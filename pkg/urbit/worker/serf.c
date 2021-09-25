@@ -244,7 +244,7 @@ _serf_grab(u3_serf* sef_u)
     u3z(sef_u->sac);
     sef_u->sac = u3_nul;
 
-    u3l_log("\n");
+    u3l_log("");
   }
 }
 
@@ -282,7 +282,7 @@ u3_serf_post(u3_serf* sef_u)
 
   if ( c3y == sef_u->pac_o ) {
     u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
-    u3l_log("\n");
+    u3l_log("");
     sef_u->pac_o = c3n;
   }
 }
@@ -464,7 +464,7 @@ _serf_poke(u3_serf* sef_u, c3_c* cap_c, c3_w mil_w, u3_noun job)
     if (  (c3__belt != tag)
        && (c3__crud != tag) )
     {
-      u3l_log("serf: %s (%" PRIu64 ") %s\r\n", cap_c, sef_u->sen_d, txt_c);
+      u3l_log("serf: %s (%" PRIu64 ") %s", cap_c, sef_u->sen_d, txt_c);
     }
   }
 #endif
@@ -484,7 +484,7 @@ _serf_poke(u3_serf* sef_u, c3_c* cap_c, c3_w mil_w, u3_noun job)
     clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
 
     if ( clr_w != 2 ) {
-      u3l_log("\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
+      u3l_log("\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m",
               clr_w, txt_c, sef_u->sen_d, ms_w,
               (int) (d0.tv_usec % 1000) / 10);
     }
@@ -523,7 +523,7 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
   //
   if ( u3_blip == u3h(gon) ) {
     u3_noun vir = _serf_sure(sef_u, pre_w, u3k(u3t(gon)));
-    
+
     u3z(gon); u3z(job);
     return u3nc(c3__done, u3nt(u3i_chubs(1, &sef_u->dun_d),
                                sef_u->mug_l,
@@ -901,7 +901,7 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
         return c3n;
       }
 
-      u3l_log("serf (%" PRIu64 "): saving rock\r\n", sef_u->dun_d);
+      u3l_log("serf (%" PRIu64 "): saving rock", sef_u->dun_d);
 
       if ( c3n == u3u_cram(sef_u->dir_c, eve_d) ) {
         fprintf(stderr, "serf (%" PRIu64 "): unable to jam state\r\n", eve_d);
@@ -1045,7 +1045,7 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
 static u3_noun
 _serf_ripe(u3_serf* sef_u)
 {
-  // u3l_log("serf: ripe %" PRIu64 "\r\n", sef_u->dun_d);
+  // u3l_log("serf: ripe %" PRIu64, sef_u->dun_d);
 
   sef_u->mug_l = ( 0 == sef_u->dun_d )
                  ? 0

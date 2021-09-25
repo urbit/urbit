@@ -37,7 +37,7 @@ u3_walk_safe(c3_c* pas_c)
   c3_y*       pad_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
-    // u3l_log("%s: %s\n", pas_c, strerror(errno));
+    // u3l_log("%s: %s", pas_c, strerror(errno));
     return 0;
   }
   fln_w = buf_b.st_size;
@@ -69,7 +69,7 @@ u3_walk_load(c3_c* pas_c)
   c3_y*       pad_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
-    u3l_log("%s: %s\n", pas_c, strerror(errno));
+    u3l_log("%s: %s", pas_c, strerror(errno));
     return u3m_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
@@ -117,7 +117,7 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
   pax_c[len_w] = '\0';
 
   if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno ) {
-    u3l_log("error mkdiring %s: %s\n", pax_c, strerror(errno));
+    u3l_log("error mkdiring %s: %s", pax_c, strerror(errno));
     u3m_bail(c3__fail);
   }
 
@@ -140,7 +140,7 @@ u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
       return u3_walk_save(pas_c, tim, pad, 0, u3_nul);
     }
 
-    u3l_log("%s: %s\n", pas_c, strerror(errno));
+    u3l_log("%s: %s", pas_c, strerror(errno));
     u3m_bail(c3__fail);
   }
 
@@ -155,7 +155,7 @@ u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
   c3_free(pad_y);
 
   if ( rit_w != fln_w ) {
-    u3l_log("%s: %s\n", pas_c, strerror(errno));
+    u3l_log("%s: %s", pas_c, strerror(errno));
     u3m_bail(c3__fail);
   }
 
@@ -185,7 +185,7 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
     struct dirent* out_n;
 
     if ( u3_readdir_r(dir_d, &ent_n, &out_n) != 0 ) {
-       u3l_log("%s: %s\n", dir_c, strerror(errno));
+       u3l_log("%s: %s", dir_c, strerror(errno));
       break;
     }
     else if ( !out_n ) {
@@ -267,7 +267,7 @@ u3_walk(const c3_c* dir_c, u3_noun old)
     struct stat buf_b;
 
     if ( 0 != stat(dir_c, &buf_b) ) {
-      u3l_log("can't stat %s\n", dir_c);
+      u3l_log("can't stat %s", dir_c);
       // return u3m_bail(c3__fail);
       c3_assert(0);
     }

@@ -33,7 +33,7 @@ typedef struct _u3_h2o_serv {
     void*            gen_u;             //  response generator
     struct _u3_hcon* hon_u;             //  connection backlink
     struct _u3_hreq* nex_u;             //  next in connection's list
-    struct _u3_hreq* pre_u;             //  next in connection's list
+    struct _u3_hreq* pre_u;             //  prev in connection's list
   } u3_hreq;
 
 /* u3_hcon: incoming http connection.
@@ -48,7 +48,7 @@ typedef struct _u3_h2o_serv {
     struct _u3_http* htp_u;             //  server backlink
     struct _u3_hreq* req_u;             //  request list
     struct _u3_hcon* nex_u;             //  next in server's list
-    struct _u3_hcon* pre_u;             //  next in server's list
+    struct _u3_hcon* pre_u;             //  prev in server's list
   } u3_hcon;
 
 /* u3_http: http server.
@@ -639,10 +639,10 @@ _http_start_respond(u3_hreq* req_u,
                     u3_noun data,
                     u3_noun complete)
 {
-  // u3l_log("start\n");
+  // u3l_log("start");
 
   if ( u3_rsat_plan != req_u->sat_e ) {
-    //u3l_log("duplicate response\n");
+    //u3l_log("duplicate response");
     return;
   }
 
@@ -715,14 +715,14 @@ _http_continue_respond(u3_hreq* req_u,
                        u3_noun data,
                        u3_noun complete)
 {
-  // u3l_log("continue\n");
+  // u3l_log("continue");
 
   // XX add sequence numbers for %continue effects?
   // Arvo does not (currently) guarantee effect idempotence!!
 
   // response has not yet been started
   if ( u3_rsat_ripe != req_u->sat_e ) {
-    // u3l_log("duplicate response\n");
+    // u3l_log("duplicate response");
     return;
   }
 
@@ -855,7 +855,7 @@ _http_seq_continue(void* vod_p, u3_noun nun)
       _http_start_respond(req_u, 403, u3_nul, u3_nul, c3y);
     }
     else if ( u3_none == aut ) {
-      u3l_log("http: authentication scry failed\n");
+      u3l_log("http: authentication scry failed");
       _http_start_respond(req_u, 500, u3_nul, u3_nul, c3y);
     }
     else {
@@ -917,7 +917,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
 
   if ( u3_none == req ) {
     if ( (u3C.wag_w & u3o_verbose) ) {
-      u3l_log("strange %.*s request\n", (int)rec_u->method.len,
+      u3l_log("strange %.*s request", (int)rec_u->method.len,
               rec_u->method.base);
     }
     c3_c* msg_c = "bad request";
@@ -1007,7 +1007,7 @@ _http_conn_free(uv_handle_t* han_t)
       noh_u = noh_u->nex_u;
     }
 
-    u3l_log("http conn free %d of %u server %d\n", hon_u->coq_l, len_w, htp_u->sev_l);
+    u3l_log("http conn free %d of %u server %d", hon_u->coq_l, len_w, htp_u->sev_l);
   }
 #endif
 
@@ -1024,13 +1024,13 @@ _http_conn_free(uv_handle_t* han_t)
       noh_u = noh_u->nex_u;
     }
 
-    u3l_log("http conn free %u remaining\n", len_w);
+    u3l_log("http conn free %u remaining", len_w);
   }
 #endif
 
   if ( (0 == htp_u->hon_u) && (0 != h2o_u->ctx_u.shutdown_requested) ) {
 #if 0
-    u3l_log("http conn free %d free server %d\n", hon_u->coq_l, htp_u->sev_l);
+    u3l_log("http conn free %d free server %d", hon_u->coq_l, htp_u->sev_l);
 #endif
     _http_serv_free(htp_u);
   }
@@ -1054,7 +1054,7 @@ _http_conn_new(u3_http* htp_u)
   _http_conn_link(htp_u, hon_u);
 
 #if 0
-  u3l_log("http conn neww %d server %d\n", hon_u->coq_l, htp_u->sev_l);
+  u3l_log("http conn neww %d server %d", hon_u->coq_l, htp_u->sev_l);
 #endif
 
   return hon_u;
@@ -1104,7 +1104,7 @@ _http_serv_unlink(u3_http* htp_u)
 {
   // XX link elsewhere initially, relink on start?
 #if 0
-  u3l_log("http serv unlink %d\n", htp_u->sev_l);
+  u3l_log("http serv unlink %d", htp_u->sev_l);
 #endif
   u3_http* pre_u = htp_u->htd_u->htp_u;
 
@@ -1213,7 +1213,7 @@ http_serv_free_cb(uv_timer_t* tim_u)
   u3_http* htp_u = tim_u->data;
 
 #if 0
-  u3l_log("http serv free cb %d\n", htp_u->sev_l);
+  u3l_log("http serv free cb %d", htp_u->sev_l);
 #endif
 
   _http_serv_really_free(htp_u);
@@ -1227,7 +1227,7 @@ static void
 _http_serv_free(u3_http* htp_u)
 {
 #if 0
-  u3l_log("http serv free %d\n", htp_u->sev_l);
+  u3l_log("http serv free %d", htp_u->sev_l);
 #endif
 
   c3_assert( 0 == htp_u->hon_u );
@@ -1297,7 +1297,7 @@ _http_serv_close(u3_http* htp_u)
   h2o_context_request_shutdown(&h2o_u->ctx_u);
 
 #if 0
-  u3l_log("http serv close %d %p\n", htp_u->sev_l, &htp_u->wax_u);
+  u3l_log("http serv close %d %p", htp_u->sev_l, &htp_u->wax_u);
 #endif
 
   uv_close((uv_handle_t*)&htp_u->wax_u, _http_serv_close_cb);
@@ -1338,7 +1338,7 @@ _http_serv_accept(u3_http* htp_u)
   if ( 0 != (sas_i = uv_accept((uv_stream_t*)&htp_u->wax_u,
                                (uv_stream_t*)&hon_u->wax_u)) ) {
     if ( (u3C.wag_w & u3o_verbose) ) {
-      u3l_log("http: accept: %s\n", uv_strerror(sas_i));
+      u3l_log("http: accept: %s", uv_strerror(sas_i));
     }
 
     uv_close((uv_handle_t*)&hon_u->wax_u, _http_conn_free);
@@ -1367,7 +1367,7 @@ _http_serv_listen_cb(uv_stream_t* str_u, c3_i sas_i)
   u3_http* htp_u = (u3_http*)str_u;
 
   if ( 0 != sas_i ) {
-    u3l_log("http: listen_cb: %s\n", uv_strerror(sas_i));
+    u3l_log("http: listen_cb: %s", uv_strerror(sas_i));
   }
   else {
     _http_serv_accept(htp_u);
@@ -1493,13 +1493,13 @@ _http_serv_start(u3_http* htp_u)
         continue;
       }
 
-      u3l_log("http: listen: %s\n", uv_strerror(sas_i));
+      u3l_log("http: listen: %s", uv_strerror(sas_i));
 
       _http_serv_free(htp_u);
       return;
     }
 
-    u3l_log("http: %s live on %s://localhost:%d\n",
+    u3l_log("http: %s live on %s://localhost:%d",
             (c3y == htp_u->lop) ? "loopback" : "web interface",
             (c3y == htp_u->sec) ? "https" : "http",
             htp_u->por_s);
@@ -1557,9 +1557,10 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
     BIO_free(bio_u);
 
     if( 0 == sas_i ) {
-      u3l_log("http: load private key failed:\n");
-      ERR_print_errors_fp(u3_term_io_hija());
-      u3_term_io_loja(1);
+      u3l_log("http: load private key failed:");
+      FILE* fil_u = u3_term_io_hija();
+      ERR_print_errors_fp(fil_u);
+      u3_term_io_loja(1, fil_u);
 
       SSL_CTX_free(tls_u);
 
@@ -1575,9 +1576,10 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
     X509_free(xer_u);
 
     if( 0 == sas_i ) {
-      u3l_log("http: load certificate failed:\n");
-      ERR_print_errors_fp(u3_term_io_hija());
-      u3_term_io_loja(1);
+      u3l_log("http: load certificate failed:");
+      FILE* fil_u = u3_term_io_hija();
+      ERR_print_errors_fp(fil_u);
+      u3_term_io_loja(1,fil_u);
 
       BIO_free(bio_u);
       SSL_CTX_free(tls_u);
@@ -1656,19 +1658,19 @@ _http_search_req(u3_httd* htd_u,
 
   if ( !(htp_u = _http_serv_find(htd_u, sev_l)) ) {
     if ( bug_w ) {
-      u3l_log("http: server not found: %x\r\n", sev_l);
+      u3l_log("http: server not found: %x", sev_l);
     }
     return 0;
   }
   else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
     if ( bug_w ) {
-      u3l_log("http: connection not found: %x/%d\r\n", sev_l, coq_l);
+      u3l_log("http: connection not found: %x/%d", sev_l, coq_l);
     }
     return 0;
   }
   else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
     if ( bug_w ) {
-      u3l_log("http: request not found: %x/%d/%d\r\n",
+      u3l_log("http: request not found: %x/%d/%d",
               sev_l, coq_l, seq_l);
     }
     return 0;
@@ -1760,7 +1762,7 @@ _http_serv_restart(u3_httd* htd_u)
     _http_serv_start_all(htd_u);
   }
   else {
-    u3l_log("http: restarting servers to apply configuration\n");
+    u3l_log("http: restarting servers to apply configuration");
 
     while ( 0 != htp_u ) {
       if ( c3y == htp_u->liv ) {
@@ -1812,7 +1814,7 @@ u3_http_ef_form(u3_httd* htd_u, u3_noun fig)
        !( c3y == pro || c3n == pro ) ||
        !( c3y == log || c3n == log ) ||
        !( c3y == red || c3n == red ) ) {
-    u3l_log("http: form: invalid card\n");
+    u3l_log("http: form: invalid card");
     u3z(fig);
     return;
   }
@@ -1907,14 +1909,14 @@ _http_ef_http_server(u3_httd* htd_u,
         _http_continue_respond(req_u, u3k(data), u3k(complete));
       }
       else if (c3y == u3r_sing_c("cancel", u3h(response))) {
-        u3l_log("http: %%cancel not handled yet\n");
+        u3l_log("http: %%cancel not handled yet");
       }
       else {
-        u3l_log("http: strange response\n");
+        u3l_log("http: strange response");
       }
     }
     else {
-      u3l_log("http: strange response\n");
+      u3l_log("http: strange response");
     }
   }
 
@@ -2028,7 +2030,7 @@ _reck_mole(u3_noun  fot,
   if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
        (u3_nul != p_uco) )
   {
-    u3l_log("strange mole %s\n", u3r_string(san));
+    u3l_log("strange mole %s", u3r_string(san));
 
     u3z(fot); u3z(uco); return c3n;
   }
@@ -2166,7 +2168,7 @@ _http_io_info(u3_auto* car_u)
     sec_y++;
     seq_u = seq_u->nex_u;
   }
-  u3l_log("      open slogstreams: %d\n", sec_y);
+  u3l_log("      open slogstreams: %d", sec_y);
 }
 
 /* u3_http_io_init(): initialize http I/O.

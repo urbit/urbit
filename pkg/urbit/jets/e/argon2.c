@@ -98,7 +98,7 @@
       }
       else {
         ret = u3_none;
-        u3l_log("argon2-error: %s\r\n", err_c);
+        u3l_log("argon2-error: %s", err_c);
       }
 
       u3a_free(out_y);
