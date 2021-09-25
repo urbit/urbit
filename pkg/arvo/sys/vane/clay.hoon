@@ -4172,7 +4172,7 @@
       !:
       =-  ?:  ?=(%& -<)  p.-
           %.  [[~ ~] fod]
-          (slog leaf+"clay: read-at-aeon fail {<[desk=syd mun]>}" ~)
+          (slog leaf+"clay: read-at-aeon fail {<[desk=syd mun]>}" p.-)
       %-  mule  |.
       ?-  care.mun
           %d
