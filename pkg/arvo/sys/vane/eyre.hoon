@@ -2118,8 +2118,8 @@
     ?:  new-before-bid  [new bindings]
     [i.bindings $(bindings t.bindings)]
   ?:  =(site.binding.new site.bid)
-    (aor path.binding.new path.bid)
-  (aor (fall site.binding.new '') (fall site.bid ''))
+    (aor path.bid path.binding.new)
+  (aor (fall site.bid '') (fall site.binding.new ''))
 ::
 ++  channel-wire
   |=  [channel-id=@t request-id=@ud]
@@ -2163,6 +2163,8 @@
     ::  initial value for the login handler
     ::
     =.  bindings.server-state.ax
+      =-  (roll - insert-binding)
+      ^-  (list [binding ^duct action])
       :~  [[~ /~/login] duct [%authentication ~]]
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
