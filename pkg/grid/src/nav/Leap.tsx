@@ -70,6 +70,14 @@ export const Leap = React.forwardRef(
       }
     }, [selection, rawInput, appsMatch]);
 
+    useEffect(() => {
+      const newMatch = getMatch(rawInput);
+
+      if (newMatch && rawInput) {
+        useLeapStore.setState({ selectedMatch: newMatch });
+      }
+    }, [rawInput, matches]);
+
     const toggleSearch = useCallback(() => {
       if (selection || menu === 'search') {
         return;
@@ -193,6 +201,9 @@ export const Leap = React.forwardRef(
 
         if (arrow) {
           e.preventDefault();
+          if (matches.length === 0) {
+            return;
+          }
 
           const currentIndex = selectedMatch
             ? matches.findIndex((m) => {

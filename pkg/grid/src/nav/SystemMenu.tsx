@@ -9,6 +9,7 @@ import { useVat } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';
 import { useMedia } from '../logic/useMedia';
 import { Cross } from '../components/icons/Cross';
+import { useLeapStore } from './Nav';
 
 type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
   open: boolean;
@@ -27,6 +28,8 @@ export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMe
   const garden = useVat(window.desk);
   const hash = garden ? getHash(garden) : null;
   const isMobile = useMedia('(max-width: 639px)');
+  const select = useLeapStore((s) => s.select);
+  const clearSelection = useCallback(() => select(null), [select]);
 
   const copyHash = useCallback(
     (event: Event) => {
@@ -69,6 +72,7 @@ export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMe
               shouldDim && 'opacity-60',
               className
             )}
+            onClick={clearSelection}
           >
             {!open && !subMenuOpen && (
               <>

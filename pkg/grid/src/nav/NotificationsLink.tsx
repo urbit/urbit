@@ -1,10 +1,11 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Timebox } from '@urbit/api';
 import { Link, LinkProps } from 'react-router-dom';
 import { Bullet } from '../components/icons/Bullet';
 import { Cross } from '../components/icons/Cross';
 import { useHarkStore } from '../state/hark';
+import { useLeapStore } from './Nav';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed' | 'open';
 
@@ -42,6 +43,8 @@ export const NotificationsLink = ({
 }: NotificationsLinkProps) => {
   const unseen = useHarkStore((s) => s.unseen);
   const state = getNotificationsState(notificationsOpen, unseen);
+  const select = useLeapStore((s) => s.select);
+  const clearSelection = useCallback(() => select(null), [select]);
 
   return (
     <Link
@@ -56,6 +59,7 @@ export const NotificationsLink = ({
         state === 'unread' && 'bg-blue-400 text-white',
         state === 'attention-needed' && 'text-white bg-orange-400'
       )}
+      onClick={clearSelection}
     >
       {state === 'empty' && <Bullet className="w-6 h-6" />}
       {state === 'unread' && Object.keys(unseen).length}
