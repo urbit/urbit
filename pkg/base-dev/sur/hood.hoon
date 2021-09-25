@@ -82,17 +82,19 @@
   =/  pen
     ?~  rail.arak  "~"
     <(turn next.u.rail.arak |=([@ lal=@tas num=@] [lal num]))>
-  :~  leaf/"/sys/kelvin:  {<[lal num]:weft>}"
-      leaf/"base hash:    {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
-      leaf/"%cz hash:     {<hash>}"
-      leaf/"updates:      {poz}"
-      leaf/"source ship:  {?~(rail.arak <~> <ship.u.rail.arak>)}"
-      leaf/"source desk:  {?~(rail.arak <~> <desk.u.rail.arak>)}"
-      leaf/"source aeon:  {?~(rail.arak <~> <aeon.u.rail.arak>)}"
-      leaf/"agent status: {sat}"
-      leaf/"force on:     {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
-      leaf/"force off:    {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
-      leaf/"pending:      {pen}"
+  :~  leaf/"/sys/kelvin:      {<[lal num]:weft>}"
+      leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
+      leaf/"%cz hash:         {<hash>}"
+      ::
+      leaf/"app status:       {sat}"
+      leaf/"force on:         {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
+      leaf/"force off:        {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
+      ::
+      leaf/"updates:          {poz}"
+      leaf/"source ship:      {?~(rail.arak <~> <ship.u.rail.arak>)}"
+      leaf/"source desk:      {?~(rail.arak <~> <desk.u.rail.arak>)}"
+      leaf/"source aeon:      {?~(rail.arak <~> <aeon.u.rail.arak>)}"
+      leaf/"pending updates:  {pen}"
   ==
 ::  +read-kelvin-foreign: read /sys/kelvin from a foreign desk
 ::
