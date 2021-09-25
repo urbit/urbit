@@ -526,8 +526,7 @@
     ::
     ?>  ?=([%cor @ @ @ @ ~] path)
     =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.path
-    =/  tim  (slav da+dat)
-    =/  =beak  [(slav %p her) desk da+tim]
+    =/  =beak  [(slav %p her) desk da+now]
     ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
     |^  ^+  mo-core
     ?~  p.sign-arvo
@@ -539,13 +538,13 @@
     ?:  ?=(%| -.res)
       (fail leaf+["gall: bad agent {<dap>}"] p.res)
     =.  mo-core  (mo-receive-core dap beak p.res)
-    (mo-subscribe-to-agent-builds tim)
+    (mo-subscribe-to-agent-builds now)
     ::
     ++  fail
       |=  =tang
       ^+  mo-core
       =.  mo-core  (mo-give %onto |+tang)
-      =/  =case  [%da tim]
+      =/  =case  [%da now]
       =/  =wire  /sys/cor/[dap]/[her]/[desk]/(scot case)
       (mo-pass wire %c %warp p.beak desk ~ %next %a case /app/[dap]/hoon)
     --
