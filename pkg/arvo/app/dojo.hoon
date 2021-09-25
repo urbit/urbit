@@ -1557,7 +1557,7 @@
   ++  session-6-to-7
     |=  old=session-6
     ~?  ?=(^ poy.old)  [dap.hid %cancelling-for-load]
-    old(poy ~)
+    old(poy ~, -.dir [our.hid %base ud+0])
   ::
   +$  house-5
     [%5 egg=@u hoc=(map id session)]
