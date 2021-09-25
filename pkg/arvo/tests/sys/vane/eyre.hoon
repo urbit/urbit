@@ -18,7 +18,7 @@
   ::
   results1
 ::
-++  test-duplicate-bindings
+++  test-overwrite-bindings
   ::
   =^  results1  eyre-gate
     %-  eyre-call  :*
@@ -38,7 +38,7 @@
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
       expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
     ==
-  ::  app2 tries to bind to the same path and fails
+  ::  app2 tries to bind to the same path and succeeds
   ::
   =^  results3  eyre-gate
     %-  eyre-call  :*
@@ -46,7 +46,7 @@
       now=~1111.1.3
       scry=scry-provides-code
       call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
-      expected-moves=[duct=~[/app2] %give %bound %.n [~ /]]~
+      expected-moves=[duct=~[/app2] %give %bound %.y [~ /]]~
     ==
   ::
   ;:  weld
@@ -125,54 +125,6 @@
     %+  expect-eq
       !>(%.n)
       !>((host-matches:eyre-gate `'example.com' `'blah.com'))
-  ==
-::
-++  test-cant-remove-other-ducts-binding
-  ::
-  =^  results1  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.1
-      scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~]]
-      expected-moves=~
-    ==
-  ::  app1 binds successfully
-  ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
-    ==
-  ::  app2 tries to steal the binding by disconnecting the path
-  ::
-  =^  results3  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      call-args=[duct=~[/app2] ~ [%disconnect [~ /]]]
-      expected-moves=~
-    ==
-  ::  app2 doesn't bind successfully because it couldn't remove app1's binding
-  ::
-  =^  results4  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
-      expected-moves=[duct=~[/app2] %give %bound %.n [~ /]]~
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
   ==
 ::  tests that when we have no match, that we fall back to the built-in 404
 ::
