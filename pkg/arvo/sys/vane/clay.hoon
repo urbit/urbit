@@ -3444,6 +3444,19 @@
           [new-cach.rov fod.dom]
         (read-unknown mool.rov(case [%ud u.aeon.rov]) new-cach.rov)
       =.  new-cach.rov  n
+      ?:  ?&  !(complete old-cach.rov)
+              (complete new-cach.rov)
+          ==
+        :_  fod.dom  :-  %&
+        %-  malt
+        %+  murn  ~(tap in paths.mool.rov)
+        |=  [=care =path]
+        ^-  (unit [mood (unit (each cage lobe))])
+        =/  cached  (~(get by new-cach.rov) [care path])
+        ?.  ?=([~ ~ *] cached)
+          %-  (slog 'clay: strange new-cache' >[care path cached]< ~)
+          ~
+        `u=[[care [%ud let.dom] path] u.u.cached]
       ::  if they're still not both complete, wait again.
       ::
       ?.  ?&  (complete old-cach.rov)

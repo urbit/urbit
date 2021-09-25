@@ -555,8 +555,7 @@
     ::
     ?>  ?=([%cor @ @ @ @ ~] wire)
     =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.wire
-    =/  tim  (slav da+dat)
-    =/  =beak  [(slav %p her) desk da+tim]
+    =/  =beak  [(slav %p her) desk da+now]
     ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
     ?~  p.sign-arvo
       (mean leaf+"gall: failed to build agent {<dap>}" ~)
@@ -567,7 +566,7 @@
     ?:  ?=(%| -.res)
       (mean leaf+["gall: bad agent {<dap>}"] p.res)
     =.  mo-core  (mo-receive-core dap beak p.res)
-    (mo-subscribe-to-agent-builds tim)
+    (mo-subscribe-to-agent-builds now)
   ::  +mo-handle-sys-lyv: handle notice that agents have been rebuilt
   ::
   ++  mo-handle-sys-lyv
