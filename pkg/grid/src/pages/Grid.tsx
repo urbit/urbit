@@ -20,7 +20,7 @@ export const Grid: FunctionComponent<GridProps> = ({ match, history }) => {
 
   return (
     <div className="flex flex-col">
-      <header className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 z-30 flex justify-center w-full px-4 bg-white">
+      <header className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 z-30 flex justify-center w-full px-4">
         <Nav menu={match.params.menu} />
       </header>
 
