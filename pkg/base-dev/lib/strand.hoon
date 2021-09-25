@@ -128,6 +128,19 @@
           [%done value=a]
       ==
     ::
+    ++  validate-mark
+      |=  [in=* =mark =desk =bowl]
+      =+    .^
+          sky=*
+          %cb
+          /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[mark]
+        ==
+      =+  !<(=dais:clay q.u.u.sky)
+        =/  res  (mule |.((vale:dais in)))
+        ?:  ?=(%| -.res)
+          (mean leaf+"gall: ames vale fail {<mark>}" p.res)
+        p.res
+    ::
     ::  Take a new sign and run the strand against it
     ::
     ++  take
@@ -137,9 +150,16 @@
       |=  [=eval-form =strand-input]
       ^-  [[(list card) =eval-result] _eval-form]
       =*  take-loop  $
+      =/  validated-input=^strand-input
+      =.  in.strand-input
+      %+    bind
+         in.strand-input
+      |=  in=input:strand
+      ?.  ?=(%sign -.in)  in
+      `(validate-mark q.cage.sign.in p.cage.sign.in q.byk.bowl.strand-input)
       ::  run the strand callback
       ::
-      =/  =output  (form.eval-form strand-input)
+      =/  =output  (form.eval-form validated-input)
       ::  add cards to cards
       ::
       =.  cards
@@ -165,3 +185,4 @@
     --
   --
 --
+::

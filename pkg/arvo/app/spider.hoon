@@ -18,7 +18,7 @@
   $:  starting=(map yarn [=trying =vase])
       running=trie
       tid=(map tid yarn)
-      serving=(map tid [@ta =mark =desk])
+      serving=(map tid [(unit @ta) =mark =desk])
   ==
 ::
 +$  clean-slate-any
@@ -318,14 +318,10 @@
   =*  output-mark  i.t.t.t.t.site.url
   =/  =tid         (new-thread-id thread)
   =.  serving.state
-    (~(put by serving.state) tid [eyre-id output-mark desk])
+    (~(put by serving.state) tid [`eyre-id output-mark desk])
   ::  TODO: speed this up somehow. we spend about 15ms in this arm alone
   ::
-  =+  .^
-      =tube:clay
-      %cc 
-      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/json/[input-mark]
-    ==
+  =/  tube  (convert-tube %json input-mark desk bowl)
   ?>  ?=(^ body.request.inbound-request)
   =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
   =/  input=vase  (slop !>(~) (tube !>(body)))
@@ -543,15 +539,11 @@
   =-  (fall - `state)
   %+  bind  
     (~(get by serving.state) tid)
-  |=  [eyre-id=@ta output=mark =desk]
-  =+    .^
-      =tube:clay
-      %cc
-      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[output]/json
-    ==
-  :_  state(serving (~(del by serving.state) tid))
-  %+  give-simple-payload:app:server  eyre-id
-  (json-response:gen:server !<(json (tube vase)))
+  |=  [eyre-id=(unit @ta) output=mark =desk]
+  =/  tube  (convert-tube output %json desk bowl)
+  :_  state(serving (~(del by serving.state) tid)
+  %+  give-simple-payload:app:server  (need eyre-id)
+  (json-response:gen:server !<(%json (tube vase))
 ::
 ++  thread-done
   |=  [=yarn =vase]
@@ -604,7 +596,7 @@
       sup.bowl
       eny.bowl
       now.bowl
-      byk.bowl
+      (yarn-to-byk yarn bowl)
   ==
 ::
 ++  yarn-to-tid
@@ -623,7 +615,26 @@
     ~
   `i.t.nary
 ::
+++  yarn-to-byk
+  |=  [=yarn =bowl]
+  ^-  beak
+  =/  tid  (yarn-to-tid yarn)
+  %+  bind
+    (~(get by serving.state) tid)
+  |=  [* * =desk]
+  =/  boc  bec
+  boc(q desk)
+::
 ++  clean-state
   !>  ^-  clean-slate
   3+state(running (turn (tap-yarn running.state) head))
+::
+++  convert-tube
+  |=  [from=mark to=mark =desk =bowl]
+  .^
+    tube:clay
+    %cc
+    /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[from]/[to]
+  ==
+
 --
