@@ -1605,15 +1605,36 @@
       ::
       ++  install-from-tmp
         |=  =desk
+        ^+  ..park
+        =/  sen  (^^sein:title rof our now our)
         %-  lime
-        :~  :^  hen  %pass  /dist/[desk]/create
-            %^  new-desk:cloy  desk
-              (latest-tako desk)
-            ;;((map path page) (cue (get-tmp-jam desk)))
+        |^  ^-  (list move)
         ::
-            :^  hen  %pass  /dist/[desk]/install
-            [%g %deal [our our] %hood %poke %kiln-install !>([desk our desk])]
+        ?:  =(sen our)
+          :~  create-desk
+              install-local
+          ==
+        :~  create-desk
+            install-local
+            install-remote
         ==
+        ::
+        ++  create-desk  ^-  move
+          :^  hen  %pass  /dist/create/[desk]
+          %^  new-desk:cloy  desk
+            (latest-tako desk)
+          ;;((map path page) (cue (get-tmp-jam desk)))
+        ::
+        ++  install-local  ^-  move
+          :^  hen  %pass  /dist/install-local/[desk]
+          [%g %deal [our our] %hood %poke %kiln-install !>([desk our desk])]
+        ::
+        ++  install-remote  ^-  move
+          =/  rem  ?:(=(%base desk) %kids desk)
+          ::
+          :^  hen  %pass  /dist/install-remote/[desk]
+          [%g %deal [our our] %hood %poke %kiln-install !>([desk sen rem])]
+        --
       ::
       ++  latest-tako
         |=  =desk
@@ -1640,6 +1661,8 @@
     ::
     ++  did-kernel-update
       |=  invalid=(set path)
+      ?.  |(=(%base syd) &(=(%home syd) !dist-upgraded.ruf))
+        |
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
     ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
