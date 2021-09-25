@@ -1,5 +1,5 @@
 /-  spider
-/+  libstrand=strand, default-agent, verb, server
+/+  libstrand=strand, default-agent, verb, server, dbug
 =,  strand=strand:libstrand
 ~%  %spider-top  ..part  ~
 |%
@@ -26,10 +26,19 @@
   $%  clean-slate-sig
       clean-slate-1
       clean-slate-2
+      clean-slate-3
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %4
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit @ta) =mark =desk])
+  ==
+::
++$  clean-slate-3
   $:  %3
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -144,6 +153,7 @@
   (welp next-1 next-2)
 --
 ::
+%-  agent:dbug
 ^-  agent:gall
 =|  =state
 =<
@@ -156,7 +166,7 @@
       def          ~(. (default-agent this %|) bowl)
       bec          byk.bowl(r da+now.bowl)
   ::
-  ++  on-init   
+  ++  on-init
     ^-  (quip card _this)
     :_  this
     ~[bind-eyre:sc]
@@ -167,15 +177,17 @@
     =+  !<(any=clean-slate-any old-state)
     =?  any  ?=(^ -.any)  (old-to-1 any)
     =?  any  ?=(~ -.any)  (old-to-1 any)
-    =^  upgrade-cards  any  
+    =^  upgrade-cards  any
       (old-to-2 any)
     =.  any  (old-to-3 any)
-    ?>  ?=(%3 -.any)
+    =.  any  (old-to-4 any)
+    ?>  ?=(%4 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
       %+  welp  running.any
       ~(tap in ~(key by starting.any))
+
     |-  ^-  (quip card _this)
     ?~  yarns
       [~[bind-eyre:sc] this]
@@ -193,8 +205,8 @@
     ++  old-to-2
       |=  old=clean-slate-any
       ^-  (quip card clean-slate-any)
-      ?>  ?=(?(%1 %2 %3) -.old)
-      ?:  ?=(?(%2 %3) -.old)
+      ?>  ?=(?(%1 %2 %3 %4) -.old)
+      ?:  ?=(?(%2 %3 %4) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -206,15 +218,27 @@
     ::
     ++  old-to-3
       |=  old=clean-slate-any
-      ^-  clean-slate
-      ?>  ?=(?(%2 %3) -.old)
-      ?:  ?=(%3 -.old)
+      ^-  clean-slate-any
+      ?>  ?=(?(%2 %3 %4) -.old)
+      ?:  ?=(?(%3 %4) -.old)
         old
       :*  %3
         starting.old
         running.old
         tid.old
         (~(run by serving.old) |=([id=@ta =mark] [id mark q.byk.bowl]))
+      ==
+    ++  old-to-4
+      |=  old=clean-slate-any
+      ^-  clean-slate
+      ?>  ?=(?(%3 %4) -.old)
+      ?:  ?=(%4 -.old)
+        old
+      :*  %4
+        starting.old
+        running.old
+        tid.old
+        (~(run by serving.old) |=([id=@ta =mark =desk] [`id mark q.byk.bowl]))
       ==
     --
   ::
@@ -230,7 +254,7 @@
         %spider-start  (handle-start-thread:sc !<(start-args vase))
         %spider-stop   (handle-stop-thread:sc !<([tid ?] vase))
       ::
-          %handle-http-request   
+          %handle-http-request
         (handle-http-request:sc !<([@ta =inbound-request:eyre] vase))
       ==
     [cards this]
@@ -309,7 +333,7 @@
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
   ::?>  authenticated.inbound-request
-  =/  url 
+  =/  url
     (parse-request-line:server url.request.inbound-request)
   ?>  ?=([%spider @t @t @t @t ~] site.url)
   =*  desk         i.t.site.url
@@ -507,11 +531,11 @@
   |=  [=tid =term =tang]
   ^-  (quip card ^state)
   =-  (fall - `state)
-  %+  bind  
+  %+  bind
     (~(get by serving.state) tid)
-  |=  [eyre-id=@ta output=mark =desk]
+  |=  [eyre-id=(unit @ta) output=mark =desk]
   :_  state(serving (~(del by serving.state) tid))
-  %+  give-simple-payload:app:server  eyre-id
+  %+  give-simple-payload:app:server  (need eyre-id)
   ^-  simple-payload:http
   :_  ~  :_  ~
   ?.  ?=(http-error:spider term)
@@ -537,13 +561,13 @@
   |=  [=tid =vase]
   ^-  (quip card ^state)
   =-  (fall - `state)
-  %+  bind  
+  %+  bind
     (~(get by serving.state) tid)
   |=  [eyre-id=(unit @ta) output=mark =desk]
   =/  tube  (convert-tube output %json desk bowl)
-  :_  state(serving (~(del by serving.state) tid)
+  :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  (need eyre-id)
-  (json-response:gen:server !<(%json (tube vase))
+  (json-response:gen:server !<(json (tube vase)))
 ::
 ++  thread-done
   |=  [=yarn =vase]
@@ -589,7 +613,7 @@
   |=  [=yarn =bowl:gall]
   ^-  bowl:spider
   :*  our.bowl
-      src.bowl
+    src.bowl
       (yarn-to-tid yarn)
       (yarn-to-parent yarn)
       wex.bowl
@@ -616,21 +640,23 @@
   `i.t.nary
 ::
 ++  yarn-to-byk
-  |=  [=yarn =bowl]
+  |=  [=yarn =bowl:gall]
   ^-  beak
   =/  tid  (yarn-to-tid yarn)
-  %+  bind
-    (~(get by serving.state) tid)
-  |=  [* * =desk]
-  =/  boc  bec
-  boc(q desk)
+  =/  byk
+    %+  bind
+      (~(get by serving.state) tid)
+    |=  [* * =desk]
+    =/  boc  bec
+    boc(q desk)
+  ?~  byk  byk.bowl  u.byk
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  3+state(running (turn (tap-yarn running.state) head))
+  4+state(running (turn (tap-yarn running.state) head))
 ::
 ++  convert-tube
-  |=  [from=mark to=mark =desk =bowl]
+  |=  [from=mark to=mark =desk =bowl:gall]
   .^
     tube:clay
     %cc
