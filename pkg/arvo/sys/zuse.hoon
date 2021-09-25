@@ -4847,9 +4847,23 @@
 ::    (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::
-::::                      ++title                       ::  (2j) namespace
+::::                      ++title                       ::  (2j) identity
   ::                                                    ::::
 ++  title
+  ::  deep core: for vane use, with $roof for scrying
+  ::
+  ::    TODO: refactor to share high-level gates like +saxo
+  ::          among the three cores
+  ::
+  =>  |%
+      ++  sein
+        |=  [rof=roof our=ship now=@da who=ship]
+        ;;  ship
+        =<  q.q  %-  need  %-  need
+        (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
+      --
+  ::  middle core: for userspace use, with .^
+  ::
   =>  |%
       ::                                                ::  ++clan:title
       ++  clan                                          ::  ship to rank
@@ -4888,6 +4902,8 @@
           %pawn  (end 4 who)
         ==
       --
+  ::  surface core: stateless queries for default numeric sponsorship
+  ::
   |%
   ::                                                    ::  ++cite:title
   ++  cite                                              ::  render ship
