@@ -4306,7 +4306,7 @@
     ++  jesc                                            ::  escaped
       =+  utf=|=(a=@ ['\\' 'u' ((x-co 4):co a)])
       |=  a=@  ^-  tape
-      ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
+      ?+  a  ?:(&((gth a 0x1f) !=(a 0x7f)) [a ~] (utf a))
         %10  "\\n"
         %34  "\\\""
         %92  "\\\\"
