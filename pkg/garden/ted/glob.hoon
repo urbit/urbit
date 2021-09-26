@@ -9,7 +9,7 @@
 |^
 ?-  -.location.ref
   %http  (fetch-http [url.location hash]:ref)
-  %ames  !!  ::NOTE  done within docket itself
+  %ames  (fetch-ames [ship.location hash]:ref base)
 ==
 ::
 ++  fetch-http
@@ -25,4 +25,14 @@
     =-  ?>(=(hash (sham -)) -)
     ;;(=glob:docket (cue cord))
   (pure:m !>(glob))
+::
+::  download from ship's docket state
+++  fetch-ames
+  |=  [[=ship hash=@uvH] base=term]
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
+  ;<  =cage  bind:m
+    (watch-one:strandio /glob/(scot %da now.bowl) [ship %docket] /glob/[base]/(scot %uv hash))
+  ?>  ?=(%glob p.cage)
+  (pure:m q.cage)
 --
