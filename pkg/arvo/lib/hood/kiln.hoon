@@ -1,5 +1,4 @@
 /-  *hood
-/*  base-bill  %bill  /desk/bill
 =,  clay
 =,  space:userlib
 =,  format
@@ -233,24 +232,21 @@
 ++  on-init
   =<  abet
   ~>  %slog.0^leaf/"kiln: boot"
-  =/  desks=(set desk)
-    .^((set desk) %cd /(scot %p our)//(scot %da now))
+  ::
+  =+  .^(desks=(set desk) %cd /(scot %p our)//(scot %da now))
   =.  desks  (~(del in desks) %base)
   =.  desks  (~(del in desks) %kids)
+  ::
+  =/  sop=ship  (sein:title our now our)
   ::  set up base desk
   ::
-  =.  ..on-init
-    =/  =rein  [liv=& add=(sy %hood %dojo ~) sub=~]  ::  TODO questionable
-    =/  daz  (get-apps-want base-bill rein)
-    %-  emil
-    %-  zing  ^-  (list (list card:agent:gall))
-    (turn daz start-dude:~(pass vats [%base *arak]))
+  =.  ..on-init  abet:(install-local:vats %base)
+  =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))
+    abet:(install:vats %base sop %kids)
   ::  install other desks
   ::
   =/  dez=(list desk)  ~(tap in desks)
-  =/  sop=ship
-    (sein:title our now our)
-  |-
+  |-  ^+  ..on-init
   ?~  dez  ..on-init
   =.  ..on-init
     abet:(install-local:vats i.dez)
@@ -336,9 +332,10 @@
     abet:(install:vats %base our %base)
   =?  kiln  ?=(^ old-ota)
     abet:(install:vats %base [her sud]:u.old-ota)
-  =?  kiln  ?=(^ wef)
+  =.  kiln
+    =/  kel  (fall wef zuse/zuse)
     =/  except=(set desk)  (sy %base %kids ~)
-    (bump:vats u.wef (all-desks-but:vats except) %.n)
+    (bump:vats kel except force=%.n)
   =.  wef  ~
   abet:kiln
 ::
@@ -494,7 +491,7 @@
         rak  [~ *rein]
       ==
     ~>  %slog.0^leaf/"kiln: local install {here}"
-    =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
+    =.  vats  update-running-apps
     =.  vats  (emit listen:pass)
     ::NOTE  for foreign desks, the download triggers a "real" commit, because
     ::      we actually download the data. for local desks we do not download
@@ -574,7 +571,7 @@
     ^+  vats
     =.  vats  (abed lac)
     =.  liv.rein.rak  &
-    =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
+    =.  vats  update-running-apps
     (emit (diff:give %revive loc rak))
   ::  +set-rein: adjust which agents are forced on or off
   ::
@@ -587,7 +584,7 @@
       [%| %|]  vats
       [%| %&]  (revive lac)
       [%& %|]  (suspend lac)
-      [%& %&]  (update-running-apps (get-apps-diff our loc now rein.rak))
+      [%& %&]  update-running-apps
     ==
   ::  +bump: try to apply kernel kelvin upgrade
   ::
@@ -646,8 +643,8 @@
     =<  abet  ^+  vats
     =.  vats  (abed desk)
     ?:  =([~ kel] (read-kelvin-local our desk now))
-      ~>  %slog.0^leaf/"kiln: {here} already at {<[- +]:kel>}, ignoring"
-      vats
+      ~>  %slog.0^leaf/"kiln: {here} already at {<[- +]:kel>}"
+      update-running-apps
     =^  tem  rail.rak  (crank-next %| kel)
     ?^  tem
       (emit merge-main:pass)
@@ -776,7 +773,8 @@
       ::
       ?.  =(~ blockers)
         ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
-        =.  rail.rak  `%*(. ral next (snoc next:ral [(dec aeon:ral) new-weft]))
+        =.  rail.rak
+          `%*(. ral next (snoc next:ral [(dec aeon:ral) new-weft]))
         =/  =diff  [%block loc rak new-weft blockers]
         (emil sync-ud:pass (diff:give diff) ~)
       ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
@@ -798,13 +796,15 @@
     ^+  vats
     ~>  %slog.0^leaf/"kiln: commit detected at {here}"
     =.  vats  (emit (diff:give %commit loc rak))
-    =?  vats  liv.rein.rak
-      (update-running-apps (get-apps-diff our loc now rein.rak))
+    =?  vats  liv.rein.rak  update-running-apps
     ?.  =(%base loc)
       vats
-    =/  kel  [- +]:weft:(head next:ral)
-    ~>  %slog.0^leaf/"kiln: merging %base into %kids at {<kel>}"
-    (emit merge-kids:pass)
+    =/  kel=[@tas @ud]
+      ?~  rail.rak         zuse/zuse
+      ?~  next.u.rail.rak  zuse/zuse
+      weft.i.next.u.rail.rak
+    =.  kiln  (bump-many kel (all-desks-but (sy %base ~)))
+    vats
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
@@ -820,7 +820,9 @@
       %-  (slog leaf/- p.p.syn)
       =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
-    take-commit
+    =.  vats  take-commit
+    ~>  %slog.0^leaf/"kiln: merging %base into %kids at {<kel>}"
+    (emit merge-kids:pass)
   ::
   ++  take-merge-kids
     |=  syn=sign-arvo
@@ -847,9 +849,10 @@
     ==
   ::
   ++  update-running-apps
-    |=  [liv=(list dude) ded=(list dude)]
-    =.  vats  (start-dudes liv)
-    =.  vats  (stop-dudes ded)
+    ^+  vats
+    =/  dif   (get-apps-diff our loc now rein.rak)
+    =.  vats  (start-dudes liv.dif)
+    =.  vats  (stop-dudes ded.dif)
     vats
   ::
   ++  start-dudes
@@ -894,6 +897,8 @@
   ?:  =(%base desk)
     ~
   ?.  liv.rein.arak
+    ~
+  ?:  =(`kel (read-kelvin-local our desk now))
     ~
   ?~  rail.arak
     `desk
