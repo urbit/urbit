@@ -39,7 +39,7 @@ export const ProviderList = ({
 
   return (
     <ul
-      className={classNames(size !== 'default' ? 'space-y-4' : 'space-y-8', listClass)}
+      className={classNames('-mx-2', size !== 'default' ? 'space-y-4' : 'space-y-8', listClass)}
       aria-labelledby={labelledBy}
     >
       {providers.map((p) => (

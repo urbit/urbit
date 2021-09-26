@@ -55,7 +55,7 @@ export const Notifications = ({ history }: RouteComponentProps) => {
             variant="secondary"
             className="flex-auto sm:flex-none py-1.5 px-2 sm:px-6 text-sm sm:text-base rounded-full"
           >
-            Mark All as Read
+            Archive All
           </Button>
           <Button
             as={Link}

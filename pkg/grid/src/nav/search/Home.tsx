@@ -85,7 +85,7 @@ export const Home = () => {
   const selectedMatch = useLeapStore((state) => state.selectedMatch);
   const { recentApps, recentDevs } = useRecentsStore();
   const charges = useCharges();
-  const groups = charges?.groups;
+  const groups = charges?.landscape;
   const contacts = useContactState((s) => s.contacts);
   const defaultAlly = useDocketState((s) =>
     s.defaultAlly ? { shipName: s.defaultAlly, ...contacts[s.defaultAlly] } : null
@@ -113,10 +113,17 @@ export const Home = () => {
         Recent Apps
       </h2>
       {apps.length === 0 && (
-        <div className="min-h-[150px] p-6 rounded-xl bg-gray-50">
-          <p className="mb-4">Apps you use will be listed here, in the order you used them.</p>
-          <p className="mb-6">You can click/tap/keyboard on a listed app to open it.</p>
-          {groups && <AppLink app={groups} size="small" onClick={() => addRecentApp('groups')} />}
+        <div className="p-6 rounded-xl bg-gray-50">
+          <p>Apps you use will be listed here, in the order you used them.</p>
+          <p className="mt-4">You can click/tap/keyboard on a listed app to open it.</p>
+          {groups && (
+            <AppLink
+              app={groups}
+              size="small"
+              className="mt-6"
+              onClick={() => addRecentApp('groups')}
+            />
+          )}
         </div>
       )}
       {apps.length > 0 && (
@@ -127,7 +134,7 @@ export const Home = () => {
         Recent Developers
       </h2>
       {recentDevs.length === 0 && (
-        <div className="min-h-[150px] p-6 rounded-xl bg-gray-50">
+        <div className="p-6 rounded-xl bg-gray-50">
           <p className="mb-4">Urbit app developers you search for will be listed here.</p>
           {defaultAlly && (
             <>
