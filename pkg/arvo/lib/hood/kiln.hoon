@@ -827,6 +827,8 @@
       vats
     =.  vats  take-commit
     ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
+    ?.  =(%base loc)
+      vats
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
