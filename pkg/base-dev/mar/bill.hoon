@@ -1,12 +1,11 @@
-/-  *bill
-|_  bil=bill
+|_  bil=(list dude:gall)
 ++  grow
   |%
   ++  mime  `^mime`[/text/x-bill (as-octs:mimes:html hoon)]
   ++  noun  bil
   ++  hoon
     ^-  @t
-    |^  (crip (of-wall:format (wrap-lines (zing (turn bil spit-chit)))))
+    |^  (crip (of-wall:format (wrap-lines (spit-duz bil))))
     ::
     ++  wrap-lines
       |=  taz=wall
@@ -16,28 +15,20 @@
       %-  snoc  :_  "=="
       (turn t.taz |=(t=tape (weld "    " t)))
     ::
-    ++  spit-chit
-      |=  =chit
-      ^-  wall
-      ?-  -.chit
-        %apes  [":-  %apes" (wrap-lines (spit-duz duz.chit))]
-        %fish  [":-  %fish" (wrap-lines (spit-duz duz.chit))]
-      ==
-    ::
     ++  spit-duz
       |=  duz=(list dude:gall)
       ^-  wall
-      (turn duz |=(=dude:gall "%{<dude>}"))
+      (turn duz |=(=dude:gall ['%' (trip dude)]))
     --
   ++  txt   (to-wain:format hoon)
   --
 ++  grab
   |%
-  ++  noun  bill
+  ++  noun  (list dude:gall)
   ++  mime
     |=  [=mite len=@ud tex=@]
     ~_  tex
-    !<(bill (slap !>(~) (ream tex)))
+    !<((list dude:gall) (slap !>(~) (ream tex)))
   --
 ++  grad  %noun
 --

@@ -1,4 +1,3 @@
-/-  *bill
 =,  clay
 =*  dude  dude:gall
 |%
@@ -121,6 +120,7 @@
 ++  read-kelvin-local
   |=  [our=ship =desk now=@da]
   ^-  (unit weft)
+  ~|  read-kelvin-local+desk
   =/  pax  (en-beam [our desk da+now] /sys/kelvin)
   ?.  .^(? cu/pax)
     ~
@@ -129,7 +129,7 @@
 ::
 ++  read-bill-foreign
   |=  [=ship =desk =aeon]
-  ^-  bill
+  ^-  (list dude)
   =/  her  (scot %p ship)
   =/  syd  (scot %tas desk)
   =/  yon  (scot %ud aeon)
@@ -140,7 +140,7 @@
   =/  lob  (scot %uv (~(got by q.yak) /desk/bill))
   =/  bob  .^(blob cs/~[her syd yon %blob lob])
   ::
-  ;;  bill
+  ;;  (list dude)
   ?-  -.bob
     %direct  q.q.bob
     %delta   q.r.bob
@@ -151,36 +151,27 @@
   |=  [our=ship =desk now=@da] 
   =/  pax  (en-beam [our desk da+now] /desk/bill)
   ?.  .^(? cu/pax)
-    *bill
-  .^(bill cx/pax)
-::  +is-fish: should dill link .dude?
+    *(list dude)
+  .^((list dude) cx/pax)
+::  +adjust-dudes: which agents should be started and stopped
 ::
-++  is-fish  |=([=dude =bill] .?((find ~[dude] (read-fish bill))))
-::  +tap-in-bill: +tap:in, respecting the order of agents in the bill
+::    Will ask Gall to start agents that it's already running
+::    but that should be ok, and might be safer in case other
+::    unprocessed moves would have turned them off.
 ::
-++  tap-in-bill
-  |=  [=bill dudes=(set dude)]
-  =/  apes  (read-apes bill)
-  |^
-  %+  sort  ~(tap in dudes)
-  |=  [a=dude b=dude]
-  (lte (idx a) (idx b))
-  ::
-  ++  idx
-    |=  =dude 
-    (fall (bind (find ~[dude] apes) succ) 0)
-  --
-::  +get-apps-diff: which agents should be started and stopped
-::
-++  get-apps-diff
-  |=  [our=ship =desk now=@da =rein]
-  ^-  [liv=(list dude) ded=(list dude)]
-  =/  =bill  (read-bill our desk now)
-  =/  wan  (sy (get-apps-want bill rein))
-  =/  hav  (sy (get-apps-live our desk now))
-  =/  liv  (tap-in-bill bill (~(dif in wan) hav))
-  =/  ded  (flop (tap-in-bill bill (~(dif in hav) wan)))
-  [liv ded]
+++  adjust-dudes
+  |=  $:  local=[our=ship =desk now=@da]
+          upstream=(unit [=ship =desk =aeon])
+          =rein
+      ==
+  ^-  [jolt=(list dude) idle=(list dude)]
+  =/  all=(list dude)
+    ?~  upstream
+      (read-bill local)
+    (read-bill-foreign u.upstream)
+  =/  want  (get-apps-want all rein)
+  =/  have  (get-apps-live local)
+  [want (skip have ~(has in (sy want)))]
 ::
 ++  get-apps-live
   |=  [our=ship =desk now=@da]
@@ -197,9 +188,8 @@
 ::  +get-apps-want: find which apps should be running on a desk
 ::
 ++  get-apps-want
-  |=  [=bill =rein]
+  |=  [duz=(list dude) =rein]
   ^-  (list dude)
-  =/  duz  (read-apes bill)
   =.  duz  (skip duz ~(has in sub.rein))
   =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
   duz

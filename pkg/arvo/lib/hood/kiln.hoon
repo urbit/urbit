@@ -339,7 +339,8 @@
     abet:(install:vats %base [her sud]:u.old-ota)
   =.  kiln
     =/  kel  (fall wef zuse/zuse)
-    =/  except=(set desk)  (sy %base %kids ~)
+    ::  $% is a hack to workaround an initialization bug
+    =/  except=(set desk)  (sy %base %kids %$ ~)
     (bump:vats kel except force=%.n)
   =.  wef  ~
   abet:kiln
@@ -434,24 +435,12 @@
       [%pass (make-wire step) %arvo %c task]
     ++  start-dude
       |=  =dude
-      ^-  (list card:agent:gall)
-      :-  [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
-      ?.  (is-fish dude (read-bill our loc now))
-        ~>  %slog.(fmt "jolt {<dude>}")
-        ~
-      ~>  %slog.(fmt "jolt {<dude>}, binding console")
-      =/  =cage  [%drum-link !>([our dude])]
-      [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
+      ^-  card:agent:gall
+      [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
     ++  stop-dude
       |=  =dude
-      ^-  (list card:agent:gall)
-      :-  [%pass /kiln/vats/[loc]/uninstall %arvo %g %idle dude]
-      ?.  (is-fish dude (read-bill our loc now))
-        ~>  %slog.(fmt "idle {<dude>}")
-        ~
-      ~>  %slog.(fmt "idle {<dude>}, unbinding console")
-      =/  =cage  [%drum-unlink !>([our dude])]
-      [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
+      ^-  card:agent:gall
+      [%pass /kiln/vats/[loc]/uninstall %arvo %g %idle dude]
     --
   ::  +uninstall: stop tracking apps on desk, and suspend apps
   ::
@@ -489,14 +478,14 @@
   ++  install-local
     |=  lac=desk
     ^+  vats
-    ?:  (~(has by ark) loc)
+    ?:  (~(has by ark) lac)
       ~>  %slog.(fmt "already tracking {here:(abed lac)}, ignoring")
       vats
     =:  loc  lac
         rak  [~ *rein]
       ==
     ~>  %slog.(fmt "local install {here}")
-    =.  vats  update-running-apps
+    =.  vats  update-running-dudes
     =.  vats  (emit listen:pass)
     ::NOTE  for foreign desks, the download triggers a "real" commit, because
     ::      we actually download the data. for local desks we do not download
@@ -576,7 +565,7 @@
     ^+  vats
     =.  vats  (abed lac)
     =.  liv.rein.rak  &
-    =.  vats  update-running-apps
+    =.  vats  update-running-dudes
     (emit (diff:give %revive loc rak))
   ::  +set-rein: adjust which agents are forced on or off
   ::
@@ -589,7 +578,7 @@
       [%| %|]  vats
       [%| %&]  (revive lac)
       [%& %|]  (suspend lac)
-      [%& %&]  update-running-apps
+      [%& %&]  update-running-dudes
     ==
   ::  +bump: try to apply kernel kelvin upgrade
   ::
@@ -649,7 +638,7 @@
     =.  vats  (abed desk)
     ?:  =([~ kel] (read-kelvin-local our desk now))
       ~>  %slog.(fmt "{here} already at {<[lal num]:kel>}")
-      update-running-apps
+      update-running-dudes
     =^  tem  rail.rak  (crank-next %| kel)
     ?^  tem
       (emit merge-main:pass)
@@ -671,6 +660,8 @@
     ?>  ?=([@ @ *] wire)
     ?:  ?=(%jolt i.t.wire)
       (take-onto wire syn)
+    ?:  ?=(%listen i.t.wire)
+      abet:(take-listen wire syn)
     =<  abet
     =.  vats  (from-wire wire)
     ?+    i.t.wire
@@ -679,7 +670,6 @@
       %find        (take-find syn)
       %sync        (take-sync syn)
       %download    (take-download syn)
-      %listen      (take-listen syn)
       %merge-main  (take-merge-main syn)
       %merge-kids  (take-merge-kids syn)
     ==
@@ -723,11 +713,9 @@
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft  (read-kelvin-foreign [ship desk aeon]:ral)
     =?  vats  liv.rein.rak
-      =/  bill      (read-bill-foreign [ship desk aeon]:ral)
-      =/  wan       (sy (get-apps-want bill rein.rak))
-      =/  hav       (sy (get-apps-live our loc now))
-      =/  ded       ~(tap in (~(dif in hav) wan))
-      (stop-dudes ded)
+      %-  stop-dudes
+      =<  idle
+      (adjust-dudes [our loc now] `[ship desk aeon]:ral rein.rak)
     =.  rail.rak  `%*(. ral aeon +(aeon:ral))
     |^  ^+  vats
     ?:  =(%base loc)
@@ -791,9 +779,15 @@
     --
   ::
   ++  take-listen
-    |=  syn=sign-arvo
+    |=  [=wire syn=sign-arvo]
     ^+  vats
     ?>  ?=([@ %writ ~ *] syn)
+    =/  lac=desk  (head wire)
+    ::  ignore spurious updates from clay on desks we've uninstalled
+    ::
+    ?.  (~(has by ark) lac)
+      vats
+    =.  vats  (from-wire wire)
     =.  vats  (emit listen:pass)
     take-commit
   ::
@@ -801,7 +795,7 @@
     ^+  vats
     ~>  %slog.(fmt "commit detected at {here}")
     =.  vats  (emit (diff:give %commit loc rak))
-    =?  vats  liv.rein.rak  update-running-apps
+    =?  vats  liv.rein.rak  update-running-dudes
     ?.  =(%base loc)
       vats
     =/  kel=[@tas @ud]
@@ -855,22 +849,22 @@
       %|  (mean >p.onto< p.onto)
     ==
   ::
-  ++  update-running-apps
+  ++  update-running-dudes
     ^+  vats
-    =/  dif   (get-apps-diff our loc now rein.rak)
-    =.  vats  (start-dudes liv.dif)
-    =.  vats  (stop-dudes ded.dif)
+    =/  local  [our loc now]
+    =/  upstream  ?~(rail.rak ~ `[ship desk aeon]:u.rail.rak)
+    =/  dif   (adjust-dudes local upstream rein.rak)
+    =.  vats  (start-dudes jolt.dif)
+    =.  vats  (stop-dudes idle.dif)
     vats
   ::
   ++  start-dudes
     |=  daz=(list dude)
-    ~>  %slog.(fmt "starting {<daz>}")
-    (emil `(list card:agent:gall)`(zing (turn daz start-dude:pass)))
+    (emil (turn daz start-dude:pass))
   ::
   ++  stop-dudes
     |=  daz=(list dude)
-    ~>  %slog.(fmt "stopping {<daz>}")
-    (emil `(list card:agent:gall)`(zing (turn daz stop-dude:pass)))
+    (emil (turn daz stop-dude:pass))
   ::  +crank-next: pop stale items from .next until one matches
   ::
   ++  crank-next
@@ -902,6 +896,8 @@
   %+  murn  ~(tap by ark)
   |=  [=desk =arak]
   ?:  =(%base desk)
+    ~
+  ?:  =(%$ desk)  ::  hack to work around initialization bug
     ~
   ?.  liv.rein.arak
     ~

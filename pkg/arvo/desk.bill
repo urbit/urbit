@@ -1,17 +1,11 @@
-:~  :-  %apes
-    :~  %acme
-        %azimuth-tracker
-        %dbug
-        %dojo
-        %eth-watcher
-        %hood
-        %herm
-        %lens
-        %ping
-        %spider
-    ==
-    :-  %fish
-    :~  %dojo
-        %hood
-    ==
+:~  %acme
+    %azimuth-tracker
+    %dbug
+    %dojo
+    %eth-watcher
+    %hood
+    %herm
+    %lens
+    %ping
+    %spider
 ==
