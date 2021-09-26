@@ -135,7 +135,8 @@
           %cb
           /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[mark]
         ==
-      =+  !<(=dais:clay q.u.u.sky)
+      :: TODO less shit
+      =+  !<(=dais:clay +.-.-.sky)
         =/  res  (mule |.((vale:dais in)))
         ?:  ?=(%| -.res)
           (mean leaf+"gall: ames vale fail {<mark>}" p.res)
@@ -152,12 +153,15 @@
       =*  take-loop  $
       =/  validated-input=^strand-input
       =.  in.strand-input
-      %+    bind
-         in.strand-input
-      |=  in=input:strand
-      ?.  ?=(%sign -.in)  in
-      `(validate-mark q.cage.sign.in p.cage.sign.in q.byk.bowl.strand-input)
-      ::  run the strand callback
+        %+    ^bind
+           in.strand-input
+        |=  in=input
+        ?.  ?=(%sign -.in)  in
+        ?.  ?=(%fact sign-arvo.in)  in
+        :: TODO less shit
+        (validate-mark q.cage.sign-arvo.in p.cage.sign-arvo.in q.byk.bowl.strand-input)
+      strand-input
+      ::  run the stranad callback
       ::
       =/  =output  (form.eval-form validated-input)
       ::  add cards to cards
