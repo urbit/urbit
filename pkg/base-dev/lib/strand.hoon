@@ -129,15 +129,13 @@
       ==
     ::
     ++  validate-mark
-      |=  [in=* =mark =desk =bowl]
-
-      ~&  validate+[mark desk]
-      =+  .^
-          =dais
-          %cb
-          /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[mark]
-        ==
-      =/  res  (mule |.((vale:dais in)))
+      |=  [in=* =mark =bowl]
+      ^-  cage
+      ~&  validate+[mark q.byk.bowl]
+      =+  .^  =dais:clay  %cb
+              /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[mark]
+          ==
+      =/  res  (mule |.((vale.dais in)))
       ?:  ?=(%| -.res)
         ~|(%spider-mark-fail (mean leaf+"spider: ames vale fail {<mark>}" p.res))
       p.res
@@ -151,21 +149,18 @@
       |=  [=eval-form =strand-input]
       ^-  [[(list card) =eval-result] _eval-form]
       =*  take-loop  $
-      =/  validated-input=^strand-input
-      =/  pox
-        %+    ^bind
-           in.strand-input
-        |=  in=input
-        ~&  input+-.in
-        ?.  ?=(%agent -.in)    ~&  sign+-.in  in
-        ?.  ?=(%fact -.sign.in)  ~&  sign+-.sign.in  in
-        :: TODO less shit
-        (validate-mark q.cage.sign.in p.cage.sign.in q.byk.bowl.strand-input bowl.strand-input)
-      ~&  >  pox+~
-      strand-input
-      ::  run the stranad callback
+      =.  in.strand-input
+        ?~  in.strand-input  ~
+        =/  in  u.in.strand-input
+        ?.  ?=(%agent -.in)      `in
+        ?.  ?=(%fact -.sign.in)  `in
+        ::
+        :-  ~
+        :+  %agent  wire.in
+        [%fact (validate-mark q.cage.sign.in p.cage.sign.in bowl.strand-input)]
+      ::  run the strand callback
       ::
-      =/  =output  (form.eval-form validated-input)
+      =/  =output  (form.eval-form strand-input)
       ::  add cards to cards
       ::
       =.  cards
