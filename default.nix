@@ -114,6 +114,8 @@ let
 
     solid = callPackage ./nix/pkgs/pill/solid.nix { };
 
+    marsSources = callPackage ./nix/pkgs/marsSources { };
+
     urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
 
     docker-image = callPackage ./nix/pkgs/docker-image { };
