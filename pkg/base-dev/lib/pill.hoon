@@ -1,8 +1,5 @@
 ::  |pill: helper functions for making pills
 ::
-/-  *bill
-/$  weft-to-mime  %kelvin  %mime
-/$  bill-to-mime  %bill    %mime
 ^?
 |%
 ::
