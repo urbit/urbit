@@ -125,11 +125,13 @@
     ::
         [%glob @ @ ~]
       =*  base  i.t.path
-      =*  hash  (slav %uv i.t.t.path)
+      =/  hash  (slav %uv i.t.t.path)
       =/  desk     ~|(path/path (~(got by by-base) i.t.path))
       =/  =charge  ~|(desk/desk (~(got by charges) desk))
       ?>  ?=(%glob -.chad.charge)
-      ?>  =(hash (hash-glob:cc glob.chad.charge))
+      =/  have  (hash-glob:cc glob.chad.charge)
+      ~|  [%glob-unavailable requested=hash have=have]
+      ?>  =(hash have)
       :_  state
       :~  [%give %fact ~[path] %glob !>(`glob`glob.chad.charge)]
           [%give %kick ~[path] ~]
@@ -291,9 +293,15 @@
         =/  =docket  docket:(~(got by charges) desk)
         ?.  ?=([%glob * %ames *] href.docket)
           `state
-        ?.  =(hash.glob-reference.href.docket (hash-glob glob))
-          ~&  [dap.bowl %glob-hash-mismatch on=desk from=src.bowl]
-          `state
+        =*  want  hash.glob-reference.href.docket
+        =/  have  (hash-glob glob)
+        ?.  =(want have)
+          %.  `state
+          %-  slog
+          :~  leaf+"docket: glob hash mismatch on {<desk>} from {<src.bowl>}"
+              leaf+"expected: {<want>}"
+              leaf+"received: {<have>}"
+          ==
         =.  charges  (new-chad:cha glob+glob)
         =.  by-base  (~(put by by-base) base.href.docket desk)
         [~[add-fact:cha] state]
