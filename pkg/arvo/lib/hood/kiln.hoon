@@ -644,17 +644,17 @@
   ++  bump-one
     |=  [kel=weft =desk]
     ^+  kiln
-    ~>  %slog.(fmt "bump {<desk>} to {<[- +]:kel>}")
+    ~>  %slog.(fmt "bump {<desk>} to {<[lal num]:kel>}")
     =<  abet  ^+  vats
     =.  vats  (abed desk)
     ?:  =([~ kel] (read-kelvin-local our desk now))
-      ~>  %slog.(fmt "{here} already at {<[- +]:kel>}")
+      ~>  %slog.(fmt "{here} already at {<[lal num]:kel>}")
       update-running-apps
     =^  tem  rail.rak  (crank-next %| kel)
     ?^  tem
       (emit merge-main:pass)
     =-  (emit (pyre:pass leaf/- ~))
-    "kiln: {here} killed upgrade to {<[- +]:kel>}"
+    "kiln: {here} killed upgrade to {<[lal num]:kel>}"
   ::  +stop-agents: internal helper to suspend agents on .loc
   ::
   ::    Will not shut down %hood or %dojo.
