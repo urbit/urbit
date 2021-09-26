@@ -273,7 +273,7 @@
       ?~  p.sign  `state
       ((slog leaf+"Failed to uninstall %{(trip desk)}" u.p.sign) `state)
     ::
-        [%glob-ames ~]
+        [%glob @ %ames @ ~]
       ?-  -.sign
         %kick      `state
         %poke-ack  ~&([dap.bowl %unexpected-poke-ack] `state)
@@ -291,10 +291,15 @@
           `state
         =+  !<(=glob q.cage.sign)
         =/  =docket  docket:(~(got by charges) desk)
-        ?.  ?=([%glob * %ames *] href.docket)
+        ?.  ?=([%glob @ @ %ames *] href.docket)
           `state
-        =*  want  hash.glob-reference.href.docket
-        =/  have  (hash-glob glob)
+        =*  want=@uv  hash.glob-reference.href.docket
+        =/  plea=@uv  (slav %uv i.t.wire)
+        ?.  =(want plea)
+          ::  we requested this at some point but no longer want it
+          ::
+          `state
+        =/  have=@uv  (hash-glob glob)
         ?.  =(want have)
           %.  `state
           %-  slog
@@ -307,7 +312,7 @@
         [~[add-fact:cha] state]
       ==
     ::
-        [%glob-http ~]
+        [%glob @ %http @ ~]
       ?-  -.sign
         %kick   `state
       ::
@@ -328,10 +333,26 @@
         ::
             %thread-done
           =+  !<(=glob q.cage.sign)
-          =/  =charge  (~(got by charges) desk)
-          ?>  ?=(%glob -.href.docket.charge)
-          =.  charges  (new-chad:cha glob+glob)
-          =.  by-base  (~(put by by-base) base.href.docket.charge desk)
+          =/  =charge   (~(got by charges) desk)
+          ?.  ?=(%glob -.href.docket.charge)
+            `state
+          =*  want=@uv  hash.glob-reference.href.docket.charge
+          =/  plea=@uv  (slav %uv i.t.wire)
+          ?.  =(want plea)
+            ::  we requested this at some point but no longer want it
+            ::
+            `state
+          =/  have=@uv  (hash-glob glob)
+          ?.  =(want have)
+            %.  `state
+            =/  url=@t  (fall (slaw %t i.t.t.t.wire) '???')
+            %-  slog
+            :~  leaf+"docket: glob hash mismatch on {<desk>} from {(trip url)}"
+                leaf+"expected: {<want>}"
+                leaf+"received: {<have>}"
+            ==
+          =.  charges   (new-chad:cha glob+glob)
+          =.  by-base   (~(put by by-base) base.href.docket.charge desk)
           :_(state ~[add-fact:cha])
         ==
       ==
@@ -600,16 +621,25 @@
 ::  +ch: Charge engine
 ++  ch
   |_  =desk
-  ++  pass  |=(slug=term ~(. ^pass /charge/[desk]/[slug]))
+  ++  pass  |=(=wire ~(. ^pass [%charge desk wire]))
+  ++  glob-wire
+    |=  glob-reference
+    ^-  wire
+    :+  %glob
+      (scot %uv hash)
+    ?-  -.location
+      %http  /http/(scot %t url.location)
+      %ames  /ames/(scot %p ship.location)
+    ==
   ++  add-fact
     =/  =charge  (~(got by charges) desk)
     (fact:io charge-update+!>([%add-charge desk (get-light-charge charge)]) /charges ~)
   ++  del-fact  (fact:io charge-update+!>([%del-charge desk]) /charges ~)
   ++  install
     |=  [=ship remote=^desk]
-    (poke-our:(pass %install) %hood kiln-install+!>([desk ship remote]))
+    (poke-our:(pass /install) %hood kiln-install+!>([desk ship remote]))
   ++  uninstall
-    (poke-our:(pass %uninstall) %hood kiln-uninstall+!>(desk))
+    (poke-our:(pass /uninstall) %hood kiln-uninstall+!>(desk))
   ++  new-docket
     |=  d=^docket
     %+  ~(put by charges)  desk
@@ -629,13 +659,13 @@
         ~
       ~>  %slog.0^leaf/"docket: fetching ames glob for {<desk>} desk"
       :_  ~
-      %+  watch:(pass %glob-ames)
+      %+  watch:(pass (glob-wire ref))
         [ship.location.ref %docket]
       /glob/[base.href.docket.charge]/(scot %uv hash.ref)
     ~>  %slog.0^leaf/"docket: fetching http glob for {<desk>} desk"
     =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[ref desk])])
-    :~  (watch-our:(pass %glob-http) %spider /thread-result/[tid])
-        (poke-our:(pass %glob-http) %spider cage)
+    :~  (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
+        (poke-our:(pass (glob-wire ref)) %spider cage)
     ==
   ++  docket-exists  .^(? %cu (scry:io desk /desk/docket))
   ++  docket  .^(^docket %cx (scry:io desk /desk/docket))
