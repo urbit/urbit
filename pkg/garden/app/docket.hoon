@@ -213,7 +213,8 @@
         =.  by-base  (~(put by by-base) base.href.docket desk.diff)
         ::  if the glob specification is unchanged, keep it
         ::
-        ?:  &(?=(^ pre) =(href.docket.u.pre `href.docket))
+        ::
+        ?:  &(?=(^ pre) =(href.docket.u.pre href.docket))
           [~[add-fact:cha] state]
         ::  if the glob spec changed, but we already host it, keep it
         ::  (this is the "just locally uploaded" case)
@@ -250,13 +251,14 @@
           ?.  ?=([%suspend ~ *] chad.charge)
             [%install ~]
           [%glob u.glob.chad.charge]
+        ~&  %rev
         :_(state [add-fact fetch-glob]:cha)
       ==
     ==
   ++  take-charge
     |=  [=desk =^wire]
     ^-  (quip card _state)
-    ~|  %took-for-nonexistent-charge
+    ~|  [%took-for-nonexistent-charge desk]
     ?>  (~(has by charges) desk)
     =*  cha  ~(. ch desk)
     ?+  wire  ~|(%bad-charge-wire !!)
