@@ -223,6 +223,11 @@
   |=  (list card:agent:gall)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
+::  +fmt: format string for slogging
+::
+++  fmt
+  |=  mes=tape
+  [%0 %leaf (weld "kiln: " mes)]
 ::
 ++  render
   |=  [mez=tape sud=desk who=ship syd=desk]
@@ -231,7 +236,7 @@
 ::
 ++  on-init
   =<  abet
-  ~>  %slog.0^leaf/"kiln: boot"
+  ~>  %slog.(fmt "boot")
   ::
   =+  .^(desks=(set desk) %cd /(scot %p our)//(scot %da now))
   =.  desks  (~(del in desks) %base)
@@ -385,7 +390,7 @@
     ~_  leaf/"kiln: {<lac>} not installed"
     vats(loc lac, rak (~(got by ark) lac))
   ::
-  ++  here  ?~  rail.rak  "{<loc>} from local"
+  ++  here  ?~  rail.rak  "{<loc>} (local)"
             "{<loc>} from {<[ship desk]:ral>}"
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
   ++  from-wire
@@ -432,9 +437,9 @@
       ^-  (list card:agent:gall)
       :-  [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
       ?.  (is-fish dude (read-bill our loc now))
-        ~>  %slog.0^leaf/"kiln: jolt {<dude>}"
+        ~>  %slog.(fmt "jolt {<dude>}")
         ~
-      ~>  %slog.0^leaf/"kiln: jolt {<dude>}, binding console"
+      ~>  %slog.(fmt "jolt {<dude>}, binding console")
       =/  =cage  [%drum-link !>([our dude])]
       [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
     ++  stop-dude
@@ -442,9 +447,9 @@
       ^-  (list card:agent:gall)
       :-  [%pass /kiln/vats/[loc]/uninstall %arvo %g %idle dude]
       ?.  (is-fish dude (read-bill our loc now))
-        ~>  %slog.0^leaf/"kiln: idle {<dude>}"
+        ~>  %slog.(fmt "idle {<dude>}")
         ~
-      ~>  %slog.0^leaf/"kiln: idle {<dude>}, unbinding console"
+      ~>  %slog.(fmt "idle {<dude>}, unbinding console")
       =/  =cage  [%drum-unlink !>([our dude])]
       [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
     --
@@ -457,10 +462,10 @@
       =-  (^emit (pyre:pass leaf/- ~))
       "kiln: |uninstall: %base cannot be uninstalled"
     ?.  (~(has by ark) lac)
-      ~>  %slog.0^leaf/"kiln: |uninstall: {<lac>} not installed, ignoring"
+      ~>  %slog.(fmt "|uninstall: {<lac>} not installed, ignoring")
       kiln
     =.  vats  (abed lac)
-    ~>  %slog.0^leaf/"kiln: uninstalling {here}"
+    ~>  %slog.(fmt "uninstalling {here}")
     =.  vats  stop-agents
     kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
@@ -472,12 +477,12 @@
       (install-local lac)
     =/  got  (~(get by ark) lac)
     ?:  =(`[her rem] got)
-      ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
+      ~>  %slog.(fmt "already tracking {here:(abed lac)}, ignoring")
       vats
     =:  loc  lac
         rak  [`[paused=| her rem *aeon next=~] rein:(fall got *arak)]
       ==
-    ~>  %slog.0^leaf/"kiln: beginning install into {here}"
+    ~>  %slog.(fmt "beginning install into {here}")
     (emil find:pass listen:pass ~)
   ::  +install-local: install from a local desk, with no remote
   ::
@@ -485,12 +490,12 @@
     |=  lac=desk
     ^+  vats
     ?:  (~(has by ark) loc)
-      ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
+      ~>  %slog.(fmt "already tracking {here:(abed lac)}, ignoring")
       vats
     =:  loc  lac
         rak  [~ *rein]
       ==
-    ~>  %slog.0^leaf/"kiln: local install {here}"
+    ~>  %slog.(fmt "local install {here}")
     =.  vats  update-running-apps
     =.  vats  (emit listen:pass)
     ::NOTE  for foreign desks, the download triggers a "real" commit, because
@@ -507,7 +512,7 @@
   ::
   ++  reset
     ^+  vats
-    ~>  %slog.0^leaf/"kiln: resetting tracking for {here}"
+    ~>  %slog.(fmt "resetting tracking for {here}")
     =/  cad  (diff:give %reset loc rak)
     =/  rel  ral
     =.  rail.rak  `rel(aeon 0, next ~)
@@ -519,9 +524,9 @@
     ^+  vats
     =.  vats  (abed lac)
     ?.  is-tracking
-      ~>  %slog.0^leaf/"kiln: {<lac>} already paused, ignoring"
+      ~>  %slog.(fmt "{<lac>} already paused, ignoring")
       vats
-    ~>  %slog.0^leaf/"kiln: {<lac>} pausing updates"
+    ~>  %slog.(fmt "{<lac>} pausing updates")
     =/  rel  ral
     =.  rail.rak  `rel(paused &, aeon 0)
     vats
@@ -541,10 +546,10 @@
     |=  lac=desk
     ^+  vats
     =.  vats  (abed lac)
-    ~>  %slog.  :+  %0  %leaf
+    ~>  %slog.  %-  fmt
                 ?.  paused:ral
-                  "kiln: {<lac>} already tracking, ignoring"
-                "kiln: {<lac>} resuming updates"
+                  "{<lac>} already tracking, ignoring"
+                "{<lac>} resuming updates"
     =/  rel  ral
     =.  rail.rak  `rel(paused |)
     reset
@@ -558,7 +563,7 @@
       =-  (emit (pyre:pass leaf/- ~))
       "kiln: suspend: %base cannot be suspended"
     ?.  (~(has by ark) lac)
-      ~>  %slog.0^leaf/"kiln: suspend: {<lac>} not installed, ignoring"
+      ~>  %slog.(fmt "suspend: {<lac>} not installed, ignoring")
       vats
     =.  vats  (abed lac)
     =.  liv.rein.rak  |
@@ -639,11 +644,11 @@
   ++  bump-one
     |=  [kel=weft =desk]
     ^+  kiln
-    ~>  %slog.0^leaf/"kiln: bump {<desk>} to {<[- +]:kel>}"
+    ~>  %slog.(fmt "bump {<desk>} to {<[- +]:kel>}")
     =<  abet  ^+  vats
     =.  vats  (abed desk)
     ?:  =([~ kel] (read-kelvin-local our desk now))
-      ~>  %slog.0^leaf/"kiln: {here} already at {<[- +]:kel>}"
+      ~>  %slog.(fmt "{here} already at {<[- +]:kel>}")
       update-running-apps
     =^  tem  rail.rak  (crank-next %| kel)
     ?^  tem
@@ -669,7 +674,7 @@
     =<  abet
     =.  vats  (from-wire wire)
     ?+    i.t.wire
-        ~>  %slog.0^leaf/"kiln: vats-bad-take {<wire>}"
+        ~>  %slog.(fmt "vats-bad-take {<wire>}")
         vats
       %find        (take-find syn)
       %sync        (take-sync syn)
@@ -686,9 +691,9 @@
     ?.  is-tracking
       vats
     ?~  p.syn
-      ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, aborting"
+      ~>  %slog.(fmt "cancelled (1) install into {here}, aborting")
       vats(ark (~(del by ark) loc))
-    ~>  %slog.0^leaf/"kiln: activated install into {here}"
+    ~>  %slog.(fmt "activated install into {here}")
     (emit sync-da:pass)
   ::
   ++  take-sync
@@ -699,10 +704,10 @@
     ?.  is-tracking
       vats
     ?~  p.syn
-      ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, retrying"
+      ~>  %slog.(fmt "cancelled (1) install into {here}, retrying")
       reset
     =?  rail.rak  ?=(%w p.p.rit)  `%*(. ral aeon ud:;;(cass:clay q.q.r.rit))
-    ~>  %slog.0^leaf/"kiln: downloading update for {here}"
+    ~>  %slog.(fmt "downloading update for {here}")
     (emit download:pass)
   ::
   ++  take-download
@@ -712,9 +717,9 @@
     ?.  is-tracking
       vats
     ?~  p.syn
-      ~>  %slog.0^leaf/"kiln: cancelled (2) install into {here}, retrying"
+      ~>  %slog.(fmt "cancelled (2) install into {here}, retrying")
       reset
-    ~>  %slog.0^leaf/"kiln: finished downloading update for {here}"
+    ~>  %slog.(fmt "finished downloading update for {here}")
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft  (read-kelvin-foreign [ship desk aeon]:ral)
     =?  vats  liv.rein.rak
@@ -735,14 +740,14 @@
     ::
     ++  kelvin-retreat
       ^+  vats
-      ~>  %slog.0^leaf/"kiln: cannot install {here}, old kelvin {<new-weft>}"
-      ~>  %slog.0^leaf/"kiln: will retry at foreign kelvin {<old-weft>}"
+      ~>  %slog.(fmt "cannot install {here}, old kelvin {<new-weft>}")
+      ~>  %slog.(fmt "will retry at foreign kelvin {<old-weft>}")
       =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
       (emil sync-ud:pass (diff:give diff) ~)
     ::
     ++  kelvin-advance
       ^+  vats
-      ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
+      ~>  %slog.(fmt "future version {<new-weft>}, enqueueing")
       ::  retry upgrade if not blocked anymore
       =.  rail.rak  `%*(. ral next (snoc next:ral [(dec aeon:ral) new-weft]))
       =.  ark  (~(put by ark) loc rak)
@@ -754,13 +759,13 @@
       =/  rel  u.rail.base
       ?.  &(?=(^ next.rel) =(~ (get-blockers weft.i.next.rel)))
         vats
-      ~>  %slog.0^leaf/"kiln: unblocked system update, updating"
+      ~>  %slog.(fmt "unblocked system update, updating")
       =.  kiln  (bump-one weft.i.next.rel %base)
       vats
     ::
     ++  kelvin-same
       ^+  vats
-      ~>  %slog.0^leaf/"kiln: merging into {here}"
+      ~>  %slog.(fmt "merging into {here}")
       =.  rail.rak  +:(crank-next %& (dec aeon:ral))
       (emil ~[merge-main sync-ud]:pass)
     ::
@@ -772,12 +777,12 @@
         (get-blockers new-weft)
       ::
       ?.  =(~ blockers)
-        ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
+        ~>  %slog.(fmt "OTA blocked on {<blockers>}")
         =.  rail.rak
           `%*(. ral next (snoc next:ral [(dec aeon:ral) new-weft]))
         =/  =diff  [%block loc rak new-weft blockers]
         (emil sync-ud:pass (diff:give diff) ~)
-      ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
+      ~>  %slog.(fmt "applying OTA to {here}, kelvin: {<new-weft>}")
       =.  rail.rak  +:(crank-next %& (dec aeon:ral))
       =.  wef
         ?:  =(old-weft new-weft)  ~
@@ -794,7 +799,7 @@
   ::
   ++  take-commit
     ^+  vats
-    ~>  %slog.0^leaf/"kiln: commit detected at {here}"
+    ~>  %slog.(fmt "commit detected at {here}")
     =.  vats  (emit (diff:give %commit loc rak))
     =?  vats  liv.rein.rak  update-running-apps
     ?.  =(%base loc)
@@ -821,7 +826,7 @@
       =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
     =.  vats  take-commit
-    ~>  %slog.0^leaf/"kiln: merging %base into %kids at {<kel>}"
+    ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
@@ -829,13 +834,13 @@
     ^+  vats
     ?>  ?=(%mere +<.syn)
     ?:  ?=([%| %ali-unavailable *] p.syn)
-      ~>  %slog.0^leaf/"kiln: OTA to %kids failed, maybe peer sunk; restarting"
+      ~>  %slog.(fmt "OTA to %kids failed, maybe peer sunk; restarting")
       =.  vats  (emit (diff:give %merge-sunk %kids rak p.p.syn))
       reset
     ?-  -.p.syn
-      %&  ~>  %slog.0^leaf/"kiln: OTA to %kids succeeded"
+      %&  ~>  %slog.(fmt "OTA to %kids succeeded")
           (emit (diff:give %commit %kids rak))
-      %|  ~>  %slog.0^leaf/"kiln: OTA to %kids failed {<p.p.syn>}"
+      %|  ~>  %slog.(fmt "OTA to %kids failed {<p.p.syn>}")
           (emit (diff:give %merge-fail %kids rak p.p.syn))
     ==
   ::
@@ -857,12 +862,12 @@
   ::
   ++  start-dudes
     |=  daz=(list dude)
-    ~>  %slog.0^leaf/"kiln: starting {<daz>}"
+    ~>  %slog.(fmt "starting {<daz>}")
     (emil `(list card:agent:gall)`(zing (turn daz start-dude:pass)))
   ::
   ++  stop-dudes
     |=  daz=(list dude)
-    ~>  %slog.0^leaf/"kiln: stopping {<daz>}"
+    ~>  %slog.(fmt "stopping {<daz>}")
     (emil `(list card:agent:gall)`(zing (turn daz stop-dude:pass)))
   ::  +crank-next: pop stale items from .next until one matches
   ::
@@ -1207,7 +1212,7 @@
   ::
       [%link @ ~]
     ?>  ?=(%poke-ack -.sign)
-    ~>  %slog.0^leaf/"kiln: linked {<`@tas`i.t.wire>} to console"
+    ~>  %slog.(fmt "linked {<`@tas`i.t.wire>} to console")
     abet
   ==
 ::
