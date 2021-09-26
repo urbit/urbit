@@ -130,17 +130,17 @@
     ::
     ++  validate-mark
       |=  [in=* =mark =desk =bowl]
-      =+    .^
-          sky=*
+
+      ~&  validate+[mark desk]
+      =+  .^
+          =dais
           %cb
           /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[mark]
         ==
-      :: TODO less shit
-      =+  !<(=dais:clay +.-.-.sky)
-        =/  res  (mule |.((vale:dais in)))
-        ?:  ?=(%| -.res)
-          (mean leaf+"gall: ames vale fail {<mark>}" p.res)
-        p.res
+      =/  res  (mule |.((vale:dais in)))
+      ?:  ?=(%| -.res)
+        ~|(%spider-mark-fail (mean leaf+"spider: ames vale fail {<mark>}" p.res))
+      p.res
     ::
     ::  Take a new sign and run the strand against it
     ::

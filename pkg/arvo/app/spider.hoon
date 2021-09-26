@@ -404,7 +404,10 @@
   ::
   =:  starting.state  (~(put by starting.state) yarn [%build vase])
       tid.state       (~(put by tid.state) new-tid yarn)
-    ==
+      serving.state
+        ?.  (~(has by serving.state) yrn) serving.state
+        (~(put by serving.state) yarn)
+  ==
   =/  pax=path
     ~|  no-file-for-thread+file
     (need (get-fit:clay beak %ted file))
@@ -597,6 +600,7 @@
     =/  =tid  (yarn-to-tid yarn)
     =:  running.state  (del-yarn running.state yarn)
         tid.state      (~(del by tid.state) tid)
+        serving.state      (~(del by serving.state) yarn)
       ==
     :_  state
     %+  murn  ~(tap by wex.bowl)
