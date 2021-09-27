@@ -1,17 +1,5 @@
-::  TODO: secp needs to not crash the process when you give it a bad
-::  v/recid.  See #4797
-::
-::  TODO: check if spawning is gated on "link"ing.  It is on L1, but we
-::  shouldn't do that here.
-::
-::  TODO: make sure you can spawn with the spawn proxy after on domain
-::  %spawn
-::
-::  TODO: make sure that if we've already been deposited to L2, no
-::  further L1 logs count except detach.
-::
-/+  std
-=>  =>  std
+/+  tiny
+=>  =>  tiny
 ::  Laconic bit
 ::
 =|  lac=?
@@ -19,8 +7,6 @@
 ::
 |%
 ::  Transfers on L1 to this address count as depositing to L2
-::
-::    0x1234567890123456789012345678901234567890
 ::
 ++  deposit-address  0x1111.1111.1111.1111.1111.1111.1111.1111.1111.1111
 ++  log-names
@@ -192,9 +178,10 @@
       topics=(lest @ux)
   ==
 +$  input
+  $:  block=@ud
   $%  [%bat batch=@]
       [%log =event-log]
-  ==
+  ==  ==
 ::  ECDSA verifier.
 ::
 ::  Must keccak `dat` and recover the ethereum address which signed.
@@ -215,39 +202,34 @@
 ++  parse-roll
   |=  batch=@
   =|  =roll
+  =|  pos=@ud
+  =/  las  (met 0 batch)
   |-  ^+  roll
-  ?~  batch
+  ?:  (gte pos las)
     (flop roll)
-  =/  parse-result  (parse-raw-tx batch)
+  =/  parse-result  (parse-raw-tx pos batch)
   ::  Parsing failed, abort batch
   ::
   ?~  parse-result
     (debug %parse-failed ~)
-  =^  =raw-tx  batch  u.parse-result
+  =^  =raw-tx  pos  u.parse-result
   $(roll [raw-tx roll])
 ::
-::  TODO: change batch to be a cursor to avoid allocating atoms
-::
 ++  parse-raw-tx
-  |=  batch=@
-  ^-  (unit [raw-tx rest=@])
-  =/  batch  [len=0 rest=batch]
+  |=  [pos=@ud batch=@]
+  ^-  (unit [raw-tx pos=@ud])
   |^
-  =^  sig  batch  (take 3 65)
-  =.  len.batch  0
-  =/  orig-batch  rest.batch
-  =/  res=(unit [=tx batch=_batch])  parse-tx
-  ?~  res
-    ~
-  :-  ~  :_  rest.batch.u.res
-  =/  len-bytes
-    ?>  =(0 (mod len.batch.u.res 8))
-    (div len.batch.u.res 8)
-  [sig [len-bytes (end [0 len.batch.u.res] orig-batch)] tx.u.res]
+  =^  sig  pos  (take 3 65)
+  =/  res=(unit [=tx pos=@ud])  parse-tx
+  ?~  res  ~
+  =/  dif  (sub pos.u.res pos)
+  =/  len  =>((dvr dif 8) ?>(=(0 q) p))
+  :-  ~  :_  pos.u.res
+  [sig [len (cut 0 [pos dif] batch)] tx.u.res]
   ::
   ++  parse-tx
-    ^-  (unit [tx _batch])
-    =^  from-proxy=@      batch  (take 0 3)
+    ^-  (unit [tx pos=@ud])
+    =^  from-proxy=@      pos  (take 0 3)
     ?.  ?=(?(%0 %1 %2 %3 %4) from-proxy)  (debug %bad-proxy ~)
     =/  =proxy
       ?-  from-proxy
@@ -257,68 +239,65 @@
         %3  %vote
         %4  %transfer
       ==
-    =^  pad               batch  (take 0 5)
-    =^  from-ship=ship    batch  (take 3 4)
+    =^  pad               pos  (take 0 5)
+    =^  from-ship=ship    pos  (take 3 4)
     =-  ?~  res
           ~
-        `[[[from-ship proxy] skim-tx.u.res] batch.u.res]
-    ^-  res=(unit [=skim-tx =_batch])
-    =^  op   batch  (take 0 7)
+        `[[[from-ship proxy] skim-tx.u.res] pos.u.res]
+    ^-  res=(unit [=skim-tx pos=@ud])
+    =^  op   pos  (take 0 7)
     ?+    op  ~>(%slog.[0 %strange-opcode] ~)
         %0
-      =^  reset=@         batch  (take 0)
-      =^  =address        batch  (take 3 20)
-      `[[%transfer-point address =(0 reset)] batch]
+      =^  reset=@         pos  (take 0)
+      =^  =address        pos  (take 3 20)
+      `[[%transfer-point address =(0 reset)] pos]
     ::
         %1
-      =^  pad=@     batch  (take 0)
-      =^  =ship     batch  (take 3 4)
-      =^  =address  batch  (take 3 20)
-      `[[%spawn ship address] batch]
+      =^  pad=@     pos  (take 0)
+      =^  =ship     pos  (take 3 4)
+      =^  =address  pos  (take 3 20)
+      `[[%spawn ship address] pos]
     ::
         %2
-      =^  breach=@        batch  (take 0)
-      =^  encrypt=@       batch  (take 3 32)
-      =^  auth=@          batch  (take 3 32)
-      =^  crypto-suite=@  batch  (take 3 4)
-      `[[%configure-keys encrypt auth crypto-suite =(0 breach)] batch]
+      =^  breach=@        pos  (take 0)
+      =^  encrypt=@       pos  (take 3 32)
+      =^  auth=@          pos  (take 3 32)
+      =^  crypto-suite=@  pos  (take 3 4)
+      `[[%configure-keys encrypt auth crypto-suite =(0 breach)] pos]
     ::
-        %3   =^(res batch take-escape `[[%escape res] batch])
-        %4   =^(res batch take-escape `[[%cancel-escape res] batch])
-        %5   =^(res batch take-escape `[[%adopt res] batch])
-        %6   =^(res batch take-escape `[[%reject res] batch])
-        %7   =^(res batch take-escape `[[%detach res] batch])
-        %8
-      =^(res batch take-ship-address `[[%set-management-proxy res] batch])
-    ::
-        %9   =^(res batch take-ship-address `[[%set-spawn-proxy res] batch])
-        %10  =^(res batch take-ship-address `[[%set-transfer-proxy res] batch])
+        %3   =^(res pos take-ship `[[%escape res] pos])
+        %4   =^(res pos take-ship `[[%cancel-escape res] pos])
+        %5   =^(res pos take-ship `[[%adopt res] pos])
+        %6   =^(res pos take-ship `[[%reject res] pos])
+        %7   =^(res pos take-ship `[[%detach res] pos])
+        %8   =^(res pos take-address `[[%set-management-proxy res] pos])
+        %9   =^(res pos take-address `[[%set-spawn-proxy res] pos])
+        %10  =^(res pos take-address `[[%set-transfer-proxy res] pos])
     ==
   ::
   ::  Take a bite
   ::
   ++  take
     |=  =bite
-    ^-  [@ _batch]
-    :-  (end bite +.batch)
-    :-  %+  add  -.batch
-        ?@  bite  (bex bite)
-        (mul step.bite (bex bloq.bite))
-    (rsh bite +.batch)
+    ^-  [@ @ud]
+    =/  =step
+      ?@  bite  (bex bite)
+      (mul step.bite (bex bloq.bite))
+    [(cut 0 [pos step] batch) (add pos step)]
   ::  Encode ship and address
   ::
-  ++  take-ship-address
-    ^-  [address _batch]
-    =^  pad=@     batch  (take 0)
-    =^  =address  batch  (take 3 20)
-    [address batch]
+  ++  take-address
+    ^-  [address @ud]
+    =^  pad=@     pos  (take 0)
+    =^  =address  pos  (take 3 20)
+    [address pos]
   ::  Encode escape-related txs
   ::
-  ++  take-escape
-    ^-  [ship _batch]
-    =^  pad=@        batch  (take 0)
-    =^  other=ship   batch  (take 3 4)
-    [other batch]
+  ++  take-ship
+    ^-  [ship @ud]
+    =^  pad=@       pos  (take 0)
+    =^  other=ship  pos  (take 3 4)
+    [other pos]
   --
 ::
 ++  proxy-from-point
@@ -402,10 +381,12 @@
 ::
 ++  ud-to-ascii
   |=  n=@ud
-  ^-  @t
-  ?~  n
-    *@t
-  (cat 3 $(n (div n 10)) (add '0' (mod n 10)))
+  ?~  n  '0'
+  =|  l=(list @)
+  |-  ^-  @t
+  ?~  n  (rep 3 l)
+  =+  (dvr n 10)
+  $(n p, l [(add '0' q) l])
 ::
 ++  ship-rank
   |=  =ship
@@ -469,7 +450,7 @@
     =/  words  (rip 8 data.log)
     ::  This is only true if each domain is <= 32 bytes
     ::
-    ?>  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)
+    ?.  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)  `state
     =*  one  &5.words
     =*  two  &3.words
     =*  tri  &1.words
@@ -802,7 +783,6 @@
     ::  Assert one-level-down
     ::
     ?.  =(+((ship-rank parent)) (ship-rank ship))  (debug %bad-rank ~)
-    ::  TODO check spawnlimit
     ::
     =/  [=effects new-point=point]
       =/  point=(unit point)  (get-point state ship)
@@ -816,8 +796,6 @@
                   =(to address.spawn-proxy.own.u.parent-point)
               ==
           ==
-        ::  TODO: use get-point or duplicate sponsor logic
-        ::
         :-  ~[[%point ship %dominion %l2] [%point ship %owner to]]
         u.point(address.owner.own to)
       ::  Else spawn to parent and set transfer proxy
@@ -863,7 +841,7 @@
       (debug %bad-rank ~)
     ::
     :+  ~  [%point ship %escape `parent]~
-    point(escape.net `parent)  ::  TODO: omitting a lot of source material?
+    point(escape.net `parent)
   ::
   ++  process-cancel-escape
     |=  [=point parent=ship]
@@ -877,8 +855,6 @@
   ++  process-adopt
     |=  [=point =ship]
     =*  parent  ship.from.tx
-    :: TODO: assert child/parent on L2?
-    ::
     ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
@@ -939,7 +915,7 @@
 ::
 |=  [=verifier chain-id=@ud =state =input]
 ^-  [effects ^state]
-?:  ?=(%log -.input)
+?:  ?=(%log +<.input)
   :: Received log from L1 transaction
   ::
   (receive-log state event-log.input)

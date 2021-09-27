@@ -82,6 +82,12 @@
   ?:  (lth a b)  c
   $(a (sub a b), c +(c))
 ::
+++  dvr                                                 ::  divide w/remainder
+  ~/  %dvr
+  |:  [a=`@`1 b=`@`1]
+  ^-  [p=@ q=@]
+  [(div a b) (mod a b)]
+::
 ++  mod                                                 ::  modulus
   ~/  %mod
   |:  [a=`@`1 b=`@`1]
@@ -210,14 +216,9 @@
   (add (lsh [a (met a b)] c) b)
 ::
 ++  cut                                                 ::  slice
-  ~/  %cut  ::  TODO: jet
+  ~/  %cut
   |=  [a=bloq [b=step c=step] d=@]
   (end [a c] (rsh [a b] d))
-::
-++  dad                                                 ::  concatenate fixed
-  ~/  %dad
-  |=  [=bite a=@ b=@]
-  (add a (lsh bite b))
 ::
 ++  can                                                 ::  assemble
   ~/  %can
