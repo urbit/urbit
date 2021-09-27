@@ -1519,8 +1519,7 @@
 ::
 ++  on-load
   |=  ole=vase
-  |^  ::NOTE  ;; because we mangle the old session type
-      =+  old=;;(house-any q.ole)
+  |^  =+  old=!<(house-any ole)
       =?  old  ?=(%5 -.old)
         (house-5-to-6 old)
       =?  old  ?=(%6 -.old)
