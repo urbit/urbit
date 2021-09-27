@@ -22,6 +22,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
   const { lightText, tileColor, menuColor, suspendColor, suspendMenuColor } = useTileColor(color);
   const loading = 'install' in chad;
   const suspended = 'suspend' in chad;
+  const hung = 'hung' in chad;
   const active = chadIsRunning(chad);
   const link = getAppHref(href);
   const backgroundColor = active ? tileColor || 'purple' : suspendColor;
@@ -64,7 +65,11 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
         >
           <h3 className="mix-blend-hard-light">{title}</h3>
           {!active && (
-            <span className="text-gray-400">{suspended ? 'Suspended' : 'Installing'}</span>
+            <span className={hung ? 'text-orange-500' : 'text-gray-400'}>
+              {suspended && 'Suspended'}
+              {loading && 'Installing'}
+              {hung && 'Errored'}
+            </span>
           )}
         </div>
         {image && !loading && (

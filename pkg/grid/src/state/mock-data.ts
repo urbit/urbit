@@ -160,6 +160,10 @@ export const mockCharges: Charges = _.reduce(
       return acc;
     }
 
+    if (desk === 'calls') {
+      return { ...acc, [desk]: { ...val, chad: { hung: 'glob failed' } } };
+    }
+
     return { ...acc, [desk]: { ...val, chad } };
   },
   {} as Charges
