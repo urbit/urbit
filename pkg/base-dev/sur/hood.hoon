@@ -179,6 +179,12 @@
   =/  have  (get-apps-live local)
   [want (skip have ~(has in (sy want)))]
 ::
+++  get-remote-diff
+  |=  [our=ship here=desk now=@da her=ship there=desk when=aeon]
+  =+  .^(our-hash=@uv cz/[(scot %p our) here (scot %da now) ~])
+  =+  .^(her-hash=@uv cz/[(scot %p her) there (scot %ud when) ~])
+  !=(our-hash her-hash)
+::
 ++  get-apps-live
   |=  [our=ship =desk now=@da]
   ^-  (list dude)

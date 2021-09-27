@@ -732,6 +732,10 @@
       ~>  %slog.(fmt "cancelled (2) install into {here}, retrying")
       reset
     ~>  %slog.(fmt "finished downloading update for {here}")
+    ?.  (get-remote-diff our loc now [ship desk aeon]:ral)
+      ~>  %slog.(fmt "remote is identical to {here}, skipping")
+      =.  rail.rak  `%*(. ral aeon +(aeon:ral))
+      (emit sync-ud:pass)
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft
       ?:  =(our ship:ral)
@@ -844,11 +848,8 @@
       %-  (slog leaf/- p.p.syn)
       =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
-    =?  rail.rak  =(~ p.p.syn)
-      ~>  %slog.(fmt "no changes for {here}, skipping")
-      `%*(. ral aeon (dec aeon:ral))
     =.  vats  take-commit
-    ?.  &(!=(~ p.p.syn) =(%base loc))
+    ?.  =(%base loc)
       vats
     ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
     (emit merge-kids:pass)
