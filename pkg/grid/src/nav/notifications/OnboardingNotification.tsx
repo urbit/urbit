@@ -90,8 +90,8 @@ export const OnboardingNotification = ({ unread }: OnboardingNotificationProps) 
     >
       <header id="system-updates-blocked" className="relative space-y-2">
         <div className="flex space-x-2">
-          <span className="inline-block w-6 h-6 bg-orange-500 rounded" />
-          <span className="font-semibold">Home</span>
+          <span className="inline-block w-6 h-6 bg-gray-200 rounded" />
+          <span className="font-semibold">System</span>
         </div>
         <div className="flex space-x-2">
           <h2 id="runtime-lag">Hello there, and welcome!</h2>
