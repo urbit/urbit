@@ -152,14 +152,16 @@
       ^-  [[(list card) =eval-result] _eval-form]
       =*  take-loop  $
       =/  validated-input=^strand-input
-      =.  in.strand-input
+      =/  pox
         %+    ^bind
            in.strand-input
         |=  in=input
-        ?.  ?=(%sign -.in)  in
-        ?.  ?=(%fact sign-arvo.in)  in
+        ~&  input+-.in
+        ?.  ?=(%agent -.in)    ~&  sign+-.in  in
+        ?.  ?=(%fact -.sign.in)  ~&  sign+-.sign.in  in
         :: TODO less shit
-        (validate-mark q.cage.sign-arvo.in p.cage.sign-arvo.in q.byk.bowl.strand-input)
+        (validate-mark q.cage.sign.in p.cage.sign.in q.byk.bowl.strand-input bowl.strand-input)
+      ~&  >  pox+~
       strand-input
       ::  run the stranad callback
       ::
