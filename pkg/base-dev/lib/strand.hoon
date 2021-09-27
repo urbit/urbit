@@ -138,7 +138,7 @@
       =/  res  (mule |.((vale.dais in)))
       ?:  ?=(%| -.res)
         ~|(%spider-mark-fail (mean leaf+"spider: ames vale fail {<mark>}" p.res))
-      p.res
+      [mark p.res]
     ::
     ::  Take a new sign and run the strand against it
     ::
