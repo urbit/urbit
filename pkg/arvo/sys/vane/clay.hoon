@@ -1598,6 +1598,8 @@
       ~>  %slog.0^'clay: migrating for third-party software distribution'
       |^  ^+  ..park
       ::  NOTE: reverse order, since we're prepending moves each time
+      =.  ..park  (install-from-tmp %bitcoin)
+      =.  ..park  (install-from-tmp %webterm)
       =.  ..park  (install-from-tmp %landscape)
       =.  ..park  (install-from-tmp %garden)
       =.  ..park  (install-from-tmp %base)
