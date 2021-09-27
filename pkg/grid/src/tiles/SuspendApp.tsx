@@ -26,7 +26,8 @@ export const SuspendApp = () => {
       <DialogContent showClose={false} className="space-y-6" containerClass="w-full max-w-md">
         <h1 className="h4">Suspend &ldquo;{charge?.title || ''}&rdquo;</h1>
         <p className="text-base tracking-tight pr-6">
-          Suspending an app will freeze its current state and render it unable
+          Suspending an app will freeze its current state and turn off automatic updates. You cannot
+          use an app when it is suspended, but you can resume it at any time.
         </p>
         <div className="flex space-x-6">
           <DialogClose as={Button} variant="secondary">
