@@ -332,7 +332,7 @@
           ?.  =(term %cancelled)
             =.  charges  (new-chad:cha hung+'glob-failed')
             :-  ~[add-fact:cha]
-            ((slog leaf+"docket: thread failed; will retry" leaf+<term> tang) state)
+            ((slog leaf+"docket: thread failed;" leaf+<term> tang) state)
           %-  (slog leaf+"docket: thread cancelled; retrying" leaf+<term> tang)
           =.  charges  (new-chad:cha %install ~)
           :_   state
