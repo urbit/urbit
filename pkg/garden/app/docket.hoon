@@ -251,7 +251,6 @@
           ?.  ?=([%suspend ~ *] chad.charge)
             [%install ~]
           [%glob u.glob.chad.charge]
-        ~&  %rev
         :_(state [add-fact fetch-glob]:cha)
       ==
     ==
@@ -336,7 +335,7 @@
           %-  (slog leaf+"docket: thread cancelled; retrying" leaf+<term> tang)
           =.  charges  (new-chad:cha %install ~)
           :_   state
-          [add-fact:cha fetch-glob:cha]
+          [leave-glob:cha add-fact:cha fetch-glob:cha]
         ::
             %thread-done
           =+  !<(=glob q.cage.sign)
@@ -652,6 +651,14 @@
     %+  ~(put by charges)  desk
     [d chad:(~(gut by charges) desk *charge)]
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
+  ++  leave-glob
+    ^-  card
+    =/  =charge
+      ~|  desk/desk
+      (~(got by charges) desk)
+    ?>  ?=(%glob -.href.docket.charge)
+    =/  ref  glob-reference.href.docket.charge
+    (leave-our:(pass (glob-wire ref)) %spider)
   ++  fetch-glob
     ^-  (list card)
     =/  =charge
