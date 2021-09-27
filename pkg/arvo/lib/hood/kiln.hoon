@@ -685,7 +685,7 @@
     ?:  ?=(%jolt i.t.wire)
       (take-onto wire syn)
     ?:  ?=(%listen i.t.wire)
-      abet:(take-listen wire syn)
+      (take-listen wire syn)
     =<  abet
     =.  vats  (from-wire wire)
     ?+    i.t.wire
@@ -812,30 +812,29 @@
   ::
   ++  take-listen
     |=  [=wire syn=sign-arvo]
-    ^+  vats
+    ^+  kiln
     ?>  ?=([@ %writ ~ *] syn)
     =/  lac=desk  (head wire)
     ::  ignore spurious updates from clay on desks we've uninstalled
     ::
     ?.  (~(has by ark) lac)
-      vats
-    =.  vats  (from-wire wire)
-    =.  vats  (emit listen:pass)
-    take-commit
-  ::
-  ++  take-commit
-    ^+  vats
-    ~>  %slog.(fmt "commit detected at {here}")
-    =.  vats  (emit (diff:give %commit loc rak))
-    =?  vats  liv.rein.rak  update-running-dudes
-    ?.  =(%base loc)
-      vats
+      kiln
+    =.  kiln
+      =<  abet
+      =.  vats  (from-wire wire)
+      ~>  %slog.(fmt "commit detected at {here}")
+      =.  vats  (emil listen:pass (diff:give %commit loc rak) ~)
+      ?.  liv.rein.rak
+        ~>  %slog.(fmt "{<loc>} not running")
+        vats
+      update-running-dudes
+    ?.  =(%base lac)
+      kiln
     =/  kel=[@tas @ud]
       ?~  rail.rak         zuse/zuse
       ?~  next.u.rail.rak  zuse/zuse
       weft.i.next.u.rail.rak
-    =.  kiln  (bump-many kel (all-desks-but (sy %base ~)))
-    vats
+    (bump-many kel (all-desks-but (sy %base ~)))
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
