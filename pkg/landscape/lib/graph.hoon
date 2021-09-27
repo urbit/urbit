@@ -6,7 +6,7 @@
   ++  update
     |=  =update:store
     ^-  cage
-    [%graph-update-2 !>(update)]
+    [%graph-update-3 !>(update)]
   --
 ::
 ++  scry-for

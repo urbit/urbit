@@ -12,7 +12,7 @@
     contents.post   contents
 ==
 ::
-:-  %graph-update-2
+:-  %graph-update-3
 ^-  update
 :-  now
 :+  %add-nodes  [our name]

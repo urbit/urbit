@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=term =uid ~] ~]
     ==
-:-  %graph-update-2
+:-  %graph-update-3
 ^-  update
 [now [%add-tag term uid]]
