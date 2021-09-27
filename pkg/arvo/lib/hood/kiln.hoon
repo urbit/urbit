@@ -248,6 +248,9 @@
   =.  ..on-init  abet:(install-local:vats %base)
   =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))
     abet:(install:vats %base sop %kids)
+  ::
+  ::  watch for gall reloading
+  =.  ..on-init  abet:gall-lyv:vats
   ::  install other desks
   ::
   =/  dez=(list desk)  ~(tap in desks)
@@ -414,6 +417,18 @@
     ++  sync-da   (warp %sync [%sing %w da+now /])
     ++  sync-ud   (warp %sync [%sing %w ud+aeon:ral /])
     ++  download  (warp %download [%sing %v ud+aeon:ral /])
+    ++  gall-lyv
+      =/  paths=(set [care:clay path])
+        %-  sy
+        :~  [%z /sys/hoon/hoon]
+            [%z /sys/arvo/hoon]
+            [%z /sys/lull/hoon]
+            [%z /sys/zuse/hoon]
+            [%z /sys/vane/gall/hoon]
+        ==
+      %+  clay-card  %gall-lyv
+      [%warp our %base ~ %mult da+now paths]
+      ::
     ++  warp
       |=  [s=term r=rave]
       (clay-card s %warp ship:ral desk:ral `r)
@@ -519,6 +534,11 @@
     =/  rel  ral
     =.  rail.rak  `rel(paused &, aeon 0)
     vats
+  ::
+  ::  +gall-lyv: watch gall source for reloading
+  ++  gall-lyv
+    =.  vats  (abed %base)
+    (emit gall-lyv:pass)
   ::  +remove-upstream: stop listening to an upstream for changes
   ::
   ++  remove-upstream
@@ -672,6 +692,7 @@
       %download    (take-download syn)
       %merge-main  (take-merge-main syn)
       %merge-kids  (take-merge-kids syn)
+      %gall-lyv    (take-gall-lyv syn)
     ==
   ::
   ++  take-find
@@ -842,6 +863,17 @@
       %|  ~>  %slog.(fmt "OTA to %kids failed {<p.p.syn>}")
           (emit (diff:give %merge-fail %kids rak p.p.syn))
     ==
+  ::
+  ++  take-gall-lyv
+    |=  syn=sign-arvo
+    ^+  vats
+    =.  vats  gall-lyv
+    =/  vets  ~(tap in ~(key by ark))
+    |-
+    ?~  vets  vats
+    =.  vats  (abed i.vets)
+    =.  vats  update-running-dudes
+    $(vets t.vets)
   ::
   ++  take-onto
     |=  [=wire syn=sign-arvo]
