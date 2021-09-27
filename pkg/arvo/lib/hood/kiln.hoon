@@ -344,7 +344,7 @@
     abet:gall-lyv:vats
   =?  kiln  ?=(^ wef)
     ::  $% is a hack to workaround an initialization bug
-    =/  except=(set desk)  (sy %base %kids %$ ~)
+    =/  except=(set desk)  (sy %base %kids ~)
     (bump:vats u.wef except force=%.n)
   =.  wef  ~
   abet:kiln
@@ -389,7 +389,10 @@
   |_  [loc=desk rak=arak]
   ++  ral  (need rail.rak)
   ++  vats  .
-  ++  abet  kiln(ark (~(put by ark) loc rak))
+  ++  abet
+    ~|  [%uninitialized-desk loc]
+    ?<  =(%$ loc)
+    kiln(ark (~(put by ark) loc rak))
   ++  abed
     |=  lac=desk
     ~_  leaf/"kiln: {<lac>} not installed"
@@ -478,15 +481,15 @@
   ++  install
     |=  [lac=desk her=ship rem=desk]
     ^+  vats
+    =.  loc  lac
     ?:  =([her rem] [our lac])
       (install-local lac)
     =/  got  (~(get by ark) lac)
     ?:  =(`[her rem] got)
+      =.  rak  (need got)
       ~>  %slog.(fmt "already tracking {here:(abed lac)}, ignoring")
       vats
-    =:  loc  lac
-        rak  [`[paused=| her rem *aeon next=~] rein:(fall got *arak)]
-      ==
+    =.  rak  [`[paused=| her rem *aeon next=~] rein:(fall got *arak)]
     ~>  %slog.(fmt "beginning install into {here}")
     (emil find:pass listen:pass ~)
   ::  +install-local: install from a local desk, with no remote
@@ -494,12 +497,12 @@
   ++  install-local
     |=  lac=desk
     ^+  vats
+    =.  loc  lac
     ?:  (~(has by ark) lac)
+      =.  rak  (~(got by ark) lac)
       ~>  %slog.(fmt "already tracking {here:(abed lac)}, ignoring")
       vats
-    =:  loc  lac
-        rak  [~ *rein]
-      ==
+    =.  rak  [~ *rein]
     ~>  %slog.(fmt "local install {here}")
     =.  vats  update-running-dudes
     =.  vats  (emit listen:pass)
@@ -936,8 +939,6 @@
   %+  murn  ~(tap by ark)
   |=  [=desk =arak]
   ?:  =(%base desk)
-    ~
-  ?:  =(%$ desk)  ::  hack to work around initialization bug
     ~
   ?.  liv.rein.arak
     ~
