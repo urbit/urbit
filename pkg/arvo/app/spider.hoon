@@ -187,7 +187,6 @@
     =/  yarns=(list yarn)
       %+  welp  running.any
       ~(tap in ~(key by starting.any))
-
     |-  ^-  (quip card _this)
     ?~  yarns
       [~[bind-eyre:sc] this]
@@ -538,7 +537,10 @@
     (~(get by serving.state) tid)
   |=  [eyre-id=(unit @ta) output=mark =desk]
   :_  state(serving (~(del by serving.state) tid))
-  %+  give-simple-payload:app:server  (need eyre-id)
+  ?~  eyre-id
+    %-  (slog leaf+"spider got input for non-existent eyre-id in thread {<tid>}" ~)
+    `state
+  %+  give-simple-payload:app:server  u.eyre-id
   ^-  simple-payload:http
   :_  ~  :_  ~
   ?.  ?=(http-error:spider term)
@@ -567,9 +569,12 @@
   %+  bind
     (~(get by serving.state) tid)
   |=  [eyre-id=(unit @ta) output=mark =desk]
+  ?~  eyre-id
+    %-  (slog leaf+"spider got input for non-existent eyre-id in thread {<tid>}" ~)
+    `state
   =/  tube  (convert-tube output %json desk bowl)
   :_  state(serving (~(del by serving.state) tid))
-  %+  give-simple-payload:app:server  (need eyre-id)
+  %+  give-simple-payload:app:server  u.eyre-id
   (json-response:gen:server !<(json (tube vase)))
 ::
 ++  thread-done

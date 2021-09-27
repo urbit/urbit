@@ -1589,9 +1589,7 @@
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     =.  ..park  (emil (print q.old-yaki data))
-    ::
-    ::  =?  ..park  &(updated !dist-upgraded.ruf)  migrate-dist
-    ::
+    =?  ..park  &(updated !dist-upgraded.ruf)  migrate-dist
     wake:(ergo mim)
     ::
     ++  migrate-dist

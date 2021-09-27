@@ -280,12 +280,12 @@
       ::
           ?(%poke-ack %watch-ack)
         ?~  p.sign  `state
-        =/  err
         =/  act=tape  ?:(?=(%poke-ack -.sign) "start" "listen")
-        =.  charges  %-  new-chad:cha
-          ?:  ?=(i.t.t.wire %http)  hung+'glob-failed'
-            hung+'failed to fetch glob via ames'
-        :-  ~[add-fact:cha]
+        =.  charges
+          %-  new-chad:cha
+          ?:  ?=(i.t.t.wire %http)
+            hung+'failed to fetch glob via http'
+          hung+'failed to fetch glob via ames'
         ((slog leaf+"docket: couldn't {act} thread; will retry" u.p.sign) state)
       ::
           %fact
