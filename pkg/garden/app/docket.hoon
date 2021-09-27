@@ -329,9 +329,14 @@
         ?+    p.cage.sign  `state
             %thread-fail
           =+  !<([=term =tang] q.cage.sign)
-          =.  charges  (new-chad:cha hung+'glob-failed')
-          :-  ~[add-fact:cha]
-          ((slog leaf+"docket: thread failed; will retry" leaf+<term> tang) state)
+          ?.  =(term %cancelled)
+            =.  charges  (new-chad:cha hung+'glob-failed')
+            :-  ~[add-fact:cha]
+            ((slog leaf+"docket: thread failed;" leaf+<term> tang) state)
+          %-  (slog leaf+"docket: thread cancelled; retrying" leaf+<term> tang)
+          =.  charges  (new-chad:cha %install ~)
+          :_   state
+          [add-fact:cha fetch-glob:cha]
         ::
             %thread-done
           =+  !<(=glob q.cage.sign)

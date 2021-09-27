@@ -248,6 +248,9 @@
   =.  ..on-init  abet:(install-local:vats %base)
   =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))
     abet:(install:vats %base sop %kids)
+  ::
+  ::  watch for gall reloading
+  =.  ..on-init  abet:gall-lyv:vats
   ::  install other desks
   ::
   =/  dez=(list desk)  ~(tap in desks)
@@ -337,10 +340,12 @@
     abet:(install:vats %base our %base)
   =?  kiln  ?=(^ old-ota)
     abet:(install:vats %base [her sud]:u.old-ota)
-  =.  kiln
-    =/  kel  (fall wef zuse/zuse)
+  =?  kiln  (lth old-version %7)
+    abet:gall-lyv:vats
+  =?  kiln  ?=(^ wef)
+    ::  $% is a hack to workaround an initialization bug
     =/  except=(set desk)  (sy %base %kids ~)
-    (bump:vats kel except force=%.n)
+    (bump:vats u.wef except force=%.n)
   =.  wef  ~
   abet:kiln
 ::
@@ -416,6 +421,18 @@
     ++  sync-da   (warp %sync [%sing %w da+now /])
     ++  sync-ud   (warp %sync [%sing %w ud+aeon:ral /])
     ++  download  (warp %download [%sing %v ud+aeon:ral /])
+    ++  gall-lyv
+      =/  paths=(set [care:clay path])
+        %-  sy
+        :~  [%z /sys/hoon/hoon]
+            [%z /sys/arvo/hoon]
+            [%z /sys/lull/hoon]
+            [%z /sys/zuse/hoon]
+            [%z /sys/vane/gall/hoon]
+        ==
+      %+  clay-card  %gall-lyv
+      [%warp our %base ~ %mult da+now paths]
+      ::
     ++  warp
       |=  [s=term r=rave]
       (clay-card s %warp ship:ral desk:ral `r)
@@ -521,6 +538,11 @@
     =/  rel  ral
     =.  rail.rak  `rel(paused &, aeon 0)
     vats
+  ::
+  ::  +gall-lyv: watch gall source for reloading
+  ++  gall-lyv
+    =.  vats  (abed %base)
+    (emit gall-lyv:pass)
   ::  +remove-upstream: stop listening to an upstream for changes
   ::
   ++  remove-upstream
@@ -674,6 +696,7 @@
       %download    (take-download syn)
       %merge-main  (take-merge-main syn)
       %merge-kids  (take-merge-kids syn)
+      %gall-lyv    (take-gall-lyv syn)
     ==
   ::
   ++  take-find
@@ -712,6 +735,10 @@
       ~>  %slog.(fmt "cancelled (2) install into {here}, retrying")
       reset
     ~>  %slog.(fmt "finished downloading update for {here}")
+    ?.  (get-remote-diff our loc now [ship desk aeon]:ral)
+      ~>  %slog.(fmt "remote is identical to {here}, skipping")
+      =.  rail.rak  `%*(. ral aeon +(aeon:ral))
+      (emit sync-ud:pass)
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft
       ?:  =(our ship:ral)
@@ -825,9 +852,9 @@
       =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
     =.  vats  take-commit
-    ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
     ?.  =(%base loc)
       vats
+    ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
@@ -844,6 +871,17 @@
       %|  ~>  %slog.(fmt "OTA to %kids failed {<p.p.syn>}")
           (emit (diff:give %merge-fail %kids rak p.p.syn))
     ==
+  ::
+  ++  take-gall-lyv
+    |=  syn=sign-arvo
+    ^+  vats
+    =.  vats  gall-lyv
+    =/  vets  ~(tap in ~(key by ark))
+    |-
+    ?~  vets  vats
+    =.  vats  (abed i.vets)
+    =.  vats  update-running-dudes
+    $(vets t.vets)
   ::
   ++  take-onto
     |=  [=wire syn=sign-arvo]
