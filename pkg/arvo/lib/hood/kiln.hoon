@@ -747,7 +747,7 @@
     =?  vats  liv.rein.rak
       %-  stop-dudes
       =<  idle
-      (adjust-dudes [our loc now] `[ship desk aeon]:ral rein.rak)
+      (adjust-dudes [our loc now] rein.rak)
     =.  rail.rak  `%*(. ral aeon +(aeon:ral))
     |^  ^+  vats
     ?:  =(%base loc)
@@ -851,7 +851,7 @@
       %-  (slog leaf/- p.p.syn)
       =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
-    =.  vats  take-commit
+    ~>  %slog.(fmt "merge into {<loc>} succeeded")
     ?.  =(%base loc)
       vats
     ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
@@ -895,8 +895,7 @@
   ++  update-running-dudes
     ^+  vats
     =/  local  [our loc now]
-    =/  upstream  ?~(rail.rak ~ `[ship desk aeon]:u.rail.rak)
-    =/  dif   (adjust-dudes local upstream rein.rak)
+    =/  dif   (adjust-dudes local rein.rak)
     =.  vats  (start-dudes jolt.dif)
     =.  vats  (stop-dudes idle.dif)
     vats

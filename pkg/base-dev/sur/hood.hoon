@@ -130,12 +130,14 @@
 ++  read-bill-foreign
   |=  [=ship =desk =aeon]
   ^-  (list dude)
+  ~|  +<
   =/  her  (scot %p ship)
   =/  syd  (scot %tas desk)
   =/  yon  (scot %ud aeon)
   ::
   =/  dom  .^(dome cv/~[her syd yon])
-  =/  tak  (scot %uv (~(got by hit.dom) aeon))
+  =/  tak  ~|  aeons=~(key by hit.dom)
+           (scot %uv (~(got by hit.dom) aeon))
   =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
   =/  fil  (~(get by q.yak) /desk/bill)
   ?~  fil  ~
@@ -150,7 +152,7 @@
 ::  +read-bill: read contents of /desk/bill manifest
 ::
 ++  read-bill
-  |=  [our=ship =desk now=@da] 
+  |=  [our=ship =desk now=@da]
   =/  pax  (en-beam [our desk da+now] /desk/bill)
   ?.  (~(has in .^((set ^desk) cd/~[(scot %p our) ~ (scot %da now)])) desk)
     *(list dude)
@@ -165,16 +167,11 @@
 ::
 ++  adjust-dudes
   |=  $:  local=[our=ship =desk now=@da]
-          upstream=(unit [=ship =desk =aeon])
           =rein
       ==
   ^-  [jolt=(list dude) idle=(list dude)]
   =/  all=(list dude)
-    ?~  upstream
-      (read-bill local)
-    ?:  =(ship.u.upstream our.local)
-      (read-bill local(desk desk.u.upstream))
-    (read-bill-foreign u.upstream)
+    (read-bill local)
   =/  want  (get-apps-want all rein)
   =/  have  (get-apps-live local)
   [want (skip have ~(has in (sy want)))]
