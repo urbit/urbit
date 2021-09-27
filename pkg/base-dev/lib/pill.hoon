@@ -18,6 +18,8 @@
       [%what p=(list (pair path (cask)))]
       [%whom p=ship]
       [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
+      [%wyrd p=vere]
+      [%verb p=(unit ?)]
       unix-task
   ==
 ::  +boot-ovum: boostrap kernel filesystem load
