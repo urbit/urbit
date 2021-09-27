@@ -251,7 +251,6 @@
           ?.  ?=([%suspend ~ *] chad.charge)
             [%install ~]
           [%glob u.glob.chad.charge]
-        ~&  %rev
         :_(state [add-fact fetch-glob]:cha)
       ==
     ==
@@ -329,9 +328,14 @@
         ?+    p.cage.sign  `state
             %thread-fail
           =+  !<([=term =tang] q.cage.sign)
-          =.  charges  (new-chad:cha hung+'glob-failed')
-          :-  ~[add-fact:cha]
-          ((slog leaf+"docket: thread failed; will retry" leaf+<term> tang) state)
+          ?.  =(term %cancelled)
+            =.  charges  (new-chad:cha hung+'glob-failed')
+            :-  ~[add-fact:cha]
+            ((slog leaf+"docket: thread failed;" leaf+<term> tang) state)
+          %-  (slog leaf+"docket: thread cancelled; retrying" leaf+<term> tang)
+          =.  charges  (new-chad:cha %install ~)
+          :_   state
+          [leave-glob:cha add-fact:cha fetch-glob:cha]
         ::
             %thread-done
           =+  !<(=glob q.cage.sign)
@@ -647,6 +651,14 @@
     %+  ~(put by charges)  desk
     [d chad:(~(gut by charges) desk *charge)]
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
+  ++  leave-glob
+    ^-  card
+    =/  =charge
+      ~|  desk/desk
+      (~(got by charges) desk)
+    ?>  ?=(%glob -.href.docket.charge)
+    =/  ref  glob-reference.href.docket.charge
+    (leave-our:(pass (glob-wire ref)) %spider)
   ++  fetch-glob
     ^-  (list card)
     =/  =charge

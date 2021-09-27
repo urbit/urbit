@@ -152,6 +152,8 @@
 ++  read-bill
   |=  [our=ship =desk now=@da] 
   =/  pax  (en-beam [our desk da+now] /desk/bill)
+  ?.  (~(has in .^((set ^desk) cd/~[(scot %p our) ~ (scot %da now)])) desk)
+    *(list dude)
   ?.  .^(? cu/pax)
     *(list dude)
   .^((list dude) cx/pax)
@@ -171,11 +173,17 @@
     ?~  upstream
       (read-bill local)
     ?:  =(ship.u.upstream our.local)
-      (read-bill local)
+      (read-bill local(desk desk.u.upstream))
     (read-bill-foreign u.upstream)
   =/  want  (get-apps-want all rein)
   =/  have  (get-apps-live local)
   [want (skip have ~(has in (sy want)))]
+::
+++  get-remote-diff
+  |=  [our=ship here=desk now=@da her=ship there=desk when=aeon]
+  =+  .^(our-hash=@uv cz/[(scot %p our) here (scot %da now) ~])
+  =+  .^(her-hash=@uv cz/[(scot %p her) there (scot %ud when) ~])
+  !=(our-hash her-hash)
 ::
 ++  get-apps-live
   |=  [our=ship =desk now=@da]
