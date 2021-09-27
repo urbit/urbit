@@ -340,11 +340,12 @@
     abet:(install:vats %base our %base)
   =?  kiln  ?=(^ old-ota)
     abet:(install:vats %base [her sud]:u.old-ota)
-  =.  kiln
-    =/  kel  (fall wef zuse/zuse)
+  =?  kiln  (lth old-version %7)
+    abet:gall-lyv:vats
+  =?  kiln  ?=(^ wef)
     ::  $% is a hack to workaround an initialization bug
     =/  except=(set desk)  (sy %base %kids %$ ~)
-    (bump:vats kel except force=%.n)
+    (bump:vats u.wef except force=%.n)
   =.  wef  ~
   abet:kiln
 ::
