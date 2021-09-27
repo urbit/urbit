@@ -21,6 +21,7 @@
     ;<  =cord  bind:n  (fetch-cord:strandio (trip url))
     %-  pure:n
     %-  mole
+    |.
     ;;(=glob:docket (cue cord))
   (pure:m !>(glob))
 ::
