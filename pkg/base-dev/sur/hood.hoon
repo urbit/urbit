@@ -135,9 +135,13 @@
   =/  yon  (scot %ud aeon)
   ::
   =/  dom  .^(dome cv/~[her syd yon])
-  =/  tak  (scot %uv (~(got by hit.dom) let.dom))
+  =/  yon  (~(get by hit.dom) let.dom)
+  ?~  yon  ~
+  =/  tak  (scot %uv u.yon)
   =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
-  =/  lob  (scot %uv (~(got by q.yak) /desk/bill))
+  =/  fil  (~(get by q.yak) /desk/bill)
+  ?~  fil  ~
+  =/  lob  (scot %uv u.fil)
   =/  bob  .^(blob cs/~[her syd yon %blob lob])
   ::
   ;;  (list dude)
