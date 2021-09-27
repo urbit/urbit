@@ -1519,8 +1519,7 @@
 ::
 ++  on-load
   |=  ole=vase
-  |^  ::NOTE  ;; because we mangle the old session type
-      =+  old=;;(house-any q.ole)
+  |^  =+  old=!<(house-any ole)
       =?  old  ?=(%5 -.old)
         (house-5-to-6 old)
       =?  old  ?=(%6 -.old)
@@ -1533,7 +1532,7 @@
   +$  house-6                                           ::  all state
     $:  %6
         egg=@u                                        ::  command count
-        hoc=(map id session)                          ::  conversations
+        hoc=(map id session-6)                        ::  conversations
         acl=(set ship)                                ::  remote access whitelist
     ==                                                ::
   +$  session-6                                       ::  per conversation
