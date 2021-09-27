@@ -135,9 +135,7 @@
   =/  yon  (scot %ud aeon)
   ::
   =/  dom  .^(dome cv/~[her syd yon])
-  =/  yon  (~(get by hit.dom) let.dom)
-  ?~  yon  ~
-  =/  tak  (scot %uv u.yon)
+  =/  tak  (scot %uv (~(got by hit.dom) aeon))
   =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
   =/  fil  (~(get by q.yak) /desk/bill)
   ?~  fil  ~
@@ -171,6 +169,8 @@
   ^-  [jolt=(list dude) idle=(list dude)]
   =/  all=(list dude)
     ?~  upstream
+      (read-bill local)
+    ?:  =(ship.u.upstream our.local)
       (read-bill local)
     (read-bill-foreign u.upstream)
   =/  want  (get-apps-want all rein)

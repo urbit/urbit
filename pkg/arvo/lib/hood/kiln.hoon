@@ -711,7 +711,10 @@
       reset
     ~>  %slog.(fmt "finished downloading update for {here}")
     =/  old-weft  `weft`[%zuse zuse]
-    =/  new-weft  (read-kelvin-foreign [ship desk aeon]:ral)
+    =/  new-weft
+      ?:  =(our ship:ral)
+        (need (read-kelvin-local our desk:ral now))  ::  TODO error handling
+      (read-kelvin-foreign [ship desk aeon]:ral)
     =?  vats  liv.rein.rak
       %-  stop-dudes
       =<  idle
