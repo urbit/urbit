@@ -236,7 +236,7 @@
                 %set-transfer-proxy    ~[(en-address address.tx)]
           ==  ==
         ::
-        ++  en-ship      |=(s=@p ship+(ship s))
+        ++  en-ship      |=(s=@p ship+(numb `@ud`s))
         ++  en-spawn     |=([s=@p a=@ux] ~[(en-ship s) (en-address a)])
         ++  en-transfer  |=([a=@ux r=?] ~[(en-address a) reset+b+r])
         ++  en-keys
