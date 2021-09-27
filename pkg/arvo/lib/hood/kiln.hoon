@@ -843,10 +843,13 @@
       %-  (slog leaf/- p.p.syn)
       =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
+    =?  rail.rak  =(~ p.p.syn)
+      ~>  %slog.(fmt "no changes for {here}, skipping")
+      `%*(. ral aeon (dec aeon:ral))
     =.  vats  take-commit
-    ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
-    ?.  =(%base loc)
+    ?.  &(!=(~ p.p.syn) =(%base loc))
       vats
+    ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
