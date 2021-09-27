@@ -170,8 +170,7 @@
           =rein
       ==
   ^-  [jolt=(list dude) idle=(list dude)]
-  =/  all=(list dude)
-    (read-bill local)
+  =/  all=(list dude)  (read-bill local)
   =/  want  (get-apps-want all rein)
   =/  have  (get-apps-live local)
   [want (skip have ~(has in (sy want)))]
