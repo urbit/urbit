@@ -1,5 +1,5 @@
 import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { leaveGroup, putEntry } from '@urbit/api';
+import { leaveGroup } from '@urbit/api';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -16,6 +16,7 @@ import { Portal } from '~/views/components/Portal';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { Triangle } from '~/views/components/Triangle';
 import airlock from '~/logic/api';
+import useSettingsState from '~/logic/state/settings';
 
 const localSelector = selectLocalState([
   'tutorialProgress',
@@ -94,7 +95,8 @@ export function TutorialModal() {
   const dismiss = useCallback(async () => {
     setPaused(false);
     hideTutorial();
-    await airlock.poke(putEntry('tutorial', 'seen', true));
+    const { putEntry } = useSettingsState.getState();
+    await putEntry('tutorial', 'seen', true);
   }, [hideTutorial]);
 
   const bailExit = useCallback(() => {

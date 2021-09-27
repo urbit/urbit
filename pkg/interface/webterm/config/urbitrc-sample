@@ -1,0 +1,11 @@
+module.exports = {
+  URBIT_PIERS: [
+    "/Users/user/ships/zod/home",
+  ],
+  herb: false,
+  URL: 'http://localhost:80',
+  /*  FLEET: {
+    'zod': "http://localhost:8080',
+    'bus': 'http://localhost:8081'
+  } */
+};

@@ -9,7 +9,7 @@ import useLocalState from '~/logic/state/local';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt from 'big-integer';
 import airlock from '~/logic/api';
-import useHarkState from '~/logic/state/hark';
+import useHarkState, { selHarkGraph } from '~/logic/state/hark';
 import { BlockScroller } from '~/views/components/BlockScroller';
 
 export interface LinkBlocksProps {
@@ -46,11 +46,13 @@ export function LinkBlocks(props: LinkBlocksProps) {
   );
 
   useEffect(() => {
-    const unreads =
-      useHarkState.getState().unreads.graph?.[association.resource]?.['/']
-        ?.unreads || new Set<string>();
-    Array.from(unreads as Set<string>).forEach((u) => {
-      airlock.poke(markEachAsRead(association.resource, '/', u));
+    const unreads = selHarkGraph(association.resource)(useHarkState.getState());
+    const [,,ship,name] = association.resource.split('/');
+    unreads.each.forEach((u) => {
+      airlock.poke(markEachAsRead({
+        desk: (window as any).desk,
+        path: `/graph/${ship}/${name}`
+      }, u));
     });
   }, [association.resource]);
 

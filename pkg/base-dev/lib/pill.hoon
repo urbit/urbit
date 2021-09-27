@@ -5,13 +5,12 @@
 ::
 +$  pill
   $%  [%ivory p=(list)]
-    $:  %pill
-        nam=term
-        boot-ova=(list)
-        kernel-ova=(list unix-event)
-        userspace-ova=(list unix-event)
-    ==
-  ==
+      $:  %pill
+          nam=term
+          boot-ova=(list)
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
+  ==  ==
 ::
 +$  unix-event
   %+  pair  wire
@@ -47,8 +46,9 @@
         /ted    ::  :spider strands
         /tests  ::  unit tests
         /web    ::  %eyre web content
+        /desk   ::  desk manifest
     ==
-  |=  bas=path
+  |=  [des=desk bas=path]
   ^-  unix-event
   %.  directories
   |=  ::  sal: all spurs to load from
@@ -59,8 +59,12 @@
   ::  hav: all user files
   ::
   =;  hav  ~&  user-files+(lent hav)
-           [/c/sync [%into %$ & hav]]
-  =|  hav=mode:clay
+           =/  =yuki:clay
+             :-  *(list tako:clay)
+             %-  ~(gas by *(map path (each page:clay lobe:clay)))
+             (turn hav |=([=path =page:clay] [path &+page]))
+           [/c/sync [%park des &+yuki *rang:clay]]
+  =|  hav=(list [path page:clay])
   |-  ^+  hav
   ?~  sal  ~
   =.  hav  $(sal t.sal)
@@ -73,40 +77,13 @@
   ::  pax: full path at `tyl`
   ::  lon: directory at `tyl`
   ::
-  =/  pax  (weld bas (flop tyl))
+  =/  lyt  (flop tyl)
+  =/  pax  (weld bas lyt)
   =/  lon  .^(arch %cy pax)
-  ::  XX this serialization should use marks
-  ::
   =?  hav  ?=(^ fil.lon)
-      ::  XX  this whitelist needs to be reviewed
-      ::
-      ?.  ?=  ?(%css %hoon %html %js %json %md %png %txt %udon %umd)
-          -.tyl
-        ::
-        ::  install only files with whitelisted marks
-        ::
-        ~&  ignoring+pax
-        hav
-      ::
-      ::  cot: file as plain-text octet-stream
-      ::
-      =;  cot  [[(flop `path`tyl) `[/text/plain cot]] hav]
-      ^-  octs
-      ?-    tyl
-          [%json *]
-        =/  dat  .^(json %cx pax)
-        (as-octt:mimes:html (en-json:html dat))
-      ::
-          [?(%md %txt) *]
-        =/  dat  .^(wain %cx pax)
-        (as-octs:mimes:html (of-wain:format dat))
-      ::
-          *
-        =/  dat  .^(@t %cx pax)
-        [(met 3 dat) dat]
-      ==
+    :_(hav [lyt mark=;;(@tas (head tyl)) noun=.^(* %cx pax)])
   =/  all  ~(tap by dir.lon)
-  |-  ^-  mode:clay
+  |-  ^+  hav
   ?~  all  hav
   $(all t.all, hav ^$(tyl [p.i.all tyl]))
 ::

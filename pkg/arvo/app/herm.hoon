@@ -1,6 +1,8 @@
 ::  herm: stand-in for term.c with http interface
 ::
 /+  default-agent, dbug, verb
+/$  blit-to-json  %blit  %json
+/$  json-to-blit  %json  %blit
 =,  jael
 |%
 +$  state-0  [%0 ~]
@@ -11,33 +13,15 @@
 %+  verb  |
 %-  agent:dbug
 ^-  agent:gall
-=>  |%
-    ++  request-tube
-      |=  [bowl:gall from=mark to=mark next=?]
-      ^-  card:agent:gall
-      :*  %pass  /tube/[from]/[to]
-          %arvo  %c     %warp
-          our    q.byk  ~
-        ::
-          ?:  next
-            [%next %c da+now /[from]/[to]]
-          [%sing %c da+now /[from]/[to]]
-      ==
-    --
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
   ^-  (quip card:agent:gall _this)
-  :_  this
-  ::  set up dill session subscription,
-  ::  and ensure the tubes we use are in cache
+  ::  set up dill session subscription
   ::
-  :~  [%pass [%view %$ ~] %arvo %d %view ~]
-      (request-tube bowl %blit %json |)
-      (request-tube bowl %json %belt |)
-  ==
+  [[%pass [%view %$ ~] %arvo %d %view ~]~ this]
 ::
 ++  on-save   !>([%0 ~])
 ++  on-load
@@ -61,7 +45,7 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card:agent:gall _this)
-  ?+  wire  !!
+  ?+  wire  (on-arvo:def wire sign-arvo)
     ::  pass on dill blits for the session
     ::
       [%view %$ ~]
@@ -72,17 +56,6 @@
     %+  turn  p.sign-arvo
     |=  =blit:dill
     [%give %fact [%session %$ ~]~ %blit !>(blit)]
-  ::
-    ::  ensure the tubes we need remain in cache
-    ::
-      [%tube @ @ ~]
-    =*  from  i.t.wire
-    =*  to  i.t.t.wire
-    ?.  ?=([%clay %writ *] sign-arvo)
-      ~|  [%unexpected-sign [- +<]:sign-arvo]
-      !!
-    :_  this
-    [(request-tube bowl from to &)]~
   ==
 ::
 ++  on-poke

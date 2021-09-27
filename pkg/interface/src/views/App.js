@@ -28,7 +28,6 @@ import './css/indigo-static.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
 import { bootstrapApi } from '~/logic/api/bootstrap';
-import useLaunchState from '../logic/state/launch';
 
 const Root = withState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -104,8 +103,6 @@ class App extends React.Component {
       this.updateMedium(this.mediumWatcher);
       this.updateLarge(this.largeWatcher);
     }, 500);
-    this.props.getBaseHash();
-    this.props.getRuntimeLag();  // TODO  consider polling periodically
     this.props.getAll();
     gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
@@ -173,7 +170,7 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root>
-          <Router>
+          <Router basename="/apps/landscape">
             <TutorialModal />
             <ErrorBoundary>
               <StatusBarWithRouter
@@ -211,14 +208,12 @@ const selContacts = s => s.contacts[`~${window.ship}`];
 const selLocal = s => [s.set, s.omniboxShown, s.toggleOmnibox, s.dark];
 const selSettings = s => [s.display, s.getAll];
 const selGraph = s => s.getShallowChildren;
-const selLaunch = s => [s.getRuntimeLag, s.getBaseHash];
 
 const WithApp = React.forwardRef((props, ref) => {
   const ourContact = useContactState(selContacts);
   const [display, getAll] = useSettingsState(selSettings, shallow);
   const [setLocal, omniboxShown, toggleOmnibox, dark] = useLocalState(selLocal);
   const getShallowChildren = useGraphState(selGraph);
-  const [getRuntimeLag, getBaseHash] = useLaunchState(selLaunch, shallow);
 
   return (
     <WarmApp
@@ -229,8 +224,6 @@ const WithApp = React.forwardRef((props, ref) => {
       set={setLocal}
       dark={dark}
       getShallowChildren={getShallowChildren}
-      getRuntimeLag={getRuntimeLag}
-      getBaseHash={getBaseHash}
       toggleOmnibox={toggleOmnibox}
       omniboxShown={omniboxShown}
     />

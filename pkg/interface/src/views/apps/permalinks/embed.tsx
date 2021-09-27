@@ -1,10 +1,11 @@
-import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
+import { BaseAnchor, Box, BoxProps, Button, Center, Col, H3, Icon, Image, Row, Text } from '@tlon/indigo-react';
+import { Association, GraphNode, resourceFromPath, GraphConfig, Treaty } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
+  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink,
+  AppPermalink as IAppPermalink
 } from '~/logic/lib/permalinks';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import { useVirtualResizeProp } from '~/logic/lib/virtualContext';
@@ -12,6 +13,9 @@ import useGraphState  from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { GroupLink } from '~/views/components/GroupLink';
 import { TranscludedNode } from './TranscludedNode';
+import styled from 'styled-components';
+import Author from '~/views/components/Author';
+import useDocketState, { useTreaty } from '~/logic/state/docket';
 
 function Placeholder(type) {
   const lines = (type) => {
@@ -184,6 +188,78 @@ function GraphPermalink(
   );
 }
 
+const ClampedText = styled(Text)`
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`;
+
+type AppTileProps = Treaty & BoxProps;
+
+export function AppTile({ color, image, ...props }: AppTileProps) {
+  return (
+    <Box
+      position="relative"
+      flex="none"
+      height={['48px', '132px']}
+      width={['48px', '132px']}
+      marginRight={3}
+      borderRadius={3}
+      bg={color || 'gray'}
+      {...props}
+    >
+      {image && (
+        <Image
+          src={image}
+          position="absolute"
+          top="0"
+          left="0"
+          width="100%"
+          height="100%"
+        />
+      )}
+    </Box>
+  );
+}
+
+function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
+  const treaty = useTreaty(ship, desk);
+  const hasProtocolHandling = Boolean(window?.navigator?.registerProtocolHandler);
+  const href = hasProtocolHandling ? link : `/apps/grid/perma?ext=${link}`;
+
+  useEffect(() => {
+    if (!treaty) {
+      useDocketState.getState().requestTreaty(ship, desk);
+    }
+  }, [treaty, ship, desk]);
+
+  return (
+    <Row
+      display="inline-flex"
+      width="100%"
+      maxWidth="500px"
+      padding={3}
+      bg="washedGray"
+      borderRadius={3}
+    >
+      {treaty && <AppTile display={['none', 'block']} {...treaty} />}
+      <Col>
+        <Row flexDirection={['row', 'column']} alignItems={['center', 'start']} marginBottom={2}>
+          {treaty && <AppTile display={['block', 'none']} {...treaty} />}
+          <Col>
+            <H3 color="black">{treaty?.title}</H3>
+            {treaty?.ship && <Author ship={treaty?.ship} showImage dontShowTime={true} />}
+          </Col>
+        </Row>
+        <ClampedText marginBottom={2} color="gray">{treaty?.info}</ClampedText>
+        <Button as="a" href={href} primary alignSelf="start" display="inline-flex" marginTop="auto">Open App</Button>
+      </Col>
+    </Row>
+  );
+}
+
 function PermalinkDetails(props: {
   title: string;
   icon: any;
@@ -242,6 +318,10 @@ export function PermalinkEmbed(props: {
           full={props.full}
           showOurContact={props.showOurContact}
         />
+      );
+    case 'app':
+      return (
+        <AppPermalink {...permalink} />
       );
   }
 }

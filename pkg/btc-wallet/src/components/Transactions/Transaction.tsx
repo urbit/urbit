@@ -12,10 +12,10 @@ const Transaction = ({ tx }: { tx: TransactionType }) => {
   const pending = !tx.recvd;
 
   let weSent = _.find(tx.inputs, (input) => {
-    return input.ship === (window as any).ship;
+    return input.ship === window.ship;
   });
   let weRecv = tx.outputs.every((output) => {
-    return output.ship === (window as any).ship;
+    return output.ship === window.ship;
   });
 
   let action: 'sent' | 'recv' | 'fail' = weRecv
@@ -31,7 +31,7 @@ const Transaction = ({ tx }: { tx: TransactionType }) => {
 
   if (action === 'sent') {
     let counter = _.find(tx.outputs, (output) => {
-      return output.ship !== (window as any).ship;
+      return output.ship !== window.ship;
     });
     counterShip = _.get(counter, 'ship', null);
     counterAddress = _.get(counter, 'val.address', null);
@@ -41,7 +41,7 @@ const Transaction = ({ tx }: { tx: TransactionType }) => {
     value = _.reduce(
       tx.outputs,
       (sum, output) => {
-        if (output.ship === (window as any).ship) {
+        if (output.ship === window.ship) {
           return sum + output.val.value;
         } else {
           return sum;
@@ -53,14 +53,14 @@ const Transaction = ({ tx }: { tx: TransactionType }) => {
     if (weSent && weRecv) {
       counterAddress = _.get(
         _.find(tx.inputs, (input) => {
-          return input.ship === (window as any).ship;
+          return input.ship === window.ship;
         }),
         'val.address',
         null
       );
     } else {
       let counter = _.find(tx.inputs, (input) => {
-        return input.ship !== (window as any).ship;
+        return input.ship !== window.ship;
       });
       counterShip = _.get(counter, 'ship', null);
       counterAddress = _.get(counter, 'val.address', null);

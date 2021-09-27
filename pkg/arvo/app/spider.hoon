@@ -18,17 +18,26 @@
   $:  starting=(map yarn [=trying =vase])
       running=trie
       tid=(map tid yarn)
-      serving=(map tid [@ta =mark])
+      serving=(map tid [@ta =mark =desk])
   ==
 ::
 +$  clean-slate-any
   $^  clean-slate-ket
   $%  clean-slate-sig
       clean-slate-1
+      clean-slate-2
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %3
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [@ta =mark =desk])
+  ==
+::
++$  clean-slate-2
   $:  %2
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -56,7 +65,7 @@
   ==
 ::
 +$  start-args
-  [parent=(unit tid) use=(unit tid) file=term =vase]
+  [parent=(unit tid) use=(unit tid) =beak file=term =vase]
 --
 ::
 ::  Trie operations
@@ -145,6 +154,7 @@
       spider-core  +>
       sc           ~(. spider-core bowl)
       def          ~(. (default-agent this %|) bowl)
+      bec          byk.bowl(r da+now.bowl)
   ::
   ++  on-init   
     ^-  (quip card _this)
@@ -159,7 +169,8 @@
     =?  any  ?=(~ -.any)  (old-to-1 any)
     =^  upgrade-cards  any  
       (old-to-2 any)
-    ?>  ?=(%2 -.any)
+    =.  any  (old-to-3 any)
+    ?>  ?=(%3 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -181,9 +192,9 @@
     ::
     ++  old-to-2
       |=  old=clean-slate-any
-      ^-  (quip card clean-slate)
-      ?>  ?=(?(%1 %2) -.old)
-      ?:  ?=(%2 -.old)
+      ^-  (quip card clean-slate-any)
+      ?>  ?=(?(%1 %2 %3) -.old)
+      ?:  ?=(?(%2 %3) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -191,6 +202,19 @@
         running.old
         tid.old
         ~
+      ==
+    ::
+    ++  old-to-3
+      |=  old=clean-slate-any
+      ^-  clean-slate
+      ?>  ?=(?(%2 %3) -.old)
+      ?:  ?=(%3 -.old)
+        old
+      :*  %3
+        starting.old
+        running.old
+        tid.old
+        (~(run by serving.old) |=([id=@ta =mark] [id mark q.byk.bowl]))
       ==
     --
   ::
@@ -271,7 +295,7 @@
 ::
 ~%  %spider-helper  ..get-yarn  ~
 |_  =bowl:gall
-::
+++  bec  `beak`byk.bowl(r da+now.bowl)
 ++  bind-eyre
   ^-  card
   [%pass /bind %arvo %e %connect [~ /spider] %spider]
@@ -284,33 +308,30 @@
   ~/  %handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
-  ?>  authenticated.inbound-request
+  ::?>  authenticated.inbound-request
   =/  url 
     (parse-request-line:server url.request.inbound-request)
-  ?>  ?=([%spider @t @t @t ~] site.url)
-  =*  input-mark   i.t.site.url
-  =*  thread       i.t.t.site.url
-  =*  output-mark  i.t.t.t.site.url
+  ?>  ?=([%spider @t @t @t @t ~] site.url)
+  =*  desk         i.t.site.url
+  =*  input-mark   i.t.t.site.url
+  =*  thread       i.t.t.t.site.url
+  =*  output-mark  i.t.t.t.t.site.url
   =/  =tid         (new-thread-id thread)
   =.  serving.state
-    (~(put by serving.state) tid [eyre-id output-mark])
+    (~(put by serving.state) tid [eyre-id output-mark desk])
   ::  TODO: speed this up somehow. we spend about 15ms in this arm alone
   ::
   =+  .^
       =tube:clay
       %cc 
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/json/[input-mark]
+      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/json/[input-mark]
     ==
   ?>  ?=(^ body.request.inbound-request)
-  =/  body=json
-    (need (de-json:html q.u.body.request.inbound-request))
-  =/  input=vase
-    (slop !>(~) (tube !>(body)))
-  =/  =start-args
-    [~ `tid thread input]
-  =^  cards  state
-    (handle-start-thread start-args)
-  [cards state]
+  =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
+  =/  input=vase  (slop !>(~) (tube !>(body)))
+  =/  boc  bec
+  =/  =start-args  [~ `tid boc(q desk, r da+now.bowl) thread input]
+  (handle-start-thread start-args)
 ::
 ++  on-poke-input
   |=  input
@@ -345,7 +366,7 @@
 ::
 ++  handle-start-thread
   ~/  %handle-start-thread
-  |=  [parent-tid=(unit tid) use=(unit tid) file=term =vase]
+  |=  [parent-tid=(unit tid) use=(unit tid) =beak file=term =vase]
   ^-  (quip card ^state)
   =/  parent-yarn=yarn
     ?~  parent-tid
@@ -366,11 +387,11 @@
     ==
   =/  pax=path
     ~|  no-file-for-thread+file
-    (need (get-fit:clay [our q.byk da+now]:bowl %ted file))
+    (need (get-fit:clay beak %ted file))
   :_  state
   :_  ~
   :+  %pass  /build/[new-tid]
-  [%arvo %c %warp our.bowl %home ~ %sing %a da+now.bowl pax]
+  [%arvo %c %warp p.beak q.beak ~ %sing %a r.beak pax]
 ::
 ++  handle-build
   ~/  %handle-build
@@ -478,7 +499,7 @@
   =/  moz  (thread-say-fail tid term tang)
   ?.  ?=([~ %build *] (~(get by starting.state) yarn))
     moz
-  :_(moz [%pass /build/[tid] %arvo %c %warp our.bowl %home ~])
+  :_(moz [%pass /build/[tid] %arvo %c %warp our.bowl %base ~])
 ::
 ++  thread-say-fail
   |=  [=tid =term =tang]
@@ -492,7 +513,7 @@
   =-  (fall - `state)
   %+  bind  
     (~(get by serving.state) tid)
-  |=  [eyre-id=@ta output=mark]
+  |=  [eyre-id=@ta output=mark =desk]
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id
   ^-  simple-payload:http
@@ -522,11 +543,11 @@
   =-  (fall - `state)
   %+  bind  
     (~(get by serving.state) tid)
-  |=  [eyre-id=@ta output=mark]
+  |=  [eyre-id=@ta output=mark =desk]
   =+    .^
       =tube:clay
       %cc
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
+      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[output]/json
     ==
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id
@@ -604,5 +625,5 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  2+state(running (turn (tap-yarn running.state) head))
+  3+state(running (turn (tap-yarn running.state) head))
 --

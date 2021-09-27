@@ -1,8 +1,13 @@
 /+  pill
 =*  card  card:agent:gall
 |%
-+$  any-state  $%(state state-0)
-+$  state
++$  state  state-1
++$  any-state
+ $~  *state
+ $%  state-1
+     state-0
+ ==
++$  state-1
   $:  %1
       mass-timer=[way=wire nex=@da tim=@dr]
   ==
@@ -222,8 +227,8 @@
 ++  take-agent
   |=  [=wire =sign:agent:gall]
   ?+  wire  ~|([%helm-bad-take-agent wire -.sign] !!)
-    [%helm %hi *]  ?>  ?=(%poke-ack -.sign)
-                   (coup-hi t.t.wire p.sign)
+    [%hi *]  ?>  ?=(%poke-ack -.sign)
+                   (coup-hi t.wire p.sign)
   ==
 ::
 ++  take-bound
