@@ -55,7 +55,7 @@
 +$  yoke
   $:  control-duct=duct
       nonce=@t
-      live=?
+      live=?  ::TODO  remove, replaced by -.agent
       =stats
       =watches
       agent=(each agent vase)
@@ -1764,7 +1764,10 @@
           =([%$ %da now] coin)
           =(our ship)
       ==
-    [~ ~ noun+!>((~(has by yokes.state) dap))]
+    =;  hav=?
+      [~ ~ noun+!>(hav)]
+    =/  yok=(unit yoke)  (~(get by yokes.state) dap)
+    ?~(yok | -.agent.u.yok)
   ::
   ?:  ?&  =(%d care)
           =(~ path)
