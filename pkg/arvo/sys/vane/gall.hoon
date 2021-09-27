@@ -1408,9 +1408,6 @@
         ?.  ?=(%raw-fact -.unto)
           [unto ap-core]
         =/  =case:clay  da+now
-        ~&  >  take+beak.yoke
-        ~&  >  take+mark.unto
-        ~&  >  take+[agent-name agent-routes agent-duct]
         ?:  ?=(%spider agent-name)
           :-  [%fact mark.unto !>(noun.unto)]
           ap-core

@@ -131,7 +131,6 @@
     ++  validate-mark
       |=  [in=* =mark =bowl]
       ^-  cage
-      ~&  validate+[mark q.byk.bowl]
       =+  .^  =dais:clay  %cb
               /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[mark]
           ==
