@@ -31,7 +31,7 @@
   ;<  ~  bind:m
     (raw-poke-our %graph-pull-hook %pull-hook-action !>([%remove rid]))
   ;<  ~  bind:m
-    (raw-poke-our %graph-store %graph-update-2 !>([now [%remove-graph rid]]))
+    (raw-poke-our %graph-store %graph-update-3 !>([now [%remove-graph rid]]))
   (pure:m ~)
 --
 ::

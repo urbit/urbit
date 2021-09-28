@@ -99,10 +99,10 @@
     =/  =ship  (slav %p i.t.path)
     =*  desk   i.t.t.path
     ?:  =(our.bowl ship)
-      :_(this (fact-init:io treaty+!>((~(got by sovereign) desk)))^~)
+      :_(this (fact-init:io (treaty:cg:cc (~(got by sovereign) desk)))^~)
     ?^  treat=(~(get by treaties) [ship desk])
       :_  this
-      (fact-init:io treaty+!>(u.treat))^~
+      (fact-init:io (treaty:cg:cc u.treat))^~
     ?>  =(our.bowl src.bowl)
     =.  direct  (~(put in direct) [ship desk])
     :_(this (drop ~(safe-watch tr:cc [ship desk])))
@@ -134,13 +134,12 @@
       %+  skim  ~(tap by treaties)
       |=  [ref=[^ship desk] =treaty]
       (~(has in alliance) ref)
-    ``(treaty-update:cg:ca %ini allied)
+    ``(treaty-update:cg:ca:cc %ini allied)
   ::
       [%x %treaty @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =*  desk   i.t.t.t.path
-    =/  =treaty  (~(got by treaties) [ship desk])
-    ``treaty+!>(treaty)
+    ``(treaty:cg:cc (~(got by treaties) [ship desk]))
   ==
 ::
 ++  on-agent 
@@ -226,7 +225,6 @@
       [%sovereign @ ~]
     =*  desk  i.t.wire
     (take-sovereign desk)
-
   ==
   ::
   ++  take-sovereign
@@ -303,9 +301,9 @@
   ++  wire  /sovereign/[desk]
   ++  pass  ~(. ^pass wire)
   ++  path  /treaty/(scot %p our.bowl)/[desk]
-  ++  get-docket  .^(docket:docket %cx (scry:io desk /desk/docket))
+  ++  get-docket  .^(docket:docket %cx (scry:io desk /desk/docket-0))
   ++  warp
-    (warp-our:pass desk `[%next %x da+now.bowl /desk/docket])
+    (warp-our:pass desk `[%next %x da+now.bowl /desk/docket-0])
   ++  kick
     (kick:io path ~)
   ++  give
@@ -315,13 +313,3 @@
     (poke-our:pass %hood kiln-permission+!>([desk / &]))
   --
 --
-
-
-
-
-  
-
-
-
-
-

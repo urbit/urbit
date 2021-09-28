@@ -12,7 +12,7 @@
       update:store
       %graph-update
       %graph-pull-hook
-      2  2
+      3  3
   ==
 ::
 +$  agent  (push-hook:push-hook config)

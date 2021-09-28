@@ -134,7 +134,7 @@
       ==
     [cards this]
   ::
-      %graph-update-2
+      %graph-update-3
     =+  !<(=update:store vase)
     ?+    -.q.update  !!
         %add-nodes

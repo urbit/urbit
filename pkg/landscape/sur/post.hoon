@@ -40,6 +40,23 @@
       [%reference =reference]
   ==
 ::
+++  post-one
+  |%
+  ::
+  +$  content
+    $%  [%text text=cord]
+        [%mention =ship]
+        [%url url=cord]
+        [%code expression=cord output=(list tank)]
+        [%reference =reference]
+  ==
+  ::
+  +$  reference
+    $%  [%graph group=resource =uid]
+        [%group group=resource]
+    ==
+  --
+::
 ++  post-zero
   |%
   ::

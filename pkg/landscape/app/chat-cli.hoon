@@ -169,7 +169,7 @@
       ::
           %fact
         ?+  p.cage.sign  ~|([dap.bowl %bad-sub-mark wire p.cage.sign] !!)
-            %graph-update-2
+            %graph-update-3
           %-  on-graph-update:tc
           !<(update:graph q.cage.sign)
         ==
@@ -763,7 +763,7 @@
       ::TODO  move creation into lib?
       %^  act  %out-message
         %graph-push-hook
-      :-  %graph-update-2
+      :-  %graph-update-3
       !>  ^-  update:graph
       :-  now.bowl
       :+  %add-nodes  audience
