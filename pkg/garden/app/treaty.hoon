@@ -270,7 +270,7 @@
   |%
   ++  ally-update      |=(=update:ally ally-update-0+!>(update))
   ++  alliance-update  |=(=update:alliance alliance-update-0+!>(update))
-  ++  treaty  |=(t=^treaty treaty+!>(t))
+  ++  treaty  |=(t=^treaty treaty-0+!>(t))
   ++  treaty-update  |=(u=update:^treaty treaty-update-0+!>(u))
   --
 ::  +ca: Card construction
