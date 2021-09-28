@@ -1021,24 +1021,9 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         return _n_comp(ops, nef, los_o, tel_o);
       }
 
-      //  no currently recognized static hints
-      //
-      case c3__clep: {
+      case c3__bout: {
         fprintf(stderr," \r\n");
-        fprintf(stderr, "compiling clep\r\n");
-        u3_noun fen = u3_nul;
-        c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
-
-        //  HILB overflows to HILS
-        //
-        ++tot_w; _n_emit(ops, u3nc(HILB, u3nc(u3k(hif), u3k(nef))));
-        ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
-        tot_w += nef_w; _n_apen(ops, fen);
-        ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HILL : HILK);
-      } break;
-      case c3__clet: {
-        fprintf(stderr," \r\n");
-        fprintf(stderr, "compiling clet\r\n");
+        fprintf(stderr, "compiling bout\r\n");
         u3_noun fen = u3_nul;
         c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
 
@@ -1067,9 +1052,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
 
-          //  no currently recognized dynamic hints
-          //
-          case u3_none: {
+      		case c3__bout: {
             u3_noun fen = u3_nul;
             c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
 
@@ -1691,294 +1674,23 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
-//-----------------------------------------------------
-#define _POSIX_C_SOURCE 200809L
-#include <inttypes.h>
-#include <math.h>
-#include <stdio.h>
+/* TODO: this function should probably not live in nock.c
+ *       let's put it somewhere more appropriate
+ */
+
+/* current_epoc_time_ns(): returns milliseconds since epoc at call time
+**                         as a 64-bit wide atom.
+*/
 #include <time.h>
-static u3_cell
-current_epoc_time_ms_as_cell (void)
-{
-    long ms; // Milliseconds
-    time_t s;  // Seconds
-    struct timespec spec;
-    clock_gettime(CLOCK_REALTIME, &spec);
-    s  = spec.tv_sec;
-    // Convert nanoseconds to milliseconds
-    ms = round(spec.tv_nsec / 1.0e6);
-    if (ms > 999) {
-        s++;
-        ms = 0;
-    }
-    return u3i_cell(s, ms);
-}
-
-/*TODO: move time functions
-        so that noun does not
-        cycle-depend upon vere
-  */
-#include <../include/vere/vere.h>
 static u3_atom
-urbit_epocnow_atom (void)
+current_epoc_time_ns (void)
 {
     struct timespec spec;
-    clock_gettime(CLOCK_REALTIME, &spec);
-    return u3_time_in_ts(&spec);
+    clock_gettime(CLOCK_MONOTONIC, &spec);
+    return u3i_chub(
+      (spec.tv_sec * 1000000000ULL) + spec.tv_nsec
+    );
 }
-
-#ifdef WIN32
-#include <windows.h>
-#elif _POSIX_C_SOURCE >= 199309L
-#include <time.h>   // for nanosleep
-#else
-#include <unistd.h> // for usleep
-#endif
-
-void
-sleep_ms(int milliseconds)
-{ // cross-platform sleep function
-#ifdef WIN32
-    Sleep(milliseconds);
-#elif _POSIX_C_SOURCE >= 199309L
-    struct timespec ts;
-    ts.tv_sec = milliseconds / 1000;
-    ts.tv_nsec = (milliseconds % 1000) * 1000000;
-    nanosleep(&ts, NULL);
-#else
-    if (milliseconds >= 1000)
-      sleep(milliseconds / 1000);
-    usleep((milliseconds % 1000) * 1000);
-#endif
-}
-//-----------------------------------------------------
-/* urbit dev process notes 2021-08-11:
-  project setup:
-      install nix
-      install git
-      install git-lfs
-      git clone urbit
-      cd urbit
-      git config credential.helper store
-      git config pull.rebase true
-      git lfs install
-      git lfs pull
-      cd pkg/urbit
-      nix-shell
-      ./configure && make -j 6
-
-  pills:
-      - brass: formal bootstrap
-      - solid: fast boot for development (logically, partially-evaluated brass)
-      - ivory: runtime support
-  my pill locations:
-      urbit/bin/brass.pill
-      urbit/bin/ivory.pill
-      urbit/bin/solid.pill
-      urbit/pkg/hs/urbit-king/test/gold/hoontree.pill
-
-  boot a fake ship:
-      build/urbit -F name-of-any-ship-except-comets
-      -
-
-  these are all the same:
-      build/urbit -F zod
-      build/urbit -F zod -c zod
-      build/urbit -F zod -u bootstrap.urbit.org/$URBIT_VERSION.pill
-
-  this is the standard local dev command:
-      build/urbit -l -F zod -B path/to/pill -A path/to/arvo -c name-of-fake-ship
-      my version:
-      # create a fake ship zod with a peir named fakezod, lite boot using fast boot pill and the local arvo path
-      build/urbit -c ../../fakezod -F zod  -l -B ../../bin/solid.pill -A ../arvo
-
-  to restart:
-      build/urbit name-of-fake-ship
-      my version:
-      # this should resume the above ship with all the settings
-      build/urbit fakezod
-
-  notable urbit binary flags:
-      * -L: local-only networking (automatically set for fake ships)
-      * -u: download pill from url
-      * -B: boot from local pill at path
-      * -l: lite-boot (faster, limited userspace)
-      * -A: load filesystem from local arvo directory
-
-  to test clep:
-      # in the fake zod dojo type and enter this:
-      ~>  %clep  (add 2 2)
-
-  bootstrap formula (see media.urbit.org/whitepaper.pdf):
-      [%2 [%0 3] %0 2]
-      -
-
-  >>>>> commands to use during main dev cycle:
-    [urbit git root]$ cd pkg/urbit/ && nix-shell && cd ../..
-    [nix-shell urbit/pkg/urbit]$ ./configure && make -j 6 && build/urbit ../../fakezod
-    ~zod:dojo> !:  ~>  %clep  (add 1 2)
-    ~zod:dojo> !:  ~>  %clet  (add 4 1)
-
-  dynamic hint protocol:
-      commonly used hints are directly represented in the u3 bytecode for performance, and adding new opcodes is an involved task.
-
-      in urbit-v1.0, we introduced a protocol for implementing dynamic hint handlers. hints must be whitelisted in the nock->bytecode compiler, and handlers are implemented in before/after callback functions:
-
-      https://github.com/urbit/urbit/pull/3979
-
-      there are two kinds of dynamic hint handlers, mirroring the two hint reduction rules (opcode 11) in the nock spec. the first is an atomic hint, which is merely a label; the second is a labeled nock formula, which can convey arbitrary data to the runtime. these are compiled into different bytecodes, and handled in different callbacks.
-
-      hints are whitelisted in _n_bint() (the "hint-processing helper" for the bytecode compiler in _n_comp()). there are separate case statements for the separate hint types, and whitelisting a given hint merely involves adding a fallthru case (the default case discards the hint while preserving nock semantics). to simplify memory management, hint labels should be "motes" -- compile-time constants of up to 4 letters, defined in motes.h.
-
-      atomic hint handlers are added to _n_hilt_fore()/_n_hilt_hind(), arbitrary hint handlers in _n_hint_fore()/_n_hint_hind()
-  */
-
-/* urbit grant notes 2021-08-18:
-  Here's a quick rundown of u3's stack trace production mechanism:
-
-  - the bytecode interpreter maintains a trace stack via
-      u3t_push()/u3t_mean() and u3t_drop()
-
-  - the frames in that stack are unrendered
-      Many frames are just data, like the %spot hints that record source locations. But some contain code, like the %mean hints from ~|.
-
-  - the stack is stored in the current road, at u3R->bug.tax
-
-  - traces are currently only produced for failed/interrupted virtual computations
-
-  - Virtualization is performed by u3m_soft() and related variants.
-  It involves a setjmp() call to trap for "exceptions", and a new inner road (u3m_leap()) to establish an isolated memory arena.
-  "Exceptions" are "thrown" via longjmp(), in u3m_bail() or a signal handler.
-
-  In some more detail:
-      - Every event is run virtualized via u3m_soft. see _serf_poke() in worker/serf.c
-      - Inside an event, further levels of virtualization are established via the +mink jet, which eventually calls u3m_soft_run()
-      - Successful computations, namespace blocks, and deterministic bails, such as u3m_bail(c3__exit), are all returned directly to the parent context
-      - Non-deterministic bails cannot be trapped, and unwind the entire execution context by re-bailing at each layer.
-      - In the case of a deterministic bail, the product of +mink / u3m_soft_run() is a proto-stack trace
-      - To render that to (list tank), ie $tang, we call `+mook`, which formats each entry in urbit's print format ($tank), and evaluates any lazy/deferred frames
-      - There's no C implementation, so we just make a dynamic call into nock
-      - A representative call-site is in u3m_soft()
-  -------
-      - At any point time, the logical current trace stack may be spread across many roads, if we're deeply nested in virtual contexts
-      - There is not currently any code that combines those traces directly; they're currently combined by unwinding/re-bailing
-      - For an initial implementation, I would only print the trace from the current road.
-      - Eventually, we'll want to gather the trace stack from all roads, and probably virtualize the call to +mook.
-
-  */
-
-/* urbit grant todo/notes 2021-08-25:
-  - u3t_init()/u3t_boot() are called on loom/inner-road init
-  - u3t_on()/u3t_off() establishing modes/labels for -P sampling profiler (and no-op without the compile-time MEMORY_DEBUG option)
-
-  >>>> Brad jump to THIS! <<<<<<
-  1. be able to session drive next time
-  2. DONE: poc of print traces without crashing
-  3. look into concating parent stacks into my trace
-      - trace is most recent at top
-      - (weld a b) / u3ck_weld
-      - u3kc_weld()
-      - u3kb_weld()
-      - best bet (zing a)
-      - u3kb_zing()
-      - nock.hoon: _n_find()
-      - trace.c: _t_samp_process()
-      - post is an offset into loom: u3to / u3of
-      - rod_u = u3tn(u3_road, rod_u->par_p);
-
-  correct code example:
-      u3_noun lit = u3t(u3dc("mook", 2, u3k(u3R->bug.tax)));
-      while ( u3_nul != lit ) {
-          u3t_slog(u3nc(0,u3k(u3h(lit))));
-          lit = u3t(lit);
-      }
-
-  notes:
-      print the trace during 'fore'
-      spot hints
-          src code locations
-          assumed to be paths to hoon file in clay
-          wraps expressions (or tries to)
-          <path>:start<line col>end<line col>
-          the parser handles them
-          dojo dissables %spots by default
-          we potentially can parse these against clay files
-            to render code in the form of
-            <path>:<the code between start and end>
-            aka what perl, python, and everything else does
-      mean hints
-          also push/pop per expression
-          not locations, these are data (to pretty print?)
-          ~| and ~! will push a %mean hint in hoon or dojo
-          an example:
-            [ %gall-call-failed
-              ~[/gall/use/hood/0w2.ihwUB/out/~zod/dojo/drum/phat/~zod/dojo /dill //term/1]
-              [ %deal
-                p=[p=~zod q=~zod]
-                q=%dojo
-                  r
-                [ %poke
-                    cage
-                  [ p=%sole-action
-                      q
-                    [   #t/
-                      [ id=@ta
-                          dat
-                        ?(
-                          [%clr %~]
-                          [ %det
-                            ler=[own=@ud his=@ud]
-                            haw=@uvH
-                              ted
-                              ^#2
-                            ?(
-                              [%del p=@ud]
-                              [%ins p=@ud q=@c]
-                              [%mor p=it(#2)]
-                              [%nop %~]
-                              [%set p=it(@c)]
-                            )
-                          ]
-                          [%ret %~]
-                          [%tab pos=@ud]
-                        )
-                      ]
-                      q=[1.852.707.279.204.647.268.964 7.628.146 0]
-                    ]
-                  ]
-                ]
-              ]
-            ]
-  to re-enable dojo spot hints do this (without the backticks):
-      turn on  hints `!:  `
-      turn off hints `!.  `
-
-  this should push %mean hint before clet or add
-  ~|  %clet  ~>  %clet (add 1 1)
-
-  ~! is a hint for compile time crashes
-  ~| is for runtime crash hints
-
-  tall:
-  ~|  %foo  ~%  %clet  (add 2 2)
-  wide:
-  ~|(%foo ~%(%clet (add 2 2)))
-
-  tall can contain wide but not the other way.
-
-  road ref counts:
-      (expect more info from Joe on this soon)
-      read only access to roads above me
-      on road exit we copy out our data
-          usually some big tree
-          as we copy things out we inc ref count on stuff that is already in parent road
-      walk up the parent roads to find the
-      stacks to join together
-
-  event:(timestamp, ovom:(wire, card:(tree of cells)))
-  */
-//-----------------------------------------------------
-
 
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
 **            hin: [hint-atom, formula]. TRANSFER
@@ -1991,60 +1703,15 @@ sleep_ms(int milliseconds)
 static c3_o
 _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 {
-  if ( c3__clep == u3h(hin) ) {
-    u3_cell now = current_epoc_time_ms_as_cell();
+  if ( c3__bout == u3h(hin) ) {
+    u3_atom now = current_epoc_time_ns();
     *out = u3i_cell(u3h(hin), now);
-    //// TODO: this should work, but does not
-    //u3_atom now = urbit_epocnow_atom();
-    //*out = u3i_cell(u3h(hin), now);
-    sleep_ms(512);
-    return c3y;
   }
-  else if ( c3__clet == u3h(hin) ) {
-    u3_cell now = current_epoc_time_ms_as_cell();
-    *out = u3i_cell(u3h(hin), now);
-    //// TODO: this should work, but does not
-    //u3_atom now = urbit_epocnow_atom();
-    //*out = u3i_cell(u3h(hin), now);
-
-    u3_road* road = u3R;
-    u3_noun tax = road->bug.tax;
-
-    /*TODO: something in this loop causes u3t_slog to fail
-            perhaps its the zero at the end of one of the tax lists
-            perhaps its on of the tax refs that IS zero
-            perhaps its a pointer/noun mismatch
-            the result is that I get what seems to be a stacktrace-on-fail
-            when I just want a printout of the stack...
-    */
-    // while there is a parent road ref ...
-    while ( &(u3H->rod_u) != road ) {
-      // ... point at the next road and append its stack to tax
-      road = u3tn(u3_road, road->par_p);
-      //if (0 == road->bug.tax) {
-      //  continue;
-      //}
-      //if (0 == tax) {
-      //  tax = road->bug.tax;
-      //  continue;
-      //}
-      tax = u3qb_weld(tax, road->bug.tax);
-    }
-    // render and print the stack
-    u3_noun lit = u3t(u3dc("mook", 2, u3k(tax)));
-    while ( u3_nul != lit ) {
-      u3t_slog(u3nc(1,u3k(u3th(lit))));
-      lit = u3t(lit);
-    }
-
-    //u3_noun mok = u3dc("mook", 2, tax);
-    //u3v_punt(blu, tab_l, u3k(u3h(mok)));
-
-    return c3y;
-  }
+	else {
+  	*out = u3_nul;
+	}
 
   u3z(hin);
-  *out = u3_nul;
   return c3y;
 }
 
@@ -2055,83 +1722,15 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 static void
 _n_hilt_hind(u3_noun tok, u3_noun pro)
 {
-  /* TODO: first attempt to unpack tok
-           so that we can test for clep-ness
-           */
   u3_noun h_tok, t_tok;
   u3r_cell(tok, &h_tok, &t_tok);
-  if ( c3__clep == h_tok ) {
-    // get and unpack current time
-    u3_noun h_now, t_now;
-    u3_cell timenow = current_epoc_time_ms_as_cell();
-    u3r_cell(timenow, &h_now, &t_now);
-
-    // unpack old time
-    u3_noun h_then, t_then;
-    u3r_cell(t_tok, &h_then, &t_then);
-
-    // subtract seconds
-    u3_atom s = h_now - h_then;
-
-    // subtract milliseconds
-    u3_atom ms;
-    if ( s != 0 ) {
-      ms = (1000+t_now) - t_then;
-      s -= 1;
-    }
-    else {
-      ms = t_now - t_then;
-    }
-    fprintf(stderr, " \r\n");
-    fprintf(stderr, "clep: took sec.ms %u.%u\r\n", s, ms);
-    /* TODO: we need to fix this;
-      both u3_time_gap_double and u3_time_gap_ms crash when mem managing
-      and yeild wrong results when I comment out the u3z calls
-    */
-    //u3_atom now = urbit_epocnow_atom();
-    //u3_atom wen = t_tok;
-    //c3_c* lab_a = u3m_pretty(now);
-    //c3_c* lab_b = u3m_pretty(wen);
-    //fprintf(stderr, " \r\n");
-    //fprintf(stderr, "clep: result is now:%s wen:%s\r\n", lab_a, lab_b);
-    //c3_d delta_time = u3_time_gap_double(u3k(now), u3k(wen));
-    //fprintf(stderr, "clep: took %lu microseconds\r\n", delta_time);
-  }
-  else if ( c3__clet == h_tok ) {
-    // get and unpack current time
-    u3_noun h_now, t_now;
-    u3_cell timenow = current_epoc_time_ms_as_cell();
-    u3r_cell(timenow, &h_now, &t_now);
-
-    // unpack old time
-    u3_noun h_then, t_then;
-    u3r_cell(t_tok, &h_then, &t_then);
-
-    // subtract seconds
-    u3_atom s = h_now - h_then;
-
-    // subtract milliseconds
-    u3_atom ms;
-    if ( s != 0 ) {
-      ms = (1000+t_now) - t_then;
-      s -= 1;
-    }
-    else {
-      ms = t_now - t_then;
-    }
-    fprintf(stderr, " \r\n");
-    fprintf(stderr, "clet: took sec.ms %u.%u\r\n", s, ms);
-    /* TODO: we need to fix this;
-      both u3_time_gap_double and u3_time_gap_ms crash when mem managing
-      and yeild wrong results when I comment out the u3z calls
-    */
-    //u3_atom now = urbit_epocnow_atom();
-    //u3_atom wen = t_tok;
-    //c3_c* lab_a = u3m_pretty(now);
-    //c3_c* lab_b = u3m_pretty(wen);
-    //fprintf(stderr, "clet: result is now:%s wen:%s\r\n", lab_a, lab_b);
-    //c3_d delta_time = u3_time_gap_double(u3k(now), u3k(wen));
-    //fprintf(stderr, "clet: took %lu microseconds\r\n", delta_time);
+  if ( c3__bout == h_tok ) {
+    u3_atom delta = u3ka_sub(current_epoc_time_ns(), u3k(t_tok) );
+		c3_c str_c[64];
+		snprintf(str_c, 63, "took %" PRIu64 " nanoseconds", u3r_chub(0, delta) );
+		// TODO: can we make our statement show up AFTER the echo of the hoon cmd in dojo?
+    u3t_slog(u3nc(0, u3i_string(str_c)));
+    u3z(delta);
   }
   else {
     c3_assert( u3_nul == tok );
@@ -2153,8 +1752,16 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
 static c3_o
 _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
 {
-  u3z(hin); u3z(*clu);
-  *clu = u3_nul;
+  if ( c3__bout == u3h(hin) ) {
+    u3_atom now = current_epoc_time_ns();
+    *clu = u3i_trel(u3h(hin), *clu, now);
+  }
+	else {
+		u3z(*clu);
+  	*clu = u3_nul;
+	}
+
+	u3z(hin);
   return c3y;
 }
 
@@ -2165,7 +1772,34 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
 static void
 _n_hint_hind(u3_noun tok, u3_noun pro)
 {
-  c3_assert( u3_nul == tok );
+  u3_noun p_tok, q_tok, r_tok;
+  u3r_trel(tok, &p_tok, &q_tok, &r_tok);
+  if ( c3__bout == p_tok ) {
+		// get the nanoseconds elapsed
+    u3_atom delta = u3ka_sub(current_epoc_time_ns(), u3k(r_tok) );
+
+		// unpack q_tok to get the C string from the tank
+		u3_noun q_tok_h, q_tok_t;
+		u3r_cell(q_tok, &q_tok_h, &q_tok_t);
+		c3_y* str_b = u3r_tape(q_tok_t);
+
+		// format the timing report and the clu sting from q_tok together
+		c3_c str_c[64];
+    snprintf(str_c, 63, "%s: took %" PRIu64 " nanoseconds", str_b, u3r_chub(0, delta) );
+	
+		// TODO: can we make our statements show up AFTER the echo of the hoon cmd in dojo?
+
+		// send the head of the tank (severity) and the report string to the terminal
+		// to handle it as it wants, when it wants
+		u3t_slog(u3nc(q_tok_h, u3i_string(str_c)));
+
+		// TODO: do I need to u3z any of the local vars I've defined?
+    u3z(delta);
+  }
+  else {
+    c3_assert( u3_nul == tok );
+  }
+
   u3z(tok);
 }
 
@@ -2202,6 +1836,9 @@ typedef struct {
  *            mov: -1 north, 1 south
  *            off: 0 north, -1 south
  */
+// thats telekinesis Kyle! 
+// this is where I can steal u3t_heck calls and other
+// profile printing goodness from! 
 static u3_noun
 _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 {
