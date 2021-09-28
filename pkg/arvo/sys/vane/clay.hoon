@@ -306,6 +306,7 @@
                   %merg                                 ::  merge desks
                   %fuse                                 ::  merge many
                   %park                                 ::
+                  %perm                                 ::
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
@@ -1611,14 +1612,16 @@
         =/  sen  (^^sein:title rof our now our)
         %-  lime
         |^  ^-  (list move)
-        ::
-        ?:  =(sen our)
-          :~  create-desk
-              install-local
-          ==
-        :~  create-desk
-            install-local
-            install-remote
+        =-  (murn - same)
+        ^-  (list (unit move))
+        :~  `create-desk
+            `install-local
+          ::
+            ?:  =(sen our)  ~
+            `install-remote
+          ::
+            ?:  =(%base desk)  ~
+            `publish-desk
         ==
         ::
         ++  create-desk  ^-  move
@@ -1626,6 +1629,10 @@
           %^  new-desk:cloy  desk
             (latest-tako desk)
           ;;((map path page) (cue (get-tmp-jam desk)))
+        ::
+        ++  publish-desk  ^-  move
+          :^  hen  %pass  /dist/public/[desk]
+          [%c %perm desk / %r `[%black ~]]
         ::
         ++  install-local  ^-  move
           :^  hen  %pass  /dist/install-local/[desk]
