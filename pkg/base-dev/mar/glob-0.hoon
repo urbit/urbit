@@ -7,5 +7,5 @@
   |%
   ++  noun  (map path mime)
   --
-++  grad  ~&(%grid-mar %noun)
+++  grad  %noun
 --
