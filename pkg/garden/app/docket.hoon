@@ -286,7 +286,7 @@
     |=  [=desk =^wire]
     ^-  (quip card _state)
     ~|  [%took-for-nonexistent-charge desk]
-    ?>  (~(has by charges) desk)
+    ?>  |((~(has by charges) desk) ?=([%uninstall ~] wire))
     =*  cha  ~(. ch desk)
     ?+  wire  ~|(%bad-charge-wire !!)
     ::
