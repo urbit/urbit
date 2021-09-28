@@ -271,7 +271,7 @@
       ?~  p.sign  `state
       ((slog leaf+"Failed to uninstall %{(trip desk)}" u.p.sign) `state)
     ::
-        ?([%glob @ %http @ ~] [%glob @ %ames @ ~])
+        [%glob @ ?(%http %ames) @ ~]
       ?-  -.sign
         %kick   `state
       ::
@@ -280,10 +280,10 @@
         =/  act=tape  ?:(?=(%poke-ack -.sign) "start" "listen")
         =.  charges
           %-  new-chad:cha
-          ?:  ?=(i.t.t.wire %http)
+          ?:  ?=(%http i.t.t.wire)
             hung+'failed to fetch glob via http'
           hung+'failed to fetch glob via ames'
-        ((slog leaf+"docket: couldn't {act} thread; will retry" u.p.sign) state)
+        ((slog leaf+"docket: couldn't {act} thread; will retry" u.p.sign) `state)
       ::
           %fact
         ?+    p.cage.sign  `state
@@ -356,9 +356,9 @@
   |%
   ++  glob            |=(g=^glob glob-0+!>(g))
   ++  docket          |=(d=^docket docket-0+!>(docket))
-  ++  charge-update   |=(u=^charge-update charge-update+!>(u))  
+  ++  charge-update   |=(u=^charge-update charge-update+!>(u))
   ++  kiln-uninstall  |=(=desk kiln-uninstall+!>(desk))
-  ++  kiln-install  
+  ++  kiln-install
     |=([here=desk her=ship there=desk] kiln-install+!>([here her there]))
   --
 ::
@@ -638,12 +638,15 @@
     =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
     ?>  ?=(%glob -.href.docket.charge)
     =/  ref  glob-reference.href.docket.charge
-    ?:  ?=(%ames -.location.ref)
-      ?:  =(our.bowl ship.location.ref)
-        ~>  %slog.0^leaf/"docket: awaiting manual glob for {<desk>} desk"
-        ~
+    ?:  ?&  ?=(%ames -.location.ref)
+            =(our.bowl ship.location.ref)
+        ==
+      ~>  %slog.0^leaf/"docket: awaiting manual glob for {<desk>} desk"
+      ~
     ~>  %slog.0^leaf/"docket: fetching {<-.location.ref>} glob for {<desk>} desk"
-    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[ref desk])])
+    =/  =cage
+      :-  %spider-start
+      !>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[ref desk])])
     :~  (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
         (poke-our:(pass (glob-wire ref)) %spider cage)
     ==
