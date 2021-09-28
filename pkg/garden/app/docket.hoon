@@ -36,6 +36,7 @@
     def   ~(. (default-agent this %|) bowl)
     cc    ~(. +> bowl)
     ch    ch:cc
+    cg    cg:cc
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -88,7 +89,6 @@
   ++  install
     |=  [=ship =desk]
     ^-  (quip card _state)
-    ~&  [dap.bowl %install ship desk]
     =+  .^(=treaty:treaty %gx (scry:io %treaty /treaty/(scot %p ship)/[desk]/noun))
     ?:  (~(has by charges) desk)
       ~|  bad-install-desk/desk
@@ -102,7 +102,6 @@
   ++  uninstall
     |=  =desk
     ^-  (quip card _state)
-    ~&  [dap.bowl %uninstall desk]
     =/  =charge  ~|(no-charge-installed+desk (~(got by charges) desk))
     =.  charges  (~(del by charges) desk)
     =?  by-base  ?=(%glob -.href.docket.charge)
@@ -135,7 +134,7 @@
       ~|  [%glob-unavailable requested=hash have=have]
       ?>  =(hash have)
       :_  state
-      (fact-init-kick:io (glob:cg:cc glob.chad.charge))
+      (fact-init-kick:io (glob:cg glob.chad.charge))
     ==
   [cards this]
 ::
@@ -163,7 +162,7 @@
     ::
       [%x %charges ~]
     :-  ~  :-  ~
-    %-  charge-update:cg:cc
+    %-  charge-update:cg
     :-  %initial
     %-  ~(gas by *(map desk charge))
     %+  turn  ~(tap by charges)
@@ -185,24 +184,21 @@
   ::
   ++  take-kiln
     ^-  (quip card _state)
-    ~&  [dap.bowl %take-kiln -.sign]
     ?+  -.sign   (on-agent:def:cc wire sign)
       %kick  [(~(watch-our pass /kiln) %hood /kiln/vats)^~ state]
     ::
         %fact
-      ~&  [dap.bowl %kiln-fact p.cage.sign]
       ?.  ?=(%kiln-vats-diff-0 p.cage.sign)  `state
       =+  !<(=diff:hood q.cage.sign)
-      ~&  [dap.bowl %kiln-diff -.diff]
       =*  cha  ~(. ch desk.diff)
       ?-  -.diff
           ?(%block %reset %merge-sunk %merge-fail)
-        ~&  [dap.bowl %ignoring-kiln-diff -.diff]  ::TODO  removeme
         `state
       ::
           %commit
-        =*  cha  ~(. ch desk.diff)
-        ?.  docket-exists:cha  `state
+        ?.  docket-exists:cha
+          ~&  [dap.bowl %no-docket-file-for desk.diff]
+          `state
         ::  always update the docket in state to match clay's
         ::
         =/  =docket            docket:cha
@@ -217,7 +213,6 @@
         ::
         =.  by-base  (~(put by by-base) base.href.docket desk.diff)
         ::  if the glob specification is unchanged, keep it
-        ::
         ::
         ?:  &(?=(^ pre) =(href.docket.u.pre href.docket))
           [~[add-fact:cha] state]
@@ -354,6 +349,7 @@
 ++  on-fail  on-fail:def
 ++  on-leave  on-leave:def
 --
+::
 |_  =bowl:gall
 ++  io    ~(. agentio bowl)
 ++  pass  pass:io
