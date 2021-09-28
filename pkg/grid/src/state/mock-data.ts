@@ -164,6 +164,10 @@ export const mockCharges: Charges = _.reduce(
       return { ...acc, [desk]: { ...val, chad: { hung: 'glob failed' } } };
     }
 
+    if (desk === 'messages') {
+      return { ...acc, [desk]: { ...val, chad: { install: null } } };
+    }
+
     return { ...acc, [desk]: { ...val, chad } };
   },
   {} as Charges
@@ -343,7 +347,7 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
       desk,
       next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
       ship: '~zod',
-      paused: false
+      paused: desk === 'groups'
     }
   },
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
