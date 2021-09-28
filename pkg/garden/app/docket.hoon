@@ -88,6 +88,7 @@
   ++  install
     |=  [=ship =desk]
     ^-  (quip card _state)
+    ~&  [dap.bowl %install ship desk]
     =+  .^(=treaty:treaty %gx (scry:io %treaty /treaty/(scot %p ship)/[desk]/noun))
     ?:  (~(has by charges) desk)
       ~|  bad-install-desk/desk
@@ -101,6 +102,7 @@
   ++  uninstall
     |=  =desk
     ^-  (quip card _state)
+    ~&  [dap.bowl %uninstall desk]
     =/  =charge  ~|(no-charge-installed+desk (~(got by charges) desk))
     =.  charges  (~(del by charges) desk)
     =?  by-base  ?=(%glob -.href.docket.charge)
@@ -183,14 +185,20 @@
   ::
   ++  take-kiln
     ^-  (quip card _state)
+    ~&  [dap.bowl %take-kiln -.sign]
     ?+  -.sign   (on-agent:def:cc wire sign)
       %kick  [(~(watch-our pass /kiln) %hood /kiln/vats)^~ state]
     ::
         %fact
+      ~&  [dap.bowl %kiln-fact p.cage.sign]
       ?.  ?=(%kiln-vats-diff-0 p.cage.sign)  `state
       =+  !<(=diff:hood q.cage.sign)
+      ~&  [dap.bowl %kiln-diff -.diff]
       =*  cha  ~(. ch desk.diff)
-      ?+  -.diff  `state
+      ?-  -.diff
+          ?(%block %reset %merge-sunk %merge-fail)
+        ~&  [dap.bowl %ignoring-kiln-diff -.diff]  ::TODO  removeme
+        `state
       ::
           %commit
         =*  cha  ~(. ch desk.diff)
