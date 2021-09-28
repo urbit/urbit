@@ -42,6 +42,18 @@ module.exports = {
           // Compiles Sass to CSS
           'sass-loader'
         ]
+      },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/'
+            }
+          }
+        ]
       }
     ]
   },
@@ -69,7 +81,8 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: 'Groups',
-      template: './public/index.html'
+      template: './public/index.html',
+      favicon: './src/assets/img/Favicon.png'
     })
   ],
   output: {
