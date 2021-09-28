@@ -128,11 +128,12 @@
   ::
   ++  title-prefix
     |=  =cord
+    %+  rap  3
     ?:  =(desk %base)
-      'System software'
+      ['System software' cord ~]
     ?:  has-docket  
-      (rap 3 'App: "' title:docket '"' cord ~)
-    (rap 3 'Desk: ' desk cord ~)
+      ['App: "' title:docket '"' cord ~]
+    ['Desk: ' desk cord ~]
   ::
   ++  get-version
     ?:  has-docket
