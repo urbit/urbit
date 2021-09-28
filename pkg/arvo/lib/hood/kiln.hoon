@@ -742,7 +742,7 @@
     ?.  (get-remote-diff our loc now [ship desk aeon]:ral)
       ~>  %slog.(fmt "remote is identical to {here}, skipping")
       =.  rail.rak  `%*(. ral aeon +(aeon:ral))
-      (emit sync-ud:pass)
+      (emil sync-ud:pass (diff:give %commit loc rak) ~)
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft
       ?:  =(our ship:ral)
