@@ -187,7 +187,7 @@
       %kick  [(~(watch-our pass /kiln) %hood /kiln/vats)^~ state]
     ::
         %fact
-      ?.  ?=(%kiln-vats-diff p.cage.sign)  `state
+      ?.  ?=(%kiln-vats-diff-0 p.cage.sign)  `state
       =+  !<(=diff:hood q.cage.sign)
       =*  cha  ~(. ch desk.diff)
       ?+  -.diff  `state

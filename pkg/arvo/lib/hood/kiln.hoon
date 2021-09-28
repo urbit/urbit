@@ -411,8 +411,8 @@
   ++  emil  |=((list card:agent:gall) vats(kiln (^emil +<)))
   ++  give
     |%
-    ++  snap  [%give %fact ~[/kiln/vats] %kiln-vats-snap !>(ark)]
-    ++  diff  |=(d=^diff [%give %fact ~[/kiln/vats] %kiln-vats-diff !>(d)])
+    ++  snap  [%give %fact ~[/kiln/vats] %kiln-vats-snap-0 !>(ark)]
+    ++  diff  |=(d=^diff [%give %fact ~[/kiln/vats] %kiln-vats-diff-0 !>(d)])
     --
   ++  pass
     |%
@@ -1237,7 +1237,7 @@
     [%vats ~]    abet
   ::
       [%ark ~]
-    abet(moz :_(moz [%give %fact ~ %kiln-vats-snap !>(ark)]))
+    abet(moz :_(moz [%give %fact ~ %kiln-vats-snap-0 !>(ark)]))
   ==
 ::
 ++  take-agent
