@@ -536,7 +536,6 @@
   |=  [eyre-id=(unit @ta) output=mark =desk]
   :_  state(serving (~(del by serving.state) tid))
   ?~  eyre-id
-    %-  (slog leaf+"spider got input for non-existent eyre-id in thread {<tid>}" ~)
     ~
   %+  give-simple-payload:app:server  u.eyre-id
   ^-  simple-payload:http
@@ -568,7 +567,6 @@
     (~(get by serving.state) tid)
   |=  [eyre-id=(unit @ta) output=mark =desk]
   ?~  eyre-id
-    %-  (slog leaf+"spider got input for non-existent eyre-id in thread {<tid>}" ~)
     `state
   =/  tube  (convert-tube output %json desk bowl)
   :_  state(serving (~(del by serving.state) tid))
