@@ -540,7 +540,7 @@
           ^-  (list card)
           =-  [%pass /write/[desk] %arvo %c %info -]~
           %+  foal:space:userlib
-            /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket
+            /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket-0
           %-  docket:cg
           docket.charge(glob-reference.href [(hash-glob glob) %ames our.bowl])
       ==
