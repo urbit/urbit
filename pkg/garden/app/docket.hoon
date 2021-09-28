@@ -274,54 +274,18 @@
       ?~  p.sign  `state
       ((slog leaf+"Failed to uninstall %{(trip desk)}" u.p.sign) `state)
     ::
-        [%glob @ %ames @ ~]
-      ?-  -.sign
-        %kick      `state
-        %poke-ack  ~&([dap.bowl %unexpected-poke-ack] `state)
-      ::
-          %watch-ack
-        ?~  p.sign  `state
-        %-  %-  slog
-            leaf+"docket: failed to fetch glob over ames for {(trip desk)}"
-        =.  charges  (new-chad:cha hung+'failed to fetch glob via ames')
-        [~[add-fact:cha] state]
-      ::
-          %fact
-        ?.  =(%glob p.cage.sign)
-          ~&  [dap.bowl %unexpected-fact from=src.bowl p.cage.sign]
-          `state
-        =+  !<(=glob q.cage.sign)
-        =/  =docket  docket:(~(got by charges) desk)
-        ?.  ?=([%glob @ @ %ames *] href.docket)
-          `state
-        =*  want=@uv  hash.glob-reference.href.docket
-        =/  plea=@uv  (slav %uv i.t.wire)
-        ?.  =(want plea)
-          ::  we requested this at some point but no longer want it
-          ::
-          `state
-        =/  have=@uv  (hash-glob glob)
-        ?.  =(want have)
-          %.  `state
-          %-  slog
-          :~  leaf+"docket: glob hash mismatch on {<desk>} from {<src.bowl>}"
-              leaf+"expected: {<want>}"
-              leaf+"received: {<have>}"
-          ==
-        =.  charges  (new-chad:cha glob+glob)
-        =.  by-base  (~(put by by-base) base.href.docket desk)
-        [~[add-fact:cha] state]
-      ==
-    ::
-        [%glob @ %http @ ~]
+        ?([%glob @ %http @ ~] [%glob @ %ames @ ~])
       ?-  -.sign
         %kick   `state
       ::
           ?(%poke-ack %watch-ack)
         ?~  p.sign  `state
         =/  act=tape  ?:(?=(%poke-ack -.sign) "start" "listen")
-        =.  charges  (new-chad:cha hung+'glob-failed')
-        :-  ~[add-fact:cha]
+        =.  charges
+          %-  new-chad:cha
+          ?:  ?=(i.t.t.wire %http)
+            hung+'failed to fetch glob via http'
+          hung+'failed to fetch glob via ames'
         ((slog leaf+"docket: couldn't {act} thread; will retry" u.p.sign) state)
       ::
           %fact
@@ -671,12 +635,7 @@
       ?:  =(our.bowl ship.location.ref)
         ~>  %slog.0^leaf/"docket: awaiting manual glob for {<desk>} desk"
         ~
-      ~>  %slog.0^leaf/"docket: fetching ames glob for {<desk>} desk"
-      :_  ~
-      %+  watch:(pass (glob-wire ref))
-        [ship.location.ref %docket]
-      /glob/[base.href.docket.charge]/(scot %uv hash.ref)
-    ~>  %slog.0^leaf/"docket: fetching http glob for {<desk>} desk"
+    ~>  %slog.0^leaf/"docket: fetching {<-.location.ref>} glob for {<desk>} desk"
     =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[ref desk])])
     :~  (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
         (poke-our:(pass (glob-wire ref)) %spider cage)

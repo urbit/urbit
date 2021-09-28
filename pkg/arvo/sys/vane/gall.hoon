@@ -1408,6 +1408,9 @@
         ?.  ?=(%raw-fact -.unto)
           [unto ap-core]
         =/  =case:clay  da+now
+        ?:  ?=(%spider agent-name)
+          :-  [%fact mark.unto !>(noun.unto)]
+          ap-core
         =/  sky  (rof ~ %cb [our q.beak.yoke case] /[mark.unto])
         ?.  ?=([~ ~ *] sky)
           (mean leaf+"gall: ames mark fail {<mark.unto>}" ~)
