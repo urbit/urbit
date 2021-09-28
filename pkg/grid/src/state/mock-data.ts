@@ -342,13 +342,16 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
       sub: [],
       add: []
     },
-    rail: {
-      aeon: 3,
-      desk,
-      next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
-      ship: '~zod',
-      paused: desk === 'groups'
-    }
+    rail:
+      desk === 'uniswap'
+        ? null
+        : {
+            aeon: 3,
+            desk,
+            next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
+            ship: '~zod',
+            paused: desk === 'groups'
+          }
   },
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
 });
