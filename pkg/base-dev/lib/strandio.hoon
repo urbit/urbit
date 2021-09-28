@@ -386,6 +386,14 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
+    ::
+      [~ %sign [%request ~] %iris %http-response %cancel *]
+    ::NOTE  iris does not (yet?) retry after cancel, so it means failure
+    :-  ~
+    :+  %fail
+      %http-request-cancelled
+    ['http request was cancelled by the runtime']~
+    ::
       [~ %sign [%request ~] %iris %http-response %finished *]
     `[%done client-response.sign-arvo.u.in.tin]
   ==

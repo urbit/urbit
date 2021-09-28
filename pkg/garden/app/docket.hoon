@@ -292,7 +292,7 @@
         ?+    p.cage.sign  `state
             %thread-fail
           =+  !<([=term =tang] q.cage.sign)
-          ?.  =(term %cancelled)
+          ?.  |(=(term %cancelled) =(term %http-request-cancelled))
             =.  charges  (new-chad:cha hung+'glob-failed')
             :-  ~[add-fact:cha]
             ((slog leaf+"docket: thread failed;" leaf+<term> tang) state)
