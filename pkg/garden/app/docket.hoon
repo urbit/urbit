@@ -299,7 +299,7 @@
           %-  (slog leaf+"docket: thread cancelled; retrying" leaf+<term> tang)
           =.  charges  (new-chad:cha %install ~)
           :_   state
-          [leave-glob:cha add-fact:cha fetch-glob:cha]
+          [add-fact:cha fetch-glob:cha]
         ::
             %thread-done
           =+  !<(=glob q.cage.sign)
@@ -626,14 +626,6 @@
     %+  ~(put by charges)  desk
     [d chad:(~(gut by charges) desk *charge)]
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
-  ++  leave-glob
-    ^-  card
-    =/  =charge
-      ~|  desk/desk
-      (~(got by charges) desk)
-    ?>  ?=(%glob -.href.docket.charge)
-    =/  ref  glob-reference.href.docket.charge
-    (leave-our:(pass (glob-wire ref)) %spider)
   ++  fetch-glob
     ^-  (list card)
     =/  =charge
@@ -651,7 +643,8 @@
     =/  =cage
       :-  %spider-start
       !>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[ref desk])])
-    :~  (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
+    :~  (leave-our:(pass (glob-wire ref)) %spider)
+        (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
         (poke-our:(pass (glob-wire ref)) %spider cage)
     ==
   ++  docket-loc  `path`/desk/docket-0
