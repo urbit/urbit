@@ -314,6 +314,7 @@
             `state
           =/  have=@uv  (hash-glob glob)
           ?.  =(want have)
+            =.  charges   (new-chad:cha hung+'glob hash mismatch')
             %.  `state
             =/  url=@t  (fall (slaw %t i.t.t.t.wire) '???')
             %-  slog
