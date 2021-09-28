@@ -744,7 +744,11 @@
       ?:  =(our ship:ral)
         (need (read-kelvin-local our desk:ral now))  ::  TODO error handling
       (read-kelvin-foreign [ship desk aeon]:ral)
-    =?  vats  liv.rein.rak
+    ::  don't try to read from the local desk's bill file if
+    ::  there are no commits to the local desk (aeon 0)
+    ::
+    =/  yon  =<(ud .^(cass cw+/(scot %p our)/[loc]/(scot %da now)))
+    =?  vats  &(liv.rein.rak !=(0 yon))
       %-  stop-dudes
       =<  idle
       (adjust-dudes [our loc now] rein.rak)
