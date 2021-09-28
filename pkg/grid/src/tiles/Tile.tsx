@@ -41,36 +41,33 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
       onAuxClick={() => addRecentApp(desk)}
     >
       <div>
-        {loading ? (
-          <div className="absolute z-10 top-4 left-4 sm:top-8 sm:left-8 flex items-center justify-center">
-            <Spinner className="h-6 w-6" />
-          </div>
-        ) : (
-          <>
-            {vat?.arak.rail?.paused && (
-              <Bullet className="absolute z-10 top-5 left-5 sm:top-6 sm:left-7 w-4 h-4 text-orange-500 dark:text-black" />
-            )}
-            <TileMenu
-              desk={desk}
-              active={active}
-              menuColor={active ? menuColor : suspendMenuColor}
-              lightText={lightText}
-              className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 pointer-coarse:opacity-100 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
-            />
-          </>
+        <div className="absolute z-10 top-4 left-4 sm:top-8 sm:left-8 flex items-center">
+          {!active && (
+            <>
+              {loading && <Spinner className="h-6 w-6 mr-4" />}
+              <span className="text-gray-500">
+                {suspended && 'Suspended'}
+                {loading && 'Installing'}
+                {hung && 'Errored'}
+              </span>
+            </>
+          )}
+        </div>
+        {vat?.arak.rail?.paused && (
+          <Bullet className="absolute z-10 top-5 left-5 sm:top-6 sm:left-7 w-4 h-4 text-orange-500 dark:text-black" />
         )}
+        <TileMenu
+          desk={desk}
+          active={active}
+          menuColor={active ? menuColor : suspendMenuColor}
+          lightText={lightText}
+          className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 pointer-coarse:opacity-100 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
+        />
         <div
           className="h4 absolute z-10 bottom-[8%] left-[5%] sm:bottom-7 sm:left-5 py-1 px-3 rounded-lg"
           style={{ backgroundColor }}
         >
           <h3 className="mix-blend-hard-light">{title}</h3>
-          {!active && (
-            <span className={hung ? 'text-orange-500' : 'text-gray-400'}>
-              {suspended && 'Suspended'}
-              {loading && 'Installing'}
-              {hung && 'Errored'}
-            </span>
-          )}
         </div>
         {image && !loading && (
           <img className="absolute top-0 left-0 h-full w-full object-contain" src={image} alt="" />
