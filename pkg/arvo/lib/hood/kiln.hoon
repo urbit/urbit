@@ -251,13 +251,17 @@
   ::
   ::  watch for gall reloading
   =.  ..on-init  abet:gall-lyv:vats
-  ::  install other desks
+  ::  install other desks and make them public
   ::
   =/  dez=(list desk)  ~(tap in desks)
   |-  ^+  ..on-init
   ?~  dez  ..on-init
   =.  ..on-init
     abet:(install-local:vats i.dez)
+  =.  ..on-init
+    %-  emit
+    :^  %pass  /kiln/permission  %arvo
+    [%c %perm i.dez / %r `[%black ~]]
   =?  ..on-init  !=(sop our)
     abet:(install:vats i.dez sop i.dez)
   $(dez t.dez)
