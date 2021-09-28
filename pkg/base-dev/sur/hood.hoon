@@ -1,6 +1,9 @@
 =,  clay
 =*  dude  dude:gall
 |%
+::  $snap: kiln snapshot
+::
++$  snap  (map desk arak)
 ::  $diff: subscription update
 ::
 +$  diff

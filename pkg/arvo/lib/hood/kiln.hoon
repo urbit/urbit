@@ -1238,9 +1238,7 @@
   |=  =path
   ?>  (team:title our src)
   ?+    path  ~|(kiln-path/path !!)
-    [%vats ~]    abet
-  ::
-      [%ark ~]
+      [%vats ~]
     abet(moz :_(moz [%give %fact ~ %kiln-vats-snap-0 !>(ark)]))
   ==
 ::

@@ -184,25 +184,47 @@
   ::
   ++  take-kiln
     ^-  (quip card _state)
-    ?+  -.sign   (on-agent:def:cc wire sign)
-      %kick  [(~(watch-our pass /kiln) %hood /kiln/vats)^~ state]
-    ::
+    ?+    -.sign  (on-agent:def:cc wire sign)
+        %kick  [(~(watch-our pass /kiln) %hood /kiln/vats)^~ state]
         %fact
-      ?.  ?=(%kiln-vats-diff-0 p.cage.sign)  `state
-      =+  !<(=diff:hood q.cage.sign)
-      =*  cha  ~(. ch desk.diff)
-      ?-  -.diff
-          ?(%block %reset %merge-sunk %merge-fail)
-        `state
+      |^  ^-  (quip card _state)
+      ?+  p.cage.sign  ~|(take-kiln-mark/p.cage.sign !!)
+        %kiln-vats-snap-0  (on-snap !<(snap:hood q.cage.sign))
+        %kiln-vats-diff-0  (on-diff !<(diff:hood q.cage.sign))
+      ==
       ::
-          %commit
+      ++  on-snap
+        |=  =snap:hood
+        ^-  (quip card _state)
+        =|  fex=(list card)
+        =/  ark  ~(tap by snap)
+        |-  ^-  (quip card _state)
+        ?~  ark  [(flop fex) state]
+        =^  caz  state  (on-commit i.ark)
+        $(ark t.ark, fex (weld (flop caz) fex))
+      ::
+      ++  on-diff
+        |=  =diff:hood
+        =+  !<(=diff:hood q.cage.sign)
+        ?-    -.diff
+            %commit   (on-commit [desk arak]:diff)
+            %suspend  (on-suspend [desk arak]:diff)
+            %revive   (on-revive [desk arak]:diff)
+            ?(%block %reset %merge-sunk %merge-fail)
+          `state
+        ==
+      ::
+      ++  on-commit
+        |=  [=desk =arak:hood]
+        ^-  (quip card _state)
+        =*  cha  ~(. ch desk)
         ?.  docket-exists:cha
-          ~&  [dap.bowl %no-docket-file-for desk.diff]
+          ~&  [dap.bowl %no-docket-file-for desk]
           `state
         ::  always update the docket in state to match clay's
         ::
         =/  =docket            docket:cha
-        =/  pre=(unit charge)  (~(get by charges) desk.diff)
+        =/  pre=(unit charge)  (~(get by charges) desk)
         =.  charges            (new-docket:cha docket)
         ::  if the new chad is a site, we're instantly done
         ::
@@ -211,7 +233,7 @@
           =.  charges  (new-chad:cha %site ~)
           state
         ::
-        =.  by-base  (~(put by by-base) base.href.docket desk.diff)
+        =.  by-base  (~(put by by-base) base.href.docket desk)
         ::  if the glob specification is unchanged, keep it
         ::
         ?:  &(?=(^ pre) =(href.docket.u.pre href.docket))
@@ -231,18 +253,24 @@
         =.  charges  (new-chad:cha %install ~)
         [[add-fact:cha fetch-glob:cha] state]
       ::
-          %suspend
-        ?.  (~(has by charges) desk.diff)  `state
+      ++  on-suspend
+        |=  [=desk =arak:hood]
+        ^-  (quip card _state)
+        =*  cha  ~(. ch desk)
+        ?.  (~(has by charges) desk)  `state
         =/  glob=(unit glob)
           =/  =chad
-            chad:(~(got by charges) desk.diff)
+            chad:(~(got by charges) desk)
           ?:(?=(%glob -.chad) `glob.chad ~)
         =.  charges  (new-chad:cha %suspend glob)
         :_(state ~[add-fact:cha])
       ::
-          %revive
-        ?.  (~(has by charges) desk.diff)  `state
-        =/  =charge  (~(got by charges) desk.diff)
+      ++  on-revive
+        |=  [=desk =arak:hood]
+        ^-  (quip card _state)
+        =*  cha  ~(. ch desk)
+        ?.  (~(has by charges) desk)  `state
+        =/  =charge  (~(got by charges) desk)
         ?.  ?=(%glob -.href.docket.charge)
           =.  charges  (new-chad:cha %site ~)
           :_(state ~[add-fact:cha])
@@ -252,7 +280,7 @@
             [%install ~]
           [%glob u.glob.chad.charge]
         :_(state [add-fact fetch-glob]:cha)
-      ==
+      --
     ==
   ++  take-charge
     |=  [=desk =^wire]
