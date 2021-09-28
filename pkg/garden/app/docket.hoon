@@ -133,9 +133,7 @@
       ~|  [%glob-unavailable requested=hash have=have]
       ?>  =(hash have)
       :_  state
-      :~  [%give %fact ~[path] %glob !>(`glob`glob.chad.charge)]
-          [%give %kick ~[path] ~]
-      ==
+      (fact-init-kick:io (glob:cg:cc glob.chad.charge))
     ==
   [cards this]
 ::
@@ -163,8 +161,7 @@
     ::
       [%x %charges ~]
     :-  ~  :-  ~
-    :-  %charge-update
-    !>  ^-  charge-update
+    %-  charge-update:cg:cc
     :-  %initial
     %-  ~(gas by *(map desk charge))
     %+  turn  ~(tap by charges)
@@ -391,6 +388,15 @@
 ++  def  ~(. (default-agent state %|) bowl)
 ::
 ++  hash-glob  sham
+++  cg
+  |%
+  ++  glob            |=(g=^glob glob-0+!>(g))
+  ++  docket          |=(d=^docket docket-0+!>(docket))
+  ++  charge-update   |=(u=^charge-update charge-update+!>(u))  
+  ++  kiln-uninstall  |=(=desk kiln-uninstall+!>(desk))
+  ++  kiln-install  
+    |=([here=desk her=ship there=desk] kiln-install+!>([here her there]))
+  --
 ::
 ++  handle-http-request
   |=  [eyre-id=@ta inbound-request:eyre]
@@ -538,7 +544,7 @@
           =-  [%pass /write/[desk] %arvo %c %info -]~
           %+  foal:space:userlib
             /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket
-          =-  [%docket !>(`docket`-)]
+          %-  docket:cg
           docket.charge(glob-reference.href [(hash-glob glob) %ames our.bowl])
       ==
     ::
@@ -639,13 +645,14 @@
     ==
   ++  add-fact
     =/  =charge  (~(got by charges) desk)
-    (fact:io charge-update+!>([%add-charge desk (get-light-charge charge)]) /charges ~)
-  ++  del-fact  (fact:io charge-update+!>([%del-charge desk]) /charges ~)
+    =-  (fact:io - /charges ~)
+    (charge-update:cg %add-charge desk (get-light-charge charge))
+  ++  del-fact  (fact:io (charge-update:cg %del-charge desk) /charges ~)
   ++  install
     |=  [=ship remote=^desk]
-    (poke-our:(pass /install) %hood kiln-install+!>([desk ship remote]))
+    (poke-our:(pass /install) %hood (kiln-install:cg desk ship remote))
   ++  uninstall
-    (poke-our:(pass /uninstall) %hood kiln-uninstall+!>(desk))
+    (poke-our:(pass /uninstall) %hood (kiln-uninstall:cg desk))
   ++  new-docket
     |=  d=^docket
     %+  ~(put by charges)  desk
@@ -681,8 +688,9 @@
     :~  (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
         (poke-our:(pass (glob-wire ref)) %spider cage)
     ==
-  ++  docket-exists  .^(? %cu (scry:io desk /desk/docket))
-  ++  docket  .^(^docket %cx (scry:io desk /desk/docket))
+  ++  docket-loc  `path`/desk/docket-0
+  ++  docket-exists  .^(? %cu (scry:io desk docket-loc))
+  ++  docket  .^(^docket %cx (scry:io desk docket-loc))
   --
 --
 
