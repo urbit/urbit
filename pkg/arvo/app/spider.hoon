@@ -403,9 +403,7 @@
   ::
   =:  starting.state  (~(put by starting.state) yarn [%build vase])
       tid.state       (~(put by tid.state) new-tid yarn)
-      serving.state
-        ?.  (~(has by serving.state) new-tid)  serving.state
-        (~(put by serving.state) new-tid [~ %noun q.beak])
+      serving.state  (~(put by serving.state) new-tid [~ %noun q.beak])
   ==
   =/  pax=path
     ~|  no-file-for-thread+file
@@ -539,7 +537,7 @@
   :_  state(serving (~(del by serving.state) tid))
   ?~  eyre-id
     %-  (slog leaf+"spider got input for non-existent eyre-id in thread {<tid>}" ~)
-    `state
+    ~
   %+  give-simple-payload:app:server  u.eyre-id
   ^-  simple-payload:http
   :_  ~  :_  ~
@@ -605,7 +603,7 @@
     =/  =tid  (yarn-to-tid yarn)
     =:  running.state  (del-yarn running.state yarn)
         tid.state      (~(del by tid.state) tid)
-        serving.state      (~(del by serving.state) yarn)
+        serving.state      (~(del by serving.state) (yarn-to-tid yarn))
       ==
     :_  state
     %+  murn  ~(tap by wex.bowl)
@@ -650,15 +648,12 @@
 ::
 ++  yarn-to-byk
   |=  [=yarn =bowl:gall]
-  ^-  beak
-  =/  tid  (yarn-to-tid yarn)
-  =/  byk
-    %+  bind
-      (~(get by serving.state) tid)
-    |=  [* * =desk]
-    =/  boc  bec
-    boc(q desk)
-  ?~  byk  byk.bowl  u.byk
+
+  =/  [* * =desk]
+    ~|  "no desk associated with {<tid>}"
+     %-  ~(got by serving.state)  (yarn-to-tid yarn)
+  =/  boc  bec
+  boc(q desk)
 ::
 ++  clean-state
   !>  ^-  clean-slate
