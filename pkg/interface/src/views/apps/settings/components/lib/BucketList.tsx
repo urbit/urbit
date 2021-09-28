@@ -1,66 +1,70 @@
-import React, { useCallback } from "react";
-
 import {
-  ManagedTextInputField as Input,
-  ManagedForm as Form,
-  Box,
-  Button,
-  Col,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-} from "@tlon/indigo-react";
-import { Formik } from "formik";
+    Box,
+    Button,
+    ManagedForm as Form,
+    ManagedTextInputField as Input,
+    Menu,
+    MenuButton,
+    MenuItem, MenuList,
+    Row, Text
+} from '@tlon/indigo-react';
+import { addBucket, removeBucket, setCurrentBucket } from '@urbit/api';
+import { Formik, FormikHelpers } from 'formik';
+import React, { ReactElement, useCallback, useState } from 'react';
+import * as Yup from 'yup';
+import airlock from '~/logic/api';
 
-import GlobalApi from "~/logic/api/global";
+const validationSchema = Yup.object({
+  newBucket: Yup.string().required('Required')
+});
 
 export function BucketList({
   buckets,
-  selected,
-  api,
+  selected
 }: {
   buckets: Set<string>;
   selected: string;
-  api: GlobalApi;
-}) {
+}): ReactElement {
   const _buckets = Array.from(buckets);
 
+  const [adding, setAdding] = useState(false);
+
   const onSubmit = useCallback(
-    (values: { newBucket: string }) => {
-      api.s3.addBucket(values.newBucket);
+    (values: { newBucket: string }, actions: FormikHelpers<any>) => {
+      airlock.poke(addBucket(values.newBucket));
+      actions.resetForm({ values: { newBucket: '' } });
+      setAdding(false);
     },
-    [api]
+    [setAdding]
   );
 
   const onSelect = useCallback(
     (bucket: string) => {
       return function () {
-        api.s3.setCurrentBucket(bucket);
+        airlock.poke(setCurrentBucket(bucket));
       };
     },
-    [api]
+    []
   );
 
   const onDelete = useCallback(
     (bucket: string) => {
       return function () {
-        api.s3.removeBucket(bucket);
+        airlock.poke(removeBucket(bucket));
       };
     },
-    [api]
+    []
   );
 
   return (
-    <Formik initialValues={{ newBucket: "" }} onSubmit={onSubmit}>
+    <Formik validationSchema={validationSchema} initialValues={{ newBucket: '' }} onSubmit={onSubmit}>
       <Form
         display="grid"
         gridTemplateColumns="100%"
         gridAutoRows="auto"
         gridRowGap={2}
       >
-        {_buckets.map((bucket) => (
+        {_buckets.map(bucket => (
           <Box
             key={bucket}
             display="flex"
@@ -68,7 +72,7 @@ export function BucketList({
             alignItems="center"
             borderRadius={1}
             border={1}
-            borderColor="washedGray"
+            borderColor="lightGray"
             fontSize={1}
             pl={2}
             mb={2}
@@ -92,10 +96,38 @@ export function BucketList({
             )}
           </Box>
         ))}
-        <Input mt="2" label="New Bucket" id="newBucket" />
-        <Button mt="2" style={{ cursor: 'pointer' }} borderColor="washedGray" type="submit">
-          Add
-        </Button>
+        {adding && (
+          <Input
+            placeholder="Enter your new bucket"
+            mt={2}
+            label="New Bucket"
+            id="newBucket"
+          />
+        )}
+        <Row gapX={3} mt={3}>
+          <Button type="button" onClick={() => setAdding(false)}>
+            Cancel
+          </Button>
+          {!adding &&
+            <Button
+              width="fit-content"
+              primary
+              type="button"
+              onClick={() => setAdding(true)}
+            >
+              Add new bucket
+            </Button>
+          }
+          {adding &&
+            <Button
+              width="fit-content"
+              primary
+              type="submit"
+            >
+              Submit
+            </Button>
+          }
+        </Row>
       </Form>
     </Formik>
   );

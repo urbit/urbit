@@ -1,5 +1,5 @@
 /-  lens, *sole
-/+  *server, default-agent
+/+  *server, default-agent, dbug
 /=  lens-mark  /mar/lens/command  ::  TODO: ask clay to build a $tube
 =,  format
 |%
@@ -25,8 +25,6 @@
     ^-  (list @tas)
     :~  %group-store
         %metadata-store
-        %contact-store
-        %contact-hook
         %invite-store
         %graph-store
     ==
@@ -35,6 +33,8 @@
 --
 ::
 =|  =state
+%-  agent:dbug
+^-  agent:gall
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
@@ -56,8 +56,6 @@
   ?.  ?=(%handle-http-request mark)
     (on-poke:def mark vase)
   =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
-  ?>  ?=(~ job.state)
-  ::
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  site  (flop site.request-line)
   ::
@@ -75,6 +73,13 @@
     (need (de-json:html body))
   =/  com=command:lens
     (json:grab:lens-mark jon)
+  ::
+  ?:  ?=(%cancel -.source.com)
+    ~&  %lens-cancel
+    :_  this(job.state ~)
+    (give-simple-payload:app eyre-id (json-response:gen [%s 'cancelled']))
+  ::
+  ?>  ?=(~ job.state)
   ::
   ?+  -.source.com
     :_  this(job.state (some [eyre-id com]))

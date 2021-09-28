@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
-import { sigil, reactRenderer } from '@tlon/sigil-js';
 import { Box } from '@tlon/indigo-react';
+import { reactRenderer, sigil } from '@tlon/sigil-js';
+import React, { memo } from 'react';
 
 export const foregroundFromBackground = (background) => {
   const rgb = {
@@ -23,9 +23,10 @@ export const Sigil = memo(
     size,
     svgClass = '',
     icon = false,
-    padding = 0
+    padding = 0,
+    display = 'inline-block'
   }) => {
-    const innerSize = Number(size) - 2*padding;
+    const innerSize = Number(size) - 2 * padding;
     const paddingPx = `${padding}px`;
     const foregroundColor = foreground
       ? foreground
@@ -34,14 +35,14 @@ export const Sigil = memo(
       <Box
         backgroundColor={color}
         borderRadius={icon ? '1' : '0'}
-        display='inline-block'
+        display={display}
         height={size}
         width={size}
         className={classes}
       />
     ) : (
       <Box
-        display='inline-block'
+        display={display}
         borderRadius={icon ? '1' : '0'}
         flexBasis={size}
         backgroundColor={color}

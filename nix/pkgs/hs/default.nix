@@ -1,4 +1,4 @@
-{ lib, stdenv, darwin, haskell-nix, gmp, zlib, libffi, brass
+{ lib, stdenv, darwin, haskell-nix, lmdb, gmp, zlib, libffi, brass
 , enableStatic ? stdenv.hostPlatform.isStatic }:
 
 haskell-nix.stackProject {
@@ -65,6 +65,7 @@ haskell-nix.stackProject {
         enableShared = !enableStatic;
 
         configureFlags = lib.optionals enableStatic [
+          "--ghc-option=-optl=-L${lmdb}/lib"
           "--ghc-option=-optl=-L${gmp}/lib"
           "--ghc-option=-optl=-L${libffi}/lib"
           "--ghc-option=-optl=-L${zlib}/lib"
@@ -81,6 +82,8 @@ haskell-nix.stackProject {
 
       urbit-king.components.tests.urbit-king-tests.testFlags =
         [ "--brass-pill=${brass.lfs}" ];
+
+      lmdb.components.library.libs = lib.mkForce [ lmdb ];
     };
   }];
 }

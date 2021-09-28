@@ -1,170 +1,233 @@
-import React, { PureComponent } from 'react';
-
-import { Contact, Group } from '~/types';
-import { cite, useShowNickname } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
-
 import {
-  Box,
-  Row,
-  Col,
-  Button,
-  Text,
-  BaseImage,
-  ColProps,
-  Icon
+  BaseImage, Box,
+
+  BoxProps,
+  Center, Col,
+
+  Icon, Row,
+
+  Text
 } from '@tlon/indigo-react';
-import RichText from './RichText';
-import { withLocalState } from '~/logic/state/local';
+import { cite, uxToHex } from '@urbit/api';
+import shallow from 'zustand/shallow';
+import _ from 'lodash';
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import VisibilitySensor from 'react-visibility-sensor';
+import styled from 'styled-components';
+import { getRelativePosition } from '~/logic/lib/relativePosition';
+import { Sigil } from '~/logic/lib/sigil';
+import { useCopy } from '~/logic/lib/useCopy';
+import { useOutsideClick } from '~/logic/lib/useOutsideClick';
+import { useShowNickname } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
+import RichText from './RichText';
 
 export const OVERLAY_HEIGHT = 250;
+const FixedOverlay = styled(Col)`
+  position: fixed;
+  -webkit-transition: all 0.1s ease-out;
+  -moz-transition: all 0.1s ease-out;
+  -o-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out;
+`;
 
-type ProfileOverlayProps = ColProps & {
+type ProfileOverlayProps = BoxProps & {
   ship: string;
-  contact?: Contact;
-  color: string;
-  topSpace: number | 'auto';
-  bottomSpace: number | 'auto';
-  group?: Group;
-  onDismiss(): void;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  history: any;
-  api: any;
+  children?: ReactNode;
+  color?: string;
 };
 
-class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
-  public popoverRef: React.Ref<typeof Col>;
+const selSettings = (s: SettingsState) => [s.calm.hideAvatars, s.calm.hideNicknames];
 
-  constructor(props) {
-    super(props);
+const ProfileOverlay = (props: ProfileOverlayProps) => {
+  const {
+    ship,
+    children,
+    ...rest
+  } = props;
 
-    this.popoverRef = React.createRef();
-    this.onDocumentClick = this.onDocumentClick.bind(this);
-  }
+  const [open, _setOpen] = useState(false);
+  const [coords, setCoords] = useState({});
+  const [visible, setVisible] = useState(false);
+  const history = useHistory();
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [hideAvatars, hideNicknames] = useSettingsState(selSettings, shallow);
+  const isOwn = useMemo(() => window.ship === ship, [ship]);
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
-  componentDidMount() {
-    document.addEventListener('mousedown', this.onDocumentClick);
-    document.addEventListener('touchstart', this.onDocumentClick);
-  }
+  const contact = useContact(`~${ship}`);
+  const color = `#${uxToHex(contact?.color ?? '0x0')}`;
+  const showNickname = useShowNickname(contact, hideNicknames);
 
-  componentWillUnmount() {
-    document.removeEventListener('mousedown', this.onDocumentClick);
-    document.removeEventListener('touchstart', this.onDocumentClick);
-  }
+  const setClosed = useCallback(() => {
+    _setOpen(false);
+  }, [_setOpen]);
 
-  onDocumentClick(event) {
-    const { popoverRef } = this;
-    // Do nothing if clicking ref's element or descendent elements
-    if (!popoverRef.current || popoverRef?.current?.contains(event.target)) {
-      return;
+  const setOpen = useCallback(() => {
+    _setOpen(true);
+  }, [_setOpen]);
+
+  useEffect(() => {
+    if(!visible) {
+      setClosed();
     }
+  }, [visible]);
 
-    this.props.onDismiss();
-  }
+  useOutsideClick(innerRef, setClosed);
 
-  render() {
-    const {
-      contact,
-      ship,
-      color,
-      topSpace,
-      bottomSpace,
-      hideAvatars,
-      hideNicknames,
-      history,
-      onDismiss,
-      ...rest
-    } = this.props;
-
-    let top, bottom;
-    if (topSpace < OVERLAY_HEIGHT / 2) {
-      top = '0px';
+  useEffect(() => {
+    if(!open) {
+      return () => {};
     }
-    if (bottomSpace < OVERLAY_HEIGHT / 2) {
-      bottom = '0px';
+    function _updateCoords() {
+      if(outerRef.current) {
+        const outer = outerRef.current;
+        const { left, right, top } = outer.getBoundingClientRect();
+        const spaceAtTop = top > 300;
+        const spaceAtRight = right > 300 || right > left;
+        setCoords(getRelativePosition(
+          outer,
+          spaceAtRight ? 'left' : 'right',
+          spaceAtTop ? 'bottom' : 'top',
+          -1* outer.clientWidth,
+          -1 * outer.clientHeight
+        ));
+      }
     }
-    if (!(top || bottom)) {
-      bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
-    }
-    const containerStyle = { top, bottom, left: '100%' };
+    const updateCoords = _.throttle(_updateCoords, 25);
+    updateCoords();
+    const interval = setInterval(updateCoords, 300);
+    window.addEventListener('scroll', updateCoords);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('scroll', updateCoords);
+    };
+  }, [open]);
 
-    const isOwn = window.ship === ship;
+  const img =
+    contact?.avatar && !hideAvatars ? (
+      <BaseImage
+        referrerPolicy='no-referrer'
+        display='inline-block'
+        style={{ objectFit: 'cover' }}
+        src={contact.avatar}
+        height={60}
+        width={60}
+        borderRadius={2}
+      />
+    ) : (
+      <Box size={60} borderRadius={2} backgroundColor={color}>
+        <Center height={60}>
+          <Sigil ship={ship} size={32} color={color} />
+        </Center>
+      </Box>
+    );
 
-    const img = contact?.avatar && !hideAvatars
-      ? <BaseImage display='inline-block' src={contact.avatar} height={72} width={72} className="brt2" />
-      : <Sigil
-        ship={ship}
-        size={72}
-        color={color}
-        classes="brt2"
-        svgClass="brt2"
-        />;
-    const showNickname = useShowNickname(contact, hideNicknames);
-
-    return (
-      <Col
-        ref={this.popoverRef}
-        backgroundColor="white"
-        color="washedGray"
+  return (
+    <Box ref={outerRef} {...rest} onClick={setOpen} cursor="pointer">
+      <VisibilitySensor active={open} onChange={setVisible}>
+        {children}
+      </VisibilitySensor>
+  { open && (
+    <Portal>
+      <FixedOverlay
+        ref={innerRef}
+        {...coords}
+        backgroundColor='white'
+        color='washedGray'
         border={1}
         borderRadius={2}
-        borderColor="lightGray"
-        boxShadow="0px 0px 0px 3px"
-        position='absolute'
-        zIndex='3'
-        fontSize='0'
-        height="250px"
-        width="250px"
+        borderColor='lightGray'
+        boxShadow='0px 0px 0px 3px'
+        zIndex={3}
+        fontSize={0}
+        height='250px'
+        width='250px'
         padding={3}
-        justifyContent="space-between"
-        style={containerStyle}
-        {...rest}
+        justifyContent='center'
       >
-        <Row color='black' width='100%' height="3rem">
-          {(!isOwn) && (
-          <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)}/>
-          )}
-        </Row>
+        <Row color='black' padding={3} position='absolute' top={0} left={0}>
+           {!isOwn && (
+             <Icon
+               icon='Chat'
+               size={16}
+               cursor='pointer'
+               onClick={() => history.push(`/~landscape/messages/dm/~${ship}`)}
+             />
+           )}
+         </Row>
         <Box
-          alignSelf="center"
-          height="72px"
-          onClick={() => history.push(`/~profile/~${ship}`)}>
+          alignSelf='center'
+          height='72px'
+          cursor='pointer'
+          onClick={() => history.push(`/~profile/~${ship}`)}
+          overflow='hidden'
+          borderRadius={2}
+        >
           {img}
         </Box>
-        <Col alignItems="end" justifyContent="flex-end" overflow="hidden" minWidth='0'>
-          <Row width="100%" >
+        <Col
+          position='absolute'
+          overflow='hidden'
+          minWidth={0}
+          width='100%'
+          padding={3}
+          bottom={0}
+          left={0}
+        >
+          <Row width='100%'>
             <Text
               fontWeight='600'
               mono={!showNickname}
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
-              lineHeight="tall"
+              marginBottom={0}
+              cursor='pointer'
+              display={didCopy ? 'none' : 'block'}
+              onClick={doCopy}
             >
               {showNickname ? contact?.nickname : cite(ship)}
             </Text>
+            <Text
+              fontWeight='600'
+              marginBottom={0}
+            >
+              {copyDisplay}
+            </Text>
           </Row>
-          { isOwn ? (
+          {isOwn ? (
             <ProfileStatus
-              api={this.props.api}
               ship={`~${ship}`}
               contact={contact}
             />
           ) : (
-              <RichText display='inline-block' width='100%' minWidth='0' textOverflow='ellipsis'
-                overflow='hidden'
-                whiteSpace='pre'
-                lineHeight="tall" disableRemoteContent gray>
+            <RichText
+              display='inline-block'
+              width='100%'
+              minWidth={0}
+              textOverflow='ellipsis'
+              overflow='hidden'
+              whiteSpace='pre'
+              mb={0}
+              disableRemoteContent
+              gray
+              title={contact?.status ? contact.status : ''}
+            >
               {contact?.status ? contact.status : ''}
             </RichText>
-          )
-          }
+          )}
         </Col>
-      </Col>
-    );
-  }
-}
+      </FixedOverlay>
+    </Portal>
+    )}
+  </Box>
+  );
+};
 
-export default withLocalState(ProfileOverlay, ['hideAvatars', 'hideNicknames']);
+export default ProfileOverlay;

@@ -36,7 +36,7 @@
   ^-  form:m
   =/  =action:store
     [%change-policy rid %invite %add-invites ships]
-  ;<  ~  bind:m  (poke-our %group-push-hook %group-update !>(action))
+  ;<  ~  bind:m  (poke-our %group-push-hook %group-update-0 !>(action))
   (pure:m ~)
 --
 ^-  thread:spider

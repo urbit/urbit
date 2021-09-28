@@ -1,7 +1,6 @@
-import _ from "lodash";
-import { roleTags, RoleTags, Group, Resource } from "~/types/group-update";
-import { PatpNoSig, Path } from "~/types/noun";
-import {deSig} from "./util";
+import { Path, PatpNoSig } from '@urbit/api';
+import { Group, Resource, roleTags, RoleTags } from '@urbit/api/groups';
+import _ from 'lodash';
 
 export function roleForShip(
   group: Group,
@@ -14,7 +13,7 @@ export function roleForShip(
 }
 
 export function resourceFromPath(path: Path): Resource {
-  const [, , ship, name] = path.split("/");
+  const [, , ship, name] = path.split('/');
   return { ship, name };
 }
 
@@ -25,7 +24,7 @@ export function makeResource(ship: string, name: string) {
 export function isWriter(group: Group, resource: string) {
   const writers: Set<string> | undefined = _.get(
     group,
-    ["tags", "graph", resource, "writers"],
+    ['tags', 'graph', resource, 'writers'],
     undefined
   );
   const admins = group?.tags?.role?.admin ?? new Set();
@@ -36,18 +35,18 @@ export function isWriter(group: Group, resource: string) {
   }
 }
 
-export function isChannelAdmin(group: Group, resource: string, ship: string = `~${window.ship}`) {
+export function isChannelAdmin(group: Group, resource: string, ship = `~${window.ship}`) {
   const role = roleForShip(group, ship.slice(1));
 
   return (
     isHost(resource, ship) ||
-    role === "admin" ||
-    role === "moderator"
+    role === 'admin' ||
+    role === 'moderator'
   );
 }
 
-export function isHost(resource: string, ship: string = `~${window.ship}`) {
-  const [, , host] = resource.split("/");
+export function isHost(resource: string, ship = `~${window.ship}`) {
+  const [, , host] = resource.split('/');
 
   return ship === host;
 }

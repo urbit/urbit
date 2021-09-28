@@ -1,3 +1,3 @@
 :-  %say
-|=  *
-[%glob-make ~]
+|=  [^ [=path ~] ~]
+[%glob-make path]

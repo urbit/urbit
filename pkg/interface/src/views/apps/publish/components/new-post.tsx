@@ -1,28 +1,22 @@
-import React from "react";
-import { FormikHelpers } from "formik";
-import GlobalApi from "~/logic/api/global";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import { RouteComponentProps } from "react-router-dom";
-import { PostForm, PostFormSchema } from "./NoteForm";
-import {createPost} from "~/logic/api/graph";
-import {Graph} from "~/types/graph-update";
-import {Association, S3State} from "~/types";
-import {newPost} from "~/logic/lib/publish";
+import { addNodes, Association } from '@urbit/api';
+import { Graph } from '@urbit/api/graph';
+import { FormikHelpers } from 'formik';
+import React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { newPost } from '~/logic/lib/publish';
+import { PostForm, PostFormSchema } from './NoteForm';
+import airlock from '~/logic/api';
 
 interface NewPostProps {
-  api: GlobalApi;
   book: string;
   ship: string;
   graph: Graph;
   association: Association;
   baseUrl: string;
-  s3: S3State;
 }
 
 export default function NewPost(props: NewPostProps & RouteComponentProps) {
-  const { api, book, ship, history } = props;
-
-  const waiter = useWaitForProps(props, 20000);
+  const { book, ship, history } = props;
 
   const onSubmit = async (
     values: PostFormSchema,
@@ -30,21 +24,18 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
   ) => {
     const { title, body } = values;
     try {
-      const [noteId, nodes] = newPost(title, body)
-      await api.graph.addNodes(ship, book, nodes)
-      await waiter(p => 
-        p.graph.has(noteId) && !p.graph.get(noteId)?.post?.pending
-      );
-      history.push(`${props.baseUrl}/note/${noteId}`);
+      const [, nodes] = newPost(title, body);
+      await airlock.thread(addNodes(ship, book, nodes));
+      history.push(`${props.baseUrl}`);
     } catch (e) {
       console.error(e);
-      actions.setStatus({ error: "Posting note failed" });
+      actions.setStatus({ error: 'Posting note failed' });
     }
   };
 
   const initialValues: PostFormSchema = {
-    title: "",
-    body: "",
+    title: '',
+    body: ''
   };
 
   return (
@@ -53,7 +44,6 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
       onSubmit={onSubmit}
       submitLabel="Publish"
       loadingText="Posting..."
-      s3={props.s3}
     />
   );
 }

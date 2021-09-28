@@ -1,20 +1,11 @@
 /* vere/http.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <ifaddrs.h>
-#include <netinet/in.h>
-#include <uv.h>
-#include <errno.h>
+#include "all.h"
+#include "vere/vere.h"
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <h2o.h>
-
-#include "all.h"
-#include "vere/vere.h"
 
 typedef struct _u3_h2o_serv {
   h2o_globalconf_t fig_u;             //  h2o global config
@@ -1467,6 +1458,10 @@ _http_serv_start(u3_http* htp_u)
                           htonl(INADDR_LOOPBACK) :
                           INADDR_ANY;
 
+  if ( 0 != u3_Host.ops_u.bin_c && c3n == htp_u->lop ) {
+    inet_pton(AF_INET, u3_Host.ops_u.bin_c, &adr_u.sin_addr);
+  }
+
   uv_tcp_init(u3L, &htp_u->wax_u);
 
   /*  Try ascending ports.
@@ -1480,6 +1475,10 @@ _http_serv_start(u3_http* htp_u)
                                    (const struct sockaddr*)&adr_u, 0)) ||
          0 != (sas_i = uv_listen((uv_stream_t*)&htp_u->wax_u,
                                  TCP_BACKLOG, _http_serv_listen_cb)) ) {
+      if ( UV_EADDRNOTAVAIL == sas_i ) {
+        u3l_log("http: ip address not available\n");
+        u3_king_bail();
+      }
       if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
         if ( (c3y == htp_u->sec) && (443 == htp_u->por_s) ) {
           htp_u->por_s = 8443;
@@ -1614,11 +1613,12 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
 
   u3_http* htp_u = htd_u->htp_u;
 
+  c3_c temp[32];
   while ( 0 != htp_u ) {
     if ( 0 < htp_u->por_s ) {
-      dprintf(por_i, "%u %s %s\n", htp_u->por_s,
+      u3_write_fd(por_i, temp, snprintf(temp, 32, "%u %s %s\n", htp_u->por_s,
                      (c3y == htp_u->sec) ? "secure" : "insecure",
-                     (c3y == htp_u->lop) ? "loopback" : "public");
+                     (c3y == htp_u->lop) ? "loopback" : "public"));
     }
 
     htp_u = htp_u->nex_u;

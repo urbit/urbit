@@ -1,117 +1,94 @@
-import React from 'react';
-
 import {
-  Box,
-  ManagedCheckboxField as Checkbox,
-  Button
+  Col,
+  Label,
+  ManagedRadioButtonField as Radio,
+  Text
 } from '@tlon/indigo-react';
-import { Formik, Form } from 'formik';
+import { Form } from 'formik';
+import React, { useCallback } from 'react';
 import * as Yup from 'yup';
-
-import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
-import { S3State, BackgroundConfig } from '~/types';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import { BackButton } from './BackButton';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
-import useLocalState, { LocalState } from '~/logic/state/local';
+import shallow from 'zustand/shallow';
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
     .oneOf(['none', 'color', 'url'], 'invalid')
     .required('Required'),
-  bgUrl: Yup.string().url(),
-  bgColor: Yup.string(),
-  avatars: Yup.boolean(),
-  nicknames: Yup.boolean()
+  bgColor: Yup.string().when('bgType', (bgType, schema) => bgType === 'color' ? schema.required() : schema),
+  bgUrl: Yup.string().when('bgType', (bgType, schema) => bgType === 'url' ? schema.required() : schema),
+  theme: Yup.string().oneOf(['light', 'dark', 'auto']).required('Required')
 });
 
 interface FormSchema {
   bgType: BgType;
   bgColor: string | undefined;
   bgUrl: string | undefined;
-  avatars: boolean;
-  nicknames: boolean;
+  theme: string;
 }
+const emptyString = '';
 
-interface DisplayFormProps {
-  api: GlobalApi;
-  s3: S3State;
-}
-
-export default function DisplayForm(props: DisplayFormProps) {
-  const { api, s3 } = props;
-
-  const { hideAvatars, hideNicknames, background, set: setLocalState } = useLocalState();
-
-  let bgColor, bgUrl;
-  if (background?.type === 'url') {
-    bgUrl = background.url;
+const settingsSel = (s: SettingsState): FormSchema => {
+  const { display } = s;
+  let bgColor = emptyString;
+  let bgUrl = emptyString;
+  if (display.backgroundType === 'url') {
+    bgUrl = display.background;
   }
-  if (background?.type === 'color') {
-    bgColor = background.color;
+  if (display.backgroundType === 'color') {
+    bgColor = display.background;
   }
-  const bgType = background?.type || 'none';
+  return {
+    bgType: display.backgroundType,
+    bgColor,
+    bgUrl,
+    theme: display.theme
+  };
+};
+
+export default function DisplayForm() {
+  const initialValues = useSettingsState(settingsSel, shallow);
+
+  const onSubmit = useCallback(async (values) => {
+    const { putEntry } = useSettingsState.getState();
+    putEntry('display', 'backgroundType', values.bgType);
+    putEntry(
+      'display',
+      'background',
+      values.bgType === 'color'
+        ? `#${uxToHex(values.bgColor || '0x0')}`
+        : values.bgType === 'url'
+        ? values.bgUrl || ''
+        : false
+    );
+    putEntry('display', 'theme', values.theme);
+  }, []);
 
   return (
-    <Formik
+    <FormikOnBlur
       validationSchema={formSchema}
-      initialValues={
-        {
-          bgType,
-          bgColor: bgColor || '',
-          bgUrl,
-          avatars: hideAvatars,
-          nicknames: hideNicknames
-        } as FormSchema
-      }
-      onSubmit={(values, actions) => {
-        const bgConfig: BackgroundConfig =
-          values.bgType === 'color'
-            ? { type: 'color', color: `#${uxToHex(values.bgColor || '0x0')}` }
-            : values.bgType === 'url'
-            ? { type: 'url', url: values.bgUrl || '' }
-            : undefined;
-
-        setLocalState((state: LocalState) => {
-          state.background = bgConfig;
-          state.hideAvatars = values.avatars;
-          state.hideNicknames = values.nicknames;
-        });
-        actions.setSubmitting(false);
-      }}
+      initialValues={initialValues}
+      onSubmit={onSubmit}
     >
-      {props => (
-        <Form>
-          <Box
-            display="grid"
-            gridTemplateColumns="100%"
-            gridTemplateRows="auto"
-            gridRowGap={5}
-          >
-            <Box color="black" fontSize={1} mb={3} fontWeight={900}>
+      <Form>
+        <BackButton />
+        <Col p={5} pt={4} gapY={5}>
+          <Col overflowY="auto" gapY={1} mt={0}>
+            <Text color="black" fontSize={2} fontWeight="medium">
               Display Preferences
-            </Box>
-            <BackgroundPicker
-              bgType={props.values.bgType}
-              bgUrl={props.values.bgUrl}
-              api={api}
-              s3={s3}
-            />
-            <Checkbox
-              label="Disable avatars"
-              id="avatars"
-              caption="Do not show user-set avatars"
-            />
-            <Checkbox
-              label="Disable nicknames"
-              id="nicknames"
-              caption="Do not show user-set nicknames"
-            />
-            <Button border={1} style={{ cursor: 'pointer' }} borderColor="washedGray" type="submit">
-              Save
-            </Button>
-          </Box>
-        </Form>
-      )}
-    </Formik>
+            </Text>
+            <Text gray>Customize visual interfaces across your Landscape</Text>
+          </Col>
+          <BackgroundPicker />
+          <Label>Theme</Label>
+          <Radio name="theme" id="light" label="Light" />
+          <Radio name="theme" id="dark" label="Dark" />
+          <Radio name="theme" id="auto" label="Auto" />
+        </Col>
+      </Form>
+    </FormikOnBlur>
   );
 }

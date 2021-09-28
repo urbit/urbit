@@ -1,0 +1,1 @@
+Each one of the folders in this directory is published at `@urbit/{folder name}`

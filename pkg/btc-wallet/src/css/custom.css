@@ -1,0 +1,158 @@
+p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
+  margin-block-end: unset;
+  margin-block-start: unset;
+  -webkit-margin-before: unset;
+  -webkit-margin-after: unset;
+  font-family: Inter, sans-serif;
+}
+
+a {
+  color: #000;
+  text-decoration: none;
+}
+
+textarea, select, input, button {
+  outline: none;
+  -webkit-appearance: none;
+  border: none;
+  background-color: #fff;
+}
+
+.body-regular {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.body-large {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.label-regular {
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.label-small-mono {
+  font-size: 12px;
+  line-height: 24px;
+  font-family: "Source Code Pro", monospace;
+}
+
+.body-regular-400 {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.plus-font {
+  font-size: 48px;
+  line-height: 24px;
+}
+
+.btn-font {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 600;
+}
+.mono {
+  font-family: "Source Code Pro", monospace;
+}
+
+.inter {
+  font-family: Inter, sans-serif;
+}
+
+.mix-blend-diff {
+  mix-blend-mode: difference;
+}
+
+/* dark */
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #333;
+  }
+  .bg-black-d {
+    background-color: black;
+  }
+  .white-d {
+    color: white;
+  }
+  .gray1-d {
+    color: #4d4d4d;
+  }
+  .gray2-d {
+    color: #7f7f7f;
+  }
+  .gray3-d {
+    color: #b1b2b3;
+  }
+  .gray4-d {
+    color: #e6e6e6;
+  }
+  .bg-gray0-d {
+    background-color: #333;
+  }
+  .bg-gray1-d {
+    background-color: #4d4d4d;
+  }
+  .b--gray0-d {
+    border-color: #333;
+  }
+  .b--gray1-d {
+    border-color: #4d4d4d;
+  }
+  .b--gray2-d {
+    border-color: #7f7f7f;
+  }
+  .b--white-d {
+    border-color: #fff;
+  }
+  .bb-d {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+  .invert-d {
+    filter: invert(1);
+  }
+  .o-80-d {
+    opacity: .8;
+  }
+  .focus-b--white-d:focus {
+    border-color: #fff;
+  }
+  a {
+    color: #fff;
+  }
+  .hover-bg-gray1-d:hover {
+    color: #4d4d4d;
+  }
+}
+
+/* responsive */
+
+@media all and (max-width: 34.375em) {
+  .h-100-minus-40-s {
+    height: calc(100% - 40px);
+  }
+}
+
+@media all and (min-width: 34.375em) and (max-width: 46.875em) {
+  .h-100-minus-40-m {
+    height: calc(100% - 40px);
+  }
+}
+
+@media all and (min-width: 46.875em) and (max-width: 60em) {
+  .h-100-minus-40-l {
+    height: calc(100% - 40px);
+  }
+}
+
+@media all and (min-width: 60em) {
+  .h-100-minus-40-xl {
+    height: calc(100% - 40px);
+  }
+}

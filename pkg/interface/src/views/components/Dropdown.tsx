@@ -1,25 +1,25 @@
+import { Box } from '@tlon/indigo-react';
 import React, {
-  ReactNode,
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-} from "react";
-import styled from "styled-components";
-import _ from "lodash";
-import { Box, Col } from "@tlon/indigo-react";
-import { useOutsideClick } from "~/logic/lib/useOutsideClick";
-import { useLocation } from "react-router-dom";
-import { Portal } from "./Portal";
-import { getRelativePosition, AlignY, AlignX } from "~/logic/lib/relativePosition";
+    ReactElement, ReactNode,
+
+    useCallback, useEffect, useRef, useState
+} from 'react';
+import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { AlignX, AlignY, getRelativePosition } from '~/logic/lib/relativePosition';
+import { useOutsideClick } from '~/logic/lib/useOutsideClick';
+import { Portal } from './Portal';
 
 interface DropdownProps {
   children: ReactNode;
   options: ReactNode;
   alignY: AlignY | AlignY[];
   alignX: AlignX | AlignX[];
+  offsetX?: number;
+  offsetY?: number;
   width?: string;
   dropWidth?: string;
+  flexShrink?: number;
 }
 
 const ClickBox = styled(Box)`
@@ -33,16 +33,19 @@ const DropdownOptions = styled(Box)`
   transition-timing-function: ease;
 `;
 
-export function Dropdown(props: DropdownProps) {
-  const { children, options } = props;
-  const dropdownRef = useRef<HTMLElement>(null);
-  const anchorRef = useRef<HTMLElement>(null);
+export function Dropdown(props: DropdownProps): ReactElement {
+  const { children, options, offsetX = 0, offsetY = 0, flexShrink = 1 } = props;
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState({});
 
   const updatePos = useCallback(() => {
-    const newCoords = getRelativePosition(anchorRef.current, props.alignX, props.alignY);
+    if(!anchorRef.current) {
+      return;
+    }
+    const newCoords = getRelativePosition(anchorRef.current, props.alignX, props.alignY, offsetX, offsetY);
     if(newCoords) {
       setCoords(newCoords);
     }
@@ -81,14 +84,14 @@ export function Dropdown(props: DropdownProps) {
   }, []);
 
   return (
-    <Box flexShrink={props?.flexShrink ? props.flexShrink : 1} position={open ? "relative" : "static"} minWidth='0' width={props?.width ? props.width : 'auto'}>
+    <Box flexShrink={flexShrink} position={open ? 'relative' : 'static'} minWidth={0} width={props?.width ? props.width : 'auto'}>
       <ClickBox width='100%' ref={anchorRef} onClick={onOpen}>
         {children}
       </ClickBox>
       {open && (
         <Portal>
           <DropdownOptions
-            width={props?.dropWidth || "max-content"}
+            width={props?.dropWidth || 'max-content'}
             {...coords}
             ref={dropdownRef}
             onClick={onOptionsClick}
@@ -102,6 +105,6 @@ export function Dropdown(props: DropdownProps) {
 }
 
 Dropdown.defaultProps = {
-  alignX: "left",
-  alignY: "bottom",
+  alignX: 'left',
+  alignY: 'bottom'
 };

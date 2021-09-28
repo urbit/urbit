@@ -20,7 +20,7 @@ dependencies:
   - rio
   - vector
   - bytestring
-  - lmdb-static
+  - lmdb
   - conduit
   - racquire
   - urbit-noun-core

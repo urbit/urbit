@@ -1,16 +1,15 @@
 /-  *settings
-/+  verb, dbug, default-agent
+/+  verb, dbug, default-agent, agentio
 |%
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
+      state-1
   ==
-+$  state-0
-  $:  %0
-      =settings
-  ==
++$  state-0  [%0 settings=settings-0]
++$  state-1  [%1 =settings]
 --
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %-  agent:dbug
@@ -21,10 +20,14 @@
   +*  this  .
       do    ~(. +> bol)
       def   ~(. (default-agent this %|) bol)
+      io    ~(. agentio bol)
   ::
   ++  on-init
     ^-  (quip card _this)
-    `this
+    =^  cards  state
+      (put-entry:do %tutorial %seen b+|)
+    [cards this]
+
   ::
   ++  on-save  !>(state)
   ::
@@ -32,8 +35,10 @@
     |=  =old=vase
     ^-  (quip card _this)
     =/  old  !<(versioned-state old-vase)
+    |-
     ?-  -.old
-      %0  [~ this(state old)]
+      %0  $(old [%1 +.old])
+      %1  [~ this(state old)]
     ==
   ::
   ++  on-poke
@@ -78,13 +83,13 @@
     ^-  (unit (unit cage))
     ?+  pax  (on-peek:def pax)
         [%x %all ~]
-      ``settings-data+!>(all+settings)
+      ``settings-data+!>(`data`all+settings)
     ::
         [%x %bucket @ ~]
       =*  buc  i.t.t.pax
       =/  bucket=(unit bucket)  (~(get by settings) buc)
       ?~  bucket  [~ ~]
-      ``settings-data+!>(bucket+u.bucket)
+      ``settings-data+!>(`data`bucket+u.bucket)
     ::
         [%x %entry @ @ ~]
       =*  buc  i.t.t.pax
@@ -92,19 +97,19 @@
       =/  =bucket  (fall (~(get by settings) buc) ~)
       =/  entry=(unit val)  (~(get by bucket) key)
       ?~  entry  [~ ~]
-      ``settings-data+!>(entry+u.entry)
+      ``settings-data+!>(`data`entry+u.entry)
     ::
         [%x %has-bucket @ ~]
       =*  buc  i.t.t.pax
       =/  has-bucket=?  (~(has by settings) buc)
-      ``noun+!>(has-bucket)
+      ``noun+!>(`?`has-bucket)
     ::
         [%x %has-entry @ @ ~]
       =*  buc  i.t.t.pax
       =*  key  i.t.t.t.pax
       =/  =bucket  (fall (~(get by settings) buc) ~)
       =/  has-entry=?  (~(has by bucket) key)
-      ``noun+!>(has-entry)
+      ``noun+!>(`?`has-entry)
     ==
   ::
   ++  on-agent  on-agent:def

@@ -1,18 +1,14 @@
-import React from "react";
-import { Icon, Text, Col, Label, Row, Button, Action } from "@tlon/indigo-react";
-import { useHistory } from "react-router-dom";
-
-import GlobalApi from "~/logic/api/global";
-import { Association } from "~/types";
-import { resourceFromPath } from "~/logic/lib/group";
-import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
-import ModalButton from "~/views/apps/launch/components/ModalButton";
-import {useModal} from "~/logic/lib/useModal";
-import {SidebarItem} from "./Sidebar/SidebarItem";
+import { Button, Col, Icon, Label, Row, Text } from '@tlon/indigo-react';
+import { Association, deleteGroup, leaveGroup } from '@urbit/api';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import { resourceFromPath } from '~/logic/lib/group';
+import { useModal } from '~/logic/lib/useModal';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import airlock from '~/logic/api';
 
 export function DeleteGroup(props: {
   owner: boolean;
-  api: GlobalApi;
   association: Association;
 }) {
   const history = useHistory();
@@ -21,40 +17,41 @@ export function DeleteGroup(props: {
     if (props.owner) {
       const shouldDelete =
         prompt(`To confirm deleting this group, type ${name}`) === name;
-      if (!shouldDelete) return;
+      if (!shouldDelete)
+return;
     }
     if(props.owner) {
-      await props.api.groups.deleteGroup(ship, name);
+      airlock.thread(deleteGroup(ship, name));
     } else {
-      await props.api.groups.leaveGroup(ship, name);
+      airlock.thread(leaveGroup(ship, name));
     }
-    history.push("/");
+    history.push('/');
   };
 
-  const action = props.owner ? "Archive" : "Leave";
+  const action = props.owner ? 'Archive' : 'Leave';
   const description = props.owner
-    ? "Permanently delete this group. (All current members will no longer see this group.)"
-    : "You can rejoin if it is an open group, or if you are reinvited";
+    ? 'Permanently archive this group. (All current members will no longer see this group.)'
+    : 'You can rejoin if it is an open group, or if you are reinvited';
 
-  const icon = props.owner ? "X" : "SignOut";
-  const { modal, showModal } = useModal({ modal: 
+  const icon = props.owner ? 'X' : 'LogOut';
+  const { modal, showModal } = useModal({ modal:
     (dismiss: () => void) => {
       const onCancel = (e) => {
         e.stopPropagation();
         dismiss();
       };
       return (
-        <Col p="4">
+        <Col p={4}>
           <Label>{action} Group</Label>
-          <Label gray mt="2">
+          <Label gray mt={2}>
             {description}
           </Label>
-          <Row mt="2" justifyContent="flex-end">
+          <Row mt={2} justifyContent="flex-end">
             <Button onClick={onCancel}>Cancel</Button>
             <StatelessAsyncButton
               name={`delete-${props.association.group}`}
               onClick={onDelete}
-              ml="2"
+              ml={2}
               destructive
               primary
             >
@@ -63,11 +60,11 @@ export function DeleteGroup(props: {
           </Row>
         </Col>
       );
-    }});
+    } });
   return (
-    <Row px="3" py="1" onClick={showModal} cursor="pointer">
+    <Row px={3} py={1} onClick={showModal} cursor="pointer">
       {modal}
-      <Icon icon={icon} color="red" mr="2" />
+      <Icon icon={icon} color="red" mr={2} />
       <Text color="red">
         {action} group
       </Text>

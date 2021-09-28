@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+command -v npx > /dev/null || {
+  exit 0
+}
+
+npx lint-staged

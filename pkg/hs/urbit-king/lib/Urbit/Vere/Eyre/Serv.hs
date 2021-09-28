@@ -35,6 +35,7 @@ import Urbit.Prelude hiding (Builder)
 
 import Data.Default                (def)
 import Data.List.NonEmpty          (NonEmpty((:|)))
+import GHC.IO.Exception            (IOException(..), IOErrorType(..))
 import Network.TLS                 ( Credential
                                    , Credentials(..)
                                    , ServerHooks(..)
@@ -254,19 +255,38 @@ startServer
   -> Net.Socket
   -> Maybe W.Port
   -> TVar E.LiveReqs
+  -> IO ()
   -> RIO e ()
-startServer typ hos por sok red vLive = do
+startServer typ hos por sok red vLive onFatal = do
   envir <- ask
 
   let host = case hos of
         SHLocalhost -> "127.0.0.1"
         SHAnyHostOk -> "*"
 
+  let handler r e = do
+        when (isFatal e) $ do
+          runRIO envir $ logError $ display $ msg r e
+          onFatal
+        when (W.defaultShouldDisplayException e) $ do
+          runRIO envir $ logWarn $ display $ msg r e
+
+      isFatal e
+        | Just (IOError {ioe_type = ResourceExhausted}) <- fromException e
+        = True
+        | otherwise = False
+
+      msg r e = case r of
+        Just r  -> "eyre: failed request from " <> (tshow $ W.remoteHost r)
+                <> " for " <> (tshow $ W.rawPathInfo r) <> ": " <> tshow e
+        Nothing -> "eyre: server exception: " <> tshow e
+
   let opts =
         W.defaultSettings
           & W.setHost host
           & W.setPort (fromIntegral por)
-          & W.setTimeout (5 * 60)
+          & W.setTimeout 30
+          & W.setOnException handler
 
   -- TODO build Eyre.Site.app in pier, thread through here
   let runAppl who = E.app envir who vLive
@@ -338,8 +358,9 @@ getFirstTlsConfig (MTC var) = do
     []  -> STM.retry
     x:_ -> pure (fst x)
 
-realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
-realServ vLive conf@ServConf {..} = do
+realServ :: HasLogFunc e
+         => TVar E.LiveReqs -> IO () -> ServConf -> RIO e ServApi
+realServ vLive onFatal conf@ServConf {..} = do
   logInfo (displayShow ("EYRE", "SERV", "Running Real Server"))
   por <- newEmptyTMVarIO
 
@@ -354,10 +375,10 @@ realServ vLive conf@ServConf {..} = do
     logInfo (displayShow ("EYRE", "SERV", "runServ"))
     rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
       atomically (putTMVar vPort por)
-      startServer scType scHost por sok scRedi vLive
+      startServer scType scHost por sok scRedi vLive onFatal
 
-serv :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
-serv vLive conf = do
+serv :: HasLogFunc e => TVar E.LiveReqs -> IO () -> ServConf -> RIO e ServApi
+serv vLive onFatal conf = do
   if scFake conf
     then fakeServ conf
-    else realServ vLive conf
+    else realServ vLive onFatal conf

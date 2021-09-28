@@ -1,13 +1,12 @@
 /* noun/urth.c
 **
 */
+#include "all.h"
+#include "ur/ur.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <ctype.h>
-
-#include "all.h"
-#include "ur/ur.h"
 
 /* _cu_atom_to_ref(): allocate indirect atom off-loom.
 */
@@ -401,13 +400,16 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   //
   _cu_all_to_loom(rot_u, ken, &cod_u);
 
+  //  allocate new hot jet state
+  //
+  u3j_boot(c3y);
+
   //  establish correct refcounts via tracing
   //
   u3m_grab(u3_none);
 
-  //  allocate new hot jet state; re-establish warm
+  //  re-establish warm jet state
   //
-  u3j_boot(c3y);
   u3j_ream();
 
   //  restore event number

@@ -1,103 +1,107 @@
+import { MetadataUpdate } from '@urbit/api/metadata';
 import _ from 'lodash';
-
-import { StoreState } from '../../store/type';
-
-import { MetadataUpdate } from '~/types/metadata-update';
 import { Cage } from '~/types/cage';
+import { BaseState } from '../state/base';
+import { MetadataState as State } from '../state/metadata';
 
-type MetadataState = Pick<StoreState, 'associations'>;
+type MetadataState = State & BaseState<State>;
 
-export default class MetadataReducer<S extends MetadataState> {
-  reduce(json: Cage, state: S) {
-    let data = json['metadata-update']
-    if (data) {
-      console.log(data);
-      this.associations(data, state);
-      this.add(data, state);
-      this.update(data, state);
-      this.remove(data, state);
-      this.groupInitial(data, state);
-    }
+export default class MetadataReducer {
+  reduce(json: Cage) {
+    return;
   }
+}
 
-  groupInitial(json: MetadataUpdate, state: S) {
-    const data = _.get(json, 'initial-group', false);
-    console.log(data);
-    if(data) {
-      this.associations(data, state);
-    }
-  }
-
-  associations(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'associations', false);
-    if (data) {
-      let metadata = state.associations;
-      Object.keys(data).forEach((key) => {
-        let val = data[key];
-        let appName = val['app-name'];
-        let rid = val.resource;
-        if (!(appName in metadata)) {
-          metadata[appName] = {};
-        }
-        if (!(rid in metadata[appName])) {
-          metadata[appName][rid] = {};
-        }
-        metadata[appName][rid] = val;
-      });
-
-      state.associations = metadata;
-    }
-  }
-
-  add(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'add', false);
-    if (data) {
-      let metadata = state.associations;
-      let appName = data['app-name'];
-      let appPath = data.resource;
-
-      if (!(appName in metadata)) {
-        metadata[appName] = {};
-      }
-      if (!(appPath in metadata[appName])) {
-        metadata[appName][appPath] = {};
-      }
-      metadata[appName][appPath] = data;
-
-      state.associations = metadata;
-    }
-  }
-
-  update(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'update-metadata', false);
-    if (data) {
-      let metadata = state.associations;
-      let appName = data['app-name'];
-      let rid = data.resource;
-
+const associations = (json: MetadataUpdate, state: MetadataState): MetadataState => {
+  const data = _.get(json, 'associations', false);
+  if (data) {
+    const metadata = state.associations;
+    Object.keys(data).forEach((key) => {
+      const val = data[key];
+      const appName = val['app-name'];
+      const rid = val.resource;
       if (!(appName in metadata)) {
         metadata[appName] = {};
       }
       if (!(rid in metadata[appName])) {
         metadata[appName][rid] = {};
       }
-      metadata[appName][rid] = data;
+      metadata[appName][rid] = val;
+    });
 
-      state.associations = metadata;
-    }
+    state.associations = metadata;
   }
+  return state;
+};
 
-  remove(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'remove', false);
-    if (data) {
-      let metadata = state.associations;
-      let appName = data['app-name'];
-      let rid = data.resource;
+const add = (json: MetadataUpdate, state: MetadataState): MetadataState => {
+  const data = _.get(json, 'add', false);
+  if (data) {
+    const metadata = state.associations;
+    const appName = data['app-name'];
+    const appPath = data.resource;
 
-      if (appName in metadata && rid in metadata[appName]) {
-        delete metadata[appName][rid];
-      }
-      state.associations = metadata;
+    if (!(appName in metadata)) {
+      metadata[appName] = {};
     }
+    if (!(appPath in metadata[appName])) {
+      metadata[appName][appPath] = {};
+    }
+    metadata[appName][appPath] = data;
+
+    state.associations = metadata;
   }
-}
+  return state;
+};
+
+const groupInitial = (json: MetadataUpdate, state: MetadataState): MetadataState => {
+  const data = _.get(json, 'initial-group', false);
+  if(data) {
+    associations(data, state);
+  }
+  return state;
+};
+
+const update = (json: MetadataUpdate, state: MetadataState): MetadataState => {
+  const data = _.get(json, 'update-metadata', false);
+  if (data) {
+    const metadata = state.associations;
+    const appName = data['app-name'];
+    const rid = data.resource;
+
+    if (!(appName in metadata)) {
+      metadata[appName] = {};
+    }
+    if (!(rid in metadata[appName])) {
+      metadata[appName][rid] = {};
+    }
+    metadata[appName][rid] = data;
+
+    state.associations = metadata;
+  }
+  return state;
+};
+
+const remove = (json: MetadataUpdate, state: MetadataState): MetadataState => {
+  const data = _.get(json, 'remove', false);
+  if (data) {
+    const metadata = state.associations;
+    const appName = data['app-name'];
+    const rid = data.resource;
+
+    if (appName in metadata && rid in metadata[appName]) {
+      delete metadata[appName][rid];
+    }
+    state.associations = metadata;
+  }
+  return state;
+};
+
+export const reduce = [
+  associations,
+  add,
+  update,
+  remove,
+  groupInitial
+];
+

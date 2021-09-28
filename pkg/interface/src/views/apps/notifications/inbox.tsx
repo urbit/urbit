@@ -1,148 +1,144 @@
-import React, { useEffect, useCallback, useRef, useState } from "react";
-import f from "lodash/fp";
-import _ from "lodash";
-import { Icon, Col, Center, Row, Box, Text, Anchor, Rule, LoadingSpinner } from "@tlon/indigo-react";
-import moment from "moment";
-import { Notifications, Rolodex, Timebox, IndexedNotification, Groups, joinProgress, JoinRequests, GroupNotificationsConfig, NotificationGraphConfig } from "~/types";
-import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
-import { BigInteger } from "big-integer";
-import GlobalApi from "~/logic/api/global";
-import { Notification } from "./notification";
-import { Associations } from "~/types";
-import { InviteItem } from '~/views/components/Invite';
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import { useHistory } from "react-router-dom";
-import {useModal} from "~/logic/lib/useModal";
-import {JoinGroup} from "~/views/landscape/components/JoinGroup";
-import {JoiningStatus} from "./joining";
-import {Invites} from "./invites";
-import {useLazyScroll} from "~/logic/lib/useLazyScroll";
+import { Box, Center, Col, LoadingSpinner, Text, Icon } from '@tlon/indigo-react';
+import {
+    IndexedNotification,
+
+    JoinRequests, Notifications,
+
+    seen,
+
+    Timebox,
+    unixToDa
+} from '@urbit/api';
+import { BigInteger } from 'big-integer';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import moment from 'moment';
+import React, { useEffect, useRef } from 'react';
+import { getNotificationKey } from '~/logic/lib/hark';
+import { useLazyScroll } from '~/logic/lib/useLazyScroll';
+import useLaunchState from '~/logic/state/launch';
+import { daToUnix } from '~/logic/lib/util';
+import useHarkState from '~/logic/state/hark';
+import { Invites } from './invites';
+import { Notification } from './notification';
+import airlock from '~/logic/api';
 
 type DatedTimebox = [BigInteger, Timebox];
 
-function filterNotification(associations: Associations, groups: string[]) {
+function filterNotification(groups: string[]) {
   if (groups.length === 0) {
     return () => true;
   }
   return (n: IndexedNotification) => {
-    if ("graph" in n.index) {
+    if ('graph' in n.index) {
       const { group } = n.index.graph;
-      return groups.findIndex((g) => group === g) !== -1;
-    } else if ("group" in n.index) {
+      return groups.findIndex(g => group === g) !== -1;
+    } else if ('group' in n.index) {
       const { group } = n.index.group;
-      return groups.findIndex((g) => group === g) !== -1;
+      return groups.findIndex(g => group === g) !== -1;
     }
     return true;
   };
 }
 
 export default function Inbox(props: {
-  notifications: Notifications;
-  notificationsSize: number;
   archive: Notifications;
-  groups: Groups;
   showArchive?: boolean;
-  api: GlobalApi;
-  associations: Associations;
-  contacts: Rolodex;
   filter: string[];
-  invites: any;
   pendingJoin: JoinRequests;
-  notificationsGroupConfig: GroupNotificationsConfig;
-  notificationsGraphConfig: NotificationGraphConfig;
 }) {
-  const { api, associations, invites } = props;
   useEffect(() => {
-    let seen = false;
+    let hasSeen = false;
     setTimeout(() => {
-      seen = true;
+      hasSeen = true;
     }, 3000);
     return () => {
-      if (seen) {
-        api.hark.seen();
+      if (hasSeen) {
+        airlock.poke(seen());
       }
     };
   }, []);
 
+  const runtimeLag = useLaunchState(state => state.runtimeLag);
+
+  const ready = useHarkState(
+    s => Object.keys(s.unreads.graph).length > 0
+  );
+
+  const getMore = useHarkState(s => s.getMore);
+
+  const notificationState = useHarkState(state => state.notifications);
+  const unreadNotes = useHarkState(s => s.unreadNotes);
+  const archivedNotifications = useHarkState(state => state.archivedNotifications);
+
   const notifications =
-    Array.from(props.showArchive ? props.archive : props.notifications) || [];
+    Array.from(props.showArchive ? archivedNotifications : notificationState) || [];
 
-  const calendar = {
-    ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
-      if (this.subtract(6, 'hours').isBefore(now)) {
-        return "[Earlier Today]";
-      } else {
-        return MOMENT_CALENDAR_DATE.sameDay;
-      }
-    }
-  };
-
-  let notificationsByDay = f.flow(
+  const notificationsByDay = f.flow(
     f.map<DatedTimebox, DatedTimebox>(([date, nots]) => [
       date,
-      nots.filter(filterNotification(associations, props.filter)),
+      nots.filter(filterNotification(props.filter))
     ]),
     f.groupBy<DatedTimebox>(([d]) => {
       const date = moment(daToUnix(d));
       if (moment().subtract(6, 'hours').isBefore(date)) {
         return 'latest';
       } else {
-        return date.format("YYYYMMDD");
+        return date.format('YYYYMMDD');
       }
-    }),
+    })
   )(notifications);
 
   const notificationsByDayMap = new Map<string, DatedTimebox[]>(
-    Object.keys(notificationsByDay).map(timebox => {
+    Object.keys(notificationsByDay).map((timebox) => {
       return [timebox, notificationsByDay[timebox]];
     })
   );
 
   const scrollRef = useRef(null);
 
-  const loadMore = useCallback(async () => {
-    return api.hark.getMore();
-  }, [api]);
-
   const { isDone, isLoading } = useLazyScroll(
-    scrollRef, 
+    scrollRef,
+    ready,
     0.2,
     _.flatten(notifications).length,
-    loadMore
+    getMore
   );
-
+  const date = unixToDa(Date.now());
 
   return (
-    <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
-      <Invites groups={props.groups} pendingJoin={props.pendingJoin} invites={invites} api={api} associations={associations} />
+    <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
+      {runtimeLag && (
+        <Box bg="yellow" borderRadius={2} p={2} m={2}>
+          <Icon verticalAlign="middle" mr={2} icon="Tutorial" />
+          <Text verticalAlign="middle">
+            Update your binary to continue receiving updates.
+          </Text>
+        </Box>
+      )}
+      <Invites pendingJoin={props.pendingJoin} />
+      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
-            label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
-            contacts={props.contacts}
-            archive={!!props.showArchive}
-            associations={props.associations}
-            api={api}
-            groups={props.groups}
-            graphConfig={props.notificationsGraphConfig}
-            groupConfig={props.notificationsGroupConfig}
           />
         );
       })}
-      {isDone && (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
-          <Text gray fontSize="1">No more notifications</Text>
+      {isDone ? (
+        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
+          <Text gray fontSize={1}>No more notifications</Text>
         </Center>
-    )}
-      {isLoading && (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+    )  : isLoading ? (
+        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
           <LoadingSpinner />
         </Center>
-      )}
-   
+    ) : (
+      <Box mt={2} height="96px" />
+    )}
+
     </Col>
   );
 }
@@ -159,17 +155,9 @@ function sortIndexedNotification(
 }
 
 function DaySection({
-  label,
-  contacts,
-  groups,
-  archive,
   timeboxes,
-  associations,
-  api,
-  groupConfig,
-  graphConfig,
+  unread = false
 }) {
-
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
     return null;
@@ -177,31 +165,14 @@ function DaySection({
 
   return (
     <>
-      <Box position="sticky" zIndex={3} top="-1px" bg="white">
-        <Box p="2" bg="scales.black05">
-          <Text>
-            {label}
-          </Text>
-        </Box>
-      </Box>
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
-          <React.Fragment key={j}>
-            {(i !== 0 || j !== 0) && (
-              <Box flexShrink={0} height="4px" bg="scales.black05" />
-            )}
-            <Notification
-              graphConfig={graphConfig}
-              groupConfig={groupConfig}
-              api={api}
-              associations={associations}
-              notification={not}
-              archived={archive}
-              contacts={contacts}
-              groups={groups}
-              time={date}
-            />
-          </React.Fragment>
+          <Notification
+            key={getNotificationKey(date, not)}
+            notification={not}
+            unread={unread}
+            time={!unread ? date : undefined}
+          />
         ))
       )}
     </>

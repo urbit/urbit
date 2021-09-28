@@ -1,77 +1,72 @@
-import React, { useCallback } from "react";
-import { Row, Box, Col } from "@tlon/indigo-react";
-import styled from "styled-components";
+import { Association } from '@urbit/api/metadata';
+import { AppName } from '@urbit/api';
+import React, { ReactElement } from 'react';
 import Helmet from 'react-helmet';
+import { Route, Switch } from 'react-router-dom';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
+import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
+import { Workspace } from '~/types';
+import { ChatResource } from '~/views/apps/chat/ChatResource';
+import { LinkResource } from '~/views/apps/links/LinkResource';
+import { PublishResource } from '~/views/apps/publish/PublishResource';
+import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
+import { ResourceSkeleton } from './ResourceSkeleton';
 
-import { ChatResource } from "~/views/apps/chat/ChatResource";
-import { PublishResource } from "~/views/apps/publish/PublishResource";
-import { LinkResource } from "~/views/apps/links/LinkResource";
-
-import { Association } from "~/types/metadata-update";
-import { StoreState } from "~/logic/store/type";
-import GlobalApi from "~/logic/api/global";
-import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import { ChannelSettings } from "./ChannelSettings";
-import { ResourceSkeleton } from "./ResourceSkeleton";
-import {ChannelPopoverRoutes} from "./ChannelPopoverRoutes";
-
-const TruncatedBox = styled(Box)`
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-`;
-
-type ResourceProps = StoreState & {
+interface ResourceProps {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+  workspace: Workspace;
+}
 
-export function Resource(props: ResourceProps) {
-  const { association, api, notificationsGraphConfig, groups, contacts } = props;
-  const app = association.metadata.module || association["app-name"];
-  const rid = association.resource;
-  const selectedGroup = association.group;
-  const relativePath = (p: string) =>
-    `${props.baseUrl}/resource/${app}${rid}${p}`;
-  const skelProps = { api, association, groups, contacts };
-  let title = props.association.metadata.title;
-  if ('workspace' in props) {
-    if ('group' in props.workspace && props.workspace.group in props.associations.groups) {
-      title = `${props.associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
-    }
+export function Resource(props: ResourceProps): ReactElement {
+  const { association } = props;
+  const groups = useGroupState(state => state.groups);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
+  const associations = useMetadataState(state => state.associations);
+  const contacts = useContactState(state => state.contacts);
+  let app = association['app-name'];
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    app = association.metadata.config.graph as AppName;
   }
+  const { resource: rid, group: selectedGroup } = association;
+  const relativePath = (p: string) => `${props.baseUrl}/resource/${app}${rid}${p}`;
+  const skelProps = { association, groups, contacts };
+  let title = props.association.metadata.title;
+  if ('group' in props.workspace && props.workspace.group in associations.groups) {
+      title = `${associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
+  }
+
   return (
     <>
       <Helmet defer={false}>
-        <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+        <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
       </Helmet>
+      { app === 'link' ? (
+        <LinkResource {...props} />
+      ) :  (
       <ResourceSkeleton
         {...skelProps}
-        baseUrl={relativePath("")}
+        baseUrl={relativePath('')}
       >
-        {app === "chat" ? (
+        {app === 'chat' ? (
           <ChatResource {...props} />
-        ) : app === "publish" ? (
+        ) : app === 'publish' ? (
           <PublishResource {...props} />
-        ) : (
-          <LinkResource {...props} />
-        )}
+        ) : null }
       </ResourceSkeleton>
+      )}
       <Switch>
         <Route
-          path={relativePath("/settings")}
+          path={relativePath('/settings')}
           render={(routeProps) => {
             return (
               <ChannelPopoverRoutes
                 association={association}
-                group={props.groups?.[selectedGroup]}
-                groups={props.groups}
-                contacts={props.contacts}
-                api={props.api}
-                baseUrl={relativePath("")}
+                group={groups?.[selectedGroup]}
+                baseUrl={relativePath('')}
                 rootUrl={props.baseUrl}
-                notificationsGraphConfig={notificationsGraphConfig}
               />
             );
           }}

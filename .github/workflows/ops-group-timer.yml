@@ -1,0 +1,20 @@
+name: group-timer
+on:
+  push:
+    branches:
+      - 'ops/group-timer'
+jobs:
+  glob:
+    runs-on: ubuntu-latest
+    name: "Create and deploy a glob to ~difmex-passed"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: ./.github/actions/glob
+        with:
+          ship: 'difmex-passed'
+          credentials: ${{ secrets.JANEWAY_SERVICE_KEY }}
+          ssh-sec-key: ${{ secrets.JANEWAY_SSH_SEC_KEY }}
+          ssh-pub-key: ${{ secrets.JANEWAY_SSH_PUB_KEY }}
+

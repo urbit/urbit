@@ -1,82 +1,172 @@
-import React, { useState } from 'react';
-import { Link } from "react-router-dom";
-import { Contacts } from '~/types/contact-update';
-import GlobalApi from '~/logic/api/global';
-import { Box, Row, Text } from '@tlon/indigo-react';
-import styled from 'styled-components';
-import Author from '~/views/components/Author';
-import { GraphNode, TextContent } from '~/types/graph-update';
-import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import { Group } from '~/types';
-import { MentionText } from '~/views/components/MentionText';
+import { Action, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { Group, removePosts } from '@urbit/api';
+import { GraphNode } from '@urbit/api/graph';
+import bigInt from 'big-integer';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { roleForShip } from '~/logic/lib/group';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-
-const ClickBox = styled(Box)`
-  cursor: pointer;
-  padding-left: ${p => p.theme.space[2]}px;
-`;
+import { useCopy } from '~/logic/lib/useCopy';
+import { useHovering } from '~/logic/lib/util';
+import useMetadataState from '~/logic/state/metadata';
+import Author from '~/views/components/Author';
+import { ActionLink } from '~/views/components/Link';
+import { GraphContent } from '../landscape/components/Graph/GraphContent';
+import { Dropdown } from './Dropdown';
+import airlock from '~/logic/api';
 
 interface CommentItemProps {
   pending?: boolean;
   comment: GraphNode;
   baseUrl: string;
-  contacts: Contacts;
   unread: boolean;
   name: string;
   ship: string;
-  api: GlobalApi;
   group: Group;
+  highlighted: boolean;
 }
 
 export function CommentItem(props: CommentItemProps) {
-  const { ship, contacts, name, api, comment, group } = props;
-  const [revNum, post] = getLatestCommentRevision(comment);
-  const disabled = props.pending || window.ship !== post?.author;
+  let { highlighted } = props;
+  const { ship, name, comment, group } = props;
+  const association = useMetadataState(
+    useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [
+      ship,
+      name
+    ])
+  );
+  const ref = useRef<HTMLDivElement>(null);
+  const [, post] = getLatestCommentRevision(comment);
+  const disabled = props.pending;
 
   const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [comment.post?.index]);
+    const revs = comment.children.get(bigInt(1));
+    const children = Array.from(revs.children);
+    const indices = [];
+    for (const child in children) {
+      const node = children[child] as any;
+      if (!node?.post || typeof node.post !== 'string') {
+        indices.push(node.post?.index);
+      }
+    }
+
+    await airlock.poke(removePosts(ship, name, [
+      comment.post?.index,
+      revs?.post?.index,
+      ...indices
+    ]));
   };
+
+  const ourMention = post?.contents?.some((e) => {
+    if (!('mention' in e))
+return false;
+    return e?.mention && e?.mention === window.ship;
+  });
+
+  if (!highlighted) {
+    if (ourMention) {
+      highlighted = true;
+    }
+  }
+  const { hovering, bind } = useHovering();
 
   const commentIndexArray = (comment.post?.index || '/').split('/');
   const commentIndex = commentIndexArray[commentIndexArray.length - 1];
-  const updateUrl = `${props.baseUrl}/${commentIndex}`
+
+  const ourRole = roleForShip(group, window.ship);
+  useEffect(() => {
+    if (ref.current && props.highlighted) {
+      ref.current.scrollIntoView({ block: 'center' });
+    }
+  }, [ref, props.highlighted]);
+
+  const { copyDisplay, doCopy } = useCopy(
+    getPermalinkForGraph(
+      association.group,
+      association.resource,
+      post?.index?.split('/').slice(0, -1).join('/')
+    ),
+    'Copy Link'
+  );
+
+  if (!post || typeof post === 'string' || typeof comment.post === 'string') {
+    return (
+      <Box width="100%" textAlign="left" py="3">
+        <Text gray>This comment has been deleted.</Text>
+      </Box>
+    );
+  }
 
   return (
-    <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
-      <Row bg="white" my={3}>
+    <Box {...bind} ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>
+      <Row justifyContent="space-between" alignItems="center" my={1} pr="1">
         <Author
+          size={24}
+          sigilPadding={4}
           showImage
-          contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
           unread={props.unread}
           group={group}
-          api={api}
-        >
-          {!disabled && (
-            <Box display="inline-block" verticalAlign="middle">
-              <Link to={updateUrl}>
-                <Text
-                  color="green"
-                  ml={2}
+          isRelativeTime
+        ></Author>
+        {!post.pending &&
+          <Box opacity={hovering ? '100%' : '0%'}>
+            <Dropdown
+              alignX="right"
+              alignY="top"
+              options={
+                <Col
+                  p="2"
+                  border="1"
+                  borderRadius="1"
+                  borderColor="lightGray"
+                  backgroundColor="white"
+                  gapY="2"
                 >
-                  Update
-                </Text>
-              </Link>
-              <ClickBox display="inline-block" color="red" onClick={onDelete}>
-                <Text color='red'>Delete</Text>
-              </ClickBox>
-            </Box>
-          )}
-        </Author>
+                  <Action bg="white" onClick={doCopy}>
+                    {copyDisplay}
+                  </Action>
+                  {(window.ship == post?.author && !disabled) ? (
+                    <ActionLink
+                      color="blue"
+                      to={{
+                        pathname: props.baseUrl,
+                        search: `?edit=${commentIndex}`
+                      }}
+                    >
+                      Update
+                    </ActionLink>
+                  ) : null}
+                  {(window.ship == post?.author || ourRole == 'admin') &&
+                  !disabled ? (
+                    <Action
+                      height="unset"
+                      bg="white"
+                      onClick={onDelete}
+                      destructive
+                    >
+                      Delete
+                    </Action>
+                  ) : null}
+                </Col>
+              }
+            >
+              <Icon icon="Ellipsis" />
+            </Dropdown>
+          </Box>
+        }
       </Row>
-      <Box mb={2}>
-        <MentionText
-          contacts={contacts}
-          group={group}
-          content={post?.contents}
-        />
-      </Box>
+      <GraphContent
+        borderRadius={1}
+        p={1}
+        mb={1}
+        ml="28px"
+        backgroundColor={highlighted ? 'washedBlue' : 'white'}
+        transcluded={0}
+        contents={post.contents}
+        showOurContact
+      />
     </Box>
   );
 }

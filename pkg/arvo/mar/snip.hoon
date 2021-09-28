@@ -43,7 +43,7 @@
 ::
 =,  mimes:html
 |_  [hed=marl tal=marl]
-++  grad  %mime
+++  grad  %noun
 ::
 ++  grow                                                ::  convert to
   |%
@@ -55,6 +55,7 @@
     ++  html  (crip (en-xml hymn))                      ::  convert to %html
     ++  mime  [/text/html (as-octs html)]               ::  convert to %mime
     --
+  ++  noun  [hed tal]
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  ,[marl marl]                        ::  clam from %noun

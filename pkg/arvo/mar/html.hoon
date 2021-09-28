@@ -6,7 +6,6 @@
 ::::  compute
   ::
 =,  html
-^|
 |_  htm=@t
 ++  grow                                                ::  convert to
   ^?

@@ -1,23 +1,24 @@
-import React, { useState, useCallback } from 'react';
-import _ from 'lodash';
-import { Text, Box } from '@tlon/indigo-react';
-import { Contact, Contacts, Content, Group } from '~/types';
+import { Text } from '@tlon/indigo-react';
+import { Contact, Content, Group } from '@urbit/api';
+import React from 'react';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { cite, deSig, useShowNickname } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
+import { PropFunc } from '~/types';
+import ProfileOverlay from '~/views/components/ProfileOverlay';
 import RichText from '~/views/components/RichText';
-import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
-import OverlaySigil from '~/views/components/OverlaySigil';
-import { useHistory } from 'react-router-dom';
 
 interface MentionTextProps {
   contact?: Contact;
-  contacts?: Contacts;
   content: Content[];
   group: Group;
+  transcluded: number;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts, contact, group, ...rest } = props;
+  const { content, contact, group, ...rest } = props;
 
   return (
-    <RichText contacts={contacts} contact={contact} group={group} {...rest}>
+    <RichText contact={contact} group={group} {...rest}>
       {content.reduce((accum, c) => {
         if ('text' in c) {
           return accum + c.text;
@@ -25,6 +26,9 @@ export function MentionText(props: MentionTextProps) {
           return accum + `[~${c.mention}]`;
         } else if ('url' in c) {
           return accum + `\n ${c.url}`;
+        } else if ('reference' in c) {
+          const { link } = referenceToPermalink(c);
+          return accum + `\n [${link}]`;
         }
         return accum;
       }, '')}
@@ -33,52 +37,28 @@ export function MentionText(props: MentionTextProps) {
 }
 
 export function Mention(props: {
-  contact: Contact;
-  contacts?: Contacts;
-  group: Group;
-  scrollWindow?: HTMLElement;
   ship: string;
-}) {
-  const { contacts, ship, scrollWindow } = props;
-  let { contact } = props;
-  contact = contact?.color ? contact : contacts?.[ship];
-  const history = useHistory();
+  first?: boolean;
+} & PropFunc<typeof Text>) {
+  const { ship, first = false, ...rest } = props;
+  const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
-  const group = props.group ?? { hidden: true };
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  const toggleOverlay = useCallback(
-    () => {
-      setShowOverlay(value => !value);
-    },
-    [showOverlay]
-  );
-
   return (
-    <Box position='relative' display='inline-block' cursor='pointer'>
+    <ProfileOverlay ship={ship} display="inline">
       <Text
-        onClick={() => toggleOverlay()}
-        mx='2px'
-        px='2px'
+        marginLeft={first? 0 : 1}
+        marginRight={1}
+        px={1}
         bg='washedBlue'
         color='blue'
+        fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
+        title={showNickname ? cite(ship) : contact?.nickname}
+        {...rest}
       >
         {name}
       </Text>
-      {showOverlay && (
-        <OverlaySigil
-          ship={ship}
-          contact={contact}
-          color={`#${uxToHex(contact?.color ?? '0x0')}`}
-          group={group}
-          onDismiss={() => toggleOverlay()}
-          history={history}
-          className='relative'
-          scrollWindow={scrollWindow}
-        />
-      )}
-    </Box>
+    </ProfileOverlay>
   );
 }

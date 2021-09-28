@@ -1,26 +1,21 @@
-import React, { createRef, useCallback, useRef } from "react";
-import { IUnControlledCodeMirror, UnControlled as CodeEditor } from "react-codemirror2";
-import { useFormikContext } from 'formik';
-import { Prompt } from 'react-router-dom';
+import { Box } from '@tlon/indigo-react';
 import { Editor } from 'codemirror';
-
-import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from "~/logic/lib/util";
-import { PropFunc } from "~/types/util";
-import CodeMirror from "codemirror";
-
-import "codemirror/mode/markdown/markdown";
-import "codemirror/addon/display/placeholder";
-import "codemirror/addon/edit/continuelist";
-
-import "codemirror/lib/codemirror.css";
-import { Box } from "@tlon/indigo-react";
-import { useFileDrag } from "~/logic/lib/useDrag";
-import SubmitDragger from "~/views/components/SubmitDragger";
-import useS3 from "~/logic/lib/useS3";
-import { S3State } from "~/types";
+import 'codemirror/addon/display/placeholder';
+import 'codemirror/addon/edit/continuelist';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/markdown/markdown';
+import { useFormikContext } from 'formik';
+import React, { useCallback, useRef } from 'react';
+import { UnControlled as CodeEditor } from 'react-codemirror2';
+import { Prompt } from 'react-router-dom';
+import { useFileUpload } from '~/logic/lib/useFileUpload';
+import { IuseStorage } from '~/logic/lib/useStorage';
+import { usePreventWindowUnload } from '~/logic/lib/util';
+import { PropFunc } from '~/types/util';
+import SubmitDragger from '~/views/components/SubmitDragger';
 
 const MARKDOWN_CONFIG = {
-  name: "markdown",
+  name: 'markdown'
 };
 
 interface MarkdownEditorProps {
@@ -28,7 +23,6 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (s: string) => void;
   onBlur?: (e: any) => void;
-  s3: S3State;
 }
 
 const PromptIfDirty = () => {
@@ -49,12 +43,12 @@ export function MarkdownEditor(
 
   const options = {
     mode: MARKDOWN_CONFIG,
-    theme: "tlon",
+    theme: 'tlon',
     lineNumbers: false,
     lineWrapping: true,
-    scrollbarStyle: "native",
+    scrollbarStyle: 'native',
     // cursorHeight: 0.85,
-    placeholder: placeholder || "",
+    placeholder: placeholder || '',
     extraKeys: { 'Enter': 'newlineAndIndentContinueMarkdownList' }
   };
 
@@ -67,24 +61,15 @@ export function MarkdownEditor(
     [onChange]
   );
 
-  const handleBlur = useCallback(
-    (_i, e: any) => {
-      onBlur && onBlur(e);
-    },
-    [onBlur]
-  );
-
-  const { uploadDefault, canUpload } = useS3(props.s3);
-
-  const onFileDrag = useCallback(
-    async (files: FileList | File[], e: DragEvent) => {
+  const onFileUpload = useCallback(
+    async (files: FileList | File[], { canUpload, uploadDefault }: IuseStorage) => {
       if (!canUpload || !editor.current) {
         return;
       }
       const codeMirror: Editor = editor.current.editor;
       const doc = codeMirror.getDoc();
 
-      Array.from(files).forEach(async file => {
+      Array.from(files).forEach(async (file) => {
         const placeholder = `![Uploading ${file.name}](...)`;
         doc.setValue(doc.getValue() + placeholder);
         const url = await uploadDefault(file);
@@ -92,14 +77,17 @@ export function MarkdownEditor(
         doc.setValue(doc.getValue().replace(placeholder, markdown));
       });
     },
-    [uploadDefault, canUpload, value, onChange]
+    [value, onChange]
   );
 
-  const { bind, dragging } = useFileDrag(onFileDrag);
+  const {
+    drag: { bind, dragging }
+  } = useFileUpload({
+    onFiles: onFileUpload
+  });
 
   return (
     <Box
-      height="100%"
       position="relative"
       className="publish"
       p={1}
@@ -117,10 +105,10 @@ export function MarkdownEditor(
         value={value}
         options={options}
         onChange={handleChange}
-        onDragLeave={(editor, e) => bind.onDragLeave(e)}
-        onDragOver={(editor, e) => bind.onDragOver(e)}
-        onDrop={(editor, e) => bind.onDrop(e)}
-        onDragEnter={(editor, e) => bind.onDragEnter(e)}
+        onDragLeave={(editor, e: any) => bind.onDragLeave(e)}
+        onDragOver={(editor, e: any) => bind.onDragOver(e)}
+        onDrop={(editor, e: any) => bind.onDrop(e)}
+        onDragEnter={(editor, e: any) => bind.onDragEnter(e)}
       />
       {dragging && <SubmitDragger />}
     </Box>

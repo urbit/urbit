@@ -24,7 +24,7 @@
   !>  ^-  action:push-hook
   [%remove resource.action]
 ;<  ~  bind:m  (cleanup-md:view rid)
-;<  ~  bind:m  (poke-our %group-store %group-update !>([%remove-group rid ~]))
+;<  ~  bind:m  (poke-our %group-store %group-update-0 !>([%remove-group rid ~]))
 ;<  ~  bind:m  (poke-our %metadata-push-hook push-hook-act)
 ;<  ~  bind:m  (poke-our %contact-push-hook push-hook-act)
 ;<  ~  bind:m  (poke-our %group-push-hook push-hook-act)

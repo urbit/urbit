@@ -1,6 +1,6 @@
-import { useEffect, RefObject, useRef, useState } from "react";
-import _ from "lodash";
-import usePreviousValue from "./usePreviousValue";
+import _ from 'lodash';
+import { RefObject, useEffect, useState } from 'react';
+import usePreviousValue from './usePreviousValue';
 
 export function distanceToBottom(el: HTMLElement) {
   const { scrollTop, scrollHeight, clientHeight } = el;
@@ -11,6 +11,7 @@ export function distanceToBottom(el: HTMLElement) {
 
 export function useLazyScroll(
   ref: RefObject<HTMLElement>,
+  ready: boolean,
   margin: number,
   count: number,
   loadMore: () => Promise<boolean>
@@ -35,17 +36,21 @@ export function useLazyScroll(
   };
 
   useEffect(() => {
-    if((oldCount > count) && ref.current) {
+    if((oldCount > count) && ref.current && !isLoading) {
       loadUntil(ref.current);
     }
-  }, [count]);
-
+  }, [count, isLoading]);
 
   useEffect(() => {
-    if (!ref.current) {
+    if(!ready) {
+      setIsDone(false);
+    }
+  }, [ready]);
+
+  useEffect(() => {
+    if (!ref.current || isDone || !ready || isLoading) {
       return;
     }
-    setIsDone(false);
     const scroll = ref.current;
     loadUntil(scroll);
 
@@ -54,13 +59,12 @@ export function useLazyScroll(
       loadUntil(el);
     };
 
-    ref.current.addEventListener("scroll", onScroll, { passive: true });
+    ref.current.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
-      ref.current?.removeEventListener("scroll", onScroll);
+      ref.current?.removeEventListener('scroll', onScroll);
     };
-  }, [ref?.current, count]);
-  
+  }, [ref?.current, ready, isDone, isLoading]);
 
   return { isDone, isLoading };
 }

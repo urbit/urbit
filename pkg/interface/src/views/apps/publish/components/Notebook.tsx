@@ -1,52 +1,49 @@
-import React from "react";
-import { RouteComponentProps, Link } from "react-router-dom";
-import { NotebookPosts } from "./NotebookPosts";
-import { Col, Box, Text, Button, Row } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from "~/types";
-import { useShowNickname } from "~/logic/lib/util";
+import { Box, Button, Col, Row, Text } from '@tlon/indigo-react';
+import { Association, Graph, readGraph } from '@urbit/api';
+import React, { ReactElement, useCallback } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { useShowNickname } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
+import airlock from '~/logic/api';
+import { NotebookPosts } from './NotebookPosts';
 
 interface NotebookProps {
-  api: GlobalApi;
   ship: string;
   book: string;
   graph: Graph;
-  notebookContacts: Contacts;
   association: Association;
-  associations: Associations;
-  contacts: Rolodex;
-  groups: Groups;
   baseUrl: string;
   rootUrl: string;
-  unreads: Unreads;
 }
 
-export function Notebook(props: NotebookProps & RouteComponentProps) {
+export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement | null {
   const {
     ship,
     book,
-    notebookContacts,
-    groups,
     association,
     graph
   } = props;
 
+  const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
+
   const group = groups[association?.group];
+
+  const contact = contacts?.[`~${ship}`];
+
+  const showNickname = useShowNickname(contact);
+
+  const readBook = useCallback(() => {
+    airlock.poke(readGraph(association.resource));
+  }, [association.resource]);
+
   if (!group) {
     return null; // Waiting on groups to populate
   }
 
-
-  const relativePath = (p: string) => props.baseUrl + p;
-
-  const contact = notebookContacts?.[ship];
-  const isOwn = `~${window.ship}` === ship;
-  console.log(association.resource);
-
-  const showNickname = useShowNickname(contact);
-
   return (
-    <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
+    <Col gapY={4} pt={4} mx="auto" px={3} maxWidth="768px">
       <Row justifyContent="space-between">
         <Box>
           <Text display='block'>{association.metadata?.title}</Text>
@@ -55,16 +52,14 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
             {showNickname ? contact?.nickname : ship}
           </Text>
         </Box>
+        <Button onClick={readBook}>Mark all as Read</Button>
       </Row>
-      <Box borderBottom="1" borderBottomColor="washedGray" />
+      <Box borderBottom={1} borderBottomColor="lightGray" />
       <NotebookPosts
         graph={graph}
         host={ship}
         book={book}
-        contacts={notebookContacts ? notebookContacts : {}}
-        unreads={props.unreads}
         baseUrl={props.baseUrl}
-        api={props.api}
         group={group}
       />
     </Col>

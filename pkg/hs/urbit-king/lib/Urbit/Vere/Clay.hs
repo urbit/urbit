@@ -37,12 +37,12 @@ textPlain = Path [(MkKnot "text"), (MkKnot "plain")]
 
 -- | Filter for dotfiles, tempfiles and backup files.
 validClaySyncPath :: FilePath -> Bool
-validClaySyncPath fp = hasPeriod && notTildeFile && notDotHash && notDoubleHash
+validClaySyncPath fp = hasPeriod && notTildeFile && notDotFile && notDoubleHash
   where
     fileName = takeFileName fp
     hasPeriod = elem '.' fileName
     notTildeFile = not $ "~" `isSuffixOf` fileName
-    notDotHash = not $ ".#" `isPrefixOf` fileName
+    notDotFile = not $ "." `isPrefixOf` fileName
     notDoubleHash =
       not $ ("#" `isPrefixOf` fileName) && ("#" `isSuffixOf` fileName)
 

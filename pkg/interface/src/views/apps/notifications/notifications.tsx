@@ -1,149 +1,79 @@
-import React, { useCallback, useState, useRef } from "react";
-import _ from 'lodash';
-import { Box, Col, Text, Row } from "@tlon/indigo-react";
-import { Link, Switch, Route } from "react-router-dom";
-import Helmet from "react-helmet";
+import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import React, { ReactElement, useCallback, useRef } from 'react';
+import Helmet from 'react-helmet';
+import { Link, Route, Switch } from 'react-router-dom';
+import useGroupState from '~/logic/state/group';
+import useHarkState from '~/logic/state/hark';
+import { Body } from '~/views/components/Body';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import Inbox from './inbox';
+import airlock from '~/logic/api';
+import { readAll } from '@urbit/api';
 
-import { Body } from "~/views/components/Body";
-import { PropFunc } from "~/types/util";
-import Inbox from "./inbox";
-import NotificationPreferences from "./preferences";
-import { Dropdown } from "~/views/components/Dropdown";
-import { Formik } from "formik";
-import { FormikOnBlur } from "~/views/components/FormikOnBlur";
-import GroupSearch from "~/views/components/GroupSearch";
-import {useTutorialModal} from "~/views/components/useTutorialModal";
+const baseUrl = '/~notifications';
 
-const baseUrl = "/~notifications";
-
-const HeaderLink = React.forwardRef((
-  props: PropFunc<typeof Text> & { view?: string; current: string },
-  ref
-) => {
-  const { current, view, ...textProps } = props;
-  const to = view ? `${baseUrl}/${view}` : baseUrl;
-  const active = view ? current === view : !current;
-
-  return (
-    <Link to={to}>
-      <Text ref={ref} px="2" {...textProps} gray={!active} />
-    </Link>
-  );
-});
-
-interface NotificationFilter {
-  groups: string[];
-}
-
-export default function NotificationsScreen(props: any) {
+export default function NotificationsScreen(props: any): ReactElement {
   const relativePath = (p: string) => baseUrl + p;
 
-  const [filter, setFilter] = useState<NotificationFilter>({ groups: [] });
-  const onSubmit = async ({ groups } : NotificationFilter) => {
-    setFilter({ groups });
-  };
-  const onReadAll = useCallback(() => {
-    props.api.hark.readAll()
+  const pendingJoin = useGroupState(s => s.pendingJoin);
+  const onReadAll = useCallback(async () => {
+    await airlock.poke(readAll());
   }, []);
-  const groupFilterDesc =
-    filter.groups.length === 0
-      ? "All"
-      : filter.groups
-          .map((g) => props.associations?.groups?.[g]?.metadata?.title)
-    .join(", ");
+
   const anchorRef = useRef<HTMLElement | null>(null);
-  useTutorialModal('notifications', true, anchorRef.current);
+  useTutorialModal('notifications', true, anchorRef);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
   return (
     <Switch>
       <Route
-        path={[relativePath("/:view"), relativePath("")]}
+        path={[relativePath('/:view'), relativePath('')]}
         render={(routeProps) => {
           const { view } = routeProps.match.params;
           return (
             <>
               <Helmet defer={false}>
-                <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Notifications</title>
+                <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Notifications</title>
               </Helmet>
               <Body>
                 <Col overflowY="hidden" height="100%">
                   <Row
-                    p="3"
+                    p={3}
                     alignItems="center"
                     height="48px"
                     justifyContent="space-between"
                     width="100%"
-                    borderBottom="1"
-                    borderBottomColor="washedGray"
+                    borderBottom={1}
+                    borderBottomColor="lightGray"
                   >
-                    <Text>Updates</Text>
-                    <Row>
-                      <Box>
-                        <HeaderLink ref={anchorRef} current={view} view="">
-                          Inbox
-                        </HeaderLink>
-                      </Box>
-                      <Box>
-                        <HeaderLink current={view} view="preferences">
-                          Preferences
-                        </HeaderLink>
-                      </Box>
-                    </Row>
-                    <Row
-                      justifyContent="space-between">
-                      <Box
-                        mr="1"
-                        overflow="hidden"
-                        onClick={onReadAll}
-                        cursor="pointer"
-                      >
-                          <Text mr="1" color="blue">
-                            Mark All Read
-                        </Text>
-                      </Box>
 
-                      <Dropdown
-                        alignX="right"
-                        alignY="top"
-                        options={
-                          <Col
-                            p="2"
-                            backgroundColor="white"
-                            border={1}
-                            borderRadius={1}
-                            borderColor="lightGray"
-                            gapY="2"
-                          >
-                            <FormikOnBlur
-                              initialValues={filter}
-                              onSubmit={onSubmit}
-                            >
-                              <GroupSearch
-                                id="groups"
-                                label="Filter Groups"
-                                caption="Only show notifications from this group"
-                                associations={props.associations}
-                              />
-                            </FormikOnBlur>
-                          </Col>
-                        }
+                  <Text fontWeight="bold" fontSize={2} lineHeight={1} ref={anchorRef}>
+                    Notifications
+                  </Text>
+                    <Row
+                      justifyContent="space-between"
+                      gapX={3}
+                    >
+                      <StatelessAsyncAction
+                        overflow="hidden"
+                        color="black"
+                        backgroundColor="white"
+                        onClick={onReadAll}
                       >
+                        Mark All Read
+                      </StatelessAsyncAction>
+                      <Link to="/~settings#notifications">
                         <Box>
-                          <Text mr="1" gray>
-                            Filter:
-                        </Text>
-                          <Text>{groupFilterDesc}</Text>
+                          <Icon lineHeight={1} icon="Adjust" />
                         </Box>
-                      </Dropdown>
+                      </Link>
                     </Row>
                   </Row>
-                  {view === "preferences" && (
-                    <NotificationPreferences
-                      graphConfig={props.notificationsGraphConfig}
-                      api={props.api}
-                      dnd={props.doNotDisturb}
-                    />
-                  )}
-                  {!view && <Inbox {...props} filter={filter.groups} />}
+                  {!view && <Inbox
+                    pendingJoin={pendingJoin}
+                    {...props}
+                    filter={[]}
+                            />}
                 </Col>
               </Body>
             </>

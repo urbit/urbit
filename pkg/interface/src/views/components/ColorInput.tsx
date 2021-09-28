@@ -1,84 +1,100 @@
-import React from "react";
-import { useField } from "formik";
 import {
-  Col,
-  Label,
-  Row,
-  Box,
-  ErrorLabel,
-  StatelessTextInput as Input,
-} from "@tlon/indigo-react";
+    Box, Col,
 
-import { uxToHex, hexToUx } from "~/logic/lib/util";
+    ErrorLabel, Label,
+    Row,
 
-type ColorInputProps = Parameters<typeof Col>[0] & {
+    StatelessTextInput as Input
+} from '@tlon/indigo-react';
+import { useField } from 'formik';
+import React, { FormEvent, useState, useEffect } from 'react';
+import { hexToUx } from '~/logic/lib/util';
+import { uxToHex } from '@urbit/api/dist';
+
+export type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
-  label: string;
+  label?: string;
+  placeholder?: string;
   disabled?: boolean;
 };
 
+const COLOR_REGEX = /^(\d|[a-f]|[A-F]){6}$/;
+
+function padHex(hex: string) {
+  if(hex.length === 0) {
+    return '000000';
+  }
+  const repeat = 6 / hex.length;
+  if(Math.floor(repeat) === repeat) {
+    return hex.repeat(repeat);
+  }
+  if(hex.length < 6) {
+    return hex.slice(0,3).repeat(2);
+  }
+  return hex.slice(0,6);
+}
+
 export function ColorInput(props: ColorInputProps) {
-  const { id, label, caption, disabled, ...rest } = props;
-  const [{ value, onBlur }, meta, { setValue }] = useField(id);
+  const { id, placeholder, label, caption, disabled, ...rest } = props;
+  const [{ value, onBlur }, meta, { setValue, setTouched }] = useField(id);
+  const [field, setField] = useState(uxToHex(value));
 
-  const hex = value.replace('#', '').replace("0x","").replace(".", "");
-  const padded = hex.padStart(6, "0");
+  useEffect(() => {
+    const newValue = hexToUx(padHex(field));
+    setValue(newValue);
+    setTouched(true);
+  }, [field]);
 
-  const onChange = (e: any) => {
-    let { value: newValue } = e.target as HTMLInputElement;
-    newValue = newValue.replace('#', '');
-    const valid = newValue.match(/^(\d|[a-f]|[A-F]){0,6}$/);
-
-    if (!valid) {
-      return;
-    }
-    const result = hexToUx(newValue);
-    setValue(result);
+  const onChange = (e: FormEvent<HTMLInputElement>) => {
+    const { value: newValue } = e.target as HTMLInputElement;
+    setField(newValue.slice(1));
   };
-
+  const hex = uxToHex(value);
+  const isValid = COLOR_REGEX.test(hex);
 
   return (
-    <Box display="flex" flexDirection="column" {...rest}>
+    <Box display='flex' flexDirection='column' {...rest}>
       <Label htmlFor={id}>{label}</Label>
       {caption ? (
-        <Label mt="2" gray>
+        <Label mt={2} gray>
           {caption}
         </Label>
       ) : null}
-      <Row mt="2" alignItems="flex-end">
+      <Row mt={2} alignItems='flex-end'>
         <Input
+          id={id}
           borderTopRightRadius={0}
           borderBottomRightRadius={0}
           onBlur={onBlur}
           onChange={onChange}
-          value={hex}
+          value={field}
           disabled={disabled || false}
           borderRight={0}
+          placeholder={placeholder}
         />
         <Box
           borderBottomRightRadius={1}
           borderTopRightRadius={1}
           border={1}
           borderLeft={0}
-          borderColor="lightGray"
-          width="32px"
-          alignSelf="stretch"
-          bg={`#${padded}`}
+          borderColor='lightGray'
+          width='32px'
+          alignSelf='stretch'
+          bg={isValid ? `#${hex}` : 'transparent'}
         >
           <Input
-            width="100%"
-            height="100%"
-            alignSelf="stretch"
-            onInput={onChange}
-            value={`#${padded}`}
+            width='100%'
+            height='100%'
+            alignSelf='stretch'
             disabled={disabled || false}
-            type="color"
+            type='color'
             opacity={0}
-            overflow="hidden"
+            overflow='hidden'
+            onChange={onChange}
           />
         </Box>
       </Row>
-      <ErrorLabel mt="2" hasError={!!(meta.touched && meta.error)}>
+      <ErrorLabel mt={2} hasError={Boolean(meta.touched && meta.error)}>
         {meta.error}
       </ErrorLabel>
     </Box>

@@ -65,3 +65,13 @@
       */
         u3_noun
         u3s_cue_atom(u3_atom a);
+
+      /* u3s_sift_ud_bytes: parse @ud.
+      */
+        u3_weak
+        u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y);
+
+      /* u3s_sift_ud: parse @ud.
+      */
+        u3_weak
+        u3s_sift_ud(u3_atom a);

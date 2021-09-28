@@ -5,12 +5,10 @@
 ::
 |_  =bowl:gall
 ++  scry
-  |*  [desk=@tas =path]
-  ?>  ?=(^ path)
-  ?>  ?=(^ t.path)
+  |=  [desk=@tas =path]
   %+  weld
     /(scot %p our.bowl)/[desk]/(scot %da now.bowl)
-  t.t.path
+  path
 ::
 ++  pass
   |_  =wire
@@ -105,10 +103,27 @@
   ^-  card
   [%give %fact ~ cage]
 ::
+++  fact-init-kick
+  |=  =cage
+  ^-  (list card)
+  :~  (fact cage ~)
+      (kick ~)
+  ==
+::
 ++  fact
   |=  [=cage paths=(list path)]
   ^-  card
   [%give %fact paths cage]
+::
+++  fact-all
+  |=  =cage
+  ^-  (unit card)
+  =/  paths=(list path)
+    %+  turn  ~(tap by sup.bowl)
+    |=  [duct ship =path]
+    path
+  ?~  paths  ~
+  `[%give %fact paths cage]
 ::
 ++  kick
   |=  paths=(list path)

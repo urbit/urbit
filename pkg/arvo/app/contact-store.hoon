@@ -71,7 +71,7 @@
   ++  give
     |=  =update:store
     ^-  (list card)
-    [%give %fact ~ [%contact-update !>(update)]]~
+    [%give %fact ~ [%contact-update-0 !>(update)]]~
   --
 ::
 ++  on-poke
@@ -81,7 +81,7 @@
   |^
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
-      %contact-update  (update !<(update:store vase))
+      %contact-update-0  (update !<(update:store vase))
       %import          (import q.vase)
     ==
   [cards this]
@@ -126,6 +126,14 @@
               !=(contact(last-updated *@da) u.old(last-updated *@da))
           ==
         [~ state]
+      ~|  "cannot add a data url to cover!"
+      ?>  ?|  ?=(~ cover.contact)
+              !=('data:' (cut 3 [0 5] u.cover.contact))
+          ==
+      ~|  "cannot add a data url to avatar!"
+      ?>  ?|  ?=(~ avatar.contact)
+              !=('data:' (cut 3 [0 5] u.avatar.contact))
+          ==
       :-  (send-diff [%add ship contact] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
     ::
@@ -149,6 +157,14 @@
       =/  contact  (edit-contact old edit-field)
       ?:  =(old contact)
         [~ state]
+      ~|  "cannot add a data url to cover!"
+      ?>  ?|  ?=(~ cover.contact)
+              !=('data:' (cut 3 [0 5] u.cover.contact))
+          ==
+      ~|  "cannot add a data url to avatar!"
+      ?>  ?|  ?=(~ avatar.contact)
+              !=('data:' (cut 3 [0 5] u.avatar.contact))
+          ==
       =.  last-updated.contact  timestamp
       :-  (send-diff [%edit ship edit-field timestamp] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
@@ -203,7 +219,7 @@
         ?:  our
           [/updates /our /all ~]
         [/updates /all ~]
-      [%give %fact paths %contact-update !>(update)]~
+      [%give %fact paths %contact-update-0 !>(update)]~
     --
   ::
   ++  import
@@ -217,26 +233,25 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  (on-peek:def path)
-    [%x %all ~]     ``noun+!>(rolodex)
+    [%x %all ~]     ``noun+!>(`rolodex:store`rolodex)
   ::
       [%x %contact @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =/  contact=(unit contact:store)  (~(get by rolodex) ship)
     ?~  contact  [~ ~]
-    :-  ~  :-  ~  :-  %contact-update
+    :-  ~  :-  ~  :-  %contact-update-0
     !>  ^-  update:store
     [%add ship u.contact]
   ::
       [%x %allowed-ship @ ~]
     =/  =ship  (slav %p i.t.t.path)
-    ``noun+!>((~(has in allowed-ships) ship))
+    ``noun+!>(`?`(~(has in allowed-ships) ship))
   ::
       [%x %is-public ~]
-    ``noun+!>(is-public)
+    ``noun+!>(`?`is-public)
   ::
       [%x %allowed-groups ~]
-    ``noun+!>(allowed-groups)
-
+    ``noun+!>(`(set resource)`allowed-groups)
   ::
       [%x %is-allowed @ @ @ @ ~]
     =/  is-personal  =(i.t.t.t.t.t.path 'true')

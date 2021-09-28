@@ -1,146 +1,135 @@
-import React, { useEffect, useCallback } from "react";
-import { Box, Row, Col, Center, LoadingSpinner, Text } from "@tlon/indigo-react";
-import { Switch, Route, Link } from "react-router-dom";
+import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { Group } from '@urbit/api';
+import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
+import React, { useEffect } from 'react';
+import { Link, Route, Switch, useLocation } from 'react-router-dom';
+import { useQuery } from '~/logic/lib/useQuery';
+import { Titlebar } from '~/views/components/Titlebar';
+import useGraphState from '~/logic/state/graph';
+import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '../../../logic/state/group';
+import { LinkBlocks } from './components/LinkBlocks';
+import { LinkDetail } from './components/LinkDetail';
+import './css/custom.css';
+import LinkWindow from './LinkWindow';
 
-import GlobalApi from "~/logic/api/global";
-import { StoreState } from "~/logic/store/type";
-import { uxToHex } from '~/logic/lib/util';
-import { RouteComponentProps } from "react-router-dom";
-
-import { LinkItem } from "./components/LinkItem";
-import { LinkPreview } from "./components/link-preview";
-import { LinkWindow } from "./LinkWindow";
-import { Comments } from "~/views/components/Comments";
-
-import "./css/custom.css";
-
-const emptyMeasure = () => {};
-
-type LinkResourceProps = StoreState & {
+interface LinkResourceProps {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+}
 
 export function LinkResource(props: LinkResourceProps) {
   const {
     association,
-    api,
-    baseUrl,
-    graphs,
-    contacts,
-    groups,
-    associations,
-    graphKeys,
-    unreads,
-    s3,
-    history
+    baseUrl
   } = props;
 
-  const rid = association.resource; 
+  const rid = association.resource;
 
   const relativePath = (p: string) => `${baseUrl}/resource/link${rid}${p}`;
+  const associations = useMetadataState(state => state.associations);
 
-  const [, , ship, name] = rid.split("/");
+  const [, , ship, name] = rid.split('/');
   const resourcePath = `${ship.slice(1)}/${name}`;
-  const resource = associations.graph[rid]
+  const resource: any = associations.graph[rid]
     ? associations.graph[rid]
     : { metadata: {} };
-  const contactDetails = contacts[resource?.group] || {};
+  const groups = useGroupState(state => state.groups);
   const group = groups[resource?.group] || {};
 
+  const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const { query } = useQuery();
+  const isList = query.has('list');
+  const { pathname, search } = useLocation();
+  const getGraph = useGraphState(s => s.getGraph);
 
   useEffect(() => {
-    api.graph.getGraph(ship, name);
+    getGraph(ship, name);
   }, [association]);
 
   const resourceUrl = `${baseUrl}/resource/link${rid}`;
-  if (!graph) {
-    return <Center width='100%' height='100%'><LoadingSpinner/></Center>;
+  if (!graph || !resource) {
+    return <Center width='100%' height='100%'><LoadingSpinner /></Center>;
   }
+  const { title, description } = resource.metadata;
+
+  const titlebar = (back?: string) => (
+    <Titlebar back={back && `${back}${search}`} title={title} description={description} workspace={baseUrl} baseUrl={resourceUrl} >
+      <Link to={{ pathname, search: isList ? '' : '?list=true' }}>
+        <Text bold pr='3' color='blue'>
+          Switch to {!isList ? 'list' : 'grid' }
+        </Text>
+      </Link>
+    </Titlebar>
+  );
 
   return (
-    <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
-      <Switch>
-        <Route
-          exact
-          path={relativePath("")}
-          render={(props) => {
+    <Switch>
+      <Route
+        exact
+        path={relativePath('')}
+        render={(props) => {
+          return (
+            <Col minWidth="0" overflow="hidden">
+              {titlebar()}
+              { isList ?  /* @ts-ignore withState typings */ (
+                  <LinkWindow
+                    key={rid}
+                    association={resource}
+                    resource={resourcePath}
+                    graph={graph}
+                    baseUrl={resourceUrl}
+                    group={group as Group}
+                    path={resource.group}
+                    pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
+                    mb={3}
+                  />
+              ) : (
+                <LinkBlocks key={rid} graph={graph} association={resource} />
+                )}
+          </Col>
+          );
+        }}
+      />
+      <Route
+        path={relativePath('/index/:index')}
+        render={(props) => {
+          const index = bigInt(props.match.params.index);
+
+          if (!index) {
+            return <div>Malformed URL</div>;
+          }
+
+          const node = graph ? graph.get(index) : null;
+
+          if (!node) {
+            return <Box>Not found</Box>;
+          }
+
+          if (typeof node.post === 'string') {
             return (
-              <LinkWindow
-                s3={s3}
-                association={resource}
-                contacts={contacts}
-                resource={resourcePath}
-                graph={graph}
-                unreads={unreads}
-                baseUrl={resourceUrl}
-                group={group}
-                path={resource.group}
-                api={api}
-                mb={3}
-              />
-            );
-          }}
-        />
-        <Route
-          path={relativePath("/:index(\\d+)/:commentId?")}
-          render={(props) => {
-            const index = bigInt(props.match.params.index);
-            const editCommentId = props.match.params.commentId || null;
-
-            if (!index) {
-              return <div>Malformed URL</div>;
-            }
-
-            const node = !!graph ? graph.get(index) : null;
-
-            if (!node) {
-              return <Box>Not found</Box>;
-            }
-
-            const contact = contactDetails[node.post.author];
-
-            return (
-              <Col alignItems="center" overflowY="auto" width="100%">
-              <Col width="100%" p={3} maxWidth="768px">
-                <Link to={resourceUrl}><Text px={3} bold>{"<- Back"}</Text></Link>
-                <LinkItem
-                  contacts={contacts}
-                  key={node.post.index}
-                  resource={resourcePath}
-                  node={node}
-                  baseUrl={resourceUrl}
-                  unreads={unreads}
-                  group={group}
-                  path={resource?.group}
-                  api={api}
-                  mt={3}
-                  measure={emptyMeasure}
-                />
-                <Comments
-                  ship={ship}
-                  name={name}
-                  comments={node}
-                  resource={resourcePath}
-                  association={association}
-                  unreads={unreads}
-                  contacts={contactDetails}
-                  api={api}
-                  editCommentId={editCommentId}
-                  history={props.history}
-                  baseUrl={`${resourceUrl}/${props.match.params.index}`}
-                  group={group}
-                  px={3}
-                />
+              <Col width="100%" textAlign="center" pt="2">
+                <Text gray>This link has been deleted.</Text>
               </Col>
-            </Col>
             );
-          }}
-        />
-      </Switch>
-    </Col>
+          }
+          return (
+            <Col overflow="hidden">
+              {titlebar(relativePath(''))}
+              <LinkDetail
+                node={node}
+                association={association}
+                baseUrl={pathname}
+                flexGrow={1}
+                maxHeight="calc(100% - 48px)"
+              />
+            </Col>
+          );
+        }}
+      />
+    </Switch>
   );
 }

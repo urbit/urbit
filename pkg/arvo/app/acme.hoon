@@ -1394,8 +1394,6 @@
   ^+  this
   ?:  =(~ dom)
     ~|(%acme-empty-certificate-order !!)
-  ?:  ?=(?(%earl %pawn) (clan:title our.bow))
-    this
   =.  ..emit  (queue-next-order 1 | dom)
   =.  ..emit  cancel-current-order
   ::  notify %dill

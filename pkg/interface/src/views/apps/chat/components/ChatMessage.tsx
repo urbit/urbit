@@ -1,244 +1,81 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  Component,
-  PureComponent
-} from 'react';
+/* eslint-disable max-lines-per-function */
+import { BaseImage, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
+import { Contact, MentionContent, Post } from '@urbit/api';
+import bigInt from 'big-integer';
 import moment from 'moment';
-import _ from 'lodash';
-import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
+import React, {
+  Ref,
+  useEffect,
+  useMemo, useState
+} from 'react';
+import VisibilitySensor from 'react-visibility-sensor';
+import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
-import OverlaySigil from '~/views/components/OverlaySigil';
+import { useCopy } from '~/logic/lib/useCopy';
 import {
-  uxToHex,
-  cite,
-  writeText,
-  useShowNickname,
-  useHovering
+  cite, daToUnix, useHovering, useShowNickname, uxToHex
 } from '~/logic/lib/util';
-import { Group, Association, Contacts, Post, Groups, Associations } from '~/types';
-import TextContent from './content/text';
-import CodeContent from './content/code';
-import RemoteContent from '~/views/components/RemoteContent';
-import { Mention } from '~/views/components/MentionText';
-import styled from 'styled-components';
-import useLocalState from '~/logic/state/local';
+import { useContact } from '~/logic/state/contact';
+import { useDark } from '~/logic/state/join';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import { Dropdown } from '~/views/components/Dropdown';
+import ProfileOverlay from '~/views/components/ProfileOverlay';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
-export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <Row
-    flexShrink={0}
-    ref={ref}
-    color='blue'
-    alignItems='center'
-    fontSize='0'
-    position='absolute'
-    width='100%'
-    py='2'
-  >
-    <Rule borderColor='blue' display={['none', 'block']} m='0' width='2rem' />
-    <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>
-      New messages below
-    </Text>
-    <Rule borderColor='blue' flexGrow='1' m='0' />
-    <Rule style={{ width: 'calc(50% - 48px)' }} borderColor='blue' m='0' />
-  </Row>
-));
+interface DayBreakProps {
+  when: string | number;
+  shimTop?: boolean;
+}
 
-export const DayBreak = ({ when }) => (
-  <Row pb='3' alignItems='center' justifyContent='center' width='100%'>
-    <Text gray>
+export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
+  <Row
+    px={2}
+    height={5}
+    mb={2}
+    justifyContent='center'
+    alignItems='center'
+    mt={shimTop ? '-8px' : '0'}
+  >
+    <Rule borderColor='lightGray' />
+    <Text
+      gray
+      flexShrink={0}
+      whiteSpace='nowrap'
+      textAlign='center'
+      fontSize={0}
+      px={2}
+    >
       {moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}
     </Text>
+    <Rule borderColor='lightGray' />
   </Row>
 );
 
-interface ChatMessageProps {
-  measure(element): void;
-  msg: Post;
-  previousMsg?: Post;
-  nextMsg?: Post;
-  isLastRead: boolean;
-  group: Group;
-  association: Association;
-  contacts: Contacts;
-  className?: string;
-  isPending: boolean;
-  style?: any;
-  scrollWindow: HTMLDivElement;
-  isLastMessage?: boolean;
-  unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  history: any;
-  api: any;
-  highlighted?: boolean;
-}
+export const MessageAuthor = React.memo<any>(({
+  timestamp,
+  msg,
+  showOurContact,
+  ...props
+}) => {
+  const dark = useDark();
+  let contact: Contact | null = useContact(`~${msg.author}`);
 
-export default class ChatMessage extends Component<ChatMessageProps> {
-  private divRef: React.RefObject<HTMLDivElement>;
-
-  constructor(props) {
-    super(props);
-    this.divRef = React.createRef();
-  }
-
-  componentDidMount() {
-    if (this.divRef.current) {
-      this.props.measure(this.divRef.current);
-    }
-  }
-
-  render() {
-    const {
-      msg,
-      previousMsg,
-      nextMsg,
-      isLastRead,
-      group,
-      association,
-      contacts,
-      className = '',
-      isPending,
-      style,
-      measure,
-      scrollWindow,
-      isLastMessage,
-      unreadMarkerRef,
-      history,
-      api,
-      highlighted,
-      fontSize,
-      groups,
-      associations
-    } = this.props;
-
-    const renderSigil = Boolean(
-      (nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1
-    );
-    const dayBreak =
-      nextMsg &&
-      new Date(msg['time-sent']).getDate() !==
-        new Date(nextMsg['time-sent']).getDate();
-
-    const containerClass = `${
-      renderSigil ? 'cf pl2 lh-copy' : 'items-top cf hide-child'
-    } ${isPending ? 'o-40' : ''} ${className}`;
-
-    const timestamp = moment
-      .unix(msg['time-sent'] / 1000)
-      .format(renderSigil ? 'hh:mm a' : 'hh:mm');
-
-    const reboundMeasure = (event) => {
-      return measure(this.divRef.current);
-    };
-
-    const messageProps = {
-      msg,
-      timestamp,
-      contacts,
-      association,
-      group,
-      measure: reboundMeasure.bind(this),
-      style,
-      containerClass,
-      isPending,
-      history,
-      api,
-      scrollWindow,
-      highlighted,
-      fontSize,
-      associations,
-      groups,
-    };
-
-    const unreadContainerStyle = {
-      height: isLastRead ? '2rem' : '0'
-    };
-
-    return (
-      <Box
-        bg={highlighted ? 'washedBlue' : 'white'}
-        flexShrink={0}
-        width='100%'
-        display='flex'
-        flexWrap='wrap'
-        pt={this.props.pt ? this.props.pt : renderSigil ? 3 : 0}
-        pr={3}
-        pb={isLastMessage ? 3 : 0}
-        ref={this.divRef}
-        className={containerClass}
-        style={style}
-        mb={1}
-        position='relative'
-      >
-        {dayBreak && !isLastRead ? <DayBreak when={msg['time-sent']} /> : null}
-        {renderSigil ? (
-          <MessageWithSigil {...messageProps} />
-        ) : (
-          <MessageWithoutSigil {...messageProps} />
-        )}
-        <Box
-          flexShrink={0}
-          fontSize={0}
-          position='relative'
-          width='100%'
-          overflow='visible'
-          style={unreadContainerStyle}
-        >
-          {isLastRead ? (
-            <UnreadMarker
-              dayBreak={dayBreak}
-              when={msg['time-sent']}
-              ref={unreadMarkerRef}
-            />
-          ) : null}
-        </Box>
-      </Box>
-    );
-  }
-}
-
-interface MessageProps {
-  msg: Post;
-  timestamp: string;
-  group: Group;
-  association: Association;
-  contacts: Contacts;
-  containerClass: string;
-  isPending: boolean;
-  style: any;
-  measure(element): void;
-  scrollWindow: HTMLDivElement;
-  associations: Associations;
-  groups: Groups;
-}
-
-export const MessageWithSigil = (props) => {
-  const {
-    msg,
-    timestamp,
-    contacts,
-    association,
-    associations,
-    groups,
-    group,
-    measure,
-    api,
-    history,
-    scrollWindow,
-    fontSize
-  } = props;
-
-  const dark = useLocalState((state) => state.dark);
+  const date = daToUnix(bigInt(msg.index.split('/').reverse()[0]));
 
   const datestamp = moment
-    .unix(msg['time-sent'] / 1000)
+    .unix(date / 1000)
     .format(DATESTAMP_FORMAT);
-  const contact = `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
+  contact =
+    ((msg.author === window.ship && showOurContact) ||
+      msg.author !== window.ship)
+      ? contact
+      : null;
+
   const showNickname = useShowNickname(contact);
-  const shipName = showNickname ? contact.nickname : cite(msg.author);
-  const copyNotice = 'Copied';
+  const { hideAvatars } = useSettingsState(selectCalmState);
+  const shipName = showNickname && contact?.nickname || cite(msg.author) || `~${msg.author}`;
   const color = contact
     ? `#${uxToHex(contact.color)}`
     : dark
@@ -249,74 +86,56 @@ export const MessageWithSigil = (props) => {
     : dark
     ? 'mix-blend-diff'
     : 'mix-blend-darken';
-  const [displayName, setDisplayName] = useState(shipName);
-  const [nameMono, setNameMono] = useState(showNickname ? false : true);
+
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${msg.author}`, shipName);
   const { hovering, bind } = useHovering();
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  const toggleOverlay = () => {
-    setShowOverlay((value) => !value);
-  };
-
-  const showCopyNotice = () => {
-    setDisplayName(copyNotice);
-    setNameMono(false);
-  };
-
-  useEffect(() => {
-    const resetDisplay = () => {
-      setDisplayName(shipName);
-      setNameMono(showNickname ? false : true);
-    };
-    const timer = setTimeout(() => resetDisplay(), 800);
-    return () => clearTimeout(timer);
-  }, [displayName]);
+  const nameMono = !(showNickname || didCopy);
 
   const img =
-    contact && contact.avatar !== null ? (
+    contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
+        referrerPolicy='no-referrer'
+        style={{ objectFit: 'cover' }}
         src={contact.avatar}
-        height={16}
-        width={16}
+        height={24}
+        width={24}
+        borderRadius={1}
       />
     ) : (
-      <Sigil
-        ship={msg.author}
-        size={16}
-        color={color}
-        classes={sigilClass}
-        icon
-        padding={2}
-      />
-    );
-
-  return (
-    <>
       <Box
-        onClick={() => {
-          setShowOverlay(true);
-        }}
-        className='fl v-top pt1'
-        height={16}
-        pr={3}
-        pl={2}
+        width={24}
+        height={24}
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        backgroundColor={color}
+        borderRadius={1}
+      >
+        <Sigil
+          ship={msg.author}
+          size={12}
+          display='block'
+          color={color}
+          classes={sigilClass}
+          icon
+          padding={0}
+        />
+      </Box>
+    );
+  return (
+    <Box pb="1" display='flex' alignItems='center'>
+      <Box
+       height={24}
+        pr={2}
+        mt={'1px'}
+        pl={props.transcluded ? '11px' : '12px'}
+        cursor='pointer'
         position='relative'
       >
-        {showOverlay && (
-          <OverlaySigil
-            ship={msg.author}
-            contact={contact}
-            color={`#${uxToHex(contact?.color ?? '0x0')}`}
-            group={group}
-            onDismiss={() => toggleOverlay()}
-            history={history}
-            className='relative'
-            scrollWindow={scrollWindow}
-            api={api}
-          />
-        )}
-        {img}
+        <ProfileOverlay cursor='auto' ship={msg.author}>
+          {img}
+        </ProfileOverlay>
       </Box>
       <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
         <Box
@@ -325,187 +144,375 @@ export const MessageWithSigil = (props) => {
           pt={1}
           pb={1}
           display='flex'
-          alignItems='center'
+          alignItems='baseline'
         >
           <Text
-            fontSize={0}
-            mr={3}
-            flexShrink={0}
+            fontSize={1}
+            mr={2}
+            flexShrink={1}
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
-            className={'mw5 db truncate pointer'}
-            onClick={() => {
-              writeText(`~${msg.author}`);
-              showCopyNotice();
-            }}
-            title={`~${msg.author}`}
+            cursor='pointer'
+            onClick={doCopy}
+            title={showNickname ? `~${msg.author}` : contact?.nickname}
           >
-            {displayName}
+            {copyDisplay}
           </Text>
-          <Text flexShrink={0} fontSize={0} gray mono>
+          <Text whiteSpace='nowrap' flexShrink={0} fontSize={0} gray>
             {timestamp}
           </Text>
           <Text
             flexShrink={0}
             fontSize={0}
+            whiteSpace='nowrap'
             gray
-            mono
             ml={2}
             display={['none', hovering ? 'block' : 'none']}
           >
             {datestamp}
           </Text>
         </Box>
-        <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
-          {msg.contents.map((c, i) => (
-            <MessageContent
-              key={i}
-              contacts={contacts}
-              content={c}
-              measure={measure}
-              scrollWindow={scrollWindow}
-              fontSize={fontSize}
-              group={group}
-              api={api}
-              associations={associations}
-              groups={groups}
-            />
-          ))}
-        </ContentBox>
       </Box>
-    </>
+    </Box>
   );
-};
+});
+MessageAuthor.displayName = 'MessageAuthor';
 
-const ContentBox = styled(Box)`
-  & > :first-child {
-    margin-left: 0px;
-  }
-`;
+type MessageProps = { timestamp: string; timestampHover: boolean; }
+  & Pick<ChatMessageProps, 'msg' | 'transcluded' | 'showOurContact'>
 
-export const MessageWithoutSigil = ({
+export const Message = React.memo(({
   timestamp,
-  contacts,
   msg,
-  measure,
-  group,
-  api,
-  associations,
-  groups,
-  scrollWindow
-}) => {
+  timestampHover,
+  transcluded,
+  showOurContact
+}: MessageProps) => {
   const { hovering, bind } = useHovering();
   return (
-    <>
-      <Text
-        flexShrink={0}
-        mono
-        gray
-        display={hovering ? 'block' : 'none'}
-        pt='2px'
-        lineHeight='tall'
-        fontSize={0}
-        position='absolute'
-        left={1}
-      >
-        {timestamp}
-      </Text>
-      <ContentBox
-        flexShrink={0}
-        fontSize='14px'
-        className='clamp-message'
-        style={{ flexGrow: 1 }}
+    <Box pl="44px" pr={4} width="100%" position='relative'>
+      {timestampHover ? (
+        <Text
+          display={hovering ? 'block' : 'none'}
+          position='absolute'
+          width='36px'
+          textAlign='right'
+          left={0}
+          top='2px'
+          lineHeight="tall"
+          fontSize={0}
+          whiteSpace='nowrap'
+          gray
+        >
+          {timestamp}
+        </Text>
+      ) : (
+        <></>
+      )}
+      <GraphContent
         {...bind}
-        pl={6}
+        width="100%"
+        contents={msg.contents}
+        transcluded={transcluded}
+        showOurContact={showOurContact}
+      />
+    </Box>
+  );
+});
+
+Message.displayName = 'Message';
+
+export const UnreadMarker = React.forwardRef(
+  ({ dismissUnread }: any, ref: Ref<HTMLDivElement>) => {
+    const [visible, setVisible] = useState(false);
+    const idling = useIdlingState();
+
+    useEffect(() => {
+      if (visible && !idling) {
+        dismissUnread();
+      }
+    }, [visible, idling]);
+
+    return (
+      <Row
+        position='absolute'
+        ref={ref}
+        px={2}
+        mt={0}
+        height={5}
+        justifyContent='center'
+        alignItems='center'
+        width='100%'
       >
-        {msg.contents.map((c, i) => (
-          <MessageContent
-            key={i}
-            contacts={contacts}
-            content={c}
-            group={group}
-            measure={measure}
-            scrollWindow={scrollWindow}
-            groups={groups}
-            associations={associations}
-            api={api}
-          />
-        ))}
-      </ContentBox>
-    </>
+        <Rule borderColor='lightBlue' />
+        <VisibilitySensor onChange={setVisible}>
+          <Text
+            color='blue'
+            fontSize={0}
+            flexShrink={0}
+            whiteSpace='nowrap'
+            textAlign='center'
+            px={2}
+          >
+            New messages below
+          </Text>
+        </VisibilitySensor>
+        <Rule borderColor='lightBlue' />
+      </Row>
+    );
+  }
+);
+
+const MessageActionItem = (props) => {
+  return (
+    <Row
+      color='black'
+      cursor='pointer'
+      fontSize={1}
+      fontWeight='500'
+      px={3}
+      py={2}
+      onClick={props.onClick}
+    >
+      <Text fontWeight='500' color={props.color}>
+        {props.children}
+      </Text>
+    </Row>
   );
 };
 
-export const MessageContent = ({
-  content,
-  contacts,
-  api,
-  associations,
-  groups,
-  measure,
-  scrollWindow,
-  fontSize,
-  group
-}) => {
-  if ('code' in content) {
-    return <CodeContent content={content} />;
-  } else if ('url' in content) {
-    return (
-      <Box
-        mx='2px'
-        flexShrink={0}
-        fontSize={fontSize ? fontSize : '14px'}
-        lineHeight='tall'
-        color='black'
-      >
-        <RemoteContent
-          url={content.url}
-          onLoad={measure}
-          imageProps={{
-            style: {
-              maxWidth: 'min(100%,18rem)',
-              display: 'block'
-            }
-          }}
-          videoProps={{
-            style: {
-              maxWidth: '18rem',
-              display: 'block'
-            }
-          }}
-          textProps={{
-            style: {
-              fontSize: 'inherit',
-              borderBottom: '1px solid',
-              textDecoration: 'none'
-            }
-          }}
-        />
-      </Box>
-    );
-  } else if ('text' in content) {
-    return (
-      <TextContent
-        associations={associations}
-        groups={groups}
-        measure={measure}
-        api={api}
-        fontSize={fontSize}
-        content={content}
-      />);
-  } else if ('mention' in content) {
-    return (
-      <Mention
-        group={group}
-        scrollWindow={scrollWindow}
-        ship={content.mention}
-        contact={contacts?.[`~${content.mention}`]}
-      />
-    );
-  } else {
-    return null;
-  }
+const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
+  const isOwn = () => msg.author === window.ship;
+  const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
+
+  return (
+    <Box
+      borderRadius={1}
+      backgroundColor='white'
+      border='1px solid'
+      borderColor='lightGray'
+      position='absolute'
+      top='-12px'
+      right={2}
+    >
+      <Row>
+        <Box
+          padding={1}
+          size={'24px'}
+          cursor='pointer'
+          onClick={() => onReply(msg)}
+        >
+          <Icon icon='Chat' size={3} />
+        </Box>
+        <Dropdown
+          dropWidth='250px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          flexShrink={0}
+          offsetY={8}
+          offsetX={-24}
+          options={
+            <Col
+              py={2}
+              backgroundColor='white'
+              color='washedGray'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              <MessageActionItem onClick={() => onReply(msg)}>
+                Reply
+              </MessageActionItem>
+              {permalink ? (
+                <MessageActionItem onClick={doCopy}>
+                  {copyDisplay}
+                </MessageActionItem>
+              ) : null }
+              {(isAdmin || isOwn()) ? (
+                <MessageActionItem onClick={e => onDelete(msg)} color='red'>
+                  Delete Message
+                </MessageActionItem>
+              ) : null}
+              {false && (
+                <MessageActionItem onClick={e => console.log(e)}>
+                  View Signature
+                </MessageActionItem>
+              )}
+            </Col>
+          }
+        >
+          <Box padding={1} size={'24px'} cursor='pointer'>
+            <Icon icon='Menu' size={3} />
+          </Box>
+        </Dropdown>
+      </Row>
+    </Box>
+  );
 };
+
+const MessageWrapper = (props) => {
+  const { hovering, bind } = useHovering();
+  const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
+  return (
+    <Box
+      py={props.transcluded ? '2px' : '1'}
+      backgroundColor={props.highlighted
+        ? showHover ? 'lightBlue' : 'washedBlue'
+        : showHover ? 'washedGray' : 'transparent'
+      }
+      position='relative'
+      {...bind}
+    >
+      {props.children}
+      {showHover ? <MessageActions {...props} /> : null}
+    </Box>
+  );
+};
+
+interface ChatMessageProps {
+  msg: Post;
+  previousMsg?: Post;
+  nextMsg?: Post;
+  isLastRead?: boolean;
+  permalink?: string;
+  transcluded?: number;
+  isAdmin?: boolean;
+  className?: string;
+  isPending?: boolean;
+  style?: unknown;
+  isLastMessage?: boolean;
+  dismissUnread?: () => void;
+  highlighted?: boolean;
+  renderSigil?: boolean;
+  hideHover?: boolean;
+  innerRef: (el: HTMLDivElement | null) => void;
+  onReply?: (msg: Post) => void;
+  showOurContact: boolean;
+  onDelete?: () => void;
+}
+const emptyCallback = () => {};
+
+function ChatMessage(props: ChatMessageProps) {
+  let { highlighted } = props;
+  const {
+    msg,
+    nextMsg,
+    isLastRead = false,
+    className = '',
+    isPending = false,
+    style,
+    isLastMessage,
+    isAdmin,
+    showOurContact,
+    hideHover,
+    dismissUnread = () => null,
+    permalink = ''
+  } = props;
+
+  if (typeof msg === 'string' || !msg) {
+    return (
+      <Text gray>This message has been deleted.</Text>
+    );
+  }
+
+  const onReply = props?.onReply || emptyCallback;
+  const onDelete = props?.onDelete || emptyCallback;
+  const transcluded = props?.transcluded || 0;
+  const renderSigil = props.renderSigil || (Boolean(nextMsg && msg.author !== nextMsg.author) ||
+        !nextMsg
+    );
+
+    const ourMention = msg?.contents?.some((e: MentionContent) => {
+      return e?.mention && e?.mention === window.ship;
+    });
+
+    if (!highlighted) {
+      if (ourMention) {
+        highlighted = true;
+      }
+    }
+
+  const date = useMemo(() =>
+    daToUnix(bigInt(msg.index.split('/').reverse()[0])),
+    [msg.index]
+  );
+  const nextDate = useMemo(() => nextMsg && typeof nextMsg !== 'string'  ? (
+    daToUnix(bigInt(nextMsg.index.split('/').reverse()[0]))
+  ) : null,
+    [nextMsg]
+  );
+
+  const dayBreak = useMemo(() =>
+    nextDate &&
+    new Date(date).getDate() !==
+    new Date(nextDate).getDate()
+  , [nextDate, date]);
+
+  const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
+
+  const timestamp = useMemo(() => moment
+    .unix(date / 1000)
+    .format(renderSigil ? 'h:mm A' : 'h:mm'),
+    [date, renderSigil]
+  );
+
+  const messageProps = {
+    msg,
+    timestamp,
+    isPending,
+    showOurContact,
+    highlighted,
+    hideHover,
+    transcluded,
+    onReply,
+    onDelete,
+    isAdmin
+  };
+
+  const message = useMemo(() => (
+    <Message
+      msg={msg}
+      timestamp={timestamp}
+      timestampHover={!renderSigil}
+      transcluded={transcluded}
+      showOurContact={showOurContact}
+    />
+  ), [renderSigil, msg, timestamp, transcluded, showOurContact]);
+
+  const unreadContainerStyle = {
+    height: isLastRead ? '2rem' : '0'
+  };
+
+  return (
+    <Box
+      ref={props.innerRef}
+      pt={renderSigil ? 2 : 0}
+      width="100%"
+      pb={isLastMessage ? '20px' : 0}
+      className={containerClass}
+      style={style}
+    >
+      {dayBreak && !isLastRead ? (
+        <DayBreak when={date} shimTop={renderSigil} />
+      ) : null}
+      <MessageWrapper permalink={permalink} {...messageProps}>
+        { renderSigil && <MessageAuthor {...messageProps} />}
+        {message}
+      </MessageWrapper>
+      <Box style={unreadContainerStyle}>
+        {isLastRead ? (
+          <UnreadMarker dismissUnread={dismissUnread} />
+        ) : null}
+      </Box>
+    </Box>
+  );
+}
+
+export default React.memo(React.forwardRef((props: Omit<ChatMessageProps, 'innerRef'>, ref: any) => (
+  <ChatMessage {...props} innerRef={ref} />
+)));
 
 export const MessagePlaceholder = ({
   height,
@@ -516,10 +523,10 @@ export const MessagePlaceholder = ({
 }) => (
   <Box
     width='100%'
-    fontSize='2'
-    pl='3'
-    pt='4'
-    pr='3'
+    fontSize={2}
+    pl={3}
+    pt={4}
+    pr={3}
     display='flex'
     lineHeight='tall'
     className={className}
@@ -527,14 +534,14 @@ export const MessagePlaceholder = ({
     {...props}
   >
     <Box
-      pr='3'
+      pr={3}
       verticalAlign='top'
       backgroundColor='white'
       style={{ float: 'left' }}
     >
       <Text
         display='block'
-        background='gray'
+        background='washedGray'
         width='24px'
         height='24px'
         borderRadius='50%'
@@ -550,19 +557,20 @@ export const MessagePlaceholder = ({
     >
       <Box
         className='hide-child'
-        paddingTop='4'
+        paddingTop={4}
         style={{ visibility: index % 5 == 0 ? 'initial' : 'hidden' }}
       >
         <Text
           display='inline-block'
           verticalAlign='middle'
-          fontSize='0'
-          gray
+          fontSize={0}
+          color='washedGray'
           cursor='default'
         >
           <Text maxWidth='32rem' display='block'>
             <Text
-              backgroundColor='gray'
+              backgroundColor='washedGray'
+              borderRadius={2}
               display='block'
               width='100%'
               height='100%'
@@ -573,11 +581,12 @@ export const MessagePlaceholder = ({
           display='inline-block'
           mono
           verticalAlign='middle'
-          fontSize='0'
-          gray
+          fontSize={0}
+          color='washedGray'
         >
           <Text
-            background='gray'
+            background='washedGray'
+            borderRadius={2}
             display='block'
             height='1em'
             style={{ width: `${((index % 3) + 1) * 3}em` }}
@@ -586,14 +595,16 @@ export const MessagePlaceholder = ({
         <Text
           mono
           verticalAlign='middle'
-          fontSize='0'
-          ml='2'
-          gray
+          fontSize={0}
+          ml={2}
+          color='washedGray'
+          borderRadius={2}
           display={['none', 'inline-block']}
           className='child'
         >
           <Text
-            backgroundColor='gray'
+            backgroundColor='washedGray'
+            borderRadius={2}
             display='block'
             width='100%'
             height='100%'
@@ -602,7 +613,8 @@ export const MessagePlaceholder = ({
       </Box>
       <Text
         display='block'
-        backgroundColor='gray'
+        backgroundColor='washedGray'
+        borderRadius={2}
         height='1em'
         style={{ width: `${(index % 5) * 20}%` }}
       ></Text>

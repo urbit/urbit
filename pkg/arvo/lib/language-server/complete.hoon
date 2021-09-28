@@ -185,6 +185,7 @@
       [%zpmc *]  (both p.gen q.gen)
       [%zpts *]  loop(gen p.gen)
       [%zppt *]  (both q.gen r.gen)
+      [%zpgl *]  (spec-and-hoon p.gen q.gen)
       [%zpzp *]  ~
       *
     =+  doz=~(open ap gen)
@@ -245,15 +246,25 @@
   ^-  (unit [term type])
   ~
 ::
+++  get-id-sym
+  |=  [pos=@ud =tape]
+  %^  get-id  pos  tape
+  ^-  $-(nail (like (unit @t)))
+  ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
+::
+++  get-id-cord
+   |=  [pos=@ud =tape]
+   %^  get-id  pos  tape
+   ^-  $-(nail (like (unit @t)))
+   ;~(sfix (punt (cook crip (star prn))) (star ;~(pose prn (just `@`10))))
+::
 ++  get-id
-  |=  [pos=@ud txt=tape]
+  |=  [pos=@ud txt=tape seek=$-(nail (like (unit @t)))]
   ^-  [forward=(unit @t) backward=(unit @t) id=(unit @t)]
-  =/  seek
-    ;~(sfix (punt (cook crip (star prn))) (star ;~(pose prn (just `@`10))))
   =/  forward=(unit @t)
     (scan (slag pos txt) seek)
   =/  backward=(unit @t)
-    %-  (lift |=(t=@tas (swp 3 t)))
+    %-  (lift |=(t=@t (swp 3 t)))
     (scan (flop (scag pos txt)) seek)
   =/  id=(unit @t)
     ?~  forward
@@ -272,7 +283,7 @@
   ^-  [back-pos=@ud fore-pos=@ud txt=tape]
   ::  Find beg-pos by searching backward to where the current term
   ::  begins
-  =+  (get-id pos txt)
+  =+  (get-id-sym pos txt)
   =/  back-pos
     ?~  backward
       pos
@@ -343,7 +354,7 @@
     [%| p.res]
   :-  %&
   ~?  >  debug  %parsed-good
-  ((cury tab-list-hoon sut) hoon.p.res)
+  ((cury tab-list-hoon sut) hoon:`pile:clay`p.res)
 ::
 :: Generators
 ++  tab-generators

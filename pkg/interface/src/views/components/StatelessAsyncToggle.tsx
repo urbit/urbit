@@ -1,13 +1,10 @@
-import React, { ReactNode, useState, useEffect, useCallback } from "react";
-
 import {
-  StatelessToggleSwitchField as Toggle,
-  LoadingSpinner,
-  Text
-} from "@tlon/indigo-react";
-import { useFormikContext } from "formik";
+  LoadingSpinner, StatelessToggleSwitchField as Toggle,
 
-import { useStatelessAsyncClickable } from "~/logic/lib/useStatelessAsyncClickable";
+  Text
+} from '@tlon/indigo-react';
+import React, { ReactElement } from 'react';
+import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
 
 interface AsyncToggleProps {
   name?: string;
@@ -16,20 +13,20 @@ interface AsyncToggleProps {
 
 export function StatelessAsyncToggle({
   onClick,
-  name = "",
+  name = '',
   ...rest
-}: AsyncToggleProps & Parameters<typeof Toggle>[0]) {
+}: AsyncToggleProps & Parameters<typeof Toggle>[0]): ReactElement {
   const {
     onClick: handleClick,
-    buttonState: state,
+    buttonState: state
   } = useStatelessAsyncClickable(onClick, name);
 
-  return state === "error" ? (
-    <Text mr="2">Error</Text>
-  ) : state === "loading" ? (
-    <LoadingSpinner mr="2" foreground={"white"} background="gray" />
-  ) : state === "success" ? (
-    <Text mr="2">Done</Text>
+  return state === 'error' ? (
+    <Text>Error</Text>
+  ) : state === 'loading' ? (
+    <LoadingSpinner foreground={'white'} background="gray" />
+  ) : state === 'success' ? (
+    <Text mx={2}>Done</Text>
   ) : (
     <Toggle onClick={handleClick} {...rest} />
   );

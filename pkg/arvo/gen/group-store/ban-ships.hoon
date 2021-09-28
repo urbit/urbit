@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=ship =term ships=(list ship) ~] ~]
     ==
-:-  %group-update
+:-  %group-update-0
 ^-  action
 [%change-policy [ship term] %open %ban-ships (sy ships)]

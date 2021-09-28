@@ -1,10 +1,8 @@
-
 export type LaunchUpdate =
   LaunchUpdateInitial
 | LaunchUpdateFirstTime
 | LaunchUpdateOrder
 | LaunchUpdateIsShown;
-
 
 interface LaunchUpdateInitial {
   initial: LaunchState;
@@ -49,7 +47,7 @@ export interface TileTypeBasic {
 }
 
 interface TileTypeCustom {
-  custom: null;
+  custom: any;
 }
 
 interface WeatherDay {

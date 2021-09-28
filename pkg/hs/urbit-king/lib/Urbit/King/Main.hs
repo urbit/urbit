@@ -99,6 +99,7 @@ import qualified Data.Set                as Set
 import qualified Data.Text               as T
 import qualified Network.HTTP.Client     as C
 import qualified System.Posix.Signals    as Sys
+import qualified System.Posix.Resource   as Sys
 import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
 import qualified Urbit.EventLog.LMDB     as Log
@@ -183,8 +184,9 @@ tryBootFromPill
   -> Bool
   -> Ship
   -> LegacyBootEvent
+  -> Feed
   -> RIO PierEnv ()
-tryBootFromPill oExit pill lite ship boot = do
+tryBootFromPill oExit pill lite ship boot feed = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
   runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart []
@@ -192,7 +194,7 @@ tryBootFromPill oExit pill lite ship boot = do
   bootedPier vSlog = do
     view pierPathL >>= lockFile
     rio $ logInfo "Starting boot"
-    sls <- Pier.booted vSlog pill lite ship boot
+    sls <- Pier.booted vSlog pill lite ship boot feed
     rio $ logInfo "Completed boot"
     pure sls
 
@@ -394,7 +396,12 @@ testPill pax showPil showSeq = do
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   logInfo "Using pill to generate boot sequence."
-  bootSeq <- genBootSeq (Ship 0) pill False (Fake (Ship 0))
+  bootSeq <- genBootSeq
+               (Ship 0)
+               pill
+               False
+               (Fake (Ship 0))
+               (Feed1 $ Germs (Ship 0) [])
 
   logInfo "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -460,6 +467,13 @@ pillFrom = \case
     noun <- cueBS body & either throwIO pure
     fromNounErr noun & either (throwIO . uncurry ParseErr) pure
 
+multiOnFatal :: HasKingEnv e => e -> IO ()
+multiOnFatal env = runRIO env $ do
+  (view stderrLogFuncL >>=) $ flip runRIO $ logError
+    ("Urbit is shutting down because of a problem with the HTTP server.\n"
+    <> "Please restart it at your leisure.")
+  view killKingActionL >>= atomically
+
 newShip :: CLI.New -> CLI.Opts -> RIO KingEnv ()
 newShip CLI.New{..} opts = do
   {-
@@ -472,7 +486,8 @@ newShip CLI.New{..} opts = do
     "run ship" flow, and possibly sequence them from the outside if
     that's really needed.
   -}
-  multi <- multiEyre (MultiEyreConf Nothing Nothing True)
+  env <- ask
+  multi <- multiEyre (multiOnFatal env) (MultiEyreConf Nothing Nothing True)
 
   -- TODO: We hit the same problem as above: we need a host env to boot a ship
   -- because it may autostart the ship, so build an inactive port configuration.
@@ -491,12 +506,12 @@ newShip CLI.New{..} opts = do
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ renderShip (sShip seed))
       putStrLn ("code: " ++ (tshow $ deriveCode $ sRing seed))
-      bootFromSeed pill seed
+      bootFromFeed pill $ Feed0 seed
 
     CLI.BootFake name -> do
       pill <- pillFrom nPillSource
       ship <- shipFrom name
-      runTryBootFromPill pill name ship (Fake ship)
+      runTryBootFromPill pill name ship (Fake ship) (Feed1 $ Germs ship [])
 
     CLI.BootFromKeyfile keyFile -> do
       text <- readFileUtf8 keyFile
@@ -505,13 +520,13 @@ newShip CLI.New{..} opts = do
         Just (UW a) -> pure a
 
       asNoun <- cueExn asAtom
-      seed :: Seed <- case fromNoun asNoun of
+      feed :: Feed <- case fromNoun asNoun of
         Nothing -> error "Keyfile does not seem to contain a seed."
         Just s  -> pure s
 
       pill <- pillFrom nPillSource
 
-      bootFromSeed pill seed
+      bootFromFeed pill feed
 
   where
     shipFrom :: Text -> RIO HostEnv Ship
@@ -532,16 +547,16 @@ newShip CLI.New{..} opts = do
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: Pill -> Seed -> RIO HostEnv ()
-    bootFromSeed pill seed = do
-      ethReturn <- dawnVent nEthNode seed
+    bootFromFeed :: Pill -> Feed -> RIO HostEnv ()
+    bootFromFeed pill feed = do
+      ethReturn <- dawnVent nEthNode feed
 
       case ethReturn of
         Left x -> error $ unpack x
         Right dawn -> do
           let ship = sShip $ dSeed dawn
           name <- nameFromShip ship
-          runTryBootFromPill pill name ship (Dawn dawn)
+          runTryBootFromPill pill name ship (Dawn dawn) feed
 
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
@@ -549,13 +564,14 @@ newShip CLI.New{..} opts = do
                        -> Text
                        -> Ship
                        -> LegacyBootEvent
+                       -> Feed
                        -> RIO HostEnv ()
-    runTryBootFromPill pill name ship bootEvent = do
+    runTryBootFromPill pill name ship bootEvent feed = do
       vKill <- view (kingEnvL . kingEnvKillSignal)
       let pierConfig = toPierConfig (pierPath name) nSerfExe opts
       let networkConfig = toNetworkConfig opts
       runPierEnv pierConfig networkConfig vKill $
-        tryBootFromPill True pill nLite ship bootEvent
+        tryBootFromPill True pill nLite ship bootEvent feed
 
 runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a
            -> RIO HostEnv a
@@ -633,13 +649,13 @@ checkDawn provider keyfilePath = do
     Just (UW a) -> pure a
 
   asNoun <- cueExn asAtom
-  seed :: Seed <- case fromNoun asNoun of
+  feed :: Feed <- case fromNoun asNoun of
     Nothing -> error "Keyfile does not seem to contain a seed."
     Just s  -> pure s
 
-  print $ show seed
+  print $ show feed
 
-  e <- dawnVent provider seed
+  e <- dawnVent provider feed
   print $ show e
 
 
@@ -660,6 +676,7 @@ main = do
 
   hSetBuffering stdout NoBuffering
   setupSignalHandlers
+  setRLimits
 
   runKingEnv args log $ case args of
     CLI.CmdRun ko ships                       -> runShips ko ships
@@ -693,6 +710,15 @@ main = do
     for_ [Sys.sigTERM, Sys.sigINT] $ \sig -> do
       Sys.installHandler sig (Sys.Catch onKillSig) Nothing
 
+  setRLimits = do
+    openFiles <- Sys.getResourceLimit Sys.ResourceOpenFiles
+    let soft = case Sys.hardLimit openFiles of
+          Sys.ResourceLimit lim     -> Sys.ResourceLimit lim
+          Sys.ResourceLimitInfinity -> Sys.ResourceLimit 10240  -- macOS
+          Sys.ResourceLimitUnknown  -> Sys.ResourceLimit 10240
+    Sys.setResourceLimit Sys.ResourceOpenFiles
+      openFiles { Sys.softLimit = soft }
+
   verboseLogging :: CLI.Cmd -> Bool
   verboseLogging = \case
     CLI.CmdRun ko ships -> any CLI.oVerbose (ships <&> \(_, o, _) -> o)
@@ -715,7 +741,6 @@ main = do
                                    | otherwise -> CLI.LogFile Nothing
       CLI.CmdRun ko _                          -> CLI.LogStderr
       _                                        -> CLI.LogStderr
-
 
 {-
   Runs a ship but restarts it if it crashes or shuts down on it's own.
@@ -792,7 +817,8 @@ runShips CLI.Host {..} ships = do
                                    -- a king-wide option.
         }
 
-  multi <- multiEyre meConf
+  env <- ask
+  multi <- multiEyre (multiOnFatal env) meConf
 
   ports <- buildPortHandler hUseNatPmp
 

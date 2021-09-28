@@ -159,7 +159,10 @@
       ~<  %slog.[0 leaf+"gall: molted"]
       ::  +molt should never notify its client about agent changes
       ::
-      =-  [(skip -< |=(move ?=([* %give %onto *] +<))) ->]
+      =-  :_  ->
+          %+  welp
+            (skip -< |=(move ?=([* %give %onto *] +<)))
+          [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
         [%7 system-duct outstanding contacts yokes=~ blocked]:spore
@@ -646,6 +649,7 @@
           ::  cleared queue in +load 3-to-4 or +load-4-to-5
           ::
           =?  stand  ?=(~ stand)
+            ~&  [%gall-missing wire hen]
             (~(put to *(qeu remote-request)) %missing)
           ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)
@@ -680,12 +684,9 @@
       ::  note this should only happen on reverse bones, so only facts
       ::  and kicks
       ::
-      =/  sys-wire  [%sys wire]
       ::  TODO: %drip %kick so app crash can't kill the remote %pull
       ::
-      =/  =ames-request-all  [%0 %u ~]
-      =.  mo-core
-        (mo-pass sys-wire %a %plea ship %g /ge/[foreign-agent] ames-request-all)
+      =.  mo-core  (mo-send-foreign-request ship foreign-agent %leave ~)
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
@@ -759,12 +760,10 @@
       mo-core
     =^  [=duct =routes blocker=(each deal sign:agent)]  blocked
       ~(get to blocked)
+    ?:  ?=(%| -.blocker)  $
     =/  =move
       =/  =sock  [attributing.routes our]
-      =/  card
-        ?:  ?=(%& -.blocker)
-          [%slip %g %deal sock dap p.blocker]
-        [%pass /clear-huck %b %huck `sign-arvo`[%gall %unto p.blocker]]
+      =/  card   [%slip %g %deal sock dap p.blocker]
       [duct card]
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.
@@ -942,15 +941,13 @@
       =/  sky  (rof ~ %cb [our %home case] /[mark.ames-response])
       ?-    sky
           ?(~ [~ ~])
-        =/  ror  "gall: ames mark fail {<mark.ames-response>}"
-        (mo-give %done `vale+[leaf+ror]~)
+        (mean leaf+"gall: ames mark fail {<mark.ames-response>}" ~)
       ::
           [~ ~ *]
         =+  !<(=dais:clay q.u.u.sky)
         =/  res  (mule |.((vale:dais noun.ames-response)))
         ?:  ?=(%| -.res)
-          =/  ror  "gall: ames vale fail {<mark.deal>}"
-          (mo-give %done `vale+[leaf+ror p.res])
+          (mean leaf+"gall: ames vale fail {<mark.ames-response>}" p.res)
         =.  mo-core
           %+  mo-pass  /nowhere
           [%c %warp our %home ~ %sing %b case /[mark.ames-response]]

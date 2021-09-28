@@ -1,11 +1,10 @@
-import React, { ReactNode } from "react";
+import { Action, LoadingSpinner } from '@tlon/indigo-react';
+import React, { ReactNode } from 'react';
 import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
-
-import { LoadingSpinner, Action } from "@tlon/indigo-react";
 
 interface AsyncActionProps {
   children: ReactNode;
-  name: string;
+  name?: string;
   disabled?: boolean;
   onClick: (e: React.MouseEvent) => Promise<void>;
 }
@@ -19,24 +18,25 @@ export function StatelessAsyncAction({
 }: AsyncActionProps & Parameters<typeof Action>[0]) {
   const {
     onClick: handleClick,
-    buttonState: state,
+    buttonState: state
   } = useStatelessAsyncClickable(onClick, name);
 
   return (
     <Action
-      height="18px"
+      height="16px"
       hideDisabled={!disabled}
       disabled={disabled || state === 'loading'}
-      onClick={handleClick} {...rest}>
-      {state === "error" ? (
-        "Error"
-      ) : state === "loading" ? (
+      onClick={handleClick} {...rest}
+    >
+      {state === 'error' ? (
+        'Error'
+      ) : state === 'loading' ? (
         <LoadingSpinner
-          foreground={rest.destructive ? "red" : "black"}
+          foreground={rest.destructive ? 'red' : 'black'}
           background="transparent"
         />
-      ) : state === "success" ? (
-        "Done"
+      ) : state === 'success' ? (
+        'Done'
       ) : (
         children
       )}

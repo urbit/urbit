@@ -1,14 +1,12 @@
-import { BaseInput, Box, Icon, LoadingSpinner, Text } from "@tlon/indigo-react";
-import React, { useCallback } from "react";
-import useS3 from "~/logic/lib/useS3";
-import { S3State } from "~/types";
+import { Box, Text } from '@tlon/indigo-react';
+import React, { ReactElement } from 'react';
 
-const SubmitDragger = () => (
+const SubmitDragger = (): ReactElement => (
   <Box
-    top='0'
-    bottom='0'
-    left='0'
-    right='0'
+    top={0}
+    bottom={0}
+    left={0}
+    right={0}
     position='absolute'
     backgroundColor='white'
     height='100%'
@@ -18,7 +16,7 @@ const SubmitDragger = () => (
     justifyContent='center'
     style={{ pointerEvents: 'none', zIndex: 999 }}
   >
-      <Text fontSize='1' color='black'>
+      <Text fontSize={1} color='black'>
         Drop a file to upload
       </Text>
     </Box>

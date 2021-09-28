@@ -5,49 +5,16 @@
 
 #include <ctype.h>
 
-/* functions
- */
-u3_noun
-_parse_ud(u3_noun txt) {
-  c3_c* c = u3a_string(txt);
+static inline u3_noun
+_parse_ud(u3_noun a)
+{
+  u3_weak pro;
 
-  // First character must represent a digit
-  c3_c* cur = c;
-  if (cur[0] > '9' || cur[0] < '0') {
-    u3a_free(c);
-    return u3_none;
-  }
-  u3_atom total = cur[0] - '0';
-  cur++;
-
-  int since_last_period = 0;
-  while (cur[0] != 0) {
-    since_last_period++;
-    if (cur[0] == '.') {
-      since_last_period = 0;
-      cur++;
-      continue;
-    }
-
-    if (cur[0] > '9' || cur[0] < '0') {
-      u3a_free(c);
-      u3z(total);
-      return u3_none;
-    }
-
-    total = u3ka_mul(total, 10);
-    total = u3ka_add(total, cur[0] - '0');
-    cur++;
-
-    if (since_last_period > 3) {
-      u3a_free(c);
-      u3z(total);
-      return u3_none;
-    }
+  if ( u3_none == (pro = u3s_sift_ud(u3x_atom(a))) ) {
+    return u3_nul;
   }
 
-  u3a_free(c);
-  return u3nc(0, total);
+  return u3nc(u3_nul, pro);
 }
 
 static

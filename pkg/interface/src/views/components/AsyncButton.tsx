@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-
-import { Button, LoadingSpinner } from "@tlon/indigo-react";
-
-import { useFormikContext } from "formik";
+import { Button, LoadingSpinner } from '@tlon/indigo-react';
+import { useFormikContext } from 'formik';
+import React, { useEffect, useState } from 'react';
 
 export function AsyncButton<T = any>({
   children,
@@ -15,11 +13,11 @@ export function AsyncButton<T = any>({
   useEffect(() => {
     const s = status || {};
     let done = false;
-    if ("success" in s) {
+    if ('success' in s) {
       setSuccess(true);
       onSuccess();
       done = true;
-    } else if ("error" in s) {
+    } else if ('error' in s) {
       setSuccess(false);
       done = true;
     }
@@ -40,13 +38,13 @@ export function AsyncButton<T = any>({
     >
       {isSubmitting ? (
         <LoadingSpinner
-          foreground={rest.primary ? "white" : "black"}
+          foreground={rest.primary ? 'white' : 'black'}
           background="gray"
         />
       ) : success === true ? (
-        "Done"
+        'Done'
       ) : success === false ? (
-        "Errored"
+        'Errored'
       ) : (
         children
       )}

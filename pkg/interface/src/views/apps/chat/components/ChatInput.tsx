@@ -1,203 +1,166 @@
-import React, { Component } from 'react';
-import ChatEditor from './chat-editor';
-import { IuseS3 } from '~/logic/lib/useS3';
-import { uxToHex } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
-import { createPost } from '~/logic/api/graph';
-import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
-import GlobalApi from '~/logic/api/global';
-import { Envelope } from '~/types/chat-update';
-import { Contacts, Content } from '~/types';
-import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
-import withS3 from '~/views/components/withS3';
+import { Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
+import { Contact, Content, evalCord } from '@urbit/api';
+import React, { FC, PropsWithChildren, useRef, useState } from 'react';
+import tokenizeMessage from '~/logic/lib/tokenizeMessage';
+import { IuseStorage } from '~/logic/lib/useStorage';
+import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
 import { withLocalState } from '~/logic/state/local';
+import ChatEditor, { CodeMirrorShim } from './ChatEditor';
+import airlock from '~/logic/api';
+import { ChatAvatar } from './ChatAvatar';
+import { useChatStore } from './ChatPane';
+import { useImperativeHandle } from 'react';
+import { FileUploadSource, useFileUpload } from '~/logic/lib/useFileUpload';
 
-type ChatInputProps = IuseS3 & {
-  api: GlobalApi;
-  numMsgs: number;
-  station: any;
-  ourContact: any;
-  envelopes: Envelope[];
-  contacts: Contacts;
-  onUnmount(msg: string): void;
-  s3: any;
-  placeholder: string;
-  message: string;
-  deleteMessage(): void;
+type ChatInputProps = PropsWithChildren<IuseStorage & {
   hideAvatars: boolean;
-}
+  ourContact?: Contact;
+  placeholder: string;
+  onSubmit: (contents: Content[]) => void;
+}>;
 
-interface ChatInputState {
-  inCodeMode: boolean;
-  submitFocus: boolean;
-  uploadingPaste: boolean;
-}
+const InputBox: FC = ({ children }) => (
+  <Row
+    alignItems='center'
+    position='relative'
+    flexGrow={1}
+    flexShrink={0}
+    borderTop={1}
+    borderTopColor='lightGray'
+    backgroundColor='white'
+    className='cf'
+    zIndex={0}
+  >
+    { children }
+  </Row>
+);
 
-class ChatInput extends Component<ChatInputProps, ChatInputState> {
-  private chatEditor: React.RefObject<ChatEditor>;
+const IconBox = ({ children, ...props }) => (
+  <Box
+    ml='12px'
+    mr={3}
+    flexShrink={0}
+    height='16px'
+    width='16px'
+    flexBasis='16px'
+    {...props}
+  >
+    { children }
+  </Box>
+);
 
-  constructor(props) {
-    super(props);
+const MobileSubmitButton = ({ enabled, onSubmit }) => (
+  <Box
+    ml={2}
+    mr="12px"
+    flexShrink={0}
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    width="24px"
+    height="24px"
+    borderRadius="50%"
+    backgroundColor={enabled ? 'blue' : 'gray'}
+    cursor={enabled !== '' ? 'pointer' : 'default'}
+    onClick={() => onSubmit()}
+  >
+    <Icon icon="ArrowEast" color="white" />
+  </Box>
+);
 
-    this.state = {
-      inCodeMode: false,
-      submitFocus: false,
-      uploadingPaste: false
-    };
+export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholder, onSubmit }: ChatInputProps, ref) => {
+  const chatEditor = useRef<CodeMirrorShim>(null);
+  useImperativeHandle(ref, () => chatEditor.current);
+  const [inCodeMode, setInCodeMode] = useState(false);
 
-    this.chatEditor = React.createRef();
+  const {
+    message,
+    setMessage
+  } = useChatStore();
+  const { canUpload, uploading, promptUpload, onPaste } = useFileUpload({
+    onSuccess: uploadSuccess
+  });
 
-    this.submit = this.submit.bind(this);
-    this.toggleCode = this.toggleCode.bind(this);
-    this.uploadSuccess = this.uploadSuccess.bind(this);
-    this.uploadError = this.uploadError.bind(this);
-  }
-
-  toggleCode() {
-    this.setState({
-      inCodeMode: !this.state.inCodeMode
-    });
-  }
-
-  submit(text) {
-    const { props, state } = this;
-    const [,,ship,name] = props.station.split('/');
-    if (state.inCodeMode) {
-      this.setState({
-        inCodeMode: false
-      }, async () => {
-        const output = await props.api.graph.eval(text);
-        const contents: Content[] = [{ code: { output, expression: text }}];
-        const post = createPost(contents);
-        props.api.graph.addPost(ship, name, post);
-      });
-      return;
-    }
-
-    const post = createPost(tokenizeMessage((text)))
-
-    props.deleteMessage();
-
-    props.api.graph.addPost(ship,name, post);
-  }
-
-  uploadSuccess(url) {
-    const { props } = this;
-    if (this.state.uploadingPaste) {
-      this.chatEditor.current.editor.setValue(url);
-      this.setState({ uploadingPaste: false });
+  function uploadSuccess(url: string, source: FileUploadSource) {
+    if (source === 'paste') {
+      setMessage(url);
     } else {
-      const [,,ship,name] = props.station.split('/');
-      props.api.graph.addPost(ship,name, createPost([{ url }]));
+      onSubmit([{ url }]);
     }
   }
 
-  uploadError(error) {
-    //  no-op for now
+  function toggleCode() {
+    setInCodeMode(!inCodeMode);
   }
 
-  onPaste(codemirrorInstance, event: ClipboardEvent) {
-    if (!event.clipboardData || !event.clipboardData.files.length) {
+  async function submit() {
+    const text = chatEditor.current?.getValue() || '';
+
+    if (text === '') {
       return;
     }
-    this.setState({ uploadingPaste: true });
-    event.preventDefault();
-    event.stopPropagation();
-    this.uploadFiles(event.clipboardData.files);
-  }
 
-  uploadFiles(files: FileList | File[]) {
-    if (!this.props.canUpload) {
-      return;
+    if (inCodeMode) {
+      const output = await airlock.thread<string[]>(evalCord(text));
+      onSubmit([{ code: { output, expression: text } }]);
+    } else {
+      onSubmit(tokenizeMessage(text));
     }
-    Array.from(files).forEach(file => {
-      this.props.uploadDefault(file)
-        .then(this.uploadSuccess)
-        .catch(this.uploadError);
-    });
+
+    setInCodeMode(false);
+    setMessage('');
+    chatEditor.current.focus();
   }
 
-  render() {
-    const { props, state } = this;
-
-    const color = props.ourContact
-      ? uxToHex(props.ourContact.color) : '000000';
-
-    const sigilClass = props.ourContact
-      ? '' : 'mix-blend-diff';
-
-    const avatar = (
-        props.ourContact &&
-        ((props.ourContact.avatar !== null) && !props.hideAvatars)
-      )
-      ? <BaseImage src={props.ourContact.avatar} height={16} width={16} className="dib" />
-      : <Sigil
-        ship={window.ship}
-        size={16}
-        color={`#${color}`}
-        classes={sigilClass}
-        icon
-        padding={2}
-        />;
-
-    return (
-      <Row
-        alignItems='center'
-        position='relative'
-        flexGrow={1}
-        flexShrink={0}
-        borderTop={1}
-        borderTopColor='washedGray'
-        backgroundColor='white'
-        className='cf'
-        zIndex={0}
-      >
-        <Row p='2' alignItems='center'>
-          {avatar}
-        </Row>
-        <ChatEditor
-          ref={this.chatEditor}
-          inCodeMode={state.inCodeMode}
-          submit={this.submit}
-          onUnmount={props.onUnmount}
-          message={props.message}
-          onPaste={this.onPaste.bind(this)}
-          placeholder='Message...'
-        />
-        <Box
-          mx={2}
-          flexShrink={0}
-          height='16px'
-          width='16px'
-          flexBasis='16px'
-        >
-          {this.props.canUpload
-            ? this.props.uploading
-              ? <LoadingSpinner />
-              : <Icon icon='Links'
-                width="16"
-                height="16"
-                onClick={() => this.props.promptUpload().then(this.uploadSuccess)}
-              />
-            : null
-          }
-        </Box>
-        <Box
-          mr={2}
-          flexShrink={0}
-          height='16px'
-          width='16px'
-          flexBasis='16px'
-        >
-          <Icon
-            icon='Dojo'
-            onClick={this.toggleCode}
-            color={state.inCodeMode ? 'blue' : 'black'}
-          />
-        </Box>
+  return (
+    <InputBox>
+      <Row p='12px 4px 12px 12px' flexShrink={0} alignItems='center'>
+        <ChatAvatar contact={ourContact} hideAvatars={hideAvatars} />
       </Row>
-    );
-  }
-}
+      <ChatEditor
+        ref={chatEditor}
+        inCodeMode={inCodeMode}
+        submit={submit}
+        onPaste={(cm, e) => onPaste(e)}
+        placeholder={placeholder}
+      />
+      <IconBox mr={canUpload ? '12px' : 3}>
+        <Icon
+          icon='Dojo'
+          cursor='pointer'
+          onClick={toggleCode}
+          color={inCodeMode ? 'blue' : 'black'}
+        />
+      </IconBox>
+      {canUpload && (
+        <IconBox>
+          {uploading ? (
+            <LoadingSpinner />
+          ) : (
+            <Icon
+              icon='Attachment'
+              cursor='pointer'
+              width='16'
+              height='16'
+              onClick={() =>
+                promptUpload().then(url => uploadSuccess(url, 'direct'))
+              }
+            />
+          )}
+        </IconBox>
+      )}
+      {MOBILE_BROWSER_REGEX.test(navigator.userAgent) && (
+        <MobileSubmitButton
+          enabled={message !== ''}
+          onSubmit={submit}
+        />
+      )}
+    </InputBox>
+  );
+});
 
-export default withLocalState(withS3(ChatInput, {accept: 'image/*'}), ['hideAvatars']);
+// @ts-ignore withLocalState prop passing weirdness
+export default withLocalState<Omit<ChatInputProps, keyof IuseStorage>, 'hideAvatars', ChatInput>(
+  ChatInput,
+  ['hideAvatars']
+);

@@ -1,31 +1,28 @@
-import React, {
-  useCallback,
-  useState,
-  ReactNode,
-  SyntheticEvent,
-  useEffect,
-  useRef,
-} from "react";
 import {
-  Box,
-  Label,
-  Row,
-  Col,
-  StatelessTextInput as Input,
-  ErrorLabel
-} from "@tlon/indigo-react";
-import { useField } from "formik";
-import Mousetrap from "mousetrap";
-import * as Yup from "yup";
+    Col,
 
-function Chip(props: { children: ReactNode }) {
+    ErrorLabel, Label,
+    Row,
+
+    StatelessTextInput as Input
+} from '@tlon/indigo-react';
+import { useField } from 'formik';
+import Mousetrap from 'mousetrap';
+import React, {
+    ReactElement, ReactNode, useCallback,
+
+    useEffect,
+    useRef, useState
+} from 'react';
+
+function Chip(props: { children: ReactNode }): ReactElement {
   return (
     <Row
       alignItems="center"
       height="24px"
-      borderRadius="1"
-      my="1"
-      p="1"
+      borderRadius={1}
+      my={1}
+      p={1}
       bg="blue"
       color="white"
     >
@@ -42,12 +39,12 @@ interface ChipInputProps {
   breakOnSpace?: boolean;
 }
 
-export function ChipInput(props: ChipInputProps) {
+export function ChipInput(props: ChipInputProps): ReactElement {
   const { id, label, caption, placeholder } = props;
-  const [{ onBlur, value }, meta, { setError, setValue }] = useField<string[]>(
+  const [{ onBlur, value }, meta, { setValue }] = useField<string[]>(
     id
   );
-  const [newChip, setNextChip] = useState("");
+  const [newChip, setNextChip] = useState('');
   const onChange = useCallback(
     (e: any) => {
       setNextChip(e.target.value);
@@ -57,7 +54,7 @@ export function ChipInput(props: ChipInputProps) {
 
   const addNewChip = useCallback(() => {
     setValue([...value, newChip]);
-    setNextChip("");
+    setNextChip('');
   }, [setValue, value, newChip, setNextChip]);
 
   const removeLastChip = useCallback(() => {
@@ -70,18 +67,18 @@ export function ChipInput(props: ChipInputProps) {
       return () => {};
     }
     const mousetrap = Mousetrap(inputRef.current);
-    mousetrap.bind("backspace", (e) => {
+    mousetrap.bind('backspace', (e) => {
       if (newChip.length === 0) {
         removeLastChip();
         return false;
       }
       return true;
     });
-    mousetrap.bind("tab", (e) => {
+    mousetrap.bind('tab', (e) => {
       addNewChip();
       return false;
     });
-    mousetrap.bind("space", (e) => {
+    mousetrap.bind('space', (e) => {
       if (props.breakOnSpace) {
         addNewChip();
         return false;
@@ -89,22 +86,22 @@ export function ChipInput(props: ChipInputProps) {
       return true;
     });
     return () => {
-      mousetrap.unbind("tab");
-      mousetrap.unbind("backspace");
-      mousetrap.unbind("space");
+      mousetrap.unbind('tab');
+      mousetrap.unbind('backspace');
+      mousetrap.unbind('space');
     };
   }, [inputRef.current, addNewChip, newChip]);
 
   return (
-    <Col gapY="2">
+    <Col gapY={2}>
       <Label htmlFor={id}>{label}</Label>
       {caption && <Label gray>{caption}</Label>}
       <Row
-        border="1"
+        border={1}
         borderColor="washedGray"
-        borderRadius="1"
-        pl="2"
-        gapX="2"
+        borderRadius={1}
+        pl={2}
+        gapX={2}
         width="100%"
         flexWrap="wrap"
         minHeight="32px"
@@ -115,20 +112,20 @@ export function ChipInput(props: ChipInputProps) {
         <Input
           width="auto"
           height="24px"
-          flexShrink="1"
-          flexGrow="1"
-          pl="0"
+          flexShrink={1}
+          flexGrow={1}
+          pl={0}
           ref={inputRef}
           onChange={onChange}
           value={newChip}
           onBlur={onBlur}
           placeholder={placeholder}
-          border="0"
-          my="1"
-          py="1"
+          border={0}
+          my={1}
+          py={1}
         />
       </Row>
-      <ErrorLabel mt="2" hasError={!!(meta.touched && meta.error)}>
+      <ErrorLabel mt={2} hasError={Boolean(meta.touched && meta.error)}>
         {meta.error}
       </ErrorLabel>
 

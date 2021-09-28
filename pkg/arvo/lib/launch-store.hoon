@@ -71,7 +71,12 @@
             [%'linkedUrl' s+linked-url.type]
         ==
       ::
-          %custom  (frond %custom ~)
+          %custom
+        %+  frond  %custom
+        %-  pairs
+        :~  [%'linkedUrl' ?~(linked-url.type ~ s+u.linked-url.type)]
+            [%'image' ?~(image.type ~ s+u.image.type)]
+        ==
       ==
     ::
     ++  terms
@@ -105,10 +110,10 @@
         [%'isShown' bo]
     ==
     ::
-    ++  tile-type  
+    ++  tile-type
       %-  of
       :~  [%basic basic]
-          [%custom ul]
+          [%custom (ot [%'linkedUrl' (mu so)] [%'image' (mu so)] ~)]
       ==
     ::
     ++  basic

@@ -1,8 +1,7 @@
-import React, { ReactNode } from "react";
-import { Text, Box, Button, Icon, Row, Rule, Col } from "@tlon/indigo-react";
-
-import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import { PropFunc } from "~/types";
+import { Col, Row, Rule } from '@tlon/indigo-react';
+import React, { ReactElement, ReactNode } from 'react';
+import { PropFunc } from '~/types';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 
 export interface InviteSkeletonProps {
   onAccept: () => Promise<any>;
@@ -14,7 +13,7 @@ export interface InviteSkeletonProps {
 
 export function InviteSkeleton(
   props: InviteSkeletonProps & PropFunc<typeof Col>
-) {
+): ReactElement {
   const {
     children,
     acceptDesc,
@@ -25,15 +24,15 @@ export function InviteSkeleton(
   } = props;
   return (
     <>
-      <Col width="100%" p="1" {...rest}>
+      <Col width="100%" p={1} {...rest}>
         {children}
-        <Row px="4" gapX="4">
+        <Row px={4} gapX={4}>
           <StatelessAsyncAction
             name="accept"
             bg="transparent"
             onClick={onAccept}
             color="blue"
-            mr="2"
+            mr={2}
           >
             {acceptDesc}
           </StatelessAsyncAction>
@@ -47,7 +46,7 @@ export function InviteSkeleton(
           </StatelessAsyncAction>
         </Row>
       </Col>
-      <Rule />
+      <Rule borderColor="washedGray" />
     </>
   );
 }

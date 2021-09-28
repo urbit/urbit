@@ -1,91 +1,124 @@
-import React, { ReactNode, useState, useRef } from 'react';
+import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
 import moment from 'moment';
-import { Row, Box, BaseImage } from '@tlon/indigo-react';
-import { uxToHex, cite, useShowNickname } from '~/logic/lib/util';
-import { Contacts } from '~/types/contact-update';
-import OverlaySigil from './OverlaySigil';
+import React, { ReactElement, ReactNode } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
-import { Group } from '~/types';
-import GlobalApi from '~/logic/api/global';
-import { useHistory } from 'react-router-dom';
+import { useCopy } from '~/logic/lib/useCopy';
+import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
+import { useDark } from '~/logic/state/join';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import { PropFunc } from '~/types';
+import ProfileOverlay from './ProfileOverlay';
+import Timestamp from './Timestamp';
 
-interface AuthorProps {
-  contacts: Contacts;
+export interface AuthorProps {
   ship: string;
-  date: number;
+  date?: number;
   showImage?: boolean;
   children?: ReactNode;
   unread?: boolean;
-  group: Group;
-  api: GlobalApi;
+  size?: number;
+  lineHeight?: string | number;
+  isRelativeTime?: boolean;
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function Author(props: AuthorProps) {
-  const { contacts, ship = '', date, showImage, group } = props;
-  const history = useHistory();
-  let contact;
-  if (contacts) {
-    contact = ship in contacts ? contacts[ship] : null;
-  }
-  const color = contact?.color ? `#${uxToHex(contact?.color)}` : '#000000';
+function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
+  const {
+    ship = '',
+    date,
+    showImage,
+    fullNotIcon,
+    children,
+    unread,
+    isRelativeTime,
+    dontShowTime,
+    lineHeight = 'tall',
+    ...rest
+  } = props;
+
+  const time = props.time || props.date || false;
+  const size = props.size || 16;
+  const sigilPadding = props.sigilPadding || 2;
+
+  const dark = useDark();
+
+  const contact = useContact(ship);
+  const color = contact?.color ? `#${uxToHex(contact?.color)}` : dark ? '#000000' : '#FFFFFF';
   const showNickname = useShowNickname(contact);
-  const name = showNickname ? contact.nickname : cite(ship);
-  const dateFmt = moment(date).fromNow();
+  const { hideAvatars } = useSettingsState(selectCalmState);
+  const name = showNickname && contact ? contact.nickname : cite(ship);
+  const stamp = moment(date);
+  const { copyDisplay, doCopy } = useCopy(`~${ship}`, name);
 
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  const toggleOverlay = () => {
-    setShowOverlay((value) => !value);
-  };
+  const sigil = fullNotIcon ? (
+    <Sigil ship={ship} size={size} color={color} padding={sigilPadding} />
+  ) : (
+    <Sigil ship={ship} size={size} color={color} icon padding={sigilPadding} />
+  );
 
   const img =
-    contact && contact.avatar !== null ? (
+    contact?.avatar && !hideAvatars ? (
       <BaseImage
+        referrerPolicy="no-referrer"
         display='inline-block'
         src={contact.avatar}
-        height={16}
-        width={16}
+        style={{ objectFit: 'cover' }}
+        height={size}
+        width={size}
+        borderRadius={1}
       />
-    ) : (
-      <Sigil ship={ship} size={16} color={color} icon padding={2} />
-    );
+    ) : sigil;
 
   return (
-    <Row alignItems='center' width='auto'>
+    <Row {...rest} alignItems='center' width='auto'>
       <Box
-        onClick={() => toggleOverlay()}
-        height={16}
+        height={`${size}px`}
+        overflow='hidden'
         position='relative'
         cursor='pointer'
       >
-        {showImage && img}
-        {showOverlay && (
-          <OverlaySigil
-            ship={ship}
-            contact={contact}
-            color={`#${uxToHex(contact?.color ?? '0x0')}`}
-            group={group}
-            onDismiss={() => toggleOverlay()}
-            history={history}
-            className='relative'
-          />
+        {showImage && (
+          <ProfileOverlay ship={ship}>
+            {img}
+          </ProfileOverlay>
         )}
       </Box>
-      <Box
-        ml={showImage ? 2 : 0}
-        color='black'
-        fontSize='1'
-        lineHeight='tall'
-        fontFamily={showNickname ? 'sans' : 'mono'}
-        fontWeight={showNickname ? '500' : '400'}
-      >
-        {name}
+      <Box display='flex' alignItems='baseline'>
+        <Text
+          ml={showImage ? 2 : 0}
+          color='black'
+          fontSize='1'
+          cursor='pointer'
+          lineHeight={lineHeight}
+          fontFamily={showNickname ? 'sans' : 'mono'}
+          fontWeight={showNickname ? '500' : '400'}
+          mr={showNickname ? 0 : '2px'}
+          mt={showNickname ? 0 : '0px'}
+          overflow="hidden"
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
+          title={showNickname ? cite(ship) : contact?.nickname}
+          onClick={doCopy}
+        >
+          {copyDisplay}
+        </Text>
+        { !dontShowTime && time && (
+          <Timestamp
+            height="fit-content"
+            relative={isRelativeTime}
+            stamp={stamp}
+            fontSize={0}
+            time={time}
+            whiteSpace='nowrap'
+            ml={2}
+            color={unread ? 'blue' : 'gray'}
+          />
+        )}
+        {children}
       </Box>
-      <Box fontSize='1' ml={2} color={props.unread ? 'blue' : 'gray'}>
-        {dateFmt}
-      </Box>
-      {props.children}
     </Row>
   );
 }
+
+export default React.memo(Author);

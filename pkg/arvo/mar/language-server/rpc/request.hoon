@@ -8,7 +8,7 @@
   --
 ++  grab
   |%
-  ++  noun  req
+  ++  noun  all:request
   ++  json
     |=  jon=^json
     (request:dejs:lsp-json jon)

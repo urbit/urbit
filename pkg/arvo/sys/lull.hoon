@@ -762,6 +762,11 @@
             her=@p  dem=desk  cas=case                  ::  source
             how=germ                                    ::  method
         ==                                              ::
+        $:  %fuse                                       ::  merge many
+            des=desk                                    ::  target desk
+            bas=beak                                    ::  base desk
+            con=(list [beak germ])                      ::  merges
+        ==
         [%mont pot=term bem=beam]                       ::  mount to unix
         [%dirk des=desk]                                ::  mark mount dirty
         [%ogre pot=$@(desk beam)]                       ::  delete mount point
@@ -796,7 +801,7 @@
     $:  face=(unit term)
         file-path=term
     ==
-  +$  care  ?(%a %b %c %d %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
+  +$  care  ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
   +$  case                                              ::  ship desk case spur
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label
@@ -928,12 +933,18 @@
   ::    /-  sur-file            ::  surface imports from /sur
   ::    /+  lib-file            ::  library imports from /lib
   ::    /=  face  /path         ::  imports built hoon file at path
+  ::    /~  face  type   /path  ::  imports built hoon files from directory
+  ::    /%  face  %mark         ::  imports mark definition from /mar
+  ::    /$  face  %from  %to    ::  imports mark converter from /mar
   ::    /*  face  %mark  /path  ::  unbuilt file imports, as mark
   ::
   +$  pile
     $:  sur=(list taut)
         lib=(list taut)
         raw=(list [face=term =path])
+        raz=(list [face=term =spec =path])
+        maz=(list [face=term =mark])
+        caz=(list [face=term =mars])
         bar=(list [face=term =mark =path])
         =hoon
     ==
@@ -942,15 +953,29 @@
   +$  taut  [face=(unit term) pax=term]
   ::  $mars: mark conversion request
   ::  $tube: mark conversion gate
+  ::  $nave: typed mark core
   ::
   +$  mars  [a=mark b=mark]
   +$  tube  $-(vase vase)
+  ++  nave
+    |$  [typ dif]
+    $_
+    ^?
+    |%
+    ++  diff  |~([old=typ new=typ] *dif)
+    ++  form  *mark
+    ++  join  |~([a=dif b=dif] *(unit (unit dif)))
+    ++  mash
+      |~  [a=[ship desk dif] b=[ship desk dif]]
+      *(unit dif)
+    ++  pact  |~([typ dif] *typ)
+    ++  vale  |~(noun *typ)
+    --
   ::  $dais: processed mark core
   ::
   +$  dais
     $_  ^|
     |_  sam=vase
-    ++  bunt  sam
     ++  diff  |~(new=_sam *vase)
     ++  form  *mark
     ++  join  |~([a=vase b=vase] *(unit (unit vase)))
@@ -959,7 +984,6 @@
       *(unit vase)
     ++  pact  |~(diff=vase sam)
     ++  vale  |~(noun sam)
-    ++  volt  |~(noun sam)
     --
   ::
   ++  get-fit
@@ -987,7 +1011,7 @@
     |=  suffix=@tas
     ^-  (list path)
     =/  parser
-      (most hep (cook crip ;~(plug low (star ;~(pose low nud)))))
+      (most hep (cook crip ;~(plug ;~(pose low nud) (star ;~(pose low nud)))))
     =/  torn=(list @tas)  (fall (rush suffix parser) ~[suffix])
     %-  flop
     |-  ^-  (list (list @tas))
@@ -1045,14 +1069,23 @@
   ::::                                                  ::  (1d2)
     ::
   +$  blew  [p=@ud q=@ud]                               ::  columns rows
-  +$  belt                                              ::  old belt
+  +$  belt                                              ::  client input
+    $?  bolt                                            ::  simple input
+    $%  [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
+        [%txt p=(list @c)]                              ::  utf32 text
+        ::TODO  consider moving %hey, %rez, %yow here   ::
+        ::TMP  forward backwards-compatibility          ::
+        ::                                              ::
+        [%ctl p=@c]                                     ::
+        [%met p=@c]                                     ::
+    ==  ==                                              ::
+  +$  bolt                                              ::  simple input
+    $@  @c                                              ::  simple keystroke
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
-        [%ctl p=@c]                                     ::  control-key
         [%del ~]                                        ::  true delete
-        [%met p=@c]                                     ::  meta-key
+        [%hit r=@ud c=@ud]                              ::  mouse click
         [%ret ~]                                        ::  return
-        [%txt p=(list @c)]                              ::  utf32 text
     ==                                                  ::
   +$  blit                                              ::  old blit
     $%  [%bel ~]                                        ::  make a noise
@@ -1846,7 +1879,12 @@
         [%public-keys =public-keys-result]            ::  ethereum changes
         [%turf turf=(list turf)]                      ::  domains
     ==                                                ::
-  ::  +seed: private boot parameters
+  ::  +feed: potential boot parameters
+  ::
+  +$  feed
+    $^  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
+    seed
+  ::  +seed: individual boot parameters
   ::
   +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
@@ -2078,6 +2116,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%$ %whiz ~]
       [@tas %meta vase]
   ==
 ::  full vane names are required in vanes

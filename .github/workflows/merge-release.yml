@@ -1,0 +1,17 @@
+name: ops-merge
+on:
+  push:
+    branches:
+      - 'release/*'
+jobs:
+  merge-release-to-ops:
+    runs-on: ubuntu-latest
+    name: "Merge to ops-tlon"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: devmasx/merge-branch@v1.3.1
+        with:
+          type: now
+          target_branch: ops-tlon
+          github_token: ${{ secrets.JANEWAY_BOT_TOKEN }}
+

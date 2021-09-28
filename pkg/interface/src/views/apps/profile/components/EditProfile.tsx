@@ -1,30 +1,29 @@
-import React from "react";
-import * as Yup from "yup";
-import _ from 'lodash';
-
 import {
-  ManagedForm as Form,
-  ManagedTextInputField as Input,
-  ManagedCheckboxField as Checkbox,
-  Center,
-  Col,
-  Box,
-  Text,
-  Row,
-  Button,
-} from "@tlon/indigo-react";
-import { Formik, FormikHelpers } from "formik";
-import { useHistory } from "react-router-dom";
+    Button, Col, ManagedCheckboxField as Checkbox, ManagedForm as Form,
+    ManagedTextInputField as Input,
 
-import { uxToHex } from "~/logic/lib/util";
-import { Sigil } from "~/logic/lib/sigil";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import { ColorInput } from "~/views/components/ColorInput";
-import { ImageInput } from "~/views/components/ImageInput";
-import { MarkdownField } from "~/views/apps/publish/components/MarkdownField";
-import { resourceFromPath } from "~/logic/lib/group";
-import GroupSearch from "~/views/components/GroupSearch";
+    Row, Text
+} from '@tlon/indigo-react';
+import { Formik } from 'formik';
+import _ from 'lodash';
+import React, { ReactElement, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import * as Yup from 'yup';
+import { resourceFromPath } from '~/logic/lib/group';
+import { uxToHex } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { ColorInput } from '~/views/components/ColorInput';
+import GroupSearch from '~/views/components/GroupSearch';
+import { ImageInput } from '~/views/components/ImageInput';
+import {
+    ProfileControls, ProfileHeader,
 
+    ProfileImages, ProfileStatus
+} from './Profile';
+import airlock from '~/logic/api';
+import { editContact, setPublic } from '@urbit/api';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
@@ -38,64 +37,88 @@ const emptyContact = {
   bio: '',
   status: '',
   color: '0',
-  avatar: null,
-  cover: null,
+  avatar: '',
+  cover: '',
   groups: [],
   'last-updated': 0,
   isPublic: false
 };
 
+export function ProfileHeaderImageEdit(props: any): ReactElement {
+  const { contact, setFieldValue, handleHideCover } = props;
+  const [editCover, setEditCover] = useState(false);
+  const [removedCoverLabel, setRemovedCoverLabel] = useState('Remove Header');
+  const handleClear = (e) => {
+    e.preventDefault();
+    handleHideCover(true);
+    setFieldValue('cover', '');
+    setRemovedCoverLabel('Header Removed');
+  };
 
-export function EditProfile(props: any) {
-  const { contact, ship, api, isPublic } = props;
+  return (
+    <>
+      {contact?.cover ? (
+        <div>
+          {editCover ? (
+            <ImageInput id='cover' marginTop='-8px' width='288px' />
+          ) : (
+            <Row>
+              <Button mr={2} onClick={() => setEditCover(true)}>
+                Replace Header
+              </Button>
+              <Button onClick={e => handleClear(e)}>
+                {removedCoverLabel}
+              </Button>
+            </Row>
+          )}
+        </div>
+      ) : (
+        <ImageInput id='cover' marginTop='-8px' width='288px' />
+      )}
+    </>
+  );
+}
+
+export function EditProfile(props: any): ReactElement {
+  const { contact, ship } = props;
+  const isPublic = useContactState(state => state.isContactPublic);
+  const [hideCover, setHideCover] = useState(false);
+
+  const handleHideCover = (value) => {
+    setHideCover(value);
+  };
+
   const history = useHistory();
-  if (contact) {
-    contact.isPublic = isPublic;
-  }
 
   const onSubmit = async (values: any, actions: any) => {
-    console.log(values);
     try {
-      await Object.keys(values).reduce((acc, key) => {
-        console.log(key);
-        const newValue = key !== "color" ? values[key] : uxToHex(values[key]);
-
+      Object.keys(values).forEach((key) => {
+        const newValue = key !== 'color' ? values[key] : uxToHex(values[key]);
         if (newValue !== contact[key]) {
-          if (key === "isPublic") {
-            return acc.then(() =>
-              api.contacts.setPublic(newValue)
-            );
+          if (key === 'isPublic') {
+            airlock.poke(setPublic(true));
+            return;
           } else if (key === 'groups') {
-            const toRemove: string[] = _.difference(contact?.groups || [], newValue);
-            console.log(toRemove);
-            const toAdd: string[] = _.difference(newValue, contact?.groups || []);
-            console.log(toAdd);
-            let promises: Promise<any>[] = [];
-
-            promises.concat(
-              toRemove.map(e =>
-                api.contacts.edit(ship, {'remove-group': resourceFromPath(e) })
-              )
+            const toRemove: string[] = _.difference(
+              contact?.groups || [],
+              newValue
             );
-            promises.concat(
-              toAdd.map(e =>
-                api.contacts.edit(ship, {'add-group': resourceFromPath(e) })
-              )
+            const toAdd: string[] = _.difference(
+              newValue,
+              contact?.groups || []
             );
-            return acc.then(() => Promise.all(promises));
-
-          } else if (
-            key !== "last-updated" &&
-            key !== "isPublic"
-          ) {
-            return acc.then(() =>
-              api.contacts.edit(ship, { [key]: newValue })
+            toRemove.forEach(e =>
+                airlock.poke(editContact(ship, { 'remove-group': resourceFromPath(e) }))
             );
+              toAdd.forEach(e =>
+                airlock.poke(editContact(ship, { 'add-group': resourceFromPath(e) }))
+            );
+          } else if (key !== 'last-updated' && key !== 'isPublic') {
+            airlock.poke(editContact(ship, { [key]: newValue }));
+            return;
           }
         }
-        return acc;
-      }, Promise.resolve());
-      //actions.setStatus({ success: null });
+      });
       history.push(`/~profile/${ship}`);
     } catch (e) {
       console.error(e);
@@ -107,31 +130,77 @@ export function EditProfile(props: any) {
     <>
       <Formik
         validationSchema={formSchema}
-        initialValues={contact || emptyContact}
+        initialValues={{ ...contact, isPublic } || emptyContact}
         onSubmit={onSubmit}
       >
-      <Form width="100%" height="100%" p={2}>
-        <Input id="nickname" label="Name" mb={3} />
-        <Col width="100%">
-          <Text mb={2}>Description</Text>
-          <MarkdownField id="bio" mb={3} s3={props.s3} />
-        </Col>
-        <ColorInput id="color" label="Sigil Color" mb={3} />
-        <Row mb={3} width="100%">
-          <Col pr={2} width="50%">
-            <ImageInput id="cover" label="Cover Image" s3={props.s3} />
-          </Col>
-          <Col pl={2} width="50%">
-            <ImageInput id="avatar" label="Profile Image" s3={props.s3} />
-          </Col>
-        </Row>
-        <Checkbox mb={3} id="isPublic" label="Public Profile" />
-        <GroupSearch label="Pinned Groups" id="groups" groups={props.groups} associations={props.associations} publicOnly />
-        <AsyncButton primary loadingText="Updating..." border mt={3}>
-          Submit
-        </AsyncButton>
-      </Form>
-    </Formik>
-  </>
+        {({ setFieldValue }) => (
+          <Form width='100%' height='100%'>
+            <ProfileHeader>
+              <ProfileControls>
+                <Row alignItems='baseline'>
+                  <Button
+                    type='submit'
+                    display='inline'
+                    cursor='pointer'
+                    fontWeight='500'
+                    color='blue'
+                    pl={0}
+                    pr={0}
+                    border={0}
+                    style={{ appearance: 'none', background: 'transparent' }}
+                  >
+                    Save Edits
+                  </Button>
+                  <Text
+                    py={2}
+                    ml={3}
+                    fontWeight='500'
+                    cursor='pointer'
+                    onClick={() => {
+                      history.push(`/~profile/${ship}`);
+                    }}
+                  >
+                    Cancel
+                  </Text>
+                </Row>
+                <ProfileStatus contact={contact} />
+              </ProfileControls>
+              <ProfileImages
+                hideCover={hideCover}
+                contact={contact}
+                ship={ship}
+              >
+                <ProfileHeaderImageEdit
+                  contact={contact}
+                  setFieldValue={setFieldValue}
+                  handleHideCover={handleHideCover}
+                />
+              </ProfileImages>
+            </ProfileHeader>
+            <Row mb={3} pt={5} width='100%'>
+              <Col pr={2} width='25%'>
+                <ColorInput id='color' label='Sigil Color' />
+              </Col>
+              <Col pl={2} width='75%'>
+                <ImageInput
+                  id='avatar'
+                  label='Overlay Avatar (may be hidden by other users)'
+                />
+              </Col>
+            </Row>
+            <Input id='nickname' label='Custom Name' mb={3} />
+            <Col width='100%'>
+              <Text mb={2}>Description</Text>
+              <MarkdownField id='bio' mb={3} />
+            </Col>
+            <Checkbox mb={3} id='isPublic' label='Public Profile' />
+            <GroupSearch label='Pinned Groups' id='groups' publicOnly />
+            <AsyncButton primary loadingText='Updating...' border mt={3}>
+              Submit
+            </AsyncButton>
+          </Form>
+        )}
+      </Formik>
+    </>
   );
 }

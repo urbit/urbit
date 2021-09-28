@@ -522,10 +522,13 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     que   <- newTBMQueueIO 1
     ()    <- atomically (writeTBMQueue que firstWorkErr)
     tWork <- async (processWork serf maxBatchSize que onWorkResp spin)
-    flip onException (cancel tWork) $ do
+    -- Avoid wrapping all subsequent runs of the event loop in an exception
+    -- handler which retains tWork.
+    nexSt <- flip onException (cancel tWork) $ do
       nexSt <- workLoop que
       wait tWork
-      nexSt
+      pure nexSt
+    nexSt
 
   workLoop :: TBMQueue EvErr -> IO (IO ())
   workLoop que = atomically onInput >>= \case

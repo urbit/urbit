@@ -14,5 +14,6 @@
   ++  diff  |=(* +<)
   ++  pact  |=(* +<)
   ++  join  |=([* *] *(unit *))
+  ++  mash  |=([[ship desk *] [ship desk *]] `*`~|(%noun-mash !!))
   --
 --

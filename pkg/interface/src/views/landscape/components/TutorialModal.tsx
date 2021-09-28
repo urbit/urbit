@@ -1,53 +1,47 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { leaveGroup, putEntry } from '@urbit/api';
 import _ from 'lodash';
-import { Box, Col, Row, Button, Text, Icon, Action } from "@tlon/indigo-react";
-import { useHistory } from "react-router-dom";
-import { TutorialProgress, tutorialProgress as progress } from "~/types";
-
-import { Portal } from "~/views/components/Portal";
-import useLocalState, { selectLocalState } from "~/logic/state/local";
+import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { getRelativePosition } from '~/logic/lib/relativePosition';
 import {
-  progressDetails,
-  MODAL_HEIGHT_PX,
-  MODAL_WIDTH_PX,
-  MODAL_WIDTH,
-  MODAL_HEIGHT,
-  TUTORIAL_HOST,
-  TUTORIAL_GROUP,
-  getTrianglePosition,
-} from "~/logic/lib/tutorialModal";
-import { getRelativePosition } from "~/logic/lib/relativePosition";
-import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
-import GlobalApi from "~/logic/api/global";
-import {Triangle} from "~/views/components/Triangle";
-import {ModalOverlay} from "~/views/components/ModalOverlay";
+    getTrianglePosition, MODAL_WIDTH_PX, progressDetails,
+
+    TUTORIAL_GROUP, TUTORIAL_HOST
+} from '~/logic/lib/tutorialModal';
+import useLocalState, { selectLocalState } from '~/logic/state/local';
+import { tutorialProgress as progress } from '~/types';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import { Portal } from '~/views/components/Portal';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { Triangle } from '~/views/components/Triangle';
+import airlock from '~/logic/api';
 
 const localSelector = selectLocalState([
-  "tutorialProgress",
-  "nextTutStep",
-  "prevTutStep",
-  "tutorialRef",
-  "hideTutorial",
-  "set"
+  'tutorialProgress',
+  'nextTutStep',
+  'prevTutStep',
+  'tutorialRef',
+  'hideTutorial',
+  'set'
 ]);
 
-export function TutorialModal(props: { api: GlobalApi }) {
+export function TutorialModal() {
   const {
     tutorialProgress,
     tutorialRef,
     nextTutStep,
     prevTutStep,
-    hideTutorial,
-    set: setLocalState
+    hideTutorial
   } = useLocalState(localSelector);
   const {
     title,
     description,
-    arrow,
+    arrow = 'North',
     alignX,
     alignY,
     offsetX,
-    offsetY,
+    offsetY
   } = progressDetails[tutorialProgress];
 
   const [coords, setCoords] = useState({});
@@ -56,7 +50,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
   const history = useHistory();
 
   const next = useCallback( () => {
-      const idx = progress.findIndex((p) => p === tutorialProgress);
+      const idx = progress.findIndex(p => p === tutorialProgress);
       const { url } = progressDetails[progress[idx + 1]];
       nextTutStep();
       history.push(url);
@@ -64,7 +58,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
     [nextTutStep, history, tutorialProgress, setCoords]
   );
   const prev = useCallback(() => {
-    const idx = progress.findIndex((p) => p === tutorialProgress);
+    const idx = progress.findIndex(p => p === tutorialProgress);
     prevTutStep();
     history.push(progressDetails[progress[idx - 1]].url);
   }, [prevTutStep, history, tutorialProgress]);
@@ -94,14 +88,14 @@ export function TutorialModal(props: { api: GlobalApi }) {
       setCoords(withMobile);
     } else {
       setCoords({});
-
     }
   }, [tutorialRef]);
 
   const dismiss = useCallback(async () => {
+    setPaused(false);
     hideTutorial();
-    await props.api.settings.putEntry('tutorial', 'seen', true);
-  }, [hideTutorial, props.api]);
+    await airlock.poke(putEntry('tutorial', 'seen', true));
+  }, [hideTutorial]);
 
   const bailExit = useCallback(() => {
     setPaused(false);
@@ -111,16 +105,17 @@ export function TutorialModal(props: { api: GlobalApi }) {
     setPaused(true);
   }, []);
 
-  const leaveGroup = useCallback(async () => {
-    await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
-  }, [props.api]);
+  const doLeaveGroup = useCallback(async () => {
+    await airlock.thread(leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP));
+    await dismiss();
+  }, [dismiss]);
 
-  const progressIdx = progress.findIndex((p) => p === tutorialProgress);
+  const progressIdx = progress.findIndex(p => p === tutorialProgress);
 
   useEffect(() => {
     if (
-      tutorialProgress !== "hidden" &&
-      tutorialProgress !== "done" &&
+      tutorialProgress !== 'hidden' &&
+      tutorialProgress !== 'done' &&
       tutorialRef
     ) {
       const interval = setInterval(updatePos, 100);
@@ -137,24 +132,24 @@ export function TutorialModal(props: { api: GlobalApi }) {
   if (tutorialProgress === 'done') {
     return (
       <Portal>
-        <ModalOverlay dismiss={dismiss} borderRadius="2" maxWidth="270px" backgroundColor="white">
-          <Col p="2" bg="lightBlue">
-            <Col mb="1">
+        <ModalOverlay dismiss={dismiss} borderRadius={2} maxWidth="270px" backgroundColor="white">
+          <Col p={3} bg="lightBlue">
+            <Col mb={3}>
               <Text lineHeight="tall" fontWeight="bold">
                 Tutorial Finished
               </Text>
-              <Text fontSize="0" gray>
-                {progressIdx} of {progress.length - 1}
+              <Text fontSize={0} gray>
+                {progressIdx} of {progress.length - 2}
               </Text>
             </Col>
             <Text lineHeight="tall">
               This tutorial is finished. Would you like to leave Beginner Island?
             </Text>
-            <Row mt="2" gapX="2" justifyContent="flex-end">
+            <Row mt={3} gapX={2} justifyContent="flex-end">
               <Button backgroundColor="washedGray" onClick={dismiss}>
                 Later
               </Button>
-              <StatelessAsyncButton primary destructive onClick={leaveGroup}>
+              <StatelessAsyncButton primary destructive onClick={doLeaveGroup}>
                 Leave Group
               </StatelessAsyncButton>
             </Row>
@@ -164,23 +159,23 @@ export function TutorialModal(props: { api: GlobalApi }) {
     );
   }
 
-  if (tutorialProgress === "hidden") {
+  if (tutorialProgress === 'hidden') {
     return null;
   }
 
   if(paused) {
     return (
-      <ModalOverlay dismiss={bailExit} borderRadius="2" maxWidth="270px" backgroundColor="white">
-        <Col p="2">
-          <Col mb="1">
+      <ModalOverlay dismiss={bailExit} borderRadius={2} maxWidth="270px" backgroundColor="white">
+        <Col p={3}>
+          <Col mb={3}>
             <Text lineHeight="tall" fontWeight="bold">
               End Tutorial Now?
             </Text>
           </Col>
           <Text lineHeight="tall">
-            You can always restart the tutorial by typing "tutorial" in Leap.
+            You can always restart the tutorial by typing &quot;tutorial&quot; in Leap.
           </Text>
-          <Row mt="4" gapX="2" justifyContent="flex-end">
+          <Row mt={3} gapX={2} justifyContent="flex-end">
             <Button backgroundColor="washedGray" onClick={bailExit}>
               Cancel
             </Button>
@@ -191,10 +186,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
         </Col>
       </ModalOverlay>
 
-    )
-
+    );
   }
-
 
   if(Object.keys(coords).length === 0) {
     return null;
@@ -207,21 +200,22 @@ export function TutorialModal(props: { api: GlobalApi }) {
         {...coords}
         bg="white"
         zIndex={50}
-        height={MODAL_HEIGHT_PX}
-        width={["100%", MODAL_WIDTH_PX]}
-        borderRadius="2"
+        display="flex"
+        flexDirection="column"
+        width={['100%', MODAL_WIDTH_PX]}
+        borderRadius={2}
       >
         <Col
           position="relative"
           justifyContent="space-between"
           height="100%"
           width="100%"
-          borderRadius="2"
-          p="2"
+          borderRadius={2}
+          p={3}
           bg="lightBlue"
-          
+
         >
-          <Triangle 
+          <Triangle
             {...triPos}
             position="absolute"
             size={16}
@@ -229,28 +223,29 @@ export function TutorialModal(props: { api: GlobalApi }) {
             direction={arrow}
             height="0px"
             width="0px"
+            display={['none', 'block']}
           />
-            
+
           <Box
-            right="8px"
-            top="8px"
+            right="16px"
+            top="16px"
             position="absolute"
             cursor="pointer"
             onClick={tryExit}
           >
             <Icon icon="X" />
           </Box>
-          <Col mb="1">
+          <Col mb={3}>
             <Text lineHeight="tall" fontWeight="bold">
               {title}
             </Text>
-            <Text fontSize="0" gray>
+            <Text fontSize={0} gray>
               {progressIdx} of {progress.length - 2}
             </Text>
           </Col>
-          
+
           <Text lineHeight="tall">{description}</Text>
-          <Row gapX="2" mt="2" justifyContent="flex-end">
+          <Row gapX={2} mt={3} justifyContent="flex-end">
             { progressIdx > 1 && (
               <Button bg="washedGray" onClick={prev}>
                 Back

@@ -6,7 +6,7 @@
 =,  html
 |_  own=manx
 ::
-++  grad  %mime
+++  grad  %noun
 ++  grow                                                ::  convert to
   |%
   ++  html  (crip (en-xml own))                         ::  convert to %html

@@ -1,31 +1,34 @@
-import { Post, GraphNode, TextContent, Graph, NodeMap } from "~/types";
+import { Content, GraphNode, Post, TextContent } from '@urbit/api';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import bigInt, { BigInteger } from 'big-integer';
 import { buntPost } from '~/logic/lib/post';
-import { unixToDa } from "~/logic/lib/util";
-import {BigIntOrderedMap} from "./BigIntOrderedMap";
-import bigInt, {BigInteger} from 'big-integer';
+import { unixToDa } from '~/logic/lib/util';
+import tokenizeMessage from './tokenizeMessage';
 
 export function newPost(
   title: string,
   body: string
-): [BigInteger, NodeMap] {
+): [BigInteger, any] {
   const now = Date.now();
   const nowDa = unixToDa(now);
   const root: Post = {
     author: `~${window.ship}`,
-    index: "/" + nowDa.toString(),
-    "time-sent": now,
+    index: '/' + nowDa.toString(),
+    'time-sent': now,
     contents: [],
     hash: null,
-    signatures: [],
+    signatures: []
   };
 
-  const revContainer: Post = { ...root, index: root.index + "/1" };
-  const commentsContainer = { ...root, index: root.index + "/2" };
+  const tokenisedBody = tokenizeMessage(body);
+
+  const revContainer: Post = { ...root, index: root.index + '/1' };
+  const commentsContainer = { ...root, index: root.index + '/2' };
 
   const firstRevision: Post = {
     ...revContainer,
-    index: revContainer.index + "/1",
-    contents: [{ text: title }, { text: body }],
+    index: revContainer.index + '/1',
+    contents: [{ text: title }, ...tokenisedBody]
   };
 
   const nodes = {
@@ -37,16 +40,16 @@ export function newPost(
             children: {
               1: {
                 post: firstRevision,
-                children: null,
-              },
-            },
+                children: null
+              }
+            }
           },
           2: {
             post: commentsContainer,
             children: null
-          },
-      },
-    },
+          }
+      }
+    }
   };
 
   return [nowDa, nodes];
@@ -54,61 +57,73 @@ export function newPost(
 
 export function editPost(rev: number, noteId: BigInteger, title: string, body: string) {
   const now = Date.now();
+  const tokenisedBody = tokenizeMessage(body);
   const newRev: Post = {
     author: `~${window.ship}`,
     index: `/${noteId.toString()}/1/${rev}`,
-    "time-sent": now,
-    contents: [{ text: title }, { text: body }],
+    'time-sent': now,
+    contents: [{ text: title }, ...tokenisedBody],
     hash: null,
-    signatures: [],
+    signatures: []
   };
   const nodes = {
     [newRev.index]: {
       post: newRev,
-      children: null 
+      children: null
     }
   };
 
   return nodes;
 }
 
-export function getLatestRevision(node: GraphNode): [number, string, string, Post] {
-  const revs = node.children.get(bigInt(1));
-  const empty = [1, "", "", buntPost()] as [number, string, string, Post];
+export function getLatestRevision(node: GraphNode): [number, string, any, Post] {
+  const empty = [1, '', '', buntPost()] as [number, string, string, Post];
+  const revs = node.children?.get(bigInt(1));
   if(!revs) {
     return empty;
   }
-  const [revNum, rev] = [...revs.children][0];
-  if(!rev) {
+  let revNum, rev;
+  if (revs?.children !== null) {
+    [revNum, rev] = [...revs.children][0];
+  }
+  if (!rev) {
     return empty;
   }
-  const [title, body] = rev.post.contents as TextContent[];
-  return [revNum.toJSNumber(), title.text, body.text, rev.post];
+  const title = rev.post.contents[0];
+  const body = rev.post.contents.slice(1);
+  return [revNum.toJSNumber(), title.text, body, rev.post];
 }
 
 export function getLatestCommentRevision(node: GraphNode): [number, Post] {
   const empty = [1, buntPost()] as [number, Post];
-  if (node.children.size <= 0) {
+  const childSize = node?.children?.size ?? 0;
+  if (childSize <= 0) {
     return empty;
   }
-  const [revNum, rev] = [...node.children][0];
-  if(!rev) {
+  let revNum, rev;
+  if (node?.children !== null) {
+    [revNum, rev] = [...node.children][0];
+  }
+  if (!rev) {
     return empty;
   }
   return [revNum.toJSNumber(), rev.post];
 }
 
-
 export function getComments(node: GraphNode): GraphNode {
-  const comments = node.children.get(bigInt(2));
+  const comments = node.children?.get(bigInt(2));
   if(!comments) {
-    return { post: buntPost(), children: new BigIntOrderedMap() }
+    return { post: buntPost(), children: new BigIntOrderedMap() };
   }
   return comments;
 }
 
-export function getSnippet(body: string) {
-  const start = body.slice(0, body.indexOf('\n', 2));
-  return (start === body || start.startsWith("![")) ? start : `${start}...`;
-}
+export function getSnippet(body: Content[]) {
+  const firstContent = body
+    .filter((c: Content): c is TextContent => 'text' in c).map(c => c.text)[0] ?? '';
+  const newlineIdx = firstContent.indexOf('\n', 2);
+  const end = newlineIdx > -1 ? newlineIdx : firstContent.length;
+  const start = firstContent.substr(0, end);
 
+  return (start === firstContent || firstContent.startsWith('![')) ? start : `${start}...`;
+}

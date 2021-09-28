@@ -2353,14 +2353,12 @@
     :^  ~  ~  %dais
     !>  ^-  dais:clay
     |_  sam=vase
-    ++  bunt  !!
     ++  diff  !!
     ++  form  !!
     ++  join  !!
     ++  mash  !!
     ++  pact  !!
     ++  vale  |=(=noun !>(;;(json noun)))
-    ++  volt  !!
     --
   ::
   ?>  =(%j view)

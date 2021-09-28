@@ -5,12 +5,13 @@
 ::
 +$  pill
   $%  [%ivory p=(list)]
-      $:  %pill
-          nam=term
-          boot-ova=(list)
-          kernel-ova=(list unix-event)
-          userspace-ova=(list unix-event)
-  ==  ==
+    $:  %pill
+        nam=term
+        boot-ova=(list)
+        kernel-ova=(list unix-event)
+        userspace-ova=(list unix-event)
+    ==
+  ==
 ::
 +$  unix-event
   %+  pair  wire
@@ -18,6 +19,8 @@
       [%what p=(list (pair path (cask)))]
       [%whom p=ship]
       [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
+      [%wyrd p=vere]
+      [%verb p=(unit ?)]
       unix-task
   ==
 ::  +boot-ovum: boostrap kernel filesystem load

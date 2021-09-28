@@ -23,7 +23,7 @@ let
   # 
   # Typically the inputs listed here also have a shell.nix in their respective
   # source directory you can use, to avoid the Haskell/GHC dependencies.
-  inputsFrom = with pkgsLocal; [ ent ge-additions herb libaes_siv urbit ];
+  inputsFrom = with pkgsLocal; [ ent herb urbit urcrypt ];
 
   # Collect the named attribute from all dependencies listed in inputsFrom.
   mergeFrom = name: pkgs.lib.concatLists (pkgs.lib.catAttrs name inputsFrom);
@@ -33,7 +33,6 @@ in pkgsLocal.hs.shellFor {
   # dependencies available in the shell.
   packages = ps:
     with ps; [
-      lmdb-static
       racquire
       terminal-progress-bar
       urbit-atom

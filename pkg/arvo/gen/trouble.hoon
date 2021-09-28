@@ -9,6 +9,7 @@
 ::             children
 ::  glob-hash: hash of the glob, which is the js for landscape
 ::
+/-  glob
 /+  version
 :-  %say
 |=  [[now=time * bec=beak] ~ ~]
@@ -65,8 +66,11 @@
   .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
 ::
 ++  glob-state
-  ^-  [@uv @tas]
-  =<  [hash ?~(glob %waiting ?:(-.u.glob %done %trying))]
-  !<  [@ud hash=@uv glob=(unit [? *])]
-  .^(vase %gx (weld (pathify ~.glob ~) /dbug/state/noun))
+  ^-  (list [path @uv @tas])
+  =+  !<  [@ud =globs:glob]
+    .^(vase %gx (weld (pathify ~.glob ~) /dbug/state/noun))
+  %+  turn  ~(tap by globs)
+  |=  [srv=path hash=@uv glob=(unit [? *])]
+  ^-  [path @uv @tas]
+  [srv hash ?~(glob %waiting ?:(-.u.glob %done %trying))]
 --

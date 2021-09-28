@@ -11,7 +11,11 @@ where
 import Urbit.Prelude hiding (Builder)
 
 import Urbit.Arvo                hiding (ServerId, reqUrl)
-import Urbit.King.App            (HasKingId(..), HasMultiEyreApi(..), HasPierEnv(..))
+import Urbit.King.App            ( killKingActionL
+                                 , HasKingId(..)
+                                 , HasMultiEyreApi(..)
+                                 , HasPierEnv(..)
+                                 )
 import Urbit.King.Config
 import Urbit.Vere.Eyre.Multi
 import Urbit.Vere.Eyre.PortsFile
@@ -177,9 +181,10 @@ startServ
   -> HttpServerConf
   -> (EvErr -> STM ())
   -> (Text -> RIO e ())
+  -> IO ()
   -> KingSubsite
   -> RIO e Serv
-startServ who isFake conf plan stderr sub = do
+startServ who isFake conf plan stderr onFatal sub = do
   logInfo (displayShow ("EYRE", "startServ"))
 
   multi <- view multiEyreApiL
@@ -228,7 +233,7 @@ startServ who isFake conf plan stderr sub = do
   atomically (joinMultiEyre multi who mCre onReq onKilReq sub)
 
   logInfo $ displayShow ("EYRE", "Starting loopback server")
-  lop <- serv vLive $ ServConf
+  lop <- serv vLive onFatal $ ServConf
     { scHost = soHost (pttLop ptt)
     , scPort = soWhich (pttLop ptt)
     , scRedi = Nothing
@@ -240,7 +245,7 @@ startServ who isFake conf plan stderr sub = do
     }
 
   logInfo $ displayShow ("EYRE", "Starting insecure server")
-  ins <- serv vLive $ ServConf
+  ins <- serv vLive onFatal $ ServConf
     { scHost = soHost (pttIns ptt)
     , scPort = soWhich (pttIns ptt)
     , scRedi = secRedi
@@ -253,7 +258,7 @@ startServ who isFake conf plan stderr sub = do
 
   mSec <- for mTls $ \tls -> do
     logInfo "Starting secure server"
-    serv vLive $ ServConf
+    serv vLive onFatal $ ServConf
       { scHost = soHost (pttSec ptt)
       , scPort = soWhich (pttSec ptt)
       , scRedi = Nothing
@@ -356,7 +361,11 @@ eyre env who plan isFake stderr sub = (initialEvents, runHttpServer)
   restart :: Drv -> HttpServerConf -> RIO e Serv
   restart (Drv var) conf = do
     logInfo "Restarting http server"
-    let startAct = startServ who isFake conf plan stderr sub
+    let onFatal = runRIO env $ do
+          -- XX instead maybe restart following logic under HSESetConfig below
+          stderr "A web server problem has occurred. Please restart your ship."
+          view killKingActionL >>= atomically
+    let startAct = startServ who isFake conf plan stderr onFatal sub
     res <- fromEither =<< restartService var startAct kill
     logInfo "Done restating http server"
     pure res

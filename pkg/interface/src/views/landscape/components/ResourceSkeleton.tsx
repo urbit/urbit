@@ -1,65 +1,103 @@
-import React, { ReactNode } from "react";
-import { Row, Icon, Box, Col, Text } from "@tlon/indigo-react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-
-import { ChatResource } from "~/views/apps/chat/ChatResource";
-import { PublishResource } from "~/views/apps/publish/PublishResource";
-
-import RichText from "~/views/components/RichText";
-
-import { Association } from "~/types/metadata-update";
-import GlobalApi from "~/logic/api/global";
-import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import { ChannelSettings } from "./ChannelSettings";
-import { ChannelMenu } from "./ChannelMenu";
-import { NotificationGraphConfig, Groups } from "~/types";
-import {isWriter} from "~/logic/lib/group";
+import _ from 'lodash';
+import { Box, Col, Icon, Text } from '@tlon/indigo-react';
+import { Association } from '@urbit/api/metadata';
+import { AppName } from '@urbit/api';
+import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
+import { isWriter } from '~/logic/lib/group';
+import { useResize } from '~/logic/lib/useResize';
 import { getItemTitle } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import useGroupState from '~/logic/state/group';
+import { Dropdown } from '~/views/components/Dropdown';
+import RichText from '~/views/components/RichText';
+import { MessageInvite } from '~/views/landscape/components/MessageInvite';
 
-const TruncatedBox = styled(Box)`
-  white-space: pre;
+const TruncatedText = styled(RichText)`
+  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  display: none;
+  @media screen and (min-width: ${p => p.theme.breakpoints[0]}) {
+    display: inline;
+  }
 `;
 
+const participantNames = (str: string, contacts, hideNicknames) => {
+  if (_.includes(str, ',') && _.startsWith(str, '~')) {
+    const names = _.split(str, ', ');
+    return names.map((name, idx) => {
+      if (urbitOb.isValidPatp(name)) {
+        if (contacts[name]?.nickname && !hideNicknames)
+          return (
+            <Text key={name} fontSize={2} fontWeight='600'>
+              {contacts[name]?.nickname}
+              {idx + 1 != names.length ? ', ' : null}
+            </Text>
+          );
+        return (
+          <Text key={name} mono fontSize={2} fontWeight='600'>
+            {name}
+            <Text fontSize={2} fontWeight='600'>
+              {idx + 1 != names.length ? ', ' : null}
+            </Text>
+          </Text>
+        );
+      } else {
+        return name;
+      }
+    });
+  } else {
+    return str;
+  }
+};
+
 type ResourceSkeletonProps = {
-  groups: Groups;
-  contacts: any;
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
   children: ReactNode;
   title?: string;
   groupTags?: any;
 };
 
-export function ResourceSkeleton(props: ResourceSkeletonProps) {
-  const { association, api, baseUrl, children, atRoot, groups } = props;
-  const app = association?.metadata?.module || association["app-name"];
+export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
+  const { association, baseUrl, children } = props;
+  let app = association['app-name'];
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    app = association.metadata.config.graph as AppName;
+  }
   const rid = association.resource;
+  const groups = useGroupState(state => state.groups);
+  const { hideNicknames } = useSettingsState(selectCalmState);
   const group = groups[association.group];
   let workspace = association.group;
+  const [actionsWidth, setActionsWidth] = useState(0);
 
-  if (group?.hidden && app === "chat") {
-    workspace = "/messages";
+  if (group?.hidden && app === 'chat') {
+    workspace = '/messages';
   } else if (group?.hidden) {
-    workspace = "/home";
+    workspace = '/home';
   }
 
-  let title = (workspace === "/messages")
+  let title = (workspace === '/messages')
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = false;
+  let recipient = '';
 
-  if (urbitOb.isValidPatp(title)) {
+  const contacts = useContactState(state => state.contacts);
+
+  if (urbitOb.isValidPatp(title) && !hideNicknames) {
     recipient = title;
-    title = (props.contacts?.[title]?.nickname) ? props.contacts[title].nickname : title;
+    title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
+  } else {
+    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(', ');
   }
 
-  const [, , ship, resource] = rid.split("/");
+  const [, , ship, resource] = rid.split('/');
 
   const resourcePath = (p: string) => baseUrl + p;
 
@@ -70,71 +108,137 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
     canWrite = isOwn;
   }
 
+  const backLink = (
+    <Box
+      borderRight={1}
+      borderRightColor='gray'
+      pr={3}
+      fontSize={1}
+      mr='12px'
+      my={1}
+      flexShrink={0}
+      display={['block','none']}
+    >
+      <Link to={`/~landscape${workspace}`}>
+        <Text>{'<- Back'}</Text>
+      </Link>
+    </Box>
+  );
+
+  const titleText = (
+    <Text
+      mono={urbitOb.isValidPatp(title)}
+      fontSize={2}
+      fontWeight='600'
+      textOverflow='ellipsis'
+      overflow='hidden'
+      whiteSpace='nowrap'
+      minWidth={0}
+      maxWidth={association?.metadata?.description ? ['100%', '50%'] : 'none'}
+      mr='2'
+      ml='1'
+      flexShrink={1}
+    >
+      {workspace === '/messages' && !urbitOb.isValidPatp(title)
+        ? participantNames(title, contacts, hideNicknames)
+        : title}
+    </Text>
+  );
+
+  const description = (
+    <TruncatedText
+      display={['none','inline']}
+      mono={workspace === '/messages' && !association?.metadata?.description}
+      color='gray'
+      mb={0}
+      minWidth={0}
+      maxWidth='50%'
+      flexShrink={1}
+      disableRemoteContent
+    >
+      {workspace === '/messages' && !association?.metadata?.description
+        ? recipient
+        : association?.metadata?.description}
+    </TruncatedText>
+  );
+
+  const extraControls =
+    (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) ?  (
+        <Dropdown
+          flexShrink={0}
+          dropWidth='300px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          options={
+            <Col
+              backgroundColor='white'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              color='washedGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              <MessageInvite association={association} />
+            </Col>
+          }
+        >
+          <Text bold pr='3' color='blue'>
+            + Add Ship
+          </Text>
+        </Dropdown>
+      ) : canWrite ? (
+        <Link to={resourcePath('/new')}>
+          <Text bold pr='3' color='blue'>
+            + New Post
+          </Text>
+        </Link>
+      ) : null;
+
+  const menuControl = (
+    <Link to={`${baseUrl}/settings`}>
+      <Icon icon='Menu' color='gray' pr={2} />
+    </Link>
+  );
+
+  const bind = useResize<HTMLDivElement>(useCallback((entry) => {
+    setActionsWidth(entry.borderBoxSize[0].inlineSize);
+  }, []));
+
   return (
-    <Col width="100%" height="100%" overflowY="hidden">
+    <Col width='100%' height='100%' overflow='hidden'>
       <Box
-        flexShrink="0"
+        flexShrink={0}
         height='48px'
-        py="2"
-        px="2"
-        display="flex"
-        alignItems="center"
+        py={2}
+        px={2}
         borderBottom={1}
-        borderBottomColor="washedGray"
+        borderBottomColor='lightGray'
+        display='flex'
+        justifyContent='space-between'
+        alignItems='center'
       >
         <Box
-          borderRight={1}
-          borderRightColor="gray"
-          pr={3}
-          fontSize='1'
-          mr={3}
-          my="1"
-          display={["block", "none"]}
-          flexShrink={0}
-        >
-          <Link to={`/~landscape${workspace}`}> {"<- Back"}</Link>
-        </Box>
-        <Box px={1} mr={2} minWidth={0} display="flex">
-          <Text
-            mono={urbitOb.isValidPatp(title)}
-            fontSize='2'
-            fontWeight='700'
-            display="inline-block"
-            verticalAlign="middle"
-            textOverflow="ellipsis"
-            overflow="hidden"
-            whiteSpace="pre"
-            minWidth={0}>
-            {title}
-          </Text>
-        </Box>
-        <TruncatedBox
-          display={["none", "block"]}
-          verticalAlign="middle"
-          maxWidth='60%'
+          display='flex'
+          alignItems='baseline'
+          width={`calc(100% - ${actionsWidth}px - 16px)`}
           flexShrink={1}
-          title={association?.metadata?.description}
-          color="gray"
+          minWidth={0}
         >
-          <RichText
-            display={(workspace === '/messages' && (urbitOb.isValidPatp(title))) ? "none" : "inline-block"}
-            mono={(workspace === '/messages' && !(urbitOb.isValidPatp(title)))}
-            color="gray"
-            mb="0"
-            disableRemoteContent
-          >
-            {(workspace === "/messages") ? recipient : association?.metadata?.description}
-          </RichText>
-        </TruncatedBox>
-        <Box flexGrow={1} />
-        {canWrite && (
-          <Link to={resourcePath('/new')} style={{ flexShrink: '0' }}>
-            <Text bold pr='3' color='blue'>+ New Post</Text>
-          </Link>
-      )}
-      <Link to={`${baseUrl}/settings`}>
-        <Icon icon="Menu" color="gray" pr="2" />
-      </Link>
+          {backLink}
+          {titleText}
+          {description}
+        </Box>
+        <Box
+          ml={3}
+          display='flex'
+          alignItems='center'
+          flexShrink={0}
+          {...bind}
+        >
+          {extraControls}
+          {menuControl}
+        </Box>
       </Box>
       {children}
     </Col>
