@@ -1,56 +1,77 @@
 import React from 'react';
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
+import { HarkLid, Vats } from '@urbit/api';
 import { Button } from '../../components/Button';
-import { useCurrentTheme } from '../../state/local';
+import { useCurrentTheme, useProtocolHandling } from '../../state/local';
 import { getDarkColor } from '../../state/util';
+import useKilnState from '../../state/kiln';
+import {getVatPublisher} from '../../../../npm/api/hood';
+import {useHarkStore} from '../../state/hark';
 
-const cards: OnboardingCardProps[] = [
-  {
-    title: 'Terminal',
-    body: "A web interface to your Urbit's command line (the dojo).",
-    button: 'Install',
-    color: '#9CA4B1',
-    href: '/leap/search/direct/apps/~zod/webterm'
-  },
-  {
-    title: 'Groups',
-    body: 'A suite of applications to communicate on Urbit',
-    button: 'Install',
-    color: '#D1DDD3',
-    href: '/leap/search/direct/apps/~zod/landscape'
-  },
-  {
-    title: 'Bitcoin',
-    body: ' A Bitcoin Wallet that lets you send and receive Bitcoin directly to and from other Urbit users',
-    button: 'Install',
-    color: '#F6EBDB',
-    href: '/leap/search/direct/apps/~zod/bitcoin'
+const getCards = (vats: Vats, protocol: boolean): OnboardingCardProps[] => {
+  const cards = [
+    {
+      title: 'Terminal',
+      body: "A web interface to your Urbit's command line (the dojo).",
+      button: 'Install',
+      color: '#9CA4B1',
+      href: '/leap/search/direct/apps/~zod/webterm',
+      ship: '~zod',
+      desk: 'webterm'
+    },
+    {
+      title: 'Groups',
+      body: 'A suite of applications to communicate on Urbit',
+      button: 'Install',
+      color: '#D1DDD3',
+      href: '/leap/search/direct/apps/~zod/landscape',
+      ship: '~zod',
+      desk: 'landscape'
+    },
+    {
+      title: 'Bitcoin',
+      body: ' A Bitcoin Wallet that lets you send and receive Bitcoin directly to and from other Urbit users',
+      button: 'Install',
+      color: '#F6EBDB',
+      href: '/leap/search/direct/apps/~zod/bitcoin',
+      ship: '~zod',
+      desk: 'bitcoin'
+    }
+    // Commenting out until we have something real
+    // {
+    //   title: 'Debug',
+    //   body: "Install a debugger. You can inspect your ship's internals using this interface",
+    //   button: 'Install',
+    //   color: '#E5E5E5',
+    //   href: '/leap/search/direct/apps/~zod/debug'
+    // }
+    // {
+    //   title: 'Build an app',
+    //   body: 'You can instantly get started building new things on Urbit.  Just right click your Landscape and select “New App”',
+    //   button: 'Learn more',
+    //   color: '#82A6CA'
+    // }
+  ];
+  if('registerProtocolHandler' in window.navigator && !protocol) {
+    cards.push({
+      title: 'Open Urbit-Native Links',
+      body: 'Enable your Urbit to open links you find in the wild',
+      button: 'Enable Link Handler',
+      color: '#82A6CA',
+      href: '/leap/system-preferences/interface',
+      desk: '',
+      ship: ''
+    });
   }
-  // Commenting out until we have something real
-  // {
-  //   title: 'Debug',
-  //   body: "Install a debugger. You can inspect your ship's internals using this interface",
-  //   button: 'Install',
-  //   color: '#E5E5E5',
-  //   href: '/leap/search/direct/apps/~zod/debug'
-  // }
-  // {
-  //   title: 'Build an app',
-  //   body: 'You can instantly get started building new things on Urbit.  Just right click your Landscape and select “New App”',
-  //   button: 'Learn more',
-  //   color: '#82A6CA'
-  // }
-];
+
+
+  return cards.filter(card => {
+    return !Object.values(vats).find(vat => getVatPublisher(vat) == card.ship && vat?.arak?.rail?.desk === card.desk);
+  });
+};
 
 if ('registerProtocolHandler' in window.navigator) {
-  cards.push({
-    title: 'Open Urbit-Native Links',
-    body: 'Enable your Urbit to open links you find in the wild',
-    button: 'Enable Link Handler',
-    color: '#82A6CA',
-    href: '/leap/system-preferences/interface'
-  });
 }
 
 interface OnboardingCardProps {
@@ -59,6 +80,8 @@ interface OnboardingCardProps {
   href: string;
   body: string;
   color: string;
+  ship: string;
+  desk: string;
 }
 
 const OnboardingCard = ({ title, button, href, body, color }: OnboardingCardProps) => (
@@ -77,11 +100,27 @@ const OnboardingCard = ({ title, button, href, body, color }: OnboardingCardProp
 );
 
 interface OnboardingNotificationProps {
-  unread: boolean;
+  unread?: boolean;
+  lid: HarkLid;
 }
 
-export const OnboardingNotification = ({ unread }: OnboardingNotificationProps) => {
+export const OnboardingNotification = ({ unread = false, lid }: OnboardingNotificationProps) => {
   const theme = useCurrentTheme();
+  const vats = useKilnState((s) => s.vats);
+  const protocolHandling = useProtocolHandling();
+  const cards = getCards(vats, protocolHandling);
+
+  if(cards.length === 0 && !('time' in lid)) {
+    useHarkStore.getState().archiveNote({
+      path: '/',
+      place: {
+        path: '/onboard',
+        desk: window.desk
+      }
+    }, lid);
+    return null;
+
+  }
 
   return (
     <section
