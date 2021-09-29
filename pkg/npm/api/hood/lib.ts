@@ -1,5 +1,5 @@
 import { Poke, Scry } from '../lib';
-import { Vats } from './types';
+import { Vats, Vat } from './types';
 import _ from 'lodash';
 
 export const getVats: Scry = {
@@ -107,4 +107,12 @@ export function getBlockers(vats: Vats): string[] {
   });
 
   return blockers;
+}
+
+export function getVatPublisher(vat: Vat): string | undefined {
+  if ('rail' in vat.arak) {
+    const { rail } = vat.arak;
+    return (rail.publisher || rail.ship);
+  }
+  return undefined;
 }
