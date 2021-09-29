@@ -677,7 +677,10 @@
         (poke-our:(pass (glob-wire ref)) %spider cage)
     ==
   ++  docket-loc  `path`/desk/docket-0
-  ++  docket-exists  .^(? %cu (scry:io desk docket-loc))
+  ++  docket-exists
+    ?&  (~(has in .^((set ^desk) %cd (scry:io %$ ~))) desk)
+        .^(? %cu (scry:io desk docket-loc))
+    ==
   ++  docket  .^(^docket %cx (scry:io desk docket-loc))
   --
 --

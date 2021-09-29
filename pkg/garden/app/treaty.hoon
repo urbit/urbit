@@ -197,7 +197,10 @@
   ++  take-treaty
     |=  =desk
     ?+  -.sign  (on-agent:def wire sign)
-      %kick   :_(this ~[~(watch tr:cc ship desk)])
+    ::
+        %kick   
+      :_  this
+      ~(watch tr:cc ship desk)^~
     ::
         %watch-ack
       ?~  p.sign  `this
@@ -205,7 +208,8 @@
           direct    (~(del in direct) ship desk)
         ==
       %-  (slog leaf+"Withdrew from treaty {<ship>}/{<desk>}" u.p.sign)
-      `this
+      :_  this
+      (kick-only:io our.bowl /treaty/(scot %p ship)/[desk] ~)^~
     ::
         %fact
       ?.  =(%treaty-0 p.cage.sign)  `this
