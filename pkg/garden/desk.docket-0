@@ -1,7 +1,7 @@
 :~  title+'System'
     info+'An app launcher for Urbit.'
     color+0xee.5432
-    glob-http+['https://bootstrap.urbit.org/glob-0v6.l4fil.upa5d.0ak43.aqhsq.l99o4.glob' 0v6.l4fil.upa5d.0ak43.aqhsq.l99o4]
+    glob-http+['https://bootstrap.urbit.org/glob-0v5.j7jum.vgmg3.a6t5o.iit7u.k76gi.glob' 0v5.j7jum.vgmg3.a6t5o.iit7u.k76gi]
     ::glob-ames+~zod^0v0
     base+'grid'
     version+[0 0 1]
