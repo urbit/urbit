@@ -3491,18 +3491,14 @@
         ?<  |(?=(~ old-cach-value) ?=(~ new-cach-value))
         =/  new-entry=(unit (pair mood (unit (each cage lobe))))
           =/  =mood  [car [%ud u.aeon.rov] pax]
+          ?~  u.new-cach-value
+            ::  if new does not exist, always notify
+            ::
+            `[mood ~]
           ?~  u.old-cach-value
-            ?~  u.new-cach-value
-              ::  not added
-              ::
-              ~
             ::  added
             ::
             `[mood `u.u.new-cach-value]
-          ?~  u.new-cach-value
-            ::  deleted
-            ::
-            `[mood ~]
           ?:  (equivalent-data:ze u.u.new-cach-value u.u.old-cach-value)
             ::  unchanged
             ::
