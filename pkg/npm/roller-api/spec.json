@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.8",
+    "version": "0.1.9",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -1630,16 +1630,13 @@
     },
     {
       "name": "getNonce",
-      "summary": "Current nonce used by the Roller",
+      "summary": "Latest nonce (counting pending transactions) for the proxy of the given ship",
       "paramStructure": "by-name",
-      "params": [],
-      "examples": [
+      "params": [
         {
-          "name": "nonce-example",
-          "params": [],
-          "result": {
-            "name": "nonce",
-            "value": 18
+          "name": "from",
+          "schema": {
+            "$ref": "#/components/schemas/From"
           }
         }
       ],

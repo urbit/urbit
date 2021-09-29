@@ -1,6 +1,6 @@
 {
   "name": "@urbit/roller-api",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Azimuth Layer 2 Roller API client",
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@open-rpc/client-js": "1.7.0",
+    "@open-rpc/client-js": "1.7.1",
     "@open-rpc/meta-schema": "1.14.2",
     "@open-rpc/schema-utils-js": "1.15.0",
     "@types/json-schema": "7.0.3",

@@ -13,6 +13,7 @@ import type {
   Ship,
   Signature,
   From,
+  Nonce,
 } from "../client/typescript/src/index";
 import { ConfigureKeys } from "../client/typescript/build";
 
@@ -136,6 +137,12 @@ test("getShips", async () => {
   const address: EthAddress = "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d";
   const ships: Ship[] = await api.getShips(address);
   expect(ships.length).toBeGreaterThan(0);
+});
+
+test("getLatestNonce", async () => {
+  const address: EthAddress = "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d";
+  const nonce: Nonce = await api.getNonce({ ship: 256, proxy: "own" });
+  expect(nonce).toBe(0);
 });
 
 // L2 Invite Flow - A -
