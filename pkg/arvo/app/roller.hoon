@@ -269,8 +269,13 @@
       !>  ^-  (unit @)
       ?~  point=(get:orm:naive points.pre u.who)
         ~
-      =<  `nonce
-      (proxy-from-point:naive proxy u.point)
+      =/  nonce=@
+        =<  nonce
+        (proxy-from-point:naive proxy u.point)
+      %-  some
+      %+  roll  pending
+      |=  [pend-tx nonce=_nonce]
+      ?:(=([u.who proxy] from.tx.raw-tx) +(nonce) nonce)
     ::
     ++  spawned
       |=  wat=@t
