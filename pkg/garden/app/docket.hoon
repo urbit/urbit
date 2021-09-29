@@ -206,6 +206,7 @@
       ++  on-diff
         |=  =diff:hood
         =+  !<(=diff:hood q.cage.sign)
+        ~&  diff
         ?-    -.diff
             %commit   (on-commit [desk arak]:diff)
             %suspend  (on-suspend [desk arak]:diff)
@@ -236,7 +237,7 @@
         =.  by-base  (~(put by by-base) base.href.docket desk)
         ::  if the glob specification is unchanged, keep it
         ::
-        ?:  &(?=(^ pre) =(href.docket.u.pre href.docket))
+        ?:  &(?=(^ pre) =(href.docket.u.pre href.docket) ?=(%glob -.chad.u.pre))
           [~[add-fact:cha] state]
         ::  if the glob spec changed, but we already host it, keep it
         ::  (this is the "just locally uploaded" case)
@@ -678,9 +679,9 @@
     ==
   ++  docket-loc  `path`/desk/docket-0
   ++  docket-exists
-    ?&  (~(has in .^((set ^desk) %cd (scry:io %$ ~))) desk)
-        .^(? %cu (scry:io desk docket-loc))
-    ==
+    ?:  =(0 ud:.^(cass:clay %cw (scry:io desk ~)))  %.n
+    .^(? %cu (scry:io desk docket-loc))
+  ::
   ++  docket  .^(^docket %cx (scry:io desk docket-loc))
   --
 --
