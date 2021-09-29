@@ -100,7 +100,7 @@
       %site   (spud path.clause)
     ::
         %glob-http
-      "[{(trip url.clause)} {(scow %uv hash.clause)}]"
+      "['{(trip url.clause)}' {(scow %uv hash.clause)}]"
     ::
         %glob-ames
       "[{(scow %p ship.clause)} {(scow %uv hash.clause)}]"
