@@ -71,7 +71,7 @@
 =*  state  -
 ::
 =<
-%+  verb  &
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 ~%  %hark-store-agent  ..card  ~

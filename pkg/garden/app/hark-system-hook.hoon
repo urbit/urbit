@@ -6,7 +6,7 @@
 ::
 ++  lag-interval  ~m10
 --
-%+  verb  &
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =|  state-0
