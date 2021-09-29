@@ -159,7 +159,7 @@ export const SettingsProvider: React.FC<Props> = ({ channel, children }) => {
 
   const initializeSettings = () => {
     let app = 'settings-store';
-    let path = `/bucket/${window.desk}btc-wallet`;
+    let path = `/bucket/${window.desk}/btc-wallet`;
 
     fetch(`/~/scry/${app}${path}.json`)
       .then((res) => res.json())
