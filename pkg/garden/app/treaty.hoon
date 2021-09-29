@@ -237,7 +237,7 @@
       =.  sovereign  (~(del by sovereign) desk)
       [~[kick:so] this]
     =*  cage  r.u.riot
-    ?.  =(%docket p.cage)  `this
+    ?.  =(%docket-0 p.cage)  `this
     =+  !<(=docket:docket q.cage)
     =/  =treaty  (treaty-from-docket:cc desk docket)
     =.  sovereign  (~(put by sovereign) desk treaty)

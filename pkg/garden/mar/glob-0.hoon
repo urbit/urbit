@@ -1,1 +1,11 @@
-../../base-dev/mar/glob-0.hoon
+|_  gob=(map path mime)
+++  grow
+  |%
+  ++  noun  gob
+  --
+++  grab
+  |%
+  ++  noun  (map path mime)
+  --
+++  grad  %noun
+--

@@ -401,9 +401,11 @@
     ~|  [%already-starting yarn]
     !!
   ::
+  =?  serving.state  !(~(has by serving.state) new-tid)
+    (~(put by serving.state) new-tid [~ %noun q.beak])
+  ::
   =:  starting.state  (~(put by starting.state) yarn [%build vase])
       tid.state       (~(put by tid.state) new-tid yarn)
-      serving.state  (~(put by serving.state) new-tid [~ %noun q.beak])
   ==
   =/  pax=path
     ~|  no-file-for-thread+file

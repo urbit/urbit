@@ -742,7 +742,8 @@
     ?.  (get-remote-diff our loc now [ship desk aeon]:ral)
       ~>  %slog.(fmt "remote is identical to {here}, skipping")
       =.  rail.rak  `%*(. ral aeon +(aeon:ral))
-      (emit sync-ud:pass)
+      =.  vats  update-running-dudes
+      (emil sync-ud:pass (diff:give %commit loc rak) ~)
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft
       ?:  =(our ship:ral)
@@ -1238,9 +1239,7 @@
   |=  =path
   ?>  (team:title our src)
   ?+    path  ~|(kiln-path/path !!)
-    [%vats ~]    abet
-  ::
-      [%ark ~]
+      [%vats ~]
     abet(moz :_(moz [%give %fact ~ %kiln-vats-snap-0 !>(ark)]))
   ==
 ::
