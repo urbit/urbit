@@ -108,6 +108,7 @@
 ++  read-kelvin-foreign
   |=  [=ship =desk =aeon]
   ^-  weft
+  ~|  read-foreign-kelvin/+<
   =/  her  (scot %p ship)
   =/  syd  (scot %tas desk)
   =/  yon  (scot %ud aeon)
