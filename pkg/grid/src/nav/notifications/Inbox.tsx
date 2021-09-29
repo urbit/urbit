@@ -23,7 +23,7 @@ function renderNotification(notification: Notification, key: string, lid: HarkLi
 }
 
 const Empty = () => (
-  <section className="flex justify-center items-center min-h-[480px] text-gray-400 space-y-2">
+  <section className="flex justify-center items-center min-h-[40vh] text-gray-400 space-y-2">
     <span className="h4">All clear!</span>
   </section>
 );

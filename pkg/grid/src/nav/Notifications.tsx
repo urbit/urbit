@@ -32,7 +32,7 @@ export const Notifications = ({ history }: RouteComponentProps) => {
       FallbackComponent={ErrorAlert}
       onReset={() => history.push('/leap/notifications')}
     >
-      <div className="grid grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-hidden">
+      <div className="grid grid-rows-[1fr,auto] sm:grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-y-auto">
         <header className="order-last sm:order-none flex flex-wrap justify-start items-center w-full gap-2 mt-8 sm:mt-0 sm:mb-8">
           <NavLink
             exact

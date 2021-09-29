@@ -271,7 +271,18 @@ function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
             <AppSkeleton width="80%" />
           </>
         )}
-        <Button as="a" href={href} primary alignSelf="start" display="inline-flex" marginTop="auto">Open App</Button>
+        <Button
+          as="a"
+          href={href}
+          primary
+          alignSelf="start"
+          display="inline-flex"
+          marginTop="auto"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Open App
+        </Button>
       </Col>
     </Row>
   );
