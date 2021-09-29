@@ -206,7 +206,7 @@
       (molt duct `[duct %slip %g task])
     ::
     ++  scry  scry:adult-core
-    ++  stay  ~|(%gall-subinvolution !!)
+    ++  stay  spore
     ++  take
       |=  [=wire =duct dud=(unit goof) sign=sign-arvo]
       =*  take-args  +<
@@ -227,7 +227,6 @@
             (spore-7-to-8 old)
           ?>  ?=(%8 -.old)
           =.  spore  old
-          ::TODO  suspend everything except hood
           ?.  =(~ eggs.spore)
             pupal-gate
           ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
