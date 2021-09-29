@@ -20,6 +20,10 @@ interface Rein {
 
 export interface Rail {
   /**
+   * Original publisher of desk, if available
+   */
+  publisher: string | null;
+  /**
    * Ship of foreign vat
    */
   ship: string;
