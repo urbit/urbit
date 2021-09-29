@@ -498,23 +498,27 @@
     (emil find:pass listen:pass ~)
   ::  +install-local: install from a local desk, with no remote
   ::
+  ::    Also notify clients that the desk was installed.
+  ::
   ++  install-local
     |=  lac=desk
     ^+  vats
-    =.  loc  lac
-    ?:  (~(has by ark) lac)
-      =.  rak  (~(got by ark) lac)
-      ~>  %slog.(fmt "already tracking {here:(abed lac)}, ignoring")
-      vats
-    =.  rak  [~ *rein]
-    ~>  %slog.(fmt "local install {here}")
-    =.  vats  update-running-dudes
-    =.  vats  (emit listen:pass)
-    ::NOTE  for foreign desks, the download triggers a "real" commit, because
-    ::      we actually download the data. for local desks we do not download
-    ::      any data, it's already there, so we emit a commit "manually".
-    =.  vats  (emit (diff:give %commit lac rak))
+    |^  ^+  vats
+    ?.  (~(has by ark) lac)
+      go
+    =.  vats  (abed lac)
+    ?^  rail.rak
+      go
+    ~>  %slog.(fmt "{<lac>} already installed locally, ignoring")
     vats
+    ::
+    ++  go
+      =.  loc  lac
+      =.  rak  *arak
+      ~>  %slog.(fmt "installing {<loc>} locally")
+      =.  vats  update-running-dudes
+      (emil listen:pass (diff:give %commit lac rak) ~)
+    --
   ::  +reset: resync after failure
   ::
   ::    TODO: instead of jumping all the way back to find:pass,
