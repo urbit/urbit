@@ -16,7 +16,7 @@ function renderNotification(notification: Notification, key: string, lid: HarkLi
       return <BaseBlockedNotification key={key} />;
     }
     if (notification.bin.place.path === '/onboard') {
-      return <OnboardingNotification key={key} unread={false} />;
+      return <OnboardingNotification key={key} lid={lid} />;
     }
   }
   return <BasicNotification key={key} notification={notification} lid={lid} />;

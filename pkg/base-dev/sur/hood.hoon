@@ -26,6 +26,7 @@
   ==
 ::  $rail: upstream tracking state
 ::
+::    .publisher: Ship that originally published desk, if available
 ::    .paused: is tracking paused? or live
 ::    .ship: upstream ship (could be .our)
 ::    .desk: name of upstream desk
@@ -33,7 +34,8 @@
 ::    .next: list of pending commits with future kelvins
 ::
 +$  rail
-  $:  paused=?
+  $:  publisher=(unit ship)
+      paused=?
       =ship
       =desk
       =aeon
@@ -94,6 +96,7 @@
       leaf/"force on:         {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
       leaf/"force off:        {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
       ::
+      leaf/"publishing ship:  {?~(rail.arak <~> <publisher.u.rail.arak>)}"
       leaf/"updates:          {poz}"
       leaf/"source ship:      {?~(rail.arak <~> <ship.u.rail.arak>)}"
       leaf/"source desk:      {?~(rail.arak <~> <desk.u.rail.arak>)}"
@@ -105,6 +108,7 @@
 ++  read-kelvin-foreign
   |=  [=ship =desk =aeon]
   ^-  weft
+  ~|  read-foreign-kelvin/+<
   =/  her  (scot %p ship)
   =/  syd  (scot %tas desk)
   =/  yon  (scot %ud aeon)
@@ -185,6 +189,13 @@
   =+  .^(our-hash=@uv cz/[(scot %p our) here (scot %da now) ~])
   =+  .^(her-hash=@uv cz/[(scot %p her) there (scot %ud when) ~])
   !=(our-hash her-hash)
+::
+++  get-publisher
+  |=  [our=ship =desk now=@da]
+  ^-  (unit ship)
+  =/  pax  /(scot %p our)/[desk]/(scot %da now)/desk/ship
+  ?.  .^(? %cu pax)  ~
+  `.^(ship %cx pax)
 ::
 ++  get-apps-live
   |=  [our=ship =desk now=@da]
@@ -281,6 +292,7 @@
     |=  r=^rail
     %-  pairs
     :~  ship+s+(scot %p ship.r)
+        publisher+?~(publisher.r ~ s+(scot %p u.publisher.r))
         desk+s+desk.r
         paused+b+paused.r
         aeon+(numb aeon.r)

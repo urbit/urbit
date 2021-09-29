@@ -236,7 +236,7 @@
         =.  by-base  (~(put by by-base) base.href.docket desk)
         ::  if the glob specification is unchanged, keep it
         ::
-        ?:  &(?=(^ pre) =(href.docket.u.pre href.docket))
+        ?:  &(?=(^ pre) =(href.docket.u.pre href.docket) ?=(%glob -.chad.u.pre))
           [~[add-fact:cha] state]
         ::  if the glob spec changed, but we already host it, keep it
         ::  (this is the "just locally uploaded" case)
@@ -677,7 +677,10 @@
         (poke-our:(pass (glob-wire ref)) %spider cage)
     ==
   ++  docket-loc  `path`/desk/docket-0
-  ++  docket-exists  .^(? %cu (scry:io desk docket-loc))
+  ++  docket-exists
+    ?:  =(0 ud:.^(cass:clay %cw (scry:io desk ~)))  %.n
+    .^(? %cu (scry:io desk docket-loc))
+  ::
   ++  docket  .^(^docket %cx (scry:io desk docket-loc))
   --
 --

@@ -64,7 +64,7 @@ function AppLinkRedirect({ desk, link }: { desk: string; link: string }) {
 }
 
 const LANDSCAPE_DESK = 'landscape';
-const LANDSCAPE_HOST = '~zod';
+const LANDSCAPE_HOST = '~lander-dister-dozzod-dozzod';
 
 function LandscapeLink({ match }: RouteComponentProps<{ link: string }>) {
   const { link } = match.params;

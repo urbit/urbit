@@ -50,6 +50,7 @@ function getRemoteDesk(docket: App, vat?: Vat) {
 export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
   const installStatus = getInstallStatus(docket);
   const [ship, desk] = getRemoteDesk(docket, vat);
+  const publisher = vat?.arak?.rail?.publisher ?? ship;
   const [copied, setCopied] = useState(false);
 
   const installApp = async () => {
@@ -61,12 +62,12 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
 
   const copyApp = useCallback(() => {
     setCopied(true);
-    clipboardCopy(`web+urbitgraph://${ship}/${desk}`);
+    clipboardCopy(`web+urbitgraph://${publisher}/${desk}`);
 
     setTimeout(() => {
       setCopied(false);
     }, 1250);
-  }, []);
+  }, [publisher, desk]);
 
   const installing = installStatus === 'installing';
 

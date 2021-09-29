@@ -1,8 +1,7 @@
 /-  docket, *treaty
 /+  default-agent, agentio, verb, dbug
 |%
-::  TODO: update before livenet deploy
-++  default-ally  ~zod
+++  default-ally  ~dister-dozzod-dozzod
 ::
 +$  card  card:agent:gall
 +$  state-0
@@ -14,7 +13,7 @@
   ==
 --
 ^-  agent:gall
-%+  verb  &
+%+  verb  |
 %-  agent:dbug
 =|  state-0
 =*  state  -
@@ -197,7 +196,14 @@
   ++  take-treaty
     |=  =desk
     ?+  -.sign  (on-agent:def wire sign)
-      %kick   :_(this ~[~(watch tr:cc ship desk)])
+    ::
+    :: rewatch only if we aren't source
+    :: this would cause a potential kick-rewatch loop otherwise
+    ::
+        %kick   
+      :_  this
+      ?:  =(our.bowl src.bowl)  ~
+      ~(watch tr:cc ship desk)^~
     ::
         %watch-ack
       ?~  p.sign  `this
@@ -205,7 +211,8 @@
           direct    (~(del in direct) ship desk)
         ==
       %-  (slog leaf+"Withdrew from treaty {<ship>}/{<desk>}" u.p.sign)
-      `this
+      :_  this
+      (kick-only:io our.bowl /treaty/(scot %p ship)/[desk] ~)^~
     ::
         %fact
       ?.  =(%treaty-0 p.cage.sign)  `this
@@ -289,7 +296,7 @@
   ++  dock  [ship dap.bowl]
   ++  watch  (watch:pass dock path)
   ++  watching  (~(has by wex.bowl) [path dock])
-  ++  safe-watch  `(unit card)`?:(watching ~ `watch)
+  ++  safe-watch  `(unit card)`?:(|(watching =(our.bowl ship)) ~ `watch)
   ++  leave  (leave:pass dock)
   ++  give  
     =/  t=treaty  (~(got by treaties) ship desk)

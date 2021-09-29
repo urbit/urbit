@@ -348,6 +348,7 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
         : {
             aeon: 3,
             desk,
+            publisher: '~zod',
             next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
             ship: '~zod',
             paused: desk === 'groups'

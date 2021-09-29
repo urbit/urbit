@@ -4,7 +4,8 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state    state-7
++$  state    state-8
++$  state-8  [%8 pith-8]
 +$  state-7  [%7 pith-7]
 +$  state-6  [%6 pith-6]
 +$  state-5  [%5 pith-5]
@@ -15,7 +16,8 @@
 +$  state-0  [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-7
+  $%  state-8
+      state-7
       state-6
       state-5
       state-4
@@ -25,7 +27,7 @@
       state-0
   ==
 ::
-+$  pith-7
++$  pith-8
   $:  wef=(unit weft)
       rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -39,7 +41,35 @@
       ::  ensure they're unique even when the same
       ::  request is made multiple times.
       hxs=(map desk @ud)
+  ==
+::
++$  pith-7
+  $:  wef=(unit weft)
+      rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ark=(map desk arak-7)                               ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
   ==                                                    ::
++$  arak-7
+  $:  rail=(unit rail-7)
+      =rein
+  ==
+::
++$  rail-7
+  $:  paused=?
+      =ship
+      =desk
+      =aeon
+      next=(list rung)
+  ==
 ::
 +$  pith-6
   $:  wef=(unit weft)
@@ -262,8 +292,9 @@
     %-  emit
     :^  %pass  /kiln/permission  %arvo
     [%c %perm i.dez / %r `[%black ~]]
-  =?  ..on-init  !=(sop our)
-    abet:(install:vats i.dez sop i.dez)
+  =/  src  (get-publisher our i.dez now)
+  =?  ..on-init  &(?=(^ src) !=(our u.src))
+    abet:(install:vats i.dez u.src i.dez)
   $(dez t.dez)
 ::
 ++  on-load
@@ -332,12 +363,24 @@
     =-  +.old(ark -)
     %-  ~(run by ark.old)
     |=  a=arak-6
-    ^-  arak
+    ^-  arak-7
     :_  rein.a
-    ^-  (unit rail)
+    ^-  (unit rail-7)
     `[paused.rail ship.rail desk.rail aeon.rail next]:a
   ::
-  ?>  ?=(%7 -.old)
+  =?  old  ?=(%7 -.old)
+    :-  %8
+    =-  +.old(ark -)
+    %-  ~(gas by *(map desk arak))
+    %+  turn  ~(tap by ark.old)
+    |=  [d=desk a=arak-7]
+    ^-  [desk arak]
+    :-  d
+    :_  rein.a
+    ?~  rail.a  ~
+    `[(get-publisher our d now) u.rail.a]
+  ::
+  ?>  ?=(%8 -.old)
   =.  state  old
   ::
   =?  kiln  (lth old-version %7)
@@ -347,7 +390,6 @@
   =?  kiln  (lth old-version %7)
     abet:gall-lyv:vats
   =?  kiln  ?=(^ wef)
-    ::  $% is a hack to workaround an initialization bug
     =/  except=(set desk)  (sy %base %kids ~)
     (bump:vats u.wef except force=%.n)
   =.  wef  ~
@@ -493,7 +535,7 @@
       =.  rak  (need got)
       ~>  %slog.(fmt "already tracking {here:(abed lac)}, ignoring")
       vats
-    =.  rak  [`[paused=| her rem *aeon next=~] rein:(fall got *arak)]
+    =.  rak  [`[~ paused=| her rem *aeon next=~] rein:(fall got *arak)]
     ~>  %slog.(fmt "beginning install into {here}")
     (emil find:pass listen:pass ~)
   ::  +install-local: install from a local desk, with no remote
@@ -836,7 +878,11 @@
       =<  abet
       =.  vats  (from-wire wire)
       ~>  %slog.(fmt "commit detected at {here}")
+      =.  rail.rak
+        ?~  rail.rak  ~
+        `[(get-publisher our loc now) +.u.rail.rak]
       =.  vats  (emil listen:pass (diff:give %commit loc rak) ~)
+
       ?.  liv.rein.rak
         ~>  %slog.(fmt "{<loc>} not running")
         vats

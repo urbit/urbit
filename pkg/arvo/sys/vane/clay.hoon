@@ -317,7 +317,10 @@
           $>(%flog task:dill)                           ::
       ==                                                ::
       $:  %g                                            ::  to %gall
-          $>(%deal task:gall)                           ::
+          $>  $?  %deal
+                  %jolt
+              ==
+          task:gall
       ==                                                ::
       $:  %j                                            ::  by %jael
           $>(%public-keys task:jael)                    ::
@@ -344,7 +347,8 @@
           gift                                          ::
       ==                                                ::
       $:  %gall
-          $>  $?  %unto
+          $>  $?  %onto
+                  %unto
               ==
           gift:gall
       ==
@@ -1596,7 +1600,13 @@
     ++  migrate-dist
       ~>  %slog.0^'clay: migrating for third-party software distribution'
       |^  ^+  ..park
+      ::  first make sure gall has molted and has :hood running
+      ::
+      =.  ..park  (emit hen %pass /dist/hood %g %jolt %home %hood)
+      ::  now ask :hood to install all the new desks
+      ::
       ::  NOTE: reverse order, since we're prepending moves each time
+      ::
       =.  ..park  (install-from-tmp %bitcoin)
       =.  ..park  (install-from-tmp %webterm)
       =.  ..park  (install-from-tmp %landscape)
@@ -1625,7 +1635,7 @@
         ++  create-desk  ^-  move
           :^  hen  %pass  /dist/create/[desk]
           %^  new-desk:cloy  desk
-            (latest-tako desk)
+            (latest-tako %home)
           ;;((map path page) (cue (get-tmp-jam desk)))
         ::
         ++  publish-desk  ^-  move
@@ -4803,6 +4813,8 @@
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
   ?:  ?=([%dist *] tea)
+    ?:  ?=(%onto +<.hin)
+      [~ ..^$]
     ?>  ?=(%unto +<.hin)
     ?>  ?=(%poke-ack -.p.hin)
     ?~  p.p.hin
@@ -4962,6 +4974,7 @@
       ::
       %boon  !!
       %lost  !!
+      %onto  !!
       %unto  !!
       %writ
     %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
