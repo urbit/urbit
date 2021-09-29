@@ -1,8 +1,7 @@
 /-  docket, *treaty
 /+  default-agent, agentio, verb, dbug
 |%
-::  TODO: update before livenet deploy
-++  default-ally  ~zod
+++  default-ally  ~dister-dozzod-dozzod
 ::
 +$  card  card:agent:gall
 +$  state-0

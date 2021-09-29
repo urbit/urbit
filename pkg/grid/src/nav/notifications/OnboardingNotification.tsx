@@ -15,8 +15,8 @@ const getCards = (vats: Vats, protocol: boolean): OnboardingCardProps[] => {
       body: "A web interface to your Urbit's command line (the dojo).",
       button: 'Install',
       color: '#9CA4B1',
-      href: '/leap/search/direct/apps/~zod/webterm',
-      ship: '~zod',
+      href: '/leap/search/direct/apps/~mister-dister-dozzod-dozzod/webterm',
+      ship: '~mister-dister-dozzod-dozzod',
       desk: 'webterm'
     },
     {
@@ -24,8 +24,8 @@ const getCards = (vats: Vats, protocol: boolean): OnboardingCardProps[] => {
       body: 'A suite of applications to communicate on Urbit',
       button: 'Install',
       color: '#D1DDD3',
-      href: '/leap/search/direct/apps/~zod/landscape',
-      ship: '~zod',
+      href: '/leap/search/direct/apps/~lander-dister-dozzod-dozzod/landscape',
+      ship: '~lander-dister-dozzod-dozzod',
       desk: 'landscape'
     },
     {
@@ -33,8 +33,8 @@ const getCards = (vats: Vats, protocol: boolean): OnboardingCardProps[] => {
       body: ' A Bitcoin Wallet that lets you send and receive Bitcoin directly to and from other Urbit users',
       button: 'Install',
       color: '#F6EBDB',
-      href: '/leap/search/direct/apps/~zod/bitcoin',
-      ship: '~zod',
+      href: '/leap/search/direct/apps/~mister-dister-dozzod-dozzod/bitcoin',
+      ship: '~mister-dister-dozzod-dozzod',
       desk: 'bitcoin'
     }
     // Commenting out until we have something real
