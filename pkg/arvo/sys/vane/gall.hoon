@@ -394,6 +394,7 @@
           [%z /sys/lull/hoon]
           [%z /sys/zuse/hoon]
           [%z /sys/vane/gall/hoon]
+          [%z /sys/kelvin]
       ==
     ::
     =.  sources
