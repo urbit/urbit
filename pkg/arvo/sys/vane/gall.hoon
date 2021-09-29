@@ -556,10 +556,6 @@
     ::
     ?>  ?=([%cor @ @ @ @ ~] wire)
     =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.wire
-    =/  yak  (~(get by yokes.state) dap)
-    ?:  &(?=(^ yak) !-.agent.u.yak)
-      ~>  %slog.0^leaf/"gall: received core for suspended agent {<dap>}"
-      mo-core
     =/  =beak  [(slav %p her) desk da+now]
     ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
     ?~  p.sign-arvo

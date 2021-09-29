@@ -1,3 +1,4 @@
+import { cite } from '@urbit/api';
 import React, { HTMLAttributes } from 'react';
 
 type ShipNameProps = {
@@ -5,18 +6,19 @@ type ShipNameProps = {
 } & HTMLAttributes<HTMLSpanElement>;
 
 export const ShipName = ({ name, ...props }: ShipNameProps) => {
-  const parts = name.replace('~', '').split(/([_^-])/);
+  const separator = /([_^-])/;
+  const parts = cite(name).replace('~', '').split(separator);
+  const first = parts.shift();
 
   return (
     <span {...props}>
       <span aria-hidden>~</span>
-      {/* <span className="sr-only">sig</span> */}
-      <span>{parts[0]}</span>
+      <span>{first}</span>
       {parts.length > 1 && (
         <>
-          <span aria-hidden>{parts[1]}</span>
-          {/* <span className="sr-only">hep</span> */}
-          <span>{parts[2]}</span>
+          {parts.map((piece) => (
+            <span aria-hidden={separator.test(piece)}>{piece}</span>
+          ))}
         </>
       )}
     </span>
