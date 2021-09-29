@@ -206,7 +206,7 @@
       (molt duct `[duct %slip %g task])
     ::
     ++  scry  scry:adult-core
-    ++  stay  ~|(%gall-subinvolution !!)
+    ++  stay  spore
     ++  take
       |=  [=wire =duct dud=(unit goof) sign=sign-arvo]
       =*  take-args  +<
@@ -227,7 +227,6 @@
             (spore-7-to-8 old)
           ?>  ?=(%8 -.old)
           =.  spore  old
-          ::TODO  suspend everything except hood
           ?.  =(~ eggs.spore)
             pupal-gate
           ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
@@ -557,6 +556,10 @@
     ::
     ?>  ?=([%cor @ @ @ @ ~] wire)
     =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.wire
+    =/  yak  (~(get by yokes.state) dap)
+    ?:  &(?=(^ yak) !-.agent.u.yak)
+      ~>  %slog.0^leaf/"gall: received core for suspended agent {<dap>}"
+      mo-core
     =/  =beak  [(slav %p her) desk da+now]
     ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
     ?~  p.sign-arvo
