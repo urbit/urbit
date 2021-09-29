@@ -48,7 +48,7 @@ const useKilnState = create<KilnState>((set, get) => ({
       return;
     }
 
-    await api.poke(kilnInstall(ship, '%kids', 'base'));
+    await api.poke(kilnInstall(ship, 'kids', 'base'));
   },
   toggleOTAs: async (desk: string, on: boolean) => {
     set(
