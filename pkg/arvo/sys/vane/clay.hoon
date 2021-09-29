@@ -1600,6 +1600,7 @@
     ++  migrate-dist
       ~>  %slog.0^'clay: migrating for third-party software distribution'
       |^  ^+  ..park
+      =.  ..park  purge
       ::  first make sure gall has molted and has :hood running
       ::
       =.  ..park  (emit hen %pass /dist/hood %g %jolt %home %hood)
@@ -1613,6 +1614,19 @@
       =.  ..park  (install-from-tmp %garden)
       =.  ..park  (install-from-tmp %base)
       ..park(dist-upgraded.ruf &)
+      ::
+      ++  purge
+        ^+  ..park
+        =/  wux=(list [=wove =duct])  ~(tap by qyx)
+        |-  ^+  ..park
+        ?~  wux  ..park
+        =/  rov  rove.wove.i.wux
+        ?.  ?=(%sing -.rov)
+          $(wux t.wux)
+        ?.  ?=([%a * %app %publish %hoon ~] mood.rov)
+          $(wux t.wux)
+        =.  qyx  (~(del by qyx) wove.i.wux)
+        $(wux t.wux)
       ::
       ++  install-from-tmp
         |=  =desk
