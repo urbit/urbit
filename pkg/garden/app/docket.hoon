@@ -219,7 +219,10 @@
         ^-  (quip card _state)
         =*  cha  ~(. ch desk)
         ?.  docket-exists:cha
-          ~?  !=(%base desk)  [dap.bowl %no-docket-file-for desk]
+          ~?  ?&  !=(%base desk)
+                  !=(%kids desk)
+              ==
+            [dap.bowl %no-docket-file-for desk]
           `state
         ::  always update the docket in state to match clay's
         ::

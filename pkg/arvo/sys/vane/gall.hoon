@@ -297,7 +297,7 @@
       mo-core
     =.  mo-core  (mo-pass i.list)
     $(list t.list)
-  ::  +mo-jolt: start agent if not already started
+  ::  +mo-jolt: (re)start agent if not already started on this desk
   ::
   ++  mo-jolt
     |=  [dap=term =ship =desk]
@@ -306,6 +306,8 @@
     ?~  yak
       (mo-boot dap ship desk)
     ?.  -.agent.u.yak
+      (mo-boot dap ship desk)
+    ?.  =(desk q.beak.u.yak)
       (mo-boot dap ship desk)
     mo-core
   ::  +mo-boot: ask %ford to build us a core for the specified agent.
