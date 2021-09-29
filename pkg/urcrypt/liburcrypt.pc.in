@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE_NAME@
+Description: cryptography library for urbit
+URL: https://github.com/urbit/urcrypt
+Version: @PACKAGE_VERSION@
+Cflags: -I${includedir}
+Requires.private: libcrypto libsecp256k1
+Libs: -L${libdir} -lurcrypt
+Libs.private: -laes_siv

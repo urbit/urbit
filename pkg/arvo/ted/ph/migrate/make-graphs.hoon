@@ -32,7 +32,7 @@
       [~zod %graph-1]
       'graph 1'
       'desc 1'
-      ~
+      `%graph-validator-chat
       [%group group-rid]
       'fake'
   ==
@@ -42,7 +42,7 @@
       [~bus %graph-2]
       'graph 2'
       'desc 2'
-      ~
+      `%graph-validator-chat
       [%group group-rid]
       'fake'
   ==
@@ -52,11 +52,19 @@
       [~web %graph-3]
       'graph 3'
       'desc 3'
-      ~
+      `%graph-validator-chat
       [%policy %invite (sy ~zod ~bus ~)]
       'fake'
   ==
 ::
+;<  ~  bind:m  (poke-app ~zod %group-store %group-update-0 [%add-tag group-rid %admin (sy ~bus ~)])
+;<  ~  bind:m  (send-hi ~zod ~bus)
+;<  ~  bind:m  (send-hi ~zod ~web)
+;<  ~  bind:m  (send-hi ~bus ~zod)
+;<  ~  bind:m  (send-hi ~bus ~web)
+;<  ~  bind:m  (send-hi ~web ~zod)
+;<  ~  bind:m  (send-hi ~web ~bus)
+
 ;<  ~  bind:m  (dojo-thread ~zod %graph-create %graph-view-action create-1)
 ;<  ~  bind:m  (dojo-thread ~bus %graph-create %graph-view-action create-2)
 ;<  ~  bind:m  (dojo-thread ~web %graph-create %graph-view-action create-3)
@@ -71,11 +79,12 @@
 =/  join-3=action:graph-view
   [%join [~web %graph-3] ~web]
 ::
-;<  ~  bind:m  (dojo-thread ~zod %graph-join %graph-view-action join-2)
-;<  ~  bind:m  (dojo-thread ~zod %graph-join %graph-view-action join-3)
-;<  ~  bind:m  (dojo-thread ~bus %graph-join %graph-view-action join-1)
-;<  ~  bind:m  (dojo-thread ~bus %graph-join %graph-view-action join-3)
+;<  ~  bind:m  (sleep ~s10)
+;<  ~  bind:m  (poke-app ~zod %group-view %group-view-action join-3)
+;<  ~  bind:m  (poke-app ~bus %group-view %group-view-action join-3)
 ;<  ~  bind:m  (dojo-thread ~web %graph-join %graph-view-action join-1)
+;<  ~  bind:m  (dojo-thread ~bus %graph-join %graph-view-action join-1)
+;<  ~  bind:m  (dojo-thread ~zod %graph-join %graph-view-action join-2)
 ;<  ~  bind:m  (dojo-thread ~web %graph-join %graph-view-action join-2)
 ;<  ~  bind:m  (sleep ~s30)
 ::

@@ -18,7 +18,7 @@
   |=  [our=ship who=@p]
   ^-  (list card:agent:gall)
   %+  emit-aqua-events  our
-  [%event who [//newt/0v1n.2m9vh %born ~]]~
+  [%event who [/a/newt/0v1n.2m9vh %born ~]]~
 ::
 ++  handle-send
   |=  [our=ship now=@da sndr=@p way=wire %send lan=lane:ames pac=@]
@@ -26,7 +26,7 @@
   =/  rcvr=ship  (lane-to-ship lan)
   =/  hear-lane  (ship-to-lane sndr)
   %+  emit-aqua-events  our
-  [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
+  [%event rcvr /a/newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  +lane-to-ship: decode a ship from an aqua lane
 ::
 ::    Special-case one comet, since its address doesn't fit into a lane.
