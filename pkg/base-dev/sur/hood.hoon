@@ -69,6 +69,8 @@
 ++  report-vat
   |=  [our=ship now=@da vat]
   ^-  tank
+  ?:  =(ud.cass 0)
+    leaf+"desk does not yet exist: {<desk>}"
   =/  kel-path
     /(scot %p our)/[desk]/(scot %da now)/sys/kelvin
   ?.  .^(? %cu kel-path)
