@@ -88,7 +88,8 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
               variant="alt-primary"
               as="a"
               href={getAppHref(docket.href)}
-              target={docket.desk || '_blank'}
+              target="_blank"
+              rel="noreferrer"
               onClick={() => addRecentApp(docket.desk)}
             >
               Open App

@@ -25,7 +25,7 @@ export function DeskLink({ children, className, desk, to = '', ...rest }: DeskLi
   }
   const href = `${getAppHref(charge.href)}${to}`;
   return (
-    <a href={href} target={desk} className={className} {...rest}>
+    <a href={href} target="_blank" rel="noreferrer" className={className} {...rest}>
       {children}
     </a>
   );

@@ -30,7 +30,8 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
   return (
     <a
       href={active ? link : undefined}
-      target={desk}
+      target="_blank"
+      rel="noreferrer"
       className={classNames(
         'group relative font-semibold aspect-w-1 aspect-h-1 rounded-3xl default-ring focus-visible:ring-4 overflow-hidden',
         lightText && active && !loading ? 'text-gray-200' : 'text-gray-800',
