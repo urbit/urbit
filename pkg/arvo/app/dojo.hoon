@@ -65,7 +65,7 @@
       $~  [%ex *hoon]
       $%  [%ur p=@t]                                    ::  http GET request
           [%ge p=dojo-model]                            ::  generator
-          [%te p=[=desk =term] q=(list dojo-source)]    ::  thread
+          [%te p=term q=(list dojo-source)]             ::  thread
           [%dv p=beak q=path]                           ::  core from source
           [%ex p=hoon]                                  ::  hoon expression
           [%sa p=mark]                                  ::  example mark value
@@ -224,7 +224,7 @@
       ;~  pose
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
-        ;~(plug (cold %te hep) parse-thread (star ;~(pfix ace parse-source)))
+        ;~(plug (cold %te hep) sym (star ;~(pfix ace parse-source)))
         ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
@@ -276,12 +276,6 @@
     ;~  plug
       ;~(pose ;~(sfix sym zap) (easy q.dir))
       (most fas sym)
-    ==
-  ::
-  ++  parse-thread
-    ;~  plug
-      ;~(pose ;~(sfix sym zap) (easy q.dir))
-      sym
     ==
   ::
   ++  parse-hoon    tall:hoon-parser
@@ -699,7 +693,7 @@
             [%sa mark]
             [%as mark dy-shown]
             [%do hoon dy-shown]
-            [%te [desk term] (list dy-shown)]
+            [%te term (list dy-shown)]
             [%ge [desk path] (list dy-shown) (map term (unit dy-shown))]
             [%dv beak path]
         ==
@@ -876,7 +870,7 @@
       (dy-hand %noun q.cag)
     ::
     ++  dy-wool-poke
-      |=  [[=desk =term] src=(list dojo-source)]
+      |=  [fil=term src=(list dojo-source)]
       ^+  +>+>
       ?>  ?=(~ pux)
       =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
@@ -886,9 +880,8 @@
         [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
-        ::TODO  would be nice if spider supported starting from paths,
-        ::      for semantics/abilities/code closer to generators.
-        [%spider-start !>([~ `tid he-beak(q.dir desk) term (dy-some src)])]
+        ::  TODO: support threads on other desks
+        [%spider-start !>([~ `tid he-beak fil (dy-some src)])]
       [%pass /wool %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
