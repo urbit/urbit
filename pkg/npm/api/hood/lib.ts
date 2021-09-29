@@ -110,9 +110,9 @@ export function getBlockers(vats: Vats): string[] {
 }
 
 export function getVatPublisher(vat: Vat): string | undefined {
-  if ('rail' in vat.arak) {
+  if (vat.arak.rail) {
     const { rail } = vat.arak;
-    return (rail.publisher || rail.ship);
+    return (rail?.publisher || rail?.ship || undefined);
   }
   return undefined;
 }

@@ -1,12 +1,11 @@
 import React from 'react';
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
-import { HarkLid, Vats } from '@urbit/api';
+import { HarkLid, Vats, getVatPublisher } from '@urbit/api';
 import { Button } from '../../components/Button';
 import { useCurrentTheme, useProtocolHandling } from '../../state/local';
 import { getDarkColor } from '../../state/util';
 import useKilnState from '../../state/kiln';
-import {getVatPublisher} from '../../../../npm/api/hood';
 import {useHarkStore} from '../../state/hark';
 
 const getCards = (vats: Vats, protocol: boolean): OnboardingCardProps[] => {
