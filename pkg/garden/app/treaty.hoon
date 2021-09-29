@@ -197,8 +197,12 @@
     |=  =desk
     ?+  -.sign  (on-agent:def wire sign)
     ::
+    :: rewatch only if we aren't source
+    :: this would cause a potential kick-rewatch loop otherwise
+    ::
         %kick   
       :_  this
+      ?:  =(our.bowl src.bowl)  ~
       ~(watch tr:cc ship desk)^~
     ::
         %watch-ack
@@ -292,7 +296,7 @@
   ++  dock  [ship dap.bowl]
   ++  watch  (watch:pass dock path)
   ++  watching  (~(has by wex.bowl) [path dock])
-  ++  safe-watch  `(unit card)`?:(watching ~ `watch)
+  ++  safe-watch  `(unit card)`?:(|(watching =(our.bowl ship)) ~ `watch)
   ++  leave  (leave:pass dock)
   ++  give  
     =/  t=treaty  (~(got by treaties) ship desk)
