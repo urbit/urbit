@@ -44,7 +44,6 @@
         /sur    ::  structures
         /sys    ::  system files
         /ted    ::  :spider strands
-        /tests  ::  unit tests
         /web    ::  %eyre web content
         /desk   ::  desk manifest
     ==
