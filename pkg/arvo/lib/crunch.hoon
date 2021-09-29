@@ -351,6 +351,6 @@
 ++  note-write-csv-to-clay
   |=  [pax=path file-content=wain]
   ?>  =(%csv (snag (dec (lent pax)) pax))
-  [%c [%info %home %& [pax %ins %csv !>(file-content)]~]]
+  [%c [%info %base %& [pax %ins %csv !>(file-content)]~]]
 ::
 --

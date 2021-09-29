@@ -151,7 +151,7 @@
   .^  (list cord)
     %cx
     (scot %p our.bowl)
-    %home
+    %base
     (scot %da now.bowl)
     path
   ==

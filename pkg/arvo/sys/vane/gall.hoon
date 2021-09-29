@@ -387,7 +387,7 @@
     =.  mo-core  (mo-abed system-duct.state)
     ::
     =/  sources=(jug desk [care:clay path])
-      %+  ~(put by *(jug desk [care:clay path]))  %home
+      %+  ~(put by *(jug desk [care:clay path]))  %base
       %-  sy
       :~  [%z /sys/hoon/hoon]
           [%z /sys/arvo/hoon]

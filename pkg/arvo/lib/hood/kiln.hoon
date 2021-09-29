@@ -390,7 +390,6 @@
   =?  kiln  (lth old-version %7)
     abet:gall-lyv:vats
   =?  kiln  ?=(^ wef)
-    ::  $% is a hack to workaround an initialization bug
     =/  except=(set desk)  (sy %base %kids ~)
     (bump:vats u.wef except force=%.n)
   =.  wef  ~
