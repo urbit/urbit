@@ -15,7 +15,7 @@ const api = useMockData
       ship: '',
       scry: async () => {}
     } as unknown as Urbit)
-  : new Urbit('', '');
+  : new Urbit('', '', window.desk, { managedChannel: true });
 if (import.meta.env.DEV || useMockData) {
   api.verbose = true;
 }

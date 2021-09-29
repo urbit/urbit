@@ -129,11 +129,28 @@ export interface PokeHandlers {
 
 export type PokeInterface<T> = PokeHandlers & Poke<T>;
 
+export interface UrbitOptions {
+  /**
+   * Ship can be set, in which case we can do some magic stuff like send chats
+   */
+  ship?: string | null;
+
+  /**
+   * If verbose, logs output eagerly.
+   */
+  verbose?: boolean;
+
+  /**
+   * Allows for the channel to be managed by external worker
+   */
+  managedChannel?: boolean;
+}
+
 export interface AuthenticationInterface {
-  ship: string;
   url: string;
   code: string;
-  verbose?: boolean;
+  desk?: string;
+  options?: UrbitOptions;
 }
 
 /**

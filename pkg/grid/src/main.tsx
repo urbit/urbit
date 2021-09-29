@@ -9,3 +9,14 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('app')
 );
+
+/* && import.meta.env.MODE !== 'development' */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/apps/grid/serviceworker.js', {
+        scope: '/'
+      })
+      .then(() => {});
+  });
+}

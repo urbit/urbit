@@ -14,6 +14,7 @@ import {
   SSEOptions,
   PokeHandlers,
   Message,
+  UrbitOptions,
 } from './types';
 import { hexString } from './utils';
 
@@ -21,6 +22,7 @@ import { hexString } from './utils';
  * A class for interacting with an urbit ship, given its URL and code
  */
 export class Urbit {
+  private options: UrbitOptions;
   /**
    * UID will be used for the channel: The current unix time plus a random hex string
    */
@@ -37,6 +39,27 @@ export class Urbit {
    * SSE Client is null for now; we don't want to start polling until it the channel exists
    */
   private sseClientInitialized: boolean = false;
+
+  /**
+   * Used with a managed channel to hold outgoing actions until we receive the
+   * current event ID and new channel UID.
+   */
+  private channelSynced: boolean = false;
+
+  /**
+   * Instance ID identifies this channel's listener to the managed channel when closing.
+   */
+  private instanceId: string = `${Math.floor(Date.now() / 1000)}-${hexString(
+    6
+  )}`;
+
+  /**
+   * Holds the set of outgoing actions in queue to send once the channel is synced.
+   */
+  private actionQueue: Array<{
+    action: Function;
+    params: any[];
+  }> = [];
 
   /**
    * Cookie gets set when we log in.
@@ -120,11 +143,61 @@ export class Urbit {
    * be the empty string.
    * @param code The access code for the ship at that address
    */
-  constructor(public url: string, public code?: string, public desk?: string) {
+  constructor(
+    public url: string,
+    public code?: string,
+    public desk?: string,
+    options?: UrbitOptions
+  ) {
+    this.options = {
+      managedChannel: false,
+      verbose: false,
+      ...options,
+    };
+
+    this.ship = this.options.ship;
+    this.verbose = this.options.verbose;
+
     if (isBrowser) {
-      window.addEventListener('beforeunload', this.delete);
+      window.addEventListener('beforeunload', this.delete.bind(this));
+    }
+
+    if (this.options.managedChannel) {
+      this.setupManagedChannel();
     }
     return this;
+  }
+
+  setupManagedChannel() {
+    console.log('setting up managed channel');
+    navigator.serviceWorker.onmessage = async (event) => {
+      if (
+        event.data &&
+        event.data.type === 'CURRENT_CHANNEL' &&
+        !this.channelSynced
+      ) {
+        if (!event.data.eventId || !event.data.channel) {
+          this.options.verbose && console.log('first to setup channel');
+        } else {
+          this.lastEventId = parseInt(event.data.eventId, 10);
+          const channel: string = event.data.channel;
+          this.uid = channel.substr(channel.lastIndexOf('/') + 1);
+          this.options.verbose &&
+            console.log('received channel info', this.lastEventId, this.uid);
+        }
+
+        this.channelSynced = true;
+        this.options.verbose && console.log('flushing queue', this.actionQueue);
+        if (!this.sseClientInitialized && this.lastEventId !== 0) {
+          await this.eventSource();
+        }
+        this.flushActionQueue();
+      }
+    };
+
+    navigator.serviceWorker.controller?.postMessage({
+      type: 'GET_CHANNEL',
+    });
   }
 
   /**
@@ -136,14 +209,12 @@ export class Urbit {
    *
    */
   static async authenticate({
-    ship,
     url,
     code,
-    verbose = false,
+    desk,
+    options,
   }: AuthenticationInterface) {
-    const airlock = new Urbit(`http://${url}`, code);
-    airlock.verbose = verbose;
-    airlock.ship = ship;
+    const airlock = new Urbit(`http://${url}`, code, desk, options);
     await airlock.connect();
     await airlock.poke({
       app: 'hood',
@@ -212,7 +283,7 @@ export class Urbit {
       } else if (isNode) {
         sseOptions.headers.Cookie = this.cookie;
       }
-      fetchEventSource(this.channelUrl, {
+      fetchEventSource(this.channelUrl + `?id=${this.instanceId}`, {
         ...this.fetchOptions,
         openWhenHidden: true,
         onopen: async (response) => {
@@ -359,6 +430,25 @@ export class Urbit {
     }
   }
 
+  private waitForSync(action: Function, ...params: any[]): boolean {
+    if (this.options.managedChannel && !this.channelSynced) {
+      this.actionQueue.push({
+        action,
+        params,
+      });
+      return true;
+    }
+
+    return false;
+  }
+
+  private flushActionQueue(): void {
+    this.actionQueue.forEach(({ action, params }) => {
+      action.apply(this, params);
+    });
+    this.actionQueue = [];
+  }
+
   /**
    * Creates a subscription, waits for a fact and then unsubscribes
    *
@@ -369,6 +459,10 @@ export class Urbit {
    * @returns The first fact on the subcription
    */
   async subscribeOnce<T = any>(app: string, path: string, timeout?: number) {
+    if (this.waitForSync(this.subscribeOnce, app, path, timeout)) {
+      return;
+    }
+
     return new Promise<T>(async (resolve, reject) => {
       let done = false;
       let id: number | null = null;
@@ -448,6 +542,10 @@ export class Urbit {
    * @param handlers Handlers to deal with various events of the subscription
    */
   async subscribe(params: SubscriptionRequestInterface): Promise<number> {
+    if (this.waitForSync(this.subscribe, params)) {
+      return;
+    }
+
     const { app, path, ship, err, event, quit } = {
       err: () => {},
       event: () => {},
@@ -496,7 +594,13 @@ export class Urbit {
    * Deletes the connection to a channel.
    */
   delete() {
-    if (isBrowser) {
+    if (this.options.managedChannel) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'CLOSE_STREAM',
+        url: this.channelUrl,
+        id: this.instanceId,
+      });
+    } else if (isBrowser) {
       navigator.sendBeacon(
         this.channelUrl,
         JSON.stringify([
@@ -505,9 +609,6 @@ export class Urbit {
           },
         ])
       );
-    } else {
-      // TODO
-      // this.sendMessage('delete');
     }
   }
 
@@ -577,7 +678,7 @@ export class Urbit {
    */
   static async onArvoNetwork(ship: string, code: string): Promise<Urbit> {
     const url = `https://${ship}.arvo.network`;
-    return await Urbit.authenticate({ ship, url, code });
+    return await Urbit.authenticate({ url, code, options: { ship } });
   }
 }
 

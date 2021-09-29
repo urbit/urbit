@@ -15,7 +15,7 @@ export default ({ mode }) => {
 
   return defineConfig({
     base: mode === 'mock' ? undefined : '/apps/grid/',
-    server: mode === 'mock' ? undefined : { https: true },
+    server: mode === 'mock' ? undefined : { https: false },
     build:
       mode !== 'profile'
         ? undefined
@@ -32,6 +32,18 @@ export default ({ mode }) => {
     plugins:
       mode === 'mock'
         ? []
-        : [urbitPlugin({ base: 'grid', target: SHIP_URL, secure: false }), reactRefresh()]
+        : [
+            {
+              name: 'configure-response-headers',
+              configureServer: (server) => {
+                server.middlewares.use((_req, res, next) => {
+                  res.setHeader('Service-Worker-Allowed', '/');
+                  next();
+                });
+              }
+            },
+            urbitPlugin({ base: 'grid', target: SHIP_URL, secure: false }),
+            reactRefresh()
+          ]
   });
 };
