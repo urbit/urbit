@@ -39,7 +39,7 @@
     |-
     ?-  -.old
       %0  $(old [%1 +.old])
-      %1  $(old [%2 (~(put by *^settings) q.byk.bol settings.old)])
+      %1  $(old [%2 (~(put by *^settings) %landscape settings.old)])
       %2  `this(state old)
     ==
   ::

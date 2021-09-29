@@ -206,7 +206,6 @@
       ++  on-diff
         |=  =diff:hood
         =+  !<(=diff:hood q.cage.sign)
-        ~&  diff
         ?-    -.diff
             %commit   (on-commit [desk arak]:diff)
             %suspend  (on-suspend [desk arak]:diff)
