@@ -254,7 +254,6 @@
           %-  ~(urn by eggs.old)
           |=  [a=term e=egg]
           ::NOTE  kiln will kick off appropriate app revival
-          ?:  =(%hood a)  e(q.beak %base)
           e(old-state [%| p.old-state.e])
         +>.old
       --
@@ -578,7 +577,7 @@
     =/  nex=(list [=care:clay =path])  ~(tap in q.sign-arvo)
     ~>  %slog.[0 leaf+"gall: reloading agents"]
     ~<  %slog.[0 leaf+"gall: reloaded agents"]
-    =;  cor  (mo-subscribe-to-agent-builds:cor p.p.sign-arvo)
+    =;  cor  (mo-subscribe-to-agent-builds:cor now)
     %+  roll  nex
     |=  [[=care:clay =path] cor=_mo-core]
     ^+  cor
@@ -597,8 +596,8 @@
     ?:  ?=(%| -.agent.u.yok)
       ~>  %slog.[0 leaf+"gall: dead agent reload: {<dap>}"]
       cor
-    =/  bek=beak  [our q.beak.u.yok p.sign-arvo]
-    =/  rag  (mo-scry-agent-cage dap q.bek p.sign-arvo)
+    =/  bek=beak  [our q.beak.u.yok da+now]
+    =/  rag  (mo-scry-agent-cage dap q.bek da+now)
     ?:  ?=(%| -.rag)
       (mean p.rag)
     (mo-receive-core:cor dap bek p.rag)
