@@ -1617,7 +1617,7 @@
       ::
       ++  purge
         ^+  ..park
-        =/  wux=(list [=wove =duct])  ~(tap by qyx)
+        =/  wux=(list [=wove dux=(set duct)])  ~(tap by qyx)
         |-  ^+  ..park
         ?~  wux  ..park
         =/  rov  rove.wove.i.wux
