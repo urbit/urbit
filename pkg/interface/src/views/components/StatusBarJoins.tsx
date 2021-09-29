@@ -1,20 +1,19 @@
-import { LoadingSpinner } from "@tlon/indigo-react";
-import React, { useState } from "react";
-import { Box, Row, Col, Text } from "@tlon/indigo-react";
-import { PropFunc } from "~/types";
-import _ from "lodash";
-import * as Dialog from "@radix-ui/react-dialog";
-import { StatusBarItem } from "./StatusBarItem";
-import useGroupState from "~/logic/state/group";
-import { JoinRequest, joinProgress } from "@urbit/api";
-import { usePreview } from "~/logic/state/metadata";
-import { Dropdown } from "./Dropdown";
-import { MetadataIcon } from "../landscape/components/MetadataIcon";
+import { LoadingSpinner, Button } from '@tlon/indigo-react';
+import React  from 'react';
+import { Box, Row, Col, Text } from '@tlon/indigo-react';
+import { PropFunc } from '~/types';
+import _ from 'lodash';
+import { StatusBarItem } from './StatusBarItem';
+import useGroupState from '~/logic/state/group';
+import { JoinRequest, joinProgress } from '@urbit/api';
+import { usePreview } from '~/logic/state/metadata';
+import { Dropdown } from './Dropdown';
+import { MetadataIcon } from '../landscape/components/MetadataIcon';
 
 function Elbow(
   props: { size?: number; color?: string } & PropFunc<typeof Box>
 ) {
-  const { size = 12, color = "lightGray", ...rest } = props;
+  const { size = 12, color = 'lightGray', ...rest } = props;
 
   return (
     <Box
@@ -39,10 +38,9 @@ function Elbow(
 }
 
 export function StatusBarJoins() {
-  const pendingJoin = useGroupState((s) => s.pendingJoin);
-  const [isOpen, setIsOpen] = useState(false);
+  const pendingJoin = useGroupState(s => s.pendingJoin);
   if (
-    Object.keys(_.omitBy(pendingJoin, (j) => j.progress === "done")).length ===
+    Object.keys(_.omitBy(pendingJoin, j => j.progress === 'done')).length ===
     0
   ) {
     return null;
@@ -50,25 +48,24 @@ export function StatusBarJoins() {
 
   return (
     <Dropdown
-      dropWidth="256px"
+      dropWidth="325px"
       options={
         <Col
           left="0px"
           top="120%"
           position="absolute"
           zIndex={10}
-          alignItems="center"
+          alignItems="flex-start"
           p="2"
-          gapY="4"
+          gapY="3"
           border="1"
           borderColor="lightGray"
+          borderRadius="1"
           backgroundColor="white"
         >
-          <Col>
-            {Object.keys(pendingJoin).map((g) => (
+            {Object.keys(pendingJoin).map(g => (
               <JoinStatus key={g} group={g} join={pendingJoin[g]} />
             ))}
-          </Col>
         </Col>
       }
       alignX="left"
@@ -82,24 +79,28 @@ export function StatusBarJoins() {
 }
 
 const description: string[] = [
-  "Contacting host...",
-  "Retrieving data...",
-  "Finished join",
-  "Unable to join, you do not have the correct permissions",
-  "Internal error, please file an issue",
+  'Contacting host...',
+  'Retrieving data...',
+  'Finished join',
+  'Unable to join, you do not have the correct permissions',
+  'Internal error, please file an issue'
 ];
 
 export function JoinStatus({
   group,
-  join,
+  join
 }: {
   group: string;
   join: JoinRequest;
 }) {
-  const { preview, error } = usePreview(group);
+  const { preview } = usePreview(group);
   const current = join && joinProgress.indexOf(join.progress);
   const desc = _.isNumber(current) && description[current];
+  const onHide = () => {
+    useGroupState.getState().hidePending(group);
+  };
   return (
+    <Row alignItems="center" gapX="3">
     <Col gapY="2">
       <Row alignItems="center" gapX="2">
         {preview ? (
@@ -112,5 +113,9 @@ export function JoinStatus({
         <Text>{desc}</Text>
       </Row>
     </Col>
+    <Button onClick={onHide}>
+      Hide
+    </Button>
+  </Row>
   );
 }

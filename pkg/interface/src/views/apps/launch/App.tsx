@@ -206,7 +206,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             color="black"
             text="Join Group"
           >
-            <JoinGroup />
+            {dismiss => <JoinGroup dismiss={dismiss} />}
           </ModalButton>
           </>}
           {!hideGroups &&

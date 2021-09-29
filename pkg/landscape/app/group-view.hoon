@@ -1,4 +1,4 @@
-/-  view-sur=group-view, group-store, *group, metadata=metadata-store
+/-  view-sur=group-view, group-store, *group, metadata=metadata-store, hark=hark-store
 /+  default-agent, agentio, mdl=metadata,
     resource, dbug, grpl=group, conl=contact, verb
 |%
@@ -327,13 +327,66 @@
       %-  (slog u.err)
       (cleanup %strange)
     ::
+    ++  notify
+      %-  emit
+      %+  poke-our:(jn-pass-io /hark)  %hark-store
+      =-  hark-action+!>(-)
+      ^-  action:hark
+      |^ 
+      [%add-note bin body]
+      ++  bin
+        ^-  bin:hark
+        [/ [q.byk.bowl /join/(scot %p entity.rid)/[name.rid]]]
+      ++  title
+        |=  [name=@t rest=@t]
+        text/(rap 3 'Joining group: "' name '" ' rest ~)
+      ++  body
+        ^-  body:hark
+        =/  =request:view  (~(got by joining) rid)
+        ?>  ?=(final:view progress.request)
+        =/  name  (rap 3 (scot %p entity.rid) '/' name.rid ~)
+        ?-  progress.request
+        ::
+            %done
+          =/  =metadatum:metadata  (need (peek-metadatum:met %groups rid))
+          :*  ~[(title title.metadatum 'succeeded')]
+              ~
+              now.bowl
+              /
+              /groups/(scot %p entity.rid)/[name.rid]
+          ==
+        ::
+            %strange
+          :*  ~[(title name 'errored unexpectedly')]
+              ~
+              now.bowl
+              /
+              /
+          ==
+        ::
+            %no-perms
+          :*  ~[(title name 'failed, you are not permitted to join the group')]
+              ~
+              now.bowl
+              /
+              /
+          ==
+        ==
+      --
+    ::
     ++  cleanup
       |=  =progress:view
       =.  jn-core
         (tx-progress progress)
       =.  jn-core
         (emit (leave-our:(jn-pass-io /groups) %group-store))
-      (emit (leave-our:(jn-pass-io /md) %metadata-store))
+      =.  jn-core
+        (emit (leave-our:(jn-pass-io /md) %metadata-store))
+      =/  =request:view  (~(got by joining) rid)
+      =?  jn-core  (lte (sub now.bowl started.request) ~s30)  
+        notify
+      =.  joining  (~(del by joining) rid)
+      jn-core
     --
   --
 --

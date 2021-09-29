@@ -94,6 +94,10 @@ function getDmRedirect(link: string) {
   const [,,ship] = link.split('/');
   return `/~landscape/messages/dm/${ship}`;
 }
+function getGroupRedirect(link: string) {
+  const [,,ship,name] = link.split('/');
+  return `/~landscape/ship/${ship}/${name}`;
+}
 
 function getNotificationRedirect(link: string) {
   if(link.startsWith('/graph-validator')) {
@@ -102,6 +106,8 @@ function getNotificationRedirect(link: string) {
     return getInviteRedirect(link);
   } else if (link.startsWith('/dm')) {
     return getDmRedirect(link);
+  } else if (link.startsWith('/groups')) {
+    return getGroupRedirect(link);
   }
 }
 
