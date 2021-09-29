@@ -2146,46 +2146,24 @@
         (wane k.a p.a v.a m.a l.a $(a r.a))
       ==
     ::
-    ++  jab                                             ::  update at key k
-      ~/  %jab
-      |*  [a=pri k=@ f=$-((unit (pair @ buc)) (pair * (unit (pair @ buc))))]
-      =/  bon  _=>((f ~) -)
-      ^-  (pair bon pri)
-      =/  ped  (pet a k)
-      =?  a  ?=(^ ped)
-        r.u.ped
-      =/  pav
-        ?~  ped
-          ~
-        `[p.u.ped q.u.ped]
-      =/  bee=(pair bon (unit (pair @ buc)))
-        (f pav)
-      :-  p.bee
-      ?~  q.bee  a
-      (raw a k p.u.q.bee q.u.q.bee)
-    ::
     ++  jib                                             ::  update at min-pri
       ~/  %jib
-      |*  [a=pri f=$-((unit (trel @ @ buc)) (pair * (unit (trel @ @ buc))))]
-      =/  bon  _=>((f ~) -)
-      ^-  (pair bon pri)
+      |=  a=pri
+      |^  ^-  (pair (unit (trel k @ v)) pri)
       ?~  a
-        =/  bee=(pair bon (unit (trel @ @ buc)))
-          (f ~)
+        =/  bee  (help ~)
         :-  p.bee
         ?~  q.bee  ~
         [%tip p.u.q.bee q.u.q.bee r.u.q.bee]
       ?-    -.a
           %tip
-        =/  bee=(pair bon (unit (trel @ @ buc)))
-          (f `[k.a p.a v.a])
+        =/  bee  (help `[k.a p.a v.a])
         :-  p.bee
         ?~  q.bee  ~
         [%tip u.q.bee]
       ::
           %bin
-        =/  bee=(pair bon (unit (trel @ @ buc)))
-          (f `[k.a p.a v.a])
+        =/  bee  (help `[k.a p.a v.a])
         :-  p.bee
         ?~  q.bee  (fuse m.a l.a r.a)
         =/  t=(trel @ @ buc)  u.q.bee
@@ -2195,6 +2173,17 @@
           [%bin k.a q.t r.t m.a l.a r.a]
         (raw (fuse m.a l.a r.a) k.a q.t r.t)
       ==
+      ::
+      ++  help
+        |=  b=(unit (trel @ @ buc))
+        ^-  (pair (unit (trel k @ v)) (unit (trel @ @ buc)))
+        ?~  b  [~ ~]
+        =/  =buc  r.u.b
+        :-  `[k.buc q.u.b v.buc]
+        =/  val  (bot:qor t.buc)
+        ?~  val  ~
+        `[p.u.b q.p.u.val [p.p.u.val r.p.u.val q.u.val]]
+      --
     ::
     ++  pet                                             ::  delete view
       ~/  %pet
@@ -2233,7 +2222,7 @@
     ++  raw                                             ::  put fresh (unsafe)
       ~/  %raw
       |=  [a=pri k=@ p=@ v=buc]                         ::  k must not exist in
-      ^-  pri                                           ::  queue
+      |-  ^-  pri                                       ::  queue
       ?~  a
         [%tip k p v]
       ?-    -.a
@@ -2250,11 +2239,11 @@
         :-  %bin
         ?:  (lex [p k] [p.a k.a])
           ?:  (zero k.a m.a)
-            [k p v m.a (raw l.a k.a p.a v.a) r.a]
-          [k p v m.a l.a (raw r.a k.a p.a v.a)]
+            [k p v m.a $(a l.a, k k.a, p p.a, v v.a) r.a]
+          [k p v m.a l.a $(a r.a, k k.a, p p.a, v v.a)]
         ?:  (zero k m.a)
-          [k.a p.a v.a m.a (raw l.a k p v) r.a]
-        [k.a p.a v.a m.a l.a (raw r.a k p v)]
+          [k.a p.a v.a m.a $(a l.a) r.a]
+        [k.a p.a v.a m.a l.a $(a r.a)]
       ==
     ::
     ++  gun                                             ::  vip view (unsafe)
@@ -2357,15 +2346,24 @@
   ++  put                                               ::  add [key pri val]
     ~/  %put
     |=  [a=pri =k p=@ =v]
+    ^-  pri
+    =/  h  (mug k)
     |^  ^-  pri
-    =/  val=(pair (unit buc) pri)
-      (jab:qat a (mug k) ins)
-    q.val
+    =/  ped  (pet:qat a h)
+    =?  a  ?=(^ ped)
+      r.u.ped
+    =/  pav
+      ?~  ped
+        ~
+      `[p.u.ped q.u.ped]
+    =/  bee=(unit (pair @ buc))
+      (ins pav)
+    ?~  bee  a
+    (raw:qat a h p.u.bee q.u.bee)
     ::
     ++  ins
       |=  b=(unit (pair @ buc))
-      ^-  (pair _~ (unit (pair @ buc)))
-      :-  ~
+      ^-  (unit (pair @ buc))
       %-  some
       ?~  b  [p k v ~]
       =/  =buc  q.u.b
@@ -2391,22 +2389,11 @@
   ++  bot                                               ::  lowest-pri view
     ~/  %bot
     |=  a=pri
-    |^  ^-  (unit (qual k @ v pri))
+    ^-  (unit (qual k @ v pri))
     =/  val=(pair (unit (trel k @ v)) pri)
-      (jib:qat a help)
+      (jib:qat a)
     ?~  p.val  ~
     `[p.u.p.val q.u.p.val r.u.p.val q.val]
-    ::
-    ++  help
-      |=  b=(unit (trel @ @ buc))
-      ^-  (pair (unit (trel k @ v)) (unit (trel @ @ buc)))
-      ?~  b  [~ ~]
-      =/  =buc  r.u.b
-      :-  `[k.buc q.u.b v.buc]
-      =/  val  (bot:qor t.buc)
-      ?~  val  ~
-      `[p.u.b q.p.u.val [p.p.u.val r.p.u.val q.u.val]]
-    --
   ::
   ++  cut                                               ::  delete lowest-pri
     ~/  %cut
