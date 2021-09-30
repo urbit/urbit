@@ -3357,6 +3357,7 @@
   ::
   ++  wake
     ^+  .
+    ~&  (print-cult qyx)
     =/  old-subs=(list [=wove ducts=(set duct)])  ~(tap by qyx)
     =|  new-subs=(list [=wove ducts=(set duct)])
     |-  ^+  ..wake
