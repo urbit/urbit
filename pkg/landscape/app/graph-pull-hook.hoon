@@ -1,5 +1,6 @@
 /-  *resource
 /+  store=graph-store, graph, default-agent, verb, dbug, pull-hook
+/+  agentio
 ~%  %graph-pull-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -12,6 +13,11 @@
       3  3
       %.n
   ==
++$  state-nul  ~
++$  state-0    [%0 ~]
++$  versioned-state
+  $%  state-0
+  ==
 --
 ::
 %-  agent:dbug
@@ -19,15 +25,25 @@
 ^-  agent:gall
 %-  (agent:pull-hook config)
 ^-  (pull-hook:pull-hook config)
+=|  state-0
+=*  state  -
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     dep   ~(. (default:pull-hook this config) bowl)
     gra   ~(. graph bowl)
+    io    ~(. agentio bowl)
+    pass  pass:io
 ::
 ++  on-init   on-init:def
-++  on-save   !>(~)
-++  on-load   on-load:def
+++  on-save   !>(state)
+++  on-load
+  |=  =vase
+  ?:  =(q.vase ~)
+    :_  this
+    (poke-self:pass kick+!>(%.y))^~
+  `this
+::
 ++  on-poke   on-poke:def
 ++  on-peek   on-peek:def
 ++  on-arvo   on-arvo:def
