@@ -1621,11 +1621,12 @@
         |-  ^+  ..park
         ?~  wux  ..park
         =/  rov  rove.wove.i.wux
-        ?.  ?=(%sing -.rov)
-          $(wux t.wux)
-        ?.  ?=([%a * %app %publish %hoon ~] mood.rov)
-          $(wux t.wux)
-        =.  qyx  (~(del by qyx) wove.i.wux)
+        =?    qyx
+            ?+  -.rov  |
+              %sing  ?=([%a * %app %publish %hoon ~] mood.rov)
+              %next  ?=([%a * %app %publish %hoon ~] mood.rov)
+            ==
+          (~(del by qyx) wove.i.wux)
         $(wux t.wux)
       ::
       ++  install-from-tmp
