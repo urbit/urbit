@@ -43,6 +43,17 @@
 ++  post-one
   |%
   ::
+  +$  indexed-post  [a=atom p=post]
+  ::
+  +$  post
+    $:  author=ship
+        =index
+        time-sent=time
+        contents=(list content)
+        hash=(unit hash)
+        =signatures
+    ==
+  ::
   +$  content
     $%  [%text text=cord]
         [%mention =ship]

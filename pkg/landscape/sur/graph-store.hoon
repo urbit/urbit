@@ -75,13 +75,14 @@
   =<  [. post-one]
   =,  post-one
   |%
+  +$  maybe-post    (each post hash)
   ++  orm      ((on atom node) gth)
   ++  orm-log  ((on time logged-update) gth)
   ::
   +$  graph         ((mop atom node) gth)
   +$  marked-graph  [p=graph q=(unit mark)]
   ::
-  +$  node          [=post children=internal-graph]
+  +$  node          [post=maybe-post children=internal-graph]
   +$  graphs        (map resource marked-graph)
   ::
   +$  tag-queries   (jug term resource)
