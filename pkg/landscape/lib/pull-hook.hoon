@@ -250,7 +250,7 @@
                   diplomatic
               ==
             ~
-          (poke-self:pass kick+!>(%kick))^~
+          (poke-self:pass kick+!>(%.n))^~
         :_  this
         :(weld cards og-cards kick)
        ::
@@ -295,8 +295,9 @@
         ::
           %kick
         ?>  (team:title [our src]:bowl)
+        =+  !<(nice=? vase)
         =^  [cards=(list card:agent:gall) hook=_pull-hook]  state
-          restart-subs:hc
+          (restart-subs:hc nice)
         =.  pull-hook  hook
         [cards this]
       ::
@@ -386,6 +387,7 @@
       ver  ~(. versioning [bowl [update-mark version min-version]:config])
   ::
   ++  restart-subs
+    |=  nice=?
     =|  acc-cards=(list card)
     =/  subs=(list resource)
       ~(tap in ~(key by tracking))
@@ -394,7 +396,7 @@
       [[acc-cards pull-hook] state]
     =*  rid  i.subs
     =^  [crds=(list card) hook=_pull-hook]  state
-      tr-abet:tr-on-load:(tr-abed:track-engine rid)
+      tr-abet:(tr-on-load:(tr-abed:track-engine rid) nice)
     =.  pull-hook  hook
     $(subs t.subs, acc-cards (weld acc-cards crds))
 
@@ -431,6 +433,12 @@
       =^  caz  pull-hook
         (ap)
       (tr-emis caz)
+    ::
+    ++  tr-sane
+      ^-  ?
+      ?+  -.status  %.y
+        %active  (~(has by wex.bowl) [tr-sub-wire tr-sub-dock])
+      ==
     ::  +|  %sign: sign handling
     ::
     ::
@@ -539,10 +547,11 @@
       tr-core(status [%sub-ver ver])
     ::
     ++  tr-on-load
+      |=  nice=?
       ?+  -.status  tr-core
         %failed-kick  tr-restart
-        %active       tr-rewatch
-        ::
+        %active       ?:(&(tr-sane nice) tr-core tr-rewatch)
+      ::
           %sub-ver
         ?.  (supported:ver (append-version:ver ver.status))
           tr-core
@@ -576,11 +585,6 @@
     ++  tr-sub-dock
       ^-  dock
       [ship push-hook-name.config]
-    ::
-    ++  tr-check-sub
-      ?:  (~(has by wex.bowl) [tr-sub-wire tr-sub-dock])
-        tr-core
-      tr-kick
     ::
     ++  tr-watch-unver
       |=  pax=path
@@ -645,6 +649,11 @@
   ::
   ++  version-wir 
     (make-wire /version)
+  ::
+  ++  version-dock
+    |=  =ship
+    ^-  dock
+    [ship push-hook-name.config]
   ::
   ++  watch-version
     |=  =ship

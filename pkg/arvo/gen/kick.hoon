@@ -2,6 +2,7 @@
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         ~
-        ~
+        nice=?
+
     ==
-[%kick %kick]
+[%kick nice]
