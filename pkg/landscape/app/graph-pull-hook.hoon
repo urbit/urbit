@@ -1,5 +1,6 @@
 /-  *resource
 /+  store=graph-store, graph, default-agent, verb, dbug, pull-hook
+/+  agentio
 ~%  %graph-pull-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -40,7 +41,7 @@
   |=  =vase
   ?:  =(q.vase ~)
     :_  this
-    (poke-self:pass kick+!>(%kick))^~
+    (poke-self:pass kick+!>(%.y))^~
   `this
 ::
 ++  on-poke   on-poke:def
