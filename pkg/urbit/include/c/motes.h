@@ -825,6 +825,7 @@
 #   define c3__pang   c3_s4('p','a','n','g')
 #   define c3__pank   c3_s4('p','a','n','k')
 #   define c3__para   c3_s4('p','a','r','a')
+#   define c3__park   c3_s4('p','a','r','k')
 #   define c3__parq   c3_s4('p','a','r','q')
 #   define c3__part   c3_s4('p','a','r','t')
 #   define c3__pass   c3_s4('p','a','s','s')

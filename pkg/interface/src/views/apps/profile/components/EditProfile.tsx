@@ -19,7 +19,6 @@ import GroupSearch from '~/views/components/GroupSearch';
 import { ImageInput } from '~/views/components/ImageInput';
 import {
     ProfileControls, ProfileHeader,
-
     ProfileImages, ProfileStatus
 } from './Profile';
 import airlock from '~/logic/api';
@@ -96,7 +95,7 @@ export function EditProfile(props: any): ReactElement {
         const newValue = key !== 'color' ? values[key] : uxToHex(values[key]);
         if (newValue !== contact[key]) {
           if (key === 'isPublic') {
-            airlock.poke(setPublic(true));
+            airlock.poke(setPublic(newValue));
             return;
           } else if (key === 'groups') {
             const toRemove: string[] = _.difference(

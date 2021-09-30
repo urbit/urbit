@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const urbitrc = require('./urbitrc');
 const fs = require('fs-extra');
@@ -34,6 +34,7 @@ let devServer = {
   host: '0.0.0.0',
   disableHostCheck: true,
   historyApiFallback: true,
+  publicPath: '/apps/bitcoin/',
 };
 
 const router = _.mapKeys(
@@ -44,22 +45,21 @@ const router = _.mapKeys(
 if (urbitrc.URL) {
   devServer = {
     ...devServer,
-    index: '',
-    proxy: {
-      '/~btc/js/bundle/index.*.js': {
+    index: 'index.html',
+    proxy: [
+      {
         target: 'http://localhost:9000',
-        pathRewrite: (req, path) => {
-          return '/index.js';
-        },
-      },
-      '**': {
         changeOrigin: true,
         target: urbitrc.URL,
         router,
-        // ensure proxy doesn't timeout channels
-        proxyTimeout: 0,
+        context: (path) => {
+          if (path === '/apps/bitcoin/desk.js') {
+            return true;
+          }
+          return !path.startsWith('/apps/bitcoin');
+        },
       },
-    },
+    ],
   };
 }
 
@@ -96,7 +96,13 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   devServer: devServer,
-  plugins: [new UrbitShipPlugin(urbitrc)],
+  plugins: [
+    new UrbitShipPlugin(urbitrc),
+    new HtmlWebpackPlugin({
+      title: 'Bitcoin Wallet',
+      template: './public/index.html',
+    }),
+  ],
   watch: true,
   watchOptions: {
     poll: true,
@@ -106,7 +112,7 @@ module.exports = {
     filename: 'index.js',
     chunkFilename: 'index.js',
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/',
+    publicPath: '/apps/bitcoin/',
     globalObject: 'this',
   },
   optimization: {

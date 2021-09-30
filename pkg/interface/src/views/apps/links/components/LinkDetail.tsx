@@ -1,11 +1,13 @@
 import { Col, Row, RowProps } from '@tlon/indigo-react';
-import { Association, GraphNode, TextContent, UrlContent } from '@urbit/api';
-import React from 'react';
+import { Association, GraphNode, markEachAsRead, TextContent, UrlContent } from '@urbit/api';
+import React, { useEffect } from 'react';
 import { useGroup } from '~/logic/state/group';
 import Author from '~/views/components/Author';
 import Comments from '~/views/components/Comments';
 import { TruncatedText } from '~/views/components/TruncatedText';
 import { LinkBlockItem } from './LinkBlockItem';
+import airlock from '~/logic/api';
+import { toHarkPlace } from '~/logic/lib/util';
 
 export interface LinkDetailProps extends RowProps {
   node: GraphNode;
@@ -17,6 +19,10 @@ export function LinkDetail(props: LinkDetailProps) {
   const { node, association, baseUrl, ...rest } = props;
   const group = useGroup(association.group);
   const { post } = node;
+
+  useEffect(() => {
+    airlock.poke(markEachAsRead(toHarkPlace(association.resource), node.post.index));
+  }, [association, node]);
   const [{ text: title }] = post.contents as [TextContent, UrlContent];
   return (
     /*  @ts-ignore indio props?? */
