@@ -65,8 +65,7 @@
   =+  .^  raz=(list vat)
           %gx  /(scot %p our)/hood/(scot %da now)/kiln/vats/noun
       ==
-  %+  weld
-    [(report-kids our now) ~]
+  :-  (report-kids our now)
   (turn raz |=(v=vat (report-vat our now v)))
 ::  +report-vat: report on a single desk installation
 ::
