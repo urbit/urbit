@@ -510,6 +510,12 @@
       [[404^~ ~] [~ state]]
     ::
     =;  [desk=@ta =glob err=(list @t)]
+      =*  error-result
+        :_  [~ state]
+        [[400 ~] `(upload-page err)]
+      ::
+      ?.  =(~ err)  error-result
+      ::
       =*  cha      ~(. ch desk)
       =/  =charge  (~(got by charges) desk)
       ::
@@ -518,9 +524,7 @@
       =?  err  !?=(%glob -.href.docket.charge)
         ['desk does not use glob' err]
       ::
-      ?.  =(~ err)
-        :_  [~ state]
-        [[400 ~] `(upload-page err)]
+      ?.  =(~ err)  error-result
       :-  [[200 ~] `(upload-page 'successfully globbed' ~)]
       ?>  ?=(%glob -.href.docket.charge)
       ::
