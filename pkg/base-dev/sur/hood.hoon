@@ -112,7 +112,7 @@
   =/  dek  %kids
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  ?.  (~(has in .^((set desk) %cd /[ego]/base/[wen])) dek)
+  ?.  (~(has in .^((set desk) %cd /[ego]//[wen])) dek)
     leaf/"no %kids desk"
   =+  .^(hash=@uv %cz /[ego]/[dek]/[wen])
   leaf/"%kids %cz hash:     {<hash>}"
