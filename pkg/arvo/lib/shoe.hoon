@@ -349,7 +349,7 @@
   ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
-    ?.  =(/x/dbug/state path)  ~
+    ?.  =(/x/dbug/state path)  (on-peek:og path)
     ``noun+(slop on-save:og !>(shoe=state))
   ::
   ++  on-agent
