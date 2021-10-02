@@ -44,10 +44,7 @@
       ::  derive-o: flag (derive ownership state)
       ::
       pending=(list pend-tx)
-    ::
-      $=  sending
-      %+  map  l1-tx-pointer
-      [next-gas-price=@ud txs=(list raw-tx:naive)]
+      sending=(map l1-tx-pointer sending-txs)
     ::
       finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
       history=(jug address:ethereum roller-tx)
@@ -73,6 +70,11 @@
 ::
 +$  init  [nas=^state:naive own=owners]
 +$  net   ?(%mainnet %ropsten %local)
+::
++$  sending-txs
+  $:  next-gas-price=@ud
+      txs=(list raw-tx:naive)
+  ==
 ::
 +$  config
   $%  [%frequency frequency=@dr]
@@ -436,6 +438,7 @@
       [%send @ @ *]        (send-batch i.t.wire i.t.t.wire sign)
       [%azimuth-events ~]  (azimuth-event sign)
       [%nonce ~]           (nonce sign)
+      [%refresh-nonce ~]   (refresh sign)
     ==
     ::
     ++  send-batch
@@ -468,11 +471,12 @@
           =+  !<([=term =tang] q.cage.sign)
           %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
           =^  cards  state
-            (on-batch-result:do address nonce %.n^'thread failed')
+            (on-batch-result:do address nonce %.n^[%error 'thread failed'])
           [cards this]
         ::
             %thread-done
-          =+   !<(result=(each @ud @t) q.cage.sign)
+          =+   !<(result=(each @ud [term @t]) q.cage.sign)
+          ~?  lverb  thread-done+result
           =^  cards  state
             (on-batch-result:do address nonce result)
           [cards this]
@@ -540,6 +544,67 @@
             %thread-done
           =+   !<(nonce=@ud q.cage.sign)
           [~ this(next-nonce `nonce)]
+        ==
+      ==
+    ::
+    ++  refresh
+      |=  =sign:agent:gall
+      ^-  (quip card _this)
+      ?-  -.sign
+          %poke-ack
+        ?~  p.sign
+          %-  (slog leaf+"Refresh Nonce thread started successfully" ~)
+          [~ this]
+        %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
+        :_  this
+        [(leave:spider:do wire)]~
+      ::
+          %watch-ack
+        ?~  p.sign
+          [~ this]
+        =/  =tank  leaf+"{(trip dap.bowl)} couldn't start listen to thread"
+        %-  (slog tank u.p.sign)
+        [~ this]
+      ::
+          %kick
+        [~ this]
+      ::
+          %fact
+        ?+  p.cage.sign  (on-agent:def wire sign)
+            %thread-fail
+          =+  !<([=term =tang] q.cage.sign)
+          %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
+          [~ this]
+        ::
+            %thread-done
+          =+   !<(nonce=@ud q.cage.sign)
+          =+  sorted=(sort-by-nonce sending)
+          =.  finding
+            =<  finding
+            %+  roll  sorted
+            |=  $:  [* * txs=(list raw-tx:naive)]
+                    nonce=_nonce
+                    finding=_finding
+                ==
+            :-  +(nonce)
+            %+  roll  txs
+            |=  [=raw-tx:naive finding=_finding]
+            =/  hash=@ux  (hash-raw-tx:lib raw-tx)
+            ?~  tx=(~(get by finding) hash)  finding
+            ?.  ?=(^ u.tx)  finding
+            (~(put by finding) [hash u.tx(nonce.+ nonce)])
+          ::
+          =.  sending
+            =<  sending
+            %+  roll  sorted
+            |=  $:  [p=l1-tx-pointer q=sending-txs]
+                    nonce=_nonce
+                    sending=(map l1-tx-pointer sending-txs)
+                ==
+            [+(nonce) (~(put by sending) [p(nonce nonce) q])]
+          ::
+          =.  next-nonce  `nonce
+          [(send-roll get-address nonce) this]
         ==
       ==
     --
@@ -611,7 +676,7 @@
   ?-    -.part-tx
       %raw
     ?~  batch=(parse-raw-tx:naive 0 q.raw.part-tx)
-      ~&  %parse-failed
+      ~?  lverb  [dap.bowl %parse-failed]
       ::  TODO: maybe return a unit if parsing fails?
       ::
       !!
@@ -620,6 +685,13 @@
     %don  [(gen-tx-octs:lib +.part-tx) +.part-tx]
     %ful  +.part-tx
   ==
+::
+++  sort-by-nonce
+  |=  sending=(map l1-tx-pointer sending-txs)
+  ^-  (list (pair l1-tx-pointer sending-txs))
+  %+  sort  ~(tap by sending)
+  |=  [a=[[* n=@ud] *] b=[[* n=@ud] *]]
+  (lth n.a n.b)
 ::  +canonical-state: current l2 state from /app/azimuth
 ::
 ++  canonical-state
@@ -648,7 +720,8 @@
 ++  predicted-state
   |=  nas=^state:naive
   ^-  (quip update _state)
-  =.  pre.state        nas
+  =.  pre.state  nas
+  =.  own.state  canonical-owners
   ::  recreate ownership based on succesful txs
   ::
   |^
@@ -665,12 +738,12 @@
   ++  apply-sending
     =|  valid=_sending
     =|  ups=(list update)
-    =+  sending=~(tap by sending)
+    =+  sorted=(sort-by-nonce sending)
     |-  ^+  [[valid ups] state]
-    ?~  sending  [[valid ups] state]
+    ?~  sorted  [[valid ups] state]
     ::
-    =*  key  p.i.sending
-    =*  val  q.i.sending
+    =*  key  p.i.sorted
+    =*  val  q.i.sorted
     =+  txs=(turn txs.val |=(=raw-tx:naive [| 0x0 *time raw-tx]))
     =^  [new-valid=_txs nups=_ups]  state
       (apply-txs txs %sending)
@@ -678,7 +751,7 @@
       %+  ~(put by valid)  key
       ::  TODO: too much functional hackery?
       val(txs (turn new-valid (cork tail (cork tail tail))))
-    $(sending t.sending, ups (welp ups nups))
+    $(sorted t.sorted, ups (welp ups nups))
   ::
   ++  apply-txs
     |=  [txs=(list pend-tx) type=?(%pending %sending)]
@@ -778,7 +851,7 @@
       %setkey
     ?~  pk=(de:base16:mimes:html pk.config)
       `state
-    [(get-nonce q.u.pk) state(pk q.u.pk)]
+    [(get-nonce q.u.pk /nonce) state(pk q.u.pk)]
   ==
 ::  TODO: move address to state?
 ::
@@ -874,9 +947,9 @@
     (predicted-state canonical-state)
   =^  cards  state
     ?:  =(~ pending)
-      [(emit updates-1) state]
+      ~?  lverb  [dap.bowl %pending-empty]  [~ state]
     ?~  next-nonce
-      ~&([dap.bowl %no-nonce] [~ state])
+      ~?  lverb  [dap.bowl %no-nonce]  [~ state]
     =/  nonce=@ud   u.next-nonce
     =^  updates-2  history  update-history
     ::  TODO: move to +on-batch-result to prevent the case the
@@ -923,15 +996,14 @@
 ::  +get-nonce: retrieves the latest nonce
 ::
 ++  get-nonce
-  |=  pk=@
+  |=  [pk=@ =wire]
   ^-  (list card)
-  ?~  endpoint  ~&([dap.bowl %no-endpoint] ~)
-  (start-thread:spider /nonce [%roller-nonce !>([u.endpoint pk])])
-::
+  ?~  endpoint  ~?(lverb [dap.bowl %no-endpoint] ~)
+  (start-thread:spider wire [%roller-nonce !>([u.endpoint pk])])
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
 ++  send-roll
-  |=  [=address:ethereum nonce=@ud]
+  |=  [=address:ethereum =nonce:naive]
   ^-  (list card)
   ::  if this nonce isn't in the sending queue anymore, it's done
   ::
@@ -940,7 +1012,9 @@
     ~
   ::  start the thread, passing in the l2 txs to use
   ::
-  ?~  endpoint  ~&([dap.bowl %no-endpoint] ~)
+  ?~  endpoint
+    ~?  lverb  [dap.bowl %no-endpoint]
+    ~
   ::TODO  should go ahead and set resend timer in case thread hangs, or nah?
   %+  start-thread:spider
     /send/(scot %ux address)/(scot %ud nonce)
@@ -956,23 +1030,33 @@
 ::  +on-batch-result: await resend after thread success or failure
 ::
 ++  on-batch-result
-  |=  [=address:ethereum nonce=@ud result=(each @ud @t)]
+  |=  [=address:ethereum nonce=@ud result=(each @ud [term @t])]
   ^-  (quip card _state)
+  ::  print error if there was one
+  ::
+  ~?  ?=(%| -.result)  [dap.bowl %send-error +.p.result]
   ::  update gas price for this tx in state
   ::
   =?  sending  ?=(%& -.result)
     %+  ~(jab by sending)  [address nonce]
     (cork tail (lead p.result))
-  ::  print error if there was one
-  ::
-  ~?  ?=(%| -.result)  [dap.bowl %send-error p.result]
-  ::  resend the l1 tx in five minutes
-  ::
   :_  state
-  :_  ~
-  %+  wait:b:sys
-    /resend/(scot %ux address)/(scot %ud nonce)
-  (add resend-time now.bowl)
+  ?:  ?|  ?=(%& -.result)
+          ?=([%| %error *] result)
+      ==
+    :_  ~
+    ::  resend the l1 tx in five minutes
+    ::
+    %+  wait:b:sys
+      /resend/(scot %ux address)/(scot %ud nonce)
+    (add resend-time now.bowl)
+  ?>  ?=(%not-sent -.p.result)
+  ::  this only accounts for the case where the nonce is out of sync
+  ::  reaching this because of lower funds, needs to be addressed manually
+  ::  by the roller operator
+  ::
+  ~?  lverb  [dap.bowl p.result]
+  (get-nonce pk.state /refresh-nonce)
 ::  +on-naive-diff: process l2 tx confirmations
 ::
 ++  on-naive-diff
@@ -988,7 +1072,7 @@
     [~ state]
   =/  =keccak  (hash-raw-tx:lib raw-tx.diff)
   ?~  wer=(~(get by finding) keccak)
-    ~&  "keccak not in finding"
+    ~?  lverb  [dap.bowl %missing-keccak]
     [~ state]
   ::  if we had already seen the tx, no-op
   ::
@@ -1006,10 +1090,10 @@
   ::
   =.  sending
     ?~  sen=(~(get by sending) [get-address nonce])
-      ~&  [dap.bowl %weird-double-remove]
+      ~?  lverb  [dap.bowl %weird-double-remove]
       sending
     ?~  nin=(find [raw-tx.diff]~ txs.u.sen)
-      ~&  [dap.bowl %weird-unknown]
+      ~?  lverb  [dap.bowl %weird-unknown]
       sending
     =.  txs.u.sen  (oust [u.nin 1] txs.u.sen)
     ?~  txs.u.sen

@@ -9,7 +9,7 @@
 =/  m  (strand:strandio ,vase)
 |^
 ^-  form:m
-=*  not-sent  (pure:m !>(%.y^next-gas-price))
+:: =*  not-sent  (pure:m !>(%.n^next-gas-price))
 ::
 =/  =address:ethereum  (address-from-prv:key:ethereum pk)
 ;<  expected-nonce=@ud  bind:m
@@ -18,7 +18,7 @@
 ::
 ?.  =(nonce expected-nonce)
   ~&  [%unexpected-nonce nonce expected+expected-nonce]
-  not-sent
+  (pure:m !>(%.n^[%not-sent %unexpected-nonce]))
 ::  if a gas-price of 0 was specified, fetch the recommended one
 ::
 ;<  use-gas-price=@ud  bind:m
@@ -51,7 +51,7 @@
   (get-balance:ethio endpoint address)
 ?:  (gth max-cost balance)
   ~&  [%insufficient-roller-balance address]
-  not-sent
+  (pure:m !>(%.n^[%not-sent %insufficient-roller-balance]))
 ::
 ::NOTE  this fails the thread if sending fails, which in the app gives us
 ::      the "retry with same gas price" behavior we want
@@ -68,11 +68,11 @@
       chain-id
   ==
 %-  pure:m
-!>  ^-  (each @ud @t)
+!>  ^-  (each @ud [term @t])
 ::  TODO: capture if the tx fails (e.g. Runtime Error: revert)
 ::
-?+  -.response  %.n^'unexpected rpc response'
-  %error   %.n^message.response
+?+  -.response  %.n^[%error 'unexpected rpc response']
+  %error   %.n^[%error message.response]
   :: TODO:
   ::  check that tx-hash in +.response is non-zero?
   ::  log tx-hash to getTransactionReceipt(tx-hash)?
