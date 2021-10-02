@@ -80,7 +80,6 @@
   $%  [%frequency frequency=@dr]
       [%setkey pk=@]
       [%endpoint endpoint=@t =net]
-      [%network =net]
   ==
 ::
 +$  action
@@ -834,9 +833,8 @@
   ^-  (quip card _state)
   ?-  -.config
     %frequency  [~ state(frequency frequency.config)]
-    %endpoint   [~ state(endpoint `endpoint.config)]
   ::
-      %network
+      %endpoint
     :-  ~
     =/  [contract=@ux chain-id=@]
       =<  [naive chain-id]
@@ -846,7 +844,11 @@
         %ropsten  ropsten-contracts
         %local    local-contracts
       ==
-    state(contract contract, chain-id chain-id)
+    %_  state
+      contract   contract
+      chain-id   chain-id
+      endpoint   `endpoint.config
+    ==
   ::
       %setkey
     ?~  pk=(de:base16:mimes:html pk.config)
