@@ -947,7 +947,7 @@
     =/  onto  ?>(?=([%gall %onto *] syn) p.syn)
     ?-  -.onto
       %&  kiln
-      %|  (mean >p.onto< p.onto)
+      %|  (mean p.onto)
     ==
   ::
   ++  update-running-dudes
