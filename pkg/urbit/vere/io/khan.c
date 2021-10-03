@@ -3,7 +3,6 @@
 */
 #include <inttypes.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <uv.h>
