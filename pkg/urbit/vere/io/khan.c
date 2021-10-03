@@ -274,7 +274,11 @@ _khan_io_exit(u3_auto* car_u)
 {
   u3_khan*          kan_u = (u3_khan*)car_u;
 
-  {
+  if ( car_u->liv_o == c3n ) {
+    c3_free(car_u);
+    return;
+  }
+  else {
     c3_c*           pax_c = u3_Host.dir_c;
     c3_w            len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
     c3_c*           paf_c = c3_malloc(len_w);
@@ -288,19 +292,19 @@ _khan_io_exit(u3_auto* car_u)
       u3l_log("khan: failed to unlink socket: %s\n", uv_strerror(errno));
     }
     c3_free(paf_c);
-  }
 
-  {
-    u3_shan*        san_u = kan_u->san_u;
-    u3_chan*        can_u = san_u->can_u;
-    u3_chan*        nex_u;
+    {
+      u3_shan*        san_u = kan_u->san_u;
+      u3_chan*        can_u = san_u->can_u;
+      u3_chan*        nex_u;
 
-    while ( can_u ) {
-      nex_u = (u3_chan*)can_u->mor_u.nex_u;
-      u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
-      can_u = nex_u;
+      while ( can_u ) {
+        nex_u = (u3_chan*)can_u->mor_u.nex_u;
+        u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
+        can_u = nex_u;
+      }
+      uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
     }
-    uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
   }
 
   c3_free(kan_u);
