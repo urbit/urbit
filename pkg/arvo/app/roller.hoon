@@ -40,8 +40,7 @@
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
       ::  own: ownership of azimuth points
-      ::  derive-p: flag (derive predicted state)
-      ::  derive-o: flag (derive ownership state)
+      ::  derive: flag (derive predicted/ownership state)
       ::
       pending=(list pend-tx)
       sending=(map l1-tx-pointer sending-txs)
@@ -52,8 +51,7 @@
       next-batch=time
       pre=^state:naive
       own=owners
-      derive-p=?
-      derive-o=?
+      derive=?
     ::
       ::  pk: private key to send the roll
       ::  frequency: time to wait between sending batches (TODO fancier)
@@ -364,16 +362,10 @@
         [%predict ~]
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
+        =.  own.state  canonical-owners:do
         =^  effects  state
           (predicted-state canonical-state):do
-        [(emit effects) this(derive-p &)]
-      ==
-    ::
-        [%owners ~]
-      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
-          %wake
-        =.  own.state  canonical-owners:do
-        `this(derive-o &)
+        [(emit effects) this(derive &)]
       ==
     ::
         [%resend @ @ ~]
@@ -929,12 +921,12 @@
   :: ?.  not-sent  ~&  "skip"  [~ state]
   ::  toggle flush flag
   ::
-  :_  state(derive-p ?:(derive-p | derive-p))
+  :_  state(derive ?:(derive | derive))
   %+  weld  (emit update-cards)
-  ?.  derive-p  ~
-  ::  derive predicted state in 5m.
+  ?.  derive  ~
+  ::  derive predicted state in 1m.
   ::
-  [(wait:b:sys /predict (add ~m5 now.bowl))]~
+  [(wait:b:sys /predict (add ~m1 now.bowl))]~
 ::  +set-timer: %wait until next whole :frequency
 ::
 ++  set-timer
@@ -958,7 +950,7 @@
     ::  tx succeds but we get a "Runtime Error: revert"?
     ::
     =:  pending     ~
-        derive-p    &
+        derive      &
         next-nonce  `+(u.next-nonce)
       ::
           sending
@@ -1064,17 +1056,20 @@
 ++  on-naive-diff
   |=  =diff:naive
   ^-  (quip card _state)
-  ?:  ?=(%point -.diff)
-    :_  state(derive-o ?:(derive-o | derive-o))
-    ?.  derive-o  ~
-    ::  calculate ownership in 5m.
-    ::
-    [(wait:b:sys /owners (add ~m5 now.bowl))]~
-  ?.  ?=(%tx -.diff)
+  ?.  |(?=(%point -.diff) ?=(%tx -.diff))
     [~ state]
+  =;  [cards=(list card) =_state]
+    :_  state(derive ?:(derive | derive))
+    %+  weld  cards
+    ?.  derive  ~
+    ::  derive predicted/ownership state in 1m.
+    ::
+    [(wait:b:sys /predict (add ~m1 now.bowl))]~
+  ::
+  ?:  ?=(%point -.diff)  [~ state]
+  ?>  ?=(%tx -.diff)
   =/  =keccak  (hash-raw-tx:lib raw-tx.diff)
   ?~  wer=(~(get by finding) keccak)
-    ~?  lverb  [dap.bowl %missing-keccak]
     [~ state]
   ::  if we had already seen the tx, no-op
   ::
@@ -1120,12 +1115,6 @@
       ?~(err.diff %confirmed %failed)
     :-  [%tx address roller-tx]~
     (~(put ju history) [address roller-tx])
-  ::
-  :_  state(derive-p ?:(derive-p | derive-p))
-  %+  weld  (emit updates)
-  ?.  derive-p  ~
-  ::  derive predicted state in 5m.
-  ::
-  [(wait:b:sys /predict (add ~m5 now.bowl))]~
+  [(emit updates) state]
 ::
 --
