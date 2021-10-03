@@ -273,28 +273,44 @@ u3_serf_grab(void)
   c3_assert( u3R == &(u3H->rod_u) );
 
   {
-    u3_noun pax = u3nc(u3i_string("whey"), u3_nul);
-    u3_noun lyc = u3nc(u3_nul, u3_nul);
-    u3_noun sam = u3nt(lyc, c3n, u3nq(c3__once, u3_blip, u3_blip, pax));
-    u3_noun gon = u3m_soft(0, u3v_peek, sam);
-    u3_noun tag, dat, val;
-    u3x_cell(gon, &tag, &dat);
+    u3_noun sam, gon;
 
-    if (  (u3_blip == tag)
-       && (u3_nul  != dat)
-       && (c3y == u3r_pq(u3t(dat), c3__omen, 0, &val)) )
     {
-      u3r_p(val, c3__mass, &sac);
-      u3k(sac);
+      u3_noun pax = u3nc(c3__whey, u3_nul);
+      u3_noun lyc = u3nc(u3_nul, u3_nul);
+      sam = u3nt(lyc, c3n, u3nq(c3__once, u3_blip, u3_blip, pax));
+    }
+
+    gon = u3m_soft(0, u3v_peek, sam);
+
+    {
+      u3_noun tag, dat, val;
+      u3x_cell(gon, &tag, &dat);
+
+      if (  (u3_blip == tag)
+         && (u3_nul  != dat)
+         && (c3y == u3r_pq(u3t(dat), c3__omen, 0, &val))
+         && (c3y == u3r_p(val, c3__mass, &sac)) )
+      {
+        u3k(sac);
+      }
     }
 
     u3z(gon);
   }
 
   fprintf(stderr, "serf: measuring memory:\r\n");
-  //  XX refactor to fallback if sac is ~
-  //
-  _serf_grab(sac);
+
+  if ( u3_nul != sac ) {
+    _serf_grab(sac);
+  }
+  else {
+    u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
+    u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
+    u3a_print_memory(stderr, "sweep", u3a_sweep());
+    fprintf(stderr, "\r\n");
+  }
+
   fflush(stderr);
 }
 
