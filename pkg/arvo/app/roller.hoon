@@ -951,7 +951,14 @@
     ::
     =:  pending     ~
         derive      &
-        next-nonce  `+(u.next-nonce)
+        ::  this is moved to +on-batch-result so it's incremented only
+        ::  when we get a confirmation that thread has been sent succesfully
+        ::  otherwise we might get into a situation where the thread for
+        ::  nonce "n" is very slow at confirming (e.g. L1 nonce out of sync),
+        ::  and the next batch with nonce "n+1" goes into sending, which will
+        ::  mean that we can't guarantee which batch will be submitted first
+        ::
+        :: next-nonce  `+(u.next-nonce)
       ::
           sending
         %+  ~(put by sending)
@@ -1034,22 +1041,25 @@
   =?  sending  ?=(%& -.result)
     %+  ~(jab by sending)  [address nonce]
     (cork tail (lead p.result))
-  :_  state
   ?:  ?|  ?=(%& -.result)
           ?=([%| %error *] result)
       ==
+    :_  state(next-nonce `+(nonce))
     :_  ~
     ::  resend the l1 tx in five minutes
     ::
     %+  wait:b:sys
       /resend/(scot %ux address)/(scot %ud nonce)
     (add resend-time now.bowl)
-  ?>  ?=(%not-sent -.p.result)
-  ::  this only accounts for the case where the nonce is out of sync
-  ::  reaching this because of lower funds, needs to be addressed manually
-  ::  by the roller operator
+  ::  TODO: this only accounts for the case where the nonce is out of sync
+  ::  reaching this because of lower funds needs to be addressed manually
   ::
+  ?>  ?=(%not-sent -.p.result)
   ~?  lverb  [dap.bowl p.result]
+  ::  new txs that come in will remain in pending
+  ::  until the newest nonce is retrieved
+  ::
+  :_  state(next-nonce ~)
   (get-nonce pk.state /refresh-nonce)
 ::  +on-naive-diff: process l2 tx confirmations
 ::
