@@ -399,6 +399,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
 
   c3_c* dir_c = argv[2];
 
+  u3C.wag_w |= u3o_hashless;
   u3m_boot(dir_c);
 
   u3_serf_grab();
