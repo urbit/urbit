@@ -1,6 +1,7 @@
 /* vere/khan.c
 **
 */
+#include <inttypes.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -11,13 +12,12 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* u3_chan: incoming control plane connection.
+/* u3_chan: incoming control plane connection. used as u3_shan->mor_u's ptr_v.
 */
   typedef struct _u3_chan {
-    struct _u3_moat   mot_u;            //  inbound message stream
+    struct _u3_moor   mor_u;            //  message handler
     c3_w              coq_l;            //  connection number
     struct _u3_shan*  san_u;            //  server backpointer
-    struct _u3_chan*  nex_u;            //  next in list
   } u3_chan;
 
 /* u3_shan: control plane server.
@@ -37,18 +37,6 @@
   } u3_khan;
 
 static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
-
-/* _khan_alloc(): libuv-style allocator.
-*/
-static void
-_khan_alloc(uv_handle_t* had_u,
-            size_t len_i,
-            uv_buf_t* buf_u)
-{
-  void* ptr_v = c3_malloc(len_i);
-
-  *buf_u = uv_buf_init(ptr_v, len_i);
-}
 
 /* _khan_close_cb(): socket close callback.
 */
@@ -105,6 +93,18 @@ _khan_read_cb(uv_stream_t* cli_u, ssize_t red_i, const uv_buf_t* buf_u)
   // socket, keeping one in text mode, and sending a 0x80 over the other.
 }
 
+static void
+_khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
+{
+  u3l_log("khan: poke called %p %" PRIu64 " %s\n", ptr_v, len_d, byt_y);
+}
+
+static void
+_khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
+{
+  u3l_log("khan: bail called %p %zd %s\n", ptr_v, err_i, err_c);
+}
+
 /* _khan_conn_cb(): socket connection callback.
 */
 static void
@@ -116,25 +116,20 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   c3_i      err_i;
 
   can_u = c3_calloc(sizeof(u3_chan));
+  can_u->mor_u.ptr_v = can_u;
+  can_u->mor_u.pok_f = _khan_moor_poke;
+  can_u->mor_u.bal_f = _khan_moor_bail;
+  // XX maybe want mug(now) or something
   can_u->coq_l = ( san_u->can_u ) ? 1 + san_u->can_u->coq_l : 0;
   can_u->san_u = san_u;
-  if ( 0 != (err_i = uv_pipe_init(u3L, &can_u->mot_u.pyp_u, 0)) ) {
-    u3l_log("khan: client init failed: %s\n", uv_strerror(err_i));
-    c3_free(can_u);
-    u3_king_bail();
-  }
-  if ( 0 != (err_i = uv_accept(sem_u, (uv_stream_t*)&can_u->mot_u.pyp_u)) ) {
-    u3l_log("khan: accept: %s\n", uv_strerror(err_i));
-    c3_free(can_u);
-    u3_king_bail();
-  }
-  if ( 0 != (err_i = uv_read_start((uv_stream_t*)&can_u->mot_u.pyp_u,
-                                   _khan_alloc, _khan_read_cb)) ) {
-    u3l_log("khan: uv_read_start: %s\n", uv_strerror(err_i));
-    uv_close((uv_handle_t*)&can_u->mot_u.pyp_u, _khan_close_cb);
-    u3_king_bail();
-  }
-  can_u->nex_u = san_u->can_u;
+  err_i = uv_timer_init(u3L, &can_u->mor_u.tim_u);
+  c3_assert(!err_i);
+  err_i = uv_pipe_init(u3L, &can_u->mor_u.pyp_u, 0);
+  c3_assert(!err_i);
+  err_i = uv_accept(sem_u, (uv_stream_t*)&can_u->mor_u.pyp_u);
+  c3_assert(!err_i);
+  u3_newt_read_sync((u3_moat*)&can_u->mor_u);
+  can_u->mor_u.nex_u = (u3_moor*)san_u->can_u;
   san_u->can_u = can_u;
 }
 
@@ -266,16 +261,10 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   return ret_o;
 }
 
-/* _khan_shutdown_cb(): close handle.
-*/
 static void
-_khan_shutdown_cb(uv_shutdown_t* req_u, c3_i sas_i)
+_khan_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
-  if ( sas_i < 0 ) {
-    u3l_log("khan: shutdown: %s\n", uv_strerror(sas_i));
-  }
-  uv_close((uv_handle_t*)req_u->handle, _khan_close_cb);
-  c3_free(req_u);
+  c3_free(ptr_v);
 }
 
 /* _khan_io_exit(): unlink socket, shut down connections.
@@ -304,17 +293,12 @@ _khan_io_exit(u3_auto* car_u)
   {
     u3_shan*        san_u = kan_u->san_u;
     u3_chan*        can_u = san_u->can_u;
-    uv_shutdown_t*  req_u;
-    c3_i            err_i;
+    u3_chan*        nex_u;
 
     while ( can_u ) {
-      req_u = c3_malloc(sizeof(*req_u));
-      if ( 0 != (err_i = uv_shutdown(req_u, (uv_stream_t*)&can_u->mot_u.pyp_u,
-                                     _khan_shutdown_cb)) ) {
-        u3l_log("khan: shutdown chan %p: %s\n", can_u, uv_strerror(err_i));
-        // XX what to do?
-      }
-      can_u = can_u->nex_u;
+      nex_u = (u3_chan*)can_u->mor_u.nex_u;
+      u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
+      can_u = nex_u;
     }
     uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
   }
