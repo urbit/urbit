@@ -33,6 +33,7 @@
     u3_auto           car_u;            //  driver
     c3_l              sev_l;            //  instance number
     struct _u3_shan*  san_u;            //  server reference
+    u3_cue_xeno*      sil_u;            //  cue handle
   } u3_khan;
 
 static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
@@ -45,63 +46,27 @@ _khan_close_cb(uv_handle_t* had_u)
   c3_free(had_u);
 }
 
-/* _khan_read_cb(): socket read callback.
-*/
 static void
-_khan_read_cb(uv_stream_t* cli_u, ssize_t red_i, const uv_buf_t* buf_u)
+_khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
-  u3l_log("khan: read %zd\n", red_i);
-  // TODO interact
-  //
-  // There are four cases to think about here:
-  //
-  // 1. peek, runtime
-  // 2. poke, runtime
-  // 3. peek, arvo
-  // 4. poke, arvo
-  //
-  // For 1, the driver itself parses and responds to a few basic text-mode
-  // commands:
-  // `ok`:   driver responds with "ok\n" (basic health test)
-  // `dump`: dumps runtime stat counters in simple machine/human-readable format
-  //
-  // There is not yet a use case for 2.
-  //
-  // For 3 and 4, we speak a binary protocol using jammed nouns, as (to be)
-  // documented in pkg/arvo/sys/vane/khan.hoon.
-  //
-  // The transition to arvo is signalled by a 0x80 (i.e. byte with MSB high) at
-  // the start of a line (i.e. as first character, or immediately following a
-  // '\n'.) Everything after that is simply forwarded to arvo, and responses
-  // forwarded back, for the rest of the duration of the connection.
-  //
-  // Some alternate protocol designs:
-  //
-  // a. Forward everything to arvo.
-  // b. Add a command that sends a single-shot jammed noun, which receives a
-  //    single-shot response.
-  // c. Listen on two or more different sockets.
-  //
-  // (a) is undesirable since we don't want to sync the runtime stats with
-  // arvo. Continuous sync would add unnecessary load, and on-demand sync would
-  // add unnecessary implementation complexity in the form of extra round-trips
-  // between arvo and the runtime. (b) is probably fine, but I'm not smart
-  // enough to know how to tell from the runtime when a jammed noun has
-  // finished sending without base64-encoding it or something. (c) is tedious;
-  // the same effect can be achieved by just opening two connections to the
-  // socket, keeping one in text mode, and sending a 0x80 over the other.
+  u3l_log("khan: bail called %p %zd %s\n", ptr_v, err_i, err_c);
 }
 
 static void
 _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
-  u3l_log("khan: poke called %p %" PRIu64 " %s\n", ptr_v, len_d, byt_y);
-}
+  u3_weak   jar;
+  u3_chan*  can_u = (u3_chan*)ptr_v;
+  u3_khan*  kan_u = can_u->san_u->kan_u;
 
-static void
-_khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
-{
-  u3l_log("khan: bail called %p %zd %s\n", ptr_v, err_i, err_c);
+  u3l_log("khan: poke called %p %" PRIu64 " %s\n", ptr_v, len_d, byt_y);
+  jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
+
+  if ( u3_none == jar ) {
+    _khan_moor_bail(ptr_v, -1, "bad jar");
+    // TODO handle runtime peek/poke
+    // TODO send noun to %khan
+  }
 }
 
 /* _khan_conn_cb(): socket connection callback.
@@ -273,11 +238,7 @@ _khan_io_exit(u3_auto* car_u)
 {
   u3_khan*          kan_u = (u3_khan*)car_u;
 
-  if ( car_u->liv_o == c3n ) {
-    c3_free(car_u);
-    return;
-  }
-  else {
+  if ( car_u->liv_o == c3y ) {
     c3_c*           pax_c = u3_Host.dir_c;
     c3_w            len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
     c3_c*           paf_c = c3_malloc(len_w);
@@ -306,6 +267,7 @@ _khan_io_exit(u3_auto* car_u)
     }
   }
 
+  u3s_cue_xeno_done(kan_u->sil_u);
   c3_free(kan_u);
 }
 
@@ -317,6 +279,7 @@ u3_khan_io_init(u3_pier* pir_u)
   u3_khan* kan_u = c3_calloc(sizeof(*kan_u));
   u3_auto* car_u = &kan_u->car_u;
 
+  kan_u->sil_u = u3s_cue_xeno_init();
   car_u->nam_m = c3__khan;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _khan_io_talk;
