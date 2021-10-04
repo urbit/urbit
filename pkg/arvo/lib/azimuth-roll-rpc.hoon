@@ -63,7 +63,7 @@
           %-  ot
           :~  ['encrypt' (cu to-hex so)]
               ['auth' (cu to-hex so)]
-              ['cryptoSuite' so]
+              ['cryptoSuite' (su dem)]
               ['breach' bo]
           ==
         ::
@@ -289,7 +289,7 @@
                 :-  'keys'
                 %-  pairs
                 :~  ['life' s+(json-number life.keys.net)]
-                    ['suite' s+`@t`suite.keys.net]
+                    ['suite' s+(json-number suite.keys.net)]
                     ['auth' (hex 32 auth.keys.net)]
                     ['crypt' (hex 32 crypt.keys.net)]
                 ==
