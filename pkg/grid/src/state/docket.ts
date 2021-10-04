@@ -19,7 +19,8 @@ import {
   docketInstall,
   ChargeUpdate,
   kilnRevive,
-  kilnSuspend
+  kilnSuspend,
+  allyShip
 } from '@urbit/api';
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
@@ -50,6 +51,8 @@ interface DocketState {
   toggleDocket: (desk: string) => Promise<void>;
   installDocket: (ship: string, desk: string) => Promise<number | void>;
   uninstallDocket: (desk: string) => Promise<number | void>;
+  //
+  addAlly: (ship: string) => Promise<void>;
 }
 
 const useDocketState = create<DocketState>((set, get) => ({
@@ -151,6 +154,12 @@ const useDocketState = create<DocketState>((set, get) => ({
   treaties: useMockData ? normalizeDockets(mockTreaties) : {},
   charges: {},
   allies: useMockData ? mockAllies : {},
+  addAlly: async (ship) => {
+    get().set((draft) => {
+      draft.allies[ship] = [];
+    });
+    await api.poke(allyShip(ship));
+  },
   set
 }));
 
@@ -195,6 +204,35 @@ api.subscribe({
       }
 
       return { charges: state.charges };
+    });
+  }
+});
+
+api.subscribe({
+  app: 'treaty',
+  path: '/treaties',
+  event: (data: TreatyUpdate) => {
+    console.log(data);
+
+    useDocketState.getState().set((draft) => {
+      if ('add' in data) {
+        const { ship, desk } = data.add;
+        const treaty = normalizeDocket(data.add, desk);
+        draft.treaties[`${ship}/${desk}`] = treaty;
+      }
+    });
+  }
+});
+
+api.subscribe({
+  app: 'treaty',
+  path: '/allies',
+  event: (data: TreatyUpdate) => {
+    useDocketState.getState().set((draft) => {
+      if ('new' in data) {
+        const { ship, alliance } = data.new;
+        draft.allies[ship] = alliance;
+      }
     });
   }
 });
