@@ -246,15 +246,32 @@
         |=  [group=resource =associations:store]
         =/  assocs=(list [=md-resource:store grp=resource =metadatum:store])
           ~(tap by associations)
-        :-  (send-diff:mc %initial-group group associations)
+        =/  old-resources=(set md-resource:store)  (~(get ju group-indices) group)
+        =/  cur-resources=(set md-resource:store)  ~(key by associations)
+        =.  state   (remove-gone group (~(dif in old-resources) cur-resources))
         |-
         ?~  assocs
-          state
+          :_  state
+          (send-diff:mc %initial-group group associations)
         =,  assocs
         ?>  =(group grp.i)
         =^  cards  state
           (handle-add group [md-resource metadatum]:i)
         $(assocs t)
+      ::
+      ++  remove-gone
+        |=  [group=resource gone=(set md-resource:store)]
+        ^+  state
+        %+  roll  ~(tap in gone)
+        |=  [=md-resource:store out=_state]
+        %_  out
+          associations      (~(del by associations.out) md-resource)
+          group-indices     (~(del ju group-indices.out) group md-resource)
+          resource-indices  (~(del by resource-indices.out) md-resource)
+          ::
+            app-indices
+          (~(del ju app-indices.out) app-name.md-resource group resource.md-resource)
+        ==
       --
     ::
     ++  poke-import
