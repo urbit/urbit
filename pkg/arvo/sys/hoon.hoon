@@ -1903,7 +1903,7 @@
   ::                                                    ::
   ::
 ++  up
-  ~%  %up  ..up  ~
+  ~/  %up
   |*  [k=mold v=mold]
   =>
   ::  molds and mold builders
@@ -1957,13 +1957,6 @@
     ^-  ?
     ?:  =(p q)
       (lth k l)
-    (lth p q)
-  ::
-  ++  lux                                               ::  lexicographic order
-    |=  [[p=@ k=k] [q=@ l=k]]                           ::  [atom noun]
-    ^-  ?
-    ?:  =(p q)
-      (gor k l)
     (lth p q)
   ::
   ++  fuse                                              ::  disjoint tree merge
@@ -2356,8 +2349,7 @@
       ?~  ped
         ~
       `[p.u.ped q.u.ped]
-    =/  bee=(unit (pair @ buc))
-      (ins pav)
+    =/  bee  (ins pav)
     ?~  bee  a
     (raw:qat a h p.u.bee q.u.bee)
     ::
@@ -2425,34 +2417,33 @@
 ++  lu                                                  ::  +pest logic
   ~/  %lu
   |*  [k=mold v=mold]
-  =>
-  |%
-  +$  pest  [cap=_`@`10.000 siz=@ tic=@ pri=(pry k v)]  ::  lru cache
-  ++  hoop  (up k v)
-  --
   ::
-  ~%  %core  ..$  ~
+  ~/  %core
   |%
+  +$  pes  [cap=_`@`10.000 siz=@ tic=@ pri=(pry k v)]   ::  lru cache
+  ::
+  ++  cor  (up k v)
+  ::
   ++  new                                               ::  new cache
     ~/  %new
     |=  cap=@
-    ^-  pest
+    ^-  pes
     [cap 0 0 ~]
   ::
   ++  ebb                                               ::  trim cache
     ~/  %ebb
-    |=  a=pest
-    ?:  (gte tic.a 0xffff.ffff.ffff.ffff)
+    |=  a=pes
+    ?:  (gte tic.a 0x7fff.ffff.ffff.ffff)
       (new cap.a)
     ?:  (gth siz.a cap.a)
-      a(siz (dec siz.a), pri (cut:hoop pri.a))
+      a(siz (dec siz.a), pri (cut:cor pri.a))
     a
   ::
   ++  put                                               ::  insert
     ~/  %put
-    |=  [a=pest =k =v]
-    ^-  pest
-    =/  vue  (gun:hoop pri.a k tic.a v)
+    |=  [a=pes =k =v]
+    ^-  pes
+    =/  vue  (gun:cor pri.a k tic.a v)
     %-  ebb
     %_  a
       siz  ?~(p.vue +(siz.a) siz.a)
@@ -2462,9 +2453,9 @@
   ::
   ++  get                                               ::  lookup and pri bump
     ~/  %get
-    |=  [a=pest =k]
-    ^-  (unit (pair v pest))
-    =/  val  (see:hoop pri.a k tic.a)
+    |=  [a=pes =k]
+    ^-  (unit (pair v pes))
+    =/  val  (see:cor pri.a k tic.a)
     ?~  p.val  ~
     %-  some
     :-  q.u.p.val
@@ -2506,9 +2497,9 @@
 ::
 ++  pest                                                ::  lru cache
   |*  [k=mold v=mold]
-  |:  a=`*`*pest:$:lu
+  |:  a=`*`*pes:$:lu
   =/  cor  (lu k v)
-  ;;(pest:cor a)
+  ;;(pes:cor a)
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
