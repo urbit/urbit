@@ -112,7 +112,8 @@ function updateNotificationStats(state: HarkState, place: HarkPlace, f: (s: Hark
 function seenIndex(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'saw-place');
   if(data) {
-    updateNotificationStats(state, data, s => ({ last: Date.now() }));
+    const last = data?.time || Date.now();
+    updateNotificationStats(state, data.place, s => ({ last }));
   }
   return state;
 }
