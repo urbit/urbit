@@ -666,7 +666,6 @@
       ?~  update-log  *update-log:store
       =*  start  i.t.t.t.t.t.path
       =*  end    i.t.t.t.t.t.t.path
-      ?~  update-log  *update-log:store
       %^  lot:orm-log
           u.update-log
         (slaw %da start)
