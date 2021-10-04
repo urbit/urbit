@@ -10,5 +10,6 @@
 ++  grab
   |%
   ++  noun  update:ally
+  ++  json  ally-update:dejs:treat
   --
 --

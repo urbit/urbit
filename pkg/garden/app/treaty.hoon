@@ -46,7 +46,7 @@
     =+  ;;([%add =desk] q.vase)
     =/  =docket:docket  ~(get-docket so:cc desk)
     =/  =treaty  (treaty-from-docket:cc desk docket)
-    =.  sovereign  (~(put by sovereign) desk treaty)
+    =.  sovereign  (~(del by sovereign) desk treaty)
     `this
   ==
   ::
@@ -78,7 +78,7 @@
       =/  =treaty  (treaty-from-docket:cc desk docket)
       =.  sovereign  (~(put by sovereign) desk treaty)
       :_  this
-      ~[publish warp give]:so
+      [publish warp give]:so
     ::
         %del
       =,  update
@@ -105,6 +105,9 @@
     ?>  =(our.bowl src.bowl)
     =.  direct  (~(put in direct) [ship desk])
     :_(this (drop ~(safe-watch tr:cc [ship desk])))
+    ::
+      [%treaties ~]
+    `this
     ::
       [%alliance ~]
     :_  this
@@ -195,6 +198,7 @@
   ::
   ++  take-treaty
     |=  =desk
+    =*  tr   ~(. tr:cc ship desk)
     ?+  -.sign  (on-agent:def wire sign)
     ::
     :: rewatch only if we aren't source
@@ -202,8 +206,8 @@
     ::
         %kick   
       :_  this
-      ?:  =(our.bowl src.bowl)  ~
-      ~(watch tr:cc ship desk)^~
+      ?:  =(our.bowl ship)  ~
+      ~[watch:tr]
     ::
         %watch-ack
       ?~  p.sign  `this
@@ -211,15 +215,15 @@
           direct    (~(del in direct) ship desk)
         ==
       %-  (slog leaf+"Withdrew from treaty {<ship>}/{<desk>}" u.p.sign)
-      :_  this
-      (kick-only:io our.bowl /treaty/(scot %p ship)/[desk] ~)^~
+      [gone:tr this]
+
     ::
         %fact
       ?.  =(%treaty-0 p.cage.sign)  `this
       =+  !<(=treaty q.cage.sign)
       ?>  =([ship desk] [ship desk]:treaty)
       =.  treaties  (~(put by treaties) [ship desk]:treaty treaty)
-      [~(give tr ship desk)^~ this]
+      [give:tr this]
     ==
   --
 ::
@@ -249,7 +253,7 @@
     =/  =treaty  (treaty-from-docket:cc desk docket)
     =.  sovereign  (~(put by sovereign) desk treaty)
     =*  so  ~(. so:cc desk)
-    :_(this [give warp ~]:so)
+    :_(this [warp give]:so)
   --
 
 ::
@@ -298,9 +302,17 @@
   ++  watching  (~(has by wex.bowl) [path dock])
   ++  safe-watch  `(unit card)`?:(|(watching =(our.bowl ship)) ~ `watch)
   ++  leave  (leave:pass dock)
+  ++  gone   
+    ^-  (list card)
+    :~  (fact:io (treaty-update:cg %del ship desk) /treaties ~)
+        (kick-only:io our.bowl path ~)
+    ==
   ++  give  
+    ^-  (list card)
     =/  t=treaty  (~(got by treaties) ship desk)
-    (fact:io (treaty:cg t) /treaties path ~)
+    :~  (fact:io (treaty-update:cg %add t) /treaties ~)
+        (fact:io (treaty:cg t) path ~)
+    ==
   --
 ::  +so: engine for sovereign treaties
 ++  so
@@ -314,8 +326,11 @@
   ++  kick
     (kick:io path ~)
   ++  give
+    ^-  (list card)
     =/  t=treaty  (~(got by sovereign) desk)
-    (fact:io (treaty:cg t) /sovereign path ~)
+    :~  (fact:io (treaty-update:cg %add t) /treaties ~)
+        (fact:io (treaty:cg t) path ~)
+    ==
   ++  publish
     (poke-our:pass %hood kiln-permission+!>([desk / &]))
   --
