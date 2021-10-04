@@ -1,4 +1,4 @@
-name: proto
+name: urbit-proto
 version: 0.1.0
 license: MIT
 license-file: LICENSE
@@ -75,7 +75,7 @@ executables:
     main: Main.hs
     source-dirs: app
     dependencies:
-      - proto
+      - urbit-proto
     ghc-options:
       - -threaded
       - -rtsopts
