@@ -117,7 +117,7 @@
   ::
   ++  check-all
     =>  (lib-hooks-desync %group scry-groups)
-    =>  (lib-hooks-desync %graph get-keys:gra)
+    =>  (lib-hooks-desync %graph scry-graphs)
     =>  (lib-hooks-desync %metadata scry-groups)
     =>  contacts
     metadata
@@ -240,6 +240,19 @@
   %+  scry
     ,(set resource)
   /x/[hook]/sharing/noun
+::
+++  scry-graphs
+  =+  .^   app-indices=(jug term [resource resource])
+        %gy
+        (scot %p our.bowl)
+        %metadata-store
+        (scot %da now.bowl)
+        /app-indices
+      ==
+  =/  resources=(set [resource resource])
+    (~(get ju app-indices) %graph)
+  %-  ~(int in get-keys:gra)
+  (~(gas in *(set resource)) (turn ~(tap in resources) |=([resource r=resource] r)))
 ::
 ++  md-group-indices
   (scry (jug resource md-resource) /y/metadata-store/group-indices)

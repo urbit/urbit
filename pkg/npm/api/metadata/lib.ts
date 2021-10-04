@@ -1,5 +1,5 @@
-import { AppName, Path, Poke, uxToHex, PatpNoSig } from '../lib';
-import { Association, Metadata, MetadataUpdate, MetadataUpdateAdd, MetadataUpdateRemove, MetadataEditField, MetadataUpdateEdit } from './types';
+import { Path, Poke, uxToHex, PatpNoSig } from '../lib';
+import { MdAppName, Association, Metadata, MetadataUpdate, MetadataUpdateAdd, MetadataUpdateRemove, MetadataEditField, MetadataUpdateEdit } from './types';
 
 export const METADATA_UPDATE_VERSION = 2;
 
@@ -11,7 +11,7 @@ export const metadataAction = <T extends MetadataUpdate>(data: T, version: numbe
 
 export const add = (
   ship: PatpNoSig,
-  appName: AppName,
+  appName: MdAppName,
   resource: Path,
   group: Path,
   title: string,
@@ -44,10 +44,10 @@ export const add = (
 export { add as metadataAdd };
 
 export const remove = (
-  appName: AppName,
+  appName: MdAppName,
   resource: string,
   group: string
-): Poke<MetadataUpdateRemove> => metadataAction({
+): Poke<MetadataUpdateRemove> => metadataAction<MetadataUpdateRemove>({
   remove: {
     group,
     resource: {
@@ -62,7 +62,7 @@ export { remove as metadataRemove };
 export const edit = (
   association: Association,
   edit: MetadataEditField
-): Poke<MetadataUpdateEdit> => metadataAction({
+): Poke<MetadataUpdateEdit> => metadataAction<MetadataUpdateEdit>({
   edit: {
     group: association.group,
     resource: {
@@ -84,7 +84,7 @@ export const update = (
 ): Poke<MetadataUpdateAdd> => {
   const metadata = { ...association.metadata, ...newMetadata };
     metadata.color = uxToHex(metadata.color);
-    return metadataAction({
+    return metadataAction<MetadataUpdateAdd>({
       add: {
         group: association.group,
         resource: {

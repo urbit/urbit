@@ -651,7 +651,7 @@
     :-  ~  :-  ~  :-  %noun
     !>
     ?+    t.t.t.t.path  (on-peek:def path)
-        ~  
+        ~
       ^-  update-log:store
       ?~(update-log *update-log:store u.update-log)
     ::
@@ -666,6 +666,7 @@
       ?~  update-log  *update-log:store
       =*  start  i.t.t.t.t.t.path
       =*  end    i.t.t.t.t.t.t.path
+      ?~  update-log  *update-log:store
       %^  lot:orm-log
           u.update-log
         (slaw %da start)
@@ -681,7 +682,7 @@
     =*  graph  p.u.marked-graph
     =*  mark   q.u.marked-graph
     ?+    t.t.t.t.path  (on-peek:def path)
-        ~  
+        ~
       :-  ~  :-  ~  :-  mar
       !>(`update:store`[now.bowl [%add-graph [ship term] graph mark %.y]])
     ::
