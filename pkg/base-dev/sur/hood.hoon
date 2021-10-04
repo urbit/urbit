@@ -65,6 +65,7 @@
   =+  .^  raz=(list vat)
           %gx  /(scot %p our)/hood/(scot %da now)/kiln/vats/noun
       ==
+  :-  (report-kids our now)
   (turn raz |=(v=vat (report-vat our now v)))
 ::  +report-vat: report on a single desk installation
 ::
@@ -103,6 +104,18 @@
       leaf/"source aeon:      {?~(rail.arak <~> <aeon.u.rail.arak>)}"
       leaf/"pending updates:  {pen}"
   ==
+::  +report-kids: non-vat cz hash report for kids desk
+::
+++  report-kids
+  |=  [our=ship now=@da]
+  ^-  tank
+  =/  dek  %kids
+  =/  ego  (scot %p our)
+  =/  wen  (scot %da now)
+  ?.  (~(has in .^((set desk) %cd /[ego]//[wen])) dek)
+    leaf/"no %kids desk"
+  =+  .^(hash=@uv %cz /[ego]/[dek]/[wen])
+  leaf/"%kids %cz hash:     {<hash>}"
 ::  +read-kelvin-foreign: read /sys/kelvin from a foreign desk
 ::
 ++  read-kelvin-foreign
