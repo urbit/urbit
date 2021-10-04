@@ -391,7 +391,7 @@
 ++  cg
   |%
   ++  glob            |=(g=^glob glob-0+!>(g))
-  ++  docket          |=(d=^docket docket-0+!>(docket))
+  ++  docket          |=(d=^docket docket-0+!>(d))
   ++  charge-update   |=(u=^charge-update charge-update+!>(u))
   ++  kiln-uninstall  |=(=desk kiln-uninstall+!>(desk))
   ++  kiln-install
