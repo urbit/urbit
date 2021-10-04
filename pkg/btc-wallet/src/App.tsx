@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const blur = !loaded || scanning ? false : !(wallet && provider);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/apps/bitcoin">
       <ThemeProvider theme={light}>
         <Reset />
         {loaded && !scanning ? <StartupModal /> : null}

@@ -1,11 +1,9 @@
-import { Box, Center, Col, LoadingSpinner, Text, Icon } from '@tlon/indigo-react';
+import { Col } from '@tlon/indigo-react';
 import {
     IndexedNotification,
-
-    JoinRequests, Notifications,
-
+    JoinRequests,
+    Notifications,
     seen,
-
     Timebox,
     unixToDa
 } from '@urbit/api';
@@ -13,10 +11,8 @@ import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import moment from 'moment';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { getNotificationKey } from '~/logic/lib/hark';
-import { useLazyScroll } from '~/logic/lib/useLazyScroll';
-import useLaunchState from '~/logic/state/launch';
 import { daToUnix } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
 import { Invites } from './invites';
@@ -59,8 +55,6 @@ export default function Inbox(props: {
     };
   }, []);
 
-  const runtimeLag = useLaunchState(state => state.runtimeLag);
-
   const ready = useHarkState(
     s => Object.keys(s.unreads.graph).length > 0
   );
@@ -95,50 +89,11 @@ export default function Inbox(props: {
     })
   );
 
-  const scrollRef = useRef(null);
-
-  const { isDone, isLoading } = useLazyScroll(
-    scrollRef,
-    ready,
-    0.2,
-    _.flatten(notifications).length,
-    getMore
-  );
   const date = unixToDa(Date.now());
 
   return (
-    <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
-      {runtimeLag && (
-        <Box bg="yellow" borderRadius={2} p={2} m={2}>
-          <Icon verticalAlign="middle" mr={2} icon="Tutorial" />
-          <Text verticalAlign="middle">
-            Update your binary to continue receiving updates.
-          </Text>
-        </Box>
-      )}
+    <Col p={1} position="relative" height="100%" overflowY="auto" overflowX="hidden">
       <Invites pendingJoin={props.pendingJoin} />
-      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} />
-      {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
-        const timeboxes = notificationsByDayMap.get(day)!;
-        return timeboxes.length > 0 && (
-          <DaySection
-            key={day}
-            timeboxes={timeboxes}
-          />
-        );
-      })}
-      {isDone ? (
-        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
-          <Text gray fontSize={1}>No more notifications</Text>
-        </Center>
-    )  : isLoading ? (
-        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
-          <LoadingSpinner />
-        </Center>
-    ) : (
-      <Box mt={2} height="96px" />
-    )}
-
     </Col>
   );
 }

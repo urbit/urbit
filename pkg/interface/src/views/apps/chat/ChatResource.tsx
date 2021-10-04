@@ -11,12 +11,13 @@ import { isWriter, resourceFromPath } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
 import { useGroupForAssoc } from '~/logic/state/group';
-import useHarkState from '~/logic/state/hark';
+import useHarkState, { useHarkStat } from '~/logic/state/hark';
 import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
 import airlock from '~/logic/api';
 import { disallowedShipsForOurContact } from '~/logic/lib/contact';
 import shallow from 'zustand/shallow';
+import { toHarkPath } from '~/logic/lib/util';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
@@ -35,9 +36,8 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const [toShare, setToShare] = useState<string[] | string | undefined>();
   const group = useGroupForAssoc(association)!;
   const graph = useGraphForAssoc(association);
-  const unreads = useHarkState(state => state.unreads);
-  const unreadCount =
-    (unreads.graph?.[resource]?.['/']?.unreads as number) || 0;
+  const stats = useHarkStat(toHarkPath(association.resource));
+  const unreadCount = stats.count;
   const canWrite = group ? isWriter(group, resource) : false;
   const [
     getNewest,
@@ -94,8 +94,8 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
     [group]
   );
 
-  const fetchMessages = useCallback(async (newer: boolean) => {
-    const pageSize = 100;
+const fetchMessages = useCallback(async (newer: boolean) => {
+  const pageSize = 100;
 
     const [, , ship, name] = resource.split('/');
     const graphSize = graph?.size ?? 0;
@@ -140,7 +140,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   }, [resource]);
 
   const dismissUnread = useCallback(() => {
-    useHarkState.getState().readCount(association.resource);
+    useHarkState.getState().readCount(toHarkPath(association.resource));
   }, [association.resource]);
 
   const getPermalink = useCallback(

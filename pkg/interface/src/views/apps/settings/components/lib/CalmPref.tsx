@@ -57,7 +57,7 @@ export function CalmPrefs() {
               CalmEngine
             </Text>
             <Text gray>
-              Modulate various elements across Landscape to maximize calmness
+              Modulate various elements across Groups to maximize calmness
             </Text>
           </Col>
           <Text fontWeight="medium">Home screen</Text>

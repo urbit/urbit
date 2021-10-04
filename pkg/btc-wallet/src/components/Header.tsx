@@ -7,7 +7,7 @@ const Header = ({ settings }: { settings: boolean }) => {
   const { provider } = useSettings();
   let icon = settings ? 'X' : 'Adjust';
   let iconColor = settings ? 'black' : 'orange';
-  let iconLink = settings ? '/~btc' : '/~btc/settings';
+  let iconLink = settings ? '/' : '/settings';
 
   let connection = null;
   let badge = null;
