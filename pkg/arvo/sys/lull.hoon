@@ -2090,6 +2090,39 @@
     +$  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+::                                                      ::::
+::::                    ++khan                            ::  (1k) control plane
+  ::                                                    ::::
+++  khan  ^?
+  |%
+  +$  socket-config                                     :: activates and sets up vane
+    $:
+        active=?
+        clients=(list term)
+    ==
+  +$  socket-event
+    $:
+        %socket-done  data=*                            :: done
+    ==
+  +$  gift                                              ::  out result <-$
+    $%  [%avow syn=sign-arvo]                           ::  response to %fyrd
+        [%set-config =socket-config]
+        [%response =socket-event]
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]
+    $%
+        [%fyrd p=fyrd]                                  ::  jammed requests
+        $>(%vega vane-task)                             :: vega
+        $>(%trim vane-task)
+        $>(%born vane-task)
+    ==
+  +$  fyrd                                              ::  input
+    $%  [%mas ~]                                        ::  |mass
+        [%cod ?]                                        ::  code reset
+    ==                                                  ::
+
+  --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2101,6 +2134,7 @@
       gift:gall
       gift:iris
       gift:jael
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2111,6 +2145,7 @@
       task:gall
       task:iris
       task:jael
+      task:khan
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2122,6 +2157,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%k task:khan]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -2130,7 +2166,7 @@
 +$  sign-arvo                                           ::  in result $<-
   $%  [%ames gift:ames]
       $:  %behn
-          $%  gift:behn
+          $%  gift:behn                                 ::
               $>(%wris gift:clay)
               $>(%writ gift:clay)
               $>(%mere gift:clay)
@@ -2143,6 +2179,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
+      [%khan gift:khan]                                 ::khan gifts
   ==
 ::  $unix-task: input from unix
 ::
@@ -2161,6 +2198,7 @@
       ::
       $>(%born vane-task)
       ::  %eyre: cancel request
+      ::
       ::
       [%cancel-request ~]
       ::  %dill: reset terminal configuration

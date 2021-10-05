@@ -1679,6 +1679,7 @@
     %g  %gall
     %i  %iris
     %j  %jael
+    %k  %khan
   ==
 --  =>
 ::

@@ -46,6 +46,7 @@ in pkgsLocal.hs.shellFor {
 
   # Haskell tools to make available on the shell's PATH.
   tools = {
+    cabal = "3.2.0.0";
     shellcheck = "0.7.1";
     ormolu = "0.1.3.0";
   };
@@ -56,6 +57,7 @@ in pkgsLocal.hs.shellFor {
     pkgs.nixfmt
     pkgs.shfmt
     pkgs.stack
+    pkgs.haskell-language-server
     (import pkgs.sources.niv { }).niv
   ] ++ mergeFrom "buildInputs";
 

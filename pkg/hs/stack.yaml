@@ -23,6 +23,7 @@ extra-deps:
 # This allows building on NixOS.
 nix:
   packages:
+    - lmdb
     - pkgconfig
     - zlib
 
