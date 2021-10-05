@@ -501,7 +501,7 @@ const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 export function getItemTitle(association: Association): string {
   if (DM_REGEX.test(association.resource)) {
     const [, , ship, name] = association.resource.split('/');
-    if (ship.slice(1) === window.ship) {
+    if (deSig(ship) === window.ship) {
       return cite(`~${name.slice(4)}`);
     }
     return cite(ship);
