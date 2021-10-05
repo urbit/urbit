@@ -20,6 +20,7 @@ export interface AuthorProps {
   size?: number;
   lineHeight?: string | number;
   isRelativeTime?: boolean;
+  dontShowTime: boolean;
 }
 
 // eslint-disable-next-line max-lines-per-function

@@ -3,22 +3,20 @@ import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import f from 'lodash/fp';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { Route } from 'react-router-dom';
 import styled from 'styled-components';
 import {
-    hasTutorialGroup,
-
-    TUTORIAL_BOOK,
-    TUTORIAL_CHAT, TUTORIAL_GROUP,
-    TUTORIAL_HOST,
-
-    TUTORIAL_LINKS
+  hasTutorialGroup,
+  TUTORIAL_BOOK,
+  TUTORIAL_CHAT,
+  TUTORIAL_GROUP,
+  TUTORIAL_HOST,
+  TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
 import { useModal } from '~/logic/lib/useModal';
 import { useQuery } from '~/logic/lib/useQuery';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import { writeText } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
-import useLaunchState from '~/logic/state/launch';
 import useLocalState from '~/logic/state/local';
 import useMetadataState from '~/logic/state/metadata';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
@@ -30,9 +28,9 @@ import Groups from './components/Groups';
 import ModalButton from './components/ModalButton';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
+import { Invite } from './components/Invite';
 import './css/custom.css';
 import { join } from '@urbit/api/groups';
-import { putEntry } from '@urbit/api/settings';
 import { joinGraph } from '@urbit/api/graph';
 import airlock from '~/logic/api';
 
@@ -52,8 +50,6 @@ interface LaunchAppProps {
 
 export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   const { connection } = props;
-  const { baseHash, runtimeLag } = useLaunchState(state => state);
-  const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
   const seen = useSettingsState(s => s?.tutorial?.seen) ?? true;
   const associations = useMetadataState(s => s.associations);
@@ -66,35 +62,6 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   !hideGroups ? { hideGroups } = calmState : null;
 
   const waiter = useWaitForProps({ ...props, associations });
-  const hashBox = (
-    <Box
-      position="sticky"
-      left={3}
-      bottom={3}
-      mt={3}
-      backgroundColor="white"
-      borderRadius={2}
-      width="fit-content"
-      fontSize={0}
-      cursor="pointer"
-      onClick={() => {
-        writeText(baseHash);
-        setHashText('copied');
-        setTimeout(() => {
-          setHashText(baseHash);
-        }, 2000);
-      }}
-    >
-      <Box
-        height="100%"
-        backgroundColor={runtimeLag ? 'yellow' : 'washedGray'}
-        p={2}
-        width="fit-content"
-      >
-        <Text mono bold>{hashText || baseHash}</Text>
-      </Box>
-    </Box>
-  );
 
   const { query } = useQuery();
 
@@ -103,15 +70,17 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
     maxWidth: '350px',
     modal: function modal(dismiss) {
       const onDismiss = (e) => {
+        const { putEntry } = useSettingsState.getState();
         e.stopPropagation();
-        airlock.poke(putEntry('tutorial', 'seen', true));
+        putEntry('tutorial', 'seen', true);
         dismiss();
       };
       const onContinue = async (e) => {
+        const { putEntry } = useSettingsState.getState();
         e.stopPropagation();
         if (!hasTutorialGroup({ associations })) {
           await airlock.poke(join(TUTORIAL_HOST, TUTORIAL_GROUP));
-          await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
+          await putEntry('tutorial', 'joined', Date.now());
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph => airlock.thread(joinGraph(TUTORIAL_HOST, graph))));
@@ -142,10 +111,10 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
           </Box>
           <Text mb={3} lineHeight="tall" fontWeight="medium">Welcome</Text>
           <Text mb={3} lineHeight="tall">
-                        You have been invited to use Landscape, an interface to chat
+                        You have been invited to use Groups, an interface to chat
             and interact with communities
             <br />
-            Would you like a tour of Landscape?
+            Would you like a tour of Groups?
           </Text>
           <Row gapX={2} justifyContent="flex-end">
             <Button
@@ -182,8 +151,11 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   return (
     <>
       <Helmet defer={false}>
-        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape</title>
+        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Groups</title>
       </Helmet>
+      <Route path="/invites/:app/:uid">
+        <Invite />
+      </Route>
       <ScrollbarLessBox height='100%' overflowY='scroll' display="flex" flexDirection="column">
         {modal}
         <Box
@@ -234,14 +206,13 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             color="black"
             text="Join Group"
           >
-            <JoinGroup />
+            {dismiss => <JoinGroup dismiss={dismiss} />}
           </ModalButton>
           </>}
           {!hideGroups &&
             (<Groups />)
           }
         </Box>
-        {hashBox}
       </ScrollbarLessBox>
     </>
   );

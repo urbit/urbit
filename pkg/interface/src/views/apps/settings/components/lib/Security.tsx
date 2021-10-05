@@ -17,7 +17,7 @@ export default function SecuritySettings() {
           Security Preferences
         </Text>
         <Text gray>
-          Manage sessions, login credentials and Landscape access
+          Manage sessions, login credentials and web access
         </Text>
       </Col>
       <Col gapY={1}>

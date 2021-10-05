@@ -1,6 +1,7 @@
 import React, { ReactElement, useCallback } from 'react';
-import { AppAssociations, Associations, Graph, UnreadStats } from '@urbit/api';
+import { Associations, Graph } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
+import _ from 'lodash';
 
 import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
 import useGraphState, { useInbox } from '~/logic/state/graph';
@@ -12,10 +13,9 @@ import useMetadataState from '~/logic/state/metadata';
 import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
 
-function sidebarSort(
-  associations: AppAssociations,
-  unreads: Record<string, Record<string, UnreadStats>>
-): Record<SidebarSort, (a: string, b: string) => number> {
+function sidebarSort(pending: Set<string>): Record<SidebarSort, (a: string, b: string) => number> {
+  const { associations } = useMetadataState.getState();
+  const { unreads } = useHarkState.getState();
   const alphabetical = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
@@ -26,18 +26,21 @@ function sidebarSort(
   };
 
   const lastUpdated = (a: string, b: string) => {
-    const aAssoc = associations[a];
-    const bAssoc = associations[b];
-    const aResource = aAssoc?.resource;
-    const bResource = bAssoc?.resource;
-
+    const aPend = pending.has(a.slice(1));
+    const bPend = pending.has(b.slice(1));
+    if(aPend && !bPend) {
+      return -1;
+    }
+    if(bPend && !aPend) {
+      return 1;
+    }
     const aUpdated = a.startsWith('~')
-      ?  (unreads?.[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(a)}`]?.last || 0)
-      :  ((unreads?.[aResource]?.['/']?.last) || 0);
+      ?  (unreads?.[`/graph/~${window.ship}/dm-inbox/${patp2dec(a)}`]?.last || 0)
+      :  (unreads?.[`/graph/${a.slice(6)}`]?.last || 0);
 
     const bUpdated = b.startsWith('~')
-      ?  (unreads?.[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(b)}`]?.last || 0)
-      :  ((unreads?.[bResource]?.['/']?.last) || 0);
+      ?  (unreads?.[`/graph/~${window.ship}/dm-inbox/${patp2dec(b)}`]?.last || 0)
+      :  (unreads?.[`/graph/${b.slice(6)}`]?.last || 0);
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };
@@ -48,7 +51,7 @@ function sidebarSort(
   };
 }
 
-function getItems(associations: Associations, workspace: Workspace, inbox: Graph) {
+function getItems(associations: Associations, workspace: Workspace, inbox: Graph, pending: Set<string>) {
    const filtered = Object.keys(associations.graph).filter((a) => {
      const assoc = associations.graph[a];
      if(!('graph' in assoc.metadata.config)) {
@@ -80,8 +83,11 @@ function getItems(associations: Associations, workspace: Workspace, inbox: Graph
    });
   const direct: string[] = workspace.type !== 'messages' ? []
     : inbox.keys().map(x => patp(x.toString()));
+  const pend = workspace.type !== 'messages'
+    ? []
+    : Array.from(pending).map(s => `~${s}`);
 
-  return [...filtered, ...direct];
+  return [...filtered, ..._.union(direct, pend)];
 }
 
 export function SidebarList(props: {
@@ -94,11 +100,11 @@ export function SidebarList(props: {
   const { selected, config, workspace } = props;
   const associations = useMetadataState(state => state.associations);
   const inbox = useInbox();
-  const unreads = useHarkState(s => s.unreads.graph);
   const graphKeys = useGraphState(s => s.graphKeys);
+  const pending = useGraphState(s => s.pendingDms);
 
-  const ordered = getItems(associations, workspace, inbox)
-    .sort(sidebarSort(associations.graph, unreads)[config.sortBy]);
+  const ordered = getItems(associations, workspace, inbox, pending)
+    .sort(sidebarSort(pending)[config.sortBy]);
 
   const history = useHistory();
 
@@ -148,6 +154,7 @@ export function SidebarList(props: {
               ship={pathOrShip}
               workspace={workspace}
               selected={pathOrShip === selected}
+              pending={pending.has(pathOrShip.slice(1))}
             />
 
           );
