@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-type Channel = {
+export type Channel = {
   poke: (
     ship: string,
     appl: string,
@@ -13,8 +13,8 @@ type Channel = {
     ship: string,
     appl: string,
     path: string,
-    errorHandler: (err: string) => void,
-    eventHandler: (event: any) => void
+    errorHandler?: (err: string) => void,
+    eventHandler?: (event: any) => void
   ) => void;
 };
 

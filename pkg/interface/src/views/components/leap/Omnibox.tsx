@@ -119,7 +119,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         if (category === 'other') {
           return [
             'other',
-            index.get('other').filter(({ app }) => app !== 'tutorial')
+            index.get('other').filter(({ app }) => app !== 'tutorial' && app !== 'inbox')
           ];
         }
         return [category, []];

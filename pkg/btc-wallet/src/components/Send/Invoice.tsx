@@ -83,7 +83,7 @@ const Invoice: React.FC<Props> = ({ stopSending, payee, satsAmount }) => {
     setBroadcasting(true);
     kg.generateWallet({
       ticket,
-      ship: parseInt(patp2dec('~' + (window as any).ship)),
+      ship: parseInt(patp2dec('~' + window.ship)),
     }).then((urbitWallet: UrbitWallet) => {
       // this wasn't being used, not clear why it was pulled out.
       // const { xpub } =

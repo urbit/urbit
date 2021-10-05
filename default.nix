@@ -1,3 +1,4 @@
+
 /* Examples
 
    Shared urbit and urbit-worker binaries:
@@ -104,6 +105,8 @@ let
     brass = callPackage ./nix/pkgs/pill/brass.nix { };
 
     solid = callPackage ./nix/pkgs/pill/solid.nix { };
+
+    marsSources = callPackage ./nix/pkgs/marsSources { };
 
     urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
 

@@ -56,8 +56,11 @@ export function parentPath(path: string) {
  * string -> enabled feed
  */
 export function getFeedPath(association: Association): string | null | undefined {
-  const { metadata = { config: {} } } = association;
-  if (metadata.config && 'group' in metadata?.config && metadata.config?.group) {
+  const metadata = association?.metadata;
+  if(!metadata) {
+    return undefined;
+  }
+  if (metadata?.config && 'group' in metadata?.config && metadata.config?.group) {
     if ('resource' in metadata.config.group) {
       return metadata.config.group.resource;
     }
@@ -553,4 +556,15 @@ export async function jsonFetch<T>(info: RequestInfo, init?: RequestInit): Promi
 
 export function clone<T>(a: T) {
   return JSON.parse(JSON.stringify(a)) as T;
+}
+
+export function toHarkPath(path: string, index = '') {
+  return `/graph/${path.slice(6)}${index}`;
+}
+
+export function toHarkPlace(graph: string, index = '') {
+  return {
+    desk: (window as any).desk,
+    path: toHarkPath(graph, index)
+  };
 }
