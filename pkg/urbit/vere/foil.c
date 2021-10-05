@@ -4,22 +4,6 @@
 */
 
 #include "all.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <dirent.h>
-#include <stdint.h>
-#include <uv.h>
-#include <errno.h>
-#include <libgen.h>
-#include <ftw.h>
-
 #include "vere/vere.h"
 
     /*  assumptions:
