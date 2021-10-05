@@ -127,5 +127,15 @@ describe('tokenizeMessage', () => {
     expect(text).toBe('oh no, ');
     expect(reference.group).toBe('/ship/~sampel/group-123-abc');
   });
+  it('should handle permalinks after inline urls', () => {
+    const example = 'test [test](https://tlon.io) web+urbitgraph://group/~middev/the-forge/graph/~littel-wolfur/writs-7082/170141184505164612398001831549075456000/2/170141184505164722986064231401764421632';
+
+    const [{ text }, { reference: { graph } }] = tokenizeMessage(example);
+
+    expect(text).toBe('test [test](https://tlon.io) ');
+    expect(graph.group).toBe('/ship/~middev/the-forge');
+    expect(graph.graph).toBe('/ship/~littel-wolfur/writs-7082');
+    expect(graph.index).toBe('/170141184505164612398001831549075456000/2/170141184505164722986064231401764421632');
+  });
 });
 

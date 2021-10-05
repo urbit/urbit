@@ -36,7 +36,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
         name,
         values.group?.toString() || undefined
       ));
-      let mod = association['app-name'];
+      let mod: string = association['app-name'];
       if (association?.metadata?.config && 'graph' in association.metadata.config) {
         mod = association.metadata.config.graph as AppName;
       }

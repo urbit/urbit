@@ -87,7 +87,7 @@
         0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
       ::
       ++  ecliptic
-        0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
+        0xa5b6.109a.d2d3.5191.b3bc.32c0.0e45.26be.56fe.321f
       ::
       ++  linear-star-release
         0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
@@ -137,9 +137,9 @@
     ::
     ++  local-contracts
       |%
-      ++  ecliptic  
+      ++  ecliptic
         0x56db.68f2.9203.ff44.a803.faa2.404a.44ec.bb7a.7480
-      ++  azimuth  
+      ++  azimuth
         0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381
       ++  delegated-sending
         0xb71c.0b6c.ee1b.cae5.6dfe.95cd.9d3e.41dd.d7ea.fc43
