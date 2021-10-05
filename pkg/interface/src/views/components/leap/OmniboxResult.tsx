@@ -39,6 +39,7 @@ interface OmniboxResultProps {
   shiftLink?: string;
   shiftDescription?: string;
   description?: string;
+  hasNotifications?: boolean;
 }
 
 interface OmniboxResultState {
@@ -142,14 +143,20 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       );
     } else if (icon === 'notifications') {
       graphic = (
+        <Box mr="2" height="18px" width="18px" position="relative" display="inline-block">
         <Icon
           display='inline-block'
           verticalAlign='middle'
           icon='Notifications'
-          mr={2}
           size='18px'
           color={iconFill}
         />
+        {this.props.hasNotifications ? (
+          <Box position="absolute" right="-6px" top="-4px">
+            <Icon icon="Bullet" color={(this.state.hovered || selected === link) ? 'white' : 'blue'} />
+        </Box>
+        ) : null}
+      </Box>
       );
     } else if (icon === 'messages') {
       graphic = (
