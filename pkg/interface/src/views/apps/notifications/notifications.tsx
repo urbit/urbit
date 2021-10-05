@@ -1,5 +1,5 @@
 import { Action, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import React, { ReactElement, ReactNode, useRef } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useRef } from 'react';
 import Helmet from 'react-helmet';
 import { Link, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import useHarkState from '~/logic/state/hark';
@@ -45,6 +45,21 @@ export default function NotificationsScreen(props: any): ReactElement {
   useTutorialModal('notifications', true, anchorRef);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const onReadAll = async () => {};
+
+  useEffect(() => {
+    function visibilitychange() {
+      if (document.visibilityState === 'hidden') {
+        useHarkState.getState().opened();
+      }
+    }
+    document.addEventListener('visibilitychange', visibilitychange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', visibilitychange);
+      useHarkState.getState().opened();
+    };
+  }, []);
+
   return (
     <Switch>
       <Route

@@ -8,7 +8,8 @@ import {
   HarkLid,
   harkBinToId,
   decToUd,
-  unixToDa
+  unixToDa,
+  opened
 } from '@urbit/api';
 import { Poke } from '@urbit/http-api';
 import { patp2dec } from 'urbit-ob';
@@ -32,6 +33,7 @@ export interface HarkState {
   doNotDisturb: boolean;
   poke: (poke: Poke<any>) => Promise<void>;
   getMore: () => Promise<boolean>;
+  opened: () => void;
   // getTimeSubset: (start?: Date, end?: Date) => Promise<void>;
   unseen: Timebox;
   seen: Timebox;
@@ -54,6 +56,11 @@ const useHarkState = createState<HarkState>(
     readCount: async (path) => {
       const poke = markCountAsRead({ desk: (window as any).desk, path });
       await pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    opened: async () => {
+      reduceStateN(get(), { opened: null }, [reduce]);
+
+      await api.poke(opened);
     },
     archiveNote: async (bin: HarkBin, lid: HarkLid) => {
       const poke = archive(bin, lid);

@@ -13,7 +13,7 @@ import useLocalState from '~/logic/state/local';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { SwipeMenu } from '~/views/components/SwipeMenu';
 import useHarkState from '~/logic/state/hark';
-import { map, take } from 'lodash';
+import { map, take, uniqBy } from 'lodash';
 import { Mention } from '~/views/components/MentionText';
 import { PropFunc } from '~/types';
 import { useHistory } from 'react-router-dom';
@@ -73,7 +73,8 @@ export function Notification(props: {
   );
 
   const { hovering, bind } = useHovering();
-  const contents = map(notification.body, 'content').filter(
+  const dedupedBody = uniqBy(notification.body, item => item.link);
+  const contents = map(dedupedBody, 'content').filter(
     c => c.length > 0
   );
   const first = notification.body[0];
@@ -118,14 +119,14 @@ export function Notification(props: {
         gridTemplateColumns={['1fr 24px', '1fr 200px']}
         gridTemplateRows="auto"
         gridTemplateAreas="'header actions' 'main main'"
-        p={2}
+        p={3}
         {...bind}
       >
         <Col gapY={contents.length === 0 ? 0 : 2}>
           <Row>
             <NotificationText contents={first.title} fontWeight="medium" />
           </Row>
-          <Col gapY="3">
+          <Col gapY="2">
             {take(contents, MAX_CONTENTS).map((content, i) => (
               <Box key={i}>
                 <NotificationText lineHeight="tall" contents={content} />
