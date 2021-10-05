@@ -1,29 +1,50 @@
-import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import React, { ReactElement, useCallback, useRef } from 'react';
+import { Action, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import React, { ReactElement, ReactNode, useRef } from 'react';
 import Helmet from 'react-helmet';
-import { Link, Route, Switch } from 'react-router-dom';
-import useGroupState from '~/logic/state/group';
+import { Link, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import useHarkState from '~/logic/state/hark';
 import { Body } from '~/views/components/Body';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
-import Inbox from './inbox';
-import airlock from '~/logic/api';
-import { readAll } from '@urbit/api';
+import { Archive } from './Archive';
+import { NewBox } from './NewBox';
 
 const baseUrl = '/~notifications';
+
+export function NavLink({
+  href,
+  children
+}: {
+  href: string;
+  children: ReactNode;
+}) {
+  const location = useLocation();
+  const { push } = useHistory();
+
+  const isActive = href === location.pathname;
+
+  const onClick = () => {
+    push(href);
+  };
+
+  return (
+    <Action
+      backgroundColor="transparent"
+      onClick={onClick}
+      color={isActive ? 'black' : 'gray'}
+    >
+      {children}
+    </Action>
+  );
+}
 
 export default function NotificationsScreen(props: any): ReactElement {
   const relativePath = (p: string) => baseUrl + p;
 
-  const pendingJoin = useGroupState(s => s.pendingJoin);
-  const onReadAll = useCallback(async () => {
-    await airlock.poke(readAll());
-  }, []);
-
   const anchorRef = useRef<HTMLElement | null>(null);
   useTutorialModal('notifications', true, anchorRef);
   const notificationsCount = useHarkState(state => state.notificationsCount);
+  const onReadAll = async () => {};
   return (
     <Switch>
       <Route
@@ -33,7 +54,10 @@ export default function NotificationsScreen(props: any): ReactElement {
           return (
             <>
               <Helmet defer={false}>
-                <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Notifications</title>
+                <title>
+                  {notificationsCount ? `(${String(notificationsCount)}) ` : ''}
+                  Groups - Notifications
+                </title>
               </Helmet>
               <Body>
                 <Col overflowY="hidden" height="100%">
@@ -46,22 +70,29 @@ export default function NotificationsScreen(props: any): ReactElement {
                     borderBottom={1}
                     borderBottomColor="lightGray"
                   >
-
-                  <Text fontWeight="bold" fontSize={2} lineHeight={1} ref={anchorRef}>
-                    Notifications
-                  </Text>
-                    <Row
-                      justifyContent="space-between"
-                      gapX={3}
+                    <Text
+                      fontWeight="bold"
+                      fontSize={2}
+                      lineHeight={1}
+                      ref={anchorRef}
                     >
-                      <StatelessAsyncAction
-                        overflow="hidden"
-                        color="black"
-                        backgroundColor="white"
-                        onClick={onReadAll}
-                      >
-                        Mark All Read
-                      </StatelessAsyncAction>
+                      Notifications
+                    </Text>
+                    <Row gapX="2">
+                      <NavLink href="/~notifications">New</NavLink>
+                      <NavLink href="/~notifications/archive">Archive</NavLink>
+                    </Row>
+                    <Row justifyContent="space-between" gapX={3}>
+                      { (false as boolean) ? (
+                        <StatelessAsyncAction
+                          overflow="hidden"
+                          color="black"
+                          backgroundColor="white"
+                          onClick={onReadAll}
+                        >
+                          Mark All Read
+                        </StatelessAsyncAction>
+                      ) : null}
                       <Link to="/~settings#notifications">
                         <Box>
                           <Icon lineHeight={1} icon="Adjust" />
@@ -69,11 +100,9 @@ export default function NotificationsScreen(props: any): ReactElement {
                       </Link>
                     </Row>
                   </Row>
-                  {!view && <Inbox
-                    pendingJoin={pendingJoin}
-                    {...props}
-                    filter={[]}
-                            />}
+                  { view === 'archive' ? (
+                    <Archive />
+                  ) : <NewBox /> }
                 </Col>
               </Body>
             </>
