@@ -1,7 +1,9 @@
 import {
   HarkPlace,
   Timebox,
-  HarkStats
+  HarkStats,
+  harkBinToId,
+  makePatDa
 } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import _ from 'lodash';
@@ -12,7 +14,7 @@ import { HarkState as State } from '../state/hark';
 type HarkState = State & BaseState<State>;
 
 function calculateCount(json: any, state: HarkState) {
-  state.notificationsCount = Object.keys(state.unreadNotes).length;
+  state.notificationsCount = Object.keys(state.unseen).length;
   return state;
 }
 
@@ -170,7 +172,8 @@ function allStats(json: any, state: HarkState): HarkState {
 function clearState(state: HarkState): HarkState {
   const initialState = {
     notifications: new BigIntOrderedMap<Timebox>(),
-    archivedNotifications: new BigIntOrderedMap<Timebox>(),
+    unseen: {},
+    seen: {},
     notificationsGroupConfig: [],
     notificationsGraphConfig: {
       watchOnSelf: false,
@@ -204,6 +207,87 @@ function more(json: any, state: HarkState): HarkState {
   return state;
 }
 
+function added(json: any, state: HarkState): HarkState {
+  if('added' in json) {
+    const { bin } = json.added;
+    const binId = harkBinToId(bin);
+    state.unseen[binId] = json.added;
+  }
+
+  return state;
+}
+
+function archived(json: any, state: HarkState): HarkState {
+  if('archived' in json) {
+    const { lid, notification } = json.archived;
+      const seen = 'seen' in lid ? 'seen' : 'unseen';
+      const binId = harkBinToId(notification.bin);
+      delete state[seen][binId];
+      const time = makePatDa(json.archived.time);
+      const timebox = state.archive?.get(time) || {};
+      timebox[binId] = notification;
+      state.archive = state.archive.set(time, timebox);
+  }
+  return state;
+}
+
+function timebox(json: any, state: HarkState): HarkState {
+  if('timebox' in json) {
+    const { timebox } = json;
+    const { lid, notifications } = timebox;
+    if('archive' in lid) {
+        const time = makePatDa(lid.archive);
+        const old = state.archive.get(time) || {};
+        notifications.forEach((note: any) => {
+          const binId = harkBinToId(note.bin);
+          old[binId] = note;
+        });
+        state.archive = state.archive.set(time, old);
+    } else {
+        const seen = 'seen' in lid ? 'seen' : 'unseen';
+        notifications.forEach((note: any) => {
+          const binId = harkBinToId(note.bin);
+          state[seen][binId] = note;
+        });
+    }
+  }
+  return state;
+}
+
+function opened(json: any, state: HarkState): HarkState {
+  if('opened' in json) {
+    const bins = Object.keys(state.unseen);
+    bins.forEach((bin) => {
+      const old = state.seen[bin];
+      const curr = state.unseen[bin];
+      curr.body = [...curr.body, ...(old?.body || [])];
+      state.seen[bin] = curr;
+      delete state.unseen[bin];
+    });
+  }
+  return state;
+}
+
+function delPlace(json: any, state: HarkState): HarkState {
+  if('del-place' in json) {
+    const { path, desk } = json['del-place'];
+    const pathId = `${desk}${path}`;
+    const wipeBox = (t: Timebox) => {
+      Object.keys(t).forEach((bin) => {
+        if (bin.startsWith(pathId)) {
+          delete t[bin];
+        }
+      });
+    };
+    wipeBox(state.unseen);
+    wipeBox(state.seen);
+    state.archive.keys().forEach((key) => {
+      wipeBox(state.archive.get(key)!);
+    });
+  }
+  return state;
+}
+
 export function reduce(data, state) {
   const reducers = [
     calculateCount,
@@ -215,7 +299,12 @@ export function reduce(data, state) {
     unreadSince,
     unreadEach,
     seenIndex,
-    readAll
+    readAll,
+    added,
+    timebox,
+    archived,
+    opened,
+    delPlace
   ];
   const reducer = compose(reducers.map(r => (s) => {
     return r(data, s);

@@ -70,8 +70,6 @@ export const opened = harkAction({
   opened: null
 });
 
-
-
 export const markCountAsRead = (place: HarkPlace): Poke<unknown> =>
   harkAction({
     'read-count': place
@@ -146,4 +144,11 @@ export function harkBinEq(a: HarkBin, b: HarkBin): boolean {
     a.place.desk === b.place.desk &&
     a.path === b.path
   );
+}
+
+export function harkLidToId(lid: HarkLid): string {
+  if('time' in lid) {
+    return `archive-${lid.time}`;
+  }
+  return Object.keys(lid)[0];
 }
