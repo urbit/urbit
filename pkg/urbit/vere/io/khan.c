@@ -58,8 +58,8 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   u3_weak   jar;
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_khan*  kan_u = can_u->san_u->kan_u;
-  u3_noun   cad;
   u3_noun   wir;
+  u3_noun   cad;
 
   u3l_log("khan: poke called %p %" PRIu64 "\n", ptr_v, len_d);
   jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
@@ -72,7 +72,7 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
                u3nt(u3dc("scot", c3__uv, kan_u->sev_l),
                     u3dc("scot", c3__ud, can_u->coq_l),
                     u3_nul));
-    cad = u3nc(u3i_string("task"), jar);
+    cad = u3nc(c3__fyrd, jar);
     u3_auto_plan(&kan_u->car_u, u3_ovum_init(0, c3__k, wir, cad));
   }
 }
