@@ -1,4 +1,4 @@
-import create from 'zustand';
+import create, { SetState } from 'zustand';
 import produce from 'immer';
 import { useCallback, useEffect } from 'react';
 import { omit, pick } from 'lodash';
@@ -15,7 +15,9 @@ import {
   Treaties,
   chadIsRunning,
   AllyUpdateIni,
+  AllyUpdateNew,
   TreatyUpdateIni,
+  TreatyUpdate,
   docketInstall,
   ChargeUpdate,
   kilnRevive,
@@ -53,6 +55,7 @@ interface DocketState {
   uninstallDocket: (desk: string) => Promise<number | void>;
   //
   addAlly: (ship: string) => Promise<void>;
+  set: SetState<DocketState>;
 }
 
 const useDocketState = create<DocketState>((set, get) => ({
@@ -212,8 +215,6 @@ api.subscribe({
   app: 'treaty',
   path: '/treaties',
   event: (data: TreatyUpdate) => {
-    console.log(data);
-
     useDocketState.getState().set((draft) => {
       if ('add' in data) {
         const { ship, desk } = data.add;
@@ -223,7 +224,7 @@ api.subscribe({
 
       if ('ini' in data) {
         const treaties = normalizeDockets(data.ini);
-        draft.treaties = { ...draft.treaties, treaties };
+        draft.treaties = { ...draft.treaties, ...treaties };
       }
     });
   }
@@ -232,7 +233,7 @@ api.subscribe({
 api.subscribe({
   app: 'treaty',
   path: '/allies',
-  event: (data: TreatyUpdate) => {
+  event: (data: AllyUpdateNew) => {
     useDocketState.getState().set((draft) => {
       if ('new' in data) {
         const { ship, alliance } = data.new;
