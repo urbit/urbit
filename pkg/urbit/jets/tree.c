@@ -17,6 +17,23 @@
 
 static c3_c* no_hashes[] = { 0 };
 
+static u3j_harm _140_hex_up_zero_a[] = {{".2", u3we_zero, c3y}, {}};
+static u3j_harm _140_hex_up_mask_a[] = {{".2", u3we_mask, c3y}, {}};
+static u3j_harm _140_hex_up_gone_a[] = {{".2", u3we_gone, c3y}, {}};
+static u3j_harm _140_hex_up_high_a[] = {{".2", u3we_high, c3y}, {}};
+static u3j_harm _140_hex_up_pert_a[] = {{".2", u3we_pert, c3y}, {}};
+static u3j_harm _140_hex_up_lex_a[] = {{".2", u3we_lex, c3y}, {}};
+
+static u3j_core _140_hex_up_d[] =
+  { { "zero", 7, _140_hex_up_zero_a, 0, no_hashes },
+    { "mask", 7, _140_hex_up_mask_a, 0, no_hashes },
+    { "gone", 7, _140_hex_up_gone_a, 0, no_hashes },
+    { "high", 7, _140_hex_up_high_a, 0, no_hashes },
+    { "pert", 7, _140_hex_up_pert_a, 0, no_hashes },
+    { "lex", 7,  _140_hex_up_lex_a,  0, no_hashes },
+    {}
+  };
+
 static u3j_harm _140_hex_mimes_base16_en_a[] = {{".2", u3we_en_base16}, {}};
 static c3_c* _140_hex_mimes_base16_en_ha[] = {
   "669807766b6802719769fcbfe149d77fb352fcf0922afaf35dc4ab8c201d84e5",
@@ -489,6 +506,7 @@ static u3j_core _140_hex_d[] =
   { "scr",    31, 0, _140_hex_scr_d,   _140_hex_scr_ha   },
   { "secp",    6, 0, _140_hex_secp_d,  _140_hex_secp_ha },
   { "mimes",  31, 0, _140_hex_mimes_d, _140_hex_mimes_ha  },
+  { "up-lib",  31, 0, _140_hex_up_d, no_hashes  },
   {}
 };
 static c3_c* _140_hex_ha[] = {
