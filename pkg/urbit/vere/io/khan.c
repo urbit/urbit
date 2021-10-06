@@ -255,6 +255,8 @@ _khan_io_exit(u3_auto* car_u)
     wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
     c3_assert(wit_i > 0);
     c3_assert(len_w == (c3_w)wit_i + 1);
+    // TODO remove
+    u3l_log("khan: unlinking %s\n", paf_c);
 
     if ( 0 != unlink(paf_c) ) {
       u3l_log("khan: failed to unlink socket: %s\n", uv_strerror(errno));
