@@ -99,6 +99,8 @@
 ::
 +$  card  card:agent:gall
 ::
+++  orm  ((on ship point:naive) por:naive)
+::
 ::  TODO: add to config
 ::
 ++  resend-time  ~m5
@@ -234,7 +236,7 @@
       :+  ~  ~
       :-  %noun
       !>  ^-  (unit @)
-      ?~  point=(get:orm:naive points.pre u.who)
+      ?~  point=(get:orm points.pre u.who)
         ~
       =<  `nonce
       (proxy-from-point:naive proxy u.point)
@@ -246,12 +248,12 @@
       !>  ^-  (list [=^ship =address:ethereum])
       ?~  star=(slaw %p wat)  ~
       =/  range
-        %+  lot:orm:naive  points.pre
+        %+  lot:orm  points.pre
         ::  range exclusive [star next-star-first-planet-]
         ::  TODO: make range inclusive ([first-planet last-planet])?
         ::
         [`u.star `(cat 3 +(u.star) 0x1)]
-      %+  turn  (tap:orm:naive range)
+      %+  turn  (tap:orm range)
       |=  [=ship =point:naive]
       ^-  [=^ship =address:ethereum]
       :-  ship
@@ -261,7 +263,7 @@
       |=  wat=@t
       ?~  ship=(rush wat ;~(pfix sig fed:ag))
         ``noun+!>(*(unit point:naive))
-      ``noun+!>((get:orm:naive points.pre u.ship))
+      ``noun+!>((get:orm points.pre u.ship))
     ::
     ++  points
       |=  wat=@t
@@ -586,7 +588,7 @@
 ++  get-l1-address
   |=  [=tx:naive nas=^state:naive]
   ^-  (unit address:ethereum)
-  ?~  point=(get:orm:naive points.nas ship.from.tx)  ~
+  ?~  point=(get:orm points.nas ship.from.tx)  ~
   =<  `address
   (proxy-from-point:naive proxy.from.tx u.point)
 ::
