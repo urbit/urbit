@@ -246,7 +246,7 @@ _khan_io_exit(u3_auto* car_u)
 {
   u3_khan*          kan_u = (u3_khan*)car_u;
 
-  if ( car_u->liv_o == c3y ) {
+  if ( c3y == car_u->liv_o ) {
     c3_c*           pax_c = u3_Host.dir_c;
     c3_w            len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
     c3_c*           paf_c = c3_malloc(len_w);
