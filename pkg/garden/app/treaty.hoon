@@ -107,7 +107,10 @@
     :_(this (drop ~(safe-watch tr:cc [ship desk])))
     ::
       [%treaties ~]
-    `this
+    :_  this
+    ::NOTE  this assumes that all treaties in sovereign are also
+    ::      present in the treaties map
+    (fact-init:io (treaty-update:cg:cc %ini treaties))^~
     ::
       [%alliance ~]
     :_  this
@@ -214,9 +217,8 @@
       =:  treaties  (~(del by treaties) ship desk)
           direct    (~(del in direct) ship desk)
         ==
-      %-  (slog leaf+"Withdrew from treaty {<ship>}/{<desk>}" u.p.sign)
+      %-  (slog leaf+"treaty: withdrew from {<ship>}/{<desk>}" u.p.sign)
       [gone:tr this]
-
     ::
         %fact
       ?.  =(%treaty-0 p.cage.sign)  `this
@@ -326,6 +328,10 @@
   ++  kick
     (kick:io path ~)
   ++  give
+    ::  notably gives on the /treaties path, like +give:tr does.
+    ::  this should not give duplicate facts, because sovereign treaties
+    ::  are handled in this core, not as "normal"/foreign treaties.
+    ::
     ^-  (list card)
     =/  t=treaty  (~(got by sovereign) desk)
     :~  (fact:io (treaty-update:cg %add t) /treaties ~)
