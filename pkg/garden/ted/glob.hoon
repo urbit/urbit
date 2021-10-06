@@ -32,6 +32,6 @@
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  =cage  bind:m
     (watch-one:strandio /glob/(scot %da now.bowl) [ship %docket] /glob/[base]/(scot %uv hash))
-  ?>  ?=(%glob p.cage)
+  ?>  ?=(%glob-0 p.cage)
   (pure:m q.cage)
 --
