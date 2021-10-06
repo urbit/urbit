@@ -49,6 +49,8 @@ in stdenvNoCC.mkDerivation {
   '';
 
   installPhase = ''
+    # XX unlink khan.sock in case pier has not finished shutting down
+    rm -f ./pier/.urb/khan.sock
     mv ./pier $out
   '';
 }
