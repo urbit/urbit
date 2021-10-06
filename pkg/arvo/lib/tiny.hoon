@@ -30,10 +30,6 @@
 ::
 ++  jug   |$  [key value]  (map key (set value))
 ::
-::  Biblical
-::
-++  ruth  |=([a=* b=*] ?>(?=(@ b) b))
-::
 ::  Bits
 ::
 ++  dec                                                 ::  decrement
@@ -310,23 +306,6 @@
       +<-(. +<+)
     +<-(+ $(+<- +<->))
   --
-::
-++  turn                                                ::  transform
-  ~/  %turn
-  |*  [a=(list) b=$-(* *)]
-  =>  .(a (homo a))
-  ^-  (list _?>(?=(^ a) (b i.a)))
-  |-
-  ?~  a  ~
-  [i=(b i.a) t=$(a t.a)]
-::
-++  levy                                                ::  all of
-  ~/  %levy
-  |*  [a=(list) b=$-(* ?)]
-  |-  ^-  ?
-  ?~  a  &
-  ?.  (b i.a)  |
-  $(a t.a)
 ::
 ++  reap                                                ::  replicate
   ~/  %reap

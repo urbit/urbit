@@ -456,7 +456,7 @@
     =*  one  &5.words
     =*  two  &3.words
     =*  tri  &1.words
-    =/  domains  (turn ~[one two tri] |=(a=@ (swp 3 a)))
+    =/  domains  ~[(swp 3 one) (swp 3 two) (swp 3 tri)]
     :-  [%dns domains]~
     state(dns domains)
   ::
