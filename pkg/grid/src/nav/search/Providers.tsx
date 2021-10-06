@@ -118,7 +118,7 @@ export const Providers = ({ match }: ProvidersProps) => {
         matches: ([] as MatchItem[]).concat(appMatches, providerMatches, newProviderMatches)
       });
     }
-  }, [results, patp]);
+  }, [results, patp, isValidPatp]);
 
   return (
     <div
