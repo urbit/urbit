@@ -220,6 +220,11 @@ api.subscribe({
         const treaty = normalizeDocket(data.add, desk);
         draft.treaties[`${ship}/${desk}`] = treaty;
       }
+
+      if ('ini' in data) {
+        const treaties = normalizeDockets(data.ini);
+        draft.treaties = { ...draft.treaties, treaties };
+      }
     });
   }
 });
