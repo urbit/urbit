@@ -12,7 +12,7 @@
 =>  |%                                                  ::  external structures
     +$  id  @tasession                                  ::  session id
     +$  house                                           ::  all state
-      $:  %7
+      $:  %8
           egg=@u                                        ::  command count
           hoc=(map id session)                          ::  conversations
           acl=(set ship)                                ::  remote access whitelist
@@ -65,7 +65,7 @@
       $~  [%ex *hoon]
       $%  [%ur p=@t]                                    ::  http GET request
           [%ge p=dojo-model]                            ::  generator
-          [%te p=term q=(list dojo-source)]             ::  thread
+          [%te p=[=desk =term] q=(list dojo-source)]    ::  thread
           [%dv p=beak q=path]                           ::  core from source
           [%ex p=hoon]                                  ::  hoon expression
           [%sa p=mark]                                  ::  example mark value
@@ -224,7 +224,7 @@
       ;~  pose
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
-        ;~(plug (cold %te hep) sym (star ;~(pfix ace parse-source)))
+        ;~(plug (cold %te hep) parse-thread (star ;~(pfix ace parse-source)))
         ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
@@ -276,6 +276,12 @@
     ;~  plug
       ;~(pose ;~(sfix sym zap) (easy q.dir))
       (most fas sym)
+    ==
+  ::
+  ++  parse-thread
+    ;~  plug
+      ;~(pose ;~(sfix sym zap) (easy q.dir))
+      sym
     ==
   ::
   ++  parse-hoon    tall:hoon-parser
@@ -693,7 +699,7 @@
             [%sa mark]
             [%as mark dy-shown]
             [%do hoon dy-shown]
-            [%te term (list dy-shown)]
+            [%te [desk term] (list dy-shown)]
             [%ge [desk path] (list dy-shown) (map term (unit dy-shown))]
             [%dv beak path]
         ==
@@ -870,7 +876,7 @@
       (dy-hand %noun q.cag)
     ::
     ++  dy-wool-poke
-      |=  [fil=term src=(list dojo-source)]
+      |=  [[=desk =term] src=(list dojo-source)]
       ^+  +>+>
       ?>  ?=(~ pux)
       =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
@@ -880,8 +886,9 @@
         [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
-        ::  TODO: support threads on other desks
-        [%spider-start !>([~ `tid he-beak fil (dy-some src)])]
+        ::TODO  would be nice if spider supported starting from paths,
+        ::      for semantics/abilities/code closer to generators.
+        [%spider-start !>([~ `tid he-beak(q.dir desk) term (dy-some src)])]
       [%pass /wool %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
@@ -1522,16 +1529,17 @@
   |^  =+  old=!<(house-any ole)
       =?  old  ?=(%5 -.old)
         (house-5-to-6 old)
-      =?  old  ?=(%6 -.old)
-        (house-6-to-7 old)
-      ?>  ?=(%7 -.old)
+      =?  old  ?=(?(%6 %7) -.old)
+        (house-6-7-to-8 +.old)
+      ?>  ?=(%8 -.old)
       `..on-init(state old)
   ::
-  +$  house-any  $%(house house-6 house-5)
+  +$  house-any  $%(house house-7 house-6 house-5)
   ::
-  +$  house-6                                           ::  all state
-    $:  %6
-        egg=@u                                        ::  command count
+  +$  house-7        [%7 house-6-7]
+  +$  house-6        [%6 house-6-7]
+  +$  house-6-7
+    $:  egg=@u                                        ::  command count
         hoc=(map id session-6)                        ::  conversations
         acl=(set ship)                                ::  remote access whitelist
     ==                                                ::
@@ -1550,10 +1558,10 @@
         old=(set term)                                ::  used TLVs
         buf=tape                                      ::  multiline buffer
     ==                                                ::
-  ++  house-6-to-7
-    |=  old=house-6
-    [%7 egg.old (~(run by hoc.old) session-6-to-7) acl.old]
-  ++  session-6-to-7
+  ++  house-6-7-to-8
+    |=  old=house-6-7
+    [%8 egg.old (~(run by hoc.old) session-6-to-8) acl.old]
+  ++  session-6-to-8
     |=  old=session-6
     ~?  ?=(^ poy.old)  [dap.hid %cancelling-for-load]
     old(poy ~, -.dir [our.hid %base ud+0])

@@ -102,6 +102,9 @@ const emptyStats = () => ({
 });
 
 function updateNotificationStats(state: HarkState, place: HarkPlace, f: (s: HarkStats) => Partial<HarkStats>) {
+  if(place.desk !== (window as any).desk) {
+    return;
+  }
   const old = state.unreads?.[place.path] || emptyStats();
   state.unreads[place.path] = { ...old, ...f(old) };
 }
@@ -109,7 +112,8 @@ function updateNotificationStats(state: HarkState, place: HarkPlace, f: (s: Hark
 function seenIndex(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'saw-place');
   if(data) {
-    updateNotificationStats(state, data, s => ({ last: Date.now() }));
+    const last = data?.time || Date.now();
+    updateNotificationStats(state, data.place, s => ({ last }));
   }
   return state;
 }
@@ -135,7 +139,6 @@ function readSince(json: any, state: HarkState): HarkState {
 function unreadSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-count');
   if (data) {
-    console.log(data);
     const { inc, count, place } = data;
     updateNotificationStats(state, place, s => ({ count: inc ? s.count + count  : s.count - count }));
   }
@@ -154,8 +157,10 @@ function unreadEach(json: any, state: HarkState): HarkState {
 function allStats(json: any, state: HarkState): HarkState {
   if('all-stats' in json) {
     const data = json['all-stats'];
-    console.log(data);
     data.forEach(({ place, stats }) => {
+      if(place.desk !== (window as any).desk) {
+        return;
+      }
       state.unreads[place.path] = stats;
     });
   }

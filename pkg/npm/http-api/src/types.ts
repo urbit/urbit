@@ -192,3 +192,7 @@ export interface Message extends Record<string, any> {
   action: Action;
   id?: number;
 }
+
+export class ResumableError extends Error {}
+
+export class FatalError extends Error {}
