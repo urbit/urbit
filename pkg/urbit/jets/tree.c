@@ -15,6 +15,51 @@
 
 #include "all.h"
 
+static u3j_harm _140_hex_up_zero_a[] = {{".2", u3we_zero, c3y}, {}};
+static c3_c* _140_hex_up_zero_ha[] = {
+  "25b9a800313aadc72818f6018458f2dcff8c2406d2426c96b97e40bf07fce084",
+  0
+};
+static u3j_harm _140_hex_up_mask_a[] = {{".2", u3we_mask, c3y}, {}};
+static c3_c* _140_hex_up_mask_ha[] = {
+  "c1600329e62974e26d54283915514abe32200d4cee37c58bc95c803e57e01d12",
+  0
+};
+static u3j_harm _140_hex_up_gone_a[] = {{".2", u3we_gone, c3y}, {}};
+static c3_c* _140_hex_up_gone_ha[] = {
+  "64fd9973774e50af21244536bbbd662c195a61e4ec4adbdc0c1d548b618779cf",
+  0
+};
+static u3j_harm _140_hex_up_high_a[] = {{".2", u3we_high, c3y}, {}};
+static c3_c* _140_hex_up_high_ha[] = {
+  "0a6d7611b051be1756f92e8c065d59573976e0141e5f0e4951fdd2d0097d38d9",
+  0
+};
+static u3j_harm _140_hex_up_pert_a[] = {{".2", u3we_pert, c3y}, {}};
+static c3_c* _140_hex_up_pert_ha[] = {
+  "54c7dc7ee42ebbc2e9cc1ada863748de685d733300c26cba60d61d8059e0f5ca",
+  0
+};
+static u3j_harm _140_hex_up_lex_a[] = {{".2", u3we_lex, c3y}, {}};
+static c3_c* _140_hex_up_lex_ha[] = {
+  "b7189b1ca98907511d89b3ba2c094d4d8531c4f192a2cdcb4391137898b50ac2",
+  0
+};
+
+static u3j_core _140_hex_up_d[] =
+  { { "zero", 7, _140_hex_up_zero_a, 0, _140_hex_up_zero_ha },
+    { "mask", 7, _140_hex_up_mask_a, 0, _140_hex_up_mask_ha },
+    { "gone", 7, _140_hex_up_gone_a, 0, _140_hex_up_gone_ha },
+    { "high", 7, _140_hex_up_high_a, 0, _140_hex_up_high_ha },
+    { "pert", 7, _140_hex_up_pert_a, 0, _140_hex_up_pert_ha },
+    { "lex", 7, _140_hex_up_lex_a, 0, _140_hex_up_lex_ha },
+    {}
+  };
+static c3_c* _140_hex_up_ha[] = {
+  "94c1006af8de1fe60a05b69ecb1e16cdda5e091a0c81c2881850f1adba6583db",
+  0
+};
+
 static u3j_harm _140_hex_mimes_base16_en_a[] = {{".2", u3we_en_base16}, {}};
 static c3_c* _140_hex_mimes_base16_en_ha[] = {
   "669807766b6802719769fcbfe149d77fb352fcf0922afaf35dc4ab8c201d84e5",
@@ -453,6 +498,7 @@ static u3j_core _140_hex_d[] =
   { "ripemd", 31, 0, _140_hex_ripe_d,  _140_hex_ripe_ha  },
   { "secp",    6, 0, _140_hex_secp_d, _140_hex_secp_ha },
   { "mimes",  31, 0, _140_hex_mimes_d, _140_hex_mimes_ha  },
+  { "up-lib",  31, 0, _140_hex_up_d, _140_hex_up_ha  },
   {}
 };
 static c3_c* _140_hex_ha[] = {
