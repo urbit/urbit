@@ -287,8 +287,8 @@
   =+  [c1=0xcc9e.2d51 c2=0x1b87.3593]
   =+  [nblocks tlen]=(dvr len 4)
   =+  ^=  [h1 tail]
-    =/  hi  (sit syd)
     =|  i=@ud
+    =/  hi  (sit syd)
     |-  ^-  [@ @]
     =/  k1  (cut 5 [i 1] key)
     ?:  =(nblocks i)
