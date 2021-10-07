@@ -1634,50 +1634,44 @@
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%onto p=(each suss tang)]                      ::  about agent
-        [%unto p=unto]                                  ::
+        [%onto =desk gens=(list path)]                  ::  new agents on desk
+        [%unto p=unto]                                  ::  response from agent
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%deal p=sock q=term r=deal]                    ::  full transmission
+    $%  [%deal =sock =desk =path =deal]                 ::  request to agent
         [%sear =ship]                                   ::  clear pending queues
-        [%jolt =desk =dude]                             ::  (re)start agent
-        [%idle =dude]                                   ::  suspend agent
-        [%nuke =dude]                                   ::  delete agent
+        [%jolt =desk gens=(list path)]                   ::  load agents on desk
+        [%nuke =desk =dude]                             ::  delete agent
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         $>(%plea vane-task)                             ::  network request
     ==                                                  ::
-  +$  bitt  (map duct (pair ship path))                 ::  incoming subs
-  +$  boat                                              ::  outgoing subs
-    %+  map  [=wire =ship =term]                        ::
+  +$  pubs  (map duct (pair ship path))                 ::  incoming subs
+  +$  subs                                              ::  outgoing subs
+    %+  map  [=wire =ship =desk =path]                  ::
     [acked=? =path]                                     ::
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
                   dap=term                              ::  agent
               ==                                        ::
-              $:  wex=boat                              ::  outgoing subs
-                  sup=bitt                              ::  incoming subs
+              $:  wex=subs                              ::  outgoing subs
+                  sup=pubs                              ::  incoming subs
               ==                                        ::
+              $:  =subs  ::  replacement faces
+                  =pubs
+              ==
               $:  act=@ud                               ::  change number
                   eny=@uvJ                              ::  entropy
                   now=@da                               ::  current time
                   byk=beak                              ::  load source
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
-  +$  gill  (pair ship term)                            ::  general contact
-  +$  scar                                              ::  opaque duct
-    $:  p=@ud                                           ::  bone sequence
-        q=(map duct bone)                               ::  by duct
-        r=(map bone duct)                               ::  by bone
-    ==                                                  ::
-  +$  suss  (trel dude @tas @da)                        ::  config report
-  +$  well  (pair desk term)                            ::
   +$  neat
     $%  [%arvo =note-arvo]
-        [%agent [=ship name=term] =deal]
+        [%agent [=ship =desk =path] =deal]
         [%pyre =tang]
     ==
   +$  deal
@@ -1697,13 +1691,13 @@
     +$  step  (quip card form)
     +$  card  (wind note gift)
     +$  note
-      $%  [%agent [=ship name=term] =task]
+      $%  [%agent [=ship =desk =path] =task]
           [%arvo note-arvo]
           [%pyre =tang]
       ==
     +$  task
-      $%  [%watch =path]
-          [%watch-as =mark =path]
+      $%  [%watch ~]
+          [%watch-as =mark]
           [%leave ~]
           [%poke =cage]
           [%poke-as =mark =cage]
@@ -1734,7 +1728,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-poke
-        |~  [mark vase]
+        |~  [path mark vase]
         *(quip card _^|(..on-init))
       ::
       ++  on-watch

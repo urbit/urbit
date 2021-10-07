@@ -12,9 +12,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-8: overall gall state, versioned
+::  $state-9: overall gall state, versioned
 ::
-+$  state-8  [%8 state]
++$  state-9  [%9 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -27,8 +27,7 @@
   $:  system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
-      yokes=(map term yoke)
-      blocked=(map term (qeu blocked-move))
+      yokes=(map desk (map path yoke))
   ==
 ::  $watches: subscribers and publications
 ::
@@ -45,21 +44,20 @@
 ::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
-::    live: is this agent running? TODO document better
-::    stats: TODO document
+::    stats: statistics about agent
 ::    watches: incoming and outgoing subscription state
 ::    agent: agent core
-::    beak: compilation source
+::    beam: compilation source
 ::    marks: mark conversion requests
 ::
 +$  yoke
   $:  control-duct=duct
       nonce=@t
-      live=?  ::TODO  remove, replaced by -.agent
       =stats
-      =watches
+      =subs
+      =pubs
       agent=(each agent vase)
-      =beak
+      =beam
       marks=(map duct mark)
   ==
 ::  $blocked-move: enqueued move to an agent
@@ -299,16 +297,9 @@
   ::  +mo-jolt: (re)start agent if not already started on this desk
   ::
   ++  mo-jolt
-    |=  [dap=term =ship =desk]
+    |=  [=desk jot=(list path)]
     ^+  mo-core
-    =/  yak  (~(get by yokes.state) dap)
-    ?~  yak
-      (mo-boot dap ship desk)
-    ?.  -.agent.u.yak
-      (mo-boot dap ship desk)
-    ?.  =(desk q.beak.u.yak)
-      (mo-boot dap ship desk)
-    mo-core
+    de-abet:(de-jolt:(de-abed:de desk) jot)
   ::  +mo-boot: ask %ford to build us a core for the specified agent.
   ::
   ++  mo-boot
@@ -962,6 +953,183 @@
       %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
       %x  (mo-give %unto %kick ~)
     ==
+  ::  +de: desk engine
+  ::
+  ++  de
+    =|  syd=desk
+    =|  gens=(map path yoke)
+    |%
+    ++  de-core  .
+    ++  de-abed
+      |=  =desk
+      ^+  de-core
+      =.  syd  desk
+      =.  gens  (~(gut by yokes.state) syd *(map path yoke))
+      de-core
+    ::
+    ++  de-abet  mo-core(yokes.state (~(put by yokes.state) desk gens))
+    ++  de-jolt
+      |=  jot=(list path)
+      ^+  de-core
+      ::  shut down agents not in .jot
+      ::
+      =/  kil  ~(tap in (~(dif in ~(key by gens)) (sy jot)))
+      =.  de-core
+        |-  ^+  de-core
+        ?~  kil  de-core
+        $(kil t.kil, de-core ag-abet:ag-idle:(ag-abud i.kil))
+      ::
+      |-  ^+  de-core
+      ?~  jot  de-core
+      $(jot t.jot, de-core ag-abet:(ag-jolt:ag i.jot))
+    ::  agent engine
+    ::
+    ++  ag
+      =|  =yoke
+      =|  dag=path
+      ++  ag-core  .
+      ++  ag-abet  de-core(gens (~(put by gens) dag yoke))
+      ++  ag-abud  ag-core(yoke (~(got by gens) dag))
+      ++  ag-beam  `beam`[[our syd da+now] :(weld /app dag /hoon)]
+      ++  ag-here  (en-beam ag-beam)
+      ++  ag-gent  ?>(?=(%& -.agent.yoke) p.agent.yoke)
+      ++  ag-idle  !!
+      ++  ag-jolt
+        |=  pax=path
+        ^+  ag-core
+        =.  dag  pax
+        =/  yak  (~(get by gens) dag)
+        ?^  yak
+          ag-reload(yoke u.yak)
+        ~>  %slog.0^leaf/"gall: {ag-here} installing agent"
+        =.  yoke
+          :*  hen
+              nonce=(scot %uw (end 5 (shas %yoke-nonce eny)))
+              stats=[change=0 eny now]
+              *subs
+              *pubs
+              agent=[%& ag-scry-for-agent]
+              ag-beam
+              marks=~
+          ==
+        =^  woe  ag-core  (ag-ingest |.(on-init:ap-gent))
+        ?~  woe
+          ag-core
+        (mean leaf+"gall: {ag-here} +on-init failed" u.woe)
+      ::
+      ++  ag-reload
+        !!
+      ::
+      ++  ag-scry-for-agent
+        =/  bem=beam  [[our syd da+now] :(weld /app dag /hoon)]
+        =/  sky  (rof ~ %ca bem)
+        ?~  sky
+          (mean [leaf+"gall: {<bem>} scry blocked"]~)
+        ?~  u.sky
+          (mean [leaf+"gall: {<bem>} scry failed"]~)
+        =/  =cage  u.u.sky
+        ?.  =(%vase p.cage)
+          (mean [leaf+"gall: bad mark {<p.cage>} for agent {<bem>}"]~)
+        ~_  leaf+"gall: {<bem>} not valid agent"
+        !<(agent !<(vase q.cage))
+      ::
+      ++  ag-poke
+        |=  [=path =cage]
+        ^-  [(list move) _ag-core]
+        =/  ran  (ag-run |.((on-poke:ag-gent path cage)))
+        ?-  -.ran
+          %&  [[[%give %poke-ack ~] -.p.ran] +.p.ran]
+          %|  [[%give %poke-ack `p.ran]~ ag-core]
+        ==
+      ::
+      ++  ag-error
+        |=  =goof
+        ^-  [(list move) _ag-core]
+        =/  =tang  (turn tang.goof |=(t=tank [%rose [~ "! " ~] t ~]))
+        =/  ran  (ag-run |.((on-fail:ag-gent mote.goof tang)))
+        ?-  -.ran
+          %&  p.ran
+          %|  [~ ag-core]  ::  TODO: print error?
+        ==
+      ::
+      ++  ag-run
+        |=  [ack=?(~ %poke-ack %watch-ack) run=(trap step:agent)]
+        ^-  (each [(list move) _ag-core] tang)
+        =/  ran  (ap-mule run)
+        ?:  ?=(%| -.ran)
+          [%| p.ran]
+        =^  fex  agent.yoke  [- &/+]:p.ran
+        =/  moz  (zing (turn fex ag-lift))
+        =.  pubs.yoke  (ag-do-pubs moz)
+        =.  subs.yoke  (ag-do-subs moz)
+        [%& moz ag-core]
+      ::  +ag-do-pubs: update pubs to reflect emitted %kick's
+      ::
+      ++  ag-do-pubs
+        |=  moz=(list move)
+        ^+  pubs.yoke
+        ?~  moz  pubs.yoke
+        =?  pubs.yoke  ?=([* %give %unto %kick *] move)
+          (~(del by pubs.yoke) duct.move)
+        $(moz t.moz)
+      ::  +ag-do-subs: update subs to reflect emitted %leave's and %watch's
+      ::
+      ++  ag-do-subs
+        |=  moz=(list move)
+        ^+  subs.yoke
+        ?~  moz  subs.yoke
+        ?.  ?=([* %pass %g %deal *] i.moz)
+          $(moz t.moz)
+        =;  s  $(moz t.moz, subs.yoke s)
+        ::
+        ^+  subs.yoke
+        =/  =wire  p.move.i.moz
+        =/  =deal  deal.q.move.i.moz
+        ?>  ?=([%use @ @ %out @ @ *] wire)
+        =/  short-wire  t.t.t.t.t.t.wire
+        =/  =dock  [q.p q]:q.move.i.moz
+        =/  sub-key  [short-wire dock]  ::  TODO: include desk
+        ?+    deal  ag-core
+            [%leave *]  (~(del by subs.yoke) sub-key)
+            [?(%watch %watch-as) *]
+          =/  sub  (~(get by subs.yoke) sub-key)
+          ?^  sub
+            =/  =tang  ~['%watch wire not unique' leaf/ag-here >sub-key<]
+            %-  (slog >out=u.sub< tang)
+            (ag-error %watch-not-unique tang)
+          =/  =path
+            ?-  -.r.q.move.move
+              %watch     path.r.q.move.move
+              %watch-as  path.r.q.move.move
+            ==
+          (~(put by subs.yoke) sub-key [| path])
+        ==
+      ::  +ag-lift: convert agent move to arvo move
+      ::
+      ++  ag-lift
+        |=  card=(wind neet gift:agent)
+        ^-  (list move)
+        !!
+      ::  +ag-mule: run virtualized with intercepted scry, preserving type
+      ::
+      ::    Compare +mute and +mule.  Those pass through scry, which
+      ::    doesn't allow us to catch crashes due to blocking scry.  If
+      ::    you intercept scry, you can't preserve the type
+      ::    polymorphically.  By monomorphizing, we are able to do so
+      ::    safely.
+      ::
+      ++  ag-mule
+        |=  run=(trap step:agent)
+        ^-  (each step:agent tang)
+        =/  res  (mock [run %9 2 %0 1] (look rof ~))
+        ?-  -.res
+          %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
+          %1  [%| (smyt ;;(path p.res)) ~]
+          %2  [%| p.res]
+        ==
+      --
+    --
+
   ::  +ap: agent engine
   ::
   ::    An inner, agent-level core.  The sample refers to the agent we're
