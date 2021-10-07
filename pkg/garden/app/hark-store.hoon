@@ -12,6 +12,8 @@
 ::  
 /-  store=hark-store
 /+  verb, dbug, default-agent, re=hark-unreads, agentio
+/$  action-to-json  %hark-action  %json
+/$  update-to-json  %hark-update  %json
 ::
 ::
 ~%  %hark-store-top  ..part  ~
