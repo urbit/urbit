@@ -710,7 +710,11 @@
     ~>  %slog.(fmt "bump {<desk>} to {<[lal num]:kel>}")
     =<  abet  ^+  vats
     =.  vats  (abed desk)
-    ?:  =([~ kel] (read-kelvin-local our desk now))
+    =/  kul   (read-kelvin-local our desk now)
+    ?~  kul
+      ~>  %slog.(fmt "{here} not yet installed")
+      vats
+    ?:  =(kel u.kul)
       ~>  %slog.(fmt "{here} already at {<[lal num]:kel>}")
       update-running-dudes
     =^  tem  rail.rak  (crank-next %| kel)
@@ -882,7 +886,6 @@
         ?~  rail.rak  ~
         `[(get-publisher our loc now) +.u.rail.rak]
       =.  vats  (emil listen:pass (diff:give %commit loc rak) ~)
-
       ?.  liv.rein.rak
         ~>  %slog.(fmt "{<loc>} not running")
         vats
@@ -912,7 +915,7 @@
     ~>  %slog.(fmt "merge into {<loc>} succeeded")
     ?.  =(%base loc)
       vats
-    ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
+    ~>  %slog.(fmt "merging %base into %kids")
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
@@ -970,7 +973,9 @@
   ++  crank-next
     |=  new=(each aeon weft)
     ^+  [match=*(unit rung) rail.rak]
-    ?~  rail.rak  !!
+    ?~  rail.rak
+      ~|  [%no-rail-for desk=loc]
+      !!
     =/  rog  next.u.rail.rak
     =-  [match `u.rail.rak(next next)]
     |-  ^-  [match=(unit rung) next=(list rung)]
