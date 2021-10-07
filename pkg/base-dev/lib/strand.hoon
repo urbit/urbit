@@ -156,7 +156,7 @@
         ::
         :-  ~
         :+  %agent  wire.in
-        [%fact (validate-mark q.cage.sign.in p.cage.sign.in bowl.strand-input)]
+        [%fact (validate-mark q.q.cage.sign.in p.cage.sign.in bowl.strand-input)]
       ::  run the strand callback
       ::
       =/  =output  (form.eval-form strand-input)
