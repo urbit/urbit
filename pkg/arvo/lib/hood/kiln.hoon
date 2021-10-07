@@ -4,8 +4,9 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state    state-8
-+$  state-8  [%8 pith-8]
++$  state    state-9
++$  state-9  [%9 pith-9]
++$  state-8  [%8 pith-9]
 +$  state-7  [%7 pith-7]
 +$  state-6  [%6 pith-6]
 +$  state-5  [%5 pith-5]
@@ -16,7 +17,8 @@
 +$  state-0  [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-8
+  $%  state-9
+      state-8
       state-7
       state-6
       state-5
@@ -27,7 +29,7 @@
       state-0
   ==
 ::
-+$  pith-8
++$  pith-9
   $:  wef=(unit weft)
       rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -380,7 +382,10 @@
     ?~  rail.a  ~
     `[(get-publisher our d now) u.rail.a]
   ::
-  ?>  ?=(%8 -.old)
+  =?  old  ?=(%8 -.old)
+    [%9 +.old]
+  ::
+  ?>  ?=(%9 -.old)
   =.  state  old
   ::
   =?  kiln  (lth old-version %7)
@@ -389,6 +394,20 @@
     abet:(install:vats %base [her sud]:u.old-ota)
   =?  kiln  (lth old-version %7)
     abet:gall-lyv:vats
+  ::  kiln %7 had a bug where it failed to properly emit a +listen
+  ::  due to an unexpected crash. here we detect the cause of the crash
+  ::  (not-yet-installed desks) and emit the +listen anew to make sure we
+  ::  stay aware of commits to base.
+  ::
+  =?    kiln
+      ?&  =(%8 old-version)
+        ::
+          %+  lien  ~(tap by ark.old)
+          |=  [d=desk *]
+          =-  =(0 rev)
+          .^([rev=@ud @da] %cw /(scot %p our)/[d]/(scot %da now))
+      ==
+    take-commit:(abed:vats %base)
   =?  kiln  ?=(^ wef)
     =/  except=(set desk)  (sy %base %kids ~)
     (bump:vats u.wef except force=%.n)
@@ -878,9 +897,13 @@
     ::
     ?.  (~(has by ark) lac)
       kiln
+    =.  vats  (from-wire wire)
+    take-commit
+  ::
+  ++  take-commit
+    ^+  kiln
     =.  kiln
       =<  abet
-      =.  vats  (from-wire wire)
       ~>  %slog.(fmt "commit detected at {here}")
       =.  rail.rak
         ?~  rail.rak  ~
@@ -890,7 +913,7 @@
         ~>  %slog.(fmt "{<loc>} not running")
         vats
       update-running-dudes
-    ?.  =(%base lac)
+    ?.  =(%base loc)
       kiln
     =/  kel=[@tas @ud]
       ?~  rail.rak         zuse/zuse
