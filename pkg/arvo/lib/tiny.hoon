@@ -281,9 +281,9 @@
 ::  Hashes
 ::
 ++  muk                                                 ::  standard murmur3
-  ~%  %muk  ..muk  ~
-  =+  ~(. fe 5)
+  ~/  %muk
   |=  [syd=@ len=@ key=@]
+  =+  ~(. fe 5)
   =+  [c1=0xcc9e.2d51 c2=0x1b87.3593]
   =+  [nblocks tlen]=(dvr len 4)
   =+  ^=  [h1 tail]

@@ -2124,7 +2124,7 @@ u3j_core _a50_d[] =
   { "mix", 7, _140_two_mix_a, 0, _140_two_mix_ha },
   { "mor", 7, _140_two_mor_a, 0, _140_two_mor_ha },
   { "mug", 7, _140_two_mug_a, 0, _140_two_mug_ha },
-  { "muk", 59, _140_two_muk_a, 0, _140_two_muk_ha },  //  TODO: why 59?
+  { "muk", 7, _140_two_muk_a, 0, _140_two_muk_ha },
   { "rep", 7, _140_two_rep_a, 0, _140_two_rep_ha },
   { "rip", 7, _140_two_rip_a, 0, _140_two_rip_ha },
   { "rsh", 7, _140_two_rsh_a, 0, _140_two_rsh_ha },
