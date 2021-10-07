@@ -262,14 +262,6 @@
   ?~  a  b
   $(a t.a, b +(b))
 ::
-++  slag                                                ::  suffix
-  ~/  %slag
-  |*  [a=@ b=(list)]
-  |-  ^+  b
-  ?:  =(0 a)  b
-  ?~  b  ~
-  $(b t.b, a (dec a))
-::
 ++  snag                                                ::  index
   ~/  %snag
   |*  [a=@ b=(list)]
@@ -306,13 +298,6 @@
       +<-(. +<+)
     +<-(+ $(+<- +<->))
   --
-::
-++  reap                                                ::  replicate
-  ~/  %reap
-  |*  [a=@ b=*]
-  |-  ^-  (list _b)
-  ?~  a  ~
-  [b $(a (dec a))]
 ::
 ::  Modular arithmetic
 ::
