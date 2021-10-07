@@ -293,13 +293,8 @@
     =/  k1  (cut 5 [i 1] key)
     ?:  =(nblocks i)
       [hi k1]
-    =.  k1  (sit (mul k1 c1))
-    =.  k1  (rol 0 15 k1)
-    =.  k1  (sit (mul k1 c2))
-    =.  hi  (mix hi k1)
-    =.  hi  (rol 0 13 hi)
-    =.  hi  (sum (sit (mul hi 5)) 0xe654.6b64)
-    $(i +(i))
+    =.  k1  (sit (mul c2 (rol 0 15 (sit (mul c1 k1)))))
+    $(i +(i), hi (sum 0xe654.6b64 (sit (mul 5 (rol 0 13 (mix hi k1))))))
   =.  h1
     |^  ?+  tlen  h1
           %3  $:case3
@@ -310,17 +305,11 @@
     ++  case2  |=(k1=@ (case1 (mix k1 (lsh 3 (cut 3 [1 1] tail)))))
     ++  case1
       |=  k1=@
-      =.  k1  (mix k1 (end 3 tail))
-      =.  k1  (sit (mul k1 c1))
-      =.  k1  (rol 0 15 k1)
-      =.  k1  (sit (mul k1 c2))
-      (mix h1 k1)
+      (mix h1 (sit (mul c2 (rol 0 15 (sit (mul c1 (mix k1 (end 3 tail))))))))
     --
   =/  h  (mix len h1)
-  =.  h  (mix h (rsh 4 h))
-  =.  h  (sit (mul h 0x85eb.ca6b))
-  =.  h  (mix h (rsh [0 13] h))
-  =.  h  (sit (mul h 0xc2b2.ae35))
+  =.  h  (sit (mul 0x85eb.ca6b (mix h (rsh 4 h))))
+  =.  h  (sit (mul 0xc2b2.ae35 (mix h (rsh [0 13] h))))
   (mix h (rsh 4 h))
 ::
 ++  mug                                                 ::  mug with murmur3
