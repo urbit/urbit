@@ -307,7 +307,7 @@
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
-           (sit (con (lsh [b g] e) (rsh [b (sub f g)] e)))
+           (sum (lsh [b g] e) (rsh [b (sub f g)] e))
   ++  sum  |=([b=@ c=@] (sit (add b c)))                ::  wrapping add
   ++  sit  |=(b=@ (end a b))                            ::  enforce modulo
   --
