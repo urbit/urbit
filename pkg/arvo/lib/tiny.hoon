@@ -110,40 +110,6 @@
   =/  [=bloq =step]  ?^(a a [a *step])
   (div b (bex (mul (bex bloq) step)))
 ::
-++  con                                                 ::  binary or
-  ~/  %con
-  |=  [a=@ b=@]
-  =+  [c=0 d=0]
-  |-  ^-  @
-  ?:  ?&(=(0 a) =(0 b))  d
-  %=  $
-    a   (rsh 0 a)
-    b   (rsh 0 b)
-    c   +(c)
-    d   %+  add  d
-          %+  lsh  [0 c]
-          ?&  =(0 (end 0 a))
-              =(0 (end 0 b))
-          ==
-  ==
-::
-++  dis                                                 ::  binary and
-  ~/  %dis
-  |=  [a=@ b=@]
-  =|  [c=@ d=@]
-  |-  ^-  @
-  ?:  ?|(=(0 a) =(0 b))  d
-  %=  $
-    a   (rsh 0 a)
-    b   (rsh 0 b)
-    c   +(c)
-    d   %+  add  d
-          %+  lsh  [0 c]
-          ?|  =(0 (end 0 a))
-              =(0 (end 0 b))
-          ==
-  ==
-::
 ++  mix                                                 ::  binary xor
   ~/  %mix
   |=  [a=@ b=@]
