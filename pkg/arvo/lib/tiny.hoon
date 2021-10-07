@@ -228,31 +228,12 @@
   ?~  a  b
   $(a t.a, b +(b))
 ::
-++  snag                                                ::  index
-  ~/  %snag
-  |*  [a=@ b=(list)]
-  |-  ^+  ?>(?=(^ b) i.b)
-  ?~  b
-    ~_  leaf+"snag-fail"
-    !!
-  ?:  =(0 a)  i.b
-  $(b t.b, a (dec a))
-::
-++  homo                                                ::  homogenize
-  |*  a=(list)
-  ^+  =<  $
-    |@  ++  $  ?:(*? ~ [i=(snag 0 a) t=$])
-    --
-  a
-::
 ++  flop                                                ::  reverse
   ~/  %flop
   |*  a=(list)
-  =>  .(a (homo a))
-  ^+  a
   =+  b=`_a`~
-  |-
-  ?~  a  b
+  |-  ^+  a
+  ?~  a   b
   $(a t.a, b [i.a b])
 ::
 ++  welp                                                ::  concatenate
