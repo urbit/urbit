@@ -300,39 +300,28 @@
     =.  hi  (rol 0 13 hi)
     =.  hi  (sum (sit (mul hi 5)) 0xe654.6b64)
     $(i +(i))
-  =/  k1    0
   =.  h1
-    ?+  tlen  h1  ::  fallthrough switch
-      %3  =.  k1  (mix k1 (lsh [0 16] (cut 3 [2 1] tail)))
-          =.  k1  (mix k1 (lsh [0 8] (cut 3 [1 1] tail)))
-          =.  k1  (mix k1 (end 3 tail))
-          =.  k1  (sit (mul k1 c1))
-          =.  k1  (rol 0 15 k1)
-          =.  k1  (sit (mul k1 c2))
-          (mix h1 k1)
-      %2  =.  k1  (mix k1 (lsh [0 8] (cut 3 [1 1] tail)))
-          =.  k1  (mix k1 (end 3 tail))
-          =.  k1  (sit (mul k1 c1))
-          =.  k1  (rol 0 15 k1)
-          =.  k1  (sit (mul k1 c2))
-          (mix h1 k1)
-      %1  =.  k1  (mix k1 (end 3 tail))
-          =.  k1  (sit (mul k1 c1))
-          =.  k1  (rol 0 15 k1)
-          =.  k1  (sit (mul k1 c2))
-          (mix h1 k1)
-    ==
-  =.  h1  (mix h1 len)
-  |^  (fmix32 h1)
-  ++  fmix32
-    |=  h=@
-    =.  h  (mix h (rsh [0 16] h))
-    =.  h  (sit (mul h 0x85eb.ca6b))
-    =.  h  (mix h (rsh [0 13] h))
-    =.  h  (sit (mul h 0xc2b2.ae35))
-    =.  h  (mix h (rsh [0 16] h))
-    h
-  --
+    |^  ?+  tlen  h1
+          %3  $:case3
+          %2  $:case2
+          %1  $:case1
+        ==
+    ++  case3  |=(k1=@ (case2 (mix k1 (lsh 4 (cut 3 [2 1] tail)))))
+    ++  case2  |=(k1=@ (case1 (mix k1 (lsh 3 (cut 3 [1 1] tail)))))
+    ++  case1
+      |=  k1=@
+      =.  k1  (mix k1 (end 3 tail))
+      =.  k1  (sit (mul k1 c1))
+      =.  k1  (rol 0 15 k1)
+      =.  k1  (sit (mul k1 c2))
+      (mix h1 k1)
+    --
+  =/  h  (mix len h1)
+  =.  h  (mix h (rsh 4 h))
+  =.  h  (sit (mul h 0x85eb.ca6b))
+  =.  h  (mix h (rsh [0 13] h))
+  =.  h  (sit (mul h 0xc2b2.ae35))
+  (mix h (rsh 4 h))
 ::
 ++  mug                                                 ::  mug with murmur3
   ~/  %mug
