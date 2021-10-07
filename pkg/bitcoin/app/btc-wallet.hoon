@@ -24,6 +24,7 @@
     $%  state-0
         state-1
         state-2
+        state-3
     ==
 ::
 +$  state-0
@@ -57,8 +58,9 @@
 ::
 +$  state-1  [%1 base-state]
 +$  state-2  [%2 base-state]
++$  state-3  [%3 base-state]
 --
-=|  state-2
+=|  state-3
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -83,7 +85,7 @@
   :-  cards
   %_  this
       state
-    :*  %2
+    :*  %3
         ~
         *(map xpub:bc walt)
         *^btc-state
@@ -110,8 +112,37 @@
   =|  cards=(list card)
   |-
   ?-  -.ver
-      %2
+      %3
     [cards this(state ver)]
+  ::
+      %2
+    =-  $(-.ver %3, cards (weld cards -))
+    ^-  (list card)
+    =/  bas=path  /(scot %p our.bowl)/settings-store/(scot %da now.bowl)
+    ?.  .^(? %gu bas)
+      ~&  [dap.bowl %settings-store-mia]
+      ~
+    ?.  .^(? %gx (weld bas /has-bucket/landscape/btc-wallet/noun))
+      ~
+    =/  dat
+      .^(data:settings %gx (weld bas /bucket/landscape/btc-wallet/noun))
+    ?>  ?=(%bucket -.dat)
+    |^  :-  =/  del=event:settings  [%del-bucket %landscape %btc-wallet]
+            (poke-our:hc %settings-store %settings-event !>(del))
+        %-  zing
+        %+  turn  ~(tap by bucket.dat)
+        (cork copy-if-missing drop)
+    ::
+    ++  copy-if-missing
+      |=  [=key:settings =val:settings]
+      ^-  (unit card)
+      =/  hav=?
+        .^(? %gx (weld bas /has-entry/[q.byk.bowl]/btc-wallet/[key]/noun))
+      ?:  hav  ~
+      ~&  [dap.bowl %importing-previous-setting key]
+      =/  put=event:settings  [%put-entry q.byk.bowl %btc-wallet key val]
+      `(poke-our:hc %settings-store %settings-event !>(put))
+    --
   ::
       %1
     =?  cards  ?=(^ prov.ver)
@@ -864,7 +895,7 @@
     ::
         %tx-info
       ::  TODO: why do we get a nest-fail when using =^ ?
-      =/  [cards=(list card) sty=state-2]
+      =/  [cards=(list card) sty=state-3]
         (handle-tx-info:hc info.p.upd)
       :_  sty
       :_  cards
