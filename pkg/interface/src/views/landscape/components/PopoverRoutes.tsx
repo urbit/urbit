@@ -29,7 +29,7 @@ export function PopoverRoutes(
   useHashLink();
 
   const groupSize = props.group.members.size;
-  const ship = resourceFromPath(props.association?.group ?? '//~zod/group').ship;
+  const ship = resourceFromPath(props.association?.group ?? '/ship/~zod/group').ship;
   const owner = deSig(ship) === window.ship;
 
   const admin = props.group?.tags?.role?.admin.has(window.ship) || false;
