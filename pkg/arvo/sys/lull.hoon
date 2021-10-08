@@ -1906,6 +1906,7 @@
         [%private-keys ~]                             ::  sub to privates
         [%public-keys ships=(set ship)]               ::  sub to publics
         [%rekey =life =ring]                          ::  update private keys
+        [%ruin ships=(set ship)]                      ::  pretend breach
         $>(%trim vane-task)                           ::  trim state
         [%turf ~]                                     ::  view domains
         $>(%vega vane-task)                           ::  report upgrade
