@@ -77,5 +77,16 @@
       ==
     ==
   --
+++  dejs
+  =,  dejs:format
+  |%
+  ++  ship  (su ;~(pfix sig fed:ag))
+  ++  ally-update
+    ^-  $-(json update:ally)
+    %-  of
+    :~  add+ship
+        del+ship
+    ==
+  --
 --
 

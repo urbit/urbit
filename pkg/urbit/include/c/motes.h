@@ -1237,6 +1237,7 @@
 #   define c3__werp   c3_s4('w','e','r','p')
 #   define c3__west   c3_s4('w','e','s','t')
 #   define c3__what   c3_s4('w','h','a','t')
+#   define c3__whey   c3_s4('w','h','e','y')
 #   define c3__whom   c3_s4('w','h','o','m')
 #   define c3__wing   c3_s4('w','i','n','g')
 #   define c3__wild   c3_s4('w','i','l','d')

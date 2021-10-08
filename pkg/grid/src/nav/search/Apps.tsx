@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
 import { Treaty } from '@urbit/api';
 import { ShipName } from '../../components/ShipName';
-import useDocketState, { useAllyTreaties } from '../../state/docket';
+import useDocketState, { useAllyTreaties, useAllies } from '../../state/docket';
 import { useLeapStore } from '../Nav';
 import { AppList } from '../../components/AppList';
 import { addRecentDev } from './Home';
@@ -18,6 +18,19 @@ export const Apps = ({ match }: AppsProps) => {
   }));
   const provider = match?.params.ship;
   const treaties = useAllyTreaties(provider);
+  const allies = useAllies();
+  const isAllied = provider in allies;
+
+  useEffect(() => {
+    if (Object.keys(allies).length > 0 && !isAllied) {
+      useDocketState
+        .getState()
+        .addAlly(provider)
+        .then(() => {
+          return useDocketState.getState().fetchAllyTreaties(provider);
+        });
+    }
+  }, [allies, isAllied, provider]);
   const results = useMemo(() => {
     if (!treaties) {
       return undefined;

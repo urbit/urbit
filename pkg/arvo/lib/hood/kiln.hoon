@@ -551,8 +551,8 @@
     =.  vats  (abed lac)
     ?^  rail.rak
       go
-    ~>  %slog.(fmt "{<lac>} already installed locally, ignoring")
-    vats
+    ~>  %slog.(fmt "{<lac>} already installed locally, refreshing")
+    update-running-dudes
     ::
     ++  go
       =.  loc  lac

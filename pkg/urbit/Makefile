@@ -1,4 +1,5 @@
 include config.mk
+include $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
 
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
@@ -9,7 +10,9 @@ worker = $(wildcard worker/*.c)
 tests  = $(wildcard tests/*.c)
 bench  = $(wildcard bench/*.c)
 
-common  = $(jets) $(noun) $(ur) $(vere)
+compat := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.c))
+
+common  = $(jets) $(noun) $(ur) $(vere) $(compat)
 headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
@@ -29,7 +32,7 @@ CFLAGS := $(CFLAGS)
 
 ################################################################################
 
-.PHONY: all test clean mkproper
+.PHONY: all test clean mrproper
 
 ################################################################################
 
@@ -74,9 +77,11 @@ build/urbit-worker: $(common_objs) $(worker_objs)
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-%.o: %.c $(headers)
+# CCDEPS and CCEXTRA are empty except in MingW build,
+# which uses them to inject a C source transform step
+%.o: %.c $(headers) $(CCDEPS)
 	@echo CC $<
-	@$(CC) -I./include $(CFLAGS) -c $< -o $@
+	@$(CC) -I./include $(CFLAGS) $< $(CCEXTRA) -c -o $@
 
 tags: $(all_srcs) $(headers)
 	ctags $^
