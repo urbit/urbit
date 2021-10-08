@@ -4,7 +4,7 @@ import {
   Text,
   StatelessToggleSwitchField
 } from '@tlon/indigo-react';
-import { Association, GraphConfig, resourceFromPath } from '@urbit/api';
+import { Association, deSig, GraphConfig, resourceFromPath } from '@urbit/api';
 import { useField } from 'formik';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -53,7 +53,7 @@ function GroupWithChannels(props: { association: Association }) {
   const joinedGraphs = useGraphState(s => s.graphKeys);
   const joinedGroupGraphs = _.pickBy(graphs, (_, graph: string) => {
     const { ship, name } = resourceFromPath(graph);
-    return joinedGraphs.has(`${ship.slice(1)}/${name}`);
+    return joinedGraphs.has(`${deSig(ship)}/${name}`);
   });
 
   const [open, setOpen] = useState(false);
