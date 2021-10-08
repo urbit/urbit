@@ -13,6 +13,7 @@ import _ from 'lodash';
 import f from 'lodash/fp';
 import { pluralize } from './util';
 import useMetadataState from '../state/metadata';
+import { emptyHarkStats } from '../state/hark';
 
 export function getLastSeen(
   unreads: Unreads,
@@ -28,13 +29,16 @@ export function getLastSeen(
   );
 }
 
+export function getHarkStats(unreads: Unreads, path: string) {
+  return unreads?.[path] ?? emptyHarkStats();
+}
+
 export function getUnreadCount(
   unreads: Unreads,
-  path: string,
-  index: string
+  path: string
 ): number {
-  const graphUnreads = unreads.graph?.[path]?.[index]?.unreads ?? 0;
-  return typeof graphUnreads === 'number' ? graphUnreads : graphUnreads.size;
+  const { count, each } = getHarkStats(unreads, path);
+  return count + each.length;
 }
 
 export function getNotificationCount(unreads: Unreads, path: string): number {

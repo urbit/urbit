@@ -1,12 +1,6 @@
 /* vere/time.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <uv.h>
-
 #include "all.h"
 #include "vere/vere.h"
 
@@ -104,7 +98,7 @@ u3_time_in_ts(struct timespec* tim_ts)
   return u3_time_in_tv(&tim_tv);
 }
 
-#if defined(U3_OS_linux)
+#if defined(U3_OS_linux) || defined(U3_OS_mingw)
 /* u3_time_t_in_ts(): urbit time from time_t.
 */
 u3_atom
@@ -117,7 +111,7 @@ u3_time_t_in_ts(time_t tim)
 
   return u3_time_in_tv(&tim_tv);
 }
-#endif // defined(U3_OS_linux)
+#endif // defined(U3_OS_linux) || defined(U3_OS_mingw)
 
 /* u3_time_out_ts(): struct timespec from urbit time.
 */

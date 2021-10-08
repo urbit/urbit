@@ -73,7 +73,7 @@ export const optReduceState = <S, U>(
 export let stateStorageKeys: string[] = [];
 
 export const stateStorageKey = (stateName: string) => {
-  stateName = `Landscape${stateName}State`;
+  stateName = `Landscape${stateName}State-${process.env.LANDSCAPE_SHORTHASH}`;
   stateStorageKeys = [...new Set([...stateStorageKeys, stateName])];
   return stateName;
 };
@@ -147,8 +147,7 @@ export const createState = <T extends {}>(
   ...(typeof properties === 'function' ? (properties as any)(set, get) : properties)
 }), {
   blacklist,
-  name: stateStorageKey(name),
-  version: process.env.LANDSCAPE_SHORTHASH as any
+  name: stateStorageKey(name)
 }));
 
 export async function doOptimistically<A, S extends {}>(state: UseStore<S & BaseState<S>>, action: A, call: (a: A) => Promise<any>, reduce: ((a: A, fn: S & BaseState<S>) => S & BaseState<S>)[]) {

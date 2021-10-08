@@ -1,10 +1,11 @@
 import {
-    Box, Col,
-    Icon,
-    ManagedTextInputField as Input, Row,
-    Text
+  Box, Col,
+  Icon,
+  ManagedTextInputField as Input, Row,
+  Text,
+  Button
 } from '@tlon/indigo-react';
-import { join, MetadataUpdatePreview, putEntry } from '@urbit/api';
+import { join, MetadataUpdatePreview } from '@urbit/api';
 import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
@@ -22,6 +23,7 @@ import { FormError } from '~/views/components/FormError';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { GroupSummary } from './GroupSummary';
 import airlock from '~/logic/api';
+import useSettingsState from '~/logic/state/settings';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -41,6 +43,7 @@ interface FormSchema {
 
 interface JoinGroupProps {
   autojoin?: string;
+  dismiss?: () => void;
 }
 
 function Autojoin(props: { autojoin: string | null }) {
@@ -56,8 +59,9 @@ function Autojoin(props: { autojoin: string | null }) {
 }
 
 export function JoinGroup(props: JoinGroupProps): ReactElement {
-  const { autojoin } = props;
+  const { autojoin, dismiss } = props;
   const { associations, getPreview } = useMetadataState();
+  const [timedOut, setTimedOut] = useState(false);
   const groups = useGroupState(state => state.groups);
   const history = useHistory();
   const initialValues: FormSchema = {
@@ -73,8 +77,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
+    const { putEntry } = useSettingsState.getState();
     if(group === TUTORIAL_GROUP_RESOURCE) {
-      await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
+      await putEntry('tutorial', 'joined', Date.now());
     }
     if (group in groups) {
       return history.push(`/~landscape${group}`);
@@ -102,8 +107,8 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
         history.push(`/~landscape${group}`);
       }
     } catch (e) {
-      //  drop them into inbox to show join request still pending
-      history.push('/~notifications');
+      setTimedOut(true);
+      console.error(e);
     }
   }, [waiter, history, associations, groups]);
 
@@ -142,7 +147,17 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
           Join a Group
         </Text>
       </Box>
-      {_.isString(preview) ? (
+      { timedOut ? (
+        <Col width="100%" gapY={4}>
+          <Text>The host is not responding. You will receive a notification when the join requests succeeds
+          </Text>
+          <Button primary onClick={dismiss}>
+            Dismiss
+          </Button>
+
+        </Col>
+      ) : _.isString(preview) ? (
+
         <Col width="100%" gapY={4}>
           <Text>The host appears to be offline. Join anyway?</Text>
           <StatelessAsyncButton

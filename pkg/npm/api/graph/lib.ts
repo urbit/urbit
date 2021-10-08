@@ -5,7 +5,7 @@ import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
 import { Content, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
 import { patp2dec } from 'urbit-ob';
 
-export const GRAPH_UPDATE_VERSION = 2;
+export const GRAPH_UPDATE_VERSION = 3;
 
 export const createBlankNodeWithChildPost = (
   ship: PatpNoSig,

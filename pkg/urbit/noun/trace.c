@@ -519,7 +519,7 @@ u3t_boot(void)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
     _ct_lop_o = c3n;
-#if defined(U3_OS_osx) || defined(U3_OS_linux)
+#if defined(U3_OS_PROF)
     //  skip profiling if we don't yet have an arvo kernel
     //
     if ( 0 == u3A->roc ) {
@@ -551,10 +551,6 @@ u3t_boot(void)
       itm_v.it_value = itm_v.it_interval;
       setitimer(ITIMER_PROF, &itm_v, 0);
     }
-#elif defined(U3_OS_bsd)
-    // XX  "Profiling isn't yet supported on BSD"
-#else
-#   error "port: profiling"
 #endif
   }
 }
@@ -565,7 +561,7 @@ void
 u3t_boff(void)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
-#if defined(U3_OS_osx) || defined(U3_OS_linux)
+#if defined(U3_OS_PROF)
     // Mask SIGPROF signals in this thread (and this is the only
     // thread that unblocked them).
     {
@@ -590,11 +586,6 @@ u3t_boff(void)
       sig_s.sa_handler = SIG_IGN;
       sigaction(SIGPROF, &sig_s, 0);
     }
-
-#elif defined(U3_OS_bsd)
-    // XX  "Profiling isn't yet supported on BSD"
-#else
-#   error "port: profiling"
 #endif
   }
 }

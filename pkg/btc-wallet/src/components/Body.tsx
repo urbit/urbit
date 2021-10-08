@@ -23,13 +23,13 @@ const Body: React.FC = () => {
     </Box>
   ) : (
     <Switch>
-      <Route path="/~btc/settings">
+      <Route path="/settings">
         <Col display="flex" flexDirection="column" width={cardWidth}>
           <Header settings={true} />
           <Settings />
         </Col>
       </Route>
-      <Route path="/~btc">
+      <Route path="/">
         <Col display="flex" flexDirection="column" width={cardWidth}>
           <Header settings={false} />
           {!warning ? null : <Warning />}

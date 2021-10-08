@@ -2,12 +2,7 @@
 **
 */
 #include "all.h"
-
-#if defined(U3_OS_osx)
-#include <CommonCrypto/CommonDigest.h>
-#else
-#include <openssl/sha.h>
-#endif
+#include <urcrypt.h>
 
 /**  Data structures.
 **/
@@ -128,20 +123,7 @@ _cj_bash(u3_noun bat)
       //
       c3_y*    fat_y = sab_u.buf_y;
       c3_y     dig_y[32];
-
-#if defined(U3_OS_osx)
-      CC_SHA256_CTX ctx_h;
-
-      CC_SHA256_Init(&ctx_h);
-      CC_SHA256_Update(&ctx_h, fat_y, met_w);
-      CC_SHA256_Final(dig_y, &ctx_h);
-#else
-      SHA256_CTX ctx_h;
-
-      SHA256_Init(&ctx_h);
-      SHA256_Update(&ctx_h, fat_y, met_w);
-      SHA256_Final(dig_y, &ctx_h);
-#endif
+      urcrypt_shay(fat_y, met_w, dig_y);
 
       pro = u3i_bytes(32, dig_y);
       u3h_put(u3R->jed.bas_p, bat, u3k(pro));

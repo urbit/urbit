@@ -14,6 +14,7 @@ import { PostRepliesRoutes } from './Post/PostReplies';
 import PostTimeline from './Post/PostTimeline';
 import airlock from '~/logic/api';
 import { PostThreadRoutes } from './Post/PostThread';
+import { toHarkPlace } from '~/logic/lib/util';
 
 function GroupFeed(props) {
   const {
@@ -52,7 +53,8 @@ function GroupFeed(props) {
       return;
     }
     getNewest(graphResource.ship, graphResource.name, 100);
-    airlock.poke(markCountAsRead(graphPath));
+
+    airlock.poke(markCountAsRead(toHarkPlace(graphPath)));
   }, [graphPath]);
 
   if (!graphPath) {

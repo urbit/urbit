@@ -132,6 +132,12 @@
   =?  site  ?=([%'~debug' *] site)  t.site
   ?~  ext
     $(ext `%html, site [%index ~]) ::NOTE  hack
+  ::  serve dynamic session.js
+  ::
+  ?:  =([/js/session `%js] [site ext])
+    %-  js-response:gen
+    %-  as-octt:mimes:html
+    "window.ship = '{(slag 1 (scow %p our.bowl))}';"
   ::  if not json, serve static file
   ::
   ?.  ?=([~ %json] ext)
@@ -418,13 +424,16 @@
 ++  apps
   |%
   ++  all
-    ^-  (list term)
-    %+  murn
-      (scry (list path) %ct %home /app)
-    |=  =path
-    ^-  (unit term)
-    ?.  ?=([%app @ %hoon ~] path)  ~
-    `i.t.path
+    ^-  (list dude:gall)
+    %-  zing
+    ^-  (list (list dude:gall))
+    %+  turn
+      ~(tap in (scry (set desk) %cd %$ /))
+    |=  =desk
+    ^-  (list dude:gall)
+    =-  (turn ~(tap in -) head)
+    ;;  (set [dude:gall ?])  ::TODO  for some reason we need this?
+    (scry (set [dude:gall ?]) %ge desk /)
   ::
   ++  running
     |=  app=term
