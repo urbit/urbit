@@ -25,7 +25,6 @@ const getGraphUnreads = (associations: Associations) => {
   const selUnread = (graph: string) => {
     const { count, each } = selHarkGraph(graph)(state);
     const result =  count + each.length;
-    console.log(graph, result);
     return result;
   };
   return (path: string) =>
