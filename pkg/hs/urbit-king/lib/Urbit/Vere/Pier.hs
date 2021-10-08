@@ -79,12 +79,17 @@ genEntropy :: MonadIO m => m Entropy
 genEntropy = Entropy . fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
 genBootSeq :: HasKingEnv e
-           => Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
-genBootSeq _    PillIvory {}   _    _    = throwIO CannotBootFromIvoryPill
-genBootSeq ship PillPill  {..} lite boot = do
+           => Ship -> Pill -> Bool -> LegacyBootEvent -> Feed -> RIO e BootSeq
+genBootSeq _    PillIvory {}   _    _    _    = throwIO CannotBootFromIvoryPill
+genBootSeq ship PillPill  {..} lite boot feed = do
   ent <- io genEntropy
   wyr <- wyrd
-  let ova = preKern ent <> [wyr] <> pKernelOva <> postKern <> pUserspaceOva
+  let ova = preKern ent
+            <> [wyr]
+            <> pKernelOva
+            <> postKern
+            <> extraKeys
+            <> pUserspaceOva
   pure $ BootSeq ident pBootFormulae ova
  where
   ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulae)
@@ -96,6 +101,10 @@ genBootSeq ship PillPill  {..} lite boot = do
   isFake   = case boot of
     Fake _ -> True
     _      -> False
+  extraKeys = case feed of
+    Feed0 _         -> []
+    Feed1 Germs{..} -> fmap rekey gFeed
+  rekey Germ{..} = EvBlip $ BlipEvJael $ JaelEvRekey () (gLife, gRing)
 
 
 -- Write to the log. -----------------------------------------------------------
@@ -160,9 +169,10 @@ booted
   -> Bool
   -> Ship
   -> LegacyBootEvent
+  -> Feed
   -> RAcquire PierEnv (Serf, EventLog)
-booted vSlog pill lite ship boot = do
-  rio $ bootNewShip pill lite ship boot
+booted vSlog pill lite ship boot feed = do
+  rio $ bootNewShip pill lite ship boot feed
   resumed vSlog Nothing
 
 bootSeqJobs :: Time.Wen -> BootSeq -> [Job]
@@ -183,9 +193,10 @@ bootNewShip
   -> Bool
   -> Ship
   -> LegacyBootEvent
+  -> Feed
   -> RIO e ()
-bootNewShip pill lite ship bootEv = do
-  seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv
+bootNewShip pill lite ship bootEv feed = do
+  seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv feed
   logInfo "BootSeq Computed"
 
   pierPath <- view pierPathL

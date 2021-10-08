@@ -53,3 +53,13 @@ export function docketInstall(ship: string, desk: string): Poke<any> {
     json: `${ship}/${desk}`
   };
 }
+
+export function allyShip(ship: string): Poke<any> {
+  return {
+    app: 'treaty',
+    mark: 'ally-update-0',
+    json: {
+      add: ship
+    }
+  };
+}
