@@ -1,5 +1,5 @@
 import { BaseAnchor, Box, BoxProps, Button, Center, Col, H3, Icon, Image, Row, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, resourceFromPath, GraphConfig, Treaty } from '@urbit/api';
+import { Association, GraphNode, resourceFromPath, GraphConfig, Treaty, deSig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { Link, useLocation } from 'react-router-dom';
@@ -83,7 +83,7 @@ function GraphPermalink(
   const location = useLocation();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
-    useCallback(s => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
+    useCallback(s => s.looseNodes?.[`${deSig(ship)}/${name}`]?.[index] as GraphNode, [
       graph,
       index
     ])

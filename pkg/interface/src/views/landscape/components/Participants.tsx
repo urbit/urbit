@@ -9,6 +9,7 @@ import {
 import { Contact, Contacts } from '@urbit/api/contacts';
 import { addTag, removeMembers, changePolicy, Group, removeTag, RoleTags } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
+import { deSig } from '@urbit/api';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import React, {
@@ -62,11 +63,11 @@ const emptyContact = (patp: string, pending: boolean): Participant => ({
 
 function getParticipants(cs: Contacts, group: Group) {
   const contacts: Participant[] = _.flow(
-    f.omitBy<Contacts>((_c, patp) => !group.members.has(patp.slice(1))),
+    f.omitBy<Contacts>((_c, patp) => !group.members.has(deSig(patp))),
     f.toPairs,
     f.map(([patp, c]: [string, Contact]) => ({
       ...c,
-      patp: patp.slice(1),
+      patp: deSig(patp),
       pending: false
     }))
   )(cs);

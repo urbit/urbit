@@ -1,5 +1,5 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, Graph, Group } from '@urbit/api';
+import { Association, deSig, Graph, Group } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import React, {
   Component, ReactNode
@@ -73,7 +73,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
           >
             <LinkSubmit
               name={name}
-              ship={ship.slice(1)}
+              ship={deSig(ship)}
             />
           </Col>
           { typeof post !== 'string' && <LinkItem {...linkProps} /> }
@@ -109,7 +109,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
           {this.canWrite() ? (
             <LinkSubmit
               name={name}
-              ship={ship.slice(1)}
+              ship={deSig(ship)}
             />
           ) : (
             <Text>
