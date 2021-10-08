@@ -7,7 +7,9 @@ function getGroupResourceRedirect(key: string) {
   if(!association || !('graph' in metadata.config)) {
     return '';
   }
-  return `/~landscape${association.group}/resource/${metadata.config.graph}${association.resource}`;
+
+  const section = association.group === association.resource ? '/messages' : association.group;
+  return `/~landscape${section}/resource/${metadata.config.graph}${association.resource}`;
 }
 
 function getPostRedirect(key: string, segs: string[]) {

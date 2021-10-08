@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { useRef, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
-import { Association, cite } from '@urbit/api';
+import { Association, cite, deSig } from '@urbit/api';
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
@@ -18,7 +18,7 @@ import useGraphState from '~/logic/state/graph';
 
 function useAssociationStatus(resource: string) {
   const [, , ship, name] = resource.split('/');
-  const graphKey = `${ship.slice(1)}/${name}`;
+  const graphKey = `${deSig(ship)}/${name}`;
   const isSubscribed = useGraphState(s => s.graphKeys.has(graphKey));
   const stats = useHarkStat(`/graph/~${graphKey}`);
   const { count, each } = stats;

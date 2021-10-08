@@ -1,6 +1,6 @@
 import { Center, LoadingSpinner } from '@tlon/indigo-react';
 import {
-  Association
+  Association, deSig
 } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
@@ -31,7 +31,7 @@ export function NotebookRoutes(
 
   const graphs = useGraphState(state => state.graphs);
 
-  const graph = graphs[`${ship.slice(1)}/${book}`];
+  const graph = graphs[`${deSig(ship)}/${book}`];
 
   const groups = useGroupState(state => state.groups);
 

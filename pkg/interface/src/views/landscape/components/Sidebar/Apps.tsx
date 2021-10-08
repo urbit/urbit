@@ -1,4 +1,4 @@
-import { Graphs, UnreadStats } from '@urbit/api';
+import { deSig, Graphs, UnreadStats } from '@urbit/api';
 import { useCallback } from 'react';
 import { SidebarAppConfig } from './types';
 
@@ -10,7 +10,7 @@ export function useGraphModule(
   const getStatus = useCallback(
     (s: string) => {
       const [, , host, name] = s.split('/');
-      const graphKey = `${host.slice(1)}/${name}`;
+      const graphKey = `${deSig(host)}/${name}`;
       if (!graphKeys.has(graphKey)) {
         return 'unsubscribed';
       }

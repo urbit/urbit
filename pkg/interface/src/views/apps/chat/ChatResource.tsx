@@ -1,4 +1,4 @@
-import { Content, createPost, fetchIsAllowed, Post, removePosts } from '@urbit/api';
+import { Content, createPost, fetchIsAllowed, Post, removePosts, deSig } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import { BigInteger } from 'big-integer';
 import React, {
@@ -115,14 +115,14 @@ const fetchMessages = useCallback(async (newer: boolean) => {
         pageSize,
         `/${index.toString()}`
       );
-      return expectedSize !== getCurrGraphSize(ship.slice(1), name);
+      return expectedSize !== getCurrGraphSize(deSig(ship), name);
     } else {
       const index = graph.peekSmallest()?.[0];
       if (!index) {
         return false;
       }
       await getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
-      const currSize = getCurrGraphSize(ship.slice(1), name);
+      const currSize = getCurrGraphSize(deSig(ship), name);
       console.log(currSize);
       const done = expectedSize !== currSize;
       return done;
