@@ -1,6 +1,6 @@
 module Practice.DependentLambda where
 
-import ClassyPrelude
+import ClassyPrelude hiding (find)
 
 import Bound
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
@@ -18,6 +18,7 @@ type Term = String
 -- evaluate, it makes great sense for this to be a newtype.
 newtype Base a = Base { loft :: Code a -- ^ "Unevalutate" a value back into code.
                       }
+  deriving (Functor, Foldable, Traversable)
 
 -- | Alias useful for pedagogical purposes.
 type Type = Base
@@ -41,8 +42,8 @@ data Code a
   | Atom Atom Term
   | Cons (Code a) (Code a)
   | Lamb (Scope () Code a)  -- TODO pattern
-  | Core (Map Term (Scope () Code a)) (Code a)
-  | Name Term (Code a)
+  | Core (Map Term (Scope () Code a)) (Code a)  -- XX second should be sut
+  | Name Term (Code a)  -- a=1
   -- elimination forms
   | Plus (Code a)
   | Slam (Code a) (Code a)
@@ -57,20 +58,19 @@ data Code a
   | Gate (Code a) (Scope () Code a)
   | Gold (Map Term (Scope () Code a)) (Code a)
   | Lead (Map Term (Code a))
-  | Mask Term (Code a)  -- ^ Liskov-compliant face type
+  | Mask Term (Code a)  -- ^ Liskov-compliant face type  a|@
   | Type
   -- other expressions
-  | Bind (Code a) (Scope () Code a)  -- TODO pattern
+  | Bind (Code a) (Scope () Code a)
   | Case (Code a) [Scope Int Code a] [Scope Int Code a]
-  | Nest { cod :: Code a, typ :: Code a }
-  | Cast { cod :: Code a, typ :: Code a }
+  | Nest { cod :: Code a, typ :: Code a }  --  ^-  a/@  @\a
+  | Cast { cod :: Code a, typ :: Code a }  --  ^!  `@`a
   -- todo Noun? or can we encode using recursors + atom + cell
   deriving (Functor, Foldable, Traversable)
 
 -- These patterns let us deconstruct a type into component types, instead of
 -- having to reapply Base on each subterm.
 -- pattern BCell t c <- Cell (Base -> t) c where BCell t c = Cell (Base t) c
-
 
 deriveEq1   ''Code
 deriveOrd1  ''Code
@@ -132,7 +132,7 @@ peg a = \case
   3 -> a * 2 + 1
   b -> b `mod` 2 + peg a (b `div` 2) * 2
 
--- | Combo of cap and mas
+-- | Combo of cap and mas. FIXME name change.
 cut :: Axis -> Maybe (Step, Axis)
 cut = \case
   0 -> Nothing
@@ -158,7 +158,7 @@ pop a = case cut a of
 -- | Type checking monad
 type Check = ReaderT [Act] Maybe
 
-bail :: Check ()
+bail :: Check a
 bail = lift Nothing
 
 -- | Error reporting context, analogous to stack trace item.
@@ -173,6 +173,8 @@ type Env a = a -> Type a
 -- | Tracks which parts of the environment were defined by lets and thus have
 -- inlinable expressions representing them.
 type Semi a = a -> Maybe (Base a)  -- XX should this be base or code?
+-- base is good for haskell because lazy, but it also means by-value, which will
+-- be extra loopy and ultimately unacceptable. I guess fix later
 
 -- | Full typing context for dependent type checking.
 data Con a = Con
@@ -280,12 +282,14 @@ data Con a = Con
 --   the more permissive situation in 140 where we compare their arm return
 --   types. But do we care?
 
-
-
--- | Promote a base to be usable in a larger context. It would be nice if this
+-- | Promote a trm to be usable in a larger context. It would be nice if this
 -- could be more efficient.
-grow :: Base a -> Base (Var b a)
-grow (Base b) = Base (F <$> b)
+grow :: Functor f => f a -> f (Var b a)
+grow = fmap F
+
+-- | Make a scope which doesn't mention the new variable. Constant time.
+blow :: Applicative f => f a -> Scope b f a
+blow = Scope . pure . F
 
 -- | Grow the environment to record a new variable with opaque rhs.
 hide :: Con a -> Type a -> Con (Var () a)
@@ -376,7 +380,7 @@ eval sem = \case
   -- XX again eval under binder q
   Gold bat pay -> Base $ Gold bat pay
 
-  Lead bat -> Base $ Lead bat --Base $ Lead $ fmap go bat
+  Lead bat -> Base $ Lead $ fmap go bat
 
   Mask n c -> Base $ Mask n $ go c
 
@@ -421,8 +425,8 @@ eval sem = \case
           _ | c == d           -> Just True  -- too cheeky? unwise?
             | otherwise        -> Nothing
     in case out c d of
-      Just True  -> Atom 0 "b"
-      Just False -> Atom 1 "b"
+      Just True  -> Atom 0 "f"
+      Just False -> Atom 1 "f"
       Nothing    -> Equl c d
 
 -- | A common pattern is to fill in a binder and continue evaluating.
@@ -440,6 +444,39 @@ data Fit
 -- | Perform subtyping or coercibility check.
 fits :: Con a -> Fit -> Type a -> Type a -> Check ()
 fits = undefined
+
+find :: Vary a => Con a -> Code a -> Type a -> Wing -> Check ([Axis], Type a)
+find con cod typ win = undefined
+ where
+  go :: Vary a
+     => Con a
+     -> Code a
+     -> Limb
+     -> ([Axis], Type a)
+     -> Check ([Axis], Type a)
+  go con cod (Axis a) (as, t) = (a:as,) <$> step con cod a t
+  go con cod (Ally n) (as, t) = walk con cod n t <&> \(a, t) -> (a:as, t)
+
+  step :: Vary a => Con a -> Code a -> Axis -> Type a -> Check (Type a)
+  step con cod a t = case (cut a, loft t) of
+    (Nothing,     _)        -> pure t
+    (_,           Mask _ c) -> step con cod a (Base c)
+    (Just (L, a), Cell c _) -> step con cod a (Base c)
+    (Just (R, a), Cell _ d) -> step con (taut cod) a $ flow con (taut cod) d
+    (Just (L, _), Gold _ _) -> bail  -- TODO Noun?
+    (Just (R, a), Gold _ c) -> step con cod a (Base c)
+    (Just (L, _), Lead _)   -> bail  -- TODO Noun?
+    (Just (R, _), Lead _)   -> bail  -- TODO Noun?
+    (_,           _)        -> bail  -- arguably for Liskov, should be Noun :(
+
+  taut :: Code a -> Code a
+  taut = \case
+    Wing (Axis a : w) c -> Wing (Axis (hop L a) : w) c
+    Wing w c -> Wing (Axis 2 : w) c
+    c -> Wing [Axis 2] c
+
+
+  walk = undefined
 
 -- | Given subject type, verify that code has result type. Since the expected
 -- result type is known in this mode, we can lighten the user's annotation
@@ -525,13 +562,117 @@ work con fit e tau@(Base t) =
                        {-
                        -- ugh again wrong, because of the Int scope
                        for cs \c -> work con Nest c st
-                       -- WRONG, we must do refinement
+                       -- WRONG, we must do refinement, i.e. substitution
                        for ds \d -> work con fit d t
                        -}
 
     Nest{} -> playFits
     Cast{} -> playFits
 
+-- | Require the given type to be a function type.
+-- XX Deppy had a cas rule here; why?
+wantGate :: Vary a => Type a -> Check (Type a, Scope () Code a)
+wantGate = \case
+  Base (Gate c d) -> pure (Base c, d)
+  _ -> bail
+
 -- | Given subject type, determine result type of code.
-play :: Con a -> Code a -> Check (Type a)
-play = undefined
+play :: Vary a => Con a -> Code a -> Check (Type a)
+play con = \case
+  Look v -> pure $ env con v
+
+  Atom _ t -> pure $ Base $ Aura t
+
+  Cons c d -> do
+    Base tc <- play con c
+    Base td <- play con d
+    pure $ Base $ Cell tc (blow td)
+
+  Lamb c -> do
+    -- TODO we need to get the type out of the pattern, if any
+    tb <- undefined
+    -- we also need to need to regard the body against subject a $-gold core
+    -- which is not possible in the reduced paradagim of this prototype.
+    undefined
+
+  Core bat pay -> undefined
+
+  Name n c -> do
+    Base t <- play con c
+    pure $ Base $ Mask n t
+
+  Plus c -> do
+    -- Following 140, we do not propagate aura.
+    work con FitNest c (Base $ Aura "")
+    pure (Base $ Aura "")
+
+  Slam c d -> do
+    (td, tr) <- wantGate =<< play con c
+    work con FitNest d td
+    pure $ flow con c tr
+
+  Wing w c -> do
+    t <- play con c
+    snd <$> find con c t w
+
+  Equl c d -> do
+    work con FitNest c undefined -- Noun
+    work con FitNest d undefined -- Noun
+    pure $ Base $ Fork (setFromList [0,1]) "f"
+
+  Aura{} -> pure $ Base Type
+
+  Fork{} -> pure $ Base Type
+
+  Cell c d -> do
+    -- idea: unify Name and Mask, have a=Type cast under Type, but not nest,
+    -- use FitCast here. What would go horribly wrong?
+    work con FitNest c (Base Type)
+    let c' = eval (sem con) c
+    work (hide con c') FitNest (fromScope d) (Base Type)
+    pure $ Base Type
+
+  Gate c d -> do
+    work con FitNest c (Base Type)
+    let c' = eval (sem con) c
+    work (hide con c') FitNest (fromScope d) (Base Type)
+    pure $ Base Type
+
+  Gold bat pay -> do
+    work con FitNest pay (Base Type)
+    let t = eval (sem con) pay
+    for bat \b -> work (hide con t) FitNest (fromScope b) (Base Type)
+    pure $ Base Type
+
+  -- likewise under the a=Type idea, we'd FitCast here
+  Lead bat -> do
+    for bat \b -> work con FitNest b (Base Type)
+    pure $ Base Type
+
+  Mask _ c -> do
+    work con FitNest c (Base Type)
+    pure $ Base Type
+
+  Type -> pure $ Base Type
+
+  Bind c d -> do
+    tc <- play con c
+    -- XX again consider alternatives, but I think this is actually the
+    -- canonical thing to do; test in idris?
+    Base u <- play (shew con c tc) (fromScope d)
+    pure $ flow con c (toScope u)
+
+  -- The easy answer is to say it has type Case c cs ts, where ts is the type
+  -- of each d. The better answer is to attempt some good faith computed fork,
+  -- and fail and require a type annotation if it fails.
+  Case c cs ds -> undefined
+
+  Nest{cod, typ} -> do
+    let t = eval (sem con) typ
+    work con FitNest cod t
+    pure t
+
+  Cast{cod, typ} -> do
+    let t = eval (sem con) typ
+    work con FitCast cod t
+    pure t
