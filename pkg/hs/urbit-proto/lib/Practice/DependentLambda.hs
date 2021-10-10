@@ -3,7 +3,9 @@ module Practice.DependentLambda where
 import ClassyPrelude hiding (find)
 
 import Bound
+import Control.Arrow ((<<<), (>>>))
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
+import Data.Foldable (foldrM)
 import Data.Maybe (fromJust)
 import Numeric.Natural
 
@@ -445,8 +447,11 @@ data Fit
 fits :: Con a -> Fit -> Type a -> Type a -> Check ()
 fits = undefined
 
+-- we need `cod` so we can substitute -:cod in the dependency on the rhs of a
+-- cell type. I think it goes away with dependent types, since all finds are
+-- against `.`.
 find :: Vary a => Con a -> Code a -> Type a -> Wing -> Check ([Axis], Type a)
-find con cod typ win = undefined
+find con cod typ win = foldrM (go con cod) ([], typ) win
  where
   go :: Vary a
      => Con a
@@ -461,22 +466,48 @@ find con cod typ win = undefined
   step con cod a t = case (cut a, loft t) of
     (Nothing,     _)        -> pure t
     (_,           Mask _ c) -> step con cod a (Base c)
-    (Just (L, a), Cell c _) -> step con cod a (Base c)
-    (Just (R, a), Cell _ d) -> step con (taut cod) a $ flow con (taut cod) d
+    (Just (L, a), Cell c _) -> step con (heed 2 cod) a (Base c)
+    (Just (R, a), Cell _ d) -> step con (heed 3 cod) a $ flow con (heed 2 cod) d
     (Just (L, _), Gold _ _) -> bail  -- TODO Noun?
-    (Just (R, a), Gold _ c) -> step con cod a (Base c)
+    (Just (R, a), Gold _ c) -> step con (heed 3 cod) a (Base c)
     (Just (L, _), Lead _)   -> bail  -- TODO Noun?
     (Just (R, _), Lead _)   -> bail  -- TODO Noun?
     (_,           _)        -> bail  -- arguably for Liskov, should be Noun :(
 
-  taut :: Code a -> Code a
-  taut = \case
-    Wing (Axis a : w) c -> Wing (Axis (hop L a) : w) c
-    Wing w c -> Wing (Axis 2 : w) c
-    c -> Wing [Axis 2] c
+  heed :: Axis -> Code a -> Code a
+  heed ax = \case
+    Wing (Axis a : w) c -> Wing (Axis (peg ax a) : w) c
+    Wing w c -> Wing (Axis ax : w) c
+    c -> Wing [Axis ax] c
 
+  fend :: Term -> Map Term a -> Axis
+  fend _ _ = 0  -- XX FIXME
 
-  walk = undefined
+  walk :: Vary a => Con a -> Code a -> Term -> Type a -> Check (Axis, Type a)
+  walk con cod n = maybe bail pure . lope con cod
+   where
+    lope con cod = loft >>> \case
+      Mask m c
+        | n == m    -> pure (1, Base c)
+        | otherwise -> Nothing
+
+      Cell c d ->
+        first (peg 2) <$> lope con (heed 2 cod) (Base c) <|>
+        first (peg 3) <$> lope con (heed 3 cod) (flow con (heed 2 cod) d)
+
+      Gold bat pay ->
+        do
+          t <- lookup n bat
+          let a = fend n bat
+          pure (peg 2 a, flow con (heed 3 cod) t)
+        <|> first (peg 3) <$> lope con (heed 3 cod) (Base pay)
+
+      Lead bat -> do
+        t <- lookup n bat
+        let a = fend n bat
+        pure (peg 2 a, Base t)
+
+      _ -> Nothing
 
 -- | Given subject type, verify that code has result type. Since the expected
 -- result type is known in this mode, we can lighten the user's annotation
@@ -547,6 +578,8 @@ work con fit e tau@(Base t) =
     Equl{} -> playFits
 
     -- likewise with types
+    Aura{} -> playFits
+    Fork{} -> playFits
     Cell{} -> playFits
     Gate{} -> playFits
     Gold{} -> playFits
