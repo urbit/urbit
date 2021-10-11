@@ -147,7 +147,7 @@ function GraphPermalink(
       border={full ? null : '1'}
       borderColor="lightGray"
       borderRadius={2}
-      onClick={(e) => {
+      onClickCapture={(e) => {
         e.stopPropagation();
       }}
     >

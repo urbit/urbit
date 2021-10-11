@@ -1,5 +1,5 @@
 import React, { MouseEvent, useCallback, useState } from 'react';
-import { Row, Box, Icon, BaseAnchor } from '@tlon/indigo-react';
+import { Row, Box, Icon, BaseAnchor, BaseButton } from '@tlon/indigo-react';
 import AsyncFallback from '../AsyncFallback';
 
 interface RemoteContentWrapperProps {
@@ -49,12 +49,12 @@ export function RemoteContentWrapper(props: RemoteContentWrapperProps) {
         {(!detail && !replaced) ? (
           <Icon ml={2} display="block" icon="ArrowExternal" />
         ) : !replaced ? (
-          <Icon
-            ml={2}
-            display="block"
-            onClick={toggleUnfold}
-            icon={unfold ? 'TriangleSouth' : 'TriangleEast'}
-          />
+          <BaseButton ml={2} onClick={toggleUnfold}>
+            <Icon
+              display="block"
+              icon={unfold ? 'TriangleSouth' : 'TriangleEast'}
+            />
+          </BaseButton>
         ) : null }
         <BaseAnchor
           display="flex"
