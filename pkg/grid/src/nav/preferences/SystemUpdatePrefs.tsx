@@ -13,7 +13,7 @@ export const SystemUpdatePrefs = () => {
   );
   const base = useVat('base');
   const otasEnabled = base && !(base.arak?.rail?.paused ?? true);
-  const otaSource = base && base.arak.rail!.ship!;
+  const otaSource = base && base.arak.rail?.ship;
 
   const toggleBase = useCallback((on: boolean) => toggleOTAs('base', on), [toggleOTAs]);
 
