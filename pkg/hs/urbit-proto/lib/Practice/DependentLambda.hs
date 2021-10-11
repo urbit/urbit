@@ -7,6 +7,7 @@ import Control.Arrow ((<<<), (>>>))
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Data.Foldable (foldrM)
 import Data.Maybe (fromJust)
+import Data.Set (isSubsetOf)
 import Numeric.Natural
 
 type Atom = Natural
@@ -61,9 +62,12 @@ data Code a
   | Gold (Map Term (Scope () Code a)) (Code a)
   | Lead (Map Term (Code a))
   | Mask Term (Code a)  -- ^ Liskov-compliant face type  a|@
+  -- | Noun
+  -- | Void
   | Type
   -- other expressions
-  | Bind (Code a) (Scope () Code a)
+  | Bind (Code a) (Scope () Code a)  -- =+, push value onto subject
+  -- | Push (Map Term (Code a))  -- |%, push battery onto subject
   | Case (Code a) [Scope Int Code a] [Scope Int Code a]
   | Nest { cod :: Code a, typ :: Code a }  --  ^-  a/@  @\a
   | Cast { cod :: Code a, typ :: Code a }  --  ^!  `@`a
@@ -438,14 +442,190 @@ flow :: Vary a => Con a -> Code a -> Scope () Code a -> Base a
 flow con cod sop =
   eval (sem con) (instantiate (const $ loft $ eval (sem con) cod) sop)
 
+-- | Take an action for each arm in both maps, failing if the maps don't line up
+farm :: Ord k => Map k a -> Map k b -> (a -> b -> Check ()) -> Check ()
+farm b b' act = do
+  let arms = keys b
+  when (arms /= keys b') bail
+  for_ arms \arm -> do
+    let a  = fromJust $ lookup arm b
+    let a' = fromJust $ lookup arm b'
+    act a a'
+
 -- | Mode for fit-checking in `fits`: either nest or cast.
 data Fit
-  = FitNest  -- ^ perform a subtyping check
-  | FitCast  -- ^ perform a coercibility check; i.e. ignore faces (masks), auras
+  = FitCast  -- ^ perform a coercibility check; i.e. ignore faces (masks), auras
+  | FitNest  -- ^ perform a subtyping check
+  | FitSame  -- ^ perform a type equivalence check
+  deriving (Eq, Ord, Show)
 
 -- | Perform subtyping or coercibility check.
-fits :: Con a -> Fit -> Type a -> Type a -> Check ()
-fits = undefined
+-- XX figure out proper encoding of recursion via cores or gates
+fits :: Vary a => Con a -> Fit -> Type a -> Type a -> Check ()
+fits con fit t u = go con fit t u
+ where
+  -- TODO push Act frame
+  go :: Vary a => Con a -> Fit -> Type a -> Type a -> Check ()
+  go con fit t u = case (loft t, loft u) of
+    -- These have to come first to avoid being excluded by the (_, Foo{}) cases.
+    (Mask n c, Mask m d) | n == m -> go con fit (Base c) (Base d)
+    -- The Liskov principle for faces.
+    (Mask _ c, d) -> go con fit (Base c) (Base d)
+    (c, Mask _ d)
+      | FitCast <- fit  -> go con fit (Base c) (Base d)
+      | otherwise       -> bail
+
+    (Look x, Look y) | x == y -> pure ()
+    {-
+    -- XX Actually, I think it's an implementation error for either of the next
+    -- two to fire. It would indicate that we haven't evaluated sufficiently.
+    (Look x, d) | Just c <- sem con x -> go con fit c (Base d)
+    (c, Look x) | Just d <- sem con x -> go con fit (Base c) d -}
+    (Look _, _) -> bail
+    (_, Look _) -> bail
+
+    -- XX confirm this, but I do think we have to decide definitional equality
+    -- of terms as part of nest. E.g. Suppose someone has opaquely defined
+    -- vect/$-(@ $ $) in their context. Because it's opaque, we cannot rely on
+    -- inlining the definition in the context of nest checking. Thus to decide
+    -- (vect 1 @) <?= (vect 1 *), we must determine that vect and vect are the
+    -- same variable, 1 and 1 are the same term, and @ <= *.
+    --
+    -- But the above has a serious problem. Is vect covariant or contravariant?
+    -- The rule implied above implicitly treats all such "opaque type functions"
+    -- as covariant which is WRONG. Absent some variance marking solution,
+    -- these should presumably be regarded as invariant.
+    --
+    -- To make invariance work, the proposed solution is to add a third Fit mode
+    -- FitSame which does equality rather than subtyping, and switch to it under
+    -- eliminators such as Slam (XX and other eliminators and introductors?).
+    (Atom a _, Atom b _) | a == b -> pure ()
+    (Atom{}, _) -> bail
+    (_, Atom{}) -> bail
+
+    (Cons c d, Cons c' d') -> do go con fit (Base c) (Base c')
+                                 go con fit (Base d) (Base d')
+    (Cons{}, _) -> bail
+    (_, Cons{}) -> bail
+
+    (Lamb c, Lamb d) | c == d -> pure ()
+    (Lamb{}, _) -> bail
+    (_, Lamb{}) -> bail
+
+    -- The apparently free choice of p or p' in show goes away in the subject-
+    -- oriented context, but probably comes back even worse in the tisgar case.
+    -- Among other things, it appears we will need to tisgar (perform arbitrary
+    -- computations on) semis. Actually, in the case below, we will have to
+    -- "push" the head of the semi into the body of the expression, sort of the
+    -- opposite.
+    (Core b p, Core b' p') -> do
+      go con fit (Base p) (Base p')
+      farm b b' \a a' -> go con fit (flow con p a) (flow con p' a')
+    (Core{}, _) -> bail
+    (_, Core{}) -> bail
+
+    -- I believe that for old-school faces, the fallback rules will have to
+    -- strip and succeed, and these rules will have to be listed immediately
+    -- after Look. Another nail in that coffin.
+    (Name n c, Name m d) | n == m -> go con fit (Base c) (Base d)
+    (Name{}, _) -> bail
+    (_, Name{}) -> bail
+
+    -- Elimination forms. Note that since Base, we will only encounter these
+    -- "stuck" on some variable.
+    (Plus c, Plus d) -> go con fit (Base c) (Base d)
+    (Plus{}, _) -> bail
+    (_, Plus{}) -> bail
+
+    -- Since it hasn't been evaluated away, we are dealing with an opaque type
+    -- function application. This means we have no choice but to regard the
+    -- function as invariant in its argument.
+    (Slam c d, Slam c' d') -> do go con fit (Base c) (Base c')
+                                 go con FitSame (Base d) (Base d')
+    (Slam{}, _) -> bail
+    (_, Slam{}) -> bail
+
+    -- XX we should recognize axes equivalent to faces :/
+    -- n.b.: things like the "empty wing" should have been evaluated out by now
+    (Wing w c, Wing v d) | w == v -> go con fit (Base c) (Base d)
+    (Wing{}, _) -> bail
+    (_, Wing{}) -> bail
+
+    (Equl c d, Equl c' d') -> do go con fit (Base c) (Base c')
+                                 go con fit (Base d) (Base d')
+    (Equl{}, _) -> bail
+    (_, Equl{}) -> bail
+
+    (Aura au, Aura ag) -> case fit of
+      FitCast -> pure ()
+      FitNest -> if ag `isPrefixOf` au then pure () else bail
+      FitSame -> if ag ==           au then pure () else bail
+
+    (Fork cs au, Aura ag) | fit /= FitSame ->
+      go con fit (Base $ Aura au) (Base $ Aura ag)
+
+    (Fork cs au, Fork ds ag) -> do
+      go con fit (Base $ Aura au) (Base $ Aura ag)
+      case fit of
+        FitSame -> when (cs /= ds) bail
+        _ -> unless (ds `isSubsetOf` cs) bail
+
+    (Cell c d, Cell c' d') -> do
+      go con fit (Base c) (Base c')
+      go (hide con $ Base c) fit (Base $ fromScope d) (Base $ fromScope d')
+
+    (Gate c d, Gate c' d') -> do
+      go con fit (Base c') (Base c)
+      go (hide con $ Base c') fit (Base $ fromScope d) (Base $ fromScope d')
+
+    -- TODO (Gate{}, Cell Noun Noun) -> pure ()
+
+    (Gold bat pay, Gold bat' pay') -> do
+      go con fit (Base pay) (Base pay')
+      farm bat bat' \a a' ->
+        go (hide con $ Base pay) fit (Base $ fromScope a) (Base $ fromScope a')
+
+    (Gold bat pay, Lead bat') ->
+      farm bat bat' \a a' ->
+        go (hide con $ Base pay) fit (Base $ fromScope a) (Base $ grow $ a')
+
+    (Lead bat, Lead bat') ->
+      farm bat bat' \a a' ->
+        go con fit (Base a) (Base a')
+
+    -- TODO (Gold _ pay, Cell Noun pay') -> go con fit (Base pay) (Base pay')
+    -- TODO (Lead{}, Cell Noun Noun) -> pure ()
+
+    -- for Mask, see top of function
+
+    (Type, Type) -> pure ()
+
+    (Aura{}, _) -> bail
+    (_, Aura{}) -> bail
+    (Fork{}, _) -> bail
+    (_, Fork{}) -> bail
+    (Cell{}, _) -> bail
+    (_, Cell{}) -> bail
+    (Gate{}, _) -> bail
+    (_, Gate{}) -> bail
+    (Gold{}, _) -> bail
+    (_, Gold{}) -> bail
+    (Lead{}, _) -> bail
+    (_, Lead{}) -> bail
+    (Type,   _) -> bail
+    (_,   Type) -> bail
+
+    -- Bind, Nest, Cast should be impossible because of evaluation
+    -- TODO cas rule
+
+{-
+  -- other expressions
+  | Bind (Code a) (Scope () Code a)
+  | Case (Code a) [Scope Int Code a] [Scope Int Code a]
+  | Nest { cod :: Code a, typ :: Code a }  --  ^-  a/@  @\a
+  | Cast { cod :: Code a, typ :: Code a }  --  ^!  `@`a
+-}
+
 
 -- we need `cod` so we can substitute -:cod in the dependency on the rhs of a
 -- cell type. I think it goes away with dependent types, since all finds are
@@ -509,6 +689,7 @@ find con cod typ win = foldrM (go con cod) ([], typ) win
 
       _ -> Nothing
 
+
 -- | Given subject type, verify that code has result type. Since the expected
 -- result type is known in this mode, we can lighten the user's annotation
 -- burden, e.g. on |= argument. Read about "bidirectional type checking" to
@@ -543,29 +724,19 @@ work con fit e tau@(Base t) =
 
     Core bat pay -> case t of Gold tat tay -> do let tie = Base tay
                                                  work con fit pay tie
-                                                 let arms = keys tat
-                                                 when (arms /= keys bat) bail
-                                                 for_ arms \arm ->
+                                                 farm bat tat \a t ->
                                                    -- XX should we play pay
-                                                   -- instead of using tay?
-                                                   work (shew con pay tie) fit
-                                                     (fromScope
-                                                        $ fromJust
-                                                        $ lookup arm bat)
-                                                     (Base $ fromScope
-                                                        $ fromJust
-                                                        $ lookup arm tat)
-                              Lead tat -> do let arms = keys tat
-                                             when (arms /= keys bat) bail
-                                             tay <- play con pay
-                                             for_ arms \arm ->
-                                               -- XX should we instantiate
-                                               -- instead of shewing?
-                                               work (shew con pay tay) fit
-                                                 (fromScope $ fromJust
-                                                            $ lookup arm bat)
-                                                 (grow $ Base $ fromJust
-                                                       $ lookup arm tat)
+                                                   -- instead of using tie?
+                                                   work (shew con pay tie)
+                                                        fit
+                                                        (fromScope a)
+                                                        (Base $ fromScope t)
+                              Lead tat -> do tay <- play con pay
+                                             farm bat tat \a t ->
+                                               work (shew con pay tay)
+                                                    fit
+                                                    (fromScope a)
+                                                    (grow $ Base t)
                               _ -> playFits
 
     Name n c -> case t of Mask m t | n == m -> work con fit c tau
@@ -602,12 +773,14 @@ work con fit e tau@(Base t) =
     Nest{} -> playFits
     Cast{} -> playFits
 
+
 -- | Require the given type to be a function type.
 -- XX Deppy had a cas rule here; why?
 wantGate :: Vary a => Type a -> Check (Type a, Scope () Code a)
 wantGate = \case
   Base (Gate c d) -> pure (Base c, d)
   _ -> bail
+
 
 -- | Given subject type, determine result type of code.
 play :: Vary a => Con a -> Code a -> Check (Type a)
