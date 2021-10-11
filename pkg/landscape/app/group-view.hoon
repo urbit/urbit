@@ -348,7 +348,9 @@
         ?-  progress.request
         ::
             %done
-          =/  =metadatum:metadata  (need (peek-metadatum:met %groups rid))
+          =/  =metadatum:metadata  
+            ?^  met=(peek-metadatum:met %groups rid)  u.met
+            (need (peek-metadatum:met %graph rid))
           :*  ~[(title title.metadatum 'succeeded')]
               ~
               now.bowl
