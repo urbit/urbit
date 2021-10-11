@@ -4,6 +4,10 @@
 /+  naive, *naive-transactions
 ::
 |%
+++  nonce-order
+  |=  [a=[* =nonce:naive] b=[* =nonce:naive]]
+  (lte nonce.a nonce.b)
+::
 ++  apply-effects
   |=  [=effects:naive nas=^state:naive own=owners chain-t=@]
   ^+  [nas=nas own=own]

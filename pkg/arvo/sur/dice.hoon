@@ -45,13 +45,14 @@
 ::
 +$  update
   $%  [%point =ship =point:naive new=owner old=(unit owner)]
-      [%tx =address:ethereum =roller-tx]
+      [%tx =address:ethereum =roll-tx]
   ==
 ::
 +$  roller-tx  [=ship =status hash=keccak =time type=l2-tx]
 ::
-+$  pend-tx    [force=? =address:naive =time =raw-tx:naive]
-::
++$  roll-tx  [=ship =status hash=keccak =time type=l2-tx]
++$  pend-tx  [force=? =address:naive =time =raw-tx:naive]
++$  send-tx  [next-gas-price=@ud sent=? txs=(list raw-tx:naive)]
 +$  part-tx
   $%  [%raw raw=octs]
       [%don =tx:naive]

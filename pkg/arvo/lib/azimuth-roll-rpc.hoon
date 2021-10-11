@@ -250,11 +250,11 @@
         --
       ::
       ++  roller-txs
-        |=  txs=(list roller-tx)
+        |=  txs=(list roll-tx)
         ^-  json
         :-  %a
         %+  turn  txs
-        |=  roller-tx
+        |=  roll-tx
         ^-  json
         %-  pairs
         :~  ['status' s+status]
@@ -567,7 +567,7 @@
   [%result id (time:enjs:format when)]
 ::
 ++  history
-  |=  [id=@t params=(map @t json) scry=$-(address:naive (list roller-tx))]
+  |=  [id=@t params=(map @t json) scry=$-(address:naive (list roll-tx))]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)
     ~(params error:json-rpc id)
