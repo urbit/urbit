@@ -31,7 +31,7 @@ const useGroupState = createState<GroupState>(
       await api.poke(hideGroup(group));
     }
   }),
-  ['groups'],
+  [],
   [
     (set, get) =>
       createSubscription('group-store', '/groups', (e) => {
