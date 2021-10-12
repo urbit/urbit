@@ -5,7 +5,7 @@ import { useProtocolHandling, setLocalState } from '../../state/local';
 export function InterfacePrefs() {
   const protocolHandling = useProtocolHandling();
   const secure = window.location.protocol === 'https:';
-  const linkHandlingAllowed = secure && !('registerProtocolHandler' in window.navigator);
+  const linkHandlingAllowed = secure && 'registerProtocolHandler' in window.navigator;
   const toggleProtoHandling = async () => {
     if (!protocolHandling && window?.navigator?.registerProtocolHandler) {
       try {

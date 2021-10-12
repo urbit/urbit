@@ -37,8 +37,8 @@ export const NotificationPrefs = () => {
           disabled={doNotDisturb && !secure}
         >
           <p>
-            Block visual desktop notifications whenever Urbit software produces an in-Landscape
-            notification badge.
+            Block visual desktop notifications whenever Urbit software produces a notification
+            badge.
           </p>
           <p>
             Turning this &quot;off&quot; will prompt your browser to ask if you&apos;d like to

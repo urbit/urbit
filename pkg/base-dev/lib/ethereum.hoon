@@ -22,29 +22,77 @@
     %-  serialize-point
     (priv-to-pub prv)
   ::
+  ++  sign-typed-transaction
+    |=  [tx=typed-transaction:rpc pk=@]
+    ^-  @ux
+    =-  (cat 3 - -.tx)
+    ?-  -.tx
+      %0x0  (sign-transaction +.tx pk)
+      %0x2  (sign-transaction-1559 +.tx pk)
+    ==
+  ::
   ++  sign-transaction
     =,  crypto
     |=  [tx=transaction:rpc pk=@]
-    ^-  @ux
-    ::  hash the raw transaction data
-    =/  hash=@
-      =/  dat=@
-        %-  encode-atoms:rlp
-        ::  with v=chain-id, r=0, s=0
-        tx(chain-id [chain-id.tx 0 0 ~])
-      =+  wid=(met 3 dat)
-      %-  keccak-256:keccak
-      [wid (rev 3 wid dat)]
-    ::  sign transaction hash with private key
-    =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
-    ::  complete transaction is raw data, with r and s
-    ::  taken from the signature, and v as per eip-155
-    %-  encode-atoms:rlp
-    tx(chain-id [:(add (mul chain-id.tx 2) 35 v) r s ~])
+    |^  ^-  @ux
+        ::  hash the raw transaction data
+        =/  hash=@
+          %-  keccak-256:keccak
+          =+  dat=(encode chain-id.tx 0 0)
+          =+  wid=(met 3 dat)
+          [wid (rev 3 wid dat)]
+        ::  sign transaction hash with private key
+        =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
+        ::  complete transaction is raw data, with r and s
+        ::  taken from the signature, and v as per eip-155
+        (encode :(add (mul chain-id.tx 2) 35 v) r s)
+    ::
+    ++  encode
+      |=  [v=@ r=@ s=@]
+      %+  encode:rlp  %l
+      tx(to b+20^to.tx, chain-id [v r s ~])
+    --
+  ::
+  ++  sign-transaction-1559
+    =,  crypto
+    |=  [tx=transaction-1559:rpc pk=@]
+    |^  ^-  @ux
+        =;  hash=@
+          =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
+          ::NOTE  we retrieve y's parity from the v value
+          (encode-1559 ~ (end 0 v) r s)
+        ::  hash the raw transaction data including leading 0x2
+        %-  keccak-256:keccak
+        =+  dat=(cat 3 (encode-1559 ~) 0x2)
+        =+  wid=(met 3 dat)
+        [wid (rev 3 wid dat)]
+    ::
+    ++  encode-1559
+      |=  sig=(unit [y=@ r=@ s=@])
+      %+  encode:rlp  %l
+      =,  tx
+      :*  chain-id
+          nonce
+          max-priority-gas-fee
+          max-gas-fee
+          gas
+          b+20^to
+          value
+          data
+        ::
+          :-  %l
+          %+  turn  ~(tap by access-list)
+          |=  [a=address b=(list @ux)]
+          l+~[b+20^a l+(turn b |=(c=@ux b+32^c))]
+        ::
+          ?~  sig  ~
+          ~[y r s]:u.sig
+      ==
+    --
   --
 ::
 ::  rlp en/decoding
-::NOTE  https://github.com/ethereum/wiki/wiki/RLP
+::NOTE  https://eth.wiki/en/fundamentals/rlp
 ::
 ++  rlp
   |%
@@ -53,35 +101,42 @@
   ::      and one-byte zero (and also empty list) we end up with
   ::      this awful type...
   +$  item
+    $@  @
     $%  [%l l=(list item)]
         [%b b=byts]
     ==
   ::  +encode-atoms: encode list of atoms as a %l of %b items
   ::
-  ++  encode-atoms
+  ++  encode-atoms  ::NOTE  deprecated
     |=  l=(list @)
     ^-  @
-    %+  encode  %l
-    %+  turn  l
-    |=(a=@ b+[(met 3 a) a])
+    (encode l+l)
   ::
   ++  encode
     |=  in=item
     |^  ^-  @
-        ?-  -.in
-            %b
+        ?-  in
+            @
+          $(in [%b (met 3 in) in])
+        ::
+            [%b *]
           ?:  &(=(1 wid.b.in) (lte dat.b.in 0x7f))
             dat.b.in
           =-  (can 3 ~[b.in [(met 3 -) -]])
           (encode-length wid.b.in 0x80)
         ::
-            %l
-          =/  out=@
-            %+  roll  l.in
-            |=  [ni=item en=@]
-            (cat 3 (encode ni) en)
-          %^  cat  3  out
-          (encode-length (met 3 out) 0xc0)
+            [%l *]
+          ::  we +can because b+1^0x0 encodes to 0x00
+          ::
+          =/  l=(list byts)
+            %+  turn  l.in
+            |=  ni=item
+            =+  (encode ni)
+            [(max 1 (met 3 -)) -]
+          %+  can  3
+          %-  flop
+          =-  [(met 3 -)^- l]
+          (encode-length (roll (turn l head) add) 0xc0)
         ==
     ::
     ++  encode-length
@@ -445,6 +500,11 @@
         ==
       ::
       ::  raw transaction data
+      +$  typed-transaction
+        $%  [%0x0 transaction]
+            [%0x2 transaction-1559]
+        ==
+      ::
       +$  transaction
         $:  nonce=@ud
             gas-price=@ud
@@ -453,6 +513,18 @@
             value=@ud
             data=@ux
             chain-id=@ux
+        ==
+      ::
+      +$  transaction-1559
+        $:  chain-id=@ux
+            nonce=@ud
+            max-priority-gas-fee=@ud
+            max-gas-fee=@ud
+            gas=@ud
+            to=address
+            value=@ud
+            data=@ux
+            access-list=(jar address @ux)
         ==
       ::
       ::  ethereum json rpc api
@@ -635,7 +707,7 @@
           ?~  tob.req  ~
           `['toBlock' (block-to-json u.tob.req)]
         ::
-          ::TODO  fucking tmi
+          ::NOTE  tmi
           ?:  =(0 (lent adr.req))  ~
           :+  ~  'address'
           ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))

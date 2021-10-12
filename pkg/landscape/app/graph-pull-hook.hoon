@@ -1,5 +1,6 @@
 /-  *resource
 /+  store=graph-store, graph, default-agent, verb, dbug, pull-hook
+/+  agentio
 ~%  %graph-pull-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -9,8 +10,13 @@
       update:store
       %graph-update
       %graph-push-hook
-      2  2
+      3  3
       %.n
+  ==
++$  state-nul  ~
++$  state-0    [%0 ~]
++$  versioned-state
+  $%  state-0
   ==
 --
 ::
@@ -19,15 +25,25 @@
 ^-  agent:gall
 %-  (agent:pull-hook config)
 ^-  (pull-hook:pull-hook config)
+=|  state-0
+=*  state  -
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     dep   ~(. (default:pull-hook this config) bowl)
     gra   ~(. graph bowl)
+    io    ~(. agentio bowl)
+    pass  pass:io
 ::
 ++  on-init   on-init:def
-++  on-save   !>(~)
-++  on-load   on-load:def
+++  on-save   !>(state)
+++  on-load
+  |=  =vase
+  ?:  =(q.vase ~)
+    :_  this
+    (poke-self:pass kick+!>(%.y))^~
+  `this
+::
 ++  on-poke   on-poke:def
 ++  on-peek   on-peek:def
 ++  on-arvo   on-arvo:def
@@ -41,7 +57,7 @@
   %-  (slog leaf+"nacked {<resource>}" tang)
   :_  this
   ?.  (~(has in get-keys:gra) resource)  ~
-  =-  [%pass /pull-nack %agent [our.bowl %graph-store] %poke %graph-update-2 -]~
+  =-  [%pass /pull-nack %agent [our.bowl %graph-store] %poke %graph-update-3 -]~
   !>  ^-  update:store
   [now.bowl [%archive-graph resource]]
 ::

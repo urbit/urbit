@@ -10,11 +10,8 @@
   $:  blocked=(jug resource [uid=serial:invite =invite:invite])
      ~
   ==
-  
-
-
 --
-%+  verb  &
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =|  state-0

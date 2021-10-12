@@ -24,6 +24,7 @@
 ::  $chad: State of a docket
 ::
 +$  chad
+  $~  [%install ~]
   $%  :: Done
       [%glob =glob]
       [%site ~]

@@ -70,7 +70,7 @@ export const Avatar = ({ size, className, ...ship }: AvatarProps) => {
   const adjustedColor = themeAdjustColor(normalizeUrbitColor(color), currentTheme);
   const foregroundColor = foregroundFromBackground(adjustedColor);
   const sigilElement = useMemo(() => {
-    if (shipName.match(/[_^]/)) {
+    if (shipName.match(/[_^]/) || shipName.length > 14) {
       return null;
     }
 

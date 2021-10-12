@@ -62,10 +62,21 @@ export const Leap = React.forwardRef(
     const handleError = useErrorHandler();
 
     useEffect(() => {
-      if (selection && rawInput === '') {
+      const onTreaty = appsMatch && !appsMatch.isExact;
+      if (selection && rawInput === '' && !onTreaty) {
         inputRef.current?.focus();
+      } else if (selection && onTreaty) {
+        inputRef.current?.blur();
       }
-    }, [selection, rawInput]);
+    }, [selection, rawInput, appsMatch]);
+
+    useEffect(() => {
+      const newMatch = getMatch(rawInput);
+
+      if (newMatch && rawInput) {
+        useLeapStore.setState({ selectedMatch: newMatch });
+      }
+    }, [rawInput, matches]);
 
     const toggleSearch = useCallback(() => {
       if (selection || menu === 'search') {
@@ -190,6 +201,9 @@ export const Leap = React.forwardRef(
 
         if (arrow) {
           e.preventDefault();
+          if (matches.length === 0) {
+            return;
+          }
 
           const currentIndex = selectedMatch
             ? matches.findIndex((m) => {
@@ -231,13 +245,13 @@ export const Leap = React.forwardRef(
               !selection && 'sr-only'
             )}
           >
-            {selection || 'Search Landscape'}
+            {selection || 'Search'}
           </label>
           <input
             id="leap"
             type="text"
             ref={inputRef}
-            placeholder={selection ? '' : 'Search Landscape'}
+            placeholder={selection ? '' : 'Search'}
             className="flex-1 w-full h-full px-2 h4 text-base rounded-full bg-transparent outline-none"
             value={rawInput}
             onClick={toggleSearch}

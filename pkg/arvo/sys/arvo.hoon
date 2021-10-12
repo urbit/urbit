@@ -1303,7 +1303,7 @@
         (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
       ::
       :~  :+  %reports  %|
-          =/  bem=beam  [[our %home da+now] /whey]
+          =/  bem=beam  [[our %home da+now] /whey]  ::TODO  %base?
           %+  turn  von
           |=  [nam=term =vane]
           =/  met  (peek [~ ~] nam bem)

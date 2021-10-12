@@ -3,6 +3,7 @@ import type * as Polymorphic from '@radix-ui/react-polymorphic';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
+import { Chad, chadIsRunning } from '@urbit/api';
 import useDocketState from '../state/docket';
 import { disableDefault, handleDropdownLink } from '../state/util';
 
@@ -10,7 +11,7 @@ export interface TileMenuProps {
   desk: string;
   lightText: boolean;
   menuColor: string;
-  active: boolean;
+  chad: Chad;
   className?: string;
 }
 
@@ -37,11 +38,13 @@ const Item = React.forwardRef(({ children, ...props }, ref) => (
   </DropdownMenu.Item>
 )) as ItemComponent;
 
-export const TileMenu = ({ desk, active, menuColor, lightText, className }: TileMenuProps) => {
+export const TileMenu = ({ desk, chad, menuColor, lightText, className }: TileMenuProps) => {
   const [open, setOpen] = useState(false);
   const toggleDocket = useDocketState((s) => s.toggleDocket);
   const menuBg = { backgroundColor: menuColor };
   const linkOnSelect = useCallback(handleDropdownLink(setOpen), []);
+  const active = chadIsRunning(chad);
+  const suspended = 'suspend' in chad;
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
@@ -80,7 +83,7 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
               Suspend App
             </Item>
           )}
-          {!active && <Item onSelect={() => toggleDocket(desk)}>Resume App</Item>}
+          {suspended && <Item onSelect={() => toggleDocket(desk)}>Resume App</Item>}
           <Item as={Link} to={`/app/${desk}/remove`} onSelect={linkOnSelect}>
             Remove App
           </Item>

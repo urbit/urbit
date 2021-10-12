@@ -1,7 +1,6 @@
-import { Association, Associations, MetadataUpdatePreview } from '@urbit/api';
+import { Association, Associations, MetadataUpdatePreview } from '@urbit/api/metadata';
 import _ from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
-import ob from 'urbit-ob';
 import {
   createState,
   createSubscription,
@@ -10,6 +9,7 @@ import {
 import airlock from '~/logic/api';
 import history from '~/logic/lib/history';
 import { reduce } from '../reducers/metadata-update';
+import { getNotificationRedirect } from '../lib/notificationRedirects';
 
 export const METADATA_MAX_PREVIEW_WAIT = 150000;
 
@@ -121,88 +121,6 @@ export function usePreview(group: string) {
   const preview = previews[group];
 
   return { error, preview };
-}
-
-function getGroupResourceRedirect(key: string) {
-  const association = useMetadataState.getState().associations.graph[`/ship/${key}`];
-  const { metadata } = association;
-  if(!association || !('graph' in metadata.config)) {
-    return '';
-  }
-  return `/~landscape${association.group}/resource/${metadata.config.graph}${association.resource}`;
-}
-
-function getPostRedirect(key: string, segs: string[]) {
-  const association = useMetadataState.getState().associations.graph[`/ship/${key}`];
-  const { metadata } = association;
-  if(!association || !('graph' in metadata.config)) {
-    return '';
-  }
-  return `/~landscape${association.group}/feed/thread/${segs.slice(0, -1).join('/')}`;
-}
-
-function getChatRedirect(chat: string, segs: string[]) {
-  const qs = segs.length > 0 ? `?msg=${segs[0]}` : '';
-  return `${getGroupResourceRedirect(chat)}${qs}`;
-}
-
-function getPublishRedirect(graphKey: string, segs: string[]) {
-  const base = getGroupResourceRedirect(graphKey);
-  if(segs.length === 3) {
-    return `${base}/note/${segs[0]}`;
-  } else if (segs.length === 4) {
-    return `${base}/note/${segs[0]}?selected=${segs[2]}`;
-  }
-  return base;
-}
-
-function getLinkRedirect(graphKey: string, segs: string[]) {
-  const base = getGroupResourceRedirect(graphKey);
-  if(segs.length === 1) {
-    return `${base}/index/${segs[0]}`;
-  } else if (segs.length === 3) {
-    return `${base}/index/${segs[0]}?selected=${segs[1]}`;
-  }
-  return base;
-}
-
-function getGraphRedirect(link: string) {
-  const [,mark, ship, name, ...rest] = link.split('/');
-  const graphKey = `${ship}/${name}`;
-  switch(mark) {
-    case 'graph-validator-dm':
-      return `/~landscape/messages/dm/${ob.patp(rest[0])}`;
-    case 'graph-validator-chat':
-      return getChatRedirect(graphKey, rest);
-    case 'graph-validator-publish':
-      return getPublishRedirect(graphKey, rest);
-    case 'graph-validator-link':
-    return getLinkRedirect(graphKey, rest);
-    case 'graph-validator-post':
-      return getPostRedirect(graphKey, rest);
-    default:
-      return'';
-  }
-}
-
-function getInviteRedirect(link: string) {
-  const [,,app,uid] = link.split('/');
-  return `/invites/${app}/${uid}`;
-}
-
-function getDmRedirect(link: string) {
-  const [,,ship] = link.split('/');
-  return `/~landscape/messages/dm/${ship}`;
-}
-
-function getNotificationRedirect(link: string) {
-  if(link.startsWith('/graph-validator')) {
-    return getGraphRedirect(link);
-  } else if (link.startsWith('/invite')) {
-    return getInviteRedirect(link);
-  } else if (link.startsWith('/dm')) {
-    return getDmRedirect(link);
-  }
 }
 
 function handleGridRedirect() {

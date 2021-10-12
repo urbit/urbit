@@ -35,7 +35,7 @@ export const mockTreaties: Treaties = {
   '~zod/garden': {
     ship: '~zod',
     desk: 'garden',
-    title: 'Landscape',
+    title: 'System',
     info: 'Your Urbit Home',
     href: makeHref('garden'),
     color: '#E2C050',
@@ -158,6 +158,14 @@ export const mockCharges: Charges = _.reduce(
     const chad = { glob: null };
     if (desk === 'inbox') {
       return acc;
+    }
+
+    if (desk === 'calls') {
+      return { ...acc, [desk]: { ...val, chad: { hung: 'glob failed' } } };
+    }
+
+    if (desk === 'messages') {
+      return { ...acc, [desk]: { ...val, chad: { install: null } } };
     }
 
     return { ...acc, [desk]: { ...val, chad } };
@@ -334,13 +342,17 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
       sub: [],
       add: []
     },
-    rail: {
-      aeon: 3,
-      desk,
-      next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
-      ship: '~zod',
-      paused: false
-    }
+    rail:
+      desk === 'uniswap'
+        ? null
+        : {
+            aeon: 3,
+            desk,
+            publisher: '~zod',
+            next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
+            ship: '~zod',
+            paused: desk === 'groups'
+          }
   },
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
 });

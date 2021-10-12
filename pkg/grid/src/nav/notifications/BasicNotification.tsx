@@ -68,15 +68,25 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
         <DocketImage {...charge} size={!large ? 'xs' : 'default'} className="note-grid-icon" />
         <div className="note-grid-title font-semibold">{charge?.title || desk}</div>
         {!large ? <Elbow className="note-grid-arrow w-6 h-6 text-gray-300" /> : null}
-        <h2 id={`${id}-title`} className="note-grid-head font-semibold text-gray-600">
+        <h2
+          id={`${id}-title`}
+          className="note-grid-head leading-tight sm:leading-normal font-semibold text-gray-600"
+        >
           <NotificationText contents={first.title} />
         </h2>
-        <div className="note-grid-actions hidden justify-center self-center group-hover:flex">
-          <Button onClick={archiveNoFollow}>Archive</Button>
-        </div>
+        {!('time' in lid) ? (
+          <div className="note-grid-actions flex sm:hidden hover-none:flex pointer-coarse:flex justify-center self-center group-hover:flex">
+            <Button
+              onClick={archiveNoFollow}
+              className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-base leading-none sm:leading-normal"
+            >
+              Archive
+            </Button>
+          </div>
+        ) : null}
       </header>
       {contents.length > 0 ? (
-        <div className="note-grid-body space-y-2">
+        <div className="note-grid-body leading-tight sm:leading-normal space-y-2">
           {take(contents, MAX_CONTENTS).map((content) => (
             <p className="">
               <NotificationText contents={content} />

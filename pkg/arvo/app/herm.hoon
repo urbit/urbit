@@ -46,6 +46,8 @@
   |=  [=wire =sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
+    [%tube *]  [~ this]  ::  we no longer care about these
+  ::
     ::  pass on dill blits for the session
     ::
       [%view %$ ~]

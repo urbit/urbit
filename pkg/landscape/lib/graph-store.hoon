@@ -537,11 +537,11 @@
   ::
   ++  graph-to-two
     |=  =graph:one
-    (graph:(upgrade ,post:one ,maybe-post) graph post-to-two)
+    (graph:(upgrade ,post:one ,maybe-post:two) graph post-to-two)
   ::
   ++  post-to-two
     |=  p=post:one
-    ^-  maybe-post
+    ^-  maybe-post:two
     [%& p]
   ::
   ::
@@ -568,11 +568,11 @@
   ::
   ++  node-to-one
     |=  =node:zero
-    (node:(upgrade ,post:zero ,post) node post-to-one)
+    (node:(upgrade ,post:zero ,post:one) node post-to-one)
   ::
   ++  graph-to-one
     |=  =graph:zero
-    (graph:(upgrade ,post:zero ,post) graph post-to-one)
+    (graph:(upgrade ,post:zero ,post:one) graph post-to-one)
   ::
   ++  marked-graph-to-one
     |=  [=graph:zero m=(unit mark)]
@@ -580,15 +580,15 @@
   ::
   ++  post-to-one
     |=  p=post:zero
-    ^-  post
+    ^-  post:one
     p(contents (contents-to-one contents.p))
   ::
   ++  contents-to-one
     |=  cs=(list content:zero)
-    ^-  (list content)
+    ^-  (list content:one)
     %+  murn  cs
     |=  =content:zero
-    ^-  (unit ^content)
+    ^-  (unit content:one)
     ?:  ?=(%reference -.content)  ~
     `content
   ::

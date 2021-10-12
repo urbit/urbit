@@ -938,12 +938,13 @@
       ::  only eagerly update lyf if we were behind the chain life
       ::
       =?  lyf.own
-          ?&  (gth life lyf.own)
-            ::
-              =+  pon=(~(get by pos.zim) our)
-              ?~  pon  |
-              (lth lyf.own life.u.pon)
-          ==
+          ?|  ?=(%earl (clan:title our))
+              ?&  (gth life lyf.own)
+                ::
+                  =+  pon=(~(get by pos.zim) our)
+                  ?~  pon  |
+                  (lth lyf.own life.u.pon)
+          ==  ==
         life
       =.  jaw.own  (~(put by jaw.own) life ring)
       (exec yen.own [%give %private-keys lyf.own jaw.own])

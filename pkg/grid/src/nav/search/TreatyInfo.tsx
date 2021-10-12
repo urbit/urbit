@@ -21,6 +21,7 @@ export const TreatyInfo = () => {
 
   useEffect(() => {
     select(<>{treaty?.title}</>);
+    useLeapStore.setState({ matches: [] });
   }, [treaty?.title]);
 
   if (!treaty) {

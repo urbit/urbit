@@ -70,7 +70,7 @@
 ;<  ~  bind:m
   %+  raw-poke
     [our.bowl %graph-store]
-  :-  %graph-update-2
+  :-  %graph-update-3
   !>  ^-  update:gra
   [now.bowl [%archive-graph app-resource]]
 ;<  ~  bind:m

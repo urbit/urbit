@@ -43,7 +43,13 @@ export const AppLink = <T extends DocketWithDesk>({
         {children}
       </Link>
     ) : (
-      <a href={getAppHref(app.href)} target={app.desk} className={linkClassnames} {...props}>
+      <a
+        href={getAppHref(app.href)}
+        target="_blank"
+        rel="noreferrer"
+        className={linkClassnames}
+        {...props}
+      >
         {children}
       </a>
     );

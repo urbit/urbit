@@ -1,8 +1,5 @@
 ::  |pill: helper functions for making pills
 ::
-/-  *bill
-/$  weft-to-mime  %kelvin  %mime
-/$  bill-to-mime  %bill    %mime
 ^?
 |%
 ::
@@ -21,6 +18,8 @@
       [%what p=(list (pair path (cask)))]
       [%whom p=ship]
       [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
+      [%wyrd p=vere]
+      [%verb p=(unit ?)]
       unix-task
   ==
 ::  +boot-ovum: boostrap kernel filesystem load
@@ -45,7 +44,6 @@
         /sur    ::  structures
         /sys    ::  system files
         /ted    ::  :spider strands
-        /tests  ::  unit tests
         /web    ::  %eyre web content
         /desk   ::  desk manifest
     ==

@@ -6,9 +6,10 @@ const urbitrc = require('./urbitrc');
 const fs = require('fs-extra');
 const _ = require('lodash');
 
-function copy(src,dest) {
-  return new Promise((res,rej) =>
-    fs.copy(src,dest, err => err ? rej(err) : res()));
+function copy(src, dest) {
+  return new Promise((res, rej) =>
+    fs.copy(src, dest, (err) => (err ? rej(err) : res()))
+  );
 }
 
 class UrbitShipPlugin {
@@ -36,24 +37,29 @@ let devServer = {
   publicPath: '/apps/bitcoin/',
 };
 
-const router = _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9000`);
+const router = _.mapKeys(
+  urbitrc.FLEET || {},
+  (value, key) => `${key}.localhost:9000`
+);
 
-if(urbitrc.URL) {
+if (urbitrc.URL) {
   devServer = {
     ...devServer,
     index: 'index.html',
-    proxy: [{
-      target: 'http://localhost:9000',
-      changeOrigin: true,
-      target: urbitrc.URL,
-      router,
-      context: path => {
-        if(path === '/apps/bitcoin/desk.js') {
-          return true;
-        }
-        return !path.startsWith('/apps/bitcoin')
-      }
-    }]
+    proxy: [
+      {
+        target: 'http://localhost:9000',
+        changeOrigin: true,
+        target: urbitrc.URL,
+        router,
+        context: (path) => {
+          if (path === '/apps/bitcoin/desk.js') {
+            return true;
+          }
+          return !path.startsWith('/apps/bitcoin');
+        },
+      },
+    ],
   };
 }
 
@@ -61,30 +67,16 @@ module.exports = {
   node: { fs: 'empty' },
   mode: 'development',
   entry: {
-    app: './src/index.js'
+    app: './src/index.tsx',
   },
   module: {
     rules: [
       {
         test: /\.(j|t)sx?$/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', ['@babel/preset-react', {
-              runtime: 'automatic',
-              development: 'true',
-              importSource: '@welldone-software/why-did-you-render',
-            }]],
-            plugins: [
-              '@babel/transform-runtime',
-              '@babel/plugin-proposal-object-rest-spread',
-              '@babel/plugin-proposal-optional-chaining',
-              '@babel/plugin-proposal-class-properties',
-              'react-hot-loader/babel'
-            ]
-          }
+          loader: 'ts-loader',
         },
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.css$/i,
@@ -94,13 +86,13 @@ module.exports = {
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
-          'sass-loader'
-        ]
-      }
-    ]
+          'sass-loader',
+        ],
+      },
+    ],
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx']
+    extensions: ['.js', '.ts', '.tsx'],
   },
   devtool: 'inline-source-map',
   devServer: devServer,
@@ -108,24 +100,23 @@ module.exports = {
     new UrbitShipPlugin(urbitrc),
     new HtmlWebpackPlugin({
       title: 'Bitcoin Wallet',
-      template: './public/index.html'
-    })
-
+      template: './public/index.html',
+    }),
   ],
   watch: true,
   watchOptions: {
     poll: true,
-    ignored: '/node_modules/'
+    ignored: '/node_modules/',
   },
   output: {
     filename: 'index.js',
     chunkFilename: 'index.js',
     path: path.resolve(__dirname, '../dist'),
     publicPath: '/apps/bitcoin/',
-    globalObject: 'this'
+    globalObject: 'this',
   },
   optimization: {
     minimize: false,
-    usedExports: true
-  }
+    usedExports: true,
+  },
 };

@@ -92,7 +92,7 @@
 ++  this  .
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
-++  on-init  se-abet
+++  on-init    (poke-link our.hid %dojo)
 ++  diff-sole-effect-phat                             ::  app event
   |=  [way=wire fec=sole-effect]
   =<  se-abet  =<  se-view

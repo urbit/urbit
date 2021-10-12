@@ -67,7 +67,7 @@
 =/  real=(set resource:re)
   =/  upd=update:ga
     %+  scry  update:ga
-    [%x %graph-store /keys/graph-update-2]
+    [%x %graph-store /keys/graph-update-3]
   ?>  ?=(%keys -.q.upd)
   resources.q.upd
 ::  count activity per channel

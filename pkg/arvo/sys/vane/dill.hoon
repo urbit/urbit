@@ -222,8 +222,6 @@
         =/  myt  (flop (fall tem ~))
         =.  tem  ~
         =.  ..mere  (pass / %g %jolt %base ram)
-        =?  ..mere  ?=(?(%earl %duke %king) (clan:title our))
-          (kiln-install %base sponsor %kids)
         =.  ..mere  (show-desk %kids)
         =.  ..mere  drum-watch
         |-  ^+  ..mere

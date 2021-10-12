@@ -138,38 +138,11 @@
     u3_noun u3qea_de(u3_atom, u3_atom);
     u3_noun u3qea_en(u3_atom, u3_atom);
 
-    u3_noun u3qes_hsh(u3_atom, u3_atom, u3_atom, u3_atom, u3_atom, u3_atom);
-    u3_noun u3qes_hsl(u3_atom, u3_atom, u3_atom, u3_atom, u3_atom,
-                      u3_atom, u3_atom, u3_atom);
-    u3_noun u3qes_pbk(u3_atom, u3_atom, u3_atom, u3_atom);
-    u3_noun u3qes_pbl(u3_atom, u3_atom, u3_atom, u3_atom, u3_atom, u3_atom);
-
-    u3_noun u3qe_shax(u3_atom);
-    u3_noun u3qe_shay(u3_atom, u3_atom);
-    u3_noun u3qe_shas(u3_atom, u3_atom);
-    u3_noun u3qe_shal(u3_atom, u3_atom);
-    u3_noun u3qe_sha1(u3_atom, u3_atom);
-
     u3_atom u3qe_fein_ob(u3_atom pyn);
     u3_atom u3qe_fynd_ob(u3_atom pyn);
 
     u3_noun u3qe_hmac(u3_noun, u3_atom, u3_atom,
                       u3_atom, u3_atom, u3_atom, u3_atom);
-
-
-    u3_noun u3qe_argon2(u3_atom, u3_atom, u3_atom,
-                        u3_atom, u3_atom, u3_atom,
-                        u3_atom, u3_atom, u3_atom, u3_atom,
-                        u3_atom, u3_atom, u3_atom, u3_atom);
-
-    u3_noun u3qe_blake(u3_atom wid, u3_atom dat,
-                       u3_atom wik, u3_atom dak, u3_atom out);
-
-    u3_noun u3qe_ripe(u3_atom wid, u3_atom dat);
-
-    u3_noun u3qe_make(u3_atom has, u3_atom prv);
-    u3_noun u3qe_reco(u3_atom has, u3_atom sig_v, u3_atom sig_r, u3_atom sig_s);
-    u3_noun u3qe_sign(u3_atom has, u3_atom prv);
 
     u3_noun u3qe_en_base16(u3_atom len, u3_atom dat);
     u3_noun u3qe_de_base16(u3_atom inp);

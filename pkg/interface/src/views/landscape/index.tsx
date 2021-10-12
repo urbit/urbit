@@ -44,7 +44,7 @@ export default function Landscape() {
   return (
     <>
       <Helmet defer={false}>
-        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape</title>
+        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Groups</title>
       </Helmet>
       <Switch>
         <Route path="/~landscape/ship/:host/:name"

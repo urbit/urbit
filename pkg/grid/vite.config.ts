@@ -2,39 +2,26 @@ import { loadEnv, defineConfig } from 'vite';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import reactRefresh from '@vitejs/plugin-react-refresh';
-import htmlPlugin from 'vite-plugin-html-config';
+import { urbitPlugin } from '@urbit/vite-plugin-urbit';
 import { execSync } from 'child_process';
-
-const htmlPluginOpt = {
-  headScripts: [{ src: '/apps/grid/desk.js' }, { src: '/session.js' }]
-};
-
-// using current commit until release
-const GIT_DESC = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-process.env.VITE_SHORTHASH = GIT_DESC;
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
+  if (mode !== 'mock') {
+    // using current commit until release
+    const GIT_DESC = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+    process.env.VITE_SHORTHASH = GIT_DESC;
+  } else {
+    process.env.VITE_SHORTHASH = '1';
+  }
+
   Object.assign(process.env, loadEnv(mode, process.cwd()));
   const SHIP_URL = process.env.SHIP_URL || process.env.VITE_SHIP_URL || 'http://localhost:8080';
   console.log(SHIP_URL);
 
   return defineConfig({
     base: mode === 'mock' ? undefined : '/apps/grid/',
-    server:
-      mode === 'mock'
-        ? undefined
-        : {
-            https: true,
-            proxy: {
-              '^/apps/grid/desk.js': {
-                target: SHIP_URL
-              },
-              '^((?!/apps/grid).)*$': {
-                target: SHIP_URL
-              }
-            }
-          },
+    server: mode === 'mock' ? undefined : { https: true },
     build:
       mode !== 'profile'
         ? undefined
@@ -48,6 +35,7 @@ export default ({ mode }) => {
               ]
             }
           },
-    plugins: [htmlPlugin(htmlPluginOpt), reactRefresh()]
+    plugins:
+      mode === 'mock' ? [] : [urbitPlugin({ base: 'grid', target: SHIP_URL }), reactRefresh()]
   });
 };

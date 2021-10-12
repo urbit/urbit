@@ -46,18 +46,25 @@ function AppLinkInvalid() {
 }
 function AppLinkRedirect({ desk, link }: { desk: string; link: string }) {
   const charge = useCharge(desk);
+
   useEffect(() => {
+    if (!charge) {
+      return;
+    }
+
     const query = new URLSearchParams({
       'grid-link': encodeURIComponent(`/${link}`)
     });
+
     const url = `${getAppHref(charge.href)}?${query.toString()}`;
     window.open(url, desk);
-  }, []);
+  }, [charge]);
+
   return <Redirect to="/" />;
 }
 
 const LANDSCAPE_DESK = 'landscape';
-const LANDSCAPE_HOST = '~zod';
+const LANDSCAPE_HOST = '~lander-dister-dozzod-dozzod';
 
 function LandscapeLink({ match }: RouteComponentProps<{ link: string }>) {
   const { link } = match.params;

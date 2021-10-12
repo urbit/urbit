@@ -179,7 +179,7 @@
       :_  ~
       :*  %event
           her
-          //http-client/0v1n.2m9vh
+          /i/http-client/0v1n.2m9vh
           %receive
           num.u.ask
           [%start [200 ~] `(as-octs:mimes:html resp) &]
@@ -274,7 +274,7 @@
   =/  clan  (clan:title who)
   ?-    clan
       ?(%czar %king %duke)
-    ;<  ~  bind:m  (raw-ship:ph-io who `(dawn who ~))
+    ;<  ~  bind:m  (init-ship:ph-io who |)
     (pure:m state)
   ::
       ?(%earl %pawn)
@@ -294,7 +294,7 @@
       =/  rank  ?:(=(%earl clan) "moon" "comet")
       "|{rank} {(scow %p who)}, =public-key {(scow %uw pass)}"
     ;<  ~  bind:m  (dojo:ph-io spon com)
-    ;<  ~  bind:m  (raw-ship:ph-io who `(dawn who `seed))
+    ;<  ~  bind:m  (init-ship:ph-io who |)
     (pure:m state)
   ==
 ::

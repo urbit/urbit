@@ -10,7 +10,7 @@ import { arrToString } from '@urbit/api/lib/BigIntArrayOrderedMap';
 import useGraphState from '~/logic/state/graph';
 import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';
-import { Association, PermVariation } from '@urbit/api';
+import { Association, deSig, PermVariation } from '@urbit/api';
 import { useParams, Switch, Route } from 'react-router';
 import { useGroupForAssoc } from '~/logic/state/group';
 
@@ -68,7 +68,7 @@ export default function PostThread(props: PostThreadProps) {
     getFirstborn(ship, name, `/${index.map(i => i.toString()).join('/')}`);
   }, [association.resource, index]);
 
-  const graphId = `${ship.slice(1)}/${name}`;
+  const graphId = `${deSig(ship)}/${name}`;
   const threadGraph = useGraphState(useCallback(s => s.threadGraphs[graphId] || {}, [graphId]));
 
   const shouldRenderFeed = arrToString(index) in threadGraph;

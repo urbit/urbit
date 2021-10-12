@@ -56,8 +56,11 @@ export function parentPath(path: string) {
  * string -> enabled feed
  */
 export function getFeedPath(association: Association): string | null | undefined {
-  const { metadata = { config: {} } } = association;
-  if (metadata.config && 'group' in metadata?.config && metadata.config?.group) {
+  const metadata = association?.metadata;
+  if(!metadata) {
+    return undefined;
+  }
+  if (metadata?.config && 'group' in metadata?.config && metadata.config?.group) {
     if ('resource' in metadata.config.group) {
       return metadata.config.group.resource;
     }
@@ -498,7 +501,7 @@ const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 export function getItemTitle(association: Association): string {
   if (DM_REGEX.test(association.resource)) {
     const [, , ship, name] = association.resource.split('/');
-    if (ship.slice(1) === window.ship) {
+    if (deSig(ship) === window.ship) {
       return cite(`~${name.slice(4)}`);
     }
     return cite(ship);

@@ -16,6 +16,7 @@
 +$  state-5  [%5 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
+++  mar      %graph-update-3
 --
 ::
 =|  state-5
@@ -100,7 +101,7 @@
   ++  give
     |=  =action:store
     ^-  (list card)
-    [%give %fact ~ [%graph-update-2 !>(`update:store`[now.bowl action])]]~
+    [%give %fact ~ [mar !>(`update:store`[now.bowl action])]]~
   --
 ::
 ++  on-poke
@@ -111,7 +112,7 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
-      %graph-update-2  (graph-update !<(update:store vase))
+      %graph-update-3  (graph-update !<(update:store vase))
       %import          (poke-import q.vase)
     ==
   [cards this]
@@ -570,7 +571,7 @@
     ++  give
       |=  [paths=(list path) update=action:store]
       ^-  (list card)
-      [%give %fact paths [%graph-update-2 !>(`update:store`[now.bowl update])]]~
+      [%give %fact paths [mar !>(`update:store`[now.bowl update])]]~
     --
   ::
   ++  validate-graph
@@ -619,11 +620,11 @@
     [%x %export ~]  ``noun+!>(state)
   ::
       [%x %keys ~]
-    :-  ~  :-  ~  :-  %graph-update-2
+    :-  ~  :-  ~  :-  mar
     !>(`update:store`[now.bowl [%keys ~(key by graphs)]])
   ::
       [%x %tag-queries *]
-    :-  ~  :-  ~  :-  %graph-update-2
+    :-  ~  :-  ~  :-  mar
     !>  ^-  update:store
     :-  now.bowl
     ?+  t.t.path  (on-peek:def path)
@@ -639,7 +640,7 @@
     ?~  marked-graph  [~ ~]
     =*  graph  p.u.marked-graph
     =*  mark   q.u.marked-graph
-    :-  ~  :-  ~  :-  %graph-update-2
+    :-  ~  :-  ~  :-  mar
     !>(`update:store`[now.bowl [%add-graph [ship term] graph mark %.y]])
   ::
       [%x %update-log @ @ *]
@@ -647,11 +648,12 @@
     =/  =term   i.t.t.t.path
     =/  update-log
       (~(get by update-logs) [ship term])
-    ?~  update-log  [~ ~]
     :-  ~  :-  ~  :-  %noun
     !>
     ?+    t.t.t.t.path  (on-peek:def path)
-      ~  `update-log:store`u.update-log
+        ~
+      ^-  update-log:store
+      ?~(update-log *update-log:store u.update-log)
     ::
         [%latest ~]
       ^-  (unit time)
@@ -661,6 +663,7 @@
     ::
         [%subset @ @ ~]
       ^-  update-log:store
+      ?~  update-log  *update-log:store
       =*  start  i.t.t.t.t.t.path
       =*  end    i.t.t.t.t.t.t.path
       %^  lot:orm-log
@@ -678,8 +681,8 @@
     =*  graph  p.u.marked-graph
     =*  mark   q.u.marked-graph
     ?+    t.t.t.t.path  (on-peek:def path)
-        ~  
-      :-  ~  :-  ~  :-  %graph-update-2
+        ~
+      :-  ~  :-  ~  :-  mar
       !>(`update:store`[now.bowl [%add-graph [ship term] graph mark %.y]])
     ::
         [%mark ~]
@@ -688,7 +691,7 @@
         [%subset ?(%lone %kith) @ @ ~]
       =/  start=(unit atom)  (rush i.t.t.t.t.t.t.path dem:ag)
       =/  end=(unit atom)    (rush i.t.t.t.t.t.t.t.path dem:ag)
-      :-  ~  :-  ~  :-  %graph-update-2
+      :-  ~  :-  ~  :-  mar
       !>  ^-  update:store
       :^  now.bowl  %add-nodes  [ship term]
       %-  ~(gas by *(map index:store node:store))
@@ -715,7 +718,7 @@
           (turn t.t.pax (cury slav %ud))
         =/  node  (get-node graph index)
         ?~  node  [~ ~]
-        :-  ~  :-  ~  :-  %graph-update-2
+        :-  ~  :-  ~  :-  mar
         !>  ^-  update:store
         :^  now.bowl  %add-nodes  [ship term]
         %-  ~(gas by *(map index:store node:store))
@@ -739,7 +742,7 @@
           ?:  ?=(%empty -.children.u.node)
             ~
           p.children.u.node
-        :-  ~  :-  ~  :-  %graph-update-2
+        :-  ~  :-  ~  :-  mar
         !>  ^-  update:store
         :^  now.bowl  %add-nodes  [ship term]
         %-  ~(gas by *(map index:store node:store))
@@ -763,7 +766,7 @@
           ?:  ?=(%empty -.children.u.node)
             ~
           p.children.u.node
-        :-  ~  :-  ~  :-  %graph-update-2
+        :-  ~  :-  ~  :-  mar
         !>  ^-  update:store
         :^  now.bowl  %add-nodes  [ship term]
         %-  ~(gas by *(map index:store node:store))
@@ -825,7 +828,7 @@
           |=  [=node:store =index:store =(map index:store node:store)]
           ^-  (unit (unit cage))
           ?:  ?=(%empty -.children.node)
-            :-  ~  :-  ~  :-  %graph-update-2
+            :-  ~  :-  ~  :-  mar
             !>(`update:store`[now.bowl [%add-nodes [ship term] map]])
           =/  item=[k=atom v=node:store]
             (need (ram:orm p.children.node))
@@ -858,7 +861,7 @@
       =/  start=(unit atom)  (rush i.t.t.t.t.t.path dem:ag)
       ?:  ?=(~ count)
         [~ ~]
-      :-  ~  :-  ~  :-  %graph-update-2
+      :-  ~  :-  ~  :-  mar
       !>  ^-  update:store
       :^  now.bowl  %add-nodes  [ship term]
       =*  a  u.count

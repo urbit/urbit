@@ -9,6 +9,7 @@ import { useVat } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';
 import { useMedia } from '../logic/useMedia';
 import { Cross } from '../components/icons/Cross';
+import { useLeapStore } from './Nav';
 
 type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
   open: boolean;
@@ -24,9 +25,11 @@ function getHash(vat: Vat): string {
 export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMenuProps) => {
   const { push } = useHistory();
   const [copied, setCopied] = useState(false);
-  const garden = useVat('garden');
+  const garden = useVat(window.desk);
   const hash = garden ? getHash(garden) : null;
   const isMobile = useMedia('(max-width: 639px)');
+  const select = useLeapStore((s) => s.select);
+  const clearSelection = useCallback(() => select(null), [select]);
 
   const copyHash = useCallback(
     (event: Event) => {
@@ -69,6 +72,7 @@ export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMe
               shouldDim && 'opacity-60',
               className
             )}
+            onClick={clearSelection}
           >
             {!open && !subMenuOpen && (
               <>
@@ -116,12 +120,12 @@ export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMe
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
                   as={Link}
-                  to="/app/garden"
+                  to={`/app/${window.desk}`}
                   className="flex items-center p-2 mb-2 space-x-2 focus:bg-blue-200 focus:outline-none rounded"
                   onSelect={handleDropdownLink()}
                 >
                   <span className="w-5 h-5 bg-gray-100 rounded-full" />
-                  <span className="h4">About Landscape</span>
+                  <span className="h4">About</span>
                 </DropdownMenu.Item>
                 {hash && (
                   <DropdownMenu.Item

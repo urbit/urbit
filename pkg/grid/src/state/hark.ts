@@ -81,15 +81,19 @@ export const useHarkStore = createState<HarkState>(
       set(newState);
     },
     archiveAll: async () => {
+      get().set((draft) => {
+        draft.unseen = {};
+        draft.seen = {};
+      });
       await api.poke(archiveAll);
     },
     archiveNote: async (bin, lid) => {
+      get().set((draft) => {
+        const seen = 'seen' in lid ? 'seen' : 'unseen';
+        const binId = harkBinToId(bin);
+        delete draft[seen][binId];
+      });
       if (useMockData) {
-        get().set((draft) => {
-          const seen = 'seen' in lid ? 'seen' : 'unseen';
-          const binId = harkBinToId(bin);
-          delete draft[seen][binId];
-        });
         return;
       }
       await api.poke(archive(bin, lid));
@@ -187,6 +191,23 @@ function reduceHark(u: any) {
         curr.body = [...curr.body, ...(old?.body || [])];
         draft.seen[bin] = curr;
         delete draft.unseen[bin];
+      });
+    });
+  } else if ('del-place' in u) {
+    const { path, desk } = u['del-place'];
+    const pathId = `${desk}${path}`;
+    const wipeBox = (t: Timebox) => {
+      Object.keys(t).forEach((bin) => {
+        if (bin.startsWith(pathId)) {
+          delete t[bin];
+        }
+      });
+    };
+    set((draft) => {
+      wipeBox(draft.unseen);
+      wipeBox(draft.seen);
+      draft.archive.keys().forEach((key) => {
+        wipeBox(draft.archive.get(key)!);
       });
     });
   }

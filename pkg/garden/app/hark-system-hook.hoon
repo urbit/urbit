@@ -6,7 +6,7 @@
 ::
 ++  lag-interval  ~m10
 --
-%+  verb  &
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =|  state-0
@@ -50,7 +50,7 @@
       ::
           %commit
         ?.  |(=(desk.diff %base) ~(has-docket de:cc desk.diff))  `this
-        =/  =action:hark  ~(updated de:cc desk.diff)
+        =/  =action:hark  ~(commit de:cc desk.diff)
         :_  this
         ~[(poke:ha:cc action)]
       ::
@@ -113,11 +113,13 @@
 ::
 ++  de
   |_  =desk
-  ++  scry-path  (scry:io desk /desk/docket)
+  ++  scry-path  (scry:io desk /desk/docket-0)
   ++  has-docket  .^(? %cu scry-path)
   ++  docket  .^(docket:^docket %cx scry-path)
   ++  hash    .^(@uv %cz (scry:io desk ~))
   ++  place    `place:hark`[q.byk.bowl /desk/[desk]]
+  ++  vat
+    .^(vat:hood %gx (scry:io %hood /kiln/vat/[desk]/noun))
   ++  body
     |=  [=path title=cord content=(unit cord)]
     ^-  body:hark
@@ -126,16 +128,26 @@
   ::
   ++  title-prefix
     |=  =cord
+    %+  rap  3
     ?:  =(desk %base)
-      'System software'
+      ['System software' cord ~]
     ?:  has-docket  
-      (rap 3 'App: "' title:docket '"' cord ~)
-    (rap 3 'Desk: ' desk cord ~)
+      ['App: "' title:docket '"' cord ~]
+    ['Desk: ' desk cord ~]
   ::
   ++  get-version
     ?:  has-docket
       (rap 3 'version: ' (ver version:docket) ~)
     (rap 3 'hash: ' (scot %uv hash) ~)
+  ::
+  ++  commit
+    ^-  action:hark
+    ?:(=(1 ud.cass:vat) created updated)
+  ::
+  ++  created
+    ^-  action:hark
+    :+  %add-note  [/created place]
+    (body /desk/[desk] (title-prefix ' has been installed') ~)
   ::
   ++  updated
     ^-  action:hark

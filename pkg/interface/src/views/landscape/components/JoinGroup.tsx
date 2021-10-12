@@ -1,8 +1,9 @@
 import {
-    Box, Col,
-    Icon,
-    ManagedTextInputField as Input, Row,
-    Text
+  Box, Col,
+  Icon,
+  ManagedTextInputField as Input, Row,
+  Text,
+  Button
 } from '@tlon/indigo-react';
 import { join, MetadataUpdatePreview } from '@urbit/api';
 import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
@@ -42,6 +43,7 @@ interface FormSchema {
 
 interface JoinGroupProps {
   autojoin?: string;
+  dismiss?: () => void;
 }
 
 function Autojoin(props: { autojoin: string | null }) {
@@ -57,8 +59,9 @@ function Autojoin(props: { autojoin: string | null }) {
 }
 
 export function JoinGroup(props: JoinGroupProps): ReactElement {
-  const { autojoin } = props;
+  const { autojoin, dismiss } = props;
   const { associations, getPreview } = useMetadataState();
+  const [timedOut, setTimedOut] = useState(false);
   const groups = useGroupState(state => state.groups);
   const history = useHistory();
   const initialValues: FormSchema = {
@@ -104,6 +107,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
         history.push(`/~landscape${group}`);
       }
     } catch (e) {
+      setTimedOut(true);
       console.error(e);
     }
   }, [waiter, history, associations, groups]);
@@ -143,7 +147,17 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
           Join a Group
         </Text>
       </Box>
-      {_.isString(preview) ? (
+      { timedOut ? (
+        <Col width="100%" gapY={4}>
+          <Text>The host is not responding. You will receive a notification when the join requests succeeds
+          </Text>
+          <Button primary onClick={dismiss}>
+            Dismiss
+          </Button>
+
+        </Col>
+      ) : _.isString(preview) ? (
+
         <Col width="100%" gapY={4}>
           <Text>The host appears to be offline. Join anyway?</Text>
           <StatelessAsyncButton

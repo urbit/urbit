@@ -42,6 +42,18 @@ module.exports = {
           // Compiles Sass to CSS
           'sass-loader'
         ]
+      },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/'
+            }
+          }
+        ]
       }
     ]
   },
@@ -68,8 +80,9 @@ module.exports = {
       'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143')
     }),
     new HtmlWebpackPlugin({
-      title: 'Landscape',
-      template: './public/index.html'
+      title: 'Groups',
+      template: './public/index.html',
+      favicon: './src/assets/img/Favicon.png'
     })
   ],
   output: {

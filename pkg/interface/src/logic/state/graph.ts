@@ -25,6 +25,7 @@ export interface GraphState {
   pendingDms: Set<string>;
   screening: boolean;
   graphTimesentMap: Record<number, string>;
+  getShallowChildren: (ship: string, name: string, index?: string) => Promise<void>;
   getDeepOlderThan: (ship: string, name: string, count: number, start?: string) => Promise<void>;
   getNewest: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   getOlderSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
@@ -53,7 +54,7 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     const promise = airlock.poke(poke);
     const pending = clone(poke);
     markPending(pending.json['add-nodes'].nodes);
-    pending.json['add-nodes'].resource.ship = pending.json['add-nodes'].resource.ship.slice(1);
+    pending.json['add-nodes'].resource.ship = deSig(pending.json['add-nodes'].resource.ship);
     GraphReducer({
       'graph-update': pending.json
     });
@@ -64,7 +65,7 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     const promise = airlock.thread(thread);
     const { body } = clone(thread);
     markPending(body['add-nodes'].nodes);
-    body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
+    body['add-nodes'].resource.ship = deSig(body['add-nodes'].resource.ship);
     GraphReducer({
       'graph-update': body,
       'graph-update-flat': body,
@@ -77,7 +78,7 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     const promise = airlock.thread(thread);
     const { body } = clone(thread);
     markPending(body['add-nodes'].nodes);
-    body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
+    body['add-nodes'].resource.ship = deSig(body['add-nodes'].resource.ship);
     GraphReducer({
       'graph-update': body,
       'graph-update-flat': body,
@@ -256,9 +257,17 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     if(j) {
       reduceStateN(get(), j, reduceDm);
     }
-  })
+  })],
+  {
+    graphs: {},
+    looseNodes: {},
+    graphTimesentMap: {},
+    flatGraphs: {},
+    threadGraphs: {},
+    pendingDms: new Set<string>()
+  }
 
-]);
+);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(

@@ -1,5 +1,5 @@
 import { BaseAnchor, Box, BoxProps, Button, Center, Col, H3, Icon, Image, Row, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, resourceFromPath, GraphConfig, Treaty } from '@urbit/api';
+import { Association, GraphNode, resourceFromPath, GraphConfig, Treaty, deSig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { Link, useLocation } from 'react-router-dom';
@@ -83,7 +83,7 @@ function GraphPermalink(
   const location = useLocation();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
-    useCallback(s => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
+    useCallback(s => s.looseNodes?.[`${deSig(ship)}/${name}`]?.[index] as GraphNode, [
       graph,
       index
     ])
@@ -207,7 +207,7 @@ export function AppTile({ color, image, ...props }: AppTileProps) {
       width={['48px', '132px']}
       marginRight={3}
       borderRadius={3}
-      bg={color || 'gray'}
+      bg={color || 'washedGray'}
       {...props}
     >
       {image && (
@@ -223,6 +223,17 @@ export function AppTile({ color, image, ...props }: AppTileProps) {
     </Box>
   );
 }
+
+const AppSkeleton = props => (
+  <Box
+    width="100%"
+    height="14px"
+    bg="washedGray"
+    borderRadius={2}
+    marginBottom={2}
+    {...props}
+  />
+);
 
 function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
   const treaty = useTreaty(ship, desk);
@@ -244,17 +255,34 @@ function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
       bg="washedGray"
       borderRadius={3}
     >
-      {treaty && <AppTile display={['none', 'block']} {...treaty} />}
-      <Col>
+      <AppTile display={['none', 'block']} {...treaty} />
+      <Col flex="1">
         <Row flexDirection={['row', 'column']} alignItems={['center', 'start']} marginBottom={2}>
-          {treaty && <AppTile display={['block', 'none']} {...treaty} />}
+          <AppTile display={['block', 'none']} {...treaty} />
           <Col>
-            <H3 color="black">{treaty?.title}</H3>
-            {treaty?.ship && <Author ship={treaty?.ship} showImage dontShowTime={true} />}
+            <H3 color="black">{ treaty?.title || '%' + desk }</H3>
+            <Author ship={treaty?.ship || ship} showImage dontShowTime={true} />
           </Col>
         </Row>
-        <ClampedText marginBottom={2} color="gray">{treaty?.info}</ClampedText>
-        <Button as="a" href={href} primary alignSelf="start" display="inline-flex" marginTop="auto">Open App</Button>
+        {treaty && <ClampedText marginBottom={2} color="gray">{treaty.info}</ClampedText>}
+        {!treaty && (
+          <>
+            <AppSkeleton />
+            <AppSkeleton width="80%" />
+          </>
+        )}
+        <Button
+          as="a"
+          href={href}
+          primary
+          alignSelf="start"
+          display="inline-flex"
+          marginTop="auto"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Open App
+        </Button>
       </Col>
     </Row>
   );

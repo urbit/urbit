@@ -1974,9 +1974,9 @@
               ?=([%'~_~' *] path.binding)  ::  runtime
           ==
         [| bindings.state]
-      (insert-binding [binding duct action] bindings.state)
+      [& (insert-binding [binding duct action] bindings.state)]
     :_  state
-    [duct %give %bound success binding]~
+    [duct %give %bound & binding]~
   ::  +remove-binding: removes a binding if it exists and is owned by this duct
   ::
   ++  remove-binding
@@ -2097,28 +2097,29 @@
   |=  url=@t
   ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
   (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
+::  +insert-binding: add a new binding, replacing any existing at its path
 ::
 ++  insert-binding
-  |=  [[=binding =duct =action] bindings=(list [=binding =duct =action])]
-  =/  to-search  bindings
-  |-  ^-  [? _bindings]
-  ?^  to-search
-    ?:  =(binding binding.i.to-search)
-      [| bindings]
-    ::
-    $(to-search t.to-search)
-  :-  &
-  ::  store in reverse alphabetical order so that longer paths are first
+  |=  $:  new=[=binding =duct =action]
+          bindings=(list [=binding =duct =action])
+      ==
+  ^+  bindings
+  ?~  bindings  [new]~
+  =*  bid  binding.i.bindings
+  ::  replace already bound paths
   ::
-  %-  flop
-  %+  sort  [[binding duct action] bindings]
-  |=  [[a=^binding *] [b=^binding *]]
+  ?:  =([site path]:bid [site path]:binding.new)
+    ~>  %slog.[0 leaf+"eyre: replacing existing binding at {<`path`path.bid>}"]
+    [new t.bindings]
+  ::  if new comes before bid, prepend it.
+  ::  otherwise, continue our search.
   ::
-  ?:  =(site.a site.b)
-    (aor path.a path.b)
-  ::  alphabetize based on site
-  ::
-  (aor ?~(site.a '' u.site.a) ?~(site.b '' u.site.b))
+  =;  new-before-bid=?
+    ?:  new-before-bid  [new bindings]
+    [i.bindings $(bindings t.bindings)]
+  ?:  =(site.binding.new site.bid)
+    (aor path.bid path.binding.new)
+  (aor (fall site.bid '') (fall site.binding.new ''))
 ::
 ++  channel-wire
   |=  [channel-id=@t request-id=@ud]
@@ -2162,6 +2163,8 @@
     ::  initial value for the login handler
     ::
     =.  bindings.server-state.ax
+      =-  (roll - insert-binding)
+      ^-  (list [binding ^duct action])
       :~  [[~ /~/login] duct [%authentication ~]]
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]

@@ -1,11 +1,12 @@
 /-  *hood
-/*  base-bill  %bill  /desk/bill
 =,  clay
 =,  space:userlib
 =,  format
 =*  dude  dude:gall
 |%
-+$  state    state-7
++$  state    state-9
++$  state-9  [%9 pith-9]
++$  state-8  [%8 pith-9]
 +$  state-7  [%7 pith-7]
 +$  state-6  [%6 pith-6]
 +$  state-5  [%5 pith-5]
@@ -16,7 +17,9 @@
 +$  state-0  [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-7
+  $%  state-9
+      state-8
+      state-7
       state-6
       state-5
       state-4
@@ -26,7 +29,7 @@
       state-0
   ==
 ::
-+$  pith-7
++$  pith-9
   $:  wef=(unit weft)
       rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -40,7 +43,35 @@
       ::  ensure they're unique even when the same
       ::  request is made multiple times.
       hxs=(map desk @ud)
+  ==
+::
++$  pith-7
+  $:  wef=(unit weft)
+      rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ark=(map desk arak-7)                               ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
   ==                                                    ::
++$  arak-7
+  $:  rail=(unit rail-7)
+      =rein
+  ==
+::
++$  rail-7
+  $:  paused=?
+      =ship
+      =desk
+      =aeon
+      next=(list rung)
+  ==
 ::
 +$  pith-6
   $:  wef=(unit weft)
@@ -224,6 +255,11 @@
   |=  (list card:agent:gall)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
+::  +fmt: format string for slogging
+::
+++  fmt
+  |=  mes=tape
+  [%0 %leaf (weld "kiln: " mes)]
 ::
 ++  render
   |=  [mez=tape sud=desk who=ship syd=desk]
@@ -232,30 +268,35 @@
 ::
 ++  on-init
   =<  abet
-  ~>  %slog.0^leaf/"kiln: boot"
-  =/  desks=(set desk)
-    .^((set desk) %cd /(scot %p our)//(scot %da now))
+  ~>  %slog.(fmt "boot")
+  ::
+  =+  .^(desks=(set desk) %cd /(scot %p our)//(scot %da now))
   =.  desks  (~(del in desks) %base)
   =.  desks  (~(del in desks) %kids)
+  ::
+  =/  sop=ship  (sein:title our now our)
   ::  set up base desk
   ::
-  =.  ..on-init
-    =/  =rein  [liv=& add=(sy %hood %dojo ~) sub=~]  ::  TODO questionable
-    =/  daz  (get-apps-want base-bill rein)
-    %-  emil
-    %-  zing  ^-  (list (list card:agent:gall))
-    (turn daz start-dude:~(pass vats [%base *arak]))
-  ::  install other desks
+  =.  ..on-init  abet:(install-local:vats %base)
+  =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))
+    abet:(install:vats %base sop %kids)
+  ::
+  ::  watch for gall reloading
+  =.  ..on-init  abet:gall-lyv:vats
+  ::  install other desks and make them public
   ::
   =/  dez=(list desk)  ~(tap in desks)
-  =/  sop=ship
-    (sein:title our now our)
-  |-
+  |-  ^+  ..on-init
   ?~  dez  ..on-init
   =.  ..on-init
     abet:(install-local:vats i.dez)
-  =?  ..on-init  !=(sop our)
-    abet:(install:vats i.dez sop i.dez)
+  =.  ..on-init
+    %-  emit
+    :^  %pass  /kiln/permission  %arvo
+    [%c %perm i.dez / %r `[%black ~]]
+  =/  src  (get-publisher our i.dez now)
+  =?  ..on-init  &(?=(^ src) !=(our u.src))
+    abet:(install:vats i.dez u.src i.dez)
   $(dez t.dez)
 ::
 ++  on-load
@@ -264,6 +305,9 @@
       --
   =|  old-ota=(unit ota)
   |=  [hood-version=@ud old=any-state]
+  =/  old-version  -.old
+  =*  state        +<+.$.abet
+  ::
   =?  old-ota  ?=(%0 -.old)
     =/  syncs=(list [ota =aeon])  ~(tap by syn.old)
     |-  ^-  (unit ota)
@@ -321,21 +365,54 @@
     =-  +.old(ark -)
     %-  ~(run by ark.old)
     |=  a=arak-6
-    ^-  arak
+    ^-  arak-7
     :_  rein.a
-    ^-  (unit rail)
+    ^-  (unit rail-7)
     `[paused.rail ship.rail desk.rail aeon.rail next]:a
   ::
-  ?>  ?=(%7 -.old)
-  =.  +<+.$.abet  old
-  =<  abet
+  =?  old  ?=(%7 -.old)
+    :-  %8
+    =-  +.old(ark -)
+    %-  ~(gas by *(map desk arak))
+    %+  turn  ~(tap by ark.old)
+    |=  [d=desk a=arak-7]
+    ^-  [desk arak]
+    :-  d
+    :_  rein.a
+    ?~  rail.a  ~
+    `[(get-publisher our d now) u.rail.a]
+  ::
+  =?  old  ?=(%8 -.old)
+    [%9 +.old]
+  ::
+  ?>  ?=(%9 -.old)
+  =.  state  old
+  ::
+  =?  kiln  (lth old-version %7)
+    abet:(install:vats %base our %base)
   =?  kiln  ?=(^ old-ota)
     abet:(install:vats %base [her sud]:u.old-ota)
+  =?  kiln  (lth old-version %7)
+    abet:gall-lyv:vats
+  ::  kiln %7 had a bug where it failed to properly emit a +listen
+  ::  due to an unexpected crash. here we detect the cause of the crash
+  ::  (not-yet-installed desks) and emit the +listen anew to make sure we
+  ::  stay aware of commits to base.
+  ::
+  =?    kiln
+      ?&  =(%8 old-version)
+        ::
+          %+  lien  ~(tap by ark.old)
+          |=  [d=desk *]
+          =-  =(0 rev)
+          .^([rev=@ud @da] %cw /(scot %p our)/[d]/(scot %da now))
+      ==
+    take-commit:(abed:vats %base)
   =?  kiln  ?=(^ wef)
     =/  except=(set desk)  (sy %base %kids ~)
-    (bump:vats u.wef (all-desks-but:vats except) %.n)
+    (bump:vats u.wef except force=%.n)
   =.  wef  ~
-  kiln
+  abet:kiln
 ::
 ++  on-peek
   |=  =path
@@ -377,15 +454,17 @@
   |_  [loc=desk rak=arak]
   ++  ral  (need rail.rak)
   ++  vats  .
-  ++  abet  kiln(ark (~(put by ark) loc rak))
+  ++  abet
+    ~|  [%uninitialized-desk loc]
+    ?<  =(%$ loc)
+    kiln(ark (~(put by ark) loc rak))
   ++  abed
     |=  lac=desk
     ~_  leaf/"kiln: {<lac>} not installed"
     vats(loc lac, rak (~(got by ark) lac))
   ::
-  ++  here  ?~  rail.rak  "{<loc>} from local"
+  ++  here  ?~  rail.rak  "{<loc>} (local)"
             "{<loc>} from {<[ship desk]:ral>}"
-  ::
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
   ++  from-wire
     |=  =wire
@@ -397,8 +476,8 @@
   ++  emil  |=((list card:agent:gall) vats(kiln (^emil +<)))
   ++  give
     |%
-    ++  snap  [%give %fact ~[/kiln/vats] %kiln-vats-snap !>(ark)]
-    ++  diff  |=(d=^diff [%give %fact ~[/kiln/vats] %kiln-vats-diff !>(d)])
+    ++  snap  [%give %fact ~[/kiln/vats] %kiln-vats-snap-0 !>(ark)]
+    ++  diff  |=(d=^diff [%give %fact ~[/kiln/vats] %kiln-vats-diff-0 !>(d)])
     --
   ++  pass
     |%
@@ -407,6 +486,18 @@
     ++  sync-da   (warp %sync [%sing %w da+now /])
     ++  sync-ud   (warp %sync [%sing %w ud+aeon:ral /])
     ++  download  (warp %download [%sing %v ud+aeon:ral /])
+    ++  gall-lyv
+      =/  paths=(set [care:clay path])
+        %-  sy
+        :~  [%z /sys/hoon/hoon]
+            [%z /sys/arvo/hoon]
+            [%z /sys/lull/hoon]
+            [%z /sys/zuse/hoon]
+            [%z /sys/vane/gall/hoon]
+        ==
+      %+  clay-card  %gall-lyv
+      [%warp our %base ~ %mult da+now paths]
+      ::
     ++  warp
       |=  [s=term r=rave]
       (clay-card s %warp ship:ral desk:ral `r)
@@ -428,24 +519,12 @@
       [%pass (make-wire step) %arvo %c task]
     ++  start-dude
       |=  =dude
-      ^-  (list card:agent:gall)
-      :-  [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
-      ?.  (is-fish dude (read-bill our loc now))
-        ~>  %slog.0^leaf/"kiln: jolt {<dude>}"
-        ~
-      ~>  %slog.0^leaf/"kiln: jolt {<dude>}, binding console"
-      =/  =cage  [%drum-link !>([our dude])]
-      [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
+      ^-  card:agent:gall
+      [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
     ++  stop-dude
       |=  =dude
-      ^-  (list card:agent:gall)
-      :-  [%pass /kiln/vats/[loc]/uninstall %arvo %g %idle dude]
-      ?.  (is-fish dude (read-bill our loc now))
-        ~>  %slog.0^leaf/"kiln: idle {<dude>}"
-        ~
-      ~>  %slog.0^leaf/"kiln: idle {<dude>}, unbinding console"
-      =/  =cage  [%drum-unlink !>([our dude])]
-      [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
+      ^-  card:agent:gall
+      [%pass /kiln/vats/[loc]/uninstall %arvo %g %idle dude]
     --
   ::  +uninstall: stop tracking apps on desk, and suspend apps
   ::
@@ -456,10 +535,10 @@
       =-  (^emit (pyre:pass leaf/- ~))
       "kiln: |uninstall: %base cannot be uninstalled"
     ?.  (~(has by ark) lac)
-      ~>  %slog.0^leaf/"kiln: |uninstall: {<lac>} not installed, ignoring"
+      ~>  %slog.(fmt "|uninstall: {<lac>} not installed, ignoring")
       kiln
     =.  vats  (abed lac)
-    ~>  %slog.0^leaf/"kiln: uninstalling {here}"
+    ~>  %slog.(fmt "uninstalling {here}")
     =.  vats  stop-agents
     kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
@@ -467,32 +546,40 @@
   ++  install
     |=  [lac=desk her=ship rem=desk]
     ^+  vats
+    =.  loc  lac
     ?:  =([her rem] [our lac])
       (install-local lac)
     =/  got  (~(get by ark) lac)
     ?:  =(`[her rem] got)
-      ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
+      =.  rak  (need got)
+      ~>  %slog.(fmt "already tracking {here:(abed lac)}, ignoring")
       vats
-    =:  loc  lac
-        rak  [`[paused=| her rem *aeon next=~] rein:(fall got *arak)]
-      ==
-    ~>  %slog.0^leaf/"kiln: beginning install into {here}"
+    =.  rak  [`[~ paused=| her rem *aeon next=~] rein:(fall got *arak)]
+    ~>  %slog.(fmt "beginning install into {here}")
     (emil find:pass listen:pass ~)
   ::  +install-local: install from a local desk, with no remote
+  ::
+  ::    Also notify clients that the desk was installed.
   ::
   ++  install-local
     |=  lac=desk
     ^+  vats
-    ?:  (~(has by ark) loc)
-      ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
-      vats
-    =:  loc  lac
-        rak  [~ *rein]
-      ==
-    ~>  %slog.0^leaf/"kiln: beginning install into {here}"
-    =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
-    =.  vats  (emit listen:pass)
-    vats
+    |^  ^+  vats
+    ?.  (~(has by ark) lac)
+      go
+    =.  vats  (abed lac)
+    ?^  rail.rak
+      go
+    ~>  %slog.(fmt "{<lac>} already installed locally, refreshing")
+    update-running-dudes
+    ::
+    ++  go
+      =.  loc  lac
+      =.  rak  *arak
+      ~>  %slog.(fmt "installing {<loc>} locally")
+      =.  vats  update-running-dudes
+      (emil listen:pass (diff:give %commit lac rak) ~)
+    --
   ::  +reset: resync after failure
   ::
   ::    TODO: instead of jumping all the way back to find:pass,
@@ -502,7 +589,7 @@
   ::
   ++  reset
     ^+  vats
-    ~>  %slog.0^leaf/"kiln: resetting tracking for {here}"
+    ~>  %slog.(fmt "resetting tracking for {here}")
     =/  cad  (diff:give %reset loc rak)
     =/  rel  ral
     =.  rail.rak  `rel(aeon 0, next ~)
@@ -514,12 +601,17 @@
     ^+  vats
     =.  vats  (abed lac)
     ?.  is-tracking
-      ~>  %slog.0^leaf/"kiln: {<lac>} already paused, ignoring"
+      ~>  %slog.(fmt "{<lac>} already paused, ignoring")
       vats
-    ~>  %slog.0^leaf/"kiln: {<lac>} pausing updates"
+    ~>  %slog.(fmt "{<lac>} pausing updates")
     =/  rel  ral
     =.  rail.rak  `rel(paused &, aeon 0)
     vats
+  ::
+  ::  +gall-lyv: watch gall source for reloading
+  ++  gall-lyv
+    =.  vats  (abed %base)
+    (emit gall-lyv:pass)
   ::  +remove-upstream: stop listening to an upstream for changes
   ::
   ++  remove-upstream
@@ -536,10 +628,10 @@
     |=  lac=desk
     ^+  vats
     =.  vats  (abed lac)
-    ~>  %slog.  :+  %0  %leaf
+    ~>  %slog.  %-  fmt
                 ?.  paused:ral
-                  "kiln: {<lac>} already tracking, ignoring"
-                "kiln: {<lac>} resuming updates"
+                  "{<lac>} already tracking, ignoring"
+                "{<lac>} resuming updates"
     =/  rel  ral
     =.  rail.rak  `rel(paused |)
     reset
@@ -553,7 +645,7 @@
       =-  (emit (pyre:pass leaf/- ~))
       "kiln: suspend: %base cannot be suspended"
     ?.  (~(has by ark) lac)
-      ~>  %slog.0^leaf/"kiln: suspend: {<lac>} not installed, ignoring"
+      ~>  %slog.(fmt "suspend: {<lac>} not installed, ignoring")
       vats
     =.  vats  (abed lac)
     =.  liv.rein.rak  |
@@ -566,7 +658,7 @@
     ^+  vats
     =.  vats  (abed lac)
     =.  liv.rein.rak  &
-    =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
+    =.  vats  update-running-dudes
     (emit (diff:give %revive loc rak))
   ::  +set-rein: adjust which agents are forced on or off
   ::
@@ -579,7 +671,7 @@
       [%| %|]  vats
       [%| %&]  (revive lac)
       [%& %|]  (suspend lac)
-      [%& %&]  (update-running-apps (get-apps-diff our loc now rein.rak))
+      [%& %&]  update-running-dudes
     ==
   ::  +bump: try to apply kernel kelvin upgrade
   ::
@@ -634,17 +726,21 @@
   ++  bump-one
     |=  [kel=weft =desk]
     ^+  kiln
-    ~>  %slog.0^leaf/"kiln: bump {<desk>} to {<[- +]:kel>}"
+    ~>  %slog.(fmt "bump {<desk>} to {<[lal num]:kel>}")
     =<  abet  ^+  vats
     =.  vats  (abed desk)
-    ?:  =([~ kel] (read-kelvin-local our desk now))
-      ~>  %slog.0^leaf/"kiln: {here} already at {<[- +]:kel>}, ignoring"
+    =/  kul   (read-kelvin-local our desk now)
+    ?~  kul
+      ~>  %slog.(fmt "{here} not yet installed")
       vats
+    ?:  =(kel u.kul)
+      ~>  %slog.(fmt "{here} already at {<[lal num]:kel>}")
+      update-running-dudes
     =^  tem  rail.rak  (crank-next %| kel)
     ?^  tem
       (emit merge-main:pass)
     =-  (emit (pyre:pass leaf/- ~))
-    "kiln: {here} killed upgrade to {<[- +]:kel>}"
+    "kiln: {here} killed upgrade to {<[lal num]:kel>}"
   ::  +stop-agents: internal helper to suspend agents on .loc
   ::
   ::    Will not shut down %hood or %dojo.
@@ -661,17 +757,19 @@
     ?>  ?=([@ @ *] wire)
     ?:  ?=(%jolt i.t.wire)
       (take-onto wire syn)
+    ?:  ?=(%listen i.t.wire)
+      (take-listen wire syn)
     =<  abet
     =.  vats  (from-wire wire)
     ?+    i.t.wire
-        ~>  %slog.0^leaf/"kiln: vats-bad-take {<wire>}"
+        ~>  %slog.(fmt "vats-bad-take {<wire>}")
         vats
       %find        (take-find syn)
       %sync        (take-sync syn)
       %download    (take-download syn)
-      %listen      (take-listen syn)
       %merge-main  (take-merge-main syn)
       %merge-kids  (take-merge-kids syn)
+      %gall-lyv    (take-gall-lyv syn)
     ==
   ::
   ++  take-find
@@ -681,9 +779,9 @@
     ?.  is-tracking
       vats
     ?~  p.syn
-      ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, aborting"
+      ~>  %slog.(fmt "cancelled (1) install into {here}, aborting")
       vats(ark (~(del by ark) loc))
-    ~>  %slog.0^leaf/"kiln: activated install into {here}"
+    ~>  %slog.(fmt "activated install into {here}")
     (emit sync-da:pass)
   ::
   ++  take-sync
@@ -694,10 +792,10 @@
     ?.  is-tracking
       vats
     ?~  p.syn
-      ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, retrying"
+      ~>  %slog.(fmt "cancelled (1) install into {here}, retrying")
       reset
     =?  rail.rak  ?=(%w p.p.rit)  `%*(. ral aeon ud:;;(cass:clay q.q.r.rit))
-    ~>  %slog.0^leaf/"kiln: downloading update for {here}"
+    ~>  %slog.(fmt "downloading update for {here}")
     (emit download:pass)
   ::
   ++  take-download
@@ -707,17 +805,27 @@
     ?.  is-tracking
       vats
     ?~  p.syn
-      ~>  %slog.0^leaf/"kiln: cancelled (2) install into {here}, retrying"
+      ~>  %slog.(fmt "cancelled (2) install into {here}, retrying")
       reset
-    ~>  %slog.0^leaf/"kiln: finished downloading update for {here}"
+    ~>  %slog.(fmt "finished downloading update for {here}")
+    ?.  (get-remote-diff our loc now [ship desk aeon]:ral)
+      ~>  %slog.(fmt "remote is identical to {here}, skipping")
+      =.  rail.rak  `%*(. ral aeon +(aeon:ral))
+      =.  vats  update-running-dudes
+      (emil sync-ud:pass (diff:give %commit loc rak) ~)
     =/  old-weft  `weft`[%zuse zuse]
-    =/  new-weft  (read-kelvin-foreign [ship desk aeon]:ral)
-    =?  vats  liv.rein.rak
-      =/  bill      (read-bill-foreign [ship desk aeon]:ral)
-      =/  wan       (sy (get-apps-want bill rein.rak))
-      =/  hav       (sy (get-apps-live our loc now))
-      =/  ded       ~(tap in (~(dif in hav) wan))
-      (stop-dudes ded)
+    =/  new-weft
+      ?:  =(our ship:ral)
+        (need (read-kelvin-local our desk:ral now))  ::  TODO error handling
+      (read-kelvin-foreign [ship desk aeon]:ral)
+    ::  don't try to read from the local desk's bill file if
+    ::  there are no commits to the local desk (aeon 0)
+    ::
+    =/  yon  =<(ud .^(cass cw+/(scot %p our)/[loc]/(scot %da now)))
+    =?  vats  &(liv.rein.rak !=(0 yon))
+      %-  stop-dudes
+      =<  idle
+      (adjust-dudes [our loc now] rein.rak)
     =.  rail.rak  `%*(. ral aeon +(aeon:ral))
     |^  ^+  vats
     ?:  =(%base loc)
@@ -730,14 +838,14 @@
     ::
     ++  kelvin-retreat
       ^+  vats
-      ~>  %slog.0^leaf/"kiln: cannot install {here}, old kelvin {<new-weft>}"
-      ~>  %slog.0^leaf/"kiln: will retry at foreign kelvin {<old-weft>}"
+      ~>  %slog.(fmt "cannot install {here}, old kelvin {<new-weft>}")
+      ~>  %slog.(fmt "will retry at foreign kelvin {<old-weft>}")
       =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
       (emil sync-ud:pass (diff:give diff) ~)
     ::
     ++  kelvin-advance
       ^+  vats
-      ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
+      ~>  %slog.(fmt "future version {<new-weft>}, enqueueing")
       ::  retry upgrade if not blocked anymore
       =.  rail.rak  `%*(. ral next (snoc next:ral [(dec aeon:ral) new-weft]))
       =.  ark  (~(put by ark) loc rak)
@@ -749,13 +857,13 @@
       =/  rel  u.rail.base
       ?.  &(?=(^ next.rel) =(~ (get-blockers weft.i.next.rel)))
         vats
-      ~>  %slog.0^leaf/"kiln: unblocked system update, updating"
+      ~>  %slog.(fmt "unblocked system update, updating")
       =.  kiln  (bump-one weft.i.next.rel %base)
       vats
     ::
     ++  kelvin-same
       ^+  vats
-      ~>  %slog.0^leaf/"kiln: merging into {here}"
+      ~>  %slog.(fmt "merging into {here}")
       =.  rail.rak  +:(crank-next %& (dec aeon:ral))
       (emil ~[merge-main sync-ud]:pass)
     ::
@@ -767,11 +875,12 @@
         (get-blockers new-weft)
       ::
       ?.  =(~ blockers)
-        ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
-        =.  rail.rak  `%*(. ral next (snoc next:ral [(dec aeon:ral) new-weft]))
+        ~>  %slog.(fmt "OTA blocked on {<blockers>}")
+        =.  rail.rak
+          `%*(. ral next (snoc next:ral [(dec aeon:ral) new-weft]))
         =/  =diff  [%block loc rak new-weft blockers]
         (emil sync-ud:pass (diff:give diff) ~)
-      ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
+      ~>  %slog.(fmt "applying OTA to {here}, kelvin: {<new-weft>}")
       =.  rail.rak  +:(crank-next %& (dec aeon:ral))
       =.  wef
         ?:  =(old-weft new-weft)  ~
@@ -780,23 +889,37 @@
     --
   ::
   ++  take-listen
-    |=  syn=sign-arvo
-    ^+  vats
+    |=  [=wire syn=sign-arvo]
+    ^+  kiln
     ?>  ?=([@ %writ ~ *] syn)
-    =.  vats  (emit listen:pass)
+    =/  lac=desk  (head wire)
+    ::  ignore spurious updates from clay on desks we've uninstalled
+    ::
+    ?.  (~(has by ark) lac)
+      kiln
+    =.  vats  (from-wire wire)
     take-commit
   ::
   ++  take-commit
-    ^+  vats
-    ~>  %slog.0^leaf/"kiln: commit detected at {here}"
-    =.  vats  (emit (diff:give %commit loc rak))
-    =?  vats  liv.rein.rak
-      (update-running-apps (get-apps-diff our loc now rein.rak))
+    ^+  kiln
+    =.  kiln
+      =<  abet
+      ~>  %slog.(fmt "commit detected at {here}")
+      =.  rail.rak
+        ?~  rail.rak  ~
+        `[(get-publisher our loc now) +.u.rail.rak]
+      =.  vats  (emil listen:pass (diff:give %commit loc rak) ~)
+      ?.  liv.rein.rak
+        ~>  %slog.(fmt "{<loc>} not running")
+        vats
+      update-running-dudes
     ?.  =(%base loc)
-      vats
-    =/  kel  [- +]:weft:(head next:ral)
-    ~>  %slog.0^leaf/"kiln: merging %base into %kids at {<kel>}"
-    (emit merge-kids:pass)
+      kiln
+    =/  kel=[@tas @ud]
+      ?~  rail.rak         zuse/zuse
+      ?~  next.u.rail.rak  zuse/zuse
+      weft.i.next.u.rail.rak
+    (bump-many kel (all-desks-but (sy %base ~)))
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
@@ -812,22 +935,37 @@
       %-  (slog leaf/- p.p.syn)
       =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
-    take-commit
+    ~>  %slog.(fmt "merge into {<loc>} succeeded")
+    ?.  =(%base loc)
+      vats
+    ~>  %slog.(fmt "merging %base into %kids")
+    (emit merge-kids:pass)
   ::
   ++  take-merge-kids
     |=  syn=sign-arvo
     ^+  vats
     ?>  ?=(%mere +<.syn)
     ?:  ?=([%| %ali-unavailable *] p.syn)
-      ~>  %slog.0^leaf/"kiln: OTA to %kids failed, maybe peer sunk; restarting"
+      ~>  %slog.(fmt "OTA to %kids failed, maybe peer sunk; restarting")
       =.  vats  (emit (diff:give %merge-sunk %kids rak p.p.syn))
       reset
     ?-  -.p.syn
-      %&  ~>  %slog.0^leaf/"kiln: OTA to %kids succeeded"
+      %&  ~>  %slog.(fmt "OTA to %kids succeeded")
           (emit (diff:give %commit %kids rak))
-      %|  ~>  %slog.0^leaf/"kiln: OTA to %kids failed {<p.p.syn>}"
+      %|  ~>  %slog.(fmt "OTA to %kids failed {<p.p.syn>}")
           (emit (diff:give %merge-fail %kids rak p.p.syn))
     ==
+  ::
+  ++  take-gall-lyv
+    |=  syn=sign-arvo
+    ^+  vats
+    =.  vats  gall-lyv
+    =/  vets  ~(tap in ~(key by ark))
+    |-
+    ?~  vets  vats
+    =.  vats  (abed i.vets)
+    =.  vats  update-running-dudes
+    $(vets t.vets)
   ::
   ++  take-onto
     |=  [=wire syn=sign-arvo]
@@ -835,30 +973,32 @@
     =/  onto  ?>(?=([%gall %onto *] syn) p.syn)
     ?-  -.onto
       %&  kiln
-      %|  (mean >p.onto< p.onto)
+      %|  (mean p.onto)
     ==
   ::
-  ++  update-running-apps
-    |=  [liv=(list dude) ded=(list dude)]
-    =.  vats  (start-dudes liv)
-    =.  vats  (stop-dudes ded)
+  ++  update-running-dudes
+    ^+  vats
+    =/  local  [our loc now]
+    =/  dif   (adjust-dudes local rein.rak)
+    =.  vats  (start-dudes jolt.dif)
+    =.  vats  (stop-dudes idle.dif)
     vats
   ::
   ++  start-dudes
     |=  daz=(list dude)
-    ~>  %slog.0^leaf/"kiln: starting {<daz>}"
-    (emil `(list card:agent:gall)`(zing (turn daz start-dude:pass)))
+    (emil (turn daz start-dude:pass))
   ::
   ++  stop-dudes
     |=  daz=(list dude)
-    ~>  %slog.0^leaf/"kiln: stopping {<daz>}"
-    (emil `(list card:agent:gall)`(zing (turn daz stop-dude:pass)))
+    (emil (turn daz stop-dude:pass))
   ::  +crank-next: pop stale items from .next until one matches
   ::
   ++  crank-next
     |=  new=(each aeon weft)
     ^+  [match=*(unit rung) rail.rak]
-    ?~  rail.rak  !!
+    ?~  rail.rak
+      ~|  [%no-rail-for desk=loc]
+      !!
     =/  rog  next.u.rail.rak
     =-  [match `u.rail.rak(next next)]
     |-  ^-  [match=(unit rung) next=(list rung)]
@@ -886,6 +1026,8 @@
   ?:  =(%base desk)
     ~
   ?.  liv.rein.arak
+    ~
+  ?:  =(`kel (read-kelvin-local our desk now))
     ~
   ?~  rail.arak
     `desk
@@ -1175,10 +1317,8 @@
   |=  =path
   ?>  (team:title our src)
   ?+    path  ~|(kiln-path/path !!)
-    [%vats ~]    abet
-  ::
-      [%ark ~]
-    abet(moz :_(moz [%give %fact ~ %kiln-vats-snap !>(ark)]))
+      [%vats ~]
+    abet(moz :_(moz [%give %fact ~ %kiln-vats-snap-0 !>(ark)]))
   ==
 ::
 ++  take-agent
@@ -1194,7 +1334,7 @@
   ::
       [%link @ ~]
     ?>  ?=(%poke-ack -.sign)
-    ~>  %slog.0^leaf/"kiln: linked {<`@tas`i.t.wire>} to console"
+    ~>  %slog.(fmt "linked {<`@tas`i.t.wire>} to console")
     abet
   ==
 ::
