@@ -46,6 +46,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
     `${match.url}/:submenu/:desk?`
   );
   const charges = useCharges();
+  const filteredCharges = Object.values(charges).filter((charge) => charge.desk !== window.desk);
   const isMobile = useMedia('(max-width: 639px)');
   const settingsPath = isMobile ? `${match.url}/:submenu` : '/';
 
@@ -104,7 +105,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
             <hr className="my-4 border-t-2 border-gray-50" />
             <nav className="px-2 sm:px-6">
               <ul className="space-y-1">
-                {Object.values(charges).map((charge) => (
+                {filteredCharges.map((charge) => (
                   <SystemPreferencesSection
                     key={charge.desk}
                     url={subUrl(`apps/${charge.desk}`)}
