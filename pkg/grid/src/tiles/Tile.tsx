@@ -64,14 +64,16 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
           lightText={lightText}
           className="absolute z-10 top-3 right-3 sm:top-5 sm:right-5 opacity-0 pointer-coarse:opacity-100 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
         />
-        <div
-          className="h4 absolute z-10 bottom-[8%] left-[5%] sm:bottom-7 sm:left-5 py-1 px-3 rounded-lg"
-          style={{ backgroundColor }}
-        >
-          <h3 className="mix-blend-hard-light">{title}</h3>
-        </div>
+        {title && (
+          <div
+            className="h4 absolute z-10 bottom-[8%] left-[5%] sm:bottom-7 sm:left-5 py-1 px-3 rounded-lg"
+            style={{ backgroundColor }}
+          >
+            <h3 className="mix-blend-hard-light">{title}</h3>
+          </div>
+        )}
         {image && !loading && (
-          <img className="absolute top-0 left-0 h-full w-full object-contain" src={image} alt="" />
+          <img className="absolute top-0 left-0 h-full w-full object-cover" src={image} alt="" />
         )}
       </div>
     </a>

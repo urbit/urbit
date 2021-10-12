@@ -61,7 +61,7 @@ export const useRecentsStore = create<RecentsStore>(
     }),
     {
       whitelist: ['recentApps', 'recentDevs'],
-      name: 'recents-store',
+      name: `${window.ship}-recents-store`,
       version: import.meta.env.VITE_SHORTHASH as any
     }
   )
