@@ -2311,7 +2311,7 @@ u3_pier_punt_goof(const c3_c* cap_c, u3_noun dud)
   u3_pier_punt(0, u3qb_flop(tan));
 
   {
-    c3_c* mot_c = u3r_string(mot);
+    c3_c* mot_c = u3m_pretty(mot); //u3r_string(mot);
     u3l_log("%s: bail: %%%s\r\n", cap_c, mot_c);
     c3_free(mot_c);
   }
@@ -2324,9 +2324,9 @@ u3_pier_punt_goof(const c3_c* cap_c, u3_noun dud)
 void
 u3_pier_punt_ovum(const c3_c* cap_c, u3_noun wir, u3_noun tag)
 {
-  c3_c* tag_c = u3r_string(tag);
+  c3_c* tag_c = u3m_pretty(tag); //u3r_string(tag);
   u3_noun riw = u3do("spat", wir);
-  c3_c* wir_c = u3r_string(riw);
+  c3_c* wir_c = u3m_pretty(riw); //u3r_string(riw);
 
   u3l_log("%s: %%%s event on %s failed\r\n\n", cap_c, tag_c, wir_c);
 
