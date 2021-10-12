@@ -1,4 +1,4 @@
-import { isChannelAdmin } from '~/logic/lib/group';
+import { isChannelAdmin } from '@urbit/api';
 import { cite } from '~/logic/lib/util';
 
 const makeIndexes = () => new Map([
@@ -49,7 +49,7 @@ const commandIndex = function (currentGroup, groups, associations) {
   const association = currentGroup ? associations?.groups?.[currentGroup] : null;
   const canAdd =
     (group && association)
-    ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup))
+    ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup, window.ship))
     : !currentGroup; // home workspace or hasn't loaded
   const workspace = currentGroup || '/home';
   commands.push(result('Groups: Create', '/~landscape/new', 'Groups', null));

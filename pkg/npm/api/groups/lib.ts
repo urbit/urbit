@@ -1,3 +1,4 @@
+import { deSig } from 'index';
 import _ from 'lodash';
 
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
@@ -158,53 +159,53 @@ export const roleTags = ['janitor', 'moderator', 'admin'];
 // TODO make this type better?
 
 export const groupBunts = {
-  group: (): Group => ({ members: new Set(), tags: { role: {} }, hidden: false, policy: groupBunts.policy() }),
-  policy: (): GroupPolicy => ({ open: { banned: new Set(), banRanks: new Set() } })
+  group: (): Group => ({ members: [], tags: { role: {} }, hidden: false, policy: groupBunts.policy() }),
+  policy: (): GroupPolicy => ({ open: { banned: [], banRanks: [] } })
 };
 
 export const joinError = ['no-perms', 'strange'] as const;
 export const joinResult = ['done', ...joinError] as const;
 export const joinProgress = ['start', 'added', ...joinResult] as const;
 
-export const roleForShip = (
+export function roleForShip(
   group: Group,
   ship: PatpNoSig
-): RoleTags | undefined => {
+): RoleTags | undefined {
   return roleTags.reduce((currRole, role) => {
     const roleShips = group?.tags?.role?.[role];
-    return roleShips && roleShips.has(ship) ? role : currRole;
+    return roleShips && _.includes(roleShips, ship) ? role : currRole;
   }, undefined as RoleTags | undefined);
 }
 
-export const resourceFromPath = (path: Path): Resource => {
+export function resourceFromPath(path: Path): Resource {
   const [, , ship, name] = path.split('/');
   return { ship, name };
 }
 
-export const makeResource = (ship: string, name: string) => {
+export function makeResource(ship: string, name: string) {
   return { ship, name };
 }
 
-export const isWriter = (group: Group, resource: string, ship: string) => {
-  const writers: Set<string> | undefined = _.get(
+export function isWriter(group: Group, resource: string, ship: string) {
+  const writers: string[] | undefined = _.get(
     group,
     ['tags', 'graph', resource, 'writers'],
     undefined
   );
-  const admins = group?.tags?.role?.admin ?? new Set();
+  const admins = group?.tags?.role?.admin ?? [];
   if (_.isUndefined(writers)) {
     return true;
   } else {
-    return writers.has(ship) || admins.has(ship);
+    return _.includes(writers, ship) || _.includes(admins, ship);
   }
 }
 
-export const isChannelAdmin = (
+export function isChannelAdmin(
   group: Group,
   resource: string,
   ship: string
-): boolean => {
-  const role = roleForShip(group, ship.slice(1));
+): boolean {
+  const role = roleForShip(group, deSig(ship));
 
   return (
     isHost(resource, ship) ||
@@ -213,10 +214,10 @@ export const isChannelAdmin = (
   );
 }
 
-export const isHost = (
+export function isHost(
   resource: string,
   ship: string
-): boolean => {
+): boolean {
   const [, , host] = resource.split('/');
 
   return ship === host;

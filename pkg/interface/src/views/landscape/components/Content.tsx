@@ -1,18 +1,11 @@
 import { Box } from '@tlon/indigo-react';
-import React, { useCallback, useEffect } from 'react';
+import React, { Suspense, useCallback, useEffect } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
-import LaunchApp from '~/views/apps/launch/App';
-import Notifications from '~/views/apps/notifications/notifications';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
-import Profile from '~/views/apps/profile/profile';
-import Settings from '~/views/apps/settings/settings';
-import ErrorComponent from '~/views/components/Error';
 import { useShortcut } from '~/logic/state/settings';
-
-import Landscape from '~/views/landscape/index';
-import GraphApp from '../../apps/graph/App';
+import { Loading } from '~/views/components/Loading';
 
 export const Container = styled(Box)`
    flex-grow: 1;
@@ -20,6 +13,14 @@ export const Container = styled(Box)`
    width: 100%;
    height: calc(100% - 62px);
 `;
+
+const Landscape = React.lazy(() => import('~/views/landscape/index'));
+const LaunchApp = React.lazy(() => import('~/views/apps/launch/App'));
+const Settings = React.lazy(() => import('~/views/apps/settings/settings'));
+const Profile = React.lazy(() => import('~/views/apps/profile/profile'));
+const Notifications = React.lazy(() => import('~/views/apps/notifications/notifications'));
+const GraphApp = React.lazy(() => import('../../apps/graph/App'));
+const ErrorComponent = React.lazy(() => import('~/views/components/Error'));
 
 export const Content = (props) => {
   const history = useHistory();
@@ -54,54 +55,56 @@ export const Content = (props) => {
 
   return (
     <Container>
-      <Switch>
-        <Route
-          exact
-          path={['/', '/invites/:app/:uid']}
-          render={p => (
-            <LaunchApp
-              location={p.location}
-              match={p.match}
+      <Suspense fallback={Loading}>
+        <Switch>
+          <Route
+            exact
+            path={['/', '/invites/:app/:uid']}
+            render={p => (
+              <LaunchApp
+                location={p.location}
+                match={p.match}
+                {...props}
+              />
+            )}
+          />
+          <Route path='/~landscape'>
+            <Landscape />
+          </Route>
+          <Route
+            path="/~profile"
+            render={ p => (
+              <Profile
               {...props}
-            />
-          )}
-        />
-        <Route path='/~landscape'>
-          <Landscape />
-        </Route>
-        <Route
-          path="/~profile"
-          render={ p => (
-            <Profile
-             {...props}
-            />
-          )}
-        />
-        <Route
-          path="/~settings"
-          render={ p => (
-            <Settings {...props} />
-          )}
-        />
-        <Route
-          path="/~notifications"
-          render={ p => (
-            <Notifications {...props} />
-          )}
-        />
-        <GraphApp path="/~graph" {...props} />
-        <PermalinkRoutes {...props} />
+              />
+            )}
+          />
+          <Route
+            path="/~settings"
+            render={ p => (
+              <Settings {...props} />
+            )}
+          />
+          <Route
+            path="/~notifications"
+            render={ p => (
+              <Notifications {...props} />
+            )}
+          />
+          <GraphApp path="/~graph" {...props} />
+          <PermalinkRoutes {...props} />
 
-        <Route
-          render={p => (
-            <ErrorComponent
-              code={404}
-              description="Not Found"
-              {...p}
-            />
-          )}
-        />
-      </Switch>
+          <Route
+            render={p => (
+              <ErrorComponent
+                code={404}
+                description="Not Found"
+                {...p}
+              />
+            )}
+          />
+        </Switch>
+      </Suspense>
     </Container>
   );
 };

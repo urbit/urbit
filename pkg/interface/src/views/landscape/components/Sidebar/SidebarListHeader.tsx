@@ -10,7 +10,7 @@ import {
 import { FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { roleForShip } from '~/logic/lib/group';
+import { roleForShip } from '@urbit/api';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';

@@ -1,4 +1,4 @@
-import { PatpNoSig, Path, Jug, ShipRank, Enc } from '../lib';
+import { PatpNoSig, Path, ShipRank, Enc } from '../lib';
 import { roleTags } from './index';
 
 export type RoleTags = typeof roleTags[number];
@@ -16,14 +16,14 @@ export type Tag = AppTag | RoleTag;
 
 export interface InvitePolicy {
   invite: {
-    pending: Set<PatpNoSig>;
+    pending: PatpNoSig[];
   };
 }
 
 export interface OpenPolicy {
   open: {
-    banned: Set<PatpNoSig>;
-    banRanks: Set<ShipRank>;
+    banned: PatpNoSig[];
+    banRanks: ShipRank[];
   };
 }
 
@@ -76,7 +76,7 @@ export type GroupPolicyDiff =
 export type GroupPolicy = OpenPolicy | InvitePolicy;
 
 export interface TaggedShips {
-  [tag: string]: Set<PatpNoSig>;
+  [tag: string]: PatpNoSig[];
 }
 
 export interface Tags {
@@ -85,7 +85,7 @@ export interface Tags {
 }
 
 export interface Group {
-  members: Set<PatpNoSig>;
+  members: PatpNoSig[];
   tags: Tags;
   policy: GroupPolicy;
   hidden: boolean;

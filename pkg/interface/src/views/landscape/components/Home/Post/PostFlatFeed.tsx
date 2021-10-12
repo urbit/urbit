@@ -1,9 +1,8 @@
 import { Box, Col } from '@tlon/indigo-react';
-import { Association, FlatGraph, FlatGraphNode, Group } from '@urbit/api';
+import { Association, FlatGraph, FlatGraphNode, Group, resourceFromPath } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
-import { resourceFromPath } from '~/logic/lib/group';
 import {
   arrToString
 } from '@urbit/api/lib/BigIntArrayOrderedMap';

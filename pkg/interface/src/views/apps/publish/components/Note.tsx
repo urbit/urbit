@@ -1,9 +1,8 @@
 import { Action, Box, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group, markEachAsRead, removePosts } from '@urbit/api';
+import { Association, Graph, GraphNode, Group, markEachAsRead, removePosts, roleForShip } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
