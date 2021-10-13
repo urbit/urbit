@@ -48,8 +48,6 @@
       [%tx =address:ethereum =roll-tx]
   ==
 ::
-+$  roller-tx  [=ship =status hash=keccak =time type=l2-tx]
-::
 +$  roll-tx  [=ship =status hash=keccak =time type=l2-tx]
 +$  pend-tx  [force=? =address:naive =time =raw-tx:naive]
 +$  send-tx  [next-gas-price=@ud sent=? txs=(list raw-tx:naive)]
