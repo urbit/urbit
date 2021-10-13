@@ -731,16 +731,12 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
 
       eve = u3t(eve);
     }
-    //  event succeeded, save and continue
+    //  event failed, stop and send trace
     //
     else {
-      u3_noun dud = u3k(u3t(gon));
-
       //  reset sent event counter
       //
-      sef_u->sen_d   = sef_u->dun_d;
-
-      u3z(gon);
+      sef_u->sen_d = sef_u->dun_d;
 
       //  XX reclaim on meme ?
       //
@@ -750,7 +746,7 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
       u3z(vev);
       return u3nc(c3__bail, u3nt(u3i_chubs(1, &sef_u->dun_d),
                                  sef_u->mug_l,
-                                 dud));
+                                 gon));
     }
   }
 
