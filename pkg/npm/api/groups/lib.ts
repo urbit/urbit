@@ -1,4 +1,4 @@
-import { deSig } from 'index';
+import { deSig } from '../index';
 import _ from 'lodash';
 
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';

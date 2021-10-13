@@ -34,6 +34,7 @@ export interface HarkState {
   poke: (poke: Poke<any>) => Promise<void>;
   getMore: () => Promise<boolean>;
   opened: () => void;
+  readCount: (path: string) => Promise<void>;
   // getTimeSubset: (start?: Date, end?: Date) => Promise<void>;
   unseen: Timebox;
   seen: Timebox;
