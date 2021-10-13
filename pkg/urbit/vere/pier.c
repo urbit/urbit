@@ -1131,7 +1131,7 @@ _pier_on_lord_play_bail(void* ptr_v, u3_info fon_u,
 
     //  dispose successful
     //
-    while ( tac_u->eve_d < eve_d ) {
+    while ( tac_u->eve_d <= eve_d ) {
       nex_u = tac_u->nex_u;
       las_l = tac_u->mug_l;
       u3_fact_free(tac_u);
