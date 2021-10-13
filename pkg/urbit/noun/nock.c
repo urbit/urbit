@@ -1,7 +1,7 @@
 /* g/n.c
 **
 */
-#include "all.h"
+#include "../include/all.h"
 
 // define to have each opcode printed as it executes,
 // along with some other debugging info
@@ -1022,8 +1022,6 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       }
 
       case c3__bout: {
-        fprintf(stderr," \r\n");
-        fprintf(stderr, "compiling bout\r\n");
         u3_noun fen = u3_nul;
         c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
 
@@ -1052,7 +1050,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
 
-      		case c3__bout: {
+          case c3__bout: {
             u3_noun fen = u3_nul;
             c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
 
@@ -1674,24 +1672,6 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
-/* TODO: this function should probably not live in nock.c
- *       let's put it somewhere more appropriate
- */
-
-/* current_epoc_time_ns(): returns milliseconds since epoc at call time
-**                         as a 64-bit wide atom.
-*/
-#include <time.h>
-static u3_atom
-current_epoc_time_ns (void)
-{
-    struct timespec spec;
-    clock_gettime(CLOCK_MONOTONIC, &spec);
-    return u3i_chub(
-      (spec.tv_sec * 1000000000ULL) + spec.tv_nsec
-    );
-}
-
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
 **            hin: [hint-atom, formula]. TRANSFER
 **            bus: subject. RETAIN
@@ -1704,12 +1684,12 @@ static c3_o
 _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 {
   if ( c3__bout == u3h(hin) ) {
-    u3_atom now = current_epoc_time_ns();
+    u3_atom now = u3i_chub(u3t_trace_time());
     *out = u3i_cell(u3h(hin), now);
   }
-	else {
-  	*out = u3_nul;
-	}
+  else {
+    *out = u3_nul;
+  }
 
   u3z(hin);
   return c3y;
@@ -1725,10 +1705,9 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
   u3_noun h_tok, t_tok;
   u3r_cell(tok, &h_tok, &t_tok);
   if ( c3__bout == h_tok ) {
-    u3_atom delta = u3ka_sub(current_epoc_time_ns(), u3k(t_tok) );
-		c3_c str_c[64];
-		snprintf(str_c, 63, "took %" PRIu64 " nanoseconds", u3r_chub(0, delta) );
-		// TODO: can we make our statement show up AFTER the echo of the hoon cmd in dojo?
+    u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(t_tok));
+    c3_c str_c[64];
+    snprintf(str_c, 63, "took %" PRIu64 " microseconds", u3r_chub(0, delta) );
     u3t_slog(u3nc(0, u3i_string(str_c)));
     u3z(delta);
   }
@@ -1738,7 +1717,6 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
 
   u3z(tok);
 }
-//-----------------------------------------------------
 
 /* _n_hint_fore(): arbitrary dynamic hint, before formula evaluation
 **            hin: [hint-atom, formula]. TRANSFER
@@ -1753,15 +1731,15 @@ static c3_o
 _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
 {
   if ( c3__bout == u3h(hin) ) {
-    u3_atom now = current_epoc_time_ns();
+    u3_atom now = u3i_chub(u3t_trace_time());
     *clu = u3i_trel(u3h(hin), *clu, now);
   }
-	else {
-		u3z(*clu);
-  	*clu = u3_nul;
-	}
+  else {
+    u3z(*clu);
+    *clu = u3_nul;
+  }
 
-	u3z(hin);
+  u3z(hin);
   return c3y;
 }
 
@@ -1775,25 +1753,30 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
   u3_noun p_tok, q_tok, r_tok;
   u3r_trel(tok, &p_tok, &q_tok, &r_tok);
   if ( c3__bout == p_tok ) {
-		// get the nanoseconds elapsed
-    u3_atom delta = u3ka_sub(current_epoc_time_ns(), u3k(r_tok) );
+    // get the microseconds elapsed
+    u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(r_tok));
 
-		// unpack q_tok to get the C string from the tank
-		u3_noun q_tok_h, q_tok_t;
-		u3r_cell(q_tok, &q_tok_h, &q_tok_t);
-		c3_y* str_b = u3r_tape(q_tok_t);
+    // unpack q_tok to get the C string from the tank
+    u3_noun q_tok_h, q_tok_t;
+    u3r_cell(q_tok, &q_tok_h, &q_tok_t);
 
-		// format the timing report and the clu sting from q_tok together
-		c3_c str_c[64];
-    snprintf(str_c, 63, "%s: took %" PRIu64 " nanoseconds", str_b, u3r_chub(0, delta) );
-	
-		// TODO: can we make our statements show up AFTER the echo of the hoon cmd in dojo?
+    // format the timing report and the clu sting from q_tok together
+    c3_c str_c[64];
+    snprintf(str_c, 63, " took %" PRIu64 " microseconds", u3r_chub(0, delta) );
 
-		// send the head of the tank (severity) and the report string to the terminal
-		// to handle it as it wants, when it wants
-		u3t_slog(u3nc(q_tok_h, u3i_string(str_c)));
+    // send the head of the tank (severity) and the report string to the terminal
+    // to handle it as it wants, when it wants
+    u3t_slog(
+      u3nc(
+        u3k(q_tok_h),
+        u3nt(
+          c3__rose,
+          u3nt(u3nc(':', u3_nul), u3_nul, u3_nul),
+          u3nt(u3k(q_tok_t), u3i_string(str_c), u3_nul)
+        )
+      )
+    );
 
-		// TODO: do I need to u3z any of the local vars I've defined?
     u3z(delta);
   }
   else {
@@ -1836,9 +1819,6 @@ typedef struct {
  *            mov: -1 north, 1 south
  *            off: 0 north, -1 south
  */
-// thats telekinesis Kyle! 
-// this is where I can steal u3t_heck calls and other
-// profile printing goodness from! 
 static u3_noun
 _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 {
