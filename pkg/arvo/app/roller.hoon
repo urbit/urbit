@@ -34,20 +34,25 @@
   $:  %0
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
-      ::  finding: raw-tx-hash reverse lookup for sending map
+      ::  finding: raw-tx-hash reverse lookup per nonce in sending map
       ::  history: status of l2 txs by ethereum address
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
       ::  own: ownership of azimuth points
-      ::  derive: flag (derive predicted/ownership state)
+      ::  derive: deferred derivation of predicted/ownership state
       ::
       pending=(list pend-tx)
       sending=(tree [l1-tx-pointer send-tx])
     ::
       $=  finding
+      ::  nonce is a unit to account for the case where a roller
+      ::  operator hasn't provided a pk, and some pending transactions
+      ::  that will be marked as "%failed" have to go to "finding" as such,
+      ::  but we don't know the nonce for the batch they'd belong to
+      ::
       %+  map  [=keccak nonce=(unit @ud)]
-      ::  TODO: txs=(list l2-status) ?
+      ::  TODO: map used for efficiency, but txs=(list l2-status) instead?
       [seen=@ud txs=(map @ud l2-status)]
     ::
       history=(jug address:ethereum roll-tx)
@@ -159,7 +164,7 @@
   ::    /x/unspawned/[~star]           ->  %noun  (list ship)
   ::    /x/next-batch                  ->  %atom  time
   ::    /x/point/[~ship]               ->  %noun  point:naive
-  ::    /x/ships/[0xadd.ress]         ->  %noun  (list ship)
+  ::    /x/ships/[0xadd.ress]          ->  %noun  (list ship)
   ::    /x/config                      ->  %noun  config
   ::    /x/chain-id                    ->  %atom  @
   ::    /x/owned                       ->  %noun  (list ship)
@@ -401,8 +406,6 @@
       :-  %points
       !>  ^-  (list [ship point:naive])
       ?~  addr=(slaw %ux wat)  ~
-      :: %+  roll
-      ::   ~(tap in (~(get ju own) u.addr))
       =/  proxies=(list proxy:naive)
         ~[%own %spawn %manage %vote %transfer]
       %+  roll  proxies
@@ -611,7 +614,7 @@
               =/  hash=keccak
                 (hash-raw-tx:lib raw-tx)
               =/  old-key=[keccak (unit @ud)]
-               [hash `nonce.p]
+                [hash `nonce.p]
               =/  new-key=[keccak (unit @ud)]
                 [hash `new-nonce]
               ?~  val=(~(get by finding) old-key)
@@ -736,8 +739,9 @@
 ++  predicted-state
   |=  nas=^state:naive
   ^-  (quip update _state)
-  =.  pre.state  nas
-  =.  own.state  canonical-owners
+  =:  pre.state  nas
+      own.state  canonical-owners
+    ==
   |^
   =^  [nes=_sending updates-1=(list update)]  state
     apply-sending
@@ -947,7 +951,7 @@
     :-  [%tx address roll-tx]~
     (~(put ju history) [address roll-tx])
   :: ?.  not-sent  ~&  "skip"  [~ state]
-  ::  toggle flush flag
+  ::  toggle derivation
   ::
   :_  state(derive ?:(derive | derive))
   %+  weld  (emit update-cards)
@@ -972,11 +976,13 @@
       ~?  lverb  [dap.bowl %pending-empty]  [~ state]
     ?~  next-nonce
       ~?  lverb  [dap.bowl %missing-roller-nonce]  [~ state]
-    ::  because we increment the next-nonce after a thread is done
-    ::  we can't guarantee that the nonce will be set up before the
-    ::  timer fires, so this checks makes sure that a pending batch
-    ::  goes to sending after the previous thread has come back
+    ::  this guarantees that next-nonce is only incremented
+    ::  when the thread that handles sending the previous one
+    ::  has come back and confirms that it was sent to L1
     ?:  out-of-sync
+      ::  TODO: this would postpone sending the batch for a whole "frequency"
+      ::    set up a timer to retry this in ~mX ?
+      ::
       ~?  lverb  [dap.bowl %nonce-out-sync]  [~ state]
     =/  nonce=@ud   u.next-nonce
     =^  updates-2  history  update-history
@@ -985,14 +991,7 @@
     ::
     =:  pending     ~
         derive      &
-        ::  this is moved to +on-batch-result so it's incremented only
-        ::  when we get a confirmation that thread has been sent succesfully
-        ::  otherwise we might get into a situation where the thread for
-        ::  nonce "n" is very slow at confirming (e.g. L1 nonce out of sync),
-        ::  and the next batch with nonce "n+1" goes into sending, which will
-        ::  mean that we can't guarantee which batch will be submitted first
-        ::
-        :: next-nonce  `+(u.next-nonce)
+        next-nonce  `+(u.next-nonce)
       ::
           sending
         %^  put:orm  sending
@@ -1044,8 +1043,8 @@
 ::
 ++  out-of-sync
   ^-  ?
-  ?~  latest-nonce=(ram:orm sending)  |
-  !=(sent.val.u.latest-nonce &)
+  ?~  newest-batch=(ram:orm sending)  |
+  !=(sent.val.u.newest-batch &)
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
 ++  send-roll
@@ -1084,16 +1083,14 @@
   ::
   ~?  ?=(%| -.result)  [dap.bowl %send-error +.p.result]
   =/  =send-tx  (got:orm sending [address nonce])
-  ::  update gas price for this tx in state
-  ::
   =?  sending  ?=(%& -.result)
     %^  put:orm  sending
       [address nonce]
+    ::  update gas price for this tx in state
+    ::  and set it as sent to L1
+    ::
     send-tx(next-gas-price p.result, sent &)
-  ::  we only increment nonce the first time the send thread finishes
-  ::
-  =?  next-nonce  &(?=(%& -.result) !=(sent.send-tx &))
-    `+(nonce)
+  :_  state
   ?:  ?|  ?=(%& -.result)
         ::  a general error shouldn't innitiate
         ::  the out-of-sync nonce thread
@@ -1106,7 +1103,6 @@
           ?&  sent.send-tx
               ?=([%| %not-sent *] result)
       ==  ==
-    :_  state
     :_  ~
     ::  resend the l1 tx in five minutes
     ::
@@ -1117,10 +1113,6 @@
   ::  reaching this because of lower funds needs to be addressed manually
   ::
   ?>  ?=(%not-sent -.p.result)
-  ::  new txs that come in will remain in pending
-  ::  until the newest nonce is retrieved
-  ::
-  :_  state(next-nonce ~)
   (get-nonce pk.state /refresh-nonce/(scot %ud nonce))
 ::  +on-naive-diff: process l2 tx confirmations
 ::
@@ -1140,12 +1132,12 @@
   ?:  ?=(%point -.diff)  [~ state]
   ?>  ?=(%tx -.diff)
   =/  =keccak  (hash-raw-tx:lib raw-tx.diff)
-  ::  assumes that l2 txs come in order, belonging to the oldest nonce awaiting confirmation
+  ::  assumes that l2 txs come in order, belonging to the oldest nonce in sending
   ::
-  ?~  head=(pry:orm sending)
+  ?~  oldest-batch=(pry:orm sending)
     ~?  lverb  [dap.bowl %no-nonce-in-sending keccak]
     [~ state]
-  =*  nonce  nonce.key.u.head
+  =*  nonce  nonce.key.u.oldest-batch
   ?~  wer=(~(get by finding) [keccak `nonce])
     ::  tx not submitted by this roller
     ::
