@@ -12,25 +12,26 @@ import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
-import { DmResource } from '~/views/apps/chat/DmResource';
 import { Workspace } from '~/types/workspace';
 import '~/views/apps/links/css/custom.css';
 import '~/views/apps/publish/css/custom.css';
 import { Loading } from '~/views/components/Loading';
-import { UnjoinedResource } from '~/views/components/UnjoinedResource';
-import { EmptyGroupHome } from './Home/EmptyGroupHome';
-import { GroupHome } from './Home/GroupHome';
 import { InvitePopover } from './InvitePopover';
-import { NewChannel } from './NewChannel';
 import { PopoverRoutes } from './PopoverRoutes';
-import { Resource } from './Resource';
 import { Skeleton } from './Skeleton';
 import airlock from '~/logic/api';
+import { EmptyGroupHome } from './Home/EmptyGroupHome';
 
 interface GroupsPaneProps {
   baseUrl: string;
   workspace: Workspace;
 }
+
+const DmResource = React.lazy(() => import('~/views/apps/chat/DmResource').then(module => ({ default: module.DmResource })));
+const Resource = React.lazy(() => import('./Resource').then(module => ({ default: module.Resource })));
+const UnjoinedResource = React.lazy(() => import('~/views/components/UnjoinedResource').then(module => ({ default: module.UnjoinedResource })));
+const GroupHome = React.lazy(() => import('./Home/GroupHome').then(module => ({ default: module.GroupHome })));
+const NewChannel = React.lazy(() => import('./NewChannel').then(module => ({ default: module.NewChannel })));
 
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, workspace } = props;

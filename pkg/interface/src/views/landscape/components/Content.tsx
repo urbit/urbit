@@ -6,6 +6,7 @@ import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 import { useShortcut } from '~/logic/state/settings';
 import { Loading } from '~/views/components/Loading';
+import LaunchApp from '~/views/apps/launch/App';
 
 export const Container = styled(Box)`
    flex-grow: 1;
@@ -15,7 +16,6 @@ export const Container = styled(Box)`
 `;
 
 const Landscape = React.lazy(() => import('~/views/landscape/index'));
-const LaunchApp = React.lazy(() => import('~/views/apps/launch/App'));
 const Settings = React.lazy(() => import('~/views/apps/settings/settings'));
 const Profile = React.lazy(() => import('~/views/apps/profile/profile'));
 const Notifications = React.lazy(() => import('~/views/apps/notifications/notifications'));
