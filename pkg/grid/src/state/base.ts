@@ -74,7 +74,7 @@ export const optReduceState = <S extends Record<string, unknown>, U>(
 export let stateStorageKeys: string[] = [];
 
 export const stateStorageKey = (stateName: string) => {
-  stateName = `Grid${stateName}State-${import.meta.env.VITE_SHORTHASH as any}`;
+  stateName = `${window.ship}-Grid${stateName}State-${import.meta.env.VITE_SHORTHASH as any}`;
   stateStorageKeys = [...new Set([...stateStorageKeys, stateName])];
   return stateName;
 };
