@@ -249,19 +249,19 @@
           ==
         --
       ::
-      ++  roller-txs
-        |=  txs=(list roll-tx)
+      ++  hist-txs
+        |=  txs=(list hist-tx)
         ^-  json
         :-  %a
         %+  turn  txs
-        |=  roll-tx
+        |=  hist-tx
         ^-  json
         %-  pairs
-        :~  ['status' s+status]
-            ['hash' (hex (as-octs:mimes:html hash))]
-            ['type' s+type]
-            ['ship' (^ship ship)]
-            ['time' (^time time)]
+        :~  ['time' (time p)]
+            ['status' s+status.q]
+            ['hash' (hex (as-octs:mimes:html hash.q))]
+            ['type' s+type.q]
+            ['ship' (ship ship.q)]
         ==
       ::
       ++  point
@@ -567,13 +567,13 @@
   [%result id (time:enjs:format when)]
 ::
 ++  history
-  |=  [id=@t params=(map @t json) scry=$-(address:naive (list roll-tx))]
+  |=  [id=@t params=(map @t json) scry=$-(address:naive (list hist-tx))]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)
     ~(params error:json-rpc id)
   ?~  address=(address:from-json params)
     ~(parse error:json-rpc id)
-  [%result id (roller-txs:to-json (scry u.address))]
+  [%result id (hist-txs:to-json (scry u.address))]
 ::
 ++  get-config
   |=  [id=@t params=(map @t json) =roller-config]

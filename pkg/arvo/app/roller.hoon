@@ -54,7 +54,7 @@
       %+  map  [=keccak nonce=(unit @ud)]
       ?(%confirmed %failed [=time =address:ethereum])
     ::
-      history=(jug address:ethereum roll-tx)
+      history=(map address:ethereum (tree hist-tx))
       next-nonce=(unit @ud)
       next-batch=time
       pre=^state:naive
@@ -74,7 +74,8 @@
       chain-id=@
   ==
 ::
-++  orm   ((ordered-map l1-tx-pointer send-tx) nonce-order:dice)
+++  ors   ((on l1-tx-pointer send-tx) nonce-order:dice)
+++  orh   ((on time roll-tx) gth)
 +$  ini   [nas=^state:naive own=owners]
 +$  net   ?(%mainnet %ropsten %local)
 ::
@@ -157,7 +158,7 @@
   ::    /x/pending/[~ship]             ->  %noun  (list pend-tx)
   ::    /x/pending/[0xadd.ress]        ->  %noun  (list pend-tx)
   ::    /x/tx/[0xke.ccak]/[@ud]status  ->  %noun  tx-status
-  ::    /x/history/[0xadd.ress]        ->  %noun  (list roll-tx)
+  ::    /x/history/[0xadd.ress]        ->  %noun  (list hist-tx)
   ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
   ::    /x/spawned/[~star]             ->  %noun  (list ship)
   ::    /x/unspawned/[~star]           ->  %noun  (list ship)
@@ -260,10 +261,10 @@
       |=  wat=@t
       :+  ~  ~
       :-  %noun
-      !>  ^-  (list roll-tx)
+      !>  ^-  (list hist-tx)
       ?~  addr=(slaw %ux wat)  ~
-      %~  tap  in
-      (~(get ju ^history) u.addr)
+      ?~  hist=(~(get by ^history) u.addr)  ~
+      (tap:orh u.hist)
     ::
     ++  nonce
       |=  [who=@t proxy=@t]
@@ -420,10 +421,10 @@
       |=  wat=@t
       ^-  cage
       :-  %txs
-      !>  ^-  (list roll-tx)
+      !>  ^-  (list hist-tx)
       ?~  addr=(slaw %ux wat)  ~
-      %~  tap  in
-      (~(get ju history) u.addr)
+      ?~  hist=(~(get by history) u.addr)  ~
+      (tap:orh u.hist)
     --
   ::
   ++  on-leave  on-leave:def
@@ -546,7 +547,7 @@
     ++  refresh
       |=  [nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
-      =/  old-nonce=@ud  (rash nonce dem)
+      =/  failed-nonce=@ud  (rash nonce dem)
       ?-  -.sign
           %poke-ack
         ?~  p.sign
@@ -575,59 +576,9 @@
         ::
             %thread-done
           =+   !<(nonce=@ud q.cage.sign)
-          ::  we only care about nonces >= than the one we received
-          ::
-          =/  sorted
-            %-  tap:orm
-            ::  (range exclusive)
-            ::
-            (lot:orm sending [`[get-address:do (dec old-nonce)] ~])
-          ~&  sort-lent+(lent sorted)
-          =/  confirmed-sending=_sending
-            (lot:orm sending [~ `[get-address:do old-nonce]])
-          =/  [nes=_sending nif=_finding]
-            =<  [sending finding]
-            %+  roll  sorted
-            |=  $:  [p=l1-tx-pointer q=send-tx]
-                    new-nonce=_nonce
-                    sending=_confirmed-sending
-                    finding=_finding
-                ==
-            |^
-            =*  nonce  nonce.p
-            =*  txs    txs.q
-            ::  TODO: this shouldn't be needed
-            ?:  (lth nonce.p old-nonce)
-              ~&  ["weird case" nonce+nonce.p]
-              [new-nonce sending finding]
-            :+  +(new-nonce)
-              update-sending
-            update-finding
-            ::
-            ++  update-sending
-              (put:orm sending [p(nonce new-nonce) q(sent %.n)])
-            ::
-            ++  update-finding
-              %+  roll  txs.q
-              |=  [=raw-tx:naive finding=_finding]
-              =/  hash=keccak
-                (hash-raw-tx:lib raw-tx)
-              =/  old-key=[keccak (unit @ud)]
-                [hash `nonce.p]
-              =/  new-key=[keccak (unit @ud)]
-                [hash `new-nonce]
-              ?~  val=(~(get by finding) old-key)
-                finding
-              ?.  ?=(^ u.val)  finding
-              %.  [new-key u.val]
-              ~(put by (~(del by finding) old-key))
-            --
-          ::
-          =:  sending     nes
-              finding     nif
-              next-nonce  `+(nonce)
-            ==
-          [(send-roll get-address nonce) this]
+          =^  cards  state
+            (on-out-of-sync:do nonce failed-nonce)
+          [cards this]
         ==
       ==
     --
@@ -753,7 +704,7 @@
   ++  apply-sending
     =|  ups=(list update)
     =/  valid=_sending  ~
-    =+  sorted=(tap:orm sending)
+    =+  sorted=(tap:ors sending)
     |-  ^+  [[valid ups] state]
     ?~  sorted  [[valid ups] state]
     ::
@@ -765,7 +716,7 @@
     ::  we only hear updates for this nonce if it has been sent
     ::
     =.  valid  ::=?  valid  sent.val
-      %^  put:orm  valid
+      %^  put:ors  valid
         key
       ::  TODO: too much functional hackery?
       val(txs (turn new-valid (cork tail (cork tail tail))))
@@ -774,6 +725,7 @@
   ++  apply-txs
     |=  [txs=(list pend-tx) type=?(%pending %sending) nonce=(unit @ud)]
     =/  valid=_txs  ~
+    =/  tid=time    now.bowl
     =|  ups=(list update)
     =|  local=(set keccak)
     |-  ^+  [[valid ups] state]
@@ -782,7 +734,6 @@
     =*  tx        i.txs
     =*  raw-tx    raw-tx.i.txs
     =*  ship      ship.from.tx.raw-tx.i.txs
-    =*  time      time.i.txs
     =/  hash=@ux  (hash-raw-tx:lib raw-tx)
     =/  sign-address=(unit @ux)
       (extract-address:lib raw-tx pre.state chain-id)
@@ -794,7 +745,7 @@
       tx(address u.sign-address)
     ::
     =/  =roll-tx
-      [ship type hash time (l2-tx +<.tx.raw-tx)]
+      [ship type hash (l2-tx +<.tx.raw-tx) nonce]
     =?  nups  !gud
       %+  snoc  nups
       [%tx address.tx roll-tx(status %failed)]
@@ -803,9 +754,16 @@
       (~(put by finding) [hash nonce] %failed)
     ::
     =?  history.state  !gud
-      %.  [address.tx roll-tx(status %failed)]
-      ~(put ju (~(del ju history.state) address.tx roll-tx))
-    $(txs t.txs, ups (weld ups nups), local (~(put in local) hash))
+      =+  val=(~(got by history.state) address.tx)
+      %+  ~(put by history.state)  address.tx
+      %+  put:orh  val
+      [tid roll-tx(status %failed)]
+    %_  $
+      txs    t.txs
+      tid    +(tid)
+      ups    (weld ups nups)
+      local  (~(put in local) hash)
+    ==
   ::
   ++  try-apply
     |=  [nas=^state:naive force=? =raw-tx:naive]
@@ -886,7 +844,7 @@
   =^  time  pending
     =|  nep=(list pend-tx)
     |-  ^-  [(unit time) _nep]
-    ?~  pending  [~ nep]
+    ?~  pending  [~ (flop nep)]
     ?:  =(keccak (hash-raw-tx:lib raw-tx.i.pending))
       [`time.i.pending (weld (flop nep) t.pending)]
     $(pending t.pending, nep [i.pending nep])
@@ -908,39 +866,23 @@
   ?~  addr=(verify-sig:lib sig message)
     ~?  lverb  [dap.bowl %cancel-sig-fail]
     [~ state]
-  ::  TODO: mark as failed instead? add a %cancelled to tx-status?
-  ::
-  =.  history
-    %+  ~(del ju history)  u.addr
-    [ship %pending keccak u.time l2-tx]
-  [~ state]
+  :-  ~
+  %_    state
+      history
+    =+  val=(~(got by history.state) u.addr)
+    %+  ~(put by history.state)  u.addr
+    %^  put:orh  val
+      now.bowl
+    [ship %cancelled keccak l2-tx next-nonce]
+  ==
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
 ++  take-tx
-  |=  pend-tx
+  |=  =pend-tx
   ^-  (quip card _state)
-  =/  hash=@ux  (hash-raw-tx:lib raw-tx)
-  ::  TODO: what if this hash/tx is already in the history?
-  ::    e.g. if previously failed, but now it will go through
-  ::    a) check in :finding that hash doesn't exist and if so, skip ?
-  ::    b) extract the status from :finding, use it to delete
-  ::      the entry in :history, and then insert it as %pending ?
-  ::
-  :: =/  not-sent=?  !(~(has by finding) hash)
-  :: =?  pending  not-sent
-  =.  pending  (snoc pending [force address time raw-tx])
-  :: =?  history  not-sent
+  =.  pending  (snoc pending pend-tx)
   =^  update-cards  history
-    =/  =roll-tx
-      :*  ship.from.tx.raw-tx
-          %pending
-          hash
-          time
-          (l2-tx +<.tx.raw-tx)
-      ==
-    :-  [%tx address roll-tx]~
-    (~(put ju history) [address roll-tx])
-  :: ?.  not-sent  ~&  "skip"  [~ state]
+    (update-history [pend-tx]~ %pending next-nonce now.bowl)
   ::  toggle derivation
   ::
   :_  state(derive ?:(derive | derive))
@@ -975,7 +917,8 @@
       ::
       ~?  lverb  [dap.bowl %nonce-out-sync]  [~ state]
     =/  nonce=@ud   u.next-nonce
-    =^  updates-2  history  update-history
+    =^  updates-2  history
+      (update-history pending %sending next-nonce now.bowl)
     ::  TODO: move to +on-batch-result to prevent the case the
     ::  tx succeds but we get a "Runtime Error: revert"?
     ::
@@ -984,7 +927,7 @@
         next-nonce  `+(u.next-nonce)
       ::
           sending
-        %^  put:orm  sending
+        %^  put:ors  sending
           [get-address nonce]
         [0 | (turn pending (cork tail (cork tail tail)))]
       ::
@@ -1005,19 +948,35 @@
   [[card cards] state]
 ::
 ++  update-history
+  |=  [pending=(list pend-tx) =status nonce=(unit @ud) tid=time]
+  =<  [ups his]
   %+  roll  pending
-  |=  [pend-tx ups=(list update) his=_history]
+  ::  TODO: add new entries for each change in status or just replace it?
+  ::    for the latter, use time in pend-tx instead of tid
+  ::
+  |=  [pend-tx tid=_tid ups=(list update) his=_history]
+  ~&  update-history+[(hash-raw-tx:lib raw-tx) tid (l2-tx +<.tx.raw-tx) status]
   =/  =roll-tx
     :*  ship.from.tx.raw-tx
-        %pending
+        status
         (hash-raw-tx:lib raw-tx)
-        time
         (l2-tx +<.tx.raw-tx)
+        nonce
     ==
-  =+  tx=[address roll-tx(status %sending)]
-  :-  (snoc ups tx+tx)
-  %.  tx
-  ~(put ju (~(del ju his) address roll-tx))
+  :+  +(tid)
+    (snoc ups tx+[address roll-tx])
+  =+  val=(~(get by his) address)
+  %+  ~(put by his)  address
+  %+  put:orh
+    ?~(val *(tree hist-tx) u.val)
+  :_  roll-tx
+  ::  hack to fix the same tid (now.bowl) in +on-naive-diff
+  ::  a side effect is that we are reversing the order of the txs
+  ::  (the most recent tx will have an older timestamp)
+  ::  but otherwise we will miss adding entries in the history
+  ::  since all the txs in a batch come with the same time
+  ::
+  (add (sub tid time) tid)
 ::  +get-nonce: retrieves the latest nonce
 ::
 ++  get-nonce
@@ -1029,8 +988,82 @@
 ::
 ++  out-of-sync
   ^-  ?
-  ?~  newest-batch=(ram:orm sending)  |
+  ?~  newest-batch=(ram:ors sending)  |
   !=(sent.val.u.newest-batch &)
+::  +on-out-of-sync
+::
+++  on-out-of-sync
+  ::  we only care about nonces >= than the one we received
+  ::
+  =/  failed-sending=(list [l1-tx-pointer send-tx])
+    %-  tap:ors
+    ::  (range exclusive)
+    ::
+    (lot:ors sending [`[get-address (dec failed-nonce)] ~])
+  =/  confirmed-sending=_sending
+    (lot:ors sending [~ `[get-address failed-nonce]])
+  =/  [nes=_sending nif=_finding sih=_history]
+    =<  [sending finding history]
+    %+  roll  failed-sending
+    |=  $:  [p=l1-tx-pointer q=send-tx]
+            new-nonce=_nonce
+            sending=_confirmed-sending
+            finding=_finding
+            history=_history
+        ==
+    |^
+    =*  nonce  nonce.p
+    =*  txs    txs.q
+    ::  TODO: this shouldn't be needed
+    ?:  (lth nonce.p failed-nonce)
+      ~&  ["weird case" nonce+nonce.p]
+      [new-nonce sending finding history]
+    :+   +(new-nonce)
+      update-sending
+    process-l2-txs
+    ::
+    ++  update-sending
+      (put:ors sending [p(nonce new-nonce) q(sent %.n)])
+    ::
+    ++  process-l2-txs
+      %+  roll  txs.q
+      |=  [=raw-tx:naive nif=_finding sih=_history]
+      =/  hash=keccak  (hash-raw-tx:lib raw-tx)
+      =/  old-key=[keccak (unit @ud)]
+        [hash `nonce.p]
+      |^  ?~  val=(~(get by nif) old-key)
+            [nif sih]
+          ?.  ?=(^ u.val)  [nif sih]
+          :-  (update-finding u.val)
+          (update-history address.u.val)
+      ::
+      ++  update-finding
+        |=  val=[time address:ethereum]
+        ^+  nif
+        %.  [[hash `new-nonce] val]
+        ~(put by (~(del by nif) old-key))
+      ::
+      ++  update-history
+        |=  =address:ethereum
+        ^+  sih
+        =*  ship      ship.from.tx.raw-tx
+        =/  l2-tx     (l2-tx +<.raw-tx)
+        =/  =roll-tx  [ship %unknown hash l2-tx `nonce.p]
+        =+  val=(~(got by history) address)
+        %+  ~(put by sih)  address
+        %+  gas:orh  val
+        :~  [now.bowl roll-tx]
+          ::
+            :-  +(now.bowl)
+            roll-tx(status %sending, nonce `new-nonce)
+        ==
+  :-  (send-roll get-address nonce)
+  %_  state
+    sending     nes
+    finding     nif
+    history     sih
+    next-nonce  `+(nonce)
+  ==
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
 ++  send-roll
@@ -1038,7 +1071,7 @@
   ^-  (list card)
   ::  if this nonce isn't in the sending queue anymore, it's done
   ::
-  ?.  (has:orm sending [address nonce])
+  ?.  (has:ors sending [address nonce])
     ~?  lverb  [dap.bowl %done-sending [address nonce]]
     ~
   ::  start the thread, passing in the l2 txs to use
@@ -1058,7 +1091,7 @@
       nonce
     ::
       =<  [next-gas-price txs]
-      (got:orm sending [address nonce])
+      (got:ors sending [address nonce])
   ==
 ::  +on-batch-result: await resend after thread success or failure
 ::
@@ -1068,9 +1101,9 @@
   ::  print error if there was one
   ::
   ~?  ?=(%| -.result)  [dap.bowl %send-error +.p.result]
-  =/  =send-tx  (got:orm sending [address nonce])
+  =/  =send-tx  (got:ors sending [address nonce])
   =?  sending  ?=(%& -.result)
-    %^  put:orm  sending
+    %^  put:ors  sending
       [address nonce]
     ::  update gas price for this tx in state
     ::  and set it as sent to L1
@@ -1120,7 +1153,7 @@
   =/  =keccak  (hash-raw-tx:lib raw-tx.diff)
   ::  assumes that l2 txs come in order, belonging to the oldest nonce in sending
   ::
-  ?~  oldest-batch=(pry:orm sending)
+  ?~  oldest-batch=(pry:ors sending)
     ~?  lverb  [dap.bowl %no-nonce-in-sending keccak]
     [~ state]
   =*  nonce  nonce.key.u.oldest-batch
@@ -1140,7 +1173,7 @@
   ::  remove the tx from the sending map
   ::
   =.  sending
-    ?~  sen=(get:orm sending [get-address nonce])
+    ?~  sen=(get:ors sending [get-address nonce])
       ~?  lverb  [dap.bowl %weird-double-remove nonce+nonce]
       sending
     ?~  nin=(find [raw-tx.diff]~ txs.u.sen)
@@ -1150,10 +1183,10 @@
     ?~  txs.u.sen
       ~?  lverb  [dap.bowl %done-with-nonce [get-address nonce]]
       =^  *  sending
-        (del:orm sending [get-address nonce])
+        (del:ors sending [get-address nonce])
       sending
     ^+  sending
-    (put:orm sending [get-address nonce] u.sen)
+    (put:ors sending [get-address nonce] u.sen)
   ::  update the finding map with the new status
   ::
   =.  finding
@@ -1165,13 +1198,14 @@
     %failed
   ::
   =^  updates  history
-    =/  =roll-tx  [ship %sending keccak time l2-tx]
-    =.  history
-      (~(del ju history) address roll-tx)
-    =.  status.roll-tx
+    %:  update-history
+      [| address time raw-tx.diff]~
       ?~(err.diff %confirmed %failed)
-    :-  [%tx address roll-tx]~
-    (~(put ju history) [address roll-tx])
+      `nonce
+      ::  FIXME: same time for different calls?
+      ::
+      now.bowl
+    ==
   [(emit updates) state]
 ::
 --

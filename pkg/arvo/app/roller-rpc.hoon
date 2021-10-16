@@ -273,7 +273,7 @@
     |%
     ++  addr
       |=  =address:naive
-      .^  (list roll-tx)
+      .^  (list hist-tx)
           %gx
           (~(scry agentio bowl) %roller /history/(scot %ux address)/noun)
       ==

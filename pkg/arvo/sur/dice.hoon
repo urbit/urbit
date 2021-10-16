@@ -17,7 +17,7 @@
 +$  keccak  @ux
 ::
 +$  status
-  ?(%unknown %pending %sending %confirmed %failed)
+  ?(%unknown %pending %sending %confirmed %failed %cancelled)
 ::
 +$  tx-status
   $:  =status
@@ -48,7 +48,8 @@
       [%tx =address:ethereum =roll-tx]
   ==
 ::
-+$  roll-tx  [=ship =status hash=keccak =time type=l2-tx]
++$  hist-tx  [p=time q=roll-tx]
++$  roll-tx  [=ship =status hash=keccak type=l2-tx nonce=(unit @ud)]
 +$  pend-tx  [force=? =address:naive =time =raw-tx:naive]
 +$  send-tx  [next-gas-price=@ud sent=? txs=(list raw-tx:naive)]
 +$  part-tx
