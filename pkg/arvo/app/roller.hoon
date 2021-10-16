@@ -52,8 +52,7 @@
       ::  but we don't know the nonce for the batch they'd belong to
       ::
       %+  map  [=keccak nonce=(unit @ud)]
-      ::  TODO: map used for efficiency, but txs=(list l2-status) instead?
-      [seen=@ud txs=(map @ud l2-status)]
+      ?(%confirmed %failed [=time =address:ethereum])
     ::
       history=(jug address:ethereum roll-tx)
       next-nonce=(unit @ud)
@@ -157,7 +156,7 @@
   ::    /x/pending                     ->  %noun  (list pend-tx)
   ::    /x/pending/[~ship]             ->  %noun  (list pend-tx)
   ::    /x/pending/[0xadd.ress]        ->  %noun  (list pend-tx)
-  ::    /x/tx/[0xke.ccak]/status       ->  %noun  tx-status
+  ::    /x/tx/[0xke.ccak]/[@ud]status  ->  %noun  tx-status
   ::    /x/history/[0xadd.ress]        ->  %noun  (list roll-tx)
   ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
   ::    /x/spawned/[~star]             ->  %noun  (list ship)
@@ -167,11 +166,11 @@
   ::    /x/ships/[0xadd.ress]          ->  %noun  (list ship)
   ::    /x/config                      ->  %noun  config
   ::    /x/chain-id                    ->  %atom  @
-  ::    /x/owned                       ->  %noun  (list ship)
-  ::    /x/transfers                   ->  %noun  (list ship)
-  ::    /x/manager                     ->  %noun  (list ship)
-  ::    /x/voting                      ->  %noun  (list ship)
-  ::    /x/spawning                    ->  %noun  (list ship)
+  ::    /x/owned/[0xadd.ress]          ->  %noun  (list ship)
+  ::    /x/transfers/[0xadd.ress]      ->  %noun  (list ship)
+  ::    /x/manager/[0xadd.ress]        ->  %noun  (list ship)
+  ::    /x/voting/[0xadd.ress]         ->  %noun  (list ship)
+  ::    /x/spawning/[0xadd.ress]       ->  %noun  (list ship)
   ::    /x/predicted                   ->  %noun  state:naive
   ::
   ++  on-peek
@@ -179,26 +178,25 @@
     ^-  (unit (unit cage))
     |^
     ?+  path  ~
-      [%x %pending ~]       ``noun+!>(pending)
-      [%x %pending @ ~]     (pending-by i.t.t.path)
-      ::  TODO: implement this
-      :: [%x %tx @ %status ~]  (status i.t.t.path)
-      [%x %pending-tx @ ~]  (transaction i.t.t.path)
-      [%x %history @ ~]     (history i.t.t.path)
-      [%x %nonce @ @ ~]     (nonce i.t.t.path i.t.t.t.path)
-      [%x %spawned @ ~]     (spawned i.t.t.path)
-      [%x %unspawned @ ~]   (unspawned i.t.t.path)
-      [%x %next-batch ~]    ``atom+!>(next-batch)
-      [%x %point @ ~]       (point i.t.t.path)
-      [%x %ships @ ~]       (ships i.t.t.path)
-      [%x %config ~]        config
-      [%x %chain-id ~]      ``atom+!>(chain-id)
-      [%x %owned @ ~]       (points-proxy %own i.t.t.path)
-      [%x %transfers @ ~]   (points-proxy %transfer i.t.t.path)
-      [%x %manager @ ~]     (points-proxy %manage i.t.t.path)
-      [%x %voting @ ~]      (points-proxy %vote i.t.t.path)
-      [%x %spawning @ ~]    (points-proxy %spawn i.t.t.path)
-      [%x %predicted ~]     ``noun+!>(pre)
+      [%x %pending ~]         ``noun+!>(pending)
+      [%x %pending @ ~]       (pending-by i.t.t.path)
+      [%x %tx @ @ %status ~]  (status i.t.t.path i.t.t.t.path)
+      [%x %pending-tx @ ~]    (transaction i.t.t.path)
+      [%x %history @ ~]       (history i.t.t.path)
+      [%x %nonce @ @ ~]       (nonce i.t.t.path i.t.t.t.path)
+      [%x %spawned @ ~]       (spawned i.t.t.path)
+      [%x %unspawned @ ~]     (unspawned i.t.t.path)
+      [%x %next-batch ~]      ``atom+!>(next-batch)
+      [%x %point @ ~]         (point i.t.t.path)
+      [%x %ships @ ~]         (ships i.t.t.path)
+      [%x %config ~]          config
+      [%x %chain-id ~]        ``atom+!>(chain-id)
+      [%x %owned @ ~]         (points-proxy %own i.t.t.path)
+      [%x %transfers @ ~]     (points-proxy %transfer i.t.t.path)
+      [%x %manager @ ~]       (points-proxy %manage i.t.t.path)
+      [%x %voting @ ~]        (points-proxy %vote i.t.t.path)
+      [%x %spawning @ ~]      (points-proxy %spawn i.t.t.path)
+      [%x %predicted ~]       ``noun+!>(pre)
     ==
     ::
     ++  pending-by
@@ -224,23 +222,24 @@
       |=  pend-tx
       =(u.who ship.from.tx.raw-tx)
     ::
-    :: ++  status
-    ::   |=  wat=@t
-    ::   ?~  keccak=(slaw %ux wat)
-    ::     [~ ~]
-    ::   :+  ~  ~
-    ::   :-  %noun
-    ::   !>  ^-  tx-status
-    ::   ?^  status=(~(get by finding) u.keccak)
-    ::     ?@  u.status  [u.status ~]
-    ::     [%sending `+.u.status]
-    ::   :: TODO: potentially slow!
-    ::   :: TODO: use ~(get by history) instead
-    ::   =;  known=?
-    ::     [?:(known %pending %unknown) ~]
-    ::   %+  lien  pending
-    ::   |=  pend-tx
-    ::   =(u.keccak (hash-tx:lib raw.raw-tx))
+    ++  status
+      |=  wat=[@t @t]
+      ?~  keccak=(slaw %ux -.wat)
+        [~ ~]
+      ?~  nonce=(slaw %ud +.wat)
+        [~ ~]
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  tx-status
+      ?^  status=(~(get by finding) [u.keccak nonce])
+        ?@  u.status  [u.status ~]
+        [%sending `[+.u.status u.nonce]]
+      :: TODO: potentially slow!
+      =;  known=?
+        [?:(known %pending %unknown) ~]
+      %+  lien  pending
+      |=  pend-tx
+      =(u.keccak (hash-raw-tx:lib raw-tx))
     ::
     ++  transaction
       |=  wat=@t
@@ -619,9 +618,7 @@
                 [hash `new-nonce]
               ?~  val=(~(get by finding) old-key)
                 finding
-              ?~  txs.u.val
-                ~?  lverb  [dap.bowl %empty-finding-tx]
-                finding
+              ?.  ?=(^ u.val)  finding
               %.  [new-key u.val]
               ~(put by (~(del by finding) old-key))
             --
@@ -803,13 +800,7 @@
       [%tx address.tx roll-tx(status %failed)]
     =?  valid  gud  (snoc valid tx)
     =?  finding.state  !gud
-      =+  index=~(wyt in local)
-      %+  ~(put by finding)  [hash nonce]
-      :-  0
-      %.  [index %failed]
-      ?^  l2-txs=(~(get by finding) [hash nonce])
-        ~(put by txs.u.l2-txs)
-      ~(put by *(map @ud l2-status))
+      (~(put by finding) [hash nonce] %failed)
     ::
     =?  history.state  !gud
       %.  [address.tx roll-tx(status %failed)]
@@ -887,10 +878,20 @@
 ++  cancel-tx
   |=  [sig=@ =keccak =l2-tx =ship]
   ^-  (quip card _state)
-  ::  TODO: try with all the nonces in sending?
+  ::  TODO: use an index for tracking pending-tx?
   ::
-  ?^  status=(~(get by finding) keccak next-nonce)
-    ~?  lverb  [dap.bowl %tx-not-pending status+u.status]
+  :: ?^  status=(~(get by finding) keccak next-nonce)
+  ::   ~?  lverb  [dap.bowl %tx-not-pending status+u.status]
+  ::   [~ state]
+  =^  time  pending
+    =|  nep=(list pend-tx)
+    |-  ^-  [(unit time) _nep]
+    ?~  pending  [~ nep]
+    ?:  =(keccak (hash-raw-tx:lib raw-tx.i.pending))
+      [`time.i.pending (weld (flop nep) t.pending)]
+    $(pending t.pending, nep [i.pending nep])
+  ?~  time
+    ~?  lverb  [dap.bowl %tx-not-pending]
     [~ state]
   ::  "cancel: 0x1234abcd"
   ::
@@ -907,22 +908,11 @@
   ?~  addr=(verify-sig:lib sig message)
     ~?  lverb  [dap.bowl %cancel-sig-fail]
     [~ state]
-  =^  time  pending
-    =|  nep=(list pend-tx)
-    =|  tx-time=time
-    |-  ^-  [time _pending]
-    ?~  pending  [tx-time nep]
-    =+  i.pending
-    =?  tx-time  =(keccak (hash-raw-tx:lib raw-tx))
-      time
-    =?  nep  !=(keccak (hash-raw-tx:lib raw-tx))
-      (snoc nep i.pending)
-    $(pending t.pending)
   ::  TODO: mark as failed instead? add a %cancelled to tx-status?
   ::
   =.  history
     %+  ~(del ju history)  u.addr
-    [ship %pending keccak time l2-tx]
+    [ship %pending keccak u.time l2-tx]
   [~ state]
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
@@ -999,15 +989,11 @@
         [0 | (turn pending (cork tail (cork tail tail)))]
       ::
           finding
-        %+  roll  pending
-        |=  [pend-tx finding=_finding]
-        =/  key  [(hash-raw-tx:lib raw-tx) `nonce]
-        =/  val  [time address]
-        %+  ~(put by finding)  key
-        :-  0
-        ?~  send-txs=(~(get by finding) key)
-          (~(put by *(map @ud l2-status)) 0 val)
-        (~(put by txs.u.send-txs) ~(wyt by txs.u.send-txs) val)
+        %-  ~(gas by finding)
+        %+  turn  pending
+        |=  pend-tx
+        :_  [time address]
+        [(hash-raw-tx:lib raw-tx) `nonce]
       ==
     :_  state
     ;:  welp
@@ -1142,25 +1128,13 @@
     ::  tx not submitted by this roller
     ::
     [~ state]
-  ?~  txs.u.wer
-    ~?  lverb  [dap.bowl %empty-finding-for keccak nonce+nonce]
-    [~ state]
-  =/  [index=@ud l2-txs=(map @ud l2-status)]  u.wer
-  ::  if we had already seen all l2-tx, no-op
-  ::
-  ?:  =(index ~(wyt by l2-txs))
-    ~?  lverb  [dap.bowl %all-l2-txs-seen keccak nonce+nonce]
-    [~ state]
-  =/  current-tx=l2-status  (~(got by l2-txs) index)
-  ::  if we had already seen the tx, no-op
-  ::
-  ?@  current-tx
-    ~?  &(?=(%confirmed current-tx) ?=(~ err.diff))
+  ?@  u.wer
+    ~?  &(?=(%confirmed u.wer) ?=(~ err.diff))
       [dap.bowl %weird-double-confirm from.tx.raw-tx.diff]
     [~ state]
-  =*  address  address.current-tx
-  =*  time     time.current-tx
+  =*  address  address.u.wer
   =*  ship     ship.from.tx.raw-tx.diff
+  =*  time     time.u.wer
   =*  tx       tx.raw-tx.diff
   =/  l2-tx    (l2-tx +<.tx)
   ::  remove the tx from the sending map
@@ -1176,7 +1150,7 @@
     ?~  txs.u.sen
       ~?  lverb  [dap.bowl %done-with-nonce [get-address nonce]]
       =^  *  sending
-       (del:orm sending [get-address nonce])
+        (del:orm sending [get-address nonce])
       sending
     ^+  sending
     (put:orm sending [get-address nonce] u.sen)
@@ -1184,8 +1158,6 @@
   ::
   =.  finding
     %+  ~(put by finding)  [keccak `nonce]
-    :-  +(index)
-    %+  ~(put by l2-txs)  index
     ?~  err.diff  %confirmed
     ::  if we kept the forced flag around for longer, we could notify of
     ::  unexpected tx failures here. would that be useful? probably not?

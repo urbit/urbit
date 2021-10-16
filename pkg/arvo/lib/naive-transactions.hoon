@@ -206,8 +206,13 @@
 ++  hash-tx  keccak-256:keccak:crypto
 ::
 ++  hash-raw-tx
-  |=  =raw-tx:naive
+  |=  raw-tx:naive
   ^-  @ux
-  (hash-tx raw.raw-tx)
+  %-  hash-tx
+  %:  cad:naive  3
+    65^sig
+    raw
+    ~
+  ==
 ::
 --
