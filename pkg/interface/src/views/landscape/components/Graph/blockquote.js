@@ -1,6 +1,6 @@
 /*  eslint-disable */
 /** pulled from remark-parse
- * 
+ *
  *  critical change is that blockquotes require a newline to be continued, see
  *  the `if(!prefixed) conditional
  */
@@ -120,7 +120,6 @@ function blockquote(eat, value, silent) {
 
   exit = self.enterBlock()
   contents = self.tokenizeBlock(contents.join(lineFeed), now)
-  console.log(values);
   exit()
 
   const added = add({type: 'blockquote', children: contents})
