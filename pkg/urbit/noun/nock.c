@@ -1,7 +1,7 @@
 /* g/n.c
 **
 */
-#include "../include/all.h"
+#include "all.h"
 
 // define to have each opcode printed as it executes,
 // along with some other debugging info
@@ -1707,7 +1707,7 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
   if ( c3__bout == h_tok ) {
     u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(t_tok));
     c3_c str_c[64];
-    snprintf(str_c, 63, "took %" PRIu64 " microseconds", u3r_chub(0, delta) );
+    snprintf(str_c, 63, "took %" PRIu64 "\xc2\xb5s", u3r_chub(0, delta) );
     u3t_slog(u3nc(0, u3i_string(str_c)));
     u3z(delta);
   }
@@ -1756,23 +1756,26 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
     // get the microseconds elapsed
     u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(r_tok));
 
-    // unpack q_tok to get the C string from the tank
-    u3_noun q_tok_h, q_tok_t;
-    u3r_cell(q_tok, &q_tok_h, &q_tok_t);
+    // unpack q_tok to get the priority integer and the tank
+    // p_q_tok is the priority, q_q_tok is the tank we will work with
+    u3_noun p_q_tok, q_q_tok;
+    u3r_cell(q_tok, &p_q_tok, &q_q_tok);
 
-    // format the timing report and the clu sting from q_tok together
+    // format the timing report
     c3_c str_c[64];
-    snprintf(str_c, 63, " took %" PRIu64 " microseconds", u3r_chub(0, delta) );
+    snprintf(str_c, 63, "took %" PRIu64 "\xc2\xb5s", u3r_chub(0, delta) );
 
-    // send the head of the tank (severity) and the report string to the terminal
-    // to handle it as it wants, when it wants
+    // join the timing report with the original tank from q_q_tok like so:
+    // "q_q_tok: report"
+    // prepend the priority to form a cell of the same shape q_tok
+    // send this to ut3_slog so that it can be logged out
     u3t_slog(
       u3nc(
-        u3k(q_tok_h),
+        u3k(p_q_tok),
         u3nt(
           c3__rose,
-          u3nt(u3nc(':', u3_nul), u3_nul, u3_nul),
-          u3nt(u3k(q_tok_t), u3i_string(str_c), u3_nul)
+          u3nt(u3nt(':', ' ', u3_nul), u3_nul, u3_nul),
+          u3nt(u3k(q_q_tok), u3i_string(str_c), u3_nul)
         )
       )
     );
