@@ -33,5 +33,7 @@
     ~&  [%took `@dr`(sub now.bowl (slav %da i.wire))]
     [~ this]
   ==
+::
+++  on-rift   on-rift:def
 ++  on-fail   on-fail:def
 --

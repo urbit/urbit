@@ -40,6 +40,7 @@
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
+++  on-rift   on-rift:def
 ++  on-fail   on-fail:def
 ::
 ++  command-parser

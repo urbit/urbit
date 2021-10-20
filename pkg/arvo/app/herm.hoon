@@ -72,5 +72,6 @@
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
+++  on-rift   on-rift:def
 ++  on-fail   on-fail:def
 --

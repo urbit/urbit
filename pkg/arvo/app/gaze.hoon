@@ -171,6 +171,7 @@
   ++  on-peek   on-peek:def
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
+  ++  on-rift   on-rift:def
   ++  on-fail   on-fail:def
   --
 ::

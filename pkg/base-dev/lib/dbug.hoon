@@ -146,6 +146,12 @@
     =^  cards  agent  (on-arvo:ag wire sign-arvo)
     [cards this]
   ::
+  ++  on-rift
+    |=  =ship
+    ^-  (quip card:agent:gall agent:gall)
+    =^  cards  agent  (on-rift:ag ship)
+    [cards this]
+  ::
   ++  on-fail
     |=  [=term =tang]
     ^-  (quip card:agent:gall agent:gall)

@@ -7,6 +7,7 @@
       [%on-leave =path]
       [%on-agent =wire sign=term]
       [%on-arvo =wire vane=term sign=term]
+      [%on-rift =ship]
       [%on-fail =term]
   ==
 --

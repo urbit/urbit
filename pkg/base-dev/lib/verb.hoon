@@ -80,6 +80,12 @@
   =^  cards  agent  (on-arvo:ag wire sign-arvo)
   [[(emit-event %on-arvo wire [- +<]:sign-arvo) cards] this]
 ::
+++  on-rift
+  |=  =ship
+  %-  (print bowl |.("{<dap.bowl>}: on-rift for {<ship>}"))
+  =^  cards  agent  (on-rift:ag ship)
+  [[(emit-event %on-rift ship) cards] this]
+::
 ++  on-fail
   |=  [=term =tang]
   ^-  (quip card:agent:gall agent:gall)

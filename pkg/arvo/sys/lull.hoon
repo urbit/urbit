@@ -1757,6 +1757,10 @@
         |~  [wire sign-arvo]
         *(quip card _^|(..on-init))
       ::
+      ++  on-rift
+        |~  ship
+        *(quip card _^|(..on-init))
+      ::
       ++  on-fail
         |~  [term tang]
         *(quip card _^|(..on-init))

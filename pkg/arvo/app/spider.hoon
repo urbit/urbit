@@ -307,6 +307,8 @@
         [%bind ~]      `state
       ==
     [cards this]
+  ::
+  ++  on-rift   on-rift:def
   ::  On unexpected failure, kill all outstanding strands
   ::
   ++  on-fail

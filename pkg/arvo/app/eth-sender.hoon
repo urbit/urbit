@@ -114,6 +114,7 @@
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
   ++  on-arvo   on-arvo:def
+  ++  on-rift   on-rift:def
   ++  on-fail   on-fail:def
   --
 ::

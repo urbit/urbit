@@ -62,6 +62,10 @@
   ~|  "unexpected system response {<-.sign-arvo>} to {<dap.bowl>} on wire {<wire>}"
   !!
 ::
+++  on-rift
+  |=  =ship
+  `agent
+::
 ++  on-fail
   |=  [=term =tang]
   %-  (slog leaf+"error in {<dap.bowl>}" >term< tang)

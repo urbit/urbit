@@ -45,7 +45,6 @@
     helm-core  (helm bowl helm.state)
     kiln-core  (kiln bowl kiln.state)
 ::
-++  on-fail   on-fail:def
 ++  on-init
   ^-  step:agent:gall
   =^  d  drum.state  on-init:drum-core
@@ -123,4 +122,7 @@
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
     [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
   ==
+::
+++  on-rift   on-rift:def
+++  on-fail   on-fail:def
 --

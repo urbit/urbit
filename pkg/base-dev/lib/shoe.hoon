@@ -109,6 +109,10 @@
     |~  [wire sign-arvo]
     *(quip card _^|(..on-init))
   ::
+  ++  on-rift
+    |~  ship
+    *(quip card _^|(..on-init))
+  ::
   ++  on-fail
     |~  [term tang]
     *(quip card _^|(..on-init))
@@ -363,6 +367,12 @@
     ^-  (quip card:agent:gall agent:gall)
     =^  cards  shoe  (on-arvo:og wire sign-arvo)
     [(deal cards) this]
+  ::
+  ++  on-rift
+    |=  =ship
+    ^-  (quip card:agent:gall agent:gall)
+    =^  cards  shoe  (on-rift:og ship)
+    [cards this]
   ::
   ++  on-fail
     |=  [=term =tang]

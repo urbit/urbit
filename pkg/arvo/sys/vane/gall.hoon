@@ -161,7 +161,11 @@
       =-  :_  ->
           %+  welp
             (skip -< |=(move ?=([* %give %onto *] +<)))
-          [^duct %pass /whiz/gall %$ %whiz ~]~
+          :~  [^duct %pass /whiz/gall %$ %whiz ~]
+            ::
+              ::NOTE  also done in +init, but idempotent
+              [system-duct.state %pass /sys/era %j %public-keys ~]
+          ==
       =/  adult  adult-core
       =.  state.adult
         [%8 system-duct outstanding contacts yokes=~ blocked]:spore
@@ -459,7 +463,7 @@
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
     (mo-pass wire note-arvo)
-  ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
+  ::  +mo-track-ship: subscribe to ames for notices about .ship
   ::
   ++  mo-track-ship
     |=  =ship
@@ -474,11 +478,6 @@
     ::  ask ames to track .ship's connectivity
     ::
     =.  moves  [[system-duct.state %pass /sys/lag %a %heed ship] moves]
-    ::  ask jael to track .ship's breaches
-    ::
-    =/  =note-arvo  [%j %public-keys (silt ship ~)]
-    =.  moves
-      [[system-duct.state %pass /sys/era note-arvo] moves]
     mo-core
   ::  +mo-untrack-ship: cancel subscriptions to ames and jael for .ship
   ::
@@ -494,10 +493,6 @@
     =.  contacts.state  (~(del in contacts.state) ship)
     ::
     =.  moves  [[system-duct.state %pass /sys/lag %a %jilt ship] moves]
-    ::
-    =/  =note-arvo  [%j %nuke (silt ship ~)]
-    =.  moves
-      [[system-duct.state %pass /sys/era note-arvo] moves]
     mo-core
   ::  +mo-breach: ship breached, so forget about them
   ::
@@ -1152,6 +1147,12 @@
     ++  ap-breach
       |=  =ship
       ^+  ap-core
+      =.  ap-core
+        =^  maybe-tang  ap-core
+          %+  ap-ingest  ~  |.
+          (on-rift:ap-agent-core ship)
+        ?~  maybe-tang  ap-core
+        (ap-error %on-breach u.maybe-tang)
       =/  in=(list [=duct =^ship =path])
         ~(tap by inbound.watches.yoke)
       |-  ^+  ap-core
@@ -1391,7 +1392,7 @@
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
       ?^  maybe-tang
-        (ap-error %arvo-response u.maybe-tang)
+        (ap-error %on-arvo u.maybe-tang)
       ap-core
     ::  +ap-specific-take: specific take.
     ::
@@ -1707,7 +1708,12 @@
       mo-abet:(mo-send-foreign-request:mo-core q.sock term deal)
     mo-abet:(mo-handle-local:mo-core p.sock term deal)
   ::
-      %init  [~ gall-payload(system-duct.state duct)]
+      %init
+    ::  ask jael to track .ship's breaches
+    ::
+    :_  gall-payload(system-duct.state duct)
+    [duct %pass /sys/era %j %public-keys ~]~
+  ::
       %plea
     =/  =ship  ship.task
     =/  =path  path.plea.task

@@ -474,5 +474,6 @@
     this(dogs.state (~(put by dogs.state) path dog))
   ==
 ::
+++  on-rift   on-rift:def
 ++  on-fail   on-fail:def
 --

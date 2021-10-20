@@ -1669,6 +1669,8 @@
         %http-response  (he-http-response:he-full t.wire +>.sign-arvo)
     ==
   [moves ..on-init]
+::
+++  on-rift  |=(ship `..on-init)
 ::  if dojo fails unexpectedly, kill whatever each session is working on
 ::
 ++  on-fail

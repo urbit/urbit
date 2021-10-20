@@ -44,6 +44,11 @@
   ^-  (quip card:agent:gall agent:gall)
   !!
 ::
+++  on-rift
+  |~  ship
+  ^-  (quip card:agent:gall agent:gall)
+  !!
+::
 ++  on-fail
   |~  [term tang]
   ^-  (quip card:agent:gall agent:gall)

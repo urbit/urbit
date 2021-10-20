@@ -150,5 +150,7 @@
       ?:(gen-ok.state %all-generators-built %some-generators-failed)
     [~ this]
   ==
+::
+++  on-rift   on-rift:def
 ++  on-fail   on-fail:def
 --
