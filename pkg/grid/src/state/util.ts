@@ -50,3 +50,7 @@ export function getDarkColor(color: string): string {
   const hslaColor = parseToHsla(color);
   return hsla(hslaColor[0], hslaColor[1], 1 - hslaColor[2], 1);
 }
+
+export function createStorageKey(name: string): string {
+  return `${window.ship}-${window.desk}-${name}`;
+}

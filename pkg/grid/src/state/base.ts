@@ -7,7 +7,7 @@ import { persist } from 'zustand/middleware';
 import Urbit, { SubscriptionRequestInterface } from '@urbit/http-api';
 import { Poke } from '@urbit/api';
 import api from './api';
-import { useMockData } from './util';
+import { createStorageKey, useMockData } from './util';
 
 setAutoFreeze(false);
 enablePatches();
@@ -73,10 +73,10 @@ export const optReduceState = <S extends Record<string, unknown>, U>(
 /* eslint-disable-next-line import/no-mutable-exports */
 export let stateStorageKeys: string[] = [];
 
-export const stateStorageKey = (stateName: string) => {
-  stateName = `${window.ship}-Grid${stateName}State-${import.meta.env.VITE_SHORTHASH as any}`;
-  stateStorageKeys = [...new Set([...stateStorageKeys, stateName])];
-  return stateName;
+export const stateStorageKey = (stateName: string): string => {
+  const key = createStorageKey(`${stateName}State`);
+  stateStorageKeys = [...new Set([...stateStorageKeys, key])];
+  return key;
 };
 
 (window as any).clearStates = () => {
@@ -149,7 +149,8 @@ export const createState = <T extends Record<string, unknown>>(
       }),
       {
         blacklist,
-        name: stateStorageKey(name)
+        name: stateStorageKey(name),
+        version: parseInt(import.meta.env.VITE_STORAGE_VERSION, 10)
       }
     )
   );
