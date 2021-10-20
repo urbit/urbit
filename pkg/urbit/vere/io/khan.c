@@ -47,9 +47,37 @@ _khan_close_cb(uv_handle_t* had_u)
 }
 
 static void
+_khan_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
+{
+  c3_free(ptr_v);
+}
+
+static void
 _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
-  u3l_log("khan: bail called %p %zd %s\n", ptr_v, err_i, err_c);
+  u3_chan*  can_u = (u3_chan*)ptr_v;
+  u3_shan*  san_u = can_u->san_u;
+  u3_khan*  kan_u = san_u->kan_u;
+  u3_chan*  inn_u;
+
+  if ( err_i != UV_EOF ) {
+    u3l_log("khan: bail called %p %zd %s\n", ptr_v, err_i, err_c);
+    u3_king_bail();
+  }
+  else {
+    // TODO remove
+    u3l_log("khan: eof\n");
+
+    // close socket and remove reference.
+    for ( inn_u = san_u->can_u; inn_u; inn_u = (u3_chan*)inn_u->mor_u.nex_u ) {
+      if ( (u3_chan*)inn_u->mor_u.nex_u == can_u ) {
+        inn_u->mor_u.nex_u = can_u->mor_u.nex_u;
+        can_u->mor_u.nex_u = NULL;
+        u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
+        break;
+      }
+    }
+  }
 }
 
 static void
@@ -61,13 +89,11 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   u3_noun   wir;
   u3_noun   cad;
 
-  u3l_log("khan: poke called %p %" PRIu64 "\n", ptr_v, len_d);
   jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
     _khan_moor_bail(ptr_v, -1, "bad jar");
   }
   else {
-    // TODO handle runtime peek/poke
     wir = u3nc(u3i_string("khan"),
                u3nt(u3dc("scot", c3__uv, kan_u->sev_l),
                     u3dc("scot", c3__ud, can_u->coq_l),
@@ -231,12 +257,6 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 
   u3z(wir); u3z(cad);
   return ret_o;
-}
-
-static void
-_khan_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
-{
-  c3_free(ptr_v);
 }
 
 /* _khan_io_exit(): unlink socket, shut down connections.
