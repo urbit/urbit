@@ -26,7 +26,7 @@ export const Apps = ({ match }: AppsProps) => {
     if (Object.keys(allies).length > 0 && !isAllied) {
       useDocketState.getState().addAlly(provider);
     }
-  }, [allies, isAllied]);
+  }, [allies, isAllied, provider]);
 
   const results = useMemo(() => {
     if (!treaties) {
