@@ -16,8 +16,10 @@ export const ShipName = ({ name, ...props }: ShipNameProps) => {
       <span>{first}</span>
       {parts.length > 1 && (
         <>
-          {parts.map((piece) => (
-            <span aria-hidden={separator.test(piece)}>{piece}</span>
+          {parts.map((piece, index) => (
+            <span key={`${piece}-${index}`} aria-hidden={separator.test(piece)}>
+              {piece}
+            </span>
           ))}
         </>
       )}

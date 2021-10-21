@@ -7,6 +7,7 @@ import useDocketState, { useAllyTreaties, useAllies } from '../../state/docket';
 import { useLeapStore } from '../Nav';
 import { AppList } from '../../components/AppList';
 import { addRecentDev } from './Home';
+import { Spinner } from '../../components/Spinner';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
 
@@ -17,20 +18,16 @@ export const Apps = ({ match }: AppsProps) => {
     selectedMatch: state.selectedMatch
   }));
   const provider = match?.params.ship;
-  const treaties = useAllyTreaties(provider);
+  const { treaties, status } = useAllyTreaties(provider);
   const allies = useAllies();
   const isAllied = provider in allies;
 
   useEffect(() => {
     if (Object.keys(allies).length > 0 && !isAllied) {
-      useDocketState
-        .getState()
-        .addAlly(provider)
-        .then(() => {
-          return useDocketState.getState().fetchAllyTreaties(provider);
-        });
+      useDocketState.getState().addAlly(provider);
     }
   }, [allies, isAllied, provider]);
+
   const results = useMemo(() => {
     if (!treaties) {
       return undefined;
@@ -57,8 +54,6 @@ export const Apps = ({ match }: AppsProps) => {
   );
 
   useEffect(() => {
-    const { fetchAllyTreaties } = useDocketState.getState();
-    fetchAllyTreaties(provider);
     select(
       <>
         Apps by <ShipName name={provider} className="font-mono" />
@@ -88,23 +83,36 @@ export const Apps = ({ match }: AppsProps) => {
 
   return (
     <div className="dialog-inner-container md:px-6 md:py-8 h4 text-gray-400">
-      <div id="developed-by">
-        <h2 className="mb-3">
-          Software developed by <ShipName name={provider} className="font-mono" />
-        </h2>
-        <p>
-          {count} result{count === 1 ? '' : 's'}
-        </p>
-      </div>
-      {results && (
-        <AppList
-          apps={results}
-          labelledBy="developed-by"
-          matchAgainst={selectedMatch}
-          to={getAppPath}
-        />
+      {status === 'loading' && (
+        <span className="mb-3">
+          <Spinner className="w-7 h-7 mr-3" /> Finding software...
+        </span>
       )}
-      <p>That&apos;s it!</p>
+      {results && results.length > 0 && (
+        <>
+          <div id="developed-by">
+            <h2 className="mb-3">
+              Software developed by <ShipName name={provider} className="font-mono" />
+            </h2>
+            <p>
+              {count} result{count === 1 ? '' : 's'}
+            </p>
+          </div>
+          <AppList
+            apps={results}
+            labelledBy="developed-by"
+            matchAgainst={selectedMatch}
+            to={getAppPath}
+          />
+          <p>That&apos;s it!</p>
+        </>
+      )}
+      {status === 'error' ||
+        ((status === 'success' || status === 'initial') && results?.length === 0 && (
+          <h2>
+            Unable to find software developed by <ShipName name={provider} className="font-mono" />
+          </h2>
+        ))}
     </div>
   );
 };
