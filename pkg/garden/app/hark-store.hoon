@@ -25,6 +25,7 @@
       state-6
       state-7
       state-8
+      state-9
   ==
 ::
 +$  base-state
@@ -56,13 +57,16 @@
 +$  state-8
   [%8 base-state]
 ::
++$  state-9
+  [%9 base-state]
+::
 ::
 +$  cached-state
   $:  by-place=(jug place:store [=lid:store =path])
       ~
   ==
 +$  inflated-state
-  [state-8 cached-state]
+  [state-9 cached-state]
 ::
 ++  orm  ((ordered-map @da timebox:store) gth)
 --
@@ -91,14 +95,20 @@
   =/  old
    !<(versioned-state old-vase)
   =|  cards=(list card)
-  ^-  (quip card _this)
-  ?:  ?=(%8 -.old)
+  |-  ^-  (quip card _this)
+  ?+  -.old
+  ::  pre-dist migration
+    :_  this
+    (poke-our:pass %hark-graph-hook hark-graph-migrate+old-vase)^~
+  ::
+      %9
     =.  -.state  old
     =.  +.state  inflate:ha
     :_(this (flop cards))
   ::
-  :_  this
-  (poke-our:pass %hark-graph-hook hark-graph-migrate+old-vase)^~
+      %8
+    $(-.old %9, archive.old *archive:store)
+  ==
 ::
 ++  on-watch  
   |=  =path
