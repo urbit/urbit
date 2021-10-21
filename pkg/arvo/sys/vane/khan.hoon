@@ -57,9 +57,9 @@
   ::  +avow: give back gifts
   ::
   ++  avow
-    |=  syn=sign-arvo
+    |=  =^avow
     =<  [moves state]
-    event-core(moves [duct %give %avow syn]~)
+    event-core(moves [duct %give %avow avow]~)
   ::  +fyrd: commands
   ::
   ++  fyrd

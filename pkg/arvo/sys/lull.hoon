@@ -2106,17 +2106,20 @@
         %socket-done  data=*                            :: done
     ==
   +$  gift                                              ::  out result <-$
-    $%  [%avow syn=sign-arvo]                           ::  response to %fyrd
+    $%  [%avow =avow]                                   ::  response to %fyrd
         [%set-config =socket-config]
         [%response =socket-event]
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]
     $%
-        [%fyrd p=fyrd]                                  ::  jammed requests
-        $>(%vega vane-task)                             :: vega
+        [%fyrd p=fyrd]                                  ::  jammed request
+        $>(%vega vane-task)                             ::  vega
         $>(%trim vane-task)
         $>(%born vane-task)
+    ==
+  +$  avow                                              ::  output
+    $%  [%res p=(unit @t)]
     ==
   +$  fyrd                                              ::  input
     $%  [%mas ~]                                        ::  |mass
