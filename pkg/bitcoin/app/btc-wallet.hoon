@@ -4,7 +4,7 @@
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
 /-  *btc-wallet, bp=btc-provider, settings
-/+  dbug, default-agent, bl=btc, bc=bitcoin, bcu=bitcoin-utils, bip32
+/+  dbug, default-agent, bl=btc, bc=bitcoin, bcu=bitcoin-utils, bip32, agentio
 ~%  %btc-wallet-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -24,6 +24,7 @@
     $%  state-0
         state-1
         state-2
+        state-3
     ==
 ::
 +$  state-0
@@ -57,8 +58,9 @@
 ::
 +$  state-1  [%1 base-state]
 +$  state-2  [%2 base-state]
++$  state-3  [%3 base-state]
 --
-=|  state-2
+=|  state-3
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -68,6 +70,8 @@
 +*  this      .
     def   ~(. (default-agent this %|) bowl)
     hc    ~(. +> bowl)
+    io    ~(. agentio bowl)
+    pass  pass:io
 ::
 ++  on-init
 ^-  (quip card _this)
@@ -83,7 +87,7 @@
   :-  cards
   %_  this
       state
-    :*  %2
+    :*  %3
         ~
         *(map xpub:bc walt)
         *^btc-state
@@ -110,8 +114,14 @@
   =|  cards=(list card)
   |-
   ?-  -.ver
+      %3
+    [(flop cards) this(state ver)]
+  ::
       %2
-    [cards this(state ver)]
+    %_  $
+      -.ver  %3
+      cards  :_(cards (~(wait pass /migrate-settings) (add now.bowl ~s1)))
+    ==
   ::
       %1
     =?  cards  ?=(^ prov.ver)
@@ -138,6 +148,11 @@
   |^
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
+      ::
+        %noun
+      ?>  =(our.bowl src.bowl)
+      (handle-noun q.vase)
+      ::
         %btc-wallet-command
       ?>  =(our.bowl src.bowl)
       (handle-command !<(command vase))
@@ -151,6 +166,37 @@
       (handle-internal !<(internal vase))
     ==
   [cards this]
+  ::
+  ++  handle-noun
+    |=  non=*
+    ?>  ?=(%migrate-settings non)
+    :_  state
+    ^-  (list card)
+    =/  bas=path  /(scot %p our.bowl)/settings-store/(scot %da now.bowl)
+    ?.  .^(? %gu bas)
+      ~&  [dap.bowl %settings-store-mia]
+      ~
+    ?.  .^(? %gx (weld bas /has-bucket/landscape/btc-wallet/noun))
+      ~
+    =/  dat
+      .^(data:settings %gx (weld bas /bucket/landscape/btc-wallet/noun))
+    ?>  ?=(%bucket -.dat)
+    |^  :-  =/  del=event:settings  [%del-bucket %landscape %btc-wallet]
+            (poke-our:hc %settings-store %settings-event !>(del))
+        %-  zing
+        %+  turn  ~(tap by bucket.dat)
+        (cork copy-if-missing drop)
+    ::
+    ++  copy-if-missing
+      |=  [=key:settings =val:settings]
+      ^-  (unit card)
+      =/  hav=?
+        .^(? %gx (weld bas /has-entry/[q.byk.bowl]/btc-wallet/[key]/noun))
+      ?:  hav  ~
+      ~&  [dap.bowl %importing-previous-setting key]
+      =/  put=event:settings  [%put-entry q.byk.bowl %btc-wallet key val]
+      `(poke-our:hc %settings-store %settings-event !>(put))
+    --
   ::
   ++  handle-command
     |=  comm=command
@@ -864,7 +910,7 @@
     ::
         %tx-info
       ::  TODO: why do we get a nest-fail when using =^ ?
-      =/  [cards=(list card) sty=state-2]
+      =/  [cards=(list card) sty=state-3]
         (handle-tx-info:hc info.p.upd)
       :_  sty
       :_  cards
@@ -1056,7 +1102,12 @@
   ==
 ::
 ++  on-leave  on-leave:def
-++  on-arvo   on-arvo:def
+++  on-arvo
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card _this)
+  ?.  ?=([%migrate-settings ~] wire)  (on-arvo:def wire sign)
+  ?>  ?=([%behn *] sign)
+  (on-poke %noun !>(%migrate-settings))
 ++  on-fail   on-fail:def
 --
 ~%  %btc-wallet-helper  ..card  ~
