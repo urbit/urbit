@@ -7,7 +7,7 @@ import { persist } from 'zustand/middleware';
 import Urbit, { SubscriptionRequestInterface } from '@urbit/http-api';
 import { Poke } from '@urbit/api';
 import api from './api';
-import { createStorageKey, useMockData } from './util';
+import { clearStorageMigration, createStorageKey, storageVersion, useMockData } from './util';
 
 setAutoFreeze(false);
 enablePatches();
@@ -150,7 +150,8 @@ export const createState = <T extends Record<string, unknown>>(
       {
         blacklist,
         name: stateStorageKey(name),
-        version: parseInt(import.meta.env.VITE_STORAGE_VERSION, 10)
+        version: storageVersion,
+        migrate: clearStorageMigration
       }
     )
   );

@@ -52,5 +52,12 @@ export function getDarkColor(color: string): string {
 }
 
 export function createStorageKey(name: string): string {
-  return `${window.ship}-${window.desk}-${name}`;
+  return `~${window.ship}/${window.desk}/${name}`;
 }
+
+// for purging storage with version updates
+export function clearStorageMigration<T>() {
+  return {} as T;
+}
+
+export const storageVersion = parseInt(import.meta.env.VITE_STORAGE_VERSION, 10);

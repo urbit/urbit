@@ -30,6 +30,8 @@ export default ({ mode }) => {
             }
           },
     plugins:
-      mode === 'mock' ? [] : [urbitPlugin({ base: 'grid', target: SHIP_URL }), reactRefresh()]
+      mode === 'mock'
+        ? []
+        : [urbitPlugin({ base: 'grid', target: SHIP_URL, secure: false }), reactRefresh()]
   });
 };
