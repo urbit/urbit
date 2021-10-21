@@ -10,14 +10,9 @@ export function VatMeta(props: { vat: Vat }) {
 
   const { desk: foreignDesk, ship, next } = arak.rail || {};
   const pluralUpdates = next?.length !== 1;
+  console.log(cass);
   return (
     <div className="mt-5 sm:mt-8 space-y-5 sm:space-y-8">
-      <Attribute title="Developer Desk" attr="desk">
-        {ship}/{foreignDesk}
-      </Attribute>
-      <Attribute title="Last Software Update" attr="case">
-        {moment(cass.da).format('YYYY.MM.DD')}
-      </Attribute>
       <Attribute title="Desk Hash" attr="hash">
         {hash}
       </Attribute>
