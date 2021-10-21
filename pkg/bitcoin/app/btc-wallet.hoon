@@ -183,9 +183,7 @@
     ?>  ?=(%bucket -.dat)
     |^  :-  =/  del=event:settings  [%del-bucket %landscape %btc-wallet]
             (poke-our:hc %settings-store %settings-event !>(del))
-        %-  zing
-        %+  turn  ~(tap by bucket.dat)
-        (cork copy-if-missing drop)
+        (murn ~(tap by bucket.dat) copy-if-missing)
     ::
     ++  copy-if-missing
       |=  [=key:settings =val:settings]
@@ -899,8 +897,8 @@
     |=  upd=update:bp
     ^-  (quip card _state)
     |^
-    ?~  prov  `state
-    ?.  =(host.u.prov src.bowl)  `state
+    ?:  =(~ prov)  `state
+    ?.  =(host:(need prov) src.bowl)  `state
     ?.  ?=(%.y -.upd)  `state
     ?-  -.p.upd
         %address-info
@@ -910,9 +908,9 @@
     ::
         %tx-info
       ::  TODO: why do we get a nest-fail when using =^ ?
-      =/  [cards=(list card) sty=state-3]
+      =^  cards=(list card)  state
         (handle-tx-info:hc info.p.upd)
-      :_  sty
+      :_  state
       :_  cards
       (poke-internal:hc [%close-pym info.p.upd])
     ::
