@@ -26,6 +26,11 @@
     ^-  card
     (poke-our dap.bowl cage)
   ::
+  ++  poke-clone
+    |=  [=ship =cage]
+    ^-  card
+    (poke [ship dap.bowl] cage)
+  ::
   ++  arvo
     |=  =note-arvo
     ^-  card
@@ -38,6 +43,10 @@
   ++  watch-our
     |=  [app=term =path]
     (watch [our.bowl app] path)
+  ::
+  ++  watch-clone
+    |=  [=ship =path]
+    (watch [ship dap.bowl] path)
   ::
   ++  watch-wire
     |=  =path
@@ -53,6 +62,11 @@
   ++  leave-our
     |=  app=term
     (leave our.bowl app)
+  ::
+  ++  leave-clone
+    |=  =ship
+    (leave ship dap.bowl)
+
   ::
   ++  leave-path
     |=  [=dock =path]
@@ -135,5 +149,6 @@
 ::
 ++  kick-only
   |=  [=ship paths=(list path)]
+  ^-  card
   [%give %kick paths `ship]
 --
