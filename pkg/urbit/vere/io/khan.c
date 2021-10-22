@@ -18,7 +18,7 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* u3_chan: incoming control plane connection. used as u3_shan->mor_u's ptr_v.
+/* u3_chan: incoming control plane connection.
 */
   typedef struct _u3_chan {
     struct _u3_moor   mor_u;            //  message handler
