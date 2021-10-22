@@ -283,13 +283,6 @@ _khan_ef_handle(u3_khan*  kan_u,
     u3z(tag); u3z(dat);
     return;
   }
-  if ( 0 == coq_l ) {
-    if ( c3y == u3r_sing_c("set-config", tag) ) {
-      u3l_log("khan: set-config\n");
-      u3z(tag); u3z(dat);
-      return;
-    }
-  }
   if ( 0 != (can_u = _khan_search_chan(kan_u, sev_l, coq_l)) ) {
     if ( c3__avow == tag ) {
       c3_y* byt_y;
