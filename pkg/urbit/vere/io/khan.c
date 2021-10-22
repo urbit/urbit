@@ -283,12 +283,6 @@ _khan_ef_handle(u3_khan*  kan_u,
 
   // TODO: socket events (close connection; any others?)
 
-  // TODO move into kick
-  if ( sev_l != kan_u->sev_l ) {
-    u3l_log("khan: server instance not found: %x\n", sev_l);
-    u3z(tag); u3z(dat);
-    return;
-  }
   if ( 0 != (can_u = _khan_search_chan(kan_u, sev_l, coq_l)) ) {
     if ( c3__avow == tag ) {
       c3_y* byt_y;
@@ -300,7 +294,7 @@ _khan_ef_handle(u3_khan*  kan_u,
       u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
     }
     else {
-      u3l_log("khan: handle-other\n");
+      can_u->mor_u.bal_f(&can_u, -1, "handle-other");
     }
   }
   else {
@@ -377,7 +371,8 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
     c3_l    sev_l, coq_l, seq_l;
 
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
-         (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
+         (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) ||
+         sev_l != kan_u->sev_l )
     {
       u3z(wir); u3z(cad);
       return c3n;
@@ -438,9 +433,9 @@ _khan_io_exit(u3_auto* car_u)
     c3_free(paf_c);
 
     {
-      u3_shan*        san_u = kan_u->san_u;
-      u3_chan*        can_u = san_u->can_u;
-      u3_chan*        nex_u;
+      u3_shan*      san_u = kan_u->san_u;
+      u3_chan*      can_u = san_u->can_u;
+      u3_chan*      nex_u;
 
       while ( can_u ) {
         nex_u = (u3_chan*)can_u->mor_u.nex_u;
