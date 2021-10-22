@@ -280,11 +280,13 @@ _khan_ef_handle(u3_khan*  kan_u,
 
   if ( sev_l != kan_u->sev_l ) {
     u3l_log("khan: server instance not found: %x\n", sev_l);
+    u3z(tag); u3z(dat);
     return;
   }
   if ( 0 == coq_l ) {
     if ( c3y == u3r_sing_c("set-config", tag) ) {
       u3l_log("khan: set-config\n");
+      u3z(tag); u3z(dat);
       return;
     }
   }
@@ -305,6 +307,7 @@ _khan_ef_handle(u3_khan*  kan_u,
   else {
     u3l_log("khan: handle-no-coq\n");
   }
+  u3z(tag); u3z(dat);
 }
 
 // TODO refactor these: they are duplicated from http.c
