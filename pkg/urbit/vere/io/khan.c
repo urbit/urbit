@@ -3,7 +3,6 @@
 // - think carefully about error handling
 // - think carefully about protocol
 // - implement runtime-specific queries
-// - remove references to %set-config
 // - clean up logging
 /* vere/khan.c
 **
@@ -30,8 +29,9 @@
 */
   typedef struct _u3_shan {
     uv_pipe_t         pyp_u;            //  server stream handler
-    struct _u3_chan*  can_u;            //  connection list
+    c3_w              nex_l;            //  next connection number
     struct _u3_khan*  kan_u;            //  device backpointer
+    struct _u3_chan*  can_u;            //  connection list
   } u3_shan;
 
 /* u3_khan: control plane device.
@@ -131,7 +131,7 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   can_u->mor_u.ptr_v = can_u;
   can_u->mor_u.pok_f = _khan_moor_poke;
   can_u->mor_u.bal_f = _khan_moor_bail;
-  can_u->coq_l = ( san_u->can_u ) ? 1 + san_u->can_u->coq_l : 1;
+  can_u->coq_l = san_u->nex_l++;
   can_u->san_u = san_u;
   err_i = uv_timer_init(u3L, &can_u->mor_u.tim_u);
   c3_assert(!err_i);
@@ -212,9 +212,10 @@ _khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
   if ( u3_ovum_done == new_e ) {
     c3_assert(!kan_u->san_u);
     san_u = c3_calloc(sizeof(*san_u));
-    _khan_sock_init(san_u);
+    san_u->nex_l = 1;
     san_u->kan_u = kan_u;
     kan_u->san_u = san_u;
+    _khan_sock_init(san_u);
     car_u->liv_o = c3y;
     u3l_log("khan: live on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
   }
@@ -278,6 +279,7 @@ _khan_ef_handle(u3_khan*  kan_u,
 
   // TODO: socket events (close connection; any others?)
 
+  // TODO move into kick
   if ( sev_l != kan_u->sev_l ) {
     u3l_log("khan: server instance not found: %x\n", sev_l);
     u3z(tag); u3z(dat);
@@ -424,7 +426,6 @@ _khan_io_exit(u3_auto* car_u)
     wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
     c3_assert(wit_i > 0);
     c3_assert(len_w == (c3_w)wit_i + 1);
-    // TODO remove
     u3l_log("khan: unlinking %s\n", paf_c);
 
     if ( 0 != unlink(paf_c) ) {
