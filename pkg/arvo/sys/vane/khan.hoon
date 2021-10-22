@@ -1,24 +1,25 @@
-::  %khan
 !:
+::  %khan, control plane
+::
 !?  164
 ::
-=,  khan
 |=  our=ship
+=,  khan
 =>  |%
     +$  move  [p=duct q=(wite note gift)]
     +$  note                                          ::  out request $->
       $%
-        $:  %j                                        :: to %jael
+        $:  %j                                        ::  to %jael
               $>(%step task:jael)
           ==
-        $:  %k                                        ::   to self
+        $:  %k                                        ::  to self
                 $>  $?
                         %fyrd
-                ==                                      ::
-             task                                       ::
-          ==                                            ::
-          $:  %d                                        ::    to %dill
-              $>(%flog task:dill)                       ::  log output
+                ==                                    ::
+             task                                     ::
+          ==                                          ::
+          $:  %d                                      ::  to %dill
+              $>(%flog task:dill)                     ::  log output
       ==  ==
       ::
     +$  sign
@@ -49,11 +50,10 @@
     ^+  [moves state]
     [[duct %slip %d %flog %crud tag error]~ state]
   ::
-  ::  +born: alive, set up config
+  ::  +born: noop
   ++  born
     ^+  [moves state]
-    =<  [moves state]
-    event-core(moves [duct %give %set-config & ~]~)   :: live event?
+    [moves state]
   ::  +avow: give back gifts
   ::
   ++  avow
@@ -78,7 +78,6 @@
               ?~  sey  ~
               ?~  u.sey  ~
               `!<(@p q.u.u.sey)
-            ~&  res+res
             [duct %give [%avow %cod res]]~  :: give code
 
           [duct %pass / %j %step ~]~
@@ -115,7 +114,6 @@
   ^-  [(list move) _khan-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ~&  task+task
   =/  event-core  (per-event [now hen rof] state)
   ::
   =^  moves  state
