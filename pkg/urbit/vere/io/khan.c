@@ -64,19 +64,23 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_shan*  san_u = can_u->san_u;
-  u3_khan*  kan_u = san_u->kan_u;
   u3_chan*  inn_u;
 
   if ( err_i == UV_EOF ) {
     // close socket and remove reference.
-    for ( inn_u = san_u->can_u; inn_u; inn_u = (u3_chan*)inn_u->mor_u.nex_u ) {
-      if ( (u3_chan*)inn_u->mor_u.nex_u == can_u ) {
-        inn_u->mor_u.nex_u = can_u->mor_u.nex_u;
-        can_u->mor_u.nex_u = NULL;
-        u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
-        break;
+    if ( san_u->can_u == can_u ) {
+      san_u->can_u = (u3_chan*)can_u->mor_u.nex_u;
+    }
+    else {
+      for ( inn_u = san_u->can_u; inn_u; inn_u = (u3_chan*)inn_u->mor_u.nex_u ) {
+        if ( (u3_chan*)inn_u->mor_u.nex_u == can_u ) {
+          inn_u->mor_u.nex_u = can_u->mor_u.nex_u;
+          break;
+        }
       }
     }
+    can_u->mor_u.nex_u = NULL;
+    u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
   }
   else {
     // TODO retry up to N
