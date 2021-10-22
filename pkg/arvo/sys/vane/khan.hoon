@@ -73,14 +73,13 @@
         =/  cov
           ?.    +.com
             =/  sey=(unit (unit cage))
-              ~&  sey+"here"
               (rof ~ %j [our %code da+now] /(scot %p our))
             =/  res=(unit @p)
               ?~  sey  ~
               ?~  u.sey  ~
               `!<(@p q.u.u.sey)
             ~&  res+res
-            [duct %give [%response %socket-done res]]~ :: give code
+            [duct %give [%avow %cod res]]~  :: give code
 
           [duct %pass / %j %step ~]~
         event-core(moves cov)

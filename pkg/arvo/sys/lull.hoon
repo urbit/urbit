@@ -2119,7 +2119,7 @@
         $>(%born vane-task)
     ==
   +$  avow                                              ::  output
-    $%  [%res p=(unit @t)]
+    $%  [%cod p=(unit @p)]
     ==
   +$  fyrd                                              ::  input
     $%  [%mas ~]                                        ::  |mass
