@@ -118,7 +118,7 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   can_u->mor_u.pok_f = _khan_moor_poke;
   can_u->mor_u.bal_f = _khan_moor_bail;
   // XX maybe want mug(now) or something
-  can_u->coq_l = ( san_u->can_u ) ? 1 + san_u->can_u->coq_l : 0;
+  can_u->coq_l = ( san_u->can_u ) ? 1 + san_u->can_u->coq_l : 1;
   can_u->san_u = san_u;
   err_i = uv_timer_init(u3L, &can_u->mor_u.tim_u);
   c3_assert(!err_i);
@@ -234,18 +234,66 @@ _khan_io_talk(u3_auto* car_u)
     _khan_born_bail);
 }
 
+/* _khan_search_chan(): lookup channel by connection number.
+*/
+static u3_chan*
+_khan_search_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
+{
+  u3_chan* ret_u;
+
+  for ( ret_u = kan_u->san_u->can_u;
+        ret_u;
+        ret_u = (u3_chan*)ret_u->mor_u.nex_u ) {
+    if ( coq_l == ret_u->coq_l ) {
+      return ret_u;
+    }
+  }
+  return 0;
+}
+
 /* _khan_ef_handle(): handle result.
 */
 static void
-_khan_ef_handle(u3_khan* kan_u,
-                c3_l sev_l,
-                c3_l coq_l,
-                c3_l seq_l,
-                u3_noun tag,
-                u3_noun dat)
+_khan_ef_handle(u3_khan*  kan_u,
+                c3_l      sev_l,
+                c3_l      coq_l,
+                c3_l      seq_l,
+                u3_noun   tag,
+                u3_noun   dat)
 {
-  u3l_log("khan: avow\n");
-  // TODO handle effects
+  u3_chan* can_u;
+
+  // for avow: send back over pipe as jammed noun
+  // for crud: send error message over pipe?
+  // for socket event: perform activity
+
+  if ( sev_l != kan_u->sev_l ) {
+    u3l_log("khan: server instance not found: %x\n", sev_l);
+    return;
+  }
+  if ( 0 == coq_l ) {
+    if ( c3y == u3r_sing_c("set-config", tag) ) {
+      u3l_log("khan: set-config\n");
+      return;
+    }
+  }
+  if ( 0 != (can_u = _khan_search_chan(kan_u, sev_l, coq_l)) ) {
+    if ( c3__avow == tag ) {
+      c3_y* byt_y;
+      c3_d  len_d;
+
+      // %avow is a response; jam and send it.
+      //
+      u3s_jam_xeno(dat, &len_d, &byt_y);
+      u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
+    }
+    else {
+      u3l_log("khan: handle-other\n");
+    }
+  }
+  else {
+    u3l_log("khan: handle-no-coq\n");
+  }
 }
 
 // TODO refactor these: they are duplicated from http.c
@@ -303,7 +351,7 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   u3_noun tag, dat, i_wir, t_wir;
   c3_o ret_o;
 
-  if (  (c3n == u3r_cell(wir, &i_wir, 0))
+  if (  (c3n == u3r_cell(wir, &i_wir, &t_wir))
      || (c3n == u3r_cell(cad, &tag, &dat))
      || (c3__khan != i_wir) )
   {
