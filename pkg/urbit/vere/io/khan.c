@@ -117,7 +117,6 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   can_u->mor_u.ptr_v = can_u;
   can_u->mor_u.pok_f = _khan_moor_poke;
   can_u->mor_u.bal_f = _khan_moor_bail;
-  // XX maybe want mug(now) or something
   can_u->coq_l = ( san_u->can_u ) ? 1 + san_u->can_u->coq_l : 1;
   can_u->san_u = san_u;
   err_i = uv_timer_init(u3L, &can_u->mor_u.tim_u);
