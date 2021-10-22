@@ -1,3 +1,10 @@
+// TODO
+// - remove sequence numbers or add them all the way
+// - think carefully about error handling
+// - think carefully about protocol
+// - implement runtime-specific queries
+// - remove references to %set-config
+// - clean up logging
 /* vere/khan.c
 **
 */
@@ -60,14 +67,7 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
   u3_khan*  kan_u = san_u->kan_u;
   u3_chan*  inn_u;
 
-  if ( err_i != UV_EOF ) {
-    u3l_log("khan: bail called %p %zd %s\n", ptr_v, err_i, err_c);
-    u3_king_bail();
-  }
-  else {
-    // TODO remove
-    u3l_log("khan: eof\n");
-
+  if ( err_i == UV_EOF ) {
     // close socket and remove reference.
     for ( inn_u = san_u->can_u; inn_u; inn_u = (u3_chan*)inn_u->mor_u.nex_u ) {
       if ( (u3_chan*)inn_u->mor_u.nex_u == can_u ) {
@@ -77,6 +77,20 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
         break;
       }
     }
+  }
+  else {
+    // TODO retry up to N
+    u3_noun bal;
+    c3_y*   byt_y;
+    c3_d    len_d;
+
+    bal = u3nq(c3__bail,
+               u3i_string("driver"),
+               -err_i & 0x7fffffff,
+               u3i_string(err_c));
+    u3s_jam_xeno(bal, &len_d, &byt_y);
+    u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
+    u3z(bal);
   }
 }
 
@@ -91,7 +105,7 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 
   jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
-    _khan_moor_bail(ptr_v, -1, "bad jar");
+    _khan_moor_bail(ptr_v, -1, "cue-none");
   }
   else {
     wir = u3nc(u3i_string("khan"),
@@ -262,9 +276,7 @@ _khan_ef_handle(u3_khan*  kan_u,
 {
   u3_chan* can_u;
 
-  // for avow: send back over pipe as jammed noun
-  // for crud: send error message over pipe?
-  // for socket event: perform activity
+  // TODO: socket events (close connection; any others?)
 
   if ( sev_l != kan_u->sev_l ) {
     u3l_log("khan: server instance not found: %x\n", sev_l);
