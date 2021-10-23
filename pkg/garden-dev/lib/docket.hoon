@@ -26,7 +26,7 @@
     ?~  version.draft  ~
     ?~  website.draft  ~
     ?~  license.draft  ~
-    =/  =gref
+    =/  =spot
       ?~  base.draft  ~
       ?^  glob-http.draft
         `[u.base hash.u.glob-http %http url.u.glob-http]:draft
@@ -34,9 +34,8 @@
         ~
       `[u.base hash.u.glob-ames %ames ship.u.glob-ames]:draft
     =/  href=(unit href)
-      ?^  site.draft  `[%site gref u.site.draft]
-      ?~  gref  ~
-      `[%glob gref ~]
+      ?^  site.draft  `[spot %site u.site.draft]
+      `[spot %glob ~]
     ?~  href  ~
     =,  draft
     :-  ~
@@ -86,11 +85,11 @@
             license+license.d
         ==
         ?~  image.d  ~  ~[image+u.image.d]
-        ?.  ?=(%site -.href.d)  ~  ~[site+path.href.d]
-        ?:  ?=(~ +<.href.d)  ~
-          =/  ref  glob-reference.u.gref.href.d
+        ?.  ?=(%site -.+.href.d)  ~  ~[site+path.href.d]
+        ?:  ?=(~ spot.href.d)  ~
+          =/  ref  glob-reference.u.spot.href.d
           :~
-            base+base.u.gref.href.d
+            base+base.u.spot.href.d
             ?-  -.location.ref
               %http  [%glob-http url.location hash]:ref
               %ames  [%glob-ames ship.location hash]:ref
@@ -169,17 +168,21 @@
     ?>  &(?=(%o -.a) ?=(%o -.b))
     [%o (~(uni by p.a) p.b)]
   ::
+  ++  spot
+    |=  s=^spot
+    ^-  json
+    ?~  s  ~
+    %-  pairs
+      :~  base+s+base.u.s
+          glob-reference+(glob-reference glob-reference.u.s)
+      ==
+  ::
   ++  href
     |=  h=^href
-    %+  frond  -.h
-    ?-    -.h
+    %+  frond  +<.h
+    ?-    +<.h
         %site  s+(spat path.h)
-        %glob
-      ?~  gref.h  ~
-      %-  pairs
-      :~  base+s+base.u.gref.h
-          glob-reference+(glob-reference glob-reference.u.gref.h)
-      ==
+        %glob  (spot spot.h)
     ==
   ::
   ++  glob-reference

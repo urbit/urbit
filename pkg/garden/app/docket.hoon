@@ -62,8 +62,8 @@
     %-  ~(gas by *(map term desk))
     %+  murn  ~(tap by charges)
     |=  [=desk =charge]
-    ?.  ?=(^ +<.href.docket.charge)  ~
-    `:_(desk base.u.gref.href.docket.charge)
+    ?.  ?=(^ spot.href.docket.charge)  ~
+    `:_(desk base.u.spot.href.docket.charge)
   --
 ::
 ++  on-save  !>(-.state)
@@ -104,8 +104,8 @@
     ^-  (quip card _state)
     =/  =charge  ~|(no-charge-installed+desk (~(got by charges) desk))
     =.  charges  (~(del by charges) desk)
-    =?  by-base  ?=(^ +<.href.docket.charge)
-      (~(del by by-base) base.u.gref.href.docket.charge)
+    =?  by-base  ?=(^ spot.href.docket.charge)
+      (~(del by by-base) base.u.spot.href.docket.charge)
     =*  cha  ~(. ch desk)
     :_  state
     ~[del-fact:cha uninstall:cha]
@@ -237,17 +237,17 @@
 
         ::  if the new chad is a site without a glob, we're instantly done
         ::
-        ?:  ?&  ?=(%site -.href.docket)
-                ?=(~ gref.href.docket)
+        ?:  ?&  ?=(%site +<.href.docket)
+                ?=(~ spot.href.docket)
             ==
           =.  charges  (new-chad:cha %site ~)
           :-  ~[add-fact:cha]
           state
         ::
         :::
-        ~|  [%on-commit-no-glob desk gref:href.docket +<.href.docket]
-        ?>  ?=(^ +<.href.docket)
-        =.  by-base  (~(put by by-base) base.u.gref.href.docket desk)
+        ~|  [%on-commit-no-glob desk spot:href.docket spot.href.docket]
+        ?>  ?=(^ spot.href.docket)
+        =.  by-base  (~(put by by-base) base.u.spot.href.docket desk)
         ::  if the glob specification is unchanged, keep it
         ::
 
@@ -262,7 +262,7 @@
         ?:  ?&  (globable:cha pre docket)
                 ?=(^ pre)
                 .=  [(sham (chad-glob:cha chad.u.pre)) %ames our.bowl]
-                glob-reference.u.gref.href.docket
+                glob-reference.u.spot.href.docket
             ==
           [~[add-fact:cha] state]
         ::  if the glob changed, forget the old and fetch the new
@@ -291,7 +291,7 @@
         =*  cha  ~(. ch desk)
         ?.  (~(has by charges) desk)  `state
         =/  =charge  (~(got by charges) desk)
-        ?.  ?=(^ +<.href.docket.charge)
+        ?.  ?=(^ spot.href.docket.charge)
           =.  charges  (new-chad:cha %site ~)
           :_(state ~[add-fact:cha])
         =.  charges
@@ -352,8 +352,8 @@
             %thread-done
           =+  !<(=glob q.cage.sign)
           =/  =charge   (~(got by charges) desk)
-          ?>  ?=(^ +<.href.docket.charge)
-          =*  want=@uv  hash.glob-reference.u.gref.href.docket.charge
+          ?>  ?=(^ spot.href.docket.charge)
+          =*  want=@uv  hash.glob-reference.u.spot.href.docket.charge
           =/  plea=@uv  (slav %uv i.t.wire)
           ?.  =(want plea)
             ::  we requested this at some point but no longer want it
@@ -370,7 +370,7 @@
                 leaf+"received: {<have>}"
             ==
           =.  charges   (new-chad:cha glob+glob)
-          =.  by-base   (~(put by by-base) base.u.gref.href.docket.charge desk)
+          =.  by-base   (~(put by by-base) base.u.spot.href.docket.charge desk)
           :_(state ~[add-fact:cha])
         ==
       ==
@@ -466,7 +466,7 @@
       %+  murn  ~(tap by charges)
       |=  [d=desk [docket *]]
       ^-  (unit desk)
-      ?:(?=(%glob -.href) `d ~)
+      ?:(?=(%glob +<.href) `d ~)
     ::
     ;html
       ;head
@@ -539,23 +539,23 @@
       ::
       =?  err  =(~ glob)
         ['no files in glob' err]
-      =?  err  !?=(%glob -.href.docket.charge)
+      =?  err  !?=(%glob +<.href.docket.charge)
         ['desk does not use glob' err]
       ::
       ?.  =(~ err)  error-result
       :-  [[200 ~] `(upload-page 'successfully globbed' ~)]
-      ?>  ?=(%glob -.href.docket.charge)
-      ?>  ?=(^ gref.href.docket.charge)
+      ?>  ?=(%glob +<.href.docket.charge)
+      ?>  ?=(^ spot.href.docket.charge)
       ::
       =.  charges  (new-chad:cha glob+glob)
       =.  by-base
         =-  (~(put by by-base) - desk)
-        base.u.gref.href.docket.charge
+        base.u.spot.href.docket.charge
       ::
       :_  state
       ::
       =/  ours=?
-        =/  loc  location.glob-reference.u.gref.href.docket.charge
+        =/  loc  location.glob-reference.u.spot.href.docket.charge
         ?&  ?=(%ames -.loc)
             =(our.bowl ship.loc)
         ==
@@ -568,7 +568,7 @@
           %+  foal:space:userlib
             /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket-0
           %-  docket:cg
-          docket.charge(glob-reference.u.gref.href [(hash-glob glob) %ames our.bowl])
+          docket.charge(glob-reference.u.spot.href [(hash-glob glob) %ames our.bowl])
       ==
     ::
     ?~  parts=(de-request:multipart [header-list body]:request)
@@ -705,9 +705,9 @@
       ~|  desk/desk
       (~(got by charges) desk)
     =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
-    ?>  ?=(?(%glob %site) -.href.docket.charge)
-    ?>  ?=(^ gref.href.docket.charge)
-    =/  ref  glob-reference.u.gref.href.docket.charge
+    ?>  ?=(?(%glob %site) +<.href.docket.charge)
+    ?>  ?=(^ spot.href.docket.charge)
+    =/  ref  glob-reference.u.spot.href.docket.charge
     ?:  ?&  ?=(%ames -.location.ref)
             =(our.bowl ship.location.ref)
         ==
