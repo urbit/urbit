@@ -109,7 +109,7 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 
   jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
-    _khan_moor_bail(ptr_v, -1, "cue-none");
+    can_u->mor_u.bal_f(can_u, -1, "cue-none");
   }
   else {
     wir = u3nc(u3i_string("khan"),
@@ -294,7 +294,7 @@ _khan_ef_handle(u3_khan*  kan_u,
       u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
     }
     else {
-      can_u->mor_u.bal_f(&can_u, -1, "handle-other");
+      can_u->mor_u.bal_f(can_u, -1, "handle-other");
     }
   }
   else {
