@@ -45,7 +45,7 @@ const Header = () => {
       </Row>
       <Row alignItems="center">
         {connection}
-        <Link to="/~btc/settings">
+        <Link to="/settings">
           <Box
             backgroundColor="white"
             borderRadius={4}
