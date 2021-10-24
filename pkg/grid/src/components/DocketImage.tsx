@@ -25,7 +25,7 @@ export function DocketImage({ color, image, className = '', size = 'full' }: Doc
       style={{ backgroundColor: tileColor }}
     >
       {image && (
-        <img className="absolute top-0 left-0 h-full w-full object-contain" src={image} alt="" />
+        <img className="absolute top-0 left-0 h-full w-full object-cover" src={image} alt="" />
       )}
     </div>
   );
