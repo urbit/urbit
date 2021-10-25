@@ -171,7 +171,7 @@
     ?+  val  ~|(%bad-noun-poke !!)
       %print  ~&(+.state [~ state])
       %clear  [~ state(. *inflated-state)]
-        %sane   
+        %sane
       ~&  +.state
       ~&  inflate
       ?>(=(+.state inflate) `state)
@@ -278,14 +278,12 @@
     ^+  poke-core
     =.  poke-core
       (emit (fact:io hark-update+!>([%add-note bin body]) /notes ~))
-    =.  by-place
-      (~(put ju by-place) place.bin unseen+~ path.bin)
     =/  existing-notif
       (~(gut by unseen) bin *notification:store)
     =/  new=notification:store
       [now.bowl bin [body body.existing-notif]]
-    =.  unseen
-      (~(put by unseen) bin new)
+    =.  poke-core
+      (put-lid unseen/~ bin new)
     (give %added new)
   ::
   ++  del-place
@@ -309,25 +307,19 @@
     =/  =notification:store  (need (get-lid lid bin))
     =.  poke-core  (del-lid lid bin)
     =.  poke-core  (put-lid archive+now.bowl bin notification)
-    =?  poke-core  ?=(%unseen -.lid)
-      ?~  n=(get-lid seen+~ bin)  poke-core
-      =.  archive  
-        %^  ~(job re archive)  now.bowl  bin 
-        |=  og=(unit notification:store)
-        (merge-notification og u.n)
-      poke-core
     (give %archived now.bowl lid notification)
   ::
   ++  read-note
     |=  =bin:store
     =/  =notification:store
       (~(got by unseen) bin)
-    =.  unseen
-      (~(del by unseen) bin)
+    =.  poke-core
+      (del-lid unseen/~ bin)
     =/  =time
       (fall timebox:(gut-place place.bin) now.bowl)
     =.  date.notification  time
-    =.  archive  (~(put re archive) time bin notification)
+    =.  poke-core
+      (put-lid archive/time bin notification)
     (give %note-read time bin)
   ::
   ::
@@ -445,18 +437,22 @@
     poke-core
   ::
   ++  opened
-    =.  seen
-      %-  ~(gas by *timebox:store)
-      %+  murn  ~(tap in (~(uni in ~(key by seen)) ~(key by unseen)))
-      |=  =bin:store
-      =/  se  (~(get by seen) bin)
-      =/  un  (~(get by unseen) bin)  
-      ?~  un  
-        ?~(se ~ `[bin u.se])
-      `[bin (merge-notification se u.un)]
-    =.  unseen  ~
     =.  poke-core  (turn-places |=(=stats:store stats(timebox ~)))
-    (give %opened ~)
+    =.  poke-core  (give %opened ~)
+    %+  roll  ~(tap in ~(key by unseen))
+    |=  [=bin:store out=_poke-core]
+    (opened-note:out bin)
+  ::
+  ++  opened-note
+    |=  =bin:store
+    ^+  poke-core
+    =/  old
+      (~(got by unseen) bin)
+    =.  poke-core
+      (del-lid unseen/~ bin) 
+    =/  se  (~(get by seen) bin)
+    %^  put-lid  seen/~  bin 
+    (merge-notification se old)
     
   ::
   ++  archive-all
