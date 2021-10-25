@@ -73,6 +73,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_STREAM': JSON.stringify(process.env.LANDSCAPE_STREAM),
       'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
+      'process.env.LANDSCAPE_STORAGE_VERSION': Date.now().toString(),
+      'process.env.LANDSCAPE_LAST_WIPE': '2021-10-20',
       'process.env.TUTORIAL_HOST': JSON.stringify('~difmex-passed'),
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),

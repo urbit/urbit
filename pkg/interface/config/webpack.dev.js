@@ -109,6 +109,8 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
+      'process.env.LANDSCAPE_STORAGE_VERSION': JSON.stringify(Date.now()),
+      'process.env.LANDSCAPE_LAST_WIPE': JSON.stringify('2021-10-20'),
       'process.env.TUTORIAL_HOST': JSON.stringify('~difmex-passed'),
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),

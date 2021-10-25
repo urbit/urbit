@@ -24,7 +24,7 @@ async function toggleMentions() {
 export const NotificationPrefs = () => {
   const doNotDisturb = useSettingsState(selDnd);
   const mentions = useHarkStore(selMentions);
-  const secure = window.location.protocol === 'https:';
+  const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
 
   return (
     <>
