@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import { Vat } from '@urbit/api/hood';
 
 import { Attribute } from './Attribute';
@@ -10,7 +9,6 @@ export function VatMeta(props: { vat: Vat }) {
 
   const { desk: foreignDesk, ship, next } = arak.rail || {};
   const pluralUpdates = next?.length !== 1;
-  console.log(cass);
   return (
     <div className="mt-5 sm:mt-8 space-y-5 sm:space-y-8">
       <Attribute title="Desk Hash" attr="hash">
