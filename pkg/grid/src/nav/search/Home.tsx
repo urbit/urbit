@@ -11,7 +11,12 @@ import { AppLink } from '../../components/AppLink';
 import { ShipName } from '../../components/ShipName';
 import { ProviderLink } from '../../components/ProviderLink';
 import useDocketState, { ChargesWithDesks, useCharges } from '../../state/docket';
-import { getAppHref } from '../../state/util';
+import {
+  clearStorageMigration,
+  createStorageKey,
+  getAppHref,
+  storageVersion
+} from '../../state/util';
 import useContactState from '../../state/contact';
 
 export interface RecentsStore {
@@ -61,8 +66,9 @@ export const useRecentsStore = create<RecentsStore>(
     }),
     {
       whitelist: ['recentApps', 'recentDevs'],
-      name: `${window.ship}-recents-store`,
-      version: import.meta.env.VITE_SHORTHASH as any
+      name: createStorageKey('recents-store'),
+      version: storageVersion,
+      migrate: clearStorageMigration
     }
   )
 );

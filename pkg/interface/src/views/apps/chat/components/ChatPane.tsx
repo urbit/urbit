@@ -5,6 +5,7 @@ import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useFileUpload } from '~/logic/lib/useFileUpload';
+import { createStorageKey, storageVersion, clearStorageMigration } from '~/logic/lib/util';
 import { useOurContact } from '~/logic/state/contact';
 import { useGraphTimesent } from '~/logic/state/graph';
 import ShareProfile from '~/views/apps/chat/components/ShareProfile';
@@ -21,7 +22,6 @@ interface useChatStoreType {
   setMessage: (message: string) => void;
 }
 
-const unsentKey = 'chat-unsent';
 export const useChatStore = create<useChatStoreType>(persist((set, get) => ({
   id: '',
   message: '',
@@ -41,8 +41,10 @@ export const useChatStore = create<useChatStoreType>(persist((set, get) => ({
     set({ message, messageStore: store });
   }
 }), {
-  name: unsentKey,
-  whitelist: ['messageStore']
+  whitelist: ['messageStore'],
+  name: createStorageKey('chat-unsent'),
+  version: storageVersion,
+  migrate: clearStorageMigration
 }));
 
 interface ChatPaneProps {

@@ -4,6 +4,7 @@ import { Button } from '../components/Button';
 import { Dialog, DialogClose, DialogContent } from '../components/Dialog';
 import { useRecentsStore } from '../nav/search/Home';
 import useDocketState, { useCharges } from '../state/docket';
+import { getAppName } from '../state/util';
 
 export const SuspendApp = () => {
   const history = useHistory();
@@ -24,7 +25,7 @@ export const SuspendApp = () => {
   return (
     <Dialog open onOpenChange={(open) => !open && history.push('/')}>
       <DialogContent showClose={false} className="space-y-6" containerClass="w-full max-w-md">
-        <h1 className="h4">Suspend &ldquo;{charge?.title || ''}&rdquo;</h1>
+        <h1 className="h4">Suspend &ldquo;{getAppName(charge)}&rdquo;</h1>
         <p className="text-base tracking-tight pr-6">
           Suspending an app will turn off automatic updates. You cannot use an app when it is
           suspended, but you can resume it at any time.
@@ -34,7 +35,7 @@ export const SuspendApp = () => {
             Cancel
           </DialogClose>
           <DialogClose as={Button} onClick={handleSuspendApp}>
-            Suspend &ldquo;{charge?.title}&rdquo;
+            Suspend &ldquo;{getAppName(charge)}&rdquo;
           </DialogClose>
         </div>
       </DialogContent>

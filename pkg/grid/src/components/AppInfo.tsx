@@ -9,7 +9,7 @@ import { DocketHeader } from './DocketHeader';
 import { Spinner } from './Spinner';
 import { VatMeta } from './VatMeta';
 import useDocketState, { ChargeWithDesk, useTreaty } from '../state/docket';
-import { getAppHref } from '../state/util';
+import { getAppHref, getAppName } from '../state/util';
 import { addRecentApp } from '../nav/search/Home';
 import { TreatyMeta } from './TreatyMeta';
 
@@ -114,7 +114,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
                 className="space-y-6"
                 containerClass="w-full max-w-md"
               >
-                <h2 className="h4">Install &ldquo;{docket.title}&rdquo;</h2>
+                <h2 className="h4">Install &ldquo;{getAppName(docket)}&rdquo;</h2>
                 <p className="text-base tracking-tight pr-6">
                   This application will be able to view and interact with the contents of your
                   Urbit. Only install if you trust the developer.
@@ -124,7 +124,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
                     Cancel
                   </DialogClose>
                   <DialogClose as={Button} onClick={installApp}>
-                    Get &ldquo;{docket.title}&rdquo;
+                    Get &ldquo;{getAppName(docket)}&rdquo;
                   </DialogClose>
                 </div>
               </DialogContent>

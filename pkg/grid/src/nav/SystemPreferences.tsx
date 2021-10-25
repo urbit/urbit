@@ -14,6 +14,7 @@ import { LeftArrow } from '../components/icons/LeftArrow';
 import { System } from '../components/icons/System';
 import { Interface } from '../components/icons/Interface';
 import { Notifications } from '../components/icons/Notifications';
+import { getAppName } from '../state/util';
 
 interface SystemPreferencesSectionProps {
   url: string;
@@ -112,7 +113,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
                     active={matchSub('apps', charge.desk)}
                   >
                     <DocketImage size="small" className="mr-3" {...charge} />
-                    {charge.title}
+                    {getAppName(charge)}
                   </SystemPreferencesSection>
                 ))}
               </ul>
