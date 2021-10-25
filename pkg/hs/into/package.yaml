@@ -1,0 +1,40 @@
+name: into
+version: 0.0
+license: MIT
+license-file: LICENSE
+
+library:
+  source-dirs: lib
+  ghc-options:
+    - -Wall
+    - -Wno-type-defaults
+    - -Wno-unused-matches
+    - -Wno-name-shadowing
+    - -Wno-unused-do-bind
+
+#tests:
+#  into-tests:
+#    source-dirs: test
+#    main: Main.hs
+#    dependencies: into
+#    ghc-options:
+#      - -threaded
+#      - -rtsopts
+#      - -with-rtsopts=-N
+
+dependencies:
+  - base
+  - urbit-atom
+  - urbit-noun
+
+executables:
+  into:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - into
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
