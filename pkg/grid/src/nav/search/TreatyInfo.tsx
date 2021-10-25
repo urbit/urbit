@@ -4,6 +4,7 @@ import { AppInfo } from '../../components/AppInfo';
 import { Spinner } from '../../components/Spinner';
 import useDocketState, { useCharge, useTreaty } from '../../state/docket';
 import { useVat } from '../../state/kiln';
+import { getAppName } from '../../state/util';
 import { useLeapStore } from '../Nav';
 
 export const TreatyInfo = () => {
@@ -12,6 +13,7 @@ export const TreatyInfo = () => {
   const treaty = useTreaty(host, desk);
   const vat = useVat(desk);
   const charge = useCharge(desk);
+  const name = getAppName(treaty);
 
   useEffect(() => {
     if (!charge) {
@@ -20,9 +22,9 @@ export const TreatyInfo = () => {
   }, [host, desk]);
 
   useEffect(() => {
-    select(<>{treaty?.title}</>);
+    select(<>{name}</>);
     useLeapStore.setState({ matches: [] });
-  }, [treaty?.title]);
+  }, [name]);
 
   if (!treaty) {
     // TODO: maybe replace spinner with skeletons

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { HTMLProps, ReactNode } from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 import { DocketWithDesk } from '../state/docket';
-import { getAppHref } from '../state/util';
+import { getAppHref, getAppName } from '../state/util';
 import { DocketImage } from './DocketImage';
 
 type Sizes = 'xs' | 'small' | 'default';
@@ -57,7 +57,7 @@ export const AppLink = <T extends DocketWithDesk>({
     <>
       <DocketImage color={app.color} image={app.image} size={size} />
       <div className="flex-1 text-black">
-        <p>{app.title}</p>
+        <p>{getAppName(app)}</p>
         {app.info && size === 'default' && <p className="font-normal">{app.info}</p>}
       </div>
     </>
