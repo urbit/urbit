@@ -4,6 +4,7 @@ import { Button } from '../components/Button';
 import { Dialog, DialogClose, DialogContent } from '../components/Dialog';
 import { useRecentsStore } from '../nav/search/Home';
 import useDocketState, { useCharges } from '../state/docket';
+import { getAppName } from '../state/util';
 
 export const SuspendApp = () => {
   const history = useHistory();
@@ -34,7 +35,7 @@ export const SuspendApp = () => {
             Cancel
           </DialogClose>
           <DialogClose as={Button} onClick={handleSuspendApp}>
-            Suspend &ldquo;{getAppName(docket)}&rdquo;
+            Suspend &ldquo;{getAppName(charge)}&rdquo;
           </DialogClose>
         </div>
       </DialogContent>
