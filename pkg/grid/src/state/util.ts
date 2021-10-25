@@ -1,4 +1,4 @@
-import { DocketHref } from '@urbit/api/docket';
+import { Docket, DocketHref, Treaty } from '@urbit/api/docket';
 import { hsla, parseToHsla } from 'color2k';
 import _ from 'lodash';
 
@@ -14,6 +14,14 @@ export async function fakeRequest<T>(data: T, time = 300): Promise<T> {
 
 export function getAppHref(href: DocketHref) {
   return 'site' in href ? href.site : `/apps/${href.glob.base}/`;
+}
+
+export function getAppName(app: (Docket & { desk: string }) | Treaty | undefined): string {
+  if (!app) {
+    return '';
+  }
+
+  return app.title || app.desk;
 }
 
 export function disableDefault<T extends Event>(e: T): void {

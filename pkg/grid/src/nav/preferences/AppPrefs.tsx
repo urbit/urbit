@@ -4,6 +4,7 @@ import { Setting } from '../../components/Setting';
 import { ShipName } from '../../components/ShipName';
 import { useCharge } from '../../state/docket';
 import useKilnState, { useVat } from '../../state/kiln';
+import { getAppName } from '../../state/util';
 
 export const AppPrefs = ({ match }: RouteComponentProps<{ desk: string }>) => {
   const { desk } = match.params;
@@ -18,11 +19,11 @@ export const AppPrefs = ({ match }: RouteComponentProps<{ desk: string }>) => {
 
   return (
     <>
-      <h2 className="h3 mb-7">{charge?.title} Settings</h2>
+      <h2 className="h3 mb-7">{getAppName(charge)} Settings</h2>
       <div className="space-y-3">
         {tracking ? (
           <Setting on={otasEnabled} toggle={toggleUpdates} name="Automatic Updates">
-            <p>Automatically download and apply updates to keep {charge?.title} up to date.</p>
+            <p>Automatically download and apply updates to keep {getAppName(charge)} up to date.</p>
             {otaSource && (
               <p>
                 OTA Source: <ShipName name={otaSource} className="font-semibold font-mono" />
