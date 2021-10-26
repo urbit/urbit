@@ -30,7 +30,7 @@
   |=  =vase
   ^-  (list resource)
   =/  =update:store  !<(update:store vase)
-  ?.  ?=(?(%add %remove %initial-group) -.update)  ~
+  ?.  ?=(?(%add %remove %initial-group %edit) -.update)  ~
   ~[group.update]
 ::  
 ++  app-paths-from-group
@@ -100,4 +100,13 @@
   ^-  (unit resource)
   %+  bind  (peek-association md-resource)
   |=(association:store group)
+::
+++  graphs-of-group
+  |=  group=resource
+  =/  =associations:store
+    (metadata-for-group group)
+  %+  murn  ~(tap in ~(key by associations))
+  |=  [=app-name:store rid=resource]
+  ?.(=(%graph app-name) ~ `rid)
+  
 --

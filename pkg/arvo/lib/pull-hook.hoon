@@ -514,7 +514,11 @@
       ^+  tr-core
       ?-  -.action
         %add  (tr-add +.action)
-        %remove  tr-remove:(tr-abed resource.action)
+      ::
+          %remove
+        ?.  (~(has by tracking) resource.action)
+          tr-core
+        tr-remove:(tr-abed resource.action)
       ==
     ::
     ++  tr-cleanup

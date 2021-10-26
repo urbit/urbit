@@ -14,7 +14,7 @@
       update:store
       %metadata-update
       %metadata-pull-hook
-      1  1
+      2  2
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -94,7 +94,7 @@
   ^-  (quip card (unit vase))
   =/  =update:store  !<(update:store vas)
   :-  ~
-  ?.  ?=(?(%add %remove) -.update)
+  ?.  ?=(?(%add %remove %edit) -.update)
     ~
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.update src.bowl)

@@ -1,7 +1,9 @@
 import { ContactUpdate, deSig } from '@urbit/api';
 import _ from 'lodash';
-import { reduceState } from '../state/base';
-import useContactState, { ContactState } from '../state/contact';
+import { BaseState } from '../state/base';
+import { ContactState as State } from '../state/contact';
+
+type ContactState = State & BaseState<State>;
 
 const initial = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'initial', false);
@@ -71,23 +73,18 @@ const setPublic = (json: ContactUpdate, state: ContactState): ContactState => {
   return state;
 };
 
-export const ContactReducer = (json) => {
-  const data: ContactUpdate = _.get(json, 'contact-update', false);
-  if (data) {
-    reduceState<ContactState, ContactUpdate>(useContactState, data, [
-      initial,
-      add,
-      remove,
-      edit,
-      setPublic
-    ]);
+export const reduceNacks = (json, state: ContactState): ContactState => {
+  const data = json?.resource;
+  if(data) {
+    state.nackedContacts.add(`~${data.res}`);
   }
-
-  // TODO: better isolation
-  const res = _.get(json, 'resource', false);
-  if (res) {
-    useContactState.setState({
-      nackedContacts: useContactState.getState().nackedContacts.add(`~${res.ship}`)
-    });
-  }
+  return state;
 };
+
+export const reduce = [
+  initial,
+  add,
+  remove,
+  edit,
+  setPublic
+];

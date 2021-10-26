@@ -9,6 +9,7 @@ import {
   Text
 } from '@tlon/indigo-react';
 import { cite, uxToHex } from '@urbit/api';
+import shallow from 'zustand/shallow';
 import _ from 'lodash';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -20,7 +21,7 @@ import { useCopy } from '~/logic/lib/useCopy';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { useShowNickname } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
-import useSettingsState from '~/logic/state/settings';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
@@ -36,10 +37,11 @@ const FixedOverlay = styled(Col)`
 
 type ProfileOverlayProps = BoxProps & {
   ship: string;
-  api: any;
   children?: ReactNode;
   color?: string;
 };
+
+const selSettings = (s: SettingsState) => [s.calm.hideAvatars, s.calm.hideNicknames];
 
 const ProfileOverlay = (props: ProfileOverlayProps) => {
   const {
@@ -54,8 +56,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const history = useHistory();
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
-  const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
-  const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
+  const [hideAvatars, hideNicknames] = useSettingsState(selSettings, shallow);
   const isOwn = useMemo(() => window.ship === ship, [ship]);
   const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
@@ -129,7 +130,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
 
   return (
     <Box ref={outerRef} {...rest} onClick={setOpen} cursor="pointer">
-      <VisibilitySensor onChange={setVisible}>
+      <VisibilitySensor active={open} onChange={setVisible}>
         {children}
       </VisibilitySensor>
   { open && (
@@ -202,7 +203,6 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
           </Row>
           {isOwn ? (
             <ProfileStatus
-              api={props.api}
               ship={`~${ship}`}
               contact={contact}
             />

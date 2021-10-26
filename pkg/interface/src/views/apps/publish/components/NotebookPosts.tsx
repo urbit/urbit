@@ -1,7 +1,6 @@
 import { Col } from '@tlon/indigo-react';
 import { Graph, Group } from '@urbit/api';
 import React from 'react';
-import useContactState from '~/logic/state/contact';
 import { NotePreview } from './NotePreview';
 
 interface NotebookPostsProps {
@@ -19,7 +18,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
     <Col>
       {Array.from(props.graph || []).map(
         ([date, node]) =>
-          node && (
+          node && typeof node?.post !== 'string' && (
             <NotePreview
               key={date.toString()}
               host={props.host}

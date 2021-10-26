@@ -46,7 +46,7 @@
   (poke-our %graph-push-hook %push-hook-action !>([%add feed-rid]))
 ;<  ~  bind:m
   %+  poke-our  %metadata-push-hook
-  :-  %metadata-update-1
+  :-  %metadata-update-2
   !>  ^-  action:met
   :^  %add
       group.action
@@ -54,7 +54,7 @@
   metadatum(feed.config ``[%graph feed-rid])
 ;<  ~  bind:m
   %+  poke-our  %metadata-push-hook
-  :-  %metadata-update-1
+  :-  %metadata-update-2
   !>  ^-  action:met
   :^  %add
       group.action

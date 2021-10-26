@@ -1,14 +1,12 @@
 import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
-import { Association, Group, PermVariation, resourceFromPath } from '@urbit/api';
+import { Association, createGroupFeed, disableGroupFeed, Group, metadataEdit, PermVariation, resourceFromPath } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import useMetadataState from '~/logic/state/metadata';
 import { FormSubmit } from '~/views/components/FormSubmit';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
-import {
-    GroupFeedPermsInput
-} from '../Home/Post/GroupFeedPerms';
+import { GroupFeedPermsInput } from '../Home/Post/GroupFeedPerms';
+import airlock from '~/logic/api';
 
 interface FormSchema {
   permissions: PermVariation;
@@ -17,9 +15,8 @@ interface FormSchema {
 export function GroupFeedSettings(props: {
   association: Association;
   group: Group;
-  api: GlobalApi;
 }) {
-  const { association, api } = props;
+  const { association } = props;
   const resource = resourceFromPath(association.group);
   let feedResource = '';
   if (
@@ -33,15 +30,12 @@ export function GroupFeedSettings(props: {
   const feedAssoc = useMetadataState(s => s.associations.graph[feedResource]);
   const isEnabled = Boolean(feedResource);
 
-  const associations = useMetadataState(state => state.associations);
-  const feedMetadata = associations?.graph[feedResource];
-
   const vip = feedAssoc?.metadata?.vip || ' ';
   const toggleFeed = async (actions: any) => {
     if (isEnabled) {
-      await api.graph.disableGroupFeed(resource);
+      await airlock.thread(disableGroupFeed(resource));
     } else {
-      await api.graph.enableGroupFeed(resource, vip.trim());
+      await airlock.thread(createGroupFeed(resource, vip.trim()));
     }
   };
   const initialValues: FormSchema = {
@@ -52,7 +46,11 @@ export function GroupFeedSettings(props: {
     values: FormSchema,
     actions: FormikHelpers<FormSchema>
   ) => {
-    await api.metadata.update(feedAssoc, { vip: values.permissions.trim() as PermVariation });
+    await airlock.poke(
+      metadataEdit(feedAssoc, {
+        vip: values.permissions.trim() as PermVariation
+      })
+    );
 
     actions.setStatus({ success: null });
   };

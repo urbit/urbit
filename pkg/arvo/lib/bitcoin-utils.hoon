@@ -1,8 +1,8 @@
 ::  lib/bitcoin-utils.hoon
 ::  Utilities for working with BTC data types and transactions
 ::
-/-  sur=bitcoin
-=,  sur
+/-  *bitcoin
+~%  %bitcoin-utils-lib  ..part  ~
 |%
 ::
 ::  TODO: move this bit/byt stuff to zuse
@@ -12,6 +12,7 @@
 ::  +blop: munge bit and byt sequences (cat, flip, take, drop)
 ::
 ++  blop
+  ~/  %blop
   |_  =bloq
   +$  biyts  [wid=@ud dat=@]
   ++  cat
@@ -48,6 +49,7 @@
 ++  byt  ~(. blop 3)
 ::
 ++  bit
+  ~/  %bit
   =/  bl    ~(. blop 0)
   |%
   ++  cat   cat:bl:bit
@@ -79,16 +81,19 @@
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
+  ~/  %sha256
   |=  =byts
   ^-  hexb
   %-  flip:byt
   [32 (shay (flip:byt byts))]
 ::
 ++  dsha256
+  ~/  %dsha256
   |=  =byts
   (sha256 (sha256 byts))
 ::
 ++  hash-160
+  ~/  %hash-160
   |=  val=byts
   ^-  hexb
   =,  ripemd:crypto
@@ -100,8 +105,10 @@
 ::  hxb: hex parsing utilities
 ::
 ++  hxb
+  ~%  %hxb  ..blop  ~
   |%
   ++  from-cord
+    ~/  %from-cord
     |=  h=@t
     ^-  hexb
     ?:  =('' h)  1^0x0
@@ -113,10 +120,11 @@
     =+  (rsh [3 2] -)
     ::  Parse hex to atom
     ::
-    :-  (div (lent (trip h)) 2)
-    `@ux`(rash - hex)
+    =/  a  (need (de:base16:mimes:html -))
+    [-.a `@ux`+.a]
   ::
   ++  to-cord
+    ~/  %to-cord
     |=  =hexb
     ^-  cord
     (en:base16:mimes:html hexb)
@@ -128,8 +136,10 @@
 ::   - decode: little endian to big endian
 ::
 ++  csiz
+  ~%  %csiz  ..blop  ~
   |%
   ++  en
+    ~/  %en
     |=  a=@
     ^-  hexb
     =/  l=@  (met 3 a)
@@ -140,6 +150,7 @@
     ~|("Cannot encode CompactSize longer than 8 bytes" !!)
   ::
   ++  de
+    ~/  %de
     |=  h=hexb
     ^-  [n=hexb rest=hexb]
     =/  s=@ux  dat:(take:byt 1 h)
@@ -162,5 +173,4 @@
     =>  (de h)
     [dat.n rest]
   --
-::
 --

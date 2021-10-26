@@ -12,14 +12,10 @@
 // intrinsic expiry.
 //
 //
-import GlobalApi from '../api/global';
 import useStorageState from '../state/storage';
 
 class GcpManager {
-  #api: GlobalApi | null = null;
-
-  configure(api: GlobalApi) {
-    this.#api = api;
+  configure() {
   }
 
   #running = false;
@@ -28,10 +24,6 @@ class GcpManager {
   start() {
     if (this.#running) {
       console.warn('GcpManager already running');
-      return;
-    }
-    if (!this.#api) {
-      console.error('GcpManager must have api set');
       return;
     }
     this.#running = true;
@@ -63,7 +55,7 @@ class GcpManager {
 
   private refreshLoop() {
     if (!this.#configured) {
-      this.#api!.gcp.isConfigured()
+      useStorageState.getState().gcp.isConfigured()
         .then((configured) => {
           if (configured === undefined) {
             throw new Error('can\'t check whether GCP is configured?');
@@ -82,7 +74,7 @@ class GcpManager {
         });
       return;
     }
-    this.#api!.gcp.getToken()
+    useStorageState.getState().gcp.getToken()
       .then(() => {
         const token = useStorageState.getState().gcp.token;
         if (token) {

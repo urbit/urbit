@@ -1,13 +1,16 @@
 import { css } from '@styled-system/css';
+import { Box, Icon, LoadingSpinner, Row, Text } from '@tlon/indigo-react';
 import {
-  Box,
-  Icon,
-  LoadingSpinner, Row, Text
-} from '@tlon/indigo-react';
-import {
-  Invite, joinProgress,
+  accept,
+  decline,
+  hideGroup,
+  Invite,
+  join,
+  joinProgress,
+  joinResult,
   JoinRequest,
-  Metadata, MetadataUpdatePreview,
+  Metadata,
+  MetadataUpdatePreview,
   resourceFromPath
 } from '@urbit/api';
 import { GraphConfig } from '@urbit/api';
@@ -15,7 +18,6 @@ import _ from 'lodash';
 import React, { ReactElement, ReactNode, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import { useRunIO } from '~/logic/lib/useRunIO';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { cite, isDm } from '~/logic/lib/util';
@@ -27,6 +29,7 @@ import { Header } from '~/views/apps/notifications/header';
 import { NotificationWrapper } from '~/views/apps/notifications/notification';
 import { MetadataIcon } from '~/views/landscape/components/MetadataIcon';
 import { StatelessAsyncButton } from '../StatelessAsyncButton';
+import airlock from '~/logic/api';
 
 interface GroupInviteProps {
   preview?: MetadataUpdatePreview;
@@ -35,7 +38,6 @@ interface GroupInviteProps {
   uid?: string;
   invite?: Invite;
   resource: string;
-  api: GlobalApi;
 }
 
 function Elbow(
@@ -79,9 +81,13 @@ function inviteUrl(hidden: boolean, resource: string, metadata?: Metadata) {
   }
 
   if ((metadata?.config as GraphConfig).graph === 'chat') {
-    return `/~landscape/messages/resource/${(metadata?.config as GraphConfig)?.graph}${resource}`;
+    return `/~landscape/messages/resource/${
+      (metadata?.config as GraphConfig)?.graph
+    }${resource}`;
   } else {
-    return `/~landscape/home/resource/${(metadata?.config as GraphConfig)?.graph}${resource}`;
+    return `/~landscape/home/resource/${
+      (metadata?.config as GraphConfig)?.graph
+    }${resource}`;
   }
 }
 function InviteMetadata(props: {
@@ -134,19 +140,20 @@ function InviteStatus(props: { status?: JoinRequest }) {
   const current = status && joinProgress.indexOf(status.progress);
   const desc = _.isNumber(current) && description[current];
   return (
-    <Row gapX={1} alignItems="center" height={4}>
-      { status.progress === 'done' ? <Icon icon="Checkmark" /> : <LoadingSpinner dark /> }
+    <Row gapX={2} alignItems="center" minHeight={4}>
+      <Row alignItems="center" flexShrink={0}>
+        {joinResult.includes(status?.progress as any) ? (
+          <Icon icon={status?.progress === 'done' ? 'Checkmark' : 'X'} />
+        ) : (
+          <LoadingSpinner dark />
+        )}
+      </Row>
       <Text gray>{desc}</Text>
     </Row>
   );
 }
 
-export function useInviteAccept(
-  resource: string,
-  api: GlobalApi,
-  app?: string,
-  uid?: string
-) {
+export function useInviteAccept(resource: string, app?: string, uid?: string) {
   const { ship, name } = resourceFromPath(resource);
   const history = useHistory();
   const associations = useMetadataState(s => s.associations);
@@ -160,12 +167,12 @@ export function useInviteAccept(
         return false;
       }
       if (resource in groups) {
-        await api.invite.decline(app, uid);
+        await airlock.poke(decline(app, uid));
         return false;
       }
 
-      await api.groups.join(ship, name);
-      await api.invite.accept(app, uid);
+      await airlock.poke(join(ship, name));
+      await airlock.poke(accept(app, uid));
       await waiter((p) => {
         return (
           (resource in p.groups &&
@@ -199,32 +206,22 @@ export function useInviteAccept(
 function InviteActions(props: {
   status?: JoinRequest;
   resource: string;
-  api: GlobalApi;
   app?: string;
   uid?: string;
 }) {
-  const { status, resource, api, app, uid } = props;
-  const inviteAccept = useInviteAccept(resource, api, app, uid);
-  const set = useGroupState(s => s.set);
+  const { status, resource, app, uid } = props;
+  const inviteAccept = useInviteAccept(resource, app, uid);
 
   const inviteDecline = useCallback(async () => {
     if (!(app && uid)) {
       return;
     }
-    await api.invite.decline(app, uid);
+    await airlock.poke(decline(app, uid));
   }, [app, uid]);
 
-  const hideJoin = useCallback(async (e) => {
-    if(status?.progress === 'done') {
-      set(s => {
-        // @ts-ignore investigate zustand types
-        delete s.pendingJoin[resource]
-      });
-      e.stopPropagation();
-      return;
-    }
-    await api.groups.hide(resource);
-  }, [api, resource, status]);
+  const hideJoin = useCallback(async () => {
+    await airlock.poke(hideGroup(resource));
+  }, [resource]);
 
   if (status) {
     return (
@@ -234,7 +231,9 @@ function InviteActions(props: {
           backgroundColor="white"
           onClick={hideJoin}
         >
-          {status?.progress === 'done' ? 'Dismiss' : 'Cancel'}
+          {[...joinResult].includes(status?.progress as any)
+            ? 'Dismiss'
+            : 'Cancel'}
         </StatelessAsyncButton>
       </Row>
     );
@@ -276,7 +275,7 @@ const responsiveStyle = ({ gapXY = 0 as number | number[] }) => {
 };
 const ResponsiveRow = styled(Row)(responsiveStyle);
 export function GroupInvite(props: GroupInviteProps): ReactElement {
-  const { resource, api, preview, invite, status, app, uid } = props;
+  const { resource, preview, invite, status, app, uid } = props;
   const dm = isDm(resource);
   const history = useHistory();
 
@@ -288,28 +287,33 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
     : { description: `invited you to a ${invitedTo}`, authors: [invite!.ship] };
 
   const onClick = () => {
-    if(status?.progress === 'done') {
+    if (status?.progress === 'done') {
       const redir = inviteUrl(app !== 'groups', resource, graphAssoc?.metadata);
-      if(redir) {
+      if (redir) {
+        airlock.poke(hideGroup(resource));
         history.push(redir);
       }
     }
   };
 
   return (
-    <NotificationWrapper api={api}>
+    <NotificationWrapper>
       <Header content {...headerProps} />
-      <Row onClick={onClick} height={[null, 4]} alignItems="flex-start" gridArea="main">
-        <Elbow mx={2} />
+      <Row
+        onClick={onClick}
+        height={[null, 4]}
+        alignItems="flex-start"
+        gridArea="main"
+      >
+        <Elbow display={['none', 'block']} mx={2} />
         <ResponsiveRow
-          gapXY={[1, 2]}
+          gapXY={2}
           height={[null, 4]}
           alignItems={['flex-start', 'center']}
         >
           <InviteMetadata preview={preview} resource={resource} />
           <InviteStatus status={status} />
           <InviteActions
-            api={api}
             resource={resource}
             status={status}
             app={app}

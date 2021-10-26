@@ -31,20 +31,24 @@
   ;<  ~  bind:m  (start-agent ship %group-store)
   ;<  ~  bind:m  (start-agent ship %group-pull-hook)
   ;<  ~  bind:m  (start-agent ship %group-push-hook)
+  ;<  ~  bind:m  (start-agent ship %group-view)
+  ;<  ~  bind:m  (start-agent ship %dm-hook)
+  ::
+  ;<  ~  bind:m  (start-agent ship %hark-store)
+  ;<  ~  bind:m  (start-agent ship %hark-graph-hook)
+  ;<  ~  bind:m  (start-agent ship %hark-group-hook)
   ::
   ;<  ~  bind:m  (start-agent ship %metadata-store)
-  ;<  ~  bind:m  (start-agent ship %metadata-hook)
+  ;<  ~  bind:m  (start-agent ship %metadata-pull-hook)
+  ;<  ~  bind:m  (start-agent ship %metadata-push-hook)
   ::
   ;<  ~  bind:m  (start-agent ship %invite-store)
   ;<  ~  bind:m  (start-agent ship %invite-hook)
   ::
-  ;<  ~  bind:m  (start-agent ship %chat-store)
-  ;<  ~  bind:m  (start-agent ship %chat-hook)
-  ;<  ~  bind:m  (start-agent ship %chat-view)
   ::
   ;<  ~  bind:m  (start-agent ship %contact-store)
-  ;<  ~  bind:m  (start-agent ship %contact-hook)
-  ;<  ~  bind:m  (start-agent ship %contact-view)
+  ;<  ~  bind:m  (start-agent ship %contact-push-hook)
+  ;<  ~  bind:m  (start-agent ship %contact-pull-hook)
   ::
   ;<  ~  bind:m  (start-agent ship %graph-store)
   ;<  ~  bind:m  (start-agent ship %graph-push-hook)

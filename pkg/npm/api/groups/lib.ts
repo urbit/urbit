@@ -89,8 +89,8 @@ export const removeGroup = (
 
 export const changePolicy = (
   resource: Resource,
-  diff: GroupPolicyDiff
-): Poke<GroupUpdateChangePolicy> => proxyAction({
+  diff: Enc<GroupPolicyDiff>
+): Poke<Enc<GroupUpdateChangePolicy>> => proxyAction({
   changePolicy: {
     resource,
     diff
@@ -148,7 +148,7 @@ export const invite = (
   }
 });
 
-export const hide = (
+export const hideGroup = (
   resource: string
 ): Poke<any> => viewAction({
   hide: resource

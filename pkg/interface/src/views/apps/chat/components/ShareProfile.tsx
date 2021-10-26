@@ -1,22 +1,18 @@
-import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
-import { Contact } from '@urbit/api';
+import { BaseImage, Row, Text, Button } from '@tlon/indigo-react';
+import { allowGroup, allowShips, Contact, share } from '@urbit/api';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
+import airlock from '~/logic/api';
 
 interface ShareProfileProps {
   our?: Contact;
-  api: GlobalApi;
   recipients: string | string[];
   onShare: () => void;
 }
 
 const ShareProfile = (props: ShareProfileProps): ReactElement | null => {
-  const {
-    api,
-    recipients
-  } = props;
+  const { recipients } = props;
 
   const image = (props?.our?.avatar)
   ? (
@@ -46,13 +42,13 @@ const ShareProfile = (props: ShareProfileProps): ReactElement | null => {
   const onClick = async () => {
     if(typeof recipients === 'string') {
       const [,,ship,name] = recipients.split('/');
-      await api.contacts.allowGroup(ship,name);
+      await airlock.poke(allowGroup(ship, name));
       if(ship !== `~${window.ship}`) {
-        await api.contacts.share(ship);
+        await airlock.poke(share(ship));
       }
     } else if(recipients.length > 0) {
-      await api.contacts.allowShips(recipients);
-      await Promise.all(recipients.map(r => api.contacts.share(r)));
+      await airlock.poke(allowShips(recipients));
+      await Promise.all(recipients.map(r => airlock.poke(share(r))));
     }
     props.onShare();
   };
@@ -65,14 +61,15 @@ const ShareProfile = (props: ShareProfileProps): ReactElement | null => {
       borderBottom={1}
       borderColor="lightGray"
       flexShrink={0}
+      px="3"
     >
-      <Row pl={3} alignItems="center">
+      <Row alignItems="center">
         {image}
         <Text verticalAlign="middle" pl={2}>Share private profile?</Text>
       </Row>
-      <Box pr={2} onClick={onClick}>
-        <Text color="blue" bold cursor="pointer">Share</Text>
-      </Box>
+      <Button primary onClick={onClick}>
+        Share
+      </Button>
     </Row>
   ) : null;
 };

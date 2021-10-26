@@ -162,6 +162,10 @@
       [%new-address =address]
       [%balance balance=(unit [confirmed=sats unconfirmed=sats])]
       [%error =error]
+      ::  current index being scanned in each wallet part
+      ::   ~ if scan of that part is done
+      ::
+      [%scan-progress main=(unit idx) change=(unit idx)]
   ==
 ::
 --

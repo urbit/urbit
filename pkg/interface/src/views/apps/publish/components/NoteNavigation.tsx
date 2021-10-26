@@ -44,7 +44,11 @@ function getAdjacentId(
 ): BigInteger | null {
   const children = Array.from(graph);
   const i = children.findIndex(([index]) => index.eq(child));
-  const target = children[backwards ? i + 1 : i - 1];
+  let idx = backwards ? i + 1 : i - 1;
+  let target = children[idx];
+  while(typeof target?.[1]?.post === 'string') {
+    target = children[backwards ? idx++ : idx--];
+  }
   return target?.[0] || null;
 }
 

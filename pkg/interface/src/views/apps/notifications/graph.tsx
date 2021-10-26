@@ -6,7 +6,6 @@ import _ from 'lodash';
 import React, { useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import { pluralize } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import {
@@ -111,7 +110,7 @@ export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
   }
   return (
     <TruncBox truncate={8}>
-      <GraphContent api={{} as any} contents={post.contents} showOurContact />
+      <GraphContent contents={post.contents} showOurContact />
     </TruncBox>
   );
 };
@@ -227,9 +226,8 @@ export function GraphNotification(props: {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  api: GlobalApi;
 }) {
-  const { contents, index, read, time, api, timebox } = props;
+  const { contents, index, read, time, timebox } = props;
   const history = useHistory();
 
   const authors = _.uniq(_.map(contents, 'author'));
@@ -261,7 +259,7 @@ export function GraphNotification(props: {
         first.index
       )
     );
-  }, [api, timebox, index, read, history.push, authors, dm]);
+  }, [timebox, index, read, history.push, authors, dm]);
 
   const authorsInHeader =
     dm ||

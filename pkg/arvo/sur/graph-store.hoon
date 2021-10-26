@@ -73,8 +73,8 @@
 ::
 ++  one
   |%
-  ++  orm      ((ordered-map atom node) gth)
-  ++  orm-log  ((ordered-map time logged-update) gth)
+  ++  orm      ((on atom node) gth)
+  ++  orm-log  ((on time logged-update) gth)
   ::
   +$  graph         ((mop atom node) gth)
   +$  marked-graph  [p=graph q=(unit mark)]

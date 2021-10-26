@@ -2,11 +2,14 @@ import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import {
     Association,
 
-    Group
+  deleteGraph,
+
+    Group,
+    leaveGraph,
+    metadataRemove
 } from '@urbit/api';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { FormGroup } from '~/views/components/FormGroup';
@@ -16,19 +19,18 @@ import { GraphPermissions } from './ChannelPermissions';
 import { ChannelDetails } from './Details';
 import { ChannelNotifications } from './Notifications';
 import { ChannelPopoverRoutesSidebar } from './Sidebar';
+import airlock from '~/logic/api';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
   rootUrl: string;
   association: Association;
   group: Group;
-  api: GlobalApi;
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
-  const { association, group, api } = props;
+  const { association, group } = props;
   useHashLink();
-  const overlayRef = useRef<HTMLElement>();
   const history = useHistory();
 
   const onDismiss = useCallback(() => {
@@ -37,16 +39,17 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
 
   const handleUnsubscribe = async () => {
     const [,,ship,name] = association.resource.split('/');
-    await api.graph.leaveGraph(ship, name);
+    await airlock.thread(leaveGraph(ship, name));
     history.push(props.rootUrl);
   };
   const handleRemove = async () => {
-    await api.metadata.remove('graph', association.resource, association.group);
+    await airlock.poke(metadataRemove('graph', association.resource, association.group));
     history.push(props.rootUrl);
   };
   const handleArchive = async () => {
     const [,,,name] = association.resource.split('/');
-    api.graph.deleteGraph(name);
+
+    airlock.thread(deleteGraph(window.ship, name));
     return history.push(props.rootUrl);
   };
 
@@ -59,7 +62,6 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
       height="100%"
       width="100%"
       spacing={[3, 5, 7]}
-      ref={overlayRef}
       dismiss={onDismiss}
     >
       <Row

@@ -1,7 +1,7 @@
-import { AppName, Path, Poke, uxToHex, PatpNoSig } from "../lib";
-import { Association, Metadata, MetadataUpdate, MetadataUpdateAdd, MetadataUpdateRemove } from './types';
+import { AppName, Path, Poke, uxToHex, PatpNoSig } from '../lib';
+import { Association, Metadata, MetadataUpdate, MetadataUpdateAdd, MetadataUpdateRemove, MetadataEditField, MetadataUpdateEdit } from './types';
 
-export const METADATA_UPDATE_VERSION = 1;
+export const METADATA_UPDATE_VERSION = 2;
 
 export const metadataAction = <T extends MetadataUpdate>(data: T, version: number = METADATA_UPDATE_VERSION): Poke<T> => ({
   app: 'metadata-push-hook',
@@ -18,13 +18,13 @@ export const add = (
   description: string,
   dateCreated: string,
   color: string,
-  moduleName: string,
+  moduleName: string
 ): Poke<MetadataUpdateAdd> => metadataAction({
   add: {
     group,
     resource: {
       resource,
-      app: appName
+      'app-name': appName
     },
     metadata: {
       title,
@@ -52,13 +52,32 @@ export const remove = (
     group,
     resource: {
       resource,
-      app: appName
+      'app-name': appName
     }
   }
 });
 
 export { remove as metadataRemove };
 
+export const edit = (
+  association: Association,
+  edit: MetadataEditField
+): Poke<MetadataUpdateEdit> => metadataAction({
+  edit: {
+    group: association.group,
+    resource: {
+      resource: association.resource,
+      'app-name': association['app-name']
+    },
+    edit
+  }
+});
+
+export { edit as metadataEdit };
+
+/**
+ * @deprecated use {@link edit} instead
+ */
 export const update = (
   association: Association,
   newMetadata: Partial<Metadata>
@@ -70,11 +89,11 @@ export const update = (
         group: association.group,
         resource: {
           resource: association.resource,
-          app: association.app
+          'app-name': association['app-name']
         },
         metadata
       }
     });
-}
+};
 
 export { update as metadataUpdate };

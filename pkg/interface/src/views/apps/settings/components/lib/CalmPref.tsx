@@ -3,14 +3,12 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { Form, Formik, FormikHelpers } from 'formik';
 import React, { useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
-import useSettingsState, { selectSettingsState, SettingsState } from '~/logic/state/settings';
-import { AsyncButton } from '~/views/components/AsyncButton';
+import { Form } from 'formik';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { BackButton } from './BackButton';
 import _ from 'lodash';
-import {FormikOnBlur} from '~/views/components/FormikOnBlur';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 
 interface FormSchema {
   hideAvatars: boolean;
@@ -25,35 +23,29 @@ interface FormSchema {
 }
 
 const settingsSel = (s: SettingsState): FormSchema => ({
-    hideAvatars: s.calm.hideAvatars,
-    hideNicknames: s.calm.hideAvatars,
-    hideUnreads: s.calm.hideUnreads,
-    hideGroups: s.calm.hideGroups,
-    hideUtilities: s.calm.hideUtilities,
-    imageShown: !s.remoteContentPolicy.imageShown,
-    videoShown: !s.remoteContentPolicy.videoShown,
-    oembedShown: !s.remoteContentPolicy.oembedShown,
+  hideAvatars: s.calm.hideAvatars,
+  hideNicknames: s.calm.hideNicknames,
+  hideUnreads: s.calm.hideUnreads,
+  hideGroups: s.calm.hideGroups,
+  hideUtilities: s.calm.hideUtilities,
+  imageShown: !s.remoteContentPolicy.imageShown,
+  videoShown: !s.remoteContentPolicy.videoShown,
+  oembedShown: !s.remoteContentPolicy.oembedShown,
   audioShown: !s.remoteContentPolicy.audioShown
 });
 
-
-export function CalmPrefs(props: {
-  api: GlobalApi;
-}) {
-  const { api } = props;
+export function CalmPrefs() {
   const initialValues = useSettingsState(settingsSel);
 
-  const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
-    let promises: Promise<any>[] = [];
+  const onSubmit = useCallback(async (v: FormSchema) => {
+    const { putEntry } = useSettingsState.getState();
     _.forEach(v, (bool, key) => {
       const bucket = ['imageShown', 'videoShown', 'audioShown', 'oembedShown'].includes(key) ? 'remoteContentPolicy' : 'calm';
       if(initialValues[key] !== bool) {
-        promises.push(api.settings.putEntry(bucket, key, bool));
+        putEntry(bucket, key, bucket === 'calm' ? bool : !bool);
       }
-    })
-    await Promise.all(promises);
-    actions.setStatus({ success: null });
-  }, [api]);
+    });
+  }, [initialValues]);
 
   return (
     <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>

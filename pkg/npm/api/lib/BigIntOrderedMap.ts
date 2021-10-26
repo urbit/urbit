@@ -26,7 +26,10 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   }
 
   get size() {
-    return Object.keys(this.root).length;
+    if(this.cachedIter) {
+      return this.cachedIter.length;
+    }
+    return this.generateCachedIter().length;
   }
 
 

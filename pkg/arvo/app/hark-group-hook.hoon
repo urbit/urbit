@@ -113,7 +113,7 @@
         (group-update !<(update:group-store q.cage.sign))
       [cards this]
     ::
-        %metadata-update-1
+        %metadata-update-2
       =^  cards  state
         (metadata-update !<(update:metadata q.cage.sign))
       [cards this]

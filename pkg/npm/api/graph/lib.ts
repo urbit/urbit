@@ -1,18 +1,18 @@
-import _ from 'lodash';
 import { GroupPolicy, makeResource, Resource, resourceFromPath } from '../groups';
 
-import { deSig, unixToDa } from '../lib';
+import { decToUd, deSig, unixToDa, Scry } from '../lib';
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
-import { Content, Graph, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
+import { Content, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
+import { patp2dec } from 'urbit-ob';
 
-export const GRAPH_UPDATE_VERSION: number = 1;
+export const GRAPH_UPDATE_VERSION = 2;
 
 export const createBlankNodeWithChildPost = (
   ship: PatpNoSig,
-  parentIndex: string = '',
-  childIndex: string = '',
+  parentIndex = '',
+  childIndex = '',
   contents: Content[]
-): any => { // TODO should be GraphNode
+): GraphNodePoke => {
   const date = unixToDa(Date.now()).toString();
   const nodeIndex = parentIndex + '/' + date;
 
@@ -39,7 +39,7 @@ export const createBlankNodeWithChildPost = (
       signatures: []
     },
     children: childGraph
-  };  
+  };
 };
 
 export const markPending = (nodes: any): any => {
@@ -56,8 +56,8 @@ export const markPending = (nodes: any): any => {
 export const createPost = (
   ship: PatpNoSig,
   contents: Content[],
-  parentIndex: string = '',
-  childIndex:string = 'DATE_PLACEHOLDER'
+  parentIndex = '',
+  childIndex = 'DATE_PLACEHOLDER'
 ): Post => {
   if (childIndex === 'DATE_PLACEHOLDER') {
     childIndex = unixToDa(Date.now()).toString();
@@ -108,8 +108,13 @@ const hookAction = <T>(data: T, version: number = GRAPH_UPDATE_VERSION): Poke<T>
   json: data
 });
 
-export { hookAction as graphHookAction };
+const dmAction = <T>(data: T): Poke<T> => ({
+  app: 'dm-hook',
+  mark: 'dm-hook-action',
+  json: data
+});
 
+export { hookAction as graphHookAction };
 
 export const createManagedGraph = (
   ship: PatpNoSig,
@@ -132,7 +137,7 @@ export const createManagedGraph = (
       mark: moduleToMark(mod)
     }
   });
-}
+};
 
 export const createUnmanagedGraph = (
   ship: PatpNoSig,
@@ -158,7 +163,7 @@ export const joinGraph = (
 ): Thread<any> => viewAction('graph-join', {
   join: {
     resource: makeResource(ship, name),
-    ship,
+    ship
   }
 });
 
@@ -166,7 +171,7 @@ export const deleteGraph = (
   ship: PatpNoSig,
   name: string
 ): Thread<any> => viewAction('graph-delete', {
-  "delete": {
+  'delete': {
     resource: makeResource(`~${ship}`, name)
   }
 });
@@ -175,7 +180,7 @@ export const leaveGraph = (
   ship: Patp,
   name: string
 ): Thread<any> => viewAction('graph-leave', {
-  "leave": {
+  'leave': {
     resource: makeResource(ship, name)
   }
 });
@@ -194,7 +199,7 @@ export const groupifyGraph = (
       to
     }
   });
-}
+};
 
 export const evalCord = (
   cord: string
@@ -207,7 +212,7 @@ export const evalCord = (
       eval: cord
     }
   });
-}
+};
 
 export const addGraph = (
   ship: Patp,
@@ -222,7 +227,7 @@ export const addGraph = (
       mark
     }
   });
-}
+};
 
 export const addNodes = (
   ship: Patp,
@@ -245,24 +250,24 @@ export const addPost = (
   name: string,
   post: Post
 ): Thread<any> => {
-  let nodes: Record<string, GraphNode> = {};
+  const nodes: Record<string, GraphNode> = {};
   nodes[post.index] = {
     post,
     children: null
   };
   return addNodes(ship, name, nodes);
-}
+};
 
 export const addNode = (
   ship: Patp,
   name: string,
-  node: GraphNode
+  node: GraphNodePoke
 ): Thread<any> => {
-  let nodes: Record<string, GraphNode> = {};
+  const nodes: Record<string, GraphNodePoke> = {};
   nodes[node.post.index] = node;
 
   return addNodes(ship, name, nodes);
-}
+};
 
 export const createGroupFeed = (
   group: Resource,
@@ -292,13 +297,230 @@ export const disableGroupFeed = (
   }
 });
 
-export const removeNodes = (
+/**
+ * Set dm-hook to screen new DMs or not
+ *
+ */
+export const setScreen = (screen: boolean): Poke<any> => dmAction({ screen });
+
+/**
+ * Accept a pending DM request
+ *
+ * @param ship the ship to accept
+ */
+export const acceptDm = (ship: string) => dmAction({
+  accept: ship
+});
+
+/**
+ * Decline a pending DM request
+ *
+ * @param ship the ship to accept
+ */
+export const declineDm = (ship: string) => dmAction({
+  decline: ship
+});
+
+/**
+ * Remove posts from a set of indices
+ *
+ */
+export const removePosts = (
   ship: Patp,
   name: string,
   indices: string[]
 ): Poke<any> => hookAction({
-  'remove-nodes': {
+  'remove-posts': {
     resource: { ship, name },
     indices
   }
+});
+
+/**
+ * Remove a DM message from our inbox
+ *
+ * @remarks
+ * This does not remove the message from the recipients inbox
+ */
+export const removeDmMessage = (
+  our: Patp,
+  index: string
+): Poke<any> => ({
+  app: 'graph-store',
+  mark: `graph-update-${GRAPH_UPDATE_VERSION}`,
+  json: {
+    'remove-posts': {
+      resource: { ship: our, name: 'dm-inbox' },
+      indices: [index]
+    }
+  }
+});
+
+/**
+ * Send a DM to a ship
+ *
+ * @param our sender
+ * @param ship recipient
+ * @param contents contents of message
+ */
+export const addDmMessage = (our: PatpNoSig, ship: Patp, contents: Content[]): Poke<any> => {
+  const post = createPost(our, contents, `/${patp2dec(ship)}`);
+  const node: GraphNode = {
+    post,
+    children: null
+  };
+  return {
+    app: 'dm-hook',
+    mark: `graph-update-${GRAPH_UPDATE_VERSION}`,
+    json: {
+      'add-nodes': {
+        resource: { ship: `~${our}`, name: 'dm-inbox' },
+        nodes: {
+          [post.index]: node
+        }
+      }
+    }
+  };
+};
+
+const encodeIndex = (idx: string) => idx.split('/').map(decToUd).join('/');
+
+/**
+ * Fetch newest (larger keys) nodes in a graph under some index
+ *
+ * @param ship ship of graph
+ * @param name name of graph
+ * @param count number of nodes to load
+ * @param index index to query
+ */
+export const getNewest = (
+  ship: string,
+  name: string,
+  count: number,
+  index = ''
+): Scry => ({
+  app: 'graph-store',
+  path: `/graph/${ship}/${name}/node/siblings` +
+        `/newest/lone/${count}${encodeIndex(index)}`
+});
+
+/**
+ * Fetch nodes in a graph that are older (key is smaller) and direct
+ * siblings of some index
+ *
+ * @param ship ship of graph
+ * @param name name of graph
+ * @param count number of nodes to load
+ * @param index index to query
+ */
+export const getOlderSiblings = (
+  ship: string,
+  name: string,
+  count: number,
+  index: string
+): Scry => ({
+  app: 'graph-store',
+  path: `/graph/${ship}/${name}/node/siblings/older/lone/${count}${encodeIndex(index)}`
+});
+
+/**
+ * Fetch nodes in a graph that are younger (key is larger) and direct
+ * siblings of some index
+ *
+ * @param ship ship of graph
+ * @param name name of graph
+ * @param count number of nodes to load
+ * @param index index to query
+ */
+export const getYoungerSiblings = (
+  ship: string,
+  name: string,
+  count: number,
+  index: string
+): Scry => ({
+  app: 'graph-store',
+  path: `/graph/${ship}/${name}/node/siblings/newer/lone/${count}${encodeIndex(index)}`
+});
+
+/**
+ * Fetch all nodes in a graph under some index, without loading children
+ *
+ * @param ship ship of graph
+ * @param name name of graph
+ * @param index index to query
+ */
+export const getShallowChildren = (ship: string, name: string, index = '') => ({
+  app: 'graph-store',
+  path: `/graph/${ship}/${name}/node/children/lone/~/~${encodeIndex(index)}`
+});
+
+/**
+ * Fetch newest nodes in a graph as a flat map, including children,
+ * optionally starting at a specified key
+ *
+ * @param ship ship of graph
+ * @param name name of graph
+ * @param count number of nodes to load
+ * @param start key to start at
+ *
+ */
+export const getDeepOlderThan = (
+  ship: string,
+  name: string,
+  count: number,
+  start = ''
+) => ({
+  app: 'graph-store',
+  path: `/graph/${ship}/${name}/node/siblings` +
+        `/${start.length > 0 ? 'older' : 'newest'}` +
+        `/kith/${count}${encodeIndex(start)}`
+});
+
+/**
+ * Fetch a flat map of a nodes ancestors and firstborn children
+ *
+ * @param ship ship of graph
+ * @param name name of graph
+ * @param index index to query
+ *
+ */
+export const getFirstborn = (
+  ship: string,
+  name: string,
+  index: string
+): Scry => ({
+  app: 'graph-store',
+  path: `/graph/${ship}/${name}/node/firstborn${encodeIndex(index)}`
+});
+
+/**
+ * Fetch a single node, and all it's children
+ *
+ * @param ship ship of graph
+ * @param name name of graph
+ * @param index index to query
+ *
+ */
+export const getNode = (
+  ship: string,
+  name: string,
+  index: string
+): Scry => ({
+  app: 'graph-store',
+  path: `/graph/${ship}/${name}/node/index/kith${encodeIndex(index)}`
+});
+
+/**
+ * Fetch entire graph
+ *
+ * @param ship ship of graph
+ * @param name name of graph
+ *
+ */
+export const getGraph = (
+  ship: string,
+  name: string
+): Scry => ({
+  app: 'graph-store',
+  path: `/graph/${ship}/${name}`
 });

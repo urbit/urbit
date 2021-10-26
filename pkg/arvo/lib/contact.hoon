@@ -42,6 +42,7 @@
     (snoc rids [our.bowl %''])
   --
 ++  scry-sharing
+  ^-  (set resource)
   .^  (set resource)
     %gx
     (scot %p our.bowl)
@@ -58,6 +59,7 @@
   (~(get by rolodex) ship)
 ::
 ++  scry-is-public
+  ^-  ?
   .^  ?
     %gx
     (scot %p our.bowl)

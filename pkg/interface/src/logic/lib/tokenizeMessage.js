@@ -1,11 +1,11 @@
 import urbitOb from 'urbit-ob';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
-const URL_REGEX = new RegExp(String(/^([^[\]]*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+[\w/])([\s\S]*)/.source));
+const URL_REGEX = new RegExp(String(/^([^[\]]*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+[-a-zA-Z0-9:@;?&=\/%\+\*!'\(\)\$_\{\}\^~\[\]`#|])([\s\S]*)/.source));
 
 const PATP_REGEX = /^([\s\S]*?)(~[a-z_-]+)([\s\S]*)/;
 
-const GROUP_REGEX = new RegExp(String(/^([\s\S ]*?)(~[-a-z_]+\/[-a-z]+)([\s\S]*)/.source));
+const GROUP_REGEX = new RegExp(String(/^([\s\S ]*?)(~[-a-z_]+\/[-a-z0-9]+)([\s\S]*)/.source));
 
 const convertToGroupRef = group => `web+urbitgraph://group/${group}`;
 
@@ -33,9 +33,10 @@ const raceRegexes = (str) => {
       content = { url: link[2] };
     }
   }
-  if(groupRef && groupRef[1].length < pfix?.length) {
+  const perma = parsePermalink(convertToGroupRef(groupRef?.[2]));
+  const [,,host] = perma?.group.split('/') ?? [];
+  if(groupRef && groupRef[1].length < pfix?.length && Boolean(perma) && urbitOb.isValidPatp(host)) {
     pfix = groupRef[1];
-    const perma = parsePermalink(convertToGroupRef(groupRef[2]));
     content = permalinkToReference(perma);
     sfix = groupRef[3];
   }

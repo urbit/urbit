@@ -13,16 +13,18 @@
 ::
 +$  state-0  [%0 base-state-0]
 +$  state-1  [%1 base-state-0]
++$  state-2  [%2 base-state-0]
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
   ==
 +$  card  card:agent:gall
 +$  nodes  (map index:store node:store)
 ++  orm   orm:store
 --
 ::
-=|  state-1
+=|  state-2
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -90,12 +92,23 @@
 ::
 ++  on-save  !>(state)
 ++  on-load
-  |=  =vase
+  |=  =old=vase
   ^-  (quip card _this)
-  =+  !<(old=versioned-state vase)
-  ?:  ?=(%1 -.old)  `this(state old)
-  :_  this(state [%1 +.old])
-  (poke-self:pass noun+!>(%reinit))^~
+  =+  !<(old=versioned-state old-vase)
+  =|  cards=(list card)
+  |-
+  ?-    -.old
+      %0
+    %_($ -.old %1)
+      %1
+    %_    $
+      -.old  %2
+      cards  (weld cards (poke-our:pass %goad noun+!>(%force))^~)
+    ==
+      %2
+    :_  this(state old)
+    (weld cards (poke-self:pass noun+!>(%reinit))^~)
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -189,7 +202,11 @@
     ?>  =(1 ~(wyt by nodes))
     =/  ship-screen  (~(get ju screened) src.bowl)
     =.  ship-screen  (~(uni in ship-screen) (normalize-incoming nodes))
-    `state(screened (~(put by screened) src.bowl ship-screen))
+    =.  screened  (~(put by screened) src.bowl ship-screen)
+    :_  state
+    =/  =action:hook
+      [%pendings ~(key by screened)]
+    (fact:io dm-hook-action+!>(action) ~[/updates])^~
   ::
   ++  dm-exists
     |=  =ship

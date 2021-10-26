@@ -36,10 +36,10 @@ export function useLazyScroll(
   };
 
   useEffect(() => {
-    if((oldCount > count) && ref.current) {
+    if((oldCount > count) && ref.current && !isLoading) {
       loadUntil(ref.current);
     }
-  }, [count]);
+  }, [count, isLoading]);
 
   useEffect(() => {
     if(!ready) {
@@ -48,7 +48,7 @@ export function useLazyScroll(
   }, [ready]);
 
   useEffect(() => {
-    if (!ref.current || isDone || !ready) {
+    if (!ref.current || isDone || !ready || isLoading) {
       return;
     }
     const scroll = ref.current;
@@ -64,7 +64,7 @@ export function useLazyScroll(
     return () => {
       ref.current?.removeEventListener('scroll', onScroll);
     };
-  }, [ref?.current, ready, isDone]);
+  }, [ref?.current, ready, isDone, isLoading]);
 
   return { isDone, isLoading };
 }

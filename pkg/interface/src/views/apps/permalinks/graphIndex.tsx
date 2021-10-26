@@ -73,7 +73,6 @@ function getLinkPermalink(
   const res = _.reduce(
     idx,
     (acc, val, i) => {
-      console.log(acc);
       if (i === 0) {
         return { ...acc, pathname: `${acc.pathname}/index/${val}` };
       } else if (i === 1) {

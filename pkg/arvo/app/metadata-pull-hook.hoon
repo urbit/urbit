@@ -38,7 +38,7 @@
       update:metadata
       %metadata-update
       %metadata-push-hook
-      1  1
+      2  2
       %.n
   ==
 +$  state-zero
@@ -180,7 +180,7 @@
         %kick  [watch-store^~ state]
         ::
           %fact
-        ?>  ?=(%metadata-update-1 p.cage.sign)
+        ?>  ?=(%metadata-update-2 p.cage.sign)
         =+  !<(=update:metadata q.cage.sign)
         ?.  ?=(%initial-group -.update)  `state
         `state(previews (~(del by previews) group.update))
@@ -325,7 +325,7 @@
   %+  turn  ~(tap by associations)
   |=  [=md-resource:metadata =association:metadata]
   %+  poke-our:pass:io  %metadata-store
-  :-  %metadata-update-1
+  :-  %metadata-update-2
   !>  ^-   update:metadata
   [%remove resource md-resource]
 ::

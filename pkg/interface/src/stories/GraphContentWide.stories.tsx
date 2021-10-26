@@ -12,8 +12,6 @@ export default {
   component: GraphContent
 } as Meta;
 
-const fakeApi = {} as any;
-
 const Template: Story<GraphContentProps> = (args) => {
   return (
     <Box
@@ -23,7 +21,7 @@ const Template: Story<GraphContentProps> = (args) => {
       width="100%"
       position="relative"
     >
-      <GraphContent width="100%" {...args} api={fakeApi} showOurContact />
+      <GraphContent width="100%" {...args} showOurContact />
     </Box>
   );
 };

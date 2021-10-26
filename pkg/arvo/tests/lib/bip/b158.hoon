@@ -151,9 +151,11 @@
   ::
   ++  check-all-match
     |=  v=match-vector
-    =+  k=(to-key blockhash.v)
+    =/  b=hexb  (from-cord:hxb (crip blockhash.v))
+    =/  inc=(list [address hexb])  (turn inc-spks.v |=(h=hexb [*address h]))
+    =/  exc=(list [address hexb])  (turn exc-spks.v |=(h=hexb [*address h]))
     %+  expect-eq
-      !>(`(set hexb)`(sy inc-spks.v))
-      !>(`(set hexb)`(all-match filter.v k (weld inc-spks.v exc-spks.v)))
+      !>(`(set [address hexb])`(sy inc))
+      !>(`(set [address hexb])`(all-match filter.v b (weld inc exc)))
   --
 --

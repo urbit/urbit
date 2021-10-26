@@ -12,7 +12,7 @@ export interface UnreadStats {
 }
 
 interface NotifRef {
-  time: BigInteger;
+  time: BigInteger | undefined;
   index: NotifIndex;
 }
 

@@ -93,4 +93,39 @@ describe('tokenizeMessage', () => {
     expect(three).toEqual(' test ');
     expect(hastuc).toEqual('~hastuc-dibtux');
   });
+  it('should tokenize a url with a par', () => {
+    const example = 'test https://en.wikipedia.org/wiki/Turbo_(gastropod)';
+
+    const [{ text }, { url }] = tokenizeMessage(example);
+    expect(text).toBe('test ');
+    expect(url).toBe('https://en.wikipedia.org/wiki/Turbo_(gastropod)');
+  });
+  it('should ignore ending commas', () => {
+    const example = 'https://tlon.io/test, foo';
+    const [{ url }, { text }] = tokenizeMessage(example);
+    expect(text).toBe(', foo');
+    expect(url).toBe('https://tlon.io/test');
+  });
+
+  it('should ignore ending dots', () => {
+    const example = 'https://tlon.io/test. foo';
+    const [{ url }, { text }] = tokenizeMessage(example);
+    expect(text).toBe('. foo');
+    expect(url).toBe('https://tlon.io/test');
+  });
+
+  it('should ignore malformed group links', () => {
+    const example = 'test ~zoid/fakegroup';
+    const [{ text }, ...rest] = tokenizeMessage(example);
+    expect(text).toBe(example);
+    expect(rest.length).toBe(0);
+  });
+  it('should handle groups with numbers', () => {
+    const example = 'oh no, ~sampel/group-123-abc';
+
+    const [{ text }, { reference }] = tokenizeMessage(example);
+    expect(text).toBe('oh no, ');
+    expect(reference.group).toBe('/ship/~sampel/group-123-abc');
+  });
 });
+
