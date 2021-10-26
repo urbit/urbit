@@ -2,10 +2,11 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "@types"],
   "compilerOptions": {
-	  "outDir": "./dist",
-    "module": "ESNext",
+    "outDir": "./dist",
+    "module": "CommonJS",
     "noImplicitAny": true,
-    "target": "ESNext",
+    "target": "ES5",
+    "downlevelIteration": true,
     "pretty": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -17,7 +18,7 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "*" : ["./node_modules/@types/*", "*"]
+      "*": ["./node_modules/@types/*", "*"]
     }
   }
 }

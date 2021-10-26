@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-	  "outDir": "./dist",
-    "module": "ES2020",
+    "outDir": "./dist",
+    "module": "CommonJS",
     "noImplicitAny": true,
-    "target": "ES2017",
+    "target": "ES5",
+    "downlevelIteration": true,
     "pretty": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
