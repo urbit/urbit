@@ -1224,7 +1224,7 @@
     **/
       /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
       */
-        void
+        c3_o
         u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d);
 
       /* u3_newt_send(): write buffer to stream.

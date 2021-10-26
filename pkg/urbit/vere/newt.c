@@ -109,7 +109,7 @@ _newt_meat_next_cb(uv_timer_t* tim_u)
 
 /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
 */
-void
+c3_o
 u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
 {
   u3_mess* mes_u = &mot_u->mes_u;
@@ -149,8 +149,9 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
 
           //  must be non-zero, only 32 bits supported
           //
-          c3_assert( met_d );
-          c3_assert( 0xFFFFFFFFULL > met_d );
+          if ( !met_d || !(0xFFFFFFFFULL > met_d) ) {
+            return c3n;
+          }
 
           //  await body
           //
@@ -183,6 +184,7 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
       } break;
     }
   }
+  return c3y;
 }
 
 /* _newt_read(): handle async read result.
@@ -210,7 +212,12 @@ _newt_read(u3_moat*        mot_u,
     return c3n;
   }
   else {
-    u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_d)len_i);
+    if ( c3n == u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_d)len_i) ) {
+      fprintf(stderr, "newt: decode failed\r\n");
+      mot_u->bal_f(mot_u->ptr_v, -1, "newt-decode");
+      c3_free(buf_u->base);
+      return c3n;
+    }
     c3_free(buf_u->base);
     return c3y;
   }
