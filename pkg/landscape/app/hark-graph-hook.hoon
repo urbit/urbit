@@ -464,7 +464,7 @@
     ++  should-notify
       ?|  is-mention
           (~(has in watching) [rid parent-idx])
-          =(mark `%graph-validator-dm)
+          =(mark %graph-validator-dm)
       ==
     ::
     ++  add-note
