@@ -288,7 +288,7 @@
         ==
     =/  cor=(unit _handle-update)  (abed:handle-update:ha rid)
     ?~  cor  `state
-    abet:add-nodes:u.cor
+    abet:(add-nodes:u.cor updates)
   --
 ::
 ++  on-peek  on-peek:def
@@ -361,7 +361,6 @@
 ::
 ++  handle-update
   |_  $:  rid=resource  ::  input
-          updates=(list node:graph-store)
           =mark
           hark-pokes=(list action:store)  :: output
           new-watches=(list index:graph-store)
@@ -460,7 +459,7 @@
     ::
     ++  place
       ^-  place:store
-      (get-place rid index.post)
+      (get-place rid parent-idx)
     ::
     ++  should-notify
       ?|  is-mention
