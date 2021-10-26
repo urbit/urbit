@@ -288,7 +288,7 @@
         ==
     =/  cor=(unit _handle-update)  (abed:handle-update:ha rid)
     ?~  cor  `state
-    abet:(add-nodes:u.cor updates)
+    abet:(add-nodes:u.cor nodes)
   --
 ::
 ++  on-peek  on-peek:def
