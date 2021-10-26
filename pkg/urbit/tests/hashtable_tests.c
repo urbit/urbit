@@ -1,4 +1,5 @@
 #include "all.h"
+#include "vere/vere.h"
 
 // defined in noun/hashtable.c
 c3_w _ch_skip_slot(c3_w mug_w, c3_w lef_w);
@@ -136,24 +137,37 @@ static c3_i
 _test_cache_trimming(void)
 {
   c3_i ret_i = 1;
-  c3_w max_w = 620;
-  c3_w   i_w;
+  c3_w max_w = 2000000; // big number
+  //c3_w max_w = 348000; // caused a leak before
+  c3_w i_w, fil_w = max_w / 10;
 
-  //u3p(u3h_root) har_p = u3h_new_cache(max_w / 2);
-  u3p(u3h_root) har_p = u3h_new_cache(max_w / 10 );
+  u3p(u3h_root) har_p = u3h_new_cache(fil_w);
   u3h_root*     har_u = u3to(u3h_root, har_p);
 
   for ( i_w = 0; i_w < max_w; i_w++ ) {
-    u3h_put(har_p, i_w, i_w + max_w);
+    u3_noun cel = u3nc(i_w, i_w);
+    u3h_put(har_p, cel, cel);
   }
 
-  if ( ( max_w + max_w - 1) != u3h_get(har_p, max_w - 1) ) {
-    fprintf(stderr, "cache_trimming (a): fail\r\n");
-    ret_i = 0;
-  }
-  if ( ( max_w / 10 ) != har_u->use_w ) {
-    fprintf(stderr, "cache_trimming (b): fail\r\n");
-    ret_i = 0;
+  {
+    // last thing we put in is still there
+    c3_w  las_w = max_w - 1;
+    u3_noun key = u3nc(las_w, las_w);
+    u3_noun val = u3h_get(har_p, key);
+    u3z(key);
+
+    if ( las_w != u3t(val) ) {
+      fprintf(stderr, "cache_trimming (a): fail\r\n");
+      ret_i = 0;
+    }
+
+    if ( fil_w != har_u->use_w ) {
+      fprintf(stderr, "cache_trimming (b): fail %d != %d\r\n",
+              fil_w, har_u->use_w );
+      ret_i = 0;
+    }
+
+    u3z(val);
   }
 
   u3h_free(har_p);
@@ -186,6 +200,8 @@ _test_cache_replace_value(void)
   }
   if ( max_w != har_u->use_w ) {
     fprintf(stderr, "cache_replace (b): fail\r\n");
+    fprintf(stderr, "cache_replace (b): fail %d %d\r\n",
+            max_w, har_u->use_w );
     ret_i = 0;
   }
 

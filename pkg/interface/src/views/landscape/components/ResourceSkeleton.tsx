@@ -65,7 +65,7 @@ type ResourceSkeletonProps = {
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const { association, baseUrl, children } = props;
-  let app = association['app-name'];
+  let app: string = association['app-name'];
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
     app = association.metadata.config.graph as AppName;
   }

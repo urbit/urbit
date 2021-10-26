@@ -1,0 +1,12 @@
+diff --git a/configure b/configure
+--- a/configure
++++ b/configure
+@@ -15,7 +15,7 @@ do
+     log "Trying IMPL=$IMPL"
+ 
+     if IMPL=$impl make >/dev/null 2>/dev/null
+-    then sed -i 's|$(error IMPL must be set)|IMPL='"$impl"'|' Makefile
++    then sed -i "" 's|$(error IMPL must be set)|IMPL='"$impl"'|' Makefile
+          log "IMPL=$IMPL works"
+          exit 0
+     else log "IMPL=$IMPL failed"

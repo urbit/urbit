@@ -56,8 +56,11 @@ export function parentPath(path: string) {
  * string -> enabled feed
  */
 export function getFeedPath(association: Association): string | null | undefined {
-  const { metadata = { config: {} } } = association;
-  if (metadata.config && 'group' in metadata?.config && metadata.config?.group) {
+  const metadata = association?.metadata;
+  if(!metadata) {
+    return undefined;
+  }
+  if (metadata?.config && 'group' in metadata?.config && metadata.config?.group) {
     if ('resource' in metadata.config.group) {
       return metadata.config.group.resource;
     }
@@ -498,7 +501,7 @@ const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 export function getItemTitle(association: Association): string {
   if (DM_REGEX.test(association.resource)) {
     const [, , ship, name] = association.resource.split('/');
-    if (ship.slice(1) === window.ship) {
+    if (deSig(ship) === window.ship) {
       return cite(`~${name.slice(4)}`);
     }
     return cite(ship);
@@ -554,3 +557,25 @@ export async function jsonFetch<T>(info: RequestInfo, init?: RequestInit): Promi
 export function clone<T>(a: T) {
   return JSON.parse(JSON.stringify(a)) as T;
 }
+
+export function toHarkPath(path: string, index = '') {
+  return `/graph/${path.slice(6)}${index}`;
+}
+
+export function toHarkPlace(graph: string, index = '') {
+  return {
+    desk: (window as any).desk,
+    path: toHarkPath(graph, index)
+  };
+}
+
+export function createStorageKey(name: string): string {
+  return `~${window.ship}/${window.desk}/${name}`;
+}
+
+// for purging storage with version updates
+export function clearStorageMigration<T>() {
+  return {} as T;
+}
+
+export const storageVersion = parseInt(process.env.LANDSCAPE_STORAGE_VERSION, 10);

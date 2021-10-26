@@ -1,5 +1,6 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { Group } from '@urbit/api/groups';
+import { deSig } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import React, { ReactElement, useCallback, useRef } from 'react';
 import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom';
@@ -28,8 +29,8 @@ export function PopoverRoutes(
   useHashLink();
 
   const groupSize = props.group.members.size;
-
-  const owner = resourceFromPath(props.association?.group ?? '~zod/group').ship.slice(1) === window.ship;
+  const ship = resourceFromPath(props.association?.group ?? '/ship/~zod/group').ship;
+  const owner = deSig(ship) === window.ship;
 
   const admin = props.group?.tags?.role?.admin.has(window.ship) || false;
 

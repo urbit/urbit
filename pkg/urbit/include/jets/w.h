@@ -192,6 +192,10 @@
 
     u3_noun u3we_hmac(u3_noun);
 
+    u3_noun u3we_kecc224(u3_noun);
+    u3_noun u3we_kecc256(u3_noun);
+    u3_noun u3we_kecc384(u3_noun);
+    u3_noun u3we_kecc512(u3_noun);
 
     u3_noun u3we_argon2(u3_noun);
 

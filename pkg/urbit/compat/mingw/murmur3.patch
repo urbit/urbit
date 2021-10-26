@@ -1,0 +1,13 @@
+diff --git a/makefile b/makefile
+--- a/makefile
++++ b/makefile
+@@ -12,5 +12,9 @@ shared: murmur3.c murmur3.h
+ 	$(CC) -fPIC -O3 -c murmur3.c
+ 	$(CC) -shared -Wl,--export-dynamic murmur3.o -o libmurmur3.so
+ 
++static: murmur3.c murmur3.h
++	$(CC) -fPIC -O3 -c murmur3.c
++	$(AR) rcs libmurmur3.a murmur3.o
++
+ clean:
+ 	rm -rf example *.o *.so
