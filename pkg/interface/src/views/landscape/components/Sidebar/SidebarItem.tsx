@@ -1,12 +1,10 @@
 import _ from 'lodash';
-import React, { useRef, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
 import { Association, cite, deSig } from '@urbit/api';
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
-import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { Workspace } from '~/types/workspace';
 import useContactState, { useContact } from '~/logic/state/contact';
 import { getItemTitle, getModuleIcon, uxToHex } from '~/logic/lib/util';
@@ -186,12 +184,6 @@ export const SidebarAssociationItem = React.memo((props: {
   const group = useGroupState(state => state.groups[groupPath]);
   const { hideNicknames } = useSettingsState(s => s.calm);
   const contacts = useContactState(s => s.contacts);
-  const anchorRef = useRef<HTMLAnchorElement>(null);
-  useTutorialModal(
-    mod as any,
-    groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
-    anchorRef
-  );
   const isUnmanaged = group?.hidden || false;
   const DM = isUnmanaged && props.workspace?.type === 'messages';
   const itemStatus = useAssociationStatus(rid);
