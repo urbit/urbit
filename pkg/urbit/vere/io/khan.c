@@ -59,6 +59,8 @@ _khan_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
   c3_free(ptr_v);
 }
 
+/* _khan_moor_bail(): error callback for u3_moor.
+*/
 static void
 _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
@@ -98,6 +100,16 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
   }
 }
 
+/* _khan_poke_bail(): error function on failed %fyrd.
+*/
+static void
+_khan_poke_bail(u3_ovum* egg_u, c3_noun lud)
+{
+  // TODO print stack trace; write a response or kill the connection?
+}
+
+/* _khan_moor_poke(): called on message read from u3_moor.
+*/
 static void
 _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
@@ -117,7 +129,11 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
                     u3dc("scot", c3__ud, can_u->coq_l),
                     u3_nul));
     cad = u3nc(c3__fyrd, jar);
-    u3_auto_plan(&kan_u->car_u, u3_ovum_init(0, c3__k, wir, cad));
+    u3_auto_peer(
+      u3_auto_plan(&kan_u->car_u, u3_ovum_init(0, c3__k, wir, cad)),
+      0,
+      0,
+      _khan_poke_bail);
   }
 }
 
@@ -143,7 +159,7 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   c3_assert(!err_i);
   err_i = uv_accept(sem_u, (uv_stream_t*)&can_u->mor_u.pyp_u);
   c3_assert(!err_i);
-  u3_newt_read_sync((u3_moat*)&can_u->mor_u);
+  u3_newt_read((u3_moat*)&can_u->mor_u);
   can_u->mor_u.nex_u = (u3_moor*)san_u->can_u;
   san_u->can_u = can_u;
 }
@@ -294,6 +310,7 @@ _khan_ef_handle(u3_khan*  kan_u,
       u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
     }
     else {
+      // TODO u3_king_bail? silently drop it?
       can_u->mor_u.bal_f(can_u, -1, "handle-other");
     }
   }
