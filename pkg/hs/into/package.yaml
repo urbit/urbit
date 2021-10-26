@@ -24,8 +24,13 @@ library:
 
 dependencies:
   - base
+  - binary-strict
+  - bytestring
+  - network
+  - unix
   - urbit-atom
   - urbit-noun
+  - urbit-noun-core
 
 executables:
   into:
