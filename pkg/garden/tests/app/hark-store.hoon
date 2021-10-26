@@ -30,7 +30,7 @@
   [%read-count place]
 ::
 +$  state
-  $:  %8
+  $:  %9
       places=(map place:hark stats:hark)
       seen=timebox:hark
       unseen=timebox:hark
@@ -87,4 +87,17 @@
   =/  actual-archive=notification:hark
     (~(got re archive.state) (add *time ~s1) bin)
   (expect-eq !>(expected-archive) !>(actual-archive))
+::
+++  test-half-open-capped
+  =|  run=@ud 
+  |-
+  ?:  =(run 31)
+    =+  !<(=state on-save:agent)
+    (expect-eq !>(~) !>(half-open.state))
+  =^  movs  agent  
+     (~(on-poke agent (bowl run)) %hark-action !>((add-note run)))
+  =^  mavs  agent  
+     (~(on-poke agent (bowl run)) %hark-action !>(read-count))
+  $(run +(run))
+::
 --
