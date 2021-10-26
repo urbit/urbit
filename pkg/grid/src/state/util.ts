@@ -1,4 +1,4 @@
-import { DocketHref } from '@urbit/api/docket';
+import { Docket, DocketHref, Treaty } from '@urbit/api/docket';
 import { hsla, parseToHsla } from 'color2k';
 import _ from 'lodash';
 
@@ -14,6 +14,14 @@ export async function fakeRequest<T>(data: T, time = 300): Promise<T> {
 
 export function getAppHref(href: DocketHref) {
   return 'site' in href ? href.site : `/apps/${href.glob.base}/`;
+}
+
+export function getAppName(app: (Docket & { desk: string }) | Treaty | undefined): string {
+  if (!app) {
+    return '';
+  }
+
+  return app.title || app.desk;
 }
 
 export function disableDefault<T extends Event>(e: T): void {
@@ -50,3 +58,14 @@ export function getDarkColor(color: string): string {
   const hslaColor = parseToHsla(color);
   return hsla(hslaColor[0], hslaColor[1], 1 - hslaColor[2], 1);
 }
+
+export function createStorageKey(name: string): string {
+  return `~${window.ship}/${window.desk}/${name}`;
+}
+
+// for purging storage with version updates
+export function clearStorageMigration<T>() {
+  return {} as T;
+}
+
+export const storageVersion = parseInt(import.meta.env.VITE_STORAGE_VERSION, 10);

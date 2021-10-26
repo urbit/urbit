@@ -25,6 +25,7 @@
       state-6
       state-7
       state-8
+      state-9
   ==
 ::
 +$  base-state
@@ -56,13 +57,16 @@
 +$  state-8
   [%8 base-state]
 ::
++$  state-9
+  [%9 base-state]
+::
 ::
 +$  cached-state
   $:  by-place=(jug place:store [=lid:store =path])
       ~
   ==
 +$  inflated-state
-  [state-8 cached-state]
+  [state-9 cached-state]
 ::
 ++  orm  ((ordered-map @da timebox:store) gth)
 --
@@ -91,31 +95,20 @@
   =/  old
    !<(versioned-state old-vase)
   =|  cards=(list card)
-  |^  ^-  (quip card _this)
-  ?:  ?=(%8 -.old)
+  |-  ^-  (quip card _this)
+  ?+  -.old
+  ::  pre-dist migration
+    :_  this
+    (poke-our:pass %hark-graph-hook hark-graph-migrate+old-vase)^~
+  ::
+      %9
     =.  -.state  old
-    =.  +.state  inflate
+    =.  +.state  inflate:ha
     :_(this (flop cards))
   ::
-  :_  this
-  (poke-our:pass %hark-graph-hook hark-graph-migrate+old-vase)^~
-  ::
-  ++  index-timebox
-    |=  [=lid:store =timebox:store out=_by-place]
-    ^+  by-place
-    %+  roll  ~(tap by timebox)
-    |=  [[=bin:store =notification:store] out=_out]
-    (~(put ju out) place.bin [lid path.bin])
-  ::
-  ++  inflate
-    =.  by-place   (index-timebox seen+~ seen by-place)
-    =.  by-place   (index-timebox unseen+~ unseen by-place)
-    =.  by-place
-      %+  roll  (tap:orm archive)
-      |=  [[=time =timebox:store] out=_by-place]
-      (index-timebox archive/time timebox out)
-    +.state
-  --
+      %8
+    $(-.old %9, archive.old *archive:store)
+  ==
 ::
 ++  on-watch  
   |=  =path
@@ -178,6 +171,10 @@
     ?+  val  ~|(%bad-noun-poke !!)
       %print  ~&(+.state [~ state])
       %clear  [~ state(. *inflated-state)]
+        %sane
+      ~&  +.state
+      ~&  inflate
+      ?>(=(+.state inflate) `state)
     ==
   ::
   ++  poke-us
@@ -281,14 +278,12 @@
     ^+  poke-core
     =.  poke-core
       (emit (fact:io hark-update+!>([%add-note bin body]) /notes ~))
-    =.  by-place
-      (~(put ju by-place) place.bin unseen+~ path.bin)
     =/  existing-notif
       (~(gut by unseen) bin *notification:store)
     =/  new=notification:store
       [now.bowl bin [body body.existing-notif]]
-    =.  unseen
-      (~(put by unseen) bin new)
+    =.  poke-core
+      (put-lid unseen/~ bin new)
     (give %added new)
   ::
   ++  del-place
@@ -312,25 +307,19 @@
     =/  =notification:store  (need (get-lid lid bin))
     =.  poke-core  (del-lid lid bin)
     =.  poke-core  (put-lid archive+now.bowl bin notification)
-    =?  poke-core  ?=(%unseen -.lid)
-      ?~  n=(get-lid seen+~ bin)  poke-core
-      =.  archive  
-        %^  ~(job re archive)  now.bowl  bin 
-        |=  og=(unit notification:store)
-        (merge-notification og u.n)
-      poke-core
     (give %archived now.bowl lid notification)
   ::
   ++  read-note
     |=  =bin:store
     =/  =notification:store
       (~(got by unseen) bin)
-    =.  unseen
-      (~(del by unseen) bin)
+    =.  poke-core
+      (del-lid unseen/~ bin)
     =/  =time
       (fall timebox:(gut-place place.bin) now.bowl)
     =.  date.notification  time
-    =.  archive  (~(put re archive) time bin notification)
+    =.  poke-core
+      (put-lid archive/time bin notification)
     (give %note-read time bin)
   ::
   ::
@@ -412,10 +401,11 @@
     =/  =time  (~(gut by half-open) bin now.bowl)
     =?  half-open  !(~(has by half-open) bin)
       (~(put by half-open) bin now.bowl)
-    =.  archive
-      %^  ~(job re archive)  time  bin
-      |=(n=(unit notification:store) (merge-notification n note))
-    =.  by-place  (~(put ju by-place) place [archive/now.bowl path.bin])
+    =/  existing  (get-lid archive/time bin) 
+    =/  new  (merge-notification existing note)
+    =.  poke-core
+      (put-lid archive/time bin new)
+    =.  poke-core  (del-lid lid bin)
     =.  poke-core  (give %archived now.bowl unseen+~ (~(got re archive) time bin))
     =.  poke-core  (give %archived now.bowl seen+~ (~(got re archive) time bin))
     $(bins t.bins)
@@ -447,18 +437,22 @@
     poke-core
   ::
   ++  opened
-    =.  seen
-      %-  ~(gas by *timebox:store)
-      %+  murn  ~(tap in (~(uni in ~(key by seen)) ~(key by unseen)))
-      |=  =bin:store
-      =/  se  (~(get by seen) bin)
-      =/  un  (~(get by unseen) bin)  
-      ?~  un  
-        ?~(se ~ `[bin u.se])
-      `[bin (merge-notification se u.un)]
-    =.  unseen  ~
     =.  poke-core  (turn-places |=(=stats:store stats(timebox ~)))
-    (give %opened ~)
+    =.  poke-core  (give %opened ~)
+    %+  roll  ~(tap in ~(key by unseen))
+    |=  [=bin:store out=_poke-core]
+    (opened-note:out bin)
+  ::
+  ++  opened-note
+    |=  =bin:store
+    ^+  poke-core
+    =/  old
+      (~(got by unseen) bin)
+    =.  poke-core
+      (del-lid unseen/~ bin) 
+    =/  se  (~(get by seen) bin)
+    %^  put-lid  seen/~  bin 
+    (merge-notification se old)
     
   ::
   ++  archive-all
@@ -483,8 +477,13 @@
 ::
 ++  get-lid
   |=  [=lid:store =bin:store]
-  =/  =timebox:store  ?:(?=(%unseen -.lid) unseen seen)
-  (~(get by timebox) bin)
+  =;  =timebox:store
+    (~(get by timebox) bin)
+  ?-  -.lid
+    %unseen  unseen
+    %seen    seen
+    %archive  (fall (get:orm archive time.lid) *timebox:store)
+  ==
 ::
 ++  merge-notification
   |=  [existing=(unit notification:store) new=notification:store]
@@ -522,4 +521,21 @@
   ^-  (list [@da timebox:store])
   %+  skim  (tap:orm archive)
   |=([@da =timebox:store] !=(~(wyt by timebox) 0))
+::
+++  inflate
+  =.  by-place   ~
+  =.  by-place   (index-timebox seen+~ seen by-place)
+  =.  by-place   (index-timebox unseen+~ unseen by-place)
+  =.  by-place
+    %+  roll  (tap:orm archive)
+    |=  [[=time =timebox:store] out=_by-place]
+    (index-timebox archive/time timebox out)
+  +.state
+::
+++  index-timebox
+  |=  [=lid:store =timebox:store out=_by-place]
+  ^+  by-place
+  %+  roll  ~(tap by timebox)
+  |=  [[=bin:store =notification:store] out=_out]
+  (~(put ju out) place.bin [lid path.bin])
 --

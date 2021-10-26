@@ -148,7 +148,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         <DialogContent
           onInteractOutside={preventClose}
           onOpenAutoFocus={onOpen}
-          className="fixed bottom-0 sm:top-0 sm:bottom-auto scroll-left-50 flex flex-col justify-end sm:justify-start scroll-full-width h-full max-w-[882px] px-4 sm:pb-4 text-gray-400 -translate-x-1/2 outline-none"
+          className="fixed bottom-0 sm:top-0 sm:bottom-auto scroll-left-50 flex flex-col justify-end sm:justify-start scroll-full-width h-full sm:h-auto max-w-[882px] px-4 sm:pb-4 text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
           aria-controls="leap-items"
           aria-owns="leap-items"

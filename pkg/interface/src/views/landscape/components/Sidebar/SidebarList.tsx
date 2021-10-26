@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback } from 'react';
-import { Associations, Graph } from '@urbit/api';
+import { Associations, Graph, Unreads } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
 import _ from 'lodash';
 
@@ -13,9 +13,8 @@ import useMetadataState from '~/logic/state/metadata';
 import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
 
-function sidebarSort(pending: Set<string>): Record<SidebarSort, (a: string, b: string) => number> {
+function sidebarSort(unreads: Unreads, pending: Set<string>): Record<SidebarSort, (a: string, b: string) => number> {
   const { associations } = useMetadataState.getState();
-  const { unreads } = useHarkState.getState();
   const alphabetical = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
@@ -102,9 +101,10 @@ export function SidebarList(props: {
   const inbox = useInbox();
   const graphKeys = useGraphState(s => s.graphKeys);
   const pending = useGraphState(s => s.pendingDms);
+  const unreads = useHarkState(s => s.unreads);
 
   const ordered = getItems(associations, workspace, inbox, pending)
-    .sort(sidebarSort(pending)[config.sortBy]);
+    .sort(sidebarSort(unreads, pending)[config.sortBy]);
 
   const history = useHistory();
 

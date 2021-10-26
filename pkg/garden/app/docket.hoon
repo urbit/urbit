@@ -232,8 +232,8 @@
         ::  if the new chad is a site, we're instantly done
         ::
         ?:  ?=(%site -.href.docket)
-          :-  ~[add-fact:cha]
           =.  charges  (new-chad:cha %site ~)
+          :-  ~[add-fact:cha]
           state
         ::
         =.  by-base  (~(put by by-base) base.href.docket desk)

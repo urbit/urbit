@@ -4,6 +4,7 @@ import { Button } from '../components/Button';
 import { Dialog, DialogClose, DialogContent } from '../components/Dialog';
 import { useRecentsStore } from '../nav/search/Home';
 import useDocketState, { useCharges } from '../state/docket';
+import { getAppName } from '../state/util';
 
 export const RemoveApp = () => {
   const history = useHistory();
@@ -21,7 +22,7 @@ export const RemoveApp = () => {
   return (
     <Dialog open onOpenChange={(open) => !open && history.push('/')}>
       <DialogContent showClose={false} className="space-y-6" containerClass="w-full max-w-md">
-        <h1 className="h4">Remove &ldquo;{docket?.title || ''}&rdquo;?</h1>
+        <h1 className="h4">Remove &ldquo;{getAppName(docket)}&rdquo;?</h1>
         <p className="text-base tracking-tight pr-6">
           This will remove the software&apos;s tile from your home screen.
         </p>
@@ -30,7 +31,7 @@ export const RemoveApp = () => {
             Cancel
           </DialogClose>
           <DialogClose as={Button} onClick={handleRemoveApp}>
-            Remove &ldquo;{docket?.title}&rdquo;
+            Remove &ldquo;{getAppName(docket)}&rdquo;
           </DialogClose>
         </div>
       </DialogContent>

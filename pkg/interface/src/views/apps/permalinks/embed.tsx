@@ -199,6 +199,8 @@ const ClampedText = styled(Text)`
 type AppTileProps = Treaty & BoxProps;
 
 export function AppTile({ color, image, ...props }: AppTileProps) {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <Box
       position="relative"
@@ -210,7 +212,7 @@ export function AppTile({ color, image, ...props }: AppTileProps) {
       bg={color || 'washedGray'}
       {...props}
     >
-      {image && (
+      {image && !imageError && (
         <Image
           src={image}
           position="absolute"
@@ -218,6 +220,7 @@ export function AppTile({ color, image, ...props }: AppTileProps) {
           left="0"
           width="100%"
           height="100%"
+          onError={() => setImageError(true)}
         />
       )}
     </Box>

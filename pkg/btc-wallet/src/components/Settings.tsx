@@ -1,7 +1,8 @@
 import React from 'react';
-import { Row, Text, Button, Col } from '@tlon/indigo-react';
+import { Box, Icon, Row, Text, Button, Col } from '@tlon/indigo-react';
 import { useSettings } from '../hooks/useSettings';
 import { api } from '../lib/api';
+import { Link } from 'react-router-dom';
 
 const Settings = () => {
   const { wallet, provider } = useSettings();
@@ -39,10 +40,15 @@ const Settings = () => {
       borderRadius="48px"
       backgroundColor="white"
     >
-      <Row mb="12px">
+      <Row mb="12px" alignItems="center" justifyContent="space-between">
         <Text fontSize={1} fontWeight="bold" color="black">
           XPub Derivation
         </Text>
+        <Link to="/~btc">
+          <Box backgroundColor="white" width={5} height={5} p={2} m={2}>
+            <Icon icon="X" />
+          </Box>
+        </Link>
       </Row>
       <Row
         borderRadius="12px"

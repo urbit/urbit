@@ -6,7 +6,7 @@ import { persist } from 'zustand/middleware';
 import { BackgroundConfig, LeapCategories, RemoteContentPolicy, TutorialProgress, tutorialProgress } from '~/types/local-update';
 import airlock from '~/logic/api';
 import { bootstrapApi } from '../api/bootstrap';
-import { wait } from '~/logic/lib/util';
+import { clearStorageMigration, createStorageKey, storageVersion, wait } from '~/logic/lib/util';
 
 export type SubscriptionStatus = 'connected' | 'disconnected' | 'reconnecting';
 
@@ -136,7 +136,9 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
       'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef', 'subscription',
       'errorCount', 'breaks'
     ],
-  name: 'localReducer'
+  name: createStorageKey('local'),
+  version: storageVersion,
+  migrate: clearStorageMigration
 }));
 
 function withLocalState<P, S extends keyof LocalState, C extends React.ComponentType<P>>(Component: C, stateMemberKeys?: S[]) {
