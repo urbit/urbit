@@ -42,6 +42,7 @@ export interface HarkState {
   notificationsGroupConfig: string[];
   unreads: Unreads;
   archiveNote: (bin: HarkBin, lid: HarkLid) => Promise<void>;
+  readCount: (path: string) => Promise<void>;
 }
 
 const useHarkState = createState<HarkState>(
@@ -171,5 +172,4 @@ export function useHarkGraphIndex(graph: string, index: string) {
   );
 }
 
-window.hark = useHarkState.getState;
 export default useHarkState;

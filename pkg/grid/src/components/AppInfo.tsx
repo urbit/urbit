@@ -8,7 +8,7 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from './Dialog';
 import { DocketHeader } from './DocketHeader';
 import { Spinner } from './Spinner';
 import { VatMeta } from './VatMeta';
-import useDocketState, { ChargeWithDesk } from '../state/docket';
+import useDocketState, { ChargeWithDesk, useTreaty } from '../state/docket';
 import { getAppHref, getAppName } from '../state/util';
 import { addRecentApp } from '../nav/search/Home';
 import { TreatyMeta } from './TreatyMeta';
@@ -52,6 +52,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
   const [ship, desk] = getRemoteDesk(docket, vat);
   const publisher = vat?.arak?.rail?.publisher ?? ship;
   const [copied, setCopied] = useState(false);
+  const treaty = useTreaty(ship, desk);
 
   const installApp = async () => {
     if (installStatus === 'installed') {
@@ -135,18 +136,20 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
           </PillButton>
         </div>
       </DocketHeader>
+      <div className="space-y-6">
       {vat ? (
         <>
           <hr className="-mx-5 sm:-mx-8 border-gray-50" />
           <VatMeta vat={vat} />
         </>
       ) : null}
-      {'chad' in docket ? null : (
+      {!treaty ? null : (
         <>
           <hr className="-mx-5 sm:-mx-8 border-gray-50" />
-          <TreatyMeta treaty={docket} />
+          <TreatyMeta treaty={treaty} />
         </>
       )}
+    </div>
     </div>
   );
 };
