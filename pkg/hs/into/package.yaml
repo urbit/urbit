@@ -26,6 +26,7 @@ dependencies:
   - base
   - binary-strict
   - bytestring
+  - filepath
   - network
   - unix
   - urbit-atom

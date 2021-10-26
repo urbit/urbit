@@ -15,8 +15,8 @@ import Data.Binary.Strict.Get
 import qualified Data.ByteString as BS
 import Network.Socket
 import Network.Socket.ByteString
-import Numeric (showHex)
 import System.Environment
+import System.FilePath.Posix
 import System.Posix
 import Urbit.Noun.Cue
 
@@ -32,7 +32,7 @@ main = withSocketsDo $ do
   let paf = args !! 0
   changeWorkingDirectory paf
   sock <- socket AF_UNIX Stream 0
-  connect sock (SockAddrUnix ".urb/khan.sock")
+  connect sock (SockAddrUnix $ ".urb" </> "khan.sock")
   send sock codeCmd
   lenBS <- recv sock 8
   let (len', _) = runGet getWord64le lenBS
