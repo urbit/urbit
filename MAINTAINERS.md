@@ -29,7 +29,7 @@ released.
 ### Release branches
 
 Release branches are code that is ready to release.  All release branch names
-should start with `release/`.
+should start with `next/`.
 
 All code must be reviewed before being pushed to a release branch.  Thus,
 feature branches should be PR'd against a release branch, not master.
@@ -41,57 +41,55 @@ be released together -- unless one of the underlying commits is separately put
 on a release branch.
 
 Here's a worked example.  The rule is to make however many branches are useful,
-and no more.  This example is not prescriptive, the developers making the
+and no more.  This example is not prescriptive; the developers making the
 changes may add, remove, or rename branches in this flow at will.
 
 Suppose you (plural, the dev community at large) complete some work in a
-userspace app, and you put it in `release/next-userspace`.  Separately, you make
-a small JS change.  If you PR it to `release/next-userspace`, then it will only
-be released at the same time as the app changes.  Maybe this is fine, or maybe
-you want this change to go out quickly, and the change in
-`release/next-userspace` is relatively risky, so you don't want to push it out
-on Friday afternoon.  In this case, put the change in another release branch,
-say `release/next-js`.  Now either can be released independently.
+userspace app, and you put it in `next/landscape`.  Separately, you make a small
+JS change.  If you PR it to `next/landscape`, then it will only be released at
+the same time as the app changes.  Maybe this is fine, or maybe you want this
+change to go out quickly, and the change in `next/landscape` is relatively
+risky, so you don't want to push it out on Friday afternoon.  In this case, put
+the change in another release branch, say `next/js`.  Now either can be released
+independently.
 
-Suppose you do further work that you want to PR to `release/next-userspace`, but
-it depends on your fixes in `release/next-js`.  Simply merge `release/next-js`
-into either your feature branch or `release/next-userspace` and PR your finished
-work to `release/next-userspace`.  Now there is a one-way coupling:
-`release/next-userspace` contains `release/next-js`, so releasing it will
-implicitly release `release/next-js`.  However, you can still release
-`release/next-js` independently.
+Suppose you do further work that you want to PR to `next/landscape`, but it
+depends on your fixes in `next/js`.  Simply merge `next/js` into either your
+feature branch or `next/landscape` and PR your finished work to
+`next/landscape`.  Now there is a one-way coupling: `next/landscape` contains
+`next/js`, so releasing it will implicitly release `next/js`.  However, you can
+still release `next/js` independently.
 
-This scheme extends to other branches, like `release/next-kernel` or
-`release/os1.1` or `release/ford-fusion`.  Some branches may be long-lived and
-represent simply the "next" release of something, while others will have a
-definite lifetime that corresponds to development of a particular feature or
-numbered release.
+This scheme extends to other branches, like `next/base` or `next/os1.1` or
+`next/ford-fusion`.  Some branches may be long-lived and represent simply the
+"next" release of something, while others will have a definite lifetime that
+corresponds to development of a particular feature or numbered release.
 
 Since they are "done", release branches should be considered "public", in the
 sense that others may depend on them at will.  Thus, never rebase a release
 branch.
 
 When cutting a new release, you can filter branches with `git branch --list
-'release/*'` or by typing "release/" in the branch filter on Github.  This will
-give you the list of branches which have passed review and may be merged to
-master and released.  When choosing which branches to release, make sure you
-understand the risks of releasing them immediately.  If merging these produces
-nontrivial conflicts, consider asking the developers on those branches to merge
-between themselves.  In many cases a developer can do this directly, but if it's
+'next/*'` or by typing "next/" in the branch filter on Github.  This will give
+you the list of branches which have passed review and may be merged to master
+and released.  When choosing which branches to release, make sure you understand
+the risks of releasing them immediately.  If merging these produces nontrivial
+conflicts, consider asking the developers on those branches to merge between
+themselves.  In many cases a developer can do this directly, but if it's
 sufficiently nontrivial, this may be a reviewed PR of one release branch into
 another.
 
-### Non-OTAable release branches
+#### Standard release branches
 
-In some cases, work is completed which cannot be OTA'd as written.  For example,
-the code may lack state adapters, or it may not properly handle outstanding
-subscriptions.  It could also be code which is planned to be released only upon
-a breach (network-wide or rolling).
+While you can always create non-standard release branches to stage for a
+particular release, most changes should go through the following:
 
-In this case, the code may be PR'd to a `na-release/` branch.  All rules are the
-same as for release branches, except that the code does not need to apply
-cleanly to an existing ship.  If you later write state adapter or otherwise make
-it OTAable, then you may PR it to a release branch.
+- next/base -- changes to the %base desk in pkg/arvo
+- next/garden -- changes to the %garden desk
+- next/landscape -- changes to the %landscape desk
+- next/bitcoin -- changes to the %bitcoin desk
+- next/webterm -- changes to the %webterm desk
+- next/vere -- changes to the runtime
 
 ### Other cases
 
@@ -309,9 +307,9 @@ the new binary, and restarting the pier with it.
 #### Continuous deployment
 
 A subset of release branches are deployed continuously to the network. Thus far
-this only includes `release/next-userspace`, which deploys livenet-compatible
+this only includes `next/landscape`, which deploys livenet-compatible
 changes to select QA ships. Any push to master will automatically
-merge master into `release/next-userspace` to keep the streams at parity.
+merge master into `next/landscape` to keep the streams at parity.
 
 ### Announce the update
 
