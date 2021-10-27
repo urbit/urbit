@@ -103,7 +103,7 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 /* _khan_poke_bail(): error function on failed %fyrd.
 */
 static void
-_khan_poke_bail(u3_ovum* egg_u, c3_noun lud)
+_khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
 {
   // TODO print stack trace; write a response or kill the connection?
 }
