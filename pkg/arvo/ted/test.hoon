@@ -14,12 +14,11 @@
 =>
 |%
 ::  +run-test: execute an individual test
-::  see photo
+::
 ++  run-test
   |=  [pax=path test=test-func]
   ^-  [ok=? =tang]
   =+  name=(spud pax)
-  ~>  %bout
   =+  run=(mule test)
   ?-  -.run
     %|  |+(welp p.run leaf+"CRASHED {name}" ~)
@@ -67,8 +66,7 @@
   =/  fire-arm=nock
     ~|  [%failed-to-compile-test-arm name]
     q:(~(mint ut typ) p:!>(*tang) [%limb name])
-  [name |.(;;(tang .*(cor fire-arm)))]
-:: see photo
+  [name |.(;;(tang ~>(%bout.[1 name] .*(cor fire-arm))))]
 ::  +has-test-prefix: does the arm define a test we should run?
 ::
 ++  has-test-prefix

@@ -1702,11 +1702,10 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 static void
 _n_hilt_hind(u3_noun tok, u3_noun pro)
 {
-  u3_noun h_tok, t_tok;
-  u3r_cell(tok, &h_tok, &t_tok);
-  if ( c3__bout == h_tok ) {
-    u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(t_tok));
-    c3_c str_c[64];
+  u3_noun p_tok, q_tok;
+  if ( (c3y == u3r_cell(tok, &p_tok, &q_tok)) && (c3__bout == p_tok) ) {
+    u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(q_tok));
+    c3_c    str_c[64];
     snprintf(str_c, 63, "took %" PRIu64 "\xc2\xb5s", u3r_chub(0, delta) );
     u3t_slog(u3nc(0, u3i_string(str_c)));
     u3z(delta);
@@ -1751,15 +1750,16 @@ static void
 _n_hint_hind(u3_noun tok, u3_noun pro)
 {
   u3_noun p_tok, q_tok, r_tok;
-  u3r_trel(tok, &p_tok, &q_tok, &r_tok);
-  if ( c3__bout == p_tok ) {
+  if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok))
+      && (c3__bout == p_tok) )
+  {
     // get the microseconds elapsed
     u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(r_tok));
 
     // unpack q_tok to get the priority integer and the tank
     // p_q_tok is the priority, q_q_tok is the tank we will work with
     u3_noun p_q_tok, q_q_tok;
-    u3r_cell(q_tok, &p_q_tok, &q_q_tok);
+    c3_assert(c3y == u3r_cell(q_tok, &p_q_tok, &q_q_tok));
 
     // format the timing report
     c3_c str_c[64];
