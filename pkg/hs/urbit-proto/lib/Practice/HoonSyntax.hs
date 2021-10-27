@@ -1,11 +1,13 @@
 module Practice.HoonSyntax where
 
-import ClassyPrelude
+import ClassyPrelude hiding (choice)
 
+import Control.Monad.Combinators
 import Control.Monad.Reader
 import Data.Void
 import Text.Megaparsec
 import Text.Megaparsec.Char
+import Text.Megaparsec.Char.Lexer
 
 import Practice.HoonCommon (Atom, Axis, Term, Wing, Limb(..))
 
@@ -17,6 +19,7 @@ data Bass
   | Nul
   | Vod
   | Aur Term
+  deriving (Eq, Ord, Show)
 
 data Hoon
   = Wung Wing
@@ -99,6 +102,7 @@ data Hoon
   | Wtzp Hoon
   --
   | Zpzp
+  deriving (Eq, Ord, Show)
 
 -- | Patterns
 type Skin = Hoon
@@ -118,12 +122,23 @@ data Mode = Wide | Tall
 
 type Parser = ReaderT Mode (Parsec Void Text)
 
+parse :: Parser a -> FilePath -> Text -> Either Text a
+parse p fp inp = bimap (pack . errorBundlePretty) id
+               $ runParser (runReaderT p Tall) fp inp
+
 hoon :: Parser Hoon
-hoon = undefined
+hoon = choice
+  [ adam
+  ]
 
 skin :: Parser Skin
-skin = undefined
+skin = hoon
 
 spec :: Parser Spec
-spec = undefined
+spec = hoon
+
+adam :: Parser Hoon
+adam = choice
+  [ decimal <&> \d -> Adam d "ud"
+  ]
 

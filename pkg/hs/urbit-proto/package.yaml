@@ -16,6 +16,7 @@ dependencies:
   - mtl
   - multimap
   - para
+  - parser-combinators
   - pretty-show
   - text
   - transformers

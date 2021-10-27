@@ -106,6 +106,7 @@ library
     , mtl
     , multimap
     , para
+    , parser-combinators
     , pretty-show
     , text
     , transformers
@@ -171,6 +172,7 @@ executable proto
     , mtl
     , multimap
     , para
+    , parser-combinators
     , pretty-show
     , text
     , transformers
@@ -244,6 +246,7 @@ test-suite proto-test
     , mtl
     , multimap
     , para
+    , parser-combinators
     , pretty-show
     , tasty
     , tasty-golden

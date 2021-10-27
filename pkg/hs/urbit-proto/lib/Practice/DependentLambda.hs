@@ -76,6 +76,8 @@ deriving instance Ord a  => Ord  (Code a)
 deriving instance Read a => Read (Code a)
 deriving instance Show a => Show (Code a)
 
+deriving instance Show a => Show (Base a)
+
 instance Applicative Code where
   pure = Look
   (<*>) = ap
