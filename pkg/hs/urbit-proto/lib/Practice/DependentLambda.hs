@@ -10,12 +10,7 @@ import Data.Maybe (fromJust)
 import Data.Set (isSubsetOf)
 import Numeric.Natural
 
-type Atom = Natural
-
-type Axis = Atom
-
--- | A @tas. Frankly, would prefer to rename this `name`.
-type Term = String
+import Practice.HoonCommon (Atom, Axis, Term, Wing, Limb(..))
 
 -- | Fully evaluated term. Since a common source of bugs is forgetting to
 -- evaluate, it makes great sense for this to be a newtype.
@@ -25,13 +20,6 @@ newtype Base a = Base { loft :: Code a -- ^ "Unevalutate" a value back into code
 
 -- | Alias useful for pedagogical purposes.
 type Type = Base
-
-type Wing = [Limb]
-
-data Limb
-  = Axis Axis
-  | Ally Term
-  deriving (Eq, Ord, Read, Show)
 
 -- | Constraint on variable types
 type Vary a = (Eq a, Show a)
