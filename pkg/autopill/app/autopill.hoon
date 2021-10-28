@@ -168,7 +168,7 @@
   =;  sag=sole-effect:shoe
     [[%txt "built {(trip name)}.pill"] sag ~]
   |^  =*  base  base.pill
-      :+  %sag  /[name]/pill
+      :+  %sag  /pills/[name]/pill
       ?-  -.pill
         %ivory  (ivory:libpill (sys base))
       ::
