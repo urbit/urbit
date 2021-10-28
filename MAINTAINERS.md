@@ -189,21 +189,23 @@ What you should do here depends on the type of release being made.
 
 First, for Urbit OS releases:
 
-If it's a very trivial hotfix that you know isn't going to break
-anything, tag it as `urbit-os-vx.y.z`.  Here 'x' refers to the product version
-(e.g. OS1, OS2..), 'y' to the continuity era in that version, and 'z' to an
-OTA patch counter.  So for a hotfix version, you'll just want to increment 'z'.
+If it's a very trivial hotfix that you know isn't going to break anything, tag
+it as `urbit-os-vx.y`.  Here 'x' is the major version and 'y' is an OTA patch
+counter.  Change `os` to e.g. `landscape` or another desk if that's what you're
+releasing.  If you're releasing changes to more than one desk, add a separate
+tag for each desk (but only make one announcment email/post, with all of the
+desks listed).
 
 Use an annotated tag, i.e.
 
 ```
-git tag -a urbit-os-vx.y.z
+git tag -a urbit-os-vx.y
 ```
 
 The tag format should look something like this:
 
 ```
-urbit-os-vx.y.z
+urbit-os-vx.y
 
 This release will be pushed to the network as an over-the-air update.
 
@@ -234,17 +236,17 @@ If the commit descriptions are too poor to easily do this, then again, yell at
 your fellow contributors to make them better in the future.
 
 If it's *not* a trivial hotfix, you should probably make any number of release
-candidate tags (e.g. `urbit-os-vx.y.z.rc1`, `urbit-os-vx.y.z.rc2`, ..), test
+candidate tags (e.g. `urbit-os-vx.y.rc1`, `urbit-os-vx.y.rc2`, ..), test
 them, and after you confirm one of them is good, tag the release as
-`urbit-os-vx.y.z`.
+`urbit-os-vx.y`.
 
 For Vere releases:
 
-Tag the release as `urbit-vx.y.z`.  The tag format should look something like
+Tag the release as `urbit-vx.y`.  The tag format should look something like
 this:
 
 ```
-urbit-vx.y.z
+urbit-vx.y
 
 Note that this Vere release will by default boot fresh ships using an Urbit OS
 va.b.c pill.
@@ -252,10 +254,10 @@ va.b.c pill.
 Release binaries:
 
 (linux64)
-https://bootstrap.urbit.org/urbit-vx.y.z-linux64.tgz
+https://bootstrap.urbit.org/urbit-vx.y-linux64.tgz
 
 (macOS)
-https://bootstrap.urbit.org/urbit-vx.y.z-darwin.tgz
+https://bootstrap.urbit.org/urbit-vx.y-darwin.tgz
 
 Release notes:
 
@@ -293,10 +295,10 @@ and stars to the rest of the network.
 For consistency, I create a release tarball and then rsync the files in.
 
 ```
-$ wget https://github.com/urbit/urbit/archive/urbit-os-vx.y.z.tar.gz
-$ tar xzf urbit-os-vx.y.z.tar.gz
+$ wget https://github.com/urbit/urbit/archive/urbit-os-vx.y.tar.gz
+$ tar xzf urbit-os-vx.y.tar.gz
 $ herb zod -p hood -d "+hood/mount /=home="
-$ rsync -zr --delete urbit-urbit-os-vx.y.z/pkg/arvo/ zod/home
+$ rsync -zr --delete urbit-urbit-os-vx.y/pkg/arvo/ zod/home
 $ herb zod -p hood -d "+hood/commit %home"
 $ herb zod -p hood -d "+hood/merge %kids our %home"
 ```
@@ -304,16 +306,11 @@ $ herb zod -p hood -d "+hood/merge %kids our %home"
 For Vere updates, this means simply shutting down each desired ship, installing
 the new binary, and restarting the pier with it.
 
-#### Continuous deployment
-
-A subset of release branches are deployed continuously to the network. Thus far
-this only includes `next/landscape`, which deploys livenet-compatible
-changes to select QA ships. Any push to master will automatically
-merge master into `next/landscape` to keep the streams at parity.
-
 ### Announce the update
 
 Post an announcement to urbit-dev.  The tag annotation, basically, is fine here
--- I usually add the %base hash (for Urbit OS releases) and the release binary
+-- I usually add the %cz hash (for Urbit OS releases) and the release binary
 URLs (for Vere releases).  Check the urbit-dev archives for examples of these
 announcements.
+
+Post the same announcement to the group feed of Urbit Community.
