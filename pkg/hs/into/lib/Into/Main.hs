@@ -11,39 +11,44 @@
 -}
 module Into.Main (main) where
 
-import Control.Monad
-import Data.Binary.Builder
-import Data.Binary.Strict.Get
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Lazy as BL
-import Data.Text
-import GHC.Natural
-import Network.Socket
-import Network.Socket.ByteString
-import Numeric (showHex)
-import System.Environment
-import System.FilePath.Posix
-import System.Posix
-import Text.Printf
-import Urbit.Noun
-import Urbit.Ob
+import            Control.Monad       ((>=>))
+import            Data.Binary.Builder (fromByteString, putWord64le,
+                                       toLazyByteString)
+import            Data.Binary.Strict.Get (getWord64le, runGet)
+import qualified  Data.ByteString as B
+import qualified  Data.ByteString.Lazy as BL
+import qualified  Data.Text as T
+import            GHC.Natural         (Natural)
+import            Network.Socket      (Family(AF_UNIX), SockAddr(SockAddrUnix),
+                                       SocketType(Stream), close, connect,
+                                       socket, withSocketsDo)
+import            Network.Socket.ByteString (send, recv)
+import            System.Environment  (getArgs)
+import            System.FilePath.Posix ((</>))
+import            System.Posix        (changeWorkingDirectory)
+import            Text.Printf         (printf)
+import            Urbit.Noun          (Cord(..), FromNoun, ToNoun, cueBSExn,
+                                       fromNounExn, jamBS, toNoun)
+import            Urbit.Ob            (patp, renderPatp)
 
-packNoun :: ToNoun a => a -> BS.ByteString
+packNoun :: ToNoun a => a -> B.ByteString
 packNoun jar =
   let pac = jamBS (toNoun jar) in
   BL.toStrict $ toLazyByteString $
-    mconcat [putWord64le $ fromIntegral $ BS.length pac,
+    mconcat [putWord64le $ fromIntegral $ B.length pac,
              fromByteString pac]
 
-codeCmd :: BS.ByteString
-codeCmd = packNoun (Cord $ Data.Text.pack "cod", False)
+codeCmd :: B.ByteString
+codeCmd = packNoun (Cord "cod", False)
 
-extractNoun :: FromNoun a => BS.ByteString -> IO a
+extractNoun :: FromNoun a => B.ByteString -> IO a
 extractNoun = cueBSExn >=> fromNounExn
+
+hexDumpBS :: B.ByteString -> T.Text
+hexDumpBS = B.foldr (\b -> (<>) (T.pack $ printf "%02x" b)) ""
 
 main :: IO ()
 main = withSocketsDo $ do
-  print $ (BS.foldr (\b -> (<>) (Data.Text.pack $ printf "%02x" b)) Data.Text.empty) codeCmd
   args <- getArgs
   let paf = args !! 0
   changeWorkingDirectory paf
@@ -60,5 +65,5 @@ main = withSocketsDo $ do
       let (_,cod') = jar
       case cod' of
         Nothing -> error "no code"
-        Just cod -> putStrLn . unpack . renderPatp . patp $ cod
+        Just cod -> putStrLn . T.unpack . renderPatp . patp $ cod
   close sock

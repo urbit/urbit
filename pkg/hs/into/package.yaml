@@ -36,6 +36,9 @@ dependencies:
   - urbit-noun
   - urbit-noun-core
 
+default-extensions:
+  - OverloadedStrings
+
 executables:
   into:
     main: Main.hs
