@@ -1024,13 +1024,19 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       case c3__bout: {
         u3_noun fen = u3_nul;
         c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+        // add appropriate hind opcode
+        ++nef_w; _n_emit(&fen, ( c3y == los_o ) ? HILL : HILK);
+        // skip over the cleanup opcode
+        ++nef_w; _n_emit(&fen, u3nc(SBIP, 1));
 
+        //  call hilt_fore
         //  HILB overflows to HILS
-        //
         ++tot_w; _n_emit(ops, u3nc(HILB, u3nc(u3k(hif), u3k(nef))));
-        ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
+        // if fore return c3n, skip fen
+        ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
         tot_w += nef_w; _n_apen(ops, fen);
-        ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HILL : HILK);
+        // post-skip cleanup opcode
+        ++tot_w; _n_emit(ops, ( c3y == los_o ) ? TOSS : SWAP);
       } break;
     }
   }
@@ -1053,14 +1059,21 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
           case c3__bout: {
             u3_noun fen = u3_nul;
             c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+            // add appropriate hind opcode
+            ++nef_w; _n_emit(&fen, ( c3y == los_o ) ? HINL : HINK);
+            // skip over the cleanup opcode
+            ++nef_w; _n_emit(&fen, u3nc(SBIP, 1));
 
+            // push clue
             tot_w += _n_comp(ops, hod, c3n, c3n);
+            //  call hint_fore
             //  HINB overflows to HINS
-            //
             ++tot_w; _n_emit(ops, u3nc(HINB, u3nc(u3k(zep), u3k(nef))));
-            ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
+            // if fore return c3n, skip fen
+            ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
             tot_w += nef_w; _n_apen(ops, fen);
-            ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HINL : HINK);
+            // post-skip cleanup opcode
+            ++tot_w; _n_emit(ops, ( c3y == los_o ) ? TOSS : SWAP);
           } break;
         }
       } break;
