@@ -196,7 +196,7 @@
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
       [%x %all ~]
-    ``noun+!>(invites)
+    ``invite-update+!>([%initial invites])
   ::
       [%x %invitatory @ ~]
     :^  ~  ~  %noun
