@@ -28,8 +28,10 @@ dependencies:
   - bytestring
   - filepath
   - network
+  - text
   - unix
   - urbit-atom
+  - urbit-hob
   - urbit-noun
   - urbit-noun-core
 

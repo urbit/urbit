@@ -11,20 +11,27 @@
 -}
 module Into.Main (main) where
 
+import Control.Monad
 import Data.Binary.Strict.Get
 import qualified Data.ByteString as BS
+import Data.Text
+import GHC.Natural
 import Network.Socket
 import Network.Socket.ByteString
 import System.Environment
 import System.FilePath.Posix
 import System.Posix
-import Urbit.Noun.Cue
+import Urbit.Noun
+import Urbit.Ob
 
 codeCmd :: BS.ByteString
 codeCmd = BS.pack [0x05, 0x00, 0x00, 0x00,
                    0x00, 0x00, 0x00, 0x00,
                    0x01, 0x6f, 0xec, 0x8d,
                    0xcc]
+
+extractNoun :: FromNoun a => BS.ByteString -> IO a
+extractNoun = cueBSExn >=> fromNounExn
 
 main :: IO ()
 main = withSocketsDo $ do
@@ -40,6 +47,9 @@ main = withSocketsDo $ do
     Left fal -> error fal
     Right len -> do
       wad <- recv sock $ fromIntegral len
-      jar <- cueBSExn wad
-      print $ jar
+      jar <- (extractNoun wad) :: IO (Cord, Maybe Natural)
+      let (_,cod') = jar
+      case cod' of
+        Nothing -> error "no code"
+        Just cod -> putStrLn . unpack . renderPatp . patp $ cod
   close sock
