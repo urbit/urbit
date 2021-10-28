@@ -1,4 +1,3 @@
-/+  pill
 =*  card  card:agent:gall
 |%
 +$  state  state-1
