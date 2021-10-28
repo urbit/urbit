@@ -25,6 +25,7 @@ library:
 dependencies:
   - base
   - binary-strict
+  - binary
   - bytestring
   - filepath
   - network

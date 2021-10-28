@@ -12,29 +12,38 @@
 module Into.Main (main) where
 
 import Control.Monad
+import Data.Binary.Builder
 import Data.Binary.Strict.Get
 import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as BL
 import Data.Text
 import GHC.Natural
 import Network.Socket
 import Network.Socket.ByteString
+import Numeric (showHex)
 import System.Environment
 import System.FilePath.Posix
 import System.Posix
+import Text.Printf
 import Urbit.Noun
 import Urbit.Ob
 
+packNoun :: ToNoun a => a -> BS.ByteString
+packNoun jar =
+  let pac = jamBS (toNoun jar) in
+  BL.toStrict $ toLazyByteString $
+    mconcat [putWord64le $ fromIntegral $ BS.length pac,
+             fromByteString pac]
+
 codeCmd :: BS.ByteString
-codeCmd = BS.pack [0x05, 0x00, 0x00, 0x00,
-                   0x00, 0x00, 0x00, 0x00,
-                   0x01, 0x6f, 0xec, 0x8d,
-                   0xcc]
+codeCmd = packNoun (Cord $ Data.Text.pack "cod", False)
 
 extractNoun :: FromNoun a => BS.ByteString -> IO a
 extractNoun = cueBSExn >=> fromNounExn
 
 main :: IO ()
 main = withSocketsDo $ do
+  print $ (BS.foldr (\b -> (<>) (Data.Text.pack $ printf "%02x" b)) Data.Text.empty) codeCmd
   args <- getArgs
   let paf = args !! 0
   changeWorkingDirectory paf
