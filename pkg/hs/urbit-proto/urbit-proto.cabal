@@ -112,6 +112,7 @@ library
     , transformers
     , transformers-compat
     , unordered-containers
+    , urbit-atom
     , urbit-noun
   default-language: Haskell2010
 
@@ -178,6 +179,7 @@ executable proto
     , transformers
     , transformers-compat
     , unordered-containers
+    , urbit-atom
     , urbit-noun
     , urbit-proto
   default-language: Haskell2010
@@ -188,6 +190,7 @@ test-suite proto-test
   other-modules:
       DependentLambdaGoldenTests
       DeppyCoreTests
+      HoonSyntaxGoldenTests
       Spec
       Paths_urbit_proto
   hs-source-dirs:
@@ -258,6 +261,7 @@ test-suite proto-test
     , transformers
     , transformers-compat
     , unordered-containers
+    , urbit-atom
     , urbit-noun
     , urbit-proto
   default-language: Haskell2010

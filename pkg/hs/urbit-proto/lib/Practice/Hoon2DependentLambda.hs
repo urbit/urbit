@@ -5,8 +5,6 @@ import Prelude (init, last)
 
 
 import Bound
-import Control.Arrow ((<<<))
-import Data.Void
 
 import Practice.DependentLambda
 import Practice.HoonCommon
@@ -18,13 +16,14 @@ open :: Hoon -> Desugar (Code Term)
 open = \case
   Wung w@(last -> Ally x)  -> pure $ Wing (init w) (Look x)
   Wung _ -> Left "unsupported wing"
-  Adam a au -> pure $ Atom a au
+  Adam _ a au -> pure $ Atom a au
   --
   Bass Non -> Left "unsupported *"
   Bass Cel -> Left "unsupported ^"
   Bass Flg -> pure $ Fork (setFromList [0,1]) "f"
   Bass Nul -> pure $ Fork (setFromList [0]) "n"
   Bass Vod -> Left "unsupported !"
+  Bass (Fok as au) -> pure $ Fork (setFromList as) au
   Bass (Aur au) -> pure $ Aura au
   Bcbc -> pure Type
   Bcbr m -> Lead <$> traverse open m
@@ -32,14 +31,16 @@ open = \case
   Bccl s ss -> boil s ss unmask open Cell
   Bccn [] -> Left "unsupported empty $% (XX what should it be?)"
   Bccn cs -> do
-    let pats = map (gale . (`Atom` "") . fst) cs
-    bods <- traverse (fmap gale . open . snd) cs
-    pure $ Cell (Aura "" {-FIXME-}) (Scope $ Case (Look $ B ()) pats bods)
+    let fork = Fork (setFromList [a | (a, _, _) <- cs]) "" -- FIXME aura
+    let pats = [gale $ Atom a au | (a, au, _) <- cs]
+    let beds = [s | (_, _, s) <- cs]
+    bods <- traverse (fmap gale . open) beds
+    pure $ Cell fork (Scope $ Case (Look $ B ()) pats bods)
    where
     gale :: Code a -> Scope Int Code (Var () (Code a))
     gale = Scope . pure . F . pure . F
   Bcdt s m -> cook s m unmask open (flip Gold)
-  Brhp s t -> bake s t unmask open Gate
+  Bchp s t -> bake s t unmask open Gate
   Bckt{} -> Left "unsupported $^"
   Bcts (Rash x) h -> Mask x <$> open h
   Bcts{} -> Left "unsupported pattern in $="

@@ -22,6 +22,7 @@ dependencies:
   - transformers
   - transformers-compat
   - unordered-containers
+  - urbit-atom
   - urbit-noun
 
 default-extensions:

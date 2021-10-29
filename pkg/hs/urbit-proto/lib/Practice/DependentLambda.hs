@@ -2,6 +2,10 @@ module Practice.DependentLambda where
 
 import ClassyPrelude hiding (find)
 
+-- TODO %foo needs to give rise to a singleton Fork type, not an Aura type
+-- This means in principle, I think, that e.g. %0 and 0 must have different
+-- abstract syntax. See %rock vs %sand in ++play
+
 import Bound
 import Control.Arrow ((<<<), (>>>))
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
