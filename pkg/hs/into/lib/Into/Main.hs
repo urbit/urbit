@@ -11,25 +11,24 @@
 -}
 module Into.Main (main) where
 
-import            Control.Monad       ((>=>))
-import            Data.Binary.Builder (fromByteString, putWord64le,
-                                       toLazyByteString)
-import            Data.Binary.Strict.Get (getWord64le, runGet)
+import            Control.Monad
+import            Data.Binary.Builder
+import            Data.Binary.Strict.Get
 import qualified  Data.ByteString as B
 import qualified  Data.ByteString.Lazy as BL
 import qualified  Data.Text as T
-import            GHC.Natural         (Natural)
-import            Network.Socket      (Family(AF_UNIX), SockAddr(SockAddrUnix),
-                                       SocketType(Stream), close, connect,
-                                       socket, withSocketsDo)
-import            Network.Socket.ByteString (send, recv)
-import            System.Environment  (getArgs)
-import            System.FilePath.Posix ((</>))
-import            System.Posix        (changeWorkingDirectory)
-import            Text.Printf         (printf)
-import            Urbit.Noun          (Cord(..), FromNoun, ToNoun, cueBSExn,
-                                       fromNounExn, jamBS, toNoun)
-import            Urbit.Ob            (patp, renderPatp)
+import            GHC.Natural
+import            Network.Socket
+import            Network.Socket.ByteString
+import            System.Environment
+import            System.FilePath.Posix
+import            System.Posix
+import            Text.Printf
+import            Urbit.Noun
+import            Urbit.Ob
+
+khanVersion :: Natural
+khanVersion = 0
 
 packNoun :: ToNoun a => a -> B.ByteString
 packNoun jar =
@@ -38,8 +37,11 @@ packNoun jar =
     mconcat [putWord64le $ fromIntegral $ B.length pac,
              fromByteString pac]
 
+buildCmd :: ToNoun a => a -> B.ByteString
+buildCmd com = packNoun (khanVersion, com)
+
 codeCmd :: B.ByteString
-codeCmd = packNoun (Cord "cod", False)
+codeCmd = buildCmd (Cord "cod", False)
 
 extractNoun :: FromNoun a => B.ByteString -> IO a
 extractNoun = cueBSExn >=> fromNounExn
