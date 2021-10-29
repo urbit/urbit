@@ -283,6 +283,7 @@
         c3_c*   gen_c;                      //  -G, czar generator
         c3_o    gab;                        //  -g, test garbage collection
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
+        c3_o    hos;                        //  -h, hosted env (run control plane)
         c3_c*   jin_c;                      //  -I, inject raw event
         c3_c*   imp_c;                      //  -i, import pier state
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
