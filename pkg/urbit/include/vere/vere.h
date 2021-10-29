@@ -1419,3 +1419,10 @@
 
         c3_w
         u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+
+    /** Ancillary stub.
+    **/
+      /* u3_reck_lily(): parse little atom.
+      */
+      u3_noun
+      u3_reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l);
