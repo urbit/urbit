@@ -1,4 +1,4 @@
-::  dice: structures for L2 Rollers
+::  dice: structures for L2 rollers
 ::
 /+  naive, ethereum
 ::

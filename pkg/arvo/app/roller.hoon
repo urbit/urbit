@@ -34,8 +34,8 @@
   $:  %0
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
-      ::  finding: raw-tx-hash reverse lookup per nonce in sending map
-      ::  history: status of l2 txs by ethereum address
+      ::  finding: sig+raw-tx hash reverse lookup for txs in sending map
+      ::  history: status of l2 txs by ethereum address, timestamp sorted
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
@@ -44,16 +44,7 @@
       ::
       pending=(list pend-tx)
       sending=(tree [l1-tx-pointer send-tx])
-    ::
-      $=  finding
-      ::  nonce is a unit to account for the case where a roller
-      ::  operator hasn't provided a pk, and some pending transactions
-      ::  that will be marked as "%failed" have to go to "finding" as such,
-      ::  but we don't know the nonce for the batch they'd belong to
-      ::
-      %+  map  [=keccak nonce=(unit @ud)]
-      ?(%confirmed %failed [=time =address:ethereum])
-    ::
+      finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
       history=(map address:ethereum (tree hist-tx))
       next-nonce=(unit @ud)
       next-batch=time
@@ -181,7 +172,7 @@
     ?+  path  ~
       [%x %pending ~]         ``noun+!>(pending)
       [%x %pending @ ~]       (pending-by i.t.t.path)
-      [%x %tx @ @ %status ~]  (status i.t.t.path i.t.t.t.path)
+      [%x %tx @ %status ~]    (status i.t.t.path)
       [%x %pending-tx @ ~]    (transaction i.t.t.path)
       [%x %history @ ~]       (history i.t.t.path)
       [%x %nonce @ @ ~]       (nonce i.t.t.path i.t.t.t.path)
@@ -224,17 +215,15 @@
       =(u.who ship.from.tx.raw-tx)
     ::
     ++  status
-      |=  wat=[@t @t]
-      ?~  keccak=(slaw %ux -.wat)
-        [~ ~]
-      ?~  nonce=(slaw %ud +.wat)
+      |=  wat=@t
+      ?~  keccak=(slaw %ux wat)
         [~ ~]
       :+  ~  ~
       :-  %noun
       !>  ^-  tx-status
-      ?^  status=(~(get by finding) [u.keccak nonce])
+      ?^  status=(~(get by finding) u.keccak)
         ?@  u.status  [u.status ~]
-        [%sending `[+.u.status u.nonce]]
+        [%sending `+.u.status]
       :: TODO: potentially slow!
       =;  known=?
         [?:(known %pending %unknown) ~]
@@ -428,6 +417,7 @@
     --
   ::
   ++  on-leave  on-leave:def
+  ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
@@ -602,8 +592,9 @@
   ++  start-thread
     |=  [=wire thread=term arg=vase]
     ^-  (list card)
+    =/  =beak    byk.bowl(r da+now.bowl)
     =/  tid=@ta  (rap 3 thread '--' (scot %uv eny.bowl) ~)
-    =/  args     [~ `tid thread arg]
+    =/  args     [~ `tid beak thread arg]
     :~  [%pass wire %agent [our.bowl %spider] %watch /thread-result/[tid]]
         [%pass wire %agent [our.bowl %spider] %poke %spider-start !>(args)]
     ==
@@ -750,9 +741,7 @@
       %+  snoc  nups
       [%tx address.tx roll-tx(status %failed)]
     =?  valid  gud  (snoc valid tx)
-    =?  finding.state  !gud
-      (~(put by finding) [hash nonce] %failed)
-    ::
+    =?  finding.state  !gud  (~(put by finding) hash %failed)
     =?  history.state  !gud
       =+  val=(~(got by history.state) address.tx)
       %+  ~(put by history.state)  address.tx
@@ -836,20 +825,8 @@
 ++  cancel-tx
   |=  [sig=@ =keccak =l2-tx =ship]
   ^-  (quip card _state)
-  ::  TODO: use an index for tracking pending-tx?
-  ::
-  :: ?^  status=(~(get by finding) keccak next-nonce)
-  ::   ~?  lverb  [dap.bowl %tx-not-pending status+u.status]
-  ::   [~ state]
-  =^  time  pending
-    =|  nep=(list pend-tx)
-    |-  ^-  [(unit time) _nep]
-    ?~  pending  [~ (flop nep)]
-    ?:  =(keccak (hash-raw-tx:lib raw-tx.i.pending))
-      [`time.i.pending (weld (flop nep) t.pending)]
-    $(pending t.pending, nep [i.pending nep])
-  ?~  time
-    ~?  lverb  [dap.bowl %tx-not-pending]
+  ?^  status=(~(get by finding) keccak)
+    ~?  lverb  [dap.bowl %tx-not-pending status+u.status]
     [~ state]
   ::  "cancel: 0x1234abcd"
   ::
@@ -866,10 +843,22 @@
   ?~  addr=(verify-sig:lib sig message)
     ~?  lverb  [dap.bowl %cancel-sig-fail]
     [~ state]
+  =^  time  pending
+    =|  nep=(list pend-tx)
+    |-  ^-  [(unit time) _nep]
+    ?~  pending  [~ (flop nep)]
+    ?:  =(keccak (hash-raw-tx:lib raw-tx.i.pending))
+      [`time.i.pending (weld (flop nep) t.pending)]
+    $(pending t.pending, nep [i.pending nep])
+  ?~  time
+    ~?  lverb  [dap.bowl %tx-not-pending]
+    [~ state]
   :-  ~
   %_    state
       history
     =+  val=(~(got by history.state) u.addr)
+    ::  TODO: update entry instead of adding a new one
+    ::
     %+  ~(put by history.state)  u.addr
     %^  put:orh  val
       now.bowl
@@ -909,19 +898,17 @@
     ?~  next-nonce
       ~?  lverb  [dap.bowl %missing-roller-nonce]  [~ state]
     ::  this guarantees that next-nonce is only incremented
-    ::  when the thread that handles sending the previous one
+    ::  when the thread that's sending the previous batch
     ::  has come back and confirms that it was sent to L1
+    ::
     ?:  out-of-sync
-      ::  TODO: this would postpone sending the batch for a whole "frequency"
-      ::    set up a timer to retry this in ~mX ?
+      ::  this would postpone sending the batch for a whole "frequency"
+      ::  TODO: set up a timer to retry this in ~mX ?
       ::
       ~?  lverb  [dap.bowl %nonce-out-sync]  [~ state]
     =/  nonce=@ud   u.next-nonce
     =^  updates-2  history
       (update-history pending %sending next-nonce now.bowl)
-    ::  TODO: move to +on-batch-result to prevent the case the
-    ::  tx succeds but we get a "Runtime Error: revert"?
-    ::
     =:  pending     ~
         derive      &
         next-nonce  `+(u.next-nonce)
@@ -935,8 +922,7 @@
         %-  ~(gas by finding)
         %+  turn  pending
         |=  pend-tx
-        :_  [time address]
-        [(hash-raw-tx:lib raw-tx) `nonce]
+        (hash-raw-tx:lib raw-tx)^[time address nonce]
       ==
     :_  state
     ;:  welp
@@ -948,14 +934,13 @@
   [[card cards] state]
 ::
 ++  update-history
-  |=  [pending=(list pend-tx) =status nonce=(unit @ud) tid=time]
-  =<  [ups his]
-  %+  roll  pending
-  ::  TODO: add new entries for each change in status or just replace it?
-  ::    for the latter, use time in pend-tx instead of tid
+  |=  [txs=(list pend-tx) =status nonce=(unit @ud) tid=time]
+  ^-  [(list update) _history]
+  %-  tail
+  %+  roll  txs
+  ::  TODO: use time in pend-tx instead of tid to update tx status
   ::
-  |=  [pend-tx tid=_tid ups=(list update) his=_history]
-  ~&  update-history+[(hash-raw-tx:lib raw-tx) tid (l2-tx +<.tx.raw-tx) status]
+  |=  [pend-tx tid=_tid ups=(list update) sih=_history]
   =/  =roll-tx
     :*  ship.from.tx.raw-tx
         status
@@ -965,18 +950,9 @@
     ==
   :+  +(tid)
     (snoc ups tx+[address roll-tx])
-  =+  val=(~(get by his) address)
-  %+  ~(put by his)  address
-  %+  put:orh
-    ?~(val *(tree hist-tx) u.val)
-  :_  roll-tx
-  ::  hack to fix the same tid (now.bowl) in +on-naive-diff
-  ::  a side effect is that we are reversing the order of the txs
-  ::  (the most recent tx will have an older timestamp)
-  ::  but otherwise we will miss adding entries in the history
-  ::  since all the txs in a batch come with the same time
-  ::
-  (add (sub tid time) tid)
+  %+  ~(put by sih)  address
+  =+  val=(~(get by sih) address)
+  (put:orh ?~(val *(tree hist-tx) u.val) [tid roll-tx])
 ::  +get-nonce: retrieves the latest nonce
 ::
 ++  get-nonce
@@ -993,7 +969,8 @@
 ::  +on-out-of-sync
 ::
 ++  on-out-of-sync
-  ::  we only care about nonces >= than the one we received
+  |=  [nonce=@ud failed-nonce=@ud]
+  ::  we only care about nonces >= than the one that failed
   ::
   =/  failed-sending=(list [l1-tx-pointer send-tx])
     %-  tap:ors
@@ -1003,7 +980,7 @@
   =/  confirmed-sending=_sending
     (lot:ors sending [~ `[get-address failed-nonce]])
   =/  [nes=_sending nif=_finding sih=_history]
-    =<  [sending finding history]
+    %-  tail
     %+  roll  failed-sending
     |=  $:  [p=l1-tx-pointer q=send-tx]
             new-nonce=_nonce
@@ -1018,7 +995,7 @@
     ?:  (lth nonce.p failed-nonce)
       ~&  ["weird case" nonce+nonce.p]
       [new-nonce sending finding history]
-    :+   +(new-nonce)
+    :+  +(new-nonce)
       update-sending
     process-l2-txs
     ::
@@ -1028,27 +1005,25 @@
     ++  process-l2-txs
       %+  roll  txs.q
       |=  [=raw-tx:naive nif=_finding sih=_history]
-      =/  hash=keccak  (hash-raw-tx:lib raw-tx)
-      =/  old-key=[keccak (unit @ud)]
-        [hash `nonce.p]
-      |^  ?~  val=(~(get by nif) old-key)
-            [nif sih]
-          ?.  ?=(^ u.val)  [nif sih]
-          :-  (update-finding u.val)
-          (update-history address.u.val)
+      =/  =keccak  (hash-raw-tx:lib raw-tx)
+      |^
+      ?~  val=(~(get by nif) keccak)
+        [nif sih]
+      ?.  ?=(^ u.val)  [nif sih]
+      :-  (update-finding u.val)
+      (update-history address.u.val)
       ::
       ++  update-finding
-        |=  val=[time address:ethereum]
+        |=  val=[time l1-tx-pointer]
         ^+  nif
-        %.  [[hash `new-nonce] val]
-        ~(put by (~(del by nif) old-key))
+        (~(put by nif) keccak val(nonce.+ new-nonce))
       ::
       ++  update-history
         |=  =address:ethereum
         ^+  sih
         =*  ship      ship.from.tx.raw-tx
         =/  l2-tx     (l2-tx +<.raw-tx)
-        =/  =roll-tx  [ship %unknown hash l2-tx `nonce.p]
+        =/  =roll-tx  [ship %unknown keccak l2-tx `nonce.p]
         =+  val=(~(got by history) address)
         %+  ~(put by sih)  address
         %+  gas:orh  val
@@ -1057,6 +1032,8 @@
             :-  +(now.bowl)
             roll-tx(status %sending, nonce `new-nonce)
         ==
+      --
+    --
   :-  (send-roll get-address nonce)
   %_  state
     sending     nes
@@ -1151,13 +1128,7 @@
   ?:  ?=(%point -.diff)  [~ state]
   ?>  ?=(%tx -.diff)
   =/  =keccak  (hash-raw-tx:lib raw-tx.diff)
-  ::  assumes that l2 txs come in order, belonging to the oldest nonce in sending
-  ::
-  ?~  oldest-batch=(pry:ors sending)
-    ~?  lverb  [dap.bowl %no-nonce-in-sending keccak]
-    [~ state]
-  =*  nonce  nonce.key.u.oldest-batch
-  ?~  wer=(~(get by finding) [keccak `nonce])
+  ?~  wer=(~(get by finding) keccak)
     ::  tx not submitted by this roller
     ::
     [~ state]
@@ -1165,6 +1136,7 @@
     ~?  &(?=(%confirmed u.wer) ?=(~ err.diff))
       [dap.bowl %weird-double-confirm from.tx.raw-tx.diff]
     [~ state]
+  =*  nonce    nonce.u.wer
   =*  address  address.u.wer
   =*  ship     ship.from.tx.raw-tx.diff
   =*  time     time.u.wer
@@ -1190,7 +1162,7 @@
   ::  update the finding map with the new status
   ::
   =.  finding
-    %+  ~(put by finding)  [keccak `nonce]
+    %+  ~(put by finding)  keccak
     ?~  err.diff  %confirmed
     ::  if we kept the forced flag around for longer, we could notify of
     ::  unexpected tx failures here. would that be useful? probably not?
@@ -1202,8 +1174,6 @@
       [| address time raw-tx.diff]~
       ?~(err.diff %confirmed %failed)
       `nonce
-      ::  FIXME: same time for different calls?
-      ::
       now.bowl
     ==
   [(emit updates) state]

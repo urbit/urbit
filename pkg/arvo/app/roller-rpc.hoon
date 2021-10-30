@@ -8,7 +8,6 @@
     default-agent,
     verb,
     dbug,
-    version,
     agentio
 |%
 ::
