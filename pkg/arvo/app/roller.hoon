@@ -64,14 +64,16 @@
       contract=@ux
       chain-id=@
   ==
+::  orp: ordered points in naive state by parent ship
+::
+++  orp  ((on ship point:naive) por:naive)
+::  ors: ordered sending map by (increasing) L1 nonce
 ::
 ++  ors  ((on l1-tx-pointer send-tx) nonce-order:dice)
-++  orh  ((on time roll-tx) gth)
-+$  ini  [nas=^state:naive own=owners]
-+$  net  ?(%mainnet %ropsten %local)
+::  orh: ordered tx history by (decreasing) timestamp
 ::
-+$  l2-status
-  ?(%confirmed %failed [=time =address:ethereum])
+++  orh  ((on time roll-tx) gth)
++$  net  ?(%mainnet %ropsten %local)
 ::
 +$  config
   $%  [%frequency frequency=@dr]
@@ -264,7 +266,7 @@
       :+  ~  ~
       :-  %noun
       !>  ^-  (unit @)
-      ?~  point=(get:orm:naive points.pre u.who)
+      ?~  point=(get:orp points.pre u.who)
         ~
       =/  nonce=@
         =<  nonce
@@ -282,11 +284,10 @@
       ?~  star=(slaw %p wat)  ~
       =;  range
         (turn range head)
-      =,  orm:naive
       ::  range exclusive [star first-moon-last-planet]
       ::
-      %-  tap
-      (lot points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
+      %-  tap:orp
+      (lot:orp points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
     ::
     ++  unspawned
       |=  wat=@t
@@ -297,9 +298,8 @@
       =/  spawned=(set @p)
         =;  points
           (~(gas in *(set @p)) (turn points head))
-        =,  orm:naive
-        %-  tap
-        (lot points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
+        %-  tap:orp
+        (lot:orp points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
       =/  children=(list @p)
         (turn (gulf 0x1 0xffff) |=(a=@ (cat 3 u.star a)))
       %+  murn  children
@@ -311,7 +311,7 @@
       |=  wat=@t
       ?~  ship=(rush wat ;~(pfix sig fed:ag))
         ``noun+!>(*(unit point:naive))
-      ``noun+!>((get:orm:naive points.pre u.ship))
+      ``noun+!>((get:orp points.pre u.ship))
     ::
     ++  ships
       |=  wat=@t
@@ -404,7 +404,7 @@
       %+  roll  ~(tap in (~(get ju own) [proxy u.addr]))
       |=  [=ship points=_points]
       %+  snoc  points
-      [ship (need (get:orm:naive points.pre ship))]
+      [ship (need (get:orp points.pre ship))]
     ::
     ++  give-txs
       |=  wat=@t
@@ -492,7 +492,8 @@
           ~&  >  %received-azimuth-state
           ::  cache naive and ownership state
           ::
-          =^  nas  own.state  !<(ini q.cage.sign)
+          =^  nas  own.state
+            !<([^state:naive owners] q.cage.sign)
           =^  effects  state
             (predicted-state:do nas)
           [(emit effects) this]
@@ -760,7 +761,7 @@
 ++  get-l1-address
   |=  [=tx:naive nas=^state:naive]
   ^-  (unit address:ethereum)
-  ?~  point=(get:orm:naive points.nas ship.from.tx)  ~
+  ?~  point=(get:orp points.nas ship.from.tx)  ~
   =<  `address
   (proxy-from-point:naive proxy.from.tx u.point)
 ::

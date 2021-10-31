@@ -366,10 +366,12 @@
         ^-  json
         |^
         %-  pairs
-        :~  ['points' (points (tap:orm:naive points.state))]
+        :~  ['points' (points (tap:orp points.state))]
             ['operators' (operators operators.state)]
             ['dns' a+(turn dns.state (lead %s))]
         ==
+        ::
+        ++  orp  ((on ^ship point:naive) por:naive)
         ::
         ++  operators
           |=  =operators:naive

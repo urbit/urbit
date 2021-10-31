@@ -30,10 +30,6 @@
 ::
 ++  jug   |$  [key value]  (map key (set value))
 ::
-::  Biblical
-::
-++  ruth  |=([a=* b=*] ?>(?=(@ b) b))
-::
 ::  Bits
 ::
 ++  dec                                                 ::  decrement
@@ -311,23 +307,6 @@
     +<-(+ $(+<- +<->))
   --
 ::
-++  turn                                                ::  transform
-  ~/  %turn
-  |*  [a=(list) b=$-(* *)]
-  =>  .(a (homo a))
-  ^-  (list _?>(?=(^ a) (b i.a)))
-  |-
-  ?~  a  ~
-  [i=(b i.a) t=$(a t.a)]
-::
-++  levy                                                ::  all of
-  ~/  %levy
-  |*  [a=(list) b=$-(* ?)]
-  |-  ^-  ?
-  ?~  a  &
-  ?.  (b i.a)  |
-  $(a t.a)
-::
 ++  reap                                                ::  replicate
   ~/  %reap
   |*  [a=@ b=*]
@@ -493,11 +472,6 @@
       $(a l.a)
     $(a r.a)
   ::
-  ++  has
-    ~/  %has
-    |*  b=*
-    !=(~ (get b))
-  ::
   ++  put
     ~/  %put
     |*  [b=* c=*]
@@ -576,13 +550,6 @@
         ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
     ==
   ::
-  ++  gas
-    ~/  %gas
-    |=  [a=(tree item) b=(list item)]
-    ^-  (tree item)
-    ?~  b  a
-    $(b t.b, a (put a i.b))
-  ::
   ++  get
     ~/  %get
     |=  [a=(tree item) b=key]
@@ -599,58 +566,6 @@
     |=  [a=(tree item) b=key]
     ^-  ?
     !=(~ (get a b))
-  ::
-  ++  lot
-    ~/  %lot
-    |=  $:  tre=(tree item)
-            start=(unit key)
-            end=(unit key)
-        ==
-    ^-  (tree item)
-    |^
-    ?:  ?&(?=(~ start) ?=(~ end))
-      tre
-    ?~  start
-      (del-span tre %end end)
-    ?~  end
-      (del-span tre %start start)
-    ?>  (compare u.start u.end)
-    =.  tre  (del-span tre %start start)
-    (del-span tre %end end)
-    ::
-    ++  del-span
-      |=  [a=(tree item) b=?(%start %end) c=(unit key)]
-      ^-  (tree item)
-      ?~  a  a
-      ?~  c  a
-      ?-  b
-          %start
-        ?:  =(key.n.a u.c)
-          (nip a(l ~))
-        ?:  (compare key.n.a u.c)
-          $(a (nip a(l ~)))
-        a(l $(a l.a))
-      ::
-          %end
-        ?:  =(u.c key.n.a)
-          (nip a(r ~))
-        ?:  (compare key.n.a u.c)
-          a(r $(a r.a))
-        $(a (nip a(r ~)))
-      ==
-    --
-  ::
-  ++  nip
-    ~/  %nip
-    |=  a=(tree item)
-    ^-  (tree item)
-    ?>  ?=(^ a)
-    |-  ^-  (tree item)
-    ?~  l.a  r.a
-    ?~  r.a  l.a
-    ?:  (mor key.n.l.a key.n.r.a)
-      l.a(r $(l.a r.l.a))
-    r.a(l $(r.a l.r.a))
   ::
   ++  put
     ~/  %put
@@ -669,15 +584,6 @@
     ?:  (mor key.n.a key.n.r)
       a(r r)
     r(l a(r l.r))
-  ::
-  ++  tap
-    ~/  %tap
-    |=  a=(tree item)
-    ^-  (list item)
-    =|  b=(list item)
-    |-  ^+  b
-    ?~  a  b
-    $(a l.a, b [n.a $(a r.a)])
   --
 ::
 ::  Sets

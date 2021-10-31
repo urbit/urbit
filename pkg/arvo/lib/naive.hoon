@@ -1,4 +1,5 @@
 /+  tiny
+!.
 =>  =>  tiny
 ::  Laconic bit
 ::
@@ -147,7 +148,8 @@
   ==  ==  ==
 ::
 +$  state
-  $:  =points
+  $:  %0
+      =points
       =operators
       dns=(list @t)
   ==
@@ -246,7 +248,7 @@
         `[[[from-ship proxy] skim-tx.u.res] pos.u.res]
     ^-  res=(unit [=skim-tx pos=@ud])
     =^  op   pos  (take 0 7)
-    ?+    op  ~>(%slog.[0 %strange-opcode] ~)
+    ?+    op  (debug %strange-opcode ~)
         %0
       =^  reset=@         pos  (take 0)
       =^  =address        pos  (take 3 20)
@@ -419,7 +421,7 @@
     `u.existing
   =|  =point
   =.  who.sponsor.net.point  (sein ship)
-  ?+    (ship-rank ship)  ~>(%slog.[0 %strange-point] ~)
+  ?+    (ship-rank ship)  (debug %strange-point ~)
       %0  `point(dominion %l1)
       ?(%1 %2)
     =/  existing-parent  $(ship (sein ship))
@@ -454,7 +456,7 @@
     =*  one  &5.words
     =*  two  &3.words
     =*  tri  &1.words
-    =/  domains  (turn ~[one two tri] |=(a=@ (swp 3 a)))
+    =/  domains  ~[(swp 3 one) (swp 3 two) (swp 3 tri)]
     :-  [%dns domains]~
     state(dns domains)
   ::
@@ -595,8 +597,7 @@
     :+  ~  [%point ship %voting-proxy to]~
     point(address.voting-proxy.own to)
   ::
-  ~>  %slog.[0 %unknown-log]
-  ~
+  (debug %unknown-log ~)
 ::
 ::  Receive batch of L2 transactions
 ::
