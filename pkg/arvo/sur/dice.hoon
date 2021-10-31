@@ -49,7 +49,7 @@
   ==
 ::
 +$  hist-tx  [p=time q=roll-tx]
-+$  roll-tx  [=ship =status hash=keccak type=l2-tx nonce=(unit @ud)]
++$  roll-tx  [=ship =status hash=keccak type=l2-tx]
 +$  pend-tx  [force=? =address:naive =time =raw-tx:naive]
 +$  send-tx  [next-gas-price=@ud sent=? txs=(list raw-tx:naive)]
 +$  part-tx

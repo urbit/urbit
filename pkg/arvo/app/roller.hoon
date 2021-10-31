@@ -65,10 +65,10 @@
       chain-id=@
   ==
 ::
-++  ors   ((on l1-tx-pointer send-tx) nonce-order:dice)
-++  orh   ((on time roll-tx) gth)
-+$  ini   [nas=^state:naive own=owners]
-+$  net   ?(%mainnet %ropsten %local)
+++  ors  ((on l1-tx-pointer send-tx) nonce-order:dice)
+++  orh  ((on time roll-tx) gth)
++$  ini  [nas=^state:naive own=owners]
++$  net  ?(%mainnet %ropsten %local)
 ::
 +$  l2-status
   ?(%confirmed %failed [=time =address:ethereum])
@@ -678,8 +678,8 @@
 ++  predicted-state
   |=  nas=^state:naive
   ^-  (quip update _state)
-  =:  pre.state  nas
-      own.state  canonical-owners
+  =:  pre  nas
+      own  canonical-owners
     ==
   |^
   =^  [nes=_sending updates-1=(list update)]  state
@@ -716,43 +716,37 @@
   ++  apply-txs
     |=  [txs=(list pend-tx) type=?(%pending %sending) nonce=(unit @ud)]
     =/  valid=_txs  ~
-    =/  tid=time    now.bowl
     =|  ups=(list update)
-    =|  local=(set keccak)
     |-  ^+  [[valid ups] state]
-    ?~  txs  [[valid ups] state]
+    ?~  txs  [[(flop valid) ups] state]
     ::
-    =*  tx        i.txs
-    =*  raw-tx    raw-tx.i.txs
-    =*  ship      ship.from.tx.raw-tx.i.txs
-    =/  hash=@ux  (hash-raw-tx:lib raw-tx)
+    =*  tx       i.txs
+    =*  raw-tx   raw-tx.i.txs
+    =*  ship     ship.from.tx.raw-tx.i.txs
+    =/  =keccak  (hash-raw-tx:lib raw-tx)
     =/  sign-address=(unit @ux)
-      (extract-address:lib raw-tx pre.state chain-id)
+      (extract-address:lib raw-tx pre chain-id)
     =^  [gud=? nups=_ups]  state
-      (try-apply pre.state force.tx raw-tx)
+      (try-apply pre force.tx raw-tx)
     ::  TODO: only replace address if !=(address.tx sign-address)?
     ::
     =?  tx  &(gud ?=(^ sign-address))
       tx(address u.sign-address)
-    ::
-    =/  =roll-tx
-      [ship type hash (l2-tx +<.tx.raw-tx) nonce]
+    =/  =roll-tx  [ship type keccak (l2-tx +<.tx.raw-tx)]
     =?  nups  !gud
       %+  snoc  nups
       [%tx address.tx roll-tx(status %failed)]
-    =?  valid  gud  (snoc valid tx)
-    =?  finding.state  !gud  (~(put by finding) hash %failed)
-    =?  history.state  !gud
-      =+  val=(~(got by history.state) address.tx)
-      %+  ~(put by history.state)  address.tx
-      %+  put:orh  val
-      [tid roll-tx(status %failed)]
-    %_  $
-      txs    t.txs
-      tid    +(tid)
-      ups    (weld ups nups)
-      local  (~(put in local) hash)
-    ==
+    =?  valid     gud  [tx valid]
+    =?  finding  !gud  (~(put by finding) keccak %failed)
+    =?  history  !gud
+      =+  wer=(~(got by finding) keccak)
+      ?>  ?=(^ wer)
+      =+  txs=(~(got by history) address.tx)
+      =.  txs  +:(del:orh txs time.wer)
+      %+  ~(put by history)  address.tx
+      %+  put:orh  txs
+      [time.wer roll-tx(status %failed)]
+    $(txs t.txs, ups (weld ups nups))
   ::
   ++  try-apply
     |=  [nas=^state:naive force=? =raw-tx:naive]
@@ -851,18 +845,17 @@
       [`time.i.pending (weld (flop nep) t.pending)]
     $(pending t.pending, nep [i.pending nep])
   ?~  time
-    ~?  lverb  [dap.bowl %tx-not-pending]
+    ~?  lverb  [dap.bowl %weird-tx-not-pending]
     [~ state]
   :-  ~
   %_    state
       history
-    =+  val=(~(got by history.state) u.addr)
-    ::  TODO: update entry instead of adding a new one
-    ::
-    %+  ~(put by history.state)  u.addr
-    %^  put:orh  val
-      now.bowl
-    [ship %cancelled keccak l2-tx next-nonce]
+    =+  txs=(~(got by history) u.addr)
+    =.  txs  +:(del:orh txs u.time)
+    %+  ~(put by history)  u.addr
+    %^  put:orh  txs
+      u.time
+    [ship %cancelled keccak l2-tx]
   ==
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
@@ -870,12 +863,11 @@
   |=  =pend-tx
   ^-  (quip card _state)
   =.  pending  (snoc pending pend-tx)
-  =^  update-cards  history
-    (update-history [pend-tx]~ %pending next-nonce now.bowl)
+  =^  cards  history  (update-history [pend-tx]~ %pending)
   ::  toggle derivation
   ::
   :_  state(derive ?:(derive | derive))
-  %+  weld  (emit update-cards)
+  %+  weld  (emit cards)
   ?.  derive  ~
   ::  derive predicted state in 1m.
   ::
@@ -907,8 +899,7 @@
       ::
       ~?  lverb  [dap.bowl %nonce-out-sync]  [~ state]
     =/  nonce=@ud   u.next-nonce
-    =^  updates-2  history
-      (update-history pending %sending next-nonce now.bowl)
+    =^  updates-2  history  (update-history pending %sending)
     =:  pending     ~
         derive      &
         next-nonce  `+(u.next-nonce)
@@ -934,25 +925,23 @@
   [[card cards] state]
 ::
 ++  update-history
-  |=  [txs=(list pend-tx) =status nonce=(unit @ud) tid=time]
+  |=  [txs=(list pend-tx) =status]
   ^-  [(list update) _history]
-  %-  tail
   %+  roll  txs
-  ::  TODO: use time in pend-tx instead of tid to update tx status
-  ::
-  |=  [pend-tx tid=_tid ups=(list update) sih=_history]
+  |=  [pend-tx ups=(list update) sih=_history]
   =/  =roll-tx
     :*  ship.from.tx.raw-tx
         status
         (hash-raw-tx:lib raw-tx)
         (l2-tx +<.tx.raw-tx)
-        nonce
     ==
-  :+  +(tid)
-    (snoc ups tx+[address roll-tx])
+  =/  txs=(tree hist-tx)
+    ?~  txs=(~(get by sih) address)  ~
+    u.txs
+  =?  txs  ?=(^ txs)  +:(del:orh txs time)
+  :-  (snoc ups tx+[address roll-tx])
   %+  ~(put by sih)  address
-  =+  val=(~(get by sih) address)
-  (put:orh ?~(val *(tree hist-tx) u.val) [tid roll-tx])
+  (put:orh txs [time roll-tx])
 ::  +get-nonce: retrieves the latest nonce
 ::
 ++  get-nonce
@@ -1011,7 +1000,7 @@
         [nif sih]
       ?.  ?=(^ u.val)  [nif sih]
       :-  (update-finding u.val)
-      (update-history address.u.val)
+      (update-history time.u.val address.u.val)
       ::
       ++  update-finding
         |=  val=[time l1-tx-pointer]
@@ -1019,28 +1008,23 @@
         (~(put by nif) keccak val(nonce.+ new-nonce))
       ::
       ++  update-history
-        |=  =address:ethereum
+        |=  [=time =address:ethereum]
         ^+  sih
         =*  ship      ship.from.tx.raw-tx
-        =/  l2-tx     (l2-tx +<.raw-tx)
-        =/  =roll-tx  [ship %unknown keccak l2-tx `nonce.p]
-        =+  val=(~(got by history) address)
+        =/  l2-tx     (l2-tx +<.tx.raw-tx)
+        =/  =roll-tx  [ship %sending keccak l2-tx]
+        =+  txs=(~(got by sih) address)
+        =.  txs  +:(del:orh txs time)
         %+  ~(put by sih)  address
-        %+  gas:orh  val
-        :~  [now.bowl roll-tx]
-          ::
-            :-  +(now.bowl)
-            roll-tx(status %sending, nonce `new-nonce)
-        ==
+        (put:orh txs [time roll-tx])
       --
     --
-  :-  (send-roll get-address nonce)
-  %_  state
-    sending     nes
-    finding     nif
-    history     sih
-    next-nonce  `+(nonce)
-  ==
+  =:  sending     nes
+      finding     nif
+      history     sih
+      next-nonce  `+(nonce)
+    ==
+  [(send-roll get-address nonce) state]
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
 ++  send-roll
@@ -1051,12 +1035,12 @@
   ?.  (has:ors sending [address nonce])
     ~?  lverb  [dap.bowl %done-sending [address nonce]]
     ~
-  ::  start the thread, passing in the l2 txs to use
-  ::
   ?~  endpoint
     ~?  lverb  [dap.bowl %no-endpoint]
     ~
-  ::TODO  should go ahead and set resend timer in case thread hangs, or nah?
+  ::  start the thread, passing in the l2 txs to use
+  ::  TODO  should go ahead and set resend timer in case thread hangs, or nah?
+  ::
   %+  start-thread:spider
     /send/(scot %ux address)/(scot %ud nonce)
   :-  %roller-send
@@ -1170,12 +1154,9 @@
     %failed
   ::
   =^  updates  history
-    %:  update-history
+    %+  update-history
       [| address time raw-tx.diff]~
-      ?~(err.diff %confirmed %failed)
-      `nonce
-      now.bowl
-    ==
+    ?~(err.diff %confirmed %failed)
   [(emit updates) state]
 ::
 --
