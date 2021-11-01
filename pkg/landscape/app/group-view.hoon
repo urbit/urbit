@@ -170,12 +170,39 @@
       (emit (fact:io cage /all tx+(en-path:resource rid) ~))
     group-view-update+!>([%progress rid progress]) 
   ::
-  ++  watch-md
-    (emit (watch-our:(jn-pass-io /md) %metadata-store /updates))
-  ::
-  ++  watch-groups
-    (emit (watch-our:(jn-pass-io /groups) %group-store /groups))
-  ::
+  ++  pass
+    =>  |%
+        ++  pull-action
+          pull-hook-action+!>([%add ship rid])
+        --
+    |%
+    ::
+    ++  watch-md      (watch-our:(jn-pass-io /md) %metadata-store /updates)
+    ++  watch-groups  (watch-our:(jn-pass-io /groups) %group-store /groups)
+    ++  watch-md-nacks  (watch-our:(jn-pass-io /md-nacks) %metadata-pull-hook /nack)
+    ++  watch-grp-nacks  (watch-our:(jn-pass-io /grp-nacks) %group-pull-hook /nack)
+    ::
+    ++  add-us 
+      %+  poke:(jn-pass-io /add)
+        [ship %group-push-hook]
+      group-update-0+!>([%add-members rid (silt our.bowl ~)])
+    ::
+    ++  pull-groups  
+      (poke-our:(jn-pass-io /poke) %group-pull-hook pull-action)
+    ++  pull-md
+      (poke-our:(jn-pass-io /poke) %metadata-pull-hook pull-action)
+    ++  pull-co
+      (poke-our:(jn-pass-io /poke) %contact-pull-hook pull-action)
+    ::
+    ++  share-co
+      %+  poke:(jn-pass-io /poke)
+        [entity.rid %contact-push-hook]
+      [%contact-share !>([%share our.bowl])]
+    ::
+    ++  pull-gra
+      |=  gr=resource
+      (poke-our:(jn-pass-io /poke) %graph-pull-hook pull-hook-action+!>([%add entity .]:gr))
+    --
   ++  jn-pass-io
     |=  pax=path
     ~(. pass:io (welp join+(en-path:resource rid) pax))
@@ -205,14 +232,12 @@
         group-view-update+!>([%started rid (~(got by joining) rid)])
       ~[/all]
     ?<  ~|("already joined {<rid>}" (has-joined rid)) 
-    =.  jn-core
-      %-  emit
-      %+  poke:(jn-pass-io /add)
-        [ship %group-push-hook]
-      group-update-0+!>([%add-members rid (silt our.bowl ~)])
+    =.  jn-core  (emit add-us:pass)
     =.  jn-core  (tx-progress %start)
-    =>  watch-md
-    watch-groups
+    =>  (emit watch-md:pass)
+    =>  (emit watch-groups:pass)
+    =>  (emit watch-grp-nacks:pass)
+    (emit watch-md-nacks:pass)
   ::
   ++  jn-agent
     |=  [=wire =sign:agent:gall]
@@ -225,34 +250,16 @@
         (cleanup %no-perms)
       =.  jn-core
         (tx-progress %added)
-      %-  emit
-      %+  poke-our:(jn-pass-io /pull-groups)  %group-pull-hook 
-      pull-hook-action+!>([%add ship rid])
-    ::
-        %pull-groups
-      ?>  ?=(%poke-ack -.sign)
-      (ack +.sign)
+      (emit pull-groups:pass)
     ::
         %groups
       ?+  -.sign  !!
         %fact  (groups-fact +.sign)
         %watch-ack  (ack +.sign)
-        %kick  watch-groups
+        %kick  (emit watch-groups:pass)
       ==
     ::
-        %pull-md
-      ?>  ?=(%poke-ack -.sign)
-      (ack +.sign)
-    ::
-        %pull-co
-      ?>  ?=(%poke-ack -.sign)
-      (ack +.sign)
-    ::
-        %share-co
-      ?>  ?=(%poke-ack -.sign)
-      (ack +.sign)
-    ::
-        %push-co
+        %poke
       ?>  ?=(%poke-ack -.sign)
       (ack +.sign)
     ::
@@ -260,13 +267,37 @@
       ?+  -.sign  !!
         %fact  (md-fact +.sign)
         %watch-ack  (ack +.sign)
-        %kick  watch-md
+        %kick  (emit watch-md:pass)
       ==
     ::
         %pull-graphs
       ?>  ?=(%poke-ack -.sign)
       %-  cleanup
       ?^(p.sign %strange %done)
+    ::
+        %md-nacks
+      ?+  -.sign  !!
+        %watch-ack  (ack +.sign)
+        %kick  (emit watch-md-nacks:pass)
+      ::
+          %fact
+        ?.  =(%resource p.cage.sign)  jn-core
+        =+  !<(nack=resource q.cage.sign)
+        ?.  =(nack rid)  jn-core
+        (cleanup %strange)
+      ==
+    ::
+        %grp-nacks
+      ?+  -.sign  !!
+        %watch-ack  (ack +.sign)
+        %kick       (emit watch-grp-nacks:pass)
+      ::
+          %fact
+        ?.  =(%resource p.cage.sign)  jn-core
+        =+  !<(nack=resource q.cage.sign)
+        ?.  =(nack rid)  jn-core
+        (cleanup %strange)
+      ==
     ==
     ::
     ++  groups-fact
@@ -275,18 +306,11 @@
       =+  !<(=update:group-store q.cage)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(rid resource.update)  jn-core
-      %-  emit-many
-      =/  cag=^cage  pull-hook-action+!>([%add [entity .]:rid])
-      %-  zing
-      :~  [(poke-our:(jn-pass-io /pull-md) %metadata-pull-hook cag)]~
-          [(poke-our:(jn-pass-io /pull-co) %contact-pull-hook cag)]~
-        ::
-          ?.  scry-is-public:con  ~
-          :_  ~
-          %+  poke:(jn-pass-io /share-co)
-            [entity.rid %contact-push-hook]
-          [%contact-share !>([%share our.bowl])]
-      ==
+      =.  jn-core  (emit pull-md:pass)
+      =.  jn-core  (emit pull-co:pass)
+      ?:  scry-is-public:con
+        (emit share-co:pass)
+      jn-core
     ::
     ++  md-fact
       |=  [=mark =vase]
@@ -294,32 +318,39 @@
       =+  !<(=update:metadata vase)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core
+      |^  ^+  jn-core
+      =/  feed  feed-rid
       =.  jn-core  (cleanup %done)
-      ?.  hidden:(need (scry-group:grp rid))
+      =/  hidden  hidden:(need (scry-group:grp rid))
+      =?  jn-core  ?&(!hidden ?=(^ feed))
+        %-  emit
+        (pull-gra:pass (need feed))
+      =?  jn-core  !hidden
+        %-  emit-many
+        (turn graphs pull-gra:pass)
+      jn-core
+      ::
+      ++  feed-rid
+        ^-  (unit resource)
         =/  list-md=(list [=md-resource:metadata =association:metadata])
           %+  skim  ~(tap by associations.update)
           |=  [=md-resource:metadata =association:metadata]
           =(app-name.md-resource %groups)
-        ?>  ?=(^ list-md)
+        ?~  list-md  ~
         =*  metadatum  metadatum.association.i.list-md
         ?.  ?&  ?=(%group -.config.metadatum)
-                ?=(^ feed.config.metadatum)
-                ?=(^ u.feed.config.metadatum)
+                ?=([~ ~ *] feed.config.metadatum)
             ==
-          jn-core
-        =*  feed  resource.u.u.feed.config.metadatum
-        %-  emit
-        %+  poke-our:(jn-pass-io /pull-feed)  %graph-pull-hook
-        pull-hook-action+!>([%add [entity .]:feed])
-      %-  emit-many
-      %+  murn  ~(tap by associations.update)
-      |=  [=md-resource:metadata =association:metadata]
-      ^-  (unit card)
-      ?.  =(app-name.md-resource %graph)  ~
-      =*  rid  resource.md-resource
-      :-  ~
-      %+  poke-our:(jn-pass-io /pull-graph)  %graph-pull-hook
-      pull-hook-action+!>([%add [entity .]:rid])
+          ~
+        `resource.u.u.feed.config.metadatum
+      ::
+      ++  graphs
+        ^-  (list resource)
+        %+  murn  ~(tap by associations.update)
+        |=  [=md-resource:metadata =association:metadata]
+        ?.  =(app-name.md-resource %graph)  ~
+        `resource.md-resource
+      --
     ::
     ++  ack
       |=  err=(unit tang)
@@ -381,7 +412,11 @@
       =.  jn-core
         (emit (leave-our:(jn-pass-io /groups) %group-store))
       =.  jn-core
+        (emit (leave-our:(jn-pass-io /grp-nacks) %group-pull-hook))
+      =.  jn-core
         (emit (leave-our:(jn-pass-io /md) %metadata-store))
+      =.  jn-core
+        (emit (leave-our:(jn-pass-io /md-nacks) %metadata-pull-hook))
       =/  =request:view  (~(got by joining) rid)
       =?  jn-core  (lte (sub now.bowl started.request) ~s30)  
         notify
