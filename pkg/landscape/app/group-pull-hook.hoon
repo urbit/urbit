@@ -37,7 +37,10 @@
 ++  on-load  on-load:def
 ++  on-poke  on-poke:def
 ++  on-agent  on-agent:def
-++  on-watch  on-watch:def
+++  on-watch  
+  |=  =path
+  ?.  ?=([%nack ~] path)  (on-watch:def path)
+  `this
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-arvo   on-arvo:def
@@ -47,8 +50,11 @@
   ^-  (quip card _this)
   %-  (slog tang)
   :_  this
-  =-  [%pass / %agent [our.bowl %group-store] %poke -]~
-  group-update-0+!>([%remove-group resource ~])
+  :~  =-  [%pass / %agent [our.bowl %group-store] %poke -]
+      group-update-0+!>([%remove-group resource ~])
+      ::
+      `card`[%give %fact ~[/nack] resource+!>(resource)]
+  ==
 ::
 ++  on-pull-kick
   |=  =resource

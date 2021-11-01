@@ -296,19 +296,22 @@
 ++  on-watch  
   |=  =path
   ?>  (team:title [our src]:bowl)
-  ?.  ?=([%preview @ @ @ ~] path)
-    (on-watch:def path)
-  =/  rid=resource
-    (de-path:resource t.path)
-  =/  prev=(unit group-preview:metadata)
-    ?^  (peek-metadatum:met %groups rid)  
-      (some (get-preview:met rid))
-    (~(get by previews) rid)
-  ?~  prev
-    :_  this(pending (~(put in pending) rid))
-    (get-preview rid)^~
-  :_  this
-  (fact-init:io metadata-hook-update+!>([%preview u.prev]))^~
+  ?+  path  (on-watch:def path)
+    [%nack ~]  `this
+  ::
+      [%preview @ @ @ ~]
+    =/  rid=resource
+      (de-path:resource t.path)
+    =/  prev=(unit group-preview:metadata)
+      ?^  (peek-metadatum:met %groups rid)  
+        (some (get-preview:met rid))
+      (~(get by previews) rid)
+    ?~  prev
+      :_  this(pending (~(put in pending) rid))
+      (get-preview rid)^~
+    :_  this
+    (fact-init:io metadata-hook-update+!>([%preview u.prev]))^~
+  ==
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
@@ -322,6 +325,7 @@
   =/  =associations:metadata
     (metadata-for-group:met resource)
   :_  this
+  :-  `card`[%give %fact ~[/nack] resource+!>(resource)]
   %+  turn  ~(tap by associations)
   |=  [=md-resource:metadata =association:metadata]
   %+  poke-our:pass:io  %metadata-store
