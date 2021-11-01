@@ -15,6 +15,7 @@
       [%remove =resource]
       ::  client side
       [%join =resource =ship]
+      [%retry =resource]
       [%leave =resource]
       ::
       [%invite =resource ships=(set ship) description=@t]
@@ -27,7 +28,7 @@
   ?(%start %added final)
 ::
 +$  final
-  ?(%no-perms %strange %done)
+  ?(%no-perms %retry %strange %done)
 ::
 +$  update
   $%  [%initial initial=(map resource request)]

@@ -84,8 +84,9 @@
   =+  !<(=action:view vase)
   =^  cards  state
     ?+  -.action  !!
-      %join  jn-abet:(jn-start:join:gc +.action)
-      %hide  (hide:gc +.action)
+      %join   jn-abet:(jn-start:join:gc +.action)
+      %retry  jn-abet:(jn-retry:join:gc +.action)
+      %hide   (hide:gc +.action)
     ==
   [cards this]
 ::
@@ -106,7 +107,7 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   =^  cards  state
-    ?+    wire  `state
+    ?+    wire  (on-agent:def:gc wire sign)
         [%join %ship @ @ *]
       =/  rid
         (de-path:resource t.wire)
@@ -124,6 +125,7 @@
 ++  grp  ~(. grpl bowl)
 ++  io   ~(. agentio bowl)
 ++  con  ~(. conl bowl)
+++  def   ~(. (default-agent state %|) bowl)
 ++  hide
   |=  rid=resource
   ^-  (quip card _state)
@@ -173,7 +175,7 @@
   ++  pass
     =>  |%
         ++  pull-action
-          pull-hook-action+!>([%add ship rid])
+          pull-hook-action+!>([%join ship rid])
         --
     |%
     ::
@@ -202,6 +204,9 @@
     ++  pull-gra
       |=  gr=resource
       (poke-our:(jn-pass-io /poke) %graph-pull-hook pull-hook-action+!>([%add entity .]:gr))
+    ::
+    ++  retry
+      (poke-self:pass:io group-view-action+!>([%join rid ship]))
     --
   ++  jn-pass-io
     |=  pax=path
@@ -238,6 +243,78 @@
     =>  (emit watch-groups:pass)
     =>  (emit watch-grp-nacks:pass)
     (emit watch-md-nacks:pass)
+  ::
+  ++  jn-retry
+    |=  r=resource
+    ^+  jn-core
+    =.  jn-core  (jn-abed r)
+    =.  jn-core  (cleanup %retry)
+    (emit retry:pass)
+  ::
+  ++  cleanup
+    |=  =progress:view
+    =.  jn-core
+      (tx-progress progress)
+    =.  jn-core
+      (emit (leave-our:(jn-pass-io /groups) %group-store))
+    =.  jn-core
+      (emit (leave-our:(jn-pass-io /md) %metadata-store))
+    =.  jn-core
+      (emit (leave-our:(jn-pass-io /md-nacks) %metadata-pull-hook))
+    =.  jn-core
+      (emit (leave-our:(jn-pass-io /grp-nacks) %group-pull-hook))
+    =/  =request:view  (~(got by joining) rid)
+    =?  jn-core  ?&(!=(progress %retry) (gth (sub now.bowl started.request) ~s30))  
+      notify
+    =.  joining  (~(del by joining) rid)
+    jn-core
+  ::
+  ++  notify
+    %-  emit
+    %+  poke-our:(jn-pass-io /hark)  %hark-store
+    =-  hark-action+!>(-)
+    ^-  action:hark
+    |^ 
+    [%add-note bin body]
+    ++  bin
+      ^-  bin:hark
+      [/ [q.byk.bowl /join/(scot %p entity.rid)/[name.rid]]]
+    ++  title
+      |=  [name=@t rest=@t]
+      text/(rap 3 'Joining group: "' name '" ' rest ~)
+    ++  body
+      ^-  body:hark
+      =/  =request:view  (~(got by joining) rid)
+      ?>  ?=(final:view progress.request)
+      =/  name  (rap 3 (scot %p entity.rid) '/' name.rid ~)
+      ?-  progress.request
+      ::
+          %done
+        =/  =metadatum:metadata  (need (peek-metadatum:met %groups rid))
+        :*  ~[(title title.metadatum 'succeeded')]
+            ~
+            now.bowl
+            /
+            /groups/(scot %p entity.rid)/[name.rid]
+        ==
+      ::
+          ?(%strange %retry)
+        :*  ~[(title name 'errored unexpectedly')]
+            ~
+            now.bowl
+            /
+            /
+        ==
+      ::
+          %no-perms
+        :*  ~[(title name 'failed, you are not permitted to join the group')]
+            ~
+            now.bowl
+            /
+            /
+        ==
+      ==
+    --
   ::
   ++  jn-agent
     |=  [=wire =sign:agent:gall]
@@ -290,7 +367,7 @@
         %grp-nacks
       ?+  -.sign  !!
         %watch-ack  (ack +.sign)
-        %kick       (emit watch-grp-nacks:pass)
+        %kick  (emit watch-grp-nacks:pass)
       ::
           %fact
         ?.  =(%resource p.cage.sign)  jn-core
@@ -298,6 +375,7 @@
         ?.  =(nack rid)  jn-core
         (cleanup %strange)
       ==
+
     ==
     ::
     ++  groups-fact
@@ -358,70 +436,6 @@
       %-  (slog u.err)
       (cleanup %strange)
     ::
-    ++  notify
-      %-  emit
-      %+  poke-our:(jn-pass-io /hark)  %hark-store
-      =-  hark-action+!>(-)
-      ^-  action:hark
-      |^ 
-      [%add-note bin body]
-      ++  bin
-        ^-  bin:hark
-        [/ [q.byk.bowl /join/(scot %p entity.rid)/[name.rid]]]
-      ++  title
-        |=  [name=@t rest=@t]
-        text/(rap 3 'Joining group: "' name '" ' rest ~)
-      ++  body
-        ^-  body:hark
-        =/  =request:view  (~(got by joining) rid)
-        ?>  ?=(final:view progress.request)
-        =/  name  (rap 3 (scot %p entity.rid) '/' name.rid ~)
-        ?-  progress.request
-        ::
-            %done
-          =/  =metadatum:metadata  (need (peek-metadatum:met %groups rid))
-          :*  ~[(title title.metadatum 'succeeded')]
-              ~
-              now.bowl
-              /
-              /groups/(scot %p entity.rid)/[name.rid]
-          ==
-        ::
-            %strange
-          :*  ~[(title name 'errored unexpectedly')]
-              ~
-              now.bowl
-              /
-              /
-          ==
-        ::
-            %no-perms
-          :*  ~[(title name 'failed, you are not permitted to join the group')]
-              ~
-              now.bowl
-              /
-              /
-          ==
-        ==
-      --
-    ::
-    ++  cleanup
-      |=  =progress:view
-      =.  jn-core
-        (tx-progress progress)
-      =.  jn-core
-        (emit (leave-our:(jn-pass-io /groups) %group-store))
-      =.  jn-core
-        (emit (leave-our:(jn-pass-io /grp-nacks) %group-pull-hook))
-      =.  jn-core
-        (emit (leave-our:(jn-pass-io /md) %metadata-store))
-      =.  jn-core
-        (emit (leave-our:(jn-pass-io /md-nacks) %metadata-pull-hook))
-      =/  =request:view  (~(got by joining) rid)
-      =?  jn-core  (lte (sub now.bowl started.request) ~s30)  
-        notify
-      =.  joining  (~(del by joining) rid)
-      jn-core
     --
   --
 --
