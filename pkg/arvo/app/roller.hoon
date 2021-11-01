@@ -738,15 +738,17 @@
       %+  snoc  nups
       [%tx address.tx roll-tx(status %failed)]
     =?  valid     gud  [tx valid]
-    =?  finding  !gud  (~(put by finding) keccak %failed)
     =?  history  !gud
-      =+  wer=(~(got by finding) keccak)
-      ?>  ?=(^ wer)
+      =/  =time
+        ?:  ?=(%pending type)  time.tx
+        =+  wer=(~(got by finding) keccak)
+        ?>(?=(^ wer) time.wer)
       =+  txs=(~(got by history) address.tx)
-      =.  txs  +:(del:orh txs time.wer)
+      =.  txs  +:(del:orh txs time)
       %+  ~(put by history)  address.tx
       %+  put:orh  txs
-      [time.wer roll-tx(status %failed)]
+      [time roll-tx(status %failed)]
+    =?  finding  !gud  (~(put by finding) keccak %failed)
     $(txs t.txs, ups (weld ups nups))
   ::
   ++  try-apply
