@@ -27,12 +27,15 @@
 ::
 =/  batch-data=octs
   %+  cad:naive  3
+  %-  flop
   %+  roll  txs
   |=  [=raw-tx:naive out=(list octs)]
-  %+  weld
-    out
-  :_  [raw.raw-tx ~]
-  (met 3 sig.raw-tx)^sig.raw-tx
+  [raw.raw-tx 65^sig.raw-tx out]
+::  TODO: keep this to avoid sending bad batches or disregard?
+::
+?~  (parse-roll:naive q.batch-data)
+  (pure:m !>(%.n^[%not-sent %batch-parse-error]))
+::
 ::  each l2 signature is 65 bytes + XX bytes for the raw data
 ::  from the ethereum yellow paper:
 ::  gasLimit = G_transaction + G_txdatanonzero × dataByteLength
@@ -50,7 +53,6 @@
 ;<  balance=@ud  bind:m
   (get-balance:ethio endpoint address)
 ?:  (gth max-cost balance)
-  ~&  [%insufficient-roller-balance address]
   (pure:m !>(%.n^[%not-sent %insufficient-roller-balance]))
 ::
 ::NOTE  this fails the thread if sending fails, which in the app gives us
@@ -70,13 +72,12 @@
 %-  pure:m
 !>  ^-  (each @ud [term @t])
 ::  TODO: capture if the tx fails (e.g. Runtime Error: revert)
+::  check that tx-hash in +.response is non-zero?
+::  log tx-hash to getTransactionReceipt(tx-hash)?
+::  enforce max here, or in app?
 ::
 ?+  -.response  %.n^[%error 'unexpected rpc response']
   %error   %.n^[%error message.response]
-  :: TODO:
-  ::  check that tx-hash in +.response is non-zero?
-  ::  log tx-hash to getTransactionReceipt(tx-hash)?
-  ::  enforce max here, or in app?
   ::  add five gwei to gas price of next attempt
   ::
   %result  %.y^(add use-gas-price 5.000.000.000)
