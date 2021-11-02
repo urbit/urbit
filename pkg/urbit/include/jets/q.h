@@ -152,7 +152,7 @@
     u3_noun u3qe_gone(u3_atom, u3_atom, u3_atom);
     u3_noun u3qe_high(u3_atom);
     u3_noun u3qe_pert(u3_atom, u3_atom);
-    u3_noun u3qe_lex(u3_atom, u3_atom, u3_atom, u3_atom);
+    c3_o u3qe_lex(u3_atom, u3_atom, u3_atom, u3_atom);
 
     u3_noun u3qeo_raw(u3_atom, u3_atom);
 

@@ -1,6 +1,6 @@
 #include "all.h"
 
-u3_noun
+c3_o
 u3qe_lex(u3_atom p, u3_atom k, u3_atom q, u3_atom l)
 {
   return ( p == q ) ? u3qa_lth(k, l) : u3qa_lth(p, q);
