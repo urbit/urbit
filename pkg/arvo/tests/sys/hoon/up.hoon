@@ -16,6 +16,74 @@
 --
 ::
 |%
+++  test-zero
+  ;:  weld
+    %-  expect
+      !>  (zero:cor 0 2)
+    %-  expect
+      !>  !(zero:cor 4 5)
+  ==
+::
+++  test-gone
+  ;:  weld
+    %-  expect  !>  (gone:cor 0 2 3)
+    %-  expect  !>  !(gone:cor 0 1 3)
+  ==
+::
+++  test-mask
+  ;:  weld
+    %+  expect-eq
+      !>  (dec 0xffff.ffff)
+      !>  (mask:cor 1)
+    %+  expect-eq
+      !>  (dec 0xffff.ffff)
+      !>  (mask:cor 0xffff.ffff)
+    %+  expect-eq
+      !>  3.758.096.384
+      !>  (mask:cor 0xf000.0000)
+  ==
+::
+++  test-pert:cor
+  ;:  weld
+    %+  expect-eq
+      !>  0
+      !>  (pert:cor 1 1)
+    %+  expect-eq
+      !>  2
+      !>  (pert:cor 2 1)
+    %+  expect-eq
+      !>  2.147.483.648
+      !>  (pert:cor 2 0xffff.ffff)
+  ==
+::
+++  test-high
+  ;:  weld
+    %+  expect-eq
+      !>  1
+      !>  (high:cor 0b1)
+    %+  expect-eq
+      !>  2
+      !>  (high:cor 0b10)
+    %+  expect-eq
+      !>  4
+      !>  (high:cor 0b100)
+    %+  expect-eq
+      !>  128
+      !>  (high:cor 0b1000.0000)
+  ==
+::
+++  test-lex
+  ;:  weld
+    %-  expect
+      !>  (lex:cor [1 2] [3 4])
+    %-  expect
+      !>  (lex:cor [1 3] [2 4])
+    %-  expect
+      !>  !(lex:cor [2 3] [1 4])
+    %-  expect
+      !>  !(lex:cor [1 4] [1 2])
+  ==
+::
 ++  test-bot  ^-  tang
   ;:  weld
     %+  expect-eq
