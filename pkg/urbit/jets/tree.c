@@ -23,7 +23,7 @@ static u3j_harm _140_hex_up_gone_a[] = {{".2", u3we_gone, c3y}, {}};
 static u3j_harm _140_hex_up_high_a[] = {{".2", u3we_high, c3y}, {}};
 static u3j_harm _140_hex_up_pert_a[] = {{".2", u3we_pert, c3y}, {}};
 static u3j_harm _140_hex_up_lex_a[] = {{".2", u3we_lex, c3y}, {}};
-// static u3j_harm _140_hex_up_fuse_a[] = {{".2", u3we_fuse, c3y}, {}};
+static u3j_harm _140_hex_up_fuse_a[] = {{".2", u3we_fuse, c3n}, {}};
 // static u3j_harm _140_hex_up_funk_a[] = {{".2", u3we_funk, c3y}, {}};
 // static u3j_harm _140_hex_up_wane_a[] = {{".2", u3we_wane, c3y}, {}};
 

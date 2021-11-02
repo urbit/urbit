@@ -216,7 +216,7 @@
     u3_noun u3we_high(u3_noun);
     u3_noun u3we_pert(u3_noun);
     u3_noun u3we_lex(u3_noun);
-    // u3_noun u3we_fuse(u3_noun);
+    u3_noun u3we_fuse(u3_noun);
     // u3_noun u3we_funk(u3_noun);
     // u3_noun u3we_wane(u3_noun);
 
