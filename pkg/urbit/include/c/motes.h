@@ -6,6 +6,7 @@
   **/
 
 #   define c3__a      c3_s1('a')
+#   define c3__a50    c3_s3('a','5','0')
 #   define c3__abel   c3_s4('a','b','e','l')
 #   define c3__abo    c3_s3('a','b','o')
 #   define c3__actd   c3_s4('a','c','t','d')
