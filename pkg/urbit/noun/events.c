@@ -311,7 +311,6 @@ _ce_patch_verify(u3_ce_patch* pat_u)
     fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
                     pat_u->con_u->ver_y,
                     u3e_version);
-    c3_assert(0);
     return c3n;
   }
 
@@ -322,12 +321,10 @@ _ce_patch_verify(u3_ce_patch* pat_u)
 
     if ( -1 == lseek(pat_u->mem_i, (i_w << (u3a_page + 2)), SEEK_SET) ) {
       fprintf(stderr, "loom: patch seek: %s\r\n", strerror(errno));
-      c3_assert(0);
       return c3n;
     }
     if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3a_page + 2))) ) {
       fprintf(stderr, "loom: patch read: %s\r\n", strerror(errno));
-      c3_assert(0);
       return c3n;
     }
     {
@@ -336,7 +333,6 @@ _ce_patch_verify(u3_ce_patch* pat_u)
       if ( mug_w != nug_w ) {
         fprintf(stderr, "loom: patch mug mismatch %d/%d; (%x, %x)\r\n",
                         pag_w, i_w, mug_w, nug_w);
-        c3_assert(0);
         return c3n;
       }
 #if 0
@@ -808,7 +804,11 @@ u3e_save(void)
   // u3a_print_memory(stderr, "sync: save", 4096 * pat_u->con_u->pgs_w);
 
   _ce_patch_sync(pat_u);
-  _ce_patch_verify(pat_u);
+
+  if ( c3n == _ce_patch_verify(pat_u) ) {
+    c3_assert(!"loom: save failed");
+  }
+
   _ce_patch_apply(pat_u);
 
 #ifdef U3_SNAPSHOT_VALIDATION
