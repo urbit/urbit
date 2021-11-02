@@ -39,6 +39,10 @@
     |=  [app=term =path]
     (watch [our.bowl app] path)
   ::
+  ++  watch-clone
+    |=  [=ship =path]
+    (watch [ship dap.bowl] path)
+  ::
   ++  watch-wire
     |=  =path
     ^+  wire
@@ -48,11 +52,16 @@
   ::
   ++  leave
     |=  =dock
+    ^-  card
     [%pass wire %agent dock %leave ~]
   ::
   ++  leave-our
     |=  app=term
     (leave our.bowl app)
+  ::
+  ++  leave-clone
+    |=  =ship
+    (leave ship dap.bowl)
   ::
   ++  leave-path
     |=  [=dock =path]
@@ -131,9 +140,11 @@
 ::
 ++  kick
   |=  paths=(list path)
+  ^-  card
   [%give %kick paths ~]
 ::
 ++  kick-only
   |=  [=ship paths=(list path)]
+  ^-  card
   [%give %kick paths `ship]
 --
