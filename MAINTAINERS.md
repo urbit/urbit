@@ -161,9 +161,10 @@ If you're making a Vere release, just play it safe and update all the pills.
 
 For an Urbit OS release, after all the merge commits, make a release with the
 commit message "release: urbit-os-v1.0.xx".  This commit should have up-to-date
-artifacts from pkg/interface and a new solid pill.  If neither the pill nor the
-JS need to be updated (e.g if the pill was already updated in the previous merge
-commit), consider making the release commit with --allow-empty.
+artifacts from pkg/interface and a new version number in the desk.docket-0 of
+any desk which changed.  If neither the pill nor the JS need to be updated (e.g
+if the pill was already updated in the previous merge commit), consider making
+the release commit with --allow-empty.
 
 If anything in `pkg/interface` has changed, ensure it has been built and
 deployed properly.  You'll want to do this before making a pill, since you want
@@ -191,7 +192,7 @@ First, for Urbit OS releases:
 
 If it's a very trivial hotfix that you know isn't going to break anything, tag
 it as `urbit-os-vx.y`.  Here 'x' is the major version and 'y' is an OTA patch
-counter.  Change `os` to e.g. `landscape` or another desk if that's what you're
+counter.  Change `urbit-os` to e.g. `landscape` or another desk if that's what you're
 releasing.  If you're releasing changes to more than one desk, add a separate
 tag for each desk (but only make one announcment email/post, with all of the
 desks listed).
