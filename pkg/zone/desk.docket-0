@@ -2,8 +2,7 @@
   title+'Zone'
   info+'A world clock to keep track of your friends'
   color+0x29.8e40
-  glob-http+['https://bootstrap.urbit.org/glob-0v3.7b5q1.gn30e.cpfem.abmqg.qh77v.glob' 0v3.7b5q1.gn30e.cpfem.abmqg.qh77v]
-  image+'https://urbit.ewr1.vultrobjects.com/hastuc-dibtux/2021.8.24..02.57.38-bitcoin.svg'
+  glob-http+['https://ewr1.vultrobjects.com/urbit/glob-0v2.pu9th.td61s.33q5c.i7thd.hfja6.glob 0v2.pu9th.td61s.33q5c.i7thd.hfja6]
   base+'zone'
   version+[0 0 1]
   license+'MIT'
