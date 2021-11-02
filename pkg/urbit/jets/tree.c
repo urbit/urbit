@@ -24,8 +24,8 @@ static u3j_harm _140_hex_up_high_a[] = {{".2", u3we_high, c3y}, {}};
 static u3j_harm _140_hex_up_pert_a[] = {{".2", u3we_pert, c3y}, {}};
 static u3j_harm _140_hex_up_lex_a[] = {{".2", u3we_lex, c3y}, {}};
 static u3j_harm _140_hex_up_fuse_a[] = {{".2", u3we_fuse, c3n}, {}};
-// static u3j_harm _140_hex_up_funk_a[] = {{".2", u3we_funk, c3y}, {}};
-// static u3j_harm _140_hex_up_wane_a[] = {{".2", u3we_wane, c3y}, {}};
+static u3j_harm _140_hex_up_funk_a[] = {{".2", u3we_funk, c3n}, {}};
+static u3j_harm _140_hex_up_wane_a[] = {{".2", u3we_wane, c3n}, {}};
 
 static u3j_core _140_hex_up_d[] =
   { { "zero", 7, _140_hex_up_zero_a, 0, no_hashes },
@@ -34,9 +34,9 @@ static u3j_core _140_hex_up_d[] =
     { "high", 7, _140_hex_up_high_a, 0, no_hashes },
     { "pert", 7, _140_hex_up_pert_a, 0, no_hashes },
     { "lex", 7,  _140_hex_up_lex_a,  0, no_hashes },
-    // { "fuse", 7, _140_hex_up_fuse_a, 0, no_hashes },
-    // { "funk", 7, _140_hex_up_funk_a, 0, no_hashes },
-    // { "wane", 7, _140_hex_up_wane_a, 0, no_hashes },
+    { "fuse", 7, _140_hex_up_fuse_a, 0, no_hashes },
+    { "funk", 7, _140_hex_up_funk_a, 0, no_hashes },
+    { "wane", 7, _140_hex_up_wane_a, 0, no_hashes },
     {}
   };
 
