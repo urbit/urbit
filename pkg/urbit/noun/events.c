@@ -605,8 +605,17 @@ _ce_patch_compose(void)
 static void
 _ce_patch_sync(u3_ce_patch* pat_u)
 {
-  c3_sync(pat_u->ctl_i);
-  c3_sync(pat_u->mem_i);
+  if ( -1 == c3_sync(pat_u->ctl_i) ) {
+    fprintf(stderr, "loom: control file sync failed: %s\r\n",
+                    strerror(errno));
+    c3_assert(!"loom: control sync");
+  }
+
+  if ( -1 == c3_sync(pat_u->mem_i) ) {
+    fprintf(stderr, "loom: patch file sync failed: %s\r\n",
+                    strerror(errno));
+    c3_assert(!"loom: patch sync");
+  }
 }
 
 /* _ce_image_sync(): make sure image is synced to disk.
@@ -614,7 +623,12 @@ _ce_patch_sync(u3_ce_patch* pat_u)
 static void
 _ce_image_sync(u3e_image* img_u)
 {
-  c3_sync(img_u->fid_i);
+  if ( -1 == c3_sync(img_u->fid_i) ) {
+    fprintf(stderr, "loom: image (%s) sync failed: %s\r\n",
+                    img_u->nam_c,
+                    strerror(errno));
+    c3_assert(!"loom: image sync");
+  }
 }
 
 /* _ce_image_resize(): resize image, truncating if it shrunk.
