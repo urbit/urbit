@@ -40,9 +40,9 @@ testEachPass file = do
         pure o1
     , goldenVsString (baseName <> " 2: open") (replaceExtension file ".2cod") $
         pure o2
-    , goldenVsString (baseName <> " 3a: open") (replaceExtension file ".3val") $
+    , goldenVsString (baseName <> " 3a: eval") (replaceExtension file ".3val") $
         pure o3a
-    , goldenVsString (baseName <> " 3b: open") (replaceExtension file ".3typ") $
+    , goldenVsString (baseName <> " 3b: type") (replaceExtension file ".3typ") $
         pure o3b
     ]
 

@@ -11,7 +11,7 @@ import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 import Urbit.Atom (utf8Atom)
 
-import Practice.HoonCommon (Atom, Axis, Aura, Term, Grit(..), Wing, Limb(..))
+import Practice.HoonCommon (Atom, Aura, Term, Grit(..), Wing, Limb(..))
 
 -- | Base type
 data Bass
@@ -158,7 +158,8 @@ vul = string "::"
 
 hoon :: Parser Hoon
 hoon = choice
-  [ scat
+  [ rune
+  , scat
   ]
 
 skin :: Parser Skin
@@ -212,6 +213,27 @@ rune = choice $ fmap (\(r, b) -> string r *> b)
   --
   , ("~/", r2   Sgfs term hoon)
   --
+  , ("=/", r3   Tsfs skin hoon hoon)
+  , ("=;", r3   Tsmc skin hoon hoon)
+  , ("=.", r3   Tsdt wing hoon hoon)
+  , ("=<", r2   Tsgl hoon hoon)
+  , ("=>", r2   Tsgr hoon hoon)
+  , ("=-", r2   Tshp hoon hoon)
+  , ("=^", r4   Tskt skin wing hoon hoon)
+  , ("=+", r2   Tsls hoon hoon)
+  , ("=~", run  Tssg hoon)
+  --
+  , ("?|", run  Wtbr hoon)
+  , ("?-", jog1 Wthp wing skin hoon)
+  , ("?:", r3   Wtcl hoon hoon hoon)
+  , ("?.", r3   Wtdt hoon hoon hoon)
+  , ("?^", r3   Wtkt wing hoon hoon)
+  , ("?<", r2   Wtgl hoon hoon)
+  , ("?>", r2   Wtgr hoon hoon)
+  , ("?&", run  Wtpm hoon)
+  , ("?@", r3   Wtpt wing hoon hoon)
+  , ("?=", r2   Wtts skin hoon)
+  , ("?!", r1   Wtzp hoon)
   ]
  where
   bccn :: [Hoon] -> Parser Hoon
@@ -221,19 +243,6 @@ rune = choice $ fmap (\(r, b) -> string r *> b)
     _ -> fail "$% clause must be a cell type with atomic head"
 
 {-
-  | Tsfs Skin Hoon Hoon
-  | Tsmc Skin Hoon Hoon  -- XX why is this not =\
-  | Tsdt Wing Hoon Hoon
-  | Tswt Wing Hoon Hoon Hoon
-  | Tsgl Hoon Hoon
-  | Tsgr Hoon Hoon
-  | Tshp Hoon Hoon
-  | Tskt Skin Wing Hoon Hoon
-  | Tsls Hoon Hoon
-  | Tssg [Hoon]
-  -- | Tstr
-  -- | Tscm
-  --
   | Wtbr [Hoon]
   | Wthp Wing [(Skin, Hoon)]
   | Wtcl Hoon Hoon Hoon
@@ -257,6 +266,7 @@ scat = wide $ choice
   [ string "!!" $> Zpzp
   , char '!' *> hoon <&> Wtzp
   , char '_' *> hoon <&> Bccb  -- XX why ktcl bccb in orig?
+  , wing <&> Wung
   , adam
   ]
 
@@ -268,7 +278,7 @@ wing = sepBy1 limb (char '.') <|> char '.' $> []
 limb :: Parser Limb
 limb = choice
   [ Ally <$> term
-  , Axis <$> L.decimal
+  , Axis <$> (char '+' *> L.decimal)
   ]
 
 term :: Parser Term
@@ -384,7 +394,7 @@ r4 f p q r s = modally
 
 run :: ([a] -> r) -> Parser a -> Parser r
 run f p = modally
-  (f <$> many (gap *> p) <* gap <* string "==")
+  (f <$> (gap *> manyTill (p <* gap) (string "==")))
   do
     char '('
     as <- sepBy p ace
@@ -393,7 +403,7 @@ run f p = modally
 
 run1 :: (a -> [b] -> r) -> Parser a -> Parser b -> Parser r
 run1 f p q = modally
-  (f <$> (gap *> p) <*> many (gap *> q) <* gap <* string "==")
+  (f <$> (gap *> p <* gap) <*> manyTill (q <* gap) (string "==") <* gap)
    do
     char '('
     a <- p
@@ -404,13 +414,12 @@ jog :: ([(a, b)] -> r) -> Parser a -> Parser b -> Parser r
 jog f p q = ask >>= \case
   Tall -> do
     gap
-    abs <- many do
+    abs <- flip manyTill (string "==") do
       a <- p
       gap
       b <- q
       gap
       pure (a, b)
-    string "=="
     pure (f abs)
   Wide -> empty
 
@@ -420,13 +429,12 @@ jog1 f p q r = ask >>= \case
     gap
     a <- p
     gap
-    bcs <- many do
+    bcs <- flip manyTill (string "==") do
       b <- q
       gap
       c <- r
       gap
       pure (b, c)
-    string "=="
     pure (f a bcs)
   Wide -> empty
 
@@ -435,7 +443,7 @@ hop :: Ord a => (Map a b -> r) -> Parser a -> Parser b -> Parser r
 hop f p q = ask >>= \case
   Tall -> do
     gap
-    abs <- many do
+    abs <- flip manyTill (string "--") do
       string "++"
       gap
       a <- p
@@ -445,8 +453,8 @@ hop f p q = ask >>= \case
       pure (a, b)
     when (length (Set.fromList (map fst abs)) /= length abs) $
       fail "duplicate arm name in hopping body"
-    string "--"
     pure (f $ mapFromList abs)
+  Wide -> empty
 
 hop1 :: Ord b
      => (a -> Map b c -> r)
@@ -456,7 +464,7 @@ hop1 f p q r = ask >>= \case
     gap
     a <- p
     gap
-    bcs <- many do
+    bcs <- flip manyTill (string "--") do
       string "++"
       gap
       b <- q
@@ -466,5 +474,5 @@ hop1 f p q r = ask >>= \case
       pure (b, c)
     when (length (Set.fromList (map fst bcs)) /= length bcs) $
       fail "duplicate arm name in hopping body"
-    string "--"
     pure (f a $ mapFromList bcs)
+  Wide -> empty
