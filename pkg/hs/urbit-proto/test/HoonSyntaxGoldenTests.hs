@@ -21,7 +21,7 @@ testEachPass file =
   in goldenVsString baseName (replaceExtension file ".cst") do
     txt <- readFileUtf8 file
     let cst = parse hoon baseName txt
-    pure $ encodeUtf8 $ LT.pack $ ppShow cst
+    pure $ encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) cst
 
 testsIO :: IO TestTree
 testsIO = do

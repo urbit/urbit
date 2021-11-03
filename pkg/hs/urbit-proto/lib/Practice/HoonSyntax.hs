@@ -1,6 +1,6 @@
 module Practice.HoonSyntax where
 
-import ClassyPrelude hiding (choice, many)
+import ClassyPrelude hiding (choice, many, try)
 
 import Control.Monad.Combinators
 import Control.Monad.Reader
@@ -48,7 +48,7 @@ data Hoon
   | Clhp Hoon Hoon
   | Clls Hoon Hoon Hoon
   | Clsg [Hoon]
-  | Cltr [Hoon]
+  | Cltr [Hoon]  -- XX actually should be run1
   --
   -- | Cncb  [%cncb p=wing q=(list (pair wing hoon))]            ::  %_
   | Cndt Hoon Hoon
@@ -168,6 +168,7 @@ skin = hoon
 spec :: Parser Spec
 spec = hoon
 
+-- | Regular forms.
 rune :: Parser Hoon
 rune = choice $ fmap (\(r, b) -> string r *> b)
   [ ("$|", hop  Bcbr term spec)
@@ -242,23 +243,6 @@ rune = choice $ fmap (\(r, b) -> string r *> b)
     Bccl (Bass (Fok as au)) (t:ts) -> pure $ map (, au, Bccl t ts) as
     _ -> fail "$% clause must be a cell type with atomic head"
 
-{-
-  | Wtbr [Hoon]
-  | Wthp Wing [(Skin, Hoon)]
-  | Wtcl Hoon Hoon Hoon
-  | Wtdt Hoon Hoon Hoon
-  | Wtkt Wing Hoon Hoon
-  | Wtgl Hoon Hoon
-  | Wtgr Hoon Hoon
-  -- | Wtls am not approve
-  | Wtpm [Hoon]
-  | Wtpt Wing Hoon Hoon
-  | Wtts Skin Hoon
-  | Wtzp Hoon
-  --
-  | Zpzp
--}
-
 -- | Irregular forms.
 scat :: Parser Hoon
 scat = wide $ choice
@@ -266,8 +250,30 @@ scat = wide $ choice
   [ string "!!" $> Zpzp
   , char '!' *> hoon <&> Wtzp
   , char '_' *> hoon <&> Bccb  -- XX why ktcl bccb in orig?
+  , char '$' *> rock (\a au -> Bass $ Fok [a] au)
+  , char '%' *> rock (Adam Rock)  -- TODO posh porc
+  , char '&' *> choice
+    [ run Wtpm hoon
+    , pure (Adam Sand 0 "f")
+    ]
+  , run1 Cncl hoon hoon
+  , char '*' $> Bass Non
+  , char '@' *> mote <&> Bass . Aur
+  -- TODO lark syntax (soil?), rope
+  , try $ char '+' *> r1 Dtls hoon
+  -- XX '.'?
+  -- TODO autonamer
+  , char '=' *> r2 Dtts hoon hoon
+  , char '?' *> choice
+    [ run (\as -> Bass $ Fok as "") (char '$' *> rock \a _ -> a)  -- XX multiaura
+    , pure (Bass $ Aur "f")
+    ]
+  , char '[' *> (Cltr <$> sepBy hoon ace) <* char ']'  -- XX read rupl
+  , char '^' $> Bass Cel  -- XX why is there a wing case here?
+  -- TODO ``
+
   , wing <&> Wung
-  , adam
+  , sand
   ]
 
 
@@ -281,17 +287,20 @@ limb = choice
   , Axis <$> (char '+' *> L.decimal)
   ]
 
+-- | Aura body.
+mote :: Parser Term
+mote = pack <$> ((<>) <$> many lowerChar <*> many upperChar)
+
 term :: Parser Term
 term = string "$" $> "" <|> do
   fist <- lowerChar
   rest <- many (char '-' <|> lowerChar <|> digitChar)
   pure $ pack (fist:rest)
 
-adam :: Parser Hoon
-adam = choice
+sand :: Parser Hoon
+sand = choice
   [ L.decimal <&> \d -> Adam Sand d "ud"  -- XX dots
   , cord      <&> \c -> Adam Sand (utf8Atom c) "t"
-  , char '%' *> rock (Adam Rock)
   ]
 
 -- | Atomic constant body, for after % or $

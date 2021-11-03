@@ -1,0 +1,27 @@
+Cltr
+  [ Zpzp
+  , Wtzp (Wung [ Ally "a" , Ally "b" ])
+  , Wtzp (Adam Sand 1 "ud")
+  , Wtpm [ Adam Sand 1 "ud" ]
+  , Wtpm
+      [ Wtpm [ Adam Sand 1 "ud" , Adam Sand 3 "ud" ] , Adam Sand 2 "ud" ]
+  , Wtpm []
+  , Adam Sand 0 "f"
+  , Adam Sand 122641728207952671039841640 "t"
+  , Adam Sand 10076 "t"
+  , Bass Non
+  , Bass (Aur "")
+  , Bass (Aur "tas")
+  , Bass (Aur "uvD")
+  , Dtls (Adam Sand 1 "ud")
+  , Dtts (Adam Sand 1 "ud") (Adam Sand 2 "ud")
+  , Bass (Fok [] "")
+  , Bass (Fok [ 7303014 , 7496034 , 1 ] "")
+  , Bass (Aur "f")
+  , Cltr [ Adam Sand 1 "ud" , Adam Sand 2 "ud" , Adam Sand 3 "ud" ]
+  , Bass Cel
+  , Wung [ Ally "foo" ]
+  , Wung [ Ally "my-term123" ]
+  , Wung [ Axis 6 ]
+  , Wung [ Axis 6 , Ally "coo" ]
+  ]
