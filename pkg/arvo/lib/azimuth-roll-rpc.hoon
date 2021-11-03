@@ -585,7 +585,7 @@
   [%result id (config:to-json roller-config)]
 ::
 ++  hash-transaction
-  |=  [id=@t params=(map @t json) chain-id=@]
+  |=  [id=@t params=(map @t json) chain-id=@ header=? reverse=?]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 4)
     ~(params error:json-rpc id)
@@ -599,9 +599,17 @@
     ~(parse error:json-rpc id)
   =/  tx=(unit tx:naive)  (build-l2-tx u.l2-tx u.from params)
   ?~  tx  ~(parse error:json-rpc id)
+  =/  =octs  (gen-tx-octs:lib u.tx)
   :+  %result  id
-  =-  (hex:to-json 32 (hash-tx:lib p q))
-  (unsigned-tx:lib chain-id u.nonce (gen-tx-octs:lib u.tx))
+  =;  =keccak
+    %+  hex:to-json  32
+    ?.  reverse  keccak
+    (reverse-hash:lib keccak)
+  %-  hash-tx:lib
+  %.  [chain-id u.nonce octs]
+  ?:  header
+    unsigned-tx:lib
+  prepare-for-sig:lib
 ::
 ++  get-naive
   |=  [id=@t params=(map @t json) =^state:naive]

@@ -166,7 +166,8 @@
       %get-nonce               `(nonce id +.params nonce:scry)
       %get-history             `(history id +.params addr:history:scry)
       %get-roller-config       `(get-config id +.params config:scry)
-      %hash-transaction        `(hash-transaction id +.params chain-id:scry)
+      %hash-transaction        `(hash-transaction id +.params chain-id:scry | &)
+      %unsign-transaction      `(hash-transaction id +.params chain-id:scry & |)
       %get-predicted-state     `(get-naive id +.params predicted:scry)
     ==
   --
