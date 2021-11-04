@@ -7,6 +7,7 @@ import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import airlock from '~/logic/api';
 import { NotebookPosts } from './NotebookPosts';
+import useHarkState from '~/logic/state/hark';
 
 interface NotebookProps {
   ship: string;
@@ -35,7 +36,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const showNickname = useShowNickname(contact);
 
   const readBook = useCallback(() => {
-    airlock.poke(readGraph(association.resource));
+    useHarkState.getState().readGraph(association.resource, 'graph-validator-publish');
   }, [association.resource]);
 
   if (!group) {
