@@ -84,6 +84,46 @@
       !>  !(lex:cor [1 4] [1 2])
   ==
 ::
+++  test-fuse
+  =/  foo=pri
+    :*  %bin
+        k=1.901.865.568
+        p=1
+        v=[k=1 v=1 t=~]
+        m=33.554.432
+        ^=  l  :*  %tip
+                   k=1.904.972.904
+                   p=2
+                   v=[k=2 v=2 t=~]
+               ==
+        ^=  r  :*  %tip
+                   k=1.923.673.882
+                   p=3
+                   v=[k=3 v=3 t=~]
+               ==
+    ==
+  =/  bar=pri
+    :*  %bin
+        k=1.904.972.904
+        p=2
+        v=[k=2 v=2 t=~]
+        m=33.554.432
+        l=~
+        ^=  r  :*  %tip
+                   k=1.923.673.882
+                   p=3
+                   v=[k=3 v=3 t=~]
+               ==
+    ==
+  ;:  weld
+    %+  expect-eq
+      !>  ~
+      !>  (fuse:cor 0 ~ ~)
+    %+  expect-eq
+      !>  bar
+      !>  ?>(?=(%bin -.foo) (fuse:cor m.foo l.foo r.foo))
+  ==
+::
 ++  test-bot  ^-  tang
   ;:  weld
     %+  expect-eq
