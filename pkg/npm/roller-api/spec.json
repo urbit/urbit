@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.9",
+    "version": "0.1.10",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -14,7 +14,7 @@
       "description": "This assumes `%roller-rpc.hoon` running on a test ship"
     },
     {
-      "url": "http://roller-tmp.urbit.org/v1/roller",
+      "url": "https://roller-tmp.urbit.org/v1/roller",
       "name": "Ropsten",
       "description": "Roller Agent on Ropsten"
     },
@@ -24,7 +24,7 @@
       "description": "This assumes `%azimuth-rpc.hoon` running on a test ship"
     },
     {
-      "url": "http://roller-tmp.urbit.org/v1/azimuth",
+      "url": "https://roller-tmp.urbit.org/v1/azimuth",
       "name": "Ropsten",
       "description": "Azimuth agent on Ropsten"
     }
@@ -2286,7 +2286,9 @@
         "required": [
           "nextBatch",
           "frequency",
-          "refreshTime",
+          "rollerResendTime",
+          "azimuthRefreshRate",
+          "rollerUpdateRate",
           "chainId",
           "contract"
         ],
@@ -2299,10 +2301,20 @@
             "title": "Frequency",
             "description": "How often the Roller sends out a new batch"
           },
-          "refreshTime": {
+          "rollerResendTime": {
             "type": "number",
-            "title": "RefreshTime",
+            "title": "RollerResendTime",
+            "description": "How ofthen the Roller retries to send a batch"
+          },
+          "rollerUpdateRate": {
+            "type": "number",
+            "title": "RollerUpdateRate",
             "description": "How ofthen the Roller updates its state"
+          },
+          "azimuthRefreshRate": {
+            "type": "number",
+            "title": "AzimuthRefreshRate",
+            "description": "How often the Azimuth agent checks for L1 updates"
           },
           "chainId": {
             "type": "number",
