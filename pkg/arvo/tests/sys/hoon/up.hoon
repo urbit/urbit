@@ -124,6 +124,32 @@
       !>  ?>(?=(%bin -.foo) (fuse:cor m.foo l.foo r.foo))
   ==
 ::
+++  test-funk
+  ;:  weld
+    %+  expect-eq
+      !>  [%tip *@ *@ *buc]
+      !>  (funk *@ *@ *buc *@ ~ ~)
+    %+  expect-eq
+      !>  [%bin *@ *@ *buc *@ ~ [%tip *@ *@ *buc]]
+      !>  (funk *@ *@ *buc *@ ~ [%tip *@ *@ *buc])
+    %+  expect-eq
+      !>  [%bin *@ *@ *buc *@ [%tip *@ *@ *buc] ~]
+      !>  (funk *@ *@ *buc *@ [%tip *@ *@ *buc] ~)
+  ==
+::
+++  test-wane
+  ;:  weld
+    %+  expect-eq
+      !>  [%tip *@ *@ *buc]
+      !>  (wane *@ *@ *buc *@ ~ ~)
+    %+  expect-eq
+      !>  [%bin *@ *@ *buc *@ [%tip *@ *@ *buc] ~]
+      !>  (wane *@ *@ *buc *@ [%tip *@ *@ *buc] ~)
+    %+  expect-eq
+      !>  [%bin *@ *@ *buc *@ ~ [%tip *@ *@ *buc]]
+      !>  (wane *@ *@ *buc *@ ~ [%tip *@ *@ *buc])
+  ==
+::
 ++  test-bot  ^-  tang
   ;:  weld
     %+  expect-eq
