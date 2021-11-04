@@ -36,7 +36,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const showNickname = useShowNickname(contact);
 
   const readBook = useCallback(() => {
-    useHarkState.getState().readGraph(association.resource, 'graph-validator-publish');
+    useHarkState.getState().readGraph(association.resource);
   }, [association.resource]);
 
   if (!group) {
