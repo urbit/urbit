@@ -101,6 +101,7 @@
 ::  TODO: add to config
 ::
 ++  resend-time  ~m5
+++  update-rate  ~m1
 ::
 ++  lverb  &
 --
@@ -334,6 +335,7 @@
       :*  next-batch
           frequency
           resend-time
+          update-rate
           contract
           chain-id
       ==
@@ -874,7 +876,7 @@
   ?.  derive  ~
   ::  derive predicted state in 1m.
   ::
-  [(wait:b:sys /predict (add ~m1 now.bowl))]~
+  [(wait:b:sys /predict (add update-rate now.bowl))]~
 ::  +set-timer: %wait until next whole :frequency
 ::
 ++  set-timer
@@ -1110,7 +1112,7 @@
     ?.  derive  ~
     ::  derive predicted/ownership state in 1m.
     ::
-    [(wait:b:sys /predict (add ~m1 now.bowl))]~
+    [(wait:b:sys /predict (add update-rate now.bowl))]~
   ::
   ?:  ?=(%point -.diff)  [~ state]
   ?>  ?=(%tx -.diff)

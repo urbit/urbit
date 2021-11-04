@@ -6,10 +6,15 @@
 +$  owner   [=proxy:naive =address:naive]
 +$  owners  (jug owner ship)
 ::
++$  azimuth-config
+  $:  refresh-rate=@dr
+  ==
+::
 +$  roller-config
   $:  next-batch=time
       frequency=@dr
-      refresh-time=@dr
+      resend-time=@dr
+      update-rate=@dr
       contract=@ux
       chain-id=@
   ==

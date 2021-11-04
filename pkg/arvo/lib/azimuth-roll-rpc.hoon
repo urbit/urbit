@@ -345,16 +345,24 @@
       ::
       ++  tx-status  |=(=^tx-status ^-(json s+status.tx-status))
       ::
-      ++  config
-        |=  roller-config
+      ++  roller-config
+        |=  [az=^azimuth-config ro=^roller-config]
         ^-  json
         %-  pairs
-        :~  ['nextBatch' (time next-batch)]
-            ['frequency' (numb (div frequency ~s1))]
-            ['refreshTime' (numb (div refresh-time ~s1))]
-            ['contract' (hex 20 contract)]
-            ['chainId' (numb chain-id)]
+        :~  ['azimuthRefreshRate' (numb (div refresh-rate.az ~s1))]
+            ['nextBatch' (time next-batch.ro)]
+            ['frequency' (numb (div frequency.ro ~s1))]
+            ['rollerResendTime' (numb (div resend-time.ro ~s1))]
+            ['rollerUpdateRate' (numb (div update-rate.ro ~s1))]
+            ['contract' (hex 20 contract.ro)]
+            ['chainId' (numb chain-id.ro)]
         ==
+      ::
+      ++  azimuth-config
+        |=  config=^azimuth-config
+        ^-  json
+        %-  pairs
+        ['refreshRate' (numb (div refresh-rate.config ~s1))]~
       ::
       ++  hex
         |=  [p=@ q=@]
@@ -578,11 +586,11 @@
   [%result id (hist-txs:to-json (scry u.address))]
 ::
 ++  get-config
-  |=  [id=@t params=(map @t json) =roller-config]
+  |=  [id=@t params=(map @t json) config=[azimuth-config roller-config]]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 0)
     ~(params error:json-rpc id)
-  [%result id (config:to-json roller-config)]
+  [%result id (roller-config:to-json config)]
 ::
 ++  hash-transaction
   |=  [id=@t params=(map @t json) chain-id=@]
@@ -609,4 +617,11 @@
   ?.  =((lent ~(tap by params)) 0)
     ~(params error:json-rpc id)
   [%result id (naive-state:to-json state)]
+::
+++  get-refresh
+  |=  [id=@t params=(map @t json) =azimuth-config]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 0)
+    ~(params error:json-rpc id)
+  [%result id (azimuth-config:to-json azimuth-config)]
 --

@@ -301,6 +301,8 @@
     ==
   ::
   ++  config
+    ^-  [azimuth-config roller-config]
+    :-  refresh
     .^  roller-config
         %gx
         %+  ~(scry agentio bowl)
@@ -320,6 +322,12 @@
     .^  ^state:naive
         %gx
         (~(scry agentio bowl) %roller /predicted/noun)
+    ==
+  ::
+  ++  refresh
+    .^  @dr
+        %gx
+        (~(scry agentio bowl) %azimuth /refresh/noun)
     ==
   --
 --
