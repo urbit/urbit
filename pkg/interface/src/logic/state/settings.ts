@@ -16,7 +16,7 @@ import {
 import { useCallback } from 'react';
 import { reduceUpdate } from '../reducers/settings-update';
 import airlock from '~/logic/api';
-import { getDeskSettings, Value } from '@urbit/api';
+import { Contact, getDeskSettings, Value } from '@urbit/api';
 import { putEntry } from '@urbit/api/settings';
 
 export interface ShortcutMapping {
@@ -137,6 +137,13 @@ const selTheme = (s: SettingsState) => s.display.theme;
 
 export function useTheme() {
   return useSettingsState(selTheme);
+}
+
+// Hide is an optional second parameter for when this function is used in class components
+export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
+  const hideState = useSettingsState(state => state.calm.hideNicknames);
+  const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
+  return Boolean(contact && contact.nickname && !hideNicknames);
 }
 
 export default useSettingsState;

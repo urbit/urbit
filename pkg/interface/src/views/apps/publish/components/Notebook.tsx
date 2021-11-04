@@ -2,9 +2,9 @@ import { Box, Button, Col, Row, Text } from '@tlon/indigo-react';
 import { Association, Graph, readGraph } from '@urbit/api';
 import React, { ReactElement, useCallback } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { useShowNickname } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import { useShowNickname } from '~/logic/state/settings';
 import airlock from '~/logic/api';
 import { NotebookPosts } from './NotebookPosts';
 import useHarkState from '~/logic/state/hark';
@@ -36,7 +36,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const showNickname = useShowNickname(contact);
 
   const readBook = useCallback(() => {
-    useHarkState.getState().readGraph(association.resource, 'graph-validator-publish');
+    useHarkState.getState().readGraph(association.resource);
   }, [association.resource]);
 
   if (!group) {
