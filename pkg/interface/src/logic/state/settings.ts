@@ -49,10 +49,6 @@ export interface SettingsState {
   leap: {
     categories: LeapCategories[];
   };
-  tutorial: {
-    seen: boolean;
-    joined?: number;
-  };
 }
 
 export const selectSettingsState = <K extends keyof (SettingsState & BaseState<SettingsState>)>(keys: K[]) =>
@@ -87,10 +83,6 @@ const useSettingsState = createState<SettingsState>(
     },
     leap: {
       categories: leapCategories
-    },
-    tutorial: {
-      seen: true,
-      joined: undefined
     },
     keyboard: {
       cycleForward: 'ctrl+\'',

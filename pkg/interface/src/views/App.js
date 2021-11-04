@@ -19,7 +19,6 @@ import useGraphState from '~/logic/state/graph';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
 
 import ErrorBoundary from '~/views/components/ErrorBoundary';
-import { TutorialModal } from '~/views/landscape/components/TutorialModal';
 import './apps/chat/css/custom.css';
 import Omnibox from './components/leap/Omnibox';
 import StatusBar from './components/StatusBar';
@@ -171,7 +170,6 @@ class App extends React.Component {
         </Helmet>
         <Root>
           <Router basename="/apps/landscape">
-            <TutorialModal />
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}
