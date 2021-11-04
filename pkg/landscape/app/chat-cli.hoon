@@ -213,7 +213,7 @@
   |=  old=(unit versioned-state)
   ^-  (quip card _state)
   ?~  old
-    [~[connect] state(width 80)]
+    [~[connect link] state(width 80)]
   ::
   =?  u.old  ?=(?(~ ^) -.u.old)
     ^-  state-1
@@ -294,6 +294,7 @@
   :_  u.old
   %+  welp
     cards
+  :-  link
   ?:  %-  ~(has by wex.bowl)
       [/graph-store our-self %graph-store]
     ~
@@ -303,6 +304,12 @@
 ++  connect
   ^-  card
   [%pass /graph-store %agent [our-self %graph-store] %watch /updates]
+::
+++  link
+  ^-  card
+  =/  =cage
+    drum-link+!>([our.bowl dap.bowl])
+  [%pass /drum %agent [our.bowl %hood] %poke cage]
 ::
 ::TODO  better moon support. (name:title our.bowl)
 ++  our-self  our.bowl
