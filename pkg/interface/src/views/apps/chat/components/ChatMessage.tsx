@@ -13,11 +13,11 @@ import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
 import {
-  cite, daToUnix, useHovering, useShowNickname, uxToHex
+  cite, daToUnix, useHovering, uxToHex
 } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/state/settings';
 import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
