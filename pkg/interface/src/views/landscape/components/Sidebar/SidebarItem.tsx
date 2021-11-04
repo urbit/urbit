@@ -24,13 +24,15 @@ function useAssociationStatus(resource: string) {
   const { count, each } = stats;
   const hasNotifications = false;
   const hasUnread = count > 0 || each.length > 0;
-  return !isSubscribed
-    ? 'unsubscribed'
-    : hasNotifications
-    ? 'notification'
-    : hasUnread
-    ? 'unread'
-    : undefined;
+  if(!isSubscribed) {
+    return 'unsubscribed';
+  } else if (hasNotifications) {
+    return 'notification';
+  } else if (hasUnread) {
+    return 'unread';
+  } else {
+    return undefined;
+  }
 }
 
 function SidebarItemBase(props: {
