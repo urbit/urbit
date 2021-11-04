@@ -61,6 +61,9 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const noteId = bigInt(index[1]);
   useEffect(() => {
     airlock.poke(markEachAsRead(toHarkPlace(association.resource), `/${index[1]}`));
+    // Unread may be malformed, dismiss anyway
+    // TODO: remove when %read-graph is implemented
+    airlock.poke(markEachAsRead(toHarkPlace(association.resource), `/1`));
   }, [association, props.note]);
 
   const adminLinks: JSX.Element[] = [];
