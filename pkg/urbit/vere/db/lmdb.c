@@ -239,14 +239,14 @@ u3_lmdb_walk_init(MDB_env*      env_u,
   //
   ops_w = MDB_RDONLY;
   if ( (ret_w = mdb_txn_begin(env_u, 0, ops_w, &itr_u->txn_u)) ) {
-    fprintf(stderr, "lmdb: read txn_begin fail: %s\r\n", mdb_strerror(ret_w));
+    mdb_logerror(stderr, ret_w, "lmdb: read txn_begin fail");
     return c3n;
   }
   //  open the database in the transaction
   //
   ops_w = MDB_CREATE | MDB_INTEGERKEY;
   if ( (ret_w = mdb_dbi_open(itr_u->txn_u, "EVENTS", ops_w, &itr_u->mdb_u)) ) {
-    fprintf(stderr, "lmdb: read: dbi_open fail: %s\r\n", mdb_strerror(ret_w));
+    mdb_logerror(stderr, ret_w, "lmdb: read: dbi_open fail");
     //  XX confirm
     //
     mdb_txn_abort(itr_u->txn_u);
@@ -256,8 +256,7 @@ u3_lmdb_walk_init(MDB_env*      env_u,
   //  creates a cursor to iterate over keys starting at [eve_d]
   //
   if ( (ret_w = mdb_cursor_open(itr_u->txn_u, itr_u->mdb_u, &itr_u->cur_u)) ) {
-    fprintf(stderr, "lmdb: read: cursor_open fail: %s\r\n",
-                    mdb_strerror(ret_w));
+    mdb_logerror(stderr, ret_w, "lmdb: read: cursor_open fail");
     //  XX confirm
     //
     mdb_txn_abort(itr_u->txn_u);
@@ -268,10 +267,8 @@ u3_lmdb_walk_init(MDB_env*      env_u,
   //
   ops_w = MDB_SET_KEY;
   if ( (ret_w = mdb_cursor_get(itr_u->cur_u, &key_u, &val_u, ops_w)) ) {
-    fprintf(stderr, "lmdb: read: initial cursor_get failed at %" PRIu64
-                    ": %s\r\n",
-                    nex_d,
-                    mdb_strerror(ret_w));
+    mdb_logerror(stderr, ret_w, "lmdb: read: initial cursor_get failed");
+    fprintf(stderr, "    at %" PRIu64 "\r\n", nex_d);
     mdb_cursor_close(itr_u->cur_u);
     //  XX confirm
     //
@@ -294,7 +291,7 @@ u3_lmdb_walk_next(u3_lmdb_walk* itr_u, size_t* len_i, void** buf_v)
 
   ops_w = ( c3y == itr_u->red_o ) ? MDB_NEXT : MDB_GET_CURRENT;
   if ( (ret_w = mdb_cursor_get(itr_u->cur_u, &key_u, &val_u, ops_w)) ) {
-    fprintf(stderr, "lmdb: walk error: %s\r\n", mdb_strerror(ret_w));
+    mdb_logerror(stderr, ret_w, "lmdb: walk error");
     return c3n;
   }
 
