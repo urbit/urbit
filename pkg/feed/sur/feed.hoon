@@ -25,14 +25,12 @@
 ++  allowed
   |=  [=ship =policy]
   ?-  -.policy
-      %invite
-    ?|  (~(has in pending.policy) ship)
-        (~(has in current.policy) ship)
-    ==
-      %open
+    %white  (~(has in p.policy) ship)
+  ::
+      %black
     ?!  ?|
-      (~(has in banned.policy) ship)
-      (~(has in ban-ranks.policy) (clan:title ship))
+      (~(has in ships.policy) ship)
+      (~(has in ranks.policy) (clan:title ship))
     ==
   ==
 

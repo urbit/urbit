@@ -4,44 +4,45 @@
 +$  kind  ?(%read %write)
 ::
 +$  policy
-  $%  invite
-      open
+  $~  [%black ~ ~]  
+  $%  black
+      white
   ==
 ::  $diff: change group policy
 +$  diff
-  $%  [%invite diff:invite]
-      [%open diff:open]
+  $%  [%black diff:black]
+      [%white diff:white]
       [%replace =policy]
   ==
-::  $invite: allow only invited ships
-++  invite
-  =<  invite-policy
+::  $white: allow only some ships
+++  white
+  =<  white-policy
   |%
   ::
-  +$  invite-policy
-    [%invite current=(set ship) pending=(set ship)]
-  ::  $diff: add or remove invites
+  +$  white-policy
+    [%white p=(set ship)]
+  ::  $diff: add or remove blacks
   ::
   +$  diff
-    $%  [%add-invites invitees=(set ship)]
-        [%remove-invites invitees=(set ship)]
+    $%  [%add p=(set ship)]
+        [%del p=(set ship)]
     ==
   --
-::  $open: allow all unbanned ships of approriate rank
+::  $black: allow all unbanned ships of approriate rank
 ::
-++  open
-  =<  open-policy
+++  black
+  =<  black-policy
   |%
   ::
-  +$  open-policy
-    [%open ban-ranks=(set rank:title) banned=(set ship)]
+  +$  black-policy
+    [%black ranks=(set rank:title) ships=(set ship)]
   :: $diff: ban or allow ranks and ships
   ::
   +$  diff
-    $%  [%allow-ranks ranks=(set rank:title)]
-        [%ban-ranks ranks=(set rank:title)]
-        [%ban-ships ships=(set ship)]
-        [%allow-ships ships=(set ship)]
+    $%  [%allow-ranks p=(set rank:title)]
+        [%ban-ranks p=(set rank:title)]
+        [%ban-ships p=(set ship)]
+        [%allow-ships p=(set ship)]
     ==
   --
 --

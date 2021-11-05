@@ -180,7 +180,12 @@
   ++  here  /feed/(scot %p ship)
   ++  area
     :-  here
-    ~
+    %~  tap  in
+    %-  ~(gas in *(set path))
+    %+  murn  ~(val by sup.bowl)
+    |=  [s=^ship =path]
+    ?.  =(here (scag 2 path))  ~
+    `path
   ::
   ++  allowed  
     |%
@@ -209,6 +214,14 @@
     ++  update
       |=  =update:feed
       (fact:io feed-update+!>(update) area)
+    ::
+    ++  recheck-perms
+      ^-  (list card)
+      %+  murn  ~(val by sup.bowl)
+      |=  [s=^ship =path]
+      ?.  =(here (scag 2 path))  ~
+      ?:  (allowed:feed s read:fed)  ~
+      `(kick-only:io s path ~)
     --
   ::  +|  %entrypoints
   ++  follow
@@ -242,16 +255,54 @@
   ::
   ++  on-diff
     |=  [=time =diff:feed]
-    ^+  fe-core
+    |^  ^+  fe-core
     ?>  write:allowed
     =.  fe-core
       (edit |=(f=feed:feed f(log (put:lorm log.f time diff))))
     =.  event-core
       (emit (update:give time diff))
     ?+  -.diff  ~|(bad-diff/-.diff !!)
-      %post   abet:(~(on-update po-core id.diff) update.diff)
-      %policy  fe-core
+    ::
+        %post   
+      abet:(~(on-update po-core id.diff) update.diff)
+    ::
+      %policy  ~!  +.diff  (diff-policy +.diff)
     ==
+    ++  diff-policy
+      |=  [=kind:policy:feed =diff:policy:feed]
+      |^  ^+  fe-core
+      ?>  |(=(our.bowl ship) =(src.bowl ship))
+      =?  fe-core  ?=(%read kind)
+        (edit |=(f=feed:feed f(read (ap read.f))))
+      =?  fe-core  ?=(%write kind)
+        (edit |=(f=feed:feed f(write (ap write.f))))
+      fe-core(event-core (emil recheck-perms:give))
+      ::
+      ++  ap
+        |=  =policy:feed
+        ^-  policy:feed
+        ?-  -.diff
+        ::
+          %replace  +.diff
+        ::
+            %white  
+          ?>  ?=(%white -.policy)
+          ?-  +<.diff
+            %add  policy(p (~(uni in p.policy) p.diff))
+            %del  policy(p (~(dif in p.policy) p.diff))
+          ==
+        ::
+            %black  
+          ?>  ?=(%black -.policy)
+          ?-  +<.diff
+            %allow-ranks  policy(ranks (~(dif in ranks.policy) p.diff))
+            %ban-ranks    policy(ranks (~(uni in ranks.policy) p.diff))
+            %ban-ships    policy(ships (~(uni in ships.policy) p.diff))
+            %allow-ships  policy(ships (~(dif in ships.policy) p.diff))
+          ==
+        ==
+      --
+    --
   ::
   ++  take
     |=  [=wire =sign:mall]
@@ -304,6 +355,7 @@
         %leave  fe-core
       ::
           %watch  
+        ?>  read:allowed
         =.  event-core  (emit (replay:give `start))
         fe-core
       ==
