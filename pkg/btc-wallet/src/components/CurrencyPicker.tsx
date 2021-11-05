@@ -17,6 +17,7 @@ const CurrencyPicker = () => {
     console.log({ newCurrency, denomination });
     let setCurrency = {
       'put-entry': {
+        desk: window.desk,
         value: newCurrency,
         'entry-key': 'currency',
         'bucket-key': 'btc-wallet',

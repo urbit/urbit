@@ -7,11 +7,21 @@
 ::::
   ::
 :-  %say
+=>  |%
+    +$  bath
+      $@  desk
+      (lest knot)
+    --
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [[pax=path pot=$@(~ [v=@tas ~])] ~]
+        [=bath pot=$@(~ [v=@tas ~])]
+        ~
     ==
-?~  pot
-  =+  bem=(need (de-beam pax))
-  $(pot ~[?^(s.bem (rear s.bem) q.bem)])
-:-  %kiln-mount
-[pax v.pot]
+=/  bem=beam
+  ?@  bath  [bec(q bath) /]
+  (need (de-beam `path`bath))
+::
+=/  =desk
+  ?^  pot  v.pot
+  ?^(s.bem (rear s.bem) q.bem)
+::
+[%kiln-mount (en-beam bem) desk]

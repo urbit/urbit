@@ -1,40 +1,36 @@
 import _ from 'lodash';
-import React, { useRef, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
-import { Association, cite, AppName } from '@urbit/api';
+import { Association, cite, deSig } from '@urbit/api';
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
-import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { Workspace } from '~/types/workspace';
 import useContactState, { useContact } from '~/logic/state/contact';
 import { getItemTitle, getModuleIcon, uxToHex } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import Dot from '~/views/components/Dot';
-import useHarkState, { useHarkDm } from '~/logic/state/hark';
+import { useHarkDm, useHarkStat } from '~/logic/state/hark';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
 
 function useAssociationStatus(resource: string) {
   const [, , ship, name] = resource.split('/');
-  const graphKey = `${ship.slice(1)}/${name}`;
+  const graphKey = `${deSig(ship)}/${name}`;
   const isSubscribed = useGraphState(s => s.graphKeys.has(graphKey));
-  const { unreads, notifications } = useHarkState(
-    s => s.unreads.graph?.[resource]?.['/'] || { unreads: 0, notifications: 0, last: 0 }
-  );
-  const hasNotifications =
-    (typeof notifications === 'number' && notifications > 0) ||
-    (typeof notifications === 'object' && notifications.length);
-  const hasUnread =
-    typeof unreads === 'number' ? unreads > 0 : unreads?.size ?? 0 > 0;
-  return hasNotifications
-    ? 'notification'
-    : hasUnread
-    ? 'unread'
-    : isSubscribed
-    ? undefined
-    : 'unsubscribed';
+  const stats = useHarkStat(`/graph/~${graphKey}`);
+  const { count, each } = stats;
+  const hasNotifications = false;
+  const hasUnread = count > 0 || each.length > 0;
+  if(!isSubscribed) {
+    return 'unsubscribed';
+  } else if (hasNotifications) {
+    return 'notification';
+  } else if (hasUnread) {
+    return 'unread';
+  } else {
+    return undefined;
+  }
 }
 
 function SidebarItemBase(props: {
@@ -46,6 +42,7 @@ function SidebarItemBase(props: {
   children: ReactNode;
   title: string | ReactNode;
   mono?: boolean;
+  pending?: boolean;
 }) {
   const {
     title,
@@ -55,7 +52,8 @@ function SidebarItemBase(props: {
     hasNotification,
     hasUnread,
     isSynced = false,
-    mono = false
+    mono = false,
+    pending = false
   } = props;
   const color = isSynced
     ? hasUnread || hasNotification
@@ -69,8 +67,8 @@ function SidebarItemBase(props: {
     <HoverBoxLink
       // ref={anchorRef}
       to={to}
-      bg="white"
-      bgActive="washedGray"
+      bg={pending ? 'lightBlue' : 'white'}
+      bgActive={pending ? 'washedBlue' : 'washedGray'}
       width="100%"
       display="flex"
       justifyContent="space-between"
@@ -124,15 +122,17 @@ export const SidebarDmItem = React.memo((props: {
   ship: string;
   selected?: boolean;
   workspace: Workspace;
+  pending?: boolean;
 }) => {
-  const { ship, selected = false } = props;
+  const { ship, selected = false, pending = false } = props;
   const contact = useContact(ship);
   const { hideAvatars, hideNicknames } = useSettingsState(s => s.calm);
   const title =
     !hideNicknames && contact?.nickname
       ? contact?.nickname
       : cite(ship) ?? ship;
-  const { unreads } = useHarkDm(ship) || { unreads: 0 };
+  const { count, each } = useHarkDm(ship);
+  const unreads = count + each.length;
   const img =
     contact?.avatar && !hideAvatars ? (
       <BaseImage
@@ -161,6 +161,7 @@ export const SidebarDmItem = React.memo((props: {
       title={title}
       mono={hideAvatars || !contact?.nickname}
       isSynced
+      pending={pending}
     >
       {img}
     </SidebarItemBase>
@@ -176,21 +177,15 @@ export const SidebarAssociationItem = React.memo((props: {
   const { association, selected } = props;
   const title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
-  let mod = appName;
+  let mod: string = appName;
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
-    mod = association.metadata.config.graph as AppName;
+    mod = association.metadata.config.graph ;
   }
   const rid = association?.resource;
   const groupPath = association?.group;
   const group = useGroupState(state => state.groups[groupPath]);
   const { hideNicknames } = useSettingsState(s => s.calm);
   const contacts = useContactState(s => s.contacts);
-  const anchorRef = useRef<HTMLAnchorElement>(null);
-  useTutorialModal(
-    mod as any,
-    groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
-    anchorRef
-  );
   const isUnmanaged = group?.hidden || false;
   const DM = isUnmanaged && props.workspace?.type === 'messages';
   const itemStatus = useAssociationStatus(rid);

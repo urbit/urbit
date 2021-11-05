@@ -1,5 +1,6 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const urbitrc = require('./urbitrc');
 
 module.exports = {
@@ -34,15 +35,21 @@ module.exports = {
     extensions: ['.js', '.ts', '.tsx'],
   },
   devtool: 'source-map',
-  plugins: [new CleanWebpackPlugin()],
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Bitcoin Wallet',
+      template: './public/index.html',
+    }),
+  ],
   output: {
     filename: (pathData) => {
       return pathData.chunk.name === 'app'
         ? 'index.[contenthash].js'
         : '[name].js';
     },
-    path: path.resolve(__dirname, `../../arvo/app/btc-wallet/js/bundle`),
-    publicPath: '/',
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/apps/bitcoin/',
   },
   optimization: {
     minimize: true,

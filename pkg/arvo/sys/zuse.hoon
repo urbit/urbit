@@ -3730,6 +3730,64 @@
       (some (~(run by lum) need))
     --  ::dejs-soft
   --
+::  |cloy: clay helpers
+::
+++  cloy
+  =,  clay
+  |%
+  ++  new-desk
+    |=  [=desk tako=(unit tako) files=(map path page)]
+    [%c %park desk &/[(drop tako) (~(run by files) (lead %&))] *rang]
+  ::  +an: $ankh interface door
+  ::
+  ++  an
+    |_  nak=ankh
+    ::  +dug: produce ankh at path
+    ::
+    ++  dug
+      |=  =path
+      ^-  (unit ankh)
+      ?~  path  `nak
+      ?~  kid=(~(get by dir.nak) i.path)
+        ~
+      $(nak u.kid, path t.path)
+    ::  +get: produce file at path
+    ::
+    ++  get
+      |=  =path
+      ^-  (unit cage)
+      ?~  nik=(dug path)  ~
+      ?~  fil.u.nik       ~
+      `q.u.fil.u.nik
+    ::  +mup: convert sub-tree at .pre to (map path [lobe cage])
+    ::
+    ++  mup
+      |=  pre=path
+      =-  ~?  =(~ -)  [%oh-no-empty pre]
+          -
+      ^-  (map path [lobe cage])
+      =/  nek=(unit ankh)  (dug pre)
+      ?~  nek
+        ~&  [%oh-no-empty-pre pre ~(key by dir.nak)]
+        ~
+      =.  nak  u.nek
+      ~?  =(~ nak)  [%oh-no-empty-nak pre]
+      =|  pax=path
+      =|  res=(map path [=lobe =cage])
+      |-  ^+  res
+      =?  res  ?=(^ fil.nak)  (~(put by res) pax u.fil.nak)
+      :: =/  anz=(list [seg=@ta =ankh])  ~(tap by dir.nak)
+      :: |-  ^+  res
+      :: ?~  anz  res
+      :: %_  $
+      ::   anz  t.anz
+      ::   res  ^$(pax (snoc pax seg.i.anz), nak ankh.i.anz)
+      :: ==
+      %+  roll  ~(tap by dir.nak)
+      |=  [[seg=@ta =ankh] res=_res]
+      ^$(pax (snoc pax seg), nak ankh, res res)
+    --
+  --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy
   ::                                                    ::::
@@ -4790,9 +4848,23 @@
 ::    (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::
-::::                      ++title                       ::  (2j) namespace
+::::                      ++title                       ::  (2j) identity
   ::                                                    ::::
 ++  title
+  ::  deep core: for vane use, with $roof for scrying
+  ::
+  ::    TODO: refactor to share high-level gates like +saxo
+  ::          among the three cores
+  ::
+  =>  |%
+      ++  sein
+        |=  [rof=roof our=ship now=@da who=ship]
+        ;;  ship
+        =<  q.q  %-  need  %-  need
+        (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
+      --
+  ::  middle core: for userspace use, with .^
+  ::
   =>  |%
       ::                                                ::  ++clan:title
       ++  clan                                          ::  ship to rank
@@ -4831,6 +4903,8 @@
           %pawn  (end 4 who)
         ==
       --
+  ::  surface core: stateless queries for default numeric sponsorship
+  ::
   |%
   ::                                                    ::  ++cite:title
   ++  cite                                              ::  render ship

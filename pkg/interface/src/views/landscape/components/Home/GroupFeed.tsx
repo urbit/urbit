@@ -1,5 +1,5 @@
 import { Col } from '@tlon/indigo-react';
-import { markCountAsRead } from '@urbit/api';
+import { deSig, markCountAsRead } from '@urbit/api';
 import React, {
   useEffect
 } from 'react';
@@ -14,6 +14,7 @@ import { PostRepliesRoutes } from './Post/PostReplies';
 import PostTimeline from './Post/PostTimeline';
 import airlock from '~/logic/api';
 import { PostThreadRoutes } from './Post/PostThread';
+import { toHarkPlace } from '~/logic/lib/util';
 
 function GroupFeed(props) {
   const {
@@ -34,7 +35,7 @@ function GroupFeed(props) {
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
   const pendingSize = Object.keys(
-    graphTimesentMap[`${graphResource.ship.slice(1)}/${graphResource.name}`] ||
+    graphTimesentMap[`${deSig(graphResource.ship)}/${graphResource.name}`] ||
     {}
   ).length;
 
@@ -43,7 +44,7 @@ function GroupFeed(props) {
 
   const history = useHistory();
 
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
+  const graphId = `${deSig(graphResource.ship)}/${graphResource.name}`;
   const graph = graphs[graphId];
 
   useEffect(() => {
@@ -52,7 +53,8 @@ function GroupFeed(props) {
       return;
     }
     getNewest(graphResource.ship, graphResource.name, 100);
-    airlock.poke(markCountAsRead(graphPath));
+
+    airlock.poke(markCountAsRead(toHarkPlace(graphPath)));
   }, [graphPath]);
 
   if (!graphPath) {

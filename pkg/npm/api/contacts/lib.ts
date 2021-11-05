@@ -1,5 +1,5 @@
 
-import { Path, Patp, Poke, resourceAsPath, Scry } from "../lib";
+import { Patp, Poke, Scry } from '../lib';
 import {
   Contact,
   ContactUpdateAdd,
@@ -10,36 +10,36 @@ import {
   ContactUpdate,
   ContactUpdateAllowShips,
   ContactUpdateAllowGroup,
-  ContactUpdateSetPublic,
-} from "./types";
+  ContactUpdateSetPublic
+} from './types';
 
-export const CONTACT_UPDATE_VERSION: number = 0;
+export const CONTACT_UPDATE_VERSION = 0;
 
 const storeAction = <T extends ContactUpdate>(data: T, version: number = CONTACT_UPDATE_VERSION): Poke<T> => ({
-  app: "contact-store",
+  app: 'contact-store',
   mark: `contact-update-${version}`,
-  json: data,
+  json: data
 });
 
 export { storeAction as contactStoreAction };
 
 export const addContact = (ship: Patp, contact: Contact): Poke<ContactUpdateAdd> => {
-  contact["last-updated"] = Date.now();
+  contact['last-updated'] = Date.now();
 
   return storeAction({
-    add: { ship, contact },
+    add: { ship, contact }
   });
 };
 
 export const removeContact = (ship: Patp): Poke<ContactUpdateRemove> =>
   storeAction({
-    remove: { ship },
+    remove: { ship }
   });
 
 export const share = (recipient: Patp, version: number = CONTACT_UPDATE_VERSION): Poke<ContactShare> => ({
-  app: "contact-push-hook",
-  mark: "contact-share",
-  json: { share: recipient },
+  app: 'contact-push-hook',
+  mark: 'contact-share',
+  json: { share: recipient }
 });
 
 export const editContact = (
@@ -49,9 +49,9 @@ export const editContact = (
   storeAction({
     edit: {
       ship,
-      "edit-field": editField,
-      timestamp: Date.now(),
-    },
+      'edit-field': editField,
+      timestamp: Date.now()
+    }
   });
 
 export const allowShips = (
@@ -67,7 +67,7 @@ export const allowGroup = (
   name: string
 ): Poke<ContactUpdateAllowGroup> => storeAction({
   allow: {
-    group: resourceAsPath({ ship, name })
+    group: { ship, name }
   }
 });
 
@@ -77,7 +77,7 @@ export const setPublic = (
   return storeAction({
     'set-public': setPublic
   });
-}
+};
 
 export const retrieve = (
   ship: string
@@ -93,7 +93,7 @@ export const retrieve = (
       }
     }
   };
-}
+};
 
 export const fetchIsAllowed = (
   entity: string,
@@ -105,5 +105,5 @@ export const fetchIsAllowed = (
   return {
     app: 'contact-store',
     path: `/is-allowed/${entity}/${name}/${ship}/${isPersonal}`
-  }
+  };
 };

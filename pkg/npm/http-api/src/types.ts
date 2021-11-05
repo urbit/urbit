@@ -1,7 +1,6 @@
-
 /**
  * An urbit style path, rendered as a Javascript string
- * @example 
+ * @example
  * `"/updates"`
  */
 export type Path = string;
@@ -28,7 +27,6 @@ export type Patp = string;
  */
 export type PatpNoSig = string;
 
-
 /**
  * The name of a clay mark, as a string
  *
@@ -43,43 +41,43 @@ export type Mark = string;
  * The name of a gall agent, as a string
  *
  * @example
- * 
+ *
  * ```typescript
  * "graph-store"
  * ```
  */
 export type GallAgent = string;
 
-/** 
+/**
  * Description of an outgoing poke
- * 
+ *
  * @typeParam Action - Typescript type of the data being poked
  */
 export interface Poke<Action> {
   /**
-   * Ship to poke. If left empty, the api lib will populate it with the ship that it is connected to. 
-   * 
+   * Ship to poke. If left empty, the api lib will populate it with the ship that it is connected to.
+   *
    * @remarks
    *
    * This should always be the ship that you are connected to
-   * 
+   *
    */
-  ship?: PatpNoSig; 
-  /** 
+  ship?: PatpNoSig;
+  /**
    */
   app: GallAgent;
   /**
-   * Mark of the cage to be poked 
-   * 
+   * Mark of the cage to be poked
+   *
    */
   mark: Mark;
-  /** 
+  /**
    * Vase of the cage of to be poked, as JSON
    */
   json: Action;
 }
 
-/** 
+/**
  * Description of a scry request
  */
 export interface Scry {
@@ -91,11 +89,11 @@ export interface Scry {
 
 /**
  * Description of a thread request
- * 
+ *
  * @typeParam Action - Typescript type of the data being poked
  */
 export interface Thread<Action> {
-  /** 
+  /**
    * The mark of the input vase
    */
   inputMark: Mark;
@@ -103,7 +101,7 @@ export interface Thread<Action> {
    * The mark of the output vase
    */
   outputMark: Mark;
-  /** 
+  /**
    * Name of the thread
    *
    * @example
@@ -113,15 +111,16 @@ export interface Thread<Action> {
    */
   threadName: string;
   /**
+   * Desk of thread
+   */
+  desk?: string;
+  /**
    * Data of the input vase
    */
   body: Action;
 }
 
 export type Action = 'poke' | 'subscribe' | 'ack' | 'unsubscribe' | 'delete';
-
-
-
 
 export interface PokeHandlers {
   onSuccess?: () => void;
@@ -139,7 +138,7 @@ export interface AuthenticationInterface {
 
 /**
  * Subscription event handlers
- * 
+ *
  */
 export interface SubscriptionInterface {
   /**
@@ -150,7 +149,7 @@ export interface SubscriptionInterface {
    * Handle %fact
    */
   event?(data: any): void;
-  /** 
+  /**
    * Handle %kick
    */
   quit?(data: any): void;
@@ -178,14 +177,13 @@ export interface headers {
   Cookie?: string;
 }
 
-
 export interface CustomEventHandler {
   (data: any, response: string): void;
 }
 
 export interface SSEOptions {
   headers?: {
-    Cookie?: string
+    Cookie?: string;
   };
   withCredentials?: boolean;
 }
@@ -194,3 +192,7 @@ export interface Message extends Record<string, any> {
   action: Action;
   id?: number;
 }
+
+export class ResumableError extends Error {}
+
+export class FatalError extends Error {}
