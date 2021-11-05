@@ -637,11 +637,11 @@ _mars_wyrd_card(c3_m nam_m, c3_w ver_w, c3_l sev_l)
 
   //  special case versions requiring the full stack
   //
-  if (  ((c3__zuse == nam_m) && (420 == ver_w))
+  if (  ((c3__zuse == nam_m) && (419 == ver_w))
      || ((c3__lull == nam_m) && (330 == ver_w))
      || ((c3__arvo == nam_m) && (240 == ver_w)) )
   {
-    kel = u3nl(u3nc(c3__zuse, 420),
+    kel = u3nl(u3nc(c3__zuse, 419),
                u3nc(c3__lull, 330),
                u3nc(c3__arvo, 240),
                u3nc(c3__hoon, 140),
@@ -922,7 +922,7 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
   inp_u.veb_o = c3n;
   inp_u.lit_o = c3y;
   inp_u.ver_u.nam_m = c3__zuse;
-  inp_u.ver_u.ver_w = 420;
+  inp_u.ver_u.ver_w = 419;
 
   gettimeofday(&inp_u.tim_u, 0);
   c3_rand(inp_u.eny_w);
