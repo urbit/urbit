@@ -523,12 +523,14 @@ _cw_boot(c3_i argc, c3_c* argv[])
 
   //  Ignore SIGPIPE signals.
   //
+  #ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
+  #endif
 
   //  configure pipe to daemon process
   //
@@ -623,11 +625,32 @@ _cw_work(c3_i argc, c3_c* argv[])
   c3_i inn_i, out_i;
   _cw_serf_stdio(&inn_i, &out_i);
 
+  #if defined(U3_OS_mingw)
+  c3_assert( 8 == argc );
+
+  //  Initialize serf's end of Ctrl-C handling
+  //
+  {
+    HANDLE h;
+    if ( 1 != sscanf(argv[7], "%u", &h) ) {
+      fprintf(stderr, "serf: Ctrl-C event: bad handle %s: %s\r\n", argv[7], strerror(errno));
+    } else
+    if ( !RegisterWaitForSingleObject(&h, h, _mingw_ctrlc_cb, NULL, INFINITE, 0) ) {
+      fprintf(stderr, "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n", h, GetLastError());
+    }
+  }
+  #else
+  c3_assert( 7 == argc );
+  #endif
+
   uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
   c3_c*      dir_c = argv[2];
   c3_c*      key_c = argv[3];
   c3_c*      wag_c = argv[4];
   c3_c*      hap_c = argv[5];
+
+  //  XX argv[6] is roc_c
+  //
 
   fprintf(stderr, "work: %s\r\n", dir_c);
 
@@ -654,12 +677,14 @@ _cw_work(c3_i argc, c3_c* argv[])
 
   //  Ignore SIGPIPE signals.
   //
+  #ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
+  #endif
 
   //  configure pipe to daemon process
   //
