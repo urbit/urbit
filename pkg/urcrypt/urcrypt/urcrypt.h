@@ -39,8 +39,8 @@ void urcrypt_ed_sign(const uint8_t *message,
 // return value means the signature was (not) verified
 bool urcrypt_ed_veri(const uint8_t *message,
                      size_t length,
-                     const uint8_t signature[64],
-                     const uint8_t public[32]);
+                     const uint8_t public[32],
+                     const uint8_t signature[64]);
 
 int urcrypt_aes_ecba_en(uint8_t key[16], uint8_t block[16], uint8_t out[16]);
 int urcrypt_aes_ecba_de(uint8_t key[16], uint8_t block[16], uint8_t out[16]);
