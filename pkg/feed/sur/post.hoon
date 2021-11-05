@@ -6,11 +6,8 @@
 +$  id  time
 ::
 +$  gid  [=ship =time]
-+$  contents
-  $~  [%0 ~]
-  $%  [%0 p=contents-0]
-      [%xeno p=*]
-  ==
+::  TODO: telescoping marks?
++$  contents  contents-0
 ::
 ++  contents-0
   =<  contents

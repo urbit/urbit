@@ -61,8 +61,7 @@
   ::
   ++  contents
     |=  c=^contents
-    ?.  ?=(%0 -.c)  s+'Unknown content'
-    a+(turn p.c content)
+    a+(turn c content)
   ::
   ++  content
     |=  c=content:contents-0
@@ -160,71 +159,68 @@
 ++  dejs
   =,  dejs:format
   |%
-  ++  contents
+  ++  contents  contents-0
+  ::
+  ++  content-0
+    ^-  $-(json content:^contents-0)
     %-  of
-    :~  [`@tas`%0 contents-0]
+    :~  [%mention (su ;~(pfix sig fed:ag))]
+        [%text so]
+        [%url so]
+        [%reference reference]
+        [%code eval]
+    ==
+  ::
+  ++  eval
+    %-  ot
+    :~  expression+so
+        output+tang
+    ==
+  ::
+  ++  tang 
+    |=  jon=^json
+    ^-  ^tang
+    ?>  ?=(%a -.jon)
+    %-  zing
+    %+  turn
+      p.jon
+    |=  jo=^json
+    ^-  (list tank)
+    ?>  ?=(%a -.jo)
+    %+  turn
+      p.jo
+    |=  j=^json
+    ?>  ?=(%s -.j)
+    ^-  tank
+    leaf+(trip p.j)
+  ::
+
+  ::
+  ++  reference
+    |^
+    %-  of
+    :~  graph+graph
+        group+dejs-path:res
+        app+app
     ==
     ::
-    ++  content-0
-      ^-  $-(json content:^contents-0)
-      %-  of
-      :~  [%mention (su ;~(pfix sig fed:ag))]
-          [%text so]
-          [%url so]
-          [%reference reference]
-          [%code eval]
-      ==
-    ::
-    ++  eval
+    ++  graph
       %-  ot
-      :~  expression+so
-          output+tang
+      :~  group+dejs-path:res
+          graph+dejs-path:res
+          index+index
       ==
     ::
-    ++  tang 
-      |=  jon=^json
-      ^-  ^tang
-      ?>  ?=(%a -.jon)
-      %-  zing
-      %+  turn
-        p.jon
-      |=  jo=^json
-      ^-  (list tank)
-      ?>  ?=(%a -.jo)
-      %+  turn
-        p.jo
-      |=  j=^json
-      ?>  ?=(%s -.j)
-      ^-  tank
-      leaf+(trip p.j)
-    ::
-
-    ::
-    ++  reference
-      |^
-      %-  of
-      :~  graph+graph
-          group+dejs-path:res
-          app+app
+    ++  app
+      %-  ot
+      :~  ship+(su ;~(pfix sig fed:ag))
+          desk+so
+          path+pa
       ==
-      ::
-      ++  graph
-        %-  ot
-        :~  group+dejs-path:res
-            graph+dejs-path:res
-            index+index
-        ==
-      ::
-      ++  app
-        %-  ot
-        :~  ship+(su ;~(pfix sig fed:ag))
-            desk+so
-            path+pa
-        ==
-      --
-    ::
-    ++  contents-0  
-      ^-  $-(json contents:^contents-0)
-      (ar content-0)
     --
+  ::
+  ++  contents-0  
+    ^-  $-(json contents:^contents-0)
+    (ar content-0)
+  --
 --

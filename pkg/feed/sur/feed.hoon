@@ -18,7 +18,6 @@
 +$  update    (pair time diff)
 +$  diff
   $%  [%replay =log]
-      [%ini =feed:feed]
       [%post =id:post =update:post]
       [%policy kind=?(%read %write) =diff:policy]
   ==

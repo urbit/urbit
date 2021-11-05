@@ -29,7 +29,9 @@
   |_  =bowl:gall
   +*  this  .
       event-core    ~(. +> [bowl ~])
-  ++  init  `this
+  ++  init  
+    :-  ~
+    this(feeds (~(put by feeds) our.bowl *feed:feed))
   ++  stay  !>(-.state)
   ++  load
     |=  =vase
@@ -278,8 +280,6 @@
         =.  watching  (~(del in watching) ship)
         fe-core
       ==
-    ::
-      [%post @ *]  abet:(take:(abed:po-core wire) t.t.wire sign)
     ==
   ::
   ++  call
@@ -370,16 +370,6 @@
         fe(tl (put:orm tl.fe id (f p)))
       po-core
     ::
-    ++  take
-      |=  [=wire =sign:mall]
-      ^+  po-core
-      %-  (info:log (fmt "take {<-.sign>} {<-:+:sign>} {<wire>}"))
-      ?+  sign  ~&(unknown-post-take/-.sign po-core)
-      ::
-          [%agent %poke-ack *]
-        ?~(p.p.sign po-core ((slog leaf/"Failed ack" u.p.p.sign) po-core))
-      ==
-    ::
     ++  reply
       |=  [parent=id:post child=id:post]
       ^+  fe-core
@@ -434,6 +424,7 @@
     ++  add
       |=  po=post
       ?>  |(?=(~ parent.p.po) (has:orm tl:fed u.parent.p.po))
+      ?>  |(?=(^ parent.p.po) =(ship src.bowl)) 
       =?  fe-core  ?=(^ parent.p.po)
         (reply u.parent.p.po id)
       =.  fe-core
