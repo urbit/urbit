@@ -169,17 +169,6 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           color={iconFill}
         />
       );
-    } else if (icon === 'tutorial') {
-      graphic = (
-        <Icon
-          display='inline-block'
-          verticalAlign='middle'
-          icon='Tutorial'
-          mr={2}
-          size='18px'
-          color={iconFill}
-        />
-      );
     } else {
       graphic = (
         <Icon
