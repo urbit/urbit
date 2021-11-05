@@ -344,7 +344,7 @@ top:
     if ( _cwe_mars_save == mar_u->sat_e ) {
       u3e_save();
       _mars_gift(mar_u,
-        u3nt(c3__sync, u3i_chubs(1, &mar_u->dun_d), mar_u->mug_l));
+        u3nt(c3__sync, u3i_chub(mar_u->dun_d), mar_u->mug_l));
       mar_u->sat_e = _cwe_mars_work;
       goto top;
     }
@@ -604,8 +604,8 @@ u3_mars_init(c3_c*    dir_c,
       u3_noun msg = u3nq(c3__ripe,
                          u3nc(2, wyn),
                          u3nc(u3i_chubs(2, who_d), fak_o),
-                         u3nc(u3i_chubs(1, &u3A->eve_d),
-                              u3r_mug(u3A->roc)));
+                         u3nc(u3i_chub(mar_u->dun_d),
+                              mar_u->mug_l));
 
       u3s_jam_xeno(msg, &len_d, &hun_y);
       u3_newt_send(mar_u->out_u, len_d, hun_y);
