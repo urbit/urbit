@@ -390,6 +390,10 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
     u3l_log("boot: verifying keys\r\n");
 
+    //  TODO: remove when L2 is supported
+
+    u3l_log("boot: if you're trying to start an L2 ship,"
+            " upgrade your binary\r\n");
     //  (each seed (lest error=@tas))
     //
     sed = u3dq("veri:dawn", u3k(ship), u3k(feed), u3k(pot), u3k(liv));
