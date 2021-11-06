@@ -726,6 +726,13 @@ _cw_work(c3_i argc, c3_c* argv[])
   {
     u3_mars* mar_u = u3_mars_init(dir_c, &inn_u, &out_u);
 
+    if ( !mar_u ) {
+      fprintf(stderr, "mars: init failed\r\n");
+      //  XX exit codes
+      //
+      exit(1);
+    }
+
     //  set up reading
     //
     inn_u.ptr_v = mar_u;
