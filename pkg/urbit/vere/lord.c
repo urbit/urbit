@@ -1028,9 +1028,7 @@ _lord_on_serf_boot_exit(uv_process_t* cub_u,
   c3_free(bot_u);
 
   if ( done_f ) {
-    //  XX review?
-    // c3_o  ret_o = ( (0 != sas_i) || (0 != sig_i) ) ? c3n : c3y;
-    c3_o ret_o = ( 0 == sas_i ) ? c3y : c3n;
+    c3_o ret_o = ( !sas_i && !sig_i ) ? c3y : c3n;
     done_f(ptr_v, ret_o);
   }
 }
