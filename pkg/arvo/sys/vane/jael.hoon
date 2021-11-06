@@ -314,7 +314,7 @@
       ::
       =.  +>.$  (poke-watch hen %azimuth nod.own.pki)
       =.  +>.$
-        ::  get everything from azimuth-tracker because jael subscriptions
+        ::  get everything from /app/azimuth because jael subscriptions
         ::  seem to be flaky for now
         ::
         ?:  &
@@ -548,7 +548,7 @@
         [%behn %wake *]
       ?^  error.hin
         %-  %+  slog
-              leaf+"jael unable to resubscribe, run :azimuth-tracker|listen"
+              leaf+"jael unable to resubscribe, run :azimuth|listen"
             u.error.hin
           +>.$
       ?>  ?=([%breach @ ~] tea)
@@ -565,7 +565,14 @@
         [%gall %unto *]
       ?-    +>-.hin
           %raw-fact  !!
-          %kick      ~|([%jael-unexpected-quit tea hin] !!)
+      ::
+          %kick
+        ?>  ?=([@ *] tea)
+        =*  app  i.tea
+        ::NOTE  we expect azimuth-tracker to be kill
+        ?:  =(%azimuth-tracker app)  +>.$
+        ~|([%jael-unexpected-quit tea hin] !!)
+      ::
           %poke-ack
         ?~  p.p.+>.hin
           +>.$
