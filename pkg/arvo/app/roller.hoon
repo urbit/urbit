@@ -30,39 +30,49 @@
     verb
 ::
 |%
-+$  state-0
-  $:  %0
++$  app-state
+  $:  %1
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
       ::  finding: sig+raw-tx hash reverse lookup for txs in sending map
       ::  history: status of l2 txs by ethereum address, timestamp sorted
+      ::  ship-quota: number of txs submited per ship in the current slice
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
       ::  own: ownership of azimuth points
-      ::  derive: deferred derivation of predicted/ownership state
       ::
       pending=(list pend-tx)
       sending=(tree [l1-tx-pointer send-tx])
       finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
       history=(map address:ethereum (tree hist-tx))
+      ship-quota=(map ship @ud)
       next-nonce=(unit @ud)
       next-batch=time
       pre=^state:naive
       own=owners
-      derive=?
     ::
       ::  pk: private key to send the roll
+      ::  quota: max numbers of transactions per unit of time (slice)
+      ::  slice: unit of time where txs are allowed to be added to pending
+      ::  derive: deferred derivation of predicted/ownership state
       ::  frequency: time to wait between sending batches (TODO fancier)
       ::  endpoint: ethereum rpc endpoint to use
       ::  contract: ethereum contract address
       ::  chain-id: mainnet, ropsten, local (https://chainid.network/)
+      ::  resend-time: time to resend a batch with higher gas prie
+      ::  update-rate: frequency to update the roller's predicted state
       ::
       pk=@
+      slice=@dr
+      quota=@ud
+      derive=?
       frequency=@dr
       endpoint=(unit @t)
       contract=@ux
       chain-id=@
+      resend-time=@dr
+      update-rate=@dr
   ==
 ::  orp: ordered points in naive state by parent ship
 ::
@@ -79,6 +89,11 @@
   $%  [%frequency frequency=@dr]
       [%setkey pk=@]
       [%endpoint endpoint=@t =net]
+      [%resend-time time=@dr]
+      [%update-rate rate=@dr]
+      [%slice slice=@dr]
+      [%quota quota=@ud]
+      [%wipe-nep ~]
   ==
 ::
 +$  action
@@ -98,15 +113,10 @@
 ::
 +$  card  card:agent:gall
 ::
-::  TODO: add to config
-::
-++  resend-time  ~m5
-++  update-rate  ~m1
-::
 ++  lverb  &
 --
 ::
-=|  state-0
+=|  app-state
 =*  state  -
 ::
 %-  agent:dbug
@@ -121,12 +131,18 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =.  frequency  ~h1
-    =.  contract  naive:local-contracts:azimuth
-    =.  chain-id  chain-id:local-contracts:azimuth
-    =^  card  next-batch  set-timer
+    =:  frequency    ~h1
+        quota        7
+        slice        ~d7
+        resend-time  ~m5
+        update-rate  ~m1
+        contract     naive:local-contracts:azimuth
+        chain-id     chain-id:local-contracts:azimuth
+      ==
+    =^  card  next-batch  set-roller:timer
     :_  this
     :~  card
+        (set-quota:timer slice)
         [%pass /azimuth-events %agent [our.bowl %azimuth] %watch /event]
     ==
   ::
@@ -134,7 +150,48 @@
   ++  on-load
     |=  old=vase
     ^-  (quip card _this)
-    [~ this(state !<(state-0 old))]
+    =|  ship-quota=(map ship @ud)
+    =|  cards=(list card)
+    =/  slice=@dr        ~d7
+    =/  quota=@ud        7
+    =/  resend-time=@dr  ~m5
+    =/  update-rate=@dr  ~m1
+    |^
+    =+  !<(old-state=app-states old)
+    =?  cards  ?=(%0 -.old-state)
+      [(set-quota:timer slice)]~
+    =?  old-state  ?=(%0 -.old-state)
+      ^-  app-state
+      =,  old-state
+      :*  %1
+          pending  sending  finding  history
+          ship-quota  next-nonce  next-batch
+          pre  own  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate
+      ==
+    ?>  ?=(%1 -.old-state)
+    [cards this(state old-state)]
+    ::
+    ++  app-states  $%(state-0 app-state)
+    ++  state-0
+      $:  %0
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer send-tx])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          next-nonce=(unit @ud)
+          next-batch=time
+          pre=^state:naive
+          own=owners
+          derive=?
+          pk=@
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+      ==
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -167,6 +224,9 @@
   ::    /x/voting/[0xadd.ress]         ->  %noun  (list ship)
   ::    /x/spawning/[0xadd.ress]       ->  %noun  (list ship)
   ::    /x/predicted                   ->  %noun  state:naive
+  ::    /x/quota                       ->  %atom  @ud
+  ::    /x/slice                       ->  %atom  @dr
+  ::    /x/over-quota/[~ship]          ->  %atom  ?
   ::
   ++  on-peek
     |=  =path
@@ -192,6 +252,9 @@
       [%x %voting @ ~]        (points-proxy %vote i.t.t.path)
       [%x %spawning @ ~]      (points-proxy %spawn i.t.t.path)
       [%x %predicted ~]       ``noun+!>(pre)
+      [%x %quota ~]           ``atom+!>(quota)
+      [%x %slice ~]           ``atom+!>(slice)
+      [%x %over-quota @ ~]    (over-quota i.t.t.path)
     ==
     ::
     ++  pending-by
@@ -338,6 +401,8 @@
           update-rate
           contract
           chain-id
+          slice
+          quota
       ==
     ::
     ++  points-proxy
@@ -348,6 +413,13 @@
       ?~  addr=(slaw %ux wat)
         ~
       ~(tap in (~(get ju own) [proxy u.addr]))
+    ::
+    ++  over-quota
+      |=  wat=@t
+      ?~  who=(slaw %p wat)  [~ ~]
+      =/  [exceeded=? *]  (quota-exceeded u.who)
+      ``atom+!>(exceeded)
+    ::
     --
   ::
   ++  on-arvo
@@ -357,6 +429,10 @@
         [%timer ~]
       ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
         %wake  =^(cards state on-timer:do [cards this])
+      ==
+        [%quota-timer ~]
+      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
+        %wake  =^(cards state on-quota-timer:do [cards this])
       ==
     ::
         [%predict ~]
@@ -791,7 +867,11 @@
   |=  =config
   ^-  (quip card _state)
   ?-  -.config
-    %frequency  [~ state(frequency frequency.config)]
+    %frequency    [~ state(frequency frequency.config)]
+    %resend-time  [~ state(resend-time time.config)]
+    %update-rate  [~ state(update-rate rate.config)]
+    %slice        [~ state(slice slice.config)]
+    %quota        [~ state(quota quota.config)]
   ::
       %endpoint
     :-  ~
@@ -867,22 +947,39 @@
 ++  take-tx
   |=  =pend-tx
   ^-  (quip card _state)
-  =.  pending  (snoc pending pend-tx)
-  =^  cards  history  (update-history [pend-tx]~ %pending)
+  =*  ship  ship.from.tx.raw-tx.pend-tx
+  =/  [exceeded=? next-quota=@]  (quota-exceeded ship)
+  ?:  exceeded  [~ state]
+  =:  pending     (snoc pending pend-tx)
+      ship-quota  (~(put by ship-quota) ship next-quota)
+    ==
+  =^  cards  history
+    (update-history [pend-tx]~ %pending)
   ::  toggle derivation
   ::
   :_  state(derive ?:(derive | derive))
   %+  weld  (emit cards)
   ?.  derive  ~
-  ::  derive predicted state in 1m.
+  ::  update predicted state in 1m.
   ::
   [(wait:b:sys /predict (add update-rate now.bowl))]~
-::  +set-timer: %wait until next whole :frequency
 ::
-++  set-timer
-  ^-  [=card =time]
-  =+  time=(mul +((div now.bowl frequency)) frequency)
-  [(wait:b:sys /timer time) time]
+++  timer
+  |%
+  ::  +set-roller: %wait until next whole :frequency
+  ::
+  ++  set-roller
+    ^-  [=card =time]
+    =+  time=(mul +((div now.bowl frequency)) frequency)
+    [(wait:b:sys /timer time) time]
+  ::  +set-roller: %wait until next whole :slice
+  ::
+  ++  set-quota
+    |=  slice=@dr
+    ^-  card
+    =+  time=(mul +((div now.bowl slice)) slice)
+    (wait:b:sys /quota-timer time)
+  --
 ::  +on-timer: every :frequency, freeze :pending txs roll and start sending it
 ::
 ++  on-timer
@@ -926,8 +1023,14 @@
       (emit updates-2)
       (send-roll get-address nonce)
     ==
-  =^  card  next-batch  set-timer
+  =^  card  next-batch  set-roller:timer
   [[card cards] state]
+::  +on-quota-timer: resets tx quota for all ships
+::
+++  on-quota-timer
+  ^-  (quip card _state)
+  :-  [(set-quota:timer slice)]~
+  state(ship-quota *(map ship @ud))
 ::
 ++  update-history
   |=  [txs=(list pend-tx) =status]
@@ -954,6 +1057,13 @@
   ^-  (list card)
   ?~  endpoint  ~?(lverb [dap.bowl %no-endpoint] ~)
   (start-thread:spider wire [%roller-nonce !>([u.endpoint pk])])
+::
+++  quota-exceeded
+  |=  =ship
+  ^-  [? @ud]
+  ?~  quota=(~(get by ship-quota) ship)
+    [| 1]
+  [(gte u.quota quota.state) +(u.quota)]
 ::  +out-of-sync: checks if the previous nonce has been sent
 ::
 ++  out-of-sync
@@ -1110,7 +1220,7 @@
     :_  state(derive ?:(derive | derive))
     %+  weld  cards
     ?.  derive  ~
-    ::  derive predicted/ownership state in 1m.
+    ::  update predicted/ownership state in 1m.
     ::
     [(wait:b:sys /predict (add update-rate now.bowl))]~
   ::

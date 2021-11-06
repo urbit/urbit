@@ -17,6 +17,8 @@
       update-rate=@dr
       contract=@ux
       chain-id=@
+      slice=@dr
+      quota=@ud
   ==
 ::
 +$  keccak  @ux

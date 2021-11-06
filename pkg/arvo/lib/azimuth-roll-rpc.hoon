@@ -356,6 +356,8 @@
             ['rollerUpdateRate' (numb (div update-rate.ro ~s1))]
             ['contract' (hex 20 contract.ro)]
             ['chainId' (numb chain-id.ro)]
+            ['timeSlice' (numb (div slice.ro ~s1))]
+            ['rollerQuota' (numb quota.ro)]
         ==
       ::
       ++  azimuth-config
@@ -490,18 +492,20 @@
   [%result id (ships:to-json (scry u.ship))]
 ::
 ++  process-rpc
-  |=  [id=@t params=(map @t json) action=l2-tx]
+  |=  [id=@t params=(map @t json) action=l2-tx over-quota=$-(@p ?)]
   ^-  [(unit cage) response:rpc]
   ?.  =((lent ~(tap by params)) 4)
     [~ ~(params error:json-rpc id)]
   =+  ^-  $:  sig=(unit @)
-              from=(unit [ship proxy:naive])
+              from=(unit [=ship proxy:naive])
               addr=(unit @ux)
           ==
     =,  from-json
     [(sig params) (from params) (address params)]
   ?:  |(?=(~ sig) ?=(~ from) ?=(~ addr))
     [~ ~(parse error:json-rpc id)]
+  ?:  (over-quota ship.u.from)
+    `[%error id '-32002' 'Max tx quota exceeded']
   =/  tx=(unit tx:naive)  (build-l2-tx action u.from params)
   ?~  tx  [~ ~(parse error:json-rpc id)]
   =+  (gen-tx-octs:lib u.tx)
