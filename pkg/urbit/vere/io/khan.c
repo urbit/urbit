@@ -79,8 +79,7 @@ _khan_close_socket(u3_khan* kan_u, u3_chan* can_u)
              u3dc("scot", c3__uv, kan_u->sev_l),
              u3dc("scot", c3__ud, can_u->coq_l),
              u3_nul);
-  // TODO change to just %socket-done or even %done
-  cad = u3nc(u3i_string("socket-done"), u3_nul);
+  cad = u3nc(c3__done, u3_nul);
   u3_auto_peer(
       u3_auto_plan(&kan_u->car_u, u3_ovum_init(0, c3__k, wir, cad)),
       0,
