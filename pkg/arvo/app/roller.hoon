@@ -55,7 +55,7 @@
       ::  pk: private key to send the roll
       ::  quota: max numbers of transactions per unit of time (slice)
       ::  slice: unit of time where txs are allowed to be added to pending
-      ::  derive: deferred derivation of predicted/ownership state
+      ::  derive: defer derivation of predicted/ownership state
       ::  frequency: time to wait between sending batches (TODO fancier)
       ::  endpoint: ethereum rpc endpoint to use
       ::  contract: ethereum contract address
@@ -135,7 +135,7 @@
         quota        7
         slice        ~d7
         resend-time  ~m5
-        update-rate  ~m1
+        update-rate  ~m5
         contract     naive:local-contracts:azimuth
         chain-id     chain-id:local-contracts:azimuth
       ==
@@ -150,12 +150,14 @@
   ++  on-load
     |=  old=vase
     ^-  (quip card _this)
-    =|  ship-quota=(map ship @ud)
     =|  cards=(list card)
+    ::  new additions to app-state
+    ::
+    =|  ship-quota=(map ship @ud)
     =/  slice=@dr        ~d7
     =/  quota=@ud        7
     =/  resend-time=@dr  ~m5
-    =/  update-rate=@dr  ~m1
+    =/  update-rate=@dr  ~m5
     |^
     =+  !<(old-state=app-states old)
     =?  cards  ?=(%0 -.old-state)
@@ -332,13 +334,8 @@
       !>  ^-  (unit @)
       ?~  point=(get:orp points.pre u.who)
         ~
-      =/  nonce=@
-        =<  nonce
-        (proxy-from-point:naive proxy u.point)
-      %-  some
-      %+  roll  pending
-      |=  [pend-tx nonce=_nonce]
-      ?:(=([u.who proxy] from.tx.raw-tx) +(nonce) nonce)
+      =<  `nonce
+      (proxy-from-point:naive proxy u.point)
     ::
     ++  spawned
       |=  wat=@t
@@ -751,8 +748,8 @@
   ==
 ::  +predicted-state
 ::
-::    derives predicted state from applying pending/sending txs to
-::    the canonical state, discarding invalid txs in the process.
+::    derives predicted state from applying pending & sending txs to
+::    the provided naive state, discarding invalid txs in the process
 ::
 ++  predicted-state
   |=  nas=^state:naive
@@ -828,15 +825,16 @@
       [time roll-tx(status %failed)]
     =?  finding  !gud  (~(put by finding) keccak %failed)
     $(txs t.txs, ups (weld ups nups))
-  ::
-  ++  try-apply
-    |=  [nas=^state:naive force=? =raw-tx:naive]
-    ^-  [[? ups=(list update)] _state]
-    =/  [success=? predicted=_nas ups=(list update) owners=_own]
-      (apply-raw-tx:dice force raw-tx nas own chain-id)
-    :-  [success ups]
-    state(pre predicted, own owners)
   --
+::  +try-apply: maybe apply the given l2 tx to the naive state
+::
+++  try-apply
+  |=  [nas=^state:naive force=? =raw-tx:naive]
+  ^-  [[? ups=(list update)] _state]
+  =/  [success=? predicted=_nas ups=(list update) owners=_own]
+    (apply-raw-tx:dice force raw-tx nas own chain-id)
+  :-  [success ups]
+  state(pre predicted, own owners)
 ::
 ++  get-l1-address
   |=  [=tx:naive nas=^state:naive]
@@ -953,16 +951,27 @@
   =:  pending     (snoc pending pend-tx)
       ship-quota  (~(put by ship-quota) ship next-quota)
     ==
-  =^  cards  history
+  =^  [gud=? cards-1=(list update)]  state
+   (try-apply pre force.pend-tx raw-tx.pend-tx)
+  ?.  gud
+    :_  state
+    ::  %point and (%failed) %tx updates
+    ::
+    (emit cards-1)
+  =^  cards-2  history
     (update-history [pend-tx]~ %pending)
   ::  toggle derivation
   ::
   :_  state(derive ?:(derive | derive))
-  %+  weld  (emit cards)
-  ?.  derive  ~
-  ::  update predicted state in 1m.
+  ;:  welp
+    (emit cards-1)  :: %point updates
+    (emit cards-2)  :: %tx updates
   ::
-  [(wait:b:sys /predict (add update-rate now.bowl))]~
+    ?.  derive  ~
+    ::  defer updating predicted/ownership state from canonical
+    ::
+    [(wait:b:sys /predict (add update-rate now.bowl))]~
+  ==
 ::
 ++  timer
   |%
@@ -1220,7 +1229,7 @@
     :_  state(derive ?:(derive | derive))
     %+  weld  cards
     ?.  derive  ~
-    ::  update predicted/ownership state in 1m.
+    ::  defer updating predicted/ownership state from canonical
     ::
     [(wait:b:sys /predict (add update-rate now.bowl))]~
   ::
