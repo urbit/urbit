@@ -1,9 +1,9 @@
 // TODO
-// - remove sequence numbers or add them all the way
 // - think carefully about error handling
 // - think carefully about protocol
 // - implement runtime-specific queries
 // - clean up logging
+// - handle windows (at least noop)
 /* vere/khan.c
 **
 */
@@ -316,7 +316,6 @@ static void
 _khan_ef_handle(u3_khan*  kan_u,
                 c3_l      sev_l,
                 c3_l      coq_l,
-                c3_l      seq_l,
                 u3_noun   tag,
                 u3_noun   dat)
 {
@@ -364,8 +363,8 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   }
   else {
     u3_noun pud = t_wir;
-    u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
-    c3_l    sev_l, coq_l, seq_l;
+    u3_noun p_pud, t_pud, q_pud, r_pud;
+    c3_l    sev_l, coq_l;
 
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
          (c3n == u3_reck_lily(c3__uv, u3k(p_pud), &sev_l)) ||
@@ -376,31 +375,19 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
     }
 
     if ( u3_nul == t_pud ) {
-      coq_l = seq_l = 0;
+      coq_l = 0;
     }
     else {
-      if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
+      if ( (c3n == u3r_cell(t_pud, &q_pud, &r_pud)) ||
+            (u3_nul != r_pud) ||
            (c3n == u3_reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
       {
         u3z(wir); u3z(cad);
         return c3n;
       }
-
-      if ( u3_nul == tt_pud ) {
-        seq_l = 0;
-      }
-      else {
-        if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
-             (u3_nul != s_pud) ||
-             (c3n == u3_reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
-        {
-          u3z(wir); u3z(cad);
-          return c3n;
-        }
-      }
     }
 
-    _khan_ef_handle(kan_u, sev_l, coq_l, seq_l, u3k(tag), u3k(dat));
+    _khan_ef_handle(kan_u, sev_l, coq_l, u3k(tag), u3k(dat));
     u3z(wir); u3z(cad);
     return c3y;
   }
