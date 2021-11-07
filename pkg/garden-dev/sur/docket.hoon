@@ -15,11 +15,14 @@
   $%  [%http =url]
       [%ames =ship]
   ==
+::  $gref: full glob reference
+::
++$  gref  (unit [base=term =glob-reference])
 ::  $href: Where a tile links to
 ::
 +$  href
-  $%  [%glob base=term =glob-reference]
-      [%site =path]
+  $%  [%glob =gref ~]
+      [%site =gref =path]
   ==
 ::  $chad: State of a docket
 ::
@@ -27,7 +30,7 @@
   $~  [%install ~]
   $%  :: Done
       [%glob =glob]
-      [%site ~]
+      [%site glob=(unit glob)]
       :: Waiting
       [%install ~]
       [%suspend glob=(unit glob)]

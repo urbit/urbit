@@ -62,8 +62,8 @@
     %-  ~(gas by *(map term desk))
     %+  murn  ~(tap by charges)
     |=  [=desk =charge]
-    ?.  ?=(%glob -.href.docket.charge)  ~
-    `:_(desk base.href.docket.charge)
+    ?.  ?=(^ +<.href.docket.charge)  ~
+    `:_(desk base.u.gref.href.docket.charge)
   --
 ::
 ++  on-save  !>(-.state)
@@ -104,8 +104,8 @@
     ^-  (quip card _state)
     =/  =charge  ~|(no-charge-installed+desk (~(got by charges) desk))
     =.  charges  (~(del by charges) desk)
-    =?  by-base  ?=(%glob -.href.docket.charge)
-      (~(del by by-base) base.href.docket)
+    =?  by-base  ?=(^ +<.href.docket.charge)
+      (~(del by by-base) base.u.gref.href.docket.charge)
     =*  cha  ~(. ch desk)
     :_  state
     ~[del-fact:cha uninstall:cha]
@@ -234,26 +234,35 @@
         =/  =docket            docket:cha
         =/  pre=(unit charge)  (~(get by charges) desk)
         =.  charges            (new-docket:cha docket)
-        ::  if the new chad is a site, we're instantly done
+
+        ::  if the new chad is a site without a glob, we're instantly done
         ::
-        ?:  ?=(%site -.href.docket)
+        ?:  ?&  ?=(%site -.href.docket)
+                ?=(~ gref.href.docket)
+            ==
           =.  charges  (new-chad:cha %site ~)
           :-  ~[add-fact:cha]
           state
         ::
-        =.  by-base  (~(put by by-base) base.href.docket desk)
+        :::
+        ~|  [%on-commit-no-glob desk gref:href.docket +<.href.docket]
+        ?>  ?=(^ +<.href.docket)
+        =.  by-base  (~(put by by-base) base.u.gref.href.docket desk)
         ::  if the glob specification is unchanged, keep it
         ::
-        ?:  &(?=(^ pre) =(href.docket.u.pre href.docket) ?=(%glob -.chad.u.pre))
+
+        ?:  ?&  (globable:cha pre docket)
+                ?=(^ pre)
+                =(href.docket.u.pre href.docket)
+            ==
           [~[add-fact:cha] state]
         ::  if the glob spec changed, but we already host it, keep it
         ::  (this is the "just locally uploaded" case)
         ::
-        ?:  ?&  ?=(^ pre)
-                ?=(%glob -.chad.u.pre)
-              ::
-                .=  [(sham glob.chad.u.pre) %ames our.bowl]
-                glob-reference.href.docket
+        ?:  ?&  (globable:cha pre docket)
+                ?=(^ pre)
+                .=  [(sham (chad-glob:cha chad.u.pre)) %ames our.bowl]
+                glob-reference.u.gref.href.docket
             ==
           [~[add-fact:cha] state]
         ::  if the glob changed, forget the old and fetch the new
@@ -269,7 +278,10 @@
         =/  glob=(unit glob)
           =/  =chad
             chad:(~(got by charges) desk)
-          ?:(?=(%glob -.chad) `glob.chad ~)
+          ?.  ?=(?(%glob %site) -.chad)  ~
+          ?:  ?=(%glob -.chad)  `glob.chad
+          glob.chad
+
         =.  charges  (new-chad:cha %suspend glob)
         :_(state ~[add-fact:cha])
       ::
@@ -279,7 +291,7 @@
         =*  cha  ~(. ch desk)
         ?.  (~(has by charges) desk)  `state
         =/  =charge  (~(got by charges) desk)
-        ?.  ?=(%glob -.href.docket.charge)
+        ?.  ?=(^ +<.href.docket.charge)
           =.  charges  (new-chad:cha %site ~)
           :_(state ~[add-fact:cha])
         =.  charges
@@ -340,9 +352,8 @@
             %thread-done
           =+  !<(=glob q.cage.sign)
           =/  =charge   (~(got by charges) desk)
-          ?.  ?=(%glob -.href.docket.charge)
-            `state
-          =*  want=@uv  hash.glob-reference.href.docket.charge
+          ?>  ?=(^ +<.href.docket.charge)
+          =*  want=@uv  hash.glob-reference.u.gref.href.docket.charge
           =/  plea=@uv  (slav %uv i.t.wire)
           ?.  =(want plea)
             ::  we requested this at some point but no longer want it
@@ -359,7 +370,7 @@
                 leaf+"received: {<have>}"
             ==
           =.  charges   (new-chad:cha glob+glob)
-          =.  by-base   (~(put by by-base) base.href.docket.charge desk)
+          =.  by-base   (~(put by by-base) base.u.gref.href.docket.charge desk)
           :_(state ~[add-fact:cha])
         ==
       ==
@@ -534,16 +545,17 @@
       ?.  =(~ err)  error-result
       :-  [[200 ~] `(upload-page 'successfully globbed' ~)]
       ?>  ?=(%glob -.href.docket.charge)
+      ?>  ?=(^ gref.href.docket.charge)
       ::
       =.  charges  (new-chad:cha glob+glob)
       =.  by-base
         =-  (~(put by by-base) - desk)
-        base.href.docket.charge
+        base.u.gref.href.docket.charge
       ::
       :_  state
       ::
       =/  ours=?
-        =/  loc  location.glob-reference.href.docket.charge
+        =/  loc  location.glob-reference.u.gref.href.docket.charge
         ?&  ?=(%ames -.loc)
             =(our.bowl ship.loc)
         ==
@@ -556,7 +568,7 @@
           %+  foal:space:userlib
             /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket-0
           %-  docket:cg
-          docket.charge(glob-reference.href [(hash-glob glob) %ames our.bowl])
+          docket.charge(glob-reference.u.gref.href [(hash-glob glob) %ames our.bowl])
       ==
     ::
     ?~  parts=(de-request:multipart [header-list body]:request)
@@ -614,11 +626,12 @@
     =/  des=(unit desk)
       (~(get by by-base) from)
     ?~  des  not-found:gen
+    =*  car      ~(. ch u.des)
     =/  cha=(unit charge)
       (~(get by charges) u.des)
     ?~  cha  not-found:gen
-    ?.  ?=(%glob -.chad.u.cha)  not-found:gen
-    =*  glob  glob.chad.u.cha
+    ?.  ?=(?(%glob %site) -.chad.u.cha)  not-found:gen
+    =*  glob  (chad-glob:car chad.u.cha)
     =/  suffix=^path
       (weld site.what (drop ext.what))
     ?:  =(suffix /desk/js)
@@ -669,14 +682,32 @@
     %+  ~(put by charges)  desk
     [d chad:(~(gut by charges) desk *charge)]
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
+  ++  globable
+    |=  [c=(unit charge) d=^docket]
+    ^-  ?
+    ?&
+      ?=(^ c)  =(href.docket.u.c href.d)
+      ?|
+        ?=(%glob -.chad.u.c)
+        &(?=(%site -.chad.u.c) ?=(^ glob.chad.u.c))
+      ==
+    ==
+  ++  chad-glob
+    |=  c=chad
+    ^-  glob
+    ?+  -.c  ~|(%bad-chad !!)
+      %glob  glob.c
+      %site  (need glob.c)
+    ==
   ++  fetch-glob
     ^-  (list card)
     =/  =charge
       ~|  desk/desk
       (~(got by charges) desk)
     =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
-    ?>  ?=(%glob -.href.docket.charge)
-    =/  ref  glob-reference.href.docket.charge
+    ?>  ?=(?(%glob %site) -.href.docket.charge)
+    ?>  ?=(^ gref.href.docket.charge)
+    =/  ref  glob-reference.u.gref.href.docket.charge
     ?:  ?&  ?=(%ames -.location.ref)
             =(our.bowl ship.location.ref)
         ==

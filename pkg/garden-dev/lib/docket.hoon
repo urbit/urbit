@@ -26,14 +26,17 @@
     ?~  version.draft  ~
     ?~  website.draft  ~
     ?~  license.draft  ~
-    =/  href=(unit href)
-      ?^  site.draft  `[%site u.site.draft]
+    =/  =gref
       ?~  base.draft  ~
       ?^  glob-http.draft
-        `[%glob u.base hash.u.glob-http %http url.u.glob-http]:draft
+        `[u.base hash.u.glob-http %http url.u.glob-http]:draft
       ?~  glob-ames.draft
         ~
-      `[%glob u.base hash.u.glob-ames %ames ship.u.glob-ames]:draft
+      `[u.base hash.u.glob-ames %ames ship.u.glob-ames]:draft
+    =/  href=(unit href)
+      ?^  site.draft  `[%site gref u.site.draft]
+      ?~  gref  ~
+      `[%glob gref ~]
     ?~  href  ~
     =,  draft
     :-  ~
@@ -83,12 +86,14 @@
             license+license.d
         ==
         ?~  image.d  ~  ~[image+u.image.d]
-        ?:  ?=(%site -.href.d)  ~[site+path.href.d]
-        =/  ref=glob-reference  glob-reference.href.d
-        :~  base+base.href.d
+        ?.  ?=(%site -.href.d)  ~  ~[site+path.href.d]
+        ?:  ?=(~ +<.href.d)  ~
+          =/  ref  glob-reference.u.gref.href.d
+          :~
+            base+base.u.gref.href.d
             ?-  -.location.ref
-              %http  [%glob-http url.location.ref hash.ref]
-              %ames  [%glob-ames ship.location.ref hash.ref]
+              %http  [%glob-http url.location hash]:ref
+              %ames  [%glob-ames ship.location hash]:ref
     ==  ==  ==
   ::
   ++  spit-clause
@@ -170,9 +175,10 @@
     ?-    -.h
         %site  s+(spat path.h)
         %glob
+      ?~  gref.h  ~
       %-  pairs
-      :~  base+s+base.h
-          glob-reference+(glob-reference glob-reference.h)
+      :~  base+s+base.u.gref.h
+          glob-reference+(glob-reference glob-reference.u.gref.h)
       ==
     ==
   ::
