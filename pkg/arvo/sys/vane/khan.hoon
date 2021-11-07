@@ -23,8 +23,7 @@
       ==  ==
       ::
     +$  sign
-      $%  [%khan $>(%response gift)]
-      ==
+      ~
     ::
     +$  khan-state
       $:  %0
@@ -63,12 +62,18 @@
   ::  +fyrd: commands
   ::
   ++  fyrd
-    |=  com=^fyrd
+    |=  fyr=^fyrd
     =<  [moves state]
     ^+  event-core
+    =*  com  com.fyr
     ~&  >  fyrd+com
     ?-  -.com
-      %mas  ~&  todo+com  event-core                    :: |mass
+      %mas                                              :: |mass
+        ~&  todo+com
+        %=    event-core
+            moves
+          [duct %give [%avow %ack]]~
+        ==
       %cod
         =/  cov
           ?.    +.com
@@ -80,7 +85,9 @@
               `!<(@p q.u.u.sey)
             [duct %give [%avow %cod res]]~  :: give code
 
-          [duct %pass / %j %step ~]~
+          :~  [duct %pass / %j %step ~]
+              [duct %give [%avow %ack]]
+          ==
         event-core(moves cov)
     ==
   ::  +trim: in response to memory pressue
@@ -89,6 +96,9 @@
   ::  +vega: learn of a kernel upgrade
   ::
   ++  vega  [moves state]
+  ::  +done: client closed socket
+  ::
+  ++  done  [moves state]
   ::  %utilities
   ::
   ::+|
@@ -114,6 +124,7 @@
   ^-  [(list move) _khan-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
+  ~&  >  task+task
   =/  event-core  (per-event [now hen rof] state)
   ::
   =^  moves  state
@@ -127,6 +138,7 @@
       %vega  vega:event-core                            :: vega
       %born  born:event-core
       %fyrd  (fyrd:event-core p.task)                   :: fyrd
+      %done  done:event-core
     ==
   [moves khan-gate]
 ::  +load: migrate an old state to a new khan version

@@ -2096,35 +2096,29 @@
   ::                                                    ::::
 ++  khan  ^?
   |%
-  +$  socket-config                                     :: activates and sets up vane
-    $:
-        active=?
-        clients=(list term)
-    ==
-  +$  socket-event
-    $:
-        %socket-done  data=*                            :: done
-    ==
   +$  gift                                              ::  out result <-$
     $%  [%avow =avow]                                   ::  response to %fyrd
-        [%set-config =socket-config]
-        [%response =socket-event]
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]
     $%
         [%fyrd p=fyrd]                                  ::  jammed request
+        [%done ~]                                       ::  client closed socket
         $>(%vega vane-task)                             ::  vega
         $>(%trim vane-task)
         $>(%born vane-task)
     ==
   +$  avow                                              ::  output
-    $%  [%cod p=(unit @p)]
+    $@  %ack                                            ::  responseless ack
+    $%  [%cod p=(unit @p)]                              ::  new code
     ==
   +$  fyrd                                              ::  input
+    $:  %0                                              ::  protocol version
+    $=  com
     $%  [%mas ~]                                        ::  |mass
-        [%cod ?]                                        ::  code reset
-    ==                                                  ::
+        [%cod ?]                                        ::  code reset/get
+      ==                                                ::
+    ==
 
   --  ::khan
 ::
