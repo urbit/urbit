@@ -24,9 +24,15 @@ import            Network.Socket.ByteString
 import            System.Environment
 import            System.FilePath.Posix
 import            System.Posix
-import            Text.Printf
+-- import            Text.Printf
 import            Urbit.Noun
 import            Urbit.Ob
+
+usage :: IO ()
+usage = do
+  putStrLn "usage: into <pier> <cmd>"
+  putStrLn "cmds:"
+  mapM_ (putStrLn . ("  " ++)) $ M.keys cmds
 
 khanVersion :: Natural
 khanVersion = 0
@@ -44,13 +50,9 @@ buildCmd com = packNoun (khanVersion, com)
 codeCmd :: B.ByteString
 codeCmd = buildCmd (Cord "cod", False)
 
--- XX This puts the onus of cue'ing into each individual command.
--- Perhaps it would be better to take a FromNoun a => a -> IO () and let each
--- command specialize it, but I'm not smart enough to do that in haskell.
-codeResponse :: B.ByteString -> IO ()
-codeResponse wad = do
-  jar <- (extractNoun wad) :: IO (Cord, Maybe Natural)
-  let (res,cod') = jar
+codeResponse :: Noun -> IO ()
+codeResponse jar = do
+  (res, cod') <- fromNounExn jar :: IO (Cord, Maybe Natural)
   if res /= (Cord "cod") then error $ "bad res: " ++ show res
   else case cod' of
     Nothing -> error "no code"
@@ -59,48 +61,41 @@ codeResponse wad = do
 codeResetCmd :: B.ByteString
 codeResetCmd = buildCmd (Cord "cod", True)
 
-codeResetResponse :: B.ByteString -> IO ()
-codeResetResponse wad = do
-  jar <- (extractNoun wad) :: IO Cord
-  if jar /= (Cord "ack") then error $ "bad jar: " ++ show jar
-  else putStrLn "Code reset sent."
+ackResponse :: String -> Noun -> IO ()
+ackResponse msg jar = do
+  zac <- fromNounExn jar
+  if zac /= (Cord "ack") then error $ "bad jar: " ++ show jar
+  else putStrLn msg
 
 massCmd :: B.ByteString
 massCmd = buildCmd (Cord "mas", 0 :: Natural)
 
-massResponse :: B.ByteString -> IO ()
-massResponse wad = do
-  jar <- (extractNoun wad) :: IO Cord
-  if jar /= (Cord "ack") then error $ "bad jar: " ++ show jar
-  else putStrLn "|mass: TODO"
-
---        arg,    wire cmd,     response action
-cmds :: M.Map String (B.ByteString, B.ByteString -> IO ())
+--            cmd,    wire cmd,     on response
+cmds :: M.Map String (B.ByteString, Noun -> IO ())
 cmds = M.fromList
-  [ ("code", (codeCmd, codeResponse))
-  , ("reset", (codeResetCmd, codeResetResponse))
-  , ("mass", (massCmd, massResponse))
+  [ ("code",  (codeCmd,       codeResponse))
+  , ("reset", (codeResetCmd,  ackResponse "+code reset."))
+  , ("mass",  (massCmd,       ackResponse "|mass TODO"))
   ]
-cmdFind :: String -> (B.ByteString, B.ByteString -> IO ())
+cmdFind :: String -> IO (B.ByteString, Noun -> IO ())
 cmdFind cmdName = case M.lookup cmdName cmds of
-  Nothing -> error "cmd not found"
-  Just cmd -> cmd
+  Nothing -> do { usage; error "cmd not found" }
+  Just cmd -> return cmd
 
 extractNoun :: FromNoun a => B.ByteString -> IO a
 extractNoun = cueBSExn >=> fromNounExn
 
-hexDumpBS :: B.ByteString -> T.Text
-hexDumpBS = B.foldr (\b -> (<>) (T.pack $ printf "%02x" b)) ""
+-- hexDumpBS :: B.ByteString -> T.Text
+-- hexDumpBS = B.foldr (\b -> (<>) (T.pack $ printf "%02x" b)) ""
 
 main :: IO ()
 main = withSocketsDo $ do
   args <- getArgs
   if 2 /= length args then
-    error "usage: into <pier> <cmd>"
+    do { usage; error "wrong number of arguments" }
   else do
-    let paf = args !! 0
-    let cmdName = args !! 1
-    let (cmd, act) = cmdFind cmdName
+    let [paf, cmdName] = args
+    (cmd, act) <- cmdFind cmdName
     changeWorkingDirectory paf
     sock <- socket AF_UNIX Stream 0
     connect sock (SockAddrUnix $ ".urb" </> "khan.sock")
@@ -111,5 +106,6 @@ main = withSocketsDo $ do
       Left fal -> error fal
       Right len -> do
         wad <- recv sock $ fromIntegral len
-        act wad
+        jar <- extractNoun wad
+        act jar
     close sock
