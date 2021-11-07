@@ -166,8 +166,8 @@
       %get-nonce               `(nonce id +.params nonce:scry)
       %get-history             `(history id +.params addr:history:scry)
       %get-roller-config       `(get-config id +.params config:scry)
-      %hash-transaction        `(hash-transaction id +.params chain-id:scry | &)
-      %unsign-transaction      `(hash-transaction id +.params chain-id:scry & |)
+      %prepare-for-signing     `(hash-transaction id +.params chain:scry | &)
+      %get-unsigned-tx         `(hash-transaction id +.params chain:scry & |)
       %get-predicted-state     `(get-naive id +.params predicted:scry)
     ==
   --
@@ -311,7 +311,7 @@
         /config/noun
     ==
   ::
-  ++  chain-id
+  ++  chain
     .^  @
         %gx
         %+  ~(scry agentio bowl)
