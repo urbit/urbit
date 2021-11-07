@@ -83,18 +83,6 @@
 ::  orh: ordered tx history by (decreasing) timestamp
 ::
 ++  orh  ((on time roll-tx) gth)
-+$  net  ?(%mainnet %ropsten %local)
-::
-+$  config
-  $%  [%frequency frequency=@dr]
-      [%setkey pk=@]
-      [%endpoint endpoint=@t =net]
-      [%resend-time time=@dr]
-      [%update-rate rate=@dr]
-      [%slice slice=@dr]
-      [%quota quota=@ud]
-      [%wipe-nep ~]
-  ==
 ::
 +$  action
   $%  ::  we need to include the address in submit so pending txs show up
@@ -433,6 +421,7 @@
       ==
     ::
         [%predict ~]
+      ~&  "predicting"
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
         =.  own.state  canonical-owners:do

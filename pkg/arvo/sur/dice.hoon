@@ -5,6 +5,17 @@
 |%
 +$  owner   [=proxy:naive =address:naive]
 +$  owners  (jug owner ship)
++$  net     ?(%mainnet %ropsten %local)
+::
++$  config
+  $%  [%frequency frequency=@dr]
+      [%setkey pk=@]
+      [%endpoint endpoint=@t =net]
+      [%resend-time time=@dr]
+      [%update-rate rate=@dr]
+      [%slice slice=@dr]
+      [%quota quota=@ud]
+  ==
 ::
 +$  azimuth-config
   $:  refresh-rate=@dr
