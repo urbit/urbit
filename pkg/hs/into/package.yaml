@@ -27,6 +27,7 @@ dependencies:
   - binary-strict
   - binary
   - bytestring
+  - containers
   - filepath
   - network
   - text
