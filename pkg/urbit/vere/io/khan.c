@@ -1,6 +1,7 @@
 // TODO
 // - think carefully about error handling
 // - think carefully about protocol
+//   - newt wire framing: high bit set on first byte?
 // - implement runtime-specific queries
 // - clean up logging
 // - handle windows (at least noop)
