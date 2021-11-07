@@ -148,6 +148,7 @@
       %get-point        `(get-point id +.params point:scry)
       %get-dns          `(get-dns id +.params dns:scry)
       %get-naive-state  `(get-naive id +.params naive-state:scry)
+      %get-refresh      `(get-refresh id +.params refresh:scry)
     ==
   --
 ::
@@ -170,6 +171,12 @@
     .^  ^state:naive
         %gx
         (~(scry agentio bowl) %azimuth /nas/noun)
+    ==
+  ::
+  ++  refresh
+    .^  @dr
+        %gx
+        (~(scry agentio bowl) %azimuth /refresh/noun)
     ==
   --
 --

@@ -5,13 +5,31 @@
 |%
 +$  owner   [=proxy:naive =address:naive]
 +$  owners  (jug owner ship)
++$  net     ?(%mainnet %ropsten %local)
+::
++$  config
+  $%  [%frequency frequency=@dr]
+      [%setkey pk=@]
+      [%endpoint endpoint=@t =net]
+      [%resend-time time=@dr]
+      [%update-rate rate=@dr]
+      [%slice slice=@dr]
+      [%quota quota=@ud]
+  ==
+::
++$  azimuth-config
+  $:  refresh-rate=@dr
+  ==
 ::
 +$  roller-config
   $:  next-batch=time
       frequency=@dr
-      refresh-time=@dr
+      resend-time=@dr
+      update-rate=@dr
       contract=@ux
       chain-id=@
+      slice=@dr
+      quota=@ud
   ==
 ::
 +$  keccak  @ux

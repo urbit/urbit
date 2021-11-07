@@ -69,11 +69,14 @@
       q.batch-data
       chain-id
   ==
+::  log batch tx-hash to getTransactionReceipt(tx-hash)
+::
+~?  &(?=(%result -.response) ?=(%s -.res.response))
+  ^-([nonce=@ud batch-hash=@t] nonce^(so:dejs:format res.response))
 %-  pure:m
 !>  ^-  (each @ud [term @t])
 ::  TODO: capture if the tx fails (e.g. Runtime Error: revert)
 ::  check that tx-hash in +.response is non-zero?
-::  log tx-hash to getTransactionReceipt(tx-hash)?
 ::  enforce max here, or in app?
 ::
 ?+  -.response  %.n^[%error 'unexpected rpc response']

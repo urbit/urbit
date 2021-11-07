@@ -145,7 +145,7 @@
       [~ ~(parse error:json-rpc id)]
     =/  method=@tas  (enkebab method)
     ?:  ?=(l2-tx method)
-      (process-rpc id +.params method)
+      (process-rpc id +.params method over-quota:scry)
     ?+  method  [~ ~(method error:json-rpc id)]
       %get-point               `(get-point id +.params point:scry)
       %get-ships               `(get-ships id +.params ships:scry)
@@ -302,6 +302,8 @@
     ==
   ::
   ++  config
+    ^-  [azimuth-config roller-config]
+    :-  refresh
     .^  roller-config
         %gx
         %+  ~(scry agentio bowl)
@@ -321,6 +323,19 @@
     .^  ^state:naive
         %gx
         (~(scry agentio bowl) %roller /predicted/noun)
+    ==
+  ::
+  ++  refresh
+    .^  @dr
+        %gx
+        (~(scry agentio bowl) %azimuth /refresh/noun)
+    ==
+  ::
+  ++  over-quota
+    |=  =ship
+    .^  ?
+        %gx
+        (~(scry agentio bowl) %roller /over-quota/(scot %p ship)/atom)
     ==
   --
 --

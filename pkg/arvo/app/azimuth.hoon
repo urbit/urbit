@@ -43,6 +43,9 @@
 +$  tagged-diff  [=id:block diff:naive]
 +$  network      ?(%mainnet %ropsten %local)
 +$  card         card:agent:gall
+::  TODO: add to state?
+::
+++  refresh      ~m5
 --
 ::
 =|  state=app-state
@@ -59,7 +62,14 @@
     ^-  (quip card _this)
     =.  net.state  %local
     :_  this
-    [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]~
+    :_  ~
+    :*  %pass
+        /eth-watcher
+        %agent
+        [our.bowl %eth-watcher]
+        %watch
+        /logs/[dap.bowl]
+    ==
   ::
   ++  on-save   !>(state)
   ++  on-load
@@ -140,6 +150,7 @@
         [%x %nas ~]      ``noun+!>(nas.state)
         [%x %dns ~]      ``noun+!>(dns.nas.state)
         [%x %own ~]      ``noun+!>(own.state)
+        [%x %refresh ~]  ``atom+!>(refresh)
         [%x %point @ ~]  ``noun+(point i.t.t.path)
     ==
     ::
@@ -319,7 +330,7 @@
   =/  args=vase  !>
     :+  %watch  /[dap.bowl]
     ^-  config:eth-watcher
-    :*  url.state  =(%czar (clan:title our.bowl))  ~m5  ~h30
+    :*  url.state  =(%czar (clan:title our.bowl))  refresh  ~h30
         (max launch.net last-snap)
         ~[azimuth.net]
         ~[naive.net]

@@ -1,3 +1,4 @@
+::  Configures /app/roller to listen to a local Ethereum node
 ::
 :-  %say
 |=  *
