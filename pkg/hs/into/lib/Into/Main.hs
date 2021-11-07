@@ -8,6 +8,7 @@
 
   - `code`: produce the ship's current `+code`.
   - `reset`: reset the ship's `+code`.
+  - `mass`: aspirationally, retrieve and dump memory usage info.
 -}
 module Into.Main (main) where
 
@@ -78,7 +79,7 @@ cmds = M.fromList
   , ("mass",  (massCmd,       ackResponse "|mass TODO"))
   ]
 cmdFind :: String -> IO (B.ByteString, Noun -> IO ())
-cmdFind cmdName = case M.lookup cmdName cmds of
+cmdFind nam = case M.lookup nam cmds of
   Nothing -> do { usage; error "cmd not found" }
   Just cmd -> return cmd
 
@@ -90,22 +91,22 @@ extractNoun = cueBSExn >=> fromNounExn
 
 main :: IO ()
 main = withSocketsDo $ do
-  args <- getArgs
-  if 2 /= length args then
+  ars <- getArgs
+  if 2 /= length ars then
     do { usage; error "wrong number of arguments" }
   else do
-    let [paf, cmdName] = args
-    (cmd, act) <- cmdFind cmdName
+    let [paf, nam] = ars
+    (cmd, act) <- cmdFind nam
     changeWorkingDirectory paf
-    sock <- socket AF_UNIX Stream 0
-    connect sock (SockAddrUnix $ ".urb" </> "khan.sock")
-    send sock cmd
-    lenBS <- recv sock 8
+    soc <- socket AF_UNIX Stream 0
+    connect soc (SockAddrUnix $ ".urb" </> "khan.sock")
+    send soc cmd
+    lenBS <- recv soc 8
     let (len', _) = runGet getWord64le lenBS
     case len' of
       Left fal -> error fal
       Right len -> do
-        wad <- recv sock $ fromIntegral len
+        wad <- recv soc $ fromIntegral len
         jar <- extractNoun wad
         act jar
-    close sock
+    close soc
