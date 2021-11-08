@@ -140,6 +140,10 @@
   ::
   ++  process
     |=  request:rpc
+    ?.  ready:scry
+      ::  TODO: move to lib
+      ::
+      `[%error id '-32003' 'Roller is not ready']
     =,  azimuth-roll-rpc
     ?.  ?=([%map *] params)
       [~ ~(parse error:json-rpc id)]
@@ -339,6 +343,12 @@
     .^  ?
         %gx
         (~(scry agentio bowl) %roller /over-quota/(scot %p ship)/atom)
+    ==
+  ::
+  ++  ready
+    .^  ?
+        %gx
+        (~(scry agentio bowl) %roller /ready/atom)
     ==
   --
 --

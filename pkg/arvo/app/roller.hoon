@@ -217,6 +217,7 @@
   ::    /x/quota                       ->  %atom  @ud
   ::    /x/slice                       ->  %atom  @dr
   ::    /x/over-quota/[~ship]          ->  %atom  ?
+  ::    /x/ready                       ->  %atom  ?
   ::
   ++  on-peek
     |=  =path
@@ -245,6 +246,7 @@
       [%x %quota ~]           ``atom+!>(quota)
       [%x %slice ~]           ``atom+!>(slice)
       [%x %over-quota @ ~]    (over-quota i.t.t.path)
+      [%x %ready ~]           ``atom+!>(?=(^ points.pre))
     ==
     ::
     ++  pending-by
@@ -421,7 +423,6 @@
       ==
     ::
         [%predict ~]
-      ~&  "predicting"
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
         =.  own.state  canonical-owners:do
