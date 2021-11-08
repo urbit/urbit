@@ -66,7 +66,7 @@
   =/  fire-arm=nock
     ~|  [%failed-to-compile-test-arm name]
     q:(~(mint ut typ) p:!>(*tang) [%limb name])
-  [name |.(;;(tang .*(cor fire-arm)))]
+  [name |.(;;(tang ~>(%bout.[1 name] .*(cor fire-arm))))]
 ::  +has-test-prefix: does the arm define a test we should run?
 ::
 ++  has-test-prefix

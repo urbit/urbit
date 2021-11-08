@@ -3,7 +3,7 @@ import f from 'lodash/fp';
 import React from 'react';
 import create, { State } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { BackgroundConfig, LeapCategories, RemoteContentPolicy, TutorialProgress, tutorialProgress } from '~/types/local-update';
+import { BackgroundConfig, LeapCategories, RemoteContentPolicy } from '~/types/local-update';
 import airlock from '~/logic/api';
 import { bootstrapApi } from '../api/bootstrap';
 import { clearStorageMigration, createStorageKey, storageVersion, wait } from '~/logic/lib/util';
@@ -15,15 +15,9 @@ export interface LocalState {
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: RemoteContentPolicy;
-  tutorialProgress: TutorialProgress;
   hideGroups: boolean;
   hideUtilities: boolean;
-  tutorialRef: HTMLElement | null,
-  hideTutorial: () => void;
-  nextTutStep: () => void;
-  prevTutStep: () => void;
   hideLeapCats: LeapCategories[];
-  setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
   mobile: boolean;
   breaks: {
@@ -62,27 +56,6 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   hideLeapCats: [],
   hideGroups: false,
   hideUtilities: false,
-  tutorialProgress: 'hidden',
-  tutorialRef: null,
-  setTutorialRef: (el: HTMLElement | null) => set(produce((state) => {
-    state.tutorialRef = el;
-  })),
-  hideTutorial: () => set(produce((state) => {
-    state.tutorialProgress = 'hidden';
-    state.tutorialRef = null;
-  })),
-  nextTutStep: () => set(produce((state) => {
-    const currIdx = tutorialProgress.findIndex(p => p === state.tutorialProgress);
-    if(currIdx < tutorialProgress.length) {
-      state.tutorialProgress = tutorialProgress[currIdx + 1];
-    }
-  })),
-  prevTutStep: () => set(produce((state) => {
-    const currIdx = tutorialProgress.findIndex(p => p === state.tutorialProgress);
-    if(currIdx > 0) {
-      state.tutorialProgress = tutorialProgress[currIdx - 1];
-    }
-  })),
   remoteContentPolicy: {
     imageShown: true,
     audioShown: true,
@@ -132,8 +105,8 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   set: fn => set(produce(fn))
   }), {
     blacklist: [
-      'suspendedFocus', 'toggleOmnibox', 'omniboxShown', 'tutorialProgress',
-      'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef', 'subscription',
+      'suspendedFocus', 'toggleOmnibox', 'omniboxShown',
+      'subscription',
       'errorCount', 'breaks'
     ],
   name: createStorageKey('local'),
