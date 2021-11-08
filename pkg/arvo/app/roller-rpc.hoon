@@ -169,6 +169,9 @@
       %prepare-for-signing     `(hash-transaction id +.params chain:scry | &)
       %get-unsigned-tx         `(hash-transaction id +.params chain:scry & |)
       %get-predicted-state     `(get-naive id +.params predicted:scry)
+      :: TODO: deprecated, remove]
+      ::
+      %hash-transaction        `(hash-transaction id +.params chain:scry & |)
     ==
   --
 ::
