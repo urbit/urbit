@@ -136,6 +136,7 @@
   ?-  -.bob
     %direct  q.q.bob
     %delta   q.r.bob
+    %dead    ~|(%tombstoned-kelvin !!)
   ==
 ::  +read-kelvin-local: read /sys/kelvin from a local desk
 ::
@@ -170,6 +171,7 @@
   ?-  -.bob
     %direct  q.q.bob
     %delta   q.r.bob
+    %dead    ~|(%tombstoned-bill !!)
   ==
 ::  +read-bill: read contents of /desk/bill manifest
 ::

@@ -244,9 +244,9 @@
 ::  Result of a subscription
 ::
 +$  sub-result
-  $%  [%blab =mood data=(each cage lobe)]
+  $%  [%blab =mood =cage]
       [%bleb ver=@ud ins=@ud range=(unit (pair aeon aeon))]
-      [%balk cage=(unit (each cage lobe)) =mood]
+      [%balk cage=(unit cage) =mood]
       [%blas moods=(set mood)]
       [%blub ~]
   ==
@@ -265,7 +265,9 @@
 ::  Like a +$rave but with caches of current versions for %next and %many.
 ::  Generally used when we store a request in our state somewhere.
 ::
-+$  cach  (unit (unit (each cage lobe)))                ::  cached result
+::  XX needs state upgrade, was (unit (unit (each cage lobe)))
+::
++$  cach  (unit (unit cage))                            ::  cached result
 +$  wove  [for=(unit [=ship ver=@ud]) =rove]            ::  stored source + req
 +$  rove                                                ::  stored request
           $%  [%sing =mood]                             ::  single request
@@ -453,7 +455,6 @@
     $(vaz t.vaz)
   ::
   ++  ford
-    !.
     =>  |%
         +$  build
           $%  [%file =path]
@@ -736,12 +737,30 @@
       =/  =blob  (~(got by file-store) lobe)
       |-  ^-  [page state]
       ?-    -.blob
+          %dead    ~|(lobe-to-page-dead+lobe !!)
           %direct  [q.blob nub]
           %delta
         =/  [[=mark =parent=^lobe] diff=page]  [q r]:blob
         =^  parent-page  nub  $(blob (~(got by file-store) parent-lobe))
         =^  =cage  nub  (run-pact parent-page diff)
         [[p q.q]:cage nub]
+      ==
+    ::
+    ++  lobe-to-unit-page
+      |=  =lobe
+      ^-  [(unit page) state]
+      =/  =blob  (~(got by file-store) lobe)
+      |-  ^-  [(unit page) state]
+      ?-    -.blob
+          %dead    [~ nub]
+          %direct  [`q.blob nub]
+          %delta
+        =/  [[=mark =parent=^lobe] diff=page]  [q r]:blob
+        =^  parent-page  nub  $(blob (~(got by file-store) parent-lobe))
+        ?~  parent-page
+          [~ nub]
+        =^  =cage  nub  (run-pact u.parent-page diff)
+        [`[p q.q]:cage nub]
       ==
     ::
     ++  validate-page
@@ -1131,14 +1150,14 @@
   ::
   ++  aver
     |=  [for=(unit ship) mun=mood]
-    ^-  [(unit (unit (each cage lobe))) ford-cache]
+    ^-  [(unit (unit cage)) ford-cache]
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
-      :_(fod.dom.red `(bind u.ezy |=(a=cage [%& a])))
+      [`u.ezy fod.dom.red]
     ?:  ?=([%s [%ud *] %late *] mun)
       :_  fod.dom.red
-      ^-  (unit (unit (each cage lobe)))
-      :^  ~  ~  %&
+      ^-  (unit (unit cage))
+      :+  ~  ~
       ^-  cage
       :-  %cass
       ?~  let.dom
@@ -1170,7 +1189,7 @@
   ::  Producing null means subscription has been completed or cancelled.
   ::
   ++  balk
-    |=  [hen=duct cay=(unit (each cage lobe)) mun=mood]
+    |=  [hen=duct cay=(unit cage) mun=mood]
     ^+  +>
     ?~  cay  (blub hen)
     (blab hen mun u.cay)
@@ -1193,18 +1212,8 @@
   ::  the latter case we fetch the data at the lobe and produce that.
   ::
   ++  blab
-    |=  [hen=duct mun=mood dat=(each cage lobe)]
+    |=  [hen=duct mun=mood =cage]
     ^+  +>
-    =^  =cage  fod.dom
-      ?:  ?=(%& -.dat)
-        [p.dat fod.dom]
-      =^  =page  fod.dom
-        %-  wrap:fusion
-        (lobe-to-page:(ford:fusion static-ford-args) p.dat)
-      =^  =cage  fod.dom
-        %-  wrap:fusion
-        (page-to-cage:(ford:fusion static-ford-args) page)
-      [cage fod.dom]
     =/  gift  [%writ ~ [care.mun case.mun syd] path.mun cage]
     ?:  ?=(^ ref)
       (emit hen %slip %b %drip !>(gift))
@@ -1273,7 +1282,6 @@
     |=  [hen=duct ver=@ud ins=@ud hip=(unit (pair aeon aeon))]
     ^+  +>
     %^  blab  hen  [%w [%ud ins] ~]
-    :-  %&
     ?~  hip
       [%null [%atom %n ~] ~]
     [%nako !>((make-nako:ze ver u.hip))]
@@ -1308,7 +1316,25 @@
   ++  bleb-all  (duct-lift bleb)
   ::
   ++  static-ford-args  [ank.dom ~ ~ lat.ran fod.dom]
+  ::  Create a ford appropriate for the aeon
   ::
+  ::  Don't forget to call +aeon-ford-cache!
+  ::
+  ++  aeon-ford
+    |=  yon=aeon
+    %-  ford:fusion
+    ?:  =(let.dom yon)
+      static-ford-args
+    =/  changes  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
+    [*ankh ~ changes lat.ran *ford-cache]
+  ::  Produce ford cache appropriate for the aeon
+  ::
+  ++  aeon-ford-cache
+    |*  [yon=aeon res=* fod=ford-cache]
+    :-  res
+    ?:  =(let.dom yon)
+      fod
+    fod.dom
   ::  Transfer a request to another ship's clay.
   ::
   ++  send-over-ames
@@ -1719,6 +1745,7 @@
                 %|  (lobe-to-weft p.fil)
             ==
           ==
+      ::
       ++  lobe-to-weft
         |=  =lobe
         ^-  weft
@@ -1726,9 +1753,11 @@
         =/  =page
           ?-  -.blob
             %direct  q.blob
-            %delta  r.blob
+            %delta   r.blob
+            %dead    ~|([%sys-kelvin-tombstoned syd] !!)
           ==
         (page-to-weft page)
+      ::
       ++  page-to-weft
         |=  =page
         ^-  weft
@@ -1844,26 +1873,16 @@
         %mime  q.q:;;(mime q.page)
       ==
     ::
-    ++  path-to-hoon
-      |=  [data=(map path (each page lobe)) =path]
-      (rain path (path-to-cord data path))
-    ::
-    ++  path-to-cord
-      |=  [data=(map path (each page lobe)) =path]
-      ^-  @t
-      =/  datum  (~(got by data) path)
-      ?-  -.datum
-        %&  (page-to-cord p.datum)
-        %|  (lobe-to-cord p.datum)
-      ==
-    ::
     ++  lobe-to-cord
       |=  =lobe
       ^-  @t
       =-  ?:(?=(%& -<) p.- (of-wain:format p.-))
       |-  ^-  (each @t wain)
-      =/  =blob  (~(got by lat.ran) lobe)
+      ::  got:by ok since we must have a blob for anything at `let`
+      ::
+      =/  =blob  (lobe-to-blob:ze lobe)
       ?-    -.blob
+          %dead    ~|([%lobe-to-cord-tombstoned syd lobe] !!)
           %direct  [%& ;;(@t q.q.blob)]
           %delta
         :-  %|
@@ -2009,12 +2028,15 @@
       =/  foo
         %-  ~(urn by lat.ran)
         |=  [=lobe =blob]
-        ?:  ?=(%delta -.blob)
+        ?-    -.blob
+            %dead   ~
+            %delta  ~
+            %direct
+          =/  actual-lobe=^lobe  `@uv`(page-to-lobe q.blob)
+          ~|  [lobe p.blob actual-lobe]
+          ?>  &(=(lobe p.blob) =(lobe actual-lobe))
           ~
-        =/  actual-lobe=^lobe  `@uv`(page-to-lobe q.blob)
-        ~|  [lobe p.blob actual-lobe]
-        ?>  &(=(lobe p.blob) =(lobe actual-lobe))
-        ~
+        ==
       ::  Assert we calculated the same change-cages w/o cache
       ::
       ::  XX remove deletes
@@ -2283,7 +2305,7 @@
       (done %| %ali-unavailable ~[>[ali-ship ali-desk germ]<])
     =/  ali-dome=dome:clay  !<(dome:clay q.r.u.riot)
     =/  result=(each (unit merge-result) (pair term tang))
-    (merge-helper ali-ship ali-desk germ ali-dome ~)
+      (merge-helper ali-ship ali-desk germ ali-dome ~)
     ?-    -.result
         %|
       (done %| +.result)
@@ -2310,22 +2332,26 @@
           ~
         (~(get by hut.ran) (~(got by hit.dom) let.dom))
       continuation-yaki
-    (merge-by-germ ali-yaki bob-yaki)
+    =/  res  (mule |.((merge-by-germ ali-yaki bob-yaki)))
+    ?-  -.res
+      %&  &+p.res
+      %|  |+merge-failed+p.res
+    ==
     ::
     ++  merge-by-germ
       |=  [=ali=yaki bob-yaki=(unit yaki)]
-      ^-  (each (unit merge-result) [term tang])
+      ^-  (unit merge-result)
       ::
       ::  If this is an %init merge, we set the ali's commit to be
       ::  bob's.
       ::
       ?:  ?=(%init germ)
         ?>  ?=(~ bob-yaki)
-        &+`[conflicts=~ new=|+ali-yaki lat=~]
+        `[conflicts=~ new=|+ali-yaki lat=~]
       ::
       =/  bob-yaki  (need bob-yaki)
       |^
-      ^-  (each (unit merge-result) [term tang])
+      ^-  (unit merge-result)
       ?-    germ
       ::
       ::  If this is a %only-this merge, we check to see if ali's and bob's
@@ -2335,8 +2361,8 @@
       ::
           %only-this
         ?:  =(r.ali-yaki r.bob-yaki)
-          &+~
-        :*  %&  ~
+          ~
+        :*  ~
             conflicts=~
             new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki q.bob-yaki)]
             lat=~
@@ -2349,8 +2375,8 @@
       ::
           %only-that
         ?:  =(r.ali-yaki r.bob-yaki)
-          &+~
-        :*  %&  ~
+          ~
+        :*  ~
             conflicts=~
             new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki q.ali-yaki)]
             lat=~
@@ -2362,9 +2388,9 @@
       ::
           %take-this
         ?:  =(r.ali-yaki r.bob-yaki)
-          &+~
+          ~
         =/  new-data  (~(uni by q.ali-yaki) q.bob-yaki)
-        :*  %&  ~
+        :*  ~
             conflicts=~
             new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
             lat=~
@@ -2376,9 +2402,9 @@
       ::
           %take-that
         ?:  =(r.ali-yaki r.bob-yaki)
-          &+~
+          ~
         =/  new-data  (~(uni by q.bob-yaki) q.ali-yaki)
-        :*  %&  ~
+        :*  ~
             conflicts=~
             new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
             lat=~
@@ -2394,27 +2420,27 @@
       ::
           %fine
         ?:  =(r.ali-yaki r.bob-yaki)
-          &+~
+          ~
         ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
-          &+~
+          ~
         ?.  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
-          :~  %|  %bad-fine-merge
-              leaf+"tried fast-forward but is not ancestor or descendant"
-          ==
-        &+`[conflicts=~ new=|+ali-yaki lat=~]
+          ~_  %bad-fine-merge
+          ~|  "tried fast-forward but is not ancestor or descendant"
+          !!
+        `[conflicts=~ new=|+ali-yaki lat=~]
       ::
           ?(%meet %mate %meld %meet-this %meet-that)
         ?:  =(r.ali-yaki r.bob-yaki)
-          &+~
+          ~
         ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
-          &+~
+          ~
         ?:  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
           $(germ %fine)
         =/  merge-points  (find-merge-points ali-yaki bob-yaki)
         ?~  merge-points
-          :~  %|  %merge-no-merge-base
-              leaf+"consider a %this or %that merge to get a mergebase"
-          ==
+          ~_  %merge-no-merge-base
+          ~|  "consider a %this or %that merge to get a mergebase"
+          !!
         =/  merge-point=yaki  n.merge-points
         ?:  ?=(?(%mate %meld) germ)
           =/  ali-diffs=cane  (diff-base ali-yaki bob-yaki merge-point)
@@ -2435,10 +2461,9 @@
           %-  ~(uni by `(map path *)`can.bob-diffs)
           `(map path *)`old.bob-diffs
         ?:  &(?=(%meet germ) !=(~ both-diffs))
-          :~  %|  %meet-conflict
-            >~(key by both-diffs)<
-            leaf+"consider a %mate merge"
-          ==
+          ~_  %meet-conflict
+          ~|  [~(key by both-diffs) "consider a %mate merge"]
+          !!
         =/  both-done=(map path lobe)
           |^
           ?-  germ
@@ -2472,7 +2497,7 @@
           %-  ~(uni by new.bob-diffs)
           %-  ~(uni by cal.ali-diffs)
           cal.bob-diffs
-        :*  %&  ~
+        :*  ~
             conflicts=~
             new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki hat)]
             lat=~
@@ -2574,7 +2599,13 @@
             ~
           ?:  =(u.in-yak u.in-yuk)
             ~
-          `[path (diff-lobes lobe u.in-yak)]
+          =/  cug=(unit cage)  (diff-lobes lobe u.in-yak)
+          ?~  cug
+            ~_  %tombstoned-mergebase
+            ~|  path
+            ~|  "consider a 2-way merge such as %only-this or %only-that"
+            !!
+          `[path u.cug]
         ::
         =/  old=(map path ~)
             %-  malt  ^-  (list [path ~])
@@ -2590,14 +2621,16 @@
       ::
       ++  lobe-to-cage
         |=  =lobe
-        ^-  cage
-        =^  =page  fod.dom
+        ^-  (unit cage)
+        =^  peg=(unit page)  fod.dom
           %-  wrap:fusion
-          (lobe-to-page:(ford:fusion static-ford-args) lobe)
+          (lobe-to-unit-page:(ford:fusion static-ford-args) lobe)
+        ?~  peg
+          ~
         =^  =cage  fod.dom
           %-  wrap:fusion
-          (page-to-cage:(ford:fusion static-ford-args) page)
-        cage
+          (page-to-cage:(ford:fusion static-ford-args) u.peg)
+        `cage
       ::
       ++  get-dais
         |=  =mark
@@ -2611,12 +2644,14 @@
       ::
       ++  diff-lobes
         |=  [=a=lobe =b=lobe]
-        ^-  cage
+        ^-  (unit cage)
         =/  a-cage  (lobe-to-cage a-lobe)
         =/  b-cage  (lobe-to-cage b-lobe)
-        ?>  =(p.a-cage p.b-cage)
-        =/  =dais  (get-dais p.a-cage)
-        [form:dais (~(diff dais q.a-cage) q.b-cage)]
+        ?:  |(?=(~ a-cage) ?=(~ b-cage))
+          ~
+        ?>  =(p.u.a-cage p.u.b-cage)
+        =/  =dais  (get-dais p.u.a-cage)
+        `[form:dais (~(diff dais q.u.a-cage) q.u.b-cage)]
       ::
       ::  Merge diffs that are on the same file.
       ::
@@ -2653,7 +2688,7 @@
                 dob=cane
                 bof=(map path (unit cage))
             ==
-        ^-  (each (unit merge-result) [term tang])
+        ^-  (unit merge-result)
         =/  both-patched=(map path cage)
           %-  malt
           %+  murn  ~(tap by bof)
@@ -2666,7 +2701,9 @@
           ?~  -
             ~|  %mate-strange-diff-no-base
             !!
-          =/  =cage  (lobe-to-cage u.-)
+          ::  +need ok because we would have crashed in +diff-base
+          ::
+          =/  =cage  ~|([%build-need path] (need (lobe-to-cage u.-)))
           =/  =dais  (get-dais p.cage)
           ?>  =(p.u.cay form.dais)
           :-  p.cage
@@ -2705,7 +2742,9 @@
           =((~(got by new.dal) pax) (~(got by new.dob) pax))
         ?:  &(?=(%mate germ) ?=(^ con))
           =+  (turn ~(tap by `(map path *)`con) |=([path *] >[+<-]<))
-          [%| %mate-conflict -]
+          ~_  %mate-conflict
+          ~|  (turn ~(tap by `(map path *)`con) |=([path *] +<-))
+          !!
         =/  old=(map path lobe)                         ::  oldies but goodies
           %+  roll  ~(tap by (~(uni by old.dal) old.dob))
           =<  .(old q.bob)
@@ -2728,9 +2767,9 @@
           %-  ~(uni by hot)
           cab
         =/  del=(map path ?)
-            (~(run by (~(uni by old.dal) old.dob)) |=(~ %|))
+          (~(run by (~(uni by old.dal) old.dob)) |=(~ %|))
         =/  new  &+[[r.bob r.ali ~] (~(run by hat) |=(=lobe |+lobe))]
-        :*  %&  ~
+        :*  ~
             (silt (turn ~(tap by con) head))
             new
             lat
@@ -3106,7 +3145,7 @@
   ++  give-backfill
     |=  =lobe
     ^+  ..give-backfill
-    (emit hen %give %boon (~(got by lat.ran) lobe))
+    (emit hen %give %boon (lobe-to-blob:ze lobe))
   ::
   ::  Ingest foreign update, requesting missing blobs if necessary
   ::
@@ -3395,7 +3434,7 @@
         :-  ~
         ?~  u.cache-value
           [%blub ~]~
-        [%blab mood.rov %& u.u.cache-value]~
+        [%blab mood.rov u.u.cache-value]~
       ::  else, check to see if rove is for an aeon we know
       ::
       =/  aeon=(unit aeon)  (case-to-aeon case.mood.rov)
@@ -3403,7 +3442,7 @@
         [[`rov ~] fod.dom]
       ::  we have the appropriate aeon, so read in the data
       ::
-      =^  value=(unit (unit (each cage lobe)))  fod.dom
+      =^  value=(unit (unit cage))  fod.dom
         (read-at-aeon:ze for u.aeon mood.rov)
       ?~  value
         ::  We don't have the data directly, which is potentially
@@ -3440,14 +3479,14 @@
       ?>  ?=(%mult -.rov)
       ::  we will either respond or store the maybe updated request.
       ::
-      =;  [res=(each (map mood (unit (each cage lobe))) rove) fod=ford-cache]
+      =;  [res=(each (map mood (unit cage)) rove) fod=ford-cache]
           :_  fod
           ?:  ?=(%& -.res)
             (respond p.res)
           (store p.res)
       ::  recurse here on next aeon if possible/needed.
       ::
-      |-  ^-  [(each (map mood (unit (each cage lobe))) rove) ford-cache]
+      |-  ^-  [(each (map mood (unit cage)) rove) ford-cache]
       ::  if we don't have an aeon yet, see if we have one now.
       ::
       ?~  aeon.rov
@@ -3483,7 +3522,7 @@
         %-  malt
         %+  murn  ~(tap in paths.mool.rov)
         |=  [=care =path]
-        ^-  (unit [mood (unit (each cage lobe))])
+        ^-  (unit [mood (unit cage)])
         =/  cached  (~(get by new-cach.rov) [care path])
         ?.  ?=([~ ~ *] cached)
           %-  (slog 'clay: strange new-cache' >[care path cached]< ~)
@@ -3497,14 +3536,14 @@
         [|+rov fod.dom]
       ::  both complete, so check if anything has changed
       ::
-      =/  changes=(map mood (unit (each cage lobe)))
+      =/  changes=(map mood (unit cage))
         %+  roll  ~(tap by old-cach.rov)
         |=  $:  [[car=care pax=path] old-cach-value=cach]
-                changes=(map mood (unit (each cage lobe)))
+                changes=(map mood (unit cage))
             ==
         =/  new-cach-value=cach  (~(got by new-cach.rov) car pax)
         ?<  |(?=(~ old-cach-value) ?=(~ new-cach-value))
-        =/  new-entry=(unit (pair mood (unit (each cage lobe))))
+        =/  new-entry=(unit (pair mood (unit cage)))
           =/  =mood  [car [%ud u.aeon.rov] pax]
           ?~  u.new-cach-value
             ::  if new does not exist, always notify
@@ -3514,7 +3553,7 @@
             ::  added
             ::
             `[mood `u.u.new-cach-value]
-          ?:  (equivalent-data:ze u.u.new-cach-value u.u.old-cach-value)
+          ?:  =([p q.q]:u.u.new-cach-value [p q.q]:u.u.old-cach-value)
             ::  unchanged
             ::
             ~
@@ -3548,7 +3587,7 @@
       ::  send changes
       ::
       ++  respond
-        |=  res=(map mood (unit (each cage lobe)))
+        |=  res=(map mood (unit cage))
         ^-  [new-sub=(unit rove) (list sub-result)]
         :-  ~
         ?:  ?=(%mult -.vor)
@@ -3685,24 +3724,13 @@
     ++  tako-to-yaki  ~(got by hut.ran)
     ++  lobe-to-mark
       |=  a=lobe
+      ^-  (unit mark)
       =>  (lobe-to-blob a)
       ?-  -
-        %delta      p.q
-        %direct     p.q
+        %delta      `p.q
+        %direct     `p.q
+        %dead       ~
       ==
-    ::
-    ::  Checks whether two pieces of data (either cages or lobes) are the same.
-    ::
-    ++  equivalent-data
-      |=  [one=(each cage lobe) two=(each cage lobe)]
-      ^-  ?
-      ?:  ?=(%& -.one)
-        ?:  ?=(%& -.two)
-          =([p q.q]:p.one [p q.q]:p.two)
-        =(p.two (page-to-lobe [p q.q]:p.one))
-      ?:  ?=(%& -.two)
-        =(p.one (page-to-lobe [p q.q]:p.two))
-      =(p.one p.two)
     ::
     ::  Gets a map of the data at the given path and all children of it.
     ::
@@ -3775,120 +3803,74 @@
       =.  s  ^$(p i.p.y)
       $(p.y t.p.y)
     ::
-    ::  Get all the lobes that are referenced in `a` except those that are
-    ::  already in `b`.
-    ::
-    ++  new-lobes                                       ::  object hash set
-      |=  [b=(set lobe) a=(set tako)]                   ::  that aren't in b
-      ^-  (set lobe)
-      %+  roll  ~(tap in a)
-      |=  [tak=tako bar=(set lobe)]
-      ^-  (set lobe)
-      =+  yak=(tako-to-yaki tak)
-      %+  roll  ~(tap by q.yak)
-      =<  .(far bar)
-      |=  [[path lob=lobe] far=(set lobe)]
-      ^-  (set lobe)
-      ?~  (~(has in b) lob)                             ::  don't need
-        far
-      =+  gar=(lobe-to-blob lob)
-      ?-  -.gar
-        %direct    (~(put in far) lob)
-        %delta     (~(put in $(lob q.q.gar)) lob)
-      ==
-    ::
-    ::  Probably can get rid of the cache checks because they happen in
-    ::  ford
-    ::
     ++  read-a
       !.
       |=  [=aeon =path]
-      ^-  [(unit (unit (each cage lobe))) ford-cache]
-      ?.  =(aeon let.dom)
-        ~>  %slog.0^leaf/"clay: %a unknown aeon {<[syd aeon path]>}"
-        [~ fod.dom]
-      =/  cached=(unit [=vase *])  (~(get by files.fod.dom) path)
-      ?^  cached
-        :_(fod.dom [~ ~ %& %vase !>(vase.u.cached)])
-      =/  x  (read-x aeon path)
-      ?~  x
-        ~>  %slog.0^leaf/"clay: %a can't read file at path {<[syd aeon path]>}"
-        [~ fod.dom]
-      ?~  u.x
-        ~>  %slog.0^leaf/"clay: %a no file at path {<[syd aeon path]>}"
-        [[~ ~] fod.dom]
-      ::  should never happen at current aeon
-      ?:  ?=(%| -.u.u.x)
-        [~ fod.dom]
+      ^-  [(unit (unit cage)) ford-cache]
       =^  =vase  fod.dom
         ~_  leaf/"clay: %a build failed {<[syd aeon path]>}"
+        %+  aeon-ford-cache  aeon
         %-  wrap:fusion
-        (build-file:(ford:fusion static-ford-args) path)
-      :_(fod.dom [~ ~ %& %vase !>(vase)])
+        (build-file:(aeon-ford aeon) path)
+      :_(fod.dom [~ ~ %vase !>(vase)])
     ::
     ++  read-b
       !.
       |=  [=aeon =path]
-      ^-  [(unit (unit (each cage lobe))) ford-cache]
-      ?.  =(aeon let.dom)
-        [~ fod.dom]
+      ^-  [(unit (unit cage)) ford-cache]
       ?.  ?=([@ ~] path)
         [[~ ~] fod.dom]
-      =/  cached=(unit [=dais *])  (~(get by marks.fod.dom) i.path)
-      ?^  cached
-        :_(fod.dom [~ ~ %& %dais !>(dais.u.cached)])
       =^  =dais  fod.dom
+        %+  aeon-ford-cache  aeon
         %-  wrap:fusion
-        (build-dais:(ford:fusion static-ford-args) i.path)
-      :_(fod.dom [~ ~ %& %dais !>(dais)])
+        (build-dais:(aeon-ford aeon) i.path)
+      :_(fod.dom [~ ~ %dais !>(dais)])
     ::
     ++  read-c
       !.
       |=  [=aeon =path]
-      ^-  [(unit (unit (each cage lobe))) ford-cache]
-      ?.  =(aeon let.dom)
-        [~ fod.dom]
+      ^-  [(unit (unit cage)) ford-cache]
       ?.  ?=([@ @ ~] path)
         [[~ ~] fod.dom]
-      =/  cached=(unit [=tube *])  (~(get by tubes.fod.dom) [i i.t]:path)
-      ?^  cached
-        :_(fod.dom [~ ~ %& %tube !>(tube.u.cached)])
       =^  =tube  fod.dom
+        %+  aeon-ford-cache  aeon
         %-  wrap:fusion
-        (build-tube:(ford:fusion static-ford-args) [i i.t]:path)
-      :_(fod.dom [~ ~ %& %tube !>(tube)])
+        (build-tube:(aeon-ford aeon) [i i.t]:path)
+      :_(fod.dom [~ ~ %tube !>(tube)])
     ::
     ++  read-e
       !.
       |=  [=aeon =path]
-      ^-  [(unit (unit (each cage lobe))) ford-cache]
-      ?.  =(aeon let.dom)
-        [~ fod.dom]
+      ^-  [(unit (unit cage)) ford-cache]
       ?.  ?=([@ ~] path)
         [[~ ~] fod.dom]
-      =/  cached=(unit [=vase *])  (~(get by naves.fod.dom) i.path)
-      ?^  cached
-        :_(fod.dom [~ ~ %& %nave vase.u.cached])
       =^  =vase  fod.dom
+        %+  aeon-ford-cache  aeon
         %-  wrap:fusion
-        (build-nave:(ford:fusion static-ford-args) i.path)
-      :_(fod.dom [~ ~ %& %nave vase])
+        (build-nave:(aeon-ford aeon) i.path)
+      :_(fod.dom [~ ~ %nave vase])
     ::
     ++  read-f
       !.
       |=  [=aeon =path]
-      ^-  [(unit (unit (each cage lobe))) ford-cache]
-      ?.  =(aeon let.dom)
-        [~ fod.dom]
+      ^-  [(unit (unit cage)) ford-cache]
       ?.  ?=([@ @ ~] path)
         [[~ ~] fod.dom]
-      =/  cached=(unit [=vase *])  (~(get by casts.fod.dom) [i i.t]:path)
-      ?^  cached
-        :_(fod.dom [~ ~ %& %cast vase.u.cached])
       =^  =vase  fod.dom
+        %+  aeon-ford-cache  aeon
         %-  wrap:fusion
-        (build-cast:(ford:fusion static-ford-args) [i i.t]:path)
-      :_(fod.dom [~ ~ %& %cast vase])
+        (build-cast:(aeon-ford aeon) [i i.t]:path)
+      :_(fod.dom [~ ~ %cast vase])
+    ::
+    ++  read-d
+      !.
+      |=  [=aeon =path]
+      ^-  (unit (unit cage))
+      ?.  =(our her)
+        [~ ~]
+      ?^  path
+        ~&(%no-cd-path [~ ~])
+      [~ ~ %noun !>(~(key by dos.rom.ruf))]
     ::
     ::  Gets the permissions that apply to a particular node.
     ::
@@ -3898,8 +3880,8 @@
     ::
     ++  read-p
       |=  pax=path
-      ^-  (unit (unit (each cage lobe)))
-      =-  [~ ~ %& %noun !>(-)]
+      ^-  (unit (unit cage))
+      =-  [~ ~ %noun !>(-)]
       :-  (read-p-in pax per.red)
       (read-p-in pax pew.red)
     ::
@@ -3985,12 +3967,12 @@
     ::
     ++  read-r
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit cage))
-      =/  x  (read-x yon pax)
+      ^-  [(unit (unit cage)) ford-cache]
+      =^  x  fod.dom  (read-x yon pax)
+      :_  fod.dom
       ?~  x    ~
       ?~  u.x  [~ ~]
-      ?>  ?=(%& -.u.u.x)
-      ``[p.p.u.u.x !>(q.p.u.u.x)]
+      ``[p.u.u.x !>(q.u.u.x)]
     ::  +read-s: produce yaki or blob for given tako or lobe
     ::
     ++  read-s
@@ -4085,11 +4067,11 @@
     ::
     ++  read-u
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit (each [%flag (hypo ?)] lobe)))
+      ^-  (unit (unit [%flag (hypo ?)]))
       ::  if asked for version 0, that never exists, so always give false
       ::
       ?:  =(0 yon)
-        ``[%& %flag -:!>(*?) |]
+        ``[%flag -:!>(*?) |]
       ::  if asked for a future version, we don't have an answer
       ::
       ?~  tak=(~(get by hit.dom) yon)
@@ -4099,7 +4081,7 @@
       =/  yak=yaki  (tako-to-yaki u.tak)
       ::  produce the result based on whether or not there's a file at :pax
       ::
-      ``[%& %flag -:!>(*?) (~(has by q.yak) pax)]
+      ``[%flag -:!>(*?) (~(has by q.yak) pax)]
     ::
     ::  Gets the dome (desk state) at a particular aeon.
     ::
@@ -4127,10 +4109,10 @@
     ::
     ++  read-w
       |=  cas=case
-      ^-  (unit (unit (each cage lobe)))
+      ^-  (unit (unit cage))
       =+  aey=(case-to-aeon cas)
       ?~  aey  ~
-      =-  [~ ~ %& %cass !>(-)]
+      =-  [~ ~ %cass !>(-)]
       ^-  cass
       :-  u.aey
       ?:  =(0 u.aey)  `@da`0
@@ -4146,41 +4128,61 @@
     ::
     ++  read-x
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit (each cage lobe)))
+      ^-  [(unit (unit cage)) ford-cache]
       ?:  =(0 yon)
-        [~ ~]
+        [[~ ~] fod.dom]
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
-        ~
-      ?:  &(?=(~ ref) =(yon let.dom))
-        :-  ~
+        [~ fod.dom]
+      ?:  &(?=(~ ref) =(let.dom yon))
+        :_  fod.dom  :-  ~
         %+  bind
           fil.ank:(descend-path:(zu ank.dom) pax)
-        |=(a=[p=lobe q=cage] [%& q.a])
+        |=(a=[p=lobe q=cage] q.a)
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
-        [~ ~]
+        [[~ ~] fod.dom]
       =+  mar=(lobe-to-mark u.lob)
+      ::  if tombstoned, nothing to return
+      ::
+      ?~  mar
+        [~ fod.dom]
       ::  should convert any lobe to cage
       ::
-      ?.  ?=(%hoon mar)
-        [~ ~ %| u.lob]
-      :^  ~  ~  %&
-      :+  mar  [%atom %t ~]
-      |-  ^-  @t                      ::  (urge cord) would be faster
-      =+  bol=(lobe-to-blob u.lob)
-      ?:  ?=(%direct -.bol)
-        ;;(@t q.q.bol)
-      ?>  ?=(%delta -.bol)
-      =+  txt=$(u.lob q.q.bol)
-      ?>  ?=(%txt-diff p.r.bol)
-      =+  dif=;;((urge cord) q.r.bol)
-      =,  format
-      =+  pac=(of-wain (lurk:differ (to-wain (cat 3 txt '\0a')) dif))
-      ?~  pac
-        ''
-      (end [3 (dec (met 3 pac))] pac)
+      ?:  ?=(%hoon u.mar)
+        =/  txt
+          |-  ^-  (unit @t)
+          =+  bol=(lobe-to-blob u.lob)
+          ?-  -.bol
+              %dead    ~
+              %direct  `;;(@t q.q.bol)
+              %delta
+            =+  txt=$(u.lob q.q.bol)
+            ?~  txt
+              ~
+            ?>  ?=(%txt-diff p.r.bol)
+            =+  dif=;;((urge cord) q.r.bol)
+            =,  format
+            =+  pac=(of-wain (lurk:differ (to-wain (cat 3 u.txt '\0a')) dif))
+            :-  ~
+            ?~  pac
+              ''
+            (end [3 (dec (met 3 pac))] pac)
+          ==
+        :_  fod.dom
+        ?~  txt
+          ~
+        [~ ~ u.mar [%atom %t ~] u.txt]
+      =^  peg=(unit page)  fod.dom
+        %-  wrap:fusion
+        (lobe-to-unit-page:(ford:fusion static-ford-args) u.lob)
+      ?~  peg
+        [~ fod.dom]
+      =^  =cage  fod.dom
+        %-  wrap:fusion
+        (page-to-cage:(ford:fusion static-ford-args) u.peg)
+      [``cage fod.dom]
     ::
     ::  Gets an arch (directory listing) at a node.
     ::
@@ -4225,50 +4227,44 @@
     ::  Get a value at an aeon.
     ::
     ::  Value can be either null, meaning we don't have it yet, [null null],
-    ::  meaning we know it doesn't exist, or [null null (each cage lobe)],
+    ::  meaning we know it doesn't exist, or [null null cage],
     ::  meaning we either have the value directly or a content hash of the
     ::  value.
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [for=(unit ship) yon=aeon mun=mood]           ::  seek and read
-      ^-  [(unit (unit (each cage lobe))) ford-cache]
-      =*  fod  fod.dom
+      ^-  [(unit (unit cage)) ford-cache]
       ?.  |(?=(~ for) (may-read u.for care.mun yon path.mun))
-        [~ fod]
+        [~ fod.dom]
       ::  virtualize to catch and produce deterministic failures
       ::
       !:
-      =-  ?:  ?=(%& -<)  p.-
-          %.  [[~ ~] fod]
-          (slog leaf+"clay: read-at-aeon fail {<[desk=syd mun]>}" p.-)
-      %-  mule  |.
-      ?-  care.mun
-          %d
-        :_  fod
-        ::  XX this should only allow reads at the current date
-        ::
-        ?:  !=(our her)
-          [~ ~]
-        ?^  path.mun
-          ~&(%no-cd-path [~ ~])
-        [~ ~ %& %noun !>(~(key by dos.rom.ruf))]
+      |^  =/  res  (mule |.(read))
+          ?:  ?=(%& -.res)  p.res
+          %.  [[~ ~] fod.dom]
+          (slog leaf+"clay: read-at-aeon fail {<[desk=syd mun]>}" p.res)
       ::
-        %a  (read-a yon path.mun)
-        %b  (read-b yon path.mun)
-        %c  (read-c yon path.mun)
-        %e  (read-e yon path.mun)
-        %f  (read-f yon path.mun)
-        %p  :_(fod (read-p path.mun))
-        %r  :_(fod (bind (read-r yon path.mun) (lift |=(a=cage [%& a]))))
-        %s  :_(fod (bind (read-s yon path.mun) (lift |=(a=cage [%& a]))))
-        %t  :_(fod (bind (read-t yon path.mun) (lift |=(a=cage [%& a]))))
-        %u  :_(fod (read-u yon path.mun))
-        %v  :_(fod (bind (read-v yon path.mun) (lift |=(a=cage [%& a]))))
-        %w  :_(fod (read-w case.mun))
-        %x  :_(fod (read-x yon path.mun))
-        %y  :_(fod (bind (read-y yon path.mun) (lift |=(a=cage [%& a]))))
-        %z  :_(fod (bind (read-z yon path.mun) (lift |=(a=cage [%& a]))))
-      ==
+      ++  read
+        ^-  [(unit (unit cage)) ford-cache]
+        ?-  care.mun
+          %a  (read-a yon path.mun)
+          %b  (read-b yon path.mun)
+          %c  (read-c yon path.mun)
+          %d  [(read-d yon path.mun) fod.dom]
+          %e  (read-e yon path.mun)
+          %f  (read-f yon path.mun)
+          %p  [(read-p path.mun) fod.dom]
+          %r  (read-r yon path.mun)
+          %s  [(read-s yon path.mun) fod.dom]
+          %t  [(read-t yon path.mun) fod.dom]
+          %u  [(read-u yon path.mun) fod.dom]
+          %v  [(read-v yon path.mun) fod.dom]
+          %w  [(read-w case.mun) fod.dom]
+          %x  (read-x yon path.mun)
+          %y  [(read-y yon path.mun) fod.dom]
+          %z  [(read-z yon path.mun) fod.dom]
+        ==
+      --
     ::  Traverse an ankh.
     ::
     ++  zu                                              ::  filesystem
@@ -4792,10 +4788,7 @@
     ~
   ?~  p.result               ~
   ?~  u.p.result             [~ ~]
-  ::  should convert %| case to cage
-  ::
-  ?:  ?=(%& -.u.u.p.result)  ``p.u.u.p.result
-  ~
+  ``u.u.p.result
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.
 ::  This nests within +ford-cache without reference to +type, +hoon, or

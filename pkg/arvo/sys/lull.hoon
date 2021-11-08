@@ -793,6 +793,7 @@
   +$  blob                                              ::  fs blob
     $%  [%delta p=lobe q=[p=mark q=lobe] r=page]        ::  delta on q
         [%direct p=lobe q=page]                         ::  immediate
+        [%dead p=lobe ~]                                ::  tombstone
     ==                                                  ::
   ::  +cable: a reference to something on the filesystem
   ::    face: the face to wrap around the imported file
