@@ -85,7 +85,7 @@ export const TileMenu = ({ desk, chad, menuColor, lightText, className }: TileMe
           )}
           {suspended && <Item onSelect={() => toggleDocket(desk)}>Resume App</Item>}
           <Item as={Link} to={`/app/${desk}/remove`} onSelect={linkOnSelect}>
-            Remove App
+            Uninstall App
           </Item>
         </DropdownMenu.Group>
         <DropdownMenu.Arrow className="w-4 h-[10px] fill-current" style={{ color: menuColor }} />

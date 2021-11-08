@@ -1,4 +1,4 @@
-import { Contact, deSig, Patp, Rolodex } from '@urbit/api';
+import { Contact, deSig, Patp, Rolodex, uxToHex } from '@urbit/api';
 import { useCallback } from 'react';
 import _ from 'lodash';
 import { reduce, reduceNacks } from '../reducers/contact-update';
@@ -7,6 +7,8 @@ import {
   createSubscription,
   reduceStateN
 } from './base';
+import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
+import { foregroundFromBackground } from '~/logic/lib/sigil';
 
 export interface ContactState {
   contacts: Rolodex;
@@ -50,5 +52,22 @@ export function useContact(ship: string) {
 export function useOurContact() {
   return useContact(`~${window.ship}`);
 }
+
+export const favicon = () => {
+  let background = '#ffffff';
+  const contacts = useContactState.getState().contacts;
+  if (Object.prototype.hasOwnProperty.call(contacts, `~${window.ship}`)) {
+    background = `#${uxToHex(contacts[`~${window.ship}`].color)}`;
+  }
+  const foreground = foregroundFromBackground(background);
+  const svg = sigiljs({
+    patp: window.ship,
+    renderer: stringRenderer,
+    size: 16,
+    colors: [background, foreground]
+  });
+  return svg;
+};
+
 
 export default useContactState;

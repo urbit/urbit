@@ -24,11 +24,7 @@
       def   ~(. (default-agent this %|) bol)
       io    ~(. agentio bol)
   ::
-  ++  on-init
-    ^-  (quip card _this)
-    =^  cards  state
-      (put-entry:do q.byk.bol %tutorial %seen b+|)
-    [cards this]
+  ++  on-init  on-init:def
   ::
   ++  on-save  !>(state)
   ::

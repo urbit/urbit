@@ -486,7 +486,7 @@
           update-core
         ?-  mode.kind 
           %count  (hark %unread-count place %.y 1)
-          %each   (hark %unread-each place /(rsh 4 (scot %ui (rear index.post))))
+          %each   (hark %unread-each place /(rsh 4 (scot %ui (rear self-idx))))
           %none   update-core
         ==
       ==
@@ -497,7 +497,7 @@
           update-core
         ?-  mode.kind 
           %count  (hark %unread-count place %.n 1)
-          %each   (hark %read-each place /(rsh 4 (scot %ui (rear index.post))))
+          %each   (hark %read-each place /(rsh 4 (scot %ui (rear self-idx))))
           %none   update-core
         ==
       ==
