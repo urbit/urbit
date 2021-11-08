@@ -87,7 +87,7 @@
         0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
       ::
       ++  ecliptic
-        0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
+        0xa5b6.109a.d2d3.5191.b3bc.32c0.0e45.26be.56fe.321f
       ::
       ++  linear-star-release
         0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
@@ -132,7 +132,7 @@
         0x3e8c.a510.354b.c2fd.bbd6.1502.52d9.3105.c9c2.7bbe
       ::
       ++  naive
-        0xb581.01cd.3bbb.cc6f.a40b.cdb0.4bb7.1623.b5c7.d39b
+        0xe7cf.4b83.06d3.11ba.ca15.585f.e3f0.7cd0.441c.21d1
       ::
       ++  launch  4.601.630
       ++  public  launch
@@ -146,9 +146,9 @@
     ::
     ++  local-contracts
       |%
-      ++  ecliptic  
+      ++  ecliptic
         0x56db.68f2.9203.ff44.a803.faa2.404a.44ec.bb7a.7480
-      ++  azimuth  
+      ++  azimuth
         0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381
       ++  delegated-sending
         0xb71c.0b6c.ee1b.cae5.6dfe.95cd.9d3e.41dd.d7ea.fc43
@@ -157,7 +157,7 @@
       ++  conditional-star-release
         0x35eb.3b10.2d9c.1b69.ac14.69c1.b1fe.1799.850c.d3eb
       ++  naive
-        0xe604.2703.475d.0dd1.bc2e.b564.a55f.1832.c252.7171
+        0x6bb8.8a9b.bd82.be7a.997f.eb01.929c.6ec7.8988.fe12
       ++  launch  0
       ++  public  0
       ++  chain-id  1.337

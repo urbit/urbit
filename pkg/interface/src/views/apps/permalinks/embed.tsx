@@ -1,18 +1,21 @@
-import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
+import { BaseAnchor, Box, BoxProps, Button, Center, Col, H3, Icon, Image, Row, Text } from '@tlon/indigo-react';
+import { Association, GraphNode, resourceFromPath, GraphConfig, Treaty, deSig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
-import { useHistory, useLocation } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
+import { Link, useLocation } from 'react-router-dom';
 import {
-  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
+  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink,
+  AppPermalink as IAppPermalink
 } from '~/logic/lib/permalinks';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import { useVirtualResizeProp } from '~/logic/lib/virtualContext';
-import useGraphState from '~/logic/state/graph';
+import useGraphState  from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { GroupLink } from '~/views/components/GroupLink';
 import { TranscludedNode } from './TranscludedNode';
+import styled from 'styled-components';
+import Author from '~/views/components/Author';
+import useDocketState, { useTreaty } from '~/logic/state/docket';
 
 function Placeholder(type) {
   const lines = (type) => {
@@ -55,12 +58,11 @@ function Placeholder(type) {
   );
 }
 
-function GroupPermalink(props: { group: string; api: GlobalApi }) {
-  const { group, api } = props;
+function GroupPermalink(props: { group: string; }) {
+  const { group } = props;
   return (
     <GroupLink
       resource={group}
-      api={api}
       pl={2}
       border={1}
       borderRadius={2}
@@ -71,25 +73,24 @@ function GroupPermalink(props: { group: string; api: GlobalApi }) {
 
 function GraphPermalink(
   props: IGraphPermalink & {
-    api: GlobalApi;
     transcluded: number;
     pending?: boolean;
     showOurContact?: boolean;
     full?: boolean;
   }
 ) {
-  const { full = false, showOurContact, pending, graph, group, index, api, transcluded } = props;
-  const history = useHistory();
+  const { full = false, showOurContact, pending, graph, group, index, transcluded } = props;
   const location = useLocation();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
-    useCallback(s => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
+    useCallback(s => s.looseNodes?.[`${deSig(ship)}/${name}`]?.[index] as GraphNode, [
       graph,
       index
     ])
   );
   const [errored, setErrored] = useState(false);
   const [loading, setLoading] = useState(false);
+  const getNode = useGraphState(s => s.getNode);
   const association = useMetadataState(
     useCallback(s => s.associations.graph[graph] as Association | null, [
       graph
@@ -104,7 +105,7 @@ function GraphPermalink(
       }
       try {
         setLoading(true);
-        await api.graph.getNode(ship, name, index);
+        await getNode(ship, name, index);
         setLoading(false);
       } catch (e) {
         console.log(e);
@@ -115,11 +116,6 @@ function GraphPermalink(
   }, [pending, graph, index]);
   const showTransclusion = Boolean(association && node && transcluded < 1);
   const permalink = getPermalinkForGraph(group, graph, index);
-
-  const navigate = (e) => {
-    e.stopPropagation();
-    history.push(`/perma${permalink.slice(16)}`);
-  };
 
   const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2) ?? ['Unknown', 'Unknown'];
   const [nodeChannelHost, nodeChannelName] = association?.resource
@@ -143,21 +139,21 @@ function GraphPermalink(
 
   return (
     <Col
+      as={Link}
+      to={`/perma${permalink.slice(16)}`}
       width="100%"
       bg="white"
       maxWidth={full ? null : '500px'}
       border={full ? null : '1'}
       borderColor="lightGray"
       borderRadius={2}
-      cursor="pointer"
       onClick={(e) => {
-        navigate(e);
+        e.stopPropagation();
       }}
     >
       {loading && association && !errored && Placeholder((association.metadata.config as GraphConfig).graph)}
       {showTransclusion && index && !loading && (
         <TranscludedNode
-          api={api}
           transcluded={transcluded + 1}
           node={node}
           assoc={association!}
@@ -170,7 +166,6 @@ function GraphPermalink(
           showTransclusion={showTransclusion}
           icon={getModuleIcon((association.metadata.config as GraphConfig).graph as GraphModule)}
           title={association.metadata.title}
-          permalink={permalink}
         />
       )}
       {association && isInSameResource && transcluded === 2 && !loading && (
@@ -179,7 +174,6 @@ function GraphPermalink(
           showTransclusion={showTransclusion}
           icon={getModuleIcon((association.metadata.config as GraphConfig).graph as GraphModule)}
           title={association.metadata.title}
-          permalink={permalink}
         />
       )}
       {isInSameResource && transcluded !== 2 && !loading && <Row height='2' />}
@@ -188,17 +182,118 @@ function GraphPermalink(
           icon="Groups"
           showDetails={false}
           title={graph.slice(5)}
-          permalink={permalink}
         />
       )}
     </Col>
   );
 }
 
+const ClampedText = styled(Text)`
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`;
+
+type AppTileProps = Treaty & BoxProps;
+
+export function AppTile({ color, image, ...props }: AppTileProps) {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <Box
+      position="relative"
+      flex="none"
+      height={['48px', '132px']}
+      width={['48px', '132px']}
+      marginRight={3}
+      borderRadius={3}
+      bg={color || 'washedGray'}
+      {...props}
+    >
+      {image && !imageError && (
+        <Image
+          src={image}
+          position="absolute"
+          top="0"
+          left="0"
+          width="100%"
+          height="100%"
+          onError={() => setImageError(true)}
+        />
+      )}
+    </Box>
+  );
+}
+
+const AppSkeleton = props => (
+  <Box
+    width="100%"
+    height="14px"
+    bg="washedGray"
+    borderRadius={2}
+    marginBottom={2}
+    {...props}
+  />
+);
+
+function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
+  const treaty = useTreaty(ship, desk);
+  const hasProtocolHandling = Boolean(window?.navigator?.registerProtocolHandler);
+  const href = hasProtocolHandling ? link : `/apps/grid/perma?ext=${link}`;
+
+  useEffect(() => {
+    if (!treaty) {
+      useDocketState.getState().requestTreaty(ship, desk);
+    }
+  }, [treaty, ship, desk]);
+
+  return (
+    <Row
+      display="inline-flex"
+      width="100%"
+      maxWidth="500px"
+      padding={3}
+      bg="washedGray"
+      borderRadius={3}
+    >
+      <AppTile display={['none', 'block']} {...treaty} />
+      <Col flex="1">
+        <Row flexDirection={['row', 'column']} alignItems={['center', 'start']} marginBottom={2}>
+          <AppTile display={['block', 'none']} {...treaty} />
+          <Col>
+            <H3 color="black">{ treaty?.title || '%' + desk }</H3>
+            <Author ship={treaty?.ship || ship} showImage dontShowTime={true} />
+          </Col>
+        </Row>
+        {treaty && <ClampedText marginBottom={2} color="gray">{treaty.info}</ClampedText>}
+        {!treaty && (
+          <>
+            <AppSkeleton />
+            <AppSkeleton width="80%" />
+          </>
+        )}
+        <Button
+          as="a"
+          href={href}
+          primary
+          alignSelf="start"
+          display="inline-flex"
+          marginTop="auto"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Open App
+        </Button>
+      </Col>
+    </Row>
+  );
+}
+
 function PermalinkDetails(props: {
   title: string;
   icon: any;
-  permalink: string;
   showTransclusion?: boolean;
   showDetails?: boolean;
   known?: boolean;
@@ -232,7 +327,6 @@ function PermalinkDetails(props: {
 export function PermalinkEmbed(props: {
   link: string;
   association?: Association;
-  api: GlobalApi;
   transcluded: number;
   showOurContact?: boolean;
   full?: boolean;
@@ -246,16 +340,19 @@ export function PermalinkEmbed(props: {
 
   switch (permalink.type) {
     case 'group':
-      return <GroupPermalink group={permalink.group} api={props.api} />;
+      return <GroupPermalink group={permalink.group} />;
     case 'graph':
       return (
         <GraphPermalink
           transcluded={props.transcluded}
           {...permalink}
-          api={props.api}
           full={props.full}
           showOurContact={props.showOurContact}
         />
+      );
+    case 'app':
+      return (
+        <AppPermalink {...permalink} />
       );
   }
 }

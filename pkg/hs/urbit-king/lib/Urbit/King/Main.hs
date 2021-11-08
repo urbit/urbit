@@ -506,7 +506,7 @@ newShip CLI.New{..} opts = do
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ renderShip (sShip seed))
       putStrLn ("code: " ++ (tshow $ deriveCode $ sRing seed))
-      bootFromSeed pill $ Feed0 seed
+      bootFromFeed pill $ Feed0 seed
 
     CLI.BootFake name -> do
       pill <- pillFrom nPillSource
@@ -526,7 +526,7 @@ newShip CLI.New{..} opts = do
 
       pill <- pillFrom nPillSource
 
-      bootFromSeed pill feed
+      bootFromFeed pill feed
 
   where
     shipFrom :: Text -> RIO HostEnv Ship
@@ -547,8 +547,8 @@ newShip CLI.New{..} opts = do
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: Pill -> Feed -> RIO HostEnv ()
-    bootFromSeed pill feed = do
+    bootFromFeed :: Pill -> Feed -> RIO HostEnv ()
+    bootFromFeed pill feed = do
       ethReturn <- dawnVent nEthNode feed
 
       case ethReturn of

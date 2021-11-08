@@ -1,12 +1,10 @@
 import {
   Box,
-
   Center, Col, Icon,
-
-  ToggleSwitch, Text,
+  Text,
   StatelessToggleSwitchField
 } from '@tlon/indigo-react';
-import { Association, GraphConfig, resourceFromPath } from '@urbit/api';
+import { Association, deSig, GraphConfig, resourceFromPath } from '@urbit/api';
 import { useField } from 'formik';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -37,23 +35,25 @@ function GroupWithChannels(props: { association: Association }) {
     s.notificationsGroupConfig.includes(association.group)
   );
 
-  const [{ value }, meta, { setValue }] = useField(
+  const [, , { setValue }] = useField(
     `groups["${association.group}"]`
   );
 
+  const [optValue, setOptValue] = useState(groupWatched);
+
   const onChange = () => {
-    setValue(!value);
+    setOptValue(v => !v);
   };
 
   useEffect(() => {
-    setValue(groupWatched);
-  }, []);
+    setValue(optValue);
+  }, [optValue]);
 
   const graphs = useGraphsForGroup(association.group);
   const joinedGraphs = useGraphState(s => s.graphKeys);
   const joinedGroupGraphs = _.pickBy(graphs, (_, graph: string) => {
     const { ship, name } = resourceFromPath(graph);
-    return joinedGraphs.has(`${ship.slice(1)}/${name}`);
+    return joinedGraphs.has(`${deSig(ship)}/${name}`);
   });
 
   const [open, setOpen] = useState(false);
@@ -84,7 +84,7 @@ function GroupWithChannels(props: { association: Association }) {
         <Text>{metadata.title}</Text>
       </Box>
       <Box gridArea="groupToggle">
-        <StatelessToggleSwitchField selected={value} onChange={onChange} />
+        <StatelessToggleSwitchField selected={optValue} onChange={onChange} />
       </Box>
       {open &&
         _.map(joinedGroupGraphs, (a: Association, graph: string) => (
@@ -101,19 +101,18 @@ function Channel(props: { association: Association }) {
     return isWatching(config, association.resource);
   });
 
-  const [{ value }, meta, { setValue, setTouched }] = useField(
+  const [{ value }, , { setValue, setTouched }] = useField(
     `graph["${association.resource}"]`
   );
-
-  useEffect(() => {
-    setValue(watching);
-  }, [watching]);
 
   const onClick = () => {
     setValue(!value);
     setTouched(true);
-  }
+  };
 
+  useEffect(() => {
+    setValue(watching);
+  }, [watching]);
 
   const icon = getModuleIcon((metadata.config as GraphConfig)?.graph as GraphModule);
 

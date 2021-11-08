@@ -85,7 +85,6 @@
   |.
   =/  ford
     %:  ford:fusion
-      bud
       *ankh:clay
       deletes=~
       changes=(my [/lib/self/hoon &+hoon+source]~)
@@ -101,7 +100,6 @@
 ++  test-mar-mime  ^-  tang
   =/  ford
     %:  ford:fusion
-      bud
       *ankh:clay
       deletes=~
       changes=(my [/mar/mime/hoon &+hoon+mar-mime]~)
@@ -122,7 +120,6 @@
 ++  test-mar-udon  ^-  tang
   =/  ford
     %:  ford:fusion
-      bud
       *ankh:clay
       deletes=~
       ^=  changes
@@ -154,7 +151,6 @@
     ==
   =/  ford
     %:  ford:fusion
-      bud
       *ankh:clay
       deletes=~
       changes
@@ -174,7 +170,6 @@
     ==
   =/  ford
     %:  ford:fusion
-      bud
       *ankh:clay
       deletes=~
       changes
@@ -195,7 +190,6 @@
     ==
   =/  ford
     %:  ford:fusion
-      bud
       *ankh:clay
       deletes=~
       changes
@@ -210,7 +204,6 @@
 ++  test-gen-hello  ^-  tang
   =/  ford
     %:  ford:fusion
-      bud
       *ankh:clay
       deletes=~
       changes=(my [/gen/hello/hoon &+hoon+gen-hello]~)
@@ -231,7 +224,6 @@
 ++  test-lib-strandio  ^-  tang
   =/  ford
     %:  ford:fusion
-      bud
       *ankh:clay
       deletes=~
       ^=  changes

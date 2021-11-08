@@ -16,7 +16,7 @@ export default function ProfileScreen(props: any) {
           {notificationsCount
             ? `(${String(notificationsCount)}) `
             : ''}
-          Landscape - Profile
+          Groups - Profile
         </title>
       </Helmet>
       <Route
@@ -43,7 +43,6 @@ export default function ProfileScreen(props: any) {
                     ship={ship}
                     hasLoaded={Object.keys(contacts).length !== 0}
                     contact={contact}
-                    api={props.api}
                     isEdit={isEdit}
                   />
                 </Box>

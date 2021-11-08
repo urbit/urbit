@@ -4,14 +4,14 @@ import {
 
     Text
 } from '@tlon/indigo-react';
+import { ignoreGroup, listenGroup } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import useHarkState from '~/logic/state/hark';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
+import airlock from '~/logic/api';
 
 export function GroupPersonalSettings(props: {
-  api: GlobalApi;
   association: Association;
 }) {
   const groupPath = props.association.group;
@@ -21,8 +21,8 @@ export function GroupPersonalSettings(props: {
   const watching = notificationsGroupConfig.findIndex(g => g === groupPath) !== -1;
 
   const onClick = async () => {
-    const func = !watching ? 'listenGroup' : 'ignoreGroup';
-    await props.api.hark[func](groupPath);
+    const func = !watching ? listenGroup : ignoreGroup;
+    await airlock.poke(func(groupPath));
   };
 
   return (

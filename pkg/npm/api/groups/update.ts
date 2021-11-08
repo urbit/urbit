@@ -1,4 +1,4 @@
-import { PatpNoSig, Path, Jug, ShipRank, Enc } from '..';
+import { PatpNoSig, Path, Jug, ShipRank, Enc } from '../lib';
 import { roleTags } from './index';
 
 export type RoleTags = typeof roleTags[number];

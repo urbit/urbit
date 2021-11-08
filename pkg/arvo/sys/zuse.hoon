@@ -1587,14 +1587,15 @@
   ::::                    ++keccak:crypto               ::  (2b7) keccak family
     ::                                                  ::::
   ++  keccak
+    ~%  %kecc  ..part  ~
     |%
     ::
     ::  keccak
     ::
-    ++  keccak-224  |=(a=octs (keccak 1.152 448 224 a))
-    ++  keccak-256  |=(a=octs (keccak 1.088 512 256 a))
-    ++  keccak-384  |=(a=octs (keccak 832 768 384 a))
-    ++  keccak-512  |=(a=octs (keccak 576 1.024 512 a))
+    ++  keccak-224  ~/  %k224  |=(a=octs (keccak 1.152 448 224 a))
+    ++  keccak-256  ~/  %k256  |=(a=octs (keccak 1.088 512 256 a))
+    ++  keccak-384  ~/  %k384  |=(a=octs (keccak 832 768 384 a))
+    ++  keccak-512  ~/  %k512  |=(a=octs (keccak 576 1.024 512 a))
     ::
     ++  keccak  (cury (cury hash keccak-f) padding-keccak)
     ::
@@ -3391,6 +3392,11 @@
     ::                                                  ::  ++no:dejs:format
     ++  no                                              ::  number as cord
       |=(jon=json ?>(?=([%n *] jon) p.jon))
+    ::                                                  ::  ++nu:dejs:format
+    ++  nu                                              ::  parse number as hex
+      |=  jon=json
+      ?>  ?=([%s *] jon)
+      (rash p.jon hex)
     ::                                                  ::  ++of:dejs:format
     ++  of                                              ::  object as frond
       |*  wer=(pole [cord fist])
@@ -3440,6 +3446,11 @@
         =/  ten  ~|(key+key.wer (wit.wer (~(get by jom) key.wer)))
         ?~(t.wer ten [ten ((ou-raw t.wer) jom)])
       ==
+    ::                                                  ::  ++oj:dejs:format
+    ++  oj                                              ::  object as jug
+      |*  =fist
+      ^-  $-(json (jug cord _(fist *json)))
+      (om (as fist))
     ::                                                  ::  ++om:dejs:format
     ++  om                                              ::  object as map
       |*  wit=fist
@@ -3466,6 +3477,12 @@
     ::                                                  ::  ++sa:dejs:format
     ++  sa                                              ::  string as tape
       |=(jon=json ?>(?=([%s *] jon) (trip p.jon)))
+    ::                                                  ::  ++sd:dejs:format
+    ++  sd                                              ::  string @ud as date
+      |=  jon=json
+      ^-  @da
+      ?>  ?=(%s -.jon)
+      `@da`(rash p.jon dem:ag)
     ::                                                  ::  ++se:dejs:format
     ++  se                                              ::  string as aura
       |=  aur=@tas
@@ -3580,6 +3597,15 @@
       ?.  ?=([%s *] jon)  ~
       (bind (stud:chrono:userlib p.jon) |=(a=date (year a)))
     ::
+    ++  dank                                            ::  tank
+      ^-  $-(json (unit tank))
+      %+  re  *tank  |.  ~+
+      %-  of  :~
+        leaf+sa
+        palm+(ot style+(ot mid+sa cap+sa open+sa close+sa ~) lines+(ar dank) ~)
+        rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
+      ==
+    ::
     ++  di                                              ::  millisecond date
       (cu from-unix-ms:chrono:userlib ni)
     ::
@@ -3653,6 +3679,12 @@
       |*  [pre=* wit=fist]
       (cu |*(* [pre +<]) wit)
     ::
+    ++  re                                              ::  recursive reparsers
+      |*  [gar=* sef=_|.(fist)]
+      |=  jon=json
+      ^-  (unit _gar)
+      ((sef) jon)
+    ::
     ++  sa                                              ::  string as tape
       |=  jon=json
       ?.(?=([%s *] jon) ~ (some (trip p.jon)))
@@ -3697,6 +3729,64 @@
         ~
       (some (~(run by lum) need))
     --  ::dejs-soft
+  --
+::  |cloy: clay helpers
+::
+++  cloy
+  =,  clay
+  |%
+  ++  new-desk
+    |=  [=desk tako=(unit tako) files=(map path page)]
+    [%c %park desk &/[(drop tako) (~(run by files) (lead %&))] *rang]
+  ::  +an: $ankh interface door
+  ::
+  ++  an
+    |_  nak=ankh
+    ::  +dug: produce ankh at path
+    ::
+    ++  dug
+      |=  =path
+      ^-  (unit ankh)
+      ?~  path  `nak
+      ?~  kid=(~(get by dir.nak) i.path)
+        ~
+      $(nak u.kid, path t.path)
+    ::  +get: produce file at path
+    ::
+    ++  get
+      |=  =path
+      ^-  (unit cage)
+      ?~  nik=(dug path)  ~
+      ?~  fil.u.nik       ~
+      `q.u.fil.u.nik
+    ::  +mup: convert sub-tree at .pre to (map path [lobe cage])
+    ::
+    ++  mup
+      |=  pre=path
+      =-  ~?  =(~ -)  [%oh-no-empty pre]
+          -
+      ^-  (map path [lobe cage])
+      =/  nek=(unit ankh)  (dug pre)
+      ?~  nek
+        ~&  [%oh-no-empty-pre pre ~(key by dir.nak)]
+        ~
+      =.  nak  u.nek
+      ~?  =(~ nak)  [%oh-no-empty-nak pre]
+      =|  pax=path
+      =|  res=(map path [=lobe =cage])
+      |-  ^+  res
+      =?  res  ?=(^ fil.nak)  (~(put by res) pax u.fil.nak)
+      :: =/  anz=(list [seg=@ta =ankh])  ~(tap by dir.nak)
+      :: |-  ^+  res
+      :: ?~  anz  res
+      :: %_  $
+      ::   anz  t.anz
+      ::   res  ^$(pax (snoc pax seg.i.anz), nak ankh.i.anz)
+      :: ==
+      %+  roll  ~(tap by dir.nak)
+      |=  [[seg=@ta =ankh] res=_res]
+      ^$(pax (snoc pax seg), nak ankh, res res)
+    --
   --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy
@@ -4758,9 +4848,23 @@
 ::    (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::
-::::                      ++title                       ::  (2j) namespace
+::::                      ++title                       ::  (2j) identity
   ::                                                    ::::
 ++  title
+  ::  deep core: for vane use, with $roof for scrying
+  ::
+  ::    TODO: refactor to share high-level gates like +saxo
+  ::          among the three cores
+  ::
+  =>  |%
+      ++  sein
+        |=  [rof=roof our=ship now=@da who=ship]
+        ;;  ship
+        =<  q.q  %-  need  %-  need
+        (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
+      --
+  ::  middle core: for userspace use, with .^
+  ::
   =>  |%
       ::                                                ::  ++clan:title
       ++  clan                                          ::  ship to rank
@@ -4799,6 +4903,8 @@
           %pawn  (end 4 who)
         ==
       --
+  ::  surface core: stateless queries for default numeric sponsorship
+  ::
   |%
   ::                                                    ::  ++cite:title
   ++  cite                                              ::  render ship

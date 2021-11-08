@@ -1,19 +1,17 @@
 import {
     Col
 } from '@tlon/indigo-react';
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import { Workspace } from '~/types';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { GroupSwitcher } from '../GroupSwitcher';
 import { SidebarList } from './SidebarList';
 import { SidebarListHeader } from './SidebarListHeader';
-import { SidebarAppConfigs, SidebarListConfig } from './types';
+import { SidebarListConfig } from './types';
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
@@ -25,10 +23,7 @@ const ScrollbarLessCol = styled(Col)`
 
 interface SidebarProps {
   recentGroups: string[];
-  api: GlobalApi;
   selected?: string;
-  selectedGroup?: string;
-  apps: SidebarAppConfigs;
   baseUrl: string;
   mobileHide?: boolean;
   workspace: Workspace;
@@ -52,12 +47,8 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
   const role = groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
 
-  const anchorRef = useRef<HTMLDivElement>(null);
-  useTutorialModal('channels', true, anchorRef);
-
   return (
     <ScrollbarLessCol
-      ref={anchorRef}
       display={display}
       width="100%"
       gridRow="1/2"
@@ -81,13 +72,11 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         handleSubmit={setConfig}
         selected={selected || ''}
         workspace={workspace}
-        api={props.api}
       />
       <SidebarList
         config={config}
         selected={selected}
         group={groupPath}
-        apps={props.apps}
         baseUrl={props.baseUrl}
         workspace={workspace}
       />

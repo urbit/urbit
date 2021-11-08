@@ -165,6 +165,7 @@
 ::  $vile: reflexive constants
 ::  $waif: arvo task, from anywhere
 ::  $wasp: arvo task, from Outside
+::  $weft: kelvin version, tag and number
 ::  $worm: compiler cache
 ::  $wisp: arvo task, larval stage
 ::  $wynn: kelvin stack
@@ -252,11 +253,13 @@
   ::  %what: update from files
   ::  %whey: produce $mass                    :: XX remove, scry
   ::  %verb: toggle laconicity
+  ::  %whiz: prime vane caches
   ::
   $%  [%trim p=@ud]
       [%what p=(list (pair path (cask)))]
       [%whey ~]
       [%verb p=(unit ?)]
+      [%whiz ~]
   ==
 +$  wasp
   ::  %crud: reroute $ovum with $goof
@@ -267,6 +270,7 @@
       [%wack p=@uvJ]
       [%wyrd p=vere]
   ==
++$  weft  [lal=@tas num=@ud]
 +$  worm
   $:  ::  +nest, +play, and +mint
       ::
@@ -279,7 +283,7 @@
       $>(?(%wack %wyrd) wasp)
       [%whom p=ship]
   ==
-+$  wynn  (list (pair term @ud))
++$  wynn  (list weft)
 --  =>
 ::
 ~%  %hex  ..ut  ~
@@ -291,14 +295,23 @@
   |=(b=beam =*(s scot `path`[(s %p p.b) q.b (s r.b) s.b]))
 ::
 ++  de-beam
+  ~/  %de-beam
   |=  p=path
   ^-  (unit beam)
   ?.  ?=([@ @ @ *] p)  ~
   ?~  who=(slaw %p i.p)  ~
   ?~  des=?~(i.t.p (some %$) (slaw %tas i.t.p))  ~  :: XX +sym ;~(pose low (easy %$))
-  ?~  ved=(slay i.t.t.p)  ~
-  ?.  ?=([%$ case] u.ved)  ~
-  `(unit beam)`[~ [`ship`u.who `desk`u.des `case`p.u.ved] t.t.t.p]
+  ?~  ved=(de-case i.t.t.p)  ~
+  `[[`ship`u.who `desk`u.des u.ved] t.t.t.p]
+::
+++  de-case
+  ~/  %de-case
+  |=  =knot
+  ^-  (unit case)
+  ?^  num=(slaw %ud knot)  `[%ud u.num]
+  ?^  wen=(slaw %da knot)  `[%da u.wen]
+  ?~  lab=(slaw %tas knot)  ~
+  `[%tas u.lab]
 ::
 ++  en-omen
   |=  [vis=view bem=beam]
@@ -308,6 +321,7 @@
   ~(rent co [%many $/tas/way.vis $/tas/car.vis ~])
 ::
 ++  de-omen
+  ~/  %de-omen
   |=  pax=path
   ^-  (unit [vis=view bem=beam])
   ?~  pax  ~
@@ -352,10 +366,10 @@
     |=  kel=wynn
     ^-  ?
     ?:  =(~ kel)  &
-    =^  las=(pair term @ud)  kel  kel
+    =^  las=weft  kel  kel
     |-  ^-  ?
     ?~  kel  &
-    ?&  (gte q.las q.i.kel)
+    ?&  (gte num.las num.i.kel)
         $(las i.kel, kel t.kel)
     ==
   ::  +need: require kelvins
@@ -372,7 +386,7 @@
       ~_  :+  %rose
             [" " ~ ~]
           :~  =+  p.u.wyr
-              leaf/"%{(trip p)} %{(scow %ud q)} required;"
+              leaf/"%{(trip lal)} %{(scow %ud num)} required;"
               ?~  q.u.wyr
                 leaf/"runtime missing support"
               leaf/"runtime only supports %{(scow %ud u.q.u.wyr)}"
@@ -381,20 +395,20 @@
       ~>  %mean.'wyrd'
       !!
     ::
-    |-  ^-  (unit (pair (pair term @ud) (unit @ud)))
+    |-  ^-  (unit (pair weft (unit @ud)))
     ?~  hav  ~
     ::
     ::  fel: %&: runtime kelvin for [i.hav]
     ::       %|: no specified runtime support
     ::
     =/  fel
-      |-  ^-  (each @ud (pair term @ud))
+      |-  ^-  (each @ud weft)
       ?~  run  |/i.hav
-      ?:(=(p.i.hav p.i.run) &/q.i.run $(run t.run))
+      ?:(=(lal.i.hav lal.i.run) &/num.i.run $(run t.run))
     ::
     ?-  -.fel
       %|  `[p.fel ~]
-      %&  ?.((lte p.fel q.i.hav) `[i.hav `p.fel] $(hav t.hav))
+      %&  ?.((lte p.fel num.i.hav) `[i.hav `p.fel] $(hav t.hav))
     ==
   --
 ::
@@ -1000,8 +1014,11 @@
         ++  settle
           |=  van=vase
           ^-  (pair vase worm)
-          =/  [rig=vase wor=worm]  (~(slym wa *worm) van *vane-sample)
-          [van +:(~(slap wa wor) rig [%limb %scry])]
+          =|  sac=worm
+          =^  rig=vase  sac  (~(slym wa sac) van *vane-sample)
+          =^  gat=vase  sac  (~(slap wa sac) rig [%limb %scry])
+          =^  pro=vase  sac  (~(slap wa sac) gat [%limb %$])
+          [van +:(~(mint wa sac) p.pro [%$ 7])]
         ::
         ::  XX pass identity to preserve behavior?
         ::
@@ -1286,7 +1303,7 @@
         (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
       ::
       :~  :+  %reports  %|
-          =/  bem=beam  [[our %home da+now] /whey]
+          =/  bem=beam  [[our %home da+now] /whey]  ::TODO  %base?
           %+  turn  von
           |=  [nam=term =vane]
           =/  met  (peek [~ ~] nam bem)
@@ -1470,6 +1487,9 @@
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
           %whey  ..pith(out [[//arvo mass/whey] out])
+        ::
+            %whiz
+          ..pith(van.mod (~(run by van.mod) |=(vane (settle:va:part vase))))
         ==
       ::
       ++  peek
@@ -1521,7 +1541,7 @@
           %wyrd  ?.  (sane:wyrd kel.p.buz)
                    ~>(%mean.'wyrd: insane' !!)
                  %-  %+  need:wyrd  kel.p.buz
-                     ^-  (list (pair term @))
+                     ^-  wynn
                      :~  hoon/hoon-version
                          arvo/arvo
                          lull/;;(@ud q:(slap lul.mod limb/%lull))
@@ -1689,7 +1709,7 @@
   =.  van.mod  (~(run by van.mod) |=(=vane vane(worm *worm)))
   ::
   %-  %+  need:wyrd  kel.ver.zen
-      ^-  (list (pair term @))
+      ^-  wynn
       :~  hoon/hoon-version
           arvo/arvo
           lull/;;(@ud q:(slap lul.mod limb/%lull))
@@ -1781,7 +1801,7 @@
       =/  lul  $:u.lul
       =/  zus  $:u.zus
       %-  %+  need:wyrd  kel.u.ver
-          ^-  (list (pair term @))
+          ^-  wynn
           :~  hoon/hoon-version
               arvo/arvo
               lull/;;(@ud q:(slap lul limb/%lull))
@@ -1868,7 +1888,7 @@
       %wyrd  ?.  (sane:wyrd kel.p.wip)
                    ~>(%mean.'wyrd: insane' !!)
              %-  %+  need:wyrd  kel.p.wip
-                 ^-  (list (pair term @))
+                 ^-  wynn
                  :*  hoon/hoon-version
                      arvo/arvo
                      ?~  lul  ~

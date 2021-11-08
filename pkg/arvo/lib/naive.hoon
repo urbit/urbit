@@ -1,74 +1,6 @@
-::  L1 contract changes:
-::  t Enforce that once spawn proxy is set to deposit address, it can't
-::    switched back
-::  t Enforce that once spawn proxy is set to deposit address, you can't
-::    spawn children
-::  + Possibly the same for approveForAll.  No, because we're not going
-::    to support approveForAll on L2
-::  + Enforce that only ownership key can set spawn proxy to rollup.
-::    maybe not though.  Yeah, a spawn proxy should be able to set spawn
-::    proxy to the rollup
-::  t Disallow depositing galaxy to L2
-::  + When depositing, clear proxies (maybe require reset).  On L1 only,
-::    not L2.  If we don't do this, we need to make sure they can't keep
-::    doing stuff using the proxies.  Probably better to clear the
-::    proxies explicitly instead of requiring _reset
-::  t Maybe require that we're not depositing from a contract?  But
-::    what if they're depositing from something that's a contract, but the
-::    owner is not a contract?  Probably best for the only condition to
-::    be that the owner is not a contract
-::  + disallow spawning to deposit address?  maybe, else we need to
-::    default the ownership somehow.  Or maybe this happens automatically
-::    because it uses the safe transfer flow?  Yes, _direct will never
-::    be true unless we're depositing to ourself, so it'll go to the
-::    owner address, which will never be the deposit address.  So we're
-::    safe.
-::  t If either side is on L2, then all sponsorship happens on L2.  If
-::    both are on L1, sponsorship happens on L1
-::  - Maybe should special-case spawning directly to L2?  Acceptable
-::    right now but not ideal.
-::
-::  TODO: can an L1 star adopt an L2 planet?  It's not obvious how --
-::  maybe they need to adopt as an L2 transaction?  That sounds right I
-::  think.  Can an L2 star adopt an L1 planet?  I guess, but L1 wouldn't
-::  know about it.  Should L1 check whether the escape target is on L2
-::  for some reason?  IMO if either side is on L2, then both sides
-::  should operate on L2.
-::
-::  I think the answer is that if either side is on L2, it's on L2; if
-::  both are on L1, then it can be on either.  L1 reading sponsorship
-::  state cannot know the sponsorship info is correct; only L2 knows.
-::  However, you can still use an on-chain multi-sig to control your
-::  sponsorship as long as you don't create a proxy that could send
-::  stuff on L2.
-::
-::  TODO: is it possible to spawn directly to the deposit address?  if
-::  so, should we find its parent's owner to control it?
-::
-::  TODO: need to find out what happens when you transfer with reset.
-::  since the setOwner happens first, it might crash the rollup when the
-::  other changes come
-::
-::  TODO: secp needs to not crash the process when you give it a bad
-::  v/recid.  See #4797
-::
-::  TODO: check if spawning is gated on "link"ing
-::
-::  TODO: make process-set-spawn-proxy work if you're on domain %spawn
-::
-::  TODO: make sure you can spawn with the spawn proxy after on domain
-::  %spawn
-::
-::  TODO: planet shouldn't be able to set spawn proxy
-::
-::  TODO: make sure that if we've already been deposited to L2, no
-::  further L1 logs count except detach.
-::
-::  TODO: change sponsorship to reject adoptions from L1 if they don't
-::  accord with our local escape state?
-::
-/+  std
-=>  =>  std
+/+  tiny
+!.
+=>  =>  tiny
 ::  Laconic bit
 ::
 =|  lac=?
@@ -76,8 +8,6 @@
 ::
 |%
 ::  Transfers on L1 to this address count as depositing to L2
-::
-::    0x1234567890123456789012345678901234567890
 ::
 ++  deposit-address  0x1111.1111.1111.1111.1111.1111.1111.1111.1111.1111
 ++  log-names
@@ -218,7 +148,8 @@
   ==  ==  ==
 ::
 +$  state
-  $:  =points
+  $:  %0
+      =points
       =operators
       dns=(list @t)
   ==
@@ -249,9 +180,10 @@
       topics=(lest @ux)
   ==
 +$  input
+  $:  block=@ud
   $%  [%bat batch=@]
       [%log =event-log]
-  ==
+  ==  ==
 ::  ECDSA verifier.
 ::
 ::  Must keccak `dat` and recover the ethereum address which signed.
@@ -272,39 +204,34 @@
 ++  parse-roll
   |=  batch=@
   =|  =roll
+  =|  pos=@ud
+  =/  las  (met 0 batch)
   |-  ^+  roll
-  ?~  batch
+  ?:  (gte pos las)
     (flop roll)
-  =/  parse-result  (parse-raw-tx batch)
+  =/  parse-result  (parse-raw-tx pos batch)
   ::  Parsing failed, abort batch
   ::
   ?~  parse-result
     (debug %parse-failed ~)
-  =^  =raw-tx  batch  u.parse-result
+  =^  =raw-tx  pos  u.parse-result
   $(roll [raw-tx roll])
 ::
-::  TODO: change batch to be a cursor to avoid allocating atoms
-::
 ++  parse-raw-tx
-  |=  batch=@
-  ^-  (unit [raw-tx rest=@])
-  =/  batch  [len=0 rest=batch]
+  |=  [pos=@ud batch=@]
+  ^-  (unit [raw-tx pos=@ud])
   |^
-  =^  sig  batch  (take 3 65)
-  =.  len.batch  0
-  =/  orig-batch  rest.batch
-  =/  res=(unit [=tx batch=_batch])  parse-tx
-  ?~  res
-    ~
-  :-  ~  :_  rest.batch.u.res
-  =/  len-bytes
-    ?>  =(0 (mod len.batch.u.res 8))
-    (div len.batch.u.res 8)
-  [sig [len-bytes (end [0 len.batch.u.res] orig-batch)] tx.u.res]
+  =^  sig  pos  (take 3 65)
+  =/  res=(unit [=tx pos=@ud])  parse-tx
+  ?~  res  ~
+  =/  dif  (sub pos.u.res pos)
+  =/  len  =>((dvr dif 8) ?>(=(0 q) p))
+  :-  ~  :_  pos.u.res
+  [sig [len (cut 0 [pos dif] batch)] tx.u.res]
   ::
   ++  parse-tx
-    ^-  (unit [tx _batch])
-    =^  from-proxy=@      batch  (take 0 3)
+    ^-  (unit [tx pos=@ud])
+    =^  from-proxy=@      pos  (take 0 3)
     ?.  ?=(?(%0 %1 %2 %3 %4) from-proxy)  (debug %bad-proxy ~)
     =/  =proxy
       ?-  from-proxy
@@ -314,68 +241,65 @@
         %3  %vote
         %4  %transfer
       ==
-    =^  pad               batch  (take 0 5)
-    =^  from-ship=ship    batch  (take 3 4)
+    =^  pad               pos  (take 0 5)
+    =^  from-ship=ship    pos  (take 3 4)
     =-  ?~  res
           ~
-        `[[[from-ship proxy] skim-tx.u.res] batch.u.res]
-    ^-  res=(unit [=skim-tx =_batch])
-    =^  op   batch  (take 0 7)
-    ?+    op  ~>(%slog.[0 %strange-opcode] ~)
+        `[[[from-ship proxy] skim-tx.u.res] pos.u.res]
+    ^-  res=(unit [=skim-tx pos=@ud])
+    =^  op   pos  (take 0 7)
+    ?+    op  (debug %strange-opcode ~)
         %0
-      =^  reset=@         batch  (take 0)
-      =^  =address        batch  (take 3 20)
-      `[[%transfer-point address =(0 reset)] batch]
+      =^  reset=@         pos  (take 0)
+      =^  =address        pos  (take 3 20)
+      `[[%transfer-point address =(0 reset)] pos]
     ::
         %1
-      =^  pad=@     batch  (take 0)
-      =^  =ship     batch  (take 3 4)
-      =^  =address  batch  (take 3 20)
-      `[[%spawn ship address] batch]
+      =^  pad=@     pos  (take 0)
+      =^  =ship     pos  (take 3 4)
+      =^  =address  pos  (take 3 20)
+      `[[%spawn ship address] pos]
     ::
         %2
-      =^  breach=@        batch  (take 0)
-      =^  encrypt=@       batch  (take 3 32)
-      =^  auth=@          batch  (take 3 32)
-      =^  crypto-suite=@  batch  (take 3 4)
-      `[[%configure-keys encrypt auth crypto-suite =(0 breach)] batch]
+      =^  breach=@        pos  (take 0)
+      =^  encrypt=@       pos  (take 3 32)
+      =^  auth=@          pos  (take 3 32)
+      =^  crypto-suite=@  pos  (take 3 4)
+      `[[%configure-keys encrypt auth crypto-suite =(0 breach)] pos]
     ::
-        %3   =^(res batch take-escape `[[%escape res] batch])
-        %4   =^(res batch take-escape `[[%cancel-escape res] batch])
-        %5   =^(res batch take-escape `[[%adopt res] batch])
-        %6   =^(res batch take-escape `[[%reject res] batch])
-        %7   =^(res batch take-escape `[[%detach res] batch])
-        %8
-      =^(res batch take-ship-address `[[%set-management-proxy res] batch])
-    ::
-        %9   =^(res batch take-ship-address `[[%set-spawn-proxy res] batch])
-        %10  =^(res batch take-ship-address `[[%set-transfer-proxy res] batch])
+        %3   =^(res pos take-ship `[[%escape res] pos])
+        %4   =^(res pos take-ship `[[%cancel-escape res] pos])
+        %5   =^(res pos take-ship `[[%adopt res] pos])
+        %6   =^(res pos take-ship `[[%reject res] pos])
+        %7   =^(res pos take-ship `[[%detach res] pos])
+        %8   =^(res pos take-address `[[%set-management-proxy res] pos])
+        %9   =^(res pos take-address `[[%set-spawn-proxy res] pos])
+        %10  =^(res pos take-address `[[%set-transfer-proxy res] pos])
     ==
   ::
   ::  Take a bite
   ::
   ++  take
     |=  =bite
-    ^-  [@ _batch]
-    :-  (end bite +.batch)
-    :-  %+  add  -.batch
-        ?@  bite  (bex bite)
-        (mul step.bite (bex bloq.bite))
-    (rsh bite +.batch)
+    ^-  [@ @ud]
+    =/  =step
+      ?@  bite  (bex bite)
+      (mul step.bite (bex bloq.bite))
+    [(cut 0 [pos step] batch) (add pos step)]
   ::  Encode ship and address
   ::
-  ++  take-ship-address
-    ^-  [address _batch]
-    =^  pad=@     batch  (take 0)
-    =^  =address  batch  (take 3 20)
-    [address batch]
+  ++  take-address
+    ^-  [address @ud]
+    =^  pad=@     pos  (take 0)
+    =^  =address  pos  (take 3 20)
+    [address pos]
   ::  Encode escape-related txs
   ::
-  ++  take-escape
-    ^-  [ship _batch]
-    =^  pad=@        batch  (take 0)
-    =^  other=ship   batch  (take 3 4)
-    [other batch]
+  ++  take-ship
+    ^-  [ship @ud]
+    =^  pad=@       pos  (take 0)
+    =^  other=ship  pos  (take 3 4)
+    [other pos]
   --
 ::
 ++  proxy-from-point
@@ -459,10 +383,12 @@
 ::
 ++  ud-to-ascii
   |=  n=@ud
-  ^-  @t
-  ?~  n
-    *@t
-  (cat 3 $(n (div n 10)) (add '0' (mod n 10)))
+  ?~  n  '0'
+  =|  l=(list @)
+  |-  ^-  @t
+  ?~  n  (rep 3 l)
+  =+  (dvr n 10)
+  $(n p, l [(add '0' q) l])
 ::
 ++  ship-rank
   |=  =ship
@@ -495,7 +421,7 @@
     `u.existing
   =|  =point
   =.  who.sponsor.net.point  (sein ship)
-  ?+    (ship-rank ship)  ~>(%slog.[0 %strange-point] ~)
+  ?+    (ship-rank ship)  (debug %strange-point ~)
       %0  `point(dominion %l1)
       ?(%1 %2)
     =/  existing-parent  $(ship (sein ship))
@@ -524,11 +450,13 @@
   ?:  =(log-name changed-dns:log-names)
     ?>  ?=(~ t.topics.log)
     =/  words  (rip 8 data.log)
-    ?>  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)  ::  TODO: not always true
+    ::  This is only true if each domain is <= 32 bytes
+    ::
+    ?.  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)  `state
     =*  one  &5.words
     =*  two  &3.words
     =*  tri  &1.words
-    =/  domains  (turn ~[one two tri] |=(a=@ (swp 3 a)))
+    =/  domains  ~[(swp 3 one) (swp 3 two) (swp 3 tri)]
     :-  [%dns domains]~
     state(dns domains)
   ::
@@ -552,20 +480,26 @@
   =/  the-point  (get-point state ship)
   ?>  ?=(^ the-point)
   =*  point  u.the-point
-  =-  [effects state(points (put:orm points.state ship new-point))]
-  ^-  [=effects new-point=^point]
+  ::
+  ::  Important to fully no-op on failure so we don't insert an entry
+  ::  into points.state
+  ::
+  =-  ?~  res
+        `state
+      [effects.u.res state(points (put:orm points.state ship new-point.u.res))]
+  ^-  res=(unit [=effects new-point=^point])
   ::
   ?:  =(log-name changed-spawn-proxy:log-names)
-    ?.  ?=(%l1 -.point)  `point
+    ?.  ?=(%l1 -.point)  ~
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     ::  Depositing to L2 is represented by a spawn proxy change on L1,
     ::  but it doesn't change the actual spawn proxy.
     ::
     ?:  =(deposit-address to)
-      :-  [%point ship %dominion %spawn]~
+      :+  ~  [%point ship %dominion %spawn]~
       point(dominion %spawn)
-    :-  [%point ship %spawn-proxy to]~
+    :+  ~  [%point ship %spawn-proxy to]~
     point(address.spawn-proxy.own to)
   ::
   ?:  =(log-name escape-accepted:log-names)
@@ -573,8 +507,8 @@
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
-    :-  [%point ship %sponsor `parent]~
+    ?:  ?=(%l2 -.u.parent-point)  ~
+    :+  ~  [%point ship %sponsor `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
   ?:  =(log-name lost-sponsor:log-names)
@@ -583,7 +517,7 @@
     ::  If the sponsor we lost was not our actual sponsor, we didn't
     ::  actually lose anything.
     ::
-    ?.  =(parent who.sponsor.net.point)  `point
+    ?.  =(parent who.sponsor.net.point)  ~
     ::
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
@@ -591,17 +525,21 @@
     ::  We can detach even if the child is on L2, as long as the parent
     ::  is on L1.
     ::
-    ?:  ?=(%l2 -.u.parent-point)  `point
-    :-  [%point ship %sponsor ~]~
+    ?:  ?=(%l2 -.u.parent-point)  ~
+    :+  ~  [%point ship %sponsor ~]~
     point(has.sponsor.net %|)
+  ::
+  ::  The rest can be done by any ship on L1, even if their spawn proxy
+  ::  is set to L2
+  ::
+  ?:  ?=(%l2 -.point)  ~
   ::
   ?:  =(log-name escape-requested:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
-    :-  [%point ship %escape `parent]~
+    :+  ~  [%point ship %escape `parent]~
     point(escape.net `parent)
   ::
   ?:  =(log-name escape-canceled:log-names)
@@ -609,19 +547,13 @@
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
-    :-  [%point ship %escape ~]~
+    :+  ~  [%point ship %escape ~]~
     point(escape.net ~)
-  ::
-  ::  The rest can be done by any ship on L1, even if their spawn proxy
-  ::  is set to L2
-  ::
-  ?:  ?=(%l2 -.point)  `point
   ::
   ?:  =(log-name broke-continuity:log-names)
     ?>  ?=(~ t.t.topics.log)
     =*  rift=@  data.log
-    :-  [%point ship %rift rift]~
+    :+  ~  [%point ship %rift rift]~
     point(rift.net rift)
   ::
   ?:  =(log-name changed-keys:log-names)
@@ -632,7 +564,7 @@
           auth=(cut 8 [2 1] data.log)
           crypt=(cut 8 [3 1] data.log)
       ==
-    :-  [%point ship %keys keys]~
+    :+  ~  [%point ship %keys keys]~
     point(keys.net keys)
   ::
   ?:  =(log-name owner-changed:log-names)
@@ -642,31 +574,30 @@
     ::  but it doesn't change who actually owns the ship.
     ::
     ?:  =(deposit-address to)
-      :-  [%point ship %dominion %l2]~
+      :+  ~  [%point ship %dominion %l2]~
       point(dominion %l2)
-    :-  [%point ship %owner to]~
+    :+  ~  [%point ship %owner to]~
     point(address.owner.own to)
   ::
   ?:  =(log-name changed-transfer-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    :-  [%point ship %transfer-proxy to]~
+    :+  ~  [%point ship %transfer-proxy to]~
     point(address.transfer-proxy.own to)
   ::
   ?:  =(log-name changed-management-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    :-  [%point ship %management-proxy to]~
+    :+  ~  [%point ship %management-proxy to]~
     point(address.management-proxy.own to)
   ::
   ?:  =(log-name changed-voting-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    :-  [%point ship %voting-proxy to]~
+    :+  ~  [%point ship %voting-proxy to]~
     point(address.voting-proxy.own to)
   ::
-  ~>  %slog.[0 %unknown-log]
-  `point
+  (debug %unknown-log ~)
 ::
 ::  Receive batch of L2 transactions
 ::
@@ -744,7 +675,9 @@
       %adopt            (w-point-esc process-adopt ship.tx +>.tx)
       %reject           (w-point-esc process-reject ship.tx +>.tx)
       %detach           (w-point-esc process-detach ship.tx +>.tx)
-      %set-spawn-proxy  (w-point process-set-spawn-proxy ship.from.tx +>.tx)
+      %set-spawn-proxy
+    (w-point-spawn process-set-spawn-proxy ship.from.tx +>.tx)
+  ::
       %set-transfer-proxy
     (w-point process-set-transfer-proxy ship.from.tx +>.tx)
   ::
@@ -757,16 +690,31 @@
     ^-  (unit [effects ^state])
     =/  point  (get-point state ship)
     ?~  point  (debug %strange-ship ~)
+    ?.  ?=(%l2 -.u.point)  (debug %ship-not-on-l2 ~)
+    ::  Important to fully no-op on failure so we don't insert an entry
+    ::  into points.state
+    ::
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
-    `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
+    `[effects.u.res state(points (put:orm points.state ship new-point.u.res))]
   ::
   ++  w-point-esc
     |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
     ^-  (unit [effects ^state])
     =/  point  (get-point state ship)
     ?~  point  (debug %strange-ship ~)
+    =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
+    ?~  res
+      ~
+    `[effects.u.res state(points (put:orm points.state ship new-point.u.res))]
+  ::
+  ++  w-point-spawn
+    |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
+    ^-  (unit [effects ^state])
+    =/  point  (get-point state ship)
+    ?~  point  (debug %strange-ship ~)
+    ?:  ?=(%l1 -.u.point)  (debug %ship-on-l2 ~)
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
@@ -832,13 +780,10 @@
       (debug %bad-permission ~)
     ::  Assert child not already spawned
     ::
-    ::  TODO: verify this means the ship exists on neither L1 nor L2
-    ::
     ?^  (get:orm points.state ship)  (debug %spawn-exists ~)
     ::  Assert one-level-down
     ::
     ?.  =(+((ship-rank parent)) (ship-rank ship))  (debug %bad-rank ~)
-    ::  TODO check spawnlimit
     ::
     =/  [=effects new-point=point]
       =/  point=(unit point)  (get-point state ship)
@@ -852,8 +797,6 @@
                   =(to address.spawn-proxy.own.u.parent-point)
               ==
           ==
-        ::  TODO: use get-point or duplicate sponsor logic
-        ::
         :-  ~[[%point ship %dominion %l2] [%point ship %owner to]]
         u.point(address.owner.own to)
       ::  Else spawn to parent and set transfer proxy
@@ -899,7 +842,7 @@
       (debug %bad-rank ~)
     ::
     :+  ~  [%point ship %escape `parent]~
-    point(escape.net `parent)  ::  TODO: omitting a lot of source material?
+    point(escape.net `parent)
   ::
   ++  process-cancel-escape
     |=  [=point parent=ship]
@@ -913,8 +856,6 @@
   ++  process-adopt
     |=  [=point =ship]
     =*  parent  ship.from.tx
-    :: TODO: assert child/parent on L2?
-    ::
     ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
@@ -975,7 +916,7 @@
 ::
 |=  [=verifier chain-id=@ud =state =input]
 ^-  [effects ^state]
-?:  ?=(%log -.input)
+?:  ?=(%log +<.input)
   :: Received log from L1 transaction
   ::
   (receive-log state event-log.input)

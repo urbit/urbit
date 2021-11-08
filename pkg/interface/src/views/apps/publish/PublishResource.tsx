@@ -2,13 +2,10 @@ import { Box } from '@tlon/indigo-react';
 import { Association } from '@urbit/api';
 import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
-import { StoreState } from '~/logic/store/type';
 import { NotebookRoutes } from './components/NotebookRoutes';
 
-type PublishResourceProps = StoreState & {
+type PublishResourceProps = {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
   history?: any;
   match?: any;
@@ -16,7 +13,7 @@ type PublishResourceProps = StoreState & {
 };
 
 export function PublishResource(props: PublishResourceProps) {
-  const { association, api, baseUrl } = props;
+  const { association, baseUrl } = props;
   const rid = association.resource;
   const [, , ship, book] = rid.split('/');
   const location = useLocation();
@@ -32,7 +29,6 @@ export function PublishResource(props: PublishResourceProps) {
   return (
     <Box ref={scrollRef} height="100%" width="100%" overflowY="auto">
       <NotebookRoutes
-        api={api}
         ship={ship}
         book={book}
         association={association}

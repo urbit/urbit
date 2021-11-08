@@ -3,10 +3,9 @@ import {
 
     ManagedCheckboxField, Text
 } from '@tlon/indigo-react';
-import { Form, useField, useFormikContext } from 'formik';
+import { Form, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import {
     LeapCategories,
@@ -17,7 +16,7 @@ import { ShuffleFields } from '~/views/components/ShuffleFields';
 import { BackButton } from './BackButton';
 
 const labels: Record<LeapCategories, string> = {
-  mychannel: 'My Channel',
+  mychannel: 'My Channels',
   updates: 'Notifications',
   profile: 'Profile',
   messages: 'Messages',
@@ -32,8 +31,6 @@ function CategoryCheckbox(props: { index: number }) {
   const { index } = props;
   const { values } = useFormikContext<FormSchema>();
   const cats = values.categories;
-  const catNameId = `categories[${index}].category`;
-  const [field] = useField(catNameId);
 
   const { category } = cats[index];
   const label = labels[category];
@@ -45,9 +42,8 @@ function CategoryCheckbox(props: { index: number }) {
 
 const settingsSel = selectSettingsState(['leap', 'set']);
 
-export function LeapSettings(props: { api: GlobalApi; }) {
-  const { api } = props;
-  const { leap, set: setSettingsState } = useSettingsState(settingsSel);
+export function LeapSettings() {
+  const { leap } = useSettingsState(settingsSel);
   const categories = leap.categories as LeapCategories[];
   const missing = _.difference(leapCategories, categories);
 
@@ -62,11 +58,12 @@ export function LeapSettings(props: { api: GlobalApi; }) {
   };
 
   const onSubmit = async (values: FormSchema) => {
+    const { putEntry } = useSettingsState.getState();
     const result = values.categories.reduce(
       (acc, { display, category }) => (display ? [...acc, category] : acc),
       [] as LeapCategories[]
     );
-    await api.settings.putEntry('leap', 'categories', result);
+    await putEntry('leap', 'categories', result);
   };
 
   return (

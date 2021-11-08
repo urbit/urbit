@@ -40,9 +40,7 @@
     %batch  a+(turn bas.response response-to-json)
     ::
       %result
-    :-  %o
-    %-  molt
-    ^-  (list [@t json])
+    %-  pairs:enjs:format
     ::  FIXME: return 'id' as string, number or NULL
     ::
     :~  ['jsonrpc' s+'2.0']
@@ -51,18 +49,20 @@
     ==
   ::
       %error
-    :-  %o
-    %-  molt
-    ^-  (list [@t json])
+    =,  enjs:format
+    %-  pairs
     :~  ['jsonrpc' s+'2.0']
         ['id' ?~(id.response ~ s+id.response)]
-        ['code' n+code.response]
-        ['message' s+message.response]
-    ==
+      ::
+        :-  'error'
+        %-  pairs
+        :~  ['code' n+code.response]
+            ['message' s+message.response]
+    ==  ==
   ==
 ::
 ++  validate-request
-  |=  [body=(unit octs) parse-method=$-(@t term)]
+  |=  body=(unit octs)
   ^-  (unit batch-request)
   ?~  body  ~
   ?~  jon=(de-json:html q.u.body)  ~
@@ -76,7 +76,7 @@
       ::
       ['id' so]
       ['jsonrpc' (su (jest '2.0'))]
-      ['method' (cu parse-method so)]
+      ['method' so]
     ::
       :-  'params'
       |=  =json
@@ -96,5 +96,6 @@
   ++  params     [%error id '-32602' 'Invalid params']
   ++  internal   [%error id '-32603' 'Internal error']
   ++  not-found  [%error id '-32000' 'Resource not found']
+  ++  todo       [%error id '-32001' 'Method not implemented']
   --
 --

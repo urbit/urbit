@@ -1,5 +1,6 @@
 import { BaseImage, Box, Center, Row, Text } from '@tlon/indigo-react';
-import React, { ReactElement, useEffect, useRef } from 'react';
+import { retrieve } from '@urbit/api';
+import React, { ReactElement, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -7,9 +8,9 @@ import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import RichText from '~/views/components/RichText';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { EditProfile } from './EditProfile';
 import { ViewProfile } from './ViewProfile';
+import airlock from '~/logic/api';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
@@ -29,10 +30,6 @@ export function ProfileImages(props: any): ReactElement {
   const { hideAvatars } = useSettingsState(selectCalmState);
   const { contact, hideCover, ship } = props;
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
-
-  const anchorRef = useRef<HTMLDivElement>(null);
-
-  useTutorialModal('profile', ship === `~${window.ship}`, anchorRef);
 
   const cover =
     contact?.cover && !hideCover ? (
@@ -67,7 +64,7 @@ export function ProfileImages(props: any): ReactElement {
 
   return (
     <>
-      <Row ref={anchorRef} width='100%' height='400px' position='relative'>
+      <Row width='100%' height='400px' position='relative'>
         {cover}
         <Center position='absolute' width='100%' height='100%'>
           {props.children}
@@ -120,7 +117,7 @@ export function ProfileStatus(props: any): ReactElement {
 }
 
 export function ProfileActions(props: any): ReactElement {
-  const { ship, isPublic, contact, api } = props;
+  const { ship, isPublic, contact } = props;
   const history = useHistory();
   return (
     <Row>
@@ -147,7 +144,6 @@ export function ProfileActions(props: any): ReactElement {
             isControl
             py={2}
             ml={3}
-            api={api}
             ship={`~${window.ship}`}
             contact={contact}
           />
@@ -169,21 +165,16 @@ export function ProfileActions(props: any): ReactElement {
 }
 
 export function Profile(props: any): ReactElement | null {
-  const { hideAvatars } = useSettingsState(selectCalmState);
-  const history = useHistory();
   const nackedContacts = useContactState(state => state.nackedContacts);
 
   const { contact, hasLoaded, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
-  const formRef = useRef(null);
 
   useEffect(() => {
     if (hasLoaded && !contact && !nacked) {
-      props.api.contacts.retrieve(ship);
+      airlock.poke(retrieve(ship));
     }
   }, [hasLoaded, contact]);
-
-  const anchorRef = useRef<HTMLElement | null>(null);
 
   if (!props.ship) {
     return null;
@@ -196,13 +187,11 @@ export function Profile(props: any): ReactElement | null {
           <EditProfile
             ship={ship}
             contact={contact}
-            api={props.api}
           />
         ) : (
           <ViewProfile
             nacked={nacked}
             ship={ship}
-            api={props.api}
             contact={contact}
           />
         )}

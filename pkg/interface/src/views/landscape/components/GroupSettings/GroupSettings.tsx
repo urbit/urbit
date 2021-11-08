@@ -1,9 +1,9 @@
 import { Box, Button, Col, Text } from '@tlon/indigo-react';
+import { deSig } from '@urbit/api';
 import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { GroupAdminSettings } from './Admin';
 import { GroupChannelSettings } from './Channels';
@@ -17,7 +17,6 @@ const Section = ({ children }) => (
 interface GroupSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {
@@ -30,7 +29,7 @@ export function GroupSettings(props: GroupSettingsProps) {
   );
 
   const isOwner =
-    resourceFromPath(props.association.group).ship.slice(1) === window.ship;
+    deSig(resourceFromPath(props.association.group).ship) === window.ship;
 
   const isAdmin =
     isOwner || roleForShip(props.group, window.ship) === 'admin';

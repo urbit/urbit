@@ -1,11 +1,10 @@
 import { Center, LoadingSpinner } from '@tlon/indigo-react';
 import {
-  Association
+  Association, deSig
 } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import useGraphState from '~/logic/state/graph';
 import useGroupState from '~/logic/state/group';
 import NewPost from './new-post';
@@ -13,7 +12,6 @@ import Notebook from './Notebook';
 import { NoteRoutes } from './NoteRoutes';
 
 interface NotebookRoutesProps {
-  api: GlobalApi;
   ship: string;
   book: string;
   baseUrl: string;
@@ -24,15 +22,16 @@ interface NotebookRoutesProps {
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, baseUrl, rootUrl } = props;
+  const { ship, book, baseUrl, rootUrl } = props;
+  const getGraph = useGraphState(s => s.getGraph);
 
   useEffect(() => {
-    ship && book && api.graph.getGraph(ship, book);
+    ship && book && getGraph(ship, book);
   }, [ship, book]);
 
   const graphs = useGraphState(state => state.graphs);
 
-  const graph = graphs[`${ship.slice(1)}/${book}`];
+  const graph = graphs[`${deSig(ship)}/${book}`];
 
   const groups = useGroupState(state => state.groups);
 
@@ -62,7 +61,6 @@ export function NotebookRoutes(
         render={routeProps => (
           <NewPost
             {...routeProps}
-            api={api}
             book={book}
             ship={ship}
             association={props.association}
@@ -89,7 +87,6 @@ export function NotebookRoutes(
             <NoteRoutes
               rootUrl={baseUrl}
               baseUrl={noteUrl}
-              api={api}
               book={book}
               ship={ship}
               note={note}

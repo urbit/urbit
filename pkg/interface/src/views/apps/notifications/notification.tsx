@@ -1,102 +1,112 @@
-import { Box, Button, Icon, Row } from '@tlon/indigo-react';
+import { Box, Col, Text, Button, Icon, Row } from '@tlon/indigo-react';
 import {
-  GraphNotificationContents,
-
-  GroupNotificationContents,
-
-  GroupNotificationsConfig, IndexedNotification,
-
-  NotificationGraphConfig
+  HarkLid,
+  harkLidToId,
+  harkBinToId,
+  Notification as INotification,
+  HarkContent
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
-import _ from 'lodash';
-import React, { ReactNode, useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
-import { getNotificationKey } from '~/logic/lib/hark';
-import { getParentIndex } from '~/logic/lib/notification';
+import React, { useCallback } from 'react';
 import { useHovering } from '~/logic/lib/util';
-import useHarkState from '~/logic/state/hark';
 import useLocalState from '~/logic/state/local';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { SwipeMenu } from '~/views/components/SwipeMenu';
-import { GraphNotification } from './graph';
-import { GroupNotification } from './group';
+import useHarkState from '~/logic/state/hark';
+import { map, take, uniqBy } from 'lodash';
+import { Mention } from '~/views/components/MentionText';
+import { PropFunc } from '~/types';
+import { useHistory } from 'react-router-dom';
+import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
 
 export interface NotificationProps {
-  notification: IndexedNotification;
+  notification: INotification;
   time: BigInteger;
-  api: GlobalApi;
   unread: boolean;
 }
 
-function getMuted(
-  idxNotif: IndexedNotification,
-  groups: GroupNotificationsConfig,
-  graphs: NotificationGraphConfig
-) {
-  const { index, notification } = idxNotif;
-  if ('graph' in idxNotif.index) {
-    const { graph } = idxNotif.index.graph;
-    if (!('graph' in notification.contents)) {
-      throw new Error();
-    }
-    const parent = getParentIndex(idxNotif.index.graph, notification.contents.graph);
+const MAX_CONTENTS = 5;
 
-    return (
-      _.findIndex(
-        graphs?.watching || [],
-        g => g.graph === graph && g.index === parent
-      ) === -1
-    );
-  }
-  if ('group' in index) {
-    return _.findIndex(groups || [], g => g === index.group.group) === -1;
-  }
-  return false;
+interface NotificationTextProps extends PropFunc<typeof Box> {
+  contents: HarkContent[];
 }
+const NotificationText = ({ contents, ...rest }: NotificationTextProps) => {
+  return (
+    <>
+      {contents.map((content, idx) => {
+        if ('ship' in content) {
+          return (
+            <Mention
+              key={idx}
+              ship={content.ship}
+              first={idx === 0}
+              {...rest}
+            />
+          );
+        }
+        return <Text key={idx} {...rest}>{content.text}</Text>;
+      })}
+    </>
+  );
+};
 
-export function NotificationWrapper(props: {
-  api: GlobalApi;
-  time?: BigInteger;
-  read?: boolean;
-  notification?: IndexedNotification;
-  children: ReactNode;
+export function Notification(props: {
+  lid: HarkLid;
+  notification: INotification;
 }) {
-  const { api, time, notification, children, read = false } = props;
+  const { notification, lid } = props;
+  const read = !('unseen' in lid);
+  const key = `${harkLidToId(lid)}-${harkBinToId(notification.bin)}`;
+  const history = useHistory();
 
   const isMobile = useLocalState(s => s.mobile);
 
-  const onArchive = useCallback(async (e) => {
-    e.stopPropagation();
-    if (!notification) {
-      return;
-    }
-    return api.hark.archive(time, notification.index);
-  }, [time, notification]);
-
-  const groupConfig = useHarkState(state => state.notificationsGroupConfig);
-  const graphConfig = useHarkState(state => state.notificationsGraphConfig);
-
-  const isMuted =
-    time && notification && getMuted(notification, groupConfig, graphConfig);
-
-  const onClick = (e: any) => {
-    if (!notification || read) {
-      return;
-    }
-    return api.hark.read(time, notification.index);
-  };
+  const onArchive = useCallback(
+    async (e) => {
+      e.stopPropagation();
+      if (!notification) {
+        return;
+      }
+      useHarkState.getState().archiveNote(notification.bin, lid);
+    },
+    [notification, lid]
+  );
 
   const { hovering, bind } = useHovering();
+  const dedupedBody = uniqBy(notification.body, item => item.link);
+  const contents = map(dedupedBody, 'content').filter(
+    c => c.length > 0
+  );
+  const first = notification.body[0];
+  if (!first) {
+    // should be unreachable
+    return null;
+  }
+
+  const onClick = (e: any) => {
+    const redirect = getNotificationRedirect(first.link);
+    if(redirect) {
+      history.push(redirect);
+    } else {
+      console.log('no redirect');
+    }
+  };
 
   return (
     <SwipeMenu
-      key={(time && notification && getNotificationKey(time, notification)) ?? 'unknown'}
+      key={key}
       m={2}
       menuWidth={100}
       disabled={!isMobile}
       menu={
-        <Button onClick={onArchive} ml={2} height="100%" width="92px" primary destructive>
+        <Button
+          onClick={onArchive}
+          ml={2}
+          height="100%"
+          width="92px"
+          primary
+          destructive
+        >
           Remove
         </Button>
       }
@@ -109,10 +119,27 @@ export function NotificationWrapper(props: {
         gridTemplateColumns={['1fr 24px', '1fr 200px']}
         gridTemplateRows="auto"
         gridTemplateAreas="'header actions' 'main main'"
-        p={2}
+        p={3}
         {...bind}
       >
-        {children}
+        <Col gapY={contents.length === 0 ? 0 : 2}>
+          <Row>
+            <NotificationText contents={first.title} fontWeight="medium" />
+          </Row>
+          <Col gapY="2">
+            {take(contents, MAX_CONTENTS).map((content, i) => (
+              <Box key={i}>
+                <NotificationText lineHeight="tall" contents={content} />
+              </Box>
+            ))}
+          </Col>
+          {contents.length > MAX_CONTENTS ? (
+            <Text mt="2" gray display="block">
+              and {contents.length - MAX_CONTENTS} more
+            </Text>
+          ) : null}
+        </Col>
+
         <Row
           alignItems="flex-start"
           gapX={2}
@@ -120,7 +147,7 @@ export function NotificationWrapper(props: {
           justifyContent="flex-end"
           opacity={[0, hovering ? 1 : 0]}
         >
-          {notification && (
+          {!('time' in lid) && (
             <StatelessAsyncAction
               name=""
               borderRadius={1}
@@ -134,52 +161,4 @@ export function NotificationWrapper(props: {
       </Box>
     </SwipeMenu>
   );
-}
-
-export function Notification(props: NotificationProps) {
-  const { notification, unread } = props;
-  const { contents, time } = notification.notification;
-
-  const wrapperProps = {
-    notification,
-    read: !unread,
-    time: props.time,
-    api: props.api
-  };
-
-  if ('graph' in notification.index) {
-    const index = notification.index.graph;
-    const c: GraphNotificationContents = (contents as any).graph;
-
-    return (
-      <NotificationWrapper {...wrapperProps}>
-        <GraphNotification
-          api={props.api}
-          index={index}
-          contents={c}
-          read={!unread}
-          timebox={props.time}
-          time={time}
-        />
-      </NotificationWrapper>
-    );
-  }
-  if ('group' in notification.index) {
-    const index = notification.index.group;
-    const c: GroupNotificationContents = (contents as any).group;
-    return (
-      <NotificationWrapper {...wrapperProps}>
-        <GroupNotification
-          api={props.api}
-          index={index}
-          contents={c}
-          read={!unread}
-          timebox={props.time}
-          time={time}
-        />
-      </NotificationWrapper>
-    );
-  }
-
-  return null;
 }

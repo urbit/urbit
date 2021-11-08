@@ -1,0 +1,24 @@
+name: frontend-test
+
+on:
+  pull_request:
+    paths:
+      - 'pkg/interface/**'
+      - 'pkg/btc-wallet/**'
+      - 'pkg/npm/**'
+
+jobs:
+  frontend-test:
+    runs-on: ubuntu-latest
+    name: "Test changed frontend packages"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: git fetch --prune
+      - name: 'Setup root deps'
+        run: npm ci
+      - name: 'Setup dependencies'
+        run: npm run bootstrap
+      - name: 'Run tests'
+        run: npm run test -- --since origin/$GITHUB_BASE_REF  --include-dependents

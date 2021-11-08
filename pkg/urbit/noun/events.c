@@ -1,11 +1,10 @@
 /* g/e.c
 **
 */
+#include "all.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-
-#include "all.h"
 
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
@@ -312,7 +311,6 @@ _ce_patch_verify(u3_ce_patch* pat_u)
     fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
                     pat_u->con_u->ver_y,
                     u3e_version);
-    c3_assert(0);
     return c3n;
   }
 
@@ -323,12 +321,10 @@ _ce_patch_verify(u3_ce_patch* pat_u)
 
     if ( -1 == lseek(pat_u->mem_i, (i_w << (u3a_page + 2)), SEEK_SET) ) {
       fprintf(stderr, "loom: patch seek: %s\r\n", strerror(errno));
-      c3_assert(0);
       return c3n;
     }
     if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3a_page + 2))) ) {
       fprintf(stderr, "loom: patch read: %s\r\n", strerror(errno));
-      c3_assert(0);
       return c3n;
     }
     {
@@ -337,7 +333,6 @@ _ce_patch_verify(u3_ce_patch* pat_u)
       if ( mug_w != nug_w ) {
         fprintf(stderr, "loom: patch mug mismatch %d/%d; (%x, %x)\r\n",
                         pag_w, i_w, mug_w, nug_w);
-        c3_assert(0);
         return c3n;
       }
 #if 0
@@ -606,8 +601,17 @@ _ce_patch_compose(void)
 static void
 _ce_patch_sync(u3_ce_patch* pat_u)
 {
-  c3_sync(pat_u->ctl_i);
-  c3_sync(pat_u->mem_i);
+  if ( -1 == c3_sync(pat_u->ctl_i) ) {
+    fprintf(stderr, "loom: control file sync failed: %s\r\n",
+                    strerror(errno));
+    c3_assert(!"loom: control sync");
+  }
+
+  if ( -1 == c3_sync(pat_u->mem_i) ) {
+    fprintf(stderr, "loom: patch file sync failed: %s\r\n",
+                    strerror(errno));
+    c3_assert(!"loom: patch sync");
+  }
 }
 
 /* _ce_image_sync(): make sure image is synced to disk.
@@ -615,7 +619,12 @@ _ce_patch_sync(u3_ce_patch* pat_u)
 static void
 _ce_image_sync(u3e_image* img_u)
 {
-  c3_sync(img_u->fid_i);
+  if ( -1 == c3_sync(img_u->fid_i) ) {
+    fprintf(stderr, "loom: image (%s) sync failed: %s\r\n",
+                    img_u->nam_c,
+                    strerror(errno));
+    c3_assert(!"loom: image sync");
+  }
 }
 
 /* _ce_image_resize(): resize image, truncating if it shrunk.
@@ -795,7 +804,11 @@ u3e_save(void)
   // u3a_print_memory(stderr, "sync: save", 4096 * pat_u->con_u->pgs_w);
 
   _ce_patch_sync(pat_u);
-  _ce_patch_verify(pat_u);
+
+  if ( c3n == _ce_patch_verify(pat_u) ) {
+    c3_assert(!"loom: save failed");
+  }
+
   _ce_patch_apply(pat_u);
 
 #ifdef U3_SNAPSHOT_VALIDATION
@@ -815,8 +828,8 @@ u3e_save(void)
 
   _ce_image_sync(&u3P.nor_u);
   _ce_image_sync(&u3P.sou_u);
-  _ce_patch_delete();
   _ce_patch_free(pat_u);
+  _ce_patch_delete();
 }
 
 /* u3e_live(): start the checkpointing system.
@@ -853,8 +866,8 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         _ce_patch_apply(pat_u);
         _ce_image_sync(&u3P.nor_u);
         _ce_image_sync(&u3P.sou_u);
-        _ce_patch_delete();
         _ce_patch_free(pat_u);
+        _ce_patch_delete();
       }
 
       /* Write image files to memory; reinstate protection.

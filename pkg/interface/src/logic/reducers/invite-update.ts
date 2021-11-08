@@ -1,24 +1,9 @@
 import { InviteUpdate } from '@urbit/api/invite';
 import _ from 'lodash';
-import { Cage } from '~/types/cage';
-import { reduceState } from '../state/base';
-import useInviteState, { InviteState } from '../state/invite';
+import { BaseState } from '../state/base';
+import { InviteState as State } from '../state/invite';
 
-export default class InviteReducer {
-  reduce(json: Cage) {
-    const data = json['invite-update'];
-    if (data) {
-      reduceState<InviteState, InviteUpdate>(useInviteState, data, [
-        initial,
-        create,
-        deleteInvite,
-        invite,
-        accepted,
-        decline
-      ]);
-    }
-  }
-}
+type InviteState = State & BaseState<State>;
 
 const initial = (json: InviteUpdate, state: InviteState): InviteState => {
   const data = _.get(json, 'initial', false);
@@ -67,3 +52,12 @@ const decline = (json: InviteUpdate, state: InviteState): InviteState => {
   }
   return state;
 };
+
+export const reduce = [
+  initial,
+  create,
+  deleteInvite,
+  invite,
+  accepted,
+  decline
+];

@@ -1069,14 +1069,23 @@
   ::::                                                  ::  (1d2)
     ::
   +$  blew  [p=@ud q=@ud]                               ::  columns rows
-  +$  belt                                              ::  old belt
+  +$  belt                                              ::  client input
+    $?  bolt                                            ::  simple input
+    $%  [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
+        [%txt p=(list @c)]                              ::  utf32 text
+        ::TODO  consider moving %hey, %rez, %yow here   ::
+        ::TMP  forward backwards-compatibility          ::
+        ::                                              ::
+        [%ctl p=@c]                                     ::
+        [%met p=@c]                                     ::
+    ==  ==                                              ::
+  +$  bolt                                              ::  simple input
+    $@  @c                                              ::  simple keystroke
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
-        [%ctl p=@c]                                     ::  control-key
         [%del ~]                                        ::  true delete
-        [%met p=@c]                                     ::  meta-key
+        [%hit r=@ud c=@ud]                              ::  mouse click
         [%ret ~]                                        ::  return
-        [%txt p=(list @c)]                              ::  utf32 text
     ==                                                  ::
   +$  blit                                              ::  old blit
     $%  [%bel ~]                                        ::  make a noise
@@ -1626,15 +1635,15 @@
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%onto p=(each suss tang)]                      ::  about agent
-        [%unto p=sign:agent]                            ::
+        [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%conf dap=term]                                ::  start agent
-        [%deal p=sock q=term r=deal]                    ::  full transmission
-        [%goad force=? agent=(unit dude)]               ::  rebuild agent(s)
+    $%  [%deal p=sock q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
-        [%fade dap=term style=?(%slay %idle %jolt)]     ::  put app to sleep
+        [%jolt =desk =dude]                             ::  (re)start agent
+        [%idle =dude]                                   ::  suspend agent
+        [%nuke =dude]                                   ::  delete agent
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -1669,10 +1678,15 @@
   +$  neat
     $%  [%arvo =note-arvo]
         [%agent [=ship name=term] =deal]
+        [%pyre =tang]
     ==
   +$  deal
     $%  [%raw-poke =mark =noun]
         task:agent
+    ==
+  +$  unto
+    $%  [%raw-fact =mark =noun]
+        sign:agent
     ==
   ::
   ::  +agent: app core
@@ -1683,8 +1697,9 @@
     +$  step  (quip card form)
     +$  card  (wind note gift)
     +$  note
-      $%  [%arvo =note-arvo]
-          [%agent [=ship name=term] =task]
+      $%  [%agent [=ship name=term] =task]
+          [%arvo note-arvo]
+          [%pyre =tang]
       ==
     +$  task
       $%  [%watch =path]
@@ -2107,6 +2122,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%$ %whiz ~]
       [@tas %meta vase]
   ==
 ::  full vane names are required in vanes
@@ -2159,6 +2175,11 @@
       ::  %clay: external edit
       ::
       $>(%into task:clay)
+      ::  %clay: synchronous commit
+      ::
+      ::    TODO: make $yuki an option for %into?
+      ::
+      $>(%park task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)

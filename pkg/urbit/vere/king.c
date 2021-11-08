@@ -2,13 +2,11 @@
 **
 ** the main loop of the daemon process
 */
-#include <curl/curl.h>
-#include <unistd.h>
-#include <uv.h>
-
 #include "all.h"
 #include "vere/vere.h"
 #include "ur/ur.h"
+#include <curl/curl.h>
+#include <uv.h>
 
 #include "ivory.h"
 
@@ -188,12 +186,13 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
   //
   u3C.slog_f = _king_slog;
 
+  u3_noun ship = ( c3y == u3a_is_cell(u3h(feed)) )
+                 ? u3h(u3t(feed))
+                 : u3h(feed);
+  u3_noun vent = u3_dawn_vent(u3k(ship), u3k(feed));
   //  XX link properly
   //
-  //NOTE  +slav is safe because _boothack_key already verified it
-  u3_noun ship = u3dc("slav", 'p', u3i_string(u3_Host.ops_u.who_c));
-  u3_noun vent = u3_dawn_vent(u3k(ship), u3k(feed));
-  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path, feed);
+  u3K.pir_u    = u3_pier_boot(sag_w, u3k(ship), vent, pill, path, feed);
 
   // disable ivory slog printfs
   //
@@ -219,8 +218,10 @@ _king_pier(u3_noun pier)
 **  XX deduplicate with dawn.c
 */
 static size_t
-_king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
+_king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
 {
+  uv_buf_t* buf_u = buf_v;
+
   size_t siz_t = uni_t * mem_t;
   buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
 
@@ -248,7 +249,7 @@ _king_get_atom(c3_c* url_c)
     exit(1);
   }
 
-  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
+  u3K.ssl_curl_f(curl);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
@@ -556,7 +557,7 @@ _king_sign_init(void)
 
   //  handle SIGINFO (if available)
   //
-#ifndef U3_OS_linux
+#ifdef SIGINFO
   {
     u3_usig* sig_u;
 
@@ -602,6 +603,10 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
     case SIGINT: {
       u3l_log("\r\ninterrupt\r\n");
       u3_term_ef_ctlc();
+
+      #if defined(U3_OS_mingw)
+      PulseEvent(u3_Host.cev_u);
+      #endif
       break;
     }
 
@@ -612,7 +617,7 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
 
     //  fallthru if defined
     //
-#ifndef U3_OS_linux
+#ifdef SIGINFO
     case SIGINFO:
 #endif
     case SIGUSR1: {
@@ -689,7 +694,6 @@ _king_loop_init()
 void
 _king_loop_exit()
 {
-  unlink(u3K.certs_c);
 }
 
 static void
@@ -754,20 +758,20 @@ u3_king_commence()
   u3C.wag_w |= u3o_hashless;
   u3C.wag_w &= ~u3o_debug_cpu;
 
-  u3m_boot_lite();
-
   //  wire up signal controls
   //
   u3C.sign_hold_f = _king_sign_hold;
   u3C.sign_move_f = _king_sign_move;
 
   //  Ignore SIGPIPE signals.
+  #ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
+  #endif
 
   //  boot the ivory pill
   //
@@ -775,6 +779,7 @@ u3_king_commence()
 
   //  disable core dumps (due to lmdb size)
   //
+  #ifndef U3_OS_mingw
   {
     struct rlimit rlm;
 
@@ -786,12 +791,14 @@ u3_king_commence()
       exit(1);
     }
   }
+  #endif
 
   //  run the loop
   //
   _king_loop_init();
   uv_run(u3L, UV_RUN_DEFAULT);
   _king_loop_exit();
+  u3m_stop();
 }
 
 /* u3_king_stub(): get the One Pier for unreconstructed code.

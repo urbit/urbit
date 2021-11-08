@@ -1,7 +1,6 @@
-import { Patp } from "..";
-import BigIntOrderedMap from "../lib/BigIntOrderedMap";
-import BigIntArrayOrderedMap from "../lib/BigIntArrayOrderedMap";
-
+import { Patp } from '../lib';
+import BigIntOrderedMap from '../lib/BigIntOrderedMap';
+import BigIntArrayOrderedMap from '../lib/BigIntArrayOrderedMap';
 
 export interface TextContent {
   text: string;
@@ -17,7 +16,7 @@ export interface CodeContent {
 }
 
 export interface ReferenceContent {
-  reference: GraphReference | GroupReference;
+  reference: AppReference | GraphReference | GroupReference;
 }
 
 export interface GraphReference {
@@ -30,6 +29,14 @@ export interface GraphReference {
 
 export interface GroupReference {
   group: string;
+}
+
+export interface AppReference {
+  app: {
+    ship: string;
+    desk: string;
+    path: string;
+  }
 }
 
 export interface MentionContent {
@@ -49,7 +56,7 @@ export interface Post {
   index: string;
   pending?: boolean;
   signatures: string[];
-  "time-sent": number;
+  'time-sent': number;
 }
 
 export interface GraphNodePoke {

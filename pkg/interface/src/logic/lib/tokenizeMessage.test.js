@@ -93,4 +93,49 @@ describe('tokenizeMessage', () => {
     expect(three).toEqual(' test ');
     expect(hastuc).toEqual('~hastuc-dibtux');
   });
+  it('should tokenize a url with a par', () => {
+    const example = 'test https://en.wikipedia.org/wiki/Turbo_(gastropod)';
+
+    const [{ text }, { url }] = tokenizeMessage(example);
+    expect(text).toBe('test ');
+    expect(url).toBe('https://en.wikipedia.org/wiki/Turbo_(gastropod)');
+  });
+  it('should ignore ending commas', () => {
+    const example = 'https://tlon.io/test, foo';
+    const [{ url }, { text }] = tokenizeMessage(example);
+    expect(text).toBe(', foo');
+    expect(url).toBe('https://tlon.io/test');
+  });
+
+  it('should ignore ending dots', () => {
+    const example = 'https://tlon.io/test. foo';
+    const [{ url }, { text }] = tokenizeMessage(example);
+    expect(text).toBe('. foo');
+    expect(url).toBe('https://tlon.io/test');
+  });
+
+  it('should ignore malformed group links', () => {
+    const example = 'test ~zoid/fakegroup';
+    const [{ text }, ...rest] = tokenizeMessage(example);
+    expect(text).toBe(example);
+    expect(rest.length).toBe(0);
+  });
+  it('should handle groups with numbers', () => {
+    const example = 'oh no, ~sampel/group-123-abc';
+
+    const [{ text }, { reference }] = tokenizeMessage(example);
+    expect(text).toBe('oh no, ');
+    expect(reference.group).toBe('/ship/~sampel/group-123-abc');
+  });
+  it('should handle permalinks after inline urls', () => {
+    const example = 'test [test](https://tlon.io) web+urbitgraph://group/~middev/the-forge/graph/~littel-wolfur/writs-7082/170141184505164612398001831549075456000/2/170141184505164722986064231401764421632';
+
+    const [{ text }, { reference: { graph } }] = tokenizeMessage(example);
+
+    expect(text).toBe('test [test](https://tlon.io) ');
+    expect(graph.group).toBe('/ship/~middev/the-forge');
+    expect(graph.graph).toBe('/ship/~littel-wolfur/writs-7082');
+    expect(graph.index).toBe('/170141184505164612398001831549075456000/2/170141184505164722986064231401764421632');
+  });
 });
+

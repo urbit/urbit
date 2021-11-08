@@ -1,8 +1,13 @@
 import {
-  BaseInput, Box,
+  BaseInput,
+  Box,
   Button,
-  Icon, Label, Row, StatelessTextInput as Input,
-  Text
+  Icon,
+  Label,
+  Row,
+  StatelessTextInput as Input,
+  Text,
+  ErrorLabel
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
 import React, { ReactElement, useCallback, useRef, useState } from 'react';
@@ -20,23 +25,19 @@ const prompt = (
   uploading,
   meta,
   clickUploadButton,
-  canUpload
+  canUpload,
+  error
 ) => {
-  if (
-    !focus &&
-    !field.value &&
-    !uploading &&
-    meta.error === undefined
-  ) {
+  if (!focus && !field.value && !uploading && error === undefined) {
     return (
       <Text
-        color='black'
-        fontWeight='500'
-        position='absolute'
+        color="black"
+        fontWeight="500"
+        position="absolute"
         left={2}
-        display='flex'
-        height='100%'
-        alignItems='center'
+        display="flex"
+        height="100%"
+        alignItems="center"
         lineHeight={1}
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
@@ -50,7 +51,7 @@ const prompt = (
               cursor="pointer"
               color="blue"
               style={{ pointerEvents: 'all' }}
-              mx='0.5ch'
+              mx="0.5ch"
               onClick={clickUploadButton}
             >
               upload
@@ -70,9 +71,9 @@ const uploadingStatus = (uploading, meta) => {
       <Text
         position="absolute"
         left={2}
-        display='flex'
-        height='100%'
-        alignItems='center'
+        display="flex"
+        height="100%"
+        alignItems="center"
         lineHeight={1}
         gray
         onSelect={e => e.preventDefault}
@@ -84,26 +85,27 @@ const uploadingStatus = (uploading, meta) => {
   return null;
 };
 
-const errorRetry = (meta, focus, uploading, clickUploadButton) => {
-  if (!focus && meta.error !== undefined) {
+const errorRetry = (meta, error, focus, uploading, clickUploadButton) => {
+  if (!focus && error !== undefined && meta.touched) {
     return (
       <Text
-        position='absolute'
+        position="absolute"
         left={2}
-        display='flex'
-        height='100%'
-        alignItems='center'
+        display="flex"
+        height="100%"
+        alignItems="center"
         lineHeight={1}
-        color='red'
+        color="red"
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
       >
-        {meta.error}{', '}please{' '}
+        {error}
+        {', '}please{' '}
         <Text
-          fontWeight='500'
-          cursor='pointer'
-          color='blue'
-          mx='0.5ch'
+          fontWeight="500"
+          cursor="pointer"
+          color="blue"
+          mx="0.5ch"
           style={{ pointerEvents: 'all' }}
           onClick={clickUploadButton}
         >
@@ -115,25 +117,24 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
   return null;
 };
 
-const clearButton = (field, uploading, clearEvt) => {
+export const clearButton = (field, uploading, clearEvt) => {
   if (field.value && !uploading) {
     return (
       <Box
-        position='absolute'
+        position="absolute"
         right={0}
-        top={0}
         px={1}
-        height='100%'
-        cursor='pointer'
+        height="100%"
+        cursor="pointer"
         onClick={clearEvt}
-        backgroundColor='white'
-        display='flex'
-        alignItems='center'
-        borderRadius='0 4px 4px 0'
-        border='1px solid'
-        borderColor='lightGray'
+        backgroundColor="white"
+        display="flex"
+        alignItems="center"
+        borderRadius="0 4px 4px 0"
+        border="1px solid"
+        borderColor="lightGray"
       >
-        <Icon icon='X' />
+        <Icon icon="X" />
       </Box>
     );
   }
@@ -143,7 +144,8 @@ const clearButton = (field, uploading, clearEvt) => {
 export function ImageInput(props: ImageInputProps): ReactElement {
   const { id, label, caption } = props;
   const { uploadDefault, canUpload, uploading } = useStorage();
-  const [field, meta, { setValue, setError }] = useField(id);
+  const [field, meta, { setValue, setTouched }] = useField(id);
+  const [uploadError, setUploadError] = useState();
   const [focus, setFocus] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
 
@@ -170,41 +172,39 @@ export function ImageInput(props: ImageInputProps): ReactElement {
       const url = await uploadDefault(file);
       setFocus(false);
       setValue(url);
+      setTouched(true);
     } catch (e) {
       setFocus(false);
-      setError(e.message);
+      setUploadError(e);
     }
   }, [ref.current, uploadDefault, canUpload, setValue]);
 
   return (
     <Box display="flex" flexDirection="column" {...props}>
-      <Label htmlFor={id}>{label}</Label>
+      {label ? <Label htmlFor={id}>{label}</Label> : null}
       {caption ? (
         <Label mt={2} gray>
           {caption}
         </Label>
       ) : null}
-      <Row mt={2} alignItems="flex-end" position='relative' width='100%'>
-        {prompt(field, focus, uploading, meta, clickUploadButton, canUpload)}
+      <Row mt={2} alignItems="flex-end" position="relative" width="100%">
+        {prompt(field, focus, uploading, meta, clickUploadButton, canUpload, uploadError)}
         {clearButton(field, uploading, clearEvt)}
         {uploadingStatus(uploading, meta)}
-        {errorRetry(meta, focus, uploading, clickUploadButton)}
-        <Box background='white' borderRadius={2} width='100%'>
+        {errorRetry(meta, uploadError, focus, uploading, clickUploadButton)}
+        <Box background="white" borderRadius={2} width="100%">
           <Input
             {...field}
-            width='100%'
+            width="100%"
             type={'text'}
             onFocus={() => setFocus(true)}
             onBlur={e => handleBlur(e)}
-            hasError={meta.touched && meta.error !== undefined}
+            hasError={Boolean(uploadError)}
           />
         </Box>
         {canUpload && (
           <>
-            <Button
-              display='none'
-              onClick={clickUploadButton}
-            />
+            <Button display="none" onClick={clickUploadButton} />
             <BaseInput
               style={{ display: 'none' }}
               type="file"
@@ -216,6 +216,9 @@ export function ImageInput(props: ImageInputProps): ReactElement {
           </>
         )}
       </Row>
+      <ErrorLabel mt="2" hasError={Boolean(meta.touched && meta.error)}>
+        {meta.error}
+      </ErrorLabel>
     </Box>
   );
 }

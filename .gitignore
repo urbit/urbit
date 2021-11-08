@@ -33,6 +33,7 @@ result-*
 
 # NodeJS
 node_modules
+.eslintcache
 
 # Haskell
 .stack-work
@@ -54,7 +55,11 @@ release/
 dist/
 out/
 work/
+pkg/*/*.a
 *.o
+*.so
+*.dll
+*.dylib
 
 # Landscape Dev
 urbitrc
@@ -77,3 +82,5 @@ pkg/interface/link-webext/web-ext-artifacts
 
 # Logs
 *.log
+
+.vercel

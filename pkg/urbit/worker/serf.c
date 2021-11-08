@@ -1,21 +1,5 @@
 /* worker/serf.c
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <sigsegv.h>
-#include <stdint.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <uv.h>
-#include <errno.h>
-
 #include "all.h"
 #include <vere/vere.h>
 #include <vere/serf.h>
@@ -199,11 +183,11 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
 /* _serf_grab(): garbage collect, checking for profiling. RETAIN.
 */
 static void
-_serf_grab(u3_serf* sef_u)
+_serf_grab(u3_noun sac)
 {
-  if ( u3_nul == sef_u->sac) {
+  if ( u3_nul == sac) {
     if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
-      u3m_grab(sef_u->sac, u3_none);
+      u3m_grab(sac, u3_none);
     }
   }
   else {
@@ -241,9 +225,9 @@ _serf_grab(u3_serf* sef_u)
     c3_assert( u3R == &(u3H->rod_u) );
     fprintf(fil_u, "\r\n");
 
-    tot_w += u3a_maid(fil_u, "total userspace", _serf_prof(fil_u, 0, sef_u->sac));
+    tot_w += u3a_maid(fil_u, "total userspace", _serf_prof(fil_u, 0, sac));
     tot_w += u3m_mark(fil_u);
-    tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sef_u->sac));
+    tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sac));
 
     u3a_print_memory(fil_u, "total marked", tot_w);
     u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
@@ -257,8 +241,7 @@ _serf_grab(u3_serf* sef_u)
     }
 #endif
 
-    u3z(sef_u->sac);
-    sef_u->sac = u3_nul;
+    u3z(sac);
 
     u3l_log("\n");
   }
@@ -269,13 +252,49 @@ _serf_grab(u3_serf* sef_u)
 void
 u3_serf_grab(void)
 {
+  u3_noun sac = u3_nul;
+
   c3_assert( u3R == &(u3H->rod_u) );
 
+  {
+    u3_noun sam, gon;
+
+    {
+      u3_noun pax = u3nc(c3__whey, u3_nul);
+      u3_noun lyc = u3nc(u3_nul, u3_nul);
+      sam = u3nt(lyc, c3n, u3nq(c3__once, u3_blip, u3_blip, pax));
+    }
+
+    gon = u3m_soft(0, u3v_peek, sam);
+
+    {
+      u3_noun tag, dat, val;
+      u3x_cell(gon, &tag, &dat);
+
+      if (  (u3_blip == tag)
+         && (u3_nul  != dat)
+         && (c3y == u3r_pq(u3t(dat), c3__omen, 0, &val))
+         && (c3y == u3r_p(val, c3__mass, &sac)) )
+      {
+        u3k(sac);
+      }
+    }
+
+    u3z(gon);
+  }
+
   fprintf(stderr, "serf: measuring memory:\r\n");
-  u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
-  u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
-  u3a_print_memory(stderr, "sweep", u3a_sweep());
-  fprintf(stderr, "\r\n");
+
+  if ( u3_nul != sac ) {
+    _serf_grab(sac);
+  }
+  else {
+    u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
+    u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
+    u3a_print_memory(stderr, "sweep", u3a_sweep());
+    fprintf(stderr, "\r\n");
+  }
+
   fflush(stderr);
 }
 
@@ -292,7 +311,8 @@ u3_serf_post(u3_serf* sef_u)
   //  XX this runs on replay too, |mass s/b elsewhere
   //
   if ( c3y == sef_u->mut_o ) {
-    _serf_grab(sef_u);
+    _serf_grab(sef_u->sac);
+    sef_u->sac   = u3_nul;
     sef_u->mut_o = c3n;
   }
 
@@ -588,7 +608,7 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 u3_noun
 u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
-  c3_t  tac_t = ( u3C.wag_w & u3o_trace );
+  c3_t  tac_t = !!( u3C.wag_w & u3o_trace );
   c3_c  lab_c[2056];
   u3_noun pro;
 
@@ -731,16 +751,12 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
 
       eve = u3t(eve);
     }
-    //  event succeeded, save and continue
+    //  event failed, stop and send trace
     //
     else {
-      u3_noun dud = u3k(u3t(gon));
-
       //  reset sent event counter
       //
-      sef_u->sen_d   = sef_u->dun_d;
-
-      u3z(gon);
+      sef_u->sen_d = sef_u->dun_d;
 
       //  XX reclaim on meme ?
       //
@@ -750,7 +766,7 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
       u3z(vev);
       return u3nc(c3__bail, u3nt(u3i_chubs(1, &sef_u->dun_d),
                                  sef_u->mug_l,
-                                 dud));
+                                 gon));
     }
   }
 

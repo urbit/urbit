@@ -1,14 +1,14 @@
 import { Button, Col, Row, Text } from '@tlon/indigo-react';
-import { resourceAsPath, resourceFromPath } from '@urbit/api';
+import { createGroupFeed, Resource, resourceFromPath } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import {
   GroupFeedPermsInput
 } from './Post/GroupFeedPerms';
+import airlock from '~/logic/api';
 
 interface FormSchema {
   permissions: any;
@@ -17,10 +17,9 @@ interface FormSchema {
 export function EnableGroupFeed(props: {
   groupPath: string;
   dismiss?: () => void;
-  api: GlobalApi;
   baseUrl: string;
 }) {
-  const { api, groupPath, baseUrl } = props;
+  const { groupPath, baseUrl } = props;
 
   const history = useHistory();
   const dismiss = () => {
@@ -33,9 +32,7 @@ export function EnableGroupFeed(props: {
   const onSubmit =
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const resource = resourceFromPath(groupPath);
-      const feed = resourceAsPath(
-        await api.graph.enableGroupFeed(resource, values.permissions.trim())
-      );
+      await airlock.thread<Resource>(createGroupFeed(resource, values.permissions.trim()));
       actions.setStatus({ success: null });
       history.replace(`${baseUrl}/feed`);
     };

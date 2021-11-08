@@ -1,4 +1,5 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
+import { invite } from '@urbit/api/groups';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
@@ -7,6 +8,7 @@ import { resourceFromPath } from '~/logic/lib/group';
 import { deSig } from '~/logic/lib/util';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ShipSearch } from '~/views/components/ShipSearch';
+import airlock from '~/logic/api';
 
 interface FormSchema {
   ships: string[];
@@ -17,17 +19,17 @@ const formSchema = Yup.object<FormSchema>({
 });
 
 export const MessageInvite = (props) => {
-  const { association, api } = props;
+  const { association } = props;
   const initialValues: FormSchema = { ships: [] };
   const onSubmit = async ({ ships }: FormSchema, actions) => {
     try {
       const { ship, name } = resourceFromPath(association.group);
-      await api.groups.invite(
+      await airlock.thread(invite(
         ship,
         name,
         _.compact(ships).map(s => `~${deSig(s)}`),
         `Inviting you to a DM with ~${ship}`
-      );
+      ));
       actions.setStatus({ success: null });
     } catch (e) {
       console.error(e);

@@ -195,7 +195,10 @@ module.exports = {
         "sourceType": "module"
       },
       "plugins": ["@typescript-eslint"],
-      "rules": rules
+      "rules": {
+        ...rules,
+        "valid-jsdoc": "off"
+      }
     }
   ]
 };

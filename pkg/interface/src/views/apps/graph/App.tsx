@@ -1,22 +1,16 @@
 import { Center, Text } from '@tlon/indigo-react';
-import { GraphConfig } from '@urbit/api';
+import { GraphConfig, joinGraph } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { deSig } from '~/logic/lib/util';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
+import airlock from '~/logic/api';
 
-interface GraphAppProps {
-  api: GlobalApi;
-}
-
-const GraphApp = (props: GraphAppProps): ReactElement => {
+const GraphApp = (): ReactElement => {
   const associations= useMetadataState(state => state.associations);
   const graphKeys = useGraphState(state => state.graphKeys);
   const history = useHistory();
-
-  const { api } = props;
 
   return (
     <Switch>
@@ -30,10 +24,10 @@ const GraphApp = (props: GraphAppProps): ReactElement => {
 
           const autoJoin = () => {
             try {
-              api.graph.joinGraph(
+              airlock.thread(joinGraph(
                 `~${deSig(props.match.params.ship)}`,
                 props.match.params.name
-              );
+              ));
             } catch(err) {
               setTimeout(autoJoin, 2000);
             }

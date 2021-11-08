@@ -1,4 +1,4 @@
-import { Association, GraphConfig } from '@urbit/api';
+import { Association, deSig, GraphConfig } from '@urbit/api';
 import React, { useCallback } from 'react';
 import {
   Redirect, Route, Switch
@@ -50,7 +50,6 @@ function FallbackRoutes(props: { query: URLSearchParams }) {
   if (query.has('ext')) {
     const ext = query.get('ext')!;
     const url = `/perma${ext.slice(16)}`;
-    console.log(url);
     return <Redirect to={{ pathname: url }} />;
   }
 
@@ -77,8 +76,8 @@ function GroupRoutes(props: { group: string; url: string }) {
           if(!association) {
             return null;
           }
-          if(!graphKeys.has(`${ship.slice(1)}/${name}`)) {
-            if(graphKeys.size > 0) {
+          if(!graphKeys.has(`${deSig(ship)}/${name}`)) {
+            if(graphKeys.size > 1) { // TODO: Better loading logic see https://github.com/urbit/landscape/issues/1063
               return <Redirect
                 to={toQuery(
                   { auto: 'y', redir: location.pathname },

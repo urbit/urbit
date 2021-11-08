@@ -1,9 +1,9 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { Group } from '@urbit/api/groups';
+import { deSig } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import React, { ReactElement, useCallback, useRef } from 'react';
 import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
@@ -17,7 +17,6 @@ export function PopoverRoutes(
     baseUrl: string;
     group: Group;
     association: Association;
-    api: GlobalApi;
   } & RouteComponentProps
 ): ReactElement {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
@@ -30,8 +29,8 @@ export function PopoverRoutes(
   useHashLink();
 
   const groupSize = props.group.members.size;
-
-  const owner = resourceFromPath(props.association.group).ship.slice(1) === window.ship;
+  const ship = resourceFromPath(props.association?.group ?? '/ship/~zod/group').ship;
+  const owner = deSig(ship) === window.ship;
 
   const admin = props.group?.tags?.role?.admin.has(window.ship) || false;
 
@@ -104,7 +103,7 @@ export function PopoverRoutes(
 
                       </>
                     )}
-                    <DeleteGroup owner={owner} api={props.api} association={props.association} />
+                    <DeleteGroup owner={owner} association={props.association} />
                   </Col>
                 </Col>
                 <Box
@@ -122,14 +121,12 @@ export function PopoverRoutes(
                       baseUrl={`${props.baseUrl}/popover`}
                       group={props.group}
                       association={props.association}
-                      api={props.api}
                     />
                   )}
                   {view === 'participants' && (
                     <Participants
                       group={props.group}
                       association={props.association}
-                      api={props.api}
                     />
                   )}
                 </Box>

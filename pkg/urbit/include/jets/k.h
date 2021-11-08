@@ -21,9 +21,16 @@
 
 /* u3kc: tier 3 functions
 */
-  u3_noun
-  u3kc_con(u3_noun a,
-           u3_noun b);
+  /* u3kc_bex(): binary exponent.
+  */
+    u3_noun
+    u3kc_bex(u3_atom);
+
+  /* u3kc_con(): binary loobean conjunction.
+  */
+    u3_noun
+    u3kc_con(u3_noun a,
+             u3_noun b);
 
   /* u3kc_mix(): binary xor.
   */

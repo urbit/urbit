@@ -52,9 +52,8 @@
           task:dill                                     ::
       ==                                                ::
       $:  %g                                            ::
-          $>  $?  %conf                                 ::
+          $>  $?  %jolt                                 ::
                   %deal                                 ::
-                  %goad                                 ::
               ==                                        ::
           task:gall                                     ::
       ==                                                ::
@@ -106,7 +105,6 @@
           %flow  +>
           %harm  +>
           %hail  (send %hey ~)
-          %belt  (send `dill-belt`p.kyz)
           %text  (from %out (tuba p.kyz))
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
@@ -116,6 +114,18 @@
           %pack  (dump kyz)
           %crop  (dump trim+p.kyz)
           %verb  (pass /verb %$ kyz)
+        ::
+            %belt
+          %-  send
+          ::TMP  forwards compatibility with next-dill
+          ::
+          ?@  p.kyz  [%txt p.kyz ~]
+          ?:  ?=(%hit -.p.kyz)  [%txt ~]
+          ?.  ?=(%mod -.p.kyz)  p.kyz
+          =/  =@c
+            ?@  key.p.kyz  key.p.kyz
+            ?:(?=(?(%bac %del %ret) -.key.p.kyz) `@`-.key.p.kyz ~-)
+          ?:(?=(%met mod.p.kyz) [%met c] [%ctl c])
         ==
       ::
       ++  crud
@@ -197,38 +207,31 @@
         ?:  ?=(%qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])
-      ::  XX move
       ::
-      ++  sein
+      ++  sponsor
         ^-  ship
         =/  dat=(unit (unit cage))
           (rof `[our ~ ~] j/[[our sein/da/now] /(scot %p our)])
         ;;(ship q.q:(need (need dat)))
       ::
       ++  init                                          ::  initialize
-        (pass /merg/home [%c %merg %kids our %home da+now %init])
+        (pass /merg/base [%c %merg %kids our %base da+now %init])
       ::
       ++  mere                                          ::  continue init
         ^+  .
         =/  myt  (flop (fall tem ~))
-        =/  can  (clan:title our)
         =.  tem  ~
-        =.  +>  (pass / %g %conf ram)
-        =?  +>  ?=(?(%earl %duke %king) can)
-          (ota sein %kids)
-        ::  make kids desk publicly readable, so syncs work.
-        ::
-        =.  +>  (show %kids)
-        =.  +>  hood-set-boot-apps
-        =.  +>  peer
-        |-  ^+  +>+
-        ?~  myt  +>+
-        $(myt t.myt, +>+ (send i.myt))
+        =.  ..mere  (pass / %g %jolt %base ram)
+        =.  ..mere  (show-desk %kids)
+        =.  ..mere  drum-watch
+        |-  ^+  ..mere
+        ?~  myt  ..mere
+        $(myt t.myt, ..mere (send i.myt))
       ::
       ++  into                                          ::  preinitialize
         |=  gyl=(list gill)
         =.  tem  `(turn gyl |=(a=gill [%yow a]))
-        (pass / [%c %warp our %home `[%sing %y [%ud 1] /]])
+        (pass / [%c %warp our %base `[%sing %y [%ud 1] /]])
       ::
       ++  send                                          ::  send action
         |=  bet=dill-belt
@@ -237,25 +240,29 @@
           +>(tem `[bet u.tem])
         (deal / [%poke [%dill-belt -:!>(bet) bet]])
       ::
-      ++  hood-set-boot-apps
-        (deal / [%poke %drum-set-boot-apps !>(lit.all)])
-      ::
-      ++  peer
+      ++  drum-watch
         (deal / [%watch /drum])
       ::
-      ++  show                                          ::  permit reads on desk
+      ++  show-desk                                     ::  permit reads on desk
         |=  des=desk
         (pass /show [%c %perm des / r+`[%black ~]])
       ::
-      ++  ota
-        |=  syn=[ship desk]
-        (deal /sync %poke %kiln-ota !>(`syn))
+      ++  kiln-install
+        |=  [loc=desk =ship rem=desk]
+        (deal /install %poke %kiln-install !>([loc ship rem]))
+      ::
+      ++  kiln-sync
+        |=  [loc=desk =ship rem=desk]
+        (deal /sync %poke %kiln-sync !>([loc ship rem]))
       ::
       ++  take                                          ::  receive
         |=  [tea=wire sih=sign]
         ^+  +>
         ?-    sih
             [%gall %onto *]
+          ::  NOTE effects during initial boot sequence are ignored,
+          ::  so :hood compilation errors will not print; slog if desired
+          ::
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
@@ -264,13 +271,19 @@
         ::
             [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
-          ?-  -.+>.sih
-            %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            %kick       peer
-            %watch-ack  ?~  p.p.+>.sih
-                          +>.$
-                        (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
+          ?-    -.+>.sih
+              %raw-fact   !!
+              %kick       drum-watch
+              %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+              %watch-ack
+            ?~  p.p.+>.sih
+              +>.$
+            (dump:(crud %reap u.p.p.+>.sih) %logo ~)
+          ::
+              %fact
+            ?.  ?=(%dill-blit p.cage.p.+>.sih)
+              +>.$
+            (from ;;(dill-blit q.q.cage.p.+>.sih))
           ==
         ::
             [%clay %note *]

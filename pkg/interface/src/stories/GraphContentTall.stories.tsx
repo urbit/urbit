@@ -12,8 +12,6 @@ export default {
   component: GraphContent
 } as Meta;
 
-const fakeApi = {} as any;
-
 const Template: Story<GraphContentProps> = args => (
   <Box
     maxWidth="500px"
@@ -27,7 +25,6 @@ const Template: Story<GraphContentProps> = args => (
       m="3"
       maxWidth="100%"
       {...args}
-      api={fakeApi}
       showOurContact
     />
   </Box>

@@ -2,20 +2,21 @@ import React, { useCallback } from 'react';
 import { Box, Row, Text } from '@tlon/indigo-react';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import Author from '~/views/components/Author';
-import GlobalApi from '~/logic/api/global';
 import { useHistory } from 'react-router';
+import { acceptDm, declineDm } from '@urbit/api/graph';
+import airlock from '~/logic/api';
 
-export function PendingDm(props: { ship: string; api: GlobalApi }) {
-  const { ship, api } = props;
+export function PendingDm(props: { ship: string; }) {
+  const { ship } = props;
   const { push } = useHistory();
   const onAccept = useCallback(async () => {
-    await api.graph.acceptDm(ship);
+    await airlock.poke(acceptDm(ship));
     push(`/~landscape/messages/dm/${ship}`);
-  }, [ship, push, api]);
+  }, [ship, push]);
 
   const onDecline = useCallback(async () => {
-    await api.graph.declineDm(ship);
-  }, [ship, api]);
+    await airlock.poke(declineDm(ship));
+  }, [ship]);
 
   return (
     <Box

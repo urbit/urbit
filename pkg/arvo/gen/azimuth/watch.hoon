@@ -1,4 +1,4 @@
-::  Change node url for azimuth
+::  Change node url and network for azimuth
 :-  %say
-|=  [* [url=@ta ~] ~]
-[%azimuth-poke %watch url]
+|=  [* [url=@ta net=?(%mainnet %ropsten %local) ~] ~]
+[%azimuth-poke %watch url net]
