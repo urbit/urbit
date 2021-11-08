@@ -941,7 +941,7 @@
       ship-quota  (~(put by ship-quota) ship next-quota)
     ==
   =^  [gud=? cards-1=(list update)]  state
-   (try-apply pre force.pend-tx raw-tx.pend-tx)
+   (try-apply pre [force raw-tx]:pend-tx)
   ?.  gud
     :_  state
     ::  %point and (%failed) %tx updates
@@ -957,7 +957,7 @@
     (emit cards-2)  :: %tx updates
   ::
     ?.  derive  ~
-    ::  defer updating predicted/ownership state from canonical
+    ::  defer updating predicted naive/ownership state from canonical
     ::
     [(wait:b:sys /predict (add update-rate now.bowl))]~
   ==
@@ -985,8 +985,7 @@
   =^  updates-1  state
     (predicted-state canonical-state)
   =^  cards  state
-    ?:  =(~ pending)
-      ~?  lverb  [dap.bowl %pending-empty]  [~ state]
+    ?:  =(~ pending)  [~ state]
     ?~  next-nonce
       ~?  lverb  [dap.bowl %missing-roller-nonce]  [~ state]
     ::  this guarantees that next-nonce is only incremented
@@ -1218,7 +1217,7 @@
     :_  state(derive ?:(derive | derive))
     %+  weld  cards
     ?.  derive  ~
-    ::  defer updating predicted/ownership state from canonical
+    ::  defer updating predicted naive/ownership state from canonical
     ::
     [(wait:b:sys /predict (add update-rate now.bowl))]~
   ::
