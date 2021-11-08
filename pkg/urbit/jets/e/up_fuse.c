@@ -21,7 +21,7 @@ u3qe_fuse(u3_atom m, u3_noun l, u3_noun r)
           return u3k(l);
         }
         else {
-          u3_noun hor = u3h(l);
+          u3_noun hor = u3h(r);
 
           if ( c3n == u3du(hor) )  {
             return u3m_bail(c3__exit);
@@ -75,7 +75,7 @@ u3qe_fuse(u3_atom m, u3_noun l, u3_noun r)
           return u3k(l);
         }
         else {
-          u3_noun hor = u3h(l);
+          u3_noun hor = u3h(r);
 
           if ( c3n == u3du(hor) )  {
             return u3m_bail(c3__exit);
