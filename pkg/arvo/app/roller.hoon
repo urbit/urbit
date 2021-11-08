@@ -836,9 +836,10 @@
 ++  on-action
   |=  =action
   ^-  (quip card _state)
+  =+  local=(team:title our.bowl src.bowl)
   ?-  -.action
-    %commit  on-timer
-    %config  (on-config +.action)
+    %commit  ?>(local on-timer)
+    %config  ?>(local (on-config +.action))
     %cancel  (cancel-tx +.action)
   ::
       %submit
