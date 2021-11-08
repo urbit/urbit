@@ -623,6 +623,25 @@
     unsigned-tx:lib
   prepare-for-sig:lib
 ::
+++  hash-raw-transaction
+  |=  [id=@t params=(map @t json)]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 4)
+    ~(params error:json-rpc id)
+  =+  ^-  $:  sig=(unit @)
+              l2-tx=(unit l2-tx)
+              from=(unit [=ship proxy:naive])
+          ==
+    =,  from-json
+    [(sig params) (tx params) (from params)]
+  ?:  |(?=(~ sig) ?=(~ from) ?=(~ l2-tx))
+    ~(parse error:json-rpc id)
+  =/  tx=(unit tx:naive)  (build-l2-tx u.l2-tx u.from params)
+  ?~  tx  ~(parse error:json-rpc id)
+  :+  %result  id
+  %+  hex:to-json  32
+  (hash-raw-tx:lib u.sig (gen-tx-octs:lib u.tx) u.tx)
+::
 ++  get-naive
   |=  [id=@t params=(map @t json) =^state:naive]
   ^-  response:rpc

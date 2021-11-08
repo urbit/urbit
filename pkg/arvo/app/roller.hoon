@@ -908,7 +908,7 @@
     ::
       =;  hash=@t
         (met 3 hash)^hash
-      (crip "0x{((x-co:co 20) keccak)}")
+      (crip "0x{((x-co:co 65) keccak)}")
     ::
       ~
     ==
