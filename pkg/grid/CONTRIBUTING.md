@@ -22,15 +22,15 @@ Where `component` is the closest most relevant area of the code base written as 
 
 ### Pull Requests
 
-A pull request (PR) should have a title similar in structure to our commit messages where it has a short identifier component followed by a very concise summary of the PR's intent. All PRs should have a description further laying out what it accomplishes. If the PR addresses certain Github issues, those should be referenced in the body of the description so they get linked. If there are visual or design changes screenshots should also be included.
+A pull request (PR) should have a title similar in structure to our commit messages where it has a short identifier component followed by a very concise summary of the PR's intent. All PRs should have a description further laying out what it accomplishes. If the PR addresses certain Github issues, those should be referenced in the body of the description so they get linked.
 
-PRs to this repo should currently ask for review from the following contributors:
+PRs to this repo should currently tag (or request review) from one of the following contributors:
 
 - [Liam - @liam-fitzgerald](https://github.com/liam-fitzgerald)
 - [Hunter - @arthyn](https://github.com/arthyn)
 - [James - @nerveharp](https://github.com/nerveharp)
 
-If visual or designs are changed please also request review from:
+If design or visual changes are made, please provide screenshots and also tag (or request a review) from one of the following contributors:
 
 - [Éd - @urcades](https://github.com/urcades)
 - [Gavin - @g-a-v-i-n](https://github.com/g-a-v-i-n)

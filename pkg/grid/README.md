@@ -6,7 +6,7 @@ Landscape is built primarily using [React], [Typescript], and [Tailwind CSS]. [V
 
 ## Getting Started
 
-To get started using Landscape first you need to run, `npm run bootstrap` at the top level of the greater urbit repo. This will install your npm dependencies and correctly link the current implementation of the packages at `pkg/npm/*` to your dependencies.
+To get started using Landscape first you need to run, `npm i && npm run bootstrap` at the top level of the greater urbit repo. This will install your npm dependencies and correctly link the current implementation of the packages at `pkg/npm/*` to your dependencies.
 
 If you intend to edit those packages will developing on Landscape, you should also have `npm run watch-libs` running to build and re-link them after every change.
 
