@@ -1,10 +1,10 @@
 :~  title+'System'
     info+'An app launcher for Urbit.'
     color+0xee.5432
-    glob-http+['https://bootstrap.urbit.org/glob-0v5.slogg.kqr7c.dm79h.c99un.6d9om.glob' 0v5.slogg.kqr7c.dm79h.c99un.6d9om]
+    glob-http+['https://bootstrap.urbit.org/glob-0v5.fdf99.nph65.qecq3.ncpjn.q13mb.glob' 0v5.fdf99.nph65.qecq3.ncpjn.q13mb]
     ::glob-ames+~zod^0v0
     base+'grid'
-    version+[1 0 0]
+    version+[1 0 1]
     website+'https://tlon.io'
     license+'MIT'
 ==

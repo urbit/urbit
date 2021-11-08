@@ -403,11 +403,12 @@
       (~(put by half-open) bin now.bowl)
     =/  existing  (get-lid archive/time bin) 
     =/  new  (merge-notification existing note)
+    =?  half-open  (lth 30 (lent body.new))
+      (~(del by half-open) bin)
     =.  poke-core
       (put-lid archive/time bin new)
     =.  poke-core  (del-lid lid bin)
-    =.  poke-core  (give %archived now.bowl unseen+~ (~(got re archive) time bin))
-    =.  poke-core  (give %archived now.bowl seen+~ (~(got re archive) time bin))
+    =.  poke-core  (give %archived time lid (~(got re archive) time bin))
     $(bins t.bins)
   ::
   ++  read-count
