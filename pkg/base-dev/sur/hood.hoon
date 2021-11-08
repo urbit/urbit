@@ -225,6 +225,7 @@
 ++  get-apps-want
   |=  [duz=(list dude) =rein]
   ^-  (list dude)
+  ?.  liv.rein  ~
   =.  duz  (skip duz ~(has in sub.rein))
   =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
   duz
