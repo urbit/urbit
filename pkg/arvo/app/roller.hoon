@@ -843,6 +843,10 @@
     %cancel  (cancel-tx +.action)
   ::
       %submit
+    ::  TODO: return [~ state] instead of crashing
+    ::  if naive state hasn't being retrieved yet?
+    ::
+    ?>  ?=(^ points.pre)
     %-  take-tx
     :*  force.action
         address.action
