@@ -1,12 +1,12 @@
 #include "all.h"
 
 u3_noun
-u3qe_gone(u3_atom k, u3_atom l, u3_atom m)
+u3qdu_gone(u3_atom k, u3_atom l, u3_atom m)
 {
   u3_noun a, b;
   u3_noun pro;
 
-  u3_noun n = u3qe_mask(m);
+  u3_noun n = u3qdu_mask(m);
 
   a = u3qc_dis(k, n);
   b = u3qc_dis(l, n);
@@ -21,7 +21,7 @@ u3qe_gone(u3_atom k, u3_atom l, u3_atom m)
 }
 
 u3_noun
-u3we_gone(u3_noun cor)
+u3wdu_gone(u3_noun cor)
 {
   u3_noun a, b, c;
 
@@ -33,7 +33,7 @@ u3we_gone(u3_noun cor)
   {
     return u3m_bail(c3__exit);
   } else {
-    return u3qe_gone(a, b, c);
+    return u3qdu_gone(a, b, c);
   }
 }
 

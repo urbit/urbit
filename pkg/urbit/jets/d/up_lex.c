@@ -1,13 +1,13 @@
 #include "all.h"
 
 c3_o
-u3qe_lex(u3_atom p, u3_atom k, u3_atom q, u3_atom l)
+u3qdu_lex(u3_atom p, u3_atom k, u3_atom q, u3_atom l)
 {
   return ( p == q ) ? u3qa_lth(k, l) : u3qa_lth(p, q);
 }
 
 u3_noun
-u3we_lex(u3_noun cor)
+u3wdu_lex(u3_noun cor)
 {
   u3_noun p, k, q, l;
 
@@ -20,7 +20,7 @@ u3we_lex(u3_noun cor)
   {
     return u3m_bail(c3__exit);
   } else {
-    return u3qe_lex(p, k, q, l);
+    return u3qdu_lex(p, k, q, l);
   }
 }
 

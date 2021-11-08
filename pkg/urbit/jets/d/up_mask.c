@@ -1,7 +1,7 @@
 #include "all.h"
 
 u3_noun
-u3qe_mask(u3_atom a)
+u3qdu_mask(u3_atom a)
 {
   u3_atom u, v, w, x, y;
   u3_atom pro;
@@ -27,7 +27,7 @@ u3qe_mask(u3_atom a)
 }
 
 u3_noun
-u3we_mask(u3_noun cor)
+u3wdu_mask(u3_noun cor)
 {
   u3_noun a;
 
@@ -36,7 +36,7 @@ u3we_mask(u3_noun cor)
   {
     return u3m_bail(c3__exit);
   } else {
-    return u3qe_mask(a);
+    return u3qdu_mask(a);
   }
 }
 

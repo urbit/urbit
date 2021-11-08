@@ -1,14 +1,21 @@
 #include "all.h"
 
 u3_noun
-u3qe_zero(u3_atom a, u3_atom b)
+u3qdu_pert(u3_atom k, u3_atom l)
 {
-  u3_atom d = u3qc_dis(a, b);
-  return ( d == 0 ) ? c3y : c3n;
+  u3_noun u;
+  u3_noun pro;
+
+  u = u3qc_mix(k, l);
+  pro = u3qdu_high(u);
+
+  u3z(u);
+
+  return pro;
 }
 
 u3_noun
-u3we_zero(u3_noun cor)
+u3wdu_pert(u3_noun cor)
 {
   u3_noun a, b;
 
@@ -18,7 +25,7 @@ u3we_zero(u3_noun cor)
   {
     return u3m_bail(c3__exit);
   } else {
-    return u3qe_zero(a, b);
+    return u3qdu_pert(a, b);
   }
 }
 

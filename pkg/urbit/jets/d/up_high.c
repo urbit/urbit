@@ -1,7 +1,7 @@
 #include "all.h"
 
 u3_noun
-u3qe_high(u3_atom a)
+u3qdu_high(u3_atom a)
 {
   u3_atom u, v;
   u3_noun pro;
@@ -18,7 +18,7 @@ u3qe_high(u3_atom a)
 }
 
 u3_noun
-u3we_high(u3_noun cor)
+u3wdu_high(u3_noun cor)
 {
   u3_noun a;
 
@@ -27,7 +27,7 @@ u3we_high(u3_noun cor)
   {
     return u3m_bail(c3__exit);
   } else {
-    return u3qe_high(a);
+    return u3qdu_high(a);
   }
 }
 

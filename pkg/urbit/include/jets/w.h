@@ -114,6 +114,16 @@
     u3_noun u3wdi_uni(u3_noun);
     u3_noun u3wdi_wyt(u3_noun);
 
+    u3_noun u3wdu_zero(u3_noun);
+    u3_noun u3wdu_mask(u3_noun);
+    u3_noun u3wdu_gone(u3_noun);
+    u3_noun u3wdu_high(u3_noun);
+    u3_noun u3wdu_pert(u3_noun);
+    u3_noun u3wdu_lex(u3_noun);
+    u3_noun u3wdu_fuse(u3_noun);
+    u3_noun u3wdu_funk(u3_noun);
+    u3_noun u3wdu_wane(u3_noun);
+
   /** Tier 5.
   **/
     u3_noun u3we_cue(u3_noun);
@@ -209,16 +219,6 @@
 
     u3_noun u3we_en_base16(u3_noun);
     u3_noun u3we_de_base16(u3_noun);
-
-    u3_noun u3we_zero(u3_noun);
-    u3_noun u3we_mask(u3_noun);
-    u3_noun u3we_gone(u3_noun);
-    u3_noun u3we_high(u3_noun);
-    u3_noun u3we_pert(u3_noun);
-    u3_noun u3we_lex(u3_noun);
-    u3_noun u3we_fuse(u3_noun);
-    u3_noun u3we_funk(u3_noun);
-    u3_noun u3we_wane(u3_noun);
 
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);
