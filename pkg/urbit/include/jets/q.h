@@ -107,6 +107,10 @@
     u3_noun u3qdi_uni(u3_noun, u3_noun);
     u3_noun u3qdi_wyt(u3_noun);
 
+    // bal FIXME
+    u3_atom u3wdu_size(u3_noun);
+
+    // rad FIXME
     u3_noun u3qdu_zero(u3_atom, u3_atom);
     u3_noun u3qdu_mask(u3_atom);
     u3_noun u3qdu_gone(u3_atom, u3_atom, u3_atom);

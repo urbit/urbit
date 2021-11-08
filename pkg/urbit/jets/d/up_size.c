@@ -1,7 +1,7 @@
 #include "all.h"
 
 u3_atom
-u3qe_size(u3_noun t)
+u3qdu_size(u3_noun t)
 {
   if ( u3_nul == t ) {
     return 0;
@@ -19,7 +19,7 @@ u3qe_size(u3_noun t)
 }
 
 u3_atom
-u3we_size(u3_noun cor)
+u3wdu_size(u3_noun cor)
 {
   u3_noun t;
 
@@ -27,7 +27,7 @@ u3we_size(u3_noun cor)
   {
     return u3m_bail(c3__exit);
   } else {
-    return u3qe_size(t);
+    return u3qdu_size(t);
   }
 }
 
