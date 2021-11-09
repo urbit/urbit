@@ -6,10 +6,16 @@
     default-agent,
     verb,
     dbug
+::  Generally don't update the snapshot until we have clay tombstoning.
+::  To update, run:
+::    =e -build-file %/lib/ethereum/hoon
+::    =l .^((list event-log:rpc:e) %gx /=azimuth=/logs/noun)
+::    */app/azimuth/logs/eth-logs &eth-logs l
+::
 /*  snap  %eth-logs  /app/azimuth/logs/eth-logs
 ::
 =/  last-snap  ::  maybe just use the last one?
-  %+  roll  `(list event-log:rpc:ethereum)`~  ::snap
+  %+  roll  `(list event-log:rpc:ethereum)`snap  ::~
   |=  [log=event-log:rpc:ethereum last=@ud]
   ?~  mined.log
     last
@@ -24,7 +30,7 @@
 +$  app-state
   $:  %0
       url=@ta
-      net=network
+      =net
       whos=(set ship)
       nas=^state:naive
       own=owners
@@ -37,11 +43,10 @@
       [%listen whos=(list ship) =source:jael]
       ::  %watch: configure node url and network
       ::
-      [%watch url=@ta net=network]
+      [%watch url=@ta =net]
   ==
 ::
 +$  tagged-diff  [=id:block diff:naive]
-+$  network      ?(%mainnet %ropsten %local)
 +$  card         card:agent:gall
 ::  TODO: add to state?
 ::
@@ -117,9 +122,12 @@
           net.state   net.poke
           url.state   url.poke
           own.state   ~
-          logs.state  ~
+          logs.state  ?:(?=(%default net.poke) snap ~)
         ==
-      [start:do this]
+      %-  %-  slog  :_  ~
+          leaf+"azimuth: loading snapshot with {<(lent logs.state)>} events"
+      =^  snap-cards  state  (run-logs:do logs.state)
+      [(weld (jael-update:do (to-udiffs:do snap-cards)) start:do) this]
     ==
   ::
   ++  on-watch
@@ -138,7 +146,13 @@
         ~
       (~(put in whos.state) u.who)
     ^-  (quip card _this)
-    [start:do this]
+    ::  Slow to recalculate all the diffs, but this is necessary to make
+    ::  sure Jael gets the updates from the snapshot
+    ::
+    %-  %-  slog  :_  ~
+        leaf+"azimuth: loading snapshot with {<(lent logs.state)>} events"
+    =/  res  (%*(run-logs do nas.state *^state:naive) logs.state)
+    [(weld (jael-update:do (to-udiffs:do -.res)) start:do) this]
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
@@ -291,7 +305,7 @@
 ++  jael-update
   |=  =udiffs:point
   ^-  (list card)
-  ?:  &  ~  ::  XX
+  ::  ?:  &  ~  ::  XX
   :-  [%give %fact ~[/] %azimuth-udiffs !>(udiffs)]
   |-  ^-  (list card)
   ?~  udiffs
@@ -314,14 +328,15 @@
   [%give %fact ~[/event] %naive-diffs !>(+.tag)]
 ::
 ++  get-network
-  |=  =network
+  |=  =net
   ^-  [azimuth=@ux naive=@ux chain-id=@ launch=@]
   =<  [azimuth naive chain-id launch]
   =,  azimuth
-  ?-  network
+  ?-  net
     %mainnet  mainnet-contracts
     %ropsten  ropsten-contracts
     %local    local-contracts
+    %default  contracts
   ==
 ::
 ++  start

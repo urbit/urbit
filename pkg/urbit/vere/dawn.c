@@ -336,12 +336,9 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
   url = _dawn_purl(rank);
 
-  //  XX require https?
-  //TODO  make L2 endpoint real
-  //
-  c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
-    u3_Host.ops_u.eth_c :
-    "http://l2.urbit.org:1234";
+  c3_c* url_c = ( 0 != u3_Host.ops_u.nav_c ) ?
+    u3_Host.ops_u.nav_c :
+    "https://roller.urbit.org/v1/azimuth";
 
   {
     //  +point:azimuth: on-chain state
@@ -378,10 +375,6 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
     u3l_log("boot: verifying keys\r\n");
 
-    //  TODO: remove when L2 is supported
-
-    u3l_log("boot: if you're trying to start an L2 ship,"
-            " upgrade your binary\r\n");
     //  (each seed (lest error=@tas))
     //
     sed = u3dq("veri:dawn", u3k(ship), u3k(feed), u3k(pot), u3k(liv));

@@ -114,17 +114,17 @@
         =,  dejs-soft:format
         =-  (ar (ot id+so result+(ot network+- ~) ~))
         %-  ot
-        :~  :-  'rift'  ni
-            :-  'keys'  (ot 'life'^ni ~)
+        :~  :-  'rift'  (su dim:ag)
+            :-  'keys'  (ot 'life'^(su dim:ag) ~)
             :-  'keys'  %+  cu  pass-from-eth:azimuth
                         %-  ot
-                        :~  'crypt'^(cu (lead 32) ni)
-                            'auth'^(cu (lead 32) ni)
-                            'suite'^ni
+                        :~  'crypt'^(cu (lead 32) (su ;~(pfix (jest '0x') hex)))
+                            'auth'^(cu (lead 32) (su ;~(pfix (jest '0x') hex)))
+                            'suite'^(su dim:ag)
                         ==
         ==
       ?~  res
-        ~&([%czar-take-dawn %invalid-json] ~)
+        ~&([%czar-take-dawn %incomplete-json] ~)
       :-  ~
       %+  roll  u.res
       |=  $:  [id=@t deet=[=rift =life =pass]]
@@ -179,19 +179,19 @@
           :-  'network'
           %-  ot
           ::TODO  dedupe with +czar
-          :~  'rift'^ni
-              'keys'^(ot 'life'^ni ~)
+          :~  'rift'^(su dim:ag)
+              'keys'^(ot 'life'^(su dim:ag) ~)
             ::
               :-  'keys'
               %+  cu  pass-from-eth:azimuth
               %-  ot
-              :~  'crypt'^(cu (lead 32) ni)
-                  'auth'^(cu (lead 32) ni)
-                  'suite'^ni
+              :~  'crypt'^(cu (lead 32) (su ;~(pfix (jest '0x') hex)))
+                  'auth'^(cu (lead 32) (su ;~(pfix (jest '0x') hex)))
+                  'suite'^(su dim:ag)
               ==
             ::
               ::TODO  inconsistent @p string
-              'sponsor'^(ot 'has'^bo 'who'^(su fed:ag) ~)
+              'sponsor'^(ot 'has'^bo 'who'^ni ~)
             ::
               ::TODO  escape
               ::TODO  what if escape or sponsor not present? possible?
@@ -208,7 +208,7 @@
       =/  res=(unit (list @t))
         ((ot result+(ar so) ~) u.jon)
       ?~  res
-        ~&([%turf-take-dawn %invalid-response rep] ~)
+        ~&([%turf-take-dawn %invalid-response] ~)
       ::  remove duplicates, parse into turfs
       ::
       =-  `doz

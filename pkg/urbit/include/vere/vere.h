@@ -278,6 +278,7 @@
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
         c3_c*   eth_c;                      //  -e, ethereum node url
+        c3_c*   nav_c;                      //  -E, naive node url
         c3_c*   fak_c;                      //  -F, fake ship
         c3_c*   gen_c;                      //  -G, czar generator
         c3_o    gab;                        //  -g, test garbage collection

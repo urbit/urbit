@@ -208,7 +208,7 @@
         app
         %poke
         %azimuth-poke
-        !>([%watch (crip (en-purl:html purl))])
+        !>([%watch (crip (en-purl:html purl)) %default])
     ==
   ::
   ++  sein                                              ::  sponsor

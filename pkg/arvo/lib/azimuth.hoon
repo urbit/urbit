@@ -78,7 +78,7 @@
     ::  #  constants
     ::
     ::  contract addresses
-    ++  contracts  ropsten-contracts
+    ++  contracts  mainnet-contracts
     ++  mainnet-contracts
       |%
       ::  azimuth: data contract
@@ -99,7 +99,7 @@
         0xf790.8ab1.f1e3.52f8.3c5e.bc75.051c.0565.aeae.a5fb
       ::
       ++  naive
-        0x45bc.b745.a1af.e67a.c877.e107.5478.2329.4ba9.0899
+        0xeb70.029c.fb3c.53c7.78ea.f68c.d28d.e725.390a.1fe9
       ::
       ::  launch: block number of azimuth deploy
       ::
