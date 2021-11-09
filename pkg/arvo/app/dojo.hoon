@@ -910,8 +910,12 @@
         =/  has-mark  .?((get-fit:clay he-beak %mar p.bil))
         ?.  has-mark  ::  yolo
           (dy-hand p.bil q.cag)
-        =+  .^(=tube:clay cc+(en-beam he-beak /[p.cag]/[p.bil]))
-        (dy-hand p.bil (tube q.cag))
+        =/  res
+          =+  .^(=tube:clay cc+(en-beam he-beak /[p.cag]/[p.bil]))
+          (mule |.((tube q.cag)))
+        ?:  ?=(%| -.res)
+          (he-diff(poy ~) %tan leaf+"dojo: %as %{(trip p.bil)} failed" p.res)
+        (dy-hand p.bil p.res)
       ::
           %do
         =/  gat  (dy-eval p.bil)
