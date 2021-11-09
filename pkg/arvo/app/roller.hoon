@@ -943,18 +943,18 @@
   =*  ship  ship.from.tx.raw-tx.pend-tx
   =/  [exceeded=? next-quota=@]  (quota-exceeded ship)
   ?:  exceeded  [~ state]
-  =:  pending     (snoc pending pend-tx)
-      ship-quota  (~(put by ship-quota) ship next-quota)
-    ==
   =^  [gud=? cards-1=(list update)]  state
    (try-apply pre [force raw-tx]:pend-tx)
+  =^  cards-2  history
+    (update-history [pend-tx]~ ?:(gud %pending %failed))
   ?.  gud
     :_  state
     ::  %point and (%failed) %tx updates
     ::
     (emit cards-1)
-  =^  cards-2  history
-    (update-history [pend-tx]~ %pending)
+  =:  pending     (snoc pending pend-tx)
+      ship-quota  (~(put by ship-quota) ship next-quota)
+    ==
   ::  toggle derivation
   ::
   :_  state(derive ?:(derive | derive))

@@ -491,6 +491,15 @@
     ~(params error:json-rpc id)
   [%result id (ships:to-json (scry u.ship))]
 ::
+++  spawns-remaining
+  |=  [id=@t params=(map @t json) scry=$-(@p (list @p))]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(ship:from-json params)
+    ~(params error:json-rpc id)
+  [%result id (numb:enjs:format (lent (scry u.ship)))]
+::
 ++  process-rpc
   |=  [id=@t params=(map @t json) action=l2-tx over-quota=$-(@p ?)]
   ^-  [(unit cage) response:rpc]
@@ -611,17 +620,16 @@
     ~(parse error:json-rpc id)
   =/  tx=(unit tx:naive)  (build-l2-tx u.l2-tx u.from params)
   ?~  tx  ~(parse error:json-rpc id)
-  =/  =octs  (gen-tx-octs:lib u.tx)
+  =/  =octs
+    %.  [chain-id u.nonce (gen-tx-octs:lib u.tx)]
+    ?:  header
+      unsigned-tx:lib
+    prepare-for-sig:lib
   :+  %result  id
-  =;  =keccak
-    %+  hex:to-json  32
-    ?.  reverse  keccak
-    (reverse-hash:lib keccak)
-  %-  hash-tx:lib
-  %.  [chain-id u.nonce octs]
-  ?:  header
-    unsigned-tx:lib
-  prepare-for-sig:lib
+  %-  hex:to-json
+  ?:  reverse
+    p.octs^(rev 3 octs)
+  32^(hash-tx:lib octs)
 ::
 ++  hash-raw-transaction
   |=  [id=@t params=(map @t json)]
