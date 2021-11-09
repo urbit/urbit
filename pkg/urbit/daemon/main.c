@@ -88,7 +88,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
+                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:E:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -139,6 +139,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'e': {
         u3_Host.ops_u.eth_c = strdup(optarg);
+        break;
+      }
+      case 'E': {
+        u3_Host.ops_u.nav_c = strdup(optarg);
         break;
       }
       case 'F': {
@@ -445,6 +449,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-D            Recompute from events\n",
     "-d            Daemon mode; implies -t\n",
     "-e url        Ethereum gateway\n",
+    "-E url        Naive (L2) gateway\n",
     "-F ship       Fake keys; also disables networking\n",
     "-g            Set GC flag\n",
     "-i jam_file   import pier state\n",
