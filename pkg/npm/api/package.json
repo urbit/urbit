@@ -1,6 +1,6 @@
 {
   "name": "@urbit/api",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A library that provides bindings and types for Urbit's various userspace desks",
   "repository": {
     "type": "git",
