@@ -409,7 +409,16 @@
       ==
     take-commit:(abed:vats %base)
   =?  kiln  ?=(^ wef)
-    =/  except=(set desk)  (sy %base %kids ~)
+    =/  except=(set desk)
+      =/  base=(set desk)  (sy %base %kids ~)
+      %-  ~(gas in base)
+      %+  murn  ~(tap by ark.old)
+      |=  [loc=desk ark=arak]
+      ^-  (unit desk)
+      ?.  liv.rein.ark  `loc
+      ?~  rail.ark  `loc
+      ?:  paused.u.rail.ark  `loc
+      ~
     (bump:vats u.wef except force=%.n)
   =.  wef  ~
   abet:kiln
@@ -605,7 +614,7 @@
       vats
     ~>  %slog.(fmt "{<lac>} pausing updates")
     =/  rel  ral
-    =.  rail.rak  `rel(paused &, aeon 0)
+    =.  rail.rak  `rel(paused &, aeon 0, next ~)
     vats
   ::
   ::  +gall-lyv: watch gall source for reloading
