@@ -51,7 +51,11 @@ window.airlock = await UrbitHttpApi.Urbit.authenticate({
     code: 'lidlut-tabwed-pillex-ridrup',
     verbose: true
 });
-window.airlock.subscribe('chat-view', '/primary', { event: console.log });</pre
+window.airlock.subscribe({ 
+  app: 'graph-store', 
+  path: '/updates',
+  event: console.log 
+});</pre
       >
     </details>
 
@@ -103,11 +107,15 @@ window.airlock.subscribe('chat-view', '/primary', { event: console.log });</pre
     async function blastOff() {
       window.airlock = await UrbitHttpApi.Urbit.authenticate({
         ship: 'zod',
-        url: 'localhost:8080',
+        url: 'localhost',
         code: 'lidlut-tabwed-pillex-ridrup',
         verbose: true,
       });
-      window.airlock.subscribe('chat-view', '/primary', { event: console.log });
+      window.airlock.subscribe({
+        app: 'graph-store',
+        path: '/updates',
+        event: console.log,
+      });
       document.body.removeChild(document.getElementById('blastoff'));
     }
   </script>
