@@ -1,41 +1,11 @@
 {
-  "comments": false,
-  "targets": {
-    "esmodules": true,
-    "node": "current",
-    "safari": "11"
-  },
   "presets": [
     [
       "@babel/preset-env",
       {
-        "useBuiltIns": false,
-        "bugfixes": true,
-        "loose": true,
-        "debug": true
-      }
-    ],
-    [
-      "@babel/preset-typescript",
-      {
-        "optimizeConstEnums": true
+        "targets": "> 1%",
+        "useBuiltIns": "usage"
       }
     ]
-  ],
-  "plugins": [
-    [
-      "@babel/plugin-transform-runtime",
-      {
-        "regenerator": false, // es2017 support async functions
-        "useESModules": true
-      }
-    ],
-    [
-      "polyfill-corejs3",
-      {
-        "method": "usage-pure"
-      }
-    ],
-    "@babel/plugin-proposal-export-namespace-from"
   ]
 }
