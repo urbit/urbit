@@ -5,7 +5,7 @@
 |%
 +$  owner   [=proxy:naive =address:naive]
 +$  owners  (jug owner ship)
-+$  net     ?(%mainnet %ropsten %local)
++$  net     ?(%mainnet %ropsten %local %default)
 ::
 +$  config
   $%  [%frequency frequency=@dr]
