@@ -125,6 +125,8 @@
     u3_noun u3qdu_lrdub(u3_noun);
     u3_noun u3qdu_rldub(u3_noun);
     c3_o u3qdu_win(u3_atom, u3_noun, u3_atom, u3_noun);
+    u3_noun u3qdu_toy(u3_noun, u3_noun);
+    u3_noun u3qdu_sec(u3_noun, u3_noun);
     u3_noun u3qdu_zero(u3_atom, u3_atom);
     u3_noun u3qdu_mask(u3_atom);
     u3_noun u3qdu_gone(u3_atom, u3_atom, u3_atom);

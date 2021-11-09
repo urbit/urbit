@@ -132,6 +132,8 @@
     u3_noun u3wdu_lrdub(u3_noun);
     u3_noun u3wdu_rldub(u3_noun);
     u3_noun u3wdu_win(u3_noun);
+    u3_noun u3wdu_toy(u3_noun);
+    u3_noun u3wdu_sec(u3_noun);
     u3_noun u3wdu_zero(u3_noun);
     u3_noun u3wdu_mask(u3_noun);
     u3_noun u3wdu_gone(u3_noun);

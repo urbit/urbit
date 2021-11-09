@@ -19,7 +19,6 @@ static c3_c* no_hashes[] = { 0 };
 
 // FIXME move me to section two
 
-// balancing internals
 static u3j_harm _140_two_up_size_a[] = {{".2", u3wdu_size, c3y}, {}};
 static u3j_harm _140_two_up_llos_a[] = {{".2", u3wdu_llos, c3y}, {}};
 static u3j_harm _140_two_up_rlos_a[] = {{".2", u3wdu_rlos, c3y}, {}};
@@ -37,11 +36,9 @@ static u3j_harm _140_two_up_lldub_a[] = {{".2", u3wdu_lldub, c3y}, {}};
 static u3j_harm _140_two_up_lrdub_a[] = {{".2", u3wdu_lrdub, c3y}, {}};
 static u3j_harm _140_two_up_rldub_a[] = {{".2", u3wdu_rldub, c3y}, {}};
 static u3j_harm _140_two_up_rrdub_a[] = {{".2", u3wdu_rrdub, c3y}, {}};
-// static u3j_harm _140_two_up_toy_a[] = {{".2", u3wdu_toy, c3y}, {}};
-// static u3j_harm _140_two_up_sec_a[] = {{".2", u3wdu_sec, c3y}, {}};
+static u3j_harm _140_two_up_toy_a[] = {{".2", u3wdu_toy, c3y}, {}};
+static u3j_harm _140_two_up_sec_a[] = {{".2", u3wdu_sec, c3y}, {}};
 static u3j_harm _140_two_up_win_a[] = {{".2", u3wdu_win, c3y}, {}};
-
-// radix tree internals
 static u3j_harm _140_two_up_zero_a[] = {{".2", u3wdu_zero, c3y}, {}};
 static u3j_harm _140_two_up_mask_a[] = {{".2", u3wdu_mask, c3y}, {}};
 static u3j_harm _140_two_up_gone_a[] = {{".2", u3wdu_gone, c3y}, {}};
@@ -53,8 +50,8 @@ static u3j_harm _140_two_up_funk_a[] = {{".2", u3wdu_funk, c3n}, {}};
 static u3j_harm _140_two_up_wane_a[] = {{".2", u3wdu_wane, c3n}, {}};
 
 static u3j_core _140_two_up_d[] =
-  { // balancing internals
-    { "size", 7, _140_two_up_size_a, 0, no_hashes },
+  {
+    // { "size", 7, _140_two_up_size_a, 0, no_hashes },
     // { "llos", 7, _140_two_up_llos_a, 0, no_hashes },
     // { "rlos", 7, _140_two_up_rlos_a, 0, no_hashes },
     // { "lbal", 7, _140_two_up_lbal_a, 0, no_hashes },
@@ -73,8 +70,7 @@ static u3j_core _140_two_up_d[] =
     // { "rrdub", 7, _140_two_up_rrdub_a, 0, no_hashes },
     // { "toy", 7, _140_two_up_toy_a, 0, no_hashes },
     // { "sec", 7, _140_two_up_sec_a, 0, no_hashes },
-    { "win", 7, _140_two_up_win_a, 0, no_hashes },
-    // radix tree internals
+    // { "win", 7, _140_two_up_win_a, 0, no_hashes },
     { "zero", 7, _140_two_up_zero_a, 0, no_hashes },
     { "mask", 7, _140_two_up_mask_a, 0, no_hashes },
     { "gone", 7, _140_two_up_gone_a, 0, no_hashes },
