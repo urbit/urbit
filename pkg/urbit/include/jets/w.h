@@ -114,10 +114,12 @@
     u3_noun u3wdi_uni(u3_noun);
     u3_noun u3wdi_wyt(u3_noun);
 
-    // bal FIXME
     u3_noun u3wdu_size(u3_noun);
-
-    // rad FIXME
+    u3_noun u3wdu_llos(u3_noun);
+    u3_noun u3wdu_rlos(u3_noun);
+    u3_noun u3wdu_llsin(u3_noun);
+    u3_noun u3wdu_rrsin(u3_noun);
+    u3_noun u3wdu_win(u3_noun);
     u3_noun u3wdu_zero(u3_noun);
     u3_noun u3wdu_mask(u3_noun);
     u3_noun u3wdu_gone(u3_noun);
