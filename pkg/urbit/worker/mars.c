@@ -10,24 +10,20 @@
 ::  peek=[gang (each path $%([%once @tas @tas path] [%beam @tas beam]))]
 ::  ovum=ovum
 ::
-|$  [peek ovum]
-|%
-::  +task: from urth to mars
-::
 ::    next steps:
 ::    - |mass should be a query of the serf directly
 ::    - add duct or vane stack for spinner
 ::
-+$  task
+|$  [peek ovum]
+|%
++$  task                                                ::  urth -> mars
   $%  [%live ?(%meld %pack) ~] :: XX rename
       [%exit ~]
       [%peek mil=@ peek]
       [%poke mil=@ ovum]  ::  XX replacement y/n
       [%sync ?(%cram %save) ~] :: XX remove cram?
   ==
-::  +gift: from mars to urth
-::
-+$  gift
++$  gift                                                ::  mars -> urth
   $%  [%live ~]
       [%flog cord]
       [%slog pri=@ tank]
@@ -39,6 +35,8 @@
 --
 */
 
+/* _mars_fact(): commit a fact and enqueue its effects.
+*/
 static void
 _mars_fact(u3_mars* mar_u,
            u3_noun    job,
@@ -75,6 +73,8 @@ _mars_fact(u3_mars* mar_u,
   }
 }
 
+/* _mars_gift(): enqueue response message.
+*/
 static void
 _mars_gift(u3_mars* mar_u, u3_noun pro)
 {
@@ -112,11 +112,13 @@ _mars_make_crud(u3_noun job, u3_noun dud)
   return new;
 }
 
+/* _mars_poke(): attempt to compute an event.
+*/
 static c3_o
-_mars_poke(c3_w     mil_w,
-           c3_o     rep_o,
-           u3_noun*   eve,
-           u3_noun*   out)
+_mars_poke(c3_w   mil_w,
+           c3_o   rep_o,
+           u3_noun* eve,
+           u3_noun* out)
 {
   u3_noun pro;
 
@@ -144,7 +146,8 @@ _mars_poke(c3_w     mil_w,
   }
 }
 
-
+/* _mars_work(): perform a task.
+*/
 static c3_o
 _mars_work(u3_mars* mar_u, u3_noun jar)
 {
@@ -255,7 +258,7 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
 
         case c3__pack: {
           u3z(jar);
-          u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
+          u3a_print_memory(stderr, "mars: pack: gained", u3m_pack());
         } break;
 
         case c3__meld: {
@@ -279,24 +282,28 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
   return c3y;
 }
 
+/* _mars_work(): deserialize a task.
+*/
 static u3_weak
 _mars_cue(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 {
   u3_weak jar;
 
-#ifdef SERF_TRACE_CUE
-  u3t_event_trace("serf ipc cue", 'B');
+#ifdef MARS_TRACE_CUE
+  u3t_event_trace("mars ipc cue", 'B');
 #endif
 
   jar = u3s_cue_xeno_with(mar_u->sil_u, len_d, hun_y);
 
-#ifdef SERF_TRACE_CUE
-  u3t_event_trace("serf ipc cue", 'E');
+#ifdef MARS_TRACE_CUE
+  u3t_event_trace("mars ipc cue", 'E');
 #endif
 
   return jar;
 }
 
+/* _mars_flush(): send pending gifts.
+*/
 static void
 _mars_flush(u3_mars* mar_u)
 {
@@ -341,6 +348,8 @@ top:
   }
 }
 
+/* u3_mars_kick(): maybe perform a task.
+*/
 c3_o
 u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 {
@@ -374,6 +383,8 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
   return ret_o;
 }
 
+/* _mars_disk_cb(): mars commit result callback.
+*/
 static void
 _mars_timer_cb(uv_timer_t* tim_u)
 {
@@ -383,8 +394,10 @@ _mars_timer_cb(uv_timer_t* tim_u)
   _mars_flush(mar_u);
 }
 
+/* _mars_disk_cb(): mars commit result callback.
+*/
 static void
-_mars_save_done(void* ptr_v, c3_d eve_d, c3_o ret_o)
+_mars_disk_cb(void* ptr_v, c3_d eve_d, c3_o ret_o)
 {
   u3_mars* mar_u = ptr_v;
 
@@ -597,7 +610,7 @@ u3_mars_init(c3_c*    dir_c,
     }
   }
 
-  u3_disk_async(mar_u->log_u, mar_u, _mars_save_done);
+  u3_disk_async(mar_u->log_u, mar_u, _mars_disk_cb);
 
   //  XX check return, make interval configurable
   //
@@ -614,6 +627,8 @@ u3_mars_init(c3_c*    dir_c,
 static u3_noun
 _mars_wyrd_card(c3_m nam_m, c3_w ver_w, c3_l sev_l)
 {
+  //  ghetto (scot %ta)
+  //
   u3_noun ver = u3nt(c3__vere, u3i_string("~." URBIT_VERSION), u3_nul);
   // u3_noun sen = u3dc("scot", c3__uv, sev_l); //  lol no
   u3_noun sen = u3i_string("0v1s.vu178");
@@ -753,16 +768,6 @@ typedef struct _u3_meta {
   c3_w lif_w;
 } u3_meta;
 
-/*
-$:  pill=[p=@ q=(unit ovum)]
-    $=  vent
-    $%  [%fake p=ship]
-        [%dawn p=seed]
-    ==
-    more=(list ovum)
-==
-*/
-
 /* _mars_boot_make(): construct boot sequence
 */
 static c3_o
@@ -894,6 +899,18 @@ _mars_boot_make(mars_input* inp_u,
   return c3y;
 }
 
+/* u3_mars_boot(): boot a ship.
+*
+*  $=  com
+*  $:  pill=[p=@ q=(unit ovum)]
+*      $=  vent
+*      $%  [%fake p=ship]
+*          [%dawn p=seed]
+*      ==
+*      more=(list ovum)
+*  ==
+*
+*/
 c3_o
 u3_mars_boot(c3_c* dir_c, u3_noun com)
 {
@@ -925,7 +942,7 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
   u3_disk* log_u;
 
   if ( !(log_u = u3_disk_init(dir_c)) ) {
-    fprintf(stderr, "boot: dist init fail\n");
+    fprintf(stderr, "boot: disk init fail\r\n");
     return c3n;
   }
 

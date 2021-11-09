@@ -299,6 +299,8 @@ u3v_poke(u3_noun ovo)
   return pro;
 }
 
+/* _cv_poke_eve(): u3v_poke w/out u3A->now XX
+*/
 static u3_noun
 _cv_poke_eve(u3_noun sam)
 {

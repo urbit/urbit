@@ -14,9 +14,6 @@ struct _u3_disk_walk {
   c3_o          liv_o;
 };
 
-static void
-_disk_commit(u3_disk* log_u);
-
 /* _disk_commit_done(): commit complete.
  */
 static void
@@ -64,6 +61,9 @@ _disk_commit_done(u3_disk* log_u)
     log_u->put_u.ent_u = 0;
   }
 }
+
+static void
+_disk_commit(u3_disk* log_u);
 
 /* _disk_commit_after_cb(): on the main thread, finish write
 */
@@ -207,6 +207,8 @@ _disk_commit(u3_disk* log_u)
   }
 }
 
+/* _disk_plan(): enqueue serialized fact (feat) for persistence.
+*/
 static void
 _disk_plan(u3_disk* log_u,
            c3_l     mug_l,
@@ -413,7 +415,7 @@ u3_disk_walk_live(u3_disk_walk* wok_u)
   return wok_u->liv_o;
 }
 
-/* u3_disk_walk_live(): get next fact.
+/* u3_disk_walk_step(): get next fact.
 */
 c3_o
 u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
