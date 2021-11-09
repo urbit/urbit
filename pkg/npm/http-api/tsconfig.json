@@ -1,23 +1,24 @@
 {
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "@types"],
   "compilerOptions": {
-	  "outDir": "./dist",
+    "outDir": "./dist",
     "module": "ESNext",
-    "noImplicitAny": true,
     "target": "ESNext",
-    "pretty": true,
+    "lib": ["ESNext", "DOM"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "sourceMap": true,
     "strict": false,
+    "pretty": true,
+    "noImplicitAny": true,
     "noErrorTruncation": true,
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "*" : ["./node_modules/@types/*", "*"]
+      "*": ["./node_modules/@types/*", "*"]
     }
   }
 }
