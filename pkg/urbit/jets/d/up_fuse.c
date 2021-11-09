@@ -1,20 +1,15 @@
 #include "all.h"
-#include <stdio.h> // FIXME
 
 u3_noun
 u3qdu_fuse(u3_atom m, u3_noun l, u3_noun r)
 {
   if ( u3_nul == l ) {
-    printf("we're alive 0\n");
     return u3k(r);
   }
   else {
     u3_noun hol = u3h(l);
 
-    // FIXME print value of hol here ?
-
-    if ( c3n == u3du(hol) )  {
-      printf("we're about to die\n");
+    if ( c3n == u3ud(hol) )  {
       return u3m_bail(c3__exit);
     }
     else switch ( hol ) {
@@ -23,13 +18,12 @@ u3qdu_fuse(u3_atom m, u3_noun l, u3_noun r)
 
       case c3__tip: {
         if ( u3_nul == r ) {
-          printf("we're alive 1\n");
           return u3k(l);
         }
         else {
           u3_noun hor = u3h(r);
 
-          if ( c3n == u3du(hor) )  {
+          if ( c3n == u3ud(hor) )  {
             return u3m_bail(c3__exit);
           }
           else switch ( hor ) {
@@ -37,9 +31,6 @@ u3qdu_fuse(u3_atom m, u3_noun l, u3_noun r)
               return u3m_bail(c3__exit);
 
             case c3__tip: {
-
-              printf("we're alive 2\n");
-
               u3_noun p_l, k_l, v_l;
               u3_noun p_r, k_r, v_r;
 
@@ -57,8 +48,6 @@ u3qdu_fuse(u3_atom m, u3_noun l, u3_noun r)
             }
 
             case c3__bin: {
-              printf("we're alive 3\n");
-
               u3_noun p_l, k_l, v_l;
               u3_noun p_r, k_r, v_r, m_r, l_r, r_r;
               u3_noun q_r;
@@ -83,13 +72,12 @@ u3qdu_fuse(u3_atom m, u3_noun l, u3_noun r)
 
       case c3__bin: {
         if ( u3_nul == r ) {
-          printf("we're alive 4\n");
           return u3k(l);
         }
         else {
           u3_noun hor = u3h(r);
 
-          if ( c3n == u3du(hor) )  {
+          if ( c3n == u3ud(hor) )  {
             return u3m_bail(c3__exit);
           }
           else switch ( hor ) {
@@ -97,8 +85,6 @@ u3qdu_fuse(u3_atom m, u3_noun l, u3_noun r)
               return u3m_bail(c3__exit);
 
             case c3__tip: {
-              printf("we're alive 5\n");
-
               u3_noun p_l, k_l, v_l, m_l, l_l, r_l;
               u3_noun p_r, k_r, v_r;
               u3_noun q_l;
@@ -119,8 +105,6 @@ u3qdu_fuse(u3_atom m, u3_noun l, u3_noun r)
             }
 
             case c3__bin: {
-              printf("we're alive 6\n");
-
               u3_noun p_l, k_l, v_l, m_l, l_l, r_l;
               u3_noun p_r, k_r, v_r, m_r, l_r, r_r;
               u3_noun q_l;
