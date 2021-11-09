@@ -60,7 +60,7 @@
     =.  net.state  %local
     :_  this
     :~  [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]
-        [%pass /old-tracker %agent [our.bowl %azimuth-tracker] %poke %kiln-nuke !>([%azimuth-tracker %base])]
+        [%pass /old-tracker %agent [our.bowl %hood] %poke %kiln-nuke !>([%azimuth-tracker %base])]
         [%pass /lo %arvo %j %listen ~ [%| dap.bowl]]
     ==
   ::
