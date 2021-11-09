@@ -16,6 +16,82 @@
 --
 ::
 |%
+++  test-size
+  ;:  weld
+    %+  expect-eq
+      !>  0
+      !>  (size:cor ~)
+    %+  expect-eq
+      !>  1
+      !>  (size:cor [%llos s=1 p=[n=[k=1 p=1 v=1] l=~ m=1 r=~]])
+  ==
+::
+++  test-llos
+  =/  lnode
+    :^    n=[k=2 p=2 v=2]
+        l=~
+      m=1
+    r=[%rlos s=1 p=[n=[k=3 p=3 v=3] l=~ m=2 r=~]]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [%llos s=1 p=[n=[k=1 p=1 v=1] l=~ m=1 r=~]]
+      !>  (llos:cor [n=[k=1 p=1 v=1] l=~ m=1 r=~])
+    %+  expect-eq
+      !>  [%llos s=2 p=lnode]
+      !>  (llos:cor lnode)
+  ==
+::
+++  test-rlos
+  =/  lnode
+    :^    n=[k=2 p=2 v=2]
+        l=~
+      m=1
+    r=[%rlos s=1 p=[n=[k=3 p=3 v=3] l=~ m=2 r=~]]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [%rlos s=1 p=[n=[k=1 p=1 v=1] l=~ m=1 r=~]]
+      !>  (rlos:cor [n=[k=1 p=1 v=1] l=~ m=1 r=~])
+    %+  expect-eq
+      !>  [%rlos s=2 p=lnode]
+      !>  (rlos:cor lnode)
+  ==
+::
+++  test-llsin
+  =/  a
+    [n=[k=2 p=2 v=2] l=~ m=1 r=[%rlos s=1 p=[n=[k=3 p=3 v=3] l=~ m=2 r=~]]]
+  =/  b
+    [n=[k=1 p=1 v=1] l=~ m=1 r=[%llos s=1 p=[n=[k=2 p=2 v=2] l=~ m=2 r=~]]]
+  ;:  weld
+    %+  expect-eq
+      !>  :+  %rlos
+            s=2
+          ^=  p
+          :^    n=[k=3 p=3 v=3]
+              l=[%llos s=1 p=[n=[k=2 p=2 v=2] l=~ m=1 r=~]]
+            m=2
+          r=~
+      !>  (llsin:cor a)
+    %+  expect-eq
+      !>  :+  %llos
+            s=2
+          ^=  p
+          :^    n=[k=1 p=1 v=1]
+              l=[%rlos s=1 p=[n=[k=2 p=2 v=2] l=~ m=1 r=~]]
+            m=2
+          r=~
+      !>  (llsin:cor b)
+  ==
+::
+++  test-win
+  ;:  weld
+    %-  expect  !>  (win:cor [1 %one] [2 %two])
+    %-  expect  !>  !(win:cor [2 %one] [1 %two])
+    %-  expect  !>  !(win:cor [1 %one] [1 %two])
+    %-  expect  !>  (win:cor [1 [2 2]] [1 [2 1]])
+  ==
+::
 ++  test-zero
   ;:  weld
     %-  expect
