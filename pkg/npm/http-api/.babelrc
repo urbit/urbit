@@ -1,10 +1,12 @@
 {
   "presets": [
+    "@babel/preset-typescript", //needed for .ts jest tests
     [
       "@babel/preset-env",
       {
         "targets": "> 1%",
-        "useBuiltIns": "usage"
+        "useBuiltIns": "usage",
+        "corejs": "3.19.1"
       }
     ]
   ]

@@ -25,6 +25,7 @@
   "dependencies": {
     "@babel/runtime": "^7.16.0",
     "big-integer": "^1.6.48",
+    "core-js": "^3.19.1",
     "immer": "^9.0.1",
     "urbit-ob": "^5.0.1"
   },
