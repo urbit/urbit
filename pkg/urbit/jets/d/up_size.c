@@ -7,18 +7,18 @@ u3qdu_size(u3_noun t)
     return 0;
   }
   else {
-    u3_noun st = u3h(u3t(t));
+    u3_noun s_t = u3h(u3t(t));
 
-    if ( c3n == u3du(st) ) {
+    if ( c3n == u3ud(s_t) ) {
       return u3m_bail(c3__exit);
     }
     else {
-      return st;
+      return u3k(s_t);
     }
   }
 }
 
-u3_atom
+u3_noun
 u3wdu_size(u3_noun cor)
 {
   u3_noun t;

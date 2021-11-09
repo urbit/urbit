@@ -10,7 +10,7 @@ u3qdu_mask(u3_atom a)
   v = u3qc_bex(u);
   w = u3qa_dec(v);
 
-  // use u3i_word for 0xffffffff
+  // as optimisation, use u3i_word for 0xffffffff
 
   x = u3qa_dec(a);
   y = u3qc_mix(x, w);
