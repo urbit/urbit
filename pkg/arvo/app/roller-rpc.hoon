@@ -175,9 +175,9 @@
       %get-unsigned-tx         `(hash-transaction id +.params chain:scry & |)
       %get-predicted-state     `(get-naive id +.params predicted:scry)
       %hash-raw-transaction    `(hash-raw-transaction id +.params)
-      :: TODO: deprecated, remove
+      :: TODO: deprecated, remove (used together with personal_sign)
       ::
-      %hash-transaction        `(hash-transaction id +.params chain:scry & |)
+      %hash-transaction        `(hash-transaction id +.params chain:scry | &)
     ==
   --
 ::
