@@ -12,7 +12,7 @@
   "module": "dist/esm/index.js",
   "jsdelivr": "dist/urbit-api.min.js",
   "unpkg": "dist/urbit-api.min.js",
-  "types": "types/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
     "build": "npm run clean && rollup -c && npx tsc -p tsconfig.json",

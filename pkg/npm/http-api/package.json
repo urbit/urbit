@@ -13,10 +13,9 @@
   "module": "dist/esm/index.js",
   "jsdelivr": "dist/urbit-http-api.min.js",
   "unpkg": "dist/urbit-http-api.min.js",
-  "types": "types/index.d.ts",
+  "types": "dist/index.d.ts",
   "file": [
-    "dist/**/*.js",
-    "types/*.d.ts"
+    "dist/**"
   ],
   "scripts": {
     "test": "jest",
