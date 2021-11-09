@@ -146,7 +146,13 @@
         ~
       (~(put in whos.state) u.who)
     ^-  (quip card _this)
-    [start:do this]
+    ::  Slow to recalculate all the diffs, but this is necessary to make
+    ::  sure Jael gets the updates from the snapshot
+    ::
+    %-  %-  slog  :_  ~
+        leaf+"azimuth: loading snapshot with {<(lent logs.state)>} events"
+    =/  res  (%*(run-logs do nas.state *^state:naive) logs.state)
+    [(weld (jael-update:do (to-udiffs:do -.res)) start:do) this]
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
