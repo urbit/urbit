@@ -138,7 +138,7 @@ _mars_poke(c3_w     mil_w,
       return c3y;
     }
     else {
-      *out = u3nc(dud, pro);
+      *out = u3nt(dud, pro, u3_nul);
       return c3n;
     }
   }
