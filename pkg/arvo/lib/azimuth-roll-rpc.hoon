@@ -491,6 +491,15 @@
     ~(params error:json-rpc id)
   [%result id (ships:to-json (scry u.ship))]
 ::
+++  spawns-remaining
+  |=  [id=@t params=(map @t json) scry=$-(@p (list @p))]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(ship:from-json params)
+    ~(params error:json-rpc id)
+  [%result id (numb:enjs:format (lent (scry u.ship)))]
+::
 ++  process-rpc
   |=  [id=@t params=(map @t json) action=l2-tx over-quota=$-(@p ?)]
   ^-  [(unit cage) response:rpc]

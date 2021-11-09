@@ -156,6 +156,7 @@
       %cancel-transaction      (cancel-tx id +.params)
       %get-spawned             `(get-spawned id +.params spawned:scry)
       %get-unspawned           `(get-spawned id +.params unspawned:scry)
+      %spawns-remaining        `(spawns-remaining id +.params unspawned:scry)
       %get-owned-points        `(get-ships id +.params owned:scry)
       %get-transferring-for    `(get-ships id +.params transfers:scry)
       %get-manager-for         `(get-ships id +.params manager:scry)
