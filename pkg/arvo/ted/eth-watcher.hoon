@@ -12,10 +12,10 @@
 =+  !<([~ pup=watchpup] args)
 =/  m  (strand:strandio ,vase)
 ^-  form:m
-;<  =latest=block                 bind:m  (get-latest-block:ethio url.pup)
-;<  pup=watchpup   bind:m         (zoom pup number.id.latest-block)
+;<  =latest=block  bind:m  (get-latest-block:ethio url.pup)
+;<  pup=watchpup   bind:m  (zoom pup number.id.latest-block)
 =|  vows=disavows
-;<  pup=watchpup   bind:m         (fetch-batches pup)
+;<  pup=watchpup   bind:m  (fetch-batches pup)
 ::?.  eager.pup
   (pure:m !>([vows pup]))
 :: |-  ^-  form:m

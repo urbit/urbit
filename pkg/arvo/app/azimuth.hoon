@@ -291,7 +291,7 @@
 ++  jael-update
   |=  =udiffs:point
   ^-  (list card)
-  ?:  &  ~  ::  XX
+  ::  ?:  &  ~  ::  XX
   :-  [%give %fact ~[/] %azimuth-udiffs !>(udiffs)]
   |-  ^-  (list card)
   ?~  udiffs

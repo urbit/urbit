@@ -90,7 +90,7 @@
   |_  id=@t
   ::  https://www.jsonrpc.org/specification#error_object
   ::
-  ++  parse      [%error id '-32700' 'Failed to parsed']
+  ++  parse      [%error id '-32700' 'Failed to parse']
   ++  request    [%error id '-32600' 'Invalid Request']
   ++  method     [%error id '-32601' 'Method not found']
   ++  params     [%error id '-32602' 'Invalid params']
