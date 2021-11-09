@@ -208,8 +208,7 @@
         app
         %poke
         %azimuth-poke
-        ::  XX  ropsten->mainnet
-        !>([%watch (crip (en-purl:html purl)) %ropsten])
+        !>([%watch (crip (en-purl:html purl)) %default])
     ==
   ::
   ++  sein                                              ::  sponsor
