@@ -1,11 +1,10 @@
 import { Action, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import React, { ReactElement, ReactNode, useEffect, useRef } from 'react';
+import React, { ReactElement, ReactNode, useEffect } from 'react';
 import Helmet from 'react-helmet';
 import { Link, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import useHarkState from '~/logic/state/hark';
 import { Body } from '~/views/components/Body';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { Archive } from './Archive';
 import { NewBox } from './NewBox';
 
@@ -41,8 +40,6 @@ export function NavLink({
 export default function NotificationsScreen(props: any): ReactElement {
   const relativePath = (p: string) => baseUrl + p;
 
-  const anchorRef = useRef<HTMLElement | null>(null);
-  useTutorialModal('notifications', true, anchorRef);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const onReadAll = async () => {};
 
@@ -89,7 +86,6 @@ export default function NotificationsScreen(props: any): ReactElement {
                       fontWeight="bold"
                       fontSize={2}
                       lineHeight={1}
-                      ref={anchorRef}
                     >
                       Notifications
                     </Text>

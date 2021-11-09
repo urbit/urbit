@@ -44,7 +44,7 @@
       %kick                    :_(this (drop safe-watch:kiln:cc))
     ::
         %fact
-      ?.  ?=(%kiln-vats-diff p.cage.sign)  `this
+      ?.  ?=(%kiln-vats-diff-0 p.cage.sign)  `this
       =+  !<(=diff:hood q.cage.sign)
       ?+  -.diff  `this
       ::

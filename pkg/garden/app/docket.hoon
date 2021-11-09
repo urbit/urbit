@@ -478,6 +478,8 @@
                   """
               ;li:"glob!"
             ==
+            (safari and internet explorer do not support uploading directory
+            trees properly. please glob from other browsers.)
         ;+  ?:  =(~ desks)
               ;p:"no desks eligible for glob upload"
             ;form(method "post", enctype "multipart/form-data")

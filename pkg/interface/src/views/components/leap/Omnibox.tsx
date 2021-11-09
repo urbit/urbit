@@ -119,7 +119,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         if (category === 'other') {
           return [
             'other',
-            index.get('other').filter(({ app }) => app !== 'tutorial')
+            index.get('other')
           ];
         }
         return [category, []];
@@ -159,7 +159,6 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         defaultApps.includes(app.toLowerCase()) ||
         app === 'profile' ||
         app === 'messages' ||
-        app === 'tutorial' ||
         app === 'Links' ||
         app === 'Terminal' ||
         app === 'home' ||
