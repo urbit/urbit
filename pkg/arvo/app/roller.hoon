@@ -782,6 +782,16 @@
     (scot %da now.bowl)
     /own/noun
   ==
+::  +canonical-sponsors: current azimuth sponsorship
+::
+++  canonical-sponsors
+  .^  sponsors
+    %gx
+    (scot %p our.bowl)
+    %azimuth
+    (scot %da now.bowl)
+    /spo/noun
+  ==
 ::  +predicted-state
 ::
 ::    derives predicted state from applying pending & sending txs to
@@ -792,6 +802,7 @@
   ^-  (quip update _state)
   =:  pre  nas
       own  canonical-owners
+      spo  canonical-sponsors
     ==
   |^
   =^  [nes=_sending updates-1=(list update)]  state

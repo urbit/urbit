@@ -185,6 +185,7 @@
         [%x %nas ~]      ``noun+!>(nas.state)
         [%x %dns ~]      ``noun+!>(dns.nas.state)
         [%x %own ~]      ``noun+!>(own.state)
+        [%x %spo ~]      ``noun+!>(spo.state)
         [%x %refresh ~]  ``atom+!>(refresh)
         [%x %point @ ~]  ``noun+(point i.t.t.path)
     ==
