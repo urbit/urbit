@@ -54,8 +54,9 @@ codeCmd = buildCmd (Cord "cod", False)
 codeResponse :: Noun -> IO ()
 codeResponse jar = do
   (res, cod') <- fromNounExn jar :: IO (Cord, Maybe Natural)
-  if res /= (Cord "cod") then error $ "bad res: " ++ show res
-  else case cod' of
+  unless ((Cord "cod") == res) $
+    error $ "bad res: " ++ show res
+  case cod' of
     Nothing -> error "no code"
     Just cod -> putStrLn . T.unpack . renderPatp . patp $ cod
 
@@ -65,8 +66,8 @@ codeResetCmd = buildCmd (Cord "cod", True)
 ackResponse :: String -> Noun -> IO ()
 ackResponse msg jar = do
   zac <- fromNounExn jar
-  if zac /= (Cord "ack") then error $ "bad jar: " ++ show jar
-  else putStrLn msg
+  unless ((Cord "ack") == zac) $ error $ "bad jar: " ++ show jar
+  putStrLn msg
 
 massCmd :: B.ByteString
 massCmd = buildCmd (Cord "mas", 0 :: Natural)
@@ -92,21 +93,20 @@ extractNoun = cueBSExn >=> fromNounExn
 main :: IO ()
 main = withSocketsDo $ do
   ars <- getArgs
-  if 2 /= length ars then
+  unless (2 == length ars) $
     do { usage; error "wrong number of arguments" }
-  else do
-    let [paf, nam] = ars
-    (cmd, act) <- cmdFind nam
-    changeWorkingDirectory paf
-    soc <- socket AF_UNIX Stream 0
-    connect soc (SockAddrUnix $ ".urb" </> "khan.sock")
-    send soc cmd
-    lenBS <- recv soc 8
-    let (len', _) = runGet getWord64le lenBS
-    case len' of
-      Left fal -> error fal
-      Right len -> do
-        wad <- recv soc $ fromIntegral len
-        jar <- extractNoun wad
-        act jar
-    close soc
+  let [paf, nam] = ars
+  (cmd, act) <- cmdFind nam
+  changeWorkingDirectory paf
+  soc <- socket AF_UNIX Stream 0
+  connect soc (SockAddrUnix $ ".urb" </> "khan.sock")
+  send soc cmd
+  lenBS <- recv soc 8
+  let (len', _) = runGet getWord64le lenBS
+  case len' of
+    Left fal -> error fal
+    Right len -> do
+      wad <- recv soc $ fromIntegral len
+      jar <- extractNoun wad
+      act jar
+  close soc
