@@ -360,7 +360,7 @@
     :+  %watch  /[dap.bowl]
     ^-  config:eth-watcher
     :*  url.state  =(%czar (clan:title our.bowl))  refresh  ~h30
-        (max launch.net last-snap)
+        (max launch.net ?:(=(net.state %default) last-snap 0))
         ~[azimuth.net]
         ~[naive.net]
         (topics whos.state)
