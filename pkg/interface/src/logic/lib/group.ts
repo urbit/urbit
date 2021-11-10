@@ -1,4 +1,4 @@
-import { Path, PatpNoSig } from '@urbit/api';
+import { deSig, Path, PatpNoSig } from '@urbit/api';
 import { Group, Resource, roleTags, RoleTags } from '@urbit/api/groups';
 import _ from 'lodash';
 
@@ -36,7 +36,7 @@ export function isWriter(group: Group, resource: string) {
 }
 
 export function isChannelAdmin(group: Group, resource: string, ship = `~${window.ship}`) {
-  const role = roleForShip(group, ship.slice(1));
+  const role = roleForShip(group, deSig(ship));
 
   return (
     isHost(resource, ship) ||

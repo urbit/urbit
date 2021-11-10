@@ -7,38 +7,29 @@ import {
   Row,
   Text
 } from '@tlon/indigo-react';
-import React, { useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
-import useHarkState from '~/logic/state/hark';
-import useLaunchState from '~/logic/state/launch';
-import useInviteState from '~/logic/state/invite';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
-import { useTutorialModal } from './useTutorialModal';
+import { StatusBarJoins } from './StatusBarJoins';
+import useHarkState from '~/logic/state/hark';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
   const { ship } = props;
-  const history = useHistory();
-  const runtimeLag = useLaunchState(state => state.runtimeLag);
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
-  const notificationsCount = useHarkState(state => state.notificationsCount);
-  const doNotDisturb = useHarkState(state => state.doNotDisturb);
-  const inviteState = useInviteState(state => state.invites);
-  const invites = [].concat(
-    ...Object.values(inviteState).map(obj => Object.values(obj))
-  );
   const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
   const { toggleOmnibox } = useLocalState(localSel);
   const { hideAvatars } = useSettingsState(selectCalmState);
+  const notificationsCount = useHarkState(s => s.notificationsCount);
 
   const color = ourContact ? `#${uxToHex(ourContact.color)}` : '#000';
   const xPadding = !hideAvatars && ourContact?.avatar ? '0' : '2';
@@ -55,13 +46,6 @@ const StatusBar = (props) => {
     ) : (
       <Sigil ship={ship} size={16} color={color} icon />
     );
-
-  const anchorRef = useRef(null);
-
-  const leapHighlight = useTutorialModal('leap', true, anchorRef);
-
-  const floatLeap =
-    leapHighlight && window.matchMedia('(max-width: 550px)').matches;
 
   return (
     <Box
@@ -85,25 +69,21 @@ const StatusBar = (props) => {
         >
           <Icon icon='Dashboard' color='black' />
         </Button>
-        <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
-          {!doNotDisturb && runtimeLag && (
-            <Box display='block' right='-8px' top='-8px' position='absolute'>
-              <Icon color='yellow' icon='Bullet' />
-            </Box>
-          )}
-          {!doNotDisturb && (notificationsCount > 0 || invites.length > 0) && (
-            <Box display='block' right='-8px' top='-8px' position='absolute'>
-              <Icon color='blue' icon='Bullet' />
-            </Box>
-          )}
+        <StatusBarItem position="relative" mr={2} onClick={() => toggleOmnibox()}>
           <Icon icon='LeapArrow' />
-          <Text ref={anchorRef} ml={2} color='black'>
+          <Text ml={2} color='black'>
             Leap
           </Text>
           <Text display={['none', 'inline']} ml={2} color='gray'>
             {metaKey}/
           </Text>
+          { notificationsCount > 0 && (
+            <Box position="absolute" right="-8px" top="-8px">
+              <Icon icon="Bullet" color="blue" />
+            </Box>
+          )}
         </StatusBarItem>
+        <StatusBarJoins />
         <ReconnectButton />
       </Row>
       <Row justifyContent='flex-end'>

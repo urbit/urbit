@@ -16,7 +16,7 @@ export default function ProfileScreen(props: any) {
           {notificationsCount
             ? `(${String(notificationsCount)}) `
             : ''}
-          Landscape - Profile
+          Groups - Profile
         </title>
       </Helmet>
       <Route

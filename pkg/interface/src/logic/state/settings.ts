@@ -16,7 +16,7 @@ import {
 import { useCallback } from 'react';
 import { reduceUpdate } from '../reducers/settings-update';
 import airlock from '~/logic/api';
-import { getAll, Value } from '@urbit/api';
+import { Contact, getDeskSettings, Value } from '@urbit/api';
 import { putEntry } from '@urbit/api/settings';
 
 export interface ShortcutMapping {
@@ -45,13 +45,9 @@ export interface SettingsState {
   keyboard: ShortcutMapping;
   remoteContentPolicy: RemoteContentPolicy;
   getAll: () => Promise<void>;
-  putEntry: (bucket: string, key: string, value: Value) => void;
+  putEntry: (bucket: string, key: string, value: Value) => Promise<void>;
   leap: {
     categories: LeapCategories[];
-  };
-  tutorial: {
-    seen: boolean;
-    joined?: number;
   };
 }
 
@@ -88,10 +84,6 @@ const useSettingsState = createState<SettingsState>(
     leap: {
       categories: leapCategories
     },
-    tutorial: {
-      seen: true,
-      joined: undefined
-    },
     keyboard: {
       cycleForward: 'ctrl+\'',
       cycleBack: 'ctrl+;',
@@ -101,20 +93,22 @@ const useSettingsState = createState<SettingsState>(
       readGroup: 'shift+Escape'
     },
     getAll: async () => {
-      const { all } = await airlock.scry(getAll);
+      const { desk } = await airlock.scry(getDeskSettings((window as any).desk));
       get().set((s) => {
-        Object.assign(s, all);
+        for(const bucket in desk) {
+          s[bucket] = { ...(s[bucket] || {}), ...desk[bucket] };
+        }
       });
     },
-    putEntry: (bucket: string, entry: string, value: Value) => {
-      const poke = putEntry(bucket, entry, value);
+    putEntry: async (bucket: string, entry: string, value: Value) => {
+      const poke = putEntry((window as any).desk, bucket, entry, value);
       pokeOptimisticallyN(useSettingsState, poke, reduceUpdate);
     }
   }),
   [],
   [
     (set, get) =>
-      createSubscription('settings-store', '/all', (e) => {
+      createSubscription('settings-store', `/desk/${(window as any).desk}`, (e) => {
         const data = _.get(e, 'settings-event', false);
         if (data) {
           reduceStateN(get(), data, reduceUpdate);
@@ -135,6 +129,13 @@ const selTheme = (s: SettingsState) => s.display.theme;
 
 export function useTheme() {
   return useSettingsState(selTheme);
+}
+
+// Hide is an optional second parameter for when this function is used in class components
+export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
+  const hideState = useSettingsState(state => state.calm.hideNicknames);
+  const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
+  return Boolean(contact && contact.nickname && !hideNicknames);
 }
 
 export default useSettingsState;

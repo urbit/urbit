@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { Formik, Form, useField } from 'formik';
-import { putEntry } from '@urbit/api/settings';
 
 import { getChord } from '~/logic/lib/util';
 import useSettingsState, {
@@ -12,7 +11,6 @@ import useSettingsState, {
 } from '~/logic/state/settings';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { BackButton } from './BackButton';
-import airlock from '~/logic/api';
 
 const settingsSel = selectSettingsState(['keyboard']);
 
@@ -69,9 +67,10 @@ export default function ShortcutSettings() {
       initialValues={keyboard}
       onSubmit={async (values: ShortcutMapping, actions) => {
         const promises = _.map(values, (value, key) => {
+          const { putEntry } = useSettingsState.getState();
           return keyboard[key] !== value
-            ? airlock.poke(putEntry('keyboard', key, value))
-            : Promise.resolve(0);
+            ? putEntry('keyboard', key, value)
+            : Promise.resolve();
         });
         await Promise.all(promises);
         actions.setStatus({ success: null });

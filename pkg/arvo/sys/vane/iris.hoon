@@ -332,6 +332,7 @@
     ::
     ::    TODO: We should gracefully retry on restart instead of just sending a
     ::    cancel.
+    ::    TODO  we might not want to do that though!
     ::
     =/  moves=(list move)
       %+  turn  ~(tap by connection-by-duct.state.ax)

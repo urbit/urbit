@@ -333,7 +333,7 @@ _cr_sing_cape_test(u3p(u3h_root) har_p, u3_noun a, u3_noun b)
   u3t_on(euq_o);
 
   u3z(key);
-  return ( u3_none == val ) ? c3y : c3n;
+  return ( u3_none != val ) ? c3y : c3n;
 }
 
 /* _cr_sing_cape_keep(): store [a] and [b] to short-circuit subsequent tests.

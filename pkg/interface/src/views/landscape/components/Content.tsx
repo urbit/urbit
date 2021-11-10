@@ -1,19 +1,20 @@
 import { Box } from '@tlon/indigo-react';
 import React, { useCallback, useEffect } from 'react';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
+import useMetadataState from '~/logic/state/metadata';
 import LaunchApp from '~/views/apps/launch/App';
 import Notifications from '~/views/apps/notifications/notifications';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 import Profile from '~/views/apps/profile/profile';
 import Settings from '~/views/apps/settings/settings';
-import TermApp from '~/views/apps/term/app';
 import ErrorComponent from '~/views/components/Error';
 import { useShortcut } from '~/logic/state/settings';
 
 import Landscape from '~/views/landscape/index';
 import GraphApp from '../../apps/graph/App';
+import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
 
 export const Container = styled(Box)`
    flex-grow: 1;
@@ -24,6 +25,18 @@ export const Container = styled(Box)`
 
 export const Content = (props) => {
   const history = useHistory();
+  const location = useLocation();
+  const mdLoaded = useMetadataState(s => s.loaded);
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    if(mdLoaded && query.has('grid-note')) {
+      history.push(getNotificationRedirect(query.get('grid-note')!));
+    } else if(mdLoaded && query.has('grid-link')) {
+      const link = decodeURIComponent(query.get('grid-link')!);
+      history.push(`/perma${link}`);
+    }
+  }, [location.search, mdLoaded]);
 
   useShortcut('navForward', useCallback((e) => {
     e.preventDefault();
@@ -58,19 +71,9 @@ export const Content = (props) => {
       <Switch>
         <Route
           exact
-          path='/'
+          path={['/', '/invites/:app/:uid']}
           render={p => (
             <LaunchApp
-              location={p.location}
-              match={p.match}
-              {...props}
-            />
-          )}
-        />
-        <Route
-          path='/~term'
-          render={p => (
-            <TermApp
               location={p.location}
               match={p.match}
               {...props}
@@ -102,6 +105,7 @@ export const Content = (props) => {
         />
         <GraphApp path="/~graph" {...props} />
         <PermalinkRoutes {...props} />
+
         <Route
           render={p => (
             <ErrorComponent

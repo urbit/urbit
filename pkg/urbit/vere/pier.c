@@ -687,7 +687,7 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 //  XX organizing version constants
 //
 #define VERE_NAME  "vere"
-#define VERE_ZUSE  420
+#define VERE_ZUSE  419
 
 /* _pier_wyrd_aver(): check for %wend effect and version downgrade. RETAIN
 */
@@ -1114,7 +1114,7 @@ _pier_on_lord_play_bail(void* ptr_v, u3_info fon_u,
 
     //  dispose successful
     //
-    while ( tac_u->eve_d < eve_d ) {
+    while ( tac_u->eve_d <= eve_d ) {
       nex_u = tac_u->nex_u;
       las_l = tac_u->mug_l;
       u3_fact_free(tac_u);
@@ -1691,7 +1691,8 @@ _pier_pill_parse(u3_noun pil)
     while ( u3_nul != ova ) {
       ovo = u3h(ova);
 
-      if ( c3__into == u3h(u3t(ovo)) ) {
+      u3_noun tag = u3h(u3t(ovo));
+      if ( ( c3__into == tag ) || ( c3__park == tag ) ) {
         c3_assert( 0 == len_w );
         len_w++;
         ovo = u3t(pil_q);

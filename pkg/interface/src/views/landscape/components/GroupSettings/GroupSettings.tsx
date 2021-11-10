@@ -1,4 +1,5 @@
 import { Box, Button, Col, Text } from '@tlon/indigo-react';
+import { deSig } from '@urbit/api';
 import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 import React, { useCallback } from 'react';
@@ -28,7 +29,7 @@ export function GroupSettings(props: GroupSettingsProps) {
   );
 
   const isOwner =
-    resourceFromPath(props.association.group).ship.slice(1) === window.ship;
+    deSig(resourceFromPath(props.association.group).ship) === window.ship;
 
   const isAdmin =
     isOwner || roleForShip(props.group, window.ship) === 'admin';

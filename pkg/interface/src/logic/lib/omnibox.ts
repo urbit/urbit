@@ -88,12 +88,11 @@ const otherIndex = function(config) {
   const other = [];
   const idx = {
     mychannel: result('My Channels', '/~landscape/home', 'home', null),
-    updates: result('Notifications', '/~notifications', 'inbox', null),
     profile: result('Profile', `/~profile/~${window.ship}`, 'profile', null),
+    updates: result('Notifications', '/~notifications', 'notifications', null),
     messages: result('Messages', '/~landscape/messages', 'messages', null),
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
-  other.push(result('Tutorial', '/?tutorial=true', 'tutorial', null));
   for(const cat of config.categories) {
     if(idx[cat]) {
       other.push(idx[cat]);

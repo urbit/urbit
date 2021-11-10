@@ -36,6 +36,14 @@
       :+  "set of three"
         0xc7c0.c1c0.c3c0.c1c0
       l+[l+~ l+[l+~ ~] l+[l+~ l+[l+~ ~] ~] ~]
+    ::
+      :+  "list with zero byte"
+        0xc311.0022
+      l+~[b+1^0x11 b+1^0x0 b+1^0x22]
+    ::
+      :+  "list of zero bytes"
+        0xc300.0000
+      l+~[b+1^0x0 b+1^0x0 b+1^0x0]
   ==
 ::
 |%
@@ -48,8 +56,8 @@
   %+  weld
     %+  category  "encode"
     %+  expect-eq
-      !>  dat
-      !>  (encode rlp)
+      !>  `@ux`dat
+      !>  `@ux`(encode rlp)
   %+  category  "decode"
   %+  expect-eq
     !>  rlp

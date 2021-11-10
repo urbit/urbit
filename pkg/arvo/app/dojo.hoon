@@ -12,7 +12,7 @@
 =>  |%                                                  ::  external structures
     +$  id  @tasession                                  ::  session id
     +$  house                                           ::  all state
-      $:  %6
+      $:  %8
           egg=@u                                        ::  command count
           hoc=(map id session)                          ::  conversations
           acl=(set ship)                                ::  remote access whitelist
@@ -65,8 +65,8 @@
       $~  [%ex *hoon]
       $%  [%ur p=@t]                                    ::  http GET request
           [%ge p=dojo-model]                            ::  generator
-          [%te p=term q=(list dojo-source)]             ::  thread
-          [%dv p=path]                                  ::  core from source
+          [%te p=[=desk =term] q=(list dojo-source)]    ::  thread
+          [%dv p=beak q=path]                           ::  core from source
           [%ex p=hoon]                                  ::  hoon expression
           [%sa p=mark]                                  ::  example mark value
           [%as p=mark q=dojo-source]                    ::  simple transmute
@@ -79,7 +79,7 @@
       ==                                                ::
     +$  dojo-server                                     ::  numbered device
       $:  p=@ud                                         ::  assembly index
-          q=path                                        ::  gate path
+          q=[=desk =path]                               ::  gate location
       ==                                                ::
     +$  dojo-config                                     ::  configuration
       $:  p=(list dojo-source)                          ::  by order
@@ -125,7 +125,14 @@
   ++  to-command
     |=  [gol=goal mod=dojo-model]
     ^-  dojo-command
-    [[%poke gol] [0 [%ge mod(q.p [q.gol q.p.mod])]]]
+    =/  =desk
+      ::TODO  maybe should recognize if the user specified a desk explicitly.
+      ::      currently eats the :app|desk#gen case.
+      =+  gop=(en-beam dir(q q.gol, s /))
+      ?.  .^(? %gu gop)
+        q.dir
+      .^(desk %gd gop)
+    [[%poke gol] [0 [%ge mod(q.p [desk q.gol path.q.p.mod])]]]
   ::
   ++  parse-variable
     |*  [sym=rule src=rule]
@@ -217,7 +224,7 @@
       ;~  pose
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
-        ;~(plug (cold %te hep) sym (star ;~(pfix ace parse-source)))
+        ;~(plug (cold %te hep) parse-thread (star ;~(pfix ace parse-source)))
         ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
@@ -263,7 +270,20 @@
     auri:de-purl:html
   ::
   ++  parse-model   ;~(plug parse-server parse-config)
-  ++  parse-server  (stag 0 (most fas sym))
+  ::
+  ++  parse-server
+    %+  stag  0
+    ;~  plug
+      ;~(pose ;~(sfix sym zap) (easy q.dir))
+      (most fas sym)
+    ==
+  ::
+  ++  parse-thread
+    ;~  plug
+      ;~(pose ;~(sfix sym zap) (easy q.dir))
+      sym
+    ==
+  ::
   ++  parse-hoon    tall:hoon-parser
   ::
   ++  parse-rood
@@ -334,11 +354,11 @@
     ::  +dy-sing: make a clay read request
     ::
     ++  dy-sing
-      |=  [way=wire =care:clay =path]
+      |=  [way=wire =care:clay =beak =path]
       ^+  +>+>
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
-      =/  [=ship =desk =case:clay]  he-beak
+      =/  [=ship =desk =case:clay]  beak
       [%pass way %arvo %c %warp ship desk ~ %sing care case path]
     ::
     ++  dy-request
@@ -427,7 +447,13 @@
     ++  dy-init-server                                  ::  ++dojo-server
       |=  srv=dojo-server
       =.  p.srv  num
-      [srv +>.$(num +(num), job (~(put by job) num [%dv [%gen q.srv]]))]
+      =/  bek=beak  he-beak
+      :-  srv
+      %_  +>.$
+        num  +(num)
+        job  %+  ~(put by job)  num
+             [%dv bek(q desk.q.srv) [%gen path.q.srv]]
+      ==
     ::
     ++  dy-init-config                                  ::  prepare config
       |=  cig=dojo-config
@@ -512,7 +538,7 @@
           $?(%eny %now %our)  !!
           %lib  .(lib ~)
           %sur  .(sur ~)
-          %dir  .(dir [[our.hid %home ud+0] /])
+          %dir  .(dir [[our.hid %base ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
       ?-    -.p.mad
@@ -538,8 +564,8 @@
         ::
             %dir  =+  ^=  pax  ^-  path
                       =+  pax=((dy-cast path !>(*path)) q.cay)
-                      ?:  ?=(~ pax)  ~[(scot %p our.hid) %home '0']
-                      ?:  ?=([@ ~] pax)  ~[i.pax %home '0']
+                      ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
+                      ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
                       ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
                       pax
                   =.  dir  (need (de-beam pax))
@@ -673,9 +699,9 @@
             [%sa mark]
             [%as mark dy-shown]
             [%do hoon dy-shown]
-            [%te term (list dy-shown)]
-            [%ge path (list dy-shown) (map term (unit dy-shown))]
-            [%dv path]
+            [%te [desk term] (list dy-shown)]
+            [%ge [desk path] (list dy-shown) (map term (unit dy-shown))]
+            [%dv beak path]
         ==
     ==
   ::
@@ -850,7 +876,7 @@
       (dy-hand %noun q.cag)
     ::
     ++  dy-wool-poke
-      |=  [fil=term src=(list dojo-source)]
+      |=  [[=desk =term] src=(list dojo-source)]
       ^+  +>+>
       ?>  ?=(~ pux)
       =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
@@ -860,7 +886,9 @@
         [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
-        [%spider-start !>([~ `tid fil (dy-some src)])]
+        ::TODO  would be nice if spider supported starting from paths,
+        ::      for semantics/abilities/code closer to generators.
+        [%spider-start !>([~ `tid he-beak(q.dir desk) term (dy-some src)])]
       [%pass /wool %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
@@ -871,7 +899,7 @@
           %ur  (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
           %te  (dy-wool-poke p.bil q.bil)
           %ex  (dy-mere p.bil)
-          %dv  (dy-sing hand+p.bil %a (snoc p.bil %hoon))
+          %dv  (dy-sing hand+q.bil %a p.bil (snoc q.bil %hoon))
           %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
           %sa
         =+  .^(=dais:clay cb+(en-beam he-beak /[p.bil]))
@@ -879,6 +907,9 @@
       ::
           %as
         =/  cag=cage  (dy-cage p.q.bil)
+        =/  has-mark  .?((get-fit:clay he-beak %mar p.bil))
+        ?.  has-mark  ::  yolo
+          (dy-hand p.bil q.cag)
         =+  .^(=tube:clay cc+(en-beam he-beak /[p.cag]/[p.bil]))
         (dy-hand p.bil (tube q.cag))
       ::
@@ -1015,13 +1046,13 @@
   ::
   ++  he-prow                                           ::  where we are
     ^-  tape
-    ?:  &(=(our.hid p.dir) =(%home q.dir) =([%ud 0] r.dir) =(~ s.dir))  ~
+    ?:  &(=(our.hid p.dir) =(%base q.dir) =([%ud 0] r.dir) =(~ s.dir))  ~
     %+  weld
       ?:  &(=(our.hid p.dir) =([%ud 0] r.dir))
         (weld "/" (trip q.dir))
       ;:  weld
         "/"  ?:(=(our.hid p.dir) "=" (scow %p p.dir))
-        "/"  ?:(=(%home q.dir) "=" (trip q.dir))
+        "/"  ?:(=(%base q.dir) "=" (trip q.dir))
         "/"  ?:(=([%ud 0] r.dir) "=" (scow r.dir))
       ==
     ?:(=(~ s.dir) "" (spud s.dir))
@@ -1039,6 +1070,7 @@
     ?+    way  !!
         [%hand *]
       ?~  riot
+        ~>  %slog.0^leaf/"dojo: %writ fail {<way>}"
         (he-diff(poy ~) %tan >%generator-build-fail< >(snoc t.way %hoon)< ~)
       (~(dy-hand dy u.poy(pux ~)) noun+!<(vase q.r.u.riot))
     ==
@@ -1140,7 +1172,7 @@
           :+  %clhp
             [%rock %tas %cx]
           %+  rash  pax.source.com
-          rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+          rood:(vang | /(scot %p our.hid)/base/(scot %da now.hid))
         ::
             %url         [%ur (crip (en-purl:html url.source.com))]
             %api         !!
@@ -1171,7 +1203,7 @@
             %hoon
           :*  %do
               %+  rash  code.source.com
-              tall:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+              tall:(vang | /(scot %p our.hid)/base/(scot %da now.hid))
               $(num +(num), source.com next.source.com)
           ==
         ::
@@ -1351,7 +1383,7 @@
     ++  complete-naked-poke
       |=  app=term
       =/  pax=path
-        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/app
+        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/app
       %+  complete  (cat 3 ':' app)
       %+  murn  ~(tap by dir:.^(arch %cy pax))
       |=  [=term ~]
@@ -1381,7 +1413,7 @@
           (cat 3 '|' gen)
         :((cury cat 3) ':' app '|' gen)
       =/  pfix=path
-        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/gen/[app]
+        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/gen/[app]
       ::
       %^  tab-generators:auto  pfix  `app
       %+  murn
@@ -1397,7 +1429,7 @@
       |=  gen=term
       %+  complete  (cat 3 '+' gen)
       =/  pax=path
-        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/gen
+        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/gen
       %^  tab-generators:auto  pax  ~
       %+  murn
         ~(tap by dir:.^(arch %cy pax))
@@ -1493,12 +1525,53 @@
   !>(state)
 ::
 ++  on-load
-  |=  old=vase
-  ?:  ?=(%6 +<.old)
-    `..on-init(state !<(house old))
-  =/  old-5  !<([%5 egg=@u hoc=(map id session)] old)
-  =/  =house  [%6 egg.old-5 hoc.old-5 *(set ship)]
-  `..on-init(state house)
+  |=  ole=vase
+  |^  =+  old=!<(house-any ole)
+      =?  old  ?=(%5 -.old)
+        (house-5-to-6 old)
+      =?  old  ?=(?(%6 %7) -.old)
+        (house-6-7-to-8 +.old)
+      ?>  ?=(%8 -.old)
+      `..on-init(state old)
+  ::
+  +$  house-any  $%(house house-7 house-6 house-5)
+  ::
+  +$  house-7        [%7 house-6-7]
+  +$  house-6        [%6 house-6-7]
+  +$  house-6-7
+    $:  egg=@u                                        ::  command count
+        hoc=(map id session-6)                        ::  conversations
+        acl=(set ship)                                ::  remote access whitelist
+    ==                                                ::
+  +$  session-6                                       ::  per conversation
+    $:  say=sole-share                                ::  command-line state
+        dir=beam                                      ::  active path
+        poy=(unit *)                                  ::  working
+        $:  ::  sur: structure imports
+            ::
+            sur=(list cable:clay)
+            ::  lib: library imports
+            ::
+            lib=(list cable:clay)
+        ==
+        var=(map term cage)                           ::  variable state
+        old=(set term)                                ::  used TLVs
+        buf=tape                                      ::  multiline buffer
+    ==                                                ::
+  ++  house-6-7-to-8
+    |=  old=house-6-7
+    [%8 egg.old (~(run by hoc.old) session-6-to-8) acl.old]
+  ++  session-6-to-8
+    |=  old=session-6
+    ~?  ?=(^ poy.old)  [dap.hid %cancelling-for-load]
+    old(poy ~, -.dir [our.hid %base ud+0])
+  ::
+  +$  house-5
+    [%5 egg=@u hoc=(map id session)]
+  ++  house-5-to-6
+    |=  old=house-5
+    [%6 egg.old hoc.old *(set ship)]
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -1555,7 +1628,7 @@
   =?  hoc  (~(has by hoc) id)
     ~&  [%dojo-peer-replaced id]
     (~(del by hoc) id)
-  =/  =session  %*(. *session -.dir [our.hid %home ud+0])
+  =/  =session  %*(. *session -.dir [our.hid %base ud+0])
   =^  moves  state
     he-abet:~(he-prom he hid id ~ session)
   [moves ..on-init]

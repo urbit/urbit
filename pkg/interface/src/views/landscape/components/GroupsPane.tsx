@@ -43,7 +43,7 @@ export function GroupsPane(props: GroupsPaneProps) {
 
   useShortcut('readGroup', useCallback(() => {
     if(groupPath) {
-      airlock.poke(readGroup(groupPath));
+      useHarkState.getState().readGroup(groupPath);
     }
   }, [groupPath]));
 
@@ -147,7 +147,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           const appPath = `/ship/${host}/${name}`;
           const association = associations.graph[appPath];
           const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
-          let title = groupAssociation?.metadata?.title ?? 'Landscape';
+          let title = groupAssociation?.metadata?.title ?? 'Groups';
 
           if (!association) {
             return <Loading />;
@@ -197,7 +197,7 @@ export function GroupsPane(props: GroupsPaneProps) {
         render={(routeProps) => {
           const shouldHideSidebar =
             routeProps.location.pathname.includes('/feed');
-          const title = groupAssociation?.metadata?.title ?? 'Landscape';
+          const title = groupAssociation?.metadata?.title ?? 'Groups';
           return (
             <>
               <Helmet defer={false}>

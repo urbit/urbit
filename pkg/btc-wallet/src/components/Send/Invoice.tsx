@@ -59,9 +59,11 @@ const Invoice: React.FC<Props> = ({ stopSending, payee, satsAmount }) => {
     broadcastSuccess,
     network,
     denomination,
+    history,
   } = useSettings();
   const [masterTicket, setMasterTicket] = useState('');
   const [ready, setReady] = useState(false);
+  const [historyLength, setHistoryLength] = useState(0);
   const [localError, setLocalError] = useState(error);
   const [broadcasting, setBroadcasting] = useState(false);
 
@@ -78,12 +80,22 @@ const Invoice: React.FC<Props> = ({ stopSending, payee, satsAmount }) => {
     return api.btcWalletCommand(command);
   };
 
+  useEffect(() => {
+    if (historyLength === 0) {
+      setHistoryLength(history.length);
+    }
+    if (broadcasting && history.length > historyLength) {
+      setBroadcasting(false);
+      stopSending();
+    }
+  }, [history]);
+
   const sendBitcoin = (ticket: string, psbt: string) => {
     const newPsbt = bitcoin.Psbt.fromBase64(psbt);
     setBroadcasting(true);
     kg.generateWallet({
       ticket,
-      ship: parseInt(patp2dec('~' + (window as any).ship)),
+      ship: parseInt(patp2dec('~' + window.ship)),
     }).then((urbitWallet: UrbitWallet) => {
       // this wasn't being used, not clear why it was pulled out.
       // const { xpub } =
