@@ -1,8 +1,8 @@
 {
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "@types"],
+  "exclude": ["node_modules", "dist", "tmp"],
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "./tmp",
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],

@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 import React, { useCallback } from 'react';
-import { kilnBump } from '@urbit/api/hood';
+import { kilnBump } from '@urbit/api';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
