@@ -126,16 +126,6 @@
         u3_dent* all_u;                     //  file list
       } u3_dire;
 
-    /* u3_save: checkpoint control.
-    */
-      typedef struct _u3_save {
-        uv_timer_t  tim_u;                  //  checkpoint timer
-        uv_signal_t sil_u;                  //  child signal
-        c3_d        req_d;                  //  requested at evt_d
-        c3_d        dun_d;                  //  completed at evt_d
-        c3_w        pid_w;                  //  pid of checkpoint process
-      } u3_save;
-
     /* u3_utat: unix terminal state.
     */
       typedef struct {
@@ -388,14 +378,6 @@
           struct _u3_feat* nex_u;
         } u3_feat;
 
-      /* u3_gift: effects
-      */
-        typedef struct _u3_gift {
-          c3_d             eve_d;               //  causal event number
-          u3_noun            act;               //  (list ovum)
-          struct _u3_gift* nex_u;               //  next in queue
-        } u3_gift;
-
       /* u3_peek_cb: namespace read response callback.
       */
         typedef void (*u3_peek_cb)(void*, u3_noun);
@@ -613,49 +595,49 @@
           struct _u3_pier* nex_u;               //  next in list
         } u3_pier;
 
-      /* cw_gift: mars pending reponse XX rename
+      /* u3_gift: mars pending reponse.
       */
-        typedef struct _cw_gift {
-          struct _cw_gift* nex_u;
-          c3_d             len_d;
-          c3_y*            hun_y;
-          enum {
-            _cwe_gift_poke = 0,
-            _cwe_gift_rest = 1
-          } sat_e;
-          union {
-            c3_d           eve_d;
-            void*          ptr_v;
+        typedef struct _u3_gift {
+          struct _u3_gift* nex_u;           //  next response
+          c3_d             len_d;           //  length
+          c3_y*            hun_y;           //  bytes
+          enum {                            //  type
+            u3_gift_poke_e = 0,             //    effects
+            u3_gift_rest_e = 1              //    any
+          } sat_e;                          //
+          union {                           //  data
+            c3_d           eve_d;           //    event number
+            void*          ptr_v;           //    any
           };
-        } cw_gift;
+        } u3_gift;
 
       /* u3_mars: the urbit state machine.
       */
         typedef struct _u3_mars {
-          c3_d    key_d[4];          //  disk key
-          c3_c*   dir_c;             //  execution directory (pier)
-          c3_d    sen_d;             //  last event requested
-          c3_d    dun_d;             //  last event processed
-          c3_l    mug_l;             //  hash of state
-          c3_o    pac_o;             //  pack kernel
-          c3_o    rec_o;             //  reclaim cache
-          c3_o    mut_o;             //  mutated kerne
-          u3_noun sac;               //  space measurement
-          u3_disk* log_u;
-          uv_timer_t   tim_u;
-          u3_moat*     inn_u;             //  input stream
-          u3_mojo*     out_u;             //  output stream
-          u3_cue_xeno* sil_u;             //  cue handle
-          enum {
-            _cwe_mars_work = 0,
-            _cwe_mars_save = 1,
-            _cwe_mars_exit = 2
-          } sat_e;
-          struct {
-            cw_gift* ent_u;
-            cw_gift* ext_u;
-          } gif_u;
-          void  (*xit_f)(void);      //  exit callback
+          c3_d    key_d[4];                 //  disk key
+          c3_c*   dir_c;                    //  execution directory (pier)
+          c3_d    sen_d;                    //  last event requested
+          c3_d    dun_d;                    //  last event processed
+          c3_l    mug_l;                    //  hash of state
+          c3_o    pac_o;                    //  pack kernel
+          c3_o    rec_o;                    //  reclaim cache
+          c3_o    mut_o;                    //  mutated kerne
+          u3_noun sac;                      //  space measurement
+          u3_disk* log_u;                   //  event log
+          uv_timer_t   tim_u;               //  snapshot timer
+          u3_moat*     inn_u;               //  input stream
+          u3_mojo*     out_u;               //  output stream
+          u3_cue_xeno* sil_u;               //  cue handle
+          enum {                            //  state
+            u3_mars_work_e = 0,             //    working
+            u3_mars_save_e = 1,             //    snapshotting
+            u3_mars_exit_e = 2              //    exiting
+          } sat_e;                          //
+          struct {                          //  response queue
+            u3_gift* ent_u;                 //    entry
+            u3_gift* ext_u;                 //    exit
+          } gif_u;                          //
+          void  (*xit_f)(void);             //  exit callback
         } u3_mars;
 
       /* u3_king: all executing piers.
@@ -770,26 +752,6 @@
       */
         void
         u3_dire_free(u3_dire *dir_u);
-
-      /* u3_fact_init(): initialize completed event.
-      */
-        u3_fact*
-        u3_fact_init(c3_d eve_d, c3_l mug_l, u3_noun job);
-
-      /* u3_fact_free(): dispose completed event.
-      */
-        void
-        u3_fact_free(u3_fact *tac_u);
-
-      /* u3_gift_init(): initialize effect list.
-      */
-        u3_gift*
-        u3_gift_init(c3_d eve_d, u3_noun act);
-
-      /* u3_gift_free(): dispose effect list.
-      */
-        void
-        u3_gift_free(u3_gift* gif_u);
 
       /* u3_ovum_init: initialize an unlinked potential event
       */
@@ -1192,24 +1154,6 @@
       */
         u3_noun
         u3_ames_encode_lane(u3_lane);
-
-    /**  Autosave.
-    **/
-      /* u3_save_ef_chld(): report SIGCHLD.
-      */
-        void
-        u3_save_ef_chld(u3_pier *pir_u);
-
-      /* u3_save_io_init(): initialize autosave.
-      */
-        void
-        u3_save_io_init(u3_pier *pir_u);
-
-      /* u3_save_io_exit(): terminate autosave.
-      */
-        void
-        u3_save_io_exit(u3_pier *pir_u);
-
 
     /**  Storage, new school.
     **/

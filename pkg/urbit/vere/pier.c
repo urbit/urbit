@@ -598,9 +598,6 @@ _pier_on_lord_wyrd_done(void*    ptr_v,
   //  traverse [gif_y] and validate
   //
   if ( c3n == _pier_wyrd_aver(act) ) {
-    // u3_fact_free(tac_u);
-    // u3_gift_free(gif_u);
-
     //  XX messaging, cli argument to bypass
     //
     u3l_log("pier: version negotiation failed; downgrade\n");

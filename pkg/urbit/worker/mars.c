@@ -54,9 +54,9 @@ _mars_fact(u3_mars* mar_u,
   }
 
   {
-    cw_gift* gif_u = c3_malloc(sizeof(*gif_u));
+    u3_gift* gif_u = c3_malloc(sizeof(*gif_u));
     gif_u->nex_u = 0;
-    gif_u->sat_e = _cwe_gift_poke;
+    gif_u->sat_e = u3_gift_poke_e;
     gif_u->eve_d = mar_u->dun_d;
 
     u3s_jam_xeno(pro, &gif_u->len_d, &gif_u->hun_y);
@@ -78,9 +78,9 @@ _mars_fact(u3_mars* mar_u,
 static void
 _mars_gift(u3_mars* mar_u, u3_noun pro)
 {
-  cw_gift* gif_u = c3_malloc(sizeof(*gif_u));
+  u3_gift* gif_u = c3_malloc(sizeof(*gif_u));
   gif_u->nex_u = 0;
-  gif_u->sat_e = _cwe_gift_rest;
+  gif_u->sat_e = u3_gift_rest_e;
   gif_u->ptr_v = 0;
 
   u3s_jam_xeno(pro, &gif_u->len_d, &gif_u->hun_y);
@@ -235,7 +235,7 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
         return c3n;
       }
 
-      mar_u->sat_e = _cwe_mars_save;
+      mar_u->sat_e = u3_mars_save_e;
     } break;
 
     //  $%  [%live ?(%meld %pack) ~] :: XX rename
@@ -272,7 +272,7 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
 
     case c3__exit: {
       u3z(jar);
-      mar_u->sat_e = _cwe_mars_exit;
+      mar_u->sat_e = u3_mars_exit_e;
       //  XX wire up to signal handler
       //
       u3_disk_info(mar_u->log_u);
@@ -309,12 +309,12 @@ _mars_flush(u3_mars* mar_u)
 {
 top:
   {
-    cw_gift* gif_u = mar_u->gif_u.ext_u;
+    u3_gift* gif_u = mar_u->gif_u.ext_u;
 
     //  XX gather i/o
     //
     while (  gif_u
-          && (  (_cwe_gift_rest == gif_u->sat_e)
+          && (  (u3_gift_rest_e == gif_u->sat_e)
              || (gif_u->eve_d <= mar_u->log_u->dun_d)) )
     {
       u3_newt_send(mar_u->out_u, gif_u->len_d, gif_u->hun_y);
@@ -329,17 +329,17 @@ top:
     }
   }
 
-  if (  (_cwe_mars_work != mar_u->sat_e)
+  if (  (u3_mars_work_e != mar_u->sat_e)
      && (mar_u->log_u->dun_d == mar_u->dun_d) )
   {
-    if ( _cwe_mars_save == mar_u->sat_e ) {
+    if ( u3_mars_save_e == mar_u->sat_e ) {
       u3e_save();
       _mars_gift(mar_u,
         u3nt(c3__sync, u3i_chub(mar_u->dun_d), mar_u->mug_l));
-      mar_u->sat_e = _cwe_mars_work;
+      mar_u->sat_e = u3_mars_work_e;
       goto top;
     }
-    else if ( _cwe_mars_exit == mar_u->sat_e ) {
+    else if ( u3_mars_exit_e == mar_u->sat_e ) {
       //  XX exit cb ?
       //
       u3e_save();
@@ -357,7 +357,7 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 
   //  XX optimize for save/cram w/ peek-next
   //
-  if ( _cwe_mars_work == mar_u->sat_e ) {
+  if ( u3_mars_work_e == mar_u->sat_e ) {
     u3_weak jar = _mars_cue(mar_u, len_d, hun_y);
 
     //  parse errors are fatal
@@ -389,7 +389,7 @@ static void
 _mars_timer_cb(uv_timer_t* tim_u)
 {
   u3_mars* mar_u = tim_u->data;
-  mar_u->sat_e = _cwe_mars_save;
+  mar_u->sat_e = u3_mars_save_e;
 
   _mars_flush(mar_u);
 }
@@ -530,7 +530,7 @@ u3_mars_init(c3_c*    dir_c,
   mar_u->mug_l = u3r_mug(u3A->roc);
   mar_u->pac_o = mar_u->rec_o = mar_u->mut_o = c3n;
   mar_u->sac   = u3_nul;
-  mar_u->sat_e = _cwe_mars_work;
+  mar_u->sat_e = u3_mars_work_e;
   mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = 0;
   mar_u->xit_f = 0;
 
