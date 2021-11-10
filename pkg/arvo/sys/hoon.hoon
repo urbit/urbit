@@ -2358,11 +2358,11 @@
     ^-  (unit (pair @ buc))
     =/  val  (bot:qor a)
     ?~  val  ~
-    `[q.p.u.val p.p.u.val r.p.u.val q.u.val]
+    `[p.p.u.val k.p.u.val v.p.u.val q.u.val]
   ::
   ++  make                                              ::  make bucket
     ~/  %make
-    |=  [=k p=@ =v a=(qeu (trel k @ v))]
+    |=  [=k p=@ =v a=pro]
     ^-  (pair @ buc)
     =.  a  (put:qor a k p v)
     =/  val  (pour a)
@@ -2449,7 +2449,7 @@
         :-  `[k.buc q.u.b v.buc]
         =/  val  (bot:qor t.buc)
         ?~  val  ~
-        `[p.u.b q.p.u.val [p.p.u.val r.p.u.val q.u.val]]
+        `[p.u.b p.p.u.val k.p.u.val v.p.u.val q.u.val]
       --
     ::
     ++  pet                                             ::  delete view
