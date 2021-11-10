@@ -34,18 +34,16 @@
 ::  manage subscriptions efficiently.
 ::
 =>  |%
-+$  state-1
-  $:  %1
-      pki=state-pki-1                                   ::
++$  state-2
+  $:  %2
+      pki=state-pki-2                                   ::
       etn=state-eth-node                                ::  eth connection state
   ==                                                    ::
-+$  state-pki-1                                         ::  urbit metadata
++$  state-pki-2                                         ::  urbit metadata
   $:  $=  own                                           ::  vault (vein)
         $:  yen=(set duct)                              ::  trackers
             sig=(unit oath)                             ::  for a moon
             tuf=(list turf)                             ::  domains
-            boq=@ud                                     ::  boot block
-            nod=purl:eyre                               ::  eth gateway
             fak=_|                                      ::  fake keys
             lyf=life                                    ::  version
             step=@ud                                    ::  login code step
@@ -181,7 +179,7 @@
           ==
           ::  all vane state
           ::
-          state-1
+          state-2
       ==
   ::  lex: all durable state
   ::  moz: pending actions
@@ -254,14 +252,6 @@
       ::
       ~|  [our who.seed.tac]
       ?>  =(our who.seed.tac)
-      ::  save our boot block
-      ::
-      =.  boq.own.pki  bloq.tac
-      ::  save our ethereum gateway (required for galaxies)
-      ::
-      =.  nod.own.pki
-        %+  fall  node.tac
-        (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.pki  sig.seed.tac
@@ -312,7 +302,10 @@
       ::
       ::  start subscriptions
       ::
-      =.  +>.$  (poke-watch hen %azimuth nod.own.pki)
+      =.  +>.$
+        %^  poke-watch  hen  %azimuth
+        %+  fall  node.tac
+        (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
       =.  +>.$
         ::  get everything from /app/azimuth because jael subscriptions
         ::  seem to be flaky for now
@@ -596,7 +589,7 @@
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
     |=  $:  moz=(list move)
-            pki=state-pki-1
+            pki=state-pki-2
             etn=state-eth-node
         ==
     +>(pki pki, etn etn, moz (weld (flop moz) ^moz))
@@ -616,7 +609,7 @@
   =|  moz=(list move)
   =|  $:  hen=duct
           now=@da
-          state-pki-1
+          state-pki-2
           state-eth-node
       ==
   ::  moz: moves in reverse order
@@ -997,7 +990,7 @@
 ::
 ::  lex: all durable %jael state
 ::
-=|  lex=state-1
+=|  lex=state-2
 |=  $:  ::  now: current time
         ::  eny: unique entropy
         ::  ski: namespace resolver
@@ -1027,8 +1020,42 @@
   [did ..^$]
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
-  |=  old=state-1
+  =>  |%
+      ::
+      +$  any-state  $%(state-1 state-2)
+      +$  state-1
+        $:  %1
+            pki=state-pki-1
+            etn=state-eth-node
+        ==
+      +$  state-pki-1
+        $:  $=  own
+              $:  yen=(set duct)
+                  sig=(unit oath)
+                  tuf=(list turf)
+                  boq=@ud
+                  nod=purl:eyre
+                  fak=_|
+                  lyf=life
+                  step=@ud
+                  jaw=(map life ring)
+              ==
+            $=  zim
+              $:  yen=(jug duct ship)
+                  ney=(jug ship duct)
+                  nel=(set duct)
+                  dns=dnses
+                  pos=(map ship point)
+        ==    ==
+      --
+  |=  old=any-state
   ^+  ..^$
+  =?  old  ?=(%1 -.old)
+    %=  old
+      -        %2
+      own.pki  own.pki.old(+>+ +>.+>+.own.pki.old)
+    ==
+  ?>  ?=(%2 -.old)
   ..^$(lex old)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
