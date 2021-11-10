@@ -875,6 +875,7 @@
         %mainnet  mainnet-contracts
         %ropsten  ropsten-contracts
         %local    local-contracts
+        %default  contracts
       ==
     %_  state
       contract   contract

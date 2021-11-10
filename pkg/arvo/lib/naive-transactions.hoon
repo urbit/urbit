@@ -203,11 +203,6 @@
   ::
   --
 ::
-++  reverse-hash
-  |=  keccak=@ux
-  ^+  keccak
-  (rev 3 (met 3 keccak) keccak)
-::
 ++  hash-tx  keccak-256:keccak:crypto
 ::
 ++  hash-raw-tx
