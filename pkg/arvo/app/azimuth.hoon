@@ -65,11 +65,16 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =.  net.state  %local
+    =:  net.state   %default
+        logs.state  snap
+        url.state   'http://eth-mainnet.urbit.org:8545'
+      ==
     :_  this
-    :~  [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]
-        [%pass /old-tracker %agent [our.bowl %hood] %poke %kiln-nuke !>([%azimuth-tracker %base])]
-        [%pass /lo %arvo %j %listen ~ [%| dap.bowl]]
+    :~  :*  %pass  /old-tracker  %agent  [our.bowl %hood]
+            %poke  %kiln-nuke  !>([%azimuth-tracker %|])
+        ==
+      ::
+        [%pass /init %arvo %b %wait now.bowl]
     ==
   ::
   ++  on-save   !>(state)
@@ -92,7 +97,9 @@
       ::
           %resub
         :_  this  :_  ~
-        [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]
+        :*  %pass  /eth-watcher  %agent  [our.bowl %eth-watcher]
+            %watch  /logs/[dap.bowl]
+        ==
       ::
           %resnap
         =.  logs.state  snap
@@ -200,7 +207,18 @@
       (event-update:do effects)
     (jael-update:do (to-udiffs:do effects))
   ::
-  ++  on-arvo   on-arvo:def
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ?.  &(=(/init wire) ?=(%wake +<.sign-arvo))
+      (on-arvo:def wire sign-arvo)
+    :_  this
+    :~  :*  %pass  /eth-watcher  %agent  [our.bowl %eth-watcher]
+            %watch  /logs/[dap.bowl]
+        ==
+      ::
+        [%pass /lo %arvo %j %listen ~ [%| dap.bowl]]
+    ==
+  ::
   ++  on-fail   on-fail:def
   --
 |_  =bowl:gall
