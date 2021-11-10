@@ -1099,6 +1099,12 @@
     =/  sal  (add %pass step.own.pki.lex)
     ``[%noun !>((end 6 (shaf sal (shax sec))))]
   ::
+      %fake
+    ?.  ?=(~ tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    ``[%noun !>(fak.own.pki.lex)]
+  ::
       %life
     ?.  ?=([@ ~] tyl)  [~ ~]
     ?.  =([%& our] why)

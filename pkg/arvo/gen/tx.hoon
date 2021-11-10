@@ -42,7 +42,7 @@
 ^-  @t
 =/  account  (hex-to-num:eth '0xb026b0AA6e686F2386051b31A03E5fB95513e1c0')
 =/  tx=octs
-  (take-ship-address:bits:l2:tt %set-spawn-proxy ~ravmun-mitbus %own account)
+  (gen-tx-octs:tt [~ravmun-mitbus %own] %set-spawn-proxy account)
 =/  prepped=octs  (prepare-for-sig:tt 3 0 tx)
 ?~  sig
   (cat 3 'sign: ' (print-for-web3 prepped))
