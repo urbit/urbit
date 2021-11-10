@@ -1,6 +1,6 @@
 {
   "name": "@urbit/roller-api",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Azimuth Layer 2 Roller API client",
   "repository": {
     "type": "git",

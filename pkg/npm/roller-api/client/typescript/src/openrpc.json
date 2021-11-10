@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.10",
+    "version": "0.1.11",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -27,6 +27,16 @@
       "url": "https://roller-tmp.urbit.org/v1/azimuth",
       "name": "Ropsten",
       "description": "Azimuth agent on Ropsten"
+    },
+    {
+      "url": "https://roller.urbit.org/v1/roller",
+      "name": "Mainnet",
+      "description": "Roller Agent on Mainnet"
+    },
+    {
+      "url": "https://roller.urbit.org/v1/azimuth",
+      "name": "Mainnet",
+      "description": "Azimuth agent on Mainnet"
     }
   ],
   "methods": [
@@ -1364,6 +1374,27 @@
       }
     },
     {
+      "name": "spawnsRemaining",
+      "summary": "Gets the number of points that haven't been spawned by a star or galaxy",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "ship",
+          "schema": {
+            "$ref": "#/components/schemas/Ship"
+          }
+        }
+      ],
+      "result": {
+        "name": "spawns remaining",
+        "description": "Number of spawns the point has left",
+        "schema": {
+          "type": "number",
+          "title": "SpawnsLeft"
+        }
+      }
+    },
+    {
       "name": "whenNextBatch",
       "summary": "Timestamp of when the next L2 batch will be submitted",
       "paramStructure": "by-name",
@@ -1770,8 +1801,47 @@
       }
     },
     {
+      "name": "hashRawTransaction",
+      "summary": "Returns the hash of the serialized signature and raw bytes of the l2 tx. Used as unique identifier of a tx submitted to a L2 roller",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "sig",
+          "schema": {
+            "$ref": "#/components/schemas/Signature"
+          }
+        },
+        {
+          "name": "from",
+          "schema": {
+            "$ref": "#/components/schemas/From"
+          }
+        },
+        {
+          "name": "tx",
+          "schema": {
+            "$ref": "#/components/schemas/TransactionType"
+          }
+        },
+        {
+          "name": "data",
+          "schema": {
+            "$ref": "#/components/schemas/L2Data"
+          }
+        }
+      ],
+      "result": {
+        "name": "Hash",
+        "description": "Hash of the signature + L2 raw transaction",
+        "schema": {
+          "$ref": "#/components/schemas/Hash"
+        }
+      }
+    },
+    {
       "name": "hashTransaction",
-      "summary": "Returns an unsigned L2 transaction, ready to be signed",
+      "deprecated": true,
+      "summary": "Currently equivalent to prepareForSigning.",
       "paramStructure": "by-name",
       "params": [
         {
@@ -1804,6 +1874,85 @@
         "description": "Hash of the L2 transaction",
         "schema": {
           "$ref": "#/components/schemas/Hash"
+        }
+      }
+    },
+    {
+      "name": "getUnsignedTx",
+      "deprecated": true,
+      "summary": "Returns a hash of the unsigned L2 transaction, following the format found at https://urbit.org/docs/azimuth/l2/bytestring#unsigned",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "nonce",
+          "schema": {
+            "$ref": "#/components/schemas/Nonce"
+          }
+        },
+        {
+          "name": "from",
+          "schema": {
+            "$ref": "#/components/schemas/From"
+          }
+        },
+        {
+          "name": "tx",
+          "schema": {
+            "$ref": "#/components/schemas/TransactionType"
+          }
+        },
+        {
+          "name": "data",
+          "schema": {
+            "$ref": "#/components/schemas/L2Data"
+          }
+        }
+      ],
+      "result": {
+        "name": "Hash",
+        "description": "Hash of the L2 transaction",
+        "schema": {
+          "$ref": "#/components/schemas/Hash"
+        }
+      }
+    },
+    {
+      "name": "prepareForSigning",
+      "deprecated": true,
+      "summary": "Returns a serialized L2 transaction, with the appropiate headers, and reversed endianness. Useful to be used together with, for example, Metamask personal_sign method",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "nonce",
+          "schema": {
+            "$ref": "#/components/schemas/Nonce"
+          }
+        },
+        {
+          "name": "from",
+          "schema": {
+            "$ref": "#/components/schemas/From"
+          }
+        },
+        {
+          "name": "tx",
+          "schema": {
+            "$ref": "#/components/schemas/TransactionType"
+          }
+        },
+        {
+          "name": "data",
+          "schema": {
+            "$ref": "#/components/schemas/L2Data"
+          }
+        }
+      ],
+      "result": {
+        "name": "SerializedTx",
+        "description": "Hex-encoded string representation of the L2 transaction",
+        "schema": {
+          "title": "SerializedTx",
+          "type": "string"
         }
       }
     },
@@ -2440,7 +2589,8 @@
               "title": "Operator",
               "properties": {
                 "operator": {
-                  "type": "string"
+                  "type": "string",
+                  "title": "OperatorAddress"
                 },
                 "addresses": {
                   "type": "array",
@@ -2458,5 +2608,9 @@
         }
       }
     }
+  },
+  "externalDocs": {
+    "url": "https://urbit.org/docs/azimuth/l2",
+    "description": "Documentation of the technical details of naive rollups."
   }
 }
