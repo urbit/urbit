@@ -531,13 +531,27 @@
           u3_psat_done = 3                    //  shutting down
         } u3_psat;
 
-      /* u3_boot: bootstrap event sequence
+      /* u3_meta: pier metadata.
       */
-        typedef struct _u3_boot {
-          u3_noun bot;                          //  boot formulas
-          u3_noun mod;                          //  module ova
-          u3_noun use;                          //  userpace ova
-        } u3_boot;
+        typedef struct _u3_meta {
+          c3_d who_d[2];                    //  identity
+          c3_o fak_o;                       //  fake bit
+          c3_w lif_w;                       //  lifecycle length
+        } u3_meta;
+
+      /* u3_boot_opts: bootstrap parameters.
+      */
+        typedef struct _u3_boot_opts {
+          c3_w           eny_w[16];         //  entropy
+          c3_o           veb_o;             //  verbose
+          c3_o           lit_o;             //  lite
+          c3_o           sev_l;             //  instance number
+          struct timeval tim_u;             //  time
+          struct {                          //  kelvin
+            c3_m         nam_m;             //    label
+            c3_w         ver_w;             //    version
+          } ver_u;
+        } u3_boot_opts;
 
       /* u3_auto_cb: i/o driver callbacks
       */
@@ -624,6 +638,7 @@
           c3_o    mut_o;                    //  mutated kerne
           u3_noun sac;                      //  space measurement
           u3_disk* log_u;                   //  event log
+          u3_meta met_u;                    //  metadata
           uv_timer_t   tim_u;               //  snapshot timer
           u3_moat*     inn_u;               //  input stream
           u3_mojo*     out_u;               //  output stream
@@ -911,18 +926,12 @@
       /* u3_disk_read_meta(): read metadata.
       */
         c3_o
-        u3_disk_read_meta(u3_disk* log_u,
-                          c3_d*    who_d,
-                          c3_o*    fak_o,
-                          c3_w*    lif_w);
+        u3_disk_read_meta(u3_disk* log_u, u3_meta* met_u);
 
       /* u3_disk_save_meta(): save metadata.
       */
         c3_o
-        u3_disk_save_meta(u3_disk* log_u,
-                          c3_d     who_d[2],
-                          c3_o     fak_o,
-                          c3_w     lif_w);
+        u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u);
 
       /* u3_disk_read_list(): synchronously read a cons list of events.
       */

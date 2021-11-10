@@ -471,21 +471,22 @@ _disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
 /* u3_disk_save_meta(): save metadata.
 */
 c3_o
-u3_disk_save_meta(u3_disk* log_u,
-                  c3_d     who_d[2],
-                  c3_o     fak_o,
-                  c3_w     lif_w)
+u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u)
 {
-  c3_assert( c3y == u3a_is_cat(lif_w) );
+  c3_assert( c3y == u3a_is_cat(met_u->lif_w) );
+
+  u3_noun who = u3i_chubs(2, met_u->who_d);
 
   if (  (c3n == _disk_save_meta(log_u, "version", 1))
-     || (c3n == _disk_save_meta(log_u, "who", u3i_chubs(2, who_d)))
-     || (c3n == _disk_save_meta(log_u, "fake", fak_o))
-     || (c3n == _disk_save_meta(log_u, "life", lif_w)) )
+     || (c3n == _disk_save_meta(log_u, "who", who))
+     || (c3n == _disk_save_meta(log_u, "fake", met_u->fak_o))
+     || (c3n == _disk_save_meta(log_u, "life", met_u->lif_w)) )
   {
+    u3z(who);
     return c3n;
   }
 
+  u3z(who);
   return c3y;
 }
 
@@ -514,10 +515,7 @@ _disk_read_meta(u3_disk* log_u, const c3_c* key_c)
 /* u3_disk_read_meta(): read metadata.
 */
 c3_o
-u3_disk_read_meta(u3_disk* log_u,
-                  c3_d*    who_d,
-                  c3_o*    fak_o,
-                  c3_w*    lif_w)
+u3_disk_read_meta(u3_disk* log_u, u3_meta* met_u)
 {
   u3_weak ver, who, fak, lif;
 
@@ -560,17 +558,9 @@ u3_disk_read_meta(u3_disk* log_u,
     }
   }
 
-  if ( who_d ) {
-    u3r_chubs(0, 2, who_d, who);
-  }
-
-  if ( fak_o ) {
-    *fak_o = fak;
-  }
-
-  if ( lif_w ) {
-    *lif_w = lif;
-  }
+  u3r_chubs(0, 2, met_u->who_d, who);
+  met_u->fak_o = fak;
+  met_u->lif_w = lif;
 
   u3z(who);
   return c3y;

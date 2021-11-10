@@ -516,6 +516,27 @@ u3_mars_play(u3_mars* mar_u)
   u3l_log("---------------- playback complete ----------------\r\n");
 }
 
+static c3_o
+_mars_do_boot(u3_disk* log_u, c3_d eve_d)
+{
+  u3_weak eve;
+  c3_l  mug_l;
+
+  if ( u3_none == (eve = u3_disk_read_list(log_u, 1, eve_d, &mug_l)) ) {
+    fprintf(stderr, "boot: read failed\r\n");
+    return c3n;
+  }
+
+  u3l_log("--------------- bootstrap starting ----------------\r\n");
+
+  if ( c3n == u3v_boot(eve) ) {
+    return c3n;
+  }
+
+  u3l_log("--------------- bootstrap complete ----------------\r\n");
+  return c3y;
+}
+
 /* u3_mars_init(): init mars, replay if necessary.
 */
 u3_mars*
@@ -546,68 +567,48 @@ u3_mars_init(c3_c*    dir_c,
     return 0;
   }
 
-  {
-    c3_d who_d[2];
-    c3_o fak_o;
-    c3_w lif_w;
+  if ( c3n == u3_disk_read_meta(mar_u->log_u, &(mar_u->met_u)) ) {
+    fprintf(stderr, "mars: disk meta fail\r\n");
+    u3_disk_exit(mar_u->log_u);
+    c3_free(mar_u);
+    return 0;
+  }
 
-    if ( c3n == u3_disk_read_meta(mar_u->log_u, who_d, &fak_o, &lif_w) ) {
-      fprintf(stderr, "mars: disk meta fail\r\n");
+  if ( !mar_u->dun_d ) {
+    if ( c3n == _mars_do_boot(mar_u->log_u, mar_u->met_u.lif_w) ) {
+      fprintf(stderr, "mars: boot fail\r\n");
       u3_disk_exit(mar_u->log_u);
       c3_free(mar_u);
       return 0;
     }
 
-    if ( !mar_u->dun_d ) {
-      u3_weak eve;
-      c3_l  mug_l;
+    mar_u->sen_d = mar_u->dun_d = mar_u->met_u.lif_w;
+    u3e_save();
+  }
 
-      if ( u3_none == (eve = u3_disk_read_list(mar_u->log_u, 1, lif_w, &mug_l)) ) {
-        fprintf(stderr, "boot: read failed\r\n");
-        u3_disk_exit(mar_u->log_u);
-        c3_free(mar_u);
-        return 0;
-      }
+  if ( mar_u->log_u->dun_d > mar_u->dun_d ) {
+    u3_mars_play(mar_u);
+    u3e_save();
+  }
 
-      u3l_log("--------------- bootstrap starting ----------------\r\n");
+  //  send ready status message
+  //
+  //    XX version negotiation
+  //
+  {
+    c3_d  len_d;
+    c3_y* hun_y;
+    u3_noun wyn = u3_nul;
+    u3_noun msg = u3nq(c3__ripe,
+                       u3nc(2, wyn),
+                       u3nc(u3i_chubs(2, mar_u->met_u.who_d),
+                            mar_u->met_u.fak_o),
+                       u3nc(u3i_chub(mar_u->dun_d),
+                            mar_u->mug_l));
 
-      if ( c3n == u3v_boot(eve) ) {
-        fprintf(stderr, "boot: failed\r\n");
-        u3_disk_exit(mar_u->log_u);
-        c3_free(mar_u);
-        return 0;
-      }
-
-      u3l_log("--------------- bootstrap complete ----------------\r\n");
-
-      mar_u->sen_d = mar_u->dun_d = lif_w;
-
-      u3e_save();
-    }
-
-    if ( mar_u->log_u->dun_d > mar_u->dun_d ) {
-      u3_mars_play(mar_u);
-      u3e_save();
-    }
-
-    //  send ready status message
-    //
-    //    XX version negotiation
-    //
-    {
-      c3_d  len_d;
-      c3_y* hun_y;
-      u3_noun wyn = u3_nul;
-      u3_noun msg = u3nq(c3__ripe,
-                         u3nc(2, wyn),
-                         u3nc(u3i_chubs(2, who_d), fak_o),
-                         u3nc(u3i_chub(mar_u->dun_d),
-                              mar_u->mug_l));
-
-      u3s_jam_xeno(msg, &len_d, &hun_y);
-      u3_newt_send(mar_u->out_u, len_d, hun_y);
-      u3z(msg);
-    }
+    u3s_jam_xeno(msg, &len_d, &hun_y);
+    u3_newt_send(mar_u->out_u, len_d, hun_y);
+    u3z(msg);
   }
 
   u3_disk_async(mar_u->log_u, mar_u, _mars_disk_cb);
@@ -746,35 +747,13 @@ _mars_sift_pill(u3_noun  pil,
   return c3y;
 }
 
-//  XX rename, move
-//
-typedef struct _mars_input {
-  c3_w           eny_w[16];
-  c3_o           veb_o;
-  c3_o           lit_o;
-  c3_o           sev_l;
-  struct timeval tim_u;
-  struct {
-    c3_m         nam_m;
-    c3_w         ver_w;
-  } ver_u;
-} mars_input;
-
-//  XX move
-//
-typedef struct _u3_meta {
-  c3_d who_d[2];
-  c3_o fak_o;
-  c3_w lif_w;
-} u3_meta;
-
 /* _mars_boot_make(): construct boot sequence
 */
 static c3_o
-_mars_boot_make(mars_input* inp_u,
-                u3_noun    com,
-                u3_noun*   ova,
-                u3_meta* met_u)
+_mars_boot_make(u3_boot_opts* inp_u,
+                u3_noun         com,
+                u3_noun*        ova,
+                u3_meta*      met_u)
 {
   u3_noun pil, ven, mor, who;
 
@@ -914,9 +893,9 @@ _mars_boot_make(mars_input* inp_u,
 c3_o
 u3_mars_boot(c3_c* dir_c, u3_noun com)
 {
-  u3_noun   ova;
-  u3_meta met_u;
-  mars_input inp_u;
+  u3_boot_opts inp_u;
+  u3_meta      met_u;
+  u3_noun        ova;
 
   //  XX source properly
   //
@@ -946,41 +925,21 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
     return c3n;
   }
 
-  //  XX refactor
-  //
-  if ( c3n == u3_disk_save_meta(log_u, met_u.who_d, met_u.fak_o, met_u.lif_w) ) {
-    return c3n;
+  if ( c3n == u3_disk_save_meta(log_u, &met_u) ) {
+    return c3n;  //  XX cleanup
   }
 
   u3_disk_plan_list(log_u, ova);
 
   if ( c3n == u3_disk_sync(log_u) ) {
-    return c3n;
+    return c3n;  //  XX cleanup
   }
 
-  //  XX just re-use ova instead of read to confirm write?
-  //  XX don't bootstrap here, defer to mars_init?s
-  //
-  {
-    u3_weak eve;
-    c3_l  mug_l;
-
-    if ( u3_none == (eve = u3_disk_read_list(log_u, 1, log_u->dun_d, &mug_l)) ) {
-      fprintf(stderr, "boot: read failed\r\n");
-      return c3n;
-    }
-
-    u3l_log("--------------- bootstrap starting ----------------\r\n");
-
-    if ( c3n == u3v_boot(eve) ) {
-      return c3n;
-    }
-
-    u3l_log("--------------- bootstrap complete ----------------\r\n");
-
-    u3e_save();
+  if ( c3n == _mars_do_boot(log_u, log_u->dun_d) ) {
+    return c3n;  //  XX cleanup
   }
 
+  u3e_save();
   u3_disk_exit(log_u);
 
   return c3y;
