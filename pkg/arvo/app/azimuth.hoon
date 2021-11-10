@@ -70,6 +70,8 @@
         url.state   'http://eth-mainnet.urbit.org:8545'
       ==
     :_  this
+    ?:  .^(? %j /(scot %p our.bowl)/fake/(scot %da now.bowl))
+      ~
     :~  :*  %pass  /old-tracker  %agent  [our.bowl %hood]
             %poke  %kiln-nuke  !>([%azimuth-tracker %|])
         ==
