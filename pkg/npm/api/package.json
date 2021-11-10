@@ -13,6 +13,9 @@
   "jsdelivr": "dist/urbit-api.min.js",
   "unpkg": "dist/urbit-api.min.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
     "build": "npm run clean && rollup -c && npx tsc -p tsconfig.json",

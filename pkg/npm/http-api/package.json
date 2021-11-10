@@ -14,7 +14,7 @@
   "jsdelivr": "dist/urbit-http-api.min.js",
   "unpkg": "dist/urbit-http-api.min.js",
   "types": "dist/index.d.ts",
-  "file": [
+  "files": [
     "dist/**"
   ],
   "scripts": {

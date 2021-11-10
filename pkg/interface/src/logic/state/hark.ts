@@ -1,5 +1,6 @@
 import {
   archive,
+  BigIntOrderedMap,
   HarkBin,
   markCountAsRead,
   NotificationGraphConfig,
@@ -14,7 +15,6 @@ import {
 import { Poke } from '@urbit/http-api';
 import { patp2dec } from 'urbit-ob';
 import _ from 'lodash';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import api from '~/logic/api';
 import { useCallback, useMemo } from 'react';
 
