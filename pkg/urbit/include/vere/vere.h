@@ -639,7 +639,10 @@
           u3_noun sac;                      //  space measurement
           u3_disk* log_u;                   //  event log
           u3_meta met_u;                    //  metadata
-          uv_timer_t   tim_u;               //  snapshot timer
+          struct {                          //  snapshot
+            uv_timer_t tim_u;               //    timer
+            c3_d       eve_d;               //    last saved
+          } sav_u;                          //
           u3_moat*     inn_u;               //  input stream
           u3_mojo*     out_u;               //  output stream
           u3_cue_xeno* sil_u;               //  cue handle

@@ -334,6 +334,7 @@ top:
   {
     if ( u3_mars_save_e == mar_u->sat_e ) {
       u3e_save();
+      mar_u->sav_u.eve_d = mar_u->dun_d;
       _mars_gift(mar_u,
         u3nt(c3__sync, u3i_chub(mar_u->dun_d), mar_u->mug_l));
       mar_u->sat_e = u3_mars_work_e;
@@ -389,7 +390,10 @@ static void
 _mars_timer_cb(uv_timer_t* tim_u)
 {
   u3_mars* mar_u = tim_u->data;
-  mar_u->sat_e = u3_mars_save_e;
+
+  if ( mar_u->dun_d > mar_u->sav_u.eve_d ) {
+    mar_u->sat_e = u3_mars_save_e;
+  }
 
   _mars_flush(mar_u);
 }
@@ -615,10 +619,11 @@ u3_mars_init(c3_c*    dir_c,
 
   //  XX check return, make interval configurable
   //
-  uv_timer_init(u3L, &mar_u->tim_u);
-  uv_timer_start(&mar_u->tim_u, _mars_timer_cb, 120000, 120000);
+  uv_timer_init(u3L, &(mar_u->sav_u.tim_u));
+  uv_timer_start(&(mar_u->sav_u.tim_u), _mars_timer_cb, 120000, 120000);
 
-  mar_u->tim_u.data = mar_u;
+  mar_u->sav_u.eve_d = mar_u->dun_d;
+  mar_u->sav_u.tim_u.data = mar_u;
 
   return mar_u;
 }
