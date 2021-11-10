@@ -236,50 +236,6 @@ _dawn_need_unit(u3_noun nit, c3_c* msg_c)
   }
 }
 
-/* _dawn_purl(): ethereum gateway url as (unit purl)
-*/
-static u3_noun
-_dawn_purl(u3_noun rac)
-{
-  u3_noun url;
-
-  if ( 0 == u3_Host.ops_u.eth_c ) {
-    if ( c3__czar == rac ) {
-      u3l_log("boot: galaxy requires ethereum gateway via -e\r\n");
-      exit(1);
-    }
-
-    url = u3_nul;
-  }
-  else {
-    //  XX call de-purl directly
-    //
-    u3_noun par = u3v_wish("auru:de-purl:html");
-    u3_noun lur = u3i_string(u3_Host.ops_u.eth_c);
-    u3_noun rul = u3dc("rush", u3k(lur), u3k(par));
-
-    if ( u3_nul == rul ) {
-      if ( c3__czar == rac ) {
-        u3l_log("boot: galaxy requires ethereum gateway via -e\r\n");
-        exit(1);
-      }
-
-      url = u3_nul;
-    }
-    else {
-      //  XX revise for de-purl
-      //  auru:de-purl:html parses to (pair user purl)
-      //  we need (unit purl)
-      //
-      url = u3nc(u3_nul, u3k(u3t(u3t(rul))));
-    }
-
-    u3z(par); u3z(lur); u3z(rul);
-  }
-
-  return url;
-}
-
 /* _dawn_turf(): override contract domains with -H
 */
 static u3_noun
@@ -330,14 +286,12 @@ _dawn_sponsor(u3_noun who, u3_noun rac, u3_noun pot)
 u3_noun
 u3_dawn_vent(u3_noun ship, u3_noun feed)
 {
-  u3_noun url, sed, pos, pon, zar, tuf;
+  u3_noun sed, pos, pon, zar, tuf;
 
   u3_noun rank = u3do("clan:title", u3k(ship));
 
-  url = _dawn_purl(rank);
-
-  c3_c* url_c = ( 0 != u3_Host.ops_u.nav_c ) ?
-    u3_Host.ops_u.nav_c :
+  c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
+    u3_Host.ops_u.eth_c :
     "https://roller.urbit.org/v1/azimuth";
 
   {
@@ -462,7 +416,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
   //NOTE  blocknum of 0 is fine because jael ignores it.
   //      should probably be removed from dawn event.
   u3_noun ven = u3nc(c3__dawn,
-                     u3nq(u3k(u3t(sed)), pon, zar, u3nt(tuf, 0, url)));
+                     u3nq(u3k(u3t(sed)), pon, zar, u3nt(tuf, 0, u3_nul)));
 
   u3z(sed); u3z(rank); u3z(pos); u3z(ship); u3z(feed);
 
