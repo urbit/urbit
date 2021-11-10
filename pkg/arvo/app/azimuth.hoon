@@ -23,17 +23,14 @@
 ::
 =,  jael
 |%
-+$  versioned-state
-  $%  app-state
-  ==
-::::
 +$  app-state
-  $:  %0
+  $:  %1
       url=@ta
       =net
       whos=(set ship)
       nas=^state:naive
       own=owners
+      spo=sponsors
       logs=(list =event-log:rpc:ethereum)
   ==
 ::
@@ -81,7 +78,27 @@
   ++  on-load
     |=  old=vase
     ^-  (quip card _this)
-    `this(state !<(versioned-state old))
+    |^
+    =+  !<(old-state=app-states old)
+    =?  old-state  ?=(%0 -.old-state)
+      ^-  app-state
+      =,  old-state
+      [%1 url net whos nas own *sponsors logs]
+    ?>  ?=(%1 -.old-state)
+    `this(state old-state)
+    ::
+    ++  app-states  $%(state-0 app-state)
+    ::
+    ++  state-0
+      $:  %0
+          url=@ta
+          =net
+          whos=(set ship)
+          nas=^state:naive
+          own=owners
+          logs=(list =event-log:rpc:ethereum)
+      ==
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -125,6 +142,7 @@
           net.state   net.poke
           url.state   url.poke
           own.state   ~
+          spo.state   ~
           logs.state  ?:(?=(%default net.poke) snap ~)
         ==
       %-  %-  slog  :_  ~
@@ -139,7 +157,7 @@
     ?<  =(/sole/drum path)
     ?:  =(/event path)
       :_  this
-      [%give %fact ~ %naive-state !>([nas.state own.state])]~
+      [%give %fact ~ %naive-state !>([nas.state own.state spo.state])]~
     =/  who=(unit ship)
       ?~  path  ~
       ?:  ?=([@ ~] path)  ~
@@ -278,22 +296,29 @@
       %&  p.res
       %|  ((slog 'naive-fail' p.res) `nas.state)
     ==
-  =.  own.state
-    =<  own
+  ::  TODO: move to /lib/dice ?
+  ::
+  =/  [new-own=_own.state new-spo=_spo.state]
+    =<  [own spo]
     ?.  =(azimuth.net address.i.logs)
       %:  apply-effects:dice
+        chain-id.net
         raw-effects
         nas.state
         own.state
-        chain-id.net
+        spo.state
       ==
-    %:  update-ownership:dice
+    %:  update-indices:dice
       raw-effects
       nas.state
       new-nas
       own.state
+      spo.state
     ==
-  =.  nas.state  new-nas
+  =:  nas.state  new-nas
+      own.state  new-own
+      spo.state  new-spo
+    ==
   =/  effects-1
     =/  =id:block  [block-hash block-number]:u.mined.i.logs
     (turn raw-effects |=(=diff:naive [id diff]))

@@ -31,7 +31,7 @@
 ::
 |%
 +$  app-state
-  $:  %1
+  $:  %2
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
       ::  finding: sig+raw-tx hash reverse lookup for txs in sending map
@@ -41,6 +41,7 @@
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
       ::  own: ownership of azimuth points
+      ::  spo: residents and escapees, per sponsor
       ::
       pending=(list pend-tx)
       sending=(tree [l1-tx-pointer send-tx])
@@ -51,6 +52,7 @@
       next-batch=time
       pre=^state:naive
       own=owners
+      spo=sponsors
     ::
       ::  pk: private key to send the roll
       ::  quota: max numbers of transactions per unit of time (slice)
@@ -141,17 +143,13 @@
     =|  cards=(list card)
     ::  new additions to app-state
     ::
-    =|  ship-quota=(map ship @ud)
-    =/  slice=@dr        ~d7
-    =/  quota=@ud        7
-    =/  resend-time=@dr  ~m5
-    =/  update-rate=@dr  ~m5
+    =|  spo=(map ship [residents=(set ship) requests=(set ship)])
     |^
     =+  !<(old-state=app-states old)
     =?  cards  ?=(%0 -.old-state)
       [(set-quota:timer slice)]~
     =?  old-state  ?=(%0 -.old-state)
-      ^-  app-state
+      ^-  state-1
       =,  old-state
       :*  %1
           pending  sending  finding  history
@@ -160,10 +158,20 @@
           frequency  endpoint  contract  chain-id
           resend-time  update-rate
       ==
-    ?>  ?=(%1 -.old-state)
+    =?  old-state  ?=(%1 -.old-state)
+      ^-  app-state
+      =,  old-state
+      :*  %2
+          pending  sending  finding  history
+          ship-quota  next-nonce  next-batch
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate
+      ==
+    ?>  ?=(%2 -.old-state)
     [cards this(state old-state)]
     ::
-    ++  app-states  $%(state-0 app-state)
+    ++  app-states  $%(state-0 state-1 app-state)
     ++  state-0
       $:  %0
           pending=(list pend-tx)
@@ -180,6 +188,29 @@
           endpoint=(unit @t)
           contract=@ux
           chain-id=@
+      ==
+    ::
+    ++  state-1
+      $:  %1
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer send-tx])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          next-nonce=(unit @ud)
+          next-batch=time
+          pre=^state:naive
+          own=owners
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
       ==
     --
   ::
@@ -203,6 +234,7 @@
   ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
   ::    /x/spawned/[~star]             ->  %noun  (list ship)
   ::    /x/unspawned/[~star]           ->  %noun  (list ship)
+  ::    /x/sponsored/[~point]          ->  %noun  [(list ship) (list ship)]
   ::    /x/next-batch                  ->  %atom  time
   ::    /x/point/[~ship]               ->  %noun  point:naive
   ::    /x/ships/[0xadd.ress]          ->  %noun  (list ship)
@@ -232,6 +264,7 @@
       [%x %nonce @ @ ~]       (nonce i.t.t.path i.t.t.t.path)
       [%x %spawned @ ~]       (spawned i.t.t.path)
       [%x %unspawned @ ~]     (unspawned i.t.t.path)
+      [%x %sponsored @ ~]     (sponsored i.t.t.path)
       [%x %next-batch ~]      ``atom+!>(next-batch)
       [%x %point @ ~]         (point i.t.t.path)
       [%x %ships @ ~]         (ships i.t.t.path)
@@ -357,6 +390,17 @@
       |=  =ship
       ?:  (~(has in spawned) ship)  ~
       `ship
+    ::
+    ++  sponsored
+      |=  wat=@t
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  [(list ship) (list ship)]
+      ?~  who=(slaw %p wat)  [~ ~]
+      ?~  sponsor=(~(get by spo) u.who)
+        [~ ~]
+      :-  ~(tap in residents.u.sponsor)
+      ~(tap in requests.u.sponsor)
     ::
     ++  point
       |=  wat=@t
@@ -557,8 +601,10 @@
           ~&  >  %received-azimuth-state
           ::  cache naive and ownership state
           ::
-          =^  nas  own.state
-            !<([^state:naive owners] q.cage.sign)
+          =+  !<([nas=^state:naive own=owners spo=sponsors] q.cage.sign)
+          =:  own.state  own
+              spo.state  spo
+            ==
           =^  effects  state
             (predicted-state:do nas)
           [(emit effects) this]
@@ -821,10 +867,10 @@
 ++  try-apply
   |=  [nas=^state:naive force=? =raw-tx:naive]
   ^-  [[? ups=(list update)] _state]
-  =/  [success=? predicted=_nas ups=(list update) owners=_own]
-    (apply-raw-tx:dice force raw-tx nas own chain-id)
+  =/  [success=? ups=(list update) predicted=_nas owners=_own sponsors=_spo]
+    (apply-raw-tx:dice force chain-id raw-tx nas own spo)
   :-  [success ups]
-  state(pre predicted, own owners)
+  state(pre predicted, own owners, spo sponsors)
 ::
 ++  get-l1-address
   |=  [=tx:naive nas=^state:naive]

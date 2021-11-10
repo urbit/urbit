@@ -157,6 +157,7 @@
       %get-spawned             `(get-spawned id +.params spawned:scry)
       %get-unspawned           `(get-spawned id +.params unspawned:scry)
       %spawns-remaining        `(spawns-remaining id +.params unspawned:scry)
+      %get-sponsored-points    `(sponsored-points id +.params sponsored:scry)
       %get-owned-points        `(get-ships id +.params owned:scry)
       %get-transferring-for    `(get-ships id +.params transfers:scry)
       %get-manager-for         `(get-ships id +.params manager:scry)
@@ -177,7 +178,8 @@
       %hash-raw-transaction    `(hash-raw-transaction id +.params)
       :: TODO: deprecated, remove (used together with personal_sign)
       ::
-      %hash-transaction        `(hash-transaction id +.params chain:scry | &)
+      %hash-transaction        ::`(hash-transaction id +.params chain:scry | &)
+                               `(hash-transaction id +.params chain:scry & |)
     ==
   --
 ::
@@ -216,6 +218,13 @@
     .^  (list ship)
         %gx
         (~(scry agentio bowl) %roller /owned/(scot %ux address)/noun)
+    ==
+  ::
+  ++  sponsored
+    |=  parent=ship
+    .^  [residents=(list ship) requests=(list ship)]
+        %gx
+        (~(scry agentio bowl) %roller /sponsored/(scot %p parent)/noun)
     ==
   ::
   ++  transfers

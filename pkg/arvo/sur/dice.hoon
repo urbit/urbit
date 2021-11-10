@@ -3,9 +3,10 @@
 /+  naive, ethereum
 ::
 |%
-+$  owner   [=proxy:naive =address:naive]
-+$  owners  (jug owner ship)
-+$  net     ?(%mainnet %ropsten %local %default)
++$  owner     [=proxy:naive =address:naive]
++$  owners    (jug owner ship)
++$  sponsors  (map ship [residents=(set ship) requests=(set ship)])
++$  net       ?(%mainnet %ropsten %local %default)
 ::
 +$  config
   $%  [%frequency frequency=@dr]
@@ -15,6 +16,12 @@
       [%update-rate rate=@dr]
       [%slice slice=@dr]
       [%quota quota=@ud]
+  ==
+::
++$  indices
+  $:  nas=^state:naive
+      own=owners
+      spo=sponsors
   ==
 ::
 +$  azimuth-config

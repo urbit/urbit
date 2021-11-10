@@ -343,6 +343,14 @@
             (en-address address)
         ==
       ::
+      ++  sponsored
+        |=  [res=(list @p) req=(list @p)]
+        ^-  json
+        %-  pairs
+        :~  ['residentes' (ships res)]
+            ['requests' (ships req)]
+        ==
+      ::
       ++  tx-status  |=(=^tx-status ^-(json s+status.tx-status))
       ::
       ++  roller-config
@@ -499,6 +507,15 @@
   ?~  ship=(ship:from-json params)
     ~(params error:json-rpc id)
   [%result id (numb:enjs:format (lent (scry u.ship)))]
+::
+++  sponsored-points
+  |=  [id=@t params=(map @t json) scry=$-(@p [(list @p) (list @p)])]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(ship:from-json params)
+    ~(params error:json-rpc id)
+  [%result id (sponsored:to-json (scry u.ship))]
 ::
 ++  process-rpc
   |=  [id=@t params=(map @t json) action=l2-tx over-quota=$-(@p ?)]
