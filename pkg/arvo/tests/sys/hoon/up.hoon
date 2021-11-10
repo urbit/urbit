@@ -5,6 +5,69 @@
 =/  qr  (gas:cor ~ ~[[4 4 4] [3 3 3] [2 2 2] [1 1 1]])
 =/  rr  (gas:cor ~ ~[[1 5 1] [2 2 2] [3 3 3] [4 4 4]])
 =/  sr  (gas:cor ~ ~[[2 2 2] [1 1 1] [4 4 4] [3 3 3]])
+=/  lnode-a=lnode
+  [n=[k=2 p=2 v=2] l=~ m=1 r=[%rlos s=1 p=[n=[k=3 p=3 v=3] l=~ m=2 r=~]]]
+=/  lnode-b=lnode
+  [n=[k=1 p=1 v=1] l=~ m=1 r=[%llos s=1 p=[n=[k=2 p=2 v=2] l=~ m=2 r=~]]]
+=/  lnode-c=lnode
+  [n=[k=1 p=1 v=1] l=~ m=1 r=~]
+=/  lnode-d=lnode
+  :^    [3 3 3]
+      :+  %llos
+        3
+      :^    [5 5 5]
+          [%rlos 1 [[6 6 6] ~ 5 ~]]
+        6
+      [%rlos 1 [[2 2 2] ~ 1 ~]]
+    2
+  [%rlos 1 [[4 4 4] ~ 3 ~]]
+=/  lnode-e=lnode
+  :^    [5 5 5]
+      [%rlos 1 [[6 6 6] ~ 5 ~]]
+    6
+  :+  %rlos
+    3
+  :^    [3 3 3]
+      [%rlos 1 [[2 2 2] ~ 1 ~]]
+    2
+  [%rlos 1 [[4 4 4] ~ 3 ~]]
+=/  psq=pro
+  :+  [1 1 1]
+    [%rlos 5 lnode-d]
+  4
+=/  qsp=pro
+  :+  [1 1 1]
+    [%llos 5 lnode-e]
+  4
+=/  tsq=pro
+  :+  [1 1 1]
+    :+  %rlos
+      11
+    :^    [1 1 1]
+        :+  %rlos
+          5
+        :^    [3 3 3]
+            :+  %llos
+              3
+            :^    [5 5 5]
+                [%rlos 1 [[6 6 6] ~ 5 ~]]
+              6
+            [%rlos 1 [[2 2 2] ~ 1 ~]]
+          2
+        [%rlos 1 [[4 4 4] ~ 3 ~]]
+      4
+    :+  %llos
+      5
+    :^    [5 5 5]
+        [%rlos 1 [[6 6 6] ~ 5 ~]]
+      6
+    :+  %rlos
+      3
+    :^    [3 3 3]
+        [%rlos 1 [[2 2 2] ~ 1 ~]]
+      2
+    [%rlos 1 [[4 4 4] ~ 3 ~]]
+  4
 ::
 =>
 |%
@@ -20,49 +83,121 @@
   ;:  weld
     %+  expect-eq
       !>  0
-      !>  (size:cor ~)
+      !>  (size ~)
     %+  expect-eq
       !>  1
       !>  (size:cor [%llos s=1 p=[n=[k=1 p=1 v=1] l=~ m=1 r=~]])
   ==
 ::
 ++  test-llos
-  =/  lnode
-    :^    n=[k=2 p=2 v=2]
-        l=~
-      m=1
-    r=[%rlos s=1 p=[n=[k=3 p=3 v=3] l=~ m=2 r=~]]
-  ::
   ;:  weld
     %+  expect-eq
-      !>  [%llos s=1 p=[n=[k=1 p=1 v=1] l=~ m=1 r=~]]
-      !>  (llos:cor [n=[k=1 p=1 v=1] l=~ m=1 r=~])
+      !>  [%llos s=2 p=lnode-a]
+      !>  (llos:cor lnode-a)
     %+  expect-eq
-      !>  [%llos s=2 p=lnode]
-      !>  (llos:cor lnode)
+      !>  [%llos s=2 p=lnode-b]
+      !>  (llos:cor lnode-b)
+    %+  expect-eq
+      !>  [%llos s=1 lnode-c]
+      !>  (llos:cor lnode-c)
   ==
 ::
 ++  test-rlos
-  =/  lnode
-    :^    n=[k=2 p=2 v=2]
-        l=~
-      m=1
-    r=[%rlos s=1 p=[n=[k=3 p=3 v=3] l=~ m=2 r=~]]
-  ::
   ;:  weld
     %+  expect-eq
-      !>  [%rlos s=1 p=[n=[k=1 p=1 v=1] l=~ m=1 r=~]]
-      !>  (rlos:cor [n=[k=1 p=1 v=1] l=~ m=1 r=~])
+      !>  [%rlos s=2 p=lnode-a]
+      !>  (rlos:cor lnode-a)
     %+  expect-eq
-      !>  [%rlos s=2 p=lnode]
-      !>  (rlos:cor lnode)
+      !>  [%rlos:cor s=2 p=lnode-b]
+      !>  (rlos:cor lnode-b)
+    %+  expect-eq
+      !>  [%rlos:cor s=1 lnode-c]
+      !>  (rlos:cor lnode-c)
   ==
 ::
+++  test-lbal
+  ;:  weld
+    %+  expect-eq
+      !>  [%llos s=2 p=lnode-a]
+      !>  (lbal:cor lnode-a)
+    %+  expect-eq
+      !>  [%llos s=2 p=lnode-b]
+      !>  (lbal:cor lnode-b)
+    %+  expect-eq
+      !>  [%llos s=1 lnode-c]
+      !>  (lbal:cor lnode-c)
+    %+  expect-eq
+      !>  :+  %llos
+            5
+          :^    [3 3 3]
+              :+  %llos
+                3
+              :^    [5 5 5]
+                  [%rlos 1 [[6 6 6] ~ 5 ~]]
+                6
+              [%rlos 1 [[2 2 2] ~ 1 ~]]
+            2
+          [%rlos 1 [[4 4 4] ~ 3 ~]]
+      !>  (lbal:cor lnode-d)
+    %+  expect-eq
+      !>  :+  %llos
+            5
+          :^    [5 5 5]
+              [%rlos 1 [[6 6 6] ~ 5 ~]]
+            6
+          :+  %rlos
+             3
+          :^    [3 3 3]
+              [%rlos 1 [[2 2 2] ~ 1 ~]]
+            2
+          [%rlos 1 [[4 4 4] ~ 3 ~]]
+      !>  (lbal:cor lnode-e)
+  ==
+::
+++  test-rbal
+  ;:  weld
+    %+  expect-eq
+      !>  [%rlos s=2 p=lnode-a]
+      !>  (rbal:cor lnode-a)
+    %+  expect-eq
+      !>  [%rlos s=2 p=lnode-b]
+      !>  (rbal:cor lnode-b)
+    %+  expect-eq
+      !>  [%rlos s=1 lnode-c]
+      !>  (rbal:cor lnode-c)
+    %+  expect-eq
+      !>  :+  %rlos
+            5
+          :^    [3 3 3]
+              :+  %llos
+                3
+              :^    [5 5 5]
+                  [%rlos 1 [[6 6 6] ~ 5 ~]]
+                6
+              [%rlos 1 [[2 2 2] ~ 1 ~]]
+            2
+          [%rlos 1 [[4 4 4] ~ 3 ~]]
+      !>  (rbal:cor lnode-d)
+    %+  expect-eq
+      !>  :+  %rlos
+            5
+          :^    [5 5 5]
+              [%rlos 1 [[6 6 6] ~ 5 ~]]
+            6
+          :+  %rlos
+             3
+          :^    [3 3 3]
+              [%rlos 1 [[2 2 2] ~ 1 ~]]
+            2
+          [%rlos 1 [[4 4 4] ~ 3 ~]]
+      !>  (rbal:cor lnode-e)
+  ==
+::++  test-llbal  !!
+::++  test-lrbal  !!
+::++  test-rlbal  !!
+::++  test-rrbal  !!
+::::
 ++  test-llsin
-  =/  a
-    [n=[k=2 p=2 v=2] l=~ m=1 r=[%rlos s=1 p=[n=[k=3 p=3 v=3] l=~ m=2 r=~]]]
-  =/  b
-    [n=[k=1 p=1 v=1] l=~ m=1 r=[%llos s=1 p=[n=[k=2 p=2 v=2] l=~ m=2 r=~]]]
   ;:  weld
     %+  expect-eq
       !>  :+  %rlos
@@ -72,7 +207,7 @@
               l=[%llos s=1 p=[n=[k=2 p=2 v=2] l=~ m=1 r=~]]
             m=2
           r=~
-      !>  (llsin:cor a)
+      !>  (llsin:cor lnode-a)
     %+  expect-eq
       !>  :+  %llos
             s=2
@@ -81,7 +216,82 @@
               l=[%rlos s=1 p=[n=[k=2 p=2 v=2] l=~ m=1 r=~]]
             m=2
           r=~
-      !>  (llsin:cor b)
+      !>  (llsin:cor lnode-b)
+  ==
+::
+++  test-rrsin
+  ;:  weld
+    %+  expect-eq
+      !>  :+  %llos
+            s=5
+          ^=  p
+          :^    n=[k=5 p=5 v=5]
+              l=[%rlos s=1 p=[n=[k=6 p=6 v=6] l=~ m=5 r=~]]
+            m=6
+          ^=  r
+          :+  %rlos
+            3
+          :^    [3 3 3]
+              [%rlos 1 [[2 2 2] ~ 1 ~]]
+            2
+          [%rlos 1 [[4 4 4] ~ 3 ~]]
+      !>  (rrsin:cor lnode-d)
+    %+  expect-eq
+      !>  :+  %rlos
+            s=5
+          ^=  p
+          :^    n=[k=5 p=5 v=5]
+              ~
+            m=5
+          :+  %llos
+            4
+          :^    [6 6 6]
+              ~
+            6
+          :+  %rlos
+            3
+          :^    [3 3 3]
+              [%rlos 1 [[2 2 2] ~ 1 ~]]
+            2
+          [%rlos 1 [[4 4 4] ~ 3 ~]]
+      !>  (rrsin:cor lnode-e)
+  ==
+::::
+::++  test-rlsin  !!
+::++  test-lrsin  !!
+::::
+::++  test-lldub  !!
+::++  test-rrdub  !!
+::++  test-lrdub  !!
+::++  test-rldub  !!
+::::
+++  test-toy
+  ;:  weld
+    %+  expect-eq
+      !>  psq
+      !>  (toy:cor ~ psq)
+    %+  expect-eq
+      !>  psq
+      !>  (toy:cor psq ~)
+    %+  expect-eq
+      !>  tsq
+      !>  (toy:cor psq qsp)
+  ==
+::
+++  test-sec
+  ;:  weld
+    %+  expect-eq
+      !>  :+  [2 2 2]
+            :+  %rlos
+              4
+            :^    [3 3 3]
+                :+  %llos
+                  2
+                [[5 5 5] [%rlos 1 [[6 6 6] ~ 5 ~]] 6 ~]
+              2
+            [%rlos 1 [[4 4 4] ~ 3 ~]]
+          4
+      !>  (sec:cor ?>(?=(^ psq) [t.psq m.psq]))
   ==
 ::
 ++  test-win
