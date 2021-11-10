@@ -588,7 +588,7 @@
     ::
     =/  =purl
         :-  [sec=| por=~ host=[%& turf.next]]
-        [[ext=`~.udon path=/static] query=~]
+        [[ext=~ path=/'~debug'] query=~]
     =/  =wire
       (acme-wire try %validate-domain /idx/(scot %ud idx.next))
     (emit (request wire purl %get ~ ~))
