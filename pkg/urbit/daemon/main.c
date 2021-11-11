@@ -446,6 +446,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-d            Daemon mode; implies -t\n",
     "-e url        Ethereum gateway\n",
     "-F ship       Fake keys; also disables networking\n",
+    "-G            Boot using key-string from key file\n",
     "-g            Set GC flag\n",
     "-i jam_file   import pier state\n",
     "-j            Create json trace file in .urb/put/trace\n",
