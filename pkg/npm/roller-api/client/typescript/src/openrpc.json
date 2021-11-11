@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.11",
+    "version": "0.1.12",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -1375,7 +1375,7 @@
     },
     {
       "name": "spawnsRemaining",
-      "summary": "Gets the number of points that haven't been spawned by a star or galaxy",
+      "summary": "Returns the number of points that haven't been spawned by a star or galaxy",
       "paramStructure": "by-name",
       "params": [
         {
@@ -1841,7 +1841,7 @@
     {
       "name": "hashTransaction",
       "deprecated": true,
-      "summary": "Currently equivalent to prepareForSigning.",
+      "summary": "DEPRECATED: Currently equivalent to prepareForSigning.",
       "paramStructure": "by-name",
       "params": [
         {
@@ -2099,6 +2099,32 @@
           "$ref": "#/components/schemas/NaiveState"
         }
       }
+    },
+    {
+      "name": "getSponsoredPoints",
+      "summary": "Retrieves sponsees of the given ship, together with a list of points requesting to be sponsored",
+      "tags": [
+        {
+          "name": "point"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "ship",
+          "description": "The @p of the ponsor (e.g. `~sampel-planet` or 256)",
+          "schema": {
+            "$ref": "#/components/schemas/Ship"
+          }
+        }
+      ],
+      "result": {
+        "name": "points",
+        "description": "Expected response to be a valid request",
+        "schema": {
+          "$ref": "#/components/schemas/SponsoredPoints"
+        }
+      }
     }
   ],
   "components": {
@@ -2126,6 +2152,26 @@
           },
           "ownership": {
             "$ref": "#/components/schemas/Ownership"
+          }
+        }
+      },
+      "SponsoredPoints": {
+        "title": "SponsoredPoints",
+        "type": "object",
+        "properties": {
+          "residents": {
+            "type": "array",
+            "title": "Residents",
+            "items": {
+              "$ref": "#/components/schemas/Ship"
+            }
+          },
+          "requests": {
+            "type": "array",
+            "title": "SponsorRequests",
+            "items": {
+              "$ref": "#/components/schemas/Ship"
+            }
           }
         }
       },
