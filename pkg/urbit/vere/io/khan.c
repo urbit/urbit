@@ -278,10 +278,6 @@ _khan_io_talk(u3_auto* car_u)
 {
   u3_khan* kan_u = (u3_khan*)car_u;
 
-  if ( c3n == u3_Host.ops_u.hos ) {
-    // do not run control plane outside of hosted context
-    return;
-  }
   u3_noun wir = u3nt(c3__khan,
                      u3dc("scot", c3__uv, kan_u->sev_l),
                      u3_nul);

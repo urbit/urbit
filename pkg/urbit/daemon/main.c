@@ -67,7 +67,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
-  u3_Host.ops_u.hos = c3n;
 
   //  always disable hashboard
   //  XX temporary, remove once hashes are added
@@ -89,7 +88,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdghqstvxPDRS")) )
+                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -199,7 +198,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
-      case 'h': { u3_Host.ops_u.hos = c3y; break; }
       case 'P': { u3_Host.ops_u.pro = c3y; break; }
       case 'D': { u3_Host.ops_u.dry = c3y; break; }
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
