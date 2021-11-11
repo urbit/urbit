@@ -107,8 +107,8 @@
       ::
       %+  ~(put by sponsors)  u.to
       ?~  receiver=(~(get by sponsors) u.to)
-        :-  *(set @pp)
-        (~(put in *(set @pp)) ship)
+        :-  *(set @p)
+        (~(put in *(set @p)) ship)
       :-  residents.u.receiver
       (~(put in requests.u.receiver) ship)
     ::
