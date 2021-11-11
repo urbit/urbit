@@ -10,16 +10,15 @@ import { hot } from 'react-hot-loader/root';
 import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import gcpManager from '~/logic/lib/gcpManager';
-import { favicon, svgDataURL } from '~/logic/lib/util';
+import { svgDataURL } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
-import useContactState from '~/logic/state/contact';
+import useContactState, { favicon } from '~/logic/state/contact';
 import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
 
 import ErrorBoundary from '~/views/components/ErrorBoundary';
-import { TutorialModal } from '~/views/landscape/components/TutorialModal';
 import './apps/chat/css/custom.css';
 import Omnibox from './components/leap/Omnibox';
 import StatusBar from './components/StatusBar';
@@ -171,7 +170,6 @@ class App extends React.Component {
         </Helmet>
         <Root>
           <Router basename="/apps/landscape">
-            <TutorialModal />
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}

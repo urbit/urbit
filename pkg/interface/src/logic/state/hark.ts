@@ -2,9 +2,15 @@ import {
   archive,
   HarkBin,
   markCountAsRead,
-  Notification,
   NotificationGraphConfig,
-  Unreads
+  Unreads,
+  Timebox,
+  HarkLid,
+  harkBinToId,
+  decToUd,
+  unixToDa,
+  opened,
+  markEachAsRead
 } from '@urbit/api';
 import { Poke } from '@urbit/http-api';
 import { patp2dec } from 'urbit-ob';
@@ -17,72 +23,107 @@ import {
   createState,
   createSubscription,
   pokeOptimisticallyN,
-  reduceState,
   reduceStateN
 } from './base';
 import { reduce, reduceGraph, reduceGroup } from '../reducers/hark-update';
-import { BigInteger } from 'big-integer';
+import useMetadataState from './metadata';
 
 export const HARK_FETCH_MORE_COUNT = 3;
 
 export interface HarkState {
-  archivedNotifications: BigIntOrderedMap<Notification[]>;
+  archive: BigIntOrderedMap<Timebox>;
   doNotDisturb: boolean;
   poke: (poke: Poke<any>) => Promise<void>;
   getMore: () => Promise<boolean>;
-  getSubset: (
-    offset: number,
-    count: number,
-    isArchive: boolean
-  ) => Promise<void>;
+  opened: () => void;
   // getTimeSubset: (start?: Date, end?: Date) => Promise<void>;
-  notifications: BigIntOrderedMap<Notification[]>;
-  unreadNotes: Notification[];
+  unseen: Timebox;
+  seen: Timebox;
   notificationsCount: number;
   notificationsGraphConfig: NotificationGraphConfig; // TODO unthread this everywhere
   notificationsGroupConfig: string[];
   unreads: Unreads;
-  archive: (bin: HarkBin, time?: BigInteger) => Promise<void>;
-  readNote: (bin: HarkBin) => Promise<void>;
+  archiveNote: (bin: HarkBin, lid: HarkLid) => Promise<void>;
   readCount: (path: string) => Promise<void>;
+  readGraph: (graph: string) => Promise<void>;
+  readGroup: (group: string) => Promise<void>;
 }
 
 const useHarkState = createState<HarkState>(
   'Hark',
   (set, get) => ({
-    archivedNotifications: new BigIntOrderedMap<Notification[]>(),
+    archive: new BigIntOrderedMap<Timebox>(),
     doNotDisturb: false,
     unreadNotes: [],
     poke: async (poke: Poke<any>) => {
       await pokeOptimisticallyN(useHarkState, poke, [reduce]);
     },
+    readGraph: async (graph: string) => {
+      const prefix = `/graph/${graph.slice(6)}`;
+      let counts = [] as string[];
+      let eaches = [] as [string, string][];
+      Object.entries(get().unreads).forEach(([path, unreads]) => {
+        if (path.startsWith(prefix)) {
+          if(unreads.count > 0) {
+            counts.push(path);
+          }
+          unreads.each.forEach(unread => {
+            eaches.push([path, unread]);
+          });
+        }
+      });
+      get().set(draft => {
+        counts.forEach(path => {
+          draft.unreads[path].count = 0;
+        });
+        eaches.forEach(([path, each]) => {
+          draft.unreads[path].each = [];
+        });
+      });
+      await Promise.all([
+        ...counts.map(path => markCountAsRead({ desk: window.desk, path })),
+        ...eaches.map(([path, each]) => markEachAsRead({ desk: window.desk, path }, each))
+      ].map(pok => api.poke(pok)));
+    },
+    readGroup: async (group: string) => {
+      const graphs = 
+        _.pickBy(useMetadataState.getState().associations.graph, a => a.group === group);
+      await Promise.all(Object.keys(graphs).map(get().readGraph));
+    },
     readCount: async (path) => {
       const poke = markCountAsRead({ desk: (window as any).desk, path });
       await pokeOptimisticallyN(useHarkState, poke, [reduce]);
     },
-    archive: async (bin: HarkBin, time?: BigInteger) => {
-      const poke = archive(bin, time);
-      await pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    opened: async () => {
+      reduceStateN(get(), { opened: null }, [reduce]);
+
+      await api.poke(opened);
     },
-    readNote: async (bin) => {
-      await pokeOptimisticallyN(useHarkState, readNote(bin), [reduce]);
+    archiveNote: async (bin: HarkBin, lid: HarkLid) => {
+      const poke = archive(bin, lid);
+      get().set((draft) => {
+        const key = 'seen' in lid ? 'seen' : 'unseen';
+        const binId = harkBinToId(bin);
+        delete draft[key][binId];
+      });
+      await api.poke(poke);
     },
     getMore: async (): Promise<boolean> => {
       const state = get();
-      const offset = state.notifications.size || 0;
-      await state.getSubset(offset, HARK_FETCH_MORE_COUNT, false);
-      const newState = get();
-      return offset === (newState?.notifications?.size || 0);
-    },
-    getSubset: async (offset, count, isArchive): Promise<void> => {
-      const where = isArchive ? 'archive' : 'inbox';
-      const { harkUpdate } = await api.scry({
+      const oldSize = state.archive?.size || 0;
+      const offset = decToUd(
+        state.archive?.peekSmallest()?.[0].toString()
+        || unixToDa(Date.now() * 1000).toString()
+      );
+      const update = await api.scry({
         app: 'hark-store',
-        path: `/recent/${where}/${offset}/${count}`
+        path: `/recent/inbox/${offset}/5`
       });
-      reduceState(useHarkState, harkUpdate, [reduce]);
+      reduceStateN(useHarkState.getState(), update, [reduce]);
+      return get().archive?.size === oldSize;
     },
-    notifications: new BigIntOrderedMap<Notification[]>(),
+    unseen: {},
+    seen: {},
     notificationsCount: 0,
     notificationsGraphConfig: {
       watchOnSelf: false,
@@ -93,9 +134,9 @@ const useHarkState = createState<HarkState>(
     unreads: {}
   }),
   [
-    'unreadNotes',
-    'notifications',
-    'archivedNotifications',
+    'seen',
+    'unseen',
+    'archive',
     'unreads',
     'notificationsCount'
   ],
@@ -167,5 +208,4 @@ export function useHarkGraphIndex(graph: string, index: string) {
   );
 }
 
-window.hark = useHarkState.getState;
 export default useHarkState;

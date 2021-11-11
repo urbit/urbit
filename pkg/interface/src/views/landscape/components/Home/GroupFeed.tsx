@@ -1,5 +1,5 @@
 import { Col } from '@tlon/indigo-react';
-import { markCountAsRead } from '@urbit/api';
+import { deSig, markCountAsRead } from '@urbit/api';
 import React, {
   useEffect
 } from 'react';
@@ -35,7 +35,7 @@ function GroupFeed(props) {
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
   const pendingSize = Object.keys(
-    graphTimesentMap[`${graphResource.ship.slice(1)}/${graphResource.name}`] ||
+    graphTimesentMap[`${deSig(graphResource.ship)}/${graphResource.name}`] ||
     {}
   ).length;
 
@@ -44,7 +44,7 @@ function GroupFeed(props) {
 
   const history = useHistory();
 
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
+  const graphId = `${deSig(graphResource.ship)}/${graphResource.name}`;
   const graph = graphs[graphId];
 
   useEffect(() => {

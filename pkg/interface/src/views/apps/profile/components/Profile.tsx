@@ -1,6 +1,6 @@
 import { BaseImage, Box, Center, Row, Text } from '@tlon/indigo-react';
 import { retrieve } from '@urbit/api';
-import React, { ReactElement, useEffect, useRef } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -8,7 +8,6 @@ import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import RichText from '~/views/components/RichText';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { EditProfile } from './EditProfile';
 import { ViewProfile } from './ViewProfile';
 import airlock from '~/logic/api';
@@ -31,10 +30,6 @@ export function ProfileImages(props: any): ReactElement {
   const { hideAvatars } = useSettingsState(selectCalmState);
   const { contact, hideCover, ship } = props;
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
-
-  const anchorRef = useRef<HTMLDivElement>(null);
-
-  useTutorialModal('profile', ship === `~${window.ship}`, anchorRef);
 
   const cover =
     contact?.cover && !hideCover ? (
@@ -69,7 +64,7 @@ export function ProfileImages(props: any): ReactElement {
 
   return (
     <>
-      <Row ref={anchorRef} width='100%' height='400px' position='relative'>
+      <Row width='100%' height='400px' position='relative'>
         {cover}
         <Center position='absolute' width='100%' height='100%'>
           {props.children}

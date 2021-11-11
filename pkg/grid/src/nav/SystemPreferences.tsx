@@ -4,8 +4,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import classNames from 'classnames';
 import { NotificationPrefs } from './preferences/NotificationPrefs';
 import { SystemUpdatePrefs } from './preferences/SystemUpdatePrefs';
-import notificationsSVG from '../assets/notifications.svg';
-import systemUpdatesSVG from '../assets/system-updates.svg';
 import { InterfacePrefs } from './preferences/InterfacePrefs';
 import { useCharges } from '../state/docket';
 import { AppPrefs } from './preferences/AppPrefs';
@@ -13,6 +11,10 @@ import { DocketImage } from '../components/DocketImage';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { useMedia } from '../logic/useMedia';
 import { LeftArrow } from '../components/icons/LeftArrow';
+import { System } from '../components/icons/System';
+import { Interface } from '../components/icons/Interface';
+import { Notifications } from '../components/icons/Notifications';
+import { getAppName } from '../state/util';
 
 interface SystemPreferencesSectionProps {
   url: string;
@@ -45,6 +47,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
     `${match.url}/:submenu/:desk?`
   );
   const charges = useCharges();
+  const filteredCharges = Object.values(charges).filter((charge) => charge.desk !== window.desk);
   const isMobile = useMedia('(max-width: 639px)');
   const settingsPath = isMobile ? `${match.url}/:submenu` : '/';
 
@@ -76,7 +79,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
     >
       <div className="sm:flex h-full overflow-y-auto">
         <Route exact={isMobile} path={match.url}>
-          <aside className="flex-none self-start w-full sm:w-auto min-w-60 py-4 sm:py-8 font-semibold text-black sm:text-gray-400 border-r-2 border-gray-50">
+          <aside className="flex-none self-start w-full sm:w-auto min-w-60 py-4 sm:py-8 font-semibold text-black sm:text-gray-600 border-r-2 border-gray-50">
             <nav className="px-2 sm:px-6">
               <h2 className="sm:hidden h3 mb-4 px-2">System Preferences</h2>
               <ul className="space-y-1">
@@ -84,18 +87,18 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
                   url={subUrl('notifications')}
                   active={matchSub('notifications')}
                 >
-                  <img className="w-8 h-8 mr-3" src={notificationsSVG} alt="" />
+                  <Notifications className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
                   Notifications
                 </SystemPreferencesSection>
                 <SystemPreferencesSection
                   url={subUrl('system-updates')}
                   active={matchSub('system-updates')}
                 >
-                  <img className="w-8 h-8 mr-3" src={systemUpdatesSVG} alt="" />
+                  <System className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
                   System Updates
                 </SystemPreferencesSection>
                 <SystemPreferencesSection url={subUrl('interface')} active={matchSub('interface')}>
-                  <img className="w-8 h-8 mr-3" src={systemUpdatesSVG} alt="" />
+                  <Interface className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
                   Interface Settings
                 </SystemPreferencesSection>
               </ul>
@@ -103,14 +106,14 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
             <hr className="my-4 border-t-2 border-gray-50" />
             <nav className="px-2 sm:px-6">
               <ul className="space-y-1">
-                {Object.values(charges).map((charge) => (
+                {filteredCharges.map((charge) => (
                   <SystemPreferencesSection
                     key={charge.desk}
                     url={subUrl(`apps/${charge.desk}`)}
                     active={matchSub('apps', charge.desk)}
                   >
                     <DocketImage size="small" className="mr-3" {...charge} />
-                    {charge.title}
+                    {getAppName(charge)}
                   </SystemPreferencesSection>
                 ))}
               </ul>

@@ -1,4 +1,4 @@
-import { acceptDm, cite, Content, declineDm, Post, removeDmMessage } from '@urbit/api';
+import { acceptDm, cite, Content, declineDm, deSig, Post, removeDmMessage } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
@@ -59,7 +59,7 @@ export function DmResource(props: DmResourceProps) {
   const { hideNicknames } = useSettingsState(selectCalmState);
   const showNickname = !hideNicknames && Boolean(contact);
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
-  const pending = useGraphState(s => s.pendingDms.has(ship.slice(1)));
+  const pending = useGraphState(s => s.pendingDms.has(deSig(ship)));
 
   const [
     getYoungerSiblings,

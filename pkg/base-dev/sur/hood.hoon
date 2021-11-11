@@ -176,8 +176,6 @@
 ++  read-bill
   |=  [our=ship =desk now=@da]
   =/  pax  (en-beam [our desk da+now] /desk/bill)
-  ?.  (~(has in .^((set ^desk) cd/~[(scot %p our) ~ (scot %da now)])) desk)
-    *(list dude)
   ?.  .^(? cu/pax)
     *(list dude)
   .^((list dude) cx/pax)
@@ -227,6 +225,7 @@
 ++  get-apps-want
   |=  [duz=(list dude) =rein]
   ^-  (list dude)
+  ?.  liv.rein  ~
   =.  duz  (skip duz ~(has in sub.rein))
   =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
   duz

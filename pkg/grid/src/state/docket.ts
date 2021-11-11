@@ -1,4 +1,4 @@
-import create from 'zustand';
+import create, { SetState } from 'zustand';
 import produce from 'immer';
 import { useCallback, useEffect } from 'react';
 import { omit, pick } from 'lodash';
@@ -15,15 +15,19 @@ import {
   Treaties,
   chadIsRunning,
   AllyUpdateIni,
+  AllyUpdateNew,
   TreatyUpdateIni,
+  TreatyUpdate,
   docketInstall,
   ChargeUpdate,
   kilnRevive,
-  kilnSuspend
+  kilnSuspend,
+  allyShip
 } from '@urbit/api';
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
 import { fakeRequest, normalizeUrbitColor, useMockData } from './util';
+import { useAsyncCall } from '../logic/useAsyncCall';
 
 export interface ChargeWithDesk extends Charge {
   desk: string;
@@ -50,6 +54,9 @@ interface DocketState {
   toggleDocket: (desk: string) => Promise<void>;
   installDocket: (ship: string, desk: string) => Promise<number | void>;
   uninstallDocket: (desk: string) => Promise<number | void>;
+  //
+  addAlly: (ship: string) => Promise<number>;
+  set: SetState<DocketState>;
 }
 
 const useDocketState = create<DocketState>((set, get) => ({
@@ -151,6 +158,13 @@ const useDocketState = create<DocketState>((set, get) => ({
   treaties: useMockData ? normalizeDockets(mockTreaties) : {},
   charges: {},
   allies: useMockData ? mockAllies : {},
+  addAlly: async (ship) => {
+    set((draft) => {
+      draft.allies[ship] = [];
+    });
+
+    return api.poke(allyShip(ship));
+  },
   set
 }));
 
@@ -199,6 +213,38 @@ api.subscribe({
   }
 });
 
+api.subscribe({
+  app: 'treaty',
+  path: '/treaties',
+  event: (data: TreatyUpdate) => {
+    useDocketState.getState().set((draft) => {
+      if ('add' in data) {
+        const { ship, desk } = data.add;
+        const treaty = normalizeDocket(data.add, desk);
+        draft.treaties[`${ship}/${desk}`] = treaty;
+      }
+
+      if ('ini' in data) {
+        const treaties = normalizeDockets(data.ini);
+        draft.treaties = { ...draft.treaties, ...treaties };
+      }
+    });
+  }
+});
+
+api.subscribe({
+  app: 'treaty',
+  path: '/allies',
+  event: (data: AllyUpdateNew) => {
+    useDocketState.getState().set((draft) => {
+      if ('new' in data) {
+        const { ship, alliance } = data.new;
+        draft.allies[ship] = alliance;
+      }
+    });
+  }
+});
+
 const selCharges = (s: DocketState) => {
   return s.charges;
 };
@@ -222,11 +268,18 @@ export function useAllies() {
 }
 
 export function useAllyTreaties(ship: string) {
-  useEffect(() => {
-    useDocketState.getState().fetchAllyTreaties(ship);
-  }, [ship]);
+  const allies = useAllies();
+  const { call: fetchTreaties, status } = useAsyncCall(() =>
+    useDocketState.getState().fetchAllyTreaties(ship)
+  );
 
-  return useDocketState(
+  useEffect(() => {
+    if (ship in allies) {
+      fetchTreaties();
+    }
+  }, [ship, allies]);
+
+  const treaties = useDocketState(
     useCallback(
       (s) => {
         const charter = s.allies[ship];
@@ -235,6 +288,11 @@ export function useAllyTreaties(ship: string) {
       [ship]
     )
   );
+
+  return {
+    treaties,
+    status
+  };
 }
 
 export function useTreaty(host: string, desk: string) {

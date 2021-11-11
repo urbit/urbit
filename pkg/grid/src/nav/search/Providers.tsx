@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
-import { Provider } from '@urbit/api';
+import { Provider, deSig } from '@urbit/api';
+import * as ob from 'urbit-ob';
 import { MatchItem, useLeapStore } from '../Nav';
 import { useAllies, useCharges } from '../../state/docket';
 import { ProviderList } from '../../components/ProviderList';
@@ -53,19 +54,34 @@ export const Providers = ({ match }: ProvidersProps) => {
         : [],
     [charges, search]
   );
-  const results = useMemo(
-    () =>
-      allies
-        ? fuzzy
-            .filter(
-              search,
-              Object.entries(allies).map(([ship]) => ship)
-            )
-            .sort(fuzzySort(search))
-            .map((el) => ({ shipName: el.original, ...contacts[el.original] }))
-        : [],
-    [allies, search, contacts]
-  );
+
+  const patp = `~${deSig(search) || ''}`;
+  const isValidPatp = ob.isValidPatp(patp);
+
+  const results = useMemo(() => {
+    if (!allies) {
+      return [];
+    }
+    const exact =
+      isValidPatp && !Object.keys(allies).includes(patp)
+        ? [
+            {
+              shipName: patp,
+              ...contacts[patp]
+            }
+          ]
+        : [];
+    return [
+      ...exact,
+      ...fuzzy
+        .filter(
+          search,
+          Object.entries(allies).map(([ship]) => ship)
+        )
+        .sort(fuzzySort(search))
+        .map((el) => ({ shipName: el.original, ...contacts[el.original] }))
+    ];
+  }, [allies, search, contacts]);
 
   const count = results?.length;
 
@@ -87,11 +103,22 @@ export const Providers = ({ match }: ProvidersProps) => {
           }))
         : [];
 
+      const newProviderMatches = isValidPatp
+        ? [
+            {
+              url: `/leap/search/${patp}/apps`,
+              value: patp,
+              display: patp,
+              openInNewTab: false
+            }
+          ]
+        : [];
+
       useLeapStore.setState({
-        matches: ([] as MatchItem[]).concat(appMatches, providerMatches)
+        matches: ([] as MatchItem[]).concat(appMatches, providerMatches, newProviderMatches)
       });
     }
-  }, [results]);
+  }, [results, patp, isValidPatp]);
 
   return (
     <div

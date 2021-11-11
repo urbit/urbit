@@ -1,5 +1,5 @@
 import { Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { Association, Group, metadataRemove, metadataEdit } from '@urbit/api';
+import { Association, Group, metadataRemove, metadataEdit, deSig } from '@urbit/api';
 import React, { useCallback } from 'react';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
@@ -36,7 +36,7 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
   );
 
   const disabled =
-    resourceFromPath(association.group).ship.slice(1) !== window.ship &&
+    deSig(resourceFromPath(association.group).ship) !== window.ship &&
     roleForShip(group, window.ship) !== 'admin';
   return (
     <Col maxWidth="384px" width="100%">

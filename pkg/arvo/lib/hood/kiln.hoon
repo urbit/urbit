@@ -4,8 +4,9 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state    state-8
-+$  state-8  [%8 pith-8]
++$  state    state-9
++$  state-9  [%9 pith-9]
++$  state-8  [%8 pith-9]
 +$  state-7  [%7 pith-7]
 +$  state-6  [%6 pith-6]
 +$  state-5  [%5 pith-5]
@@ -16,7 +17,8 @@
 +$  state-0  [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-8
+  $%  state-9
+      state-8
       state-7
       state-6
       state-5
@@ -27,7 +29,7 @@
       state-0
   ==
 ::
-+$  pith-8
++$  pith-9
   $:  wef=(unit weft)
       rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -380,7 +382,10 @@
     ?~  rail.a  ~
     `[(get-publisher our d now) u.rail.a]
   ::
-  ?>  ?=(%8 -.old)
+  =?  old  ?=(%8 -.old)
+    [%9 +.old]
+  ::
+  ?>  ?=(%9 -.old)
   =.  state  old
   ::
   =?  kiln  (lth old-version %7)
@@ -389,8 +394,31 @@
     abet:(install:vats %base [her sud]:u.old-ota)
   =?  kiln  (lth old-version %7)
     abet:gall-lyv:vats
+  ::  kiln %7 had a bug where it failed to properly emit a +listen
+  ::  due to an unexpected crash. here we detect the cause of the crash
+  ::  (not-yet-installed desks) and emit the +listen anew to make sure we
+  ::  stay aware of commits to base.
+  ::
+  =?    kiln
+      ?&  =(%8 old-version)
+        ::
+          %+  lien  ~(tap by ark.old)
+          |=  [d=desk *]
+          =-  =(0 rev)
+          .^([rev=@ud @da] %cw /(scot %p our)/[d]/(scot %da now))
+      ==
+    take-commit:(abed:vats %base)
   =?  kiln  ?=(^ wef)
-    =/  except=(set desk)  (sy %base %kids ~)
+    =/  except=(set desk)
+      =/  base=(set desk)  (sy %base %kids ~)
+      %-  ~(gas in base)
+      %+  murn  ~(tap by ark.old)
+      |=  [loc=desk ark=arak]
+      ^-  (unit desk)
+      ?.  liv.rein.ark  `loc
+      ?~  rail.ark  `loc
+      ?:  paused.u.rail.ark  `loc
+      ~
     (bump:vats u.wef except force=%.n)
   =.  wef  ~
   abet:kiln
@@ -551,8 +579,8 @@
     =.  vats  (abed lac)
     ?^  rail.rak
       go
-    ~>  %slog.(fmt "{<lac>} already installed locally, ignoring")
-    vats
+    ~>  %slog.(fmt "{<lac>} already installed locally, refreshing")
+    update-running-dudes
     ::
     ++  go
       =.  loc  lac
@@ -586,7 +614,7 @@
       vats
     ~>  %slog.(fmt "{<lac>} pausing updates")
     =/  rel  ral
-    =.  rail.rak  `rel(paused &, aeon 0)
+    =.  rail.rak  `rel(paused &, aeon 0, next ~)
     vats
   ::
   ::  +gall-lyv: watch gall source for reloading
@@ -710,7 +738,11 @@
     ~>  %slog.(fmt "bump {<desk>} to {<[lal num]:kel>}")
     =<  abet  ^+  vats
     =.  vats  (abed desk)
-    ?:  =([~ kel] (read-kelvin-local our desk now))
+    =/  kul   (read-kelvin-local our desk now)
+    ?~  kul
+      ~>  %slog.(fmt "{here} not yet installed")
+      vats
+    ?:  =(kel u.kul)
       ~>  %slog.(fmt "{here} already at {<[lal num]:kel>}")
       update-running-dudes
     =^  tem  rail.rak  (crank-next %| kel)
@@ -874,20 +906,23 @@
     ::
     ?.  (~(has by ark) lac)
       kiln
+    =.  vats  (from-wire wire)
+    take-commit
+  ::
+  ++  take-commit
+    ^+  kiln
     =.  kiln
       =<  abet
-      =.  vats  (from-wire wire)
       ~>  %slog.(fmt "commit detected at {here}")
       =.  rail.rak
         ?~  rail.rak  ~
         `[(get-publisher our loc now) +.u.rail.rak]
       =.  vats  (emil listen:pass (diff:give %commit loc rak) ~)
-
       ?.  liv.rein.rak
         ~>  %slog.(fmt "{<loc>} not running")
         vats
       update-running-dudes
-    ?.  =(%base lac)
+    ?.  =(%base loc)
       kiln
     =/  kel=[@tas @ud]
       ?~  rail.rak         zuse/zuse
@@ -912,7 +947,7 @@
     ~>  %slog.(fmt "merge into {<loc>} succeeded")
     ?.  =(%base loc)
       vats
-    ~>  %slog.(fmt "merging %base into %kids at {<kel>}")
+    ~>  %slog.(fmt "merging %base into %kids")
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
@@ -970,7 +1005,9 @@
   ++  crank-next
     |=  new=(each aeon weft)
     ^+  [match=*(unit rung) rail.rak]
-    ?~  rail.rak  !!
+    ?~  rail.rak
+      ~|  [%no-rail-for desk=loc]
+      !!
     =/  rog  next.u.rail.rak
     =-  [match `u.rail.rak(next next)]
     |-  ^-  [match=(unit rung) next=(list rung)]
