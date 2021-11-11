@@ -408,18 +408,6 @@
           .^([rev=@ud @da] %cw /(scot %p our)/[d]/(scot %da now))
       ==
     take-commit:(abed:vats %base)
-  =?  kiln  ?=(^ wef)
-    =/  except=(set desk)
-      =/  base=(set desk)  (sy %base %kids ~)
-      %-  ~(gas in base)
-      %+  murn  ~(tap by ark.old)
-      |=  [loc=desk ark=arak]
-      ^-  (unit desk)
-      ?.  liv.rein.ark  `loc
-      ?~  rail.ark  `loc
-      ?:  paused.u.rail.ark  `loc
-      ~
-    (bump:vats u.wef except force=%.n)
   =.  wef  ~
   abet:kiln
 ::
@@ -928,7 +916,7 @@
       ?~  rail.rak         zuse/zuse
       ?~  next.u.rail.rak  zuse/zuse
       weft.i.next.u.rail.rak
-    (bump-many kel (all-desks-but (sy %base ~)))
+    (bump-many kel (all-desks-but (get-unblockers ark)))
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
@@ -1043,6 +1031,19 @@
   ?:  (lien next.u.rail.arak |=([* k=weft] =(k kel)))
     ~
   `desk
+::  +get-unblockers: find desks which shouldn't block a kernel upgrade
+::
+++  get-unblockers
+  |=  ark=(map desk arak)
+  =/  base=(set desk)  (sy %base %kids ~)
+  %-  ~(gas in base)
+  %+  murn  ~(tap by ark)
+  |=  [loc=desk ark=arak]
+  ^-  (unit desk)
+  ?.  liv.rein.ark       `loc
+  ?~  rail.ark           `loc
+  ?:  paused.u.rail.ark  `loc
+  ~
 ::  +get-germ: select merge strategy into local desk
 ::
 ::  If destination desk doesn't exist, need a %init merge.  If this is
