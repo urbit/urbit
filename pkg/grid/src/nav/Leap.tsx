@@ -249,7 +249,7 @@ export const Leap = React.forwardRef(
             )}
           >
             {menu === 'upgrading'
-              ? 'Your Urbit is being updated, this page will refresh when ready'
+              ? 'Your Urbit is being updated, this page will update when ready'
               : selection || 'Search'}
           </label>
           {menu !== 'upgrading' ? (
