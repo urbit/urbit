@@ -2091,6 +2091,36 @@
     +$  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+::                                                      ::::
+::::                    ++khan                            ::  (1k) control plane
+  ::                                                    ::::
+++  khan  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%avow =avow]                                   ::  response to %fyrd
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]
+    $%
+        [%fyrd p=fyrd]                                  ::  jammed request
+        [%done ~]                                       ::  client closed socket
+        $>(%vega vane-task)                             ::  vega
+        $>(%trim vane-task)
+        $>(%born vane-task)
+    ==
+  +$  avow                                              ::  output
+    $@  %ack                                            ::  responseless ack
+    $%  [%cod p=(unit @p)]                              ::  new code
+    ==
+  +$  fyrd                                              ::  input
+    $:  %0                                              ::  protocol version
+    $=  com
+    $%  [%mas ~]                                        ::  |mass
+        [%cod ?]                                        ::  code reset/get
+      ==                                                ::
+    ==
+
+  --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2102,6 +2132,7 @@
       gift:gall
       gift:iris
       gift:jael
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2112,6 +2143,7 @@
       task:gall
       task:iris
       task:jael
+      task:khan
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2123,6 +2155,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%k task:khan]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -2131,7 +2164,7 @@
 +$  sign-arvo                                           ::  in result $<-
   $%  [%ames gift:ames]
       $:  %behn
-          $%  gift:behn
+          $%  gift:behn                                 ::
               $>(%wris gift:clay)
               $>(%writ gift:clay)
               $>(%mere gift:clay)
@@ -2144,6 +2177,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
+      [%khan gift:khan]                                 ::khan gifts
   ==
 ::  $unix-task: input from unix
 ::
@@ -2162,6 +2196,7 @@
       ::
       $>(%born vane-task)
       ::  %eyre: cancel request
+      ::
       ::
       [%cancel-request ~]
       ::  %dill: reset terminal configuration
