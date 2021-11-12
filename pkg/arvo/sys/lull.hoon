@@ -850,7 +850,7 @@
   +$  mool  [=case paths=(set (pair care path))]        ::  requests in desk
   +$  nori                                              ::  repository action
     $%  [%& p=soba]                                     ::  delta
-        [%| p=@tas]                                     ::  label
+        [%| p=@tas q=(unit aeon)]                       ::  label
     ==                                                  ::
   +$  nuri                                              ::  repository action
     $%  [%& p=suba]                                     ::  delta

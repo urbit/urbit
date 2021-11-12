@@ -1211,9 +1211,9 @@
   abet:abet:(install:vats +<)
 ::
 ++  poke-label
-  |=  [syd=desk lab=@tas]
+  |=  [syd=desk lab=@tas aey=(unit aeon)]
   =+  pax=/(scot %p our)/[syd]/[lab]
-  (poke-info "labeled {(spud pax)}" `[syd %| lab])
+  (poke-info "labeled {(spud pax)}" `[syd %| lab aey])
 ::
 ++  poke-merge
   |=  kiln-merge

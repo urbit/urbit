@@ -1445,6 +1445,15 @@
       ==
     ==
   ::
+  :: Attach label to aeon
+  ::
+  ++  label
+    |=  [bel=@tas aey=(unit aeon)]
+    ^+  ..park
+    =/  yon      ?~(aey let.dom u.aey)
+    =.  lab.dom  (~(put by lab.dom) bel yon)
+    ..park
+  ::
   ::  Porcelain commit
   ::
   ++  info
@@ -4374,8 +4383,14 @@
   ::
       %info
     ?:  ?=(%| -.dit.req)
-      ~|  %labelling-not-implemented
-      !!
+      :: initial pass. doing it directly inline rather than putting any logic into ++de
+      =/  bel=@tas         p.dit.req
+      =/  aey=(unit aeon)  q.dit.req
+      =^  mos  ruf
+        =/  den  ((de now rof hen ruf) our des.req)
+        abet:(label:den bel aey)
+        :: ~&  "labeling current aeon {<let.dom>} on {<des.req>}"
+      [mos ..^$]
     =/  [deletes=(set path) changes=(map path cage)]
       =/  =soba  p.dit.req
       =|  deletes=(set path)
