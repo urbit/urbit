@@ -57,8 +57,8 @@ export const BaseBlockedNotification = () => {
   const handlePauseOTAs = useCallback(() => {}, []);
 
   const handleArchiveApps = useCallback(async () => {
-    api.poke(kilnBump(true, unblocked));
-  }, [unblocked]);
+    api.poke(kilnBump(true));
+  }, []);
 
   return (
     <section
