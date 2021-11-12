@@ -13,10 +13,10 @@
 module Into.Main (main) where
 
 import            Control.Monad
-import            Data.Binary.Builder
 import            Data.Binary.Strict.Get
 import qualified  Data.ByteString as B
-import qualified  Data.ByteString.Lazy as BL
+import            Data.ByteString.Builder
+import qualified  Data.ByteString.Lazy as L
 import qualified  Data.Map as M
 import qualified  Data.Text as T
 import            GHC.Natural
@@ -41,9 +41,9 @@ khanVersion = 0
 packNoun :: ToNoun a => a -> B.ByteString
 packNoun jar =
   let pac = jamBS (toNoun jar) in
-  BL.toStrict $ toLazyByteString $
-    mconcat [putWord64le $ fromIntegral $ B.length pac,
-             fromByteString pac]
+  L.toStrict $ toLazyByteString $
+    mconcat [word64LE $ fromIntegral $ B.length pac,
+             byteString pac]
 
 buildCmd :: ToNoun a => a -> B.ByteString
 buildCmd com = packNoun (khanVersion, com)
