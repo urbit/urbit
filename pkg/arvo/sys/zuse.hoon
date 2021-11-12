@@ -4918,10 +4918,10 @@
     %-  trip
     %+  rap  3
     :~  '~'
-        (tos:po (end 3 (rsh 3^(dec (mul wid 2)) who)))
-        (tod:po (end 3 (rsh 3^(mul (dec wid) 2) who)))
+        (tos:po (cut 3 [(dec (mul wid 2)) 1] who))
+        (tod:po (cut 3 [(mul (dec wid) 2) 1] who))
         '_'
-        (tos:po (end 3 (rsh 3 who)))
+        (tos:po (cut 3 [1 1] who))
         (tod:po (end 3 who))
     ==
   ::                                                    ::  ++saxo:title
