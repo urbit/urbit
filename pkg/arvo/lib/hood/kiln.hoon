@@ -682,11 +682,9 @@
     =/  ded  (find-blocked kel except)
     =?  kiln  force  (suspend-many ded)
     ?:  |(force =(~ ded))
-      =/  desks
-        ?:  !=(zuse+zuse kel)
-          (sy %base ~)
-        (all-desks-but (~(uni in except) ded))
-      (bump-many kel desks)
+      ?:  !=(zuse+zuse kel)
+        (bump-one kel %base)
+      (bump-many (all-desks-but (~(uni in except) ded)))
     =-  (^emit (pyre:pass leaf/- ~))
     "kiln: desks blocked upgrade to {<zuse/zuse>}: {<ded>}"
   ::
@@ -706,7 +704,7 @@
     $(ded t.ded, kiln abet:(suspend i.ded))
   ::
   ++  bump-many
-    |=  [kel=weft live=(set desk)]
+    |=  live=(set desk)
     ^+  kiln
     ::  ensure %base is always reloaded first
     ::
@@ -720,7 +718,7 @@
     ::
     |-  ^+  kiln
     ?~  liv  kiln
-    $(liv t.liv, kiln (bump-one kel i.liv))
+    $(liv t.liv, kiln (bump-one zuse+zuse i.liv))
   ::
   ++  bump-one
     |=  [kel=weft =desk]
@@ -914,7 +912,7 @@
       update-running-dudes
     ?.  =(%base loc)
       kiln
-    (bump-many zuse+zuse (all-desks-but (get-unblockers ark)))
+    (bump-many (all-desks-but (get-unblockers ark)))
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
