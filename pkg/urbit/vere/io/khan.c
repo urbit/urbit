@@ -54,10 +54,35 @@ _khan_close_cb(uv_handle_t* had_u)
   c3_free(had_u);
 }
 
+/* _khan_mote_free(): u3_moat-shaped close callback.
+*/
 static void
 _khan_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
   c3_free(ptr_v);
+}
+
+/* _khan_punt_goof(): print stack trace of error.
+*/
+static void
+_khan_punt_goof(u3_noun lud)
+{
+  if ( 2 == u3qb_lent(lud) ) {
+    u3_pier_punt_goof("khan", u3k(u3h(lud)));
+    u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
+  }
+  else {
+    u3_noun dul = lud;
+    c3_w    len_w = 1;
+
+    while ( u3_nul != dul ) {
+      u3l_log("khan: bail %u\r\n", len_w++);
+      u3_pier_punt_goof("khan", u3k(u3h(dul)));
+      dul = u3t(dul);
+    }
+  }
+
+  u3z(lud);
 }
 
 /* _khan_poke_bail(): error function on failed %fyrd.
@@ -65,8 +90,11 @@ _khan_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 static void
 _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
 {
-  u3l_log("khan: bail!\n");
-  // TODO print stack trace; write a response or kill the connection?
+  u3_khan* kan_u = (u3_khan*)egg_u->car_u;
+
+  // TODO: find and close channel if not already closed
+  _khan_punt_goof(lud);
+  u3_ovum_free(egg_u);
 }
 
 /* _khan_close_chan(): send a close event to arvo and stop reading.
@@ -82,10 +110,9 @@ _khan_close_socket(u3_khan* kan_u, u3_chan* can_u)
              u3_nul);
   cad = u3nc(c3__done, u3_nul);
   u3_auto_peer(
-      u3_auto_plan(&kan_u->car_u, u3_ovum_init(0, c3__k, wir, cad)),
-      0,
-      0,
-      _khan_poke_bail);
+    u3_auto_plan(&kan_u->car_u,
+                 u3_ovum_init(0, c3__k, wir, cad)),
+    0, 0, _khan_poke_bail);
   u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
 }
 
@@ -120,6 +147,7 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
     c3_y*   byt_y;
     c3_d    len_d;
 
+    u3l_log("khan: moor bail %zd %s\n", err_i, err_c);
     bal = u3nq(c3__bail,
                u3i_string("driver"),
                -err_i & 0x7fffffff,
@@ -152,10 +180,9 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
                u3_nul);
     cad = u3nc(c3__fyrd, jar);
     u3_auto_peer(
-        u3_auto_plan(&kan_u->car_u, u3_ovum_init(0, c3__k, wir, cad)),
-        0,
-        0,
-        _khan_poke_bail);
+      u3_auto_plan(&kan_u->car_u,
+                   u3_ovum_init(0, c3__k, wir, cad)),
+      0, 0, _khan_poke_bail);
   }
 }
 
@@ -332,11 +359,12 @@ _khan_ef_handle(u3_khan*  kan_u,
     }
     else {
       // TODO u3_king_bail? silently drop it?
-      can_u->mor_u.bal_f(can_u, -1, "handle-other");
+      can_u->mor_u.bal_f(can_u, -1, "handle-unknown");
     }
   }
   else {
-    u3l_log("khan: handle-no-coq\n");
+    u3l_log("khan: handle-no-coq %" PRIx32 " %" PRIu32 "\n",
+            sev_l, coq_l);
   }
   u3z(tag); u3z(dat);
 }
@@ -406,11 +434,11 @@ _khan_io_exit(u3_auto* car_u)
     wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
     c3_assert(wit_i > 0);
     c3_assert(len_w == (c3_w)wit_i + 1);
-    u3l_log("khan: unlinking %s\n", paf_c);
 
     if ( 0 != unlink(paf_c) ) {
       u3l_log("khan: failed to unlink socket: %s\n", uv_strerror(errno));
     }
+    u3l_log("khan: unlinked %s\n", paf_c);
     c3_free(paf_c);
 
     {
