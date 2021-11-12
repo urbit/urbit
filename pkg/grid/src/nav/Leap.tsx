@@ -227,6 +227,8 @@ export const Leap = React.forwardRef(
       [selection, rawInput, match, matches, selectedMatch]
     );
 
+    console.log(menu);
+
     return (
       <div className="relative z-50 w-full">
         <form
@@ -234,6 +236,7 @@ export const Leap = React.forwardRef(
             'flex items-center h-full w-full px-2 rounded-full bg-white default-ring focus-within:ring-2',
             shouldDim && 'opacity-60',
             !navOpen ? 'bg-gray-50' : '',
+            menu === 'upgrading' ? 'bg-orange-500' : '',
             className
           )}
           onSubmit={onSubmit}
@@ -241,28 +244,32 @@ export const Leap = React.forwardRef(
           <label
             htmlFor="leap"
             className={classNames(
-              'inline-block flex-none p-2 h4 text-blue-400',
-              !selection && 'sr-only'
+              'inline-block flex-none p-2 h4 ',
+              menu === 'upgrading' ? 'text-white' : !selection ? 'sr-only' : 'text-blue-400'
             )}
           >
-            {selection || 'Search'}
+            {menu === 'upgrading'
+              ? 'Your Urbit is being updated, this page will refresh when ready'
+              : selection || 'Search'}
           </label>
-          <input
-            id="leap"
-            type="text"
-            ref={inputRef}
-            placeholder={selection ? '' : 'Search'}
-            className="flex-1 w-full h-full px-2 h4 text-base rounded-full bg-transparent outline-none"
-            value={rawInput}
-            onClick={toggleSearch}
-            onFocus={onFocus}
-            onChange={onChange}
-            onKeyDown={onKeyDown}
-            autoComplete="off"
-            aria-autocomplete="both"
-            aria-controls={dropdown}
-            aria-activedescendant={selectedMatch?.display || selectedMatch?.value}
-          />
+          {menu !== 'upgrading' ? (
+            <input
+              id="leap"
+              type="text"
+              ref={inputRef}
+              placeholder={selection ? '' : 'Search'}
+              className="flex-1 w-full h-full px-2 h4 text-base rounded-full bg-transparent outline-none"
+              value={rawInput}
+              onClick={toggleSearch}
+              onFocus={onFocus}
+              onChange={onChange}
+              onKeyDown={onKeyDown}
+              autoComplete="off"
+              aria-autocomplete="both"
+              aria-controls={dropdown}
+              aria-activedescendant={selectedMatch?.display || selectedMatch?.value}
+            />
+          ) : null}
         </form>
         {menu === 'search' && (
           <Link
