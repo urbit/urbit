@@ -10,7 +10,7 @@
 :-  desk
 %+  roll  arg
 =|  =rein:hood
-|:  [*[on=? =dude:gall] rein(liv liv)]
+|:  [*[on=? =dude:gall] rein=rein(liv liv)]
 ?:  on
   rein(add (~(put in add.rein) dude))
 rein(sub (~(put in sub.rein) dude))

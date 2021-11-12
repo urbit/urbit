@@ -28,10 +28,13 @@
   ::  we do not have a public key from ship at this life
   ::
   ?~  lyf  %.y
+  ?.  =(u.lyf r.signature)  %.y
   =+  %:  jael-scry
         ,deed=[a=life b=pass c=(unit @ux)]
         our  %deed  now  /(scot %p q.signature)/(scot %ud r.signature)
       ==
+  ::  if signature is from a past life, skip validation
+  ::  XX: should be visualised on frontend, not great.
   ?.  =(a.deed r.signature)  %.y
   ::  verify signature from ship at life
   ::

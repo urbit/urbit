@@ -937,7 +937,6 @@ struct ur_walk_fore_s {
   ur_root_t  *r;
   uint32_t prev;
   uint32_t size;
-  uint32_t fill;
   ur_nref  *top;
 };
 
@@ -950,7 +949,6 @@ ur_walk_fore_init_with(ur_root_t    *r,
   w->top = _oom("walk_fore", malloc(s_size * sizeof(*w->top)));
   w->prev = s_prev;
   w->size = s_size;
-  w->fill = 0;
   w->r    = r;
 
   return w;
@@ -969,45 +967,42 @@ ur_walk_fore_with(ur_walk_fore_t *w,
                   void       (*atom)(ur_root_t*, ur_nref, void*),
                   ur_bool_t  (*cell)(ur_root_t*, ur_nref, void*))
 {
-  ur_root_t *r = w->r;
-  ur_nref *don = w->top;
+  ur_root_t  *r = w->r;
+  uint32_t fill = 1;
 
-  w->top += ++w->fill;
   *w->top = ref;
 
-  while ( w->top != don ) {
+  do {
     //  visit atom, pop stack
     //
     if ( !ur_deep(ref) ) {
       atom(r, ref, v);
-      w->top--; w->fill--;
+      fill--;
     }
     //  visit cell, pop stack if false
     //
     else if ( !cell(r, ref, v) ) {
-      w->top--; w->fill--;
+      fill--;
     }
     //  push the tail, continue into the head
     //
     else {
-      *w->top = ur_tail(r, ref);
+      w->top[fill++] = ur_tail(r, ref);
 
       //  reallocate "stack" if full
       //
-      if ( w->size == w->fill ) {
+      if ( w->size == fill ) {
         uint32_t next = w->prev + w->size;
-        don     = _oom("walk_fore", realloc(don, next * sizeof(*don)));
-        w->top  = don + w->fill;
+        w->top  = _oom("walk_fore", realloc(w->top, next * sizeof(*w->top)));
         w->prev = w->size;
         w->size = next;
       }
 
-      w->top++; w->fill++;
-      *w->top = ur_head(r, ref);
+      w->top[fill] = ur_head(r, ref);
     }
 
-    ref = *w->top;
-  }
+    ref = w->top[fill];
+  } while ( fill );
 }
 
 void
