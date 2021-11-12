@@ -733,7 +733,7 @@
     ?:  =(kel u.kul)
       ~>  %slog.(fmt "{here} already at {<[lal num]:kel>}")
       update-running-dudes
-    =^  tem  rail.rak  (crank-next %| kel)
+    =^  tem  rail.rak  (crank-next kel)
     ?^  tem
       (emit merge-main:pass)
     =-  (emit (pyre:pass leaf/- ~))
@@ -861,7 +861,8 @@
     ++  kelvin-same
       ^+  vats
       ~>  %slog.(fmt "merging into {here}")
-      =.  rail.rak  +:(crank-next %& (dec aeon:ral))
+      ?>  ?=(^ rail.rak)
+      =.  next.u.rail.rak  ~
       (emil ~[merge-main sync-ud]:pass)
     ::
     ++  do-base
@@ -878,7 +879,8 @@
         =/  =diff  [%block loc rak new-weft blockers]
         (emil sync-ud:pass (diff:give diff) ~)
       ~>  %slog.(fmt "applying OTA to {here}, kelvin: {<new-weft>}")
-      =.  rail.rak  +:(crank-next %& (dec aeon:ral))
+      ?>  ?=(^ rail.rak)
+      =.  next.u.rail.rak  ~
       =.  wef
         ?:  =(old-weft new-weft)  ~
         `new-weft
@@ -987,7 +989,7 @@
   ::  +crank-next: pop stale items from .next until one matches
   ::
   ++  crank-next
-    |=  new=(each aeon weft)
+    |=  new=weft
     ^+  [match=*(unit rung) rail.rak]
     ?~  rail.rak
       ~|  [%no-rail-for desk=loc]
@@ -996,10 +998,7 @@
     =-  [match `u.rail.rak(next next)]
     |-  ^-  [match=(unit rung) next=(list rung)]
     ?~  rog  [~ next.u.rail.rak]
-    ?:  ?-  -.new
-          %&  =(p.new aeon.i.rog)
-          %|  =(p.new weft.i.rog)
-        ==
+    ?:  =(new weft.i.rog)
       [`i.rog t.rog]
     $(rog t.rog)
   ::
