@@ -1,10 +1,11 @@
 import { map, omit } from 'lodash';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Route, RouteComponentProps, useHistory, useParams } from 'react-router-dom';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { MenuState, Nav } from '../nav/Nav';
 import { useCharges } from '../state/docket';
+import useKilnState from '../state/kiln';
 import { RemoveApp } from '../tiles/RemoveApp';
 import { SuspendApp } from '../tiles/SuspendApp';
 import { Tile } from '../tiles/Tile';
@@ -19,6 +20,27 @@ export const Grid: FunctionComponent<{}> = () => {
   const { push } = useHistory();
   const { menu } = useParams<RouteProps>();
   const chargesLoaded = Object.keys(charges).length > 0;
+
+  useEffect(() => {
+    // TOOD: rework
+    // Heuristically detect reload completion and redirect
+    async function attempt(count = 0) {
+      if(count > 5) {
+        window.location.reload();
+      }
+      const start = performance.now();
+      await useKilnState.getState().fetchVats();
+      await useKilnState.getState().fetchVats();
+      if((performance.now() - start) > 5000) {
+        attempt(count+1);
+      } else {
+        push('/');
+      }
+    }
+    if(menu === 'upgrading') {
+      attempt();
+    }
+  }, [menu])
 
   return (
     <div className="flex flex-col">
