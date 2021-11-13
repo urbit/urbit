@@ -11,7 +11,8 @@ import useKilnState, { useVat } from '../../state/kiln';
 
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
-import { Vat } from '../../../../npm/api/dist';
+import { Vat } from '@urbit/api';
+import {useHistory} from 'react-router-dom';
 
 export const RuntimeLagNotification = () => (
   <section
@@ -43,6 +44,7 @@ function vatIsBlocked(newKelvin: number, vat: Vat) {
 
 export const BaseBlockedNotification = () => {
   const base = useVat('base');
+  const { push } = useHistory();
   // TODO: assert weft.name === 'zuse'??
   const newKelvin = base?.arak?.rail?.next?.[0]?.weft?.kelvin || 420;
   const charges = useCharges();
@@ -58,6 +60,7 @@ export const BaseBlockedNotification = () => {
 
   const handleArchiveApps = useCallback(async () => {
     api.poke(kilnBump(true));
+    push('/leap/upgrading');
   }, []);
 
   return (
