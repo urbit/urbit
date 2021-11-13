@@ -13,19 +13,20 @@ import { Bullet } from '../components/icons/Bullet';
 type TileProps = {
   charge: ChargeWithDesk;
   desk: string;
+  disabled?: boolean;
 };
 
-export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
+export const Tile: FunctionComponent<TileProps> = ({ charge, desk, disabled = false }) => {
   const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const { title, image, color, chad, href } = charge;
   const vat = useVat(desk);
   const { lightText, tileColor, menuColor, suspendColor, suspendMenuColor } = useTileColor(color);
-  const loading = 'install' in chad;
-  const suspended = 'suspend' in chad;
+  const loading = !disabled && 'install' in chad;
+  const suspended = disabled || 'suspend' in chad;
   const hung = 'hung' in chad;
-  const active = chadIsRunning(chad);
+  const active = !disabled && chadIsRunning(chad);
   const link = getAppHref(href);
-  const backgroundColor = active ? tileColor || 'purple' : suspendColor;
+  const backgroundColor = suspended ? suspendColor : active ? tileColor || 'purple' : suspendColor;
 
   return (
     <a
@@ -47,14 +48,12 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
             <>
               {loading && <Spinner className="h-6 w-6 mr-2" />}
               <span className="text-gray-500">
-                {suspended && 'Suspended'}
-                {loading && 'Installing'}
-                {hung && 'Errored'}
+                {suspended ? 'Suspended' : loading ? 'Installing' : hung ? 'Errored' : null }
               </span>
             </>
           )}
         </div>
-        {vat?.arak.rail?.paused && (
+        {vat?.arak.rail?.paused && !disabled && (
           <Bullet className="absolute z-10 top-5 left-5 sm:top-7 sm:left-7 w-4 h-4 text-orange-500 dark:text-black" />
         )}
         <TileMenu
