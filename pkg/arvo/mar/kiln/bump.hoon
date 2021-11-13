@@ -1,5 +1,5 @@
 |%
-+$  bump  [%kiln-bump except=(set desk) force=_|]
++$  bump  [except=(set desk) force=_|]
 --
 |_  b=bump
 ++  grad  %noun
@@ -9,7 +9,6 @@
   ++  json
     ^-  $-(^json bump)
     =,  dejs:format
-    %+  pe  %kiln-bump
     %-  ot
     :~  except+(as so)
         force+bo

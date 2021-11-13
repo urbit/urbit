@@ -49,8 +49,6 @@ const AppRoutes = () => {
     }
   }, [isDarkMode, theme]);
 
-  useEffect(() => {}, []);
-
   useEffect(
     handleError(() => {
       window.name = 'grid';
