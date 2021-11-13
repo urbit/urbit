@@ -75,9 +75,6 @@ const AppRoutes = () => {
   return (
     <Switch>
       <Route path="/perma" component={PermalinkRoutes} />
-      <Route path="/upgrading">
-        <Grid upgrading />
-      </Route>
       <Route path={['/leap/:menu', '/']} component={Grid} />
     </Switch>
   );
