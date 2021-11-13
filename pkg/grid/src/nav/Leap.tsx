@@ -227,7 +227,6 @@ export const Leap = React.forwardRef(
       [selection, rawInput, match, matches, selectedMatch]
     );
 
-    console.log(menu);
 
     return (
       <div className="relative z-50 w-full">

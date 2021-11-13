@@ -11,7 +11,7 @@ import useKilnState, { useVat } from '../../state/kiln';
 
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
-import { Vat } from '../../../../npm/api/dist';
+import { Vat } from '@urbit/api';
 import {useHistory} from 'react-router-dom';
 
 export const RuntimeLagNotification = () => (
