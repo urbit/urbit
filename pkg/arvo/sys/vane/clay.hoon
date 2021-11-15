@@ -4400,13 +4400,11 @@
   ::
       %info
     ?:  ?=(%| -.dit.req)
-      :: initial pass. doing it directly inline rather than putting any logic into ++de
       =/  bel=@tas         p.dit.req
       =/  aey=(unit aeon)  q.dit.req
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) our des.req)
         abet:(label:den bel aey)
-        :: ~&  "labeling current aeon {<let.dom>} on {<des.req>}"
       [mos ..^$]
     =/  [deletes=(set path) changes=(map path cage)]
       =/  =soba  p.dit.req
