@@ -1468,7 +1468,7 @@
     :: rewriting would violate referential transparency
     ::
     ~|  %tried-to-rewrite-existing-label
-    ~&  "requested aeon: {<yon>}, existing aeon: {<u.yen>}"
+    ~|  "requested aeon: {<yon>}, existing aeon: {<u.yen>}"
     !!
   ::
   ::  Porcelain commit
