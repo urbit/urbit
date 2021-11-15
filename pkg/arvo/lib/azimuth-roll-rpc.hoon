@@ -347,7 +347,7 @@
         |=  [res=(list @p) req=(list @p)]
         ^-  json
         %-  pairs
-        :~  ['residentes' (ships res)]
+        :~  ['residents' (ships res)]
             ['requests' (ships req)]
         ==
       ::
