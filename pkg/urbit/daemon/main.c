@@ -15,6 +15,7 @@
 #include <h2o.h>
 #include <curl/curl.h>
 #include <vere/db/lmdb.h>
+#include <getopt.h>
 
 #include "ca-bundle.h"
 
@@ -59,7 +60,7 @@ _main_presig(c3_c* txt_c)
 static u3_noun
 _main_getopt(c3_i argc, c3_c** argv)
 {
-  c3_i ch_i;
+  c3_i ch_i, lid_i;
   c3_w arg_w;
 
   u3_Host.ops_u.abo = c3n;
@@ -87,8 +88,50 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( -1 != (ch_i=getopt(argc, argv,
-                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
+  static struct option lop_u[] = {
+    { "arvo",                required_argument, NULL, 'A' },
+    { "abort",               no_argument,       NULL, 'a' },
+    { "bootstrap",           required_argument, NULL, 'B' },
+    { "http-ip",             required_argument, NULL, 'b' },
+    { "memo-cache-limit",    required_argument, NULL, 'C' },
+    { "pier",                required_argument, NULL, 'c' },
+    { "replay",              no_argument,       NULL, 'D' },
+    { "daemon",              no_argument,       NULL, 'd' },
+    { "ethereum",            required_argument, NULL, 'e' },
+    { "fake",                required_argument, NULL, 'F' },
+    { "key-string",          required_argument, NULL, 'G' },
+    { "gc",                  no_argument,       NULL, 'g' },
+    { "dns-root",            required_argument, NULL, 'H' },
+    { "inject",              required_argument, NULL, 'I' },
+    { "import",              required_argument, NULL, 'i' },
+    { "ivory-pill",          required_argument, NULL, 'J' },
+    { "json-trace",          no_argument,       NULL, 'j' },
+    { "kernel-stage",        required_argument, NULL, 'K' },
+    { "key-file",            required_argument, NULL, 'k' },
+    { "local",               no_argument,       NULL, 'L' },
+    { "lite-boot",           no_argument,       NULL, 'l' },
+    { "replay-to",           required_argument, NULL, 'n' },
+    { "profile",             no_argument,       NULL, 'P' },
+    { "ames-port",           required_argument, NULL, 'p' },
+    { "quiet",               no_argument,       NULL, 'q' },
+    { "versions",            no_argument,       NULL, 'R' },
+    { "replay-from",         required_argument, NULL, 'r' },
+    { "skip-battery-hashes", no_argument,       NULL, 'S' },
+    { "autoselect-pill",     no_argument,       NULL, 's' },
+    { "no-tty",              no_argument,       NULL, 't' },
+    { "bootstrap-url",       required_argument, NULL, 'u' },
+    { "verbose",             no_argument,       NULL, 'v' },
+    { "name",                required_argument, NULL, 'w' },
+    { "scry",                required_argument, NULL, 'X' },
+    { "exit",                no_argument,       NULL, 'x' },
+    { "scry-into",           required_argument, NULL, 'Y' },
+    { "scry-format",         required_argument, NULL, 'Z' },
+    { NULL, 0, NULL, 0 },
+  };
+
+  while ( -1 != (ch_i=getopt_long(argc, argv,
+                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS",
+                 lop_u, &lid_i)) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -437,37 +480,43 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "where ship_name is a @p phonetic representation of an urbit address\n",
     "without the leading '~', and options is some subset of the following:\n",
     "\n",
-    "-A dir        Use dir for initial clay sync\n",
-    "-B pill       Bootstrap from this pill\n",
-    "-b ip         Bind HTTP server to this IP address\n",
-    "-C limit      Set memo cache max size; 0 means uncapped\n",
-    "-c pier       Create a new urbit in pier/\n",
-    "-D            Recompute from events\n",
-    "-d            Daemon mode; implies -t\n",
-    "-e url        Ethereum gateway\n",
-    "-F ship       Fake keys; also disables networking\n",
-    "-G string     Private key string (see also -k)\n",
-    "-g            Set GC flag\n",
-    "-i jam_file   import pier state\n",
-    "-j            Create json trace file in .urb/put/trace\n",
-    "-K stage      Start at Hoon kernel version stage\n",
-    "-k file-path  Private key file (see also -G)\n",
-    "-L            local networking only\n",
-    "-P            Profiling\n",
-    "-p ames_port  Set the ames port to bind to\n",
-    "-q            Quiet\n",
-    "-R            Report urbit build info\n",
-    "-S            Disable battery hashing\n",
+    "-A, --arvo DIR                Use dir for initial clay sync\n",
+    "-a, --abort                   Abort aggressively\n",
+    "-B, --bootstrap PILL          Bootstrap from this pill\n",
+    "-b, --http-ip IP              Bind HTTP server to this IP address\n",
+    "-C, --memo-cache-limit LIMIT  Set memo cache max size; 0 means uncapped\n",
+    "-c, --pier PIER               Create a new urbit in pier/\n",
+    "-D, --replay                  Recompute from events\n",
+    "-d, --daemon                  Daemon mode; implies -t\n",
+    "-e, --ethereum URL            Ethereum gateway\n",
+    "-F, --fake SHIP               Fake keys; also disables networking\n",
+    "-G, --key-string STRING       Private key string (@uw, see also -k)\n"
+    "-g, --gc                      Set GC flag\n",
+    "-I, --inject FILE             Inject event from jamfile\n",
+    "-i, --import FILE             Import pier state from jamfile\n",
+    "-J, --ivory-pill PILL         Use custom ivory pill\n",
+    "-j, --json-trace              Create json trace file in .urb/put/trace\n",
+    "-K, --kernel-stage STAGE      Start at Hoon kernel version stage\n",
+    "-k, --key-file KEYS           Private key file (see also -G)\n",
+    "-L, --local                   Local networking only\n",
+    "-l, --lite-boot               Most-minimal startup\n",
+    "-n, --replay-to NUMBER        Replay up to event\n",
+    "-P, --profile                 Profiling\n",
+    "-p, --ames-port PORT          Set the ames port to bind to\n",
+    "-q, --quiet                   Quiet\n",
+    "-R, --versions                Report urbit build info\n",
+    "-r, --replay-from NUMBER      Load snapshot from event\n",
+    "-S, --skip-battery-hashes     Disable battery hashing\n",
     // XX find a way to re-enable
-    // "-s            Pill URL from arvo git hash\n",
-    "-t            Disable terminal/tty assumptions\n",
-    "-u url        URL from which to download pill\n",
-    "-v            Verbose\n",
-    "-w name       Boot as ~name\n",
-    "-X path       Scry, write to file, then exit\n"
-    "-x            Exit immediately\n",
-    "-Y file       Optional name of file (for -X and -o)\n"
-    "-Z format     Optional file format ('jam', or aura, for -X)\n"
+    // "-s, --autoselect-pill      Pill URL from arvo git hash\n",
+    "-t, --no-tty                  Disable terminal/tty assumptions\n",
+    "-u, --bootstrap-url URL       URL from which to download pill\n",
+    "-v, --verbose                 Verbose\n",
+    "-w, --name NAME               Boot as ~name\n",
+    "-X, --scry PATH               Scry, write to file, then exit\n",
+    "-x, --exit                    Exit immediately\n",
+    "-Y, --scry-into FILE          Optional name of file (for -X)\n",
+    "-Z, --scry-format FORMAT      Optional file format ('jam', or aura, for -X)\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
@@ -770,7 +819,7 @@ main(c3_i   argc,
 
     //  starting u3m configures OpenSSL memory functions, so we must do it
     //  before any OpenSSL allocations
-    // 
+    //
     u3m_boot_lite();
 
     //  Initialize OpenSSL for client and server
