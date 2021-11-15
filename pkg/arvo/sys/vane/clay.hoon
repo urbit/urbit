@@ -241,16 +241,6 @@
       busy=_|
   ==
 ::
-::  Result of a subscription
-::
-+$  sub-result
-  $%  [%blab =mood =cage]
-      [%bleb ver=@ud ins=@ud range=(unit (pair aeon aeon))]
-      [%balk cage=(unit cage) =mood]
-      [%blas moods=(set mood)]
-      [%blub ~]
-  ==
-::
 ::  Domestic ship.
 ::
 ::  `hun` is the duct to dill, and `dos` is a collection of our desks.
@@ -287,7 +277,8 @@
           $:  rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
-+$  move  [p=duct q=(wind note gift)]                   ::  local move
++$  card  (wind note gift)                              ::  local card
++$  move  [p=duct q=card]                               ::  local move
 +$  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
   $%  $:  %$                                            ::  to arvo
@@ -1184,16 +1175,6 @@
     |=  mof=(list move)
     %_(+> mow (weld mow (flop mof)))
   ::
-  ::  Produce either null or a result along a subscription.
-  ::
-  ::  Producing null means subscription has been completed or cancelled.
-  ::
-  ++  balk
-    |=  [hen=duct cay=(unit cage) mun=mood]
-    ^+  +>
-    ?~  cay  (blub hen)
-    (blab hen mun u.cay)
-  ::
   ::  Set timer.
   ::
   ++  bait
@@ -1206,18 +1187,18 @@
     |=  [hen=duct tym=@da]
     (emit hen %pass /tyme/(scot %p her)/[syd] %b %rest tym)
   ::
-  ::  Give subscription result.
+  ::  Give %writ, or slip a drip if foreign desk
   ::
-  ::  Result can be either a direct result (cage) or a lobe of a result.  In
-  ::  the latter case we fetch the data at the lobe and produce that.
-  ::
-  ++  blab
-    |=  [hen=duct mun=mood =cage]
-    ^+  +>
-    =/  gift  [%writ ~ [care.mun case.mun syd] path.mun cage]
-    ?:  ?=(^ ref)
-      (emit hen %slip %b %drip !>(gift))
-    (emit hen %give gift)
+  ++  writ
+    |=  res=(unit [=mood =cage])
+    ^-  card
+    =/  =riot
+      ?~  res
+        ~
+      `[[care.mood case.mood syd] path.mood cage]:[u.res syd=syd]
+    ?~  ref
+      [%give %writ riot]
+    [%slip %b %drip !>([%writ riot])]
   ::
   ++  case-to-date
     |=  =case
@@ -1261,59 +1242,6 @@
         %tas  (~(get by lab.dom) p.lok)
         %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
     ==
-  ::
-  ++  blas
-    |=  [hen=duct das=(set mood)]
-    ^+  +>
-    ?>  ?=(^ das)
-    ::  translate the case to a date
-    ::
-    =/  cas  [%da (case-to-date case.n.das)]
-    =/  res
-      (~(run in `(set mood)`das) |=(m=mood [care.m path.m]))
-    =/  gift  [%wris cas res]
-    ?:  ?=(^ ref)
-      (emit hen %slip %b %drip !>(gift))
-    (emit hen %give gift)
-  ::
-  ::  Give next step in a subscription.
-  ::
-  ++  bleb
-    |=  [hen=duct ver=@ud ins=@ud hip=(unit (pair aeon aeon))]
-    ^+  +>
-    %^  blab  hen  [%w [%ud ins] ~]
-    ?~  hip
-      [%null [%atom %n ~] ~]
-    [%nako !>((make-nako:ze ver u.hip))]
-  ::
-  ::  Tell subscriber that subscription is done.
-  ::
-  ++  blub
-    |=  hen=duct
-    ?:  ?=(^ ref)
-      (emit hen %slip %b %drip !>([%writ ~]))
-    (emit hen %give %writ ~)
-  ::
-  ::  Lifts a function so that a single result can be fanned out over a set of
-  ::  subscriber ducts.
-  ::
-  ::  Thus, `((duct-lift func) subs arg)` runs `(func sub arg)` for each `sub`
-  ::  in `subs`.
-  ::
-  ++  duct-lift
-    |*  send=_|=([duct *] ..duct-lift)
-    |=  [a=(set duct) arg=_+<+.send]  ^+  ..duct-lift
-    =+  all=~(tap by a)
-    |-  ^+  ..duct-lift
-    ?~  all  ..duct-lift
-    =.  +>.send  ..duct-lift
-    $(all t.all, duct-lift (send i.all arg))
-  ::
-  ++  blub-all  (duct-lift |=([a=duct ~] (blub a)))
-  ++  blab-all  (duct-lift blab)
-  ++  blas-all  (duct-lift blas)
-  ++  balk-all  (duct-lift balk)
-  ++  bleb-all  (duct-lift bleb)
   ::
   ++  static-ford-args  [ank.dom ~ ~ lat.ran fod.dom]
   ::  Create a ford appropriate for the aeon
@@ -3025,9 +2953,9 @@
     ?:  &(?=(^ for) !(foreign-capable rav))
       ~&  [%bad-foreign-request-care from=for rav]
       ..start-request
-    =^  [new-sub=(unit rove) sub-results=(list sub-result)]  fod.dom
+    =^  [new-sub=(unit rove) cards=(list card)]  fod.dom
       (try-fill-sub for (rave-to-rove rav))
-    =.  ..start-request  (send-sub-results sub-results [hen ~ ~])
+    =.  ..start-request  (send-cards cards [hen ~ ~])
     ?~  new-sub
       ..start-request
     (duce for u.new-sub)
@@ -3377,51 +3305,43 @@
       %many  [- track moat]:rov
     ==
   ::
-  ++  send-sub-results
-    |=  [sub-results=(list sub-result) ducts=(set duct)]
+  ++  send-cards
+    |=  [cards=(list card) ducts=(set duct)]
     ^+  ..wake
-    ?~  sub-results
-      ..wake
-    =.  ..wake
-      ?-  -.i.sub-results
-        %blab  (blab-all ducts +.i.sub-results)
-        %bleb  (bleb-all ducts +.i.sub-results)
-        %balk  (balk-all ducts +.i.sub-results)
-        %blas  (blas-all ducts +.i.sub-results)
-        %blub  (blub-all ducts +.i.sub-results)
-      ==
-    $(sub-results t.sub-results)
+    %-  emil
+    %-  zing
+    %+  turn  cards
+    |=  =card
+    %+  turn  ~(tap by ducts)
+    |=  =duct
+    [duct card]
   ::
   ::  Loop through open subscriptions and check if we can fill any of
   ::  them.
   ::
   ++  wake
     ^+  .
-    =/  old-subs=(list [=wove ducts=(set duct)])  ~(tap by qyx)
-    =|  new-subs=(list [=wove ducts=(set duct)])
+    =/  subs=(list [=wove ducts=(set duct)])  ~(tap by qyx)
+    =|  qux=cult
     |-  ^+  ..wake
-    ?~  old-subs
-      ::  install new subs
-      ::
-      ..wake(qyx (~(gas by *cult) new-subs))
-    ?:  =(~ ducts.i.old-subs)
-      ::  drop forgotten roves
-      ::
-      $(old-subs t.old-subs)
-    =^  [new-sub=(unit rove) sub-results=(list sub-result)]  fod.dom
-      (try-fill-sub wove.i.old-subs)
-    =.  ..wake  (send-sub-results sub-results ducts.i.old-subs)
-    =.  new-subs
-      ?~  new-sub
-        new-subs
-      [[[for.wove.i.old-subs u.new-sub] ducts.i.old-subs] new-subs]
-    $(old-subs t.old-subs)
+    ?~  subs
+      ..wake(qyx qux)
+    ?:  =(~ ducts.i.subs)
+      $(subs t.subs)
+    =^  [new-sub=(unit rove) cards=(list card)]  fod.dom
+      (try-fill-sub wove.i.subs)
+    =.  ..wake  (send-cards cards ducts.i.subs)
+    =?  qux  ?=(^ new-sub)
+      =/  =wove  [for.wove.i.subs u.new-sub]
+      %+  ~(put by qux)  wove
+      (~(uni in ducts.i.subs) (fall (~(get by qux) wove) ~))
+    $(subs t.subs)
   ::
   ::  Try to fill a subscription
   ::
   ++  try-fill-sub
     |=  [far=(unit [=ship ver=@ud]) rov=rove]
-    ^-  [[new-sub=(unit rove) (list sub-result)] ford-cache]
+    ^-  [[(unit rove) (list card)] ford-cache]
     =/  for=(unit ship)  ?~(far ~ `ship.u.far)
     ?-    -.rov
         %sing
@@ -3430,11 +3350,8 @@
       ?^  cache-value
         ::  if we have a result in our cache, produce it
         ::
-        :_  fod.dom
-        :-  ~
-        ?~  u.cache-value
-          [%blub ~]~
-        [%blab mood.rov u.u.cache-value]~
+        :_  fod.dom  :-  ~  :_  ~
+        (writ ?~(u.cache-value ~ `[mood.rov u.u.cache-value]))
       ::  else, check to see if rove is for an aeon we know
       ::
       =/  aeon=(unit aeon)  (case-to-aeon case.mood.rov)
@@ -3445,17 +3362,20 @@
       =^  value=(unit (unit cage))  fod.dom
         (read-at-aeon:ze for u.aeon mood.rov)
       ?~  value
-        ::  We don't have the data directly, which is potentially
-        ::  problematical.  How can we fetch the data?
+        ::  we don't have the data directly.  how can we fetch it?
         ::
         ?:  =(0 u.aeon)
           ~&  [%clay-sing-indirect-data-0 `path`[syd '0' path.mood.rov]]
           [[~ ~] fod.dom]
         ~&  [%clay-sing-indirect-data desk=syd mood=mood.rov aeon=u.aeon]
         [[`rov ~] fod.dom]
-      ::  we have the data, so we produce the results
+      ::  we have the data, so produce the results
       ::
-      [[~ [%balk u.value mood.rov]~] fod.dom]
+      :_  fod.dom  :-  ~  :_  ~
+      %-  writ
+      ?~  u.value
+        ~
+      `[mood.rov u.u.value]
     ::
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
     ::
@@ -3477,23 +3397,16 @@
             ~
         ==
       ?>  ?=(%mult -.rov)
-      ::  we will either respond or store the maybe updated request.
-      ::
-      =;  [res=(each (map mood (unit cage)) rove) fod=ford-cache]
-          :_  fod
-          ?:  ?=(%& -.res)
-            (respond p.res)
-          (store p.res)
       ::  recurse here on next aeon if possible/needed.
       ::
-      |-  ^-  [(each (map mood (unit cage)) rove) ford-cache]
+      |-
       ::  if we don't have an aeon yet, see if we have one now.
       ::
       ?~  aeon.rov
         =/  aeon=(unit aeon)  (case-to-aeon case.mool.rov)
         ::  if we still don't, wait.
         ::
-        ?~  aeon  [|+rov fod.dom]
+        ?~  aeon  [(store rov) fod.dom]
         ::  if we do, update the request and retry.
         ::
         $(aeon.rov `+(u.aeon), old-cach.rov ~, new-cach.rov ~)
@@ -3507,7 +3420,7 @@
       ::  if the next aeon we want to compare is in the future, wait again.
       ::
       =/  next-aeon=(unit aeon)  (case-to-aeon [%ud u.aeon.rov])
-      ?~  next-aeon  [|+rov fod.dom]
+      ?~  next-aeon  [(store rov) fod.dom]
       ::  if new isn't complete, try filling in the gaps.
       ::
       =^  n  fod.dom
@@ -3515,10 +3428,15 @@
           [new-cach.rov fod.dom]
         (read-unknown mool.rov(case [%ud u.aeon.rov]) new-cach.rov)
       =.  new-cach.rov  n
-      ?:  ?&  !(complete old-cach.rov)
-              (complete new-cach.rov)
-          ==
-        :_  fod.dom  :-  %&
+      ::  if new still isn't complete, wait again.
+      ::
+      ?.  (complete new-cach.rov)
+        [(store rov) fod.dom]
+      ::  if old not complete, give a result (possible false positive).
+      ::
+      ?:  !(complete old-cach.rov)
+        :_  fod.dom
+        %-  respond
         %-  malt
         %+  murn  ~(tap in paths.mool.rov)
         |=  [=care =path]
@@ -3528,12 +3446,6 @@
           %-  (slog 'clay: strange new-cache' >[care path cached]< ~)
           ~
         `u=[[care [%ud let.dom] path] u.u.cached]
-      ::  if they're still not both complete, wait again.
-      ::
-      ?.  ?&  (complete old-cach.rov)
-              (complete new-cach.rov)
-          ==
-        [|+rov fod.dom]
       ::  both complete, so check if anything has changed
       ::
       =/  changes=(map mood (unit cage))
@@ -3568,14 +3480,14 @@
       ::  if there are any changes, send response. if none, move on to
       ::  next aeon.
       ::
-      ?^  changes  [&+changes fod.dom]
+      ?^  changes  [(respond changes) fod.dom]
       $(u.aeon.rov +(u.aeon.rov), new-cach.rov ~)
       ::
       ::  check again later
       ::
       ++  store
         |=  rov=rove
-        ^-  [new-sub=(unit rove) (list sub-result)]
+        ^-  [(unit rove) (list card)]
         =/  new-rove=rove
           ?>  ?=(%mult -.rov)
           ?:  ?=(%mult -.vor)  rov
@@ -3588,14 +3500,26 @@
       ::
       ++  respond
         |=  res=(map mood (unit cage))
-        ^-  [new-sub=(unit rove) (list sub-result)]
+        ^-  [(unit rove) (list card)]
         :-  ~
         ?:  ?=(%mult -.vor)
-          [%blas ~(key by res)]~
+          :_  ~
+          =/  moods  ~(key by res)
+          =/  cas
+            ?>  ?=(^ moods)
+            [%da (case-to-date case.n.moods)]
+          =/  res
+            (~(run in moods) |=(m=mood [care.m path.m]))
+          =/  gift  [%wris cas res]
+          ?:  ?=(^ ref)
+            [%slip %b %drip !>(gift)]
+          [%give gift]
         ?>  ?=([* ~ ~] res)
+        :_  ~
+        %-  writ
         ?~  q.n.res
-          [%blub ~]~
-        [%blab [p u.q]:n.res]~
+          ~
+        `[p u.q]:n.res
       ::
       ::  no unknowns
       ::
@@ -3643,41 +3567,31 @@
         ::
         [`rov ~]
       =/  to-aeon  (case-to-aeon to.moat.rov)
+      =/  up-to  ?~(to-aeon let.dom u.to-aeon)
       =/  ver  ?~(far %1 ver.u.far)
-      ?~  to-aeon
-        ::  we're in the middle of the range, so produce what we can,
-        ::  but don't end the subscription
-        ::
-        ::  update "from" case to the aeon after now
-        ::
-        =.  from.moat.rov
-          [%ud +(let.dom)]
-        :-  `rov
-        =/  new-lobes=(map path lobe)
-          (lobes-at-path:ze for let.dom path.moat.rov)
+      =/  new-lobes=(map path lobe)
+        (lobes-at-path:ze for up-to path.moat.rov)
+      =.  from.moat.rov  [%ud +(let.dom)]
+      =/  cards=(list card)
         ?:  =(lobes.rov new-lobes)
           ::  if no changes, don't produce results
           ::
           ~
         ::  else changes, so produce them
         ::
-        [%bleb ver let.dom ?:(track.rov ~ `[u.from-aeon let.dom])]~
+        =/  =cage
+          ?:  track.rov
+            [%null [%atom %n ~] ~]
+          [%nako !>((make-nako:ze ver u.from-aeon up-to))]
+        [(writ ~ [%w ud+let.dom /] cage) ~]
+      ?~  to-aeon
+        ::  we're in the middle of the range, so produce what we can,
+        ::  but don't end the subscription
+        ::
+        [`rov cards]
       ::  we're past the end of the range, so end subscription
       ::
-      :-  ~
-      =/  new-lobes=(map path lobe)
-        (lobes-at-path:ze for u.to-aeon path.moat.rov)
-      ::  if changed, give subscription result
-      ::
-      =/  bleb=(list sub-result)
-        ?:  =(lobes.rov new-lobes)
-          ~
-        [%bleb ver +(u.from-aeon) ?:(track.rov ~ `[u.from-aeon u.to-aeon])]~
-      ::  end subscription
-      ::
-      =/  blub=(list sub-result)
-        [%blub ~]~
-      (weld bleb blub)
+      [~ (snoc cards (writ ~))]
     ==
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
