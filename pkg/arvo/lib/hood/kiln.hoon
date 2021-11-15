@@ -408,8 +408,6 @@
           .^([rev=@ud @da] %cw /(scot %p our)/[d]/(scot %da now))
       ==
     take-commit:(abed:vats %base)
-  =?  kiln  ?=(^ wef)
-    (bump:vats u.wef (get-unblockers ark.old) force=%.n)
   =.  wef  ~
   abet:kiln
 ::
