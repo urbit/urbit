@@ -134,7 +134,7 @@
     :~  parent+?~(parent.l ~ (id u.parent.l))
         author+s+(scot %p author.l)
         contents+(contents contents.l)
-        time+=-(~&(- -) (time time-sent.l))
+        time+(time time-sent.l)
     ==
   ::
   ++  stamps-update

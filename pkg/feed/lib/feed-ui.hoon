@@ -8,7 +8,15 @@
     ^-  $-(json ^update)
     %-  of
     :~  [%add-post add-post]
+        [%like like]
     ==
+  ::
+  ++  like
+    %-  ot
+    :~  ship+(su ;~(pfix sig fed:ag))
+        id+id
+    ==
+        
   ::
   ++  add-post
     %-  ot

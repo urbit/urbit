@@ -88,7 +88,7 @@
 ::
 ++  peek
   |=  =path
-  ^-  (unit (unit cage))
+  |^  ^-  (unit (unit cage))
   ?+  path  [~ ~]
     [%x %dbug %state ~]  ``noun+!>(state)
     [%x %feed @ *]  (peek:(from-wire:fe-core t.path) t.t.t.path)
@@ -96,10 +96,18 @@
     ::
       [%x %global %newest @ ~]
     =/  count=@ud  (slav %ud i.t.t.t.path)
-    =-  ``feed-ui-update+!>(-)
-    ^-  update:feed-ui
-    list/(scag count (turn (tap:gorm aggregate) tail))
+    ``(ui-upd list/(scag count (turn (tap:gorm aggregate) tail)))
+    ::  
+      [%x %global %older @ @ ~]
+    =/  count=@ud  (slav %ud i.t.t.t.path)
+    =/  index=@da  (slav %da i.t.t.t.t.path)
+    ``(ui-upd list/(turn (tab:gorm aggregate `[~zod index] count) tail))
   ==
+  ++  ui-upd
+    |=  =update:feed-ui
+    ^-  cage
+    feed-ui-update+!>(update)
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -116,15 +124,25 @@
   ::
      %feed-ui-update
     =+  !<(=update:feed-ui vase)
-    ?>  ?=(%add-post -.update)
-    ~&  'adding post'
-    =/  =missive:post
-      [[now.bowl ~] q.update]
-    =/  p=post:post
-      [missive *stamps:post]
-    =/  up=update:post  add-post/p
-    =/  =diff:feed  post/[now.bowl up]
-    abet:(~(on-action fe-core p.update) diff)
+    =;   [=ship =diff:feed]
+      abet:(~(on-action fe-core ship) diff)
+    ?+  -.update  ~|(bad-ui-update/-.update !!)
+    ::
+        %like
+      =/  post-update=update:post  [%stamps like/~]
+      =/  =diff:feed  post/[time.update post-update]
+      [ship.update diff]
+    ::
+        %add-post
+      =/  =missive:post
+        [[now.bowl ~] q.update]
+      =/  p=post:post
+        [missive *stamps:post]
+      =/  up=update:post  add-post/p
+      =/  =diff:feed  post/[now.bowl up]
+      [p.update diff]
+    ==
+
   ::
       %ship  
     =+  !<(=ship vase)
@@ -453,9 +471,9 @@
       ==
       ++  like
         ^+  po-core
-        ?<  (~(has in likes.q:p) ship)
+        ?<  (~(has in likes.q:p) src.bowl)
         %-  edit
-        |=(=post:post post(likes.q (~(put in likes.q.post) ship)))
+        |=(=post:post post(likes.q (~(put in likes.q.post) src.bowl)))
       ::
       ++  unlike
         ^+  po-core
