@@ -52,7 +52,8 @@ export type MenuState =
   | 'search'
   | 'notifications'
   | 'help-and-support'
-  | 'system-preferences';
+  | 'system-preferences'
+  | 'upgrading';
 
 interface NavProps {
   menu?: MenuState;
@@ -68,7 +69,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
   const select = useLeapStore((state) => state.select);
 
   const menuState = menu || 'closed';
-  const isOpen = menuState !== 'closed';
+  const isOpen = menuState !== 'upgrading' && menuState !== 'closed';
   const eitherOpen = isOpen || systemMenuOpen;
 
   useEffect(() => {

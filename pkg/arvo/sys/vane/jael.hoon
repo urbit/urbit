@@ -482,6 +482,7 @@
     ::    [%trim p=@ud]
     ::
         %trim
+      ::TODO  consider %ruin-ing long-offline comets
       +>.$
     ::
     ::  watch private keys
@@ -514,6 +515,20 @@
         =.  moz  [[hen %give %done ~] moz]
         $(tac message)
       ==
+    ::
+    ::  pretend ships breached
+    ::    [%ruin ships=(set ship)]
+    ::
+        %ruin
+      ::NOTE  we blast this out to _all_ known ducts, because the common
+      ::      use case for this is comets, about who nobody cares.
+      =/  dus  ~(key by yen.zim.pki)
+      =/  sus  ~(. su hen now pki etn)
+      =/  sis  ~(tap in ships.tac)
+      |-
+      ?~  sis  (curd abet:sus)
+      =.  sus  (exec:sus dus %give %public-keys %breach i.sis)
+      $(sis t.sis)
     ==
   ::
   ++  take

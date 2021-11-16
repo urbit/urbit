@@ -680,11 +680,11 @@
     |=  [kel=weft except=(set desk) force=?]
     ^+  kiln
     =/  ded  (find-blocked kel except)
-    ?:  force
-      =.  kiln  (suspend-many ded)
-      (bump-many kel (all-desks-but (~(uni in except) ded)))
-    ?:  =(~ ded)
-      (bump-many kel (all-desks-but except))
+    =?  kiln  force  (suspend-many ded)
+    ?:  |(force =(~ ded))
+      ?:  !=(zuse+zuse kel)
+        (bump-one kel %base)
+      (bump-many (all-desks-but (~(uni in except) ded)))
     =-  (^emit (pyre:pass leaf/- ~))
     "kiln: desks blocked upgrade to {<zuse/zuse>}: {<ded>}"
   ::
@@ -704,7 +704,7 @@
     $(ded t.ded, kiln abet:(suspend i.ded))
   ::
   ++  bump-many
-    |=  [kel=weft live=(set desk)]
+    |=  live=(set desk)
     ^+  kiln
     ::  ensure %base is always reloaded first
     ::
@@ -718,7 +718,7 @@
     ::
     |-  ^+  kiln
     ?~  liv  kiln
-    $(liv t.liv, kiln (bump-one kel i.liv))
+    $(liv t.liv, kiln (bump-one zuse+zuse i.liv))
   ::
   ++  bump-one
     |=  [kel=weft =desk]
@@ -733,7 +733,7 @@
     ?:  =(kel u.kul)
       ~>  %slog.(fmt "{here} already at {<[lal num]:kel>}")
       update-running-dudes
-    =^  tem  rail.rak  (crank-next %| kel)
+    =^  tem  rail.rak  (crank-next kel)
     ?^  tem
       (emit merge-main:pass)
     =-  (emit (pyre:pass leaf/- ~))
@@ -861,7 +861,8 @@
     ++  kelvin-same
       ^+  vats
       ~>  %slog.(fmt "merging into {here}")
-      =.  rail.rak  +:(crank-next %& (dec aeon:ral))
+      ?>  ?=(^ rail.rak)
+      =.  next.u.rail.rak  ~
       (emil ~[merge-main sync-ud]:pass)
     ::
     ++  do-base
@@ -878,7 +879,8 @@
         =/  =diff  [%block loc rak new-weft blockers]
         (emil sync-ud:pass (diff:give diff) ~)
       ~>  %slog.(fmt "applying OTA to {here}, kelvin: {<new-weft>}")
-      =.  rail.rak  +:(crank-next %& (dec aeon:ral))
+      ?>  ?=(^ rail.rak)
+      =.  next.u.rail.rak  ~
       =.  wef
         ?:  =(old-weft new-weft)  ~
         `new-weft
@@ -912,11 +914,7 @@
       update-running-dudes
     ?.  =(%base loc)
       kiln
-    =/  kel=[@tas @ud]
-      ?~  rail.rak         zuse/zuse
-      ?~  next.u.rail.rak  zuse/zuse
-      weft.i.next.u.rail.rak
-    (bump-many kel (all-desks-but (get-unblockers ark)))
+    (bump-many (all-desks-but (get-unblockers ark)))
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
@@ -991,7 +989,7 @@
   ::  +crank-next: pop stale items from .next until one matches
   ::
   ++  crank-next
-    |=  new=(each aeon weft)
+    |=  new=weft
     ^+  [match=*(unit rung) rail.rak]
     ?~  rail.rak
       ~|  [%no-rail-for desk=loc]
@@ -1000,10 +998,7 @@
     =-  [match `u.rail.rak(next next)]
     |-  ^-  [match=(unit rung) next=(list rung)]
     ?~  rog  [~ next.u.rail.rak]
-    ?:  ?-  -.new
-          %&  =(p.new aeon.i.rog)
-          %|  =(p.new weft.i.rog)
-        ==
+    ?:  =(new weft.i.rog)
       [`i.rog t.rog]
     $(rog t.rog)
   ::
@@ -1212,9 +1207,9 @@
   abet:abet:(install:vats +<)
 ::
 ++  poke-label
-  |=  [syd=desk lab=@tas]
+  |=  [syd=desk lab=@tas aey=(unit aeon)]
   =+  pax=/(scot %p our)/[syd]/[lab]
-  (poke-info "labeled {(spud pax)}" `[syd %| lab])
+  (poke-info "labeled {(spud pax)}" `[syd %| lab aey])
 ::
 ++  poke-merge
   |=  kiln-merge
