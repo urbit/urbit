@@ -82,7 +82,6 @@
   |=  [pup=watchpup =latest=number:block]
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
-  ~&  >  [%zoom-start number.pup latest-number]
   =/  zoom-margin=number:block  0  :: TODO: 30!
   =/  zoom-step=number:block  100.000
   ?:  (lth latest-number (add number.pup zoom-margin))
@@ -90,7 +89,6 @@
   =/  up-to-number=number:block
     (min (add 10.000.000 number.pup) (sub latest-number zoom-margin))
   |-
-  ~&  >  [%zooming number.pup up-to-number]
   =*  loop  $
   ?:  (gth number.pup up-to-number)
     (pure:m pup(blocks ~))

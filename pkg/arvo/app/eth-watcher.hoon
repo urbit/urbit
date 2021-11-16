@@ -298,7 +298,6 @@
       ==
     ::
     =/  already  (~(has by dogs.state) path.poke)
-    ~&  [already=already restart=restart]
     ~?  &(already restart)
       [dap.bowl 'overwriting existing watchdog on' path.poke]
     =/  wait-cards=(list card)
