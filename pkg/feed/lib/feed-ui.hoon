@@ -5,6 +5,7 @@
   =,  dejs:format
   |%
   ++  update
+    ^-  $-(json ^update)
     %-  of
     :~  [%add-post add-post]
     ==
@@ -14,13 +15,15 @@
     :~  ship+(su ;~(pfix sig fed:ag))
         letter+letter
     ==
+  ++  id  (su ;~(pfix sig (cook year when:^so)))
   ::
   ++  letter
-    %-  ot
-    :~  parent+(mu ni)
-        ship+(su ;~(pfix sig fed:ag))
-        contents+contents:dejs:post
-        time+sd
+    ^-  $-(json letter:post)
+    %-  ou
+    :~  parent+(uf ~ (mu id))
+        author+(un (su ;~(pfix sig fed:ag)))
+        contents+(un contents:dejs:post)
+        time+(un di)
     ==
   --
 ++  enjs
@@ -28,7 +31,6 @@
   |%
   ++  update
     |=  u=^update
-    %+  frond  -.u
     ?+  -.u  ~
       %list  a+(turn p.u post:enjs:post)
       %feeds  a+(turn ~(tap in p.u) ship)

@@ -10,5 +10,6 @@
 ++  grab
   |%
   ++  noun  update:feed-ui
+  ++  json  update:dejs:lib
   --
 --

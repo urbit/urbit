@@ -95,7 +95,7 @@
     [%x %feeds ~]   ``feed-ui-update+!>([%feeds ~(key by feeds)])
     ::
       [%x %global %newest @ ~]
-    =/  count=@ud  (slav %ud i.t.path)
+    =/  count=@ud  (slav %ud i.t.t.t.path)
     =-  ``feed-ui-update+!>(-)
     ^-  update:feed-ui
     list/(scag count (turn (tap:gorm aggregate) tail))
@@ -117,6 +117,7 @@
      %feed-ui-update
     =+  !<(=update:feed-ui vase)
     ?>  ?=(%add-post -.update)
+    ~&  'adding post'
     =/  =missive:post
       [[now.bowl ~] q.update]
     =/  p=post:post
