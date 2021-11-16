@@ -444,7 +444,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-c pier       Create a new urbit in pier/\n",
     "-D            Recompute from events\n",
     "-d            Daemon mode; implies -t\n",
-    "-e url        Ethereum gateway\n",
+    "-e url        Urbit ID (L2) gateway\n",
     "-F ship       Fake keys; also disables networking\n",
     "-g            Set GC flag\n",
     "-i jam_file   import pier state\n",
