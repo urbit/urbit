@@ -4910,13 +4910,20 @@
   ++  cite                                              ::  render ship
     |=  who=@p
     ^-  tape
-    =+  kind=(clan who)
-    =+  name=(scow %p who)
-    ?:  =(%earl kind)
-      :(weld "~" (swag [15 6] name) "^" (swag [22 6] name))
-    ?:  =(%pawn kind)
-      :(weld (swag [0 7] name) "_" (swag [51 6] name))
-    name
+    =/  wid  (met 4 who)
+    ?:  (lte wid 2)  (scow %p who)
+    ?:  (lte wid 4)
+      =/  nom  (scow %p (end 5 who))
+      :(weld (scag 7 nom) "^" (slag 8 nom))
+    %-  trip
+    %+  rap  3
+    :~  '~'
+        (tos:po (cut 3 [(dec (mul wid 2)) 1] who))
+        (tod:po (cut 3 [(mul (dec wid) 2) 1] who))
+        '_'
+        (tos:po (cut 3 [1 1] who))
+        (tod:po (end 3 who))
+    ==
   ::                                                    ::  ++saxo:title
   ++  saxo                                              ::  autocanon
     |=  [our=ship now=@da who=ship]
