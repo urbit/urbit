@@ -1,6 +1,7 @@
 /-  post, feed, feed-ui
 /+  mall, dbug, verb, agentio, log
 |%
+++  nobody  `@p`(bex 128)
 ++  orm  orm:feed
 ++  gorm  gorm:feed
 ++  lorm  lorm:feed
@@ -101,7 +102,7 @@
       [%x %global %older @ @ ~]
     =/  count=@ud  (slav %ud i.t.t.t.path)
     =/  index=@da  (slav %da i.t.t.t.t.path)
-    ``(ui-upd list/(turn (tab:gorm aggregate `[~zod index] count) tail))
+    ``(ui-upd list/(turn (tab:gorm aggregate `[nobody (dec index)] count) tail))
   ==
   ++  ui-upd
     |=  =update:feed-ui
@@ -434,11 +435,13 @@
     ++  edit
       |=  f=$-(post:post post:post)
       ^+  po-core
+      =/  new=post:post  (f (got:orm tl:fed id))
       =.  fe-core
         %-  edit:fe-core
         |=  fe=feed:feed
-        =/  old=post:post  (got:orm tl.fe id)
-        fe(tl (put:orm tl.fe id (f p)))
+        fe(tl (put:orm tl.fe id new))
+      =.  aggregate  
+        (put:gorm aggregate [ship id] new)
       po-core
     ::
     ++  reply
