@@ -5,7 +5,7 @@ import {
     Text
 } from '@tlon/indigo-react';
 import _ from 'lodash';
-import { changePolicy, Enc } from '@urbit/api';
+import { changePolicy, deSig, Enc } from '@urbit/api';
 import { Group, GroupPolicy } from '@urbit/api/groups';
 import { Association, metadataEdit, MetadataEditField } from '@urbit/api/metadata';
 import { Form, Formik, FormikHelpers } from 'formik';
@@ -96,7 +96,7 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   };
 
   const disabled =
-    resourceFromPath(association.group).ship.slice(1) !== window.ship &&
+    deSig(resourceFromPath(association.group).ship) !== window.ship &&
     roleForShip(group, window.ship) !== 'admin';
   if(disabled)
 return null;

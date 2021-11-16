@@ -4086,6 +4086,10 @@
     ++  read-u
       |=  [yon=aeon pax=path]
       ^-  (unit (unit (each [%flag (hypo ?)] lobe)))
+      ::  if asked for version 0, that never exists, so always give false
+      ::
+      ?:  =(0 yon)
+        ``[%& %flag -:!>(*?) |]
       ::  if asked for a future version, we don't have an answer
       ::
       ?~  tak=(~(get by hit.dom) yon)

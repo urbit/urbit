@@ -7,13 +7,7 @@ import { execSync } from 'child_process';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
-  if (mode !== 'mock') {
-    // using current commit until release
-    const GIT_DESC = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-    process.env.VITE_SHORTHASH = GIT_DESC;
-  } else {
-    process.env.VITE_SHORTHASH = '1';
-  }
+  process.env.VITE_STORAGE_VERSION = Date.now().toString();
 
   Object.assign(process.env, loadEnv(mode, process.cwd()));
   const SHIP_URL = process.env.SHIP_URL || process.env.VITE_SHIP_URL || 'http://localhost:8080';
@@ -36,6 +30,8 @@ export default ({ mode }) => {
             }
           },
     plugins:
-      mode === 'mock' ? [] : [urbitPlugin({ base: 'grid', target: SHIP_URL }), reactRefresh()]
+      mode === 'mock'
+        ? []
+        : [urbitPlugin({ base: 'grid', target: SHIP_URL, secure: false }), reactRefresh()]
   });
 };

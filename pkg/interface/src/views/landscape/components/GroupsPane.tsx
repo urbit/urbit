@@ -43,7 +43,7 @@ export function GroupsPane(props: GroupsPaneProps) {
 
   useShortcut('readGroup', useCallback(() => {
     if(groupPath) {
-      airlock.poke(readGroup(groupPath));
+      useHarkState.getState().readGroup(groupPath);
     }
   }, [groupPath]));
 

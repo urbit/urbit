@@ -1,5 +1,5 @@
 import { LoadingSpinner, Button } from '@tlon/indigo-react';
-import React  from 'react';
+import React from 'react';
 import { Box, Row, Col, Text } from '@tlon/indigo-react';
 import { PropFunc } from '~/types';
 import _ from 'lodash';
@@ -40,8 +40,8 @@ function Elbow(
 export function StatusBarJoins() {
   const pendingJoin = useGroupState(s => s.pendingJoin);
   if (
-    Object.keys(_.omitBy(pendingJoin, j => j.progress === 'done')).length ===
-    0
+    Object.keys(_.omitBy(pendingJoin, j => j.hidden || j.progress === 'done'))
+      .length === 0
   ) {
     return null;
   }
@@ -63,9 +63,9 @@ export function StatusBarJoins() {
           borderRadius="1"
           backgroundColor="white"
         >
-            {Object.keys(pendingJoin).map(g => (
-              <JoinStatus key={g} group={g} join={pendingJoin[g]} />
-            ))}
+          {Object.keys(pendingJoin).map(g => (
+            <JoinStatus key={g} group={g} join={pendingJoin[g]} />
+          ))}
         </Col>
       }
       alignX="left"
@@ -101,21 +101,19 @@ export function JoinStatus({
   };
   return (
     <Row alignItems="center" gapX="3">
-    <Col gapY="2">
-      <Row alignItems="center" gapX="2">
-        {preview ? (
-          <MetadataIcon height={4} width={4} metadata={preview.metadata} />
-        ) : null}
-        <Text>{preview?.metadata.title || group.slice(6)}</Text>
-      </Row>
-      <Row ml="2" alignItems="center" gapX="2">
-        <Elbow />
-        <Text>{desc}</Text>
-      </Row>
-    </Col>
-    <Button onClick={onHide}>
-      Hide
-    </Button>
-  </Row>
+      <Col gapY="2">
+        <Row alignItems="center" gapX="2">
+          {preview ? (
+            <MetadataIcon height={4} width={4} metadata={preview.metadata} />
+          ) : null}
+          <Text>{preview?.metadata.title || group.slice(6)}</Text>
+        </Row>
+        <Row ml="2" alignItems="center" gapX="2">
+          <Elbow />
+          <Text>{desc}</Text>
+        </Row>
+      </Col>
+      <Button onClick={onHide}>Hide</Button>
+    </Row>
   );
 }

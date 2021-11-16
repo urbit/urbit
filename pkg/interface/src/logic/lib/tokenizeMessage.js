@@ -1,7 +1,7 @@
 import urbitOb from 'urbit-ob';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
-const URL_REGEX = new RegExp(String(/^([^[\]]*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+[-a-zA-Z0-9:@;?&=\/%\+\*!'\(\)\$_\{\}\^~\[\]`#|])([\s\S]*)/.source));
+const URL_REGEX = new RegExp(String(/^([\s\S]*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+[-a-zA-Z0-9:@;?&=\/%\+\*!'\(\)\$_\{\}\^~\[\]`#|])([\s\S]*)/.source));
 
 const PATP_REGEX = /^([\s\S]*?)(~[a-z_-]+)([\s\S]*)/;
 
@@ -18,7 +18,15 @@ export const isUrl = (str) => {
 };
 
 const raceRegexes = (str) => {
-  const link = str.match(URL_REGEX);
+  let link = str.match(URL_REGEX);
+  while(link?.[1]?.endsWith('(')) {
+    const resumePos = link[1].length + link[2].length;
+    const resume = str.slice(resumePos);
+    link = resume.match(URL_REGEX);
+    if(link) {
+      link[1] = str.slice(0, resumePos) + link[1];
+    }
+  }
   const groupRef = str.match(GROUP_REGEX);
   const mention = str.match(PATP_REGEX);
   let pfix = str;

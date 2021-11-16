@@ -16,7 +16,7 @@ const api = useMockData
       scry: async () => {}
     } as unknown as Urbit)
   : new Urbit('', '');
-if (useMockData) {
+if (import.meta.env.DEV || useMockData) {
   api.verbose = true;
 }
 api.ship = useMockData ? 'dopzod' : window.ship;

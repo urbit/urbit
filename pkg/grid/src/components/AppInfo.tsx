@@ -8,8 +8,8 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from './Dialog';
 import { DocketHeader } from './DocketHeader';
 import { Spinner } from './Spinner';
 import { VatMeta } from './VatMeta';
-import useDocketState, { ChargeWithDesk } from '../state/docket';
-import { getAppHref } from '../state/util';
+import useDocketState, { ChargeWithDesk, useTreaty } from '../state/docket';
+import { getAppHref, getAppName } from '../state/util';
 import { addRecentApp } from '../nav/search/Home';
 import { TreatyMeta } from './TreatyMeta';
 
@@ -52,6 +52,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
   const [ship, desk] = getRemoteDesk(docket, vat);
   const publisher = vat?.arak?.rail?.publisher ?? ship;
   const [copied, setCopied] = useState(false);
+  const treaty = useTreaty(ship, desk);
 
   const installApp = async () => {
     if (installStatus === 'installed') {
@@ -113,7 +114,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
                 className="space-y-6"
                 containerClass="w-full max-w-md"
               >
-                <h2 className="h4">Install &ldquo;{docket.title}&rdquo;</h2>
+                <h2 className="h4">Install &ldquo;{getAppName(docket)}&rdquo;</h2>
                 <p className="text-base tracking-tight pr-6">
                   This application will be able to view and interact with the contents of your
                   Urbit. Only install if you trust the developer.
@@ -123,7 +124,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
                     Cancel
                   </DialogClose>
                   <DialogClose as={Button} onClick={installApp}>
-                    Get &ldquo;{docket.title}&rdquo;
+                    Get &ldquo;{getAppName(docket)}&rdquo;
                   </DialogClose>
                 </div>
               </DialogContent>
@@ -135,18 +136,20 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
           </PillButton>
         </div>
       </DocketHeader>
+      <div className="space-y-6">
       {vat ? (
         <>
           <hr className="-mx-5 sm:-mx-8 border-gray-50" />
           <VatMeta vat={vat} />
         </>
       ) : null}
-      {'chad' in docket ? null : (
+      {!treaty ? null : (
         <>
           <hr className="-mx-5 sm:-mx-8 border-gray-50" />
-          <TreatyMeta treaty={docket} />
+          <TreatyMeta treaty={treaty} />
         </>
       )}
+    </div>
     </div>
   );
 };

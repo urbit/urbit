@@ -5,7 +5,7 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { addTag, Association, Group, PermVariation, removeTag, metadataEdit } from '@urbit/api';
+import { addTag, Association, Group, PermVariation, removeTag, metadataEdit, deSig } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
@@ -79,7 +79,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
   );
 
   let [, , hostShip] = association.resource.split('/');
-  hostShip = hostShip.slice(1);
+  hostShip = deSig(hostShip);
 
   const writePerms =
     writers.size === 0

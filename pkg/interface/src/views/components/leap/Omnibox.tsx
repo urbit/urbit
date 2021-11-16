@@ -55,7 +55,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<[] | [string, string]>([]);
   const contactState = useContactState(state => state.contacts);
-  const notifications = useHarkState(state => state.notifications);
+  const notificationCount = useHarkState(state => state.notificationsCount);
   const invites = useInviteState(state => state.invites);
   const tiles = useLaunchState(state => state.tiles);
   const [leapCursor, setLeapCursor] = useState('pointer');
@@ -119,7 +119,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         if (category === 'other') {
           return [
             'other',
-            index.get('other').filter(({ app }) => app !== 'tutorial' && app !== 'inbox')
+            index.get('other')
           ];
         }
         return [category, []];
@@ -159,11 +159,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         defaultApps.includes(app.toLowerCase()) ||
         app === 'profile' ||
         app === 'messages' ||
-        app === 'tutorial' ||
         app === 'Links' ||
         app === 'Terminal' ||
         app === 'home' ||
-        app === 'inbox'
+        app === 'notifications'
       ) {
         if(shift && app === 'profile') {
           // TODO: hacky, fix
@@ -351,6 +350,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
                     navigate={() => navigate(result.app, result.link, false)}
                     setSelection={() => setSelection(result.app, result.link)}
                     selected={sel}
+                    hasNotifications={notificationCount !== 0}
                   />
                 ))}
               </Box>
@@ -358,7 +358,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
           })}
       </Box>
     );
-  }, [results, navigate, selected, contactState, notifications, invites]);
+  }, [results, navigate, selected, contactState, invites]);
 
   return (
     <Portal>

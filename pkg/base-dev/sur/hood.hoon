@@ -65,6 +65,7 @@
   =+  .^  raz=(list vat)
           %gx  /(scot %p our)/hood/(scot %da now)/kiln/vats/noun
       ==
+  :-  (report-kids our now)
   (turn raz |=(v=vat (report-vat our now v)))
 ::  +report-vat: report on a single desk installation
 ::
@@ -103,6 +104,18 @@
       leaf/"source aeon:      {?~(rail.arak <~> <aeon.u.rail.arak>)}"
       leaf/"pending updates:  {pen}"
   ==
+::  +report-kids: non-vat cz hash report for kids desk
+::
+++  report-kids
+  |=  [our=ship now=@da]
+  ^-  tank
+  =/  dek  %kids
+  =/  ego  (scot %p our)
+  =/  wen  (scot %da now)
+  ?.  (~(has in .^((set desk) %cd /[ego]//[wen])) dek)
+    leaf/"no %kids desk"
+  =+  .^(hash=@uv %cz /[ego]/[dek]/[wen])
+  leaf/"%kids %cz hash:     {<hash>}"
 ::  +read-kelvin-foreign: read /sys/kelvin from a foreign desk
 ::
 ++  read-kelvin-foreign
@@ -163,8 +176,6 @@
 ++  read-bill
   |=  [our=ship =desk now=@da]
   =/  pax  (en-beam [our desk da+now] /desk/bill)
-  ?.  (~(has in .^((set ^desk) cd/~[(scot %p our) ~ (scot %da now)])) desk)
-    *(list dude)
   ?.  .^(? cu/pax)
     *(list dude)
   .^((list dude) cx/pax)
@@ -180,7 +191,7 @@
       ==
   ^-  [jolt=(list dude) idle=(list dude)]
   =/  all=(list dude)  (read-bill local)
-  =/  want  (get-apps-want all rein)
+  =/  want  (get-apps-want local all rein)
   =/  have  (get-apps-live local)
   [want (skip have ~(has in (sy want)))]
 ::
@@ -212,8 +223,10 @@
 ::  +get-apps-want: find which apps should be running on a desk
 ::
 ++  get-apps-want
-  |=  [duz=(list dude) =rein]
+  |=  [local=[our=ship =desk now=@da] duz=(list dude) =rein]
   ^-  (list dude)
+  ?.  liv.rein  ~
+  ?.  |(=(`zuse+zuse (read-kelvin-local local)) =(%base desk.local))  ~
   =.  duz  (skip duz ~(has in sub.rein))
   =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
   duz

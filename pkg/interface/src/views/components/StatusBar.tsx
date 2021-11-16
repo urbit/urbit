@@ -7,7 +7,7 @@ import {
   Row,
   Text
 } from '@tlon/indigo-react';
-import React, { useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -18,8 +18,8 @@ import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
-import { useTutorialModal } from './useTutorialModal';
 import { StatusBarJoins } from './StatusBarJoins';
+import useHarkState from '~/logic/state/hark';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
@@ -29,6 +29,7 @@ const StatusBar = (props) => {
   const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
   const { toggleOmnibox } = useLocalState(localSel);
   const { hideAvatars } = useSettingsState(selectCalmState);
+  const notificationsCount = useHarkState(s => s.notificationsCount);
 
   const color = ourContact ? `#${uxToHex(ourContact.color)}` : '#000';
   const xPadding = !hideAvatars && ourContact?.avatar ? '0' : '2';
@@ -45,13 +46,6 @@ const StatusBar = (props) => {
     ) : (
       <Sigil ship={ship} size={16} color={color} icon />
     );
-
-  const anchorRef = useRef(null);
-
-  const leapHighlight = useTutorialModal('leap', true, anchorRef);
-
-  const floatLeap =
-    leapHighlight && window.matchMedia('(max-width: 550px)').matches;
 
   return (
     <Box
@@ -75,14 +69,19 @@ const StatusBar = (props) => {
         >
           <Icon icon='Dashboard' color='black' />
         </Button>
-        <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
+        <StatusBarItem position="relative" mr={2} onClick={() => toggleOmnibox()}>
           <Icon icon='LeapArrow' />
-          <Text ref={anchorRef} ml={2} color='black'>
+          <Text ml={2} color='black'>
             Leap
           </Text>
           <Text display={['none', 'inline']} ml={2} color='gray'>
             {metaKey}/
           </Text>
+          { notificationsCount > 0 && (
+            <Box position="absolute" right="-8px" top="-8px">
+              <Icon icon="Bullet" color="blue" />
+            </Box>
+          )}
         </StatusBarItem>
         <StatusBarJoins />
         <ReconnectButton />

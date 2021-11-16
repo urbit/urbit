@@ -232,8 +232,8 @@
         ::  if the new chad is a site, we're instantly done
         ::
         ?:  ?=(%site -.href.docket)
-          :-  ~[add-fact:cha]
           =.  charges  (new-chad:cha %site ~)
+          :-  ~[add-fact:cha]
           state
         ::
         =.  by-base  (~(put by by-base) base.href.docket desk)
@@ -391,7 +391,7 @@
 ++  cg
   |%
   ++  glob            |=(g=^glob glob-0+!>(g))
-  ++  docket          |=(d=^docket docket-0+!>(docket))
+  ++  docket          |=(d=^docket docket-0+!>(d))
   ++  charge-update   |=(u=^charge-update charge-update+!>(u))
   ++  kiln-uninstall  |=(=desk kiln-uninstall+!>(desk))
   ++  kiln-install
@@ -478,6 +478,8 @@
                   """
               ;li:"glob!"
             ==
+            (safari and internet explorer do not support uploading directory
+            trees properly. please glob from other browsers.)
         ;+  ?:  =(~ desks)
               ;p:"no desks eligible for glob upload"
             ;form(method "post", enctype "multipart/form-data")
@@ -510,6 +512,12 @@
       [[404^~ ~] [~ state]]
     ::
     =;  [desk=@ta =glob err=(list @t)]
+      =*  error-result
+        :_  [~ state]
+        [[400 ~] `(upload-page err)]
+      ::
+      ?.  =(~ err)  error-result
+      ::
       =*  cha      ~(. ch desk)
       =/  =charge  (~(got by charges) desk)
       ::
@@ -518,9 +526,7 @@
       =?  err  !?=(%glob -.href.docket.charge)
         ['desk does not use glob' err]
       ::
-      ?.  =(~ err)
-        :_  [~ state]
-        [[400 ~] `(upload-page err)]
+      ?.  =(~ err)  error-result
       :-  [[200 ~] `(upload-page 'successfully globbed' ~)]
       ?>  ?=(%glob -.href.docket.charge)
       ::

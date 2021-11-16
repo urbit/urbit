@@ -24,7 +24,7 @@
     io    ~(. agentio bowl)
     pass  pass:io
     cc    ~(. +> bowl)
-++  on-init  
+++  on-init
   ?:  =(our.bowl default-ally)  `this
   (on-poke %ally-update-0 !>([%add default-ally]))
 ++  on-save  !>(state)
@@ -37,12 +37,12 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?>  (team:title [our src]:bowl)
-  |^  
+  |^
   ?+  mark  (on-poke:def mark vase)
     %ally-update-0      (ally-update !<(update:ally vase))
-    %alliance-update-0  (alliance-update !<(update:alliance vase)) 
+    %alliance-update-0  (alliance-update !<(update:alliance vase))
   ::
-      %noun 
+      %noun
     =+  ;;([%add =desk] q.vase)
     =/  =docket:docket  ~(get-docket so:cc desk)
     =/  =treaty  (treaty-from-docket:cc desk docket)
@@ -69,7 +69,7 @@
     =-  [[(alliance-update:ca:cc update) -.-] +.-]
     ?+  -.update  !!
     ::
-        %add  
+        %add
       =,  update
       =.  entente  (~(put in entente) [ship desk])
       ?.  =(our.bowl ship)  `this
@@ -78,7 +78,7 @@
       =/  =treaty  (treaty-from-docket:cc desk docket)
       =.  sovereign  (~(put by sovereign) desk treaty)
       :_  this
-      ~[publish warp give]:so
+      [publish warp give]:so
     ::
         %del
       =,  update
@@ -93,8 +93,8 @@
   |=  =path
   ^-  (quip card _this)
   ?+  path  (on-watch:def path)
-    ::  syncing 
-      [%treaty @ @ ~]  
+    ::  syncing
+      [%treaty @ @ ~]
     =/  =ship  (slav %p i.t.path)
     =*  desk   i.t.t.path
     ?:  =(our.bowl ship)
@@ -105,6 +105,12 @@
     ?>  =(our.bowl src.bowl)
     =.  direct  (~(put in direct) [ship desk])
     :_(this (drop ~(safe-watch tr:cc [ship desk])))
+    ::
+      [%treaties ~]
+    :_  this
+    ::NOTE  this assumes that all treaties in sovereign are also
+    ::      present in the treaties map
+    (fact-init:io (treaty-update:cg:cc %ini treaties))^~
     ::
       [%alliance ~]
     :_  this
@@ -141,15 +147,15 @@
     ``(treaty:cg:cc (~(got by treaties) [ship desk]))
   ==
 ::
-++  on-agent 
+++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   =*  ship  src.bowl
-  |^  
+  |^
   ?+  wire  (on-agent:def wire sign)
     [%ally @ ~]  ?>(=(src.bowl (slav %p i.t.wire)) take-ally)
   ::
-      [%treaty @ @ ~]  
+      [%treaty @ @ ~]
     =*  desk  i.t.t.wire
     ?>  =(ship (slav %p i.t.wire))
     (take-treaty desk)
@@ -171,8 +177,8 @@
         %fact
       ?.  =(%alliance-update-0 p.cage.sign)  `this
       =+  !<(=update:alliance q.cage.sign)
-      =^  cards  allies  
-        ?-  -.update 
+      =^  cards  allies
+        ?-  -.update
         ::
             %ini
           :_   (~(put by allies) src.bowl init.update)
@@ -180,7 +186,7 @@
           |=  [s=^ship =desk]
           ~(safe-watch tr:cc s desk)
         ::
-            %add  
+            %add
           :_  (~(put ju allies) src.bowl [ship desk]:update)
           (drop ~(safe-watch tr:cc [ship desk]:update))
 
@@ -195,31 +201,31 @@
   ::
   ++  take-treaty
     |=  =desk
+    =*  tr   ~(. tr:cc ship desk)
     ?+  -.sign  (on-agent:def wire sign)
     ::
     :: rewatch only if we aren't source
     :: this would cause a potential kick-rewatch loop otherwise
     ::
-        %kick   
+        %kick
       :_  this
-      ?:  =(our.bowl src.bowl)  ~
-      ~(watch tr:cc ship desk)^~
+      ?:  =(our.bowl ship)  ~
+      ~[watch:tr]
     ::
         %watch-ack
       ?~  p.sign  `this
       =:  treaties  (~(del by treaties) ship desk)
           direct    (~(del in direct) ship desk)
         ==
-      %-  (slog leaf+"Withdrew from treaty {<ship>}/{<desk>}" u.p.sign)
-      :_  this
-      (kick-only:io our.bowl /treaty/(scot %p ship)/[desk] ~)^~
+      %-  (slog leaf+"treaty: withdrew from {<ship>}/{<desk>}" u.p.sign)
+      [gone:tr this]
     ::
         %fact
       ?.  =(%treaty-0 p.cage.sign)  `this
       =+  !<(=treaty q.cage.sign)
       ?>  =([ship desk] [ship desk]:treaty)
       =.  treaties  (~(put by treaties) [ship desk]:treaty treaty)
-      [~(give tr ship desk)^~ this]
+      [give:tr this]
     ==
   --
 ::
@@ -249,7 +255,7 @@
     =/  =treaty  (treaty-from-docket:cc desk docket)
     =.  sovereign  (~(put by sovereign) desk treaty)
     =*  so  ~(. so:cc desk)
-    :_(this [give warp ~]:so)
+    :_(this [warp give]:so)
   --
 
 ::
@@ -269,7 +275,7 @@
 ++  al
   |_  =ship
   ++  pass    ~(. ^pass /ally/(scot %p ship))
-  ++  watch   (watch:pass [ship dap.bowl] /alliance) 
+  ++  watch   (watch:pass [ship dap.bowl] /alliance)
   ++  leave   (leave:pass ship dap.bowl)
   --
 ::  +cg: Cage construction
@@ -285,7 +291,7 @@
   |%
   ++  watch-docket  (~(watch-our pass /docket) %docket /dockets)
   ++  ally-update  |=(=update:ally (fact:io (ally-update:cg update) /allies ~))
-  ++  alliance-update  
+  ++  alliance-update
     |=(=update:alliance (fact:io (alliance-update:cg update) /alliance ~))
   --
 ::  +tr: engine for treaties
@@ -298,9 +304,17 @@
   ++  watching  (~(has by wex.bowl) [path dock])
   ++  safe-watch  `(unit card)`?:(|(watching =(our.bowl ship)) ~ `watch)
   ++  leave  (leave:pass dock)
-  ++  give  
+  ++  gone
+    ^-  (list card)
+    :~  (fact:io (treaty-update:cg %del ship desk) /treaties ~)
+        (kick-only:io our.bowl path ~)
+    ==
+  ++  give
+    ^-  (list card)
     =/  t=treaty  (~(got by treaties) ship desk)
-    (fact:io (treaty:cg t) /treaties path ~)
+    :~  (fact:io (treaty-update:cg %add t) /treaties ~)
+        (fact:io (treaty:cg t) path ~)
+    ==
   --
 ::  +so: engine for sovereign treaties
 ++  so
@@ -314,8 +328,15 @@
   ++  kick
     (kick:io path ~)
   ++  give
+    ::  notably gives on the /treaties path, like +give:tr does.
+    ::  this should not give duplicate facts, because sovereign treaties
+    ::  are handled in this core, not as "normal"/foreign treaties.
+    ::
+    ^-  (list card)
     =/  t=treaty  (~(got by sovereign) desk)
-    (fact:io (treaty:cg t) /sovereign path ~)
+    :~  (fact:io (treaty-update:cg %add t) /treaties ~)
+        (fact:io (treaty:cg t) path ~)
+    ==
   ++  publish
     (poke-our:pass %hood kiln-permission+!>([desk / &]))
   --

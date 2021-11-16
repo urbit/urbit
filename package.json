@@ -12,11 +12,7 @@
     "watch-libs": "lerna run watch --no-private --parallel",
     "build-libs": "lerna run build --no-private",
     "test": "lerna run test",
-    "prepare": "husky install .husky",
     "bootstrap": "lerna bootstrap",
     "build:prod": "lerna run build:prod"
-  },
-  "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --cache --fix --quiet"
   }
 }
