@@ -233,6 +233,10 @@
     ++  pull-co
       (poke-our:(jn-pass-io /poke) %contact-pull-hook pull-action)
     ::
+    ++  allow-co
+      %+  poke-our:(jn-pass-io /poke)  %contact-store
+      contact-update-0+!>([%allow %group rid])
+    ::
     ++  share-co
       %+  poke:(jn-pass-io /poke)
         [entity.rid %contact-push-hook]
@@ -422,12 +426,15 @@
       ?.  ?=(%group-update-0 p.cage)  jn-core
       =+  !<(=update:group-store q.cage)
       ?.  ?=(%initial-group -.update)  jn-core
+      =/  =request:view  (~(got by joining) rid)
       ?.  =(rid resource.update)  jn-core
       =.  jn-core  (emit pull-md:pass)
       =.  jn-core  (emit pull-co:pass)
-      ?:  scry-is-public:con
-        (emit share-co:pass)
-      jn-core
+      ?.  |(share-co.request scry-is-public:con)
+        jn-core
+      ?:  scry-is-public:con  (emit share-co:pass)
+      =.  jn-core  (emit allow-co:pass)
+      (emit share-co:pass)
     ::
     ++  md-fact
       |=  [=mark =vase]
@@ -436,13 +443,14 @@
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core
       |^  ^+  jn-core
+      =/  =request:view  (~(got by joining) rid)
       =/  feed  feed-rid
       =.  jn-core  (cleanup %done)
       =/  hidden  hidden:(need (scry-group:grp rid))
       =?  jn-core  ?&(!hidden ?=(^ feed))
         %-  emit
         (pull-gra:pass (need feed))
-      =?  jn-core  !hidden
+      =?  jn-core  |(hidden autojoin.request)
         %-  emit-many
         (turn graphs pull-gra:pass)
       jn-core
