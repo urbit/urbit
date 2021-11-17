@@ -1,4 +1,4 @@
-import { Invites } from '@urbit/api';
+import { deSig, Invites } from '@urbit/api';
 import { reduce } from '../reducers/invite-update';
 import _ from 'lodash';
 import {
@@ -29,3 +29,12 @@ const useInviteState = createState<InviteState>(
 );
 
 export default useInviteState;
+
+export function useInviteForResource(app: string, ship: string, name: string) {
+  const { invites } = useInviteState();
+  return _.compact(Object.entries(invites?.[app] || {}).map(([uid, invite]) => {
+    if (invite.resource.ship === deSig(ship) && invite.resource.name === name) {
+      return invite;
+    }
+  }))?.[0];
+}

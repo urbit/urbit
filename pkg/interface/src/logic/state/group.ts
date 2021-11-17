@@ -9,13 +9,15 @@ import {
   reduceStateN
 } from './base';
 import api from '~/logic/api';
+import { abortJoin } from '@urbit/api';
 
 export interface GroupState {
   groups: {
     [group: string]: Group;
   };
   pendingJoin: JoinRequests;
-  hidePending: (group: string) => Promise<void>;
+  abortJoin: (group: string) => Promise<void>;
+  doneJoin: (group: string) => Promise<void>;
 }
 
 // @ts-ignore investigate zustand types
@@ -24,12 +26,21 @@ const useGroupState = createState<GroupState>(
   (set, get) => ({
     groups: {},
     pendingJoin: {},
-    hidePending: async (group) => {
+    abortJoin: async (group) => {
       get().set((draft) => {
         delete draft.pendingJoin[group];
       });
-      await api.poke(hideGroup(group));
-    }
+      await api.poke(abortJoin(group));
+    },
+    doneJoin: async (group) => {
+      get().set((draft) => {
+        delete draft.pendingJoin[group];
+      });
+      await api.poke({ app: 'group-view', mark: 'group-view-action', json: {
+        done: group
+      }});
+    },
+
   }),
   ['groups'],
   [
