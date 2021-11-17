@@ -24,7 +24,7 @@
 =,  jael
 |%
 +$  app-state
-  $:  %1
+  $:  %2
       url=@ta
       =net
       whos=(set ship)
@@ -83,13 +83,32 @@
     |^
     =+  !<(old-state=app-states old)
     =?  old-state  ?=(%0 -.old-state)
-      ^-  app-state
       =,  old-state
       [%1 url net whos nas own *sponsors logs]
-    ?>  ?=(%1 -.old-state)
-    `this(state old-state)
+    =^  cards-1  old-state
+      ?.  ?=(%1 -.old-state)
+        `old-state
+      %-  %-  slog  :_  ~
+          leaf+"azimuth: loading snapshot with {<(lent logs.old-state)>} events"
+      =.  +.state  +.old-state
+      =^  cards  state
+        (%*(run-logs do nas.state *^state:naive) logs.state)
+      [(jael-update:do (to-udiffs:do cards)) state]
+    ?>  ?=(%2 -.old-state)
+    [cards-1 this(state old-state)]
     ::
-    ++  app-states  $%(state-0 app-state)
+    ++  app-states  $%(state-0 state-1 app-state)
+    ::
+    +$  state-1
+      $:  %1
+          url=@ta
+          =net
+          whos=(set ship)
+          nas=^state:naive
+          own=owners
+          spo=sponsors
+          logs=(list =event-log:rpc:ethereum)
+      ==
     ::
     ++  state-0
       $:  %0
@@ -147,10 +166,7 @@
           spo.state   ~
           logs.state  ?:(?=(%default net.poke) snap ~)
         ==
-      %-  %-  slog  :_  ~
-          leaf+"azimuth: loading snapshot with {<(lent logs.state)>} events"
-      =^  snap-cards  state  (run-logs:do logs.state)
-      [(weld (jael-update:do (to-udiffs:do snap-cards)) start:do) this]
+      [start:do this]
     ==
   ::
   ++  on-watch
@@ -174,8 +190,9 @@
     ::
     %-  %-  slog  :_  ~
         leaf+"azimuth: loading snapshot with {<(lent logs.state)>} events"
-    =/  res  (%*(run-logs do nas.state *^state:naive) logs.state)
-    [(weld (jael-update:do (to-udiffs:do -.res)) start:do) this]
+    =^  snap-cards  state
+      (%*(run-logs do nas.state *^state:naive) logs.state)
+    [(weld (jael-update:do (to-udiffs:do snap-cards)) start:do) this]
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
@@ -232,6 +249,9 @@
     |=  [=wire =sign-arvo]
     ?.  &(=(/init wire) ?=(%wake +<.sign-arvo))
       (on-arvo:def wire sign-arvo)
+    ?^  error.sign-arvo
+      %-  (slog 'azimuth: failed to initialize!' ~)
+      `this
     :_  this
     :~  :*  %pass  /eth-watcher  %agent  [our.bowl %eth-watcher]
             %watch  /logs/[dap.bowl]
