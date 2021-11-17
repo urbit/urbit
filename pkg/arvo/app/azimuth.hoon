@@ -233,6 +233,9 @@
     |=  [=wire =sign-arvo]
     ?.  &(=(/init wire) ?=(%wake +<.sign-arvo))
       (on-arvo:def wire sign-arvo)
+    ?^  error.sign-arvo
+      %-  (slog 'azimuth: failed to initialize!' ~)
+      `this
     :_  this
     :~  :*  %pass  /eth-watcher  %agent  [our.bowl %eth-watcher]
             %watch  /logs/[dap.bowl]
