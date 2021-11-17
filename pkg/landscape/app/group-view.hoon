@@ -5,30 +5,30 @@
 |%
 ++  card  card:agent:gall
 ::
-+$   base-state-0
-  joining=(map rid=resource [=ship =progress:view])
 ::
-+$   base-state-1
-  joining=(map rid=resource request:view)
 ::
 +$  state-zero
-  [%0 base-state-0]
+  [%0 *]
 ::
 +$  state-one
-  [%1 base-state-0]
+  [%1 *]
 ::
 +$  state-two
-  [%2 base-state-1]
+  [%2 *]
+::
++$  state-three
+  [%3 joining=(map rid=resource request:view)]
 ::
 +$  versioned-state
   $%  state-zero
       state-one
       state-two
+      state-three
   ==
 ::
 ++  view  view-sur
 --
-=|  state-two
+=|  state-three
 =*  state  -
 ::
 %-  agent:dbug
@@ -49,29 +49,10 @@
   |=  =vase
   =+  !<(old=versioned-state vase)
   =|  cards=(list card)
-  |^
-  ?-  -.old
-    %2  [cards this(state old)]
-    %1  $(-.old %2, +.old (base-state-to-1 +.old))
-    %0  $(-.old %1, cards :_(cards (poke-self:pass:io noun+!>(%cleanup))))
-  ==
-  ::
-  ++  base-state-to-1
-    |=  base-state-0
-    %-  ~(gas by *(map resource request:view))
-    (turn ~(tap by joining) request-to-1)
-  ::
-  ++  request-to-1
-    |=  [rid=resource =ship =progress:view]
-    ^-  [resource request:view]
-    :-  rid
-    %*  .  *request:view
-      started   now.bowl
-      hidden    %.n
-      ship      ship
-      progress  progress
-    ==
-  --
+  |-
+  ?:  ?=(%3 -.old)
+    [cards this(state old)]
+  $(old *state-three)
 ::
 ++  on-poke
   |=  [=mark =vase]
