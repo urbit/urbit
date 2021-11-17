@@ -116,7 +116,18 @@
     ==
   [cards this]
 ::
-++  on-arvo  on-arvo:def
+++  on-arvo  
+  |=  [=wire sign=sign-arvo]
+  =^  cards  state
+    ?+    wire  (on-arvo:def:gc wire sign)
+        [%breach ~]
+      ?>  ?=([%jael %public-keys *] sign)
+      ?.  ?=(%breach -.public-keys-result.sign)
+        `state
+      (breach who.public-keys-result.sign)
+    ==
+  [cards this]
+::
 ++  on-leave  on-leave:def
 ++  on-fail  on-fail:def
 --
@@ -135,7 +146,28 @@
     :_  state
     (fact:io group-view-update+!>(`update:view`[%initial joining]) /all ~)^~
   :-  (fact:io group-view-update+!>([%hide rid]) /all ~)^~
-  state(joining (~(put by joining) rid request(hidden %.y)))
+  state(joining (~(put by joining) rid request))
+::
+++  is-tracking
+  |=  her=ship
+  ^-  ?
+  %+  lien  ~(tap in ~(key by joining))
+  |=([him=ship name=term] =(her him))
+::
+++  breach
+  |=  who=ship
+  ^-  (quip card _state)
+  =/  requests=(list [rid=resource =request:view])
+    ~(tap by joining)
+  =|  cards=(list card)
+  |-  ^-  (quip card _state)
+  ?~  requests
+    [cards state]
+  ?.  =(entity.rid.i.requests who)  
+    $(requests t.requests)
+  =^  crds  state
+    jn-abet:jn-breach:(jn-abed:join rid.i.requests)
+  [(welp cards crds) state]
 ::
 ++  has-joined
   |=  rid=resource
@@ -207,6 +239,10 @@
     ::
     ++  retry
       (poke-self:pass:io group-view-action+!>([%join rid ship]))
+    ++  watch-breach
+      (~(arvo pass:io /breach) %j %public-keys (silt ship ~))
+    ++  leave-breach
+      (~(arvo pass:io /breach) %j %nuke (silt ship ~))
     --
   ++  jn-pass-io
     |=  pax=path
@@ -239,17 +275,55 @@
     ?<  ~|("already joined {<rid>}" (has-joined rid)) 
     =.  jn-core  (emit add-us:pass)
     =.  jn-core  (tx-progress %start)
+    =?  jn-core  !(is-tracking ship)
+      (emit watch-breach:pass)
     =>  (emit watch-md:pass)
     =>  (emit watch-groups:pass)
     =>  (emit watch-grp-nacks:pass)
-    (emit watch-md-nacks:pass)
+    =>  (emit watch-md-nacks:pass)
+    (emit watch-breach:pass)
   ::
-  ++  jn-retry
+  ++  jn-breach
+    =/  =request:view  (~(got by joining) rid)
+    ?.  ?=(%start progress.request)
+      :: no action required, subscriptions are sane across breaches 
+      jn-core 
+    (emit add-us:pass)
+  ::
+  ++  jn-abort
     |=  r=resource
     ^+  jn-core
     =.  jn-core  (jn-abed r)
-    =.  jn-core  (cleanup %retry)
-    (emit retry:pass)
+    (cleanup:rollback %abort)
+  ::
+  ++  jn-done
+    |=  r=resource
+    =.  joining  (~(del by joining) r)
+    jn-core
+  ::
+  ++  rollback
+    |^
+    =/  =request:view  (~(got by joining) rid)
+    ?+  progress.request  ~|(cannot-rollback/progress.request !!)
+      %start     start
+      %added     added
+      %metadata  metadata
+    ==
+    ++  start   jn-core
+    ++  added   (emit del-us:pass)
+    ++  metadata  (emit:added remove-pull-groups:pass)
+    --
+  ::
+  ++  get-invites
+    |=  [=app:view rid=resource]
+    ^-  (set uid:view)
+    =+  .^(invit=(unit invitatory:inv) %gx (scry:io %invite-store /invitatory/[app]/noun))
+    ?~  invit  ~
+    %-  ~(gas in *(set uid:view))
+    %+  murn  ~(tap by u.invit)
+    |=  [=uid:view =invite:inv]
+    ?.  =(rid resource.invite)  ~
+    `uid
   ::
   ++  cleanup
     |=  =progress:view
