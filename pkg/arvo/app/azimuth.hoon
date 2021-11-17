@@ -277,8 +277,16 @@
   |=  [logs=(list event-log:rpc:ethereum)]
   ^-  (quip tagged-diff _state)
   =+  net=(get-network net.state)
+  =|  effects=(list tagged-diff)
+  !.  ::  saves 700MB replaying snapshot
+  =-  =/  res  (mule -)
+      ?-  -.res
+        %&  p.res
+        %|  (mean 'naive: fail!' p.res)
+      ==
+  |.
   ?~  logs
-    `state
+    [(flop effects) state]
   ?~  mined.i.logs
     $(logs t.logs)
   =/  [raw-effects=effects:naive new-nas=_nas.state]
@@ -292,13 +300,7 @@
       ?~  input.u.mined.i.logs
         [%bat *@]
       [%bat u.input.u.mined.i.logs]
-    =/  res
-      %-  mule
-      |.((%*(. naive lac |) verifier chain-id.net nas.state input))
-    ?-  -.res
-      %&  p.res
-      %|  ((slog 'naive-fail' p.res) `nas.state)
-    ==
+    (%*(. naive lac |) verifier chain-id.net nas.state input)
   ::  TODO: move to /lib/dice ?
   ::
   =/  [new-own=_own.state new-spo=_spo.state]
@@ -325,8 +327,8 @@
   =/  effects-1
     =/  =id:block  [block-hash block-number]:u.mined.i.logs
     (turn raw-effects |=(=diff:naive [id diff]))
-  =^  effects-2  state  $(logs t.logs)
-  [(welp effects-1 effects-2) state]
+  =.  effects  (welp (flop effects-1) effects)
+  $(logs t.logs)
 ::
 ++  to-udiffs
   |=  effects=(list tagged-diff)
