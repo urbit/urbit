@@ -15,6 +15,7 @@ import { useShortcut } from '~/logic/state/settings';
 import Landscape from '~/views/landscape/index';
 import GraphApp from '../../apps/graph/App';
 import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
+import {JoinRoute} from './Join';
 
 export const Container = styled(Box)`
    flex-grow: 1;
@@ -68,11 +69,11 @@ export const Content = (props) => {
 
   return (
     <Container>
+      <JoinRoute />
       <Switch>
         <Route
           exact
-          path={['/', '/invites/:app/:uid']}
-          render={p => (
+          path="/" render={p => (
             <LaunchApp
               location={p.location}
               match={p.match}
