@@ -174,8 +174,9 @@
     ::
     %-  %-  slog  :_  ~
         leaf+"azimuth: loading snapshot with {<(lent logs.state)>} events"
-    =/  res  (%*(run-logs do nas.state *^state:naive) logs.state)
-    [(weld (jael-update:do (to-udiffs:do -.res)) start:do) this]
+    =^  snap-cards  state
+      (%*(run-logs do nas.state *^state:naive) logs.state)
+    [(weld (jael-update:do (to-udiffs:do snap-cards)) start:do) this]
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
