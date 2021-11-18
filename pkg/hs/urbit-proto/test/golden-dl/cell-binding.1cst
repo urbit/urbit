@@ -1,0 +1,12 @@
+Bccl
+  (Bass (Aur ""))
+  [ Bcts (Wung [ Ally "p" ]) (Bass Typ)
+  , Bccl
+      (Bcts (Wung [ Ally "q" ]) (Bchp (Bass Typ) (Bass Typ)))
+      [ Bcts
+          (Wung [ Ally "x" ])
+          (Cncl (Wung [ Ally "q" ]) [ Wung [ Ally "p" ] ])
+      , Bcts (Wung [ Ally "p" ]) (Bass (Aur ""))
+      ]
+  , Wung [ Ally "p" ]
+  ]

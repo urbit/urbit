@@ -1,10 +1,10 @@
 Base
   { loft =
       Cons
-        (Cons (Aura "") (Atom 1 "ud"))
+        (Cons (Aura "") (Atom 1 Sand "ud"))
         (Cons
            (Cons
               (Cell (Aura "") (Scope (Aura "")))
-              (Cons (Atom 3 "ud") (Atom 4 "ud")))
-           (Cons (Aura "f") (Atom 0 "f")))
+              (Cons (Atom 3 Sand "ud") (Atom 4 Sand "ud")))
+           (Cons (Aura "f") (Atom 0 Rock "f")))
   }

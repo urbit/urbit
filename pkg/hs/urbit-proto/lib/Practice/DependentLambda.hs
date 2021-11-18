@@ -14,7 +14,7 @@ import Data.Maybe (fromJust)
 import Data.Set (isSubsetOf)
 import Numeric.Natural
 
-import Practice.HoonCommon (Atom, Axis, Term, Wing, Limb(..))
+import Practice.HoonCommon (Atom, Axis, Grit(..), Term, Wing, Limb(..))
 
 -- | Fully evaluated term. Since a common source of bugs is forgetting to
 -- evaluate, it makes great sense for this to be a newtype.
@@ -34,7 +34,7 @@ data Code a
   -- for this non-subject-oriented prototype, variables are separate from wings
   = Look a
   -- introduction forms
-  | Atom Atom Term
+  | Atom Atom Grit Term
   | Cons (Code a) (Code a)
   | Lamb (Scope () Code a)  -- TODO pattern
   | Core (Map Term (Scope () Code a)) (Code a)  -- XX second should be sut
@@ -90,7 +90,7 @@ instance Monad Code where
   return = Look
 
   Look a >>= f = f a
-  Atom a t >>= _ = Atom a t
+  Atom a g t >>= _ = Atom a g t
   Cons c d >>= f = Cons (c >>= f) (d >>= f)
   Lamb c >>= f = Lamb (c >>>= f)
   Core bat pay >>= f = Core (fmap (>>>= f) bat) (pay >>= f)
@@ -334,7 +334,7 @@ eval sem = \case
   Name n c -> Base $ Name n $ go c  -- NB: we do not strip names during eval!
 
   Plus c -> Base case go c of
-    Atom a au -> Atom (a + 1) au
+    Atom a g au -> Atom (a + 1) g au
     -- Our mantra is: invalid programs get stuck.
     x -> Plus x
 
@@ -416,17 +416,17 @@ eval sem = \case
   -- "more fully featured" than the compile time one, without loss of integrity.
   equl c d =
     let out c d = case (c, d) of
-          (Atom a _, Atom b _) -> Just (a == b)
-          (Cons c d, Cons e f) -> (&&) <$> out c e <*> out d f
-          (Atom{}, Cons{})     -> Just False
-          (Cons{}, Atom{})     -> Just False
+          (Atom a _ _, Atom b _ _) -> Just (a == b)
+          (Cons c d,   Cons e f) -> (&&) <$> out c e <*> out d f
+          (Atom{},     Cons{})     -> Just False
+          (Cons{},     Atom{})     -> Just False
           -- XX that reminds me, people can also apply equality to reified types
           -- pls reason about that thx
           _ | c == d           -> Just True  -- too cheeky? unwise?
             | otherwise        -> Nothing
     in case out c d of
-      Just True  -> Atom 0 "f"
-      Just False -> Atom 1 "f"
+      Just True  -> Atom 0 Rock "f"
+      Just False -> Atom 1 Rock "f"
       Nothing    -> Equl c d
 
 -- | A common pattern is to fill in a binder and continue evaluating.
@@ -493,7 +493,7 @@ fits con fit t u = go con fit t u
     -- To make invariance work, the proposed solution is to add a third Fit mode
     -- FitSame which does equality rather than subtyping, and switch to it under
     -- eliminators such as Slam (XX and other eliminators and introductors?).
-    (Atom a _, Atom b _) | a == b -> pure ()
+    (Atom a _ _, Atom b _ _) | a == b -> pure ()
     (Atom{}, _) -> bail
     (_, Atom{}) -> bail
 
@@ -781,7 +781,8 @@ play :: Vary a => Con a -> Code a -> Check (Type a)
 play con = \case
   Look v -> pure $ env con v
 
-  Atom _ t -> pure $ Base $ Aura t
+  Atom a Rock t -> pure $ Base $ Fork (singleton a) t
+  Atom _ Sand t -> pure $ Base $ Aura t
 
   Cons c d -> do
     Base tc <- play con c

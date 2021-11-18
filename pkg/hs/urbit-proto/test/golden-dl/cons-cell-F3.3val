@@ -1,1 +1,1 @@
-Base { loft = Cons (Atom 1 "ud") (Atom 2 "ud") }
+Base { loft = Cons (Atom 1 Sand "ud") (Atom 2 Sand "ud") }

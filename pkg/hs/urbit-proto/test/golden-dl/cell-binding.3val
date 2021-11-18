@@ -1,0 +1,17 @@
+Base
+  { loft =
+      Cell
+        (Aura "")
+        (Scope
+           (Cell
+              (Mask "p" Type)
+              (Scope
+                 (Cell
+                    (Cell
+                       (Mask "q" (Gate Type (Scope Type)))
+                       (Scope
+                          (Cell
+                             (Mask "x" (Slam (Wing [] (Look (B ()))) (Look (F (Look (B ()))))))
+                             (Scope (Mask "p" (Aura ""))))))
+                    (Scope (Look (F (Look (B ())))))))))
+  }

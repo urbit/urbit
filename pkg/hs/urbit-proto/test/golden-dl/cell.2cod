@@ -1,5 +1,6 @@
 Cons
-  (Atom 1 "ud")
+  (Atom 1 Sand "ud")
   (Cons
-     (Cons (Atom 4 "ud") (Cons (Atom 5 "ud") (Atom 6 "ud")))
-     (Cons (Atom 2 "ud") (Atom 3 "ud")))
+     (Cons
+        (Atom 4 Sand "ud") (Cons (Atom 5 Sand "ud") (Atom 6 Sand "ud")))
+     (Cons (Atom 2 Sand "ud") (Atom 3 Sand "ud")))

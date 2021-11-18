@@ -1,1 +1,4 @@
-Nest { cod = Cons (Atom 1 "ud") (Atom 2 "ud") , typ = Aura "" }
+Nest
+  { cod = Cons (Atom 1 Sand "ud") (Atom 2 Sand "ud")
+  , typ = Aura ""
+  }

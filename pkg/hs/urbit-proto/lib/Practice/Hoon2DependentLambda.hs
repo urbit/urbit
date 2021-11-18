@@ -16,7 +16,7 @@ open :: Hoon -> Desugar (Code Term)
 open = \case
   Wung w@(last -> Ally x)  -> pure $ Wing (init w) (Look x)
   Wung _ -> Left "unsupported wing"
-  Adam _ a au -> pure $ Atom a au
+  Adam g a au -> pure $ Atom a g au
   --
   Bass Non -> Left "unsupported *"
   Bass Cel -> Left "unsupported ^"
@@ -31,7 +31,7 @@ open = \case
   Bccn [] -> Left "unsupported empty $% (XX what should it be?)"
   Bccn cs -> do
     let fork = Fork (setFromList [a | (a, _, _) <- cs]) "" -- FIXME aura
-    let pats = [gale $ Atom a au | (a, au, _) <- cs]
+    let pats = [gale $ Atom a Rock au | (a, au, _) <- cs]
     let beds = [s | (_, _, s) <- cs]
     bods <- traverse (fmap gale . open) beds
     pure $ Cell fork (Scope $ Case (Look $ B ()) pats bods)
@@ -57,7 +57,7 @@ open = \case
                                            <*> open l))
   Clhp h j -> Cons <$> open h <*> open j
   Clls h j k -> Cons <$> open h <*> (Cons <$> open j <*> open k)
-  Clsg hs -> foldr Cons (Atom 0 "n") <$> traverse open hs
+  Clsg hs -> foldr Cons (Atom 0 Rock "n") <$> traverse open hs
   Cltr [] -> Left "empty :*"
   Cltr [h] -> open h
   Cltr (h:hs) -> Cons <$> open h <*> open (Cltr hs)
@@ -151,7 +151,6 @@ open = \case
   cook h hs fac go make = case fac h of
     Nothing -> make <$> go h <*> traverse (fmap blow . go) hs
     Just f  -> make <$> go h <*> traverse (fmap (abstract1 f) . go) hs
-
 
   boil :: (Applicative f, Eq a)
        => Hoon

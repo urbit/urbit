@@ -8,11 +8,12 @@ Bind
     }
   (Scope
      (Cons
-        (Slam (Wing [] (Look (B ()))) (Cons (Aura "") (Atom 1 "ud")))
+        (Slam (Wing [] (Look (B ()))) (Cons (Aura "") (Atom 1 Sand "ud")))
         (Cons
            (Slam
               (Wing [] (Look (B ())))
               (Cons
                  (Cell (Aura "") (Scope (Look (F (Aura "")))))
-                 (Cons (Atom 3 "ud") (Atom 4 "ud"))))
-           (Slam (Wing [] (Look (B ()))) (Cons (Aura "f") (Atom 0 "f"))))))
+                 (Cons (Atom 3 Sand "ud") (Atom 4 Sand "ud"))))
+           (Slam
+              (Wing [] (Look (B ()))) (Cons (Aura "f") (Atom 0 Rock "f"))))))
