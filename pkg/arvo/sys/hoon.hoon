@@ -1905,10 +1905,8 @@
 ++  up
   ~/  %up
   |*  [k=mold v=mold]
-  =>
   ::  molds and mold builders
   ::
-  |%
   +$  elem  [=k p=@ =v]                                 ::  pri element
   ::
   +$  lnode  [n=elem l=ltree m=k r=ltree]               ::  loser tree node
@@ -1934,12 +1932,8 @@
     $%  [%bin k=@ p=@ v=buc m=@ l=pri r=pri]
         [%tip k=@ p=@ v=buc]
     ==
-  --
-  =>
   ::  internals
   ::
-  ~%  %in  ..$  ~
-  |%
   ++  mega  4                                           ::  balancing factor
   ::
   ++  size                                              ::  queue size
@@ -2241,12 +2235,8 @@
         %bin  [k p v m l ~]
       ==
     [%bin k p v m l r]
-  --
-  =>
   ::  collision resolution
   ::
-  ~%  %up-qor  ..$  ~
-  |%
   ++  qor
     ~%  %qor  ..qor  ~
     |%
@@ -2346,37 +2336,30 @@
       ?~  a  ~
       `[n.a (sec t.a m.a)]
     --
-  --
-  ::  bucket helpers
-  ::
-  =>
-  ~%  %buc  ..$  ~
-  |%
-  ++  pour                                              ::  to bucket
-    ~/  %pour
-    |=  a=pro
-    ^-  (unit (pair @ buc))
-    =/  val  (bot:qor a)
-    ?~  val  ~
-    `[p.p.u.val k.p.u.val v.p.u.val q.u.val]
-  ::
-  ++  make                                              ::  make bucket
-    ~/  %make
-    |=  [=k p=@ =v a=pro]
-    ^-  (pair @ buc)
-    =.  a  (put:qor a k p v)
-    =/  val  (pour a)
-    ?>  ?=(^ val)
-    u.val
-  --
-  =>
   ::  radix tree logic
   ::
-  ~%  %up-qat  ..$  ~
-  |%
   ++  qat
     ~%  %qat  ..qat  ~
     |%
+    ::  bucket helpers
+    ::
+    ++  pour                                            ::  to bucket
+      ~/  %pour
+      |=  a=pro
+      ^-  (unit (pair @ buc))
+      =/  val  (bot:qor a)
+      ?~  val  ~
+      `[p.p.u.val k.p.u.val v.p.u.val q.u.val]
+    ::
+    ++  make                                            ::  make bucket
+      ~/  %make
+      |=  [=k p=@ =v a=pro]
+      ^-  (pair @ buc)
+      =.  a  (put:qor a k p v)
+      =/  val  (pour a)
+      ?>  ?=(^ val)
+      u.val
+    ::
     ++  put                                             ::  add [key pri val]
       ~/  %put
       |=  [a=pri k=@ p=@ v=buc]
@@ -2605,11 +2588,8 @@
         [k.bb v.bb (put:qor t.bb k p q.u.val)]
       --
     --
-  --
   ::  pri logic
   ::
-  ~%  %pri  ..$  ~
-  |%
   ++  put                                               ::  add [key pri val]
     ~/  %put
     |=  [a=pri =k p=@ =v]
@@ -2634,7 +2614,7 @@
       ?~  b  [p k v ~]
       =/  =buc  q.u.b
       ?:  =(k k.buc)
-        (make k p v t.buc)
+        (make:qat k p v t.buc)
       ?:  |((lth p.u.b p) &(=(p p.u.b) (gor k.buc k)))
         =/  val  (put:qor t.buc k p v)
         [p.u.b k.buc v.buc val]
