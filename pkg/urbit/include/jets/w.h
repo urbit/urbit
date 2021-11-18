@@ -144,6 +144,8 @@
     u3_noun u3wdu_funk(u3_noun);
     u3_noun u3wdu_wane(u3_noun);
 
+    u3_noun u3wdu_qor_top(u3_noun);
+
   /** Tier 5.
   **/
     u3_noun u3we_cue(u3_noun);

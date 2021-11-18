@@ -44,9 +44,17 @@ static u3j_harm _140_two__up_gone_a[] = {{".2", u3wdu_gone, c3y}, {}};
 static u3j_harm _140_two__up_high_a[] = {{".2", u3wdu_high, c3y}, {}};
 static u3j_harm _140_two__up_pert_a[] = {{".2", u3wdu_pert, c3y}, {}};
 static u3j_harm _140_two__up_lex_a[] = {{".2", u3wdu_lex, c3y}, {}};
-static u3j_harm _140_two__up_fuse_a[] = {{".2", u3wdu_fuse, c3n}, {}};
-static u3j_harm _140_two__up_funk_a[] = {{".2", u3wdu_funk, c3n}, {}};
-static u3j_harm _140_two__up_wane_a[] = {{".2", u3wdu_wane, c3n}, {}};
+static u3j_harm _140_two__up_fuse_a[] = {{".2", u3wdu_fuse, c3y}, {}};
+static u3j_harm _140_two__up_funk_a[] = {{".2", u3wdu_funk, c3y}, {}};
+static u3j_harm _140_two__up_wane_a[] = {{".2", u3wdu_wane, c3y}, {}};
+
+static u3j_harm _140_two__up_qor_top_a[] = {{".2", u3wdu_qor_top, c3n}, {}};
+
+static u3j_core _140_two__up_qor_d[] =
+{
+  { "top", 7, _140_two__up_qor_top_a, 0, no_hashes },
+  {}
+};
 
 static u3j_core _140_two__up_d[] =
 {
@@ -79,6 +87,7 @@ static u3j_core _140_two__up_d[] =
   { "fuse", 7, _140_two__up_fuse_a, 0, no_hashes },
   { "funk", 7, _140_two__up_funk_a, 0, no_hashes },
   { "wane", 7, _140_two__up_wane_a, 0, no_hashes },
+  { "qor", 3, 0, _140_two__up_qor_d, no_hashes },
   {}
 };
 

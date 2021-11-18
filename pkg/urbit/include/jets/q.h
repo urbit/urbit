@@ -137,6 +137,8 @@
     u3_noun u3qdu_funk(u3_atom, u3_atom, u3_noun, u3_atom, u3_noun, u3_noun);
     u3_noun u3qdu_wane(u3_atom, u3_atom, u3_noun, u3_atom, u3_noun, u3_noun);
 
+    u3_noun u3qdu_qor_top(u3_noun);
+
   /** Tier 5.
   **/
     u3_noun u3qe_cue(u3_atom);
