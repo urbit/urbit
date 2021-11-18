@@ -1,19 +1,16 @@
 #include "all.h"
 
 u3_noun
-u3qdu_rlsin(u3_noun a)
+u3qdu_rlsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 {
-  u3_noun b;
-  u3_noun n_a, l_a, m_a, r_a;
-  u3_noun n_b, l_b, m_b, r_b;
-
-  u3x_qual(a, &n_a, &l_a, &m_a, &r_a);
-
   if ( c3n == u3du(r_a) ) {
     return u3m_bail(c3__exit);
   }
 
-  u3x_cell(u3t(r_a), 0, &b);
+  u3_noun n_b, l_b, m_b, r_b;
+
+  u3_noun b = u3t(u3t(r_a));
+
   u3x_qual(b, &n_b, &l_b, &m_b, &r_b);
 
   u3_noun hor = u3h(r_a);
@@ -53,7 +50,15 @@ u3wdu_rlsin(u3_noun cor)
   {
     return u3m_bail(c3__exit);
   } else {
-    return u3qdu_rlsin(a);
+    u3_noun n, l, m, r;
+    u3x_qual(a, &n, &l, &m, &r);
+
+    if ( (c3n == u3du(n)) || (c3n == u3ud(m)) ) {
+      return u3m_bail(c3__exit);
+    }
+    else {
+      return u3qdu_rlsin(n, l, m, r);
+    }
   }
 }
 

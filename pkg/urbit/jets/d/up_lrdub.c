@@ -1,20 +1,13 @@
 #include "all.h"
 
 u3_noun
-u3qdu_lrdub(u3_noun a)
+u3qdu_lrdub(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 {
-  u3_noun n_a, l_a, m_a, r_a;
-
-  u3x_qual(a, &n_a, &l_a, &m_a, &r_a);
-
   if ( c3n == u3du(l_a) ) {
     return u3m_bail(c3__exit);
   }
 
-  u3_noun p_l_a;
-
-  u3x_cell(u3t(l_a), 0, &p_l_a);
-
+  u3_noun p_l_a = u3t(u3t(l_a));
   u3_noun hol = u3h(l_a);
 
   if ( c3n == u3ud(hol) ) {
@@ -25,13 +18,27 @@ u3qdu_lrdub(u3_noun a)
       return u3m_bail(c3__exit);
 
     case c3__llos: {
+      u3_noun n_p_l_a, l_p_l_a, m_p_l_a, r_p_l_a;
+
+      u3x_qual(p_l_a, &n_p_l_a, &l_p_l_a, &m_p_l_a, &r_p_l_a);
+
       return u3qdu_lrsin(
-               u3nq(u3k(n_a), u3qdu_llsin(p_l_a), u3k(m_a), u3k(r_a)));
+               u3k(n_a),
+               u3qdu_lrsin(n_p_l_a, l_p_l_a, m_p_l_a, r_p_l_a),
+               u3k(m_a),
+               u3k(r_a));
     }
 
     case c3__rlos: {
+      u3_noun n_p_l_a, l_p_l_a, m_p_l_a, r_p_l_a;
+
+      u3x_qual(p_l_a, &n_p_l_a, &l_p_l_a, &m_p_l_a, &r_p_l_a);
+
       return u3qdu_lrsin(
-               u3nq(u3k(n_a), u3qdu_rlsin(p_l_a), u3k(m_a), u3k(r_a)));
+               u3k(n_a),
+               u3qdu_rlsin(n_p_l_a, l_p_l_a, m_p_l_a, r_p_l_a),
+               u3k(m_a),
+               u3k(r_a));
     }
   }
 }
@@ -46,7 +53,15 @@ u3wdu_lrdub(u3_noun cor)
   {
     return u3m_bail(c3__exit);
   } else {
-    return u3qdu_lrdub(a);
+    u3_noun n, l, m, r;
+    u3x_qual(a, &n, &l, &m, &r);
+
+    if ( (c3n == u3du(n)) || (c3n == u3ud(m)) ) {
+      return u3m_bail(c3__exit);
+    }
+    else {
+      return u3qdu_lrdub(n, l, m, r);
+    }
   }
 }
 
