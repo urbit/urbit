@@ -68,6 +68,10 @@
       [%cast-document-vote gal=ship hash=@ vote=?]
     ::
       [%send-point as=ship point=ship to=address]
+    ::
+      [%approve-batch-transfer to=address]
+      [%transfer-batch from=address]
+      [%withdraw to=address]
   ==
 ::
 ++  prep-result

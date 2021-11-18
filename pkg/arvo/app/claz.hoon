@@ -200,6 +200,9 @@
   =/  contracts  (get-contracts network)
   ?+  -.call  ecliptic:contracts
     %send-point  delegated-sending:contracts
+  ::
+      ?(%approve-batch-transfer %transfer-batch %withdraw)
+    linear-star-release:contracts
   ==
 ::
 ++  deed
