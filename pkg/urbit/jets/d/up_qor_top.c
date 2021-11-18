@@ -17,9 +17,7 @@ u3wdu_qor_top(u3_noun cor)
 {
   u3_noun a;
 
-  if (
-    (c3n == u3r_mean(cor, u3x_sam, &a, 0)) ||
-    (c3n == u3du(a)) )
+  if (c3n == u3r_mean(cor, u3x_sam, &a, 0))
   {
     return u3m_bail(c3__exit);
   } else {
