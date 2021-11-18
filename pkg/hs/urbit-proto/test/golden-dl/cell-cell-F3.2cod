@@ -1,0 +1,4 @@
+Nest
+  { cod = Cell (Aura "") (Scope (Look (F (Aura ""))))
+  , typ = Cell (Aura "") (Scope (Look (F (Aura ""))))
+  }

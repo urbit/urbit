@@ -25,8 +25,7 @@ open = \case
   Bass Vod -> Left "unsupported !"
   Bass (Fok as au) -> pure $ Fork (setFromList as) au
   Bass (Aur au) -> pure $ Aura au
-  Bcbc -> pure Type
-  Bcbr m -> Lead <$> traverse open m
+  Bass Typ -> pure Type
   Bccb h -> Left "unsupported _"
   Bccl s ss -> boil s ss unmask open Cell
   Bccn [] -> Left "unsupported empty $% (XX what should it be?)"
@@ -45,6 +44,7 @@ open = \case
   Bcts (Rash x) h -> Mask x <$> open h
   Bcts{} -> Left "unsupported pattern in $="
   Bcpt{} -> Left "unsupported $@"
+  Bcwt m -> Lead <$> traverse open m
   --
   Brcn{} -> Left "unsupported naked |%; use with => for now"
   Brts (Rash x) h -> Lamb <$> abstract1 x <$> open h

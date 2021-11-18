@@ -1,15 +1,14 @@
-Right
-  Base
-    { loft =
-        Cell
-          (Aura "ud")
-          (Scope
-             (Look
-                (F (Cell
-                      (Cell
-                         (Aura "ud")
-                         (Scope
-                            (Look (F (Cell (Aura "ud") (Scope (Look (F (Aura "ud")))))))))
-                      (Scope
-                         (Look (F (Cell (Aura "ud") (Scope (Look (F (Aura "ud"))))))))))))
-    }
+Base
+  { loft =
+      Cell
+        (Aura "ud")
+        (Scope
+           (Look
+              (F (Cell
+                    (Cell
+                       (Aura "ud")
+                       (Scope
+                          (Look (F (Cell (Aura "ud") (Scope (Look (F (Aura "ud")))))))))
+                    (Scope
+                       (Look (F (Cell (Aura "ud") (Scope (Look (F (Aura "ud"))))))))))))
+  }

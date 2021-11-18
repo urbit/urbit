@@ -1,0 +1,4 @@
+Nest
+  { cod = Cons (Atom 1 "ud") (Atom 2 "ud")
+  , typ = Cell (Aura "") (Scope (Look (F (Aura ""))))
+  }

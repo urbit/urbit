@@ -1,9 +1,8 @@
-Right
-  Base
-    { loft =
-        Cons
-          (Atom 1 "ud")
-          (Cons
-             (Cons (Atom 4 "ud") (Cons (Atom 5 "ud") (Atom 6 "ud")))
-             (Cons (Atom 2 "ud") (Atom 3 "ud")))
-    }
+Base
+  { loft =
+      Cons
+        (Atom 1 "ud")
+        (Cons
+           (Cons (Atom 4 "ud") (Cons (Atom 5 "ud") (Atom 6 "ud")))
+           (Cons (Atom 2 "ud") (Atom 3 "ud")))
+  }

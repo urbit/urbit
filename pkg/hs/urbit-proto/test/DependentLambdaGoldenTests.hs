@@ -4,6 +4,7 @@ import ClassyPrelude
 
 import Bound
 import qualified Data.ByteString.Lazy as LBS
+import qualified Data.Foldable as F
 import qualified Data.Text.Lazy as LT
 import Data.Void
 import System.FilePath (takeBaseName, replaceExtension)
@@ -24,15 +25,18 @@ testEachPass file = do
   let baseName = takeBaseName file
   txt <- readFileUtf8 file
   let cst = parse hoon baseName txt
-  let cod = cst >>= open >>= maybe (Left "free variables") Right . closed
+  let cod = do
+        c <- cst
+        o <- open c
+        maybe (Left $ "free variables " <> tshow (F.toList o)) Right $ closed o
   let val = eval absurd <$> cod
   let typ = do c <- cod
                maybe (Left "type error") Right $
                  runReaderT (play (Con absurd absurd) c) []
-  let o1  = encodeUtf8 $ LT.pack $ ppShow cst
-  let o2  = encodeUtf8 $ LT.pack $ ppShow cod
-  let o3a = encodeUtf8 $ LT.pack $ ppShow val
-  let o3b = encodeUtf8 $ LT.pack $ ppShow typ
+  let o1  = encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) cst
+  let o2  = encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) cod
+  let o3a = encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) val
+  let o3b = encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) typ
   pure $ testGroup baseName
     [ {-goldenVsString (baseName <> " 0: id") (replaceExtension file ".0id") do
         LBS.readFile file-}

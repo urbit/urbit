@@ -1,0 +1,18 @@
+Bind
+  Nest
+    { cod = Lamb (Scope (Wing [ Ally "x" ] (Look (B ()))))
+    , typ =
+        Gate
+          (Cell (Mask "t" Type) (Scope (Aura "")))
+          (Scope (Look (F (Aura ""))))
+    }
+  (Scope
+     (Cons
+        (Slam (Wing [] (Look (B ()))) (Cons (Aura "") (Atom 1 "ud")))
+        (Cons
+           (Slam
+              (Wing [] (Look (B ())))
+              (Cons
+                 (Cell (Aura "") (Scope (Look (F (Aura "")))))
+                 (Cons (Atom 3 "ud") (Atom 4 "ud"))))
+           (Slam (Wing [] (Look (B ()))) (Cons (Aura "f") (Atom 0 "f"))))))

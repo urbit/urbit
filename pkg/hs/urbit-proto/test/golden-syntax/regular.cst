@@ -1,0 +1,43 @@
+Cltr
+  [ Bccn
+      [ ( 1 , "ud" , Bccl (Bass Non) [ Bass (Aur "") ] )
+      , ( 2 , "ud" , Bccl (Bass Cel) [] )
+      , ( 3 , "ud" , Bccl (Bass (Aur "")) [ Bass (Aur "") ] )
+      ]
+  , Bccl (Bass Non) []
+  , Dtls (Adam Sand 1 "ud")
+  , Dtls (Adam Sand 1 "ud")
+  , Clhp
+      (Adam Sand 1 "ud") (Clhp (Adam Sand 1 "ud") (Adam Sand 2 "ud"))
+  , Cnls
+      (Wung [ Ally "f" ])
+      (Cnls (Wung [ Ally "g" ]) (Wung [ Ally "a" ]) (Wung [ Ally "b" ]))
+      (Wung [ Ally "c" ])
+  , Clkt
+      (Adam Sand 1 "ud")
+      (Clkt
+         (Adam Sand 1 "ud")
+         (Adam Sand 2 "ud")
+         (Adam Sand 3 "ud")
+         (Adam Sand 4 "ud"))
+      (Adam Sand 3 "ud")
+      (Adam Sand 4 "ud")
+  , Cltr
+      [ Adam Sand 1 "ud"
+      , Cltr [ Adam Sand 1 "ud" , Adam Sand 2 "ud" , Adam Sand 3 "ud" ]
+      , Adam Sand 2 "ud"
+      , Adam Sand 3 "ud"
+      ]
+  , Wthp
+      [ Ally "a" , Ally "b" , Axis 6 ]
+      [ ( Adam Sand 1 "ud" , Adam Sand 1 "ud" )
+      , ( Adam Sand 2 "ud" , Adam Sand 2 "ud" )
+      , ( Adam Sand 3 "ud" , Adam Sand 3 "ud" )
+      ]
+  , Brcn
+      (fromList
+         [ ( "bar" , Adam Sand 2 "ud" ) , ( "foo" , Adam Sand 1 "ud" ) ])
+  , Bcdt
+      (Bass Cel)
+      (fromList [ ( "bar" , Bass Non ) , ( "foo" , Bass (Aur "") ) ])
+  ]

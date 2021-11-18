@@ -22,6 +22,7 @@ data Bass
   | Vod
   | Fok [Atom] Aura
   | Aur Aura
+  | Typ
   deriving (Eq, Ord, Show)
 
 data Hoon
@@ -29,8 +30,6 @@ data Hoon
   | Adam Grit Atom Aura
   --
   | Bass Bass
-  | Bcbc  -- ^ type of type
-  | Bcbr (Map Term Spec)  -- ^ lead core type (prev $!)
   | Bccb Hoon  -- ^ type of expression
   | Bccl Spec [Spec]  -- ^ tuple
   | Bccn [(Atom, Aura, Spec)]  -- ^ tagged union
@@ -39,6 +38,7 @@ data Hoon
   | Bckt Spec Spec  -- ^ god save me
   | Bcts Skin Spec  -- ^ facialized type
   | Bcpt Spec Spec  -- ^ atomic-cellular disjunction
+  | Bcwt (Map Term Spec)  -- ^ lead core type (prev $!)
   --
   | Brcn (Map Term Hoon)
   | Brts Skin Hoon
@@ -159,7 +159,7 @@ vul = string "::"
 hoon :: Parser Hoon
 hoon = choice
   [ rune
-  , scat
+  , long
   ]
 
 skin :: Parser Skin
@@ -170,71 +170,71 @@ spec = hoon
 
 -- | Regular forms.
 rune :: Parser Hoon
-rune = choice $ fmap (\(r, b) -> string r *> b)
-  [ ("$|", hop  Bcbr term spec)
-  , ("$_", r1   Bccb hoon)
-  , ("$:", run1 Bccl hoon hoon)
-  , ("$%", run  id spec >>= bccn)
-  , ("$.", hop1 Bcdt spec term spec)
-  , ("$-", r2   Bchp spec spec)
-  , ("$^", r2   Bckt spec spec)
-  , ("$=", r2   Bcts skin spec)
-  , ("$@", r2   Bcpt spec spec)
+rune = choice
+  [ r1   "$_" Bccb hoon
+  , run1 "$:" Bccl hoon hoon
+  , run  "$%" id spec >>= bccn
+  , hop1 "$." Bcdt spec term spec
+  , r2   "$-" Bchp spec spec
+  , r2   "$^" Bckt spec spec
+  , r2   "$=" Bcts skin spec
+  , r2   "$@" Bcpt spec spec
+  , hop  "$?" Bcwt term spec
   --
-  , ("|%", hop  Brcn term hoon)
-  , ("|=", r2   Brts skin hoon)
+  , hop  "|%" Brcn term hoon
+  , r2   "|=" Brts skin hoon
   --
-  , (":_", r2   Clcb hoon hoon)
-  , (":^", r4   Clkt hoon hoon hoon hoon)
-  , (":-", r2   Clhp hoon hoon)
-  , (":+", r3   Clls hoon hoon hoon)
-  , (":~", run  Clsg hoon)
-  , (":*", run  Cltr hoon)
+  , r2   ":_" Clcb hoon hoon
+  , r4   ":^" Clkt hoon hoon hoon hoon
+  , r2   ":-" Clhp hoon hoon
+  , r3   ":+" Clls hoon hoon hoon
+  , run  ":~" Clsg hoon
+  , run  ":*" Cltr hoon
   --
-  , ("%.", r2   Cndt hoon hoon)
-  , ("%-", r2   Cnhp hoon hoon)
-  , ("%:", run1 Cncl hoon hoon)
-  , ("%^", r4   Cnkt hoon hoon hoon hoon)
-  , ("%+", r3   Cnls hoon hoon hoon)
-  , ("%=", jog1 Cnts wing wing hoon)
+  , r2   "%." Cndt hoon hoon
+  , r2   "%-" Cnhp hoon hoon
+  , run1 "%:" Cncl hoon hoon
+  , r4   "%^" Cnkt hoon hoon hoon hoon
+  , r3   "%+" Cnls hoon hoon hoon
+  , jog1 "%=" Cnts wing wing hoon
   --
-  , (".^", r2   Dtkt hoon hoon)
-  , (".+", r1   Dtls hoon)
-  , (".*", r2   Dttr hoon hoon)
-  , (".=", r2   Dtts hoon hoon)
-  , (".?", r1   Dtwt hoon)
+  , r2   ".^" Dtkt hoon hoon
+  , r1   ".+" Dtls hoon
+  , r2   ".*" Dttr hoon hoon
+  , r2   ".=" Dtts hoon hoon
+  , r1   ".?" Dtwt hoon
   --
-  , ("^+", r2   Ktls hoon hoon)
-  , ("^-", r2   Kthp spec hoon)
-  , ("^/", r2   Ktfs hoon spec)
-  , ("^?", r1   Ktwt hoon)
-  , ("^=", r2   Ktts skin hoon)
-  , ("^:", r1   Ktcl spec)
-  , ("^!", r2   Ktzp spec hoon)
+  , r2   "^+" Ktls hoon hoon
+  , r2   "^-" Kthp spec hoon
+  , r2   "^/" Ktfs hoon spec
+  , r1   "^?" Ktwt hoon
+  , r2   "^=" Ktts skin hoon
+  , r1   "^:" Ktcl spec
+  , r2   "^!" Ktzp spec hoon
   --
-  , ("~/", r2   Sgfs term hoon)
+  , r2   "~/" Sgfs term hoon
   --
-  , ("=/", r3   Tsfs skin hoon hoon)
-  , ("=;", r3   Tsmc skin hoon hoon)
-  , ("=.", r3   Tsdt wing hoon hoon)
-  , ("=<", r2   Tsgl hoon hoon)
-  , ("=>", r2   Tsgr hoon hoon)
-  , ("=-", r2   Tshp hoon hoon)
-  , ("=^", r4   Tskt skin wing hoon hoon)
-  , ("=+", r2   Tsls hoon hoon)
-  , ("=~", run  Tssg hoon)
+  , r3   "=/" Tsfs skin hoon hoon
+  , r3   "=;" Tsmc skin hoon hoon
+  , r3   "=." Tsdt wing hoon hoon
+  , r2   "=<" Tsgl hoon hoon
+  , r2   "=>" Tsgr hoon hoon
+  , r2   "=-" Tshp hoon hoon
+  , r4   "=^" Tskt skin wing hoon hoon
+  , r2   "=+" Tsls hoon hoon
+  , run  "=~" Tssg hoon
   --
-  , ("?|", run  Wtbr hoon)
-  , ("?-", jog1 Wthp wing skin hoon)
-  , ("?:", r3   Wtcl hoon hoon hoon)
-  , ("?.", r3   Wtdt hoon hoon hoon)
-  , ("?^", r3   Wtkt wing hoon hoon)
-  , ("?<", r2   Wtgl hoon hoon)
-  , ("?>", r2   Wtgr hoon hoon)
-  , ("?&", run  Wtpm hoon)
-  , ("?@", r3   Wtpt wing hoon hoon)
-  , ("?=", r2   Wtts skin hoon)
-  , ("?!", r1   Wtzp hoon)
+  , run  "?|" Wtbr hoon
+  , jog1 "?-" Wthp wing skin hoon
+  , r3   "?:" Wtcl hoon hoon hoon
+  , r3   "?." Wtdt hoon hoon hoon
+  , r3   "?^" Wtkt wing hoon hoon
+  , r2   "?<" Wtgl hoon hoon
+  , r2   "?>" Wtgr hoon hoon
+  , run  "?&" Wtpm hoon
+  , r3   "?@" Wtpt wing hoon hoon
+  , r2   "?=" Wtts skin hoon
+  , r1   "?!" Wtzp hoon
   ]
  where
   bccn :: [Hoon] -> Parser Hoon
@@ -243,35 +243,63 @@ rune = choice $ fmap (\(r, b) -> string r *> b)
     Bccl (Bass (Fok as au)) (t:ts) -> pure $ map (, au, Bccl t ts) as
     _ -> fail "$% clause must be a cell type with atomic head"
 
--- | Irregular forms.
+-- | Irregular forms including binary operators.
+long :: Parser Hoon
+long = wide do
+  hd <- scat
+  choice
+    [ char '='  *> hoon <&> Ktts hd
+    , char '|'  *> spec <&> Bcts hd
+    , char '/'  *> spec <&> Ktfs hd
+    , char '\\' *> hoon <&> Kthp hd
+    , char ':'  *> hoon <&> Tsgl hd
+    , case hd of Wung w -> do
+                   char '('
+                   edits <- sepBy ((,) <$> wing <* ace <*> hoon) (string ", ")
+                   char ')'
+                   pure $ Cnts w edits
+                 _ -> empty
+    , pure hd
+    ]
+
+-- | Irregular forms not including binary operators.
 scat :: Parser Hoon
 scat = wide $ choice
   -- missing ,
   [ string "!!" $> Zpzp
   , char '!' *> hoon <&> Wtzp
   , char '_' *> hoon <&> Bccb  -- XX why ktcl bccb in orig?
-  , char '$' *> rock (\a au -> Bass $ Fok [a] au)
-  , char '%' *> rock (Adam Rock)  -- TODO posh porc
-  , char '&' *> choice
-    [ run Wtpm hoon
-    , pure (Adam Sand 0 "f")
+  , char '$' *> choice
+    [ rock (\a au -> Bass $ Fok [a] au)
+    , char '$' *> pure (Bass $ Fok [0] "tas")  -- special for blip; can't use $%
+    , pure (Bass Typ)
     ]
-  , run1 Cncl hoon hoon
+  , lookAhead (char '%') *> choice
+    [ try $ char '%' *> rock (Adam Rock)  -- TODO posh porc
+    , wing <&> Wung   -- e.g. `%` itself, but also `%.%`, etc.
+    ]
+  , run  "&" Wtpm hoon
+  , char '&' *> pure (Adam Sand 0 "f")
+  , run1 ""  Cncl hoon hoon
   , char '*' $> Bass Non
   , char '@' *> mote <&> Bass . Aur
   -- TODO lark syntax (soil?), rope
-  , try $ char '+' *> r1 Dtls hoon
+  , r1   "+" Dtls hoon
   -- XX '.'?
   -- TODO autonamer
-  , char '=' *> r2 Dtts hoon hoon
-  , char '?' *> choice
-    [ run (\as -> Bass $ Fok as "") (char '$' *> rock \a _ -> a)  -- XX multiaura
-    , pure (Bass $ Aur "f")
-    ]
+  , r2   "=" Dtts hoon hoon
+  -- XX multiaura
+  , run  "?" (\as -> Bass $ Fok as "") (char '$' *> rock \a _ -> a)
+  , char '?' *> pure (Bass $ Aur "f")
   , char '[' *> (Cltr <$> sepBy hoon ace) <* char ']'  -- XX read rupl
+  , char '{' *> (Bccl <$> (spec <* ace) <*> sepBy spec ace) <* char '}'
   , char '^' $> Bass Cel  -- XX why is there a wing case here?
-  -- TODO ``
-
+  , do
+      char '`'
+      t <- spec
+      char '`'
+      e <- hoon
+      pure (Ktzp t e)
   , wing <&> Wung
   , sand
   ]
@@ -292,7 +320,7 @@ mote :: Parser Term
 mote = pack <$> ((<>) <$> many lowerChar <*> many upperChar)
 
 term :: Parser Term
-term = string "$" $> "" <|> do
+term = string "%" $> "" <|> do
   fist <- lowerChar
   rest <- many (char '-' <|> lowerChar <|> digitChar)
   pure $ pack (fist:rest)
@@ -328,38 +356,38 @@ modally tal wid = ask >>= \case
   Tall -> tal <|> wide wid
   Wide -> wid
 
-r1 :: (a -> r) -> Parser a -> Parser r
-r1 f p = modally
+r1 :: Text -> (a -> r) -> Parser a -> Parser r
+r1 x f p = modally
   do
-    gap
+    try (string x >> gap)
     a <- p
     pure (f a)
   do
-    char '('
+    string (x <> "(")
     a <- p
     char ')'
     pure (f a)
 
-r2 :: (a -> b -> r) -> Parser a -> Parser b -> Parser r
-r2 f p q = modally
+r2 :: Text -> (a -> b -> r) -> Parser a -> Parser b -> Parser r
+r2 x f p q = modally
   do
-    gap
+    try (string x >> gap)
     a <- p
     gap
     b <- q
     pure (f a b)
   do
-    char '('
+    string (x <> "(")
     a <- p
     ace
     b <- q
     char ')'
     pure (f a b)
 
-r3 :: (a -> b -> c-> r) -> Parser a -> Parser b -> Parser c -> Parser r
-r3 f p q r = modally
+r3 :: Text -> (a -> b -> c-> r) -> Parser a -> Parser b -> Parser c -> Parser r
+r3 x f p q r = modally
   do
-    gap
+    try (string x >> gap)
     a <- p
     gap
     b <- q
@@ -367,7 +395,7 @@ r3 f p q r = modally
     c <- r
     pure (f a b c)
   do
-    char '('
+    string (x <> "(")
     a <- p
     ace
     b <- q
@@ -376,11 +404,12 @@ r3 f p q r = modally
     char ')'
     pure (f a b c)
 
-r4 :: (a -> b -> c -> d -> r)
+r4 :: Text
+   -> (a -> b -> c -> d -> r)
    -> Parser a -> Parser b -> Parser c -> Parser d -> Parser r
-r4 f p q r s = modally
+r4 x f p q r s = modally
   do
-    gap
+    try (string x >> gap)
     a <- p
     gap
     b <- q
@@ -390,7 +419,7 @@ r4 f p q r s = modally
     d <- s
     pure (f a b c d)
   do
-    char '('
+    string (x <> "(")
     a <- p
     ace
     b <- q
@@ -401,28 +430,30 @@ r4 f p q r s = modally
     char ')'
     pure (f a b c d)
 
-run :: ([a] -> r) -> Parser a -> Parser r
-run f p = modally
-  (f <$> (gap *> manyTill (p <* gap) (string "==")))
+run :: Text -> ([a] -> r) -> Parser a -> Parser r
+run x f p = modally
+  (f <$> (try (string x *> gap) *> manyTill (p <* gap) (string "==")))
   do
-    char '('
+    string (x <> "(")
     as <- sepBy p ace
     char ')'
     pure (f as)
 
-run1 :: (a -> [b] -> r) -> Parser a -> Parser b -> Parser r
-run1 f p q = modally
-  (f <$> (gap *> p <* gap) <*> manyTill (q <* gap) (string "==") <* gap)
+run1 :: Text -> (a -> [b] -> r) -> Parser a -> Parser b -> Parser r
+run1 x f p q = modally
+  (f <$> (try (string x *> gap) *> p <* gap)
+     <*> manyTill (q <* gap) (string "=="))
    do
-    char '('
+    string (x <> "(")
     a <- p
     bs <- many (ace *> q)
+    char ')'
     pure (f a bs)
 
-jog :: ([(a, b)] -> r) -> Parser a -> Parser b -> Parser r
-jog f p q = ask >>= \case
+jog :: Text -> ([(a, b)] -> r) -> Parser a -> Parser b -> Parser r
+jog x f p q = ask >>= \case
   Tall -> do
-    gap
+    try (string x >> gap)
     abs <- flip manyTill (string "==") do
       a <- p
       gap
@@ -432,10 +463,12 @@ jog f p q = ask >>= \case
     pure (f abs)
   Wide -> empty
 
-jog1 :: (a -> [(b, c)] -> r) -> Parser a -> Parser b -> Parser c -> Parser r
-jog1 f p q r = ask >>= \case
+jog1 :: Text
+     -> (a -> [(b, c)] -> r)
+     -> Parser a -> Parser b -> Parser c -> Parser r
+jog1 x f p q r = ask >>= \case
   Tall -> do
-    gap
+    try (string x >> gap)
     a <- p
     gap
     bcs <- flip manyTill (string "==") do
@@ -448,10 +481,10 @@ jog1 f p q r = ask >>= \case
   Wide -> empty
 
 -- | Parse the syntax of a core body.
-hop :: Ord a => (Map a b -> r) -> Parser a -> Parser b -> Parser r
-hop f p q = ask >>= \case
+hop :: Ord a => Text -> (Map a b -> r) -> Parser a -> Parser b -> Parser r
+hop x f p q = ask >>= \case
   Tall -> do
-    gap
+    try (string x >> gap)
     abs <- flip manyTill (string "--") do
       string "++"
       gap
@@ -466,11 +499,12 @@ hop f p q = ask >>= \case
   Wide -> empty
 
 hop1 :: Ord b
-     => (a -> Map b c -> r)
+     => Text
+     -> (a -> Map b c -> r)
      -> Parser a -> Parser b -> Parser c-> Parser r
-hop1 f p q r = ask >>= \case
+hop1 x f p q r = ask >>= \case
   Tall -> do
-    gap
+    try (string x >> gap)
     a <- p
     gap
     bcs <- flip manyTill (string "--") do

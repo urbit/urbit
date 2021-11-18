@@ -1,0 +1,16 @@
+Tsfs
+  (Wung [ Ally "id" ])
+  (Kthp
+     (Bchp
+        (Bccl (Bcts (Wung [ Ally "t" ]) (Bass Typ)) [ Bass (Aur "") ])
+        (Bass (Aur "")))
+     (Brts (Wung [ Ally "a" ]) (Wung [ Ally "x" , Ally "a" ])))
+  (Cltr
+     [ Cncl (Wung [ Ally "id" ]) [ Bass (Aur "") , Adam Sand 1 "ud" ]
+     , Cncl
+         (Wung [ Ally "id" ])
+         [ Bccl (Bass (Aur "")) [ Bass (Aur "") ]
+         , Cltr [ Adam Sand 3 "ud" , Adam Sand 4 "ud" ]
+         ]
+     , Cncl (Wung [ Ally "id" ]) [ Bass (Aur "f") , Adam Rock 0 "f" ]
+     ])

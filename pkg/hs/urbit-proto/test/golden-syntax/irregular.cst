@@ -2,6 +2,26 @@ Cltr
   [ Zpzp
   , Wtzp (Wung [ Ally "a" , Ally "b" ])
   , Wtzp (Adam Sand 1 "ud")
+  , Wtzp
+      (Wtcl (Adam Sand 0 "ud") (Adam Sand 1 "ud") (Adam Sand 2 "ud"))
+  , Bass (Fok [ 7303014 ] "tas")
+  , Bass (Fok [ 32195221641981798 ] "tas")
+  , Bass (Fok [ 0 ] "f")
+  , Bass (Fok [ 1 ] "f")
+  , Bass (Fok [ 15653 ] "t")
+  , Bass (Fok [ 1 ] "ud")
+  , Bass (Fok [ 0 ] "tas")
+  , Bass Typ
+  , Adam Rock 7303014 "tas"
+  , Adam Rock 32195221641981798 "tas"
+  , Adam Rock 0 "tas"
+  , Adam Rock 0 "f"
+  , Adam Rock 1 "f"
+  , Adam Rock 9596 "t"
+  , Adam Rock 123 "ud"
+  , Wung [ Ally "" ]
+  , Wung [ Ally "" , Ally "foo" ]
+  , Wung [ Ally "foo" , Ally "" ]
   , Wtpm [ Adam Sand 1 "ud" ]
   , Wtpm
       [ Wtpm [ Adam Sand 1 "ud" , Adam Sand 3 "ud" ] , Adam Sand 2 "ud" ]
@@ -9,6 +29,13 @@ Cltr
   , Adam Sand 0 "f"
   , Adam Sand 122641728207952671039841640 "t"
   , Adam Sand 10076 "t"
+  , Cncl
+      (Wung [ Ally "f" ])
+      [ Wung [ Ally "a" ]
+      , Cncl (Wung [ Ally "g" ]) [ Wung [ Ally "b" ] ]
+      , Wung [ Ally "c" ]
+      ]
+  , Cncl (Wung [ Ally "f" ]) []
   , Bass Non
   , Bass (Aur "")
   , Bass (Aur "tas")
@@ -19,9 +46,81 @@ Cltr
   , Bass (Fok [ 7303014 , 7496034 , 1 ] "")
   , Bass (Aur "f")
   , Cltr [ Adam Sand 1 "ud" , Adam Sand 2 "ud" , Adam Sand 3 "ud" ]
+  , Bccl
+      (Bass (Aur ""))
+      [ Bccl (Bass Non) [ Bcpt (Bass (Aur "")) (Bass Cel) ] , Bass Cel ]
   , Bass Cel
+  , Ktzp (Bass (Aur "")) (Adam Sand 1 "ud")
+  , Ktzp (Bass (Aur "t")) (Ktzp (Bass (Aur "")) (Adam Sand 1 "ud"))
+  , Ktzp (Ktzp (Bass Typ) (Bass (Aur ""))) (Adam Sand 1 "ud")
+  , Ktzp
+      (Wung [ Ally "wow" ])
+      (Cncl (Wung [ Ally "f" ]) [ Wung [ Ally "g" ] ])
+  , Wung [ Ally "" ]
   , Wung [ Ally "foo" ]
   , Wung [ Ally "my-term123" ]
   , Wung [ Axis 6 ]
   , Wung [ Axis 6 , Ally "coo" ]
+  , Ktts (Wung [ Ally "a" ]) (Adam Sand 1 "ud")
+  , Ktts
+      (Wung [ Ally "a" ]) (Ktts (Wung [ Ally "b" ]) (Adam Sand 2 "ud"))
+  , Ktts
+      (Wung [ Ally "a" ])
+      (Cnls (Wung [ Ally "f" ]) (Wung [ Ally "a" ]) (Wung [ Ally "b" ]))
+  , Ktts
+      (Cltr [ Wung [ Ally "a" ] , Wung [ Ally "b" ] ])
+      (Cnls (Wung [ Ally "f" ]) (Wung [ Ally "a" ]) (Wung [ Ally "b" ]))
+  , Bcts (Wung [ Ally "a" ]) (Bass (Aur ""))
+  , Bcts
+      (Wung [ Ally "a" ]) (Bcts (Wung [ Ally "b" ]) (Bass (Aur "")))
+  , Bcts
+      (Wung [ Ally "a" ])
+      (Cnls (Wung [ Ally "f" ]) (Wung [ Ally "a" ]) (Wung [ Ally "b" ]))
+  , Ktts
+      (Cltr [ Wung [ Ally "a" ] , Wung [ Ally "b" ] ])
+      (Cnls (Wung [ Ally "f" ]) (Wung [ Ally "a" ]) (Wung [ Ally "b" ]))
+  , Ktfs (Adam Sand 1 "ud") (Bass (Aur ""))
+  , Ktfs (Adam Sand 478560413032 "t") (Bass (Aur "t"))
+  , Ktfs
+      (Cltr [ Adam Sand 1 "ud" , Adam Sand 2 "ud" ])
+      (Bccl (Bass (Aur "")) [ Bass (Aur "") ])
+  , Kthp (Bass (Aur "")) (Adam Sand 1 "ud")
+  , Kthp
+      (Bccl (Bass (Aur "")) [ Bass (Aur "") ])
+      (Cltr [ Adam Sand 1 "ud" , Adam Sand 2 "ud" ])
+  , Tsgl
+      (Wung [ Ally "a" ])
+      (Cltr
+         [ Ktts (Wung [ Ally "a" ]) (Adam Sand 1 "ud")
+         , Ktts (Wung [ Ally "b" ]) (Adam Sand 2 "ud")
+         ])
+  , Tsgl
+      (Cltr [ Wung [ Ally "b" ] , Wung [ Ally "a" ] ])
+      (Cltr
+         [ Ktts (Wung [ Ally "a" ]) (Adam Sand 1 "ud")
+         , Ktts (Wung [ Ally "b" ]) (Adam Sand 2 "ud")
+         ])
+  , Tsgl (Wung [ Ally "" ]) (Wung [ Ally "foo" ])
+  , Cnts [ Ally "a" ] []
+  , Cnts
+      [ Ally "a" ]
+      [ ( [ Ally "a" ] , Cncl (Wung [ Ally "e" ]) [ Wung [ Ally "f" ] ] )
+      ]
+  , Cnts
+      [ Ally "a" , Ally "b" ]
+      [ ( [ Ally "c" , Ally "d" ] , Adam Sand 1 "ud" )
+      , ( [ Ally "e" , Ally "f" ] , Adam Sand 2 "ud" )
+      ]
+  , Tsgl
+      (Wung [ Ally "e" , Ally "f" ])
+      (Cnts
+         [ Ally "a" , Ally "b" ]
+         [ ( [ Ally "c" , Ally "d" ] , Adam Sand 1 "ud" )
+         , ( [ Ally "e" , Ally "f" ] , Adam Sand 2 "ud" )
+         ])
+  , Cnts
+      [ Ally "" ]
+      [ ( [ Ally "a" ] , Adam Sand 1 "ud" )
+      , ( [ Ally "b" ] , Adam Sand 2 "ud" )
+      ]
   ]
