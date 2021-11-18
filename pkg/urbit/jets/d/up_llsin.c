@@ -33,6 +33,10 @@ u3qdu_llsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 
       u3_noun p_n_a = u3h(t_a);
 
+      if ( (c3n == u3ud(p_n_a)) || (c3n == u3ud(p_n_b)) ) {
+        return u3m_bail(c3__exit);
+      }
+
       if ( c3y == u3qdu_win(p_n_a, k_n_a, p_n_b, k_n_b) ) {
         return u3qdu_llos(
                  u3k(n_a),
