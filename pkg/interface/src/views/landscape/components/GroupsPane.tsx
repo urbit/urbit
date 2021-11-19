@@ -26,8 +26,7 @@ import { NewChannel } from './NewChannel';
 import { PopoverRoutes } from './PopoverRoutes';
 import { Resource } from './Resource';
 import { Skeleton } from './Skeleton';
-import airlock from '~/logic/api';
-import {Join, JoinRoute} from './Join';
+import {Join, JoinRoute} from './Join/Join';
 
 interface GroupsPaneProps {
   baseUrl: string;

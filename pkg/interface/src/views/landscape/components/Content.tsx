@@ -15,7 +15,7 @@ import { useShortcut } from '~/logic/state/settings';
 import Landscape from '~/views/landscape/index';
 import GraphApp from '../../apps/graph/App';
 import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
-import {JoinRoute} from './Join';
+import {JoinRoute} from './Join/Join';
 
 export const Container = styled(Box)`
    flex-grow: 1;

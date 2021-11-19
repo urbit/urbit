@@ -1,10 +1,8 @@
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import React, { ReactElement, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { useModal } from '~/logic/lib/useModal';
 import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { PropFunc } from '~/types';
-import { JoinGroup } from '../landscape/components/JoinGroup';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
 
 type GroupLinkProps = {

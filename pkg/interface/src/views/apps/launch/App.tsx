@@ -6,18 +6,13 @@ import { Route, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import useHarkState from "~/logic/state/hark";
 import useSettingsState, { selectCalmState } from "~/logic/state/settings";
-import { JoinGroup } from "~/views/landscape/components/JoinGroup";
-import { NewGroup } from "~/views/landscape/components/NewGroup";
 import Groups from "./components/Groups";
+import { NewGroup } from "~/views/landscape/components/NewGroup";
 import ModalButton from "./components/ModalButton";
 import Tiles from "./components/tiles";
 import Tile from "./components/tiles/tile";
-import { Invite } from "./components/Invite";
 import "./css/custom.css";
-import { join } from "@urbit/api/groups";
-import { joinGraph } from "@urbit/api/graph";
-import airlock from "~/logic/api";
-import { Join, JoinRoute } from "~/views/landscape/components/Join";
+import { Join, JoinRoute } from "~/views/landscape/components/Join/Join";
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
