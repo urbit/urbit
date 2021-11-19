@@ -11,7 +11,7 @@
     |=  [chapter=[tak=tako:clay message=[title=@t body=@t]]]
     =/  tak=tako:clay       tak.chapter
     =/  [title=@t body=@t]  +.chapter
-    (crip "commit: {<`@uv`tak>}\0a\0a{(trip title)}\0a\0a{(trip body)}\0a---\0a")
+    (crip "commit: {<`@uv`tak>}\0a{(trip title)}\0a\0a{(trip body)}\0a---\0a")
   --
 ++  grab
   |%                                             ::  convert from
