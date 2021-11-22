@@ -279,6 +279,7 @@
       [%x %quota ~]           ``atom+!>(quota)
       [%x %slice ~]           ``atom+!>(slice)
       [%x %over-quota @ ~]    (over-quota i.t.t.path)
+      [%x %ship-quota @ ~]    (ship-quota i.t.t.path)
       [%x %ready ~]           ``atom+!>(?=(^ points.pre))
     ==
     ::
@@ -450,6 +451,16 @@
       ?~  who=(slaw %p wat)  [~ ~]
       =/  [exceeded=? *]  (quota-exceeded u.who)
       ``atom+!>(exceeded)
+    ::
+    ++  ship-quota
+      |=  wat=@t
+      ?~  who=(slaw %p wat)  [~ ~]
+      =/  [exceeded=? next-quota=@ud]  (quota-exceeded u.who)
+      :+  ~  ~
+      :-  %atom
+      !>  ^-  @ud
+      ?:  exceeded  0
+      (sub quota.state (dec next-quota))
     ::
     --
   ::

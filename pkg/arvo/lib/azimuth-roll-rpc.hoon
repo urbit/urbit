@@ -680,4 +680,13 @@
   ?.  =((lent ~(tap by params)) 0)
     ~(params error:json-rpc id)
   [%result id (azimuth-config:to-json azimuth-config)]
+::
+++  quota-remaining
+  |=  [id=@t params=(map @t json) quota-left=$-(@p @ud)]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(ship:from-json params)
+    ~(params error:json-rpc id)
+  [%result id (numb:enjs:format (quota-left u.ship))]
 --
