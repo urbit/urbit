@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.12",
+    "version": "0.1.13",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -10,32 +10,32 @@
   "servers": [
     {
       "url": "http://localhost:8080/v1/roller",
-      "name": "Local",
+      "name": "Roller Local",
       "description": "This assumes `%roller-rpc.hoon` running on a test ship"
     },
     {
-      "url": "https://roller-tmp.urbit.org/v1/roller",
-      "name": "Ropsten",
-      "description": "Roller Agent on Ropsten"
-    },
-    {
       "url": "http://localhost:8080/v1/azimuth",
-      "name": "Local",
+      "name": "Azimuth Local",
       "description": "This assumes `%azimuth-rpc.hoon` running on a test ship"
     },
     {
+      "url": "https://roller-tmp.urbit.org/v1/roller",
+      "name": "Roller Ropsten",
+      "description": "Roller Agent on Ropsten"
+    },
+    {
       "url": "https://roller-tmp.urbit.org/v1/azimuth",
-      "name": "Ropsten",
+      "name": "Azimuth Ropsten",
       "description": "Azimuth agent on Ropsten"
     },
     {
       "url": "https://roller.urbit.org/v1/roller",
-      "name": "Mainnet",
+      "name": "Roller Mainnet",
       "description": "Roller Agent on Mainnet"
     },
     {
       "url": "https://roller.urbit.org/v1/azimuth",
-      "name": "Mainnet",
+      "name": "Azimuth Mainnet",
       "description": "Azimuth agent on Mainnet"
     }
   ],
@@ -2116,6 +2116,28 @@
         "description": "Expected response to be a valid request",
         "schema": {
           "$ref": "#/components/schemas/SponsoredPoints"
+        }
+      }
+    },
+    {
+      "name": "getRemainingQuota",
+      "summary": "Retrieves number of L2 transactions this ship is allowed to send to the Roller",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "ship",
+          "description": "The @p of the planet (e.g. `~sampel-planet` or 256)",
+          "schema": {
+            "$ref": "#/components/schemas/Ship"
+          }
+        }
+      ],
+      "result": {
+        "name": "remaining quota",
+        "description": "Remaining L2 quota",
+        "schema": {
+          "type": "number",
+          "title": "RemainingQuota"
         }
       }
     }
