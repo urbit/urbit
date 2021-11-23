@@ -5,3 +5,4 @@ bin/
 .husky/
 *.config.js
 *.config.ts
+package.json
