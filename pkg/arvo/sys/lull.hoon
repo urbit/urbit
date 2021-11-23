@@ -1177,6 +1177,7 @@
         $>(%init vane-task)                             ::  after gall ready
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
+        [%seat =desk]                                   ::  install desk
         [%shot ses=@tas task=session-task]              ::  task for session
         [%talk p=(list tank)]                           ::  print tanks
         [%text p=tape]                                  ::  print tape
