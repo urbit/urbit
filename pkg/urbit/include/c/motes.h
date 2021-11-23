@@ -904,6 +904,7 @@
 #   define c3__pro    c3_s3('p','r','o')
 #   define c3__prod   c3_s4('p','r','o','d')
 #   define c3__prof   c3_s4('p','r','o','f')
+#   define c3__prop   c3_s4('p','r','o','p')
 #   define c3__prox   c3_s4('p','r','o','x')
 #   define c3__psdg   c3_s4('p','s','d','g')
 #   define c3__puck   c3_s4('p','u','c','k')

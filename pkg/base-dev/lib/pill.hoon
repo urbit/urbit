@@ -322,4 +322,21 @@
     =/  pro  q:$:tap
     [[%cell p.gun p:$:tap] [.*(pro q.gun) pro]]
   --
+::
+++  events
+  |%
+  +$  prop  [%prop meta tier (list ovum)]
+  +$  meta  term
+  +$  tier  ?(%pre-userspace %post-userspace)
+  ::
+  ++  install
+    |=  [as=desk =beak]
+    ^-  prop
+    :^  %prop  %install  %post-userspace
+    ::TODO  will exclude non-:directories files, such as /changelog/txt
+    :~  (file-ovum as (en-beam beak /))
+      ::
+        [/d/install/[as] [%seat as]]
+    ==
+  --
 --

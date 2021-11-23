@@ -222,7 +222,15 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 
   {
     c3_d   key_d[4] = {0};
-    u3_noun  msg, mor = u3_nul;;
+    u3_noun  msg, mor = u3_nul;
+
+    //  include additional bootstrap events if provided
+    //
+    while ( 0 != u3_Host.ops_u.vex_u ) {
+      u3_noun jam = u3m_file(u3_Host.ops_u.vex_u->loc_c);
+      mor = u3nc(u3ke_cue(jam), mor);
+      u3_Host.ops_u.vex_u = u3_Host.ops_u.vex_u->pre_u;
+    }
 
     //  include additional key configuration events if we have multiple keys
     //
@@ -230,12 +238,21 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
       u3_noun wir = u3nt(c3__j, c3__seed, u3_nul);
       u3_noun tag = u3i_string("rekey");
       u3_noun kyz = u3t(u3t(feed));
+      u3_noun ves = u3_nul;
       u3_noun cad;
 
       while ( u3_nul != kyz ) {
         cad = u3nc(u3k(tag), u3k(u3h(kyz)));
-        mor = u3nc(u3nc(u3k(wir), cad), mor);
+        ves = u3nc(u3nc(u3k(wir), cad), ves);
         kyz = u3t(kyz);
+      }
+
+      if ( u3_nul != ves ) {
+        u3_noun pro = u3nq(c3__prop,
+                           u3i_string("dawn"),
+                           u3i_string("post-userspace"),
+                           ves);
+        mor = u3nc(pro, mor);
       }
 
       u3z(tag); u3z(wir);
