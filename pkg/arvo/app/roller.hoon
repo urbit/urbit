@@ -31,14 +31,16 @@
 ::
 |%
 +$  app-state
-  $:  %2
+  $:  %3
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
       ::  finding: sig+raw-tx hash reverse lookup for txs in sending map
       ::  history: status of l2 txs by ethereum address, timestamp sorted
       ::  ship-quota: number of txs submited per ship in the current slice
+      ::  allowances: specific no of allowed transactions per given ship
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
+      ::  next-slice: when the global quota will be reset
       ::  pre: predicted l2 state
       ::  own: ownership of azimuth points
       ::  spo: residents and escapees, per sponsor
@@ -48,8 +50,10 @@
       finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
       history=(map address:ethereum (tree hist-tx))
       ship-quota=(map ship @ud)
+      allowances=(map ship (unit @ud))
       next-nonce=(unit @ud)
       next-batch=time
+      next-slice=time
       pre=^state:naive
       own=owners
       spo=sponsors
@@ -87,7 +91,7 @@
 ++  orh  ((on time roll-tx) gth)
 ::
 +$  action
-  $%  ::  we need to include the address in submit so pending txs show up
+  $%  ::  we need to include the address in %submit so pending txs show up
       ::  in the tx history, but because users can send the wrong
       ::  address, in +apply-tx:predicted state, we just replace
       ::  the provided address, with the one used when the message was signed;
@@ -99,6 +103,7 @@
       [%cancel sig=@ keccak=@ =l2-tx =ship]
       [%commit ~]  ::TODO  maybe pk=(unit @) later
       [%config config]
+      [%assign =ship quota=(unit @ud)]
   ==
 ::
 +$  card  card:agent:gall
@@ -129,10 +134,11 @@
         contract     naive:local-contracts:azimuth
         chain-id     chain-id:local-contracts:azimuth
       ==
-    =^  card  next-batch  set-roller:timer
+    =^  card-1  next-batch  set-roller:timer
+    =^  card-2  next-slice  (set-quota:timer slice)
     :_  this
-    :~  card
-        (set-quota:timer slice)
+    :~  card-1
+        card-2
         [%pass /azimuth-events %agent [our.bowl %azimuth] %watch /event]
     ==
   ::
@@ -141,15 +147,15 @@
     |=  old=vase
     ^-  (quip card _this)
     =|  cards=(list card)
-    ::  new additions to app-state
-    ::
-    =|  spo=(map ship [residents=(set ship) requests=(set ship)])
     |^
     =+  !<(old-state=app-states old)
     =?  cards  ?=(%0 -.old-state)
-      [(set-quota:timer slice)]~
+      [card:(set-quota:timer slice)]~
     =?  old-state  ?=(%0 -.old-state)
       ^-  state-1
+      =|  ship-quota=(map ship @ud)
+      =/  [slice=@dr quota=@ud resend-time=@dr update-rate=@dr]
+        [~d7 7 ~m5 ~m1]
       =,  old-state
       :*  %1
           pending  sending  finding  history
@@ -159,7 +165,8 @@
           resend-time  update-rate
       ==
     =?  old-state  ?=(%1 -.old-state)
-      ^-  app-state
+      ^-  state-2
+      =|  spo=(map ship [residents=(set ship) requests=(set ship)])
       =,  old-state
       :*  %2
           pending  sending  finding  history
@@ -168,10 +175,23 @@
           frequency  endpoint  contract  chain-id
           resend-time  update-rate
       ==
-    ?>  ?=(%2 -.old-state)
+    =?  old-state  ?=(%2 -.old-state)
+      ^-  app-state
+      =,  old-state
+      =|  allowances=(map ship (unit @ud))
+      =/  next-slice=time  (mul +((div now.bowl slice)) slice)
+      :*  %3
+          pending  sending  finding  history
+          ship-quota  allowances
+          next-nonce  next-batch  next-slice
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate
+      ==
+    ?>  ?=(%3 -.old-state)
     [cards this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1 app-state)
+    ++  app-states  $%(state-0 state-1 state-2 app-state)
     ++  state-0
       $:  %0
           pending=(list pend-tx)
@@ -212,6 +232,30 @@
           resend-time=@dr
           update-rate=@dr
       ==
+    ::
+    ++  state-2
+      $:  %2
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer send-tx])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          next-nonce=(unit @ud)
+          next-batch=time
+          pre=^state:naive
+          own=owners
+          spo=sponsors
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
+      ==
     --
   ::
   ++  on-poke
@@ -236,6 +280,7 @@
   ::    /x/unspawned/[~star]           ->  %noun  (list ship)
   ::    /x/sponsored/[~point]          ->  %noun  [(list ship) (list ship)]
   ::    /x/next-batch                  ->  %atom  time
+  ::    /x/next-slice                  ->  %atom  time
   ::    /x/point/[~ship]               ->  %noun  point:naive
   ::    /x/ships/[0xadd.ress]          ->  %noun  (list ship)
   ::    /x/config                      ->  %noun  config
@@ -249,6 +294,9 @@
   ::    /x/quota                       ->  %atom  @ud
   ::    /x/slice                       ->  %atom  @dr
   ::    /x/over-quota/[~ship]          ->  %atom  ?
+  ::    /x/ship-quota/[~ship]          ->  %atom  @ud
+  ::    /x/allowances                  ->  %noun  (map @p (unit @ud))
+  ::    /x/allowances/[~ship]          ->  %noun  (unit @ud)
   ::    /x/ready                       ->  %atom  ?
   ::
   ++  on-peek
@@ -266,6 +314,7 @@
       [%x %unspawned @ ~]     (unspawned i.t.t.path)
       [%x %sponsored @ ~]     (sponsored i.t.t.path)
       [%x %next-batch ~]      ``atom+!>(next-batch)
+      [%x %next-slice ~]      ``atom+!>(next-slice)
       [%x %point @ ~]         (point i.t.t.path)
       [%x %ships @ ~]         (ships i.t.t.path)
       [%x %config ~]          config
@@ -280,6 +329,8 @@
       [%x %slice ~]           ``atom+!>(slice)
       [%x %over-quota @ ~]    (over-quota i.t.t.path)
       [%x %ship-quota @ ~]    (ship-quota i.t.t.path)
+      [%x %allowances ~]      ``noun+!>(allowances)
+      [%x %allowance @ ~]     (allowance i.t.t.path)
       [%x %ready ~]           ``atom+!>(?=(^ points.pre))
     ==
     ::
@@ -461,6 +512,16 @@
       !>  ^-  @ud
       ?:  exceeded  0
       (sub quota.state (dec next-quota))
+    ::
+    ++  allowance
+      |=  wat=@t
+      ?~  who=(slaw %p wat)  [~ ~]
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  (unit @ud)
+      ?^  allow=(~(get by allowances) u.who)
+        u.allow
+      `quota.state
     ::
     --
   ::
@@ -908,6 +969,7 @@
   ?-  -.action
     %commit  ?>(local on-timer)
     %config  ?>(local (on-config +.action))
+    %assign  ?>(local `state(allowances (~(put by allowances) +.action)))
     %cancel  (cancel-tx +.action)
   ::
       %submit
@@ -1049,9 +1111,9 @@
   ::
   ++  set-quota
     |=  slice=@dr
-    ^-  card
+    ^-  [=card =time]
     =+  time=(mul +((div now.bowl slice)) slice)
-    (wait:b:sys /quota-timer time)
+    [(wait:b:sys /quota-timer time) time]
   --
 ::  +on-timer: every :frequency, freeze :pending txs roll and start sending it
 ::
@@ -1101,7 +1163,8 @@
 ::
 ++  on-quota-timer
   ^-  (quip card _state)
-  :-  [(set-quota:timer slice)]~
+  =^  card  next-slice  (set-quota:timer slice)
+  :-  [card]~
   state(ship-quota *(map ship @ud))
 ::
 ++  update-history
@@ -1132,10 +1195,19 @@
 ::
 ++  quota-exceeded
   |=  =ship
-  ^-  [? @ud]
-  ?~  quota=(~(get by ship-quota) ship)
-    [| 1]
-  [(gte u.quota quota.state) +(u.quota)]
+  ^-  [exceeded=? next-quota=@ud]
+  =/  quota=(unit @ud)         (~(get by ship-quota) ship)
+  =/  allow=(unit (unit @ud))  (~(get by allowances) ship)
+  ?~  quota
+    :_  1
+    ?~  allow  |
+    ?~(u.allow | =(u.u.allow 0))
+  :_  +(u.quota)
+  ?~  allow
+    (gte u.quota quota.state)
+  ::  ship has been whitelisted ("?~ u.allow" means no quota restrictions)
+  ::
+  ?~(u.allow | (gte u.quota u.u.allow))
 ::  +out-of-sync: checks if the previous nonce has been sent
 ::
 ++  out-of-sync

@@ -152,9 +152,11 @@
       (process-rpc id +.params method over-quota:scry)
     ?+  method  [~ ~(method error:json-rpc id)]
       %cancel-transaction      (cancel-tx id +.params)
-      %when-next-batch         `(next-batch id +.params next-batch:scry)
+      %when-next-batch         `(next-timer id +.params next-batch:scry)
+      %when-next-slice         `(next-timer id +.params next-slice:scry)
       %spawns-remaining        `(spawns-remaining id +.params unspawned:scry)
       %get-remaining-quota     `(quota-remaining id +.params ship-quota:scry)
+      %get-allowance           `(ship-allowance id +.params allowance:scry)
       %get-point               `(get-point id +.params point:scry)
       %get-ships               `(get-ships id +.params ships:scry)
       %get-spawned             `(get-spawned id +.params spawned:scry)
@@ -304,7 +306,13 @@
   ++  next-batch
     .^  time
         %gx
-        (~(scry agentio bowl) %roller /next-batch/noun)
+        (~(scry agentio bowl) %roller /next-batch/atom)
+    ==
+  ::
+  ++  next-slice
+    .^  time
+        %gx
+        (~(scry agentio bowl) %roller /next-slice/atom)
     ==
   ::
   ++  nonce
@@ -358,6 +366,13 @@
     .^  @ud
         %gx
         (~(scry agentio bowl) %roller /ship-quota/(scot %p ship)/atom)
+    ==
+  ::
+  ++  allowance
+    |=  =ship
+    .^  (unit @ud)
+        %gx
+        (~(scry agentio bowl) %roller /allowance/(scot %p ship)/noun)
     ==
   ::
   ++  ready
