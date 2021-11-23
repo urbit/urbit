@@ -140,7 +140,7 @@
         "pmnsh": {
             "include": "include",
             "lib": ".libs",
-            "prepare": "./autogen.sh && ./configure --disable-shared --enable-module-recovery CFLAGS=-DSECP256K1_API=",
+            "prepare": "./autogen.sh && ./configure --disable-shared --enable-module-recovery --enable-module-schnorrsig CFLAGS=-DSECP256K1_API=",
             "make": "libsecp256k1.la"
         },
         "owner": "bitcoin-core",
