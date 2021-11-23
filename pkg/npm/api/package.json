@@ -1,39 +1,52 @@
 {
   "name": "@urbit/api",
-  "version": "2.0.0",
-  "description": "",
+  "version": "2.1.0",
+  "description": "A library that provides bindings and types for Urbit's various userspace desks",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/urbit/urbit.git",
     "directory": "pkg/npm/api"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d",
+  "type": "module",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "jsdelivr": "dist/urbit-api.min.js",
+  "unpkg": "dist/urbit-api.min.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
-    "watch": "tsc -p tsconfig.json --watch",
-    "build": "tsc -p tsconfig.json",
-    "clean": "rm -rf dist/*",
-    "prepare": "npm run build"
+    "build": "npm run clean && rollup -c && npx tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "watch": "rollup -c -w",
+    "clean": "rm -rf dist/* types/*"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.12.5",
-    "@types/lodash": "^4.14.168",
-    "@urbit/eslint-config": "^1.0.3",
+    "@babel/runtime": "^7.16.0",
     "big-integer": "^1.6.48",
+    "core-js": "^3.19.1",
     "immer": "^9.0.1",
-    "lodash": "^4.17.20",
     "urbit-ob": "^5.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
     "@types/node": "^15.12.5",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
+    "@urbit/eslint-config": "^1.0.3",
     "babel-eslint": "^10.1.0",
     "eslint-plugin-react": "^7.24.0",
-    "onchange": "^7.1.0",
+    "rollup": "^2.59.0",
+    "rollup-plugin-analyzer": "^4.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0",
     "typescript": "^4.3.2"
   }
 }

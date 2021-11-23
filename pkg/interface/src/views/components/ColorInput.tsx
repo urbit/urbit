@@ -9,7 +9,7 @@ import {
 import { useField } from 'formik';
 import React, { FormEvent, useState, useEffect } from 'react';
 import { hexToUx } from '~/logic/lib/util';
-import { uxToHex } from '@urbit/api/dist';
+import { uxToHex } from '@urbit/api';
 
 export type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;

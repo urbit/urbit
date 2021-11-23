@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react';
 
 import { Box } from '@tlon/indigo-react';
 import { InviteItem, InviteItemProps } from '~/views/components/Invite';
-import { JoinProgress } from '@urbit/api/groups';
+import { JoinProgress } from '@urbit/api';
 
 export default {
   title: 'Notifications/Invite',

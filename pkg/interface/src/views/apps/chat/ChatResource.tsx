@@ -1,5 +1,4 @@
-import { Content, createPost, fetchIsAllowed, Post, removePosts, deSig } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, Content, createPost, fetchIsAllowed, Post, removePosts, deSig } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import React, {
   ReactElement, useCallback,

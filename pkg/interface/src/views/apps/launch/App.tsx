@@ -30,8 +30,7 @@ import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import { Invite } from './components/Invite';
 import './css/custom.css';
-import { join } from '@urbit/api/groups';
-import { joinGraph } from '@urbit/api/graph';
+import { join, joinGraph } from '@urbit/api';
 import airlock from '~/logic/api';
 
 const ScrollbarLessBox = styled(Box)`

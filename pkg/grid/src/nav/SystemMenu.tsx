@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import clipboardCopy from 'clipboard-copy';
 import React, { HTMLAttributes, useCallback, useState } from 'react';
 import { Link, Route, useHistory } from 'react-router-dom';
-import { Vat } from '@urbit/api/hood';
+import { Vat } from '@urbit/api';
 import { Adjust } from '../components/icons/Adjust';
 import { useVat } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';

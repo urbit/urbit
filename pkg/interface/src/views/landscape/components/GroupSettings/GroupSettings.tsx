@@ -1,7 +1,5 @@
 import { Box, Button, Col, Text } from '@tlon/indigo-react';
-import { deSig } from '@urbit/api';
-import { Group } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Association, deSig, Group } from '@urbit/api';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
