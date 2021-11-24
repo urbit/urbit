@@ -18,9 +18,9 @@
   $:  started=time
       =ship
       =progress
+      =app
       share-co=?
       autojoin=?
-      =app
       invite=(set uid)
   ==
 ::
@@ -32,8 +32,8 @@
       $:  %join
           =resource
           =ship
-          share-contact=?
           =app
+          share-contact=?
           autojoin=?
       ==
       [%abort =resource]

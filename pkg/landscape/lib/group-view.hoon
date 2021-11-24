@@ -35,8 +35,8 @@
     %-  ot
     :~  resource+dejs:resource
         ship+(su ;~(pfix sig fed:ag))
-        'shareContact'^bo
         app+(su (perk %groups %graph ~))
+        'shareContact'^bo
         autojoin+bo
     ==
   ::

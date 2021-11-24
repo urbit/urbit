@@ -249,12 +249,12 @@
     [(flop cards) state]
   ::
   ++  jn-start
-    |=  [rid=resource =^ship share-co=? =app:view autojoin=?]
+    |=  [rid=resource =^ship =app:view share-co=? autojoin=?]
     ^+  jn-core
     ?>  ?=  $@(~ [~ ?(%done %abort)])
             (bind (~(get by joining) rid) |=(request:view progress))
     =/  =request:view
-      [now.bowl ship %start share-co autojoin app (get-invites app rid)]
+      [now.bowl ship %start app share-co autojoin (get-invites app rid)]
     =.  joining
       (~(put by joining) rid request)
     =.  jn-core
