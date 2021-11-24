@@ -1,4 +1,4 @@
-import { Association, Group, JoinRequests } from '@urbit/api';
+import { Association, Group, JoinRequests, abortJoin } from '@urbit/api';
 import { useCallback } from 'react';
 import { reduce } from '../reducers/group-update';
 import _ from 'lodash';
@@ -9,7 +9,6 @@ import {
   reduceStateN
 } from './base';
 import api from '~/logic/api';
-import { abortJoin } from '@urbit/api';
 
 export interface GroupState {
   groups: {

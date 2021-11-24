@@ -91,7 +91,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
                 <NewGroup />
               </ModalButton>
               <Button
-                bg="washedGray"
+                backgroundColor="washedGray"
                 color="black"
                 border={0}
                 p={0}
