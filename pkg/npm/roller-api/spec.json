@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.13",
+    "version": "0.1.14",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -1417,6 +1417,18 @@
       }
     },
     {
+      "name": "whenNextSlice",
+      "summary": "Timestamp of when the quota for submitting L2 transactions will be reset",
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "Next slice",
+        "schema": {
+          "$ref": "#/components/schemas/Timestamp"
+        }
+      }
+    },
+    {
       "name": "getTransactionStatus",
       "summary": "Status of an L2 transaction submitted to the Roller",
       "paramStructure": "by-name",
@@ -2121,7 +2133,7 @@
     },
     {
       "name": "getRemainingQuota",
-      "summary": "Retrieves number of L2 transactions this ship is allowed to send to the Roller",
+      "summary": "Retrieves current number of L2 transactions this ship is allowed to send to the Roller",
       "paramStructure": "by-name",
       "params": [
         {
@@ -2138,6 +2150,28 @@
         "schema": {
           "type": "number",
           "title": "RemainingQuota"
+        }
+      }
+    },
+    {
+      "name": "getAllowance",
+      "summary": "Retrieves number of L2 transactions this ship is allowed to send to the Roller, per time slice",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "ship",
+          "description": "The @p of the planet (e.g. `~sampel-planet` or 256)",
+          "schema": {
+            "$ref": "#/components/schemas/Ship"
+          }
+        }
+      ],
+      "result": {
+        "name": "Allowance",
+        "description": "Ship Allowance, per time slice",
+        "schema": {
+          "type": "number",
+          "title": "Allowance"
         }
       }
     }
