@@ -297,7 +297,6 @@
   |=  =path
   ?>  (team:title [our src]:bowl)
   ?+  path  (on-watch:def path)
-    [%nack ~]  `this
   ::
       [%preview @ @ @ ~]
     =/  rid=resource
@@ -325,7 +324,6 @@
   =/  =associations:metadata
     (metadata-for-group:met resource)
   :_  this
-  :-  `card`[%give %fact ~[/nack] resource+!>(resource)]
   %+  turn  ~(tap by associations)
   |=  [=md-resource:metadata =association:metadata]
   %+  poke-our:pass:io  %metadata-store
