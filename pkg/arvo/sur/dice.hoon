@@ -19,8 +19,7 @@
   ==
 ::
 +$  indices
-  $:  nas=^state:naive
-      own=owners
+  $:  own=owners
       spo=sponsors
   ==
 ::

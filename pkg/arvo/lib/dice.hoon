@@ -9,66 +9,52 @@
   (lte nonce.a nonce.b)
 ::
 ++  apply-effects
-  |=  [chain-t=@ =effects:naive =indices]
+  |=  [chain-t=@ =effects:naive nas=^state:naive =indices]
   ^+  indices
   %+  roll  effects
   |=  [=diff:naive indices=_indices]
-  ?.  ?=([%tx *] diff)  indices::[nas own spo]
+  ?.  ?=([%tx *] diff)  indices
   =<  indices
-  (apply-raw-tx | chain-t raw-tx.diff indices)
+  (apply-raw-tx | chain-t raw-tx.diff nas indices)
 ::
 ++  apply-raw-tx
-  |=  [force=? chain-t=@ =raw-tx:naive =indices]
-  ^-  [? ups=(list update) indices=_indices]
-  =+  cache-nas=nas.indices
+  |=  [force=? chain-t=@ =raw-tx:naive nas=^state:naive =indices]
+  ^-  [? ups=(list update) nas=_nas indices=_indices]
+  =+  cache=nas
   =/  chain-t=@t  (ud-to-ascii:naive chain-t)
-  ?.  (verify-sig-and-nonce:naive verifier chain-t nas.indices raw-tx)
+  ?.  (verify-sig-and-nonce:naive verifier chain-t nas raw-tx)
     ~&  [%verify-sig-and-nonce %failed tx.raw-tx]
-    [force ~ indices]
-  =^  *  points.nas.indices
-    (increment-nonce:naive nas.indices from.tx.raw-tx)
-  ?~  nex=(receive-tx:naive nas.indices tx.raw-tx)
+    [force ~ nas indices]
+  =^  *  points.nas
+    (increment-nonce:naive nas from.tx.raw-tx)
+  ?~  nex=(receive-tx:naive nas tx.raw-tx)
     ~&  [%receive-tx %failed]
-    =?  nas.indices  !force  cache-nas
-    [force ~ indices]
+    [force ~ ?:(force nas cache) indices]
   =*  new-nas   +.u.nex
   =*  effects   -.u.nex
-  =/  [updates=(list update) own=_own.indices spo=_spo.indices]
-     (update-indices effects cache-nas new-nas [own spo]:indices)
-  =:  nas.indices  new-nas
-      own.indices  own
-      spo.indices  spo
-    ==
-  [& updates indices]
+  =^  updates   indices
+    (update-indices effects cache new-nas [own spo]:indices)
+  [& updates new-nas indices]
 ::
 ++  update-indices
-  |=  $:  =effects:naive
-          cache-nas=^state:naive
-          nas=^state:naive
-          =owners
-          =sponsors
-      ==
-  ^-  [(list update) own=_owners spo=_sponsors]
+  |=  [=effects:naive cache=^state:naive nas=^state:naive =indices]
+  ^-  [(list update) indices=_indices]
   %+  roll  effects
-  |=  $:  =diff:naive
-          ups=(list update)
-          owners=_owners
-          sponsors=_sponsors
-      ==
+  |=  [=diff:naive ups=(list update) indices=_indices]
   =,  orm:naive
-  ?.  ?=([%point *] diff)  [ups owners sponsors]
-  =*  ship  ship.diff
+  ?.  ?=([%point *] diff)  [ups indices]
+  =*  ship      ship.diff
+  =*  sponsors  spo.indices
+  =*  owners    own.indices
   =/  old=(unit point:naive)
-    (get points.cache-nas ship)
+    (get points.cache ship)
   =/  new=point:naive
     (need (get points.nas ship))
   =*  event  +>.diff
   |^
-  =^  updates  owners  ownership
-  =+  sponsors=sponsorship
-  :+  (weld ups updates)
-    owners
-  sponsors
+  =.  sponsors  sponsorship
+  =^  updates   owners  ownership
+  [(weld ups updates) indices]
   ::
   ++  sponsorship
     ^+  sponsors

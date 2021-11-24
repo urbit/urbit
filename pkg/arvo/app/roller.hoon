@@ -950,10 +950,13 @@
 ++  try-apply
   |=  [nas=^state:naive force=? =raw-tx:naive]
   ^-  [[? ups=(list update)] _state]
-  =/  [success=? ups=(list update) predicted=_nas owners=_own sponsors=_spo]
+  =/  [success=? ups=(list update) predicted=_nas =indices]
     (apply-raw-tx:dice force chain-id raw-tx nas own spo)
-  :-  [success ups]
-  state(pre predicted, own owners, spo sponsors)
+  =:  pre  predicted
+      own  own.indices
+      spo  spo.indices
+    ==
+  [[success ups] state]
 ::
 ++  get-l1-address
   |=  [=tx:naive nas=^state:naive]

@@ -309,7 +309,8 @@
     [(flop effects) state]
   ?~  mined.i.logs
     $(logs t.logs)
-  =/  [raw-effects=effects:naive new-nas=_nas.state]
+  =+  cache=nas.state
+  =^  raw-effects  nas.state
     =/  =^input:naive
       :-  block-number.u.mined.i.logs
       ?:  =(azimuth.net address.i.logs)
@@ -321,28 +322,14 @@
         [%bat *@]
       [%bat u.input.u.mined.i.logs]
     (%*(. naive lac |) verifier chain-id.net nas.state input)
-  ::  TODO: move to /lib/dice ?
-  ::
-  =/  [new-own=_own.state new-spo=_spo.state]
-    =<  [own spo]
+  =/  =indices  [own spo]:state
+  =.  indices
     ?.  =(azimuth.net address.i.logs)
-      %:  apply-effects:dice
-        chain-id.net
-        raw-effects
-        nas.state
-        own.state
-        spo.state
-      ==
-    %:  update-indices:dice
-      raw-effects
-      nas.state
-      new-nas
-      own.state
-      spo.state
-    ==
-  =:  nas.state  new-nas
-      own.state  new-own
-      spo.state  new-spo
+      (apply-effects:dice chain-id.net raw-effects cache indices)
+    =<  indices
+    (update-indices:dice raw-effects cache nas.state indices)
+  =:  own.state  own.indices
+      spo.state  spo.indices
     ==
   =/  effects-1
     =/  =id:block  [block-hash block-number]:u.mined.i.logs
