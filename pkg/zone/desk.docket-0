@@ -2,9 +2,10 @@
   title+'Zone'
   info+'A world clock to keep track of your friends'
   color+0x29.8e40
-  glob-http+['https://ewr1.vultrobjects.com/urbit/glob-0v2.pu9th.td61s.33q5c.i7thd.hfja6.glob 0v2.pu9th.td61s.33q5c.i7thd.hfja6]
+  glob-http+['https://bootstrap.urbit.org/glob-0v6.sg922.r56c1.fpa5m.eb4ko.odab3.glob' 0v6.sg922.r56c1.fpa5m.eb4ko.odab3]
+
   base+'zone'
-  version+[0 0 1]
+  version+[0 1 0]
   license+'MIT'
   website+'https://tlon.io'
 ==
