@@ -57,6 +57,8 @@
     "workbox-precaching": "^6.0.2",
     "workbox-recipes": "^6.0.2",
     "workbox-routing": "^6.0.2",
+    "xterm": "^4.15.0",
+    "xterm-addon-fit": "^0.5.0",
     "yup": "^0.29.3",
     "zustand": "^3.5.0"
   },
