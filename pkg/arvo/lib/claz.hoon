@@ -42,6 +42,8 @@
     %adopt                 (adopt:dat +.call)
     %start-document-poll   (start-document-poll:dat +.call)
     %cast-document-vote    (cast-document-vote:dat +.call)
+    %start-upgrade-poll    (start-upgrade-poll:dat +.call)
+    %cast-upgrade-vote     (cast-upgrade-vote:dat +.call)
   ::
     %send-point  (send-point:dat +.call)
   ::
@@ -71,6 +73,8 @@
   ++  adopt                   (enc adopt:cal)
   ++  start-document-poll     (enc start-document-poll:cal)
   ++  cast-document-vote      (enc cast-document-vote:cal)
+  ++  start-upgrade-poll      (enc start-upgrade-poll:cal)
+  ++  cast-upgrade-vote       (enc cast-upgrade-vote:cal)
   ::
   ++  register-linear         (enc register-linear:cal)
   ++  register-conditional    (enc register-conditional:cal)
@@ -175,6 +179,25 @@
     :-  'castDocumentVote(uint8,bytes32,bool)'
     :~  [%uint `@`gal]
         [%bytes-n 32^hash]
+        [%bool support]
+    ==
+  ::
+  ++  start-upgrade-poll
+    |=  [gal=ship =address]
+    ^-  call-data
+    ?>  =(%czar (clan:title gal))
+    :-  'startUpgradePoll(uint8,address)'
+    :~  [%uint `@`gal]
+        [%address address]
+    ==
+  ::
+  ++  cast-upgrade-vote
+    |=  [gal=ship =address support=?]
+    ^-  call-data
+    ?>  =(%czar (clan:title gal))
+    :-  'castUpgradeVote(uint8,address,bool)'
+    :~  [%uint `@`gal]
+        [%address address]
         [%bool support]
     ==
   ::
