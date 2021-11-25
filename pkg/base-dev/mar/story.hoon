@@ -7,11 +7,14 @@
     [/text/x-urb-story (as-octs:mimes:html (of-wain:format txt))]
   ++  txt
     ^-  wain
+    :: TODO better code style?
+    %+  snoc  :: ensure terminating newline is present 
     %+  turn  ~(tap by story)
     |=  [chapter=[tak=tako:clay message=[title=@t body=@t]]]
     =/  tak=tako:clay       tak.chapter
     =/  [title=@t body=@t]  +.chapter
-    (crip "commit: {<`@uv`tak>}\0a{(trip title)}\0a\0a{(trip body)}\0a---\0a")
+    (crip "commit: {<`@uv`tak>}\0a{(trip title)}\0a\0a{(trip body)}\0a---")
+    ''
   --
 ++  grab
   |%                                             ::  convert from
@@ -38,7 +41,7 @@
       ;~  sfix                              :: parse the following and discard terminator
         %-  star                            :: parse 0 or more of the following
         %+  cook  crip                      :: convert to cord
-        ;~  less  (jest '---\0a')              :: exclude '---' from the following parse
+        ;~  less  (jest '---\0a')           :: exclude the terminator from the following parse
           ;~(sfix (star prn) (just '\0a'))  :: parse 0 or more prn chars then discard literal newline
         ==
       ::
@@ -46,8 +49,8 @@
       ==
     ::
     =/  story-parser
-      %-  star  :: parse any number of the chapters
-      ;~  plug  :: parse chapter: a commit, followed by a title, followed by a body
+      %-  star           :: parse any number of the chapters
+      ;~  plug           :: parse chapter: a commit, followed by a title, followed by a body
           commit-parser
           title-parser
           body-parser
