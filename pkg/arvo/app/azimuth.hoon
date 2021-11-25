@@ -322,12 +322,14 @@
         [%bat *@]
       [%bat u.input.u.mined.i.logs]
     (%*(. naive lac |) verifier chain-id.net nas.state input)
+  ::  TODO: make index update optional?
+  ::
   =/  =indices  [own spo]:state
   =.  indices
-    ?.  =(azimuth.net address.i.logs)
-      (apply-effects:dice chain-id.net raw-effects cache indices)
+    ?:  =(naive.net address.i.logs)
+      (tx-effects:dice chain-id.net raw-effects cache indices)
     =<  indices
-    (update-indices:dice raw-effects cache nas.state indices)
+    (point-effects:dice raw-effects cache nas.state indices)
   =:  own.state  own.indices
       spo.state  spo.indices
     ==

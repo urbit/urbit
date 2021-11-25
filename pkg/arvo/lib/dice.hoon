@@ -8,41 +8,44 @@
   |=  [a=[* =nonce:naive] b=[* =nonce:naive]]
   (lte nonce.a nonce.b)
 ::
-++  apply-effects
+++  tx-effects
   |=  [chain-t=@ =effects:naive nas=^state:naive =indices]
   ^+  indices
-  %+  roll  effects
-  |=  [=diff:naive indices=_indices]
-  ?.  ?=([%tx *] diff)  indices
   =<  indices
+  %+  roll  effects
+  |=  [=diff:naive nas=_nas indices=_indices]
+  ?.  ?=([%tx *] diff)  [nas indices]
+  =<  [nas indices]
   (apply-raw-tx | chain-t raw-tx.diff nas indices)
 ::
 ++  apply-raw-tx
   |=  [force=? chain-t=@ =raw-tx:naive nas=^state:naive =indices]
-  ^-  [? ups=(list update) nas=_nas indices=_indices]
+  ^-  [? (list update) nas=_nas indices=_indices]
   =+  cache=nas
   =/  chain-t=@t  (ud-to-ascii:naive chain-t)
   ?.  (verify-sig-and-nonce:naive verifier chain-t nas raw-tx)
-    ~&  [%verify-sig-and-nonce %failed tx.raw-tx]
+    ~&  >>>  [%verify-sig-and-nonce %failed tx.raw-tx]
     [force ~ nas indices]
   =^  *  points.nas
     (increment-nonce:naive nas from.tx.raw-tx)
   ?~  nex=(receive-tx:naive nas tx.raw-tx)
-    ~&  [%receive-tx %failed]
+    ~&  >>>  [%receive-tx %failed]
     [force ~ ?:(force nas cache) indices]
   =*  new-nas   +.u.nex
   =*  effects   -.u.nex
   =^  updates   indices
-    (update-indices effects cache new-nas [own spo]:indices)
+    (point-effects effects cache new-nas [own spo]:indices)
   [& updates new-nas indices]
 ::
-++  update-indices
+++  point-effects
   |=  [=effects:naive cache=^state:naive nas=^state:naive =indices]
   ^-  [(list update) indices=_indices]
+  =;  [updates=(list update) indices=_indices]
+    [(flop updates) indices]
   %+  roll  effects
-  |=  [=diff:naive ups=(list update) indices=_indices]
+  |=  [=diff:naive updates=(list update) indices=_indices]
   =,  orm:naive
-  ?.  ?=([%point *] diff)  [ups indices]
+  ?.  ?=([%point *] diff)  [updates indices]
   =*  ship      ship.diff
   =*  sponsors  spo.indices
   =*  owners    own.indices
@@ -53,8 +56,8 @@
   =*  event  +>.diff
   |^
   =.  sponsors  sponsorship
-  =^  updates   owners  ownership
-  [(weld ups updates) indices]
+  =^  update    owners  ownership
+  [(welp update updates) indices]
   ::
   ++  sponsorship
     ^+  sponsors
@@ -76,7 +79,7 @@
       (~(put in residents.u.sponsor) ship)
     ::
         %escape
-      ?~  old  sponsors
+      ?~  old     sponsors
       =*  from    who.sponsor.net.u.old
       =*  to      to.event
       =*  escape  escape.net.u.old
@@ -99,7 +102,7 @@
       (~(put in requests.u.receiver) ship)
     ::
         %sponsor
-      ?~  old  sponsors
+      ?~  old   sponsors
       =*  from  who.sponsor.net.u.old
       =*  to    sponsor.event
       =/  previous  (~(get by sponsors) from)
@@ -132,10 +135,10 @@
       ?:  ?|  =(~ to)
               &(?=(^ to) =(address.u.to 0x0))
           ==
-        [ups owners]
-      ?~  to  [ups owners]
-      :_  (~(put ju owners) u.to ship)
-      (snoc ups [%point ship new u.to from])
+        [~ owners]
+      ?~  to  [~ owners]
+      :-  [%point ship new u.to from]~
+      (~(put ju owners) u.to ship)
     ?+    -.event  [~ ~]
         %owner
       :-  `[%own +.event]
@@ -166,7 +169,7 @@
 ::
 ++  get-owner
   |=  [=point:naive =proxy:naive]
-  ^-  [nonce=@ _point]
+  ^-  [=nonce:naive _point]
   =*  own  own.point
   ?-    proxy
       %own
