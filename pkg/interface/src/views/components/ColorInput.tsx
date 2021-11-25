@@ -1,15 +1,14 @@
 import {
     Box, Col,
-
     ErrorLabel, Label,
     Row,
-
     StatelessTextInput as Input
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
-import React, { FormEvent, useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import { hexToUx } from '~/logic/lib/util';
 import { uxToHex } from '@urbit/api/dist';
+import _ from 'lodash';
 
 export type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
@@ -36,19 +35,28 @@ function padHex(hex: string) {
 
 export function ColorInput(props: ColorInputProps) {
   const { id, placeholder, label, caption, disabled, ...rest } = props;
-  const [{ value, onBlur }, meta, { setValue, setTouched }] = useField(id);
+  const [{ value }, meta, { setValue, setTouched }] = useField(id);
   const [field, setField] = useState(uxToHex(value));
 
-  useEffect(() => {
+  const update = (value: string) => {
+    const normalizedValue = value.trim().replace(/[^a-f\d]/gi, '').slice(0,6);
+    setField(normalizedValue);
+  };
+
+  const onText = (e: ChangeEvent<HTMLInputElement>) => update(e.target.value);
+
+  const pickerChange = useMemo(() => _.debounce(update, 100), []);
+
+  const updateField = useMemo(() => _.debounce((field: string) => {
     const newValue = hexToUx(padHex(field));
     setValue(newValue);
     setTouched(true);
+  }, 150), []);
+
+  useEffect(() => {
+    updateField(field);
   }, [field]);
 
-  const onChange = (e: FormEvent<HTMLInputElement>) => {
-    const { value: newValue } = e.target as HTMLInputElement;
-    setField(newValue.slice(1));
-  };
   const hex = uxToHex(value);
   const isValid = COLOR_REGEX.test(hex);
 
@@ -65,8 +73,8 @@ export function ColorInput(props: ColorInputProps) {
           id={id}
           borderTopRightRadius={0}
           borderBottomRightRadius={0}
-          onBlur={onBlur}
-          onChange={onChange}
+          onBlur={onText}
+          onChange={onText}
           value={field}
           disabled={disabled || false}
           borderRight={0}
@@ -90,7 +98,7 @@ export function ColorInput(props: ColorInputProps) {
             type='color'
             opacity={0}
             overflow='hidden'
-            onChange={onChange}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => pickerChange(e.target.value)}
           />
         </Box>
       </Row>
