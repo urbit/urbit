@@ -794,7 +794,7 @@
       ^-  vase
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
+      =/  tex=cord  !<(@t q.cag)
       =/  =pile  (parse-pile path tex)
       =.  hoon.pile  !,(*hoon .)
       =^  res=vase  nub  (run-pile pile)
@@ -819,7 +819,7 @@
       :: ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
+      =/  tex=cord  !<(@t q.cag)
       =/  =pile  (parse-pile path tex)
       =^  res=vase  nub  (run-pile pile)
       =^  top  stack.nub  pop-stack
@@ -870,15 +870,16 @@
       [res nub]
     ::
     ++  parse-pile
-      |=  [pax=path tex=tape]
+      |=  [pax=path tex=cord]
       ^-  pile
-      =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
+      =/  [=hair res=(unit [=pile =nail])]
+        ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
       %-  mean  %-  flop
       =/  lyn  p.hair
       =/  col  q.hair
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-          leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
+          leaf+(trip (snag (dec lyn) (to-wain:format tex)))
           leaf+(runt [(dec col) '-'] "^")
       ==
     ::
@@ -1457,7 +1458,7 @@
     ?~  yen
       =.  lab.dom  (~(put by lab.dom) bel yon)
       ..park
-    ::  an aeon is bound to this label, 
+    ::  an aeon is bound to this label,
     ::  but it is the same as the existing one, so we no-op
     ::
     ?:  =(u.yen yon)

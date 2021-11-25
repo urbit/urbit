@@ -4031,8 +4031,8 @@
           ^=  q                                         ::
           ?@  +.b  ~                                    ::
           :-  ~                                         ::
-          u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
-+$  nail  [p=hair q=tape]                               ::  parsing input
+          u=[p=(a +>-.b) q=[p=(hair -.b) q=(cord +.b)]] ::
++$  nail  [p=hair q=cord]                               ::  parsing input
 +$  pint  [p=[p=@ q=@] q=[p=@ q=@]]                     ::  line+column range
 +$  rule  _|:($:nail $:edge)                            ::  parsing rule
 +$  spot  [p=path q=pint]                               ::  range in file
@@ -4914,22 +4914,24 @@
 ::
 ++  inde  |*  sef=rule                                  :: indentation block
   |=  nail  ^+  (sef)
-  =+  [har tap]=[p q]:+<
+  =+  [har cor]=[p q]:+<
   =+  lev=(fil 3 (dec q.har) ' ')
   =+  eol=(just `@t`10)
-  =+  =-  roq=((star ;~(pose prn ;~(sfix eol (jest lev)) -)) har tap)
+  =+  =-  roq=((star ;~(pose prn ;~(sfix eol (jest lev)) -)) har cor)
       ;~(simu ;~(plug eol eol) eol)
   ?~  q.roq  roq
-  =+  vex=(sef har(q 1) p.u.q.roq)
+  =+  vex=(sef har(q 1) (crip p.u.q.roq))
   =+  fur=p.vex(q (add (dec q.har) q.p.vex))
   ?~  q.vex  vex(p fur)
   =-  vex(p fur, u.q -)
-  :+  &3.vex
-    &4.vex(q.p (add (dec q.har) q.p.&4.vex))
-  =+  res=|4.vex
-  |-  ?~  res  |4.roq
-  ?.  =(10 -.res)  [-.res $(res +.res)]
-  (welp [`@t`10 (trip lev)] $(res +.res))
+  :+  &3.vex  ::  p.u.q.vex, out value
+    &4.vex(q.p (add (dec q.har) q.p.&4.vex))  ::  p.q.u.q.vex, hair
+  =+  res=|4.vex  ::  q.q.u.q.vex, cord
+  |-  ?:  =('' res)  |4.roq  ::  cord
+  =+  nep=(end 3 res)
+  =+  nex=(rsh 3 res)
+  ?.  =(10 nep)  (cat 3 nep $(res nex))
+  (cat 3 (cat 3 10 lev) $(res nex))
 ::
 ++  ifix
   |*  [fel=[rule rule] hof=rule]
@@ -4945,9 +4947,9 @@
   |-  ^-  (like @t)
   ?:  =(`@`0 daf)
     [p=p.tub q=[~ u=[p=fad q=tub]]]
-  ?:  |(?=(~ q.tub) !=((end 3 daf) i.q.tub))
+  ?:  !=((end 3 daf) (end 3 q.tub))
     (fail tub)
-  $(p.tub (lust i.q.tub p.tub), q.tub t.q.tub, daf (rsh 3 daf))
+  $(p.tub (lust (end 3 q.tub) p.tub), q.tub (rsh 3 q.tub), daf (rsh 3 daf))
 ::
 ++  just                                                ::  XX redundant, jest
   ~/  %just                                             ::  match a char
@@ -4955,9 +4957,9 @@
   ~/  %fun
   |=  tub=nail
   ^-  (like char)
-  ?~  q.tub
+  ?:  =('' q.tub)
     (fail tub)
-  ?.  =(daf i.q.tub)
+  ?.  =(daf (end 3 q.tub))
     (fail tub)
   (next tub)
 ::
@@ -4975,9 +4977,10 @@
   ~/  %fun
   |=  tub=nail
   ^-  (like char)
-  ?~  q.tub
+  ?:  =('' q.tub)
     (fail tub)
-  ?.  (lien bud |=(a=char =(i.q.tub a)))
+  =+  nep=(end 3 q.tub)
+  ?.  (lien bud |=(a=char =(nep a)))
     (fail tub)
   (next tub)
 ::
@@ -4992,10 +4995,11 @@
 ++  next                                                ::  consume a char
   |=  tub=nail
   ^-  (like char)
-  ?~  q.tub
+  ?:  =('' q.tub)
     (fail tub)
-  =+  zac=(lust i.q.tub p.tub)
-  [zac [~ i.q.tub [zac t.q.tub]]]
+  =+  nep=(end 3 q.tub)
+  =+  zac=(lust nep p.tub)
+  [zac [~ nep [zac (rsh 3 q.tub)]]]
 ::
 ++  perk                                                ::  parse cube fork
   |*  a=(pole @tas)
@@ -5030,9 +5034,10 @@
   ~/  %fun
   |=  tub=nail
   ^-  (like char)
-  ?~  q.tub
+  ?:  =('' q.tub)
     (fail tub)
-  ?.  ?&((gte i.q.tub les) (lte i.q.tub mos))
+  =+  nep=(end 3 q.tub)
+  ?.  ?&((gte nep les) (lte nep mos))
     (fail tub)
   (next tub)
 ::
@@ -5083,17 +5088,18 @@
       [n.nuc [n.yal l.yal l.nuc] r.nuc]
   ~%  %fun  ..^$  ~
   |=  tub=nail
-  ?~  q.tub
+  ?:  =('' q.tub)
     (fail tub)
   |-
   ?~  hel
     (fail tub)
+  =+  nep=(end 3 q.tub)
   ?:  ?@  p.n.hel
-        =(p.n.hel i.q.tub)
-      ?&((gte i.q.tub -.p.n.hel) (lte i.q.tub +.p.n.hel))
-    ::  (q.n.hel [(lust i.q.tub p.tub) t.q.tub])
+        =(p.n.hel nep)
+      ?&((gte nep -.p.n.hel) (lte nep +.p.n.hel))
+    ::  (q.n.hel [(lust nep p.tub) (rsh 3 q.tub)])
     (q.n.hel tub)
-  ?:  (wor i.q.tub p.n.hel)
+  ?:  (wor nep p.n.hel)
     $(hel l.hel)
   $(hel r.hel)
 ::
@@ -5156,19 +5162,19 @@
 ::
 ::::  4g: parsing (outside caller)
   ::
-++  rash  |*([naf=@ sab=rule] (scan (trip naf) sab))
+++  scan  |*([naf=tape sab=rule] (rash (crip naf) sab))
 ++  rose  |*  [los=tape sab=rule]
-          =+  vex=(sab [[1 1] los])
+          =+  vex=(sab [[1 1] (crip los)])
           =+  len=(lent los)
           ?.  =(+(len) q.p.vex)  [%| p=(dec q.p.vex)]
           ?~  q.vex
             [%& p=~]
           [%& p=[~ u=p.u.q.vex]]
-++  rush  |*([naf=@ sab=rule] (rust (trip naf) sab))
-++  rust  |*  [los=tape sab=rule]
+++  rust  |*([naf=tape sab=rule] (rush (crip naf) sab))
+++  rush  |*  [los=cord sab=rule]
           =+  vex=((full sab) [[1 1] los])
           ?~(q.vex ~ [~ u=p.u.q.vex])
-++  scan  |*  [los=tape sab=rule]
+++  rash  |*  [los=cord sab=rule]
           =+  vex=((full sab) [[1 1] los])
           ?~  q.vex
             ~_  (show [%m '{%d %d}'] p.p.vex q.p.vex ~)
@@ -5245,25 +5251,7 @@
            (cook |=(a=char (sub a 87)) (shim 'a' 'f'))
            (cook |=(a=char (sub a 55)) (shim 'A' 'F'))
          ==
-++  iny                                                 :: indentation block
-  |*  sef=rule
-  |=  nail  ^+  (sef)
-  =+  [har tap]=[p q]:+<
-  =+  lev=(fil 3 (dec q.har) ' ')
-  =+  eol=(just `@t`10)
-  =+  =-  roq=((star ;~(pose prn ;~(sfix eol (jest lev)) -)) har tap)
-      ;~(simu ;~(plug eol eol) eol)
-  ?~  q.roq  roq
-  =+  vex=(sef har(q 1) p.u.q.roq)
-  =+  fur=p.vex(q (add (dec q.har) q.p.vex))
-  ?~  q.vex  vex(p fur)
-  =-  vex(p fur, u.q -)
-  :+  &3.vex
-    &4.vex(q.p (add (dec q.har) q.p.&4.vex))
-  =+  res=|4.vex
-  |-  ?~  res  |4.roq
-  ?.  =(10 -.res)  [-.res $(res +.res)]
-  (welp [`@t`10 (trip lev)] $(res +.res))
+++  iny  inde                                           :: indentation block
 ::
 ++  low  (shim 'a' 'z')                                 ::  lowercase
 ++  mes  %+  cook                                       ::  hexbyte
@@ -5948,8 +5936,8 @@
   |=  txt=@ta  ^-  (unit coin)
   =+  ^=  vex
       ?:  (gth 0x7fff.ffff txt)                         ::  XX  petty cache
-        ~+  ((full nuck:so) [[1 1] (trip txt)])
-      ((full nuck:so) [[1 1] (trip txt)])
+        ~+  ((full nuck:so) [[1 1] txt])
+      ((full nuck:so) [[1 1] txt])
   ?~  q.vex
     ~
   [~ p.u.q.vex]
@@ -12065,7 +12053,7 @@
       =|  hac=(list item)
       =/  cur=item  [%down ~]
       =|  par=(unit (pair hair wall))
-      |_  [loc=hair txt=tape]
+      |_  [loc=hair txt=cord]
       ::
       ++  $                                           ::  resolve
         ^-  (like tarp)
@@ -12139,18 +12127,20 @@
         |-  ^+  [[lin *(unit _err)] +<.^$]  :: parsed tape and halt/error
         ::
         ::  no unterminated lines
-        ?~  txt
+        ?:  =('' txt)
           ~?  verbose  %unterminated-line
           [[~ ``loc] +<.^$]
-        ?.  =(`@`10 i.txt)
+        =+  nep=(end 3 txt)
+        =+  nex=(rsh 3 txt)
+        ?.  =(`@`10 nep)
           ?:  (gth inr.ind q.loc)
-            ?.  =(' ' i.txt)
+            ?.  =(' ' nep)
               ~?  verbose  expected-indent+[inr.ind loc txt]
               [[~ ``loc] +<.^$]
-            $(txt t.txt, q.loc +(q.loc))
+            $(txt nex, q.loc +(q.loc))
           ::
           ::  save byte and repeat
-          $(txt t.txt, q.loc +(q.loc), lin [i.txt lin])
+          $(txt nex, q.loc +(q.loc), lin [nep lin])
         =.  lin
         ::
         ::  trim trailing spaces
@@ -12159,7 +12149,7 @@
             $(lin t.lin)
           (flop lin)
           ::
-        =/  eat-newline=nail  [[+(p.loc) 1] t.txt]
+        =/  eat-newline=nail  [[+(p.loc) 1] nex]
         =/  saw  look(+<.$ eat-newline)
         ::
         ?:  ?=([~ @ %end ?(%stet %dent)] saw)           ::  stop on == or dedent
@@ -12199,11 +12189,11 @@
           ;/("{+<}\0a")
         ::
         ::  yex: block recomposed, with newlines
-        =/  yex=tape
-          %-  zing
+        =/  yex=cord
+          %+  rap  3
           %+  turn  (flop q.u.par)
           |=  a=tape
-          (runt [(dec inr.ind) ' '] "{a}\0a")
+          (rap 3 (fil 3 (dec inr.ind) ' ') (crip a) '\0a' ~)
         ::
         ::  vex: parse of paragraph
         =/  vex=(like tarp)
@@ -12359,7 +12349,7 @@
           =.  inr.ind  (add 2 inr.ind)
           ::
           ::  "parse" marker
-          =.  txt  (slag (sub inr.ind q.loc) txt)
+          =.  txt  (rsh 3^(sub inr.ind q.loc) txt)
           =.  q.loc  inr.ind
           ::
           (push typ)
@@ -12423,7 +12413,7 @@
                 fex=rule
                 sab=rule
             ==
-        |=  [loc=hair txt=tape]
+        |=  [loc=hair txt=cord]
         ^+  *sab
         ::
         ::  vex: fenced span
@@ -12431,7 +12421,7 @@
         ?~  q.vex  vex
         ::
         ::  hav: reparse full fenced text
-        =/  hav  ((full sab) [loc p.u.q.vex])
+        =/  hav  ((full sab) [loc (crip p.u.q.vex)])
         ::
         ::  reparsed error position is always at start
         ?~  q.hav  [loc ~]
@@ -12449,7 +12439,7 @@
       ::
       ++  echo                                          ::  hoon literal
         |*  sab=rule
-        |=  [loc=hair txt=tape]
+        |=  [loc=hair txt=cord]
         ^-  (like tape)
         ::
         ::  vex: result of parsing wide hoon
@@ -12463,7 +12453,7 @@
         |-  ^-  tape
         ?:  =(q.q.u.q.vex txt)  ~
         ?~  txt  ~
-        [i.txt $(txt +.txt)]
+        [(end 3 txt) $(txt (rsh 3 txt))]
       ::
       ++  non-empty
         |*  a=rule

@@ -4584,12 +4584,12 @@
               (cook |=(a=tape (rap 3 ^-((list @) a))) (star aln))
               dot
             ==
-        [1^1 (flop (trip i.rax))]
+        [1^1 (swp 3 i.rax)]
       ?~  q.raf
         [~ [i.rax ~]]
-      =+  `[ext=term [@ @] fyl=tape]`u.q.raf
+      =+  `[ext=term [@ @] fyl=cord]`u.q.raf
       :-  `ext
-      ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
+      ?:(=(~ fyl) ~ [(swp 3 fyl) ~])
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
