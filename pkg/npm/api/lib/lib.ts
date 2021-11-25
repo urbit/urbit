@@ -162,8 +162,11 @@ export function uxToHex(ux: string) {
 
 export const hexToUx = (hex: string): string => {
   const ux = f.flow(
+    f.dropWhile(y => y === '0'),
+    f.reverse,
     f.chunk(4),
-    f.map(x => _.dropWhile(x, (y: unknown) => y === 0).join('')),
+    f.map(x => x.reverse().join('')),
+    f.reverse,
     f.join('.')
   )(hex.split(''));
   return `0x${ux}`;

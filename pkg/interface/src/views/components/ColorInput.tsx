@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
     Box, Col,
     ErrorLabel, Label,
@@ -6,9 +7,7 @@ import {
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
 import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
-import { hexToUx } from '~/logic/lib/util';
-import { uxToHex } from '@urbit/api/dist';
-import _ from 'lodash';
+import { uxToHex, hexToUx } from '@urbit/api';
 
 export type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
@@ -49,6 +48,7 @@ export function ColorInput(props: ColorInputProps) {
 
   const updateField = useMemo(() => _.debounce((field: string) => {
     const newValue = hexToUx(padHex(field));
+    console.log({ field, newValue });
     setValue(newValue);
     setTouched(true);
   }, 150), []);
