@@ -67,7 +67,7 @@
     u3_noun zac;
 
     u3x_cell(tub, &p_tub, &q_tub);
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
@@ -479,7 +479,7 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
@@ -515,7 +515,7 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
@@ -739,7 +739,7 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
@@ -856,7 +856,7 @@
     u3_noun p_tub, q_tub;
 
     u3x_cell(tub, &p_tub, &q_tub);
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
