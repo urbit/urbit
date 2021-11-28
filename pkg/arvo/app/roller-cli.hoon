@@ -31,7 +31,7 @@
       ::TODO
       ::chain-id=@
       addresses=(map @ux [roller=ship pk=@])
-      :: TODO: keep track of sessions
+      :: TODO: keep track of sessions?
       ::
       :: sessions=(map sole-id session)
       =points:naive
@@ -42,11 +42,6 @@
 ::
 +$  card         card:shoe
 --
-::  Helpers
-::
-=>  |%
-    ++  todo  ~
-    --
 ::  Cards
 ::
 =>  |%
@@ -150,7 +145,6 @@
       ^-  (quip card _this)
       ?+  -.sign  (on-agent:def wire sign)
           %fact
-        ~&  p.cage.sign
         ?+  p.cage.sign  (on-agent:def wire sign)
             %roller-data
           ?~  addr=(slaw %ux wat)  (on-agent:def wire sign)
@@ -251,7 +245,6 @@
   ++  on-command
     |=  [sole-id=@ta command=command-cli]
     ^-  (quip card _this)
-    ~&  ~(wyt by points.state)
     =^  cards  state
       ?+  -.command  !!
           %connect  (~(connect commands:do sole-id) +.command)
@@ -309,7 +302,6 @@
   ++  point
     |=  =ship
     ^-  (quip card _state)
-    ~&  ~(wyt by points.state)
     ::  TODO: console formatting
     ::
     ~&  (get:orp:dice points.state ship)
@@ -326,7 +318,6 @@
         ~[t+'signing ship' t+'type' t+'status' t+'hash' t+'time']
       ~[14 20 9 13 26]
     ?~  history=(~(get by history.state) address)
-      ~&  "nope"^history.state
       ~
     %+  turn  (tap:orh:dice u.history)
     |=  [=time roll-tx]
