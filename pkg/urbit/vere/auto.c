@@ -389,6 +389,7 @@ static u3_auto*
 _auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
 {
   //  skip null drivers
+  //
   if ( !car_u ) {
     return nex_u;
   }
