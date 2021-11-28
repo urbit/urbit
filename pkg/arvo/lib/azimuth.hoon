@@ -98,6 +98,9 @@
       ++  delegated-sending
         0xf790.8ab1.f1e3.52f8.3c5e.bc75.051c.0565.aeae.a5fb
       ::
+      ++  naive
+        0xeb70.029c.fb3c.53c7.78ea.f68c.d28d.e725.390a.1fe9
+      ::
       ::  launch: block number of azimuth deploy
       ::
       ++  launch  6.784.800
@@ -105,6 +108,8 @@
       ::  public: block number of azimuth becoming independent
       ::
       ++  public  7.033.765
+      ::
+      ++  chain-id  1
       --
     ::
     ::  Testnet contract addresses
@@ -126,8 +131,12 @@
       ++  delegated-sending
         0x3e8c.a510.354b.c2fd.bbd6.1502.52d9.3105.c9c2.7bbe
       ::
+      ++  naive
+        0xe7cf.4b83.06d3.11ba.ca15.585f.e3f0.7cd0.441c.21d1
+      ::
       ++  launch  4.601.630
       ++  public  launch
+      ++  chain-id  3
       --
     ::
     ::  Local contract addresses
@@ -147,8 +156,11 @@
         0x3c3.dc12.be65.8158.d1d7.f9e6.6e08.ec40.99c5.68e4
       ++  conditional-star-release
         0x35eb.3b10.2d9c.1b69.ac14.69c1.b1fe.1799.850c.d3eb
+      ++  naive
+        0x6bb8.8a9b.bd82.be7a.997f.eb01.929c.6ec7.8988.fe12
       ++  launch  0
       ++  public  0
+      ++  chain-id  1.337
       --
     ::
       ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge

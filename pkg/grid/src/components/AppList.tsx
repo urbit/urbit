@@ -4,6 +4,7 @@ import { MatchItem } from '../nav/Nav';
 import { useRecentsStore } from '../nav/search/Home';
 import { AppLink, AppLinkProps } from './AppLink';
 import { DocketWithDesk } from '../state/docket';
+import { getAppName } from '../state/util';
 
 type AppListProps<T extends DocketWithDesk> = {
   apps: T[];
@@ -45,7 +46,7 @@ export const AppList = <T extends DocketWithDesk>({
       aria-labelledby={labelledBy}
     >
       {apps.map((app) => (
-        <li key={app.title} id={app.title} role="option" aria-selected={selected(app)}>
+        <li key={getAppName(app)} id={getAppName(app)} role="option" aria-selected={selected(app)}>
           <AppLink
             {...props}
             app={app}

@@ -191,7 +191,7 @@
       ==
   ^-  [jolt=(list dude) idle=(list dude)]
   =/  all=(list dude)  (read-bill local)
-  =/  want  (get-apps-want all rein)
+  =/  want  (get-apps-want local all rein)
   =/  have  (get-apps-live local)
   [want (skip have ~(has in (sy want)))]
 ::
@@ -223,8 +223,10 @@
 ::  +get-apps-want: find which apps should be running on a desk
 ::
 ++  get-apps-want
-  |=  [duz=(list dude) =rein]
+  |=  [local=[our=ship =desk now=@da] duz=(list dude) =rein]
   ^-  (list dude)
+  ?.  liv.rein  ~
+  ?.  |(=(`zuse+zuse (read-kelvin-local local)) =(%base desk.local))  ~
   =.  duz  (skip duz ~(has in sub.rein))
   =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
   duz

@@ -27,6 +27,7 @@ import {
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
 import { fakeRequest, normalizeUrbitColor, useMockData } from './util';
+import { useAsyncCall } from '../logic/useAsyncCall';
 
 export interface ChargeWithDesk extends Charge {
   desk: string;
@@ -54,7 +55,7 @@ interface DocketState {
   installDocket: (ship: string, desk: string) => Promise<number | void>;
   uninstallDocket: (desk: string) => Promise<number | void>;
   //
-  addAlly: (ship: string) => Promise<void>;
+  addAlly: (ship: string) => Promise<number>;
   set: SetState<DocketState>;
 }
 
@@ -158,10 +159,11 @@ const useDocketState = create<DocketState>((set, get) => ({
   charges: {},
   allies: useMockData ? mockAllies : {},
   addAlly: async (ship) => {
-    get().set((draft) => {
+    set((draft) => {
       draft.allies[ship] = [];
     });
-    await api.poke(allyShip(ship));
+
+    return api.poke(allyShip(ship));
   },
   set
 }));
@@ -266,11 +268,18 @@ export function useAllies() {
 }
 
 export function useAllyTreaties(ship: string) {
-  useEffect(() => {
-    useDocketState.getState().fetchAllyTreaties(ship);
-  }, [ship]);
+  const allies = useAllies();
+  const { call: fetchTreaties, status } = useAsyncCall(() =>
+    useDocketState.getState().fetchAllyTreaties(ship)
+  );
 
-  return useDocketState(
+  useEffect(() => {
+    if (ship in allies) {
+      fetchTreaties();
+    }
+  }, [ship, allies]);
+
+  const treaties = useDocketState(
     useCallback(
       (s) => {
         const charter = s.allies[ship];
@@ -279,6 +288,11 @@ export function useAllyTreaties(ship: string) {
       [ship]
     )
   );
+
+  return {
+    treaties,
+    status
+  };
 }
 
 export function useTreaty(host: string, desk: string) {

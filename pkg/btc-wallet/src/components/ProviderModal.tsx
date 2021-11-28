@@ -99,9 +99,9 @@ const ProviderModal = () => {
       </Row>
       <Box mt={3}>
         <Text fontSize="14px" fontWeight="regular" color="gray">
-          In order to perform Bitcoin transaction in Landscape, you&apos;ll need
-          to set a provider node. A provider node is an urbit which maintains a
-          synced Bitcoin ledger.
+          In order to use the Bitcoin wallet on your ship you&apos;ll need to
+          set a provider node. A provider node is an urbit ship which maintains
+          a synced Bitcoin ledger.
           <a
             style={{ fontSize: '14px' }}
             target="_blank"

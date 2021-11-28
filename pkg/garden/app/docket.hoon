@@ -232,8 +232,8 @@
         ::  if the new chad is a site, we're instantly done
         ::
         ?:  ?=(%site -.href.docket)
-          :-  ~[add-fact:cha]
           =.  charges  (new-chad:cha %site ~)
+          :-  ~[add-fact:cha]
           state
         ::
         =.  by-base  (~(put by by-base) base.href.docket desk)
@@ -478,6 +478,8 @@
                   """
               ;li:"glob!"
             ==
+            (safari and internet explorer do not support uploading directory
+            trees properly. please glob from other browsers.)
         ;+  ?:  =(~ desks)
               ;p:"no desks eligible for glob upload"
             ;form(method "post", enctype "multipart/form-data")
