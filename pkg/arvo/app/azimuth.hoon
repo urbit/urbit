@@ -130,6 +130,7 @@
         ~&  [%rerunning (lent logs.state)]
         =.  points.nas.state  ~
         =.  own.state  ~
+        =.  spo.state  ~
         =^  *  state  (run-logs:do logs.state)
         `this
       ::
@@ -329,7 +330,7 @@
     ?:  =(naive.net address.i.logs)
       (tx-effects:dice chain-id.net raw-effects cache indices)
     =<  indices
-    (point-effects:dice raw-effects cache nas.state indices)
+    (point-effects:dice raw-effects points.cache points.nas.state indices)
   =:  own.state  own.indices
       spo.state  spo.indices
     ==

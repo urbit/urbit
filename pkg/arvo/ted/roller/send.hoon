@@ -101,7 +101,7 @@
   ;<  rep=(unit client-response:iris)  bind:m
     take-maybe-response:strandio
   =*  fallback
-    ~&  %fallback-gas-price
+    ~&  >>  %fallback-gas-price
     (pure:m 10.000.000.000)
   ?.  ?&  ?=([~ %finished *] rep)
           ?=(^ full-file.u.rep)

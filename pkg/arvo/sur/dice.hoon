@@ -6,6 +6,7 @@
 +$  owner     [=proxy:naive =address:naive]
 +$  owners    (jug owner ship)
 +$  sponsors  (map ship [residents=(set ship) requests=(set ship)])
++$  history   (map address:ethereum (tree hist-tx))
 +$  net       ?(%mainnet %ropsten %local %default)
 ::
 +$  config
@@ -68,9 +69,16 @@
   ==
 ::
 +$  update
-  $%  [%point =ship =point:naive new=owner old=(unit owner)]
-      [%tx =address:ethereum =roll-tx]
-  ==
+  $%  [%tx =pend-tx =status]
+    ::
+      $:  %point
+          =diff:naive
+          =ship
+          new=point:naive
+          old=(unit point:naive)
+          to=owner
+          from=(unit owner)
+  ==  ==
 ::
 +$  hist-tx  [p=time q=roll-tx]
 +$  roll-tx  [=ship =status hash=keccak type=l2-tx]
@@ -92,4 +100,8 @@
       next-gas-price=@ud
       txs=(list raw-tx:naive)
   ==
+::
++$  roller-data
+  [chain-id=@ =points:naive history=(tree hist-tx) =owners =sponsors]
+::
 --
