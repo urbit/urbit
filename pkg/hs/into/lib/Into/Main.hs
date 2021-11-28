@@ -45,11 +45,11 @@ packNoun jar =
     mconcat [word64LE $ fromIntegral $ B.length pac,
              byteString pac]
 
-buildCmd :: ToNoun a => a -> B.ByteString
-buildCmd com = packNoun (khanVersion, com)
+buildFyrd :: ToNoun a => a -> B.ByteString
+buildFyrd com = packNoun (Cord "fyrd", khanVersion, com)
 
 codeCmd :: B.ByteString
-codeCmd = buildCmd (Cord "cod", False)
+codeCmd = buildFyrd (Cord "cod", False)
 
 codeResponse :: Noun -> IO ()
 codeResponse jar = do
@@ -61,7 +61,7 @@ codeResponse jar = do
     Just cod -> putStrLn . T.unpack . renderPatp . patp $ cod
 
 codeResetCmd :: B.ByteString
-codeResetCmd = buildCmd (Cord "cod", True)
+codeResetCmd = buildFyrd (Cord "cod", True)
 
 ackResponse :: String -> Noun -> IO ()
 ackResponse msg jar = do
@@ -70,7 +70,7 @@ ackResponse msg jar = do
   putStrLn msg
 
 massCmd :: B.ByteString
-massCmd = buildCmd (Cord "mas", 0 :: Natural)
+massCmd = buildFyrd (Cord "mas", 0 :: Natural)
 
 --            cmd,    wire cmd,     on response
 cmds :: M.Map String (B.ByteString, Noun -> IO ())
