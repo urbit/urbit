@@ -41,6 +41,10 @@ in stdenvNoCC.mkDerivation {
     if check && sleep 10 && check; then
       header "boot success"
       herb ./pier -p hood -d '+hood/exit'
+      while [ -f ./pier/.vere.lock ]; do
+        echo "waiting for pier to shut down"
+        sleep 5
+      done
     else
       header "boot failure"
       kill $(< ./pier/.vere.lock) || true
@@ -49,6 +53,8 @@ in stdenvNoCC.mkDerivation {
   '';
 
   installPhase = ''
+    ls
+    ls -a ./pier
     # XX unlink khan.sock in case pier has not finished shutting down
     rm -f ./pier/.urb/khan.sock
     mv ./pier $out
