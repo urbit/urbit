@@ -104,4 +104,34 @@
 +$  roller-data
   [chain-id=@ =points:naive history=(tree hist-tx) =owners =sponsors]
 ::
++$  command-cli
+  $%  ::  List all possible L2 tx types
+      ::
+      [%l2-tx ~]  :: ?
+      ::  Loads a new address (login?)
+      ::    — should require signing?
+      ::    - it subscribes to the Roller, for updates to it
+      ::    - innitially receives a list of points (if any) it controls
+      :: TODO: add tag
+      ::
+      [%connect =ship =address:naive pk=@]
+      ::  Table of all submitted txs, by address
+      ::
+      [%history address:ethereum]
+      ::  Table of all unsigned txs, by address
+      ::
+      [%show-unsigned ~]
+      ::  Signs and Submit an unsigned txs (signed)
+      ::
+      [%submit address:naive tx:naive]
+      ::  Cancels a submitted (but pending) txs
+      ::
+      [%cancel ~]
+      ::  Ships owned by an address
+      ::
+      [%ships address:naive]
+      ::  Point data for a given ship
+      ::
+      [%point ship]
+  ==
 --
