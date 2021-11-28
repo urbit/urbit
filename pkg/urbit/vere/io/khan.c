@@ -18,6 +18,16 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#ifdef  _WIN32
+
+u3_auto*
+u3_khan_io_init(u3_pier* pir_u)
+{
+  return NULL;
+}
+
+#else   //  _WIN32
+
 /* u3_chan: incoming control plane connection.
 */
   typedef struct _u3_chan {
@@ -486,3 +496,5 @@ u3_khan_io_init(u3_pier* pir_u)
 
   return car_u;
 }
+
+#endif  //  _WIN32

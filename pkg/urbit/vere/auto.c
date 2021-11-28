@@ -388,6 +388,11 @@ u3_auto_info(u3_auto* car_u)
 static u3_auto*
 _auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
 {
+  //  skip null drivers
+  if ( !car_u ) {
+    return nex_u;
+  }
+
   //  assert that io callbacks are present (info_f is optional)
   //
   c3_assert( car_u->io.talk_f );
