@@ -273,11 +273,14 @@
   ++  tab-list
     |=  sole-id=@ta
     ^-  (list [@t tank])
-    :~  ['txs' leaf+"list available L2 transaction"]
-        ['submit' leaf+"sends| a L2 transaction to the Roller"]
-        ['cancel' leaf+"cancels a (pending) L2 transaction"]
+    :~  ['submit' leaf+"sends| a L2 transaction to the Roller"]
         ['history' leaf+"shows all current submitted transactions"]
-        ['track' leaf+"loads an ethereum address and tracks points and L2 txs"]
+        ['point' leaf+"shows point information for the given ship"]
+        ['ships' leaf+"shows controlled ships by the given address"]
+        ['connect' leaf+"loads an ethereum address to listen for updates"]
+        ::  TODO
+        :: ['txs' leaf+"list available L2 transaction"]
+        ::['cancel' leaf+"cancels a (pending) L2 transaction"]
     ==
   ::
   ++  on-command
