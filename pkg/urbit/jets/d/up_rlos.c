@@ -15,7 +15,7 @@ u3qdu_rlos(u3_noun n, u3_noun l, u3_atom m, u3_noun r)
   u3z(sr);
   u3z(s);
 
-  return u3nt(c3__rlos, pro, u3nq(u3k(n), u3k(l), u3k(m), u3k(r)));
+  return u3nt(c3__rlos, pro, u3nq(n, l, m, r));
 }
 
 u3_noun
@@ -36,7 +36,7 @@ u3wdu_rlos(u3_noun cor)
       return u3m_bail(c3__exit);
     }
     else {
-      return u3qdu_rlos(n, l, m, r);
+      return u3qdu_rlos(u3k(n), u3k(l), u3k(m), u3k(r));
     }
   }
 }
