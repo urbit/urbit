@@ -19,7 +19,6 @@
 /+  dice,
     naive,
     lib=naive-transactions,
-    *fake-roller,
     shoe,
     verb,
     dbug,
@@ -42,6 +41,19 @@
 ::
 +$  card         card:shoe
 --
+::  Utils
+::
+=>  |%
+    ++  sign-tx
+      |=  [chain-id=@ pk=@ =nonce:naive =tx:naive]
+      ^-  octs
+      =/  sign-data=@uvI
+        %-  hash-tx:lib
+        (unsigned-tx:lib chain-id nonce (gen-tx-octs:lib tx))
+      =;  [v=@ r=@ s=@]
+        (cad:naive 3 1^v 32^s 32^r ~)
+      (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
+    --
 ::  Cards
 ::
 =>  |%
@@ -66,6 +78,17 @@
       ^-  card
       =/  =wire  /points/[(scot %ux address)]
       [%pass wire %agent [roller %roller] %watch wire]
+    ::
+    ++  submit-tx
+      |=  [roller=ship =address:ethereum sig=@ =tx:naive]
+      ^-  card
+      :*  %pass
+          /submit
+          %agent
+          [roller %roller]
+          %poke
+          roller-action+!>([%submit | address sig %don tx])
+      ==
     --
 ::
 =|  app-state
@@ -281,7 +304,12 @@
       ?.  =(src our):bowl
         [%txt tape]
       [%klr [[`%br ~ `%g] [(crip tape)]~]~]
-    =.  addresses  (~(put by addresses) address [roller pk])
+    ?~  pk=(de:base16:mimes:html pk)
+      ~&  >>>  "private key has incorrect format"
+      `state
+    =.  addresses
+      %+  ~(put by addresses)  address
+      [roller q.u.pk]
     :_  state
     =;  cards=(list card)
       ?:  =(*@ta sole-id)  cards
@@ -355,11 +383,14 @@
     ::  TODO: to state
     ::
     =/  chain-id=@  1.337
-    =/  roller=@p  roller:(~(got by addresses) address)
+    ?~  roller=(~(get by addresses) address)
+      ~&  >>>  'can\'t find address'
+      `state
+    =/  [roller=ship pk=@]  u.roller
     ?~  owned=(~(get ju owners) [proxy.from.tx address])
       ~&  >>>  'address doesn\'t control any points'
       `state
-    ?:  (~(has in ^-((set @p) owned)) ship.from.tx)
+    ?.  (~(has in ^-((set @p) owned)) ship.from.tx)
       ~&  >>>  'can\'t find point'
       `state
     =/  =nonce:naive
@@ -367,18 +398,9 @@
     =/  =keccak
       %-  hash-tx:lib
       (unsigned-tx:lib chain-id nonce (gen-tx-octs:lib tx))
-    =/  sig=octs  (fake-sig tx address nonce)
+    =/  sig=octs  (sign-tx chain-id pk nonce tx)
     :_  state
-    ::  TODO: to cards
-    ::
-    :_  ~
-    :*  %pass
-        /submit
-        %agent
-        [roller %roller]
-        %poke
-        roller-action+!>([%submit | address q.sig %don tx])
-    ==
+    [(submit-tx roller address q.sig tx)]~
   --
 ::
 ++  build-parser
@@ -396,11 +418,12 @@
     ;~((glue ace) (tag %ships) address)
   ==
   ::
-  ++  tag      |*(a=@tas (cold a (jest a)))  :: TODO (from /app/chat-cli) into stdlib
+  :: TODO (from /app/chat-cli) into stdlib ?
+  ++  tag      |*(a=@tas (cold a (jest a)))
   ++  roller   ;~(pfix sig fed:ag)
   ++  address  ;~(pfix (jest '0x') hex)
   ++  connect
-    (cook ,[ship address:ethereum @] ;~((glue ace) roller address dem))
+    (cook ,[ship address:ethereum @] ;~((glue ace) roller address hex))
   ::
   ++  sponsorship
     %-  perk
