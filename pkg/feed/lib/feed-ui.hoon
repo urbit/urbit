@@ -4,8 +4,15 @@
 ++  dejs
   =,  dejs:format
   |%
-  ++  update
-    ^-  $-(json ^update)
+  ++  uid  (su ;~(pfix (jest '0x') hex:ag))
+  ++  request
+    %-  ot
+    :~  uid+uid
+        action+action
+    ==
+  ::
+  ++  action
+    ^-  $-(json ^action)
     %-  of
     :~  [%add-post add-post]
         [%like like]
@@ -16,7 +23,6 @@
     :~  ship+(su ;~(pfix sig fed:ag))
         id+id
     ==
-        
   ::
   ++  add-post
     %-  ot
@@ -28,7 +34,8 @@
   ++  letter
     ^-  $-(json letter:post)
     %-  ou
-    :~  parent+(uf ~ (mu id))
+    :~  host+(un (su ;~(pfix sig fed:ag)))
+        parent+(uf ~ (mu id))
         author+(un (su ;~(pfix sig fed:ag)))
         contents+(un contents:dejs:post)
         time+(un di)
@@ -37,9 +44,21 @@
 ++  enjs
   =,  enjs:format
   |%
+  ::
+  ++  response
+    |=  r=^response
+    %-  pairs
+    :~  uid+s+(scot %ux p.r)
+        :-  %data
+      %+  frond  -.q.r
+      ?-  -.q.r
+        %ack  ~
+      ==
+    ==
+  ::
   ++  update
     |=  u=^update
-    ?+  -.u  ~
+    ?-  -.u
       %list  a+(turn p.u post:enjs:post)
       %feeds  a+(turn ~(tap in p.u) ship)
     ==

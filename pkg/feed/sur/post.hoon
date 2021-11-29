@@ -35,7 +35,8 @@
   ==
 ::
 +$  letter
-  $:  parent=(unit id)
+  $:  host=ship
+      parent=(unit id)
       author=ship
       =contents
       time-sent=time

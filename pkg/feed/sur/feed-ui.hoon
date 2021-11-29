@@ -1,10 +1,19 @@
 /-  post
 |%
++$  uid  @uxH
++$  request  (pair uid action)
++$  response 
+  %+  pair  uid
+  $%  [%ack p=(unit tang)]
+  ==
++$  action 
+  $%  [%add-post p=ship q=letter:post]
+      [%like gid:post]
+  ==
+      
 +$  update
   $%  [%list p=(list post:post)]
-      [%add-post p=ship q=letter:post]
       [%feeds p=(set ship)]
-      [%like gid:post]
   ==
 ::
 +$  poke-status

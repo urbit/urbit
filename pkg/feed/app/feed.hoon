@@ -6,11 +6,16 @@
 ++  gorm  gorm:feed
 ++  lorm  lorm:feed
 +$  card  card:agent:gall
++$  versioned-state
+  $%  [%0 *]
+      persistent-state-0
+  ==
 ::
 +$  persistent-state-0
-  $:  %0
+  $:  %1
       feeds=(map ship feed:feed)
       watching=(set ship)
+      pending=(jar ship uid:feed-ui)
   ==
 ::
 +$  cache
@@ -29,18 +34,23 @@
 =<
   |_  =bowl:gall
   +*  this  .
-      event-core    ~(. +> [bowl ~])
+      event-core    ~(. +> [bowl ~ 0x0])
   ++  init  
     :-  ~
     this(feeds (~(put by feeds) our.bowl *feed:feed))
   ++  stay  !>(-.state)
   ++  load
     |=  =vase
-    =.  -.state  !<(persistent-state-0 vase)
+    =+  !<(old=versioned-state vase)
+    =?  old  ?=(%0 -.old)
+      *persistent-state-0
+    ?>  ?=(%1 -.old)
+    =.  -.state  old
     =?  feeds  !(~(has by feeds) our.bowl)
       (~(put by feeds) our.bowl *feed:feed)
     =.  +.state  rebuild-cache:event-core
     `this
+  ::
   ++  call
     |=  [=path =task:mall]
     =^  cards  state
@@ -64,7 +74,7 @@
     %-  (slog leaf/"error in {<dap.bowl>}" >term< tang)
     `this
   --
-|_  [=bowl:gall cards=(list card)]
+|_  [=bowl:gall cards=(list card) =uid:feed-ui]
 ++  io  ~(. agentio bowl)
 ++  pas  pass:io
 ++  log  ~(. ^log [bowl 0 "feed: "])
@@ -123,27 +133,27 @@
     =+  !<(=diff:feed vase)
     abet:(~(on-diff fe-core our.bowl) now.bowl diff)
   ::
-     %feed-ui-update
-    =+  !<(=update:feed-ui vase)
+     %feed-ui-request
+    =+  !<(=request:feed-ui vase)
     =;   [=ship =diff:feed]
+      =.  uid  p.request
       abet:(~(on-action fe-core ship) diff)
-    ?+  -.update  ~|(bad-ui-update/-.update !!)
+    ?-  -.q.request
     ::
         %like
       =/  post-update=update:post  [%stamps like/~]
-      =/  =diff:feed  post/[time.update post-update]
-      [ship.update diff]
+      =/  =diff:feed  post/[time.q.request post-update]
+      [ship.q.request diff]
     ::
         %add-post
       =/  =missive:post
-        [[now.bowl ~] q.update]
+        [[now.bowl ~] q.q.request]
       =/  p=post:post
         [missive *stamps:post]
       =/  up=update:post  add-post/p
       =/  =diff:feed  post/[now.bowl up]
-      [p.update diff]
+      [p.q.request diff]
     ==
-
   ::
       %ship  
     =+  !<(=ship vase)
@@ -260,10 +270,17 @@
     ^+  fe-core
     fe-core(feeds (~(jab by feeds) ship f))
   ::
+  ++  proxy-diff
+    |=  =diff:feed
+    =.  pending  (~(add ja pending) ship uid)
+    =.  event-core  (emit (proxy:pass feed-diff+!>(diff)))
+    fe-core
+  ::
   ++  on-action
     |=  =diff:feed
-    ?:  =(our.bowl ship)  (on-diff now.bowl diff)
-    fe-core(event-core (emit (proxy:pass feed-diff+!>(diff))))
+    ?:  =(our.bowl ship)
+      (on-diff now.bowl diff)
+    (proxy-diff diff)
   ::
   ++  on-update
     |=  [=time =diff:feed]
