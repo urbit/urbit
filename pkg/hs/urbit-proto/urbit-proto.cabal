@@ -27,6 +27,7 @@ library
       Practice.Hoon2DependentLambda
       Practice.HoonCommon
       Practice.HoonSyntax
+      Practice.Render
       Practice.SimpleHoon
       Practice.SimpleLambda
       Rule
@@ -99,6 +100,7 @@ library
     , classy-prelude
     , containers
     , deriving-compat
+    , dlist
     , keys
     , lens
     , megaparsec
@@ -166,6 +168,7 @@ executable proto
     , classy-prelude
     , containers
     , deriving-compat
+    , dlist
     , keys
     , lens
     , megaparsec
@@ -241,6 +244,7 @@ test-suite proto-test
     , containers
     , deriving-compat
     , directory
+    , dlist
     , filepath
     , keys
     , lens

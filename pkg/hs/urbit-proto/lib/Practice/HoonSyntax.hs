@@ -1,6 +1,6 @@
 module Practice.HoonSyntax where
 
-import ClassyPrelude hiding (choice, many, try)
+import ClassyPrelude hiding (choice, many, span, try)
 
 import Control.Monad.Combinators
 import Control.Monad.Reader
@@ -212,7 +212,7 @@ rune = choice
   , r1   "^:" Ktcl spec
   , r2   "^!" Ktzp spec hoon
   --
-  , r2   "~/" Sgfs term hoon
+  , r2   "~/" Sgfs (char '%' >> term) hoon
   --
   , r3   "=/" Tsfs skin hoon hoon
   , r3   "=;" Tsmc skin hoon hoon
@@ -266,9 +266,13 @@ long = wide do
 scat :: Parser Hoon
 scat = wide $ choice
   -- missing ,
-  [ string "!!" $> Zpzp
-  , char '!' *> hoon <&> Wtzp
+  [ char '!' *> choice
+    [ char '!' $> Zpzp
+    , hoon <&> Wtzp
+    , pure (Bass Vod)
+    ]
   , char '_' *> hoon <&> Bccb  -- XX why ktcl bccb in orig?
+  , char '~' $> Adam Rock 0 "n"  -- XX should this be sand? vs %~
   , char '$' *> choice
     [ rock (\a au -> Bass $ Fok [a] au)
     , char '$' *> pure (Bass $ Fok [0] "tas")  -- special for blip; can't use $%
@@ -280,6 +284,8 @@ scat = wide $ choice
     ]
   , run  "&" Wtpm hoon
   , char '&' *> pure (Adam Sand 0 "f")
+  , run  "|" Wtbr hoon
+  , char '|' *> pure (Adam Sand 1 "f")
   , run1 ""  Cncl hoon hoon
   , char '*' $> Bass Non
   , char '@' *> mote <&> Bass . Aur
@@ -320,7 +326,7 @@ mote :: Parser Term
 mote = pack <$> ((<>) <$> many lowerChar <*> many upperChar)
 
 term :: Parser Term
-term = string "%" $> "" <|> do
+term = char '%' $> "" <|> do
   fist <- lowerChar
   rest <- many (char '-' <|> lowerChar <|> digitChar)
   pure $ pack (fist:rest)
@@ -337,6 +343,7 @@ rock k = choice
     [ term       <&> \t -> k (utf8Atom t) "tas"
     , char '&'    $>       k 0 "f"
     , char '|'    $>       k 1 "f"
+    , char '~'    $>       k 0 "n"
     , cord       <&> \t -> k (utf8Atom t) "t"
     , L.decimal  <&> \d -> k d "ud"
     -- , undefined -- XX nuck

@@ -9,6 +9,7 @@ dependencies:
   - classy-prelude
   - containers
   - deriving-compat
+  - dlist
   - keys
   - lens
   - megaparsec

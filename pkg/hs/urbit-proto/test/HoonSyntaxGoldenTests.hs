@@ -11,21 +11,27 @@ import Test.Tasty
 import Test.Tasty.Golden
 import Text.Show.Pretty (ppShow)
 import Practice.HoonSyntax
+import Practice.Render
 
 listTests :: IO [FilePath]
 listTests = findByExtension [".hoon"] "test/golden-syntax"
 
-testEachPass :: FilePath -> TestTree
-testEachPass file =
+testEachPass :: FilePath -> IO [TestTree]
+testEachPass file = do
   let baseName = takeBaseName file
-  in goldenVsString baseName (replaceExtension file ".cst") do
-    txt <- readFileUtf8 file
-    let cst = parse hoon baseName txt
-    pure $ encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) cst
+  txt <- readFileUtf8 file
+  let cst = parse hoon baseName txt
+  let prn = render <$> cst
+  pure
+    [ goldenVsString (baseName <> " cst") (replaceExtension file ".cst") $
+        pure $ encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) cst
+    , goldenVsString (baseName <> " pretty") (replaceExtension file ".prn") $
+        pure $ encodeUtf8 $ either LT.fromStrict LT.fromStrict prn
+    ]
 
 testsIO :: IO TestTree
 testsIO = do
   tests <- listTests
-  pure $ testGroup "HoonSyntax tests" $ fmap testEachPass tests
+  testGroup "HoonSyntax tests" <$> concat <$> traverse testEachPass tests
 
 

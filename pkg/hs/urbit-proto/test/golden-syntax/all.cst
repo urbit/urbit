@@ -1,0 +1,31 @@
+Cltr
+  [ Wung [ Ally "a" , Axis 6 , Ally "b" ]
+  , Adam Sand 1 "ud"
+  , Adam Rock 1 "ud"
+  , Bass Non
+  , Bass Cel
+  , Bass (Aur "f")
+  , Bass (Fok [ 0 ] "n")
+  , Bass Vod
+  , Bass (Fok [ 1 ] "ud")
+  , Bass (Fok [ 1 , 2 ] "")
+  , Bass (Aur "")
+  , Bass (Aur "tas")
+  , Bass Typ
+  , Bccb (Wung [ Ally "a" ])
+  , Bccb
+      (Wtcl (Adam Sand 1 "ud") (Adam Sand 2 "ud") (Adam Sand 3 "ud"))
+  , Bccl
+      (Wung [ Ally "a" ]) [ Wung [ Ally "b" ] , Wung [ Ally "c" ] ]
+  , Bccl
+      (Wung [ Ally "a" ])
+      [ Wung [ Ally "b" ]
+      , Wtcl (Wung [ Ally "a" ]) (Wung [ Ally "b" ]) (Wung [ Ally "c" ])
+      ]
+  , Bccn
+      [ ( 1 , "ud" , Bccl (Bass Non) [ Bass (Aur "") ] )
+      , ( 2 , "ud" , Bccl (Bass Cel) [] )
+      , ( 3 , "ud" , Bccl (Bass (Aur "")) [ Bass (Aur "") ] )
+      , ( 4 , "ud" , Bccl (Bccn []) [] )
+      ]
+  ]

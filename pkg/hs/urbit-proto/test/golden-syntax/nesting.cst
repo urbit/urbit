@@ -1,0 +1,56 @@
+Cltr
+  [ Cltr
+      [ Bccb (Wung [ Ally "a" ])
+      , Bccb (Bccb (Wung [ Ally "a" ]))
+      , Bccb (Ktfs (Wung [ Ally "a" ]) (Wung [ Ally "b" ]))
+      , Ktfs (Bccb (Wung [ Ally "a" ])) (Wung [ Ally "b" ])
+      ]
+  , Cltr
+      [ Bcts (Wung [ Ally "a" ]) (Wung [ Ally "b" ])
+      , Bcts
+          (Wung [ Ally "a" ]) (Bcts (Wung [ Ally "b" ]) (Wung [ Ally "c" ]))
+      , Bcts
+          (Bcts (Wung [ Ally "a" ]) (Wung [ Ally "b" ])) (Wung [ Ally "c" ])
+      ]
+  , Cltr
+      [ Kthp (Wung [ Ally "a" ]) (Wung [ Ally "b" ])
+      , Kthp
+          (Wung [ Ally "a" ]) (Kthp (Wung [ Ally "b" ]) (Wung [ Ally "c" ]))
+      , Kthp
+          (Kthp (Wung [ Ally "a" ]) (Wung [ Ally "b" ])) (Wung [ Ally "c" ])
+      ]
+  , Cltr
+      [ Ktfs (Wung [ Ally "a" ]) (Wung [ Ally "b" ])
+      , Ktfs
+          (Wung [ Ally "a" ]) (Ktfs (Wung [ Ally "b" ]) (Wung [ Ally "c" ]))
+      , Ktfs
+          (Ktfs (Wung [ Ally "a" ]) (Wung [ Ally "b" ])) (Wung [ Ally "c" ])
+      ]
+  , Cltr
+      [ Ktts (Wung [ Ally "a" ]) (Wung [ Ally "b" ])
+      , Ktts
+          (Wung [ Ally "a" ]) (Ktts (Wung [ Ally "b" ]) (Wung [ Ally "c" ]))
+      , Ktts
+          (Ktts (Wung [ Ally "a" ]) (Wung [ Ally "b" ])) (Wung [ Ally "c" ])
+      ]
+  , Cltr
+      [ Ktzp (Wung [ Ally "a" ]) (Wung [ Ally "b" ])
+      , Ktzp
+          (Wung [ Ally "a" ]) (Ktfs (Wung [ Ally "b" ]) (Wung [ Ally "c" ]))
+      , Ktfs
+          (Ktzp (Wung [ Ally "a" ]) (Wung [ Ally "b" ])) (Wung [ Ally "c" ])
+      ]
+  , Cltr
+      [ Tsgl (Wung [ Ally "a" ]) (Wung [ Ally "b" ])
+      , Tsgl
+          (Wung [ Ally "a" ]) (Tsgl (Wung [ Ally "b" ]) (Wung [ Ally "c" ]))
+      , Tsgl
+          (Tsgl (Wung [ Ally "a" ]) (Wung [ Ally "b" ])) (Wung [ Ally "c" ])
+      ]
+  , Cltr
+      [ Cnts [ Ally "a" ] [ ( [ Ally "b" ] , Adam Sand 1 "ud" ) ]
+      , Kthp
+          (Wung [ Ally "c" ])
+          (Cnts [ Ally "a" ] [ ( [ Ally "b" ] , Adam Sand 1 "ud" ) ])
+      ]
+  ]
