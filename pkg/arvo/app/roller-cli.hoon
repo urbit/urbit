@@ -26,13 +26,12 @@
     ethereum
 |%
 +$  app-state
-  $:  %0
-      ::TODO
-      ::chain-id=@
-      addresses=(map @ux [roller=ship pk=@])
+  $:  %1
+      chain-id=@
       :: TODO: keep track of sessions?
       ::
       :: sessions=(map sole-id session)
+      addresses=(map @ux [roller=ship pk=@])
       =points:naive
       =owners
       =sponsors
@@ -113,7 +112,23 @@
   ++  on-load
     |=  old=vase
     ^-  (quip card _this)
-    `this(state !<(app-state old))
+    |^
+    =+  !<(old-state=app-states old)
+    =?  old-state  ?=(%0 -.old-state)
+      [%1 1.337 +.old-state]
+    ?>  ?=(%1 -.old-state)
+    `this(state old-state)
+    ::
+    ++  app-states  $%(state-0 app-state)
+    ++  state-0
+      $:  %0
+          (map @ux [roller=ship pk=@])
+          points:naive
+          owners:dice
+          sponsors:dice
+          history:dice
+      ==
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -173,7 +188,7 @@
           ?~  addr=(slaw %ux wat)  (on-agent:def wire sign)
           =+  !<(=roller-data q.cage.sign)
           =,  roller-data
-          =:  ::chain-id.state  chain-id
+          =:  chain-id.state  chain-id
               points.state    points
               owners.state    owners
               sponsors.state  sponsors
