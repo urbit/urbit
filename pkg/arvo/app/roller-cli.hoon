@@ -398,9 +398,6 @@
   ++  submit
     |=  [=address:ethereum =tx:naive]
     ^-  (quip card _state)
-    ::  TODO: to state
-    ::
-    =/  chain-id=@  1.337
     ?~  roller=(~(get by addresses) address)
       ~&  >>>  'can\'t find address'
       `state
@@ -413,10 +410,7 @@
       `state
     =/  =nonce:naive
       (get-nonce:dice (got:orp:dice points ship.from.tx) proxy.from.tx)
-    =/  =keccak
-      %-  hash-tx:lib
-      (unsigned-tx:lib chain-id nonce (gen-tx-octs:lib tx))
-    =/  sig=octs  (sign-tx chain-id pk nonce tx)
+    =/  sig=octs  (sign-tx chain-id.state pk nonce tx)
     :_  state
     [(submit-tx roller address q.sig tx)]~
   --
