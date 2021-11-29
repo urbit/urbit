@@ -589,3 +589,97 @@ u3t_boff(void)
 #endif
   }
 }
+
+/* where pir_l is the priority, headline is provided by the c-caller
+ * and message is provided by the hint-caller
+ */
+void
+dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message)
+{
+  u3t_slog(
+    u3nc(
+      pri_l,
+      u3nt(
+        c3__rose,
+        u3nt(u3nt(':', ' ', u3_nul), u3_nul, u3_nul),
+        u3nt(headline, message, u3_nul)
+      )
+    )
+  );
+}
+
+/* This flops the given tax and slogs it entry by entry.
+ */
+void
+slog_trace
+(c3_l pri_l, u3_noun tax)
+{
+  // render the stack
+  // Note: ton is a reference to a data struct
+  // we have just allocated
+  // lit is a used as a moving cursor pointer through
+  // that allocated struct
+  // once we finish lit will be null, but ton will still
+  // point to the whole valid allocated data structure
+  // and thus we can free it safely at the end of the func
+  // to clean up after ourselves.
+  // Note: flop reverses the stack trace list 'tax'
+  u3_noun ton = u3dc("mook", 2, u3kb_flop(tax));
+  u3_noun lit = u3t(ton);
+
+  // TODO: we need to clean the means in the stack where we add
+  //       "call: failed", and "[ %gall-call-failed"
+
+  // print the stack one stack item at a time
+  while ( u3_nul != lit ) {
+    u3t_slog(u3nc(pri_l, u3k(u3h(lit)) ));
+    lit = u3t(lit);
+  }
+
+  u3z(ton);
+}
+
+/* this function calls slog_trace on the same road
+ * as the wrapped hoon function was called in effectively
+ * showing only the short trace from just after the most
+ * recent virtualization, down into the wrap site
+ * it takes a c3_l pri_l
+ */
+void
+near_trace(c3_l pri_l)
+{
+  u3_noun tax = u3k(u3R->bug.tax);
+  slog_trace(pri_l, tax);
+}
+
+/* this function joins all the road traces together
+ * into a sinlge trace, which it sends to slog_trace
+ */
+void
+full_trace(c3_l pri_l)
+{
+  /* Goals:
+   * 01. DONE: print lines in the correct order
+   * 02. print only what we must per line, since we can see the whole stack
+   * 03. emphasize which clause in the last block led to the call of the next block?
+   * 04. emphasize virtualization changes
+   * 05. make the visual xp pretty, clear, and informative
+   */
+
+  // rod_u protects us from mutating the global state
+  u3_road* rod_u = u3R;
+
+  // inits to the the current road's trace
+  u3_noun tax = u3k(rod_u->bug.tax);
+
+  // while there is a parent road ref ...
+  while ( &(u3H->rod_u) != rod_u ) {
+    // ... point at the next road and append its stack to tax
+    rod_u = u3tn(u3_road, rod_u->par_p);
+    // TODO: we can insert another mean or spot between tax, u3k(..
+    tax = u3kb_weld(tax, u3k(rod_u->bug.tax));
+  }
+
+  slog_trace(pri_l, tax);
+}
+
