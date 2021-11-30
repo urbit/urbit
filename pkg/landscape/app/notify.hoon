@@ -73,10 +73,13 @@
     ?-  -.old
     ::
         %2
-      =/  =wire  /hark/updates
+      =/  upd=wire  /hark/updates
+      =/  not=wire  /hark/notes
       =/  =dock  [our.bowl %hark-store]
-      =?  cards  !(~(has by wex.bowl) [wire dock])
-        :_(cards [%pass wire %agent dock %watch /updates])
+      =?  cards  !(~(has by wex.bowl) [upd dock])  :: rewatch notes
+        :_(cards [%pass upd %agent dock %watch /updates])
+      =?  cards  !(~(has by wex.bowl) [not dock])  ::  rewatch updates
+        :_(cards [%pass not %agent dock %watch /notes])
       [(flop cards) this(state old)]
     ::
         ?(%0 %1)
@@ -243,7 +246,7 @@
     ::
     ::  subscription from client to their own hark-store
     ::
-        [%hark *]
+        [%hark @ ~]
       ?+  -.sign  (on-agent:def wire sign)
           %fact
         ?.  ?=(%hark-update p.cage.sign)
@@ -256,7 +259,7 @@
       ::
           %kick
         :_  this
-        [%pass /hark %agent [our.bowl %hark-store] %watch /updates]~
+        [%pass wire %agent [our.bowl %hark-store] %watch t.wire]~
       ==
     ::
     ::  subscription from provider to client
