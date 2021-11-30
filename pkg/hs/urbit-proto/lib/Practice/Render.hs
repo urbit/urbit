@@ -4,8 +4,11 @@ import ClassyPrelude
 
 import Data.Either (fromRight)
 import Data.List (unfoldr)
+import Data.Void
 import Urbit.Atom (atomUtf8)
 
+import Practice.DependentLambda
+import Practice.Hoon2DependentLambda
 import Practice.HoonCommon
 import Practice.HoonSyntax
 
@@ -134,6 +137,22 @@ tankLines = \case
 
 -- Producing rolls from syntax -------------------------------------------------
 
+-- | Can be prettyprinted.
+class Rolling r where
+  roll :: r -> Roll
+
+instance Rolling (Code Void) where
+  roll = roll . shut absurd
+
+instance Rolling (Base Void) where
+  roll = roll . loft
+
+instance Rolling (Code Term) where
+  roll = roll . shut id
+
+instance Rolling (Base Term) where
+  roll = roll . loft
+
 -- | Limit the width of a wide form in two ways.
 chop :: Int -> Roll -> Roll
 chop ribbon = \case
@@ -146,10 +165,6 @@ chop ribbon = \case
 -- care about other things more right now.
 chip :: Roll -> Roll
 chip = chop 40
-
--- | Can be prettyprinted.
-class Rolling r where
-  roll :: r -> Roll
 
 -- | The main entry point to the pretty printer.
 render :: Rolling r => r -> Text
@@ -321,7 +336,7 @@ instance Rolling Hoon where
     Dtwt h   -> fixed ".?" ".?(" ")" [roll h]
     --
     Ktls h j -> Huge $ Palm "^+" [tank $ roll h, tank $ roll j]
-    Kthp s h -> binary "^-" "\\" (roll s) (roll h)
+    Kthp s h -> Huge $ Palm "^-" [tank $ roll s, tank $ roll h]
     Ktfs h s -> binary "^/" "/" (roll h) (roll s)
     Ktwt h -> fixed "^?" "^?(" ")" [roll h]
     Ktts s h -> binary "^=" "=" (roll s) (roll h)

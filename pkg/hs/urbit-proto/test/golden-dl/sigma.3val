@@ -1,1 +1,3 @@
+{t|$ t}
+
 Base { loft = Cell (Mask "t" Type) (Scope (Look (B ()))) }

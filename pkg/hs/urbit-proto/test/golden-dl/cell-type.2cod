@@ -1,2 +1,5 @@
+^-  $
+{@ @}
+
 Nest
   { cod = Cell (Aura "") (Scope (Look (F (Aura "")))) , typ = Type }

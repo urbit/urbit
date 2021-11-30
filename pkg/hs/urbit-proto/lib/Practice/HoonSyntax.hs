@@ -296,7 +296,7 @@ scat = wide $ choice
   , r2   "=" Dtts hoon hoon
   -- XX multiaura
   , run  "?" (\as -> Bass $ Fok as "") (char '$' *> rock \a _ -> a)
-  , char '?' *> pure (Bass $ Aur "f")
+  , char '?' *> pure (Bass Flg)
   , char '[' *> (Cltr <$> sepBy hoon ace) <* char ']'  -- XX read rupl
   , char '{' *> (Bccl <$> (spec <* ace) <*> sepBy spec ace) <* char '}'
   , char '^' $> Bass Cel  -- XX why is there a wing case here?

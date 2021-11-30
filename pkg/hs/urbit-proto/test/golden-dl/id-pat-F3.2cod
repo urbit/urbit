@@ -1,5 +1,8 @@
+^-  $-(@ {@ @})
+|=(a a)
+
 Nest
-  { cod = Lamb (Scope (Wing [] (Look (B ()))))
+  { cod = Lamb "a" (Scope (Wing [] (Look (B ()))))
   , typ =
       Gate
         (Aura "")

@@ -16,9 +16,16 @@ import Practice.DependentLambda
 import Practice.Hoon2DependentLambda
 import Practice.HoonCommon
 import Practice.HoonSyntax
+import Practice.Render
 
 listTests :: IO [FilePath]
 listTests = findByExtension [".hoon"] "test/golden-dl"
+
+display :: (Show a, Rolling a) => a -> Text
+display x = render x <> "\n\n" <> pack (ppShow x)
+
+awful :: (Show a, Rolling a) => Either Text a -> LBS.ByteString
+awful = encodeUtf8 . either LT.fromStrict (LT.fromStrict . display)
 
 testEachPass :: FilePath -> IO TestTree
 testEachPass file = do
@@ -33,10 +40,10 @@ testEachPass file = do
   let typ = do c <- cod
                maybe (Left "type error") Right $
                  runReaderT (play (Con absurd absurd) c) []
-  let o1  = encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) cst
-  let o2  = encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) cod
-  let o3a = encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) val
-  let o3b = encodeUtf8 $ either LT.fromStrict (LT.pack . ppShow) typ
+  let o1  = awful cst
+  let o2  = awful cod
+  let o3a = awful val
+  let o3b = awful typ
   pure $ testGroup baseName
     [ {-goldenVsString (baseName <> " 0: id") (replaceExtension file ".0id") do
         LBS.readFile file-}

@@ -1,3 +1,5 @@
+[[@ 1] [{@ @} 3 4] ?($& $|) %&]
+
 Base
   { loft =
       Cons
@@ -6,5 +8,5 @@ Base
            (Cons
               (Cell (Aura "") (Scope (Aura "")))
               (Cons (Atom 3 Sand "ud") (Atom 4 Sand "ud")))
-           (Cons (Aura "f") (Atom 0 Rock "f")))
+           (Cons (Fork (fromList [ 0 , 1 ]) "f") (Atom 0 Rock "f")))
   }

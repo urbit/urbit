@@ -4,7 +4,7 @@ Cltr
   , Adam Rock 1 "ud"
   , Bass Non
   , Bass Cel
-  , Bass (Aur "f")
+  , Bass Flg
   , Bass (Fok [ 0 ] "n")
   , Bass Vod
   , Bass (Fok [ 1 ] "ud")

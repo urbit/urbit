@@ -1,6 +1,14 @@
+=/  id
+  ^-  $-({t|$ @} @)
+  |=(a x.a)
+:+  (id @ 1)
+  (id {@ @} 3 4)
+(id ?($& $|) %&)
+
 Bind
+  "id"
   Nest
-    { cod = Lamb (Scope (Wing [ Ally "x" ] (Look (B ()))))
+    { cod = Lamb "a" (Scope (Wing [ Ally "x" ] (Look (B ()))))
     , typ =
         Gate
           (Cell (Mask "t" Type) (Scope (Aura "")))
@@ -16,4 +24,5 @@ Bind
                  (Cell (Aura "") (Scope (Look (F (Aura "")))))
                  (Cons (Atom 3 Sand "ud") (Atom 4 Sand "ud"))))
            (Slam
-              (Wing [] (Look (B ()))) (Cons (Aura "f") (Atom 0 Rock "f"))))))
+              (Wing [] (Look (B ())))
+              (Cons (Fork (fromList [ 0 , 1 ]) "f") (Atom 0 Rock "f"))))))

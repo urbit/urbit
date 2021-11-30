@@ -1,1 +1,3 @@
-Lamb (Scope (Wing [] (Look (B ()))))
+|=(a a)
+
+Lamb "a" (Scope (Wing [] (Look (B ()))))

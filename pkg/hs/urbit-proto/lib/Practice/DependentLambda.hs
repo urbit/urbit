@@ -36,7 +36,7 @@ data Code a
   -- introduction forms
   | Atom Atom Grit Term
   | Cons (Code a) (Code a)
-  | Lamb (Scope () Code a)  -- TODO pattern
+  | Lamb Term (Scope () Code a)  -- TODO pattern
   | Core (Map Term (Scope () Code a)) (Code a)  -- XX second should be sut
   | Name Term (Code a)  -- a=1
   -- elimination forms
@@ -58,7 +58,7 @@ data Code a
   -- | Void
   | Type
   -- other expressions
-  | Bind (Code a) (Scope () Code a)  -- =+, push value onto subject
+  | Bind Term (Code a) (Scope () Code a)  -- =+, push value onto subject
   -- | Push (Map Term (Code a))  -- |%, push battery onto subject
   | Case (Code a) [Scope Int Code a] [Scope Int Code a]
   | Nest { cod :: Code a, typ :: Code a }  --  ^-  a/@  @\a
@@ -92,7 +92,7 @@ instance Monad Code where
   Look a >>= f = f a
   Atom a g t >>= _ = Atom a g t
   Cons c d >>= f = Cons (c >>= f) (d >>= f)
-  Lamb c >>= f = Lamb (c >>>= f)
+  Lamb t c >>= f = Lamb t (c >>>= f)
   Core bat pay >>= f = Core (fmap (>>>= f) bat) (pay >>= f)
   Name n c >>= f = Name n (c >>= f)
   Plus c >>= f = Plus (c >>= f)
@@ -108,7 +108,7 @@ instance Monad Code where
   Lead bat >>= f = Lead (fmap (>>= f) bat)
   Mask t c >>= f = Mask t (c >>= f)
   Type >>= _ = Type
-  Bind c d >>= f = Bind (c >>= f) (d >>>= f)
+  Bind t c d >>= f = Bind t (c >>= f) (d >>>= f)
   Case c ds es >>= f = Case (c >>= f) (fmap (>>>= f) ds) (fmap (>>>= f) es)
   Nest c d >>= f = Nest (c >>= f) (d >>= f)
   Cast c d >>= f = Cast (c >>= f) (d >>= f)
@@ -339,7 +339,7 @@ eval sem = \case
     x -> Plus x
 
   Slam c d -> Base case go c of
-    Lamb b -> go $ instantiate (const $ go d) b
+    Lamb _ b -> go $ instantiate (const $ go d) b
     f -> Slam c $ go d
 
   Wing w c -> Base $ foldr limn (go c) w
@@ -386,7 +386,7 @@ eval sem = \case
 
   Type -> Base Type
 
-  Bind c d -> eval sem $ instantiate (const $ go c) d
+  Bind _ c d -> eval sem $ instantiate (const $ go c) d
 
   Case{} -> undefined
 
@@ -502,7 +502,7 @@ fits con fit t u = go con fit t u
     (Cons{}, _) -> bail
     (_, Cons{}) -> bail
 
-    (Lamb c, Lamb d) | c == d -> pure ()
+    (Lamb _ c, Lamb _ d) | c == d -> pure ()
     (Lamb{}, _) -> bail
     (_, Lamb{}) -> bail
 
@@ -712,9 +712,9 @@ work con fit e tau@(Base t) =
                           _ -> playFits
 
     -- This lets us, e.g., turn with |=(a +(a)) without annotating a.
-    Lamb c -> case t of Gate u v -> work (hide con (Base u)) fit
-                                      (fromScope c) (Base $ fromScope v)
-                        _ -> playFits
+    Lamb _ c -> case t of Gate u v -> work (hide con (Base u)) fit
+                                        (fromScope c) (Base $ fromScope v)
+                          _ -> playFits
 
     Core bat pay -> case t of Gold tat tay -> do let tie = Base tay
                                                  work con fit pay tie
@@ -752,8 +752,8 @@ work con fit e tau@(Base t) =
     Mask{} -> playFits
     Type{} -> playFits
 
-    Bind c d -> do tc <- play con c
-                   work (shew con c tc) fit (fromScope d) (grow tau)
+    Bind _ c d -> do tc <- play con c
+                     work (shew con c tc) fit (fromScope d) (grow tau)
 
     Case s cs ds -> do st <- play con s
                        undefined
@@ -789,7 +789,7 @@ play con = \case
     Base td <- play con d
     pure $ Base $ Cell tc (blow td)
 
-  Lamb c -> do
+  Lamb _ c -> do
     -- TODO we need to get the type out of the pattern, if any
     tb <- undefined
     -- we also need to need to regard the body against subject a $-gold core
@@ -856,7 +856,7 @@ play con = \case
 
   Type -> pure $ Base Type
 
-  Bind c d -> do
+  Bind _ c d -> do
     tc <- play con c
     -- XX again consider alternatives, but I think this is actually the
     -- canonical thing to do; test in idris?

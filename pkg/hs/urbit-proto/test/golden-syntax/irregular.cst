@@ -53,7 +53,7 @@ Cltr
   , Dtts (Adam Sand 1 "ud") (Adam Sand 2 "ud")
   , Bass (Fok [] "")
   , Bass (Fok [ 7303014 , 7496034 , 1 ] "")
-  , Bass (Aur "f")
+  , Bass Flg
   , Cltr [ Adam Sand 1 "ud" , Adam Sand 2 "ud" , Adam Sand 3 "ud" ]
   , Bccl
       (Bass (Aur ""))

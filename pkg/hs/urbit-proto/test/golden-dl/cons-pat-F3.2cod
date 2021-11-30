@@ -1,3 +1,6 @@
+^-  @
+[1 2]
+
 Nest
   { cod = Cons (Atom 1 Sand "ud") (Atom 2 Sand "ud")
   , typ = Aura ""

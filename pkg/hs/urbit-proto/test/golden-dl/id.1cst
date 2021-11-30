@@ -1,3 +1,8 @@
+=/  id
+  ^-  $-({t|$ @} @)
+  |=(a x.a)
+[(id @ 1) (id {@ @} [3 4]) (id ? %&)]
+
 Tsfs
   (Wung [ Ally "id" ])
   (Kthp
@@ -12,5 +17,5 @@ Tsfs
          [ Bccl (Bass (Aur "")) [ Bass (Aur "") ]
          , Cltr [ Adam Sand 3 "ud" , Adam Sand 4 "ud" ]
          ]
-     , Cncl (Wung [ Ally "id" ]) [ Bass (Aur "f") , Adam Rock 0 "f" ]
+     , Cncl (Wung [ Ally "id" ]) [ Bass Flg , Adam Rock 0 "f" ]
      ])

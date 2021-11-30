@@ -47,7 +47,7 @@ open = \case
   Bcwt m -> Lead <$> traverse open m
   --
   Brcn{} -> Left "unsupported naked |%; use with => for now"
-  Brts (Rash x) h -> Lamb <$> abstract1 x <$> open h
+  Brts (Rash x) h -> Lamb x <$> abstract1 x <$> open h
   Brts{} -> Left "unsupported pattern in |="
   --
   Clcb h j -> Cons <$> open j <*> open h
@@ -89,9 +89,9 @@ open = \case
   --
   Sgfs{} -> Left "unsupported ~/"
   --
-  Tsfs (Rash x) h j -> Bind <$> open h <*> (abstract1 x <$> open j)
+  Tsfs (Rash x) h j -> Bind x <$> open h <*> (abstract1 x <$> open j)
   Tsfs{} -> Left "unsupported pattern in =/"
-  Tsmc (Rash x) j h -> Bind <$> open h <*> (abstract1 x <$> open j)
+  Tsmc (Rash x) j h -> Bind x <$> open h <*> (abstract1 x <$> open j)
   Tsmc{} -> Left "unsupported pattern in =;"
   Tsdt{} -> Left "unsupported =."
   Tswt{} -> Left "unsupported =?"
@@ -164,3 +164,56 @@ open = \case
     j:js -> case fac h of
       Nothing -> make <$> go h <*> (blow <$> boil j js fac go make)
       Just f  -> make <$> go h <*> (abstract1 f <$> boil j js fac go make)
+
+shut :: (a -> Term) -> Code a -> Hoon
+shut e = \case
+  Look a -> Wung [Ally $ e a]
+  --
+  Atom a g au -> Adam g a au
+  Cons c d -> case shut e d of
+    Clhp h j -> Clls (shut e c) h j
+    Clls h j k -> Clkt (shut e c) h j k
+    Clkt h j k l -> Cltr [shut e c, h, j, k, l]
+    Cltr hs -> Cltr (shut e c : hs)
+    h -> Clhp (shut e c) h
+  Lamb t sc -> Brts (Wung [Ally t]) $ shut f $ fromScope sc
+    where f = \case B () -> t; F x -> e x
+  Core b p -> Tsgr (shut e p) (Brcn $ fmap (shut (unname e p) . fromScope) b)
+  Name t c -> Ktts (Wung [Ally t]) (shut e c)
+  --
+  Plus c -> Dtls (shut e c)
+  Slam c d -> case shut e d of
+    Clhp h j -> Cnls (shut e c) h j
+    Clls h j k -> Cnkt (shut e c) h j k
+    Clkt h j k l -> Cncl (shut e c) [h, j, k, l]
+    Cltr hs -> Cncl (shut e c) hs
+    h -> Cnhp (shut e c) h
+  Wing w (Look x) -> Wung (w ++ [Ally $ e x])
+  Wing w c -> Tsgl (Wung w) (shut e c)
+  Equl c d -> Dtts (shut e c) (shut e d)
+  --
+  Aura au -> Bass (Aur au)
+  Fork as au -> Bass (Fok (toList as) au)
+  Cell c d -> case shut (unmask e c) $ fromScope d of
+    Bccl s ss -> Bccl (shut e c) (s:ss)
+    s -> Bccl (shut e c) [s]
+  Gate c d -> Bchp (shut e c) (shut (unmask e c) $ fromScope d)
+  Gold cs c -> Bcdt (shut e c) (shut (unmask e c) . fromScope <$> cs)
+  Lead cs -> Bcwt (shut e <$> cs)
+  Mask t c -> Bcts (Wung [Ally t]) (shut e c)
+  Type -> Bass Typ
+  --
+  Bind t c d -> Tsfs (Wung [Ally t]) (shut e c) (shut f $ fromScope d)
+   where f = \case B () -> t; F x -> e x
+  Case c ss ds -> error "open: case"
+  Nest{cod, typ} -> Kthp (shut e typ) (shut e cod)  -- XX should print as / wide
+  Cast{cod, typ} -> Ktzp (shut e typ) (shut e cod)
+
+ where
+  unname e = \case
+    Name t _ -> \case B () -> t;     F x -> e x
+    _        -> \case B () -> "???"; F x -> e x
+
+  unmask e = \case
+    Mask t _ -> \case B () -> t;     F x -> e x
+    _        -> \case B () -> "???"; F x -> e x
