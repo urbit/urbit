@@ -141,6 +141,9 @@ tankLines = \case
 class Rolling r where
   roll :: r -> Roll
 
+instance Rolling Text where
+  roll = leaf
+
 instance Rolling (Code Void) where
   roll = roll . shut absurd
 
@@ -152,6 +155,38 @@ instance Rolling (Code Term) where
 
 instance Rolling (Base Term) where
   roll = roll . loft
+
+instance Rolling ([Act], Fail) where
+  roll (as, f) = Huge $ Rose "" "" [tank $ roll as, tank $ roll f]
+
+instance Rolling [Act] where
+  roll as = Huge $ Rose "trace:" "" $ map (tank . roll) $ reverse as
+
+instance Rolling Act where
+  roll = \case
+    ActFits e f t u -> Huge $ Stem (tshow f <> ":") "" []
+      [ ("have:", tank $ roll $ fmap e t, Leaf "")
+      , ("need:", tank $ roll $ fmap e u, Leaf "")
+      ]
+    ActFind e t w -> Huge $ Stem "find:" "" []
+      [ ("type:", tank $ roll $ fmap e t, Leaf "")
+      , ("wing:", tank $ roll w, Leaf "")
+      ]
+    ActWork e f c t -> Huge $ Stem ("work-" <> tshow f <> ":") "" []
+      [ ("code:", tank $ roll $ fmap e c, Leaf "")
+      , ("type:", tank $ roll $ fmap e t, Leaf "")
+      ]
+    ActPlay e c -> Huge $ Stem "play:" "" []
+      [ ("code:", tank $ roll $ fmap e c, Leaf "")
+      ]
+    ActNote t -> Huge $ Palm "note:" [Leaf t]
+
+
+instance Rolling Fail where
+  roll = \case
+    NeedGate e t -> Huge $ Palm "need-gate:" [tank $ roll $ fmap e t]
+    BailNote t -> Huge $ Palm "bail-note:" [Leaf t]
+    BailFail -> leaf "bail-fail"
 
 -- | Limit the width of a wide form in two ways.
 chop :: Int -> Roll -> Roll

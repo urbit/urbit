@@ -1,1 +1,47 @@
-type error
+  trace:  play:
+          code:  {@ p|$ {q|$-($ $) x|(q p) p|@} p}  
+          
+          work-nest:
+          code:  {p|$ {q|$-($ $) x|(q p) p|@} p}  
+          type:  $  
+          
+          play:
+          code:  {p|$ {q|$-($ $) x|(q p) p|@} p}  
+          
+          work-nest:
+          code:  {{q|$-($ $) x|(q p) p|@} p}  
+          type:  $  
+          
+          play:
+          code:  {{q|$-($ $) x|(q p) p|@} p}  
+          
+          work-nest:
+          code:  {q|$-($ $) x|(q p) p|@}  
+          type:  $  
+          
+          play:
+          code:  {q|$-($ $) x|(q p) p|@}  
+          
+          work-nest:
+          code:  {x|(q p) p|@}  
+          type:  $  
+          
+          play:
+          code:  {x|(q p) p|@}  
+          
+          work-nest:
+          code:  x|(q p)  
+          type:  $  
+          
+          play:
+          code:  x|(q p)  
+          
+          work-nest:
+          code:  (q p)  
+          type:  $  
+          
+          play:
+          code:  (q p)  
+          
+  
+  need-gate:  q|$-($ $)

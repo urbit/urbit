@@ -1,1 +1,15 @@
-type error
+  trace:  play:
+          code:  ^-  {@ @}
+                 {@ @}
+            
+          
+          work-nest:
+          code:  {@ @}  
+          type:  {@ @}  
+          
+          nest:
+          have:  $  
+          need:  {@ @}  
+          
+  
+  bail-fail

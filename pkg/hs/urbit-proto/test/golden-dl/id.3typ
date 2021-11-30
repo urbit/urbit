@@ -1,1 +1,31 @@
-type error
+  trace:  play:
+          code:  =/  id
+                   ^-  $-({t|$ @} @)
+                   |=(a x.a)
+                 :+  (id @ 1)
+                   (id {@ @} 3 4)
+                 (id ?($& $|) %&)
+            
+          
+          play:
+          code:  ^-  $-({t|$ @} @)
+                 |=(a x.a)
+            
+          
+          work-nest:
+          code:  |=(a x.a)  
+          type:  $-({t|$ @} @)  
+          
+          work-nest:
+          code:  x.a  
+          type:  @  
+          
+          play:
+          code:  x.a  
+          
+          find:
+          type:  {t|$ @}  
+          wing:  x  
+          
+  
+  bail-fail

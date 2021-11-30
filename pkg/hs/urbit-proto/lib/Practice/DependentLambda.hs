@@ -8,6 +8,7 @@ import ClassyPrelude hiding (find)
 
 import Bound
 import Control.Arrow ((<<<), (>>>))
+import Control.Monad.Reader
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Data.Foldable (foldrM)
 import Data.Maybe (fromJust)
@@ -156,16 +157,26 @@ pop a = case cut a of
 --
 
 -- | Type checking monad
-type Check = ReaderT [Act] Maybe
-
-bail :: Check a
-bail = lift Nothing
+type Check = ReaderT [Act] (Either ([Act], Fail))
 
 -- | Error reporting context, analogous to stack trace item.
 data Act
-  = forall a. Show a => ActNest (Code a) (Code a)
-  | ActFind Wing
-  | ActNote String
+  = forall a. ActFits (a -> Text) Fit (Type a) (Type a)
+  | forall a. ActFind (a -> Text) (Type a) Wing
+  | forall a. ActWork (a -> Text) Fit (Code a) (Type a)
+  | forall a. ActPlay (a -> Text) (Code a)
+  | ActNote Text
+
+data Fail
+  = forall a. NeedGate (a -> Text) (Type a)  -- ^ type is not a gate
+  | BailNote Text  -- ^ failure with note
+  | BailFail  -- ^ unspecified failure
+
+bail :: Fail -> Check a
+bail f = ask >>= \as -> lift $ Left (as, f)
+
+bailFail :: Check a
+bailFail = bail BailFail
 
 -- | An impoverished subject type.
 type Env a = a -> Type a
@@ -180,7 +191,11 @@ type Semi a = a -> Maybe (Base a)  -- XX should this be base or code?
 data Con a = Con
   { env :: Env a
   , sem :: Semi a
+  , nom :: a -> Term
   }
+
+act :: Act -> Check b -> Check b
+act a = local (a:)
 
 -- Note: Handling environmental translucency.
 --
@@ -292,30 +307,42 @@ blow :: Applicative f => f a -> Scope b f a
 blow = Scope . pure . F
 
 -- | Grow the environment to record a new variable with opaque rhs.
-hide :: Con a -> Type a -> Con (Var () a)
-hide Con{env, sem} typ = let t = grow typ
-                             e = grow <$> env
-                             s = fmap grow <$> sem in Con
+hide :: Con a -> Term -> Type a -> Con (Var () a)
+hide Con{env, sem, nom} nam typ = let t = grow typ
+                                      e = grow <$> env
+                                      s = fmap grow <$> sem in Con
   { env = \case
       B () -> t
       F x  -> e x
   , sem = \case
       B () -> Nothing
       F x  -> s x
+  , nom = \case
+      B () -> nam
+      F x  -> nom x
   }
 
+rash :: Code c -> Term
+rash = \case
+  Mask t _ -> t
+  Name t _ -> t
+  _ -> "???"
+
 -- | Grow the environment to record a new variable with translucent rhs.
-shew :: Vary a => Con a -> Code a ->  Type a -> Con (Var () a)
-shew Con{env, sem} cod typ = let c = grow $ eval sem cod
-                                 t = grow typ
-                                 e = grow <$> env
-                                 s = fmap grow <$> sem in Con
+shew :: Vary a => Con a -> Term -> Code a ->  Type a -> Con (Var () a)
+shew Con{env, sem, nom} nam cod typ = let c = grow $ eval sem cod
+                                          t = grow typ
+                                          e = grow <$> env
+                                          s = fmap grow <$> sem in Con
   { env = \case
       B () -> t
       F x  -> e x
   , sem = \case
       B () -> Just c
       F x  -> s x
+  , nom = \case
+      B () -> nam
+      F x  -> nom x
   }
 
 -- | Evaluate code to produce base.
@@ -440,7 +467,7 @@ flow con cod sop =
 farm :: Ord k => Map k a -> Map k b -> (a -> b -> Check ()) -> Check ()
 farm b b' act = do
   let arms = keys b
-  when (arms /= keys b') bail
+  when (arms /= keys b') bailFail
   for_ arms \arm -> do
     let a  = fromJust $ lookup arm b
     let a' = fromJust $ lookup arm b'
@@ -451,12 +478,18 @@ data Fit
   = FitCast  -- ^ perform a coercibility check; i.e. ignore faces (masks), auras
   | FitNest  -- ^ perform a subtyping check
   | FitSame  -- ^ perform a type equivalence check
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord)
+
+instance Show Fit where
+  show = \case
+    FitCast -> "cast"
+    FitNest -> "nest"
+    FitSame -> "same"
 
 -- | Perform subtyping or coercibility check.
 -- XX figure out proper encoding of recursion via cores or gates
 fits :: Vary a => Con a -> Fit -> Type a -> Type a -> Check ()
-fits con fit t u = go con fit t u
+fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
  where
   -- TODO push Act frame
   go :: Vary a => Con a -> Fit -> Type a -> Type a -> Check ()
@@ -467,7 +500,7 @@ fits con fit t u = go con fit t u
     (Mask _ c, d) -> go con fit (Base c) (Base d)
     (c, Mask _ d)
       | FitCast <- fit  -> go con fit (Base c) (Base d)
-      | otherwise       -> bail
+      | otherwise       -> bailFail
 
     (Look x, Look y) | x == y -> pure ()
     {-
@@ -475,8 +508,8 @@ fits con fit t u = go con fit t u
     -- two to fire. It would indicate that we haven't evaluated sufficiently.
     (Look x, d) | Just c <- sem con x -> go con fit c (Base d)
     (c, Look x) | Just d <- sem con x -> go con fit (Base c) d -}
-    (Look _, _) -> bail
-    (_, Look _) -> bail
+    (Look _, _) -> bailFail
+    (_, Look _) -> bailFail
 
     -- XX confirm this, but I do think we have to decide definitional equality
     -- of terms as part of nest. E.g. Suppose someone has opaquely defined
@@ -494,17 +527,17 @@ fits con fit t u = go con fit t u
     -- FitSame which does equality rather than subtyping, and switch to it under
     -- eliminators such as Slam (XX and other eliminators and introductors?).
     (Atom a _ _, Atom b _ _) | a == b -> pure ()
-    (Atom{}, _) -> bail
-    (_, Atom{}) -> bail
+    (Atom{}, _) -> bailFail
+    (_, Atom{}) -> bailFail
 
     (Cons c d, Cons c' d') -> do go con fit (Base c) (Base c')
                                  go con fit (Base d) (Base d')
-    (Cons{}, _) -> bail
-    (_, Cons{}) -> bail
+    (Cons{}, _) -> bailFail
+    (_, Cons{}) -> bailFail
 
     (Lamb _ c, Lamb _ d) | c == d -> pure ()
-    (Lamb{}, _) -> bail
-    (_, Lamb{}) -> bail
+    (Lamb{}, _) -> bailFail
+    (_, Lamb{}) -> bailFail
 
     -- The apparently free choice of p or p' in show goes away in the subject-
     -- oriented context, but probably comes back even worse in the tisgar case.
@@ -515,45 +548,45 @@ fits con fit t u = go con fit t u
     (Core b p, Core b' p') -> do
       go con fit (Base p) (Base p')
       farm b b' \a a' -> go con fit (flow con p a) (flow con p' a')
-    (Core{}, _) -> bail
-    (_, Core{}) -> bail
+    (Core{}, _) -> bailFail
+    (_, Core{}) -> bailFail
 
     -- I believe that for old-school faces, the fallback rules will have to
     -- strip and succeed, and these rules will have to be listed immediately
     -- after Look. Another nail in that coffin.
     (Name n c, Name m d) | n == m -> go con fit (Base c) (Base d)
-    (Name{}, _) -> bail
-    (_, Name{}) -> bail
+    (Name{}, _) -> bailFail
+    (_, Name{}) -> bailFail
 
     -- Elimination forms. Note that since Base, we will only encounter these
     -- "stuck" on some variable.
     (Plus c, Plus d) -> go con fit (Base c) (Base d)
-    (Plus{}, _) -> bail
-    (_, Plus{}) -> bail
+    (Plus{}, _) -> bailFail
+    (_, Plus{}) -> bailFail
 
     -- Since it hasn't been evaluated away, we are dealing with an opaque type
     -- function application. This means we have no choice but to regard the
     -- function as invariant in its argument.
     (Slam c d, Slam c' d') -> do go con fit (Base c) (Base c')
                                  go con FitSame (Base d) (Base d')
-    (Slam{}, _) -> bail
-    (_, Slam{}) -> bail
+    (Slam{}, _) -> bailFail
+    (_, Slam{}) -> bailFail
 
     -- XX we should recognize axes equivalent to faces :/
     -- n.b.: things like the "empty wing" should have been evaluated out by now
     (Wing w c, Wing v d) | w == v -> go con fit (Base c) (Base d)
-    (Wing{}, _) -> bail
-    (_, Wing{}) -> bail
+    (Wing{}, _) -> bailFail
+    (_, Wing{}) -> bailFail
 
     (Equl c d, Equl c' d') -> do go con fit (Base c) (Base c')
                                  go con fit (Base d) (Base d')
-    (Equl{}, _) -> bail
-    (_, Equl{}) -> bail
+    (Equl{}, _) -> bailFail
+    (_, Equl{}) -> bailFail
 
     (Aura au, Aura ag) -> case fit of
       FitCast -> pure ()
-      FitNest -> if ag `isPrefixOf` au then pure () else bail
-      FitSame -> if ag ==           au then pure () else bail
+      FitNest -> if ag `isPrefixOf` au then pure () else bailFail
+      FitSame -> if ag ==           au then pure () else bailFail
 
     (Fork cs au, Aura ag) | fit /= FitSame ->
       go con fit (Base $ Aura au) (Base $ Aura ag)
@@ -561,27 +594,43 @@ fits con fit t u = go con fit t u
     (Fork cs au, Fork ds ag) -> do
       go con fit (Base $ Aura au) (Base $ Aura ag)
       case fit of
-        FitSame -> when (cs /= ds) bail
-        _ -> unless (ds `isSubsetOf` cs) bail
+        FitSame -> when (cs /= ds) bailFail
+        _ -> unless (ds `isSubsetOf` cs) bailFail
 
     (Cell c d, Cell c' d') -> do
       go con fit (Base c) (Base c')
-      go (hide con $ Base c) fit (Base $ fromScope d) (Base $ fromScope d')
+      -- when we pass into the right of {a|t u} {b|t' u'}, we have to chose
+      -- one of a,b to be the variable name. this choice is arbitrary and
+      -- affects only error messages
+      go (hide con (rash c) $ Base c)
+         fit
+         (Base $ fromScope d)
+         (Base $ fromScope d')
 
     (Gate c d, Gate c' d') -> do
       go con fit (Base c') (Base c)
-      go (hide con $ Base c') fit (Base $ fromScope d) (Base $ fromScope d')
+      go (hide con (rash c') $ Base c')
+         fit
+         (Base $ fromScope d)
+         (Base $ fromScope d')
 
     -- TODO (Gate{}, Cell Noun Noun) -> pure ()
 
     (Gold bat pay, Gold bat' pay') -> do
       go con fit (Base pay) (Base pay')
-      farm bat bat' \a a' ->
-        go (hide con $ Base pay) fit (Base $ fromScope a) (Base $ fromScope a')
+      farm bat bat' \a a' -> go
+        -- the choice of rash is arbitrary here, again
+        (hide con (rash pay) $ Base pay)
+        fit
+        (Base $ fromScope a)
+        (Base $ fromScope a')
 
     (Gold bat pay, Lead bat') ->
-      farm bat bat' \a a' ->
-        go (hide con $ Base pay) fit (Base $ fromScope a) (Base $ grow $ a')
+      farm bat bat' \a a' -> go
+        (hide con (rash pay) $ Base pay)
+        fit
+        (Base $ fromScope a)
+        (Base $ grow $ a')
 
     (Lead bat, Lead bat') ->
       farm bat bat' \a a' ->
@@ -594,20 +643,20 @@ fits con fit t u = go con fit t u
 
     (Type, Type) -> pure ()
 
-    (Aura{}, _) -> bail
-    (_, Aura{}) -> bail
-    (Fork{}, _) -> bail
-    (_, Fork{}) -> bail
-    (Cell{}, _) -> bail
-    (_, Cell{}) -> bail
-    (Gate{}, _) -> bail
-    (_, Gate{}) -> bail
-    (Gold{}, _) -> bail
-    (_, Gold{}) -> bail
-    (Lead{}, _) -> bail
-    (_, Lead{}) -> bail
-    (Type,   _) -> bail
-    (_,   Type) -> bail
+    (Aura{}, _) -> bailFail
+    (_, Aura{}) -> bailFail
+    (Fork{}, _) -> bailFail
+    (_, Fork{}) -> bailFail
+    (Cell{}, _) -> bailFail
+    (_, Cell{}) -> bailFail
+    (Gate{}, _) -> bailFail
+    (_, Gate{}) -> bailFail
+    (Gold{}, _) -> bailFail
+    (_, Gold{}) -> bailFail
+    (Lead{}, _) -> bailFail
+    (_, Lead{}) -> bailFail
+    (Type,   _) -> bailFail
+    (_,   Type) -> bailFail
 
     -- Bind, Nest, Cast should be impossible because of evaluation
     -- TODO cas rule
@@ -625,7 +674,8 @@ fits con fit t u = go con fit t u
 -- cell type. I think it goes away with dependent types, since all finds are
 -- against `.`.
 find :: Vary a => Con a -> Code a -> Type a -> Wing -> Check ([Axis], Type a)
-find con cod typ win = foldrM (go con cod) ([], typ) win
+find con cod typ win = act (ActFind (nom con) typ win)
+                     $ foldrM (go con cod) ([], typ) win
  where
   go :: Vary a
      => Con a
@@ -642,11 +692,11 @@ find con cod typ win = foldrM (go con cod) ([], typ) win
     (_,           Mask _ c) -> step con cod a (Base c)
     (Just (L, a), Cell c _) -> step con (heed 2 cod) a (Base c)
     (Just (R, a), Cell _ d) -> step con (heed 3 cod) a $ flow con (heed 2 cod) d
-    (Just (L, _), Gold _ _) -> bail  -- TODO Noun?
+    (Just (L, _), Gold _ _) -> bailFail  -- TODO Noun?
     (Just (R, a), Gold _ c) -> step con (heed 3 cod) a (Base c)
-    (Just (L, _), Lead _)   -> bail  -- TODO Noun?
-    (Just (R, _), Lead _)   -> bail  -- TODO Noun?
-    (_,           _)        -> bail  -- arguably for Liskov, should be Noun :(
+    (Just (L, _), Lead _)   -> bailFail  -- TODO Noun?
+    (Just (R, _), Lead _)   -> bailFail  -- TODO Noun?
+    (_,           _)        -> bailFail  -- arguably for Liskov, should be Noun :(
 
   heed :: Axis -> Code a -> Code a
   heed ax = \case
@@ -658,7 +708,7 @@ find con cod typ win = foldrM (go con cod) ([], typ) win
   fend _ _ = 0  -- XX FIXME
 
   walk :: Vary a => Con a -> Code a -> Term -> Type a -> Check (Axis, Type a)
-  walk con cod n = maybe bail pure . lope con cod
+  walk con cod n = maybe bailFail pure . lope con cod
    where
     lope con cod = loft >>> \case
       Mask m c
@@ -689,7 +739,7 @@ find con cod typ win = foldrM (go con cod) ([], typ) win
 -- burden, e.g. on |= argument. Read about "bidirectional type checking" to
 -- learn more.
 work :: Vary a => Con a -> Fit -> Code a -> Type a -> Check ()
-work con fit e tau@(Base t) =
+work con fit e tau@(Base t) = act (ActWork (nom con) fit e tau)
   let playFits = do t' <- play con e
                     fits con fit t' tau
   in case e of
@@ -712,25 +762,26 @@ work con fit e tau@(Base t) =
                           _ -> playFits
 
     -- This lets us, e.g., turn with |=(a +(a)) without annotating a.
-    Lamb _ c -> case t of Gate u v -> work (hide con (Base u)) fit
+    Lamb x c -> case t of Gate u v -> work (hide con x (Base u)) fit
                                         (fromScope c) (Base $ fromScope v)
                           _ -> playFits
 
     Core bat pay -> case t of Gold tat tay -> do let tie = Base tay
                                                  work con fit pay tie
-                                                 farm bat tat \a t ->
-                                                   -- XX should we play pay
-                                                   -- instead of using tie?
-                                                   work (shew con pay tie)
-                                                        fit
-                                                        (fromScope a)
-                                                        (Base $ fromScope t)
+                                                 -- XX should we play pay
+                                                 -- instead of using tie?
+                                                 farm bat tat \a t -> work
+                                                   -- another arbitrary rash
+                                                   (shew con (rash pay) pay tie)
+                                                   fit
+                                                   (fromScope a)
+                                                   (Base $ fromScope t)
                               Lead tat -> do tay <- play con pay
-                                             farm bat tat \a t ->
-                                               work (shew con pay tay)
-                                                    fit
-                                                    (fromScope a)
-                                                    (grow $ Base t)
+                                             farm bat tat \a t -> work
+                                               (shew con (rash pay) pay tay)
+                                               fit
+                                               (fromScope a)
+                                               (grow $ Base t)
                               _ -> playFits
 
     Name n c -> case t of Mask m t | n == m -> work con fit c tau
@@ -752,8 +803,8 @@ work con fit e tau@(Base t) =
     Mask{} -> playFits
     Type{} -> playFits
 
-    Bind _ c d -> do tc <- play con c
-                     work (shew con c tc) fit (fromScope d) (grow tau)
+    Bind x c d -> do tc <- play con c
+                     work (shew con x c tc) fit (fromScope d) (grow tau)
 
     Case s cs ds -> do st <- play con s
                        undefined
@@ -770,15 +821,15 @@ work con fit e tau@(Base t) =
 
 -- | Require the given type to be a function type.
 -- XX Deppy had a cas rule here; why?
-wantGate :: Vary a => Type a -> Check (Type a, Scope () Code a)
-wantGate = \case
+needGate :: Vary a => Con a -> Type a -> Check (Type a, Scope () Code a)
+needGate con = \case
   Base (Gate c d) -> pure (Base c, d)
-  _ -> bail
+  t -> bail $ NeedGate (nom con) t
 
 
 -- | Given subject type, determine result type of code.
 play :: Vary a => Con a -> Code a -> Check (Type a)
-play con = \case
+play con cod = act (ActPlay (nom con) cod) case cod of
   Look v -> pure $ env con v
 
   Atom a Rock t -> pure $ Base $ Fork (singleton a) t
@@ -808,7 +859,7 @@ play con = \case
     pure (Base $ Aura "")
 
   Slam c d -> do
-    (td, tr) <- wantGate =<< play con c
+    (td, tr) <- needGate con =<< play con c
     work con FitNest d td
     pure $ flow con c tr
 
@@ -830,19 +881,19 @@ play con = \case
     -- use FitCast here. What would go horribly wrong?
     work con FitNest c (Base Type)
     let c' = eval (sem con) c
-    work (hide con c') FitNest (fromScope d) (Base Type)
+    work (hide con (rash c) c') FitNest (fromScope d) (Base Type)
     pure $ Base Type
 
   Gate c d -> do
     work con FitNest c (Base Type)
     let c' = eval (sem con) c
-    work (hide con c') FitNest (fromScope d) (Base Type)
+    work (hide con (rash c) c') FitNest (fromScope d) (Base Type)
     pure $ Base Type
 
   Gold bat pay -> do
     work con FitNest pay (Base Type)
     let t = eval (sem con) pay
-    for bat \b -> work (hide con t) FitNest (fromScope b) (Base Type)
+    for bat \b -> work (hide con (rash pay) t) FitNest (fromScope b) (Base Type)
     pure $ Base Type
 
   -- likewise under the a=Type idea, we'd FitCast here
@@ -856,11 +907,11 @@ play con = \case
 
   Type -> pure $ Base Type
 
-  Bind _ c d -> do
+  Bind x c d -> do
     tc <- play con c
     -- XX again consider alternatives, but I think this is actually the
     -- canonical thing to do; test in idris?
-    Base u <- play (shew con c tc) (fromScope d)
+    Base u <- play (shew con x c tc) (fromScope d)
     pure $ flow con c (toScope u)
 
   -- The easy answer is to say it has type Case c cs ts, where ts is the type

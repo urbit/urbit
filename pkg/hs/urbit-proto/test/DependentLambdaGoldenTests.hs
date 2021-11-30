@@ -24,22 +24,35 @@ listTests = findByExtension [".hoon"] "test/golden-dl"
 display :: (Show a, Rolling a) => a -> Text
 display x = render x <> "\n\n" <> pack (ppShow x)
 
-awful :: (Show a, Rolling a) => Either Text a -> LBS.ByteString
-awful = encodeUtf8 . either LT.fromStrict (LT.fromStrict . display)
+awful :: (Show a, Rolling a, Rolling b) => Either b a -> LBS.ByteString
+awful = encodeUtf8 . either (LT.fromStrict . render) (LT.fromStrict . display)
+
+data Err
+  = ErrRead Text
+  | ErrOpen Text
+  | ErrFree [Term]
+  | ErrType ([Act], Fail)
+
+instance Rolling Err where
+  roll = \case
+    ErrRead t -> roll t
+    ErrOpen t -> roll t
+    ErrFree t -> leaf $ "free variables: " <> tshow t
+    ErrType t -> roll t
 
 testEachPass :: FilePath -> IO TestTree
 testEachPass file = do
   let baseName = takeBaseName file
   txt <- readFileUtf8 file
-  let cst = parse hoon baseName txt
+  let cst = first ErrRead $ parse hoon baseName txt
   let cod = do
         c <- cst
-        o <- open c
-        maybe (Left $ "free variables " <> tshow (F.toList o)) Right $ closed o
+        o <- first ErrOpen $ open c
+        maybe (Left $ ErrFree $ F.toList o) Right $ closed o
   let val = eval absurd <$> cod
-  let typ = do c <- cod
-               maybe (Left "type error") Right $
-                 runReaderT (play (Con absurd absurd) c) []
+  let typ = do
+        c <- cod
+        first ErrType $ runReaderT (play (Con absurd absurd absurd) c) []
   let o1  = awful cst
   let o2  = awful cod
   let o3a = awful val
