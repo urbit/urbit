@@ -1073,6 +1073,32 @@ u3_serf_init(u3_serf* sef_u)
 {
   u3_noun rip;
 
+  if ( sef_u->dun_d ) {
+    // u3_noun sam = u3nt(u3_nul, c3n, u3nq(c3__once, c3_s2('c', 'd'), u3_blip, u3_nul));
+    u3_noun sam = u3nt(u3_nul, u3nq(c3__once, c3__ax, u3_blip, u3nt(u3i_string("peers"), u3i_string("~bex"), u3_nul)));
+    u3_noun dat = u3_serf_peek(sef_u, 0, sam);
+    c3_c  fil_c[2048];
+    snprintf(fil_c, 2048, "%s/.urb/put/ames-peers-bex-%" PRIu64 ".jam",
+             sef_u->dir_c, sef_u->dun_d);
+    // snprintf(fil_c, 2048, "%s/.urb/put/clay-desks.jam",
+    //          sef_u->dir_c);
+
+    {
+      u3_noun out = u3ke_jam(dat);
+      c3_w  len_w = u3r_met(3, out);
+      c3_y* out_y = c3_malloc(len_w);
+      u3r_bytes(0, len_w, out_y, out);
+
+      c3_i  fid_i = open(fil_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+
+      write(fid_i, out_y, len_w);
+      c3_sync(fid_i);
+      close(fid_i);
+      c3_free(out_y);
+      u3z(out);
+    }
+  }
+
   {
     c3_w  pro_w = 1;
     c3_y  hon_y = 141;
