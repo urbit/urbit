@@ -5,6 +5,23 @@
 
 #include <openssl/aes.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <setjmp.h>
+#include <gmp.h>
+#include <sigsegv.h>
+#include <stdint.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <uv.h>
+#include <errno.h>
+
+
 #include "aes_siv.h"
 
 /* functions
@@ -290,6 +307,23 @@ u3wea_sivb_de(u3_noun cor)
   }
 }
 
+static void
+_jamfile(c3_c* fil_c, u3_noun dat)
+{
+  u3_noun out = u3ke_jam(dat);
+  c3_w  len_w = u3r_met(3, out);
+  c3_y* out_y = c3_malloc(len_w);
+  u3r_bytes(0, len_w, out_y, out);
+
+  c3_i  fid_i = open(fil_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+
+  write(fid_i, out_y, len_w);
+  c3_sync(fid_i);
+  close(fid_i);
+  c3_free(out_y);
+  u3z(out);
+}
+
 
 
 u3_noun
@@ -306,6 +340,8 @@ u3qea_sivc_en(u3_atom key,
   return _siv_en(key_y, 64, ads, txt);
 }
 
+static c3_w enc_w = 0;
+
 u3_noun
 u3wea_sivc_en(u3_noun cor)
 {
@@ -318,7 +354,24 @@ u3wea_sivc_en(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return u3qea_sivc_en(key, ads, txt);
+    c3_c  fil_c[2048];
+    snprintf(fil_c, 2048, "%s/.urb/put/sivc_en input %" PRIu64 "-%u.jam",
+             u3P.dir_c, u3A->eve_d, enc_w);
+
+    _jamfile(fil_c, u3nt(u3k(key), u3k(ads), u3k(txt)));
+
+
+    u3_noun pro = u3qea_sivc_en(key, ads, txt);
+
+    if ( u3_none != pro ) {
+      snprintf(fil_c, 2048, "%s/.urb/put/sivc_en output %" PRIu64 "-%u.jam",
+               u3P.dir_c, u3A->eve_d, enc_w);
+      _jamfile(fil_c, u3k(pro));
+    }
+
+    enc_w++;
+
+    return pro;
   }
 }
 
@@ -339,6 +392,8 @@ u3qea_sivc_de(u3_atom key,
   return _siv_de(key_y, 64, ads, iv, len, txt);
 }
 
+static c3_w dec_w = 0;
+
 u3_noun
 u3wea_sivc_de(u3_noun cor)
 {
@@ -354,6 +409,22 @@ u3wea_sivc_de(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return u3qea_sivc_de(key, ads, iv, len, txt);
+    c3_c  fil_c[2048];
+    snprintf(fil_c, 2048, "%s/.urb/put/sivc_de input %" PRIu64 "-%u.jam",
+             u3P.dir_c, u3A->eve_d, dec_w);
+
+    _jamfile(fil_c, u3nc(u3k(key), u3nq(u3k(ads), u3k(iv), u3k(len), u3k(txt))));
+
+    u3_noun pro = u3qea_sivc_de(key, ads, iv, len, txt);
+
+    if ( u3_none != pro ) {
+      snprintf(fil_c, 2048, "%s/.urb/put/sivc_de output %" PRIu64 "-%u.jam",
+               u3P.dir_c, u3A->eve_d, dec_w);
+      _jamfile(fil_c, u3k(pro));
+    }
+
+    dec_w++;
+
+    return pro;
   }
 }
