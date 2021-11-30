@@ -8,6 +8,7 @@ import {
 import { useField } from 'formik';
 import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import { uxToHex, hexToUx } from '@urbit/api';
+import styled from 'styled-components';
 
 export type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
@@ -18,24 +19,26 @@ export type ColorInputProps = Parameters<typeof Col>[0] & {
 
 const COLOR_REGEX = /^(\d|[a-f]|[A-F]){6}$/;
 
-function padHex(hex: string) {
-  if(hex.length === 0) {
-    return '000000';
-  }
-  const repeat = 6 / hex.length;
-  if(Math.floor(repeat) === repeat) {
-    return hex.repeat(repeat);
-  }
-  if(hex.length < 6) {
-    return hex.slice(0,3).repeat(2);
-  }
-  return hex.slice(0,6);
+function isValidHex(color: string): boolean {
+  return COLOR_REGEX.test(color);
 }
+
+function parseIncomingColor(value: string): string {
+  if (!value)
+    return '';
+
+  const isUx = value.startsWith('0x');
+  return isUx ? uxToHex(value) : value.replace('#', '');
+}
+
+const ClickInput = styled(Input)`
+  cursor: pointer;
+`;
 
 export function ColorInput(props: ColorInputProps) {
   const { id, placeholder, label, caption, disabled, ...rest } = props;
   const [{ value }, meta, { setValue, setTouched }] = useField(id);
-  const [field, setField] = useState(uxToHex(value));
+  const [field, setField] = useState(parseIncomingColor(value));
 
   const update = (value: string) => {
     const normalizedValue = value.trim().replace(/[^a-f\d]/gi, '').slice(0,6);
@@ -44,21 +47,29 @@ export function ColorInput(props: ColorInputProps) {
 
   const onText = (e: ChangeEvent<HTMLInputElement>) => update(e.target.value);
 
-  const pickerChange = useMemo(() => _.debounce(update, 100), []);
+  const pickerChange = useMemo(() => _.debounce(update, 300), []);
 
   const updateField = useMemo(() => _.debounce((field: string) => {
-    const newValue = hexToUx(padHex(field));
-    console.log({ field, newValue });
+    const newValue = hexToUx(field);
     setValue(newValue);
     setTouched(true);
-  }, 150), []);
+  }, 100), []);
 
   useEffect(() => {
-    updateField(field);
+    if (isValidHex(field)) {
+      updateField(field);
+    }
   }, [field]);
 
-  const hex = uxToHex(value);
-  const isValid = COLOR_REGEX.test(hex);
+  useEffect(() => {
+    const parsedColor = parseIncomingColor(value);
+
+    if (parsedColor !== field) {
+      update(parsedColor);
+    }
+  }, [value]);
+
+  const isValid = isValidHex(field);
 
   return (
     <Box display='flex' flexDirection='column' {...rest}>
@@ -68,7 +79,7 @@ export function ColorInput(props: ColorInputProps) {
           {caption}
         </Label>
       ) : null}
-      <Row mt={2} alignItems='flex-end'>
+      <Row mt={2} alignItems='flex-end' maxWidth="120px">
         <Input
           id={id}
           borderTopRightRadius={0}
@@ -84,18 +95,18 @@ export function ColorInput(props: ColorInputProps) {
           borderBottomRightRadius={1}
           borderTopRightRadius={1}
           border={1}
-          borderLeft={0}
           borderColor='lightGray'
           width='32px'
           alignSelf='stretch'
-          bg={isValid ? `#${hex}` : 'transparent'}
+          bg={isValid ? `#${field}` : 'transparent'}
         >
-          <Input
+          <ClickInput
             width='100%'
             height='100%'
             alignSelf='stretch'
             disabled={disabled || false}
             type='color'
+            value={`#${isValid ? field : uxToHex(value)}`}
             opacity={0}
             overflow='hidden'
             onChange={(e: ChangeEvent<HTMLInputElement>) => pickerChange(e.target.value)}
