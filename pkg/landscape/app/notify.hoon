@@ -80,6 +80,7 @@
         :_(cards [%pass upd %agent dock %watch /updates])
       =?  cards  !(~(has by wex.bowl) [not dock])  ::  rewatch updates
         :_(cards [%pass not %agent dock %watch /notes])
+      =.  notifications.old  ~
       [(flop cards) this(state old)]
     ::
         ?(%0 %1)
@@ -346,10 +347,16 @@
     $(upds (welp upds us), more.upd t.more.upd)
   ::
       %read-count
-    :_  notifications
-    ^-  (list update)
-    %+  turn  ~(tap in (uids-for-place place.upd))
-    |=(=uid `update`[uid %dismiss])
+    =/  uids  ~(tap in (uids-for-place place.upd))
+    =|  upds=(list update)
+    |-  
+    ?~  uids 
+      [upds notifications]
+    %_  $
+      notifications  (~(del by notifications) i.uids)
+      upds           :_(upds [i.uids %dismiss])
+      uids           t.uids
+    ==
   ::
       %add-note
     =/  note=notification  +.upd
