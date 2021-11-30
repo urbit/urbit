@@ -168,7 +168,7 @@ export const hexToUx = (hex: string): string => {
     f.map(x => x.reverse().join('')),
     f.reverse,
     f.join('.')
-  )(hex.split(''));
+  )(hex.split('')) || '0';
   return `0x${ux}`;
 };
 
