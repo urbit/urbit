@@ -1075,7 +1075,7 @@ u3_serf_init(u3_serf* sef_u)
 
   if ( sef_u->dun_d ) {
     // u3_noun sam = u3nt(u3_nul, c3n, u3nq(c3__once, c3_s2('c', 'd'), u3_blip, u3_nul));
-    u3_noun sam = u3nt(u3_nul, u3nq(c3__once, c3__ax, u3_blip, u3nt(u3i_string("peers"), u3i_string("~bex"), u3_nul)));
+    u3_noun sam = u3nt(u3_nul, c3n, u3nq(c3__once, c3__ax, u3_blip, u3nt(u3i_string("peers"), u3i_string("~bex"), u3_nul)));
     u3_noun dat = u3_serf_peek(sef_u, 0, sam);
     c3_c  fil_c[2048];
     snprintf(fil_c, 2048, "%s/.urb/put/ames-peers-bex-%" PRIu64 ".jam",
