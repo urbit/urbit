@@ -6,7 +6,7 @@
 [x] Make core do rock/sand correctly.
 [x] Write a resugarer
 [x] Write a rudamentary printer for the cst
-[ ] Add Failure sum and propagate these through the failure points of Check
-[ ] Add Activities and push them
-[ ] Print out the Failure and Activity stack on type error
-[ ] Debug the failing test case.
+[x] Add Failure sum and propagate these through the failure points of Check
+[x] Add Activities and push them
+[x] Print out the Failure and Activity stack on type error
+[x] Debug the failing test case.

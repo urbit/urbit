@@ -824,6 +824,7 @@ work con fit e tau@(Base t) = act (ActWork (nom con) fit e tau)
 needGate :: Vary a => Con a -> Type a -> Check (Type a, Scope () Code a)
 needGate con = \case
   Base (Gate c d) -> pure (Base c, d)
+  Base (Mask _ t) -> needGate con (Base t)
   t -> bail $ NeedGate (nom con) t
 
 
