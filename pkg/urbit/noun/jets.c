@@ -930,7 +930,16 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
       mug_fil_u = fopen("/tmp/mugs.txt", "w");
     }
 
-    fprintf(mug_fil_u, "%s: 0x%x\r\n", cop_u->cos_c, u3r_mug(pro));
+    if ( u3P.dir_c ) {
+      u3j_core* cor_u = cop_u;
+
+      while ( cor_u ) {
+        fprintf(mug_fil_u, "%s/", cor_u->cos_c);
+        cor_u = cor_u->par_u;
+      }
+
+      fprintf(mug_fil_u, " 0x%x 0x%x\r\n", u3r_mug(cor), u3r_mug(pro));
+    }
   }
 
   return pro;
