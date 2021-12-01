@@ -1062,7 +1062,7 @@ _pier_play(u3_play* pay_u)
       //  XX temporary hack
       //
       u3l_log("pier: replay barrier reached, cramming\r\n");
-      u3_pier_cram(pir_u);
+      u3_lord_exit(pir_u->god_u);
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
       u3_lord_save(pir_u->god_u);
