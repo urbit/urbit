@@ -4,8 +4,9 @@
 ++  dejs
   =,  dejs:format
   |%
-  ++  uid  (su ;~(pfix (jest '0x') hex:ag))
+  ++  uid  (se %ux)
   ++  request
+    ^-  $-(json ^request)
     %-  ot
     :~  uid+uid
         action+action
