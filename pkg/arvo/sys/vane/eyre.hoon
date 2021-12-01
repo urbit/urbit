@@ -1705,12 +1705,16 @@
         ==
       ::
           %fact
-        :~  ['response' [%s 'diff']]
+        :+  ['response' [%s 'diff']]
           ::
-            :-  'json'
-            ~|  [%unexpected-fact-mark p.cage.sign]
-            ?>  =(%json p.cage.sign)
-            !<(json q.cage.sign)
+          :-  'json'
+          ~|  [%unexpected-fact-mark p.cage.sign]
+          ?>  =(%json p.cage.sign)
+          !<(json q.cage.sign)
+        ::
+        ?~  from  ~
+        :~  ['mark' [%s mark.u.from]]
+            ['desk' [%s desk.u.from]]
         ==
       ::
           %kick
