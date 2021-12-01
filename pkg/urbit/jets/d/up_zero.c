@@ -4,7 +4,10 @@ u3_noun
 u3qdu_zero(u3_atom a, u3_atom b)
 {
   u3_atom d = u3qc_dis(a, b);
-  return ( d == 0 ) ? c3y : c3n;
+  u3_atom pro = ( d == 0 ) ? c3y : c3n;
+
+  u3z(d);
+  return pro;
 }
 
 u3_noun

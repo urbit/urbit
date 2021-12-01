@@ -22,11 +22,12 @@ u3qdu_rrdub(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 
       u3x_qual(p_l_a, &n_p_l_a, &l_p_l_a, &m_p_l_a, &r_p_l_a);
 
-      return u3qdu_rrsin(
-               u3k(n_a),
-               u3qdu_llsin(n_p_l_a, l_p_l_a, m_p_l_a, r_p_l_a),
-               u3k(m_a),
-               u3k(r_a));
+      u3_noun pre = u3qdu_llsin(n_p_l_a, l_p_l_a, m_p_l_a, r_p_l_a);
+      u3_noun pro = u3qdu_rrsin(n_a, pre, m_a, r_a);
+
+      u3z(pre);
+
+      return pro;
     }
 
     case c3__rlos: {
@@ -34,11 +35,12 @@ u3qdu_rrdub(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 
       u3x_qual(p_l_a, &n_p_l_a, &l_p_l_a, &m_p_l_a, &r_p_l_a);
 
-      return u3qdu_rrsin(
-               u3k(n_a),
-               u3qdu_rlsin(n_p_l_a, l_p_l_a, m_p_l_a, r_p_l_a),
-               u3k(m_a),
-               u3k(r_a));
+      u3_noun pre = u3qdu_rlsin(n_p_l_a, l_p_l_a, m_p_l_a, r_p_l_a);
+      u3_noun pro = u3qdu_rrsin(n_a, pre, m_a, r_a);
+
+      u3z(pre);
+
+      return pro;
     }
   }
 }

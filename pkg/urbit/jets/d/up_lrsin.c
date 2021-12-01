@@ -7,9 +7,9 @@ u3qdu_lrsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
     return u3m_bail(c3__exit);
   }
 
-  u3_noun n_b, l_b, m_b, r_b;
-
   u3_noun b = u3t(u3t(l_a));
+
+  u3_noun n_b, l_b, m_b, r_b;
 
   u3x_qual(b, &n_b, &l_b, &m_b, &r_b);
 
@@ -23,19 +23,21 @@ u3qdu_lrsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
       return u3m_bail(c3__exit);
 
     case c3__llos: {
-      return u3qdu_llos(
-               u3k(n_b),
-               u3k(l_b),
-               u3k(m_b),
-               u3qdu_llos(u3k(n_a), u3k(r_b), u3k(m_a), u3k(r_a)));
+      u3_noun pre = u3qdu_llos(n_a, r_b, m_a, r_a);
+      u3_noun pro = u3qdu_llos(n_b, l_b, m_b, pre);
+
+      u3z(pre);
+
+      return pro;
     }
 
     case c3__rlos: {
-      return u3qdu_llos(
-               u3k(n_a),
-               u3k(l_b),
-               u3k(m_b),
-               u3qdu_llos(u3k(n_b), u3k(r_b), u3k(m_a), u3k(r_a)));
+      u3_noun pre = u3qdu_llos(n_b, r_b, m_a, r_a);
+      u3_noun pro = u3qdu_llos(n_a, l_b, m_b, pre);
+
+      u3z(pre);
+
+      return pro;
     }
   }
 }

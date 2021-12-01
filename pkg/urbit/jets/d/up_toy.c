@@ -12,11 +12,11 @@ u3qdu_toy(u3_noun a, u3_noun b)
   else {
     u3_noun n_a, t_a, m_a;
     u3_noun n_b, t_b, m_b;
-    u3_noun k_n_a, k_n_b;
 
     u3x_trel(a, &n_a, &t_a, &m_a);
     u3x_trel(b, &n_b, &t_b, &m_b);
 
+    u3_noun k_n_a, k_n_b;
     u3_noun t_p_n_a, t_p_n_b;
 
     u3x_cell(n_a, &k_n_a, &t_p_n_a);

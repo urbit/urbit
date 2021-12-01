@@ -1,30 +1,31 @@
 #include "all.h"
 
 u3_noun
-u3qdu_llbal(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
+u3qdu_llbal(u3_noun n, u3_noun l, u3_noun m, u3_noun r)
 {
-  if ( c3n == u3du(r_a) ) {
+  if ( c3n == u3du(r) ) {
     return u3m_bail(c3__exit);
   }
 
-  u3_noun p_r_a = u3t(u3t(r_a));
+  u3_noun p_r = u3t(u3t(r));
 
-  u3_noun n_p_r_a, l_p_r_a, m_p_r_a, r_p_r_a;
+  u3_noun n_p_r, l_p_r, m_p_r, r_p_r;
 
-  u3x_qual(p_r_a, &n_p_r_a, &l_p_r_a, &m_p_r_a, &r_p_r_a);
+  u3x_qual(p_r, &n_p_r, &l_p_r, &m_p_r, &r_p_r);
 
-  if ( (c3n == u3du(l_p_r_a)) || (c3n == u3du(r_p_r_a)) ) {
-    return u3m_bail(c3__exit);
-  }
+  u3_atom sl = u3qdu_size(l_p_r);
+  u3_atom sr = u3qdu_size(r_p_r);
 
-  u3_atom sl = u3qdu_size(l_p_r_a);
-  u3_atom sr = u3qdu_size(r_p_r_a);
+  c3_o comp = u3qa_lth(sl, sr);
 
-  if ( c3y == u3qa_lth(sl, sr) ) {
-    return u3qdu_llsin(u3k(n_a), u3k(l_a), u3k(m_a), u3k(r_a));
+  u3z(sl);
+  u3z(sr);
+
+  if ( c3y == comp ) {
+    return u3qdu_llsin(n, l, m, r);
   }
   else {
-    return u3qdu_lldub(u3k(n_a), u3k(l_a), u3k(m_a), u3k(r_a));
+    return u3qdu_lldub(n, l, m, r);
   }
 }
 
