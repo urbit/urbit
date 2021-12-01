@@ -886,9 +886,9 @@ u3e_save(void)
 {
   u3_ce_patch* pat_u;
 
-  if ( u3C.wag_w & u3o_dryrun ) {
+  // if ( u3C.wag_w & u3o_dryrun ) {
     return;
-  }
+  // }
 
   if ( !(pat_u = _ce_patch_compose()) ) {
     return;

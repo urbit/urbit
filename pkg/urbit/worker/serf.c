@@ -818,6 +818,8 @@ u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
   return u3nc(c3__peek, pro);
 }
 
+extern FILE* mug_fil_u;
+
 /* _serf_writ_live_exit(): exit on command.
 */
 static void
@@ -852,6 +854,11 @@ _serf_writ_live_exit(u3_serf* sef_u, c3_w cod_w)
     {
       fclose(fil_u);
     }
+  }
+
+  if ( mug_fil_u ) {
+    fflush(mug_fil_u);
+    fclose(mug_fil_u);
   }
 
   //  XX move to jets.c

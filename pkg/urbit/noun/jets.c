@@ -839,7 +839,7 @@ _cj_soft(u3_noun cor, u3_noun axe)
 ** `axe` is RETAINED.
 */
 static u3_weak
-_cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
+_cj_kick_z_real(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
 {
   if ( 0 == ham_u->fun_f ) {
     return u3_none;
@@ -915,6 +915,25 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
     }
     return u3_none;
   }
+}
+
+FILE* mug_fil_u = 0;
+
+static u3_weak
+_cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
+{
+  u3_weak pro = _cj_kick_z_real(cor, cop_u, ham_u, axe);
+
+  if ( u3_none != pro ) {
+
+    if ( !mug_fil_u ) {
+      mug_fil_u = fopen("/tmp/mugs.txt", "w");
+    }
+
+    fprintf(mug_fil_u, "%s: 0x%x\r\n", cop_u->cos_c, u3r_mug(pro));
+  }
+
+  return pro;
 }
 
 /* _cj_hook_in(): execute hook from core, or fail.
