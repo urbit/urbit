@@ -1,0 +1,10 @@
+$?
+++  bar  {@ @}
+++  foo  @
+--
+
+Lead
+  (fromList
+     [ ( "bar" , Cell (Aura "") (Scope (Look (F (Aura "")))) )
+     , ( "foo" , Aura "" )
+     ])

@@ -1,0 +1,25 @@
+:*  {@ @}
+    {a|@ @}
+    {a|$ a}
+    {a|{@ $} +3.a}
+    {a|$-(@ $) $-(b|@ (a b))}
+==
+
+Cons
+  (Cell (Aura "") (Scope (Look (F (Aura "")))))
+  (Cons
+     (Cell (Mask "a" (Aura "")) (Scope (Aura "")))
+     (Cons
+        (Cell (Mask "a" Type) (Scope (Wing [] (Look (B ())))))
+        (Cons
+           (Cell
+              (Mask "a" (Cell (Aura "") (Scope (Look (F Type)))))
+              (Scope (Wing [ Axis 3 ] (Look (B ())))))
+           (Cell
+              (Mask "a" (Gate (Aura "") (Scope (Look (F Type)))))
+              (Scope
+                 (Gate
+                    (Mask "b" (Aura ""))
+                    (Scope
+                       (Slam
+                          (Wing [] (Look (F (Look (B ()))))) (Wing [] (Look (B ())))))))))))

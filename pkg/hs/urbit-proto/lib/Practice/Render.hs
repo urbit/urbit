@@ -270,7 +270,7 @@ binary run op r1 r2 = case (r1, r2) of
 showRock :: Atom -> Term -> Text
 showRock a = \case
   "f" -> case a of
-    0 -> "%&"
+    0 -> "%&"  -- XX should this actually be `&`? Ask Phil
     1 -> "%|"
     _ -> "%" <> tshow a
   "n" -> case a of 0 -> "~"; _ -> "%" <> tshow a
@@ -341,7 +341,7 @@ instance Rolling Hoon where
     Bckt s t -> fixed "$^" "$^(" ")" [roll s, roll t]
     Bcts s t -> binary "$=" "|" (roll s) (roll t)
     Bcpt s t -> fixed "$@" "$@(" ")" [roll s, roll t]
-    Bcwt ms -> Huge $ Stem "$!" "--" [] (arms ms)
+    Bcwt ms -> Huge $ Stem "$?" "--" [] (arms ms)
     --
     Brcn ms -> Huge $ Stem "|%" "--" [] (arms ms)
     Brts s h -> fixed "|=" "|=(" ")" [roll s, roll h]

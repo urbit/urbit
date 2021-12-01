@@ -1,0 +1,3 @@
+q:p=1
+
+Base { loft = Wing [ Ally "q" ] (Name "p" (Atom 1 Sand "ud")) }

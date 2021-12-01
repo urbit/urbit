@@ -1,0 +1,13 @@
+$?
+++  bar  {@ @}
+++  foo  @
+--
+
+Base
+  { loft =
+      Lead
+        (fromList
+           [ ( "bar" , Cell (Aura "") (Scope (Aura "")) )
+           , ( "foo" , Aura "" )
+           ])
+  }

@@ -1,0 +1,17 @@
+  trace:  play:
+          code  a|1
+
+          work:
+          mode  nest
+          code  1
+          type  $
+
+          nest:
+          have  @ud
+          need  $
+
+
+  nest-fail:
+  have  @ud
+  need  $
+

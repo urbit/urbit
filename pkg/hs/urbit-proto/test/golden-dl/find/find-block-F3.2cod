@@ -1,0 +1,8 @@
+=/  a
+  p=q=1
+q.a
+
+Bind
+  "a"
+  (Name "p" (Name "q" (Atom 1 Sand "ud")))
+  (Scope (Wing [ Ally "q" ] (Look (B ()))))

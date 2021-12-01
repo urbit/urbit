@@ -1,0 +1,4 @@
+$.  1
+--
+
+Base { loft = Gold (fromList []) (Atom 1 Sand "ud") }

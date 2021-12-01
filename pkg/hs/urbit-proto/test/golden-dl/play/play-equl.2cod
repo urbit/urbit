@@ -1,0 +1,16 @@
+=/  a
+  1
+=/  b
+  [2 3]
+=(a b)
+
+Bind
+  "a"
+  (Atom 1 Sand "ud")
+  (Scope
+     (Bind
+        "b"
+        (Cons (Atom 2 Sand "ud") (Atom 3 Sand "ud"))
+        (Scope
+           (Equl
+              (Wing [] (Look (F (Look (B ()))))) (Wing [] (Look (B ())))))))

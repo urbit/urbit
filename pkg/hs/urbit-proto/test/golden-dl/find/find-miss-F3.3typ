@@ -1,0 +1,15 @@
+  trace:  play:
+          code  =/  a
+                  p=1
+                q.a
+
+
+          play:
+          code  q.a
+
+          find:
+          type  p|@ud
+          wing  q
+
+
+  bail-fail:

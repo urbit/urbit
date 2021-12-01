@@ -375,7 +375,11 @@ eval sem = \case
 
   Wing w c -> Base $ foldr limn (go c) w
    where
-    limn l c = maybe c id $ limb l c
+    limn l c = maybe (replant l c) id $ limb l c
+
+    replant l = \case
+      Wing w c -> Wing (l:w) c
+      c -> Wing [l] c
 
     limb (Ally n) (Name m c) | m == n    = Just c
                              | otherwise = Nothing
@@ -499,11 +503,12 @@ fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
   go con fit t u = case (loft t, loft u) of
     -- These have to come first to avoid being excluded by the (_, Foo{}) cases.
     (Mask n c, Mask m d) | n == m -> go con fit (Base c) (Base d)
-    -- The Liskov principle for faces.
-    (Mask _ c, d) -> go con fit (Base c) (Base d)
+    (Mask _ c, d)
+      | FitSame <- fit -> fitsFail
+      | otherwise      -> go con fit (Base c) (Base d)
     (c, Mask _ d)
-      | FitCast <- fit  -> go con fit (Base c) (Base d)
-      | otherwise       -> fitsFail
+      | FitSame <- fit  -> fitsFail
+      | otherwise       -> go con fit (Base c) (Base d)
 
     (Look x, Look y) | x == y -> pure ()
     {-

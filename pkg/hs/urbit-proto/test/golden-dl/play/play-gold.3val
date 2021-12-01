@@ -1,0 +1,14 @@
+$.  @
+++  bar  $
+++  foo  @
+--
+
+Base
+  { loft =
+      Gold
+        (fromList
+           [ ( "bar" , Scope (Look (F Type)) )
+           , ( "foo" , Scope (Look (F (Aura ""))) )
+           ])
+        (Aura "")
+  }

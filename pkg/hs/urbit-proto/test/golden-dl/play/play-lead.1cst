@@ -1,0 +1,10 @@
+$?
+++  bar  {@ @}
+++  foo  @
+--
+
+Bcwt
+  (fromList
+     [ ( "bar" , Bccl (Bass (Aur "")) [ Bass (Aur "") ] )
+     , ( "foo" , Bass (Aur "") )
+     ])

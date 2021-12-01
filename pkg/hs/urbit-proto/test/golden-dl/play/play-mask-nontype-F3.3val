@@ -1,0 +1,3 @@
+a|1
+
+Base { loft = Mask "a" (Atom 1 Sand "ud") }

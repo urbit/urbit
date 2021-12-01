@@ -1,0 +1,27 @@
+:*  {@ @}
+    {a|@ @}
+    {a|$ a}
+    {a|{@ $} +3.a}
+    {a|$-(@ $) $-(b|@ (a b))}
+==
+
+Base
+  { loft =
+      Cons
+        (Cell (Aura "") (Scope (Aura "")))
+        (Cons
+           (Cell (Mask "a" (Aura "")) (Scope (Aura "")))
+           (Cons
+              (Cell (Mask "a" Type) (Scope (Look (B ()))))
+              (Cons
+                 (Cell
+                    (Mask "a" (Cell (Aura "") (Scope Type)))
+                    (Scope (Wing [ Axis 3 ] (Look (B ())))))
+                 (Cell
+                    (Mask "a" (Gate (Aura "") (Scope Type)))
+                    (Scope
+                       (Gate
+                          (Mask "b" (Aura ""))
+                          (Scope
+                             (Slam (Wing [] (Look (F (Look (B ()))))) (Look (B ()))))))))))
+  }

@@ -193,6 +193,7 @@ shut e = \case
   Equl c d -> Dtts (shut e c) (shut e d)
   --
   Aura au -> Bass (Aur au)
+  Fork as "f" | as == setFromList [0, 1] -> Bass Flg
   Fork as au -> Bass (Fok (toList as) au)
   Cell c d -> case shut (unmask e c) $ fromScope d of
     Bccl s ss -> Bccl (shut e c) (s:ss)

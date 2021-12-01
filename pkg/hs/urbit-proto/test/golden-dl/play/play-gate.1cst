@@ -1,0 +1,20 @@
+:*  $-(@ @)
+    $-(a|@ @)
+    $-(a|$ a)
+    $-(a|{@ $} +3.a)
+    $-(a|$-(@ $) $-(b|@ (a b)))
+==
+
+Cltr
+  [ Bchp (Bass (Aur "")) (Bass (Aur ""))
+  , Bchp (Bcts (Wung [ Ally "a" ]) (Bass (Aur ""))) (Bass (Aur ""))
+  , Bchp (Bcts (Wung [ Ally "a" ]) (Bass Typ)) (Wung [ Ally "a" ])
+  , Bchp
+      (Bcts (Wung [ Ally "a" ]) (Bccl (Bass (Aur "")) [ Bass Typ ]))
+      (Wung [ Axis 3 , Ally "a" ])
+  , Bchp
+      (Bcts (Wung [ Ally "a" ]) (Bchp (Bass (Aur "")) (Bass Typ)))
+      (Bchp
+         (Bcts (Wung [ Ally "b" ]) (Bass (Aur "")))
+         (Cncl (Wung [ Ally "a" ]) [ Wung [ Ally "b" ] ]))
+  ]

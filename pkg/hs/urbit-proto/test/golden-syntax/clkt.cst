@@ -1,0 +1,10 @@
+Brcn
+  (fromList
+     [ ( "a"
+       , Clkt
+           (Tsgr (Adam Sand 1 "ud") (Adam Sand 2 "ud"))
+           (Wung [ Ally "b" ])
+           (Wung [ Ally "c" ])
+           (Wung [ Ally "d" ])
+       )
+     ])
