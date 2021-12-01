@@ -1671,7 +1671,7 @@ u3a_mark_ptr(void* ptr_v)
     if ( 0 == box_u->eus_w ) {
       siz_w = box_u->siz_w;
     }
-    else if ( 0xffffffff == box_u->eus_w ) {      // see _raft_prof()
+    else if ( 0xffffffff == box_u->eus_w ) {      // see u3a_prof()
       siz_w = 0xffffffff;
       box_u->eus_w = 0;
     }
@@ -1689,7 +1689,7 @@ u3a_mark_ptr(void* ptr_v)
     else {
       c3_assert(use_ws != 0);
 
-      if ( 0x80000000 == (c3_w)use_ws ) {    // see _raft_prof()
+      if ( 0x80000000 == (c3_w)use_ws ) {         // see u3a_prof()
         use_ws = -1;
         siz_w = 0xffffffff;
       }
@@ -1922,7 +1922,6 @@ u3a_discount_noun(u3_noun som)
   }
 }
 
-
 /* u3a_print_memory: print memory amount.
 */
 void
@@ -1939,7 +1938,7 @@ u3a_print_memory(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
   if ( byt_w ) {
     if ( gib_w ) {
       fprintf(fil_u, "%s: GB/%d.%03d.%03d.%03d\r\n",
-          cap_c, gib_w, mib_w, kib_w, bib_w);
+              cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
       fprintf(fil_u, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
@@ -1962,6 +1961,122 @@ u3a_maid(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
     u3a_print_memory(fil_u, cap_c, wor_w);
   }
   return wor_w;
+}
+
+/* _ca_print_memory(): un-captioned u3a_print_memory().
+*/
+static void
+_ca_print_memory(FILE* fil_u, c3_w wor_w)
+{
+  c3_w byt_w = (wor_w * 4);
+  c3_w gib_w = (byt_w / 1000000000);
+  c3_w mib_w = (byt_w % 1000000000) / 1000000;
+  c3_w kib_w = (byt_w % 1000000) / 1000;
+  c3_w bib_w = (byt_w % 1000);
+
+  if ( gib_w ) {
+    fprintf(fil_u, "GB/%d.%03d.%03d.%03d\r\n",
+            gib_w, mib_w, kib_w, bib_w);
+  }
+  else if ( mib_w ) {
+    fprintf(fil_u, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w);
+  }
+  else if ( kib_w ) {
+    fprintf(fil_u, "KB/%d.%03d\r\n", kib_w, bib_w);
+  }
+  else {
+    fprintf(fil_u, "B/%d\r\n", bib_w);
+  }
+}
+
+/* u3a_prof(): mark/measure/print memory profile. RETAIN.
+*/
+c3_w
+u3a_prof(FILE* fil_u, c3_w den_w, u3_noun mas)
+{
+  c3_w tot_w = 0;
+  u3_noun h_mas, t_mas;
+
+  if ( c3n == u3r_cell(mas, &h_mas, &t_mas) ) {
+    fprintf(fil_u, "%.*smistyped mass\r\n", den_w, "");
+    return tot_w;
+  }
+  else if ( _(u3du(h_mas)) ) {
+    fprintf(fil_u, "%.*smistyped mass head\r\n", den_w, "");
+    {
+      c3_c* lab_c = u3m_pretty(h_mas);
+      fprintf(fil_u, "h_mas: %s", lab_c);
+      c3_free(lab_c);
+    }
+    return tot_w;
+  }
+  else {
+    {
+      c3_c* lab_c = u3m_pretty(h_mas);
+      fprintf(fil_u, "%*s%s: ", den_w, "", lab_c);
+      c3_free(lab_c);
+    }
+
+    u3_noun it_mas, tt_mas;
+
+    if ( c3n == u3r_cell(t_mas, &it_mas, &tt_mas) ) {
+      fprintf(fil_u, "%*smistyped mass tail\r\n", den_w, "");
+      return tot_w;
+    }
+    else if ( c3y == it_mas ) {
+      tot_w += u3a_mark_noun(tt_mas);
+      _ca_print_memory(fil_u, tot_w);
+
+#if 1
+      /* The basic issue here is that tt_mas is included in .sac
+       * (the whole profile), so they can't both be roots in the
+       * normal sense. When we mark .sac later on, we want tt_mas
+       * to appear unmarked, but its children should be already
+       * marked.
+       *
+       * see u3a_mark_ptr().
+      */
+      if ( _(u3a_is_dog(tt_mas)) ) {
+        u3a_box* box_u = u3a_botox(u3a_to_ptr(tt_mas));
+#ifdef U3_MEMORY_DEBUG
+        if ( 1 == box_u->eus_w ) {
+          box_u->eus_w = 0xffffffff;
+        }
+        else {
+          box_u->eus_w -= 1;
+        }
+#else
+        if ( -1 == (c3_w)box_u->use_w ) {
+          box_u->use_w = 0x80000000;
+        }
+        else {
+          box_u->use_w += 1;
+        }
+#endif
+      }
+#endif
+
+      return tot_w;
+    }
+    else if ( c3n == it_mas ) {
+      fprintf(fil_u, "\r\n");
+
+      while ( _(u3du(tt_mas)) ) {
+        tot_w += u3a_prof(fil_u, den_w+2, u3h(tt_mas));
+        tt_mas = u3t(tt_mas);
+      }
+
+      fprintf(fil_u, "%*s--", den_w, "");
+      _ca_print_memory(fil_u, tot_w);
+
+      return tot_w;
+
+    }
+    else {
+      fprintf(fil_u, "%*smistyped (strange) mass tail\r\n", den_w, "");
+      return tot_w;
+    }
+  }
 }
 
 /* u3a_mark_road(): mark ad-hoc persistent road structures.

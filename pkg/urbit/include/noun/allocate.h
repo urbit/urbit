@@ -644,6 +644,11 @@
           void
           u3a_print_memory(FILE* fil_u, c3_c* cap_c, c3_w wor_w);
 
+        /* u3a_prof(): mark/measure/print memory profile. RETAIN.
+        */
+          c3_w
+          u3a_prof(FILE* fil_u, c3_w den_w, u3_noun mas);
+
         /* u3a_maid(): maybe print memory.
         */
           c3_w
