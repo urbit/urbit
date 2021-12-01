@@ -1,0 +1,73 @@
+=/  a
+  :*  p=1
+      q=[1 2]
+      r=`$-(@ @)`|=(a a)
+      s=r=$
+      q=[1 2 3]
+      t=[u=4 v=5]
+  ==
+:*  p.a
+    q.a
+    +3.q.a
+    r.a
+    s.a
+    r.s.a
+    t.a
+    u.t.a
+    v.t.a
+    +2.t.a
+    +3.t.a
+    +3.a
+    +6.a
+==
+
+Bind
+  "a"
+  (Cons
+     (Name "p" (Atom 1 Sand "ud"))
+     (Cons
+        (Name "q" (Cons (Atom 1 Sand "ud") (Atom 2 Sand "ud")))
+        (Cons
+           (Name
+              "r"
+              Cast
+                { cod = Lamb "a" (Scope (Wing [] (Look (B ()))))
+                , typ = Gate (Aura "") (Scope (Look (F (Aura ""))))
+                })
+           (Cons
+              (Name "s" (Name "r" Type))
+              (Cons
+                 (Name
+                    "q"
+                    (Cons
+                       (Atom 1 Sand "ud") (Cons (Atom 2 Sand "ud") (Atom 3 Sand "ud"))))
+                 (Name
+                    "t"
+                    (Cons
+                       (Name "u" (Atom 4 Sand "ud")) (Name "v" (Atom 5 Sand "ud")))))))))
+  (Scope
+     (Cons
+        (Wing [ Ally "p" ] (Look (B ())))
+        (Cons
+           (Wing [ Ally "q" ] (Look (B ())))
+           (Cons
+              (Wing [ Axis 3 , Ally "q" ] (Look (B ())))
+              (Cons
+                 (Wing [ Ally "r" ] (Look (B ())))
+                 (Cons
+                    (Wing [ Ally "s" ] (Look (B ())))
+                    (Cons
+                       (Wing [ Ally "r" , Ally "s" ] (Look (B ())))
+                       (Cons
+                          (Wing [ Ally "t" ] (Look (B ())))
+                          (Cons
+                             (Wing [ Ally "u" , Ally "t" ] (Look (B ())))
+                             (Cons
+                                (Wing [ Ally "v" , Ally "t" ] (Look (B ())))
+                                (Cons
+                                   (Wing [ Axis 2 , Ally "t" ] (Look (B ())))
+                                   (Cons
+                                      (Wing [ Axis 3 , Ally "t" ] (Look (B ())))
+                                      (Cons
+                                         (Wing [ Axis 3 ] (Look (B ())))
+                                         (Wing [ Axis 6 ] (Look (B ()))))))))))))))))

@@ -379,7 +379,7 @@ eval sem = \case
 
     limb (Ally n) (Name m c) | m == n    = Just c
                              | otherwise = Nothing
-    limb (Ally n) (Cons c d)             = limb (Ally n) c <|> limb (Ally n) d
+    limb (Ally n) (Cons c d)             = limb (Ally n) d <|> limb (Ally n) c
     limb (Ally n) (Core bat pay)         = go <$> instantiate (const pay)
                                              <$> lookup n bat
                                            <|> limb (Ally n) pay
@@ -721,8 +721,9 @@ find con cod typ win = act (ActFind (nom con) typ win)
         | otherwise -> Nothing
 
       Cell c d ->
-        first (peg 2) <$> lope con (heed 2 cod) (Base c) <|>
-        first (peg 3) <$> lope con (heed 3 cod) (flow con (heed 2 cod) d)
+        -- NB: We look to the right first, because =+ now pushes to the right.
+        first (peg 3) <$> lope con (heed 3 cod) (flow con (heed 2 cod) d) <|>
+        first (peg 2) <$> lope con (heed 2 cod) (Base c)
 
       Gold bat pay ->
         do
