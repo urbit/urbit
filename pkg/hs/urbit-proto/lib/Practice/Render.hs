@@ -4,6 +4,7 @@ import ClassyPrelude
 
 import Data.Either (fromRight)
 import Data.List (unfoldr)
+import Data.Text (stripEnd)
 import Data.Void
 import Urbit.Atom (atomUtf8)
 
@@ -75,7 +76,7 @@ renderTank = renderLines . toList . tankLines
 
 renderLines :: [Line] -> Text
 renderLines = intercalate "\n"
-            . map \Line{..} -> replicate ind ' ' <> tex
+            . map \Line{..} -> stripEnd $ replicate ind ' ' <> tex
 
 tankLines :: Tank -> DList Line
 tankLines = \case
@@ -165,28 +166,33 @@ instance Rolling [Act] where
 instance Rolling Act where
   roll = \case
     ActFits e f t u -> Huge $ Stem (tshow f <> ":") "" []
-      [ ("have:", tank $ roll $ fmap e t, Leaf "")
-      , ("need:", tank $ roll $ fmap e u, Leaf "")
+      [ ("have", tank $ roll $ fmap e t, Leaf "")
+      , ("need", tank $ roll $ fmap e u, Leaf "")
       ]
     ActFind e t w -> Huge $ Stem "find:" "" []
-      [ ("type:", tank $ roll $ fmap e t, Leaf "")
-      , ("wing:", tank $ roll w, Leaf "")
+      [ ("type", tank $ roll $ fmap e t, Leaf "")
+      , ("wing", tank $ roll w, Leaf "")
       ]
-    ActWork e f c t -> Huge $ Stem ("work-" <> tshow f <> ":") "" []
-      [ ("code:", tank $ roll $ fmap e c, Leaf "")
-      , ("type:", tank $ roll $ fmap e t, Leaf "")
+    ActWork e f c t -> Huge $ Stem "work:" "" []
+      [ ("mode", Leaf $ tshow f,         Leaf "")
+      , ("code", tank $ roll $ fmap e c, Leaf "")
+      , ("type", tank $ roll $ fmap e t, Leaf "")
       ]
     ActPlay e c -> Huge $ Stem "play:" "" []
-      [ ("code:", tank $ roll $ fmap e c, Leaf "")
+      [ ("code", tank $ roll $ fmap e c, Leaf "")
       ]
     ActNote t -> Huge $ Palm "note:" [Leaf t]
 
 
 instance Rolling Fail where
   roll = \case
+    FitsFail e f t u -> Huge $ Stem (tshow f <> "-fail:") "" []
+      [ ("have", tank $ roll $ fmap e t, Leaf "")
+      , ("need", tank $ roll $ fmap e u, Leaf "")
+      ]
     NeedGate e t -> Huge $ Palm "need-gate:" [tank $ roll $ fmap e t]
     BailNote t -> Huge $ Palm "bail-note:" [Leaf t]
-    BailFail -> leaf "bail-fail"
+    BailFail -> leaf "bail-fail:"
 
 -- | Limit the width of a wide form in two ways.
 chop :: Int -> Roll -> Roll

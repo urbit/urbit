@@ -129,6 +129,11 @@ parse :: Parser a -> FilePath -> Text -> Either Text a
 parse p fp inp = bimap (pack . errorBundlePretty) id
                $ runParser (runReaderT p Tall) fp inp
 
+
+-- | A complete hoon program
+vest :: Parser Hoon
+vest = optional gap *> hoon <* optional gap
+
 -- | Require that the parser and all of its contents operate solely in wide
 -- mode.
 wide :: Parser a -> Parser a

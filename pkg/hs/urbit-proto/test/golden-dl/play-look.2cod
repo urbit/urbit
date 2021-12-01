@@ -1,0 +1,5 @@
+=/  a
+  1
+a
+
+Bind "a" (Atom 1 Sand "ud") (Scope (Wing [] (Look (B ()))))

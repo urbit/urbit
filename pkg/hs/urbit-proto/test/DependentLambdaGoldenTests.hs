@@ -44,7 +44,7 @@ testEachPass :: FilePath -> IO TestTree
 testEachPass file = do
   let baseName = takeBaseName file
   txt <- readFileUtf8 file
-  let cst = first ErrRead $ parse hoon baseName txt
+  let cst = first ErrRead $ parse vest baseName txt
   let cod = do
         c <- cst
         o <- first ErrOpen $ open c

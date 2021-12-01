@@ -1,7 +1,5 @@
   trace:  play:
-          code  ^-  @
-                [1 2]
-
+          code  +([1 2])
 
           work:
           mode  nest

@@ -20,7 +20,7 @@ testEachPass :: FilePath -> IO [TestTree]
 testEachPass file = do
   let baseName = takeBaseName file
   txt <- readFileUtf8 file
-  let cst = parse hoon baseName txt
+  let cst = parse vest baseName txt
   let prn = render <$> cst
   pure
     [ goldenVsString (baseName <> " cst") (replaceExtension file ".cst") $

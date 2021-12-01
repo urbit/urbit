@@ -1,15 +1,19 @@
   trace:  play:
-          code:  ^-  {@ @}
-                 {@ @}
-            
-          
-          work-nest:
-          code:  {@ @}  
-          type:  {@ @}  
-          
+          code  ^-  {@ @}
+                {@ @}
+
+
+          work:
+          mode  nest
+          code  {@ @}
+          type  {@ @}
+
           nest:
-          have:  $  
-          need:  {@ @}  
-          
-  
-  bail-fail
+          have  $
+          need  {@ @}
+
+
+  nest-fail:
+  have  $
+  need  {@ @}
+

@@ -163,12 +163,16 @@ type Check = ReaderT [Act] (Either ([Act], Fail))
 data Act
   = forall a. ActFits (a -> Text) Fit (Type a) (Type a)
   | forall a. ActFind (a -> Text) (Type a) Wing
+  | forall a. ActToil (a -> Text) (Code a) (Type a)
+  | forall a. ActRomp (a -> Text) (Code a)
   | forall a. ActWork (a -> Text) Fit (Code a) (Type a)
   | forall a. ActPlay (a -> Text) (Code a)
   | ActNote Text
 
 data Fail
-  = forall a. NeedGate (a -> Text) (Type a)  -- ^ type is not a gate
+  = forall a. FitsFail (a -> Text) Fit (Type a) (Type a)
+  | forall a. SkinRash (a -> Text) (Code a)  -- ^ not a valid pattern
+  | forall a. NeedGate (a -> Text) (Type a)  -- ^ type is not a gate
   | BailNote Text  -- ^ failure with note
   | BailFail  -- ^ unspecified failure
 
@@ -486,12 +490,11 @@ instance Show Fit where
     FitNest -> "nest"
     FitSame -> "same"
 
--- | Perform subtyping or coercibility check.
+-- | Perform subtyping, coercibility, or equality check.
 -- XX figure out proper encoding of recursion via cores or gates
 fits :: Vary a => Con a -> Fit -> Type a -> Type a -> Check ()
 fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
  where
-  -- TODO push Act frame
   go :: Vary a => Con a -> Fit -> Type a -> Type a -> Check ()
   go con fit t u = case (loft t, loft u) of
     -- These have to come first to avoid being excluded by the (_, Foo{}) cases.
@@ -500,7 +503,7 @@ fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
     (Mask _ c, d) -> go con fit (Base c) (Base d)
     (c, Mask _ d)
       | FitCast <- fit  -> go con fit (Base c) (Base d)
-      | otherwise       -> bailFail
+      | otherwise       -> fitsFail
 
     (Look x, Look y) | x == y -> pure ()
     {-
@@ -508,8 +511,8 @@ fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
     -- two to fire. It would indicate that we haven't evaluated sufficiently.
     (Look x, d) | Just c <- sem con x -> go con fit c (Base d)
     (c, Look x) | Just d <- sem con x -> go con fit (Base c) d -}
-    (Look _, _) -> bailFail
-    (_, Look _) -> bailFail
+    (Look _, _) -> fitsFail
+    (_, Look _) -> fitsFail
 
     -- XX confirm this, but I do think we have to decide definitional equality
     -- of terms as part of nest. E.g. Suppose someone has opaquely defined
@@ -527,17 +530,17 @@ fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
     -- FitSame which does equality rather than subtyping, and switch to it under
     -- eliminators such as Slam (XX and other eliminators and introductors?).
     (Atom a _ _, Atom b _ _) | a == b -> pure ()
-    (Atom{}, _) -> bailFail
-    (_, Atom{}) -> bailFail
+    (Atom{}, _) -> fitsFail
+    (_, Atom{}) -> fitsFail
 
     (Cons c d, Cons c' d') -> do go con fit (Base c) (Base c')
                                  go con fit (Base d) (Base d')
-    (Cons{}, _) -> bailFail
-    (_, Cons{}) -> bailFail
+    (Cons{}, _) -> fitsFail
+    (_, Cons{}) -> fitsFail
 
     (Lamb _ c, Lamb _ d) | c == d -> pure ()
-    (Lamb{}, _) -> bailFail
-    (_, Lamb{}) -> bailFail
+    (Lamb{}, _) -> fitsFail
+    (_, Lamb{}) -> fitsFail
 
     -- The apparently free choice of p or p' in show goes away in the subject-
     -- oriented context, but probably comes back even worse in the tisgar case.
@@ -548,45 +551,45 @@ fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
     (Core b p, Core b' p') -> do
       go con fit (Base p) (Base p')
       farm b b' \a a' -> go con fit (flow con p a) (flow con p' a')
-    (Core{}, _) -> bailFail
-    (_, Core{}) -> bailFail
+    (Core{}, _) -> fitsFail
+    (_, Core{}) -> fitsFail
 
     -- I believe that for old-school faces, the fallback rules will have to
     -- strip and succeed, and these rules will have to be listed immediately
     -- after Look. Another nail in that coffin.
     (Name n c, Name m d) | n == m -> go con fit (Base c) (Base d)
-    (Name{}, _) -> bailFail
-    (_, Name{}) -> bailFail
+    (Name{}, _) -> fitsFail
+    (_, Name{}) -> fitsFail
 
     -- Elimination forms. Note that since Base, we will only encounter these
     -- "stuck" on some variable.
     (Plus c, Plus d) -> go con fit (Base c) (Base d)
-    (Plus{}, _) -> bailFail
-    (_, Plus{}) -> bailFail
+    (Plus{}, _) -> fitsFail
+    (_, Plus{}) -> fitsFail
 
     -- Since it hasn't been evaluated away, we are dealing with an opaque type
     -- function application. This means we have no choice but to regard the
     -- function as invariant in its argument.
     (Slam c d, Slam c' d') -> do go con fit (Base c) (Base c')
                                  go con FitSame (Base d) (Base d')
-    (Slam{}, _) -> bailFail
-    (_, Slam{}) -> bailFail
+    (Slam{}, _) -> fitsFail
+    (_, Slam{}) -> fitsFail
 
     -- XX we should recognize axes equivalent to faces :/
     -- n.b.: things like the "empty wing" should have been evaluated out by now
     (Wing w c, Wing v d) | w == v -> go con fit (Base c) (Base d)
-    (Wing{}, _) -> bailFail
-    (_, Wing{}) -> bailFail
+    (Wing{}, _) -> fitsFail
+    (_, Wing{}) -> fitsFail
 
     (Equl c d, Equl c' d') -> do go con fit (Base c) (Base c')
                                  go con fit (Base d) (Base d')
-    (Equl{}, _) -> bailFail
-    (_, Equl{}) -> bailFail
+    (Equl{}, _) -> fitsFail
+    (_, Equl{}) -> fitsFail
 
     (Aura au, Aura ag) -> case fit of
       FitCast -> pure ()
-      FitNest -> if ag `isPrefixOf` au then pure () else bailFail
-      FitSame -> if ag ==           au then pure () else bailFail
+      FitNest -> if ag `isPrefixOf` au then pure () else fitsFail
+      FitSame -> if ag ==           au then pure () else fitsFail
 
     (Fork cs au, Aura ag) | fit /= FitSame ->
       go con fit (Base $ Aura au) (Base $ Aura ag)
@@ -594,8 +597,8 @@ fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
     (Fork cs au, Fork ds ag) -> do
       go con fit (Base $ Aura au) (Base $ Aura ag)
       case fit of
-        FitSame -> when (cs /= ds) bailFail
-        _ -> unless (ds `isSubsetOf` cs) bailFail
+        FitSame -> when (cs /= ds) fitsFail
+        _ -> unless (cs `isSubsetOf` ds) fitsFail
 
     (Cell c d, Cell c' d') -> do
       go con fit (Base c) (Base c')
@@ -643,20 +646,22 @@ fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
 
     (Type, Type) -> pure ()
 
-    (Aura{}, _) -> bailFail
-    (_, Aura{}) -> bailFail
-    (Fork{}, _) -> bailFail
-    (_, Fork{}) -> bailFail
-    (Cell{}, _) -> bailFail
-    (_, Cell{}) -> bailFail
-    (Gate{}, _) -> bailFail
-    (_, Gate{}) -> bailFail
-    (Gold{}, _) -> bailFail
-    (_, Gold{}) -> bailFail
-    (Lead{}, _) -> bailFail
-    (_, Lead{}) -> bailFail
-    (Type,   _) -> bailFail
-    (_,   Type) -> bailFail
+    (Aura{}, _) -> fitsFail
+    (_, Aura{}) -> fitsFail
+    (Fork{}, _) -> fitsFail
+    (_, Fork{}) -> fitsFail
+    (Cell{}, _) -> fitsFail
+    (_, Cell{}) -> fitsFail
+    (Gate{}, _) -> fitsFail
+    (_, Gate{}) -> fitsFail
+    (Gold{}, _) -> fitsFail
+    (_, Gold{}) -> fitsFail
+    (Lead{}, _) -> fitsFail
+    (_, Lead{}) -> fitsFail
+    (Type,   _) -> fitsFail
+    (_,   Type) -> fitsFail
+   where
+    fitsFail = bail (FitsFail (nom con) fit t u)
 
     -- Bind, Nest, Cast should be impossible because of evaluation
     -- TODO cas rule
@@ -733,6 +738,24 @@ find con cod typ win = act (ActFind (nom con) typ win)
 
       _ -> Nothing
 
+-- | Check that a pattern has the given type, producing the types of its
+-- variables.
+toil :: Vary a
+     => Con a
+     -> (Int -> Term)
+     -> Code (Var Int a)
+     -> Type a
+     -> Check (IntMap (Type a))
+toil con nom e t = undefined
+
+-- | Determine the type of a pattern, if possible, also producing the types of
+-- its variables
+romp :: Vary a
+     => Con a
+     -> (Int -> Term)
+     -> Code (Var Int a)
+     -> Check (Type a, IntMap (Type a))
+romp con nom e = undefined
 
 -- | Given subject type, verify that code has result type. Since the expected
 -- result type is known in this mode, we can lighten the user's annotation
@@ -766,6 +789,9 @@ work con fit e tau@(Base t) = act (ActWork (nom con) fit e tau)
                                         (fromScope c) (Base $ fromScope v)
                           _ -> playFits
 
+    -- XX this is actually all wrong. The binder in the arms must refer to the
+    -- whole core. Absent subject orientation, this means |% must have a
+    -- syntactic element for the selfname.
     Core bat pay -> case t of Gold tat tay -> do let tie = Base tay
                                                  work con fit pay tie
                                                  -- XX should we play pay
@@ -848,7 +874,10 @@ play con cod = act (ActPlay (nom con) cod) case cod of
     -- which is not possible in the reduced paradagim of this prototype.
     undefined
 
-  Core bat pay -> undefined
+  Core bat pay -> do
+    tay <- play con pay
+    -- XX avoid going on an infinite loop
+    mfix \t -> undefined
 
   Name n c -> do
     Base t <- play con c
@@ -869,8 +898,11 @@ play con cod = act (ActPlay (nom con) cod) case cod of
     snd <$> find con c t w
 
   Equl c d -> do
-    work con FitNest c undefined -- Noun
-    work con FitNest d undefined -- Noun
+    -- XX why did I write this?
+    -- work con FitNest c undefined -- Noun
+    -- work con FitNest d undefined -- Noun
+    _ <- play con c
+    _ <- play con d
     pure $ Base $ Fork (setFromList [0,1]) "f"
 
   Aura{} -> pure $ Base Type

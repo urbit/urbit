@@ -1,19 +1,24 @@
   trace:  play:
-          code:  ^-  $-(@ {@ @})
-                 |=(a a)
-            
-          
-          work-nest:
-          code:  |=(a a)  
-          type:  $-(@ {@ @})  
-          
-          work-nest:
-          code:  a  
-          type:  {@ @}  
-          
+          code  ^-  $-(@ {@ @})
+                |=(a a)
+
+
+          work:
+          mode  nest
+          code  |=(a a)
+          type  $-(@ {@ @})
+
+          work:
+          mode  nest
+          code  a
+          type  {@ @}
+
           nest:
-          have:  @  
-          need:  {@ @}  
-          
-  
-  bail-fail
+          have  @
+          need  {@ @}
+
+
+  nest-fail:
+  have  @
+  need  {@ @}
+
