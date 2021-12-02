@@ -1,4 +1,4 @@
-/-  post, feed, feed-ui
+/-  post, feed, feed-ui, column, deck
 /+  mall, dbug, verb, agentio, log
 |%
 ++  nobody  `@p`(bex 128)
@@ -16,6 +16,7 @@
       feeds=(map ship feed:feed)
       watching=(set ship)
       pending=(jar ship uid:feed-ui)
+      dec=deck
   ==
 ::
 +$  cache
@@ -112,7 +113,7 @@
       [%x %global %older @ @ ~]
     =/  count=@ud  (slav %ud i.t.t.t.path)
     =/  index=@da  (slav %da i.t.t.t.t.path)
-    ``(ui-upd list/(turn (tab:gorm aggregate `[nobody (dec index)] count) tail))
+    ``(ui-upd list/(turn (tab:gorm aggregate `[nobody (^dec index)] count) tail))
   ==
   ++  ui-upd
     |=  =update:feed-ui
@@ -161,6 +162,10 @@
     ?:  (~(has in watching) ship)
       abet:unfollow:fe
     abet:follow:fe
+  ::
+      %deck-diff
+    =+  !<(=diff:deck vase)
+    event-core
   ::
       %noun  
     ?+  q.vase  ~|(%bad-noun-poke !!)
@@ -536,5 +541,52 @@
         f
       po-core
     --
+  --
+::
+++  on-deck-diff
+  |=  =diff:deck
+  ?>  =(our.bowl src.bowl)
+  =.  event-core  
+    (emit (fact:io deck-diff+!>(diff) /diff ~)) 
+  ?-  -.diff
+  ::
+    %ord  event-core(ordering.dec p.diff)
+  ::
+      %add-col
+    =/  =id:column  (shax eny.bowl)
+    =/  col=column
+      %*  .  *column
+        id   id
+        ref  p.diff
+      ==
+    %_  event-core 
+      ordering.dec  (snoc ordering.dec id)
+      columns.dec   (~(put by columns.dec) id col)
+    ==
+  ::
+      %del-col
+    %_  event-core
+      ordering.dec  (skip ordering.dec |=(=id:column =(id p.diff)))
+      columns.dec   (~(del by columns.dec) p.diff)
+    ==
+  ==
+::
+++  vert
+  |_  =id:column
+  ++  vert  .
+  ++  col   (~(got by columns.dec) id)
+  ++  edit  |=(f=$-(column column) (~(jab by columns.dec) id f))
+  ++  on-diff
+    |=  =diff:column
+    =.  event-core
+      (emit (fact:io column-diff+!>(diff) /diff /columns ~)) 
+    %-  edit
+    |=  col=column
+    ?-  -.diff
+      %push-ref  col(hist (snoc hist.col p.diff), ref p.diff)
+      %pop-ref   =^(new hist.col hist.col col(ref new))
+      %replies   col(replies p.diff)
+      %reversed  col(reversed p.diff)
+    ==
   --
 --
