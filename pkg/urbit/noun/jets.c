@@ -922,6 +922,7 @@ FILE* mug_fil_u = 0;
 static u3_weak
 _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
 {
+  c3_l cor_l  = u3r_mug(cor);
   u3_weak pro = _cj_kick_z_real(cor, cop_u, ham_u, axe);
 
   if ( u3_none != pro ) {
@@ -938,7 +939,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
         cor_u = cor_u->par_u;
       }
 
-      fprintf(mug_fil_u, " 0x%x 0x%x\r\n", u3r_mug(cor), u3r_mug(pro));
+      fprintf(mug_fil_u, "0x%x 0x%x\r\n", cor_l, u3r_mug(pro));
     }
   }
 
