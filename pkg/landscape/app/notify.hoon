@@ -22,7 +22,7 @@
   $:  =provider-state
       =client-state
   ==
-+$  base-state-1
++$  base-state-2
   $:  notifications=(map uid notification)
       base-state-0
   ==
@@ -34,7 +34,7 @@
   [%1 base-state-0]
 ::
 +$  state-2
-  [%2 base-state-1]
+  [%2 base-state-2]
 ::
 +$  versioned-state
   $%  state-0
@@ -61,7 +61,9 @@
   ::
   ++  on-init
     :_  this
-    [(~(watch-our pass:io /hark) %hark-store /notes)]~
+    :~  (~(watch-our pass:io /hark/notes) %hark-store /notes)
+        (~(watch-our pass:io /hark/updates) %hark-store /updates)
+    ==
   ::
   ++  on-save   !>(state)
   ++  on-load
@@ -76,9 +78,9 @@
       =/  upd=wire  /hark/updates
       =/  not=wire  /hark/notes
       =/  =dock  [our.bowl %hark-store]
-      =?  cards  !(~(has by wex.bowl) [upd dock])  :: rewatch notes
+      =?  cards  !(~(has by wex.bowl) [upd dock])  :: rewatch updates
         :_(cards [%pass upd %agent dock %watch /updates])
-      =?  cards  !(~(has by wex.bowl) [not dock])  ::  rewatch updates
+      =?  cards  !(~(has by wex.bowl) [not dock])  ::  rewatch notes
         :_(cards [%pass not %agent dock %watch /notes])
       =.  notifications.old  ~
       [(flop cards) this(state old)]
@@ -88,18 +90,6 @@
         -.old  %2
         +.old  [~ +.old]
       ==
-::      %1  [(flop cards) this]
-    ::
-::        %0
-::      %_    $
-::          -.old  %1
-      ::
-::          cards
-::        %+  welp  cards
-::        :~  (~(leave-our pass:io /hark) %hark-store)
-::            (~(watch-our pass:io /hark) %hark-store /notes)
-::        ==
-::      ==
     ==
   ::
   ++  on-poke
@@ -324,8 +314,15 @@
         [%send-notification *]
       ?>  ?=(%iris -.sign-arvo)
       ?>  ?=(%http-response +<.sign-arvo)
-      ?>  ?=(%finished -.client-response.sign-arvo)
-      `this
+      =*  res  client-response.sign-arvo
+      ?>  ?=(%finished -.res)
+      %.  `this  
+      =*  status  status-code.response-header.res
+      ?:  =(200 status)  same
+      %+  slog  
+        leaf/"Error sending notfication, status: {(scow %ud status)}"
+      ?~  full-file.res  ~
+      ~[leaf/(trip `@t`q.data.u.full-file.res)]
     ==
   ::
   ++  on-fail   on-fail:def
