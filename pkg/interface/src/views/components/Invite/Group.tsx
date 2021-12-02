@@ -3,9 +3,7 @@ import { Box, Icon, LoadingSpinner, Row, Text } from '@tlon/indigo-react';
 import {
   accept,
   decline,
-  hideGroup,
   Invite,
-  join,
   joinProgress,
   joinResult,
   JoinRequest,
@@ -170,7 +168,6 @@ export function useInviteAccept(resource: string, app?: string, uid?: string) {
         return false;
       }
 
-      await airlock.poke(join(ship, name));
       await airlock.poke(accept(app, uid));
       await waiter((p) => {
         return (
@@ -218,9 +215,6 @@ function InviteActions(props: {
     await airlock.poke(decline(app, uid));
   }, [app, uid]);
 
-  const hideJoin = useCallback(async () => {
-    await airlock.poke(hideGroup(resource));
-  }, [resource]);
 
   if (status) {
     return (
@@ -228,7 +222,7 @@ function InviteActions(props: {
         <StatelessAsyncButton
           height={4}
           backgroundColor="white"
-          onClick={hideJoin}
+          onClick={async () => {}}
         >
           {[...joinResult].includes(status?.progress as any)
             ? 'Dismiss'
@@ -289,7 +283,6 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
     if (status?.progress === 'done') {
       const redir = inviteUrl(app !== 'groups', resource, graphAssoc?.metadata);
       if (redir) {
-        airlock.poke(hideGroup(resource));
         history.push(redir);
       }
     }

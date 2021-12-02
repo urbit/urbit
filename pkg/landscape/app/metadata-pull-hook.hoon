@@ -296,19 +296,21 @@
 ++  on-watch  
   |=  =path
   ?>  (team:title [our src]:bowl)
-  ?.  ?=([%preview @ @ @ ~] path)
-    (on-watch:def path)
-  =/  rid=resource
-    (de-path:resource t.path)
-  =/  prev=(unit group-preview:metadata)
-    ?^  (peek-metadatum:met %groups rid)  
-      (some (get-preview:met rid))
-    (~(get by previews) rid)
-  ?~  prev
-    :_  this(pending (~(put in pending) rid))
-    (get-preview rid)^~
-  :_  this
-  (fact-init:io metadata-hook-update+!>([%preview u.prev]))^~
+  ?+  path  (on-watch:def path)
+  ::
+      [%preview @ @ @ ~]
+    =/  rid=resource
+      (de-path:resource t.path)
+    =/  prev=(unit group-preview:metadata)
+      ?^  (peek-metadatum:met %groups rid)  
+        (some (get-preview:met rid))
+      (~(get by previews) rid)
+    ?~  prev
+      :_  this(pending (~(put in pending) rid))
+      (get-preview rid)^~
+    :_  this
+    (fact-init:io metadata-hook-update+!>([%preview u.prev]))^~
+  ==
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
