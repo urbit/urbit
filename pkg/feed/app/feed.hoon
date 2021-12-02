@@ -89,8 +89,12 @@
 ::
 ++  call
   |=  [=path =task:mall]
-  ?>  ?=([%feed @ *] path)
-  abet:(call:(from-wire:fe-core path) t.t.path task)
+  ?+  path  ~|(bad-path/path !!)
+    [?(%columns %deck %feeds) ~]  ?>(=(our src):bowl event-core)
+  ::
+      [%feed @ *]
+    abet:(call:(from-wire:fe-core path) t.t.path task)
+  ==
 ::
 ++  take
   |=  [=wire =sign:mall]
@@ -114,6 +118,9 @@
     =/  count=@ud  (slav %ud i.t.t.t.path)
     =/  index=@da  (slav %da i.t.t.t.t.path)
     ``(ui-upd list/(turn (tab:gorm aggregate `[nobody (^dec index)] count) tail))
+    ::
+      [%x %deck ~]  ``deck+!>(dec)
+      [%x %column @ ~]  ``column+!>((~(got by columns.dec) (slav %uv i.t.t.path)))
   ==
   ++  ui-upd
     |=  =update:feed-ui
@@ -246,6 +253,7 @@
       |=  t=(unit time)
       =/  =log:feed  (lot:lorm log:fed ~ t)
       (fact-init:io feed-update+!>([when:pass %replay log]))
+    ::
     ++  update
       |=  =update:feed
       (fact:io feed-update+!>(update) area)
