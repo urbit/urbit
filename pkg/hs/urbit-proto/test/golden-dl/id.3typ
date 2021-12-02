@@ -1,31 +1,31 @@
   trace:  play:
           code  =/  id
-                  ^-  $-({t|$ @} @)
-                  |=(a x.a)
+                  ^-  $-(arg|{t|$ x|t} t.arg)
+                  |=(a x.arg.a)
                 [(id @ 1) (id {@ @} 3 4) (id ? %&)]
 
 
           play:
-          code  ^-  $-({t|$ @} @)
-                |=(a x.a)
+          code  ^-  $-(arg|{t|$ x|t} t.arg)
+                |=(a x.arg.a)
 
 
           work:
           mode  nest
-          code  |=(a x.a)
-          type  $-({t|$ @} @)
+          code  |=(a x.arg.a)
+          type  $-(arg|{t|$ x|t} t.arg)
 
           work:
           mode  nest
-          code  x.a
-          type  @
+          code  x.arg.a
+          type  t.a
 
-          play:
-          code  x.a
-
-          find:
-          type  {t|$ @}
-          wing  x
+          nest:
+          have  +2.a
+          need  t.a
 
 
-  bail-fail:
+  nest-fail:
+  have  +2.a
+  need  t.a
+

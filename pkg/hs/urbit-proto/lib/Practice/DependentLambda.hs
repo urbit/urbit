@@ -582,7 +582,14 @@ fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
 
     -- XX we should recognize axes equivalent to faces :/
     -- n.b.: things like the "empty wing" should have been evaluated out by now
-    (Wing w c, Wing v d) | w == v -> go con fit (Base c) (Base d)
+    (Wing w c, Wing v d) -> do
+      t <- play con c
+      u <- play con d
+      as <- fst <$> find con c t w
+      bs <- fst <$> find con d u v
+      if foldr (flip peg) 1 as == foldr (flip peg) 1 bs
+        then go con fit (Base c) (Base d)
+        else fitsFail
     (Wing{}, _) -> fitsFail
     (_, Wing{}) -> fitsFail
 

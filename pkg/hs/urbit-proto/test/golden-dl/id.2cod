@@ -1,16 +1,19 @@
 =/  id
-  ^-  $-({t|$ @} @)
-  |=(a x.a)
+  ^-  $-(arg|{t|$ x|t} t.arg)
+  |=(a x.arg.a)
 [(id @ 1) (id {@ @} 3 4) (id ? %&)]
 
 Bind
   "id"
   Nest
-    { cod = Lamb "a" (Scope (Wing [ Ally "x" ] (Look (B ()))))
+    { cod =
+        Lamb "a" (Scope (Wing [ Ally "x" , Ally "arg" ] (Look (B ()))))
     , typ =
         Gate
-          (Cell (Mask "t" Type) (Scope (Aura "")))
-          (Scope (Look (F (Aura ""))))
+          (Mask
+             "arg"
+             (Cell (Mask "t" Type) (Scope (Mask "x" (Wing [] (Look (B ())))))))
+          (Scope (Wing [ Ally "t" ] (Look (B ()))))
     }
   (Scope
      (Cons

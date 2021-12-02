@@ -1,16 +1,19 @@
-[x:[@ 1] x:[{@ @} 3 4] x:[? %&]]
+:+  x.arg:[@ 1]
+  x.arg:[{@ @} 3 4]
+x.arg:[? %&]
 
 Base
   { loft =
       Cons
-        (Wing [ Ally "x" ] (Cons (Aura "") (Atom 1 Sand "ud")))
+        (Wing
+           [ Ally "x" , Ally "arg" ] (Cons (Aura "") (Atom 1 Sand "ud")))
         (Cons
            (Wing
-              [ Ally "x" ]
+              [ Ally "x" , Ally "arg" ]
               (Cons
                  (Cell (Aura "") (Scope (Aura "")))
                  (Cons (Atom 3 Sand "ud") (Atom 4 Sand "ud"))))
            (Wing
-              [ Ally "x" ]
+              [ Ally "x" , Ally "arg" ]
               (Cons (Fork (fromList [ 0 , 1 ]) "f") (Atom 0 Rock "f"))))
   }

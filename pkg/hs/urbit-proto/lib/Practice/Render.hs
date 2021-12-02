@@ -145,6 +145,14 @@ class Rolling r where
 instance Rolling Text where
   roll = leaf
 
+instance (Rolling a, Rolling b) => Rolling (Either a b) where
+  roll = \case
+    Left a -> Huge $ Palm "%|" [tank $ roll a]
+    Right b -> Huge $ Palm "%&" [tank $ roll b]
+
+instance (Rolling a, Rolling b) => Rolling (a, b) where
+  roll (a, b) = Huge $ Rose "" "" [tank $ roll a, tank $ roll b]
+
 instance Rolling (Code Void) where
   roll = roll . shut absurd
 
@@ -156,9 +164,6 @@ instance Rolling (Code Term) where
 
 instance Rolling (Base Term) where
   roll = roll . loft
-
-instance Rolling ([Act], Fail) where
-  roll (as, f) = Huge $ Rose "" "" [tank $ roll as, tank $ roll f]
 
 instance Rolling [Act] where
   roll as = Huge $ Rose "trace:" "" $ map (tank . roll) $ reverse as

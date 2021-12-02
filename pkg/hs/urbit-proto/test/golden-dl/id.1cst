@@ -1,15 +1,20 @@
 =/  id
-  ^-  $-({t|$ @} @)
-  |=(a x.a)
+  ^-  $-(arg|{t|$ x|t} t.arg)
+  |=(a x.arg.a)
 [(id @ 1) (id {@ @} [3 4]) (id ? %&)]
 
 Tsfs
   (Wung [ Ally "id" ])
   (Kthp
      (Bchp
-        (Bccl (Bcts (Wung [ Ally "t" ]) (Bass Typ)) [ Bass (Aur "") ])
-        (Bass (Aur "")))
-     (Brts (Wung [ Ally "a" ]) (Wung [ Ally "x" , Ally "a" ])))
+        (Bcts
+           (Wung [ Ally "arg" ])
+           (Bccl
+              (Bcts (Wung [ Ally "t" ]) (Bass Typ))
+              [ Bcts (Wung [ Ally "x" ]) (Wung [ Ally "t" ]) ]))
+        (Wung [ Ally "t" , Ally "arg" ]))
+     (Brts
+        (Wung [ Ally "a" ]) (Wung [ Ally "x" , Ally "arg" , Ally "a" ])))
   (Cltr
      [ Cncl (Wung [ Ally "id" ]) [ Bass (Aur "") , Adam Sand 1 "ud" ]
      , Cncl

@@ -30,6 +30,7 @@ library
       Practice.Render
       Practice.SimpleHoon
       Practice.SimpleLambda
+      Practice.TopLevelDL
       Rule
       SimpleNoun
       Untyped.Core
