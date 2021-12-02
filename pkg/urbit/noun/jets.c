@@ -32,6 +32,10 @@ _cj_count(u3j_core* par_u, u3j_core* dev_u)
       if ( par_u ) {
         kid_u->par_u = par_u;
       }
+      else {
+        kid_u->par_u = 0;
+      }
+
       len_l += _cj_count(kid_u, kid_u->dev_u);
     }
   }
