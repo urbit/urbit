@@ -184,7 +184,7 @@ export function Join(props: JoinProps) {
     joinRequest && joinLoad.includes(joinRequest.progress as any);
 
   useEffect(() => {
-    if(isDone && desc.kind ===  'graph') {
+    if(isDone) {
       history.push(finishedPath);
     }
   }, [isDone, desc]);
