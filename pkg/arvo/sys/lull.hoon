@@ -850,7 +850,7 @@
   +$  mool  [=case paths=(set (pair care path))]        ::  requests in desk
   +$  nori                                              ::  repository action
     $%  [%& p=soba]                                     ::  delta
-        [%| p=@tas]                                     ::  label
+        [%| p=@tas q=(unit aeon)]                       ::  label
     ==                                                  ::
   +$  nuri                                              ::  repository action
     $%  [%& p=suba]                                     ::  delta
@@ -1906,6 +1906,7 @@
         [%private-keys ~]                             ::  sub to privates
         [%public-keys ships=(set ship)]               ::  sub to publics
         [%rekey =life =ring]                          ::  update private keys
+        [%ruin ships=(set ship)]                      ::  pretend breach
         $>(%trim vane-task)                           ::  trim state
         [%turf ~]                                     ::  view domains
         $>(%vega vane-task)                           ::  report upgrade

@@ -134,7 +134,7 @@ void
 ur_jam_done(ur_jam_t *j)
 {
   ur_dict_free((ur_dict_t*)&j->dict);
-  free(j->w);
+  ur_walk_fore_done(j->w);
   free(j);
 }
 

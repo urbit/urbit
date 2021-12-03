@@ -1,14 +1,21 @@
 ::  json-rpc: protocol types
 ::
 |%
++$  batch-request
+  $%  [%a p=(list request)]
+      [%o p=request]
+  ==
+::
 +$  request
   $:  id=@t
+      jsonrpc=@t
       method=@t
       params=request-params
   ==
 ::
 +$  request-params
   $%  [%list (list json)]
+      [%map (map @t json)]
       [%object (list (pair @t json))]
   ==
 +$  response

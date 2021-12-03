@@ -10,7 +10,8 @@ import {
   harkBinToId,
   decToUd,
   unixToDa,
-  opened
+  opened,
+  markEachAsRead
 } from '@urbit/api';
 import { Poke } from '@urbit/http-api';
 import { patp2dec } from 'urbit-ob';
@@ -25,6 +26,7 @@ import {
   reduceStateN
 } from './base';
 import { reduce, reduceGraph, reduceGroup } from '../reducers/hark-update';
+import useMetadataState from './metadata';
 
 export const HARK_FETCH_MORE_COUNT = 3;
 
@@ -43,6 +45,8 @@ export interface HarkState {
   unreads: Unreads;
   archiveNote: (bin: HarkBin, lid: HarkLid) => Promise<void>;
   readCount: (path: string) => Promise<void>;
+  readGraph: (graph: string) => Promise<void>;
+  readGroup: (group: string) => Promise<void>;
 }
 
 const useHarkState = createState<HarkState>(
@@ -53,6 +57,38 @@ const useHarkState = createState<HarkState>(
     unreadNotes: [],
     poke: async (poke: Poke<any>) => {
       await pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    readGraph: async (graph: string) => {
+      const prefix = `/graph/${graph.slice(6)}`;
+      let counts = [] as string[];
+      let eaches = [] as [string, string][];
+      Object.entries(get().unreads).forEach(([path, unreads]) => {
+        if (path.startsWith(prefix)) {
+          if(unreads.count > 0) {
+            counts.push(path);
+          }
+          unreads.each.forEach(unread => {
+            eaches.push([path, unread]);
+          });
+        }
+      });
+      get().set(draft => {
+        counts.forEach(path => {
+          draft.unreads[path].count = 0;
+        });
+        eaches.forEach(([path, each]) => {
+          draft.unreads[path].each = [];
+        });
+      });
+      await Promise.all([
+        ...counts.map(path => markCountAsRead({ desk: window.desk, path })),
+        ...eaches.map(([path, each]) => markEachAsRead({ desk: window.desk, path }, each))
+      ].map(pok => api.poke(pok)));
+    },
+    readGroup: async (group: string) => {
+      const graphs = 
+        _.pickBy(useMetadataState.getState().associations.graph, a => a.group === group);
+      await Promise.all(Object.keys(graphs).map(get().readGraph));
     },
     readCount: async (path) => {
       const poke = markCountAsRead({ desk: (window as any).desk, path });

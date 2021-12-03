@@ -588,7 +588,7 @@
     ::
     =/  =purl
         :-  [sec=| por=~ host=[%& turf.next]]
-        [[ext=`~.udon path=/static] query=~]
+        [[ext=~ path=/'~debug'] query=~]
     =/  =wire
       (acme-wire try %validate-domain /idx/(scot %ud idx.next))
     (emit (request wire purl %get ~ ~))
@@ -1300,11 +1300,11 @@
     ~&  [%failed-order-history fal.hit]
     this
   ::
-    ::  install privkey and cert .pem from /=home=/acme, ignores app state
+    ::  install privkey and cert .pem from /=base=/acme, ignores app state
     ::TODO  refactor this out of %acme, see also arvo#1151
     ::
       %install-from-clay
-    =/  bas=path  /(scot %p our.bow)/home/(scot %da now.bow)/acme
+    =/  bas=path  /(scot %p our.bow)/base/(scot %da now.bow)/acme
     =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
     =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
     (emit %pass /install %arvo %e %rule %cert `[key cer])

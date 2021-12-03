@@ -16,7 +16,7 @@ import {
 import { useCallback } from 'react';
 import { reduceUpdate } from '../reducers/settings-update';
 import airlock from '~/logic/api';
-import { getDeskSettings, putEntry, Value } from '@urbit/api';
+import { Contact, getDeskSettings, putEntry, Value } from '@urbit/api';
 
 export interface ShortcutMapping {
   cycleForward: string;
@@ -47,10 +47,6 @@ export interface SettingsState {
   putEntry: (bucket: string, key: string, value: Value) => Promise<void>;
   leap: {
     categories: LeapCategories[];
-  };
-  tutorial: {
-    seen: boolean;
-    joined?: number;
   };
 }
 
@@ -86,10 +82,6 @@ const useSettingsState = createState<SettingsState>(
     },
     leap: {
       categories: leapCategories
-    },
-    tutorial: {
-      seen: true,
-      joined: undefined
     },
     keyboard: {
       cycleForward: 'ctrl+\'',
@@ -136,6 +128,13 @@ const selTheme = (s: SettingsState) => s.display.theme;
 
 export function useTheme() {
   return useSettingsState(selTheme);
+}
+
+// Hide is an optional second parameter for when this function is used in class components
+export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
+  const hideState = useSettingsState(state => state.calm.hideNicknames);
+  const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
+  return Boolean(contact && contact.nickname && !hideNicknames);
 }
 
 export default useSettingsState;

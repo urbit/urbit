@@ -12,7 +12,6 @@ import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
 import * as Yup from 'yup';
-import { TUTORIAL_GROUP_RESOURCE } from '~/logic/lib/tutorialModal';
 import { useQuery } from '~/logic/lib/useQuery';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { getModuleIcon } from '~/logic/lib/util';
@@ -23,7 +22,6 @@ import { FormError } from '~/views/components/FormError';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { GroupSummary } from './GroupSummary';
 import airlock from '~/logic/api';
-import useSettingsState from '~/logic/state/settings';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -77,10 +75,6 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
-    const { putEntry } = useSettingsState.getState();
-    if(group === TUTORIAL_GROUP_RESOURCE) {
-      await putEntry('tutorial', 'joined', Date.now());
-    }
     if (group in groups) {
       return history.push(`/~landscape${group}`);
     }
