@@ -1,13 +1,14 @@
-::  dice: structures for L2 rollers
+::  dice: structures for Azimuth L2 rollers
 ::
 /+  naive, ethereum
 ::
 |%
-+$  owner     [=proxy:naive =address:naive]
-+$  owners    (jug owner ship)
-+$  sponsors  (map ship [residents=(set ship) requests=(set ship)])
-+$  history   (map address:ethereum (tree hist-tx))
-+$  net       ?(%mainnet %ropsten %local %default)
++$  owner       [=proxy:naive =address:naive]
++$  owners      (jug owner ship)
++$  sponsors    (map ship [residents=(set ship) requests=(set ship)])
++$  history     (map address:ethereum (tree hist-tx))
++$  net         ?(%mainnet %ropsten %local %default)
++$  snap-state  [%0 =id:block:jael nas=^state:naive =owners =sponsors]
 ::
 +$  config
   $%  [%frequency frequency=@dr]

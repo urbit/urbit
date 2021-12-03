@@ -7,19 +7,19 @@
     verb,
     dbug
 ::  Generally don't update the snapshot until we have clay tombstoning.
-::  To update, run:
+::
+/*  state-naive  %naive  /app/azimuth/state/naive
+::  To update, run from dojo:
+::    -azimuth-snap-state %default 'state'
+::
+::  To recreate from a list of logs:
 ::    =e -build-file %/lib/ethereum/hoon
 ::    =l .^((list event-log:rpc:e) %gx /=azimuth=/logs/noun)
 ::    */app/azimuth/logs/eth-logs &eth-logs l
+::    -azimuth-snap-logs %default 'state'
 ::
-/*  snap  %eth-logs  /app/azimuth/logs/eth-logs
-::
-=/  last-snap  ::  maybe just use the last one?
-  %+  roll  `(list event-log:rpc:ethereum)`snap  ::~
-  |=  [log=event-log:rpc:ethereum last=@ud]
-  ?~  mined.log
-    last
-  (max block-number.u.mined.log last)
+=/  snap=snap-state  state-naive
+=/  last-snap        number.id.snap
 ::
 =,  jael
 |%
@@ -62,8 +62,17 @@
   ::
   ++  on-init
     ^-  (quip card _this)
+    %-  %-  slog
+        =,  snap
+        :~  leaf+"azimuth: loading {<~(wyt by points.nas)>} points"
+            leaf+"azimuth: loading {<~(wyt by sponsors)>} sponsors"
+            leaf+"azimuth: loading {<~(wyt by owners)>} owners"
+        ==
+    ::
     =:  net.state   %default
-        logs.state  snap
+        nas.state   nas.snap
+        own.state   owners.snap
+        spo.state   sponsors.snap
         url.state   'http://eth-mainnet.urbit.org:8545'
       ==
     :_  this
@@ -126,13 +135,6 @@
     ^-  (quip card _this)
     ?:  =(%noun mark)
       ?+    q.vase  !!
-          %rerun
-        ~&  [%rerunning (lent logs.state)]
-        =.  points.nas.state  ~
-        =.  own.state  ~
-        =.  spo.state  ~
-        =^  *  state  (run-logs:do logs.state)
-        `this
       ::
           %resub
         :_  this  :_  ~
@@ -141,8 +143,11 @@
         ==
       ::
           %resnap
-        =.  logs.state  snap
-        $(mark %noun, vase !>(%rerun))
+        =:  nas.state  nas.snap
+            own.state  owners.snap
+            spo.state  sponsors.snap
+          ==
+        `this
       ==
     ?:  =(%eth-logs mark)
       =+  !<(logs=(list event-log:rpc:ethereum) vase)
@@ -160,12 +165,12 @@
       :: TODO: only wipe out state when switching networks?
       :: ?:  =(net.state net.poke)
       ::   [~ this]
-      =:  nas.state   *^state:naive
+      =:  nas.state   ?:(?=(%default net.poke) nas.snap *^state:naive)
+          own.state   ?:(?=(%default net.poke) owners.snap ~)
+          spo.state   ?:(?=(%default net.poke) sponsors.snap ~)
           net.state   net.poke
           url.state   url.poke
-          own.state   ~
-          spo.state   ~
-          logs.state  ?:(?=(%default net.poke) snap ~)
+          logs.state  ~
         ==
       [start:do this]
     ==
@@ -190,10 +195,11 @@
     ::  sure Jael gets the updates from the snapshot
     ::
     %-  %-  slog  :_  ~
-        leaf+"azimuth: loading snapshot with {<(lent logs.state)>} events"
-    =^  snap-cards  state
-      (%*(run-logs do nas.state *^state:naive) logs.state)
-    [(weld (jael-update:do (to-udiffs:do snap-cards)) start:do) this]
+        :-  %leaf
+        "azimuth: processing snapshot ({<~(wyt by points.nas.state)>} points)"
+    =/  snap-cards=udiffs:point
+      (%*(run-state do logs.state ~) id.snap points.nas.state)
+    [(weld (jael-update:do snap-cards) start:do) this]
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
@@ -232,13 +238,15 @@
     ?:  ?=(%disavow -.diff)
       [(jael-update:do [*ship id.diff %disavow ~]~) this]
     ::
+    :: TODO: skip running the logs if we receive a history diff?
+    ::
     =.  logs.state
       ?-  -.diff
         :: %history  loglist.diff
         %history  (welp logs.state loglist.diff)
         %logs     (welp logs.state loglist.diff)
       ==
-    =?  nas.state  ?=(%history -.diff)  *^state:naive
+    :: =?  nas.state  ?=(%history -.diff)  *^state:naive  :: should go
     =^  effects  state  (run-logs:do loglist.diff)
     ::
     :_  this
@@ -288,16 +296,27 @@
   ^-  (list ?(@ux (list @ux)))
   ~
 ::
-++  data-to-hex
-  |=  data=@t
-  ?~  data  *@ux
-  ?:  =(data '0x')  *@ux
-  (hex-to-num:ethereum data)
+++  run-state
+  |=  [=id:block =points:naive]
+  ::%-  road  |.  :: count memory usage in a separate road
+  ^-  =udiffs:point
+  %-  flop
+  %+  roll  (tap:orp:dice points)
+  |=  [[=ship naive-point=point:naive] =udiffs:point]
+  =,  naive-point
+  =/  =pass
+    (pass-from-eth:azimuth [32^crypt 32^auth suite]:keys.net)
+  ^-  (list [@p udiff:point])
+  :*  [ship id %rift rift.net]
+      [ship id %keys life.keys.net suite.keys.net pass]
+      [ship id %spon ?:(has.sponsor.net `who.sponsor.net ~)]
+      udiffs
+  ==
 ::
 ++  run-logs
   |=  [logs=(list event-log:rpc:ethereum)]
   ^-  (quip tagged-diff _state)
-  =+  net=(get-network net.state)
+  =+  net=(get-network:dice net.state)
   =|  effects=(list tagged-diff)
   !.  ::  saves 700MB replaying snapshot
   =-  =/  res  (mule -)
@@ -315,7 +334,7 @@
     =/  =^input:naive
       :-  block-number.u.mined.i.logs
       ?:  =(azimuth.net address.i.logs)
-        =/  data  (data-to-hex data.i.logs)
+        =/  data  (data-to-hex:dice data.i.logs)
         =/  =event-log:naive
           [address.i.logs data topics.i.logs]
         [%log event-log]
@@ -381,26 +400,13 @@
   ^-  card
   [%give %fact ~[/event] %naive-diffs !>(+.tag)]
 ::
-++  get-network
-  |=  =net
-  ^-  [azimuth=@ux naive=@ux chain-id=@ launch=@]
-  =<  [azimuth naive chain-id launch]
-  =,  azimuth
-  ?-  net
-    %mainnet  mainnet-contracts
-    %ropsten  ropsten-contracts
-    %local    local-contracts
-    %default  contracts
-  ==
-::
 ++  start
   ^-  (list card)
-  =+  net=(get-network net.state)
+  =+  net=(get-network:dice net.state)
   =/  args=vase  !>
     :+  %watch  /[dap.bowl]
     ^-  config:eth-watcher
-    :*  url.state  =(%czar (clan:title our.bowl))  refresh  ~h30
-        (max launch.net ?:(=(net.state %default) last-snap 0))
+        (max launch.net ?:(=(net.state %default) +(last-snap) 0))
         ~[azimuth.net]
         ~[naive.net]
         (topics whos.state)

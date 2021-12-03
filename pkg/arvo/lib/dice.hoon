@@ -1,7 +1,7 @@
 ::  dice: helper functions for L2 Rollers
 ::
 /-  *dice
-/+  naive, *naive-transactions
+/+  naive, *naive-transactions, ethereum, azimuth
 ::
 |%
 ::  orp: ordered points in naive state by parent ship
@@ -17,6 +17,34 @@
 ++  nonce-order
   |=  [a=[* =nonce:naive] b=[* =nonce:naive]]
   (lte nonce.a nonce.b)
+::
+++  data-to-hex
+  |=  data=@t
+  ?~  data  *@ux
+  ?:  =(data '0x')  *@ux
+  (hex-to-num:ethereum data)
+::
+++  get-network
+  |=  =net
+  ^-  [azimuth=@ux naive=@ux chain-id=@ launch=@]
+  =<  [azimuth naive chain-id launch]
+  =,  azimuth
+  ?-  net
+    %mainnet  mainnet-contracts
+    %ropsten  ropsten-contracts
+    %local    local-contracts
+    %default  contracts
+  ==
+::
+++  last-block-id
+  |=  logs=(list event-log:rpc:ethereum)
+  ^-  id:block:jael
+  %+  roll  logs
+  |=  [log=event-log:rpc:ethereum =id:block:jael]
+  ?~  mined.log  id
+  ?.  (gth block-number.u.mined.log number.id)
+    id
+  [block-hash block-number]:u.mined.log
 ::
 ++  tx-effects
   |=  [chain-t=@ =effects:naive nas=^state:naive =indices]
@@ -65,18 +93,17 @@
     =/  old=(unit point:naive)  (get:orp cache ship)
     =/  new=point:naive         (need (get:orp points ship))
     =^  update-1  sponsors
-      (sponsorship diff ship new old sponsors)
+      (sponsorship-diff diff ship new old sponsors)
     =^  update-2  owners
-      (ownership diff ship new old owners)
+      (ownership-diff diff ship new old owners)
     =/  update-3=_updates
       (point-data-updates diff ship new old)
     :_  indices
     :(welp update-3 update-2 update-1 updates)
   [(flop updates) indices]
 ::
-++  sponsorship
+++  sponsorship-diff
   |=  [=diff:naive =ship new=point:naive old=(unit point:naive) =sponsors]
-  ::^+  sponsors
   ^-  (quip update _sponsors)
   ?.  ?=([%point *] diff)  `sponsors
   =*  event  +>.diff
@@ -159,7 +186,7 @@
     (proxy-updates diff ship new old)
   ==
 ::
-++  ownership
+++  ownership-diff
   |=  [=diff:naive =ship new=point:naive old=(unit point:naive) =owners]
   ^-  (quip update _owners)
   ?.  ?=([%point *] diff)  `owners
@@ -200,6 +227,56 @@
     ?~  old  ~
     `[%transfer address.transfer-proxy.own.u.old]
   ==
+::
+++  create-indices
+  |=  nas=^state:naive
+  ^-  [sponsors owners]
+  %+  roll  (tap:orp points.nas)
+  |=  [[=ship =point:naive] =sponsors =owners]
+  |^
+  =?  sponsors  has.sponsor.net.point
+    ^+  sponsors
+    (add-resident who.sponsor.net.point)
+  =?  sponsors  ?=(^ escape.net.point)
+    (add-request u.escape.net.point)
+  [sponsors add-ownership]
+  ::
+  ++  add-resident
+    |=  sponsor=@p
+    ^+  sponsors
+    ::  galaxies have themselves as their sponsors
+    ::
+    ?:  =(sponsor ship)  sponsors
+    %+  ~(put by sponsors)  sponsor
+    ?~  sponsees=(~(get by sponsors) sponsor)
+      :_  *(set @p)
+      (~(put in *(set @p)) ship)
+    :_  requests.u.sponsees
+    (~(put in residents.u.sponsees) ship)
+  ::
+  ++  add-request
+    |=  sponsor=@p
+    ^+  sponsors
+    ::  galaxies have themselves as their sponsors
+    ::
+    ?:  =(sponsor ship)  sponsors
+    %+  ~(put by sponsors)  sponsor
+    ?~  receiver=(~(get by sponsors) sponsor)
+      :-  *(set @p)
+      (~(put in *(set @p)) ship)
+    :-  residents.u.receiver
+    (~(put in requests.u.receiver) ship)
+  ::
+  ++  add-ownership
+    ^+  owners
+    =/  proxies=(list proxy:naive)
+      ~[%own %spawn %manage %vote %transfer]
+    %+  roll  proxies
+    |=  [=proxy:naive own=_owners]
+    ?~  owner=(get-owner point proxy)
+      own
+    (~(put ju own) u.owner ship)
+  --
 ::
 ++  proxy-updates
   |=  [=diff:naive =ship =point:naive old=(unit point:naive)]
