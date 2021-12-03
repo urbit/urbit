@@ -160,16 +160,19 @@ function JoinError(props: {
 
 export interface JoinProps {
   desc: JoinDesc;
+  redir?: string;
   modal?: boolean;
   dismiss?: () => void;
 }
 
 export function Join(props: JoinProps) {
-  const { desc, modal, dismiss } = props;
+  const { desc, modal, dismiss, redir } = props;
   const { group, kind } = desc;
   const [, , ship, name] = group.split("/");
   const graph = kind === "graph";
-  const finishedPath = graph
+  const finishedPath = !!redir
+    ? redir
+    : graph
     ? `/~landscape/messages/resource/chat/${ship}/${name}`
     : `/~landscape/ship/${ship}/${name}`;
 
@@ -319,6 +322,7 @@ export function JoinRoute(props: { graph?: boolean; modal?: boolean }) {
   const { pathname } = useLocation();
   const kind = query.get("join-kind");
   const path = query.get("join-path");
+  const redir = query.get('redir');
   if (!kind) {
     return null;
   }
@@ -334,7 +338,7 @@ export function JoinRoute(props: { graph?: boolean; modal?: boolean }) {
   };
 
   return desc ? (
-    <Join desc={desc} modal dismiss={dismiss} />
+    <Join desc={desc} modal dismiss={dismiss} redir={redir} />
   ) : (
     <JoinPrompt kind={kind} dismiss={dismiss} />
   );
