@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Col,
   Row,
@@ -75,15 +75,29 @@ export function JoinBody(props: { desc: JoinDesc }) {
   const { ship, name } = resourceFromPath(group);
 
   const invite = useInviteForResource(kind, ship, name);
+  const [override, setOverride] = useState(false);
+
+  useEffect(() => {
+    let interval = setInterval(() => {
+      setOverride(s => !s);
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, []);
+
 
   return (
     <>
       {!desc ? "Prompt invite link" : null}
-      {preview ? (
+      {(preview && override) ? (
         <GroupSummary
           memberCount={preview.members}
           channelCount={preview["channel-count"]}
           metadata={preview.metadata}
+          height="72px"
+          width="256px"
         />
       ) : (
         <FallbackSummary path={group} />
@@ -112,7 +126,7 @@ function FallbackSummary(props: { path: string }) {
   const [, , ship, name] = path.split("/");
 
   return (
-    <Row alignItems="center" gapX="0">
+    <Row height="72px" width="256px" alignItems="center" gapX="0">
       <Author gray fullNotIcon size={40} showImage ship={ship} dontShowTime />
       <Text mono>/{name}</Text>
     </Row>
