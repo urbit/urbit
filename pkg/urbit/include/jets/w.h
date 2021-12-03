@@ -149,6 +149,8 @@
     u3_noun u3wdu_qor_put(u3_noun);
     u3_noun u3wdu_qor_get(u3_noun);
     u3_noun u3wdu_qor_has(u3_noun);
+    u3_noun u3wdu_qor_del(u3_noun);
+    u3_noun u3wdu_qor_bot(u3_noun);
 
   /** Tier 5.
   **/
