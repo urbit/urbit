@@ -854,19 +854,30 @@ _mars_boot_make(u3_boot_opts* inp_u,
     }
 
     u3_noun mos = mor;
-    u3_noun vez = u3_nul;
+    u3_noun pre = u3_nul;
+    u3_noun aft = u3_nul;
     while ( u3_nul != mos ) {
       u3_noun mot = u3h(mos);
 
       switch ( u3h(mot) ) {
         case c3__prop: {
           u3_noun ter, met, ves;
+
           if ( c3n == u3r_trel(u3t(mot), &met, &ter, &ves) ) {
             u3m_p("invalid prop", u3t(mot));
+            break;
           }
-          if ( c3y == u3r_sing_c("post-userspace", ter) ) {
-            u3m_p("including", met);
-            vez = u3kb_weld(vez, ves);
+
+          if ( c3y == u3r_sing_c("pre-userspace", ter) ) {
+            u3m_p("prop: pre-userspace", met);
+            pre = u3kb_weld(pre, ves);
+          }
+          else if ( c3y == u3r_sing_c("post-userspace", ter) ) {
+            u3m_p("prop: post-userspace", met);
+            aft = u3kb_weld(aft, ves);
+          }
+          else {
+            u3m_p("unrecognized prop tier", ter);
           }
         } break;
 
@@ -884,7 +895,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
       u3_noun eve = u3kb_flop(bot);
 
       {
-        u3_noun  lit = u3kb_weld(mod, u3kb_weld(use, vez));
+        u3_noun  lit = u3kb_weld(mod, u3kb_weld(pre, u3kb_weld(use, aft)));
         u3_noun i, t = lit;
 
         while ( u3_nul != t ) {
