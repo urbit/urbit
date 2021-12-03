@@ -730,9 +730,7 @@ u3_noun
 _print_p(u3_atom cor, u3_atom p)
 {
   // Scramble the raw number to the concealed version.
-  u3_noun ob = u3j_cook("u3we_scow_ob_p", u3k(cor), "ob");
-  u3_noun hok = u3j_cook("u3we_scow_fein_p", ob, "fein");
-  u3_atom sxz = u3n_slam_on(hok, u3k(p));
+  u3_noun sxz = u3qe_fein_ob(p);
   c3_w prefix, suffix;
   u3_noun pre, suf;
   u3_atom aus = 0;
