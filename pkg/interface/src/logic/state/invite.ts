@@ -9,14 +9,16 @@ import {
 
 export interface InviteState {
   invites: Invites;
+  loaded: boolean;
 }
 
 const useInviteState = createState<InviteState>(
   'Invite',
   {
-    invites: {}
+    invites: {},
+    loaded: false
   },
-  ['invites'],
+  ['invites', 'loaded'],
   [
     (set, get) =>
       createSubscription('invite-store', '/all', (e) => {
