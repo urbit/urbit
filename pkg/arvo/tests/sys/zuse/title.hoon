@@ -7,22 +7,27 @@
   ;:  weld
     %+  expect-eq
       !>  "~zod^"
+      ~&  (cite ~dister-dozzod-dozzod)
       !>  (cite ~dister-dozzod-dozzod)
   ::
     %+  expect-eq
       !>  "~marzod^"
+      ~&  (cite ~dister-dozzod-marzod)
       !>  (cite ~dister-dozzod-marzod)
   ::
     %+  expect-eq
       !>  "~palfun^foslup"
+      ~&  (cite ~littel-palfun-foslup)
       !>  (cite ~littel-palfun-foslup)
   ::
     %+  expect-eq
       !>  "~palfun^foslup"
+      ~&  (cite ~littel-bittel-palfun-foslup)
       !>  (cite ~littel-bittel-palfun-foslup)
   ::
     %+  expect-eq
       !>  "~sampel_sampel"
+      ~&  (cite ~sampel--dozzod-dozzod-dozzod-sampel)
       !>  (cite ~sampel--dozzod-dozzod-dozzod-sampel)
   ==
 --
