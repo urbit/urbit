@@ -81,6 +81,8 @@ void _king_doom(u3_noun doom);
     void _king_fake(u3_noun ship, u3_noun pill, u3_noun path);
   void _king_pier(u3_noun pier);
 
+static u3_noun _king_get_atom(c3_c* url_c);
+
 /* _king_defy_fate(): invalid fate
 */
 void
@@ -227,9 +229,35 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
     //  include additional bootstrap events if provided
     //
     while ( 0 != u3_Host.ops_u.vex_u ) {
-      u3_noun jam = u3m_file(u3_Host.ops_u.vex_u->loc_c);
-      mor = u3nc(u3ke_cue(jam), mor);
-      u3_Host.ops_u.vex_u = u3_Host.ops_u.vex_u->pre_u;
+      u3_even* vex_u = u3_Host.ops_u.vex_u;
+      switch ( vex_u->kin_i ) {
+        case 1: {  //  file
+          u3_atom jam = u3m_file(vex_u->loc_c);
+          mor = u3nc(u3ke_cue(jam), mor);
+        } break;
+
+        case 2: {  //  url
+          u3_atom jam = _king_get_atom(vex_u->loc_c);
+          mor = u3nc(u3ke_cue(jam), mor);
+        } break;
+
+        case 3: {  //  name
+          c3_c* url_c = c3_malloc(80);
+          sprintf(url_c,
+                  "https://bootstrap.urbit.org/props/%s.jam",
+                  vex_u->loc_c);
+          u3_atom jam = _king_get_atom(url_c);
+          mor = u3nc(u3ke_cue(jam), mor);
+          c3_free(url_c);
+        }
+
+        default: {
+          u3l_log("invalid prop source %d", vex_u->kin_i);
+          exit(1);
+        }
+      }
+
+      u3_Host.ops_u.vex_u = vex_u->pre_u;
     }
 
     //  include additional key configuration events if we have multiple keys
