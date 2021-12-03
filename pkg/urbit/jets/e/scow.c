@@ -778,8 +778,8 @@ _print_p(u3_atom cor, u3_atom p)
     sxz = u3qc_rsh(4, 1, sxz);
   }
   aus = u3qa_add(u3qc_lsh(2, 2, aus), SIG);
-  //u3z(sxz);
-  //u3z(pre);
+  u3z(sxz);
+  u3z(pre);
   u3z(suf);
   return aus;
 }
