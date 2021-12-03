@@ -18,7 +18,7 @@ import { resourceFromPath } from "~/logic/lib/group";
 import useMetadataState, { usePreview } from "~/logic/state/metadata";
 import useInviteState, { useInviteForResource } from "~/logic/state/invite";
 
-const SUMMARY_HEIGHT = "72px";
+const SUMMARY_HEIGHT = "96px";
 const SUMMARY_WIDTH = ["90vw", "512px"];
 
 export type JoinKind = "graph" | "groups";
@@ -42,7 +42,7 @@ export function JoinSkeleton(props: JoinSkeletonProps) {
 
   const inner = (
     <Col
-      maxWidth={modal ? "384px" : undefined}
+      width={modal ? ["90vw", "384px"] : undefined}
       borderRadius="2"
       backgroundColor="white"
     >
@@ -78,28 +78,19 @@ export function JoinBody(props: { desc: JoinDesc }) {
   const { ship, name } = resourceFromPath(group);
 
   const invite = useInviteForResource(kind, ship, name);
-  const [override, setOverride] = useState(false);
-
-  useEffect(() => {
-    let interval = setInterval(() => {
-      setOverride((s) => !s);
-    }, 5000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
 
   return (
     <>
       {!desc ? "Prompt invite link" : null}
-      {preview && override ? (
+      {preview ? (
         <GroupSummary
           memberCount={preview.members}
           channelCount={preview["channel-count"]}
           metadata={preview.metadata}
           height={SUMMARY_HEIGHT}
-          width={SUMMARY_WIDTH}
+          width="100%"
+          maxWidth="100%"
+          overflow="hidden"
         />
       ) : (
         <FallbackSummary path={group} />
@@ -130,12 +121,15 @@ function FallbackSummary(props: { path: string }) {
   return (
     <Row
       height={SUMMARY_HEIGHT}
-      width={SUMMARY_WIDTH}
+      width="100%"
+      overflow="hidden"
       alignItems="center"
       gapX="0"
     >
       <Author gray fullNotIcon size={40} showImage ship={ship} dontShowTime />
-      <Text mono>/{name}</Text>
+      <Text mono whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+        /{name}
+      </Text>
     </Row>
   );
 }
