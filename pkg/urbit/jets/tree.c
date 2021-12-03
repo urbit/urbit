@@ -50,11 +50,13 @@ static u3j_harm _140_two__up_wane_a[] = {{".2", u3wdu_wane, c3y}, {}};
 
 static u3j_harm _140_two__up_qor_top_a[] = {{".2", u3wdu_qor_top, c3n}, {}};
 static u3j_harm _140_two__up_qor_see_a[] = {{".2", u3wdu_qor_see, c3n}, {}};
+static u3j_harm _140_two__up_qor_put_a[] = {{".2", u3wdu_qor_put, c3n}, {}};
 
 static u3j_core _140_two__up_qor_d[] =
 {
   { "top", 7, _140_two__up_qor_top_a, 0, no_hashes },
   { "see", 7, _140_two__up_qor_see_a, 0, no_hashes },
+  { "put", 7, _140_two__up_qor_put_a, 0, no_hashes },
   {}
 };
 

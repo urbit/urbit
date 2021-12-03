@@ -3,19 +3,14 @@
 u3_noun
 u3qdu_mask(u3_atom a)
 {
-  u3_atom u, v, w, x, y;
-  u3_atom pro;
+  // XX as optimisation, use u3i_word to encode 0xffffffff
+  u3_atom u = u3qc_bex(5);
+  u3_atom v = u3qc_bex(u);
+  u3_atom w = u3qa_dec(v);
+  u3_atom x = u3qa_dec(a);
+  u3_atom y = u3qc_mix(x, w);
 
-  u = u3qc_bex(5);
-  v = u3qc_bex(u);
-  w = u3qa_dec(v);
-
-  // as optimisation, use u3i_word for 0xffffffff
-
-  x = u3qa_dec(a);
-  y = u3qc_mix(x, w);
-
-  pro = u3qc_mix(y, a);
+  u3_atom pro = u3qc_mix(y, a);
 
   u3z(u);
   u3z(v);

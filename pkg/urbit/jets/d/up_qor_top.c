@@ -7,8 +7,7 @@ u3qdu_qor_top(u3_noun a)
     return u3m_bail(c3__exit);
   }
   else {
-    u3_noun m_a = u3t(u3t(a));
-    return u3k(m_a);
+    return u3k(u3t(u3t(a)));
   }
 }
 

@@ -27,7 +27,6 @@ u3wdu_rlos(u3_noun cor)
     return u3m_bail(c3__exit);
   } else {
     u3_noun n, l, m, r;
-
     u3x_qual(a, &n, &l, &m, &r);
 
     if ( (c3n == u3du(n)) || (c3n == u3ud(m)) ) {

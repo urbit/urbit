@@ -3,13 +3,10 @@
 u3_noun
 u3qdu_high(u3_atom a)
 {
-  u3_atom u, v;
-  u3_noun pro;
+  u3_atom u = u3qc_xeb(a);
+  u3_atom v = u3qc_bex(u);
 
-  u = u3qc_xeb(a);
-  v = u3qc_bex(u);
-
-  pro = u3qc_rsh(0, 1, v);
+  u3_noun pro = u3qc_rsh(0, 1, v);
 
   u3z(u);
   u3z(v);

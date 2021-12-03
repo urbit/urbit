@@ -3,11 +3,8 @@
 u3_noun
 u3qdu_pert(u3_atom k, u3_atom l)
 {
-  u3_noun u;
-  u3_noun pro;
-
-  u = u3qc_mix(k, l);
-  pro = u3qdu_high(u);
+  u3_noun u = u3qc_mix(k, l);
+  u3_noun pro = u3qdu_high(u);
 
   u3z(u);
 

@@ -10,7 +10,6 @@ u3qdu_rrbal(u3_noun n, u3_noun l, u3_noun m, u3_noun r)
   u3_noun p_l = u3t(u3t(l));
 
   u3_noun n_p_l, l_p_l, m_p_l, r_p_l;
-
   u3x_qual(p_l, &n_p_l, &l_p_l, &m_p_l, &r_p_l);
 
   u3_atom sl = u3qdu_size(l_p_l);
@@ -21,12 +20,7 @@ u3qdu_rrbal(u3_noun n, u3_noun l, u3_noun m, u3_noun r)
   u3z(sl);
   u3z(sr);
 
-  if ( c3y == comp ) {
-    return u3qdu_rrsin(n, l, m, r);
-  }
-  else {
-    return u3qdu_rrdub(n, l, m, r);
-  }
+  return ( c3y == comp ) ? u3qdu_rrsin(n, l, m, r) : u3qdu_rrdub(n, l, m, r);
 }
 
 u3_noun

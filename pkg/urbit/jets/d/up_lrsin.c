@@ -10,7 +10,6 @@ u3qdu_lrsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
   u3_noun b = u3t(u3t(l_a));
 
   u3_noun n_b, l_b, m_b, r_b;
-
   u3x_qual(b, &n_b, &l_b, &m_b, &r_b);
 
   u3_noun hol = u3h(l_a);

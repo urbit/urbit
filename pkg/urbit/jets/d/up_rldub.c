@@ -19,7 +19,6 @@ u3qdu_rldub(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 
     case c3__llos: {
       u3_noun n_p_r_a, l_p_r_a, m_p_r_a, r_p_r_a;
-
       u3x_qual(p_r_a, &n_p_r_a, &l_p_r_a, &m_p_r_a, &r_p_r_a);
 
       u3_noun pre = u3qdu_lrsin(n_p_r_a, l_p_r_a, m_p_r_a, r_p_r_a);
@@ -32,7 +31,6 @@ u3qdu_rldub(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 
     case c3__rlos: {
       u3_noun n_p_r_a, l_p_r_a, m_p_r_a, r_p_r_a;
-
       u3x_qual(p_r_a, &n_p_r_a, &l_p_r_a, &m_p_r_a, &r_p_r_a);
 
       u3_noun pre = u3qdu_rrsin(n_p_r_a, l_p_r_a, m_p_r_a, r_p_r_a);

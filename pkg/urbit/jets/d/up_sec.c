@@ -18,21 +18,32 @@ u3qdu_sec(u3_noun t, u3_atom m)
 
       case c3__llos: {
         u3_noun n_p_t, l_p_t, m_p_t, r_p_t;
-
         u3x_qual(u3t(u3t(t)), &n_p_t, &l_p_t, &m_p_t, &r_p_t);
 
-        return u3qdu_toy(u3nt(u3k(n_p_t), u3k(l_p_t), u3k(m_p_t)),
-                         u3qdu_sec(u3k(r_p_t), u3k(m)));
+        u3_noun fel = u3nt(u3k(n_p_t), u3k(l_p_t), u3k(m_p_t));
+
+        u3_noun pre = u3qdu_sec(r_p_t, m);
+        u3_noun pro = u3qdu_toy(fel, pre);
+
+        u3z(fel);
+        u3z(pre);
+
+        return pro;
       }
 
       case c3__rlos: {
         u3_noun n_p_t, l_p_t, m_p_t, r_p_t;
-
         u3x_qual(u3t(u3t(t)), &n_p_t, &l_p_t, &m_p_t, &r_p_t);
 
-        return u3qdu_toy(u3qdu_sec(u3k(l_p_t), u3k(m_p_t)),
-                         u3nt(u3k(n_p_t), u3k(r_p_t), u3k(m)));
+        u3_noun fer = u3nt(u3k(n_p_t), u3k(r_p_t), u3k(m));
 
+        u3_noun pre = u3qdu_sec(l_p_t, m_p_t);
+        u3_noun pro = u3qdu_toy(pre, fer);
+
+        u3z(fer);
+        u3z(pre);
+
+        return pro;
       }
     }
   }

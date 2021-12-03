@@ -3,15 +3,11 @@
 u3_noun
 u3qdu_gone(u3_atom k, u3_atom l, u3_atom m)
 {
-  u3_noun a, b;
-  u3_noun pro;
-
   u3_noun n = u3qdu_mask(m);
+  u3_noun a = u3qc_dis(k, n);
+  u3_noun b = u3qc_dis(l, n);
 
-  a = u3qc_dis(k, n);
-  b = u3qc_dis(l, n);
-
-  pro = ( a == b ) ? c3n : c3y;
+  u3_noun pro = ( a == b ) ? c3n : c3y;
 
   u3z(n);
   u3z(a);

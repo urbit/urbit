@@ -11,12 +11,10 @@ u3qdu_rrsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 
   u3_noun n_b, l_b, m_b, r_b, t_b;
   u3_noun k_n_b;
-
   u3x_qual(b, &n_b, &l_b, &m_b, &r_b);
   u3x_cell(n_b, &k_n_b, &t_b);
 
   u3_noun p_n_b = u3h(t_b);
-
   u3_noun hol = u3h(l_a);
 
   if ( c3n == u3ud(hol) ) {
