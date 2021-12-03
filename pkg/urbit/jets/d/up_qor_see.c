@@ -8,7 +8,6 @@ u3qdu_qor_see(u3_noun a)
   }
 
   u3_noun n_a, t_a, m_a;
-
   u3x_trel(a, &n_a, &t_a, &m_a);
 
   if (u3_nul == t_a) {
@@ -25,10 +24,9 @@ u3qdu_qor_see(u3_noun a)
       return u3m_bail(c3__exit);
 
     case c3__llos: {
-      u3_noun n_p_t_a, l_p_t_a, m_p_t_a, r_p_t_a;
-
       u3_noun p_t_a = u3t(u3t(t_a));
 
+      u3_noun n_p_t_a, l_p_t_a, m_p_t_a, r_p_t_a;
       u3x_qual(p_t_a, &n_p_t_a, &l_p_t_a, &m_p_t_a, &r_p_t_a);
 
       return u3nt(
@@ -38,10 +36,9 @@ u3qdu_qor_see(u3_noun a)
     }
 
     case c3__rlos: {
-      u3_noun n_p_t_a, l_p_t_a, m_p_t_a, r_p_t_a;
-
       u3_noun p_t_a = u3t(u3t(t_a));
 
+      u3_noun n_p_t_a, l_p_t_a, m_p_t_a, r_p_t_a;
       u3x_qual(p_t_a, &n_p_t_a, &l_p_t_a, &m_p_t_a, &r_p_t_a);
 
       return u3nt(
