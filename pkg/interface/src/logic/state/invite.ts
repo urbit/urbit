@@ -36,7 +36,7 @@ export function useInviteForResource(app: string, ship: string, name: string) {
     .reduce((acc, [uid, invite]) => {
       const isMatch = (invite.resource.ship === deSig(ship)
         && invite.resource.name === name)
-      return isMatch ? [invite, ...acc] : acc;
+      return isMatch ? [{ uid, ...invite}, ...acc] : acc;
     }, [] as Invite[])
   return matches?.[0];
 }
