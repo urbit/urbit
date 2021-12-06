@@ -79,14 +79,14 @@ _behn_time_cb(uv_timer_t* tim_u)
 
   // send timer event
   //
-  {
-    u3_noun wir = u3nc(c3__behn, u3_nul);
-    u3_noun cad = u3nc(c3__wake, u3_nul);
+  // {
+  //   u3_noun wir = u3nc(c3__behn, u3_nul);
+  //   u3_noun cad = u3nc(c3__wake, u3_nul);
 
-    u3_auto_peer(
-      u3_auto_plan(&teh_u->car_u, u3_ovum_init(0, c3__b, wir, cad)),
-      0, 0, _behn_wake_bail);
-  }
+  //   u3_auto_peer(
+  //     u3_auto_plan(&teh_u->car_u, u3_ovum_init(0, c3__b, wir, cad)),
+  //     0, 0, _behn_wake_bail);
+  // }
 }
 
 /* u3_behn_ef_doze(): set or cancel timer
