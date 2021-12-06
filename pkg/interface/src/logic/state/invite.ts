@@ -32,6 +32,10 @@ const useInviteState = createState<InviteState>(
 
 export default useInviteState;
 
+interface InviteWithUid extends Invite {
+  uid: string;
+}
+
 export function useInviteForResource(app: string, ship: string, name: string) {
   const { invites } = useInviteState();
   const matches = Object.entries(invites?.[app] || {})
@@ -39,6 +43,6 @@ export function useInviteForResource(app: string, ship: string, name: string) {
       const isMatch = (invite.resource.ship === deSig(ship)
         && invite.resource.name === name)
       return isMatch ? [{ uid, ...invite}, ...acc] : acc;
-    }, [] as Invite[])
+    }, [] as InviteWithUid[])
   return matches?.[0];
 }
