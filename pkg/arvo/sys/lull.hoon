@@ -1980,8 +1980,8 @@
     +$  udiffs  (list [=ship =udiff])
     +$  udiff
       $:  =id:block
-      $%  [%rift =rift]
-          [%keys key-update]
+      $%  [%rift =rift boot=?]
+          [%keys key-update boot=?]
           [%spon sponsor=(unit @p)]
           [%disavow ~]
       ==  ==
@@ -1995,14 +1995,14 @@
           %rift
         ?.  (gth rift.a-udiff rift.a-point)
           ~
-        ~?  !=(rift.a-udiff +(rift.a-point))
+        ~?  &(!=(rift.a-udiff +(rift.a-point)) !boot.a-udiff)
           [%udiff-to-diff-skipped-rift a-udiff a-point]
         `[%rift rift.a-point rift.a-udiff]
       ::
           %keys
         ?.  (gth life.a-udiff life.a-point)
           ~
-        ~?  !=(life.a-udiff +(life.a-point))
+        ~?  &(!=(life.a-udiff +(life.a-point)) !boot.a-udiff)
           [%udiff-to-diff-skipped-life a-udiff a-point]
         :^  ~  %keys
           [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]

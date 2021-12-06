@@ -307,8 +307,8 @@
   =/  =pass
     (pass-from-eth:azimuth [32^crypt 32^auth suite]:keys.net)
   ^-  (list [@p udiff:point])
-  :*  [ship id %rift rift.net]
-      [ship id %keys life.keys.net suite.keys.net pass]
+  :*  [ship id %rift rift.net %.y]
+      [ship id %keys [life.keys.net suite.keys.net pass] %.y]
       [ship id %spon ?:(has.sponsor.net `who.sponsor.net ~)]
       udiffs
   ==
@@ -367,12 +367,12 @@
   ^-  (unit [=ship =udiff:point])
   ?.  ?=(%point +<.tag)  ~
   ?+    +>+<.tag  ~
-      %rift     `[ship.tag id.tag %rift rift.tag]
+      %rift     `[ship.tag id.tag %rift rift.tag %.n]
       %sponsor  `[ship.tag id.tag %spon sponsor.tag]
       %keys
     =/  =pass
       (pass-from-eth:azimuth 32^crypt.keys.tag 32^auth.keys.tag suite.keys.tag)
-    `[ship.tag id.tag %keys life.keys.tag suite.keys.tag pass]
+    `[ship.tag id.tag %keys [life.keys.tag suite.keys.tag pass] %.n]
   ==
 ::
 ++  jael-update
