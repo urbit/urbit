@@ -19,7 +19,6 @@ import useMetadataState, { usePreview } from "~/logic/state/metadata";
 import useInviteState, { useInviteForResource } from "~/logic/state/invite";
 
 const SUMMARY_HEIGHT = "96px";
-const SUMMARY_WIDTH = ["90vw", "512px"];
 
 export type JoinKind = "graph" | "groups";
 
