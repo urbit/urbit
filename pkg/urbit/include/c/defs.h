@@ -56,6 +56,15 @@
 #     define c3_max(x, y) ( ((x) > (y)) ? (x) : (y) )
 #     define c3_min(x, y) ( ((x) < (y)) ? (x) : (y) )
 
+    /* Round [x] up to the nearest multiple of [n], which must be a power of 2.
+    ** Taken from the lcc compiler.
+    */
+#     define c3_rup(x, n) ( ((x) + ((n) - 1)) & (~((n) - 1 )) )
+
+    /* Round [x] down to the nearest multiple of [n], which must be a power of 2.
+    */
+#     define c3_rud(x, n) ( (x) & ~((n) - 1) )
+
     /* Rotate.
     */
 #     define c3_rotw(r, x)  ( ((x) << (r)) | ((x) >> (32 - (r))) )

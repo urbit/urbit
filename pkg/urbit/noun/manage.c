@@ -780,20 +780,40 @@ u3m_leap(c3_w pad_w)
       pad_w -= u3R->all.fre_w;
     }
 #endif
-    if ( (pad_w + c3_wiseof(u3a_road)) >= u3a_open(u3R) ) {
+    pad_w += c3_wiseof(u3a_road);
+    if ( pad_w  >= u3a_open(u3R) ) {
       u3m_bail(c3__meme);
     }
-    len_w = u3a_open(u3R) - (pad_w + c3_wiseof(u3a_road));
+    len_w = (u3a_open(u3R) - pad_w);
   }
 
   /* Allocate a region on the cap.
   */
   {
+    u3p(c3_w) top_p;
     u3p(c3_w) bot_p;
 
     if ( c3y == u3a_is_north(u3R) ) {
-      bot_p = (u3R->cap_p - len_w);
-      u3R->cap_p -= len_w;
+      /* Align the space between the home road's hat and cap to native page
+      ** boundaries and disable page tracking on the pad and inner roads.
+      */
+      if ( &u3H->rod_u == u3R ) {
+        u3p(c3_w) har_p = c3_rup(u3R->hat_p, U3_OS_NativePageWords);
+        u3p(c3_w) car_p = c3_rud(u3R->cap_p, U3_OS_NativePageWords);
+        if ( 0 != mprotect(u3to(void*, har_p),
+                           (car_p - har_p) << 2,
+                           PROT_READ | PROT_WRITE) ) 
+        {
+          fprintf(stderr, "leap: unable to disable page tracking "
+                          "on inner roads, continuing\r\n");
+        }
+        top_p = car_p;
+      }
+      else {
+        top_p = u3R->cap_p;
+      }
+      bot_p = (top_p - len_w);
+      u3R->cap_p = bot_p;
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
@@ -805,7 +825,8 @@ u3m_leap(c3_w pad_w)
     }
     else {
       bot_p = u3R->cap_p;
-      u3R->cap_p += len_w;
+      top_p = (bot_p + len_w);
+      u3R->cap_p = top_p;
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
@@ -877,6 +898,49 @@ u3m_fall()
   */
   u3R = u3to(u3_road, u3R->par_p);
   u3R->kid_p = 0;
+
+  /* Write-protect all clean pages in the loom when returning to the home road.
+  */
+  if ( &u3H->rod_u == u3R ) {
+    u3p(c3_w) off_p;
+    c3_w pag_w;
+    c3_w blk_w;
+    c3_w bit_w;
+    c3_o suc_o = c3y;
+    for ( off_p = u3H->rod_u.rut_p;
+          off_p < u3H->rod_u.mat_p;
+          off_p += (1 << u3a_page) )
+    {
+      pag_w = off_p >> u3a_page;
+      blk_w = pag_w >> 5;
+      bit_w = pag_w & 31;
+
+      // This page is dirty, so don't re-enable write protection.
+      if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+        continue;
+      }
+
+      if ( 0 != mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
+                         1 << (u3a_page + 2),
+                         PROT_READ) )
+      {
+        fprintf(stderr,
+                "fall: unable to write-protect loom "
+                "offsets 0x%x to 0x%x: %s\r\n",
+                off_p,
+                off_p + (1 << u3a_page),
+                strerror(errno));
+        suc_o = c3n;
+        break;
+      }
+    }
+
+    if ( c3n == suc_o ) {
+      fprintf(stderr,
+              "fall: unable to reinstate page tracking on home road, "
+              "continuing\r\n");
+    }
+  }
 }
 
 /* u3m_hate(): new, integrated leap mechanism (enter).
