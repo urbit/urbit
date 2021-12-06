@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Col,
   Row,
@@ -17,6 +17,8 @@ import { resourceFromPath } from "~/logic/lib/group";
 
 import useMetadataState, { usePreview } from "~/logic/state/metadata";
 import useInviteState, { useInviteForResource } from "~/logic/state/invite";
+
+const SUMMARY_HEIGHT = "96px";
 
 export type JoinKind = "graph" | "groups";
 
@@ -39,7 +41,7 @@ export function JoinSkeleton(props: JoinSkeletonProps) {
 
   const inner = (
     <Col
-      maxWidth={modal ? "384px" : undefined}
+      width={modal ? ["90vw", "384px"] : undefined}
       borderRadius="2"
       backgroundColor="white"
     >
@@ -84,6 +86,10 @@ export function JoinBody(props: { desc: JoinDesc }) {
           memberCount={preview.members}
           channelCount={preview["channel-count"]}
           metadata={preview.metadata}
+          height={SUMMARY_HEIGHT}
+          width="100%"
+          maxWidth="100%"
+          overflow="hidden"
         />
       ) : (
         <FallbackSummary path={group} />
@@ -112,9 +118,17 @@ function FallbackSummary(props: { path: string }) {
   const [, , ship, name] = path.split("/");
 
   return (
-    <Row alignItems="center" gapX="0">
+    <Row
+      height={SUMMARY_HEIGHT}
+      width="100%"
+      overflow="hidden"
+      alignItems="center"
+      gapX="0"
+    >
       <Author gray fullNotIcon size={40} showImage ship={ship} dontShowTime />
-      <Text mono>/{name}</Text>
+      <Text mono whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+        /{name}
+      </Text>
     </Row>
   );
 }

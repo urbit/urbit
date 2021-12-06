@@ -33,7 +33,7 @@ export function GroupSummary(
   );
 
   return (
-    <Col {...rest} gapY={4} maxWidth={["100%", "288px"]}>
+    <Col gapY={4} maxWidth={["100%", "288px"]} {...rest}>
       <Row gapX={2} width="100%">
         <MetadataIcon
           width="40px"

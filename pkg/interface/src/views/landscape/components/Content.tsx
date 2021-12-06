@@ -16,6 +16,7 @@ import Landscape from '~/views/landscape/index';
 import GraphApp from '../../apps/graph/App';
 import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
 import {JoinRoute} from './Join/Join';
+import useInviteState from '~/logic/state/invite';
 
 export const Container = styled(Box)`
    flex-grow: 1;
@@ -28,16 +29,20 @@ export const Content = (props) => {
   const history = useHistory();
   const location = useLocation();
   const mdLoaded = useMetadataState(s => s.loaded);
+  const inviteLoaded = useInviteState(s => s.loaded);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
-    if(mdLoaded && query.has('grid-note')) {
+    if(!(mdLoaded && inviteLoaded)) {
+      return;
+    }
+    if(query.has('grid-note')) {
       history.push(getNotificationRedirect(query.get('grid-note')!));
-    } else if(mdLoaded && query.has('grid-link')) {
+    } else if(query.has('grid-link')) {
       const link = decodeURIComponent(query.get('grid-link')!);
       history.push(`/perma${link}`);
     }
-  }, [location.search, mdLoaded]);
+  }, [location.search, mdLoaded, inviteLoaded]);
 
   useShortcut('navForward', useCallback((e) => {
     e.preventDefault();

@@ -14,12 +14,16 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import useGroupState from "~/logic/state/group";
 import useInviteState, { useInviteForResource } from "~/logic/state/invite";
 import useMetadataState, { usePreview } from "~/logic/state/metadata";
-import { Invite } from "@urbit/api";
+import { decline, Invite } from "@urbit/api";
 import { join, JoinRequest } from "@urbit/api/groups";
 import airlock from "~/logic/api";
 import { joinError, joinResult, joinLoad, JoinProgress } from "@urbit/api";
 import { useQuery } from "~/logic/lib/useQuery";
-import { JoinKind, JoinDesc, JoinSkeleton } from './Skeleton';
+import { JoinKind, JoinDesc, JoinSkeleton } from "./Skeleton";
+
+interface InviteWithUid extends Invite {
+  uid: string;
+}
 
 interface FormSchema {
   autojoin: boolean;
@@ -34,7 +38,7 @@ const initialValues = {
 function JoinForm(props: {
   desc: JoinDesc;
   dismiss: () => void;
-  invite?: Invite;
+  invite?: InviteWithUid;
 }) {
   const { desc, dismiss, invite } = props;
   const onSubmit = (values: FormSchema) => {
@@ -43,19 +47,33 @@ function JoinForm(props: {
       join(ship, name, desc.kind, values.autojoin, values.shareContact)
     );
   };
+
+  const onDecline =  () => {
+    airlock.poke(decline(desc.kind, invite.uid));
+    dismiss();
+  }
   const isGroups = desc.kind === "groups";
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       <Form>
         <Col p="4" gapY="4">
-          {isGroups ? (<ManagedCheckboxField id="autojoin" label="Join all channels" />) : null}
+          {isGroups ? (
+            <ManagedCheckboxField id="autojoin" label="Join all channels" />
+          ) : null}
           <ManagedCheckboxField id="shareContact" label="Share identity" />
-          <Row gapX="2">
+          <Row justifyContent="space-between" width="100%">
             <Button onClick={dismiss}>Dismiss</Button>
-            <Button primary type="submit">
-              {!invite ? "Join Group" : "Accept Invite"}
-            </Button>
+            <Row gapX="2">
+              {!invite ? null : (
+                <Button onClick={onDecline} destructive type="button">
+                  Decline
+                </Button>
+              )}
+              <Button primary type="submit">
+                {!invite ? "Join Group" : "Accept"}
+              </Button>
+            </Row>
           </Row>
         </Col>
       </Form>
@@ -68,7 +86,7 @@ const REQUEST: JoinDesc = {
 };
 
 export function JoinInitial(props: {
-  invite?: Invite;
+  invite?: InviteWithUid;
   desc: JoinDesc;
   modal: boolean;
   dismiss: () => void;
@@ -160,16 +178,19 @@ function JoinError(props: {
 
 export interface JoinProps {
   desc: JoinDesc;
+  redir?: string;
   modal?: boolean;
   dismiss?: () => void;
 }
 
 export function Join(props: JoinProps) {
-  const { desc, modal, dismiss } = props;
+  const { desc, modal, dismiss, redir } = props;
   const { group, kind } = desc;
   const [, , ship, name] = group.split("/");
   const graph = kind === "graph";
-  const finishedPath = graph
+  const finishedPath = !!redir
+    ? redir
+    : graph
     ? `/~landscape/messages/resource/chat/${ship}/${name}`
     : `/~landscape/ship/${ship}/${name}`;
 
@@ -184,7 +205,7 @@ export function Join(props: JoinProps) {
     joinRequest && joinLoad.includes(joinRequest.progress as any);
 
   useEffect(() => {
-    if(isDone && desc.kind ===  'graph') {
+    if (isDone) {
       history.push(finishedPath);
     }
   }, [isDone, desc]);
@@ -319,6 +340,7 @@ export function JoinRoute(props: { graph?: boolean; modal?: boolean }) {
   const { pathname } = useLocation();
   const kind = query.get("join-kind");
   const path = query.get("join-path");
+  const redir = query.get("redir");
   if (!kind) {
     return null;
   }
@@ -334,7 +356,7 @@ export function JoinRoute(props: { graph?: boolean; modal?: boolean }) {
   };
 
   return desc ? (
-    <Join desc={desc} modal dismiss={dismiss} />
+    <Join desc={desc} modal dismiss={dismiss} redir={redir} />
   ) : (
     <JoinPrompt kind={kind} dismiss={dismiss} />
   );
