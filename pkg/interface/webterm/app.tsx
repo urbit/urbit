@@ -6,7 +6,8 @@ import React, {
 import Helmet from 'react-helmet';
 
 import useTermState from './state';
-import { useDark } from '../src/logic/state/join';
+import { useDark } from './join';
+import api from './api';
 
 import { Terminal, ITerminalOptions, ITheme } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -14,12 +15,12 @@ import { saveAs } from 'file-saver';
 
 import { Box, Col } from '@tlon/indigo-react';
 
-import '../../../../node_modules/xterm/css/xterm.css';
-import api from '../src/logic/api/index';
+import 'xterm/css/xterm.css';
+
 import {
   Belt, Blit, Stye, Stub, Tint, Deco,
   pokeTask, pokeBelt
-} from '../../npm/term';
+} from "@urbit/api/term";
 
 import bel from './lib/bel';
 
