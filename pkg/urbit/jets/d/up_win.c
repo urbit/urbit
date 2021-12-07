@@ -6,7 +6,7 @@ u3qdu_win(u3_atom p, u3_noun q, u3_atom r, u3_noun s)
   if  ( c3y == u3qa_lth(p, r) ) {
     return c3y;
   }
-  else if ( (p == r) && (c3y == u3qc_gor(q, s)) ) {
+  else if ( (c3y == u3r_sing(p, r)) && (c3y == u3qc_gor(q, s)) ) {
     return c3y;
   }
   else {

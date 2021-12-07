@@ -15,23 +15,16 @@ u3qdu_toy(u3_noun a, u3_noun b)
     u3x_trel(a, &n_a, &t_a, &m_a);
     u3x_trel(b, &n_b, &t_b, &m_b);
 
-    u3_noun k_n_a, k_n_b;
-    u3_noun t_p_n_a, t_p_n_b;
-    u3x_cell(n_a, &k_n_a, &t_p_n_a);
-    u3x_cell(n_b, &k_n_b, &t_p_n_b);
-
-    u3_noun p_n_a = u3h(t_p_n_a);
-    u3_noun p_n_b = u3h(t_p_n_b);
+    u3_noun k_n_a, p_n_a, v_n_a;
+    u3_noun k_n_b, p_n_b, v_n_b;
+    u3x_trel(n_a, &k_n_a, &p_n_a, &v_n_a);
+    u3x_trel(n_b, &k_n_b, &p_n_b, &v_n_b);
 
     if ( c3y == u3qdu_win(p_n_a, k_n_a, p_n_b, k_n_b) ) {
-      u3_noun pre = u3qdu_rbal(n_b, t_a, m_a, t_b);
-
-      return u3nt(u3k(n_a), pre, u3k(m_b));
+      return u3nt(u3k(n_a), u3qdu_rbal(n_b, t_a, m_a, t_b), u3k(m_b));
     }
     else {
-      u3_noun pre = u3qdu_lbal(n_a, t_a, m_a, t_b);
-
-      return u3nt(u3k(n_b), pre, u3k(m_b));
+      return u3nt(u3k(n_b), u3qdu_lbal(n_a, t_a, m_a, t_b), u3k(m_b));
     }
   }
 }

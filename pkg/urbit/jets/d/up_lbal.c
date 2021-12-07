@@ -21,7 +21,6 @@ u3qdu_lbal(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
     u3_atom sm_l = u3qa_mul(4, sl);
 
     if ( c3y == u3qa_gth(sr, sm_l) ) {
-
       u3z(sl);
       u3z(sr);
       u3z(sm_l);
@@ -35,14 +34,12 @@ u3qdu_lbal(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
       u3_atom sm_r = u3qa_mul(4, sr);
 
       if ( c3y == u3qa_gth(sl, sm_r) ) {
-
         u3z(sl);
         u3z(sm_r);
 
         return u3qdu_lrbal(n_a, l_a, m_a, r_a);
       }
       else {
-
         u3z(sl);
         u3z(sm_r);
 

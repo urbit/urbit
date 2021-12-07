@@ -18,9 +18,7 @@ u3qdu_qor_put(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
     }
     else if (c3y == u3qc_gor(k, m_a)) {
       u3_noun fel = u3nt(u3nt(u3k(k), u3k(p), u3k(v)), u3_nul, u3k(k));
-      u3_noun fer = u3nt(u3nt(u3k(k_n_a), u3k(p_n_a), u3k(v_n_a)),
-                         u3_nul,
-                         u3k(k_n_a));
+      u3_noun fer = u3nt(u3k(n_a), u3_nul, u3k(k_n_a));
 
       u3_noun pro = u3qdu_toy(fel, fer);
 
@@ -93,6 +91,7 @@ u3qdu_qor_put(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
         u3_noun fel = u3nt(u3k(n_b), u3k(l_b), u3k(m_b));
         u3_noun fer = u3nt(u3k(n_a), u3k(r_b), u3k(m_a));
         u3_noun pre = u3qdu_qor_put(fel, k, p, v);
+
         u3_noun pro = u3qdu_toy(pre, fer);
 
         u3z(pre);
