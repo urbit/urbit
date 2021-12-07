@@ -168,7 +168,7 @@ export const groupBunts = {
   policy: (): GroupPolicy => ({ open: { banned: new Set(), banRanks: new Set() } })
 };
 
-export const joinError = ['no-perms', 'strange'] as const;
+export const joinError = ['no-perms', 'strange', 'abort'] as const;
 export const joinResult = ['done', ...joinError] as const;
 export const joinLoad = ['start', 'added', 'metadata'] as const;
 export const joinProgress = [...joinLoad, ...joinResult] as const;

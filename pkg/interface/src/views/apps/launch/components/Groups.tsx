@@ -69,7 +69,7 @@ export default function Groups(props: Parameters<typeof Box>[0]) {
 
   const joining = useGroupState((s) =>
     _.omit(
-      _.pickBy(s.pendingJoin || {}, req => req.app === 'groups'),
+      _.pickBy(s.pendingJoin || {}, req => req.app === 'groups' && req.progress != 'abort'),
       groups.map((g) => g.group)
     )
   );
