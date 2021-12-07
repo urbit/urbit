@@ -456,6 +456,16 @@ _http_req_done(void* ptr_v)
 /* _http_seq_done(): slog stream request finished, deallocation callback
 */
 static void
+_http_scry_done(void* ptr_v)
+{
+  u3_hreq* seq_u = (u3_hreq*)ptr_v;
+  _http_req_close(seq_u);
+  _http_req_unlink(seq_u);
+}
+
+/* _http_seq_done(): slog stream request finished, deallocation callback
+*/
+static void
 _http_seq_done(void* ptr_v)
 {
   u3_hreq* seq_u = (u3_hreq*)ptr_v;
@@ -514,6 +524,27 @@ _http_seq_new(u3_hcon* hon_u, h2o_req_t* rec_u)
 
   return req_u;
 }
+
+/* _http_scry_new(): receive scry http request.
+*/
+static u3_hreq*
+_http_scry_new(u3_hcon* hon_u, h2o_req_t* rec_u)
+{
+  u3_hreq* req_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*req_u),
+                                        _http_scry_done);
+  req_u->rec_u = rec_u;
+  req_u->sat_e = u3_rsat_plan;
+  req_u->tim_u = 0;
+  req_u->gen_u = 0;
+  req_u->pre_u = 0;
+
+  _http_req_link(hon_u, req_u);
+
+
+  return req_u;
+}
+
+
 
 /* _http_req_dispatch(): dispatch http request to %eyre
 */
@@ -816,6 +847,38 @@ _http_req_prepare(h2o_req_t* rec_u,
   return seq_u;
 }
 
+
+/* _http_scry_continue(): respond to scry request based on scry result
+*/
+static void
+_http_scry_continue(void *vod_p, u3_noun nun)
+{
+  u3l_log("scry continue");
+  h2o_req_t* rec_u = vod_p;
+  u3_hreq* req_u   = _http_req_prepare(rec_u, _http_scry_new);
+  u3_weak    res   = u3r_at(7, nun);
+  //  if the request is authenticated properly, send slogstream/sse headers
+  //
+  //TODO  authentication might expire after the connection has been opened!
+  //      eyre could notify us about this, or we could re-check periodically.
+  //
+  if ( u3_none == res ) {
+	 
+    _http_start_respond(req_u, 404, u3_nul, u3_nul, c3y);
+  }
+  //  if the scry failed, the result is unexpected, or there is no auth,
+  //  respond with the appropriate status code
+  //
+  else {
+    u3_noun uni = u3i_cell(u3_nul, res);
+   
+    _http_start_respond(req_u, 200, u3_nul, uni, c3y);
+  }
+
+  //u3z(nun);
+}
+
+
 /* _http_seq_continue(): respond to slogstream request based on auth scry result
 */
 static void
@@ -866,6 +929,57 @@ _http_seq_continue(void* vod_p, u3_noun nun)
 
   u3z(nun);
 }
+
+static int
+_http_scry_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
+{
+  //  try to find a cookie header
+  //
+  u3_weak coo = u3_none;
+  {
+    //TODO  http2 allows the client to put multiple 'cookie' headers
+    ssize_t hin_i = h2o_find_header_by_str(&rec_u->headers, "cookie", 6, -1);
+    if ( hin_i != -1 ) {
+      coo = _http_vec_to_atom(rec_u->headers.entries[hin_i].value);
+    }
+  }
+
+  //  if there is no cookie header, it can't possibly be authenticated
+  //
+  if ( u3_none == coo ) {
+    coo = u3i_string("test");
+    /*
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
+    req_u->sat_e = u3_rsat_plan;
+    _http_start_respond(req_u, 403, u3_nul, u3_nul, c3y);
+    */
+  }
+  //  if there is a cookie, scry to see if it constitutes authentication
+  //
+    h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
+                           callbacks->get_socket(rec_u->conn);
+    u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
+
+    /*u3_noun pfix = u3nq(u3i_string("get"),
+//u3dc("scot", 't', coo),
+                       u3_nul);
+    //u3_noun sfix = n3nq();
+    */
+     u3_noun pox = u3dc("scot", 't', _http_vec_to_atom(rec_u->path_normalized));
+
+    u3_noun pax = u3nq(u3i_string("get"),
+                       u3dc("scot", 't', coo),
+		       pox,
+                       u3_nul);
+
+    
+    
+    u3_pier_peek_last(hon_u->htp_u->htd_u->car_u.pir_u, u3_nul, c3__ex,
+                      u3_nul, pax, rec_u, _http_scry_continue);
+
+  return 0;
+}
+
 
 /* _http_seq_accept(): handle incoming http request on slogstream endpoint
 */
@@ -1414,6 +1528,12 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
   h2o_pathconf_t* pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/slog", 0);
   h2o_handler_t*  han_u = h2o_create_handler(pac_u, sizeof(*han_u));
   han_u->on_req = _http_seq_accept;
+
+  //  register scry endpoint
+  //
+  h2o_pathconf_t* scry_pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/scry", 0);
+  h2o_handler_t*  scry_han_u = h2o_create_handler(scry_pac_u, sizeof(*scry_han_u));
+  scry_han_u->on_req = _http_scry_accept;
 
   if ( c3y == log ) {
     // XX move this to post serv_start and put the port in the name
