@@ -8,7 +8,7 @@
     dbug
 ::  Generally don't update the snapshot until we have clay tombstoning.
 ::
-/*  state-naive  %naive  /app/azimuth/state/naive
+/*  snap  %azimuth  /app/azimuth/state/azimuth
 ::  To update, run from dojo:
 ::    -azimuth-snap-state %default 'state'
 ::
@@ -18,8 +18,8 @@
 ::    */app/azimuth/logs/eth-logs &eth-logs l
 ::    -azimuth-snap-logs %default 'state'
 ::
-=/  snap=snap-state  state-naive
-=/  last-snap        number.id.snap
+=/  snap=snap-state  snap
+=/  last-snap=@      number.id.snap
 ::
 =,  jael
 |%
@@ -246,9 +246,7 @@
         %history  (welp logs.state loglist.diff)
         %logs     (welp logs.state loglist.diff)
       ==
-    :: =?  nas.state  ?=(%history -.diff)  *^state:naive  :: should go
     =^  effects  state  (run-logs:do loglist.diff)
-    ::
     :_  this
     %+  weld
       (event-update:do effects)
@@ -406,6 +404,7 @@
   =/  args=vase  !>
     :+  %watch  /[dap.bowl]
     ^-  config:eth-watcher
+    :*  url.state  =(%czar (clan:title our.bowl))  refresh  ~h30
         (max launch.net ?:(=(net.state %default) +(last-snap) 0))
         ~[azimuth.net]
         ~[naive.net]

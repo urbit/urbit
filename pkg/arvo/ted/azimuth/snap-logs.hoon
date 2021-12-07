@@ -1,4 +1,5 @@
-::  Creates a snapshop of the naive state and its indices (owners and sposnors)
+::  Creates a snapshot of the azimuth state and its indices
+::  (owners and sposnors) from a list of ethereum logs
 ::
 /-  spider, *dice
 /+  strand,
@@ -59,9 +60,9 @@
         leaf+"owners: {<~(wyt by owners)>}"
     ==
 ::
-=/  =path  /app/azimuth/[name]/naive
-=/  =cage  naive+!>([%0 id nas owners sponsors])
+=/  =path  /app/azimuth/[name]/azimuth
+=/  =cage  azimuth+!>([%0 id nas owners sponsors])
 =/  =task  [%info %base %& [path %ins cage]~]
 =/  =card  [%pass /next %arvo %c task]
 ;<  ~  bind:m  (send-raw-card:strandio card)
-(pure:m !>('naive logs processed'))
+(pure:m !>('azimuth logs processed'))

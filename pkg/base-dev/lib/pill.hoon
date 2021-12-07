@@ -1,5 +1,6 @@
 ::  |pill: helper functions for making pills
 ::
+/-  *dice
 ^?
 |%
 ::
@@ -90,7 +91,7 @@
 ::
 ++  file-ovum2  |=(p=path `unix-event`[//arvo what/(user-files p)])
 ::
-::  +user-files: all userspace hoon files
+::  +user-files: all userspace hoon files, and azimuth snapshot
 ::
 ++  user-files
   |=  bas=path
@@ -117,12 +118,12 @@
   =/  lon  .^(arch %cy pax)
   =?  hav  ?=(^ fil.lon)
       ::
-      ::  install only hoon files for now
+      ::  install only hoon files and azimuth snapshot for now
       ::
-      ?.  ?=([%hoon *] tyl)
-        hav
-      :_  hav
-      [(flop `path`t.tyl) hoon/.^(@t %cx pax)]
+      ?+  tyl  hav
+        [%hoon *]     [(flop `path`t.tyl) hoon/.^(@t %cx pax)]^hav
+        [%azimuth *]  [(flop `path`t.tyl) mime/.^(snap-state %cx pax)]^hav
+      ==
   ::
   =/  all  ~(tap by dir.lon)
   |-  ^+   hav

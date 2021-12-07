@@ -1,4 +1,4 @@
-::  naive state
+::  /app/azimuth state snapshot
 ::
 /-  *dice
 /+  naive
@@ -15,7 +15,7 @@
 ++  grow
   |%
   ++  mime
-    [/application/x-naive (as-octs:mimes:html (jam snap))]
+    [/application/octet-stream (as-octs:mimes:html (jam snap))]
   --
 ++  grad  %mime
 --
