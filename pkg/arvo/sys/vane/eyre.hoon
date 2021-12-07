@@ -2571,6 +2571,7 @@
     ~
   ?:  &(?=(%x ren) ?=(~ syd))
     =,  server-state.ax
+    |^
     ?+  tyl  [~ ~]
       [%cors ~]            ``noun+!>(cors-registry)
       [%cors %requests ~]  ``noun+!>(requests.cors-registry)
@@ -2588,12 +2589,43 @@
     ::
         [%authenticated %cookie @ ~]
       ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
-      :^  ~  ~  %noun
-      !>  ^-  ?
+      ``noun+!>((is-authenticated u.cookies))
+    ::
+        [%get @ @ ~]
+      ~>  %slog.[0 leaf+"eyre: received stateless get "]
+      ?~  url=(slaw %t i.t.t.tyl)  [~ ~]
+      ?~  cookies=(slaw %t i.t.tyl)  [~ ~]
+      :: ?.  (is-authenticated u.cookies)  [~ ~]
+      ?~  pax=`(unit path)`(rush u.url stap)  [~ ~]
+      ~>  %slog.[0 leaf+"eyre: received stateless get on {(trip (spat u.pax))}"]
+      =/  pox=path  (slag 2 u.pax)
+      =^  ext=@t  pox
+        (strip-ext pox)
+      ::=/  cag  (rof ~ %gx [our i.pox da+now] t.pox)
+      ~>  %slog.[1 leaf+"eyre: received stateless get on {(spud pox)} {(trip ext)}"]
+     =/  test=@t  'test'
+      ``noun+!>([(met 3 test) test])
+    ::
+    ==
+    ++  strip-ext
+     =|  res=path
+     |=  pax=path
+     ^-  [@t path]
+     ?~  pax  ['' res]
+     ?~  t.pax
+       =/  lst=(pair @t @t)
+         (fall (rush i.pax ;~((glue dot) sym sym)) [i.pax ''])
+       [q.lst (weld res pax(i p.lst))]
+     $(pax t.pax, res (snoc res i.pax))
+    ::
+    ++  is-authenticated
+      |=  cookie=@t
+      ^-  ?
       %-  =<  request-is-logged-in:authentication
           (per-server-event [eny *duct now rof] server-state.ax)
-      %*(. *request:http header-list ['cookie' u.cookies]~)
-    ==
+      %*(. *request:http header-list ['cookie' cookie]~)
+    --
+    ::
   ?.  ?=(%$ ren)
     [~ ~]
   ?+  syd  [~ ~]
