@@ -17,6 +17,7 @@ import { resourceFromPath } from "~/logic/lib/group";
 
 import useMetadataState, { usePreview } from "~/logic/state/metadata";
 import useInviteState, { useInviteForResource } from "~/logic/state/invite";
+import {useHistory} from "react-router-dom";
 
 const SUMMARY_HEIGHT = "96px";
 
@@ -38,6 +39,10 @@ interface JoinSkeletonProps {
 
 export function JoinSkeleton(props: JoinSkeletonProps) {
   const { title, body, children, onJoin, desc, modal } = props;
+  const history = useHistory();
+  const dismiss = () => {
+    history.push({ search: '' });
+  };
 
   const inner = (
     <Col
@@ -64,7 +69,7 @@ export function JoinSkeleton(props: JoinSkeletonProps) {
     </Col>
   );
   return modal ? (
-    <ModalOverlay dismiss={() => {}}>{inner}</ModalOverlay>
+    <ModalOverlay dismiss={dismiss}>{inner}</ModalOverlay>
   ) : (
     inner
   );

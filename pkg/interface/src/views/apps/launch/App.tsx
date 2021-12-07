@@ -83,7 +83,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
               <Tiles />
               <ModalButton
                 icon="Plus"
-                bg="washedGray"
+                bg="white"
                 color="black"
                 text="New Group"
                 style={{ gridColumnStart: 1 }}
@@ -91,14 +91,12 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
                 <NewGroup />
               </ModalButton>
               <Button
-                backgroundColor="washedGray"
-                color="black"
                 border={0}
                 p={0}
                 borderRadius={2}
                 onClick={() => history.push({ search: "?join-kind=group" })}
               >
-                <Row gapX="2" p={2} height="100%" width="100%" alignItems="center">
+                <Row backgroundColor="white" gapX="2" p={2} height="100%" width="100%" alignItems="center">
                   <Icon icon="BootNode" />
                   <Text fontWeight="medium" whiteSpace="nowrap">Join Group</Text>
                 </Row>

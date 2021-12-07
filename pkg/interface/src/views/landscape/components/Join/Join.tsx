@@ -48,10 +48,10 @@ function JoinForm(props: {
     );
   };
 
-  const onDecline =  () => {
+  const onDecline = () => {
     airlock.poke(decline(desc.kind, invite.uid));
     dismiss();
-  }
+  };
   const isGroups = desc.kind === "groups";
 
   return (
@@ -117,7 +117,7 @@ function JoinLoading(props: {
   const { desc, request, dismiss, modal, finished } = props;
   const history = useHistory();
   useEffect(() => {
-    if (request.progress === "done") {
+    if (desc.kind === "graph" && request.progress === "done") {
       history.push(finished);
     }
   }, [request]);
@@ -205,13 +205,18 @@ export function Join(props: JoinProps) {
     joinRequest && joinLoad.includes(joinRequest.progress as any);
 
   useEffect(() => {
-    if (isDone) {
+    if (isDone && desc.kind == "graph") {
       history.push(finishedPath);
     }
   }, [isDone, desc]);
 
   return isDone ? (
-    <JoinDone modal={modal} desc={desc} />
+    <JoinDone
+      dismiss={dismiss}
+      modal={modal}
+      desc={desc}
+      finished={finishedPath}
+    />
   ) : isLoading ? (
     <JoinLoading
       modal={modal}
@@ -312,21 +317,30 @@ function JoinProgressIndicator(props: { progress: JoinProgress }) {
 export interface JoinDoneProps {
   desc: JoinDesc;
   modal: boolean;
+  finished: string;
+  dismiss: () => void;
 }
 
 export function JoinDone(props: JoinDoneProps) {
-  const { desc, modal } = props;
+  const { desc, modal, finished, dismiss } = props;
   const { preview, error } = usePreview(desc.group);
   const name = desc.kind === "groups" ? "Group" : "Group Chat";
   const title = `Joined ${name} successfully`;
+  const history = useHistory();
+
+  const onView = () => {
+    history.push(finished);
+  };
 
   return (
     <JoinSkeleton title={title} modal={modal} desc={desc}>
       <Col p="4" gapY="4">
         <JoinProgressIndicator progress="done" />
         <Row gapX="2">
-          <Button>Dismiss</Button>
-          <Button primary>View Group</Button>
+          <Button onClick={dismiss}>Dismiss</Button>
+          <Button onClick={onView} primary>
+            View Group
+          </Button>
         </Row>
       </Col>
     </JoinSkeleton>
