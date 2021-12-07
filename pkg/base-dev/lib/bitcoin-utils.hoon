@@ -162,7 +162,7 @@
       %0xfe  2
       %0xff  3
     ==
-    :_  (drop:byt (add 1 len) h)
+    :_  (drop:byt (add 1 (bex len)) h)
     %-  flip:byt
     (take:byt (bex len) (drop:byt 1 h))
   ::  +dea: atom instead of hexb for parsed CompactSize
