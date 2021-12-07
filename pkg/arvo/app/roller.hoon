@@ -864,6 +864,8 @@
     ==
   ::
       %setkey
+    =?  pk.config  =((end [3 2] pk.config) '0x')
+      (rsh [3 2] pk.config)
     ?~  pk=(de:base16:mimes:html pk.config)
       `state
     [(get-nonce q.u.pk /nonce) state(pk q.u.pk)]
