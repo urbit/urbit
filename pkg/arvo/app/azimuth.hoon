@@ -63,11 +63,7 @@
   ++  on-init
     ^-  (quip card _this)
     %-  %-  slog
-        =,  snap
-        :~  leaf+"azimuth: loading {<~(wyt by points.nas)>} points"
-            leaf+"azimuth: loading {<~(wyt by sponsors)>} sponsors"
-            leaf+"azimuth: loading {<~(wyt by owners)>} owners"
-        ==
+        [leaf+"azimuth: loading {<~(wyt by points.nas.snap)>} points"]~
     ::
     =:  net.state   %default
         nas.state   nas.snap
