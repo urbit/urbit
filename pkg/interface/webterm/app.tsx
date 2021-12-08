@@ -13,7 +13,7 @@ import { Terminal, ITerminalOptions, ITheme } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { saveAs } from 'file-saver';
 
-import { Box, Col } from '@tlon/indigo-react';
+import { Box, Col, Reset, _dark, _light } from '@tlon/indigo-react';
 
 import 'xterm/css/xterm.css';
 
@@ -23,6 +23,7 @@ import {
 } from '@urbit/api/term';
 
 import bel from './lib/bel';
+import { ThemeProvider } from 'styled-components';
 
 type TermAppProps = {
   ship: string;
@@ -32,7 +33,7 @@ const makeTheme = (dark: boolean): ITheme => {
   let fg, bg: string;
   if (dark) {
     fg = 'white';
-    bg = 'black';
+    bg = 'rgb(26,26,26)';
   } else {
     fg = 'black';
     bg = 'white';
@@ -57,7 +58,8 @@ const termConfig: ITerminalOptions = {
   cols: 80,
   scrollback: 10000,
   //
-  fontFamily: '"Source Code Pro","Roboto mono","Courier New",monospace',
+  fontFamily: '"Source Code Pro", "Roboto mono", "Courier New", monospace',
+  fontWeight: 400,
   // NOTE  theme colors configured dynamically
   //
   bellStyle: 'sound',
@@ -444,26 +446,29 @@ export default function TermApp(props: TermAppProps) {
 
   return (
     <>
-      <Box
-        width='100%'
-        height='100%'
-        px={['0','3']}
-        pb={['0','3']}
-        display='flex'
-        id='outer'
-      >
-        <Col
-          id='inner'
+      <ThemeProvider theme={dark ? _dark : _light}>
+        <Reset />
+        <Box
           width='100%'
-          minHeight='0'
-          color='washedGray'
-          borderRadius={['0','2px']}
-          border={['0','1px solid']}
-          p='1'
-          ref={container}
+          height='100%'
+          p={['0','3']}
+          display='flex'
+          bg='white'
+          fontFamily='mono'
         >
-        </Col>
-      </Box>
+          <Col
+            width='100%'
+            height='100%'
+            minHeight='0'
+            color='washedGray'
+            borderRadius={['0','2px']}
+            border={['0','1px solid']}
+            p='1'
+            ref={container}
+          >
+          </Col>
+        </Box>
+      </ThemeProvider>
     </>
   );
 }
