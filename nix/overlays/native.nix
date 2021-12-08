@@ -23,7 +23,7 @@ in {
     ];
   });
 
-  curlMinimal = prev.curl.override {
+  curlUrbit = prev.curlMinimal.override {
     http2Support = false;
     scpSupport = false;
     gssSupport = false;
