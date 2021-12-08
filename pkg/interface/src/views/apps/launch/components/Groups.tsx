@@ -79,7 +79,9 @@ export default function Groups(props: Parameters<typeof Box>[0]) {
         resourceAsPath(inv.resource)
       ) || []
   );
-  const pending = _.union(invites, Object.keys(joining));
+  const pending = _.union(invites, Object.keys(joining)).filter(group => {
+    return !(group in (groupState?.groups || {})) && !(group in (associations.groups || {}))
+  });
 
   return (
     <>
