@@ -72,12 +72,12 @@ jobs:
       # for the docker build. We don't want in on Mac, where it isn't but
       # it breaks the nix install. The two `if` clauses should be mutually
       # exclusive
-      - uses: cachix/install-nix-action@v13
+      - uses: cachix/install-nix-action@v16
         with:
           extra_nix_config: |
             system-features = nixos-test benchmark big-parallel kvm
         if: ${{ matrix.os == 'ubuntu-latest' }}
-      - uses: cachix/install-nix-action@v13
+      - uses: cachix/install-nix-action@v16
         if: ${{ matrix.os != 'ubuntu-latest' }}
 
       - uses: cachix/cachix-action@v10
