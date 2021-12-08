@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Usage: fmt-c
+
+set -euo pipefail
+
+cd "${0%/*}/.."
+
+echo "Formatting C"
+
+find pkg -type f -name '*.[ch]' \
+  -exec clang-format -i --Werror {} \+
