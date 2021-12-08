@@ -1,13 +1,19 @@
 {
   "name": "roller-api",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "description": "Azimuth L2 Rollup API client generator",
   "scripts": {
     "generate-clients": "open-rpc-generator generate -c open-rpc-generator-config.json",
     "clean": "rm -rf build && mkdir -p build",
     "build": "npm run clean && npm run generate-clients",
-    "client-test": "jest"
+    "client-test": "jest",
+    "repository": "npe repository.type git --package=$PWD/client/typescript/package.json",
+    "url": "npe repository.url 'ssh://git@github.com/urbit/urbit.git' --package=$PWD/client/typescript/package.json",
+    "dir": "npe repository.directory 'pkg/npm/roller-api/client' --package=$PWD/client/typescript/package.json",
+    "description": "npe description 'Azimuth Layer 2 Roller API client' --package=$PWD/client/typescript/package.json",
+    "license": "npe license 'MIT' --package=$PWD/client/typescript/package.json",
+    "fix-client": "npm-run-all license description repository url dir"
   },
   "author": "~norsyr-torryn",
   "license": "MIT",
@@ -20,6 +26,8 @@
     "@types/secp256k1": "^4.0.3",
     "jest": "^27.0.6",
     "keccak": "^3.0.1",
+    "npe": "1.2.0",
+    "npm-run-all": "4.1.5",
     "secp256k1": "^4.0.2",
     "ts-jest": "^27.0.3",
     "tslint": "^6.1.3",
