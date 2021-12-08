@@ -38,6 +38,7 @@ const associations = (json: MetadataUpdate, state: MetadataState): MetadataState
   const data = _.get(json, 'associations', false);
   if (data) {
     state.associations = normalizeAssociations(data);
+    state.loaded = true;
   }
   return state;
 };

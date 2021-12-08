@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %420
+++  zuse  %419
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -1587,14 +1587,15 @@
   ::::                    ++keccak:crypto               ::  (2b7) keccak family
     ::                                                  ::::
   ++  keccak
+    ~%  %kecc  ..part  ~
     |%
     ::
     ::  keccak
     ::
-    ++  keccak-224  |=(a=octs (keccak 1.152 448 224 a))
-    ++  keccak-256  |=(a=octs (keccak 1.088 512 256 a))
-    ++  keccak-384  |=(a=octs (keccak 832 768 384 a))
-    ++  keccak-512  |=(a=octs (keccak 576 1.024 512 a))
+    ++  keccak-224  ~/  %k224  |=(a=octs (keccak 1.152 448 224 a))
+    ++  keccak-256  ~/  %k256  |=(a=octs (keccak 1.088 512 256 a))
+    ++  keccak-384  ~/  %k384  |=(a=octs (keccak 832 768 384 a))
+    ++  keccak-512  ~/  %k512  |=(a=octs (keccak 576 1.024 512 a))
     ::
     ++  keccak  (cury (cury hash keccak-f) padding-keccak)
     ::
@@ -3729,6 +3730,64 @@
       (some (~(run by lum) need))
     --  ::dejs-soft
   --
+::  |cloy: clay helpers
+::
+++  cloy
+  =,  clay
+  |%
+  ++  new-desk
+    |=  [=desk tako=(unit tako) files=(map path page)]
+    [%c %park desk &/[(drop tako) (~(run by files) (lead %&))] *rang]
+  ::  +an: $ankh interface door
+  ::
+  ++  an
+    |_  nak=ankh
+    ::  +dug: produce ankh at path
+    ::
+    ++  dug
+      |=  =path
+      ^-  (unit ankh)
+      ?~  path  `nak
+      ?~  kid=(~(get by dir.nak) i.path)
+        ~
+      $(nak u.kid, path t.path)
+    ::  +get: produce file at path
+    ::
+    ++  get
+      |=  =path
+      ^-  (unit cage)
+      ?~  nik=(dug path)  ~
+      ?~  fil.u.nik       ~
+      `q.u.fil.u.nik
+    ::  +mup: convert sub-tree at .pre to (map path [lobe cage])
+    ::
+    ++  mup
+      |=  pre=path
+      =-  ~?  =(~ -)  [%oh-no-empty pre]
+          -
+      ^-  (map path [lobe cage])
+      =/  nek=(unit ankh)  (dug pre)
+      ?~  nek
+        ~&  [%oh-no-empty-pre pre ~(key by dir.nak)]
+        ~
+      =.  nak  u.nek
+      ~?  =(~ nak)  [%oh-no-empty-nak pre]
+      =|  pax=path
+      =|  res=(map path [=lobe =cage])
+      |-  ^+  res
+      =?  res  ?=(^ fil.nak)  (~(put by res) pax u.fil.nak)
+      :: =/  anz=(list [seg=@ta =ankh])  ~(tap by dir.nak)
+      :: |-  ^+  res
+      :: ?~  anz  res
+      :: %_  $
+      ::   anz  t.anz
+      ::   res  ^$(pax (snoc pax seg.i.anz), nak ankh.i.anz)
+      :: ==
+      %+  roll  ~(tap by dir.nak)
+      |=  [[seg=@ta =ankh] res=_res]
+      ^$(pax (snoc pax seg), nak ankh, res res)
+    --
+  --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy
   ::                                                    ::::
@@ -4363,7 +4422,7 @@
     ::                                                  ::  ++chrd:de-xml:html
     ++  chrd                                            ::  character data
       %+  cook  |=(a=tape ^-(mars ;/(a)))
-      (plus ;~(less doq ;~(pose (just `@`10) escp)))
+      (plus ;~(pose (just `@`10) escp))
     ::                                                  ::  ++comt:de-xml:html
     ++  comt                                            ::  comments
       =-  (ifix [(jest '<!--') (jest '-->')] (star -))
@@ -4789,9 +4848,23 @@
 ::    (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::
-::::                      ++title                       ::  (2j) namespace
+::::                      ++title                       ::  (2j) identity
   ::                                                    ::::
 ++  title
+  ::  deep core: for vane use, with $roof for scrying
+  ::
+  ::    TODO: refactor to share high-level gates like +saxo
+  ::          among the three cores
+  ::
+  =>  |%
+      ++  sein
+        |=  [rof=roof our=ship now=@da who=ship]
+        ;;  ship
+        =<  q.q  %-  need  %-  need
+        (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
+      --
+  ::  middle core: for userspace use, with .^
+  ::
   =>  |%
       ::                                                ::  ++clan:title
       ++  clan                                          ::  ship to rank
@@ -4830,18 +4903,27 @@
           %pawn  (end 4 who)
         ==
       --
+  ::  surface core: stateless queries for default numeric sponsorship
+  ::
   |%
   ::                                                    ::  ++cite:title
   ++  cite                                              ::  render ship
     |=  who=@p
     ^-  tape
-    =+  kind=(clan who)
-    =+  name=(scow %p who)
-    ?:  =(%earl kind)
-      :(weld "~" (swag [15 6] name) "^" (swag [22 6] name))
-    ?:  =(%pawn kind)
-      :(weld (swag [0 7] name) "_" (swag [51 6] name))
-    name
+    =/  wid  (met 4 who)
+    ?:  (lte wid 2)  (scow %p who)
+    ?:  (lte wid 4)
+      =/  nom  (scow %p (end 5 who))
+      :(weld (scag 7 nom) "^" (slag 8 nom))
+    %-  trip
+    %+  rap  3
+    :~  '~'
+        (tos:po (cut 3 [(dec (mul wid 2)) 1] who))
+        (tod:po (cut 3 [(mul (dec wid) 2) 1] who))
+        '_'
+        (tos:po (cut 3 [1 1] who))
+        (tod:po (end 3 who))
+    ==
   ::                                                    ::  ++saxo:title
   ++  saxo                                              ::  autocanon
     |=  [our=ship now=@da who=ship]

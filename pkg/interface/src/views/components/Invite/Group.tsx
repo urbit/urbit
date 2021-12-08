@@ -26,7 +26,6 @@ import useGroupState from '~/logic/state/group';
 import useMetadataState, { useAssocForGraph } from '~/logic/state/metadata';
 import { PropFunc } from '~/types';
 import { Header } from '~/views/apps/notifications/header';
-import { NotificationWrapper } from '~/views/apps/notifications/notification';
 import { MetadataIcon } from '~/views/landscape/components/MetadataIcon';
 import { StatelessAsyncButton } from '../StatelessAsyncButton';
 import airlock from '~/logic/api';
@@ -297,7 +296,7 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
   };
 
   return (
-    <NotificationWrapper>
+    <>
       <Header content {...headerProps} />
       <Row
         onClick={onClick}
@@ -321,6 +320,6 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
           />
         </ResponsiveRow>
       </Row>
-    </NotificationWrapper>
+    </>
   );
 }

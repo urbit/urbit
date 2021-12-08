@@ -1,21 +1,5 @@
 /* vere/disk.c
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <sigsegv.h>
-#include <stdint.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <uv.h>
-#include <errno.h>
-
 #include "all.h"
 #include "vere/vere.h"
 #include <vere/db/lmdb.h>
@@ -767,7 +751,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
     //
     {
-      #if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
+      #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
         const size_t siz_i = 64424509440;
       #else
         const size_t siz_i = 1099511627776;

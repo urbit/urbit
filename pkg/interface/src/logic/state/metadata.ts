@@ -13,6 +13,7 @@ export const METADATA_MAX_PREVIEW_WAIT = 150000;
 
 export interface MetadataState {
   associations: Associations;
+  loaded: boolean;
   getPreview: (group: string) => Promise<MetadataUpdatePreview
   >;
   previews: {
@@ -24,6 +25,7 @@ export interface MetadataState {
 const useMetadataState = createState<MetadataState>(
   'Metadata',
   (set, get) => ({
+    loaded: false,
     associations: {
       groups: {},
       graph: {}
@@ -53,7 +55,7 @@ const useMetadataState = createState<MetadataState>(
       }
     }
   }),
-  [],
+  ['loaded'],
   [
     (set, get) =>
       createSubscription('metadata-store', '/all', (j) => {

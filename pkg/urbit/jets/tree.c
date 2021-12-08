@@ -15,6 +15,8 @@
 
 #include "all.h"
 
+static c3_c* no_hashes[] = { 0 };
+
 static u3j_harm _140_hex_mimes_base16_en_a[] = {{".2", u3we_en_base16}, {}};
 static c3_c* _140_hex_mimes_base16_en_ha[] = {
   "669807766b6802719769fcbfe149d77fb352fcf0922afaf35dc4ab8c201d84e5",
@@ -376,17 +378,29 @@ static c3_c* _140_hex_argon_ha[] = {
   0
 };
 
+static c3_c* _140_hex_scr_pbk_ha[] = { 0 };
+static u3j_harm _140_hex_scr_pbk_a[] = {{".2", u3wes_pbk, c3y}, {}};
+static c3_c* _140_hex_scr_pbl_ha[] = { 0 };
+static u3j_harm _140_hex_scr_pbl_a[] = {{".2", u3wes_pbl, c3y}, {}};
+static c3_c* _140_hex_scr_hsh_ha[] = { 0 };
+static u3j_harm _140_hex_scr_hsh_a[] = {{".2", u3wes_hsh, c3y}, {}};
+static c3_c* _140_hex_scr_hsl_ha[] = { 0 };
+static u3j_harm _140_hex_scr_hsl_a[] = {{".2", u3wes_hsl, c3y}, {}};
+
+static c3_c* _140_hex_scr_ha[] = { 0 };
+static u3j_core _140_hex_scr_d[] =
+  { { "pbk", 7, _140_hex_scr_pbk_a, 0, _140_hex_scr_pbk_ha },
+    { "pbl", 7, _140_hex_scr_pbl_a, 0, _140_hex_scr_pbl_ha },
+    { "hsh", 7, _140_hex_scr_hsh_a, 0, _140_hex_scr_hsh_ha },
+    { "hsl", 7, _140_hex_scr_hsl_a, 0, _140_hex_scr_hsl_ha },
+    {}
+  };
+
 static c3_c* _140_hex_secp_secp256k1_make_ha[] = { 0 };
 static u3j_harm _140_hex_secp_secp256k1_make_a[] = {{".2", u3we_make, c3y}, {}};
-static c3_c* _140_hex_secp_secp256k1_sign_ha[] = {
-  "3e75b3452b74776488d5eec75a91211700d9f360a4e06dd779600d5128d9c600",
-  0
-};
+static c3_c* _140_hex_secp_secp256k1_sign_ha[] = { 0 };
 static u3j_harm _140_hex_secp_secp256k1_sign_a[] = {{".2", u3we_sign, c3y}, {}};
-static c3_c* _140_hex_secp_secp256k1_reco_ha[] = {
-  "449f3aa878b61962c3048e167c23ba54a0736d3aa1ab7762bd54016fbba136ee",
-  0
-};
+static c3_c* _140_hex_secp_secp256k1_reco_ha[] = { 0 };
 static u3j_harm _140_hex_secp_secp256k1_reco_a[] = {{".2", u3we_reco, c3y}, {}};
 
 static c3_c* _140_hex_secp_secp256k1_ha[] = {
@@ -423,6 +437,26 @@ static c3_c* _140_hex_blake_ha[] = {
   0
 };
 
+  static u3j_harm _140_hex_kecc_k224_a[] =
+    {{".2", u3we_kecc224, c3y, c3y, c3y}, {}};
+
+  static u3j_harm _140_hex_kecc_k256_a[] =
+    {{".2", u3we_kecc256, c3y, c3y, c3y}, {}};
+
+  static u3j_harm _140_hex_kecc_k384_a[] =
+    {{".2", u3we_kecc384, c3y, c3y, c3y}, {}};
+
+  static u3j_harm _140_hex_kecc_k512_a[] =
+    {{".2", u3we_kecc512, c3y, c3y, c3y}, {}};
+
+static u3j_core _140_hex_kecc_d[] =
+  { { "k224", 7, _140_hex_kecc_k224_a, 0, no_hashes },
+    { "k256", 7, _140_hex_kecc_k256_a, 0, no_hashes },
+    { "k384", 7, _140_hex_kecc_k384_a, 0, no_hashes },
+    { "k512", 7, _140_hex_kecc_k512_a, 0, no_hashes },
+    {}
+  };
+
   static u3j_harm _140_hex_ripemd_160_a[] = {{".2", u3we_ripe, c3y}, {}};
   static c3_c* _140_hex_ripemd_160_ha[] = {
     "176684b29926a01f5c60fa584e4691b0cbdc9b93608dcbe7d0cf3585683fa42f",
@@ -450,8 +484,10 @@ static u3j_core _140_hex_d[] =
   { "hmac",   63, 0, _140_hex_hmac_d,  _140_hex_hmac_ha  },
   { "argon",  31, 0, _140_hex_argon_d, _140_hex_argon_ha },
   { "blake",  31, 0, _140_hex_blake_d, _140_hex_blake_ha },
+  { "kecc",   31, 0, _140_hex_kecc_d,  no_hashes },
   { "ripemd", 31, 0, _140_hex_ripe_d,  _140_hex_ripe_ha  },
-  { "secp",    6, 0, _140_hex_secp_d, _140_hex_secp_ha },
+  { "scr",    31, 0, _140_hex_scr_d,   _140_hex_scr_ha   },
+  { "secp",    6, 0, _140_hex_secp_d,  _140_hex_secp_ha },
   { "mimes",  31, 0, _140_hex_mimes_d, _140_hex_mimes_ha  },
   {}
 };
@@ -2078,8 +2114,75 @@ static c3_c* _k140_ha[] = {
   0
 };
 
+
+//  TODO: probably need different ha hashes
+
+static u3j_core _a50_two__by_d[] =
+  { { "apt", 7, _140_two__by_apt_a, 0, _140_two__by_apt_ha },
+    { "del", 7, _140_two__by_del_a, 0, _140_two__by_del_ha },
+    { "get", 7, _140_two__by_get_a, 0, _140_two__by_get_ha },
+    { "has", 7, _140_two__by_has_a, 0, _140_two__by_has_ha },
+    { "put", 7, _140_two__by_put_a, 0, _140_two__by_put_ha },
+    {}
+  };
+
+static u3j_core _a50_two__in_d[] =
+  { { "apt", 7, _140_two__in_apt_a, 0, _140_two__in_apt_ha },
+    { "del", 7, _140_two__in_del_a, 0, _140_two__in_del_ha },
+    { "put", 7, _140_two__in_put_a, 0, _140_two__in_put_ha },
+    {}
+  };
+
+u3j_core _a50_d[] =
+{ { "add", 7, _140_one_add_a, 0, _140_one_add_ha },
+  { "dec", 7, _140_one_dec_a, 0, _140_one_dec_ha },
+  { "div", 7, _140_one_div_a, 0, _140_one_div_ha },
+  { "dvr", 7, _140_one_dvr_a, 0, _140_one_dvr_ha },
+  { "gte", 7, _140_one_gte_a, 0, _140_one_gte_ha },
+  { "gth", 7, _140_one_gth_a, 0, _140_one_gth_ha },
+  { "lte", 7, _140_one_lte_a, 0, _140_one_lte_ha },
+  { "lth", 7, _140_one_lth_a, 0, _140_one_lth_ha },
+  { "mod", 7, _140_one_mod_a, 0, _140_one_mod_ha },
+  { "mul", 7, _140_one_mul_a, 0, _140_one_mul_ha },
+  { "sub", 7, _140_one_sub_a, 0, _140_one_sub_ha },
+
+  { "bex", 7, _140_two_bex_a, 0, _140_two_bex_ha },
+  { "cat", 7, _140_two_cat_a, 0, _140_two_cat_ha },
+  { "can", 7, _140_two_can_a, 0, _140_two_can_ha },
+  { "con", 7, _140_two_con_a, 0, _140_two_con_ha },
+  { "cut", 7, _140_two_cut_a, 0, _140_two_cut_ha },
+  { "dis", 7, _140_two_dis_a, 0, _140_two_dis_ha },
+  { "dor", 7, _140_two_dor_a, 0, _140_two_dor_ha },
+  { "end", 7, _140_two_end_a, 0, _140_two_end_ha },
+  { "gor", 7, _140_two_gor_a, 0, _140_two_gor_ha },
+  { "lsh", 7, _140_two_lsh_a, 0, _140_two_lsh_ha },
+  { "met", 7, _140_two_met_a, 0, _140_two_met_ha },
+  { "mix", 7, _140_two_mix_a, 0, _140_two_mix_ha },
+  { "mor", 7, _140_two_mor_a, 0, _140_two_mor_ha },
+  { "mug", 7, _140_two_mug_a, 0, _140_two_mug_ha },
+  { "muk", 59, _140_two_muk_a, 0, _140_two_muk_ha },  //  TODO: why 59?
+  { "rep", 7, _140_two_rep_a, 0, _140_two_rep_ha },
+  { "rip", 7, _140_two_rip_a, 0, _140_two_rip_ha },
+  { "rsh", 7, _140_two_rsh_a, 0, _140_two_rsh_ha },
+  { "swp", 7, _140_two_swp_a, 0, _140_two_swp_ha },
+
+  { "flop", 7, _140_two_flop_a, 0, _140_two_flop_ha },
+  { "lent", 7, _140_two_lent_a, 0, _140_two_lent_ha },
+  { "levy", 7, _140_two_levy_a, 0, _140_two_levy_ha },
+  { "reap", 7, _140_two_reap_a, 0, _140_two_reap_ha },
+  { "slag", 7, _140_two_slag_a, 0, _140_two_slag_ha },
+  { "snag", 7, _140_two_snag_a, 0, _140_two_snag_ha },
+  { "turn", 7, _140_two_turn_a, 0, _140_two_turn_ha },
+  { "welp", 7, _140_two_welp_a, 0, _140_two_welp_ha },
+
+  { "by",  7, 0, _a50_two__by_d, _140_two__by_ha },
+  { "in",  7, 0, _a50_two__in_d, _140_two__in_ha },
+  {}
+};
+
 static u3j_core _d[] = {
   { "k140", 0, 0, _k140_d, _k140_ha, 0, (u3j_core*) 140, 0 },
+  { "a50", 0, 0, _a50_d, _k140_ha, 0, (u3j_core*) c3__a50, 0 },
   {}
 };
 

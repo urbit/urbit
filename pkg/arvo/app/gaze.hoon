@@ -62,6 +62,7 @@
   +*  this  .
       do    ~(. +> bowl)
       def   ~(. (default-agent this %|) bowl)
+      bec   byk.bowl(r da+now.bowl)
   ::
   ++  on-init
     ^-  (quip card _this)
@@ -174,6 +175,7 @@
   --
 ::
 |_  =bowl:gall
+++  bec  byk.bowl(r da+now.bowl)
 ++  setup-cards
   ^-  (list card)
   :~  wait-export
@@ -209,6 +211,7 @@
       timeout-time
       public:mainnet-contracts
       ~[azimuth delegated-sending]:mainnet-contracts
+      ~
       ~
   ==
 ::
@@ -296,7 +299,7 @@
     ::
       %+  poke-spider  /timestamps/[tid]
       :-  %spider-start
-      =-  !>([~ `tid %eth-get-timestamps -])
+      =-  !>([~ `tid bec %eth-get-timestamps -])
       !>  ^-  [@t (list @ud)]
       :-  node-url
       =-  ~(tap in -)

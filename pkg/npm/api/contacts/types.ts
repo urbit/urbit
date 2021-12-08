@@ -1,5 +1,5 @@
-import { Path, Patp } from "../lib";
-import { Resource } from "../groups";
+import { Path, Patp } from '../lib';
+import { Resource } from '../groups';
 
 export type ContactUpdate =
   | ContactUpdateAdd
@@ -26,7 +26,7 @@ export interface ContactUpdateRemove {
 export interface ContactUpdateEdit {
   edit: {
     ship: Patp;
-    "edit-field": ContactEditField;
+    'edit-field': ContactEditField;
     timestamp: number;
   };
 }
@@ -39,7 +39,7 @@ export interface ContactUpdateAllowShips {
 
 export interface ContactUpdateAllowGroup {
   allow: {
-    group: Path;
+    group: Resource;
   }
 }
 
@@ -74,7 +74,7 @@ export interface Contact {
 
 type ContactKeys = keyof Contact;
 
-export type ContactEditFieldPrim = Exclude<ContactKeys, "groups" | "last-updated">;
+export type ContactEditFieldPrim = Exclude<ContactKeys, 'groups' | 'last-updated'>;
 
 export type ContactEditField = Partial<Pick<Contact, ContactEditFieldPrim>> & {
   'add-group'?: Resource;

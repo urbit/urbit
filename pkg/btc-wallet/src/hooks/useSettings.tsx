@@ -64,7 +64,7 @@ export const SettingsContext = createContext<SettingsContextType>({
   setNetwork: () => {},
   loadedBtc: false,
   setLoadedBtc: () => {},
-  loadedSettings: false,
+  loadedSettings: true,
   setLoadedSettings: () => {},
   loaded: false,
   setLoaded: () => {},
@@ -96,7 +96,7 @@ export const SettingsContext = createContext<SettingsContextType>({
   setCurrencyRates: () => {},
   denomination: 'BTC',
   setDenomination: () => {},
-  showWarning: true,
+  showWarning: false,
   setShowWarning: () => {},
   error: '',
   setError: () => {},
@@ -159,7 +159,7 @@ export const SettingsProvider: React.FC<Props> = ({ channel, children }) => {
 
   const initializeSettings = () => {
     let app = 'settings-store';
-    let path = '/bucket/btc-wallet';
+    let path = `/bucket/${window.desk}/btc-wallet`;
 
     fetch(`/~/scry/${app}${path}.json`)
       .then((res) => res.json())

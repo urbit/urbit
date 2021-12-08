@@ -34,18 +34,16 @@
 ::  manage subscriptions efficiently.
 ::
 =>  |%
-+$  state-1
-  $:  %1
-      pki=state-pki-1                                   ::
++$  state-2
+  $:  %2
+      pki=state-pki-2                                   ::
       etn=state-eth-node                                ::  eth connection state
   ==                                                    ::
-+$  state-pki-1                                         ::  urbit metadata
++$  state-pki-2                                         ::  urbit metadata
   $:  $=  own                                           ::  vault (vein)
         $:  yen=(set duct)                              ::  trackers
             sig=(unit oath)                             ::  for a moon
             tuf=(list turf)                             ::  domains
-            boq=@ud                                     ::  boot block
-            nod=purl:eyre                               ::  eth gateway
             fak=_|                                      ::  fake keys
             lyf=life                                    ::  version
             step=@ud                                    ::  login code step
@@ -181,7 +179,7 @@
           ==
           ::  all vane state
           ::
-          state-1
+          state-2
       ==
   ::  lex: all durable state
   ::  moz: pending actions
@@ -207,8 +205,8 @@
         [our our]
         app
         %poke
-        %azimuth-tracker-poke
-        !>([%watch (crip (en-purl:html purl))])
+        %azimuth-poke
+        !>([%watch (crip (en-purl:html purl)) %default])
     ==
   ::
   ++  sein                                              ::  sponsor
@@ -254,14 +252,6 @@
       ::
       ~|  [our who.seed.tac]
       ?>  =(our who.seed.tac)
-      ::  save our boot block
-      ::
-      =.  boq.own.pki  bloq.tac
-      ::  save our ethereum gateway (required for galaxies)
-      ::
-      =.  nod.own.pki
-        %+  fall  node.tac
-        (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.pki  sig.seed.tac
@@ -312,26 +302,29 @@
       ::
       ::  start subscriptions
       ::
-      =.  +>.$  (poke-watch hen %azimuth-tracker nod.own.pki)
       =.  +>.$
-        ::  get everything from azimuth-tracker because jael subscriptions
+        %^  poke-watch  hen  %azimuth
+        %+  fall  node.tac
+        (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+      =.  +>.$
+        ::  get everything from /app/azimuth because jael subscriptions
         ::  seem to be flaky for now
         ::
         ?:  &
           %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%| %azimuth-tracker])
+          (sources:~(feel su hen now pki etn) ~ [%| %azimuth])
         ::
         ?-    (clan:title our)
             %czar
           %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%| %azimuth-tracker])
+          (sources:~(feel su hen now pki etn) ~ [%| %azimuth])
         ::
             *
           =.  +>.$
             %-  curd  =<  abet
             %+  sources:~(feel su hen now pki etn)
               (silt (turn spon-points head))
-            [%| %azimuth-tracker]
+            [%| %azimuth]
           %-  curd  =<  abet
           (sources:~(feel su hen now pki etn) ~ [%& (need spon-ship)])
         ==
@@ -489,6 +482,7 @@
     ::    [%trim p=@ud]
     ::
         %trim
+      ::TODO  consider %ruin-ing long-offline comets
       +>.$
     ::
     ::  watch private keys
@@ -521,6 +515,20 @@
         =.  moz  [[hen %give %done ~] moz]
         $(tac message)
       ==
+    ::
+    ::  pretend ships breached
+    ::    [%ruin ships=(set ship)]
+    ::
+        %ruin
+      ::NOTE  we blast this out to _all_ known ducts, because the common
+      ::      use case for this is comets, about who nobody cares.
+      =/  dus  ~(key by yen.zim.pki)
+      =/  sus  ~(. su hen now pki etn)
+      =/  sis  ~(tap in ships.tac)
+      |-
+      ?~  sis  (curd abet:sus)
+      =.  sus  (exec:sus dus %give %public-keys %breach i.sis)
+      $(sis t.sis)
     ==
   ::
   ++  take
@@ -548,7 +556,7 @@
         [%behn %wake *]
       ?^  error.hin
         %-  %+  slog
-              leaf+"jael unable to resubscribe, run :azimuth-tracker|listen"
+              leaf+"jael unable to resubscribe, run :azimuth|listen"
             u.error.hin
           +>.$
       ?>  ?=([%breach @ ~] tea)
@@ -563,8 +571,16 @@
       +>.$
     ::
         [%gall %unto *]
-      ?-  +>-.hin
-          %kick      ~|([%jael-unexpected-quit tea hin] !!)
+      ?-    +>-.hin
+          %raw-fact  !!
+      ::
+          %kick
+        ?>  ?=([@ *] tea)
+        =*  app  i.tea
+        ::NOTE  we expect azimuth-tracker to be kill
+        ?:  =(%azimuth-tracker app)  +>.$
+        ~|([%jael-unexpected-quit tea hin] !!)
+      ::
           %poke-ack
         ?~  p.p.+>.hin
           +>.$
@@ -588,7 +604,7 @@
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
     |=  $:  moz=(list move)
-            pki=state-pki-1
+            pki=state-pki-2
             etn=state-eth-node
         ==
     +>(pki pki, etn etn, moz (weld (flop moz) ^moz))
@@ -608,7 +624,7 @@
   =|  moz=(list move)
   =|  $:  hen=duct
           now=@da
-          state-pki-1
+          state-pki-2
           state-eth-node
       ==
   ::  moz: moves in reverse order
@@ -937,12 +953,13 @@
       ::  only eagerly update lyf if we were behind the chain life
       ::
       =?  lyf.own
-          ?&  (gth life lyf.own)
-            ::
-              =+  pon=(~(get by pos.zim) our)
-              ?~  pon  |
-              (lth lyf.own life.u.pon)
-          ==
+          ?|  ?=(%earl (clan:title our))
+              ?&  (gth life lyf.own)
+                ::
+                  =+  pon=(~(get by pos.zim) our)
+                  ?~  pon  |
+                  (lth lyf.own life.u.pon)
+          ==  ==
         life
       =.  jaw.own  (~(put by jaw.own) life ring)
       (exec yen.own [%give %private-keys lyf.own jaw.own])
@@ -988,7 +1005,7 @@
 ::
 ::  lex: all durable %jael state
 ::
-=|  lex=state-1
+=|  lex=state-2
 |=  $:  ::  now: current time
         ::  eny: unique entropy
         ::  ski: namespace resolver
@@ -1018,8 +1035,42 @@
   [did ..^$]
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
-  |=  old=state-1
+  =>  |%
+      ::
+      +$  any-state  $%(state-1 state-2)
+      +$  state-1
+        $:  %1
+            pki=state-pki-1
+            etn=state-eth-node
+        ==
+      +$  state-pki-1
+        $:  $=  own
+              $:  yen=(set duct)
+                  sig=(unit oath)
+                  tuf=(list turf)
+                  boq=@ud
+                  nod=purl:eyre
+                  fak=_|
+                  lyf=life
+                  step=@ud
+                  jaw=(map life ring)
+              ==
+            $=  zim
+              $:  yen=(jug duct ship)
+                  ney=(jug ship duct)
+                  nel=(set duct)
+                  dns=dnses
+                  pos=(map ship point)
+        ==    ==
+      --
+  |=  old=any-state
   ^+  ..^$
+  =?  old  ?=(%1 -.old)
+    %=  old
+      -        %2
+      own.pki  own.pki.old(+>+ +>.+>+.own.pki.old)
+    ==
+  ?>  ?=(%2 -.old)
   ..^$(lex old)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
@@ -1062,6 +1113,12 @@
     =/  sec  (~(got by jaw.own.pki.lex) lyf.own.pki.lex)
     =/  sal  (add %pass step.own.pki.lex)
     ``[%noun !>((end 6 (shaf sal (shax sec))))]
+  ::
+      %fake
+    ?.  ?=(~ tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    ``[%noun !>(fak.own.pki.lex)]
   ::
       %life
     ?.  ?=([@ ~] tyl)  [~ ~]

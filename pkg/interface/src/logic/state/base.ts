@@ -6,6 +6,7 @@ import { persist } from 'zustand/middleware';
 import Urbit, { SubscriptionRequestInterface, FatalError } from '@urbit/http-api';
 import { Poke } from '@urbit/api';
 import airlock from '~/logic/api';
+import { clearStorageMigration, createStorageKey, storageVersion } from '../lib/util';
 
 setAutoFreeze(false);
 enablePatches();
@@ -73,9 +74,9 @@ export const optReduceState = <S, U>(
 export let stateStorageKeys: string[] = [];
 
 export const stateStorageKey = (stateName: string) => {
-  stateName = `Landscape${stateName}State`;
-  stateStorageKeys = [...new Set([...stateStorageKeys, stateName])];
-  return stateName;
+  const key = createStorageKey(`${stateName}State`);
+  stateStorageKeys = [...new Set([...stateStorageKeys, key])];
+  return key;
 };
 
 (window as any).clearStates = () => {
@@ -148,7 +149,8 @@ export const createState = <T extends {}>(
 }), {
   blacklist,
   name: stateStorageKey(name),
-  version: process.env.LANDSCAPE_SHORTHASH as any
+  version: storageVersion,
+  migrate: clearStorageMigration
 }));
 
 export async function doOptimistically<A, S extends {}>(state: UseStore<S & BaseState<S>>, action: A, call: (a: A) => Promise<any>, reduce: ((a: A, fn: S & BaseState<S>) => S & BaseState<S>)[]) {

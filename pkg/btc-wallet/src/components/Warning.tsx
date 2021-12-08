@@ -10,6 +10,7 @@ const Warning = () => {
     let removeWarning = {
       'put-entry': {
         value: false,
+        desk: window.desk,
         'entry-key': 'warning',
         'bucket-key': 'btc-wallet',
       },

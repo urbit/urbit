@@ -72,7 +72,7 @@ const WalletModal: React.FC = () => {
     setProcessingSubmission(true);
     kg.generateWallet({
       ticket,
-      ship: parseInt(patp2dec('~' + (window as any).ship)),
+      ship: parseInt(patp2dec('~' + window.ship)),
     }).then((urbitWallet: UrbitWallet) => {
       const { xpub: xpubFromWallet } =
         network === 'testnet'

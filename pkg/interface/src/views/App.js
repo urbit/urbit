@@ -10,16 +10,15 @@ import { hot } from 'react-hot-loader/root';
 import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import gcpManager from '~/logic/lib/gcpManager';
-import { favicon, svgDataURL } from '~/logic/lib/util';
+import { svgDataURL } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
-import useContactState from '~/logic/state/contact';
+import useContactState, { favicon } from '~/logic/state/contact';
 import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
 
 import ErrorBoundary from '~/views/components/ErrorBoundary';
-import { TutorialModal } from '~/views/landscape/components/TutorialModal';
 import './apps/chat/css/custom.css';
 import Omnibox from './components/leap/Omnibox';
 import StatusBar from './components/StatusBar';
@@ -28,7 +27,6 @@ import './css/indigo-static.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
 import { bootstrapApi } from '~/logic/api/bootstrap';
-import useLaunchState from '../logic/state/launch';
 
 const Root = withState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -104,8 +102,6 @@ class App extends React.Component {
       this.updateMedium(this.mediumWatcher);
       this.updateLarge(this.largeWatcher);
     }, 500);
-    this.props.getBaseHash();
-    this.props.getRuntimeLag();  // TODO  consider polling periodically
     this.props.getAll();
     gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
@@ -173,8 +169,7 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root>
-          <Router>
-            <TutorialModal />
+          <Router basename="/apps/landscape">
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}
@@ -211,14 +206,12 @@ const selContacts = s => s.contacts[`~${window.ship}`];
 const selLocal = s => [s.set, s.omniboxShown, s.toggleOmnibox, s.dark];
 const selSettings = s => [s.display, s.getAll];
 const selGraph = s => s.getShallowChildren;
-const selLaunch = s => [s.getRuntimeLag, s.getBaseHash];
 
 const WithApp = React.forwardRef((props, ref) => {
   const ourContact = useContactState(selContacts);
   const [display, getAll] = useSettingsState(selSettings, shallow);
   const [setLocal, omniboxShown, toggleOmnibox, dark] = useLocalState(selLocal);
   const getShallowChildren = useGraphState(selGraph);
-  const [getRuntimeLag, getBaseHash] = useLaunchState(selLaunch, shallow);
 
   return (
     <WarmApp
@@ -229,8 +222,6 @@ const WithApp = React.forwardRef((props, ref) => {
       set={setLocal}
       dark={dark}
       getShallowChildren={getShallowChildren}
-      getRuntimeLag={getRuntimeLag}
-      getBaseHash={getBaseHash}
       toggleOmnibox={toggleOmnibox}
       omniboxShown={omniboxShown}
     />
