@@ -1,9 +1,9 @@
+/* eslint-disable max-lines */
 import React, {
   useEffect,
   useRef,
   useCallback
 } from 'react';
-import Helmet from 'react-helmet';
 
 import useTermState from './state';
 import { useDark } from './join';
@@ -20,13 +20,12 @@ import 'xterm/css/xterm.css';
 import {
   Belt, Blit, Stye, Stub, Tint, Deco,
   pokeTask, pokeBelt
-} from "@urbit/api/term";
+} from '@urbit/api/term';
 
 import bel from './lib/bel';
 
 type TermAppProps = {
   ship: string;
-  notificationsCount: number;
 }
 
 const makeTheme = (dark: boolean): ITheme => {
@@ -150,6 +149,11 @@ const showBlit = (term: Terminal, blit: Blit) => {
     out += blit.put.join('');
     out += csi('u');
   } else if ('klr' in blit) {
+    //TODO  remove for new backend
+    {
+      out += csi('H', term.rows, 1);
+      out += csi('K');
+    }
     out += blit.klr.reduce((lin: string, p: Stub) => {
       lin += stye(p.stye);
       lin += p.text.join('');
@@ -170,6 +174,14 @@ const showBlit = (term: Terminal, blit: Blit) => {
   } else if ('wyp' in blit) {
     out += '\r' + csi('K');
     out += csi('u');
+  //
+  //TODO  remove for new backend
+  } else if ('lin' in blit) {
+    out += csi('H', term.rows, 1);
+    out += csi('K');
+    out += blit.lin.join('');
+  } else if ('mor' in blit) {
+    out += '\n';
   } else {
     console.log('weird blit', blit);
   }
@@ -223,7 +235,13 @@ const readInput = (term: Terminal, e: string): Belt[] => {
     } else if (13 === c) {
       belts.push({ ret: null });
     } else if (c <= 26) {
-      belts.push({ mod: { mod: 'ctl', key: String.fromCharCode(96 + c) } });
+      let k = String.fromCharCode(96 + c);
+      //NOTE  prevent remote shut-downs
+      if ('d' !== k) {
+        belts.push({ ctl: k });
+        //TODO  for new backend
+        // belts.push({ mod: { mod: 'ctl', key: k } });
+      }
     }
 
     //  escape sequences
@@ -246,7 +264,8 @@ const readInput = (term: Terminal, e: string): Belt[] => {
             if (1 === m) {
               const c = e.charCodeAt(2) - 32;
               const r = e.charCodeAt(3) - 32;
-              belts.push({ hit: { r: term.rows - r, c: c - 1 } });
+              //TODO  re-enable for new backend
+              // belts.push({ hit: { r: term.rows - r, c: c - 1 } });
             }
             e = e.slice(3);
             break;
@@ -314,15 +333,20 @@ export default function TermApp(props: TermAppProps) {
     };
 
     set((state) => {
- state.slogstream = slog;
-});
+      state.slogstream = slog;
+    });
   }, [sessions]);
 
   const onInput = useCallback((ses: string, e: string) => {
     const term = useTermState.getState().sessions[ses].term;
     const belts = readInput(term, e);
     belts.map((b) => {  // NOTE  passing api.poke(pokeBelt makes `this` undefined!
-      api.poke(pokeBelt(ses, b));
+      //TODO  pokeBelt(ses, b);
+      api.poke({
+        app: 'herm',
+        mark: 'belt',
+        json: b
+      });
     });
   }, [sessions]);
 
@@ -379,7 +403,8 @@ export default function TermApp(props: TermAppProps) {
       term.onData(e => onInput(selected, e));
       term.onBinary(e => onInput(selected, e));
       term.onResize((e) => {
-        api.poke(pokeTask(selected, { blew: { w: e.cols, h: e.rows } }));
+        //TODO  re-enable once new backend lands
+        // api.poke(pokeTask(selected, { blew: { w: e.cols, h: e.rows } }));
       });
 
       ses = { term, fit };
@@ -419,24 +444,23 @@ export default function TermApp(props: TermAppProps) {
 
   return (
     <>
-      <Helmet defer={false}>
-        <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape</title>
-      </Helmet>
       <Box
         width='100%'
         height='100%'
         px={['0','3']}
         pb={['0','3']}
         display='flex'
+        id='outer'
       >
         <Col
-            width='100%'
-            minHeight='0'
-            color='washedGray'
-            borderRadius={['0','2']}
-            border={['0','1']}
-            p='1'
-            ref={container}
+          id='inner'
+          width='100%'
+          minHeight='0'
+          color='washedGray'
+          borderRadius={['0','2px']}
+          border={['0','1px solid']}
+          p='1'
+          ref={container}
         >
         </Col>
       </Box>

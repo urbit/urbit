@@ -33,6 +33,9 @@ export type Blit =
   | { sav: { path: string, file: string } }             //  save to file
   | { url: string }                                     //  activate url
   | { wyp: null }                                       //  wipe cursor line
+  //
+  | { lin: string[] }  //  legacy put
+  | { mor: true }  //  legacy nel
 
 //  inputs
 //
@@ -48,7 +51,9 @@ export type Bolt =
 export type Belt =
   | Bolt
   | { mod: { mod: 'ctl' | 'met' | 'hyp', key: Bolt } }
-  | { txt: Array<string> };
+  | { txt: Array<string> }
+  //
+  | { ctl: string };  //  legacy mod
 
 export type Task =
   | { belt: Belt }

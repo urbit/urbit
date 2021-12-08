@@ -3,7 +3,6 @@ import { FitAddon } from 'xterm-addon-fit';
 import create from 'zustand';
 import produce from 'immer';
 
-
 type Session  = { term: Terminal, fit: FitAddon };
 type Sessions = { [id: string]: Session; }
 
@@ -22,6 +21,6 @@ const useTermState = create<TermState>((set, get) => ({
   set: (f: (draft: TermState) => void) => {
     set(produce(f));
   }
-} as TermState))
+} as TermState));
 
 export default useTermState;
