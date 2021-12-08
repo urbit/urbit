@@ -627,9 +627,6 @@ slog_trace
   u3_noun ton = u3dc("mook", 2, u3kb_flop(tax));
   u3_noun lit = u3t(ton);
 
-  // TODO: we need to clean the means in the stack where we add
-  //       "call: failed", and "[ %gall-call-failed"
-
   // print the stack one stack item at a time
   while ( u3_nul != lit ) {
     u3t_slog(u3nc(pri_l, u3k(u3h(lit)) ));
@@ -658,14 +655,6 @@ near_trace(c3_l pri_l)
 void
 full_trace(c3_l pri_l)
 {
-  /* Goals:
-   * 01. DONE: print lines in the correct order
-   * 02. print only what we must per line, since we can see the whole stack
-   * 03. emphasize which clause in the last block led to the call of the next block?
-   * 04. emphasize virtualization changes
-   * 05. make the visual xp pretty, clear, and informative
-   */
-
   // rod_u protects us from mutating the global state
   u3_road* rod_u = u3R;
 
@@ -676,7 +665,6 @@ full_trace(c3_l pri_l)
   while ( &(u3H->rod_u) != rod_u ) {
     // ... point at the next road and append its stack to tax
     rod_u = u3tn(u3_road, rod_u->par_p);
-    // TODO: we can insert another mean or spot between tax, u3k(..
     tax = u3kb_weld(tax, u3k(rod_u->bug.tax));
   }
 

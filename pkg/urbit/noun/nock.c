@@ -453,7 +453,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define KICS 54
 #define TICB 55
 #define TICS 56
-// nock 11
+// nock 12
 #define WILS 57
 #define WISH 58
 // hint processing
@@ -1020,7 +1020,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       default: {
         return _n_comp(ops, nef, los_o, tel_o);
       }
-      case c3__near:
+      case c3__nara:
       case c3__hela:
       case c3__bout: {
         u3_noun fen = u3_nul;
@@ -1056,7 +1056,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             ++tot_w; _n_emit(ops, TOSS);
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
-          case c3__near:
+          case c3__nara:
           case c3__hela:
           case c3__bout: {
             u3_noun fen = u3_nul;
@@ -1687,20 +1687,6 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
-/* TODO:
- *   - DONE: move slog tracing functions to trace.h/trace.c
- *   - DONE: implement hints for near and full trace
- *   - clean up style of docs etc
- *   - add a test for each hint to the hoon test suite
- *      - make it a test series of its own
- *      - is there a hoon test set for jets/hints/vere?
- *      - maybe in dir run or dir bug ...
- *   - submit a PR
- *   - ask world about pretty after pr merge
- *   - BONUS: setup home-manager with my new nix files
- */
-
-
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
 **            hin: [hint-atom, formula]. TRANSFER
 **            bus: subject. RETAIN
@@ -1716,15 +1702,11 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
     u3_atom now = u3i_chub(u3t_trace_time());
     *out = u3i_cell(u3h(hin), now);
   }
-  else if ( c3__near == u3h(hin) ) {
-    // this will run BEFORE calling the wrapped code
-    // thus it prints a trace UPTO the call site
+  else if ( c3__nara == u3h(hin) ) {
     near_trace(0);
     *out = u3_nul;
   }
   else if ( c3__hela == u3h(hin) ) {
-    // this will run BEFORE calling the wrapped code
-    // thus it prints a trace UPTO the call site
     full_trace(0);
     *out = u3_nul;
   }
@@ -1752,7 +1734,7 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
     u3z(delta);
   }
   else if ( (c3y == u3r_cell(tok, &p_tok, &q_tok)) &&
-      ((c3__near == p_tok) || (c3__hela == p_tok))
+      ((c3__nara == p_tok) || (c3__hela == p_tok))
   ) {
     // DO NOTHING
   }
@@ -1775,7 +1757,7 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
 static c3_o
 _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
 {
-  if ( c3__bout == u3h(hin) || c3__near == u3h(hin) || c3__hela == u3h(hin) ) {
+  if ( c3__bout == u3h(hin) || c3__nara == u3h(hin) || c3__hela == u3h(hin) ) {
     u3_atom now = u3i_chub(u3t_trace_time());
     *clu = u3i_trel(u3h(hin), *clu, now);
   }
@@ -1818,7 +1800,7 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
     u3z(delta);
   }
   else if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok)) &&
-      ((c3__near == p_tok) || (c3__hela == p_tok))
+      ((c3__nara == p_tok) || (c3__hela == p_tok))
   ) {
     // unpack q_tok to get the priority integer and the tank
     // p_q_tok is the priority, q_q_tok is the tank we will work with
@@ -1835,7 +1817,7 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
     // send this to ut3_slog so that it can be logged out
     c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
     dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
-    if (c3__near == p_tok) {
+    if (c3__nara == p_tok) {
       near_trace(pri_l);
     }
     else {

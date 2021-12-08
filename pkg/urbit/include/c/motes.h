@@ -771,7 +771,7 @@
 #   define c3__nap    c3_s3('n','a','p')
 #   define c3__narv   c3_s4('n','a','r','v')
 #   define c3__ne     c3_s2('n','e')
-#   define c3__near   c3_s4('n','e', 'a', 'r')
+#   define c3__nara   c3_s4('n', 'a', 'r', 'a')
 #   define c3__need   c3_s4('n','e','e','d')
 #   define c3__neft   c3_s4('n','e','f','t')
 #   define c3__nest   c3_s4('n','e','s','t')
