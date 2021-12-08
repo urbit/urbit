@@ -19,6 +19,10 @@ export interface JoinRequest {
   started: number;
   ship: Patp;
   progress: JoinProgress;
+  shareContact: boolean;
+  autojoin: boolean;
+  app: 'graph' | 'groups';
+  invite: string[];
 }
 
 export interface JoinRequests {
