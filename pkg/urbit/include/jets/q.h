@@ -151,6 +151,7 @@
     u3_noun u3qdu_qat_del(u3_noun, u3_atom);
     u3_noun u3qdu_qat_raw(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qdu_qat_put(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdu_qat_jib(u3_noun);
 
   /** Tier 5.
   **/

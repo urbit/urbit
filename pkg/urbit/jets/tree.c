@@ -62,6 +62,7 @@ static u3j_harm _140_two__up_qat_tie_a[] = {{".2", u3wdu_qat_tie, c3y}, {}};
 static u3j_harm _140_two__up_qat_del_a[] = {{".2", u3wdu_qat_del, c3y}, {}};
 static u3j_harm _140_two__up_qat_raw_a[] = {{".2", u3wdu_qat_raw, c3y}, {}};
 static u3j_harm _140_two__up_qat_put_a[] = {{".2", u3wdu_qat_put, c3y}, {}};
+static u3j_harm _140_two__up_qat_jib_a[] = {{".2", u3wdu_qat_jib, c3y}, {}};
 
 static u3j_core _140_two__up_qor_d[] =
 {
@@ -83,6 +84,7 @@ static u3j_core _140_two__up_qat_d[] =
   { "del", 7, _140_two__up_qat_del_a, 0, no_hashes },
   { "raw", 7, _140_two__up_qat_raw_a, 0, no_hashes },
   { "put", 7, _140_two__up_qat_put_a, 0, no_hashes },
+  { "jib", 7, _140_two__up_qat_jib_a, 0, no_hashes },
   {}
 };
 
