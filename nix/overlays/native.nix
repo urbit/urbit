@@ -9,6 +9,7 @@ in {
     version = final.sources.h2o.rev;
     src = final.sources.h2o;
     outputs = [ "out" "dev" "lib" ];
+    meta.platforms = prev.lib.platforms.linux ++ prev.lib.platforms.darwin;
   });
 
   secp256k1 = prev.secp256k1.overrideAttrs (_attrs: {
