@@ -109,7 +109,7 @@ export function SidebarList(props: {
     s => Object.values(s.invites?.['graph'] || {})
     .map(inv => {
       return `/ship/~${inv.resource.ship}/${inv.resource.name}`
-    })
+    }).filter(group => !(group in groups))
   );
   const pending = [...pendingDms, ...Object.keys(pendingGroupChats), ...inviteGroupChats];
   const unreads = useHarkState(s => s.unreads);
