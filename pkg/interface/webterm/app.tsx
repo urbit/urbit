@@ -451,19 +451,16 @@ export default function TermApp(props: TermAppProps) {
         <Box
           width='100%'
           height='100%'
-          p={['0','3']}
-          display='flex'
           bg='white'
           fontFamily='mono'
+          overflow='hidden'
         >
           <Col
             width='100%'
             height='100%'
             minHeight='0'
-            color='washedGray'
-            borderRadius={['0','2px']}
-            border={['0','1px solid']}
-            p='1'
+            px={['0','2']}
+            pb={['0','2']}
             ref={container}
           >
           </Col>
