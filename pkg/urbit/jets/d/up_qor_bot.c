@@ -11,12 +11,7 @@ u3qdu_qor_bot(u3_noun a)
     u3_noun n_a, t_a, m_a;
     u3x_trel(a, &n_a, &t_a, &m_a);
 
-    u3_noun ser = u3qdu_sec(t_a, m_a);
-    u3_noun pro = u3nt(u3_nul, u3k(n_a), ser);
-
-    u3z(ser);
-
-    return pro;
+    return u3nt(u3_nul, u3k(n_a), u3qdu_sec(t_a, m_a));
   }
 }
 
