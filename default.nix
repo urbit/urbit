@@ -105,7 +105,7 @@ let
   # Additional top-level packages and attributes exposed for convenience.
   pkgsExtra = with pkgsLocal; rec {
     # Expose packages with local customisations (like patches) for dev access.
-    inherit (pkgsCross) libsigsegv;
+    inherit (pkgsStatic) libsigsegv lmdb;
 
     urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = libLocal.testFakeShip {

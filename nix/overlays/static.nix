@@ -26,12 +26,8 @@ in {
 
   lmdb = prev.lmdb.overrideAttrs (old:
     configureFlags old // {
-      # Why remove the so version? It's easier than preventing it from being
-      # built with lmdb's custom Makefiles, and it can't exist in the output
-      # because otherwise the linker will preferentially choose the .so over
-      # the .a.
-      postInstall = ''
-        rm $out/lib/liblmdb.so
+      postPatch = ''
+        sed '/^ILIBS\t/s/liblmdb\$(SOEXT)//' -i Makefile
       '';
     });
 }

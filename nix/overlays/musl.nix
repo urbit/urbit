@@ -24,5 +24,5 @@ in prev.lib.optionalAttrs isMusl {
 
   numactl = overrideStdenv prev.numactl;
 
-  lmdb = overrideStdenv prev.lmdb;
+#  lmdb = overrideStdenv prev.lmdb;
 }
