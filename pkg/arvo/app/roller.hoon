@@ -232,7 +232,7 @@
   ++  on-init
     ^-  (quip card _this)
     =:  frequency    ~h1
-        quota        7
+        quota        25
         slice        ~d7
         resend-time  ~m5
         update-rate  ~m5
@@ -592,8 +592,6 @@
         ::
             %naive-state
           ~&  >  %received-azimuth-state
-          ::  cache naive and ownership state
-          ::
           =+  !<([nas=^state:naive =indices] q.cage.sign)
           =^  effects  state
             (predicted-state:do nas indices)
@@ -968,7 +966,7 @@
       ::  TODO: set up a timer to retry this in ~mX ?
       ::
       ~?  lverb  [dap.bowl %nonce-out-sync]  [~ state]
-    =/  nonce=@ud   u.next-nonce
+    =/  nonce=@ud  u.next-nonce
     =^  updates-2  history  (update-history:dice history pending %sending)
     =/  =address:ethereum   (get-address pk)
     =:  pending     ~
