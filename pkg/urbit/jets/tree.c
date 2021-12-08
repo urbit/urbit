@@ -48,13 +48,20 @@ static u3j_harm _140_two__up_fuse_a[] = {{".2", u3wdu_fuse, c3y}, {}};
 static u3j_harm _140_two__up_funk_a[] = {{".2", u3wdu_funk, c3y}, {}};
 static u3j_harm _140_two__up_wane_a[] = {{".2", u3wdu_wane, c3y}, {}};
 
-static u3j_harm _140_two__up_qor_top_a[] = {{".2", u3wdu_qor_top, c3n}, {}};
-static u3j_harm _140_two__up_qor_see_a[] = {{".2", u3wdu_qor_see, c3n}, {}};
-static u3j_harm _140_two__up_qor_put_a[] = {{".2", u3wdu_qor_put, c3n}, {}};
-static u3j_harm _140_two__up_qor_get_a[] = {{".2", u3wdu_qor_get, c3n}, {}};
-static u3j_harm _140_two__up_qor_has_a[] = {{".2", u3wdu_qor_has, c3n}, {}};
-static u3j_harm _140_two__up_qor_del_a[] = {{".2", u3wdu_qor_del, c3n}, {}};
-static u3j_harm _140_two__up_qor_bot_a[] = {{".2", u3wdu_qor_bot, c3n}, {}};
+static u3j_harm _140_two__up_qor_top_a[] = {{".2", u3wdu_qor_top, c3y}, {}};
+static u3j_harm _140_two__up_qor_see_a[] = {{".2", u3wdu_qor_see, c3y}, {}};
+static u3j_harm _140_two__up_qor_put_a[] = {{".2", u3wdu_qor_put, c3y}, {}};
+static u3j_harm _140_two__up_qor_get_a[] = {{".2", u3wdu_qor_get, c3y}, {}};
+static u3j_harm _140_two__up_qor_has_a[] = {{".2", u3wdu_qor_has, c3y}, {}};
+static u3j_harm _140_two__up_qor_del_a[] = {{".2", u3wdu_qor_del, c3y}, {}};
+static u3j_harm _140_two__up_qor_bot_a[] = {{".2", u3wdu_qor_bot, c3y}, {}};
+
+static u3j_harm _140_two__up_qat_pour_a[] = {{".2", u3wdu_qat_pour, c3y}, {}};
+static u3j_harm _140_two__up_qat_make_a[] = {{".2", u3wdu_qat_make, c3y}, {}};
+static u3j_harm _140_two__up_qat_tie_a[] = {{".2", u3wdu_qat_tie, c3y}, {}};
+static u3j_harm _140_two__up_qat_del_a[] = {{".2", u3wdu_qat_del, c3y}, {}};
+static u3j_harm _140_two__up_qat_raw_a[] = {{".2", u3wdu_qat_raw, c3y}, {}};
+static u3j_harm _140_two__up_qat_put_a[] = {{".2", u3wdu_qat_put, c3y}, {}};
 
 static u3j_core _140_two__up_qor_d[] =
 {
@@ -65,6 +72,17 @@ static u3j_core _140_two__up_qor_d[] =
   { "has", 7, _140_two__up_qor_has_a, 0, no_hashes },
   { "del", 7, _140_two__up_qor_del_a, 0, no_hashes },
   { "bot", 7, _140_two__up_qor_bot_a, 0, no_hashes },
+  {}
+};
+
+static u3j_core _140_two__up_qat_d[] =
+{
+  { "pour", 7, _140_two__up_qat_pour_a, 0, no_hashes },
+  { "make", 7, _140_two__up_qat_make_a, 0, no_hashes },
+  { "tie", 7, _140_two__up_qat_tie_a, 0, no_hashes },
+  { "del", 7, _140_two__up_qat_del_a, 0, no_hashes },
+  { "raw", 7, _140_two__up_qat_raw_a, 0, no_hashes },
+  { "put", 7, _140_two__up_qat_put_a, 0, no_hashes },
   {}
 };
 
@@ -100,6 +118,7 @@ static u3j_core _140_two__up_d[] =
   { "funk", 7, _140_two__up_funk_a, 0, no_hashes },
   { "wane", 7, _140_two__up_wane_a, 0, no_hashes },
   { "qor", 3, 0, _140_two__up_qor_d, no_hashes },
+  { "qat", 3, 0, _140_two__up_qat_d, no_hashes },
   {}
 };
 

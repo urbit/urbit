@@ -145,6 +145,13 @@
     u3_noun u3qdu_qor_del(u3_noun, u3_noun);
     u3_noun u3qdu_qor_bot(u3_noun);
 
+    u3_noun u3qdu_qat_pour(u3_noun);
+    u3_noun u3qdu_qat_make(u3_noun, u3_atom, u3_noun, u3_noun);
+    u3_noun u3qdu_qat_tie(u3_noun, u3_atom, u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdu_qat_del(u3_noun, u3_atom);
+    u3_noun u3qdu_qat_raw(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdu_qat_put(u3_noun, u3_noun, u3_noun, u3_noun);
+
   /** Tier 5.
   **/
     u3_noun u3qe_cue(u3_atom);

@@ -1,0 +1,31 @@
+#include "all.h"
+
+u3_noun
+u3qdu_qat_put(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
+{
+  u3_noun pre = u3qdu_qat_del(a, k);
+  u3_noun pro = u3qdu_qat_raw(pre, k, p, v);
+
+  u3z(pre);
+
+  return pro;
+}
+
+u3_noun
+u3wdu_qat_put(u3_noun cor)
+{
+  u3_noun a, k, p, v;
+
+  if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_6, &k, u3x_sam_14, &p,
+                        u3x_sam_15, &v, 0)) ||
+       (c3n == u3ud(k)) ||
+       (c3n == u3ud(p)) ||
+       (c3n == u3du(v)) )
+  {
+    return u3m_bail(c3__exit);
+  } else {
+    return u3qdu_qat_put(a, k, p, v);
+  }
+}
+
+
