@@ -53,6 +53,7 @@ in pkgsLocal.hs.shellFor {
   # Nixpkgs tools to make available on the shell's PATH.
   buildInputs = [
     pkgs.cacert
+    pkgs.clang-tools
     pkgs.nixfmt
     pkgs.shfmt
     pkgs.stack
