@@ -12,11 +12,6 @@ in {
     meta.platforms = prev.lib.platforms.linux ++ prev.lib.platforms.darwin;
   });
 
-  secp256k1 = prev.secp256k1.overrideAttrs (_attrs: {
-    version = final.sources.secp256k1.rev;
-    src = final.sources.secp256k1;
-  });
-
   libsigsegv = prev.libsigsegv.overrideAttrs (attrs: {
     patches = optionalList attrs.patches ++ [
       ../pkgs/libsigsegv/disable-stackvma_fault-linux-arm.patch

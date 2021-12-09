@@ -31,6 +31,24 @@
         "url": "https://github.com/LMDB/lmdb/archive/48a7fed59a8aae623deff415dda27097198ca0c1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "secp256k1": {
+        "branch": "master",
+        "description": "Optimized C library for ECDSA signatures and secret/public key operations on curve secp256k1.",
+        "homepage": null,
+        "owner": "bitcoin-core",
+        "pmnsh": {
+            "include": "include",
+            "lib": ".libs",
+            "make": "libsecp256k1.la",
+            "prepare": "./autogen.sh && ./configure --disable-shared --enable-module-recovery CFLAGS=-DSECP256K1_API="
+        },
+        "repo": "secp256k1",
+        "rev": "7973576f6e3ab27d036a09397152b124d747f4ae",
+        "sha256": "0vjk55dv0mkph4k6bqgkykmxn05ngzvhc4rzjnvn33xzi8dzlvah",
+        "type": "tarball",
+        "url": "https://github.com/bitcoin-core/secp256k1/archive/7973576f6e3ab27d036a09397152b124d747f4ae.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "uv": {
         "branch": "v1.x",
         "description": "Cross-platform asynchronous I/O",
