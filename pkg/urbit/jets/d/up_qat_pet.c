@@ -76,6 +76,7 @@ u3qdu_qat_pet(u3_noun a, u3_noun k)
   u3x_cell(med, &pm, &qm);
 
   if (u3_nul == qm) {
+    u3z(med);
     return u3_nul;
   }
   else {

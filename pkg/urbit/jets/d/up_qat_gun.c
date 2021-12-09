@@ -45,7 +45,7 @@ u3qdu_qat_gun(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
       else {
         u3_noun pre = u3nq(c3__tip, u3k(h), u3k(p),
                         u3nt(u3k(k), u3k(v), u3_nul));
-        u3_noun pro = u3qdu_qat_tie(ka, pa, va, h, pre, u3_nul);
+        u3_noun pro = u3nc(u3_nul, u3qdu_qat_tie(ka, pa, va, h, pre, u3_nul));
 
         u3z(pre);
 

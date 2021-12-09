@@ -136,6 +136,11 @@
     u3_noun u3qdu_fuse(u3_atom, u3_noun, u3_noun);
     u3_noun u3qdu_funk(u3_atom, u3_atom, u3_noun, u3_atom, u3_noun, u3_noun);
     u3_noun u3qdu_wane(u3_atom, u3_atom, u3_noun, u3_atom, u3_noun, u3_noun);
+    u3_noun u3qdu_put(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdu_bot(u3_noun);
+    u3_noun u3qdu_cut(u3_noun);
+    u3_noun u3qdu_gun(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdu_see(u3_noun, u3_noun, u3_noun);
 
     u3_noun u3qdu_qor_top(u3_noun);
     u3_noun u3qdu_qor_see(u3_noun);

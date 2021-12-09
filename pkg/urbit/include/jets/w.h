@@ -143,6 +143,11 @@
     u3_noun u3wdu_fuse(u3_noun);
     u3_noun u3wdu_funk(u3_noun);
     u3_noun u3wdu_wane(u3_noun);
+    u3_noun u3wdu_put(u3_noun);
+    u3_noun u3wdu_bot(u3_noun);
+    u3_noun u3wdu_cut(u3_noun);
+    u3_noun u3wdu_gun(u3_noun);
+    u3_noun u3wdu_see(u3_noun);
 
     u3_noun u3wdu_qor_top(u3_noun);
     u3_noun u3wdu_qor_see(u3_noun);

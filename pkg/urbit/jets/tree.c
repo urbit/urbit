@@ -47,6 +47,11 @@ static u3j_harm _140_two__up_lex_a[] = {{".2", u3wdu_lex, c3y}, {}};
 static u3j_harm _140_two__up_fuse_a[] = {{".2", u3wdu_fuse, c3y}, {}};
 static u3j_harm _140_two__up_funk_a[] = {{".2", u3wdu_funk, c3y}, {}};
 static u3j_harm _140_two__up_wane_a[] = {{".2", u3wdu_wane, c3y}, {}};
+static u3j_harm _140_two__up_put_a[] = {{".2", u3wdu_put, c3y}, {}};
+static u3j_harm _140_two__up_bot_a[] = {{".2", u3wdu_bot, c3y}, {}};
+static u3j_harm _140_two__up_cut_a[] = {{".2", u3wdu_cut, c3y}, {}};
+static u3j_harm _140_two__up_gun_a[] = {{".2", u3wdu_gun, c3y}, {}};
+static u3j_harm _140_two__up_see_a[] = {{".2", u3wdu_see, c3y}, {}};
 
 static u3j_harm _140_two__up_qor_top_a[] = {{".2", u3wdu_qor_top, c3y}, {}};
 static u3j_harm _140_two__up_qor_see_a[] = {{".2", u3wdu_qor_see, c3y}, {}};
@@ -125,6 +130,11 @@ static u3j_core _140_two__up_d[] =
   { "fuse", 7, _140_two__up_fuse_a, 0, no_hashes },
   { "funk", 7, _140_two__up_funk_a, 0, no_hashes },
   { "wane", 7, _140_two__up_wane_a, 0, no_hashes },
+  { "put", 7, _140_two__up_put_a, 0, no_hashes },
+  { "bot", 7, _140_two__up_bot_a, 0, no_hashes },
+  { "cut", 7, _140_two__up_cut_a, 0, no_hashes },
+  { "gun", 7, _140_two__up_gun_a, 0, no_hashes },
+  { "see", 7, _140_two__up_see_a, 0, no_hashes },
   { "qor", 3, 0, _140_two__up_qor_d, no_hashes },
   { "qat", 3, 0, _140_two__up_qat_d, no_hashes },
   {}
