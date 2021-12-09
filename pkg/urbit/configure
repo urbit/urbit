@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+
 URBIT_VERSION="$(cat ./version)"
 
 # we require pkg-config metadata to statically link these

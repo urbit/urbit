@@ -21,7 +21,7 @@ let
 
     # If the container is not started with the `-i` flag
     # then STDIN will be closed and we need to start
-    # Urbit/vere with the `-t` flag.
+    # Urbit/vere with the `-t` flag. 
     ttyflag=""
     if [ ! -t 0 ]; then
       echo "Running with no STDIN"
