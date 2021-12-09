@@ -1,9 +1,9 @@
-import { loadEnv, defineConfig } from 'vite';
+import { loadEnv, defineConfig, Plugin } from 'vite';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import reactRefresh from '@vitejs/plugin-react-refresh';
 import { urbitPlugin } from '@urbit/vite-plugin-urbit';
-import { execSync } from 'child_process';
+import { injectManifest } from 'rollup-plugin-workbox';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -22,6 +22,12 @@ export default ({ mode }) => {
         : {
             rollupOptions: {
               plugins: [
+                injectManifest({
+                  swSrc: 'service-worker.js',
+                  swDest: 'dist/service-worker.js',
+                  globDirectory: 'dist',
+                  mode: 'production' // this inlines the module imports when using yarn build
+                }) as Plugin,
                 analyze({
                   limit: 20
                 }),
