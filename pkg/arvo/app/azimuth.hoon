@@ -64,7 +64,7 @@
     ^-  (quip card _this)
     =/  points=@ud  ~(wyt by points.nas.snap)
     %-  %-  slog
-        [leaf+"id:   loading azimuth snapshot {<points>} points"]~
+        [leaf+"ship: loading azimuth snapshot ({<points>} points)"]~
     ::
     =:  net.state   %default
         nas.state   nas.snap
@@ -95,7 +95,7 @@
       ?.  ?=(%1 -.old-state)
         `old-state
       %-  %-  slog  :_  ~
-          leaf+"id:   loading snapshot with {<(lent logs.old-state)>} events"
+          leaf+"ship: loading snapshot with {<(lent logs.old-state)>} events"
       =.  +.state  +.old-state
       =^  cards  state
         (%*(run-logs do nas.state *^state:naive) logs.state)
@@ -194,7 +194,7 @@
     =/  points=@ud  ~(wyt by points.nas.state)
     %-  %-  slog  :_  ~
         :-  %leaf
-        "id:   processing azimuth snapshot ({<points>} points)"
+        "ship: processing azimuth snapshot ({<points>} points)"
     =/  snap-cards=udiffs:point
       (%*(run-state do logs.state ~) id.snap points.nas.state)
     [(weld (jael-update:do snap-cards) start:do) this]
