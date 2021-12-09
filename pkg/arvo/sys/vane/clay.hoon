@@ -4914,6 +4914,9 @@
       abet:(park:den & & yoki *rang)
     [mos ..^$]
   ::
+      %prep
+    [~ ..^$(lat.ran.ruf (~(uni by lat.req) lat.ran.ruf))]
+  ::
       %perm
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
