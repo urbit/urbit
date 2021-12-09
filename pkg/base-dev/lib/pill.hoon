@@ -81,7 +81,14 @@
   =/  pax  (weld bas lyt)
   =/  lon  .^(arch %cy pax)
   =?  hav  ?=(^ fil.lon)
-    :_(hav [lyt mark=;;(@tas (head tyl)) noun=.^(* %cx pax)])
+    :_  hav
+    :+  lyt
+      mark=;;(@tas (head tyl))
+    ?.  ?=([%azimuth *] tyl)
+      noun=.^(* %cx pax)
+    =;  convert
+      mime=(convert .^(snap-state %cx pax))
+    .^($-(snap-state mime) %cf (weld bas /azimuth/mime))
   =/  all  ~(tap by dir.lon)
   |-  ^+  hav
   ?~  all  hav
@@ -91,7 +98,7 @@
 ::
 ++  file-ovum2  |=(p=path `unix-event`[//arvo what/(user-files p)])
 ::
-::  +user-files: all userspace hoon files, and azimuth snapshot
+::  +user-files: all userspace hoon files
 ::
 ++  user-files
   |=  bas=path
@@ -118,12 +125,12 @@
   =/  lon  .^(arch %cy pax)
   =?  hav  ?=(^ fil.lon)
       ::
-      ::  install only hoon files and azimuth snapshot for now
+      ::  install only hoon files for now
       ::
-      ?+  tyl  hav
-        [%hoon *]     [(flop `path`t.tyl) hoon/.^(@t %cx pax)]^hav
-        [%azimuth *]  [(flop `path`t.tyl) mime/.^(snap-state %cx pax)]^hav
-      ==
+      ?.  ?=([%hoon *] tyl)
+        hav
+      :_  hav
+      [(flop `path`t.tyl) hoon/.^(@t %cx pax)]
   ::
   =/  all  ~(tap by dir.lon)
   |-  ^+   hav
