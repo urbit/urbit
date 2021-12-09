@@ -1137,6 +1137,12 @@
   ::  print error if there was one
   ::
   ~?  ?=(%| -.result)  [dap.bowl %send-error +.p.result]
+  ::  if this nonce was removed from the queue by a
+  ::  previous resend-with-higher-gas thread, it's done
+  ::
+  ?.  (has:ors:dice sending [address nonce])
+    ~?  lverb  [dap.bowl %done-sending [address nonce]]
+    `state
   =/  =send-tx  (got:ors:dice sending [address nonce])
   =?  sending  ?=(%& -.result)
     %^  put:ors:dice  sending
