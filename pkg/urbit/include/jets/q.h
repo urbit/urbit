@@ -152,6 +152,9 @@
     u3_noun u3qdu_qat_raw(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qdu_qat_put(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qdu_qat_jib(u3_noun);
+    u3_noun u3qdu_qat_pet(u3_noun, u3_noun);
+    u3_noun u3qdu_qat_gun(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdu_qat_see(u3_noun, u3_noun, u3_noun);
 
   /** Tier 5.
   **/
