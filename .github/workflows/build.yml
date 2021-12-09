@@ -90,8 +90,8 @@ jobs:
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         run: nix-build -A urbit-tests
 
-      - if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: nix-build -A docker-image
+      # - if: ${{ matrix.os == 'ubuntu-latest' }}
+      #   run: nix-build -A docker-image
 
   mingw:
     runs-on: windows-latest
