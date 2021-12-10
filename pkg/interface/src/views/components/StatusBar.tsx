@@ -18,7 +18,6 @@ import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
-import { StatusBarJoins } from './StatusBarJoins';
 import useHarkState from '~/logic/state/hark';
 
 const localSel = selectLocalState(['toggleOmnibox']);
@@ -83,7 +82,6 @@ const StatusBar = (props) => {
             </Box>
           )}
         </StatusBarItem>
-        <StatusBarJoins />
         <ReconnectButton />
       </Row>
       <Row justifyContent='flex-end'>
