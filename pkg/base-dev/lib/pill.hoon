@@ -84,11 +84,11 @@
     :_  hav
     :+  lyt
       mark=;;(@tas (head tyl))
-    ?.  ?=([%azimuth *] tyl)
+    ?.  ?=([%azimuth-snapshot *] tyl)
       noun=.^(* %cx pax)
     =;  convert
       mime=(convert .^(snap-state %cx pax))
-    .^($-(snap-state mime) %cf (weld bas /azimuth/mime))
+    .^($-(snap-state mime) %cf (weld bas /azimuth-snapshot/mime))
   =/  all  ~(tap by dir.lon)
   |-  ^+  hav
   ?~  all  hav

@@ -8,15 +8,16 @@
     dbug
 ::  Generally don't update the snapshot until we have clay tombstoning.
 ::
-/*  snap  %azimuth  /app/azimuth/state/azimuth
+/*  snap  %azimuth-snapshot  /app/azimuth/version-0/azimuth-snapshot
+:: /*  snap  %azimuth  /app/azimuth/state/azimuth
 ::  To update, run from dojo:
-::    -azimuth-snap-state %default 'state'
+::    -azimuth-snap-state %default 'version-0'
 ::
 ::  To recreate from a list of logs:
 ::    =e -build-file %/lib/ethereum/hoon
 ::    =l .^((list event-log:rpc:e) %gx /=azimuth=/logs/noun)
 ::    */app/azimuth/logs/eth-logs &eth-logs l
-::    -azimuth-snap-logs %default 'state'
+::    -azimuth-snap-logs %default 'version-0'
 ::
 =/  snap=snap-state  snap
 =/  last-snap=@      number.id.snap

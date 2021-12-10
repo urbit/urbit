@@ -1,7 +1,6 @@
 ::  /app/azimuth state snapshot
 ::
 /-  *dice
-/+  naive
 ::
 |_  snap=snap-state
 ++  grab

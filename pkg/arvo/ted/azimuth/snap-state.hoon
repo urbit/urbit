@@ -30,8 +30,11 @@
         leaf+"owners: {<~(wyt by owners)>}"
     ==
 ::
-=/  =path  /app/azimuth/[name]/azimuth
-=/  =cage  azimuth+!>([%0 id nas owners sponsors])
+=/  =path  /app/azimuth/[name]/azimuth-snapshot
+=/  =cage
+  :-  %azimuth-snapshot
+  !>  ^-  snap-state
+  [%0 id nas owners sponsors]
 =/  =task  [%info %base %& [path %ins cage]~]
 =/  =card  [%pass /next %arvo %c task]
 ;<  ~  bind:m  (send-raw-card:strandio card)
