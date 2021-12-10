@@ -195,8 +195,14 @@ export class Urbit {
       }
     };
 
-    navigator.serviceWorker.controller?.postMessage({
-      type: 'GET_CHANNEL',
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      const channelSW = registrations.find((sw) => {
+        return sw.scope === `${location.protocol}//${location.host}/`;
+      });
+
+      channelSW?.active.postMessage({
+        type: 'GET_CHANNEL',
+      });
     });
   }
 

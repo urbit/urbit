@@ -42,7 +42,11 @@ async function getServerConnection(url) {
       openWhenHidden: true,
       onmessage: (event) => {
         const parsedData = JSON.parse(event.data);
+        // console.log(event.data);
+
+        // if (!('ok' in parsedData)) {
         serverConnection.eventId = parseInt(parsedData.id, 10);
+        // }
 
         const responseData = encodeEvent(event);
         const handlers = serverConnection.listeners.slice();
@@ -63,8 +67,8 @@ async function getServerConnection(url) {
 
 registerRoute(
   ({ request }) => {
-    const { headers } = request;
-    return headers.get('Accept') === 'text/event-stream';
+    const { headers, url } = request;
+    return headers.get('Accept') === 'text/event-stream' && url.indexOf('?id=') !== -1;
   },
   async ({ url }) => {
     const id = url.searchParams.get('id');
@@ -131,7 +135,7 @@ async function closeStream({ url, id }) {
   const connection = await getServerConnection(url);
 
   if (connection.count <= 1) {
-    clearConnection();
+    clearConnection(connection.url);
   } else {
     const index = connection.listeners.findIndex((item) => item.id === id);
     let listener = connection.listeners[index];

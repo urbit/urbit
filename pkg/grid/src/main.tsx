@@ -15,7 +15,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/apps/grid/serviceworker.js', {
-        scope: '/',
+        scope: '../../',
         type: import.meta.env.DEV ? 'module' : 'classic'
       })
       .then(() => {});

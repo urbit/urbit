@@ -15,7 +15,18 @@ export default ({ mode }) => {
 
   return defineConfig({
     base: mode === 'mock' ? undefined : '/apps/grid/',
-    server: mode === 'mock' ? undefined : { https: false },
+    server:
+      mode === 'mock'
+        ? undefined
+        : {
+            https: false,
+            proxy: {
+              ['/apps/landscape']: {
+                target: 'http://localhost:9000',
+                secure: false
+              }
+            }
+          },
     build:
       mode !== 'profile'
         ? undefined
@@ -43,7 +54,7 @@ export default ({ mode }) => {
               name: 'configure-response-headers',
               configureServer: (server) => {
                 server.middlewares.use((_req, res, next) => {
-                  res.setHeader('Service-Worker-Allowed', '/');
+                  res.setHeader('Service-Worker-Allowed', '../../');
                   next();
                 });
               }
