@@ -9,7 +9,6 @@
 =/  m  (strand:strandio ,vase)
 |^
 ^-  form:m
-:: =*  not-sent  (pure:m !>(%.n^next-gas-price))
 ::
 =/  =address:ethereum  (address-from-prv:key:ethereum pk)
 ;<  expected-nonce=@ud  bind:m
@@ -17,8 +16,18 @@
 ::  if chain expects a different nonce, don't send this transaction
 ::
 ?.  =(nonce expected-nonce)
-  ~&  [%unexpected-nonce nonce expected+expected-nonce]
-  (pure:m !>(%.n^[%not-sent %unexpected-nonce]))
+  ~&  >>>  [%unexpected-nonce nonce expected+expected-nonce]
+  %-  pure:m
+  !>  ^-  [%.n @tas @t]
+  :+  %.n
+    %not-sent
+  ?:  (lth expected-nonce nonce)
+    ::  if ahead, it will use the same next-gas-price when resending
+    ::
+    %ahead-nonce
+  ::  if behind, start out-of-sync flow
+  ::
+  %behind-nonce
 ::  if a gas-price of 0 was specified, fetch the recommended one
 ::
 ;<  use-gas-price=@ud  bind:m
@@ -72,7 +81,8 @@
 ::  log batch tx-hash to getTransactionReceipt(tx-hash)
 ::
 ~?  &(?=(%result -.response) ?=(%s -.res.response))
-  ^-([nonce=@ud batch-hash=@t] nonce^(so:dejs:format res.response))
+  ^-  [nonce=@ud batch-hash=@t gas=@ud]
+  nonce^(so:dejs:format res.response)^use-gas-price
 %-  pure:m
 !>  ^-  (each @ud [term @t])
 ::  TODO: capture if the tx fails (e.g. Runtime Error: revert)
@@ -102,7 +112,7 @@
     take-maybe-response:strandio
   =*  fallback
     ~&  >>  %fallback-gas-price
-    (pure:m 10.000.000.000)
+    (pure:m fallback-gas-price)
   ?.  ?&  ?=([~ %finished *] rep)
           ?=(^ full-file.u.rep)
       ==

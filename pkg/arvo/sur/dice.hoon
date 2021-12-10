@@ -12,6 +12,7 @@
 ::
 +$  config
   $%  [%frequency frequency=@dr]
+      [%fallback gas=@ud]
       [%setkey pk=@]
       [%endpoint endpoint=@t =net]
       [%resend-time time=@dr]
@@ -98,6 +99,7 @@
       pk=@
     ::
       nonce=@ud
+      fallback-gas-price=@ud
       next-gas-price=@ud
       txs=(list raw-tx:naive)
   ==

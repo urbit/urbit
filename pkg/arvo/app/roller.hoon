@@ -31,7 +31,7 @@
 ::
 |%
 +$  app-state
-  $:  %3
+  $:  %4
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
       ::  finding: sig+raw-tx hash reverse lookup for txs in sending map
@@ -68,6 +68,7 @@
       ::  chain-id: mainnet, ropsten, local (https://chainid.network/)
       ::  resend-time: time to resend a batch with higher gas prie
       ::  update-rate: frequency to update the roller's predicted state
+      ::  fallback-gas-price: default batch gas price
       ::
       pk=@
       slice=@dr
@@ -79,15 +80,11 @@
       chain-id=@
       resend-time=@dr
       update-rate=@dr
+      fallback-gas-price=@ud
   ==
 ::
 +$  action
   $%  ::  submit: request to add a l2 tx to the pending queue
-      ::
-      ::   the address needs to be added so pending txs show up
-      ::   in the tx history, but because users can send the wrong
-      ::   address, in +apply-tx:predicted-state, we replace the
-      ::   given address, with the one used when the message was signed
       ::
       [%submit force=? =address:naive sig=@ tx=part-tx]
       ::  cancel: cancels a pending transaction
@@ -106,10 +103,12 @@
       ::  assign: assign an allowance to a ship for submitting l2 txs
       ::
       [%assign =ship quota=(unit @ud)]
+      ::  refuel: bumps the next-gas-price of a sending tx
+      ::
+      [%refuel nonce=@ address=(unit address:ethereum) gas=@ud]
   ==
 ::
-+$  card  card:agent:gall
-::
++$  card   card:agent:gall
 ++  lverb  &
 --
 ::  Helpers
@@ -231,13 +230,14 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =:  frequency    ~h1
-        quota        25
-        slice        ~d7
-        resend-time  ~m5
-        update-rate  ~m5
-        contract     naive:local-contracts:azimuth
-        chain-id     chain-id:local-contracts:azimuth
+    =:  frequency           ~h1
+        quota               25
+        slice               ~d7
+        resend-time         ~m5
+        update-rate         ~m5
+        contract            naive:local-contracts:azimuth
+        chain-id            chain-id:local-contracts:azimuth
+        fallback-gas-price  10.000.000.000
       ==
     =^  card-1  next-batch  (set-roller:timer frequency now.bowl)
     =^  card-2  next-slice  (set-quota:timer slice now.bowl)
@@ -281,7 +281,7 @@
           resend-time  update-rate
       ==
     =?  old-state  ?=(%2 -.old-state)
-      ^-  app-state
+      ^-  state-3
       =,  old-state
       =|  allowances=(map ship (unit @ud))
       =/  next-slice=time  (mul +((div now.bowl slice)) slice)
@@ -293,10 +293,22 @@
           frequency  endpoint  contract  chain-id
           resend-time  update-rate
       ==
-    ?>  ?=(%3 -.old-state)
+    =?  old-state  ?=(%3 -.old-state)
+      ^-  app-state
+      =,  old-state
+      =/  fallback-gas-price=@ud  10.000.000.000
+      :*  %4
+          pending  sending  finding  history
+          ship-quota  allowances
+          next-nonce  next-batch  next-slice
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate  fallback-gas-price
+      ==
+    ?>  ?=(%4 -.old-state)
     [cards this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1 state-2 app-state)
+    ++  app-states  $%(state-0 state-1 state-2 state-3 app-state)
     ++  state-0
       $:  %0
           pending=(list pend-tx)
@@ -347,6 +359,31 @@
           ship-quota=(map ship @ud)
           next-nonce=(unit @ud)
           next-batch=time
+          pre=^state:naive
+          own=owners
+          spo=sponsors
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
+      ==
+    ++  state-3
+      $:  %3
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer send-tx])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          allowances=(map ship (unit @ud))
+          next-nonce=(unit @ud)
+          next-batch=time
+          next-slice=time
           pre=^state:naive
           own=owners
           spo=sponsors
@@ -561,7 +598,7 @@
           =+  !<([=term =tang] q.cage.sign)
           %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
           =^  cards  state
-            (on-batch-result:do address nonce %.n^[%error 'thread failed'])
+            (on-batch-result:do address nonce %.n^[%crash 'thread failed'])
           [cards this]
         ::
             %thread-done
@@ -801,6 +838,7 @@
     %commit  ?>(local on-timer)
     %config  ?>(local (on-config +.action))
     %assign  ?>(local `state(allowances (~(put by allowances) +.action)))
+    %refuel  ?>(local (refuel-tx +.action))
     %cancel  (cancel-tx +.action)
   ::
       %submit
@@ -839,6 +877,7 @@
   ^-  (quip card _state)
   ?-  -.config
     %frequency    [~ state(frequency frequency.config)]
+    %fallback     [~ state(fallback-gas-price gas.config)]
     %resend-time  [~ state(resend-time time.config)]
     %update-rate  [~ state(update-rate rate.config)]
     %slice        [~ state(slice slice.config)]
@@ -911,6 +950,21 @@
       u.time
     [ship %cancelled keccak l2-tx]
   ==
+::  +refuel-tx: bumps the gas price for a sending tx
+::
+++  refuel-tx
+  |=  [nonce=@ud address=(unit address:ethereum) gas=@ud]
+  ^-  (quip card _state)
+  =/  batch=[address:ethereum @ud]
+    :_  nonce
+    ?^(address u.address (get-address pk.state))
+  =.  sending
+    ?~  send-tx=(get:ors:dice sending batch)
+      sending
+    %^  put:ors:dice  sending
+      batch
+    u.send-tx(next-gas-price gas)
+  `state
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
 ++  take-tx
@@ -961,7 +1015,7 @@
     ::  when the thread that's sending the previous batch
     ::  has come back and confirms that it was sent to L1
     ::
-    ?:  out-of-sync
+    ?:  pending-batch
       ::  this would postpone sending the batch for a whole "frequency"
       ::  TODO: set up a timer to retry this in ~mX ?
       ::
@@ -1022,9 +1076,22 @@
   ::  ship has been whitelisted ("?~ u.allow" means no quota restrictions)
   ::
   ?~(u.allow | (gte u.quota u.u.allow))
-::  +out-of-sync: checks if the previous nonce has been sent
+::  +pending-batch: checks if the previous nonce has been sent
 ::
-++  out-of-sync
+::    If %.y, the roller has been trying to send a batch for a whole frequency.
+::
+::    The cause of not sending the previous batch can happen because
+::    of thread failure (see line 1251) or because the private key loaded onto
+::    the roller was used for outside of the roller (i.e. for other than signing
+::    L2 batches) right after the send-batch thread started.
+::
+::    After reaching this state, any subsequents attempts have failed (L: 1251)
+::    (prior to updating the sending nonce if we hit the on-out-of-sync case)
+::    which would possibly require a manual intervention (e.g. changing the
+::    ethereum node URL, adding funds to the roller's address, manually bumping
+::    the fall-back-gas-price or refueling the current batch with higher gas)
+::
+++  pending-batch
   ^-  ?
   ?~  newest-batch=(ram:ors:dice sending)  |
   !=(sent.val.u.newest-batch &)
@@ -1032,8 +1099,10 @@
 ::
 ++  on-out-of-sync
   |=  [nonce=@ud failed-nonce=@ud]
+  ^-  (quip card _state)
+  ~&  >  %begin-on-out-of-sync
   =/  =address:ethereum   (get-address pk)
-  ::  we only care about nonces >= than the one that failed
+  ::  we only consider nonces >= than the one that failed
   ::
   =/  failed-sending=(list [l1-tx-pointer send-tx])
     %-  tap:ors:dice
@@ -1056,7 +1125,7 @@
     =*  txs    txs.q
     ::  TODO: this shouldn't be needed
     ?:  (lth nonce.p failed-nonce)
-      ~&  ["weird case" nonce+nonce.p]
+      ~&  >>>  [%on-out-of-sync nonce+nonce.p failed+failed-nonce]
       [new-nonce sending finding history]
     :+  +(new-nonce)
       fix-sending
@@ -1098,6 +1167,7 @@
       history     sih
       next-nonce  `+(nonce)
     ==
+  ~&  >  %end-on-out-of-sync
   [(send-roll address nonce) state]
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
@@ -1125,6 +1195,7 @@
       chain-id
       pk
       nonce
+      fallback-gas-price
     ::
       =<  [next-gas-price txs]
       (got:ors:dice sending [address nonce])
@@ -1143,38 +1214,54 @@
   ?.  (has:ors:dice sending [address nonce])
     ~?  lverb  [dap.bowl %done-sending [address nonce]]
     `state
+  ?:  ?=([%| %not-sent %batch-parse-error] result)
+    ::  if we tried to send a malformed batch, remove it from the queue
+    ::
+    ~&  >>>  [dap.bowl %removing-malformed-batch]
+    =^  *  sending
+      (del:ors:dice sending [address nonce])
+    `state
   =/  =send-tx  (got:ors:dice sending [address nonce])
-  =?  sending  ?=(%& -.result)
+  =?  sending  ?|  ?=(%& -.result)
+                   ?=([%| %crash *] result)
+               ==
     %^  put:ors:dice  sending
       [address nonce]
     ::  update gas price for this tx in state
-    ::  and set it as sent to L1
     ::
-    send-tx(next-gas-price p.result, sent &)
+    ?:  ?=(%& -.result)
+      send-tx(next-gas-price p.result, sent &)
+    ::  if the thread crashed, we don't know the gas used,
+    ::  so we udpate it manually, same as the thread would do
+    ::
+    %_  send-tx
+      next-gas-price
+        ?:  =(0 next-gas-price.send-tx)
+          fallback-gas-price
+        (add next-gas-price.send-tx 5.000.000.000)
+    ==
   :_  state
-  ?:  ?|  ?=(%& -.result)
-        ::  a general error shouldn't innitiate
-        ::  the out-of-sync nonce thread
-        ::
-          ?=([%| %error *] result)
-        ::  this accounts for a resend with higher gas
-        ::  for a previous nonce, so we shouldn't start
-        ::  the out-of-sync nonce thread
-        ::
-          ?&  sent.send-tx
-              ?=([%| %not-sent *] result)
-      ==  ==
-    :_  ~
-    ::  resend the l1 tx in five minutes
+  ?:  ?&  !sent.send-tx
+          ?=([%| %not-sent %behind-nonce] result)
+      ==
+    ::  start out-of-sync flow if our L1 nonce is behind
+    ::  and this transaction hasn't been sent out yet
     ::
-    %+  wait:b:sys
-      /resend/(scot %ux address)/(scot %ud nonce)
-    (add resend-time now.bowl)
-  ::  TODO: this only accounts for the case where the nonce is out of sync,
-  ::  reaching this because of lower funds needs to be addressed manually
+    ~&  >  [dap.bowl %start-refresh-nonce-thread]
+    (get-nonce pk.state /refresh-nonce/(scot %ud nonce))
+  ::  resend the l1 tx in five minutes if:
   ::
-  ?>  ?=(%not-sent -.p.result)
-  (get-nonce pk.state /refresh-nonce/(scot %ud nonce))
+  ::  - the thread succeeds and returns the next gas price
+  ::  - the thread failed because:
+  ::    - the roll's eth addres doesn't have enough funds to pay
+  ::    - the thread crashes
+  ::    - the sending L1 nonce is ahead of the expected one
+  ::    - a general ethereum error
+  ::
+  :_  ~
+  %+  wait:b:sys
+    /resend/(scot %ux address)/(scot %ud nonce)
+  (add resend-time now.bowl)
 ::  +on-naive-diff: process l2 tx confirmations
 ::
 ++  on-naive-diff
