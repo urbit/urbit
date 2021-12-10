@@ -161,6 +161,10 @@
     u3_noun u3qdu_qat_gun(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qdu_qat_see(u3_noun, u3_noun, u3_noun);
 
+    u3_noun u3qdl_ebb(u3_noun);
+    u3_noun u3qdl_put(u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdl_get(u3_noun, u3_noun);
+
   /** Tier 5.
   **/
     u3_noun u3qe_cue(u3_atom);

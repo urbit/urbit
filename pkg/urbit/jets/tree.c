@@ -72,6 +72,10 @@ static u3j_harm _140_two__up_qat_pet_a[] = {{".2", u3wdu_qat_pet, c3y}, {}};
 static u3j_harm _140_two__up_qat_gun_a[] = {{".2", u3wdu_qat_gun, c3y}, {}};
 static u3j_harm _140_two__up_qat_see_a[] = {{".2", u3wdu_qat_see, c3y}, {}};
 
+static u3j_harm _140_two__lu_ebb_a[] = {{".2", u3wdl_ebb, c3y}, {}};
+static u3j_harm _140_two__lu_put_a[] = {{".2", u3wdl_put, c3y}, {}};
+static u3j_harm _140_two__lu_get_a[] = {{".2", u3wdl_get, c3y}, {}};
+
 static u3j_core _140_two__up_qor_d[] =
 {
   { "top", 7, _140_two__up_qor_top_a, 0, no_hashes },
@@ -96,6 +100,14 @@ static u3j_core _140_two__up_qat_d[] =
   { "pet", 7, _140_two__up_qat_pet_a, 0, no_hashes },
   { "gun", 7, _140_two__up_qat_gun_a, 0, no_hashes },
   { "see", 7, _140_two__up_qat_see_a, 0, no_hashes },
+  {}
+};
+
+static u3j_core _140_two__lu_d[] =
+{
+  { "ebb", 7, _140_two__lu_ebb_a, 0, no_hashes },
+  { "put", 7, _140_two__lu_put_a, 0, no_hashes },
+  { "get", 7, _140_two__lu_get_a, 0, no_hashes },
   {}
 };
 
@@ -137,6 +149,8 @@ static u3j_core _140_two__up_d[] =
   { "see", 7, _140_two__up_see_a, 0, no_hashes },
   { "qor", 3, 0, _140_two__up_qor_d, no_hashes },
   { "qat", 3, 0, _140_two__up_qat_d, no_hashes },
+  // FIXME
+  { "lru", 3, 0, _140_two__lu_d, no_hashes },
   {}
 };
 

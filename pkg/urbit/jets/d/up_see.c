@@ -1,6 +1,12 @@
 #include "all.h"
 
 u3_noun
+u3qdu_see(u3_noun a, u3_noun k, u3_noun p)
+{
+  return u3qdu_qat_see(a, k, p);
+}
+
+u3_noun
 u3wdu_see(u3_noun cor)
 {
   u3_noun a, k, p;

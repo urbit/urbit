@@ -168,6 +168,10 @@
     u3_noun u3wdu_qat_gun(u3_noun);
     u3_noun u3wdu_qat_see(u3_noun);
 
+    u3_noun u3wdl_ebb(u3_noun);
+    u3_noun u3wdl_put(u3_noun);
+    u3_noun u3wdl_get(u3_noun);
+
   /** Tier 5.
   **/
     u3_noun u3we_cue(u3_noun);
