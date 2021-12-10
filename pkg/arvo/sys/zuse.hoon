@@ -2235,6 +2235,16 @@
         =/  pub  (from.j qj)
         ?<  =([0 0] pub)
         pub
+      ++  schnorrsig-sign
+        ~&  %no-impl
+        ~/  %sosi
+        |=  *
+        !!
+      ++  schnorrsig-verify
+        ~&  %no-impl
+        ~/  %sove
+        |=  *
+        !!
       --
     --
   ::
