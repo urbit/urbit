@@ -22,9 +22,7 @@ u3qdb_uni(u3_noun a, u3_noun b)
     u3x_cell(n_b, &p_n_b, &q_n_b);
 
     if ( c3y == u3r_sing(p_n_a, p_n_b) ) {
-      return u3nt(u3k(n_b),
-                  u3qdb_uni(l_a, l_b),
-                  u3qdb_uni(r_a, r_b));
+      return u3nt(u3k(n_b), u3qdb_uni(l_a, l_b), u3qdb_uni(r_a, r_b));
     }
     else if ( c3y == u3qc_mor(p_n_a, p_n_b) ) {
       u3_noun new_a, old_b;
@@ -93,6 +91,7 @@ u3_noun
 u3kdb_uni(u3_noun a, u3_noun b)
 {
   u3_noun pro = u3qdb_uni(a, b);
-  u3z(a); u3z(b);
+  u3z(a);
+  u3z(b);
   return pro;
 }

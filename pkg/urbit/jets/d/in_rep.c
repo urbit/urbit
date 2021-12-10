@@ -25,7 +25,7 @@ _in_rep(u3_noun a, u3j_site* sit_u, u3_noun* out)
 u3_noun
 u3qdi_rep(u3_noun a, u3_noun b)
 {
-  u3_noun    out = u3k(u3x_at(u3x_sam_3, b));
+  u3_noun  out = u3k(u3x_at(u3x_sam_3, b));
   u3j_site sit_u;
 
   u3j_gate_prep(&sit_u, u3k(b));

@@ -4,9 +4,7 @@
 #include "all.h"
 
 u3_noun
-u3qc_end(u3_atom a,
-         u3_atom b,
-         u3_atom c)
+u3qc_end(u3_atom a, u3_atom b, u3_atom c)
 {
   if ( !_(u3a_is_cat(a)) || (a >= 32) ) {
     return u3m_bail(c3__fail);
@@ -41,8 +39,7 @@ u3wc_end(u3_noun cor)
 {
   u3_atom bloq, step;
   u3_noun a, b;
-  u3x_mean(cor, u3x_sam_2, &a,
-                u3x_sam_3, &b, 0);
+  u3x_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0);
   u3x_bite(a, &bloq, &step);
 
   return u3qc_end(bloq, step, u3x_atom(b));

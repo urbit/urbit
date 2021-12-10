@@ -4,21 +4,21 @@
 */
 #include "all.h"
 #include "rsignal.h"
-#include <vere/vere.h>
-#include <vere/serf.h>
-
 #include "ur/hashcons.h"
 
-static u3_serf        u3V;             //  one serf per process
-static u3_moat      inn_u;             //  input stream
-static u3_mojo      out_u;             //  output stream
-static u3_cue_xeno* sil_u;             //  cue handle
+#include <vere/serf.h>
+#include <vere/vere.h>
+
+static u3_serf      u3V;   //  one serf per process
+static u3_moat      inn_u; //  input stream
+static u3_mojo      out_u; //  output stream
+static u3_cue_xeno* sil_u; //  cue handle
 
 #undef SERF_TRACE_JAM
 #undef SERF_TRACE_CUE
 
 /* _cw_serf_fail(): failure stub.
-*/
+ */
 static void
 _cw_serf_fail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
@@ -33,7 +33,7 @@ _cw_serf_fail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 }
 
 /* _cw_serf_send(): send plea back to daemon.
-*/
+ */
 static void
 _cw_serf_send(u3_noun pel)
 {
@@ -55,7 +55,7 @@ _cw_serf_send(u3_noun pel)
 }
 
 /* _cw_serf_send_slog(): send hint output (hod is [priority tank]).
-*/
+ */
 static void
 _cw_serf_send_slog(u3_noun hod)
 {
@@ -63,21 +63,20 @@ _cw_serf_send_slog(u3_noun hod)
 }
 
 /* _cw_serf_send_stdr(): send stderr output (%flog)
-*/
+ */
 static void
 _cw_serf_send_stdr(c3_c* str_c)
 {
   _cw_serf_send(u3nc(c3__flog, u3i_string(str_c)));
 }
 
-
 /* _cw_serf_step_trace(): initialize or rotate trace file.
-*/
+ */
 static void
 _cw_serf_step_trace(void)
 {
   if ( u3C.wag_w & u3o_trace ) {
-    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
+    if ( u3_Host.tra_u.con_w == 0 && u3_Host.tra_u.fun_w == 0 ) {
       u3t_trace_open(u3V.dir_c);
     }
     else if ( u3_Host.tra_u.con_w >= 100000 ) {
@@ -88,7 +87,7 @@ _cw_serf_step_trace(void)
 }
 
 /* _cw_serf_writ(): process a command from the king.
-*/
+ */
 static void
 _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 {
@@ -107,9 +106,7 @@ _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
   u3t_event_trace("serf ipc cue", 'E');
 #endif
 
-  if (  (u3_none == jar)
-     || (c3n == u3_serf_writ(&u3V, jar, &ret)) )
-  {
+  if ( (u3_none == jar) || (c3n == u3_serf_writ(&u3V, jar, &ret)) ) {
     _cw_serf_fail(0, -1, "bad jar");
   }
   else {
@@ -122,7 +119,7 @@ _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 }
 
 /* _cw_serf_stdio(): fix up std io handles
-*/
+ */
 static void
 _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
 {
@@ -148,7 +145,7 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
 }
 
 /* _cw_serf_stdio(): cleanup on serf exit.
-*/
+ */
 static void
 _cw_serf_exit(void)
 {
@@ -158,7 +155,7 @@ _cw_serf_exit(void)
 
 #if defined(U3_OS_mingw)
 /* _mingw_ctrlc_cb(): invoked when the lord signals the Ctrl-C event
-*/
+ */
 static void
 _mingw_ctrlc_cb(PVOID param, BOOLEAN timedOut)
 {
@@ -167,30 +164,43 @@ _mingw_ctrlc_cb(PVOID param, BOOLEAN timedOut)
 #endif
 
 /* _cw_serf_commence(); initialize and run serf
-*/
+ */
 static void
 _cw_serf_commence(c3_i argc, c3_c* argv[])
 {
   c3_i inn_i, out_i;
   _cw_serf_stdio(&inn_i, &out_i);
 
-  #if defined(U3_OS_mingw)
-  c3_assert( 8 == argc );
+#if defined(U3_OS_mingw)
+  c3_assert(8 == argc);
 
   //  Initialize serf's end of Ctrl-C handling
   //
   {
     HANDLE h;
     if ( 1 != sscanf(argv[7], "%u", &h) ) {
-      fprintf(stderr, "serf: Ctrl-C event: bad handle %s: %s\r\n", argv[7], strerror(errno));
-    } else
-    if ( !RegisterWaitForSingleObject(&h, h, _mingw_ctrlc_cb, NULL, INFINITE, 0) ) {
-      fprintf(stderr, "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n", h, GetLastError());
+      fprintf(stderr,
+              "serf: Ctrl-C event: bad handle %s: %s\r\n",
+              argv[7],
+              strerror(errno));
+    }
+    else if ( !RegisterWaitForSingleObject(&h,
+                                           h,
+                                           _mingw_ctrlc_cb,
+                                           NULL,
+                                           INFINITE,
+                                           0) )
+    {
+      fprintf(
+        stderr,
+        "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n",
+        h,
+        GetLastError());
     }
   }
-  #else
-  c3_assert( 7 == argc );
-  #endif
+#else
+  c3_assert(7 == argc);
+#endif
 
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[2];
@@ -211,11 +221,12 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   //    XX and then ... use passkey
   //
   {
-    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
-                  &u3V.key_d[0],
-                  &u3V.key_d[1],
-                  &u3V.key_d[2],
-                  &u3V.key_d[3]);
+    sscanf(key_c,
+           "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
+           &u3V.key_d[0],
+           &u3V.key_d[1],
+           &u3V.key_d[2],
+           &u3V.key_d[3]);
   }
 
   //  load runtime config
@@ -225,16 +236,16 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
     sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
   }
 
-  //  Ignore SIGPIPE signals.
-  //
-  #ifndef U3_OS_mingw
+//  Ignore SIGPIPE signals.
+//
+#ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
-  #endif
+#endif
 
   //  configure pipe to daemon process
   //
@@ -292,7 +303,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   //
   {
     u3C.stderr_log_f = _cw_serf_send_stdr;
-    u3C.slog_f = _cw_serf_send_slog;
+    u3C.slog_f       = _cw_serf_send_slog;
   }
 
   u3V.xit_f = _cw_serf_exit;
@@ -318,11 +329,11 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
 }
 
 /* _cw_info(); print pier info
-*/
+ */
 static void
 _cw_info(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert(3 <= argc);
 
   c3_c* dir_c = argv[2];
   c3_d  eve_d = u3m_boot(dir_c);
@@ -332,11 +343,11 @@ _cw_info(c3_i argc, c3_c* argv[])
 }
 
 /* _cw_grab(); gc pier.
-*/
+ */
 static void
 _cw_grab(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert(3 <= argc);
 
   c3_c* dir_c = argv[2];
   u3m_boot(dir_c);
@@ -346,11 +357,11 @@ _cw_grab(c3_i argc, c3_c* argv[])
 }
 
 /* _cw_cram(); jam persistent state (rock), and exit.
-*/
+ */
 static void
 _cw_cram(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert(3 <= argc);
 
   c3_c* dir_c = argv[2];
   c3_d  eve_d = u3m_boot(dir_c);
@@ -362,7 +373,9 @@ _cw_cram(c3_i argc, c3_c* argv[])
     fprintf(stderr, "urbit-worker: cram: unable to jam state\r\n");
   }
   else {
-    fprintf(stderr, "urbit-worker: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
+    fprintf(stderr,
+            "urbit-worker: cram: rock saved at event %" PRIu64 "\r\n",
+            eve_d);
   }
 
   //  save even on failure, as we just did all the work of deduplication
@@ -377,11 +390,11 @@ _cw_cram(c3_i argc, c3_c* argv[])
 }
 
 /* _cw_queu(); cue rock, save, and exit.
-*/
+ */
 static void
 _cw_queu(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 4 <= argc );
+  c3_assert(4 <= argc);
 
   c3_c* dir_c = argv[2];
   c3_c* eve_c = argv[3];
@@ -409,17 +422,19 @@ _cw_queu(c3_i argc, c3_c* argv[])
 
     u3e_save();
 
-    fprintf(stderr, "urbit-worker: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
+    fprintf(stderr,
+            "urbit-worker: queu: rock loaded at event %" PRIu64 "\r\n",
+            eve_d);
     u3m_stop();
   }
 }
 
 /* _cw_uniq(); deduplicate persistent nouns
-*/
+ */
 static void
 _cw_meld(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert(3 <= argc);
 
   c3_c* dir_c = argv[2];
 
@@ -436,11 +451,11 @@ _cw_meld(c3_i argc, c3_c* argv[])
 }
 
 /* _cw_pack(); compact memory, save, and exit.
-*/
+ */
 static void
 _cw_pack(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert(3 <= argc);
 
   c3_c* dir_c = argv[2];
 
@@ -452,7 +467,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
 }
 
 /* _cw_usage(): print urbit-worker usage.
-*/
+ */
 static void
 _cw_usage(c3_i argc, c3_c* argv[])
 {
@@ -472,15 +487,21 @@ _cw_usage(c3_i argc, c3_c* argv[])
           "    %s queu <pier> <at-event>\n\n"
           "  run as a 'serf':\n"
           "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
-          #if defined(U3_OS_mingw)
+#if defined(U3_OS_mingw)
           " <ctrlc-handle>"
-          #endif
+#endif
           "\n",
-          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+          argv[0],
+          argv[0],
+          argv[0],
+          argv[0],
+          argv[0],
+          argv[0],
+          argv[0]);
 }
 
 /* main(): main() when run as urbit-worker
-*/
+ */
 c3_i
 main(c3_i argc, c3_c* argv[])
 {

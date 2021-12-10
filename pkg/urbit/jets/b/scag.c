@@ -17,10 +17,10 @@ u3qb_scag(u3_atom a, u3_noun b)
     u3_noun* lit = &pro;
 
     {
-      c3_w   len_w = (c3_w)a;
+      c3_w     len_w = (c3_w)a;
       u3_noun* hed;
       u3_noun* tel;
-      u3_noun i, t = b;
+      u3_noun  i, t = b;
 
       while ( len_w-- && (u3_nul != t) ) {
         u3x_cell(t, &i, &t);

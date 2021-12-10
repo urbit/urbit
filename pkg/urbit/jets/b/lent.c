@@ -3,8 +3,7 @@
 */
 #include "all.h"
 
-STATIC_ASSERT( (UINT32_MAX > u3a_cells),
-               "length precision" );
+STATIC_ASSERT((UINT32_MAX > u3a_cells), "length precision");
 
 u3_noun
 u3qb_lent(u3_noun a)

@@ -1,8 +1,9 @@
 /* worker/serf.c
-*/
+ */
 #include "all.h"
-#include <vere/vere.h>
+
 #include <vere/serf.h>
+#include <vere/vere.h>
 
 /*
 |%
@@ -21,7 +22,8 @@
               [%meld ~]
               [%pack ~]
       ==  ==
-      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [beam @tas beam]))
+      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [beam
+@tas beam]))
       [%play eve=@ lit=(list ?((pair @da ovum) *))]
       [%work mil=@ job=(pair @da ovum)]
   ==
@@ -50,12 +52,12 @@
 */
 
 /* _serf_space(): print n spaces.
-*/
+ */
 static void
-_serf_space(FILE* fil_u,  c3_w n)
+_serf_space(FILE* fil_u, c3_w n)
 {
-  for (; n > 0; n--)
-    (fprintf(fil_u," "));
+  for ( ; n > 0; n-- )
+    (fprintf(fil_u, " "));
 }
 
 /* _serf_print_memory(): print memory amount.
@@ -72,8 +74,7 @@ _serf_print_memory(FILE* fil_u, c3_w wor_w)
   c3_w bib_w = (byt_w % 1000);
 
   if ( gib_w ) {
-    (fprintf(fil_u, "GB/%d.%03d.%03d.%03d\r\n",
-        gib_w, mib_w, kib_w, bib_w));
+    (fprintf(fil_u, "GB/%d.%03d.%03d.%03d\r\n", gib_w, mib_w, kib_w, bib_w));
   }
   else if ( mib_w ) {
     (fprintf(fil_u, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w));
@@ -87,11 +88,11 @@ _serf_print_memory(FILE* fil_u, c3_w wor_w)
 }
 
 /* _serf_prof(): print memory profile. RETAIN.
-*/
+ */
 c3_w
 _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
 {
-  c3_w tot_w = 0;
+  c3_w    tot_w = 0;
   u3_noun h_mas, t_mas;
 
   if ( c3n == u3r_cell(mas, &h_mas, &t_mas) ) {
@@ -134,24 +135,24 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
        * normal sense. When we mark .sac later on, we want tt_mas
        * to appear unmarked, but its children should be already
        * marked.
-      */
+       */
       if ( _(u3a_is_dog(tt_mas)) ) {
         u3a_box* box_u = u3a_botox(u3a_to_ptr(tt_mas));
-#ifdef U3_MEMORY_DEBUG
+#  ifdef U3_MEMORY_DEBUG
         if ( 1 == box_u->eus_w ) {
           box_u->eus_w = 0xffffffff;
         }
         else {
           box_u->eus_w -= 1;
         }
-#else
+#  else
         if ( -1 == (c3_w)box_u->use_w ) {
           box_u->use_w = 0x80000000;
         }
         else {
           box_u->use_w += 1;
         }
-#endif
+#  endif
       }
 #endif
 
@@ -161,7 +162,7 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
       fprintf(fil_u, "\r\n");
 
       while ( _(u3du(tt_mas)) ) {
-        tot_w += _serf_prof(fil_u, den+2, u3h(tt_mas));
+        tot_w += _serf_prof(fil_u, den + 2, u3h(tt_mas));
         tt_mas = u3t(tt_mas);
       }
 
@@ -170,7 +171,6 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
       _serf_print_memory(fil_u, tot_w);
 
       return tot_w;
-
     }
     else {
       _serf_space(fil_u, den);
@@ -181,23 +181,23 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
 }
 
 /* _serf_grab(): garbage collect, checking for profiling. RETAIN.
-*/
+ */
 static void
 _serf_grab(u3_noun sac)
 {
-  if ( u3_nul == sac) {
+  if ( u3_nul == sac ) {
     if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
       u3m_grab(sac, u3_none);
     }
   }
   else {
-    c3_w tot_w = 0;
+    c3_w  tot_w = 0;
     FILE* fil_u;
 
 #ifdef U3_MEMORY_LOG
     {
-      u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
-      c3_c* wen_c = u3r_string(wen);
+      u3_noun wen   = u3dc("scot", c3__da, u3k(u3A->now));
+      c3_c*   wen_c = u3r_string(wen);
 
       c3_c nam_c[2048];
       snprintf(nam_c, 2048, "%s/.urb/put/mass", u3P.dir_c);
@@ -222,7 +222,7 @@ _serf_grab(u3_noun sac)
     }
 #endif
 
-    c3_assert( u3R == &(u3H->rod_u) );
+    c3_assert(u3R == &(u3H->rod_u));
     fprintf(fil_u, "\r\n");
 
     tot_w += u3a_maid(fil_u, "total userspace", _serf_prof(fil_u, 0, sac));
@@ -248,13 +248,13 @@ _serf_grab(u3_noun sac)
 }
 
 /* u3_serf_grab(): garbage collect.
-*/
+ */
 void
 u3_serf_grab(void)
 {
   u3_noun sac = u3_nul;
 
-  c3_assert( u3R == &(u3H->rod_u) );
+  c3_assert(u3R == &(u3H->rod_u));
 
   {
     u3_noun sam, gon;
@@ -262,7 +262,7 @@ u3_serf_grab(void)
     {
       u3_noun pax = u3nc(c3__whey, u3_nul);
       u3_noun lyc = u3nc(u3_nul, u3_nul);
-      sam = u3nt(lyc, c3n, u3nq(c3__once, u3_blip, u3_blip, pax));
+      sam         = u3nt(lyc, c3n, u3nq(c3__once, u3_blip, u3_blip, pax));
     }
 
     gon = u3m_soft(0, u3v_peek, sam);
@@ -271,10 +271,9 @@ u3_serf_grab(void)
       u3_noun tag, dat, val;
       u3x_cell(gon, &tag, &dat);
 
-      if (  (u3_blip == tag)
-         && (u3_nul  != dat)
-         && (c3y == u3r_pq(u3t(dat), c3__omen, 0, &val))
-         && (c3y == u3r_p(val, c3__mass, &sac)) )
+      if ( (u3_blip == tag) && (u3_nul != dat)
+           && (c3y == u3r_pq(u3t(dat), c3__omen, 0, &val))
+           && (c3y == u3r_p(val, c3__mass, &sac)) )
       {
         u3k(sac);
       }
@@ -299,7 +298,7 @@ u3_serf_grab(void)
 }
 
 /* u3_serf_post(): update serf state post-writ.
-*/
+ */
 void
 u3_serf_post(u3_serf* sef_u)
 {
@@ -324,7 +323,7 @@ u3_serf_post(u3_serf* sef_u)
 }
 
 /* _serf_sure_feck(): event succeeded, send effects.
-*/
+ */
 static u3_noun
 _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
 {
@@ -386,10 +385,10 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
   //    instead of directly triggering these remedial actions.
   //
   {
-    u3_noun pri = u3_none;
-    c3_w pos_w = u3a_open(u3R);
-    c3_w low_w = (1 << 27);
-    c3_w hig_w = (1 << 22);
+    u3_noun pri   = u3_none;
+    c3_w    pos_w = u3a_open(u3R);
+    c3_w    low_w = (1 << 27);
+    c3_w    hig_w = (1 << 22);
 
     if ( (pre_w > low_w) && !(pos_w > low_w) ) {
       //  XX set flag(s) in u3V so we don't repeat endlessly?
@@ -416,9 +415,8 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
     //  notify daemon of memory pressure via "fake" effect
     //
     if ( u3_none != pri ) {
-      u3_noun cad = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
-                         u3nc(c3__trim, pri));
-      vir = u3nc(cad, vir);
+      u3_noun cad = u3nc(u3nt(u3_blip, c3__arvo, u3_nul), u3nc(c3__trim, pri));
+      vir         = u3nc(cad, vir);
     }
   }
 
@@ -429,7 +427,7 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
 }
 
 /* _serf_sure_core(): event succeeded, save state.
-*/
+ */
 static void
 _serf_sure_core(u3_serf* sef_u, u3_noun cor)
 {
@@ -443,7 +441,7 @@ _serf_sure_core(u3_serf* sef_u, u3_noun cor)
 }
 
 /* _serf_sure(): event succeeded, save state and process effects.
-*/
+ */
 static u3_noun
 _serf_sure(u3_serf* sef_u, c3_w pre_w, u3_noun par)
 {
@@ -461,7 +459,7 @@ _serf_sure(u3_serf* sef_u, c3_w pre_w, u3_noun par)
 }
 
 /* _serf_make_crud():
-*/
+ */
 static u3_noun
 _serf_make_crud(u3_noun job, u3_noun dud)
 {
@@ -477,7 +475,7 @@ _serf_make_crud(u3_noun job, u3_noun dud)
 }
 
 /* _serf_poke(): RETAIN
-*/
+ */
 static u3_noun
 _serf_poke(u3_serf* sef_u, c3_c* cap_c, c3_w mil_w, u3_noun job)
 {
@@ -489,17 +487,15 @@ _serf_poke(u3_serf* sef_u, c3_c* cap_c, c3_w mil_w, u3_noun job)
 
 #ifdef U3_EVENT_TIME_DEBUG
   struct timeval b4;
-  c3_c*       txt_c;
+  c3_c*          txt_c;
 
   gettimeofday(&b4, 0);
 
   {
     u3_noun tag = u3h(u3t(ovo));
-    txt_c = u3r_string(tag);
+    txt_c       = u3r_string(tag);
 
-    if (  (c3__belt != tag)
-       && (c3__crud != tag) )
-    {
+    if ( (c3__belt != tag) && (c3__crud != tag) ) {
       u3l_log("serf: %s (%" PRIu64 ") %s\r\n", cap_c, sef_u->sen_d, txt_c);
     }
   }
@@ -510,19 +506,22 @@ _serf_poke(u3_serf* sef_u, c3_c* cap_c, c3_w mil_w, u3_noun job)
 #ifdef U3_EVENT_TIME_DEBUG
   {
     struct timeval f2, d0;
-    c3_w ms_w;
-    c3_w clr_w;
+    c3_w           ms_w;
+    c3_w           clr_w;
 
     gettimeofday(&f2, 0);
     timersub(&f2, &b4, &d0);
 
-    ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+    ms_w  = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
     clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
 
     if ( clr_w != 2 ) {
       u3l_log("\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
-              clr_w, txt_c, sef_u->sen_d, ms_w,
-              (int) (d0.tv_usec % 1000) / 10);
+              clr_w,
+              txt_c,
+              sef_u->sen_d,
+              ms_w,
+              (int)(d0.tv_usec % 1000) / 10);
     }
 
     c3_free(txt_c);
@@ -541,29 +540,28 @@ _serf_poke(u3_serf* sef_u, c3_c* cap_c, c3_w mil_w, u3_noun job)
 }
 
 /* _serf_work():  apply event, capture effects.
-*/
+ */
 static u3_noun
 _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
   u3_noun gon;
-  c3_w  pre_w = u3a_open(u3R);
+  c3_w    pre_w = u3a_open(u3R);
 
   //  event numbers must be continuous
   //
-  c3_assert( sef_u->sen_d == sef_u->dun_d);
+  c3_assert(sef_u->sen_d == sef_u->dun_d);
   sef_u->sen_d++;
 
-  gon = _serf_poke(sef_u, "work", mil_w, job);  // retain
+  gon = _serf_poke(sef_u, "work", mil_w, job); // retain
 
   //  event accepted
   //
   if ( u3_blip == u3h(gon) ) {
     u3_noun vir = _serf_sure(sef_u, pre_w, u3k(u3t(gon)));
-    
-    u3z(gon); u3z(job);
-    return u3nc(c3__done, u3nt(u3i_chubs(1, &sef_u->dun_d),
-                               sef_u->mug_l,
-                               vir));
+
+    u3z(gon);
+    u3z(job);
+    return u3nc(c3__done, u3nt(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l, vir));
   }
   //  event rejected
   //
@@ -576,18 +574,17 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
     //
 
     job = _serf_make_crud(job, dud);
-    gon = _serf_poke(sef_u, "crud", mil_w, job);  // retain
+    gon = _serf_poke(sef_u, "crud", mil_w, job); // retain
 
     //  error notification accepted
     //
     if ( u3_blip == u3h(gon) ) {
       u3_noun vir = _serf_sure(sef_u, pre_w, u3k(u3t(gon)));
 
-      u3z(gon); u3z(dud);
-      return u3nc(c3__swap, u3nq(u3i_chubs(1, &sef_u->dun_d),
-                                 sef_u->mug_l,
-                                 job,
-                                 vir));
+      u3z(gon);
+      u3z(dud);
+      return u3nc(c3__swap,
+                  u3nq(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l, job, vir));
     }
     //  error notification rejected
     //
@@ -604,12 +601,12 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 }
 
 /* u3_serf_work(): apply event, producing effects.
-*/
+ */
 u3_noun
 u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
-  c3_t  tac_t = !!( u3C.wag_w & u3o_trace );
-  c3_c  lab_c[2056];
+  c3_t    tac_t = !!(u3C.wag_w & u3o_trace);
+  c3_c    lab_c[2056];
   u3_noun pro;
 
   // XX refactor tracing
@@ -631,7 +628,7 @@ u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 
   //  %work must be performed against an extant kernel
   //
-  c3_assert( 0 != sef_u->mug_l);
+  c3_assert(0 != sef_u->mug_l);
 
   pro = u3nc(c3__work, _serf_work(sef_u, mil_w, job));
 
@@ -643,17 +640,17 @@ u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 }
 
 /* _serf_play_life():
-*/
+ */
 static u3_noun
 _serf_play_life(u3_serf* sef_u, u3_noun eve)
 {
   u3_noun gon;
 
-  c3_assert( 0ULL == sef_u->sen_d );
+  c3_assert(0ULL == sef_u->sen_d);
 
   {
     u3_noun len = u3qb_lent(eve);
-    c3_assert( c3y == u3r_safe_chub(len, &sef_u->sen_d) );
+    c3_assert(c3y == u3r_safe_chub(len, &sef_u->sen_d));
     u3z(len);
   }
 
@@ -687,7 +684,7 @@ _serf_play_life(u3_serf* sef_u, u3_noun eve)
 }
 
 /* _serf_play_poke(): RETAIN
-*/
+ */
 static u3_noun
 _serf_play_poke(u3_noun job)
 {
@@ -710,12 +707,12 @@ _serf_play_poke(u3_noun job)
 }
 
 /* _serf_play_list():
-*/
+ */
 static u3_noun
 _serf_play_list(u3_serf* sef_u, u3_noun eve)
 {
-  c3_w pre_w = u3a_open(u3R);
-  u3_noun vev = eve;
+  c3_w    pre_w = u3a_open(u3R);
+  u3_noun vev   = eve;
   u3_noun job, gon;
 
   while ( u3_nul != eve ) {
@@ -764,9 +761,8 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
       //  send failure notification
       //
       u3z(vev);
-      return u3nc(c3__bail, u3nt(u3i_chubs(1, &sef_u->dun_d),
-                                 sef_u->mug_l,
-                                 gon));
+      return u3nc(c3__bail,
+                  u3nt(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l, gon));
     }
   }
 
@@ -775,21 +771,21 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
 }
 
 /* u3_serf_play(): apply event list, producing status.
-*/
+ */
 u3_noun
 u3_serf_play(u3_serf* sef_u, c3_d eve_d, u3_noun lit)
 {
-  c3_assert( eve_d == 1ULL + sef_u->sen_d );
+  c3_assert(eve_d == 1ULL + sef_u->sen_d);
 
   //  XX better condition for no kernel?
   //
-  return u3nc(c3__play, ( 0ULL == sef_u->dun_d )
-                        ? _serf_play_life(sef_u, lit)
-                        : _serf_play_list(sef_u, lit));
+  return u3nc(c3__play,
+              (0ULL == sef_u->dun_d) ? _serf_play_life(sef_u, lit)
+                                     : _serf_play_list(sef_u, lit));
 }
 
 /* u3_serf_peek(): dereference namespace.
-*/
+ */
 u3_noun
 u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
 {
@@ -819,7 +815,7 @@ u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
 }
 
 /* _serf_writ_live_exit(): exit on command.
-*/
+ */
 static void
 _serf_writ_live_exit(u3_serf* sef_u, c3_w cod_w)
 {
@@ -827,8 +823,8 @@ _serf_writ_live_exit(u3_serf* sef_u, c3_w cod_w)
     FILE* fil_u;
 
     {
-      u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
-      c3_c* wen_c = u3r_string(wen);
+      u3_noun wen   = u3dc("scot", c3__da, u3k(u3A->now));
+      c3_c*   wen_c = u3r_string(wen);
 
       c3_c nam_c[2048];
       snprintf(nam_c, 2048, "%s/.urb/put/profile", u3P.dir_c);
@@ -864,14 +860,15 @@ _serf_writ_live_exit(u3_serf* sef_u, c3_w cod_w)
 }
 
 /* _serf_writ_live_save(): save snapshot.
-*/
+ */
 static void
 _serf_writ_live_save(u3_serf* sef_u, c3_d eve_d)
 {
-  if( eve_d != sef_u->dun_d ) {
-    fprintf(stderr, "serf (%" PRIu64 "): save failed: %" PRIu64 "\r\n",
-                    sef_u->dun_d,
-                    eve_d);
+  if ( eve_d != sef_u->dun_d ) {
+    fprintf(stderr,
+            "serf (%" PRIu64 "): save failed: %" PRIu64 "\r\n",
+            sef_u->dun_d,
+            eve_d);
     exit(1);
   }
 
@@ -879,7 +876,7 @@ _serf_writ_live_save(u3_serf* sef_u, c3_d eve_d)
 }
 
 /* u3_serf_live(): apply %live command [com], producing *ret on c3y.
-*/
+ */
 c3_o
 u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
 {
@@ -926,10 +923,11 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
 
       u3z(com);
 
-      if( eve_d != sef_u->dun_d ) {
-        fprintf(stderr, "serf (%" PRIu64 "): cram failed: %" PRIu64 "\r\n",
-                        sef_u->dun_d,
-                        eve_d);
+      if ( eve_d != sef_u->dun_d ) {
+        fprintf(stderr,
+                "serf (%" PRIu64 "): cram failed: %" PRIu64 "\r\n",
+                sef_u->dun_d,
+                eve_d);
         return c3n;
       }
 
@@ -941,8 +939,11 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       }
 
       if ( u3r_mug(u3A->roc) != sef_u->mug_l ) {
-        fprintf(stderr, "serf (%" PRIu64 "): mug mismatch 0x%08x 0x%08x\r\n",
-                        eve_d, sef_u->mug_l, u3r_mug(u3A->roc));
+        fprintf(stderr,
+                "serf (%" PRIu64 "): mug mismatch 0x%08x 0x%08x\r\n",
+                eve_d,
+                sef_u->mug_l,
+                u3r_mug(u3A->roc));
         return c3n;
       }
 
@@ -996,12 +997,12 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
 }
 
 /* u3_serf_writ(): apply writ [wit], producing plea [*pel] on c3y.
-*/
+ */
 c3_o
 u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
 {
   u3_noun tag, com;
-  c3_o  ret_o;
+  c3_o    ret_o;
 
   if ( c3n == u3r_cell(wit, &tag, &com) ) {
     ret_o = c3n;
@@ -1022,46 +1023,43 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
 
       case c3__peek: {
         u3_noun tim, sam;
-        c3_w  mil_w;
+        c3_w    mil_w;
 
-        if ( (c3n == u3r_cell(com, &tim, &sam)) ||
-             (c3n == u3r_safe_word(tim, &mil_w)) )
-        {
+        if ( (c3n == u3r_cell(com, &tim, &sam))
+             || (c3n == u3r_safe_word(tim, &mil_w)) ) {
           ret_o = c3n;
         }
         else {
-          *pel = u3_serf_peek(sef_u, mil_w, u3k(sam));
+          *pel  = u3_serf_peek(sef_u, mil_w, u3k(sam));
           ret_o = c3y;
         }
       } break;
 
       case c3__play: {
         u3_noun eve, lit;
-        c3_d eve_d;
+        c3_d    eve_d;
 
-        if ( (c3n == u3r_cell(com, &eve, &lit)) ||
-             (c3n == u3a_is_cell(lit)) ||
-             (c3n == u3r_safe_chub(eve, &eve_d)) )
+        if ( (c3n == u3r_cell(com, &eve, &lit)) || (c3n == u3a_is_cell(lit))
+             || (c3n == u3r_safe_chub(eve, &eve_d)) )
         {
           ret_o = c3n;
         }
         else {
-          *pel = u3_serf_play(sef_u, eve_d, u3k(lit));
+          *pel  = u3_serf_play(sef_u, eve_d, u3k(lit));
           ret_o = c3y;
         }
       } break;
 
       case c3__work: {
         u3_noun tim, job;
-        c3_w  mil_w;
+        c3_w    mil_w;
 
-        if ( (c3n == u3r_cell(com, &tim, &job)) ||
-             (c3n == u3r_safe_word(tim, &mil_w)) )
-        {
+        if ( (c3n == u3r_cell(com, &tim, &job))
+             || (c3n == u3r_safe_word(tim, &mil_w)) ) {
           ret_o = c3n;
         }
         else {
-          *pel = u3_serf_work(sef_u, mil_w, u3k(job));
+          *pel  = u3_serf_work(sef_u, mil_w, u3k(job));
           ret_o = c3y;
         }
       } break;
@@ -1073,31 +1071,29 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
 }
 
 /* _serf_ripe(): produce initial serf state as [eve=@ mug=@]
-*/
+ */
 static u3_noun
 _serf_ripe(u3_serf* sef_u)
 {
   // u3l_log("serf: ripe %" PRIu64 "\r\n", sef_u->dun_d);
 
-  sef_u->mug_l = ( 0 == sef_u->dun_d )
-                 ? 0
-                 : u3r_mug(u3A->roc);
+  sef_u->mug_l = (0 == sef_u->dun_d) ? 0 : u3r_mug(u3A->roc);
 
   return u3nc(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l);
 }
 
 /* u3_serf_init(): init or restore, producing status.
-*/
+ */
 u3_noun
 u3_serf_init(u3_serf* sef_u)
 {
   u3_noun rip;
 
   {
-    c3_w  pro_w = 1;
-    c3_y  hon_y = 141;
-    c3_y  noc_y = 4;
-    u3_noun ver = u3nt(pro_w, hon_y, noc_y);
+    c3_w    pro_w = 1;
+    c3_y    hon_y = 141;
+    c3_y    noc_y = 4;
+    u3_noun ver   = u3nt(pro_w, hon_y, noc_y);
 
     rip = u3nt(c3__ripe, ver, _serf_ripe(sef_u));
   }

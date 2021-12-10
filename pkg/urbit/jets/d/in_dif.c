@@ -4,13 +4,12 @@
 #include "all.h"
 
 /* internal functions
-*/
+ */
 
 /* RETAIN
-*/
+ */
 static u3_noun
-_i_dif_join(u3_noun d,
-            u3_noun e)
+_i_dif_join(u3_noun d, u3_noun e)
 {
   if ( u3_nul == d ) {
     return u3k(e);
@@ -28,23 +27,19 @@ _i_dif_join(u3_noun d,
       u3_noun l_d, r_d;
       u3x_cell(lr_d, &l_d, &r_d);
 
-      return u3nt(u3k(n_d),
-                  u3k(l_d),
-                  _i_dif_join(r_d, e));
+      return u3nt(u3k(n_d), u3k(l_d), _i_dif_join(r_d, e));
     }
     else {
       u3_noun l_e, r_e;
       u3x_cell(lr_e, &l_e, &r_e);
 
-      return u3nt(u3k(n_e),
-                  _i_dif_join(d, l_e),
-                  u3k(r_e));
+      return u3nt(u3k(n_e), _i_dif_join(d, l_e), u3k(r_e));
     }
   }
 }
 
 /* functions
-*/
+ */
 u3_noun
 u3wdi_dif(u3_noun cor)
 {
@@ -54,8 +49,7 @@ u3wdi_dif(u3_noun cor)
 }
 
 u3_noun
-u3qdi_dif(u3_noun a,
-          u3_noun b)
+u3qdi_dif(u3_noun a, u3_noun b)
 {
   if ( u3_nul == b ) {
     return u3k(a);

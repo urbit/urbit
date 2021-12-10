@@ -2,18 +2,25 @@
 #include "vere/vere.h"
 
 /* _dup_std_handle(): creates an inheritable duplicate of a standard handle.
-*/
+ */
 static BOOL
 _dup_std_handle(HANDLE* new_u, DWORD typ_u)
 {
-  DWORD dum_u;
+  DWORD  dum_u;
   HANDLE han_u = GetStdHandle(typ_u);
-  BOOL con_u = GetConsoleMode(han_u, &dum_u);
+  BOOL   con_u = GetConsoleMode(han_u, &dum_u);
   if ( con_u ) {
     han_u = (HANDLE)_get_osfhandle(open(c3_dev_null, O_RDWR, 0));
   }
 
-  if ( !DuplicateHandle(GetCurrentProcess(), han_u, GetCurrentProcess(), new_u, 0, TRUE, DUPLICATE_SAME_ACCESS) ) {
+  if ( !DuplicateHandle(GetCurrentProcess(),
+                        han_u,
+                        GetCurrentProcess(),
+                        new_u,
+                        0,
+                        TRUE,
+                        DUPLICATE_SAME_ACCESS) )
+  {
     fprintf(stderr, "vere: DuplicateHandle(%d): %d\r\n", typ_u, GetLastError());
     exit(1);
   }
@@ -22,15 +29,17 @@ _dup_std_handle(HANDLE* new_u, DWORD typ_u)
 }
 
 /* _on_boot_completed_cb: invoked when the ship has finished booting.
-*/
-static void _on_boot_completed_cb() {
+ */
+static void
+_on_boot_completed_cb()
+{
   HANDLE hin_u = GetStdHandle(STD_INPUT_HANDLE);
   SetEvent(hin_u);
   CloseHandle(hin_u);
 }
 
 /* u3_daemon_init(): platform-specific daemon mode initialization.
-*/
+ */
 void
 u3_daemon_init()
 {
@@ -43,7 +52,7 @@ u3_daemon_init()
 
   STARTUPINFOW psi_u;
   ZeroMemory(&psi_u, sizeof(psi_u));
-  psi_u.cb = sizeof(psi_u);
+  psi_u.cb      = sizeof(psi_u);
   psi_u.dwFlags = STARTF_USESTDHANDLES;
 
   //  duplicate standard output and error handles for the child process,
@@ -60,11 +69,12 @@ u3_daemon_init()
   //  has booted, but -d is intended for background operation anyway
   //  and does not seem to warrant the added complexity.
   //
-  if ( _dup_std_handle(&psi_u.hStdOutput, STD_OUTPUT_HANDLE) |
-       _dup_std_handle(&psi_u.hStdError,  STD_ERROR_HANDLE) )
+  if ( _dup_std_handle(&psi_u.hStdOutput, STD_OUTPUT_HANDLE)
+       | _dup_std_handle(&psi_u.hStdError, STD_ERROR_HANDLE) )
   {
-    fprintf(stderr, "vere: -d used from a Windows console without redirection\r\n"
-                    "      no output from the daemon process will be visible\r\n");
+    fprintf(stderr,
+            "vere: -d used from a Windows console without redirection\r\n"
+            "      no output from the daemon process will be visible\r\n");
     fflush(stderr);
   }
 
@@ -72,7 +82,7 @@ u3_daemon_init()
   //  the parent that the ship has finished booting
   //  pass the handle as "stdin" (otherwise unused with -d)
   //
-  SECURITY_ATTRIBUTES sa_u = {sizeof (SECURITY_ATTRIBUTES), NULL, TRUE};
+  SECURITY_ATTRIBUTES sa_u = {sizeof(SECURITY_ATTRIBUTES), NULL, TRUE};
   if ( !(psi_u.hStdInput = CreateEvent(&sa_u, TRUE, FALSE, NULL)) ) {
     fprintf(stderr, "vere: CreateEvent: %d\r\n", GetLastError());
     exit(1);
@@ -82,7 +92,17 @@ u3_daemon_init()
   //  it will start, re-parse the command line, and call u3_daemon_init
   //
   PROCESS_INFORMATION ppi_u;
-  if ( !CreateProcessW(NULL, _wcsdup(GetCommandLineW()), NULL, NULL, TRUE, DETACHED_PROCESS, NULL, NULL, &psi_u, &ppi_u) ) {
+  if ( !CreateProcessW(NULL,
+                       _wcsdup(GetCommandLineW()),
+                       NULL,
+                       NULL,
+                       TRUE,
+                       DETACHED_PROCESS,
+                       NULL,
+                       NULL,
+                       &psi_u,
+                       &ppi_u) )
+  {
     fprintf(stderr, "vere: CreateProcess: %d\r\n", GetLastError());
     exit(1);
   }
@@ -91,26 +111,26 @@ u3_daemon_init()
 
   //  wait for the child process to exit or to signal the event
   //
-  DWORD exi_u;
+  DWORD  exi_u;
   HANDLE han_u[2] = {ppi_u.hProcess, psi_u.hStdInput};
   switch ( WaitForMultipleObjects(2, han_u, FALSE, INFINITE) ) {
-  case WAIT_OBJECT_0:
-    //  the child process exited prematurely, propagate its exit code
-    //
-    if ( GetExitCodeProcess(ppi_u.hProcess, &exi_u) ) {
-      exit(exi_u);
-    }
+    case WAIT_OBJECT_0:
+      //  the child process exited prematurely, propagate its exit code
+      //
+      if ( GetExitCodeProcess(ppi_u.hProcess, &exi_u) ) {
+        exit(exi_u);
+      }
 
-    fprintf(stderr, "vere: GetExitCodeProcess: %d\r\n", GetLastError());
-    exit(1);
+      fprintf(stderr, "vere: GetExitCodeProcess: %d\r\n", GetLastError());
+      exit(1);
 
-  case WAIT_OBJECT_0 + 1:
-    //  the child process has finished booting, exit normally
-    //
-    exit(0);
+    case WAIT_OBJECT_0 + 1:
+      //  the child process has finished booting, exit normally
+      //
+      exit(0);
 
-  default:
-    fprintf(stderr, "vere: WaitForMultipleObjects: %d\r\n", GetLastError());
-    exit(1);
+    default:
+      fprintf(stderr, "vere: WaitForMultipleObjects: %d\r\n", GetLastError());
+      exit(1);
   }
 }

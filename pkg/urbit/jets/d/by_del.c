@@ -4,17 +4,17 @@
 #include "all.h"
 
 /* functions
-*/
+ */
 static u3_noun
 _rebalance(u3_noun a)
 {
   u3_noun n_a, l_a, r_a;
   u3x_trel(a, &n_a, &l_a, &r_a);
 
-  if ( u3_nul == l_a) {
+  if ( u3_nul == l_a ) {
     return u3k(r_a);
   }
-  else if ( u3_nul == r_a) {
+  else if ( u3_nul == r_a ) {
     return u3k(l_a);
   }
   else {
@@ -24,25 +24,17 @@ _rebalance(u3_noun a)
     u3x_trel(r_a, &n_r_a, &l_r_a, &r_r_a);
 
     if ( c3y == u3qc_mor(u3h(n_l_a), u3h(n_r_a)) ) {
-      u3_noun new_right = u3nt(u3k(n_a),
-                               u3k(r_l_a),
-                               u3k(r_a));
+      u3_noun new_right = u3nt(u3k(n_a), u3k(r_l_a), u3k(r_a));
 
-      u3_noun ret = u3nt(u3k(n_l_a),
-                         u3k(l_l_a),
-                         _rebalance(new_right));
+      u3_noun ret = u3nt(u3k(n_l_a), u3k(l_l_a), _rebalance(new_right));
       u3z(new_right);
 
       return ret;
     }
     else {
-      u3_noun new_left = u3nt(u3k(n_a),
-                              u3k(l_a),
-                              u3k(l_r_a));
+      u3_noun new_left = u3nt(u3k(n_a), u3k(l_a), u3k(l_r_a));
 
-      u3_noun ret = u3nt(u3k(n_r_a),
-                         _rebalance(new_left),
-                         u3k(r_r_a));
+      u3_noun ret = u3nt(u3k(n_r_a), _rebalance(new_left), u3k(r_r_a));
       u3z(new_left);
 
       return ret;
@@ -51,8 +43,7 @@ _rebalance(u3_noun a)
 }
 
 u3_noun
-u3qdb_del(u3_noun a,
-          u3_noun b)
+u3qdb_del(u3_noun a, u3_noun b)
 {
   if ( u3_nul == a ) {
     return u3_nul;
@@ -71,14 +62,10 @@ u3qdb_del(u3_noun a,
       u3x_cell(lr_a, &l_a, &r_a);
 
       if ( c3y == u3qc_gor(b, pn_a) ) {
-        return u3nt(u3k(n_a),
-                    u3qdb_del(l_a, b),
-                    u3k(r_a));
+        return u3nt(u3k(n_a), u3qdb_del(l_a, b), u3k(r_a));
       }
       else {
-        return u3nt(u3k(n_a),
-                    u3k(l_a),
-                    u3qdb_del(r_a, b));
+        return u3nt(u3k(n_a), u3k(l_a), u3qdb_del(r_a, b));
       }
     }
   }

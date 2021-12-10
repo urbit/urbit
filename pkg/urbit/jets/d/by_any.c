@@ -14,9 +14,12 @@ _by_any(u3_noun a, u3j_site* sit_u)
     u3x_trel(a, &n_a, &l_a, &r_a);
 
     switch ( u3j_gate_slam(sit_u, u3k(u3t(n_a))) ) {
-      case c3y: return c3y;
-      case c3n: break;
-      default:  return u3m_bail(c3__exit);
+      case c3y:
+        return c3y;
+      case c3n:
+        break;
+      default:
+        return u3m_bail(c3__exit);
     }
 
     if ( c3y == _by_any(l_a, sit_u) ) {
@@ -30,7 +33,7 @@ _by_any(u3_noun a, u3j_site* sit_u)
 u3_noun
 u3qdb_any(u3_noun a, u3_noun b)
 {
-  u3_noun    pro;
+  u3_noun  pro;
   u3j_site sit_u;
 
   u3j_gate_prep(&sit_u, u3k(b));

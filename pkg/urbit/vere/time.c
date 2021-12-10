@@ -31,7 +31,7 @@ u3_time_sec_out(c3_d urs_d)
 }
 
 /* u3_time_fsc_in(): urbit fracto-seconds from unix microseconds.
-*/
+ */
 c3_d
 u3_time_fsc_in(c3_w usc_w)
 {
@@ -41,23 +41,23 @@ u3_time_fsc_in(c3_w usc_w)
 }
 
 /* u3_time_fsc_out: unix microseconds from urbit fracto-seconds.
-*/
+ */
 c3_w
 u3_time_fsc_out(c3_d ufc_d)
 {
-  return (c3_w) (((ufc_d >> 48ULL) * 1000000ULL) / 65536ULL);
+  return (c3_w)(((ufc_d >> 48ULL) * 1000000ULL) / 65536ULL);
 }
 
 /* u3_time_msc_out: unix microseconds from urbit fracto-seconds.
-*/
+ */
 c3_w
 u3_time_msc_out(c3_d ufc_d)
 {
-  return (c3_w) (((ufc_d >> 48ULL) * 1000ULL) / 65536ULL);
+  return (c3_w)(((ufc_d >> 48ULL) * 1000ULL) / 65536ULL);
 }
 
 /* u3_time_in_tv(): urbit time from struct timeval.
-*/
+ */
 u3_atom
 u3_time_in_tv(struct timeval* tim_tv)
 {
@@ -72,27 +72,27 @@ u3_time_in_tv(struct timeval* tim_tv)
 }
 
 /* u3_time_out_tv(): struct timeval from urbit time.
-*/
+ */
 void
 u3_time_out_tv(struct timeval* tim_tv, u3_noun now)
 {
   c3_d ufc_d = u3r_chub(0, now);
   c3_d urs_d = u3r_chub(1, now);
 
-  tim_tv->tv_sec = u3_time_sec_out(urs_d);
+  tim_tv->tv_sec  = u3_time_sec_out(urs_d);
   tim_tv->tv_usec = u3_time_fsc_out(ufc_d);
 
   u3z(now);
 }
 
 /* u3_time_in_ts(): urbit time from struct timespec.
-*/
+ */
 u3_atom
 u3_time_in_ts(struct timespec* tim_ts)
 {
   struct timeval tim_tv;
 
-  tim_tv.tv_sec = tim_ts->tv_sec;
+  tim_tv.tv_sec  = tim_ts->tv_sec;
   tim_tv.tv_usec = (tim_ts->tv_nsec / 1000);
 
   return u3_time_in_tv(&tim_tv);
@@ -100,13 +100,13 @@ u3_time_in_ts(struct timespec* tim_ts)
 
 #if defined(U3_OS_linux) || defined(U3_OS_mingw)
 /* u3_time_t_in_ts(): urbit time from time_t.
-*/
+ */
 u3_atom
 u3_time_t_in_ts(time_t tim)
 {
   struct timeval tim_tv;
 
-  tim_tv.tv_sec = tim;
+  tim_tv.tv_sec  = tim;
   tim_tv.tv_usec = 0;
 
   return u3_time_in_tv(&tim_tv);
@@ -114,7 +114,7 @@ u3_time_t_in_ts(time_t tim)
 #endif // defined(U3_OS_linux) || defined(U3_OS_mingw)
 
 /* u3_time_out_ts(): struct timespec from urbit time.
-*/
+ */
 void
 u3_time_out_ts(struct timespec* tim_ts, u3_noun now)
 {
@@ -122,17 +122,18 @@ u3_time_out_ts(struct timespec* tim_ts, u3_noun now)
 
   u3_time_out_tv(&tim_tv, now);
 
-  tim_ts->tv_sec = tim_tv.tv_sec;
+  tim_ts->tv_sec  = tim_tv.tv_sec;
   tim_ts->tv_nsec = (tim_tv.tv_usec * 1000);
 }
 
 /* u3_time_gap_ms(): (wen - now) in ms.
-*/
+ */
 c3_d
 u3_time_gap_ms(u3_noun now, u3_noun wen)
 {
   if ( c3n == u3ka_gth(u3k(wen), u3k(now)) ) {
-    u3z(wen); u3z(now);
+    u3z(wen);
+    u3z(now);
     return 0ULL;
   }
   else {
@@ -146,11 +147,11 @@ u3_time_gap_ms(u3_noun now, u3_noun wen)
 }
 
 /* u3_time_gap_double(): (wen - now) in libev resolution.
-*/
+ */
 double
 u3_time_gap_double(u3_noun now, u3_noun wen)
 {
-  mpz_t now_mp, wen_mp, dif_mp;
+  mpz_t  now_mp, wen_mp, dif_mp;
   double sec_g = (((double)(1ULL << 32ULL)) * ((double)(1ULL << 32ULL)));
   double gap_g, dif_g;
 
@@ -164,7 +165,9 @@ u3_time_gap_double(u3_noun now, u3_noun wen)
 
   dif_g = mpz_get_d(dif_mp) / sec_g;
   gap_g = (dif_g > 0.0) ? dif_g : 0.0;
-  mpz_clear(dif_mp); mpz_clear(wen_mp); mpz_clear(now_mp);
+  mpz_clear(dif_mp);
+  mpz_clear(wen_mp);
+  mpz_clear(now_mp);
 
   return gap_g;
 }

@@ -12,7 +12,7 @@ modification, are permitted provided that the following conditions are met:
       this list of conditions and the following disclaimer in the documentation
       and/or other materials provided with the distribution.
     * The name of the author may not be used to endorse or promote products
-	  derived from this software without specific prior written permission.
+    derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -30,13 +30,13 @@ POSSIBILITY OF SUCH DAMAGE.
 #define __GETGATEWAY_H__
 
 #ifdef WIN32
-#if !defined(_MSC_VER) || _MSC_VER >= 1600
-#include <stdint.h>
-#else
-typedef unsigned long uint32_t;
+#  if !defined(_MSC_VER) || _MSC_VER >= 1600
+#    include <stdint.h>
+#  else
+typedef unsigned long  uint32_t;
 typedef unsigned short uint16_t;
-#endif
-#define in_addr_t uint32_t
+#  endif
+#  define in_addr_t uint32_t
 #endif
 /* #include "declspec.h" */
 
@@ -44,6 +44,7 @@ typedef unsigned short uint16_t;
  * return value :
  *    0 : success
  *   -1 : failure    */
-/* LIBSPEC */int getdefaultgateway(in_addr_t * addr);
+/* LIBSPEC */ int
+getdefaultgateway(in_addr_t* addr);
 
 #endif

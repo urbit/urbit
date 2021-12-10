@@ -2,10 +2,11 @@
 **
 */
 #include "all.h"
+
 #include <murmur3.h>
 
 /* _frag_word(): fast fragment/branch prediction for top word.
-*/
+ */
 static u3_weak
 _frag_word(c3_w a_w, u3_noun b)
 {
@@ -30,7 +31,7 @@ _frag_word(c3_w a_w, u3_noun b)
 }
 
 /* _frag_deep(): fast fragment/branch for deep words.
-*/
+ */
 static u3_weak
 _frag_deep(c3_w a_w, u3_noun b)
 {
@@ -77,8 +78,8 @@ u3r_at(u3_atom a, u3_noun b)
       return u3_none;
     }
     else {
-      u3a_atom* a_u = u3a_to_ptr(a);
-      c3_w len_w      = a_u->len_w;
+      u3a_atom* a_u   = u3a_to_ptr(a);
+      c3_w      len_w = a_u->len_w;
 
       b = _frag_word(a_u->buf_w[len_w - 1], b);
       len_w -= 1;
@@ -95,7 +96,8 @@ u3r_at(u3_atom a, u3_noun b)
           u3t_off(far_o);
 
           return b;
-        } else {
+        }
+        else {
           len_w--;
         }
       }
@@ -111,55 +113,52 @@ u3r_at(u3_atom a, u3_noun b)
 **   Attempt to deconstruct `a` by axis, noun pairs; 0 terminates.
 **   Axes must be sorted in tree order.
 */
-  struct _mean_pair {
-    c3_w    axe_w;
-    u3_noun* som;
-  };
+struct _mean_pair {
+  c3_w     axe_w;
+  u3_noun* som;
+};
 
-  static c3_w
-  _mean_cut(c3_w               len_w,
-            struct _mean_pair* prs_m)
-  {
-    c3_w i_w, cut_t, cut_w;
+static c3_w
+_mean_cut(c3_w len_w, struct _mean_pair* prs_m)
+{
+  c3_w i_w, cut_t, cut_w;
 
-    cut_t = 0;
-    cut_w = 0;
-    for ( i_w = 0; i_w < len_w; i_w++ ) {
-      c3_w axe_w = prs_m[i_w].axe_w;
+  cut_t = 0;
+  cut_w = 0;
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w axe_w = prs_m[i_w].axe_w;
 
-      if ( (cut_t == 0) && (3 == u3x_cap(axe_w)) ) {
-        cut_t = 1;
-        cut_w = i_w;
-      }
-      prs_m[i_w].axe_w = u3x_mas(axe_w);
+    if ( (cut_t == 0) && (3 == u3x_cap(axe_w)) ) {
+      cut_t = 1;
+      cut_w = i_w;
     }
-    return cut_t ? cut_w : i_w;
+    prs_m[i_w].axe_w = u3x_mas(axe_w);
   }
+  return cut_t ? cut_w : i_w;
+}
 
-  static c3_o
-  _mean_extract(u3_noun            som,
-                c3_w               len_w,
-                struct _mean_pair* prs_m)
-  {
-    if ( len_w == 0 ) {
-      return c3y;
-    }
-    else if ( (len_w == 1) && (1 == prs_m[0].axe_w) ) {
-      *prs_m->som = som;
-      return c3y;
+static c3_o
+_mean_extract(u3_noun som, c3_w len_w, struct _mean_pair* prs_m)
+{
+  if ( len_w == 0 ) {
+    return c3y;
+  }
+  else if ( (len_w == 1) && (1 == prs_m[0].axe_w) ) {
+    *prs_m->som = som;
+    return c3y;
+  }
+  else {
+    if ( c3n == u3a_is_cell(som) ) {
+      return c3n;
     }
     else {
-      if ( c3n == u3a_is_cell(som) ) {
-        return c3n;
-      } else {
-        c3_w cut_w = _mean_cut(len_w, prs_m);
+      c3_w cut_w = _mean_cut(len_w, prs_m);
 
-        return c3a
-          (_mean_extract(u3a_h(som), cut_w, prs_m),
-           _mean_extract(u3a_t(som), (len_w - cut_w), (prs_m + cut_w)));
-      }
+      return c3a(_mean_extract(u3a_h(som), cut_w, prs_m),
+                 _mean_extract(u3a_t(som), (len_w - cut_w), (prs_m + cut_w)));
     }
   }
+}
 
 c3_o
 u3r_vmean(u3_noun som, va_list ap)
@@ -185,7 +184,7 @@ u3r_vmean(u3_noun som, va_list ap)
 
   va_end(aq);
 
-  c3_assert( 0 != len_w );
+  c3_assert(0 != len_w);
   prs_m = alloca(len_w * sizeof(struct _mean_pair));
 
   //  traverse va_list and extract args
@@ -195,7 +194,7 @@ u3r_vmean(u3_noun som, va_list ap)
 
     for ( i_w = 0; i_w < len_w; i_w++ ) {
       prs_m[i_w].axe_w = va_arg(ap, c3_w);
-      prs_m[i_w].som = va_arg(ap, u3_noun*);
+      prs_m[i_w].som   = va_arg(ap, u3_noun*);
     }
 
     va_end(ap);
@@ -240,13 +239,13 @@ u3r_mean(u3_noun som, ...)
 #define SING_TAIL 2
 
 typedef struct {
-  c3_y     sat_y;
-  u3_noun  a;
-  u3_noun  b;
+  c3_y    sat_y;
+  u3_noun a;
+  u3_noun b;
 } eqframe;
 
 /* _cr_sing_push(): push a new stack frame, initialized as SING_NONE.
-*/
+ */
 static inline eqframe*
 _cr_sing_push(u3a_pile* pil_u, u3_noun a, u3_noun b)
 {
@@ -258,7 +257,7 @@ _cr_sing_push(u3a_pile* pil_u, u3_noun a, u3_noun b)
 }
 
 /* _cr_sing_mug(): short-circuit comparison if mugs are present and not equal.
-*/
+ */
 static inline c3_o
 _cr_sing_mug(u3a_noun* a_u, u3a_noun* b_u)
 {
@@ -273,16 +272,14 @@ _cr_sing_mug(u3a_noun* a_u, u3a_noun* b_u)
 }
 
 /* _cr_sing_atom(): check if atom [a] is indirect and equal to noun [b]
-*/
+ */
 static inline c3_o
 _cr_sing_atom(u3_atom a, u3_noun b)
 {
   //  [a] is an atom, not pointer-equal to noun [b].
   //  if they're not both indirect atoms, they can't be equal.
   //
-  if (  (c3n == u3a_is_pug(a))
-     || (c3n == u3a_is_pug(b)) )
-  {
+  if ( (c3n == u3a_is_pug(a)) || (c3n == u3a_is_pug(b)) ) {
     return c3n;
   }
   else {
@@ -321,7 +318,7 @@ _cr_sing_atom(u3_atom a, u3_noun b)
 }
 
 /* _cr_sing_cape_test(): check for previous comparison of [a] and [b].
-*/
+ */
 static inline c3_o
 _cr_sing_cape_test(u3p(u3h_root) har_p, u3_noun a, u3_noun b)
 {
@@ -333,12 +330,13 @@ _cr_sing_cape_test(u3p(u3h_root) har_p, u3_noun a, u3_noun b)
   u3t_on(euq_o);
 
   u3z(key);
-  return ( u3_none != val ) ? c3y : c3n;
+  return (u3_none != val) ? c3y : c3n;
 }
 
 /* _cr_sing_cape_keep(): store [a] and [b] to short-circuit subsequent tests.
 **                   NB: [a] and [b] (which MUST be equal nouns)
-**                       are cons'd as offsets (direct atoms) to avoid refcount churn.
+**                       are cons'd as offsets (direct atoms) to avoid refcount
+*churn.
 */
 static inline void
 _cr_sing_cape_keep(u3p(u3h_root) har_p, u3_noun a, u3_noun b)
@@ -360,7 +358,7 @@ _cr_sing_cape_keep(u3p(u3h_root) har_p, u3_noun a, u3_noun b)
 static c3_o
 _cr_sing_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
 {
-  eqframe* fam_u = u3a_peek(pil_u);
+  eqframe*  fam_u = u3a_peek(pil_u);
   u3_noun   a, b, key;
   u3_weak   got;
   u3a_cell* a_u;
@@ -373,7 +371,6 @@ _cr_sing_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
     b = fam_u->b;
 
     switch ( fam_u->sat_y ) {
-
       //  [a] and [b] are arbitrary nouns
       //
       case SING_NONE: {
@@ -412,7 +409,7 @@ _cr_sing_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
           //
           else {
             fam_u->sat_y = SING_HEAD;
-            fam_u = _cr_sing_push(pil_u, a_u->hed, b_u->hed);
+            fam_u        = _cr_sing_push(pil_u, a_u->hed, b_u->hed);
             continue;
           }
         }
@@ -428,7 +425,7 @@ _cr_sing_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
         //  upgrade head-frame to tail-frame, check tails
         //
         fam_u->sat_y = SING_TAIL;
-        fam_u = _cr_sing_push(pil_u, a_u->tel, b_u->tel);
+        fam_u        = _cr_sing_push(pil_u, a_u->tel, b_u->tel);
         continue;
       }
 
@@ -450,22 +447,21 @@ _cr_sing_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
     _cr_sing_cape_keep(har_p, a, b);
 
     fam_u = u3a_pop(pil_u);
-  }
-  while ( c3n == u3a_pile_done(pil_u) );
+  } while ( c3n == u3a_pile_done(pil_u) );
 
   return c3y;
 }
 
 /* _cr_sing(): unifying equality.
-*/
+ */
 static c3_o
 _cr_sing(u3_noun a, u3_noun b)
 {
-  c3_s     ovr_s = 0;
-  u3a_cell*  a_u;
-  u3a_cell*  b_u;
-  eqframe* fam_u;
-  u3a_pile pil_u;
+  c3_s      ovr_s = 0;
+  u3a_cell* a_u;
+  u3a_cell* b_u;
+  eqframe*  fam_u;
+  u3a_pile  pil_u;
 
   //  initialize stack control, push arguments onto the stack (none-frame)
   //
@@ -479,7 +475,6 @@ _cr_sing(u3_noun a, u3_noun b)
     b = fam_u->b;
 
     switch ( fam_u->sat_y ) {
-
       //  [a] and [b] are arbitrary nouns
       //
       case SING_NONE: {
@@ -515,7 +510,7 @@ _cr_sing(u3_noun a, u3_noun b)
           //
           else {
             fam_u->sat_y = SING_HEAD;
-            fam_u = _cr_sing_push(&pil_u, a_u->hed, b_u->hed);
+            fam_u        = _cr_sing_push(&pil_u, a_u->hed, b_u->hed);
             continue;
           }
         }
@@ -531,7 +526,7 @@ _cr_sing(u3_noun a, u3_noun b)
         //  upgrade head-frame to tail-frame, check tails
         //
         fam_u->sat_y = SING_TAIL;
-        fam_u = _cr_sing_push(&pil_u, a_u->tel, b_u->tel);
+        fam_u        = _cr_sing_push(&pil_u, a_u->tel, b_u->tel);
         continue;
       }
 
@@ -554,7 +549,7 @@ _cr_sing(u3_noun a, u3_noun b)
     //
     if ( 0 == ++ovr_s ) {
       u3p(u3h_root) har_p = u3h_new();
-      c3_o ret_o = _cr_sing_cape(&pil_u, har_p);
+      c3_o          ret_o = _cr_sing_cape(&pil_u, har_p);
       u3h_free(har_p);
       u3R->cap_p = pil_u.top_p;
       return ret_o;
@@ -567,7 +562,7 @@ _cr_sing(u3_noun a, u3_noun b)
 }
 
 /* u3r_sing(): Yes iff [a] and [b] are the same noun.
-*/
+ */
 c3_o
 u3r_sing(u3_noun a, u3_noun b)
 {
@@ -579,8 +574,7 @@ u3r_sing(u3_noun a, u3_noun b)
 }
 
 c3_o
-u3r_fing(u3_noun a,
-           u3_noun b)
+u3r_fing(u3_noun a, u3_noun b)
 {
   return (a == b) ? c3y : c3n;
 }
@@ -590,22 +584,16 @@ u3r_fing(u3_noun a,
 **   Yes iff `[p q]` and `b` are the same noun.
 */
 c3_o
-u3r_sing_cell(u3_noun p,
-                u3_noun q,
-                u3_noun b)
+u3r_sing_cell(u3_noun p, u3_noun q, u3_noun b)
 {
   return c3a(_(u3a_is_cell(b)),
-                c3a(u3r_sing(p, u3a_h(b)),
-                       u3r_sing(q, u3a_t(b))));
+             c3a(u3r_sing(p, u3a_h(b)), u3r_sing(q, u3a_t(b))));
 }
 c3_o
-u3r_fing_cell(u3_noun p,
-                u3_noun q,
-                u3_noun b)
+u3r_fing_cell(u3_noun p, u3_noun q, u3_noun b)
 {
   return c3a(_(u3a_is_cell(b)),
-                c3a(u3r_fing(p, u3a_h(b)),
-                       u3r_fing(q, u3a_t(b))));
+             c3a(u3r_fing(p, u3a_h(b)), u3r_fing(q, u3a_t(b))));
 }
 
 /* u3r_sing_mixt():
@@ -613,22 +601,16 @@ u3r_fing_cell(u3_noun p,
 **   Yes iff `[p q]` and `b` are the same noun.
 */
 c3_o
-u3r_sing_mixt(const c3_c* p_c,
-                u3_noun     q,
-                u3_noun     b)
+u3r_sing_mixt(const c3_c* p_c, u3_noun q, u3_noun b)
 {
   return c3a(_(u3a_is_cell(b)),
-                c3a(u3r_sing_c(p_c, u3a_h(b)),
-                       u3r_sing(q, u3a_t(b))));
+             c3a(u3r_sing_c(p_c, u3a_h(b)), u3r_sing(q, u3a_t(b))));
 }
 c3_o
-u3r_fing_mixt(const c3_c* p_c,
-                u3_noun     q,
-                u3_noun     b)
+u3r_fing_mixt(const c3_c* p_c, u3_noun q, u3_noun b)
 {
   return c3a(_(u3a_is_cell(b)),
-                c3a(u3r_sing_c(p_c, u3a_h(b)),
-                       u3r_fing(q, u3a_t(b))));
+             c3a(u3r_sing_c(p_c, u3a_h(b)), u3r_fing(q, u3a_t(b))));
 }
 
 /* u3r_sing_trel():
@@ -636,24 +618,16 @@ u3r_fing_mixt(const c3_c* p_c,
 **   Yes iff `[p q r]` and `b` are the same noun.
 */
 c3_o
-u3r_sing_trel(u3_noun p,
-                u3_noun q,
-                u3_noun r,
-                u3_noun b)
+u3r_sing_trel(u3_noun p, u3_noun q, u3_noun r, u3_noun b)
 {
   return c3a(_(u3a_is_cell(b)),
-                c3a(u3r_sing(p, u3a_h(b)),
-                       u3r_sing_cell(q, r, u3a_t(b))));
+             c3a(u3r_sing(p, u3a_h(b)), u3r_sing_cell(q, r, u3a_t(b))));
 }
 c3_o
-u3r_fing_trel(u3_noun p,
-                u3_noun q,
-                u3_noun r,
-                u3_noun b)
+u3r_fing_trel(u3_noun p, u3_noun q, u3_noun r, u3_noun b)
 {
   return c3a(_(u3a_is_cell(b)),
-                c3a(u3r_fing(p, u3a_h(b)),
-                       u3r_fing_cell(q, r, u3a_t(b))));
+             c3a(u3r_fing(p, u3a_h(b)), u3r_fing_cell(q, r, u3a_t(b))));
 }
 
 /* u3r_sing_qual():
@@ -661,26 +635,16 @@ u3r_fing_trel(u3_noun p,
 **   Yes iff `[p q r]` and `b` are the same noun.
 */
 c3_o
-u3r_sing_qual(u3_noun p,
-                u3_noun q,
-                u3_noun r,
-                u3_noun s,
-                u3_noun b)
+u3r_sing_qual(u3_noun p, u3_noun q, u3_noun r, u3_noun s, u3_noun b)
 {
   return c3a(_(u3a_is_cell(b)),
-                c3a(u3r_sing(p, u3a_h(b)),
-                       u3r_sing_trel(q, r, s, u3a_t(b))));
+             c3a(u3r_sing(p, u3a_h(b)), u3r_sing_trel(q, r, s, u3a_t(b))));
 }
 c3_o
-u3r_fing_qual(u3_noun p,
-                u3_noun q,
-                u3_noun r,
-                u3_noun s,
-                u3_noun b)
+u3r_fing_qual(u3_noun p, u3_noun q, u3_noun r, u3_noun s, u3_noun b)
 {
   return c3a(_(u3a_is_cell(b)),
-                c3a(u3r_fing(p, u3a_h(b)),
-                       u3r_fing_trel(q, r, s, u3a_t(b))));
+             c3a(u3r_fing(p, u3a_h(b)), u3r_fing_trel(q, r, s, u3a_t(b))));
 }
 
 /* u3r_nord():
@@ -688,8 +652,7 @@ u3r_fing_qual(u3_noun p,
 **   Return 0, 1 or 2 if `a` is below, equal to, or above `b`.
 */
 u3_atom
-u3r_nord(u3_noun a,
-        u3_noun b)
+u3r_nord(u3_noun a, u3_noun b)
 {
   c3_assert(u3_none != a);
   c3_assert(u3_none != b);
@@ -701,12 +664,14 @@ u3r_nord(u3_noun a,
     if ( _(u3a_is_atom(a)) ) {
       if ( !_(u3a_is_atom(b)) ) {
         return 0;
-      } else {
+      }
+      else {
         if ( _(u3a_is_cat(a)) ) {
           if ( _(u3a_is_cat(b)) ) {
             return (a < b) ? 0 : 2;
           }
-          else return 0;
+          else
+            return 0;
         }
         else if ( _(u3a_is_cat(b)) ) {
           return 2;
@@ -736,15 +701,18 @@ u3r_nord(u3_noun a,
           }
         }
       }
-    } else {
+    }
+    else {
       if ( _(u3a_is_atom(b)) ) {
         return 2;
-      } else {
+      }
+      else {
         u3_atom c = u3r_nord(u3a_h(a), u3a_h(b));
 
         if ( 1 == c ) {
           return u3r_nord(u3a_t(a), u3a_t(b));
-        } else {
+        }
+        else {
           return c;
         }
       }
@@ -753,10 +721,9 @@ u3r_nord(u3_noun a,
 }
 
 /* u3r_sing_c(): cord/C-string value equivalence.
-*/
+ */
 c3_o
-u3r_sing_c(const c3_c* a_c,
-           u3_noun     b)
+u3r_sing_c(const c3_c* a_c, u3_noun b)
 {
   c3_assert(u3_none != b);
 
@@ -784,9 +751,7 @@ u3r_sing_c(const c3_c* a_c,
 **   Factor [a] as a bush [b.[p q] c].
 */
 c3_o
-u3r_bush(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c)
+u3r_bush(u3_noun a, u3_noun* b, u3_noun* c)
 {
   c3_assert(u3_none != a);
 
@@ -798,7 +763,8 @@ u3r_bush(u3_noun  a,
 
     if ( _(u3a_is_atom(*b)) ) {
       return c3n;
-    } else {
+    }
+    else {
       *c = u3a_t(a);
       return c3y;
     }
@@ -806,9 +772,9 @@ u3r_bush(u3_noun  a,
 }
 
 /* u3r_bite(): retrieve/default $bloq and $step from $bite.
-*/
+ */
 c3_o
-u3r_bite(u3_noun bite, u3_atom* bloq, u3_atom *step)
+u3r_bite(u3_noun bite, u3_atom* bloq, u3_atom* step)
 {
   u3_noun hed, tal;
 
@@ -817,9 +783,7 @@ u3r_bite(u3_noun bite, u3_atom* bloq, u3_atom *step)
     *step = 1;
     return c3y;
   }
-  else if (  (c3n == u3a_is_atom(hed))
-          || (c3n == u3a_is_atom(tal)) )
-  {
+  else if ( (c3n == u3a_is_atom(hed)) || (c3n == u3a_is_atom(tal)) ) {
     return c3n;
   }
   else {
@@ -834,9 +798,7 @@ u3r_bite(u3_noun bite, u3_atom* bloq, u3_atom *step)
 **   Factor (a) as a cell (b c).
 */
 c3_o
-u3r_cell(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c)
+u3r_cell(u3_noun a, u3_noun* b, u3_noun* c)
 {
   c3_assert(u3_none != a);
 
@@ -844,8 +806,10 @@ u3r_cell(u3_noun  a,
     return c3n;
   }
   else {
-    if ( b ) *b = u3a_h(a);
-    if ( c ) *c = u3a_t(a);
+    if ( b )
+      *b = u3a_h(a);
+    if ( c )
+      *c = u3a_t(a);
     return c3y;
   }
 }
@@ -855,19 +819,16 @@ u3r_cell(u3_noun  a,
 **   & [0] if [a] is of the form [b *c].
 */
 c3_o
-u3r_p(u3_noun  a,
-        u3_noun  b,
-        u3_noun* c)
+u3r_p(u3_noun a, u3_noun b, u3_noun* c)
 {
   u3_noun feg, nux;
 
-  if ( (c3y == u3r_cell(a, &feg, &nux)) &&
-       (c3y == u3r_sing(feg, b)) )
-  {
+  if ( (c3y == u3r_cell(a, &feg, &nux)) && (c3y == u3r_sing(feg, b)) ) {
     *c = nux;
     return c3y;
   }
-  else return c3n;
+  else
+    return c3n;
 }
 
 /* u3r_pq():
@@ -875,19 +836,15 @@ u3r_p(u3_noun  a,
 **   & [0] if [a] is of the form [b *c d].
 */
 c3_o
-u3r_pq(u3_noun  a,
-         u3_noun  b,
-         u3_noun* c,
-         u3_noun* d)
+u3r_pq(u3_noun a, u3_noun b, u3_noun* c, u3_noun* d)
 {
   u3_noun nux;
 
-  if ( (c3y == u3r_p(a, b, &nux)) &&
-       (c3y == u3r_cell(nux, c, d)) )
-  {
+  if ( (c3y == u3r_p(a, b, &nux)) && (c3y == u3r_cell(nux, c, d)) ) {
     return c3y;
   }
-  else return c3n;
+  else
+    return c3n;
 }
 
 /* u3r_pqr():
@@ -895,20 +852,15 @@ u3r_pq(u3_noun  a,
 **   & [0] if [a] is of the form [b *c *d *e].
 */
 c3_o
-u3r_pqr(u3_noun  a,
-          u3_noun  b,
-          u3_noun* c,
-          u3_noun* d,
-          u3_noun* e)
+u3r_pqr(u3_noun a, u3_noun b, u3_noun* c, u3_noun* d, u3_noun* e)
 {
   u3_noun nux;
 
-  if ( (c3y == u3r_p(a, b, &nux)) &&
-       (c3y == u3r_trel(nux, c, d, e)) )
-  {
+  if ( (c3y == u3r_p(a, b, &nux)) && (c3y == u3r_trel(nux, c, d, e)) ) {
     return c3y;
   }
-  else return c3n;
+  else
+    return c3n;
 }
 
 /* u3r_pqrs():
@@ -916,21 +868,15 @@ u3r_pqr(u3_noun  a,
 **   & [0] if [a] is of the form [b *c *d *e *f].
 */
 c3_o
-u3r_pqrs(u3_noun  a,
-           u3_noun  b,
-           u3_noun* c,
-           u3_noun* d,
-           u3_noun* e,
-           u3_noun* f)
+u3r_pqrs(u3_noun a, u3_noun b, u3_noun* c, u3_noun* d, u3_noun* e, u3_noun* f)
 {
   u3_noun nux;
 
-  if ( (c3y == u3r_p(a, b, &nux)) &&
-       (c3y == u3r_qual(nux, c, d, e, f)) )
-  {
+  if ( (c3y == u3r_p(a, b, &nux)) && (c3y == u3r_qual(nux, c, d, e, f)) ) {
     return c3y;
   }
-  else return c3n;
+  else
+    return c3n;
 }
 
 /* u3r_trel():
@@ -938,15 +884,11 @@ u3r_pqrs(u3_noun  a,
 **   Factor (a) as a trel (b c d).
 */
 c3_o
-u3r_trel(u3_noun a,
-           u3_noun *b,
-           u3_noun *c,
-           u3_noun *d)
+u3r_trel(u3_noun a, u3_noun* b, u3_noun* c, u3_noun* d)
 {
   u3_noun guf;
 
-  if ( (c3y == u3r_cell(a, b, &guf)) &&
-       (c3y == u3r_cell(guf, c, d)) ) {
+  if ( (c3y == u3r_cell(a, b, &guf)) && (c3y == u3r_cell(guf, c, d)) ) {
     return c3y;
   }
   else {
@@ -959,19 +901,15 @@ u3r_trel(u3_noun a,
 **   Factor (a) as a qual (b c d e).
 */
 c3_o
-u3r_qual(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c,
-           u3_noun* d,
-           u3_noun* e)
+u3r_qual(u3_noun a, u3_noun* b, u3_noun* c, u3_noun* d, u3_noun* e)
 {
   u3_noun guf;
 
-  if ( (c3y == u3r_cell(a, b, &guf)) &&
-       (c3y == u3r_trel(guf, c, d, e)) ) {
+  if ( (c3y == u3r_cell(a, b, &guf)) && (c3y == u3r_trel(guf, c, d, e)) ) {
     return c3y;
   }
-  else return c3n;
+  else
+    return c3n;
 }
 
 /* u3r_quil():
@@ -979,20 +917,15 @@ u3r_qual(u3_noun  a,
 **   Factor (a) as a quil (b c d e f).
 */
 c3_o
-u3r_quil(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c,
-           u3_noun* d,
-           u3_noun* e,
-           u3_noun* f)
+u3r_quil(u3_noun a, u3_noun* b, u3_noun* c, u3_noun* d, u3_noun* e, u3_noun* f)
 {
   u3_noun guf;
 
-  if ( (c3y == u3r_cell(a, b, &guf)) &&
-       (c3y == u3r_qual(guf, c, d, e, f)) ) {
+  if ( (c3y == u3r_cell(a, b, &guf)) && (c3y == u3r_qual(guf, c, d, e, f)) ) {
     return c3y;
   }
-  else return c3n;
+  else
+    return c3n;
 }
 
 /* u3r_hext():
@@ -1001,20 +934,21 @@ u3r_quil(u3_noun  a,
 */
 c3_o
 u3r_hext(u3_noun  a,
-           u3_noun* b,
-           u3_noun* c,
-           u3_noun* d,
-           u3_noun* e,
-           u3_noun* f,
-           u3_noun* g)
+         u3_noun* b,
+         u3_noun* c,
+         u3_noun* d,
+         u3_noun* e,
+         u3_noun* f,
+         u3_noun* g)
 {
   u3_noun guf;
 
-  if ( (c3y == u3r_cell(a, b, &guf)) &&
-       (c3y == u3r_quil(guf, c, d, e, f, g)) ) {
+  if ( (c3y == u3r_cell(a, b, &guf)) && (c3y == u3r_quil(guf, c, d, e, f, g)) )
+  {
     return c3y;
   }
-  else return c3n;
+  else
+    return c3n;
 }
 
 /* u3r_met():
@@ -1025,8 +959,7 @@ u3r_hext(u3_noun  a,
 **   For example, (a_y == 3) returns the size in bytes.
 */
 c3_w
-u3r_met(c3_y    a_y,
-          u3_atom b)
+u3r_met(c3_y a_y, u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1067,12 +1000,14 @@ u3r_met(c3_y    a_y,
         return (bif_w + ((1 << a_y) - 1)) >> a_y;
       }
       case 3: {
-        return  (gal_w << 2)
-              + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
+        return (gal_w << 2)
+               + ((daz_w >> 24)   ? 4
+                  : (daz_w >> 16) ? 3
+                  : (daz_w >> 8)  ? 2
+                                  : 1);
       }
       case 4: {
-        return  (gal_w << 1)
-              + ((daz_w >> 16) ? 2 : 1);
+        return (gal_w << 1) + ((daz_w >> 16) ? 2 : 1);
       }
       default: {
         c3_y gow_y = (a_y - 5);
@@ -1088,8 +1023,7 @@ u3r_met(c3_y    a_y,
 **   Return bit (a_w) of (b).
 */
 c3_b
-u3r_bit(c3_w    a_w,
-          u3_atom b)
+u3r_bit(c3_w a_w, u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1098,12 +1032,13 @@ u3r_bit(c3_w    a_w,
     if ( a_w >= 31 ) {
       return 0;
     }
-    else return (1 & (b >> a_w));
+    else
+      return (1 & (b >> a_w));
   }
   else {
     u3a_atom* b_u   = u3a_to_ptr(b);
-    c3_y        vut_y = (a_w & 31);
-    c3_w        pix_w = (a_w >> 5);
+    c3_y      vut_y = (a_w & 31);
+    c3_w      pix_w = (a_w >> 5);
 
     if ( pix_w >= b_u->len_w ) {
       return 0;
@@ -1121,8 +1056,7 @@ u3r_bit(c3_w    a_w,
 **   Return byte (a_w) of (b).
 */
 c3_y
-u3r_byte(c3_w    a_w,
-           u3_atom b)
+u3r_byte(c3_w a_w, u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1131,7 +1065,8 @@ u3r_byte(c3_w    a_w,
     if ( a_w > 3 ) {
       return 0;
     }
-    else return (255 & (b >> (a_w << 3)));
+    else
+      return (255 & (b >> (a_w << 3)));
   }
   else {
     u3a_atom* b_u   = u3a_to_ptr(b);
@@ -1154,10 +1089,7 @@ u3r_byte(c3_w    a_w,
 **  Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).
 */
 void
-u3r_bytes(c3_w    a_w,
-            c3_w    b_w,
-            c3_y*   c_y,
-            u3_atom d)
+u3r_bytes(c3_w a_w, c3_w b_w, c3_y* c_y, u3_atom d)
 {
   c3_assert(u3_none != d);
   c3_assert(_(u3a_is_atom(d)));
@@ -1171,9 +1103,9 @@ u3r_bytes(c3_w    a_w,
     }
   }
   else {
-    u3a_atom* d_u   = u3a_to_ptr(d);
-    c3_w n_w = d_u->len_w << 2;
-    c3_y* x_y = (c3_y*)d_u->buf_w + a_w;
+    u3a_atom* d_u = u3a_to_ptr(d);
+    c3_w      n_w = d_u->len_w << 2;
+    c3_y*     x_y = (c3_y*)d_u->buf_w + a_w;
 
     if ( a_w >= n_w ) {
       memset(c_y, 0, b_w);
@@ -1193,7 +1125,7 @@ u3r_bytes(c3_w    a_w,
 **  Copy (len_w) bytes of (a) into (buf_y) if it fits, returning overage
 */
 c3_w
-u3r_bytes_fit(c3_w len_w, c3_y *buf_y, u3_atom a)
+u3r_bytes_fit(c3_w len_w, c3_y* buf_y, u3_atom a)
 {
   c3_w met_w = u3r_met(3, a);
   if ( met_w <= len_w ) {
@@ -1210,9 +1142,7 @@ u3r_bytes_fit(c3_w len_w, c3_y *buf_y, u3_atom a)
 **  Copy (len_w) bytes starting at (a_w) from (b) into a fresh allocation.
 */
 c3_y*
-u3r_bytes_alloc(c3_w    a_w,
-                c3_w    len_w,
-                u3_atom b)
+u3r_bytes_alloc(c3_w a_w, c3_w len_w, u3_atom b)
 {
   c3_y* b_y = u3a_malloc(len_w);
   u3r_bytes(a_w, a_w + len_w, b_y, b);
@@ -1236,8 +1166,7 @@ u3r_bytes_all(c3_w* len_w, u3_atom a)
 **   Copy (b) into (a_mp).
 */
 void
-u3r_mp(mpz_t   a_mp,
-       u3_atom b)
+u3r_mp(mpz_t a_mp, u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1246,9 +1175,9 @@ u3r_mp(mpz_t   a_mp,
     mpz_init_set_ui(a_mp, b);
   }
   else {
-    u3a_atom* b_u = u3a_to_ptr(b);
-    c3_w    len_w = b_u->len_w;
-    c3_d    bit_d = (c3_d)len_w << 5;
+    u3a_atom* b_u   = u3a_to_ptr(b);
+    c3_w      len_w = b_u->len_w;
+    c3_d      bit_d = (c3_d)len_w << 5;
 
     //  avoid reallocation on import, if possible
     //
@@ -1262,22 +1191,24 @@ u3r_mp(mpz_t   a_mp,
 **   Return short (a_w) of (b).
 */
 c3_s
-u3r_short(c3_w  a_w,
-          u3_atom b)
+u3r_short(c3_w a_w, u3_atom b)
 {
-  c3_assert( u3_none != b );
-  c3_assert( c3y == u3a_is_atom(b) );
+  c3_assert(u3_none != b);
+  c3_assert(c3y == u3a_is_atom(b));
 
   if ( c3y == u3a_is_cat(b) ) {
     switch ( a_w ) {
-      case 0:  return b & 0xffff;
-      case 1:  return b >> 16;
-      default: return 0;
+      case 0:
+        return b & 0xffff;
+      case 1:
+        return b >> 16;
+      default:
+        return 0;
     }
   }
   else {
-    u3a_atom* b_u = u3a_to_ptr(b);
-    c3_w    nix_w = a_w >> 1;
+    u3a_atom* b_u   = u3a_to_ptr(b);
+    c3_w      nix_w = a_w >> 1;
 
     if ( nix_w >= b_u->len_w ) {
       return 0;
@@ -1285,7 +1216,7 @@ u3r_short(c3_w  a_w,
     else {
       c3_w wor_w = b_u->buf_w[nix_w];
 
-      return ( a_w & 1 ) ? (wor_w >> 16) : (wor_w & 0xffff);
+      return (a_w & 1) ? (wor_w >> 16) : (wor_w & 0xffff);
     }
   }
 }
@@ -1295,8 +1226,7 @@ u3r_short(c3_w  a_w,
 **   Return word (a_w) of (b).
 */
 c3_w
-u3r_word(c3_w    a_w,
-           u3_atom b)
+u3r_word(c3_w a_w, u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1305,7 +1235,8 @@ u3r_word(c3_w    a_w,
     if ( a_w > 0 ) {
       return 0;
     }
-    else return b;
+    else
+      return b;
   }
   else {
     u3a_atom* b_u = u3a_to_ptr(b);
@@ -1313,7 +1244,8 @@ u3r_word(c3_w    a_w,
     if ( a_w >= b_u->len_w ) {
       return 0;
     }
-    else return b_u->buf_w[a_w];
+    else
+      return b_u->buf_w[a_w];
   }
 }
 
@@ -1322,7 +1254,7 @@ u3r_word(c3_w    a_w,
 **   Fill (out_w) with (a) if it fits, returning success.
 */
 c3_t
-u3r_word_fit(c3_w *out_w, u3_atom a)
+u3r_word_fit(c3_w* out_w, u3_atom a)
 {
   if ( u3r_met(5, a) > 1 ) {
     return 0;
@@ -1338,8 +1270,7 @@ u3r_word_fit(c3_w *out_w, u3_atom a)
 **   Return double-word (a_w) of (b).
 */
 c3_d
-u3r_chub(c3_w  a_w,
-           u3_atom b)
+u3r_chub(c3_w a_w, u3_atom b)
 {
   c3_w wlo_w = u3r_word(a_w * 2, b);
   c3_w whi_w = u3r_word(1 + (a_w * 2), b);
@@ -1352,10 +1283,7 @@ u3r_chub(c3_w  a_w,
 **  Copy words (a_w) through (a_w + b_w - 1) from (d) to (c).
 */
 void
-u3r_words(c3_w    a_w,
-          c3_w    b_w,
-          c3_w*   c_w,
-          u3_atom d)
+u3r_words(c3_w a_w, c3_w b_w, c3_w* c_w, u3_atom d)
 {
   c3_assert(u3_none != d);
   c3_assert(_(u3a_is_atom(d)));
@@ -1378,7 +1306,7 @@ u3r_words(c3_w    a_w,
       memset((c3_y*)c_w, 0, b_w << 2);
     }
     else {
-      c3_w z_w = c3_min(b_w, d_u->len_w - a_w);
+      c3_w  z_w = c3_min(b_w, d_u->len_w - a_w);
       c3_w* x_w = d_u->buf_w + a_w;
       memcpy((c3_y*)c_w, (c3_y*)x_w, z_w << 2);
       if ( b_w > d_u->len_w - a_w ) {
@@ -1393,24 +1321,19 @@ u3r_words(c3_w    a_w,
 **  Copy double-words (a_w) through (a_w + b_w - 1) from (d) to (c).
 */
 void
-u3r_chubs(c3_w    a_w,
-          c3_w    b_w,
-          c3_d*   c_d,
-          u3_atom d)
+u3r_chubs(c3_w a_w, c3_w b_w, c3_d* c_d, u3_atom d)
 {
   /* XX: assumes little-endian
-  */
-  u3r_words(a_w * 2, b_w * 2, (c3_w *)c_d, d);
+   */
+  u3r_words(a_w * 2, b_w * 2, (c3_w*)c_d, d);
 }
 
 /* u3r_safe_byte(): validate and retrieve byte.
-*/
+ */
 c3_o
 u3r_safe_byte(u3_noun dat, c3_y* out_y)
 {
-  if (  (c3n == u3a_is_atom(dat))
-     || (1 < u3r_met(3, dat)) )
-  {
+  if ( (c3n == u3a_is_atom(dat)) || (1 < u3r_met(3, dat)) ) {
     return c3n;
   }
 
@@ -1419,13 +1342,11 @@ u3r_safe_byte(u3_noun dat, c3_y* out_y)
 }
 
 /* u3r_safe_word(): validate and retrieve word.
-*/
+ */
 c3_o
 u3r_safe_word(u3_noun dat, c3_w* out_w)
 {
-  if (  (c3n == u3a_is_atom(dat))
-     || (1 < u3r_met(5, dat)) )
-  {
+  if ( (c3n == u3a_is_atom(dat)) || (1 < u3r_met(5, dat)) ) {
     return c3n;
   }
 
@@ -1434,13 +1355,11 @@ u3r_safe_word(u3_noun dat, c3_w* out_w)
 }
 
 /* u3r_safe_chub(): validate and retrieve chub.
-*/
+ */
 c3_o
 u3r_safe_chub(u3_noun dat, c3_d* out_d)
 {
-  if (  (c3n == u3a_is_atom(dat))
-     || (1 < u3r_met(6, dat)) )
-  {
+  if ( (c3n == u3a_is_atom(dat)) || (1 < u3r_met(6, dat)) ) {
     return c3n;
   }
 
@@ -1456,11 +1375,11 @@ u3r_safe_chub(u3_noun dat, c3_d* out_d)
 */
 void
 u3r_chop(c3_g    met_g,
-           c3_w    fum_w,
-           c3_w    wid_w,
-           c3_w    tou_w,
-           c3_w*   dst_w,
-           u3_atom src)
+         c3_w    fum_w,
+         c3_w    wid_w,
+         c3_w    tou_w,
+         c3_w*   dst_w,
+         u3_atom src)
 {
   c3_w  i_w;
   c3_w  len_w;
@@ -1514,17 +1433,14 @@ u3r_chop(c3_g    met_g,
       c3_w wut_w = (tou_w + i_w) << hut_g;
 
       for ( j_w = 0; j_w < san_w; j_w++ ) {
-        dst_w[wut_w + j_w] ^=
-            ((wuf_w + j_w) >= len_w)
-              ? 0
-              : buf_w[wuf_w + j_w];
+        dst_w[wut_w + j_w] ^= ((wuf_w + j_w) >= len_w) ? 0 : buf_w[wuf_w + j_w];
       }
     }
   }
 }
 
 /* u3r_string(): `a` as malloced C string.
-*/
+ */
 c3_c*
 u3r_string(u3_atom a)
 {
@@ -1537,19 +1453,19 @@ u3r_string(u3_atom a)
 }
 
 /* u3r_tape(): `a`, a list of bytes, as malloced C string.
-*/
+ */
 c3_y*
 u3r_tape(u3_noun a)
 {
   u3_noun b;
   c3_w    i_w;
-  c3_y    *a_y;
+  c3_y*   a_y;
 
-  for ( i_w = 0, b=a; c3y == u3a_is_cell(b); i_w++, b=u3a_t(b) )
+  for ( i_w = 0, b = a; c3y == u3a_is_cell(b); i_w++, b = u3a_t(b) )
     ;
   a_y = c3_malloc(i_w + 1);
 
-  for ( i_w = 0, b=a; c3y == u3a_is_cell(b); i_w++, b=u3a_t(b) ) {
+  for ( i_w = 0, b = a; c3y == u3a_is_cell(b); i_w++, b = u3a_t(b) ) {
     a_y[i_w] = u3a_h(b);
   }
   a_y[i_w] = 0;
@@ -1558,21 +1474,21 @@ u3r_tape(u3_noun a)
 }
 
 /* u3r_mug_both(): Join two mugs.
-*/
+ */
 c3_l
 u3r_mug_both(c3_l lef_l, c3_l rit_l)
 {
   c3_y len_y = 4 + ((c3_bits_word(rit_l) + 0x7) >> 3);
   c3_w syd_w = 0xdeadbeef;
-  c3_w   i_w = 0;
+  c3_w i_w   = 0;
   c3_y buf_y[8];
 
-  buf_y[0] = lef_l         & 0xff;
-  buf_y[1] = (lef_l >>  8) & 0xff;
+  buf_y[0] = lef_l & 0xff;
+  buf_y[1] = (lef_l >> 8) & 0xff;
   buf_y[2] = (lef_l >> 16) & 0xff;
   buf_y[3] = (lef_l >> 24) & 0xff;
-  buf_y[4] = rit_l         & 0xff;
-  buf_y[5] = (rit_l >>  8) & 0xff;
+  buf_y[4] = rit_l & 0xff;
+  buf_y[5] = (rit_l >> 8) & 0xff;
   buf_y[6] = (rit_l >> 16) & 0xff;
   buf_y[7] = (rit_l >> 24) & 0xff;
 
@@ -1584,7 +1500,8 @@ u3r_mug_both(c3_l lef_l, c3_l rit_l)
     ham_l = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
 
     if ( 0 == ham_l ) {
-      syd_w++; i_w++;
+      syd_w++;
+      i_w++;
     }
     else {
       return ham_l;
@@ -1595,13 +1512,12 @@ u3r_mug_both(c3_l lef_l, c3_l rit_l)
 }
 
 /* u3r_mug_bytes(): Compute the mug of `buf`, `len`, LSW first.
-*/
+ */
 c3_l
-u3r_mug_bytes(const c3_y *buf_y,
-              c3_w        len_w)
+u3r_mug_bytes(const c3_y* buf_y, c3_w len_w)
 {
   c3_w syd_w = 0xcafebabe;
-  c3_w   i_w = 0;
+  c3_w i_w   = 0;
 
   while ( i_w < 8 ) {
     c3_w haz_w;
@@ -1611,7 +1527,8 @@ u3r_mug_bytes(const c3_y *buf_y,
     ham_l = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
 
     if ( 0 == ham_l ) {
-      syd_w++; i_w++;
+      syd_w++;
+      i_w++;
     }
     else {
       return ham_l;
@@ -1622,7 +1539,7 @@ u3r_mug_bytes(const c3_y *buf_y,
 }
 
 /* u3r_mug_c(): Compute the mug of `a`, LSB first.
-*/
+ */
 c3_l
 u3r_mug_c(const c3_c* a_c)
 {
@@ -1630,10 +1547,9 @@ u3r_mug_c(const c3_c* a_c)
 }
 
 /* u3r_mug_cell(): Compute the mug of the cell `[hed tel]`.
-*/
+ */
 c3_l
-u3r_mug_cell(u3_noun hed,
-             u3_noun tel)
+u3r_mug_cell(u3_noun hed, u3_noun tel)
 {
   c3_w lus_w = u3r_mug(hed);
   c3_w biq_w = u3r_mug(tel);
@@ -1642,7 +1558,7 @@ u3r_mug_cell(u3_noun hed,
 }
 
 /* u3r_mug_chub(): Compute the mug of `num`, LSW first.
-*/
+ */
 c3_l
 u3r_mug_chub(c3_d num_d)
 {
@@ -1655,7 +1571,7 @@ u3r_mug_chub(c3_d num_d)
 }
 
 /* u3r_mug_words(): 31-bit nonzero MurmurHash3 on raw words.
-*/
+ */
 c3_l
 u3r_mug_words(const c3_w* key_w, c3_w len_w)
 {
@@ -1677,8 +1593,10 @@ u3r_mug_words(const c3_w* key_w, c3_w len_w)
     c3_w daz_w = key_w[gal_w];
 
     byt_w = (gal_w << 2)
-            + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
-
+            + ((daz_w >> 24)   ? 4
+               : (daz_w >> 16) ? 3
+               : (daz_w >> 8)  ? 2
+                               : 1);
   }
 
   //  XX: assumes little-endian
@@ -1690,12 +1608,12 @@ u3r_mug_words(const c3_w* key_w, c3_w len_w)
 **          !mug == head-frame
 */
 typedef struct {
-  c3_l  mug_l;
+  c3_l    mug_l;
   u3_cell cel;
 } _cr_mugf;
 
 /* _cr_mug_next(): advance mug calculation, pushing cells onto the stack.
-*/
+ */
 static inline c3_l
 _cr_mug_next(u3a_pile* pil_u, u3_noun veb)
 {
@@ -1722,7 +1640,7 @@ _cr_mug_next(u3a_pile* pil_u, u3_noun veb)
       else if ( c3y == u3a_is_atom(veb) ) {
         u3a_atom* vat_u = (u3a_atom*)veb_u;
         c3_l      mug_l = u3r_mug_words(vat_u->buf_w, vat_u->len_w);
-        vat_u->mug_w = mug_l;
+        vat_u->mug_w    = mug_l;
         return mug_l;
       }
       //  veb is a cell, push a stack frame to mark head-recursion
@@ -1747,7 +1665,7 @@ _cr_mug_next(u3a_pile* pil_u, u3_noun veb)
 }
 
 /* u3r_mug(): statefully mug a noun with 31-bit murmur3.
-*/
+ */
 c3_l
 u3r_mug(u3_noun veb)
 {
@@ -1757,7 +1675,7 @@ u3r_mug(u3_noun veb)
 
   //  sanity check
   //
-  c3_assert( u3_none != veb );
+  c3_assert(u3_none != veb);
 
   u3a_pile_prep(&pil_u, sizeof(*fam_u));
 
@@ -1789,8 +1707,7 @@ u3r_mug(u3_noun veb)
         cel_u->mug_w = mug_l;
         fam_u        = u3a_pop(&pil_u);
       }
-    }
-    while ( c3n == u3a_pile_done(&pil_u) );
+    } while ( c3n == u3a_pile_done(&pil_u) );
   }
 
   return mug_l;

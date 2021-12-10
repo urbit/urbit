@@ -3,12 +3,12 @@
 ** the main loop of the daemon process
 */
 #include "all.h"
-#include "vere/vere.h"
+#include "ivory.h"
 #include "ur/ur.h"
+#include "vere/vere.h"
+
 #include <curl/curl.h>
 #include <uv.h>
-
-#include "ivory.h"
 
 //  stash config flags for worker
 //
@@ -74,15 +74,21 @@ static c3_w sag_w;
 --
 */
 
-void _king_doom(u3_noun doom);
-  void _king_boot(u3_noun boot);
-    void _king_come(u3_noun star, u3_noun pill, u3_noun path);
-    void _king_dawn(u3_noun seed, u3_noun pill, u3_noun path);
-    void _king_fake(u3_noun ship, u3_noun pill, u3_noun path);
-  void _king_pier(u3_noun pier);
+void
+_king_doom(u3_noun doom);
+void
+_king_boot(u3_noun boot);
+void
+_king_come(u3_noun star, u3_noun pill, u3_noun path);
+void
+_king_dawn(u3_noun seed, u3_noun pill, u3_noun path);
+void
+_king_fake(u3_noun ship, u3_noun pill, u3_noun path);
+void
+_king_pier(u3_noun pier);
 
 /* _king_defy_fate(): invalid fate
-*/
+ */
 void
 _king_defy_fate()
 {
@@ -90,7 +96,7 @@ _king_defy_fate()
 }
 
 /* _king_doom(): doom parser
-*/
+ */
 void
 _king_doom(u3_noun doom)
 {
@@ -117,7 +123,7 @@ _king_doom(u3_noun doom)
 }
 
 /* _king_boot(): boot parser
-*/
+ */
 void
 _king_boot(u3_noun bul)
 {
@@ -150,7 +156,7 @@ _king_boot(u3_noun bul)
 }
 
 /* _king_fake(): boot with fake keys
-*/
+ */
 void
 _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
 {
@@ -178,7 +184,7 @@ _king_slog(u3_noun hod)
 }
 
 /* _king_dawn(): boot from keys, validating
-*/
+ */
 void
 _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 {
@@ -186,13 +192,11 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
   //
   u3C.slog_f = _king_slog;
 
-  u3_noun ship = ( c3y == u3a_is_cell(u3h(feed)) )
-                 ? u3h(u3t(feed))
-                 : u3h(feed);
+  u3_noun ship = (c3y == u3a_is_cell(u3h(feed))) ? u3h(u3t(feed)) : u3h(feed);
   u3_noun vent = u3_dawn_vent(u3k(ship), u3k(feed));
   //  XX link properly
   //
-  u3K.pir_u    = u3_pier_boot(sag_w, u3k(ship), vent, pill, path, feed);
+  u3K.pir_u = u3_pier_boot(sag_w, u3k(ship), vent, pill, path, feed);
 
   // disable ivory slog printfs
   //
@@ -200,12 +204,11 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 }
 
 /* _king_pier(): pier parser
-*/
+ */
 void
 _king_pier(u3_noun pier)
 {
-  if ( (c3n == u3du(pier)) ||
-       (c3n == u3ud(u3t(pier))) ) {
+  if ( (c3n == u3du(pier)) || (c3n == u3ud(u3t(pier))) ) {
     u3m_p("daemon: invalid pier", pier);
     exit(1);
   }
@@ -223,7 +226,7 @@ _king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
   uv_buf_t* buf_u = buf_v;
 
   size_t siz_t = uni_t * mem_t;
-  buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
+  buf_u->base  = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
 
   memcpy(buf_u->base + buf_u->len, dat_v, siz_t);
   buf_u->len += siz_t;
@@ -238,9 +241,9 @@ _king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
 static u3_noun
 _king_get_atom(c3_c* url_c)
 {
-  CURL *curl;
+  CURL*    curl;
   CURLcode result;
-  long cod_l;
+  long     cod_l;
 
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
@@ -260,8 +263,7 @@ _king_get_atom(c3_c* url_c)
   //  XX retry?
   //
   if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s\n",
-            url_c, curl_easy_strerror(result));
+    u3l_log("failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
     u3_king_bail();
     exit(1);
   }
@@ -288,9 +290,9 @@ _king_get_atom(c3_c* url_c)
    the command's output, up to a max of len_c characters.
 */
 static void
-_get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
+_get_cmd_output(c3_c* cmd_c, c3_c* out_c, c3_w len_c)
 {
-  FILE *fp = popen(cmd_c, "r");
+  FILE* fp = popen(cmd_c, "r");
   if ( NULL == fp ) {
     u3l_log("'%s' failed\n", cmd_c);
     exit(1);
@@ -309,21 +311,21 @@ _get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
    hax_c must be an array with length >= 11.
 */
 static void
-_arvo_hash(c3_c *out_c, c3_c *arv_c)
+_arvo_hash(c3_c* out_c, c3_c* arv_c)
 {
   c3_c cmd_c[2048];
 
   sprintf(cmd_c, "git -C %s log -1 HEAD --format=%%H -- sys/", arv_c);
   _get_cmd_output(cmd_c, out_c, 11);
 
-  out_c[10] = 0;  //  end with null-byte
+  out_c[10] = 0; //  end with null-byte
 }
 
 /* _git_pill_url(): produce a URL from which to download a pill
    based on the location of an arvo git repository.
 */
 static void
-_git_pill_url(c3_c *out_c, c3_c *arv_c)
+_git_pill_url(c3_c* out_c, c3_c* arv_c)
 {
   c3_c hax_c[11];
 
@@ -339,7 +341,7 @@ _git_pill_url(c3_c *out_c, c3_c *arv_c)
 }
 
 /* _boothack_pill(): parse CLI pill arguments into +pill specifier
-*/
+ */
 static u3_noun
 _boothack_pill(void)
 {
@@ -353,13 +355,11 @@ _boothack_pill(void)
   else {
     c3_c url_c[2048];
 
-    if ( (c3y == u3_Host.ops_u.git) &&
-       (0 != u3_Host.ops_u.arv_c) )
-    {
+    if ( (c3y == u3_Host.ops_u.git) && (0 != u3_Host.ops_u.arv_c) ) {
       _git_pill_url(url_c, u3_Host.ops_u.arv_c);
     }
     else {
-      c3_assert( 0 != u3_Host.ops_u.url_c );
+      c3_assert(0 != u3_Host.ops_u.url_c);
       strcpy(url_c, u3_Host.ops_u.url_c);
     }
 
@@ -368,8 +368,7 @@ _boothack_pill(void)
   }
 
   if ( 0 != u3_Host.ops_u.arv_c ) {
-    u3l_log("boot: preparing filesystem from %s\r\n",
-            u3_Host.ops_u.arv_c);
+    u3l_log("boot: preparing filesystem from %s\r\n", u3_Host.ops_u.arv_c);
     arv = u3nc(u3_nul, u3_unix_initial_into_card(u3_Host.ops_u.arv_c));
   }
 
@@ -377,7 +376,7 @@ _boothack_pill(void)
 }
 
 /* _boothack_key(): parse a private key file or value
-*/
+ */
 static u3_noun
 _boothack_key(u3_noun kef)
 {
@@ -426,13 +425,12 @@ _boothack_key(u3_noun kef)
       exit(1);
     }
 
-    if ( (u3_none != ship) &&
-         (c3n == u3r_sing(ship, u3t(whu))) )
-    {
-      u3_noun how = u3dc("scot", 'p', u3k(ship));
-      c3_c* how_c = u3r_string(u3k(how));
+    if ( (u3_none != ship) && (c3n == u3r_sing(ship, u3t(whu))) ) {
+      u3_noun how   = u3dc("scot", 'p', u3k(ship));
+      c3_c*   how_c = u3r_string(u3k(how));
       u3l_log("dawn: mismatch between -w %s and -K %s\r\n",
-              u3_Host.ops_u.who_c, how_c);
+              u3_Host.ops_u.who_c,
+              how_c);
 
       u3z(how);
       c3_free(how_c);
@@ -447,7 +445,7 @@ _boothack_key(u3_noun kef)
 }
 
 /* _boothack_doom(): parse CLI arguments into $doom
-*/
+ */
 static u3_noun
 _boothack_doom(void)
 {
@@ -483,7 +481,7 @@ _boothack_doom(void)
         c3_c* key_c = u3r_string(kef);
         c3_w  len_w = strlen(key_c);
 
-        if (len_w && (key_c[len_w - 1] == '\n')) {
+        if ( len_w && (key_c[len_w - 1] == '\n') ) {
           key_c[len_w - 1] = '\0';
           u3z(kef);
           kef = u3i_string(key_c);
@@ -512,7 +510,7 @@ _boothack_doom(void)
 }
 
 /* _king_sign_init(): initialize daemon signal handlers
-*/
+ */
 static void
 _king_sign_init(void)
 {
@@ -524,8 +522,8 @@ _king_sign_init(void)
     sig_u = c3_malloc(sizeof(u3_usig));
     uv_signal_init(u3L, &sig_u->sil_u);
 
-    sig_u->num_i = SIGTERM;
-    sig_u->nex_u = u3_Host.sig_u;
+    sig_u->num_i  = SIGTERM;
+    sig_u->nex_u  = u3_Host.sig_u;
     u3_Host.sig_u = sig_u;
   }
 
@@ -537,8 +535,8 @@ _king_sign_init(void)
     sig_u = c3_malloc(sizeof(u3_usig));
     uv_signal_init(u3L, &sig_u->sil_u);
 
-    sig_u->num_i = SIGINT;
-    sig_u->nex_u = u3_Host.sig_u;
+    sig_u->num_i  = SIGINT;
+    sig_u->nex_u  = u3_Host.sig_u;
     u3_Host.sig_u = sig_u;
   }
 
@@ -550,8 +548,8 @@ _king_sign_init(void)
     sig_u = c3_malloc(sizeof(u3_usig));
     uv_signal_init(u3L, &sig_u->sil_u);
 
-    sig_u->num_i = SIGWINCH;
-    sig_u->nex_u = u3_Host.sig_u;
+    sig_u->num_i  = SIGWINCH;
+    sig_u->nex_u  = u3_Host.sig_u;
     u3_Host.sig_u = sig_u;
   }
 
@@ -564,8 +562,8 @@ _king_sign_init(void)
     sig_u = c3_malloc(sizeof(u3_usig));
     uv_signal_init(u3L, &sig_u->sil_u);
 
-    sig_u->num_i = SIGINFO;
-    sig_u->nex_u = u3_Host.sig_u;
+    sig_u->num_i  = SIGINFO;
+    sig_u->nex_u  = u3_Host.sig_u;
     u3_Host.sig_u = sig_u;
   }
 #endif
@@ -578,14 +576,14 @@ _king_sign_init(void)
     sig_u = c3_malloc(sizeof(u3_usig));
     uv_signal_init(u3L, &sig_u->sil_u);
 
-    sig_u->num_i = SIGUSR1;
-    sig_u->nex_u = u3_Host.sig_u;
+    sig_u->num_i  = SIGUSR1;
+    sig_u->nex_u  = u3_Host.sig_u;
     u3_Host.sig_u = sig_u;
   }
 }
 
 /* _king_sign_cb: signal callback.
-*/
+ */
 static void
 _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
 {
@@ -604,9 +602,9 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
       u3l_log("\r\ninterrupt\r\n");
       u3_term_ef_ctlc();
 
-      #if defined(U3_OS_mingw)
+#if defined(U3_OS_mingw)
       PulseEvent(u3_Host.cev_u);
-      #endif
+#endif
       break;
     }
 
@@ -628,7 +626,7 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
 }
 
 /* _king_sign_move(): enable daemon signal handlers
-*/
+ */
 static void
 _king_sign_move(void)
 {
@@ -640,7 +638,7 @@ _king_sign_move(void)
 }
 
 /* _king_sign_hold(): disable daemon signal handlers
-*/
+ */
 static void
 _king_sign_hold(void)
 {
@@ -652,7 +650,7 @@ _king_sign_hold(void)
 }
 
 /* _king_sign_close(): dispose daemon signal handlers
-*/
+ */
 static void
 _king_sign_close(void)
 {
@@ -663,7 +661,7 @@ _king_sign_close(void)
   }
 }
 /* _boothack_cb(): setup pier via message as if from client.
-*/
+ */
 void
 _boothack_cb(uv_timer_t* tim_u)
 {
@@ -671,7 +669,7 @@ _boothack_cb(uv_timer_t* tim_u)
 }
 
 /* _king_loop_init(): stuff that comes before the event loop
-*/
+ */
 void
 _king_loop_init()
 {
@@ -690,11 +688,10 @@ _king_loop_init()
 }
 
 /* _king_loop_exit(): cleanup after event loop
-*/
+ */
 void
 _king_loop_exit()
-{
-}
+{}
 
 static void
 _king_boot_ivory(void)
@@ -704,8 +701,7 @@ _king_boot_ivory(void)
 
   if ( u3_Host.ops_u.lit_c ) {
     if ( c3n == u3u_mmap_read("lite", u3_Host.ops_u.lit_c, &len_d, &byt_y) ) {
-      u3l_log("lite: unable to load ivory pill at %s\n",
-              u3_Host.ops_u.lit_c);
+      u3l_log("lite: unable to load ivory pill at %s\n", u3_Host.ops_u.lit_c);
       exit(1);
     }
   }
@@ -716,7 +712,7 @@ _king_boot_ivory(void)
 
   {
     u3_cue_xeno* sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
-    u3_weak        pil;
+    u3_weak      pil;
 
     if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
       u3l_log("lite: unable to cue ivory pill\r\n");
@@ -725,7 +721,7 @@ _king_boot_ivory(void)
 
     u3s_cue_xeno_done(sil_u);
 
-    if ( c3n == u3v_boot_lite(pil)) {
+    if ( c3n == u3v_boot_lite(pil) ) {
       u3l_log("lite: boot failed\r\n");
       exit(1);
     }
@@ -733,15 +729,14 @@ _king_boot_ivory(void)
 
   if ( u3_Host.ops_u.lit_c ) {
     if ( c3n == u3u_munmap(len_d, byt_y) ) {
-      u3l_log("lite: unable to unmap ivory pill at %s\n",
-              u3_Host.ops_u.lit_c);
+      u3l_log("lite: unable to unmap ivory pill at %s\n", u3_Host.ops_u.lit_c);
       exit(1);
     }
   }
 }
 
 /* u3_king_commence(): start the daemon
-*/
+ */
 void
 u3_king_commence()
 {
@@ -763,23 +758,23 @@ u3_king_commence()
   u3C.sign_hold_f = _king_sign_hold;
   u3C.sign_move_f = _king_sign_move;
 
-  //  Ignore SIGPIPE signals.
-  #ifndef U3_OS_mingw
+//  Ignore SIGPIPE signals.
+#ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
-  #endif
+#endif
 
   //  boot the ivory pill
   //
   _king_boot_ivory();
 
-  //  disable core dumps (due to lmdb size)
-  //
-  #ifndef U3_OS_mingw
+//  disable core dumps (due to lmdb size)
+//
+#ifndef U3_OS_mingw
   {
     struct rlimit rlm;
 
@@ -791,7 +786,7 @@ u3_king_commence()
       exit(1);
     }
   }
-  #endif
+#endif
 
   //  run the loop
   //
@@ -802,7 +797,7 @@ u3_king_commence()
 }
 
 /* u3_king_stub(): get the One Pier for unreconstructed code.
-*/
+ */
 u3_pier*
 u3_king_stub(void)
 {
@@ -815,7 +810,7 @@ u3_king_stub(void)
 }
 
 /* _king_forall(): run on all piers
-*/
+ */
 static void
 _king_forall(void (*pir_f)(u3_pier*))
 {
@@ -828,7 +823,7 @@ _king_forall(void (*pir_f)(u3_pier*))
 }
 
 /* u3_king_info(): print status info.
-*/
+ */
 void
 u3_king_info(void)
 {
@@ -836,7 +831,7 @@ u3_king_info(void)
 }
 
 /* _king_forall_unlink(): run on all piers, unlinking from king.
-*/
+ */
 static void
 _king_forall_unlink(void (*pir_f)(u3_pier*))
 {
@@ -844,17 +839,17 @@ _king_forall_unlink(void (*pir_f)(u3_pier*))
 
   while ( u3K.pir_u ) {
     u3_pier* pir_u = u3K.pir_u;
-    u3K.pir_u = pir_u->nex_u;
+    u3K.pir_u      = pir_u->nex_u;
     pir_f(pir_u);
   }
 }
 
 /* _king_done_cb():
-*/
+ */
 static void
 _king_done_cb(uv_handle_t* han_u)
 {
-  if( UV_EBUSY == uv_loop_close(u3L) ) {
+  if ( UV_EBUSY == uv_loop_close(u3L) ) {
     //  XX uncomment to debug
     //
     // fprintf(stderr, "\r\nking: open libuv handles\r\n");
@@ -866,7 +861,7 @@ _king_done_cb(uv_handle_t* han_u)
 }
 
 /* u3_king_done(): all piers closed. s/b callback
-*/
+ */
 void
 u3_king_done(void)
 {
@@ -884,7 +879,7 @@ u3_king_done(void)
 }
 
 /* u3_king_exit(): shutdown gracefully
-*/
+ */
 void
 u3_king_exit(void)
 {
@@ -892,7 +887,7 @@ u3_king_exit(void)
 }
 
 /* u3_king_bail(): immediately shutdown.
-*/
+ */
 void
 u3_king_bail(void)
 {
@@ -903,21 +898,21 @@ u3_king_bail(void)
 }
 
 /* u3_king_grab(): gc the daemon
-*/
+ */
 void
 u3_king_grab(void* vod_p)
 {
-  c3_w tot_w = 0;
+  c3_w  tot_w = 0;
   FILE* fil_u;
 
-  c3_assert( u3R == &(u3H->rod_u) );
+  c3_assert(u3R == &(u3H->rod_u));
 
 #ifdef U3_MEMORY_LOG
   {
     //  XX date will not match up with that of the worker
     //
-    u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
-    c3_c* wen_c = u3r_string(wen);
+    u3_noun wen   = u3dc("scot", c3__da, u3k(u3A->now));
+    c3_c*   wen_c = u3r_string(wen);
 
     c3_c nam_c[2048];
     snprintf(nam_c, 2048, "%s/.urb/put/mass", u3_king_stub()->pax_c);

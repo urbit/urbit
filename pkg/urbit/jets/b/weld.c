@@ -12,7 +12,7 @@ u3qb_weld(u3_noun a, u3_noun b)
   {
     u3_noun* hed;
     u3_noun* tel;
-    u3_noun    i, t = a;
+    u3_noun  i, t = a;
 
     while ( u3_nul != t ) {
       u3x_cell(t, &i, &t);
@@ -40,6 +40,7 @@ u3_noun
 u3kb_weld(u3_noun a, u3_noun b)
 {
   u3_noun c = u3qb_weld(a, b);
-  u3z(a); u3z(b);
+  u3z(a);
+  u3z(b);
   return c;
 }

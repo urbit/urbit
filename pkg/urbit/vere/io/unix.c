@@ -2,102 +2,104 @@
 **
 */
 #include "all.h"
-#include <ftw.h>
 #include "vere/vere.h"
+
+#include <ftw.h>
 
 struct _u3_umon;
 struct _u3_udir;
 struct _u3_ufil;
 
 /* u3_unod: file or directory.
-*/
-  typedef struct _u3_unod {
-    c3_o              dir;              //  c3y if dir, c3n if file
-    c3_o              dry;              //  ie, unmodified
-    c3_c*             pax_c;            //  absolute path
-    struct _u3_udir*  par_u;            //  parent
-    struct _u3_unod*  nex_u;            //  internal list
-  } u3_unod;
+ */
+typedef struct _u3_unod {
+  c3_o             dir;   //  c3y if dir, c3n if file
+  c3_o             dry;   //  ie, unmodified
+  c3_c*            pax_c; //  absolute path
+  struct _u3_udir* par_u; //  parent
+  struct _u3_unod* nex_u; //  internal list
+} u3_unod;
 
 /* u3_ufil: synchronized file.
-*/
-  typedef struct _u3_ufil {
-    c3_o              dir;              //  c3y if dir, c3n if file
-    c3_o              dry;              //  ie, unmodified
-    c3_c*             pax_c;            //  absolute path
-    struct _u3_udir*  par_u;            //  parent
-    struct _u3_unod*  nex_u;            //  internal list
-    c3_w              gum_w;            //  mug of last %ergo
-  } u3_ufil;
+ */
+typedef struct _u3_ufil {
+  c3_o             dir;   //  c3y if dir, c3n if file
+  c3_o             dry;   //  ie, unmodified
+  c3_c*            pax_c; //  absolute path
+  struct _u3_udir* par_u; //  parent
+  struct _u3_unod* nex_u; //  internal list
+  c3_w             gum_w; //  mug of last %ergo
+} u3_ufil;
 
 /* u3_ufil: synchronized directory.
-*/
-  typedef struct _u3_udir {
-    c3_o              dir;              //  c3y if dir, c3n if file
-    c3_o              dry;              //  ie, unmodified
-    c3_c*             pax_c;            //  absolute path
-    struct _u3_udir*  par_u;            //  parent
-    struct _u3_unod*  nex_u;            //  internal list
-    u3_unod*          kid_u;            //  subnodes
-  } u3_udir;
+ */
+typedef struct _u3_udir {
+  c3_o             dir;   //  c3y if dir, c3n if file
+  c3_o             dry;   //  ie, unmodified
+  c3_c*            pax_c; //  absolute path
+  struct _u3_udir* par_u; //  parent
+  struct _u3_unod* nex_u; //  internal list
+  u3_unod*         kid_u; //  subnodes
+} u3_udir;
 
 /* u3_ufil: synchronized mount point.
-*/
-  typedef struct _u3_umon {
-    u3_udir          dir_u;             //  root directory, must be first
-    c3_c*            nam_c;             //  mount point name
-    struct _u3_umon* nex_u;             //  internal list
-  } u3_umon;
+ */
+typedef struct _u3_umon {
+  u3_udir          dir_u; //  root directory, must be first
+  c3_c*            nam_c; //  mount point name
+  struct _u3_umon* nex_u; //  internal list
+} u3_umon;
 
 /* u3_unix: clay support system, also
-*/
-  typedef struct _u3_unix {
-    u3_auto     car_u;
-    c3_l        sev_l;                  //  instance number
-    u3_umon*    mon_u;                  //  mount points
-    c3_c*       pax_c;                  //  pier directory
-    c3_o        alm;                    //  timer set
-    c3_o        dyr;                    //  ready to update
+ */
+typedef struct _u3_unix {
+  u3_auto  car_u;
+  c3_l     sev_l; //  instance number
+  u3_umon* mon_u; //  mount points
+  c3_c*    pax_c; //  pier directory
+  c3_o     alm;   //  timer set
+  c3_o     dyr;   //  ready to update
 #ifdef SYNCLOG
-    c3_w         lot_w;                 //  sync-slot
-    struct _u3_sylo {
-      c3_o     unx;                     //  from unix
-      c3_m     wer_m;                   //  mote saying where
-      c3_m     wot_m;                   //  mote saying what
-      c3_c*    pax_c;                   //  path
-    } sylo[1024];
+  c3_w lot_w; //  sync-slot
+  struct _u3_sylo {
+    c3_o  unx;   //  from unix
+    c3_m  wer_m; //  mote saying where
+    c3_m  wot_m; //  mote saying what
+    c3_c* pax_c; //  path
+  } sylo[1024];
 #endif
-  } u3_unix;
+} u3_unix;
 
 void
 u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all);
 
 /* u3_readdir_r():
-*/
+ */
 c3_w
-u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
+u3_readdir_r(DIR* dirp, struct dirent* entry, struct dirent** result)
 {
-  errno = 0;
-  struct dirent * tmp_u = readdir(dirp);
+  errno                = 0;
+  struct dirent* tmp_u = readdir(dirp);
 
-  if (NULL == tmp_u){
+  if ( NULL == tmp_u ) {
     *result = NULL;
-    return (errno);  // either success or error code
-  } else {
+    return (errno); // either success or error code
+  }
+  else {
     memcpy(entry, tmp_u, sizeof(struct dirent));
     *result = entry;
   }
 
-  return(0);
+  return (0);
 }
 
 /* _unix_down(): descend path.
-*/
+ */
 static c3_c*
 _unix_down(c3_c* pax_c, c3_c* sub_c)
 {
-  c3_w pax_w = strlen(pax_c);
-  c3_w sub_w = strlen(sub_c);
+  c3_w  pax_w = strlen(pax_c);
+  c3_w  sub_w = strlen(sub_c);
   c3_c* don_c = c3_malloc(pax_w + sub_w + 2);
 
   strcpy(don_c, pax_c);
@@ -111,7 +113,7 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
 /* _unix_string_to_path(): convert c string to u3_noun path
  *
  * c string must begin with the pier path plus mountpoint
-*/
+ */
 static u3_noun
 _unix_string_to_path_helper(c3_c* pax_c)
 {
@@ -123,13 +125,13 @@ _unix_string_to_path_helper(c3_c* pax_c)
       return u3nc(u3i_string(pax_c), u3_nul);
     }
     else {
-      return u3nt(u3i_bytes(end_w - pax_c, (c3_y*) pax_c),
+      return u3nt(u3i_bytes(end_w - pax_c, (c3_y*)pax_c),
                   u3i_string(end_w + 1),
                   u3_nul);
     }
   }
   else {
-    return u3nc(u3i_bytes(end_w - pax_c, (c3_y*) pax_c),
+    return u3nc(u3i_bytes(end_w - pax_c, (c3_y*)pax_c),
                 _unix_string_to_path_helper(end_w + 1));
   }
 }
@@ -153,12 +155,12 @@ _unix_string_to_path(u3_unix* unx_u, c3_c* pax_c)
 }
 
 /* _unix_rm_r_cb(): callback to delete individual files/directories
-*/
+ */
 static c3_i
-_unix_rm_r_cb(const c3_c* pax_c,
+_unix_rm_r_cb(const c3_c*        pax_c,
               const struct stat* buf_u,
-              c3_i typeflag,
-              struct FTW* ftw_u)
+              c3_i               typeflag,
+              struct FTW*        ftw_u)
 {
   switch ( typeflag ) {
     default:
@@ -166,8 +168,7 @@ _unix_rm_r_cb(const c3_c* pax_c,
       break;
     case FTW_F:
       if ( 0 != unlink(pax_c) && ENOENT != errno ) {
-        u3l_log("error unlinking (in rm_r) %s: %s\n",
-                pax_c, strerror(errno));
+        u3l_log("error unlinking (in rm_r) %s: %s\n", pax_c, strerror(errno));
         c3_assert(0);
       }
       break;
@@ -198,29 +199,30 @@ _unix_rm_r_cb(const c3_c* pax_c,
 }
 
 /* _unix_rm_r(): rm -r directory
-*/
+ */
 static void
 _unix_rm_r(c3_c* pax_c)
 {
-  if ( 0 > nftw(pax_c, _unix_rm_r_cb, 100, FTW_DEPTH | FTW_PHYS )
-       && ENOENT != errno) {
+  if ( 0 > nftw(pax_c, _unix_rm_r_cb, 100, FTW_DEPTH | FTW_PHYS)
+       && ENOENT != errno )
+  {
     u3l_log("rm_r error on %s: %s\r\n", pax_c, strerror(errno));
   }
 }
 
 /* _unix_mkdir(): mkdir, asserting.
-*/
+ */
 static void
 _unix_mkdir(c3_c* pax_c)
 {
-  if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno) {
+  if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno ) {
     u3l_log("error mkdiring %s: %s\n", pax_c, strerror(errno));
     c3_assert(0);
   }
 }
 
 /* _unix_write_file_hard(): write to a file, overwriting what's there
-*/
+ */
 static c3_w
 _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
 {
@@ -231,8 +233,7 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
   u3_noun dat = u3t(u3t(mim));
 
   if ( fid_i < 0 ) {
-    u3l_log("error opening %s for writing: %s\r\n",
-            pax_c, strerror(errno));
+    u3l_log("error opening %s for writing: %s\r\n", pax_c, strerror(errno));
     u3z(mim);
     return 0;
   }
@@ -247,8 +248,7 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
   rit_w = write(fid_i, dat_y, siz_w);
 
   if ( rit_w != siz_w ) {
-    u3l_log("error writing %s: %s\r\n",
-            pax_c, strerror(errno));
+    u3l_log("error writing %s: %s\r\n", pax_c, strerror(errno));
     mug_w = 0;
   }
   else {
@@ -262,15 +262,15 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
 }
 
 /* _unix_write_file_soft(): write to a file, not overwriting if it's changed
-*/
+ */
 static void
 _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
 {
   struct stat buf_u;
-  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
-  c3_ws len_ws, red_ws;
-  c3_w  old_w;
-  c3_y* old_y;
+  c3_i        fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
+  c3_ws       len_ws, red_ws;
+  c3_w        old_w;
+  c3_y*       old_y;
 
   if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
     if ( ENOENT == errno ) {
@@ -278,30 +278,35 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
     }
     else {
       u3l_log("error opening file (soft) %s: %s\r\n",
-              fil_u->pax_c, strerror(errno));
+              fil_u->pax_c,
+              strerror(errno));
       u3z(mim);
       return;
     }
   }
 
   len_ws = buf_u.st_size;
-  old_y = c3_malloc(len_ws);
+  old_y  = c3_malloc(len_ws);
 
   red_ws = read(fid_i, old_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
     u3l_log("error closing file (soft) %s: %s\r\n",
-            fil_u->pax_c, strerror(errno));
+            fil_u->pax_c,
+            strerror(errno));
   }
 
   if ( len_ws != red_ws ) {
     if ( red_ws < 0 ) {
       u3l_log("error reading file (soft) %s: %s\r\n",
-              fil_u->pax_c, strerror(errno));
+              fil_u->pax_c,
+              strerror(errno));
     }
     else {
       u3l_log("wrong # of bytes read in file %s: %d %d\r\n",
-              fil_u->pax_c, len_ws, red_ws);
+              fil_u->pax_c,
+              len_ws,
+              red_ws);
     }
     c3_free(old_y);
     u3z(mim);
@@ -312,7 +317,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
 
   if ( old_w != fil_u->gum_w ) {
     fil_u->gum_w = u3r_mug(u3t(u3t(mim))); // XXX this might fail with
-    c3_free(old_y);                           //     trailing zeros
+    c3_free(old_y);                        //     trailing zeros
     u3z(mim);
     return;
   }
@@ -329,7 +334,7 @@ static void
 _unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c);
 
 /* _unix_get_mount_point(): retrieve or create mount point
-*/
+ */
 static u3_umon*
 _unix_get_mount_point(u3_unix* unx_u, u3_noun mon)
 {
@@ -339,26 +344,24 @@ _unix_get_mount_point(u3_unix* unx_u, u3_noun mon)
     return NULL;
   }
 
-  c3_c* nam_c = u3r_string(mon);
+  c3_c*    nam_c = u3r_string(mon);
   u3_umon* mon_u;
 
-  for ( mon_u = unx_u->mon_u;
-        mon_u && 0 != strcmp(nam_c, mon_u->nam_c);
+  for ( mon_u = unx_u->mon_u; mon_u && 0 != strcmp(nam_c, mon_u->nam_c);
         mon_u = mon_u->nex_u )
-  {
-  }
+  {}
 
   if ( !mon_u ) {
-    mon_u = c3_malloc(sizeof(u3_umon));
-    mon_u->nam_c = nam_c;
-    mon_u->dir_u.dir = c3y;
-    mon_u->dir_u.dry = c3n;
+    mon_u              = c3_malloc(sizeof(u3_umon));
+    mon_u->nam_c       = nam_c;
+    mon_u->dir_u.dir   = c3y;
+    mon_u->dir_u.dry   = c3n;
     mon_u->dir_u.pax_c = strdup(unx_u->pax_c);
     mon_u->dir_u.par_u = NULL;
     mon_u->dir_u.nex_u = NULL;
     mon_u->dir_u.kid_u = NULL;
-    mon_u->nex_u = unx_u->mon_u;
-    unx_u->mon_u = mon_u;
+    mon_u->nex_u       = unx_u->mon_u;
+    unx_u->mon_u       = mon_u;
   }
   else {
     c3_free(nam_c);
@@ -370,14 +373,15 @@ _unix_get_mount_point(u3_unix* unx_u, u3_noun mon)
 }
 
 /* _unix_scan_mount_point(): scan unix for already-existing mount point
-*/
+ */
 static void
 _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
 {
   DIR* rid_u = opendir(mon_u->dir_u.pax_c);
   if ( !rid_u ) {
     u3l_log("error opening pier directory: %s: %s\r\n",
-            mon_u->dir_u.pax_c, strerror(errno));
+            mon_u->dir_u.pax_c,
+            strerror(errno));
     return;
   }
 
@@ -386,11 +390,12 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
   while ( 1 ) {
     struct dirent  ent_u;
     struct dirent* out_u;
-    c3_w err_w;
+    c3_w           err_w;
 
     if ( 0 != (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) ) {
       u3l_log("erroring loading pier directory %s: %s\r\n",
-              mon_u->dir_u.pax_c, strerror(errno));
+              mon_u->dir_u.pax_c,
+              strerror(errno));
 
       c3_assert(0);
     }
@@ -410,7 +415,8 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
 
       if ( 0 != stat(pax_c, &buf_u) ) {
         u3l_log("can't stat pier directory %s: %s\r\n",
-                mon_u->dir_u.pax_c, strerror(errno));
+                mon_u->dir_u.pax_c,
+                strerror(errno));
         c3_free(pax_c);
         continue;
       }
@@ -425,12 +431,11 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
         }
       }
       else {
-        if ( '.' != out_u->d_name[len_w]
-             || '\0' == out_u->d_name[len_w + 1]
+        if ( '.' != out_u->d_name[len_w] || '\0' == out_u->d_name[len_w + 1]
              || '~' == out_u->d_name[strlen(out_u->d_name) - 1]
-             || ('#' == out_u->d_name[0] &&
-                 '#' == out_u->d_name[strlen(out_u->d_name) - 1])
-	     ) {
+             || ('#' == out_u->d_name[0]
+                 && '#' == out_u->d_name[strlen(out_u->d_name) - 1]) )
+        {
           c3_free(pax_c);
           continue;
         }
@@ -445,12 +450,13 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
   }
 }
 
-static u3_noun _unix_free_node(u3_unix* unx_u, u3_unod* nod_u);
+static u3_noun
+_unix_free_node(u3_unix* unx_u, u3_unod* nod_u);
 
 /* _unix_free_file(): free file, unlinking it
-*/
+ */
 static void
-_unix_free_file(u3_ufil *fil_u)
+_unix_free_file(u3_ufil* fil_u)
 {
   if ( 0 != unlink(fil_u->pax_c) && ENOENT != errno ) {
     u3l_log("error unlinking %s: %s\n", fil_u->pax_c, strerror(errno));
@@ -462,9 +468,9 @@ _unix_free_file(u3_ufil *fil_u)
 }
 
 /* _unix_free_dir(): free directory, deleting everything within
-*/
+ */
 static void
-_unix_free_dir(u3_udir *dir_u)
+_unix_free_dir(u3_udir* dir_u)
 {
   _unix_rm_r(dir_u->pax_c);
 
@@ -476,15 +482,15 @@ _unix_free_dir(u3_udir *dir_u)
   }
   c3_free(dir_u->pax_c);
   c3_free(dir_u); // XXX this might be too early, how do we
-               //     know we've freed all the children?
-               //     i suspect we should do this only if
-               //     our kid list is empty
+                  //     know we've freed all the children?
+                  //     i suspect we should do this only if
+                  //     our kid list is empty
 }
 
 /* _unix_free_node(): free node, deleting everything within
  *
  * also deletes from parent list if in it
-*/
+ */
 static u3_noun
 _unix_free_node(u3_unix* unx_u, u3_unod* nod_u)
 {
@@ -507,19 +513,18 @@ _unix_free_node(u3_unix* unx_u, u3_unod* nod_u)
   }
 
   if ( c3y == nod_u->dir ) {
-    can = u3_nul;
-    u3_unod* nud_u = ((u3_udir*) nod_u)->kid_u;
+    can            = u3_nul;
+    u3_unod* nud_u = ((u3_udir*)nod_u)->kid_u;
     while ( nud_u ) {
       u3_unod* nex_u = nud_u->nex_u;
-      can = u3kb_weld(_unix_free_node(unx_u, nud_u), can);
-      nud_u = nex_u;
+      can            = u3kb_weld(_unix_free_node(unx_u, nud_u), can);
+      nud_u          = nex_u;
     }
-    _unix_free_dir((u3_udir *)nod_u);
+    _unix_free_dir((u3_udir*)nod_u);
   }
   else {
-    can = u3nc(u3nc(_unix_string_to_path(unx_u, nod_u->pax_c), u3_nul),
-               u3_nul);
-    _unix_free_file((u3_ufil *)nod_u);
+    can = u3nc(u3nc(_unix_string_to_path(unx_u, nod_u->pax_c), u3_nul), u3_nul);
+    _unix_free_file((u3_ufil*)nod_u);
   }
 
   return can;
@@ -532,7 +537,7 @@ _unix_free_node(u3_unix* unx_u, u3_unod* nod_u)
  * the child directories before it does us.
  *
  * tread carefully
-*/
+ */
 static void
 _unix_free_mount_point(u3_unix* unx_u, u3_umon* mon_u)
 {
@@ -549,7 +554,7 @@ _unix_free_mount_point(u3_unix* unx_u, u3_umon* mon_u)
 }
 
 /* _unix_delete_mount_point(): remove mount point from list and free
-*/
+ */
 static void
 _unix_delete_mount_point(u3_unix* unx_u, u3_noun mon)
 {
@@ -559,7 +564,7 @@ _unix_delete_mount_point(u3_unix* unx_u, u3_noun mon)
     return;
   }
 
-  c3_c* nam_c = u3r_string(mon);
+  c3_c*    nam_c = u3r_string(mon);
   u3_umon* mon_u;
   u3_umon* tem_u;
 
@@ -574,18 +579,16 @@ _unix_delete_mount_point(u3_unix* unx_u, u3_noun mon)
     goto _delete_mount_point_out;
   }
 
-  for ( ;
-        mon_u->nex_u && 0 != strcmp(nam_c, mon_u->nex_u->nam_c);
+  for ( ; mon_u->nex_u && 0 != strcmp(nam_c, mon_u->nex_u->nam_c);
         mon_u = mon_u->nex_u )
-  {
-  }
+  {}
 
   if ( !mon_u->nex_u ) {
     u3l_log("mount point already gone: %s\r\n", nam_c);
     goto _delete_mount_point_out;
   }
 
-  tem_u = mon_u->nex_u;
+  tem_u        = mon_u->nex_u;
   mon_u->nex_u = mon_u->nex_u->nex_u;
   _unix_free_mount_point(unx_u, tem_u);
 
@@ -595,7 +598,7 @@ _delete_mount_point_out:
 }
 
 /* _unix_commit_mount_point: commit from mount point
-*/
+ */
 static void
 _unix_commit_mount_point(u3_unix* unx_u, u3_noun mon)
 {
@@ -605,14 +608,14 @@ _unix_commit_mount_point(u3_unix* unx_u, u3_noun mon)
 }
 
 /* _unix_watch_file(): initialize file
-*/
+ */
 static void
 _unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
 {
   // initialize fil_u
 
-  fil_u->dir = c3n;
-  fil_u->dry = c3n;
+  fil_u->dir   = c3n;
+  fil_u->dry   = c3n;
   fil_u->pax_c = c3_malloc(1 + strlen(pax_c));
   strcpy(fil_u->pax_c, pax_c);
   fil_u->par_u = par_u;
@@ -621,19 +624,19 @@ _unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
 
   if ( par_u ) {
     fil_u->nex_u = par_u->kid_u;
-    par_u->kid_u = (u3_unod*) fil_u;
+    par_u->kid_u = (u3_unod*)fil_u;
   }
 }
 
 /* _unix_watch_dir(): initialize directory
-*/
+ */
 static void
 _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
 {
   // initialize dir_u
 
-  dir_u->dir = c3y;
-  dir_u->dry = c3n;
+  dir_u->dir   = c3y;
+  dir_u->dry   = c3n;
   dir_u->pax_c = c3_malloc(1 + strlen(pax_c));
   strcpy(dir_u->pax_c, pax_c);
   dir_u->par_u = par_u;
@@ -642,12 +645,12 @@ _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
 
   if ( par_u ) {
     dir_u->nex_u = par_u->kid_u;
-    par_u->kid_u = (u3_unod*) dir_u;
+    par_u->kid_u = (u3_unod*)dir_u;
   }
 }
 
 /* _unix_create_dir(): create unix directory and watch it
-*/
+ */
 static void
 _unix_create_dir(u3_udir* dir_u, u3_udir* par_u, u3_noun nam)
 {
@@ -668,7 +671,8 @@ _unix_create_dir(u3_udir* dir_u, u3_udir* par_u, u3_noun nam)
   _unix_watch_dir(dir_u, par_u, pax_c);
 }
 
-static u3_noun _unix_update_node(u3_unix* unx_u, u3_unod* nod_u);
+static u3_noun
+_unix_update_node(u3_unix* unx_u, u3_unod* nod_u);
 
 /* _unix_update_file(): update file, producing list of changes
  *
@@ -677,11 +681,11 @@ static u3_noun _unix_update_node(u3_unix* unx_u, u3_unod* nod_u);
  * and add path plus sig to %into event.  otherwise, read the file and
  * get a mug checksum.  if same as gum_w, move on.  otherwise, overwrite
  * add path plus data to %into event.
-*/
+ */
 static u3_noun
 _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
 {
-  c3_assert( c3n == fil_u->dir );
+  c3_assert(c3n == fil_u->dir);
 
   if ( c3y == fil_u->dry ) {
     return u3_nul;
@@ -690,39 +694,39 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
   fil_u->dry = c3n;
 
   struct stat buf_u;
-  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
-  c3_ws len_ws, red_ws;
-  c3_y* dat_y;
+  c3_i        fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
+  c3_ws       len_ws, red_ws;
+  c3_y*       dat_y;
 
   if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
     if ( ENOENT == errno ) {
-      return u3nc(u3nc(_unix_string_to_path(unx_u, fil_u->pax_c), u3_nul), u3_nul);
+      return u3nc(u3nc(_unix_string_to_path(unx_u, fil_u->pax_c), u3_nul),
+                  u3_nul);
     }
     else {
-      u3l_log("error opening file %s: %s\r\n",
-              fil_u->pax_c, strerror(errno));
+      u3l_log("error opening file %s: %s\r\n", fil_u->pax_c, strerror(errno));
       return u3_nul;
     }
   }
 
   len_ws = buf_u.st_size;
-  dat_y = c3_malloc(len_ws);
+  dat_y  = c3_malloc(len_ws);
 
   red_ws = read(fid_i, dat_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
-    u3l_log("error closing file %s: %s\r\n",
-            fil_u->pax_c, strerror(errno));
+    u3l_log("error closing file %s: %s\r\n", fil_u->pax_c, strerror(errno));
   }
 
   if ( len_ws != red_ws ) {
     if ( red_ws < 0 ) {
-      u3l_log("error reading file %s: %s\r\n",
-              fil_u->pax_c, strerror(errno));
+      u3l_log("error reading file %s: %s\r\n", fil_u->pax_c, strerror(errno));
     }
     else {
       u3l_log("wrong # of bytes read in file %s: %d %d\r\n",
-              fil_u->pax_c, len_ws, red_ws);
+              fil_u->pax_c,
+              len_ws,
+              red_ws);
     }
     c3_free(dat_y);
     return u3_nul;
@@ -748,13 +752,13 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
  *
  * when changing this, consider whether to also change
  * _unix_initial_update_dir()
-*/
+ */
 static u3_noun
 _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 {
   u3_noun can = u3_nul;
 
-  c3_assert( c3y == dir_u->dir );
+  c3_assert(c3y == dir_u->dir);
 
   if ( c3y == dir_u->dry ) {
     return u3_nul;
@@ -776,8 +780,8 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
           DIR* red_u = opendir(nod_u->pax_c);
           if ( 0 == red_u ) {
             u3_unod* nex_u = nod_u->nex_u;
-            can = u3kb_weld(_unix_free_node(unx_u, nod_u), can);
-            nod_u = nex_u;
+            can            = u3kb_weld(_unix_free_node(unx_u, nod_u), can);
+            nod_u          = nex_u;
           }
           else {
             closedir(red_u);
@@ -786,22 +790,24 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
         }
         else {
           struct stat buf_u;
-          c3_i  fid_i = open(nod_u->pax_c, O_RDONLY, 0644);
+          c3_i        fid_i = open(nod_u->pax_c, O_RDONLY, 0644);
 
           if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
             if ( ENOENT != errno ) {
               u3l_log("_unix_update_dir: error opening file %s: %s\r\n",
-                      nod_u->pax_c, strerror(errno));
+                      nod_u->pax_c,
+                      strerror(errno));
             }
 
             u3_unod* nex_u = nod_u->nex_u;
-            can = u3kb_weld(_unix_free_node(unx_u, nod_u), can);
-            nod_u = nex_u;
+            can            = u3kb_weld(_unix_free_node(unx_u, nod_u), can);
+            nod_u          = nex_u;
           }
           else {
             if ( close(fid_i) < 0 ) {
               u3l_log("_unix_update_dir: error closing file %s: %s\r\n",
-                      nod_u->pax_c, strerror(errno));
+                      nod_u->pax_c,
+                      strerror(errno));
             }
 
             nod_u = nod_u->nex_u;
@@ -816,19 +822,20 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
   DIR* rid_u = opendir(dir_u->pax_c);
   if ( !rid_u ) {
     u3l_log("error opening directory %s: %s\r\n",
-            dir_u->pax_c, strerror(errno));
+            dir_u->pax_c,
+            strerror(errno));
     c3_assert(0);
   }
 
   while ( 1 ) {
     struct dirent  ent_u;
     struct dirent* out_u;
-    c3_w err_w;
-
+    c3_w           err_w;
 
     if ( (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) != 0 ) {
       u3l_log("error loading directory %s: %s\r\n",
-              dir_u->pax_c, strerror(err_w));
+              dir_u->pax_c,
+              strerror(err_w));
       c3_assert(0);
     }
     else if ( !out_u ) {
@@ -869,11 +876,11 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 
         if ( !nod_u ) {
           if ( !S_ISDIR(buf_u.st_mode) ) {
-            if ( !strchr(out_u->d_name,'.')
+            if ( !strchr(out_u->d_name, '.')
                  || '~' == out_u->d_name[strlen(out_u->d_name) - 1]
-                 || ('#' == out_u->d_name[0] &&
-                     '#' == out_u->d_name[strlen(out_u->d_name) - 1])
-               ) {
+                 || ('#' == out_u->d_name[0]
+                     && '#' == out_u->d_name[strlen(out_u->d_name) - 1]) )
+            {
               c3_free(pax_c);
               continue;
             }
@@ -884,7 +891,8 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
           else {
             u3_udir* dis_u = c3_malloc(sizeof(u3_udir));
             _unix_watch_dir(dis_u, dir_u, pax_c);
-            can = u3kb_weld(_unix_update_dir(unx_u, dis_u), can); // XXX unnecessary?
+            can = u3kb_weld(_unix_update_dir(unx_u, dis_u),
+                            can); // XXX unnecessary?
           }
         }
       }
@@ -895,11 +903,12 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 
   if ( closedir(rid_u) < 0 ) {
     u3l_log("error closing directory %s: %s\r\n",
-            dir_u->pax_c, strerror(errno));
+            dir_u->pax_c,
+            strerror(errno));
   }
 
   if ( !dir_u->kid_u ) {
-    return u3kb_weld(_unix_free_node(unx_u, (u3_unod*) dir_u), can);
+    return u3kb_weld(_unix_free_node(unx_u, (u3_unod*)dir_u), can);
   }
 
   // get change list
@@ -912,7 +921,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 }
 
 /* _unix_update_node(): update node, producing list of changes
-*/
+ */
 static u3_noun
 _unix_update_node(u3_unix* unx_u, u3_unod* nod_u)
 {
@@ -925,7 +934,7 @@ _unix_update_node(u3_unix* unx_u, u3_unod* nod_u)
 }
 
 /* _unix_update_mount(): update mount point
-*/
+ */
 static void
 _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
 {
@@ -939,9 +948,7 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
     {
       //  XX remove u3A->sen
       //
-      u3_noun wir = u3nt(c3__sync,
-                        u3dc("scot", c3__uv, unx_u->sev_l),
-                        u3_nul);
+      u3_noun wir = u3nt(c3__sync, u3dc("scot", c3__uv, unx_u->sev_l), u3_nul);
       u3_noun cad = u3nq(c3__into, u3i_string(mon_u->nam_c), all, can);
 
       u3_auto_plan(&unx_u->car_u, u3_ovum_init(0, c3__c, wir, cad));
@@ -956,47 +963,45 @@ static u3_noun
 _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
 {
   struct stat buf_u;
-  c3_i  fid_i = open(pax_c, O_RDONLY, 0644);
-  c3_ws len_ws, red_ws;
-  c3_y* dat_y;
+  c3_i        fid_i = open(pax_c, O_RDONLY, 0644);
+  c3_ws       len_ws, red_ws;
+  c3_y*       dat_y;
 
   if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
     if ( ENOENT == errno ) {
       return u3_nul;
     }
     else {
-      u3l_log("error opening initial file %s: %s\r\n",
-              pax_c, strerror(errno));
+      u3l_log("error opening initial file %s: %s\r\n", pax_c, strerror(errno));
       return u3_nul;
     }
   }
 
   len_ws = buf_u.st_size;
-  dat_y = c3_malloc(len_ws);
+  dat_y  = c3_malloc(len_ws);
 
   red_ws = read(fid_i, dat_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
-    u3l_log("error closing initial file %s: %s\r\n",
-            pax_c, strerror(errno));
+    u3l_log("error closing initial file %s: %s\r\n", pax_c, strerror(errno));
   }
 
   if ( len_ws != red_ws ) {
     if ( red_ws < 0 ) {
-      u3l_log("error reading initial file %s: %s\r\n",
-              pax_c, strerror(errno));
+      u3l_log("error reading initial file %s: %s\r\n", pax_c, strerror(errno));
     }
     else {
       u3l_log("wrong # of bytes read in initial file %s: %d %d\r\n",
-              pax_c, len_ws, red_ws);
+              pax_c,
+              len_ws,
+              red_ws);
     }
     c3_free(dat_y);
     return u3_nul;
   }
   else {
-    u3_noun pax = _unix_string_to_path_helper(pax_c
-                   + strlen(bas_c)
-                   + 1); /* XX slightly less VERY BAD than before*/
+    u3_noun pax = _unix_string_to_path_helper(
+      pax_c + strlen(bas_c) + 1); /* XX slightly less VERY BAD than before*/
     u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
     u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
 
@@ -1016,18 +1021,20 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
   DIR* rid_u = opendir(pax_c);
   if ( !rid_u ) {
     u3l_log("error opening initial directory: %s: %s\r\n",
-            pax_c, strerror(errno));
+            pax_c,
+            strerror(errno));
     return u3_nul;
   }
 
   while ( 1 ) {
     struct dirent  ent_u;
     struct dirent* out_u;
-    c3_w err_w;
+    c3_w           err_w;
 
     if ( 0 != (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) ) {
       u3l_log("error loading initial directory %s: %s\r\n",
-              pax_c, strerror(errno));
+              pax_c,
+              strerror(errno));
 
       c3_assert(0);
     }
@@ -1043,8 +1050,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
       struct stat buf_u;
 
       if ( 0 != stat(pox_c, &buf_u) ) {
-        u3l_log("initial can't stat %s: %s\r\n",
-                pox_c, strerror(errno));
+        u3l_log("initial can't stat %s: %s\r\n", pox_c, strerror(errno));
         c3_free(pox_c);
         continue;
       }
@@ -1062,30 +1068,34 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
 
   if ( closedir(rid_u) < 0 ) {
     u3l_log("error closing initial directory %s: %s\r\n",
-            pax_c, strerror(errno));
+            pax_c,
+            strerror(errno));
   }
 
   return can;
 }
 
 /* u3_unix_initial_into_card(): create initial filesystem sync card.
-*/
+ */
 u3_noun
 u3_unix_initial_into_card(c3_c* arv_c)
 {
   u3_noun can = _unix_initial_update_dir(arv_c, arv_c);
 
-  return u3nc(u3nt(c3__c, c3__sync, u3_nul),
-              u3nq(c3__into, u3_nul, c3y, can));
+  return u3nc(u3nt(c3__c, c3__sync, u3_nul), u3nq(c3__into, u3_nul, c3y, can));
 }
 
 /* _unix_sync_file(): sync file to unix
-*/
+ */
 static void
-_unix_sync_file(u3_unix* unx_u, u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
+_unix_sync_file(u3_unix* unx_u,
+                u3_udir* par_u,
+                u3_noun  nam,
+                u3_noun  ext,
+                u3_noun  mim)
 {
-  c3_assert( par_u );
-  c3_assert( c3y == par_u->dir );
+  c3_assert(par_u);
+  c3_assert(c3y == par_u->dir);
 
   // form file path
 
@@ -1103,18 +1113,18 @@ _unix_sync_file(u3_unix* unx_u, u3_udir* par_u, u3_noun nam, u3_noun ext, u3_nou
   strcpy(pax_c + par_w + 1 + nam_w + 1, ext_c);
   pax_c[par_w + 1 + nam_w + 1 + ext_w] = '\0';
 
-  c3_free(nam_c); c3_free(ext_c);
-  u3z(nam); u3z(ext);
+  c3_free(nam_c);
+  c3_free(ext_c);
+  u3z(nam);
+  u3z(ext);
 
   // check whether we already know about this file
 
   u3_unod* nod_u;
   for ( nod_u = par_u->kid_u;
-        ( nod_u &&
-          ( c3y == nod_u->dir ||
-            0 != strcmp(nod_u->pax_c, pax_c) ) );
+        (nod_u && (c3y == nod_u->dir || 0 != strcmp(nod_u->pax_c, pax_c)));
         nod_u = nod_u->nex_u )
-  { }
+  {}
 
   // apply change
 
@@ -1124,16 +1134,15 @@ _unix_sync_file(u3_unix* unx_u, u3_udir* par_u, u3_noun nam, u3_noun ext, u3_nou
     }
   }
   else {
-
     if ( !nod_u ) {
-      c3_w gum_w = _unix_write_file_hard(pax_c, u3k(u3t(mim)));
+      c3_w     gum_w = _unix_write_file_hard(pax_c, u3k(u3t(mim)));
       u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
       _unix_watch_file(unx_u, fil_u, par_u, pax_c);
       fil_u->gum_w = gum_w;
       goto _unix_sync_file_out;
     }
     else {
-      _unix_write_file_soft((u3_ufil*) nod_u, u3k(u3t(mim)));
+      _unix_write_file_soft((u3_ufil*)nod_u, u3k(u3t(mim)));
     }
   }
 
@@ -1144,11 +1153,11 @@ _unix_sync_file_out:
 }
 
 /* _unix_sync_change(): sync single change to unix
-*/
+ */
 static void
 _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
 {
-  c3_assert( c3y == dir_u->dir );
+  c3_assert(c3y == dir_u->dir);
 
   if ( c3n == u3du(pax) ) {
     if ( u3_nul == pax ) {
@@ -1157,16 +1166,18 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
     else {
       u3l_log("sync out: bad path\r\n");
     }
-    u3z(pax); u3z(mim);
+    u3z(pax);
+    u3z(mim);
     return;
   }
   else if ( c3n == u3du(u3t(pax)) ) {
     u3l_log("can't sync out file as top-level, strangely\r\n");
-    u3z(pax); u3z(mim);
+    u3z(pax);
+    u3z(mim);
   }
   else {
-    u3_noun i_pax = u3h(pax);
-    u3_noun t_pax = u3t(pax);
+    u3_noun i_pax  = u3h(pax);
+    u3_noun t_pax  = u3t(pax);
     u3_noun it_pax = u3h(t_pax);
     u3_noun tt_pax = u3t(t_pax);
 
@@ -1174,20 +1185,20 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
       _unix_sync_file(unx_u, dir_u, u3k(i_pax), u3k(it_pax), mim);
     }
     else {
-      c3_c* nam_c = u3r_string(i_pax);
-      c3_w pax_w = strlen(dir_u->pax_c);
+      c3_c*    nam_c = u3r_string(i_pax);
+      c3_w     pax_w = strlen(dir_u->pax_c);
       u3_unod* nod_u;
 
       for ( nod_u = dir_u->kid_u;
-            ( nod_u &&
-              ( c3n == nod_u->dir ||
-                0 != strcmp(nod_u->pax_c + pax_w + 1, nam_c) ) );
+            (nod_u
+             && (c3n == nod_u->dir
+                 || 0 != strcmp(nod_u->pax_c + pax_w + 1, nam_c)));
             nod_u = nod_u->nex_u )
-      { }
+      {}
 
       if ( !nod_u ) {
         nod_u = c3_malloc(sizeof(u3_udir));
-        _unix_create_dir((u3_udir*) nod_u, dir_u, u3k(i_pax));
+        _unix_create_dir((u3_udir*)nod_u, dir_u, u3k(i_pax));
       }
 
       if ( c3n == nod_u->dir ) {
@@ -1195,22 +1206,23 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
         c3_assert(0);
       }
 
-      _unix_sync_change(unx_u, (u3_udir*) nod_u, u3k(t_pax), mim);
+      _unix_sync_change(unx_u, (u3_udir*)nod_u, u3k(t_pax), mim);
     }
   }
   u3z(pax);
 }
 
 /* _unix_sync_ergo(): sync list of changes to unix
-*/
+ */
 static void
 _unix_sync_ergo(u3_unix* unx_u, u3_umon* mon_u, u3_noun can)
 {
   u3_noun nac = can;
   u3_noun nam = u3i_string(mon_u->nam_c);
 
-  while ( u3_nul != nac) {
-    _unix_sync_change(unx_u, &mon_u->dir_u,
+  while ( u3_nul != nac ) {
+    _unix_sync_change(unx_u,
+                      &mon_u->dir_u,
                       u3nc(u3k(nam), u3k(u3h(u3h(nac)))),
                       u3k(u3t(u3h(nac))));
     nac = u3t(nac);
@@ -1221,7 +1233,7 @@ _unix_sync_ergo(u3_unix* unx_u, u3_umon* mon_u, u3_noun can)
 }
 
 /* u3_unix_ef_dirk(): commit mount point
-*/
+ */
 void
 u3_unix_ef_dirk(u3_unix* unx_u, u3_noun mon)
 {
@@ -1229,7 +1241,7 @@ u3_unix_ef_dirk(u3_unix* unx_u, u3_noun mon)
 }
 
 /* u3_unix_ef_ergo(): update filesystem from urbit
-*/
+ */
 void
 u3_unix_ef_ergo(u3_unix* unx_u, u3_noun mon, u3_noun can)
 {
@@ -1239,7 +1251,7 @@ u3_unix_ef_ergo(u3_unix* unx_u, u3_noun mon, u3_noun can)
 }
 
 /* u3_unix_ef_ogre(): delete mount point
-*/
+ */
 void
 u3_unix_ef_ogre(u3_unix* unx_u, u3_noun mon)
 {
@@ -1247,7 +1259,7 @@ u3_unix_ef_ogre(u3_unix* unx_u, u3_noun mon)
 }
 
 /* u3_unix_ef_hill(): enumerate mount points
-*/
+ */
 void
 u3_unix_ef_hill(u3_unix* unx_u, u3_noun hil)
 {
@@ -1264,26 +1276,26 @@ u3_unix_ef_hill(u3_unix* unx_u, u3_noun hil)
 }
 
 /* u3_unix_acquire(): acquire a lockfile, killing anything that holds it.
-*/
+ */
 static void
 u3_unix_acquire(c3_c* pax_c)
 {
   c3_c* paf_c = _unix_down(pax_c, ".vere.lock");
-  c3_w pid_w;
+  c3_w  pid_w;
   FILE* loq_u;
 
   if ( NULL != (loq_u = fopen(paf_c, "r")) ) {
     if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
       u3l_log("lockfile %s is corrupt!\n", paf_c);
       kill(getpid(), SIGTERM);
-      sleep(1); c3_assert(0);
+      sleep(1);
+      c3_assert(0);
     }
-    else if (pid_w != getpid()) {
+    else if ( pid_w != getpid() ) {
       c3_w i_w;
 
       if ( -1 != kill(pid_w, SIGTERM) ) {
-        u3l_log("unix: stopping process %d, live in %s...\n",
-                pid_w, pax_c);
+        u3l_log("unix: stopping process %d, live in %s...\n", pid_w, pax_c);
 
         for ( i_w = 0; i_w < 16; i_w++ ) {
           sleep(1);
@@ -1327,7 +1339,7 @@ u3_unix_acquire(c3_c* pax_c)
 }
 
 /* u3_unix_release(): release a lockfile.
-*/
+ */
 static void
 u3_unix_release(c3_c* pax_c)
 {
@@ -1338,15 +1350,15 @@ u3_unix_release(c3_c* pax_c)
 }
 
 /* u3_unix_ef_look(): update the root of a specific mount point.
-*/
+ */
 void
 u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all)
 {
   if ( c3y == unx_u->dyr ) {
-    unx_u->dyr = c3n;
+    unx_u->dyr     = c3n;
     u3_umon* mon_u = unx_u->mon_u;
 
-    while ( mon_u && ( c3n == u3r_sing_c(mon_u->nam_c, mon) ) ) {
+    while ( mon_u && (c3n == u3r_sing_c(mon_u->nam_c, mon)) ) {
       mon_u = mon_u->nex_u;
     }
 
@@ -1359,7 +1371,7 @@ u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all)
 }
 
 /* _unix_io_talk(): start listening for fs events.
-*/
+ */
 static void
 _unix_io_talk(u3_auto* car_u)
 {
@@ -1372,20 +1384,17 @@ _unix_io_talk(u3_auto* car_u)
 }
 
 /* _unix_io_kick(): apply effects.
-*/
+ */
 static c3_o
 _unix_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
   u3_unix* unx_u = (u3_unix*)car_u;
 
   u3_noun tag, dat, i_wir;
-  c3_o ret_o;
+  c3_o    ret_o;
 
-  if (  (c3n == u3r_cell(wir, &i_wir, 0))
-     || (c3n == u3r_cell(cad, &tag, &dat))
-     || (  (c3__clay != i_wir)
-        && (c3__boat != i_wir)
-        && (c3__sync != i_wir) )  )
+  if ( (c3n == u3r_cell(wir, &i_wir, 0)) || (c3n == u3r_cell(cad, &tag, &dat))
+       || ((c3__clay != i_wir) && (c3__boat != i_wir) && (c3__sync != i_wir)) )
   {
     ret_o = c3n;
   }
@@ -1420,12 +1429,13 @@ _unix_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
     }
   }
 
-  u3z(wir); u3z(cad);
+  u3z(wir);
+  u3z(cad);
   return ret_o;
 }
 
 /* _unix_io_exit(): terminate unix I/O.
-*/
+ */
 static void
 _unix_io_exit(u3_auto* car_u)
 {
@@ -1440,23 +1450,23 @@ _unix_io_exit(u3_auto* car_u)
 }
 
 /* u3_unix_io_init(): initialize unix sync.
-*/
+ */
 u3_auto*
 u3_unix_io_init(u3_pier* pir_u)
 {
   u3_unix* unx_u = c3_calloc(sizeof(*unx_u));
-  unx_u->mon_u = 0;
-  unx_u->pax_c = strdup(pir_u->pax_c);
-  unx_u->alm = c3n;
-  unx_u->dyr = c3n;
+  unx_u->mon_u   = 0;
+  unx_u->pax_c   = strdup(pir_u->pax_c);
+  unx_u->alm     = c3n;
+  unx_u->dyr     = c3n;
 
   //  XX move to disk.c?
   //
   u3_unix_acquire(unx_u->pax_c);
 
-  u3_auto* car_u = &unx_u->car_u;
-  car_u->nam_m = c3__unix;
-  car_u->liv_o = c3n;
+  u3_auto* car_u   = &unx_u->car_u;
+  car_u->nam_m     = c3__unix;
+  car_u->liv_o     = c3n;
   car_u->io.talk_f = _unix_io_talk;
   car_u->io.kick_f = _unix_io_kick;
   car_u->io.exit_f = _unix_io_exit;
@@ -1465,11 +1475,11 @@ u3_unix_io_init(u3_pier* pir_u)
   // car_u->ev.bail_f = ...l;
 
   {
-    u3_noun now;
+    u3_noun        now;
     struct timeval tim_u;
     gettimeofday(&tim_u, 0);
 
-    now = u3_time_in_tv(&tim_u);
+    now          = u3_time_in_tv(&tim_u);
     unx_u->sev_l = u3r_mug(now);
     u3z(now);
   }

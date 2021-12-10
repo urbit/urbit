@@ -3,29 +3,29 @@
 */
 #include "all.h"
 #include "ur/ur.h"
+
+#include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <ctype.h>
 
 /* _cu_atom_to_ref(): allocate indirect atom off-loom.
-*/
+ */
 static inline ur_nref
 _cu_atom_to_ref(ur_root_t* rot_u, u3a_atom* vat_u)
 {
   ur_nref ref;
-  c3_d  val_d;
+  c3_d    val_d;
 
   switch ( vat_u->len_w ) {
     case 2: {
-      val_d = ((c3_d)vat_u->buf_w[1]) << 32
-            | ((c3_d)vat_u->buf_w[0]);
-      ref = ur_coin64(rot_u, val_d);
+      val_d = ((c3_d)vat_u->buf_w[1]) << 32 | ((c3_d)vat_u->buf_w[0]);
+      ref   = ur_coin64(rot_u, val_d);
     } break;
 
     case 1: {
       val_d = (c3_d)vat_u->buf_w[0];
-      ref = ur_coin64(rot_u, val_d);
+      ref   = ur_coin64(rot_u, val_d);
     } break;
 
     default: {
@@ -34,7 +34,7 @@ _cu_atom_to_ref(ur_root_t* rot_u, u3a_atom* vat_u)
       c3_y* byt_y = (c3_y*)vat_u->buf_w;
       c3_d  len_d = ((c3_d)vat_u->len_w) << 2;
 
-      c3_assert( len_d );
+      c3_assert(len_d);
 
       //  NB: this call will account for any trailing null bytes
       //  caused by an overestimate in [len_d]
@@ -47,7 +47,7 @@ _cu_atom_to_ref(ur_root_t* rot_u, u3a_atom* vat_u)
 }
 
 /* _cu_box_check(): check loom allocation box for relocation pointer.
-*/
+ */
 static inline c3_o
 _cu_box_check(u3a_noun* som_u, ur_nref* ref)
 {
@@ -55,8 +55,7 @@ _cu_box_check(u3a_noun* som_u, ur_nref* ref)
   c3_w*    box_w = (void*)box_u;
 
   if ( 0xffffffff == box_w[0] ) {
-    *ref = ( ((c3_d)box_w[2]) << 32
-           | ((c3_d)box_w[1]) );
+    *ref = (((c3_d)box_w[2]) << 32 | ((c3_d)box_w[1]));
     return c3y;
   }
 
@@ -64,7 +63,7 @@ _cu_box_check(u3a_noun* som_u, ur_nref* ref)
 }
 
 /* _cu_box_stash(): overwrite an allocation box with relocation pointer.
-*/
+ */
 static inline void
 _cu_box_stash(u3a_noun* som_u, ur_nref ref)
 {
@@ -87,14 +86,12 @@ _cu_box_stash(u3a_noun* som_u, ur_nref ref)
 
 #define LOM_HEAD 0xffffffffffffffffULL
 
-typedef struct _cu_frame_s
-{
-  ur_nref     ref;
+typedef struct _cu_frame_s {
+  ur_nref   ref;
   u3a_cell* cel_u;
 } _cu_frame;
 
-typedef struct _cu_stack_s
-{
+typedef struct _cu_stack_s {
   c3_w       pre_w;
   c3_w       siz_w;
   c3_w       fil_w;
@@ -102,7 +99,7 @@ typedef struct _cu_stack_s
 } _cu_stack;
 
 /* _cu_from_loom_next(): advance off-loom reallocation traversal.
-*/
+ */
 static inline ur_nref
 _cu_from_loom_next(_cu_stack* tac_u, ur_root_t* rot_u, u3_noun a)
 {
@@ -134,8 +131,9 @@ _cu_from_loom_next(_cu_stack* tac_u, ur_root_t* rot_u, u3_noun a)
         //  reallocate the stack if full
         //
         if ( tac_u->fil_w == tac_u->siz_w ) {
-          c3_w nex_w   = tac_u->pre_w + tac_u->siz_w;
-          tac_u->fam_u = c3_realloc(tac_u->fam_u, nex_w * sizeof(*tac_u->fam_u));
+          c3_w nex_w = tac_u->pre_w + tac_u->siz_w;
+          tac_u->fam_u
+            = c3_realloc(tac_u->fam_u, nex_w * sizeof(*tac_u->fam_u));
           tac_u->pre_w = tac_u->siz_w;
           tac_u->siz_w = nex_w;
         }
@@ -144,8 +142,8 @@ _cu_from_loom_next(_cu_stack* tac_u, ur_root_t* rot_u, u3_noun a)
         //
         {
           _cu_frame* fam_u = &(tac_u->fam_u[tac_u->fil_w++]);
-          fam_u->ref   = LOM_HEAD;
-          fam_u->cel_u = cel_u;
+          fam_u->ref       = LOM_HEAD;
+          fam_u->cel_u     = cel_u;
         }
 
         a = cel_u->hed;
@@ -156,12 +154,12 @@ _cu_from_loom_next(_cu_stack* tac_u, ur_root_t* rot_u, u3_noun a)
 }
 
 /* _cu_from_loom(): reallocate [a] off loom, in [r].
-*/
+ */
 static ur_nref
 _cu_from_loom(ur_root_t* rot_u, u3_noun a)
 {
   _cu_stack tac_u = {0};
-  ur_nref     ref;
+  ur_nref   ref;
 
   tac_u.pre_w = ur_fib10;
   tac_u.siz_w = ur_fib11;
@@ -197,14 +195,14 @@ _cu_from_loom(ur_root_t* rot_u, u3_noun a)
 }
 
 /* _cu_vec: parameters for cold-state hamt walk.
-*/
+ */
 typedef struct _cu_vec_s {
   ur_nvec_t* vec_u;
   ur_root_t* rot_u;
 } _cu_vec;
 
 /* _cu_hamt_walk(): reallocate key/value pair in hamt walk.
-*/
+ */
 static void
 _cu_hamt_walk(u3_noun kev, void* ptr)
 {
@@ -222,9 +220,9 @@ _cu_hamt_walk(u3_noun kev, void* ptr)
 static ur_nref
 _cu_all_from_loom(ur_root_t* rot_u, ur_nvec_t* cod_u)
 {
-  ur_nref   ken = _cu_from_loom(rot_u, u3A->roc);
+  ur_nref ken   = _cu_from_loom(rot_u, u3A->roc);
   c3_w    cod_w = u3h_wyt(u3R->jed.cod_p);
-  _cu_vec dat_u = { .vec_u = cod_u, .rot_u = rot_u };
+  _cu_vec dat_u = {.vec_u = cod_u, .rot_u = rot_u};
 
   ur_nvec_init(cod_u, cod_w);
   u3h_walk_with(u3R->jed.cod_p, _cu_hamt_walk, &dat_u);
@@ -233,28 +231,30 @@ _cu_all_from_loom(ur_root_t* rot_u, ur_nvec_t* cod_u)
 }
 
 typedef struct _cu_loom_s {
-  ur_dict32_t map_u;  //  direct->indirect mapping
-  u3_atom      *vat;  //  indirect atoms
-  u3_noun      *cel;  //  cells
+  ur_dict32_t map_u; //  direct->indirect mapping
+  u3_atom*    vat;   //  indirect atoms
+  u3_noun*    cel;   //  cells
 } _cu_loom;
 
 /* _cu_ref_to_noun(): lookup/allocate [ref] on the loom.
-*/
+ */
 static u3_noun
 _cu_ref_to_noun(ur_root_t* rot_u, ur_nref ref, _cu_loom* lom_u)
 {
   switch ( ur_nref_tag(ref) ) {
-    default: c3_assert(0);
+    default:
+      c3_assert(0);
 
     //  all ur indirect atoms have been pre-reallocated on the loom.
     //
-    case ur_iatom:  return lom_u->vat[ur_nref_idx(ref)];
-
+    case ur_iatom:
+      return lom_u->vat[ur_nref_idx(ref)];
 
     //  cells were allocated off-loom in cons-order, and are traversed
     //  in the same order: we've already relocated any one we could need here.
     //
-    case ur_icell:  return lom_u->cel[ur_nref_idx(ref)];
+    case ur_icell:
+      return lom_u->cel[ur_nref_idx(ref)];
 
     //  u3 direct atoms are 31-bit, while ur direct atoms are 62-bit;
     //  we use a hashtable to deduplicate the non-overlapping space
@@ -270,8 +270,8 @@ _cu_ref_to_noun(ur_root_t* rot_u, ur_nref ref, _cu_loom* lom_u)
       }
       else {
         {
-          c3_w wor_w[2] = { ref & 0xffffffff, ref >> 32 };
-          vat = (c3_w)u3i_words(2, wor_w);
+          c3_w wor_w[2] = {ref & 0xffffffff, ref >> 32};
+          vat           = (c3_w)u3i_words(2, wor_w);
         }
 
         ur_dict32_put(0, &lom_u->map_u, ref, (c3_w)vat);
@@ -289,8 +289,8 @@ _cu_ref_to_noun(ur_root_t* rot_u, ur_nref ref, _cu_loom* lom_u)
 static void
 _cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
 {
-  _cu_loom  lom_u = {0};
-  c3_d i_d, fil_d;
+  _cu_loom lom_u = {0};
+  c3_d     i_d, fil_d;
 
   ur_dict32_grow(0, &lom_u.map_u, ur_fib11, ur_fib12);
 
@@ -300,7 +300,7 @@ _cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
     c3_d*  len_d = rot_u->atoms.lens;
     c3_y** byt_y = rot_u->atoms.bytes;
 
-    fil_d = rot_u->atoms.fill;
+    fil_d     = rot_u->atoms.fill;
     lom_u.vat = calloc(fil_d, sizeof(u3_atom));
 
     for ( i_d = 0; i_d < fil_d; i_d++ ) {
@@ -315,11 +315,11 @@ _cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
     ur_nref* tal = rot_u->cells.tails;
     u3_noun  cel;
 
-    fil_d = rot_u->cells.fill;
+    fil_d     = rot_u->cells.fill;
     lom_u.cel = c3_calloc(fil_d * sizeof(u3_noun));
 
     for ( i_d = 0; i_d < fil_d; i_d++ ) {
-      cel = u3nc(_cu_ref_to_noun(rot_u, hed[i_d], &lom_u),
+      cel            = u3nc(_cu_ref_to_noun(rot_u, hed[i_d], &lom_u),
                  _cu_ref_to_noun(rot_u, tal[i_d], &lom_u));
       lom_u.cel[i_d] = cel;
       u3r_mug(cel);
@@ -333,12 +333,12 @@ _cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
   //  restore cold jet state (always cells)
   //
   {
-    c3_d  max_d = cod_u->fill;
+    c3_d    max_d = cod_u->fill;
     c3_d    i_d;
     ur_nref ref;
     u3_noun kev;
 
-    for ( i_d = 0; i_d < max_d; i_d++) {
+    for ( i_d = 0; i_d < max_d; i_d++ ) {
       ref = cod_u->refs[i_d];
       kev = lom_u.cel[ur_nref_idx(ref)];
       u3h_put(u3R->jed.cod_p, u3h(kev), u3k(u3t(kev)));
@@ -354,7 +354,7 @@ _cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
 }
 
 /* _cu_realloc(): hash-cons roots off-loom, reallocate on loom.
-*/
+ */
 static ur_nref
 _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 {
@@ -381,7 +381,7 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   //
   ur_root_t* rot_u = ur_root_init();
   ur_nvec_t  cod_u;
-  ur_nref      ken = _cu_all_from_loom(rot_u, &cod_u);
+  ur_nref    ken = _cu_all_from_loom(rot_u, &cod_u);
 
   //  print [rot_u] measurements
   //
@@ -427,7 +427,7 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 }
 
 /* u3u_meld(): globally deduplicate memory.
-*/
+ */
 #ifdef U3_MEMORY_DEBUG
 void
 u3u_meld(void)
@@ -441,7 +441,7 @@ u3u_meld(void)
   ur_root_t* rot_u;
   ur_nvec_t  cod_u;
 
-  c3_assert( &(u3H->rod_u) == u3R );
+  c3_assert(&(u3H->rod_u) == u3R);
 
   _cu_realloc(stderr, &rot_u, &cod_u);
 
@@ -453,25 +453,30 @@ u3u_meld(void)
 #endif
 
 /* _cu_rock_path(): format rock path.
-*/
+ */
 static c3_o
 _cu_rock_path(c3_c* dir_c, c3_d eve_d, c3_c** out_c)
 {
   c3_w  nam_w = 1 + snprintf(0, 0, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
   c3_c* nam_c = c3_malloc(nam_w);
-  c3_i ret_i;
+  c3_i  ret_i;
 
   ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
 
   if ( ret_i < 0 ) {
-    fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
-                    dir_c, eve_d, strerror(errno));
+    fprintf(stderr,
+            "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
+            dir_c,
+            eve_d,
+            strerror(errno));
     c3_free(nam_c);
     return c3n;
   }
   else if ( ret_i >= nam_w ) {
-    fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
-                    dir_c, eve_d);
+    fprintf(stderr,
+            "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
+            dir_c,
+            eve_d);
     c3_free(nam_c);
     return c3n;
   }
@@ -481,13 +486,13 @@ _cu_rock_path(c3_c* dir_c, c3_d eve_d, c3_c** out_c)
 }
 
 /* _cu_rock_path_make(): format rock path, creating directory if necessary..
-*/
+ */
 static c3_o
 _cu_rock_path_make(c3_c* dir_c, c3_d eve_d, c3_c** out_c)
 {
   c3_w  nam_w = 1 + snprintf(0, 0, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
   c3_c* nam_c = c3_malloc(nam_w);
-  c3_i ret_i;
+  c3_i  ret_i;
 
   //  create $pier/.urb/roc, if it doesn't exist
   //
@@ -497,23 +502,29 @@ _cu_rock_path_make(c3_c* dir_c, c3_d eve_d, c3_c** out_c)
     ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc", dir_c);
 
     if ( ret_i < 0 ) {
-      fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
-                      dir_c, eve_d, strerror(errno));
+      fprintf(stderr,
+              "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
+              dir_c,
+              eve_d,
+              strerror(errno));
       c3_free(nam_c);
       return c3n;
     }
     else if ( ret_i >= nam_w ) {
-      fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
-                      dir_c, eve_d);
+      fprintf(stderr,
+              "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
+              dir_c,
+              eve_d);
       c3_free(nam_c);
       return c3n;
     }
 
-    if (  mkdir(nam_c, 0700)
-       && (EEXIST != errno) )
-    {
-      fprintf(stderr, "rock: directory create failed (%s, %" PRIu64 "): %s\r\n",
-                      dir_c, eve_d, strerror(errno));
+    if ( mkdir(nam_c, 0700) && (EEXIST != errno) ) {
+      fprintf(stderr,
+              "rock: directory create failed (%s, %" PRIu64 "): %s\r\n",
+              dir_c,
+              eve_d,
+              strerror(errno));
       c3_free(nam_c);
       return c3n;
     }
@@ -522,14 +533,19 @@ _cu_rock_path_make(c3_c* dir_c, c3_d eve_d, c3_c** out_c)
   ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
 
   if ( ret_i < 0 ) {
-    fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
-                    dir_c, eve_d, strerror(errno));
+    fprintf(stderr,
+            "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
+            dir_c,
+            eve_d,
+            strerror(errno));
     c3_free(nam_c);
     return c3n;
   }
   else if ( ret_i >= nam_w ) {
-    fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
-                    dir_c, eve_d);
+    fprintf(stderr,
+            "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
+            dir_c,
+            eve_d);
     c3_free(nam_c);
     return c3n;
   }
@@ -553,8 +569,11 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
     }
 
     if ( -1 == (fid_i = open(nam_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
-      fprintf(stderr, "rock: open failed (%s, %" PRIu64 "): %s\r\n",
-                      dir_c, eve_d, strerror(errno));
+      fprintf(stderr,
+              "rock: open failed (%s, %" PRIu64 "): %s\r\n",
+              dir_c,
+              eve_d,
+              strerror(errno));
       c3_free(nam_c);
       return c3n;
     }
@@ -585,11 +604,9 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
         }
 
         ret_i = write(fid_i, byt_y, len_d);
-      }
-      while (  (ret_i < 0)
-            && (  (errno == EINTR)
-               || (errno == EAGAIN)
-               || (errno == EWOULDBLOCK) ));
+      } while (
+        (ret_i < 0)
+        && ((errno == EINTR) || (errno == EAGAIN) || (errno == EWOULDBLOCK)) );
 
       //  assert on true errors
       //
@@ -617,7 +634,7 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
 }
 
 /* u3u_cram(): globably deduplicate memory, and write a rock to disk.
-*/
+ */
 #ifdef U3_MEMORY_DEBUG
 c3_o
 u3u_cram(c3_c* dir_c, c3_d eve_d)
@@ -633,32 +650,32 @@ u3u_cram(c3_c* dir_c, c3_d eve_d)
   c3_d  len_d;
   c3_y* byt_y;
 
-  c3_assert( &(u3H->rod_u) == u3R );
+  c3_assert(&(u3H->rod_u) == u3R);
 
   {
     ur_root_t* rot_u;
     ur_nvec_t  cod_u;
-    ur_nref      ken = _cu_realloc(stderr, &rot_u, &cod_u);
+    ur_nref    ken = _cu_realloc(stderr, &rot_u, &cod_u);
 
     {
-      ur_nref roc = u3_nul;
-      c3_d  max_d = cod_u.fill;
+      ur_nref roc   = u3_nul;
+      c3_d    max_d = cod_u.fill;
       c3_d    i_d;
 
       //  cons vector of cold jet-state entries onto a list
       //
-      for ( i_d = 0; i_d < max_d; i_d++) {
+      for ( i_d = 0; i_d < max_d; i_d++ ) {
         roc = ur_cons(rot_u, cod_u.refs[i_d], roc);
       }
 
       {
-        c3_c* has_c = "hashboard";
-        ur_nref has = ur_coin_bytes(rot_u, strlen(has_c), (c3_y*)has_c);
-        roc = ur_cons(rot_u, has, roc);
+        c3_c*   has_c = "hashboard";
+        ur_nref has   = ur_coin_bytes(rot_u, strlen(has_c), (c3_y*)has_c);
+        roc           = ur_cons(rot_u, has, roc);
       }
 
-      roc = ur_cons(rot_u, ur_coin64(rot_u, c3__arvo),
-                           ur_cons(rot_u, ken, roc));
+      roc
+        = ur_cons(rot_u, ur_coin64(rot_u, c3__arvo), ur_cons(rot_u, ken, roc));
 
       ur_jam(rot_u, roc, &len_d, &byt_y);
     }
@@ -682,7 +699,7 @@ u3u_cram(c3_c* dir_c, c3_d eve_d)
 #endif
 
 /* u3u_mmap_read(): open and mmap the file at [pat_c] for reading.
-*/
+ */
 c3_o
 u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
 {
@@ -692,8 +709,11 @@ u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
   //  open file
   //
   if ( -1 == (fid_i = open(pat_c, O_RDONLY, 0644)) ) {
-    fprintf(stderr, "%s: open failed (%s): %s\r\n",
-                    cap_c, pat_c, strerror(errno));
+    fprintf(stderr,
+            "%s: open failed (%s): %s\r\n",
+            cap_c,
+            pat_c,
+            strerror(errno));
     return c3n;
   }
 
@@ -703,8 +723,11 @@ u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
     struct stat buf_b;
 
     if ( -1 == fstat(fid_i, &buf_b) ) {
-      fprintf(stderr, "%s: stat failed (%s): %s\r\n",
-                      cap_c, pat_c, strerror(errno));
+      fprintf(stderr,
+              "%s: stat failed (%s): %s\r\n",
+              cap_c,
+              pat_c,
+              strerror(errno));
       close(fid_i);
       return c3n;
     }
@@ -717,9 +740,13 @@ u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
   {
     void* ptr_v;
 
-    if ( MAP_FAILED == (ptr_v = mmap(0, len_d, PROT_READ, MAP_SHARED, fid_i, 0)) ) {
-      fprintf(stderr, "%s: mmap failed (%s): %s\r\n",
-                      cap_c, pat_c, strerror(errno));
+    if ( MAP_FAILED
+         == (ptr_v = mmap(0, len_d, PROT_READ, MAP_SHARED, fid_i, 0)) ) {
+      fprintf(stderr,
+              "%s: mmap failed (%s): %s\r\n",
+              cap_c,
+              pat_c,
+              strerror(errno));
       close(fid_i);
       return c3n;
     }
@@ -736,7 +763,7 @@ u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
 }
 
 /* u3u_mmap(): open/create file-backed mmap at [pat_c] for read/write.
-*/
+ */
 c3_o
 u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
 {
@@ -745,8 +772,11 @@ u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
   //  open file
   //
   if ( -1 == (fid_i = open(pat_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
-    fprintf(stderr, "%s: open failed (%s): %s\r\n",
-                    cap_c, pat_c, strerror(errno));
+    fprintf(stderr,
+            "%s: open failed (%s): %s\r\n",
+            cap_c,
+            pat_c,
+            strerror(errno));
     return c3n;
   }
 
@@ -755,8 +785,11 @@ u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
   //    XX build with _FILE_OFFSET_BITS == 64 ?
   //
   if ( 0 != ftruncate(fid_i, len_d) ) {
-    fprintf(stderr, "%s: ftruncate grow %s: %s\r\n",
-                    cap_c, pat_c, strerror(errno));
+    fprintf(stderr,
+            "%s: ftruncate grow %s: %s\r\n",
+            cap_c,
+            pat_c,
+            strerror(errno));
     close(fid_i);
     return c3n;
   }
@@ -766,9 +799,15 @@ u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
   {
     void* ptr_v;
 
-    if ( MAP_FAILED == (ptr_v = mmap(0, len_d, PROT_READ|PROT_WRITE, MAP_SHARED, fid_i, 0)) ) {
-      fprintf(stderr, "%s: mmap failed (%s): %s\r\n",
-                      cap_c, pat_c, strerror(errno));
+    if ( MAP_FAILED
+         == (ptr_v
+             = mmap(0, len_d, PROT_READ | PROT_WRITE, MAP_SHARED, fid_i, 0)) )
+    {
+      fprintf(stderr,
+              "%s: mmap failed (%s): %s\r\n",
+              cap_c,
+              pat_c,
+              strerror(errno));
       close(fid_i);
       return c3n;
     }
@@ -784,7 +823,7 @@ u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
 }
 
 /* u3u_mmap_save(): sync file-backed mmap.
-*/
+ */
 c3_o
 u3u_mmap_save(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y* byt_y)
 {
@@ -797,7 +836,7 @@ u3u_mmap_save(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y* byt_y)
 }
 
 /* u3u_munmap(): unmap the region at [byt_y].
-*/
+ */
 c3_o
 u3u_munmap(c3_d len_d, c3_y* byt_y)
 {
@@ -809,7 +848,7 @@ u3u_munmap(c3_d len_d, c3_y* byt_y)
 }
 
 /* u3u_uncram(): restore persistent state from a rock.
-*/
+ */
 c3_o
 u3u_uncram(c3_c* dir_c, c3_d eve_d)
 {
@@ -820,8 +859,10 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
   //  load rock file into buffer
   //
   if ( c3n == _cu_rock_path(dir_c, eve_d, &nam_c) ) {
-    fprintf(stderr, "uncram: failed to make rock path (%s, %" PRIu64 ")\r\n",
-                    dir_c, eve_d);
+    fprintf(stderr,
+            "uncram: failed to make rock path (%s, %" PRIu64 ")\r\n",
+            dir_c,
+            eve_d);
     return c3n;
   }
   else if ( c3n == u3u_mmap_read("rock", nam_c, &len_d, &byt_y) ) {
@@ -852,8 +893,8 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
     //  XX tune the initial dictionary size for less reallocation
     //
     u3_cue_xeno* sil_u = u3s_cue_xeno_init_with(ur_fib33, ur_fib34);
-    u3_weak        ref = u3s_cue_xeno_with(sil_u, len_d, byt_y);
-    u3_noun   roc, doc, tag, cod;
+    u3_weak      ref   = u3s_cue_xeno_with(sil_u, len_d, byt_y);
+    u3_noun      roc, doc, tag, cod;
 
     u3s_cue_xeno_done(sil_u);
 
@@ -862,10 +903,10 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
       c3_free(nam_c);
       return c3n;
     }
-    else if (  c3n == u3r_pq(ref, c3__arvo, &roc, &doc)
-            || (c3n == u3r_cell(doc, &tag, &cod))
-            || (c3n == u3r_sing_c("hashboard", tag)) )
-   {
+    else if ( c3n == u3r_pq(ref, c3__arvo, &roc, &doc)
+              || (c3n == u3r_cell(doc, &tag, &cod))
+              || (c3n == u3r_sing_c("hashboard", tag)) )
+    {
       fprintf(stderr, "uncram: failed: invalid rock format\r\n");
       u3z(ref);
       c3_free(nam_c);
@@ -896,7 +937,8 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
   //  leave rocks on disk
   //
   // if ( 0 != unlink(nam_c) ) {
-  //   fprintf(stderr, "uncram: failed to delete rock (%s, %" PRIu64 "): %s\r\n",
+  //   fprintf(stderr, "uncram: failed to delete rock (%s, %" PRIu64 "):
+  //   %s\r\n",
   //                   dir_c, eve_d, strerror(errno));
   //   c3_free(nam_c);
   //   return c3n;

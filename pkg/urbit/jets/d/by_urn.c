@@ -22,7 +22,7 @@ _by_urn(u3_noun a, u3j_site* sit_u)
 u3_noun
 u3qdb_urn(u3_noun a, u3_noun b)
 {
-  u3_noun    pro;
+  u3_noun  pro;
   u3j_site sit_u;
 
   u3j_gate_prep(&sit_u, u3k(b));

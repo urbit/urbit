@@ -4,10 +4,9 @@
 #include "all.h"
 
 /* functions
-*/
+ */
 u3_noun
-u3qdb_has(u3_noun a,
-          u3_noun b)
+u3qdb_has(u3_noun a, u3_noun b)
 {
   if ( u3_nul == a ) {
     return c3n;
@@ -22,8 +21,8 @@ u3qdb_has(u3_noun a,
       return c3y;
     }
     else {
-      return ( c3y == u3qc_gor(b, pn_a) ) ? u3qdb_has(u3h(lr_a), b)
-                                          : u3qdb_has(u3t(lr_a), b);
+      return (c3y == u3qc_gor(b, pn_a)) ? u3qdb_has(u3h(lr_a), b)
+                                        : u3qdb_has(u3t(lr_a), b);
     }
   }
 }
@@ -37,10 +36,10 @@ u3wdb_has(u3_noun cor)
 }
 
 u3_noun
-u3kdb_has(u3_noun a,
-          u3_noun b)
+u3kdb_has(u3_noun a, u3_noun b)
 {
   u3_noun c = u3qdb_has(a, b);
-  u3z(a); u3z(b);
+  u3z(a);
+  u3z(b);
   return c;
 }

@@ -1,5 +1,6 @@
 #include "all.h"
 #include "vere/vere.h"
+
 #include <sys/wait.h>
 
 /*
@@ -21,8 +22,10 @@ static c3_i _child_process_booted_signal_fd = -1;
   and overwrite the global to make it impossible to accidentally do
   this twice.
 */
-static void _on_boot_completed_cb() {
-  c3_c buf[2] = {0,0};
+static void
+_on_boot_completed_cb()
+{
+  c3_c buf[2] = {0, 0};
 
   if ( -1 == _child_process_booted_signal_fd ) {
     return;
@@ -71,7 +74,7 @@ u3_daemon_init()
   if ( 0 == childpid ) {
     close(pipefd[0]);
     _child_process_booted_signal_fd = pipefd[1];
-    u3_Host.bot_f = _on_boot_completed_cb;
+    u3_Host.bot_f                   = _on_boot_completed_cb;
     return;
   }
 
@@ -80,7 +83,7 @@ u3_daemon_init()
   close(1);
   close(2);
 
-  c3_c buf[2] = {0,0};
+  c3_c buf[2] = {0, 0};
   if ( 1 == read(pipefd[0], buf, 1) ) {
     exit(0);
   }

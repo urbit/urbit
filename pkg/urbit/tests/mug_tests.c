@@ -1,7 +1,7 @@
 #include "all.h"
 
 /* _setup(): prepare for tests.
-*/
+ */
 static void
 _setup(void)
 {
@@ -10,7 +10,7 @@ _setup(void)
 }
 
 /* _test_mug(): spot check u3r_mug hashes.
-*/
+ */
 static c3_i
 _test_mug(void)
 {
@@ -59,7 +59,6 @@ _test_mug(void)
     fprintf(stderr, "fail (d)\r\n");
     ret_i = 0;
   }
-
 
   {
     if ( 0x192f5588 != u3r_mug_cell(0, 0) ) {
@@ -114,9 +113,10 @@ _test_mug(void)
   {
     //  stick some zero bytes in a string
     //
-    u3_noun str = u3kc_lsh(3, 1,
-                           u3kc_mix(u3qc_bex(212),
-                           u3i_string("abcdefjhijklmnopqrstuvwxyz")));
+    u3_noun str = u3kc_lsh(
+      3,
+      1,
+      u3kc_mix(u3qc_bex(212), u3i_string("abcdefjhijklmnopqrstuvwxyz")));
 
     c3_w  byt_w = u3r_met(3, str);
     c3_w  wor_w = u3r_met(5, str);
@@ -153,8 +153,8 @@ _test_mug(void)
   }
 
   {
-    c3_w  som_w[4] = { 0, 0, 0, 1 };
-    u3_noun som    = u3i_words(4, som_w);
+    c3_w    som_w[4] = {0, 0, 0, 1};
+    u3_noun som      = u3i_words(4, som_w);
 
     if ( 0x519bd45c != u3r_mug(som) ) {
       fprintf(stderr, "fail (j) (1)\r\n");
@@ -170,8 +170,8 @@ _test_mug(void)
   }
 
   {
-    c3_w  som_w[4] = { 0, 1, 0, 1 };
-    u3_noun som    = u3i_words(4, som_w);
+    c3_w    som_w[4] = {0, 1, 0, 1};
+    u3_noun som      = u3i_words(4, som_w);
 
     if ( 0x540eb8a9 != u3r_mug(som) ) {
       fprintf(stderr, "fail (k) (1)\r\n");
@@ -187,8 +187,8 @@ _test_mug(void)
   }
 
   {
-    c3_w  som_w[4] = { 1, 1, 0, 1 };
-    u3_noun som    = u3i_words(4, som_w);
+    c3_w    som_w[4] = {1, 1, 0, 1};
+    u3_noun som      = u3i_words(4, som_w);
 
     if ( 0x319d28f9 != u3r_mug(som) ) {
       fprintf(stderr, "fail (l) (1)\r\n");
@@ -204,8 +204,8 @@ _test_mug(void)
   }
 
   {
-    c3_w  som_w[4] = { 0, 0, 0, 0xffff };
-    u3_noun som    = u3i_words(4, som_w);
+    c3_w    som_w[4] = {0, 0, 0, 0xffff};
+    u3_noun som      = u3i_words(4, som_w);
 
     if ( 0x5230a260 != u3r_mug(som) ) {
       fprintf(stderr, "fail (m) (1)\r\n");
@@ -224,7 +224,7 @@ _test_mug(void)
 }
 
 /* main(): run all test cases.
-*/
+ */
 int
 main(int argc, char* argv[])
 {

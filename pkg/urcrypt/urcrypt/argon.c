@@ -1,36 +1,35 @@
 #include "urcrypt.h"
 #include "util.h"
+
 #include <argon2.h>
 #include <blake2.h>
 
 // library convention is to have sizes in size_t, but argon2 wants them
 // in uint32_t, so here's a helper macro for ensuring equivalence.
-#define SZ_32(s) ( sizeof(size_t) <= sizeof(uint32_t) || s <= 0xFFFFFFFF )
+#define SZ_32(s) (sizeof(size_t) <= sizeof(uint32_t) || s <= 0xFFFFFFFF)
 
 const char*
-urcrypt_argon2(uint8_t  type,
-               uint32_t version,
-               uint32_t threads,
-               uint32_t memory_cost,
-               uint32_t time_cost,
-               size_t secret_length,
-               uint8_t *secret,
-               size_t associated_length,
-               uint8_t *associated,
-               size_t password_length,
-               uint8_t *password,
-               size_t salt_length,
-               uint8_t *salt,
-               size_t out_length,
-               uint8_t *out,
+urcrypt_argon2(uint8_t                type,
+               uint32_t               version,
+               uint32_t               threads,
+               uint32_t               memory_cost,
+               uint32_t               time_cost,
+               size_t                 secret_length,
+               uint8_t*               secret,
+               size_t                 associated_length,
+               uint8_t*               associated,
+               size_t                 password_length,
+               uint8_t*               password,
+               size_t                 salt_length,
+               uint8_t*               salt,
+               size_t                 out_length,
+               uint8_t*               out,
                urcrypt_argon2_alloc_t alloc_ptr,
-               urcrypt_argon2_free_t free_ptr)
+               urcrypt_argon2_free_t  free_ptr)
 {
-  if ( !( SZ_32(secret_length) &&
-          SZ_32(associated_length) &&
-          SZ_32(password_length) &&
-          SZ_32(salt_length) &&
-          SZ_32(out_length) ) ) {
+  if ( !(SZ_32(secret_length) && SZ_32(associated_length)
+         && SZ_32(password_length) && SZ_32(salt_length) && SZ_32(out_length)) )
+  {
     return "length > 32 bits";
   }
   else {
@@ -60,24 +59,24 @@ urcrypt_argon2(uint8_t  type,
     urcrypt__reverse(salt_length, salt);
 
     argon2_context context = {
-      out,                   // output array, at least [digest length] in size
-      out_length,            // digest length
-      password,              // password array
-      password_length,       // password length
-      salt,                  // salt array
-      salt_length,           // salt length
-      secret,                // optional secret data
+      out,             // output array, at least [digest length] in size
+      out_length,      // digest length
+      password,        // password array
+      password_length, // password length
+      salt,            // salt array
+      salt_length,     // salt length
+      secret,          // optional secret data
       secret_length,
-      associated,            // optional associated data
+      associated, // optional associated data
       associated_length,
-      time_cost,             // performance cost configuration
+      time_cost, // performance cost configuration
       memory_cost,
       threads,
       threads,
-      version,               // algorithm version
-      alloc_ptr,             // custom memory allocation function
-      free_ptr,              // custom memory deallocation function
-      ARGON2_DEFAULT_FLAGS   // by default only internal memory is cleared
+      version,             // algorithm version
+      alloc_ptr,           // custom memory allocation function
+      free_ptr,            // custom memory deallocation function
+      ARGON2_DEFAULT_FLAGS // by default only internal memory is cleared
     };
 
     result = (*f)(&context);
@@ -93,12 +92,12 @@ urcrypt_argon2(uint8_t  type,
 }
 
 int
-urcrypt_blake2(size_t message_length,
-               uint8_t *message,
-               size_t key_length,
-               uint8_t key[64],
-               size_t out_length,
-               uint8_t *out)
+urcrypt_blake2(size_t   message_length,
+               uint8_t* message,
+               size_t   key_length,
+               uint8_t  key[64],
+               size_t   out_length,
+               uint8_t* out)
 {
   if ( key_length > 64 ) {
     return -1;
@@ -107,9 +106,9 @@ urcrypt_blake2(size_t message_length,
     urcrypt__reverse(message_length, message);
     urcrypt__reverse(key_length, key);
 
-    if ( 0 != blake2b(out, out_length,
-                      message, message_length,
-                      key, key_length)) {
+    if ( 0
+         != blake2b(out, out_length, message, message_length, key, key_length) )
+    {
       return -1;
     }
     else {

@@ -18,17 +18,13 @@ _by_apt(u3_noun a, u3_weak l, u3_weak r)
     }
 
     if ( u3_none != l ) {
-      if (  (c3n == u3qc_gor(p_n_a, l))
-         || (c3y == u3r_sing(p_n_a, l)) )
-      {
+      if ( (c3n == u3qc_gor(p_n_a, l)) || (c3y == u3r_sing(p_n_a, l)) ) {
         return c3n;
       }
     }
 
     if ( u3_none != r ) {
-      if (  (c3n == u3qc_gor(r, p_n_a))
-         || (c3y == u3r_sing(r, p_n_a)) )
-      {
+      if ( (c3n == u3qc_gor(r, p_n_a)) || (c3y == u3r_sing(r, p_n_a)) ) {
         return c3n;
       }
     }
@@ -36,9 +32,8 @@ _by_apt(u3_noun a, u3_weak l, u3_weak r)
     if ( u3_nul != l_a ) {
       u3_noun p_n_l_a = u3h(u3h(l_a));
 
-      if (  (c3n == u3qc_mor(p_n_a, p_n_l_a))
-         || (c3y == u3r_sing(p_n_a, p_n_l_a)) )
-      {
+      if ( (c3n == u3qc_mor(p_n_a, p_n_l_a))
+           || (c3y == u3r_sing(p_n_a, p_n_l_a)) ) {
         return c3n;
       }
 
@@ -50,9 +45,8 @@ _by_apt(u3_noun a, u3_weak l, u3_weak r)
     if ( u3_nul != r_a ) {
       u3_noun p_n_r_a = u3h(u3h(r_a));
 
-      if (  (c3n == u3qc_mor(p_n_a, p_n_r_a))
-         || (c3y == u3r_sing(p_n_a, p_n_r_a)) )
-      {
+      if ( (c3n == u3qc_mor(p_n_a, p_n_r_a))
+           || (c3y == u3r_sing(p_n_a, p_n_r_a)) ) {
         return c3n;
       }
 

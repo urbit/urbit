@@ -4,13 +4,13 @@
 #include "all.h"
 #include "vere/vere.h"
 
-  /*  |%
-  **  ++  arch                                        ::  fs node
-  **            $%  [& p=@uvI q=*]                    ::  file, hash/data
-  **                [| p=(map ,@ta arch)]             ::  directory
-  **            ==                                    ::
-  **  --
-  */
+/*  |%
+**  ++  arch                                        ::  fs node
+**            $%  [& p=@uvI q=*]                    ::  file, hash/data
+**                [| p=(map ,@ta arch)]             ::  directory
+**            ==                                    ::
+**  --
+*/
 
 #if 0
 static u3_noun
@@ -27,7 +27,7 @@ _walk_ok(u3_noun nod)
 #endif
 
 /* u3_walk_safe(): load file or 0.
-*/
+ */
 u3_noun
 u3_walk_safe(c3_c* pas_c)
 {
@@ -51,7 +51,7 @@ u3_walk_safe(c3_c* pas_c)
     return 0;
   }
   else {
-    u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3i_bytes(fln_w, (c3_y*)pad_y);
     c3_free(pad_y);
 
     return pad;
@@ -59,7 +59,7 @@ u3_walk_safe(c3_c* pas_c)
 }
 
 /* u3_walk_load(): load file or bail.
-*/
+ */
 u3_noun
 u3_walk_load(c3_c* pas_c)
 {
@@ -84,7 +84,7 @@ u3_walk_load(c3_c* pas_c)
     return u3m_bail(c3__fail);
   }
   else {
-    u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3i_bytes(fln_w, (c3_y*)pad_y);
     c3_free(pad_y);
 
     return pad;
@@ -92,7 +92,7 @@ u3_walk_load(c3_c* pas_c)
 }
 
 /* _walk_mkdirp(): recursively make directories in pax at bas_c (RETAIN)
-*/
+ */
 static void
 _walk_mkdirp(c3_c* bas_c, u3_noun pax)
 {
@@ -112,7 +112,7 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
   strcpy(pax_c, bas_c);
 
   pax_c[fas_w] = '/';
-  waq_y = (void*)(1 + pax_c + fas_w);
+  waq_y        = (void*)(1 + pax_c + fas_w);
   u3r_bytes(0, pax_w, waq_y, u3h(pax));
   pax_c[len_w] = '\0';
 
@@ -126,7 +126,7 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
 }
 
 /* u3_walk_save(): save file or bail.
-*/
+ */
 void
 u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
 {
@@ -170,94 +170,97 @@ u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
 }
 
 /* _walk_in(): inner loop of _walk(), producing map.
-*/
+ */
 static u3_noun
 _walk_in(const c3_c* dir_c, c3_w len_w)
 {
   DIR*    dir_d = opendir(dir_c);
-  u3_noun map = u3_nul;
+  u3_noun map   = u3_nul;
 
   if ( !dir_d ) {
     return u3_nul;
   }
-  else while ( 1 ) {
-    struct dirent  ent_n;
-    struct dirent* out_n;
+  else
+    while ( 1 ) {
+      struct dirent  ent_n;
+      struct dirent* out_n;
 
-    if ( u3_readdir_r(dir_d, &ent_n, &out_n) != 0 ) {
-       u3l_log("%s: %s\n", dir_c, strerror(errno));
-      break;
-    }
-    else if ( !out_n ) {
-      break;
-    }
-    else if ( !strcmp(out_n->d_name, ".") ||
-              !strcmp(out_n->d_name, "..") ||
-              ('~' == out_n->d_name[0]) ||
-              ('.' == out_n->d_name[0]) )     //  XX restricts some spans
-    {
-      continue;
-    }
-    else {
-      c3_c*  fil_c = out_n->d_name;
-      c3_w   lef_w = len_w + 1 + strlen(fil_c);
-      c3_c*  pat_c = c3_malloc(lef_w + 1);
-      struct stat buf_b;
+      if ( u3_readdir_r(dir_d, &ent_n, &out_n) != 0 ) {
+        u3l_log("%s: %s\n", dir_c, strerror(errno));
+        break;
+      }
+      else if ( !out_n ) {
+        break;
+      }
+      else if ( !strcmp(out_n->d_name, ".") || !strcmp(out_n->d_name, "..")
+                || ('~' == out_n->d_name[0])
+                || ('.' == out_n->d_name[0]) ) //  XX restricts some spans
+      {
+        continue;
+      }
+      else {
+        c3_c*       fil_c = out_n->d_name;
+        c3_w        lef_w = len_w + 1 + strlen(fil_c);
+        c3_c*       pat_c = c3_malloc(lef_w + 1);
+        struct stat buf_b;
 
-      strncpy(pat_c, dir_c, lef_w);
-      pat_c[len_w] = '/';
-      strncpy(pat_c + len_w + 1, fil_c, lef_w);
-      pat_c[lef_w] = '\0';
+        strncpy(pat_c, dir_c, lef_w);
+        pat_c[len_w] = '/';
+        strncpy(pat_c + len_w + 1, fil_c, lef_w);
+        pat_c[lef_w] = '\0';
 
-      if ( 0 != stat(pat_c, &buf_b) ) {
-        c3_free(pat_c);
-      } else {
-        u3_noun tim = c3_stat_mtime(&buf_b);
-
-        if ( !S_ISDIR(buf_b.st_mode) ) {
-          c3_c* dot_c = strrchr(fil_c, '.');
-          c3_c* nam_c = strdup(fil_c);
-          c3_c* ext_c = strdup(dot_c + 1);
-
-          nam_c[dot_c - fil_c] = 0;
-          {
-            u3_noun nam = u3i_string(nam_c);
-            u3_noun ext = u3i_string(ext_c);
-            u3_noun get = u3kdb_get(u3k(map), u3k(nam));
-            u3_noun dat = u3_walk_load(pat_c);
-            u3_noun hax;
-
-            if ( !strcmp("noun", ext_c) ) {
-              dat = u3ke_cue(dat);
-            }
-            hax = u3do("sham", u3k(dat));
-            if ( u3_none == get ) { get = u3_nul; }
-
-            get = u3kdb_put(get, ext, u3nt(c3y, hax, dat));
-            map = u3kdb_put(map, nam, u3nc(c3n, get));
-          }
-          c3_free(nam_c);
-          c3_free(ext_c);
+        if ( 0 != stat(pat_c, &buf_b) ) {
+          c3_free(pat_c);
         }
         else {
-          u3_noun dir = _walk_in(pat_c, lef_w);
+          u3_noun tim = c3_stat_mtime(&buf_b);
 
-          if ( u3_nul != dir ) {
-            map = u3kdb_put
-              (map, u3i_string(fil_c), u3nc(c3n, dir));
+          if ( !S_ISDIR(buf_b.st_mode) ) {
+            c3_c* dot_c = strrchr(fil_c, '.');
+            c3_c* nam_c = strdup(fil_c);
+            c3_c* ext_c = strdup(dot_c + 1);
+
+            nam_c[dot_c - fil_c] = 0;
+            {
+              u3_noun nam = u3i_string(nam_c);
+              u3_noun ext = u3i_string(ext_c);
+              u3_noun get = u3kdb_get(u3k(map), u3k(nam));
+              u3_noun dat = u3_walk_load(pat_c);
+              u3_noun hax;
+
+              if ( !strcmp("noun", ext_c) ) {
+                dat = u3ke_cue(dat);
+              }
+              hax = u3do("sham", u3k(dat));
+              if ( u3_none == get ) {
+                get = u3_nul;
+              }
+
+              get = u3kdb_put(get, ext, u3nt(c3y, hax, dat));
+              map = u3kdb_put(map, nam, u3nc(c3n, get));
+            }
+            c3_free(nam_c);
+            c3_free(ext_c);
           }
-          else u3z(tim);
+          else {
+            u3_noun dir = _walk_in(pat_c, lef_w);
+
+            if ( u3_nul != dir ) {
+              map = u3kdb_put(map, u3i_string(fil_c), u3nc(c3n, dir));
+            }
+            else
+              u3z(tim);
+          }
+          c3_free(pat_c);
         }
-        c3_free(pat_c);
       }
     }
-  }
   closedir(dir_d);
   return map;
 }
 
 /* u3_walk(): traverse `dir_c` to produce an arch, updating `old`.
-*/
+ */
 u3_noun
 u3_walk(const c3_c* dir_c, u3_noun old)
 {
@@ -272,19 +275,18 @@ u3_walk(const c3_c* dir_c, u3_noun old)
       c3_assert(0);
     }
     else {
-      return u3nc(c3n,
-                  _walk_in(dir_c, strlen(dir_c)));
+      return u3nc(c3n, _walk_in(dir_c, strlen(dir_c)));
     }
   }
 }
 
 /* u3_path(): C unix path in computer for file or directory.
-*/
+ */
 c3_c*
 u3_path(c3_o fyl, u3_noun pax)
 {
-  c3_w len_w;
-  c3_c *pas_c;
+  c3_w  len_w;
+  c3_c* pas_c;
 
   //  measure
   //
@@ -312,7 +314,9 @@ u3_path(c3_o fyl, u3_noun pax)
 
       if ( (c3y == fyl) && (u3_nul == u3t(wiz)) ) {
         *waq_c++ = '.';
-      } else *waq_c++ = '/';
+      }
+      else
+        *waq_c++ = '/';
 
       u3r_bytes(0, tis_w, (c3_y*)waq_c, u3h(wiz));
       waq_c += tis_w;

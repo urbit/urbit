@@ -4,10 +4,9 @@
 #include "all.h"
 
 /* internal functions
-*/
+ */
 static u3_noun
-_b_bif_putroot(u3_noun a,
-               u3_noun b)
+_b_bif_putroot(u3_noun a, u3_noun b)
 {
   if ( u3_nul == a ) {
     return u3nt(u3k(b), u3_nul, u3_nul);
@@ -30,20 +29,14 @@ _b_bif_putroot(u3_noun a,
       if ( c3y == u3qc_gor(p_b, p_n_a) ) {
         c = _b_bif_putroot(l_a, b);
         u3r_trel(c, &n_c, &l_c, &r_c);
-        d = u3nt(u3k(n_c),
-                 u3k(l_c),
-                 u3nt(u3k(n_a), u3k(r_c), u3k(r_a))
-                );
+        d = u3nt(u3k(n_c), u3k(l_c), u3nt(u3k(n_a), u3k(r_c), u3k(r_a)));
         u3z(c);
         return d;
       }
       else {
         c = _b_bif_putroot(r_a, b);
         u3r_trel(c, &n_c, &l_c, &r_c);
-        d = u3nt(u3k(n_c),
-                 u3nt(u3k(n_a), u3k(l_a), u3k(l_c)),
-                 u3k(r_c)
-                );
+        d = u3nt(u3k(n_c), u3nt(u3k(n_a), u3k(l_a), u3k(l_c)), u3k(r_c));
         u3z(c);
         return d;
       }
@@ -52,7 +45,7 @@ _b_bif_putroot(u3_noun a,
 }
 
 /* functions
-*/
+ */
 u3_noun
 u3wdb_bif(u3_noun cor)
 {
@@ -62,8 +55,7 @@ u3wdb_bif(u3_noun cor)
 }
 
 u3_noun
-u3qdb_bif(u3_noun a,
-          u3_noun b)
+u3qdb_bif(u3_noun a, u3_noun b)
 {
   u3_noun c, n_c, l_c, r_c;
   u3_noun d;

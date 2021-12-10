@@ -4,10 +4,9 @@
 #include "all.h"
 
 /* functions
-*/
+ */
 static u3_noun
-_tap_in(u3_noun a,
-        u3_noun b)
+_tap_in(u3_noun a, u3_noun b)
 {
   if ( u3_nul == a ) {
     return b;
@@ -16,9 +15,7 @@ _tap_in(u3_noun a,
     u3_noun n_a, l_a, r_a;
     u3x_trel(a, &n_a, &l_a, &r_a);
 
-    return _tap_in(r_a,
-                   u3nc(u3k(n_a),
-                   _tap_in(l_a, b)));
+    return _tap_in(r_a, u3nc(u3k(n_a), _tap_in(l_a, b)));
   }
 }
 

@@ -2,7 +2,7 @@
 #include "vere/vere.h"
 
 /* _setup(): prepare for tests.
-*/
+ */
 static void
 _setup(void)
 {
@@ -10,8 +10,9 @@ _setup(void)
   u3m_pave(c3y);
 }
 
-/* _newt_encode(): synchronous serialization into a single buffer, for test purposes
-*/
+/* _newt_encode(): synchronous serialization into a single buffer, for test
+ * purposes
+ */
 static c3_y*
 _newt_encode(u3_atom mat, c3_w* len_w)
 {
@@ -50,13 +51,13 @@ _moat_length(u3_moat* mot_u)
 }
 
 /* _test_newt_smol(): various scenarios with small messages
-*/
+ */
 static void
 _test_newt_smol(void)
 {
   //  =(2 (jam 0))
   //
-  u3_atom     a = u3ke_jam(0);
+  u3_atom a = u3ke_jam(0);
   u3_moat mot_u;
   c3_w    len_w;
   c3_y*   buf_y;
@@ -105,7 +106,7 @@ _test_newt_smol(void)
 
     buf_y = _newt_encode(u3k(a), &len_w);
 
-    end_y = c3_malloc(1);
+    end_y    = c3_malloc(1);
     end_y[0] = buf_y[len_w - 1];
 
     u3_newt_decode(&mot_u, buf_y, len_w - 1);
@@ -165,13 +166,13 @@ _test_newt_smol(void)
 }
 
 /* _test_newt_vast(): various scenarios with larger messages
-*/
+ */
 static void
 _test_newt_vast(void)
 {
   //  =(53 (met 3 (jam "abcdefghijklmnopqrstuvwxyz")))
   //
-  u3_atom     a = u3ke_jam(u3i_tape("abcdefghijklmnopqrstuvwxyz"));
+  u3_atom a = u3ke_jam(u3i_tape("abcdefghijklmnopqrstuvwxyz"));
   u3_moat mot_u;
   c3_w    len_w;
   c3_y*   buf_y;
@@ -227,7 +228,7 @@ _test_newt_vast(void)
 
       while ( haf_w < len_w ) {
         c3_y* end_y = c3_malloc(1);
-        end_y[0] = cop_y[haf_w];
+        end_y[0]    = cop_y[haf_w];
 
         if ( 0 != _moat_length(&mot_u) ) {
           fprintf(stderr, "newt vast fail (c) %u\n", haf_w);
@@ -272,14 +273,14 @@ _test_newt_vast(void)
 
     u3_newt_decode(&mot_u, buf_y, dub_w - haf_w);
 
-    if ( 1 !=  _moat_length(&mot_u) ) {
+    if ( 1 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (e)\n");
       exit(1);
     }
 
     u3_newt_decode(&mot_u, haf_y, haf_w);
 
-    if ( 2 !=  _moat_length(&mot_u) ) {
+    if ( 2 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (f)\n");
       exit(1);
     }
@@ -310,9 +311,9 @@ _test_newt_vast(void)
 
       while ( haf_w < dub_w ) {
         c3_y* end_y = c3_malloc(1);
-        end_y[0] = cop_y[haf_w];
+        end_y[0]    = cop_y[haf_w];
 
-        if ( 1 !=  _moat_length(&mot_u) ) {
+        if ( 1 != _moat_length(&mot_u) ) {
           fprintf(stderr, "newt vast fail (g) %u\n", haf_w);
           exit(1);
         }
@@ -324,7 +325,7 @@ _test_newt_vast(void)
       c3_free(cop_y);
     }
 
-    if ( 2 !=  _moat_length(&mot_u) ) {
+    if ( 2 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (h)\n");
       exit(1);
     }
@@ -334,7 +335,7 @@ _test_newt_vast(void)
 }
 
 /* main(): run all test cases.
-*/
+ */
 int
 main(int argc, char* argv[])
 {

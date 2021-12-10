@@ -1,15 +1,14 @@
 #include "urcrypt.h"
+
 #include <ge-additions.h>
 
 int
-urcrypt_ed_point_add(const uint8_t a[32],
-                     const uint8_t b[32],
-                     uint8_t out[32])
+urcrypt_ed_point_add(const uint8_t a[32], const uint8_t b[32], uint8_t out[32])
 {
-  ge_p3 A, B;
+  ge_p3     A, B;
   ge_cached b_cached;
-  ge_p1p1 sum;
-  ge_p3 result;
+  ge_p1p1   sum;
+  ge_p3     result;
 
   if ( ge_frombytes_negate_vartime(&A, a) != 0 ) {
     return -1;
@@ -35,9 +34,7 @@ urcrypt_ed_point_add(const uint8_t a[32],
 }
 
 int
-urcrypt_ed_scalarmult(const uint8_t a[32],
-                      const uint8_t b[32],
-                      uint8_t out[32])
+urcrypt_ed_scalarmult(const uint8_t a[32], const uint8_t b[32], uint8_t out[32])
 {
   ge_p3 B, result;
 
@@ -55,8 +52,7 @@ urcrypt_ed_scalarmult(const uint8_t a[32],
 }
 
 void
-urcrypt_ed_scalarmult_base(const uint8_t a[32],
-                           uint8_t out[32])
+urcrypt_ed_scalarmult_base(const uint8_t a[32], uint8_t out[32])
 {
   ge_p3 R;
   ge_scalarmult_base(&R, a);
@@ -67,12 +63,12 @@ int
 urcrypt_ed_add_scalarmult_scalarmult_base(const uint8_t a[32],
                                           const uint8_t a_point[32],
                                           const uint8_t b[32],
-                                          uint8_t out[32])
+                                          uint8_t       out[32])
 {
   ge_p2 r;
   ge_p3 A;
 
-  if (ge_frombytes_negate_vartime(&A, a_point) != 0) {
+  if ( ge_frombytes_negate_vartime(&A, a_point) != 0 ) {
     return -1;
   }
 
@@ -91,11 +87,11 @@ urcrypt_ed_add_double_scalarmult(const uint8_t a[32],
                                  const uint8_t a_point[32],
                                  const uint8_t b[32],
                                  const uint8_t b_point[32],
-                                 uint8_t out[32])
+                                 uint8_t       out[32])
 {
-  ge_p3 A, B, a_result, b_result, final_result;
+  ge_p3     A, B, a_result, b_result, final_result;
   ge_cached b_result_cached;
-  ge_p1p1 sum;
+  ge_p1p1   sum;
 
   if ( ge_frombytes_negate_vartime(&A, a_point) != 0 ) {
     return -1;

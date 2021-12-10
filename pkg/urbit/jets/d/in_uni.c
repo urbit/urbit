@@ -4,7 +4,7 @@
 #include "all.h"
 
 /* internal functions
-*/
+ */
 static u3_noun
 _in_uni(u3_noun a, u3_noun b)
 {
@@ -15,9 +15,7 @@ _in_uni(u3_noun a, u3_noun b)
     return u3k(a);
   }
   else {
-    u3_noun n_a, l_a, r_a,
-            n_b, l_b, r_b,
-            neb, sub, naw, pro;
+    u3_noun n_a, l_a, r_a, n_b, l_b, r_b, neb, sub, naw, pro;
     u3x_trel(a, &n_a, &l_a, &r_a);
     u3x_trel(b, &n_b, &l_b, &r_b);
 
@@ -30,15 +28,17 @@ _in_uni(u3_noun a, u3_noun b)
         sub = _in_uni(naw, l_b);
         neb = u3nt(u3k(n_b), sub, u3k(r_b));
         pro = _in_uni(r_a, neb);
-        u3z(naw); u3z(neb);
+        u3z(naw);
+        u3z(neb);
         return pro;
       }
       else {
         naw = u3nt(u3k(n_a), u3_nul, u3k(r_a));
         sub = _in_uni(naw, r_b);
-        neb = u3nt(u3k(n_b), u3k(l_b),  sub);
+        neb = u3nt(u3k(n_b), u3k(l_b), sub);
         pro = _in_uni(l_a, neb);
-        u3z(naw); u3z(neb);
+        u3z(naw);
+        u3z(neb);
         return pro;
       }
     }
@@ -50,7 +50,8 @@ _in_uni(u3_noun a, u3_noun b)
       sub = _in_uni(l_a, neb);
       naw = u3nt(u3k(n_a), sub, u3k(r_a));
       pro = _in_uni(naw, r_b);
-      u3z(neb); u3z(naw);
+      u3z(neb);
+      u3z(naw);
       return pro;
     }
     else {
@@ -58,26 +59,26 @@ _in_uni(u3_noun a, u3_noun b)
       sub = _in_uni(r_a, neb);
       naw = u3nt(u3k(n_a), u3k(l_a), sub);
       pro = _in_uni(naw, l_b);
-      u3z(neb); u3z(naw);
+      u3z(neb);
+      u3z(naw);
       return pro;
     }
   }
 }
 
 /* functions
-*/
+ */
 u3_noun
-u3kdi_uni(u3_noun a,
-          u3_noun b)
+u3kdi_uni(u3_noun a, u3_noun b)
 {
   u3_noun c = u3qdi_uni(a, b);
-  u3z(a); u3z(b);
+  u3z(a);
+  u3z(b);
   return c;
 }
 
 u3_noun
-u3qdi_uni(u3_noun a,
-          u3_noun b)
+u3qdi_uni(u3_noun a, u3_noun b)
 {
   if ( c3y == u3r_sing(a, b) ) {
     return u3k(a);
@@ -94,4 +95,3 @@ u3wdi_uni(u3_noun cor)
   u3x_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0);
   return u3qdi_uni(a, b);
 }
-

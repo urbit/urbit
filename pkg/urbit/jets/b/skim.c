@@ -9,10 +9,10 @@ u3qb_skim(u3_noun a, u3_noun b)
   u3_noun  pro;
   u3_noun* lit = &pro;
 
-  if ( u3_nul != a) {
-    u3_noun   i, t = a;
-    u3_noun*   hed;
-    u3_noun*   tel;
+  if ( u3_nul != a ) {
+    u3_noun  i, t = a;
+    u3_noun* hed;
+    u3_noun* tel;
     u3j_site sit_u;
     u3j_gate_prep(&sit_u, u3k(b));
 
@@ -26,12 +26,13 @@ u3qb_skim(u3_noun a, u3_noun b)
           lit  = tel;
         } break;
 
-        case c3n: break;
+        case c3n:
+          break;
 
-        default: u3m_bail(c3__exit);
+        default:
+          u3m_bail(c3__exit);
       }
-    }
-    while ( u3_nul != t );
+    } while ( u3_nul != t );
 
     u3j_gate_lose(&sit_u);
   }

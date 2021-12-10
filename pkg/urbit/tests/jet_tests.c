@@ -1,7 +1,7 @@
 #include "all.h"
 
 /* _setup(): prepare for tests.
-*/
+ */
 static void
 _setup(void)
 {
@@ -18,7 +18,11 @@ _ud_good(c3_w num_w, const c3_c* num_c)
       fprintf(stderr, "sift_ud: %s fail; expected %u\r\n", num_c, num_w);
     }
     else {
-      fprintf(stderr, "sift_ud: %s wrong; expected %u: actual %u\r\n", num_c, num_w, out);
+      fprintf(stderr,
+              "sift_ud: %s wrong; expected %u: actual %u\r\n",
+              num_c,
+              num_w,
+              out);
     }
     return 0;
   }
@@ -70,9 +74,9 @@ _test_sift_ud(void)
   ret_i &= _ud_fail(".123.456");
 
   {
-    c3_c* num_c = "4.294.967.296";
-    u3_weak out = u3s_sift_ud_bytes(strlen(num_c), (c3_y*)num_c);
-    u3_atom pro = u3qc_bex(32);
+    c3_c*   num_c = "4.294.967.296";
+    u3_weak out   = u3s_sift_ud_bytes(strlen(num_c), (c3_y*)num_c);
+    u3_atom pro   = u3qc_bex(32);
 
     if ( u3_none == out ) {
       fprintf(stderr, "sift_ud: (bex 32) fail\r\n");
@@ -85,14 +89,14 @@ _test_sift_ud(void)
       ret_i = 0;
     }
 
-    u3z(out); u3z(pro);
+    u3z(out);
+    u3z(pro);
   }
 
-
   {
-    c3_c* num_c = "340.282.366.920.938.463.463.374.607.431.768.211.456";
-    u3_weak out = u3s_sift_ud_bytes(strlen(num_c), (c3_y*)num_c);
-    u3_atom pro = u3qc_bex(128);
+    c3_c*   num_c = "340.282.366.920.938.463.463.374.607.431.768.211.456";
+    u3_weak out   = u3s_sift_ud_bytes(strlen(num_c), (c3_y*)num_c);
+    u3_atom pro   = u3qc_bex(128);
 
     if ( u3_none == out ) {
       fprintf(stderr, "sift_ud: (bex 128) fail\r\n");
@@ -105,7 +109,8 @@ _test_sift_ud(void)
       ret_i = 0;
     }
 
-    u3z(out); u3z(pro);
+    u3z(out);
+    u3z(pro);
   }
 
   return ret_i;
@@ -189,7 +194,6 @@ _test_en_base16(void)
   return ret_i;
 }
 
-
 static c3_i
 _test_de_base16(void)
 {
@@ -215,7 +219,8 @@ _test_de_base16(void)
       ret_i = 0;
     }
 
-    u3z(inp); u3z(pro);
+    u3z(inp);
+    u3z(pro);
   }
 
   {
@@ -238,7 +243,8 @@ _test_de_base16(void)
       ret_i = 0;
     }
 
-    u3z(inp); u3z(pro);
+    u3z(inp);
+    u3z(pro);
   }
 
   {
@@ -261,7 +267,8 @@ _test_de_base16(void)
       ret_i = 0;
     }
 
-    u3z(inp); u3z(pro);
+    u3z(inp);
+    u3z(pro);
   }
 
   {
@@ -284,7 +291,8 @@ _test_de_base16(void)
       ret_i = 0;
     }
 
-    u3z(inp); u3z(pro);
+    u3z(inp);
+    u3z(pro);
   }
 
   {
@@ -307,7 +315,8 @@ _test_de_base16(void)
       ret_i = 0;
     }
 
-    u3z(inp); u3z(pro);
+    u3z(inp);
+    u3z(pro);
   }
 
   {
@@ -330,7 +339,8 @@ _test_de_base16(void)
       ret_i = 0;
     }
 
-    u3z(inp); u3z(pro);
+    u3z(inp);
+    u3z(pro);
   }
 
   return ret_i;
@@ -350,10 +360,11 @@ _test_base16(void)
 static c3_w
 _fein_ob_w(c3_w inp_w)
 {
-  u3_atom inp = u3i_word(inp_w);
-  u3_atom act = u3qe_fein_ob(inp);
-  c3_w  act_w = u3r_word(0, act);
-  u3z(inp); u3z(act);
+  u3_atom inp   = u3i_word(inp_w);
+  u3_atom act   = u3qe_fein_ob(inp);
+  c3_w    act_w = u3r_word(0, act);
+  u3z(inp);
+  u3z(act);
   return act_w;
 }
 
@@ -363,8 +374,11 @@ _expect_fein_ob_w(c3_w inp_w, c3_w exp_w)
   c3_w act_w = _fein_ob_w(inp_w);
 
   if ( act_w != exp_w ) {
-    fprintf(stderr, "fein: inp=0x%08x exp=0x%08x act=0x%08x\n",
-                    inp_w, exp_w, act_w);
+    fprintf(stderr,
+            "fein: inp=0x%08x exp=0x%08x act=0x%08x\n",
+            inp_w,
+            exp_w,
+            act_w);
     return 0;
   }
 
@@ -395,10 +409,11 @@ _test_fein_ob(void)
 static c3_w
 _fynd_ob_w(c3_w inp_w)
 {
-  u3_atom inp = u3i_word(inp_w);
-  u3_atom act = u3qe_fynd_ob(inp);
-  c3_w  act_w = u3r_word(0, act);
-  u3z(inp); u3z(act);
+  u3_atom inp   = u3i_word(inp_w);
+  u3_atom act   = u3qe_fynd_ob(inp);
+  c3_w    act_w = u3r_word(0, act);
+  u3z(inp);
+  u3z(act);
   return act_w;
 }
 
@@ -408,8 +423,11 @@ _expect_fynd_ob_w(c3_w exp_w, c3_w inp_w)
   c3_w act_w = _fynd_ob_w(inp_w);
 
   if ( act_w != exp_w ) {
-    fprintf(stderr, "fynd: inp=0x%08x exp=0x%08x act=0x%08x\n",
-                    inp_w, exp_w, act_w);
+    fprintf(stderr,
+            "fynd: inp=0x%08x exp=0x%08x act=0x%08x\n",
+            inp_w,
+            exp_w,
+            act_w);
     return 0;
   }
 
@@ -451,11 +469,15 @@ _exhaust_roundtrip_fein_fynd_ob(void)
       fyn_w = u3r_word(0, fyn);
 
       if ( i_w != fyn_w ) {
-        fprintf(stderr, "fein/fynd: inp=0x%08x fein=0x%08x fynd=0x%08x\n",
-                        i_w, u3r_word(0, fen), fyn_w);
+        fprintf(stderr,
+                "fein/fynd: inp=0x%08x fein=0x%08x fynd=0x%08x\n",
+                i_w,
+                u3r_word(0, fen),
+                fyn_w);
         ret_i = 0;
       }
-      u3z(fen); u3z(fyn);
+      u3z(fen);
+      u3z(fyn);
 
       if ( !(i_w % 0x1000000) ) {
         fprintf(stderr, "fein/fynd: 0x%x done\n", i_w);
@@ -470,16 +492,18 @@ _exhaust_roundtrip_fein_fynd_ob(void)
       fen_w = _fein_ob_w(i_w);
       fyn_w = _fynd_ob_w(fen_w);
       if ( i_w != fyn_w ) {
-        fprintf(stderr, "fein/fynd: inp=0x%08x fein=0x%08x fynd=0x%08x\n",
-                        i_w, fen_w, fyn_w);
+        fprintf(stderr,
+                "fein/fynd: inp=0x%08x fein=0x%08x fynd=0x%08x\n",
+                i_w,
+                fen_w,
+                fyn_w);
         ret_i = 0;
       }
 
       if ( !(i_w % 0x1000000) ) {
         fprintf(stderr, "fein/fynd: 0x%x done\n", i_w);
       }
-    }
-    while ( ++i_w );
+    } while ( ++i_w );
   }
 
   return ret_i;
@@ -521,7 +545,7 @@ _test_jets(void)
 }
 
 /* main(): run all test cases.
-*/
+ */
 int
 main(int argc, char* argv[])
 {

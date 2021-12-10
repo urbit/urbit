@@ -44,9 +44,8 @@ u3wa_gth(u3_noun cor)
 {
   u3_noun a, b;
 
-  if (  (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0))
-     || (c3n == u3ud(b) && 0 != a)
-     || (c3n == u3ud(a) && 0 != b) )
+  if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0))
+       || (c3n == u3ud(b) && 0 != a) || (c3n == u3ud(a) && 0 != b) )
   {
     return u3m_bail(c3__exit);
   }
@@ -59,6 +58,7 @@ u3_noun
 u3ka_gth(u3_noun a, u3_noun b)
 {
   u3_noun c = u3qa_gth(a, b);
-  u3z(a); u3z(b);
+  u3z(a);
+  u3z(b);
   return c;
 }

@@ -3,6 +3,7 @@
 
 #include "natpmp.h"
 
-int readNatResponseSynchronously(natpmp_t* natpmp, natpmpresp_t * response);
+int
+readNatResponseSynchronously(natpmp_t* natpmp, natpmpresp_t* response);
 
 #endif

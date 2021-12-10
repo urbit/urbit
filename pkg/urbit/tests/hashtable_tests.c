@@ -2,10 +2,11 @@
 #include "vere/vere.h"
 
 // defined in noun/hashtable.c
-c3_w _ch_skip_slot(c3_w mug_w, c3_w lef_w);
+c3_w
+_ch_skip_slot(c3_w mug_w, c3_w lef_w);
 
 /* _setup(): prepare for tests.
-*/
+ */
 static void
 _setup(void)
 {
@@ -14,7 +15,7 @@ _setup(void)
 }
 
 /* _test_bit_manipulation():
-*/
+ */
 static c3_i
 _test_bit_manipulation()
 {
@@ -27,24 +28,24 @@ _test_bit_manipulation()
 
   u3h_slot a = 0;
 
-  if (u3h_slot_is_null(a) != c3y) {
+  if ( u3h_slot_is_null(a) != c3y ) {
     fprintf(stderr, "bit manipulation: nullity\r\n");
     ret_i = 0;
   }
 
   a = u3h_noun_be_warm(a);
-  if (u3h_slot_is_warm(a) != c3y) {
+  if ( u3h_slot_is_warm(a) != c3y ) {
     fprintf(stderr, "bit manipulation: warmth\r\n");
     ret_i = 0;
   }
 
-  if (u3h_slot_is_null(a) != c3n) {
+  if ( u3h_slot_is_null(a) != c3n ) {
     fprintf(stderr, "bit manipulation: nullity 2\r\n");
     ret_i = 0;
   }
 
   a = u3h_noun_be_cold(a);
-  if (u3h_slot_is_warm(a) != c3n) {
+  if ( u3h_slot_is_warm(a) != c3n ) {
     fprintf(stderr, "bit manipulation: coldness\r\n");
     ret_i = 0;
   }
@@ -53,13 +54,13 @@ _test_bit_manipulation()
 }
 
 /* _test_no_cache(): test a hashtable without caching.
-*/
+ */
 static c3_i
 _test_no_cache(void)
 {
   c3_i ret_i = 1;
   c3_w max_w = 1000;
-  c3_w   i_w;
+  c3_w i_w;
 
   u3p(u3h_root) har_p = u3h_new();
 
@@ -79,7 +80,7 @@ _test_no_cache(void)
 }
 
 /* _test_skip_slot():
-*/
+ */
 static c3_i
 _test_skip_slot(void)
 {
@@ -132,13 +133,13 @@ _test_skip_slot(void)
 }
 
 /* _test_cache_trimming(): ensure a caching hashtable removes stale items.
-*/
+ */
 static c3_i
 _test_cache_trimming(void)
 {
   c3_i ret_i = 1;
   c3_w max_w = 2000000; // big number
-  //c3_w max_w = 348000; // caused a leak before
+  // c3_w max_w = 348000; // caused a leak before
   c3_w i_w, fil_w = max_w / 10;
 
   u3p(u3h_root) har_p = u3h_new_cache(fil_w);
@@ -151,9 +152,9 @@ _test_cache_trimming(void)
 
   {
     // last thing we put in is still there
-    c3_w  las_w = max_w - 1;
-    u3_noun key = u3nc(las_w, las_w);
-    u3_noun val = u3h_get(har_p, key);
+    c3_w    las_w = max_w - 1;
+    u3_noun key   = u3nc(las_w, las_w);
+    u3_noun val   = u3h_get(har_p, key);
     u3z(key);
 
     if ( las_w != u3t(val) ) {
@@ -162,8 +163,10 @@ _test_cache_trimming(void)
     }
 
     if ( fil_w != har_u->use_w ) {
-      fprintf(stderr, "cache_trimming (b): fail %d != %d\r\n",
-              fil_w, har_u->use_w );
+      fprintf(stderr,
+              "cache_trimming (b): fail %d != %d\r\n",
+              fil_w,
+              har_u->use_w);
       ret_i = 0;
     }
 
@@ -175,13 +178,13 @@ _test_cache_trimming(void)
 }
 
 /* _test_cache_replace_value():
-*/
+ */
 static c3_i
 _test_cache_replace_value(void)
 {
   c3_i ret_i = 1;
   c3_w max_w = 100;
-  c3_w   i_w;
+  c3_w i_w;
 
   u3p(u3h_root) har_p = u3h_new_cache(max_w);
   u3h_root*     har_u = u3to(u3h_root, har_p);
@@ -200,8 +203,7 @@ _test_cache_replace_value(void)
   }
   if ( max_w != har_u->use_w ) {
     fprintf(stderr, "cache_replace (b): fail\r\n");
-    fprintf(stderr, "cache_replace (b): fail %d %d\r\n",
-            max_w, har_u->use_w );
+    fprintf(stderr, "cache_replace (b): fail %d %d\r\n", max_w, har_u->use_w);
     ret_i = 0;
   }
 
@@ -224,7 +226,7 @@ _test_hashtable(void)
 }
 
 /* main(): run all test cases.
-*/
+ */
 int
 main(int argc, char* argv[])
 {

@@ -3,21 +3,22 @@
 */
 #include "all.h"
 #include "vere/vere.h"
+
 #include <sys/ioctl.h>
 #include <termios.h>
 
 /*  u3_ptty: POSIX terminal extension to u3_utty.
-*/
+ */
 typedef struct {
-  u3_utty          tty_u;  //  common tty structure
-  c3_i             cug_i;  //  blocking fcntl flags
-  c3_i             nob_i;  //  nonblocking fcntl flags
-  struct termios   bak_u;  //  cooked terminal state
-  struct termios   raw_u;  //  raw terminal state
+  u3_utty        tty_u; //  common tty structure
+  c3_i           cug_i; //  blocking fcntl flags
+  c3_i           nob_i; //  nonblocking fcntl flags
+  struct termios bak_u; //  cooked terminal state
+  struct termios raw_u; //  raw terminal state
 } u3_ptty;
 
 /*  _term_tcsetattr(): tcsetattr w/retry on EINTR.
-*/
+ */
 static c3_i
 _term_tcsetattr(c3_i fil_i, c3_i act_i, const struct termios* tms_u)
 {
@@ -38,7 +39,7 @@ _term_tcsetattr(c3_i fil_i, c3_i act_i, const struct termios* tms_u)
 }
 
 /*  _ttyf_start_raw_input(): sets the tty to raw input.
-*/
+ */
 static c3_o
 _ttyf_start_raw_input(u3_utty* uty_u)
 {
@@ -53,7 +54,7 @@ _ttyf_start_raw_input(u3_utty* uty_u)
 }
 
 /*  _ttyf_start_raw_input(): ends raw input on the tty.
-*/
+ */
 static c3_o
 _ttyf_end_raw_input(u3_utty* uty_u)
 {
@@ -68,7 +69,7 @@ _ttyf_end_raw_input(u3_utty* uty_u)
 }
 
 /*  _ttyf_hija(): hijacks the tty for cooked output.
-*/
+ */
 static c3_o
 _ttyf_hija(u3_utty* uty_u)
 {
@@ -93,7 +94,7 @@ _ttyf_hija(u3_utty* uty_u)
 }
 
 /*  _ttyf_loja(): releases the tty from cooked output.
-*/
+ */
 static c3_o
 _ttyf_loja(u3_utty* uty_u)
 {
@@ -118,23 +119,23 @@ _ttyf_loja(u3_utty* uty_u)
 }
 
 /*  _ttyf_get_winsize(): gets the tty window size.
-*/
+ */
 static c3_o
 _ttyf_get_winsize(u3_utty* uty_u, c3_l* col_l, c3_l* row_l)
 {
   struct winsize siz_u;
-  if ( 0 == ioctl(uty_u->fid_i, TIOCGWINSZ, &siz_u) )
-  {
+  if ( 0 == ioctl(uty_u->fid_i, TIOCGWINSZ, &siz_u) ) {
     *col_l = siz_u.ws_col;
     *row_l = siz_u.ws_row;
     return c3y;
-  } else {
+  }
+  else {
     return c3n;
   }
 }
 
 /* u3_ptty_init(): initialize platform-specific tty.
-*/
+ */
 u3_utty*
 u3_ptty_init(uv_loop_t* lup_u, const c3_c** err_c)
 {
@@ -161,8 +162,8 @@ u3_ptty_init(uv_loop_t* lup_u, const c3_c** err_c)
     if ( -1 == fcntl(uty_u->fid_i, F_GETFL, &pty_u->cug_i) ) {
       c3_assert(!"init-fcntl");
     }
-    pty_u->cug_i &= ~O_NONBLOCK;                // could fix?
-    pty_u->nob_i = pty_u->cug_i | O_NONBLOCK;   // O_NDELAY on older unix
+    pty_u->cug_i &= ~O_NONBLOCK;              // could fix?
+    pty_u->nob_i = pty_u->cug_i | O_NONBLOCK; // O_NDELAY on older unix
   }
 
   //  Construct raw termios configuration.
@@ -175,7 +176,7 @@ u3_ptty_init(uv_loop_t* lup_u, const c3_c** err_c)
     pty_u->raw_u.c_cflag &= ~(CSIZE | PARENB);
     pty_u->raw_u.c_cflag |= CS8;
     pty_u->raw_u.c_oflag &= ~(OPOST);
-    pty_u->raw_u.c_cc[VMIN] = 0;
+    pty_u->raw_u.c_cc[VMIN]  = 0;
     pty_u->raw_u.c_cc[VTIME] = 0;
   }
 

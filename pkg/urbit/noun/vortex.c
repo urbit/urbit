@@ -2,15 +2,16 @@
 **
 */
 #include "all.h"
+
 #include <stdio.h>
 
-#define _CVX_LOAD  4
+#define _CVX_LOAD 4
 #define _CVX_PEEK 22
 #define _CVX_POKE 23
 #define _CVX_WISH 10
 
 /* u3v_life(): execute initial lifecycle, producing Arvo core.
-*/
+ */
 u3_noun
 u3v_life(u3_noun eve)
 {
@@ -23,7 +24,7 @@ u3v_life(u3_noun eve)
 }
 
 /* u3v_boot(): evaluate boot sequence, making a kernel
-*/
+ */
 c3_o
 u3v_boot(u3_noun eve)
 {
@@ -47,7 +48,7 @@ u3v_boot(u3_noun eve)
 }
 
 /* _cv_lite(): load lightweight, core-only pill.
-*/
+ */
 static u3_noun
 _cv_lite(u3_noun pil)
 {
@@ -56,7 +57,7 @@ _cv_lite(u3_noun pil)
   {
     u3_noun hed, tal;
     u3x_cell(pil, &hed, &tal);
-    u3_assent( u3r_sing_c("ivory", hed) );
+    u3_assent(u3r_sing_c("ivory", hed));
     eve = tal;
   }
 
@@ -69,7 +70,7 @@ _cv_lite(u3_noun pil)
 }
 
 /* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
-*/
+ */
 c3_o
 u3v_boot_lite(u3_noun pil)
 {
@@ -95,7 +96,7 @@ u3v_boot_lite(u3_noun pil)
 }
 
 /* _cv_nock_wish(): call wish through hardcoded interface.
-*/
+ */
 static u3_noun
 _cv_nock_wish(u3_noun txt)
 {
@@ -108,7 +109,7 @@ _cv_nock_wish(u3_noun txt)
 }
 
 /* u3v_wish(): text expression with cache.
-*/
+ */
 u3_noun
 u3v_wish(const c3_c* str_c)
 {
@@ -134,7 +135,7 @@ u3v_wish(const c3_c* str_c)
 }
 
 /* u3v_do(): use a kernel gate.
-*/
+ */
 u3_noun
 u3v_do(const c3_c* txt_c, u3_noun sam)
 {
@@ -156,7 +157,7 @@ u3v_do(const c3_c* txt_c, u3_noun sam)
 }
 
 /* _cv_scot(): print atom.
-*/
+ */
 static u3_noun
 _cv_scot(u3_noun dim)
 {
@@ -164,7 +165,7 @@ _cv_scot(u3_noun dim)
 }
 
 /* u3v_time(): set the reck time.
-*/
+ */
 void
 u3v_time(u3_noun now)
 {
@@ -185,7 +186,7 @@ _cv_time_bump(u3_reck* rec_u)
 #endif
 
 /* u3v_peek(): query the reck namespace (protected).
-*/
+ */
 u3_noun
 u3v_peek(u3_noun sam)
 {
@@ -242,7 +243,7 @@ _cv_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 #endif
 
 /* u3v_poke(): insert and apply an input ovum (protected).
-*/
+ */
 u3_noun
 u3v_poke(u3_noun ovo)
 {
@@ -252,7 +253,7 @@ u3v_poke(u3_noun ovo)
 
   {
     c3_w cod_w = u3a_lush(u3h(u3t(ovo)));
-    pro = u3n_slam_on(fun, sam);
+    pro        = u3n_slam_on(fun, sam);
     u3a_lop(cod_w);
   }
 
@@ -260,7 +261,7 @@ u3v_poke(u3_noun ovo)
 }
 
 /* u3v_tank(): dump single tank.
-*/
+ */
 void
 u3v_tank(u3_noun blu, c3_l tab_l, u3_noun tac)
 {
@@ -268,7 +269,7 @@ u3v_tank(u3_noun blu, c3_l tab_l, u3_noun tac)
 }
 
 /* u3v_punt(): dump tank list.
-*/
+ */
 void
 u3v_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
 {
@@ -291,7 +292,7 @@ u3v_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
 }
 
 /* u3v_sway(): print trace.
-*/
+ */
 void
 u3v_sway(u3_noun blu, c3_l tab_l, u3_noun tax)
 {
@@ -302,21 +303,21 @@ u3v_sway(u3_noun blu, c3_l tab_l, u3_noun tax)
 }
 
 /* u3v_mark(): mark arvo kernel.
-*/
+ */
 c3_w
 u3v_mark(FILE* fil_u)
 {
   u3v_arvo* arv_u = &(u3H->arv_u);
-  c3_w tot_w = 0;
+  c3_w      tot_w = 0;
 
   tot_w += u3a_maid(fil_u, "  kernel", u3a_mark_noun(arv_u->roc));
   tot_w += u3a_maid(fil_u, "  date", u3a_mark_noun(arv_u->now));
   tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
-  return   u3a_maid(fil_u, "total arvo stuff", tot_w);
+  return u3a_maid(fil_u, "total arvo stuff", tot_w);
 }
 
 /* u3v_reclaim(): clear ad-hoc persistent caches to reclaim memory.
-*/
+ */
 void
 u3v_reclaim(void)
 {
@@ -331,7 +332,7 @@ u3v_reclaim(void)
 }
 
 /* u3v_rewrite_compact(): rewrite arvo kernel for compaction.
-*/
+ */
 void
 u3v_rewrite_compact()
 {
@@ -345,4 +346,3 @@ u3v_rewrite_compact()
   arv_u->now = u3a_rewritten_noun(arv_u->now);
   arv_u->yot = u3a_rewritten_noun(arv_u->yot);
 }
-

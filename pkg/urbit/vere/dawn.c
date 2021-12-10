@@ -4,11 +4,12 @@
 */
 #include "all.h"
 #include "vere/vere.h"
+
 #include <curl/curl.h>
 #include <uv.h>
 
 /* _dawn_oct_to_buf(): +octs to uv_buf_t
-*/
+ */
 static uv_buf_t
 _dawn_oct_to_buf(u3_noun oct)
 {
@@ -16,8 +17,8 @@ _dawn_oct_to_buf(u3_noun oct)
     exit(1);
   }
 
-  c3_w len_w  = u3h(oct);
-  c3_y* buf_y = c3_malloc(1 + len_w);
+  c3_w  len_w  = u3h(oct);
+  c3_y* buf_y  = c3_malloc(1 + len_w);
   buf_y[len_w] = 0;
 
   u3r_bytes(0, len_w, buf_y, u3t(oct));
@@ -27,7 +28,7 @@ _dawn_oct_to_buf(u3_noun oct)
 }
 
 /* _dawn_buf_to_oct(): uv_buf_t to +octs
-*/
+ */
 static u3_noun
 _dawn_buf_to_oct(uv_buf_t buf_u)
 {
@@ -40,16 +41,15 @@ _dawn_buf_to_oct(uv_buf_t buf_u)
   return u3nc(len, u3i_bytes(buf_u.len, (const c3_y*)buf_u.base));
 }
 
-
 /* _dawn_curl_alloc(): allocate a response buffer for curl
-*/
+ */
 static size_t
 _dawn_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
 {
   uv_buf_t* buf_u = buf_v;
 
   size_t siz_t = uni_t * mem_t;
-  buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
+  buf_u->base  = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
 
   memcpy(buf_u->base + buf_u->len, dat_v, siz_t);
   buf_u->len += siz_t;
@@ -59,13 +59,13 @@ _dawn_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
 }
 
 /* _dawn_post_json(): POST JSON to url_c
-*/
+ */
 static uv_buf_t
 _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
 {
-  CURL *curl;
-  CURLcode result;
-  long cod_l;
+  CURL*              curl;
+  CURLcode           result;
+  long               cod_l;
   struct curl_slist* hed_u = 0;
 
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
@@ -95,8 +95,7 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
 
   // XX retry?
   if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s\n",
-            url_c, curl_easy_strerror(result));
+    u3l_log("failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
     exit(1);
   }
   if ( 300 <= cod_l ) {
@@ -111,13 +110,13 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
 }
 
 /* _dawn_get_jam(): GET a jammed noun from url_c
-*/
+ */
 static u3_noun
 _dawn_get_jam(c3_c* url_c)
 {
-  CURL *curl;
+  CURL*    curl;
   CURLcode result;
-  long cod_l;
+  long     cod_l;
 
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
@@ -138,8 +137,7 @@ _dawn_get_jam(c3_c* url_c)
 
   // XX retry?
   if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s\n",
-            url_c, curl_easy_strerror(result));
+    u3l_log("failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
     exit(1);
   }
   if ( 300 <= cod_l ) {
@@ -151,7 +149,7 @@ _dawn_get_jam(c3_c* url_c)
 
   //  throw away the length from the octs
   //
-  u3_noun octs = _dawn_buf_to_oct(buf_u);
+  u3_noun octs   = _dawn_buf_to_oct(buf_u);
   u3_noun jammed = u3k(u3t(octs));
   u3z(octs);
 
@@ -161,12 +159,12 @@ _dawn_get_jam(c3_c* url_c)
 }
 
 /* _dawn_eth_rpc(): ethereum JSON RPC with request/response as +octs
-*/
+ */
 static u3_noun
 _dawn_eth_rpc(c3_c* url_c, u3_noun oct)
 {
   uv_buf_t buf_u = _dawn_post_json(url_c, _dawn_oct_to_buf(oct));
-  u3_noun    pro = _dawn_buf_to_oct(buf_u);
+  u3_noun  pro   = _dawn_buf_to_oct(buf_u);
 
   c3_free(buf_u.base);
 
@@ -174,17 +172,18 @@ _dawn_eth_rpc(c3_c* url_c, u3_noun oct)
 }
 
 /* _dawn_fail(): pre-boot validation failed
-*/
+ */
 static void
 _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
 {
-  u3_noun how = u3dc("scot", 'p', u3k(who));
-  c3_c* how_c = u3r_string(u3k(how));
+  u3_noun how   = u3dc("scot", 'p', u3k(who));
+  c3_c*   how_c = u3r_string(u3k(how));
 
   c3_c* rac_c;
 
-  switch (rac) {
-    default: c3_assert(0);
+  switch ( rac ) {
+    default:
+      c3_assert(0);
     case c3__czar: {
       rac_c = "galaxy";
       break;
@@ -221,7 +220,7 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
 }
 
 /* _dawn_need_unit(): produce a value or print error and exit
-*/
+ */
 static u3_noun
 _dawn_need_unit(u3_noun nit, c3_c* msg_c)
 {
@@ -237,7 +236,7 @@ _dawn_need_unit(u3_noun nit, c3_c* msg_c)
 }
 
 /* _dawn_turf(): override contract domains with -H
-*/
+ */
 static u3_noun
 _dawn_turf(c3_c* dns_c)
 {
@@ -254,16 +253,18 @@ _dawn_turf(c3_c* dns_c)
   else {
     u3l_log("boot: overriding network domains with %s\r\n", dns_c);
     u3_noun dom = u3t(u3t(rul));
-    tuf = u3nc(u3k(dom), u3_nul);
+    tuf         = u3nc(u3k(dom), u3_nul);
   }
 
-  u3z(par); u3z(dns); u3z(rul);
+  u3z(par);
+  u3z(dns);
+  u3z(rul);
 
   return tuf;
 }
 
 /* _dawn_sponsor(): retrieve sponsor from point
-*/
+ */
 static u3_noun
 _dawn_sponsor(u3_noun who, u3_noun rac, u3_noun pot)
 {
@@ -276,13 +277,16 @@ _dawn_sponsor(u3_noun who, u3_noun rac, u3_noun pot)
 
   u3_noun pos = u3k(u3t(uni));
 
-  u3z(who); u3z(rac); u3z(pot); u3z(uni);
+  u3z(who);
+  u3z(rac);
+  u3z(pot);
+  u3z(uni);
 
   return pos;
 }
 
 /* u3_dawn_vent(): validated boot event
-*/
+ */
 u3_noun
 u3_dawn_vent(u3_noun ship, u3_noun feed)
 {
@@ -290,9 +294,9 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
   u3_noun rank = u3do("clan:title", u3k(ship));
 
-  c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
-    u3_Host.ops_u.eth_c :
-    "https://roller.urbit.org/v1/azimuth";
+  c3_c* url_c = (0 != u3_Host.ops_u.eth_c)
+                  ? u3_Host.ops_u.eth_c
+                  : "https://roller.urbit.org/v1/azimuth";
 
   {
     //  +point:azimuth: on-chain state
@@ -304,12 +308,11 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
       //
       pot = u3v_wish("*point:azimuth");
     }
-    else  if ( c3__earl == rank ) {
+    else if ( c3__earl == rank ) {
       pot = u3v_wish("*point:azimuth");
     }
     else {
-      u3l_log("boot: retrieving %s's public keys\r\n",
-              u3_Host.ops_u.who_c);
+      u3l_log("boot: retrieving %s's public keys\r\n", u3_Host.ops_u.who_c);
 
       {
         u3_noun oct = u3do("point:give:dawn", u3k(ship));
@@ -317,7 +320,8 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
         pot = _dawn_need_unit(u3dc("point:take:dawn", u3k(ship), u3k(luh)),
                               "boot: failed to retrieve public keys");
-        u3z(oct); u3z(luh);
+        u3z(oct);
+        u3z(luh);
       }
     }
 
@@ -341,9 +345,9 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
     u3l_log("boot: getting sponsor\r\n");
     pos = _dawn_sponsor(u3k(ship), u3k(rank), u3k(pot));
-    u3z(pot); u3z(liv);
+    u3z(pot);
+    u3z(liv);
   }
-
 
   //  (map ship [=life =pass]): galaxy table
   //
@@ -355,7 +359,8 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
     zar = _dawn_need_unit(u3do("czar:take:dawn", u3k(raz)),
                           "boot: failed to retrieve galaxy table");
-    u3z(oct); u3z(raz);
+    u3z(oct);
+    u3z(raz);
   }
 
   //  (list turf): ames domains
@@ -371,17 +376,18 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
     tuf = _dawn_need_unit(u3do("turf:take:dawn", u3k(fut)),
                           "boot: failed to retrieve network domains");
-    u3z(oct); u3z(fut);
+    u3z(oct);
+    u3z(fut);
   }
 
   pon = u3_nul;
-  while (c3__czar != rank) {
+  while ( c3__czar != rank ) {
     u3_noun son;
     //  print message
     //
     {
-      u3_noun who = u3dc("scot", 'p', u3k(pos));
-      c3_c* who_c = u3r_string(who);
+      u3_noun who   = u3dc("scot", 'p', u3k(pos));
+      c3_c*   who_c = u3r_string(who);
       u3l_log("boot: retrieving keys for sponsor %s\r\n", who_c);
       u3z(who);
       c3_free(who_c);
@@ -398,33 +404,39 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
       // append to sponsor chain list
       //
       pon = u3nc(u3nc(u3k(pos), u3k(son)), pon);
-      u3z(oct); u3z(luh);
+      u3z(oct);
+      u3z(luh);
     }
 
     // find next sponsor
     //
-    u3z(ship); u3z(rank);
+    u3z(ship);
+    u3z(rank);
     ship = pos;
     rank = u3do("clan:title", u3k(ship));
-    pos = _dawn_sponsor(u3k(ship), u3k(rank), u3k(son));
+    pos  = _dawn_sponsor(u3k(ship), u3k(rank), u3k(son));
 
     u3z(son);
   }
 
   //  [%dawn seed sponsors galaxies domains block eth-url snap]
   //
-  //NOTE  blocknum of 0 is fine because jael ignores it.
+  // NOTE  blocknum of 0 is fine because jael ignores it.
   //      should probably be removed from dawn event.
-  u3_noun ven = u3nc(c3__dawn,
-                     u3nq(u3k(u3t(sed)), pon, zar, u3nt(tuf, 0, u3_nul)));
+  u3_noun ven
+    = u3nc(c3__dawn, u3nq(u3k(u3t(sed)), pon, zar, u3nt(tuf, 0, u3_nul)));
 
-  u3z(sed); u3z(rank); u3z(pos); u3z(ship); u3z(feed);
+  u3z(sed);
+  u3z(rank);
+  u3z(pos);
+  u3z(ship);
+  u3z(feed);
 
   return ven;
 }
 
 /* _dawn_come(): mine a comet under a list of stars
-*/
+ */
 static u3_noun
 _dawn_come(u3_noun stars)
 {
@@ -444,13 +456,13 @@ _dawn_come(u3_noun stars)
   }
 
   {
-    u3_noun who = u3dc("scot", 'p', u3k(u3h(seed)));
-    c3_c* who_c = u3r_string(who);
+    u3_noun who   = u3dc("scot", 'p', u3k(u3h(seed)));
+    c3_c*   who_c = u3r_string(who);
 
     u3l_log("boot: found comet %s\r\n", who_c);
 
-  //  enable to print and save comet private key for future reuse
-  //
+    //  enable to print and save comet private key for future reuse
+    //
 #if 0
     {
       u3_noun key = u3dc("scot", c3__uw, u3qe_jam(seed));
@@ -482,10 +494,10 @@ _dawn_come(u3_noun stars)
 }
 
 /* u3_dawn_come(): mine a comet under a list of stars we download
-*/
+ */
 u3_noun
 u3_dawn_come()
 {
   return _dawn_come(
-      _dawn_get_jam("https://bootstrap.urbit.org/comet-stars.jam"));
+    _dawn_get_jam("https://bootstrap.urbit.org/comet-stars.jam"));
 }

@@ -29,8 +29,10 @@
  * @pre context member pointers must point to allocated memory of size according
  * to the length values
  */
-void initial_kat(const uint8_t *blockhash, const argon2_context *context,
-                 argon2_type type);
+void
+initial_kat(const uint8_t*        blockhash,
+            const argon2_context* context,
+            argon2_type           type);
 
 /*
  * Function that prints the output tag
@@ -38,7 +40,8 @@ void initial_kat(const uint8_t *blockhash, const argon2_context *context,
  * @param  outlen digest length
  * @pre out must point to @a outlen bytes
  **/
-void print_tag(const void *out, uint32_t outlen);
+void
+print_tag(const void* out, uint32_t outlen);
 
 /*
  * Function that prints the internal state at given moment
@@ -46,6 +49,7 @@ void print_tag(const void *out, uint32_t outlen);
  * @param  pass current pass number
  * @pre instance must have necessary memory allocated
  **/
-void internal_kat(const argon2_instance_t *instance, uint32_t pass);
+void
+internal_kat(const argon2_instance_t* instance, uint32_t pass);
 
 #endif

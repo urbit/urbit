@@ -1,10 +1,10 @@
 #include "urcrypt.h"
-#include <string.h>
+
 #include <ed25519.h>
+#include <string.h>
 
 void
-urcrypt_ed_puck(const uint8_t seed[32],
-                uint8_t out[32])
+urcrypt_ed_puck(const uint8_t seed[32], uint8_t out[32])
 {
   uint8_t secret[64];
   ed25519_create_keypair(out, secret, seed);
@@ -13,7 +13,7 @@ urcrypt_ed_puck(const uint8_t seed[32],
 void
 urcrypt_ed_shar(const uint8_t public[32],
                 const uint8_t seed[32],
-                uint8_t out[32])
+                uint8_t       out[32])
 {
   uint8_t self[32], exp[64];
 
@@ -26,10 +26,10 @@ urcrypt_ed_shar(const uint8_t public[32],
 }
 
 void
-urcrypt_ed_sign(const uint8_t *message,
-                size_t length,
-                const uint8_t seed[32],
-                uint8_t out[64])
+urcrypt_ed_sign(const uint8_t* message,
+                size_t         length,
+                const uint8_t  seed[32],
+                uint8_t        out[64])
 {
   uint8_t public[64], secret[64];
 
@@ -42,12 +42,11 @@ urcrypt_ed_sign(const uint8_t *message,
 }
 
 bool
-urcrypt_ed_veri(const uint8_t *message,
-                size_t length,
+urcrypt_ed_veri(const uint8_t* message,
+                size_t         length,
                 const uint8_t public[32],
                 const uint8_t signature[64])
 {
-  return ( ed25519_verify(signature, message, length, public) == 1 )
-    ? true
-    : false;
+  return (ed25519_verify(signature, message, length, public) == 1) ? true
+                                                                   : false;
 }

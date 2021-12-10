@@ -1,9 +1,10 @@
 #include "urcrypt.h"
 #include "util.h"
+
 #include <openssl/ripemd.h>
 
 int
-urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20])
+urcrypt_ripemd160(uint8_t* message, size_t length, uint8_t out[20])
 {
   unsigned long n = length;
 
@@ -17,4 +18,3 @@ urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20])
     return 0;
   }
 }
-

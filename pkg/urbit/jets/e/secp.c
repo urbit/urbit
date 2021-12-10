@@ -1,8 +1,9 @@
-        /* j/5/secp.c
-**
-*/
+/* j/5/secp.c
+ **
+ */
 #include "all.h"
 #include "urcrypt.h"
+
 #include <ent.h>
 
 static urcrypt_secp_context* sec_u;
@@ -36,10 +37,14 @@ static c3_t
 _cqes_in_order(u3_atom a)
 {
   // this is the "n" parameter of the secp256k1 curve
-  static const c3_w now_w[8] = {
-    0xd0364141, 0xbfd25e8c, 0xaf48a03b, 0xbaaedce6,
-    0xfffffffe, 0xffffffff, 0xffffffff, 0xffffffff
-  };
+  static const c3_w now_w[8] = {0xd0364141,
+                                0xbfd25e8c,
+                                0xaf48a03b,
+                                0xbaaedce6,
+                                0xfffffffe,
+                                0xffffffff,
+                                0xffffffff,
+                                0xffffffff};
 
   if ( 0 == a ) {
     return 0;
@@ -48,8 +53,8 @@ _cqes_in_order(u3_atom a)
     return 1;
   }
   else {
-    u3a_atom* a_u = u3a_to_ptr(a);
-    c3_w len_w = a_u->len_w;
+    u3a_atom* a_u   = u3a_to_ptr(a);
+    c3_w      len_w = a_u->len_w;
 
     if ( len_w < 8 ) {
       return 1;
@@ -58,12 +63,11 @@ _cqes_in_order(u3_atom a)
       return 0;
     }
     else {
-      c3_y i_y;
-      c3_w *buf_w = a_u->buf_w;
+      c3_y  i_y;
+      c3_w* buf_w = a_u->buf_w;
       // loop from most to least significant words
       for ( i_y = 8; i_y > 0; ) {
-        c3_w b_w = buf_w[i_y],
-             o_w = now_w[--i_y];
+        c3_w b_w = buf_w[i_y], o_w = now_w[--i_y];
         if ( b_w < o_w ) {
           return 1;
         }
@@ -90,8 +94,7 @@ _cqes_unpack_fe(u3_atom k, c3_y out_y[32])
 /* sign hash with priv key
  */
 static u3_noun
-_cqes_sign(u3_atom has,
-           u3_atom prv)
+_cqes_sign(u3_atom has, u3_atom prv)
 {
   c3_y has_y[32];
 
@@ -102,24 +105,20 @@ _cqes_sign(u3_atom has,
     c3_y prv_y[32], v_y, r_y[32], s_y[32];
     _cqes_unpack_fe(prv, prv_y);
 
-    return( 0 == urcrypt_secp_sign(sec_u, has_y, prv_y, &v_y, r_y, s_y) )
-      ? u3nt(v_y, u3i_bytes(32, r_y), u3i_bytes(32, s_y))
-      : u3_none;
+    return (0 == urcrypt_secp_sign(sec_u, has_y, prv_y, &v_y, r_y, s_y))
+             ? u3nt(v_y, u3i_bytes(32, r_y), u3i_bytes(32, s_y))
+             : u3_none;
   }
 }
 
 u3_noun
 u3we_sign(u3_noun cor)
 {
-
   u3_noun has, prv;
 
-  if ( (c3n == u3r_mean(cor,
-                        u3x_sam_2,  &has,
-                        u3x_sam_3,  &prv,
-                        0)) ||
-       (c3n == u3ud(has)) ||
-       (c3n == u3ud(prv))) {
+  if ( (c3n == u3r_mean(cor, u3x_sam_2, &has, u3x_sam_3, &prv, 0))
+       || (c3n == u3ud(has)) || (c3n == u3ud(prv)) )
+  {
     return u3m_bail(c3__exit);
   }
   else {
@@ -128,45 +127,48 @@ u3we_sign(u3_noun cor)
 }
 
 /* recover pubkey from signature (which is how we verify signatures)
-*/
+ */
 static u3_noun
 _cqes_reco(u3_atom has,
-           u3_atom siv,  /* signature: v */
-           u3_atom sir,  /* signature: r */
-           u3_atom sis)  /* signature: s */
+           u3_atom siv, /* signature: v */
+           u3_atom sir, /* signature: r */
+           u3_atom sis) /* signature: s */
 {
   c3_y has_y[32];
-  if ( !((siv < 4) && (0 == u3r_bytes_fit(32, has_y, has)) ) ) {
+  if ( !((siv < 4) && (0 == u3r_bytes_fit(32, has_y, has))) ) {
     return u3m_bail(c3__exit);
   }
   else {
     c3_y sir_y[32], sis_y[32], x_y[32], y_y[32];
-    c3_y siv_y = (c3_y) siv;
+    c3_y siv_y = (c3_y)siv;
     _cqes_unpack_fe(sir, sir_y);
     _cqes_unpack_fe(sis, sis_y);
-    return
-      ( 0 == urcrypt_secp_reco(sec_u, has_y, siv, sir_y, sis_y, x_y, y_y) )
-      ? u3nc(u3i_bytes(32, x_y), u3i_bytes(32, y_y))
-      : u3_none;
+    return (0 == urcrypt_secp_reco(sec_u, has_y, siv, sir_y, sis_y, x_y, y_y))
+             ? u3nc(u3i_bytes(32, x_y), u3i_bytes(32, y_y))
+             : u3_none;
   }
 }
 
 u3_noun
 u3we_reco(u3_noun cor)
 {
-  u3_noun has,      /* hash */
-    siv, sir, sis;  /* signature: v, r, s */
+  u3_noun has,     /* hash */
+    siv, sir, sis; /* signature: v, r, s */
 
-  if ( (c3n == u3r_mean(cor,
-                        u3x_sam_2,   &has,
-                        u3x_sam_6,   &siv,
-                        u3x_sam_14,  &sir,
-                        u3x_sam_15,  &sis,
-                        0)) ||
-       (c3n == u3ud(has)) ||
-       (c3n == u3ud(siv)) ||
-       (c3n == u3ud(sir)) ||
-       (c3n == u3ud(sis)) ) {
+  if ( (c3n
+        == u3r_mean(cor,
+                    u3x_sam_2,
+                    &has,
+                    u3x_sam_6,
+                    &siv,
+                    u3x_sam_14,
+                    &sir,
+                    u3x_sam_15,
+                    &sis,
+                    0))
+       || (c3n == u3ud(has)) || (c3n == u3ud(siv)) || (c3n == u3ud(sir))
+       || (c3n == u3ud(sis)) )
+  {
     return u3m_bail(c3__exit);
   }
   else {
@@ -175,8 +177,7 @@ u3we_reco(u3_noun cor)
 }
 
 static u3_atom
-_cqes_make(u3_atom has,
-          u3_atom prv)
+_cqes_make(u3_atom has, u3_atom prv)
 {
   c3_y has_y[32];
 
@@ -186,9 +187,8 @@ _cqes_make(u3_atom has,
   else {
     c3_y prv_y[32], out_y[32];
     _cqes_unpack_fe(prv, prv_y);
-    return ( 0 == urcrypt_secp_make(has_y, prv_y, out_y) )
-      ? u3i_bytes(32, out_y)
-      : u3_none;
+    return (0 == urcrypt_secp_make(has_y, prv_y, out_y)) ? u3i_bytes(32, out_y)
+                                                         : u3_none;
   }
 }
 
@@ -196,12 +196,9 @@ u3_noun
 u3we_make(u3_noun cor)
 {
   u3_noun has, prv;
-  if ( (c3n == u3r_mean(cor,
-                        u3x_sam_2,  &has,
-                        u3x_sam_3,  &prv,
-                        0)) ||
-       (c3n == u3ud(has)) ||
-       (c3n == u3ud(prv)) ) {
+  if ( (c3n == u3r_mean(cor, u3x_sam_2, &has, u3x_sam_3, &prv, 0))
+       || (c3n == u3ud(has)) || (c3n == u3ud(prv)) )
+  {
     return u3m_bail(c3__exit);
   }
   else {
