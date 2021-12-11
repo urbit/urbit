@@ -67,7 +67,7 @@
         u3_mess_type     sat_e;             //  msg type
         union {                             //
           struct {                          //  awaiting header:
-            c3_y         len_y[8];          //    header bytes
+            c3_y         hed_y[5];          //    header bytes
             c3_y         has_y;             //    length
           } hed_u;                          //
           struct {                          //  awaiting body
