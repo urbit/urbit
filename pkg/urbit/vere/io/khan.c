@@ -168,6 +168,21 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
   }
 }
 
+/* _khan_peek_cb(): handle scry result: send immediately.
+*/
+static void
+_khan_peek_cb(void* ptr_v, u3_noun nun)
+{
+  u3_chan* can_u = (u3_chan*)ptr_v;
+  u3_khan* kan_u = can_u->san_u->kan_u;
+  c3_y*    byt_y;
+  c3_d     len_d;
+
+  u3s_jam_xeno(nun, &len_d, &byt_y);
+  u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
+  u3z(nun);
+}
+
 /* _khan_moor_poke(): called on message read from u3_moor.
 */
 static void
@@ -177,7 +192,6 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   u3_noun   i_jar, t_jar;
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_khan*  kan_u = can_u->san_u->kan_u;
-  u3_noun   wir;
   u3_noun   cad;
 
   jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
@@ -189,16 +203,17 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     can_u->mor_u.bal_f(can_u, -2, "jar-atom");
   }
   else {
-    wir = u3nq(c3__khan,
-               u3dc("scot", c3__uv, kan_u->sev_l),
-               u3dc("scot", c3__ud, can_u->coq_l),
-               u3_nul);
     switch (i_jar) {
       default: {
-        can_u->mor_u.bal_f(can_u, -2, "i.jar-unknown");
+        can_u->mor_u.bal_f(can_u, -3, "i.jar-unknown");
         break;
       }
       case c3__fyrd: {
+        u3_noun wir = u3nq(c3__khan,
+                           u3dc("scot", c3__uv, kan_u->sev_l),
+                           u3dc("scot", c3__ud, can_u->coq_l),
+                           u3_nul);
+
         u3_auto_peer(
           u3_auto_plan(&kan_u->car_u,
                        u3_ovum_init(0, c3__k, wir, jar)),
@@ -206,11 +221,17 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         break;
       }
       case c3__scry: {
-        // TODO implement
+        u3_noun ful = u3k(t_jar);
+
+        //  TODO: handle runtime-specific namespace queries. dispatch on ful.
+        //
+        u3_pier_peek(kan_u->car_u.pir_u, u3_nul, ful, can_u, _khan_peek_cb);
+        u3z(jar);
         break;
       }
       case c3__move: {
         // TODO implement
+        u3z(jar);
         break;
       }
     }
