@@ -11,7 +11,7 @@ u3qdl_put(u3_noun a, u3_noun k, u3_noun v)
   u3_noun pv, qv;
   u3x_cell(vue, &pv, &qv);
 
-  u3_noun siz = (u3_nul == pv) ? u3qa_inc(siz_a) : u3k(siz);
+  u3_noun siz = (u3_nul == pv) ? u3qa_inc(siz_a) : u3k(siz_a);
 
   u3_noun pre = u3nq(u3k(cap_a), siz, u3qa_inc(tic_a), u3k(qv));
   u3_noun pro = u3kdl_ebb(pre);
