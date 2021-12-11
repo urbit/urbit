@@ -1907,6 +1907,8 @@
   |*  [k=mold v=mold]
   ::  molds and mold builders
   ::
+  ~%  %core  +  ~
+  |%
   +$  elem  [=k p=@ =v]                                 ::  pri element
   ::
   +$  lnode  [n=elem l=ltree m=k r=ltree]               ::  loser tree node
@@ -2141,33 +2143,39 @@
   ::  radix tree utilities
   ::
   ++  zero                                              ::  zero
+    ~/  %zero
     |=  [k=@ m=@]
     ^-  ?
     =(0 (dis k m))
   ::
   ++  gone                                              ::  nomatch
+    ~/  %gone
     |=  [k=@ l=@ m=@]
     ^-  ?
     =/  n  (mask m)
     !=((dis k n) (dis l n))
   ::
   ++  mask                                              ::  maskw
+    ~/  %mask
     |=  a=@
     ^-  @
     (mix (not 5 1 (dec a)) a)
   ::
-  ++  part                                              ::  branch mask
+  ++  pert                                              ::  branch mask
+    ~/  %pert
     |=  [k=@ l=@]
     ^-  @
     (high (mix k l))
   ::
   ++  high                                              ::  highest bitmask
+    ~/  %high
     |=  a=@
     ^-  @
     (rsh 0 (bex (xeb a)))
   ::
   ++  lex                                               ::  lexicographic order
-    |=  [[p=@ k=@] [q=@ l=@]]                           ::  [atom atom]
+    ~/  %lex                                            ::  [atom atom]
+    |=  [[p=@ k=@] [q=@ l=@]]
     ^-  ?
     ?:  =(p q)
       (lth k l)
@@ -2284,6 +2292,13 @@
         (toy [n.b l.b m.b] $(a [n.a r.b m.a]))
       ==
     ::
+    ++  gas                                             ::  concatenate
+      ~/  %gas
+      |=  [a=pro b=(list (trel k @ v))]
+      |-  ^-  pro
+      ?~  b  a
+      $(b t.b, a (put a p.i.b q.i.b r.i.b))
+    ::
     ++  has                                             ::  contains
       ~/  %has
       |=  [a=pro =k]
@@ -2341,8 +2356,6 @@
   ++  qat
     ~%  %qat  ..qat  ~
     |%
-    ::  bucket helpers
-    ::
     ++  pour                                            ::  to bucket
       ~/  %pour
       |=  a=pro
@@ -2370,7 +2383,7 @@
       ~/  %tie
       |=  [k=@ p=@ v=buc l=@ a=pri b=pri]
       ^-  pri
-      =/  m  (part k l)
+      =/  m  (pert k l)
       :-  %bin
       ?:  (zero m l)
         [k p v m a b]
@@ -2400,11 +2413,7 @@
       ~/  %jib
       |=  a=pri
       |^  ^-  (pair (unit (trel k @ v)) pri)
-      ?~  a
-        =/  bee  (help ~)
-        :-  p.bee
-        ?~  q.bee  ~
-        [%tip p.u.q.bee q.u.q.bee r.u.q.bee]
+      ?~  a  [~ ~]
       ?-    -.a
           %tip
         =/  bee  (help `[k.a p.a v.a])
@@ -2597,32 +2606,26 @@
     =/  h  (mug k)
     |^  ^-  pri
     =/  ped  (pet:qat a h)
-    =?  a  ?=(^ ped)
-      r.u.ped
-    =/  pav
-      ?~  ped
-        ~
-      `[p.u.ped q.u.ped]
-    =/  bee  (ins pav)
-    ?~  bee  a
-    (raw:qat a h p.u.bee q.u.bee)
+    ?~  ped
+      (raw:qat a h p [k v ~])
+    =/  bee  (ins p.u.ped q.u.ped)
+    (raw:qat r.u.ped h p.bee q.bee)
     ::
     ++  ins
-      |=  b=(unit (pair @ buc))
-      ^-  (unit (pair @ buc))
-      %-  some
-      ?~  b  [p k v ~]
-      =/  =buc  q.u.b
+      |=  b=(pair @ buc)
+      ^-  (pair @ buc)
+      =/  =buc  q.b
       ?:  =(k k.buc)
         (make:qat k p v t.buc)
-      ?:  |((lth p.u.b p) &(=(p p.u.b) (gor k.buc k)))
+      ?:  |((lth p.b p) &(=(p p.b) (gor k.buc k)))
         =/  val  (put:qor t.buc k p v)
-        [p.u.b k.buc v.buc val]
-      =/  val
-        ?:  (has:qor t.buc k)
-          (put:qor (del:qor t.buc k) k.buc p.u.b v.buc)
-        (put:qor t.buc k.buc p.u.b v.buc)
-      [p k v val]
+        [p.b k.buc v.buc val]
+      :^    p
+          k
+        v
+      ?:  (has:qor t.buc k)
+        (put:qor (del:qor t.buc k) k.buc p.b v.buc)
+      (put:qor t.buc k.buc p.b v.buc)
     --
   ::
   ++  gas                                               ::  concatenate
@@ -2672,7 +2675,7 @@
   ~/  %lu
   |*  [k=mold v=mold]
   ::
-  ~/  %core
+  ~%  %core  +  ~
   |%
   +$  pes  [cap=_`@`10.000 siz=@ tic=@ pri=(pry k v)]   ::  lru cache
   ::
