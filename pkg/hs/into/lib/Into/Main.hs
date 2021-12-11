@@ -42,8 +42,10 @@ packNoun :: ToNoun a => a -> B.ByteString
 packNoun jar =
   let pac = jamBS (toNoun jar) in
   L.toStrict $ toLazyByteString $
-    mconcat [word64LE $ fromIntegral $ B.length pac,
-             byteString pac]
+    mconcat [ word8 0x9                               --  newt tag byte
+            , word32LE $ fromIntegral $ B.length pac  --  32-bit length
+            , byteString pac                          --  +jam of noun
+            ]
 
 buildFyrd :: ToNoun a => a -> B.ByteString
 buildFyrd com = packNoun (Cord "fyrd", khanVersion, com)
@@ -101,8 +103,9 @@ main = withSocketsDo $ do
   soc <- socket AF_UNIX Stream 0
   connect soc (SockAddrUnix $ ".urb" </> "khan.sock")
   send soc cmd
-  lenBS <- recv soc 8
-  let (len', _) = runGet getWord64le lenBS
+  hedBS <- recv soc 5
+  unless (9 == B.head hedBS) $ do { error "newt: bad tag" }
+  let (len', _) = runGet getWord32le $ B.tail hedBS
   case len' of
     Left fal -> error fal
     Right len -> do
