@@ -25,7 +25,7 @@ GTAGS
 result
 result-*
 
-# Common Piers
+# Piers
 /zod
 /fakezod
 /bus
@@ -53,6 +53,17 @@ result-*
 /sen
 /mud
 /nev
+/bex
+/dux
+/fen
+/fes
+/lyd
+/nut
+/pub
+/red
+/rel
+/tus
+/wex
 
 # NodeJS
 node_modules
