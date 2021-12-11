@@ -356,11 +356,10 @@ static void
 _khan_io_talk(u3_auto* car_u)
 {
   u3_khan* kan_u = (u3_khan*)car_u;
-
-  u3_noun wir = u3nt(c3__khan,
-                     u3dc("scot", c3__uv, kan_u->sev_l),
-                     u3_nul);
-  u3_noun cad = u3nc(c3__born, u3_nul);
+  u3_noun  wir = u3nt(c3__khan,
+                      u3dc("scot", c3__uv, kan_u->sev_l),
+                      u3_nul);
+  u3_noun  cad = u3nc(c3__born, u3_nul);
 
   u3_auto_peer(
     u3_auto_plan(car_u, u3_ovum_init(0, c3__k, wir, cad)),
