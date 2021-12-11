@@ -9591,7 +9591,6 @@
       fis=(lu (pair type axis) nock)                       ::  +fish
       cro=(lu (pair type type) type)                       ::  +crop
       fus=(lu (pair type type) type)                       ::  +fuse
-      fon=(lu (pair type limb) (pair (unit atom) pony))    ::  +fond
   ==
 ::
 ++  ut
@@ -11084,12 +11083,6 @@
           pony(p.p (weld p.p.pony p.p.mor))
         [pony grub]
       |^
-      =/  cached  (get:fon:lru fon.grub [sut heg])
-      ?^  cached
-        [p.u.cached grub(fon q.u.cached)]
-      =;  [=puny =_grub]
-        :_  grub(fon (put:fon:lru fon.grub [sut heg] puny))
-        puny
       ^-  [puny _grub]
       ?-    sut
           %void
