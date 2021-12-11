@@ -2690,7 +2690,7 @@
   ++  ebb                                               ::  trim cache
     ~/  %ebb
     |=  a=pes
-    ?:  (gte tic.a 0x7fff.ffff.ffff.ffff)
+    ?:  (gte tic.a 0x7fff.ffff)
       (new cap.a)
     ?:  (gth siz.a cap.a)
       a(siz (dec siz.a), pri (cut:cor pri.a))
