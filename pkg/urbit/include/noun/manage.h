@@ -1,7 +1,6 @@
-/* i/n/m.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_MANAGE_H
+#define U3_MANAGE_H
+
     /** System management.
     **/
       /* u3m_boot(): start the u3 system. return next event, starting from 1.
@@ -149,3 +148,5 @@
       */
         c3_w
         u3m_pack(void);
+
+#endif /* ifndef U3_MANAGE_H */
