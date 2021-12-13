@@ -423,11 +423,14 @@
     ::
     ++  revoke
       |=  [ships=(set ship) rid=resource]
-      =/  pax=path
+      =/  ver-pax=path
+        [%resource %ver (en-path:resource rid)]
+      =/  unver-pax=path
         [%resource (en-path:resource rid)]
       :_  state
       %+  murn
-        (incoming-subscriptions pax)
+        %+  welp  (incoming-subscriptions unver-pax)
+        (incoming-subscriptions ver-pax)
       |=  [her=ship =path]
       ^-  (unit card)
       ?.  (~(has in ships) her)
