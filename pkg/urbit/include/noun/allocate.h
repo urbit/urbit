@@ -1,9 +1,9 @@
-/* i/n/a.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_ALLOCATE_H
+#define U3_ALLOCATE_H
 
 #include <openssl/opensslv.h>
+
+#include "manage.h"
 
   /**  Constants.
   **/
@@ -356,12 +356,6 @@
             return u3a_peek(pil_u);
           }
 
-        //  we have to forward-declare u3m_bail() here, as our
-        //  headers don't have the necessary guards.
-        //
-          c3_i
-          u3m_bail(c3_m how_m) __attribute__((noreturn));
-
         /* u3a_pile_sane(): bail on invalid road stack state.
         */
           inline void
@@ -682,3 +676,5 @@
         */
           c3_c*
           u3a_string(u3_atom a);
+
+#endif /* ifndef U3_ALLOCATE_H */

@@ -1,5 +1,5 @@
-/* include/vere/db/lmdb-impl.h
-*/
+#ifndef U3_VERE_DB_LMDB_H
+#define U3_VERE_DB_LMDB_H
 
 #include <lmdb.h>
 
@@ -89,3 +89,5 @@
     */
       void
       u3_lmdb_walk_done(u3_lmdb_walk* itr_u);
+
+#endif /* ifndef U3_VERE_DB_LMDB_H */
