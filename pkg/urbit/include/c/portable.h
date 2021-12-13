@@ -137,19 +137,6 @@
 #     error "port: LoomBase"
 #   endif
 
-  /** Native page size.
-  **/
-#   if defined(U3_OS_linux)
-#     define U3_OS_NativePageBytes sysconf(_SC_PAGESIZE)
-#   elif defined(U3_OS_osx)
-#     define U3_OS_NativePageBytes sysconf(_SC_PAGESIZE)
-#   elif defined(U3_OS_bsd)
-#     define U3_OS_NativePageBytes sysconf(_SC_PAGESIZE)
-#   else
-#     error "port: NativePageBytes"
-#   endif
-#   define U3_OS_NativePageWords   (U3_OS_NativePageBytes >> 2)
-
   /** Global variable control.
   ***
   *** To instantiate globals, #define c3_global as extern.

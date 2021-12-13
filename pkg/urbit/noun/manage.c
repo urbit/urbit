@@ -11,6 +11,8 @@
 #include <openssl/crypto.h>
 #include <urcrypt.h>
 
+static long U3_OS_NativePageWords = 0;
+
 //  XX stack-overflow recovery should be gated by -a
 //
 #undef NO_OVERFLOW
@@ -802,7 +804,7 @@ u3m_leap(c3_w pad_w)
         u3p(c3_w) car_p = c3_rud(u3R->cap_p, U3_OS_NativePageWords);
         if ( 0 != mprotect(u3to(void*, har_p),
                            (car_p - har_p) << 2,
-                           PROT_READ | PROT_WRITE) ) 
+                           PROT_READ | PROT_WRITE) )
         {
           fprintf(stderr, "leap: unable to disable page tracking "
                           "on inner roads, continuing\r\n");
@@ -1786,6 +1788,19 @@ _cm_crypto()
 void
 u3m_init(void)
 {
+  if ( 0 == U3_OS_NativePageWords) {
+    U3_OS_NativePageWords =
+#if defined(U3_OS_linux)
+      sysconf(_SC_PAGESIZE) >> 2;
+#elif defined(U3_OS_osx)
+      sysconf(_SC_PAGESIZE) >> 2;
+#elif defined(U3_OS_bsd)
+      sysconf(_SC_PAGESIZE) >> 2;
+#else
+#  error "port: NativePageWords"
+#endif
+  }
+
   _cm_limits();
   _cm_signals();
   _cm_crypto();
