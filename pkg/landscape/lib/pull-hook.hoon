@@ -432,7 +432,7 @@
     ::
     ++  tr-emis
       |=  caz=(list card)
-      tr-core(cards (welp (flop cards) cards))
+      tr-core(cards (welp (flop caz) cards))
     ::
     ++  tr-ap-og
       |=  ap=_^?(|.(*(quip card _pull-hook)))
