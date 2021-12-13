@@ -413,7 +413,7 @@ export default function TermApp(props: TermAppProps) {
 
       //  open subscription
       //
-      api.subscribe({ app: 'herm', path: '/session/'+selected,
+      api.subscribe({ app: 'herm', path: '/session/'+selected+'/view',
         event: (e) => {
           const ses = useTermState.getState().sessions[selected];
           if (!ses) {
