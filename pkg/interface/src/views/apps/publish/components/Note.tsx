@@ -46,13 +46,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(rootUrl);
   };
 
-  if (typeof note.post === 'string' || !note.post) {
-    return (
-      <Box width="100%"  pt="2" textAlign="center">
-        <Text gray>This note has been deleted.</Text>
-      </Box>
-    );
-  }
 
   const comments = getComments(note);
   const [, title, , post] = getLatestRevision(note);
@@ -148,4 +141,16 @@ export function Note(props: NoteProps & RouteComponentProps) {
   );
 }
 
-export default Note;
+export default function(props: NoteProps & RouteComponentProps) {
+  const { note } = props;
+
+  if (typeof note.post === 'string' || !note.post) {
+    return (
+      <Box width="100%"  pt="2" textAlign="center">
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
+  }
+
+  return (<Note {...props} />);
+}
