@@ -163,7 +163,6 @@ class ChatWindow extends Component<
 
   onTopLoaded = () => {
     const { graphSize, unreadCount } = this.props;
-    console.log(graphSize, unreadCount);
     if(graphSize >= unreadCount) {
       this.props.dismissUnread();
     }
