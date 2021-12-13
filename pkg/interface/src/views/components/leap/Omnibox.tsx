@@ -40,7 +40,6 @@ const SEARCHED_CATEGORIES = [
   'other',
   'groups',
   'subscriptions',
-  'apps'
 ];
 const settingsSel = (s: SettingsState) => s.leap;
 const CAT_LIMIT = 6;
@@ -57,7 +56,6 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const contactState = useContactState(state => state.contacts);
   const notificationCount = useHarkState(state => state.notificationsCount);
   const invites = useInviteState(state => state.invites);
-  const tiles = useLaunchState(state => state.tiles);
   const [leapCursor, setLeapCursor] = useState('pointer');
 
   const contacts = useMemo(() => {
@@ -83,12 +81,11 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     return makeIndex(
       contacts,
       associations,
-      tiles,
       selectedGroup,
       groups,
       leapConfig
     );
-  }, [selectedGroup, leapConfig, contacts, associations, groups, tiles]);
+  }, [selectedGroup, leapConfig, contacts, associations, groups]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle();
