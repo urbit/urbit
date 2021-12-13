@@ -22,8 +22,20 @@
   :-  %pull-hook-action
   !>  ^-  action:pull-hook
   [%remove rid]
-;<  ~  bind:m  (raw-poke-our %contact-pull-hook pull-hook-act)
-;<  ~  bind:m  (raw-poke-our %metadata-pull-hook pull-hook-act)
-;<  ~  bind:m  (raw-poke-our %group-pull-hook pull-hook-act)
-;<  ~  bind:m  (raw-poke-our %group-store %group-update-0 !>([%remove-group rid ~]))
+=/  leave=cage
+  :-  %group-update-0
+  !>  ^-  update:store
+  [%remove-members rid (silt our.bowl ~)]
+=/  remove=cage
+  :-  %group-update-0
+  !>  ^-  update:store
+  [%remove-group rid ~]
+;<  ~  bind:m
+  (raw-poke-our %group-push-hook leave)
+;<  ~  bind:m
+  (raw-poke-our %group-pull-hook pull-hook-act)
+;<  ~  bind:m
+  (raw-poke-our %contact-pull-hook pull-hook-act)
+;<  ~  bind:m
+  (raw-poke-our %group-store remove)
 (pure:m !>(~))
