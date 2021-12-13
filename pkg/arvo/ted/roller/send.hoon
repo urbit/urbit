@@ -125,7 +125,7 @@
     (mul 1.000.000.000 u.res)  ::NOTE  gwei to wei
   %.  u.jon
   =,  dejs-soft:format
-  (ot 'result'^(ot 'FastGasPrice'^ni ~) ~)
+  (ot 'result'^(ot 'FastGasPrice'^(su dem) ~) ~)
 ::
 ++  send-batch
   |=  [endpoint=@ta batch=@ux]
