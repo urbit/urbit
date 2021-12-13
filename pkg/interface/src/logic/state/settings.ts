@@ -41,6 +41,7 @@ export interface SettingsState {
     hideUnreads: boolean;
     hideGroups: boolean;
     hideUtilities: boolean;
+    disableSpellcheck: boolean;
   };
   keyboard: ShortcutMapping;
   remoteContentPolicy: RemoteContentPolicy;
@@ -73,7 +74,8 @@ const useSettingsState = createState<SettingsState>(
       hideAvatars: false,
       hideUnreads: false,
       hideGroups: false,
-      hideUtilities: false
+      hideUtilities: false,
+      disableSpellcheck: false
     },
     remoteContentPolicy: {
       imageShown: true,
