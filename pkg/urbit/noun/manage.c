@@ -900,39 +900,51 @@ u3m_fall()
   u3R->kid_p = 0;
 
   /* Write-protect all clean pages in the loom when returning to the home road.
+  **
+  ** The naive approach of one mprotect() call per one clean page is too slow,
+  ** so we aggregate the clean pages into contiguous blocks, each of which can
+  ** be write-protected with a single mprotect() call.
   */
   if ( &u3H->rod_u == u3R ) {
-    u3p(c3_w) off_p;
-    c3_w pag_w;
-    c3_w blk_w;
-    c3_w bit_w;
+    static const c3_w sen_w = 0xffffffff;
+    c3_w sar_w = sen_w;
     c3_o suc_o = c3y;
-    for ( off_p = u3H->rod_u.rut_p;
-          off_p < u3H->rod_u.mat_p;
-          off_p += (1 << u3a_page) )
-    {
-      pag_w = off_p >> u3a_page;
-      blk_w = pag_w >> 5;
-      bit_w = pag_w & 31;
+    for ( c3_w pag_w = 0; pag_w < u3a_pages; pag_w++ ) {
+      c3_w blk_w = pag_w >> 5;
+      c3_w bit_w = pag_w & 31;
 
-      // This page is dirty, so don't re-enable write protection.
-      if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+      // Clean page. Mark the page as the start of a contiguous block if it is
+      // either (1) the first page in the loom or (2) immediately preceded by a
+      // dirty page.
+      if ( 0 == (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+        if ( sen_w == sar_w ) {
+          sar_w = pag_w;
+        }
         continue;
       }
 
-      if ( 0 != mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
-                         1 << (u3a_page + 2),
-                         PROT_READ) )
-      {
+      // Dirty page, but we haven't marked a clean page because this page is
+      // either (1) the first page in the loom or (2) immediately preceded by a
+      // dirty page.
+      if ( sen_w == sar_w ) {
+        continue;
+      }
+
+      // Dirty page marking the end of a contiguous block of clean pages.
+      void* adr_v = u3_Loom + (sar_w << u3a_page);
+      c3_w siz_w = (pag_w - sar_w) << (u3a_page + 2);
+      if ( 0 != mprotect(adr_v, siz_w, PROT_READ) ) {
         fprintf(stderr,
                 "fall: unable to write-protect loom "
                 "offsets 0x%x to 0x%x: %s\r\n",
-                off_p,
-                off_p + (1 << u3a_page),
+                sar_w << u3a_page,
+                pag_w << u3a_page,
                 strerror(errno));
         suc_o = c3n;
         break;
       }
+
+      sar_w = sen_w;
     }
 
     if ( c3n == suc_o ) {
