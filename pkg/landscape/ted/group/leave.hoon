@@ -26,5 +26,4 @@
 ;<  ~  bind:m  (raw-poke-our %metadata-pull-hook pull-hook-act)
 ;<  ~  bind:m  (raw-poke-our %group-pull-hook pull-hook-act)
 ;<  ~  bind:m  (raw-poke-our %group-store %group-update-0 !>([%remove-group rid ~]))
-;<  ~  bind:m  (cleanup-md:view rid)
 (pure:m !>(~))
