@@ -114,6 +114,9 @@
     (pure:m fallback-gas-price)
   ?.  ?&  ?=([~ %finished *] rep)
           ?=(^ full-file.u.rep)
+          ::  get suggested price only for mainnet txs
+          ::
+          =(chain-id 1)
       ==
     fallback
   ?~  jon=(de-json:html q.data.u.full-file.u.rep)
