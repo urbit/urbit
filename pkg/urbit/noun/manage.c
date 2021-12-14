@@ -11,8 +11,6 @@
 #include <openssl/crypto.h>
 #include <urcrypt.h>
 
-static long U3_OS_NativePageWords = 0;
-
 //  XX stack-overflow recovery should be gated by -a
 //
 #undef NO_OVERFLOW
