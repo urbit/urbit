@@ -9,14 +9,10 @@
 ::  Generally don't update the snapshot until we have clay tombstoning.
 ::
 /*  snap  %azimuth-snapshot  /app/azimuth/version-0/azimuth-snapshot
-:: /*  snap  %azimuth  /app/azimuth/state/azimuth
 ::  To update, run from dojo:
 ::    -azimuth-snap-state %default 'version-0'
 ::
-::  To recreate from a list of logs:
-::    =e -build-file %/lib/ethereum/hoon
-::    =l .^((list event-log:rpc:e) %gx /=azimuth=/logs/noun)
-::    */app/azimuth/logs/eth-logs &eth-logs l
+::  To recreate from a full list of logs (at /app/azimuth/logs/eth-logs):
 ::    -azimuth-snap-logs %default 'version-0'
 ::
 =/  snap=snap-state  snap
@@ -236,8 +232,6 @@
     =+  !<(diff=diff:eth-watcher q.cage.sign)
     ?:  ?=(%disavow -.diff)
       [(jael-update:do [*ship id.diff %disavow ~]~) this]
-    ::
-    :: TODO: skip running the logs if we receive a history diff?
     ::
     =.  logs.state
       ?-  -.diff
