@@ -21,12 +21,10 @@
 ::
 +$  state-null  ~
 +$  state-zero  [%0 ~]
-+$  state-one   [%1 ~]
 ::
 +$  versioned-state
   $%  state-null
       state-zero
-      state-one
   ==
 --
 ::
