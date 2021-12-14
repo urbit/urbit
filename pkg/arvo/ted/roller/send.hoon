@@ -13,6 +13,16 @@
 =/  =address:ethereum  (address-from-prv:key:ethereum pk)
 ;<  expected-nonce=@ud  bind:m
   (get-next-nonce:ethio endpoint address)
+=/  batch-data=octs
+  %+  cad:naive  3
+  %-  flop
+  %+  roll  txs
+  |=  [=raw-tx:naive out=(list octs)]
+  [raw.raw-tx 65^sig.raw-tx out]
+::  if the batch is malformed, emit error to kick it out of sending
+::
+?~  (parse-roll:naive q.batch-data)
+  (pure:m !>(%.n^[%not-sent %batch-parse-error]))
 ::  if chain expects a different nonce, don't send this transaction
 ::
 ?.  =(nonce expected-nonce)
@@ -33,17 +43,6 @@
 ;<  use-gas-price=@ud  bind:m
   ?:  =(0 next-gas-price)  fetch-gas-price
   (pure:(strand:strandio @ud) next-gas-price)
-::
-=/  batch-data=octs
-  %+  cad:naive  3
-  %-  flop
-  %+  roll  txs
-  |=  [=raw-tx:naive out=(list octs)]
-  [raw.raw-tx 65^sig.raw-tx out]
-::  TODO: keep this to avoid sending bad batches or disregard?
-::
-?~  (parse-roll:naive q.batch-data)
-  (pure:m !>(%.n^[%not-sent %batch-parse-error]))
 ::
 ::  each l2 signature is 65 bytes + XX bytes for the raw data
 ::  from the ethereum yellow paper:

@@ -1082,8 +1082,8 @@
 ::
 ::    The cause of not sending the previous batch can happen because
 ::    of thread failure (see line 1251) or because the private key loaded onto
-::    the roller was used for outside of the roller (i.e. for other than signing
-::    L2 batches) right after the send-batch thread started.
+::    the roller was used for something other than signing L2 batches right
+::    after the send-batch thread started.
 ::
 ::    After reaching this state, any subsequents attempts have failed (L: 1251)
 ::    (prior to updating the sending nonce if we hit the on-out-of-sync case)
@@ -1174,13 +1174,18 @@
 ++  send-roll
   |=  [=address:ethereum =nonce:naive]
   ^-  (list card)
+  ?~  endpoint
+    ~?  lverb  [dap.bowl %no-endpoint]
+    ~
   ::  if this nonce isn't in the sending queue anymore, it's done
   ::
   ?.  (has:ors:dice sending [address nonce])
     ~?  lverb  [dap.bowl %done-sending [address nonce]]
     ~
-  ?~  endpoint
-    ~?  lverb  [dap.bowl %no-endpoint]
+  ::  if there are no txs for this nonce, don't send it
+  ::
+  ?:  =(0 (lent txs:(got:ors:dice sending [address nonce])))
+    ~&  >>>  [dap.bowl %empty-nonce]
     ~
   ::  start the thread, passing in the l2 txs to use
   ::  TODO  should go ahead and set resend timer in case thread hangs, or nah?
