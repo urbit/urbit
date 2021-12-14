@@ -45,6 +45,7 @@
       (~(connect pass /eyre) [~ /] %docket)
       (~(wait pass /init) (add 1 now.bowl))
       (~(connect pass /eyre) [~ /apps] %docket)
+      (~(arvo pass /eyre) %e %serve [~ /who] %base /gen/who/hoon ~)
   ==
 ::
 ++  on-load
@@ -55,7 +56,8 @@
   |^
   =.  -.state  old
   =.  +.state  inflate-cache
-  `this
+  :_  this
+  [(~(arvo pass /eyre) %e %serve [~ /who] %base /gen/who/hoon ~)]~
   ::
   ++  inflate-cache
     ^-  cache
