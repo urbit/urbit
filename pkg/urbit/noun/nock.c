@@ -1023,7 +1023,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 
       case c3__bout: {
         u3_noun fen = u3_nul;
-        c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+        c3_w  nef_w = _n_comp(&fen, nef, los_o, c3n);
         // add appropriate hind opcode
         ++nef_w; _n_emit(&fen, ( c3y == los_o ) ? HILL : HILK);
         // skip over the cleanup opcode
@@ -1058,7 +1058,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 
           case c3__bout: {
             u3_noun fen = u3_nul;
-            c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+            c3_w  nef_w = _n_comp(&fen, nef, los_o, c3n);
             // add appropriate hind opcode
             ++nef_w; _n_emit(&fen, ( c3y == los_o ) ? HINL : HINK);
             // skip over the cleanup opcode
