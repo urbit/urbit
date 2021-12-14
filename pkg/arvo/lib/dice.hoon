@@ -2,6 +2,9 @@
 ::
 /-  *dice
 /+  naive, *naive-transactions, ethereum, azimuth
+::  verbose bit
+::
+=|  verb=?
 ::
 |%
 ::  orp: ordered points in naive state by parent ship
@@ -54,7 +57,8 @@
   |=  [=diff:naive nas=_nas indices=_indices]
   ?.  ?=([%tx *] diff)  [nas indices]
   =<  [nas indices]
-  (apply-raw-tx | chain-t raw-tx.diff nas indices)
+  %-  %*(. apply-raw-tx verb |)
+  [| chain-t raw-tx.diff nas indices]
 ::
 ++  apply-raw-tx
   |=  [force=? chain-t=@ =raw-tx:naive nas=^state:naive =indices]
@@ -62,13 +66,15 @@
   =+  cache=nas
   =/  chain-t=@t  (ud-to-ascii:naive chain-t)
   ?.  (verify-sig-and-nonce:naive verifier chain-t nas raw-tx)
-    ~&  >>>  [%verify-sig-and-nonce %failed tx.raw-tx]
-    [force ~ nas indices]
+    =+  [force ~ nas indices]
+    ?.  verb  -
+    ~&  >>>  [verb+verb %verify-sig-and-nonce %failed tx.raw-tx]  -
   =^  effects-1  points.nas
     (increment-nonce:naive nas from.tx.raw-tx)
   ?~  nex=(receive-tx:naive nas tx.raw-tx)
-    ~&  >>>  [%receive-tx %failed]
-    [force ~ ?:(force nas cache) indices]
+    =+  [force ~ ?:(force nas cache) indices]
+    ?.  verb  -
+    ~&  >>>  [verb+verb %receive-tx %failed]  -
   =*  new-nas   +.u.nex
   =/  effects   (welp effects-1 -.u.nex)
   =^  updates   indices
