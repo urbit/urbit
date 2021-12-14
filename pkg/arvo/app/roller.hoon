@@ -481,7 +481,7 @@
     ?+    wire  (on-arvo:def wire sign-arvo)
         [%timer ~]
       ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-        %wake  =^(cards state on-timer:do [cards this])
+        %wake  =^(cards state (on-timer:do &) [cards this])
       ==
         [%quota-timer ~]
       ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
@@ -835,7 +835,7 @@
   =+  local=(team:title our.bowl src.bowl)
   |^
   ?-  -.action
-    %commit  ?>(local on-timer)
+    %commit  ?>(local (on-timer |))
     %config  ?>(local (on-config +.action))
     %assign  ?>(local `state(allowances (~(put by allowances) +.action)))
     %refuel  ?>(local (refuel-tx +.action))
@@ -1004,6 +1004,7 @@
 ::  +on-timer: every :frequency, freeze :pending txs roll and start sending it
 ::
 ++  on-timer
+  |=  new=?
   ^-  (quip card _state)
   =^  updates-1  state
     (predicted-state canonical)
@@ -1044,8 +1045,10 @@
       (emit updates-2)
       (send-roll address nonce)
     ==
-  =^  card  next-batch  (set-roller:timer frequency now.bowl)
-  [[card cards] state]
+  ?.  new   cards^state
+  =^  card  next-batch
+    (set-roller:timer frequency now.bowl)
+  [card cards]^state
 ::  +on-quota-timer: resets tx quota for all ships
 ::
 ++  on-quota-timer
