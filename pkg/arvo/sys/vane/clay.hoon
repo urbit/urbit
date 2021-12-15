@@ -1445,6 +1445,32 @@
       ==
     ==
   ::
+  ::  Attach label to aeon
+  ::
+  ++  label
+    |=  [bel=@tas aey=(unit aeon)]
+    ^+  ..park
+    =/  yon  ?~(aey let.dom u.aey)
+    =/  yen  (~(get by lab.dom) bel)  :: existing aeon?
+    ::  no existing aeon is bound to this label
+    ::
+    ?~  yen
+      =.  lab.dom  (~(put by lab.dom) bel yon)
+      ..park
+    ::  an aeon is bound to this label, 
+    ::  but it is the same as the existing one, so we no-op
+    ::
+    ?:  =(u.yen yon)
+      ~&  "clay: tried to rebind existing label {<bel>} to equivalent aeon {<yon>}"
+      ..park
+    ::  an existing aeon bound to the label
+    ::  that is distinct from the requested one.
+    ::  rewriting would violate referential transparency
+    ::
+    ~|  %tried-to-rewrite-existing-label
+    ~|  "requested aeon: {<yon>}, existing aeon: {<u.yen>}"
+    !!
+  ::
   ::  Porcelain commit
   ::
   ++  info
@@ -4374,8 +4400,12 @@
   ::
       %info
     ?:  ?=(%| -.dit.req)
-      ~|  %labelling-not-implemented
-      !!
+      =/  bel=@tas         p.dit.req
+      =/  aey=(unit aeon)  q.dit.req
+      =^  mos  ruf
+        =/  den  ((de now rof hen ruf) our des.req)
+        abet:(label:den bel aey)
+      [mos ..^$]
     =/  [deletes=(set path) changes=(map path cage)]
       =/  =soba  p.dit.req
       =|  deletes=(set path)

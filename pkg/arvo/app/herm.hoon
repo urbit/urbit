@@ -32,7 +32,8 @@
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _this)
-  ?>  ?=([%session @ ~] path)
+  ?>  =(our src):bowl
+  ?>  ?=([%session @ %view ~] path)
   :_  this
   ::  scry prompt and cursor position out of dill for initial response
   ::
@@ -57,12 +58,13 @@
     :_  this
     %+  turn  p.sign-arvo
     |=  =blit:dill
-    [%give %fact [%session %$ ~]~ %blit !>(blit)]
+    [%give %fact [%session %$ %view ~]~ %blit !>(blit)]
   ==
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
+  ?>  =(our src):bowl
   ?.  ?=(%belt mark)
     ~|  [%unexpected-mark mark]
     !!
