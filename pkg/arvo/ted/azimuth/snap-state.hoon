@@ -16,7 +16,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ =net name=@t] arg)
+=+  !<([~ file-name=@t] arg)
 ::
 ;<  nas=^state:naive  bind:m  (scry:strandio ^state:naive /gx/azimuth/nas/noun)
 ;<  =owners           bind:m  (scry:strandio owners /gx/azimuth/own/noun)
@@ -28,9 +28,11 @@
     :~  leaf+"points: {<~(wyt by points.nas)>}"
         leaf+"sponsors: {<~(wyt by sponsors)>}"
         leaf+"owners: {<~(wyt by owners)>}"
+        leaf+"block-number: {<number.id>}"
+        leaf+"block-hash: {<hash.id>}"
     ==
 ::
-=/  =path  /app/azimuth/[name]/azimuth-snapshot
+=/  =path  /app/azimuth/[file-name]/azimuth-snapshot
 =/  =cage
   :-  %azimuth-snapshot
   !>  ^-  snap-state

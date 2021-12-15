@@ -22,7 +22,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ =net name=@t] arg)
+=+  !<([~ =net file-name=@t] arg)
 ::
 =/  [azimuth-contract=@ux chain-id=@]
   [azimuth chain-id]:(get-network:dice net)
@@ -53,14 +53,15 @@
 ::
 =/  [=sponsors =owners]  (create-indices:dice nas)
 ::
-::
 %-  %-  slog
     :~  leaf+"points: {<~(wyt by points.nas)>}"
         leaf+"sponsors: {<~(wyt by sponsors)>}"
         leaf+"owners: {<~(wyt by owners)>}"
+        leaf+"block-number: {<number.id>}"
+        leaf+"block-hash: {<hash.id>}"
     ==
 ::
-=/  =path  /app/azimuth/[name]/azimuth-snapshot
+=/  =path  /app/azimuth/[file-name]/azimuth-snapshot
 =/  =cage
   :-  %azimuth-snapshot
   !>  ^-  snap-state
