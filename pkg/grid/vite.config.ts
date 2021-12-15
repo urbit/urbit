@@ -3,6 +3,7 @@ import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import reactRefresh from '@vitejs/plugin-react-refresh';
 import { urbitPlugin } from '@urbit/vite-plugin-urbit';
+import replace from '@rollup/plugin-replace';
 import { injectManifest } from 'rollup-plugin-workbox';
 
 // https://vitejs.dev/config/
@@ -29,16 +30,24 @@ export default ({ mode }) => {
           },
     build:
       mode !== 'profile'
-        ? undefined
-        : {
+        ? {
             rollupOptions: {
               plugins: [
                 injectManifest({
-                  swSrc: 'service-worker.js',
-                  swDest: 'dist/service-worker.js',
+                  swSrc: 'serviceworker.js',
+                  swDest: 'dist/serviceworker.js',
                   globDirectory: 'dist',
                   mode: 'production' // this inlines the module imports when using yarn build
                 }) as Plugin,
+                replace({
+                  isVitePreview: true // this is used to conditionally call Workbox's precacheAndRoute function
+                })
+              ]
+            }
+          }
+        : {
+            rollupOptions: {
+              plugins: [
                 analyze({
                   limit: 20
                 }),

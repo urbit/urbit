@@ -21,7 +21,6 @@
     "@radix-ui/react-polymorphic": "^0.0.13",
     "@radix-ui/react-portal": "^0.0.15",
     "@radix-ui/react-toggle": "^0.0.10",
-    "@rollup/plugin-replace": "^3.0.0",
     "@tlon/sigil-js": "^1.4.4",
     "@types/lodash": "^4.14.172",
     "@urbit/api": "^2.1.0",
@@ -43,11 +42,12 @@
     "react-router-dom": "^5.2.0",
     "slugify": "^1.6.0",
     "urbit-ob": "^5.0.1",
-    "workbox-precaching": "^6.3.0",
+    "workbox-precaching": "^6.4.2",
     "workbox-routing": "^6.3.0",
     "zustand": "^3.5.7"
   },
   "devDependencies": {
+    "@rollup/plugin-replace": "^3.0.0",
     "@tailwindcss/aspect-ratio": "^0.2.1",
     "@types/lodash": "^4.14.172",
     "@types/mousetrap": "^1.6.8",

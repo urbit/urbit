@@ -176,7 +176,7 @@ export class Urbit {
         event.data.type === 'CURRENT_CHANNEL' &&
         !this.channelSynced
       ) {
-        if (!event.data.eventId || !event.data.channel) {
+        if (typeof event.data.eventId === 'undefined' || !event.data.channel) {
           this.options.verbose && console.log('first to setup channel');
         } else {
           this.lastEventId = parseInt(event.data.eventId, 10);

@@ -1,6 +1,14 @@
 /* eslint-disable no-restricted-globals */
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { registerRoute } from 'workbox-routing';
+import { precacheAndRoute } from 'workbox-precaching';
+
+if (typeof isVitePreview !== 'undefined') {
+  /* eslint-disable no-underscore-dangle */
+  precacheAndRoute(self.__WB_MANIFEST);
+} else {
+  console.log('skipping precache in dev');
+}
 
 self.addEventListener('install', () => {
   self.skipWaiting();
@@ -68,12 +76,14 @@ async function getServerConnection(url) {
 registerRoute(
   ({ request }) => {
     const { headers, url } = request;
+    console.log(request);
     return headers.get('Accept') === 'text/event-stream' && url.indexOf('?id=') !== -1;
   },
   async ({ url }) => {
     const id = url.searchParams.get('id');
     url.searchParams.delete('id');
     const connection = await getServerConnection(url.href);
+    console.log(connection);
 
     const stream = new ReadableStream({
       start: (controller) => {
