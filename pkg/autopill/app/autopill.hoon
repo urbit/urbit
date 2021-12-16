@@ -19,9 +19,9 @@
 |%
 +$  state-0
   $:  %0
-      make=(map @ta [next=@da =task])  ::  things to make
-      hear=(set desk)                  ::  desks we are observing
-      sole=@ta                         ::  the way out
+      make=(map @ta [next=(unit @da) =task])            ::  things to make
+      hear=(set desk)                                   ::  observed desks
+      sole=@ta                                          ::  the way out
   ==
 ::
 +$  task
@@ -121,7 +121,7 @@
       ==
     =/  news  (~(dif in targ) hear)
     =.  hear  (~(uni in hear) targ)
-    =.  make  (~(put by make) name.command now.bowl task.command)
+    =.  make  (~(put by make) name.command `now.bowl task.command)
     :_  this
     %+  turn  ~(tap in news)
     |=  =desk
@@ -144,21 +144,25 @@
     :-  [%txt "--"]
     :-  [%txt "builds:"]
     %+  turn  ~(tap by make)
-    |=  [name=@ta next=@da =task]
+    |=  [name=@ta next=(unit @da) =task]
     :-  %txt
     %-  trip
     %+  rap  3
-    =-  [name ' (' (scot %da next) ') : +' -.task ' %' -]
-    ?-  -.task
-      %ivory            [base.task ~]
-      ?(%solid %brass)  [base.task ' %' (join ' %' ~(tap in etc.task))]
-      %desk             [desk.task ~]
-    ==
+    :*  name  ' ('
+        ?~(next 'up to date' (scot %da u.next))
+        ') : +'  -.task  ' %'
+      ::
+        ?-  -.task
+          %ivory            [base.task ~]
+          ?(%solid %brass)  [base.task ' %' (join ' %' ~(tap in etc.task))]
+          %desk             [desk.task ~]
+    ==  ==
   ::
       %run
     =*  name  name.command
     =+  (~(got by make) name)
-    :_  this
+    :_  =-  this(make (~(jab by make) name -))
+        |=([next=(unit @da) =^task] [~ task])
     ::TODO  just poke hood instead?
     =;  sag=sole-effect:shoe
       [%shoe [sole]~ %sole %mor [[%txt "built {(trip name)}"] sag ~]]~
@@ -204,13 +208,13 @@
   ^-  (quip card _this)
   ?:  ?=([%build ~] wire)
     ?>  ?=(%wake +<.sign)
-    ::TODO  should nullify next for affected tasks to avoid re-run
     ?^  error.sign
       ((slog 'on-wake build failed' u.error.sign) ~ this)
     =/  tasks=(list @ta)
       %+  murn  ~(tap by make)
-      |=  [name=@ta next=@da task]
-      ?:((lte next now.bowl) (some name) ~)
+      |=  [name=@ta next=(unit @da) task]
+      ?~  next  ~
+      ?:((lte u.next now.bowl) (some name) ~)
     ::
     =|  cards=(list card)
     |-
@@ -226,7 +230,7 @@
   ::
   =/  tasks=(list @ta)
     %+  murn  ~(tap by make)
-    |=  [name=@ta next=@da =task]
+    |=  [name=@ta (unit @da) =task]
     =-  ?:(- (some name) ~)
     ?-  -.task
       %ivory            =(desk base.task)
@@ -242,7 +246,7 @@
       |-  ?~  tasks  this
       =.  make
         %+  ~(jab by make)  i.tasks
-        |=([@da =task] [next task])
+        |=([(unit @da) =task] [`next task])
       $(tasks t.tasks)
   :~  ::  watch for the next change on this desk
       ::
