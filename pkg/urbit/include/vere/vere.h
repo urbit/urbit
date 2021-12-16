@@ -616,7 +616,7 @@
           c3_d             len_d;           //  length
           c3_y*            hun_y;           //  bytes
           enum {                            //  type
-            u3_gift_poke_e = 0,             //    effects
+            u3_gift_fact_e = 0,             //    effects
             u3_gift_rest_e = 1              //    any
           } sat_e;                          //
           union {                           //  data

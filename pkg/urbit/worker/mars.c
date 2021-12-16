@@ -123,7 +123,7 @@ _mars_fact(u3_mars* mar_u,
   {
     u3_gift* gif_u = c3_malloc(sizeof(*gif_u));
     gif_u->nex_u = 0;
-    gif_u->sat_e = u3_gift_poke_e;
+    gif_u->sat_e = u3_gift_fact_e;
     gif_u->eve_d = mar_u->dun_d;
 
     u3s_jam_xeno(pro, &gif_u->len_d, &gif_u->hun_y);
