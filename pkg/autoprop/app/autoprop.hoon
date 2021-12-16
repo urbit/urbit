@@ -219,14 +219,16 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card _this)
   ?:  ?=([%build ~] wire)
+    ::  on-wake, build all tasks whose time has come
+    ::
     ?>  ?=(%wake +<.sign)
-    ?^  error.sign
-      ((slog 'on-wake build failed' u.error.sign) ~ this)
     =/  tasks=(list @ta)
       %+  murn  ~(tap by make)
       |=  [name=@ta next=(unit @da) task]
       ?~  next  ~
       ?:((lte u.next now.bowl) (some name) ~)
+    ?^  error.sign
+      ((slog 'on-wake build failed' >tasks< u.error.sign) ~ this)
     ::
     =|  cards=(list card)
     |-
@@ -239,6 +241,7 @@
   ?.  ?=(%writ +<.sign)
     ~&  [dap.bowl %unexpected-sign +<.sign]
     [~ this]
+  ::  on-writ, bump build timers for all affected tasks
   ::
   =/  tasks=(list @ta)
     %+  murn  ~(tap by make)
