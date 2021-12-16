@@ -43,6 +43,7 @@ on:
       - 'pkg/urbit/**'
       - 'bin/**'
       - 'nix/**'
+      - '.github/**'
   pull_request:
     paths:
       - 'pkg/arvo/**'
@@ -53,6 +54,7 @@ on:
       - 'pkg/urbit/**'
       - 'bin/**'
       - 'nix/**'
+      - '.github/**'
 
 jobs:
   urbit:
