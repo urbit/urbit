@@ -48,7 +48,7 @@
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))
 +$  mark  @tas
-+$  mein  [our=ship now=@da eny=@uvJ]
++$  mien  [our=ship now=@da eny=@uvJ]
 ++  omen  |$  [a]  (pair path (cask a))
 +$  ship  @p
 +$  sink  (trel bone ship path)
@@ -214,7 +214,7 @@
       ::  zen: Outside knowledge
       ::  mod: internal modules
       ::
-      mein
+      mien
       $=  fad
       $:  ::  lac: not verbose
           ::
