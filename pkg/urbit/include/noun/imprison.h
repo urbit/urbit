@@ -1,7 +1,5 @@
-/* include/noun/imprison.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_IMPRISON_H
+#define U3_IMPRISON_H
 
   /**  Structures.
   **/
@@ -157,3 +155,5 @@
         */
           u3_noun
           u3i_molt(u3_noun som, ...);
+
+#endif /* ifndef U3_IMPRISON_H */

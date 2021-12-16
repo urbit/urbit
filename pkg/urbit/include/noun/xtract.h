@@ -1,7 +1,6 @@
-/* i/n/x.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_XTRACT_H
+#define U3_XTRACT_H
+
   /**  Constants.
   **/
     /* Conventional axes for gate call.
@@ -157,3 +156,5 @@
                    u3_noun* e,
                    u3_noun* f,
                    u3_noun* g);
+
+#endif /* ifndef U3_XTRACT_H */
