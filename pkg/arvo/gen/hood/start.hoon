@@ -10,8 +10,9 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [arg=[@ $@(~ [@ ~])] ~]
     ==
-:-  %drum-start
-?>  ((sane %tas) -.arg)
-?@  +.arg  [q.bec -.arg]
-?>  ((sane %tas) +<.arg)
-[-.arg +<.arg]
+=/  [des=@tas dap=@tas]
+  ?>  ((sane %tas) -.arg)
+  ?@  +.arg  [q.bec -.arg]
+  ?>  ((sane %tas) +<.arg)
+  [-.arg +<.arg]
+[%kiln-rein des & [dap ~ ~] ~]

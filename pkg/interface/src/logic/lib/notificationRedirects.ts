@@ -1,5 +1,7 @@
 import useMetadataState from '../state/metadata';
 import ob from 'urbit-ob';
+import useInviteState from '../state/invite';
+import {resourceAsPath} from '../../../../npm/api/dist';
 
 function getGroupResourceRedirect(key: string) {
   const association = useMetadataState.getState().associations.graph[`/ship/${key}`];
@@ -67,7 +69,9 @@ function getGraphRedirect(link: string) {
 
 function getInviteRedirect(link: string) {
   const [,,app,uid] = link.split('/');
-  return `/invites/${app}/${uid}`;
+  const invite = useInviteState.getState().invites[app][uid];
+  if(!invite) { return ''; }
+  return { search: `?join-kind=${app}&join-path=${encodeURIComponent(resourceAsPath(invite.resource))}` };
 }
 
 function getDmRedirect(link: string) {
