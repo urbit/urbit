@@ -12,6 +12,9 @@
 ::    see currently configured build tasks:
 ::      ?
 ::
+::    run task right now:
+::      !latest-solid
+::
 /+  libpill=pill, shoe, verb, dbug, default-agent
 ::
 =,  clay
@@ -137,8 +140,10 @@
     ^-  (list card)
     =-  [%shoe [sole-id]~ %sole %mor -]~
     ^-  (list sole-effect:shoe)
-    :-  [%txt "to add:  pill-name +type %args"]
-    :-  [%txt "to del:  -pill-name"]
+    :-  [%txt "to add:  task-name +type %args"]
+    :-  [%txt "         where +type is a pill type, or +desk"]
+    :-  [%txt "to del:  -task-name"]
+    :-  [%txt "to run:  !task-name"]
     ?:  =(~ make)
       [%txt "no builds configured"]~
     :-  [%txt "--"]
