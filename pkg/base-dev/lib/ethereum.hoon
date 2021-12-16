@@ -553,7 +553,9 @@
                 top=(list ?(@ux (list @ux)))
             ==
             [%eth-get-filter-changes fid=@ud]
+            [%eth-get-transaction-by-hash txh=@ux]
             [%eth-get-transaction-count adr=address =block]
+            [%eth-get-balance adr=address =block]
             [%eth-get-transaction-receipt txh=@ux]
             [%eth-send-raw-transaction dat=@ux]
         ==
@@ -569,10 +571,20 @@
             [%eth-transaction-hash haz=@ux]
         ==
       ::
+      ++  transaction-result
+        $:  block-hash=(unit @ux)
+            block-number=(unit @ud)
+            transaction-index=(unit @ud)
+            from=@ux
+            to=(unit @ux)
+            input=@t
+        ==
+      ::
       ++  event-log
         $:  ::  null for pending logs
             $=  mined  %-  unit
-            $:  log-index=@ud
+            $:  input=(unit @ux)
+                log-index=@ud
                 transaction-index=@ud
                 transaction-hash=@ux
                 block-number=@ud
@@ -779,6 +791,15 @@
           (block-to-json block.req)
       ==
     ::
+        %eth-get-balance
+      :-  'eth_getBalance'
+      :~  (tape (address-to-hex adr.req))
+          (block-to-json block.req)
+      ==
+    ::
+        %eth-get-transaction-by-hash
+      ['eth_getTransactionByHash' (tape (transaction-to-hex txh.req)) ~]
+    ::
         %eth-get-transaction-receipt
       ['eth_getTransactionReceipt' (tape (transaction-to-hex txh.req)) ~]
     ::
@@ -854,6 +875,8 @@
   ::
   ++  parse-eth-get-transaction-count  parse-hex-result
   ::
+  ++  parse-eth-get-balance  parse-hex-result
+  ::
   ++  parse-event-logs
     (ar:dejs:format parse-event-log)
   ::
@@ -865,7 +888,7 @@
     :~  =-  ['logIndex'^(cu - (mu so))]
         |=  li=(unit @t)
         ?~  li  ~
-        =-  `((ou -) log)  ::TODO  not sure if elegant or hacky.
+        =-  ``((ou -) log)  ::TODO  not sure if elegant or hacky.
         :~  'logIndex'^(un (cu hex-to-num so))
             'transactionIndex'^(un (cu hex-to-num so))
             'transactionHash'^(un (cu hex-to-num so))
@@ -884,6 +907,27 @@
         :-  (hex-to-num i.r)
         (turn t.r hex-to-num)
     ==
+  ::
+  ++  parse-transaction-result
+    =,  dejs:format
+    |=  jon=json
+    ~|  jon=jon
+    ^-  transaction-result
+    =-  ((ot -) jon)
+    :~  'blockHash'^_~  :: TODO: fails if maybe-num?
+        'blockNumber'^maybe-num
+        'transactionIndex'^maybe-num
+        from+(cu hex-to-num so)
+        to+maybe-num
+        input+so
+    ==
+  ::
+  ++  maybe-num
+    =,  dejs:format
+    =-  (cu - (mu so))
+    |=  r=(unit @t)
+    ?~  r  ~
+    `(hex-to-num u.r)
   --
 ::
 ::  utilities

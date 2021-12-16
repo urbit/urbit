@@ -3,7 +3,7 @@ import { Associations, Graph, Unreads } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
 import _ from 'lodash';
 
-import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
+import { SidebarAssociationItem, SidebarDmItem, SidebarPendingItem } from './SidebarItem';
 import useGraphState, { useInbox } from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
 import { alphabeticalOrder, getResourcePath, modulo } from '~/logic/lib/util';
@@ -12,8 +12,10 @@ import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
 import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
+import useGroupState from '~/logic/state/group';
+import useInviteState from '~/logic/state/invite';
 
-function sidebarSort(unreads: Unreads, pending: Set<string>): Record<SidebarSort, (a: string, b: string) => number> {
+function sidebarSort(unreads: Unreads, pending: string[]): Record<SidebarSort, (a: string, b: string) => number> {
   const { associations } = useMetadataState.getState();
   const alphabetical = (a: string, b: string) => {
     const aAssoc = associations[a];
@@ -25,8 +27,8 @@ function sidebarSort(unreads: Unreads, pending: Set<string>): Record<SidebarSort
   };
 
   const lastUpdated = (a: string, b: string) => {
-    const aPend = pending.has(a.slice(1));
-    const bPend = pending.has(b.slice(1));
+    const aPend = pending.includes(a);
+    const bPend = pending.includes(b);
     if(aPend && !bPend) {
       return -1;
     }
@@ -50,7 +52,7 @@ function sidebarSort(unreads: Unreads, pending: Set<string>): Record<SidebarSort
   };
 }
 
-function getItems(associations: Associations, workspace: Workspace, inbox: Graph, pending: Set<string>) {
+function getItems(associations: Associations, workspace: Workspace, inbox: Graph, pending: string[]) {
    const filtered = Object.keys(associations.graph).filter((a) => {
      const assoc = associations.graph[a];
      if(!('graph' in assoc.metadata.config)) {
@@ -84,9 +86,9 @@ function getItems(associations: Associations, workspace: Workspace, inbox: Graph
     : inbox.keys().map(x => patp(x.toString()));
   const pend = workspace.type !== 'messages'
     ? []
-    : Array.from(pending).map(s => `~${s}`);
+    : pending
 
-  return [...filtered, ..._.union(direct, pend)];
+  return _.union(direct, pend, filtered);
 }
 
 export function SidebarList(props: {
@@ -98,9 +100,18 @@ export function SidebarList(props: {
 }): ReactElement {
   const { selected, config, workspace } = props;
   const associations = useMetadataState(state => state.associations);
+  const groups = useGroupState(s => s.groups);
   const inbox = useInbox();
   const graphKeys = useGraphState(s => s.graphKeys);
-  const pending = useGraphState(s => s.pendingDms);
+  const pendingDms = useGraphState(s => [...s.pendingDms].map(s => `~${s}`));
+  const pendingGroupChats = useGroupState(s => _.pickBy(s.pendingJoin, (req, rid) => !(rid in groups) && req.app === 'graph'));
+  const inviteGroupChats = useInviteState(
+    s => Object.values(s.invites?.['graph'] || {})
+    .map(inv => {
+      return `/ship/~${inv.resource.ship}/${inv.resource.name}`
+    }).filter(group => !(group in groups))
+  );
+  const pending = [...pendingDms, ...Object.keys(pendingGroupChats), ...inviteGroupChats];
   const unreads = useHarkState(s => s.unreads);
 
   const ordered = getItems(associations, workspace, inbox, pending)
@@ -118,10 +129,16 @@ export function SidebarList(props: {
     if(newChannel.startsWith('~')) {
       path = `/~landscape/messages/dm/${newChannel}`;
     } else {
-      const { metadata, resource } = associations.graph[ordered[newIdx]];
-      const joined = graphKeys.has(resource.slice(7));
-      if ('graph' in metadata.config) {
-        path = getResourcePath(workspace, resource, joined, metadata.config.graph);
+      const association = associations.graph[ordered[newIdx]];
+      if(!association) {
+        path = `/~landscape/messages`
+        return;
+      } else {
+        const { metadata, resource } = association;
+        const joined = graphKeys.has(resource.slice(7));
+        if ('graph' in metadata.config) {
+          path = getResourcePath(workspace, resource, joined, metadata.config.graph);
+        }
       }
     }
     history.push(path);
@@ -140,7 +157,22 @@ export function SidebarList(props: {
   return (
     <>
       {ordered.map((pathOrShip) => {
-        return pathOrShip.startsWith('/') ? (
+        return pathOrShip.startsWith('~') ? (
+            <SidebarDmItem
+              key={pathOrShip}
+              ship={pathOrShip}
+              workspace={workspace}
+              selected={pathOrShip === selected}
+              pending={pending.includes(pathOrShip)}
+            />
+
+          ) : pending.includes(pathOrShip) ? (
+            <SidebarPendingItem
+              key={pathOrShip}
+              path={pathOrShip}
+              selected={pathOrShip === selected}
+            />
+          ) : (
           <SidebarAssociationItem
             key={pathOrShip}
             selected={pathOrShip === selected}
@@ -148,16 +180,7 @@ export function SidebarList(props: {
             hideUnjoined={config.hideUnjoined}
             workspace={workspace}
           />
-          ) : (
-            <SidebarDmItem
-              key={pathOrShip}
-              ship={pathOrShip}
-              workspace={workspace}
-              selected={pathOrShip === selected}
-              pending={pending.has(pathOrShip.slice(1))}
-            />
-
-          );
+          ) ;
       })}
     </>
   );

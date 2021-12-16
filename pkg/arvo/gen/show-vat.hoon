@@ -1,4 +1,3 @@
-/-  *bill
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [=desk ~]
@@ -11,5 +10,5 @@
 :~  'sys.kelvin:'
     leaf/"[%{<lal>} %{<num>}]"
     'desk.bill:'
-    (sell !>(.^(bill cx+(weld pax /desk/bill))))
+    (sell !>(.^((list dude:gall) cx+(weld pax /desk/bill))))
 ==

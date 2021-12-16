@@ -21,6 +21,7 @@ export interface AuthorProps {
   lineHeight?: string | number;
   isRelativeTime?: boolean;
   dontShowTime?: boolean;
+  gray?: boolean;
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -35,6 +36,7 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
     isRelativeTime,
     dontShowTime,
     lineHeight = 'tall',
+    gray = false,
     ...rest
   } = props;
 
@@ -88,7 +90,7 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
       <Box display='flex' alignItems='baseline'>
         <Text
           ml={showImage ? 2 : 0}
-          color='black'
+          color={gray ? 'gray': 'black'}
           fontSize='1'
           cursor='pointer'
           lineHeight={lineHeight}

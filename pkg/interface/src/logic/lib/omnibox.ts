@@ -56,7 +56,7 @@ const commandIndex = function (currentGroup, groups, associations) {
   if (canAdd) {
     commands.push(result('Channel: Create', `/~landscape${workspace}/new`, 'Groups', null));
   }
-  commands.push(result('Groups: Join', '/~landscape/join', 'Groups', null));
+  commands.push(result('Groups: Join', '?join-kind=group', 'Groups', null));
 
   return commands;
 };
