@@ -1,13 +1,13 @@
 ::  autoprop: make pills & props when desk contents change
 ::
 ::    auto-build a new .urb/put/latest-solid.pill:
-::      latest-solid +solid %kids %garden
+::      +latest-solid solid %kids %garden
 ::
 ::    stop auto-building latest-solid:
 ::      -latest-solid
 ::
 ::    auto-build a new .urb/put/somedesk.jam:
-::      some-desk +desk %somedesk
+::      +some-desk desk %somedesk
 ::
 ::    see currently configured build tasks:
 ::      ?
@@ -82,7 +82,7 @@
   %+  pick
     (cold [%see ~] wut)
   |^  ;~  pose
-        (stag %put ;~(plug sym ;~(pfix ace lus ;~(pose pil pro))))
+        (stag %put ;~(plug (ifix [lus ace] sym) ;~(pose pil pro)))
         ;~(plug (cold %del hep) sym)
         ;~(plug (cold %run zap) sym)
       ==
@@ -140,8 +140,8 @@
     ^-  (list card)
     =-  [%shoe [sole-id]~ %sole %mor -]~
     ^-  (list sole-effect:shoe)
-    :-  [%txt "to add:  task-name +type %args"]
-    :-  [%txt "         where +type is a pill type, or +desk"]
+    :-  [%txt "to add:  +task-name type %args"]
+    :-  [%txt "         where type is one of: solid, brass, ivory, desk"]
     :-  [%txt "to del:  -task-name"]
     :-  [%txt "to run:  !task-name"]
     ?:  =(~ make)
@@ -159,7 +159,9 @@
       ::
         ?-  -.task
           %ivory            [base.task ~]
-          ?(%solid %brass)  [base.task ' %' (join ' %' ~(tap in etc.task))]
+          ?(%solid %brass)  :-  base.task
+                            ?:  =(~ etc.task)  ~
+                            [' %' (join ' %' ~(tap in etc.task))]
           %desk             [desk.task ~]
     ==  ==
   ::
@@ -170,12 +172,17 @@
         |=([next=(unit @da) =^task] [~ task])
     ::TODO  just poke hood instead?
     =;  sag=sole-effect:shoe
-      [%shoe [sole]~ %sole %mor [[%txt "built {(trip name)}"] sag ~]]~
+      :_  ~
+      :+  %shoe  [sole]~
+      :+  %sole  %mor
+      :~  [%txt "{(trip dap.bowl)} built {(trip name)}"]
+          sag
+      ==
     |^  =*  base  base.task
         :+  %sag
           ?-  -.task
-            ?(%solid %brass %ivory)  /tasks/[name]/pill
-            %desk                    /tasks/[name]/jam
+            ?(%solid %brass %ivory)  /[dap.bowl]/[name]/pill
+            %desk                    /[dap.bowl]/[name]/jam
           ==
         ?-  -.task
           %ivory  (ivory:libpill (sys base))
