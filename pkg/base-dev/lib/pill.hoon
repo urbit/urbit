@@ -63,6 +63,10 @@
              %-  ~(gas by *(map path (each page:clay lobe:clay)))
              (turn hav |=([=path =page:clay] [path &+page]))
            [/c/sync [%park des &+yuki *rang:clay]]
+  (file-pages bas sal)
+::
+++  file-pages
+  |=  [bas=path sal=(list spur)]
   =|  hav=(list [path page:clay])
   |-  ^+  hav
   ?~  sal  ~
@@ -129,6 +133,7 @@
   ?~  all  hav
   $(all t.all, hav ^$(tyl [p.i.all tyl]))
 ::
+::TODO  include %prep task in solid and brass?
 ++  solid
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
   ::  dez: secondary desks and their root paths
@@ -330,12 +335,12 @@
   +$  tier  ?(%pre-userspace %post-userspace)
   ::
   ++  install
-    |=  [as=desk =beak]
+    |=  [as=desk =beak pri=(map lobe:clay blob:clay)]
     ^-  prop
     :^  %prop  %install  %post-userspace
     ::TODO  will exclude non-:directories files, such as /changelog/txt
     :~  (file-ovum as (en-beam beak /))
-      ::
+        [/c/inflate/[as] [%prep pri]]
         [/d/install/[as] [%seat as]]
     ==
   --
