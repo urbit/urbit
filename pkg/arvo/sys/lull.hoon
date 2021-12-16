@@ -2183,6 +2183,9 @@
       ::    TODO: make $yuki an option for %into?
       ::
       $>(%park task:clay)
+      ::  %clay: load blob store
+      ::
+      $>(%prep task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)

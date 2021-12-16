@@ -28,6 +28,7 @@
         ==
       ::
         dub=_|
+        prime=_|
     ==
 :-  %boot-pill
 ^-  pill:pill
@@ -45,4 +46,4 @@
   |=  =desk
   [desk /(scot %p p.bec)/[desk]/(scot %da now)]
 ::
-(solid:pill sys dez dub now)
+(solid:pill sys dez dub now prime)

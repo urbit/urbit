@@ -20,7 +20,7 @@
 +$  state-0
   $:  %0
       make=(map @ta [next=@da =task])  ::  things to make
-      hear=(map desk (map lobe blob))  ::  desks we are observing
+      hear=(set desk)                  ::  desks we are observing
       sole=@ta                         ::  the way out
   ==
 ::
@@ -113,29 +113,17 @@
   ?-  -.command
       %put
     =*  task  task.command
-    =/  target-desks=(set desk)
+    =/  targ=(set desk)
       ?-  -.task
         %ivory            [base.task ~ ~]
         ?(%solid %brass)  (~(put in etc.task) base.task)
         %desk             [desk.task ~ ~]
       ==
-    =/  new-desks=(list desk)
-      ~(tap in (~(dif in target-desks) ~(key by hear)))
-    ::
-    =.  make
-      %+  ~(put by make)
-        name.command
-      [now.bowl task.command]
-    =.  hear
-      ::  load existing blobs for desks
-      ::
-      %-  ~(gas by hear)
-      %+  turn  new-desks
-      |=  d=desk
-      :-  d
-      .^((map lobe blob) %cs /(scot %p our.bowl)/[d]/(scot %da now.bowl)/bloc)
+    =/  news  (~(dif in targ) hear)
+    =.  hear  (~(uni in hear) targ)
+    =.  make  (~(put by make) name.command now.bowl task.command)
     :_  this
-    %+  turn  new-desks
+    %+  turn  ~(tap in news)
     |=  =desk
     :+  %pass  /desk/[desk]
     [%arvo %c %warp our.bowl desk `[%next %z da+now.bowl /]]
@@ -188,16 +176,13 @@
             %+  turn  ~(tap in etc.task)
             |=(d=desk [d (bek d)])
           ?-  -.task
-            %solid  (solid:libpill (sys base) dez | now.bowl)
-            %brass  (brass:libpill (sys base) dez)
+            %solid  (solid:libpill (sys base) dez | now.bowl &)
+            %brass  (brass:libpill (sys base) dez &)
           ==
         ::
             %desk
           =*  desk  desk.task
-          ~?  !(~(has by hear) desk)  [%no-blob-cache desk=desk]
-          ~&  [%prime ~(wyt by (~(gut by hear) desk ~))]
-          ::TODO  shouldn't /lib/pill just scry for the blobs on-demand?
-          (install:events:libpill desk (byk desk) (~(gut by hear) desk ~))
+          (install:events:libpill desk (byk desk) &)
         ==
     ::
     ++  sys
@@ -249,20 +234,7 @@
       %desk             =(desk desk.task)
     ==
   ?:  =(~ tasks)
-    [~ this(hear (~(del by hear) desk))]
-  ::
-  =.  hear
-    ::  learn of new blobs for this desk
-    ::
-    %+  ~(put by hear)  desk
-    %-  ~(gas by (~(gut by hear) desk ~))
-    %+  turn
-      %+  file-pages:libpill
-        /(scot %p our.bowl)/[desk]/(scot %da now.bowl)
-      directories:file-ovum:libpill
-    |=  [path =page]
-    =+  l=(page-to-lobe page)
-    [l %direct l page]
+    [~ this(hear (~(del in hear) desk))]
   ::
   =/  next=@da  (add now.bowl delay)
   :_  ::  delay next build for affected tasks

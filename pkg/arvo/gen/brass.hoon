@@ -24,7 +24,7 @@
             rest=(list desk)
         ==
       ::
-        ~
+        prime=_|
     ==
 :-  %boot-pill
 ^-  pill:pill
@@ -45,4 +45,4 @@
   |=  =desk
   [desk /(scot %p p.bec)/[desk]/(scot %da now)]
 ::
-(brass:pill sys dez)
+(brass:pill sys dez prime)

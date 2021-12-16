@@ -94,6 +94,16 @@
 ::
 ++  file-ovum2  |=(p=path `unix-event`[//arvo what/(user-files p)])
 ::
+++  prep-ovum
+  |=  dez=(list path)
+  ^-  unix-event
+  =-  ~&  clay-blobs+~(wyt by -)
+      [/c/inflate [%prep -]]
+  %+  roll  dez
+  |=  [bas=path out=(map lobe:clay blob:clay)]
+  %-  ~(uni by out)
+  .^(_out %cs (snoc bas %bloc))
+::
 ::  +user-files: all userspace hoon files
 ::
 ++  user-files
@@ -138,7 +148,7 @@
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
   ::  dez: secondary desks and their root paths
   ::
-  |=  [sys=path dez=(list [desk path]) dub=? now=@da]
+  |=  [sys=path dez=(list [desk path]) dub=? now=@da prime=?]
   ^-  pill
   =/  bas=path       (scag 3 sys)
   =/  compiler-path  (weld sys /hoon)
@@ -218,15 +228,17 @@
   ::
   :+  %pill  %solid
   :+  boot-ova  ~
-  %+  turn
-    (snoc dez [%base bas])
-  file-ovum:pill
+  =.  dez  (snoc dez [%base bas])
+  %+  weld
+    (turn dez file-ovum)
+  ?.  prime  ~
+  [(prep-ovum (turn dez tail))]~
 ::
 ++  brass
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
   ::  dez: secondary desks and their root paths
   ::
-  |=  [sys=path dez=(list [desk path])]
+  |=  [sys=path dez=(list [desk path]) prime=?]
   ^-  pill
   =/  bas=path  (scag 3 sys)
   ::  compiler-source: hoon source file producing compiler, `sys/hoon`
@@ -265,9 +277,11 @@
     :~  (boot-ovum:pill compiler-source arvo-source)
         (file-ovum2:pill bas)
     ==
-  %+  turn
-    (snoc dez [%base bas])
-  file-ovum:pill
+  =.  dez  (snoc dez [%base bas])
+  %+  weld
+    (turn dez file-ovum)
+  ?.  prime  ~
+  [(prep-ovum (turn dez tail))]~
 ::
 ++  ivory
   |=  sys=path
@@ -335,13 +349,18 @@
   +$  tier  ?(%pre-userspace %post-userspace)
   ::
   ++  install
-    |=  [as=desk =beak pri=(map lobe:clay blob:clay)]
+    |=  [as=desk =beak pri=?]
     ^-  prop
     :^  %prop  %install  %post-userspace
     ::TODO  will exclude non-:directories files, such as /changelog/txt
-    :~  (file-ovum as (en-beam beak /))
-        [/c/inflate/[as] [%prep pri]]
-        [/d/install/[as] [%seat as]]
+    =-  (murn - same)
+    ^-  (list (unit ovum))
+    :~  `(file-ovum as (en-beam beak /))
+      ::
+        ?.  pri  ~
+        `(prep-ovum (en-beam beak /) ~)
+      ::
+        `[/d/install/[as] [%seat as]]
     ==
   --
 --
