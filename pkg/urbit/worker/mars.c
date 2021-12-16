@@ -294,7 +294,7 @@ _mars_poke(c3_w   mil_w,
 {
   u3_noun pro;
 
-  if ( c3y == u3_poke_sure(mil_w, u3k(*eve), &pro) ) {
+  if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), &pro) ) {
     *out = pro;
     return c3y;
   }
@@ -307,7 +307,7 @@ _mars_poke(c3_w   mil_w,
 
     *eve = _mars_make_crud(*eve, u3k(dud));
 
-    if ( c3y == u3_poke_sure(mil_w, u3k(*eve), &pro) ) {
+    if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), &pro) ) {
       u3z(dud);
       *out = pro;
       return c3y;
@@ -626,7 +626,7 @@ _mars_poke_play(u3_mars* mar_u, c3_d eve_d, u3_noun job)
   c3_w  pre_w = u3a_open(u3R);
   u3_noun vir;
 
-  if ( c3y == u3_poke_sure(0, job, &vir) ) {
+  if ( c3y == u3v_poke_sure(0, job, &vir) ) {
     u3z(_mars_sure_feck(mar_u, pre_w, vir));
     return c3y;
   }
