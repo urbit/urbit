@@ -2677,7 +2677,8 @@
   ::
   ~%  %core  +  ~
   |%
-  +$  pes  [cap=_`@`10.000 siz=@ tic=@ pri=(pry k v)]   ::  lru cache
+  ::
+  +$  pes  [cap=_`@`10.000 siz=@ tic=@ pri=pri:cor]     ::  lru cache
   ::
   ++  cor  (up k v)
   ::
@@ -7133,16 +7134,31 @@
               r=(pair seminoun (map term tome))         ::  chapters
           ==                                            ::
 +$  garb  (trel (unit term) poly vair)                  ::  core
+::
+++  lru                                                    ::  compiler cache
+  :*  nes=(lu (pair type type) ?)                          ::  +nest
+      res=(lu (pair type hoon) type)                       ::  +rest
+      mit=(lu (pair type hoon) (pair type nock))           ::  +mint
+      mul=(lu (qual type type type hoon) (pair type type)) ::  +mull
+      fis=(lu (pair type axis) nock)                       ::  +fish
+      cro=(lu (pair type type) type)                       ::  +crop
+      fus=(lu (pair type type) type)                       ::  +fuse
+  ==
+::
 +$  grub                                                    ::  ut cache
-  $:  nes=(pest (pair type type) ?)                          ::  +nest
-      res=(pest (pair type hoon) type)                       ::  +rest
-      mit=(pest (pair type hoon) (pair type nock))           ::  +mint
-      mul=(pest (qual type type type hoon) (pair type type)) ::  +mull
-      fis=(pest (pair type axis) nock)                       ::  +fish
-      cro=(pest (pair type type) type)                       ::  +crop
-      fus=(pest (pair type type) type)                       ::  +fuse
-      fon=(pest (pair type limb) (pair (unit atom) pony))    ::  +fond
+  $:  nes=_(new:nes:lru 17.500)                             ::  +nest
+      res=_(new:res:lru 17.500)                             ::  +rest
+      mit=_(new:mit:lru 5.000)                              ::  +mint
+      mul=_(new:mul:lru 5.000)                              ::  +mull
+      fis=_(new:fis:lru 100)                                ::  +fish
+      cro=_(new:cro:lru 2.450)                              ::  +crop
+      fus=_(new:fus:lru 2.450)                              ::  +fuse
+      nen=(map (pair type type) ?)                          ::  internal +nest
+      con=(map (pair type type) type)                       ::  internal +crop
+      fun=(map (pair type type) type)                       ::  internal +fuse
+      fin=(map (pair type axis) nock)                       ::  internal +fish
   ==                                                    ::
+::
 +$  pony                                                ::  raw match
   $@  ~                                                 ::  void
   %+  each                                              ::  natural/abnormal
@@ -9583,16 +9599,6 @@
 ::
 ::::  5c: compiler backend and prettyprinter
   ::
-++  lru                                                    ::  compiler cache
-  :*  nes=(lu (pair type type) ?)                          ::  +nest
-      res=(lu (pair type hoon) type)                       ::  +rest
-      mit=(lu (pair type hoon) (pair type nock))           ::  +mint
-      mul=(lu (qual type type type hoon) (pair type type)) ::  +mull
-      fis=(lu (pair type axis) nock)                       ::  +fish
-      cro=(lu (pair type type) type)                       ::  +crop
-      fus=(lu (pair type type) type)                       ::  +fuse
-  ==
-::
 ++  ut
   ~%    %ut
       +>+
@@ -10515,16 +10521,22 @@
   ++  caching-crop
     ~/  %caching-crop
     |=  ref=type
+    =/  cached  (get:cro:lru cro.grub [sut ref])
+    ?^  cached
+      [p.u.cached grub(cro q.u.cached)]
+    =;  [cropped=type =_grub]
+      :_  grub(cro (put:cro:lru cro.grub [sut ref] cropped), con ~)
+      cropped
     =|  bix=(set [type type])
     =<  dext
     |%
     ++  dext
       ^-  [type _grub]
-      =/  cached  (get:cro:lru cro.grub [sut ref])
+      =/  cached  (~(get by con.grub) [sut ref])
       ?^  cached
-        [p.u.cached grub(cro q.u.cached)]
+        [u.cached grub]
       =;  [cropped=type =_grub]
-        :_  grub(cro (put:cro:lru cro.grub [sut ref] cropped))
+        :_  grub(con (~(put by con.grub) [sut ref] cropped))
         cropped
       ~_  leaf+"crop"
       ?:  |(=(sut ref) =(%noun ref))
@@ -11674,13 +11686,19 @@
   ++  caching-fish
     ~/  %caching-fish
     |=  axe=axis
-    =|  vot=(set type)
-    |-  ^-  [nock _grub]
     =/  cached  (get:fis:lru fis.grub [sut axe])
     ?^  cached
       [p.u.cached grub(fis q.u.cached)]
     =;  [fished=nock =_grub]
-      :_  grub(fis (put:fis:lru fis.grub [sut axe] fished))
+      :_  grub(fis (put:fis:lru fis.grub [sut axe] fished), fin ~)
+      fished
+    =|  vot=(set type)
+    |-  ^-  [nock _grub]
+    =/  cached  (~(get by fin.grub) [sut axe])
+    ?^  cached
+      [u.cached grub]
+    =;  [fished=nock =_grub]
+      :_  grub(fin (~(put by fin.grub) [sut axe] fished))
       fished
     ?-  sut
         %void
@@ -11774,13 +11792,19 @@
   ++  caching-fuse
     ~/  %caching-fuse
     |=  ref=type
-    =|  bix=(set [type type])
-    |-  ^-  [type _grub]
     =/  cached  (get:fus:lru fus.grub [sut ref])
     ?^  cached
       [p.u.cached grub(fus q.u.cached)]
     =;  [fused=type =_grub]
-      :_  grub(fus (put:fus:lru fus.grub [sut ref] fused))
+      :_  grub(fus (put:fus:lru fus.grub [sut ref] fused), fun ~)
+      fused
+    =|  bix=(set [type type])
+    |-  ^-  [type _grub]
+    =/  cached  (~(get by fun.grub) [sut ref])
+    ?^  cached
+      [u.cached grub]
+    =;  [fused=type =_grub]
+      :_  grub(fun (~(put by fun.grub) [sut ref] fused))
       fused
     ?:  ?|(=(sut ref) =(%noun ref))
       [sut grub]
@@ -13646,6 +13670,15 @@
   ++  caching-nest
     ~/  %caching-nest
     |=  [tel=? ref=type]
+    =/  cached  (get:nes:lru nes.grub [sut ref])
+    ?^  cached
+      [p.u.cached grub(nes q.u.cached)]
+    =;  [nests=? =_grub]
+      :_  %_  grub
+            nes  (put:nes:lru nes.grub [sut ref] nests)
+            nen  ~
+          ==
+      nests
     =|  $:  seg=(set type)                              ::  degenerate sut
             reg=(set type)                              ::  degenerate ref
             gil=(set (pair type type))                  ::  assume nest
@@ -13713,15 +13746,15 @@
       dext(sut played-dab, ref played-hem)
     ::
     ++  dext
-      =/  cached  (get:nes:lru nes.grub [sut ref])
+      =/  cached  (~(get by nen.grub) [sut ref])
       ?^  cached
-        [p.u.cached grub(nes q.u.cached)]
+        [u.cached grub]
       =;  [nests=? =_grub]
-        =?  nes.grub
+        =?  nen.grub
             ?|  &(nests =(~ reg))
                 &(!nests =(~ seg))
             ==
-          (put:nes:lru nes.grub [sut ref] nests)
+          (~(put by nen.grub) [sut ref] nests)
         :_  grub
         nests
       |-
