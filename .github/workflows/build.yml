@@ -88,10 +88,10 @@ jobs:
       - run: nix-build -A urbit --arg enableStatic true
 
       - if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: nix-build -A urbit-tests
+        run: nix-build -A docker-image
 
       - if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: nix-build -A docker-image
+        run: nix-build -A urbit-tests
 
   mingw:
     runs-on: windows-latest
