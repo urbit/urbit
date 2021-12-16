@@ -4210,6 +4210,18 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
+      ?:  ?=([%bloc ~] pax)
+        :^  ~  ~  %noun
+        :-  -:!>(*(map lobe blob))
+        ^-  (map lobe blob)
+        %-  %~  rep  in
+            %-  reachable-takos
+            (~(got by hit.dom) let.dom)
+        |=  [t=tako o=(map lobe blob)]
+        %-  ~(gas by o)
+        %+  turn
+          ~(val by q:(~(got by hut.ran) t))
+        |=(l=lobe [l (~(got by lat.ran) l)])
       ?.  ?=([@ * *] pax)
         `~
       ?+    i.pax  `~
