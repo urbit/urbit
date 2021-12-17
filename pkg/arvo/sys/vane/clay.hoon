@@ -3464,6 +3464,10 @@
             ~
         ==
       ?>  ?=(%mult -.rov)
+      ~&  rov
+      ~&  vor
+      ?^  cac=(next-cache mool.rov)
+        [u.cac fod.dom]
       ::  we will either respond or store the maybe updated request.
       ::
       =;  [res=(each (map mood (unit (each cage lobe))) rove) fod=ford-cache]
@@ -3570,6 +3574,29 @@
           =*  one  n.old-cach.rov
           [%next [care.p.one case.mool.rov path.p.one] aeon.rov q.one]
         [`new-rove ~]
+      ::
+      ++  next-cache
+        |=  =mool
+        ^-  (unit [new-sub=(unit rove) (list sub-result)])
+        ?~  ref  ~
+        =/  items=(list mood)  
+          =<  +
+          %+  roll  ~(tap by haw.u.ref)
+          |=  [=mood max=(map [care path] case)]
+        =|  res=(map mood (unit (each cage lobe)))
+        |-
+        ?~  items  
+          ?:  =(~ res)  ~
+          `(respond res)
+        =*  mood  i.items
+        ?.  (~(has in paths.mool) [care path]:i.items)
+          $(items t.items)
+        =/  cag=(unit (unit cage))  (~(get by haw.u.ref) mood)
+        ?~  cag  $(items t.items)
+        =/  eac=(unit (each cage lobe))
+          ?~  u.cag  ~
+          [~ [%& u.u.cag]]
+        $(items t.items, res (~(put by res) mood eac))
       ::
       ::  send changes
       ::

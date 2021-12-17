@@ -12,9 +12,9 @@
     contents.post   contents
 ==
 ::
-:-  %graph-update-3
+:-  %graph-update-4
 ^-  update
-:-  now
-:+  %add-nodes  [our name]
+:-  [our name]
+:-  %add-nodes  
 %-  ~(gas by *(map index node))
 ~[[[now]~ [[%& post] [%empty ~]]]]

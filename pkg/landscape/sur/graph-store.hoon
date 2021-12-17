@@ -1,16 +1,19 @@
 /-  *post
 |%
 +$  graph         ((mop atom node) gth)
-+$  marked-graph  [p=graph q=(unit mark)]
++$  root-graph  
+  $:  =graph 
+      mark=(unit mark)
+      syncing=(unit ship)
+      count=@ud
+      archived=?
+  ==
 ::
 +$  maybe-post    (each post hash)
 +$  node          [post=maybe-post children=internal-graph]
-+$  graphs        (map resource marked-graph)
++$  graphs        (map resource root-graph)
 ::
 +$  tag-queries   (jug term uid)
-::
-+$  update-log    ((mop time logged-update) gth)
-+$  update-logs   (map resource update-log)
 ::
 +$  internal-graph
   $~  [%empty ~]
@@ -21,40 +24,40 @@
 +$  network
   $:  =graphs
       =tag-queries
-      =update-logs
       archive=graphs
-      ~
+  ==
++$  log-tags
+  $?  %add-graph  
+      %add-nodes  %remove-posts
+      %remove-signatures  %add-signatures
   ==
 ::
-+$  update  [p=time q=action]
++$  update  (pair resource diff)
 ::
-+$  logged-update  [p=time q=logged-action]
-  
-::
-+$  logged-action
-  $%  [%add-graph =resource =graph mark=(unit mark) overwrite=?]
-      [%add-nodes =resource nodes=(map index node)]
-      [%remove-posts =resource indices=(set index)]
-      [%add-signatures =uid =signatures]
-      [%remove-signatures =uid =signatures]
++$  logged-diff
+  $%  [%add-graph =graph mark=(unit mark) overwrite=?]
+      [%add-nodes nodes=(map index node)]
+      [%remove-posts indices=(set index)]
+      [%add-signatures =index =signatures]
+      [%remove-signatures =index =signatures]
   ==
 ::
-+$  action
-  $%  logged-action
-      [%remove-graph =resource]
++$  diff
+  $%  logged-diff
+      [%remove-graph ~]
     ::
-      [%add-tag =term =uid]
-      [%remove-tag =term =uid]
+      [%add-tag =term =index]
+      [%remove-tag =term =index]
     ::
-      [%archive-graph =resource]
-      [%unarchive-graph =resource]
-      [%run-updates =resource =update-log]
+      [%archive-graph ~]
+      [%unarchive-graph ~]
+    ::  [%run-updates =update-log]
     ::
     ::  NOTE: cannot be sent as pokes
     ::
-      [%keys =resources]
-      [%tags tags=(set term)]
-      [%tag-queries =tag-queries]
+   ::   [%keys =resources]
+    ::  [%tags tags=(set term)]
+    :: [%tag-queries =tag-queries]
   ==
 ::
 +$  permissions  

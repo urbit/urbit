@@ -7,6 +7,7 @@
 |_  non=*
 ++  grab  |%
           ++  noun  *
+          ++  mime  |=([* =octs] (cue q.octs))
           --
 ++  grad
   |%
@@ -15,5 +16,9 @@
   ++  pact  |=(* +<)
   ++  join  |=([* *] *(unit *))
   ++  mash  |=([[ship desk *] [ship desk *]] `*`~|(%noun-mash !!))
+  --
+++  grow
+  |%
+  ++  mime  [/application/x-urb-noun (as-octs:mimes:html (jam non))]
   --
 --
