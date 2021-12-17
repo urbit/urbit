@@ -52,7 +52,7 @@
     "rollup": "^2.59.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
-    "typescript": "^3.9.7",
+    "typescript": "^4.5.4",
     "util": "^0.12.3",
     "web-streams-polyfill": "^3.0.3",
     "yet-another-abortcontroller-polyfill": "0.0.4"

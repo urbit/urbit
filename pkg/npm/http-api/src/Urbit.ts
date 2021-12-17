@@ -15,6 +15,11 @@ import {
   PokeHandlers,
   Message,
   UrbitOptions,
+  ServiceWorkerMessage,
+  CurrentChannelMessage,
+  ProxyStreamMessage,
+  ProxyMessage,
+  StreamProxiedMessage,
 } from './types';
 import { hexString } from './utils';
 
@@ -45,6 +50,12 @@ export class Urbit {
    * current event ID and new channel UID.
    */
   private channelSynced: boolean = false;
+
+  /**
+   * Used to determine if proxying event streams is necessary due to a service worker
+   * being used in a more specific scope
+   */
+  private usingRootSW: boolean = true;
 
   /**
    * Instance ID identifies this channel's listener to the managed channel when closing.
@@ -150,7 +161,7 @@ export class Urbit {
     options?: UrbitOptions
   ) {
     this.options = {
-      managedChannel: false,
+      managedChannel: true,
       verbose: false,
       ...options,
     };
@@ -168,42 +179,96 @@ export class Urbit {
     return this;
   }
 
-  setupManagedChannel() {
+  async setupManagedChannel() {
     console.log('setting up managed channel');
-    navigator.serviceWorker.onmessage = async (event) => {
-      if (
-        event.data &&
-        event.data.type === 'CURRENT_CHANNEL' &&
-        !this.channelSynced
-      ) {
-        if (typeof event.data.eventId === 'undefined' || !event.data.channel) {
-          this.options.verbose && console.log('first to setup channel');
-        } else {
-          this.lastEventId = parseInt(event.data.eventId, 10);
-          const channel: string = event.data.channel;
-          this.uid = channel.substr(channel.lastIndexOf('/') + 1);
-          this.options.verbose &&
-            console.log('received channel info', this.lastEventId, this.uid);
-        }
+    const rootSW = await this.getRootSW();
 
-        this.channelSynced = true;
-        this.options.verbose && console.log('flushing queue', this.actionQueue);
-        if (!this.sseClientInitialized && this.lastEventId !== 0) {
-          await this.eventSource();
-        }
-        this.flushActionQueue();
+    if (!rootSW) {
+      this.options.managedChannel = false;
+      return;
+    }
+
+    this.usingRootSW = rootSW.active === navigator.serviceWorker.controller;
+
+    navigator.serviceWorker.onmessage = async (
+      event: MessageEvent<ServiceWorkerMessage>
+    ) => {
+      if (!event.data) {
+        return;
+      }
+
+      switch (event.data.type) {
+        case 'CURRENT_CHANNEL':
+          this.receiveChannel(event as MessageEvent<CurrentChannelMessage>);
+          break;
+        case 'PROXY_STREAM':
+          this.proxyStream(event as MessageEvent<ProxyStreamMessage>);
+          break;
+        case 'PROXY_MESSAGE':
+          this.proxyMessage(event as MessageEvent<ProxyMessage>);
+          break;
+        case 'STREAM_PROXIED':
+          this.streamProxied(event as MessageEvent<StreamProxiedMessage>);
+          break;
       }
     };
 
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      const channelSW = registrations.find((sw) => {
-        return sw.scope === `${location.protocol}//${location.host}/`;
-      });
-
-      channelSW?.active.postMessage({
-        type: 'GET_CHANNEL',
-      });
+    rootSW.active.postMessage({
+      type: 'GET_CHANNEL',
     });
+  }
+
+  async getRootSW() {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    return registrations.find((sw) => {
+      return sw.scope === `${location.protocol}//${location.host}/`;
+    });
+  }
+
+  async receiveChannel(event: MessageEvent<CurrentChannelMessage>) {
+    if (this.channelSynced) {
+      return;
+    }
+
+    if (typeof event.data.eventId === 'undefined' || !event.data.channel) {
+      this.options.verbose && console.log('first to setup channel');
+    } else {
+      this.lastEventId = parseInt(event.data.eventId, 10);
+      const channel: string = event.data.channel;
+      this.uid = channel.substr(channel.lastIndexOf('/') + 1);
+      this.options.verbose &&
+        console.log('received channel info', this.lastEventId, this.uid);
+    }
+
+    this.channelSynced = true;
+    if (!this.sseClientInitialized && this.lastEventId !== 0) {
+      await this.eventSource();
+    }
+
+    if (this.usingRootSW) {
+      this.options.verbose && console.log('flushing queue', this.actionQueue);
+      this.flushActionQueue();
+    }
+  }
+
+  async proxyStream(event: MessageEvent<ProxyStreamMessage>) {
+    const rootSW = await this.getRootSW();
+    console.log('request stream proxy', event.data);
+    rootSW?.active.postMessage(event.data);
+  }
+
+  async proxyMessage(event: MessageEvent<ProxyMessage>) {
+    const sw = navigator.serviceWorker.controller;
+    console.log('proxy message', event.data);
+    sw?.postMessage(event.data);
+  }
+
+  async streamProxied(event: MessageEvent<StreamProxiedMessage>) {
+    console.log('stream proxied');
+    if (this.instanceId === event.data.id) {
+      this.options.verbose && console.log('flushing queue', this.actionQueue);
+      this.flushActionQueue();
+    }
   }
 
   /**
@@ -289,7 +354,11 @@ export class Urbit {
       } else if (isNode) {
         sseOptions.headers.Cookie = this.cookie;
       }
-      fetchEventSource(this.channelUrl + `?id=${this.instanceId}`, {
+
+      const url = this.options.managedChannel
+        ? this.channelUrl + `?id=${this.instanceId}`
+        : this.channelUrl;
+      fetchEventSource(url, {
         ...this.fetchOptions,
         openWhenHidden: true,
         onopen: async (response) => {

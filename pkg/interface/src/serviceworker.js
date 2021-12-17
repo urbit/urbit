@@ -7,6 +7,7 @@ import {
   CacheFirst, NetworkFirst,
   StaleWhileRevalidate
 } from 'workbox-strategies';
+import { proxyStreams } from '@urbit/http-api';
 
 //  generate a different sw for every build, to bust cache properly
 const hash = process.env.LANDSCAPE_SHORTHASH;
@@ -19,6 +20,8 @@ self.addEventListener('install', (ev) => {
 self.addEventListener('activate', (ev) => {
   ev.waitUntil(self.clients.claim());
 });
+
+proxyStreams();
 
 // Cache page navigations (html) with a Network First strategy
 registerRoute(

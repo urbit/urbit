@@ -3,11 +3,13 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { registerRoute } from 'workbox-routing';
 import { precacheAndRoute } from 'workbox-precaching';
 
+const isDev = import.meta.env.DEV;
+
 if (typeof isVitePreview !== 'undefined') {
   /* eslint-disable no-underscore-dangle */
   precacheAndRoute(self.__WB_MANIFEST);
 } else {
-  console.log('skipping precache in dev');
+  isDev && console.log('skipping precache in dev');
 }
 
 self.addEventListener('install', () => {
@@ -50,7 +52,7 @@ async function getServerConnection(url) {
       openWhenHidden: true,
       onmessage: (event) => {
         const parsedData = JSON.parse(event.data);
-        // console.log(event.data);
+        isDev && console.log(event.data);
 
         // if (!('ok' in parsedData)) {
         serverConnection.eventId = parseInt(parsedData.id, 10);
@@ -76,20 +78,19 @@ async function getServerConnection(url) {
 registerRoute(
   ({ request }) => {
     const { headers, url } = request;
-    console.log(request);
     return headers.get('Accept') === 'text/event-stream' && url.indexOf('?id=') !== -1;
   },
   async ({ url }) => {
     const id = url.searchParams.get('id');
     url.searchParams.delete('id');
     const connection = await getServerConnection(url.href);
-    console.log(connection);
+    isDev && console.log(connection);
 
     const stream = new ReadableStream({
       start: (controller) => {
         controller.enqueue(encodeEvent({ data: 'hello!' }));
         connection.count += 1;
-        console.log('current', connection.count, id);
+        isDev && console.log('current', connection.count, id);
 
         connection.listeners.push({
           id,
@@ -99,14 +100,15 @@ registerRoute(
       }
     });
 
-    console.log('initiating stream', serverConnection.url);
+    isDev && console.log('initiating stream', serverConnection.url);
     return new Response(stream, { headers: sseHeaders });
   }
 );
 
 const handlerMap = {
   GET_CHANNEL: getChannel,
-  CLOSE_STREAM: closeStream
+  CLOSE_STREAM: closeStream,
+  PROXY_STREAM: proxyStream
 };
 
 self.addEventListener('message', async (event) => {
@@ -134,7 +136,7 @@ function getChannel() {
         channel: serverConnection.url
       };
 
-      console.log(message);
+      isDev && console.log(message);
       if (clients && clients.length) {
         clients.forEach((client) => client.postMessage(message));
       }
@@ -158,8 +160,48 @@ async function closeStream({ url, id }) {
     listener.close();
     listener = null;
 
-    console.log({ url, count: connection.count, listeners: connection.listeners });
+    isDev && console.log({ url, count: connection.count, listeners: connection.listeners });
   }
+}
+
+async function proxyStream({ id, clientId, url }) {
+  const connection = await getServerConnection(url);
+  if (connection.listeners.find((listener) => listener.id === id)) {
+    return;
+  }
+
+  isDev && console.log(connection);
+  connection.count += 1;
+  isDev && console.log('current', connection.count, id);
+
+  connection.listeners.push({
+    id,
+    handle: (responseData) => {
+      self.clients.get(clientId).then((client) => {
+        if (!client) {
+          return;
+        }
+
+        const message = {
+          type: 'PROXY_MESSAGE',
+          id,
+          payload: responseData
+        };
+
+        isDev && console.log('sending proxy message', message);
+        client.postMessage(message);
+      });
+    },
+    close: () => {}
+  });
+
+  isDev && console.log('proxied stream attached', serverConnection.url, id);
+  self.clients.get(clientId).then((client) => {
+    client.postMessage({
+      type: 'STREAM_PROXIED',
+      id
+    });
+  });
 }
 
 function clearConnection(url) {
@@ -174,7 +216,7 @@ function clearConnection(url) {
     body: JSON.stringify([{ action: 'delete' }]),
     method: 'PUT'
   });
-  console.log('closing', url);
+  isDev && console.log('closing', url);
 }
 
 function encodeEvent({ data, event, retry, id }) {

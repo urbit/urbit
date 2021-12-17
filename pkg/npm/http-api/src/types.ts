@@ -210,6 +210,36 @@ export interface Message extends Record<string, any> {
   id?: number;
 }
 
+export type ServiceWorkerMessage =
+  | CurrentChannelMessage
+  | ProxyStreamMessage
+  | ProxyMessage
+  | StreamProxiedMessage;
+
+export interface CurrentChannelMessage {
+  type: 'CURRENT_CHANNEL';
+  eventId: string;
+  channel: string;
+}
+
+export interface ProxyStreamMessage {
+  type: 'PROXY_STREAM';
+  id: string;
+  clientId: string;
+  url: string;
+}
+
+export interface ProxyMessage {
+  type: 'PROXY_MESSAGE';
+  id: string;
+  payload: string;
+}
+
+export interface StreamProxiedMessage {
+  type: 'STREAM_PROXIED';
+  id: string;
+}
+
 export class ResumableError extends Error {}
 
 export class FatalError extends Error {}

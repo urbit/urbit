@@ -1,3 +1,4 @@
 export * from './types';
 import { Urbit } from './Urbit';
-export { Urbit as default, Urbit };
+import { proxyStreams } from './proxy';
+export { Urbit as default, Urbit, proxyStreams };
