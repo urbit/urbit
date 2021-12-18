@@ -91,7 +91,7 @@ let
       "''${curl[@]}" -s --output "$out" "$href"
     '';
 
-    impureEnvVars = stdenvNoCC.lib.fetchers.proxyImpureEnvVars;
+    impureEnvVars = lib.fetchers.proxyImpureEnvVars;
 
     SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
 
