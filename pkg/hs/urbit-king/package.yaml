@@ -96,7 +96,6 @@ dependencies:
   - tasty-quickcheck
   - tasty-th
   - template-haskell
-  - terminal-progress-bar
   - text
   - these
   - time
@@ -107,7 +106,6 @@ dependencies:
   - unliftio-core
   - unordered-containers
   - urbit-atom
-  - urbit-eventlog-lmdb
   - urbit-hob
   - urbit-noun
   - urbit-noun-core

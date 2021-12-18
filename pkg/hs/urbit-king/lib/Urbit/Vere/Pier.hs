@@ -6,41 +6,32 @@
 -}
 module Urbit.Vere.Pier
   ( booted
-  , runSerf
   , resumed
-  , getSnapshot
   , pier
-  , runPersist
   , runCompute
-  , genBootSeq
   )
 where
 
 import Urbit.Prelude
 
-import Control.Monad.Trans.Maybe
-import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Stat
 
-import Control.Monad.STM      (retry)
-import System.Environment     (getExecutablePath)
-import System.FilePath        (splitFileName)
-import System.Posix.Files     (ownerModes, setFileMode)
-import Urbit.EventLog.LMDB    (EventLog)
-import Urbit.EventLog.Event   (buildLogEvent)
-import Urbit.King.API         (TermConn)
-import Urbit.TermSize         (TermSize(..), termSize)
-import Urbit.Vere.Serf        (Serf)
+import Control.Monad.STM         (retry)
+import System.Environment        (getExecutablePath)
+import System.Exit               (ExitCode)
+import System.FilePath           (splitFileName)
+import Urbit.King.API            (TermConn)
+import Urbit.TermSize            (TermSize(..), termSize)
+import Urbit.Vere.Serf           (Serf)
+import Urbit.Vere.Serf.IPC.Types (Boot(..), Vent(..))
 
 import qualified Data.Text                   as T
 import qualified Data.List as L
 import qualified System.Entropy              as Ent
-import qualified Urbit.EventLog.LMDB         as Log
 import qualified Urbit.King.API              as King
-import qualified Urbit.Noun.Time             as Time
 import qualified Urbit.Vere.Ames             as Ames
 import qualified Urbit.Vere.Behn             as Behn
 import qualified Urbit.Vere.Clay             as Clay
@@ -53,23 +44,6 @@ import qualified Urbit.Vere.Term.API         as Term
 import qualified Urbit.Vere.Term.Demux       as Term
 
 
--- Initialize pier directory. --------------------------------------------------
-
-data PierDirectoryAlreadyExists = PierDirectoryAlreadyExists
- deriving (Show, Exception)
-
-setupPierDirectory :: FilePath -> RIO e ()
-setupPierDirectory shipPath = do
-  -- shipPath will already exist because we put a lock file there.
-  alreadyExists <- doesPathExist (shipPath </> ".urb")
-  when alreadyExists $ do
-    throwIO PierDirectoryAlreadyExists
-  for_ ["put", "get", "log", "chk"] $ \seg -> do
-    let pax = shipPath </> ".urb" </> seg
-    createDirectoryIfMissing True pax
-    io $ setFileMode pax ownerModes
-
-
 -- Load pill into boot sequence. -----------------------------------------------
 
 data CannotBootFromIvoryPill = CannotBootFromIvoryPill
@@ -78,64 +52,60 @@ data CannotBootFromIvoryPill = CannotBootFromIvoryPill
 genEntropy :: MonadIO m => m Entropy
 genEntropy = Entropy . fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
-genBootSeq :: HasKingEnv e
-           => Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
-genBootSeq _    PillIvory {}   _    _    = throwIO CannotBootFromIvoryPill
-genBootSeq ship PillPill  {..} lite boot = do
-  ent <- io genEntropy
-  wyr <- wyrd
-  let ova = preKern ent <> [wyr] <> pKernelOva <> postKern <> pUserspaceOva
-  pure $ BootSeq ident pBootFormulae ova
+-- Boot a new ship. ------------------------------------------------------------
+
+booted
+  :: TVar ((Atom, Tank) -> IO ())
+  -> Pill
+  -> Bool
+  -> Ship  -- XX duplication between this and LegacyBootEvent?
+  -> LegacyBootEvent
+  -> RIO PierEnv ExitCode
+booted vSlog pill lite ship boot = do
+  rio $ logTrace "Booting ship"
+
+  config@Config{ scPier } <- getSerfConfig vSlog
+
+  rio $ do
+    logTrace $ display @Text ("pier: " <> pack scPier)
+
+  io $ Serf.boot config shoe
  where
-  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulae)
-  preKern ent =
-    [ EvBlip $ BlipEvArvo $ ArvoEvWhom () ship
-    , EvBlip $ BlipEvArvo $ ArvoEvWack () ent
-    ]
-  postKern = [EvBlip $ BlipEvTerm $ TermEvBoot (1, ()) lite boot]
-  isFake   = case boot of
-    Fake _ -> True
-    _      -> False
+  shoe = Boot
+    { bPill = (pill, Nothing) 
+    , bVent = case boot of
+        Fake ship' -> VFake ship'
+        Dawn dawn  -> VDawn $ dSeed dawn
+    , bMore = []
+    }
 
 
--- Write to the log. -----------------------------------------------------------
+-- Resume an existing ship. ----------------------------------------------------
 
--- | Write a batch of jobs to the event log.
-writeJobs :: EventLog -> Vector Job -> RIO e ()
-writeJobs log !jobs = do
-  expect <- atomically (Log.nextEv log)
-  events <- fmap fromList $ traverse fromJob (zip [expect ..] $ toList jobs)
-  Log.appendEvents log events
- where
-  fromJob :: (EventId, Job) -> RIO e ByteString
-  fromJob (expectedId, job) = do
-    unless (expectedId == jobId job) $ error $ show
-      ("bad job id!", expectedId, jobId job)
-    pure $ buildLogEvent (jobMug job) (jobPayload job)
+resumed
+  :: TVar ((Atom, Tank) -> IO ())
+  -> RAcquire PierEnv (Serf, Ripe)
+resumed vSlog = do
+  rio $ logTrace "Resuming ship"
 
-  jobMug :: Job -> Mug
-  jobMug (RunNok (LifeCyc _ m _)) = m
-  jobMug (DoWork (Work _ m _ _)) = m
+  config@Config{ scPier } <- rio $ getSerfConfig vSlog
 
-  jobPayload :: Job -> Noun
-  jobPayload (RunNok (LifeCyc _ _ n)) = toNoun n
-  jobPayload (DoWork (Work _ _ d o))  = toNoun (d, o)
+  rio $ do
+    logTrace $ display @Text ("pier: " <> pack scPier)
+
+  Serf.withSerf config
 
 
--- Acquire a running serf. -----------------------------------------------------
+-- Get Serf.Config for booting or resuming -------------------------------------
 
-runSerf
-  :: HasPierEnv e
-  => TVar ((Atom, Tank) -> IO ())
-  -> FilePath
-  -> RAcquire e Serf
-runSerf vSlog pax = do
+getSerfConfig
+  :: TVar ((Atom, Tank) -> IO ())
+  -> RIO PierEnv Serf.Config
+getSerfConfig vSlog = do
+  pax <- view pierPathL
   env <- ask
   serfProg <- io getSerfProg
-  Serf.withSerf (config env serfProg)
- where
-  slog s = atomically (readTVar vSlog) >>= (\f -> f s)
-  config env serfProg = Serf.Config
+  pure Config
     { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
@@ -143,6 +113,9 @@ runSerf vSlog pax = do
     , scStdr = \txt -> slog (0, (textToTank txt))
     , scDead = pure () -- TODO: What can be done?
     }
+ where
+  slog s = atomically (readTVar vSlog) >>= (\f -> f s)
+
   getSerfProg :: IO FilePath
   getSerfProg = do
     (path, filename) <- splitFileName <$> getExecutablePath
@@ -152,123 +125,21 @@ runSerf vSlog pax = do
       _            -> "urbit-worker"
 
 
--- Boot a new ship. ------------------------------------------------------------
-
-booted
-  :: TVar ((Atom, Tank) -> IO ())
-  -> Pill
-  -> Bool
-  -> Ship
-  -> LegacyBootEvent
-  -> RAcquire PierEnv (Serf, EventLog)
-booted vSlog pill lite ship boot = do
-  rio $ bootNewShip pill lite ship boot
-  resumed vSlog Nothing
-
-bootSeqJobs :: Time.Wen -> BootSeq -> [Job]
-bootSeqJobs now (BootSeq ident nocks ovums) = zipWith ($) bootSeqFns [1 ..]
- where
-  wen :: EventId -> Time.Wen
-  wen off = Time.addGap now ((fromIntegral off - 1) ^. from Time.microSecs)
-
-  bootSeqFns :: [EventId -> Job]
-  bootSeqFns = fmap nockJob nocks <> fmap ovumJob ovums
-   where
-    nockJob nok eId = RunNok $ LifeCyc eId 0 nok
-    ovumJob ov eId = DoWork $ Work eId 0 (wen eId) ov
-
-bootNewShip
-  :: HasPierEnv e
-  => Pill
-  -> Bool
-  -> Ship
-  -> LegacyBootEvent
-  -> RIO e ()
-bootNewShip pill lite ship bootEv = do
-  seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv
-  logInfo "BootSeq Computed"
-
-  pierPath <- view pierPathL
-
-  rio (setupPierDirectory pierPath)
-  logInfo "Directory setup."
-
-  let logPath = (pierPath </> ".urb/log")
-
-  rwith (Log.new logPath ident) $ \log -> do
-    logInfo "Event log initialized."
-    jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
-    writeJobs log (fromList jobs)
-
-  logInfo "Finsihed populating event log with boot sequence"
-
-
--- Resume an existing ship. ----------------------------------------------------
-
-resumed
-  :: TVar ((Atom, Tank) -> IO ())
-  -> Maybe Word64
-  -> RAcquire PierEnv (Serf, EventLog)
-resumed vSlog replayUntil = do
-  rio $ logTrace "Resuming ship"
-  top <- view pierPathL
-  tap <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
-    ev <- MaybeT (pure replayUntil)
-    MaybeT (getSnapshot top ev)
-
-  rio $ do
-    logTrace $ display @Text ("pier: " <> pack top)
-    logTrace $ display @Text ("running serf in: " <> pack tap)
-
-  log  <- Log.existing (top </> ".urb/log")
-  serf <- runSerf vSlog tap
-
-  rio $ do
-    logInfo "Replaying events"
-    Serf.execReplay serf log replayUntil >>= \case
-      Left err -> error (show err)
-      Right 0  -> do
-        logInfo "No work during replay so no snapshot"
-        pure ()
-      Right _  -> do
-        logInfo "Taking snapshot"
-        io (Serf.snapshot serf)
-        logInfo "SNAPSHOT TAKEN"
-
-  pure (serf, log)
-
--- | Get a fake pier directory for partial snapshots.
-getSnapshot :: forall e . FilePath -> Word64 -> RIO e (Maybe FilePath)
-getSnapshot top last = do
-  lastSnapshot <- lastMay <$> listReplays
-  pure (replayToPath <$> lastSnapshot)
- where
-  replayDir = top </> ".partial-replay"
-  replayToPath eId = replayDir </> show eId
-
-  listReplays :: RIO e [Word64]
-  listReplays = do
-    createDirectoryIfMissing True replayDir
-    snapshotNums <- mapMaybe readMay <$> listDirectory replayDir
-    pure $ sort (filter (<= fromIntegral last) snapshotNums)
-
-
 -- Run Pier --------------------------------------------------------------------
 
 pier
-  :: (Serf, EventLog)
+  :: (Serf, Ripe)
   -> TVar ((Atom, Tank) -> IO ())
   -> MVar ()
   -> [Ev]
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog startedSig injected = do
-  let logId = Log.identity log :: LogIdentity
-  let ship  = who logId :: Ship
+pier (serf, ripe) vSlog startedSig injected = do
+  let self = riSelf ripe :: Self
+  let ship  = who self :: Ship
 
   -- TODO Instead of using a TMVar, pull directly from the IO driver
   -- event sources.
   computeQ :: TMVar RunReq      <- newEmptyTMVarIO
-  persistQ :: TQueue (Fact, FX) <- newTQueueIO
   executeQ :: TQueue FX         <- newTQueueIO
   saveSig :: TMVar ()           <- newEmptyTMVarIO
   kingApi :: King.King          <- King.kingAPI
@@ -299,8 +170,6 @@ pier (serf, log) vSlog startedSig injected = do
   -- the c serf code. Logging output from our haskell process must manually
   -- add them.
   let compute = putTMVar computeQ
-  let execute = writeTQueue executeQ
-  let persist = writeTQueue persistQ
   let sigint  = Serf.sendSIGINT serf
   let scry    = \g r -> do
         res <- newEmptyMVar
@@ -323,20 +192,19 @@ pier (serf, log) vSlog startedSig injected = do
       logOther "serf" (display $ T.strip $ tankToText tank)
 
   let err = atomically . Term.trace muxed . (<> "\r\n")
-  (bootEvents, startDrivers) <- do
+  (bornEvents, startDrivers) <- do
     env <- ask
     siz <- atomically $ Term.curDemuxSize demux
-    let fak = isFake logId
+    let fak = isFake self
     drivers env ship fak compute scry (siz, muxed) err sigint stat runtimeSubsite
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
                                     , ccOnSave      = takeTMVar saveSig
                                     , ccOnScry      = readTQueue scryQ
-                                    , ccPutResult   = persist
+                                    , ccExecute     = writeTQueue executeQ
                                     , ccShowSpinner = Term.spin muxed
                                     , ccHideSpinner = Term.stopSpin muxed
-                                    , ccLastEvInLog = Log.lastEv log
                                     }
 
   tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
@@ -345,7 +213,7 @@ pier (serf, log) vSlog startedSig injected = do
 
   -- Run all born events and retry them until they succeed.
   wackEv <- EvBlip . BlipEvArvo . ArvoEvWack () <$> genEntropy
-  rio $ for_ (wackEv : bootEvents) $ \ev -> do
+  rio $ for_ (wackEv : bornEvents) $ \ev -> do
     okaySig <- newEmptyMVar
 
     let inject n = atomically $ compute $ RRWork $ EvErr ev $ cb n
@@ -354,9 +222,8 @@ pier (serf, log) vSlog startedSig injected = do
         cb :: Int -> WorkError -> IO ()
         cb n | n >= 3 = error ("boot event failed: " <> show ev)
         cb n          = \case
-          RunOkay _ _       -> putMVar okaySig ()
-          RunSwap _ _ _ _ _ -> putMVar okaySig ()
-          RunBail _         -> inject (n + 1)
+          RunOkay _ -> putMVar okaySig ()
+          RunBail _ -> inject (n + 1)
 
     -- logTrace ("[BOOT EVENT]: " <> display (summarizeEvent ev))
     io (inject 0)
@@ -368,7 +235,6 @@ pier (serf, log) vSlog startedSig injected = do
 
   drivz <- startDrivers
   tExec <- acquireWorker "Effects" (router slog (readTQueue executeQ) drivz)
-  tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ execute)
 
   -- Now that the Serf is configured, the IO drivers are hooked up, their
   -- starting events have been dispatched, and the terminal is live, we can now
@@ -381,9 +247,8 @@ pier (serf, log) vSlog startedSig injected = do
     let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
         cb :: WorkError -> IO ()
         cb = \case
-          RunOkay _ _       -> putMVar okaySig (Right ())
-          RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
-          RunBail goofs     -> putMVar okaySig (Left goofs)
+          RunOkay _     -> putMVar okaySig (Right ())
+          RunBail goofs -> putMVar okaySig (Left goofs)
 
     io inject
 
@@ -405,7 +270,6 @@ pier (serf, log) vSlog startedSig injected = do
 
   let ded = asum
         [ death "effects thread" tExec
-        , death "persist thread" tDisk
         , death "compute thread" tSerf
         ]
 
@@ -456,9 +320,8 @@ doVersionNegotiation compute stderr = do
   let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
       cb :: WorkError -> IO ()
       cb = \case
-        RunOkay _ fx       -> putMVar okaySig (Right fx)
-        RunSwap _ _ _ _ fx -> putMVar okaySig (Right fx)
-        RunBail goofs      -> putMVar okaySig (Left goofs)
+        RunOkay fx    -> putMVar okaySig (Right fx)
+        RunBail goofs -> putMVar okaySig (Left goofs)
 
   rio $ stderr "vere: checking version compatibility"
   io inject
@@ -609,10 +472,9 @@ data ComputeConfig = ComputeConfig
   , ccOnKill      :: STM ()
   , ccOnSave      :: STM ()
   , ccOnScry      :: STM (Gang, ScryReq, Maybe (Term, Noun) -> IO ())
-  , ccPutResult   :: (Fact, FX) -> STM ()
+  , ccExecute     :: FX -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
-  , ccLastEvInLog :: STM EventId
   }
 
 runCompute :: forall e . HasKingEnv e => Serf.Serf -> ComputeConfig -> RIO e ()
@@ -638,50 +500,4 @@ runCompute serf ComputeConfig {..} = do
 
   let maxBatchSize = 10
 
-  io (Serf.run serf maxBatchSize ccLastEvInLog onRR ccPutResult onSpin)
-
-
--- Event-Log Persistence Thread ------------------------------------------------
-
-data PersistExn = BadEventId EventId EventId
-  deriving Show
-
-instance Exception PersistExn where
-  displayException (BadEventId expected got) =
-    unlines [ "Out-of-order event id send to persist thread."
-            , "\tExpected " <> show expected <> " but got " <> show got
-            ]
-
-runPersist
-  :: forall e
-   . HasPierEnv e
-  => EventLog
-  -> TQueue (Fact, FX)
-  -> (FX -> STM ())
-  -> RIO e ()
-runPersist log inpQ out = do
-  dryRun <- view dryRunL
-  forever $ do
-    writs  <- atomically getBatchFromQueue
-    events <- validateFactsAndGetBytes (fst <$> toNullable writs)
-    unless dryRun (Log.appendEvents log events)
-    atomically $ for_ writs $ \(_, fx) -> do
-      out fx
-
- where
-  validateFactsAndGetBytes :: [Fact] -> RIO e (Vector ByteString)
-  validateFactsAndGetBytes facts = do
-    expect <- atomically (Log.nextEv log)
-    lis <- for (zip [expect ..] facts) $ \(expectedId, Fact eve mug wen non) ->
-      do
-        unless (expectedId == eve) $ do
-          throwIO (BadEventId expectedId eve)
-        pure $ buildLogEvent mug $ toNoun (wen, non)
-    pure (fromList lis)
-
-  getBatchFromQueue :: STM (NonNull [(Fact, FX)])
-  getBatchFromQueue = readTQueue inpQ >>= go . singleton
-   where
-    go acc = tryReadTQueue inpQ >>= \case
-      Nothing   -> pure (reverse acc)
-      Just item -> go (item <| acc)
+  io (Serf.run serf maxBatchSize onRR ccExecute onSpin)

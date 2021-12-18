@@ -10,7 +10,6 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Arvo
-import Urbit.EventLog.LMDB
 import Urbit.Noun.Time
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
@@ -22,8 +21,6 @@ import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
-
-import qualified Urbit.EventLog.LMDB as Log
 
 
 -- Utils -----------------------------------------------------------------------

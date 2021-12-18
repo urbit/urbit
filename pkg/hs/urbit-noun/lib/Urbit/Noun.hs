@@ -18,6 +18,7 @@ module Urbit.Noun
     , _Cue
     , LoadErr(..)
     , loadFile
+    , loadFileAtom
     ) where
 
 import ClassyPrelude
@@ -57,3 +58,8 @@ loadFile pax = try $ do
     non <- cueBS byt & either (throwIO . CueErr) pure
     res <- fromNounErr non & either (throwIO . uncurry ParseErr) pure
     pure res
+
+loadFileAtom :: FilePath -> IO (Either LoadErr Atom)
+loadFileAtom pax = try $ do
+    byt <- try (readFile pax) >>= either (throwIO . FileErr) pure
+    pure $ bytesAtom byt

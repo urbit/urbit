@@ -5,11 +5,10 @@
 -}
 module Urbit.Vere.Pier.Types
   ( module Urbit.Vere.Serf.Types
-  , LogIdentity(..)
-  , Pill(..)
+  , Pill
   , Job(..)
   , LifeCyc(..)
-  , BootSeq(..)
+  -- , BootSeq(..)
   , Work(..)
   , jobId
   , jobMug
@@ -23,8 +22,6 @@ import Urbit.Prelude
 import Urbit.Arvo
 import Urbit.Noun.Time
 import Urbit.Vere.Serf.Types
-
-import Urbit.EventLog.LMDB (LogIdentity(..))
 
 
 -- Avoid touching Nock values. -------------------------------------------------
@@ -45,20 +42,10 @@ instance Show Nock where
 
 --------------------------------------------------------------------------------
 
-data Pill
-  = PillIvory [Noun]
-  | PillPill
-    { pName         :: Noun
-    , pBootFormulae :: ![Nock]  -- XX not actually nock, semantically
-    , pKernelOva    :: ![Ev]
-    , pUserspaceOva :: ![Ev]
-    }
- deriving (Eq, Show)
+type Pill = Atom
 
-data BootSeq = BootSeq !LogIdentity ![Nock] ![Ev]
-  deriving (Eq, Show)
-
-deriveNoun ''Pill
+-- data BootSeq = BootSeq !Self ![Nock] ![Ev]
+--   deriving (Eq, Show)
 
 
 -- Jobs ------------------------------------------------------------------------
