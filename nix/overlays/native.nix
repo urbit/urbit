@@ -9,11 +9,7 @@ in {
     version = final.sources.h2o.rev;
     src = final.sources.h2o;
     outputs = [ "out" "dev" "lib" ];
-  });
-
-  secp256k1 = prev.secp256k1.overrideAttrs (_attrs: {
-    version = final.sources.secp256k1.rev;
-    src = final.sources.secp256k1;
+    meta.platforms = prev.lib.platforms.linux ++ prev.lib.platforms.darwin;
   });
 
   libsigsegv = prev.libsigsegv.overrideAttrs (attrs: {
@@ -23,7 +19,7 @@ in {
     ];
   });
 
-  curlMinimal = prev.curl.override {
+  curlUrbit = prev.curlMinimal.override {
     http2Support = false;
     scpSupport = false;
     gssSupport = false;
