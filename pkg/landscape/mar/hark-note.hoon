@@ -15,6 +15,6 @@
   --
 ++  grab
   |%
-  ++  noun  body
+  ++  noun  note
   --
 --
