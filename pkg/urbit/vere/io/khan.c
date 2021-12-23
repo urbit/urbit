@@ -115,6 +115,19 @@ _khan_punt_goof(u3_noun lud)
   u3z(lud);
 }
 
+/* _khan_send_noun(): jam and send noun over chan.
+*/
+static void
+_khan_send_noun(u3_chan* can_u, u3_noun nun)
+{
+  c3_y* byt_y;
+  c3_d  len_d;
+
+  u3s_jam_xeno(nun, &len_d, &byt_y);
+  u3z(nun);
+  u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
+}
+
 /* _khan_poke_bail(): error function on failed %fyrd.
 */
 static void
@@ -190,8 +203,6 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
   }
   else {
     u3_noun bal;
-    c3_y*   byt_y;
-    c3_d    len_d;
 
     if ( 3 >= can_u->red_w ) {
       u3l_log("khan: moor fatal %zd %s\n", err_i, err_c);
@@ -200,15 +211,13 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
     else {
       u3l_log("khan: moor bail %zd %s\n", err_i, err_c);
       can_u->red_w++;
-      //  TODO: instead of this, plan appropriate ovum. reset red_w on success.
+      //  TODO: rethink.
       //
       bal = u3nq(c3__bail,
                  u3i_string("driver"),
                  -err_i & 0x7fffffff,
                  u3i_string(err_c));
-      u3s_jam_xeno(bal, &len_d, &byt_y);
-      u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
-      u3z(bal);
+      _khan_send_noun(can_u, bal);
     }
   }
 }
@@ -221,9 +230,6 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
   u3_cran* ran_u = (u3_cran*)ptr_v;
   u3_chan* can_u = ran_u->can_u;
   u3_cran* inn_u;
-  u3_noun  ret;
-  c3_y*    byt_y;
-  c3_d     len_d;
 
   if ( !can_u ) {
     //  chan was closed; noop.
@@ -232,13 +238,7 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
     u3z(res);
     return;
   }
-
-  //  jam and send result with request id.
-  //
-  ret = u3nt(c3__peek, ran_u->rid_l, res);
-  u3s_jam_xeno(ret, &len_d, &byt_y);
-  u3_newt_send((u3_mojo*)&ran_u->can_u->mor_u, len_d, byt_y);
-
+  _khan_send_noun(can_u, u3nt(c3__peek, ran_u->rid_l, res));
 
   //  remove this request from the pending list.
   //
@@ -254,7 +254,6 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
     }
   }
   c3_free(ran_u);
-  u3z(ret);
 }
 
 /* _khan_moor_poke(): called on message read from u3_moor.
@@ -266,16 +265,15 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   u3_noun   can, rid, tag, dat;
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_khan*  kan_u = can_u->san_u->kan_u;
-  u3_noun   cad;
 
   jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
     can_u->mor_u.bal_f(can_u, -1, "cue-none");
     return;
   }
-  if (  (c3n == u3r_cell(jar, &rid, &can))
-     || (c3n == u3r_cell(can, &tag, &dat))
-     || (c3n == u3a_is_cat(rid)) )
+  if ( (c3n == u3r_cell(jar, &rid, &can)) ||
+       (c3n == u3r_cell(can, &tag, &dat)) ||
+       (c3n == u3a_is_cat(rid)) )
   {
     can_u->mor_u.bal_f(can_u, -2, "jar-bad");
   }
@@ -480,25 +478,22 @@ static void
 _khan_ef_handle(u3_khan*  kan_u,
                 c3_l      sev_l,
                 c3_l      coq_l,
+                c3_l      rid_l,
                 u3_noun   tag,
                 u3_noun   dat)
 {
   u3_chan* can_u;
 
-  // TODO: socket events (close connection; any others?)
+  //  TODO: socket events (close connection; any others?)
+  //
 
   if ( 0 != (can_u = _khan_search_chan(kan_u, sev_l, coq_l)) ) {
     if ( c3__avow == tag ) {
-      c3_y* byt_y;
-      c3_d  len_d;
-
-      // %avow is a response; jam and send it.
-      //
-      u3s_jam_xeno(dat, &len_d, &byt_y);
-      u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
+      _khan_send_noun(can_u, u3nc(rid_l, u3k(dat)));
     }
     else {
-      // TODO u3_king_bail? silently drop it?
+      //  TODO u3_king_bail? silently drop it?
+      //
       can_u->mor_u.bal_f(can_u, -1, "handle-unknown");
     }
   }
@@ -528,8 +523,8 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   }
   else {
     u3_noun pud = t_wir;
-    u3_noun p_pud, t_pud, q_pud, r_pud;
-    c3_l    sev_l, coq_l;
+    u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
+    c3_l    sev_l, coq_l, rid_l;
 
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
          (c3n == u3_reck_lily(c3__uv, u3k(p_pud), &sev_l)) ||
@@ -540,19 +535,31 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
     }
 
     if ( u3_nul == t_pud ) {
-      coq_l = 0;
+      coq_l = rid_l = 0;
     }
     else {
-      if ( (c3n == u3r_cell(t_pud, &q_pud, &r_pud)) ||
-            (u3_nul != r_pud) ||
+      if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
            (c3n == u3_reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
       {
         u3z(wir); u3z(cad);
         return c3n;
       }
+
+      if ( u3_nul == tt_pud ) {
+        rid_l = 0;
+      }
+      else {
+        if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
+             (u3_nul != s_pud) ||
+             (c3n == u3_reck_lily(c3__ud, u3k(r_pud), &rid_l)) )
+        {
+          u3z(wir); u3z(cad);
+          return c3n;
+        }
+      }
     }
 
-    _khan_ef_handle(kan_u, sev_l, coq_l, u3k(tag), u3k(dat));
+    _khan_ef_handle(kan_u, sev_l, coq_l, rid_l, u3k(tag), u3k(dat));
     u3z(wir); u3z(cad);
     return c3y;
   }
