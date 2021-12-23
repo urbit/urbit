@@ -43,6 +43,7 @@ u3_khan_io_init(u3_pier* pir_u)
   typedef struct _u3_cran {
     c3_l              rid_l;            //  client-supplied request id
     struct _u3_chan*  can_u;            //  connection backpointer
+    struct _u3_cran*  nex_u;            //  next pointer
   } u3_cran;
 
 /* u3_chan: incoming control plane connection.
@@ -52,6 +53,7 @@ u3_khan_io_init(u3_pier* pir_u)
     c3_l              coq_l;            //  connection number
     c3_w              red_w;            //  retry counter
     struct _u3_shan*  san_u;            //  server backpointer
+    struct _u3_cran*  ran_u;            //  request list
   } u3_chan;
 
 /* u3_shan: control plane server.
@@ -150,8 +152,15 @@ static void
 _khan_close_chan(u3_chan* can_u, u3_shan* san_u)
 {
   u3_chan* inn_u;
+  u3_cran* ran_u;
 
-  //  fix up channel list; special-case list head.
+  //  unset chan on all pending requests.
+  //
+  for ( ran_u = can_u->ran_u; ran_u; ran_u = ran_u->nex_u ) {
+    ran_u->can_u = 0;
+  }
+
+  //  remove chan from server's connection list.
   //
   if ( san_u->can_u == can_u ) {
     san_u->can_u = (u3_chan*)can_u->mor_u.nex_u;
@@ -211,15 +220,41 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
 {
   u3_cran* ran_u = (u3_cran*)ptr_v;
   u3_chan* can_u = ran_u->can_u;
+  u3_cran* inn_u;
   u3_noun  ret;
   c3_y*    byt_y;
   c3_d     len_d;
 
+  if ( !can_u ) {
+    //  chan was closed; noop.
+    //
+    c3_free(ran_u);
+    u3z(res);
+    return;
+  }
+
+  //  jam and send result with request id.
+  //
   ret = u3nt(c3__peek, ran_u->rid_l, res);
-  c3_free(ran_u);
   u3s_jam_xeno(ret, &len_d, &byt_y);
+  u3_newt_send((u3_mojo*)&ran_u->can_u->mor_u, len_d, byt_y);
+
+
+  //  remove this request from the pending list.
+  //
+  if ( ran_u == can_u->ran_u ) {
+    can_u->ran_u = ran_u->nex_u;
+  }
+  else {
+    for ( inn_u = can_u->ran_u; inn_u; inn_u = inn_u->nex_u ) {
+      if ( ran_u == inn_u->nex_u ) {
+        inn_u->nex_u = ran_u->nex_u;
+        break;
+      }
+    }
+  }
+  c3_free(ran_u);
   u3z(ret);
-  u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
 }
 
 /* _khan_moor_poke(): called on message read from u3_moor.
@@ -228,7 +263,7 @@ static void
 _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_weak   jar;
-  u3_noun   tag, rid, dat;
+  u3_noun   can, rid, tag, dat;
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_khan*  kan_u = can_u->san_u->kan_u;
   u3_noun   cad;
@@ -236,32 +271,32 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
     can_u->mor_u.bal_f(can_u, -1, "cue-none");
+    return;
   }
-  else if (  (c3n == u3r_trel(jar, &tag, &rid, &dat))
-          || (c3n == u3a_is_cat(rid)) )
+  if (  (c3n == u3r_cell(jar, &rid, &can))
+     || (c3n == u3r_cell(can, &tag, &dat))
+     || (c3n == u3a_is_cat(rid)) )
   {
-    u3z(jar);
     can_u->mor_u.bal_f(can_u, -2, "jar-bad");
   }
   else {
     switch (tag) {
       default: {
         can_u->mor_u.bal_f(can_u, -3, "i.jar-unknown");
-        u3z(jar);
         break;
       }
 
       case c3__fyrd: {
-        u3_noun wir = u3nq(c3__khan,
-                           u3dc("scot", c3__uv, kan_u->sev_l),
-                           u3dc("scot", c3__ud, can_u->coq_l),
-                           u3nc(u3dc("scot", c3__ud, rid),
+        u3_noun wir = u3nc(c3__khan,
+                           u3nq(u3dc("scot", c3__uv, kan_u->sev_l),
+                                u3dc("scot", c3__ud, can_u->coq_l),
+                                u3dc("scot", c3__ud, rid),
                                 u3_nul));
 
         u3l_log("khan: fyrd %" PRIu32 "\n", rid);
         u3_auto_peer(
           u3_auto_plan(&kan_u->car_u,
-                       u3_ovum_init(0, c3__k, wir, jar)),
+                       u3_ovum_init(0, c3__k, wir, u3k(can))),
           0, 0, _khan_poke_bail);
         break;
       }
@@ -273,10 +308,11 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         //  TODO: overlay runtime namespace.
         //
         u3l_log("khan: peek %" PRIu32 "\n", rid);
-        ran_u->rid_l = (c3_l)rid;
         ran_u->can_u = can_u;
+        ran_u->nex_u = can_u->ran_u;
+        can_u->ran_u = ran_u;
+        ran_u->rid_l = (c3_l)rid;
         u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
-        u3z(jar);
         break;
       }
 
@@ -284,11 +320,11 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         //  TODO: implement
         //
         u3l_log("khan: move %" PRIu32 "\n", rid);
-        u3z(jar);
         break;
       }
     }
   }
+  u3z(jar);
 }
 
 /* _khan_conn_cb(): socket connection callback.
