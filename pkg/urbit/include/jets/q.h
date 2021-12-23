@@ -1,7 +1,6 @@
-/* include/f/qjet.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_JETS_Q_H
+#define U3_JETS_Q_H
+
   /** Tier 1.
   **/
     u3_noun u3qa_add(u3_atom, u3_atom);
@@ -241,3 +240,5 @@
 #   define u3qfu_van_vet  59
 
     void u3qf_test(const c3_c*, u3_noun);
+
+#endif /* ifndef U3_JETS_Q_H */

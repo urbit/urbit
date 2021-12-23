@@ -1,7 +1,6 @@
-/* i/n/o.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_OPTIONS_H
+#define U3_OPTIONS_H
+
   /** Data structures.
   **/
     /* u3o_config: process / system configuration.
@@ -40,3 +39,5 @@
       c3_global u3o_config u3o_Config;
 #     define u3C u3o_Config
 
+
+#endif /* ifndef U3_OPTIONS_H */

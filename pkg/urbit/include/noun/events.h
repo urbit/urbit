@@ -1,7 +1,6 @@
-/* i/n/e.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_EVENTS_H
+#define U3_EVENTS_H
+
   /** Data structures.
   **/
     /* u3e_line: control line.
@@ -89,3 +88,5 @@
     */
       void
       u3e_foul(void);
+
+#endif /* ifndef U3_EVENTS_H */

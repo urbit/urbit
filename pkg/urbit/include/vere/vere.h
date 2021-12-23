@@ -1,5 +1,5 @@
-/* include/vere/vere.h
-*/
+#ifndef U3_VERE_H
+#define U3_VERE_H
 
 #include <uv.h>
 
@@ -1425,3 +1425,5 @@
       */
       u3_noun
       u3_reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l);
+
+#endif /* ifndef U3_VERE_H */
