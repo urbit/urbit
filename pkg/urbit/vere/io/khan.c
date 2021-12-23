@@ -1,11 +1,21 @@
-// TODO
-// - think carefully about error handling
-// - think carefully about protocol
-//   - newt wire framing: high bit set on first byte?
-// - implement runtime-specific queries
-// - clean up logging
-// - handle windows (at least noop)
 /* vere/khan.c
+**
+**  implements the control plane: a socket that can be used to
+**  query and interact with an urbit ship from earth. supports
+**  three basic request types:
+**
+**  - %fyrd: a request to run a thread; will be forwarded to arvo
+**           to be dispatched by the khan vane.
+**
+**  - %peek: namespace peek request. mostly forwarded to arvo,
+**           except for a namespace overlay for runtime
+**           information.
+**
+**  - %move: kernel event. injected, with a runtime overlay.
+**
+**  messages use newt framing. because the framing begins with
+**  a magic byte (^I, horizontal tab), any messages that do not
+**  contain that byte are reserved for future use.
 **
 */
 #include <inttypes.h>
@@ -28,11 +38,19 @@ u3_khan_io_init(u3_pier* pir_u)
 
 #else   //  _WIN32
 
+/* u3_cran: control plane request.
+*/
+  typedef struct _u3_cran {
+    c3_l              rid_l;            //  client-supplied request id
+    struct _u3_chan*  can_u;            //  connection backpointer
+  } u3_cran;
+
 /* u3_chan: incoming control plane connection.
 */
   typedef struct _u3_chan {
     struct _u3_moor   mor_u;            //  message handler
-    c3_w              coq_l;            //  connection number
+    c3_l              coq_l;            //  connection number
+    c3_w              red_w;            //  retry counter
     struct _u3_shan*  san_u;            //  server backpointer
   } u3_chan;
 
@@ -40,7 +58,7 @@ u3_khan_io_init(u3_pier* pir_u)
 */
   typedef struct _u3_shan {
     uv_pipe_t         pyp_u;            //  server stream handler
-    c3_w              nex_l;            //  next connection number
+    c3_l              nex_l;            //  next connection number
     struct _u3_khan*  kan_u;            //  device backpointer
     struct _u3_chan*  can_u;            //  connection list
   } u3_shan;
@@ -102,7 +120,7 @@ _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_khan* kan_u = (u3_khan*)egg_u->car_u;
 
-  // TODO: find and close channel if not already closed
+  // TODO: find request and produce error packet
   _khan_punt_goof(lud);
   u3_ovum_free(egg_u);
 }
@@ -126,6 +144,30 @@ _khan_close_socket(u3_khan* kan_u, u3_chan* can_u)
   u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
 }
 
+/* _khan_close_chan(): close given channel, freeing.
+*/
+static void
+_khan_close_chan(u3_chan* can_u, u3_shan* san_u)
+{
+  u3_chan* inn_u;
+
+  //  fix up channel list; special-case list head.
+  //
+  if ( san_u->can_u == can_u ) {
+    san_u->can_u = (u3_chan*)can_u->mor_u.nex_u;
+  }
+  else {
+    for ( inn_u = san_u->can_u; inn_u; inn_u = (u3_chan*)inn_u->mor_u.nex_u ) {
+      if ( (u3_chan*)inn_u->mor_u.nex_u == can_u ) {
+        inn_u->mor_u.nex_u = can_u->mor_u.nex_u;
+        break;
+      }
+    }
+  }
+  can_u->mor_u.nex_u = NULL;
+  _khan_close_socket(san_u->kan_u, can_u);
+}
+
 /* _khan_moor_bail(): error callback for u3_moor.
 */
 static void
@@ -133,54 +175,51 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_shan*  san_u = can_u->san_u;
-  u3_chan*  inn_u;
 
   if ( err_i == UV_EOF ) {
-    // close socket and remove reference.
-    if ( san_u->can_u == can_u ) {
-      san_u->can_u = (u3_chan*)can_u->mor_u.nex_u;
-    }
-    else {
-      for ( inn_u = san_u->can_u; inn_u; inn_u = (u3_chan*)inn_u->mor_u.nex_u ) {
-        if ( (u3_chan*)inn_u->mor_u.nex_u == can_u ) {
-          inn_u->mor_u.nex_u = can_u->mor_u.nex_u;
-          break;
-        }
-      }
-    }
-    can_u->mor_u.nex_u = NULL;
-    _khan_close_socket(can_u->san_u->kan_u, can_u);
+    _khan_close_chan(can_u, san_u);
   }
   else {
-    // TODO retry up to N
     u3_noun bal;
     c3_y*   byt_y;
     c3_d    len_d;
 
-    u3l_log("khan: moor bail %zd %s\n", err_i, err_c);
-    bal = u3nq(c3__bail,
-               u3i_string("driver"),
-               -err_i & 0x7fffffff,
-               u3i_string(err_c));
-    u3s_jam_xeno(bal, &len_d, &byt_y);
-    u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
-    u3z(bal);
+    if ( 3 >= can_u->red_w ) {
+      u3l_log("khan: moor fatal %zd %s\n", err_i, err_c);
+      _khan_close_chan(can_u, san_u);
+    }
+    else {
+      u3l_log("khan: moor bail %zd %s\n", err_i, err_c);
+      can_u->red_w++;
+      //  TODO: instead of this, plan appropriate ovum. reset red_w on success.
+      //
+      bal = u3nq(c3__bail,
+                 u3i_string("driver"),
+                 -err_i & 0x7fffffff,
+                 u3i_string(err_c));
+      u3s_jam_xeno(bal, &len_d, &byt_y);
+      u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
+      u3z(bal);
+    }
   }
 }
 
-/* _khan_peek_cb(): handle scry result: send immediately.
+/* _khan_peek_cb(): scry result handler.
 */
 static void
-_khan_peek_cb(void* ptr_v, u3_noun nun)
+_khan_peek_cb(void* ptr_v, u3_noun res)
 {
-  u3_chan* can_u = (u3_chan*)ptr_v;
-  u3_khan* kan_u = can_u->san_u->kan_u;
+  u3_cran* ran_u = (u3_cran*)ptr_v;
+  u3_chan* can_u = ran_u->can_u;
+  u3_noun  ret;
   c3_y*    byt_y;
   c3_d     len_d;
 
-  u3s_jam_xeno(nun, &len_d, &byt_y);
+  ret = u3nt(c3__peek, ran_u->rid_l, res);
+  c3_free(ran_u);
+  u3s_jam_xeno(ret, &len_d, &byt_y);
+  u3z(ret);
   u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
-  u3z(nun);
 }
 
 /* _khan_moor_poke(): called on message read from u3_moor.
@@ -208,6 +247,7 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         can_u->mor_u.bal_f(can_u, -3, "i.jar-unknown");
         break;
       }
+
       case c3__fyrd: {
         u3_noun wir = u3nq(c3__khan,
                            u3dc("scot", c3__uv, kan_u->sev_l),
@@ -220,15 +260,27 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
           0, 0, _khan_poke_bail);
         break;
       }
-      case c3__scry: {
-        u3_noun ful = u3k(t_jar);
 
-        //  TODO: handle runtime-specific namespace queries. dispatch on ful.
-        //
-        u3_pier_peek(kan_u->car_u.pir_u, u3_nul, ful, can_u, _khan_peek_cb);
+      case c3__peek: {
+        u3_noun rid, sam;
+
+        if (  (c3n == u3r_cell(t_jar, &rid, &sam))
+           || (c3n == u3a_is_cat(rid)) )
+        {
+          can_u->mor_u.bal_f(can_u, -1, "peek-bad");
+        }
+        else {
+          u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
+          u3_noun   gan = u3nc(u3_nul, u3_nul);   //  [~ ~]: read from self
+
+          ran_u->rid_l = (c3_l)rid;
+          ran_u->can_u = can_u;
+          u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(sam), ran_u, _khan_peek_cb);
+        }
         u3z(jar);
         break;
       }
+
       case c3__move: {
         // TODO implement
         u3z(jar);
