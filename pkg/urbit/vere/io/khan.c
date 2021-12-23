@@ -228,7 +228,7 @@ static void
 _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_weak   jar;
-  u3_noun   i_jar, t_jar;
+  u3_noun   tag, rid, dat;
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_khan*  kan_u = can_u->san_u->kan_u;
   u3_noun   cad;
@@ -237,14 +237,17 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   if ( u3_none == jar ) {
     can_u->mor_u.bal_f(can_u, -1, "cue-none");
   }
-  else if ( (c3n == u3r_cell(jar, &i_jar, &t_jar)) ) {
+  else if (  (c3n == u3r_trel(jar, &tag, &rid, &dat))
+          || (c3n == u3a_is_cat(rid)) )
+  {
     u3z(jar);
-    can_u->mor_u.bal_f(can_u, -2, "jar-atom");
+    can_u->mor_u.bal_f(can_u, -2, "jar-bad");
   }
   else {
-    switch (i_jar) {
+    switch (tag) {
       default: {
         can_u->mor_u.bal_f(can_u, -3, "i.jar-unknown");
+        u3z(jar);
         break;
       }
 
@@ -252,8 +255,10 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         u3_noun wir = u3nq(c3__khan,
                            u3dc("scot", c3__uv, kan_u->sev_l),
                            u3dc("scot", c3__ud, can_u->coq_l),
-                           u3_nul);
+                           u3nc(u3dc("scot", c3__ud, rid),
+                                u3_nul));
 
+        u3l_log("khan: fyrd %" PRIu32 "\n", rid);
         u3_auto_peer(
           u3_auto_plan(&kan_u->car_u,
                        u3_ovum_init(0, c3__k, wir, jar)),
@@ -262,27 +267,23 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__peek: {
-        u3_noun rid, sam;
+        u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
+        u3_noun   gan = u3nc(u3_nul, u3_nul);   //  [~ ~]: read from self
 
-        if (  (c3n == u3r_cell(t_jar, &rid, &sam))
-           || (c3n == u3a_is_cat(rid)) )
-        {
-          can_u->mor_u.bal_f(can_u, -1, "peek-bad");
-        }
-        else {
-          u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
-          u3_noun   gan = u3nc(u3_nul, u3_nul);   //  [~ ~]: read from self
-
-          ran_u->rid_l = (c3_l)rid;
-          ran_u->can_u = can_u;
-          u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(sam), ran_u, _khan_peek_cb);
-        }
+        //  TODO: overlay runtime namespace.
+        //
+        u3l_log("khan: peek %" PRIu32 "\n", rid);
+        ran_u->rid_l = (c3_l)rid;
+        ran_u->can_u = can_u;
+        u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
         u3z(jar);
         break;
       }
 
       case c3__move: {
-        // TODO implement
+        //  TODO: implement
+        //
+        u3l_log("khan: move %" PRIu32 "\n", rid);
         u3z(jar);
         break;
       }
