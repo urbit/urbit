@@ -236,6 +236,7 @@ _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
   {
     //  wtf?
     //
+    c3_assert(!"not reached");
     return;
   }
   can_u = _khan_find_chan(kan_u, sev_l, coq_l);
