@@ -1,17 +1,36 @@
 /* vere/khan.c
 **
 **  implements the control plane: a socket that can be used to
-**  query and interact with an urbit ship from earth. supports
-**  three basic request types:
+**  query and interact with an urbit ship from earth.
 **
-**  - %fyrd: a request to run a thread; will be forwarded to arvo
-**           to be dispatched by the khan vane.
+**  the control plane nominally consumes input described by:
 **
-**  - %peek: namespace peek request. mostly forwarded to arvo,
-**           except for a namespace overlay for runtime
-**           information.
+**  $:  request-id=@udF
+**  $%  [%fyrd fyrd-args=*]
+**      [%peek peek-args=*]
+**      [%move move-args=*]
+**  ==  ==
 **
-**  - %move: kernel event. injected, with a runtime overlay.
+**  request-id is a 32-bit client-supplied identifier that will
+**  be returned along with the response, to allow correlating
+**  responses to simultaneous requests. (any request that may
+**  take more than a single arvo event is not guaranteed to
+**  return in order.) its use is optional, and 0 may be supplied
+**  every time for a client that never sends simultaneous
+**  requests.
+**
+**  %fyrd is a request to run a thread. its arguments are
+**  described in the %khan vane, which handles these. it produces
+**  either %avow (on success) or %fail (on failure.)
+**
+**  %peek is a namespace read request (aka scry). they are
+**  forwarded directly to arvo, except for a namespace overlay
+**  for runtime queries. its arguments are the nom of the
+**  external peek interface in arvo, at arm 22. (lyc is always
+**  [~ ~], i.e. request from self.)
+**
+**  %move is a kernel move. these are injected into arvo, except
+**  again for a runtime overlay.
 **
 **  messages use newt framing. because the framing begins with
 **  a magic byte (^I, horizontal tab), any messages that do not
@@ -128,15 +147,104 @@ _khan_send_noun(u3_chan* can_u, u3_noun nun)
   u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
 }
 
+/* _khan_search_chan(): lookup channel by connection number.
+*/
+static u3_chan*
+_khan_search_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
+{
+  u3_chan* ret_u;
+
+  for ( ret_u = kan_u->san_u->can_u;
+        ret_u;
+        ret_u = (u3_chan*)ret_u->mor_u.nex_u ) {
+    if ( coq_l == ret_u->coq_l ) {
+      return ret_u;
+    }
+  }
+  return 0;
+}
+
+/* _khan_read_wire(): decompose wire into /tag/instance/connection/request
+*/
+static c3_o
+_khan_read_wire(u3_noun wir,
+                c3_l* tag_l,
+                c3_l* sev_l,
+                c3_l* coq_l,
+                c3_l* rid_l)
+{
+  u3_noun i_wir, t_wir;
+
+  if ( (c3n == u3r_cell(wir, &i_wir, &t_wir)) ||
+       (c3n == u3a_is_cat(i_wir)) )
+  {
+    u3z(wir);
+    return c3n;
+  }
+  else {
+    u3_noun pud = t_wir;
+    u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
+
+    if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
+         (c3n == u3_reck_lily(c3__uv, u3k(p_pud), sev_l)) )
+    {
+      u3z(wir);
+      return c3n;
+    }
+
+    if ( u3_nul == t_pud ) {
+      *coq_l = *rid_l = 0;
+    }
+    else {
+      if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
+           (c3n == u3_reck_lily(c3__ud, u3k(q_pud), coq_l)) )
+      {
+        u3z(wir);
+        return c3n;
+      }
+
+      if ( u3_nul == tt_pud ) {
+        *rid_l = 0;
+      }
+      else {
+        if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
+             (u3_nul != s_pud) ||
+             (c3n == u3_reck_lily(c3__ud, u3k(r_pud), rid_l)) )
+        {
+          u3z(wir);
+          return c3n;
+        }
+      }
+    }
+    *tag_l = i_wir;
+    u3z(wir);
+    return c3y;
+  }
+}
+
 /* _khan_poke_bail(): error function on failed %fyrd.
 */
 static void
 _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
 {
-  u3_khan* kan_u = (u3_khan*)egg_u->car_u;
+  u3_khan*  kan_u = (u3_khan*)egg_u->car_u;
+  u3_chan*  can_u;
+  u3_noun   wir = egg_u->wir;
+  c3_l      tag_l, sev_l, coq_l, rid_l;
 
-  // TODO: find request and produce error packet
-  _khan_punt_goof(lud);
+  _khan_punt_goof(u3k(lud));
+  if ( (c3n == _khan_read_wire(u3k(wir), &tag_l, &sev_l, &coq_l, &rid_l)) ||
+       (c3__khan != tag_l) ||
+       (kan_u->sev_l != sev_l) )
+  {
+    //  wtf?
+    //
+    return;
+  }
+  can_u = _khan_search_chan(kan_u, sev_l, coq_l);
+  if ( can_u ) {
+    _khan_send_noun(can_u, u3nt(rid_l, c3__fail, lud));
+  }
   u3_ovum_free(egg_u);
 }
 
@@ -238,7 +346,7 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
     u3z(res);
     return;
   }
-  _khan_send_noun(can_u, u3nt(c3__peek, ran_u->rid_l, res));
+  _khan_send_noun(can_u, u3nt(ran_u->rid_l, c3__peek, res));
 
   //  remove this request from the pending list.
   //
@@ -458,23 +566,6 @@ _khan_io_talk(u3_auto* car_u)
     _khan_born_bail);
 }
 
-/* _khan_search_chan(): lookup channel by connection number.
-*/
-static u3_chan*
-_khan_search_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
-{
-  u3_chan* ret_u;
-
-  for ( ret_u = kan_u->san_u->can_u;
-        ret_u;
-        ret_u = (u3_chan*)ret_u->mor_u.nex_u ) {
-    if ( coq_l == ret_u->coq_l ) {
-      return ret_u;
-    }
-  }
-  return 0;
-}
-
 /* _khan_ef_handle(): handle result.
 */
 static void
@@ -512,60 +603,22 @@ _khan_ef_handle(u3_khan*  kan_u,
 static c3_o
 _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
-  u3_khan* kan_u = (u3_khan*)car_u;
+  u3_khan*  kan_u = (u3_khan*)car_u;
+  u3_noun   tag, dat;
+  c3_l      tag_l, sev_l, coq_l, rid_l;
 
-  u3_noun tag, dat, i_wir, t_wir;
-  c3_o ret_o;
-
-  if (  (c3n == u3r_cell(wir, &i_wir, &t_wir))
-     || (c3n == u3r_cell(cad, &tag, &dat))
-     || (c3__khan != i_wir) )
+  if ( (c3n == _khan_read_wire(wir, &tag_l, &sev_l, &coq_l, &rid_l)) ||
+       (c3n == u3r_cell(cad, &tag, &dat)) ||
+       (c3__khan != tag_l) ||
+       (kan_u->sev_l != sev_l) )
   {
-    u3z(wir); u3z(cad);
+    u3z(cad);
     return c3n;
   }
-  else {
-    u3_noun pud = t_wir;
-    u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
-    c3_l    sev_l, coq_l, rid_l;
 
-    if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
-         (c3n == u3_reck_lily(c3__uv, u3k(p_pud), &sev_l)) ||
-         sev_l != kan_u->sev_l )
-    {
-      u3z(wir); u3z(cad);
-      return c3n;
-    }
-
-    if ( u3_nul == t_pud ) {
-      coq_l = rid_l = 0;
-    }
-    else {
-      if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
-           (c3n == u3_reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
-      {
-        u3z(wir); u3z(cad);
-        return c3n;
-      }
-
-      if ( u3_nul == tt_pud ) {
-        rid_l = 0;
-      }
-      else {
-        if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
-             (u3_nul != s_pud) ||
-             (c3n == u3_reck_lily(c3__ud, u3k(r_pud), &rid_l)) )
-        {
-          u3z(wir); u3z(cad);
-          return c3n;
-        }
-      }
-    }
-
-    _khan_ef_handle(kan_u, sev_l, coq_l, rid_l, u3k(tag), u3k(dat));
-    u3z(wir); u3z(cad);
-    return c3y;
-  }
+  _khan_ef_handle(kan_u, sev_l, coq_l, rid_l, u3k(tag), u3k(dat));
+  u3z(cad);
+  return c3y;
 }
 
 /* _khan_io_exit(): unlink socket, shut down connections.
