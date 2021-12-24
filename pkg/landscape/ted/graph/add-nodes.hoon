@@ -31,7 +31,7 @@
   add-hash-to-node
 =/  hashes  (nodes-to-pending-indices nodes.q.update)
 ;<  ~  bind:m
-  %^  poke-our  %graph-push-hook
+  %^  poke-our  %uqbar-dao
     %graph-update-3
   !>  ^-  update:store
   update

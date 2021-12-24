@@ -13,9 +13,8 @@
     %contact-pull-hook
     %contact-push-hook
     %contact-view
+    %uqbar-dao
     %dm-hook
-    %graph-pull-hook
-    %graph-push-hook
     %group-pull-hook
     %group-push-hook
     %group-view

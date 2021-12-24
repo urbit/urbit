@@ -22,11 +22,15 @@
   ^-  mark
   (append-version version)
 ::
+++  supported-ver
+  |=  ver=@ud
+  &((gte ver min) (lte ver version))
+::
 ++  supported
   |=  =mark
   =/  ver
     (read-version mark)
-  &((gte ver min) (lte ver version))
+  (supported-ver ver)
 ::
 ++  convert-to
   |=  [=mark =vase]
