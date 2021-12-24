@@ -147,10 +147,10 @@ _khan_send_noun(u3_chan* can_u, u3_noun nun)
   u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
 }
 
-/* _khan_search_chan(): lookup channel by connection number.
+/* _khan_find_chan(): lookup channel by connection number.
 */
 static u3_chan*
-_khan_search_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
+_khan_find_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
 {
   u3_chan* ret_u;
 
@@ -164,11 +164,11 @@ _khan_search_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
   return 0;
 }
 
-/* _khan_read_wire(): decompose wire into /tag/instance/connection/request
+/* _khan_read_wire(): check tag, decompose wire into /sev/coq/rid
 */
 static c3_o
 _khan_read_wire(u3_noun wir,
-                c3_l* tag_l,
+                c3_l  tag_l,
                 c3_l* sev_l,
                 c3_l* coq_l,
                 c3_l* rid_l)
@@ -176,7 +176,7 @@ _khan_read_wire(u3_noun wir,
   u3_noun i_wir, t_wir;
 
   if ( (c3n == u3r_cell(wir, &i_wir, &t_wir)) ||
-       (c3n == u3a_is_cat(i_wir)) )
+       (tag_l != i_wir) )
   {
     u3z(wir);
     return c3n;
@@ -216,7 +216,6 @@ _khan_read_wire(u3_noun wir,
         }
       }
     }
-    *tag_l = i_wir;
     u3z(wir);
     return c3y;
   }
@@ -230,18 +229,17 @@ _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
   u3_khan*  kan_u = (u3_khan*)egg_u->car_u;
   u3_chan*  can_u;
   u3_noun   wir = egg_u->wir;
-  c3_l      tag_l, sev_l, coq_l, rid_l;
+  c3_l      sev_l, coq_l, rid_l;
 
   _khan_punt_goof(u3k(lud));
-  if ( (c3n == _khan_read_wire(u3k(wir), &tag_l, &sev_l, &coq_l, &rid_l)) ||
-       (c3__khan != tag_l) ||
+  if ( (c3n == _khan_read_wire(u3k(wir), c3__khan, &sev_l, &coq_l, &rid_l)) ||
        (kan_u->sev_l != sev_l) )
   {
     //  wtf?
     //
     return;
   }
-  can_u = _khan_search_chan(kan_u, sev_l, coq_l);
+  can_u = _khan_find_chan(kan_u, sev_l, coq_l);
   if ( can_u ) {
     _khan_send_noun(can_u, u3nt(rid_l, c3__fail, lud));
   }
@@ -581,7 +579,7 @@ _khan_ef_handle(u3_khan*  kan_u,
   //  TODO: socket events (close connection; any others?)
   //
 
-  if ( 0 != (can_u = _khan_search_chan(kan_u, sev_l, coq_l)) ) {
+  if ( 0 != (can_u = _khan_find_chan(kan_u, sev_l, coq_l)) ) {
     if ( c3__avow == tag ) {
       _khan_send_noun(can_u, u3nc(rid_l, u3k(dat)));
     }
@@ -605,11 +603,10 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
   u3_khan*  kan_u = (u3_khan*)car_u;
   u3_noun   tag, dat;
-  c3_l      tag_l, sev_l, coq_l, rid_l;
+  c3_l      sev_l, coq_l, rid_l;
 
-  if ( (c3n == _khan_read_wire(wir, &tag_l, &sev_l, &coq_l, &rid_l)) ||
+  if ( (c3n == _khan_read_wire(wir, c3__khan, &sev_l, &coq_l, &rid_l)) ||
        (c3n == u3r_cell(cad, &tag, &dat)) ||
-       (c3__khan != tag_l) ||
        (kan_u->sev_l != sev_l) )
   {
     u3z(cad);
