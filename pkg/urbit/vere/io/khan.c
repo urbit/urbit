@@ -70,7 +70,6 @@ u3_khan_io_init(u3_pier* pir_u)
   typedef struct _u3_chan {
     struct _u3_moor   mor_u;            //  message handler
     c3_l              coq_l;            //  connection number
-    c3_w              red_w;            //  retry counter
     struct _u3_shan*  san_u;            //  server backpointer
     struct _u3_cran*  ran_u;            //  request list
   } u3_chan;
@@ -304,28 +303,10 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_shan*  san_u = can_u->san_u;
 
-  if ( err_i == UV_EOF ) {
-    _khan_close_chan(can_u, san_u);
+  if ( err_i != UV_EOF ) {
+    u3l_log("khan: moor bail %zd %s\n", err_i, err_c);
   }
-  else {
-    u3_noun bal;
-
-    if ( 3 >= can_u->red_w ) {
-      u3l_log("khan: moor fatal %zd %s\n", err_i, err_c);
-      _khan_close_chan(can_u, san_u);
-    }
-    else {
-      u3l_log("khan: moor bail %zd %s\n", err_i, err_c);
-      can_u->red_w++;
-      //  TODO: rethink.
-      //
-      bal = u3nq(c3__bail,
-                 u3i_string("driver"),
-                 -err_i & 0x7fffffff,
-                 u3i_string(err_c));
-      _khan_send_noun(can_u, bal);
-    }
-  }
+  _khan_close_chan(can_u, san_u);
 }
 
 /* _khan_peek_cb(): scry result handler.
@@ -584,9 +565,8 @@ _khan_ef_handle(u3_khan*  kan_u,
       _khan_send_noun(can_u, u3nc(rid_l, u3k(dat)));
     }
     else {
-      //  TODO u3_king_bail? silently drop it?
-      //
       can_u->mor_u.bal_f(can_u, -1, "handle-unknown");
+      u3_king_bail();
     }
   }
   else {
