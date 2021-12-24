@@ -211,7 +211,6 @@ _newt_read(u3_moat*        mot_u,
   }
   else {
     if ( c3n == u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_d)len_i) ) {
-      fprintf(stderr, "newt: decode failed\r\n");
       mot_u->bal_f(mot_u->ptr_v, -1, "newt-decode");
       c3_free(buf_u->base);
       return c3n;
