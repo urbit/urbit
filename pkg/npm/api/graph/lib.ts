@@ -127,7 +127,7 @@ export const createManagedGraph = (
   const associated = { group: resourceFromPath(group) };
   const resource = makeResource(`~${ship}`, name);
 
-  return viewAction('graph-create', {
+  return viewAction('graph-create-dao', {
     create: {
       resource,
       title,
@@ -146,7 +146,7 @@ export const createUnmanagedGraph = (
   description: string,
   policy: Enc<GroupPolicy>,
   mod: string
-): Thread<any> => viewAction('graph-create', {
+): Thread<any> => viewAction('graph-create-dao', {
   create: {
     resource: makeResource(`~${ship}`, name),
     title,
@@ -160,7 +160,7 @@ export const createUnmanagedGraph = (
 export const joinGraph = (
   ship: Patp,
   name: string
-): Thread<any> => viewAction('graph-join', {
+): Thread<any> => viewAction('graph-join-dao', {
   join: {
     resource: makeResource(ship, name),
     ship
