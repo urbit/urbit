@@ -435,6 +435,9 @@ static void
 _khan_born_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3l_log("khan: %%born failure; socket not opened\n");
+  //  XX: still say we're "live" so event processing can start.
+  //
+  egg_u->car_u->liv_o = c3y;
 }
 
 /* _khan_io_talk(): notify %khan that we're live
@@ -571,33 +574,36 @@ static void
 _khan_io_exit(u3_auto* car_u)
 {
   u3_khan*          kan_u = (u3_khan*)car_u;
+  c3_c*             pax_c = u3_Host.dir_c;
+  c3_w              len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
+  c3_c*             paf_c = c3_malloc(len_w);
+  c3_i              wit_i;
 
-  if ( c3y == car_u->liv_o ) {
-    c3_c*           pax_c = u3_Host.dir_c;
-    c3_w            len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
-    c3_c*           paf_c = c3_malloc(len_w);
-    c3_i            wit_i;
+  wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
+  c3_assert(wit_i > 0);
+  c3_assert(len_w == (c3_w)wit_i + 1);
 
-    wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
-    c3_assert(wit_i > 0);
-    c3_assert(len_w == (c3_w)wit_i + 1);
-
-    if ( 0 != unlink(paf_c) ) {
+  if ( 0 != unlink(paf_c) ) {
+    if ( ENOENT != errno ) {
       u3l_log("khan: failed to unlink socket: %s\n", uv_strerror(errno));
     }
+  }
+  else {
     u3l_log("khan: unlinked %s\n", paf_c);
-    c3_free(paf_c);
+  }
+  c3_free(paf_c);
 
-    {
-      u3_shan*      san_u = kan_u->san_u;
-      u3_chan*      can_u = san_u->can_u;
-      u3_chan*      nex_u;
+  {
+    u3_shan*        san_u = kan_u->san_u;
+    u3_chan*        can_u = san_u ? san_u->can_u : 0;
+    u3_chan*        nex_u;
 
-      while ( can_u ) {
-        nex_u = (u3_chan*)can_u->mor_u.nex_u;
-        _khan_close_socket(kan_u, can_u);
-        can_u = nex_u;
-      }
+    while ( can_u ) {
+      nex_u = (u3_chan*)can_u->mor_u.nex_u;
+      _khan_close_socket(kan_u, can_u);
+      can_u = nex_u;
+    }
+    if ( san_u ) {
       uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
     }
   }
