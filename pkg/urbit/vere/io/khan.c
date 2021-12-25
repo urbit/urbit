@@ -563,7 +563,7 @@ _khan_ef_handle(u3_khan*  kan_u,
 
   if ( 0 != (can_u = _khan_find_chan(kan_u, sev_l, coq_l)) ) {
     if ( c3__avow == tag ) {
-      _khan_send_noun(can_u, u3nc(rid_l, u3k(dat)));
+      _khan_send_noun(can_u, u3nt(rid_l, c3__avow, u3k(dat)));
     }
     else {
       can_u->mor_u.bal_f(can_u, -1, "handle-unknown");
