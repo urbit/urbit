@@ -546,7 +546,7 @@ _khan_sock_err_chdir:
   u3_king_bail();
 }
 
-/* _khan_born_news(): initialization complete, open socket.
+/* _khan_born_news(): initialization complete; vane available.
 */
 static void
 _khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
@@ -566,7 +566,7 @@ _khan_born_bail(u3_ovum* egg_u, u3_noun lud)
   u3l_log("khan: %%born failure; %%fyrd not supported\n");
 }
 
-/* _khan_io_talk(): notify %khan that we're live
+/* _khan_io_talk(): open socket and notify %khan that we're live.
 */
 static void
 _khan_io_talk(u3_auto* car_u)
