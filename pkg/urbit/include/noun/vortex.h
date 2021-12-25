@@ -72,6 +72,11 @@
       u3_noun
       u3v_peek(u3_noun hap);
 
+    /* u3v_lily(): parse little atom.
+    */
+      c3_o
+      u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l);
+
     /* u3v_poke(): insert and apply an input ovum (protected).
     */
       u3_noun

@@ -2044,7 +2044,7 @@ _http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 
 
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
-         (c3n == u3_reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
+         (c3n == u3v_lily(c3__uv, u3k(p_pud), &sev_l)) )
     {
       u3z(wir); u3z(cad);
       return c3n;
@@ -2055,7 +2055,7 @@ _http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
     }
     else {
       if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
-           (c3n == u3_reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
+           (c3n == u3v_lily(c3__ud, u3k(q_pud), &coq_l)) )
       {
         u3z(wir); u3z(cad);
         return c3n;
@@ -2066,7 +2066,7 @@ _http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
       } else {
         if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
              (u3_nul != s_pud) ||
-             (c3n == u3_reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
+             (c3n == u3v_lily(c3__ud, u3k(r_pud), &seq_l)) )
         {
           u3z(wir); u3z(cad);
           return c3n;
