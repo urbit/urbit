@@ -13,11 +13,9 @@
 **
 **  request-id is a 31-bit client-supplied identifier that will
 **  be returned along with the response, to allow correlating
-**  responses to simultaneous requests. (any request that may
-**  take more than a single arvo event is not guaranteed to
-**  return in order.) it may be reused; e.g. 0 could be supplied
-**  every time for a client that never sends simultaneous
-**  requests or that doesn't care about responses.
+**  responses with requests. it may be reused; e.g. 0 could be
+**  supplied every time for a client that doesn't care about
+**  responses.
 **
 **  %fyrd is a request to run a thread. its arguments are
 **  described in the %khan vane, which handles these. it produces
@@ -35,8 +33,12 @@
 **      $+  each  path
 **      $%  [%once vis=view syd=desk tyl=spur]
 **          [%beam vis=view bem=beam]
-**          [%urth *]
+**          [%urth urth-args=*]
 **      ==
+**
+**  so e.g. a full %urth peek request might look like:
+**
+**      [`@ud`%id %peek | %urth %mass ~]
 **
 **  %move is a kernel move. these are injected into arvo, except
 **  again for a runtime overlay.
