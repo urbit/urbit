@@ -99,6 +99,7 @@ u3_khan_io_init(u3_pier* pir_u)
     c3_l              sev_l;            //  instance number
     struct _u3_shan*  san_u;            //  server reference
     u3_cue_xeno*      sil_u;            //  cue handle
+    c3_o              van_o;            //  vane present?
   } u3_khan;
 
 static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
@@ -380,17 +381,24 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__fyrd: {
-        u3_noun     wir = u3nc(c3__khan,
+        u3l_log("khan: fyrd %" PRIu32 "\n", rid);
+        if ( c3n == kan_u->van_o ) {
+          _khan_send_noun(
+              can_u, u3nt(rid, c3__fail,
+                          u3i_string("vane not present")));
+        }
+        else {
+          u3_noun   wir = u3nc(c3__khan,
                                u3nq(u3dc("scot", c3__uv, kan_u->sev_l),
                                     u3dc("scot", c3__ud, can_u->coq_l),
                                     u3dc("scot", c3__ud, rid),
                                     u3_nul));
 
-        u3l_log("khan: fyrd %" PRIu32 "\n", rid);
-        u3_auto_peer(
-          u3_auto_plan(&kan_u->car_u,
-                       u3_ovum_init(0, c3__k, wir, u3k(can))),
-          0, 0, _khan_poke_bail);
+          u3_auto_peer(
+            u3_auto_plan(&kan_u->car_u,
+                         u3_ovum_init(0, c3__k, wir, u3k(can))),
+            0, 0, _khan_poke_bail);
+        }
         break;
       }
 
@@ -541,19 +549,10 @@ _khan_sock_err_chdir:
 static void
 _khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
 {
-  u3_auto* car_u = egg_u->car_u;
-  u3_khan* kan_u = (u3_khan*)car_u;
-  u3_shan* san_u;
+  u3_khan* kan_u = (u3_khan*)egg_u->car_u;
 
   if ( u3_ovum_done == new_e ) {
-    c3_assert(!kan_u->san_u);
-    san_u = c3_calloc(sizeof(*san_u));
-    san_u->nex_l = 1;
-    san_u->kan_u = kan_u;
-    kan_u->san_u = san_u;
-    _khan_sock_init(san_u);
-    car_u->liv_o = c3y;
-    u3l_log("khan: live on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
+    kan_u->van_o = c3y;
   }
 }
 
@@ -562,10 +561,7 @@ _khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
 static void
 _khan_born_bail(u3_ovum* egg_u, u3_noun lud)
 {
-  u3l_log("khan: %%born failure; socket not opened\n");
-  //  XX: still say we're "live" so event processing can start.
-  //
-  egg_u->car_u->liv_o = c3y;
+  u3l_log("khan: %%born failure; %%fyrd not supported\n");
 }
 
 /* _khan_io_talk(): notify %khan that we're live
@@ -574,6 +570,7 @@ static void
 _khan_io_talk(u3_auto* car_u)
 {
   u3_khan* kan_u = (u3_khan*)car_u;
+  u3_shan* san_u;
   u3_noun  wir = u3nt(c3__khan,
                       u3dc("scot", c3__uv, kan_u->sev_l),
                       u3_nul);
@@ -584,6 +581,17 @@ _khan_io_talk(u3_auto* car_u)
     0,
     _khan_born_news,
     _khan_born_bail);
+
+  //  initialize server, opening socket.
+  //
+  c3_assert(!kan_u->san_u);
+  san_u = c3_calloc(sizeof(*san_u));
+  san_u->nex_l = 1;
+  san_u->kan_u = kan_u;
+  kan_u->san_u = san_u;
+  _khan_sock_init(san_u);
+  car_u->liv_o = c3y;
+  u3l_log("khan: live on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
 }
 
 /* _khan_ef_handle(): handle result.
@@ -685,6 +693,7 @@ u3_khan_io_init(u3_pier* pir_u)
   u3_auto* car_u = &kan_u->car_u;
 
   kan_u->sil_u = u3s_cue_xeno_init();
+  kan_u->van_o = c3n;
   car_u->nam_m = c3__khan;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _khan_io_talk;
