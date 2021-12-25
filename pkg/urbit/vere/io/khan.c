@@ -11,7 +11,7 @@
 **      [%move move-args=*]
 **  ==  ==
 **
-**  request-id is a 32-bit client-supplied identifier that will
+**  request-id is a 31-bit client-supplied identifier that will
 **  be returned along with the response, to allow correlating
 **  responses to simultaneous requests. (any request that may
 **  take more than a single arvo event is not guaranteed to
