@@ -488,10 +488,10 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   san_u->can_u = can_u;
 }
 
-/* _khan_sock_init(): initialize socket device.
+/* _khan_init_sock(): initialize socket device.
 */
 static void
-_khan_sock_init(u3_shan* san_u)
+_khan_init_sock(u3_shan* san_u)
 {
   // The full socket path is limited to about 108 characters, and we want it to
   // be relative to the pier. So we save our current path, chdir to the pier,
@@ -589,7 +589,7 @@ _khan_io_talk(u3_auto* car_u)
   san_u->nex_l = 1;
   san_u->kan_u = kan_u;
   kan_u->san_u = san_u;
-  _khan_sock_init(san_u);
+  _khan_init_sock(san_u);
   car_u->liv_o = c3y;
   u3l_log("khan: live on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
 }
