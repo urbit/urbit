@@ -349,10 +349,10 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
 static void
 _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
-  u3_weak   jar;
-  u3_noun   can, rid, tag, dat;
-  u3_chan*  can_u = (u3_chan*)ptr_v;
-  u3_khan*  kan_u = can_u->san_u->kan_u;
+  u3_weak           jar;
+  u3_noun           can, rid, tag, dat;
+  u3_chan*          can_u = (u3_chan*)ptr_v;
+  u3_khan*          kan_u = can_u->san_u->kan_u;
 
   jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
@@ -373,11 +373,11 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__fyrd: {
-        u3_noun wir = u3nc(c3__khan,
-                           u3nq(u3dc("scot", c3__uv, kan_u->sev_l),
-                                u3dc("scot", c3__ud, can_u->coq_l),
-                                u3dc("scot", c3__ud, rid),
-                                u3_nul));
+        u3_noun     wir = u3nc(c3__khan,
+                               u3nq(u3dc("scot", c3__uv, kan_u->sev_l),
+                                    u3dc("scot", c3__ud, can_u->coq_l),
+                                    u3dc("scot", c3__ud, rid),
+                                    u3_nul));
 
         u3l_log("khan: fyrd %" PRIu32 "\n", rid);
         u3_auto_peer(
@@ -388,17 +388,50 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__peek: {
-        u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
-        u3_noun   gan = u3nc(u3_nul, u3_nul);   //  [~ ~]: read from self
+        u3_noun     fog, nom, pyt;
 
-        //  TODO: overlay runtime namespace.
-        //
         u3l_log("khan: peek %" PRIu32 "\n", rid);
-        ran_u->can_u = can_u;
-        ran_u->nex_u = can_u->ran_u;
-        can_u->ran_u = ran_u;
-        ran_u->rid_l = (c3_l)rid;
-        u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
+        if ( (c3n == u3r_trel(dat, &fog, &nom, &pyt)) ||
+             (c3y == fog) ||
+             (c3__urth != nom) )
+        {
+          u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
+          u3_noun   gan = u3nc(u3_nul, u3_nul);   //  [~ ~]: read from self
+
+          //  this doesn't look like a runtime request; forward it to arvo.
+          //
+          ran_u->can_u = can_u;
+          ran_u->nex_u = can_u->ran_u;
+          can_u->ran_u = ran_u;
+          ran_u->rid_l = (c3_l)rid;
+          u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
+        }
+        else {
+          u3_noun   i_pyt, t_pyt;
+
+          //  runtime (%urth) request; respond immediately.
+          //
+          if ( (c3n == u3r_cell(pyt, &i_pyt, &t_pyt)) ||
+               (u3_nul != t_pyt) )
+          {
+            _khan_send_noun(can_u, u3nt(rid, c3__none, u3_nul));
+          }
+          else {
+            //  TODO: fill in %urth namespace.
+            //
+            switch (i_pyt) {
+              default: {
+                _khan_send_noun(can_u, u3nt(rid, c3__none, u3_nul));
+                break;
+              }
+
+              case c3__mass: {
+                _khan_send_noun(can_u, u3nt(rid, c3__mass, u3_nul));
+                break;
+              }
+            }
+          }
+        }
         break;
       }
 
