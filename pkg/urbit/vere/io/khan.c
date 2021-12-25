@@ -288,7 +288,7 @@ _khan_close_chan(u3_shan* san_u, u3_chan* can_u)
 
   //  send a close event to arvo and stop reading.
   //
-  {
+  if ( c3y == kan_u->van_o ) {
     u3_noun wir, cad;
 
     wir = u3nq(c3__khan,
@@ -300,8 +300,8 @@ _khan_close_chan(u3_shan* san_u, u3_chan* can_u)
       u3_auto_plan(&kan_u->car_u,
                    u3_ovum_init(0, c3__k, wir, cad)),
       0, 0, _khan_poke_bail);
-    u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
   }
+  u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
 }
 
 /* _khan_moor_bail(): error callback for u3_moor.
