@@ -21,7 +21,7 @@ _newt_encode(u3_atom mat, c3_w* len_w)
   *len_w = 5 + met_w;
   buf_y  = c3_malloc(*len_w);
 
-  //  write header; c3_d is futureproofing
+  //  write header
   //
   buf_y[0] = 0x9;
   buf_y[1] = ( met_w        & 0xff);
