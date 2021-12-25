@@ -189,8 +189,7 @@ _khan_read_wire(u3_noun wir,
   if ( (c3n == u3r_cell(wir, &i_wir, &t_wir)) ||
        (tag_l != i_wir) )
   {
-    u3z(wir);
-    return c3n;
+    u3z(wir); return c3n;
   }
   else {
     u3_noun pud = t_wir;
@@ -199,8 +198,7 @@ _khan_read_wire(u3_noun wir,
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
          (c3n == u3v_lily(c3__uv, u3k(p_pud), sev_l)) )
     {
-      u3z(wir);
-      return c3n;
+      u3z(wir); return c3n;
     }
 
     if ( u3_nul == t_pud ) {
@@ -210,8 +208,7 @@ _khan_read_wire(u3_noun wir,
       if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
            (c3n == u3v_lily(c3__ud, u3k(q_pud), coq_l)) )
       {
-        u3z(wir);
-        return c3n;
+        u3z(wir); return c3n;
       }
 
       if ( u3_nul == tt_pud ) {
@@ -222,13 +219,11 @@ _khan_read_wire(u3_noun wir,
              (u3_nul != s_pud) ||
              (c3n == u3v_lily(c3__ud, u3k(r_pud), rid_l)) )
         {
-          u3z(wir);
-          return c3n;
+          u3z(wir); return c3n;
         }
       }
     }
-    u3z(wir);
-    return c3y;
+    u3z(wir); return c3y;
   }
 }
 
@@ -249,11 +244,14 @@ _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
     //  wtf?
     //
     c3_assert(!"not reached");
-    return;
+    u3z(lud); return;
   }
   can_u = _khan_find_chan(kan_u, sev_l, coq_l);
   if ( can_u ) {
     _khan_send_noun(can_u, u3nt(rid_l, c3__fail, lud));
+  }
+  else {
+    u3z(lud);
   }
   u3_ovum_free(egg_u);
 }
@@ -333,8 +331,7 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
     //  chan was closed; noop.
     //
     c3_free(ran_u);
-    u3z(res);
-    return;
+    u3z(res); return;
   }
   _khan_send_noun(can_u, u3nt(ran_u->rid_l, c3__peek, res));
 
@@ -378,16 +375,15 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   else {
     switch (tag) {
       default: {
-        can_u->mor_u.bal_f(can_u, -3, "i.jar-unknown");
+        can_u->mor_u.bal_f(can_u, -3, "tag-unknown");
         break;
       }
 
       case c3__fyrd: {
         u3l_log("khan: fyrd %" PRIu32 "\n", rid);
         if ( c3n == kan_u->van_o ) {
-          _khan_send_noun(
-              can_u, u3nt(rid, c3__fail,
-                          u3i_string("vane not present")));
+          _khan_send_noun(can_u,
+                          u3nt(rid, c3__fail, u3i_string("vane-miss")));
         }
         else {
           u3_noun   wir = u3nc(c3__khan,
@@ -566,6 +562,7 @@ static void
 _khan_born_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3l_log("khan: %%born failure; %%fyrd not supported\n");
+  u3z(lud);
 }
 
 /* _khan_io_talk(): open socket and notify %khan that we're live.
@@ -615,7 +612,7 @@ _khan_ef_handle(u3_khan*  kan_u,
       _khan_send_noun(can_u, u3nt(rid_l, c3__avow, u3k(dat)));
     }
     else {
-      can_u->mor_u.bal_f(can_u, -1, "handle-unknown");
+      can_u->mor_u.bal_f(can_u, -4, "handle-unknown");
       u3_king_bail();
     }
   }
@@ -639,13 +636,11 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
        (c3n == u3r_cell(cad, &tag, &dat)) ||
        (kan_u->sev_l != sev_l) )
   {
-    u3z(cad);
-    return c3n;
+    u3z(cad); return c3n;
   }
 
   _khan_ef_handle(kan_u, sev_l, coq_l, rid_l, u3k(tag), u3k(dat));
-  u3z(cad);
-  return c3y;
+  u3z(cad); return c3y;
 }
 
 /* _khan_io_exit(): unlink socket, shut down connections.
