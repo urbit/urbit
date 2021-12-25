@@ -15,9 +15,9 @@
 **  be returned along with the response, to allow correlating
 **  responses to simultaneous requests. (any request that may
 **  take more than a single arvo event is not guaranteed to
-**  return in order.) its use is optional, and 0 may be supplied
+**  return in order.) it may be reused; e.g. 0 could be supplied
 **  every time for a client that never sends simultaneous
-**  requests.
+**  requests or that doesn't care about responses.
 **
 **  %fyrd is a request to run a thread. its arguments are
 **  described in the %khan vane, which handles these. it produces
@@ -590,9 +590,6 @@ _khan_ef_handle(u3_khan*  kan_u,
                 u3_noun   dat)
 {
   u3_chan* can_u;
-
-  //  TODO: socket events (close connection; any others?)
-  //
 
   if ( 0 != (can_u = _khan_find_chan(kan_u, sev_l, coq_l)) ) {
     if ( c3__avow == tag ) {
