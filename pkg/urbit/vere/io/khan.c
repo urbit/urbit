@@ -493,10 +493,12 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
 static void
 _khan_init_sock(u3_shan* san_u)
 {
-  // The full socket path is limited to about 108 characters, and we want it to
-  // be relative to the pier. So we save our current path, chdir to the pier,
-  // open the socket at the desired path, then chdir back. Hopefully there
-  // aren't any threads.
+  //  The full socket path is limited to about 108 characters,
+  //  and we want it to be relative to the pier. So we save our
+  //  current path, chdir to the pier, open the socket at the
+  //  desired path, then chdir back. Hopefully there aren't any
+  //  threads.
+  //
   c3_c pax_c[2048];
   c3_i err_i;
 
