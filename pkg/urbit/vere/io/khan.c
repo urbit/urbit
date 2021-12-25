@@ -29,6 +29,15 @@
 **  external peek interface in arvo, at arm 22. (lyc is always
 **  [~ ~], i.e. request from self.)
 **
+**  the %peek runtime overlay functions like an extra arm of the
+**  $%. the full accepted type would be something like:
+**
+**      $+  each  path
+**      $%  [%once vis=view syd=desk tyl=spur]
+**          [%beam vis=view bem=beam]
+**          [%urth *]
+**      ==
+**
 **  %move is a kernel move. these are injected into arvo, except
 **  again for a runtime overlay.
 **
