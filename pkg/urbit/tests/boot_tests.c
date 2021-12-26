@@ -59,4 +59,5 @@ main(int argc, char* argv[])
   _test_lily();
 
   fprintf(stderr, "test_lilly: ok\n");
+  return 0;
 }
