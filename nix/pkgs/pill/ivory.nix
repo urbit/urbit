@@ -34,7 +34,7 @@ in {
 
       mkdir -p $out/include
       cat $src > $file
-      xxd -i $file > $out/include/ivory.h
+      xxd -i $file > $out/include/ivory_impl.h
     '';
 
     preferLocalBuild = true;

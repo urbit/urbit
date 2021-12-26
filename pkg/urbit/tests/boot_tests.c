@@ -2,14 +2,6 @@
 #include "vere/vere.h"
 #include "ur/ur.h"
 
-//  XX ivory.h just declares these; if it's included elsewhere
-//  (currently king.c), this will cause duplicate definition
-//  errors. so we just extern them instead.
-//
-extern unsigned char u3_Ivory_pill[];
-extern unsigned int u3_Ivory_pill_len;
-//  #include "ivory.h"
-
 /* _setup(): prepare for tests.
 */
 static void
