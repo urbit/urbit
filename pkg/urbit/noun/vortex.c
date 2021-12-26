@@ -184,15 +184,6 @@ _cv_time_bump(u3_reck* rec_u)
 }
 #endif
 
-/* u3v_peek(): query the reck namespace (protected).
-*/
-u3_noun
-u3v_peek(u3_noun sam)
-{
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
-  return u3n_slam_on(fun, sam);
-}
-
 /* u3v_lily(): parse little atom.
 */
 c3_o
@@ -214,6 +205,15 @@ u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
     *tid_l = (c3_l)wad_w;
     u3z(txt); u3z(uco); return c3y;
   }
+}
+
+/* u3v_peek(): query the reck namespace (protected).
+*/
+u3_noun
+u3v_peek(u3_noun sam)
+{
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
+  return u3n_slam_on(fun, sam);
 }
 
 /* u3v_poke(): insert and apply an input ovum (protected).
