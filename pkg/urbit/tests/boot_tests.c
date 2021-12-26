@@ -44,7 +44,18 @@ _test_lily()
   u3_noun cod = u3dc("scot", c3__uv, big);
 
   if ( c3y == u3v_lily(c3__uv, cod, &lit_l) ) {
-    printf("*** fail lily\n");
+    printf("*** fail _test_lily-1\n");
+    exit(1);
+  }
+  cod = u3dc("scot", c3__ud, 0x7fffffff);
+  if ( (c3n == u3v_lily(c3__ud, cod, &lit_l)) ||
+       (0x7fffffff != lit_l) ) {
+    printf("*** fail _test_lily-2a\n");
+    exit(1);
+  }
+  cod = u3dc("scot", c3__ud, u3i_word(0x80000000));
+  if ( c3y == u3v_lily(c3__ud, cod, &lit_l) ) {
+    printf("*** fail _test_lily-2b\n");
     exit(1);
   }
 }
