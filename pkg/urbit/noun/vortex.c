@@ -193,47 +193,26 @@ u3v_peek(u3_noun sam)
   return u3n_slam_on(fun, sam);
 }
 
-/* _cv_mole(): parse simple atomic mole.
-*/
-static c3_o
-_cv_mole(u3_noun  fot,
-         u3_noun  san,
-         c3_d*    ato_d)
-{
-  u3_noun uco = u3dc("slaw", fot, san);
-  u3_noun p_uco, q_uco;
-
-  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
-       (u3_nul != p_uco) )
-  {
-    u3l_log("strange mole %s\n", u3r_string(san));
-
-    u3z(fot); u3z(uco); return c3n;
-  }
-  else {
-    *ato_d = u3r_chub(0, q_uco);
-
-    u3z(fot); u3z(uco); return c3y;
-  }
-}
-
 /* u3v_lily(): parse little atom.
 */
 c3_o
 u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 {
-  c3_d ato_d;
+  c3_w    wad_w;
+  u3_noun uco = u3dc("slaw", fot, u3k(txt));
+  u3_noun p_uco, q_uco;
 
-  if ( c3n == _cv_mole(fot, txt, &ato_d) ) {
-    return c3n;
-  } else {
-    if ( ato_d >= 0x80000000ULL ) {
-      return c3n;
-    } else {
-      *tid_l = (c3_l) ato_d;
-
-      return c3y;
-    }
+  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
+       (u3_nul != p_uco) ||
+       !u3r_word_fit(&wad_w, q_uco) ||
+       (wad_w & 0x80000000) )
+  {
+    u3l_log("strange lily %s\n", u3r_string(txt));
+    u3z(txt); u3z(uco); return c3n;
+  }
+  else {
+    *tid_l = (c3_l)wad_w;
+    u3z(txt); u3z(uco); return c3y;
   }
 }
 
