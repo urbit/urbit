@@ -1100,11 +1100,13 @@ u3we_scot(u3_noun cor)
   switch (mod) {
     case c3__da:
       //return __print_da(cor, atom);
-    return u3_none;
+      mpz_clear(u_mp);
+      return u3_none;
       tape = _print_da(cor, atom);
       break;
 
     case 'p':
+      mpz_clear(u_mp);
       return u3_none;
       u3r_mp(u_mp, atom);
 
