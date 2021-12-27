@@ -1,3 +1,5 @@
+// WORKS WITHOUT LEAKING
+
 /* j/3/scow.c
 **
 */
@@ -805,16 +807,13 @@ _u3_po_to_suffix(u3_noun id)
 
 static
 u3_noun
-__print_p(c3_w p)
+__print_p(u3_atom cor, u3_atom p)
 {
   // Scramble the raw number to the concealed version.
   u3_noun sxz = u3qe_fein_ob(p);
   c3_w prefix, suffix;
   u3_noun pre, suf;
   u3_atom aus = 0;
-  fprintf(stderr, "p: %d\n", p);
-  u3m_p("sxz", sxz);
-  return u3_none;
 
   // Galaxies
   if (c3y == u3qa_lth(sxz, 256)) {
@@ -901,7 +900,6 @@ __print_ud(c3_w ud)
 
   u3_noun aus_return = u3i_bytes(len, aus);
   u3a_free(aus);
-  u3m_p("ud> aus_return", aus_return);
   return aus_return;
 }
 
@@ -947,7 +945,6 @@ __print_uw(c3_w uw)
 
   u3_noun aus_return = u3i_bytes(len, aus);
   u3a_free(aus);
-  u3m_p("uw> aus_return", aus_return);
   return aus_return;
 }
 
@@ -1025,7 +1022,6 @@ __print_uv(c3_w uv)
 
   u3_noun aus_return = u3i_bytes(len, aus);
   u3a_free(aus);
-  u3m_p("uv> aus_return", aus_return);
   return aus_return;
 }
 
@@ -1094,31 +1090,21 @@ u3we_scot(u3_noun cor)
     return u3m_bail(c3__exit);
   }
   //return u3_none;
+  u3m_p("scot> %x", atom);
 
   u3_noun tape;
   mpz_t u_mp;
   switch (mod) {
     case c3__da:
       //return __print_da(cor, atom);
-      mpz_clear(u_mp);
-      return u3_none;
+    return u3_none;
       tape = _print_da(cor, atom);
       break;
 
     case 'p':
-      mpz_clear(u_mp);
-      return u3_none;
-      u3r_mp(u_mp, atom);
-
-      // if too big, send back to Hoon
-      if (!(mpz_fits_ulong_p(u_mp))) {  // check against unsigned long int, 32 bits
-        mpz_clear(u_mp);
-        return u3_none;
-      } else {
-        c3_w uv_int = mpz_get_ui(u_mp);
-        mpz_clear(u_mp);
-        return __print_p(uv_int);
-      }
+      //return __print_p(cor, atom);
+    return u3_none;
+      tape = _print_p(cor, atom);
       break;
 
     case c3__ud:
