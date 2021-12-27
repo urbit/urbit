@@ -18,6 +18,7 @@ deps="          \
   ent           \
   gmp           \
   lmdb          \
+  m             \
   murmur3       \
   pthread       \
   sigsegv       \
