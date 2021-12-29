@@ -2235,58 +2235,69 @@
         =/  pub  (from.j qj)
         ?<  =([0 0] pub)
         pub
-      ++  hash-tag
-        |=  [tag=@ [l=@ x=@]]
-        =+  hat=(shax tag)
-        %-  shay
-        =/  pin
-          (cat 8 hat (cat 8 hat x))
-        [(add 64 l) pin]
-      ++  schnorrsig-sign
-        ::  ~/  %sosi
-        |=  [sk=@I m=@I a=@I]
-        =/  c  curve
-        =/  j  jc.c
-        ?<  |(=(0 sk) (gte sk n.domain.c))
-        =/  pp  (mul-point-scalar g.domain.c sk)
-        =/  d
-          ?:  =(0 (mod y.pp 2))
-            sk
-          (sub n.domain.c sk)
-        =/  t
-          %+  mix  (rev 3 32 d)
-          (hash-tag 'BIP0340/aux' [32 (rev 3 32 a)])
-        =/  rand
-          %+  hash-tag  'BIP0340/nonce'
-          =/  pin
-            (can 8 ~[[1 t] [1 (rev 3 32 x.pp)] [1 (rev 3 32 m)]])
-          [96 pin]
-        =/  kp  (rev 3 32 (mod rand n.domain.c))
-        =/  rr  (mul-point-scalar g.domain.c kp)
-        =/  k
-          ?:  =(0 (mod y.rr 2))
-            kp
-          (sub n.domain.c kp)
-        =/  e
-          %^  rev  3  32
-          %+  mod
-            %+  hash-tag  'BIP0340/challenge'
+      ++  schnorr
+        =>  |%  ++  tagged-hash
+                  |=  [tag=@ [l=@ x=@]]
+                  =+  hat=(shax tag)
+                  %-  shay
+                  =/  pin
+                    (cat 8 hat (cat 8 hat x))
+                  [(add 64 l) pin]
+                ++  flip  |=(byts (rev 3 wid dat))      ::  endianness remedy
+                --
+        |%
+        ::
+        ++  sign
+          ::  ~/  %sosi
+          |=  [sk=@I m=@I a=@I]
+          =/  c  curve
+          ?<  |(=(0 sk) (gte sk n.domain.c))
+          =/  pp
+            (mul-point-scalar g.domain.c sk)
+          =/  d
+            ?:  =(0 (mod y.pp 2))
+              sk
+            (sub n.domain.c sk)
+          =/  t
+            %+  mix
+              (flip 32 d)
+            (tagged-hash 'BIP0340/aux' [32 (flip 32 a)])
+          =/  rand
+            %+  tagged-hash  'BIP0340/nonce'
             =/  pin
-              (can 8 ~[[1 (rev 3 32 x.rr)] [1 (rev 3 32 x.pp)] [1 (rev 3 32 m)]])
+              (can 8 ~[[1 t] [1 (flip 32 x.pp)] [1 (flip 32 m)]])
             [96 pin]
-          n.domain.c
-        =/  sig
-          %^  cat  8
-            (rev 3 32 x.rr)
-          %^  rev  3  32
-          (mod (add k (mul e d)) n.domain.c)
-        ::  ?>  (schnorrsig-verify pp message sig)
-        (rev 3 64 sig)
-      ++  schnorrsig-verify
-        ::  ~/  %sove
-        |=  *
-        !!
-      --
+          =/  kp  (mod (flip 32 rand) n.domain.c)
+          =/  rr  (mul-point-scalar g.domain.c kp)
+          =/  k
+            ?:  =(0 (mod y.rr 2))
+              kp
+            (sub n.domain.c kp)
+          =/  e
+            %-  mod
+            :_  n.domain.c
+            %+  flip  32
+            %+  tagged-hash  'BIP0340/challenge'
+            =/  pin
+              %+  can  8
+              :~  [1 (flip 32 x.rr)]
+                  [1 (flip 32 x.pp)]
+                  [1 (flip 32 m)]
+              ==
+            [96 pin]
+          =/  sig
+            %^  cat  8
+              (flip 32 x.rr)
+            %+  flip  32
+            (mod (add k (mul e d)) n.domain.c)
+          ::  ?>  (schnorrsig-verify pp message sig)
+          (flip 64 sig)
+        ::
+        ++  verify
+          ::  ~/  %sove
+          |=  *
+          !!
+        --
     --
   ::
   ++  blake
