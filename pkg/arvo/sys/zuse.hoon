@@ -2304,10 +2304,7 @@
                 [1 (flip 32 m)]
             ==
           =/  sig
-            %+  flip  64
-            %^  cat  8
-              (flip 32 x.rr)
-            %+  flip  32
+            %^  cat  8  x.rr
             (mod (add k (mul e d)) n.domain.c)
           ?>  (verify x.pp m sig)
           sig
@@ -2321,10 +2318,10 @@
           ?~  ppx
             %.n
           =/  pp  u.ppx
-          =/  r  (cut 8 [1 1] sig)
+          =/  r  (cut 8 [0 1] sig)
           ?:  (gte r p.domain.c)
             %.n
-          =/  s  (cut 8 [0 1] sig)
+          =/  s  (cut 8 [1 1] sig)
           ?:  (gte s n.domain.c)
             %.n
           =/  e
