@@ -2249,7 +2249,7 @@
                   ^-  (unit point)
                   =/  c  curve
                   =/  fop  field-p.c
-                  =+  [fadd ffra fpow]=[sum.fop fra.fop exp.fop]
+                  =+  [fadd fpow]=[sum.fop exp.fop]
                   =/  cp  (fadd (fpow 3 x) 7)
                   =/  y  (fpow (rsh [0 2] +(p.domain.c)) cp)
                   ?.  =(cp (fpow 2 y))
