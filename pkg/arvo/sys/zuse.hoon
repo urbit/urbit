@@ -2244,12 +2244,27 @@
                     (cat 8 hat (cat 8 hat x))
                   [(add 64 l) pin]
                 ++  flip  |=(byts (rev 3 wid dat))      ::  endianness remedy
+                ++  lift-x
+                  |=  x=@I
+                  ^-  (unit point)
+                  =/  c  curve
+                  =/  fop  field-p.c
+                  =+  [fadd ffra fpow]=[sum.fop fra.fop exp.fop]
+                  =/  cp  (fadd (fpow 3 x) 7)
+                  =/  y  (fpow (rsh [0 2] +(p.domain.c)) cp)
+                  ?.  =(cp (fpow 2 y))
+                    ~
+                  %-  some  :-  x
+                  ?:  =(0 (mod y 2))
+                    y
+                  (sub p.domain.c y)
                 --
         |%
         ::
         ++  sign
           ::  ~/  %sosi
           |=  [sk=@I m=@I a=@I]
+          ^-  @J
           =/  c  curve
           ?<  |(=(0 sk) (gte sk n.domain.c))
           =/  pp
@@ -2286,18 +2301,60 @@
               ==
             [96 pin]
           =/  sig
+            %+  flip  64
             %^  cat  8
               (flip 32 x.rr)
             %+  flip  32
             (mod (add k (mul e d)) n.domain.c)
-          ::  ?>  (schnorrsig-verify pp message sig)
-          (flip 64 sig)
+          ?>  (verify x.pp m sig)
+          sig
         ::
         ++  verify
           ::  ~/  %sove
-          |=  *
-          !!
+          |=  [pk=@I m=@I sig=@J]
+          ^-  ?
+          =/  c  curve
+          =/  ppx  (lift-x pk)
+          ?~  ppx
+            %.n
+          =/  pp  u.ppx
+          =/  r  (cut 8 [1 1] sig)
+          ?:  (gte r p.domain.c)
+            %.n
+          =/  s  (cut 8 [0 1] sig)
+          ?:  (gte s n.domain.c)
+            %.n
+          =/  e
+            %-  mod
+            :_  n.domain.c
+            %+  flip  32
+            %+  tagged-hash  'BIP0340/challenge'
+            :-  96
+            %+  can  8
+            :~  [1 (flip 32 r)]
+                [1 (flip 32 x.pp)]
+                [1 (flip 32 m)]
+            ==
+          =/  aa
+            (mul-point-scalar g.domain.c s)
+          =/  bb
+            (mul-point-scalar pp (sub n.domain.c e))
+          ?:  &(=(x.aa x.bb) !=(y.aa y.bb))
+            %.n
+          =/  rr  (add-points aa bb)
+          ~&  :-  m+`@ux`m
+              :-  pk+`@ux`pk
+              :-  sig+`@ux`sig
+              :-  pp+`[@ux @ux]`pp
+              :-  r+`@ux`r
+              :-  s+`@ux`s
+              :-  e+`@ux`e
+                  rr+`[@ux @ux]`rr
+          ?.  =(0 (mod y.rr 2))
+            %.n
+          =(r x.rr)
         --
+      --
     --
   ::
   ++  blake
