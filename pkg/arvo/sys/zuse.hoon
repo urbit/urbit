@@ -2281,7 +2281,7 @@
           %^  rev  3  32
           (mod (add k (mul e d)) n.domain.c)
         ::  ?>  (schnorrsig-verify pp message sig)
-        sig
+        (rev 3 64 sig)
       ++  schnorrsig-verify
         ::  ~/  %sove
         |=  *
