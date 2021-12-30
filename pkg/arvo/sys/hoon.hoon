@@ -5351,6 +5351,7 @@
   ++  qex  (bass 16 ;~(plug sex (stun [0 3] hit)))
   ++  qib  (bass 2 (stun [4 4] sib))
   ++  qix  (bass 16 (stun [4 4] six))
+  ++  qux  (bass 16 (stun [4 8] hit))
   ++  seb  (cold 1 (just '1'))
   ++  sed  (cook |=(a=@ (sub a '0')) (shim '1' '9'))
   ++  sev  ;~(pose sed sov)
