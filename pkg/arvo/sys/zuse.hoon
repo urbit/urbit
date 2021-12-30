@@ -2273,8 +2273,7 @@
             (sub n.domain.c sk)
           =/  t
             %+  mix  d
-            %+  tagged-hash  'BIP0340/aux'
-            [32 a]
+            (tagged-hash 'BIP0340/aux' [32 a])
           =/  rand
             %+  tagged-hash  'BIP0340/nonce'
             :-  96
