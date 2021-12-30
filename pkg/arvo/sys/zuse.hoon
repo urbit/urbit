@@ -2302,10 +2302,10 @@
           |=  [pk=@I m=@I sig=@J]
           ^-  ?
           =/  c  curve
-          =/  ppx  (lift-x pk)
-          ?~  ppx
+          =/  pup  (lift-x pk)
+          ?~  pup
             %.n
-          =/  pp  u.ppx
+          =/  pp  u.pup
           =/  r  (cut 8 [1 1] sig)
           ?:  (gte r p.domain.c)
             %.n
@@ -2322,7 +2322,7 @@
             (mul-point-scalar g.domain.c s)
           =/  bb
             (mul-point-scalar pp (sub n.domain.c e))
-          ?:  &(=(x.aa x.bb) !=(y.aa y.bb))             ::  check infinity
+          ?:  &(=(x.aa x.bb) !=(y.aa y.bb))             ::  infinite?
             %.n
           =/  rr  (add-points aa bb)
           ?.  =(0 (mod y.rr 2))
