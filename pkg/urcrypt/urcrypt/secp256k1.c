@@ -2,8 +2,10 @@
 #include "util.h"
 #include <string.h>
 #include <secp256k1.h>
+#include <secp256k1_extrakeys.h>
 #include <secp256k1_recovery.h>
 #include <secp256k1_preallocated.h>
+#include <secp256k1_schnorrsig.h>
 
 #define SECP_FLAGS SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN
 
@@ -195,4 +197,51 @@ urcrypt_secp_reco(urcrypt_secp_context* context,
       }
     }
   }
+}
+
+int
+urcrypt_secp_schnorr_sign(urcrypt_secp_context* context,
+                          uint8_t key[32],
+                          uint8_t msg[32],
+                          uint8_t aux[32],
+                          uint8_t out_sig[64])
+{
+  secp256k1_keypair keypair;
+
+  urcrypt__reverse(32, key);
+  urcrypt__reverse(32, msg);
+  urcrypt__reverse(32, aux);
+
+  if ( 1 != secp256k1_keypair_create(context->secp, &keypair, key) ) {
+    return -1;
+  }
+  if ( 1 != secp256k1_schnorrsig_sign(context->secp, out_sig, msg, &keypair,
+                                      secp256k1_nonce_function_bip340, aux) )
+  {
+    return -1;
+  }
+
+  urcrypt__reverse(64, out_sig);
+  return 0;
+}
+
+bool
+urcrypt_secp_schnorr_veri(urcrypt_secp_context* context,
+                          uint8_t sig[64],
+                          uint8_t msg[32],
+                          uint8_t pub[32])
+{
+  secp256k1_xonly_pubkey pubkey;
+
+  urcrypt__reverse(64, sig);
+  urcrypt__reverse(32, msg);
+  urcrypt__reverse(32, pub);
+
+  if ( 1 != secp256k1_xonly_pubkey_parse(context->secp, &pubkey, pub) ) {
+    return false;
+  }
+  if ( 1 != secp256k1_schnorrsig_verify(context->secp, sig, msg, &pubkey) ) {
+    return false;
+  }
+  return true;
 }
