@@ -2238,12 +2238,10 @@
       ++  schnorr
         =>  |%  ++  tagged-hash
                   |=  [tag=@ [l=@ x=@]]
-                  =+  hat=(shax tag)
-                  %-  shay
-                  =/  pin
-                    (cat 8 hat (cat 8 hat x))
-                  [(add 64 l) pin]
-                ++  flip  |=(byts (rev 3 wid dat))      ::  endianness remedy
+                  =+  hat=(sha-256:sha (swp 3 tag))
+                  %-  sha-256l:sha
+                  :-  (add 64 l)
+                  (can 3 ~[[l x] [32 hat] [32 hat]])
                 ++  lift-x
                   |=  x=@I
                   ^-  (unit point)
@@ -2274,19 +2272,14 @@
               sk
             (sub n.domain.c sk)
           =/  t
-            %+  mix
-              (flip 32 d)
+            %+  mix  d
             %+  tagged-hash  'BIP0340/aux'
-            [32 (flip 32 a)]
+            [32 a]
           =/  rand
             %+  tagged-hash  'BIP0340/nonce'
             :-  96
-            %+  can  8
-            :~  [1 t]
-                [1 (flip 32 x.pp)]
-                [1 (flip 32 m)]
-            ==
-          =/  kp  (mod (flip 32 rand) n.domain.c)
+            (can 8 ~[[1 m] [1 x.pp] [1 t]])
+          =/  kp  (mod rand n.domain.c)
           =/  rr  (mul-point-scalar g.domain.c kp)
           =/  k
             ?:  =(0 (mod y.rr 2))
@@ -2295,14 +2288,9 @@
           =/  e
             %-  mod
             :_  n.domain.c
-            %+  flip  32
             %+  tagged-hash  'BIP0340/challenge'
             :-  96
-            %+  can  8
-            :~  [1 (flip 32 x.rr)]
-                [1 (flip 32 x.pp)]
-                [1 (flip 32 m)]
-            ==
+            (can 8 ~[[1 m] [1 x.pp] [1 x.rr]])
           =/  sig
             %^  cat  8
               (mod (add k (mul e d)) n.domain.c)
@@ -2328,14 +2316,9 @@
           =/  e
             %-  mod
             :_  n.domain.c
-            %+  flip  32
             %+  tagged-hash  'BIP0340/challenge'
             :-  96
-            %+  can  8
-            :~  [1 (flip 32 r)]
-                [1 (flip 32 x.pp)]
-                [1 (flip 32 m)]
-            ==
+            (can 8 ~[[1 m] [1 x.pp] [1 r]])
           =/  aa
             (mul-point-scalar g.domain.c s)
           =/  bb
