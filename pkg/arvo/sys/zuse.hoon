@@ -2236,7 +2236,7 @@
         ?<  =([0 0] pub)
         pub
       ++  schnorr
-        ~%  %schnorr  +  ~
+        ~%  %schnorr  ..schnorr  ~
         =>  |%  ++  tagged-hash
                   |=  [tag=@ [l=@ x=@]]
                   =+  hat=(sha-256:sha (swp 3 tag))
