@@ -2236,6 +2236,7 @@
         ?<  =([0 0] pub)
         pub
       ++  schnorr
+        ~%  %schnorr  +  ~
         =>  |%  ++  tagged-hash
                   |=  [tag=@ [l=@ x=@]]
                   =+  hat=(sha-256:sha (swp 3 tag))
@@ -2260,7 +2261,7 @@
         |%
         ::
         ++  sign                                        ::  schnorr signature
-          ::  ~/  %sosi
+          ~/  %sosi
           |=  [sk=@I m=@I a=@I]
           ^-  @J
           =/  c  curve
@@ -2298,7 +2299,7 @@
           sig
         ::
         ++  verify                                      ::  schnorr verify
-          ::  ~/  %sove
+          ~/  %sove
           |=  [pk=@I m=@I sig=@J]
           ^-  ?
           =/  c  curve
