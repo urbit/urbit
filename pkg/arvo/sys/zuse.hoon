@@ -4244,7 +4244,7 @@
             [b+8 t+9 n+10 f+12 r+13 ~]
           =*  wow  `(map @t @)`(malt lip)
           (sear ~(get by wow) low)
-        =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
+        =*  tuf  ;~(pfix (just 'u') (cook tuft qux:ab))
         ;~(pose doq fas soq bas loo tuf)
       ==
     ::                                                  ::  ++expo:de-json:html
