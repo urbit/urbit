@@ -10,7 +10,7 @@
 ::
 =/  our  p.bec
 =?  cas  =(*case cas)  [%da now]  :: set current commit when cas not provided
-=/  tak  .^(tako:clay %cs /(scot %p our)/base/(scot cas)/tako/~)
+=/  tak  .^(tako:clay %cs /(scot %p our)/[syd]/(scot cas)/tako/~)
 =/  tale=(map tako:clay [@t @t])
   .^((map tako:clay [@t @t]) %cx /(scot %p our)/[syd]/(scot %da now)/story)
 =.  tale  (~(put by tale) tak [title body])
