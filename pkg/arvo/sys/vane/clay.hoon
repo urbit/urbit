@@ -4022,7 +4022,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%tako %yaki %blob %hash %cage %open %late %base) * *] pax)
+      ?.  ?=([?(%tako %yaki %blob %hash %cage %open %late %base %base-tako) * *] pax)
         `~
       ?-    i.pax
           %tako
@@ -4065,6 +4065,18 @@
         ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
           %late  !!  :: handled in +aver
+          %base-tako
+        :: XX this ignores the given beak
+        ?>  ?=(^ t.t.pax)
+        :^  ~  ~  %uvs  !>
+        ^-  (list @uv)
+        =/  tako-a  (slav %uv i.t.pax)
+        =/  tako-b  (slav %uv i.t.t.pax)
+        =/  yaki-a  (~(got by hut.ran) tako-a)
+        =/  yaki-b  (~(got by hut.ran) tako-b)
+        %+  turn  ~(tap in (find-merge-points yaki-a yaki-b))
+        |=  =yaki
+        r.yaki
           %base
         ?>  ?=(^ t.t.pax)
         :^  ~  ~  %uvs  !>
