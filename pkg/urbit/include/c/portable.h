@@ -92,7 +92,6 @@
 #   else
       #error "port: headers"
 #   endif
-#   include "c/types.h"
 
 #   ifndef __has_feature
 #     define __has_feature(x) 0
@@ -146,9 +145,6 @@
 #     define c3_global
 #   endif
 
-  /** Native page size.
-  **/
-    c3_global c3_ds U3_OS_NativePageWords;
 
   /** External, OS-independent library dependencies.
   **/

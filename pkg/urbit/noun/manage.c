@@ -780,40 +780,20 @@ u3m_leap(c3_w pad_w)
       pad_w -= u3R->all.fre_w;
     }
 #endif
-    pad_w += c3_wiseof(u3a_road);
-    if ( pad_w  >= u3a_open(u3R) ) {
+    if ( (pad_w + c3_wiseof(u3a_road)) >= u3a_open(u3R) ) {
       u3m_bail(c3__meme);
     }
-    len_w = (u3a_open(u3R) - pad_w);
+    len_w = u3a_open(u3R) - (pad_w + c3_wiseof(u3a_road));
   }
 
   /* Allocate a region on the cap.
   */
   {
-    u3p(c3_w) top_p;
     u3p(c3_w) bot_p;
 
     if ( c3y == u3a_is_north(u3R) ) {
-      /* Align the space between the home road's hat and cap to native page
-      ** boundaries and disable page tracking on the pad and inner roads.
-      */
-      if ( &u3H->rod_u == u3R ) {
-        u3p(c3_w) har_p = c3_rup(u3R->hat_p, U3_OS_NativePageWords);
-        u3p(c3_w) car_p = c3_rud(u3R->cap_p, U3_OS_NativePageWords);
-        if ( 0 != mprotect(u3to(void*, har_p),
-                           (car_p - har_p) << 2,
-                           PROT_READ | PROT_WRITE) )
-        {
-          fprintf(stderr, "leap: unable to disable page tracking "
-                          "on inner roads, continuing\r\n");
-        }
-        top_p = car_p;
-      }
-      else {
-        top_p = u3R->cap_p;
-      }
-      bot_p = (top_p - len_w);
-      u3R->cap_p = bot_p;
+      bot_p = (u3R->cap_p - len_w);
+      u3R->cap_p -= len_w;
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
@@ -825,8 +805,7 @@ u3m_leap(c3_w pad_w)
     }
     else {
       bot_p = u3R->cap_p;
-      top_p = (bot_p + len_w);
-      u3R->cap_p = top_p;
+      u3R->cap_p += len_w;
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
@@ -898,61 +877,6 @@ u3m_fall()
   */
   u3R = u3to(u3_road, u3R->par_p);
   u3R->kid_p = 0;
-
-  /* Write-protect all clean pages in the loom when returning to the home road.
-  **
-  ** The naive approach of one mprotect() call per one clean page is too slow,
-  ** so we aggregate the clean pages into contiguous blocks, each of which can
-  ** be write-protected with a single mprotect() call.
-  */
-  if ( &u3H->rod_u == u3R ) {
-    static const c3_w sen_w = 0xffffffff;
-    c3_w sar_w = sen_w;
-    c3_o suc_o = c3y;
-    for ( c3_w pag_w = 0; pag_w < u3a_pages; pag_w++ ) {
-      c3_w blk_w = pag_w >> 5;
-      c3_w bit_w = pag_w & 31;
-
-      // Clean page. Mark the page as the start of a contiguous block if it is
-      // either (1) the first page in the loom or (2) immediately preceded by a
-      // dirty page.
-      if ( 0 == (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
-        if ( sen_w == sar_w ) {
-          sar_w = pag_w;
-        }
-        continue;
-      }
-
-      // Dirty page, but we haven't marked a clean page because this page is
-      // either (1) the first page in the loom or (2) immediately preceded by a
-      // dirty page.
-      if ( sen_w == sar_w ) {
-        continue;
-      }
-
-      // Dirty page marking the end of a contiguous block of clean pages.
-      void* adr_v = u3_Loom + (sar_w << u3a_page);
-      c3_w siz_w = (pag_w - sar_w) << (u3a_page + 2);
-      if ( 0 != mprotect(adr_v, siz_w, PROT_READ) ) {
-        fprintf(stderr,
-                "fall: unable to write-protect loom "
-                "offsets 0x%x to 0x%x: %s\r\n",
-                sar_w << u3a_page,
-                pag_w << u3a_page,
-                strerror(errno));
-        suc_o = c3n;
-        break;
-      }
-
-      sar_w = sen_w;
-    }
-
-    if ( c3n == suc_o ) {
-      fprintf(stderr,
-              "fall: unable to reinstate page tracking on home road, "
-              "continuing\r\n");
-    }
-  }
 }
 
 /* u3m_hate(): new, integrated leap mechanism (enter).
@@ -1786,19 +1710,6 @@ _cm_crypto()
 void
 u3m_init(void)
 {
-  if ( 0 == U3_OS_NativePageWords) {
-    U3_OS_NativePageWords =
-#if defined(U3_OS_linux)
-      sysconf(_SC_PAGESIZE) >> 2;
-#elif defined(U3_OS_osx)
-      sysconf(_SC_PAGESIZE) >> 2;
-#elif defined(U3_OS_bsd)
-      sysconf(_SC_PAGESIZE) >> 2;
-#else
-#  error "port: NativePageWords"
-#endif
-  }
-
   _cm_limits();
   _cm_signals();
   _cm_crypto();
