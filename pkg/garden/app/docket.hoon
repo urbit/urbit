@@ -62,7 +62,7 @@
   ~!  +.maybe-old
   =/  old=versioned-state
     ?:  ?=(%& -.maybe-old)  [%0 +.maybe-old]
-  !<(versioned-state vase)
+  [%1 !<(state-1 vase)]
 
   |^
   |-
