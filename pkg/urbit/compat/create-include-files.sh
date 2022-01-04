@@ -19,4 +19,4 @@ poor_mans_xxd () {
 }
 
 [ -e include/ca-bundle.h  ] || poor_mans_xxd $2 include_ca_bundle_crt >include/ca-bundle.h
-[ -e include/ivory_impl.h ] || poor_mans_xxd ../../bin/ivory.pill u3_Ivory_pill >include/ivory.h
+[ -e include/ivory_impl.h ] || poor_mans_xxd ../../bin/ivory.pill u3_Ivory_pill >include/ivory_impl.h
