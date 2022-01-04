@@ -1,6 +1,6 @@
 {
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "tmp"],
+  "exclude": ["node_modules", "dist", "tmp", "src/proxy/index.ts"],
   "compilerOptions": {
     "outDir": "./tmp",
     "module": "ESNext",

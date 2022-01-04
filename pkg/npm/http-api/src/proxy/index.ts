@@ -1,8 +1,6 @@
-/// <reference lib="WebWorker" />
-
 import { ProxyStreamMessage } from 'src';
 
-const sw = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
+const sw = self as ServiceWorkerGlobalScope & typeof globalThis;
 
 interface ProxyMessage {
   type: 'PROXY_MESSAGE';
