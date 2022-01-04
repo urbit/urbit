@@ -981,5 +981,5 @@ u3e_yolo(void)
 void
 u3e_foul(void)
 {
-  memset((void*)u3P.dit_w, 0xff, u3a_pages >> 3);
+  memset((void*)u3P.dit_w, 0xff, sizeof(u3P.dit_w));
 }
