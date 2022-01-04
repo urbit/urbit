@@ -20,6 +20,7 @@
     ^-  (list path)
     :~  /mar/noun/hoon
         /mar/hoon/hoon
+        /mar/txt/hoon
         /mar/kelvin/hoon
         /sys/kelvin
     ==
