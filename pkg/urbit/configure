@@ -24,11 +24,6 @@ deps="          \
   softfloat3    \
 "
 
-headers="       \
-  ca-bundle.h   \
-  ivory.h       \
-"
-
 echo '#pragma once' >include/config.h
 
 defmacro () {
@@ -183,10 +178,6 @@ LDFLAGS="${LDFLAGS-} $($PKG_CONFIG --libs $pkgc_deps)"
 
 for dep in $deps; do
   LDFLAGS="${LDFLAGS-} -l$dep"
-done
-
-for header in $headers; do
-  CFLAGS="${CFLAGS-} -I$header"
 done
 
 compat="${compat-posix}"
