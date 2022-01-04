@@ -1,14 +1,25 @@
-/// <reference lib="WebWorker" />
-
 import { ProxyStreamMessage } from 'src';
 
-const sw = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
+const sw = self as any; //Really difficult to type service workers
+
+interface ServiceWorkerClient {
+  postMessage: (msg: any) => void;
+}
+interface FetchEvent {
+  request: Request;
+  clientId: string;
+  respondWith: (rsp: Response) => void;
+}
 
 interface ProxyMessage {
   type: 'PROXY_MESSAGE';
   id: string;
   clientId: string;
   payload: string;
+}
+
+interface MessageEvent {
+  data?: ProxyMessage;
 }
 
 interface StreamMap {
@@ -49,7 +60,7 @@ export function proxyStreams() {
     stream.enqueue(msg.payload);
   }
 
-  sw.addEventListener('message', async (event) => {
+  sw.addEventListener('message', async (event: MessageEvent) => {
     if (!event.data) {
       return;
     }
@@ -59,7 +70,7 @@ export function proxyStreams() {
     }
   });
 
-  self.addEventListener('fetch', (event: FetchEvent) => {
+  sw.addEventListener('fetch', (event: FetchEvent) => {
     const { headers, url } = event.request;
     if (
       headers.get('Accept') !== 'text/event-stream' ||
@@ -84,7 +95,7 @@ export function proxyStreams() {
         proxiedStreams[id] = controller;
 
         setTimeout(() => {
-          sw.clients.get(event.clientId).then((client) => {
+          sw.clients.get(event.clientId).then((client: ServiceWorkerClient) => {
             client.postMessage(msg);
           });
         }, 0);
