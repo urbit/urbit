@@ -1,25 +1,24 @@
 /+  dock=docket
-|_  =docket:dock
+|_  docket=docket-0:dock
 ++  grow
   |%
   ++  mime  
     ^-  ^mime
-    [/text/x-docket (as-octt:mimes:html (spit-docket:mime:dock docket))]
+    [/text/x-docket (as-octt:mimes:html (spit-docket-0:mime:dock docket))]
   ++  noun  docket
-  ++  json  (docket:enjs:dock docket)
+  ++  json  (docket-0:enjs:dock docket)
   --
 ++  grab
   |%
   ::
   ++  mime
     |=  [=mite len=@ud tex=@]
-    ^-  docket:dock
+    ^-  docket-0:dock
     %-  need
-    %-  from-clauses:mime:dock
+    %-  from-clauses-0:mime:dock
     !<((list clause:dock) (slap !>(~) (ream tex)))
-
   ::
-  ++  noun  docket:dock
+  ++  noun  docket-0:dock
   --
 ++  grad  %noun
 --

@@ -17,6 +17,37 @@
         license=(unit cord)
     ==
   ::
+  ++  finalize-0
+    |=  =draft
+    ^-  (unit docket-0)
+    ?~  title.draft  ~
+    ?~  info.draft  ~
+    ?~  color.draft  ~
+    ?~  version.draft  ~
+    ?~  website.draft  ~
+    ?~  license.draft  ~
+    =/  href-0=(unit href-0)
+      ?^  site.draft  `[%site u.site.draft]
+      ?~  base.draft  ~
+      ?^  glob-http.draft
+        `[%glob u.base hash.u.glob-http %http url.u.glob-http]:draft
+      ?~  glob-ames.draft
+        ~
+      `[%glob u.base hash.u.glob-ames %ames ship.u.glob-ames]:draft
+    ?~  href-0  ~
+    =,  draft
+    :-  ~
+    :*  %1
+        u.title
+        u.info
+        u.color
+        u.href-0
+        image
+        u.version
+        u.website
+        u.license
+    ==
+  ::
   ++  finalize
     |=  =draft
     ^-  (unit docket)
@@ -49,6 +80,29 @@
         u.website
         u.license
     ==
+  ::
+  ++  from-clauses-0
+    =|  =draft
+    |=  cls=(list clause)
+    ^-  (unit docket-0)
+    =*  loop  $
+    ?~  cls  (finalize-0 draft)
+    =*  clause  i.cls
+    =.  draft
+      ?-  -.clause
+        %title  draft(title `title.clause)
+        %info   draft(info `info.clause)
+        %color  draft(color `color.clause)
+        %glob-http   draft(glob-http `[url hash]:clause)
+        %glob-ames   draft(glob-ames `[ship hash]:clause)
+        %base   draft(base `base.clause)
+        %site   draft(site `path.clause)
+        %image  draft(image `url.clause)
+        %version  draft(version `version.clause)
+        %website  draft(website `website.clause)
+        %license  draft(license `license.clause)
+      ==
+    loop(cls t.cls)
   ::
   ++  from-clauses
     =|  =draft
@@ -95,6 +149,26 @@
               %ames  [%glob-ames ship.location hash]:ref
     ==  ==  ==
   ::
+  ++  to-clauses-0
+    |=  d=docket-0
+    ^-  (list clause)
+    %-  zing
+    :~  :~  title+title.d
+            info+info.d
+            color+color.d
+            version+version.d
+            website+website.d
+            license+license.d
+        ==
+        ?~  image.d  ~  ~[image+u.image.d]
+        ?:  ?=(%site -.href-0.d)  ~[site+path.href-0.d]
+        =/  ref=glob-reference  glob-reference.href-0.d
+        :~  base+base.href-0.d
+            ?-  -.location.ref
+              %http  [%glob-http url.location.ref hash.ref]
+              %ames  [%glob-ames ship.location.ref hash.ref]
+    ==  ==  ==
+  ::
   ++  spit-clause
     |=  =clause
     ^-  tape
@@ -120,6 +194,15 @@
     ;:  welp
       ":~\0a"
       `tape`(zing (join "\0a" (turn (to-clauses dock) spit-clause)))
+      "\0a=="
+    ==
+  ::
+  ++  spit-docket-0
+    |=  dock=docket-0
+    ^-  tape
+    ;:  welp
+      ":~\0a"
+      `tape`(zing (join "\0a" (turn (to-clauses-0 dock) spit-clause)))
       "\0a=="
     ==
   --
@@ -177,6 +260,18 @@
           glob-reference+(glob-reference glob-reference.u.s)
       ==
   ::
+  ++  href-0
+    |=  h=^href-0
+    %+  frond  -.h
+    ?-    -.h
+        %site  s+(spat path.h)
+        %glob
+      %-  pairs
+      :~  base+s+base.h
+          glob-reference+(glob-reference glob-reference.h)
+        ==
+    ==
+  ::
   ++  href
     |=  h=^href
     %+  frond  +<.h
@@ -216,6 +311,19 @@
         info+s+info.d
         color+s+(scot %ux color.d)
         href+(href href.d)
+        image+?~(image.d ~ s+u.image.d)
+        version+(version version.d)
+        license+s+license.d
+        website+s+website.d
+    ==
+  ++  docket-0
+    |=  d=^docket-0
+    ^-  json
+    %-  pairs
+    :~  title+s+title.d
+        info+s+info.d
+        color+s+(scot %ux color.d)
+        href-0+(href-0 href-0.d)
         image+?~(image.d ~ s+u.image.d)
         version+(version version.d)
         license+s+license.d

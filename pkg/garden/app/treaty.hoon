@@ -5,17 +5,31 @@
 ::
 +$  card  card:agent:gall
 +$  state-0
-  $:  treaties=(map [=ship =desk] treaty)
+  $:
+      treaties=(map [=ship =desk] treaty-0)
+      sovereign=(map desk treaty-0)
+      entente=alliance
+      =allies:ally
+      direct=(set [=ship =desk])
+  ==
++$  state-1
+  $:
+      %1
+      treaties=(map [=ship =desk] treaty)
       sovereign=(map desk treaty)
       entente=alliance
       =allies:ally
       direct=(set [=ship =desk])
   ==
++$  versioned-state
+  $%  [%0 state-0]
+      state-1
+  ==
 --
 ^-  agent:gall
 %+  verb  |
 %-  agent:dbug
-=|  state-0
+=|  state-1
 =*  state  -
 =<
 |_  =bowl:gall
@@ -30,8 +44,42 @@
 ++  on-save  !>(state)
 ++  on-load
   |=  =vase
-  =+  !<(old=state-0 vase)
-  `this(state old)
+  =/  maybe-old  (mule |.(!<(state-0 vase)))
+  =/  old=versioned-state
+    ?:  ?=(%& -.maybe-old)  [%0 +.maybe-old]
+  !<(versioned-state vase)
+  |-
+  ?-  -.old
+    %0
+      =/  treats=(map [ship desk] treaty)
+        %-  ~(run by treaties.old)
+        |=  oter=treaty-0
+        ^-  treaty
+        =/  tern=treaty  *treaty
+        %=  tern
+          ship  ship.oter
+          desk  desk.oter
+          case  case.oter
+          hash  hash.oter
+          docket  *docket:docket
+        ==
+      =/  royals=(map desk treaty)
+        %-  ~(run by sovereign.old)
+        |=  oter=treaty-0
+        ^-  treaty
+        =/  tern=treaty  *treaty
+        %=  tern
+          desk  desk.oter
+          case  case.oter
+          hash  hash.oter
+          docket  *docket:docket
+        ==
+      =/  new=versioned-state  [%1 +.old(treaties treats, sovereign royals)]
+      $(old new)
+    %1  `this(state old)
+  ==
+
+
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -250,7 +298,8 @@
       =.  sovereign  (~(del by sovereign) desk)
       [~[kick:so] this]
     =*  cage  r.u.riot
-    ?.  =(%docket-0 p.cage)  `this
+    ::  support multiple docket versions?
+    ?.  =(%docket-1 p.cage)  `this
     =+  !<(=docket:docket q.cage)
     =/  =treaty  (treaty-from-docket:cc desk docket)
     =.  sovereign  (~(put by sovereign) desk treaty)
@@ -268,7 +317,7 @@
 ::
 ++  treaty-from-docket
   |=  [=desk =docket:docket]
-  =+  .^(=cass:clay %cw (scry:io desk /desk/docket))
+  =+  .^(=cass:clay %cw (scry:io desk /desk/docket-1))
   =+  .^(hash=@uv %cz (scry:io desk ~))
   [our.bowl desk da+da.cass hash docket]
 ::  +al: Side effects for allies
@@ -322,9 +371,11 @@
   ++  wire  /sovereign/[desk]
   ++  pass  ~(. ^pass wire)
   ++  path  /treaty/(scot %p our.bowl)/[desk]
-  ++  get-docket  .^(docket:docket %cx (scry:io desk /desk/docket-0))
+  ::  support multiple docket versions?
+  ++  get-docket  .^(docket:docket %cx (scry:io desk /desk/docket-1))
+  ::  support multiple docket versions?
   ++  warp
-    (warp-our:pass desk `[%next %x da+now.bowl /desk/docket-0])
+    (warp-our:pass desk `[%next %x da+now.bowl /desk/docket-1])
   ++  kick
     (kick:io path ~)
   ++  give

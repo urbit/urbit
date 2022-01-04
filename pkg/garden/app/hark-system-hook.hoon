@@ -113,7 +113,7 @@
 ::
 ++  de
   |_  =desk
-  ++  scry-path  (scry:io desk /desk/docket-0)
+  ++  scry-path  (scry:io desk /desk/docket-1)
   ++  has-docket  .^(? %cu scry-path)
   ++  docket  .^(docket:^docket %cx scry-path)
   ++  hash    .^(@uv %cz (scry:io desk ~))

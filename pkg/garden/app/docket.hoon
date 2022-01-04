@@ -4,14 +4,22 @@
 +$  card  card:agent:gall
 +$  state-0
   $:  ::  local
+      charges=(map desk charge-0)
+  ==
++$  state-1
+  $:  ::  local
       charges=(map desk charge)
+  ==
++$  versioned-state
+  $%  [%0 state-0]
+      [%1 state-1]
   ==
 ::  $cache: impermanent state
 +$  cache
   by-base=(map term desk)
 ::
 +$  inflated-state
-  [state-0 cache]
+  [state-1 cache]
 ::  +lac: toggle verbosity
 ++  lac  &
 ::
@@ -50,12 +58,21 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  =+  !<(old=state-0 vase)
-  =*  cha  ~(. ch q.byk.bowl)
+  =/  maybe-old  (mule |.(!<(state-0 vase)))
+  ~!  +.maybe-old
+  =/  old=versioned-state
+    ?:  ?=(%& -.maybe-old)  [%0 +.maybe-old]
+  !<(versioned-state vase)
+
   |^
-  =.  -.state  old
-  =.  +.state  inflate-cache
-  `this
+  |-
+  ?-  -.old
+    %0  $(old [%1 (state-0-to-1 +.old)])
+    %1
+       =.  -.state  +.old
+       =.  +.state  inflate-cache
+       `this
+    ==
   ::
   ++  inflate-cache
     ^-  cache
@@ -64,6 +81,39 @@
     |=  [=desk =charge]
     ?.  ?=(^ spot.href.docket.charge)  ~
     `:_(desk base.u.spot.href.docket.charge)
+  ::
+  ++  state-0-to-1
+    |=  sta=state-0
+    ^-  state-1
+    =+  new-state=*state-1
+    =/  new-charges=(map desk charge)
+    %-  ~(urn by charges.sta)
+    |=  [=desk old-charge=charge-0]
+    ^-  charge
+    =/  d=docket-0  docket-0.old-charge
+    =/  ocket=docket
+      :*  %1
+          title.d
+          info.d
+          color.d
+          *href
+          image.d
+          version.d
+          website.d
+          license.d
+      ==
+    =/  res=docket
+    ?-    -.href-0.d
+        %glob
+      =/  spot   `[base.href-0.d glob-reference.href-0.d]
+      ocket(href (href spot [%glob ~]))
+        %site
+      ocket(href (href ~ href-0.d))
+    ==
+    [res chad:(~(gut by charges.sta) desk *charge)]
+    ~!  new-charges
+    =.  charges.new-state  new-charges
+    new-state
   --
 ::
 ++  on-save  !>(-.state)
@@ -407,7 +457,8 @@
 ++  cg
   |%
   ++  glob            |=(g=^glob glob-0+!>(g))
-  ++  docket          |=(d=^docket docket-0+!>(d))
+  ::  support multiple docket versions?
+  ++  docket          |=(d=^docket docket-1+!>(d))
   ++  charge-update   |=(u=^charge-update charge-update+!>(u))
   ++  kiln-uninstall  |=(=desk kiln-uninstall+!>(desk))
   ++  kiln-install
@@ -566,7 +617,7 @@
           ^-  (list card)
           =-  [%pass /write/[desk] %arvo %c %info -]~
           %+  foal:space:userlib
-            /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket-0
+            /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket-1
           %-  docket:cg
           docket.charge(glob-reference.u.spot.href [(hash-glob glob) %ames our.bowl])
       ==
@@ -721,7 +772,7 @@
         (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
         (poke-our:(pass (glob-wire ref)) %spider cage)
     ==
-  ++  docket-loc  `path`/desk/docket-0
+  ++  docket-loc  `path`/desk/docket-1
   ++  docket-exists
     ?:  =(0 ud:.^(cass:clay %cw (scry:io desk ~)))  %.n
     .^(? %cu (scry:io desk docket-loc))

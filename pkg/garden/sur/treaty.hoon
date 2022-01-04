@@ -18,6 +18,20 @@
         [%del =ship =desk]
     ==
   --
+:: TODO gotta be a better way to do this
+::
+++  treaty-0
+  =<  treaty
+  |%
+  +$  treaty
+    [=ship =desk =case hash=@uv =docket-0:docket]
+  ::
+  +$  update
+    $%  [%ini init=(map [=ship =desk] =treaty)]
+        [%add =treaty]
+        [%del =ship =desk]
+    ==
+  --
 ++  alliance
   =<  alliance
   |%

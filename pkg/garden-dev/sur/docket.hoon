@@ -1,12 +1,28 @@
 |%
 ::
+++  docket-0
+  =<  docket
+  |%
+  +$  docket
+    $:  %1
+        title=@t
+        info=@t
+        color=@ux
+        =href-0
+        image=(unit url)
+        =version
+        website=url
+        license=cord
+    ==
+  --
+::
 +$  version
   [major=@ud minor=@ud patch=@ud]
 ::
 +$  glob  (map path mime)
 ::
 +$  url   cord
-::  $glob-location: How to retrieve a glob
+::  $glob-location: where to retrieve a glob
 ::
 +$  glob-reference
   [hash=@uvH location=glob-location]
@@ -15,16 +31,22 @@
   $%  [%http =url]
       [%ames =ship]
   ==
-::  $spot: full glob reference
+::  $spot: full glob reference including the base desk
 ::
 +$  spot  (unit [base=term =glob-reference])
-::  $href: Where a tile links to
+::  $href: app links
 ::
 +$  href
   $:  =spot
   $%  [%glob ~]
       [%site =path]
   ==  ==
+::  $href-0: where tile links to
+::
++$  href-0
+  $%  [%glob base=term =glob-reference]
+      [%site =path]
+  ==
 ::  $chad: State of a docket
 ::
 +$  chad
@@ -40,6 +62,11 @@
   ==
 ::
 ::  $charge: A realized $docket
+::
++$  charge-0
+  $:  =docket-0
+      =chad
+  ==
 ::
 +$  charge
   $:  =docket
