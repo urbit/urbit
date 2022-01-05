@@ -48,18 +48,33 @@
 ::
 ++  poke-rekey                                        ::  rotate private keys
   |=  des=@t
-  =/  sed=(unit seed:jael)
+  =/  fud=(unit feed:jael)
     %+  biff
       (bind (slaw %uw des) cue)
-    (soft seed:jael)
+    (soft feed:jael)
   =<  abet
-  ?~  sed
+  ?~  fud
     ~&  %invalid-private-key
     this
-  ?.  =(our.bowl who.u.sed)
-    ~&  [%wrong-private-key-ship who.u.sed]
+  =/  fed  (need fud)
+  ?@  -.fed
+    ?.  =(our.bowl who.fed)
+      ~&  [%wrong-private-key-ship who.fed]
+      this
+    (emit %pass / %arvo %j %rekey lyf.fed key.fed)
+  ?.  =(our.bowl who.fed)
+    ~&  [%wrong-private-key-ship who.fed]
     this
-  (emit %pass / %arvo %j %rekey lyf.u.sed key.u.sed)
+  =|  caz=(list card)
+  %-  emil
+  |-
+  ?~  kyz.fed
+    caz
+  =/  sed=seed:jael  [who [lyf key ~]:i.kyz]:fed
+  %=  $
+      kyz.fed  t.kyz.fed
+      caz      (snoc caz [%pass / %arvo %j %rekey lyf.sed key.sed])
+  ==
 ::
 ++  ames-secret
   ^-  @t
