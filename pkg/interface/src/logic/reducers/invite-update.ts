@@ -8,6 +8,7 @@ type InviteState = State & BaseState<State>;
 const initial = (json: InviteUpdate, state: InviteState): InviteState => {
   const data = _.get(json, 'initial', false);
   if (data) {
+    state.loaded = true;
     state.invites = data;
   }
   return state;
