@@ -471,25 +471,6 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
   return pgc_w;
 }
 
-/* _ce_patch_junk_page(): mark a page as junk.
-*/
-static void
-_ce_patch_junk_page(u3_ce_patch* pat_u,
-                    c3_w         pag_w)
-{
-  c3_w blk_w = (pag_w >> 5);
-  c3_w bit_w = (pag_w & 31);
-
-  // u3l_log("protect b: page %d\r\n", pag_w);
-  if ( -1 == mprotect(u3_Loom + (pag_w << u3a_page),
-                      (1 << (u3a_page + 2)),
-                      PROT_READ) )
-  {
-    c3_assert(0);
-  }
-  u3P.dit_w[blk_w] &= ~(1 << bit_w);
-}
-
 /* _ce_patch_compose(): make and write current patch.
 */
 static u3_ce_patch*
@@ -545,9 +526,6 @@ _ce_patch_compose(void)
     }
     for ( i_w = 0; i_w < sou_w; i_w++ ) {
       pgc_w = _ce_patch_save_page(pat_u, (u3a_pages - (i_w + 1)), pgc_w);
-    }
-    for ( i_w = nor_w; i_w < (u3a_pages - sou_w); i_w++ ) {
-      _ce_patch_junk_page(pat_u, i_w);
     }
 
     pat_u->con_u->nor_w = nor_w;
