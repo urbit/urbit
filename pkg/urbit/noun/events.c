@@ -677,27 +677,25 @@ _ce_image_blit(u3e_image* img_u,
     return;
   }
 
-  c3_w siz_w = img_u->pgs_w * (1 << (u3a_page + 2));
+  c3_w i_w;
+  c3_w siz_w = 1 << (u3a_page + 2);
 
   lseek(img_u->fid_i, 0, SEEK_SET);
-  if ( -1 == read(img_u->fid_i, ptr_w, siz_w) ) {
-    fprintf(stderr, "loom: image blit read: %s\r\n", strerror(errno));
-    c3_assert(0);
-  }
-
-  {
-    c3_w i_w;
-    for ( i_w = 0; i_w < img_u->pgs_w; i_w++) {
-      c3_w pag_w = (u3a_outa(ptr_w) >> u3a_page) + i_w;
-      c3_w blk_w = pag_w >> 5;
-      c3_w bit_w = pag_w & 31;
-      u3P.dit_w[blk_w] &= ~(1 << bit_w);
+  for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
+    if ( -1 == read(img_u->fid_i, ptr_w, siz_w) ) {
+      fprintf(stderr, "loom: image blit read: %s\r\n", strerror(errno));
+      c3_assert(0);
     }
-  }
 
-  if ( 0 != mprotect(ptr_w, siz_w, PROT_READ) ) {
-    fprintf(stderr, "loom: live mprotect: %s\r\n", strerror(errno));
-    c3_assert(0);
+    if ( 0 != mprotect(ptr_w, siz_w, PROT_READ) ) {
+      fprintf(stderr, "loom: live mprotect: %s\r\n", strerror(errno));
+      c3_assert(0);
+    }
+
+    c3_w pag_w = u3a_outa(ptr_w) >> u3a_page;
+    c3_w blk_w = pag_w >> 5;
+    c3_w bit_w = pag_w & 31;
+    u3P.dit_w[blk_w] &= ~(1 << bit_w);
   }
 }
 
