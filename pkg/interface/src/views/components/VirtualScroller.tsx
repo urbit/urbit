@@ -441,7 +441,6 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
     const startOffset = this.startOffset();
 
     if (scrollTop < ZONE_SIZE) {
-      log('scroll', `Entered start zone ${scrollTop}`);
       if (startOffset === 0) {
         onStartReached && onStartReached();
         this.scrollLocked = true;
@@ -458,7 +457,6 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
       }
     } else if (scrollTop + windowHeight >= scrollHeight - ZONE_SIZE) {
       this.scrollLocked = false;
-      log('scroll', `Entered end zone ${scrollTop}`);
 
       const newOffset =
         clamp(startOffset + this.pageDelta, 0, this.props.data.size - this.pageSize);

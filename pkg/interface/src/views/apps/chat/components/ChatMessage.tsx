@@ -179,44 +179,65 @@ export const MessageAuthor = React.memo<any>(({
 MessageAuthor.displayName = 'MessageAuthor';
 
 type MessageProps = { timestamp: string; timestampHover: boolean; }
-  & Pick<ChatMessageProps, 'msg' | 'transcluded' | 'showOurContact'>
+  & Pick<ChatMessageProps, 'msg' | 'transcluded' | 'showOurContact' | 'isReply'>
 
 export const Message = React.memo(({
   timestamp,
   msg,
   timestampHover,
   transcluded,
-  showOurContact
+  showOurContact,
+  isReply = false
 }: MessageProps) => {
   const { hovering, bind } = useHovering();
+  const defaultCollapsed = isReply && transcluded > 0;
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+
   return (
-    <Box pl="44px" pr={4} width="100%" position='relative'>
-      {timestampHover ? (
-        <Text
-          display={hovering ? 'block' : 'none'}
-          position='absolute'
-          width='36px'
-          textAlign='right'
-          left={0}
-          top='2px'
-          lineHeight="tall"
-          fontSize={0}
-          whiteSpace='nowrap'
-          gray
-        >
-          {timestamp}
-        </Text>
-      ) : (
-        <></>
+    <Row width="100%">
+      {defaultCollapsed && (
+        <Icon
+          ml="12px"
+          mr="8px"
+          p={1}
+          display="block"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setCollapsed(!collapsed);
+          }}
+          icon={collapsed ? 'TriangleEast' : 'TriangleSouth'}
+        />
       )}
-      <GraphContent
-        {...bind}
-        width="100%"
-        contents={msg.contents}
-        transcluded={transcluded}
-        showOurContact={showOurContact}
-      />
-    </Box>
+      <Box pl={defaultCollapsed ? '0px' : '44px'} pr={4} width="calc(100% - 44px)" position='relative'>
+        {timestampHover ? (
+          <Text
+            display={hovering ? 'block' : 'none'}
+            position='absolute'
+            width='36px'
+            textAlign='right'
+            left={0}
+            top='2px'
+            lineHeight="tall"
+            fontSize={0}
+            whiteSpace='nowrap'
+            gray
+          >
+            {timestamp}
+          </Text>
+        ) : (
+          <></>
+        )}
+        <GraphContent
+          {...bind}
+          width="100%"
+          contents={msg.contents}
+          transcluded={transcluded}
+          showOurContact={showOurContact}
+          collapsed={collapsed}
+        />
+      </Box>
+    </Row>
   );
 });
 
@@ -379,6 +400,7 @@ interface ChatMessageProps {
   permalink?: string;
   transcluded?: number;
   isAdmin?: boolean;
+  isReply?: boolean;
   className?: string;
   isPending?: boolean;
   style?: unknown;
@@ -408,7 +430,8 @@ function ChatMessage(props: ChatMessageProps) {
     showOurContact,
     hideHover,
     dismissUnread = () => null,
-    permalink = ''
+    permalink = '',
+    isReply = false
   } = props;
 
   if (typeof msg === 'string' || !msg) {
@@ -478,6 +501,7 @@ function ChatMessage(props: ChatMessageProps) {
       timestampHover={!renderSigil}
       transcluded={transcluded}
       showOurContact={showOurContact}
+      isReply={isReply}
     />
   ), [renderSigil, msg, timestamp, transcluded, showOurContact]);
 

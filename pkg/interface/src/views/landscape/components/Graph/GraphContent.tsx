@@ -281,9 +281,12 @@ const renderers = {
       </Text>
     );
   },
-  paragraph: ({ children }) => {
+  paragraph: ({ children, collapsed = false }) => {
+    const containerStyle = collapsed
+      ? { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }
+      : {};
     return (
-      <Box display="block">
+      <Box display="block" {...containerStyle}>
         <Text
           fontSize={1}
           lineHeight="tall"
@@ -356,6 +359,9 @@ const renderers = {
   ),
   'graph-reference': ({ reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
+    if (transcluded > 1) {
+      return null;
+    }
     return (
       <Box my={2} flexShrink={0}>
         <PermalinkEmbed
@@ -407,7 +413,6 @@ export function Graphdown<T extends {} = {}>(
       depth={depth}
       {...rest}
       {...nodeRest}
-      tall={tall}
     >
       {children.map((c, idx) => (
         <Graphdown
@@ -437,12 +442,13 @@ export const GraphContent = React.memo((
     contents,
     tall = false,
     transcluded = 0,
+    collapsed = false,
     ...rest
   } = props;
   const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
-      <Graphdown transcluded={transcluded} ast={ast} tall={tall} />
+      <Graphdown transcluded={transcluded} ast={ast} tall={tall} collapsed={collapsed} />
     </Box>
   );
 });

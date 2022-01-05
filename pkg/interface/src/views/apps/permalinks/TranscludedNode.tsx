@@ -297,6 +297,7 @@ export function TranscludedNode(props: {
             fontSize={0}
             showOurContact={showOurContact}
             mt='0'
+            isReply
           />
         </Row>
       );
@@ -305,14 +306,14 @@ export function TranscludedNode(props: {
     case 'link':
       return <TranscludedLinkNode {...props} />;
     case 'post':
-    return (
-      <TranscludedPost
-        post={node.post}
-        commentsCount={Object.keys(node.children.root).length}
-        group={group}
-        transcluded={transcluded}
-      />)
-      ;
+      return (
+        <TranscludedPost
+          post={node.post}
+          commentsCount={Object.keys(node.children.root).length}
+          group={group}
+          transcluded={transcluded}
+        />
+      );
     default:
       return null;
   }
