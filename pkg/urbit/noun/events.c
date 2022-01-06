@@ -260,23 +260,6 @@ _ce_patch_open(void)
   return pat_u;
 }
 
-/* _ce_patch_write_page(): write a page of patch memory.
-*/
-static void
-_ce_patch_write_page(u3_ce_patch* pat_u,
-                     c3_w         pgc_w,
-                     c3_w*        mem_w)
-{
-  if ( -1 == lseek(pat_u->mem_i, (pgc_w << (u3a_page + 2)), SEEK_SET) ) {
-    c3_assert(0);
-  }
-  if ( (1 << (u3a_page + 2)) !=
-       write(pat_u->mem_i, mem_w, (1 << (u3a_page + 2))) )
-  {
-    c3_assert(0);
-  }
-}
-
 /* _ce_patch_count_page(): count a page, producing new counter.
 */
 static c3_w
@@ -312,7 +295,12 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
 #if 0
     u3l_log("protect a: page %d\r\n", pag_w);
 #endif
-    _ce_patch_write_page(pat_u, pgc_w, mem_w);
+    // Write page to patch's memory file.
+    {
+      c3_assert(-1 != lseek(pat_u->mem_i, pgc_w << (u3a_page + 2), SEEK_SET));
+      c3_w len_w = 1 << (u3a_page + 2);
+      c3_assert(len_w == write(pat_u->mem_i, mem_w, len_w));
+    }
 
     if ( -1 == mprotect(u3_Loom + (pag_w << u3a_page),
                         (1 << (u3a_page + 2)),
