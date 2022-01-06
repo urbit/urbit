@@ -746,6 +746,7 @@
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
+        [%wriz p=desk q=(unit loot)]                           ::  unified response
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
@@ -831,6 +832,8 @@
         %meet-that                                      ::  hers if conflict
     ==                                                  ::
   +$  lobe  @uvI                                        ::  blob ref
+  +$  loot  
+    [=case res=(map [=care =path] (unit cage))]
   +$  maki  [p=@ta q=@ta r=@ta s=path]                  ::
   +$  miso                                              ::  ankh delta
     $%  [%del ~]                                        ::  delete
@@ -874,6 +877,12 @@
         [%next =mood]                                   ::  await next version
         [%mult =mool]                                   ::  next version of any
         [%many track=? =moat]                           ::  track range
+        [%rage =rage]                                   ::  unified request
+    ==                                                  ::
+  +$  rage                                              ::  unified request
+    $:  wen=?(%this %next)                              ::  current or next
+        =case                                           ::
+        req=(set [=care =path])                         ::  request paths
     ==                                                  ::
   +$  real                                              ::  resolved permissions
     $:  mod=?(%black %white)                            ::
@@ -881,9 +890,22 @@
     ==                                                  ::
   +$  regs  (map path rule)                             ::  rules for paths
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
-  +$  riff-any
-    $%  [%1 =riff]
-    ==
+  +$  raff  (pair desk (unit rage))                     ::  unified request
+  ++  riff-any
+    =<  any
+    |%
+    +$  any
+      $%  [%1 riff=riff-1]
+          [%2 =riff]
+      ==
+    +$  riff-1  (pair desk (unit rave-1))
+    +$  rave-1
+      $%  [%sing =mood]
+          [%next =mood]
+          [%mult =mool]
+          [%many track=? =moat]
+      ==
+    --
   +$  rite                                              ::  new permissions
     $%  [%r red=(unit rule)]                            ::  for read
         [%w wit=(unit rule)]                            ::  for write
@@ -2134,6 +2156,7 @@
           $%  gift:behn
               $>(%wris gift:clay)
               $>(%writ gift:clay)
+              $>(%wriz gift:clay)
               $>(%mere gift:clay)
               $>(%unto gift:gall)
           ==
