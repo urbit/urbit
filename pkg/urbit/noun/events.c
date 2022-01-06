@@ -674,6 +674,8 @@ _ce_image_blit(u3e_image* img_u,
     c3_w blk_w = pag_w >> 5;
     c3_w bit_w = pag_w & 31;
     u3P.dit_w[blk_w] &= ~(1 << bit_w);
+
+    ptr_w += stp_ws;
   }
 }
 
