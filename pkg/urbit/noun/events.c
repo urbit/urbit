@@ -240,13 +240,7 @@ _ce_patch_open(void)
          len_w != sizeof(u3e_control) +
                   (pat_u->con_u->pgs_w * sizeof(u3e_line)) )
     {
-      c3_free(pat_u->con_u);
-      pat_u->con_u = 0;
-
-      close(pat_u->ctl_i);
-      close(pat_u->mem_i);
-      c3_free(pat_u);
-
+      _ce_patch_free(pat_u);
       _ce_patch_delete();
 
       return 0;
