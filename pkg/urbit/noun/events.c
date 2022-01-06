@@ -15,31 +15,6 @@ struct {
   c3_w mug_w[u3a_pages];
 } u3K;
 
-/* _ce_maplloc(): crude off-loom allocator.
-*/
-static void*
-_ce_maplloc(c3_w len_w)
-{
-  void* map_v;
-
-  map_v = mmap(0,
-               len_w,
-               (PROT_READ | PROT_WRITE),
-               (MAP_ANON | MAP_PRIVATE),
-               -1, 0);
-
-  if ( -1 == (c3_ps)map_v ) {
-    c3_assert(0);
-  }
-  else {
-    c3_w* map_w = map_v;
-
-    map_w[0] = len_w;
-
-    return map_w + 1;
-  }
-}
-
 /* _ce_mapfree(): crude off-loom allocator.
 */
 static void
