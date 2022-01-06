@@ -126,11 +126,21 @@ _ce_image_open(u3e_image* img_u)
   }
 }
 
-/* _ce_patch_delete(): delete a patch.
-*/
+/* _ce_patch_delete(): clean up the patch's resources and delete its control and
+ * memory files from the filesystem.
+ *
+ * @param pat_u  pointer to a patch struct. Can be NULL.
+ */
 static void
-_ce_patch_delete(void)
+_ce_patch_delete(u3_ce_patch* pat_u)
 {
+  if ( 0 != pat_u ) {
+    c3_free(pat_u->con_u);
+    close(pat_u->ctl_i);
+    close(pat_u->mem_i);
+    c3_free(pat_u);
+  }
+
   c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
@@ -185,23 +195,12 @@ _ce_patch_verify(u3_ce_patch* pat_u)
   return c3y;
 }
 
-/* _ce_patch_free(): free a patch.
-*/
-static void
-_ce_patch_free(u3_ce_patch* pat_u)
-{
-  c3_free(pat_u->con_u);
-  close(pat_u->ctl_i);
-  close(pat_u->mem_i);
-  c3_free(pat_u);
-}
-
 /* _ce_patch_open(): open patch, if any.
 */
 static u3_ce_patch*
 _ce_patch_open(void)
 {
-  u3_ce_patch* pat_u;
+  u3_ce_patch* pat_u = 0;
   c3_c ful_c[8193];
   c3_i ctl_i, mem_i;
 
@@ -220,7 +219,7 @@ _ce_patch_open(void)
   if ( -1 == (mem_i = open(ful_c, O_RDWR)) ) {
     close(ctl_i);
 
-    _ce_patch_delete();
+    _ce_patch_delete(pat_u);
     return 0;
   }
   pat_u = c3_malloc(sizeof(u3_ce_patch));
@@ -240,15 +239,12 @@ _ce_patch_open(void)
          len_w != sizeof(u3e_control) +
                   (pat_u->con_u->pgs_w * sizeof(u3e_line)) )
     {
-      _ce_patch_free(pat_u);
-      _ce_patch_delete();
-
+      _ce_patch_delete(pat_u);
       return 0;
     }
   }
   if ( c3n == _ce_patch_verify(pat_u) ) {
-    _ce_patch_free(pat_u);
-    _ce_patch_delete();
+    _ce_patch_delete(pat_u);
     return 0;
   }
   return pat_u;
@@ -787,8 +783,7 @@ u3e_save(void)
 
   _ce_image_sync(&u3P.nor_u);
   _ce_image_sync(&u3P.sou_u);
-  _ce_patch_free(pat_u);
-  _ce_patch_delete();
+  _ce_patch_delete(pat_u);
 
   _ce_backup();
 }
@@ -827,8 +822,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         _ce_patch_apply(pat_u);
         _ce_image_sync(&u3P.nor_u);
         _ce_image_sync(&u3P.sou_u);
-        _ce_patch_free(pat_u);
-        _ce_patch_delete();
+        _ce_patch_delete(pat_u);
       }
 
       /* Write image files to memory; reinstate protection.
