@@ -220,10 +220,17 @@
       ~
     `vas
   ::
+      ?(%add-signatures %remove-signatures)
+    ?>  (is-allowed:hc resource.uid.q.update)
+    =;  valid=?
+      ?>  valid
+      [~ `vas]
+    %-  ~(all in signatures.q.update)
+    |=  =signature:store
+    =(src.bowl q.signature)
+  ::
     %add-graph          [~ ~]
     %remove-graph       [~ ~]
-    %add-signatures     [~ ~]
-    %remove-signatures  [~ ~]
     %archive-graph      [~ ~]
     %unarchive-graph    [~ ~]
     %add-tag            [~ ~]
@@ -240,8 +247,7 @@
   ~/  %initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  |^
-  ?>  (is-allowed resource)
+  ?>  (is-allowed:hc resource)
   !>  ^-  update:store
   ?~  path
     ::  new subscribe
@@ -255,12 +261,6 @@
   =/  =update-log:store  (get-update-log-subset:gra resource time)
   [now.bowl [%run-updates resource update-log]]
   ::
-  ++  is-allowed
-    |=  =resource:res
-    =/  group-res=resource:res
-      (need (peek-group:met %graph resource))
-    (is-member:grp src.bowl group-res)
-  --
 ::
 ++  take-update
   |=  =vase
@@ -290,6 +290,11 @@
   %+  weld
     /[care]/(scot %p our.bowl)/[desk]/(scot %da now.bowl)
   path
+++  is-allowed
+  |=  =resource:res
+  =/  group-res=resource:res
+    (need (peek-group:met %graph resource))
+  (is-member:grp src.bowl group-res)
 ::
 ++  perm-mark
   |=  [=resource:res perm=@t vip=vip-metadata:metadata =indexed-post:store]
