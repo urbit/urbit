@@ -68,12 +68,10 @@
   =|  caz=(list card)
   %-  emil
   |-
-  ?~  kyz.fed
-    caz
-  =/  sed=seed:jael  [who [lyf key ~]:i.kyz]:fed
+  ?~  kyz.fed  (flop caz)
   %=  $
-      kyz.fed  t.kyz.fed
-      caz      (snoc caz [%pass / %arvo %j %rekey lyf.sed key.sed])
+    kyz.fed  t.kyz.fed
+    caz      [[%pass / %arvo %j %rekey i.kyz.fed] caz]
   ==
 ::
 ++  ames-secret
