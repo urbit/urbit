@@ -66,13 +66,13 @@
 +$  sign                                                ::  in result $<-
   $~  [%dill %blit ~]                                   ::
   $%  $:  %behn                                         ::
-          $%  $>(%writ gift:clay)                       ::  XX %slip
+          $%  $>(%wriz gift:clay)                       ::  XX %slip
               $>(%mere gift:clay)                       ::  XX %slip
       ==  ==                                            ::
       $:  %clay                                         ::
           $>  $?  %mere                                 ::
                   %note                                 ::
-                  %writ                                 ::
+                  %wriz                                 ::
               ==                                        ::
           gift:clay                                     ::
       ==                                                ::
@@ -289,7 +289,7 @@
             [%clay %note *]
           (from %out (tuba p.sih ' ' ~(ram re q.sih)))
         ::
-            [?(%behn %clay) %writ *]
+            [?(%behn %clay) %wriz *]
           init
         ::
             [?(%behn %clay) %mere *]
