@@ -126,19 +126,6 @@ _ce_image_open(u3e_image* img_u)
   }
 }
 
-/* _ce_patch_write_control(): write control block file.
-*/
-static void
-_ce_patch_write_control(u3_ce_patch* pat_u)
-{
-  c3_w len_w = sizeof(u3e_control) +
-               (pat_u->con_u->pgs_w * sizeof(u3e_line));
-
-  if ( len_w != write(pat_u->ctl_i, pat_u->con_u, len_w) ) {
-    c3_assert(0);
-  }
-}
-
 /* _ce_patch_read_control(): read control block file.
 */
 static c3_o
@@ -441,7 +428,11 @@ _ce_patch_compose(void)
     pat_u->con_u->sou_w = sou_w;
     pat_u->con_u->pgs_w = pgc_w;
 
-    _ce_patch_write_control(pat_u);
+    // Write u3e_control struct to patch's control file.
+    {
+      c3_w len_w = sizeof(u3e_control) + (pat_u->con_u->pgs_w * sizeof(u3e_line));
+      c3_assert(len_w == write(pat_u->ctl_i, pat_u->con_u, len_w));
+    }
     return pat_u;
   }
 }
