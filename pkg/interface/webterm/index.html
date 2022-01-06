@@ -8,8 +8,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-touch-fullscreen" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <link rel="apple-touch-icon" href="/~landscape/img/touch_icon.png">
-    <link rel="icon" type="image/png" href="/~landscape/img/Favicon.png">
+    <!--<link rel="apple-touch-icon" href="/~landscape/img/touch_icon.png">
+    <link rel="icon" type="image/png" href="/~landscape/img/Favicon.png">-->
     <link rel="manifest"
       href='data:application/manifest+json,{
         "name": "Terminal",
@@ -18,6 +18,16 @@
         "display": "standalone",
         "background_color": "%23FFFFFF",
         "theme_color": "%23000000"}' />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <style>
+      body, #root {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

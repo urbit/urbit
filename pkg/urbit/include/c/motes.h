@@ -6,6 +6,7 @@
   **/
 
 #   define c3__a      c3_s1('a')
+#   define c3__a50    c3_s3('a','5','0')
 #   define c3__abel   c3_s4('a','b','e','l')
 #   define c3__abo    c3_s3('a','b','o')
 #   define c3__actd   c3_s4('a','c','t','d')
@@ -112,6 +113,7 @@
 #   define c3__boot   c3_s4('b','o','o','t')
 #   define c3__born   c3_s4('b','o','r','n')
 #   define c3__both   c3_s4('b','o','t','h')
+#   define c3__bout   c3_s4('b','o','u','t')
 #   define c3__box    c3_s3('b','o','x')
 #   define c3__br     c3_s2('b','r')
 #   define c3__bran   c3_s4('b','r','a','n')

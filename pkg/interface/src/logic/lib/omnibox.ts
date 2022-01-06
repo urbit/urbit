@@ -56,7 +56,7 @@ const commandIndex = function (currentGroup, groups, associations) {
   if (canAdd) {
     commands.push(result('Channel: Create', `/~landscape${workspace}/new`, 'Groups', null));
   }
-  commands.push(result('Groups: Join', '/~landscape/join', 'Groups', null));
+  commands.push(result('Groups: Join', '?join-kind=group', 'Groups', null));
 
   return commands;
 };
@@ -93,7 +93,6 @@ const otherIndex = function(config) {
     messages: result('Messages', '/~landscape/messages', 'messages', null),
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
-  other.push(result('Tutorial', '/?tutorial=true', 'tutorial', null));
   for(const cat of config.categories) {
     if(idx[cat]) {
       other.push(idx[cat]);

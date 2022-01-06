@@ -439,7 +439,7 @@ data PierVersionNegotiationFailed = PierVersionNegotiationFailed
  deriving (Show, Exception)
 
 zuseVersion :: Word
-zuseVersion = 420
+zuseVersion = 419
 
 wyrd :: HasKingEnv e => RIO e Ev
 wyrd = do

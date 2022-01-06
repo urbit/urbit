@@ -11,7 +11,6 @@ import './css/custom.css';
 import _ from 'lodash';
 
 const NewGroup = React.lazy(() => import('./components/NewGroup').then(module => ({ default: module.NewGroup })));
-const JoinGroup = React.lazy(() => import('./components/JoinGroup').then(module => ({ default: module.JoinGroup })));
 
 moment.updateLocale('en', {
   relativeTime : {
@@ -76,22 +75,6 @@ export default function Landscape() {
             </Box>
           </Body>
         </Route>
-        <Route path="/~landscape/join/:ship?/:name?"
-          render={(routeProps) => {
-            const { ship, name } = routeProps.match.params;
-            const autojoin = ship && name ? `${ship}/${name}` : undefined;
-            return (
-              <Body>
-                <Box maxWidth="300px">
-                  <JoinGroup
-                    autojoin={autojoin}
-                    {...routeProps}
-                  />
-                </Box>
-              </Body>
-            );
-          }}
-        />
       </Switch>
     </>
   );

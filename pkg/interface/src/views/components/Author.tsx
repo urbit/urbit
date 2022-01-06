@@ -3,10 +3,10 @@ import moment from 'moment';
 import React, { ReactElement, ReactNode } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
-import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
+import { cite, uxToHex } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/state/settings';
 import { PropFunc } from '~/types';
 import ProfileOverlay from './ProfileOverlay';
 import Timestamp from './Timestamp';
@@ -21,6 +21,7 @@ export interface AuthorProps {
   lineHeight?: string | number;
   isRelativeTime?: boolean;
   dontShowTime?: boolean;
+  gray?: boolean;
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -35,6 +36,7 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
     isRelativeTime,
     dontShowTime,
     lineHeight = 'tall',
+    gray = false,
     ...rest
   } = props;
 
@@ -88,7 +90,7 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
       <Box display='flex' alignItems='baseline'>
         <Text
           ml={showImage ? 2 : 0}
-          color='black'
+          color={gray ? 'gray': 'black'}
           fontSize='1'
           cursor='pointer'
           lineHeight={lineHeight}

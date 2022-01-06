@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Docket } from '@urbit/api/docket';
 import cn from 'classnames';
 import { useTileColor } from '../tiles/useTileColor';
@@ -19,13 +19,20 @@ const sizeMap: Record<DocketImageSizes, string> = {
 
 export function DocketImage({ color, image, className = '', size = 'full' }: DocketImageProps) {
   const { tileColor } = useTileColor(color);
+  const [imageError, setImageError] = useState(false);
+
   return (
     <div
       className={cn('flex-none relative bg-gray-200 overflow-hidden', sizeMap[size], className)}
       style={{ backgroundColor: tileColor }}
     >
-      {image && (
-        <img className="absolute top-0 left-0 h-full w-full object-contain" src={image} alt="" />
+      {image && !imageError && (
+        <img
+          className="absolute top-0 left-0 h-full w-full object-cover"
+          src={image}
+          alt=""
+          onError={() => setImageError(true)}
+        />
       )}
     </div>
   );

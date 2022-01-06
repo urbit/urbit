@@ -9,8 +9,12 @@ interface, see its [contribution guidelines][interface].
 
 For information on Arvo's maintainers, see [pkg/arvo][main].
 
+For more extensive information on Urbit development, such as how to set up an
+environment and how to submit a grant, see the [developer documentation][dev].
+
 [start]: https://urbit.org/using/install
 [interface]: /pkg/interface/CONTRIBUTING.md
+[dev]: https://urbit.org/docs/development
 
 ## Fake ships
 
@@ -55,8 +59,9 @@ urbit -F zod -B "bin/solid.pill" -A "pkg/arvo"
 
 The canonical source tree is the `master` branch of
 [https://github.com/urbit/urbit][repo].  You should typically branch off of
-`master` when commencing new work; similarly, when we pull in your
-contribution, we'll do so by merging it to `master`.
+`master` when commencing new work. Most pull requests should be merging into
+one of the `next/*` branches, depending on what part of the system the pull
+request is targeting.
 
 Since we use GitHub, we request you contribute via a GitHub pull request. Tag
 the [maintainer][main] for the component. If you have a question for the
@@ -294,5 +299,5 @@ Questions or other communications about contributing to Urbit can go to
 [repo]: https://github.com/urbit/urbit
 [reba]: https://git-rebase.io/
 [issu]: https://github.com/urbit/urbit/issues
-[hoon]: https://urbit.org/docs/learn/hoon/style/
+[hoon]: https://urbit.org/docs/hoon/reference/style
 [main]: https://github.com/urbit/urbit/tree/master/pkg/arvo#maintainers

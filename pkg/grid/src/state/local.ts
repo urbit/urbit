@@ -1,6 +1,7 @@
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import produce from 'immer';
+import { clearStorageMigration, createStorageKey, storageVersion } from './util';
 
 interface LocalState {
   protocolHandling: boolean;
@@ -16,7 +17,9 @@ export const useLocalState = create<LocalState>(
       protocolHandling: false
     }),
     {
-      name: 'grid-local'
+      name: createStorageKey('local'),
+      version: storageVersion,
+      migrate: clearStorageMigration
     }
   )
 );

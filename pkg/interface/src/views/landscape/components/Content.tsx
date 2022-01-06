@@ -8,6 +8,10 @@ import { useShortcut } from '~/logic/state/settings';
 import { Loading } from '~/views/components/Loading';
 import LaunchApp from '~/views/apps/launch/App';
 
+import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
+import { JoinRoute } from './Join/Join';
+import useInviteState from '~/logic/state/invite';
+
 export const Container = styled(Box)`
    flex-grow: 1;
    overflow: hidden;
@@ -24,6 +28,22 @@ const ErrorComponent = React.lazy(() => import('~/views/components/Error'));
 
 export const Content = (props) => {
   const history = useHistory();
+  const location = useLocation();
+  const mdLoaded = useMetadataState(s => s.loaded);
+  const inviteLoaded = useInviteState(s => s.loaded);
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    if(!(mdLoaded && inviteLoaded)) {
+      return;
+    }
+    if(query.has('grid-note')) {
+      history.push(getNotificationRedirect(query.get('grid-note')!));
+    } else if(query.has('grid-link')) {
+      const link = decodeURIComponent(query.get('grid-link')!);
+      history.push(`/perma${link}`);
+    }
+  }, [location.search, mdLoaded, inviteLoaded]);
 
   useShortcut('navForward', useCallback((e) => {
     e.preventDefault();
@@ -56,11 +76,11 @@ export const Content = (props) => {
   return (
     <Container>
       <Suspense fallback={Loading}>
+        <JoinRoute />
         <Switch>
           <Route
             exact
-            path={['/', '/invites/:app/:uid']}
-            render={p => (
+            path="/" render={p => (
               <LaunchApp
                 location={p.location}
                 match={p.match}
@@ -75,7 +95,7 @@ export const Content = (props) => {
             path="/~profile"
             render={ p => (
               <Profile
-              {...props}
+                {...props}
               />
             )}
           />

@@ -311,7 +311,6 @@ _ce_patch_verify(u3_ce_patch* pat_u)
     fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
                     pat_u->con_u->ver_y,
                     u3e_version);
-    c3_assert(0);
     return c3n;
   }
 
@@ -322,12 +321,10 @@ _ce_patch_verify(u3_ce_patch* pat_u)
 
     if ( -1 == lseek(pat_u->mem_i, (i_w << (u3a_page + 2)), SEEK_SET) ) {
       fprintf(stderr, "loom: patch seek: %s\r\n", strerror(errno));
-      c3_assert(0);
       return c3n;
     }
     if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3a_page + 2))) ) {
       fprintf(stderr, "loom: patch read: %s\r\n", strerror(errno));
-      c3_assert(0);
       return c3n;
     }
     {
@@ -336,7 +333,6 @@ _ce_patch_verify(u3_ce_patch* pat_u)
       if ( mug_w != nug_w ) {
         fprintf(stderr, "loom: patch mug mismatch %d/%d; (%x, %x)\r\n",
                         pag_w, i_w, mug_w, nug_w);
-        c3_assert(0);
         return c3n;
       }
 #if 0
@@ -605,8 +601,17 @@ _ce_patch_compose(void)
 static void
 _ce_patch_sync(u3_ce_patch* pat_u)
 {
-  c3_sync(pat_u->ctl_i);
-  c3_sync(pat_u->mem_i);
+  if ( -1 == c3_sync(pat_u->ctl_i) ) {
+    fprintf(stderr, "loom: control file sync failed: %s\r\n",
+                    strerror(errno));
+    c3_assert(!"loom: control sync");
+  }
+
+  if ( -1 == c3_sync(pat_u->mem_i) ) {
+    fprintf(stderr, "loom: patch file sync failed: %s\r\n",
+                    strerror(errno));
+    c3_assert(!"loom: patch sync");
+  }
 }
 
 /* _ce_image_sync(): make sure image is synced to disk.
@@ -614,7 +619,12 @@ _ce_patch_sync(u3_ce_patch* pat_u)
 static void
 _ce_image_sync(u3e_image* img_u)
 {
-  c3_sync(img_u->fid_i);
+  if ( -1 == c3_sync(img_u->fid_i) ) {
+    fprintf(stderr, "loom: image (%s) sync failed: %s\r\n",
+                    img_u->nam_c,
+                    strerror(errno));
+    c3_assert(!"loom: image sync");
+  }
 }
 
 /* _ce_image_resize(): resize image, truncating if it shrunk.
@@ -758,6 +768,99 @@ _ce_image_fine(u3e_image* img_u,
 }
 #endif
 
+/* _ce_image_copy():
+*/
+static c3_o
+_ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
+{
+  c3_w i_w;
+
+  //  resize images
+  //
+  _ce_image_resize(tou_u, fom_u->pgs_w);
+
+  //  seek to begining of patch and images
+  //
+  if (  (-1 == lseek(fom_u->fid_i, 0, SEEK_SET))
+     || (-1 == lseek(tou_u->fid_i, 0, SEEK_SET)) )
+  {
+    fprintf(stderr, "loom: image copy seek 0: %s\r\n", strerror(errno));
+    return c3n;
+  }
+
+  //  copy pages into destination image
+  //
+  for ( i_w = 0; i_w < fom_u->pgs_w; i_w++ ) {
+    c3_w mem_w[1 << u3a_page];
+    c3_w off_w = i_w;
+
+    if ( -1 == read(fom_u->fid_i, mem_w, (1 << (u3a_page + 2))) ) {
+      fprintf(stderr, "loom: image copy read: %s\r\n", strerror(errno));
+      return c3n;
+    }
+    else {
+      if ( -1 == lseek(tou_u->fid_i, (off_w << (u3a_page + 2)), SEEK_SET) ) {
+        fprintf(stderr, "loom: image copy seek: %s\r\n", strerror(errno));
+        return c3n;
+      }
+      if ( -1 == write(tou_u->fid_i, mem_w, (1 << (u3a_page + 2))) ) {
+        fprintf(stderr, "loom: image copy write: %s\r\n", strerror(errno));
+        return c3n;
+      }
+    }
+  }
+
+  return c3y;
+}
+
+/* _ce_backup();
+*/
+static void
+_ce_backup(void)
+{
+  u3e_image nop_u = { .nam_c = "north", .pgs_w = 0 };
+  u3e_image sop_u = { .nam_c = "south", .pgs_w = 0 };
+  c3_i mod_i = O_RDWR | O_CREAT;
+  c3_c ful_c[8193];
+
+  snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
+
+  if ( mkdir(ful_c, 0700) ) {
+    if ( EEXIST != errno ) {
+      fprintf(stderr, "loom: image backup: %s\r\n", strerror(errno));
+    }
+    return;
+  }
+
+  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, nop_u.nam_c);
+
+  if ( -1 == (nop_u.fid_i = open(ful_c, mod_i, 0666)) ) {
+    fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
+    return;
+  }
+
+  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, sop_u.nam_c);
+
+  if ( -1 == (sop_u.fid_i = open(ful_c, mod_i, 0666)) ) {
+    fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
+    return;
+  }
+
+  if (  (c3n == _ce_image_copy(&u3P.nor_u, &nop_u))
+     || (c3n == _ce_image_copy(&u3P.sou_u, &sop_u)) )
+  {
+
+    unlink(ful_c);
+    snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, nop_u.nam_c);
+    unlink(ful_c);
+    snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
+    rmdir(ful_c);
+  }
+
+  close(nop_u.fid_i);
+  close(sop_u.fid_i);
+}
+
 /*
   u3e_save(): save current changes.
 
@@ -794,7 +897,11 @@ u3e_save(void)
   // u3a_print_memory(stderr, "sync: save", 4096 * pat_u->con_u->pgs_w);
 
   _ce_patch_sync(pat_u);
-  _ce_patch_verify(pat_u);
+
+  if ( c3n == _ce_patch_verify(pat_u) ) {
+    c3_assert(!"loom: save failed");
+  }
+
   _ce_patch_apply(pat_u);
 
 #ifdef U3_SNAPSHOT_VALIDATION
@@ -816,6 +923,8 @@ u3e_save(void)
   _ce_image_sync(&u3P.sou_u);
   _ce_patch_free(pat_u);
   _ce_patch_delete();
+
+  _ce_backup();
 }
 
 /* u3e_live(): start the checkpointing system.

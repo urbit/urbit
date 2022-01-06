@@ -1,7 +1,7 @@
-import { readGroup } from '@urbit/api';
 import _ from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import Helmet from 'react-helmet';
+import { Box } from '@tlon/indigo-react';
 import {
   Route,
   RouteComponentProps, Switch
@@ -19,8 +19,8 @@ import { Loading } from '~/views/components/Loading';
 import { InvitePopover } from './InvitePopover';
 import { PopoverRoutes } from './PopoverRoutes';
 import { Skeleton } from './Skeleton';
-import airlock from '~/logic/api';
 import { EmptyGroupHome } from './Home/EmptyGroupHome';
+import { Join } from './Join/Join';
 
 interface GroupsPaneProps {
   baseUrl: string;
@@ -44,7 +44,7 @@ export function GroupsPane(props: GroupsPaneProps) {
 
   useShortcut('readGroup', useCallback(() => {
     if(groupPath) {
-      airlock.poke(readGroup(groupPath));
+      useHarkState.getState().readGroup(groupPath);
     }
   }, [groupPath]));
 
@@ -60,6 +60,12 @@ export function GroupsPane(props: GroupsPaneProps) {
     if (workspace.type !== 'group') {
       return;
     }
+    const { pendingJoin, doneJoin } = useGroupState.getState();
+    const group = getGroupFromWorkspace(workspace)!;
+    if(group in pendingJoin) {
+      doneJoin(group);
+    }
+
     return () => {
       setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
     };
@@ -178,6 +184,28 @@ export function GroupsPane(props: GroupsPaneProps) {
         }}
       />
       <Route
+        path={relativePath('/pending/:ship/:name')}
+        render={(routeProps) => {
+          const { ship, name } = routeProps.match.params as Record<string, string>;
+          const desc =  {
+            group: `/ship/${ship}/${name}`,
+            kind: 'graph' as const
+          };
+          return (
+            <Skeleton
+              mobileHide
+              recentGroups={recentGroups}
+              {...props}
+              baseUrl={baseUrl}
+            >
+              <Box width="100%">
+                <Join desc={desc} />
+              </Box>
+            </Skeleton>
+          );
+        }}
+      />
+      <Route
         path={relativePath('/new')}
         render={(routeProps) => {
           return (
@@ -223,7 +251,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                       associations={associations}
                     />
                 )}
-               {popovers(routeProps, baseUrl)}
+                {popovers(routeProps, baseUrl)}
               </Skeleton>
             </>
           );

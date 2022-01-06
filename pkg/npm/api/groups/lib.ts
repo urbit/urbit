@@ -100,11 +100,17 @@ export const changePolicy = (
 
 export const join = (
   ship: string,
-  name: string
+  name: string,
+  app: "groups" | "graph",
+  autojoin: boolean,
+  share: boolean
 ): Poke<any> => viewAction({
   join: {
     resource: makeResource(ship, name),
-    ship
+    ship,
+    shareContact: share || false,
+    app,
+    autojoin
   }
 });
 
@@ -149,10 +155,10 @@ export const invite = (
   }
 });
 
-export const hideGroup = (
+export const abortJoin = (
   resource: string
 ): Poke<any> => viewAction({
-  hide: resource
+  abort: resource
 });
 
 export const roleTags = ['janitor', 'moderator', 'admin'];
@@ -163,9 +169,10 @@ export const groupBunts = {
   policy: (): GroupPolicy => ({ open: { banned: [], banRanks: [] } })
 };
 
-export const joinError = ['no-perms', 'strange'] as const;
+export const joinError = ['no-perms', 'strange', 'abort'] as const;
 export const joinResult = ['done', ...joinError] as const;
-export const joinProgress = ['start', 'added', ...joinResult] as const;
+export const joinLoad = ['start', 'added', 'metadata'] as const;
+export const joinProgress = [...joinLoad, ...joinResult] as const;
 
 export function roleForShip(
   group: Group,

@@ -4,14 +4,11 @@ import { patp2dec } from 'urbit-ob';
 import f  from 'lodash/fp';
 import { Association, Contact, Patp } from '@urbit/api';
 import { enableMapSet } from 'immer';
-import useSettingsState from '../state/settings';
 /* eslint-disable max-lines */
 import anyAscii from 'any-ascii';
 import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import bigInt, { BigInteger } from 'big-integer';
-import { foregroundFromBackground } from '~/logic/lib/sigil';
 import { IconRef, Workspace } from '~/types';
-import useContactState from '../state/contact';
 
 enableMapSet();
 
@@ -462,13 +459,6 @@ export function pluralize(text: string, isPlural = false, vowel = false) {
   return isPlural ? `${text}s` : `${vowel ? 'an' : 'a'} ${text}`;
 }
 
-// Hide is an optional second parameter for when this function is used in class components
-export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
-  const hideState = useSettingsState(state => state.calm.hideNicknames);
-  const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
-  return Boolean(contact && contact.nickname && !hideNicknames);
-}
-
 interface useHoveringInterface {
   hovering: boolean;
   bind: {
@@ -513,21 +503,6 @@ export const svgDataURL = svg => 'data:image/svg+xml;base64,' + btoa(svg);
 
 export const svgBlobURL = svg => URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
 
-export const favicon = () => {
-  let background = '#ffffff';
-  const contacts = useContactState.getState().contacts;
-  if (Object.prototype.hasOwnProperty.call(contacts, `~${window.ship}`)) {
-    background = `#${uxToHex(contacts[`~${window.ship}`].color)}`;
-  }
-  const foreground = foregroundFromBackground(background);
-  const svg = sigiljs({
-    patp: window.ship,
-    renderer: stringRenderer,
-    size: 16,
-    colors: [background, foreground]
-  });
-  return svg;
-};
 
 export function binaryIndexOf(arr: BigInteger[], target: BigInteger): number | undefined {
   let leftBound = 0;
@@ -568,3 +543,14 @@ export function toHarkPlace(graph: string, index = '') {
     path: toHarkPath(graph, index)
   };
 }
+
+export function createStorageKey(name: string): string {
+  return `~${window.ship}/${window.desk}/${name}`;
+}
+
+// for purging storage with version updates
+export function clearStorageMigration<T>() {
+  return {} as T;
+}
+
+export const storageVersion = parseInt(process.env.LANDSCAPE_STORAGE_VERSION, 10);

@@ -115,7 +115,12 @@ function GraphPermalink(
     })();
   }, [pending, graph, index]);
   const showTransclusion = Boolean(association && node && transcluded < 1);
-  const permalink = getPermalinkForGraph(group, graph, index);
+  const permalink = (() => {
+    const link = `/perma${getPermalinkForGraph(group, graph, index).slice(16)}`;
+    return (!association && !loading)
+      ? { search: `?join-kind=group&join-path=${encodeURIComponent(group)}&redir=${encodeURIComponent(link)}`  }
+        :  link
+  })();
 
   const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2) ?? ['Unknown', 'Unknown'];
   const [nodeChannelHost, nodeChannelName] = association?.resource
@@ -140,7 +145,7 @@ function GraphPermalink(
   return (
     <Col
       as={Link}
-      to={`/perma${permalink.slice(16)}`}
+      to={permalink}
       width="100%"
       bg="white"
       maxWidth={full ? null : '500px'}
@@ -199,6 +204,8 @@ const ClampedText = styled(Text)`
 type AppTileProps = Treaty & BoxProps;
 
 export function AppTile({ color, image, ...props }: AppTileProps) {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <Box
       position="relative"
@@ -210,7 +217,7 @@ export function AppTile({ color, image, ...props }: AppTileProps) {
       bg={color || 'washedGray'}
       {...props}
     >
-      {image && (
+      {image && !imageError && (
         <Image
           src={image}
           position="absolute"
@@ -218,6 +225,7 @@ export function AppTile({ color, image, ...props }: AppTileProps) {
           left="0"
           width="100%"
           height="100%"
+          onError={() => setImageError(true)}
         />
       )}
     </Box>

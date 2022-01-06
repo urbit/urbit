@@ -1,14 +1,13 @@
 import {
     Col
 } from '@tlon/indigo-react';
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { roleForShip } from '@urbit/api';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import { Workspace } from '~/types';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { GroupSwitcher } from '../GroupSwitcher';
 import { SidebarList } from './SidebarList';
 import { SidebarListHeader } from './SidebarListHeader';
@@ -48,12 +47,8 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
   const role = groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
 
-  const anchorRef = useRef<HTMLDivElement>(null);
-  useTutorialModal('channels', true, anchorRef);
-
   return (
     <ScrollbarLessCol
-      ref={anchorRef}
       display={display}
       width="100%"
       gridRow="1/2"

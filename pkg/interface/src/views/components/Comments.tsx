@@ -25,7 +25,7 @@ import { CommentItem } from './CommentItem';
 import airlock from '~/logic/api';
 import useGraphState from '~/logic/state/graph';
 import { useHistory } from 'react-router';
-import { toHarkPlace } from '~/logic/lib/util';
+import { toHarkPath, toHarkPlace } from '~/logic/lib/util';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -134,7 +134,8 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   }, [comments.post?.index, association.resource]);
 
   const unreads = useHarkState(state => state.unreads);
-  const readCount = children.length - getUnreadCount(unreads, association.resource);
+  const harkPath = toHarkPath(association.resource, parentIndex);
+  const readCount = children.length - getUnreadCount(unreads, harkPath);
 
   const canComment = isWriter(group, association.resource, window.ship) || association.metadata.vip === 'reader-comments';
 

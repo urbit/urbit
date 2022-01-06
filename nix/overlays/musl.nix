@@ -23,6 +23,4 @@ in prev.lib.optionalAttrs isMusl {
   rhash = overrideStdenv prev.rhash;
 
   numactl = overrideStdenv prev.numactl;
-
-  lmdb = overrideStdenv prev.lmdb;
 }

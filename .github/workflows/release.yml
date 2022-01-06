@@ -17,8 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v8
+      - uses: cachix/install-nix-action@v16
+      - uses: cachix/cachix-action@v10
         with:
           name: ${{ secrets.CACHIX_NAME }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -35,7 +35,8 @@ jobs:
       - name: Run upload to bootstrap.urbit.org
         run: |
           version="$(cat ./pkg/urbit/version)"
-          system="$(nix eval --raw '(builtins.currentSystem)')"
+          system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
+          system=${system:1:${#system}-2}
           target="gs://bootstrap.urbit.org/ci/urbit-v${version}-${system}-${GITHUB_SHA:0:9}.tgz"
 
           gsutil cp -n ./result "$target"

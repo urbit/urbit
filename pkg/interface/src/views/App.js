@@ -13,14 +13,13 @@ import gcpManager from '~/logic/lib/gcpManager';
 import { favicon, svgDataURL } from '~/logic/lib/util';
 import history from '~/logic/lib/history';
 import withState from '~/logic/lib/withState';
-import useContactState from '~/logic/state/contact';
+import useContactState, { favicon } from '~/logic/state/contact';
 import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
 
 import ErrorBoundary from '~/views/components/ErrorBoundary';
-import { TutorialModal } from '~/views/landscape/components/TutorialModal';
 import './apps/chat/css/custom.css';
 import Omnibox from './components/leap/Omnibox';
 import StatusBar from './components/StatusBar';
@@ -29,6 +28,17 @@ import './css/indigo-static.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
 import { bootstrapApi } from '~/logic/api/bootstrap';
+import { uxToHex } from '@urbit/api/dist';
+
+function ensureValidHex(color) {
+  if (!color)
+    return '#000000';
+
+  const isUx = color.startsWith('0x');
+  const parsedColor = isUx ? uxToHex(color) : color;
+
+  return parsedColor.startsWith('#') ? parsedColor : `#${parsedColor}`;
+}
 
 const Root = withState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -40,7 +50,7 @@ const Root = withState(styled.div`
     background-image: url('${p.display.background}');
     background-size: cover;
     ` : p.display.backgroundType === 'color' ? `
-    background-color: ${p.display.background};
+    background-color: ${ensureValidHex(p.display.background)};
     ` : `background-color: ${p.theme.colors.white};`
   }
   display: flex;
@@ -172,7 +182,6 @@ class App extends React.Component {
         </Helmet>
         <Root>
           <Router history={history}>
-            <TutorialModal />
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}
