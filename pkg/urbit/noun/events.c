@@ -15,17 +15,6 @@ struct {
   c3_w mug_w[u3a_pages];
 } u3K;
 
-/* _ce_check_page(): checksum page.
-*/
-static c3_w
-_ce_check_page(c3_w pag_w)
-{
-  c3_w* mem_w = u3_Loom + (pag_w << u3a_page);
-  c3_w  mug_w = u3r_mug_words(mem_w, (1 << u3a_page));
-
-  return mug_w;
-}
-
 /* _ce_maplloc(): crude off-loom allocator.
 */
 static void*
