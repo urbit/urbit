@@ -126,36 +126,6 @@ _ce_image_open(u3e_image* img_u)
   }
 }
 
-/* _ce_patch_read_control(): read control block file.
-*/
-static c3_o
-_ce_patch_read_control(u3_ce_patch* pat_u)
-{
-  c3_w len_w;
-
-  c3_assert(0 == pat_u->con_u);
-  {
-    struct stat buf_u;
-
-    if ( -1 == fstat(pat_u->ctl_i, &buf_u) ) {
-      c3_assert(0);
-      return c3n;
-    }
-    len_w = (c3_w) buf_u.st_size;
-  }
-
-  pat_u->con_u = c3_malloc(len_w);
-  if ( (len_w != read(pat_u->ctl_i, pat_u->con_u, len_w)) ||
-        (len_w != sizeof(u3e_control) +
-                  (pat_u->con_u->pgs_w * sizeof(u3e_line))) )
-  {
-    c3_free(pat_u->con_u);
-    pat_u->con_u = 0;
-    return c3n;
-  }
-  return c3y;
-}
-
 /* _ce_patch_create(): create patch files.
 */
 static void
@@ -284,13 +254,29 @@ _ce_patch_open(void)
   pat_u->mem_i = mem_i;
   pat_u->con_u = 0;
 
-  if ( c3n == _ce_patch_read_control(pat_u) ) {
-    close(pat_u->ctl_i);
-    close(pat_u->mem_i);
-    c3_free(pat_u);
+  // Read u3e_control struct from patch's control file.
+  {
+    struct stat buf_u;
+    c3_assert(-1 != fstat(pat_u->ctl_i, &buf_u));
 
-    _ce_patch_delete();
-    return 0;
+    c3_w len_w = (c3_w)buf_u.st_size;
+    pat_u->con_u = c3_malloc(len_w);
+
+    if ( len_w != read(pat_u->ctl_i, pat_u->con_u, len_w) ||
+         len_w != sizeof(u3e_control) +
+                  (pat_u->con_u->pgs_w * sizeof(u3e_line)) )
+    {
+      c3_free(pat_u->con_u);
+      pat_u->con_u = 0;
+
+      close(pat_u->ctl_i);
+      close(pat_u->mem_i);
+      c3_free(pat_u);
+
+      _ce_patch_delete();
+
+      return 0;
+    }
   }
   if ( c3n == _ce_patch_verify(pat_u) ) {
     _ce_patch_free(pat_u);
