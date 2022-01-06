@@ -35,6 +35,73 @@
 --
 */
 
+/* _mars_grab(): garbage collect, checking for profiling.
+*/
+static void
+_mars_grab(u3_noun sac)
+{
+  if ( u3_nul == sac) {
+    if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
+      u3m_grab(sac, u3_none);
+    }
+  }
+  else {
+    c3_w tot_w = 0;
+    FILE* fil_u;
+
+#ifdef U3_MEMORY_LOG
+    {
+      u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
+      c3_c* wen_c = u3r_string(wen);
+
+      c3_c nam_c[2048];
+      snprintf(nam_c, 2048, "%s/.urb/put/mass", u3P.dir_c);
+
+      struct stat st;
+      if ( -1 == stat(nam_c, &st) ) {
+        mkdir(nam_c, 0700);
+      }
+
+      c3_c man_c[2054];
+      snprintf(man_c, 2053, "%s/%s-serf.txt", nam_c, wen_c);
+
+      fil_u = fopen(man_c, "w");
+      fprintf(fil_u, "%s\r\n", wen_c);
+
+      c3_free(wen_c);
+      u3z(wen);
+    }
+#else
+    {
+      fil_u = stderr;
+    }
+#endif
+
+    c3_assert( u3R == &(u3H->rod_u) );
+    fprintf(fil_u, "\r\n");
+
+    tot_w += u3a_maid(fil_u, "total userspace", u3a_prof(fil_u, 0, sac));
+    tot_w += u3m_mark(fil_u);
+    tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sac));
+
+    u3a_print_memory(fil_u, "total marked", tot_w);
+    u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
+    u3a_print_memory(fil_u, "sweep", u3a_sweep());
+
+    fflush(fil_u);
+
+#ifdef U3_MEMORY_LOG
+    {
+      fclose(fil_u);
+    }
+#endif
+
+    u3z(sac);
+
+    u3l_log("\n");
+  }
+}
+
 /* _mars_fact(): commit a fact and enqueue its effects.
 */
 static void
@@ -56,7 +123,7 @@ _mars_fact(u3_mars* mar_u,
   {
     u3_gift* gif_u = c3_malloc(sizeof(*gif_u));
     gif_u->nex_u = 0;
-    gif_u->sat_e = u3_gift_poke_e;
+    gif_u->sat_e = u3_gift_fact_e;
     gif_u->eve_d = mar_u->dun_d;
 
     u3s_jam_xeno(pro, &gif_u->len_d, &gif_u->hun_y);
@@ -112,6 +179,111 @@ _mars_make_crud(u3_noun job, u3_noun dud)
   return new;
 }
 
+/* _mars_sure_feck(): event succeeded, send effects.
+*/
+static u3_noun
+_mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
+{
+  c3_o rec_o = c3n;
+  c3_o pac_o = c3n;
+
+  //  intercept |mass, observe |reset
+  //
+  {
+    u3_noun riv = vir;
+    c3_w    i_w = 0;
+
+    while ( u3_nul != riv ) {
+      u3_noun fec = u3t(u3h(riv));
+
+      //  assumes a max of one %mass effect per event
+      //
+      if ( c3__mass == u3h(fec) ) {
+        //  save a copy of the %mass data
+        //
+        mar_u->sac = u3k(u3t(fec));
+        //  replace the %mass data with ~
+        //
+        //    For efficient transmission to daemon.
+        //
+        riv = u3kb_weld(u3qb_scag(i_w, vir),
+                        u3nc(u3nt(u3k(u3h(u3h(riv))), c3__mass, u3_nul),
+                             u3qb_slag(1 + i_w, vir)));
+        u3z(vir);
+        vir = riv;
+        break;
+      }
+
+      //  reclaim memory from persistent caches on |reset
+      //
+      if ( c3__vega == u3h(fec) ) {
+        rec_o = c3y;
+      }
+
+      riv = u3t(riv);
+      i_w++;
+    }
+  }
+
+  //  after a successful event, we check for memory pressure.
+  //
+  //    if we've exceeded either of two thresholds, we reclaim
+  //    from our persistent caches, and notify the daemon
+  //    (via a "fake" effect) that arvo should trim state
+  //    (trusting that the daemon will enqueue an appropriate event).
+  //    For future flexibility, the urgency of the notification is represented
+  //    by a *decreasing* number: 0 is maximally urgent, 1 less so, &c.
+  //
+  //    high-priority: 2^22 contiguous words remaining (~8 MB)
+  //    low-priority:  2^27 contiguous words remaining (~536 MB)
+  //    XX maybe use 2^23 (~16 MB) and 2^26 (~268 MB?
+  //
+  //    XX these thresholds should trigger notifications sent to the king
+  //    instead of directly triggering these remedial actions.
+  //
+  {
+    u3_noun pri = u3_none;
+    c3_w pos_w = u3a_open(u3R);
+    c3_w low_w = (1 << 27);
+    c3_w hig_w = (1 << 22);
+
+    if ( (pre_w > low_w) && !(pos_w > low_w) ) {
+      //  XX set flag(s) in u3V so we don't repeat endlessly?
+      //
+      pac_o = c3y;
+      rec_o = c3y;
+      pri   = 1;
+    }
+    else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
+      pac_o = c3y;
+      rec_o = c3y;
+      pri   = 0;
+    }
+    //  reclaim memory from persistent caches periodically
+    //
+    //    XX this is a hack to work two things
+    //    - bytecode caches grow rapidly and can't be simply capped
+    //    - we don't make very effective use of our free lists
+    //
+    else if ( 0 == (mar_u->dun_d % 1000ULL) ) {
+      rec_o = c3y;
+    }
+
+    //  notify daemon of memory pressure via "fake" effect
+    //
+    if ( u3_none != pri ) {
+      u3_noun cad = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
+                         u3nc(c3__trim, pri));
+      vir = u3nc(cad, vir);
+    }
+  }
+
+  mar_u->rec_o = c3o(mar_u->rec_o, rec_o);
+  mar_u->pac_o = c3o(mar_u->pac_o, pac_o);
+
+  return vir;
+}
+
 /* _mars_poke(): attempt to compute an event.
 */
 static c3_o
@@ -122,7 +294,7 @@ _mars_poke(c3_w   mil_w,
 {
   u3_noun pro;
 
-  if ( c3y == u3_poke_sure(mil_w, u3k(*eve), &pro) ) {
+  if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), &pro) ) {
     *out = pro;
     return c3y;
   }
@@ -135,7 +307,8 @@ _mars_poke(c3_w   mil_w,
 
     *eve = _mars_make_crud(*eve, u3k(dud));
 
-    if ( c3y == u3_poke_sure(mil_w, u3k(*eve), &pro) ) {
+    if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), &pro) ) {
+      u3z(dud);
       *out = pro;
       return c3y;
     }
@@ -168,7 +341,7 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
 
     case c3__poke: {
       u3_noun tim, job;
-      c3_w  mil_w;
+      c3_w  mil_w, pre_w;
 
       if ( (c3n == u3r_cell(dat, &tim, &job)) ||
            (c3n == u3r_safe_word(tim, &mil_w)) )
@@ -190,14 +363,16 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
       }
       u3z(jar);
 
+      pre_w = u3a_open(u3R);
       mar_u->sen_d++;
 
       if ( c3y == _mars_poke(mil_w, c3y, &job, &pro) ) {
         mar_u->dun_d = mar_u->sen_d;
         mar_u->mug_l = u3r_mug(u3A->roc);
+        mar_u->mut_o = c3y;
 
-        //  XX process effects
-        //
+        pro = _mars_sure_feck(mar_u, pre_w, pro);
+
         _mars_fact(mar_u, job, u3nt(c3__poke, c3y, pro));
       }
       else {
@@ -302,6 +477,31 @@ _mars_cue(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
   return jar;
 }
 
+/* _mars_post(): update mars state post-task.
+*/
+void
+_mars_post(u3_mars* mar_u)
+{
+  if ( c3y == mar_u->rec_o ) {
+    u3m_reclaim();
+    mar_u->rec_o = c3n;
+  }
+
+  //  XX this runs on replay too, |mass s/b elsewhere
+  //
+  if ( c3y == mar_u->mut_o ) {
+    _mars_grab(mar_u->sac);
+    mar_u->sac   = u3_nul;
+    mar_u->mut_o = c3n;
+  }
+
+  if ( c3y == mar_u->pac_o ) {
+    u3a_print_memory(stderr, "mars: pack: gained", u3m_pack());
+    u3l_log("\n");
+    mar_u->pac_o = c3n;
+  }
+}
+
 /* _mars_flush(): send pending gifts.
 */
 static void
@@ -334,6 +534,7 @@ top:
   {
     if ( u3_mars_save_e == mar_u->sat_e ) {
       u3e_save();
+      mar_u->sav_u.eve_d = mar_u->dun_d;
       _mars_gift(mar_u,
         u3nt(c3__sync, u3i_chub(mar_u->dun_d), mar_u->mug_l));
       mar_u->sat_e = u3_mars_work_e;
@@ -371,7 +572,9 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
       exit(1);
     }
 
-    //  XX u3_serf_post()
+    _mars_post(mar_u);
+
+    //  XX
     //
     // _cw_serf_step_trace();
 
@@ -389,7 +592,10 @@ static void
 _mars_timer_cb(uv_timer_t* tim_u)
 {
   u3_mars* mar_u = tim_u->data;
-  mar_u->sat_e = u3_mars_save_e;
+
+  if ( mar_u->dun_d > mar_u->sav_u.eve_d ) {
+    mar_u->sat_e = u3_mars_save_e;
+  }
 
   _mars_flush(mar_u);
 }
@@ -415,24 +621,23 @@ _mars_disk_cb(void* ptr_v, c3_d eve_d, c3_o ret_o)
 /* _mars_poke_play(): replay an event.
 */
 static u3_noun
-_mars_poke_play(c3_d eve_d, u3_noun job)
+_mars_poke_play(u3_mars* mar_u, c3_d eve_d, u3_noun job)
 {
-  u3_noun pro;
+  c3_w  pre_w = u3a_open(u3R);
+  u3_noun vir;
 
-  if ( c3y == u3_poke_sure(0, job, &pro) ) {
-    //  XX check effects
-    //
-    u3z(pro);
+  if ( c3y == u3v_poke_sure(0, job, &vir) ) {
+    u3z(_mars_sure_feck(mar_u, pre_w, vir));
     return c3y;
   }
 
-  //  XX reclaim on meme, retry on %intr, &c
+  //  XX produce/print trace, reclaim on meme, retry on %intr, &c
   //
   // {
   //   u3_noun mot, tan;
-  //   u3x_cell(pro, &mot, &tan);
+  //   u3x_cell(vir, &mot, &tan);
   // }
-  u3z(pro);
+  u3z(vir);
   return c3n;
 }
 
@@ -453,14 +658,13 @@ _mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
 
     c3_assert( ++mar_u->sen_d == tac_u.eve_d );
 
-    if ( c3n == _mars_poke_play(tac_u.eve_d, tac_u.job) ) {
+    if ( c3n == _mars_poke_play(mar_u, tac_u.eve_d, tac_u.job) ) {
       fprintf(stderr, "play (%" PRIu64 "): failed\r\n", tac_u.eve_d);
-      mar_u->sen_d--;
+      mar_u->sen_d = mar_u->dun_d;
       u3_disk_walk_done(wok_u);
       return c3n;
     }
 
-    mar_u->dun_d++;
     mar_u->mug_l = u3r_mug(u3A->roc);
 
     if ( tac_u.mug_l && (mar_u->mug_l != tac_u.mug_l) ) {
@@ -469,12 +673,13 @@ _mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
                       tac_u.eve_d, tac_u.mug_l, mar_u->mug_l);
 
       if ( c3y == mug_o ) {
-        mar_u->sen_d--;
-        mar_u->dun_d--;
+        mar_u->sen_d = mar_u->dun_d;
         u3_disk_walk_done(wok_u);
         return c3n;
       }
     }
+
+    mar_u->dun_d = mar_u->sen_d;
   }
 
   u3_disk_walk_done(wok_u);
@@ -504,13 +709,20 @@ u3_mars_play(u3_mars* mar_u)
     //  XX get batch from args
     //
     if ( c3n == _mars_play_batch(mar_u, c3n, 500) ) {
-      u3l_log("play (%" PRIu64 "): failed\r\n", mar_u->dun_d);
+      u3l_log("play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
+      u3e_save();
       //  XX exit code, cb
       //
       exit(1);
     }
 
     u3l_log("play (%" PRIu64 "): done\r\n", mar_u->dun_d);
+
+    //  XX refactor |mass
+    //
+    u3z(mar_u->sac);
+    mar_u->sac = u3_nul;
+    _mars_post(mar_u);
   }
 
   u3l_log("---------------- playback complete ----------------\r\n");
@@ -615,10 +827,11 @@ u3_mars_init(c3_c*    dir_c,
 
   //  XX check return, make interval configurable
   //
-  uv_timer_init(u3L, &mar_u->tim_u);
-  uv_timer_start(&mar_u->tim_u, _mars_timer_cb, 120000, 120000);
+  uv_timer_init(u3L, &(mar_u->sav_u.tim_u));
+  uv_timer_start(&(mar_u->sav_u.tim_u), _mars_timer_cb, 120000, 120000);
 
-  mar_u->tim_u.data = mar_u;
+  mar_u->sav_u.eve_d = mar_u->dun_d;
+  mar_u->sav_u.tim_u.data = mar_u;
 
   return mar_u;
 }

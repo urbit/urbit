@@ -319,7 +319,7 @@ _cv_poke_eve(u3_noun sam)
 /* u3v_poke_sure(): inject an event, saving new state if successful.
 */
 c3_o
-u3_poke_sure(c3_w mil_w, u3_noun eve, u3_noun* pro)
+u3v_poke_sure(c3_w mil_w, u3_noun eve, u3_noun* pro)
 {
   u3_noun gon = u3m_soft(mil_w, _cv_poke_eve, eve);
   u3_noun tag, dat;
