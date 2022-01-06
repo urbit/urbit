@@ -557,13 +557,16 @@
     ?>  ?=([%cor @ @ @ @ ~] wire)
     =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.wire
     =/  =beak  [(slav %p her) desk da+now]
-    ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
-    ?~  p.sign-arvo
+    ?>  ?=([?(%behn %clay) %wriz *] sign-arvo)
+    ?~  q.sign-arvo
       (mean leaf+"gall: failed to build agent {<dap>}" ~)
-    =/  cag=cage  r.u.p.sign-arvo
-    ?.  =(%vase p.cag)
-      (mean leaf+"gall: bad %writ {<p.cag>} for {<dap>}" ~)
-    =/  res  (mule |.(!<(agent !<(vase q.cag))))
+    =/  [[=care:clay =path] cag=(unit cage)]  
+      (snag 0 ~(tap by res.u.q.sign-arvo))
+    ?~  cag
+      (mean leaf+"gall: failed to build agent {<dap>}" ~)
+    ?.  =(%vase p.u.cag)
+      (mean leaf+"gall: bad %writ {<p.u.cag>} for {<dap>}" ~)
+    =/  res  (mule |.(!<(agent !<(vase q.u.cag))))
     ?:  ?=(%| -.res)
       (mean leaf+["gall: bad agent {<dap>}"] p.res)
     =.  mo-core  (mo-receive-core dap beak p.res)
@@ -574,8 +577,9 @@
     |=  [=wire =sign-arvo]
     ^+  mo-core
     ?>  ?=([%lyv ~] wire)
-    ?>  ?=([?(%behn %clay) %wris *] sign-arvo)
-    =/  nex=(list [=care:clay =path])  ~(tap in q.sign-arvo)
+    ?>  ?=([?(%behn %clay) %wriz *] sign-arvo)
+    =/  nex=(list [=care:clay =path])  
+      ~(tap in ~(key by res:(need q.sign-arvo)))
     ~>  %slog.[0 leaf+"gall: reloading agents"]
     ~<  %slog.[0 leaf+"gall: reloaded agents"]
     =;  cor  (mo-subscribe-to-agent-builds:cor now)
