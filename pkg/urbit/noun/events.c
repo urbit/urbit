@@ -26,47 +26,6 @@ _ce_check_page(c3_w pag_w)
   return mug_w;
 }
 
-/* u3e_check(): compute a checksum on all memory within the watermarks.
-*/
-void
-u3e_check(c3_c* cap_c)
-{
-  c3_w nor_w = 0;
-  c3_w sou_w = 0;
-
-  {
-    c3_w nwr_w, swu_w;
-
-    u3m_water(&nwr_w, &swu_w);
-
-    nor_w = (nwr_w + ((1 << u3a_page) - 1)) >> u3a_page;
-    sou_w = (swu_w + ((1 << u3a_page) - 1)) >> u3a_page;
-  }
-
-  /* Count dirty pages.
-  */
-  {
-    c3_w i_w, sum_w, mug_w;
-
-    sum_w = 0;
-    for ( i_w = 0; i_w < nor_w; i_w++ ) {
-      mug_w = _ce_check_page(i_w);
-      if ( strcmp(cap_c, "boot") ) {
-        c3_assert(mug_w == u3K.mug_w[i_w]);
-      }
-      sum_w += mug_w;
-    }
-    for ( i_w = 0; i_w < sou_w; i_w++ ) {
-      mug_w = _ce_check_page((u3a_pages - (i_w + 1)));
-      if ( strcmp(cap_c, "boot") ) {
-        c3_assert(mug_w == u3K.mug_w[(u3a_pages - (i_w + 1))]);
-      }
-      sum_w += mug_w;
-    }
-    u3l_log("%s: sum %x (%x, %x)\r\n", cap_c, sum_w, nor_w, sou_w);
-  }
-}
-
 /* _ce_maplloc(): crude off-loom allocator.
 */
 static void*
