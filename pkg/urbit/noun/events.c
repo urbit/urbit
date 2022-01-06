@@ -14,20 +14,6 @@ struct {
   c3_w sou_w;
   c3_w mug_w[u3a_pages];
 } u3K;
-
-/* _ce_mapfree(): crude off-loom allocator.
-*/
-static void
-_ce_mapfree(void* map_v)
-{
-  c3_w* map_w = map_v;
-  c3_i res_i;
-
-  map_w -= 1;
-  res_i = munmap(map_w, map_w[0]);
-
-  c3_assert(0 == res_i);
-}
 #endif
 
 /* u3e_fault(): handle a memory event with libsigsegv protocol.
