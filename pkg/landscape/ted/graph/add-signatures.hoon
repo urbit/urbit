@@ -11,14 +11,11 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 =|  gall=bowl:gall
 =.  gall  gall(our our.bowl, now now.bowl)
-;<  =node:store  bind:m  (got-node uid.q.update)
+=/  =node:store  (~(got-node gra gall) uid.q.update)
 ?>  ?=(%& -.post.node)
-=/  =signature:store  (sign:sig our.bowl now.bowl hash.p.post)
+=/  =signature:store  
+  (sign:sig our.bowl now.bowl (need hash.p.post.node))
 =.  signatures.q.update  (silt signature ~)
 ;<  ~  bind:m
-  %^  poke-our  %graph-push-hook
-    %graph-update-3
-  !>  ^-  update:store
-  update
+  (poke-our:strandio %graph-push-hook %graph-update-3 !>(update))
 (pure:m *vase)
-
