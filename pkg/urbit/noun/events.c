@@ -126,32 +126,6 @@ _ce_image_open(u3e_image* img_u)
   }
 }
 
-/* _ce_patch_create(): create patch files.
-*/
-static void
-_ce_patch_create(u3_ce_patch* pat_u)
-{
-  c3_c ful_c[8193];
-
-  snprintf(ful_c, 8192, "%s", u3P.dir_c);
-  mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
-  mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
-  if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
-    fprintf(stderr, "loom: patch open control.bin: %s\r\n", strerror(errno));
-    c3_assert(0);
-  }
-
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
-  if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
-    fprintf(stderr, "loom: patch open memory.bin: %s\r\n", strerror(errno));
-    c3_assert(0);
-  }
-}
-
 /* _ce_patch_delete(): delete a patch.
 */
 static void
@@ -454,7 +428,31 @@ _ce_patch_compose(void)
     u3_ce_patch* pat_u = c3_malloc(sizeof(u3_ce_patch));
     c3_w i_w, pgc_w;
 
-    _ce_patch_create(pat_u);
+    // Create and open the patch's control and memory files.
+    {
+      c3_c ful_c[8193];
+
+      snprintf(ful_c, sizeof(ful_c)-1, "%s", u3P.dir_c);
+      mkdir(ful_c, 0700);
+
+      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb", u3P.dir_c);
+      mkdir(ful_c, 0700);
+
+      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb/chk/control.bin", u3P.dir_c);
+      pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600);
+      if ( -1 == pat_u->ctl_i ) {
+        fprintf(stderr, "loom: patch open control.bin: %s\r\n", strerror(errno));
+        c3_assert(0);
+      }
+
+      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb/chk/memory.bin", u3P.dir_c);
+      pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600);
+      if ( -1 == pat_u->mem_i ) {
+        fprintf(stderr, "loom: patch open memory.bin: %s\r\n", strerror(errno));
+        c3_assert(0);
+      }
+    }
+
     pat_u->con_u = c3_malloc(sizeof(u3e_control) + (pgs_w * sizeof(u3e_line)));
     pat_u->con_u->ver_y = u3e_version;
     pgc_w = 0;
