@@ -77,8 +77,10 @@ export function DmResource(props: DmResourceProps) {
   );
 
   useEffect(() => {
-    getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
-  }, [ship]);
+    if(!dm) {
+      getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
+    }
+  }, [ship, dm]);
 
   const fetchMessages = useCallback(
     async (newer: boolean) => {
