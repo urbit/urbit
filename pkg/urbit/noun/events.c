@@ -74,8 +74,16 @@ u3e_fault(void* adr_v, c3_i ser_i)
   return 1;
 }
 
-/* _ce_image_open(): open or create image.
-*/
+/* Open the image file at <path to pier>/.urb/chk/<segment name>.bin. If the
+ * file does not already exist, then create it.
+ *
+ * @param img_u  memory segment struct containing the segment name. File
+ *               descriptor and page length fields are filled in by this
+ *               function.
+ *
+ * @return c3y   image file was successfully opened (or created).
+ * @return c3n   image file could not be opened (or created).
+ */
 static c3_o
 _ce_image_open(u3e_image* img_u)
 {
