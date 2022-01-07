@@ -20,7 +20,14 @@
 /* u3_ames: ames networking.
 */
   typedef struct _u3_ames {             //  packet network state
-    u3_auto          car_u;             //  driver
+    u3_auto          car_u;             //  ames driver
+    struct {
+      u3_auto  car_u;                   //  fine driver
+      c3_y     pro_y;                   //  fine protocol
+
+      // TODO: hashtable, stats, maybe config? etc.
+    } fin_s;
+    u3_auto          van_u;             //  fine driver TODO: review, correct?
     u3_pier*         pir_u;             //  pier
     union {                             //  uv udp handle
       uv_udp_t       wax_u;             //
@@ -55,9 +62,10 @@
     } sat_u;                            //
   } u3_ames;
 
-/* u3_head: ames packet header
+/* u3_head: ames or fine packet header
 */
   typedef struct _u3_head {
+    c3_o req_o;                         //  is request (fine only)
     c3_o sim_o;                         //  is ames protocol?
     c3_y ver_y;                         //  protocol version
     c3_y sac_y;                         //  sender class
@@ -66,6 +74,7 @@
     c3_o rel_o;                         //  relayed?
   } u3_head;
 
+/* TODO: request response bodies for scry */
 /* u3_body: ames packet body
 */
   typedef struct _u3_body {
@@ -1057,6 +1066,35 @@ _ames_skip(u3_body* bod_u) {
 }
 #endif
 
+/* _fine_hear(): hear a (potential) packet, dispatch appropriately
+ */
+static void _fine_hear(u3_head* hed_u) {
+  u3_noun* bod_u;
+  if(hed_u->req_o) {
+    // lookup in cache
+    // (unit (unit (unit packet))
+    // ~ -> miss
+    // [~ ~] -> hit, unbound
+    // [~ ~ ~] -> hit, empty
+    // [~ ~ ~ *] -> hit, w/ data
+    if(hit) {
+      _fine_send(cache_res);
+    } else {
+
+      u3_pier_peek_last(car_u->pir_u, u3_nul, c3__ax, u3_nul,
+                      // TODO path for scry
+                      sam_u, _fine_pack_scry_cb);
+    }
+  } else {
+    // handle response
+    // TODO: serialize, validate, enqueue task
+    // [%fund *]
+
+  }
+
+
+}
+
 /* _ames_hear(): parse a (potential) packet, dispatch appropriately.
 */
 static void
@@ -1083,8 +1121,11 @@ _ames_hear(u3_ames* sam_u,
 
   //  unpack header, ensuring buffer is large enough
   //
+  //
+  c3_o is_ames_o = _ames_sift_head(&hed_u, hun_y);
+  
   if (  (4 > len_w)
-     || (c3n == _ames_sift_head(&hed_u, hun_y)) )
+     || (c3n == is_ames_o))
   {
     sam_u->sat_u.hed_d++;
     if ( 0 == (sam_u->sat_u.hed_d % 100000) ) {
@@ -1094,6 +1135,10 @@ _ames_hear(u3_ames* sam_u,
 
     c3_free(hun_y);
     return;
+  } else if ((4 > len_w)
+     || (c3n == is_ames_o)) {
+    // TODO: dispatch fine request
+    //_fine_hear()
   }
 
   //  ensure the protocol version matches ours
@@ -1312,6 +1357,71 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
   }
 }
 
+/* _fine_pack_scry_cb(): receive all packets for datum out of fine
+ * TODO: implement
+ */
+static void _fine_pack_scry_cb(void* vod_p u3_noun nun)
+{
+  u3_ames* sam_u = vod_p;
+  u3_weak   pack = u3r_at(3, nun);
+  // 
+  //  hashtable = (path, packet_num) -> cached_result;
+  //  All cases, except 1st ~: put results in cache for all packets
+  // ~ -> if second request, ask for notification if 2nd, drop on floor
+  // [~ ~] -> send packet
+  // [~ ~ *] -> send packet
+  //
+  // TODO: also, maybe evict
+}
+
+/**
+ * _fine_send()
+ */
+static void _fine_send()
+{
+  // TODO: deduplicate with _ames_send();
+  // _fine_send_fail()
+  // _fine_send_cb()
+}
+
+/* fine_io_kick:(): receive effect from arvo
+ *   TODO: 
+ */
+static c3_o _fine_io_kick()
+{
+  /**
+   * +task:fine
+   *   $%  [%find *]
+   *       [%fund *]
+   *   ==
+   * +gift:fine
+   *   $%  [%made *]
+   *       [%find *]
+   *    ==
+   */
+  u3_noun hed = u3h(nun);
+  if(c3__made == hed) {
+    // TODO: respond to notification of bound data 
+    // put in cache
+    return c3y;
+  } else if(c3__find == hed) {
+    // TODO: emit request packet to host ship
+    // _fine_io_request();
+  } else {
+    return c3n;
+  }
+}
+
+static void _fine_send_fail()
+{
+  // TODO: log some shit
+}
+
+static void _fine_send_cb()
+{
+  // TODO: anything to do here?
+}
+
 /* _ames_prot_scry_cb(): receive protocol version
 */
 static void
@@ -1361,6 +1471,8 @@ _ames_io_talk(u3_auto* car_u)
 
     u3_auto_plan(car_u, u3_ovum_init(0, c3__a, wir, cad));
   }
+  //  TODO: scry the fine protocol out of arvo
+  //
 
   //  scry the protocol version out of arvo
   //
@@ -1524,6 +1636,8 @@ u3_ames_io_init(u3_pier* pir_u)
   sam_u->fig_u.net_o = c3y;
   sam_u->fig_u.see_o = c3y;
   sam_u->fig_u.fit_o = c3n;
+
+  // TODO: setup hashtable for scry cache
 
   //NOTE  some numbers on memory usage for the lane cache
   //
