@@ -101,13 +101,13 @@ u3e_fault(void* adr_v, c3_i ser_i)
   c3_w* adr_w = (c3_w*) adr_v;
 
   if ( (adr_w < u3_Loom) || (adr_w >= (u3_Loom + u3a_words)) ) {
-    fprintf(stderr, "address %p out of loom!\r\n", adr_v);
+    fprintf(stderr, "address %p out of loom!\r\n", adr_w);
     fprintf(stderr, "loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3a_words);
     c3_assert(0);
     return 0;
   }
   else {
-    c3_w off_w = (adr_w - u3_Loom);
+    c3_w off_w = u3a_outa(adr_w);
     c3_w pag_w = off_w >> u3a_page;
     c3_w blk_w = (pag_w >> 5);
     c3_w bit_w = (pag_w & 31);
@@ -367,25 +367,6 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
   return pgc_w;
 }
 
-/* _ce_patch_junk_page(): mark a page as junk.
-*/
-static void
-_ce_patch_junk_page(u3_ce_patch* pat_u,
-                    c3_w         pag_w)
-{
-  c3_w blk_w = (pag_w >> 5);
-  c3_w bit_w = (pag_w & 31);
-
-  // u3l_log("protect b: page %d\r\n", pag_w);
-  if ( -1 == mprotect(u3_Loom + (pag_w << u3a_page),
-                      (1 << (u3a_page + 2)),
-                      PROT_READ) )
-  {
-    c3_assert(0);
-  }
-  u3P.dit_w[blk_w] &= ~(1 << bit_w);
-}
-
 /* _ce_patch_compose(): make and write current patch.
 */
 static u3_ce_patch*
@@ -470,9 +451,6 @@ _ce_patch_compose(void)
     }
     for ( i_w = 0; i_w < sou_w; i_w++ ) {
       pgc_w = _ce_patch_save_page(pat_u, (u3a_pages - (i_w + 1)), pgc_w);
-    }
-    for ( i_w = nor_w; i_w < (u3a_pages - sou_w); i_w++ ) {
-      _ce_patch_junk_page(pat_u, i_w);
     }
 
     pat_u->con_u->nor_w = nor_w;
@@ -602,23 +580,30 @@ _ce_image_blit(u3e_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
+  if ( 0 == img_u->pgs_w ) {
+    return;
+  }
+
   c3_w i_w;
+  c3_w siz_w = 1 << (u3a_page + 2);
 
   lseek(img_u->fid_i, 0, SEEK_SET);
-  for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
-    if ( -1 == read(img_u->fid_i, ptr_w, (1 << (u3a_page + 2))) ) {
+  for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
+    if ( -1 == read(img_u->fid_i, ptr_w, siz_w) ) {
       fprintf(stderr, "loom: image blit read: %s\r\n", strerror(errno));
       c3_assert(0);
     }
-#if 0
-    {
-      c3_w off_w = (ptr_w - u3_Loom);
-      c3_w pag_w = (off_w >> u3a_page);
 
-      u3l_log("blit: page %d, mug %x\r\n", pag_w,
-              u3r_mug_words(ptr_w, (1 << u3a_page)));
+    if ( 0 != mprotect(ptr_w, siz_w, PROT_READ) ) {
+      fprintf(stderr, "loom: live mprotect: %s\r\n", strerror(errno));
+      c3_assert(0);
     }
-#endif
+
+    c3_w pag_w = u3a_outa(ptr_w) >> u3a_page;
+    c3_w blk_w = pag_w >> 5;
+    c3_w bit_w = pag_w & 31;
+    u3P.dit_w[blk_w] &= ~(1 << bit_w);
+
     ptr_w += stp_ws;
   }
 }
@@ -866,17 +851,16 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
                        (u3_Loom + (1 << u3a_bits) - (1 << u3a_page)),
                        -(1 << u3a_page));
 
-        if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, PROT_READ) ) {
-          u3l_log("loom: live mprotect: %s\r\n", strerror(errno));
-          c3_assert(0);
-        }
-
         u3l_log("boot: protected loom\r\n");
       }
 
-      /* If the images were empty, we are logically booting.
+      /* If the images were empty, we are logically booting. By default, we mark
+      ** all pages as dirty, which enables us to track only home road pages by
+      ** marking those as clean when they're mapped into memory from the
+      ** snapshot on a future boot for which the images are not empty.
       */
       if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
+        u3e_foul();
         u3l_log("live: logical boot\r\n");
         nuu_o = c3y;
       }
@@ -908,5 +892,5 @@ u3e_yolo(void)
 void
 u3e_foul(void)
 {
-  memset((void*)u3P.dit_w, 0xff, u3a_pages >> 3);
+  memset((void*)u3P.dit_w, 0xff, sizeof(u3P.dit_w));
 }
