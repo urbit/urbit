@@ -9,10 +9,12 @@ daemon = $(wildcard daemon/*.c)
 worker = $(wildcard worker/*.c)
 tests  = $(wildcard tests/*.c)
 bench  = $(wildcard bench/*.c)
+# TODO(peter): select correct pagfal implementation for platform.
+pagfal = $(wildcard pagfal/*.c)
 
 compat := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.c))
 
-common  = $(jets) $(noun) $(ur) $(vere) $(compat)
+common  = $(jets) $(noun) $(ur) $(vere) $(compat) $(pagfal)
 headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')

@@ -107,7 +107,9 @@ _ce_mapfree(void* map_v)
 }
 #endif
 
-/* u3e_fault(): handle a memory event with libsigsegv protocol.
+/* TODO(peter): update this comment after replacing libsigsegv. 
+**
+** u3e_fault(): handle a memory event with libsigsegv protocol.
 */
 c3_i
 u3e_fault(void* adr_v, c3_i ser_i)
@@ -153,11 +155,11 @@ u3e_fault(void* adr_v, c3_i ser_i)
 
     u3P.dit_w[blk_w] |= (1 << bit_w);
 
-    if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
-                        (1 << (u3a_page + 2)),
-                        (PROT_READ | PROT_WRITE)) )
+    if ( c3n == u3f_protect(u3_Loom + (pag_w << u3a_page),
+                            1 << (u3a_page + 2),
+                            u3f_read | u3f_write) )
     {
-      fprintf(stderr, "loom: fault mprotect: %s\r\n", strerror(errno));
+      fprintf(stderr, "loom: failed to grant write access\r\n");
       c3_assert(0);
       return 0;
     }
@@ -458,9 +460,9 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
 #endif
     _ce_patch_write_page(pat_u, pgc_w, mem_w);
 
-    if ( -1 == mprotect(u3_Loom + (pag_w << u3a_page),
-                        (1 << (u3a_page + 2)),
-                        PROT_READ) )
+    if ( c3n == u3f_protect(u3_Loom + (pag_w << u3a_page),
+                            1 << (u3a_page + 2),
+                            u3f_read) )
     {
       c3_assert(0);
     }
@@ -952,12 +954,7 @@ c3_o
 u3e_yolo(void)
 {
   //    NB: u3e_save() will reinstate protection flags
-  //
-  if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
-    return c3n;
-  }
-
-  return c3y;
+  return u3f_protect(u3_Loom, u3a_bytes, u3f_read | u3f_write);
 }
 
 /* u3e_foul(): dirty all the pages of the loom.

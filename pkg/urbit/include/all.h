@@ -30,3 +30,7 @@
 #   include "jets/k.h"         //  u3k: jets (transfer, args)
 #   include "jets/q.h"         //  u3q: jets (retain, args)
 #   include "jets/w.h"         //  u3w: jets (retain, core)
+
+  /** pagfal: page fault.
+  **/
+#   include "pagfal/pagfal.h"

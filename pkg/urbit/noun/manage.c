@@ -142,7 +142,7 @@ _cm_signal_handle(c3_l sig_l)
 #ifndef U3_OS_mingw
   if ( c3__over == sig_l ) {
 #ifndef NO_OVERFLOW
-    sigsegv_leave_handler(_cm_overflow, NULL, NULL, NULL);
+    //sigsegv_leave_handler(_cm_overflow, NULL, NULL, NULL);
 #endif
   } else
 #endif
@@ -151,7 +151,9 @@ _cm_signal_handle(c3_l sig_l)
   }
 }
 
-#ifndef NO_OVERFLOW
+#if !defined(NO_OVERFLOW)
+// TODO(peter): handle stack overflow in pagfal.
+#if 0
 static void
 #ifndef U3_OS_mingw
 _cm_signal_handle_over(int emergency, stackoverflow_context_t scp)
@@ -161,7 +163,8 @@ _cm_signal_handle_over(int x)
 {
   _cm_signal_handle(c3__over);
 }
-#endif
+#endif /* 0 */
+#endif /* !defined(NO_OVERFLOW) */
 
 static void
 _cm_signal_handle_term(int x)
@@ -349,7 +352,7 @@ _cm_signal_deep(c3_w mil_w)
 
 #ifndef NO_OVERFLOW
 #ifndef U3_OS_mingw
-  stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
+  //stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
 #else
   rsignal_install_handler(SIGSTK, _cm_signal_handle_over);
 #endif
@@ -393,7 +396,7 @@ _cm_signal_done()
 
 #ifndef NO_OVERFLOW
 #ifndef U3_OS_mingw
-  stackoverflow_deinstall_handler();
+  //stackoverflow_deinstall_handler();
 #else
   rsignal_deinstall_handler(SIGSTK);
 #endif
@@ -1748,6 +1751,12 @@ u3m_init(void)
     }
 
     u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
+  }
+
+  // When using userfaultfd, the handler has to be installed after mmap() is
+  // called.
+  if ( c3n == u3f_install_handler(u3e_fault) ) {
+    exit(1);
   }
 }
 
