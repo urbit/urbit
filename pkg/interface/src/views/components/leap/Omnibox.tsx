@@ -167,8 +167,15 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         if(shift && app === 'profile') {
           // TODO: hacky, fix
           link = link.replace('~profile', '~landscape/messages/dm');
+        } 
+        if(link.startsWith('?')) {
+          history.push({
+            search: link
+          });
+        } else {
+          history.push(link);
+
         }
-        history.push(link);
       } else {
         window.location.href = link;
       }
