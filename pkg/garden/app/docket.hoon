@@ -634,6 +634,10 @@
       [[200 headers] `q.data]
     :-  content-type+mime-type
     ?:  =(/index/html requested)  ~
+    ?:  ?&  =(/serviceworker/js requested)
+            =(from 'grid')
+        ==
+        ~[max-1-wk:gen 'service-worker-allowed'^'../../']
     ~[max-1-wk:gen]
   --
 ::
