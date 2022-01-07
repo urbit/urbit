@@ -21,7 +21,7 @@
 =,  jael
 |%
 +$  app-state
-  $:  %2
+  $:  %3
       url=@ta
       =net
       whos=(set ship)
@@ -97,13 +97,35 @@
       =^  cards  state
         (%*(run-logs do nas.state *^state:naive) logs.state)
       [(jael-update:do (to-udiffs:do cards)) state]
-    ?>  ?=(%2 -.old-state)
-    [cards-1 this(state old-state)]
+    =^  cards-2  old-state
+      ?.  ?=(%2 -.old-state)
+        `old-state
+      ::  replace naive state and indices with snapshot
+      ::
+      =:  nas.old-state   nas.snap
+          own.old-state   owners.snap
+          spo.old-state   sponsors.snap
+          logs.old-state  ~
+        ==
+      =/  points=@ud  ~(wyt by points.nas.old-state)
+      %-  %-  slog  :_  ~
+          :-  %leaf
+          "ship: processing azimuth snapshot ({<points>} points)"
+      =/  snap-cards=udiffs:point  (run-state:do id.snap points.nas.old-state)
+      :_  [%3 +.old-state]
+      ;:  welp
+        cards-1
+        (jael-update:do snap-cards)
+        ::  start getting new logs after the last id:block in the snapshot
+        ::
+        start:do
+      ==
+    ?>  ?=(%3 -.old-state)
+    [cards-2 this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1 app-state)
-    ::
-    +$  state-1
-      $:  %1
+    ++  app-states  $%(state-0 state-1-2 app-state)
+    +$  state-1-2
+      $:  ?(%1 %2)
           url=@ta
           =net
           whos=(set ship)
@@ -143,10 +165,6 @@
           ==
         `this
       ==
-    ?:  =(%eth-logs mark)
-      =+  !<(logs=(list event-log:rpc:ethereum) vase)
-      =.  logs.state  logs
-      $(mark %noun, vase !>(%rerun))
     ::
     ?.  ?=(%azimuth-poke mark)
       (on-poke:def mark vase)
