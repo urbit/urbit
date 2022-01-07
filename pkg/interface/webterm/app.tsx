@@ -45,7 +45,8 @@ const makeTheme = (dark: boolean): ITheme => {
     foreground: fg,
     background: bg,
     brightBlack: '#7f7f7f',  // NOTE  slogs
-    cursor: fg
+    cursor: fg,
+    selection: fg
   };
 };
 
@@ -66,7 +67,9 @@ const termConfig: ITerminalOptions = {
   bellSound: bel,
   //
   //  allows text selection by holding modifier (option, or shift)
-  macOptionClickForcesSelection: true
+  macOptionClickForcesSelection: true,
+  //  prevent insertion of simulated arrow keys on-altclick
+  altClickMovesCursor: false
 };
 
 const csi = (cmd: string, ...args: number[]) => {
