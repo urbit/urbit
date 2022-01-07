@@ -1,6 +1,6 @@
 import { Box } from '@tlon/indigo-react';
 import React, { Suspense, useCallback, useEffect } from 'react';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
@@ -11,6 +11,7 @@ import LaunchApp from '~/views/apps/launch/App';
 import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
 import { JoinRoute } from './Join/Join';
 import useInviteState from '~/logic/state/invite';
+import useMetadataState from '~/logic/state/metadata';
 
 export const Container = styled(Box)`
    flex-grow: 1;

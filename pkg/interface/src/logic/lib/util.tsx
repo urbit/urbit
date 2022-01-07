@@ -2,11 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import { patp2dec } from 'urbit-ob';
 import f  from 'lodash/fp';
-import { Association, Contact, Patp } from '@urbit/api';
+import { Association, Patp } from '@urbit/api';
 import { enableMapSet } from 'immer';
 /* eslint-disable max-lines */
 import anyAscii from 'any-ascii';
-import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import bigInt, { BigInteger } from 'big-integer';
 import { IconRef, Workspace } from '~/types';
 
@@ -502,7 +501,6 @@ export function getItemTitle(association: Association): string {
 export const svgDataURL = svg => 'data:image/svg+xml;base64,' + btoa(svg);
 
 export const svgBlobURL = svg => URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
-
 
 export function binaryIndexOf(arr: BigInteger[], target: BigInteger): number | undefined {
   let leftBound = 0;

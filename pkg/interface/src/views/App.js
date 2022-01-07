@@ -10,7 +10,7 @@ import { hot } from 'react-hot-loader/root';
 import { Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import gcpManager from '~/logic/lib/gcpManager';
-import { favicon, svgDataURL } from '~/logic/lib/util';
+import { svgDataURL } from '~/logic/lib/util';
 import history from '~/logic/lib/history';
 import withState from '~/logic/lib/withState';
 import useContactState, { favicon } from '~/logic/state/contact';

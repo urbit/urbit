@@ -14,10 +14,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import useGroupState from '~/logic/state/group';
 import { useInviteForResource } from '~/logic/state/invite';
 import { usePreview } from '~/logic/state/metadata';
-import { decline, Invite } from '@urbit/api';
-import { join, JoinRequest } from '@urbit/api/groups';
+import { joinError, joinLoad, JoinProgress, join, JoinRequest, decline, Invite } from '@urbit/api';
 import airlock from '~/logic/api';
-import { joinError, joinLoad, JoinProgress } from '@urbit/api';
 import { useQuery } from '~/logic/lib/useQuery';
 import { JoinDesc, JoinSkeleton } from './Skeleton';
 

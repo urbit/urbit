@@ -1,7 +1,7 @@
 import useMetadataState from '../state/metadata';
 import ob from 'urbit-ob';
 import useInviteState from '../state/invite';
-import {resourceAsPath} from '../../../../npm/api/dist';
+import { resourceAsPath } from '@urbit/api/';
 
 function getGroupResourceRedirect(key: string) {
   const association = useMetadataState.getState().associations.graph[`/ship/${key}`];
