@@ -1,5 +1,5 @@
 import React from 'react';
-import { Vat } from '@urbit/api/hood';
+import { Vat } from '@urbit/api';
 
 import { Attribute } from './Attribute';
 

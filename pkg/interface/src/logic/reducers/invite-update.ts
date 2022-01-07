@@ -1,4 +1,4 @@
-import { InviteUpdate } from '@urbit/api/invite';
+import { InviteUpdate } from '@urbit/api';
 import _ from 'lodash';
 import { BaseState } from '../state/base';
 import { InviteState as State } from '../state/invite';
