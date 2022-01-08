@@ -161,6 +161,13 @@
     ?:  =(%noun mark)
       ?+    q.vase  !!
       ::
+          %rerun
+        =/  points=@ud  ~(wyt by points.nas.state)
+        ~&  >  "rerunning ({<points>} points)"
+        =/  =udiffs:point
+          (run-state:do (last-block-id:dice logs.state) points.nas.state)
+        [(jael-update:do udiffs) this]
+      ::
           %resub
         :_  this  :_  ~
         :*  %pass  /eth-watcher  %agent  [our.bowl %eth-watcher]

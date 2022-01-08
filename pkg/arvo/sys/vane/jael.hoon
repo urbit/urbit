@@ -740,17 +740,18 @@
     =/  a-point=point  (~(gut by pos.zim.pki) ship.i.udiffs *point)
     =/  a-diff=(unit diff:point)  (udiff-to-diff:point udiff.i.udiffs a-point)
     =?  this-su  ?=(^ a-diff)
-      ::  if this about our keys, and we already know these, start using them
-      ::
-      =?  lyf.own
-          ?&  =(our ship.i.udiffs)
+      =-  (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
+      ?.  ?&  =(our ship.i.udiffs)
               ?=(%keys -.u.a-diff)
               (~(has by jaw.own) life.to.u.a-diff)
           ==
-        =*  lyf  life.to.u.a-diff
-        =.  moz  [[hen %give %private-keys lyf jaw:own] moz]
-        lyf
-      (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
+        this-su
+      ::  if this about our keys, and we already know these, start using them
+      ::
+      =.  lyf.own  life.to.u.a-diff
+      ::  notify subscribers (ames) to start using our new private keys
+      ::
+      (exec yen.own [%give %private-keys [lyf jaw]:own])
     $(udiffs t.udiffs)
   ::
   ++  subscribers-on-ship
