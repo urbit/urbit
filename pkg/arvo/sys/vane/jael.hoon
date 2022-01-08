@@ -427,6 +427,13 @@
       %-  curd  =<  abet
       (private-keys:~(feel su hen now pki etn) life.tac ring.tac)
     ::
+    ::  resend private key to subscribers
+    ::
+        %resend
+      %-  curd  =<  abet
+      %-  ~(exec su hen now pki etn)
+      [yen.own.pki [%give %private-keys [lyf jaw]:own.pki]]
+    ::
     ::  register moon keys
     ::
         %moon
@@ -740,7 +747,9 @@
               ?=(%keys -.u.a-diff)
               (~(has by jaw.own) life.to.u.a-diff)
           ==
-        life.to.u.a-diff
+        =*  lyf  life.to.u.a-diff
+        =.  moz  [[hen %give %private-keys lyf jaw:own] moz]
+        lyf
       (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
     $(udiffs t.udiffs)
   ::

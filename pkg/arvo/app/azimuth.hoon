@@ -21,7 +21,7 @@
 =,  jael
 |%
 +$  app-state
-  $:  %3
+  $:  %4
       url=@ta
       =net
       whos=(set ship)
@@ -100,32 +100,41 @@
     =^  cards-2  old-state
       ?.  ?=(%2 -.old-state)
         `old-state
+      ~&  >  '%azimuth: updating to state 3'
+      =.  +.state  +.old-state
       ::  replace naive state and indices with snapshot
       ::
-      =:  nas.old-state   nas.snap
-          own.old-state   owners.snap
-          spo.old-state   sponsors.snap
-          logs.old-state  ~
+      =:  nas.state   nas.snap
+          own.state   owners.snap
+          spo.state   sponsors.snap
+          logs.state  ~
+          ::  TODO: shouldn't be needed but have seen eth-watcher
+          ::        threads use a url='' if this is not used
+          ::
+          url.state   'http://eth-mainnet.urbit.org:8545'
         ==
-      =/  points=@ud  ~(wyt by points.nas.old-state)
+      =/  points=@ud  ~(wyt by points.nas.state)
       %-  %-  slog  :_  ~
-          :-  %leaf
-          "ship: processing azimuth snapshot ({<points>} points)"
-      =/  snap-cards=udiffs:point  (run-state:do id.snap points.nas.old-state)
-      :_  [%3 +.old-state]
-      ;:  welp
-        cards-1
+          leaf+"ship: processing azimuth snapshot ({<points>} points)"
+      =/  snap-cards=udiffs:point  (run-state:do id.snap points.nas.state)
+      :_  [%3 +.state]
+      %+  weld
         (jael-update:do snap-cards)
-        ::  start getting new logs after the last id:block in the snapshot
-        ::
-        start:do
-      ==
-    ?>  ?=(%3 -.old-state)
-    [cards-2 this(state old-state)]
+      ::  start getting new logs after the last id:block in the snapshot
+      ::
+      start:do
+    =^  cards-3  old-state
+      ?.  ?=(%3 -.old-state)  [cards-2 old-state]
+      :_  old-state(- %4)
+      ~&  >  '%azimuth: updating to state 4'
+      [%pass /resend-pk %arvo %j %resend ~]^cards-2
+    ?>  ?=(%4 -.old-state)
+    [cards-3 this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1-2 app-state)
-    +$  state-1-2
-      $:  ?(%1 %2)
+    ++  app-states  $%(state-0 state-1-2-3 app-state)
+    ::
+    +$  state-1-2-3
+      $:  ?(%1 %2 %3)
           url=@ta
           =net
           whos=(set ship)
@@ -257,6 +266,12 @@
         %history  (welp logs.state loglist.diff)
         %logs     (welp logs.state loglist.diff)
       ==
+    ::  doing :azimuth|watch caused a l2-sig-fail when using the eth-log
+    ::  snapshot because we were not updating nas with the saved logs.
+    ::
+    ::  now (L: 189) nas.state is loaded with the contents of the snapshot,
+    ::  if we are on the %default network.
+    ::
     =^  effects  state  (run-logs:do loglist.diff)
     :_  this
     %+  weld
