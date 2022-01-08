@@ -3,9 +3,9 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { registerRoute } from 'workbox-routing';
 import { precacheAndRoute } from 'workbox-precaching';
 
-const isDev = import.meta.env.DEV;
+const isDev = import.meta.env && import.meta.env.DEV;
 
-if (typeof isVitePreview !== 'undefined') {
+if (!isDev) {
   /* eslint-disable no-underscore-dangle */
   precacheAndRoute(self.__WB_MANIFEST);
 } else {

@@ -33,15 +33,15 @@ export default ({ mode }) => {
         ? {
             rollupOptions: {
               plugins: [
+                replace({
+                  isVitePreview: 'true' // this is used to conditionally call Workbox's precacheAndRoute function
+                }),
                 injectManifest({
                   swSrc: 'serviceworker.js',
                   swDest: 'dist/serviceworker.js',
                   globDirectory: 'dist',
                   mode: 'production' // this inlines the module imports when using yarn build
-                }) as Plugin,
-                replace({
-                  isVitePreview: true // this is used to conditionally call Workbox's precacheAndRoute function
-                })
+                }) as Plugin
               ]
             }
           }
