@@ -2264,6 +2264,9 @@
           ~/  %sosi
           |=  [sk=@I m=@I a=@I]
           ^-  @J
+          ?>  (gte 32 (met 3 sk))
+          ?>  (gte 32 (met 3 m))
+          ?>  (gte 32 (met 3 a))
           =/  c  curve
           ?<  |(=(0 sk) (gte sk n.domain.c))
           =/  pp
@@ -2302,6 +2305,9 @@
           ~/  %sove
           |=  [pk=@I m=@I sig=@J]
           ^-  ?
+          ?>  (gte 32 (met 3 pk))
+          ?>  (gte 32 (met 3 m))
+          ?>  (gte 64 (met 3 sig))
           =/  c  curve
           =/  pup  (lift-x pk)
           ?~  pup
