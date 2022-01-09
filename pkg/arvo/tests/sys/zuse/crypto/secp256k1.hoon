@@ -316,4 +316,37 @@
     %+  expect-eq
       !>  res
     !>  (verify:schnorr:ecc pub mes sig)
+++  test-schnorr-bounds
+  =>  |%  +$  case  [sec=@ pub=@ aux=@ mes=@ sig=@]  --
+  =<  %+  category  "bounds"
+      (zing (weld t1 t2))
+  =/  too-big
+    0xff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.
+      ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff
+  =/  big-sig
+    0xff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.
+      ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.
+      ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.
+      ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff
+  =/  cases-big-sec=(list case)
+    :~  [too-big 0 0 0 0]
+        [0 0 too-big 0 0]
+        [0 0 0 too-big 0]
+    ==
+  =/  cases-big-pub=(list case)
+    :~  [0 too-big 0 0 0]
+        [0 0 0 too-big 0]
+        [0 0 0 0 big-sig]
+    ==
+  =/  t1
+    %+  turn  cases-big-sec
+    |=  case
+    %-  expect-fail
+    |.  (sign:schnorr:ecc sec mes aux)
+  :_  .
+  ^=  t2
+    %+  turn  cases-big-pub
+    |=  case
+    %-  expect-fail
+    |.  (verify:schnorr:ecc pub mes sig)
 --
