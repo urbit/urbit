@@ -63,7 +63,6 @@
   =/  old=versioned-state
     ?:  ?=(%& -.maybe-old)  [%0 +.maybe-old]
   [%1 !<(state-1 vase)]
-
   |^
   |-
   ?-  -.old
@@ -85,33 +84,15 @@
   ++  state-0-to-1
     |=  sta=state-0
     ^-  state-1
-    =+  new-state=*state-1
+    =/  garden=path  /(scot %p our.bowl)/garden/(scot %da now.bowl)
+    =+  .^(=dock=tube:clay %cc (weld garden /docket-0/docket-1))
+    =|  new-state=state-1
     =/  new-charges=(map desk charge)
-    %-  ~(urn by charges.sta)
-    |=  [=desk old-charge=charge-0]
-    ^-  charge
-    =/  d=docket-0  docket-0.old-charge
-    =/  ocket=docket
-      :*  %1
-          title.d
-          info.d
-          color.d
-          *href
-          image.d
-          version.d
-          website.d
-          license.d
-      ==
-    =/  res=docket
-    ?-    -.href-0.d
-        %glob
-      =/  spot   `[base.href-0.d glob-reference.href-0.d]
-      ocket(href (href spot [%glob ~]))
-        %site
-      ocket(href (href ~ href-0.d))
-    ==
-    [res chad:(~(gut by charges.sta) desk *charge)]
-    ~!  new-charges
+      %-  ~(urn by charges.sta)
+      |=  [=desk old-charge=charge-0]
+      ^-  charge
+      :-  !<(docket (dock-tube !>(docket-0.old-charge)))
+      chad:(~(gut by charges.sta) desk *charge)
     =.  charges.new-state  new-charges
     new-state
   --
@@ -281,10 +262,9 @@
           `state
         ::  always update the docket in state to match clay's
         ::
-        =/  =docket            docket:cha
+        =/  =docket            get-docket:cha
         =/  pre=(unit charge)  (~(get by charges) desk)
         =.  charges            (new-docket:cha docket)
-
         ::  if the new chad is a site without a glob, we're instantly done
         ::
         ?:  ?&  ?=(%site +<.href.docket)
@@ -300,7 +280,6 @@
         =.  by-base  (~(put by by-base) base.u.spot.href.docket desk)
         ::  if the glob specification is unchanged, keep it
         ::
-
         ?:  ?&  (globable:cha pre docket)
                 ?=(^ pre)
                 =(href.docket.u.pre href.docket)
@@ -331,7 +310,6 @@
           ?.  ?=(?(%glob %site) -.chad)  ~
           ?:  ?=(%glob -.chad)  `glob.chad
           glob.chad
-
         =.  charges  (new-chad:cha %suspend glob)
         :_(state ~[add-fact:cha])
       ::
@@ -433,7 +411,7 @@
     ?+  wire  (on-arvo:def wire sign)
         [%init ~]
       =*  cha  ~(. ch q.byk.bowl)
-      =.  charges  (~(put by charges) q.byk.bowl [docket:cha %install ~])
+      =.  charges  (~(put by charges) q.byk.bowl [get-docket:cha %install ~])
       [fetch-glob:cha state]
     ::
         [%eyre ~]
@@ -457,7 +435,6 @@
 ++  cg
   |%
   ++  glob            |=(g=^glob glob-0+!>(g))
-  ::  support multiple docket versions?
   ++  docket          |=(d=^docket docket-1+!>(d))
   ++  charge-update   |=(u=^charge-update charge-update+!>(u))
   ++  kiln-uninstall  |=(=desk kiln-uninstall+!>(desk))
@@ -729,12 +706,12 @@
   ++  uninstall
     (poke-our:(pass /uninstall) %hood (kiln-uninstall:cg desk))
   ++  new-docket
-    |=  d=^docket
+    |=  d=docket
     %+  ~(put by charges)  desk
     [d chad:(~(gut by charges) desk *charge)]
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
   ++  globable
-    |=  [c=(unit charge) d=^docket]
+    |=  [c=(unit charge) d=docket]
     ^-  ?
     ?&
       ?=(^ c)  =(href.docket.u.c href.d)
@@ -772,12 +749,21 @@
         (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
         (poke-our:(pass (glob-wire ref)) %spider cage)
     ==
-  ++  docket-loc  `path`/desk/docket-1
+  ::
   ++  docket-exists
     ?:  =(0 ud:.^(cass:clay %cw (scry:io desk ~)))  %.n
-    .^(? %cu (scry:io desk docket-loc))
+    ?|  .^(? %cu (scry:io desk /desk/docket-0))
+        .^(? %cu (scry:io desk /desk/docket-1))
+    ==
+  ::  +get-docket: get the docket manifest from clay, converting from older version
+  ::  if necessary.
   ::
-  ++  docket  .^(^docket %cx (scry:io desk docket-loc))
+  ++  get-docket
+    =+  .^(=dock=tube:clay %cc (scry:io desk /docket-0/docket-1))
+    ?:  .^(? %cu (scry:io desk /desk/docket-1))
+      .^(docket %cx (scry:io desk /desk/docket-1))
+    !<  docket
+    %-  dock-tube
+    !>  .^(docket-0 %cx (scry:io desk /desk/docket-0))
   --
 --
-

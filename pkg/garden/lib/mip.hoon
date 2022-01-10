@@ -1,1 +1,1 @@
-../../garden-dev/lib/mip.hoon
+../.././garden-dev/lib/mip.hoon

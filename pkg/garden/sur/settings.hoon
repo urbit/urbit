@@ -1,1 +1,1 @@
-../../garden-dev/sur/settings.hoon
+../.././garden-dev/sur/settings.hoon

@@ -51,35 +51,35 @@
   |-
   ?-  -.old
     %0
+      =/  garden=path  /(scot %p our.bowl)/garden/(scot %da now.bowl)
+      =+  .^(=dock=tube:clay %cc (weld garden /docket-0/docket-1))
       =/  treats=(map [ship desk] treaty)
         %-  ~(run by treaties.old)
         |=  oter=treaty-0
         ^-  treaty
-        =/  tern=treaty  *treaty
+        =|  tern=treaty
         %=  tern
           ship  ship.oter
           desk  desk.oter
           case  case.oter
           hash  hash.oter
-          docket  *docket:docket
+          docket  !<(docket:docket (dock-tube !>(docket-0.oter)))
         ==
       =/  royals=(map desk treaty)
         %-  ~(run by sovereign.old)
         |=  oter=treaty-0
         ^-  treaty
-        =/  tern=treaty  *treaty
+        =|  tern=treaty
         %=  tern
           desk  desk.oter
           case  case.oter
           hash  hash.oter
-          docket  *docket:docket
+          docket  !<(docket:docket (dock-tube !>(docket-0.oter)))
         ==
       =/  new=versioned-state  [%1 +.old(treaties treats, sovereign royals)]
       $(old new)
     %1  `this(state old)
   ==
-
-
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -237,7 +237,7 @@
             %add
           :_  (~(put ju allies) src.bowl [ship desk]:update)
           (drop ~(safe-watch tr:cc [ship desk]:update))
-
+        ::
           %del
           :_  (~(del ju allies) src.bowl [ship desk]:update)
           ~[~(leave tr:cc [ship desk]:update)]
@@ -306,7 +306,6 @@
     =*  so  ~(. so:cc desk)
     :_(this [warp give]:so)
   --
-
 ::
 ++  on-fail  on-fail:def
 ++  on-leave  on-leave:def
@@ -317,7 +316,11 @@
 ::
 ++  treaty-from-docket
   |=  [=desk =docket:docket]
-  =+  .^(=cass:clay %cw (scry:io desk /desk/docket-1))
+  ?:  .^(? %cu (scry:io desk /desk/docket-1))
+    =+  .^(=cass:clay %cw (scry:io desk /desk/docket-1))
+    =+  .^(hash=@uv %cz (scry:io desk ~))
+    [our.bowl desk da+da.cass hash docket]
+  =+  .^(=cass:clay %cw (scry:io desk /desk/docket-0))
   =+  .^(hash=@uv %cz (scry:io desk ~))
   [our.bowl desk da+da.cass hash docket]
 ::  +al: Side effects for allies
@@ -371,13 +374,25 @@
   ++  wire  /sovereign/[desk]
   ++  pass  ~(. ^pass wire)
   ++  path  /treaty/(scot %p our.bowl)/[desk]
-  ::  support multiple docket versions?
-  ++  get-docket  .^(docket:docket %cx (scry:io desk /desk/docket-1))
-  ::  support multiple docket versions?
+  ::  +get-docket: get the docket manifest from clay, converting from older version
+  ::  if necessary.
+  ::
+  ++  get-docket
+    =+  .^(=dock=tube:clay %cc (scry:io desk /docket-0/docket-1))
+    ?:  .^(? %cu (scry:io desk /desk/docket-1))
+      .^(docket:docket %cx (scry:io desk /desk/docket-1))
+    !<  docket:docket
+    %-  dock-tube
+    !>  .^(docket-0:docket %cx (scry:io desk /desk/docket-0))
+  ::
   ++  warp
-    (warp-our:pass desk `[%next %x da+now.bowl /desk/docket-1])
+    ?:  .^(? %cu (scry:io desk /desk/docket-1))
+      (warp-our:pass desk `[%next %x da+now.bowl /desk/docket-1])
+    (warp-our:pass desk `[%next %x da+now.bowl /desk/docket-0])
+  ::
   ++  kick
     (kick:io path ~)
+  ::
   ++  give
     ::  notably gives on the /treaties path, like +give:tr does.
     ::  this should not give duplicate facts, because sovereign treaties
@@ -388,6 +403,7 @@
     :~  (fact:io (treaty-update:cg %add t) /treaties ~)
         (fact:io (treaty:cg t) path ~)
     ==
+  ::
   ++  publish
     (poke-our:pass %hood kiln-permission+!>([desk / &]))
   --
