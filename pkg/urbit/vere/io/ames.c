@@ -109,8 +109,8 @@
 
   /* u3_pend: generic ames or fine pending packet */
   typedef struct _u3_pend {
-    c3_y   typ_y;     // 0 for ames, 1 for fine request, 2 for fine response
     uv_udp_send_t    snd_u;             //  udp send request
+    c3_y   typ_y;     // 0 for ames, 1 for fine request, 2 for fine response
     c3_d   her_d[2];  // recipent mars address
     c3_c*  dns_c;     // galaxy FQDN
     c3_y*  hun_y;     // packet contents
@@ -521,15 +521,15 @@ _ames_etch_pack(u3_head* hed_u,
 static void
 _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
 {
-  //u3_pend* pen_u = (u3_pend*)req_u;
-  //u3_ames* sam_u = pen_u->sam_u;
+  u3_pend* pen_u = (u3_pend*)req_u;
+  u3_ames* sam_u = pen_u->sam_u;
 
   if (sas_i) {
     u3l_log("ames: send fail: %s\n", uv_strerror(sas_i));
-    //sam_u->fig_u.net_o = c3n;
+    sam_u->fig_u.net_o = c3n;
   }
   else {
-    //sam_u->fig_u.net_o = c3y;
+    sam_u->fig_u.net_o = c3y;
   }
 
   //_ames_pend_free(pen_u);
@@ -541,8 +541,8 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
 static void
 _ames_send(u3_pend* pen_u)
 {
+  u3l_log("ames: send");
   u3_ames* sam_u = pen_u->sam_u;
-
 
   // TODO: prevalidation?
   /*if ( !pen_u->hun_y ) {
@@ -559,6 +559,7 @@ _ames_send(u3_pend* pen_u)
 
     {
       uv_buf_t buf_u = uv_buf_init((c3_c*)pen_u->hun_y, pen_u->len_w);
+
       c3_i     sas_i = uv_udp_send(&pen_u->snd_u,
                                    &sam_u->wax_u,
                                    &buf_u, 1,
@@ -909,6 +910,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     c3_assert( val < 256 );
 
     pac_u->imp_y = val;
+    pen_u->her_d[0] = val;
     _ames_czar(pen_u);
   }
   //  non-galaxy lane
@@ -1281,9 +1283,6 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   } else if(u3_nul == lan)  {
     // TODO: no lane, drop packet
   } else {
-
-
-
     _fine_send(pen_u);
   }
 }
@@ -1394,6 +1393,8 @@ _ames_hear(u3_ames* sam_u,
            c3_w     len_w,
            c3_y*    hun_y)
 {
+
+  u3l_log("ames: hear");
   //  TODO: move from stack to heap to avoid reparsing
   u3_head hed_u;
   u3_body bod_u;
