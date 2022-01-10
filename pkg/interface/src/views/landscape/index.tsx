@@ -35,6 +35,7 @@ moment.updateLocale('en', {
 const makeGroupWorkspace = _.memoize((group: string): Workspace => ({ type: 'group', group }));
 
 const homeWorkspace: Workspace = { type: 'home' };
+const uqbarWorkspace: Workspace = { type: 'uqbar-home' };
 const messagesWorkspace: Workspace = { type: 'messages' };
 
 export default function Landscape() {
@@ -61,6 +62,9 @@ export default function Landscape() {
             );
           }}
         />
+        <Route exact path="/">
+          <GroupsPane workspace={uqbarWorkspace} baseUrl="/~landscape/home" isHome />
+        </Route>
         <Route path="/~landscape/home">
           <GroupsPane workspace={homeWorkspace} baseUrl="/~landscape/home" />
         </Route>

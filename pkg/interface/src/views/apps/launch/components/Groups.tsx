@@ -24,10 +24,10 @@ import Tile from "../components/tiles/tile";
 import { useQuery } from "~/logic/lib/useQuery";
 import { createJoinParams } from "~/views/landscape/components/Join/Join";
 
-const sortGroupsAlph = (a: Association, b: Association) =>
+export const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
 
-const getGraphUnreads = (associations: Associations) => {
+export const getGraphUnreads = (associations: Associations) => {
   const state = useHarkState.getState();
   const selUnread = (graph: string) => {
     const { count, each } = selHarkGraph(graph)(state);
@@ -43,7 +43,7 @@ const getGraphUnreads = (associations: Associations) => {
     )(associations.graph);
 };
 
-const getGraphNotifications = (
+export const getGraphNotifications = (
   associations: Associations,
   unreads: Unreads
 ) => (path: string) =>

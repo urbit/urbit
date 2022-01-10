@@ -78,14 +78,10 @@ export const Content = (props) => {
       <Switch>
         <Route
           exact
-          path="/" render={p => (
-            <LaunchApp
-              location={p.location}
-              match={p.match}
-              {...props}
-            />
-          )}
-        />
+          path="/"
+        >
+          <Landscape />
+        </Route>
         <Route path='/~landscape'>
           <Landscape />
         </Route>

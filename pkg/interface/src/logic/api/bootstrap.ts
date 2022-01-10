@@ -11,16 +11,10 @@ import useLocalState from '../state/local';
 import useStorageState from '../state/storage';
 
 export async function bootstrapApi() {
-  airlock.onError = (e) => {
-    (async () => {
-      const { reconnect } = useLocalState.getState();
-      try {
-        await reconnect();
-      } catch (e) {
-        console.log(e);
-        console.log('onError');
-      }
-    })();
+  airlock.onError = async (err) => {
+    airlock.reset();
+    console.log('AIRLOCK ERROR', err);
+    await bootstrapApi();
   };
 
   airlock.onRetry = () => {

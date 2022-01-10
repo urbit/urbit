@@ -473,3 +473,35 @@ export default function TermApp(props: TermAppProps) {
     </>
   );
 }
+
+// function harkContentsToPlainText(contents: HarkContent[]) {
+//   return contents
+//     .map((c) => {
+//       if ('ship' in c) {
+//         return c.ship;
+//       }
+//       return c.text;
+//     })
+//     .join('');
+// }
+
+// api.subscribe({
+//   app: 'hark-store',
+//   path: '/notes',
+//   event: (u: any) => {
+//     if ('add-note' in u) {
+//       const { bin, body } = u['add-note'];
+//       const binId = harkBinToId(bin);
+//       const { title, content } = body;
+
+//       ReactNativeWebView?.postMessage(...);
+
+//       const note = new Notification(harkContentsToPlainText(title), {
+//         body: harkContentsToPlainText(content),
+//         tag: binId,
+//         renotify: true
+//       });
+//       note.onclick = () => {};
+//     }
+//   }
+// });

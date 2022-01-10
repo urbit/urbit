@@ -9,7 +9,7 @@ import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import { Workspace } from '~/types';
 import { GroupSwitcher } from '../GroupSwitcher';
-import { SidebarList } from './SidebarList';
+import { SidebarGroupList } from './SidebarGroupList';
 import { SidebarListHeader } from './SidebarListHeader';
 import { SidebarListConfig } from './types';
 
@@ -73,12 +73,10 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         selected={selected || ''}
         workspace={workspace}
       />
-      <SidebarList
+      <SidebarGroupList
         config={config}
         selected={selected}
-        group={groupPath}
         baseUrl={props.baseUrl}
-        workspace={workspace}
       />
     </ScrollbarLessCol>
   );

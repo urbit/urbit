@@ -1,6 +1,6 @@
 :~  title+'EScape'
     info+'The next new thing'
-    color+0xee.5432  :: TODO change this to something
+    color+0x72.7bf2  :: alt: 0xdd.7c8a
     glob-ames+[~zod 0v0]
     base+'escape'
     version+[1 0 0]

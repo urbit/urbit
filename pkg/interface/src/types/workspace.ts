@@ -11,4 +11,8 @@ interface Messages {
   type: 'messages'
 }
 
-export type Workspace = HomeWorkspace | GroupWorkspace | Messages;
+interface UqbarHome {
+  type: 'uqbar-home'
+}
+
+export type Workspace = HomeWorkspace | GroupWorkspace | Messages | UqbarHome;

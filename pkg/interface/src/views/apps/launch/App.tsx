@@ -14,7 +14,7 @@ import Tile from "./components/tiles/tile";
 import "./css/custom.css";
 import { createJoinParams, Join, JoinRoute } from "~/views/landscape/components/Join/Join";
 
-const ScrollbarLessBox = styled(Box)`
+export const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
 
   ::-webkit-scrollbar {

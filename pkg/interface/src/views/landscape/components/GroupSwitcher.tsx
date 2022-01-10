@@ -7,12 +7,15 @@ import {
 } from '@tlon/indigo-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { uxToHex } from '~/logic/lib/util';
-import { getTitleFromWorkspace } from '~/logic/lib/workspace';
+import { getGroupFromWorkspace, getTitleFromWorkspace } from '~/logic/lib/workspace';
 import useMetadataState from '~/logic/state/metadata';
 import { Workspace } from '~/types/workspace';
 import { Dropdown } from '~/views/components/Dropdown';
 import { MetadataIcon } from './MetadataIcon';
+import { TitleActions } from './Sidebar/TitleActions';
+import { SidebarListConfig } from './Sidebar/types';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -78,10 +81,18 @@ export function GroupSwitcher(props: {
   const { workspace, isAdmin } = props;
   const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
-  const metadata = (workspace.type === 'home' || workspace.type  === 'messages')
+  const groupPath = getGroupFromWorkspace(workspace);
+  const metadata = (workspace.type === 'home' || workspace.type  === 'uqbar-home' || workspace.type  === 'messages')
     ? undefined
     : associations.groups[workspace.group].metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
+  const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
+    `group-config:${groupPath || 'home'}`,
+    {
+      sortBy: 'lastUpdated',
+      hideUnjoined: false
+    }
+  );
   return (
     <Row
       width="100%"
@@ -165,10 +176,18 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row flexGrow={1} alignItems="center" width='100%' minWidth={0} flexShrink={0}>
-              { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
-              <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
+            <Row flexGrow={1} alignItems="center" justifyContent="space-between" width='100%' minWidth={0} flexShrink={0}>
+              <Row flexGrow={1} alignItems="center" width='100%' minWidth={0} flexShrink={0}>
+                { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
+                <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
+              <TitleActions
+                baseUrl={props.baseUrl}
+                initialValues={config}
+                handleSubmit={setConfig}
+                workspace={workspace}
+              />
+            </Row>
           </Dropdown>
           <Row pr={3} verticalAlign="middle">
             {(workspace.type === 'group') && (

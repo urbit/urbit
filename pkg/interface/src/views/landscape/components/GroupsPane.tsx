@@ -26,15 +26,17 @@ import { NewChannel } from './NewChannel';
 import { PopoverRoutes } from './PopoverRoutes';
 import { Resource } from './Resource';
 import { Skeleton } from './Skeleton';
-import {Join, JoinRoute} from './Join/Join';
+import { Join } from './Join/Join';
+import { UqbarHome } from './Home/UqbarHome';
 
 interface GroupsPaneProps {
   baseUrl: string;
   workspace: Workspace;
+  isHome?: boolean;
 }
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, workspace } = props;
+  const { baseUrl, workspace, isHome = false } = props;
   const associations = useMetadataState(state => state.associations);
   const notificationsCount = useHarkState(state => state.notificationsCount);
 
@@ -66,11 +68,28 @@ export function GroupsPane(props: GroupsPaneProps) {
       doneJoin(group);
     }
 
-
     return () => {
       setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
     };
   }, [workspace]);
+
+  if (isHome) {
+    return (
+      <>
+        <Helmet defer={false}>
+          <title>Uqbar UI</title>
+        </Helmet>
+        <Skeleton
+          {...props}
+          mobileHide={false}
+          recentGroups={recentGroups}
+          baseUrl={baseUrl}
+        >
+          <UqbarHome />
+        </Skeleton>
+      </>
+    );
+  }
 
   if (!(associations && (groupPath ? groupPath in groups : true))) {
     return null;
@@ -202,9 +221,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           <Join desc={desc} />
         </Box>
       </Skeleton>
-       )
-
-
+       );
       }}
     >
     </Route>
