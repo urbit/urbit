@@ -27,7 +27,7 @@ import './css/indigo-static.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
 import { bootstrapApi } from '~/logic/api/bootstrap';
-import { uxToHex } from '@urbit/api/dist';
+import { uxToHex } from '@urbit/api';
 
 function ensureValidHex(color) {
   if (!color)
