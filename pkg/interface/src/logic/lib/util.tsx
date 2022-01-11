@@ -9,6 +9,7 @@ import anyAscii from 'any-ascii';
 import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import bigInt, { BigInteger } from 'big-integer';
 import { IconRef, Workspace } from '~/types';
+import { Text } from '@tlon/indigo-react';
 
 enableMapSet();
 
@@ -278,9 +279,9 @@ export function writeText(str: string | null): Promise<void> {
 }
 
 // trim patps to match dojo, chat-cli
-export function cite(ship: string): string {
+export function cite(ship: string): string | Element {
   let patp = ship,
-    shortened = '';
+    shortened: string | Element = '';
   if (patp === null || patp === '') {
     return '';
   }
@@ -294,7 +295,10 @@ export function cite(ship: string): string {
   }
   // moon
   if (patp.length === 27) {
-    shortened = '~' + patp.slice(14, 20) + '^' + patp.slice(21, 27);
+    shortened = <>
+      {'~' + patp.slice(0, 13) + '^'}
+      <Text mono fontSize="10px" verticalAlign="top">{patp.slice(14, 27)}</Text>
+    </>;
     return shortened;
   }
   return `~${patp}`;
