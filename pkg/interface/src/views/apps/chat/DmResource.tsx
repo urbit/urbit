@@ -1,4 +1,4 @@
-import { acceptDm, cite, Content, declineDm, deSig, Post, removeDmMessage } from '@urbit/api';
+import { acceptDm, cite, Content, declineDm, deSig, Post } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
@@ -77,7 +77,7 @@ export function DmResource(props: DmResourceProps) {
   );
 
   useEffect(() => {
-    if(!dm) {
+    if(dm.size === 0) {
       getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
     }
   }, [ship, dm]);
@@ -126,10 +126,6 @@ export function DmResource(props: DmResourceProps) {
     },
     [ship, addDmMessage]
   );
-
-  const onDelete = useCallback((msg: Post) => {
-    airlock.poke(removeDmMessage(`~${window.ship}`, msg.index));
-  }, []);
 
   const onAccept = async () => {
     await airlock.poke(acceptDm(ship));
@@ -208,7 +204,6 @@ export function DmResource(props: DmResourceProps) {
           onReply={quoteReply}
           fetchMessages={fetchMessages}
           dismissUnread={dismissUnread}
-          onDelete={onDelete}
           getPermalink={() => undefined}
           isAdmin={false}
           onSubmit={onSubmit}
