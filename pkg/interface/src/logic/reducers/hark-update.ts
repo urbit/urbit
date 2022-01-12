@@ -1,11 +1,11 @@
 import {
+  BigIntOrderedMap,
   HarkPlace,
   Timebox,
   HarkStats,
   harkBinToId,
   makePatDa
 } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { BaseState } from '../state/base';

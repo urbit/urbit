@@ -1,5 +1,13 @@
-import { getVats, Vats, scryLag, getBlockers, Vat, kilnInstall } from '@urbit/api';
-import { kilnPause, kilnResume } from '@urbit/api/hood';
+import {
+  getVats,
+  Vats,
+  scryLag,
+  getBlockers,
+  Vat,
+  kilnInstall,
+  kilnPause,
+  kilnResume
+} from '@urbit/api';
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback } from 'react';

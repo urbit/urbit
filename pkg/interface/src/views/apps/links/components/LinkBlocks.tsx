@@ -1,12 +1,11 @@
 import { Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, markEachAsRead } from '@urbit/api';
+import { Association, BigIntOrderedMap, Graph, GraphNode, markEachAsRead } from '@urbit/api';
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import _ from 'lodash';
 import { useResize } from '~/logic/lib/useResize';
 import { LinkBlockItem } from './LinkBlockItem';
 import { LinkBlockInput } from './LinkBlockInput';
 import useLocalState from '~/logic/state/local';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt from 'big-integer';
 import airlock from '~/logic/api';
 import useHarkState, { selHarkGraph } from '~/logic/state/hark';

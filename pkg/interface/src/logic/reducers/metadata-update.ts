@@ -1,4 +1,4 @@
-import { MetadataUpdate, Associations, ResourceAssociations } from '@urbit/api/metadata';
+import { MetadataUpdate, Associations, ResourceAssociations } from '@urbit/api';
 import _ from 'lodash';
 import { Cage } from '~/types/cage';
 import { BaseState } from '../state/base';
