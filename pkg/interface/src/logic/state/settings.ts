@@ -16,8 +16,7 @@ import {
 import { useCallback } from 'react';
 import { reduceUpdate } from '../reducers/settings-update';
 import airlock from '~/logic/api';
-import { Contact, getDeskSettings, Value } from '@urbit/api';
-import { putEntry } from '@urbit/api/settings';
+import { Contact, getDeskSettings, putEntry, Value } from '@urbit/api';
 
 export interface ShortcutMapping {
   cycleForward: string;
