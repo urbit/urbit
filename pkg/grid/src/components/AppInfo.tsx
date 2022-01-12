@@ -1,8 +1,7 @@
-import { chadIsRunning, Treaty } from '@urbit/api';
+import { chadIsRunning, Treaty, Vat } from '@urbit/api';
 import clipboardCopy from 'clipboard-copy';
 import React, { FC, useCallback, useState } from 'react';
 import cn from 'classnames';
-import { Vat } from '@urbit/api/hood';
 import { Button, PillButton } from './Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from './Dialog';
 import { DocketHeader } from './DocketHeader';
@@ -137,19 +136,19 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
         </div>
       </DocketHeader>
       <div className="space-y-6">
-      {vat ? (
-        <>
-          <hr className="-mx-5 sm:-mx-8 border-gray-50" />
-          <VatMeta vat={vat} />
-        </>
-      ) : null}
-      {!treaty ? null : (
-        <>
-          <hr className="-mx-5 sm:-mx-8 border-gray-50" />
-          <TreatyMeta treaty={treaty} />
-        </>
-      )}
-    </div>
+        {vat ? (
+          <>
+            <hr className="-mx-5 sm:-mx-8 border-gray-50" />
+            <VatMeta vat={vat} />
+          </>
+        ) : null}
+        {!treaty ? null : (
+          <>
+            <hr className="-mx-5 sm:-mx-8 border-gray-50" />
+            <TreatyMeta treaty={treaty} />
+          </>
+        )}
+      </div>
     </div>
   );
 };
