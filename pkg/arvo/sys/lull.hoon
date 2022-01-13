@@ -1627,6 +1627,36 @@
   +$  user  knot                                        ::  username
   --  ::eyre
 ::                                                      ::::
+::::                    ++fine                            ::  (1f) remote scry
+  ::                                                    ::::
+++  fine  ^?
+  |%
+  +$  gift                                              ::    to arvo:
+    $%  [%tune =path =(cask)]                           ::  found at path
+        ::TODO  add task to clay (& gall?) for declaring notify desire
+      ::                                                ::    to vere:
+        [%hoot =lane:ames =hoot]                        ::  request packet
+        [%howl =path =song]                             ::  full response
+    ==                                                  ::
+  ::                                                    ::
+  +$  task                                              ::    from arvo:
+    $%  [%keen =path]                                   ::  data request
+        [%yawn =path]                                   ::  cancel request
+      ::                                                ::    from unix:
+        ::TODO  add ames task for updating lane
+        [%purr [from=ship =lane:ames] =purr]            ::  data packet
+        [%bide =path]                                   ::  await %howl
+      ::                                                ::    generic:
+        $>(%born vane-task)                             ::  new unix process
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+    ==                                                  ::
+  ::                                                    ::
+  +$  hoot  @uxhoot                                     ::  request packet
+  +$  purr  @uxpurr                                     ::  response packet
+  +$  song  (list purr)                                 ::  full response
+  --  ::fine
+::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
   ::                                                    ::::
 ++  gall  ^?
@@ -2120,6 +2150,7 @@
       [%c task:clay]
       [%d task:dill]
       [%e task:eyre]
+      [%f task:fine]
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
@@ -2141,6 +2172,7 @@
       [%clay gift:clay]
       [%dill gift:dill]
       [%eyre gift:eyre]
+      [%fine gift:fine]
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
@@ -2196,5 +2228,11 @@
       ::  %behn: wakeup
       ::
       $>(%wake task:behn)
+      ::  %fine: hear packet
+      ::
+      $>(%purr task:fine)
+      ::  %fine: await datum
+      ::
+      $>(%bide task:fine)
   ==
 --  ::
