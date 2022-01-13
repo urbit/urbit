@@ -24,21 +24,24 @@
 **  either %avow (on success) or %fail (on failure.)
 **
 **  %peek is a namespace read request (aka scry). they are
-**  forwarded directly to arvo, except for a namespace overlay
-**  for runtime queries. its arguments are the nom of the
+**  forwarded directly to arvo. its arguments are the nom of the
 **  external peek interface in arvo, at arm 22. (lyc is always
-**  [~ ~], i.e. request from self.)
-**
-**  the %peek runtime overlay functions like an extra arm of the
-**  $%. the full accepted type would be something like:
+**  [~ ~], i.e. request from self.) that is:
 **
 **      $+  each  path
 **      $%  [%once vis=view syd=desk tyl=spur]
 **          [%beam vis=view bem=beam]
 **      ==
 **
-**  %move is a kernel move. these are injected into arvo, except
-**  again for a runtime overlay.
+**  %peel is a runtime "peek". it exposes an unprincipled
+**  namespace allowing querying of various metrics about the
+**  state of vere.
+**
+**  %ovum is a raw kernel move, to be injected directly into
+**  arvo. needless to say this will void your warranty. usually
+**  you want to use %fyrd instead.
+**
+**  %urth is a command for the runtime.
 **
 **  messages use newt framing. because the framing begins with
 **  a magic byte (^I, horizontal tab), any messages that do not
@@ -416,53 +419,50 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__peek: {
-        u3_noun     fog, nom, pyt;
+        u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
+        u3_noun   gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
 
-        if ( (c3n == u3r_trel(dat, &fog, &nom, &pyt)) ||
-             (c3y == fog) ||
-             (c3__urth != nom) )
+        ran_u->can_u = can_u;
+        ran_u->rid = u3k(rid);
+        ran_u->nex_u = can_u->ran_u;
+        can_u->ran_u = ran_u;
+        u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
+        break;
+      }
+
+      case c3__peel: {
+        u3_noun i_dat, t_dat;
+
+        if ( (c3n == u3r_cell(dat, &i_dat, &t_dat)) ||
+             (u3_nul != t_dat) )
         {
-          u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
-          u3_noun   gan = u3nc(u3_nul, u3_nul);   //  [~ ~]: read from self
-
-          //  this doesn't look like a runtime request; forward it to arvo.
-          //
-          ran_u->can_u = can_u;
-          ran_u->nex_u = can_u->ran_u;
-          can_u->ran_u = ran_u;
-          ran_u->rid = u3k(rid);
-          u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
+          can_u->mor_u.bal_f(can_u, -5, "peel-bad");
         }
         else {
-          u3_noun   i_pyt, t_pyt;
-
-          //  runtime (%urth) request; respond immediately.
+          //  TODO: fill in %peel namespace.
           //
-          if ( (c3n == u3r_cell(pyt, &i_pyt, &t_pyt)) ||
-               (u3_nul != t_pyt) )
-          {
-            _khan_send_noun(can_u, u3nt(u3k(rid), c3__none, u3_nul));
-          }
-          else {
-            //  TODO: fill in %urth namespace.
-            //
-            switch (i_pyt) {
-              default: {
-                _khan_send_noun(can_u, u3nt(u3k(rid), c3__none, u3_nul));
-                break;
-              }
+          switch (i_dat) {
+            default: {
+              can_u->mor_u.bal_f(can_u, -6, "peel-unknown");
+              break;
+            }
 
-              case c3__mass: {
-                _khan_send_noun(can_u, u3nt(u3k(rid), c3__mass, u3_nul));
-                break;
-              }
+            case c3__mass: {
+              _khan_send_noun(can_u, u3nt(u3k(rid), c3__mass, u3_nul));
+              break;
             }
           }
         }
         break;
       }
 
-      case c3__move: {
+      case c3__ovum: {
+        //  TODO: implement
+        //
+        break;
+      }
+
+      case c3__urth: {
         //  TODO: implement
         //
         break;
