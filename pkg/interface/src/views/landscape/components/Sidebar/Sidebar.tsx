@@ -1,4 +1,5 @@
 import {
+  Box,
     Col
 } from '@tlon/indigo-react';
 import React, { ReactElement } from 'react';
@@ -48,36 +49,57 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
 
   return (
-    <ScrollbarLessCol
-      display={display}
-      width="100%"
-      gridRow="1/2"
-      gridColumn="1/2"
-      borderTopLeftRadius={2}
-      borderRight={1}
-      borderRightColor="lightGray"
-      overflowY="scroll"
-      fontSize={0}
-      position="relative"
-    >
-      <GroupSwitcher
-        recentGroups={props.recentGroups}
-        baseUrl={props.baseUrl}
-        isAdmin={isAdmin}
-        workspace={props.workspace}
-      />
-      <SidebarListHeader
-        baseUrl={props.baseUrl}
-        initialValues={config}
-        handleSubmit={setConfig}
-        selected={selected || ''}
-        workspace={workspace}
-      />
-      <SidebarGroupList
-        config={config}
-        selected={selected}
-        baseUrl={props.baseUrl}
-      />
-    </ScrollbarLessCol>
+    <Box>
+      <ScrollbarLessCol
+        display={display}
+        width="100%"
+        gridRow="1/2"
+        gridColumn="1/2"
+        borderTopLeftRadius={2}
+        borderRight={1}
+        borderRightColor="lightGray"
+        overflowY="scroll"
+        fontSize={0}
+        position="relative"
+        height="80%"
+        borderBottom={1}
+        borderBottomColor="lightGray"
+        pb={1}
+      >
+        <GroupSwitcher
+          recentGroups={props.recentGroups}
+          baseUrl={props.baseUrl}
+          isAdmin={isAdmin}
+          workspace={props.workspace}
+        />
+        <Box mt={2} />
+        <SidebarGroupList
+          config={config}
+          selected={selected}
+          baseUrl={props.baseUrl}
+        />
+      </ScrollbarLessCol>
+      <ScrollbarLessCol
+        display={display}
+        width="100%"
+        gridRow="1/2"
+        gridColumn="1/2"
+        borderTopLeftRadius={2}
+        borderRight={1}
+        borderRightColor="lightGray"
+        pt={1}
+        overflowY="scroll"
+        fontSize={0}
+        position="relative"
+        height="20%"
+      >
+        <SidebarGroupList
+          config={config}
+          selected={selected}
+          baseUrl={props.baseUrl}
+          messages
+        />
+      </ScrollbarLessCol>
+    </Box>
   );
 }

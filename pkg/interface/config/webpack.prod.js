@@ -85,7 +85,7 @@ module.exports = {
       'process.env.LANDSCAPE_LAST_WIPE': '2021-10-20'
     }),
     new HtmlWebpackPlugin({
-      title: 'Groups',
+      title: 'EScape',
       template: './public/index.html',
       favicon: './src/assets/img/Favicon.png'
     })
@@ -95,7 +95,7 @@ module.exports = {
       return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
     },
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/apps/landscape/'
+    publicPath: '/apps/escape/'
   },
   optimization: {
     minimize: true,

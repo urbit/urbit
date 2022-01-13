@@ -21,7 +21,7 @@ export function GroupFeedHeader(props) {
     historyLocation === `${baseUrl}/feed`;
 
   const locationUrl =
-    history.location.pathname.replace(`${baseUrl}/feed`, '');
+    history.location.pathname.replace(baseUrl, '').replace('/feed', '');
 
   let splitLoc = locationUrl.split('/');
   let indicator = '';

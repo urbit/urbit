@@ -82,8 +82,10 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
     );
   }
 
+  const isGroupLevel = !window.location.href.includes('/feed');
+
   return (
-    <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1}>
+    <Box height={`calc(100% - ${isGroupLevel ? 165 : 48}px)`} width="100%" alignItems="center" pl={1}>
       <PostFlatFeed
         key={graphPath}
         graphPath={graphPath}

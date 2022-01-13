@@ -112,14 +112,14 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     if (!props.show) {
       return;
     }
-    Mousetrap.bind('escape', props.toggle);
+    Mousetrap.bind('landscape', props.toggle);
     const touchstart = new Event('touchstart');
     // @ts-ignore ref typings
     inputRef?.current?.input?.dispatchEvent(touchstart);
     // @ts-ignore ref typings
     inputRef?.current?.input?.focus();
     return () => {
-      Mousetrap.unbind('escape');
+      Mousetrap.unbind('landscape');
       setQuery('');
     };
   }, [props.show]);

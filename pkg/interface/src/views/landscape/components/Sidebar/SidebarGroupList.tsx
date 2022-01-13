@@ -110,9 +110,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   title?: string;
   workspace: Workspace;
 }): ReactElement {
-  const groupSelected = workspace.type === 'group'
-    ? baseUrl.includes(workspace.group)
-    : baseUrl.includes('messages');
+  const groupSelected = workspace.type === 'messages' || workspace.type === 'group' && baseUrl.includes(workspace.group);
 
   const [collapsed, setCollapsed] = useState(!groupSelected);
   const associations = useMetadataState(state => state.associations);
@@ -254,10 +252,14 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   );
 }
 
-export function SidebarGroupList(props: {
+export function SidebarGroupList({
+  messages = false,
+  ...props
+}: {
   config: SidebarListConfig;
   baseUrl: string;
   selected?: string;
+  messages: boolean;
 }): ReactElement {
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(s => s.groups);
@@ -267,21 +269,24 @@ export function SidebarGroupList(props: {
     .sort(sortGroupsAlph);
 
   return (
-    <>
-      {groupList.map((g) => {
-        return (
-          <SidebarGroup
-            key={g.group}
-            {...props}
-            workspace={{ type: 'group', group: g.group }}
-            title={g.metadata.title}
-          />
-        );
-      })}
+    messages ? (
       <SidebarGroup
         {...props}
         workspace={{ type: 'messages' }}
       />
-    </>
+    ) : (
+      <>
+        {groupList.map((g) => {
+          return (
+            <SidebarGroup
+              key={g.group}
+              {...props}
+              workspace={{ type: 'group', group: g.group }}
+              title={g.metadata.title}
+            />
+          );
+        })}
+      </>
+    )
   );
 }

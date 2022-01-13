@@ -72,6 +72,23 @@ function GroupHome(props) {
           associations={associations}
           groupPath={groupPath}
         />
+        {graphMetadata && (
+          (graphMetadata?.vip === 'admin-feed') ? (
+            <GroupFeed
+              graphPath={feedPath}
+              groupPath={groupPath}
+              vip={graphMetadata?.vip || ''}
+              baseUrl={baseUrl}
+            />
+          ) : (
+            <GroupFlatFeed
+              graphPath={feedPath}
+              groupPath={groupPath}
+              vip={graphMetadata?.vip || ''}
+              baseUrl={baseUrl}
+            />
+          )
+        )}
       </Route>
     </Box>
   );

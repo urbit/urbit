@@ -184,7 +184,7 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root>
-          <Router basename="/apps/landscape">
+          <Router basename="/apps/escape">
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}

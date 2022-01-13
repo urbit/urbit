@@ -15,10 +15,9 @@ export function EmptyGroupHome(props) {
   return (
     <Col
       width="100%"
-      height="100%"
-      justifyContent="center"
-      alignItems="center"
       display="flex"
+      pt={3}
+      pl={3}
     >
       { groupAssociation?.group ? (
         <GroupSummary

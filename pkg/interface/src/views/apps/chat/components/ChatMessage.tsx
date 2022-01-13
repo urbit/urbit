@@ -440,9 +440,6 @@ function ChatMessage(props: ChatMessageProps) {
     );
   }
 
-  // TODO: render the signatures field as likes
-  console.log(msg)
-
   const onReply = props?.onReply || emptyCallback;
   const onDelete = props?.onDelete; // If missing hide delete action
   const transcluded = props?.transcluded || 0;

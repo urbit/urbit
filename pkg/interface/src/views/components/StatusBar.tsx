@@ -96,7 +96,7 @@ const StatusBar = (props) => {
           flexShrink={0}
           onClick={() =>
             window.open(
-              'https://github.com/urbit/landscape/issues/new' +
+              'https://github.com/willbach/urbit/issues/new' +
                 '?assignees=&labels=development-stream&title=&' +
                 `body=commit:%20urbit/urbit@${process.env.LANDSCAPE_SHORTHASH}`
             )

@@ -53,7 +53,7 @@ export class Skeleton extends Component {
       <div className="absolute h-100 w-100 mono">
         <div className="cf w-100 h-100 flex">
           <div className="bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl relative">
-            <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">⟵ Landscape</a>
+            <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">⟵ EScape</a>
             <div className="overflow-y-scroll h-100">
               <div className="w-100 bg-transparent">
                 <Link
