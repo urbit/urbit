@@ -5,10 +5,12 @@
 **
 **  the control plane nominally consumes input described by:
 **
-**  $:  request-id=@udF
-**  $%  [%fyrd fyrd-args=*]
-**      [%peek peek-args=*]
-**      [%move move-args=*]
+**  $:  request-id=@
+**  $%  [%fyrd fyrd-args=*]                             ::  run a thread
+**      [%peek peek-args=*]                             ::  scry
+**      [%peel peel-args=*]                             ::  runtime peek
+**      [%ovum ovum-args=*]                             ::  inject raw ovum
+**      [%urth urth-args=*]                             ::  runtime command
 **  ==  ==
 **
 **  request-id is a 31-bit client-supplied identifier that will
@@ -33,12 +35,7 @@
 **      $+  each  path
 **      $%  [%once vis=view syd=desk tyl=spur]
 **          [%beam vis=view bem=beam]
-**          [%urth urth-args=*]
 **      ==
-**
-**  so e.g. a full %urth peek request might look like:
-**
-**      [`@ud`%id %peek | %urth %mass ~]
 **
 **  %move is a kernel move. these are injected into arvo, except
 **  again for a runtime overlay.
@@ -71,7 +68,7 @@ u3_khan_io_init(u3_pier* pir_u)
 /* u3_cran: control plane request.
 */
   typedef struct _u3_cran {
-    c3_l              rid_l;            //  client-supplied request id
+    u3_atom           rid;              //  client-supplied request id
     struct _u3_chan*  can_u;            //  connection backpointer
     struct _u3_cran*  nex_u;            //  next pointer
   } u3_cran;
@@ -178,11 +175,11 @@ _khan_find_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
 /* _khan_read_wire(): check tag, decompose wire into /sev/coq/rid
 */
 static c3_o
-_khan_read_wire(u3_noun wir,
-                c3_l  tag_l,
-                c3_l* sev_l,
-                c3_l* coq_l,
-                c3_l* rid_l)
+_khan_read_wire(u3_noun   wir,
+                c3_l      tag_l,
+                c3_l*     sev_l,
+                c3_l*     coq_l,
+                u3_atom*  rid)
 {
   u3_noun i_wir, t_wir;
 
@@ -193,7 +190,8 @@ _khan_read_wire(u3_noun wir,
   }
   else {
     u3_noun pud = t_wir;
-    u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
+    u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud,
+            uco, p_uco, q_uco;
 
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
          (c3n == u3v_lily(c3__uv, u3k(p_pud), sev_l)) )
@@ -202,7 +200,7 @@ _khan_read_wire(u3_noun wir,
     }
 
     if ( u3_nul == t_pud ) {
-      *coq_l = *rid_l = 0;
+      *coq_l = 0; *rid = 0;
     }
     else {
       if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
@@ -212,15 +210,23 @@ _khan_read_wire(u3_noun wir,
       }
 
       if ( u3_nul == tt_pud ) {
-        *rid_l = 0;
+        *rid = 0;
       }
       else {
         if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
              (u3_nul != s_pud) ||
-             (c3n == u3v_lily(c3__ud, u3k(r_pud), rid_l)) )
+             (c3n == u3ud(r_pud)) )
         {
           u3z(wir); return c3n;
         }
+
+        uco = u3dc("slaw", c3__uv, u3k(r_pud));
+        if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
+             (u3_nul != p_uco) )
+        {
+          u3z(wir); return c3n;
+        }
+        *rid = u3k(q_uco);
       }
     }
     u3z(wir); return c3y;
@@ -235,10 +241,11 @@ _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
   u3_khan*  kan_u = (u3_khan*)egg_u->car_u;
   u3_chan*  can_u;
   u3_noun   wir = egg_u->wir;
-  c3_l      sev_l, coq_l, rid_l;
+  c3_l      sev_l, coq_l;
+  u3_atom   rid;
 
   _khan_punt_goof(u3k(lud));
-  if ( (c3n == _khan_read_wire(u3k(wir), c3__khan, &sev_l, &coq_l, &rid_l)) ||
+  if ( (c3n == _khan_read_wire(u3k(wir), c3__khan, &sev_l, &coq_l, &rid)) ||
        (kan_u->sev_l != sev_l) )
   {
     //  wtf?
@@ -248,10 +255,10 @@ _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
   }
   can_u = _khan_find_chan(kan_u, sev_l, coq_l);
   if ( can_u ) {
-    _khan_send_noun(can_u, u3nt(rid_l, c3__fail, lud));
+    _khan_send_noun(can_u, u3nt(rid, c3__fail, lud));
   }
   else {
-    u3z(lud);
+    u3z(rid); u3z(lud);
   }
   u3_ovum_free(egg_u);
 }
@@ -330,10 +337,11 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
   if ( !can_u ) {
     //  chan was closed; noop.
     //
+    u3z(ran_u->rid);
     c3_free(ran_u);
     u3z(res); return;
   }
-  _khan_send_noun(can_u, u3nt(ran_u->rid_l, c3__peek, res));
+  _khan_send_noun(can_u, u3nt(ran_u->rid, c3__peek, res));
 
   //  remove this request from the pending list.
   //
@@ -368,11 +376,19 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   }
   if ( (c3n == u3r_cell(jar, &rid, &can)) ||
        (c3n == u3r_cell(can, &tag, &dat)) ||
-       (c3n == u3a_is_cat(rid)) )
+       (c3n == u3ud(rid)) )
   {
     can_u->mor_u.bal_f(can_u, -2, "jar-bad");
   }
   else {
+    u3_atom rud = u3dc("scot", c3__uv, u3k(rid));
+    c3_c*   tag_c = u3r_string(tag);
+    c3_c*   rid_c = u3r_string(rud);
+
+    u3l_log("khan: %s %s\n", tag_c, rid_c);
+    c3_free(tag_c);
+    c3_free(rid_c);
+    u3z(rud);
     switch (tag) {
       default: {
         can_u->mor_u.bal_f(can_u, -3, "tag-unknown");
@@ -380,16 +396,15 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__fyrd: {
-        u3l_log("khan: fyrd %" PRIu32 "\n", rid);
         if ( c3n == kan_u->van_o ) {
           _khan_send_noun(can_u,
-                          u3nt(rid, c3__fail, u3i_string("vane-miss")));
+                          u3nt(u3k(rid), c3__fail, u3i_string("vane-miss")));
         }
         else {
           u3_noun   wir = u3nc(c3__khan,
                                u3nq(u3dc("scot", c3__uv, kan_u->sev_l),
                                     u3dc("scot", c3__ud, can_u->coq_l),
-                                    u3dc("scot", c3__ud, rid),
+                                    u3dc("scot", c3__uv, u3k(rid)),
                                     u3_nul));
 
           u3_auto_peer(
@@ -403,7 +418,6 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       case c3__peek: {
         u3_noun     fog, nom, pyt;
 
-        u3l_log("khan: peek %" PRIu32 "\n", rid);
         if ( (c3n == u3r_trel(dat, &fog, &nom, &pyt)) ||
              (c3y == fog) ||
              (c3__urth != nom) )
@@ -416,7 +430,7 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
           ran_u->can_u = can_u;
           ran_u->nex_u = can_u->ran_u;
           can_u->ran_u = ran_u;
-          ran_u->rid_l = (c3_l)rid;
+          ran_u->rid = u3k(rid);
           u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
         }
         else {
@@ -427,19 +441,19 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
           if ( (c3n == u3r_cell(pyt, &i_pyt, &t_pyt)) ||
                (u3_nul != t_pyt) )
           {
-            _khan_send_noun(can_u, u3nt(rid, c3__none, u3_nul));
+            _khan_send_noun(can_u, u3nt(u3k(rid), c3__none, u3_nul));
           }
           else {
             //  TODO: fill in %urth namespace.
             //
             switch (i_pyt) {
               default: {
-                _khan_send_noun(can_u, u3nt(rid, c3__none, u3_nul));
+                _khan_send_noun(can_u, u3nt(u3k(rid), c3__none, u3_nul));
                 break;
               }
 
               case c3__mass: {
-                _khan_send_noun(can_u, u3nt(rid, c3__mass, u3_nul));
+                _khan_send_noun(can_u, u3nt(u3k(rid), c3__mass, u3_nul));
                 break;
               }
             }
@@ -451,7 +465,6 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       case c3__move: {
         //  TODO: implement
         //
-        u3l_log("khan: move %" PRIu32 "\n", rid);
         break;
       }
     }
@@ -601,7 +614,7 @@ static void
 _khan_ef_handle(u3_khan*  kan_u,
                 c3_l      sev_l,
                 c3_l      coq_l,
-                c3_l      rid_l,
+                u3_atom   rid,
                 u3_noun   tag,
                 u3_noun   dat)
 {
@@ -609,7 +622,7 @@ _khan_ef_handle(u3_khan*  kan_u,
 
   if ( 0 != (can_u = _khan_find_chan(kan_u, sev_l, coq_l)) ) {
     if ( c3__avow == tag ) {
-      _khan_send_noun(can_u, u3nt(rid_l, c3__avow, u3k(dat)));
+      _khan_send_noun(can_u, u3nt(u3k(rid), c3__avow, u3k(dat)));
     }
     else {
       can_u->mor_u.bal_f(can_u, -4, "handle-unknown");
@@ -620,7 +633,7 @@ _khan_ef_handle(u3_khan*  kan_u,
     u3l_log("khan: handle-no-coq %" PRIx32 " %" PRIu32 "\n",
             sev_l, coq_l);
   }
-  u3z(tag); u3z(dat);
+  u3z(rid); u3z(tag); u3z(dat);
 }
 
 /* _khan_io_kick(): apply effects.
@@ -630,16 +643,17 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
   u3_khan*  kan_u = (u3_khan*)car_u;
   u3_noun   tag, dat;
-  c3_l      sev_l, coq_l, rid_l;
+  c3_l      sev_l, coq_l;
+  u3_weak   rid = u3_none;
 
-  if ( (c3n == _khan_read_wire(wir, c3__khan, &sev_l, &coq_l, &rid_l)) ||
+  if ( (c3n == _khan_read_wire(wir, c3__khan, &sev_l, &coq_l, &rid)) ||
        (c3n == u3r_cell(cad, &tag, &dat)) ||
        (kan_u->sev_l != sev_l) )
   {
-    u3z(cad); return c3n;
+    u3z(rid); u3z(cad); return c3n;
   }
 
-  _khan_ef_handle(kan_u, sev_l, coq_l, rid_l, u3k(tag), u3k(dat));
+  _khan_ef_handle(kan_u, sev_l, coq_l, rid, u3k(tag), u3k(dat));
   u3z(cad); return c3y;
 }
 
