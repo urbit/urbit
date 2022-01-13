@@ -101,7 +101,7 @@ u3_conn_io_init(u3_pier* pir_u)
     c3_l              sev_l;            //  instance number
     struct _u3_shan*  san_u;            //  server reference
     u3_cue_xeno*      sil_u;            //  cue handle
-    c3_o              van_o;            //  vane present?
+    c3_o              kan_o;            //  %khan present?
   } u3_conn;
 
 static const c3_c URB_SOCK_PATH[] = ".urb/conn.sock";
@@ -298,7 +298,7 @@ _conn_close_chan(u3_shan* san_u, u3_chan* can_u)
 
   //  send a close event to arvo and stop reading.
   //
-  if ( c3y == con_u->van_o ) {
+  if ( c3y == con_u->kan_o ) {
     u3_noun wir, cad;
 
     wir = u3nq(c3__khan,
@@ -460,9 +460,9 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__fyrd: {
-        if ( c3n == con_u->van_o ) {
+        if ( c3n == con_u->kan_o ) {
           _conn_send_noun(can_u,
-                          u3nt(u3k(rid), c3__fail, u3i_string("vane-miss")));
+                          u3nt(u3k(rid), c3__fail, u3i_string("khan-miss")));
         }
         else {
           u3_noun   wir = u3nc(c3__khan,
@@ -633,7 +633,7 @@ _conn_sock_err_chdir:
   u3_king_bail();
 }
 
-/* _conn_born_news(): initialization complete; vane available.
+/* _conn_born_news(): initialization complete; %khan available.
 */
 static void
 _conn_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
@@ -641,7 +641,7 @@ _conn_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
   u3_conn* con_u = (u3_conn*)egg_u->car_u;
 
   if ( u3_ovum_done == new_e ) {
-    con_u->van_o = c3y;
+    con_u->kan_o = c3y;
   }
 }
 
@@ -782,7 +782,7 @@ u3_conn_io_init(u3_pier* pir_u)
   u3_auto* car_u = &con_u->car_u;
 
   con_u->sil_u = u3s_cue_xeno_init();
-  con_u->van_o = c3n;
+  con_u->kan_o = c3n;
   car_u->nam_m = c3__conn;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _conn_io_talk;
