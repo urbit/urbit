@@ -13,7 +13,7 @@
 **      [%urth urth-args=*]                             ::  runtime command
 **  ==  ==
 **
-**  request-id is a 31-bit client-supplied identifier that will
+**  request-id is a client-supplied atomic identifier that will
 **  be returned along with the response, to allow correlating
 **  responses with requests. it may be reused; e.g. 0 could be
 **  supplied every time for a client that doesn't care about
