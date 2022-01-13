@@ -72,16 +72,24 @@
     c3_l mug_l;                         //  truncated mug hash of u3_body
     c3_o rel_o;                         //  relayed?
   } u3_head;
+  
+/* u3_prel: ames/fine packet prelude
+*/
+  typedef struct _u3_prel {
+    c3_y  sic_y;                        //  sender life tick
+    c3_y  ric_y;                        //  receiver life tick
+    c3_d  sen_d[2];                     //  sender
+    c3_d  rec_d[2];                     //  receiver
+    c3_d  rog_d;                        //  origin lane (optional)
+  } u3_prel;
 
 /* TODO: request response bodies for scry */
 /* u3_requ: fine packet request */
   typedef struct _u3_requ {
-    c3_y sig_y[64];                    // requester signature
-    c3_w lyf_w;                        // requester life
-    c3_d her_d[2];                     // requester addres
-    c3_w fra_w;                        // fragment number
-    c3_d hos_d[2];                     // host address
-    c3_s len_s;                        // path length
+    u3_prel pre_u;
+    c3_y    sig_y[64];                    // requester signature
+    c3_w    fra_w;                        // fragment number
+    c3_s    len_s;                        // path length
     c3_c* pat_c;                       // path as ascii
   } u3_requ;
 
@@ -117,7 +125,7 @@
     c3_w   len_w;     // packet contents
     u3_lane  lan_u;   // recipient lane
     u3_ames* sam_u;   // ames backpointer
-    union { 
+    union {
       u3_resp* res_u;
       u3_reqp* req_u;
       u3_pact* pac_u;
@@ -127,14 +135,10 @@
 /* u3_body: ames packet body
 */
   typedef struct _u3_body {
-    c3_d  sen_d[2];                     //  sender
-    c3_d  rec_d[2];                     //  receiver
-    c3_y  sic_y;                        //  sender life tick
-    c3_y  ric_y;                        //  receiver life tick
-    c3_s  con_s;                        //  content size
-    c3_y* con_y;                        //  content
-    c3_d  rog_d;                        //  origin lane (optional)
-    c3_l  mug_l;                        //  checksum
+    u3_prel pre_u;                      //  prelude
+    c3_s    con_s;                        //  content size
+    c3_y*   con_y;                        //  content
+    c3_l    mug_l;                        //  checksum
   } u3_body;
 
 /* u3_panc: deconstructed incoming packet
@@ -294,7 +298,42 @@ _ames_ship_of_chubs(c3_d sip_d[2], c3_y len_y, c3_y* buf_y)
   memcpy(buf_y, sip_y, c3_min(16, len_y));
 }
 
+/* _ames_sift_prelude(): parse prelude, returning length
+*/
+static c3_y
+_ames_sift_prelude(u3_head* hed_u,
+                   u3_prel* pre_u,
+                   c3_w     len_w,
+                   c3_y*    pre_y)
+{
+  c3_y rog_y, sen_y, rec_y, len_y;
+
+  rog_y = ( c3y == hed_u->rel_o )? 6 : 0;
+  sen_y = 2 << hed_u->sac_y;
+  rec_y = 2 << hed_u->rac_y;
+  len_y = rog_y + sen_y + rec_y;
+
+  pre_u->sic_y = pre_y[0] & 0xf;
+  pre_u->ric_y = pre_y[0] & 0xf0;
+
+  _ames_ship_to_chubs(pre_u->sen_d, sen_y, pre_y + 1);
+  _ames_ship_to_chubs(pre_u->rec_d, rec_y, pre_y + 1 + sen_y);
+
+  if (rog_y) {
+    c3_y rag_y[8] = {0};
+    memcpy(rag_y, pre_y + 1 + sen_y + rec_y, rog_y);
+    pre_u->rog_d = _ames_chub_bytes(rag_y);
+  }
+  else {
+    pre_u->rog_d = 0;
+  }
+  return len_y;
+}
+
+
+
 /* _fine_sift_requ(): parse request body, returning success
+ * TODO: bring up to date
 */
 static c3_o 
 _fine_sift_requ(u3_head* hed_u,
@@ -309,14 +348,8 @@ _fine_sift_requ(u3_head* hed_u,
   memcpy(req_u->sig_y, req_y, 64);
   req_y += 64;
 
-  req_u->lyf_w = (
-      (req_y[0] << 0x18)
-    | (req_y[1] << 0x10)
-    | (req_y[2] << 0x8)
-    | (req_y[3] << 0x0));
   req_y += 4;
 
-  _ames_ship_to_chubs(req_u->her_d, hed_u->sac_y, req_y);
   req_y += hed_u->sac_y;
 
   req_u->fra_w = (
@@ -326,8 +359,8 @@ _fine_sift_requ(u3_head* hed_u,
     | (req_y[3] << 0x0));
   req_y += 4;
 
-  _ames_ship_to_chubs(req_u->hos_d, hed_u->rac_y, req_y);
-  req_y += hed_u->rac_y;
+  //_ames_ship_to_chubs(req_u->hos_d, hed_u->rac_y, req_y);
+  //req_y += hed_u->rac_y;
 
 
   req_u->len_s = c3_min(384,
@@ -411,42 +444,19 @@ _ames_sift_body(u3_head* hed_u,
                 c3_w     len_w,
                 c3_y*    bod_y)
 {
-  c3_y rog_y, sen_y, rec_y;
+  c3_y rog_y = ( c3y == hed_u->rel_o )? 6 : 0;
+  c3_y* gob_y = bod_y + rog_y;
+  c3_s gob_s = len_w - rog_y;
 
-  rog_y = ( c3y == hed_u->rel_o )? 6 : 0;
+  c3_y pre_y = _ames_sift_prelude(hed_u, &bod_u->pre_u, len_w, bod_y);
 
-  sen_y = 2 << hed_u->sac_y;
-  rec_y = 2 << hed_u->rac_y;
-
-  if ( (1 + sen_y + rec_y + rog_y) >= len_w ) {
+  if (pre_y >= len_w ) {
     return c3n;
   }
   else {
-    c3_y* gob_y;
-    c3_s  gob_s;
-
-    if ( rog_y) {
-      c3_y rag_y[8] = {0};
-      memcpy(rag_y, bod_y, rog_y);
-      bod_u->rog_d = _ames_chub_bytes(rag_y);
-    }
-    else {
-      bod_u->rog_d = 0;
-    }
-
-    gob_y = bod_y + rog_y;
-    gob_s = len_w - rog_y;
-
     bod_u->mug_l = u3r_mug_bytes(gob_y, gob_s) & 0xfffff;
 
-    bod_u->sic_y = gob_y[0]        & 0xf;
-    bod_u->ric_y = (gob_y[0] >> 4) & 0xf;
-
-    _ames_ship_to_chubs(bod_u->sen_d, sen_y, gob_y + 1);
-    _ames_ship_to_chubs(bod_u->rec_d, rec_y, gob_y + 1 + sen_y);
-
-    bod_u->con_s = gob_s - 1 - sen_y - rec_y;
-    bod_u->con_y = gob_y + 1 + sen_y + rec_y;
+    bod_u->con_y = gob_y + 4;
 
     return c3y;
   }
@@ -475,6 +485,63 @@ _ames_etch_head(u3_head* hed_u, c3_y buf_y[4])
   buf_y[3] = (hed_w >> 24) & 0xff;
 }
 
+/* _ames_etch_prelude(): serialize packet prelude
+*/
+static c3_y
+_ames_etch_prelude(u3_head* hed_u, u3_prel* pre_u, c3_y* buf_y) 
+{
+  c3_y  rog_y = ( c3y == hed_u->rel_o ) ? 6 : 0;           //  origin len
+  c3_y  sen_y = 2 << pre_u->sic_y;
+  c3_y  rec_y = 2 << pre_u->ric_y;
+  c3_y  len_y = sen_y + rec_y + rog_y;
+
+
+  // copy lives
+  buf_y[0] = (pre_u->sic_y & 0xf) ^ ((pre_u->ric_y & 0xf) << 4);
+  
+  _ames_ship_of_chubs(pre_u->sen_d, sen_y, buf_y + 1);
+  _ames_ship_of_chubs(pre_u->rec_d, rec_y, buf_y + 1 + sen_y);
+
+  if ( rog_y ) {
+    c3_y rag_y[8] = {0};
+    _ames_bytes_chub(rag_y, pre_u->rog_d);
+    memcpy(buf_y, rag_y, rog_y);
+  }
+  return len_y;
+}
+
+/* _fine_etch_resp(): serialise response packet
+ */
+static c3_w
+_fine_etch_resp(u3_head* hed_u,
+                u3_resp* res_u,
+                c3_y**   out_y)
+{
+  c3_assert(0 == hed_u->req_o);
+  c3_assert(0 == hed_u->sim_o);
+
+  c3_y  sen_y = 2 << hed_u->sac_y;                         //  sender len
+  c3_y  rec_y = 2 << hed_u->rac_y;                         //  receiver len
+  c3_y  len_w = 80 + sen_y + rec_y + res_u->siz_s + res_u->len_s;
+
+  c3_y* pac_y = c3_calloc(len_w);
+  c3_w* pac_w = (c3_w*)pac_y;
+
+  memcpy(pac_w, &res_u->fra_w, 4);
+  *pac_w = res_u->fra_w;  // TODO: check byte order
+  _ames_ship_of_chubs(res_u->hos_d, sen_y, pac_y + 4);
+
+  *(pac_y + sen_y + 4) = (0xff << 0) & res_u->len_s;
+  *(pac_y + sen_y + 5) = (0xff << 1) & res_u->len_s;
+
+  memcpy(pac_y + sen_y + 6, res_u->pat_c, res_u->len_s);
+
+  memcpy(pac_y + sen_y + 6 + res_u->len_s, &res_u->sig_y, 64 + 4 + 4 + 2);
+  
+  return len_w;
+}
+
+
 /* _ames_etch_pack(): serialize packet header and body.
 */
 static c3_w
@@ -484,33 +551,21 @@ _ames_etch_pack(u3_head* hed_u,
 {
   c3_y  sen_y = 2 << hed_u->sac_y;                         //  sender len
   c3_y  rec_y = 2 << hed_u->rac_y;                         //  receiver len
-  c3_y  rog_y = ( c3y == hed_u->rel_o )? 6 : 0;            //  origin len
+  c3_y  rog_y = ( c3y == hed_u->rel_o ) ? 6 : 0;           //  origin len
   c3_w  bod_w = rog_y + 1 + sen_y + rec_y + bod_u->con_s;  //  body len
   c3_w  len_w = 4 + bod_w;                                 //  packet len
   c3_y* pac_y = c3_malloc(len_w);                          //  output buf
   c3_y* bod_y = pac_y + 4;                                 //  body cursor
-  c3_y* gob_y = bod_y + rog_y;                             //  after origin
 
   //  serialize the head
   //
   _ames_etch_head(hed_u, pac_y);
 
-  //  serialize the origin, if present
-  //
-  if ( rog_y ) {
-    c3_y rag_y[8] = {0};
-    _ames_bytes_chub(rag_y, bod_u->rog_d);
-    memcpy(bod_y, rag_y, rog_y);
-  }
+  c3_y pre_y = _ames_etch_prelude(hed_u, &bod_u->pre_u, bod_y + 4);
+  c3_y* gob_y = bod_y + pre_y;                             //  after origin
 
   //  serialize the body
-  //
-  gob_y[0] = (bod_u->sic_y & 0xf) ^ ((bod_u->ric_y & 0xf) << 4);
-
-  _ames_ship_of_chubs(bod_u->sen_d, sen_y, gob_y + 1);
-  _ames_ship_of_chubs(bod_u->rec_d, rec_y, gob_y + 1 + sen_y);
-
-  memcpy(gob_y + 1 + sen_y + rec_y, bod_u->con_y, bod_u->con_s);
+  memcpy(gob_y, bod_u->con_y, bod_u->con_s);
 
   *out_y = pac_y;
   return len_w;
@@ -660,11 +715,11 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
   //
   if (  c3y == dop_o
      && c3n == pac_u->hed_u.rel_o
-     && !( ( 256 > pac_u->bod_u.sen_d[0] )
-        && ( 0  == pac_u->bod_u.sen_d[1] ) ) )
+     && !( ( 256 > pac_u->bod_u.pre_u.sen_d[0] )
+        && ( 0  == pac_u->bod_u.pre_u.sen_d[1] ) ) )
   {
     pac_u->hed_u.rel_o = c3y;
-    pac_u->bod_u.rog_d = u3_ames_lane_to_chub(pac_u->ore_u);
+    pac_u->bod_u.pre_u.rog_d = u3_ames_lane_to_chub(pac_u->ore_u);
   }
 
   //  serialize the packet
@@ -1051,8 +1106,8 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
   }
 
   if ( u3C.wag_w & u3o_verbose ) {
-    u3_noun sen = u3dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.sen_d));
-    u3_noun rec = u3dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.rec_d));
+    u3_noun sen = u3dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.pre_u.sen_d));
+    u3_noun rec = u3dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.pre_u.rec_d));
     c3_c* sen_c = u3r_string(sen);
     c3_c* rec_c = u3r_string(rec);
     c3_y* pip_y = (c3_y*)&pac_u->ore_u.pip_w;
@@ -1136,7 +1191,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
     //  cache the scry result for later use
     //
     _ames_lane_into_cache(sam_u->lax_p,
-                          u3i_chubs(2, pac_u->bod_u.rec_d),
+                          u3i_chubs(2, pac_u->bod_u.pre_u.rec_d),
                           u3k(las));
 
     //  if there is no lane, drop the packet
@@ -1167,15 +1222,15 @@ _ames_try_forward(u3_ames* sam_u,
 
   //  if the recipient is a galaxy, their lane is always &+~gax
   //
-  if (  (256 > bod_u->rec_d[0])
-     && (0  == bod_u->rec_d[1]) )
+  if (  (256 > bod_u->pre_u.rec_d[0])
+     && (0  == bod_u->pre_u.rec_d[1]) )
   {
-    lac = u3nc(c3y, (c3_y)bod_u->rec_d[0]);
+    lac = u3nc(c3y, (c3_y)bod_u->pre_u.rec_d[0]);
   }
   //  otherwise, try to get the lane from cache
   //
   else {
-    lac = _ames_lane_from_cache(sam_u->lax_p, u3i_chubs(2, bod_u->rec_d));
+    lac = _ames_lane_from_cache(sam_u->lax_p, u3i_chubs(2, bod_u->pre_u.rec_d));
 
     //  if we don't know the lane, and the scry queue is full,
     //  just drop the packet
@@ -1233,7 +1288,7 @@ _ames_try_forward(u3_ames* sam_u,
     else {
       sam_u->sat_u.foq_d++;
       u3_noun pax = u3nq(u3i_string("peers"),
-                         u3dc("scot", 'p', u3i_chubs(2, bod_u->rec_d)),
+                         u3dc("scot", 'p', u3i_chubs(2, bod_u->pre_u.rec_d)),
                          u3i_string("forward-lane"),
                          u3_nul);
       u3_pier_peek_last(sam_u->pir_u, u3_nul, c3__ax,
@@ -1468,6 +1523,7 @@ _ames_hear(u3_ames* sam_u,
 
     //  ensure the mug is valid
     //
+    u3l_log("bod: %ux, hed: %ux\n", hed_u.mug_l, bod_u.mug_l);
     if ( bod_u.mug_l != hed_u.mug_l ) {
       sam_u->sat_u.mut_d++;
       if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
@@ -1485,8 +1541,8 @@ _ames_hear(u3_ames* sam_u,
   //  we might want to forward statelessly
   //
   if (  0 && (c3y == sam_u->fig_u.see_o)
-     && (  (bod_u.rec_d[0] != sam_u->pir_u->who_d[0])
-        || (bod_u.rec_d[1] != sam_u->pir_u->who_d[1]) ) )
+     && (  (bod_u.pre_u.rec_d[0] != sam_u->pir_u->who_d[0])
+        || (bod_u.pre_u.rec_d[1] != sam_u->pir_u->who_d[1]) ) )
   {
     _ames_try_forward(sam_u, lan_u, &hed_u, &bod_u, hun_y);
   }
