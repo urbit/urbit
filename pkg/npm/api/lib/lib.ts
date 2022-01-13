@@ -1,5 +1,3 @@
-import _ from "lodash";
-import f from "lodash/fp";
 import bigInt, { BigInteger } from "big-integer";
 
 import { Resource } from "../groups/types";
@@ -8,6 +6,36 @@ import { Post, GraphNode } from "../graph/types";
 const DA_UNIX_EPOCH = bigInt("170141184475152167957503069145530368000"); // `@ud` ~1970.1.1
 
 const DA_SECOND = bigInt("18446744073709551616"); // `@ud` ~s1
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  let chunk: T[] = [];
+  let newArray = [chunk];
+
+  for (let i = 0;i < arr.length;i++) {
+    if (chunk.length < size) {
+      chunk.push(arr[i])
+    } else {
+      chunk = [arr[i]]
+      newArray.push(chunk)
+    }
+  }
+
+  return newArray;
+}
+
+function dropWhile<T>(arr: T[], pred: (x: T) => boolean): T[] {
+  const newArray = arr.slice();
+
+  for (const item of arr) {
+    if (pred(item)) {
+      newArray.shift();
+    } else {
+      return newArray;
+    }
+  }
+
+  return newArray;
+}
 
 /**
  * Given a bigint representing an urbit date, returns a unix timestamp.
@@ -48,17 +76,11 @@ export function udToDec(ud: string): string {
 }
 
 export function decToUd(str: string): string {
-  return _.trimStart(
-    f.flow(
-      f.split(""),
-      f.reverse,
-      f.chunk(3),
-      f.map(f.flow(f.reverse, f.join(""))),
-      f.reverse,
-      f.join(".")
-    )(str),
-    "0."
-  );
+  const transform = chunk(str.split('').reverse(), 3)
+    .map(group => group.reverse().join(''))
+    .reverse()
+    .join('.')
+  return transform.replace(/^[0\.]+/g, '');
 }
 
 export function resourceAsPath(resource: Resource): string {
@@ -161,14 +183,11 @@ export function uxToHex(ux: string) {
 }
 
 export const hexToUx = (hex: string): string => {
-  const ux = f.flow(
-    f.dropWhile(y => y === '0'),
-    f.reverse,
-    f.chunk(4),
-    f.map(x => x.reverse().join('')),
-    f.reverse,
-    f.join('.')
-  )(hex.split('')) || '0';
+  const nonZeroChars = dropWhile(hex.split(''), y => y === '0');
+  const ux = chunk(nonZeroChars.reverse(), 4).map(x => {
+    return x.reverse().join('');
+  }).reverse().join('.') || '0';
+
   return `0x${ux}`;
 };
 
@@ -208,21 +227,6 @@ export function stringToTa(str: string): string {
     out = out + add;
   }
   return "~." + out;
-}
-
-
-/**
- * Formats a numbers as a `@ud` inserting dot where needed
- */
-export function numToUd(num: number): string {
-  return f.flow(
-    f.split(''),
-    f.reverse,
-    f.chunk(3),
-    f.reverse,
-    f.map(s => s.join('')),
-    f.join('.')
-  )(num.toString())
 }
 
 export const buntPost = (): Post => ({

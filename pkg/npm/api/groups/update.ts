@@ -1,4 +1,4 @@
-import { PatpNoSig, Path, Jug, ShipRank, Enc } from '../lib';
+import { PatpNoSig, Path, ShipRank, Enc } from '../lib';
 import { roleTags } from './index';
 
 export type RoleTags = typeof roleTags[number];
@@ -173,5 +173,3 @@ export type GroupUpdate =
   | GroupUpdateInitialGroup;
 
 export type GroupAction = Omit<GroupUpdate, 'initialGroup' | 'initial'>;
-
-
