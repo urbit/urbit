@@ -9,11 +9,11 @@ import {
   ContinuousProgressBar,
 } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import useGroupState from '~/logic/state/group';
 import { useInviteForResource } from '~/logic/state/invite';
-import { usePreview } from '~/logic/state/metadata';
+import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { decline, Invite } from '@urbit/api';
 import { join, JoinRequest } from '@urbit/api/groups';
 import airlock from '~/logic/api';
@@ -184,6 +184,8 @@ export function Join(props: JoinProps) {
   const { group, kind } = desc;
   const [, , ship, name] = group.split('/');
   const graph = kind === 'graph';
+  const associations = useMetadataState(s => s.associations);
+  const joined = graph ? associations.graph[group] : associations.groups[group];
   const finishedPath = redir
     ? redir
     : graph
@@ -192,13 +194,22 @@ export function Join(props: JoinProps) {
 
   const history = useHistory();
   const joinRequest = useGroupState(s => s.pendingJoin[group]);
+  const [openedRequest, setOpenedRequest] = useState<JoinRequest>();
   const invite = useInviteForResource(kind, ship, name);
 
-  const isDone = joinRequest && joinRequest.progress === 'done';
+  const isDone = openedRequest && openedRequest.progress === 'done' && joined;
   const isErrored =
-    joinRequest && joinError.includes(joinRequest.progress as any);
+  openedRequest && joinError.includes(openedRequest.progress as any);
   const isLoading =
-    joinRequest && joinLoad.includes(joinRequest.progress as any);
+  openedRequest && joinLoad.includes(openedRequest.progress as any);
+
+  // If we opened this modal from a join request,
+  // don't let the request getting deleted move us to the wrong state
+  useEffect(() => {
+    if (joinRequest) {
+      setOpenedRequest(joinRequest);
+    }
+  }, [joinRequest]);
 
   useEffect(() => {
     if (isDone && desc.kind == 'graph') {
@@ -218,11 +229,11 @@ export function Join(props: JoinProps) {
       modal={modal}
       dismiss={dismiss}
       desc={desc}
-      request={joinRequest}
+      request={openedRequest}
       finished={finishedPath}
     />
   ) : isErrored ? (
-    <JoinError modal={modal} desc={desc} request={joinRequest} />
+    <JoinError modal={modal} desc={desc} request={openedRequest} />
   ) : (
     <JoinInitial modal={modal} dismiss={dismiss} desc={desc} invite={invite} />
   );
