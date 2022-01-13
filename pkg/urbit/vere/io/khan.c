@@ -328,6 +328,29 @@ _khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
   _khan_close_chan(san_u, can_u);
 }
 
+/* _khan_drop_cran(): finalize/remove request from chan (does not u3z rid.)
+*/
+static void
+_khan_drop_cran(u3_chan* can_u, u3_cran* ran_u)
+{
+  u3_cran* inn_u;
+
+  //  remove from pending list, special-case for head.
+  //
+  if ( ran_u == can_u->ran_u ) {
+    can_u->ran_u = ran_u->nex_u;
+  }
+  else {
+    for ( inn_u = can_u->ran_u; inn_u; inn_u = inn_u->nex_u ) {
+      if ( ran_u == inn_u->nex_u ) {
+        inn_u->nex_u = ran_u->nex_u;
+        break;
+      }
+    }
+  }
+  c3_free(ran_u);
+}
+
 /* _khan_peek_cb(): scry result handler.
 */
 static void
@@ -345,21 +368,59 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
     u3z(res); return;
   }
   _khan_send_noun(can_u, u3nt(ran_u->rid, c3__peek, res));
+  _khan_drop_cran(can_u, ran_u);
+}
 
-  //  remove this request from the pending list.
-  //
-  if ( ran_u == can_u->ran_u ) {
-    can_u->ran_u = ran_u->nex_u;
+/* _khan_ovum_bail(): bail callback on injected event.
+*/
+static void
+_khan_ovum_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  u3_cran* ran_u = egg_u->ptr_v;
+  u3_chan* can_u = ran_u->can_u;
+  u3_cran* inn_u;
+
+  if ( !can_u ) {
+    //  chan was closed; noop.
+    //
+    u3z(ran_u->rid); c3_free(ran_u);
+    u3z(lud); return;
   }
-  else {
-    for ( inn_u = can_u->ran_u; inn_u; inn_u = inn_u->nex_u ) {
-      if ( ran_u == inn_u->nex_u ) {
-        inn_u->nex_u = ran_u->nex_u;
-        break;
-      }
+  _khan_send_noun(can_u, u3nq(ran_u->rid, c3__ovum, c3__bail, lud));
+  _khan_drop_cran(can_u, ran_u);
+}
+
+/* _khan_ovum_news(): lifecycle callback for injected events.
+*/
+static void
+_khan_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
+{
+  u3_cran*  ran_u = egg_u->ptr_v;
+  u3_chan*  can_u = ran_u->can_u;
+  c3_l      new_l;
+
+  if ( can_u ) {
+    switch (new_e) {
+      default: c3_assert(!"not-reached");
+      case u3_ovum_drop: new_l = c3__drop; break;
+      case u3_ovum_work: new_l = c3__work; break;
+      case u3_ovum_done: new_l = c3__done; break;
+    }
+    _khan_send_noun(can_u, u3nt(u3k(ran_u->rid), c3__ovum, new_l));
+  }
+  if ( (u3_ovum_done == new_e) ||
+       (u3_ovum_drop == new_e) )
+  {
+    u3z(ran_u->rid);
+    if ( !can_u ) {
+      //  chan was closed; free.
+      //
+      c3_free(ran_u);
+    }
+    else {
+      _khan_drop_cran(can_u, ran_u);
     }
   }
-  c3_free(ran_u);
 }
 
 /* _khan_moor_poke(): called on message read from u3_moor.
@@ -422,8 +483,8 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
         u3_noun   gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
 
-        ran_u->can_u = can_u;
         ran_u->rid = u3k(rid);
+        ran_u->can_u = can_u;
         ran_u->nex_u = can_u->ran_u;
         can_u->ran_u = ran_u;
         u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
@@ -457,8 +518,23 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__ovum: {
-        //  TODO: implement
-        //
+        u3_noun tar, wir, cad;
+
+        if ( (c3n == u3r_trel(dat, &tar, &wir, &cad)) ) {
+          can_u->mor_u.bal_f(can_u, -6, "ovum-bad");
+        }
+        else {
+          u3_cran* ran_u = c3_calloc(sizeof(u3_cran));
+
+          ran_u->rid = u3k(rid);
+          ran_u->can_u = can_u;
+          ran_u->nex_u = can_u->ran_u;
+          can_u->ran_u = ran_u;
+          u3_auto_peer(
+            u3_auto_plan(&kan_u->car_u,
+                         u3_ovum_init(0, u3k(tar), u3k(wir), u3k(cad))),
+            ran_u, _khan_ovum_news, _khan_ovum_bail);
+        }
         break;
       }
 
