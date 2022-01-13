@@ -31,7 +31,7 @@ export const Skeleton = React.memo((props: SkeletonProps): ReactElement => {
       gridTemplateRows="100%"
     >
       <ErrorBoundary>
-        { sidebar && (
+        { sidebar && !props.mobileHide && (
           <Sidebar
             recentGroups={props.recentGroups}
             selected={props.selected}

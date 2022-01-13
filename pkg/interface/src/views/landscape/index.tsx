@@ -63,7 +63,7 @@ export default function Landscape() {
           }}
         />
         <Route exact path="/">
-          <GroupsPane workspace={uqbarWorkspace} baseUrl="/~landscape/home" isHome />
+          <GroupsPane workspace={uqbarWorkspace} baseUrl="/" isHome />
         </Route>
         <Route path="/~landscape/home">
           <GroupsPane workspace={homeWorkspace} baseUrl="/~landscape/home" />

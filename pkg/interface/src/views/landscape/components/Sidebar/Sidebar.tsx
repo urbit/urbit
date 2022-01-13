@@ -11,7 +11,6 @@ import useGroupState from '~/logic/state/group';
 import { Workspace } from '~/types';
 import { GroupSwitcher } from '../GroupSwitcher';
 import { SidebarGroupList } from './SidebarGroupList';
-import { SidebarListHeader } from './SidebarListHeader';
 import { SidebarListConfig } from './types';
 
 const ScrollbarLessCol = styled(Col)`
@@ -26,14 +25,12 @@ interface SidebarProps {
   recentGroups: string[];
   selected?: string;
   baseUrl: string;
-  mobileHide?: boolean;
   workspace: Workspace;
 }
 
 export function Sidebar(props: SidebarProps): ReactElement | null {
   const { selected, workspace } = props;
   const groupPath = getGroupFromWorkspace(workspace);
-  const display = props.mobileHide ? ['none', 'flex'] : 'flex';
 
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     `group-config:${groupPath || 'home'}`,
@@ -51,7 +48,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
   return (
     <Box>
       <ScrollbarLessCol
-        display={display}
+        display="flex"
         width="100%"
         gridRow="1/2"
         gridColumn="1/2"
@@ -80,7 +77,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         />
       </ScrollbarLessCol>
       <ScrollbarLessCol
-        display={display}
+        display="flex"
         width="100%"
         gridRow="1/2"
         gridColumn="1/2"

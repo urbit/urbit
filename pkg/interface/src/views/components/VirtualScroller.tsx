@@ -632,7 +632,6 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
           bottom={!isTop ? '0' : undefined} ref={this.setScrollRef}
           backgroundColor="lightGray"
                      />)}
-
       <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, 'WebkitOverflowScrolling': 'auto' }}>
         <Box style={{ transform, width: 'calc(100% - 4px)' }}>
           {(isTop ? !atStart : !atEnd) && (<Center height={5}>
