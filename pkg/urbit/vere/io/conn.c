@@ -1,4 +1,4 @@
-/* vere/khan.c
+/* vere/conn.c
 **
 **  implements the control plane: a socket that can be used to
 **  query and interact with an urbit ship from earth.
@@ -61,7 +61,7 @@
 #ifdef  _WIN32
 
 u3_auto*
-u3_khan_io_init(u3_pier* pir_u)
+u3_conn_io_init(u3_pier* pir_u)
 {
   return NULL;
 }
@@ -90,45 +90,45 @@ u3_khan_io_init(u3_pier* pir_u)
   typedef struct _u3_shan {
     uv_pipe_t         pyp_u;            //  server stream handler
     c3_l              nex_l;            //  next connection number
-    struct _u3_khan*  kan_u;            //  device backpointer
+    struct _u3_conn*  con_u;            //  device backpointer
     struct _u3_chan*  can_u;            //  connection list
   } u3_shan;
 
-/* u3_khan: control plane device.
+/* u3_conn: control plane device.
 */
-  typedef struct _u3_khan {
+  typedef struct _u3_conn {
     u3_auto           car_u;            //  driver
     c3_l              sev_l;            //  instance number
     struct _u3_shan*  san_u;            //  server reference
     u3_cue_xeno*      sil_u;            //  cue handle
     c3_o              van_o;            //  vane present?
-  } u3_khan;
+  } u3_conn;
 
-static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
+static const c3_c URB_SOCK_PATH[] = ".urb/conn.sock";
 
-/* _khan_close_cb(): socket close callback.
+/* _conn_close_cb(): socket close callback.
 */
 static void
-_khan_close_cb(uv_handle_t* had_u)
+_conn_close_cb(uv_handle_t* had_u)
 {
   c3_free(had_u);
 }
 
-/* _khan_mote_free(): u3_moat-shaped close callback.
+/* _conn_mote_free(): u3_moat-shaped close callback.
 */
 static void
-_khan_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
+_conn_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
   c3_free(ptr_v);
 }
 
-/* _khan_punt_goof(): print stack trace of error.
+/* _conn_punt_goof(): print stack trace of error.
 */
 static void
-_khan_punt_goof(u3_noun lud)
+_conn_punt_goof(u3_noun lud)
 {
   if ( 2 == u3qb_lent(lud) ) {
-    u3_pier_punt_goof("khan", u3k(u3h(lud)));
+    u3_pier_punt_goof("conn", u3k(u3h(lud)));
     u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
   }
   else {
@@ -136,8 +136,8 @@ _khan_punt_goof(u3_noun lud)
     c3_w    len_w = 1;
 
     while ( u3_nul != dul ) {
-      u3l_log("khan: bail %u\r\n", len_w++);
-      u3_pier_punt_goof("khan", u3k(u3h(dul)));
+      u3l_log("conn: bail %u\r\n", len_w++);
+      u3_pier_punt_goof("conn", u3k(u3h(dul)));
       dul = u3t(dul);
     }
   }
@@ -145,10 +145,10 @@ _khan_punt_goof(u3_noun lud)
   u3z(lud);
 }
 
-/* _khan_send_noun(): jam and send noun over chan.
+/* _conn_send_noun(): jam and send noun over chan.
 */
 static void
-_khan_send_noun(u3_chan* can_u, u3_noun nun)
+_conn_send_noun(u3_chan* can_u, u3_noun nun)
 {
   c3_y* byt_y;
   c3_d  len_d;
@@ -158,14 +158,14 @@ _khan_send_noun(u3_chan* can_u, u3_noun nun)
   u3_newt_send((u3_mojo*)&can_u->mor_u, len_d, byt_y);
 }
 
-/* _khan_find_chan(): lookup channel by connection number.
+/* _conn_find_chan(): lookup channel by connection number.
 */
 static u3_chan*
-_khan_find_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
+_conn_find_chan(u3_conn* con_u, c3_l sev_l, c3_l coq_l)
 {
   u3_chan* ret_u;
 
-  for ( ret_u = kan_u->san_u->can_u;
+  for ( ret_u = con_u->san_u->can_u;
         ret_u;
         ret_u = (u3_chan*)ret_u->mor_u.nex_u ) {
     if ( coq_l == ret_u->coq_l ) {
@@ -175,10 +175,10 @@ _khan_find_chan(u3_khan* kan_u, c3_l sev_l, c3_l coq_l)
   return 0;
 }
 
-/* _khan_read_wire(): check tag, decompose wire into /sev/coq/rid
+/* _conn_read_wire(): check tag, decompose wire into /sev/coq/rid
 */
 static c3_o
-_khan_read_wire(u3_noun   wir,
+_conn_read_wire(u3_noun   wir,
                 c3_l      tag_l,
                 c3_l*     sev_l,
                 c3_l*     coq_l,
@@ -236,29 +236,29 @@ _khan_read_wire(u3_noun   wir,
   }
 }
 
-/* _khan_poke_bail(): error function on failed %fyrd.
+/* _conn_poke_bail(): error function on failed %fyrd.
 */
 static void
-_khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
+_conn_poke_bail(u3_ovum* egg_u, u3_noun lud)
 {
-  u3_khan*  kan_u = (u3_khan*)egg_u->car_u;
+  u3_conn*  con_u = (u3_conn*)egg_u->car_u;
   u3_chan*  can_u;
   u3_noun   wir = egg_u->wir;
   c3_l      sev_l, coq_l;
   u3_atom   rid;
 
-  _khan_punt_goof(u3k(lud));
-  if ( (c3n == _khan_read_wire(u3k(wir), c3__khan, &sev_l, &coq_l, &rid)) ||
-       (kan_u->sev_l != sev_l) )
+  _conn_punt_goof(u3k(lud));
+  if ( (c3n == _conn_read_wire(u3k(wir), c3__khan, &sev_l, &coq_l, &rid)) ||
+       (con_u->sev_l != sev_l) )
   {
     //  wtf?
     //
     c3_assert(!"not reached");
     u3z(lud); return;
   }
-  can_u = _khan_find_chan(kan_u, sev_l, coq_l);
+  can_u = _conn_find_chan(con_u, sev_l, coq_l);
   if ( can_u ) {
-    _khan_send_noun(can_u, u3nt(rid, c3__fail, lud));
+    _conn_send_noun(can_u, u3nt(rid, c3__fail, lud));
   }
   else {
     u3z(rid); u3z(lud);
@@ -266,12 +266,12 @@ _khan_poke_bail(u3_ovum* egg_u, u3_noun lud)
   u3_ovum_free(egg_u);
 }
 
-/* _khan_close_chan(): close given channel, freeing.
+/* _conn_close_chan(): close given channel, freeing.
 */
 static void
-_khan_close_chan(u3_shan* san_u, u3_chan* can_u)
+_conn_close_chan(u3_shan* san_u, u3_chan* can_u)
 {
-  u3_khan*  kan_u = san_u->kan_u;
+  u3_conn*  con_u = san_u->con_u;
   u3_chan*  inn_u;
   u3_cran*  ran_u;
 
@@ -298,40 +298,40 @@ _khan_close_chan(u3_shan* san_u, u3_chan* can_u)
 
   //  send a close event to arvo and stop reading.
   //
-  if ( c3y == kan_u->van_o ) {
+  if ( c3y == con_u->van_o ) {
     u3_noun wir, cad;
 
     wir = u3nq(c3__khan,
-               u3dc("scot", c3__uv, kan_u->sev_l),
+               u3dc("scot", c3__uv, con_u->sev_l),
                u3dc("scot", c3__ud, can_u->coq_l),
                u3_nul);
     cad = u3nc(c3__done, u3_nul);
     u3_auto_peer(
-      u3_auto_plan(&kan_u->car_u,
+      u3_auto_plan(&con_u->car_u,
                    u3_ovum_init(0, c3__k, wir, cad)),
-      0, 0, _khan_poke_bail);
+      0, 0, _conn_poke_bail);
   }
-  u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _khan_moat_free);
+  u3_newt_moat_stop((u3_moat*)&can_u->mor_u, _conn_moat_free);
 }
 
-/* _khan_moor_bail(): error callback for u3_moor.
+/* _conn_moor_bail(): error callback for u3_moor.
 */
 static void
-_khan_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
+_conn_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_shan*  san_u = can_u->san_u;
 
   if ( err_i != UV_EOF ) {
-    u3l_log("khan: moor bail %zd %s\n", err_i, err_c);
+    u3l_log("conn: moor bail %zd %s\n", err_i, err_c);
   }
-  _khan_close_chan(san_u, can_u);
+  _conn_close_chan(san_u, can_u);
 }
 
-/* _khan_drop_cran(): finalize/remove request from chan (does not u3z rid.)
+/* _conn_drop_cran(): finalize/remove request from chan (does not u3z rid.)
 */
 static void
-_khan_drop_cran(u3_chan* can_u, u3_cran* ran_u)
+_conn_drop_cran(u3_chan* can_u, u3_cran* ran_u)
 {
   u3_cran* inn_u;
 
@@ -351,10 +351,10 @@ _khan_drop_cran(u3_chan* can_u, u3_cran* ran_u)
   c3_free(ran_u);
 }
 
-/* _khan_peek_cb(): scry result handler.
+/* _conn_peek_cb(): scry result handler.
 */
 static void
-_khan_peek_cb(void* ptr_v, u3_noun res)
+_conn_peek_cb(void* ptr_v, u3_noun res)
 {
   u3_cran* ran_u = (u3_cran*)ptr_v;
   u3_chan* can_u = ran_u->can_u;
@@ -367,14 +367,14 @@ _khan_peek_cb(void* ptr_v, u3_noun res)
     c3_free(ran_u);
     u3z(res); return;
   }
-  _khan_send_noun(can_u, u3nt(ran_u->rid, c3__peek, res));
-  _khan_drop_cran(can_u, ran_u);
+  _conn_send_noun(can_u, u3nt(ran_u->rid, c3__peek, res));
+  _conn_drop_cran(can_u, ran_u);
 }
 
-/* _khan_ovum_bail(): bail callback on injected event.
+/* _conn_ovum_bail(): bail callback on injected event.
 */
 static void
-_khan_ovum_bail(u3_ovum* egg_u, u3_noun lud)
+_conn_ovum_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_cran* ran_u = egg_u->ptr_v;
   u3_chan* can_u = ran_u->can_u;
@@ -386,14 +386,14 @@ _khan_ovum_bail(u3_ovum* egg_u, u3_noun lud)
     u3z(ran_u->rid); c3_free(ran_u);
     u3z(lud); return;
   }
-  _khan_send_noun(can_u, u3nq(ran_u->rid, c3__ovum, c3__bail, lud));
-  _khan_drop_cran(can_u, ran_u);
+  _conn_send_noun(can_u, u3nq(ran_u->rid, c3__ovum, c3__bail, lud));
+  _conn_drop_cran(can_u, ran_u);
 }
 
-/* _khan_ovum_news(): lifecycle callback for injected events.
+/* _conn_ovum_news(): lifecycle callback for injected events.
 */
 static void
-_khan_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
+_conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
 {
   u3_cran*  ran_u = egg_u->ptr_v;
   u3_chan*  can_u = ran_u->can_u;
@@ -406,7 +406,7 @@ _khan_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
       case u3_ovum_work: new_l = c3__work; break;
       case u3_ovum_done: new_l = c3__done; break;
     }
-    _khan_send_noun(can_u, u3nt(u3k(ran_u->rid), c3__ovum, new_l));
+    _conn_send_noun(can_u, u3nt(u3k(ran_u->rid), c3__ovum, new_l));
   }
   if ( (u3_ovum_done == new_e) ||
        (u3_ovum_drop == new_e) )
@@ -418,22 +418,22 @@ _khan_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
       c3_free(ran_u);
     }
     else {
-      _khan_drop_cran(can_u, ran_u);
+      _conn_drop_cran(can_u, ran_u);
     }
   }
 }
 
-/* _khan_moor_poke(): called on message read from u3_moor.
+/* _conn_moor_poke(): called on message read from u3_moor.
 */
 static void
-_khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
+_conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_weak           jar;
   u3_noun           can, rid, tag, dat;
   u3_chan*          can_u = (u3_chan*)ptr_v;
-  u3_khan*          kan_u = can_u->san_u->kan_u;
+  u3_conn*          con_u = can_u->san_u->con_u;
 
-  jar = u3s_cue_xeno_with(kan_u->sil_u, len_d, byt_y);
+  jar = u3s_cue_xeno_with(con_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
     can_u->mor_u.bal_f(can_u, -1, "cue-none");
     return;
@@ -449,7 +449,7 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     c3_c*   tag_c = u3r_string(tag);
     c3_c*   rid_c = u3r_string(rud);
 
-    u3l_log("khan: %s %s\n", tag_c, rid_c);
+    u3l_log("conn: %s %s\n", tag_c, rid_c);
     c3_free(tag_c);
     c3_free(rid_c);
     u3z(rud);
@@ -460,21 +460,21 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__fyrd: {
-        if ( c3n == kan_u->van_o ) {
-          _khan_send_noun(can_u,
+        if ( c3n == con_u->van_o ) {
+          _conn_send_noun(can_u,
                           u3nt(u3k(rid), c3__fail, u3i_string("vane-miss")));
         }
         else {
           u3_noun   wir = u3nc(c3__khan,
-                               u3nq(u3dc("scot", c3__uv, kan_u->sev_l),
+                               u3nq(u3dc("scot", c3__uv, con_u->sev_l),
                                     u3dc("scot", c3__ud, can_u->coq_l),
                                     u3dc("scot", c3__uv, u3k(rid)),
                                     u3_nul));
 
           u3_auto_peer(
-            u3_auto_plan(&kan_u->car_u,
+            u3_auto_plan(&con_u->car_u,
                          u3_ovum_init(0, c3__k, wir, u3k(can))),
-            0, 0, _khan_poke_bail);
+            0, 0, _conn_poke_bail);
         }
         break;
       }
@@ -487,7 +487,7 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         ran_u->can_u = can_u;
         ran_u->nex_u = can_u->ran_u;
         can_u->ran_u = ran_u;
-        u3_pier_peek(kan_u->car_u.pir_u, gan, u3k(dat), ran_u, _khan_peek_cb);
+        u3_pier_peek(con_u->car_u.pir_u, gan, u3k(dat), ran_u, _conn_peek_cb);
         break;
       }
 
@@ -509,7 +509,7 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
             }
 
             case c3__mass: {
-              _khan_send_noun(can_u, u3nt(u3k(rid), c3__mass, u3_nul));
+              _conn_send_noun(can_u, u3nt(u3k(rid), c3__mass, u3_nul));
               break;
             }
           }
@@ -531,9 +531,9 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
           ran_u->nex_u = can_u->ran_u;
           can_u->ran_u = ran_u;
           u3_auto_peer(
-            u3_auto_plan(&kan_u->car_u,
+            u3_auto_plan(&con_u->car_u,
                          u3_ovum_init(0, u3k(tar), u3k(wir), u3k(cad))),
-            ran_u, _khan_ovum_news, _khan_ovum_bail);
+            ran_u, _conn_ovum_news, _conn_ovum_bail);
         }
         break;
       }
@@ -548,20 +548,20 @@ _khan_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   u3z(jar);
 }
 
-/* _khan_conn_cb(): socket connection callback.
+/* _conn_sock_cb(): socket connection callback.
 */
 static void
-_khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
+_conn_sock_cb(uv_stream_t* sem_u, c3_i tas_i)
 {
   u3_shan*  san_u = (u3_shan*)sem_u;
-  u3_khan*  kan_u = san_u->kan_u;
+  u3_conn*  con_u = san_u->con_u;
   u3_chan*  can_u;
   c3_i      err_i;
 
   can_u = c3_calloc(sizeof(u3_chan));
   can_u->mor_u.ptr_v = can_u;
-  can_u->mor_u.pok_f = _khan_moor_poke;
-  can_u->mor_u.bal_f = _khan_moor_bail;
+  can_u->mor_u.pok_f = _conn_moor_poke;
+  can_u->mor_u.bal_f = _conn_moor_bail;
   can_u->coq_l = san_u->nex_l++;
   can_u->san_u = san_u;
   err_i = uv_timer_init(u3L, &can_u->mor_u.tim_u);
@@ -575,10 +575,10 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   san_u->can_u = can_u;
 }
 
-/* _khan_init_sock(): initialize socket device.
+/* _conn_init_sock(): initialize socket device.
 */
 static void
-_khan_init_sock(u3_shan* san_u)
+_conn_init_sock(u3_shan* san_u)
 {
   //  The full socket path is limited to about 108 characters,
   //  and we want it to be relative to the pier. So we save our
@@ -590,104 +590,104 @@ _khan_init_sock(u3_shan* san_u)
   c3_i err_i;
 
   if ( NULL == getcwd(pax_c, sizeof(pax_c)) ) {
-    u3l_log("khan: getcwd: %s\n", uv_strerror(errno));
+    u3l_log("conn: getcwd: %s\n", uv_strerror(errno));
     u3_king_bail();
   }
   if ( 0 != chdir(u3_Host.dir_c) ) {
-    u3l_log("khan: chdir: %s\n", uv_strerror(errno));
+    u3l_log("conn: chdir: %s\n", uv_strerror(errno));
     u3_king_bail();
   }
   if ( 0 != unlink(URB_SOCK_PATH) && errno != ENOENT ) {
-    u3l_log("khan: unlink: %s\n", uv_strerror(errno));
-    goto _khan_sock_err_chdir;
+    u3l_log("conn: unlink: %s\n", uv_strerror(errno));
+    goto _conn_sock_err_chdir;
   }
   if ( 0 != (err_i = uv_pipe_init(u3L, &san_u->pyp_u, 0)) ) {
-    u3l_log("khan: uv_pipe_init: %s\n", uv_strerror(err_i));
-    goto _khan_sock_err_chdir;
+    u3l_log("conn: uv_pipe_init: %s\n", uv_strerror(err_i));
+    goto _conn_sock_err_chdir;
   }
   if ( 0 != (err_i = uv_pipe_bind(&san_u->pyp_u, URB_SOCK_PATH)) ) {
-    u3l_log("khan: uv_pipe_bind: %s\n", uv_strerror(err_i));
-    goto _khan_sock_err_chdir;
+    u3l_log("conn: uv_pipe_bind: %s\n", uv_strerror(err_i));
+    goto _conn_sock_err_chdir;
   }
   if ( 0 != (err_i = uv_listen((uv_stream_t*)&san_u->pyp_u, 0,
-                               _khan_conn_cb)) ) {
-    u3l_log("khan: uv_listen: %s\n", uv_strerror(err_i));
-    goto _khan_sock_err_unlink;
+                               _conn_sock_cb)) ) {
+    u3l_log("conn: uv_listen: %s\n", uv_strerror(err_i));
+    goto _conn_sock_err_unlink;
   }
   if ( 0 != chdir(pax_c) ) {
-    u3l_log("khan: chdir: %s\n", uv_strerror(errno));
-    goto _khan_sock_err_close;
+    u3l_log("conn: chdir: %s\n", uv_strerror(errno));
+    goto _conn_sock_err_close;
   }
   return;
 
-_khan_sock_err_close:
-  uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
-_khan_sock_err_unlink:
+_conn_sock_err_close:
+  uv_close((uv_handle_t*)&san_u->pyp_u, _conn_close_cb);
+_conn_sock_err_unlink:
   if ( 0 != unlink(URB_SOCK_PATH) ) {
-    u3l_log("khan: unlink: %s\n", uv_strerror(errno));
+    u3l_log("conn: unlink: %s\n", uv_strerror(errno));
   }
-_khan_sock_err_chdir:
+_conn_sock_err_chdir:
   if ( 0 != chdir(pax_c) ) {
-    u3l_log("khan: chdir: %s\n", uv_strerror(errno));
+    u3l_log("conn: chdir: %s\n", uv_strerror(errno));
   }
   u3_king_bail();
 }
 
-/* _khan_born_news(): initialization complete; vane available.
+/* _conn_born_news(): initialization complete; vane available.
 */
 static void
-_khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
+_conn_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
 {
-  u3_khan* kan_u = (u3_khan*)egg_u->car_u;
+  u3_conn* con_u = (u3_conn*)egg_u->car_u;
 
   if ( u3_ovum_done == new_e ) {
-    kan_u->van_o = c3y;
+    con_u->van_o = c3y;
   }
 }
 
-/* _khan_born_bail(): nonessential failure; log it and keep going.
+/* _conn_born_bail(): nonessential failure; log it and keep going.
 */
 static void
-_khan_born_bail(u3_ovum* egg_u, u3_noun lud)
+_conn_born_bail(u3_ovum* egg_u, u3_noun lud)
 {
-  u3l_log("khan: %%born failure; %%fyrd not supported\n");
+  u3l_log("conn: %%born failure; %%fyrd not supported\n");
   u3z(lud);
 }
 
-/* _khan_io_talk(): open socket and notify %khan that we're live.
+/* _conn_io_talk(): open socket and notify %khan that we're live.
 */
 static void
-_khan_io_talk(u3_auto* car_u)
+_conn_io_talk(u3_auto* car_u)
 {
-  u3_khan* kan_u = (u3_khan*)car_u;
+  u3_conn* con_u = (u3_conn*)car_u;
   u3_shan* san_u;
   u3_noun  wir = u3nt(c3__khan,
-                      u3dc("scot", c3__uv, kan_u->sev_l),
+                      u3dc("scot", c3__uv, con_u->sev_l),
                       u3_nul);
   u3_noun  cad = u3nc(c3__born, u3_nul);
 
   u3_auto_peer(
     u3_auto_plan(car_u, u3_ovum_init(0, c3__k, wir, cad)),
     0,
-    _khan_born_news,
-    _khan_born_bail);
+    _conn_born_news,
+    _conn_born_bail);
 
   //  initialize server, opening socket.
   //
-  c3_assert(!kan_u->san_u);
+  c3_assert(!con_u->san_u);
   san_u = c3_calloc(sizeof(*san_u));
   san_u->nex_l = 1;
-  san_u->kan_u = kan_u;
-  kan_u->san_u = san_u;
-  _khan_init_sock(san_u);
+  san_u->con_u = con_u;
+  con_u->san_u = san_u;
+  _conn_init_sock(san_u);
   car_u->liv_o = c3y;
-  u3l_log("khan: live on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
+  u3l_log("conn: live on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
 }
 
-/* _khan_ef_handle(): handle result.
+/* _conn_ef_handle(): handle result.
 */
 static void
-_khan_ef_handle(u3_khan*  kan_u,
+_conn_ef_handle(u3_conn*  con_u,
                 c3_l      sev_l,
                 c3_l      coq_l,
                 u3_atom   rid,
@@ -696,9 +696,9 @@ _khan_ef_handle(u3_khan*  kan_u,
 {
   u3_chan* can_u;
 
-  if ( 0 != (can_u = _khan_find_chan(kan_u, sev_l, coq_l)) ) {
+  if ( 0 != (can_u = _conn_find_chan(con_u, sev_l, coq_l)) ) {
     if ( c3__avow == tag ) {
-      _khan_send_noun(can_u, u3nt(u3k(rid), c3__avow, u3k(dat)));
+      _conn_send_noun(can_u, u3nt(u3k(rid), c3__avow, u3k(dat)));
     }
     else {
       can_u->mor_u.bal_f(can_u, -4, "handle-unknown");
@@ -706,39 +706,39 @@ _khan_ef_handle(u3_khan*  kan_u,
     }
   }
   else {
-    u3l_log("khan: handle-no-coq %" PRIx32 " %" PRIu32 "\n",
+    u3l_log("conn: handle-no-coq %" PRIx32 " %" PRIu32 "\n",
             sev_l, coq_l);
   }
   u3z(rid); u3z(tag); u3z(dat);
 }
 
-/* _khan_io_kick(): apply effects.
+/* _conn_io_kick(): apply effects.
 */
 static c3_o
-_khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
+_conn_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
-  u3_khan*  kan_u = (u3_khan*)car_u;
+  u3_conn*  con_u = (u3_conn*)car_u;
   u3_noun   tag, dat;
   c3_l      sev_l, coq_l;
   u3_weak   rid = u3_none;
 
-  if ( (c3n == _khan_read_wire(wir, c3__khan, &sev_l, &coq_l, &rid)) ||
+  if ( (c3n == _conn_read_wire(wir, c3__khan, &sev_l, &coq_l, &rid)) ||
        (c3n == u3r_cell(cad, &tag, &dat)) ||
-       (kan_u->sev_l != sev_l) )
+       (con_u->sev_l != sev_l) )
   {
     u3z(rid); u3z(cad); return c3n;
   }
 
-  _khan_ef_handle(kan_u, sev_l, coq_l, rid, u3k(tag), u3k(dat));
+  _conn_ef_handle(con_u, sev_l, coq_l, rid, u3k(tag), u3k(dat));
   u3z(cad); return c3y;
 }
 
-/* _khan_io_exit(): unlink socket, shut down connections.
+/* _conn_io_exit(): unlink socket, shut down connections.
 */
 static void
-_khan_io_exit(u3_auto* car_u)
+_conn_io_exit(u3_auto* car_u)
 {
-  u3_khan*          kan_u = (u3_khan*)car_u;
+  u3_conn*          con_u = (u3_conn*)car_u;
   c3_c*             pax_c = u3_Host.dir_c;
   c3_w              len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
   c3_c*             paf_c = c3_malloc(len_w);
@@ -750,44 +750,44 @@ _khan_io_exit(u3_auto* car_u)
 
   if ( 0 != unlink(paf_c) ) {
     if ( ENOENT != errno ) {
-      u3l_log("khan: failed to unlink socket: %s\n", uv_strerror(errno));
+      u3l_log("conn: failed to unlink socket: %s\n", uv_strerror(errno));
     }
   }
   else {
-    u3l_log("khan: unlinked %s\n", paf_c);
+    u3l_log("conn: unlinked %s\n", paf_c);
   }
   c3_free(paf_c);
 
   {
-    u3_shan*        san_u = kan_u->san_u;
+    u3_shan*        san_u = con_u->san_u;
 
     if ( san_u ) {
       while ( san_u->can_u ) {
-        _khan_close_chan(san_u, san_u->can_u);
+        _conn_close_chan(san_u, san_u->can_u);
       }
-      uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
+      uv_close((uv_handle_t*)&san_u->pyp_u, _conn_close_cb);
     }
   }
 
-  u3s_cue_xeno_done(kan_u->sil_u);
-  c3_free(kan_u);
+  u3s_cue_xeno_done(con_u->sil_u);
+  c3_free(con_u);
 }
 
-/* u3_khan(): initialize control plane socket.
+/* u3_conn(): initialize control plane socket.
 */
 u3_auto*
-u3_khan_io_init(u3_pier* pir_u)
+u3_conn_io_init(u3_pier* pir_u)
 {
-  u3_khan* kan_u = c3_calloc(sizeof(*kan_u));
-  u3_auto* car_u = &kan_u->car_u;
+  u3_conn* con_u = c3_calloc(sizeof(*con_u));
+  u3_auto* car_u = &con_u->car_u;
 
-  kan_u->sil_u = u3s_cue_xeno_init();
-  kan_u->van_o = c3n;
-  car_u->nam_m = c3__khan;
+  con_u->sil_u = u3s_cue_xeno_init();
+  con_u->van_o = c3n;
+  car_u->nam_m = c3__conn;
   car_u->liv_o = c3n;
-  car_u->io.talk_f = _khan_io_talk;
-  car_u->io.kick_f = _khan_io_kick;
-  car_u->io.exit_f = _khan_io_exit;
+  car_u->io.talk_f = _conn_io_talk;
+  car_u->io.kick_f = _conn_io_kick;
+  car_u->io.exit_f = _conn_io_exit;
 
   {
     u3_noun         now;
@@ -795,7 +795,7 @@ u3_khan_io_init(u3_pier* pir_u)
 
     gettimeofday(&tim_u, 0);
     now = u3_time_in_tv(&tim_u);
-    kan_u->sev_l = u3r_mug(now);
+    con_u->sev_l = u3r_mug(now);
     u3z(now);
   }
 

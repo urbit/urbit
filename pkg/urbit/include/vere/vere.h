@@ -1201,10 +1201,10 @@
 
     /**  Control plane.
     **/
-      /* u3_khan_io_init(): initialize control plane I/O.
+      /* u3_conn_io_init(): initialize control plane I/O.
       */
         u3_auto*
-        u3_khan_io_init(u3_pier* pir_u);
+        u3_conn_io_init(u3_pier* pir_u);
 
     /**  fore, first events
     **/
