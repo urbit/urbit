@@ -686,7 +686,7 @@ main(c3_i   argc,
     c3_free(abs_c);
   } else {
     printf("boot: home is %s\n", abs_c);
-    c3_free(abs_c);
+    free(abs_c);
   }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
