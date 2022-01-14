@@ -4,6 +4,7 @@ import { Workspace } from '~/types/workspace';
 import { Body } from '~/views/components/Body';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
 import { useShortcut } from '~/logic/state/settings';
+import { isMobile } from '~/views/apps/chat/components/ChatEditor';
 
 interface SkeletonProps {
   children: ReactNode;
@@ -20,6 +21,8 @@ export const Skeleton = React.memo((props: SkeletonProps): ReactElement => {
     setSidebar(s => !s);
   }, []));
 
+  const hideMobileSidebar = props.mobileHide && isMobile;
+
   return (
     <Body
       display="grid"
@@ -31,12 +34,11 @@ export const Skeleton = React.memo((props: SkeletonProps): ReactElement => {
       gridTemplateRows="100%"
     >
       <ErrorBoundary>
-        { sidebar && !props.mobileHide && (
+        { sidebar && !hideMobileSidebar && (
           <Sidebar
             recentGroups={props.recentGroups}
             selected={props.selected}
             baseUrl={props.baseUrl}
-            mobileHide={props.mobileHide}
             workspace={props.workspace}
           />
         )}

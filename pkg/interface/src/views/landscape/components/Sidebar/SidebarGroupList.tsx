@@ -14,8 +14,8 @@ import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
 import useGroupState from '~/logic/state/group';
 import useInviteState from '~/logic/state/invite';
-import { getGraphNotifications, getGraphUnreads, sortGroupsAlph } from '~/views/apps/launch/components/Groups';
-import { Box, Icon } from '@tlon/indigo-react';
+import { getGraphUnreads, sortGroupsAlph } from '~/views/apps/launch/components/Groups';
+import { Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 
 function dmUnreads(unreads) {
   let unreadCount = 0;
@@ -259,7 +259,7 @@ export function SidebarGroupList({
   config: SidebarListConfig;
   baseUrl: string;
   selected?: string;
-  messages: boolean;
+  messages?: boolean;
 }): ReactElement {
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(s => s.groups);
@@ -274,7 +274,14 @@ export function SidebarGroupList({
         {...props}
         workspace={{ type: 'messages' }}
       />
-    ) : (
+    )
+    : !groupList?.length
+    ? (
+      <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
+        <LoadingSpinner />
+      </Box>
+    )
+    : (
       <>
         {groupList.map((g) => {
           return (

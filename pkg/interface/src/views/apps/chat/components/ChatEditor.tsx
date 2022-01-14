@@ -12,7 +12,7 @@ import useSettingsState from '~/logic/state/settings';
 import '../css/custom.css';
 import { useChatStore } from './ChatPane';
 
-const isMobile = Boolean(MOBILE_BROWSER_REGEX.test(navigator.userAgent));
+export const isMobile = Boolean(MOBILE_BROWSER_REGEX.test(navigator.userAgent));
 
 const MARKDOWN_CONFIG = {
   name: 'markdown',
