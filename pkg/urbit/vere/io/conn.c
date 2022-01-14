@@ -5,7 +5,7 @@
 **
 **  the control plane nominally consumes input described by:
 **
-**  $:  request-id=@
+**  $:  request-id=@                                    ::  id sent in response
 **  $%  [%fyrd fyrd-args=*]                             ::  run a thread
 **      [%peek peek-args=*]                             ::  scry
 **      [%peel peel-args=*]                             ::  runtime peek
