@@ -67,6 +67,7 @@ interface ChatPaneProps {
    */
   onReply: (msg: Post) => string;
   onDelete?: (msg: Post) => void;
+  onLike?: (msg: Post) => void;
   /**
    * Fetch more messages
    *
@@ -108,6 +109,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     dismissUnread,
     onSubmit,
     onDelete,
+    onLike,
     promptShare = [],
     fetchMessages
   } = props;
@@ -153,18 +155,11 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
       {canUpload && drag.dragging && <SubmitDragger />}
       <ChatWindow
         key={id}
-        graph={graph}
         graphSize={graph.size}
-        unreadCount={unreadCount}
         showOurContact={promptShare.length === 0 && !showBanner}
         pendingSize={Object.keys(graphTimesentMap).length}
-        onReply={onReply}
-        onDelete={onDelete}
-        dismissUnread={dismissUnread}
-        fetchMessages={fetchMessages}
-        isAdmin={isAdmin}
-        getPermalink={getPermalink}
         scrollTo={scrollTo ? bigInt(scrollTo) : undefined}
+        {...{ graph, unreadCount, onReply, onDelete, onLike, dismissUnread, fetchMessages, isAdmin, getPermalink }}
       />
       {canWrite && (
         <ChatInput

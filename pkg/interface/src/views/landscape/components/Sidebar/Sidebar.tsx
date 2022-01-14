@@ -59,7 +59,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         overflowY="scroll"
         fontSize={0}
         position="relative"
-        height={focusMessages ? '50%' : '80%'}
+        height={focusMessages ? '60%' : '80%'}
         borderBottom={1}
         borderBottomColor="lightGray"
         pb={1}
@@ -88,7 +88,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         overflowY="scroll"
         fontSize={0}
         position="relative"
-        height={focusMessages ? '50%' : '20%'}
+        height={focusMessages ? '40%' : '20%'}
       >
         <SidebarGroupList
           config={config}

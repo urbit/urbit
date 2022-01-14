@@ -138,6 +138,38 @@ const fetchMessages = useCallback(async (newer: boolean) => {
     airlock.poke(removePosts(ship, name, [msg.index]));
   }, [resource]);
 
+  const onLike = useCallback(async ({ author, signatures, index }: Post) => {
+    if (window.ship !== author) {
+      const { ship, name } = resourceFromPath(resource);
+      console.log(1, ship, name)
+      const body = signatures.find(({ ship }) => ship === window.ship)
+        ? {
+          'remove-signatures': {
+            uid: { resource: { ship, name }, index },
+            signatures: []
+          }
+        } // unlike
+        : {
+          'add-signatures': {
+            uid: { resource: { ship, name }, index },
+            signatures: []
+          }
+        }; // like
+      const result = await airlock.thread({
+        inputMark: "graph-update-3",
+        outputMark: "json",
+        threadName: "graph-add-signatures",
+        body: {
+          'add-signatures': {
+            uid: { resource: { ship, name }, index },
+            signatures: []
+          }
+        }
+      });
+      console.log(3, result)
+    }
+  }, [resource]);
+
   const dismissUnread = useCallback(() => {
     useHarkState.getState().readCount(toHarkPath(association.resource));
   }, [association.resource]);
@@ -155,17 +187,8 @@ const fetchMessages = useCallback(async (newer: boolean) => {
   return (
     <ChatPane
       id={resource.slice(7)}
-      graph={graph}
-      unreadCount={unreadCount}
-      canWrite={canWrite}
-      onReply={onReply}
-      onDelete={onDelete}
-      fetchMessages={fetchMessages}
-      dismissUnread={dismissUnread}
-      getPermalink={getPermalink}
-      isAdmin={isAdmin}
-      onSubmit={onSubmit}
       promptShare={toShare}
+      {...{ graph, unreadCount, canWrite, onReply, onDelete, onLike, fetchMessages, dismissUnread, getPermalink, isAdmin, onSubmit }}
     />
   );
 };

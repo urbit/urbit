@@ -21,6 +21,7 @@ type ChatWindowProps = {
   scrollTo?: BigInteger;
   onReply: (msg: Post) => void;
   onDelete: (msg: Post) => void;
+  onLike: (msg: Post) => void;
   dismissUnread: () => void;
   pendingSize?: number;
   showOurContact: boolean;
@@ -195,6 +196,7 @@ class ChatWindow extends Component<
       graph,
       onReply,
       onDelete,
+      onLike,
       getPermalink,
       dismissUnread,
       isAdmin
@@ -204,6 +206,7 @@ class ChatWindow extends Component<
       showOurContact,
       onReply,
       onDelete,
+      onLike,
       permalink,
       dismissUnread,
       isAdmin

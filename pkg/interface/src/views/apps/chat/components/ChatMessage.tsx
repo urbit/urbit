@@ -1,10 +1,11 @@
 /* eslint-disable max-lines-per-function */
 import { BaseImage, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Contact, MentionContent, Post } from '@urbit/api';
+import { Contact, MentionContent, Post, resourceFromPath } from '@urbit/api';
 import bigInt from 'big-integer';
 import moment from 'moment';
 import React, {
   Ref,
+  useCallback,
   useEffect,
   useMemo, useState
 } from 'react';
@@ -12,6 +13,7 @@ import VisibilitySensor from 'react-visibility-sensor';
 import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
+import airlock from '~/logic/api';
 import {
   cite, daToUnix, useHovering, uxToHex
 } from '~/logic/lib/util';
@@ -179,7 +181,7 @@ export const MessageAuthor = React.memo<any>(({
 MessageAuthor.displayName = 'MessageAuthor';
 
 type MessageProps = { timestamp: string; timestampHover: boolean; }
-  & Pick<ChatMessageProps, 'msg' | 'transcluded' | 'showOurContact' | 'isReply'>
+  & Pick<ChatMessageProps, 'msg' | 'transcluded' | 'showOurContact' | 'isReply' | 'onLike'>
 
 export const Message = React.memo(({
   timestamp,
@@ -187,12 +189,19 @@ export const Message = React.memo(({
   timestampHover,
   transcluded,
   showOurContact,
+  onLike,
   isReply = false
 }: MessageProps) => {
   const { hovering, bind } = useHovering();
   // TODO: add an additional check for links-only messages to remove the Triangle icon
   const defaultCollapsed = isReply && transcluded > 0;
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
+
+  console.log(0, msg)
+
+  const onClick = useCallback(async () => {
+    onLike(msg);
+  }, [msg, onLike]);
 
   return (
     <Row width="100%">
@@ -210,7 +219,7 @@ export const Message = React.memo(({
           icon={collapsed ? 'TriangleEast' : 'TriangleSouth'}
         />
       )}
-      <Box pl={defaultCollapsed ? '0px' : '44px'} pr={4} width="calc(100% - 44px)" position='relative'>
+      <Box pl={defaultCollapsed ? '0px' : '44px'} pr={4} width="calc(100% - 44px)" position='relative' onClick={onClick}>
         {timestampHover ? (
           <Text
             display={hovering ? 'block' : 'none'}
@@ -414,6 +423,7 @@ interface ChatMessageProps {
   onReply?: (msg: Post) => void;
   showOurContact: boolean;
   onDelete?: () => void;
+  onLike?: (msg: Post) => void;
 }
 const emptyCallback = () => {};
 
@@ -432,6 +442,7 @@ function ChatMessage(props: ChatMessageProps) {
     hideHover,
     dismissUnread = () => null,
     permalink = '',
+    onLike,
     isReply = false
   } = props;
 
@@ -492,19 +503,16 @@ function ChatMessage(props: ChatMessageProps) {
     transcluded,
     onReply,
     onDelete,
+    onLike,
     isAdmin
   };
 
   const message = useMemo(() => (
     <Message
-      msg={msg}
-      timestamp={timestamp}
       timestampHover={!renderSigil}
-      transcluded={transcluded}
-      showOurContact={showOurContact}
-      isReply={isReply}
+      {...{ msg, timestamp, transcluded, showOurContact, isReply, onLike }}
     />
-  ), [renderSigil, msg, timestamp, transcluded, showOurContact]);
+  ), [renderSigil, msg, timestamp, transcluded, showOurContact, onLike]);
 
   const unreadContainerStyle = {
     height: isLastRead ? '2rem' : '0'
