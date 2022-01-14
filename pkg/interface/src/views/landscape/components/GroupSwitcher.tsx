@@ -6,7 +6,7 @@ import {
     Text
 } from '@tlon/indigo-react';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { uxToHex } from '~/logic/lib/util';
 import { getGroupFromWorkspace, getTitleFromWorkspace } from '~/logic/lib/workspace';
@@ -82,6 +82,7 @@ export function GroupSwitcher(props: {
   const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
   const groupPath = getGroupFromWorkspace(workspace);
+  const history = useHistory();
   const metadata = (workspace.type === 'home' || workspace.type  === 'uqbar-home' || workspace.type  === 'messages')
     ? undefined
     : associations.groups[workspace.group].metadata;
@@ -141,7 +142,7 @@ export function GroupSwitcher(props: {
                   <Icon mr={2} color="gray" icon="CreateGroup" />
                   <Text> New Group</Text>
                 </GroupSwitcherItem>
-                <GroupSwitcherItem to="/~landscape/join">
+                <GroupSwitcherItem to="?join-kind=group">
                   <Icon mr={2} color="gray" icon="Plus" />
                   <Text> Join Group</Text>
                 </GroupSwitcherItem>
@@ -181,12 +182,13 @@ export function GroupSwitcher(props: {
                 { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
                 <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
-              <TitleActions
+              {props.workspace?.type === 'messages' && <TitleActions
                 baseUrl={props.baseUrl}
                 initialValues={config}
                 handleSubmit={setConfig}
                 workspace={workspace}
-              />
+              />}
+              {props.workspace?.type === 'uqbar-home' && <Icon icon="Plus" />}
             </Row>
           </Dropdown>
           <Row pr={3} verticalAlign="middle">

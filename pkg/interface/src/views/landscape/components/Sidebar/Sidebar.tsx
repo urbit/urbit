@@ -44,7 +44,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
 
   const role = groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
-  const showOnlyMessages = props.baseUrl.includes('~landscape/messages');
+  const focusMessages = props.baseUrl.includes('~landscape/messages');
 
   return (
     <Box>
@@ -59,7 +59,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         overflowY="scroll"
         fontSize={0}
         position="relative"
-        height={showOnlyMessages ? '100%' : '80%'}
+        height={focusMessages ? '50%' : '80%'}
         borderBottom={1}
         borderBottomColor="lightGray"
         pb={1}
@@ -75,32 +75,28 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
           config={config}
           selected={selected}
           baseUrl={props.baseUrl}
-          messages={showOnlyMessages}
         />
       </ScrollbarLessCol>
-      {!showOnlyMessages && (
-        <ScrollbarLessCol
-          display="flex"
-          width="100%"
-          gridRow="1/2"
-          gridColumn="1/2"
-          borderTopLeftRadius={2}
-          borderRight={1}
-          borderRightColor="lightGray"
-          pt={1}
-          overflowY="scroll"
-          fontSize={0}
-          position="relative"
-          height="20%"
-        >
-          <SidebarGroupList
-            config={config}
-            selected={selected}
-            baseUrl={props.baseUrl}
-            messages
-          />
-        </ScrollbarLessCol>
-      )}
+      <ScrollbarLessCol
+        display="flex"
+        width="100%"
+        gridRow="1/2"
+        gridColumn="1/2"
+        borderTopLeftRadius={2}
+        borderRight={1}
+        borderRightColor="lightGray"
+        overflowY="scroll"
+        fontSize={0}
+        position="relative"
+        height={focusMessages ? '50%' : '20%'}
+      >
+        <SidebarGroupList
+          config={config}
+          selected={selected}
+          baseUrl={props.baseUrl}
+          messages
+        />
+      </ScrollbarLessCol>
     </Box>
   );
 }

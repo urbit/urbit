@@ -39,7 +39,7 @@ export const ModalOverlay = (props: Props) => {
       height="100%"
       position="fixed"
       display="flex"
-      zIndex={10}
+      zIndex={100}
       justifyContent="center"
       alignItems="center"
       p={spacing}

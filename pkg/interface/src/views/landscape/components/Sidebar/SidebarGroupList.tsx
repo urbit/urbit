@@ -199,17 +199,19 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
         pending={isPending}
         onClick={() => setCollapsed(false)}
       >
-        <Icon
-          p={1}
-          pr="0"
-          display="block"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setCollapsed(!collapsed);
-          }}
-          icon={collapsed ? 'TriangleEast' : 'TriangleSouth'}
-        />
+        {workspace?.type !== 'messages' && (
+          <Icon
+            p={1}
+            pr="0"
+            display="block"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCollapsed(!collapsed);
+            }}
+            icon={collapsed ? 'TriangleEast' : 'TriangleSouth'}
+          />
+        )}
       </SidebarItemBase>
       {!collapsed && (
         <Box>

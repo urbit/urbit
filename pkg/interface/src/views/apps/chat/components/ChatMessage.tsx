@@ -190,6 +190,7 @@ export const Message = React.memo(({
   isReply = false
 }: MessageProps) => {
   const { hovering, bind } = useHovering();
+  // TODO: add an additional check for links-only messages to remove the Triangle icon
   const defaultCollapsed = isReply && transcluded > 0;
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
 

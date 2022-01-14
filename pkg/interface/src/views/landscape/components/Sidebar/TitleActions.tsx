@@ -26,11 +26,6 @@ export function TitleActions(props: {
     [props.handleSubmit]
   );
   const groupPath = getGroupFromWorkspace(props.workspace);
-  const isMessages = props.workspace?.type === 'messages';
-
-  if (!isMessages) {
-    return null;
-  }
 
   return (
     <Row

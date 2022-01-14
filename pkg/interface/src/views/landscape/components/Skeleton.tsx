@@ -28,7 +28,7 @@ export const Skeleton = React.memo((props: SkeletonProps): ReactElement => {
       display="grid"
       gridTemplateColumns={
         sidebar
-        ?  ['100%', 'minmax(150px, 1fr) 3fr', 'minmax(250px, 1fr) 4fr']
+        ?  ['100%', 'minmax(150px, 1fr) 3fr', 'minmax(250px, 1fr) 4fr', 'minmax(300px, 1fr) 5fr']
         : '100%'
       }
       gridTemplateRows="100%"
