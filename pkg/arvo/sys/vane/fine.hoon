@@ -104,7 +104,7 @@
       |=  [=path num=@ud]
       ^-  hoot
       =+  bod=(request-body path num)
-      (can 0 512^(sign:sign d.bod) bod ~)
+      (can 0 512^(sign:sign-fine d.bod) bod ~)
     ::
     ++  packetize-response
       |=  [=path data=(unit (cask *))]
@@ -119,7 +119,7 @@
         :_  +(num)
         ::NOTE  we stub out the receiver & origin details,
         ::      runtime should replace them as appropriate.
-        =/  pre=bits  (prelude [*ship *life] life:sign ~)
+        =/  pre=bits  (prelude [*ship *life] life:sign-fine ~)
         =/  req=bits  (request-body path num)
         =/  bod=bits  [:(add w.pre w.req w.pac) (can 0 pre req pac ~)]
         =/  hed=bits  (header *ship | +.bod |)
@@ -127,7 +127,7 @@
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
-        =/  sig=@  (sign path (fall data ~))
+        =/  sig=@  (sign-fine path (fall data ~))
         ?~  data  [sig]~
         %+  rip  3^1.024  ::TODO  prints "rip: stub"
         (cat 3 sig (jam u.data))  ::REVIEW
@@ -140,17 +140,15 @@
       =/  wid=@ud  (met 3 dat)
       :-  :(add 512 32 16 (mul 8 wid))
       %+  can  0
-      :~  512^(sign:sign dat)  ::  signature
-          32^size              ::  number of fragments
-          16^wid               ::  response data size in bytes  ::REVIEW
-          (mul 8 wid)^dat      ::  response data
+      :~  512^(sign:sign-fine dat)  ::  signature
+          32^size                   ::  number of fragments
+          16^wid                    ::  response data size in bytes  ::REVIEW
+          (mul 8 wid)^dat           ::  response data
       ==
     ::
-    ++  sign
+    ++  sign-fine  ::TODO  +sign, except compiler bug
       |^  |=  [=path mess=*]
-          !!
-          ::TODO  compiler bug here?
-          :: (sign (shax (jam [our life path mess])))
+          (sign (shax (jam [our life path mess])))
       ::
       ++  life  ~+  (jael ^life %life /[(scot %p our)])
       ++  ring  ~+  (jael ^ring %vein /[(scot %ud life)])
