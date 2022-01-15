@@ -340,8 +340,7 @@ _conn_peek_cb(void* ptr_v, u3_noun res)
   if ( !can_u ) {
     //  chan was closed; noop.
     //
-    u3z(ran_u->rid);
-    c3_free(ran_u);
+    u3z(ran_u->rid); c3_free(ran_u);
     u3z(res); return;
   }
   _conn_send_noun(can_u, u3nt(ran_u->rid, c3__peek, res));
