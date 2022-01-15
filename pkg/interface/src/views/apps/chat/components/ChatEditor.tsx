@@ -193,6 +193,13 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
     }
 
     setMessage(value);
+
+    // TODO: add a popup when the message starts with a tilde and the mention doesn't match a group member
+    // popup should have a set height with scroll
+    // list of current group members matching the text from start to first space and sorted alphabetically
+    // message if no user matches the mention
+    // if current user is an admin and mention is not in group, give option to add user
+    // if group is public and mention is not in group, give option to share group with user
   }
 
   const codeTheme = inCodeMode ? ' code' : '';

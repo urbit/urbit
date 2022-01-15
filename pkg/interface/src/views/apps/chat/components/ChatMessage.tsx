@@ -197,8 +197,6 @@ export const Message = React.memo(({
   const defaultCollapsed = isReply && transcluded > 0;
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
-  console.log(0, msg)
-
   const onClick = useCallback(async () => {
     onLike(msg);
   }, [msg, onLike]);

@@ -159,12 +159,7 @@ const fetchMessages = useCallback(async (newer: boolean) => {
         inputMark: "graph-update-3",
         outputMark: "json",
         threadName: "graph-add-signatures",
-        body: {
-          'add-signatures': {
-            uid: { resource: { ship, name }, index },
-            signatures: []
-          }
-        }
+        body
       });
       console.log(3, result)
     }

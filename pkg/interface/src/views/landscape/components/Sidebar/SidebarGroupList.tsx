@@ -111,8 +111,15 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   workspace: Workspace;
 }): ReactElement {
   const groupSelected = workspace.type === 'messages' || workspace.type === 'group' && baseUrl.includes(workspace.group);
-
   const [collapsed, setCollapsed] = useState(!groupSelected);
+
+  const groupElement = React.useRef<HTMLInputElement>(null);
+  React.useEffect(() => {
+    if (workspace && groupElement?.current) {
+      groupElement.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [workspace]);
+
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(s => s.groups);
   const inbox = useInbox();
@@ -187,7 +194,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   // TODO: scroll until group is at the top of the sidebar
 
   return (
-    <Box>
+    <Box ref={groupElement}>
       <SidebarItemBase
         to={to}
         selected={groupSelected}
