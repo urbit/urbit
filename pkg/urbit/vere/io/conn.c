@@ -500,18 +500,31 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
           can_u->mor_u.bal_f(can_u, -5, "peel-bad");
         }
         else {
-          //  TODO: fill in %peel namespace.
-          //
           switch (i_dat) {
             default: {
               can_u->mor_u.bal_f(can_u, -6, "peel-unknown");
               break;
             }
-
-            case c3__mass: {
-              _conn_send_noun(can_u, u3nt(u3k(rid), c3__mass, u3_nul));
+            //  simple health check.
+            //
+            case c3__live: {
+              _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
               break;
             }
+            //  say whether the %khan vane is working.
+            //
+            case c3__khan: {
+              _conn_send_noun(can_u, u3nc(u3k(rid), con_u->kan_o));
+              break;
+            }
+            //  get vere version.
+            //
+            case c3__v: {
+              _conn_send_noun(can_u, u3nc(u3k(rid), u3i_string(URBIT_VERSION)));
+              break;
+            }
+            //  TODO: fill in rest of %peel namespace.
+            //
           }
         }
         break;
@@ -539,8 +552,34 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__urth: {
-        //  TODO: implement
-        //
+        switch (dat) {
+          default: {
+            can_u->mor_u.bal_f(can_u, -7, "urth-bad");
+            break;
+          }
+          case c3__cram: {
+            //  ack immediately.
+            //
+            _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
+            u3_pier_cram(con_u->car_u.pir_u);
+            //  TODO: send roc?
+            //
+            break;
+          }
+          case c3__meld: {
+            _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
+            u3_pier_meld(con_u->car_u.pir_u);
+            break;
+          }
+          case c3__pack: {
+            _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
+            u3_pier_pack(con_u->car_u.pir_u);
+            break;
+          }
+          //  TODO: more commands.
+          //  TODO: send updates, success/failure?
+          //
+        }
         break;
       }
     }
