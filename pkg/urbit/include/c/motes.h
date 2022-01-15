@@ -779,6 +779,7 @@
 #   define c3__nest   c3_s4('n','e','s','t')
 #   define c3__netd   c3_s4('n','e','t','d')
 #   define c3__new    c3_s3('n','e','w')
+#   define c3__news   c3_s4('n','e','w','s')
 #   define c3__newt   c3_s4('n','e','w','t')
 #   define c3__next   c3_s4('n','e','x','t')
 #   define c3__nich   c3_s4('n','i','c','h')

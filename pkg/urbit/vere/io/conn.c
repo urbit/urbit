@@ -26,7 +26,7 @@
 **  %peek is a namespace read request (aka scry). they are
 **  forwarded directly to arvo. its arguments are the nom of the
 **  external peek interface in arvo, at arm 22. (lyc is always
-**  [~ ~], i.e. request from self.) that is:
+**  `~, i.e. request from self.) that is:
 **
 **      $+  each  path
 **      $%  [%once vis=view syd=desk tyl=spur]
@@ -122,29 +122,6 @@ _conn_moat_free(void* ptr_v, ssize_t err_i, const c3_c* err_c)
   c3_free(ptr_v);
 }
 
-/* _conn_punt_goof(): print stack trace of error.
-*/
-static void
-_conn_punt_goof(u3_noun lud)
-{
-  if ( 2 == u3qb_lent(lud) ) {
-    u3_pier_punt_goof("conn", u3k(u3h(lud)));
-    u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
-  }
-  else {
-    u3_noun dul = lud;
-    c3_w    len_w = 1;
-
-    while ( u3_nul != dul ) {
-      u3l_log("conn: bail %u\r\n", len_w++);
-      u3_pier_punt_goof("conn", u3k(u3h(dul)));
-      dul = u3t(dul);
-    }
-  }
-
-  u3z(lud);
-}
-
 /* _conn_send_noun(): jam and send noun over chan.
 */
 static void
@@ -184,7 +161,7 @@ _conn_read_wire(u3_noun   wir,
                 c3_l*     coq_l,
                 u3_atom*  rid)
 {
-  u3_noun i_wir, t_wir;
+  u3_noun   i_wir, t_wir;
 
   if ( (c3n == u3r_cell(wir, &i_wir, &t_wir)) ||
        (tag_l != i_wir) )
@@ -247,7 +224,7 @@ _conn_poke_bail(u3_ovum* egg_u, u3_noun lud)
   c3_l      sev_l, coq_l;
   u3_atom   rid;
 
-  _conn_punt_goof(u3k(lud));
+  u3_auto_bail_slog(egg_u, u3k(lud));
   if ( (c3n == _conn_read_wire(u3k(wir), c3__khan, &sev_l, &coq_l, &rid)) ||
        (con_u->sev_l != sev_l) )
   {
@@ -258,7 +235,7 @@ _conn_poke_bail(u3_ovum* egg_u, u3_noun lud)
   }
   can_u = _conn_find_chan(con_u, sev_l, coq_l);
   if ( can_u ) {
-    _conn_send_noun(can_u, u3nt(rid, c3__fail, lud));
+    _conn_send_noun(can_u, u3nt(rid, c3__bail, lud));
   }
   else {
     u3z(rid); u3z(lud);
@@ -380,14 +357,16 @@ _conn_ovum_bail(u3_ovum* egg_u, u3_noun lud)
   u3_chan* can_u = ran_u->can_u;
   u3_cran* inn_u;
 
+  u3_auto_bail_slog(egg_u, u3k(lud));
   if ( !can_u ) {
     //  chan was closed; noop.
     //
     u3z(ran_u->rid); c3_free(ran_u);
     u3z(lud); return;
   }
-  _conn_send_noun(can_u, u3nq(ran_u->rid, c3__ovum, c3__bail, lud));
+  _conn_send_noun(can_u, u3nt(ran_u->rid, c3__bail, lud));
   _conn_drop_cran(can_u, ran_u);
+  u3_ovum_free(egg_u);
 }
 
 /* _conn_ovum_news(): lifecycle callback for injected events.
@@ -397,19 +376,19 @@ _conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
 {
   u3_cran*  ran_u = egg_u->ptr_v;
   u3_chan*  can_u = ran_u->can_u;
-  c3_l      new_l;
+  c3_m      new_m;
 
   if ( can_u ) {
     switch (new_e) {
-      default: c3_assert(!"not-reached");
-      case u3_ovum_drop: new_l = c3__drop; break;
-      case u3_ovum_work: new_l = c3__work; break;
-      case u3_ovum_done: new_l = c3__done; break;
+      default: c3_assert(!"not reached");
+      case u3_ovum_drop: new_m = c3__drop; break;
+      case u3_ovum_work: new_m = c3__work; break;
+      case u3_ovum_done: new_m = c3__done; break;
     }
-    _conn_send_noun(can_u, u3nt(u3k(ran_u->rid), c3__ovum, new_l));
+    _conn_send_noun(can_u, u3nt(u3k(ran_u->rid), c3__news, new_m));
   }
-  if ( (u3_ovum_done == new_e) ||
-       (u3_ovum_drop == new_e) )
+  if ( u3_ovum_done == new_e ||
+       u3_ovum_drop == new_e )
   {
     u3z(ran_u->rid);
     if ( !can_u ) {
@@ -445,9 +424,9 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     can_u->mor_u.bal_f(can_u, -2, "jar-bad");
   }
   else {
-    u3_atom rud = u3dc("scot", c3__uv, u3k(rid));
-    c3_c*   tag_c = u3r_string(tag);
-    c3_c*   rid_c = u3r_string(rud);
+    u3_atom         rud = u3dc("scot", c3__uv, u3k(rid));
+    c3_c*           tag_c = u3r_string(tag);
+    c3_c*           rid_c = u3r_string(rud);
 
     u3l_log("conn: %s %s\n", tag_c, rid_c);
     c3_free(tag_c);
@@ -480,8 +459,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__peek: {
-        u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
-        u3_noun   gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
+        u3_cran*    ran_u = c3_calloc(sizeof(u3_cran));
+        u3_noun     gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
 
         ran_u->rid = u3k(rid);
         ran_u->can_u = can_u;
@@ -492,7 +471,7 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__peel: {
-        u3_noun i_dat, t_dat;
+        u3_noun     i_dat, t_dat;
 
         if ( (c3n == u3r_cell(dat, &i_dat, &t_dat)) ||
              (u3_nul != t_dat) )
@@ -531,13 +510,13 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__ovum: {
-        u3_noun tar, wir, cad;
+        u3_noun     tar, wir, cad;
 
         if ( (c3n == u3r_trel(dat, &tar, &wir, &cad)) ) {
           can_u->mor_u.bal_f(can_u, -6, "ovum-bad");
         }
         else {
-          u3_cran* ran_u = c3_calloc(sizeof(u3_cran));
+          u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
 
           ran_u->rid = u3k(rid);
           ran_u->can_u = can_u;
@@ -691,6 +670,7 @@ _conn_born_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3l_log("conn: %%born failure; %%fyrd not supported\n");
   u3z(lud);
+  u3_ovum_free(egg_u);
 }
 
 /* _conn_io_talk(): open socket and notify %khan that we're live.
@@ -817,8 +797,8 @@ _conn_io_exit(u3_auto* car_u)
 u3_auto*
 u3_conn_io_init(u3_pier* pir_u)
 {
-  u3_conn* con_u = c3_calloc(sizeof(*con_u));
-  u3_auto* car_u = &con_u->car_u;
+  u3_conn*          con_u = c3_calloc(sizeof(*con_u));
+  u3_auto*          car_u = &con_u->car_u;
 
   con_u->sil_u = u3s_cue_xeno_init();
   con_u->kan_o = c3n;
