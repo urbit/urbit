@@ -1,5 +1,52 @@
-++  grad  %mime
+!:
 |_  tale=(map tako:clay [title=@t body=@t])
++$  story       (map tako:clay [title=@t body=@t])
++$  story-diff  [additions=story deletions=story]
+++  grad
+  |%
+  ++  form  %story-diff
+  ++  diff
+    :: diff between given story, tale and another story, tory
+    |=  tory=story
+    ^-  story-diff
+    =/  additions  (~(dif by tory) tale)  :: tory(new) - tale(old)
+    =/  deletions  (~(dif by tale) tory)  :: tale(old) - tory(new)
+    [additions deletions]
+  ++  pact
+    ::  given tale=story, compute the new story after applying the given dif
+    |=  dif=story-diff
+    ^-  story
+    =/  [additions=story deletions=story]  dif
+    ::
+    ::  a: story
+    ::  b: story + additions = a + additions
+    ::  c: story + additions - deletions = b - deletions
+    ::
+    ::  add all new keys of additions to tale, and overwrite existing keys of tale with value from additions
+    =/  tale-with-additions  (~(uni by tale) additions)
+    ::  return the tale with additions, but now remove all elements from it that are present in the deletions
+    =/  tale-merged  (~(dif by tale-with-additions) deletions)
+    tale-merged
+  ++  join
+    |=  [ali=story-diff bob=story-diff]
+    ^-  (unit story-diff)
+    =/  [additions-a=story deletions-a=story]  ali
+    =/  [additions-b=story deletions-b=story]  bob
+    =/  joined-additions  (~(uni by additions-b) additions-a)
+    =/  joined-deletions  (~(uni by deletions-b) deletions-a)
+    :: in a true join, we'd do an intersection and see if the vals are not exactly the same
+    :: which means we have a conflict, then we'd produce null, kick the flow to mash
+    %-  some
+    [joined-additions joined-deletions]
+  ++  mash
+    ::  called by meld, force merge, annotating conflicts
+    |=  $:  [als=ship ald=desk ali=story-diff]
+            [bos=ship bod=desk bob=story-diff]
+        ==
+    ^-  story-diff
+    (need (join ali bob)) :: XX temporary, only because join doesn't fail
+  --
+
 ::
 ++  grow                                                ::  convert to
   |%                                                    ::
