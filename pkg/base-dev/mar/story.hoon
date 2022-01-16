@@ -1,5 +1,5 @@
-|_  story=(map tako:clay [title=@t body=@t])
 ++  grad  %mime
+|_  tale=(map tako:clay [title=@t body=@t])
 ::
 ++  grow                                                ::  convert to
   |%                                                    ::
@@ -7,9 +7,8 @@
     [/text/x-urb-story (as-octs:mimes:html (of-wain:format txt))]
   ++  txt
     ^-  wain
-    :: TODO better code style?
     %+  snoc  :: ensure terminating newline is present 
-    %+  turn  ~(tap by story)
+    %+  turn  ~(tap by tale)
     |=  [chapter=[tak=tako:clay message=[title=@t body=@t]]]
     =/  tak=tako:clay       tak.chapter
     =/  [title=@t body=@t]  +.chapter
