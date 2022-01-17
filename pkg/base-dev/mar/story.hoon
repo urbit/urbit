@@ -1,6 +1,6 @@
+/-  *story
 !:
-|_  tale=(map tako:clay [title=@t body=@t])
-+$  story       (map tako:clay [title=@t body=@t])
+|_  tale=story
 +$  story-diff  [additions=story deletions=story]
 ++  grad
   |%
@@ -64,10 +64,10 @@
   --
 ++  grab
   |%                                             ::  convert from
-  ++  noun  (map tako:clay ,[title=@t body=@t])  ::  clam from %noun
+  ++  noun  story                                ::  clam from %noun
   ++  mime                                       ::  retrieve form %mime
     |=  [p=mite q=octs]
-    ^-  (map tako:clay [title=@t body=@t])
+    ^-  story
     =/  commit-parser 
       ;~  sfix                                     :: throw away the trailing newline
         ;~  pfix  (jest 'commit: ')                :: throw away leading literal 'commit'
@@ -104,7 +104,7 @@
     ::
     =/  story-text    `@t`q.q
     =/  parsed-story  `(list [@uv @t wain])`(rash story-text story-parser)
-    %-  ~(gas by *(map tako:clay [title=@t body=@t]))
+    %-  ~(gas by *story)
     %+  turn  parsed-story
     |=  [tak=tako:clay title=@t body=wain]
     [tak title (of-wain:format body)]
