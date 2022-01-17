@@ -14,9 +14,7 @@ import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
 import airlock from '~/logic/api';
-import {
-  cite, daToUnix, useHovering, uxToHex
-} from '~/logic/lib/util';
+import { citeNickname, daToUnix, useHovering, uxToHex } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
 import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/state/settings';
@@ -77,7 +75,7 @@ export const MessageAuthor = React.memo<any>(({
 
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
-  const shipName = showNickname && contact?.nickname || cite(msg.author) || `~${msg.author}`;
+  const shipName = citeNickname(msg.author, showNickname, contact?.nickname);
   const color = contact
     ? `#${uxToHex(contact.color)}`
     : dark
@@ -156,7 +154,7 @@ export const MessageAuthor = React.memo<any>(({
             fontWeight={nameMono ? '400' : '500'}
             cursor='pointer'
             onClick={doCopy}
-            title={showNickname ? `~${msg.author}` : contact?.nickname}
+            title={`~${msg.author}`}
           >
             {copyDisplay}
           </Text>
@@ -202,7 +200,13 @@ export const Message = React.memo(({
   }, [msg, onLike]);
 
   return (
-    <Row width="100%">
+    <Row width="100%" onClick={(e) => {
+      if (collapsed) {
+        e.preventDefault();
+        e.stopPropagation();
+        setCollapsed(!collapsed);
+      }
+    }}>
       {defaultCollapsed && (
         <Icon
           ml="12px"

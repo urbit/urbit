@@ -48,6 +48,12 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
 
   return (
     <Box>
+      <GroupSwitcher
+        recentGroups={props.recentGroups}
+        baseUrl={props.baseUrl}
+        isAdmin={isAdmin}
+        workspace={props.workspace}
+      />
       <ScrollbarLessCol
         display="flex"
         width="100%"
@@ -59,17 +65,11 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         overflowY="scroll"
         fontSize={0}
         position="relative"
-        height={focusMessages ? '60%' : '80%'}
+        height={focusMessages ? 'calc(50% - 24px)' : 'calc(75% - 23px)'}
         borderBottom={1}
         borderBottomColor="lightGray"
         pb={1}
       >
-        <GroupSwitcher
-          recentGroups={props.recentGroups}
-          baseUrl={props.baseUrl}
-          isAdmin={isAdmin}
-          workspace={props.workspace}
-        />
         <Box mt={2} />
         <SidebarGroupList
           config={config}
@@ -88,7 +88,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         overflowY="scroll"
         fontSize={0}
         position="relative"
-        height={focusMessages ? '40%' : '20%'}
+        height={focusMessages ? 'calc(50% - 23px)' : 'calc(25% - 24px)'}
       >
         <SidebarGroupList
           config={config}

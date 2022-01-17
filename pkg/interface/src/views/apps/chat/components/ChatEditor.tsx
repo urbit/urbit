@@ -1,14 +1,18 @@
 /* eslint-disable max-lines-per-function */
-import { BaseTextArea, Box, Row } from '@tlon/indigo-react';
+import { BaseTextArea, Box, Row, Text } from '@tlon/indigo-react';
+import { Association, Group, invite } from '@urbit/api';
+import * as ob from 'urbit-ob';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/addon/hint/show-hint';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
-import React, { useRef, ClipboardEvent, useEffect, useImperativeHandle } from 'react';
+import React, { useRef, useState, ClipboardEvent, useEffect, useImperativeHandle, useCallback } from 'react';
 import { Controlled as CodeEditor } from 'react-codemirror2';
 import styled from 'styled-components';
 import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
 import useSettingsState from '~/logic/state/settings';
+import { resourceFromPath } from '~/logic/lib/group';
+import airlock from '~/logic/api';
 import '../css/custom.css';
 import { useChatStore } from './ChatPane';
 
@@ -110,11 +114,26 @@ const MobileBox = styled(Box)`
   }
 `;
 
+const AutocompleteSuggestionRow = styled(Row)`
+  color: rgba(33,157,255,1);
+  height: 28px;
+  padding: 2px;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 interface ChatEditorProps {
   inCodeMode: boolean;
   placeholder: string;
   submit: (message: string) => void;
   onPaste: (codemirrorInstance, event: ClipboardEvent) => void;
+  isAdmin: boolean;
+  group: Group;
+  association: Association;
 }
 
 export interface CodeMirrorShim {
@@ -127,10 +146,22 @@ export interface CodeMirrorShim {
   element: HTMLElement;
 }
 
-const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMode, placeholder, submit, onPaste }, ref) => {
+const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
+  inCodeMode,
+  placeholder,
+  submit,
+  onPaste,
+  isAdmin,
+  group,
+  association
+}, ref) => {
   const editorRef = useRef<CodeMirrorShim>(null);
   useImperativeHandle(ref, () => editorRef.current);
   const editor = editorRef.current;
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [autocompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
+  const [enteredUser, setEnteredUser] = useState('');
+  const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
 
   const disableSpellcheck = useSettingsState(s => s.calm.disableSpellcheck);
 
@@ -184,9 +215,31 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
     }
   }, [inCodeMode, placeholder]);
 
-  function messageChange(editor, data, value) {
+  const selectMember = useCallback((patp: string) => () => {
+    const regex = /^~.*? /;
+
+    if (message === '~') {
+      setMessage(patp);
+    } else if (regex.test(message)) {
+      setMessage(message.replace(regex, `${patp} `));
+    } else if (message[0] === '~' && message.length < 26) {
+      setMessage(patp);
+    }
+
+    setShowAutocomplete(false);
+    editor.focus();
+  }, [editor, message, setMessage]);
+
+  const setAutocompleteValues = (show, suggestions, user) => {
+    setShowAutocomplete(show);
+    setAutoCompleteSuggestions(suggestions.map(s => `~${s}`));
+    setEnteredUser(user);
+  };
+
+  const messageChange = useCallback((editor, data, value) => {
     if (message !== '' && value == '') {
       setMessage(value);
+      setAutocompleteValues(false, [], '');
     }
     if (value == message || value == '' || value == ' ') {
       return;
@@ -194,13 +247,28 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
 
     setMessage(value);
 
-    // TODO: add a popup when the message starts with a tilde and the mention doesn't match a group member
-    // popup should have a set height with scroll
-    // list of current group members matching the text from start to first space and sorted alphabetically
-    // message if no user matches the mention
-    // if current user is an admin and mention is not in group, give option to add user
-    // if group is public and mention is not in group, give option to share group with user
-  }
+    if (value === '~') {
+      setAutocompleteValues(true, [...group.members], '');
+    } else if (value[0] === '~') {
+      const [patp] = value.split(' ');
+      const ship = patp.slice(1);
+      const isValid = ob.isValidPatp(patp);
+
+      if (isValid || patp.length < 14) {
+        const matchingMembers = [...group.members].filter(m => m.includes(ship));
+        const includesMember = matchingMembers.includes(ship);
+        if (!matchingMembers.length || includesMember) {
+          setAutocompleteValues(isValid && !includesMember, [], patp);
+        } else {
+          setAutocompleteValues(Boolean(matchingMembers.length), matchingMembers, '');
+        }
+      } else {
+        setAutocompleteValues(false, [], '');
+      }
+    } else {
+      setAutocompleteValues(false, [], '');
+    }
+  }, [group, setAutocompleteValues]);
 
   const codeTheme = inCodeMode ? ' code' : '';
   const options = {
@@ -215,6 +283,45 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
     }
   };
 
+  const inviteMissingUser = useCallback(async () => {
+    try {
+      const { ship, name }  = resourceFromPath(association.group);
+      await airlock.thread(invite(
+        ship, name,
+        [enteredUser],
+        `You are invited to ${association.group}`
+      ));
+      setInvitedUsers([...invitedUsers, enteredUser]);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [enteredUser, invitedUsers, setInvitedUsers]);
+
+  const renderAutocompleteSection = () => {
+    if (autocompleteSuggestions.length) {
+      return <>
+        {autocompleteSuggestions.map(suggestion => (
+          <AutocompleteSuggestionRow key={suggestion} onClick={selectMember(suggestion)}>
+            <Text mono color="rgba(33,157,255,1)">{suggestion}</Text>
+          </AutocompleteSuggestionRow>
+        ))}
+      </>;
+    } else if (isAdmin) {
+      return <AutocompleteSuggestionRow onClick={inviteMissingUser} whiteSpace="nowrap">
+        <Text>
+          Invite <Text mono color="rgba(33,157,255,1)">{enteredUser}</Text> to group
+        </Text>
+      </AutocompleteSuggestionRow>;
+    }
+
+    // TODO?: if group is public and mention is not in group, give option to share group with user
+    return <AutocompleteSuggestionRow>
+      <Text whiteSpace="nowrap">
+        <Text mono color="rgba(33,157,255,1)">{enteredUser}</Text> is not in this group
+      </Text>
+    </AutocompleteSuggestionRow>;
+  };
+
   return (
     <Row
       backgroundColor='white'
@@ -227,8 +334,24 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
       width='calc(100% - 88px)'
       className={inCodeMode ? 'chat code' : 'chat'}
       color="black"
-      overflow='auto'
+      overflow={showAutocomplete ? 'visible' : 'auto'}
+      position='relative'
     >
+      {showAutocomplete && !invitedUsers.includes(enteredUser) && <Box
+        className="autocomplete-patp"
+        position="absolute"
+        top={`-${Math.min((autocompleteSuggestions.length || 1) * 28 + 11, 95)}px`}
+        left="-40px"
+        height={`${Math.min((autocompleteSuggestions.length || 1) * 28 + 10, 94)}px`}
+        overflowY="scroll"
+        overflowX="visible"
+        px="43px"
+        py={1}
+        background="white"
+        border="1px solid lightgray"
+      >
+        {renderAutocompleteSection()}
+      </Box>}
       {isMobile
         ? <MobileBox
             data-value={message}

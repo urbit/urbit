@@ -1,9 +1,9 @@
 :~  title+'Uqbar UI'
-    info+'Uqbar UI, forked from Landscape'
+    info+'The UI for Uqbar.'
     color+0x72.7bf2  :: alt: 0xdd.7c8a
-    glob-ames+[~fabnev-hinmur 0v0]
+    glob-http+['https://escape-app-dist.s3.us-east-2.amazonaws.com/glob-0v4.aai74.17l14.2ri3q.jsgvi.aq5g9.glob' 0v4.aai74.17l14.2ri3q.jsgvi.aq5g9]
     base+'escape'
-    version+[1 0 0]
+    version+[0 0 1]
     website+'https://uqbar.com'
     license+'MIT'
 ==

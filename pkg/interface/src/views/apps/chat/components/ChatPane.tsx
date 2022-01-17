@@ -1,5 +1,5 @@
 import { Col } from '@tlon/indigo-react';
-import { Content, Graph, Post } from '@urbit/api';
+import { Association, Content, Graph, Group, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import create from 'zustand';
@@ -57,6 +57,8 @@ interface ChatPaneProps {
    * The graph of the chat to render
    */
   graph: Graph;
+  group: Group;
+  association: Association;
   unreadCount: number;
   /**
    * User able to write to chat
@@ -101,6 +103,8 @@ interface ChatPaneProps {
 export function ChatPane(props: ChatPaneProps): ReactElement {
   const {
     graph,
+    group,
+    association,
     unreadCount,
     canWrite,
     id,
@@ -163,7 +167,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
       />
       {canWrite && (
         <ChatInput
-          onSubmit={onSubmit}
+          {...{ onSubmit, isAdmin, group, association }}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           placeholder="Message..."
         />

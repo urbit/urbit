@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
+import { Link } from 'react-router-dom';
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
 import { Association, cite, deSig } from '@urbit/api';
 import { HoverBoxLink } from '~/views/components/HoverBox';
@@ -36,6 +37,7 @@ function useAssociationStatus(resource: string) {
 export function SidebarItemBase(props: {
   to: string;
   selected: boolean;
+  groupSelected?: boolean;
   hasNotification: boolean;
   hasUnread: boolean;
   unreadCount?: number;
@@ -43,6 +45,7 @@ export function SidebarItemBase(props: {
   children: ReactNode;
   title: string | ReactNode;
   mono?: boolean;
+  fontSize?: string;
   pending?: boolean;
   indent?: number;
   onClick?: () => void;
@@ -52,6 +55,8 @@ export function SidebarItemBase(props: {
     children,
     to,
     selected,
+    groupSelected = false,
+    fontSize,
     hasNotification,
     hasUnread,
     unreadCount = 0,
@@ -68,13 +73,14 @@ export function SidebarItemBase(props: {
     : 'lightGray';
 
   const fontWeight = hasUnread || hasNotification ? '500' : 'normal';
+  const bg = pending ? 'lightBlue' : groupSelected ? 'washedGray' : 'white';
 
   return (
     <HoverBoxLink
       // ref={anchorRef}
       to={to}
       onClick={onClick}
-      bg={pending ? 'lightBlue' : 'white'}
+      bg={bg}
       bgActive={pending ? 'washedBlue' : 'washedGray'}
       width="100%"
       display="flex"
@@ -82,7 +88,7 @@ export function SidebarItemBase(props: {
       alignItems="center"
       position="relative"
       py={1}
-      pl={`${4 + indent * 12}px`}
+      pl={`${8 + indent * 28}px`}
       pr={3}
       selected={selected}
     >
@@ -95,6 +101,7 @@ export function SidebarItemBase(props: {
           ml={2}
           display="flex"
           overflow="hidden"
+          alignItems="center"
         >
           <Text
             lineHeight="tall"
@@ -102,11 +109,19 @@ export function SidebarItemBase(props: {
             overflow="hidden"
             mono={mono}
             color={color}
+            fontSize={fontSize}
             fontWeight={fontWeight}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
+            borderBottom={selected ? '1px solid darkGray' : 'none'}
+            className={selected ? '' : 'hover-underline'}
           >
             {title}
           </Text>
+          {title === 'Messages' && (
+            <Link style={{ display: 'inline-block', margin: '4px 0 0 16px' }} to="/~landscape/messages/new">
+              <Icon icon="Plus" color="gray" pr='12px' />
+            </Link>
+          )}
           {hasNotification && (
             <Box>
               <Icon icon="Bullet" color="blue" />
@@ -125,7 +140,7 @@ export function SidebarItemBase(props: {
           minWidth="12px"
           borderRadius="6px"
           color="white"
-          backgroundColor="blue"
+          backgroundColor="darkGray"
           textAlign="center"
         >
           {unreadCount}
@@ -227,6 +242,8 @@ export const SidebarAssociationItem = React.memo(
     association: Association;
     selected: boolean;
     workspace: Workspace;
+    groupSelected?: boolean;
+    fontSize?: string;
     unreadCount?: number;
     hasNotification?: boolean;
     indent?: number;
@@ -309,7 +326,9 @@ export const SidebarAssociationItem = React.memo(
       <SidebarItemBase
         to={to}
         selected={selected}
+        groupSelected={props.groupSelected}
         hasUnread={hasUnread}
+        fontSize={props.fontSize}
         isSynced={isSynced}
         title={
           DM && !urbitOb.isValidPatp(title) ? participantNames(title) : title

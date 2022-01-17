@@ -1,12 +1,11 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Image, Text, Row, Button, Icon } from '@tlon/indigo-react';
+import { Box, Image, Text, Row, Button, Icon, H2, Col } from '@tlon/indigo-react';
 import { NewGroup } from '~/views/landscape/components/NewGroup';
 import ModalButton from '~/views/apps/launch/components/ModalButton';
-import Tiles from '~/views/apps/launch/components/tiles';
 import Tile from '~/views/apps/launch/components/tiles/tile';
 import { ScrollbarLessBox } from '~/views/apps/launch/App';
-import UqbarLogo from '~/assets/img/uqbar-logo.jpeg';
+import UqbarLogo from '~/assets/img/uqbar-logo.png';
 
 export function UqbarHome(props) {
   const history = useHistory();
@@ -19,6 +18,7 @@ export function UqbarHome(props) {
       flexDirection="column"
       mt={3}
     >
+      <H2 textAlign="center" mb={3}>Brought to you by Uqbar</H2>
       <Box
         mx={2}
         display="grid"
@@ -49,18 +49,22 @@ export function UqbarHome(props) {
             </Row>
           </Box>
         </Tile> */}
-        <Tile p="0">
+        <Tile p="0" border="none">
+          <Col display="flex" alignItems="center" justifyContent="center" height="100%">
+            <Text textAlign="center">Welcome to the Uqbar UI</Text>
+            <Text textAlign="center" fontWeight="bold">~{window.ship}!</Text>
+          </Col>
+        </Tile>
+        <Tile p="0" border="none">
           <Image
             referrerPolicy="no-referrer"
             flexShrink={0}
             src={UqbarLogo}
             height="100%"
             width="100%"
-            // objectFit="contain"
             onError={console.warn}
           />
         </Tile>
-        <Tiles />
         <ModalButton
           icon="Plus"
           bg="white"

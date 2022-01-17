@@ -110,15 +110,9 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   title?: string;
   workspace: Workspace;
 }): ReactElement {
-  const groupSelected = workspace.type === 'messages' || workspace.type === 'group' && baseUrl.includes(workspace.group);
-  const [collapsed, setCollapsed] = useState(!groupSelected);
-
-  const groupElement = React.useRef<HTMLInputElement>(null);
-  React.useEffect(() => {
-    if (workspace && groupElement?.current) {
-      groupElement.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [workspace]);
+  const isMessages = workspace.type === 'messages';
+  const groupSelected = (isMessages && baseUrl.includes('messages')) || (workspace.type === 'group' && baseUrl.includes(workspace.group));
+  const [collapsed, setCollapsed] = useState(!groupSelected && !isMessages);
 
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(s => s.groups);
@@ -191,10 +185,9 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   const isSynced = true;
   const isPending = false;
   const to = `/~landscape${workspace.type === 'group' ? workspace?.group : '/messages'}`;
-  // TODO: scroll until group is at the top of the sidebar
 
   return (
-    <Box ref={groupElement}>
+    <Box>
       <SidebarItemBase
         to={to}
         selected={groupSelected}
@@ -204,9 +197,9 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
         title={title || 'Messages'}
         hasNotification={hasNotification}
         pending={isPending}
-        onClick={() => setCollapsed(false)}
+        onClick={() => setCollapsed(!collapsed)}
       >
-        {workspace?.type !== 'messages' && (
+        {!isMessages && (
           <Icon
             p={1}
             pr="0"
@@ -233,7 +226,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
                   workspace={workspace}
                   selected={pathOrShip === selected}
                   pending={pending.includes(pathOrShip)}
-                  indent={1}
+                  indent={0.5}
                 />
               ) : pending.includes(pathOrShip) ? (
                 <SidebarPendingItem
@@ -246,12 +239,14 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
               <SidebarAssociationItem
                 key={pathOrShip}
                 selected={pathOrShip === selected}
+                groupSelected={groupSelected}
                 association={associations.graph[pathOrShip]}
                 hideUnjoined={config.hideUnjoined}
+                fontSize="13px"
                 workspace={workspace}
                 unreadCount={count + each.length}
                 hasNotification={unseen?.[`landscape${pathAsGraph}/mention`]}
-                indent={1}
+                indent={isMessages ? 0.5 : 1}
               />
               );
           })}

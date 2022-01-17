@@ -165,7 +165,7 @@ export function DmResource(props: DmResourceProps) {
           {showNickname && (
             <Box mr="3">
               <Text fontWeight="medium" fontSize={2} mono={!showNickname}>
-                {nickname}
+                {nickname} - ({cite(ship)})
               </Text>
             </Box>
           )}

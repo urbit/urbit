@@ -278,6 +278,9 @@ export function writeText(str: string | null): Promise<void> {
   });
 }
 
+export const citeNickname = (ship: string, showNickname?: boolean, nickname?: string) =>
+  showNickname && nickname ? `${nickname} - ${cite(ship)}` : cite(ship);
+
 // trim patps to match dojo, chat-cli
 export function cite(ship: string): string | Element {
   let patp = ship,
@@ -296,8 +299,8 @@ export function cite(ship: string): string | Element {
   // moon
   if (patp.length === 27) {
     shortened = <>
-      {'~' + patp.slice(0, 13) + '^'}
-      <Text mono fontSize="10px" verticalAlign="top">{patp.slice(14, 27)}</Text>
+      <Text mono fontSize="10px" verticalAlign="top">{patp.slice(0, 13)}</Text>
+      {'~' + patp.slice(14, 27) + '^'}
     </>;
     return shortened;
   }

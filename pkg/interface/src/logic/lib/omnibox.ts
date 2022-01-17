@@ -52,11 +52,11 @@ const commandIndex = function (currentGroup, groups, associations) {
     ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup))
     : !currentGroup; // home workspace or hasn't loaded
   const workspace = currentGroup || '/home';
-  commands.push(result('Groups: Create', '/~landscape/new', 'Groups', null));
+  commands.push(result('Create Group', '/~landscape/new', 'Uqbar Ui', null));
   if (canAdd) {
-    commands.push(result('Channel: Create', `/~landscape${workspace}/new`, 'Groups', null));
+    commands.push(result('Create Channel', `/~landscape${workspace}/new`, 'Uqbar Ui', null));
   }
-  commands.push(result('Groups: Join', createJoinParams('groups'), 'Groups', null));
+  commands.push(result('Join Group', '?join-kind=group', 'Uqbar UI', null));
 
   return commands;
 };

@@ -63,7 +63,7 @@ export function TitleActions(props: {
               </Col>
             }
           >
-          <Icon icon="Plus" color="gray" pr='12px' />
+            <Icon icon="Plus" color="gray" pr='12px' />
           </Dropdown>
         )
         : (

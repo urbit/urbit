@@ -82,7 +82,6 @@ export function GroupSwitcher(props: {
   const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
   const groupPath = getGroupFromWorkspace(workspace);
-  const history = useHistory();
   const metadata = (workspace.type === 'home' || workspace.type  === 'uqbar-home' || workspace.type  === 'messages')
     ? undefined
     : associations.groups[workspace.group].metadata;
@@ -106,6 +105,7 @@ export function GroupSwitcher(props: {
       pl={3}
       borderBottom='1px solid'
       borderColor='lightGray'
+      borderRight="1px solid lightGray"
     >
       <Col
         bg="white"

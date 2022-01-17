@@ -77,7 +77,7 @@ export function GroupsPane(props: GroupsPaneProps) {
     return (
       <>
         <Helmet defer={false}>
-          <title>Uqbar UI</title>
+          <title>~{window.ship}</title>
         </Helmet>
         <Skeleton
           {...props}
@@ -246,7 +246,7 @@ export function GroupsPane(props: GroupsPaneProps) {
         render={(routeProps) => {
           const shouldHideSidebar =
             routeProps.location.pathname.includes('/feed');
-          const title = groupAssociation?.metadata?.title ?? 'Groups';
+          const title = groupAssociation?.metadata?.title ?? `~${window.ship}`;
           return (
             <>
               <Helmet defer={false}>

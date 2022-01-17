@@ -1,5 +1,5 @@
 import { Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
-import { Contact, Content, evalCord } from '@urbit/api';
+import { Association, Contact, Content, evalCord, Group } from '@urbit/api';
 import React, { FC, PropsWithChildren, useRef, useState } from 'react';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { IuseStorage } from '~/logic/lib/useStorage';
@@ -17,6 +17,9 @@ type ChatInputProps = PropsWithChildren<IuseStorage & {
   ourContact?: Contact;
   placeholder: string;
   onSubmit: (contents: Content[]) => void;
+  isAdmin: boolean;
+  group: Group;
+  association: Association;
 }>;
 
 const InputBox: FC = ({ children }) => (
@@ -68,7 +71,15 @@ const MobileSubmitButton = ({ enabled, onSubmit }) => (
   </Box>
 );
 
-export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholder, onSubmit }: ChatInputProps, ref) => {
+export const ChatInput = React.forwardRef(({
+  ourContact,
+  hideAvatars,
+  placeholder,
+  onSubmit,
+  isAdmin,
+  group,
+  association
+}: ChatInputProps, ref) => {
   const chatEditor = useRef<CodeMirrorShim>(null);
   useImperativeHandle(ref, () => chatEditor.current);
   const [inCodeMode, setInCodeMode] = useState(false);
@@ -120,9 +131,8 @@ export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholde
       <ChatEditor
         ref={chatEditor}
         inCodeMode={inCodeMode}
-        submit={submit}
         onPaste={(cm, e) => onPaste(e)}
-        placeholder={placeholder}
+        {...{ submit, placeholder, isAdmin, group, association }}
       />
       <IconBox mr={canUpload ? '12px' : 3}>
         <Icon

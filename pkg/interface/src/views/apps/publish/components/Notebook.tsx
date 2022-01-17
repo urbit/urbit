@@ -1,13 +1,13 @@
 import { Box, Button, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, readGraph } from '@urbit/api';
+import { Association, Graph } from '@urbit/api';
 import React, { ReactElement, useCallback } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import { useShowNickname } from '~/logic/state/settings';
-import airlock from '~/logic/api';
 import { NotebookPosts } from './NotebookPosts';
 import useHarkState from '~/logic/state/hark';
+import { citeNickname } from '~/logic/lib/util';
 
 interface NotebookProps {
   ship: string;
@@ -50,7 +50,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
           <Text display='block'>{association.metadata?.title}</Text>
           <Text color="lightGray">by </Text>
           <Text fontFamily={showNickname ? 'sans' : 'mono'}>
-            {showNickname ? contact?.nickname : ship}
+            {citeNickname(ship, showNickname, contact?.nickname)}
           </Text>
         </Box>
         <Button onClick={readBook}>Mark all as Read</Button>

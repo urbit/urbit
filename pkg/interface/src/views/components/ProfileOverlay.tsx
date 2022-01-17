@@ -24,6 +24,7 @@ import useSettingsState, { SettingsState, useShowNickname } from '~/logic/state/
 import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
+import { citeNickname } from '~/logic/lib/util';
 
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Col)`
@@ -191,7 +192,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
               display={didCopy ? 'none' : 'block'}
               onClick={doCopy}
             >
-              {showNickname ? contact?.nickname : cite(ship)}
+              {citeNickname(ship, showNickname, contact?.nickname)}
             </Text>
             <Text
               fontWeight='600'

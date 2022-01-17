@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, { ReactElement, ReactNode } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
-import { cite, uxToHex } from '~/logic/lib/util';
+import { cite, citeNickname, uxToHex } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
 import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/state/settings';
@@ -50,7 +50,7 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : dark ? '#000000' : '#FFFFFF';
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
-  const name = showNickname && contact ? contact.nickname : cite(ship);
+  const name = citeNickname(ship, showNickname, contact?.nickname);
   const stamp = moment(date);
   const { copyDisplay, doCopy } = useCopy(`~${ship}`, name);
 

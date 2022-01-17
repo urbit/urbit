@@ -183,7 +183,21 @@ const fetchMessages = useCallback(async (newer: boolean) => {
     <ChatPane
       id={resource.slice(7)}
       promptShare={toShare}
-      {...{ graph, unreadCount, canWrite, onReply, onDelete, onLike, fetchMessages, dismissUnread, getPermalink, isAdmin, onSubmit }}
+      {...{
+        graph,
+        unreadCount,
+        canWrite,
+        onReply,
+        onDelete,
+        onLike,
+        fetchMessages,
+        dismissUnread,
+        getPermalink,
+        isAdmin,
+        onSubmit,
+        group,
+        association
+      }}
     />
   );
 };

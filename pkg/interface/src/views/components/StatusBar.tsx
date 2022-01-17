@@ -3,7 +3,9 @@ import {
   Box,
   Button,
   Col,
+  H3,
   Icon,
+  Image,
   Row,
   Text
 } from '@tlon/indigo-react';
@@ -19,6 +21,7 @@ import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import useHarkState from '~/logic/state/hark';
+import UqbarLogo from '~/assets/img/uqbar-logo.png';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
@@ -51,7 +54,7 @@ const StatusBar = (props) => {
       display='grid'
       width='100%'
       gridTemplateRows='30px'
-      gridTemplateColumns='3fr 1fr'
+      gridTemplateColumns='1fr 1fr 1fr'
       py={3}
       px={3}
       pb={3}
@@ -63,16 +66,20 @@ const StatusBar = (props) => {
           width='32px'
           borderColor='lightGray'
           mr={2}
-          px={2}
+          px={1}
           {...props}
         >
-          <Icon icon='Dashboard' color='black' />
+          <Image
+            referrerPolicy="no-referrer"
+            src={UqbarLogo}
+            height="20px"
+            width="20px"
+            onError={console.warn}
+          />
+          {/* <Icon icon='Dashboard' color='black' /> */}
         </Button>
         <StatusBarItem position="relative" mr={2} onClick={() => toggleOmnibox()}>
-          <Icon icon='LeapArrow' />
-          <Text ml={2} color='black'>
-            Leap
-          </Text>
+          <Icon icon='Menu' />
           <Text display={['none', 'inline']} ml={2} color='gray'>
             {metaKey}/
           </Text>
@@ -84,6 +91,7 @@ const StatusBar = (props) => {
         </StatusBarItem>
         <ReconnectButton />
       </Row>
+      <H3 textAlign="center" verticalAlign="middle" lineHeight="28px">Uqbar UI</H3>
       <Row justifyContent='flex-end'>
         <StatusBarItem
           width='32px'
