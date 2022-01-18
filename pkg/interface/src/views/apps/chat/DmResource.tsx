@@ -77,7 +77,7 @@ export function DmResource(props: DmResourceProps) {
   );
 
   useEffect(() => {
-    if(dm.size === 0) {
+    if(dm.size === 0 && !pending) {
       getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
     }
   }, [ship, dm]);
@@ -134,6 +134,7 @@ export function DmResource(props: DmResourceProps) {
     history.push('/~landscape/messages');
     await airlock.poke(declineDm(ship));
   };
+
   return (
     <Col width="100%" height="100%" overflow="hidden">
       <Row
