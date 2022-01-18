@@ -54,13 +54,13 @@
   ?:  =(broke-continuity i.topics.event-log)
     =/  who=@  (decode-topics t.topics.event-log ~[%uint])
     =/  num=@  (decode-results data.event-log ~[%uint])
-    `[who id %rift num]
+    `[who id %rift num %.n]
   ?:  =(changed-keys i.topics.event-log)
     =/  who=@  (decode-topics t.topics.event-log ~[%uint])
     =/  [enc=octs aut=octs sut=@ud rev=@ud]
         %+  decode-results  data.event-log
         ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-    `[who id %keys rev sut (pass-from-eth:azimuth enc aut sut)]
+    `[who id %keys [rev sut (pass-from-eth:azimuth enc aut sut)] %.n]
   ?:  =(lost-sponsor i.topics.event-log)
     =/  [who=@ pos=@]
         (decode-topics t.topics.event-log ~[%uint %uint])

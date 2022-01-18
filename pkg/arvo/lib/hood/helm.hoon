@@ -212,6 +212,9 @@
 ::
 ++  poke
   |=  [=mark =vase]
+  ?>  ?|  ?=(%helm-hi mark)
+          =(our src):bowl
+      ==
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)

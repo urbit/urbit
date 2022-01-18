@@ -1,5 +1,6 @@
 ::  |pill: helper functions for making pills
 ::
+/-  dice
 ^?
 |%
 ::
@@ -80,7 +81,13 @@
   =/  pax  (weld bas lyt)
   =/  lon  .^(arch %cy pax)
   =?  hav  ?=(^ fil.lon)
-    :_(hav [lyt mark=;;(@tas (head tyl)) noun=.^(* %cx pax)])
+    :_  hav
+    :-  lyt
+    ?.  ?=([%azimuth-snapshot *] tyl)
+      [mark=;;(@tas (head tyl)) noun=.^(* %cx pax)]
+    =;  convert
+      mime/(convert .^(snap-state:dice %cx pax))
+    .^($-(snap-state:dice mime) %cf (weld bas /azimuth-snapshot/mime))
   =/  all  ~(tap by dir.lon)
   |-  ^+  hav
   ?~  all  hav
