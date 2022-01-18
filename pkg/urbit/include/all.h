@@ -15,7 +15,6 @@
 #   include "noun/aliases.h"   //  general u3
 
 #   include "noun/allocate.h"  //  u3a: allocation
-#   include "noun/events.h"    //  u3e: persistence
 #   include "noun/hashtable.h" //  u3h: hashtables
 #   include "noun/imprison.h"  //  u3i: noun construction
 #   include "noun/jets.h"      //  u3j: jet control
@@ -34,3 +33,7 @@
 #   include "jets/k.h"         //  u3k: jets (transfer, args)
 #   include "jets/q.h"         //  u3q: jets (retain, args)
 #   include "jets/w.h"         //  u3w: jets (retain, core)
+
+  /** vere: event stream environment.
+  **/
+#   include "vere/event_log.h"
