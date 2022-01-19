@@ -48,7 +48,7 @@
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))
 +$  mark  @tas
-+$  mein  [our=ship now=@da eny=@uvJ]
++$  mien  [our=ship now=@da eny=@uvJ]
 ++  omen  |$  [a]  (pair path (cask a))
 +$  ship  @p
 +$  sink  (trel bone ship path)
@@ -214,7 +214,7 @@
       ::  zen: Outside knowledge
       ::  mod: internal modules
       ::
-      mein
+      mien
       $=  fad
       $:  ::  lac: not verbose
           ::
@@ -1294,31 +1294,30 @@
       ^-  mass
       =;  sam=(list mass)
         :+  %arvo  %|
-        :~  hoon+&+pit
-            zuse+&+zus.mod
+        :~  :+  %hoon  %|
+            :~  one+&+..bloq
+                two+&+..turn
+                tri+&+..year
+                qua+&+..sane
+                pen+&+..ride
+            ==
+            hex+&+..part
+            pit+&+pit
+            lull+|+[dot+&+q typ+&+p ~]:lul.mod
+            zuse+|+[dot+&+q typ+&+p ~]:zus.mod
             vane+|+sam
         ==
       ::
-      =/  von
+      %+  turn
         (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
-      ::
-      :~  :+  %reports  %|
-          =/  bem=beam  [[our %home da+now] /whey]  ::TODO  %base?
-          %+  turn  von
-          |=  [nam=term =vane]
-          =/  met  (peek [~ ~] nam bem)
-          ~|  mass/nam
-          ?>  &(?=(^ met) ?=(^ u.met))  :: XX make optional
-          nam^|+;;((list mass) q.q.u.u.met)
-      ::
-          :+  %caches  %|
-          %+  turn  von
-          |=([nam=term =vane] nam^&+worm.vane)
-      ::
-          :+  %dregs  %|
-          %+  turn  von
-          |=([nam=term =vane] nam^&+vase.vane)
-      ==
+      =/  bem=beam  [[our %home da+now] /whey]  ::TODO  %base?
+      |=  [nam=term =vane]
+      =;  mas=(list mass)
+        nam^|+(welp mas [dot+&+q.vase typ+&+p.vase sac+&+worm ~]:vane)
+      ?~  met=(peek [~ ~] nam bem)  ~
+      ?~  u.met  ~
+      ~|  mass+nam
+      ;;((list mass) q.q.u.u.met)
     ::  +peek: read from the entire namespace
     ::
     ++  peek
