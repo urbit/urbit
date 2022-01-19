@@ -14,38 +14,38 @@
 typedef struct {
   c3_w pag_w;
   c3_w mug_w;
-} u3e_line;
+} u3_el_line;
 
 //! Memory change, control file.
 typedef struct {
-  c3_w     ver_y;     //!< version number
-  c3_w     nor_w;     //!< new page count north
-  c3_w     sou_w;     //!< new page count south
-  c3_w     pgs_w;     //!< number of changed pages
-  u3e_line mem_u[0];  //!< per page
-} u3e_control;
+  c3_w       ver_y;     //!< version number
+  c3_w       nor_w;     //!< new page count north
+  c3_w       sou_w;     //!< new page count south
+  c3_w       pgs_w;     //!< number of changed pages
+  u3_el_line mem_u[0];  //!< per page
+} u3_el_control;
 
 //! Memory change, top level.
 typedef struct {
-  c3_i         ctl_i;
-  c3_i         mem_i;
-  u3e_control* con_u;
-} u3_ce_patch;
+  c3_i           ctl_i;
+  c3_i           mem_i;
+  u3_el_control* con_u;
+} u3_el_patch;
 
 //! Memory segment, open file.
 typedef struct {
   c3_c* nam_c;  //!< segment name
   c3_i  fid_i;  //!< open file, or 0
   c3_w  pgs_w;  //!< length in pages
-} u3e_image;
+} u3_el_image;
 
 //! Entire memory system.
 typedef struct {
-  c3_c*     dir_c;                  //!< path to
-  c3_w      dit_w[u3a_pages >> 5];  //!< touched since last save
-  u3e_image nor_u;                  //!< north segment
-  u3e_image sou_u;                  //!< south segment
-} u3e_pool;
+  c3_c*       dir_c;                  //!< path to
+  c3_w        dit_w[u3a_pages >> 5];  //!< touched since last save
+  u3_el_image nor_u;                  //!< north segment
+  u3_el_image sou_u;                  //!< south segment
+} u3_el_pool;
 
 #ifdef U3_SNAPSHOT_VALIDATION
 //! Image check
@@ -70,7 +70,7 @@ struct {
 //==============================================================================
 
 //! Global memory control.
-static u3e_pool pol_u;
+static u3_el_pool pol_u;
 
 
 //==============================================================================
@@ -87,7 +87,7 @@ static u3e_pool pol_u;
 //! @return c3y  image file was successfully opened (or created).
 //! @return c3n  image file could not be opened (or created).
 static c3_o
-_ce_image_open(u3e_image* img_u)
+_ce_image_open(u3_el_image* img_u)
 {
   c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
@@ -141,7 +141,7 @@ _ce_image_open(u3e_image* img_u)
 //!
 //! @param[in] pat_u  patch struct to free. Can be NULL.
 static void
-_ce_patch_delete(u3_ce_patch* pat_u)
+_ce_patch_delete(u3_el_patch* pat_u)
 {
   if ( 0 != pat_u ) {
     c3_free(pat_u->con_u);
@@ -167,7 +167,7 @@ _ce_patch_delete(u3_ce_patch* pat_u)
 //! @return c3n  patch failed verification because of a version mismatch, a
 //!              filesystem error, or a mug mismatch.
 static c3_o
-_ce_patch_verify(u3_ce_patch* pat_u)
+_ce_patch_verify(u3_el_patch* pat_u)
 {
   c3_w i_w;
 
@@ -214,10 +214,10 @@ _ce_patch_verify(u3_ce_patch* pat_u)
 //! @return pat_u  successfully opened patch.
 //! @return NULL   patch could not be opened because of a filesystem error or
 //!                mug mismatch.
-static u3_ce_patch*
+static u3_el_patch*
 _ce_patch_open(void)
 {
-  u3_ce_patch* pat_u = 0;
+  u3_el_patch* pat_u = 0;
   c3_c ful_c[8193];
   c3_i ctl_i, mem_i;
 
@@ -239,12 +239,12 @@ _ce_patch_open(void)
     _ce_patch_delete(pat_u);
     return 0;
   }
-  pat_u = c3_malloc(sizeof(u3_ce_patch));
+  pat_u = c3_malloc(sizeof(u3_el_patch));
   pat_u->ctl_i = ctl_i;
   pat_u->mem_i = mem_i;
   pat_u->con_u = 0;
 
-  // Read u3e_control struct from patch's control file.
+  // Read u3_el_control struct from patch's control file.
   {
     struct stat buf_u;
     c3_assert(-1 != fstat(pat_u->ctl_i, &buf_u));
@@ -253,8 +253,8 @@ _ce_patch_open(void)
     pat_u->con_u = c3_malloc(len_w);
 
     if ( len_w != read(pat_u->ctl_i, pat_u->con_u, len_w) ||
-         len_w != sizeof(u3e_control) +
-                  (pat_u->con_u->pgs_w * sizeof(u3e_line)) )
+         len_w != sizeof(u3_el_control) +
+                  (pat_u->con_u->pgs_w * sizeof(u3_el_line)) )
     {
       _ce_patch_delete(pat_u);
       return 0;
@@ -269,7 +269,7 @@ _ce_patch_open(void)
 
 //! Save a page, producing a new page counter.
 static c3_w
-_ce_patch_save_page(u3_ce_patch* pat_u,
+_ce_patch_save_page(u3_el_patch* pat_u,
                     c3_w         pag_w,
                     c3_w         pgc_w)
 {
@@ -307,7 +307,7 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
 }
 
 //! Make and write current patch.
-static u3_ce_patch*
+static u3_el_patch*
 _ce_patch_compose(void)
 {
   c3_w pgs_w = 0;
@@ -352,7 +352,7 @@ _ce_patch_compose(void)
     return 0;
   }
   else {
-    u3_ce_patch* pat_u = c3_malloc(sizeof(u3_ce_patch));
+    u3_el_patch* pat_u = c3_malloc(sizeof(u3_el_patch));
     c3_w i_w, pgc_w;
 
     // Create and open the patch's control and memory files.
@@ -380,7 +380,7 @@ _ce_patch_compose(void)
       }
     }
 
-    pat_u->con_u = c3_malloc(sizeof(u3e_control) + (pgs_w * sizeof(u3e_line)));
+    pat_u->con_u = c3_malloc(sizeof(u3_el_control) + (pgs_w * sizeof(u3_el_line)));
     pat_u->con_u->ver_y = u3e_version;
     pgc_w = 0;
 
@@ -395,9 +395,9 @@ _ce_patch_compose(void)
     pat_u->con_u->sou_w = sou_w;
     pat_u->con_u->pgs_w = pgc_w;
 
-    // Write u3e_control struct to patch's control file.
+    // Write u3_el_control struct to patch's control file.
     {
-      c3_w len_w = sizeof(u3e_control) + (pat_u->con_u->pgs_w * sizeof(u3e_line));
+      c3_w len_w = sizeof(u3_el_control) + (pat_u->con_u->pgs_w * sizeof(u3_el_line));
       c3_assert(len_w == write(pat_u->ctl_i, pat_u->con_u, len_w));
     }
     return pat_u;
@@ -406,7 +406,7 @@ _ce_patch_compose(void)
 
 //! Make sure patch is synced to disk.
 static void
-_ce_patch_sync(u3_ce_patch* pat_u)
+_ce_patch_sync(u3_el_patch* pat_u)
 {
   if ( -1 == c3_sync(pat_u->ctl_i) ) {
     fprintf(stderr, "loom: control file sync failed: %s\r\n",
@@ -423,7 +423,7 @@ _ce_patch_sync(u3_ce_patch* pat_u)
 
 //! Make sure image is synced to disk.
 static void
-_ce_image_sync(u3e_image* img_u)
+_ce_image_sync(u3_el_image* img_u)
 {
   if ( -1 == c3_sync(img_u->fid_i) ) {
     fprintf(stderr, "loom: image (%s) sync failed: %s\r\n",
@@ -435,7 +435,7 @@ _ce_image_sync(u3e_image* img_u)
 
 //! Resize image, truncating if it shrunk.
 static void
-_ce_image_resize(u3e_image* img_u, c3_w pgs_w)
+_ce_image_resize(u3_el_image* img_u, c3_w pgs_w)
 {
   if ( img_u->pgs_w > pgs_w ) {
     if ( ftruncate(img_u->fid_i, pgs_w << (u3a_page + 2)) ) {
@@ -451,7 +451,7 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w)
 
 //! Apply patch to images.
 static void
-_ce_patch_apply(u3_ce_patch* pat_u)
+_ce_patch_apply(u3_el_patch* pat_u)
 {
   c3_w i_w;
 
@@ -509,7 +509,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
 
 //! Apply image to memory.
 static void
-_ce_image_blit(u3e_image* img_u,
+_ce_image_blit(u3_el_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
@@ -544,7 +544,7 @@ _ce_image_blit(u3e_image* img_u,
 #ifdef U3_SNAPSHOT_VALIDATION
 //! Compare image to memory.
 static void
-_ce_image_fine(u3e_image* img_u,
+_ce_image_fine(u3_el_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
@@ -579,7 +579,7 @@ _ce_image_fine(u3e_image* img_u,
 
 //! TODO(peter)
 static c3_o
-_ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
+_ce_image_copy(u3_el_image* fom_u, u3_el_image* tou_u)
 {
   c3_w i_w;
 
@@ -625,8 +625,8 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
 static void
 _ce_backup(void)
 {
-  u3e_image nop_u = { .nam_c = "north", .pgs_w = 0 };
-  u3e_image sop_u = { .nam_c = "south", .pgs_w = 0 };
+  u3_el_image nop_u = { .nam_c = "north", .pgs_w = 0 };
+  u3_el_image sop_u = { .nam_c = "south", .pgs_w = 0 };
   c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
@@ -751,7 +751,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
 void
 u3e_save(void)
 {
-  u3_ce_patch* pat_u;
+  u3_el_patch* pat_u;
 
   if ( u3C.wag_w & u3o_dryrun ) {
     return;
@@ -818,7 +818,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       exit(1);
     }
     else {
-      u3_ce_patch* pat_u;
+      u3_el_patch* pat_u;
 
       /* Load any patch files; apply them to images.
       */
