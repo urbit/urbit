@@ -21,7 +21,7 @@
 =,  jael
 |%
 +$  app-state
-  $:  %4
+  $:  %5
       url=@ta
       =net
       whos=(set ship)
@@ -128,13 +128,20 @@
       :_  old-state(- %4)
       ~&  >  '%azimuth: updating to state 4'
       [%pass /resend-pk %arvo %j %resend ~]^cards-2
-    ?>  ?=(%4 -.old-state)
-    [cards-3 this(state old-state)]
+    =^  cards-4  old-state
+      ?.  ?=(%4 -.old-state)  [cards-3 old-state]
+      =^  cards  this
+        %-  %*(. on-poke +.state.this +.old-state)
+        [%azimuth-poke !>([%watch [url net]:old-state])]
+      ~&  >  '%azimuth: updating to state 5'
+      [cards state.this(- %5)]
+    ?>  ?=(%5 -.old-state)
+    [cards-4 this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1-2-3 app-state)
+    ++  app-states  $%(state-0 state-1-2-3-4 app-state)
     ::
-    +$  state-1-2-3
-      $:  ?(%1 %2 %3)
+    +$  state-1-2-3-4
+      $:  ?(%1 %2 %3 %4)
           url=@ta
           =net
           whos=(set ship)
@@ -190,9 +197,6 @@
       [[%pass /lo %arvo %j %listen (silt whos.poke) source.poke]~ this]
     ::
         %watch
-      :: TODO: only wipe out state when switching networks?
-      :: ?:  =(net.state net.poke)
-      ::   [~ this]
       =:  nas.state   ?:(?=(%default net.poke) nas.snap *^state:naive)
           own.state   ?:(?=(%default net.poke) owners.snap ~)
           spo.state   ?:(?=(%default net.poke) sponsors.snap ~)
