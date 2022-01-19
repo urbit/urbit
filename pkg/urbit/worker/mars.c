@@ -55,7 +55,7 @@ _mars_grab(u3_noun sac)
       c3_c* wen_c = u3r_string(wen);
 
       c3_c nam_c[2048];
-      snprintf(nam_c, 2048, "%s/.urb/put/mass", u3P.dir_c);
+      snprintf(nam_c, 2048, "%s/.urb/put/mass", u3_Host.dir_c);
 
       struct stat st;
       if ( -1 == stat(nam_c, &st) ) {
