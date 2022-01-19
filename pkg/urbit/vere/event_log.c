@@ -70,10 +70,7 @@ struct {
 //==============================================================================
 
 //! Global memory control.
-c3_global u3e_pool u3e_Pool;
-
-//! Global memory control.
-#define u3P u3e_Pool
+static u3e_pool pol_u;
 
 
 //==============================================================================
@@ -95,16 +92,16 @@ _ce_image_open(u3e_image* img_u)
   c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s", pol_u.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb", pol_u.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk", pol_u.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s.bin", pol_u.dir_c, img_u->nam_c);
   if ( -1 == (img_u->fid_i = open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
     return c3n;
@@ -155,10 +152,10 @@ _ce_patch_delete(u3_ce_patch* pat_u)
 
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", pol_u.dir_c);
   unlink(ful_c);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", pol_u.dir_c);
   unlink(ful_c);
 }
 
@@ -224,18 +221,18 @@ _ce_patch_open(void)
   c3_c ful_c[8193];
   c3_i ctl_i, mem_i;
 
-  snprintf(ful_c, 8192, "%s", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s", pol_u.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb", pol_u.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", pol_u.dir_c);
   if ( -1 == (ctl_i = open(ful_c, O_RDWR)) ) {
     return 0;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", pol_u.dir_c);
   if ( -1 == (mem_i = open(ful_c, O_RDWR)) ) {
     close(ctl_i);
 
@@ -279,7 +276,7 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
   c3_w blk_w = (pag_w >> 5);
   c3_w bit_w = (pag_w & 31);
 
-  if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
+  if ( pol_u.dit_w[blk_w] & (1 << bit_w) ) {
     c3_w* mem_w = u3_Loom + (pag_w << u3a_page);
 
     pat_u->con_u->mem_u[pgc_w].pag_w = pag_w;
@@ -303,7 +300,7 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
       c3_assert(0);
     }
 
-    u3P.dit_w[blk_w] &= ~(1 << bit_w);
+    pol_u.dit_w[blk_w] &= ~(1 << bit_w);
     pgc_w += 1;
   }
   return pgc_w;
@@ -345,7 +342,7 @@ _ce_patch_compose(void)
       c3_w blk_w = pag_w >> 5;
       c3_w bit_w = pag_w & 31;
 
-      if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
+      if ( pol_u.dit_w[blk_w] & (1 << bit_w) ) {
         pgs_w++;
       }
     }
@@ -362,20 +359,20 @@ _ce_patch_compose(void)
     {
       c3_c ful_c[8193];
 
-      snprintf(ful_c, sizeof(ful_c)-1, "%s", u3P.dir_c);
+      snprintf(ful_c, sizeof(ful_c)-1, "%s", pol_u.dir_c);
       mkdir(ful_c, 0700);
 
-      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb", u3P.dir_c);
+      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb", pol_u.dir_c);
       mkdir(ful_c, 0700);
 
-      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb/chk/control.bin", u3P.dir_c);
+      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb/chk/control.bin", pol_u.dir_c);
       pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600);
       if ( -1 == pat_u->ctl_i ) {
         fprintf(stderr, "loom: patch open control.bin: %s\r\n", strerror(errno));
         c3_assert(0);
       }
 
-      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb/chk/memory.bin", u3P.dir_c);
+      snprintf(ful_c, sizeof(ful_c)-1, "%s/.urb/chk/memory.bin", pol_u.dir_c);
       pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600);
       if ( -1 == pat_u->mem_i ) {
         fprintf(stderr, "loom: patch open memory.bin: %s\r\n", strerror(errno));
@@ -460,14 +457,14 @@ _ce_patch_apply(u3_ce_patch* pat_u)
 
   //  resize images
   //
-  _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w);
-  _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w);
+  _ce_image_resize(&pol_u.nor_u, pat_u->con_u->nor_w);
+  _ce_image_resize(&pol_u.sou_u, pat_u->con_u->sou_w);
 
   //  seek to begining of patch and images
   //
   if (  (-1 == lseek(pat_u->mem_i, 0, SEEK_SET))
-     || (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET))
-     || (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
+     || (-1 == lseek(pol_u.nor_u.fid_i, 0, SEEK_SET))
+     || (-1 == lseek(pol_u.sou_u.fid_i, 0, SEEK_SET)) )
   {
     fprintf(stderr, "loom: patch apply seek 0: %s\r\n", strerror(errno));
     c3_assert(0);
@@ -482,11 +479,11 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     c3_w off_w;
 
     if ( pag_w < pat_u->con_u->nor_w ) {
-      fid_i = u3P.nor_u.fid_i;
+      fid_i = pol_u.nor_u.fid_i;
       off_w = pag_w;
     }
     else {
-      fid_i = u3P.sou_u.fid_i;
+      fid_i = pol_u.sou_u.fid_i;
       off_w = (u3a_pages - (pag_w + 1));
     }
 
@@ -538,7 +535,7 @@ _ce_image_blit(u3e_image* img_u,
     c3_w pag_w = u3a_outa(ptr_w) >> u3a_page;
     c3_w blk_w = pag_w >> 5;
     c3_w bit_w = pag_w & 31;
-    u3P.dit_w[blk_w] &= ~(1 << bit_w);
+    pol_u.dit_w[blk_w] &= ~(1 << bit_w);
 
     ptr_w += stp_ws;
   }
@@ -633,7 +630,7 @@ _ce_backup(void)
   c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/bhk", pol_u.dir_c);
 
   if ( mkdir(ful_c, 0700) ) {
     if ( EEXIST != errno ) {
@@ -642,28 +639,28 @@ _ce_backup(void)
     return;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, nop_u.nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", pol_u.dir_c, nop_u.nam_c);
 
   if ( -1 == (nop_u.fid_i = open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
     return;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, sop_u.nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", pol_u.dir_c, sop_u.nam_c);
 
   if ( -1 == (sop_u.fid_i = open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
     return;
   }
 
-  if (  (c3n == _ce_image_copy(&u3P.nor_u, &nop_u))
-     || (c3n == _ce_image_copy(&u3P.sou_u, &sop_u)) )
+  if (  (c3n == _ce_image_copy(&pol_u.nor_u, &nop_u))
+     || (c3n == _ce_image_copy(&pol_u.sou_u, &sop_u)) )
   {
 
     unlink(ful_c);
-    snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, nop_u.nam_c);
+    snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", pol_u.dir_c, nop_u.nam_c);
     unlink(ful_c);
-    snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
+    snprintf(ful_c, 8192, "%s/.urb/bhk", pol_u.dir_c);
     rmdir(ful_c);
   }
 
@@ -712,14 +709,14 @@ u3e_fault(void* adr_v, c3_i ser_i)
     }
 #endif
 
-    if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+    if ( 0 != (pol_u.dit_w[blk_w] & (1 << bit_w)) ) {
       fprintf(stderr, "strange page: %d, at %p, off %x\r\n",
               pag_w, adr_w, off_w);
       c3_assert(0);
       return 0;
     }
 
-    u3P.dit_w[blk_w] |= (1 << bit_w);
+    pol_u.dit_w[blk_w] |= (1 << bit_w);
 
     if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
                         (1 << (u3a_page + 2)),
@@ -776,21 +773,21 @@ u3e_save(void)
 
 #ifdef U3_SNAPSHOT_VALIDATION
   {
-    _ce_image_fine(&u3P.nor_u,
+    _ce_image_fine(&pol_u.nor_u,
                    u3_Loom,
                    (1 << u3a_page));
 
-    _ce_image_fine(&u3P.sou_u,
+    _ce_image_fine(&pol_u.sou_u,
                    (u3_Loom + (1 << u3a_bits) - (1 << u3a_page)),
                    -(1 << u3a_page));
 
-    c3_assert(u3P.nor_u.pgs_w == u3K.nor_w);
-    c3_assert(u3P.sou_u.pgs_w == u3K.sou_w);
+    c3_assert(pol_u.nor_u.pgs_w == u3K.nor_w);
+    c3_assert(pol_u.sou_u.pgs_w == u3K.sou_w);
   }
 #endif
 
-  _ce_image_sync(&u3P.nor_u);
-  _ce_image_sync(&u3P.sou_u);
+  _ce_image_sync(&pol_u.nor_u);
+  _ce_image_sync(&pol_u.sou_u);
   _ce_patch_delete(pat_u);
 
   _ce_backup();
@@ -800,9 +797,9 @@ u3e_save(void)
 c3_o
 u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
-  u3P.dir_c = dir_c;
-  u3P.nor_u.nam_c = "north";
-  u3P.sou_u.nam_c = "south";
+  pol_u.dir_c = dir_c;
+  pol_u.nor_u.nam_c = "north";
+  pol_u.sou_u.nam_c = "south";
 
   //  XX review dryrun requirements, enable or remove
   //
@@ -814,8 +811,8 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   {
     //  Open image files.
     //
-    if ( (c3n == _ce_image_open(&u3P.nor_u)) ||
-         (c3n == _ce_image_open(&u3P.sou_u)) )
+    if ( (c3n == _ce_image_open(&pol_u.nor_u)) ||
+         (c3n == _ce_image_open(&pol_u.sou_u)) )
     {
       fprintf(stderr, "boot: image failed\r\n");
       exit(1);
@@ -827,19 +824,19 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       */
       if ( 0 != (pat_u = _ce_patch_open()) ) {
         _ce_patch_apply(pat_u);
-        _ce_image_sync(&u3P.nor_u);
-        _ce_image_sync(&u3P.sou_u);
+        _ce_image_sync(&pol_u.nor_u);
+        _ce_image_sync(&pol_u.sou_u);
         _ce_patch_delete(pat_u);
       }
 
       /* Write image files to memory; reinstate protection.
       */
       {
-        _ce_image_blit(&u3P.nor_u,
+        _ce_image_blit(&pol_u.nor_u,
                        u3_Loom,
                        (1 << u3a_page));
 
-        _ce_image_blit(&u3P.sou_u,
+        _ce_image_blit(&pol_u.sou_u,
                        (u3_Loom + (1 << u3a_bits) - (1 << u3a_page)),
                        -(1 << u3a_page));
 
@@ -851,14 +848,14 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       ** marking those as clean when they're mapped into memory from the
       ** snapshot on a future boot for which the images are not empty.
       */
-      if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
+      if ( (0 == pol_u.nor_u.pgs_w) && (0 == pol_u.sou_u.pgs_w) ) {
         u3e_foul();
         u3l_log("live: logical boot\r\n");
         nuu_o = c3y;
       }
       else {
         u3a_print_memory(stderr, "live: loaded",
-                         (u3P.nor_u.pgs_w + u3P.sou_u.pgs_w) << u3a_page);
+                         (pol_u.nor_u.pgs_w + pol_u.sou_u.pgs_w) << u3a_page);
       }
     }
   }
@@ -882,5 +879,5 @@ u3e_yolo(void)
 void
 u3e_foul(void)
 {
-  memset((void*)u3P.dit_w, 0xff, sizeof(u3P.dit_w));
+  memset((void*)pol_u.dit_w, 0xff, sizeof(pol_u.dit_w));
 }
