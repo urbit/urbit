@@ -1,6 +1,5 @@
-/* g/e.c
-**
-*/
+//! @file event_log.c
+
 #include "all.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -11,51 +10,45 @@
 // Data structures
 //==============================================================================
 
-/* u3e_line: control line.
-*/
+//! Control line.
 typedef struct {
   c3_w pag_w;
   c3_w mug_w;
 } u3e_line;
 
-/* u3e_control: memory change, control file.
-*/
+//! Memory change, control file.
 typedef struct {
-  c3_w     ver_y;                     //  version number
-  c3_w     nor_w;                     //  new page count north
-  c3_w     sou_w;                     //  new page count south
-  c3_w     pgs_w;                     //  number of changed pages
-  u3e_line mem_u[0];                  //  per page
+  c3_w     ver_y;     //!< version number
+  c3_w     nor_w;     //!< new page count north
+  c3_w     sou_w;     //!< new page count south
+  c3_w     pgs_w;     //!< number of changed pages
+  u3e_line mem_u[0];  //!< per page
 } u3e_control;
 
-/* u3_cs_patch: memory change, top level.
-*/
+//! Memory change, top level.
 typedef struct {
   c3_i         ctl_i;
   c3_i         mem_i;
   u3e_control* con_u;
 } u3_ce_patch;
 
-/* u3e_image: memory segment, open file.
-*/
+//! Memory segment, open file.
 typedef struct {
-  c3_c* nam_c;                        //  segment name
-  c3_i  fid_i;                        //  open file, or 0
-  c3_w  pgs_w;                        //  length in pages
+  c3_c* nam_c;  //!< segment name
+  c3_i  fid_i;  //!< open file, or 0
+  c3_w  pgs_w;  //!< length in pages
 } u3e_image;
 
-/* u3e_pool: entire memory system.
-*/
+//! Entire memory system.
 typedef struct {
-  c3_c*     dir_c;                     //  path to
-  c3_w      dit_w[u3a_pages >> 5];     //  touched since last save
-  u3e_image nor_u;                     //  north segment
-  u3e_image sou_u;                     //  south segment
+  c3_c*     dir_c;                  //!< path to
+  c3_w      dit_w[u3a_pages >> 5];  //!< touched since last save
+  u3e_image nor_u;                  //!< north segment
+  u3e_image sou_u;                  //!< south segment
 } u3e_pool;
 
 #ifdef U3_SNAPSHOT_VALIDATION
-/* Image check.
-*/
+//! Image check
 struct {
   c3_w nor_w;
   c3_w sou_w;
@@ -68,6 +61,7 @@ struct {
 // Constants
 //==============================================================================
 
+//! Event log version number.
 #define u3e_version 1
 
 
@@ -75,9 +69,10 @@ struct {
 // Globals
 //==============================================================================
 
-/* u3_Pool / u3P: global memory control.
-*/
+//! Global memory control.
 c3_global u3e_pool u3e_Pool;
+
+//! Global memory control.
 #define u3P u3e_Pool
 
 
@@ -85,8 +80,7 @@ c3_global u3e_pool u3e_Pool;
 // Functions
 //==============================================================================
 
-/* u3e_fault(): handle a memory event with libsigsegv protocol.
-*/
+//! Handle a memory event with libsigsegv protocol.
 c3_i
 u3e_fault(void* adr_v, c3_i ser_i)
 {
@@ -143,16 +137,15 @@ u3e_fault(void* adr_v, c3_i ser_i)
   return 1;
 }
 
-/* Open the image file at <path to pier>/.urb/chk/<segment name>.bin. If the
- * file does not already exist, then create it.
- *
- * @param img_u  memory segment struct containing the segment name. File
- *               descriptor and page length fields are filled in by this
- *               function.
- *
- * @return c3y   image file was successfully opened (or created).
- * @return c3n   image file could not be opened (or created).
- */
+//! Open the image file at <path to pier>/.urb/chk/<segment name>.bin. If the
+//! file does not already exist, then create it.
+//!
+//! @param img_u[in,out]  memory segment struct containing the segment name.
+//!                       File descriptor and page length fields are filled in
+//!                       by this function.
+//!
+//! @return c3y  image file was successfully opened (or created).
+//! @return c3n  image file could not be opened (or created).
 static c3_o
 _ce_image_open(u3e_image* img_u)
 {
@@ -203,11 +196,10 @@ _ce_image_open(u3e_image* img_u)
   }
 }
 
-/* _ce_patch_delete(): clean up the patch's resources and delete its control and
- * memory files from the filesystem.
- *
- * @param pat_u  pointer to a patch struct. Can be NULL.
- */
+//! Free a patch's resources and delete its control and memory files from the
+//! filesystem.
+//!
+//! @param[in] pat_u  patch struct to free. Can be NULL.
 static void
 _ce_patch_delete(u3_ce_patch* pat_u)
 {
@@ -227,8 +219,13 @@ _ce_patch_delete(u3_ce_patch* pat_u)
   unlink(ful_c);
 }
 
-/* _ce_patch_verify(): check patch data mug.
-*/
+//! Check patch data mug.
+//!
+//! @param pat_u  patch struct to verify. Cannot be NULL.
+//!
+//! @return c3y  patch passed verification.
+//! @return c3n  patch failed verification because of a version mismatch, a
+//!              filesystem error, or a mug mismatch.
 static c3_o
 _ce_patch_verify(u3_ce_patch* pat_u)
 {
@@ -272,8 +269,11 @@ _ce_patch_verify(u3_ce_patch* pat_u)
   return c3y;
 }
 
-/* _ce_patch_open(): open patch, if any.
-*/
+//! Open a patch by reading its control and memory files into memory.
+//!
+//! @return pat_u  successfully opened patch.
+//! @return NULL   patch could not be opened because of a filesystem error or
+//!                mug mismatch.
 static u3_ce_patch*
 _ce_patch_open(void)
 {
@@ -327,8 +327,7 @@ _ce_patch_open(void)
   return pat_u;
 }
 
-/* _ce_patch_save_page(): save a page, producing new page counter.
-*/
+//! Save a page, producing a new page counter.
 static c3_w
 _ce_patch_save_page(u3_ce_patch* pat_u,
                     c3_w         pag_w,
@@ -367,8 +366,7 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
   return pgc_w;
 }
 
-/* _ce_patch_compose(): make and write current patch.
-*/
+//! Make and write current patch.
 static u3_ce_patch*
 _ce_patch_compose(void)
 {
@@ -466,8 +464,7 @@ _ce_patch_compose(void)
   }
 }
 
-/* _ce_patch_sync(): make sure patch is synced to disk.
-*/
+//! Make sure patch is synced to disk.
 static void
 _ce_patch_sync(u3_ce_patch* pat_u)
 {
@@ -484,8 +481,7 @@ _ce_patch_sync(u3_ce_patch* pat_u)
   }
 }
 
-/* _ce_image_sync(): make sure image is synced to disk.
-*/
+//! Make sure image is synced to disk.
 static void
 _ce_image_sync(u3e_image* img_u)
 {
@@ -497,8 +493,7 @@ _ce_image_sync(u3e_image* img_u)
   }
 }
 
-/* _ce_image_resize(): resize image, truncating if it shrunk.
-*/
+//! Resize image, truncating if it shrunk.
 static void
 _ce_image_resize(u3e_image* img_u, c3_w pgs_w)
 {
@@ -514,8 +509,7 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w)
   img_u->pgs_w = pgs_w;
 }
 
-/* _ce_patch_apply(): apply patch to images.
-*/
+//! Apply patch to images.
 static void
 _ce_patch_apply(u3_ce_patch* pat_u)
 {
@@ -573,8 +567,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   }
 }
 
-/* _ce_image_blit(): apply image to memory.
-*/
+//! Apply image to memory.
 static void
 _ce_image_blit(u3e_image* img_u,
                c3_w*        ptr_w,
@@ -609,8 +602,7 @@ _ce_image_blit(u3e_image* img_u,
 }
 
 #ifdef U3_SNAPSHOT_VALIDATION
-/* _ce_image_fine(): compare image to memory.
-*/
+//! Compare image to memory.
 static void
 _ce_image_fine(u3e_image* img_u,
                c3_w*        ptr_w,
@@ -645,8 +637,7 @@ _ce_image_fine(u3e_image* img_u,
 }
 #endif
 
-/* _ce_image_copy():
-*/
+//! TODO(peter)
 static c3_o
 _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
 {
@@ -690,8 +681,7 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
   return c3y;
 }
 
-/* _ce_backup();
-*/
+//! TODO(peter)
 static void
 _ce_backup(void)
 {
@@ -738,26 +728,24 @@ _ce_backup(void)
   close(sop_u.fid_i);
 }
 
-/*
-  u3e_save(): save current changes.
-
-  If we are in dry-run mode, do nothing.
-
-  First, call `_ce_patch_compose` to write all dirty pages to disk and
-  clear protection and dirty bits. If there were no dirty pages to write,
-  then we're done.
-
-  - Sync the patch files to disk.
-  - Verify the patch (because why not?)
-  - Write the patch data into the image file (This is idempotent.).
-  - Sync the image file.
-  - Delete the patchfile and free it.
-
-  Once we've written the dirty pages to disk (and have reset their dirty bits
-  and protection flags), we *could* handle the rest of the checkpointing
-  process in a separate thread, but we'd need to wait until that finishes
-  before we try to make another snapshot.
-*/
+//! Save current changes.
+//!
+//! If we are in dry-run mode, do nothing.
+//!
+//! First, call `_ce_patch_compose` to write all dirty pages to disk and
+//! clear protection and dirty bits. If there were no dirty pages to write,
+//! then we're done.
+//!
+//! - Sync the patch files to disk.
+//! - Verify the patch (because why not?)
+//! - Write the patch data into the image file (This is idempotent.).
+//! - Sync the image file.
+//! - Delete the patchfile and free it.
+//!
+//! Once we've written the dirty pages to disk (and have reset their dirty bits
+//! and protection flags), we *could* handle the rest of the checkpointing
+//! process in a separate thread, but we'd need to wait until that finishes
+//! before we try to make another snapshot.
 void
 u3e_save(void)
 {
@@ -803,8 +791,7 @@ u3e_save(void)
   _ce_backup();
 }
 
-/* u3e_live(): start the checkpointing system.
-*/
+//! Start the checkpointing system.
 c3_o
 u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
@@ -873,8 +860,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   return nuu_o;
 }
 
-/* u3e_yolo(): disable dirty page tracking, read/write whole loom.
-*/
+//! Disable page tracking, which makes the entire loom writable.
 c3_o
 u3e_yolo(void)
 {
@@ -887,8 +873,7 @@ u3e_yolo(void)
   return c3y;
 }
 
-/* u3e_foul(): dirty all the pages of the loom.
-*/
+//! Dirty all pages of the loom.
 void
 u3e_foul(void)
 {
