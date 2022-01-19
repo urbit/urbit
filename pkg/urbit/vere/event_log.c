@@ -77,65 +77,8 @@ c3_global u3e_pool u3e_Pool;
 
 
 //==============================================================================
-// Functions
+// Static functions
 //==============================================================================
-
-//! Handle a memory event with libsigsegv protocol.
-c3_i
-u3e_fault(void* adr_v, c3_i ser_i)
-{
-  //  Let the stack overflow handler run.
-  if ( 0 == ser_i ) {
-    return 0;
-  }
-
-  //  XX u3l_log avoid here, as it can
-  //  cause problems when handling errors
-
-  c3_w* adr_w = (c3_w*) adr_v;
-
-  if ( (adr_w < u3_Loom) || (adr_w >= (u3_Loom + u3a_words)) ) {
-    fprintf(stderr, "address %p out of loom!\r\n", adr_w);
-    fprintf(stderr, "loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3a_words);
-    c3_assert(0);
-    return 0;
-  }
-  else {
-    c3_w off_w = u3a_outa(adr_w);
-    c3_w pag_w = off_w >> u3a_page;
-    c3_w blk_w = (pag_w >> 5);
-    c3_w bit_w = (pag_w & 31);
-
-#if 0
-    if ( pag_w == 131041 ) {
-      u3l_log("dirty page %d (at %p); unprotecting %p to %p\r\n",
-              pag_w,
-              adr_v,
-              (u3_Loom + (pag_w << u3a_page)),
-              (u3_Loom + (pag_w << u3a_page) + (1 << u3a_page)));
-    }
-#endif
-
-    if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
-      fprintf(stderr, "strange page: %d, at %p, off %x\r\n",
-              pag_w, adr_w, off_w);
-      c3_assert(0);
-      return 0;
-    }
-
-    u3P.dit_w[blk_w] |= (1 << bit_w);
-
-    if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
-                        (1 << (u3a_page + 2)),
-                        (PROT_READ | PROT_WRITE)) )
-    {
-      fprintf(stderr, "loom: fault mprotect: %s\r\n", strerror(errno));
-      c3_assert(0);
-      return 0;
-    }
-  }
-  return 1;
-}
 
 //! Open the image file at <path to pier>/.urb/chk/<segment name>.bin. If the
 //! file does not already exist, then create it.
@@ -726,6 +669,68 @@ _ce_backup(void)
 
   close(nop_u.fid_i);
   close(sop_u.fid_i);
+}
+
+
+//==============================================================================
+// Functions
+//==============================================================================
+
+//! Handle a memory event with libsigsegv protocol.
+c3_i
+u3e_fault(void* adr_v, c3_i ser_i)
+{
+  //  Let the stack overflow handler run.
+  if ( 0 == ser_i ) {
+    return 0;
+  }
+
+  //  XX u3l_log avoid here, as it can
+  //  cause problems when handling errors
+
+  c3_w* adr_w = (c3_w*) adr_v;
+
+  if ( (adr_w < u3_Loom) || (adr_w >= (u3_Loom + u3a_words)) ) {
+    fprintf(stderr, "address %p out of loom!\r\n", adr_w);
+    fprintf(stderr, "loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3a_words);
+    c3_assert(0);
+    return 0;
+  }
+  else {
+    c3_w off_w = u3a_outa(adr_w);
+    c3_w pag_w = off_w >> u3a_page;
+    c3_w blk_w = (pag_w >> 5);
+    c3_w bit_w = (pag_w & 31);
+
+#if 0
+    if ( pag_w == 131041 ) {
+      u3l_log("dirty page %d (at %p); unprotecting %p to %p\r\n",
+              pag_w,
+              adr_v,
+              (u3_Loom + (pag_w << u3a_page)),
+              (u3_Loom + (pag_w << u3a_page) + (1 << u3a_page)));
+    }
+#endif
+
+    if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+      fprintf(stderr, "strange page: %d, at %p, off %x\r\n",
+              pag_w, adr_w, off_w);
+      c3_assert(0);
+      return 0;
+    }
+
+    u3P.dit_w[blk_w] |= (1 << bit_w);
+
+    if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
+                        (1 << (u3a_page + 2)),
+                        (PROT_READ | PROT_WRITE)) )
+    {
+      fprintf(stderr, "loom: fault mprotect: %s\r\n", strerror(errno));
+      c3_assert(0);
+      return 0;
+    }
+  }
+  return 1;
 }
 
 //! Save current changes.
