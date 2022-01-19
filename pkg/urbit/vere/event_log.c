@@ -13,14 +13,14 @@
 
 /* u3e_line: control line.
 */
-typedef struct _u3e_line {
+typedef struct {
   c3_w pag_w;
   c3_w mug_w;
 } u3e_line;
 
 /* u3e_control: memory change, control file.
 */
-typedef struct _u3e_control {
+typedef struct {
   c3_w     ver_y;                     //  version number
   c3_w     nor_w;                     //  new page count north
   c3_w     sou_w;                     //  new page count south
@@ -30,7 +30,7 @@ typedef struct _u3e_control {
 
 /* u3_cs_patch: memory change, top level.
 */
-typedef struct _u3_cs_patch {
+typedef struct {
   c3_i         ctl_i;
   c3_i         mem_i;
   u3e_control* con_u;
@@ -38,7 +38,7 @@ typedef struct _u3_cs_patch {
 
 /* u3e_image: memory segment, open file.
 */
-typedef struct _u3e_image {
+typedef struct {
   c3_c* nam_c;                        //  segment name
   c3_i  fid_i;                        //  open file, or 0
   c3_w  pgs_w;                        //  length in pages
@@ -46,7 +46,7 @@ typedef struct _u3e_image {
 
 /* u3e_pool: entire memory system.
 */
-typedef struct _u3e_pool {
+typedef struct {
   c3_c*     dir_c;                     //  path to
   c3_w      dit_w[u3a_pages >> 5];     //  touched since last save
   u3e_image nor_u;                     //  north segment
