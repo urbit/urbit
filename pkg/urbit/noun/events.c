@@ -258,21 +258,6 @@ _ce_patch_open(void)
   return pat_u;
 }
 
-/* _ce_patch_count_page(): count a page, producing new counter.
-*/
-static c3_w
-_ce_patch_count_page(c3_w pag_w,
-                     c3_w pgc_w)
-{
-  c3_w blk_w = (pag_w >> 5);
-  c3_w bit_w = (pag_w & 31);
-
-  if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
-    pgc_w += 1;
-  }
-  return pgc_w;
-}
-
 /* _ce_patch_save_page(): save a page, producing new page counter.
 */
 static c3_w
@@ -360,13 +345,18 @@ _ce_patch_compose(void)
   /* Count dirty pages.
   */
   {
-    c3_w i_w;
+    c3_w pag_w;
+    for ( pag_w = 0; pag_w < u3a_pages; pag_w++ ) {
+      if ( nor_w == pag_w ) {
+        pag_w = u3a_pages - sou_w;
+      }
 
-    for ( i_w = 0; i_w < nor_w; i_w++ ) {
-      pgs_w = _ce_patch_count_page(i_w, pgs_w);
-    }
-    for ( i_w = 0; i_w < sou_w; i_w++ ) {
-      pgs_w = _ce_patch_count_page((u3a_pages - (i_w + 1)), pgs_w);
+      c3_w blk_w = pag_w >> 5;
+      c3_w bit_w = pag_w & 31;
+
+      if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
+        pgs_w++;
+      }
     }
   }
 
