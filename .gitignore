@@ -84,3 +84,7 @@ pkg/interface/link-webext/web-ext-artifacts
 *.log
 
 .vercel
+
+# Doxygen
+**/html
+**/latex
