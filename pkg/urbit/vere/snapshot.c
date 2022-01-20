@@ -47,15 +47,6 @@ typedef struct {
   u3_snap_image sou_u;                //!< south segment
 } u3_snap_pool;
 
-#ifdef U3_SNAPSHOT_VALIDATION
-//! Image check
-struct {
-  c3_w nor_w;
-  c3_w sou_w;
-  c3_w mug_w[u3a_pages];
-} u3K;
-#endif
-
 
 //==============================================================================
 // Constants
@@ -66,11 +57,27 @@ struct {
 
 
 //==============================================================================
-// Globals
+// Static globals
 //==============================================================================
 
 //! Global memory control.
 static u3_snap_pool pol_u;
+
+#ifdef U3_SNAPSHOT_VALIDATION
+//! Image check
+static struct {
+  c3_w nor_w;
+  c3_w sou_w;
+  c3_w mug_w[u3a_pages];
+} chk_u;
+#endif
+
+
+//==============================================================================
+// Globals
+//==============================================================================
+
+// Add globals here.
 
 
 //==============================================================================
@@ -326,8 +333,8 @@ _snap_patch_compose(void)
   }
 
 #ifdef U3_SNAPSHOT_VALIDATION
-  u3K.nor_w = nor_w;
-  u3K.sou_w = sou_w;
+  chk_u.nor_w = nor_w;
+  chk_u.sou_w = sou_w;
 #endif
 
   /* Count dirty pages.
@@ -569,7 +576,7 @@ _snap_image_fine(u3_snap_image* img_u,
                      pag_w,
                      mem_w,
                      fil_w,
-                     u3K.mug_w[pag_w]);
+                     chk_u.mug_w[pag_w]);
       abort();
     }
     ptr_w += stp_ws;
@@ -781,8 +788,8 @@ u3_snap_save(void)
                    (u3_Loom + (1 << u3a_bits) - (1 << u3a_page)),
                    -(1 << u3a_page));
 
-    c3_assert(pol_u.nor_u.pgs_w == u3K.nor_w);
-    c3_assert(pol_u.sou_u.pgs_w == u3K.sou_w);
+    c3_assert(pol_u.nor_u.pgs_w == chk_u.nor_w);
+    c3_assert(pol_u.sou_u.pgs_w == chk_u.sou_w);
   }
 #endif
 
