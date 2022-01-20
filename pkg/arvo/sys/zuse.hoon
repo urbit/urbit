@@ -4314,6 +4314,7 @@
     --  ::en-json
   ::                                                    ::  ++de-json:html
   ++  de-json                                           ::  parse JSON
+    ~%  %de-json  ..part  ~
     =<  |=(a=cord `(unit json)`(rush a apex))
     |%
     ::                                                  ::  ++abox:de-json:html

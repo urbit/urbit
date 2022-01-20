@@ -137,6 +137,11 @@
     u3_noun
     u3ke_cue(u3_atom a);
 
+  /* u3ke_de_json(): parse JSON from cord.
+  */
+    u3_noun
+    u3ke_de_json(u3_atom);
+
   /* u3ke_jam(): pack noun as atom.
   */
     u3_atom

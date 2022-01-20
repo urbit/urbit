@@ -210,6 +210,8 @@
     u3_noun u3we_en_base16(u3_noun);
     u3_noun u3we_de_base16(u3_noun);
 
+    u3_noun u3we_de_json(u3_noun);
+
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);
     u3_noun u3we_cook_fun(u3_noun);

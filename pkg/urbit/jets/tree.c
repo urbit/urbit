@@ -17,6 +17,12 @@
 
 static c3_c* no_hashes[] = { 0 };
 
+static u3j_harm _140_hex_de_json_a[] = {{".2", u3we_de_json}, {}};
+static c3_c* _140_hex_de_json_ha[] = {
+  "db68672e5792e5b862e4d6584daff0df2bc84b55b3c3241bd6c6a9c62b803dbe",
+  0
+};
+
 static u3j_harm _140_hex_mimes_base16_en_a[] = {{".2", u3we_en_base16}, {}};
 static c3_c* _140_hex_mimes_base16_en_ha[] = {
   "669807766b6802719769fcbfe149d77fb352fcf0922afaf35dc4ab8c201d84e5",
@@ -473,22 +479,22 @@ static c3_c* _140_hex_ripe_ha[] = {
 
 
 static u3j_core _140_hex_d[] =
-{ { "lore",   63, _140_hex_lore_a, 0, _140_hex_lore_ha },
-  { "leer",   63, _140_hex_leer_a, 0, _140_hex_leer_ha },
-  { "loss",   63, _140_hex_loss_a, 0, _140_hex_loss_ha },
-  { "lune",  127, _140_hex_lune_a, 0, _140_hex_lune_ha },
+{ { "lore",     63, _140_hex_lore_a,    0, _140_hex_lore_ha    },
+  { "leer",     63, _140_hex_leer_a,    0, _140_hex_leer_ha    },
+  { "loss",     63, _140_hex_loss_a,    0, _140_hex_loss_ha    },
+  { "lune",    127, _140_hex_lune_a,    0, _140_hex_lune_ha    },
+  { "de-json", 127, _140_hex_de_json_a, 0, _140_hex_de_json_ha },
 
-  { "coed",   63, 0, _140_hex_coed_d, _140_hex_coed_ha },
-  { "aes",    31, 0, _140_hex_aes_d, _140_hex_aes_ha },
-
+  { "coed",   63, 0, _140_hex_coed_d,  _140_hex_coed_ha  },
+  { "aes",    31, 0, _140_hex_aes_d,   _140_hex_aes_ha   },
   { "hmac",   63, 0, _140_hex_hmac_d,  _140_hex_hmac_ha  },
   { "argon",  31, 0, _140_hex_argon_d, _140_hex_argon_ha },
   { "blake",  31, 0, _140_hex_blake_d, _140_hex_blake_ha },
   { "kecc",   31, 0, _140_hex_kecc_d,  no_hashes },
   { "ripemd", 31, 0, _140_hex_ripe_d,  _140_hex_ripe_ha  },
   { "scr",    31, 0, _140_hex_scr_d,   _140_hex_scr_ha   },
-  { "secp",    6, 0, _140_hex_secp_d,  _140_hex_secp_ha },
-  { "mimes",  31, 0, _140_hex_mimes_d, _140_hex_mimes_ha  },
+  { "secp",    6, 0, _140_hex_secp_d,  _140_hex_secp_ha  },
+  { "mimes",  31, 0, _140_hex_mimes_d, _140_hex_mimes_ha },
   {}
 };
 static c3_c* _140_hex_ha[] = {

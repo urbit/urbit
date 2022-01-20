@@ -180,7 +180,6 @@
     ['fals' "n_value_incomplete_false"]
     ['nul' "n_value_incomplete_null"]
     ['tru' "n_value_incomplete_true"]
-    ['\EF\BB{}' "n_value_incomplete_UTF8_BOM"]
     ['\0C[]' "n_value_invalid_whitespace"]
     ['a' "n_value_lone_character"]
     ['\E5' "n_value_lone_invalid_UTF8"]
@@ -211,7 +210,6 @@
     ['[\E2\81\A0]' "n_value_U+2060_word_joined_array"]
     ['{\E2\81\A0}' "n_value_U+2060_word_joined_object"]
     ['\\u0020"asd"' "n_value_UTF16_outside_string"]
-    ['\EF\BB\BF' "n_value_UTF8_BOM_no_data"]
   ==
 ::  These are all inputs that should be accepted by a valid JSON parser.
 ::

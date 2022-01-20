@@ -147,6 +147,8 @@
     u3_noun u3qe_en_base16(u3_atom len, u3_atom dat);
     u3_noun u3qe_de_base16(u3_atom inp);
 
+    u3_noun u3qe_de_json(u3_atom);
+
     u3_noun u3qeo_raw(u3_atom, u3_atom);
 
     u3_noun u3qef_drg(u3_noun, u3_atom);
