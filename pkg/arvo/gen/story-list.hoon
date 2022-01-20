@@ -1,3 +1,4 @@
+/-  *story
 ::
 ::::
   ::
@@ -9,10 +10,9 @@
 ::  List all commit messages for the given desk
 ::
 =/  our  p.bec
-=/  story=(map tako:clay [@t @t])  
-  .^((map tako:clay [@t @t]) %cx /(scot %p our)/[syd]/(scot %da now)/story)
-=/  story-to-mime  .^($-((map tako:clay [@t @t]) mime) %cf /(scot %p our)/[syd]/(scot %da now)/story/mime)
-=/  story-mime   (story-to-mime story)
-=/  story-text  `@t`q.q.story-mime
+=/  tale=story  .^(story %cx /(scot %p our)/[syd]/(scot %da now)/story)
+=/  story-to-mime  .^($-(story mime) %cf /(scot %p our)/[syd]/(scot %da now)/story/mime)
+=/  tale-mime   (story-to-mime tale)
+=/  tale-text  `@t`q.q.tale-mime
 :-  %tang
-[story-text ~]
+[tale-text ~]
