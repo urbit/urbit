@@ -6,6 +6,7 @@
 // define to have each opcode printed as it executes,
 // along with some other debugging info
 #        undef VERBOSE_BYTECODE
+//#define VERBOSE_BYTECODE 1
 
 #if 0
 // Retained for debugging purposes.
@@ -385,121 +386,154 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 /* These must match the order in the section marked OPCODE TABLE,
  * and several opcodes "overflow" (from byte to short index) to
  * their successor, so order can matter here. */
-// general purpose
-#define HALT  0
-#define BAIL  1
-#define COPY  2
-#define SWAP  3
-#define TOSS  4
-#define AUTO  5
-#define AULT  6
-#define SNOC  7
-#define SNOL  8
-#define HEAD  9
-#define HELD 10
-#define TAIL 11
-#define TALL 12
-// fragment (keep)
-#define FABK 13
-#define FASK 14
-#define FIBK 15
-#define FISK 16
-// fragment (lose)
-#define FABL 17
-#define FASL 18
-#define FIBL 19
-#define FISL 20
-// literal (keep)
-#define LIT0 21
-#define LIT1 22
-#define LITB 23
-#define LITS 24
-#define LIBK 25
-#define LISK 26
-// literal (lose)
-#define LIL0 27
-#define LIL1 28
-#define LILB 29
-#define LILS 30
-#define LIBL 31
-#define LISL 32
-// nock
-#define NOLK 33
-#define NOCT 34
-#define NOCK 35
-// 3 & 4
-#define DEEP 36
-#define BUMP 37
-// equality
-#define SAM0 38
-#define SAM1 39
-#define SAMB 40
-#define SAMS 41
-#define SANB 42
-#define SANS 43
-#define SAME 44
-#define SALM 45
-#define SAMC 46
-// unconditional skips
-#define SBIP 47
-#define SIPS 48
-#define SWIP 49
-// conditional skips
-#define SBIN 50
-#define SINS 51
-#define SWIN 52
-// nock 9
-#define KICB 53
-#define KICS 54
-#define TICB 55
-#define TICS 56
-// nock 11
-#define WILS 57
-#define WISH 58
-// hint processing
-#define BUSH 59
-#define SUSH 60
-#define DROP 61
-#define HECK 62
-#define SLOG 63
-// fast (keep)
-#define BAST 64
-#define SAST 65
-// fast (lose)
-#define BALT 66
-#define SALT 67
-// memo (keep)
-#define SKIB 68
-#define SKIS 69
-// memo (lose)
-#define SLIB 70
-#define SLIS 71
-#define SAVE 72
-// before formula
-#define HILB 73  //  atomic,    byte
-#define HILS 74  //  atomic,    short
-#define HINB 75  //  arbitrary, byte
-#define HINS 76  //  arbitrary, short
-// after formula
-#define HILK 77  //  atomic,    keep
-#define HILL 78  //  atomic,    lose
-#define HINK 79  //  arbitrary, keep
-#define HINL 80  //  arbitrary, lose
-// nock 10
-#define MUTH 81
-#define KUTH 82
-#define MUTT 83
-#define KUTT 84
-#define MUSM 85
-#define KUSM 86
-#define MUTB 87
-#define MUTS 88
-#define MITB 89
-#define MITS 90
-#define KUTB 91
-#define KUTS 92
-#define KITB 93
-#define KITS 94
+
+// size defs for this table:
+  // c3_y byte:    8 bit unsigned in
+  // c3_s short:  16 bit unsigned in
+  // c3_l little: 32 bit unsigned int, used as 31 bit int
+  // c3_m mote:   like little, but promises to be a 4-char keyword
+  // c3_w word:   32 unsigned int, but not promising to be mote or little
+
+// opcodes:
+  // op-0: this bytecode is an expansion of a nock op code
+  // op99: "-"
+  // np-0: this bytecode is related a specific to a nock op code,
+  //       but is not an expansion
+  // np99: "-"
+// stack management strategies:
+  //
+
+//      name code  nock mem  size purpose
+#define HALT  0 // n/a  n/a  n/a  terminator; end of bytcode program
+#define BAIL  1 // n/a  n/a  n/a  deterministic crash
+
+#define COPY  2 // ???? ???? ???? stack manipulation
+#define SWAP  3 // ???? ???? ???? stack manipulation
+#define TOSS  4 // ???? ???? ???? stack manipulation
+
+#define AUTO  5 // ???? keep ???? auto-cons roll out
+#define AULT  6 // ???? lose ???? ????
+#define SNOC  7 // ???? keep ???? ????
+#define SNOL  8 // ???? lose ???? ????
+
+#define HEAD  9 // op-0 keep ???? ????
+#define HELD 10 // op-0 lose ???? ????
+#define TAIL 11 // op-0 keep ???? ????
+#define TALL 12 // op-0 lose ???? ????
+
+#define FABK 13 // op-0 keep c3_y fragment(?)
+#define FASK 14 // op-0 keep c3_s fragment(?)
+#define FIBK 15 // op-0 keep c3_y fragment(?)
+#define FISK 16 // op-0 keep c3_s fragment(?)
+
+#define FABL 17 // op-0 lose c3_y fragment(?)
+#define FASL 18 // op-0 lose c3_s fragment(?)
+#define FIBL 19 // op-0 lose c3_y fragment(?)
+#define FISL 20 // op-0 lose c3_s fragment(?)
+
+#define LIT0 21 // op-1 keep ???? literal(?)
+#define LIT1 22 // op-1 keep ???? literal(?)
+#define LITB 23 // op-1 keep c3_y literal(?)
+#define LITS 24 // op-1 keep c3_s literal(?)
+
+#define LIBK 25 // op-1 keep c3_y literal(?)
+#define LISK 26 // op-1 keep c3_s literal(?)
+
+#define LIL0 27 // op-1 lose ???? litteral(?)
+#define LIL1 28 // op-1 lose ???? litteral(?)
+#define LILB 29 // op-1 lose c3_y litteral(?)
+#define LILS 30 // op-1 lose c3_s litteral(?)
+
+#define LIBL 31 // op-1 lose c3_y litteral(?)
+#define LISL 32 // op-1 lose c3_s litteral(?)
+
+#define NOLK 33 // op-2 lose ???? nock(?)
+#define NOCT 34 // op-2 lose ???? nock(?)
+#define NOCK 35 // op-2 lose ???? nock(?)
+
+#define DEEP 36 // op-3 ???? ???? ????
+#define BUMP 37 // op-4 ???? ???? ????
+
+#define SAM0 38 // op-5 ???? ???? equality(?)
+#define SAM1 39 // op-5 ???? ???? equality(?)
+#define SAMB 40 // op-5 ???? c3_b equality(?)
+#define SAMS 41 // op-5 ???? c3_s equality(?)
+
+#define SANB 42 // op-5 ???? c3_b equality(?)
+#define SANS 43 // op-5 ???? c3_s equality(?)
+
+#define SAME 44 // op-5 ???? ???? equality(?)
+#define SALM 45 // op-5 ???? ???? equality(?)
+#define SAMC 46 // op-5 ???? ???? equality(?)
+
+#define SBIP 47 // np-6 ???? c3_b unconditional skip
+#define SIPS 48 // np-6 ???? c3_s unconditional skip
+#define SWIP 49 // np-6 ???? c3_l unconditional skip
+
+#define SBIN 50 // np-6 ???? c3_b conditional skip
+#define SINS 51 // np-6 ???? c3_s conditional skip
+#define SWIN 52 // np-6 ???? c3_l conditional skip
+
+#define KICB 53 // op-9 ???? c3_b ????
+#define KICS 54 // op-9 ???? c3_s ????
+#define TICB 55 // op-9 ???? c3_b ????
+#define TICS 56 // op-9 ???? c3_s ????
+
+#define WILS 57 // op12 ???? ???? ????
+#define WISH 58 // op12 ???? ???? ????
+
+#define BUSH 59 // ?p11 ???? c3_b hint processing(?)
+#define SUSH 60 // ?p11 ???? c3_s hint processing(?)
+
+#define DROP 61 // ?p11 ???? ???? hint processing(?)
+#define HECK 62 // ?p11 ???? ???? hint processing(?)
+#define SLOG 63 // ?p11 ???? ???? hint processing(?)
+
+#define BAST 64 // ???? keep c3_b fast(?)
+#define SAST 65 // ???? keep c3_s fast(?)
+
+#define BALT 66 // ???? lose c3_b fast(?)
+#define SALT 67 // ???? lose c3_s fast(?)
+
+#define SKIB 68 // ???? keep c3_b memo(?)
+#define SKIS 69 // ???? keep c3_s memo(?)
+#define SLIB 70 // ???? lose c3_b memo(?)
+#define SLIS 71 // ???? lose c3_s memo(?)
+
+#define SAVE 72 // ???? lose ???? memo(?)
+
+#define HILB 73 // ???? ???? c3_b before formula, atomic
+#define HILS 74 // ???? ???? c3_s before formula, atomic
+#define HINB 75 // ???? ???? c3_b before formula, arbitrary
+#define HINS 76 // ???? ???? c3_s before formula, arbitrary
+
+#define HILK 77 // ???? keep ???? after formula, atomic
+#define HILL 78 // ???? lose ???? after formula, atomic
+#define HINK 79 // ???? keep ???? after formula, arbitrary
+#define HINL 80 // ???? lose ???? after formula, arbitrary
+
+#define MUTH 81 // op10 ???? ???? ????
+#define KUTH 82 // op10 ???? ???? ????
+#define MUTT 83 // op10 ???? ???? ????
+#define KUTT 84 // op10 ???? ???? ????
+
+#define MUSM 85 // op10 ???? ???? ????
+#define KUSM 86 // op10 ???? ???? ????
+
+#define MUTB 87 // op10 ???? c3_b ????
+#define MUTS 88 // op10 ???? c3_s ????
+#define MITB 89 // op10 ???? c3_b ????
+#define MITS 90 // op10 ???? c3_s ???? seems unused in codebase
+
+#define KUTB 91 // op10 ???? c3_b ????
+#define KUTS 92 // op10 ???? c3_s ????
+#define KITB 93 // op10 ???? c3_b ????
+#define KITS 94 // op10 ???? c3_s ???? seems unused in codebase
+
+//TODO: where are op-7 & op-8?
+
+// not an opcode?
+// all codes must be lower than this number?
 #define LAST 95
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
@@ -1021,6 +1055,8 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         return _n_comp(ops, nef, los_o, tel_o);
       }
 
+      case c3__orry:
+      case c3__xray:
       case c3__bout: {
         u3_noun fen = u3_nul;
         c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
@@ -1056,6 +1092,8 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
 
+          case c3__orry:
+          case c3__xray:
           case c3__bout: {
             u3_noun fen = u3_nul;
             c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
@@ -1685,6 +1723,18 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
+// move this stuff to another c file
+
+u3_noun bytecode_data() {
+  u3_noun foo;
+  return foo;
+}
+
+void slog_bytecode(u3_noun before, u3_noun after, c3_l pri_l) {
+}
+
+// end of move this stuff
+
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
 **            hin: [hint-atom, formula]. TRANSFER
 **            bus: subject. RETAIN
@@ -1699,6 +1749,14 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
   if ( c3__bout == u3h(hin) ) {
     u3_atom now = u3i_chub(u3t_trace_time());
     *out = u3i_cell(u3h(hin), now);
+  }
+  else if ( c3__orry == u3h(hin) ) {
+    //TODO: add some code
+  }
+  else if ( c3__xray == u3h(hin) ) {
+    // not sure of the shape of info
+    u3_noun info = bytecode_data();
+    *out = u3i_cell(u3h(hin), info);
   }
   else {
     *out = u3_nul;
@@ -1723,6 +1781,12 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
     u3t_slog(u3nc(0, u3i_string(str_c)));
     u3z(delta);
   }
+  else if ( (c3y == u3r_cell(tok, &p_tok, &q_tok)) && (c3__xray == p_tok) ) {
+    u3_noun info = bytecode_data();
+    c3_c str_c[64];
+    snprintf(str_c, 63, "bytecode of");
+    slog_bytecode(u3k(q_tok), info, 0);
+  }
   else {
     c3_assert( u3_nul == tok );
   }
@@ -1745,6 +1809,10 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
   if ( c3__bout == u3h(hin) ) {
     u3_atom now = u3i_chub(u3t_trace_time());
     *clu = u3i_trel(u3h(hin), *clu, now);
+  }
+  else if ( c3__xray == u3h(hin) ) {
+    u3_noun info = bytecode_data();
+    *clu = u3i_trel(u3h(hin), *clu, info);
   }
   else {
     u3z(*clu);
@@ -1794,6 +1862,27 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
     );
 
     u3z(delta);
+  }
+  else if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok)) &&
+      (c3__xray == p_tok)
+  ) {
+    // unpack q_tok to get the priority integer and the tank
+    // p_q_tok is the priority, q_q_tok is the tank we will work with
+    u3_noun p_q_tok, q_q_tok;
+    c3_assert(c3y == u3r_cell(q_tok, &p_q_tok, &q_q_tok));
+
+    // format the timing report
+    c3_c str_c[64];
+    snprintf(str_c, 63, "bytecode");
+
+    // join the bytecode report with the original tank from q_q_tok like so:
+    // "q_q_tok: report"
+    // prepend the priority to form a cell of the same shape q_tok
+    // send this to ut3_slog so that it can be logged out
+    c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
+    //dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
+    u3_noun info = bytecode_data();
+    slog_bytecode(r_tok, info, pri_l);
   }
   else {
     c3_assert( u3_nul == tok );
@@ -2265,7 +2354,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-        fprintf(stderr, "\r\nhead kick jump: %u, sp: %p\r\n", u3r_at(sit_u->axe, cor), top);
+        fprintf(stderr, "\r\nhead kick jump: %u, sp: %p\r\n", u3r_at(sit_u->axe, o), top);
         _n_print_byc(pog, ip_w);
 #endif
         _n_push(mov, off, o);
@@ -2297,7 +2386,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-        fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", u3x_at(sit_u->axe, o);, top);
+        fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", u3x_at(sit_u->axe, o), top);
         _n_print_byc(pog, ip_w);
 #endif
       }
