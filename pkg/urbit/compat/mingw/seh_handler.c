@@ -12,7 +12,7 @@ EXCEPTION_DISPOSITION _mingw_exception_filter(
 {
     if (ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION &&
         ExceptionRecord->ExceptionInformation[0] == 1 &&
-        u3_el_fault((void*)ExceptionRecord->ExceptionInformation[1], 1))
+        u3_snap_fault((void*)ExceptionRecord->ExceptionInformation[1], 1))
     {
         return ExceptionContinueExecution;
     }

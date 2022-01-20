@@ -744,7 +744,7 @@ _serf_writ_live_save(u3_serf* sef_u, c3_d eve_d)
     exit(1);
   }
 
-  u3_el_save();
+  u3_snap_save();
 }
 
 /* u3_serf_live(): apply %live command [com], producing *ret on c3y.
@@ -815,7 +815,7 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
         return c3n;
       }
 
-      u3_el_save();
+      u3_snap_save();
       u3_serf_grab();
 
       *ret = u3nc(c3__live, u3_nul);
