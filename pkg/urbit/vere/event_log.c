@@ -62,7 +62,7 @@ struct {
 //==============================================================================
 
 //! Event log version number.
-#define u3e_version 1
+#define u3_el_version 1
 
 
 //==============================================================================
@@ -171,10 +171,10 @@ _el_patch_verify(u3_el_patch* pat_u)
 {
   c3_w i_w;
 
-  if ( u3e_version != pat_u->con_u->ver_y ) {
+  if ( u3_el_version != pat_u->con_u->ver_y ) {
     fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
                     pat_u->con_u->ver_y,
-                    u3e_version);
+                    u3_el_version);
     return c3n;
   }
 
@@ -381,7 +381,7 @@ _el_patch_compose(void)
     }
 
     pat_u->con_u = c3_malloc(sizeof(u3_el_control) + (pgs_w * sizeof(u3_el_line)));
-    pat_u->con_u->ver_y = u3e_version;
+    pat_u->con_u->ver_y = u3_el_version;
     pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {
@@ -675,7 +675,7 @@ _el_backup(void)
 
 //! Handle a memory event with libsigsegv protocol.
 c3_i
-u3e_fault(void* adr_v, c3_i ser_i)
+u3_el_fault(void* adr_v, c3_i ser_i)
 {
   //  Let the stack overflow handler run.
   if ( 0 == ser_i ) {
@@ -749,7 +749,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
 //! process in a separate thread, but we'd need to wait until that finishes
 //! before we try to make another snapshot.
 void
-u3e_save(void)
+u3_el_save(void)
 {
   u3_el_patch* pat_u;
 
@@ -795,7 +795,7 @@ u3e_save(void)
 
 //! Start the checkpointing system.
 c3_o
-u3e_live(c3_o nuu_o, c3_c* dir_c)
+u3_el_live(c3_o nuu_o, c3_c* dir_c)
 {
   pol_u.dir_c = dir_c;
   pol_u.nor_u.nam_c = "north";
@@ -849,7 +849,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       ** snapshot on a future boot for which the images are not empty.
       */
       if ( (0 == pol_u.nor_u.pgs_w) && (0 == pol_u.sou_u.pgs_w) ) {
-        u3e_foul();
+        u3_el_foul();
         u3l_log("live: logical boot\r\n");
         nuu_o = c3y;
       }
@@ -864,9 +864,9 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
 
 //! Disable page tracking, which makes the entire loom writable.
 c3_o
-u3e_yolo(void)
+u3_el_yolo(void)
 {
-  //    NB: u3e_save() will reinstate protection flags
+  //    NB: u3_el_save() will reinstate protection flags
   //
   if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
     return c3n;
@@ -877,7 +877,7 @@ u3e_yolo(void)
 
 //! Dirty all pages of the loom.
 void
-u3e_foul(void)
+u3_el_foul(void)
 {
   memset((void*)pol_u.dit_w, 0xff, sizeof(pol_u.dit_w));
 }
