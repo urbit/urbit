@@ -14,38 +14,38 @@
 typedef struct {
   c3_w pag_w;
   c3_w mug_w;
-} u3_snap_line;
+} _line;
 
 //! Memory change, control file.
 typedef struct {
-  c3_w       ver_y;       //!< version number
-  c3_w       nor_w;       //!< new page count north
-  c3_w       sou_w;       //!< new page count south
-  c3_w       pgs_w;       //!< number of changed pages
-  u3_snap_line mem_u[0];  //!< per page
-} u3_snap_control;
+  c3_w  ver_w;     //!< version number
+  c3_w  nor_w;     //!< new page count north
+  c3_w  sou_w;     //!< new page count south
+  c3_w  pgs_w;     //!< number of changed pages
+  _line mem_u[0];  //!< per page
+} _control;
 
 //! Memory change, top level.
 typedef struct {
-  c3_i           ctl_i;
-  c3_i           mem_i;
-  u3_snap_control* con_u;
-} u3_snap_patch;
+  c3_i      ctl_i;
+  c3_i      mem_i;
+  _control* con_u;
+} _patch;
 
 //! Memory segment, open file.
 typedef struct {
   c3_c* nam_c;  //!< segment name
   c3_i  fid_i;  //!< open file, or 0
   c3_w  pgs_w;  //!< length in pages
-} u3_snap_image;
+} _image;
 
 //! Entire memory system.
 typedef struct {
-  c3_c*       dir_c;                  //!< path to
-  c3_w        dit_w[u3a_pages >> 5];  //!< touched since last save
-  u3_snap_image nor_u;                //!< north segment
-  u3_snap_image sou_u;                //!< south segment
-} u3_snap_pool;
+  c3_c*  dir_c;                  //!< path to
+  c3_w   dit_w[u3a_pages >> 5];  //!< touched since last save
+  _image nor_u;                  //!< north segment
+  _image sou_u;                  //!< south segment
+} _pool;
 
 
 //==============================================================================
@@ -61,7 +61,7 @@ typedef struct {
 //==============================================================================
 
 //! Global memory control.
-static u3_snap_pool pol_u;
+static _pool pol_u;
 
 #ifdef U3_SNAPSHOT_VALIDATION
 //! Image check
@@ -94,7 +94,7 @@ static struct {
 //! @return c3y  image file was successfully opened (or created).
 //! @return c3n  image file could not be opened (or created).
 static c3_o
-_snap_image_open(u3_snap_image* img_u)
+_snap_image_open(_image* img_u)
 {
   c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
@@ -148,7 +148,7 @@ _snap_image_open(u3_snap_image* img_u)
 //!
 //! @param[in] pat_u  patch struct to free. Can be NULL.
 static void
-_snap_patch_delete(u3_snap_patch* pat_u)
+_snap_patch_delete(_patch* pat_u)
 {
   if ( 0 != pat_u ) {
     c3_free(pat_u->con_u);
@@ -174,13 +174,13 @@ _snap_patch_delete(u3_snap_patch* pat_u)
 //! @return c3n  patch failed verification because of a version mismatch, a
 //!              filesystem error, or a mug mismatch.
 static c3_o
-_snap_patch_verify(u3_snap_patch* pat_u)
+_snap_patch_verify(_patch* pat_u)
 {
   c3_w i_w;
 
-  if ( u3_snap_version != pat_u->con_u->ver_y ) {
+  if ( u3_snap_version != pat_u->con_u->ver_w ) {
     fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
-                    pat_u->con_u->ver_y,
+                    pat_u->con_u->ver_w,
                     u3_snap_version);
     return c3n;
   }
@@ -221,10 +221,10 @@ _snap_patch_verify(u3_snap_patch* pat_u)
 //! @return pat_u  successfully opened patch.
 //! @return NULL   patch could not be opened because of a filesystem error or
 //!                mug mismatch.
-static u3_snap_patch*
+static _patch*
 _snap_patch_open(void)
 {
-  u3_snap_patch* pat_u = 0;
+  _patch* pat_u = 0;
   c3_c ful_c[8193];
   c3_i ctl_i, mem_i;
 
@@ -246,12 +246,12 @@ _snap_patch_open(void)
     _snap_patch_delete(pat_u);
     return 0;
   }
-  pat_u = c3_malloc(sizeof(u3_snap_patch));
+  pat_u = c3_malloc(sizeof(_patch));
   pat_u->ctl_i = ctl_i;
   pat_u->mem_i = mem_i;
   pat_u->con_u = 0;
 
-  // Read u3_snap_control struct from patch's control file.
+  // Read _control struct from patch's control file.
   {
     struct stat buf_u;
     c3_assert(-1 != fstat(pat_u->ctl_i, &buf_u));
@@ -260,8 +260,7 @@ _snap_patch_open(void)
     pat_u->con_u = c3_malloc(len_w);
 
     if ( len_w != read(pat_u->ctl_i, pat_u->con_u, len_w) ||
-         len_w != sizeof(u3_snap_control) +
-                  (pat_u->con_u->pgs_w * sizeof(u3_snap_line)) )
+         len_w != sizeof(_control) + (pat_u->con_u->pgs_w * sizeof(_line)) )
     {
       _snap_patch_delete(pat_u);
       return 0;
@@ -276,7 +275,7 @@ _snap_patch_open(void)
 
 //! Save a page, producing a new page counter.
 static c3_w
-_snap_patch_save_page(u3_snap_patch* pat_u,
+_snap_patch_save_page(_patch* pat_u,
                     c3_w         pag_w,
                     c3_w         pgc_w)
 {
@@ -314,7 +313,7 @@ _snap_patch_save_page(u3_snap_patch* pat_u,
 }
 
 //! Make and write current patch.
-static u3_snap_patch*
+static _patch*
 _snap_patch_compose(void)
 {
   c3_w pgs_w = 0;
@@ -359,7 +358,7 @@ _snap_patch_compose(void)
     return 0;
   }
   else {
-    u3_snap_patch* pat_u = c3_malloc(sizeof(u3_snap_patch));
+    _patch* pat_u = c3_malloc(sizeof(_patch));
     c3_w i_w, pgc_w;
 
     // Create and open the patch's control and memory files.
@@ -387,8 +386,8 @@ _snap_patch_compose(void)
       }
     }
 
-    pat_u->con_u = c3_malloc(sizeof(u3_snap_control) + (pgs_w * sizeof(u3_snap_line)));
-    pat_u->con_u->ver_y = u3_snap_version;
+    pat_u->con_u = c3_malloc(sizeof(_control) + (pgs_w * sizeof(_line)));
+    pat_u->con_u->ver_w = u3_snap_version;
     pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {
@@ -402,9 +401,9 @@ _snap_patch_compose(void)
     pat_u->con_u->sou_w = sou_w;
     pat_u->con_u->pgs_w = pgc_w;
 
-    // Write u3_snap_control struct to patch's control file.
+    // Write _control struct to patch's control file.
     {
-      c3_w len_w = sizeof(u3_snap_control) + (pat_u->con_u->pgs_w * sizeof(u3_snap_line));
+      c3_w len_w = sizeof(_control) + (pat_u->con_u->pgs_w * sizeof(_line));
       c3_assert(len_w == write(pat_u->ctl_i, pat_u->con_u, len_w));
     }
     return pat_u;
@@ -413,7 +412,7 @@ _snap_patch_compose(void)
 
 //! Make sure patch is synced to disk.
 static void
-_snap_patch_sync(u3_snap_patch* pat_u)
+_snap_patch_sync(_patch* pat_u)
 {
   if ( -1 == c3_sync(pat_u->ctl_i) ) {
     fprintf(stderr, "loom: control file sync failed: %s\r\n",
@@ -430,7 +429,7 @@ _snap_patch_sync(u3_snap_patch* pat_u)
 
 //! Make sure image is synced to disk.
 static void
-_snap_image_sync(u3_snap_image* img_u)
+_snap_image_sync(_image* img_u)
 {
   if ( -1 == c3_sync(img_u->fid_i) ) {
     fprintf(stderr, "loom: image (%s) sync failed: %s\r\n",
@@ -442,7 +441,7 @@ _snap_image_sync(u3_snap_image* img_u)
 
 //! Resize image, truncating if it shrunk.
 static void
-_snap_image_resize(u3_snap_image* img_u, c3_w pgs_w)
+_snap_image_resize(_image* img_u, c3_w pgs_w)
 {
   if ( img_u->pgs_w > pgs_w ) {
     if ( ftruncate(img_u->fid_i, pgs_w << (u3a_page + 2)) ) {
@@ -458,7 +457,7 @@ _snap_image_resize(u3_snap_image* img_u, c3_w pgs_w)
 
 //! Apply patch to images.
 static void
-_snap_patch_apply(u3_snap_patch* pat_u)
+_snap_patch_apply(_patch* pat_u)
 {
   c3_w i_w;
 
@@ -516,7 +515,7 @@ _snap_patch_apply(u3_snap_patch* pat_u)
 
 //! Apply image to memory.
 static void
-_snap_image_blit(u3_snap_image* img_u,
+_snap_image_blit(_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
@@ -551,7 +550,7 @@ _snap_image_blit(u3_snap_image* img_u,
 #ifdef U3_SNAPSHOT_VALIDATION
 //! Compare image to memory.
 static void
-_snap_image_fine(u3_snap_image* img_u,
+_snap_image_fine(_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
@@ -586,7 +585,7 @@ _snap_image_fine(u3_snap_image* img_u,
 
 //! TODO(peter): comment once interface freezes.
 static c3_o
-_snap_image_copy(u3_snap_image* fom_u, u3_snap_image* tou_u)
+_snap_image_copy(_image* fom_u, _image* tou_u)
 {
   c3_w i_w;
 
@@ -632,8 +631,8 @@ _snap_image_copy(u3_snap_image* fom_u, u3_snap_image* tou_u)
 static void
 _snap_backup(void)
 {
-  u3_snap_image nop_u = { .nam_c = "north", .pgs_w = 0 };
-  u3_snap_image sop_u = { .nam_c = "south", .pgs_w = 0 };
+  _image nop_u = { .nam_c = "north", .pgs_w = 0 };
+  _image sop_u = { .nam_c = "south", .pgs_w = 0 };
   c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
@@ -758,7 +757,7 @@ u3_snap_fault(void* adr_v, c3_i ser_i)
 void
 u3_snap_save(void)
 {
-  u3_snap_patch* pat_u;
+  _patch* pat_u;
 
   if ( u3C.wag_w & u3o_dryrun ) {
     return;
@@ -825,7 +824,7 @@ u3_snap_live(c3_o nuu_o, c3_c* dir_c)
       exit(1);
     }
     else {
-      u3_snap_patch* pat_u;
+      _patch* pat_u;
 
       /* Load any patch files; apply them to images.
       */
