@@ -4395,10 +4395,11 @@
       (cook |=(a=@ [a ~]) bus)
     ::                                                  ::  ++stri:de-json:html
     ++  stri                                            ::  string
+      %+  sear
+        |=  a=cord
+        ?.  (sune a)  ~
+        (some a)
       (cook crip (ifix [doq doq] (star jcha)))
-    ::                                                  ::  ++tops:de-json:html
-    ++  tops                                            ::  strict value
-      ;~(pose abox obox)
     ::                                                  ::  ++spac:de-json:html
     ++  spac                                            ::  whitespace
       (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
@@ -4445,6 +4446,67 @@
           ==
         ==
       --
+    ::                                                  ::  ++utfe:de-json:html
+    ++  utfe                                            ::  UTF-8 sequence
+      ;~  less  doq  bas
+        =*  qua
+          %+  cook
+          |=  [a=@ b=@ c=@ d=@]
+            :((cury cat 3) a b c d)
+          ;~  pose
+            ;~  plug
+              (shim 241 243)
+              (shim 128 191)
+              (shim 128 191)
+              (shim 128 191)
+            ==
+            ;~  plug
+              (just '\F0')
+              (shim 144 191)
+              (shim 128 191)
+              (shim 128 191)
+            ==
+            ;~  plug
+              (just '\F4')
+              (shim 128 143)
+              (shim 128 191)
+              (shim 128 191)
+            ==
+          ==
+        =*  tre
+          %+  cook
+          |=  [a=@ b=@ c=@]
+            :((cury cat 3) a b c)
+          ;~  pose
+            ;~  plug
+              ;~  pose
+                (shim 225 236)
+                (shim 238 239)
+              ==
+              (shim 128 191)
+              (shim 128 191)
+            ==
+            ;~  plug
+              (just '\E0')
+              (shim 160 191)
+              (shim 128 191)
+            ==
+            ;~  plug
+              (just '\ED')
+              (shim 128 159)
+              (shim 128 191)
+            ==
+          ==
+        =*  dos
+          %+  cook
+          |=  [a=@ b=@]
+            (cat 3 a b)
+          ;~  plug
+            (shim 194 223)
+            (shim 128 191)
+          ==
+        ;~(pose qua tre dos)
+      ==
     ::                                                  ::  ++wish:de-json:html
     ++  wish                                            ::  with whitespace
       |*(sef=rule ;~(pfix spac sef))
