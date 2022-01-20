@@ -1,4 +1,4 @@
-//! @file event_log.c
+//! @file snapshot.c
 
 #include "all.h"
 #include <errno.h>

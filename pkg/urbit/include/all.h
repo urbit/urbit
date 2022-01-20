@@ -36,4 +36,4 @@
 
   /** vere: event stream environment.
   **/
-#   include "vere/event_log.h"
+#   include "vere/snapshot.h"
