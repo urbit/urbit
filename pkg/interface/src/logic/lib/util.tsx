@@ -2,11 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import { patp2dec } from 'urbit-ob';
 import f  from 'lodash/fp';
-import { Association, Contact, Patp } from '@urbit/api';
+import { Association, Patp } from '@urbit/api';
 import { enableMapSet } from 'immer';
 /* eslint-disable max-lines */
 import anyAscii from 'any-ascii';
-import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import bigInt, { BigInteger } from 'big-integer';
 import { IconRef, Workspace } from '~/types';
 import { Text } from '@tlon/indigo-react';
@@ -278,8 +277,17 @@ export function writeText(str: string | null): Promise<void> {
   });
 }
 
-export const citeNickname = (ship: string, showNickname?: boolean, nickname?: string) =>
-  showNickname && nickname ? `${nickname} - ${cite(ship)}` : cite(ship);
+export const citeNickname = (ship: string, showNickname?: boolean, nickname?: string) => {
+  if (showNickname) {
+    if (ship.length === 27) {
+      return <>{nickname} {cite(ship)}</>;
+    } else {
+      return `${nickname} ${cite(ship)}`;
+    }
+  }
+
+  return cite(ship);
+};
 
 // trim patps to match dojo, chat-cli
 export function cite(ship: string): string | Element {

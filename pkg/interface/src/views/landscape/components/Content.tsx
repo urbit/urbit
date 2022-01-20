@@ -4,7 +4,6 @@ import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import useMetadataState from '~/logic/state/metadata';
-import LaunchApp from '~/views/apps/launch/App';
 import Notifications from '~/views/apps/notifications/notifications';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 import Profile from '~/views/apps/profile/profile';
@@ -51,6 +50,7 @@ export const Content = (props) => {
   }, [history.goForward]));
 
   useShortcut('navBack', useCallback((e) => {
+    console.log('HERE')
     e.preventDefault();
     e.stopImmediatePropagation();
     history.goBack();

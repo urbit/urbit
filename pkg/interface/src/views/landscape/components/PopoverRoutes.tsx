@@ -18,7 +18,6 @@ export function PopoverRoutes(
   } & RouteComponentProps
 ): ReactElement {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
-  const innerRef = useRef(null);
 
   const onDismiss = useCallback(() => {
     props.history.push(props.baseUrl);
@@ -41,7 +40,6 @@ export function PopoverRoutes(
           return (
             <ModalOverlay
               spacing={[3,5,7]}
-              ref={innerRef}
               border={1}
               borderColor="washedGray"
               borderRadius={1}

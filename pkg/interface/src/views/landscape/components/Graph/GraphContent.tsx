@@ -283,7 +283,7 @@ const renderers = {
   },
   paragraph: ({ children, collapsed = false }) => {
     const containerStyle = collapsed
-      ? { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }
+      ? { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxHeight: '2em' }
       : {};
     return (
       <Box display="block" {...containerStyle}>

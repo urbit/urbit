@@ -1,7 +1,7 @@
-import React, { ReactElement, useCallback, useState } from 'react';
-import { Associations, Graph, Unreads } from '@urbit/api';
+import React, { ReactElement, useCallback, useState, useEffect } from 'react';
+import { Associations, Graph, resourceAsPath, Unreads } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
-import _, { keyBy } from 'lodash';
+import _ from 'lodash';
 
 import { SidebarAssociationItem, SidebarDmItem, SidebarItemBase, SidebarPendingItem } from './SidebarItem';
 import useGraphState, { useInbox } from '~/logic/state/graph';
@@ -9,13 +9,15 @@ import useHarkState from '~/logic/state/hark';
 import { alphabeticalOrder, getResourcePath, modulo } from '~/logic/lib/util';
 import { SidebarListConfig, SidebarSort } from './types';
 import { Workspace } from '~/types/workspace';
-import useMetadataState from '~/logic/state/metadata';
+import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
 import useGroupState from '~/logic/state/group';
 import useInviteState from '~/logic/state/invite';
 import { getGraphUnreads, sortGroupsAlph } from '~/views/apps/launch/components/Groups';
 import { Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
+import { useQuery } from '~/logic/lib/useQuery';
+import { IS_MOBILE } from '~/logic/lib/platform';
 
 function dmUnreads(unreads) {
   let unreadCount = 0;
@@ -98,7 +100,7 @@ function getItems(associations: Associations, workspace: Workspace, inbox: Graph
     : inbox.keys().map(x => patp(x.toString()));
   const pend = workspace.type !== 'messages'
     ? []
-    : pending
+    : pending;
 
   return _.union(direct, pend, filtered);
 }
@@ -113,6 +115,12 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   const isMessages = workspace.type === 'messages';
   const groupSelected = (isMessages && baseUrl.includes('messages')) || (workspace.type === 'group' && baseUrl.includes(workspace.group));
   const [collapsed, setCollapsed] = useState(!groupSelected && !isMessages);
+
+  useEffect(() => {
+    if (workspace.type === 'group' && window.location.href.includes(workspace.group)) {
+      setCollapsed(false);
+    }
+  }, [window.location.href, workspace]);
 
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(s => s.groups);
@@ -188,7 +196,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
 
   return (
     <Box>
-      <SidebarItemBase
+      {!(IS_MOBILE && isMessages) && <SidebarItemBase
         to={to}
         selected={groupSelected}
         hasUnread={hasUnread}
@@ -197,7 +205,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
         title={title || 'Messages'}
         hasNotification={hasNotification}
         pending={isPending}
-        onClick={() => setCollapsed(!collapsed)}
+        onClick={() => setCollapsed(isMessages ? false : !collapsed)}
       >
         {!isMessages && (
           <Icon
@@ -212,7 +220,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
             icon={collapsed ? 'TriangleEast' : 'TriangleSouth'}
           />
         )}
-      </SidebarItemBase>
+      </SidebarItemBase>}
       {!collapsed && (
         <Box>
           {ordered.map((pathOrShip) => {
@@ -245,7 +253,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
                 fontSize="13px"
                 workspace={workspace}
                 unreadCount={count + each.length}
-                hasNotification={unseen?.[`landscape${pathAsGraph}/mention`]}
+                hasNotification={Boolean(unseen?.[`landscape${pathAsGraph}/mention`])}
                 indent={isMessages ? 0.5 : 1}
               />
               );
@@ -253,6 +261,38 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
         </Box>
       )}
     </Box>
+  );
+}
+
+interface PendingSidebarGroupProps {
+  path: string;
+}
+
+function PendingSidebarGroup({ path }: PendingSidebarGroupProps) {
+  const history = useHistory();
+  const { preview, error } = usePreview(path);
+  const title = preview?.metadata?.title || path;
+  const { toQuery } = useQuery();
+  const onClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    history.push(toQuery({ "join-kind": "groups", "join-path": path }))
+  };
+
+  const joining = useGroupState((s) => s.pendingJoin[path]?.progress);
+  const isJoining = Boolean(joining && joining !== 'done');
+
+  return (
+    <SidebarItemBase
+      to="/"
+      onClick={onClick}
+      title={title}
+      selected={false}
+      pending={isJoining}
+      hasUnread={false}
+      hasNotification={!joining}
+      isSynced={!joining}
+    />
   );
 }
 
@@ -271,6 +311,22 @@ export function SidebarGroupList({
   const groupList = Object.values(associations?.groups || {})
     .filter(e => e?.group in groups)
     .sort(sortGroupsAlph);
+
+  const joining = useGroupState((s) =>
+    _.omit(
+      _.pickBy(s.pendingJoin || {}, req => req.app === 'groups' && req.progress != 'abort'),
+      groupList.map((g) => g.group)
+    )
+  );
+  const invites = useInviteState(
+    (s) =>
+      Object.values(s.invites?.["groups"] || {}).map((inv) =>
+        resourceAsPath(inv.resource)
+      ) || []
+  );
+  const pending = _.union(invites, Object.keys(joining)).filter(group => {
+    return !(group in (groups?.groups || {})) && !(group in (associations.groups || {}))
+  });
 
   return (
     messages ? (
@@ -297,6 +353,7 @@ export function SidebarGroupList({
             />
           );
         })}
+        {pending.map((p) => <PendingSidebarGroup key={p} path={p} />)}
       </>
     )
   );

@@ -5,6 +5,7 @@ import {
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { roleForShip } from '~/logic/lib/group';
+import { IS_MOBILE } from '~/logic/lib/platform';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
@@ -45,6 +46,16 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
   const role = groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
   const focusMessages = props.baseUrl.includes('~landscape/messages');
+  let groupsHeight = 'calc(75% - 23px)';
+  let messagesHeight = 'calc(25% - 24px)';
+  if (IS_MOBILE && focusMessages) {
+    messagesHeight = 'calc(100% - 47px)';
+  } else if (IS_MOBILE) {
+    groupsHeight = 'calc(100% - 47px)';
+  } else if (focusMessages) {
+    groupsHeight = 'calc(50% - 24px)';
+    messagesHeight = 'calc(50% - 23px)';
+  }
 
   return (
     <Box>
@@ -54,7 +65,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         isAdmin={isAdmin}
         workspace={props.workspace}
       />
-      <ScrollbarLessCol
+      {(!IS_MOBILE || !focusMessages) && <ScrollbarLessCol
         display="flex"
         width="100%"
         gridRow="1/2"
@@ -65,7 +76,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         overflowY="scroll"
         fontSize={0}
         position="relative"
-        height={focusMessages ? 'calc(50% - 24px)' : 'calc(75% - 23px)'}
+        height={groupsHeight}
         borderBottom={1}
         borderBottomColor="lightGray"
         pb={1}
@@ -76,8 +87,8 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
           selected={selected}
           baseUrl={props.baseUrl}
         />
-      </ScrollbarLessCol>
-      <ScrollbarLessCol
+      </ScrollbarLessCol>}
+      {(!IS_MOBILE || focusMessages) && <ScrollbarLessCol
         display="flex"
         width="100%"
         gridRow="1/2"
@@ -88,7 +99,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         overflowY="scroll"
         fontSize={0}
         position="relative"
-        height={focusMessages ? 'calc(50% - 23px)' : 'calc(25% - 24px)'}
+        height={messagesHeight}
       >
         <SidebarGroupList
           config={config}
@@ -96,7 +107,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
           baseUrl={props.baseUrl}
           messages
         />
-      </ScrollbarLessCol>
+      </ScrollbarLessCol>}
     </Box>
   );
 }

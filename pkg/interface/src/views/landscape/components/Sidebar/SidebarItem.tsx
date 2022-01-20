@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
 import { Association, cite, deSig } from '@urbit/api';
 import { HoverBoxLink } from '~/views/components/HoverBox';
@@ -67,12 +67,13 @@ export function SidebarItemBase(props: {
     onClick
   } = props;
   const color = isSynced
-    ? hasUnread || hasNotification
+    ? selected
       ? 'black'
       : 'gray'
     : 'lightGray';
 
-  const fontWeight = hasUnread || hasNotification ? '500' : 'normal';
+  const fontStyle = (hasUnread || hasNotification) ? 'italic' : 'normal';
+  const fontWeight = selected ? 600 : 'normal';
   const bg = pending ? 'lightBlue' : groupSelected ? 'washedGray' : 'white';
 
   return (
@@ -111,8 +112,8 @@ export function SidebarItemBase(props: {
             color={color}
             fontSize={fontSize}
             fontWeight={fontWeight}
+            fontStyle={fontStyle}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
-            borderBottom={selected ? '1px solid darkGray' : 'none'}
             className={selected ? '' : 'hover-underline'}
           >
             {title}
@@ -179,7 +180,7 @@ export const SidebarPendingItem = (props: {
       />
     </SidebarItemBase>
   );
-}
+};
 
 export const SidebarDmItem = React.memo(
   (props: {
@@ -220,7 +221,7 @@ export const SidebarDmItem = React.memo(
     return (
       <SidebarItemBase
         selected={selected}
-        hasNotification={false}
+        hasNotification={unreads > 0}
         hasUnread={unreads > 0}
         to={`/~landscape/messages/dm/${ship}`}
         title={title}
@@ -249,6 +250,7 @@ export const SidebarAssociationItem = React.memo(
     indent?: number;
   }) => {
     const { association, selected } = props;
+    const history = useHistory();
     const title = association ? getItemTitle(association) || "" : "";
     const appName = association?.["app-name"];
     let mod: string = appName;
@@ -282,7 +284,11 @@ export const SidebarAssociationItem = React.memo(
 
     const onClick = pending ? () => {
       useGroupState.getState().doneJoin(rid);
-    } : undefined;
+    } : () => {
+      if (group && !history.location.pathname.includes(baseUrl)) {
+        history.push(baseUrl);
+      }
+    };
 
     if (props.hideUnjoined && !isSynced) {
       return null;

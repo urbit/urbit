@@ -65,6 +65,7 @@ export function Dropdown(props: DropdownProps): ReactElement {
     (e: React.MouseEvent<HTMLDivElement>) => {
       updatePos();
       setOpen(true);
+      console.log('HERE')
     },
     [setOpen, updatePos]
   );

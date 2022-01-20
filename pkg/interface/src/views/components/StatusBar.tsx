@@ -21,6 +21,7 @@ import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
 import UqbarLogo from '~/assets/img/uqbar-logo.png';
 
 const localSel = selectLocalState(['toggleOmnibox']);
@@ -32,6 +33,13 @@ const StatusBar = (props) => {
   const { toggleOmnibox } = useLocalState(localSel);
   const { hideAvatars } = useSettingsState(selectCalmState);
   const notificationsCount = useHarkState(s => s.notificationsCount);
+
+  const groups = useMetadataState(s => s.associations.groups);
+  let title = '';
+  if (props.location.pathname.includes('~landscape')) {
+    const [, , , groupShip, groupName] = props.location.pathname.split('/');
+    title = groups[`/ship/${groupShip}/${groupName}`]?.metadata?.title;
+  }
 
   const color = ourContact ? `#${uxToHex(ourContact.color)}` : '#000';
   const xPadding = !hideAvatars && ourContact?.avatar ? '0' : '2';
@@ -91,7 +99,16 @@ const StatusBar = (props) => {
         </StatusBarItem>
         <ReconnectButton />
       </Row>
-      <H3 textAlign="center" verticalAlign="middle" lineHeight="28px">Uqbar UI</H3>
+      <H3
+        textAlign="center"
+        verticalAlign="middle"
+        lineHeight="28px"
+        textOverflow="ellipsis"
+        whiteSpace="nowrap"
+        overflow="hidden"
+      >
+        {title}
+      </H3>
       <Row justifyContent='flex-end'>
         <StatusBarItem
           width='32px'

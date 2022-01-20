@@ -1,8 +1,8 @@
 import { Box } from '@tlon/indigo-react';
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Helmet from 'react-helmet';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import useHarkState from '~/logic/state/hark';
 import { Workspace } from '~/types/workspace';
 import { Body } from '../components/Body';

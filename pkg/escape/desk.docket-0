@@ -1,9 +1,9 @@
 :~  title+'Uqbar UI'
     info+'The UI for Uqbar.'
     color+0x72.7bf2  :: alt: 0xdd.7c8a
-    glob-http+['https://escape-app-dist.s3.us-east-2.amazonaws.com/glob-0v4.aai74.17l14.2ri3q.jsgvi.aq5g9.glob' 0v4.aai74.17l14.2ri3q.jsgvi.aq5g9]
+    glob-http+['https://escape-app-dist.s3.us-east-2.amazonaws.com/glob-0v1.30gpe.t6abp.dkqu1.k2sv0.gsm3l.glob' 0v1.30gpe.t6abp.dkqu1.k2sv0.gsm3l]
     base+'escape'
-    version+[0 0 1]
+    version+[0 0 2]
     website+'https://uqbar.com'
     license+'MIT'
 ==

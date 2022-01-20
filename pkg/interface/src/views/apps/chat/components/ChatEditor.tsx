@@ -6,7 +6,7 @@ import 'codemirror/addon/display/placeholder';
 import 'codemirror/addon/hint/show-hint';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
-import React, { useRef, useState, ClipboardEvent, useEffect, useImperativeHandle, useCallback } from 'react';
+import React, { useRef, useState, ClipboardEvent, useEffect, useImperativeHandle, useCallback, useMemo } from 'react';
 import { Controlled as CodeEditor } from 'react-codemirror2';
 import styled from 'styled-components';
 import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
@@ -16,6 +16,8 @@ import airlock from '~/logic/api';
 import '../css/custom.css';
 import { useChatStore } from './ChatPane';
 
+export const SIG_REGEX = /(?:^|\s)(~)(?=\s|$)/;
+export const MENTION_REGEX = /(?:^|\s)(~)(?![a-z]{6}\-[a-z]{6})(?![a-z]{6}[?=\s|$])([a-z\-]+)(?=\s|$)/;
 export const isMobile = Boolean(MOBILE_BROWSER_REGEX.test(navigator.userAgent));
 
 const MARKDOWN_CONFIG = {
@@ -162,6 +164,8 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
   const [autocompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
   const [enteredUser, setEnteredUser] = useState('');
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
+  const [mentionedUsers, setMentionedUsers] = useState<string[]>([]);
+  const memberArray = useMemo(() => [...(group?.members || [])], [group]);
 
   const disableSpellcheck = useSettingsState(s => s.calm.disableSpellcheck);
 
@@ -216,19 +220,21 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
   }, [inCodeMode, placeholder]);
 
   const selectMember = useCallback((patp: string) => () => {
-    const regex = /^~.*? /;
+    const replaceText = (text, regex, set) => {
+      const matches = text.match(regex);
+      const newMention = matches.find(m => !ob.isValidPatp(m.trim()));
+      set(text.replace(regex, newMention[0] === ' ' ? ` ${patp}` : patp));
+    };
 
-    if (message === '~') {
-      setMessage(patp);
-    } else if (regex.test(message)) {
-      setMessage(message.replace(regex, `${patp} `));
-    } else if (message[0] === '~' && message.length < 26) {
-      setMessage(patp);
+    if (SIG_REGEX.test(message)) {
+      replaceText(message, SIG_REGEX, setMessage);
+    } else if (MENTION_REGEX.test(message)) {
+      replaceText(message, MENTION_REGEX, setMessage);
     }
 
     setShowAutocomplete(false);
     editor.focus();
-  }, [editor, message, setMessage]);
+  }, [editor, message, setMessage, mentionedUsers, setMentionedUsers, memberArray]);
 
   const setAutocompleteValues = (show, suggestions, user) => {
     setShowAutocomplete(show);
@@ -247,23 +253,21 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
 
     setMessage(value);
 
-    if (value === '~') {
-      setAutocompleteValues(true, [...group.members], '');
-    } else if (value[0] === '~') {
-      const [patp] = value.split(' ');
-      const ship = patp.slice(1);
-      const isValid = ob.isValidPatp(patp);
+    const valueWithoutMembers = memberArray.reduce((cleaned, m) => cleaned.replace(`~${m}`, ''), value);
 
-      if (isValid || patp.length < 14) {
-        const matchingMembers = [...group.members].filter(m => m.includes(ship));
-        const includesMember = matchingMembers.includes(ship);
-        if (!matchingMembers.length || includesMember) {
-          setAutocompleteValues(isValid && !includesMember, [], patp);
-        } else {
-          setAutocompleteValues(Boolean(matchingMembers.length), matchingMembers, '');
-        }
+    if (SIG_REGEX.test(valueWithoutMembers) && SIG_REGEX.test(value)) {
+      setAutocompleteValues(true, memberArray.filter(m => !value.includes(m)), '');
+    } else if (MENTION_REGEX.test(valueWithoutMembers) && MENTION_REGEX.test(value)) {
+      const [patp] = valueWithoutMembers.match(MENTION_REGEX);
+      const ship = patp.replace(/\s*?~/, '');
+      const isValid = ob.isValidPatp(patp.replace(' ', ''));
+
+      const matchingMembers = memberArray.filter(m => m.includes(ship) && !value.includes(m));
+      const includesMember = matchingMembers.includes(ship);
+      if (!matchingMembers.length || includesMember) {
+        setAutocompleteValues(isValid, [], patp);
       } else {
-        setAutocompleteValues(false, [], '');
+        setAutocompleteValues(Boolean(matchingMembers.length), matchingMembers, '');
       }
     } else {
       setAutocompleteValues(false, [], '');

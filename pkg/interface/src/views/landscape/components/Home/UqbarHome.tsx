@@ -5,7 +5,6 @@ import { NewGroup } from '~/views/landscape/components/NewGroup';
 import ModalButton from '~/views/apps/launch/components/ModalButton';
 import Tile from '~/views/apps/launch/components/tiles/tile';
 import { ScrollbarLessBox } from '~/views/apps/launch/App';
-import UqbarLogo from '~/assets/img/uqbar-logo.png';
 
 export function UqbarHome(props) {
   const history = useHistory();
@@ -51,19 +50,9 @@ export function UqbarHome(props) {
         </Tile> */}
         <Tile p="0" border="none">
           <Col display="flex" alignItems="center" justifyContent="center" height="100%">
-            <Text textAlign="center">Welcome to the Uqbar UI</Text>
-            <Text textAlign="center" fontWeight="bold">~{window.ship}!</Text>
+            <Text textAlign="center" fontWeight="bold">~{window.ship}</Text>
+            <Text textAlign="center">Welcome to the Uqbar UI!</Text>
           </Col>
-        </Tile>
-        <Tile p="0" border="none">
-          <Image
-            referrerPolicy="no-referrer"
-            flexShrink={0}
-            src={UqbarLogo}
-            height="100%"
-            width="100%"
-            onError={console.warn}
-          />
         </Tile>
         <ModalButton
           icon="Plus"

@@ -145,18 +145,25 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     }
     const q = query.toLowerCase();
     const resultsMap = new Map<string, OmniboxItem[]>();
-    let categoryMaxes: Record<string, number> = {};
+    const categoryMaxes: Record<string, number> = {};
 
     SEARCHED_CATEGORIES.map((category) => {
       const categoryIndex = index.get(category);
-      const fuzzied = fuzzy
-        .filter(q, categoryIndex, { extract: res => res.title });
-      categoryMaxes[category] = fuzzied
-        .map(a => a.score)
-        .reduce((a,b) => Math.max(a,b), 0);
-      resultsMap.set(category, fuzzied.map(a => a.original));
+      resultsMap.set(
+        category,
+        categoryIndex.filter((result) => {
+          return (
+            result.title.toLowerCase().includes(q) ||
+            result.link.toLowerCase().includes(q) ||
+            result.app.toLowerCase().includes(q) ||
+            (typeof result.host === 'string'
+              ? result.host.toLowerCase().includes(q)
+              : false)
+          );
+        })
+      );
     });
-    let order = Object.entries(categoryMaxes)
+    const order = Object.entries(categoryMaxes)
       .sort(([,a],[,b]) => b - a)
       .map(([id]) => id);
     return [resultsMap, order];
