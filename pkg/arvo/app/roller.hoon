@@ -1507,11 +1507,17 @@
     |=  wat=@t
     ?~  who=(slaw %p wat)  [~ ~]
     =/  [exceeded=? next-quota=@ud]  (quota-exceeded u.who)
+    =/  allow=(unit (unit @ud))      (~(get by allowances) u.who)
     :+  ~  ~
     :-  %atom
     !>  ^-  @ud
-    ?:  exceeded  0
-    (sub quota.state (dec next-quota))
+    ?:  exceeded     0
+    =/  max-quota=@  quota.state
+    ?:  &(?=(^ allow) ?=(~ u.allow))
+      max-quota
+    =?  max-quota  &(?=(^ allow) ?=(^ u.allow))
+      u.u.allow
+    (sub max-quota (dec next-quota))
   ::
   ++  allowance
     |=  wat=@t
