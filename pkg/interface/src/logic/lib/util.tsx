@@ -299,8 +299,8 @@ export function cite(ship: string): string | Element {
   // moon
   if (patp.length === 27) {
     shortened = <>
-      <Text mono fontSize="10px" verticalAlign="top">{patp.slice(0, 13)}</Text>
-      {'~' + patp.slice(14, 27) + '^'}
+      <Text mono fontSize="10px" verticalAlign="top">~{patp.slice(0, 13)}</Text>
+      {'^' + patp.slice(14, 27)}
     </>;
     return shortened;
   }
