@@ -364,10 +364,10 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 
   //  bypassing page tracking as an optimization
   //
-  //    NB: u3e_yolo() will mark all as dirty, and
-  //    u3e_save() will reinstate protection flags
+  //    NB: u3_el_yolo() will mark all as dirty, and
+  //    u3_el_save() will reinstate protection flags
   //
-  if ( c3n == u3e_yolo() ) {
+  if ( c3n == u3_el_yolo() ) {
     if ( fil_u ) {
       fprintf(fil_u, "uniq: unable to bypass page tracking, continuing\r\n");
     }
@@ -418,7 +418,7 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 
   //  mark all pages dirty
   //
-  u3e_foul();
+  u3_el_foul();
 
   *tor_u = rot_u;
   *doc_u = cod_u;
@@ -831,10 +831,10 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
 
   //  bypassing page tracking as an optimization
   //
-  //    NB: u3e_yolo() will mark all as dirty, and
-  //    u3e_save() will reinstate protection flags
+  //    NB: u3_el_yolo() will mark all as dirty, and
+  //    u3_el_save() will reinstate protection flags
   //
-  if ( c3n == u3e_yolo() ) {
+  if ( c3n == u3_el_yolo() ) {
     fprintf(stderr, "uncram: unable to bypass page tracking, continuing\r\n");
   }
 
@@ -891,7 +891,7 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
 
   //  mark all pages dirty
   //
-  u3e_foul();
+  u3_el_foul();
 
   //  leave rocks on disk
   //
