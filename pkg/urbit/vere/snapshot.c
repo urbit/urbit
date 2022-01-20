@@ -577,7 +577,7 @@ _snap_image_fine(u3_snap_image* img_u,
 }
 #endif
 
-//! TODO(peter)
+//! TODO(peter): comment once interface freezes.
 static c3_o
 _snap_image_copy(u3_snap_image* fom_u, u3_snap_image* tou_u)
 {
@@ -621,7 +621,7 @@ _snap_image_copy(u3_snap_image* fom_u, u3_snap_image* tou_u)
   return c3y;
 }
 
-//! TODO(peter)
+//! TODO(peter): comment once interface freezes.
 static void
 _snap_backup(void)
 {
