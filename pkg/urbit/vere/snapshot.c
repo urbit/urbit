@@ -53,7 +53,7 @@ typedef struct {
 //==============================================================================
 
 //! Snapshot version number.
-#define u3_snap_version 1
+static const c3_w ver_w = 1;
 
 
 //==============================================================================
@@ -178,10 +178,10 @@ _snap_patch_verify(_patch* pat_u)
 {
   c3_w i_w;
 
-  if ( u3_snap_version != pat_u->con_u->ver_w ) {
+  if ( ver_w != pat_u->con_u->ver_w ) {
     fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
                     pat_u->con_u->ver_w,
-                    u3_snap_version);
+                    ver_w);
     return c3n;
   }
 
@@ -387,7 +387,7 @@ _snap_patch_compose(void)
     }
 
     pat_u->con_u = c3_malloc(sizeof(_control) + (pgs_w * sizeof(_line)));
-    pat_u->con_u->ver_w = u3_snap_version;
+    pat_u->con_u->ver_w = ver_w;
     pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {
