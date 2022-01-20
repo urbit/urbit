@@ -434,6 +434,9 @@
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
+  ::  $protocol-version: 3-bit protocol version
+  ::
+  +$  protocol-version  ?(%0 %1 %2 %3 %4 %5 %6 %7)
   ::  $error: tagged diagnostic trace
   ::
   +$  error  [tag=@tas =tang]
@@ -702,7 +705,171 @@
         num-received=fragment-num
         fragments=(map fragment-num fragment)
     ==
+  ::  |packets: ames-style packet en- and decoding
   ::
+  ::  $dyad: pair of sender and receiver ships
+  ::
+  +$  dyad  [sndr=ship rcvr=ship]
+  ::  $rank: which kind of ship address, by length
+  ::
+  ::    0b0: galaxy or star -- 2  bytes
+  ::    0b1: planet         -- 4  bytes
+  ::    0b10: moon           -- 8  bytes
+  ::    0b11: comet          -- 16 bytes
+  ::
+  +$  rank  ?(%0b0 %0b1 %0b10 %0b11)
+  ::  $packet: noun representation of an ames datagram packet
+  ::
+  ::    Roundtrips losslessly through atom encoding and decoding.
+  ::
+  ::    .origin is ~ unless the packet is being forwarded.  If present,
+  ::    it's an atom that encodes a route to another ship, such as an IPv4
+  ::    address.  Routes are opaque to Arvo and only have meaning in the
+  ::    interpreter. This enforces that Ames is transport-agnostic.
+  ::
+  +$  packet
+    $:  dyad
+        sndr-tick=@ubC
+        rcvr-tick=@ubC
+        origin=(unit @uxaddress)
+        content=@uxcontent
+    ==
+  ::  +encode-packet: serialize a packet into a bytestream
+  ::
+  ++  encode-packet
+    |=  [ames=? =protocol-version]
+    |=  packet
+    ^-  blob
+    ::
+    =/  sndr-meta  (encode-ship-metadata sndr)
+    =/  rcvr-meta  (encode-ship-metadata rcvr)
+    ::
+    =/  body=@
+      ;:  mix
+        sndr-tick
+        (lsh 2 rcvr-tick)
+        (lsh 3 sndr)
+        (lsh [3 +(size.sndr-meta)] rcvr)
+        (lsh [3 +((add size.sndr-meta size.rcvr-meta))] content)
+      ==
+    =/  checksum  (end [0 20] (mug body))
+    =?  body  ?=(^ origin)  (mix u.origin (lsh [3 6] body))
+    ::
+    =/  header=@
+      %+  can  0
+      :~  [3 reserved=0]
+          [1 is-ames=&]
+          [3 protocol-version]
+          [2 rank.sndr-meta]
+          [2 rank.rcvr-meta]
+          [20 checksum]
+          [1 relayed=.?(origin)]
+      ==
+    (mix header (lsh 5 body))
+  ::  +decode-packet: deserialize packet from bytestream or crash
+  ::
+  ++  decode-packet
+    |=  [ames=? =protocol-version]
+    |=  =blob
+    ^-  packet
+    ~|  %decode-packet-fail
+    ::  first 32 (2^5) bits are header; the rest is body
+    ::
+    =/  header  (end 5 blob)
+    =/  body    (rsh 5 blob)
+    ::  read header; first three bits are reserved
+    ::
+    =/  is-ames  (cut 0 [3 1] header)
+    ?.  =(ames is-ames)
+      ~|  ?:(ames %ames-not-ames %fine-not-fine)  !!
+    ::
+    =/  version  (cut 0 [4 3] header)
+    ?.  =(protocol-version version)
+      ~|  ames-protocol-version+version  !!
+    ::
+    =/  sndr-size  (decode-ship-size (cut 0 [7 2] header))
+    =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
+    =/  checksum   (cut 0 [11 20] header)
+    =/  relayed    (cut 0 [31 1] header)
+    ::  origin, if present, is 6 octets long, at the end of the body
+    ::
+    =^  origin=(unit @)  body
+      ?:  =(| relayed)
+        [~ body]
+      =/  len  (sub (met 3 body) 6)
+      [`(end [3 6] body) (rsh [3 6] body)]
+    ::  .checksum does not apply to the origin
+    ::
+    ?.  =(checksum (end [0 20] (mug body)))
+      ~|  %ames-checksum  !!
+    ::  read fixed-length sndr and rcvr life data from body
+    ::
+    ::    These represent the last four bits of the sender and receiver
+    ::    life fields, to be used for quick dropping of honest packets to
+    ::    or from the wrong life.
+    ::
+    =/  sndr-tick  (cut 0 [0 4] body)
+    =/  rcvr-tick  (cut 0 [4 4] body)
+    ::  read variable-length .sndr and .rcvr addresses
+    ::
+    =/  off   1
+    =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
+    ?.  (is-valid-rank sndr sndr-size)
+      ~|  ames-sender-impostor+[sndr sndr-size]  !!
+    ::
+    =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
+    ?.  (is-valid-rank rcvr rcvr-size)
+      ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
+    ::  read variable-length .content from the rest of .body
+    ::
+    =/  content  (cut 3 [off (sub (met 3 body) off)] body)
+    [[sndr rcvr] sndr-tick rcvr-tick origin content]
+  ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
+  ::
+  ::    Type 0: galaxy or star -- 2 bytes
+  ::    Type 1: planet         -- 4 bytes
+  ::    Type 2: moon           -- 8 bytes
+  ::    Type 3: comet          -- 16 bytes
+  ::
+  ++  decode-ship-size
+    |=  rank=@ubC
+    ^-  @
+    ::
+    ?+  rank  !!
+      %0b0   2
+      %0b1   4
+      %0b10  8
+      %0b11  16
+    ==
+  ::  +encode-ship-metadata: produce size (in bytes) and address rank for .ship
+  ::
+  ::    0: galaxy or star
+  ::    1: planet
+  ::    2: moon
+  ::    3: comet
+  ::
+  ++  encode-ship-metadata
+    |=  =ship
+    ^-  [size=@ =rank]
+    ::
+    =/  size=@  (met 3 ship)
+    ::
+    ?:  (lte size 2)  [2 %0b0]
+    ?:  (lte size 4)  [4 %0b1]
+    ?:  (lte size 8)  [8 %0b10]
+    [16 %0b11]
+  ::  +is-valid-rank: does .ship match its stated .size?
+  ::
+  ++  is-valid-rank
+    |=  [=ship size=@ubC]
+    ^-  ?
+    .=  size
+    =/  wid  (met 3 ship)
+    ?:  (lte wid 1)   2
+    ?:  =(2 wid)      2
+    ?:  (lte wid 4)   4
+    ?:  (lte wid 8)   8
+    ?>  (lte wid 16)  16
   --  ::ames
 ::                                                      ::::
 ::::                    ++behn                            ::  (1b) timekeeping
