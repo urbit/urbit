@@ -1799,8 +1799,7 @@
 ++  fine  ^?
   |%
   +$  gift                                              ::    to arvo:
-    $%  [%tune =path =(cask)]                           ::  found at path
-        ::TODO  add task to clay (& gall?) for declaring notify desire
+    $%  [%tune =path data=(unit (cask))]                ::  found at path
       ::                                                ::    to vere:
         [%hoot =lane:ames =hoot]                        ::  request packet
         [%howl =path =song]                             ::  full response

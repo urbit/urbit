@@ -21,11 +21,6 @@
       $%  $:  %behn
           $%  $>(%wake gift:behn)
           ==  ==
-          $:  %fine
-          $%  $>(%tune gift)
-              $>(%hoot gift)
-              $>(%howl gift)
-          ==  ==
           $:  %jael
           $%  $>(%private-keys gift:jael)
               $>(%public-keys gift:jael)
@@ -35,15 +30,42 @@
     ::
     +$  fine-state
       $:  %0
+          urth=duct                                     ::  unix duct
           hear=(jug path duct)                          ::  awaiting existence
           want=(jug path duct)                          ::  awaiting response
-          part=(map path [siz=@ud pac=(map @ud @)])     ::  partial responses
+          part=(map path partial)                       ::  partial responses
+          ::TODO  re-send request timers?
       ==
-    ::
-    ::TODO  types for unpacked packets?
     ::
     +$  bits  [w=@ud d=@]
     ++  protocol-version  %0
+    ::
+    +$  partial
+      $:  num-fragments=@ud
+          num-received=@ud
+          fragments=(map @ud byts)
+      ==
+    ::
+    +$  twit  ::  signed request
+      $:  signature=@
+          peep
+      ==
+    ::
+    +$  peep  ::  request data
+      $:  =path
+          num=@ud
+      ==
+    ::
+    +$  rawr  ::  response packet
+      $:  sig=@
+          siz=@ud
+          byts
+      ==
+    ::
+    +$  roar  ::  response message
+      $:  sig=@
+          dat=(cask)
+      ==
     --
 ::
 ~%  %fine  ..part  ~
@@ -53,6 +75,9 @@
 |=  [now=@da eny=@uvJ rof=roof]
 =*  fine-gate  .
 =>  |%
+    ++  encode-packet  (encode-packet:ames | protocol-version)
+    ++  decode-packet  (decode-packet:ames | protocol-version)
+    ::
     ++  spit
       |=  =path
       ^-  [pat=@t wid=@ud]
@@ -60,50 +85,6 @@
       =+  wid=(met 3 pat)
       ?>  (lte wid 384)  ::TODO  check when we handle %keen, instead of here?
       [pat wid]
-    ::
-    ++  meet  ::NOTE  from ames, but bits instead of bytes
-      |=  =ship
-      ^-  [size=@ rank=@ub]
-      =/  size=@  (met 3 ship)
-      ?:  (lte size 2)  [16 %0b0]
-      ?:  (lte size 4)  [32 %0b1]
-      ?:  (lte size 8)  [64 %0b10]
-      [128 %0b11]
-    ::
-    ++  header
-      |=  [for=ship req=? bod=@ rel=?]
-      ^-  bits
-      =+  him=(meet our)
-      =+  her=(meet for)
-      =+  sum=(end [0 20] (mug bod))
-      :-  32
-      %+  can  0
-      :~  2^0                 ::  reserved
-          1^req               ::  request or response
-          1^|                 ::  not ames
-          3^protocol-version  ::  protocol version
-          2^size.him          ::  sender address size
-          2^size.her          ::  receiver address size
-          20^sum              ::  checksum
-          1^rel               ::  relayed
-      ==
-    ::
-    ++  prelude
-      |=  [for=[=ship =life] =life origin=(unit lane:ames)]
-      ^-  bits
-      =+  him=(meet our)
-      =+  her=(meet ship.for)
-      =/  ore=bits
-        ?.  ?=([~ %| *] origin)  0^0
-        (mul 8 (met 3 p.u.origin))^p.u.origin
-      :-  :(add 4 4 size.him size.her w.ore)
-      %+  can  0
-      :~  4^(mod life 16)      ::  sender life
-          4^(mod life.for 16)  ::  receiver life
-          size.him^our         ::  sender
-          size.her^ship.for    ::  receiver
-          ore
-      ==
     ::
     ++  request-body
       |=  [=path num=@ud]
@@ -117,14 +98,14 @@
           (mul 8 wid)^`@`pat  ::  namespace path
       ==
     ::
-    ++  packetize-request
+    ++  encode-request
       |=  [=path num=@ud]
       ^-  hoot
       =+  bod=(request-body path num)
       (can 0 512^(sign:keys d.bod) bod ~)
     ::
-    ++  packetize-response
-      |=  [=path data=(unit (cask *))]
+    ++  encode-response
+      |=  [=path data=(unit (cask))]
       ^-  song
       ::  prepend request descriptions to each response packet
       ::
@@ -134,13 +115,12 @@
         |=  [pac=bits num=@ud]
         ^-  [purr _num]
         :_  +(num)
+        ^-  @ux
         ::NOTE  we stub out the receiver & origin details,
         ::      runtime should replace them as appropriate.
-        =/  pre=bits  (prelude [*ship *life] life:keys ~)
         =/  req=bits  (request-body path num)
-        =/  bod=bits  [:(add w.pre w.req w.pac) (can 0 pre req pac ~)]
-        =/  hed=bits  (header *ship | +.bod |)
-        (can 0 hed bod ~)
+        =/  con=@ux   (can 0 req pac ~)
+        (encode-packet [our ~zod] (mod life:keys 16) 0b0 ~ con)
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
@@ -191,125 +171,6 @@
         !!
       --
     ::
-    ::
-    ::TODO  copied from ames
-    +$  dyad  [sndr=ship rcvr=ship]
-    +$  packet
-      $:  dyad
-          sndr-tick=@ubC
-          rcvr-tick=@ubC
-          origin=(unit @uxaddress)
-          content=@uxcontent
-      ==
-    ::
-    ::TODO  copied from ames, only req parsing added
-    ++  decode-packet
-      ~/  %decode-packet
-      |=  blob=@ux
-      ^-  [req=? packet]
-      ~|  %decode-packet-fail
-      ::  first 32 (2^5) bits are header; the rest is body
-      ::
-      =/  header  (end 5 blob)
-      =/  body    (rsh 5 blob)
-      ::  read header; first two bits are reserved
-      ::
-      :-  req==(0 (cut 0 [2 1] header))
-      =/  is-ames  (cut 0 [3 1] header)
-      ?:  =(& is-ames)
-        ~|  %fine-but-ames  !!
-      ::
-      =/  version  (cut 0 [4 3] header)
-      ?.  =(protocol-version version)
-        ~|  fine-protocol-version+version  !!
-      ::
-      =/  sndr-size  (decode-ship-size (cut 0 [7 2] header))
-      =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
-      =/  checksum   (cut 0 [11 20] header)
-      =/  relayed    (cut 0 [31 1] header)
-      ::  origin, if present, is 6 octets long, at the end of the body
-      ::
-      =^  origin=(unit @)  body
-        ?:  =(| relayed)
-          [~ body]
-        =/  len  (sub (met 3 body) 6)
-        [`(end [3 6] body) (rsh [3 6] body)]
-      ::  .checksum does not apply to the origin
-      ::
-      ?.  =(checksum (end [0 20] (mug body)))
-        ~|  %ames-checksum  !!
-      ::  read fixed-length sndr and rcvr life data from body
-      ::
-      ::    These represent the last four bits of the sender and receiver
-      ::    life fields, to be used for quick dropping of honest packets to
-      ::    or from the wrong life.
-      ::
-      =/  sndr-tick  (cut 0 [0 4] body)
-      =/  rcvr-tick  (cut 0 [4 4] body)
-      ::  read variable-length .sndr and .rcvr addresses
-      ::
-      =/  off   1
-      =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
-      ?.  (is-valid-rank sndr sndr-size)
-        ~|  ames-sender-impostor+[sndr sndr-size]  !!
-      ::
-      =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
-      ?.  (is-valid-rank rcvr rcvr-size)
-        ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
-      ::  read variable-length .content from the rest of .body
-      ::
-      =/  content  (cut 3 [off (sub (met 3 body) off)] body)
-      [[sndr rcvr] sndr-tick rcvr-tick origin content]
-    ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
-    ::
-    ::    Type 0: galaxy or star -- 2 bytes
-    ::    Type 1: planet         -- 4 bytes
-    ::    Type 2: moon           -- 8 bytes
-    ::    Type 3: comet          -- 16 bytes
-    ::
-    ++  decode-ship-size
-      ~/  %decode-ship-size
-      |=  rank=@ubC
-      ^-  @
-      ::
-      ?+  rank  !!
-        %0b0   2
-        %0b1   4
-        %0b10  8
-        %0b11  16
-      ==
-    ::  +is-valid-rank: does .ship match its stated .size?
-    ::
-    ++  is-valid-rank
-      ~/  %is-valid-rank
-      |=  [=ship size=@ubC]
-      ^-  ?
-      .=  size
-      ?-  (clan:title ship)
-        %czar  2
-        %king  2
-        %duke  4
-        %earl  8
-        %pawn  16
-      ==
-    ::
-    +$  twit  ::  signed request
-      $:  signature=@
-          peep
-      ==
-    ::
-    +$  peep  ::  request data
-      $:  =path
-          num=@ud
-      ==
-    ::
-    +$  rawr  ::  response data
-      $:  sig=@
-          siz=@ud
-          wid=@ud
-          dat=@
-      ==
-    ::
     ++  decode-request
       |=  =hoot
       ^-  twit
@@ -326,7 +187,7 @@
       ::  if there is data remaining, it's the response
       (rsh [3 (add 6 len)] hoot)
     ::
-    ++  decode-response
+    ++  decode-response-packet
       |=  =purr
       =;  =rawr
         ~?  !=(wid.rawr (met 3 dat.rawr))  [%fine %unexpected-dat-size]
@@ -337,9 +198,81 @@
           dat=(rsh 0^560 purr)
       ==
     ::
-    ++  verify-response
+    ++  verify-response-packet
       |=  rawr
       !!
+    ::
+    ++  decode-response-msg
+      |=  partial  ::TODO  maybe take @ instead
+      ^-  roar
+      =/  mess=@
+        %+  can  3
+        %+  turn  (gulf 1 num-fragments)
+        ~(got by fragments)
+      :-  sig=(cut 0 [0 512] mess)
+      ~|  [%fine %response-not-cask]
+      ;;((cask) (cue (rsh 0^512 mess)))
+    ::
+    ++  process-response
+      |=  [=path data=(unit (cask))]
+      ^-  (quip move _state)
+      :-  %+  turn  ~(tap in (~(get ju want) path))
+          (late [%give %tune path data])
+      =.  want  (~(del by want) path)
+      =.  part  (~(del by part) path)
+      state
+    ::
+    ++  handle-request
+      |=  =twit
+      ^-  (list move)
+      ::TODO  collect scry response
+      ::TODO  sane y/n? other task?
+      [duct %give %fine %howl !!]~
+    ::
+    ++  handle-response
+      |=  [[from=ship =lane:ames] =peep =rawr]
+      ^-  (quip move _state)
+      ?:  =(0 siz.rawr)
+        ?>  =(0 dat.rawr)
+        (process-response path.peep ~)
+      ?.  (~(has by part) path.peep)
+        ::  we did not initiate this request, or it's been cancelled
+        ::
+        !!
+      =/  partial  (~(got by part) path.peep)
+      =.  partial
+        ?:  (~(has by fragments.partial) num.peep)
+          ~&  [%fine %duplicate-response peep]  ::TODO  disable
+          ::TODO  what if non-equal?
+          partial
+        =,  partial
+        :+  ~|  [%fine %response-size-changed have=num-fragments new=siz.rawr]
+            ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
+            num-fragments
+          +(num-received)
+        (~(put by fragments) num.peep [wid dat]:rawr)
+      ::
+      ?:  =(num-fragments num-received):partial
+        ::  we have all the parts now, construct the full response
+        ::
+        =/  =roar  (decode-response-msg partial)
+        ::TODO  check signature
+        (process-response path.peep `dat.roar)
+      ::  otherwise, store the part, and send out the next request
+      ::
+      =.  part  (~(put by part) path.peep partial)
+      =/  next-num=@ud
+        =/  next=@ud  +(num.peep)
+        ::  we should receive responses in order, but in case we don't...
+        ::
+        |-
+        ?.  (~(has by fragments.partial) next)  next
+        $(next +((mod next num-fragments.partial)))
+      ::
+      =/  =lane:ames  !!  ::TODO
+      =/  =hoot  (encode-request path.peep next-num)
+      ::REVIEW  no %f tag?
+      [[urth %give %hoot lane hoot]~ state]
     --
 ^?
 |%
@@ -361,54 +294,43 @@
   =^  moves  state
     ?-  -.task
         %keen
-      :-  ~  ::TODO  emit request packet
-      state(want (~(put ju want) path.task hen))
+      ^-  (quip move _state)
+      =.  want  (~(put ju want) path.task hen)
+      ?:  (~(has by part) path.task)
+        ::  request is already ongoing
+        ::
+        [~ state]
+      ::  kick off the request
+      ::
+      =.  part  (~(put by part) path.task *partial)
+      =/  =lane:ames  !!  ::TODO  just scry out of ames, or what?
+      =/  =hoot  (encode-request path.task 1)
+      ::TODO  how to make sure this ends up in the runtime? default duct??
+      [[urth %give %hoot lane hoot]~ state]
     ::
         %yawn
       [~ state(want (~(del ju want) path.task hen))]
     ::
         %purr
-      =/  [req=? =packet]  (decode-packet purr.task)
+      ^-  (quip move _state)
+      =/  =packet:ames  (decode-packet `@ux`purr.task)
+      =/  req=?         =(& (cut 0 [2 1] purr.task))
       ?:  req
         =/  =twit  (decode-request `@ux`content.packet)
         ::TODO  verify request signature
-        ::TODO  handle twit
-        !!
+        [(handle-request twit) state]
       =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
-      =/  =rawr          (decode-response purr)
+      =/  =rawr          (decode-response-packet purr)
       ::TODO  validate response signature
-      ?:  =(0 siz.rawr)
-        ::TODO  complete instantly
-        ::TODO  (~(del by part) path.peep) for safety?
-        !!
-      !!
-      :: =/  have=(list @)  (~(get ja part) path.peep)
-      :: ::TODO  if we get fancier, we could receive in any order
-      :: ?>  =((lent have) (dec num.peep))
-      :: =.  have  [[wid dat]:rawr have]
-      :: ::  if we have all the parts now, construct the response
-      :: ::
-      :: ?>  (lte num.peep siz.rawr)
-      :: ?:  =(num.peep siz.rawr)
-      ::   ?.  =((lent have) siz.rawr)
-      ::     ::TODO  wtf! start over?
-      ::     !!
-      ::   ::TODO  need to flop first y/n?
-      ::   !!
-      :: ::  otherwise, store the part, and send out the next request
-      :: ::
-      :: =.  part  (~(put by part) path.peep have)
-      :: ::TODO  emit properly
-      :: :+  %hoot
-      ::   !!  ::TODO  get lane, from response or ames?
-      :: ::TODO  needs header, prelude
-      :: (packetize-request path.peep +(num.peep))
+      (handle-response [from lane]:task peep rawr)
     ::
         %bide
       [~ state(hear (~(put ju hear) path.task hen))]
     ::
         %born
-      [~ state(hear ~)]  ::REVIEW  assuming this is for runtime use only?
+      ^-  (quip move _state)
+      ::REVIEW  assuming hear is for runtime use only?
+      [~ state(hear ~, urth hen)]
     ::
         %trim
       [~ state]  ::TODO  maybe clear part?
@@ -448,7 +370,7 @@
   ::
   ?.  ?=(%x car)  ~
   ?.  ?=([%message @ *] s.bem)  ~
-  ::  s.bem is expected to be a scry path of the shape /vc/desk/rev/etc,
+  ::  t.s.bem is expected to be a scry path of the shape /vc/desk/rev/etc,
   ::  so we need to give it the right shape
   ::
   =/  pax=path
@@ -467,8 +389,8 @@
   =+  res=(rof lyc u.nom)
   ?-  res
     ~        ~
-    [~ ~]    ``noun+!>((packetize-response pax ~))
-    [~ ~ *]  ``noun+!>((packetize-response pax `[p q.q]:u.u.res))
+    [~ ~]    ``noun+!>((encode-response pax ~))
+    [~ ~ *]  ``noun+!>((encode-response pax `[p q.q]:u.u.res))
   ==
 ::
 ++  stay  state
