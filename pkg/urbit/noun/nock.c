@@ -1703,11 +1703,11 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
     *out = u3i_cell(u3h(hin), now);
   }
   else if ( c3__nara == u3h(hin) ) {
-    near_trace(0);
+    u3t_nara(0);
     *out = u3_nul;
   }
   else if ( c3__hela == u3h(hin) ) {
-    full_trace(0);
+    u3t_hela(0);
     *out = u3_nul;
   }
   else {
@@ -1796,7 +1796,7 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
     // prepend the priority to form a cell of the same shape q_tok
     // send this to ut3_slog so that it can be logged out
     c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
-    dynamic_header(pri_l, u3k(q_q_tok), u3i_string(str_c));
+    u3t_dynamic_header(pri_l, u3k(q_q_tok), u3i_string(str_c));
     u3z(delta);
   }
   else if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok)) &&
@@ -1816,12 +1816,12 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
     // prepend the priority to form a cell of the same shape q_tok
     // send this to ut3_slog so that it can be logged out
     c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
-    dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
+    u3t_dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
     if (c3__nara == p_tok) {
-      near_trace(pri_l);
+      u3t_nara(pri_l);
     }
     else {
-      full_trace(pri_l);
+      u3t_hela(pri_l);
     }
   }
   else {

@@ -130,29 +130,29 @@
       void
       u3t_boot(void);
 
-    /* dynamic_header: slog a vere headline, and hoon hint with
+    /* u3t_dynamic_header: slog a vere headline, and hoon hint with
      * a given indent-style c3_l int (assumed 0-3).
      */
       void
-      dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message);
+      u3t_dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message);
 
-    /* slog_trace: given an indent-style c3_l int and a raw stack tax
+    /* u3t_slog_trace: given an indent-style c3_l int and a raw stack tax
      * flop the order into start-to-end, render, and slog each item
      * until done.
      */
       void
-      slog_trace(c3_l pri_l, u3_noun tax);
+      u3t_slog_trace(c3_l pri_l, u3_noun tax);
 
-    /* near_trace: slog only the deepest road's trace
+    /* u3t_nara: slog only the deepest road's trace
      */
       void
-      near_trace(c3_l pri_l);
+      u3t_nara(c3_l pri_l);
 
-    /* full_trace: join all roads' traces together into one tax
+    /* u3t_hela: join all roads' traces together into one tax
      * and pass it to slog_trace allong with the given pri_l
      */
       void
-      full_trace(c3_l pri_l);
+      u3t_hela(c3_l pri_l);
 
   /** Globals.
   **/

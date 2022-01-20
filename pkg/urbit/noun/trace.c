@@ -594,7 +594,7 @@ u3t_boff(void)
  * and message is provided by the hint-caller
  */
 void
-dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message)
+u3t_dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message)
 {
   u3t_slog(
     u3nc(
@@ -611,7 +611,7 @@ dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message)
 /* This flops the given tax and slogs it entry by entry.
  */
 void
-slog_trace
+u3t_slog_trace
 (c3_l pri_l, u3_noun tax)
 {
   // render the stack
@@ -643,17 +643,17 @@ slog_trace
  * it takes a c3_l pri_l
  */
 void
-near_trace(c3_l pri_l)
+u3t_nara(c3_l pri_l)
 {
   u3_noun tax = u3k(u3R->bug.tax);
-  slog_trace(pri_l, tax);
+  u3t_slog_trace(pri_l, tax);
 }
 
 /* this function joins all the road traces together
  * into a sinlge trace, which it sends to slog_trace
  */
 void
-full_trace(c3_l pri_l)
+u3t_hela(c3_l pri_l)
 {
   // rod_u protects us from mutating the global state
   u3_road* rod_u = u3R;
@@ -668,6 +668,6 @@ full_trace(c3_l pri_l)
     tax = u3kb_weld(tax, u3k(rod_u->bug.tax));
   }
 
-  slog_trace(pri_l, tax);
+  u3t_slog_trace(pri_l, tax);
 }
 
