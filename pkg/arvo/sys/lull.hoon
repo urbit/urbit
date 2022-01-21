@@ -2098,12 +2098,12 @@
 ++  khan  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%avow ~]
+    $%  [%avow (each cage [term tang])]                 ::  thread result
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]
     $%  $>(%born vane-task)                             ::  new unix process
-        [%fyrd ~]
+        [%fyrd =beak name=term data=*]                  ::  run thread v0
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
     ==

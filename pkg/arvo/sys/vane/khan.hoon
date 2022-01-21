@@ -30,7 +30,17 @@
   ^-  [(list move) _khan-gate]
   ::
   =/  =task:khan  ((harden task:khan) wrapped-task)
-  [~ khan-gate]
+  ?-    -.task
+      %vega
+    [~ khan-gate]
+      %trim
+    [~ khan-gate]
+      %born
+    [~ khan-gate(unix-duct hen)]
+      %fyrd
+    ::  send to gall, sub for updates
+    !!
+  ==
 ::  +load: migrate an old state to a new khan version
 ::
 ++  load
@@ -50,5 +60,6 @@
   ^-  [(list move) _khan-gate]
   ?^  dud
     ~|(%khan-take-dud (mean tang.u.dud))
+  ::  switch on type of thing you get back, update state
   [~ khan-gate]
 --
