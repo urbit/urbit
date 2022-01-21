@@ -2092,6 +2092,22 @@
     +$  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+::                                                      ::::
+::::                    ++khan                          ::  (1i) threads
+  ::                                                    ::::
+++  khan  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%avow ~]
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%fyrd ~]
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+    ==
+  --  ::  khan
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2103,6 +2119,7 @@
       gift:gall
       gift:iris
       gift:jael
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2113,6 +2130,7 @@
       task:gall
       task:iris
       task:jael
+      task:khan
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2124,6 +2142,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%k task:khan]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -2145,6 +2164,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
+      [%khan gift:khan]
   ==
 ::  $unix-task: input from unix
 ::
