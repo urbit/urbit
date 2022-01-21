@@ -78,8 +78,8 @@
   typedef struct _u3_prel {
     c3_y  sic_y;                        //  sender life tick
     c3_y  ric_y;                        //  receiver life tick
-    c3_d  sen_d[2];                     //  sender
-    c3_d  rec_d[2];                     //  receiver
+    c3_d  sen_d[2];                     //  sender/requester
+    c3_d  rec_d[2];                     //  receiver/responder
     c3_d  rog_d;                        //  origin lane (optional)
   } u3_prel;
 
@@ -101,17 +101,16 @@
 
 /* u3_resp: fine packet response */
   typedef struct _u3_resp {
+    u3_prel  pre_u;
     // request: 
-    c3_w fra_w;                        // fragment number
-    c3_d hos_d[2];                     // host address
-    c3_s len_s;                        // path length
-    c3_c* pat_c;                       // path as ascii
+    c3_w    fra_w;                        // fragment number
+    c3_s    len_s;                        // path length
+    c3_c*   pat_c;                       // path as ascii
     // response:
-    c3_y sig_y[64];                    // host signature
-    c3_w lyf_w;                        // host life
-    c3_w num_w;                        // number of fragments
-    c3_s siz_s;                        // datum size
-    c3_y* dat_y;                       // datum (0 if null response)
+    c3_y    sig_y[64];                    // host signature
+    c3_w    num_w;                        // number of fragments
+    c3_s    siz_s;                        // datum size
+    c3_y*   dat_y;                       // datum (0 if null response)
   } u3_resp;
 
 
@@ -341,16 +340,16 @@ _fine_sift_requ(u3_head* hed_u,
                 c3_w     len_w,
                 c3_y*    req_y)
 {
-  c3_w rem_w = (64 + 4 + hed_u->sac_y + 4 + hed_u->rac_y + 2);
+  c3_y pre_y = _ames_sift_prelude(hed_u, &req_u->pre_u, len_w, req_y);
+
+  req_y += pre_y;
+
+  c3_w rem_w = (64 + 4 + 2 + pre_y);
   if(rem_w > len_w) {
     return c3n;
   }
   memcpy(req_u->sig_y, req_y, 64);
   req_y += 64;
-
-  req_y += 4;
-
-  req_y += hed_u->sac_y;
 
   req_u->fra_w = (
       (req_y[0] << 0x18)
@@ -358,9 +357,6 @@ _fine_sift_requ(u3_head* hed_u,
     | (req_y[2] << 0x8)
     | (req_y[3] << 0x0));
   req_y += 4;
-
-  //_ames_ship_to_chubs(req_u->hos_d, hed_u->rac_y, req_y);
-  //req_y += hed_u->rac_y;
 
 
   req_u->len_s = c3_min(384,
@@ -374,11 +370,10 @@ _fine_sift_requ(u3_head* hed_u,
   }
 
   // TODO: defend maliciusly crafted lengths?
-  req_u->pat_c = c3_malloc(req_u->len_s + 1);
+  req_u->pat_c = c3_calloc(req_u->len_s + 1);
 
   memcpy(req_u->pat_c, req_y, req_u->len_s);
   req_u->pat_c[req_u->len_s] = '\0';
-  // TODO: add null terminator?
   return c3y;
 } 
 
@@ -394,18 +389,11 @@ _fine_sift_resp(u3_head* hed_u,
   if(rem_w > len_w) {
     return c3n;
   }
+  c3_y pre_y = _ames_sift_prelude(hed_u, &res_u->pre_u, len_w, res_y);
+  res_y += pre_y;
+
   memcpy(res_u->sig_y, res_y, 64);
   res_y += 64;
-
-  res_u->lyf_w = (
-      (res_y[0] << 0x18)
-    | (res_y[1] << 0x10)
-    | (res_y[2] << 0x8)
-    | (res_y[3] << 0x0));
-  res_y += 4;
-
-  _ames_ship_to_chubs(res_u->hos_d, hed_u->sac_y, res_y);
-  res_y += hed_u->sac_y;
 
   res_u->fra_w = (
       (res_y[0] << 0x18)
@@ -413,9 +401,6 @@ _fine_sift_resp(u3_head* hed_u,
     | (res_y[2] << 0x8)
     | (res_y[3] << 0x0));
   res_y += 4;
-
-  _ames_ship_to_chubs(res_u->hos_d, hed_u->rac_y, res_y);
-  res_y += hed_u->rac_y;
 
 
   res_u->len_s = c3_min(384,
@@ -529,7 +514,6 @@ _fine_etch_resp(u3_head* hed_u,
 
   memcpy(pac_w, &res_u->fra_w, 4);
   *pac_w = res_u->fra_w;  // TODO: check byte order
-  _ames_ship_of_chubs(res_u->hos_d, sen_y, pac_y + 4);
 
   *(pac_y + sen_y + 4) = (0xff << 0) & res_u->len_s;
   *(pac_y + sen_y + 5) = (0xff << 1) & res_u->len_s;
@@ -1354,12 +1338,8 @@ static void _fine_hear(u3_ames* sam_u,
 {
   u3_head hed_u;
   //u3_body bod_u;
-  c3_o val_o = _ames_sift_head(&hed_u, hun_y);
-  if(c3y == val_o) {
-    // invalid, maybe crash?
-    //
-    return;
-  }
+  c3_assert ( c3n == _ames_sift_head(&hed_u, hun_y));
+
   // skip past header
   len_w -= 4;
   hun_y += 4;
@@ -1383,36 +1363,60 @@ static void _fine_hear(u3_ames* sam_u,
     if(u3_none == cac) {
       // cache miss
       //  packet scry path
-      //  /packet/requested/path/elements/<fragment-num>
+      //  /packet/requested/path/elements
       //
       //  eg:
-      //  /packet/gx/~zod/graph-store/5/graphs/~zod/test/message/10/20 
-      //    (fragment num is 20)
+      //  /packet/gx/~zod/graph-store/5/graphs/~zod/test/message/10
       //
-      u3_noun pax = u3dc("snoc", 
-                        u3do("stab", u3i_string(req_u.pat_c)),
-                        u3i_words(1, &req_u.fra_w));
+      u3_noun pax = u3nc(u3i_string("packet"),
+                        u3do("stab", u3i_string(req_u.pat_c)));
+
+
       u3_reqp* rep_u = c3_malloc(sizeof(*rep_u));
       rep_u->sam_u = sam_u;
       memcpy(&rep_u->hed_u, &hed_u, sizeof(u3_head));
       memcpy(&rep_u->req_u, &req_u, sizeof(u3_requ));
 
       u3_pier_peek_last(sam_u->fin_s.car_u.pir_u, u3_nul, c3__fx, u3_nul, 
-                        u3nc(u3i_string("packet"), pax), rep_u, _fine_pack_scry_cb);
+                        pax, rep_u, _fine_pack_scry_cb);
 
     } else if(u3_nul == cac) {
       // cache hit, unbound
       // do nothing, maybe report?
     } else {
-      u3_noun hit = u3t(cac);
-
+      //  shape 
+      //  
+      u3_noun fra = u3dc("snag", u3i_word(req_u.fra_w), u3t(cac));
       //
-      u3_resp res;
-      //  _fine_etch_resp();
+      
+      c3_w  fra_w = u3r_met(3, fra);
+      c3_y* fra_y = c3_calloc(fra_w);
+      
+      u3r_bytes(0, fra_w, fra_y, fra);
 
-      //_fine_send();
+      u3_resp* res_u = c3_calloc(sizeof(*res_u));
 
+      c3_assert(c3y == _fine_sift_resp(&hed_u, res_u, fra_w, fra_y));
+      
+      memcpy(&res_u->pre_u, &req_u.pre_u, sizeof(u3_prel));
 
+      c3_y* res_y;
+      c3_w res_w = _fine_etch_resp(&hed_u, res_u, &res_y);
+
+      // TODO: where free? maybe stack allocate instead?
+      u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
+      pen_u->typ_y = 2;
+      pen_u->res_u = res_u;
+      pen_u->len_w = res_w;
+      pen_u->hun_y = res_y;
+      pen_u->her_d[0] = res_u->pre_u.sen_d[0];
+      pen_u->her_d[1] = res_u->pre_u.sen_d[1];
+      pen_u->lan_u = lan_u;
+      pen_u->sam_u = sam_u;
+
+      _fine_send(pen_u);
+  
+      return;
     }
   } else {
     u3_resp res_u;
@@ -1426,18 +1430,42 @@ static void _fine_hear(u3_ames* sam_u,
     u3_noun wir = u3nc(c3__fine, u3_nul);
     c3_w num_w = res_u.num_w;
     c3_w fra_w = res_u.fra_w;
-    u3_noun cad = u3nq(c3__fund, 
-                       pat, 
-                       u3i_words(1, &fra_w),
-                       u3nc(u3i_words(1, &res_u.num_w),
-                            u3i_bytes(res_u.siz_s, res_u.dat_y)));
-
+    u3_noun cad = u3nc(c3__purr, u3i_bytes(len_w, hun_y));
 
     u3_ovum* ovo_u = u3_ovum_init(0, c3__fine, wir, cad);
     u3_auto_plan(&sam_u->fin_s.car_u, ovo_u);
-
-    // TODO: moar stats?
   }
+}
+
+static void
+_fine_request(u3_ames* sam_u,
+              u3_lane lan_u,
+              u3_noun  req)
+{
+  u3l_log("fine: request\n");
+
+  u3_pend pen_u;
+  u3_head hed_u;
+  u3_requ req_u;
+  
+  
+  c3_w req_w = u3r_met(3, req);
+  c3_y* req_y = c3_calloc(req_w);
+  u3r_bytes(0, req_w, req_y, req);
+
+  _ames_sift_head(&hed_u, req_y);
+  req_y += 4;
+  req_w -= 4;
+
+  _fine_sift_requ(&hed_u, &req_u, req_w, req_y);
+
+
+  pen_u.typ_y = 1;
+  pen_u.her_d[0] = req_u.pre_u.rec_d[0];
+  pen_u.her_d[1] = req_u.pre_u.rec_d[1];
+
+  pen_u.lan_u = lan_u;
+  pen_u.sam_u = sam_u;
 }
 
 /* _ames_hear(): parse a (potential) packet, dispatch appropriately.
@@ -1484,7 +1512,7 @@ _ames_hear(u3_ames* sam_u,
   }
   else if (c3n == is_ames_o) {
     // TODO: dispatch fine request
-    //_fine_hear(sam_u, lan_u, len_w, hun_y)
+    _fine_hear(sam_u, *lan_u, len_w, hun_y);
   }
 
   //  ensure the protocol version matches ours
@@ -1708,25 +1736,17 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
 /* fine_io_kick:(): receive effect from arvo
  *   TODO: 
  */
-static c3_o _fine_io_kick(u3_noun nun) {
-  /**
-   * +task:fine
-   *   $%  [%find *]  :: request
-   *       [%fund =path frag-num=@ud frag-tot=@ud contents=@]
-   *   ==
-   * +gift:fine
-   *   $%  [%made *]  :: notification
-   *       [%find =lane =path]  :: request packet to unix
-   *    ==
-   */
+static c3_o _fine_io_kick(u3_auto* car_u, u3_noun wir, u3_noun nun) {
+  u3_ames* sam_u = (u3_ames*)car_u;
   u3_noun hed = u3h(nun);
-  if(c3__made == hed) {
+  if(c3__hoot == hed) {
     // TODO: respond to notification of bound data 
-    // put in cache
     return c3y;
-  } else if(c3__find == hed) {
-    // TODO: emit request packet to host ship
-    // _fine_io_request();
+  } else if(c3__howl == hed) {
+    u3_noun lan, hot;
+    u3x_cell(u3t(nun), &lan, &hot);
+    u3_lane lan_u = u3_ames_decode_lane(lan);
+    _fine_request(sam_u, lan_u, hot);
     return c3y;
   } else {
     return c3n;
