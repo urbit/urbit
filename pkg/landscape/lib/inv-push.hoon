@@ -1,0 +1,96 @@
+/-  dao=uqbar-dao
+/+  graphlib=graph, graph-store
+/+  versioning
+=,  graph:dao
+=>
+  |%
+  +$  card  card:agent:gall
+  ++  version  3
+  ++  push-handler
+    $_  ^|
+    |_  rid=resource
+    ++  resource-for-update     |~(vase *?)
+    ++  initial-watch           |~(knot *vase)
+    --
+  --
+|=  $:  pfix=wire
+        =push-handler
+        store-name=term
+        =mark
+        current-version=@ud
+        min-version=@ud
+    ==
+|_  [=bowl:gall rid=resource cards=(list card)]
+++  abet
+  (flop cards)
+++  cor  .
+++  ver  ~(. versioning [bowl mark current-version min-version])
+::
+++  incoming-subscriptions
+  %-  ~(gas by *(map path @ud))
+  %+  murn
+    ~(val by sup.bowl)
+  |=  [him=ship pax=path]
+  =/  idx=(unit @)
+    (find pfix pax)
+  ?~  idx  ~
+  =/  ver  (slaw %ud (rear pax))
+  ?~  ver  ~
+  ?.  =(u.idx 0)  ~
+  `[pax u.ver]
+::
+++  emit  |=(=card cor(cards [card cards]))
+++  pass
+  |=  [=wire =dock =task:agent:gall]
+  (emit %pass `^wire`(welp pfix wire) %agent dock task)
+++  emil  |=(caz=(list card) cor(cards (welp (flop caz) cards)))
+++  area  `path`(welp pfix /(scot %p entity.rid)/[name.rid])
+::  +here: wire for subscriptions
+::
+++  here  area
+::  +there: path for subscriptions
+::
+++  there   
+  |=  time=(unit time)
+  ^-  path
+  =/  ver  (scot %ud version)
+  =/  tim  ?~(time %$ (scot %ud u.time))
+  (welp area /[tim]/[ver])
+::
+++  fact
+  |=  =vase
+  %-  emil
+  %+  turn  ~(tap by incoming-subscriptions)
+  |=  [=path version=@ud]
+  ^-  card
+  =/  mark  (append-version:ver version)
+  [%give %fact ~[path] (convert-from:ver mark vase)]
+::
+++  watch
+  |=  =path
+  ^+  cor
+  ?+  path  !!
+  ::
+      [@ @ ~]
+    =/  version  (slav %ud i.t.path)
+    =/  =vase  (initial-watch:push-handler i.path)
+    =/  mark  (append-version:ver version)
+    ?:  (supported:ver mark)
+      (emit %give %fact ~ (convert-from:ver mark vase))
+    =>  (emit %give %fact ~ version+!>(version))
+    (emit %give %kick ~ ~)
+
+  ==
+++  watch-them
+  |=  resub=(unit knot)
+  cor
+::
+::
+++  put
+  |=  *
+  cor
+::
+++  wait-sub
+  |=  version=@ud
+  (put %sub %sub-ver version)
+--

@@ -1,8 +1,10 @@
+/-  tx
+/-  meta=dao-metadata
 /+  pull-hook
 /+  resource
 =<  dao
 |%
-+$  id  term
++$  id  @ux
 ::
 ::  TODO: these should come from chain state
 ::    instead, just spam them to everyone
@@ -14,30 +16,35 @@
       [%daoist p=daoist-update]
       [%delete ~]
       [%graphs p=update:graph]
+      [%initial p=dao]
   ==
 +$  daoist-update
   (pair ship daoist-diff)
 ::
 +$  daoist-diff
-  $%  [%join =tx]
+  $%  [%join ~]
       [%leave ~]
       [%deputise =badge]
       [%undeputise =badge]
   ==
-+$  tx  @uvH
 +$  daoist
   $:  =ship
       joined=time
-      attest=tx
+      attest=hash:tx
       roles=(set badge)
   ==
 +$  role
   $:  title=cord
       description=cord
+      color=@ux
   ==
 ::
 ++  graph
   |%
+  +$  create
+    (trel id resource datum:meta)
+  +$  state
+    [=net =datum:meta]
   +$  update
     (pair resource diff)
   +$  diff
@@ -45,9 +52,10 @@
         [%pub p=pub-diff]
     ==
   ::
-  +$  status
+  +$  net
     $%  [%pub p=(set badge)]
         [%sub p=status:pull-hook]
+        [%tub ~]
     ==
   +$  pub-diff
     $%  [%attach p=(set badge)]
@@ -59,9 +67,12 @@
 ::
 +$  badge  term
 +$  dao
-  $:  host=ship
+  $:  :: on-chain
+      host=ship
       daoists=(map ship daoist)
+      admins=(set ship)
+      ::  off-chain
       roles=(map badge role)
-      graphs=(map resource status:graph)
+      graphs=(map resource state:graph)
   ==
 --

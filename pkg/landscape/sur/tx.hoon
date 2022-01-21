@@ -3,7 +3,12 @@
 +$  pubkey  @ux 
 +$  multisig
   [members=(set pubkey) threshold=@ud]
-+$  owner  ?(pubkey multisig)
++$  owner  where
++$  where  
+  $%  [%pubkey p=pubkey]
+      [%multisig p=multisig]
+  ==
+::
 +$  id  @ud
 +$  account-id  @ux
 +$  hash  @ux
@@ -13,11 +18,11 @@
 +$  zigs  amount
 ::
 +$  asset
-  $%  [%nft minter=account-id =id uri=@t =hash can-xfer=?]
+  $%  [%nft minter=account-id =id uri=@t =hash creator=ship can-xfer=?]
       [%tok minter=account-id =amount]
   ==
 +$  minting-asset
-  $%  [%nft uri=@t =hash can-xfer=?]
+  $%  [%nft creator=ship uri=@t =hash can-xfer=?]
       [%tok =amount]
   ==
 +$  account
@@ -61,21 +66,22 @@
       feerate=zigs
       signers=(set [pubkey signature])
   ==
-+$  sender  ?(pubkey-sender multisig-sender)
++$  sender  account-id
 ::
 ++  tx
   $%  
     $:  %send
         from=sender
-        to=?(account-id pubkey)
+        to=account-id
         ::  making assets a map to enforce uniqueness of assets
-        assets=(map ?(account-id hash) asset)
+        assets=(map account-id asset)
     ==
     $:  %mint
         from=sender
         minter=account-id
-        to=(list [?(account-id pubkey) minting-asset])
+        to=(list [account-id minting-asset])
     ==
+    ::
     $:  %lone-mint
         from=sender
         to=(list [?(account-id pubkey) minting-asset])

@@ -1,20 +1,14 @@
 /-  dao=uqbar-dao
 /-  tx
 /-  meta=dao-metadata
-/-  chain=dao-chain
 /+  default-agent, dbug, verb
 /+  resource, agentio
 /+  graphlib=graph, graph-store
 /+  pull=inv-pull, push=inv-push
-/+  pull-hook
 |%
 +$  card  card:agent:gall
 +$  state-zero
-  $:  %0
-      daos=(map id:dao dao)
-      sub=(map id:dao status:pull-hook)
-      pub=(set id:dao)
-  ==
+  [%0 daos=(map id:dao dao)]
 --
 =|  state-zero
 =*  state  -
@@ -71,29 +65,22 @@
   ~|  poke/mark
   ?+  mark   ~|(%no-mark !!)
   ::  TODO: remove, debugging purposes
-    %noun          cor(state *state-zero)
+    %noun  cor(state *state-zero)
   ::
-    %tx            (handle-tx !<(tx vase))
-    %chain-update  (handle-chain !<(update:chain vase))
+    %tx   (handle-tx !<(tx vase))
   ::
       %dao-update
     =+  !<(=update:dao vase)
     abet:(~(diff tao p.update) q.update)
   ::
       %graph-update-3
-    =/  res  (~(resource-for-update graphlib bowl) vase)
-    |- 
-    ?~  res  cor
-    =*  rid  i.res
-    =/  d=(unit id:dao)  (dao-for-graph rid)
-    ?~  d  $(res t.res)
+    %-  emil
+    %+  murn  (~(resource-for-update graphlib bowl) vase)
+    |=  rid=resource
+    ^-  (unit card)
+    =/  d=(unit dao)  (dao-for-graph rid)
     =/  t  ~(. tao u.d)
-    =.  cor  abet:abet:(proxy:(abed:gra:t rid) vase)
-    $(res t.res)
-  ::
-      %graph-create
-    =+  !<(=create:graph:dao vase)
-    abet:(~(create-graph tao p.create) [q r]:create)
+    ~(proxy graph:t rid)
   ==
 ++  watch
   |=  =path
@@ -150,27 +137,7 @@
   |=  =path
   ^-  (unit (unit cage))
   [~ ~]
-::
-++  handle-chain
-  |=  =update:chain
-  ^+  cor
-  ?:  (~(has by daos) p.update)
-    abet:(~(bind tao p.update) q.update)
-  =/  daoists
-    %-  ~(gas by *(map ship daoist:dao))
-    %+  turn  ~(tap by members.q.update)
-    |=  [s=ship =hash:tx]
-    ^-  [ship daoist:dao]
-    :-  s
-    :: TODO: verify attestation!
-    [s now.bowl hash ~]
-  =/  d=dao   
-    =,  q.update
-    [host daoists admins ~ ~]
-  =.  daos  (~(put by daos) p.update d)
-  ?:  =(host.q.update our.bowl)  
-    cor(pub (~(put in pub) p.update))
-  abet:~(subscribe tao p.update)
+::  $handle-tx: handle an incoming transaction
 ::
 ::    TODO: move initialisation logic elsewhere, so that you mint the
 ::    NFT, then poke this agent to setup an dao by scrying out data.
@@ -223,48 +190,6 @@
     |=  f=$-(dao dao)
     tao(daos (~(jab by daos) id f))
   ++  te  (~(got by daos) id)
-  ::  TODO: finalise
-  ++  bind
-    |=  =chain:chain
-    ^+  tao
-    |^
-    =.  tao  host
-    =.  tao  members
-    admin
-    ++  host
-      ~|  %host-swapping-unimplemented
-      ?>  =(host.chain host:te)
-      tao
-    ++  members
-      tao
-    ++  admin
-      tao
-    --
-  ++  create-graph
-    |=  [rid=resource =datum:meta]
-    ^+  tao
-    =/  =state:graph:dao
-      [[%pub ~] datum]
-    =.  tao
-      %-  edit
-      |=  dao
-      +<(graphs (~(put by graphs) rid state))
-    =/  =mark
-      ?-  module.datum
-        %chat  %graph-validator-chat
-        %book  %graph-validator-publish
-        %link  %graph-validator-link
-      ==
-    =/  =update:graph-store
-      [now.bowl %add-graph rid *graph:graph-store `mark %.y]
-    ::  TODO: handle failure??
-    %^  pass  ~  [our.bowl %graph-store]
-    [%poke graph-update-3+!>(update)]
-  ++  subscribe
-    =/  =path  (welp area /dao)
-    %^  pass  path  [host:te dap.bowl]
-    [%watch path]
-    
   ::
   ++  watch
     |=  =path
@@ -274,13 +199,8 @@
         [%graphs @ @ *]
       =/  ship  (slav %p i.t.path)
       =/  rid=resource  [ship i.t.t.path]
-      ::  TODO: respond to graph requests
+      ::  TODO:
       tao
-    ::
-        [%dao ~]
-
-
-
     ==
   :: TODO: work
   ++  revoke
@@ -330,10 +250,6 @@
       %create  create
       %delete  delete
       %daoist  abet:(~(diff taoist p.p.diff) q.p.diff)
-    ::
-        %initial
-      %-  edit
-      |=(d=dao p.diff)
     ::
         %graphs  
       =*  update  p.diff
@@ -411,12 +327,6 @@
   ++  agent
     |=  [=wire =sign:agent:gall]
     ?+  wire  !!
-        ~
-      ?.  ?=(%poke-ack -.sign)  tao
-      %.  tao
-      ?~  p.sign  same
-      (slog leaf/"Failed poke" u.p.sign)
-    ::
         [%graphs @ @ *]
       =/  ship  (slav %p i.t.wire)
       =/  rid=resource  [ship i.t.t.wire]
@@ -496,33 +406,40 @@
     ++  proxy
       |=  =vase
       =+  !<(=update:graph-store vase)
-      =/  mar  (fall mark %$)
       |^  
       =/  =dock  [our.bowl %graph-store]
       =.  gra  
-        (pass /proxy dock %poke %graph-update-3 vase)
-      =/  valid=?  
+        (pass /proxy dock %poke current-version:ver:net-graphs-pull vase)
+      ?>  
       ::
-        ?+   -.q.update  !!
-        ::
-            %add-nodes
-          ?+  mar  !!
-            %graph-validator-chat     (chat-add nodes.q.update)
-            %graph-validator-link     (link-add nodes.q.update)
-            %graph-validator-post     (post-add nodes.q.update)
-            %graph-validator-publish     (publish-add nodes.q.update)
-          ==
-        ::
-            %remove-posts
-          ?+  mar  !!
-            %graph-validator-chat     (chat-del indices.q.update)
-            %graph-validator-link     (link-del indices.q.update)
-            %graph-validator-post     (post-del indices.q.update)
-            %graph-validator-publish     (publish-del indices.q.update)
-          ==
+      ~!  q.update 
+      ~!  -.q.update
+      ?+   mark  !!
+      ::
+          %graph-validator-chat
+        ?+  -.q.update  !!
+          :: %add-nodes     (chat-add nodes.q.update)
+          %remove-posts  (chat-del indices.q.update)
         ==
-      ?>  valid
-      gra  ::: XX: fix, possibly the ugliest syntax ever committed
+      ::
+          %graph-validator-link 
+        ?+  -.q.update  !!
+          %add-nodes     (link-add nodes.q.update)
+          %remove-posts  (link-del indices.q.update)
+        ==
+      ::
+          %graph-validator-post 
+        ?+  -.q.update  !!
+          %add-nodes     (post-add nodes.q.update)
+          %remove-posts  (post-del indices.q.update)
+        ==
+      ::
+          %graph-validator-publish 
+        ?+  -.q.update  !!
+          %add-nodes     (publish-add nodes.q.update)
+          %remove-posts  (publish-del indices.q.update)
+        ==
+      ==  gra  ::: XX: fix, possibly the ugliest syntax ever committed
       ++  daoist  (~(got by daoists:te) src.bowl)
       +$  nodes   (map index:graph-store node:graph-store)
       +$  indices  (set index:graph-store)
@@ -579,7 +496,7 @@
       ::
       ++  post-add
         |=  =nodes
-        %+  add  nodes
+        %-  add
         |=  =post:graph-store
         =/  writer  (has-policy %write)
         ?:  ?=([@ ~] index.post)

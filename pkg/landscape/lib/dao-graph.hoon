@@ -33,7 +33,7 @@
 ::
 ++  emit  |=(=card cor(cards [card cards]))
 ++  emil  |=(caz=(list card) cor(cards (welp (flop caz) cards)))
-++  area  `path`/daos/[id]/graphs/(scot %p entity.rid)/[name.rid]
+++  area  `path`/daos/(scot %ux id)/graphs/(scot %p entity.rid)/[name.rid]
 ::  +here: wire for subscriptions
 ::
 ++  here  area
@@ -60,6 +60,11 @@
   ~|  %pub-not-host
   ?>  =(our.bowl entity.rid)
   |%
+  ++  revoke
+    |=  =ship
+    cor
+
+
   ++  allowed
     =*  ship  src.bowl
     ^-  ?
