@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useState, useEffect } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import { Associations, Graph, resourceAsPath, Unreads } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
 import _ from 'lodash';
@@ -69,32 +69,31 @@ function sidebarSort(unreads: Unreads, pending: string[]): Record<SidebarSort, (
 function getItems(associations: Associations, workspace: Workspace, inbox: Graph, pending: string[]) {
    const filtered = Object.keys(associations.graph).filter((a) => {
      const assoc = associations.graph[a];
-     if(!('graph' in assoc.metadata.config)) {
+     if (!('graph' in assoc.metadata.config)) {
        return false;
+    } else if (workspace?.type === 'group') {
+      const group = workspace.group;
+      return group ? (
+        assoc.group === group &&
+        !assoc.metadata.hidden
+      ) : (
+        !(assoc.group in associations.groups) &&
+        'graph' in assoc.metadata.config &&
+        assoc.metadata.config.graph !== 'chat' &&
+        !assoc.metadata.hidden
+      );
+    } else if (workspace?.type === 'messages') {
+      return (
+        !assoc.metadata.hidden &&
+        !(assoc.group in associations.groups) &&
+        assoc.metadata.config.graph === 'chat'
+      );
+    } else {
+      return (
+        !(assoc.group in associations.groups) &&
+        assoc.metadata.config.graph !== 'chat'
+      );
     }
-      if (workspace?.type === 'group') {
-        const group = workspace.group;
-        return group ? (
-          assoc.group === group &&
-          !assoc.metadata.hidden
-        ) : (
-          !(assoc.group in associations.groups) &&
-          'graph' in assoc.metadata.config &&
-          assoc.metadata.config.graph !== 'chat' &&
-          !assoc.metadata.hidden
-        );
-      } else if (workspace?.type === 'messages') {
-        return (
-          !assoc.metadata.hidden &&
-          !(assoc.group in associations.groups) &&
-          assoc.metadata.config.graph === 'chat'
-        );
-      } else {
-        return (
-          !(assoc.group in associations.groups) &&
-          assoc.metadata.config.graph !== 'chat'
-        );
-      }
    });
   const direct: string[] = workspace.type !== 'messages' ? []
     : inbox.keys().map(x => patp(x.toString()));
@@ -116,17 +115,11 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   const groupSelected = (isMessages && baseUrl.includes('messages')) || (workspace.type === 'group' && baseUrl.includes(workspace.group));
   const [collapsed, setCollapsed] = useState(!groupSelected && !isMessages);
 
-  useEffect(() => {
-    if (workspace.type === 'group' && window.location.href.includes(workspace.group)) {
-      setCollapsed(false);
-    }
-  }, [window.location.href, workspace]);
-
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(s => s.groups);
   const inbox = useInbox();
-  const graphKeys = useGraphState(s => s.graphKeys);
   const pendingDms = useGraphState(s => [...s.pendingDms].map(s => `~${s}`));
+  const graphKeys = useGraphState(s => s.graphKeys);
   const pendingGroupChats = useGroupState(s => _.pickBy(s.pendingJoin, (req, rid) => !(rid in groups) && req.app === 'graph'));
   const inviteGroupChats = useInviteState(
     s => Object.values(s.invites?.['graph'] || {})
@@ -180,7 +173,6 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
     for (const key in unseen) {
       const formattedKey = key.replace('landscape/graph', '/ship').replace('/mention', '');
       if (associations.graph[formattedKey]?.group === workspace?.group) {
-        console.log(1, associations.graph[formattedKey]?.group, workspace?.group)
         hasNotification = true;
         break;
       }
@@ -206,6 +198,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
         hasNotification={hasNotification}
         pending={isPending}
         onClick={() => setCollapsed(isMessages ? false : !collapsed)}
+        isGroup
       >
         {!isMessages && (
           <Icon
@@ -292,6 +285,7 @@ function PendingSidebarGroup({ path }: PendingSidebarGroupProps) {
       hasUnread={false}
       hasNotification={!joining}
       isSynced={!joining}
+      isGroup
     />
   );
 }

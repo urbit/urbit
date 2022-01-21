@@ -290,7 +290,7 @@ export const citeNickname = (ship: string, showNickname?: boolean, nickname?: st
 };
 
 // trim patps to match dojo, chat-cli
-export function cite(ship: string): string | Element {
+export function cite(ship: string, useOldFormat = false): string | Element {
   let patp = ship,
     shortened: string | Element = '';
   if (patp === null || patp === '') {
@@ -306,10 +306,14 @@ export function cite(ship: string): string | Element {
   }
   // moon
   if (patp.length === 27) {
-    shortened = <>
-      <Text mono fontSize="10px" verticalAlign="top">~{patp.slice(0, 13)}</Text>
-      {'^' + patp.slice(14, 27)}
-    </>;
+    if (useOldFormat) {
+      shortened = '~' + patp.slice(14, 20) + '^' + patp.slice(21, 27);
+    } else {
+      shortened = <>
+        <Text mono fontSize="10px" verticalAlign="top">~{patp.slice(0, 13)}</Text>
+        {'^' + patp.slice(14, 27)}
+      </>;
+    }
     return shortened;
   }
   return `~${patp}`;

@@ -27,7 +27,7 @@ interface LaunchAppProps {
 }
 
 export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
-  const notificationsCount = useHarkState((state) => state.notificationsCount);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
   const calmState = useSettingsState(selectCalmState);
   const { hideUtilities, hideGroups } = calmState;
   const history = useHistory();
@@ -36,7 +36,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
     <>
       <Helmet defer={false}>
         <title>
-          {notificationsCount ? `(${String(notificationsCount)}) ` : ""}Groups
+          {notificationsCount ? `(${String(notificationsCount)}) ` : ''}EScape
         </title>
       </Helmet>
       <Route path="/join/:ship/:name">

@@ -116,7 +116,7 @@ export default function index(contacts, associations, currentGroup, groups, hide
             title,
             `/~landscape${each.resource}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            cite(shipStart.slice(0, shipStart.indexOf('/')))
+            cite(shipStart.slice(0, shipStart.indexOf('/')), true) as string
           );
           landscape.push(obj);
         } else {

@@ -47,6 +47,7 @@ export function SidebarItemBase(props: {
   mono?: boolean;
   fontSize?: string;
   pending?: boolean;
+  isGroup?: boolean;
   indent?: number;
   onClick?: () => void;
 }) {
@@ -63,18 +64,23 @@ export function SidebarItemBase(props: {
     isSynced = false,
     mono = false,
     pending = false,
+    isGroup = false,
     indent = 0,
     onClick
   } = props;
   const color = isSynced
-    ? selected
+    ? selected || (!isGroup && hasUnread)
       ? 'black'
       : 'gray'
     : 'lightGray';
 
-  const fontStyle = (hasUnread || hasNotification) ? 'italic' : 'normal';
-  const fontWeight = selected ? 600 : 'normal';
+  const hasGroupUnread = isGroup && (hasUnread || hasNotification);
+  const hasChannelUnread = !isGroup && (hasUnread || hasNotification);
+
+  const fontStyle = hasGroupUnread ? 'italic' : 'normal';
+  const fontWeight = hasChannelUnread ? 600 : 'normal';
   const bg = pending ? 'lightBlue' : groupSelected ? 'washedGray' : 'white';
+  const borderBottom = selected ? '1px solid lightGray' : undefined;
 
   return (
     <HoverBoxLink
@@ -115,6 +121,7 @@ export function SidebarItemBase(props: {
             fontStyle={fontStyle}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
             className={selected ? '' : 'hover-underline'}
+            borderBottom={borderBottom}
           >
             {title}
           </Text>
@@ -128,25 +135,24 @@ export function SidebarItemBase(props: {
               <Icon icon="Bullet" color="blue" />
             </Box>
           )}
+          {hasUnread && (
+            <Box
+              px="3px"
+              py="1px"
+              fontSize="10px"
+              minWidth="18px"
+              borderRadius="6px"
+              color="white"
+              backgroundColor="darkGray"
+              textAlign="center"
+              ml="6px"
+              mr="6px"
+            >
+              {unreadCount}
+            </Box>
+          )}
         </Row>
       </Row>
-      {hasUnread && (
-        <Box
-          position="absolute"
-          top="4px"
-          right="2px"
-          px="3px"
-          py="1px"
-          fontSize="10px"
-          minWidth="12px"
-          borderRadius="6px"
-          color="white"
-          backgroundColor="darkGray"
-          textAlign="center"
-        >
-          {unreadCount}
-        </Box>
-      )}
     </HoverBoxLink>
   );
 }

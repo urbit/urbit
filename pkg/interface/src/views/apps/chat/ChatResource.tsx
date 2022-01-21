@@ -139,9 +139,11 @@ const fetchMessages = useCallback(async (newer: boolean) => {
   }, [resource]);
 
   const onLike = useCallback(async ({ author, signatures, index }: Post) => {
+    // console.log(0)
     if (window.ship !== author) {
       const { ship, name } = resourceFromPath(resource);
-      console.log(1, ship, name)
+      // console.log(1)
+
       const body = signatures.find(({ ship }) => ship === window.ship)
         ? {
           'remove-signatures': {
@@ -155,13 +157,14 @@ const fetchMessages = useCallback(async (newer: boolean) => {
             signatures: []
           }
         }; // like
+      // console.log(2, body)
       const result = await airlock.thread({
-        inputMark: "graph-update-3",
-        outputMark: "json",
-        threadName: "graph-add-signatures",
+        inputMark: 'graph-update-3',
+        outputMark: 'json',
+        threadName: 'graph-add-signatures',
         body
       });
-      console.log(3, result)
+      // console.log(3, result)
     }
   }, [resource]);
 

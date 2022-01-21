@@ -28,6 +28,7 @@ import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { Portal } from '../Portal';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
+import { useDmUnreads } from '~/logic/lib/useDmUnreads';
 
 interface OmniboxProps {
   show: boolean;
@@ -69,6 +70,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const [selected, setSelected] = useState<[] | [string, string]>([]);
   const contactState = useContactState(state => state.contacts);
   const notificationCount = useHarkState(state => state.notificationsCount);
+  const { unreadDmCount } = useDmUnreads();
   const invites = useInviteState(state => state.invites);
   const [leapCursor, setLeapCursor] = useState('pointer');
 
@@ -184,14 +186,13 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         if(shift && app === 'profile') {
           // TODO: hacky, fix
           link = link.replace('~profile', '~landscape/messages/dm');
-        } 
+        }
         if(link.startsWith('?')) {
           history.push({
             search: link
           });
         } else {
           history.push(link);
-
         }
       } else {
         window.location.href = link;
@@ -377,6 +378,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
                     setSelection={() => setSelection(result.app, result.link)}
                     selected={sel}
                     hasNotifications={notificationCount !== 0}
+                    hasUnreadDms={unreadDmCount > 0}
                   />
                 ))}
               </Box>

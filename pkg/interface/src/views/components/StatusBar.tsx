@@ -9,7 +9,8 @@ import {
   Row,
   Text
 } from '@tlon/indigo-react';
-import React from 'react';
+import React, { useMemo } from 'react';
+import { patp } from 'urbit-ob';
 import { Link } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -20,9 +21,12 @@ import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
-import useHarkState from '~/logic/state/hark';
+import useHarkState, { useHarkDm } from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
 import UqbarLogo from '~/assets/img/uqbar-logo.png';
+import useGraphState, { useInbox } from '~/logic/state/graph';
+import _ from 'lodash';
+import { useDmUnreads } from '~/logic/lib/useDmUnreads';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
@@ -32,9 +36,10 @@ const StatusBar = (props) => {
   const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
   const { toggleOmnibox } = useLocalState(localSel);
   const { hideAvatars } = useSettingsState(selectCalmState);
-  const notificationsCount = useHarkState(s => s.notificationsCount);
-
+  const { notificationsCount } = useHarkState();
+  const { unreadDmCount } = useDmUnreads();
   const groups = useMetadataState(s => s.associations.groups);
+
   let title = '';
   if (props.location.pathname.includes('~landscape')) {
     const [, , , groupShip, groupName] = props.location.pathname.split('/');
@@ -136,6 +141,11 @@ const StatusBar = (props) => {
           mr={2}
         >
           <Icon icon='Messages' />
+          { unreadDmCount > 0 && (
+            <Box position="absolute" right="-8px" top="-8px">
+              <Icon icon="Bullet" color="blue" />
+            </Box>
+          )}
         </StatusBarItem>
         <Dropdown
           dropWidth='250px'

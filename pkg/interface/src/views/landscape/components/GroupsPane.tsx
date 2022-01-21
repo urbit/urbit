@@ -77,7 +77,7 @@ export function GroupsPane(props: GroupsPaneProps) {
     return (
       <>
         <Helmet defer={false}>
-          <title>~{window.ship}</title>
+          <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}~{window.ship}</title>
         </Helmet>
         <Skeleton
           {...props}

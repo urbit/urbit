@@ -454,6 +454,8 @@ function ChatMessage(props: ChatMessageProps) {
     );
   }
 
+  // console.log(1, msg)
+
   const onReply = props?.onReply || emptyCallback;
   const onDelete = props?.onDelete; // If missing hide delete action
   const transcluded = props?.transcluded || 0;
