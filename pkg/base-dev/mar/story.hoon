@@ -46,7 +46,6 @@
     ^-  story-diff
     (need (join ali bob)) :: XX temporary, only because join doesn't fail
   --
-
 ::
 ++  grow                                                ::  convert to
   |%                                                    ::
@@ -54,12 +53,15 @@
     [/text/x-urb-story (as-octs:mimes:html (of-wain:format txt))]
   ++  txt
     ^-  wain
-    %+  snoc  :: ensure terminating newline is present 
-    %+  turn  ~(tap by tale)
-    |=  [chapter=[tak=tako:clay message=[title=@t body=@t]]]
-    =/  tak=tako:clay       tak.chapter
-    =/  [title=@t body=@t]  +.chapter
-    (crip "commit: {<`@uv`tak>}\0a{(trip title)}\0a\0a{(trip body)}\0a---")
+    %+  snoc  :: ensure terminating newline is present
+    %+  murn  ~(tap by tale)
+    |=  [[=tako:clay proses=(set prose)]]
+    =/  proses-list  ~(tap in proses)
+    ?~  proses-list  ~
+    =/  prose-a  i.proses-list
+    %-  some
+    (crip "commit: {<`@uv`tako>}\0a{(trip title.prose-a)}\0a\0a{(trip body.prose-a)}\0a---")
+    ::(turn ~(tap by proses) |=(=prose ))
     ''
   --
 ++  grab
@@ -106,7 +108,10 @@
     =/  parsed-story  `(list [@uv @t wain])`(rash story-text story-parser)
     %-  ~(gas by *story)
     %+  turn  parsed-story
-    |=  [tak=tako:clay title=@t body=wain]
-    [tak title (of-wain:format body)]
+    |=  [=tako:clay title=@t body=wain]
+    :-  tako 
+    %-  silt
+    :~  [title (of-wain:format body)]
+    ==
   --
 --
