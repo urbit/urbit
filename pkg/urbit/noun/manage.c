@@ -1662,9 +1662,9 @@ _cm_signals(void)
   //  finds no filter to handle the exception.
   //  Instead of libsigsegv, all vere functions register a SEH exception
   //  filter (see compat/mingw/seh_handler.c) that handles both memory
-  //  access and stack overflow exceptions. It calls u3e_fault directly.
+  //  access and stack overflow exceptions. It calls u3_snap_fault directly.
 # else
-  if ( 0 != sigsegv_install_handler(u3e_fault) ) {
+  if ( 0 != sigsegv_install_handler(u3_snap_fault) ) {
     u3l_log("boot: sigsegv install failed\n");
     exit(1);
   }
@@ -1771,7 +1771,7 @@ u3m_boot(c3_c* dir_c)
 
   /* Activate the storage system.
   */
-  nuu_o = u3e_live(c3n, dir_c);
+  nuu_o = u3_snap_live(c3n, dir_c);
 
   /* Activate tracing.
   */
