@@ -223,11 +223,13 @@
       state
     ::
     ++  handle-request
-      |=  =twit
+      |=  [=duct =twit]
       ^-  (list move)
-      ::TODO  collect scry response
-      ::TODO  sane y/n? other task?
-      [duct %give %fine %howl !!]~
+      =/  =song
+        %+  encode-response  path.twit
+        (get-scry-result *gang path.twit)
+      ::TODO  different task, pick the right packet
+      [duct %give %howl path.twit song]~
     ::
     ++  handle-response
       |=  [[from=ship =lane:ames] =peep =rawr]
@@ -273,6 +275,28 @@
       =/  =hoot  (encode-request path.peep next-num)
       ::REVIEW  no %f tag?
       [[urth %give %hoot lane hoot]~ state]
+    ::
+    ++  get-scry-result
+      |=  [=gang =path]
+      ^-  (unit (cask))
+      ?~  nom=(de-omen path)  ~
+      ?>  =(our p.bem.u.nom)
+      ::  we only support scrying into clay,
+      ::  and only if the data is fully public.
+      ::
+      ?.  =(%c (end 3 (snag 0 path)))  ~
+      =+  pem=(rof gang (need (de-omen %cp (slag 1 path))))
+      ?>  ?=(^ pem)
+      ?>  ?=(^ u.pem)
+      =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+      ?>  =([%black ~ ~] rul.r.per)
+      =+  res=(rof gang u.nom)
+      ~!  res
+      ?-  res
+        ~        !!  ::REVIEW  crashing in the blocking case is fine.. right?
+        [~ ~]    ~
+        [~ ~ *]  `[p q.q]:u.u.res
+      ==
     --
 ^?
 |%
@@ -316,9 +340,10 @@
       =/  =packet:ames  (decode-packet `@ux`purr.task)
       =/  req=?         =(& (cut 0 [2 1] purr.task))
       ?:  req
+        ::TODO  crash instead, scry/peek should be used for this
         =/  =twit  (decode-request `@ux`content.packet)
         ::TODO  verify request signature
-        [(handle-request twit) state]
+        [(handle-request hen twit) state]
       =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
       =/  =rawr          (decode-response-packet purr)
       ::TODO  validate response signature
@@ -375,23 +400,7 @@
   ::
   =/  pax=path
     [i.t.s.bem (scot %p our) t.t.s.bem]
-  ?~  nom=(de-omen pax)  [~ ~]
-  ::  we only support scrying into clay, and only if the data is fully public
-  ::
-  ?.  =(%c (end 3 (snag 0 pax)))  ~
-  =+  pem=(rof lyc (need (de-omen %cp (slag 1 pax))))
-  ?~  pem  ~
-  ?~  u.pem  ~
-  =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-  ?.  =([%black ~ ~] rul.r.per)  ~
-  ::  scry out the data from clay and packetize it as appropriate
-  ::
-  =+  res=(rof lyc u.nom)
-  ?-  res
-    ~        ~
-    [~ ~]    ``noun+!>((encode-response pax ~))
-    [~ ~ *]  ``noun+!>((encode-response pax `[p q.q]:u.u.res))
-  ==
+  ``noun+!>((encode-response pax (get-scry-result lyc pax)))
 ::
 ++  stay  state
 ++  take
