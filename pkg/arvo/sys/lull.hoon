@@ -2103,6 +2103,7 @@
   +$  task                                              ::  in request ->$
     $~  [%vega ~]
     $%  $>(%born vane-task)                             ::  new unix process
+        [%done ~]                                       ::  socket closed
         [%fyrd =beak name=term data=*]                  ::  run thread v0
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
