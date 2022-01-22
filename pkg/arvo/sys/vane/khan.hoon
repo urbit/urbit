@@ -6,7 +6,9 @@
 =>  |%
     +$  move  [p=duct q=(wite note gift:khan)]
     +$  note                                            ::  out request $->
-      !!
+      $%  $:  %g                                        ::  to %gall
+              $>(%deal task:gall)                       ::  full transmission
+      ==  ==                                            ::
     +$  sign                                            ::  in response $<-
       !!
     +$  khan-state
@@ -14,6 +16,15 @@
           unix-duct=duct
       ==
     --
+=>
+|%
+++  start-spider
+  |=  *
+  !!
+++  watch-spider
+  |=  *
+  !!
+--
 =|  khan-state
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
@@ -35,11 +46,20 @@
     [~ khan-gate]
       %trim
     [~ khan-gate]
+      %done
+    [~ khan-gate]
       %born
     [~ khan-gate(unix-duct hen)]
       %fyrd
+    =/  rid=@ta  (rear (head hen))
+    =/  tid=@ta
+      (cat 3 'khan-fyrd--' rid)
+    =/  start-moves=(list move)
+      :~  (watch-spider beak.task name.task /thread-result/[tid])
+          (start-spider beak.task name.task !>(data.task))
+      ==
     ::  send to gall, sub for updates
-    !!
+    [start-moves khan-gate]
   ==
 ::  +load: migrate an old state to a new khan version
 ::
