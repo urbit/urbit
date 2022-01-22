@@ -60,6 +60,8 @@
 
 #ifdef  _WIN32
 
+//  TODO  windows
+//
 u3_auto*
 u3_conn_io_init(u3_pier* pir_u)
 {
@@ -597,11 +599,10 @@ _conn_sock_cb(uv_stream_t* sem_u, c3_i tas_i)
 static void
 _conn_init_sock(u3_shan* san_u)
 {
-  //  The full socket path is limited to about 108 characters,
-  //  and we want it to be relative to the pier. So we save our
-  //  current path, chdir to the pier, open the socket at the
-  //  desired path, then chdir back. Hopefully there aren't any
-  //  threads.
+  //  the full socket path is limited to about 108 characters,
+  //  and we want it to be relative to the pier. save our current
+  //  path, chdir to the pier, open the socket at the desired
+  //  path, then chdir back. hopefully there aren't any threads.
   //
   c3_c pax_c[2048];
   c3_i err_i;
