@@ -1,7 +1,7 @@
 import { Col } from '@tlon/indigo-react';
 import { Association, Content, Graph, Group, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState, useRef } from 'react';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useFileUpload } from '~/logic/lib/useFileUpload';
@@ -13,6 +13,8 @@ import { Loading } from '~/views/components/Loading';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import ChatInput from './ChatInput';
 import ChatWindow from './ChatWindow';
+import { CodeMirrorShim } from './ChatEditor';
+
 
 interface useChatStoreType {
   id: string;
@@ -123,9 +125,9 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   const { canUpload, drag } = useFileUpload({
     onSuccess: url => onSubmit([{ url }])
   });
-
   useEffect(() => {
     restore(id);
+    inputRef.current.focus();
   }, [id]);
 
   const scrollTo = new URLSearchParams(location.search).get('msg');
@@ -136,10 +138,14 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     setShowBanner(promptShare.length > 0);
   }, [promptShare]);
 
+  const inputRef = useRef<CodeMirrorShim>(null);
+
+
   const onReply = useCallback(
     (msg: Post) => {
       const message = props.onReply(msg);
-      setMessage(message);
+      setMessage(message + " ");
+      inputRef.current.focus();
     },
     [id, props.onReply]
   );
@@ -170,6 +176,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
           {...{ onSubmit, isAdmin, group, association }}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           placeholder="Message..."
+          chatEditor={inputRef}
         />
       )}
     </Col>

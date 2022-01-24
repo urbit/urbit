@@ -20,6 +20,7 @@ type ChatInputProps = PropsWithChildren<IuseStorage & {
   isAdmin: boolean;
   group: Group;
   association: Association;
+  chatEditor: React.RefObject<CodeMirrorShim>
 }>;
 
 const InputBox: FC = ({ children }) => (
@@ -78,9 +79,10 @@ export const ChatInput = React.forwardRef(({
   onSubmit,
   isAdmin,
   group,
-  association
+  association,
+  chatEditor
 }: ChatInputProps, ref) => {
-  const chatEditor = useRef<CodeMirrorShim>(null);
+  // const chatEditor = useRef<CodeMirrorShim>(null);
   useImperativeHandle(ref, () => chatEditor.current);
   const [inCodeMode, setInCodeMode] = useState(false);
 
