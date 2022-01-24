@@ -111,18 +111,16 @@
       ^-  song
       ::  prepend request descriptions to each response packet
       ::
-      =;  pacs=(list byts)
+      =;  pacs=(list @ux)
         %-  head
         %^  spin  pacs  1
-        |=  [pac=byts num=@ud]
+        |=  [pac=@ux num=@ud]
         ^-  [purr _num]
         :_  +(num)
         ^-  @ux
         ::NOTE  we stub out the receiver & origin details,
         ::      runtime should replace them as appropriate.
-        =/  req=byts  (request-body path num)
-        =/  con=@ux   (can 3 req pac ~)
-        (encode-packet [our ~zod] (mod life:keys 16) 0b0 ~ con)
+        (encode-packet [our ~zod] (mod life:keys 16) 0b0 ~ pac)
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
@@ -132,17 +130,23 @@
         (cat 3 sig (jam u.data))  ::TODO  should include life
       ::  sign & packetize the fragments
       ::
-      %+  turn  frag
-      |=  dat=@
-      ^-  byts
-      =/  wid=@ud  (met 3 dat)
-      :-  :(add 64 4 2 wid)
-      %+  can  3
-      :~  64^(sign:keys dat)  ::  signature  ::TODO  +pack:keys
-          4^(lent frag)       ::  number of fragments
-          2^wid               ::  response data fragment size in bytes
-          wid^dat             ::  response data fragment
-      ==
+      %-  head
+      %^  spin  frag  1
+      |=  [dat=@ num=@ud]
+      :_  +(num)
+      ^-  @ux
+      =/  req=byts  (request-body path num)
+      =/  bod=byts
+        =/  wid=@ud  (met 3 dat)
+        :-  :(add 4 2 wid)
+        %+  can  3
+        :~  4^(lent frag)  ::  number of fragments
+            2^wid          ::  response data fragment size in bytes
+            wid^dat        ::  response data fragment
+        ==
+      =/  sig=byts
+        64^(sign:keys (can 3 req bod ~))
+      (can 3 req sig bod ~)
     ::
     ++  keys
       |%
