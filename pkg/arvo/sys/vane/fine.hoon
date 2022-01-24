@@ -172,6 +172,18 @@
         !!
       --
     ::
+    ++  get-lane
+      |=  =ship
+      ^-  lane:ames
+      =;  lanes
+        ::TODO  should we send to all lanes?
+        ?^  lanes  i.lanes
+        ~&(%fine-lane-stub &+~zod)  ::TODO
+      .^  (list lane:ames)
+        %ax  (scot %p our)  %$  (scot %da now)
+        /peers/(scot %p ship)/forward-lane
+      ==
+    ::
     ++  decode-request
       |=  =hoot
       ^-  twit
@@ -272,9 +284,11 @@
         ?.  (~(has by fragments.partial) next)  next
         $(next +((mod next num-fragments.partial)))
       ::
-      =/  =lane:ames  !!  ::TODO
       =/  =hoot  (encode-request path.peep next-num)
-      ::REVIEW  no %f tag?
+      ::TODO  ask amsden, should we shotgun? we can tweak this
+      ::      for now (mvp) though, stay 1-to-1
+      ::TODO  update lane in ames state
+      ::TODO  is reusing the lane fine?
       [[urth %give %hoot lane hoot]~ state]
     ::
     ++  get-scry-result
@@ -320,6 +334,9 @@
     ?-  -.task
         %keen
       ^-  (quip move _state)
+      =/  omen
+        ~|  [%fine %invalid-namespace-path path.task]
+        (need (de-omen path.task))
       =.  want  (~(put ju want) path.task hen)
       ?:  (~(has by part) path.task)
         ::  request is already ongoing
@@ -328,9 +345,8 @@
       ::  kick off the request
       ::
       =.  part  (~(put by part) path.task *partial)
-      =/  =lane:ames  !!  ::TODO  just scry out of ames, or what?
+      =/  =lane:ames  (get-lane p.bem.omen)
       =/  =hoot  (encode-request path.task 1)
-      ::TODO  how to make sure this ends up in the runtime? default duct??
       [[urth %give %hoot lane hoot]~ state]
     ::
         %yawn
