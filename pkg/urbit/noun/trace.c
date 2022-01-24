@@ -589,3 +589,46 @@ u3t_boff(void)
 #endif
   }
 }
+
+/* where pri_l is the priority, headline is provided by the c-caller
+ * and message is provided by the hint-caller
+ */
+void
+u3t_dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message) {
+  u3t_slog(
+    u3nc(
+      pri_l,
+      u3nt(
+        c3__rose,
+        u3nt(u3nt(':', ' ', u3_nul), u3_nul, u3_nul),
+        u3nt(headline, message, u3_nul)
+      )
+    )
+  );
+}
+
+/* u3t_orry(): collect the bytecode data
+* for the context containing the 'calling' hint
+*/
+u3_noun
+u3t_orry() {
+  u3_noun foo;
+  return foo;
+}
+
+/* u3t_xray(): collect the bytecode data
+* for the expression wrapped in the 'calling' hint
+*/
+u3_noun
+u3t_xray() {
+  u3_noun bar;
+  return bar;
+}
+
+/* u3t_slog_bytecode(): print bytecode
+* to the terminal
+*/
+void
+u3t_slog_bytecode(c3_l pri_l, u3_noun info) {
+}
+

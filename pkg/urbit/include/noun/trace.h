@@ -130,6 +130,29 @@
       void
       u3t_boot(void);
 
+    /* u3t_dynamic_header(): slog a vere headline, and hoon hint with
+     * a given indent-style c3_l int (assumed 0-3)
+     */
+      void
+      u3t_dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message);
+
+    /* u3t_orry(): collect the bytecode data
+     * for the context containing the 'calling' hint
+     */
+      u3_noun
+      u3t_orry();
+
+    /* u3t_xray(): collect the bytecode data
+     * for the expression wrapped in the 'calling' hint
+     */
+      u3_noun
+      u3t_xray();
+
+    /* u3t_slog_bytecode(): print bytecode
+     * to the terminal
+    */
+      void
+      u3t_slog_bytecode(c3_l pri_l, u3_noun info);
 
   /** Globals.
   **/

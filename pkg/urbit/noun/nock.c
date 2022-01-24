@@ -982,7 +982,6 @@ static void _n_print_stack(u3p(u3_noun) empty) {
 }
 #endif
 
-#ifdef VERBOSE_BYTECODE
 // match to OPCODE TABLE
 static char* opcode_names[] = {
   "halt", "bail",
@@ -1017,7 +1016,6 @@ static char* opcode_names[] = {
   "mutb", "muts", "mitb", "mits",
   "kutb", "kuts", "kitb", "kits",
 };
-#endif
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -1604,7 +1602,6 @@ _n_swap(c3_ys mov, c3_ys off)
   return top;
 }
 
-#ifdef VERBOSE_BYTECODE
 /* _n_print_byc(): print bytecode. used for debugging.
  */
 static void
@@ -1654,7 +1651,6 @@ _n_print_byc(c3_y* pog, c3_w her_w)
   }
   fprintf(stderr, " halt}\r\n");
 }
-#endif
 
 /* _n_bite(): compile a nock formula to bytecode. RETAIN.
  */
@@ -1723,17 +1719,114 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
-// move this stuff to another c file
+//-------------------DANE------
 
-u3_noun bytecode_data() {
-  u3_noun foo;
-  return foo;
+/* _n_prog_free(): free memory retained by program
+*/
+static void
+_n_prog_free(u3n_prog* pog_u)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
+    u3z(pog_u->lit_u.non[i_w]);
+  }
+
+  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
+    u3z(pog_u->mem_u.sot_u[i_w].key);
+  }
+
+  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
+    u3j_site_lose(&(pog_u->cal_u.sit_u[i_w]));
+  }
+
+  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
+    u3j_rite_lose(&(pog_u->reg_u.rit_u[i_w]));
+  }
+
+  u3a_free(pog_u);
 }
 
-void slog_bytecode(u3_noun before, u3_noun after, c3_l pri_l) {
+void slog_me(c3_l pri_l, c3_c* message) {
+  c3_c str_c[strlen(message)+1];
+  snprintf(str_c, strlen(message), "%s", message);
+  u3t_slog(
+    u3nc(
+      pri_l,
+      u3nt(
+        c3__rose,
+        u3nt(u3nt(u3_nul, ' ', u3_nul), u3_nul, u3_nul),
+        u3nt(u3_nul, u3i_string(str_c), u3_nul)
+      )
+    )
+  );
 }
 
-// end of move this stuff
+void
+slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
+  c3_w ip_w = 0;
+  c3_c str_c[1000];
+  if ( her_w == 0 ) {
+    sprintf(str_c, "begin: {");
+  }
+  else {
+    sprintf(str_c, "resume: {");
+  }
+  int first = 1;
+  while ( pog[ip_w] ) {
+    if ( first ) {
+      first = 0;
+    }
+    else if (ip_w == her_w) {
+      sprintf(str_c + strlen(str_c), " [*]");
+    }
+    else {
+      sprintf(str_c + strlen(str_c), " ");
+    }
+    switch ( _n_arg(pog[ip_w]) ) {
+      case 0:
+        sprintf(str_c + strlen(str_c), "%s", opcode_names[pog[ip_w++]]);
+        break;
+
+      case 1:
+        sprintf(str_c + strlen(str_c), "[%s ", opcode_names[pog[ip_w++]]);
+        sprintf(str_c + strlen(str_c), "%u]", pog[ip_w++]);
+        break;
+
+      case 2:
+        sprintf(str_c + strlen(str_c), "[%s ", opcode_names[pog[ip_w++]]);
+        sprintf(str_c + strlen(str_c), "%u]", _n_resh(pog, &ip_w));
+        break;
+
+      case 4:
+        sprintf(str_c + strlen(str_c), "[%s", opcode_names[pog[ip_w++]]);
+        sprintf(str_c + strlen(str_c), "%u]", _n_rewo(pog, &ip_w));
+        break;
+      default:
+        c3_assert(0);
+        break;
+    }
+  }
+  sprintf(str_c + strlen(str_c), " halt} ");
+  slog_me(pri_l, str_c);
+}
+
+void
+xray(c3_l pri_l, u3_noun fol) {
+  c3_w ip_w = 0;
+  u3n_prog* pog_u = _n_bite(fol);
+  c3_y* pog = pog_u->byc_u.ops_y;
+  slog_bytecode(pri_l, pog, 0);
+  _n_prog_free(pog_u);
+}
+
+void //u3n_prog*
+orry(u3_noun fol) {
+  // TODO: replace with a call for the outer context
+  //return _n_bite(fol);
+}
+
+// ---------------END DANEs EDIT -----
 
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
 **            hin: [hint-atom, formula]. TRANSFER
@@ -1746,17 +1839,17 @@ void slog_bytecode(u3_noun before, u3_noun after, c3_l pri_l) {
 static c3_o
 _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 {
+  u3_noun p_hin, q_hin;
   if ( c3__bout == u3h(hin) ) {
     u3_atom now = u3i_chub(u3t_trace_time());
     *out = u3i_cell(u3h(hin), now);
   }
-  else if ( c3__orry == u3h(hin) ) {
-    //TODO: add some code
-  }
-  else if ( c3__xray == u3h(hin) ) {
-    // not sure of the shape of info
-    u3_noun info = bytecode_data();
-    *out = u3i_cell(u3h(hin), info);
+  else if ( (c3y == u3r_cell(hin, &p_hin, &q_hin)) &&
+  (c3__xray == p_hin) ) {
+    c3_c str_c[64];
+    u3_noun info;
+    xray(0, q_hin);
+    *out = u3_nul;
   }
   else {
     *out = u3_nul;
@@ -1776,17 +1869,23 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
   u3_noun p_tok, q_tok;
   if ( (c3y == u3r_cell(tok, &p_tok, &q_tok)) && (c3__bout == p_tok) ) {
     u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(q_tok));
-    c3_c    str_c[64];
+    c3_c str_c[64];
     snprintf(str_c, 63, "took %" PRIu64 "\xc2\xb5s", u3r_chub(0, delta) );
     u3t_slog(u3nc(0, u3i_string(str_c)));
     u3z(delta);
   }
-  else if ( (c3y == u3r_cell(tok, &p_tok, &q_tok)) && (c3__xray == p_tok) ) {
-    u3_noun info = bytecode_data();
-    c3_c str_c[64];
-    snprintf(str_c, 63, "bytecode of");
-    slog_bytecode(u3k(q_tok), info, 0);
-  }
+  //else if ( (c3y == u3r_cell(tok, &p_tok, &q_tok)) &&
+  //((c3__orry == p_tok) || (c3__xray == p_tok)) ) {
+  //  c3_c str_c[64];
+  //  if ( c3__orry == p_tok ) {
+  //    snprintf(str_c, 63, "outer bytecode");
+  //  }
+  //  else {
+  //    snprintf(str_c, 63, "inner bytecode");
+  //  }
+  //  u3t_slog(u3nc(0, u3i_string(str_c)));
+  //  //slog_bytecode(0, (u3n_prog*)q_tok);
+  //}
   else {
     c3_assert( u3_nul == tok );
   }
@@ -1810,9 +1909,12 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
     u3_atom now = u3i_chub(u3t_trace_time());
     *clu = u3i_trel(u3h(hin), *clu, now);
   }
+  //else if ( c3__orry == u3h(hin) ) {
+  //  u3_noun info = (u3_noun)orry(u3t(hin));
+  //  *clu = u3i_trel(u3h(hin), *clu, info);
+  //}
   else if ( c3__xray == u3h(hin) ) {
-    u3_noun info = bytecode_data();
-    *clu = u3i_trel(u3h(hin), *clu, info);
+    *clu = u3i_trel(u3h(hin), *clu, u3t(hin));
   }
   else {
     u3z(*clu);
@@ -1831,9 +1933,7 @@ static void
 _n_hint_hind(u3_noun tok, u3_noun pro)
 {
   u3_noun p_tok, q_tok, r_tok;
-  if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok))
-      && (c3__bout == p_tok) )
-  {
+  if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok)) && (c3__bout == p_tok) ) {
     // get the microseconds elapsed
     u3_atom delta = u3ka_sub(u3i_chub(u3t_trace_time()), u3k(r_tok));
 
@@ -1864,25 +1964,25 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
     u3z(delta);
   }
   else if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok)) &&
-      (c3__xray == p_tok)
+      ( (c3__orry == p_tok) || (c3__xray == p_tok) )
   ) {
-    // unpack q_tok to get the priority integer and the tank
-    // p_q_tok is the priority, q_q_tok is the tank we will work with
     u3_noun p_q_tok, q_q_tok;
     c3_assert(c3y == u3r_cell(q_tok, &p_q_tok, &q_q_tok));
-
-    // format the timing report
     c3_c str_c[64];
-    snprintf(str_c, 63, "bytecode");
-
-    // join the bytecode report with the original tank from q_q_tok like so:
-    // "q_q_tok: report"
-    // prepend the priority to form a cell of the same shape q_tok
-    // send this to ut3_slog so that it can be logged out
+    if ( c3__orry == p_tok ) {
+      snprintf(str_c, 63, "outer bytecode");
+    }
+    else {
+      snprintf(str_c, 63, "inner bytecode");
+    }
     c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
-    //dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
-    u3_noun info = bytecode_data();
-    slog_bytecode(r_tok, info, pri_l);
+    u3t_dynamic_header(pri_l, u3k(q_q_tok), u3i_string(str_c));
+    if ( c3__orry == p_tok ) {
+      // DO NOTHING
+    }
+    else {
+      xray(pri_l, r_tok);
+    }
   }
   else {
     c3_assert( u3_nul == tok );
@@ -2555,7 +2655,15 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     hilt_fore_in:
       x   = u3k(pog_u->lit_u.non[x]);
       top = _n_peek(off);   // bus
-      x   = _n_hilt_fore(x, *top, &o);
+      /*
+      if ( c3__xray == u3h(x) ) {
+        // TODO: we can thread stuff HERE
+        x = _n_hilt_fore(x, *top, &o);
+      }
+      else {
+        x = _n_hilt_fore(x, *top, &o);
+      }*/
+      x = _n_hilt_fore(x, *top, &o);
       _n_push(mov, off, o);
       _n_swap(mov, off);    // bus
       _n_push(mov, off, x); // shortcircuit if c3n
@@ -2571,6 +2679,14 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       x   = u3k(pog_u->lit_u.non[x]);
       o   = _n_pep(mov, off);   //  [bus]
       top = _n_peek(off);
+      /*
+      if ( c3__xray == u3h(x) ) {
+        // TODO: we can thread stuff HERE
+        x = _n_hint_fore(x, *top, &o);
+      }
+      else {
+        x = _n_hint_fore(x, *top, &o);
+      }*/
       x   = _n_hint_fore(x, *top, &o);
       _n_push(mov, off, o);     //  [tok bus]
       _n_swap(mov, off);        //  [bus tok]
@@ -2748,32 +2864,6 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
   u3t_off(noc_o);
 
   return pro;
-}
-
-/* _n_prog_free(): free memory retained by program
-*/
-static void
-_n_prog_free(u3n_prog* pog_u)
-{
-  c3_w i_w;
-
-  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
-    u3z(pog_u->lit_u.non[i_w]);
-  }
-
-  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
-    u3z(pog_u->mem_u.sot_u[i_w].key);
-  }
-
-  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    u3j_site_lose(&(pog_u->cal_u.sit_u[i_w]));
-  }
-
-  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
-    u3j_rite_lose(&(pog_u->reg_u.rit_u[i_w]));
-  }
-
-  u3a_free(pog_u);
 }
 
 /* _cn_take_prog_dat(): take references from junior u3n_prog.
