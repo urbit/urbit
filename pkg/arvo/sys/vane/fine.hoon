@@ -102,8 +102,9 @@
       |=  [=path num=@ud]
       ^-  hoot  ^-  @
       =+  bod=(request-body path num)
-      =+  con=(can 3 64^(sign:keys dat.bod) bod ~)
-      (encode-packet [our ~zod] (mod life:keys 16) 0b0 ~ con)
+      =+  syn=(can 3 64^(sign:keys dat.bod) bod ~)
+      %+  con  0b100  ::NOTE  request bit
+      (encode-packet [our ~zod] (mod life:keys 16) 0b0 ~ syn)
     ::
     ++  encode-response
       |=  [=path data=(unit (cask))]
@@ -338,8 +339,8 @@
         %purr
       ^-  (quip move _state)
       =/  =packet:ames  (decode-packet `@ux`purr.task)
-      =/  req=?         =(& (cut 0 [2 1] purr.task))
-      ?:  req
+      =/  resp=?        =(& (cut 0 [2 1] purr.task))
+      ?.  resp
         ::TODO  crash instead, scry/peek should be used for this
         =/  =twit  (decode-request `@ux`content.packet)
         ::TODO  verify request signature
