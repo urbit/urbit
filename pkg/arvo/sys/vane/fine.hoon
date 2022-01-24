@@ -100,9 +100,10 @@
     ::
     ++  encode-request
       |=  [=path num=@ud]
-      ^-  hoot
+      ^-  hoot  ^-  @
       =+  bod=(request-body path num)
-      (can 3 64^(sign:keys d.bod) bod ~)
+      =+  con=(can 3 64^(sign:keys dat.bod) bod ~)
+      (encode-packet [our ~zod] (mod life:keys 16) 0b0 ~ con)
     ::
     ++  encode-response
       |=  [=path data=(unit (cask))]
