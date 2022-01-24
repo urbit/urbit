@@ -88,59 +88,58 @@
     ::
     ++  request-body
       |=  [=path num=@ud]
-      ^-  bits
+      ^-  byts
       ?>  (lth num (bex 32))
       =+  (spit path)
-      :-  :(add 32 16 (mul 8 wid))
-      %+  can  0
-      :~  32^num              ::  fragment number
-          16^wid              ::  path size
-          (mul 8 wid)^`@`pat  ::  namespace path
+      :-  :(add 32 16 wid)
+      %+  can  3
+      :~  4^num       ::  fragment number
+          2^wid       ::  path size
+          wid^`@`pat  ::  namespace path
       ==
     ::
     ++  encode-request
       |=  [=path num=@ud]
       ^-  hoot
       =+  bod=(request-body path num)
-      (can 0 512^(sign:keys d.bod) bod ~)
+      (can 3 64^(sign:keys d.bod) bod ~)
     ::
     ++  encode-response
       |=  [=path data=(unit (cask))]
       ^-  song
       ::  prepend request descriptions to each response packet
       ::
-      =;  pacs=(list bits)
+      =;  pacs=(list byts)
         %-  head
         %^  spin  pacs  1
-        |=  [pac=bits num=@ud]
+        |=  [pac=byts num=@ud]
         ^-  [purr _num]
         :_  +(num)
         ^-  @ux
         ::NOTE  we stub out the receiver & origin details,
         ::      runtime should replace them as appropriate.
-        =/  req=bits  (request-body path num)
-        =/  con=@ux   (can 0 req pac ~)
+        =/  req=byts  (request-body path num)
+        =/  con=@ux   (can 3 req pac ~)
         (encode-packet [our ~zod] (mod life:keys 16) 0b0 ~ con)
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
         =/  sig=@  (full:keys path (fall data ~))
         ?~  data  [sig]~
-        %+  rip  3^1.024  ::TODO  prints "rip: stub"
-        (cat 3 sig (jam u.data))  ::REVIEW
-      =/  size=@ud
-        ?~(data 0 (lent frag))  ::REVIEW
+        %+  rip  13  ::NOTE  1024 bytes
+        (cat 3 sig (jam u.data))  ::TODO  should include life
       ::  sign & packetize the fragments
       ::
       %+  turn  frag
       |=  dat=@
+      ^-  byts
       =/  wid=@ud  (met 3 dat)
-      :-  :(add 512 32 16 (mul 8 wid))
-      %+  can  0
-      :~  512^(sign:keys dat)  ::  signature
-          32^size                   ::  number of fragments
-          16^wid                    ::  response data size in bytes  ::REVIEW
-          (mul 8 wid)^dat           ::  response data
+      :-  :(add 64 4 2 wid)
+      %+  can  3
+      :~  64^(sign:keys dat)  ::  signature  ::TODO  +pack:keys
+          4^(lent frag)       ::  number of fragments
+          2^wid               ::  response data fragment size in bytes
+          wid^dat             ::  response data fragment
       ==
     ::
     ++  keys
@@ -174,14 +173,14 @@
     ++  decode-request
       |=  =hoot
       ^-  twit
-      :-  sig=(cut 0 [0 512] hoot)
-      -:(decode-request-info (rsh [0 512] hoot))
+      :-  sig=(cut 3 [0 64] hoot)
+      -:(decode-request-info (rsh 3^64 hoot))
     ::
     ++  decode-request-info
       |=  =hoot
       ^-  [=peep =purr]
-      =+  num=(cut 0 [0 32] hoot)
-      =+  len=(cut 0 [32 16] hoot)
+      =+  num=(cut 3 [0 4] hoot)
+      =+  len=(cut 3 [4 2] hoot)
       =+  pat=(cut 3 [6 len] hoot)
       :-  [(stab pat) num]
       ::  if there is data remaining, it's the response
@@ -192,10 +191,10 @@
       =;  =rawr
         ~?  !=(wid.rawr (met 3 dat.rawr))  [%fine %unexpected-dat-size]
         rawr
-      :*  sig=(cut 0 [0 512] purr)
-          siz=(cut 0 [512 32] purr)
-          wid=(cut 0 [544 16] purr)
-          dat=(rsh 0^560 purr)
+      :*  sig=(cut 3 [0 64] purr)
+          siz=(cut 3 [64 4] purr)
+          wid=(cut 3 [68 2] purr)
+          dat=(rsh 3^70 purr)
       ==
     ::
     ++  verify-response-packet
@@ -206,12 +205,12 @@
       |=  partial  ::TODO  maybe take @ instead
       ^-  roar
       =/  mess=@
-        %+  can  3
+        %+  can  3  ::TODO  just (rep 13 -)
         %+  turn  (gulf 1 num-fragments)
         ~(got by fragments)
-      :-  sig=(cut 0 [0 512] mess)
+      :-  sig=(cut 3 [0 64] mess)
       ~|  [%fine %response-not-cask]
-      ;;((cask) (cue (rsh 0^512 mess)))
+      ;;((cask) (cue (rsh 3^64 mess)))
     ::
     ++  process-response
       |=  [=path data=(unit (cask))]
