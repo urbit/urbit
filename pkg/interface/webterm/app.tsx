@@ -151,11 +151,6 @@ const showBlit = (term: Terminal, blit: Blit) => {
     out += blit.put.join('');
     out += csi('u');
   } else if ('klr' in blit) {
-    //TODO  remove for new backend
-    {
-      out += csi('H', term.rows, 1);
-      out += csi('K');
-    }
     out += blit.klr.reduce((lin: string, p: Stub) => {
       lin += stye(p.stye);
       lin += p.text.join('');
@@ -177,13 +172,6 @@ const showBlit = (term: Terminal, blit: Blit) => {
     out += '\r' + csi('K');
     out += csi('u');
   //
-  //TODO  remove for new backend
-  } else if ('lin' in blit) {
-    out += csi('H', term.rows, 1);
-    out += csi('K');
-    out += blit.lin.join('');
-  } else if ('mor' in blit) {
-    out += '\n';
   } else {
     console.log('weird blit', blit);
   }
@@ -240,9 +228,7 @@ const readInput = (term: Terminal, e: string): Belt[] => {
       let k = String.fromCharCode(96 + c);
       //NOTE  prevent remote shut-downs
       if ('d' !== k) {
-        belts.push({ ctl: k });
-        //TODO  for new backend
-        // belts.push({ mod: { mod: 'ctl', key: k } });
+        belts.push({ mod: { mod: 'ctl', key: k } });
       }
     }
 
@@ -266,8 +252,7 @@ const readInput = (term: Terminal, e: string): Belt[] => {
             if (1 === m) {
               const c = e.charCodeAt(2) - 32;
               const r = e.charCodeAt(3) - 32;
-              //TODO  re-enable for new backend
-              // belts.push({ hit: { r: term.rows - r, c: c - 1 } });
+              belts.push({ hit: { r: term.rows - r, c: c - 1 } });
             }
             e = e.slice(3);
             break;
@@ -342,13 +327,8 @@ export default function TermApp(props: TermAppProps) {
   const onInput = useCallback((ses: string, e: string) => {
     const term = useTermState.getState().sessions[ses].term;
     const belts = readInput(term, e);
-    belts.map((b) => {  // NOTE  passing api.poke(pokeBelt makes `this` undefined!
-      //TODO  pokeBelt(ses, b);
-      api.poke({
-        app: 'herm',
-        mark: 'belt',
-        json: b
-      });
+    belts.map((b) => {
+      api.poke(pokeBelt(ses, b));
     });
   }, [sessions]);
 
@@ -405,8 +385,7 @@ export default function TermApp(props: TermAppProps) {
       term.onData(e => onInput(selected, e));
       term.onBinary(e => onInput(selected, e));
       term.onResize((e) => {
-        //TODO  re-enable once new backend lands
-        // api.poke(pokeTask(selected, { blew: { w: e.cols, h: e.rows } }));
+        api.poke(pokeTask(selected, { blew: { w: e.cols, h: e.rows } }));
       });
 
       ses = { term, fit };

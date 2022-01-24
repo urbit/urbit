@@ -14,9 +14,7 @@ export const pokeBelt = (
 ): Poke<SessionTask> => pokeTask(session, { belt });
 
 //NOTE  scry will return string[]
-// export const scrySessions = (): Scry => ({
-//   app: 'herm',
-//   path: `/sessions`
-// });
-//TODO  remove stub once new backend lands
-export const scrySessions = (): string[] => [''];
+export const scrySessions = (): Scry => ({
+  app: 'herm',
+  path: `/sessions`
+});

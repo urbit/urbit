@@ -753,7 +753,7 @@
     ^+  kiln
     ?>  ?=([@ @ *] wire)
     ?:  ?=(%jolt i.t.wire)
-      (take-onto wire syn)
+      kiln
     ?:  ?=(%listen i.t.wire)
       (take-listen wire syn)
     =<  abet
@@ -961,15 +961,6 @@
     =.  vats  (abed i.vets)
     =.  vats  update-running-dudes
     $(vets t.vets)
-  ::
-  ++  take-onto
-    |=  [=wire syn=sign-arvo]
-    ^+  kiln
-    =/  onto  ?>(?=([%gall %onto *] syn) p.syn)
-    ?-  -.onto
-      %&  kiln
-      %|  (mean p.onto)
-    ==
   ::
   ++  update-running-dudes
     ^+  vats

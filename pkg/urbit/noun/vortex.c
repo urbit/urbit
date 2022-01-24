@@ -60,9 +60,9 @@ _cv_lite(u3_noun pil)
     eve = tal;
   }
 
-  u3l_log("lite: arvo formula %x\r\n", u3r_mug(pil));
+  u3l_log("lite: arvo formula %x", u3r_mug(pil));
   pro = u3v_life(u3k(eve));
-  u3l_log("lite: core %x\r\n", u3r_mug(pro));
+  u3l_log("lite: core %x", u3r_mug(pro));
 
   u3z(pil);
   return pro;
@@ -89,7 +89,7 @@ u3v_boot_lite(u3_noun pil)
     u3z(pro);
   }
 
-  u3l_log("lite: final state %x\r\n", u3r_mug(u3A->roc));
+  u3l_log("lite: final state %x", u3r_mug(u3A->roc));
 
   return c3y;
 }
@@ -209,7 +209,7 @@ _cv_mole(u3_noun  fot,
        (0 != q_uco) ||
        (c3n == u3r_sing(fot, r_uco)) )
   {
-    u3l_log("strange mole %s\n", u3r_string(san)));
+    u3l_log("strange mole %s", u3r_string(san)));
 
     u3z(fot); u3z(uco); return c3n;
   }

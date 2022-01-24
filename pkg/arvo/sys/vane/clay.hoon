@@ -314,7 +314,10 @@
           task                                          ::
       ==                                                ::
       $:  %d                                            ::  to %dill
-          $>(%flog task:dill)                           ::
+          $>  $?  %flog                                 ::
+                  %text                                 ::
+              ==                                        ::
+          task:dill                                     ::
       ==                                                ::
       $:  %g                                            ::  to %gall
           $>  $?  %deal
@@ -341,14 +344,12 @@
       ==  ==                                            ::
       $:  %clay                                         ::
           $>  $?  %mere                                 ::
-                  %note                                 ::
                   %writ                                 ::
               ==                                        ::
           gift                                          ::
       ==                                                ::
       $:  %gall
-          $>  $?  %onto
-                  %unto
+          $>  $?  %unto
               ==
           gift:gall
       ==
@@ -1457,7 +1458,7 @@
     ?~  yen
       =.  lab.dom  (~(put by lab.dom) bel yon)
       ..park
-    ::  an aeon is bound to this label, 
+    ::  an aeon is bound to this label,
     ::  but it is the same as the existing one, so we no-op
     ::
     ?:  =(u.yen yon)
@@ -2003,7 +2004,8 @@
         |=  [prefix=@tD paths=(set path)]
         %+  turn  ~(tap in paths)
         |=  =path
-        [u.hun %give %note prefix (path-to-tank path)]
+        ^-  move
+        [u.hun %pass /note %d %text prefix ' ' ~(ram re (path-to-tank path))]
       ::
       ++  path-to-tank
         |=  =path
@@ -4858,8 +4860,6 @@
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
   ?:  ?=([%dist *] tea)
-    ?:  ?=(%onto +<.hin)
-      [~ ..^$]
     ?>  ?=(%unto +<.hin)
     ?>  ?=(%poke-ack -.p.hin)
     ?~  p.p.hin
@@ -4998,7 +4998,6 @@
         q.p.p.+.hin
     [~ ..^$]
   ::
-      %note  [[hen %give +.hin]~ ..^$]
       %wake
     ::  TODO: handle behn errors
     ::
@@ -5019,7 +5018,6 @@
       ::
       %boon  !!
       %lost  !!
-      %onto  !!
       %unto  !!
       %writ
     %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)

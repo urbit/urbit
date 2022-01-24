@@ -167,6 +167,9 @@ u3_ptty_init(uv_loop_t* lup_u, const c3_c** err_c)
 
   //  Construct raw termios configuration.
   //
+  //    makes input available per-character, does not echo input,
+  //    disables special input pre-processing, output post-processing.
+  //
   {
     pty_u->raw_u = pty_u->bak_u;
 
