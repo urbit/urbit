@@ -758,7 +758,7 @@
     =/  header=@
       %+  can  0
       :~  [3 reserved=0]
-          [1 is-ames=&]
+          [1 is-ames=ames]
           [3 protocol-version]
           [2 rank.sndr-meta]
           [2 rank.rcvr-meta]
