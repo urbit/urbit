@@ -59,7 +59,7 @@ in stdenv.mkDerivation {
     then [ "--disable-shared" "--enable-static" ]
     else [];
 
-  CFLAGS = [ (if enableDebug then "-O0" else "-O3") "-g" ]
+  CFLAGS = (if enableDebug then [ "-O0" "-g" ] else [ "-O3" ])
     ++ lib.optionals (!enableDebug) [ "-Werror" ];
 
   MEMORY_DEBUG = enableDebug;
