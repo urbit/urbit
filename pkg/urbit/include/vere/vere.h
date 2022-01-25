@@ -3,6 +3,7 @@
 
 #include <uv.h>
 
+#include "vere/foil.h"
 #include "vere/newt.h"
 
   /** Quasi-tunable parameters.
@@ -21,21 +22,6 @@
         c3_w             pip_w;             //  target IPv4 address
         c3_s             por_s;             //  target port
       } u3_lane;
-
-    /* u3_dent: directory entry.
-    */
-      typedef struct _u3_dent {
-        c3_c*            nam_c;
-        struct _u3_dent* nex_u;
-      } u3_dent;
-
-    /* u3_dire: simple directory state.
-    */
-      typedef struct _u3_dire {
-        c3_c*    pax_c;                     //  path of directory
-        uv_file  fil_u;                     //  file, opened read-only to fsync
-        u3_dent* all_u;                     //  file list
-      } u3_dire;
 
     /* u3_utat: unix terminal state.
     */
@@ -990,13 +976,6 @@
       */
         c3_c*
         u3_path(c3_o    fyl, u3_noun pax);
-
-    /**  Filesystem (async)
-    **/
-      /* u3_foil_folder(): load directory, blockingly.  create if nonexistent.
-      */
-        u3_dire*
-        u3_foil_folder(const c3_c* pax_c);         //  directory object, or 0
 
     /**  Terminal, new style.
     **/

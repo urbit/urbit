@@ -2,6 +2,9 @@
 **
 **  This file is in the public domain.
 */
+#include "vere/foil.h"
+
+#include <uv.h>
 
 #include "all.h"
 #include "vere/vere.h"
