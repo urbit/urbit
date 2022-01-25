@@ -14,6 +14,12 @@ let
 
   version = builtins.readFile "${src}/version";
 
+  # See https://github.com/urbit/urbit/issues/5561
+  oFlags =
+    if stdenv.hostPlatform.system == "aarch64-darwin"
+    then (if enableDebug then [ "-O0" "-g" ] else [ "-O3" ])
+    else [ (if enableDebug then "-O0" else "-O3") "-g" ];
+
 in stdenv.mkDerivation {
   inherit src version;
 
@@ -59,8 +65,7 @@ in stdenv.mkDerivation {
     then [ "--disable-shared" "--enable-static" ]
     else [];
 
-  CFLAGS = [ (if enableDebug then "-O0" else "-O3") "-g" ]
-    ++ lib.optionals (!enableDebug) [ "-Werror" ];
+  CFLAGS = oFlags ++ lib.optionals (!enableDebug) [ "-Werror" ];
 
   MEMORY_DEBUG = enableDebug;
   CPU_DEBUG = enableDebug;
