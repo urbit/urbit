@@ -1,7 +1,5 @@
 import {
-  cite,
   NotificationGraphConfig,
-  Post,
   Unreads
 } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
@@ -53,4 +51,3 @@ export function isWatching(
     )
   );
 }
-

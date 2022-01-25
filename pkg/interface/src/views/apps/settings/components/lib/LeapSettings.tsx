@@ -16,7 +16,6 @@ import { ShuffleFields } from '~/views/components/ShuffleFields';
 import { BackButton } from './BackButton';
 
 const labels: Record<LeapCategories, string> = {
-  mychannel: 'My Channels',
   updates: 'Notifications',
   profile: 'Profile',
   messages: 'Messages',

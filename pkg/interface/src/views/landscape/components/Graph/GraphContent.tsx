@@ -24,6 +24,8 @@ import { Mention } from '~/views/components/MentionText';
 import RemoteContent from '~/views/components/RemoteContent';
 import { parseTall, parseWide } from './parse';
 
+const IMAGE_EXTENSIONS = ['png', 'jpg', 'svg', 'jpeg'];
+
 type StitchMode = 'merge' | 'block' | 'inline';
 
 // XX make better
@@ -347,16 +349,23 @@ const renderers = {
     return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
   },
   'graph-mention': ({ ship }) => <Mention ship={ship} />,
-  image: ({ url, tall }) => (
-    <Box mt="1" mb="2" flexShrink={0}>
-      <RemoteContent key={url} url={url} tall={tall} />
-    </Box>
+  image: ({ url, tall, collapsed = false }) => (
+    collapsed
+      ? <Text fontStyle="italic">Image</Text>
+      : <Box mt="1" mb="2" flexShrink={0}>
+        <RemoteContent key={url} url={url} tall={tall} />
+      </Box>
   ),
-  'graph-url': ({ url, tall }) => (
-    <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent key={url} url={url} tall={tall} />
-    </Box>
-  ),
+  'graph-url': ({ url, tall, collapsed = false }) => {
+    if (collapsed && /(https?:\/\/.*\.(?:png|jpg|jpeg))/i.test(url)) {
+      return <Text fontStyle="italic">Image</Text>;
+    }
+    return (
+      <Box mt={1} mb={2} flexShrink={0}>
+        <RemoteContent key={url} url={url} tall={tall} />
+      </Box>
+    );
+  },
   'graph-reference': ({ reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     if (transcluded > 1) {

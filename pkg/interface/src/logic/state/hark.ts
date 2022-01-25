@@ -208,4 +208,28 @@ export function useHarkGraphIndex(graph: string, index: string) {
   );
 }
 
+// Mobile notification pop-ups when app is in background or foreground (not when closed)
+api.subscribe({
+  app: 'hark-store',
+  path: '/notes',
+  event: (u: any) => {
+    if ('add-note' in u) {
+      // if (useSettingsState.getState().display.doNotDisturb) {
+      //   return;
+      // }
+      const { bin, body } = u['add-note'];
+      const binId = harkBinToId(bin);
+
+      if ((window as any).ReactNativeWebView?.postMessage) {
+        console.log('SENDING NOTIFICATION TO APP:', binId, body);
+        (window as any).ReactNativeWebView.postMessage(JSON.stringify({
+          type: 'hark-notification',
+          binId,
+          body
+        }));
+      }
+    }
+  }
+});
+
 export default useHarkState;

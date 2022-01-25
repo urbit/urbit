@@ -14,6 +14,7 @@ import SubmitDragger from '~/views/components/SubmitDragger';
 import ChatInput from './ChatInput';
 import ChatWindow from './ChatWindow';
 import { CodeMirrorShim } from './ChatEditor';
+import { IS_MOBILE } from '~/logic/lib/platform';
 
 
 interface useChatStoreType {
@@ -121,33 +122,32 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   } = props;
   const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
-  const { restore, setMessage } = useChatStore(s => ({ setMessage: s.setMessage, restore: s.restore }));
+  const { message, restore, setMessage } = useChatStore();
   const { canUpload, drag } = useFileUpload({
     onSuccess: url => onSubmit([{ url }])
   });
+  const inputRef = useRef<CodeMirrorShim>(null);
+  const scrollTo = new URLSearchParams(location.search).get('msg');
+  const [showBanner, setShowBanner] = useState(false);
+
   useEffect(() => {
     restore(id);
-    inputRef.current.focus();
+    if (!IS_MOBILE) {
+      inputRef.current?.focus();
+    }
   }, [id]);
-
-  const scrollTo = new URLSearchParams(location.search).get('msg');
-
-  const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
     setShowBanner(promptShare.length > 0);
   }, [promptShare]);
 
-  const inputRef = useRef<CodeMirrorShim>(null);
-
-
   const onReply = useCallback(
     (msg: Post) => {
-      const message = props.onReply(msg);
-      setMessage(message + " ");
+      // Prepend the reply reference
+      setMessage(`${props.onReply(msg)}${message || ''}`);
       inputRef.current.focus();
     },
-    [id, props.onReply]
+    [id, message, props.onReply]
   );
 
   if (!graph) {

@@ -93,6 +93,8 @@ export function GroupSwitcher(props: {
       hideUnjoined: false
     }
   );
+  const showTitleActions = (props.workspace?.type === 'messages' || props.workspace?.type === 'home');
+
   return (
     <Row
       width="100%"
@@ -127,14 +129,24 @@ export function GroupSwitcher(props: {
                 alignItems="stretch"
               >
                   <GroupSwitcherItem to="">
-                  <Icon
-                    mr={2}
-                    color="gray"
-                    display="block"
-                    icon="Groups"
-                  />
-                  <Text>All Groups</Text>
-                </GroupSwitcherItem>
+                    <Icon
+                      mr={2}
+                      color="gray"
+                      display="block"
+                      icon="Groups"
+                    />
+                    <Text>All Groups</Text>
+                  </GroupSwitcherItem>
+                  :
+                  <GroupSwitcherItem to="/~landscape/home">
+                    <Icon
+                      mr={2}
+                      color="gray"
+                      display="block"
+                      icon="Home"
+                    />
+                    <Text>My Channels</Text>
+                  </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
                 />
@@ -182,7 +194,7 @@ export function GroupSwitcher(props: {
                 { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
                 <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
-              {props.workspace?.type === 'messages' && <TitleActions
+              {showTitleActions && <TitleActions
                 baseUrl={props.baseUrl}
                 initialValues={config}
                 handleSubmit={setConfig}

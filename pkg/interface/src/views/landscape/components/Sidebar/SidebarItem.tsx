@@ -140,7 +140,7 @@ export function SidebarItemBase(props: {
               px="3px"
               py="1px"
               fontSize="10px"
-              minWidth="18px"
+              minWidth="fit-content"
               borderRadius="6px"
               color="white"
               backgroundColor="darkGray"

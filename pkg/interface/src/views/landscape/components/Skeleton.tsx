@@ -4,7 +4,7 @@ import { Workspace } from '~/types/workspace';
 import { Body } from '~/views/components/Body';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
 import { useShortcut } from '~/logic/state/settings';
-import { isMobile } from '~/views/apps/chat/components/ChatEditor';
+import { IS_MOBILE } from '~/logic/lib/platform';
 
 interface SkeletonProps {
   children: ReactNode;
@@ -21,7 +21,7 @@ export const Skeleton = React.memo((props: SkeletonProps): ReactElement => {
     setSidebar(s => !s);
   }, []));
 
-  const hideMobileSidebar = props.mobileHide && isMobile;
+  const hideMobileSidebar = props.mobileHide && IS_MOBILE;
 
   return (
     <Body

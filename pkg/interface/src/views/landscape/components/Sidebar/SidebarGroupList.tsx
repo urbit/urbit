@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { SidebarAssociationItem, SidebarDmItem, SidebarItemBase, SidebarPendingItem } from './SidebarItem';
 import useGraphState, { useInbox } from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
-import { alphabeticalOrder, getResourcePath, modulo } from '~/logic/lib/util';
+import { alphabeticalOrder, getFeedPath, getResourcePath, modulo } from '~/logic/lib/util';
 import { SidebarListConfig, SidebarSort } from './types';
 import { Workspace } from '~/types/workspace';
 import useMetadataState, { usePreview } from '~/logic/state/metadata';
@@ -112,7 +112,9 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   workspace: Workspace;
 }): ReactElement {
   const isMessages = workspace.type === 'messages';
-  const groupSelected = (isMessages && baseUrl.includes('messages')) || (workspace.type === 'group' && baseUrl.includes(workspace.group));
+  const isHome = workspace.type === 'home';
+  const isGroup = workspace.type === 'group';
+  const groupSelected = (isMessages && baseUrl.includes('messages')) || (isHome && baseUrl.includes('home')) || (workspace.type === 'group' && baseUrl.includes(workspace.group));
   const [collapsed, setCollapsed] = useState(!groupSelected && !isMessages);
 
   const associations = useMetadataState(state => state.associations);
@@ -179,22 +181,26 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
     }
   }
   const graphUnreads = getGraphUnreads(associations || ({} as Associations));
-  const path = workspace.type === 'group' ? workspace.group : '';
-  const unreadCount = workspace.type === 'group' ? graphUnreads(path) : dmUnreads(unreads);
+  const groupPath = isGroup ? workspace.group : '';
+  const unreadCount = isGroup ? graphUnreads(groupPath) : dmUnreads(unreads);
   const hasUnread = unreadCount > 0;
   const isSynced = true;
   const isPending = false;
-  const to = `/~landscape${workspace.type === 'group' ? workspace?.group : '/messages'}`;
+  const to = `/~landscape${isGroup ? workspace?.group : isMessages ? '/messages' : '/home'}`;
+  const isMobileMessages = IS_MOBILE && isMessages;
+  const groupTitle = title ? title : isHome ? 'My Channels' : 'Messages';
+  const association = isGroup ? associations?.groups[workspace.group] : undefined;
+  const feedPath = getFeedPath(association);
 
   return (
     <Box>
-      {!(IS_MOBILE && isMessages) && <SidebarItemBase
+      {!isMobileMessages && <SidebarItemBase
         to={to}
         selected={groupSelected}
         hasUnread={hasUnread}
         unreadCount={unreadCount}
         isSynced={isSynced}
-        title={title || 'Messages'}
+        title={groupTitle}
         hasNotification={hasNotification}
         pending={isPending}
         onClick={() => setCollapsed(isMessages ? false : !collapsed)}
@@ -216,6 +222,22 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
       </SidebarItemBase>}
       {!collapsed && (
         <Box>
+          {feedPath && IS_MOBILE && <SidebarItemBase
+            to={`/~landscape${groupPath}/feed`}
+            selected={history.location.pathname.includes('feed')}
+            title="Group Feed"
+            groupSelected={groupSelected}
+            fontSize="13px"
+            isSynced
+            hasNotification={false} // How to get notifications and unreads for this?
+            hasUnread={false}
+            unreadCount={0}
+            // unreadCount={count + each.length}
+            // hasNotification={Boolean(unseen?.[`landscape${pathAsGraph}/mention`])}
+            indent={1}
+          >
+            <Icon display="block" color="black" icon="Collection" />
+          </SidebarItemBase>}
           {ordered.map((pathOrShip) => {
             const pathAsGraph = pathOrShip.replace('ship', 'graph');
             const { count, each } = unreads[pathAsGraph] || { count: 0, each: [] };
@@ -309,46 +331,41 @@ export function SidebarGroupList({
   const joining = useGroupState((s) =>
     _.omit(
       _.pickBy(s.pendingJoin || {}, req => req.app === 'groups' && req.progress != 'abort'),
-      groupList.map((g) => g.group)
+      groupList.map(g => g.group)
     )
   );
   const invites = useInviteState(
-    (s) =>
-      Object.values(s.invites?.["groups"] || {}).map((inv) =>
-        resourceAsPath(inv.resource)
+    s =>
+      Object.values(s.invites?.['groups'] || {}).map(inv =>
+        resourceAsPath(inv?.resource)
       ) || []
   );
   const pending = _.union(invites, Object.keys(joining)).filter(group => {
-    return !(group in (groups?.groups || {})) && !(group in (associations.groups || {}))
+    return !(group in (groups?.groups || {})) && !(group in (associations.groups || {}));
   });
 
+  if (messages) {
+    return <SidebarGroup {...props} workspace={{ type: 'messages' }} />;
+  } else if (!groupList.length) {
+    return <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
+      <LoadingSpinner />
+    </Box>;
+  };
+
   return (
-    messages ? (
-      <SidebarGroup
-        {...props}
-        workspace={{ type: 'messages' }}
-      />
-    )
-    : !groupList?.length
-    ? (
-      <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
-        <LoadingSpinner />
-      </Box>
-    )
-    : (
-      <>
-        {groupList.map((g) => {
-          return (
-            <SidebarGroup
-              key={g.group}
-              {...props}
-              workspace={{ type: 'group', group: g.group }}
-              title={g.metadata.title}
-            />
-          );
-        })}
-        {pending.map((p) => <PendingSidebarGroup key={p} path={p} />)}
-      </>
-    )
+    <>
+      <SidebarGroup {...props} workspace={{ type: 'home' }} />
+      {groupList.map((g) => {
+        return (
+          <SidebarGroup
+            key={g.group}
+            {...props}
+            workspace={{ type: 'group', group: g.group }}
+            title={g.metadata.title}
+          />
+        );
+      })}
+      {pending.map((p) => <PendingSidebarGroup key={p} path={p} />)}
+    </>
   );
 }

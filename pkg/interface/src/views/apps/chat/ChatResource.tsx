@@ -161,7 +161,8 @@ const fetchMessages = useCallback(async (newer: boolean) => {
       const result = await airlock.thread({
         inputMark: 'graph-update-3',
         outputMark: 'json',
-        threadName: 'graph-add-signatures',
+        threadName: 'add-signatures',
+        desk: 'escape',
         body
       });
       // console.log(3, result)

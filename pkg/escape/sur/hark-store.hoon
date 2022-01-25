@@ -1,1 +1,1 @@
-../../garden-dev/sur/hark-store.hoon
+../../landscape/sur/hark-store.hoon
