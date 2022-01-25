@@ -21,6 +21,22 @@ typedef struct _u3_dire {
   u3_dent* all_u;  //!< file list
 } u3_dire;
 
+//! Initialize a file record.
+u3_dent*
+u3_dent_init(const c3_c* nam_c);
+
+//! Dispose of a file record.
+void
+u3_dent_free(u3_dent *det_u);
+
+//! Initialize a directory record.
+u3_dire*
+u3_dire_init(const c3_c* pax_c);
+
+//! Dispose of a directory record.
+void
+u3_dire_free(u3_dire *dir_u);
+
 //! Load directory, blockingly. Create if nonexistent.
 //!
 //! @param[in] pax_c  Directory object or NULL.

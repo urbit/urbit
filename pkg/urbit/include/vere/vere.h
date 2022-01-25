@@ -4,7 +4,6 @@
 #include <uv.h>
 
 #include "vere/disk.h"
-#include "vere/foil.h"
 #include "vere/newt.h"
 #include "vere/ovum.h"
 #include "vere/peek.h"
@@ -388,26 +387,6 @@
   **/
     /**  ward: common structure lifecycle
     **/
-      /* u3_dent_init(): initialize file record.
-      */
-        u3_dent*
-        u3_dent_init(const c3_c* nam_c);
-
-      /* u3_dent_free(): dispose file record.
-      */
-        void
-        u3_dent_free(u3_dent *det_u);
-
-      /* u3_dire_init(): initialize directory record.
-      */
-        u3_dire*
-        u3_dire_init(const c3_c* pax_c);
-
-      /* u3_dire_free(): dispose directory record.
-      */
-        void
-        u3_dire_free(u3_dire *dir_u);
-
       /* u3_pico_init(): initialize a scry request struct
       */
         u3_pico*
