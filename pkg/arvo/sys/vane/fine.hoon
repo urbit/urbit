@@ -183,10 +183,10 @@
         ::TODO  should we send to all lanes?
         ?^  lanes  i.lanes
         ~&(%fine-lane-stub &+~zod)  ::TODO
-      .^  (list lane:ames)
-        %ax  (scot %p our)  %$  (scot %da now)
-        /peers/(scot %p ship)/forward-lane
-      ==
+      !<  (list lane:ames)
+      =<  q  %-  need  %-  need
+      =/  =path  /peers/(scot %p ship)/forward-lane
+      (rof `[our ~ ~] [%ames %x] [our %$ da+now] path)
     ::
     ++  decode-request
       |=  =hoot
