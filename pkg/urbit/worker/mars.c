@@ -2,8 +2,12 @@
 **
 **  the main loop of a serf process.
 */
+#include "vere/mars.h"
+
 #include "all.h"
+#include "noun/serial.h"
 #include "vere/db/lmdb.h"
+#include "vere/disk.h"
 #include "vere/time.h"
 #include "vere/vere.h"
 
