@@ -29,6 +29,7 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
   } = props;
   const shouldRenderFeed = Boolean(graph);
 
+
   if (!shouldRenderFeed) {
     return (
       <Box height="100%" pt={3} pb={3} width="100%" alignItems="center" pl={1}>
@@ -71,7 +72,7 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
         >
           <Col bg="washedGray" width="100%" alignItems="center" p={3}>
             <Text textAlign="center" width="100%">
-              No one has posted anything here yet.
+              No one has posted anything here yet!.
             </Text>
           </Col>
         </Box>

@@ -60,7 +60,6 @@ function GroupFeed(props) {
   if (!graphPath) {
     return <Loading />;
   }
-
   return (
     <Col
       width="100%"
@@ -77,7 +76,7 @@ function GroupFeed(props) {
         graphResource={graphResource}
       />
       <Switch>
-        <Route exact path={relativePath('/feed')}>
+      <Route exact path={[relativePath('/'), relativePath('/feed')]}>
           <PostTimeline
             baseUrl={relativePath('/feed')}
             history={history}
