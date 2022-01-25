@@ -1,7 +1,6 @@
-/* i/n/u.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_ALIASES_H
+#define U3_ALIASES_H
+
   /**  Constants.
   **/
     /* u3_none - u3_noun which is not a noun.
@@ -112,3 +111,5 @@
 #     define  u3tn(type, x) (x == 0) ? (void *)0 :  ((type *) u3a_into(x))
 #     define  u3of(type, x) (u3a_outa((type *)x))
 
+
+#endif /* ifndef U3_ALIASES_H */

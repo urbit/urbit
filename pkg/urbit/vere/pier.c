@@ -1,6 +1,7 @@
 /* vere/pier.c
 */
 #include "all.h"
+#include "vere/time.h"
 #include "vere/vere.h"
 #include "vere/db/lmdb.h"
 #include <ent.h>

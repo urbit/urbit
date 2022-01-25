@@ -2,9 +2,14 @@
 **
 **  the main loop of a serf process.
 */
+#include "vere/mars.h"
+
 #include "all.h"
-#include <vere/vere.h>
-#include <vere/db/lmdb.h>
+#include "noun/serial.h"
+#include "vere/db/lmdb.h"
+#include "vere/disk.h"
+#include "vere/time.h"
+#include "vere/vere.h"
 
 /*
 ::  peek=[gang (each path $%([%once @tas @tas path] [%beam @tas beam]))]

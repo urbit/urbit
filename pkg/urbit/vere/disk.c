@@ -1,8 +1,10 @@
 /* vere/disk.c
 */
+#include "vere/disk.h"
+
 #include "all.h"
 #include "vere/vere.h"
-#include <vere/db/lmdb.h>
+#include "vere/db/lmdb.h"
 
 #undef VERBOSE_DISK
 #undef DISK_TRACE_JAM

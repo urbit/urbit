@@ -3,6 +3,7 @@
 */
 #include "all.h"
 #include <ftw.h>
+#include "vere/time.h"
 #include "vere/vere.h"
 
 struct _u3_umon;

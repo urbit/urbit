@@ -1,7 +1,12 @@
-/* include/vere/vere.h
-*/
+#ifndef U3_VERE_H
+#define U3_VERE_H
 
 #include <uv.h>
+
+#include "vere/disk.h"
+#include "vere/newt.h"
+#include "vere/ovum.h"
+#include "vere/peek.h"
 
   /** Quasi-tunable parameters.
   **/
@@ -13,118 +18,12 @@
   /** Data types.
   **/
 
-    /* u3_hhed: http header.
-    */
-      typedef struct _u3_hhed {
-        struct _u3_hhed* nex_u;
-        c3_w             nam_w;
-        c3_c*            nam_c;
-        c3_w             val_w;
-        c3_c*            val_c;
-      } u3_hhed;
-
-    /* u3_hbod: http body block.  Also used for responses.
-    */
-      typedef struct _u3_hbod {
-        struct _u3_hbod* nex_u;
-        c3_w             len_w;
-        c3_y             hun_y[0];
-      } u3_hbod;
-
     /* u3_lane: ames lane (IP address and port)
     */
       typedef struct _u3_lane {
         c3_w             pip_w;             //  target IPv4 address
         c3_s             por_s;             //  target port
       } u3_lane;
-
-    /* u3_moor_poke: poke callback function.
-    */
-      typedef c3_o (*u3_moor_poke)(void*, c3_d, c3_y*);
-
-    /* u3_moor_bail: bailout callback function.
-    */
-      typedef void (*u3_moor_bail)(void*, ssize_t err_i, const c3_c* err_c);
-
-    /* u3_meat: blob message block.
-    */
-      typedef struct _u3_meat {
-        struct _u3_meat* nex_u;
-        c3_d             len_d;
-        c3_y             hun_y[0];
-      } u3_meat;
-
-    /* u3_mess_type: in-process message type.
-    */
-      typedef enum {
-        u3_mess_head = 0,                   //  awaiting header
-        u3_mess_tail = 1                    //  awaiting body
-      } u3_mess_type;
-
-    /* u3_mess: blob message in process.
-    */
-      typedef struct _u3_mess {
-        u3_mess_type     sat_e;             //  msg type
-        union {                             //
-          struct {                          //  awaiting header:
-            c3_y         len_y[8];          //    header bytes
-            c3_y         has_y;             //    length
-          } hed_u;                          //
-          struct {                          //  awaiting body
-            u3_meat*     met_u;             //    partial message
-            c3_d         has_d;             //    length
-          } tal_u;                          //
-        };
-      } u3_mess;
-
-    /* u3_moat: inbound message stream.
-    */
-      typedef struct _u3_moat {
-        uv_pipe_t        pyp_u;             //  input stream
-        u3_moor_bail     bal_f;             //  error response function
-        void*            ptr_v;             //  callback pointer
-        u3_moor_poke     pok_f;             //  action function
-        u3_mess          mes_u;             //  message in progress
-        uv_timer_t       tim_u;             //  queue timer
-        u3_meat*         ent_u;             //  entry of message queue
-        u3_meat*         ext_u;             //  exit of message queue
-      } u3_moat;
-
-    /* u3_mojo: outbound message stream.
-    */
-      typedef struct _u3_mojo {
-        uv_pipe_t        pyp_u;             //  output stream
-        u3_moor_bail     bal_f;             //  error response function
-        void*            ptr_v;             //  callback pointer
-      } u3_mojo;
-
-    /* u3_moor: two-way message stream, linked list */
-      typedef struct _u3_moor {
-        uv_pipe_t        pyp_u;             //  duplex stream
-        u3_moor_bail     bal_f;             //  error response function
-        void*            ptr_v;             //  callback pointer
-        u3_moor_poke     pok_f;             //  action function
-        u3_mess          mes_u;             //  message in progress
-        uv_timer_t       tim_u;             //  queue timer
-        u3_meat*         ent_u;             //  entry of message queue
-        u3_meat*         ext_u;             //  exit of message queue
-        struct _u3_moor* nex_u;             //  next in list
-      } u3_moor;
-
-    /* u3_dent: directory entry.
-    */
-      typedef struct _u3_dent {
-        c3_c*            nam_c;
-        struct _u3_dent* nex_u;
-      } u3_dent;
-
-    /* u3_dire: simple directory state.
-    */
-      typedef struct _u3_dire {
-        c3_c*    pax_c;                     //  path of directory
-        uv_file  fil_u;                     //  file, opened read-only to fsync
-        u3_dent* all_u;                     //  file list
-      } u3_dire;
 
     /* u3_utat: unix terminal state.
     */
@@ -320,102 +219,6 @@
 
     /**  New pier system.
     **/
-      /* u3_ovum_news: u3_ovum lifecycle events
-      */
-        typedef enum {
-          u3_ovum_drop = 0,                 //  unplanned
-          u3_ovum_work = 1,                 //  begun
-          u3_ovum_done = 2                  //  complete
-        } u3_ovum_news;
-
-      struct _u3_ovum;
-
-      /* u3_ovum_peer: news callback
-      */
-        typedef void (*u3_ovum_peer)(struct _u3_ovum*, u3_ovum_news);
-
-      /* u3_ovum_bail: failure callback
-      */
-        typedef void (*u3_ovum_bail)(struct _u3_ovum*, u3_noun);
-
-      /* u3_ovum: potential event
-      */
-        typedef struct _u3_ovum {
-          void*            ptr_v;               //  context
-          c3_w             try_w;               //  retry count
-          c3_w             mil_w;               //  timeout ms
-          u3_noun            tar;               //  target (in arvo)
-          u3_noun            wir;               //  wire
-          u3_noun            cad;               //  card
-          struct {                              //  spinner:
-            u3_atom          lab;               //    label
-            c3_o           del_o;               //    delay (c3y)
-          } pin_u;                              //
-          struct {                              //  optional callbacks:
-            u3_ovum_peer  news_f;               //    progress
-            u3_ovum_bail  bail_f;               //    failure
-          } cb_u;                               //
-          struct _u3_ovum* pre_u;               //  previous ovum
-          struct _u3_ovum* nex_u;               //  next ovum
-          struct _u3_auto* car_u;               //  backpointer to i/o driver
-        } u3_ovum;
-
-      /* u3_fact: completed event
-      */
-        typedef struct _u3_fact {
-          c3_d             eve_d;               //  event number
-          c3_l             mug_l;               //  kernel mug after
-          u3_noun            job;               //  (pair date ovum)
-          struct _u3_fact* nex_u;               //  next in queue
-        } u3_fact;
-
-      /* u3_feat: serialized fact
-      */
-        typedef struct _u3_feat {
-          c3_d             eve_d;
-          size_t           len_i;
-          c3_y*            hun_y;
-          struct _u3_feat* nex_u;
-        } u3_feat;
-
-      /* u3_peek_cb: namespace read response callback.
-      */
-        typedef void (*u3_peek_cb)(void*, u3_noun);
-
-      /* u3_pico_type: kinds of proto-peek
-      */
-        typedef enum {
-          u3_pico_full = 0,
-          u3_pico_once = 1
-        } u3_pico_type;
-
-      /* u3_pico: proto-peek
-      */
-        typedef struct _u3_pico {
-          struct _u3_pico* nex_u;               //  next in queue
-          void*            ptr_v;               //  context
-          u3_peek_cb       fun_f;               //  callback
-          u3_noun            gan;               //  leakset
-          u3_pico_type     typ_e;               //  type-tagged
-          union {                               //
-            u3_noun          ful;               //  (each path [%beam term beam])
-            struct {                            //  once:
-              c3_m         car_m;               //    care
-              u3_atom        des;               //    desk
-              u3_noun        pax;               //    /path
-            } las_u;
-          };
-        } u3_pico;
-
-      /* u3_peek: namespace read request
-      */
-        typedef struct _u3_peek {
-          void*            ptr_v;               //  context
-          u3_peek_cb       fun_f;               //  callback
-          u3_pico_type     typ_e;               //  type
-          u3_noun            sam;               //  +peek sample
-        } u3_peek;
-
       /* u3_writ_type: king->serf ipc message types
       */
         typedef enum {
@@ -482,46 +285,6 @@
           struct _u3_writ*     ext_u;           //  queue exit
         } u3_lord;
 
-
-      /* u3_disk_news: disk sync callbak.
-      */
-        typedef void (*u3_disk_news)(void*, c3_d, c3_o);
-
-      /* u3_disk: manage event persistence.
-      */
-        typedef struct _u3_disk {
-          u3_dire*         dir_u;               //  main pier directory
-          u3_dire*         urb_u;               //  urbit system data
-          u3_dire*         com_u;               //  log directory
-          c3_o             liv_o;               //  live
-          void*            mdb_u;               //  lmdb environment.
-          c3_d             sen_d;               //  commit requested
-          c3_d             dun_d;               //  committed
-          c3_w             hit_w[100];          //  batch histogram
-          struct {                              //  new write queue
-            u3_feat*       ent_u;               //  queue entry (highest)
-            u3_feat*       ext_u;               //  queue exit (lowest)
-          } put_u;
-          struct {                              //  write control
-            union {                             //  thread/request
-              uv_work_t    ted_u;               //
-              uv_req_t     req_u;               //
-            };
-            void*          ptr_v;               //  async context
-            u3_disk_news   don_f;               //  async write cb
-            c3_o           ted_o;               //  c3y == active
-            c3_o           ret_o;               //  result
-            c3_d           eve_d;               //  first event
-            c3_d           len_w;               //  number of events
-            c3_y*          byt_y[100];          //  array of bytes
-            size_t         siz_i[100];          //  array of lengths
-          } sav_u;
-        } u3_disk;
-
-      /* u3_disk_walk: opaque event log iterator.
-      */
-        typedef struct _u3_disk_walk u3_disk_walk;
-
       /* u3_psat: pier state.
       */
         typedef enum {
@@ -530,14 +293,6 @@
           u3_psat_work = 2,                   //  working
           u3_psat_done = 3                    //  shutting down
         } u3_psat;
-
-      /* u3_meta: pier metadata.
-      */
-        typedef struct _u3_meta {
-          c3_d who_d[2];                    //  identity
-          c3_o fak_o;                       //  fake bit
-          c3_w lif_w;                       //  lifecycle length
-        } u3_meta;
 
       /* u3_boot_opts: bootstrap parameters.
       */
@@ -609,55 +364,6 @@
           struct _u3_pier* nex_u;               //  next in list
         } u3_pier;
 
-      /* u3_gift: mars pending reponse.
-      */
-        typedef struct _u3_gift {
-          struct _u3_gift* nex_u;           //  next response
-          c3_d             len_d;           //  length
-          c3_y*            hun_y;           //  bytes
-          enum {                            //  type
-            u3_gift_fact_e = 0,             //    effects
-            u3_gift_rest_e = 1              //    any
-          } sat_e;                          //
-          union {                           //  data
-            c3_d           eve_d;           //    event number
-            void*          ptr_v;           //    any
-          };
-        } u3_gift;
-
-      /* u3_mars: the urbit state machine.
-      */
-        typedef struct _u3_mars {
-          c3_d    key_d[4];                 //  disk key
-          c3_c*   dir_c;                    //  execution directory (pier)
-          c3_d    sen_d;                    //  last event requested
-          c3_d    dun_d;                    //  last event processed
-          c3_l    mug_l;                    //  hash of state
-          c3_o    pac_o;                    //  pack kernel
-          c3_o    rec_o;                    //  reclaim cache
-          c3_o    mut_o;                    //  mutated kerne
-          u3_noun sac;                      //  space measurement
-          u3_disk* log_u;                   //  event log
-          u3_meta met_u;                    //  metadata
-          struct {                          //  snapshot
-            uv_timer_t tim_u;               //    timer
-            c3_d       eve_d;               //    last saved
-          } sav_u;                          //
-          u3_moat*     inn_u;               //  input stream
-          u3_mojo*     out_u;               //  output stream
-          u3_cue_xeno* sil_u;               //  cue handle
-          enum {                            //  state
-            u3_mars_work_e = 0,             //    working
-            u3_mars_save_e = 1,             //    snapshotting
-            u3_mars_exit_e = 2              //    exiting
-          } sat_e;                          //
-          struct {                          //  response queue
-            u3_gift* ent_u;                 //    entry
-            u3_gift* ext_u;                 //    exit
-          } gif_u;                          //
-          void  (*xit_f)(void);             //  exit callback
-        } u3_mars;
-
       /* u3_king: all executing piers.
       */
         typedef struct _u3_king {
@@ -679,111 +385,8 @@
 
   /** Functions.
   **/
-    /*  Urbit time: 128 bits, leap-free.
-    **
-    **  High 64 bits: 0x8000.000c.cea3.5380 + Unix time at leap 25 (Jul 2012)
-    **  Low 64 bits: 1/2^64 of a second.
-    **
-    **  Seconds per Gregorian 400-block: 12.622.780.800
-    **  400-blocks from 0 to 0AD: 730.692.561
-    **  Years from 0 to 0AD: 292.277.024.400
-    **  Seconds from 0 to 0AD: 9.223.372.029.693.628.800
-    **  Seconds between 0A and Unix epoch: 62.167.219.200
-    **  Seconds before Unix epoch: 9.223.372.091.860.848.000
-    **  The same, in C hex notation: 0x8000000cce9e0d80ULL
-    **
-    **  XX: needs to be adjusted to implement Google leap-smear time.
-    */
-      /* u3_time_sec_in(): urbit seconds from unix time.
-      **
-      ** Adjust (externally) for future leap secs!
-      */
-        c3_d
-        u3_time_sec_in(c3_w unx_w);
-
-      /* u3_time_sec_out(): unix time from urbit seconds.
-      **
-      ** Adjust (externally) for future leap secs!
-      */
-        c3_w
-        u3_time_sec_out(c3_d urs_d);
-
-      /* u3_time_fsc_in(): urbit fracto-seconds from unix microseconds.
-      */
-        c3_d
-        u3_time_fsc_in(c3_w usc_w);
-
-      /* u3_time_fsc_out: unix microseconds from urbit fracto-seconds.
-      */
-        c3_w
-        u3_time_fsc_out(c3_d ufc_d);
-
-      /* u3_time_in_tv(): urbit time from struct timeval.
-      */
-        u3_atom
-        u3_time_in_tv(struct timeval* tim_tv);
-
-      /* u3_time_out_tv(): struct timeval from urbit time.
-      */
-        void
-        u3_time_out_tv(struct timeval* tim_tv, u3_noun now);
-
-      /* u3_time_in_ts(): urbit time from struct timespec.
-      */
-        u3_atom
-        u3_time_in_ts(struct timespec* tim_ts);
-#if defined(U3_OS_linux) || defined(U3_OS_mingw)
-      /* u3_time_t_in_ts(): urbit time from time_t.
-       */
-         u3_atom
-         u3_time_t_in_ts(time_t tim);
-#endif
-
-      /* u3_time_out_ts(): struct timespec from urbit time.
-      */
-        void
-        u3_time_out_ts(struct timespec* tim_ts, u3_noun now);
-
-      /* u3_time_gap_ms(): (wen - now) in ms.
-      */
-        c3_d
-        u3_time_gap_ms(u3_noun now, u3_noun wen);
-
     /**  ward: common structure lifecycle
     **/
-      /* u3_dent_init(): initialize file record.
-      */
-        u3_dent*
-        u3_dent_init(const c3_c* nam_c);
-
-      /* u3_dent_free(): dispose file record.
-      */
-        void
-        u3_dent_free(u3_dent *det_u);
-
-      /* u3_dire_init(): initialize directory record.
-      */
-        u3_dire*
-        u3_dire_init(const c3_c* pax_c);
-
-      /* u3_dire_free(): dispose directory record.
-      */
-        void
-        u3_dire_free(u3_dire *dir_u);
-
-      /* u3_ovum_init: initialize an unlinked potential event
-      */
-        u3_ovum*
-        u3_ovum_init(c3_w     mil_w,
-                     u3_noun    tar,
-                     u3_noun    wir,
-                     u3_noun    cad);
-
-      /* u3_ovum_free: dispose an unlinked potential event
-      */
-        void
-        u3_ovum_free(u3_ovum *egg_u);
-
       /* u3_pico_init(): initialize a scry request struct
       */
         u3_pico*
@@ -894,97 +497,6 @@
                      u3_ovum_peer news_f,
                      u3_ovum_bail bail_f);
 
-      /* u3_disk_init(): load or create pier directories and event log.
-      */
-        u3_disk*
-        u3_disk_init(c3_c* pax_c);
-
-      /* u3_disk_etch(): serialize an event for persistence.
-      */
-        c3_w
-        u3_disk_etch(u3_disk* log_u,
-                     u3_noun    eve,
-                     c3_l     mug_l,
-                     c3_y**   out_y);
-
-      /* u3_disk_sift(): parse a persisted event buffer.
-      */
-        c3_o
-        u3_disk_sift(u3_disk* log_u,
-                     size_t   len_i,
-                     c3_y*    dat_y,
-                     c3_l*    mug_l,
-                     u3_noun*   job);
-
-      /* u3_disk_info(): print status info.
-      */
-        void
-        u3_disk_info(u3_disk* log_u);
-
-      /* u3_disk_exit(): close [log_u] and dispose.
-      */
-        void
-        u3_disk_exit(u3_disk* log_u);
-
-      /* u3_disk_read_meta(): read metadata.
-      */
-        c3_o
-        u3_disk_read_meta(u3_disk* log_u, u3_meta* met_u);
-
-      /* u3_disk_save_meta(): save metadata.
-      */
-        c3_o
-        u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u);
-
-      /* u3_disk_read_list(): synchronously read a cons list of events.
-      */
-        u3_weak
-        u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l);
-
-      /* u3_disk_plan_list(): enqueue completed event list, without autocommit.
-      */
-        void
-        u3_disk_plan_list(u3_disk* log_u, u3_noun lit);
-
-      /* u3_disk_sync(): commit planned events.
-      */
-        c3_o
-        u3_disk_sync(u3_disk* log_u);
-
-      /* u3_disk_async(): active autosync with callbacks.
-      */
-        void
-        u3_disk_async(u3_disk*     log_u,
-                      void*        ptr_v,
-                      u3_disk_news don_f);
-
-      /* u3_disk_plan(): enqueue completed event for persistence.
-      */
-        void
-        u3_disk_plan(u3_disk* log_u, u3_fact* tac_u);
-
-      /* u3_disk_walk_init(): init iterator.
-      */
-        u3_disk_walk*
-        u3_disk_walk_init(u3_disk* log_u,
-                          c3_d     eve_d,
-                          c3_d     len_d);
-
-      /* u3_disk_walk_live(): check if live.
-      */
-        c3_o
-        u3_disk_walk_live(u3_disk_walk* wok_u);
-
-      /* u3_disk_walk_live(): get next fact.
-      */
-        c3_o
-        u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u);
-
-      /* u3_disk_walk_done(): close iterator.
-      */
-        void
-        u3_disk_walk_done(u3_disk_walk* wok_u);
-
       /* u3_lord_boot(): instantiate child process.
       */
         void
@@ -1079,13 +591,6 @@
       */
         c3_c*
         u3_path(c3_o    fyl, u3_noun pax);
-
-    /**  Filesystem (async)
-    **/
-      /* u3_foil_folder(): load directory, blockingly.  create if nonexistent.
-      */
-        u3_dire*
-        u3_foil_folder(const c3_c* pax_c);         //  directory object, or 0
 
     /**  Terminal, new style.
     **/
@@ -1186,20 +691,6 @@
         u3_auto*
         u3_behn_io_init(u3_pier* pir_u);
 
-    /**  HTTP server.
-    **/
-      /* u3_http_io_init(): initialize http I/O.
-      */
-        u3_auto*
-        u3_http_io_init(u3_pier* pir_u);
-
-    /**  HTTP client.
-    **/
-      /* u3_cttp_io_init(): initialize cttp I/O.
-      */
-        u3_auto*
-        u3_cttp_io_init(u3_pier* pir_u);
-
     /**  fore, first events
     **/
       /* u3_hind_io_init(): initialize fore
@@ -1213,57 +704,6 @@
       */
         u3_auto*
         u3_hind_io_init(u3_pier* pir_u);
-
-    /**  Stream messages.
-    **/
-      /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
-      */
-        void
-        u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d);
-
-      /* u3_newt_send(): write buffer to stream.
-      */
-        void
-        u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y);
-
-      /* u3_newt_read(): activate reading on input stream.
-      */
-        void
-        u3_newt_read(u3_moat* mot_u);
-
-      /* u3_newt_moat_info(); print status info.
-      */
-        void
-        u3_newt_moat_info(u3_moat* mot_u);
-
-      /* u3_newt_moat_stop(); newt stop/close input stream.
-      */
-        void
-        u3_newt_moat_stop(u3_moat* mot_u, u3_moor_bail bal_f);
-
-      /* u3_newt_mojo_stop(); newt stop/close output stream.
-      */
-        void
-        u3_newt_mojo_stop(u3_mojo* moj_u, u3_moor_bail bal_f);
-
-    /** Mars interface.
-    **/
-      /* u3_mars_boot(): boot a new ship.
-      */
-        c3_o
-        u3_mars_boot(c3_c* dir_c, u3_noun com);
-
-      /* u3_mars_init(): restart an existing ship.
-      */
-        u3_mars*
-        u3_mars_init(c3_c*    dir_c,
-                     u3_moat* inn_u,
-                     u3_mojo* out_u);
-
-      /* u3_mars_init(): try to send a task into mars.
-      */
-        c3_o
-        u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y);
 
     /** Pier scries.
     **/
@@ -1431,3 +871,5 @@
 
         c3_w
         u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+
+#endif /* ifndef U3_VERE_H */
