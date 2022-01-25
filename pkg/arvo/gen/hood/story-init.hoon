@@ -11,10 +11,9 @@
 ::
 =/  our  p.bec
 =?  desk  =(*^desk desk)  q.bec  :: use current desk if user didn't provide
-=/  existing-story  .^(? %cu /(scot %p our)/[desk]/(scot %da now)/story)::
+=/  existing-story  .^(? %cu /(scot %p our)/[desk]/(scot %da now)/story)
 ?:  ?&(existing-story !overwrite)
   ~&  "Error: {<desk>}/story already exists. Set the optional parameter `overwrite` to `%.y` to forcibly wipe"
-  ::  XX dumb hack to no-op because apparently type system doesn't like it when you mix %kiln-info and %helm-pass
   :-  %helm-pass  [%d %noop ~]
 =|  tale=story
 :-  %helm-pass

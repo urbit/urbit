@@ -9,6 +9,7 @@
 ::
 ::  List all commit messages for the given desk
 ::
+::  TODO remove this outdated generator, superseded by story-log
 =/  our  p.bec
 =/  tale=story  .^(story %cx /(scot %p our)/[syd]/(scot %da now)/story)
 =/  story-to-mime  .^($-(story mime) %cf /(scot %p our)/[syd]/(scot %da now)/story/mime)
