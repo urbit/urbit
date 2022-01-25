@@ -29,31 +29,31 @@ typedef void (*u3_disk_news)(void*, c3_d, c3_o);
 
 //! Manage event persistence.
 typedef struct _u3_disk {
-  u3_dire*         dir_u;               //  main pier directory
-  u3_dire*         urb_u;               //  urbit system data
-  u3_dire*         com_u;               //  log directory
-  c3_o             liv_o;               //  live
-  void*            mdb_u;               //  lmdb environment.
-  c3_d             sen_d;               //  commit requested
-  c3_d             dun_d;               //  committed
-  c3_w             hit_w[100];          //  batch histogram
-  struct {                              //  new write queue
-    u3_feat*       ent_u;               //  queue entry (highest)
-    u3_feat*       ext_u;               //  queue exit (lowest)
+  u3_dire*         dir_u;       //!< main pier directory
+  u3_dire*         urb_u;       //!< urbit system data
+  u3_dire*         com_u;       //!< log directory
+  c3_o             liv_o;       //!< live
+  void*            mdb_u;       //!< lmdb environment.
+  c3_d             sen_d;       //!< commit requested
+  c3_d             dun_d;       //!< committed
+  c3_w             hit_w[100];  //!< batch histogram
+  struct {                      //!< new write queue
+    u3_feat*       ent_u;       //!< queue entry (highest)
+    u3_feat*       ext_u;       //!< queue exit (lowest)
   } put_u;
-  struct {                              //  write control
-    union {                             //  thread/request
-      uv_work_t    ted_u;               //
-      uv_req_t     req_u;               //
+  struct {                      //!< write control
+    union {                     //!< thread/request
+      uv_work_t    ted_u;
+      uv_req_t     req_u;
     };
-    void*          ptr_v;               //  async context
-    u3_disk_news   don_f;               //  async write cb
-    c3_o           ted_o;               //  c3y == active
-    c3_o           ret_o;               //  result
-    c3_d           eve_d;               //  first event
-    c3_d           len_w;               //  number of events
-    c3_y*          byt_y[100];          //  array of bytes
-    size_t         siz_i[100];          //  array of lengths
+    void*          ptr_v;       //!< async context
+    u3_disk_news   don_f;       //!< async write cb
+    c3_o           ted_o;       //!< c3y == active
+    c3_o           ret_o;       //!< result
+    c3_d           eve_d;       //!< first event
+    c3_d           len_w;       //!< number of events
+    c3_y*          byt_y[100];  //!< array of bytes
+    size_t         siz_i[100];  //!< array of lengths
   } sav_u;
 } u3_disk;
 
