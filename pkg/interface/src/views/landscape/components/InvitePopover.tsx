@@ -5,9 +5,7 @@ import {
 
     Row, Text
 } from '@tlon/indigo-react';
-import { resourceFromPath } from '@urbit/api';
-import { invite } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Association, invite, resourceFromPath } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React, { useCallback, useRef } from 'react';

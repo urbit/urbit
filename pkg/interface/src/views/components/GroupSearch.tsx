@@ -6,8 +6,7 @@ import {
     ErrorLabel, Icon, Label,
     Row, Text
 } from '@tlon/indigo-react';
-import { OpenPolicy, roleForShip } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, OpenPolicy, roleForShip } from '@urbit/api';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement, useMemo, useState } from 'react';

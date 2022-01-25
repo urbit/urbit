@@ -1,11 +1,9 @@
-import { Enc } from '@urbit/api';
 import {
+  Enc,
   Group,
-
   GroupUpdate,
-
   InvitePolicy, InvitePolicyDiff, OpenPolicy, OpenPolicyDiff, Tags
-} from '@urbit/api/groups';
+} from '@urbit/api';
 import _ from 'lodash';
 import { Cage } from '~/types/cage';
 import { resourceAsPath } from '../lib/util';

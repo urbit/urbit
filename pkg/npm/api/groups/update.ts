@@ -173,5 +173,3 @@ export type GroupUpdate =
   | GroupUpdateInitialGroup;
 
 export type GroupAction = Omit<GroupUpdate, 'initialGroup' | 'initial'>;
-
-

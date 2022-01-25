@@ -5,9 +5,7 @@ import {
     Text
 } from '@tlon/indigo-react';
 import _ from 'lodash';
-import { changePolicy, deSig, Enc, resourceFromPath, roleForShip } from '@urbit/api';
-import { Group, GroupPolicy } from '@urbit/api/groups';
-import { Association, metadataEdit, MetadataEditField } from '@urbit/api/metadata';
+import { Association, changePolicy, deSig, Enc, Group, GroupPolicy, metadataEdit, MetadataEditField, resourceFromPath, roleForShip } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';

@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Group } from '@urbit/api/groups';
-import { deSig, resourceFromPath } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, deSig, Group, resourceFromPath } from '@urbit/api';
 import React, { ReactElement, useCallback, useRef } from 'react';
 import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { useHashLink } from '~/logic/lib/useHashLink';

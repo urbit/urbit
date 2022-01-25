@@ -1,14 +1,4 @@
-import {
-  Content,
-  createPost,
-  deSig,
-  fetchIsAllowed,
-  isWriter,
-  Post,
-  removePosts,
-  resourceFromPath
-} from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, Content, createPost, deSig, fetchIsAllowed, isWriter, Post, removePosts, resourceFromPath } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import React, {

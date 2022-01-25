@@ -1,4 +1,4 @@
-import { SettingsUpdate } from '@urbit/api/settings';
+import { SettingsUpdate } from '@urbit/api';
 import _ from 'lodash';
 import { SettingsState as State } from '~/logic/state/settings';
 import { BaseState } from '../state/base';

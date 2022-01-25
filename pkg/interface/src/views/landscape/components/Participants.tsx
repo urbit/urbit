@@ -6,10 +6,7 @@ import {
 
     StatelessTextInput as Input, Text
 } from '@tlon/indigo-react';
-import { Contact, Contacts } from '@urbit/api/contacts';
-import { addTag, removeMembers, changePolicy, Group, removeTag, RoleTags } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
-import { deSig, resourceFromPath, roleForShip } from '@urbit/api';
+import { addTag, Association, Contact, Contacts, changePolicy, deSig, Group, removeMembers, removeTag, RoleTags, resourceFromPath, roleForShip } from '@urbit/api';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import React, {

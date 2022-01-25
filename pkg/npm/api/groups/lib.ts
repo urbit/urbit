@@ -1,6 +1,4 @@
 import { deSig } from '../index';
-import _ from 'lodash';
-
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
 import { Group, GroupPolicy, GroupPolicyDiff, GroupUpdateAddMembers, GroupUpdateAddTag, GroupUpdateChangePolicy, GroupUpdateRemoveGroup, GroupUpdateRemoveMembers, GroupUpdateRemoveTag, Resource, RoleTags, Tag } from './types';
 import { GroupUpdate } from './update';
@@ -180,9 +178,9 @@ export function roleForShip(
 ): RoleTags | undefined {
   return roleTags.reduce((currRole, role) => {
     const roleShips = group?.tags?.role?.[role];
-    return roleShips && _.includes(roleShips, ship) ? role : currRole;
+    return roleShips && roleShips.includes(ship) ? role : currRole;
   }, undefined as RoleTags | undefined);
-}
+};
 
 export function resourceFromPath(path: Path): Resource {
   const [, , ship, name] = path.split('/');
@@ -193,19 +191,16 @@ export function makeResource(ship: string, name: string) {
   return { ship, name };
 }
 
-export function isWriter(group: Group, resource: string, ship: string) {
-  const writers: string[] | undefined = _.get(
-    group,
-    ['tags', 'graph', resource, 'writers'],
-    undefined
-  );
+export const isWriter = (group: Group, resource: string, ship: string) => {
+  const graph = group.tags?.graph;
+  const writers: string[] | undefined = graph && (graph[resource] as any)?.writers;
   const admins = group?.tags?.role?.admin ?? [];
-  if (_.isUndefined(writers)) {
+  if (typeof writers === 'undefined') {
     return true;
   } else {
-    return _.includes(writers, ship) || _.includes(admins, ship);
+    return writers.includes(ship) || admins.includes(ship);
   }
-}
+};
 
 export function isChannelAdmin(
   group: Group,
