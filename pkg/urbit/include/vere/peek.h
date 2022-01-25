@@ -13,7 +13,7 @@ typedef void (*u3_peek_cb)(void*, u3_noun);
 //! Kinds of proto-peek.
 typedef enum {
   u3_pico_full = 0,
-  u3_pico_once = 1
+  u3_pico_once = 1,
 } u3_pico_type;
 
 //! proto-peek.
