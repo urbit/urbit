@@ -2,6 +2,7 @@
 **
 */
 #include "all.h"
+#include "vere/time.h"
 #include "vere/vere.h"
 
 /* u3_behn: just a timer for ever
