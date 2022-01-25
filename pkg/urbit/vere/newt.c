@@ -9,8 +9,10 @@
 **  the implementation is relatively inefficient and could
 **  lose a few copies, mallocs, etc.
 */
+#include <uv.h>
+
 #include "all.h"
-#include "vere/vere.h"
+#include "vere/newt.h"
 
 /* _newt_mess_head(): await next msg header.
 */
