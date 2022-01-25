@@ -6,6 +6,7 @@
 =>  |%
     +$  move  [p=duct q=(wite note gift:khan)]
     +$  note                                            ::  out request $->
+      $~  [%g %deal *sock *term *deal:gall]
       $%  $:  %g                                        ::  to %gall
               $>(%deal task:gall)                       ::  full transmission
       ==  ==                                            ::
@@ -19,11 +20,13 @@
 =>
 |%
 ++  start-spider
-  |=  *
-  !!
+  |=  [our=@p =cage]
+  ^-  note
+  [%g %deal [our our] %spider %poke cage]
 ++  watch-spider
-  |=  *
-  !!
+  |=  [our=@p =path]
+  ^-  note
+  [%g %deal [our our] %spider %watch path]
 --
 =|  khan-state
 =*  state  -
@@ -54,11 +57,16 @@
     =/  rid=@ta  (rear (head hen))
     =/  tid=@ta
       (cat 3 'khan-fyrd--' rid)
-    =/  start-moves=(list move)
-      :~  (watch-spider beak.task name.task /thread-result/[tid])
-          (start-spider beak.task name.task !>(data.task))
+    =/  args
+      :*  ~  `tid  [our q.beak.task %da now]  name.task
+          !>(data.task)
       ==
-    ::  send to gall, sub for updates
+    =/  start-moves=(list move)
+      %+  turn
+        :~  (watch-spider p.beak.task name.task /thread-result/[tid])
+            (start-spider p.beak.task %noun !>(args))
+        ==
+      |=(=note ^-(move [hen %pass //g note]))
     [start-moves khan-gate]
   ==
 ::  +load: migrate an old state to a new khan version
