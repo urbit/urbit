@@ -3,6 +3,7 @@
 */
 #include "all.h"
 #include "vere/io/http.h"
+#include "vere/time.h"
 #include "vere/vere.h"
 
 #include <openssl/ssl.h>
