@@ -1,6 +1,7 @@
 /* vere/auto.c
 */
 #include "all.h"
+#include "vere/io/http.h"
 #include "vere/vere.h"
 
 /* u3_auto_plan(): enqueue an ovum.
