@@ -2,7 +2,9 @@
 **
 */
 #include "all.h"
+#include "vere/io/http.h"
 #include "vere/vere.h"
+
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <h2o.h>
