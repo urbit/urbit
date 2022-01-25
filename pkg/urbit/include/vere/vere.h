@@ -7,6 +7,7 @@
 #include "vere/foil.h"
 #include "vere/newt.h"
 #include "vere/ovum.h"
+#include "vere/peek.h"
 
   /** Quasi-tunable parameters.
   **/
@@ -219,44 +220,6 @@
 
     /**  New pier system.
     **/
-      /* u3_peek_cb: namespace read response callback.
-      */
-        typedef void (*u3_peek_cb)(void*, u3_noun);
-
-      /* u3_pico_type: kinds of proto-peek
-      */
-        typedef enum {
-          u3_pico_full = 0,
-          u3_pico_once = 1
-        } u3_pico_type;
-
-      /* u3_pico: proto-peek
-      */
-        typedef struct _u3_pico {
-          struct _u3_pico* nex_u;               //  next in queue
-          void*            ptr_v;               //  context
-          u3_peek_cb       fun_f;               //  callback
-          u3_noun            gan;               //  leakset
-          u3_pico_type     typ_e;               //  type-tagged
-          union {                               //
-            u3_noun          ful;               //  (each path [%beam term beam])
-            struct {                            //  once:
-              c3_m         car_m;               //    care
-              u3_atom        des;               //    desk
-              u3_noun        pax;               //    /path
-            } las_u;
-          };
-        } u3_pico;
-
-      /* u3_peek: namespace read request
-      */
-        typedef struct _u3_peek {
-          void*            ptr_v;               //  context
-          u3_peek_cb       fun_f;               //  callback
-          u3_pico_type     typ_e;               //  type
-          u3_noun            sam;               //  +peek sample
-        } u3_peek;
-
       /* u3_writ_type: king->serf ipc message types
       */
         typedef enum {
