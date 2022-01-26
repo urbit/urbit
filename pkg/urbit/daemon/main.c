@@ -277,9 +277,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  c3_t imp_t = ((0 != u3_Host.ops_u.who_c) &&
-                (4 == strlen(u3_Host.ops_u.who_c)));
-
   if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
     fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
     return c3n;
@@ -319,10 +316,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
     return c3n;
-  }
-
-  if ( u3_Host.ops_u.eth_c == 0 && imp_t ) {
-    u3_Host.ops_u.eth_c = "http://eth-mainnet.urbit.org:8545";
   }
 
   if ( u3_Host.ops_u.url_c != 0 && u3_Host.ops_u.pil_c != 0 ) {
