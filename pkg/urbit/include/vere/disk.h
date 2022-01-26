@@ -87,6 +87,8 @@ u3_disk_sift(u3_disk* log_u,
              u3_noun*   job);
 
 //! Print status info.
+//!
+//! @param[in] log_u  Disk object to report status info for.
 void
 u3_disk_info(u3_disk* log_u);
 
