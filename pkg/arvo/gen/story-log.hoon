@@ -2,6 +2,7 @@
 ::::
   ::
 /-  *story
+/+  lib=story
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[syd=desk ~] ~]
@@ -20,13 +21,12 @@
   ^-  (unit cord)
   =/  proses  (~(get by tale) r.commit)
   ?~  proses  ~
-  =/  prose-list  ~(tap in u.proses)
-  ::  TODO signal conflict
-  =/  prose-first  (snag 0 prose-list)
-  =/  title  title:prose-first
-  =/  body   body:prose-first
   %-  some
-  (crip "commit: {<`@uv`r.commit>}\0atitle: {<title>}\0abody:\0a{<body>}")
+  %-  crip
+  ;:  welp
+    (trip (tako-to-text:lib r.commit))
+    (trip (proses-to-text:lib u.proses))
+  ==
 ::::
 ::  Remarks:
 ::
