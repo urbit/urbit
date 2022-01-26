@@ -242,7 +242,7 @@ function timebox(json: any, state: HarkState): HarkState {
         const time = makePatDa(lid.archive);
         const old = state.archive.get(time) || {};
         notifications.forEach((note: any) => {
-          if(note.bin.desk !== window.desk) {
+          if(note.bin.place.desk !== window.desk) {
             return;
           }
           const binId = harkBinToId(note.bin);
@@ -252,7 +252,7 @@ function timebox(json: any, state: HarkState): HarkState {
     } else {
         const seen = 'seen' in lid ? 'seen' : 'unseen';
         notifications.forEach((note: any) => {
-          if(note.bin.desk !== window.desk) {
+          if(note.bin.place.desk !== window.desk) {
             return;
           }
           const binId = harkBinToId(note.bin);
