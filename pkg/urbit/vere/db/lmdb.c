@@ -521,7 +521,7 @@ u3_lmdb_read_meta(MDB_env*    env_u,
   //
   if ( (ret_w = mdb_txn_begin(env_u, 0, MDB_RDONLY, &txn_u)) ) {
     mdb_logerror(stderr, ret_w, "lmdb: meta read: txn_begin fail");
-    return read_f(ptr_v, 0, 0);
+    return;
   }
 
   //  open the database in the transaction
@@ -529,7 +529,7 @@ u3_lmdb_read_meta(MDB_env*    env_u,
   if ( (ret_w =  mdb_dbi_open(txn_u, "META", 0, &mdb_u)) ) {
     mdb_logerror(stderr, ret_w, "lmdb: meta read: dbi_open fail");
     mdb_txn_abort(txn_u);
-    return read_f(ptr_v, 0, 0);
+    return;
   }
 
   //  read by string key, invoking callback with result
@@ -540,7 +540,7 @@ u3_lmdb_read_meta(MDB_env*    env_u,
     if ( (ret_w = mdb_get(txn_u, mdb_u, &key_u, &val_u)) ) {
       mdb_logerror(stderr, ret_w, "lmdb: read failed");
       mdb_txn_abort(txn_u);
-      return read_f(ptr_v, 0, 0);
+      return;
     }
     else {
       read_f(ptr_v, val_u.mv_size, val_u.mv_data);
