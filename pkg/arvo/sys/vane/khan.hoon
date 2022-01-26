@@ -11,7 +11,12 @@
               $>(%deal task:gall)                       ::  full transmission
       ==  ==                                            ::
     +$  sign                                            ::  in response $<-
-      !!
+      $%  $:  %gall
+              $>(%unto gift:gall)
+          ==
+          $:  %khan
+              $>(%avow gift:khan)
+      ==  ==
     +$  khan-state
       $:  %0
           unix-duct=duct
@@ -59,12 +64,12 @@
       (cat 3 'khan-fyrd--' rid)
     =/  args
       :*  ~  `tid  [our q.beak.task %da now]  name.task
-          !>(data.task)
+          !>([~ ~zod])
       ==
     =/  start-moves=(list move)
       %+  turn
-        :~  (watch-spider p.beak.task name.task /thread-result/[tid])
-            (start-spider p.beak.task %noun !>(args))
+        :~  (watch-spider p.beak.task /thread-result/[tid])
+            (start-spider p.beak.task %spider-start !>(args))
         ==
       |=(=note ^-(move [hen %pass //g note]))
     [start-moves khan-gate]
@@ -88,6 +93,31 @@
   ^-  [(list move) _khan-gate]
   ?^  dud
     ~|(%khan-take-dud (mean tang.u.dud))
-  ::  switch on type of thing you get back, update state
-  [~ khan-gate]
+  ~&  >  [tea+tea hen+hen hin+hin]
+  ?-    -.hin
+      %gall
+    ?+    -.p.hin  [~ khan-gate]
+        ?(%poke-ack %watch-ack)
+      ?~  p.p.hin  [~ khan-gate]
+      %-  (slog u.p.p.hin)
+      [~ khan-gate]
+    ::
+        %fact
+      =*  cag  cage.p.hin
+      ?+    p.cag  !!
+          %thread-fail
+        %-  (slog !<(tang q.cag))
+        [~ khan-gate]
+      ::
+          %thread-done
+        :_  khan-gate
+        =/  mov=move
+          [hen %give %avow %& %tape !>(~)]
+        ~[mov]
+      ==
+    ==
+  ::
+      %khan
+    !!
+  ==
 --

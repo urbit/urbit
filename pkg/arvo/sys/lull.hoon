@@ -2098,7 +2098,7 @@
 ++  khan  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%avow (each cage [term tang])]                 ::  thread result
+    $%  [%avow p=(each cage [term tang])]               ::  thread result
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]
