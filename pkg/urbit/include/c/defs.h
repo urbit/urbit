@@ -43,6 +43,10 @@
     */
 #     define c3_stub       c3_assert(!"stub")
 
+    /* Element count of an array.
+    */
+#    define c3_arr_len(arr) (sizeof(arr) / sizeof(arr[0]))
+
     /* Size in words.
     */
 #     define c3_wiseof(x)  (((sizeof (x)) + 3) >> 2)
