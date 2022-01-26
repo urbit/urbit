@@ -1,5 +1,5 @@
-/* vere/disk.c
-*/
+//! @file disk.c
+
 #include "vere/disk.h"
 
 #include "all.h"
@@ -16,8 +16,7 @@ struct _u3_disk_walk {
   c3_o          liv_o;
 };
 
-/* _disk_commit_done(): commit complete.
- */
+//! Commit complete.
 static void
 _disk_commit_done(u3_disk* log_u)
 {
@@ -67,8 +66,7 @@ _disk_commit_done(u3_disk* log_u)
 static void
 _disk_commit(u3_disk* log_u);
 
-/* _disk_commit_after_cb(): on the main thread, finish write
-*/
+//! On the main thread, finish write
 static void
 _disk_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
 {
@@ -82,8 +80,7 @@ _disk_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
   }
 }
 
-/* _disk_commit_cb(): off the main thread, write event-batch.
-*/
+//! Off the main thread, write event-batch.
 static void
 _disk_commit_cb(uv_work_t* ted_u)
 {
@@ -96,8 +93,7 @@ _disk_commit_cb(uv_work_t* ted_u)
                                     log_u->sav_u.siz_i);
 }
 
-/* _disk_commit_start(): queue async event-batch write.
-*/
+//! Queue async event-batch write.
 static void
 _disk_commit_start(u3_disk* log_u)
 {
@@ -110,8 +106,6 @@ _disk_commit_start(u3_disk* log_u)
                                           _disk_commit_after_cb);
 }
 
-/* u3_disk_etch(): serialize an event for persistence.
-*/
 c3_w
 u3_disk_etch(u3_disk* log_u,
              u3_noun    eve,
@@ -148,8 +142,7 @@ u3_disk_etch(u3_disk* log_u,
   }
 }
 
-/* _disk_batch(): create a write batch
-*/
+//! Create a write batch
 static c3_o
 _disk_batch(u3_disk* log_u)
 {
@@ -187,8 +180,7 @@ _disk_batch(u3_disk* log_u)
   }
 }
 
-/* _disk_commit(): commit all available events, if idle.
-*/
+//! Commit all available events, if idle.
 static void
 _disk_commit(u3_disk* log_u)
 {
@@ -209,8 +201,7 @@ _disk_commit(u3_disk* log_u)
   }
 }
 
-/* _disk_plan(): enqueue serialized fact (feat) for persistence.
-*/
+//! Enqueue serialized fact (feat) for persistence.
 static void
 _disk_plan(u3_disk* log_u,
            c3_l     mug_l,
@@ -231,8 +222,6 @@ _disk_plan(u3_disk* log_u,
   }
 }
 
-/* u3_disk_plan(): enqueue completed event for persistence.
-*/
 void
 u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
@@ -243,8 +232,6 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
   _disk_commit(log_u);
 }
 
-/* u3_disk_plan_list(): enqueue completed event list, without autocommit.
-*/
 void
 u3_disk_plan_list(u3_disk* log_u, u3_noun lit)
 {
@@ -260,8 +247,6 @@ u3_disk_plan_list(u3_disk* log_u, u3_noun lit)
   u3z(lit);
 }
 
-/* u3_disk_sync(): commit planned events.
-*/
 c3_o
 u3_disk_sync(u3_disk* log_u)
 {
@@ -286,8 +271,6 @@ u3_disk_sync(u3_disk* log_u)
   return ret_o;
 }
 
-/* u3_disk_async(): active autosync with callbacks.
-*/
 void
 u3_disk_async(u3_disk*     log_u,
               void*        ptr_v,
@@ -299,8 +282,6 @@ u3_disk_async(u3_disk*     log_u,
   log_u->sav_u.don_f = don_f;
 }
 
-/* u3_disk_sift(): parse a persisted event buffer.
-*/
 c3_o
 u3_disk_sift(u3_disk* log_u,
              size_t   len_i,
@@ -342,8 +323,7 @@ struct _cd_list {
   c3_l     mug_l;
 };
 
-/* _disk_read_list_cb(): lmdb read callback, invoked for each event in order
-*/
+//! Lmdb read callback, invoked for each event in order
 static c3_o
 _disk_read_list_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
 {
@@ -365,8 +345,6 @@ _disk_read_list_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   return c3y;
 }
 
-/* u3_disk_read_list(): synchronously read a cons list of events.
-*/
 u3_weak
 u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l)
 {
@@ -386,8 +364,6 @@ u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l)
   }
 }
 
-/* u3_disk_walk_init(): init iterator.
-*/
 u3_disk_walk*
 u3_disk_walk_init(u3_disk* log_u,
                   c3_d     eve_d,
@@ -405,8 +381,6 @@ u3_disk_walk_init(u3_disk* log_u,
   return wok_u;
 }
 
-/* u3_disk_walk_live(): check if live.
-*/
 c3_o
 u3_disk_walk_live(u3_disk_walk* wok_u)
 {
@@ -417,8 +391,6 @@ u3_disk_walk_live(u3_disk_walk* wok_u)
   return wok_u->liv_o;
 }
 
-/* u3_disk_walk_step(): get next fact.
-*/
 c3_o
 u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
 {
@@ -445,8 +417,6 @@ u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
   return c3y;
 }
 
-/* u3_disk_walk_done(): close iterator.
-*/
 void
 u3_disk_walk_done(u3_disk_walk* wok_u)
 {
@@ -454,8 +424,7 @@ u3_disk_walk_done(u3_disk_walk* wok_u)
   c3_free(wok_u);
 }
 
-/* _disk_save_meta(): serialize atom, save as metadata at [key_c].
-*/
+//! Serialize atom, save as metadata at [key_c].
 static c3_o
 _disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
 {
@@ -470,8 +439,6 @@ _disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
   }
 }
 
-/* u3_disk_save_meta(): save metadata.
-*/
 c3_o
 u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u)
 {
@@ -492,8 +459,7 @@ u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u)
   return c3y;
 }
 
-/* _disk_meta_read_cb(): copy [val_p] to atom [ptr_v] if present.
-*/
+//! Copy [val_p] to atom [ptr_v] if present.
 static void
 _disk_meta_read_cb(void* ptr_v, size_t val_i, void* val_p)
 {
@@ -504,8 +470,7 @@ _disk_meta_read_cb(void* ptr_v, size_t val_i, void* val_p)
   }
 }
 
-/* _disk_read_meta(): read metadata at [key_c], deserialize.
-*/
+//! Read metadata at [key_c], deserialize.
 static u3_weak
 _disk_read_meta(u3_disk* log_u, const c3_c* key_c)
 {
@@ -514,8 +479,6 @@ _disk_read_meta(u3_disk* log_u, const c3_c* key_c)
   return dat;
 }
 
-/* u3_disk_read_meta(): read metadata.
-*/
 c3_o
 u3_disk_read_meta(u3_disk* log_u, u3_meta* met_u)
 {
@@ -568,8 +531,6 @@ u3_disk_read_meta(u3_disk* log_u, u3_meta* met_u)
   return c3y;
 }
 
-/* u3_disk_exit(): close the log.
-*/
 void
 u3_disk_exit(u3_disk* log_u)
 {
@@ -616,8 +577,6 @@ u3_disk_exit(u3_disk* log_u)
 #endif
 }
 
-/* u3_disk_info(): print status info.
-*/
 void
 u3_disk_info(u3_disk* log_u)
 {
