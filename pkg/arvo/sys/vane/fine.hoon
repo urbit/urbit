@@ -91,7 +91,7 @@
       ^-  byts
       ?>  (lth num (bex 32))
       =+  (spit path)
-      :-  :(add 32 16 wid)
+      :-  :(add 4 2 wid)
       %+  can  3
       :~  4^num       ::  fragment number
           2^wid       ::  path size
