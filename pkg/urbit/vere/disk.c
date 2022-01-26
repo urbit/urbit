@@ -531,14 +531,15 @@ u3_disk_read_meta(u3_disk* log_u, u3_meta* met_u)
   return c3y;
 }
 
+//! @n (1) Cancel write thread.
+//!        XX can deadlock when called from signal handler.
+//!        XX revise SIGTSTP handling.
+//! @n (2) Close database.
+//! @n (3) Dispose of planned writes.
 void
 u3_disk_exit(u3_disk* log_u)
 {
-  //  cancel write thread
-  //
-  //    XX can deadlock when called from signal handler
-  //    XX revise SIGTSTP handling
-  //
+  // (1)
   if ( c3y == log_u->sav_u.ted_o ) {
     c3_i sas_i;
 
@@ -548,13 +549,10 @@ u3_disk_exit(u3_disk* log_u)
     while ( UV_EBUSY == sas_i );
   }
 
-  //  close database
-  //
+  // (2)
   u3_lmdb_exit(log_u->mdb_u);
 
-  //  dispose planned writes
-  //
-
+  // (3)
   {
     u3_feat* fet_u = log_u->put_u.ext_u;
 
