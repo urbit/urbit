@@ -589,7 +589,7 @@ u3_disk_info(u3_disk* log_u)
 
     u3l_log("    batch:\n");
 
-    for ( i_w = 0; i_w < 100; i_w++ ) {
+    for ( i_w = 0; i_w < c3_arr_len(log_u->hit_w); i_w++ ) {
       len_w = log_u->hit_w[i_w];
       if ( len_w ) {
         u3l_log("      %u: %u\n", i_w, len_w);
