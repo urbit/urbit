@@ -459,15 +459,22 @@ u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u)
   return c3y;
 }
 
-//! Copy [val_p] to atom [ptr_v] if present.
+//! Copy array to an atom.
+//!
+//! @param[out] dst_v  Address of destination atom.
+//! @param[in]  len_i  Length of source array in bytes.
+//! @param[in]  val_v  Source array.
+//!
+//! @n (1) Confirm unique, non-NULL source and destination addresses.
 static void
-_disk_meta_read_cb(void* ptr_v, size_t val_i, void* val_p)
+_disk_meta_read_cb(void* dst_v, size_t len_i, void* src_v)
 {
-  u3_weak* mat = ptr_v;
-
-  if ( val_p ) {
-    *mat = u3i_bytes(val_i, val_p);
+  // (1)
+  if ( src_v == dst_v ) {
+    return;
   }
+
+  *(u3_atom*)dst_v = u3i_bytes(len_i, src_v);
 }
 
 //! Read metadata at [key_c], deserialize.
