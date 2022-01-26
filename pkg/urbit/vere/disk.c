@@ -609,6 +609,15 @@ u3_disk_info(u3_disk* log_u)
   }
 }
 
+//! @n (1) Create/load the pier directory.
+//! @n (2) Create/load `$pier/.urb`.
+//! @n (3) Create/load `$pier/.urb/put`.
+//! @n (4) Create/load `$pier/.urb/get`.
+//! @n (5) Create/load `$pier/.urb/log`.
+//! @n (6) Initialize database. Arbitrarily choose 1TB as a "large enough" mapsize.
+//!        Per the LMDB docs:
+//!        "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
+//! @n (7) Get the latest event number from the db.
 u3_disk*
 u3_disk_init(c3_c* pax_c)
 {
@@ -618,7 +627,7 @@ u3_disk_init(c3_c* pax_c)
   log_u->sav_u.ted_u.data = log_u;
   log_u->put_u.ent_u = log_u->put_u.ext_u = 0;
 
-  // Create/load the pier directory.
+  // (1)
   if ( 0 == (log_u->dir_u = u3_foil_folder(pax_c)) ) {
     fprintf(stderr, "disk: failed to load pier at %s\r\n", pax_c);
     c3_free(log_u);
@@ -632,7 +641,7 @@ u3_disk_init(c3_c* pax_c)
   static const c3_w sub_w = c3_max(c3_max(sizeof(put_c), sizeof(get_c)), sizeof(log_c));
   c3_c dir_c[strlen(pax_c) + sizeof(urb_c) + sub_w];
 
-  // Create/load $pier/.urb.
+  // (2)
   snprintf(dir_c, sizeof(dir_c), "%s%s", pax_c, urb_c);
   fprintf(stderr, "peter: %s\r\n", dir_c);
   if ( 0 == (log_u->urb_u = u3_foil_folder(dir_c)) ) {
@@ -641,17 +650,17 @@ u3_disk_init(c3_c* pax_c)
     return 0;
   }
 
-  // Create/load $pier/.urb/put.
+  // (3)
   snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, put_c);
   fprintf(stderr, "peter: %s\r\n", dir_c);
   mkdir(dir_c, 0700);
 
-  // Create/load $pier/.urb/get.
+  // (4)
   snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, get_c);
   fprintf(stderr, "peter: %s\r\n", dir_c);
   mkdir(dir_c, 0700);
 
-  // Create/load $pier/.urb/log.
+  // (5)
   snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, log_c);
   fprintf(stderr, "peter: %s\r\n", dir_c);
   if ( 0 == (log_u->com_u = u3_foil_folder(dir_c)) ) {
@@ -660,10 +669,7 @@ u3_disk_init(c3_c* pax_c)
     return 0;
   }
 
-  // Initialize database. Arbitrarily choose 1TB as a "large enough" mapsize.
-  //
-  //  per the LMDB docs:
-  //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
+  // (6)
   static const size_t siz_i =
   #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
     0xf00000000;
@@ -676,7 +682,7 @@ u3_disk_init(c3_c* pax_c)
     return 0;
   }
 
-  // Get the latest event number from the db.
+  // (7)
   log_u->dun_d = 0;
   c3_d fir_d;
   if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
