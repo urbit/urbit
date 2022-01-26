@@ -121,15 +121,19 @@
     [/text/x-urb-story (as-octs:mimes:html (of-wain:format txt))]
   ++  txt
     ^-  wain
-    %+  snoc  :: ensure terminating newline is present
+    ::  XX code clean up: cleaner snoc
+    %+  snoc  :: ensures terminating newline is present
     %+  murn  ~(tap by tale)
     |=  [[=tako:clay proses=(set prose)]]
-    =/  proses-list  ~(tap in proses)
-    ?~  proses-list  ~
-    =/  prose-a  i.proses-list
+    ^-  (unit cord)
+    ?~  proses  ~
     %-  some
-    (crip "commit: {<`@uv`tako>}\0a{(trip title.prose-a)}\0a\0a{(trip body.prose-a)}\0a---")
-    ::(turn ~(tap by proses) |=(=prose ))
+    %-  crip
+    ;:  welp
+      (tako-to-text:lib tako)
+      (trip (proses-to-text:lib proses))
+      "---"
+    ==
     ''
   --
 ++  grab
