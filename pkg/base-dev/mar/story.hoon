@@ -151,6 +151,8 @@
         (just '\0a')                               :: parse trailing newline
       ==
     ::
+    ::  XX TODO: implement parsing in conflicts
+    =/  proses-parse  ~
     =/  title-parser
       ;~  sfix                  :: throw away trailing newlines
         (cook crip (star prn))  :: parse any number of ascii characters, turn into cord
