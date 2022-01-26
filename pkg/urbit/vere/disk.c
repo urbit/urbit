@@ -650,8 +650,6 @@ u3_disk_info(u3_disk* log_u)
   }
 }
 
-/* u3_disk_init(): load or create pier directories and event log.
-*/
 u3_disk*
 u3_disk_init(c3_c* pax_c)
 {
@@ -661,108 +659,78 @@ u3_disk_init(c3_c* pax_c)
   log_u->sav_u.ted_u.data = log_u;
   log_u->put_u.ent_u = log_u->put_u.ext_u = 0;
 
-  //  create/load pier directory
-  //
-  {
-    if ( 0 == (log_u->dir_u = u3_foil_folder(pax_c)) ) {
-      fprintf(stderr, "disk: failed to load pier at %s\r\n", pax_c);
-      c3_free(log_u);
-      return 0;
-    }
+  // Create/load the pier directory.
+  if ( 0 == (log_u->dir_u = u3_foil_folder(pax_c)) ) {
+    fprintf(stderr, "disk: failed to load pier at %s\r\n", pax_c);
+    c3_free(log_u);
+    return 0;
   }
 
-  //  create/load $pier/.urb
-  //
-  {
-    c3_c* urb_c = c3_malloc(6 + strlen(pax_c));
+  static const c3_c urb_c[] = "/.urb";
+  static const c3_c put_c[] = "/put";
+  static const c3_c get_c[] = "/get";
+  static const c3_c log_c[] = "/log";
+  static const c3_w sub_w = c3_max(c3_max(sizeof(put_c), sizeof(get_c)), sizeof(log_c));
+  c3_c dir_c[strlen(pax_c) + sizeof(urb_c) + sub_w];
 
-    strcpy(urb_c, pax_c);
-    strcat(urb_c, "/.urb");
-
-    if ( 0 == (log_u->urb_u = u3_foil_folder(urb_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb in %s\r\n", pax_c);
-      c3_free(urb_c);
-      c3_free(log_u);
-      return 0;
-    }
-    c3_free(urb_c);
+  // Create/load $pier/.urb.
+  snprintf(dir_c, sizeof(dir_c), "%s%s", pax_c, urb_c);
+  fprintf(stderr, "peter: %s\r\n", dir_c);
+  if ( 0 == (log_u->urb_u = u3_foil_folder(dir_c)) ) {
+    fprintf(stderr, "disk: failed to load %s in %s\r\n", urb_c, pax_c);
+    c3_free(log_u);
+    return 0;
   }
 
-  //  create/load $pier/.urb/put and $pier/.urb/get
-  //
-  {
-    c3_c* dir_c = c3_malloc(10 + strlen(pax_c));
+  // Create/load $pier/.urb/put.
+  snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, put_c);
+  fprintf(stderr, "peter: %s\r\n", dir_c);
+  mkdir(dir_c, 0700);
 
-    strcpy(dir_c, pax_c);
-    strcat(dir_c, "/.urb/put");
-    mkdir(dir_c, 0700);
+  // Create/load $pier/.urb/get.
+  snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, get_c);
+  fprintf(stderr, "peter: %s\r\n", dir_c);
+  mkdir(dir_c, 0700);
 
-    strcpy(dir_c, pax_c);
-    strcat(dir_c, "/.urb/get");
-    mkdir(dir_c, 0700);
-
-    c3_free(dir_c);
+  // Create/load $pier/.urb/log.
+  snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, log_c);
+  fprintf(stderr, "peter: %s\r\n", dir_c);
+  if ( 0 == (log_u->com_u = u3_foil_folder(dir_c)) ) {
+    fprintf(stderr, "disk: failed to load %s%s in %s\r\n", urb_c, log_c, pax_c);
+    c3_free(log_u);
+    return 0;
   }
 
-  //  create/load $pier/.urb/log, initialize db
+  // Initialize database. Arbitrarily choose 1TB as a "large enough" mapsize.
   //
-  {
-    c3_c* log_c = c3_malloc(10 + strlen(pax_c));
-
-    strcpy(log_c, pax_c);
-    strcat(log_c, "/.urb/log");
-
-    if ( 0 == (log_u->com_u = u3_foil_folder(log_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb/log in %s\r\n", pax_c);
-      c3_free(log_c);
-      c3_free(log_u);
-      return 0;
-    }
-
-    //  Arbitrarily choosing 1TB as a "large enough" mapsize
-    //
-    //  per the LMDB docs:
-    //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
-    //
-    {
-      const size_t siz_i =
-      #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
-        0xf00000000;
-      #else
-        0x10000000000;
-      #endif
-
-      if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_c, siz_i)) ) {
-        fprintf(stderr, "disk: failed to initialize database\r\n");
-        c3_free(log_c);
-        c3_free(log_u);
-        return 0;
-      }
-    }
-
-    c3_free(log_c);
+  //  per the LMDB docs:
+  //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
+  static const size_t siz_i =
+  #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
+    0xf00000000;
+  #else
+    0x10000000000;
+  #endif
+  if ( 0 == (log_u->mdb_u = u3_lmdb_init(dir_c, siz_i)) ) {
+    fprintf(stderr, "disk: failed to initialize database\r\n");
+    c3_free(log_u);
+    return 0;
   }
 
-  //  get the latest event number from the db
-  //
-  {
-    log_u->dun_d = 0;
-    c3_d fir_d;
-
-    if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
-      fprintf(stderr, "disk: failed to load latest event from database\r\n");
-      c3_free(log_u);
-      return 0;
-    }
-
-    log_u->sen_d = log_u->dun_d;
+  // Get the latest event number from the db.
+  log_u->dun_d = 0;
+  c3_d fir_d;
+  if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
+    fprintf(stderr, "disk: failed to load latest event from database\r\n");
+    c3_free(log_u);
+    return 0;
   }
-
-  log_u->liv_o = c3y;
+  log_u->sen_d = log_u->dun_d;
 
 #if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
   u3t_trace_open(pax_c);
 #endif
 
+  log_u->liv_o = c3y;
   return log_u;
 }
