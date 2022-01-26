@@ -49,27 +49,33 @@
   ^-  [(list move) _khan-gate]
   ::
   =/  =task:khan  ((harden task:khan) wrapped-task)
-  ?-    -.task
-      %vega
-    [~ khan-gate]
-      %trim
-    [~ khan-gate]
-      %done
-    [~ khan-gate]
+  ?+    -.task  [~ khan-gate]
       %born
     [~ khan-gate(unix-duct hen)]
       %fyrd
-    =/  rid=@ta  (rear (head hen))
+    ::  start the thread on %spider.
+    ::
+    =/  wir=wire  (head hen)
+    =/  rid=@ta   (rear wir)
+    ::  XX  what if the client sends a duplicate rid?
+    ::  is this fine? should we inject some randomness?
+    ::
     =/  tid=@ta
       (cat 3 'khan-fyrd--' rid)
     =/  args
-      :*  ~  `tid  [our q.beak.task %da now]  name.task
-          !>([~ ~zod])
+      :*  ~  `tid  [our desk.task %da now]  name.task
+          ::  XX  can't do this:
+          ::
+          ::    !>(data.task)
+          ::
+          ::  special case for -hi:
+          ::
+          !>(;;([~ arg=$@(who=ship [who=ship mez=tape])] data.task))
       ==
     =/  start-moves=(list move)
       %+  turn
-        :~  (watch-spider p.beak.task /thread-result/[tid])
-            (start-spider p.beak.task %spider-start !>(args))
+        :~  (watch-spider our /thread-result/[tid])
+            (start-spider our %spider-start !>(args))
         ==
       |=(=note ^-(move [hen %pass //g note]))
     [start-moves khan-gate]
@@ -80,7 +86,7 @@
   |=  old=khan-state
   ^+  khan-gate
   khan-gate(state old)
-::  +scry: view khan state
+::  +scry: nothing to see as yet
 ::
 ++  scry
   ^-  roon
@@ -88,6 +94,8 @@
   ^-  (unit (unit cage))
   ~
 ++  stay  state
+::  +take: handle responses.
+::
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _khan-gate]
@@ -100,24 +108,30 @@
         ?(%poke-ack %watch-ack)
       ?~  p.p.hin  [~ khan-gate]
       %-  (slog u.p.p.hin)
-      [~ khan-gate]
+      :_  khan-gate
+      [hen %give %avow %| -.p.hin u.p.p.hin]~
     ::
         %fact
       =*  cag  cage.p.hin
-      ?+    p.cag  !!
+      ?+    p.cag  ~&(bad-fact+p.cag !!)
           %thread-fail
-        %-  (slog !<(tang q.cag))
-        [~ khan-gate]
+        =/  =tang  !<(tang q.cag)
+        %-  (slog tang)
+        :_  khan-gate
+        [hen %give %avow %| p.cag tang]~
       ::
           %thread-done
         :_  khan-gate
-        =/  mov=move
-          [hen %give %avow %& %tape !>(~)]
-        ~[mov]
+        ::  XX  mark conversion
+        ::
+        =/  res=*  !<(* q.cag)
+        [hen %give %avow %& %noun res]~
       ==
     ==
   ::
       %khan
+    ::  XX  unreachable?
+    ::
     !!
   ==
 --
