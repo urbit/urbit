@@ -24,10 +24,9 @@ const Landscape = React.lazy(() => import('~/views/landscape/index'));
 const Settings = React.lazy(() => import('~/views/apps/settings/settings'));
 const Profile = React.lazy(() => import('~/views/apps/profile/profile'));
 const Notifications = React.lazy(() => import('~/views/apps/notifications/notifications'));
-const GraphApp = React.lazy(() => import('../../apps/graph/App'));
 const ErrorComponent = React.lazy(() => import('~/views/components/Error'));
 
-export const Content = (props) => {
+export const Content = () => {
   const history = useHistory();
   const location = useLocation();
   const mdLoaded = useMetadataState(s => s.loaded);
@@ -81,39 +80,25 @@ export const Content = (props) => {
         <Switch>
           <Route
             exact
-            path="/" render={p => (
-              <LaunchApp
-                location={p.location}
-                match={p.match}
-                {...props}
-              />
-            )}
+            path="/"
+            component={LaunchApp}
           />
           <Route path='/~landscape'>
             <Landscape />
           </Route>
           <Route
             path="/~profile"
-            render={ p => (
-              <Profile
-                {...props}
-              />
-            )}
+            component={Profile}
           />
           <Route
             path="/~settings"
-            render={ p => (
-              <Settings {...props} />
-            )}
+            component={Settings}
           />
           <Route
             path="/~notifications"
-            render={ p => (
-              <Notifications {...props} />
-            )}
+            component={Notifications}
           />
-          <GraphApp path="/~graph" {...props} />
-          <PermalinkRoutes {...props} />
+          <PermalinkRoutes />
 
           <Route
             render={p => (

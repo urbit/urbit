@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const urbitrc = require('./urbitrc');
 const _ = require('lodash');
 const { execSync } = require('child_process');
@@ -47,7 +47,7 @@ if(urbitrc.URL) {
 module.exports = {
   mode: 'development',
   entry: {
-    app: './src/index.js'
+    app: './src/index.tsx'
     // serviceworker: './src/serviceworker.js'
   },
   module: {
@@ -59,15 +59,14 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
               runtime: 'automatic',
-              development: true,
-              importSource: '@welldone-software/why-did-you-render'
+              development: true
             }]],
             plugins: [
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
               '@babel/plugin-proposal-class-properties',
-              'react-hot-loader/babel'
+              'react-refresh/babel'
             ]
           }
         },
@@ -115,7 +114,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Groups',
       template: './public/index.html'
-    })
+    }),
+    new ReactRefreshWebpackPlugin()
   ],
   watch: true,
   output: {

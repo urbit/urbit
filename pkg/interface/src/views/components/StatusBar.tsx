@@ -22,8 +22,8 @@ import useHarkState from '~/logic/state/hark';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
-const StatusBar = (props) => {
-  const { ship } = props;
+const StatusBar = () => {
+  const ship = window.ship;
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
   const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
   const { toggleOmnibox } = useLocalState(localSel);
@@ -64,7 +64,6 @@ const StatusBar = (props) => {
           borderColor='lightGray'
           mr={2}
           px={2}
-          {...props}
         >
           <Icon icon='Dashboard' color='black' />
         </Button>

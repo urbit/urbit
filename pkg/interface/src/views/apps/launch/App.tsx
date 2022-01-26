@@ -1,18 +1,18 @@
 /* eslint-disable max-lines-per-function */
-import { Box, Icon, Row, Text, Button } from "@tlon/indigo-react";
-import React, { ReactElement } from "react";
-import { Helmet } from "react-helmet";
-import { Route, useHistory } from "react-router-dom";
-import styled from "styled-components";
-import useHarkState from "~/logic/state/hark";
-import useSettingsState, { selectCalmState } from "~/logic/state/settings";
-import Groups from "./components/Groups";
-import { NewGroup } from "~/views/landscape/components/NewGroup";
-import ModalButton from "./components/ModalButton";
-import Tiles from "./components/tiles";
-import Tile from "./components/tiles/tile";
-import "./css/custom.css";
-import { Join, JoinRoute } from "~/views/landscape/components/Join/Join";
+import { Box, Icon, Row, Text, Button } from '@tlon/indigo-react';
+import React, { ReactElement } from 'react';
+import { Helmet } from 'react-helmet';
+import { Route, useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import useHarkState from '~/logic/state/hark';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import Groups from './components/Groups';
+import { NewGroup } from '~/views/landscape/components/NewGroup';
+import ModalButton from './components/ModalButton';
+import Tiles from './components/tiles';
+import Tile from './components/tiles/tile';
+import './css/custom.css';
+import { JoinRoute } from '~/views/landscape/components/Join/Join';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -22,12 +22,8 @@ const ScrollbarLessBox = styled(Box)`
   }
 `;
 
-interface LaunchAppProps {
-  connection: string;
-}
-
-export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
-  const notificationsCount = useHarkState((state) => state.notificationsCount);
+export const LaunchApp = (): ReactElement | null => {
+  const notificationsCount = useHarkState(state => state.notificationsCount);
   const calmState = useSettingsState(selectCalmState);
   const { hideUtilities, hideGroups } = calmState;
   const history = useHistory();
@@ -36,22 +32,22 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
     <>
       <Helmet defer={false}>
         <title>
-          {notificationsCount ? `(${String(notificationsCount)}) ` : ""}Groups
+          {notificationsCount ? `(${String(notificationsCount)}) ` : ''}Groups
         </title>
       </Helmet>
-      <Route path="/join/:ship/:name">
+      <Route path='/join/:ship/:name'>
         <JoinRoute modal />
       </Route>
       <ScrollbarLessBox
-        height="100%"
-        overflowY="scroll"
-        display="flex"
-        flexDirection="column"
+        height='100%'
+        overflowY='scroll'
+        display='flex'
+        flexDirection='column'
       >
         <Box
           mx={2}
-          display="grid"
-          gridTemplateColumns="repeat(auto-fill, minmax(128px, 1fr))"
+          display='grid'
+          gridTemplateColumns='repeat(auto-fill, minmax(128px, 1fr))'
           gridGap={3}
           p={2}
           pt={0}
@@ -59,22 +55,22 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
           {!hideUtilities && (
             <>
               <Tile
-                bg="white"
-                color="scales.black20"
-                to="/~landscape/home"
+                bg='white'
+                color='scales.black20'
+                to='/~landscape/home'
                 p={0}
               >
                 <Box
                   p={2}
-                  height="100%"
-                  width="100%"
-                  bg="scales.black20"
+                  height='100%'
+                  width='100%'
+                  bg='scales.black20'
                   border={1}
-                  borderColor="lightGray"
+                  borderColor='lightGray'
                 >
-                  <Row alignItems="center">
-                    <Icon color="black" icon="Home" />
-                    <Text ml={2} mt="1px" color="black">
+                  <Row alignItems='center'>
+                    <Icon color='black' icon='Home' />
+                    <Text ml={2} mt='1px' color='black'>
                       My Channels
                     </Text>
                   </Row>
@@ -82,10 +78,10 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
               </Tile>
               <Tiles />
               <ModalButton
-                icon="Plus"
-                bg="white"
-                color="black"
-                text="New Group"
+                icon='Plus'
+                bg='white'
+                color='black'
+                text='New Group'
                 style={{ gridColumnStart: 1 }}
               >
                 <NewGroup />
@@ -94,11 +90,11 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
                 border={0}
                 p={0}
                 borderRadius={2}
-                onClick={() => history.push({ search: "?join-kind=group" })}
+                onClick={() => history.push({ search: '?join-kind=group' })}
               >
-                <Row backgroundColor="white" gapX="2" p={2} height="100%" width="100%" alignItems="center">
-                  <Icon icon="BootNode" />
-                  <Text fontWeight="medium" whiteSpace="nowrap">Join Group</Text>
+                <Row backgroundColor='white' gapX='2' p={2} height='100%' width='100%' alignItems='center'>
+                  <Icon icon='BootNode' />
+                  <Text fontWeight='medium' whiteSpace='nowrap'>Join Group</Text>
                 </Row>
               </Button>
             </>
