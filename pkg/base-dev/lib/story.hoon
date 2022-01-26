@@ -3,7 +3,7 @@
 ++  tako-to-text
   |=  [=tako:clay]
   ^-  cord
-  "commit: {<`@uv`tako>}\0a"
+  (crip "commit: {<`@uv`tako>}\0a")
 ++  proses-to-text
   |=  [proses=(set prose)]
   ^-  cord

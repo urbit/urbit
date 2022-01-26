@@ -130,7 +130,7 @@
     %-  some
     %-  crip
     ;:  welp
-      (tako-to-text:lib tako)
+      (trip (tako-to-text:lib tako))
       (trip (proses-to-text:lib proses))
       "---"
     ==
