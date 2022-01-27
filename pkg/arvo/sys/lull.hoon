@@ -1810,7 +1810,7 @@
         [%yawn =path]                                   ::  cancel request
       ::                                                ::    from unix:
         ::TODO  add ames task for updating lane
-        [%purr [from=ship =lane:ames] =purr]            ::  data packet
+        [%purr =lane:ames =purr]                        ::  data packet
         [%bide =path]                                   ::  await %howl
       ::                                                ::    generic:
         $>(%born vane-task)                             ::  new unix process

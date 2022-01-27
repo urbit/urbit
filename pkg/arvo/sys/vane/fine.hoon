@@ -260,7 +260,7 @@
       [duct %give %howl path.twit song]~
     ::
     ++  handle-response
-      |=  [[from=ship =lane:ames] =peep =rawr]
+      |=  [=lane:ames =peep =rawr]
       ^-  (quip move _state)
       ?:  =(0 siz.rawr)
         ?>  =(0 dat.rawr)
@@ -376,7 +376,7 @@
       =/  [=peep =purr]  (decode-request-info sndr.packet `@ux`content.packet)
       =/  =rawr          (decode-response-packet purr)
       ::TODO  validate response signature
-      (handle-response [from lane]:task peep rawr)
+      (handle-response lane.task peep rawr)
     ::
         %bide
       [~ state(hear (~(put ju hear) path.task hen))]
