@@ -184,15 +184,16 @@ _ames_pact_free(u3_pact* pac_u)
 static void
 _ames_pend_free(u3_pend* pen_u) 
 {
-  if(0 == pen_u->typ_y) {          // ames packet
+  if ( 0 == pen_u->typ_y ) {          // ames packet
     _ames_pact_free(pen_u->pac_u);
-  } else if (1 == pen_u->typ_y) {  // fine request
+  } else if ( 1 == pen_u->typ_y ) {  // fine request
     c3_free(pen_u->req_u);
     c3_free(pen_u->hun_y);
   } else {                         // fine response
     c3_free(pen_u->res_u);
     c3_free(pen_u->hun_y);
   }
+
   c3_free(pen_u->dns_c);
   c3_free(pen_u);
 }
@@ -635,7 +636,7 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
     sam_u->fig_u.net_o = c3y;
   }
 
-  //_ames_pend_free(pen_u);
+  _ames_pend_free(pen_u);
 }
 
 #define _fine_send _ames_send
@@ -674,7 +675,7 @@ _ames_send(u3_pend* pen_u)
           sam_u->fig_u.net_o = c3n;
         }
 
-        //_ames_pend_free(pen_u);
+        _ames_pend_free(pen_u);
       }
     }
   }
@@ -1410,6 +1411,118 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
 }
 
 
+static void _fine_hear_response(u3_ames* sam_u,
+                                u3_lane  lan_u,
+                                c3_w     len_w,
+                                c3_y*    hun_y)
+{
+
+}
+
+
+static void _fine_hear_request(u3_ames* sam_u,
+                               u3_lane  lan_u,
+                               c3_w     len_w,
+                               c3_y*    hun_y)
+{
+  u3_head hed_u;
+  c3_assert ( c3n == _ames_sift_head(&hed_u, hun_y));
+  // lookup in cache
+  // (unit (unit (unit packet))
+  // ~ -> miss
+  // [~ ~] -> hit, unbound
+  // [~ ~ ~] -> hit, empty
+  // [~ ~ ~ *] -> hit, w/ data
+  u3_requ req_u;
+
+  // skip past header
+  len_w -= 4;
+  hun_y += 4;
+
+  c3_assert( c3y == _fine_sift_requ(&hed_u, &req_u, len_w, hun_y));
+
+  u3_noun pat = u3i_string(req_u.pat_c);
+
+  // TODO: revive
+  u3_weak cac =  u3_none; // u3h_git(sam_u->fin_s.sac_p, pat);
+
+
+  if ( u3_none == cac ) {
+    // cache miss
+    //  packet scry path
+    //  /packet/requested/path/elements
+    //
+    //  eg:
+    //  /packet/gx/~zod/graph-store/5/graphs/~zod/test/message/10
+    //
+    u3_noun pax = u3nc(u3i_string("message"),
+                      u3do("stab", u3k(pat)));
+
+
+    u3_reqp* rep_u = c3_calloc(sizeof(*rep_u));
+    u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
+
+    pen_u->sam_u = sam_u;
+    pen_u->typ_y = 2;
+    pen_u->req_u = rep_u;
+
+    memcpy(&rep_u->hed_u, &hed_u, sizeof(u3_head));
+    memcpy(&rep_u->req_u, &req_u, sizeof(u3_requ));
+
+    memcpy(&pen_u->lan_u, &lan_u, sizeof(u3_lane));
+    pen_u->fra_w = req_u.fra_w;
+
+    u3_pier_peek_last(sam_u->fin_s.car_u.pir_u, u3_nul, c3__fx, u3_nul, 
+                      pax, pen_u, _fine_pack_scry_cb);
+    
+
+  } else if(u3_nul == cac) {
+    // cache hit, unbound
+    // do nothing, maybe report?
+  } else {
+    //  shape 
+    // 
+    c3_w  fra_w;
+    c3_y* fra_y;
+
+    {
+      u3_noun fra = u3dc("snag", u3i_word(req_u.fra_w), u3t(cac));
+      
+      fra_w = u3r_met(3, fra);
+      fra_y = c3_calloc(fra_w);
+      
+      u3r_bytes(0, fra_w, fra_y, fra);
+
+      u3z(fra);
+    }
+
+    u3_resp* res_u = c3_calloc(sizeof(*res_u));
+
+    c3_assert(c3y == _fine_sift_resp(&hed_u, res_u, fra_w, fra_y));
+    
+    memcpy(&res_u->pre_u, &req_u.pre_u, sizeof(u3_prel));
+
+    c3_y* res_y;
+    c3_w res_w = _fine_etch_resp(&hed_u, res_u, &res_y);
+
+    // TODO: where free? maybe stack allocate instead?
+    u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
+    pen_u->typ_y = 2;
+    pen_u->res_u = res_u;
+    pen_u->len_w = res_w;
+    pen_u->hun_y = res_y;
+    pen_u->her_d[0] = res_u->pre_u.sen_d[0];
+    pen_u->her_d[1] = res_u->pre_u.sen_d[1];
+    pen_u->lan_u = lan_u;
+    pen_u->sam_u = sam_u;
+
+    _fine_send(pen_u);
+  }
+
+  u3z(pat);
+}
+
+
 
 /* _fine_hear(): hear a (potential) packet, dispatch appropriately
  */
@@ -1419,102 +1532,11 @@ static void _fine_hear(u3_ames* sam_u,
                        c3_y*    hun_y)
 {
   u3_head hed_u;
-  //u3_body bod_u;
   c3_assert ( c3n == _ames_sift_head(&hed_u, hun_y));
 
   
   if(c3n == hed_u.req_o) {
-    // lookup in cache
-    // (unit (unit (unit packet))
-    // ~ -> miss
-    // [~ ~] -> hit, unbound
-    // [~ ~ ~] -> hit, empty
-    // [~ ~ ~ *] -> hit, w/ data
-    u3_requ req_u;
-
-    // skip past header
-    len_w -= 4;
-    hun_y += 4;
-
-
-
-    c3_assert( c3y == _fine_sift_requ(&hed_u, &req_u, len_w, hun_y));
-
-    //_log_requ(&req_u);
-
-    u3_noun pat = u3i_string(req_u.pat_c);
-
-    // TODO: revive
-    u3_weak cac =  u3_none; // u3h_git(sam_u->fin_s.sac_p, pat);
-
-
-    if(u3_none == cac) {
-      // cache miss
-      //  packet scry path
-      //  /packet/requested/path/elements
-      //
-      //  eg:
-      //  /packet/gx/~zod/graph-store/5/graphs/~zod/test/message/10
-      //
-      u3_noun pax = u3nc(u3i_string("message"),
-                        u3do("stab", pat));
-
-
-      u3_reqp* rep_u = c3_calloc(sizeof(*rep_u));
-      u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
-
-      pen_u->sam_u = sam_u;
-      pen_u->typ_y = 2;
-      pen_u->req_u = rep_u;
-
-      memcpy(&rep_u->hed_u, &hed_u, sizeof(u3_head));
-      memcpy(&rep_u->req_u, &req_u, sizeof(u3_requ));
-
-      memcpy(&pen_u->lan_u, &lan_u, sizeof(u3_lane));
-      pen_u->fra_w = req_u.fra_w;
-
-      u3_pier_peek_last(sam_u->fin_s.car_u.pir_u, u3_nul, c3__fx, u3_nul, 
-                        pax, pen_u, _fine_pack_scry_cb);
-      
-
-    } else if(u3_nul == cac) {
-      // cache hit, unbound
-      // do nothing, maybe report?
-    } else {
-      //  shape 
-      //  
-      u3_noun fra = u3dc("snag", u3i_word(req_u.fra_w), u3t(cac));
-      //
-      
-      c3_w  fra_w = u3r_met(3, fra);
-      c3_y* fra_y = c3_calloc(fra_w);
-      
-      u3r_bytes(0, fra_w, fra_y, fra);
-
-      u3_resp* res_u = c3_calloc(sizeof(*res_u));
-
-      c3_assert(c3y == _fine_sift_resp(&hed_u, res_u, fra_w, fra_y));
-      
-      memcpy(&res_u->pre_u, &req_u.pre_u, sizeof(u3_prel));
-
-      c3_y* res_y;
-      c3_w res_w = _fine_etch_resp(&hed_u, res_u, &res_y);
-
-      // TODO: where free? maybe stack allocate instead?
-      u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
-      pen_u->typ_y = 2;
-      pen_u->res_u = res_u;
-      pen_u->len_w = res_w;
-      pen_u->hun_y = res_y;
-      pen_u->her_d[0] = res_u->pre_u.sen_d[0];
-      pen_u->her_d[1] = res_u->pre_u.sen_d[1];
-      pen_u->lan_u = lan_u;
-      pen_u->sam_u = sam_u;
-
-      _fine_send(pen_u);
-  
-      return;
-    }
+    _fine_hear_request(sam_u, lan_u, len_w, hun_y);
   } else {
     u3_resp res_u;
 
@@ -1528,8 +1550,11 @@ static void _fine_hear(u3_ames* sam_u,
                        u3nc(c3n, u3_ames_encode_lane(lan_u)),
                        u3i_bytes(len_w, hun_y));
 
-    u3_ovum* ovo_u = u3_ovum_init(0, c3__fine, wir, cad);
+    u3_ovum* ovo_u = u3_ovum_init(0, c3__fine, u3k(wir), u3k(cad));
     u3_auto_plan(&sam_u->fin_s.car_u, ovo_u);
+
+    u3z(cad);
+    u3z(wir);
   }
 }
 
@@ -1554,7 +1579,6 @@ _fine_request(u3_ames* sam_u,
               u3_lane lan_u,
               u3_noun  req)
 {
-  u3l_log("fine: request\n");
 
   u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
   u3_head* hed_u = c3_calloc(sizeof(*hed_u));
@@ -1580,6 +1604,7 @@ _fine_request(u3_ames* sam_u,
   pen_u->lan_u.por_s = lan_u.por_s;
 
   pen_u->sam_u = sam_u;
+  // TODO: revive for non-galaxy case
   _ames_czar(pen_u);
 }
 
