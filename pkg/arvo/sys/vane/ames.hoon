@@ -85,11 +85,16 @@
 ::
 ::    Debug output can be adjusted using %sift and %spew $task's.
 ::
+::TODO  fine
+::  - receiving packets: +on-hear (1st) -> +on-hear-packet -> %fine
+::  - sending packets: +on-plea -> +make-peer-core (make a function kind of like +on-memo) -> call +on-pump-send kind of like how +run-message-pump does
+::    (assuming as event, scry just stateless)
+::
 ::  protocol-version: current version of the ames wire protocol
 ::
 !:
+=/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 =,  ames
-=/  =protocol-version  %0
 =*  point               point:jael
 =*  public-keys-result  public-keys-result:jael
 ::  veb: verbosity flags
@@ -248,9 +253,105 @@
   =.  private-key  (rsh 8 (rsh 3 private-key))
   ::
   `@`(shar:ed:crypto public-key private-key)
+::  +encode-packet: serialize a packet into a bytestream
 ::
-++  encode-packet  (^encode-packet & protocol-version)
-++  decode-packet  (^decode-packet & protocol-version)
+++  encode-packet
+  |=  [ames=? packet]
+  ^-  blob
+  ::
+  =/  sndr-meta  (encode-ship-metadata sndr)
+  =/  rcvr-meta  (encode-ship-metadata rcvr)
+  ::
+  =/  body=@
+    ;:  mix
+      sndr-tick
+      (lsh 2 rcvr-tick)
+      (lsh 3 sndr)
+      (lsh [3 +(size.sndr-meta)] rcvr)
+      (lsh [3 +((add size.sndr-meta size.rcvr-meta))] content)
+    ==
+  =/  checksum  (end [0 20] (mug body))
+  =?  body  ?=(^ origin)  (mix u.origin (lsh [3 6] body))
+  ::
+  =/  header=@
+    %+  can  0
+    :~  [3 reserved=0]
+        [1 is-ames=ames]
+        [3 protocol-version]
+        [2 rank.sndr-meta]
+        [2 rank.rcvr-meta]
+        [20 checksum]
+        [1 relayed=.?(origin)]
+    ==
+  (mix header (lsh 5 body))
+::  +decode-packet: deserialize packet from bytestream or crash
+::
+++  decode-packet
+  |=  =blob
+  ^-  [ames=? =packet]
+  ~|  %decode-packet-fail
+  ::  first 32 (2^5) bits are header; the rest is body
+  ::
+  =/  header  (end 5 blob)
+  =/  body    (rsh 5 blob)
+  ::  read header; first three bits are reserved
+  ::
+  =/  is-ames  (cut 0 [3 1] header)
+  :-  =(& is-ames)
+  ::
+  =/  version  (cut 0 [4 3] header)
+  ?.  =(protocol-version version)
+    ~|  ames-protocol-version+version  !!
+  ::
+  =/  sndr-size  (decode-ship-size (cut 0 [7 2] header))
+  =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
+  =/  checksum   (cut 0 [11 20] header)
+  =/  relayed    (cut 0 [31 1] header)
+  ::  origin, if present, is 6 octets long, at the end of the body
+  ::
+  =^  origin=(unit @)  body
+    ?:  =(| relayed)
+      [~ body]
+    =/  len  (sub (met 3 body) 6)
+    [`(end [3 6] body) (rsh [3 6] body)]
+  ::  .checksum does not apply to the origin
+  ::
+  ?.  =(checksum (end [0 20] (mug body)))
+    ~|  %ames-checksum  !!
+  ::  read fixed-length sndr and rcvr life data from body
+  ::
+  ::    These represent the last four bits of the sender and receiver
+  ::    life fields, to be used for quick dropping of honest packets to
+  ::    or from the wrong life.
+  ::
+  =/  sndr-tick  (cut 0 [0 4] body)
+  =/  rcvr-tick  (cut 0 [4 4] body)
+  ::  read variable-length .sndr and .rcvr addresses
+  ::
+  =/  off   1
+  =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
+  ?.  (is-valid-rank sndr sndr-size)
+    ~|  ames-sender-impostor+[sndr sndr-size]  !!
+  ::
+  =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
+  ?.  (is-valid-rank rcvr rcvr-size)
+    ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
+  ::  read variable-length .content from the rest of .body
+  ::
+  =/  content  (cut 3 [off (sub (met 3 body) off)] body)
+  [[sndr rcvr] sndr-tick rcvr-tick origin content]
+::  +is-valid-rank: does .ship match its stated .size?
+::
+++  is-valid-rank
+  |=  [=ship size=@ubC]
+  ^-  ?
+  .=  size
+  =/  wid  (met 3 ship)
+  ?:  (lte wid 1)   2
+  ?:  =(2 wid)      2
+  ?:  (lte wid 4)   4
+  ?:  (lte wid 8)   8
+  ?>  (lte wid 16)  16
 ::  +encode-open-packet: convert $open-packet attestation to $packet
 ::
 ++  encode-open-packet
@@ -336,10 +437,52 @@
   =/  vec  ~[sndr.packet rcvr.packet sndr-life rcvr-life]
   ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
+::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
+::
+::    Type 0: galaxy or star -- 2 bytes
+::    Type 1: planet         -- 4 bytes
+::    Type 2: moon           -- 8 bytes
+::    Type 3: comet          -- 16 bytes
+::
+++  decode-ship-size
+  |=  rank=@ubC
+  ^-  @
+  ::
+  ?+  rank  !!
+    %0b0   2
+    %0b1   4
+    %0b10  8
+    %0b11  16
+  ==
+::  +encode-ship-metadata: produce size (in bytes) and address rank for .ship
+::
+::    0: galaxy or star
+::    1: planet
+::    2: moon
+::    3: comet
+::
+++  encode-ship-metadata
+  |=  =ship
+  ^-  [size=@ =rank]
+  ::
+  =/  size=@  (met 3 ship)
+  ::
+  ?:  (lte size 2)  [2 %0b0]
+  ?:  (lte size 4)  [4 %0b1]
+  ?:  (lte size 8)  [8 %0b10]
+  [16 %0b11]
 +|  %atomics
 ::
 +$  private-key    @uwprivatekey
 +$  signature      @uwsignature
+::  $rank: which kind of ship address, by length
+::
+::    0b0: galaxy or star -- 2  bytes
+::    0b1: planet         -- 4  bytes
+::    0b10: moon           -- 8  bytes
+::    0b11: comet          -- 16 bytes
+::
++$  rank  ?(%0b0 %0b1 %0b10 %0b11)
 ::
 +|  %kinetics
 ::  $channel: combined sender and receiver identifying data
@@ -360,6 +503,25 @@
           =her=public-key
           her-sponsor=ship
   ==  ==
+::  $dyad: pair of sender and receiver ships
+::
++$  dyad  [sndr=ship rcvr=ship]
+::  $packet: noun representation of an ames datagram packet
+::
+::    Roundtrips losslessly through atom encoding and decoding.
+::
+::    .origin is ~ unless the packet is being forwarded.  If present,
+::    it's an atom that encodes a route to another ship, such as an IPv4
+::    address.  Routes are opaque to Arvo and only have meaning in the
+::    interpreter. This enforces that Ames is transport-agnostic.
+::
++$  packet
+  $:  dyad
+      sndr-tick=@ubC
+      rcvr-tick=@ubC
+      origin=(unit @uxaddress)
+      content=@uxcontent
+  ==
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
 ::
 ::    This data structure gets signed and jammed to form the .contents
@@ -417,6 +579,33 @@
       =life
       crypto-core=acru:ames
       =bug
+      =fine-state
+  ==
++$  ames-state-5
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      =bug
+  ==
+::  $fine-state: remote scry subsystem state
+::
+::    hear: awaiting existence
+::    want: awaiting response
+::    part: partial responses
+::
++$  fine-state
+  $:  hear=(jug path duct)
+      want=(jug path duct)
+      part=(map path partial-fine)
+      ::TODO  re-send request timers?
+  ==
+::  $partial-fine: partial remote scry response
+::
++$  partial-fine
+  $:  num-fragments=@ud
+      num-received=@ud
+      fragments=(map @ud byts)  ::TODO  not byts, always 1024 bytes, just @
   ==
 ::  $bug: debug printing configuration
 ::
@@ -665,17 +854,24 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%5 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%6 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=_ames-state.adult-gate
+                      state=ames-state-5
                   ==
-                  [%adult state=_ames-state.adult-gate]
+                  [%adult state=ames-state-5]
               ==  ==
               $:  %5
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-5
+                  ==
+                  [%adult state=ames-state-5]
+              ==  ==
+              $:  %6
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -699,6 +895,14 @@
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %5 state.old)
         larval-gate
+      ::
+          [%6 %adult *]  (load:adult-core %6 state.old)
+      ::
+          [%6 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %6 state.old)
+        larval-gate
       ==
     --
 ::  adult ames, after metamorphosis from larva
@@ -719,15 +923,24 @@
   =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
-    =<  abet
     ::  handle error notifications
     ::
     ?^  dud
+      =<  abet
       ?+  -.task
           (on-crud:event-core -.task tang.u.dud)
         %hear  (on-hear:event-core lane.task blob.task dud)
       ==
     ::
+    ?:  ?=(?(%keen %yawn %bide) -.task)
+      =/  fine-core  (fine now rof duct ames-state)
+      ?-  -.task
+        %keen  (on-keen:fine-core +.task)
+        %yawn  (on-yawn:fine-core +.task)
+        %bide  (on-bide:fine-core +.task)
+      ==
+    ::
+    =<  abet
     ?-  -.task
       %born  on-born:event-core
       %hear  (on-hear:event-core [lane blob ~]:task)
@@ -770,24 +983,31 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%5 %adult ames-state]
+++  stay  [%6 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
-  |=  $=  old-state
-      $%  [%4 ^ames-state]
-          [%5 ^ames-state]
-      ==
   |^
+  |=  $=  old-state
+      $%  [%4 ames-state-5]
+          [%5 ames-state-5]
+          [%6 ^ames-state]
+      ==
   ^+  ames-gate
   =?  old-state  ?=(%4 -.old-state)  %5^(state-4-to-5 +.old-state)
+  =?  old-state  ?=(%5 -.old-state)  %6^(state-5-to-6 +.old-state)
   ::
-  ?>  ?=(%5 -.old-state)
+  ?>  ?=(%6 -.old-state)
   ames-gate(ames-state +.old-state)
   ::
+  ++  state-5-to-6
+    |=  old=ames-state-5
+    ^-  ^ames-state
+    old(bug [bug.old *fine-state])
+  ::
   ++  state-4-to-5
-    |=  =^ames-state
-    ^-  ^^ames-state
+    |=  ames-state=ames-state-5
+    ^-  ames-state-5
     =.  peers.ames-state
       %-  ~(run by peers.ames-state)
       |=  =ship-state
@@ -838,6 +1058,7 @@
   ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
+  ::  /ax/fine/message/[path/...]    song
   ::
   ?.  ?=(%x ren)  ~
   ?+    tyl  ~
@@ -913,11 +1134,21 @@
     =/  res
       u.mps
     ``noun+!>(!>(res))
+  ::
+      [%fine %message @ *]
+    ::  t.t.tyl is expected to be a scry path of the shape /vc/desk/rev/etc,
+    ::  so we need to give it the right shape
+    ::
+    =/  pax=path
+      [i.t.t.tyl (scot %p our) t.t.t.tyl]
+    =/  fin
+      (fine now rof *duct ames-state)
+    ``noun+!>((encode-response:fin pax (get-scry-result:fin lyc pax)))
   ==
 --
 ::  |per-event: inner event-handling core
 ::
-~%  %per-event  ..trace  ~
+~%  %per-event  ..decode-packet  ~
 |%
 ++  per-event
   =|  moves=(list move)
@@ -1076,7 +1307,18 @@
   ::
   ++  on-hear
     |=  [l=lane b=blob d=(unit goof)]
-    (on-hear-packet l (decode-packet b) d)
+    =/  [ames=? =packet]
+      (decode-packet b)
+    ?:  ames
+      (on-hear-packet l packet d)
+    ::
+    =^  moz  ames-state
+      %-  on-hear-response:(fine now rof duct ames-state)
+      ~|  [%fine %request-events-forbidden]
+      ?>  response==(& (cut 0 [2 1] b))
+      [l packet d]
+    =.  moves  (weld (flop moz) moves)
+    ..on-hear
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
@@ -1119,7 +1361,7 @@
         ~|  ames-lane-size+p.lane  !!
       `p.lane
     ::
-    =/  =blob  (encode-packet packet)
+    =/  =blob  (encode-packet & packet)
     (send-blob & rcvr.packet blob)
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
@@ -1542,7 +1784,7 @@
   ::  +on-trim: handle request to free memory
   ::
   ++  on-vega  event-core
-  ++  on-trim  event-core
+  ++  on-trim  event-core  ::TODO  trim fine parts on high prio
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
   ::    Also requests key and life from Jael on first request.
@@ -1645,7 +1887,7 @@
   ++  attestation-packet
     |=  [her=ship =her=life]
     ^-  blob
-    %-  encode-packet
+    %+  encode-packet  &
     %-  encode-open-packet
     :_  crypto-core.ames-state
     :*  ^=  public-key  pub:ex:crypto-core.ames-state
@@ -1917,7 +2159,7 @@
       ::
       =.  event-core
         %^  send-blob  |  her.channel
-        %-  encode-packet
+        %+  encode-packet  &
         %:  encode-shut-packet
           shut-packet(bone (mix 1 bone.shut-packet))
           symmetric-key.channel
@@ -2980,5 +3222,321 @@
     =.  nax.state  (~(del in nax.state) message-num)
     ::
     message-sink
+  --
+::
+++  fine
+  |=  [now=@da rof=roof =duct =ames-state]
+  =*  state  fine-state.ames-state
+  =<  |%
+      ++  on-keen
+        |=  =path
+        ^-  (quip move _ames-state)
+        =/  omen
+          ~|  [%fine %invalid-namespace-path path]
+          (need (de-omen path))
+        =.  want.state  (~(put ju want.state) path duct)
+        ?:  (~(has by part.state) path)
+          ::  request is already ongoing
+          ::
+          [~ ames-state]
+        ::  kick off the request
+        ::
+        =.  part.state  (~(put by part.state) path *partial-fine)
+        :_  ames-state
+        =/  =lane:ames  (get-lane p.bem.omen)
+        =/  =hoot       (encode-request path 1)
+        [unix-duct.ames-state %give %send lane `@ux`hoot]~
+      ::
+      ++  on-yawn
+        |=  =path
+        ^-  (quip move _ames-state)
+        =.  want.state  (~(del ju want.state) path duct)
+        [~ ames-state]
+      ::
+      ++  on-bide
+        |=  =path
+        ^-  (quip move _ames-state)
+        =.  hear.state  (~(put ju hear.state) path duct)
+        [~ ames-state]
+      ::
+      ++  on-hear-response
+        |=  [=lane =packet dud=(unit goof)]
+        ^-  (quip move _ames-state)
+        ?^  dud
+          ::TODO  handle
+          ~&  [%fine %done-goofed u.dud]
+          [~ ames-state]
+        =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
+        =/  =rawr          (decode-response-packet purr)
+        ::TODO  validate response signature
+        (handle-response [sndr.packet lane] peep rawr)
+      --
+  |%
+  +$  twit  ::  signed request
+    $:  signature=@
+        peep
+    ==
+  ::
+  +$  peep  ::  request data
+    $:  =path
+        num=@ud
+    ==
+  ::
+  +$  rawr  ::  response packet  ::TODO  meow
+    $:  sig=@
+        siz=@ud
+        byts
+    ==
+  ::
+  +$  roar  ::  response message
+    $:  sig=@
+        dat=(cask)
+    ==
+  ::
+  ++  spit
+    |=  =path
+    ^-  [pat=@t wid=@ud]
+    =+  pat=(spat path)
+    =+  wid=(met 3 pat)
+    ?>  (lte wid 384)  ::TODO  check when we handle %keen, in addition to here
+    [pat wid]
+  ::
+  ++  request-body
+    |=  [=path num=@ud]
+    ::TODO  need to ensure valid namespace path without ship
+    ^-  byts
+    ?>  (lth num (bex 32))
+    =+  (spit path)
+    :-  :(add 32 16 wid)
+    %+  can  3
+    :~  4^num       ::  fragment number
+        2^wid       ::  path size
+        wid^`@`pat  ::  namespace path
+    ==
+  ::
+  ++  encode-request
+    |=  [=path num=@ud]
+    ^-  hoot  ^-  @
+    =+  bod=(request-body path num)
+    =+  syn=(can 3 64^(sign:keys dat.bod) bod ~)
+    %+  con  0b100  ::NOTE  request bit
+    (encode-packet | [our ~zod] (mod life:keys 16) 0b0 ~ syn)
+  ::
+  ++  encode-response  ::TODO  unit tests
+    |=  [=path data=(unit (cask))]
+    ^-  song
+    ::  prepend request descriptions to each response packet
+    ::
+    =;  pacs=(list @ux)
+      %-  head
+      %^  spin  pacs  1
+      |=  [pac=@ux num=@ud]
+      ^-  [purr _num]
+      :_  +(num)
+      ^-  @ux
+      ::NOTE  we stub out the receiver & origin details,
+      ::      runtime should replace them as appropriate.
+      ::TODO  should have scry endpoint that produces gate that does
+      ::      that packet transformation
+      (encode-packet | [our ~zod] (mod life:keys 16) 0b0 ~ pac)
+    ::  prepend a signature and split the data into 1024-byte fragments
+    ::
+    =/  frag=(list @)
+      ::TODO  should also sign the request path
+      =/  sig=@  (full:keys path (fall data ~))
+      ?~  data  [sig]~
+      %+  rip  13  ::NOTE  1024 bytes
+      (cat 3 sig (jam u.data))  ::TODO  should include life
+    ::  sign & packetize the fragments
+    ::
+    %-  head
+    %^  spin  frag  1
+    |=  [dat=@ num=@ud]
+    :_  +(num)
+    ^-  @ux
+    =/  req=byts  (request-body path num)
+    =/  bod=byts
+      =/  wid=@ud  (met 3 dat)
+      :-  :(add 4 2 wid)
+      %+  can  3
+      :~  4^(lent frag)  ::  number of fragments
+          2^wid          ::  response data fragment size in bytes
+          wid^dat        ::  response data fragment
+      ==
+    =/  sig=byts
+      64^(sign:keys (can 3 req bod ~))
+    (can 3 req sig bod ~)
+  ::
+  ++  keys
+    |%
+    ++  full
+      |=  [=path mess=*]
+      (sign (shax (jam [our life path mess])))
+    ::
+    ++  life  ~+  (jael ^life %life /(scot %p our))
+    ++  ring  ~+  (jael ^ring %vein /(scot %ud life))
+    ++  sign      sign:as:(nol:nu:crub:crypto ring)
+    ::
+    ++  jael
+      |*  [=mold =desk =path]
+      !<  mold
+      %-  tail  %-  need  %-  need
+      (rof `[our ~ ~] [%jael %$] [our desk da+now] path)
+    ::
+    ++  lyfe
+      |=  who=ship
+      (jael (unit ^life) %lyfe /(scot %p our))
+    ::
+    ::TODO  don't scry! subscribe & get from state instead
+    ::TODO  literally copy the ames code lol
+    ::TODO  the fact that we share pki and lane data with ames is... suspect
+    ::      also the en/decoding etc
+    ++  pass
+      |=  [who=ship lyf=^life]
+      ::TODO  but might fail need checks?
+      :: (jael * %deed )
+      !!
+    --
+  ::
+  ++  get-lane
+    |=  =ship
+    ^-  lane:ames
+    =;  lanes
+      ::TODO  should we send to all lanes?
+      ?^  lanes  i.lanes
+      ~&(%fine-lane-stub &+~zod)  ::TODO
+    !<  (list lane:ames)
+    =<  q  %-  need  %-  need
+    =/  =path  /peers/(scot %p ship)/forward-lane
+    ::TODO  get from state
+    (rof `[our ~ ~] [%ames %x] [our %$ da+now] path)
+  ::
+  ++  decode-request
+    |=  =hoot
+    ^-  twit
+    :-  sig=(cut 3 [0 64] hoot)
+    -:(decode-request-info (rsh 3^64 hoot))
+  ::
+  ++  decode-request-info
+    |=  =hoot
+    ^-  [=peep =purr]
+    =+  num=(cut 3 [0 4] hoot)
+    =+  len=(cut 3 [4 2] hoot)
+    =+  pat=(cut 3 [6 len] hoot)
+    :-  [(stab pat) num]
+    ::  if there is data remaining, it's the response
+    (rsh [3 (add 6 len)] hoot)
+  ::
+  ++  decode-response-packet
+    |=  =purr
+    =;  =rawr
+      ~?  !=(wid.rawr (met 3 dat.rawr))  [%fine %unexpected-dat-size]
+      rawr
+    :*  sig=(cut 3 [0 64] purr)
+        siz=(cut 3 [64 4] purr)
+        wid=(cut 3 [68 2] purr)
+        dat=(rsh 3^70 purr)
+    ==
+  ::
+  ++  verify-response-packet
+    |=  rawr
+    !!
+  ::
+  ++  decode-response-msg
+    |=  partial-fine  ::TODO  maybe take @ instead
+    ^-  roar
+    =/  mess=@
+      %+  can  3  ::TODO  just (rep 13 -)
+      %+  turn  (gulf 1 num-fragments)
+      ~(got by fragments)
+    :-  sig=(cut 3 [0 64] mess)
+    ~|  [%fine %response-not-cask]
+    ;;((cask) (cue (rsh 3^64 mess)))
+  ::
+  ++  process-response
+    |=  [=path data=(unit (cask))]
+    ^-  (quip move _ames-state)
+    :-  %+  turn  ~(tap in (~(get ju want.state) path))
+        (late [%give %tune path data])
+    =.  want.state  (~(del by want.state) path)
+    =.  part.state  (~(del by part.state) path)
+    ames-state
+  ::
+  ++  handle-request
+    |=  =twit
+    ^-  (list move)
+    =/  =song
+      %+  encode-response  path.twit
+      (get-scry-result *gang path.twit)
+    ::TODO  different task, pick the right packet
+    [duct %give %howl path.twit song]~
+  ::
+  ++  handle-response
+    |=  [[from=ship =lane:ames] =peep =rawr]
+    ^-  (quip move _ames-state)
+    ?:  =(0 siz.rawr)
+      ?>  =(~ dat.rawr)
+      (process-response path.peep ~)
+    ?.  (~(has by part.state) path.peep)
+      ::  we did not initiate this request, or it's been cancelled
+      ::
+      !!
+    =/  partial=partial-fine
+      (~(got by part.state) path.peep)
+    =.  partial
+      ?:  (~(has by fragments.partial) num.peep)
+        partial
+      =,  partial
+      :+  ~|  [%fine %response-size-changed have=num-fragments new=siz.rawr]
+          ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
+          num-fragments
+        +(num-received)
+      (~(put by fragments) num.peep [wid dat]:rawr)
+    ::
+    ?:  =(num-fragments num-received):partial
+      ::  we have all the parts now, construct the full response
+      ::
+      =/  =roar  (decode-response-msg partial)
+      ::TODO  check signature
+      (process-response path.peep `dat.roar)
+    ::  otherwise, store the part, and send out the next request
+    ::
+    =.  part.state  (~(put by part.state) path.peep partial)
+    =/  next-num=@ud
+      =/  next=@ud  +(num.peep)
+      ::  we should receive responses in order, but in case we don't...
+      ::
+      |-
+      ?.  (~(has by fragments.partial) next)  next
+      $(next +((mod next num-fragments.partial)))
+    ::
+    =/  =hoot  (encode-request path.peep next-num)
+    ::TODO  ask amsden, should we shotgun? we can tweak this
+    ::      for now (mvp) though, stay 1-to-1
+    ::TODO  update lane in ames state
+    ::TODO  is reusing the lane fine?
+    :_  ames-state
+    [unix-duct.ames-state %give %send lane `@ux`hoot]~
+  ::
+  ++  get-scry-result
+    |=  [=gang =path]
+    ^-  (unit (cask))
+    ?~  nom=(de-omen path)  ~
+    ?>  =(our p.bem.u.nom)
+    ::  we only support scrying into clay,
+    ::  and only if the data is fully public.
+    ::
+    ?.  =(%c (end 3 (snag 0 path)))  ~
+    =+  pem=(rof gang (need (de-omen %cp (slag 1 path))))
+    ?>  ?=(^ pem)
+    ?>  ?=(^ u.pem)
+    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+    ?>  =([%black ~ ~] rul.r.per)
+    =+  res=(rof gang u.nom)
+    ?-  res
+      ~        !!  ::TODO  lets just not do the task case
+      [~ ~]    ~
+      [~ ~ *]  `[p q.q]:u.u.res
+    ==
   --
 --

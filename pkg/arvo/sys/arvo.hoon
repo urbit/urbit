@@ -1674,7 +1674,6 @@
     %c  %clay
     %d  %dill
     %e  %eyre
-    %f  %fine
     %g  %gall
     %i  %iris
     %j  %jael
