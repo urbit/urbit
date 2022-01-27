@@ -19,9 +19,12 @@
       ==  ==
     +$  khan-state
       $:  %0
-          unix-duct=duct
-          out-dais=(map duct dais:clay)
+          hey=duct                                      ::  current unix duct
+          run=(map duct thread-state)                   ::  running threads
       ==
+    ::  TODO  move to lull
+    ::
+    +$  thread-state  [tid=@ta mak=mark bek=beak]
     --
 =>
 |%
@@ -63,14 +66,15 @@
       %born
     :-  ~
     %=  khan-gate
-      unix-duct  hen
-      out-dais   *(map duct dais:clay)
+      hey  hen
+      run  *(map duct thread-state)
     ==
+  ::
       %fyrd
     =/  wir=wire  (head hen)
     =/  rid=@ta   (rear wir)
     =*  fyd  p.task
-    ?:  (~(has by out-dais) hen)
+    ?:  (~(has by run) hen)
       ~|(%fyrd-duplicate-rid !!)
     =/  tid=@ta
       (cat 3 'khan-fyrd--' rid)
@@ -87,9 +91,7 @@
             (start-spider our %spider-start !>(args))
         ==
       |=(=note ^-(move [hen %pass //g note]))
-    =.  out-dais
-      %+  ~(put by out-dais)  hen
-      (get-dais beak mark.fyd rof)
+    =.  run  (~(put by run) hen tid mark.fyd beak)
     [start-moves khan-gate]
   ==
 ::  +load: migrate an old state to a new khan version
@@ -112,12 +114,14 @@
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _khan-gate]
   ?^  dud
+    =.  run  (~(del by run) hen)
     ~|(%khan-take-dud (mean tang.u.dud))
   ?.  ?=(%gall -.hin)
     [~ khan-gate]
   ?+    -.p.hin  [~ khan-gate]
       ?(%poke-ack %watch-ack)
     ?~  p.p.hin  [~ khan-gate]
+    =.  run  (~(del by run) hen)
     %-  (slog u.p.p.hin)
     :_  khan-gate
     [hen %give %avow %| -.p.hin u.p.p.hin]~
@@ -133,12 +137,12 @@
     ::
         %thread-done
       :_  khan-gate
-      =/  =dais:clay  (~(got by out-dais) hen)
-      =/  res=vase  (vale:dais !<(* q.cag))
-      ::  XX  store and reflect back mark?
-      [hen %give %avow %& form.dais q.res]~
+      =/  tad=thread-state  (~(got by run) hen)
+      =/  =dais:clay  (get-dais bek.tad mak.tad rof)
+      =/  =vase  (vale:dais q.q.cag)
+      [hen %give %avow %& mak.tad q.vase]~
     ==
       %kick
-    [~ khan-gate(out-dais (~(del by out-dais) hen))]
+    [~ khan-gate(run (~(del by run) hen))]
   ==
 --
