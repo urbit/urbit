@@ -135,7 +135,6 @@
       ::  sign & packetize the fragments
       ::
       %-  head
-      =-  ~&(-> -)
       %^  spin  frag  1
       |=  [dat=@ num=@ud]
       :_  +(num)
@@ -231,24 +230,20 @@
     ++  decode-response-msg
       |=  partial  ::TODO  maybe take @ instead
       ^-  roar
-      ~&  ~(key by fragments)
       =/  mess=@ux
         %+  rep  13
         %+  turn  (gulf 1 num-fragments)
         |=  frag-num=@ud
         +:(~(got by fragments) frag-num)
-      ~&  mess/mess
-      ~&  jamdat/`@ux`(rsh 3^64 mess)
       =+  sig=`@ux`(end 3^64 mess)
       :-  sig
-      ~&  sig/sig
       ~|  [%fine %response-not-cask]
-      ~&  dat/(cue (rsh 3^64 mess))
       ;;((cask) (cue (rsh 3^64 mess)))
     ::
     ++  process-response
       |=  [=path data=(unit (cask))]
       ^-  (quip move _state)
+      ~&  "got response on path {<path>}"
       :-  %+  turn  ~(tap in (~(get ju want) path))
           (late [%give %tune path data])
       =.  want  (~(del by want) path)
@@ -275,8 +270,6 @@
         ::
         !!
       =/  partial  (~(got by part) path.peep)
-      ~&  siz.rawr 
-      ~&  partial
       =.  partial
         ?:  (~(has by fragments.partial) num.peep)
           ~&  [%fine %duplicate-response peep]  ::TODO  disable
@@ -288,7 +281,6 @@
             siz.rawr
           +(num-received)
         (~(put by fragments) num.peep [wid dat]:rawr)
-      ~&  partial
       ::
       ?:  =(num-fragments num-received):partial
         ::  we have all the parts now, construct the full response
@@ -325,8 +317,6 @@
       ?.  =(%c (end 3 (snag 0 path)))  ~
       =+  res=(rof gang u.nom)
       ~!  res
-      ~&  gang
-      ~&  u.nom
       ?-  res
         ~        !!  ::REVIEW  crashing in the blocking case is fine.. right?
         [~ ~]    ~
@@ -439,7 +429,6 @@
   ::
   =/  pax=path
     [i.t.s.bem (scot %p our) t.t.s.bem]
-  ~&  pax
   ``noun+!>((encode-response pax (get-scry-result lyc pax)))
 ::
 ++  stay  state
