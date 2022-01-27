@@ -111,7 +111,6 @@
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _khan-gate]
-  ::  XX  delete dais here?
   ?^  dud
     ~|(%khan-take-dud (mean tang.u.dud))
   ?.  ?=(%gall -.hin)
@@ -119,7 +118,6 @@
   ?+    -.p.hin  [~ khan-gate]
       ?(%poke-ack %watch-ack)
     ?~  p.p.hin  [~ khan-gate]
-    =.  out-dais  (~(del by out-dais) hen)
     %-  (slog u.p.p.hin)
     :_  khan-gate
     [hen %give %avow %| -.p.hin u.p.p.hin]~
@@ -128,7 +126,6 @@
     =*  cag  cage.p.hin
     ?+    p.cag  ~&(bad-fact+p.cag !!)
         %thread-fail
-      =.  out-dais  (~(del by out-dais) hen)
       =/  =tang  !<(tang q.cag)
       %-  (slog tang)
       :_  khan-gate
@@ -138,9 +135,10 @@
       :_  khan-gate
       =/  =dais:clay  (~(got by out-dais) hen)
       =/  res=vase  (vale:dais !<(* q.cag))
-      =.  out-dais  (~(del by out-dais) hen)
       ::  XX  store and reflect back mark?
       [hen %give %avow %& form.dais q.res]~
     ==
+      %kick
+    [~ khan-gate(out-dais (~(del by out-dais) hen))]
   ==
 --
