@@ -1531,7 +1531,7 @@ static void _log_head(u3_head* hed_u)
 
 static void
 _fine_request(u3_ames* sam_u,
-              u3_lane lan_u,
+              u3_noun  lan,
               u3_noun  req)
 {
 
@@ -1555,12 +1555,25 @@ _fine_request(u3_ames* sam_u,
   pen_u->typ_y = 1;
   pen_u->her_d[0] = req_u->pre_u.rec_d[0];
   pen_u->her_d[1] = req_u->pre_u.rec_d[1];
-  pen_u->lan_u.pip_w = lan_u.pip_w;
-  pen_u->lan_u.por_s = lan_u.por_s;
-
   pen_u->sam_u = sam_u;
-  // TODO: revive for non-galaxy case
-  _ames_czar(pen_u);
+
+  {
+    u3_noun tag, val;
+    u3x_cell(lan, &tag, &val);
+    u3m_p("tag", tag);
+    u3m_p("val", val);
+    if(tag == 0) {
+      _ames_czar(pen_u);
+    } else {
+      u3_lane lan_u = u3_ames_decode_lane(val);
+      pen_u->lan_u.pip_w = lan_u.pip_w;
+      u3l_log("IP: %u", lan_u.pip_w);
+      u3l_log("port: %u", lan_u.por_s);
+      pen_u->lan_u.por_s = lan_u.por_s;
+      
+      _ames_send(pen_u);
+    }
+  }
 }
 
 /* _ames_hear(): parse a (potential) packet, dispatch appropriately.
@@ -1840,8 +1853,7 @@ static c3_o _fine_io_kick(u3_auto* car_u, u3_noun wir, u3_noun nun) {
   } else if(c3__hoot == hed) {
     u3_noun lan, hot;
     u3x_cell(u3t(nun), &lan, &hot);
-    u3_lane lan_u = u3_ames_decode_lane(lan);
-    _fine_request(sam_u, lan_u, hot);
+    _fine_request(sam_u, lan, hot);
     return c3y;
   } else {
     return c3n;
