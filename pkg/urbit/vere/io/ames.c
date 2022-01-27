@@ -630,7 +630,7 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
     sam_u->fig_u.net_o = c3y;
   }
 
-  _ames_pend_free(pen_u);
+  //_ames_pend_free(pen_u);
 }
 
 #define _fine_send _ames_send
@@ -669,7 +669,7 @@ _ames_send(u3_pend* pen_u)
           sam_u->fig_u.net_o = c3n;
         }
 
-        _ames_pend_free(pen_u);
+        //_ames_pend_free(pen_u);
       }
     }
   }
@@ -1359,18 +1359,8 @@ _ames_skip(u3_body* bod_u) {
 }
 #endif
 
-/* _fine_pack_scry_cb(): receive all packets for datum out of fine
- * TODO: implement
- */
-static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
+static void _fine_got_pack(u3_pend* pen_u, u3_noun pac) 
 {
-
-  u3_pend* pen_u = vod_p;
-  u3_weak  pac = u3r_at(7, nun);
-  if(pac == u3_none) {
-    u3l_log("no result, bailing\n");
-    return;
-  }
   u3_noun num = u3i_word(pen_u->fra_w - 1);
 
   u3_noun fra = u3dc("snag", num, pac);
@@ -1403,6 +1393,32 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   }
   */
 }
+
+/* _fine_pack_scry_cb(): receive all packets for datum out of fine
+ * TODO: implement
+ */
+static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
+{
+  u3l_log("got scry result\n");
+
+  u3_pend* pen_u = vod_p;
+  u3_ames* sam_u = pen_u->sam_u;
+  u3_weak  pac = u3r_at(7, nun);
+  if(pac == u3_none) {
+    u3l_log("no result, bailing\n");
+    return;
+  }
+  c3_assert( 1 == pen_u->typ_y);
+  u3_noun pax = u3i_string(pen_u->req_u->req_u.pat_c);
+  u3l_log("path: %s\n", pen_u->req_u->req_u.pat_c);
+  u3l_log("made pax\n");
+
+  u3h_put(sam_u->fin_s.sac_p, u3k(pax), u3k(pac));
+  u3l_log("got scry result\n");
+
+  _fine_got_pack(pen_u, u3k(pac));
+}
+
 
 
 static void _fine_hear_response(u3_ames* sam_u,
@@ -1437,12 +1453,6 @@ static void _fine_hear_request(u3_ames* sam_u,
   c3_assert ( c3n == _ames_sift_head(&hed_u, hun_y));
   // TODO: check mug
 
-  // lookup in cache
-  // (unit (unit (unit packet))
-  // ~ -> miss
-  // [~ ~] -> hit, unbound
-  // [~ ~ ~] -> hit, empty
-  // [~ ~ ~ *] -> hit, w/ data
   u3_requ req_u;
 
   // skip past header
@@ -1454,72 +1464,31 @@ static void _fine_hear_request(u3_ames* sam_u,
   u3_noun pat = u3i_string(req_u.pat_c);
 
   // TODO: revive
-  u3_weak cac =  u3_none; // u3h_git(sam_u->fin_s.sac_p, pat);
+  u3_weak cac =  u3h_git(sam_u->fin_s.sac_p, pat);
 
+  u3_reqp* rep_u = c3_calloc(sizeof(*rep_u));
+  u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
+
+  pen_u->sam_u = sam_u;
+  pen_u->typ_y = 1;
+  pen_u->req_u = rep_u;
+
+  memcpy(&rep_u->hed_u, &hed_u, sizeof(u3_head));
+  memcpy(&rep_u->req_u, &req_u, sizeof(u3_requ));
+
+  memcpy(&pen_u->lan_u, &lan_u, sizeof(u3_lane));
+  pen_u->fra_w = req_u.fra_w;
 
   if ( u3_none == cac ) {
     // cache miss
     u3_noun pax = u3nc(u3i_string("message"),
                       u3do("stab", u3k(pat)));
 
-    u3_reqp* rep_u = c3_calloc(sizeof(*rep_u));
-    u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
-
-    pen_u->sam_u = sam_u;
-    pen_u->typ_y = 2;
-    pen_u->req_u = rep_u;
-
-    memcpy(&rep_u->hed_u, &hed_u, sizeof(u3_head));
-    memcpy(&rep_u->req_u, &req_u, sizeof(u3_requ));
-
-    memcpy(&pen_u->lan_u, &lan_u, sizeof(u3_lane));
-    pen_u->fra_w = req_u.fra_w;
-
     u3_pier_peek_last(sam_u->fin_s.car_u.pir_u, u3_nul, c3__fx, u3_nul, 
                       pax, pen_u, _fine_pack_scry_cb);
     
-  } else if(u3_nul == cac) {
-    // cache hit, unbound
-    // do nothing, maybe report?
   } else {
-    //  shape 
-    // 
-    c3_w  fra_w;
-    c3_y* fra_y;
-
-    {
-      u3_noun fra = u3dc("snag", u3i_word(req_u.fra_w), u3t(cac));
-      
-      fra_w = u3r_met(3, fra);
-      fra_y = c3_calloc(fra_w);
-      
-      u3r_bytes(0, fra_w, fra_y, fra);
-
-      u3z(fra);
-    }
-
-    u3_resp* res_u = c3_calloc(sizeof(*res_u));
-
-    if ( c3n == _fine_sift_resp(&hed_u, res_u, fra_w, fra_y) ) {
-      c3_free(res_u);
-    } else {
-      memcpy(&res_u->pre_u, &req_u.pre_u, sizeof(u3_prel));
-
-      c3_y* res_y;
-      c3_w res_w = _fine_etch_resp(&hed_u, res_u, &res_y);
-
-      u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
-      pen_u->typ_y = 2;
-      pen_u->res_u = res_u;
-      pen_u->len_w = res_w;
-      pen_u->hun_y = res_y;
-      pen_u->her_d[0] = res_u->pre_u.sen_d[0];
-      pen_u->her_d[1] = res_u->pre_u.sen_d[1];
-      pen_u->lan_u = lan_u;
-      pen_u->sam_u = sam_u;
-
-      _fine_send(pen_u);
-    }
+    _fine_got_pack(pen_u, u3k(cac));
   }
 
   u3z(pat);
