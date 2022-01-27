@@ -1459,15 +1459,8 @@ static void _fine_hear_request(u3_ames* sam_u,
 
   if ( u3_none == cac ) {
     // cache miss
-    //  packet scry path
-    //  /packet/requested/path/elements
-    //
-    //  eg:
-    //  /packet/gx/~zod/graph-store/5/graphs/~zod/test/message/10
-    //
     u3_noun pax = u3nc(u3i_string("message"),
                       u3do("stab", u3k(pat)));
-
 
     u3_reqp* rep_u = c3_calloc(sizeof(*rep_u));
     u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
@@ -1485,7 +1478,6 @@ static void _fine_hear_request(u3_ames* sam_u,
     u3_pier_peek_last(sam_u->fin_s.car_u.pir_u, u3_nul, c3__fx, u3_nul, 
                       pax, pen_u, _fine_pack_scry_cb);
     
-
   } else if(u3_nul == cac) {
     // cache hit, unbound
     // do nothing, maybe report?
@@ -1508,25 +1500,26 @@ static void _fine_hear_request(u3_ames* sam_u,
 
     u3_resp* res_u = c3_calloc(sizeof(*res_u));
 
-    c3_assert(c3y == _fine_sift_resp(&hed_u, res_u, fra_w, fra_y));
-    
-    memcpy(&res_u->pre_u, &req_u.pre_u, sizeof(u3_prel));
+    if ( c3n == _fine_sift_resp(&hed_u, res_u, fra_w, fra_y) ) {
+      c3_free(res_u);
+    } else {
+      memcpy(&res_u->pre_u, &req_u.pre_u, sizeof(u3_prel));
 
-    c3_y* res_y;
-    c3_w res_w = _fine_etch_resp(&hed_u, res_u, &res_y);
+      c3_y* res_y;
+      c3_w res_w = _fine_etch_resp(&hed_u, res_u, &res_y);
 
-    // TODO: where free? maybe stack allocate instead?
-    u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
-    pen_u->typ_y = 2;
-    pen_u->res_u = res_u;
-    pen_u->len_w = res_w;
-    pen_u->hun_y = res_y;
-    pen_u->her_d[0] = res_u->pre_u.sen_d[0];
-    pen_u->her_d[1] = res_u->pre_u.sen_d[1];
-    pen_u->lan_u = lan_u;
-    pen_u->sam_u = sam_u;
+      u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
+      pen_u->typ_y = 2;
+      pen_u->res_u = res_u;
+      pen_u->len_w = res_w;
+      pen_u->hun_y = res_y;
+      pen_u->her_d[0] = res_u->pre_u.sen_d[0];
+      pen_u->her_d[1] = res_u->pre_u.sen_d[1];
+      pen_u->lan_u = lan_u;
+      pen_u->sam_u = sam_u;
 
-    _fine_send(pen_u);
+      _fine_send(pen_u);
+    }
   }
 
   u3z(pat);
@@ -1542,9 +1535,9 @@ static void _fine_hear(u3_ames* sam_u,
                        c3_y*    hun_y)
 {
   u3_head hed_u;
-  c3_assert ( c3n == _ames_sift_head(&hed_u, hun_y));
-
-  if(c3n == hed_u.req_o) {
+  if ( c3y == _ames_sift_head(&hed_u, hun_y) ) {
+    c3_free(hun_y);
+  } else if ( c3n == hed_u.req_o ) {
     _fine_hear_request(sam_u, lan_u, len_w, hun_y);
   } else {
     _fine_hear_response(sam_u, lan_u, len_w, hun_y);
