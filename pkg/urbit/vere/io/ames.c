@@ -1525,7 +1525,7 @@ static void _fine_hear(u3_ames* sam_u,
     c3_w fra_w = res_u.fra_w;
 
     u3_noun cad = u3nt(c3__purr, 
-                       u3nt(0, c3n, u3_ames_encode_lane(lan_u)),
+                       u3nc(c3n, u3_ames_encode_lane(lan_u)),
                        u3i_bytes(len_w, hun_y));
 
     u3_ovum* ovo_u = u3_ovum_init(0, c3__fine, wir, cad);
