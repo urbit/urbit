@@ -648,7 +648,6 @@ u3_disk_init(c3_c* pax_c)
 
   // (2)
   snprintf(dir_c, sizeof(dir_c), "%s%s", pax_c, urb_c);
-  fprintf(stderr, "peter: %s\r\n", dir_c);
   if ( 0 == (log_u->urb_u = u3_foil_folder(dir_c)) ) {
     fprintf(stderr, "disk: failed to load %s in %s\r\n", urb_c, pax_c);
     c3_free(log_u);
@@ -657,17 +656,22 @@ u3_disk_init(c3_c* pax_c)
 
   // (3)
   snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, put_c);
-  fprintf(stderr, "peter: %s\r\n", dir_c);
-  mkdir(dir_c, 0700);
+  if ( -1 == mkdir(dir_c, 0700) && EEXIST != errno ) {
+    fprintf(stderr, "disk: failed to load %s%s in %s\r\n", urb_c, put_c, pax_c);
+    c3_free(log_u);
+    return 0;
+  }
 
   // (4)
   snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, get_c);
-  fprintf(stderr, "peter: %s\r\n", dir_c);
-  mkdir(dir_c, 0700);
+  if ( -1 == mkdir(dir_c, 0700) && EEXIST != errno ) {
+    fprintf(stderr, "disk: failed to load %s%s in %s\r\n", urb_c, get_c, pax_c);
+    c3_free(log_u);
+    return 0;
+  }
 
   // (5)
   snprintf(dir_c, sizeof(dir_c), "%s%s%s", pax_c, urb_c, log_c);
-  fprintf(stderr, "peter: %s\r\n", dir_c);
   if ( 0 == (log_u->com_u = u3_foil_folder(dir_c)) ) {
     fprintf(stderr, "disk: failed to load %s%s in %s\r\n", urb_c, log_c, pax_c);
     c3_free(log_u);
