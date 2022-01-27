@@ -87,7 +87,6 @@
     c3_d  rog_d;                        //  origin lane (optional)
   } u3_prel;
 
-/* TODO: request response bodies for scry */
 /* u3_requ: fine packet request */
   typedef struct _u3_requ {
     u3_prel pre_u;
@@ -371,7 +370,6 @@ _ames_sift_prelude(u3_head* hed_u,
 
 
 /* _fine_sift_requ(): parse request body, returning success
- * TODO: bring up to date
 */
 static c3_o 
 _fine_sift_requ(u3_head* hed_u,
@@ -384,7 +382,7 @@ _fine_sift_requ(u3_head* hed_u,
   req_y += pre_y;
 
   c3_w rem_w = (64 + 4 + 2 + pre_y);
-  if(rem_w > len_w) {
+  if ( rem_w > len_w ) {
     u3l_log("not big enough\n");
     return c3n;
   }
@@ -400,21 +398,17 @@ _fine_sift_requ(u3_head* hed_u,
     | (req_y[3] << 0x18));
   req_y += 4;
 
-
   req_u->len_s = c3_min(384,
       (req_y[0] << 0x0)
     | (req_y[1] << 0x8));
   req_y += 2;
 
-  //_log_bytes(req_y, req_u->len_s);
-
-  // TODO: strict inequality?
-  /*if(rem_w + req_u->len_s != len_w) {
-    u3l_log("bad format\n");
+  c3_w exp_w = rem_w + req_u->len_s;
+  if ( exp_w != len_w ) {
+    u3l_log("expected len: %u, actual %u\n", exp_w, len_w);
     return c3n;
-  }*/
+  }
 
-  // TODO: defend maliciusly crafted lengths?
   req_u->pat_c = c3_calloc(req_u->len_s + 1);
 
   memcpy(req_u->pat_c, req_y, req_u->len_s);
@@ -1416,7 +1410,21 @@ static void _fine_hear_response(u3_ames* sam_u,
                                 c3_w     len_w,
                                 c3_y*    hun_y)
 {
+  u3_resp res_u;
 
+  u3_noun wir = u3nc(c3__fine, u3_nul);
+  c3_w num_w = res_u.num_w;
+  c3_w fra_w = res_u.fra_w;
+
+  u3_noun cad = u3nt(c3__purr, 
+                     u3nc(c3n, u3_ames_encode_lane(lan_u)),
+                     u3i_bytes(len_w, hun_y));
+
+  u3_ovum* ovo_u = u3_ovum_init(0, c3__fine, u3k(wir), u3k(cad));
+  u3_auto_plan(&sam_u->fin_s.car_u, ovo_u);
+
+  u3z(cad);
+  u3z(wir);
 }
 
 
@@ -1427,6 +1435,8 @@ static void _fine_hear_request(u3_ames* sam_u,
 {
   u3_head hed_u;
   c3_assert ( c3n == _ames_sift_head(&hed_u, hun_y));
+  // TODO: check mug
+
   // lookup in cache
   // (unit (unit (unit packet))
   // ~ -> miss
@@ -1534,27 +1544,10 @@ static void _fine_hear(u3_ames* sam_u,
   u3_head hed_u;
   c3_assert ( c3n == _ames_sift_head(&hed_u, hun_y));
 
-  
   if(c3n == hed_u.req_o) {
     _fine_hear_request(sam_u, lan_u, len_w, hun_y);
   } else {
-    u3_resp res_u;
-
-    // TODO: check mug
-
-    u3_noun wir = u3nc(c3__fine, u3_nul);
-    c3_w num_w = res_u.num_w;
-    c3_w fra_w = res_u.fra_w;
-
-    u3_noun cad = u3nt(c3__purr, 
-                       u3nc(c3n, u3_ames_encode_lane(lan_u)),
-                       u3i_bytes(len_w, hun_y));
-
-    u3_ovum* ovo_u = u3_ovum_init(0, c3__fine, u3k(wir), u3k(cad));
-    u3_auto_plan(&sam_u->fin_s.car_u, ovo_u);
-
-    u3z(cad);
-    u3z(wir);
+    _fine_hear_response(sam_u, lan_u, len_w, hun_y);
   }
 }
 
@@ -1650,7 +1643,6 @@ _ames_hear(u3_ames* sam_u,
     return;
   }
   else if (c3n == is_ames_o) {
-    // TODO: dispatch fine request
     _fine_hear(sam_u, *lan_u, len_w, hun_y);
     return;
   }
@@ -1894,16 +1886,6 @@ static c3_o _fine_io_kick(u3_auto* car_u, u3_noun wir, u3_noun nun) {
   }
 }
 
-static void _fine_send_fail()
-{
-  // TODO: log some shit
-}
-
-static void _fine_send_cb()
-{
-  // TODO: anything to do here?
-}
-
 /* _ames_prot_scry_cb(): receive ames protocol version
 */
 static void
@@ -1999,8 +1981,6 @@ _ames_io_talk(u3_auto* car_u)
   }
 
 
-  //  TODO: scry the fine protocol out of arvo
-  //
   u3_pier_peek_last(car_u->pir_u, u3_nul, c3__fx, u3_nul,
                     u3nt(u3i_string("protocol"), u3i_string("version"), u3_nul),
                     sam_u, _fine_prot_scry_cb);
@@ -2186,7 +2166,7 @@ u3_ames_io_init(u3_pier* pir_u, u3_auto** far_u)
   sam_u->fig_u.fit_o = c3n;
 
   // hashtable for scry cache
-  // TODO: review size
+  // 
   // 1500 bytes per packet * 100_000 = 150MB
   // 50 bytes (average) per path * 100_000 = 5MB
   sam_u->fin_s.sac_p = u3h_new_cache(100000);
