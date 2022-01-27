@@ -1,17 +1,17 @@
 import useMetadataState from '../state/metadata';
 import ob from 'urbit-ob';
 import useInviteState from '../state/invite';
-import {resourceAsPath} from '../../../../npm/api/dist';
+import { deSig, resourceAsPath } from '@urbit/api';
 
 function getGroupResourceRedirect(key: string) {
-  const association = useMetadataState.getState().associations.graph[`/ship/${key}`];
-  const { metadata } = association;
-  if(!association || !('graph' in metadata.config)) {
+  const graphs = useMetadataState.getState().associations.graph;
+  const association = graphs[`/ship/${key}`];
+  if(!association || !('graph' in association.metadata.config)) {
     return '';
   }
 
   const section = association.group === association.resource ? '/messages' : association.group;
-  return `/~landscape${section}/resource/${metadata.config.graph}${association.resource}`;
+  return `/~landscape${section}/resource/${association.metadata.config.graph}${association.resource}`;
 }
 
 function getPostRedirect(key: string, segs: string[]) {
@@ -70,7 +70,17 @@ function getGraphRedirect(link: string) {
 function getInviteRedirect(link: string) {
   const [,,app,uid] = link.split('/');
   const invite = useInviteState.getState().invites[app][uid];
-  if(!invite) { return ''; }
+  if(!invite) {
+    return '';
+  }
+
+  const { ship, name } = invite.resource;
+  const alreadyJoined = getGroupResourceRedirect(`~${deSig(ship)}/${name}`);
+
+  if (alreadyJoined) {
+    return alreadyJoined;
+  }
+
   return { search: `?join-kind=${app}&join-path=${encodeURIComponent(resourceAsPath(invite.resource))}` };
 }
 
