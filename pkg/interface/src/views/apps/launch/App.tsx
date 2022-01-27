@@ -40,7 +40,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
         </title>
       </Helmet>
       <Route path="/join/:ship/:name">
-        <JoinRoute modal />
+        <JoinRoute />
       </Route>
       <ScrollbarLessBox
         height="100%"
