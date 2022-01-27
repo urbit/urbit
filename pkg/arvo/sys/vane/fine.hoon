@@ -90,6 +90,9 @@
       |=  [=path num=@ud]
       ^-  byts
       ?>  (lth num (bex 32))
+      =.  path  
+        ?>  ?=([@ @ *] path)
+        [i t.t]:path
       =+  (spit path)
       :-  :(add 4 2 wid)
       %+  can  3
@@ -124,13 +127,15 @@
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
-        =/  sig=@  (full:keys path (fall data ~))
+        =/  sig=@  ::(full:keys path (fall data ~))
+          (fil 5 16 0xdead.beef)
         ?~  data  [sig]~
         %+  rip  13  ::NOTE  1024 bytes
         (cat 3 sig (jam u.data))  ::TODO  should include life
       ::  sign & packetize the fragments
       ::
       %-  head
+      =-  ~&(-> -)
       %^  spin  frag  1
       |=  [dat=@ num=@ud]
       :_  +(num)
@@ -179,28 +184,32 @@
     ++  get-lane
       |=  =ship
       ^-  lane:ames
-      =;  lanes
+      ::=;  lanes
         ::TODO  should we send to all lanes?
-        ?^  lanes  i.lanes
+        ::  ?^  lanes  i.lanes
         ~&(%fine-lane-stub &+~zod)  ::TODO
-      !<  (list lane:ames)
-      =<  q  %-  need  %-  need
-      =/  =path  /peers/(scot %p ship)/forward-lane
-      (rof `[our ~ ~] [%ames %x] [our %$ da+now] path)
+      ::.^  (list lane:ames)
+        ::%ax  (scot %p our)  %$  (scot %da now)
+        ::/peers/(scot %p ship)/forward-lane
+      ::==
     ::
     ++  decode-request
-      |=  =hoot
+      |=  [sndr=ship =hoot]
       ^-  twit
       :-  sig=(cut 3 [0 64] hoot)
-      -:(decode-request-info (rsh 3^64 hoot))
+      -:(decode-request-info sndr (rsh 3^64 hoot))
     ::
     ++  decode-request-info
-      |=  =hoot
+      |=  [sndr=ship =hoot]
       ^-  [=peep =purr]
       =+  num=(cut 3 [0 4] hoot)
       =+  len=(cut 3 [4 2] hoot)
       =+  pat=(cut 3 [6 len] hoot)
-      :-  [(stab pat) num]
+      =/  path  (stab pat)
+      =.  path
+        ?>  ?=([@ @ *] path)
+        [i.path (scot %p sndr) t.path]
+      :-  [path num]
       ::  if there is data remaining, it's the response
       (rsh [3 (add 6 len)] hoot)
     ::
@@ -222,12 +231,19 @@
     ++  decode-response-msg
       |=  partial  ::TODO  maybe take @ instead
       ^-  roar
-      =/  mess=@
-        %+  can  3  ::TODO  just (rep 13 -)
+      ~&  ~(key by fragments)
+      =/  mess=@ux
+        %+  rep  13
         %+  turn  (gulf 1 num-fragments)
-        ~(got by fragments)
-      :-  sig=(cut 3 [0 64] mess)
+        |=  frag-num=@ud
+        +:(~(got by fragments) frag-num)
+      ~&  mess/mess
+      ~&  jamdat/`@ux`(rsh 3^64 mess)
+      =+  sig=`@ux`(end 3^64 mess)
+      :-  sig
+      ~&  sig/sig
       ~|  [%fine %response-not-cask]
+      ~&  dat/(cue (rsh 3^64 mess))
       ;;((cask) (cue (rsh 3^64 mess)))
     ::
     ++  process-response
@@ -259,6 +275,8 @@
         ::
         !!
       =/  partial  (~(got by part) path.peep)
+      ~&  siz.rawr 
+      ~&  partial
       =.  partial
         ?:  (~(has by fragments.partial) num.peep)
           ~&  [%fine %duplicate-response peep]  ::TODO  disable
@@ -267,9 +285,10 @@
         =,  partial
         :+  ~|  [%fine %response-size-changed have=num-fragments new=siz.rawr]
             ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
-            num-fragments
+            siz.rawr
           +(num-received)
         (~(put by fragments) num.peep [wid dat]:rawr)
+      ~&  partial
       ::
       ?:  =(num-fragments num-received):partial
         ::  we have all the parts now, construct the full response
@@ -304,13 +323,10 @@
       ::  and only if the data is fully public.
       ::
       ?.  =(%c (end 3 (snag 0 path)))  ~
-      =+  pem=(rof gang (need (de-omen %cp (slag 1 path))))
-      ?>  ?=(^ pem)
-      ?>  ?=(^ u.pem)
-      =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-      ?>  =([%black ~ ~] rul.r.per)
       =+  res=(rof gang u.nom)
       ~!  res
+      ~&  gang
+      ~&  u.nom
       ?-  res
         ~        !!  ::REVIEW  crashing in the blocking case is fine.. right?
         [~ ~]    ~
@@ -356,16 +372,18 @@
         %yawn
       [~ state(want (~(del ju want) path.task hen))]
     ::
+    ::
         %purr
       ^-  (quip move _state)
+      =/  header  `@ub`(end 5 `@ux`purr.task)
       =/  =packet:ames  (decode-packet `@ux`purr.task)
       =/  resp=?        =(& (cut 0 [2 1] purr.task))
       ?.  resp
         ::TODO  crash instead, scry/peek should be used for this
-        =/  =twit  (decode-request `@ux`content.packet)
+        =/  =twit  (decode-request sndr.packet `@ux`content.packet)
         ::TODO  verify request signature
         [(handle-request hen twit) state]
-      =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
+      =/  [=peep =purr]  (decode-request-info sndr.packet `@ux`content.packet)
       =/  =rawr          (decode-response-packet purr)
       ::TODO  validate response signature
       (handle-response [from lane]:task peep rawr)
@@ -384,7 +402,7 @@
         %vega
       [~ state]
     ==
-  [~ fine-gate]
+  [moves fine-gate]
 ::  +load: migrate an old state to a new fine version
 ::
 ++  load
@@ -421,6 +439,7 @@
   ::
   =/  pax=path
     [i.t.s.bem (scot %p our) t.t.s.bem]
+  ~&  pax
   ``noun+!>((encode-response pax (get-scry-result lyc pax)))
 ::
 ++  stay  state
