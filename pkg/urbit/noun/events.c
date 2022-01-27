@@ -913,6 +913,10 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         _ce_patch_delete();
       }
 
+      //  mark all pages dirty (pages in the snapshot will be marked clean)
+      //
+      u3e_foul();
+
       /* Write image files to memory; reinstate protection.
       */
       {
@@ -933,7 +937,6 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       ** snapshot on a future boot for which the images are not empty.
       */
       if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
-        u3e_foul();
         u3l_log("live: logical boot\r\n");
         nuu_o = c3y;
       }
