@@ -215,8 +215,10 @@ class ChatWindow extends Component<
     const msg = graph.get(index)?.post;
     if (!msg || typeof msg === 'string') {
       return (
-        <Text pl="44px" pt="1" pb="1" gray display="block">
+        <Text className="nuked-post" pt="1" pb="1" gray display="block">
+          -
           This message has been deleted.
+          -
         </Text>
       );
     }
