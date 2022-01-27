@@ -15,15 +15,29 @@
 **
 **  request-id is a client-supplied atomic identifier that will
 **  be returned along with the response, to allow correlating
-**  responses with requests. it may be reused; e.g. 0 could be
-**  supplied every time for a client that doesn't care about
-**  responses.
+**  responses with requests.
 **
 **  %fyrd is a request to run a thread. its arguments are
-**  described in the %khan vane, which handles these. it produces
-**  either %avow (on success) or %fail (on failure.)
+**  described in the ++khan section of sys/lull.hoon. to
+**  summarize:
 **
-**  %peek is a namespace read request (aka scry). they are
+**      +$  task  $%(... [%fyrd p=fyrd])                ::
+**      +$  fyrd  [=bear name=term =mark data=(cask)]   ::  thread request
+**      +$  bear  $@(desk [desk case])                  ::  partial +beak
+**
+**  the passed mark is applied to the output. the cask (short for
+**  (cask *)) at data contains the input mark. e.g. to run -code
+**  with ~ as input, receiving output as a +tape, with request-id
+**  set to 32, send the +jam of this noun over the socket with
+**  newt framing:
+**
+**      [32 %fyrd [%base %code %tape [%noun ~]]]
+**
+**  responses to %fyrd are either %fail if something went wrong
+**  in the driver, or %avow to indicate success or failure from
+**  %khan. +avow is: (each (cask) goof).
+**
+**  %peek is a namespace read request (aka scry), and will be
 **  forwarded directly to arvo. its arguments are the nom of the
 **  external peek interface in arvo, at arm 22. (lyc is always
 **  `~, i.e. request from self.) that is:
