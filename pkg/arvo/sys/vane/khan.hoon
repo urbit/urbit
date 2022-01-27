@@ -53,24 +53,23 @@
       %born
     [~ khan-gate(unix-duct hen)]
       %fyrd
-    ::  start the thread on %spider.
-    ::
     =/  wir=wire  (head hen)
     =/  rid=@ta   (rear wir)
-    ::  XX  what if the client sends a duplicate rid?
-    ::  is this fine? should we inject some randomness?
-    ::
+    =*  fyd  p.task
     =/  tid=@ta
       (cat 3 'khan-fyrd--' rid)
+    =/  =beak
+      ?@(bear.fyd [our bear.fyd %da now] [our bear.fyd])
+    =/  =dais:clay
+      ?~  ret=(rof ~ %cb beak /[p.data.fyd])
+        ~|(%mark-unknown !!)
+      ?~  u.ret
+        ~|(%mark-invalid !!)
+      ?>  =(%dais p.u.u.ret)
+      !<(dais:clay q.u.u.ret)
     =/  args
-      :*  ~  `tid  [our desk.task %da now]  name.task
-          ::  XX  can't do this:
-          ::
-          ::    !>(data.task)
-          ::
-          ::  special case for -hi:
-          ::
-          !>(;;([~ arg=$@(who=ship [who=ship mez=tape])] data.task))
+      :*  ~  `tid  beak  name.fyd
+          (vale.dais q.data.fyd)
       ==
     =/  start-moves=(list move)
       %+  turn

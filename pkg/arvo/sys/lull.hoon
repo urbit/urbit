@@ -2093,22 +2093,25 @@
     --  ::  pki
   --  ::  jael
 ::                                                      ::::
-::::                    ++khan                          ::  (1i) threads
+::::                    ++khan                            ::  (1i) threads
   ::                                                    ::::
 ++  khan  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%avow p=(each [mark noun] [term tang])]        ::  thread result
-    ==
+    $%  [%avow p=(each (cask) goof)]                    ::  thread result
+    ==                                                  ::
   +$  task                                              ::  in request ->$
-    $~  [%vega ~]
+    $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         [%done ~]                                       ::  socket closed
-        [%fyrd =desk name=term data=*]                  ::  run thread v0
+        [%fyrd p=fyrd]                                  ::  run thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
-    ==
-  --  ::  khan
+    ==                                                  ::
+  ::                                                    ::
+  +$  bear  $@(=desk [=desk =case])                     ::  local desk/case
+  +$  fyrd  [=bear name=term =mark data=(cask)]         ::  run-thread request
+  --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
