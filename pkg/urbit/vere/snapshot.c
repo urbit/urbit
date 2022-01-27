@@ -1,4 +1,61 @@
 //! @file snapshot.c
+//! Incremental snapshot system.
+//!
+//! ### Components
+//!   - North image file: the contiguous pages of the home road's heap. Pages
+//!     are ordered within the file by increasing address (i.e. bottommost page
+//!     of the loom comes first).
+//!   - South image file: the contiguous pages of the home road's stack. Pages
+//!     are ordered within the file by decreasing address (i.e. topmost page of
+//!     the loom comes first).
+//!   - Memory patch file: the raw memory of the pages that changed since the
+//!     last snapshot was taken.
+//!   - Control patch file: metadata describing the contents of the memory patch
+//!     file.
+//!
+//! ### Taking a snapshot
+//! 1. Create a memory patch file containing all dirty pages within the bounds
+//!    of the home road's heap and stack and an accompanying control patch file
+//!    that documents where in the loom those dirty pages belong.
+//! 2. Apply the contents of the memory patch file to the appropriate image file
+//!    using the metadata stored in the control patch file.
+//! 3. Delete the memory and control patch files.
+//!
+//! ### Restoring a snapshot
+//! 1. Check for the memory and control patch files. If they exist, then a crash
+//!    presumably occurred while taking a snapshot (after the patch files were
+//!    created but before they could be applied to the image files) and so the
+//!    patch files should be applied to the image files the same as when taking
+//!    a snapshot.
+//! 2. Mark all pages in the loom as dirty. This effectively ignores pages that
+//!    are not on the home road and so optimizes page tracking.
+//! 3. Apply the image files to memory. Mark as clean and write-protect the
+//!    pages restored from the image files.
+//!
+//! ### Page tracking subtleties
+//! To better understand any subtleties of the page tracking system, consider
+//! the following sequence:
+//! 1. Boot up and restore the snapshot, which is empty (i.e. the image files
+//!    contain no pages). Because the snapshot is empty, all pages are marked as
+//!    dirty and are writable, which means that no page faults will be generated.
+//! 2. After a while, take a snapshot. All pages within the home road's heap and
+//!    stack  will be gathered into the patch files (because all of the pages in
+//!    the loom are dirty) and ultimately written to the image files.
+//! 3. Exit.
+//! 4. Reboot and restore the snapshot, which is no longer empty. Because the
+//!    snapshot contains the pages that comprised the home road's heap and stack
+//!    at the time at which the snapshot was taken, only those pages will be
+//!    marked as clean and write-protected. As a result, all other pages will
+//!    remain dirty and writable.
+//! 5. After a while, take another snapshot. By this point, any writes to the
+//!    write-protected pages on the home road's heap or stack will have triggered
+//!    page faults, and those pages will have been marked as dirty. Any writes to
+//!    non-write-protected pages on the home road's heap or stack (which would
+//!    exist if the home road heap and/or stack grew) will already be dirty.
+//!    All of these dirty pages are applied to the image files via the patch
+//!    files. As this process repeats, the snapshot grows incrementally without
+//!    the need to write-protect the pages between the home road's heap and
+//!    stack, thereby reducing the number of page faults generated.
 
 #include "all.h"
 #include <errno.h>
@@ -853,10 +910,7 @@ u3_snap_live(c3_o nuu_o, c3_c* dir_c)
         u3l_log("boot: protected loom\r\n");
       }
 
-      /* If the images were empty, we are logically booting. By default, we mark
-      ** all pages as dirty, which enables us to track only home road pages by
-      ** marking those as clean when they're mapped into memory from the
-      ** snapshot on a future boot for which the images are not empty.
+      /* If the images were empty, we are logically booting.
       */
       if ( (0 == pol_u.nor_u.pgs_w) && (0 == pol_u.sou_u.pgs_w) ) {
         u3l_log("live: logical boot\r\n");
