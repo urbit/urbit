@@ -392,7 +392,3 @@ pre.CodeMirror-placeholder.CodeMirror-line-like {
   border-bottom: 1px solid darkgray;
   line-height: calc(1.66667em - 1px);
 }
-
-.nuked-post{
-  text-align: center;
-}

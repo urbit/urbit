@@ -14,8 +14,11 @@ import { useShortcut } from '~/logic/state/settings';
 import Landscape from '~/views/landscape/index';
 import GraphApp from '../../apps/graph/App';
 import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
-import {JoinRoute} from './Join/Join';
+import { JoinRoute } from './Join/Join';
 import useInviteState from '~/logic/state/invite';
+import api from '~/logic/api';
+import { postReactNativeMessage } from '~/logic/lib/reactNative';
+import { harkBinToId } from '@urbit/api';
 
 export const Container = styled(Box)`
    flex-grow: 1;
@@ -29,6 +32,23 @@ export const Content = (props) => {
   const location = useLocation();
   const mdLoaded = useMetadataState(s => s.loaded);
   const inviteLoaded = useInviteState(s => s.loaded);
+
+  useEffect(() => {
+    // Mobile notification pop-ups when app is in background or foreground (not when closed)
+    api.subscribe({ app: 'hark-store', path: '/notes',
+      event: (u: any) => {
+        if ('add-note' in u) {
+          const { bin, body } = u['add-note'];
+          const binId = harkBinToId(bin);
+          postReactNativeMessage({ type: 'hark-notification', binId, body, redirect: getNotificationRedirect(body.link) });
+        }
+      }
+    });
+
+    return history.listen((location, action) => {
+      postReactNativeMessage({ type: 'navigation-change', pathname: location.pathname });
+    });
+  }, []);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);

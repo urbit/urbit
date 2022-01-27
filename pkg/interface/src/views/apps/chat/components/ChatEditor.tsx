@@ -15,6 +15,7 @@ import { resourceFromPath } from '~/logic/lib/group';
 import airlock from '~/logic/api';
 import '../css/custom.css';
 import { useChatStore } from './ChatPane';
+import { useDark } from '~/logic/state/join';
 
 export const SIG_REGEX = /(?:^|\s)(~)(?=\s|$)/;
 export const MENTION_REGEX = /(?:^|\s)(~)(?![a-z]{6}\-[a-z]{6})(?![a-z]{6}[?=\s|$])([a-z\-]+)(?=\s|$)/;
@@ -120,7 +121,6 @@ const AutocompleteSuggestionRow = styled(Row)`
   color: rgba(33,157,255,1);
   height: 28px;
   padding: 2px;
-  background-color: white;
   border-radius: 4px;
   cursor: pointer;
   &:hover {
@@ -157,6 +157,7 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
   group,
   association
 }, ref) => {
+  const dark = useDark();
   const editorRef = useRef<CodeMirrorShim>(null);
   useImperativeHandle(ref, () => editorRef.current);
   const editor = editorRef.current;
@@ -351,8 +352,9 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
         overflowX="visible"
         px="43px"
         py={1}
-        background="white"
+        background={dark ? 'black' : 'white'}
         border="1px solid lightgray"
+        borderColor={dark ? 'black' : ''}
       >
         {renderAutocompleteSection()}
       </Box>}

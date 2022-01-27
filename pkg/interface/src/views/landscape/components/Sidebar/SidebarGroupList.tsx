@@ -291,10 +291,10 @@ function PendingSidebarGroup({ path }: PendingSidebarGroupProps) {
   const onClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    history.push(toQuery({ "join-kind": "groups", "join-path": path }))
+    history.push(toQuery({ 'join-kind': 'groups', 'join-path': path }));
   };
 
-  const joining = useGroupState((s) => s.pendingJoin[path]?.progress);
+  const joining = useGroupState(s => s.pendingJoin[path]?.progress);
   const isJoining = Boolean(joining && joining !== 'done');
 
   return (
