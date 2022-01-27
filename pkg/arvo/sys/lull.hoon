@@ -2098,7 +2098,7 @@
 ++  khan  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%avow p=(each (cask) goof)]                    ::  thread result
+    $%  [%avow p=avow]                                  ::  thread result
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
@@ -2109,6 +2109,7 @@
         $>(%vega vane-task)                             ::  report upgrade
     ==                                                  ::
   ::                                                    ::
+  +$  avow  (each (cask) goof)                          ::  result type
   +$  bear  $@(=desk [=desk =case])                     ::  local desk/case
   +$  fyrd  [=bear name=term =mark data=(cask)]         ::  run-thread request
   --  ::khan
