@@ -1,4 +1,4 @@
-import { acceptDm, cite, Content, declineDm, deSig, Post, removeDmMessage } from '@urbit/api';
+import { acceptDm, cite, Content, declineDm, deSig, Post } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
@@ -77,8 +77,10 @@ export function DmResource(props: DmResourceProps) {
   );
 
   useEffect(() => {
-    getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
-  }, [ship]);
+    if(dm.size === 0 && !pending) {
+      getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
+    }
+  }, [ship, dm]);
 
   const fetchMessages = useCallback(
     async (newer: boolean) => {
@@ -125,10 +127,6 @@ export function DmResource(props: DmResourceProps) {
     [ship, addDmMessage]
   );
 
-  const onDelete = useCallback((msg: Post) => {
-    airlock.poke(removeDmMessage(`~${window.ship}`, msg.index));
-  }, []);
-
   const onAccept = async () => {
     await airlock.poke(acceptDm(ship));
   };
@@ -136,6 +134,7 @@ export function DmResource(props: DmResourceProps) {
     history.push('/~landscape/messages');
     await airlock.poke(declineDm(ship));
   };
+
   return (
     <Col width="100%" height="100%" overflow="hidden">
       <Row
@@ -206,7 +205,6 @@ export function DmResource(props: DmResourceProps) {
           onReply={quoteReply}
           fetchMessages={fetchMessages}
           dismissUnread={dismissUnread}
-          onDelete={onDelete}
           getPermalink={() => undefined}
           isAdmin={false}
           onSubmit={onSubmit}

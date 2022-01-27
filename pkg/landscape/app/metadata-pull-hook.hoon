@@ -326,7 +326,7 @@
   :_  this
   %+  turn  ~(tap by associations)
   |=  [=md-resource:metadata =association:metadata]
-  %+  poke-our:pass:io  %metadata-store
+  %+  poke-our:pass:io:hc  %metadata-store
   :-  %metadata-update-2
   !>  ^-   update:metadata
   [%remove resource md-resource]

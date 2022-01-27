@@ -6,7 +6,6 @@ const makeIndexes = () => new Map([
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
-    ['apps', []],
     ['other', []]
   ]);
 
@@ -61,29 +60,6 @@ const commandIndex = function (currentGroup, groups, associations) {
   return commands;
 };
 
-const appIndex = function (apps) {
-  // all apps are indexed from launch data
-  // indexed into 'apps'
-  const applications = [];
-  Object.keys(apps)
-    .filter((e) => {
-      return !['weather','clock'].includes(e);
-    })
-    .sort((a, b) => {
-      return a.localeCompare(b);
-    })
-    .map((e) => {
-      const obj = result(
-        apps[e].type?.basic?.title || apps[e].type.custom?.tile || e,
-        apps[e]?.type.basic?.linkedUrl || apps[e]?.type.custom?.linkedUrl || '',
-        apps[e]?.type?.basic?.title || apps[e].type.custom?.tile || e,
-        null
-      );
-      applications.push(obj);
-    });
-  return applications;
-};
-
 const otherIndex = function(config) {
   const other = [];
   const idx = {
@@ -102,7 +78,7 @@ const otherIndex = function(config) {
   return other;
 };
 
-export default function index(contacts, associations, apps, currentGroup, groups, hide): Map<string, OmniboxItem[]> {
+export default function index(contacts, associations, currentGroup, groups, hide): Map<string, OmniboxItem[]> {
   const indexes = makeIndexes();
   indexes.set('ships', shipIndex(contacts));
   // all metadata from all apps is indexed
@@ -164,7 +140,6 @@ export default function index(contacts, associations, apps, currentGroup, groups
   indexes.set('commands', commandIndex(currentGroup, groups, associations));
   indexes.set('subscriptions', subscriptions);
   indexes.set('groups', landscape);
-  indexes.set('apps', appIndex(apps));
   indexes.set('other', otherIndex(hide));
 
   return indexes;
