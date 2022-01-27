@@ -380,8 +380,6 @@ _fine_sift_requ(u3_head* hed_u,
 {
   c3_y pre_y = _ames_sift_prelude(hed_u, &req_u->pre_u, len_w, req_y);
 
-  //u3l_log("prelude size: %u\n", pre_y);
-
   req_y += pre_y;
 
   c3_w rem_w = (64 + 4 + 2 + pre_y);
@@ -417,7 +415,6 @@ _fine_sift_requ(u3_head* hed_u,
 
   // TODO: defend maliciusly crafted lengths?
   req_u->pat_c = c3_calloc(req_u->len_s + 1);
-  u3l_log("byt: %x\n", *req_y);
 
   memcpy(req_u->pat_c, req_y, req_u->len_s);
   req_u->pat_c[req_u->len_s] = '\0';
@@ -473,7 +470,6 @@ _fine_sift_resp(u3_head* hed_u,
     | (res_y[1] << 0x8));
   res_y += 2;
 
-  u3l_log("dat siz: %u", res_u->siz_s);
 
   res_u->dat_y = c3_calloc(res_u->siz_s);
   memcpy(&res_u->dat_y, res_y, res_u->siz_s);
@@ -630,7 +626,6 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
 {
   u3_pend* pen_u = (u3_pend*)req_u;
   u3_ames* sam_u = pen_u->sam_u;
-  u3l_log("ames: send \n");
 
   if (sas_i) {
     u3l_log("ames: send fail: %s\n", uv_strerror(sas_i));
@@ -649,7 +644,6 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
 static void
 _ames_send(u3_pend* pen_u)
 {
-  u3l_log("ames: send\n");
   u3_ames* sam_u = pen_u->sam_u;
 
   // TODO: prevalidation?
@@ -1376,19 +1370,15 @@ _ames_skip(u3_body* bod_u) {
 static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
 {
 
-  u3l_log("in scry cb\n");
   u3_pend* pen_u = vod_p;
   u3_weak  pac = u3r_at(7, nun);
   if(pac == u3_none) {
     u3l_log("no result, bailing\n");
     return;
   }
-  //u3m_p("pac:", pac);
   u3_noun num = u3i_word(pen_u->fra_w - 1);
-  u3m_p("frag num", num);
 
   u3_noun fra = u3dc("snag", num, pac);
-  u3l_log("found fragment\n");
 
   pen_u->len_w = u3r_met(3, fra);
   pen_u->hun_y = c3_calloc(pen_u->len_w);
@@ -1433,9 +1423,7 @@ static void _fine_hear(u3_ames* sam_u,
   c3_assert ( c3n == _ames_sift_head(&hed_u, hun_y));
 
   
-  u3l_log("fine: request %u == %u \n", hed_u.req_o, c3y);
   if(c3n == hed_u.req_o) {
-    u3l_log("fine: request\n");
     // lookup in cache
     // (unit (unit (unit packet))
     // ~ -> miss
@@ -1454,12 +1442,11 @@ static void _fine_hear(u3_ames* sam_u,
 
     //_log_requ(&req_u);
 
-    u3l_log("checking cache: %s\n", req_u.pat_c);
     u3_noun pat = u3i_string(req_u.pat_c);
 
+    // TODO: revive
     u3_weak cac =  u3_none; // u3h_git(sam_u->fin_s.sac_p, pat);
 
-    u3l_log("checked cache\n");
 
     if(u3_none == cac) {
       // cache miss
@@ -1469,11 +1456,9 @@ static void _fine_hear(u3_ames* sam_u,
       //  eg:
       //  /packet/gx/~zod/graph-store/5/graphs/~zod/test/message/10
       //
-      u3l_log("constructing path\n");
       u3_noun pax = u3nc(u3i_string("message"),
                         u3do("stab", pat));
 
-      u3l_log("constructed path\n");
 
       u3_reqp* rep_u = c3_calloc(sizeof(*rep_u));
       u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
@@ -1486,10 +1471,8 @@ static void _fine_hear(u3_ames* sam_u,
       memcpy(&rep_u->req_u, &req_u, sizeof(u3_requ));
 
       memcpy(&pen_u->lan_u, &lan_u, sizeof(u3_lane));
-      u3l_log("frag num %u\n", req_u.fra_w);
       pen_u->fra_w = req_u.fra_w;
 
-      u3l_log("scrying...\n");
       u3_pier_peek_last(sam_u->fin_s.car_u.pir_u, u3_nul, c3__fx, u3_nul, 
                         pax, pen_u, _fine_pack_scry_cb);
       
@@ -1498,7 +1481,6 @@ static void _fine_hear(u3_ames* sam_u,
       // cache hit, unbound
       // do nothing, maybe report?
     } else {
-      u3l_log("cache hit\n");
       //  shape 
       //  
       u3_noun fra = u3dc("snag", u3i_word(req_u.fra_w), u3t(cac));
@@ -1534,31 +1516,20 @@ static void _fine_hear(u3_ames* sam_u,
       return;
     }
   } else {
-    u3l_log("fine: response\n");
     u3_resp res_u;
 
-    u3l_log("fine: parsing\n");
-    // TODO: return
-    //_fine_sift_resp(&hed_u, &res_u, len_w, hun_y);
-    //u3l_log("pat: %s\n\n\n", res_u.pat_c);
-    //u3_noun pat = u3do("stab", u3i_string(res_u.pat_c));
-    //u3m_p("pat", pat);
-    //
-    //
+    // TODO: check mug
+
     u3_noun wir = u3nc(c3__fine, u3_nul);
-    u3l_log("made wire");
     c3_w num_w = res_u.num_w;
     c3_w fra_w = res_u.fra_w;
-    u3l_log("making card");
+
     u3_noun cad = u3nt(c3__purr, 
                        u3nt(0, c3n, u3_ames_encode_lane(lan_u)),
                        u3i_bytes(len_w, hun_y));
 
-    u3l_log("making ovum");
     u3_ovum* ovo_u = u3_ovum_init(0, c3__fine, wir, cad);
-    u3l_log("made ovum");
     u3_auto_plan(&sam_u->fin_s.car_u, ovo_u);
-    u3l_log("sent ovum");
   }
 }
 
@@ -1600,11 +1571,7 @@ _fine_request(u3_ames* sam_u,
   req_y += 4;
   req_w -= 4;
 
-  _log_head(hed_u);
-
   _fine_sift_requ(hed_u, req_u, req_w, req_y);
-
-  _log_prel(&req_u->pre_u);
 
   pen_u->typ_y = 1;
   pen_u->her_d[0] = req_u->pre_u.rec_d[0];
@@ -1625,7 +1592,6 @@ _ames_hear(u3_ames* sam_u,
            c3_y*    hun_y)
 {
 
-  u3l_log("ames: hear\n");
   //  TODO: move from stack to heap to avoid reparsing
   u3_head hed_u;
   u3_body bod_u;
@@ -1660,7 +1626,6 @@ _ames_hear(u3_ames* sam_u,
   }
   else if (c3n == is_ames_o) {
     // TODO: dispatch fine request
-    u3l_log("fine: hear\n");
     _fine_hear(sam_u, *lan_u, len_w, hun_y);
     return;
   }
@@ -1701,7 +1666,6 @@ _ames_hear(u3_ames* sam_u,
 
     //  ensure the mug is valid
     //
-    u3l_log("bod: %ux, hed: %ux\n", hed_u.mug_l, bod_u.mug_l);
     if ( bod_u.mug_l != hed_u.mug_l ) {
       sam_u->sat_u.mut_d++;
       if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
@@ -1886,7 +1850,6 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
 /* fine_io_kick:(): receive effect from arvo
  */
 static c3_o _fine_io_kick(u3_auto* car_u, u3_noun wir, u3_noun nun) {
-  u3l_log("fine: received effect\n");
   u3_fine* fin_u = (u3_fine*)car_u;
   u3_ames* sam_u = fin_u->sam_u;
   u3_noun hed = u3h(nun);
@@ -2247,9 +2210,7 @@ u3_ames_io_init(u3_pier* pir_u, u3_auto** far_u)
   fur_u->io.info_f = _fine_io_info;
   fur_u->io.kick_f = _fine_io_kick;
   fur_u->io.exit_f = _fine_io_exit;
-  u3l_log("fur: %p\n", fur_u);
   *far_u = fur_u;
-  u3l_log("far: %p\n", *far_u);
 
   sam_u->fin_s.sam_u = sam_u;
 
