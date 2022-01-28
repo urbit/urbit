@@ -3338,7 +3338,7 @@
   ::
   ++  request-body
     |=  [=path num=@ud]
-    ::TODO  need to ensure valid namespace path without ship
+    ::NOTE  path is expected to be a namespace path without the ship
     ^-  byts
     ?>  (lth num (bex 32))
     =+  (spit path)
@@ -3350,12 +3350,14 @@
     ==
   ::
   ++  encode-request
-    |=  [=path num=@ud]
+    |=  [=ship =path num=@ud]
+    ::NOTE  path is expected to be a namespace path without the ship
     ^-  hoot  ^-  @
     =+  bod=(request-body path num)
     =+  syn=(can 3 64^(sign:keys dat.bod) bod ~)
     %+  con  0b100  ::NOTE  request bit
-    (encode-packet | [our ~zod] (mod life:keys 16) 0b0 ~ syn)
+    %+  encode-packet  |
+    [[our ship] (mod life:keys 16) (mod (lyfe:keys ship) 16) ~ syn]
   ::
   ++  encode-response  ::TODO  unit tests
     |=  [=path data=(unit (cask))]
@@ -3555,7 +3557,7 @@
       ?.  (~(has by fragments.partial) next)  next
       $(next +((mod next num-fragments.partial)))
     ::
-    =/  =hoot  (encode-request path.peep next-num)
+    =/  =hoot  (encode-request from path.peep next-num)
     ::TODO  ask amsden, should we shotgun? we can tweak this
     ::      for now (mvp) though, stay 1-to-1
     ::TODO  update lane in ames state
