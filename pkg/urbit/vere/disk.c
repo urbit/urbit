@@ -47,19 +47,14 @@ _disk_commit_done(u3_disk* log_u)
     log_u->sav_u.don_f(log_u->sav_u.ptr_v, eve_d + (len_w - 1), ret_o);
   }
 
-  {
-    u3_feat* fet_u = log_u->put_u.ext_u;
-
-    while ( fet_u && (fet_u->eve_d <= log_u->dun_d) ) {
-      log_u->put_u.ext_u = fet_u->nex_u;
-      c3_free(fet_u->hun_y);
-      c3_free(fet_u);
-      fet_u = log_u->put_u.ext_u;
+  while ( 1 ) {
+    u3_feat* fet_u = c3_queue_peek_front(log_u->put_u);
+    if ( !fet_u || fet_u->eve_d > log_u->dun_d ) {
+      break;
     }
-  }
-
-  if ( !log_u->put_u.ext_u ) {
-    log_u->put_u.ent_u = 0;
+    c3_assert((void*)fet_u == c3_queue_pop_front(log_u->put_u));
+    c3_free(fet_u->hun_y);
+    c3_free(fet_u);
   }
 }
 
@@ -146,7 +141,6 @@ u3_disk_etch(u3_disk* log_u,
 static c3_o
 _disk_batch(u3_disk* log_u)
 {
-  u3_feat* fet_u = log_u->put_u.ext_u;
   c3_w     len_w = log_u->sen_d - log_u->dun_d;
 
   if (  !len_w
@@ -157,6 +151,7 @@ _disk_batch(u3_disk* log_u)
   else {
     len_w = c3_min(len_w, 100);
 
+    u3_feat*  fet_u = c3_queue_peek_front(log_u->put_u);
     c3_assert( fet_u );
     c3_assert( (1ULL + log_u->dun_d) == fet_u->eve_d );
 
@@ -171,7 +166,7 @@ _disk_batch(u3_disk* log_u)
       log_u->sav_u.byt_y[i_w] = fet_u->hun_y;
       log_u->sav_u.siz_i[i_w] = fet_u->len_i;
 
-      fet_u = fet_u->nex_u;
+      fet_u = c3_queue_peek(log_u->put_u, 1 + i_w);
     }
 
     log_u->hit_w[len_w]++;
@@ -210,16 +205,8 @@ _disk_plan(u3_disk* log_u,
   u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
   fet_u->eve_d = ++log_u->sen_d;
   fet_u->len_i = (size_t)u3_disk_etch(log_u, job, mug_l, &fet_u->hun_y);
-  fet_u->nex_u = 0;
 
-  if ( !log_u->put_u.ent_u ) {
-    c3_assert( !log_u->put_u.ext_u );
-    log_u->put_u.ent_u = log_u->put_u.ext_u = fet_u;
-  }
-  else {
-    log_u->put_u.ent_u->nex_u = fet_u;
-    log_u->put_u.ent_u = fet_u;
-  }
+  c3_queue_push_back(log_u->put_u, fet_u, sizeof(*fet_u));
 }
 
 void
@@ -561,19 +548,21 @@ u3_disk_exit(u3_disk* log_u)
 
   // (3)
   {
-    u3_feat* fet_u = log_u->put_u.ext_u;
-
-    while ( fet_u && (fet_u->eve_d <= log_u->dun_d) ) {
-      log_u->put_u.ext_u = fet_u->nex_u;
+    while ( 1 ) {
+      u3_feat* fet_u = c3_queue_peek_front(log_u->put_u);
+      if ( !fet_u || fet_u->eve_d > log_u->dun_d ) {
+        break;
+      }
+      c3_assert((void*)fet_u == c3_queue_pop_front(log_u->put_u));
       c3_free(fet_u->hun_y);
       c3_free(fet_u);
-      fet_u = log_u->put_u.ext_u;
     }
   }
 
   u3_dire_free(log_u->dir_u);
   u3_dire_free(log_u->urb_u);
   u3_dire_free(log_u->com_u);
+  c3_queue_free(log_u->put_u);
 
   c3_free(log_u);
 
@@ -602,15 +591,18 @@ u3_disk_info(u3_disk* log_u)
     }
   }
 
-  if ( log_u->put_u.ext_u ) {
-    if ( log_u->put_u.ext_u != log_u->put_u.ent_u ) {
+  switch ( c3_queue_length(log_u->put_u) ) {
+    case 0:
+      break;
+    case 1:
+      u3l_log("    save: %" PRIu64 "\n",
+              ((u3_feat*)c3_queue_peek_front(log_u->put_u))->eve_d);
+      break;
+    default:
       u3l_log("    save: %" PRIu64 "-%" PRIu64 "\n",
-              log_u->put_u.ext_u->eve_d,
-              log_u->put_u.ent_u->eve_d);
-    }
-    else {
-      u3l_log("    save: %" PRIu64 "\n", log_u->put_u.ext_u->eve_d);
-    }
+              ((u3_feat*)c3_queue_peek_front(log_u->put_u))->eve_d,
+              ((u3_feat*)c3_queue_peek_back(log_u->put_u))->eve_d);
+      break;
   }
 }
 
@@ -630,7 +622,6 @@ u3_disk_init(c3_c* pax_c)
   log_u->liv_o = c3n;
   log_u->sav_u.ted_o = c3n;
   log_u->sav_u.ted_u.data = log_u;
-  log_u->put_u.ent_u = log_u->put_u.ext_u = 0;
 
   // (1)
   if ( 0 == (log_u->dir_u = u3_foil_folder(pax_c)) ) {
@@ -706,5 +697,7 @@ u3_disk_init(c3_c* pax_c)
 #endif
 
   log_u->liv_o = c3y;
+  log_u->put_u = c3_queue_init();
+
   return log_u;
 }

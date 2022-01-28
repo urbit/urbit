@@ -4,6 +4,7 @@
 #define U3_VERE_DISK_H
 
 #include "c/portable.h"
+#include "c/queue.h"
 #include "c/types.h"
 #include "noun/aliases.h"
 #include "vere/foil.h"
@@ -21,7 +22,6 @@ typedef struct _u3_feat {
   c3_d             eve_d;
   size_t           len_i;
   c3_y*            hun_y;
-  struct _u3_feat* nex_u;
 } u3_feat;
 
 //! Disk sync callbak.
@@ -37,10 +37,7 @@ typedef struct _u3_disk {
   c3_d             sen_d;       //!< commit requested
   c3_d             dun_d;       //!< committed
   c3_w             hit_w[100];  //!< batch histogram
-  struct {                      //!< new write queue
-    u3_feat*       ent_u;       //!< queue entry (highest)
-    u3_feat*       ext_u;       //!< queue exit (lowest)
-  } put_u;
+  c3_queue*        put_u;       //!< new write queue
   struct {                      //!< write control
     union {                     //!< thread/request
       uv_work_t    ted_u;
