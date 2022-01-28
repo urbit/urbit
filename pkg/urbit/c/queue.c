@@ -6,6 +6,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+//! Single element of a doubly-linked list.
+typedef struct _c3_node {
+  void*            dat_v;  //!< data
+  struct _c3_node* nex_u;  //!< next node
+  struct _c3_node* pre_u;  //!< previous node
+} c3_node;
+
+//! Queue abstraction backed by a doubly-linked list.
+struct _c3_queue {
+  c3_node* fir_u;  //!< first node in queue
+  c3_node* las_u;  //!< last node in queue
+  size_t   len_i;  //!< length of queue in nodes
+};
+
 static c3_node*
 _create_node(void* dat_v, size_t siz_i)
 {
@@ -13,7 +27,6 @@ _create_node(void* dat_v, size_t siz_i)
   assert(nod_u);
   nod_u->dat_v = malloc(siz_i);
   memcpy(nod_u->dat_v, dat_v, siz_i);
-  nod_u->siz_i = siz_i;
   nod_u->nex_u = NULL;
   nod_u->pre_u = NULL;
   return nod_u;
@@ -36,7 +49,7 @@ c3_queue_length(const c3_queue* que_u)
   return (NULL == que_u) ? 0 : que_u->len_i;
 }
 
-c3_node*
+void*
 c3_queue_push_back(c3_queue* que_u, void* dat_v, size_t siz_i)
 {
   if ( NULL == que_u ) {
@@ -58,10 +71,10 @@ c3_queue_push_back(c3_queue* que_u, void* dat_v, size_t siz_i)
   }
   que_u->len_i++;
 
-  return nod_u;
+  return nod_u->dat_v;
 }
 
-c3_node*
+void*
 c3_queue_push_front(c3_queue* que_u, void* dat_v, size_t siz_i)
 {
   if ( NULL == que_u ) {
@@ -83,22 +96,22 @@ c3_queue_push_front(c3_queue* que_u, void* dat_v, size_t siz_i)
   }
   que_u->len_i++;
 
-  return nod_u;
+  return nod_u->dat_v;
 }
 
-c3_node*
+void*
 c3_queue_peek_back(const c3_queue* que_u)
 {
-  return (NULL == que_u) ? NULL : que_u->las_u;
+  return (0 == c3_queue_length(que_u)) ? NULL : que_u->las_u->dat_v;
 }
 
-c3_node*
+void*
 c3_queue_peek_front(const c3_queue* que_u)
 {
-  return (NULL == que_u) ? NULL : que_u->fir_u;
+  return (0 == c3_queue_length(que_u)) ? NULL : que_u->fir_u->dat_v;
 }
 
-c3_node*
+void*
 c3_queue_pop_back(c3_queue* que_u)
 {
   if ( NULL == que_u ) {
@@ -121,10 +134,13 @@ c3_queue_pop_back(c3_queue* que_u)
   nod_u->pre_u = NULL;
   que_u->len_i--;
 
-  return nod_u;
+  void* dat_v = nod_u->dat_v;
+  free(nod_u);
+
+  return dat_v;
 }
 
-c3_node*
+void*
 c3_queue_pop_front(c3_queue* que_u)
 {
   if ( NULL == que_u ) {
@@ -147,7 +163,10 @@ c3_queue_pop_front(c3_queue* que_u)
   nod_u->nex_u = NULL;
   que_u->len_i--;
 
-  return nod_u;
+  void* dat_v = nod_u->dat_v;
+  free(nod_u);
+
+  return dat_v;
 }
 
 void
