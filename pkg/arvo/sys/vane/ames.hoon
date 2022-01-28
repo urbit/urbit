@@ -932,24 +932,15 @@
   =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
+    =<  abet
     ::  handle error notifications
     ::
     ?^  dud
-      =<  abet
       ?+  -.task
           (on-crud:event-core -.task tang.u.dud)
         %hear  (on-hear:event-core lane.task blob.task dud)
       ==
     ::
-    ?:  ?=(?(%keen %yawn %bide) -.task)
-      =/  fine-core  (fine now rof duct ames-state)
-      ?-  -.task
-        %keen  (on-keen:fine-core +.task)
-        %yawn  (on-yawn:fine-core +.task)
-        %bide  (on-bide:fine-core +.task)
-      ==
-    ::
-    =<  abet
     ?-  -.task
       %born  on-born:event-core
       %hear  (on-hear:event-core [lane blob ~]:task)
@@ -962,6 +953,10 @@
       %trim  on-trim:event-core
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
+    ::
+      %keen  (on-keen:fine:event-core +.task)
+      %yawn  (on-yawn:fine:event-core +.task)
+      %bide  (on-bide:fine:event-core +.task)
     ==
   ::
   [moves ames-gate]
@@ -1154,14 +1149,30 @@
     ``noun+!>(!>(res))
   ::
       [%fine %message @ *]
+    ::TODO  separate endpoint for the full message (instead of packet list)
     ::  t.t.tyl is expected to be a scry path of the shape /vc/desk/rev/etc,
     ::  so we need to give it the right shape
     ::
-    =/  pax=path
+    =/  =path
       [i.t.t.tyl (scot %p our) t.t.t.tyl]
-    =/  fin
-      (fine now rof *duct ames-state)
-    ``noun+!>((encode-response:fin pax (get-scry-result:fin lyc pax)))
+    ?~  nom=(de-omen path)  ~
+    ::  we only support scrying into clay,
+    ::  and only if the data is fully public.
+    ::
+    ?.  =(%c (end 3 (snag 0 path)))  ~
+    =+  pem=(rof lyc (need (de-omen %cp (slag 1 path))))
+    ?>  ?=(^ pem)
+    ?>  ?=(^ u.pem)
+    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+    ?>  =([%black ~ ~] rul.r.per)
+    =+  res=(rof lyc u.nom)
+    ::TODO  suggests we need to factor differently
+    =+  ven=(per-event [now 0v0 rof] *duct ames-state)
+    ?-  res
+      ~        ~
+      [~ ~]    ``noun+!>((encode-response:fine:ven path ~))
+      [~ ~ *]  ``noun+!>((encode-response:fine:ven path `[p q.q]:u.u.res))
+    ==
   ==
 --
 ::  |per-event: inner event-handling core
@@ -1178,6 +1189,7 @@
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
   ++  emit  |=(=move event-core(moves [move moves]))
+  ++  emil  |=(mos=(list move) event-core(moves (weld (flop mos) moves)))
   ++  channel-state  [life crypto-core bug]:ames-state
   ++  trace
     |=  [verb=? =ship print=(trap tape)]
@@ -1325,18 +1337,14 @@
   ::
   ++  on-hear
     |=  [l=lane b=blob d=(unit goof)]
+    ^+  event-core
     =/  [ames=? =packet]
       (decode-packet b)
     ?:  ames
       (on-hear-packet l packet d)
-    ::
-    =^  moz  ames-state
-      %-  on-hear-response:(fine now rof duct ames-state)
-      ~|  [%fine %request-events-forbidden]
-      ?>  response==(& (cut 0 [2 1] b))
-      [l packet d]
-    =.  moves  (weld (flop moz) moves)
-    ..on-hear
+    ?.  response==(& (cut 0 [2 1] b))
+      ~|([%fine %request-events-forbidden] !!)
+    (on-hear-response:fine l packet d)
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
@@ -1748,14 +1756,10 @@
           (send-blob:core | ship blob)
         ::  apply remote scry requests
         ::
-        =^  moz=(list move)  ames-state
+        =.  event-core
           %+  roll  ~(tap in keens.todos)
-          |=  [=path moz=(list move) =_ames-state]
-          =^  mos  ames-state
-            %.  [ship path 1]
-            send-request:(fine now rof original-duct ames-state)
-          [(weld moz mos) ames-state]
-        =.  moves  (weld (flop moz) moves)
+          |=  [=path core=_event-core]
+          (send-request:fine:core ship path 1)
         ::
         event-core(duct original-duct)
       --
@@ -2410,6 +2414,309 @@
         ::
         (run-message-pump nack-trace-bone %memo message-blob)
       --
+    --
+  ::
+  ++  fine
+    =*  state  fine-state.ames-state
+    =<  |%
+        ++  on-keen
+          |=  =path
+          ^+  event-core
+          =/  omen
+            ~|  [%fine %invalid-namespace-path path]
+            (need (de-omen path))
+          =*  ship  p.bem.omen
+          =.  want.state  (~(put ju want.state) path duct)
+          ?:  (~(has by part.state) path)
+            ::  request is already ongoing
+            ::
+            event-core
+          =.  part.state  (~(put by part.state) path *partial-fine)
+          ::  if we don't know the target yet, store the request for later
+          ::
+          =/  peer  (~(get by peers.ames-state) ship)
+          ?:  ?=([~ %known *] peer)
+            (send-request p.bem.omen path 1)
+          %+  enqueue-alien-todo  ship
+          |=  todos=alien-agenda
+          todos(keens (~(put in keens.todos) path))
+        ::
+        ++  on-yawn
+          |=  =path
+          ^+  event-core
+          =.  want.state  (~(del ju want.state) path duct)
+          event-core
+        ::
+        ++  on-bide
+          |=  =path
+          ^+  event-core
+          =.  hear.state  (~(put ju hear.state) path duct)
+          event-core
+        ::
+        ++  on-hear-response
+          |=  [=lane =packet dud=(unit goof)]
+          ^+  event-core
+          ?^  dud
+            ::TODO  handle
+            ~&  [%fine %done-goofed u.dud]
+            event-core
+          =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
+          =/  =rawr          (decode-response-packet purr)
+          ::TODO  validate we are the right life? at laest for request case
+          ::TODO  validate response signature
+          (handle-response [sndr.packet lane] peep rawr)
+        --
+    |%
+    +$  twit  ::  signed request
+      $:  signature=@
+          peep
+      ==
+    ::
+    +$  peep  ::  request data
+      $:  =path
+          num=@ud
+      ==
+    ::
+    +$  rawr  ::  response packet  ::TODO  meow
+      $:  sig=@
+          siz=@ud
+          byts
+      ==
+    ::
+    +$  roar  ::  response message
+      $:  sig=@
+          dat=(cask)
+      ==
+    ::
+    ++  spit
+      |=  =path
+      ^-  [pat=@t wid=@ud]
+      =+  pat=(spat path)
+      =+  wid=(met 3 pat)
+      ?>  (lte wid 384)  ::TODO  check when we handle %keen, in addition to here
+      [pat wid]
+    ::
+    ++  request-body
+      |=  [=path num=@ud]
+      ::NOTE  path is expected to be a namespace path without the ship
+      ^-  byts
+      ?>  (lth num (bex 32))
+      =+  (spit path)
+      :-  :(add 32 16 wid)
+      %+  can  3
+      :~  4^num       ::  fragment number
+          2^wid       ::  path size
+          wid^`@`pat  ::  namespace path
+      ==
+    ::
+    ++  encode-request
+      |=  [=ship =path num=@ud]
+      ::NOTE  path is expected to be a namespace path without the ship
+      ^-  hoot  ^-  @
+      =+  bod=(request-body path num)
+      =+  syn=(can 3 64^(sign:keys dat.bod) bod ~)
+      %+  con  0b100  ::NOTE  request bit
+      %+  encode-packet  |
+      [[our ship] (mod life:keys 16) (mod (lyfe:keys ship) 16) ~ syn]
+    ::
+    ++  encode-response  ::TODO  unit tests
+      |=  [=path data=(unit (cask))]
+      ^-  song
+      ::  prepend request descriptions to each response packet
+      ::
+      =;  pacs=(list @ux)
+        %-  head
+        %^  spin  pacs  1
+        |=  [pac=@ux num=@ud]
+        ^-  [purr _num]
+        :_  +(num)
+        ^-  @ux
+        ::NOTE  we stub out the receiver & origin details,
+        ::      runtime should replace them as appropriate.
+        ::TODO  should have scry endpoint that produces gate that does
+        ::      that packet transformation, just to set a spec
+        (encode-packet | [our ~zod] (mod life:keys 16) 0b0 ~ pac)
+      ::  prepend a signature and split the data into 1024-byte fragments
+      ::
+      =/  frag=(list @)
+        ::TODO  should also sign the request path
+        =/  sig=@  (full:keys path (fall data ~))
+        ?~  data  [sig]~
+        %+  rip  13  ::NOTE  1024 bytes
+        (cat 3 sig (jam u.data))  ::TODO  should include life
+      ::  sign & packetize the fragments
+      ::
+      %-  head
+      %^  spin  frag  1
+      |=  [dat=@ num=@ud]
+      :_  +(num)
+      ^-  @ux
+      =/  req=byts  (request-body path num)
+      =/  bod=byts
+        =/  wid=@ud  (met 3 dat)
+        :-  :(add 4 2 wid)
+        %+  can  3
+        :~  4^(lent frag)  ::  number of fragments
+            2^wid          ::  response data fragment size in bytes
+            wid^dat        ::  response data fragment
+        ==
+      =/  sig=byts
+        64^(sign:keys (can 3 req bod ~))
+      (can 3 req sig bod ~)
+    ::
+    ++  keys
+      |%
+      ++  full
+        |=  [=path mess=*]
+        (sign (shax (jam [our life path mess])))
+      ::
+      ++  life  life.ames-state
+      ++  sign  sign:as:crypto-core.ames-state
+      ::
+      ::TODO  for the unknown case, should use the alien-agenda
+      ++  lyfe
+        |=  who=ship
+        ^-  ^life
+        ~|  [%fine %unknown-peer who]
+        =/  ship-state  (~(got by peers.ames-state) who)
+        ?>  ?=([%known *] ship-state)
+        life.ship-state
+      ::
+      ::TODO  for the unknown case, should use the alien-agenda
+      ++  pass
+        |=  [who=ship lyf=^life]
+        ~|  [%fine %unknown-peer who lyf]
+        =/  ship-state  (~(got by peers.ames-state) who)
+        ?>  ?=([%known *] ship-state)
+        ~|  [%fine %life-mismatch who lyf]
+        ?>  =(lyf life.ship-state)
+        public-key.ship-state
+      --
+    ::
+    ++  get-lane
+      |=  =ship
+      ^-  lane:ames
+      =;  lanes
+        ::TODO  should we send to all lanes?
+        ?^  lanes  i.lanes
+        ~&(%fine-lane-stub &+~zod)  ::TODO
+      !<  (list lane:ames)
+      =<  q  %-  need  %-  need
+      =/  =path  /peers/(scot %p ship)/forward-lane
+      ::TODO  get from state
+      (rof `[our ~ ~] [%ames %x] [our %$ da+now] path)
+    ::
+    ++  decode-request
+      |=  =hoot
+      ^-  twit
+      :-  sig=(cut 3 [0 64] hoot)
+      -:(decode-request-info (rsh 3^64 hoot))
+    ::
+    ++  decode-request-info
+      |=  =hoot
+      ^-  [=peep =purr]
+      =+  num=(cut 3 [0 4] hoot)
+      =+  len=(cut 3 [4 2] hoot)
+      =+  pat=(cut 3 [6 len] hoot)
+      :-  [(stab pat) num]
+      ::  if there is data remaining, it's the response
+      (rsh [3 (add 6 len)] hoot)
+    ::
+    ++  decode-response-packet
+      |=  =purr
+      =;  =rawr
+        ~?  !=(wid.rawr (met 3 dat.rawr))  [%fine %unexpected-dat-size]
+        rawr
+      :*  sig=(cut 3 [0 64] purr)
+          siz=(cut 3 [64 4] purr)
+          wid=(cut 3 [68 2] purr)
+          dat=(rsh 3^70 purr)
+      ==
+    ::
+    ++  verify-response-packet
+      |=  rawr
+      !!
+    ::
+    ++  decode-response-msg
+      |=  partial-fine  ::TODO  maybe take @ instead
+      ^-  roar
+      =/  mess=@
+        %+  can  3  ::TODO  just (rep 13 -)
+        %+  turn  (gulf 1 num-fragments)
+        ~(got by fragments)
+      :-  sig=(cut 3 [0 64] mess)
+      ~|  [%fine %response-not-cask]
+      ;;((cask) (cue (rsh 3^64 mess)))
+    ::
+    ++  send-request
+      |=  [=ship =path num=@ud]
+      ^+  event-core
+      ::  make sure we exclude the ship from the path proper,
+      ::  since it already gets included in the request header
+      ::
+      =.  path        (oust [1 1] path)
+      =/  =lane:ames  (get-lane ship)
+      =/  =hoot       (encode-request ship path 1)
+      %-  emit
+      [unix-duct.ames-state %give %send lane `@ux`hoot]
+    ::
+    ++  process-response
+      |=  [=path data=(unit (cask))]
+      ^+  event-core
+      =.  event-core
+        %-  emil
+        %+  turn  ~(tap in (~(get ju want.state) path))
+        (late [%give %tune path data])
+      =.  want.state  (~(del by want.state) path)
+      =.  part.state  (~(del by part.state) path)
+      event-core
+    ::
+    ++  handle-response
+      |=  [[from=ship =lane:ames] =peep =rawr]
+      ^+  event-core
+      ?:  =(0 siz.rawr)
+        ?>  =(~ dat.rawr)
+        (process-response path.peep ~)
+      ?.  (~(has by part.state) path.peep)
+        ::  we did not initiate this request, or it's been cancelled
+        ::
+        !!
+      =/  partial=partial-fine
+        (~(got by part.state) path.peep)
+      =.  partial
+        ?:  (~(has by fragments.partial) num.peep)
+          partial
+        =,  partial
+        :+  ~|  [%fine %response-size-changed have=num-fragments new=siz.rawr]
+            ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
+            num-fragments
+          +(num-received)
+        (~(put by fragments) num.peep [wid dat]:rawr)
+      ::
+      ?:  =(num-fragments num-received):partial
+        ::  we have all the parts now, construct the full response
+        ::
+        =/  =roar  (decode-response-msg partial)
+        ::TODO  check signature
+        (process-response path.peep `dat.roar)
+      ::  otherwise, store the part, and send out the next request
+      ::
+      =.  part.state  (~(put by part.state) path.peep partial)
+      =/  next-num=@ud
+        =/  next=@ud  +(num.peep)
+        ::  we should receive responses in order, but in case we don't...
+        ::
+        |-
+        ?.  (~(has by fragments.partial) next)  next
+        $(next +((mod next num-fragments.partial)))
+      ::
+      =/  =hoot  (encode-request from path.peep next-num)
+      ::TODO  ask amsden, should we shotgun? we can tweak this
+      ::      for now (mvp) though, stay 1-to-1
+      ::TODO  update lane in ames state
+      ::TODO  is reusing the lane fine?
+      %-  emit
+      [unix-duct.ames-state %give %send lane `@ux`hoot]
     --
   --
 ::  +make-message-pump: constructor for |message-pump
@@ -3250,340 +3557,5 @@
     =.  nax.state  (~(del in nax.state) message-num)
     ::
     message-sink
-  --
-::
-++  fine
-  |=  [now=@da rof=roof =duct =ames-state]
-  =*  state  fine-state.ames-state
-  =<  |%
-      ++  on-keen
-        |=  =path
-        ^-  (quip move _ames-state)
-        =/  omen
-          ~|  [%fine %invalid-namespace-path path]
-          (need (de-omen path))
-        =*  ship  p.bem.omen
-        =.  want.state  (~(put ju want.state) path duct)
-        ?:  (~(has by part.state) path)
-          ::  request is already ongoing
-          ::
-          [~ ames-state]
-        =.  part.state  (~(put by part.state) path *partial-fine)
-        ::  if we don't know the target yet, store the request for later
-        ::
-        =/  peer  (~(get by peers.ames-state) ship)
-        ?.  ?=([~ %known *] peer)
-          ::TODO  full enqueue-alien-todo
-          =.  peers.ames-state
-            %+  ~(put by peers.ames-state)  ship
-            ?~  peer  [%alien %*(. *alien-agenda keens [path ~ ~])]
-            ?>  ?=(%alien -.u.peer)
-            u.peer(keens (~(put in keens.u.peer) path))
-          [~ ames-state]
-        (send-request p.bem.omen path 1)
-      ::
-      ++  on-yawn
-        |=  =path
-        ^-  (quip move _ames-state)
-        =.  want.state  (~(del ju want.state) path duct)
-        [~ ames-state]
-      ::
-      ++  on-bide
-        |=  =path
-        ^-  (quip move _ames-state)
-        =.  hear.state  (~(put ju hear.state) path duct)
-        [~ ames-state]
-      ::
-      ++  on-hear-response
-        |=  [=lane =packet dud=(unit goof)]
-        ^-  (quip move _ames-state)
-        ?^  dud
-          ::TODO  handle
-          ~&  [%fine %done-goofed u.dud]
-          [~ ames-state]
-        =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
-        =/  =rawr          (decode-response-packet purr)
-        ::TODO  validate response signature
-        (handle-response [sndr.packet lane] peep rawr)
-      --
-  |%
-  +$  twit  ::  signed request
-    $:  signature=@
-        peep
-    ==
-  ::
-  +$  peep  ::  request data
-    $:  =path
-        num=@ud
-    ==
-  ::
-  +$  rawr  ::  response packet  ::TODO  meow
-    $:  sig=@
-        siz=@ud
-        byts
-    ==
-  ::
-  +$  roar  ::  response message
-    $:  sig=@
-        dat=(cask)
-    ==
-  ::
-  ++  spit
-    |=  =path
-    ^-  [pat=@t wid=@ud]
-    =+  pat=(spat path)
-    =+  wid=(met 3 pat)
-    ?>  (lte wid 384)  ::TODO  check when we handle %keen, in addition to here
-    [pat wid]
-  ::
-  ++  request-body
-    |=  [=path num=@ud]
-    ::NOTE  path is expected to be a namespace path without the ship
-    ^-  byts
-    ?>  (lth num (bex 32))
-    =+  (spit path)
-    :-  :(add 32 16 wid)
-    %+  can  3
-    :~  4^num       ::  fragment number
-        2^wid       ::  path size
-        wid^`@`pat  ::  namespace path
-    ==
-  ::
-  ++  encode-request
-    |=  [=ship =path num=@ud]
-    ::NOTE  path is expected to be a namespace path without the ship
-    ^-  hoot  ^-  @
-    =+  bod=(request-body path num)
-    =+  syn=(can 3 64^(sign:keys dat.bod) bod ~)
-    %+  con  0b100  ::NOTE  request bit
-    %+  encode-packet  |
-    [[our ship] (mod life:keys 16) (mod (lyfe:keys ship) 16) ~ syn]
-  ::
-  ++  encode-response  ::TODO  unit tests
-    |=  [=path data=(unit (cask))]
-    ^-  song
-    ::  prepend request descriptions to each response packet
-    ::
-    =;  pacs=(list @ux)
-      %-  head
-      %^  spin  pacs  1
-      |=  [pac=@ux num=@ud]
-      ^-  [purr _num]
-      :_  +(num)
-      ^-  @ux
-      ::NOTE  we stub out the receiver & origin details,
-      ::      runtime should replace them as appropriate.
-      ::TODO  should have scry endpoint that produces gate that does
-      ::      that packet transformation
-      (encode-packet | [our ~zod] (mod life:keys 16) 0b0 ~ pac)
-    ::  prepend a signature and split the data into 1024-byte fragments
-    ::
-    =/  frag=(list @)
-      ::TODO  should also sign the request path
-      =/  sig=@  (full:keys path (fall data ~))
-      ?~  data  [sig]~
-      %+  rip  13  ::NOTE  1024 bytes
-      (cat 3 sig (jam u.data))  ::TODO  should include life
-    ::  sign & packetize the fragments
-    ::
-    %-  head
-    %^  spin  frag  1
-    |=  [dat=@ num=@ud]
-    :_  +(num)
-    ^-  @ux
-    =/  req=byts  (request-body path num)
-    =/  bod=byts
-      =/  wid=@ud  (met 3 dat)
-      :-  :(add 4 2 wid)
-      %+  can  3
-      :~  4^(lent frag)  ::  number of fragments
-          2^wid          ::  response data fragment size in bytes
-          wid^dat        ::  response data fragment
-      ==
-    =/  sig=byts
-      64^(sign:keys (can 3 req bod ~))
-    (can 3 req sig bod ~)
-  ::
-  ++  keys
-    |%
-    ++  full
-      |=  [=path mess=*]
-      (sign (shax (jam [our life path mess])))
-    ::
-    ++  life  life.ames-state
-    ++  sign  sign:as:crypto-core.ames-state
-    ::
-    ::TODO  for the unknown case, should use the alien-agenda
-    ++  lyfe
-      |=  who=ship
-      ^-  ^life
-      ~|  [%fine %unknown-peer who]
-      =/  ship-state  (~(got by peers.ames-state) who)
-      ?>  ?=([%known *] ship-state)
-      life.ship-state
-    ::
-    ::TODO  for the unknown case, should use the alien-agenda
-    ++  pass
-      |=  [who=ship lyf=^life]
-      ~|  [%fine %unknown-peer who lyf]
-      =/  ship-state  (~(got by peers.ames-state) who)
-      ?>  ?=([%known *] ship-state)
-      ~|  [%fine %life-mismatch who lyf]
-      ?>  =(lyf life.ship-state)
-      public-key.ship-state
-    --
-  ::
-  ++  get-lane
-    |=  =ship
-    ^-  lane:ames
-    =;  lanes
-      ::TODO  should we send to all lanes?
-      ?^  lanes  i.lanes
-      ~&(%fine-lane-stub &+~zod)  ::TODO
-    !<  (list lane:ames)
-    =<  q  %-  need  %-  need
-    =/  =path  /peers/(scot %p ship)/forward-lane
-    ::TODO  get from state
-    (rof `[our ~ ~] [%ames %x] [our %$ da+now] path)
-  ::
-  ++  decode-request
-    |=  =hoot
-    ^-  twit
-    :-  sig=(cut 3 [0 64] hoot)
-    -:(decode-request-info (rsh 3^64 hoot))
-  ::
-  ++  decode-request-info
-    |=  =hoot
-    ^-  [=peep =purr]
-    =+  num=(cut 3 [0 4] hoot)
-    =+  len=(cut 3 [4 2] hoot)
-    =+  pat=(cut 3 [6 len] hoot)
-    :-  [(stab pat) num]
-    ::  if there is data remaining, it's the response
-    (rsh [3 (add 6 len)] hoot)
-  ::
-  ++  decode-response-packet
-    |=  =purr
-    =;  =rawr
-      ~?  !=(wid.rawr (met 3 dat.rawr))  [%fine %unexpected-dat-size]
-      rawr
-    :*  sig=(cut 3 [0 64] purr)
-        siz=(cut 3 [64 4] purr)
-        wid=(cut 3 [68 2] purr)
-        dat=(rsh 3^70 purr)
-    ==
-  ::
-  ++  verify-response-packet
-    |=  rawr
-    !!
-  ::
-  ++  decode-response-msg
-    |=  partial-fine  ::TODO  maybe take @ instead
-    ^-  roar
-    =/  mess=@
-      %+  can  3  ::TODO  just (rep 13 -)
-      %+  turn  (gulf 1 num-fragments)
-      ~(got by fragments)
-    :-  sig=(cut 3 [0 64] mess)
-    ~|  [%fine %response-not-cask]
-    ;;((cask) (cue (rsh 3^64 mess)))
-  ::
-  ++  send-request
-    |=  [=ship =path num=@ud]
-    ^-  (quip move _ames-state)
-    :_  ames-state
-    ::  make sure we exclude the ship from the path proper,
-    ::  since it already gets included in the request header
-    ::
-    =.  path        (oust [1 1] path)
-    =/  =lane:ames  (get-lane ship)
-    =/  =hoot       (encode-request ship path 1)
-    [unix-duct.ames-state %give %send lane `@ux`hoot]~
-  ::
-  ++  process-response
-    |=  [=path data=(unit (cask))]
-    ^-  (quip move _ames-state)
-    :-  %+  turn  ~(tap in (~(get ju want.state) path))
-        (late [%give %tune path data])
-    =.  want.state  (~(del by want.state) path)
-    =.  part.state  (~(del by part.state) path)
-    ames-state
-  ::
-  ++  handle-request
-    |=  =twit
-    ^-  (list move)
-    =/  =song
-      %+  encode-response  path.twit
-      (get-scry-result *gang path.twit)
-    ::TODO  different task, pick the right packet
-    [duct %give %howl path.twit song]~
-  ::
-  ++  handle-response
-    |=  [[from=ship =lane:ames] =peep =rawr]
-    ^-  (quip move _ames-state)
-    ?:  =(0 siz.rawr)
-      ?>  =(~ dat.rawr)
-      (process-response path.peep ~)
-    ?.  (~(has by part.state) path.peep)
-      ::  we did not initiate this request, or it's been cancelled
-      ::
-      !!
-    =/  partial=partial-fine
-      (~(got by part.state) path.peep)
-    =.  partial
-      ?:  (~(has by fragments.partial) num.peep)
-        partial
-      =,  partial
-      :+  ~|  [%fine %response-size-changed have=num-fragments new=siz.rawr]
-          ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
-          num-fragments
-        +(num-received)
-      (~(put by fragments) num.peep [wid dat]:rawr)
-    ::
-    ?:  =(num-fragments num-received):partial
-      ::  we have all the parts now, construct the full response
-      ::
-      =/  =roar  (decode-response-msg partial)
-      ::TODO  check signature
-      (process-response path.peep `dat.roar)
-    ::  otherwise, store the part, and send out the next request
-    ::
-    =.  part.state  (~(put by part.state) path.peep partial)
-    =/  next-num=@ud
-      =/  next=@ud  +(num.peep)
-      ::  we should receive responses in order, but in case we don't...
-      ::
-      |-
-      ?.  (~(has by fragments.partial) next)  next
-      $(next +((mod next num-fragments.partial)))
-    ::
-    =/  =hoot  (encode-request from path.peep next-num)
-    ::TODO  ask amsden, should we shotgun? we can tweak this
-    ::      for now (mvp) though, stay 1-to-1
-    ::TODO  update lane in ames state
-    ::TODO  is reusing the lane fine?
-    :_  ames-state
-    [unix-duct.ames-state %give %send lane `@ux`hoot]~
-  ::
-  ++  get-scry-result
-    |=  [=gang =path]
-    ^-  (unit (cask))
-    ?~  nom=(de-omen path)  ~
-    ?>  =(our p.bem.u.nom)
-    ::  we only support scrying into clay,
-    ::  and only if the data is fully public.
-    ::
-    ?.  =(%c (end 3 (snag 0 path)))  ~
-    =+  pem=(rof gang (need (de-omen %cp (slag 1 path))))
-    ?>  ?=(^ pem)
-    ?>  ?=(^ u.pem)
-    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-    ?>  =([%black ~ ~] rul.r.per)
-    =+  res=(rof gang u.nom)
-    ?-  res
-      ~        !!  ::TODO  lets just not do the task case
-      [~ ~]    ~
-      [~ ~ *]  `[p q.q]:u.u.res
-    ==
   --
 --
