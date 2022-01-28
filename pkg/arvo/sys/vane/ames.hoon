@@ -582,11 +582,20 @@
       =fine-state
   ==
 +$  ames-state-5
-  $:  peers=(map ship ship-state)
+  $:  peers=(map ship ship-state-5)
       =unix=duct
       =life
       crypto-core=acru:ames
       =bug
+  ==
++$  ship-state-5
+  $%  [%alien alien-agenda-5]
+      [%known peer-state]
+  ==
++$  alien-agenda-5
+  $:  messages=(list [=duct =plea])
+      packets=(set =blob)
+      heeds=(set duct)
   ==
 ::  $fine-state: remote scry subsystem state
 ::
@@ -1003,14 +1012,23 @@
   ++  state-5-to-6
     |=  old=ames-state-5
     ^-  ^ames-state
-    old(bug [bug.old *fine-state])
+    %=  old
+      peers  (~(run by peers.old) ship-state-5-to-6)
+      bug    [bug.old *fine-state]
+    ==
+  ::
+  ++  ship-state-5-to-6
+    |=  old=ship-state-5
+    ^-  ship-state
+    ?.  ?=(%alien -.old)  old
+    old(heeds [heeds.old ~])
   ::
   ++  state-4-to-5
     |=  ames-state=ames-state-5
     ^-  ames-state-5
     =.  peers.ames-state
       %-  ~(run by peers.ames-state)
-      |=  =ship-state
+      |=  ship-state=ship-state-5
       ?.  ?=(%known -.ship-state)
         ship-state
       =.  snd.ship-state
@@ -1728,6 +1746,16 @@
           %+  roll  ~(tap in packets.todos)
           |=  [=blob core=_event-core]
           (send-blob:core | ship blob)
+        ::  apply remote scry requests
+        ::
+        =^  moz=(list move)  ames-state
+          %+  roll  ~(tap in keens.todos)
+          |=  [=path moz=(list move) =_ames-state]
+          =^  mos  ames-state
+            %.  [ship path 1]
+            send-request:(fine now rof original-duct ames-state)
+          [(weld moz mos) ames-state]
+        =.  moves  (weld (flop moz) moves)
         ::
         event-core(duct original-duct)
       --
@@ -3234,18 +3262,25 @@
         =/  omen
           ~|  [%fine %invalid-namespace-path path]
           (need (de-omen path))
+        =*  ship  p.bem.omen
         =.  want.state  (~(put ju want.state) path duct)
         ?:  (~(has by part.state) path)
           ::  request is already ongoing
           ::
           [~ ames-state]
-        ::  kick off the request
-        ::
         =.  part.state  (~(put by part.state) path *partial-fine)
-        :_  ames-state
-        =/  =lane:ames  (get-lane p.bem.omen)
-        =/  =hoot       (encode-request path 1)
-        [unix-duct.ames-state %give %send lane `@ux`hoot]~
+        ::  if we don't know the target yet, store the request for later
+        ::
+        =/  peer  (~(get by peers.ames-state) ship)
+        ?.  ?=([~ %known *] peer)
+          ::TODO  full enqueue-alien-todo
+          =.  peers.ames-state
+            %+  ~(put by peers.ames-state)  ship
+            ?~  peer  [%alien %*(. *alien-agenda keens [path ~ ~])]
+            ?>  ?=(%alien -.u.peer)
+            u.peer(keens (~(put in keens.u.peer) path))
+          [~ ames-state]
+        (send-request p.bem.omen path 1)
       ::
       ++  on-yawn
         |=  =path
@@ -3450,6 +3485,18 @@
     :-  sig=(cut 3 [0 64] mess)
     ~|  [%fine %response-not-cask]
     ;;((cask) (cue (rsh 3^64 mess)))
+  ::
+  ++  send-request
+    |=  [=ship =path num=@ud]
+    ^-  (quip move _ames-state)
+    :_  ames-state
+    ::  make sure we exclude the ship from the path proper,
+    ::  since it already gets included in the request header
+    ::
+    =.  path        (oust [1 1] path)
+    =/  =lane:ames  (get-lane ship)
+    =/  =hoot       (encode-request ship path 1)
+    [unix-duct.ames-state %give %send lane `@ux`hoot]~
   ::
   ++  process-response
     |=  [=path data=(unit (cask))]
