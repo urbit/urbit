@@ -184,16 +184,18 @@ static void
 _ames_pend_free(u3_pend* pen_u) 
 {
   if ( 0 == pen_u->typ_y ) {          // ames packet
-    _ames_pact_free(pen_u->pac_u);
+    if( pen_u->pac_u ) {
+      _ames_pact_free(pen_u->pac_u);
+    }
   } else if ( 1 == pen_u->typ_y ) {  // fine request
     c3_free(pen_u->req_u);
-    c3_free(pen_u->hun_y);
   } else {                         // fine response
     c3_free(pen_u->res_u);
-    c3_free(pen_u->hun_y);
   }
 
   c3_free(pen_u->dns_c);
+  c3_free(pen_u->hun_y);
+
   c3_free(pen_u);
 }
 
@@ -597,7 +599,7 @@ _ames_etch_pack(u3_head* hed_u,
   c3_y  rog_y = ( c3y == hed_u->rel_o ) ? 6 : 0;           //  origin len
   c3_w  bod_w = rog_y + 1 + sen_y + rec_y + bod_u->con_s;  //  body len
   c3_w  len_w = 4 + bod_w;                                 //  packet len
-  c3_y* pac_y = c3_malloc(len_w);                          //  output buf
+  c3_y* pac_y = c3_calloc(len_w);                          //  output buf
   c3_y* bod_y = pac_y + 4;                                 //  body cursor
 
   //  serialize the head
@@ -630,7 +632,7 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
     sam_u->fig_u.net_o = c3y;
   }
 
-  //_ames_pend_free(pen_u);
+  _ames_pend_free(pen_u);
 }
 
 #define _fine_send _ames_send
@@ -669,7 +671,7 @@ _ames_send(u3_pend* pen_u)
           sam_u->fig_u.net_o = c3n;
         }
 
-        //_ames_pend_free(pen_u);
+        _ames_pend_free(pen_u);
       }
     }
   }
@@ -1560,17 +1562,12 @@ _fine_request(u3_ames* sam_u,
   {
     u3_noun tag, val;
     u3x_cell(lan, &tag, &val);
-    u3m_p("tag", tag);
-    u3m_p("val", val);
     if(tag == 0) {
       _ames_czar(pen_u);
     } else {
       u3_lane lan_u = u3_ames_decode_lane(val);
       pen_u->lan_u.pip_w = lan_u.pip_w;
-      u3l_log("IP: %u", lan_u.pip_w);
-      u3l_log("port: %u", lan_u.por_s);
       pen_u->lan_u.por_s = lan_u.por_s;
-      
       _ames_send(pen_u);
     }
   }
