@@ -17,6 +17,11 @@
 
 static c3_c* no_hashes[] = { 0 };
 
+static u3j_harm _140_hex_en_json_a[] = {{".2", u3we_en_json}, {}};
+static c3_c* _140_hex_en_json_ha[] = {
+  "f19d6749b272c78084d7daf1e65b651c1c750dd05ce845669251d39364d83f36",
+  0
+};
 static u3j_harm _140_hex_de_json_a[] = {{".2", u3we_de_json}, {}};
 static c3_c* _140_hex_de_json_ha[] = {
   "db68672e5792e5b862e4d6584daff0df2bc84b55b3c3241bd6c6a9c62b803dbe",
@@ -483,6 +488,7 @@ static u3j_core _140_hex_d[] =
   { "leer",     63, _140_hex_leer_a,    0, _140_hex_leer_ha    },
   { "loss",     63, _140_hex_loss_a,    0, _140_hex_loss_ha    },
   { "lune",    127, _140_hex_lune_a,    0, _140_hex_lune_ha    },
+  { "en-json", 127, _140_hex_en_json_a, 0, _140_hex_en_json_ha },
   { "de-json", 127, _140_hex_de_json_a, 0, _140_hex_de_json_ha },
 
   { "coed",   63, 0, _140_hex_coed_d,  _140_hex_coed_ha  },

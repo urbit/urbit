@@ -4259,6 +4259,12 @@
         (cook |=(a=@ (sub a 49)) (shim '1' '9'))
       ==
     --  ::mimes
+  ::
+  ++  en-json-c
+    ~%  %en-json  ..part  ~
+    |=  val=json
+    ^-  @t
+    (crip (en-json val))
   ::                                                    ::  ++en-json:html
   ++  en-json                                           ::  print json
     |^  |=(val=json (apex val ""))

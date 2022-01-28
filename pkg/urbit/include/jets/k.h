@@ -137,6 +137,11 @@
     u3_noun
     u3ke_cue(u3_atom a);
 
+  /* u3ke_en_json(): serialize JSON to cord.
+  */
+    u3_atom
+    u3ke_en_json(u3_noun);
+
   /* u3ke_de_json(): parse JSON from cord.
   */
     u3_noun

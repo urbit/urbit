@@ -13,7 +13,7 @@
 ::
 +$  json-decode-spec  [name=^tape input=cord expected=json]
 +$  json-decode-rejection-spec  [input=cord name=^tape]
-+$  json-encode-spec  [name=^tape input=json expected=^tape]
++$  json-encode-spec  [name=^tape input=json expected=cord]
 ::
 ++  run-decode-specs
   ::  legend tells of a man who made the Kessel run in less than 12
@@ -45,7 +45,7 @@
   :-  specs
   |=  spec=json-encode-spec
   ^-  tang
-  =+  result=(expect-eq !>(expected.spec) !>((en-json input.spec)))
+  =+  result=(expect-eq !>(expected.spec) !>((en-json-c input.spec)))
   ?~  result  ~
   `tang`[[%leaf "in {name.spec}:"] result]
 ::  JSON decoding test suite
@@ -1503,43 +1503,43 @@
   :~
     :*  "e_array_empty"
         [%a ~]
-        "[]"
+        '[]'
     ==
     :*  "e_array_single_boolean_false"
         [%a ~[[%b |]]]
-        "[false]"
+        '[false]'
     ==
     :*  "e_array_single_boolean_true"
         [%a ~[[%b &]]]
-        "[true]"
+        '[true]'
     ==
     :*  "e_array_single_null"
         [%a ~[~]]
-        "[null]"
+        '[null]'
     ==
     :*  "e_array_single_number"
         [%a ~[[%n '123.456']]]
-        "[123.456]"
+        '[123.456]'
     ==
     :*  "e_array_single_object"
         [%a ~[[%o ~]]]
-        "[\{}]"
+        '[{}]'
     ==
     :*  "e_array_single_string"
         [%a ~[[%s 'abc']]]
-        "[\"abc\"]"
+        '["abc"]'
     ==
     :*  "e_array_nested_array"
         [%a ~[[%a ~]]]
-        "[[]]"
+        '[[]]'
     ==
     :*  "e_array_multiple_homogenous"
         [%a ~[[%n '1'] [%n '2'] [%n '3'] [%n '4'] [%n '5']]]
-        "[1,2,3,4,5]"
+        '[1,2,3,4,5]'
     ==
     :*  "e_array_multiple_heterogenous"
         [%a ~[[%b |] ~ [%n '1'] [%s 'a'] [%o ~] [%a ~]]]
-        "[false,null,1,\"a\",\{},[]]"
+        '[false,null,1,"a",{},[]]'
     ==
   ==
 ::  Encode numbers
@@ -1552,7 +1552,7 @@
   :~
     :*  "e_number_sanity_check"
         [%n '-123.456e789']
-        "-123.456e789"
+        '-123.456e789'
     ==
   ==
 ::  Encode objects
@@ -1562,52 +1562,52 @@
   :~
     :*  "e_object_empty"
         [%o ~]
-        "\{}"
+        '{}'
     ==
     :*  "e_object_single_boolean_false"
         (frond 'x' [%b |])
-        "\{\"x\":false}"
+        '{"x":false}'
     ==
     :*  "e_object_single_boolean_true"
         (frond 'x' [%b &])
-        "\{\"x\":true}"
+        '{"x":true}'
     ==
     :*  "e_object_single_null"
         (frond 'x' ~)
-        "\{\"x\":null}"
+        '{"x":null}'
     ==
     :*  "e_object_single_number"
         (frond 'x' [%n '123.456'])
-        "\{\"x\":123.456}"
+        '{"x":123.456}'
     ==
     :*  "e_object_single_string"
         (frond 'x' [%s 'abc'])
-        "\{\"x\":\"abc\"}"
+        '{"x":"abc"}'
     ==
     :*  "e_object_single_array"
         (frond 'x' [%a ~])
-        "\{\"x\":[]}"
+        '{"x":[]}'
     ==
     :*  "e_object_nested_object"
         (frond 'x' [%o ~])
-        "\{\"x\":\{}}"
+        '{"x":{}}'
     ==
     ::  the order of elements for the below two tests is determined by hash, and
     ::  therefore "random" but consistent 
     :*  "e_object_multiple_homogenous"
         (pairs ~[['a' [%n '97']] ['b' [%n '98']] ['c' [%n '99']] ['d' [%n '100']] ['e' [%n '101']] ['f' [%n '102']]])
-        "\{\"c\":99,\"a\":97,\"f\":102,\"d\":100,\"b\":98,\"e\":101}"
+        '{"c":99,"a":97,"f":102,"d":100,"b":98,"e":101}'
     ==
     :*  "e_object_multiple_heterogenous"
         (pairs ~[['a' [%b |]] ['b' ~] ['c' [%n '1']] ['d' [%s 'a']] ['e' [%a ~]] ['f' [%o ~]]])
-        "\{\"c\":1,\"a\":false,\"f\":\{},\"d\":\"a\",\"b\":null,\"e\":[]}"
+        '{"c":1,"a":false,"f":{},"d":"a","b":null,"e":[]}'
     ==
   ==
 ::  Encode strings
 ::
 ::  Summary of .en-json:html string encoding rules:
 ::    - '"', '\', and newlines are escaped
-::    - bytes \00 to \1F are UTF16 escaped
+::    - bytes \00 to \1F and \7F are UTF16 escaped
 ::    - everything else (ASCII & unicode) is written directly as UTF8
 ::
 ++  test-en-json-strings
@@ -1615,70 +1615,67 @@
   :~
     :*  "e_string_empty"
         [%s '']
-        "\"\""
+        '""'
     ==
-    ::  TODO: .en-json:html will ignore the trailing null bytes of strings due
-    ::        to the behaviour of .trip
-    ::
     :*  "e_string_null_wrapped"
         [%s 'a\00a']
-        "\"a\\u0000a\""
+        '"a\\u0000a"'
     ==
     :*  "e_string_ascii"
         [%s 'a']
-        "\"a\""
+        '"a"'
     ==
     :*  "e_string_escape_backslash"
         [%s 'Delete C:\\Windows\\System32']
-        "\"Delete C:\\\\Windows\\\\System32\""
+        '"Delete C:\\\\Windows\\\\System32"'
     ==
     :*  "e_string_escape_delete"
         [%s 'delete\7Fme']
-        "\"delete\\u007fme\""
+        '"delete\\u007fme"'
     ==
     :*  "e_string_escape_newline"
         [%s 'new\0Aline']
-        "\"new\\nline\""
+        '"new\\nline"'
     ==
     :*  "e_string_escape_quotes"
         [%s 'he said "wow"']
-        "\"he said \\\"wow\\\"\""
+        '"he said \\"wow\\""'
     ==
     :*  "e_string_escape_whitespace"
         [%s 'add\01some\09space\1Fbetween here']
-        "\"add\\u0001some\\u0009space\\u001fbetween here\""
+        '"add\\u0001some\\u0009space\\u001fbetween here"'
     ==
     :*  "e_string_unicode_bytes"
         [%s '\F0\9D\84\9E']
-        "\"𝄞\""
+        '"𝄞"'
     ==
     :*  "e_string_unicode_bytes_invalid"
         [%s '\F0\9B\BF\BF']
-        "\"𛿿\""
+        '"𛿿"'
     ==
     :*  "e_string_unicode_bytes_invisible"
         [%s '\E2\81\A4']
-        "\"⁤\""
+        '"⁤"'
     ==
     :*  "e_string_unicode_inline"
         [%s '𝄞']
-        "\"𝄞\""
+        '"𝄞"'
     ==
     :*  "e_string_utf16_inline"
         [%s '\\uD83C\\uDDFA\\uD83C\\uDDF2']
-        "\"\\\\uD83C\\\\uDDFA\\\\uD83C\\\\uDDF2\""
+        '"\\\\uD83C\\\\uDDFA\\\\uD83C\\\\uDDF2"'
     ==
     :*  "e_string_multiple_ascii"
         [%s '123456789 abcdefghijklmnop']
-        "\"123456789 abcdefghijklmnop\""
+        '"123456789 abcdefghijklmnop"'
     ==
     :*  "e_string_multiple_escapes"
         [%s '\09"wow!"\0Ahe said\\']
-        "\"\\u0009\\\"wow!\\\"\\nhe said\\\\\""
+        '"\\u0009\\"wow!\\"\\nhe said\\\\"'
     ==
     :*  "e_string_multiple_unicode"
         [%s '𝄞\F0\9D\84\9E']
-        "\"𝄞𝄞\""
+        '"𝄞𝄞"'
     ==
   ==
 ::  Encode naked values
@@ -1688,15 +1685,15 @@
   :~
     :*  "e_value_bool_false"
         [%b |]
-        "false"
+        'false'
     ==
     :*  "e_value_bool_true"
         [%b &]
-        "true"
+        'true'
     ==
     :*  "e_value_null"
         ~
-        "null"
+        'null'
     ==
   ==
 ::  Encoding stress-test
@@ -1706,8 +1703,8 @@
 ::
 ++  test-en-json-complex-structure
   %+  expect-eq
-    !>  "\{\"data\":\{\"user\":\{\"result\":\{\"has_nft_avatar\":false,\"rest_id\":\"826261914\",\"affiliates_highlighted_label\":\{},\"__typename\":\"User\",\"id\":\"VXNlcjo4MjYyNjE5MTQ=\",\"is_profile_translatable\":false,\"legacy_extended_profile\":\{},\"legacy\":\{\"protected\":false,\"pinned_tweet_ids_str\":[\"1238111933905190913\"],\"entities\":\{\"url\":\{\"urls\":[\{\"indices\":[0,23],\"display_url\":\"NewDiscourses.com\",\"url\":\"https://t.co/RDZVUxIOWN\",\"expanded_url\":\"http://NewDiscourses.com\"}]},\"description\":\{\"urls\":[]}},\"name\":\"James Lindsay, pro-freedom\",\"default_profile\":true,\"location\":\"Knoxville, TN\",\"url\":\"https://t.co/RDZVUxIOWN\",\"verified\":false,\"profile_interstitial_type\":\"\",\"fast_followers_count\":0,\"description\":\"Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲\",\"created_at\":\"Sun Sep 16 01:32:21 +0000 2012\",\"followers_count\":284274,\"withheld_in_countries\":[],\"listed_count\":1867,\"profile_image_url_https\":\"https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg\",\"has_custom_timelines\":true,\"normal_followers_count\":284274,\"favourites_count\":193322,\"default_profile_image\":false,\"media_count\":11074,\"statuses_count\":137296,\"profile_banner_extensions\":\{\"mediaColor\":\{\"r\":\{\"ok\":\{\"palette\":[\{\"rgb\":\{\"green\":36,\"blue\":41,\"red\":33},\"percentage\":95.91},\{\"rgb\":\{\"green\":115,\"blue\":118,\"red\":113},\"percentage\":3.65},\{\"rgb\":\{\"green\":201,\"blue\":202,\"red\":200},\"percentage\":0.44}]}}}},\"profile_banner_url\":\"https://pbs.twimg.com/profile_banners/826261914/1582653360\",\"screen_name\":\"ConceptualJames\",\"translator_type\":\"none\",\"friends_count\":338,\"profile_image_extensions\":\{\"mediaColor\":\{\"r\":\{\"ok\":\{\"palette\":[\{\"rgb\":\{\"green\":22,\"blue\":16,\"red\":35},\"percentage\":72.12},\{\"rgb\":\{\"green\":123,\"blue\":100,\"red\":146},\"percentage\":17.13},\{\"rgb\":\{\"green\":153,\"blue\":129,\"red\":193},\"percentage\":10.57},\{\"rgb\":\{\"green\":149,\"blue\":125,\"red\":222},\"percentage\":2.03},\{\"rgb\":\{\"green\":53,\"blue\":55,\"red\":131},\"percentage\":1.58}]}}}},\"is_translator\":false}}}}}"
-    !>  %-  en-json:html
+    !>  '{"data":{"user":{"result":{"has_nft_avatar":false,"rest_id":"826261914","affiliates_highlighted_label":{},"__typename":"User","id":"VXNlcjo4MjYyNjE5MTQ=","is_profile_translatable":false,"legacy_extended_profile":{},"legacy":{"protected":false,"pinned_tweet_ids_str":["1238111933905190913"],"entities":{"url":{"urls":[{"indices":[0,23],"display_url":"NewDiscourses.com","url":"https://t.co/RDZVUxIOWN","expanded_url":"http://NewDiscourses.com"}]},"description":{"urls":[]}},"name":"James Lindsay, pro-freedom","default_profile":true,"location":"Knoxville, TN","url":"https://t.co/RDZVUxIOWN","verified":false,"profile_interstitial_type":"","fast_followers_count":0,"description":"Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲","created_at":"Sun Sep 16 01:32:21 +0000 2012","followers_count":284274,"withheld_in_countries":[],"listed_count":1867,"profile_image_url_https":"https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg","has_custom_timelines":true,"normal_followers_count":284274,"favourites_count":193322,"default_profile_image":false,"media_count":11074,"statuses_count":137296,"profile_banner_extensions":{"mediaColor":{"r":{"ok":{"palette":[{"rgb":{"green":36,"blue":41,"red":33},"percentage":95.91},{"rgb":{"green":115,"blue":118,"red":113},"percentage":3.65},{"rgb":{"green":201,"blue":202,"red":200},"percentage":0.44}]}}}},"profile_banner_url":"https://pbs.twimg.com/profile_banners/826261914/1582653360","screen_name":"ConceptualJames","translator_type":"none","friends_count":338,"profile_image_extensions":{"mediaColor":{"r":{"ok":{"palette":[{"rgb":{"green":22,"blue":16,"red":35},"percentage":72.12},{"rgb":{"green":123,"blue":100,"red":146},"percentage":17.13},{"rgb":{"green":153,"blue":129,"red":193},"percentage":10.57},{"rgb":{"green":149,"blue":125,"red":222},"percentage":2.03},{"rgb":{"green":53,"blue":55,"red":131},"percentage":1.58}]}}}},"is_translator":false}}}}}'
+    !>  %-  en-json-c
         :-  %o
         %-  malt
         ^-  (list [@t json])
