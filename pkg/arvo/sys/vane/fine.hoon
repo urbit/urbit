@@ -104,10 +104,11 @@
     ++  encode-request
       |=  [=path num=@ud]
       ^-  hoot  ^-  @
+      =/  =ship  (slav %p (head (tail path)))
       =+  bod=(request-body path num)
       =+  syn=(can 3 64^(sign:keys dat.bod) bod ~)
       %+  con  0b100  ::NOTE  request bit
-      (encode-packet [our ~zod] (mod life:keys 16) 0b0 ~ syn)
+      (encode-packet [our ship] (mod life:keys 16) 0b0 ~ syn)
     ::
     ++  encode-response
       |=  [=path data=(unit (cask))]
@@ -186,7 +187,7 @@
       ::=;  lanes
         ::TODO  should we send to all lanes?
         ::  ?^  lanes  i.lanes
-        ~&(%fine-lane-stub &+~zod)  ::TODO
+        ~&(fine-lane-stub/ship &+ship)  ::TODO
       ::.^  (list lane:ames)
         ::%ax  (scot %p our)  %$  (scot %da now)
         ::/peers/(scot %p ship)/forward-lane
@@ -268,7 +269,8 @@
       ?.  (~(has by part) path.peep)
         ::  we did not initiate this request, or it's been cancelled
         ::
-        !!
+        ~&  fine-no-request/path.peep
+        `state
       =/  partial  (~(got by part) path.peep)
       =.  partial
         ?:  (~(has by fragments.partial) num.peep)
@@ -347,11 +349,12 @@
       =/  omen
         ~|  [%fine %invalid-namespace-path path.task]
         (need (de-omen path.task))
-      =.  want  (~(put ju want) path.task hen)
-      ?:  (~(has by part) path.task)
+      ::?:  (~(has by part) path.task)
         ::  request is already ongoing
         ::
-        [~ state]
+        ::~&  fine-ongoing-request/path.task
+        ::[~ state]
+      =.  want  (~(put ju want) path.task hen)
       ::  kick off the request
       ::
       =.  part  (~(put by part) path.task *partial)
