@@ -122,7 +122,7 @@
       ?(%poke-ack %watch-ack)
     ?~  p.p.hin  [~ khan-gate]
     =.  run  (~(del by run) hen)
-    %-  (slog u.p.p.hin)
+    %-  (slog 'khan-ack' u.p.p.hin)
     :_  khan-gate
     [hen %give %avow %| -.p.hin u.p.p.hin]~
   ::
@@ -131,7 +131,7 @@
     ?+    p.cag  ~&(bad-fact+p.cag !!)
         %thread-fail
       =/  =tang  !<(tang q.cag)
-      %-  (slog tang)
+      %-  (slog 'khan-fact' tang)
       :_  khan-gate
       [hen %give %avow %| p.cag tang]~
     ::
