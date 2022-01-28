@@ -21,7 +21,6 @@ _help(u3_noun k, u3_noun p, u3_noun buc)
     u3_noun pro = u3k(u3nc(pre, u3nq(u3_nul, u3k(k), u3k(ppb),
                     u3nt(u3k(kpb), u3k(vpb), u3k(qb)))));
 
-    u3z(pre);
     u3z(boc);
 
     return pro;

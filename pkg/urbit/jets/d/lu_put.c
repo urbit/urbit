@@ -17,7 +17,6 @@ u3qdl_put(u3_noun a, u3_noun k, u3_noun v)
   u3_noun pro = u3kdl_ebb(pre);
 
   u3z(vue);
-  u3z(siz);
 
   return pro;
 }

@@ -22,7 +22,7 @@ u3qdu_qat_gun(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
 
   if (u3_nul == a) {
     return u3nc(u3_nul,
-            u3nq(c3__tip, u3k(h), u3k(p), u3nt(u3k(k), u3k(v), u3_nul)));
+            u3nq(c3__tip, h, u3k(p), u3nt(u3k(k), u3k(v), u3_nul)));
   }
 
   u3_noun hoc = u3h(a);
@@ -40,13 +40,14 @@ u3qdu_qat_gun(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
 
       if (c3y == u3r_sing(h, ka)) {
         return u3nc(u3nt(u3_nul, u3k(pa), u3k(va)),
-                           u3nt(c3__tip, u3k(h), _help(pa, va, k, p, v)));
+                           u3nt(c3__tip, h, _help(pa, va, k, p, v)));
       }
       else {
         u3_noun pre = u3nq(c3__tip, u3k(h), u3k(p),
                         u3nt(u3k(k), u3k(v), u3_nul));
         u3_noun pro = u3nc(u3_nul, u3qdu_qat_tie(ka, pa, va, h, pre, u3_nul));
 
+        u3z(h);
         u3z(pre);
 
         return pro;
@@ -67,6 +68,7 @@ u3qdu_qat_gun(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
 
         u3z(tee);
         u3z(rof);
+        u3z(h);
 
         return u3nc(u3_nul, pro);
       }
@@ -80,6 +82,7 @@ u3qdu_qat_gun(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
           u3_noun pre = u3qdu_qat_raw(la, h, pv, qv);
           u3_noun pro = u3qdu_fuse(ma, pre, ra);
 
+          u3z(h);
           u3z(val);
           u3z(pre);
 
@@ -89,6 +92,7 @@ u3qdu_qat_gun(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
           u3_noun pre = u3qdu_qat_raw(ra, h, pv, qv);
           u3_noun pro = u3qdu_fuse(ma, la, pre);
 
+          u3z(h);
           u3z(val);
           u3z(pre);
 
@@ -105,6 +109,7 @@ u3qdu_qat_gun(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
                         u3nq(c3__bin, u3k(ka), u3k(pa),
                           u3nq(u3k(va), u3k(ma), u3k(qv), u3k(ra))));
 
+        u3z(h);
         u3z(val);
 
         return pro;
@@ -119,6 +124,7 @@ u3qdu_qat_gun(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
                         u3nq(c3__bin, u3k(ka), u3k(pa),
                           u3nq(u3k(va), u3k(ma), u3k(la), u3k(qv))));
 
+        u3z(h);
         u3z(val);
 
         return pro;
