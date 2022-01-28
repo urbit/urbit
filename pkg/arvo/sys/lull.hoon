@@ -2110,7 +2110,7 @@
     ==                                                  ::
   ::                                                    ::
   +$  avow  (each (cask) goof)                          ::  result type
-  +$  bear  $@(desk [desk case])                        ::  local desk/case
+  +$  bear  $@(desk beak)                               ::  local desk/case
   +$  fyrd  [=bear name=term =mark data=(cask)]         ::  run-thread request
   --  ::khan
 ::

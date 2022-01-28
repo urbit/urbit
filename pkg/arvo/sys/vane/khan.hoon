@@ -79,7 +79,7 @@
     =/  tid=@ta
       (cat 3 'khan-fyrd--' rid)
     =/  =beak
-      ?@(bear.fyd [our bear.fyd %da now] [our bear.fyd])
+      ?@(bear.fyd [our bear.fyd %da now] bear.fyd)
     =/  =dais:clay  (get-dais beak p.data.fyd rof)
     =/  args
       :*  ~  `tid  beak  name.fyd
