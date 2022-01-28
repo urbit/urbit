@@ -1,6 +1,7 @@
 include config.mk
 include $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
 
+c = $(wildcard c/*.c)
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
 ur   = $(wildcard ur/*.c)
@@ -12,7 +13,7 @@ bench  = $(wildcard bench/*.c)
 
 compat := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.c))
 
-common  = $(jets) $(noun) $(ur) $(vere) $(compat)
+common  = $(c) $(jets) $(noun) $(ur) $(vere) $(compat)
 headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
