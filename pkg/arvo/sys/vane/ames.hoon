@@ -3373,29 +3373,27 @@
       |=  [=path mess=*]
       (sign (shax (jam [our life path mess])))
     ::
-    ++  life  ~+  (jael ^life %life /(scot %p our))
-    ++  ring  ~+  (jael ^ring %vein /(scot %ud life))
-    ++  sign      sign:as:(nol:nu:crub:crypto ring)
+    ++  life  life.ames-state
+    ++  sign  sign:as:crypto-core.ames-state
     ::
-    ++  jael
-      |*  [=mold =desk =path]
-      !<  mold
-      %-  tail  %-  need  %-  need
-      (rof `[our ~ ~] [%jael %$] [our desk da+now] path)
-    ::
+    ::TODO  for the unknown case, should use the alien-agenda
     ++  lyfe
       |=  who=ship
-      (jael (unit ^life) %lyfe /(scot %p our))
+      ^-  ^life
+      ~|  [%fine %unknown-peer who]
+      =/  ship-state  (~(got by peers.ames-state) who)
+      ?>  ?=([%known *] ship-state)
+      life.ship-state
     ::
-    ::TODO  don't scry! subscribe & get from state instead
-    ::TODO  literally copy the ames code lol
-    ::TODO  the fact that we share pki and lane data with ames is... suspect
-    ::      also the en/decoding etc
+    ::TODO  for the unknown case, should use the alien-agenda
     ++  pass
       |=  [who=ship lyf=^life]
-      ::TODO  but might fail need checks?
-      :: (jael * %deed )
-      !!
+      ~|  [%fine %unknown-peer who lyf]
+      =/  ship-state  (~(got by peers.ames-state) who)
+      ?>  ?=([%known *] ship-state)
+      ~|  [%fine %life-mismatch who lyf]
+      ?>  =(lyf life.ship-state)
+      public-key.ship-state
     --
   ::
   ++  get-lane
