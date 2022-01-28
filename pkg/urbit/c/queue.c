@@ -121,6 +121,21 @@ c3_queue_peek_front(const c3_queue* que_u)
 }
 
 void*
+c3_queue_peek(const c3_queue* que_u, const size_t idx_i)
+{
+  if ( NULL == que_u || c3_queue_length(que_u) <= idx_i ) {
+    return NULL;
+  }
+
+  c3_node* nod_u = que_u->fir_u;
+  for ( size_t cnt_i = 0; cnt_i < idx_i; cnt_i++ ) {
+    nod_u = nod_u->nex_u;
+  }
+
+  return nod_u->dat_v;
+}
+
+void*
 c3_queue_pop_back(c3_queue* que_u)
 {
   if ( NULL == que_u ) {

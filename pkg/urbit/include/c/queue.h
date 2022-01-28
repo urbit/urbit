@@ -32,6 +32,7 @@ c3_queue_length(const c3_queue* que_u);
 //!
 //! @return NULL  [que_u] was NULL.
 //! @return       Heap-allocated pointer to the newly added node's payload.
+//!               Must not be freed by caller.
 void*
 c3_queue_push_back(c3_queue* que_u, void* dat_v, size_t siz_i);
 
@@ -43,6 +44,7 @@ c3_queue_push_back(c3_queue* que_u, void* dat_v, size_t siz_i);
 //!
 //! @return NULL  [que_u] was NULL.
 //! @return       Heap-allocated pointer to the newly added node's payload.
+//!               Must not be freed by caller.
 void*
 c3_queue_push_front(c3_queue* que_u, void* dat_v, size_t siz_i);
 
@@ -51,7 +53,8 @@ c3_queue_push_front(c3_queue* que_u, void* dat_v, size_t siz_i);
 //! @param[in] que_u  Queue to get the last node's data from.
 //!
 //! @return NULL  [que_u] was NULL.
-//! @return       Heap-allocated pointer to the last node's payload.
+//! @return       Heap-allocated pointer to the last node's payload. Must not
+//!               be freed by caller.
 void*
 c3_queue_peek_back(const c3_queue* que_u);
 
@@ -60,9 +63,22 @@ c3_queue_peek_back(const c3_queue* que_u);
 //! @param[in] que_u  Queue to get the first node's data from.
 //!
 //! @return NULL  [que_u] was NULL.
-//! @return       Heap-allocated pointer to the first node's payload.
+//! @return       Heap-allocated pointer to the first node's payload. Must not
+//!               be freed by caller.
 void*
 c3_queue_peek_front(const c3_queue* que_u);
+
+//! Get the data of the node at the given index in the queue.
+//!
+//! @param[in] que_u  Queue to get the node's data from.
+//! @param[in] idx_i  Zero-based index of the node of interest.
+//!
+//! @return NULL  [que_u] was NULL.
+//! @return NULL  [idx_i] was an invalid index.
+//! @return       Heap-allocated pointer to the first node's payload. Must not
+//!               be freed by caller.
+void*
+c3_queue_peek(const c3_queue* que_u, const size_t idx_i);
 
 //! Remove the last node from the back of the queue.
 //!
@@ -70,7 +86,7 @@ c3_queue_peek_front(const c3_queue* que_u);
 //!
 //! @return NULL  [que_u] was NULL.
 //! @return       Heap-allocated pointer to node's payload popped from the back
-//!               of [que_u].
+//!               of [que_u]. Must be freed by caller.
 void*
 c3_queue_pop_back(c3_queue* que_u);
 
@@ -80,7 +96,7 @@ c3_queue_pop_back(c3_queue* que_u);
 //!
 //! @return NULL  [que_u] was NULL.
 //! @return       Heap-allocated pointer to node's payload popped from the front
-//!               of [que_u].
+//!               of [que_u]. Must be freed by caller.
 void*
 c3_queue_pop_front(c3_queue* que_u);
 
