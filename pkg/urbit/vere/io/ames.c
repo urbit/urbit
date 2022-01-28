@@ -1361,12 +1361,8 @@ _ames_skip(u3_body* bod_u) {
 }
 #endif
 
-static void _fine_got_pack(u3_pend* pen_u, u3_noun pac) 
+static void _fine_got_pack(u3_pend* pen_u, u3_noun fra) 
 {
-  u3_noun num = u3i_word(pen_u->fra_w - 1);
-
-  u3_noun fra = u3dc("snag", num, pac);
-
   pen_u->len_w = u3r_met(3, fra);
   pen_u->hun_y = c3_calloc(pen_u->len_w);
   
@@ -1411,14 +1407,24 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
     return;
   }
   c3_assert( 1 == pen_u->typ_y);
+  u3_weak fra = u3_none;
   u3_noun pax = u3i_string(pen_u->req_u->req_u.pat_c);
-  u3l_log("path: %s\n", pen_u->req_u->req_u.pat_c);
-  u3l_log("made pax\n");
-
-  u3h_put(sam_u->fin_s.sac_p, u3k(pax), u3k(pac));
-  u3l_log("got scry result\n");
-
-  _fine_got_pack(pen_u, u3k(pac));
+  u3l_log("made string\n");
+  c3_w cur_w = 1;
+  u3_noun lis = u3k(pac);
+  while(pac != u3_nul) {
+    u3h_put(sam_u->fin_s.sac_p, u3nc(u3k(pax), u3i_word(cur_w)), u3h(pac));
+    if ( pen_u->fra_w == cur_w ) {
+      fra = u3k(u3h(pac));
+    }
+    cur_w++;
+    pac = u3t(pac);
+  }
+  if ( fra == u3_none ) {
+    u3l_log("fragment number out of range\n");
+  } else {
+    _fine_got_pack(pen_u, fra);
+  }
 }
 
 
@@ -1464,9 +1470,10 @@ static void _fine_hear_request(u3_ames* sam_u,
   c3_assert( c3y == _fine_sift_requ(&hed_u, &req_u, len_w, hun_y));
 
   u3_noun pat = u3i_string(req_u.pat_c);
+  u3_noun key = u3nc(u3k(pat), u3i_word(req_u.fra_w));
 
   // TODO: revive
-  u3_weak cac =  u3h_git(sam_u->fin_s.sac_p, pat);
+  u3_weak cac =  u3h_git(sam_u->fin_s.sac_p, key);
 
   u3_reqp* rep_u = c3_calloc(sizeof(*rep_u));
   u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
