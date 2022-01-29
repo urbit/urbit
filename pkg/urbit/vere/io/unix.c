@@ -72,6 +72,41 @@ struct _u3_ufil;
 void
 u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all);
 
+/* u3_unix_safe(): true iff path is canonical.
+*/
+c3_t
+u3_unix_safe(const c3_c* pax_c)
+{
+  if ( 0 == pax_c ||
+       0 != strchr(pax_c, '\\') )
+  {
+    return 0;
+  }
+  //  allow root.
+  //
+  if ( 0 == strcmp("/", pax_c) ) {
+    return 1;
+  }
+  //  allow absolute paths.
+  //
+  if ( '/' == *pax_c ) {
+    pax_c++;
+  }
+  do {
+    if (  0 == *pax_c
+       || 0 == strcmp(".",    pax_c)
+       || 0 == strcmp("..",   pax_c)
+       || 0 == strncmp("/",   pax_c, 1)
+       || 0 == strncmp("./",  pax_c, 2)
+       || 0 == strncmp("../", pax_c, 3) )
+    {
+      return 0;
+    }
+    pax_c = strchr(pax_c, '/');
+  } while ( 0 != pax_c++ );
+  return 1;
+}
+
 /* u3_readdir_r():
 */
 c3_w

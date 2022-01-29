@@ -1168,6 +1168,11 @@
 
     /**  Storage, new school.
     **/
+      /* u3_unix_safe(): true iff path is canonical.
+      */
+        c3_t
+        u3_unix_safe(const c3_c* pax_c);
+
       /* u3_unix_initial_into_card(): create initial filesystem sync card.
       */
         u3_noun
