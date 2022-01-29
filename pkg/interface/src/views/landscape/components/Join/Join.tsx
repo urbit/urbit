@@ -349,20 +349,42 @@ export function JoinDone(props: JoinDoneProps) {
   );
 }
 
+export interface JoinParams extends Record<string, string> {
+  'join-kind': JoinKind;
+  'join-path'?: string;
+  redir?: string;
+}
+
+export function createJoinParams(kind: JoinKind, path?: string, redirect?: string, inLink?: true): string;
+export function createJoinParams(kind: JoinKind, path?: string, redirect?: string, inLink?: false): JoinParams;
+export function createJoinParams(kind: JoinKind, path?: string, redirect?: string, inLink = true) {
+  const params = {
+    'join-kind': kind
+  };
+
+  if (path) {
+    params['join-path'] = path;
+  }
+
+  if (redirect) {
+    params['redir'] = redirect;
+  }
+
+  return inLink ? '?' + new URLSearchParams(params).toString() : params;
+}
+
 export function JoinRoute() {
   const { query } = useQuery();
   const history = useHistory();
   const { pathname } = useLocation();
   const kind = query.get('join-kind');
-  const path = query.get('join-path');
+  const path = query.get('join-path')?.replace('web+urbitgraph://group/', '');
   const redir = query.get('redir');
-  if (!kind) {
-    return null;
-  }
+
   const desc: JoinDesc = path
     ? {
         group: path,
-        kind: kind as JoinKind
+        kind: kind === 'graph' ? 'graph' : 'groups'
       }
     : undefined;
 
