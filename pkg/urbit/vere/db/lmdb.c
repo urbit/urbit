@@ -42,6 +42,8 @@ u3_lmdb_init(const c3_c* pax_c, size_t siz_i)
   MDB_env* env_u;
   c3_w     ret_w;
 
+  c3_assert(u3_unix_safe(pax_c));
+
   if ( (ret_w = mdb_env_create(&env_u)) ) {
     mdb_logerror(stderr, ret_w, "lmdb: init fail");
     return 0;
