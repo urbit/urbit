@@ -200,7 +200,7 @@ _unix_rm_r_cb(const c3_c* pax_c,
       u3l_log("bad file type in rm_r: %s\r\n", pax_c);
       break;
     case FTW_F:
-      if ( 0 != unlink(pax_c) && ENOENT != errno ) {
+      if ( 0 != c3_unlink(pax_c) && ENOENT != errno ) {
         u3l_log("error unlinking (in rm_r) %s: %s\n",
                 pax_c, strerror(errno));
         c3_assert(0);
@@ -216,7 +216,7 @@ _unix_rm_r_cb(const c3_c* pax_c,
       u3l_log("couldn't stat path: %s\r\n", pax_c);
       break;
     case FTW_DP:
-      if ( 0 != rmdir(pax_c) && ENOENT != errno ) {
+      if ( 0 != c3_rmdir(pax_c) && ENOENT != errno ) {
         u3l_log("error rmdiring %s: %s\n", pax_c, strerror(errno));
         c3_assert(0);
       }
@@ -248,7 +248,7 @@ _unix_rm_r(c3_c* pax_c)
 static void
 _unix_mkdir(c3_c* pax_c)
 {
-  if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno) {
+  if ( 0 != c3_mkdir(pax_c, 0755) && EEXIST != errno) {
     u3l_log("error mkdiring %s: %s\n", pax_c, strerror(errno));
     c3_assert(0);
   }
@@ -259,7 +259,7 @@ _unix_mkdir(c3_c* pax_c)
 static c3_w
 _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
 {
-  c3_i  fid_i = open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  c3_i  fid_i = c3_open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_w  len_w, rit_w, siz_w, mug_w = 0;
   c3_y* dat_y;
 
@@ -302,7 +302,7 @@ static void
 _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
 {
   struct stat buf_u;
-  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
+  c3_i  fid_i = c3_open(fil_u->pax_c, O_RDONLY, 0644);
   c3_ws len_ws, red_ws;
   c3_w  old_w;
   c3_y* old_y;
@@ -409,7 +409,7 @@ _unix_get_mount_point(u3_unix* unx_u, u3_noun mon)
 static void
 _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
 {
-  DIR* rid_u = opendir(mon_u->dir_u.pax_c);
+  DIR* rid_u = c3_opendir(mon_u->dir_u.pax_c);
   if ( !rid_u ) {
     u3l_log("error opening pier directory: %s: %s\r\n",
             mon_u->dir_u.pax_c, strerror(errno));
@@ -487,7 +487,7 @@ static u3_noun _unix_free_node(u3_unix* unx_u, u3_unod* nod_u);
 static void
 _unix_free_file(u3_ufil *fil_u)
 {
-  if ( 0 != unlink(fil_u->pax_c) && ENOENT != errno ) {
+  if ( 0 != c3_unlink(fil_u->pax_c) && ENOENT != errno ) {
     u3l_log("error unlinking %s: %s\n", fil_u->pax_c, strerror(errno));
     c3_assert(0);
   }
@@ -725,7 +725,7 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
   fil_u->dry = c3n;
 
   struct stat buf_u;
-  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
+  c3_i  fid_i = c3_open(fil_u->pax_c, O_RDONLY, 0644);
   c3_ws len_ws, red_ws;
   c3_y* dat_y;
 
@@ -808,7 +808,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
       }
       else {
         if ( c3y == nod_u->dir ) {
-          DIR* red_u = opendir(nod_u->pax_c);
+          DIR* red_u = c3_opendir(nod_u->pax_c);
           if ( 0 == red_u ) {
             u3_unod* nex_u = nod_u->nex_u;
             can = u3kb_weld(_unix_free_node(unx_u, nod_u), can);
@@ -821,7 +821,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
         }
         else {
           struct stat buf_u;
-          c3_i  fid_i = open(nod_u->pax_c, O_RDONLY, 0644);
+          c3_i  fid_i = c3_open(nod_u->pax_c, O_RDONLY, 0644);
 
           if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
             if ( ENOENT != errno ) {
@@ -848,7 +848,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 
   // Check for new nodes
 
-  DIR* rid_u = opendir(dir_u->pax_c);
+  DIR* rid_u = c3_opendir(dir_u->pax_c);
   if ( !rid_u ) {
     u3l_log("error opening directory %s: %s\r\n",
             dir_u->pax_c, strerror(errno));
@@ -991,7 +991,7 @@ static u3_noun
 _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
 {
   struct stat buf_u;
-  c3_i  fid_i = open(pax_c, O_RDONLY, 0644);
+  c3_i  fid_i = c3_open(pax_c, O_RDONLY, 0644);
   c3_ws len_ws, red_ws;
   c3_y* dat_y;
 
@@ -1048,7 +1048,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
 {
   u3_noun can = u3_nul;
 
-  DIR* rid_u = opendir(pax_c);
+  DIR* rid_u = c3_opendir(pax_c);
   if ( !rid_u ) {
     u3l_log("error opening initial directory: %s: %s\r\n",
             pax_c, strerror(errno));
@@ -1307,7 +1307,7 @@ u3_unix_acquire(c3_c* pax_c)
   c3_w pid_w;
   FILE* loq_u;
 
-  if ( NULL != (loq_u = fopen(paf_c, "r")) ) {
+  if ( NULL != (loq_u = c3_fopen(paf_c, "r")) ) {
     if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
       u3l_log("lockfile %s is corrupt!\n", paf_c);
       kill(getpid(), SIGTERM);
@@ -1342,10 +1342,10 @@ u3_unix_acquire(c3_c* pax_c)
       }
     }
     fclose(loq_u);
-    unlink(paf_c);
+    c3_unlink(paf_c);
   }
 
-  if ( NULL == (loq_u = fopen(paf_c, "w")) ) {
+  if ( NULL == (loq_u = c3_fopen(paf_c, "w")) ) {
     u3l_log("unix: unable to open %s\n", paf_c);
     c3_assert(0);
   }
@@ -1368,7 +1368,7 @@ u3_unix_release(c3_c* pax_c)
 {
   c3_c* paf_c = _unix_down(pax_c, ".vere.lock");
 
-  unlink(paf_c);
+  c3_unlink(paf_c);
   c3_free(paf_c);
 }
 

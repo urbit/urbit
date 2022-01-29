@@ -32,7 +32,7 @@ u3_noun
 u3_walk_safe(c3_c* pas_c)
 {
   struct stat buf_b;
-  c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
+  c3_i        fid_i = c3_open(pas_c, O_RDONLY, 0644);
   c3_w        fln_w, red_w;
   c3_y*       pad_y;
 
@@ -64,7 +64,7 @@ u3_noun
 u3_walk_load(c3_c* pas_c)
 {
   struct stat buf_b;
-  c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
+  c3_i        fid_i = c3_open(pas_c, O_RDONLY, 0644);
   c3_w        fln_w, red_w;
   c3_y*       pad_y;
 
@@ -116,7 +116,7 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
   u3r_bytes(0, pax_w, waq_y, u3h(pax));
   pax_c[len_w] = '\0';
 
-  if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno ) {
+  if ( 0 != c3_mkdir(pax_c, 0755) && EEXIST != errno ) {
     u3l_log("error mkdiring %s: %s\n", pax_c, strerror(errno));
     u3m_bail(c3__fail);
   }
@@ -130,7 +130,7 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
 void
 u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
 {
-  c3_i  fid_i = open(pas_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  c3_i  fid_i = c3_open(pas_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_w  fln_w, rit_w;
   c3_y* pad_y;
 
@@ -174,7 +174,7 @@ u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
 static u3_noun
 _walk_in(const c3_c* dir_c, c3_w len_w)
 {
-  DIR*    dir_d = opendir(dir_c);
+  DIR*    dir_d = c3_opendir(dir_c);
   u3_noun map = u3_nul;
 
   if ( !dir_d ) {
