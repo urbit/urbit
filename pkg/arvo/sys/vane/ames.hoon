@@ -1301,25 +1301,27 @@
       event-core
     ::
     =/  =open-packet  (decode-open-packet packet our life.ames-state)
-    ::  store comet as peer in our state
+    ::  add comet as an %alien if we haven't already
+    ::
+    =?  peers.ames-state  ?=(~ ship-state)
+      (~(put by peers.ames-state) sndr.packet %alien *alien-agenda)
+    ::  upgrade comet to %known via on-publ-full
+    ::
+    =.  event-core
+      =/  crypto-suite=@ud  1
+      =/  =point
+        :*  ^=     rift  0
+            ^=     life  sndr-life.open-packet
+            ^=     keys  (my [sndr-life.open-packet crypto-suite public-key.open-packet]~)
+            ^=  sponsor  `(^sein:title sndr.packet)
+        ==
+      (on-publ / [%full (my [sndr.packet point]~)])
+    ::  manually add the lane to the peer state
     ::
     =.  peers.ames-state
-      %+  ~(put by peers.ames-state)  sndr.packet
-      ^-  ^ship-state
-      :-  %known
-      =|  =peer-state
-      =/  our-private-key  sec:ex:crypto-core.ames-state
-      =/  =symmetric-key
-        (derive-symmetric-key public-key.open-packet our-private-key)
-      ::
-      %_  peer-state
-        qos            [%unborn now]
-        symmetric-key  symmetric-key
-        life           sndr-life.open-packet
-        public-key     public-key.open-packet
-        sponsor        (^sein:title sndr.packet)
-        route          `[direct=%.n lane]
-      ==
+      =/  =peer-state  (gut-peer-state sndr.packet)
+      =.  route.peer-state  `[direct=%.n lane]
+      (~(put by peers.ames-state) sndr.packet %known peer-state)
     ::
     event-core
   ::  +on-hear-shut: handle receipt of encrypted packet
@@ -1712,7 +1714,8 @@
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
   ::    Also requests key and life from Jael on first request.
-  ::    On a comet, enqueues self-attestation packet on first request.
+  ::    If we're a comet talking to another comet, sends our
+  ::    self-attestation packet.
   ::
   ++  enqueue-alien-todo
     |=  [=ship mutate=$-(alien-agenda alien-agenda)]
@@ -1729,10 +1732,17 @@
     ::
     =.  todos             (mutate todos)
     =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
-    ::  ask jael for .sndr life and keys on first contact
-    ::
     ?:  already-pending
       event-core
+    ::  On first contact, ask Jael for ship's life and keys. Comets aren't in
+    ::  Jael, though, so don't bother asking. If we're a comet talking to
+    ::  another comet, send our self-attestation immediately.
+    ::
+    ?:  =(%pawn (clan:title ship))
+      ?:  =(%pawn (clan:title our))
+        (send-blob | ship (attestation-packet ship 1))
+      event-core
+    ::
     ::  NB: we specifically look for this wire in +public-keys-give in
     ::  Jael.  if you change it here, you must change it there.
     ::
