@@ -381,6 +381,10 @@ export function JoinRoute() {
   const path = query.get('join-path')?.replace('web+urbitgraph://group/', '');
   const redir = query.get('redir');
 
+  if (!kind) {
+    return null;
+  }
+
   const desc: JoinDesc = path
     ? {
         group: path,
