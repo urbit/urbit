@@ -1,5 +1,6 @@
 import { isChannelAdmin } from '~/logic/lib/group';
 import { cite } from '~/logic/lib/util';
+import { createJoinParams } from '~/views/landscape/components/Join/Join';
 
 const makeIndexes = () => new Map([
     ['ships', []],
@@ -55,7 +56,7 @@ const commandIndex = function (currentGroup, groups, associations) {
   if (canAdd) {
     commands.push(result('Channel: Create', `/~landscape${workspace}/new`, 'Groups', null));
   }
-  commands.push(result('Groups: Join', '?join-kind=group', 'Groups', null));
+  commands.push(result('Groups: Join', createJoinParams('groups'), 'Groups', null));
 
   return commands;
 };
