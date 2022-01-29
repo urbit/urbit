@@ -7,24 +7,21 @@
     verb,
     dbug
 ::  Generally don't update the snapshot until we have clay tombstoning.
-::  To update, run:
-::    =e -build-file %/lib/ethereum/hoon
-::    =l .^((list event-log:rpc:e) %gx /=azimuth=/logs/noun)
-::    */app/azimuth/logs/eth-logs &eth-logs l
 ::
-/*  snap  %eth-logs  /app/azimuth/logs/eth-logs
+/*  snap  %azimuth-snapshot  /app/azimuth/version-0/azimuth-snapshot
+::  To update, run from dojo:
+::    -azimuth-snap-state %default 'version-0'
 ::
-=/  last-snap  ::  maybe just use the last one?
-  %+  roll  `(list event-log:rpc:ethereum)`snap  ::~
-  |=  [log=event-log:rpc:ethereum last=@ud]
-  ?~  mined.log
-    last
-  (max block-number.u.mined.log last)
+::  To recreate from a full list of logs (at /app/azimuth/logs/eth-logs):
+::    -azimuth-snap-logs %default 'version-0'
+::
+=/  snap=snap-state  snap
+=/  last-snap=@      number.id.snap
 ::
 =,  jael
 |%
 +$  app-state
-  $:  %2
+  $:  %5
       url=@ta
       =net
       whos=(set ship)
@@ -62,8 +59,14 @@
   ::
   ++  on-init
     ^-  (quip card _this)
+    =/  points=@ud  ~(wyt by points.nas.snap)
+    %-  %-  slog
+        [leaf+"ship: loading azimuth snapshot ({<points>} points)"]~
+    ::
     =:  net.state   %default
-        logs.state  snap
+        nas.state   nas.snap
+        own.state   owners.snap
+        spo.state   sponsors.snap
         url.state   'http://eth-mainnet.urbit.org:8545'
       ==
     :_  this
@@ -89,18 +92,56 @@
       ?.  ?=(%1 -.old-state)
         `old-state
       %-  %-  slog  :_  ~
-          leaf+"azimuth: loading snapshot with {<(lent logs.old-state)>} events"
+          leaf+"ship: loading snapshot with {<(lent logs.old-state)>} events"
       =.  +.state  +.old-state
       =^  cards  state
         (%*(run-logs do nas.state *^state:naive) logs.state)
       [(jael-update:do (to-udiffs:do cards)) state]
-    ?>  ?=(%2 -.old-state)
-    [cards-1 this(state old-state)]
+    =^  cards-2  old-state
+      ?.  ?=(%2 -.old-state)
+        `old-state
+      ~&  >  '%azimuth: updating to state 3'
+      =.  +.state  +.old-state
+      ::  replace naive state and indices with snapshot
+      ::
+      =:  nas.state   nas.snap
+          own.state   owners.snap
+          spo.state   sponsors.snap
+          logs.state  ~
+          ::  TODO: shouldn't be needed but have seen eth-watcher
+          ::        threads use a url='' if this is not used
+          ::
+          url.state   'http://eth-mainnet.urbit.org:8545'
+        ==
+      =/  points=@ud  ~(wyt by points.nas.state)
+      %-  %-  slog  :_  ~
+          leaf+"ship: processing azimuth snapshot ({<points>} points)"
+      =/  snap-cards=udiffs:point  (run-state:do id.snap points.nas.state)
+      :_  [%3 +.state]
+      %+  weld
+        (jael-update:do snap-cards)
+      ::  start getting new logs after the last id:block in the snapshot
+      ::
+      start:do
+    =^  cards-3  old-state
+      ?.  ?=(%3 -.old-state)  [cards-2 old-state]
+      :_  old-state(- %4)
+      ~&  >  '%azimuth: updating to state 4'
+      [%pass /resend-pk %arvo %j %resend ~]^cards-2
+    =^  cards-4  old-state
+      ?.  ?=(%4 -.old-state)  [cards-3 old-state]
+      =^  cards  this
+        %-  %*(. on-poke +.state.this +.old-state)
+        [%azimuth-poke !>([%watch [url net]:old-state])]
+      ~&  >  '%azimuth: updating to state 5'
+      [cards state.this(- %5)]
+    ?>  ?=(%5 -.old-state)
+    [cards-4 this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1 app-state)
+    ++  app-states  $%(state-0 state-1-2-3-4 app-state)
     ::
-    +$  state-1
-      $:  %1
+    +$  state-1-2-3-4
+      $:  ?(%1 %2 %3 %4)
           url=@ta
           =net
           whos=(set ship)
@@ -126,12 +167,13 @@
     ^-  (quip card _this)
     ?:  =(%noun mark)
       ?+    q.vase  !!
+      ::
           %rerun
-        ~&  [%rerunning (lent logs.state)]
-        =.  points.nas.state  ~
-        =.  own.state  ~
-        =^  *  state  (run-logs:do logs.state)
-        `this
+        =/  points=@ud  ~(wyt by points.nas.state)
+        ~&  >  "rerunning ({<points>} points)"
+        =/  =udiffs:point
+          (run-state:do (last-block-id:dice logs.state) points.nas.state)
+        [(jael-update:do udiffs) this]
       ::
           %resub
         :_  this  :_  ~
@@ -140,13 +182,12 @@
         ==
       ::
           %resnap
-        =.  logs.state  snap
-        $(mark %noun, vase !>(%rerun))
+        =:  nas.state  nas.snap
+            own.state  owners.snap
+            spo.state  sponsors.snap
+          ==
+        `this
       ==
-    ?:  =(%eth-logs mark)
-      =+  !<(logs=(list event-log:rpc:ethereum) vase)
-      =.  logs.state  logs
-      $(mark %noun, vase !>(%rerun))
     ::
     ?.  ?=(%azimuth-poke mark)
       (on-poke:def mark vase)
@@ -156,15 +197,12 @@
       [[%pass /lo %arvo %j %listen (silt whos.poke) source.poke]~ this]
     ::
         %watch
-      :: TODO: only wipe out state when switching networks?
-      :: ?:  =(net.state net.poke)
-      ::   [~ this]
-      =:  nas.state   *^state:naive
+      =:  nas.state   ?:(?=(%default net.poke) nas.snap *^state:naive)
+          own.state   ?:(?=(%default net.poke) owners.snap ~)
+          spo.state   ?:(?=(%default net.poke) sponsors.snap ~)
           net.state   net.poke
           url.state   url.poke
-          own.state   ~
-          spo.state   ~
-          logs.state  ?:(?=(%default net.poke) snap ~)
+          logs.state  ~
         ==
       [start:do this]
     ==
@@ -188,11 +226,13 @@
     ::  Slow to recalculate all the diffs, but this is necessary to make
     ::  sure Jael gets the updates from the snapshot
     ::
+    =/  points=@ud  ~(wyt by points.nas.state)
     %-  %-  slog  :_  ~
-        leaf+"azimuth: loading snapshot with {<(lent logs.state)>} events"
-    =^  snap-cards  state
-      (%*(run-logs do nas.state *^state:naive) logs.state)
-    [(weld (jael-update:do (to-udiffs:do snap-cards)) start:do) this]
+        :-  %leaf
+        "ship: processing azimuth snapshot ({<points>} points)"
+    =/  snap-cards=udiffs:point
+      (%*(run-state do logs.state ~) id.snap points.nas.state)
+    [(weld (jael-update:do snap-cards) start:do) this]
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
@@ -237,9 +277,13 @@
         %history  (welp logs.state loglist.diff)
         %logs     (welp logs.state loglist.diff)
       ==
-    =?  nas.state  ?=(%history -.diff)  *^state:naive
-    =^  effects  state  (run-logs:do loglist.diff)
+    ::  doing :azimuth|watch caused a l2-sig-fail when using the eth-log
+    ::  snapshot because we were not updating nas with the saved logs.
     ::
+    ::  now (L: 189) nas.state is loaded with the contents of the snapshot,
+    ::  if we are on the %default network.
+    ::
+    =^  effects  state  (run-logs:do loglist.diff)
     :_  this
     %+  weld
       (event-update:do effects)
@@ -287,16 +331,27 @@
   ^-  (list ?(@ux (list @ux)))
   ~
 ::
-++  data-to-hex
-  |=  data=@t
-  ?~  data  *@ux
-  ?:  =(data '0x')  *@ux
-  (hex-to-num:ethereum data)
+++  run-state
+  |=  [=id:block =points:naive]
+  ::%-  road  |.  :: count memory usage in a separate road
+  ^-  =udiffs:point
+  %-  flop
+  %+  roll  (tap:orp:dice points)
+  |=  [[=ship naive-point=point:naive] =udiffs:point]
+  =,  naive-point
+  =/  =pass
+    (pass-from-eth:azimuth [32^crypt 32^auth suite]:keys.net)
+  ^-  (list [@p udiff:point])
+  :*  [ship id %rift rift.net %.y]
+      [ship id %keys [life.keys.net suite.keys.net pass] %.y]
+      [ship id %spon ?:(has.sponsor.net `who.sponsor.net ~)]
+      udiffs
+  ==
 ::
 ++  run-logs
   |=  [logs=(list event-log:rpc:ethereum)]
   ^-  (quip tagged-diff _state)
-  =+  net=(get-network net.state)
+  =+  net=(get-network:dice net.state)
   =|  effects=(list tagged-diff)
   !.  ::  saves 700MB replaying snapshot
   =-  =/  res  (mule -)
@@ -309,11 +364,12 @@
     [(flop effects) state]
   ?~  mined.i.logs
     $(logs t.logs)
-  =/  [raw-effects=effects:naive new-nas=_nas.state]
+  =+  cache=nas.state
+  =^  raw-effects  nas.state
     =/  =^input:naive
       :-  block-number.u.mined.i.logs
       ?:  =(azimuth.net address.i.logs)
-        =/  data  (data-to-hex data.i.logs)
+        =/  data  (data-to-hex:dice data.i.logs)
         =/  =event-log:naive
           [address.i.logs data topics.i.logs]
         [%log event-log]
@@ -321,28 +377,16 @@
         [%bat *@]
       [%bat u.input.u.mined.i.logs]
     (%*(. naive lac |) verifier chain-id.net nas.state input)
-  ::  TODO: move to /lib/dice ?
+  ::  TODO: make index update optional?
   ::
-  =/  [new-own=_own.state new-spo=_spo.state]
-    =<  [own spo]
-    ?.  =(azimuth.net address.i.logs)
-      %:  apply-effects:dice
-        chain-id.net
-        raw-effects
-        nas.state
-        own.state
-        spo.state
-      ==
-    %:  update-indices:dice
-      raw-effects
-      nas.state
-      new-nas
-      own.state
-      spo.state
-    ==
-  =:  nas.state  new-nas
-      own.state  new-own
-      spo.state  new-spo
+  =/  =indices  [own spo]:state
+  =.  indices
+    ?:  =(naive.net address.i.logs)
+      (tx-effects:dice chain-id.net raw-effects cache indices)
+    =<  indices
+    (point-effects:dice raw-effects points.cache points.nas.state indices)
+  =:  own.state  own.indices
+      spo.state  spo.indices
     ==
   =/  effects-1
     =/  =id:block  [block-hash block-number]:u.mined.i.logs
@@ -358,12 +402,12 @@
   ^-  (unit [=ship =udiff:point])
   ?.  ?=(%point +<.tag)  ~
   ?+    +>+<.tag  ~
-      %rift     `[ship.tag id.tag %rift rift.tag]
+      %rift     `[ship.tag id.tag %rift rift.tag %.n]
       %sponsor  `[ship.tag id.tag %spon sponsor.tag]
       %keys
     =/  =pass
       (pass-from-eth:azimuth 32^crypt.keys.tag 32^auth.keys.tag suite.keys.tag)
-    `[ship.tag id.tag %keys life.keys.tag suite.keys.tag pass]
+    `[ship.tag id.tag %keys [life.keys.tag suite.keys.tag pass] %.n]
   ==
 ::
 ++  jael-update
@@ -391,26 +435,14 @@
   ^-  card
   [%give %fact ~[/event] %naive-diffs !>(+.tag)]
 ::
-++  get-network
-  |=  =net
-  ^-  [azimuth=@ux naive=@ux chain-id=@ launch=@]
-  =<  [azimuth naive chain-id launch]
-  =,  azimuth
-  ?-  net
-    %mainnet  mainnet-contracts
-    %ropsten  ropsten-contracts
-    %local    local-contracts
-    %default  contracts
-  ==
-::
 ++  start
   ^-  (list card)
-  =+  net=(get-network net.state)
+  =+  net=(get-network:dice net.state)
   =/  args=vase  !>
     :+  %watch  /[dap.bowl]
     ^-  config:eth-watcher
     :*  url.state  =(%czar (clan:title our.bowl))  refresh  ~h30
-        (max launch.net ?:(=(net.state %default) last-snap 0))
+        (max launch.net ?:(=(net.state %default) +(last-snap) 0))
         ~[azimuth.net]
         ~[naive.net]
         (topics whos.state)

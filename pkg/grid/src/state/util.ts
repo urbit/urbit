@@ -1,4 +1,4 @@
-import { Docket, DocketHref, Treaty } from '@urbit/api/docket';
+import { Docket, DocketHref, Treaty } from '@urbit/api';
 import { hsla, parseToHsla } from 'color2k';
 import _ from 'lodash';
 
