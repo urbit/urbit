@@ -1,7 +1,7 @@
 :~  title+'Groups'
     info+'A suite of applications to communicate on Urbit'
     color+0xee.5432
-    glob-http+['https://bootstrap.urbit.org/glob-0v7.i3htk.kflos.l8nic.q5u2o.v8oir.glob' 0v7.i3htk.kflos.l8nic.q5u2o.v8oir]
+    glob-http+['https://bootstrap.urbit.org/glob-0v2.mvimg.otm4r.bo1uf.ttq1v.ufa2l.glob' 0v2.mvimg.otm4r.bo1uf.ttq1v.ufa2l]
 
     base+'landscape'
     version+[1 0 5]
