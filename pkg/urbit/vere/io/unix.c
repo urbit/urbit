@@ -460,12 +460,12 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
         }
       }
       else {
-        if ( '.' != out_u->d_name[len_w]
-             || '\0' == out_u->d_name[len_w + 1]
-             || '~' == out_u->d_name[strlen(out_u->d_name) - 1]
-             || ('#' == out_u->d_name[0] &&
-                 '#' == out_u->d_name[strlen(out_u->d_name) - 1])
-	     ) {
+        if (  '.'  != out_u->d_name[len_w]
+           || '\0' == out_u->d_name[len_w + 1]
+           || '~'  == out_u->d_name[strlen(out_u->d_name) - 1]
+           || ('#' == out_u->d_name[0] &&
+               '#' == out_u->d_name[strlen(out_u->d_name) - 1]) )
+        {
           c3_free(pax_c);
           continue;
         }
