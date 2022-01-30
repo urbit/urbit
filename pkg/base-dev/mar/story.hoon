@@ -1,5 +1,5 @@
 /-  *story
-/+  lib=story
+/+  *story
 !:
 |_  tale=story
 +$  story-additions  [entry-additions=story prose-additions=story]
