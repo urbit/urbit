@@ -1,5 +1,5 @@
 import { Action, Col, Icon, Row } from '@tlon/indigo-react';
-import { Association, Post } from '@urbit/api';
+import { Association, Post, removePosts } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
@@ -8,7 +8,6 @@ import { resourceFromPath } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 import airlock from '~/logic/api';
-import { removePosts } from '@urbit/api/graph';
 interface PostHeaderProps {
   post: Post;
   association: Association;

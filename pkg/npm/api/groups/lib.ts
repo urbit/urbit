@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
 import { Group, GroupPolicy, GroupPolicyDiff, GroupUpdateAddMembers, GroupUpdateAddTag, GroupUpdateChangePolicy, GroupUpdateRemoveGroup, GroupUpdateRemoveMembers, GroupUpdateRemoveTag, Resource, RoleTags, Tag } from './types';
 import { GroupUpdate } from './update';
@@ -97,13 +95,23 @@ export const changePolicy = (
   }
 });
 
+export const makeResource = (ship: string, name: string) => {
+  return { ship, name };
+};
+
 export const join = (
   ship: string,
-  name: string
+  name: string,
+  app: "groups" | "graph",
+  autojoin: boolean,
+  share: boolean
 ): Poke<any> => viewAction({
   join: {
     resource: makeResource(ship, name),
-    ship
+    ship,
+    shareContact: share || false,
+    app,
+    autojoin
   }
 });
 
@@ -148,10 +156,10 @@ export const invite = (
   }
 });
 
-export const hideGroup = (
+export const abortJoin = (
   resource: string
 ): Poke<any> => viewAction({
-  hide: resource
+  abort: resource
 });
 
 export const roleTags = ['janitor', 'moderator', 'admin'];
@@ -162,9 +170,10 @@ export const groupBunts = {
   policy: (): GroupPolicy => ({ open: { banned: new Set(), banRanks: new Set() } })
 };
 
-export const joinError = ['no-perms', 'strange'] as const;
+export const joinError = ['no-perms', 'strange', 'abort'] as const;
 export const joinResult = ['done', ...joinError] as const;
-export const joinProgress = ['start', 'added', ...joinResult] as const;
+export const joinLoad = ['start', 'added', 'metadata'] as const;
+export const joinProgress = [...joinLoad, ...joinResult] as const;
 
 export const roleForShip = (
   group: Group,
@@ -174,30 +183,32 @@ export const roleForShip = (
     const roleShips = group?.tags?.role?.[role];
     return roleShips && roleShips.has(ship) ? role : currRole;
   }, undefined as RoleTags | undefined);
-}
+};
 
 export const resourceFromPath = (path: Path): Resource => {
   const [, , ship, name] = path.split('/');
   return { ship, name };
-}
-
-export const makeResource = (ship: string, name: string) => {
-  return { ship, name };
-}
+};
 
 export const isWriter = (group: Group, resource: string, ship: string) => {
-  const writers: Set<string> | undefined = _.get(
-    group,
-    ['tags', 'graph', resource, 'writers'],
-    undefined
-  );
+  const graph = group.tags?.graph;
+  const writers: Set<string> | undefined = graph && (graph[resource] as any)?.writers;
   const admins = group?.tags?.role?.admin ?? new Set();
-  if (_.isUndefined(writers)) {
+  if (typeof writers === 'undefined') {
     return true;
   } else {
     return writers.has(ship) || admins.has(ship);
   }
-}
+};
+
+export const isHost = (
+  resource: string,
+  ship: string
+): boolean => {
+  const [, , host] = resource.split('/');
+
+  return ship === host;
+};
 
 export const isChannelAdmin = (
   group: Group,
@@ -211,13 +222,4 @@ export const isChannelAdmin = (
     role === 'admin' ||
     role === 'moderator'
   );
-}
-
-export const isHost = (
-  resource: string,
-  ship: string
-): boolean => {
-  const [, , host] = resource.split('/');
-
-  return ship === host;
-}
+};

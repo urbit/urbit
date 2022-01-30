@@ -599,7 +599,7 @@
     ~(parse error:json-rpc id)
   [%result id (tx-status:to-json (scry u.hash))]
 ::
-++  next-batch
+++  next-timer
   |=  [id=@t params=(map @t json) when=time]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 0)
@@ -680,4 +680,25 @@
   ?.  =((lent ~(tap by params)) 0)
     ~(params error:json-rpc id)
   [%result id (azimuth-config:to-json azimuth-config)]
+::
+++  quota-remaining
+  |=  [id=@t params=(map @t json) quota-left=$-(@p @ud)]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(ship:from-json params)
+    ~(params error:json-rpc id)
+  [%result id (numb:enjs:format (quota-left u.ship))]
+::
+++  ship-allowance
+  |=  [id=@t params=(map @t json) allowance=$-(@p (unit @ud))]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(ship:from-json params)
+    ~(params error:json-rpc id)
+  :+  %result  id
+  ?^  allow=(allowance u.ship)
+    (numb:enjs:format u.allow)
+  s+(crip "No quota restrictions for {(scow %p u.ship)}")
 --

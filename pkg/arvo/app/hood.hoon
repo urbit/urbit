@@ -2,27 +2,28 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $~  [%22 *state:drum *state:helm *state:kiln]
-  $>(%22 any-state)
+  $~  [%23 *state:drum *state:helm *state:kiln]
+  $>(%23 any-state)
 ::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
-      [%7 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%8 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%9 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%10 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%11 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%12 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%13 drum=state-2:drum helm=state:helm kiln=state-1:kiln]
-      [%14 drum=state-2:drum helm=state:helm kiln=state-1:kiln]
-      [%15 drum=state-2:drum helm=state:helm kiln=state-2:kiln]
-      [%16 drum=state-4:drum helm=state:helm kiln=state-3:kiln]
-      [%17 drum=state-4:drum helm=state:helm kiln=state-4:kiln]
-      [%18 drum=state-4:drum helm=state:helm kiln=state-5:kiln]
-      [%19 drum=state-4:drum helm=state:helm kiln=state-6:kiln]
-      [%20 drum=state-4:drum helm=state:helm kiln=state-7:kiln]
-      [%21 drum=state-4:drum helm=state:helm kiln=state-8:kiln]
-      [%22 drum=state-4:drum helm=state:helm kiln=state-9:kiln]
+      [%7 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%8 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%9 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%10 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%11 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%12 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%13 drum=state-2:drum helm=state-1:helm kiln=state-1:kiln]
+      [%14 drum=state-2:drum helm=state-1:helm kiln=state-1:kiln]
+      [%15 drum=state-2:drum helm=state-1:helm kiln=state-2:kiln]
+      [%16 drum=state-4:drum helm=state-1:helm kiln=state-3:kiln]
+      [%17 drum=state-4:drum helm=state-1:helm kiln=state-4:kiln]
+      [%18 drum=state-4:drum helm=state-1:helm kiln=state-5:kiln]
+      [%19 drum=state-4:drum helm=state-1:helm kiln=state-6:kiln]
+      [%20 drum=state-4:drum helm=state-1:helm kiln=state-7:kiln]
+      [%21 drum=state-4:drum helm=state-1:helm kiln=state-8:kiln]
+      [%22 drum=state-4:drum helm=state-1:helm kiln=state-9:kiln]
+      [%23 drum=state-4:drum helm=state-2:helm kiln=state-9:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -48,6 +49,7 @@
 ++  on-fail   on-fail:def
 ++  on-init
   ^-  step:agent:gall
+  =^  h  helm.state  on-init:helm-core
   =^  d  drum.state  on-init:drum-core
   =^  k  kiln.state  on-init:kiln-core
   [:(welp d k) this]
