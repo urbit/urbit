@@ -144,8 +144,8 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
 }
 
 /* _unix_string_to_path(): convert c string to u3_noun path
- *
- * c string must begin with the pier path plus mountpoint
+**
+** c string must begin with the pier path plus mountpoint
 */
 static u3_noun
 _unix_string_to_path_helper(c3_c* pax_c)
@@ -517,8 +517,8 @@ _unix_free_dir(u3_udir *dir_u)
 }
 
 /* _unix_free_node(): free node, deleting everything within
- *
- * also deletes from parent list if in it
+**
+** also deletes from parent list if in it
 */
 static u3_noun
 _unix_free_node(u3_unix* unx_u, u3_unod* nod_u)
@@ -561,12 +561,12 @@ _unix_free_node(u3_unix* unx_u, u3_unod* nod_u)
 }
 
 /* _unix_free_mount_point(): free mount point
- *
- * this process needs to happen in a very careful order.  in particular,
- * we must recurse before we get to the callback, so that libuv does all
- * the child directories before it does us.
- *
- * tread carefully
+**
+** this process needs to happen in a very careful order.  in particular,
+** we must recurse before we get to the callback, so that libuv does all
+** the child directories before it does us.
+**
+** tread carefully
 */
 static void
 _unix_free_mount_point(u3_unix* unx_u, u3_umon* mon_u)
@@ -706,12 +706,12 @@ _unix_create_dir(u3_udir* dir_u, u3_udir* par_u, u3_noun nam)
 static u3_noun _unix_update_node(u3_unix* unx_u, u3_unod* nod_u);
 
 /* _unix_update_file(): update file, producing list of changes
- *
- * when scanning through files, if dry, do nothing.  otherwise, mark as
- * dry, then check if file exists.  if not, remove self from node list
- * and add path plus sig to %into event.  otherwise, read the file and
- * get a mug checksum.  if same as gum_w, move on.  otherwise, overwrite
- * add path plus data to %into event.
+**
+** when scanning through files, if dry, do nothing.  otherwise, mark as
+** dry, then check if file exists.  if not, remove self from node list
+** and add path plus sig to %into event.  otherwise, read the file and
+** get a mug checksum.  if same as gum_w, move on.  otherwise, overwrite
+** add path plus data to %into event.
 */
 static u3_noun
 _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
@@ -780,9 +780,9 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
 }
 
 /* _unix_update_dir(): update directory, producing list of changes
- *
- * when changing this, consider whether to also change
- * _unix_initial_update_dir()
+**
+** when changing this, consider whether to also change
+** _unix_initial_update_dir()
 */
 static u3_noun
 _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
