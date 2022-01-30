@@ -73,7 +73,7 @@ export const MessageAuthor = React.memo<any>(({
       ? contact
       : null;
 
-  const showNickname = useShowNickname(contact);
+  const showNickname = useShowNickname(contact) && (msg.author.trim() !== contact?.nickname?.replace('~', '')?.trim());
   const { hideAvatars } = useSettingsState(selectCalmState);
   const shipName = citeNickname(msg.author, showNickname, contact?.nickname);
   const color = contact

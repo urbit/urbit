@@ -6,8 +6,7 @@ import {
   Button,
   ManagedTextInputField,
   ManagedCheckboxField,
-  ContinuousProgressBar,
-<<<<<<< HEAD
+  ContinuousProgressBar
 } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -21,21 +20,6 @@ import airlock from '~/logic/api';
 import { joinError, joinLoad, JoinProgress } from '@urbit/api';
 import { useQuery } from '~/logic/lib/useQuery';
 import { JoinKind, JoinDesc, JoinSkeleton } from './Skeleton';
-=======
-} from "@tlon/indigo-react";
-import { Formik, Form } from "formik";
-import React, { useEffect } from "react";
-import { useHistory, useLocation, useParams } from "react-router-dom";
-import useGroupState from "~/logic/state/group";
-import useInviteState, { useInviteForResource } from "~/logic/state/invite";
-import useMetadataState, { usePreview } from "~/logic/state/metadata";
-import { decline, Invite } from "@urbit/api";
-import { join, JoinRequest } from "@urbit/api";
-import airlock from "~/logic/api";
-import { joinError, joinResult, joinLoad, JoinProgress } from "@urbit/api";
-import { useQuery } from "~/logic/lib/useQuery";
-import { JoinKind, JoinDesc, JoinSkeleton } from "./Skeleton";
->>>>>>> 3a542c635e (fixed couple annoying imports (#1))
 
 interface InviteWithUid extends Invite {
   uid: string;

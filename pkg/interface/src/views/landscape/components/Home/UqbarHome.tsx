@@ -7,6 +7,7 @@ import Tile from '~/views/apps/launch/components/tiles/tile';
 import { ScrollbarLessBox } from '~/views/apps/launch/App';
 import { Sigil } from '~/logic/lib/sigil';
 import { useDark } from '~/logic/state/join';
+import { version } from '~/../package.json';
 
 export function UqbarHome(props) {
   const history = useHistory();
@@ -53,6 +54,11 @@ export function UqbarHome(props) {
             </Row>
           </Box>
         </Tile> */}
+        <Tile>
+          <Col display="flex" alignItems="center" justifyContent="center" height="100%">
+            <Text mt={3} textAlign="center" fontWeight="bold">Welcome to EScape (v{version})</Text>
+          </Col>
+        </Tile>
         <Tile>
           <Col display="flex" alignItems="center" justifyContent="center" height="100%">
             <Sigil
