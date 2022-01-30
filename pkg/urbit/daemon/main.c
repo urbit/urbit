@@ -54,6 +54,40 @@ _main_presig(c3_c* txt_c)
   return new_c;
 }
 
+/* _main_repath(): canonicalize path, using dirname if needed.
+*/
+c3_c*
+_main_repath(c3_c* pax_c)
+{
+  c3_c* rel_c;
+  c3_c* fas_c;
+  c3_c* dir_c;
+  c3_w  len_w;
+  c3_i  wit_i;
+
+  if ( 0 != (rel_c = realpath(pax_c, 0)) ) {
+    return rel_c;
+  }
+  fas_c = strrchr(pax_c, '/');
+  if ( !fas_c ) {
+    fprintf(stderr, "invalid path %s\n", pax_c);
+    return 0;
+  }
+  c3_assert(u3_unix_safe(fas_c + 1));
+  *fas_c = 0;
+  if ( 0 == (dir_c = realpath(pax_c, 0)) ) {
+    *fas_c = '/';
+    return 0;
+  }
+  len_w = strlen(dir_c) + strlen(fas_c + 1) + 2;
+  rel_c = c3_malloc(len_w);
+  wit_i = snprintf(rel_c, len_w, "%s/%s", dir_c, fas_c + 1);
+  c3_assert(wit_i >= 0 && (c3_w)wit_i + 1 == len_w);
+  *fas_c = '/';
+  c3_free(dir_c);
+  return rel_c;
+}
+
 /* _main_getopt(): extract option map from command line.
 */
 static u3_noun
@@ -104,11 +138,11 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'J': {
-        u3_Host.ops_u.lit_c = strdup(optarg);
+        u3_Host.ops_u.lit_c = _main_repath(optarg);
         break;
       }
       case 'B': {
-        u3_Host.ops_u.pil_c = strdup(optarg);
+        u3_Host.ops_u.pil_c = _main_repath(optarg);
         break;
       }
       case 'b': {
@@ -120,7 +154,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'A': {
-        u3_Host.ops_u.arv_c = strdup(optarg);
+        u3_Host.ops_u.arv_c = _main_repath(optarg);
         break;
       }
       case 'H': {
@@ -128,7 +162,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'I': {
-        u3_Host.ops_u.jin_c = strdup(optarg);
+        u3_Host.ops_u.jin_c = _main_repath(optarg);
         break;
       }
       case 'C': {
@@ -166,7 +200,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'k': {
-        u3_Host.ops_u.key_c = strdup(optarg);
+        u3_Host.ops_u.key_c = _main_repath(optarg);
         break;
       }
       case 'n': {
@@ -188,7 +222,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'i': {
-        u3_Host.ops_u.imp_c = strdup(optarg);
+        u3_Host.ops_u.imp_c = _main_repath(optarg);
         break;
       }
       case 'L': { u3_Host.ops_u.net = c3n; break; }
@@ -248,7 +282,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
     }
 
-    u3_Host.dir_c = strdup(argv[optind]);
+    u3_Host.dir_c = _main_repath(argv[optind]);
   }
 
   //  daemon mode (-d) implies disabling terminal assumptions (-t)
@@ -663,31 +697,7 @@ main(c3_i   argc,
   printf("~\n");
   //  printf("welcome.\n");
   printf("urbit %s\n", URBIT_VERSION);
-
-  // prints the absolute path of the pier
-  //
-  c3_c* abs_c = realpath(u3_Host.dir_c, 0);
-
-  // if the ship is being booted, we use realpath(). Otherwise, we use getcwd()
-  // with a memory-allocation loop
-  //
-  if (abs_c == NULL) {
-    c3_i mprint_i = 1000;
-    abs_c = c3_malloc(mprint_i);
-
-    // allocates more memory as needed if the path is too large
-    //
-    while ( abs_c != getcwd(abs_c, mprint_i) ) {
-      c3_free(abs_c);
-      mprint_i *= 2;
-      abs_c = c3_malloc(mprint_i);
-    }
-    printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
-    c3_free(abs_c);
-  } else {
-    printf("boot: home is %s\n", abs_c);
-    c3_free(abs_c);
-  }
+  printf("boot: home is %s\n", u3_Host.dir_c);
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem ) {
