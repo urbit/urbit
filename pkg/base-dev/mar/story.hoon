@@ -2,9 +2,7 @@
 /+  *story
 !:
 |_  tale=story
-+$  story-additions  [entry-additions=story prose-additions=story]
-+$  story-deletions  [entry-deletions=story prose-deletions=story]
-+$  story-diff       [additions=story-additions deletions=story-deletions]
++$  story-diff       [additions=story deletions=story]
 ::
 ++  grad
   |%
