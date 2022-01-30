@@ -141,15 +141,17 @@
   ++  noun  story                                ::  clam from %noun
   ++  mime                                       ::  retrieve form %mime
     |=  [p=mite q=octs]
-    ^-  story
     =/  story-text    `@t`q.q
-    =/  parsed-story  `(list [@uv @t wain])`(rash story-text story-parser)
+    =/  parsed-story  `(list [@uv (list [@t wain])])`(rash story-text parse-story)
+    ^-  story
     %-  ~(gas by *story)
     %+  turn  parsed-story
-    |=  [=tako:clay title=@t body=wain]
-    :-  tako 
+    |=  [tak=tako:clay proses-list=(list [@t wain])]
+    ^-  chapter
+    :-  tak
     %-  silt
-    :~  [title (of-wain:format body)]
-    ==
+    %+  turn  proses-list
+    |=  [[title=@t body=(list @t)]]
+    [title (of-wain:format body)]
   --
 --
