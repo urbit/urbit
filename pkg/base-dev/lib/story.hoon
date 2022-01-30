@@ -1,5 +1,53 @@
 /-  *story
+!:
 |%
+::  XX generalize move to hoon.hoon
+++  dif-ju
+  |=  [a=story b=story]
+  ^-  story
+  ::?:  ?=(~ a)  b
+  ::?<  ?=(~ a)
+  ::?<  ?=(~ b)
+  ::~!  a
+  ::~!  b
+  ::  uno := (a-b) + (merged items in both a and b) + (b-a)
+  ::  ret := (a-b) + (merged items in both a and b)  
+  ::  ret = (~(int by a) uno)  :: preserve only the entries whose keys are in a
+  ::
+  :: uno doesn't work on emtpty
+  ::  0 - b = b
+  ::  a - 0 = a
+  ::=/  proses-set         %-  ~(gas by *(set prose))  ~[['loll' 'lolll'] ['t' 'b']]
+  ::=/  story-a=story      %-  ~(gas by *story)  ~[[0v1 proses-set]]
+  ::?:  ?=(~ a)  b  :: need this so that uno 
+  ::?:  ?=(~ b)  a
+  ::~!  ((~(uno by a) b) |=(* *proses))
+  ::
+  =/  uno=story
+    ::~!  ((~(uno by story-a) story-a) |=(* *proses))
+    ::~!  ((~(uno by `story`a) `story`a) |=(* *proses))
+    %-  (~(uno by a) b)  ::|=(* *proses)
+    |=  [k=tako:clay proses-a=proses proses-b=proses]
+    ^-  proses
+    (~(dif in proses-a) proses-b)
+  ::
+  =/  ret=story  ::story-a  
+    (~(int by a) uno)
+  :: normalizing step, remove any keys with null sets, 
+  :: which can occur if proses-a == proses-b above
+  %-  ~(gas by *story)
+  (skip ~(tap by ret) |=([k=* v=proses] ?=(~ v)))
+::
+++  uni-ju
+  |=  [a=story b=story]
+  ^-  story
+  %-  (~(uno by a) b)
+  |=  [k=tako:clay proses-a=proses proses-b=proses]
+  ^-  proses
+  (~(uni in proses-a) proses-b)
+::
+::  Canonical textual representation
+::
 ++  tako-to-text
   |=  [=tako:clay]
   ^-  tape
