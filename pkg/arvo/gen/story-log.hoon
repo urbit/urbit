@@ -24,8 +24,8 @@
   %-  some
   %-  crip
   ;:  welp
-    (trip (tako-to-text:lib r.commit))
-    (trip (proses-to-text:lib u.proses))
+    (tako-to-text:lib r.commit)
+    (proses-to-text:lib u.proses)
   ==
 ::::
 ::  Remarks:

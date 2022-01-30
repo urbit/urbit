@@ -2,32 +2,34 @@
 |%
 ++  tako-to-text
   |=  [=tako:clay]
-  ^-  cord
-  (crip "commit: {<`@uv`tako>}\0a")
+  ^-  tape
+  "commit: {<`@uv`tako>}\0a"
+::
 ++  proses-to-text
-  |=  [proses=(set prose)]
-  ^-  cord
-  ::  XX code cleanup: factor out duplicate code
+  |=  [=proses]
+  ^-  tape
   =/  proses-list=(list prose)  ~(tap in proses)
-  ?:  ?=(~ proses-list)  ''
+  ?:  ?=(~ proses-list)  ""
   ?:  ?=([prose ~] proses-list)
-    =/  [title=@t body=@t]  i.proses-list
-    %-  crip
-    ;:  welp
-      "{(trip title)}"
-      "\0a\0a"
-      "{(trip body)}"
-      "\0a"
-    ==
-  %-  crip
+    (prose-to-text i.proses-list)
   %-  tail
-  %^  spin  ;;((list prose) proses-list)  *tape  :: WHY DO WE NEED ;;
-  |=  [[title=@t body=@t] state=tape]
+  %^  spin  ;;((list prose) t.proses-list)  :: XX WHY DO WE NEED ;;
+  (prose-to-text i.proses-list)
+  |=  [prz=prose state=tape]
   ^-  [prose tape]
-  :-  [title body]
+  :-  prz
   ;:  welp
     state
-    "|||\0a"
+    "|||"
+    "\0a"
+    (prose-to-text prz)
+  ==
+::
+++  prose-to-text
+  |=  pro=prose
+  =/  [title=@t body=@t]  pro
+  ^-  tape
+  ;:  welp
     "{(trip title)}"
     "\0a\0a"
     "{(trip body)}"

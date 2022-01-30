@@ -124,14 +124,14 @@
     ::  XX code clean up: cleaner snoc
     %+  snoc  :: ensures terminating newline is present
     %+  murn  ~(tap by tale)
-    |=  [[=tako:clay proses=(set prose)]]
+    |=  [[=tako:clay =proses]]
     ^-  (unit cord)
     ?~  proses  ~
     %-  some
     %-  crip
     ;:  welp
-      (trip (tako-to-text:lib tako))
-      (trip (proses-to-text:lib proses))
+      (tako-to-text tako)
+      (proses-to-text proses)
       "---"
     ==
     ''
