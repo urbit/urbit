@@ -136,7 +136,7 @@ u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
   return(0);
 }
 
-/* _unix_string_to_knot(): convert c unix path component to +knot
+/* _unix_string_to_knot(): convert c unix path component to $knot
 */
 static u3_atom
 _unix_string_to_knot(c3_c* pax_c)
@@ -153,7 +153,7 @@ _unix_string_to_knot(c3_c* pax_c)
   return u3i_string(pax_c);
 }
 
-/* _unix_knot_to_string(): convert +knot to c unix path component
+/* _unix_knot_to_string(): convert $knot to c unix path component
 */
 static c3_c*
 _unix_knot_to_string(u3_atom pon)
@@ -197,7 +197,7 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
   return don_c;
 }
 
-/* _unix_string_to_path(): convert c string to u3_noun +path
+/* _unix_string_to_path(): convert c string to u3_noun $path
 **
 **  c string must begin with the pier path plus mountpoint
 */
