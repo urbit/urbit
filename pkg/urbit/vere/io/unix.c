@@ -81,15 +81,15 @@ u3_unix_cane(const c3_c* pax_c)
   if ( 0 == pax_c ) {
     return 0;
   }
-  //  allow root.
-  //
-  if ( 0 == strcmp("/", pax_c) ) {
-    return 1;
-  }
   //  allow absolute paths.
   //
   if ( '/' == *pax_c ) {
     pax_c++;
+    //  allow root.
+    //
+    if ( 0 == *pax_c ) {
+      return 1;
+    }
   }
   do {
     if (  0 == *pax_c
@@ -158,20 +158,23 @@ _unix_string_to_knot(c3_c* pax_c)
 static c3_c*
 _unix_knot_to_string(u3_atom pon)
 {
-  c3_w  met_w = u3r_met(3, pon);
-  c3_w  add_w = 2 *
-    (  0 == met_w
-    || (  '~' == u3r_byte(0, pon)
-       && '.' == u3r_byte(1, pon) )
-    || c3_s1('.') == pon
-    || c3_s2('.','.') == pon );
-  c3_c* ret_c = c3_malloc(met_w + add_w + 1);
+  c3_c* ret_c;
 
-  memcpy(ret_c, "~.", add_w);
-  u3r_bytes(0, met_w, (c3_y*)ret_c + add_w, pon);
-  ret_c[met_w + add_w] = 0;
-  //  |(((sane %ta) '/') ((sane %ta) '\\')) -> %.n
-  //
+  if (  u3_nul != pon
+     && c3_s1('.') != pon
+     && c3_s2('.','.') != pon
+     && !( '~' == u3r_byte(0, pon)
+        && '.' == u3r_byte(1, pon) ) )
+  {
+    ret_c = u3r_string(pon);
+  }
+  else {
+    c3_w  met_w = u3r_met(3, pon);
+
+    ret_c = malloc(met_w + 3);
+    memcpy(ret_c, "~.", 2);
+    u3r_bytes(0, met_w, ret_c + 2, pon);
+  }
   c3_assert(!strchr(ret_c, '/'));
   c3_assert(!strchr(ret_c, '\\'));
   return ret_c;
