@@ -63,7 +63,6 @@ _main_repath(c3_c* pax_c)
   c3_c* fas_c;
   c3_c* dir_c;
   c3_w  len_w;
-  c3_i  wit_i;
 
   if ( 0 != (rel_c = realpath(pax_c, 0)) ) {
     return rel_c;
@@ -75,16 +74,16 @@ _main_repath(c3_c* pax_c)
   }
   c3_assert(u3_unix_safe(fas_c + 1));
   *fas_c = 0;
-  if ( 0 == (dir_c = realpath(pax_c, 0)) ) {
-    *fas_c = '/';
+  dir_c = realpath(pax_c, 0);
+  *fas_c = '/';
+  if ( 0 == dir_c ) {
     return 0;
   }
-  len_w = strlen(dir_c) + strlen(fas_c + 1) + 2;
+  len_w = strlen(dir_c) + strlen(fas_c) + 1;
   rel_c = c3_malloc(len_w);
-  wit_i = snprintf(rel_c, len_w, "%s/%s", dir_c, fas_c + 1);
-  c3_assert(wit_i >= 0 && (c3_w)wit_i + 1 == len_w);
-  *fas_c = '/';
+  strcpy(rel_c, dir_c);
   c3_free(dir_c);
+  strcat(rel_c, fas_c);
   return rel_c;
 }
 
