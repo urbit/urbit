@@ -3,11 +3,12 @@
 #ifndef U3_VERE_DISK_H
 #define U3_VERE_DISK_H
 
+#include <uv.h>
+
 #include "c/portable.h"
 #include "c/queue.h"
 #include "c/types.h"
 #include "noun/aliases.h"
-#include "vere/foil.h"
 
 //! Completed event
 typedef struct _u3_fact {
@@ -29,9 +30,9 @@ typedef void (*u3_disk_news)(void*, c3_d, c3_o);
 
 //! Manage event persistence.
 typedef struct _u3_disk {
-  u3_dire*         dir_u;       //!< main pier directory
-  u3_dire*         urb_u;       //!< urbit system data
-  u3_dire*         com_u;       //!< log directory
+  c3_c*            dir_c;       //!< main pier directory
+  c3_c*            urb_c;       //!< urbit system data
+  c3_c*            log_c;       //!< log directory
   c3_o             liv_o;       //!< live
   void*            mdb_u;       //!< lmdb environment.
   c3_d             sen_d;       //!< commit requested
