@@ -15,7 +15,9 @@ _test_safe()
 {
   c3_i ret_i = 1;
 
-  if ( !u3_unix_cane("a") ||
+  if ( !u3_unix_cane("/") ||
+       !u3_unix_cane("~.") ||
+       !u3_unix_cane("a") ||
        !u3_unix_cane("a/b") ||
        !u3_unix_cane("a/b/c/defg/h/ijklmnop") )
   {
