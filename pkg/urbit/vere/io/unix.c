@@ -1298,80 +1298,6 @@ u3_unix_ef_hill(u3_unix* unx_u, u3_noun hil)
   u3z(hil);
 }
 
-/* u3_unix_acquire(): acquire a lockfile, killing anything that holds it.
-*/
-static void
-u3_unix_acquire(c3_c* pax_c)
-{
-  c3_c* paf_c = _unix_down(pax_c, ".vere.lock");
-  c3_w pid_w;
-  FILE* loq_u;
-
-  if ( NULL != (loq_u = c3_fopen(paf_c, "r")) ) {
-    if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
-      u3l_log("lockfile %s is corrupt!\n", paf_c);
-      kill(getpid(), SIGTERM);
-      sleep(1); c3_assert(0);
-    }
-    else if (pid_w != getpid()) {
-      c3_w i_w;
-
-      if ( -1 != kill(pid_w, SIGTERM) ) {
-        u3l_log("unix: stopping process %d, live in %s...\n",
-                pid_w, pax_c);
-
-        for ( i_w = 0; i_w < 16; i_w++ ) {
-          sleep(1);
-          if ( -1 == kill(pid_w, SIGTERM) ) {
-            break;
-          }
-        }
-        if ( 16 == i_w ) {
-          for ( i_w = 0; i_w < 16; i_w++ ) {
-            if ( -1 == kill(pid_w, SIGKILL) ) {
-              break;
-            }
-            sleep(1);
-          }
-        }
-        if ( 16 == i_w ) {
-          u3l_log("unix: process %d seems unkillable!\n", pid_w);
-          c3_assert(0);
-        }
-        u3l_log("unix: stopped old process %u\n", pid_w);
-      }
-    }
-    fclose(loq_u);
-    c3_unlink(paf_c);
-  }
-
-  if ( NULL == (loq_u = c3_fopen(paf_c, "w")) ) {
-    u3l_log("unix: unable to open %s\n", paf_c);
-    c3_assert(0);
-  }
-
-  fprintf(loq_u, "%u\n", getpid());
-
-  {
-    c3_i fid_i = fileno(loq_u);
-    c3_sync(fid_i);
-  }
-
-  fclose(loq_u);
-  c3_free(paf_c);
-}
-
-/* u3_unix_release(): release a lockfile.
-*/
-static void
-u3_unix_release(c3_c* pax_c)
-{
-  c3_c* paf_c = _unix_down(pax_c, ".vere.lock");
-
-  c3_unlink(paf_c);
-  c3_free(paf_c);
-}
-
 /* u3_unix_ef_look(): update the root of a specific mount point.
 */
 void
@@ -1466,10 +1392,6 @@ _unix_io_exit(u3_auto* car_u)
 {
   u3_unix* unx_u = (u3_unix*)car_u;
 
-  //  XX move to disk.c?
-  //
-  u3_unix_release(unx_u->pax_c);
-
   c3_free(unx_u->pax_c);
   c3_free(unx_u);
 }
@@ -1484,10 +1406,6 @@ u3_unix_io_init(u3_pier* pir_u)
   unx_u->pax_c = strdup(pir_u->pax_c);
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
-
-  //  XX move to disk.c?
-  //
-  u3_unix_acquire(unx_u->pax_c);
 
   u3_auto* car_u = &unx_u->car_u;
   car_u->nam_m = c3__unix;
