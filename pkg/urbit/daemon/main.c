@@ -72,7 +72,7 @@ _main_repath(c3_c* pax_c)
     fprintf(stderr, "invalid path %s\n", pax_c);
     return 0;
   }
-  c3_assert(u3_unix_safe(fas_c + 1));
+  c3_assert(u3_unix_cane(fas_c + 1));
   *fas_c = 0;
   dir_c = realpath(pax_c, 0);
   *fas_c = '/';

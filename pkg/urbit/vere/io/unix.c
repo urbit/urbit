@@ -73,10 +73,10 @@ struct _u3_ufil;
 void
 u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all);
 
-/* u3_unix_safe(): true iff (unix) path is canonical.
+/* u3_unix_cane(): true iff (unix) path is canonical.
 */
 c3_t
-u3_unix_safe(const c3_c* pax_c)
+u3_unix_cane(const c3_c* pax_c)
 {
   if ( 0 == pax_c ) {
     return 0;

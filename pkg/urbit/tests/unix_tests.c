@@ -15,29 +15,29 @@ _test_safe()
 {
   c3_i ret_i = 1;
 
-  if ( !u3_unix_safe("a") ||
-       !u3_unix_safe("a/b") ||
-       !u3_unix_safe("a/b/c/defg/h/ijklmnop") )
+  if ( !u3_unix_cane("a") ||
+       !u3_unix_cane("a/b") ||
+       !u3_unix_cane("a/b/c/defg/h/ijklmnop") )
   {
     fprintf(stderr, "_safe fail 1\n");
     ret_i = 0;
   }
 
-  if ( u3_unix_safe("") ||
-       u3_unix_safe(".") ||
-       u3_unix_safe("..") ||
-       u3_unix_safe("/.") ||
-       u3_unix_safe("a/b/c//") ||
-       u3_unix_safe("a/b/.") ||
-       u3_unix_safe("/././../.") ||
-       u3_unix_safe("/../etc") )
+  if ( u3_unix_cane("") ||
+       u3_unix_cane(".") ||
+       u3_unix_cane("..") ||
+       u3_unix_cane("/.") ||
+       u3_unix_cane("a/b/c//") ||
+       u3_unix_cane("a/b/.") ||
+       u3_unix_cane("/././../.") ||
+       u3_unix_cane("/../etc") )
   {
     fprintf(stderr, "_safe fail 2\r\n");
     ret_i = 0;
   }
 
-  if ( !u3_unix_safe(".a") ||
-       !u3_unix_safe("/.a.b.c/..c") )
+  if ( !u3_unix_cane(".a") ||
+       !u3_unix_cane("/.a.b.c/..c") )
   {
     fprintf(stderr, "_safe fail 3\r\n");
     ret_i = 0;

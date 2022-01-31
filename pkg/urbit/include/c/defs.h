@@ -125,24 +125,24 @@
     /* Asserting unix fs wrappers.
     */
       // defined in vere/io/unix.c.
-      c3_t u3_unix_safe(const c3_c* pax_c);
+      c3_t u3_unix_cane(const c3_c* pax_c);
 #     define c3_open(a, ...) ({                                 \
-        c3_assert(u3_unix_safe(a));                             \
+        c3_assert(u3_unix_cane(a));                             \
         open(a, __VA_ARGS__);})
 #     define c3_opendir(a) ({                                   \
-        c3_assert(u3_unix_safe(a));                             \
+        c3_assert(u3_unix_cane(a));                             \
         opendir(a);})
 #     define c3_mkdir(a, b) ({                                  \
-        c3_assert(u3_unix_safe(a));                             \
+        c3_assert(u3_unix_cane(a));                             \
         mkdir(a, b);})
 #     define c3_rmdir(a) ({                                     \
-        c3_assert(u3_unix_safe(a));                             \
+        c3_assert(u3_unix_cane(a));                             \
         rmdir(a);})
 #     define c3_unlink(a) ({                                    \
-        c3_assert(u3_unix_safe(a));                             \
+        c3_assert(u3_unix_cane(a));                             \
         unlink(a);})
 #     define c3_fopen(a, b) ({                                  \
-        c3_assert(u3_unix_safe(a));                             \
+        c3_assert(u3_unix_cane(a));                             \
         fopen(a, b);})
 
 #endif /* ifndef C3_DEFS_H */

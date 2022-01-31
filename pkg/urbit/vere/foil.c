@@ -84,7 +84,7 @@ u3_foil_folder(const c3_c* pax_c)
   uv_dirent_t den_u;
   c3_i        err_i;
 
-  c3_assert(u3_unix_safe(pax_c));
+  c3_assert(u3_unix_cane(pax_c));
 
   /*  open directory, synchronously
   */
