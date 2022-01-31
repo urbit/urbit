@@ -2,7 +2,6 @@
 **
 */
 #include "all.h"
-#include <ctype.h>
 #include <ftw.h>
 #include "vere/vere.h"
 
@@ -59,6 +58,7 @@ struct _u3_ufil;
     c3_c*       pax_c;                  //  pier directory
     c3_o        alm;                    //  timer set
     c3_o        dyr;                    //  ready to update
+    u3_noun     sat;                    //  (sane %ta) handle
 #ifdef SYNCLOG
     c3_w         lot_w;                 //  sync-slot
     struct _u3_sylo {
@@ -112,18 +112,9 @@ u3_unix_safe(const c3_c* pax_c)
 **      (star ;~(pose nud low hep dot sig cab))
 */
 static c3_t
-_unix_sane_ta(c3_c* pax_c, c3_w len_w)
+_unix_sane_ta(u3_unix* unx_u, c3_c* pax_c, c3_w len_w)
 {
-  for ( ; len_w; pax_c++, len_w-- ) {
-    if (  !islower(*pax_c)
-       && !isdigit(*pax_c)
-       && '-' != *pax_c && '.' != *pax_c
-       && '~' != *pax_c && '_' != *pax_c )
-    {
-      return 0;
-    }
-  }
-  return 1;
+  return _(u3n_slam_on(u3k(unx_u->sat), u3i_bytes(len_w, (c3_y*)pax_c)));
 }
 
 /* u3_readdir_r():
@@ -528,7 +519,7 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
         if (  '.'  != out_u->d_name[len_w]
            || '\0' == out_u->d_name[len_w + 1]
            || '~'  == out_u->d_name[strlen(out_u->d_name) - 1]
-           || !_unix_sane_ta(out_u->d_name, len_w) )
+           || !_unix_sane_ta(unx_u, out_u->d_name, len_w) )
         {
           c3_free(pax_c);
           continue;
@@ -971,7 +962,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
             c3_w len_w = strlen(out_u->d_name);
 
             if (  !strchr(out_u->d_name,'.')
-               || !_unix_sane_ta(out_u->d_name, len_w)
+               || !_unix_sane_ta(unx_u, out_u->d_name, len_w)
                || '~' == out_u->d_name[len_w - 1] )
             {
               c3_free(pax_c);
@@ -1458,6 +1449,7 @@ _unix_io_exit(u3_auto* car_u)
 {
   u3_unix* unx_u = (u3_unix*)car_u;
 
+  u3z(unx_u->sat);
   c3_free(unx_u->pax_c);
   c3_free(unx_u);
 }
@@ -1472,6 +1464,7 @@ u3_unix_io_init(u3_pier* pir_u)
   unx_u->pax_c = strdup(pir_u->pax_c);
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
+  unx_u->sat = u3do("sane", c3__ta);
 
   u3_auto* car_u = &unx_u->car_u;
   car_u->nam_m = c3__unix;
