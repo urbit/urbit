@@ -63,6 +63,7 @@ _main_repath(c3_c* pax_c)
   c3_c* fas_c;
   c3_c* dir_c;
   c3_w  len_w;
+  c3_i  wit_i;
 
   c3_assert(pax_c);
   if ( 0 != (rel_c = realpath(pax_c, 0)) ) {
@@ -70,14 +71,11 @@ _main_repath(c3_c* pax_c)
   }
   fas_c = strrchr(pax_c, '/');
   if ( !fas_c ) {
-    c3_c* rec_c = c3_malloc(strlen(pax_c) + 3);
-    c3_c* ret_c;
+    c3_c rec_c[2048];
 
-    strcpy(rec_c, "./");
-    strcat(rec_c, pax_c);
-    ret_c = _main_repath(rec_c);
-    c3_free(rec_c);
-    return ret_c;
+    wit_i = snprintf(rec_c, sizeof(rec_c), "./%s", pax_c);
+    c3_assert(sizeof(rec_c) > wit_i);
+    return _main_repath(rec_c);
   }
   c3_assert(u3_unix_cane(fas_c + 1));
   *fas_c = 0;
@@ -88,9 +86,9 @@ _main_repath(c3_c* pax_c)
   }
   len_w = strlen(dir_c) + strlen(fas_c) + 1;
   rel_c = c3_malloc(len_w);
-  strcpy(rel_c, dir_c);
+  wit_i = snprintf(rel_c, len_w, "%s%s", dir_c, fas_c);
+  c3_assert(len_w == wit_i + 1);
   c3_free(dir_c);
-  strcat(rel_c, fas_c);
   return rel_c;
 }
 
