@@ -94,7 +94,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
                 border={0}
                 p={0}
                 borderRadius={2}
-                onClick={() => history.push({ search: "?join-kind=group" })}
+                onClick={() => history.push({ search: "?join-kind=groups" })}
               >
                 <Row backgroundColor="white" gapX="2" p={2} height="100%" width="100%" alignItems="center">
                   <Icon icon="BootNode" />
