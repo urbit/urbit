@@ -142,7 +142,9 @@ static u3_atom
 _unix_string_to_knot(c3_c* pax_c)
 {
   c3_assert(pax_c);
-  c3_assert(*pax_c);
+  //  XX  this can happen if we encounter a file without an extension.
+  //
+  // c3_assert(*pax_c);
   c3_assert(!strchr(pax_c, '/'));
   c3_assert(!strchr(pax_c, '\\'));
   if ( 0 == strncmp("~.", pax_c, 2) ) {
