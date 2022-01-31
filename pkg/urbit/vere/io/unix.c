@@ -167,9 +167,7 @@ _unix_knot_to_string(u3_atom pon)
     || c3_s2('.','.') == pon );
   c3_c* ret_c = c3_malloc(met_w + add_w + 1);
 
-  if ( add_w ) {
-    memcpy(ret_c, "~.", 2);
-  }
+  memcpy(ret_c, "~.", add_w);
   u3r_bytes(0, met_w, (c3_y*)ret_c + add_w, pon);
   ret_c[met_w + add_w] = 0;
   //  |(((sane %ta) '/') ((sane %ta) '\\')) -> %.n
