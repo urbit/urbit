@@ -1168,7 +1168,7 @@
 
     /**  Storage, new school.
     **/
-      /* u3_unix_safe(): true iff path is canonical.
+      /* u3_unix_safe(): true iff (unix) path is canonical.
       */
         c3_t
         u3_unix_safe(const c3_c* pax_c);

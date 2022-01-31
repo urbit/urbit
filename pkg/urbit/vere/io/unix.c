@@ -2,6 +2,7 @@
 **
 */
 #include "all.h"
+#include <ctype.h>
 #include <ftw.h>
 #include "vere/vere.h"
 
@@ -72,14 +73,12 @@ struct _u3_ufil;
 void
 u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all);
 
-/* u3_unix_safe(): true iff path is canonical.
+/* u3_unix_safe(): true iff (unix) path is canonical.
 */
 c3_t
 u3_unix_safe(const c3_c* pax_c)
 {
-  if ( 0 == pax_c ||
-       0 != strchr(pax_c, '\\') )
-  {
+  if ( 0 == pax_c ) {
     return 0;
   }
   //  allow root.
@@ -104,6 +103,26 @@ u3_unix_safe(const c3_c* pax_c)
     }
     pax_c = strchr(pax_c, '/');
   } while ( 0 != pax_c++ );
+  return 1;
+}
+
+/* _unix_sane_ta(): true iff all len_w characters of pax_c are (sane %ta).
+**
+**  %ta is parsed by:
+**      (star ;~(pose nud low hep dot sig cab))
+*/
+static c3_t
+_unix_sane_ta(c3_c* pax_c, c3_w len_w)
+{
+  for ( ; len_w; pax_c++, len_w-- ) {
+    if (  !islower(*pax_c)
+       && !isdigit(*pax_c)
+       && '-' != *pax_c && '.' != *pax_c
+       && '~' != *pax_c && '_' != *pax_c )
+    {
+      return 0;
+    }
+  }
   return 1;
 }
 
@@ -135,8 +154,8 @@ _unix_string_to_knot(c3_c* pax_c)
   c3_assert(*pax_c);
   c3_assert(!strchr(pax_c, '/'));
   c3_assert(!strchr(pax_c, '\\'));
-  if ( '~' == *pax_c ) {
-    pax_c++;
+  if ( 0 == strncmp("~.", pax_c, 2) ) {
+    pax_c += 2;
   }
   return u3i_string(pax_c);
 }
@@ -147,14 +166,16 @@ static c3_c*
 _unix_knot_to_string(u3_atom pon)
 {
   c3_w  met_w = u3r_met(3, pon);
-  c3_w  add_w = (  0 == met_w
-                || '~' == u3r_byte(0, pon)
-                || c3_s1('.') == pon
-                || c3_s2('.','.') == pon );
+  c3_w  add_w = 2 *
+    (  0 == met_w
+    || (  '~' == u3r_byte(0, pon)
+       && '.' == u3r_byte(1, pon) )
+    || c3_s1('.') == pon
+    || c3_s2('.','.') == pon );
   c3_c* ret_c = c3_malloc(met_w + add_w + 1);
 
   if ( add_w ) {
-    *ret_c = '~';
+    memcpy(ret_c, "~.", 2);
   }
   u3r_bytes(0, met_w, (c3_y*)ret_c + add_w, pon);
   ret_c[met_w + add_w] = 0;
@@ -507,8 +528,7 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
         if (  '.'  != out_u->d_name[len_w]
            || '\0' == out_u->d_name[len_w + 1]
            || '~'  == out_u->d_name[strlen(out_u->d_name) - 1]
-           || ('#' == out_u->d_name[0] &&
-               '#' == out_u->d_name[strlen(out_u->d_name) - 1]) )
+           || !_unix_sane_ta(out_u->d_name, len_w) )
         {
           c3_free(pax_c);
           continue;
@@ -948,11 +968,12 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 
         if ( !nod_u ) {
           if ( !S_ISDIR(buf_u.st_mode) ) {
-            if ( !strchr(out_u->d_name,'.')
-                 || '~' == out_u->d_name[strlen(out_u->d_name) - 1]
-                 || ('#' == out_u->d_name[0] &&
-                     '#' == out_u->d_name[strlen(out_u->d_name) - 1])
-               ) {
+            c3_w len_w = strlen(out_u->d_name);
+
+            if (  !strchr(out_u->d_name,'.')
+               || !_unix_sane_ta(out_u->d_name, len_w)
+               || '~' == out_u->d_name[len_w - 1] )
+            {
               c3_free(pax_c);
               continue;
             }
@@ -1254,7 +1275,7 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
       _unix_sync_file(unx_u, dir_u, u3k(i_pax), u3k(it_pax), mim);
     }
     else {
-      c3_c* nam_c = u3r_string(i_pax);
+      c3_c* nam_c = _unix_knot_to_string(i_pax);
       c3_w pax_w = strlen(dir_u->pax_c);
       u3_unod* nod_u;
 

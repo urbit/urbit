@@ -30,7 +30,6 @@ _test_safe()
        u3_unix_safe("a/b/c//") ||
        u3_unix_safe("a/b/.") ||
        u3_unix_safe("/././../.") ||
-       u3_unix_safe("a\\b\\c") ||
        u3_unix_safe("/../etc") )
   {
     fprintf(stderr, "_safe fail 2\r\n");
