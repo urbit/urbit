@@ -598,7 +598,7 @@ _term_it_save(u3_noun pax, u3_noun pad)
 {
   c3_c* pax_c = _term_it_path(pax);
 
-  u3_unix_save(c3__put, pax_c, pad);
+  u3_unix_save(pax_c, pad);
   c3_free(pax_c);
 }
 

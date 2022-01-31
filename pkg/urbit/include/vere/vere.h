@@ -1141,10 +1141,10 @@
 
     /**  Storage.
     **/
-      /* u3_unix_save(): save file undir .../.urb/[bas_m] or bail.
+      /* u3_unix_save(): save file undir .../.urb/put or bail.
       */
         void
-        u3_unix_save(c3_m bas_m, c3_c* pax_c, u3_atom pad);
+        u3_unix_save(c3_c* pax_c, u3_atom pad);
 
       /* u3_unix_cane(): true iff (unix) path is canonical.
       */

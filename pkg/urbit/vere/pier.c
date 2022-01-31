@@ -529,7 +529,7 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
       c3_c fil_c[256];
       snprintf(fil_c, 256, "%s.%s", pac_c + 1, ext_c);
 
-      u3_unix_save(c3__put, fil_c, pad);
+      u3_unix_save(fil_c, pad);
       u3l_log("pier: scry result in %s/.urb/put/%s\n", u3_Host.dir_c, fil_c);
     }
   }
