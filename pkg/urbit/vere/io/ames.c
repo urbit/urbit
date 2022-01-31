@@ -20,7 +20,6 @@
 /* u3_fine: fine networking
 */
   typedef struct _u3_fine {
-    u3_auto           car_u;              // fine driver
     c3_y              ver_y;               //  fine protocol
     u3p(u3h_root)     sac_p;               //  scry cache hashtable
     struct _u3_ames*  sam_u;               // ames backpointer
@@ -989,15 +988,19 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
   pac_u->len_w = u3r_met(3, pac);
   pac_u->hun_y = c3_malloc(pac_u->len_w);
 
+
   u3_pend* pen_u = c3_calloc(sizeof(*pen_u));
-  pen_u->typ_y = 0;
   pen_u->len_w = pac_u->len_w;
   pen_u->hun_y = pac_u->hun_y;
   pen_u->sam_u = sam_u;
 
-
-
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
+
+  u3_head hed_u;
+  _ames_sift_head(&hed_u, pac_u->hun_y);
+  pen_u->typ_y = 
+    hed_u.sim_o == c3y ? 0 :
+    hed_u.req_o == c3y ? 1 : 2;
 
   u3_noun tag, val;
   u3x_cell(lan, &tag, &val);
@@ -1177,7 +1180,6 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
       //
       if ( c3n == u3r_cell(lan, &tag, &dat) ) {
         u3l_log("ames: bogus lane\n");
-        u3m_p("lan", lan);
       }
       else {
         c3_o sen_o = c3y;
@@ -1440,12 +1442,12 @@ static void _fine_hear_response(u3_ames* sam_u,
   c3_w num_w = res_u.num_w;
   c3_w fra_w = res_u.fra_w;
 
-  u3_noun cad = u3nt(c3__purr, 
+  u3_noun cad = u3nt(c3__hear, 
                      u3nc(c3n, u3_ames_encode_lane(lan_u)),
                      u3i_bytes(len_w, hun_y));
 
-  u3_ovum* ovo_u = u3_ovum_init(0, c3__fine, u3k(wir), u3k(cad));
-  u3_auto_plan(&sam_u->fin_s.car_u, ovo_u);
+  u3_ovum* ovo_u = u3_ovum_init(0, c3__ames, u3k(wir), u3k(cad));
+  u3_auto_plan(&sam_u->car_u, ovo_u);
 
   u3z(cad);
   u3z(wir);
@@ -1490,10 +1492,11 @@ static void _fine_hear_request(u3_ames* sam_u,
 
   if ( u3_none == cac ) {
     // cache miss
-    u3_noun pax = u3nc(u3i_string("message"),
+    u3_noun pax = u3nt(u3i_string("fine"),
+                      u3i_string("message"),
                       u3do("stab", u3k(pat)));
 
-    u3_pier_peek_last(sam_u->fin_s.car_u.pir_u, u3_nul, c3__fx, u3_nul, 
+    u3_pier_peek_last(sam_u->car_u.pir_u, u3_nul, c3__ax, u3_nul, 
                       pax, pen_u, _fine_pack_scry_cb);
     
   } else {
@@ -1843,27 +1846,6 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
 }
 
 
-/* fine_io_kick:(): receive effect from arvo
- */
-static c3_o _fine_io_kick(u3_auto* car_u, u3_noun wir, u3_noun nun) {
-  u3_fine* fin_u = (u3_fine*)car_u;
-  u3_ames* sam_u = fin_u->sam_u;
-  u3_noun hed = u3h(nun);
-  //u3m_p("head: ", hed);
-
-  if(c3__howl == hed) {
-    // TODO: respond to notification of bound data 
-    return c3y;
-  } else if(c3__hoot == hed) {
-    u3_noun lan, hot;
-    u3x_cell(u3t(nun), &lan, &hot);
-    _fine_request(sam_u, lan, hot);
-    return c3y;
-  } else {
-    return c3n;
-  }
-}
-
 /* _ames_prot_scry_cb(): receive ames protocol version
 */
 static void
@@ -1918,15 +1900,6 @@ _fine_prot_scry_cb(void* vod_p, u3_noun nun)
   u3z(nun);
 }
 
-/* _fine_io_talk(): start receiving ames traffic.
-*/
-static void _fine_io_talk(u3_auto* car_u)
-{
-  // do nothing
-}
-
-
-
 /* _ames_io_talk(): start receiving ames traffic.
 */
 static void
@@ -1947,17 +1920,6 @@ _ames_io_talk(u3_auto* car_u)
 
     u3_auto_plan(car_u, u3_ovum_init(0, c3__a, wir, cad));
   }
-  // send fine born
-  {
-    u3_noun wir = u3nt(c3__newt,
-                       u3dc("scot", c3__uv, sam_u->sev_l),
-                       u3_nul);
-    u3_noun cad = u3nc(c3__born, u3_nul);
-
-    u3_auto_plan(&sam_u->fin_s.car_u, u3_ovum_init(0, c3__f, wir, cad));
-
-  }
-
 
   u3_pier_peek_last(car_u->pir_u, u3_nul, c3__fx, u3_nul,
                     u3nt(u3i_string("protocol"), u3i_string("version"), u3_nul),
@@ -1995,6 +1957,17 @@ _ames_kick_newt(u3_ames* sam_u, u3_noun tag, u3_noun dat)
 
     case c3__turf: {
       _ames_ef_turf(sam_u, u3k(dat));
+      ret_o = c3y;
+    } break;
+  
+    case c3__howl: {
+      ret_o = c3y;
+    } break;
+
+    case c3__hoot: {
+      u3_noun lan = u3k(u3h(dat));
+      u3_noun pac = u3k(u3t(dat));
+      _fine_request(sam_u, lan, pac);
       ret_o = c3y;
     } break;
   }
@@ -2080,14 +2053,6 @@ _ames_exit_cb(uv_handle_t* had_u)
   c3_free(sam_u);
 }
 
-/* _fine_io_exit(): terminate fine I/O.
-*/
-static void
-_fine_io_exit(u3_auto* car_u)
-{
-  // cleanup handled in _ames_io_exit
-}
-
 /* _ames_io_exit(): terminate ames I/O.
 */
 static void
@@ -2135,7 +2100,7 @@ _ames_io_info(u3_auto* car_u)
 /* u3_ames_io_init(): initialize ames I/O.
 */
 u3_auto*
-u3_ames_io_init(u3_pier* pir_u, u3_auto** far_u)
+u3_ames_io_init(u3_pier* pir_u)
 {
   u3_ames* sam_u  = c3_calloc(sizeof(*sam_u));
   sam_u->pir_u    = pir_u;
@@ -2185,15 +2150,6 @@ u3_ames_io_init(u3_pier* pir_u, u3_auto** far_u)
   car_u->io.info_f = _ames_io_info;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
-
-  u3_auto* fur_u = &sam_u->fin_s.car_u;
-  fur_u->nam_m = c3__fine;
-  fur_u->liv_o = c3y;
-  fur_u->io.talk_f = _fine_io_talk;
-  fur_u->io.info_f = _fine_io_info;
-  fur_u->io.kick_f = _fine_io_kick;
-  fur_u->io.exit_f = _fine_io_exit;
-  *far_u = fur_u;
 
   sam_u->fin_s.sam_u = sam_u;
 

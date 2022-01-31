@@ -1136,7 +1136,7 @@
       /* u3_ames_io_init(): initialize ames I/O.
       */
         u3_auto*
-        u3_ames_io_init(u3_pier* pir_u, u3_auto** far_u);
+        u3_ames_io_init(u3_pier* pir_u);
 
       /* u3_ames_decode_lane(): destructure lane from noun
       */
