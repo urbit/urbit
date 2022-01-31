@@ -16,6 +16,33 @@ struct _u3_disk_walk {
   c3_o          liv_o;
 };
 
+//! Free memory associated with a log object.
+static void
+_disk_free(u3_disk* log_u)
+{
+  if ( NULL == log_u ) {
+    return;
+  }
+
+  if ( NULL != log_u->dir_c ) {
+    c3_free(log_u->dir_c);
+  }
+
+  if ( NULL != log_u->urb_c ) {
+    c3_free(log_u->urb_c);
+  }
+
+  if ( NULL != log_u->log_c ) {
+    c3_free(log_u->log_c);
+  }
+
+  if ( NULL != log_u->put_u ) {
+    c3_queue_free(log_u->put_u);
+  }
+
+  c3_free(log_u);
+}
+
 //! Commit complete.
 static void
 _disk_commit_done(u3_disk* log_u)
@@ -559,12 +586,7 @@ u3_disk_exit(u3_disk* log_u)
     }
   }
 
-  c3_free(log_u->dir_c);
-  c3_free(log_u->urb_c);
-  c3_free(log_u->log_c);
-  c3_queue_free(log_u->put_u);
-
-  c3_free(log_u);
+  _disk_free(log_u);
 
 #if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
   u3t_trace_close();
@@ -630,8 +652,7 @@ u3_disk_init(c3_c* pax_c)
     c3_assert(log_u->dir_c == strcpy(log_u->dir_c, pax_c));
     if ( -1 == mkdir(log_u->dir_c, 0700) && EEXIST != errno ) {
       fprintf(stderr, "disk: failed to load pier at %s\r\n", log_u->dir_c);
-      c3_free(log_u->dir_c);
-      c3_free(log_u);
+      _disk_free(log_u);
       return 0;
     }
   }
@@ -645,13 +666,10 @@ u3_disk_init(c3_c* pax_c)
     c3_assert(siz_ws - 1 == snprintf(log_u->urb_c, siz_ws, "%s%s", log_u->dir_c, urb_c));
     if ( -1 == mkdir(log_u->urb_c, 0700) && EEXIST != errno ) {
       fprintf(stderr, "disk: failed to load %s in %s\r\n", urb_c, log_u->dir_c);
-      c3_free(log_u->dir_c);
-      c3_free(log_u->urb_c);
-      c3_free(log_u);
+      _disk_free(log_u);
       return 0;
     }
   }
-
 
   {
     static const c3_c put_c[] = "/put";
@@ -664,9 +682,7 @@ u3_disk_init(c3_c* pax_c)
     c3_assert(siz_ws - 1 == snprintf(dir_c, siz_ws, "%s%s", log_u->urb_c, put_c));
     if ( -1 == mkdir(dir_c, 0700) && EEXIST != errno ) {
       fprintf(stderr, "disk: failed to load %s in %s\r\n", put_c, log_u->urb_c);
-      c3_free(log_u->dir_c);
-      c3_free(log_u->urb_c);
-      c3_free(log_u);
+      _disk_free(log_u);
       return 0;
     }
 
@@ -674,9 +690,7 @@ u3_disk_init(c3_c* pax_c)
     c3_assert(siz_ws - 1 == snprintf(dir_c, siz_ws, "%s%s", log_u->urb_c, get_c));
     if ( -1 == mkdir(dir_c, 0700) && EEXIST != errno ) {
       fprintf(stderr, "disk: failed to load %s in %s\r\n", get_c, log_u->urb_c);
-      c3_free(log_u->dir_c);
-      c3_free(log_u->urb_c);
-      c3_free(log_u);
+      _disk_free(log_u);
       return 0;
     }
   }
@@ -690,10 +704,7 @@ u3_disk_init(c3_c* pax_c)
     c3_assert(siz_ws - 1 == snprintf(log_u->log_c, siz_ws, "%s%s", log_u->urb_c, log_c));
     if ( -1 == mkdir(log_u->log_c, 0700) && EEXIST != errno ) {
       fprintf(stderr, "disk: failed to load %s in %s\r\n", log_u->log_c, log_u->urb_c);
-      c3_free(log_u->dir_c);
-      c3_free(log_u->urb_c);
-      c3_free(log_u->log_c);
-      c3_free(log_u);
+      _disk_free(log_u);
       return 0;
     }
   }
@@ -708,7 +719,7 @@ u3_disk_init(c3_c* pax_c)
 #endif
     if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_u->log_c, siz_i)) ) {
       fprintf(stderr, "disk: failed to initialize database\r\n");
-      c3_free(log_u);
+      _disk_free(log_u);
       return 0;
     }
   }
@@ -719,7 +730,7 @@ u3_disk_init(c3_c* pax_c)
     c3_d fir_d;
     if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
       fprintf(stderr, "disk: failed to load latest event from database\r\n");
-      c3_free(log_u);
+      _disk_free(log_u);
       return 0;
     }
     log_u->sen_d = log_u->dun_d;
