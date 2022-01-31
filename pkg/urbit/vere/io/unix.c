@@ -171,7 +171,7 @@ _unix_knot_to_string(u3_atom pon)
   else {
     c3_w  met_w = u3r_met(3, pon);
 
-    ret_c = malloc(met_w + 3);
+    ret_c = c3_malloc(met_w + 3);
     memcpy(ret_c, "~.", 2);
     u3r_bytes(0, met_w, ret_c + 2, pon);
   }
