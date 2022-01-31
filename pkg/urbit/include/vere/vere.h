@@ -1034,33 +1034,6 @@
         void
         u3_lord_peek(u3_lord* god_u, u3_pico* pic_u);
 
-    /**  Filesystem (new api).
-    **/
-      /* u3_walk_load(): load file or bail.
-      */
-        u3_noun
-        u3_walk_load(c3_c* pas_c);
-
-      /* u3_walk_safe(): load file or 0.
-      */
-        u3_noun
-        u3_walk_safe(c3_c* pas_c);
-
-      /* u3_walk_save(): save file or bail.
-      */
-        void
-        u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax);
-
-      /* u3_walk(): traverse `dir_c` to produce an arch, updating `old`.
-      */
-        u3_noun
-        u3_walk(const c3_c* dir_c, u3_noun old);
-
-      /* u3_path(): C unix path in computer for file or directory.
-      */
-        c3_c*
-        u3_path(c3_o    fyl, u3_noun pax);
-
     /**  Filesystem (async)
     **/
       /* u3_foil_folder(): load directory, blockingly.  create if nonexistent.
@@ -1168,6 +1141,11 @@
 
     /**  Storage, new school.
     **/
+      /* u3_unix_save(): save file undir .../.urb/[bas_m] or bail.
+      */
+        void
+        u3_unix_save(c3_m bas_m, c3_c* pax_c, u3_atom pad);
+
       /* u3_unix_cane(): true iff (unix) path is canonical.
       */
         c3_t

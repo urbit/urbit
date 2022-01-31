@@ -243,6 +243,83 @@ _unix_string_to_path(u3_unix* unx_u, c3_c* pax_c)
   }
 }
 
+/* _unix_mkdirp(): recursive mkdir of dirname of pax_c.
+*/
+static void
+_unix_mkdirp(c3_c* pax_c)
+{
+  c3_c* fas_c = strchr(pax_c + 1, '/');
+
+  while ( fas_c ) {
+    *fas_c = 0;
+    if ( 0 != mkdir(pax_c, 0777) && EEXIST != errno ) {
+      u3l_log("unix: mkdir %s: %s\n", pax_c, strerror(errno));
+      u3m_bail(c3__fail);
+    }
+    *fas_c++ = '/';
+    fas_c = strchr(fas_c, '/');
+  }
+}
+
+/* u3_unix_save(): save file under .../.urb/[bas_m] or bail.
+**
+**  XX this is quite bad, and doesn't share much in common with
+**  the rest of unix.c. at minimum it should instead take pax as
+**  a noun and build the C path from that. it would also be nice
+**  if it could take a u3_udir or something corresponding to the
+**  base directory.
+*/
+void
+u3_unix_save(c3_m bas_m, c3_c* pax_c, u3_atom pad)
+{
+  c3_i  fid_i;
+  c3_w  lod_w, len_w, fln_w, rit_w;
+  c3_y* pad_y;
+  c3_c* ful_c;
+
+  c3_assert(3 == u3r_met(3, bas_m));
+  c3_assert(c3_s3('b','h','k') != bas_m &&
+            c3_s3('c','h','k') != bas_m &&
+            c3_s3('g','e','t') != bas_m &&
+            c3_s3('l','o','g') != bas_m);
+  if ( '/' == *pax_c) {
+    pax_c++;
+  }
+  if ( !u3_unix_cane(pax_c) ) {
+    u3l_log("%s: non-canonical path\n", pax_c);
+    u3z(pad); u3m_bail(c3__fail);
+  }
+  lod_w = strlen(u3_Host.dir_c);
+  len_w = lod_w + sizeof("/.urb/xxx/") + strlen(pax_c);
+  ful_c = c3_malloc(len_w);
+  rit_w = snprintf(ful_c, len_w, "%s/.urb/xxx/%s", u3_Host.dir_c, pax_c);
+  c3_assert(len_w == rit_w + 1);
+  u3r_bytes(0, 3, (c3_y*)ful_c + lod_w + sizeof("/.urb/") - 1, bas_m);
+
+  _unix_mkdirp(ful_c);
+  fid_i = c3_open(ful_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  if ( fid_i < 0 ) {
+    u3l_log("%s: %s\n", ful_c, strerror(errno));
+    c3_free(ful_c);
+    u3z(pad); u3m_bail(c3__fail);
+  }
+
+  fln_w = u3r_met(3, pad);
+  pad_y = c3_malloc(fln_w);
+  u3r_bytes(0, fln_w, pad_y, pad);
+  u3z(pad);
+  rit_w = write(fid_i, pad_y, fln_w);
+  close(fid_i);
+  c3_free(pad_y);
+
+  if ( rit_w != fln_w ) {
+    u3l_log("%s: %s\n", ful_c, strerror(errno));
+    c3_free(ful_c);
+    u3m_bail(c3__fail);
+  }
+  c3_free(ful_c);
+}
+
 /* _unix_rm_r_cb(): callback to delete individual files/directories
 */
 static c3_i

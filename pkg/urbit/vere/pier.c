@@ -526,12 +526,11 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
     //  if serialization and export path succeeded, write to disk
     //
     if ( (u3_none != out) && (u3_none != pad) ) {
-      c3_c fil_c[2048];
-      snprintf(fil_c, 2048, "%s/.urb/put/%s.%s",
-               pir_u->pax_c, pac_c+1, ext_c);
+      c3_c fil_c[256];
+      snprintf(fil_c, 256, "%s.%s", pac_c + 1, ext_c);
 
-      u3_walk_save(fil_c, 0, out, pir_u->pax_c, pad);
-      u3l_log("pier: scry result in %s\n", fil_c);
+      u3_unix_save(c3__put, fil_c, pad);
+      u3l_log("pier: scry result in %s/.urb/put/%s\n", u3_Host.dir_c, fil_c);
     }
   }
 
