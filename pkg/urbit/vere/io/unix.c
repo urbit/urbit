@@ -1037,8 +1037,8 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
             c3_w len_w = strlen(out_u->d_name);
 
             if (  !strchr(out_u->d_name,'.')
-               || !_unix_sane_ta(unx_u, out_u->d_name, len_w)
-               || '~' == out_u->d_name[len_w - 1] )
+               || '~' == out_u->d_name[len_w - 1]
+               || !_unix_sane_ta(unx_u, out_u->d_name, len_w) )
             {
               c3_free(pax_c);
               continue;
