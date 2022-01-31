@@ -64,13 +64,20 @@ _main_repath(c3_c* pax_c)
   c3_c* dir_c;
   c3_w  len_w;
 
+  c3_assert(pax_c);
   if ( 0 != (rel_c = realpath(pax_c, 0)) ) {
     return rel_c;
   }
   fas_c = strrchr(pax_c, '/');
   if ( !fas_c ) {
-    fprintf(stderr, "invalid path %s\n", pax_c);
-    return 0;
+    c3_c* rec_c = c3_malloc(strlen(pax_c) + 3);
+    c3_c* ret_c;
+
+    strcpy(rec_c, "./");
+    strcat(rec_c, pax_c);
+    ret_c = _main_repath(rec_c);
+    c3_free(rec_c);
+    return ret_c;
   }
   c3_assert(u3_unix_cane(fas_c + 1));
   *fas_c = 0;
