@@ -126,6 +126,45 @@ u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
   return(0);
 }
 
+/* _unix_string_to_knot(): convert c unix path component to +knot
+*/
+static u3_atom
+_unix_string_to_knot(c3_c* pax_c)
+{
+  c3_assert(pax_c);
+  c3_assert(*pax_c);
+  c3_assert(!strchr(pax_c, '/'));
+  c3_assert(!strchr(pax_c, '\\'));
+  if ( '~' == *pax_c ) {
+    pax_c++;
+  }
+  return u3i_string(pax_c);
+}
+
+/* _unix_knot_to_string(): convert +knot to c unix path component
+*/
+static c3_c*
+_unix_knot_to_string(u3_atom pon)
+{
+  c3_w  met_w = u3r_met(3, pon);
+  c3_w  add_w = (  0 == met_w
+                || '~' == u3r_byte(0, pon)
+                || c3_s1('.') == pon
+                || c3_s2('.','.') == pon );
+  c3_c* ret_c = c3_malloc(met_w + add_w + 1);
+
+  if ( add_w ) {
+    *ret_c = '~';
+  }
+  u3r_bytes(0, met_w, (c3_y*)ret_c + add_w, pon);
+  ret_c[met_w + add_w] = 0;
+  //  |(((sane %ta) '/') ((sane %ta) '\\')) -> %.n
+  //
+  c3_assert(!strchr(ret_c, '/'));
+  c3_assert(!strchr(ret_c, '\\'));
+  return ret_c;
+}
+
 /* _unix_down(): descend path.
 */
 static c3_c*
@@ -143,29 +182,34 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
   return don_c;
 }
 
-/* _unix_string_to_path(): convert c string to u3_noun path
+/* _unix_string_to_path(): convert c string to u3_noun +path
 **
 ** c string must begin with the pier path plus mountpoint
 */
 static u3_noun
 _unix_string_to_path_helper(c3_c* pax_c)
 {
+  u3_noun not;
+
   c3_assert(pax_c[-1] == '/');
-  c3_c* end_w = strchr(pax_c, '/');
-  if ( !end_w ) {
-    end_w = strrchr(pax_c, '.');
-    if ( !end_w ) {
-      return u3nc(u3i_string(pax_c), u3_nul);
+  c3_c* end_c = strchr(pax_c, '/');
+  if ( !end_c ) {
+    end_c = strrchr(pax_c, '.');
+    if ( !end_c ) {
+      return u3nc(_unix_string_to_knot(pax_c), u3_nul);
     }
     else {
-      return u3nt(u3i_bytes(end_w - pax_c, (c3_y*) pax_c),
-                  u3i_string(end_w + 1),
-                  u3_nul);
+      *end_c = 0;
+      not = _unix_string_to_knot(pax_c);
+      *end_c = '.';
+      return u3nt(not, _unix_string_to_knot(end_c + 1), u3_nul);
     }
   }
   else {
-    return u3nc(u3i_bytes(end_w - pax_c, (c3_y*) pax_c),
-                _unix_string_to_path_helper(end_w + 1));
+    *end_c = 0;
+    not = _unix_string_to_knot(pax_c);
+    *end_c = '/';
+    return u3nc(not, _unix_string_to_path_helper(end_c + 1));
   }
 }
 static u3_noun
@@ -179,7 +223,7 @@ _unix_string_to_path(u3_unix* unx_u, c3_c* pax_c)
       return u3_nul;
     }
     else {
-      return u3nc(u3i_string(pox_c + 1), u3_nul);
+      return u3nc(_unix_string_to_knot(pox_c + 1), u3_nul);
     }
   }
   else {
@@ -374,7 +418,7 @@ _unix_get_mount_point(u3_unix* unx_u, u3_noun mon)
     return NULL;
   }
 
-  c3_c* nam_c = u3r_string(mon);
+  c3_c* nam_c = _unix_knot_to_string(mon);
   u3_umon* mon_u;
 
   for ( mon_u = unx_u->mon_u;
@@ -594,7 +638,7 @@ _unix_delete_mount_point(u3_unix* unx_u, u3_noun mon)
     return;
   }
 
-  c3_c* nam_c = u3r_string(mon);
+  c3_c* nam_c = _unix_knot_to_string(mon);
   u3_umon* mon_u;
   u3_umon* tem_u;
 
@@ -686,7 +730,7 @@ _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
 static void
 _unix_create_dir(u3_udir* dir_u, u3_udir* par_u, u3_noun nam)
 {
-  c3_c* nam_c = u3r_string(nam);
+  c3_c* nam_c = _unix_knot_to_string(nam);
   c3_w  nam_w = strlen(nam_c);
   c3_w  pax_w = strlen(par_u->pax_c);
   c3_c* pax_c = c3_malloc(pax_w + 1 + nam_w + 1);
@@ -977,7 +1021,8 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
       u3_noun wir = u3nt(c3__sync,
                         u3dc("scot", c3__uv, unx_u->sev_l),
                         u3_nul);
-      u3_noun cad = u3nq(c3__into, u3i_string(mon_u->nam_c), all, can);
+      u3_noun cad = u3nq(c3__into, _unix_string_to_knot(mon_u->nam_c), all,
+                         can);
 
       u3_auto_plan(&unx_u->car_u, u3_ovum_init(0, c3__c, wir, cad));
     }
@@ -1124,8 +1169,8 @@ _unix_sync_file(u3_unix* unx_u, u3_udir* par_u, u3_noun nam, u3_noun ext, u3_nou
 
   // form file path
 
-  c3_c* nam_c = u3r_string(nam);
-  c3_c* ext_c = u3r_string(ext);
+  c3_c* nam_c = _unix_knot_to_string(nam);
+  c3_c* ext_c = _unix_knot_to_string(ext);
   c3_w  par_w = strlen(par_u->pax_c);
   c3_w  nam_w = strlen(nam_c);
   c3_w  ext_w = strlen(ext_c);
@@ -1242,7 +1287,7 @@ static void
 _unix_sync_ergo(u3_unix* unx_u, u3_umon* mon_u, u3_noun can)
 {
   u3_noun nac = can;
-  u3_noun nam = u3i_string(mon_u->nam_c);
+  u3_noun nam = _unix_string_to_knot(mon_u->nam_c);
 
   while ( u3_nul != nac) {
     _unix_sync_change(unx_u, &mon_u->dir_u,
@@ -1304,18 +1349,18 @@ void
 u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all)
 {
   if ( c3y == unx_u->dyr ) {
+    c3_c* nam_c = _unix_knot_to_string(mon);
+
     unx_u->dyr = c3n;
     u3_umon* mon_u = unx_u->mon_u;
-
-    while ( mon_u && ( c3n == u3r_sing_c(mon_u->nam_c, mon) ) ) {
+    while ( mon_u && 0 != strcmp(nam_c, mon_u->nam_c) ) {
       mon_u = mon_u->nex_u;
     }
-
+    c3_free(nam_c);
     if ( mon_u ) {
       _unix_update_mount(unx_u, mon_u, all);
     }
   }
-
   u3z(mon);
 }
 
