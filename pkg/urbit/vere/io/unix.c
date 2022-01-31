@@ -173,7 +173,7 @@ _unix_knot_to_string(u3_atom pon)
 
     ret_c = c3_malloc(met_w + 3);
     memcpy(ret_c, "~.", 2);
-    u3r_bytes(0, met_w, ret_c + 2, pon);
+    u3r_bytes(0, met_w, (c3_y*)ret_c + 2, pon);
   }
   c3_assert(!strchr(ret_c, '/'));
   c3_assert(!strchr(ret_c, '\\'));
