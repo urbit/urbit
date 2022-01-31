@@ -5,13 +5,13 @@
 **
 **  the control plane nominally consumes input described by:
 **
-**  $:  request-id=@                                    ::  id sent in response
-**  $%  [%fyrd fyrd-args=*]                             ::  run a thread
-**      [%peek peek-args=*]                             ::  scry
-**      [%peel peel-args=*]                             ::  runtime peek
-**      [%ovum ovum-args=*]                             ::  inject raw ovum
-**      [%urth urth-args=*]                             ::  runtime command
-**  ==  ==
+**      $:  request-id=@                                ::  id sent in response
+**      $%  [%fyrd fyrd-args=*]                         ::  run a thread
+**          [%peek peek-args=*]                         ::  scry
+**          [%peel peel-args=*]                         ::  runtime peek
+**          [%ovum ovum-args=*]                         ::  inject raw ovum
+**          [%urth urth-args=*]                         ::  runtime command
+**      ==  ==
 **
 **  request-id is a client-supplied atomic identifier that will
 **  be returned along with the response, to allow correlating
