@@ -280,12 +280,12 @@ u3_unix_save(c3_c* pax_c, u3_atom pad)
   c3_y* pad_y;
   c3_c* ful_c;
 
-  if ( '/' == *pax_c) {
-    pax_c++;
-  }
   if ( !u3_unix_cane(pax_c) ) {
     u3l_log("%s: non-canonical path\n", pax_c);
     u3z(pad); u3m_bail(c3__fail);
+  }
+  if ( '/' == *pax_c) {
+    pax_c++;
   }
   lod_w = strlen(u3_Host.dir_c);
   len_w = lod_w + sizeof("/.urb/put/") + strlen(pax_c);
