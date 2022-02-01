@@ -122,6 +122,8 @@ _mars_fact(u3_mars* mar_u,
     };
 
     u3_disk_plan(mar_u->log_u, &tac_u);
+    u3_disk_commit(mar_u->log_u);
+
     u3z(job);
   }
 

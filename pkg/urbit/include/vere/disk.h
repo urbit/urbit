@@ -116,7 +116,7 @@ u3_disk_async(u3_disk*     log_u,
 void
 u3_disk_commit(u3_disk* log_u);
 
-//! Enqueue completed event for persistence.
+//! Enqueue completed event (aka fact) for persistence.
 void
 u3_disk_plan(u3_disk* log_u, u3_fact* tac_u);
 

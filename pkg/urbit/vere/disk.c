@@ -226,24 +226,16 @@ u3_disk_commit(u3_disk* log_u)
 }
 
 //! Enqueue fact for persistence.
-static void
-_disk_plan(u3_disk* log_u, u3_fact* tac_u)
-{
-  u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
-  fet_u->eve_d = ++log_u->sen_d;
-  fet_u->len_i = (size_t)u3_disk_etch(log_u, tac_u->job, tac_u->mug_l, &fet_u->hun_y);
-
-  c3_queue_push_back(log_u->put_u, fet_u, sizeof(*fet_u));
-}
-
 void
 u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
   c3_assert( (1ULL + log_u->sen_d) == tac_u->eve_d );
 
-  _disk_plan(log_u, tac_u);
+  u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
+  fet_u->eve_d = ++log_u->sen_d;
+  fet_u->len_i = (size_t)u3_disk_etch(log_u, tac_u->job, tac_u->mug_l, &fet_u->hun_y);
 
-  u3_disk_commit(log_u);
+  c3_queue_push_back(log_u->put_u, fet_u, sizeof(*fet_u));
 }
 
 void
@@ -258,7 +250,7 @@ u3_disk_plan_list(u3_disk* log_u, u3_noun lit)
     //
     tac_u.mug_l = 0;
     tac_u.job = i;
-    _disk_plan(log_u, &tac_u);
+    u3_disk_plan(log_u, &tac_u);
   }
 
   u3z(lit);
