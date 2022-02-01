@@ -224,13 +224,11 @@ _disk_commit(u3_disk* log_u)
 
 //! Enqueue serialized fact (feat) for persistence.
 static void
-_disk_plan(u3_disk* log_u,
-           c3_l     mug_l,
-           u3_noun    job)
+_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
   u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
   fet_u->eve_d = ++log_u->sen_d;
-  fet_u->len_i = (size_t)u3_disk_etch(log_u, job, mug_l, &fet_u->hun_y);
+  fet_u->len_i = (size_t)u3_disk_etch(log_u, tac_u->job, tac_u->mug_l, &fet_u->hun_y);
 
   c3_queue_push_back(log_u->put_u, fet_u, sizeof(*fet_u));
 }
@@ -240,7 +238,7 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
   c3_assert( (1ULL + log_u->sen_d) == tac_u->eve_d );
 
-  _disk_plan(log_u, tac_u->mug_l, tac_u->job);
+  _disk_plan(log_u, tac_u);
 
   _disk_commit(log_u);
 }
@@ -249,12 +247,15 @@ void
 u3_disk_plan_list(u3_disk* log_u, u3_noun lit)
 {
   u3_noun i, t = lit;
+  u3_fact tac_u;
 
   while ( u3_nul != t ) {
     u3x_cell(t, &i, &t);
     //  NB, boot mugs are 0
     //
-    _disk_plan(log_u, 0, i);
+    tac_u.mug_l = 0;
+    tac_u.job = i;
+    _disk_plan(log_u, &tac_u);
   }
 
   u3z(lit);
