@@ -112,6 +112,10 @@ u3_disk_async(u3_disk*     log_u,
               void*        ptr_v,
               u3_disk_news don_f);
 
+//! Commit all available events, if idle.
+void
+u3_disk_commit(u3_disk* log_u);
+
 //! Enqueue completed event for persistence.
 void
 u3_disk_plan(u3_disk* log_u, u3_fact* tac_u);

@@ -92,9 +92,6 @@ _disk_commit_done(u3_disk* log_u)
   }
 }
 
-static void
-_disk_commit(u3_disk* log_u);
-
 //! On the main thread, finish write
 static void
 _disk_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
@@ -105,7 +102,7 @@ _disk_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
 
   if ( UV_ECANCELED != sas_i ) {
     _disk_commit_done(log_u);
-    _disk_commit(log_u);
+    u3_disk_commit(log_u);
   }
 }
 
@@ -196,10 +193,9 @@ _disk_batch(u3_disk* log_u)
   }
 }
 
-//! Commit all available events, if idle.
 //! @n (1) Queue async event-batch write to happen on another thread.
-static void
-_disk_commit(u3_disk* log_u)
+void
+u3_disk_commit(u3_disk* log_u)
 {
   if ( c3n == _disk_batch(log_u) ) {
     return;
@@ -229,7 +225,7 @@ _disk_commit(u3_disk* log_u)
   }
 }
 
-//! Enqueue serialized fact (feat) for persistence.
+//! Enqueue fact for persistence.
 static void
 _disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
@@ -247,7 +243,7 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 
   _disk_plan(log_u, tac_u);
 
-  _disk_commit(log_u);
+  u3_disk_commit(log_u);
 }
 
 void
