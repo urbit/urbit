@@ -120,11 +120,8 @@ _disk_commit_cb(uv_work_t* ted_u)
 }
 
 //! Serialize an event.
-static c3_w
-_disk_serialize_fact(u3_disk* log_u,
-                     u3_noun    eve,
-                     c3_l     mug_l,
-                     c3_y**   out_y)
+static size_t
+_disk_serialize_fact(u3_disk* log_u, u3_fact* tac_u, u3_feat* fet_u)
 {
   //  XX check version number
   //
@@ -136,14 +133,17 @@ _disk_serialize_fact(u3_disk* log_u,
   //  XX needs api redesign to limit allocations
   //
   {
-    u3_atom mat = u3qe_jam(eve);
+    u3_atom mat = u3qe_jam(tac_u->job);
     c3_w  len_w = u3r_met(3, mat);
-    c3_y* dat_y = c3_malloc(4 + len_w);
-    dat_y[0] = mug_l & 0xff;
-    dat_y[1] = (mug_l >> 8) & 0xff;
-    dat_y[2] = (mug_l >> 16) & 0xff;
-    dat_y[3] = (mug_l >> 24) & 0xff;
-    u3r_bytes(0, len_w, dat_y + 4, mat);
+
+    fet_u->hun_y = c3_malloc(4 + len_w);
+    fet_u->hun_y[0] = tac_u->mug_l & 0xff;
+    fet_u->hun_y[1] = (tac_u->mug_l >> 8) & 0xff;
+    fet_u->hun_y[2] = (tac_u->mug_l >> 16) & 0xff;
+    fet_u->hun_y[3] = (tac_u->mug_l >> 24) & 0xff;
+    u3r_bytes(0, len_w, fet_u->hun_y + 4, mat);
+
+    fet_u->len_i = 4 + len_w;
 
 #ifdef DISK_TRACE_JAM
     u3t_event_trace("king disk jam", 'E');
@@ -151,8 +151,7 @@ _disk_serialize_fact(u3_disk* log_u,
 
     u3z(mat);
 
-    *out_y = dat_y;
-    return len_w + 4;
+    return fet_u->len_i;
   }
 }
 
@@ -234,7 +233,7 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 
   u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
   fet_u->eve_d = ++log_u->sen_d;
-  fet_u->len_i = (size_t)_disk_serialize_fact(log_u, tac_u->job, tac_u->mug_l, &fet_u->hun_y);
+  fet_u->len_i = _disk_serialize_fact(log_u, tac_u, fet_u);
 
   c3_queue_push_back(log_u->put_u, fet_u, sizeof(*fet_u));
 }
