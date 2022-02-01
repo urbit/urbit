@@ -1171,7 +1171,7 @@
     ?-  res
       ~        ~
       [~ ~]    ``noun+!>((encode-response:fine:ven path ~))
-      [~ ~ *]  ``noun+!>((encode-response:fine:ven path `[p q.q]:u.u.res))
+      [~ ~ *]  ``noun+!>((encode-response:fine:ven path [p q.q]:u.u.res))
     ==
   ==
 --
@@ -2527,7 +2527,7 @@
       [(mod life.ames-state 16) (mod (lyfe:keys ship) 16) ~ syn]
     ::
     ++  encode-response  ::TODO  unit tests
-      |=  [=path data=(unit (cask))]
+      |=  [=path data=$@(~ (cask))]
       ^-  song
       ::  prepend request descriptions to each response packet
       ::
