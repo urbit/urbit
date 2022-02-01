@@ -127,12 +127,12 @@
 
         /* u3i_string(): Produce an LSB-first atom from the C string [a].
         */
-          u3_noun
+          u3_atom
           u3i_string(const c3_c* a_c);
 
         /* u3i_tape(): from a C string, to a list of bytes.
         */
-          u3_atom
+          u3_noun
           u3i_tape(const c3_c* txt_c);
 
         /* u3i_list(): list from `u3_none`-terminated varargs.

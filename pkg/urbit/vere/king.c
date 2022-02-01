@@ -922,13 +922,13 @@ u3_king_grab(void* vod_p)
 
     struct stat st;
     if ( -1 == stat(nam_c, &st) ) {
-      mkdir(nam_c, 0700);
+      c3_mkdir(nam_c, 0700);
     }
 
     c3_c man_c[2048];
     snprintf(man_c, 2048, "%s/%s-daemon.txt", nam_c, wen_c);
 
-    fil_u = fopen(man_c, "w");
+    fil_u = c3_fopen(man_c, "w");
     fprintf(fil_u, "%s\r\n", wen_c);
 
     c3_free(wen_c);

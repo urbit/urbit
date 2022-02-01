@@ -585,6 +585,94 @@ u3_disk_read_meta(u3_disk* log_u,
   return c3y;
 }
 
+/* _disk_lock(): lockfile path.
+*/
+static c3_c*
+_disk_lock(c3_c* pax_c)
+{
+  c3_w  len_w = strlen(pax_c) + sizeof("/.vere.lock");
+  c3_c* paf_c = c3_malloc(len_w);
+  c3_i  wit_i;
+
+  wit_i = snprintf(paf_c, len_w, "%s/.vere.lock", pax_c);
+  c3_assert(wit_i + 1 == len_w);
+  return paf_c;
+}
+
+/* u3_disk_acquire(): acquire a lockfile, killing anything that holds it.
+*/
+static void
+u3_disk_acquire(c3_c* pax_c)
+{
+  c3_c* paf_c = _disk_lock(pax_c);
+  c3_w  pid_w;
+  FILE* loq_u;
+
+  if ( NULL != (loq_u = c3_fopen(paf_c, "r")) ) {
+    if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
+      u3l_log("lockfile %s is corrupt!\n", paf_c);
+      kill(getpid(), SIGTERM);
+      sleep(1); c3_assert(0);
+    }
+    else if (pid_w != getpid()) {
+      c3_w i_w;
+
+      if ( -1 != kill(pid_w, SIGTERM) ) {
+        u3l_log("disk: stopping process %d, live in %s...\n",
+                pid_w, pax_c);
+
+        for ( i_w = 0; i_w < 16; i_w++ ) {
+          sleep(1);
+          if ( -1 == kill(pid_w, SIGTERM) ) {
+            break;
+          }
+        }
+        if ( 16 == i_w ) {
+          for ( i_w = 0; i_w < 16; i_w++ ) {
+            if ( -1 == kill(pid_w, SIGKILL) ) {
+              break;
+            }
+            sleep(1);
+          }
+        }
+        if ( 16 == i_w ) {
+          u3l_log("disk: process %d seems unkillable!\n", pid_w);
+          c3_assert(0);
+        }
+        u3l_log("disk: stopped old process %u\n", pid_w);
+      }
+    }
+    fclose(loq_u);
+    c3_unlink(paf_c);
+  }
+
+  if ( NULL == (loq_u = c3_fopen(paf_c, "w")) ) {
+    u3l_log("disk: unable to open %s\n", paf_c);
+    c3_assert(0);
+  }
+
+  fprintf(loq_u, "%u\n", getpid());
+
+  {
+    c3_i fid_i = fileno(loq_u);
+    c3_sync(fid_i);
+  }
+
+  fclose(loq_u);
+  c3_free(paf_c);
+}
+
+/* u3_disk_release(): release a lockfile.
+*/
+static void
+u3_disk_release(c3_c* pax_c)
+{
+  c3_c* paf_c = _disk_lock(pax_c);
+
+  c3_unlink(paf_c);
+  c3_free(paf_c);
+}
+
 /* u3_disk_exit(): close the log.
 */
 void
@@ -632,6 +720,8 @@ u3_disk_exit(u3_disk* log_u)
       tac_u = nex_u;
     }
   }
+
+  u3_disk_release(log_u->dir_u->pax_c);
 
   u3_dire_free(log_u->dir_u);
   u3_dire_free(log_u->urb_u);
@@ -697,6 +787,10 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     }
   }
 
+  //  acquire lockfile.
+  //
+  u3_disk_acquire(pax_c);
+
   //  create/load $pier/.urb
   //
   {
@@ -721,11 +815,11 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
 
     strcpy(dir_c, pax_c);
     strcat(dir_c, "/.urb/put");
-    mkdir(dir_c, 0700);
+    c3_mkdir(dir_c, 0700);
 
     strcpy(dir_c, pax_c);
     strcat(dir_c, "/.urb/get");
-    mkdir(dir_c, 0700);
+    c3_mkdir(dir_c, 0700);
 
     c3_free(dir_c);
   }
