@@ -18,18 +18,18 @@ _newt_encode(u3_atom mat, c3_w* len_w)
   c3_w  met_w = u3r_met(3, mat);
   c3_y* buf_y;
 
-  *len_w = 8 + met_w;
+  *len_w = 5 + met_w;
   buf_y  = c3_malloc(*len_w);
 
-  //  write header; c3_d is futureproofing
+  //  write header
   //
-  buf_y[0] = ((met_w >> 0) & 0xff);
-  buf_y[1] = ((met_w >> 8) & 0xff);
-  buf_y[2] = ((met_w >> 16) & 0xff);
-  buf_y[3] = ((met_w >> 24) & 0xff);
-  buf_y[4] = buf_y[5] = buf_y[6] = buf_y[7] = 0;
+  buf_y[0] = 0x9;
+  buf_y[1] = ( met_w        & 0xff);
+  buf_y[2] = ((met_w >>  8) & 0xff);
+  buf_y[3] = ((met_w >> 16) & 0xff);
+  buf_y[4] = ((met_w >> 24) & 0xff);
 
-  u3r_bytes(0, met_w, buf_y + 8, mat);
+  u3r_bytes(0, met_w, buf_y + 5, mat);
   u3z(mat);
 
   return buf_y;

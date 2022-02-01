@@ -67,7 +67,7 @@
         u3_mess_type     sat_e;             //  msg type
         union {                             //
           struct {                          //  awaiting header:
-            c3_y         len_y[8];          //    header bytes
+            c3_y         hed_y[5];          //    header bytes
             c3_y         has_y;             //    length
           } hed_u;                          //
           struct {                          //  awaiting body
@@ -274,6 +274,7 @@
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   bin_c;                      //  -b, http server bind ip
+        c3_w    hap_w;                      //  -C, cap memo cache
         c3_o    nuu;                        //  -c, new pier
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
@@ -284,7 +285,6 @@
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
         c3_c*   jin_c;                      //  -I, inject raw event
         c3_c*   imp_c;                      //  -i, import pier state
-        c3_w    hap_w;                      //  -C, cap memo cache
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
         c3_o    tra;                        //  -j, json trace
         c3_w    kno_w;                      //  -K, kernel version
@@ -298,13 +298,13 @@
         c3_o    rep;                        //  -R, report build info
         c3_c*   roc_c;                      //  -r, load rock by eve_d
         c3_o    has;                        //  -S, Skip battery hashes
-        c3_o    tem;                        //  -t, Disable terminal/tty assumptions
         c3_o    git;                        //  -s, pill url from arvo git hash
+        c3_o    tem;                        //  -t, Disable terminal/tty assumptions
         c3_c*   url_c;                      //  -u, pill url
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_c*   who_c;                      //  -w, begin with ticket
-        c3_o    tex;                        //  -x, exit after loading
         c3_c*   pek_c;                      //  -X, scry path (/vc/desk/path)
+        c3_o    tex;                        //  -x, exit after loading
         c3_c*   puk_c;                      //  -Y, scry result filename
         c3_c*   puf_c;                      //  -Z, scry result format
       } u3_opts;
@@ -1199,6 +1199,13 @@
         u3_auto*
         u3_cttp_io_init(u3_pier* pir_u);
 
+    /**  Control plane.
+    **/
+      /* u3_conn_io_init(): initialize control plane I/O.
+      */
+        u3_auto*
+        u3_conn_io_init(u3_pier* pir_u);
+
     /**  fore, first events
     **/
       /* u3_hind_io_init(): initialize fore
@@ -1217,7 +1224,7 @@
     **/
       /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
       */
-        void
+        c3_o
         u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d);
 
       /* u3_newt_send(): write buffer to stream.

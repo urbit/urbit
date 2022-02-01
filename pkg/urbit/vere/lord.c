@@ -19,7 +19,7 @@
               [%meld ~]
               [%pack ~]
       ==  ==
-      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [beam @tas beam]))
+      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [%beam @tas beam]))
       [%play eve=@ lit=(list ?((pair @da ovum) *))]
       [%work mil=@ job=(pair @da ovum)]
   ==

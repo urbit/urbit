@@ -4,6 +4,7 @@
 #include "ur/defs.h"
 #include "ur/bitstream.h"
 #include "ur/hashcons.h"
+#include "ur/ivory.h"
 #include "ur/serial.h"
 
 #endif /* ifndef UR_H */
