@@ -267,10 +267,10 @@ _unix_mkdirp(c3_c* pax_c)
 /* u3_unix_save(): save file under .../.urb/put or bail.
 **
 **  XX this is quite bad, and doesn't share much in common with
-**  the rest of unix.c. at minimum it should instead take pax as
-**  a noun and build the C path from that. it would also be nice
-**  if it could take a u3_udir or something corresponding to the
-**  base directory.
+**  the rest of unix.c. a refactor would probably share common
+**  logic with _unix_sync_change, perhaps using openat, making
+**  unx_u optional, and/or having a flag to not track the file
+**  for future changes.
 */
 void
 u3_unix_save(c3_c* pax_c, u3_atom pad)
