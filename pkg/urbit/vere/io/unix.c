@@ -106,15 +106,15 @@ u3_unix_cane(const c3_c* pax_c)
   return 1;
 }
 
-/* _unix_sane_ta(): true iff all len_w characters of pax_c are (sane %ta).
+/* _unix_sane_ta(): true iff pat is a valid @ta
 **
 **  %ta is parsed by:
 **      (star ;~(pose nud low hep dot sig cab))
 */
 static c3_t
-_unix_sane_ta(u3_unix* unx_u, c3_c* pax_c, c3_w len_w)
+_unix_sane_ta(u3_unix* unx_u, u3_atom pat)
 {
-  return _(u3n_slam_on(u3k(unx_u->sat), u3i_bytes(len_w, (c3_y*)pax_c)));
+  return _(u3n_slam_on(u3k(unx_u->sat), pat));
 }
 
 /* u3_readdir_r():
@@ -146,14 +146,18 @@ _unix_string_to_knot(c3_c* pax_c)
   //
   // c3_assert(*pax_c);
   c3_assert(!strchr(pax_c, '/'));
+  //  XX  horrible
+  //
+# ifdef _WIN32
   c3_assert(!strchr(pax_c, '\\'));
-  if ( 0 == strncmp("~.", pax_c, 2) ) {
-    pax_c += 2;
+# endif
+  if ( '!' == *pax_c ) {
+    pax_c++;
   }
   return u3i_string(pax_c);
 }
 
-/* _unix_knot_to_string(): convert $knot to c unix path component
+/* _unix_knot_to_string(): convert $knot to c unix path component. RETAIN.
 */
 static c3_c*
 _unix_knot_to_string(u3_atom pon)
@@ -163,20 +167,22 @@ _unix_knot_to_string(u3_atom pon)
   if (  u3_nul != pon
      && c3_s1('.') != pon
      && c3_s2('.','.') != pon
-     && !( '~' == u3r_byte(0, pon)
-        && '.' == u3r_byte(1, pon) ) )
+     && '!' != u3r_byte(0, pon) )
   {
     ret_c = u3r_string(pon);
   }
   else {
     c3_w  met_w = u3r_met(3, pon);
 
-    ret_c = c3_malloc(met_w + 3);
-    memcpy(ret_c, "~.", 2);
-    u3r_bytes(0, met_w, (c3_y*)ret_c + 2, pon);
+    ret_c = c3_malloc(met_w + 2);
+    *ret_c = '!';
+    u3r_bytes(0, met_w, (c3_y*)ret_c + 1, pon);
+    ret_c[met_w + 1] = 0;
   }
   c3_assert(!strchr(ret_c, '/'));
+# ifdef _WIN32
   c3_assert(!strchr(ret_c, '\\'));
+# endif
   return ret_c;
 }
 
@@ -590,12 +596,10 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
         }
       }
       else {
-        c3_w lod_w = strlen(out_u->d_name);
-
         if (  '.'  != out_u->d_name[len_w]
            || '\0' == out_u->d_name[len_w + 1]
-           || '~'  == out_u->d_name[lod_w - 1]
-           || !_unix_sane_ta(unx_u, out_u->d_name, lod_w) )
+           || '~'  == out_u->d_name[strlen(out_u->d_name) - 1]
+           || !_unix_sane_ta(unx_u, _unix_string_to_knot(out_u->d_name)) )
         {
           c3_free(pax_c);
           continue;
@@ -1036,11 +1040,9 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 
         if ( !nod_u ) {
           if ( !S_ISDIR(buf_u.st_mode) ) {
-            c3_w len_w = strlen(out_u->d_name);
-
             if (  !strchr(out_u->d_name,'.')
-               || '~' == out_u->d_name[len_w - 1]
-               || !_unix_sane_ta(unx_u, out_u->d_name, len_w) )
+               || '~' == out_u->d_name[strlen(out_u->d_name) - 1]
+               || !_unix_sane_ta(unx_u, _unix_string_to_knot(out_u->d_name)) )
             {
               c3_free(pax_c);
               continue;
