@@ -17,13 +17,6 @@ typedef struct _u3_fact {
   u3_noun            job;               //  (pair date ovum)
 } u3_fact;
 
-//! Serialized fact
-typedef struct _u3_feat {
-  c3_d             eve_d;
-  size_t           len_i;
-  c3_y*            hun_y;
-} u3_feat;
-
 //! Disk sync callbak.
 typedef void (*u3_disk_news)(void*, c3_d, c3_o);
 

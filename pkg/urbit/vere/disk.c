@@ -10,6 +10,13 @@
 #undef DISK_TRACE_JAM
 #undef DISK_TRACE_CUE
 
+//! Serialized fact
+typedef struct {
+  c3_d             eve_d;
+  size_t           len_i;
+  c3_y*            hun_y;
+} u3_feat;
+
 struct _u3_disk_walk {
   u3_lmdb_walk  itr_u;
   u3_disk*      log_u;
