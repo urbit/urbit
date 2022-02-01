@@ -61,13 +61,6 @@ typedef struct _u3_disk_walk u3_disk_walk;
 u3_disk*
 u3_disk_init(c3_c* pax_c);
 
-//! Serialize an event for persistence.
-c3_w
-u3_disk_etch(u3_disk* log_u,
-             u3_noun    eve,
-             c3_l     mug_l,
-             c3_y**   out_y);
-
 //! Print status info.
 //!
 //! @param[in] log_u  Disk object to report status info for.

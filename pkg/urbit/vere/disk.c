@@ -119,11 +119,12 @@ _disk_commit_cb(uv_work_t* ted_u)
                                     log_u->sav_u.siz_i);
 }
 
-c3_w
-u3_disk_etch(u3_disk* log_u,
-             u3_noun    eve,
-             c3_l     mug_l,
-             c3_y**   out_y)
+//! Serialize an event.
+static c3_w
+_disk_serialize_fact(u3_disk* log_u,
+                     u3_noun    eve,
+                     c3_l     mug_l,
+                     c3_y**   out_y)
 {
   //  XX check version number
   //
@@ -233,7 +234,7 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 
   u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
   fet_u->eve_d = ++log_u->sen_d;
-  fet_u->len_i = (size_t)u3_disk_etch(log_u, tac_u->job, tac_u->mug_l, &fet_u->hun_y);
+  fet_u->len_i = (size_t)_disk_serialize_fact(log_u, tac_u->job, tac_u->mug_l, &fet_u->hun_y);
 
   c3_queue_push_back(log_u->put_u, fet_u, sizeof(*fet_u));
 }
