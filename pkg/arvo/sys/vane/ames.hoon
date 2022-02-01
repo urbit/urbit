@@ -284,6 +284,53 @@
         [1 relayed=.?(origin)]
     ==
   (mix header (lsh 5 body))
+::
+++  decode-request
+  |=  =hoot
+  ^-  twit
+  :-  sig=(cut 3 [0 64] hoot)
+  -:(decode-request-info (rsh 3^64 hoot))
+::
+++  decode-request-info
+  |=  =hoot
+  ^-  [=peep =purr]
+  =+  num=(cut 3 [0 4] hoot)
+  =+  len=(cut 3 [4 2] hoot)
+  =+  pat=(cut 3 [6 len] hoot)
+  :-  [(stab pat) num]
+  ::  if there is data remaining, it's the response
+  (rsh [3 (add 6 len)] hoot)
+::
+++  decode-response-packet
+  |=  =purr
+  =;  =rawr
+    ~?  !=(wid.rawr (met 3 dat.rawr))  [%fine %unexpected-dat-size]
+    rawr
+  :*  sig=(cut 3 [0 64] purr)
+      siz=(cut 3 [64 4] purr)
+      wid=(cut 3 [68 2] purr)
+      dat=(rsh 3^70 purr)
+  ==
+::
+++  verify-response-packet
+  |=  rawr
+  !!
+::
+++  decode-response-msg
+  |=  partial-fine  ::TODO  maybe take @ instead
+  ^-  roar
+  =/  mess=@
+    %+  rep  13
+    %+  turn  (gulf 1 num-fragments)
+    |=  num=@ud
+    =/  frag=byts  (~(got by fragments) num)
+    dat.frag
+  =+  sig=(end 3^64 mess)
+  :-  sig
+  ~|  [%fine %response-not-cask]
+  ;;((cask) (cue (rsh 3^64 mess)))
+::
+
 ::  +decode-packet: deserialize packet from bytestream or crash
 ::
 ++  decode-packet
@@ -483,6 +530,7 @@
 ::    0b11: comet          -- 16 bytes
 ::
 +$  rank  ?(%0b0 %0b1 %0b10 %0b11)
++$  byuts  [wid=@ud dat=@ux]
 ::
 +|  %kinetics
 ::  $channel: combined sender and receiver identifying data
@@ -608,6 +656,26 @@
       want=(jug path duct)
       part=(map path partial-fine)
       ::TODO  re-send request timers?
+  ==
++$  twit  ::  signed request
+  $:  signature=@
+      peep
+  ==
+::
++$  peep  ::  request data
+  $:  =path
+      num=@ud
+  ==
+::
++$  rawr  ::  response packet  ::TODO  meow
+  $:  sig=@
+      siz=@ud
+      byts
+  ==
+::
++$  roar  ::  response message
+  $:  sig=@
+      dat=(cask)
   ==
 ::  $partial-fine: partial remote scry response
 ::
@@ -1155,16 +1223,18 @@
     ::
     =/  =path
       [i.t.t.tyl (scot %p our) t.t.t.tyl]
+    =*  pax  t.t.tyl
     ?~  nom=(de-omen path)  ~
     ::  we only support scrying into clay,
     ::  and only if the data is fully public.
     ::
-    ?.  =(%c (end 3 (snag 0 path)))  ~
-    =+  pem=(rof lyc (need (de-omen %cp (slag 1 path))))
-    ?>  ?=(^ pem)
-    ?>  ?=(^ u.pem)
-    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-    ?>  =([%black ~ ~] rul.r.per)
+    :: ?.  =(%c (end 3 (snag 0 path)))  ~
+    :: =/  perm-omen  (need (de-omen %cp (slag 1 path)))
+    :: =+  pem=(rof lyc perm-omen)
+    :: ?>  ?=(^ pem)
+    :: ?>  ?=(^ u.pem)
+    :: =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+    :: ?>  =([%black ~ ~] rul.r.per)
     =+  res=(rof lyc u.nom)
     ::TODO  suggests we need to factor differently
     =+  ven=(per-event [now 0v0 rof] *duct ames-state)
@@ -2458,7 +2528,8 @@
           ^+  event-core
           ?^  dud
             ::TODO  handle
-            ~&  [%fine %done-goofed u.dud]
+            ~&  [%fine %done-goofed mote.u.dud]
+            %-  (slog tang.u.dud)
             event-core
           ::NOTE  we only send requests to ships we know,
           ::      so we should only get responses from ships we know.
@@ -2473,6 +2544,7 @@
           (handle-response [from life.peer lane] peep rawr)
         --
     |%
+<<<<<<< HEAD
     +$  twit  ::  signed request
       $:  signature=@
           peep
@@ -2508,7 +2580,7 @@
       ^-  byts
       ?>  (lth num (bex 32))
       =+  (spit path)
-      :-  :(add 32 16 wid)
+      :-  :(add 4 2 wid)
       %+  can  3
       :~  4^num       ::  fragment number
           2^wid       ::  path size
@@ -2544,7 +2616,12 @@
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
+<<<<<<< HEAD
         =/  sig=@  (full:keys path (fall data ~))
+=======
+        ::TODO  should also sign the request path
+        =/  sig=@  ::(full:keys path (fall data ~))
+           (fil 5 16 0xdead.beef)
         ?~  data  [sig]~
         %+  rip  13  ::NOTE  1024 bytes
         (cat 3 sig (jam u.data))  ::TODO  should include life
@@ -2565,7 +2642,8 @@
             wid^dat        ::  response data fragment
         ==
       =/  sig=byts
-        64^(sign:keys (can 3 req bod ~))
+        64^(fil 5 16 0xcafe.face)
+        :: 64^(fil (sign:keys (can 3 req bod ~))
       (can 3 req sig bod ~)
     ::
     ++  keys
@@ -2611,18 +2689,16 @@
         |=  [who=ship lyf=life pax=path sig=@ dat=$@(~ (cask))]
         (veri who lyf sig (mess who lyf pax dat))
       --
-    ::
+    ::  TODO: should not crash,
+    ::    improve routing?
     ++  get-lane
       |=  =ship
       ^-  lane:ames
-      =;  lanes
-        ::TODO  should we send to all lanes?
-        ?^  lanes  i.lanes
-        ~&(%fine-lane-stub &+~zod)  ::TODO
-      !<  (list lane:ames)
-      =<  q  %-  need  %-  need
-      =/  =path  /peers/(scot %p ship)/forward-lane
+      =/  =peer-state
+        (got-peer-state ship)
+      lane:(need route.peer-state)
       ::TODO  get from state
+<<<<<<< HEAD
       (rof `[our ~ ~] [%ames %x] [our %$ da+now] path)
     ::
     ++  decode-request
@@ -2681,6 +2757,7 @@
       |=  [[from=ship =life] =path sig=@ data=$@(~ (cask))]
       ^+  event-core
       ?>  (meri:keys from life path sig data)
+      ~&  got-response/path
       =.  event-core
         %-  emil
         %+  turn  ~(tap in (~(get ju want.state) path))
@@ -2692,19 +2769,24 @@
     ++  handle-response
       |=  [[from=ship =life =lane:ames] =peep =rawr]
       ^+  event-core
-      ?.  (~(has by part.state) path.peep)
+      ?>  ?=([@ *] path.peep)
+      =/  =path  [i.path.peep (scot %p from) t.path.peep]
+      ?:  =(0 siz.rawr)
+        ?>  =(~ dat.rawr)
+        (process-response path.peep ~)
+      ?.  (~(has by part.state) path)
         ::  we did not initiate this request, or it's been cancelled
         ::
         !!
       =/  partial=partial-fine
-        (~(got by part.state) path.peep)
+        (~(got by part.state) path)
       =.  partial
         ?:  (~(has by fragments.partial) num.peep)
           partial
         =,  partial
         :+  ~|  [%fine %response-size-changed have=num-fragments new=siz.rawr]
             ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
-            num-fragments
+            siz.rawr
           +(num-received)
         ?>  (veri:keys from life [sig dat]:rawr)
         (~(put by fragments) num.peep [wid dat]:rawr)
@@ -2713,10 +2795,10 @@
         ::  we have all the parts now, construct the full response
         ::
         =/  =roar  (decode-response-msg partial)
-        (process-response [from life] path.peep [sig dat]:roar)
+        (process-response [from life] path [sig dat]:roar)
       ::  otherwise, store the part, and send out the next request
       ::
-      =.  part.state  (~(put by part.state) path.peep partial)
+      =.  part.state  (~(put by part.state) path partial)
       =/  next-num=@ud
         =/  next=@ud  +(num.peep)
         ::  we should receive responses in order, but in case we don't...
