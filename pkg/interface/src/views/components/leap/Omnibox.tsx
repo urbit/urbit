@@ -3,7 +3,6 @@ import { omit } from 'lodash';
 import Mousetrap from 'mousetrap';
 import fuzzy from 'fuzzy';
 import _ from 'lodash';
-import f from 'lodash/fp';
 import React, {
   ReactElement, useCallback,
   useEffect, useMemo,
@@ -21,14 +20,12 @@ import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
-import useLaunchState from '~/logic/state/launch';
 import { withLocalState } from '~/logic/state/local';
 import useMetadataState from '~/logic/state/metadata';
 import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { Portal } from '../Portal';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
-import { useDmUnreads } from '~/logic/lib/useDmUnreads';
 
 interface OmniboxProps {
   show: boolean;
@@ -51,12 +48,11 @@ const CAT_LIMIT = 6;
  */
 function flattenCattegoryMap(cats: string[], catMap: Map<string, OmniboxItem[]>) {
   let res = [] as OmniboxItem[];
-  cats.forEach(cat => {
+  cats.forEach((cat) => {
     res = res.concat(_.take(catMap.get(cat), CAT_LIMIT));
   });
 
   return res;
-
 }
 
 export function Omnibox(props: OmniboxProps): ReactElement {
@@ -70,7 +66,6 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const [selected, setSelected] = useState<[] | [string, string]>([]);
   const contactState = useContactState(state => state.contacts);
   const notificationCount = useHarkState(state => state.notificationsCount);
-  const { unreadDmCount } = useDmUnreads();
   const invites = useInviteState(state => state.invites);
   const [leapCursor, setLeapCursor] = useState('pointer');
 
@@ -114,14 +109,14 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     if (!props.show) {
       return;
     }
-    Mousetrap.bind('landscape', props.toggle);
+    Mousetrap.bind('escape', props.toggle);
     const touchstart = new Event('touchstart');
     // @ts-ignore ref typings
     inputRef?.current?.input?.dispatchEvent(touchstart);
     // @ts-ignore ref typings
     inputRef?.current?.input?.focus();
     return () => {
-      Mousetrap.unbind('landscape');
+      Mousetrap.unbind('escape');
       setQuery('');
     };
   }, [props.show]);
@@ -151,19 +146,12 @@ export function Omnibox(props: OmniboxProps): ReactElement {
 
     SEARCHED_CATEGORIES.map((category) => {
       const categoryIndex = index.get(category);
-      resultsMap.set(
-        category,
-        categoryIndex.filter((result) => {
-          return (
-            result.title.toLowerCase().includes(q) ||
-            result.link.toLowerCase().includes(q) ||
-            result.app.toLowerCase().includes(q) ||
-            (typeof result.host === 'string'
-              ? result.host.toLowerCase().includes(q)
-              : false)
-          );
-        })
-      );
+      const fuzzied = fuzzy
+        .filter(q, categoryIndex, { extract: res => res.title });
+      categoryMaxes[category] = fuzzied
+        .map(a => a.score)
+        .reduce((a,b) => Math.max(a,b), 0);
+      resultsMap.set(category, fuzzied.map(a => a.original));
     });
     const order = Object.entries(categoryMaxes)
       .sort(([,a],[,b]) => b - a)
@@ -378,7 +366,6 @@ export function Omnibox(props: OmniboxProps): ReactElement {
                     setSelection={() => setSelection(result.app, result.link)}
                     selected={sel}
                     hasNotifications={notificationCount !== 0}
-                    hasUnreadDms={unreadDmCount > 0}
                   />
                 ))}
               </Box>

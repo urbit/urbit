@@ -54,7 +54,7 @@ const commandIndex = function (currentGroup, groups, associations) {
   const workspace = currentGroup || '/home';
   commands.push(result('Create Group', '/~landscape/new', 'Uqbar Ui', null));
   if (canAdd) {
-    commands.push(result('Create Channel', `/~landscape${workspace}/new`, 'Uqbar Ui', null));
+    commands.push(result('Create Channel', `/~landscape${workspace}/new`, 'Uqbar UI', null));
   }
   commands.push(result('Join Group', '?join-kind=group', 'Uqbar UI', null));
 
