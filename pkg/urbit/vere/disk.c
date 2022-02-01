@@ -115,19 +115,6 @@ _disk_commit_cb(uv_work_t* ted_u)
                                     log_u->sav_u.siz_i);
 }
 
-//! Queue async event-batch write.
-static void
-_disk_commit_start(u3_disk* log_u)
-{
-  c3_assert( c3n == log_u->sav_u.ted_o );
-  log_u->sav_u.ted_o = c3y;
-
-  //  queue asynchronous work to happen on another thread
-  //
-  uv_queue_work(u3L, &log_u->sav_u.ted_u, _disk_commit_cb,
-                                          _disk_commit_after_cb);
-}
-
 c3_w
 u3_disk_etch(u3_disk* log_u,
              u3_noun    eve,
@@ -203,23 +190,35 @@ _disk_batch(u3_disk* log_u)
 }
 
 //! Commit all available events, if idle.
+//! @n (1) Queue async event-batch write to happen on another thread.
 static void
 _disk_commit(u3_disk* log_u)
 {
-  if ( c3y == _disk_batch(log_u) ) {
-#ifdef VERBOSE_DISK
-    if ( 1 == len_w ) {
-      fprintf(stderr, "disk: (%" PRIu64 "): commit: request\r\n",
-                      log_u->sav_u.eve_d);
-    }
-    else {
-      fprintf(stderr, "disk: (%" PRIu64 "-%" PRIu64 "): commit: request\r\n",
-                      log_u->sav_u.eve_d,
-                      (log_u->sav_u.eve_d + log_u->sav_u.len_w - 1));
-    }
-#endif
+  if ( c3n == _disk_batch(log_u) ) {
+    return;
+  }
 
-    _disk_commit_start(log_u);
+#ifdef VERBOSE_DISK
+  if ( 1 == len_w ) {
+    fprintf(stderr, "disk: (%" PRIu64 "): commit: request\r\n",
+            log_u->sav_u.eve_d);
+  }
+  else {
+    fprintf(stderr, "disk: (%" PRIu64 "-%" PRIu64 "): commit: request\r\n",
+            log_u->sav_u.eve_d,
+            log_u->sav_u.eve_d + log_u->sav_u.len_w - 1);
+  }
+#endif /* ifndef VERBOSE_DISK */
+
+  // (1)
+  {
+    c3_assert( c3n == log_u->sav_u.ted_o );
+    log_u->sav_u.ted_o = c3y;
+
+    uv_queue_work(u3L,
+                  &log_u->sav_u.ted_u,
+                  _disk_commit_cb,
+                  _disk_commit_after_cb);
   }
 }
 
