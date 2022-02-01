@@ -275,23 +275,19 @@ u3_disk_async(u3_disk*     log_u,
 
 //! Parse a persisted event buffer.
 static c3_o
-_disk_sift(u3_disk* log_u,
-           size_t   len_i,
-           c3_y*    dat_y,
-           c3_l*    mug_l,
-           u3_noun*   job)
+_disk_sift(u3_disk* log_u, u3_feat* fet_u, u3_fact* tac_u)
 {
   //  XX check version
   //
 
-  if ( 4 >= len_i ) {
+  if ( 4 >= fet_u->len_i ) {
     return c3n;
   }
   else {
-    *mug_l = dat_y[0]
-           ^ (dat_y[1] <<  8)
-           ^ (dat_y[2] << 16)
-           ^ (dat_y[3] << 24);
+    tac_u->mug_l = fet_u->hun_y[0]
+                 ^ (fet_u->hun_y[1] <<  8)
+                 ^ (fet_u->hun_y[2] << 16)
+                 ^ (fet_u->hun_y[3] << 24);
 
 #ifdef DISK_TRACE_CUE
     u3t_event_trace("king disk cue", 'B');
@@ -299,7 +295,7 @@ _disk_sift(u3_disk* log_u,
 
     //  XX u3m_soft?
     //
-    *job = u3ke_cue(u3i_bytes(len_i - 4, dat_y + 4));
+    tac_u->job = u3ke_cue(u3i_bytes(fet_u->len_i - 4, fet_u->hun_y + 4));
 
 #ifdef DISK_TRACE_CUE
     u3t_event_trace("king disk cue", 'E');
@@ -323,15 +319,14 @@ _disk_read_list_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   u3_disk* log_u = ven_u->log_u;
 
   {
-    u3_noun job;
-    c3_l  mug_l;
-
-    if ( c3n == _disk_sift(log_u, val_i, (c3_y*)val_p, &mug_l, &job) ) {
+    u3_feat fet_u = { .len_i = val_i, .hun_y = val_p };
+    u3_fact tac_u;
+    if ( c3n == _disk_sift(log_u, &fet_u, &tac_u) ) {
       return c3n;
     }
 
-    ven_u->mug_l = mug_l;
-    ven_u->eve   = u3nc(job, ven_u->eve);
+    ven_u->mug_l = tac_u.mug_l;
+    ven_u->eve   = u3nc(tac_u.job, ven_u->eve);
   }
 
   return c3y;
@@ -397,10 +392,8 @@ u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
     return wok_u->liv_o = c3n;
   }
 
-  if ( c3n == _disk_sift(log_u, len_i,
-                           (c3_y*)buf_v,
-                           &tac_u->mug_l,
-                           &tac_u->job) )
+  u3_feat fet_u = { .len_i = len_i, .hun_y = buf_v };
+  if ( c3n == _disk_sift(log_u, &fet_u, tac_u) )
   {
     fprintf(stderr, "disk: (%" PRIu64 "): sift fail\r\n", tac_u->eve_d);
     return wok_u->liv_o = c3n;
