@@ -23,7 +23,7 @@ export function UqbarHome(props) {
       flexDirection="column"
       mt={3}
     >
-      <H2 mb={3} ml={3}>EScape from Eternal September</H2>
+      <H2 mb={3} ml={3}>EScape from Eternal September <Text fontSize="16px">(v{version})</Text></H2>
       <Box
         mx={2}
         display="grid"
@@ -54,11 +54,6 @@ export function UqbarHome(props) {
             </Row>
           </Box>
         </Tile> */}
-        <Tile>
-          <Col display="flex" alignItems="center" justifyContent="center" height="100%">
-            <Text mt={3} textAlign="center" fontWeight="bold">Welcome to EScape (v{version})</Text>
-          </Col>
-        </Tile>
         <Tile>
           <Col display="flex" alignItems="center" justifyContent="center" height="100%">
             <Sigil

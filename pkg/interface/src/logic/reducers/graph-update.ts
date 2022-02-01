@@ -280,6 +280,40 @@ export const addNodes = (json, state) => {
     return [graph, flatGraph, threadGraphs];
   };
 
+  const addSigs = _.get(json, 'add-signatures', false);
+  if (addSigs) {
+    if (!('graphs' in state) || !('flatGraphs' in state) || !('threadGraphs' in state)) {
+      return state;
+    }
+
+    const { signatures, uid: { index, resource: { name, ship } } } = addSigs;
+    const resource = `${ship}/${name}`;
+
+    if (!(resource in state.graphs)) {
+      if(json.fetch) {
+        state.graphs[resource] = new BigIntOrderedMap();
+      } else {
+        return state;
+      }
+    }
+
+    const indexArr = stringToArr(index);
+
+    const graph = state.graphs[resource];
+    const node = graph.get(indexArr[0]);
+    const newNode = {
+      ...node,
+      post: {
+        ...node.post,
+        signatures: [...node.post.signatures, ...signatures]
+      }
+    };
+    const updatedGraph = graph.set(indexArr[0], newNode);
+    state.graphs[resource] = updatedGraph;
+
+    return state;
+  }
+
   const data = _.get(json, 'add-nodes', false);
   if (data) {
     if (!('graphs' in state)) {

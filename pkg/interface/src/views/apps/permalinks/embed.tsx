@@ -151,6 +151,7 @@ function GraphPermalink(
       maxWidth={full ? null : '500px'}
       border={full ? null : '1'}
       borderColor="lightGray"
+      color="black"
       borderRadius={2}
       onClick={(e) => {
         e.stopPropagation();

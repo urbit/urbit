@@ -23,6 +23,7 @@ import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
 import { Mention } from '~/views/components/MentionText';
 import RemoteContent from '~/views/components/RemoteContent';
 import { parseTall, parseWide } from './parse';
+import { useDark } from '~/logic/state/join';
 
 const IMAGE_EXTENSIONS = ['png', 'jpg', 'svg', 'jpeg'];
 
@@ -455,9 +456,10 @@ export const GraphContent = React.memo((
     ...rest
   } = props;
   const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
+
   return (
     <Box {...rest}>
-      <Graphdown transcluded={transcluded} ast={ast} tall={tall} collapsed={collapsed} />
+      <Graphdown {...{ transcluded, ast, tall, collapsed }} />
     </Box>
   );
 });

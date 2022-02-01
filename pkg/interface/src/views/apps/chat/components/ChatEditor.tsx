@@ -18,7 +18,7 @@ import { useChatStore } from './ChatPane';
 import { useDark } from '~/logic/state/join';
 
 export const SIG_REGEX = /(?:^|\s)(~)(?=\s|$)/;
-export const MENTION_REGEX = /(?:^|\s)(~)(?![a-z]{6}\-[a-z]{6})(?![a-z]{6}[?=\s|$])([a-z\-]+)(?=\s|$)/;
+export const MENTION_REGEX = /(?:^|\s)(~)(?![a-z]{6}\-[a-z]{6}[?=\s|$])(?![a-z]{6}[?=\s|$])([a-z\-]+)(?=\s|$)/;
 export const isMobile = Boolean(MOBILE_BROWSER_REGEX.test(navigator.userAgent));
 
 const MARKDOWN_CONFIG = {
@@ -248,27 +248,36 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
       setMessage(value);
       setAutocompleteValues(false, [], '');
     }
-    if (value == message || value == '' || value == ' ') {
+    if (value == message || value == '' || value == ' ')
       return;
-    }
 
     setMessage(value);
 
-    const valueWithoutMembers = memberArray.reduce((cleaned, m) => cleaned.replace(`~${m}`, ''), value);
+    if (!value.includes('~'))
+      return;
 
-    if (SIG_REGEX.test(valueWithoutMembers) && SIG_REGEX.test(value)) {
-      setAutocompleteValues(true, memberArray.filter(m => !value.includes(m)), '');
-    } else if (MENTION_REGEX.test(valueWithoutMembers) && MENTION_REGEX.test(value)) {
-      const [patp] = valueWithoutMembers.match(MENTION_REGEX);
-      const ship = patp.replace(/\s*?~/, '');
-      const isValid = ob.isValidPatp(patp.replace(' ', ''));
+    const sigMatch = SIG_REGEX.test(value);
+    const mentionMatch = MENTION_REGEX.test(value);
 
-      const matchingMembers = memberArray.filter(m => m.includes(ship) && !value.includes(m));
-      const includesMember = matchingMembers.includes(ship);
-      if (!matchingMembers.length || includesMember) {
-        setAutocompleteValues(isValid, [], patp);
+    if (sigMatch || mentionMatch) {
+      const valueWithoutMembers = memberArray.reduce((cleaned, m) => cleaned.replace(`~${m}`, ''), value);
+
+      if (sigMatch && SIG_REGEX.test(valueWithoutMembers)) {
+        setAutocompleteValues(true, memberArray.filter(m => !value.includes(m)), '');
+      } else if (mentionMatch && MENTION_REGEX.test(valueWithoutMembers)) {
+        const [patp] = valueWithoutMembers.match(MENTION_REGEX);
+        const ship = patp.replace(/\s*?~/, '');
+        const isValid = ob.isValidPatp(patp.replace(' ', ''));
+
+        const matchingMembers = memberArray.filter(m => m.includes(ship) && !value.includes(m));
+        const includesMember = matchingMembers.includes(ship);
+        if (!matchingMembers.length || includesMember) {
+          setAutocompleteValues(isValid, [], patp);
+        } else {
+          setAutocompleteValues(Boolean(matchingMembers.length), matchingMembers, '');
+        }
       } else {
-        setAutocompleteValues(Boolean(matchingMembers.length), matchingMembers, '');
+        setAutocompleteValues(false, [], '');
       }
     } else {
       setAutocompleteValues(false, [], '');

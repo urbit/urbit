@@ -187,17 +187,12 @@ export const Message = React.memo(({
   timestampHover,
   transcluded,
   showOurContact,
-  onLike,
   isReply = false
 }: MessageProps) => {
   const { hovering, bind } = useHovering();
   // TODO: add an additional check for links-only messages to remove the Triangle icon
   const defaultCollapsed = isReply && transcluded > 0;
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
-
-  const onClick = useCallback(async () => {
-    onLike(msg);
-  }, [msg, onLike]);
 
   return (
     <Row width="100%" onClick={(e) => {
@@ -221,7 +216,7 @@ export const Message = React.memo(({
           icon={collapsed ? 'TriangleEast' : 'TriangleSouth'}
         />
       )}
-      <Box pl={defaultCollapsed ? '0px' : '44px'} pr={4} width="calc(100% - 44px)" position='relative' onClick={onClick}>
+      <Box pl={defaultCollapsed ? '0px' : '44px'} pr={4} width="calc(100% - 44px)" position='relative'>
         {timestampHover ? (
           <Text
             display={hovering ? 'block' : 'none'}
@@ -314,7 +309,7 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
+const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink, onLike }) => {
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
   const showCopyMessageLink = Boolean(permalink);
@@ -340,58 +335,69 @@ const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
         >
           <Icon icon='Chat' size={3} />
         </Box>
-        {showDropdown && (
-          <Dropdown
-            dropWidth='250px'
-            width='auto'
-            alignY='top'
-            alignX='right'
-            flexShrink={0}
-            offsetY={8}
-            offsetX={-24}
-            options={
-              <Col
-                py={2}
-                backgroundColor='white'
-                color='washedGray'
-                border={1}
-                borderRadius={2}
-                borderColor='lightGray'
-                boxShadow='0px 0px 0px 3px'
-              >
-                <MessageActionItem onClick={() => onReply(msg)}>
-                  Reply
+        <Box
+          padding={1}
+          size={'24px'}
+          cursor='pointer'
+          onClick={() => onLike(msg)}
+        >
+          <Icon icon='CheckmarkBold' size="20px" mt="-2px" ml="-2px" />
+        </Box>
+        <Dropdown
+          dropWidth='250px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          flexShrink={0}
+          offsetY={8}
+          offsetX={-24}
+          options={
+            <Col
+              py={2}
+              backgroundColor='white'
+              color='washedGray'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              <MessageActionItem onClick={() => onReply(msg)}>
+                Reply
+              </MessageActionItem>
+              {/* <MessageActionItem onClick={e => console.log(e)}>
+                View Signature
+              </MessageActionItem> */}
+              {showCopyMessageLink && (
+                <MessageActionItem onClick={doCopy}>
+                  {copyDisplay}
                 </MessageActionItem>
-                {showCopyMessageLink && (
-                  <MessageActionItem onClick={doCopy}>
-                    {copyDisplay}
-                  </MessageActionItem>
-                )}
-                {showDelete && (
-                  <MessageActionItem onClick={e => onDelete(msg)} color='red'>
-                    Delete Message
-                  </MessageActionItem>
-                )}
-              </Col>
-            }
-          >
+              )}
+              {showDelete && (
+                <MessageActionItem onClick={e => onDelete(msg)} color='red'>
+                  Delete Message
+                </MessageActionItem>
+              )}
+            </Col>
+          }>
             <Box padding={1} size={'24px'} cursor='pointer'>
               <Icon icon='Menu' size={3} />
             </Box>
           </Dropdown>
-        )}
       </Row>
     </Box>
   );
 };
 
 const MessageWrapper = (props) => {
+  const { transcluded, hideHover, highlighted, numLikes, didLike, msg, onLike } = props;
   const { hovering, bind } = useHovering();
-  const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
+  const showHover = (transcluded === 0) && hovering && !hideHover;
+  const dark = useDark();
+
   return (
     <Box
-      py={props.transcluded ? '2px' : '1'}
-      backgroundColor={props.highlighted
+      py={transcluded ? '2px' : '1'}
+      backgroundColor={highlighted
         ? showHover ? 'lightBlue' : 'washedBlue'
         : showHover ? 'washedGray' : 'transparent'
       }
@@ -399,6 +405,17 @@ const MessageWrapper = (props) => {
       {...bind}
     >
       {props.children}
+      {/* {(numLikes > 0 && !transcluded) && <Row
+        onClick={() => onLike(msg)}
+        backgroundColor={didLike ? 'washedBlue' : 'washedGray'}
+        width="fit-content" p="1px 4px"
+        borderRadius={2}
+        m="4px 0px 0px 44px"
+        border={dark ? '1px solid white' : undefined}
+        cursor="pointer">
+        <Icon icon="CheckmarkBold" size={20} color={didLike ? 'rgba(33,157,255,1)' : 'black'} />
+        <Text color={didLike ? 'rgba(33,157,255,1)' : undefined}>{numLikes}</Text>
+      </Row>} */}
       {showHover ? <MessageActions {...props} /> : null}
     </Box>
   );
@@ -454,8 +471,6 @@ function ChatMessage(props: ChatMessageProps) {
     );
   }
 
-  // console.log(1, msg)
-
   const onReply = props?.onReply || emptyCallback;
   const onDelete = props?.onDelete; // If missing hide delete action
   const transcluded = props?.transcluded || 0;
@@ -497,6 +512,9 @@ function ChatMessage(props: ChatMessageProps) {
     [date, renderSigil]
   );
 
+  const numLikes = msg.signatures.length - 1;
+  const didLike = Boolean(msg.author !== window.ship && msg.signatures.find(({ ship }) => ship === window.ship));
+
   const messageProps = {
     msg,
     timestamp,
@@ -508,15 +526,17 @@ function ChatMessage(props: ChatMessageProps) {
     onReply,
     onDelete,
     onLike,
-    isAdmin
+    isAdmin,
+    numLikes,
+    didLike
   };
 
   const message = useMemo(() => (
     <Message
       timestampHover={!renderSigil}
-      {...{ msg, timestamp, transcluded, showOurContact, isReply, onLike }}
+      {...{ msg, timestamp, transcluded, showOurContact, isReply }}
     />
-  ), [renderSigil, msg, timestamp, transcluded, showOurContact, onLike]);
+  ), [renderSigil, msg, timestamp, transcluded, showOurContact]);
 
   const unreadContainerStyle = {
     height: isLastRead ? '2rem' : '0'

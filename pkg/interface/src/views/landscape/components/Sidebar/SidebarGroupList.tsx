@@ -114,7 +114,10 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   const isMessages = workspace.type === 'messages';
   const isHome = workspace.type === 'home';
   const isGroup = workspace.type === 'group';
-  const groupSelected = (isMessages && baseUrl.includes('messages')) || (isHome && baseUrl.includes('home')) || (workspace.type === 'group' && baseUrl.includes(workspace.group));
+  const groupSelected =
+    (isMessages && baseUrl.includes('messages')) ||
+    (isHome && baseUrl.includes('home')) ||
+    (workspace.type === 'group' && (baseUrl.replace('/~landscape', '') === workspace.group || baseUrl.includes(`${workspace.group}/resource`)));
   const [collapsed, setCollapsed] = useState(!groupSelected && !isMessages);
 
   const associations = useMetadataState(state => state.associations);

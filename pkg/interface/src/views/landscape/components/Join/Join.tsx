@@ -32,7 +32,7 @@ interface FormSchema {
 
 const initialValues = {
   autojoin: false,
-  shareContact: false,
+  shareContact: false
 };
 
 function JoinForm(props: {

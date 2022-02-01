@@ -132,7 +132,6 @@ function readEach(json: any, state: HarkState): HarkState {
 function readSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-count');
   if(data) {
-    console.log(data);
     updateNotificationStats(state, data, s => ({ count: 0 }));
   }
   return state;

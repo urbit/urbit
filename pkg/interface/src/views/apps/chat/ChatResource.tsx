@@ -122,7 +122,6 @@ const fetchMessages = useCallback(async (newer: boolean) => {
       }
       await getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
       const currSize = getCurrGraphSize(deSig(ship), name);
-      console.log(currSize);
       const done = expectedSize !== currSize;
       return done;
     }
@@ -139,12 +138,11 @@ const fetchMessages = useCallback(async (newer: boolean) => {
   }, [resource]);
 
   const onLike = useCallback(async ({ author, signatures, index }: Post) => {
-    // console.log(0)
     if (window.ship !== author) {
       const { ship, name } = resourceFromPath(resource);
-      // console.log(1)
+      const remove = signatures.find(({ ship }) => ship === window.ship);
 
-      const body = signatures.find(({ ship }) => ship === window.ship)
+      const body = remove
         ? {
           'remove-signatures': {
             uid: { resource: { ship, name }, index },
@@ -157,15 +155,13 @@ const fetchMessages = useCallback(async (newer: boolean) => {
             signatures: []
           }
         }; // like
-      // console.log(2, body)
-      const result = await airlock.thread({
+      await airlock.thread({
         inputMark: 'graph-update-3',
         outputMark: 'json',
-        threadName: 'add-signatures',
+        threadName: `${remove ? 'remove' : 'add'}-signatures`,
         desk: 'escape',
         body
       });
-      // console.log(3, result)
     }
   }, [resource]);
 
