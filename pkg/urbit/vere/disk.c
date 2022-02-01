@@ -273,12 +273,13 @@ u3_disk_async(u3_disk*     log_u,
   log_u->sav_u.don_f = don_f;
 }
 
-c3_o
-u3_disk_sift(u3_disk* log_u,
-             size_t   len_i,
-             c3_y*    dat_y,
-             c3_l*    mug_l,
-             u3_noun*   job)
+//! Parse a persisted event buffer.
+static c3_o
+_disk_sift(u3_disk* log_u,
+           size_t   len_i,
+           c3_y*    dat_y,
+           c3_l*    mug_l,
+           u3_noun*   job)
 {
   //  XX check version
   //
@@ -325,7 +326,7 @@ _disk_read_list_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
     u3_noun job;
     c3_l  mug_l;
 
-    if ( c3n == u3_disk_sift(log_u, val_i, (c3_y*)val_p, &mug_l, &job) ) {
+    if ( c3n == _disk_sift(log_u, val_i, (c3_y*)val_p, &mug_l, &job) ) {
       return c3n;
     }
 
@@ -396,7 +397,7 @@ u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
     return wok_u->liv_o = c3n;
   }
 
-  if ( c3n == u3_disk_sift(log_u, len_i,
+  if ( c3n == _disk_sift(log_u, len_i,
                            (c3_y*)buf_v,
                            &tac_u->mug_l,
                            &tac_u->job) )

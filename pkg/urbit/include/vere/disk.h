@@ -68,14 +68,6 @@ u3_disk_etch(u3_disk* log_u,
              c3_l     mug_l,
              c3_y**   out_y);
 
-//! Parse a persisted event buffer.
-c3_o
-u3_disk_sift(u3_disk* log_u,
-             size_t   len_i,
-             c3_y*    dat_y,
-             c3_l*    mug_l,
-             u3_noun*   job);
-
 //! Print status info.
 //!
 //! @param[in] log_u  Disk object to report status info for.
