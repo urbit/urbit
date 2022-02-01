@@ -2460,11 +2460,17 @@
             ::TODO  handle
             ~&  [%fine %done-goofed u.dud]
             event-core
+          ::NOTE  we only send requests to ships we know,
+          ::      so we should only get responses from ships we know.
+          ::      below we assume sndr.packet is a known peer.
+          =*  from  sndr.packet
+          =/  peer  (~(got by peers.ames-state) from)
+          ?>  ?=(%known -.peer)
+          ?>  =(sndr-tick.packet (mod life.peer 16))
+          ::
           =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
           =/  =rawr          (decode-response-packet purr)
-          ::TODO  validate we are the right life? at laest for request case
-          ::TODO  validate response signature
-          (handle-response [sndr.packet lane] peep rawr)
+          (handle-response [from life.peer lane] peep rawr)
         --
     |%
     +$  twit  ::  signed request
@@ -2485,7 +2491,7 @@
     ::
     +$  roar  ::  response message
       $:  sig=@
-          dat=(cask)
+          dat=$@(~ (cask))
       ==
     ::
     ++  spit
@@ -2516,8 +2522,9 @@
       =+  bod=(request-body path num)
       =+  syn=(can 3 64^(sign:keys dat.bod) bod ~)
       %+  con  0b100  ::NOTE  request bit
-      %+  encode-packet  |
-      [[our ship] (mod life:keys 16) (mod (lyfe:keys ship) 16) ~ syn]
+      %^  encode-packet  |
+        [our ship]
+      [(mod life.ames-state 16) (mod (lyfe:keys ship) 16) ~ syn]
     ::
     ++  encode-response  ::TODO  unit tests
       |=  [=path data=(unit (cask))]
@@ -2533,13 +2540,10 @@
         ^-  @ux
         ::NOTE  we stub out the receiver & origin details,
         ::      runtime should replace them as appropriate.
-        ::TODO  should have scry endpoint that produces gate that does
-        ::      that packet transformation, just to set a spec
-        (encode-packet | [our ~zod] (mod life:keys 16) 0b0 ~ pac)
+        (encode-packet | [our ~zod] (mod life.ames-state 16) 0b0 ~ pac)
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
-        ::TODO  should also sign the request path
         =/  sig=@  (full:keys path (fall data ~))
         ?~  data  [sig]~
         %+  rip  13  ::NOTE  1024 bytes
@@ -2566,31 +2570,46 @@
     ::
     ++  keys
       |%
+      ++  mess
+        |=([@p life path $@(~ (cask))] (jam +<))
+      ::
       ++  full
-        |=  [=path mess=*]
-        (sign (shax (jam [our life path mess])))
+        |=  [=path data=$@(~ (cask))]
+        (sign (mess our life.ames-state path data))
       ::
-      ++  life  life.ames-state
-      ++  sign  sign:as:crypto-core.ames-state
+      ++  sign
+        |=  msg=@
+        %+  sign:ed:crypto  msg
+        ::TODO  get just the sgn key!
+        sec:ex:crypto-core.ames-state
       ::
-      ::TODO  for the unknown case, should use the alien-agenda
       ++  lyfe
         |=  who=ship
-        ^-  ^life
+        ^-  life
         ~|  [%fine %unknown-peer who]
         =/  ship-state  (~(got by peers.ames-state) who)
         ?>  ?=([%known *] ship-state)
         life.ship-state
       ::
-      ::TODO  for the unknown case, should use the alien-agenda
       ++  pass
-        |=  [who=ship lyf=^life]
+        |=  [who=ship lyf=life]
         ~|  [%fine %unknown-peer who lyf]
         =/  ship-state  (~(got by peers.ames-state) who)
         ?>  ?=([%known *] ship-state)
         ~|  [%fine %life-mismatch who lyf]
         ?>  =(lyf life.ship-state)
         public-key.ship-state
+      ::
+      ++  veri
+        |=  [who=ship lyf=life sig=@ dat=@]
+        %^  veri:ed:crypto  sig
+          dat
+        ::TODO  get jsut the sign key!
+        pub:ex:(com:nu:crub:crypto (pass:keys who lyf))
+      ::
+      ++  meri
+        |=  [who=ship lyf=life pax=path sig=@ dat=$@(~ (cask))]
+        (veri who lyf sig (mess who lyf pax dat))
       --
     ::
     ++  get-lane
@@ -2633,10 +2652,6 @@
           dat=(rsh 3^70 purr)
       ==
     ::
-    ++  verify-response-packet
-      |=  rawr
-      !!
-    ::
     ++  decode-response-msg
       |=  partial-fine  ::TODO  maybe take @ instead
       ^-  roar
@@ -2645,8 +2660,10 @@
         %+  turn  (gulf 1 num-fragments)
         ~(got by fragments)
       :-  sig=(cut 3 [0 64] mess)
+      =+  dat=(rsh 3^64 mess)
+      ?~  dat  ~
       ~|  [%fine %response-not-cask]
-      ;;((cask) (cue (rsh 3^64 mess)))
+      ;;((cask) (cue dat))
     ::
     ++  send-request
       |=  [=ship =path num=@ud]
@@ -2661,22 +2678,20 @@
       [unix-duct.ames-state %give %send lane `@ux`hoot]
     ::
     ++  process-response
-      |=  [=path data=(unit (cask))]
+      |=  [[from=ship =life] =path sig=@ data=$@(~ (cask))]
       ^+  event-core
+      ?>  (meri:keys from life path sig data)
       =.  event-core
         %-  emil
         %+  turn  ~(tap in (~(get ju want.state) path))
-        (late [%give %tune path data])
+        (late [%give %tune path ?@(data data `data)])
       =.  want.state  (~(del by want.state) path)
       =.  part.state  (~(del by part.state) path)
       event-core
     ::
     ++  handle-response
-      |=  [[from=ship =lane:ames] =peep =rawr]
+      |=  [[from=ship =life =lane:ames] =peep =rawr]
       ^+  event-core
-      ?:  =(0 siz.rawr)
-        ?>  =(~ dat.rawr)
-        (process-response path.peep ~)
       ?.  (~(has by part.state) path.peep)
         ::  we did not initiate this request, or it's been cancelled
         ::
@@ -2691,14 +2706,14 @@
             ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
             num-fragments
           +(num-received)
+        ?>  (veri:keys from life [sig dat]:rawr)
         (~(put by fragments) num.peep [wid dat]:rawr)
       ::
       ?:  =(num-fragments num-received):partial
         ::  we have all the parts now, construct the full response
         ::
         =/  =roar  (decode-response-msg partial)
-        ::TODO  check signature
-        (process-response path.peep `dat.roar)
+        (process-response [from life] path.peep [sig dat]:roar)
       ::  otherwise, store the part, and send out the next request
       ::
       =.  part.state  (~(put by part.state) path.peep partial)
