@@ -98,10 +98,6 @@ u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u);
 u3_weak
 u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l);
 
-//! Enqueue completed event list, without autocommit.
-void
-u3_disk_plan_list(u3_disk* log_u, u3_noun lit);
-
 //! Commit planned events.
 c3_o
 u3_disk_sync(u3_disk* log_u);

@@ -238,24 +238,6 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
   c3_queue_push_back(log_u->put_u, fet_u, sizeof(*fet_u));
 }
 
-void
-u3_disk_plan_list(u3_disk* log_u, u3_noun lit)
-{
-  u3_noun i, t = lit;
-  u3_fact tac_u;
-
-  while ( u3_nul != t ) {
-    u3x_cell(t, &i, &t);
-    //  NB, boot mugs are 0
-    //
-    tac_u.mug_l = 0;
-    tac_u.job = i;
-    u3_disk_plan(log_u, &tac_u);
-  }
-
-  u3z(lit);
-}
-
 c3_o
 u3_disk_sync(u3_disk* log_u)
 {
