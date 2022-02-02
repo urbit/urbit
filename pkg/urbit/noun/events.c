@@ -1,61 +1,71 @@
 //! @file events.c
-//! Incremental snapshot system.
 //!
-//! ### Components
-//!   - North image file: the contiguous pages of the home road's heap. Pages
-//!     are ordered within the file by increasing address (i.e. bottommost page
-//!     of the loom comes first).
-//!   - South image file: the contiguous pages of the home road's stack. Pages
-//!     are ordered within the file by decreasing address (i.e. topmost page of
-//!     the loom comes first).
-//!   - Memory patch file: the raw memory of the pages that changed since the
-//!     last snapshot was taken.
-//!   - Control patch file: metadata describing the contents of the memory patch
-//!     file.
+//! incremental, orthogonal, paginated loom snapshots
 //!
-//! ### Taking a snapshot
-//! 1. Create a memory patch file containing all dirty pages within the bounds
-//!    of the home road's heap and stack and an accompanying control patch file
-//!    that documents where in the loom those dirty pages belong.
-//! 2. Apply the contents of the memory patch file to the appropriate image file
-//!    using the metadata stored in the control patch file.
-//! 3. Delete the memory and control patch files.
+//! ### components
 //!
-//! ### Restoring a snapshot
-//! 1. Check for the memory and control patch files. If they exist, then a crash
-//!    presumably occurred while taking a snapshot (after the patch files were
-//!    created but before they could be applied to the image files) and so the
-//!    patch files should be applied to the image files the same as when taking
-//!    a snapshot.
-//! 2. Mark all pages in the loom as dirty. This effectively ignores pages that
-//!    are not on the home road and so optimizes page tracking.
-//! 3. Apply the image files to memory. Mark as clean and write-protect the
-//!    pages restored from the image files.
+//!   - page: 16KB chunk of the loom.
+//!   - north segment (u3e_image, north.bin): low contiguous loom pages,
+//!     (in practice, the home road heap). indexed from low to high:
+//!     in-order on disk.
+//!   - south segment (u3e_image, south.bin): high contiguous loom pages,
+//!     (in practice, the home road stack). indexed from high to low:
+//!     reversed on disk.
+//!   - patch memory (memory.bin): new or changed pages since the last snapshot
+//!   - patch control (u3e_control control.bin): patch metadata, watermarks,
+//!     and indices/mugs for pages in patch memory.
 //!
-//! ### Page tracking subtleties
-//! To better understand any subtleties of the page tracking system, consider
-//! the following sequence:
-//! 1. Boot up and restore the snapshot, which is empty (i.e. the image files
-//!    contain no pages). Because the snapshot is empty, all pages are marked as
-//!    dirty and are writable, which means that no page faults will be generated.
-//! 2. After a while, take a snapshot. All pages within the home road's heap and
-//!    stack  will be gathered into the patch files (because all of the pages in
-//!    the loom are dirty) and ultimately written to the image files.
-//! 3. Exit.
-//! 4. Reboot and restore the snapshot, which is no longer empty. Because the
-//!    snapshot contains the pages that comprised the home road's heap and stack
-//!    at the time at which the snapshot was taken, only those pages will be
-//!    marked as clean and write-protected. As a result, all other pages will
-//!    remain dirty and writable.
-//! 5. After a while, take another snapshot. By this point, any writes to the
-//!    write-protected pages on the home road's heap or stack will have triggered
-//!    page faults, and those pages will have been marked as dirty. Any writes to
-//!    non-write-protected pages on the home road's heap or stack (which would
-//!    exist if the home road heap and/or stack grew) will already be dirty.
-//!    All of these dirty pages are applied to the image files via the patch
-//!    files. As this process repeats, the snapshot grows incrementally without
-//!    the need to write-protect the pages between the home road's heap and
-//!    stack, thereby reducing the number of page faults generated.
+//! ### initialization (u3e_live())
+//!
+//!   - with the loom already mapped, all pages are marked dirty in a bitmap.
+//!   - if snapshot is missing or partial, empty segments are created.
+//!   - if a patch is present, it's applied (crash recovery).
+//!   - snapshot segments are copied onto the loom; all included pages
+//!     are marked clean and protected (read-only).
+//!
+//! #### page faults (u3e_fault())
+//!
+//!   - stores into protected pages generate faults (currently SIGSEGV,
+//!     handled outside this module).
+//!   - faults are handled by dirtying the page and switching protections to
+//!     read/write.
+//!
+//! ### updates (u3e_save())
+//!
+//!   - all updates to a snapshot are made through a patch.
+//!   - high/low watermarks for the north/south segments are established,
+//!     and dirty pages below/above them are added to the patch.
+//!     - modifications have been caught by the fault handler.
+//!     - newly-used pages are automatically included (preemptively dirtied).
+//!     - unused, innermost pages are reclaimed (segments are truncated to the
+//!       high/low watermarks; the last page in each is always adjacent to the
+//!       contiguous free space).
+//!   - patch pages are written to memory.bin, metadata to control.bin.
+//!   - the patch is applied to the snapshot segments, in-place.
+//!   - patch files are deleted.
+//!
+//! ### limitations
+//!
+//!   - loom page size is fixed (16 KB), and must be a multiple of the
+//!     system page size, but that invariant is not enforced.
+//!     (can the size vary at runtime give south.bin's reversed order?
+//!     alternately, if system page size > ours, the fault handler could dirty
+//!     N pages at a time.)
+//!   - update atomicity is suspect: patch application must either
+//!     completely succeed or leave on-disk segments intact. unapplied
+//!     patches can be discarded (triggering event replay), but once
+//!     patch application begins it must succeed (can fail if disk is full).
+//!     may require integration into the overall signal-handling regime.
+//!   - any errors are handled with assertions; failed/partial writes are not
+//!     retried.
+//!
+//! ### enhancements
+//!
+//!   - use platform specific page fault mechanism (mach rpc, userfaultfd, &c).
+//!   - implement demand paging / heuristic page-out.
+//!   - add a guard page in the middle of the loom to reactively handle stack overflow.
+//!   - parallelism
+//!
 
 #include "all.h"
 #include <errno.h>
