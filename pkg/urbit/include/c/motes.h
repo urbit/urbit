@@ -72,6 +72,7 @@
 #   define c3__ber    c3_s3('b','e','r')
 #   define c3__bias   c3_s4('b','i','a','s')
 #   define c3__bic    c3_s3('b','i','c')
+#   define c3__bide   c3_s4('b','i','d', 'e')
 #   define c3__bind   c3_s4('b','i','n','d')
 #   define c3__bink   c3_s4('b','i','n','k')
 #   define c3__bird   c3_s4('b','i','r','d')
