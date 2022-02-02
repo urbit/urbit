@@ -1,5 +1,5 @@
 
-declare module "urbit-ob" {
+declare module 'urbit-ob' {
 
   /**
    * Convert a @p-encoded string to a decimal-encoded string.

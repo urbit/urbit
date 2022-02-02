@@ -2,7 +2,7 @@
  * Martian embassy
  */
 
-import BigIntOrderedMap from "./BigIntOrderedMap";
+import { BigIntOrderedMap } from "./BigIntOrderedMap";
 
 // an urbit style path rendered as string
 export type Path = string;

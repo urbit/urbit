@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import {
+  BigIntOrderedMap,
   makePatDa,
   decToUd,
   unixToDa,
@@ -13,7 +14,6 @@ import {
   NotificationGraphConfig,
   archiveAll
 } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 /* eslint-disable-next-line camelcase */
 import { unstable_batchedUpdates } from 'react-dom';
 import produce from 'immer';

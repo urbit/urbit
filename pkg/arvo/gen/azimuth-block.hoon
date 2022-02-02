@@ -10,5 +10,5 @@
   [leaf+(scow %ud block)]~
 .^  @ud
   %gx
-  /(scot %p our)/eth-watcher/(scot %da now)/block/azimuth-tracker/noun
+  /(scot %p our)/eth-watcher/(scot %da now)/block/azimuth/noun
 ==

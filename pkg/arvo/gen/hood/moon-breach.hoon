@@ -30,4 +30,4 @@
   ?.  =(*^rift rift)
     rift
   +(.^(^rift j+/(scot %p our)/rift/(scot %da now)/(scot %p mon)))
-`[mon *id:block:jael %rift rift]
+`[mon *id:block:jael %rift rift %.n]

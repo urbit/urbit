@@ -1,46 +1,17 @@
-import * as http from 'http';
-
-interface HttpResponse {
-  req: http.ClientRequest;
-  res: http.IncomingMessage;
-  data: string;
-}
-
-export function request(
-  url: string,
-  options: http.ClientRequestArgs,
-  body?: string
-): Promise<HttpResponse> {
-  return new Promise<HttpResponse>((resolve, reject) => {
-    const req = http.request(url, options, res => {
-      let data = "";
-      res.on("data", chunk => {
-        data += chunk;
-      });
-      res.on("end", () => {
-        resolve({ req, res, data });
-      });
-      res.on("error", e => {
-        reject(e);
-      });
-    });
-    if (body) {
-      req.write(body);
-    }
-    req.end();
-  });
-}
-
 export function camelize(str: string) {
   return str
-    .replace(/\s(.)/g, function($1: string) { return $1.toUpperCase(); })
+    .replace(/\s(.)/g, function ($1: string) {
+      return $1.toUpperCase();
+    })
     .replace(/\s/g, '')
-    .replace(/^(.)/, function($1: string) { return $1.toLowerCase(); });
+    .replace(/^(.)/, function ($1: string) {
+      return $1.toLowerCase();
+    });
 }
 
 export function uncamelize(str: string, separator = '-') {
   // Replace all capital letters by separator followed by lowercase one
-  var str = str.replace(/[A-Z]/g, function (letter: string)  {
+  var str = str.replace(/[A-Z]/g, function (letter: string) {
     return separator + letter.toLowerCase();
   });
   return str.replace(new RegExp('^' + separator), '');

@@ -1,6 +1,6 @@
 { lib, stdenv, coreutils, pkgconfig                      # build/env
 , cacert, ca-bundle, ivory                               # codegen
-, curlMinimal, ent, gmp, h2o, libsigsegv, libuv, lmdb    # libs
+, curlUrbit, ent, gmp, h2o, libsigsegv, libuv, lmdb    # libs
 , murmur3, openssl, softfloat3, urcrypt, zlib            #
 , enableStatic           ? stdenv.hostPlatform.isStatic  # opts
 , enableDebug            ? false
@@ -14,6 +14,12 @@ let
 
   version = builtins.readFile "${src}/version";
 
+  # See https://github.com/urbit/urbit/issues/5561
+  oFlags =
+    if stdenv.hostPlatform.system == "aarch64-darwin"
+    then (if enableDebug then [ "-O0" "-g" ] else [ "-O3" ])
+    else [ (if enableDebug then "-O0" else "-O3") "-g" ];
+
 in stdenv.mkDerivation {
   inherit src version;
 
@@ -25,7 +31,7 @@ in stdenv.mkDerivation {
   buildInputs = [
     cacert
     ca-bundle
-    curlMinimal
+    curlUrbit
     ent
     gmp
     h2o
@@ -59,8 +65,7 @@ in stdenv.mkDerivation {
     then [ "--disable-shared" "--enable-static" ]
     else [];
 
-  CFLAGS = [ (if enableDebug then "-O0" else "-O3") "-g" ]
-    ++ lib.optionals (!enableDebug) [ "-Werror" ];
+  CFLAGS = oFlags ++ lib.optionals (!enableDebug) [ "-Werror" ];
 
   MEMORY_DEBUG = enableDebug;
   CPU_DEBUG = enableDebug;

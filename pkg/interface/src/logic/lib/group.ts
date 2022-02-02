@@ -1,5 +1,4 @@
-import { deSig, Path, PatpNoSig } from '@urbit/api';
-import { Group, Resource, roleTags, RoleTags } from '@urbit/api/groups';
+import { deSig, Path, PatpNoSig, Group, Resource, roleTags, RoleTags } from '@urbit/api';
 import _ from 'lodash';
 
 export function roleForShip(

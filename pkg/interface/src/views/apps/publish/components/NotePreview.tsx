@@ -1,6 +1,5 @@
 import { Box, Col, Icon, Image, Row, Text } from '@tlon/indigo-react';
-import { Group } from '@urbit/api';
-import { GraphNode } from '@urbit/api/graph';
+import { Group, GraphNode } from '@urbit/api';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';

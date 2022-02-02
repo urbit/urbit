@@ -1,5 +1,5 @@
 name: urbit-king
-version: 1.7
+version: 1.8
 license: MIT
 license-file: LICENSE
 data-files:
@@ -79,6 +79,7 @@ dependencies:
   - pretty-show
   - primitive
   - process
+  - psqueues
   - QuickCheck
   - racquire
   - random

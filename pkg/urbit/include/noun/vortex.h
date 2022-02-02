@@ -1,7 +1,6 @@
-/* include/g/v.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_VORTEX_H
+#define U3_VORTEX_H
+
   /**  Data structures.
   **/
     /* u3v_arvo: modern arvo structure.
@@ -112,3 +111,5 @@
     */
       void
       u3v_rewrite_compact();
+
+#endif /* ifndef U3_VORTEX_H */

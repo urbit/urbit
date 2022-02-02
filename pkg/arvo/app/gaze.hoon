@@ -212,6 +212,7 @@
       public:mainnet-contracts
       ~[azimuth delegated-sending]:mainnet-contracts
       ~
+      ~
   ==
 ::
 ::  see also comment in +setup-cards

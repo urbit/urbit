@@ -54,13 +54,13 @@
   ?:  =(broke-continuity i.topics.event-log)
     =/  who=@  (decode-topics t.topics.event-log ~[%uint])
     =/  num=@  (decode-results data.event-log ~[%uint])
-    `[who id %rift num]
+    `[who id %rift num %.n]
   ?:  =(changed-keys i.topics.event-log)
     =/  who=@  (decode-topics t.topics.event-log ~[%uint])
     =/  [enc=octs aut=octs sut=@ud rev=@ud]
         %+  decode-results  data.event-log
         ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-    `[who id %keys rev sut (pass-from-eth:azimuth enc aut sut)]
+    `[who id %keys [rev sut (pass-from-eth:azimuth enc aut sut)] %.n]
   ?:  =(lost-sponsor i.topics.event-log)
     =/  [who=@ pos=@]
         (decode-topics t.topics.event-log ~[%uint %uint])
@@ -94,6 +94,7 @@
     :*  url.state  =(%czar (clan:title our))  ~m5  ~m30
         launch:contracts:azimuth
         ~[azimuth:contracts:azimuth]
+        ~
         (topics whos.state)
     ==
   [%pass /wa %agent [our %eth-watcher] %poke %eth-watcher-poke args]
