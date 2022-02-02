@@ -1399,7 +1399,6 @@ static void _fine_bide(u3_pact* pac_u, u3_noun pax)
 {
   u3_ames* sam_u = pac_u->sam_u;
   u3_weak lis = u3h_get(sam_u->fin_s.bid_p, pax);
-  
   if ( u3_none == lis ) {
     lis = u3_nul;
   }
@@ -1409,15 +1408,11 @@ static void _fine_bide(u3_pact* pac_u, u3_noun pax)
 
   u3l_log("put in hashtable\n");
   u3m_p("hashtable", new);
-  u3_noun car, res;
-  u3x_cell(pax, &car, &res);
-  u3_noun our = u3dc("scot", 'p', u3i_chubs(2, sam_u->car_u.pir_u->who_d));
 
-  u3_noun pat = u3nt(car, our, res);
-  u3h_put(sam_u->fin_s.bid_p, pat, new);
-  u3m_p("pat", pat);
+  u3h_put(sam_u->fin_s.bid_p, pax, new);
+  u3m_p("pax", pax);
 
-  u3_noun cad = u3nc(c3__bide, pat);
+  u3_noun cad = u3nc(c3__bide, pax);
   u3_noun wir = u3nc(c3__fine, u3_nul);
   u3_ovum* ovo_u = u3_ovum_init(0, c3__ames, u3k(wir), u3k(cad));
   u3_auto_plan(&sam_u->car_u, ovo_u);
@@ -1437,6 +1432,7 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   u3_ames* sam_u = pac_u->sam_u;
   u3_weak  pas = u3r_at(7, nun);
   u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c));
+  u3m_p("pax", pax);
   if(pas == u3_none) {
     // TODO: send %bide
     u3l_log("no result, bailing\n");
