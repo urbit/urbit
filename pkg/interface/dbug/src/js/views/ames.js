@@ -35,6 +35,16 @@ export class Ames extends Component {
     api.getPeer(who);
   }
 
+  renderPaths(paths) {
+    const items = paths.map(path => {
+      return {
+        key: path,
+        jsx: path
+      }
+    });
+    return <SearchableList placeholder="path" items={items}/>;
+  }
+
   renderDucts(ducts) {
     const items = ducts.map(duct => {
       return {
@@ -213,6 +223,7 @@ export class Ames extends Component {
           Pending messages: {peer.alien.messages}
           Pending packets: {peer.alien.packets}
           Heeds: {this.renderDucts(peer.alien.heeds)}
+          Keens: {this.renderPaths(peer.alien.keens)}
         </>);
       } else if (peer.known) {
         const p = peer.known;
