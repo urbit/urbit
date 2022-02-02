@@ -947,23 +947,18 @@ _ames_czar(u3_pact* pac_u)
  */
 static void
 _fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis) {
-  u3l_log("howling\n");
   u3_noun pas = lis;
 
   // TODO; refactor, 
   u3_weak fra = u3_none;
   c3_w cur_w = 1;
   u3k(pas);
-  u3l_log("howling a\n");
   while(pas != u3_nul) {
-    u3l_log("howling in list\n");
     u3_noun key = u3nc(u3k(pax), u3i_word(cur_w));
     u3h_put(sam_u->fin_s.sac_p, key, u3k(u3h(pas)));
     pas = u3t(pas);
     u3z(key);
   }
-  u3l_log("howling after list\n");
-  u3m_p("pax", pax);
   u3_weak who = u3h_get(sam_u->fin_s.bid_p, pax);
   if ( who == u3_none ) {
     u3l_log("no listeners\n");
@@ -971,6 +966,7 @@ _fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis) {
 
     u3_noun her = who;
     while ( her != u3_nul ) {
+      // TODO: prime cache maybe???
       //u3m_p("her", her);
 
       /*u3_weak lac =  _ames_lane_from_cache(sam_u->lax_p, u3h(her));
@@ -984,7 +980,6 @@ _fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis) {
       pac_u->sam_u = sam_u;
       c3_d her_d[2];
       u3r_chubs(0, 2, her_d, u3k(u3h(her)));
-      u3l_log(" %"PRIu64", %" PRIu64 "\n", her_d[0], her_d[1]);
 
       // TODO: fix for non-galaxy case
       pac_u->imp_y = her_d[0];
@@ -1381,17 +1376,14 @@ _ames_skip(u3_body* bod_u) {
 
 static void _fine_got_pack(u3_pact* pac_u, u3_noun fra) 
 {
-  u3l_log("got pack\n");
   pac_u->len_w = u3r_met(3, fra);
   pac_u->hun_y = c3_calloc(pac_u->len_w);
-  u3m_p("fra", fra);
   
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, fra);
 
-  u3l_log("preczar\n");
 
   _ames_czar(pac_u); //_fine_send(pac_u);
-  u3l_log("postczar\n");
+
   u3z(fra);
 }
 
@@ -1431,11 +1423,9 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   u3_pact* pac_u = vod_p;
   u3_ames* sam_u = pac_u->sam_u;
   u3_weak  pas = u3r_at(7, nun);
-  u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c));
-  u3m_p("pax", pax);
+  u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c)); u3m_p("pax", pax);
   if(pas == u3_none) {
     // TODO: send %bide
-    u3l_log("no result, bailing\n");
     _fine_bide(pac_u, u3k(pax));
     _ames_pact_free(pac_u);
     u3z(pax);
