@@ -1,6 +1,71 @@
-/* g/e.c
-**
-*/
+//! @file events.c
+//!
+//! incremental, orthogonal, paginated loom snapshots
+//!
+//! ### components
+//!
+//!   - page: 16KB chunk of the loom.
+//!   - north segment (u3e_image, north.bin): low contiguous loom pages,
+//!     (in practice, the home road heap). indexed from low to high:
+//!     in-order on disk.
+//!   - south segment (u3e_image, south.bin): high contiguous loom pages,
+//!     (in practice, the home road stack). indexed from high to low:
+//!     reversed on disk.
+//!   - patch memory (memory.bin): new or changed pages since the last snapshot
+//!   - patch control (u3e_control control.bin): patch metadata, watermarks,
+//!     and indices/mugs for pages in patch memory.
+//!
+//! ### initialization (u3e_live())
+//!
+//!   - with the loom already mapped, all pages are marked dirty in a bitmap.
+//!   - if snapshot is missing or partial, empty segments are created.
+//!   - if a patch is present, it's applied (crash recovery).
+//!   - snapshot segments are copied onto the loom; all included pages
+//!     are marked clean and protected (read-only).
+//!
+//! #### page faults (u3e_fault())
+//!
+//!   - stores into protected pages generate faults (currently SIGSEGV,
+//!     handled outside this module).
+//!   - faults are handled by dirtying the page and switching protections to
+//!     read/write.
+//!
+//! ### updates (u3e_save())
+//!
+//!   - all updates to a snapshot are made through a patch.
+//!   - high/low watermarks for the north/south segments are established,
+//!     and dirty pages below/above them are added to the patch.
+//!     - modifications have been caught by the fault handler.
+//!     - newly-used pages are automatically included (preemptively dirtied).
+//!     - unused, innermost pages are reclaimed (segments are truncated to the
+//!       high/low watermarks; the last page in each is always adjacent to the
+//!       contiguous free space).
+//!   - patch pages are written to memory.bin, metadata to control.bin.
+//!   - the patch is applied to the snapshot segments, in-place.
+//!   - patch files are deleted.
+//!
+//! ### limitations
+//!
+//!   - loom page size is fixed (16 KB), and must be a multiple of the
+//!     system page size. (can the size vary at runtime give south.bin's
+//!     reversed order? alternately, if system page size > ours, the fault
+//!     handler could dirty N pages at a time.)
+//!   - update atomicity is suspect: patch application must either
+//!     completely succeed or leave on-disk segments intact. unapplied
+//!     patches can be discarded (triggering event replay), but once
+//!     patch application begins it must succeed (can fail if disk is full).
+//!     may require integration into the overall signal-handling regime.
+//!   - any errors are handled with assertions; failed/partial writes are not
+//!     retried.
+//!
+//! ### enhancements
+//!
+//!   - use platform specific page fault mechanism (mach rpc, userfaultfd, &c).
+//!   - implement demand paging / heuristic page-out.
+//!   - add a guard page in the middle of the loom to reactively handle stack overflow.
+//!   - parallelism
+//!
+
 #include "all.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -880,6 +945,10 @@ u3e_save(void)
 c3_o
 u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
+  //  require that our page size is a multiple of the system page size.
+  //
+  c3_assert(0 == (1 << (2 + u3a_page)) % sysconf(_SC_PAGESIZE));
+
   u3P.dir_c = dir_c;
   u3P.nor_u.nam_c = "north";
   u3P.sou_u.nam_c = "south";
@@ -913,6 +982,10 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         _ce_patch_delete();
       }
 
+      //  mark all pages dirty (pages in the snapshot will be marked clean)
+      //
+      u3e_foul();
+
       /* Write image files to memory; reinstate protection.
       */
       {
@@ -927,13 +1000,9 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         u3l_log("boot: protected loom\r\n");
       }
 
-      /* If the images were empty, we are logically booting. By default, we mark
-      ** all pages as dirty, which enables us to track only home road pages by
-      ** marking those as clean when they're mapped into memory from the
-      ** snapshot on a future boot for which the images are not empty.
+      /* If the images were empty, we are logically booting.
       */
       if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
-        u3e_foul();
         u3l_log("live: logical boot\r\n");
         nuu_o = c3y;
       }
