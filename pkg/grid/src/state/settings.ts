@@ -5,7 +5,7 @@ import {
   putEntry as doPutEntry,
   getDeskSettings,
   DeskData
-} from '@urbit/api/settings';
+} from '@urbit/api';
 import _ from 'lodash';
 import {
   BaseState,

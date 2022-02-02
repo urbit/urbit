@@ -7,7 +7,13 @@ type ShipNameProps = {
 
 export const ShipName = ({ name, ...props }: ShipNameProps) => {
   const separator = /([_^-])/;
-  const parts = cite(name).replace('~', '').split(separator);
+  const citedName = cite(name);
+
+  if (!citedName) {
+    return null;
+  }
+
+  const parts = citedName.replace('~', '').split(separator);
   const first = parts.shift();
 
   return (

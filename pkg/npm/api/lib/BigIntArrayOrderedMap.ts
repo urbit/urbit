@@ -51,7 +51,7 @@ export function sortBigIntArr(a: BigInteger[], b: BigInteger[]) {
   return bLen - aLen;
 }
 
-export default class BigIntArrayOrderedMap<V> implements Iterable<[BigInteger[], V]> {
+export class BigIntArrayOrderedMap<V> implements Iterable<[BigInteger[], V]> {
   root: Record<string, V> = {}
   cachedIter: [BigInteger[], V][] | null = null;
   [immerable] = true;

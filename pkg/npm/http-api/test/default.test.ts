@@ -1,6 +1,4 @@
-
 import Urbit from '../src';
-import { Readable } from 'streams';
 import 'jest';
 
 function fakeSSE(messages = [], timeout = 0) {
@@ -54,7 +52,7 @@ const fakeFetch = (body) => () =>
 
 const wait = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-process.on('unhandledRejection', () => {
+process.on('unhandledRejection', (error) => {
   console.error(error);
 });
 
@@ -91,7 +89,7 @@ describe('Initialisation', () => {
       )
       .mockImplementationOnce(() =>
         Promise.resolve({ ok: true, body: fakeSSE([], 100) })
-      )
+      );
 
     airlock.onError = jest.fn();
     try {
@@ -163,7 +161,7 @@ describe('subscription', () => {
       )
       .mockImplementationOnce(() =>
         Promise.resolve({ ok: false, body: fakeSSE([ack(1, true)]) })
-      )
+      );
 
     const params = {
       app: 'app',
