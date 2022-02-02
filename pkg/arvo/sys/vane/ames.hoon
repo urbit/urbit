@@ -1229,9 +1229,7 @@
     ::  t.t.tyl is expected to be a scry path of the shape /vc/desk/rev/etc,
     ::  so we need to give it the right shape
     ::
-    =/  =path
-      [i.t.t.tyl (scot %p our) t.t.t.tyl]
-    =*  pax  t.t.tyl
+    =*  path  t.t.tyl
     ?~  nom=(de-omen path)  ~
     ::  we only support scrying into clay,
     ::  and only if the data is fully public.
@@ -2500,6 +2498,7 @@
         ++  on-keen
           |=  =path
           ^+  event-core
+          ~&  path
           =/  omen
             ~|  [%fine %invalid-namespace-path path]
             (need (de-omen path))
@@ -2534,6 +2533,7 @@
         ::
         ++  bide-clay
           |=  =path
+          ~&  bide-clay/path
           ^+  event-core
           ?>  ?=([@ @ *] path)
           =/  =wire
@@ -2552,8 +2552,6 @@
           |=  [=wire =riot:clay]
           ?>  ?=([%fine %bide @ *] wire)
           =/  pax=path  t.t.wire
-          ?>  ?=([@ @ *] pax)
-          =/  pan=path  [i t.t]:pax
           =/  cas=(unit (cask))
             ?~  riot  ~
             `[p q.q]:r.u.riot 
@@ -2561,7 +2559,7 @@
           =/  wanted        (~(get ju want.state) pax)
           =.  want.state    (~(del by want.state) pax)
           =/  =song
-            (encode-response pan cas)
+            (encode-response pax cas)
           %-  emil
           %+  turn  [unix-duct.ames-state ~(tap in wanted)]
           |=  d=^duct
@@ -2584,6 +2582,7 @@
           ?>  =(sndr-tick.packet (mod life.peer 16))
           ::
           =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
+          ~&  path.peep
           =/  =rawr          (decode-response-packet purr)
           (handle-response [from life.peer lane] peep rawr)
         --
@@ -2632,6 +2631,7 @@
     ::
     ++  encode-request
       |=  [=ship =path num=@ud]
+      ~&  enc-req/path
       ::NOTE  path is expected to be a namespace path without the ship
       ^-  hoot  ^-  @
       =+  bod=(request-body path num)
@@ -2643,6 +2643,7 @@
     ::
     ++  encode-response  ::TODO  unit tests
       |=  [=path data=(unit (cask))]
+      ~&  enc-res/path
       ^-  song
       ::  prepend request descriptions to each response packet
       ::
@@ -2784,10 +2785,6 @@
     ++  send-request
       |=  [=ship =path num=@ud]
       ^+  event-core
-      ::  make sure we exclude the ship from the path proper,
-      ::  since it already gets included in the request header
-      ::
-      =.  path        (oust [1 1] path)
       =/  =lane:ames  (get-lane ship)
       =/  =hoot       (encode-request ship path 1)
       %-  emit
@@ -2809,19 +2806,16 @@
     ++  handle-response
       |=  [[from=ship =life =lane:ames] =peep =rawr]
       ^+  event-core
-      ?>  ?=([@ *] path.peep)
-      =/  =path  [i.path.peep (scot %p from) t.path.peep]
-      ~&  path 
       ~&  ~(key by part.state)
       ?:  =(0 siz.rawr)
         ?>  =(~ dat.rawr)
-        (process-response [from life] path sig.rawr ~)
-      ?.  (~(has by part.state) path)
+        (process-response [from life] path.peep sig.rawr ~)
+      ?.  (~(has by part.state) path.peep)
         ::  we did not initiate this request, or it's been cancelled
         ::
         !!
       =/  partial=partial-fine
-        (~(got by part.state) path)
+        (~(got by part.state) path.peep)
       =.  partial
         ?:  (~(has by fragments.partial) num.peep)
           partial
@@ -2837,10 +2831,10 @@
         ::  we have all the parts now, construct the full response
         ::
         =/  =roar  (decode-response-msg partial)
-        (process-response [from life] path [sig dat]:roar)
+        (process-response [from life] path.peep [sig dat]:roar)
       ::  otherwise, store the part, and send out the next request
       ::
-      =.  part.state  (~(put by part.state) path partial)
+      =.  part.state  (~(put by part.state) path.peep partial)
       =/  next-num=@ud
         =/  next=@ud  +(num.peep)
         ::  we should receive responses in order, but in case we don't...
