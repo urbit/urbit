@@ -383,15 +383,13 @@
   ::  only a star can sponsor a comet
   ::
   ?>  =(%king (clan:title (^sein:title sndr.packet)))
+  =/  crub  (com:nu:crub:crypto public-key.open-packet)
   ::  comet public-key must hash to its @p address
   ::
-  ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
+  ?>  =(sndr.packet fig:ex:crub)
   ::  verify signature
   ::
-  ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
-  ::
-  =/  key  (end 8 (rsh 3 public-key.open-packet))
-  ?>  (veri:ed:crypto signature signed key)
+  ?>  (safe:as:crub signature signed)
   open-packet
 ::  +encode-shut-packet: encrypt and packetize a $shut-packet
 ::
