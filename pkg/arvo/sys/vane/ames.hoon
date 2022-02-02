@@ -2544,10 +2544,10 @@
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
-        =/  sig=@  (full:keys path (fall data ~))
+        =/  sig=@  (full:keys path data)
         ?~  data  [sig]~
         %+  rip  13  ::NOTE  1024 bytes
-        (cat 3 sig (jam u.data))  ::TODO  should include life
+        (cat 3 sig (jam data))  ::TODO  should include life
       ::  sign & packetize the fragments
       ::
       %-  head
