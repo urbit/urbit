@@ -862,6 +862,7 @@ _ames_czar(u3_pact* pac_u)
   u3_ames* sam_u = pac_u->sam_u;
 
   c3_y imp_y = pac_u->imp_y;
+  u3l_log("ames: send to %u\n", imp_y);
 
   pac_u->lan_u.por_s = _ames_czar_port(imp_y);
 
@@ -943,22 +944,35 @@ _ames_czar(u3_pact* pac_u)
   }
 }
 
+/* _fine_put_cache(): put list of packets into cache
+ */
+static void
+_fine_put_cache(u3_ames* sam_u, u3_noun pax, u3_noun lis) 
+{
+  u3_noun beg = lis;
+
+  c3_w cur_w = 1;
+  while ( lis != u3_nul ) {
+    u3_noun key = u3nc(u3k(pax), u3i_word(cur_w));
+    u3h_put(sam_u->fin_s.sac_p, key, u3k(u3h(lis)));
+
+    lis = u3t(lis);
+    cur_w++;
+    u3z(key);
+  }
+  u3l_log("put %u packets at\n", cur_w);
+  u3m_p("path", pax);
+}
+
 /* _fine_ef_howl(): broadcast notification of newly bound data
  */
 static void
-_fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis) {
+_fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis)
+{
   u3_noun pas = lis;
 
-  // TODO; refactor, 
-  u3_weak fra = u3_none;
-  c3_w cur_w = 1;
-  u3k(pas);
-  while(pas != u3_nul) {
-    u3_noun key = u3nc(u3k(pax), u3i_word(cur_w));
-    u3h_put(sam_u->fin_s.sac_p, key, u3k(u3h(pas)));
-    pas = u3t(pas);
-    u3z(key);
-  }
+  _fine_put_cache(sam_u, pax, pas);
+
   u3_weak who = u3h_get(sam_u->fin_s.bid_p, pax);
   if ( who == u3_none ) {
     u3l_log("no listeners\n");
@@ -1391,18 +1405,15 @@ static void _fine_bide(u3_pact* pac_u, u3_noun pax)
 {
   u3_ames* sam_u = pac_u->sam_u;
   u3_weak lis = u3h_get(sam_u->fin_s.bid_p, pax);
+
   if ( u3_none == lis ) {
     lis = u3_nul;
   }
+
   u3_noun her = u3i_chubs(2, pac_u->req_u.pre_u.sen_d);
   u3_noun new = u3nc(her, lis);
-  //  TODO: linear search bad
-
-  u3l_log("put in hashtable\n");
-  u3m_p("hashtable", new);
 
   u3h_put(sam_u->fin_s.bid_p, pax, new);
-  u3m_p("pax", pax);
 
   u3_noun cad = u3nc(c3__bide, pax);
   u3_noun wir = u3nc(c3__fine, u3_nul);
@@ -1418,12 +1429,12 @@ static void _fine_bide(u3_pact* pac_u, u3_noun pax)
  */
 static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
 {
-  u3l_log("got scry result\n");
 
   u3_pact* pac_u = vod_p;
   u3_ames* sam_u = pac_u->sam_u;
   u3_weak  pas = u3r_at(7, nun);
-  u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c)); u3m_p("pax", pax);
+  u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c)); 
+
   if(pas == u3_none) {
     // TODO: send %bide
     _fine_bide(pac_u, u3k(pax));
@@ -1434,23 +1445,25 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   }
   c3_assert( 1 == pac_u->typ_y );
   u3_weak fra = u3_none;
+  _fine_put_cache(sam_u, pax, pas);
+  
   c3_w cur_w = 1;
-  u3k(pas);
-  while(pas != u3_nul) {
-    u3_noun key = u3nc(u3k(pax), u3i_word(cur_w));
-    u3h_put(sam_u->fin_s.sac_p, key, u3h(pas));
+
+  // find requested fragment
+  while ( pas != u3_nul ) {
     if ( pac_u->req_u.fra_w == cur_w ) {
       fra = u3k(u3h(pas));
     }
     cur_w++;
     pas = u3t(pas);
-    u3z(key);
   }
+
   if ( fra == u3_none ) {
     u3l_log("fragment number out of range\n");
   } else {
     _fine_got_pack(pac_u, fra);
   }
+
   u3z(pas);
   u3z(nun);
 }
@@ -1496,7 +1509,7 @@ static void _fine_hear_request(u3_ames* sam_u,
 
   c3_assert( c3y == _fine_sift_requ(&hed_u, &req_u, len_w, hun_y));
 
-  u3_noun pat = u3i_string(req_u.pat_c);
+  u3_noun pat = u3do("stab", u3i_string(req_u.pat_c));
   u3_noun key = u3nc(u3k(pat), u3i_word(req_u.fra_w));
 
   u3_weak cac =  u3h_git(sam_u->fin_s.sac_p, key);
@@ -1511,11 +1524,16 @@ static void _fine_hear_request(u3_ames* sam_u,
 
   memcpy(&pac_u->lan_u, &lan_u, sizeof(u3_lane));
 
+  if ( pac_u->req_u.pre_u.sen_d[0] < 256
+      && pac_u->req_u.pre_u.sen_d[1] == 0 ) {
+     pac_u->imp_y = pac_u->req_u.pre_u.sen_d[0];
+  }
+
   if ( u3_none == cac ) {
     // cache miss
     u3_noun pax = u3nt(u3i_string("fine"),
                       u3i_string("message"),
-                      u3do("stab", u3k(pat)));
+                      u3k(pat));
 
     u3_pier_peek_last(sam_u->car_u.pir_u, u3_nul, c3__ax, u3_nul, 
                       pax, pac_u, _fine_pack_scry_cb);
