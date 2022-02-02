@@ -47,10 +47,9 @@
 //! ### limitations
 //!
 //!   - loom page size is fixed (16 KB), and must be a multiple of the
-//!     system page size, but that invariant is not enforced.
-//!     (can the size vary at runtime give south.bin's reversed order?
-//!     alternately, if system page size > ours, the fault handler could dirty
-//!     N pages at a time.)
+//!     system page size. (can the size vary at runtime give south.bin's
+//!     reversed order? alternately, if system page size > ours, the fault
+//!     handler could dirty N pages at a time.)
 //!   - update atomicity is suspect: patch application must either
 //!     completely succeed or leave on-disk segments intact. unapplied
 //!     patches can be discarded (triggering event replay), but once
@@ -946,6 +945,10 @@ u3e_save(void)
 c3_o
 u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
+  //  require that our page size is a multiple of the system page size.
+  //
+  c3_assert(0 == (1 << (2 + u3a_page)) % sysconf(_SC_PAGESIZE));
+
   u3P.dir_c = dir_c;
   u3P.nor_u.nam_c = "north";
   u3P.sou_u.nam_c = "south";
