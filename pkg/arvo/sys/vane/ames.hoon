@@ -2498,7 +2498,6 @@
         ++  on-keen
           |=  =path
           ^+  event-core
-          ~&  path
           =/  omen
             ~|  [%fine %invalid-namespace-path path]
             (need (de-omen path))
@@ -2533,7 +2532,6 @@
         ::
         ++  bide-clay
           |=  =path
-          ~&  bide-clay/path
           ^+  event-core
           ?>  ?=([@ @ *] path)
           =/  =wire
@@ -2555,7 +2553,6 @@
           =/  cas=(unit (cask))
             ?~  riot  ~
             `[p q.q]:r.u.riot 
-          ~&  resolved-bide/pax
           =/  wanted        (~(get ju want.state) pax)
           =.  want.state    (~(del by want.state) pax)
           =/  =song
@@ -2582,7 +2579,6 @@
           ?>  =(sndr-tick.packet (mod life.peer 16))
           ::
           =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
-          ~&  path.peep
           =/  =rawr          (decode-response-packet purr)
           (handle-response [from life.peer lane] peep rawr)
         --
@@ -2631,7 +2627,6 @@
     ::
     ++  encode-request
       |=  [=ship =path num=@ud]
-      ~&  enc-req/path
       ::NOTE  path is expected to be a namespace path without the ship
       ^-  hoot  ^-  @
       =+  bod=(request-body path num)
@@ -2643,7 +2638,6 @@
     ::
     ++  encode-response  ::TODO  unit tests
       |=  [=path data=(unit (cask))]
-      ~&  enc-res/path
       ^-  song
       ::  prepend request descriptions to each response packet
       ::
@@ -2794,7 +2788,6 @@
       |=  [[from=ship =life] =path sig=@ data=$@(~ (cask))]
       ^+  event-core
       ?>  (meri:keys from life path sig data)
-      ~&  got-response/path
       =.  event-core
         %-  emil
         %+  turn  ~(tap in (~(get ju want.state) path))
@@ -2806,7 +2799,6 @@
     ++  handle-response
       |=  [[from=ship =life =lane:ames] =peep =rawr]
       ^+  event-core
-      ~&  ~(key by part.state)
       ?:  =(0 siz.rawr)
         ?>  =(~ dat.rawr)
         (process-response [from life] path.peep sig.rawr ~)
