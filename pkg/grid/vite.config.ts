@@ -9,8 +9,8 @@ import { execSync } from 'child_process';
 export default ({ mode }) => {
   process.env.VITE_STORAGE_VERSION = Date.now().toString();
 
-  Object.assign(process.env, loadEnv(mode, process.cwd()));
-  const SHIP_URL = process.env.SHIP_URL || process.env.VITE_SHIP_URL || 'http://localhost:8080';
+  const env = loadEnv(mode, process.cwd());
+  const SHIP_URL = env.SHIP_URL || env.VITE_SHIP_URL || 'http://localhost:8080';
   console.log(SHIP_URL);
 
   return defineConfig({
