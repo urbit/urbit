@@ -353,3 +353,14 @@ char *realpath(const char *path, char *resolved_path)
     // TODO
     return strdup(path);
 }
+
+long sysconf(int name)
+{
+  SYSTEM_INFO si;
+
+  if ( _SC_PAGESIZE != name ) {
+    return -1;
+  }
+  GetNativeSystemInfo(&si);
+  return si.dwPageSize;
+}
