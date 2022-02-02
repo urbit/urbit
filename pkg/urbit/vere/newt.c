@@ -2,9 +2,11 @@
 **
 **  implements noun blob messages with trivial framing.
 **
-**  a message is a 64-bit little-endian byte count, followed
-**  by the indicated number of bytes.  the bytes are the
-**  the +jam of of a noun.
+**  framing is 5 bytes long. first byte is a version tag; a
+**  character that should never otherwise appear in a message
+**  intended for urbit. right now we use 0x9, horizontal tab.
+**  next 32 bits are little-endian byte count. after that is the
+**  indicated number of bytes, which are the +jam of a noun.
 **
 **  the implementation is relatively inefficient and could
 **  lose a few copies, mallocs, etc.
@@ -109,7 +111,7 @@ _newt_meat_next_cb(uv_timer_t* tim_u)
 
 /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
 */
-void
+c3_o
 u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
 {
   u3_mess* mes_u = &mot_u->mes_u;
@@ -117,15 +119,15 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
   while ( len_d ) {
     switch( mes_u->sat_e ) {
 
-      //  read up to 8 length bytes as needed
+      //  read up to 5 bytes as needed
       //
       case u3_mess_head: {
-        c3_y* len_y = mes_u->hed_u.len_y;
+        c3_y* hed_y = mes_u->hed_u.hed_y;
         c3_y  has_y = mes_u->hed_u.has_y;
-        c3_y  ned_y = 8 - has_y;
+        c3_y  ned_y = sizeof(mes_u->hed_u.hed_y) - has_y;
         c3_y  cop_y = c3_min(ned_y, len_d);
 
-        memcpy(len_y + has_y, buf_y, cop_y);
+        memcpy(hed_y + has_y, buf_y, cop_y);
         buf_y += cop_y;
         len_d -= cop_y;
         ned_y -= cop_y;
@@ -138,19 +140,16 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
         //  length known, allocate message
         //
         else {
-          c3_d met_d = (((c3_d)len_y[0]) <<  0)
-                     | (((c3_d)len_y[1]) <<  8)
-                     | (((c3_d)len_y[2]) << 16)
-                     | (((c3_d)len_y[3]) << 24)
-                     | (((c3_d)len_y[4]) << 32)
-                     | (((c3_d)len_y[5]) << 40)
-                     | (((c3_d)len_y[6]) << 48)
-                     | (((c3_d)len_y[7]) << 56);
+          c3_d met_d = (((c3_d)hed_y[1]) <<  0)
+                     | (((c3_d)hed_y[2]) <<  8)
+                     | (((c3_d)hed_y[3]) << 16)
+                     | (((c3_d)hed_y[4]) << 24);
 
-          //  must be non-zero, only 32 bits supported
+          //  check for version tag and nonzero length
           //
-          c3_assert( met_d );
-          c3_assert( 0xFFFFFFFFULL > met_d );
+          if ( 0x9 != hed_y[0] || !met_d ) {
+            return c3n;
+          }
 
           //  await body
           //
@@ -183,6 +182,7 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
       } break;
     }
   }
+  return c3y;
 }
 
 /* _newt_read(): handle async read result.
@@ -210,7 +210,11 @@ _newt_read(u3_moat*        mot_u,
     return c3n;
   }
   else {
-    u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_d)len_i);
+    if ( c3n == u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_d)len_i) ) {
+      mot_u->bal_f(mot_u->ptr_v, -1, "newt-decode");
+      c3_free(buf_u->base);
+      return c3n;
+    }
     c3_free(buf_u->base);
     return c3y;
   }
@@ -372,7 +376,7 @@ typedef struct _n_req {
   uv_write_t wri_u;
   u3_mojo*   moj_u;
   c3_y*      buf_y;
-  c3_y       len_y[8];
+  c3_y       hed_y[5];
 } n_req;
 
 /* _newt_write_cb(): generic write callback.
@@ -431,18 +435,15 @@ u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y)
 
   //  write header
   //
-  req_u->len_y[0] = ( len_d        & 0xff);
-  req_u->len_y[1] = ((len_d >>  8) & 0xff);
-  req_u->len_y[2] = ((len_d >> 16) & 0xff);
-  req_u->len_y[3] = ((len_d >> 24) & 0xff);
-  req_u->len_y[4] = ((len_d >> 32) & 0xff);
-  req_u->len_y[5] = ((len_d >> 40) & 0xff);
-  req_u->len_y[6] = ((len_d >> 48) & 0xff);
-  req_u->len_y[7] = ((len_d >> 56) & 0xff);
+  req_u->hed_y[0] = 0x9;
+  req_u->hed_y[1] = ( len_d        & 0xff);
+  req_u->hed_y[2] = ((len_d >>  8) & 0xff);
+  req_u->hed_y[3] = ((len_d >> 16) & 0xff);
+  req_u->hed_y[4] = ((len_d >> 24) & 0xff);
 
   {
     uv_buf_t buf_u[2] = {
-      uv_buf_init((c3_c*)req_u->len_y, 8),
+      uv_buf_init((c3_c*)req_u->hed_y, sizeof(req_u->hed_y)),
       uv_buf_init((c3_c*)req_u->buf_y, len_d)
     };
 

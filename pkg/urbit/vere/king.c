@@ -8,8 +8,6 @@
 #include <curl/curl.h>
 #include <uv.h>
 
-#include "ivory.h"
-
 //  stash config flags for worker
 //
 static c3_w sag_w;

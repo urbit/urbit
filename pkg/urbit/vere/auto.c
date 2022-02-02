@@ -388,6 +388,12 @@ u3_auto_info(u3_auto* car_u)
 static u3_auto*
 _auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
 {
+  //  skip null drivers
+  //
+  if ( !car_u ) {
+    return nex_u;
+  }
+
   //  assert that io callbacks are present (info_f is optional)
   //
   c3_assert( car_u->io.talk_f );
@@ -408,6 +414,7 @@ u3_auto_init(u3_pier* pir_u)
 
   car_u = _auto_link(u3_hind_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_behn_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_conn_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_ames_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_http_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_cttp_io_init(pir_u), pir_u, car_u);
