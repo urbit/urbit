@@ -2586,9 +2586,7 @@
         (sign (mess our life.ames-state path data))
       ::
       ++  sign
-        |=  msg=@
-        %+  sign:ed:crypto  msg
-        sgn:raw:ex:crypto-core.ames-state
+        sigh:as:crypto-core.ames-state
       ::
       ++  lyfe
         |=  who=ship
@@ -2609,9 +2607,9 @@
       ::
       ++  veri
         |=  [who=ship lyf=life sig=@ dat=@]
-        %^  veri:ed:crypto  sig
-          dat
-        sgn:par:ex:(com:nu:crub:crypto (pass:keys who lyf))
+        ^-  ?
+        =/  =^pass  (pass who lyf)
+        (safe:as:(com:nu:crub:crypto pass) sig dat)
       ::
       ++  meri
         |=  [who=ship lyf=life pax=path sig=@ dat=$@(~ (cask))]

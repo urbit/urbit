@@ -424,7 +424,9 @@
     ++  as  ^?                                          ::  asym ops
       |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
           ++  sign  |~(a=@ *@)                          ::  certify as us
+          ++  sigh  |~(a=@ *@)                          ::  certification only
           ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
+          ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
           ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
       --  ::as                                          ::
     ++  de  |~([a=@ b=@] *(unit @))                     ::  symmetric de, soft
@@ -434,9 +436,7 @@
       |%  ++  fig  *@uvH                                ::  fingerprint
           ++  pac  *@uvG                                ::  default passcode
           ++  pub  *pass                                ::  public key
-          ++  par  *[cry=@ sgn=@]                       ::  shared pair
           ++  sec  *ring                                ::  private key
-          ++  raw  *[cry=@ sgn=@]                       ::  secret pair
       --  ::ex                                          ::
     ++  nu  ^?                                          ::  reconstructors
       |%  ++  pit  |~([a=@ b=@] ^?(..nu))               ::  from [width seed]

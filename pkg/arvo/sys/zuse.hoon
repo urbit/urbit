@@ -1450,15 +1450,25 @@
       ++  sign                                          ::
         |=  msg=@
         ^-  @ux
+        (jam [(sigh msg) msg])
+      ::                                                ::  ++sigh:as:crub:
+      ++  sigh                                          ::
+        |=  msg=@
+        ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
-        (jam [(sign:ed msg sgn.u.sek) msg])
+        (sign:ed msg sgn.u.sek)
       ::                                                ::  ++sure:as:crub:
       ++  sure                                          ::
         |=  txt=@
         ^-  (unit @ux)
         =+  ;;([sig=@ msg=@] (cue txt))
-        ?.  (veri:ed sig msg sgn.pub)  ~
+        ?.  (safe sig msg)  ~
         (some msg)
+      ::                                                ::  ++safe:as:crub:
+      ++  safe
+        |=  [sig=@ msg=@]
+        ^-  ?
+        (veri:ed sig msg sgn.pub)
       ::                                                ::  ++seal:as:crub:
       ++  seal                                          ::
         |=  [bpk=pass msg=@]
@@ -1516,19 +1526,11 @@
       ++  pub                                           ::  public key
         ^-  pass
         (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
-      ::                                                ::  ++par:ex:crub:crypto
-      ++  par                                           ::  shared pair
-        ^pub
       ::                                                ::  ++sec:ex:crub:crypto
       ++  sec                                           ::  private key
         ^-  ring
         ?~  sek  ~|  %pubkey-only  !!
         (cat 3 'B' (cat 8 sgn.u.sek cry.u.sek))
-      ::                                                ::  ++raw:ex:crub:crypto
-      ++  raw                                           ::  secret pair
-        ^-  [cry=@ sgn=@]
-        ~|  %pubkey-only
-        (need sek)
       --  ::ex
     ::                                                  ::  ++nu:crub:crypto
     ++  nu                                              ::
