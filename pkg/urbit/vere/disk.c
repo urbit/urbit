@@ -414,14 +414,11 @@ static c3_o
 _disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
 {
   c3_w  len_w = u3r_met(3, dat);
-  c3_y* byt_y = c3_malloc(len_w);
-  u3r_bytes(0, len_w, byt_y, dat);
+  c3_y  byt_y[len_w];
+  u3r_bytes(0, sizeof(byt_y), byt_y, dat);
 
-  {
-    c3_o ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
-    c3_free(byt_y);
-    return ret_o;
-  }
+  c3_o ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, sizeof(byt_y), byt_y);
+  return ret_o;
 }
 
 c3_o
