@@ -724,6 +724,9 @@
       $%  [%wait date=@da]
           [%rest date=@da]
       ==  ==
+      $:  %c
+      $%  $>(%warp task:clay)
+      ==  ==
       $:  %d
       $%  [%flog flog:dill]
       ==  ==
@@ -741,6 +744,9 @@
   $~  [%behn %wake ~]
   $%  $:  %behn
       $%  $>(%wake gift:behn)
+      ==  ==
+      $:  ?(%behn %clay)
+      $%  [%writ p=riot:clay]
       ==  ==
       $:  %jael
       $%  [%private-keys =life vein=(map life ring)]
@@ -1045,6 +1051,8 @@
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
     ::
+      [?(%clay %behn) %writ *]  (on-take-clay-bide:fine:event-core wire p.sign)
+    ::
       [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
       [%jael %turf *]          (on-take-turf:event-core turfs.sign)
@@ -1241,7 +1249,7 @@
     ?-  res
       ~        ~
       [~ ~]    ``noun+!>((encode-response:fine:ven path ~))
-      [~ ~ *]  ``noun+!>((encode-response:fine:ven path [p q.q]:u.u.res))
+      [~ ~ *]  ``noun+!>((encode-response:fine:ven path `[p q.q]:u.u.res))
     ==
   ==
 --
@@ -2521,7 +2529,43 @@
           |=  =path
           ^+  event-core
           =.  hear.state  (~(put ju hear.state) path duct)
-          event-core
+          ::  TODO: other vanes?
+          (bide-clay path)
+        ::
+        ++  bide-clay
+          |=  =path
+          ^+  event-core
+          ?>  ?=([@ @ *] path)
+          =/  =wire
+            (welp /fine/bide path)
+          =/  =ship  (slav %p i.t.path)
+          =/  [vis=view bem=beam]
+            (need (de-omen path))
+          =+  ;;  =care:clay
+              ?^  vis  car.vis
+              (rsh 3^1 vis)
+          =/  =rave:clay
+            [%sing care r.bem s.bem]
+          (emit duct %pass wire %c %warp p.bem q.bem `rave)
+        ::
+        ++  on-take-clay-bide
+          |=  [=wire =riot:clay]
+          ?>  ?=([%fine %bide @ *] wire)
+          =/  pax=path  t.t.wire
+          ?>  ?=([@ @ *] pax)
+          =/  pan=path  [i t.t]:pax
+          =/  cas=(unit (cask))
+            ?~  riot  ~
+            `[p q.q]:r.u.riot 
+          ~&  resolved-bide/pax
+          =/  wanted        (~(get ju want.state) pax)
+          =.  want.state    (~(del by want.state) pax)
+          =/  =song
+            (encode-response pan cas)
+          %-  emil
+          %+  turn  [unix-duct.ames-state ~(tap in wanted)]
+          |=  d=^duct
+          [d %give %howl pax song]
         ::
         ++  on-hear-response
           |=  [=lane =packet dud=(unit goof)]
@@ -2544,7 +2588,6 @@
           (handle-response [from life.peer lane] peep rawr)
         --
     |%
-<<<<<<< HEAD
     +$  twit  ::  signed request
       $:  signature=@
           peep
@@ -2599,7 +2642,7 @@
       [(mod life.ames-state 16) (mod (lyfe:keys ship) 16) ~ syn]
     ::
     ++  encode-response  ::TODO  unit tests
-      |=  [=path data=$@(~ (cask))]
+      |=  [=path data=(unit (cask))]
       ^-  song
       ::  prepend request descriptions to each response packet
       ::
@@ -2616,9 +2659,6 @@
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
-<<<<<<< HEAD
-        =/  sig=@  (full:keys path (fall data ~))
-=======
         ::TODO  should also sign the request path
         =/  sig=@  ::(full:keys path (fall data ~))
            (fil 5 16 0xdead.beef)
@@ -2657,9 +2697,10 @@
       ::
       ++  sign
         |=  msg=@
-        %+  sign:ed:crypto  msg
+        (fil 5 16 0xdead.beef)
+        :: %+  sign:ed:crypto  msg
         ::TODO  get just the sgn key!
-        sec:ex:crypto-core.ames-state
+        :: sec:ex:crypto-core.ames-state
       ::
       ++  lyfe
         |=  who=ship
@@ -2680,10 +2721,12 @@
       ::
       ++  veri
         |=  [who=ship lyf=life sig=@ dat=@]
-        %^  veri:ed:crypto  sig
-          dat
+        &
+
+        ::%^  veri:ed:crypto  sig
+          :: dat
         ::TODO  get jsut the sign key!
-        pub:ex:(com:nu:crub:crypto (pass:keys who lyf))
+       ::  pub:ex:(com:nu:crub:crypto (pass:keys who lyf))
       ::
       ++  meri
         |=  [who=ship lyf=life pax=path sig=@ dat=$@(~ (cask))]
@@ -2697,9 +2740,6 @@
       =/  =peer-state
         (got-peer-state ship)
       lane:(need route.peer-state)
-      ::TODO  get from state
-<<<<<<< HEAD
-      (rof `[our ~ ~] [%ames %x] [our %$ da+now] path)
     ::
     ++  decode-request
       |=  =hoot
@@ -2771,9 +2811,11 @@
       ^+  event-core
       ?>  ?=([@ *] path.peep)
       =/  =path  [i.path.peep (scot %p from) t.path.peep]
+      ~&  path 
+      ~&  ~(key by part.state)
       ?:  =(0 siz.rawr)
         ?>  =(~ dat.rawr)
-        (process-response path.peep ~)
+        (process-response [from life] path sig.rawr ~)
       ?.  (~(has by part.state) path)
         ::  we did not initiate this request, or it's been cancelled
         ::
