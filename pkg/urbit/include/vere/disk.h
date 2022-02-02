@@ -11,17 +11,17 @@
 #include "noun/aliases.h"
 
 //! Completed event
-typedef struct _u3_fact {
-  c3_d             eve_d;               //  event number
-  c3_l             mug_l;               //  kernel mug after
-  u3_noun            job;               //  (pair date ovum)
+typedef struct {
+  c3_d             eve_d;  //!< event number
+  c3_l             mug_l;  //!< kernel mug after
+  u3_noun            job;  //!< (pair date ovum)
 } u3_fact;
 
 //! Disk sync callbak.
 typedef void (*u3_disk_news)(void*, c3_d, c3_o);
 
 //! Manage event persistence.
-typedef struct _u3_disk {
+typedef struct {
   c3_c*            dir_c;       //!< main pier directory
   c3_c*            urb_c;       //!< urbit system data
   c3_c*            log_c;       //!< log directory
@@ -49,9 +49,9 @@ typedef struct _u3_disk {
 
 //! Pier metadata.
 typedef struct _u3_meta {
-  c3_d who_d[2];                    //  identity
-  c3_o fak_o;                       //  fake bit
-  c3_w lif_w;                       //  lifecycle length
+  c3_d who_d[2];  //!< identity
+  c3_o fak_o;     //!<  fake bit
+  c3_w lif_w;     //!<  lifecycle length
 } u3_meta;
 
 //! Opaque event log iterator.
