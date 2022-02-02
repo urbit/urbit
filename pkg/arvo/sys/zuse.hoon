@@ -1516,11 +1516,19 @@
       ++  pub                                           ::  public key
         ^-  pass
         (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
+      ::                                                ::  ++par:ex:crub:crypto
+      ++  par                                           ::  shared pair
+        ^pub
       ::                                                ::  ++sec:ex:crub:crypto
       ++  sec                                           ::  private key
         ^-  ring
         ?~  sek  ~|  %pubkey-only  !!
         (cat 3 'B' (cat 8 sgn.u.sek cry.u.sek))
+      ::                                                ::  ++raw:ex:crub:crypto
+      ++  raw                                           ::  secret pair
+        ^-  [cry=@ sgn=@]
+        ~|  %pubkey-only
+        (need sek)
       --  ::ex
     ::                                                  ::  ++nu:crub:crypto
     ++  nu                                              ::

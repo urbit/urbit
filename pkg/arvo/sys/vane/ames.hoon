@@ -581,11 +581,12 @@
       =bug
       =fine-state
   ==
+::
 +$  ames-state-5
   $:  peers=(map ship ship-state-5)
       =unix=duct
       =life
-      crypto-core=acru:ames
+      crypto-core=*
       =bug
   ==
 +$  ship-state-5
@@ -1010,6 +1011,13 @@
     %=  old
       peers  (~(run by peers.old) ship-state-5-to-6)
       bug    [bug.old *fine-state]
+    ::
+        crypto-core
+      %-  nol:nu:crub:crypto
+      ~|  [%ames %strange-pk-reload life.old]
+      ;;  private-key
+      =<  q.q  %-  need  %-  need
+      (rof ~ %j [our %vein da+now] /(scot %ud life.old))
     ==
   ::
   ++  ship-state-5-to-6
@@ -2580,8 +2588,7 @@
       ++  sign
         |=  msg=@
         %+  sign:ed:crypto  msg
-        ::TODO  get just the sgn key!
-        sec:ex:crypto-core.ames-state
+        sgn:raw:ex:crypto-core.ames-state
       ::
       ++  lyfe
         |=  who=ship
@@ -2604,8 +2611,7 @@
         |=  [who=ship lyf=life sig=@ dat=@]
         %^  veri:ed:crypto  sig
           dat
-        ::TODO  get jsut the sign key!
-        pub:ex:(com:nu:crub:crypto (pass:keys who lyf))
+        sgn:par:ex:(com:nu:crub:crypto (pass:keys who lyf))
       ::
       ++  meri
         |=  [who=ship lyf=life pax=path sig=@ dat=$@(~ (cask))]

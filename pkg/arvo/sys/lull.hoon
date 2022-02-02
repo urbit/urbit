@@ -434,7 +434,9 @@
       |%  ++  fig  *@uvH                                ::  fingerprint
           ++  pac  *@uvG                                ::  default passcode
           ++  pub  *pass                                ::  public key
+          ++  par  *[cry=@ sgn=@]                       ::  shared pair
           ++  sec  *ring                                ::  private key
+          ++  raw  *[cry=@ sgn=@]                       ::  secret pair
       --  ::ex                                          ::
     ++  nu  ^?                                          ::  reconstructors
       |%  ++  pit  |~([a=@ b=@] ^?(..nu))               ::  from [width seed]
