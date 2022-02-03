@@ -2237,27 +2237,28 @@
         pub
       ++  schnorr
         ~%  %schnorr  ..schnorr  ~
-        =>  |%  ++  tagged-hash
-                  |=  [tag=@ [l=@ x=@]]
-                  =+  hat=(sha-256:sha (swp 3 tag))
-                  %-  sha-256l:sha
-                  :-  (add 64 l)
-                  (can 3 ~[[l x] [32 hat] [32 hat]])
-                ++  lift-x
-                  |=  x=@I
-                  ^-  (unit point)
-                  =/  c  curve
-                  =/  fop  field-p.c
-                  =+  [fadd fpow]=[sum.fop exp.fop]
-                  =/  cp  (fadd (fpow 3 x) 7)
-                  =/  y  (fpow (rsh [0 2] +(p.domain.c)) cp)
-                  ?.  =(cp (fpow 2 y))
-                    ~
-                  %-  some  :-  x
-                  ?:  =(0 (mod y 2))
-                    y
-                  (sub p.domain.c y)
-                --
+        =>  |%
+            ++  tagged-hash
+              |=  [tag=@ [l=@ x=@]]
+              =+  hat=(sha-256:sha (swp 3 tag))
+              %-  sha-256l:sha
+              :-  (add 64 l)
+              (can 3 ~[[l x] [32 hat] [32 hat]])
+            ++  lift-x
+              |=  x=@I
+              ^-  (unit point)
+              =/  c  curve
+              =/  fop  field-p.c
+              =+  [fadd fpow]=[sum.fop exp.fop]
+              =/  cp  (fadd (fpow 3 x) 7)
+              =/  y  (fpow (rsh [0 2] +(p.domain.c)) cp)
+              ?.  =(cp (fpow 2 y))
+                ~
+              %-  some  :-  x
+              ?:  =(0 (mod y 2))
+                y
+              (sub p.domain.c y)
+            --
         |%
         ::
         ++  sign                                        ::  schnorr signature
@@ -2281,7 +2282,7 @@
           =/  rand
             %+  tagged-hash  'BIP0340/nonce'
             :-  96
-            (can 8 ~[[1 m] [1 x.pp] [1 t]])
+            (rep 8 ~[m x.pp t])
           =/  kp  (mod rand n.domain.c)
           =/  rr  (mul-point-scalar g.domain.c kp)
           =/  k
@@ -2293,7 +2294,7 @@
             :_  n.domain.c
             %+  tagged-hash  'BIP0340/challenge'
             :-  96
-            (can 8 ~[[1 m] [1 x.pp] [1 x.rr]])
+            (rep 8 ~[m x.pp x.rr])
           =/  sig
             %^  cat  8
               (mod (add k (mul e d)) n.domain.c)
@@ -2316,7 +2317,7 @@
           =/  r  (cut 8 [1 1] sig)
           ?:  (gte r p.domain.c)
             %.n
-          =/  s  (cut 8 [0 1] sig)
+          =/  s  (end 8 sig)
           ?:  (gte s n.domain.c)
             %.n
           =/  e
@@ -2324,7 +2325,7 @@
             :_  n.domain.c
             %+  tagged-hash  'BIP0340/challenge'
             :-  96
-            (can 8 ~[[1 m] [1 x.pp] [1 r]])
+            (rep 8 ~[m x.pp r])
           =/  aa
             (mul-point-scalar g.domain.c s)
           =/  bb

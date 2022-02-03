@@ -191,7 +191,7 @@
     ^-  tang
     %+  expect-eq
       !>  sig
-    !>  (sign:schnorr:ecc sec mes aux)
+      !>  (sign:schnorr:ecc sec mes aux)
   =/  t2
     %+  turn  cases-sec
     |=  case-sec
@@ -315,7 +315,7 @@
     ^-  tang
     %+  expect-eq
       !>  res
-    !>  (verify:schnorr:ecc pub mes sig)
+      !>  (verify:schnorr:ecc pub mes sig)
 ++  test-schnorr-bounds
   =>  |%  +$  case  [sec=@ pub=@ aux=@ mes=@ sig=@]  --
   =<  %+  category  "bounds"
