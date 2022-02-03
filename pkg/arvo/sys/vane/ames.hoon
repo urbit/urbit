@@ -584,7 +584,7 @@
   $:  peers=(map ship ship-state-5)
       =unix=duct
       =life
-      crypto-core=*
+      crypto-core=acru-5
       =bug
   ==
 +$  ship-state-5
@@ -596,6 +596,29 @@
       packets=(set =blob)
       heeds=(set duct)
   ==
+++  acru-5  $_  ^?
+  |%
+  ++  as  ^?
+    |%  ++  seal  |~([a=pass b=@] *@)
+        ++  sign  |~(a=@ *@)
+        ++  sure  |~(a=@ *(unit @))
+        ++  tear  |~([a=pass b=@] *(unit @))
+    --
+  ++  de  |~([a=@ b=@] *(unit @))
+  ++  dy  |~([a=@ b=@] *@)
+  ++  en  |~([a=@ b=@] *@)
+  ++  ex  ^?
+    |%  ++  fig  *@uvH
+        ++  pac  *@uvG
+        ++  pub  *pass
+        ++  sec  *ring
+    --
+  ++  nu  ^?
+    |%  ++  pit  |~([a=@ b=@] ^?(..nu))
+        ++  nol  |~(a=ring ^?(..nu))
+        ++  com  |~(a=pass ^?(..nu))
+    --
+  --
 ::  $fine-state: remote scry subsystem state
 ::
 ::    hear: awaiting existence
@@ -1007,15 +1030,9 @@
     |=  old=ames-state-5
     ^-  ^ames-state
     %=  old
-      peers  (~(run by peers.old) ship-state-5-to-6)
-      bug    [bug.old *fine-state]
-    ::
-        crypto-core
-      %-  nol:nu:crub:crypto
-      ~|  [%ames %strange-pk-reload life.old]
-      ;;  private-key
-      =<  q.q  %-  need  %-  need
-      (rof ~ %j [our %vein da+now] /(scot %ud life.old))
+      peers        (~(run by peers.old) ship-state-5-to-6)
+      bug          [bug.old *fine-state]
+      crypto-core  (nol:nu:crub:crypto sec:ex:crypto-core.old)
     ==
   ::
   ++  ship-state-5-to-6
