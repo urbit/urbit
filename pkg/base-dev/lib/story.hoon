@@ -5,28 +5,20 @@
 ++  dif-ju
   |=  [a=story b=story]
   ^-  story
-  ::?:  ?=(~ a)  b
-  ::?<  ?=(~ a)
-  ::?<  ?=(~ b)
-  ::~!  a
-  ::~!  b
+  ::  0 - b = -b. how do we negate a jug/"infinite" set lol?
+  ::  a - 0 = a   (not impl.)
   ::  uno := (a-b) + (merged items in both a and b) + (b-a)
   ::  ret := (a-b) + (merged items in both a and b)  
   ::  ret = (~(int by a) uno)  :: preserve only the entries whose keys are in a
   ::
-  :: uno doesn't work on emtpty
-  ::  0 - b = b
-  ::  a - 0 = a
-  ::=/  proses-set         %-  ~(gas by *(set prose))  ~[['loll' 'lolll'] ['t' 'b']]
-  ::=/  story-a=story      %-  ~(gas by *story)  ~[[0v1 proses-set]]
-  ::?:  ?=(~ a)  b  :: need this so that uno 
-  ::?:  ?=(~ b)  a
-  ::~!  ((~(uno by a) b) |=(* *proses))
   ::
+  ::  uno doesn't work if first argument is empty map
+  ?:  =(~ a)  b
+  ~&  a
   =/  uno=story
     ::~!  ((~(uno by story-a) story-a) |=(* *proses))
     ::~!  ((~(uno by `story`a) `story`a) |=(* *proses))
-    %-  (~(uno by a) b)  ::|=(* *proses)
+    %-  (~(uno by a) b)
     |=  [k=tako:clay proses-a=proses proses-b=proses]
     ^-  proses
     (~(dif in proses-a) proses-b)
@@ -41,6 +33,8 @@
 ++  uni-ju
   |=  [a=story b=story]
   ^-  story
+  ::  0 + b = b
+  ?:  =(~ a)  b
   %-  (~(uno by a) b)
   |=  [k=tako:clay proses-a=proses proses-b=proses]
   ^-  proses
