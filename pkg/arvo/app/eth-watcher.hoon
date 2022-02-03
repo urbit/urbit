@@ -462,9 +462,9 @@
   ++  release-logs
     |=  [=path dog=watchdog]
     ^-  (quip card watchdog)
-    ?:  (lth number.dog 0)  :: TODO: 30!
+    ?:  (lth number.dog 30)
       `dog
-    =/  rel-number  (sub number.dog 0)  :: TODO: 30!
+    =/  rel-number  (sub number.dog 30)
     =/  numbers=(list number:block)  ~(tap in ~(key by pending-logs.dog))
     =.  numbers  (sort numbers lth)
     =^  logs=(list event-log:rpc:ethereum)  dog

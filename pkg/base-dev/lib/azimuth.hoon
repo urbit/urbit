@@ -87,7 +87,7 @@
         0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
       ::
       ++  ecliptic
-        0xa5b6.109a.d2d3.5191.b3bc.32c0.0e45.26be.56fe.321f
+        0x33ee.cbf9.0847.8c10.6146.26a9.d304.bfe1.8b78.dd73
       ::
       ++  linear-star-release
         0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801

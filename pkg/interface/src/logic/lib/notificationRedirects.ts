@@ -2,6 +2,7 @@ import useMetadataState from '../state/metadata';
 import ob from 'urbit-ob';
 import useInviteState from '../state/invite';
 import { deSig, resourceAsPath } from '@urbit/api';
+import { createJoinParams } from '~/views/landscape/components/Join/Join';
 
 function getGroupResourceRedirect(key: string) {
   const graphs = useMetadataState.getState().associations.graph;
@@ -70,7 +71,7 @@ function getGraphRedirect(link: string) {
 function getInviteRedirect(link: string) {
   const [,,app,uid] = link.split('/');
   const invite = useInviteState.getState().invites[app][uid];
-  if(!invite) {
+  if(!invite || (app !== 'groups' && app !== 'graph')) {
     return '';
   }
 
@@ -81,7 +82,7 @@ function getInviteRedirect(link: string) {
     return alreadyJoined;
   }
 
-  return { search: `?join-kind=${app}&join-path=${encodeURIComponent(resourceAsPath(invite.resource))}` };
+  return { search: createJoinParams(app, resourceAsPath(invite.resource)) };
 }
 
 function getDmRedirect(link: string) {

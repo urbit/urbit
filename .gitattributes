@@ -8,4 +8,8 @@ pkg/arvo/tmp/landscape.jam filter=lfs diff=lfs merge=lfs -text
 pkg/arvo/tmp/base.jam filter=lfs diff=lfs merge=lfs -text
 pkg/arvo/tmp/bitcoin.jam filter=lfs diff=lfs merge=lfs -text
 pkg/arvo/tmp/webterm.jam filter=lfs diff=lfs merge=lfs -text
-
+*.hoon text eol=lf
+*.kelvin text eol=lf
+*.bill text eol=lf
+*.docket-0 text eol=lf
+*.ship text eol=lf

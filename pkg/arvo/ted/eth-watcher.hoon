@@ -82,8 +82,8 @@
   |=  [pup=watchpup =latest=number:block]
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
-  =/  zoom-margin=number:block  0  :: TODO: 30!
-  =/  zoom-step=number:block  100.000
+  =/  zoom-margin=number:block  30
+  =/  zoom-step=number:block    100.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
   =/  up-to-number=number:block
