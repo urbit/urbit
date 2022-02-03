@@ -330,8 +330,8 @@
       ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff
   =/  cases-big-sec=(list case)
     :~  [too-big 0 0 0 0]
-        [0 0 too-big 0 0]
-        [0 0 0 too-big 0]
+        [1 0 too-big 0 0]
+        [1 0 0 too-big 0]
     ==
   =/  cases-big-pub=(list case)
     :~  [0 too-big 0 0 0]

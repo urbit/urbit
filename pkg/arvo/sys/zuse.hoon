@@ -2265,7 +2265,6 @@
           ~/  %sosi
           |=  [sk=@I m=@I a=@I]
           ^-  @J
-          ?>  (gte 32 (met 3 sk))
           ?>  (gte 32 (met 3 m))
           ?>  (gte 32 (met 3 a))
           =/  c  curve
