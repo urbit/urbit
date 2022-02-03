@@ -275,7 +275,7 @@ u3_disk_async(u3_disk*     log_u,
 
 //! Parse a persisted event buffer.
 static c3_o
-_disk_sift(u3_disk* log_u, u3_feat* fet_u, u3_fact* tac_u)
+_disk_deserialize_fact(u3_disk* log_u, u3_feat* fet_u, u3_fact* tac_u)
 {
   //  XX check version
   //
@@ -321,7 +321,7 @@ _disk_read_list_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   {
     u3_feat fet_u = { .len_i = val_i, .hun_y = val_p };
     u3_fact tac_u;
-    if ( c3n == _disk_sift(log_u, &fet_u, &tac_u) ) {
+    if ( c3n == _disk_deserialize_fact(log_u, &fet_u, &tac_u) ) {
       return c3n;
     }
 
@@ -393,7 +393,7 @@ u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
   }
 
   u3_feat fet_u = { .len_i = len_i, .hun_y = buf_v };
-  if ( c3n == _disk_sift(log_u, &fet_u, tac_u) )
+  if ( c3n == _disk_deserialize_fact(log_u, &fet_u, tac_u) )
   {
     fprintf(stderr, "disk: (%" PRIu64 "): sift fail\r\n", tac_u->eve_d);
     return wok_u->liv_o = c3n;
