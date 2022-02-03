@@ -404,9 +404,11 @@ static c3_c* _140_hex_secp_secp256k1_reco_ha[] = { 0 };
 static u3j_harm _140_hex_secp_secp256k1_reco_a[] = {{".2", u3we_reco, c3y}, {}};
 
 static c3_c* _140_hex_secp_secp256k1_schnorr_sosi_ha[] = { 0 };
-static u3j_harm _140_hex_secp_secp256k1_schnorr_sosi_a[] = {{".2", u3we_sosi, c3y}, {}};
+static u3j_harm _140_hex_secp_secp256k1_schnorr_sosi_a[] =
+  {{".2", u3we_sosi, c3n, c3n}, {}};
 static c3_c* _140_hex_secp_secp256k1_schnorr_sove_ha[] = { 0 };
-static u3j_harm _140_hex_secp_secp256k1_schnorr_sove_a[] = {{".2", u3we_sove, c3y}, {}};
+static u3j_harm _140_hex_secp_secp256k1_schnorr_sove_a[] =
+  {{".2", u3we_sove, c3n}, {}};
 
 static c3_c* _140_hex_secp_secp256k1_schnorr_ha[] = { 0 };
 static u3j_core _140_hex_secp_secp256k1_schnorr_d[] =
