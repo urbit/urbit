@@ -1757,6 +1757,8 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ::
         ?.  ?=([~ %known *] ship-state)
+          ?:  ?=(%pawn (clan:title ship))
+            (try-next-sponsor (^sein:title ship))
           %+  enqueue-alien-todo  ship
           |=  todos=alien-agenda
           todos(packets (~(put in packets.todos) blob))
