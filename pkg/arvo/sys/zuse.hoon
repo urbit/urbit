@@ -2268,6 +2268,8 @@
           ?>  (gte 32 (met 3 m))
           ?>  (gte 32 (met 3 a))
           =/  c  curve
+          ::  implies (gte 32 (met 3 sk))
+          ::
           ?<  |(=(0 sk) (gte sk n.domain.c))
           =/  pp
             (mul-point-scalar g.domain.c sk)
