@@ -89,6 +89,11 @@
   %+  snag  index
   (skim moves is-move-send)
 ::
+++  scry
+  |=  [vane=_nec car=term bem=beam]
+  =/  vane-core  (vane)
+  (scry:vane-core ~ car bem)
+::
 ++  call
   |=  [vane=_nec =duct =task:ames]
   ^-  [moves=(list move:ames) _nec]
@@ -118,7 +123,7 @@
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:ames packet)
+  =/  encoded  (encode-packet:ames & packet)
   =/  decoded  (decode-packet:ames encoded)
   ::
   %+  expect-eq
@@ -135,7 +140,7 @@
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:ames packet)
+  =/  encoded  (encode-packet:ames & packet)
   =/  decoded  (decode-packet:ames encoded)
   ::
   %+  expect-eq
@@ -191,7 +196,7 @@
       rcvr-life=3
     ==
   ::
-  =/  =blob:ames   (encode-packet:ames packet)
+  =/  =blob:ames   (encode-packet:ames & packet)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   =^  moves2  bud
     =/  =point:ames
@@ -236,7 +241,7 @@
   =/  packet
     ~!  ames
     (encode-open-packet:ames open-packet crypto-core.ames-state.comet)
-  =/  blob  (encode-packet:ames packet)
+  =/  blob  (encode-packet:ames & packet)
   ::
   =^  moves0  bud  (call bud ~[//unix] %hear lane-foo blob)
   ::
@@ -255,7 +260,7 @@
       sndr-life=1
       rcvr-life=3
     ==
-  =/  blob  (encode-packet:ames packet)
+  =/  blob  (encode-packet:ames & packet)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   ::
   ;:  weld
@@ -330,4 +335,56 @@
   %+  expect-eq
     !>  [~[/g/talk] %give %done `error]
     !>  (snag 1 `(list move:ames)`moves5)
+::
+++  test-fine-request
+  ^-  tang
+  =/  want=path  /cz/~bud/kids/1/sys
+  =/  net=path   /cz/kids/1/sys
+  =^  moves1  nec  (call nec ~[/g/talk] %keen want)
+  =/  req=hoot:ames
+    %+  snag  0
+    %+  murn  ;;((list move:ames) moves1)
+    |=  =move:ames 
+    ^-  (unit hoot:ames)
+    ?.  ?=(%give -.card.move)    ~
+    ?.  ?=(%send -.p.card.move)  ~
+    `;;(@uxhoot blob.p.card.move)
+  =/  [is-ames=? =packet:ames]  (decode-packet:ames `@ux`req)
+  ?>  ?=(%| is-ames)
+  =/  twit
+   (decode-request:ames `@ux`content.packet)
+  ~&  twit
+  (expect-eq !>(1) !>(1))
+::
+++  test-fine-response
+  ^-  tang
+  =/  want=path  /cz/~bud/kids/1/sys
+  =/  net=path   /cz/kids/1/sys
+  =/  =beam  [[~bud %$ da+now:bud] (welp /fine/message net)]
+  =/  [=mark =vase]  (need (need (scry bud %x beam)))
+  =+  !<(=song:ames vase)
+  =/   partial
+    %-  ~(gas by *(map @ud byts))
+    ^-  (list [@ud byts])
+    %-  head 
+    %^  spin  song  1
+    |=  [blob=@ux num=@ud]
+    ^-  [[_num byts] _num]
+    :_  +(num)
+    =/  [is-ames=? =packet:ames]  (decode-packet:ames `@ux`blob)
+    ?>  ?=(%| is-ames)
+    =/  [=peep:ames =purr:ames]  (decode-request-info:ames `@ux`content.packet)
+    =/  rawr  (decode-response-packet:ames `@ux`purr)
+    ~&  rawr-sig/`@ux`sig.rawr
+    ~&  rawr-siz/`@ux`siz.rawr
+    ~&  rawr-wid/`@ux`wid.rawr
+    ~&  rawr-dat/`@ux`dat.rawr
+    :-  num
+    [wid dat]:rawr
+  =/  num-frag=@ud  ~(wyt by partial)
+  =/   =roar:ames
+    (decode-response-msg:ames num-frag num-frag partial)
+  ~&  roar
+  ~!  .
+  (expect-eq !>(1) !>(1))
 --
