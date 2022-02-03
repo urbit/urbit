@@ -346,12 +346,12 @@
   |%
   +$  prop  [%prop meta tier (list ovum)]
   +$  meta  term
-  +$  tier  ?(%pre-userspace %post-userspace)
+  +$  tier  ?(%fore %hind)  ::  before or after userspace
   ::
   ++  install
     |=  [as=desk =beak pri=?]
     ^-  prop
-    :^  %prop  %install  %post-userspace
+    :^  %prop  %install  %hind
     ::TODO  will exclude non-:directories files, such as /changelog/txt
     =-  (murn - same)
     ^-  (list (unit ovum))

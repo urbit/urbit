@@ -1081,12 +1081,12 @@ _mars_boot_make(u3_boot_opts* inp_u,
             break;
           }
 
-          if ( c3y == u3r_sing_c("pre-userspace", ter) ) {
-            u3m_p("prop: pre-userspace", met);
+          if ( c3__fore == ter ) {
+            u3m_p("prop: fore", met);
             pre = u3kb_weld(pre, ves);
           }
-          else if ( c3y == u3r_sing_c("post-userspace", ter) ) {
-            u3m_p("prop: post-userspace", met);
+          else if ( c3__hind == ter ) {
+            u3m_p("prop: hind", met);
             aft = u3kb_weld(aft, ves);
           }
           else {
