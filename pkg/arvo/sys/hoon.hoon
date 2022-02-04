@@ -13208,8 +13208,8 @@
       $(gen p.gen)
     ::
         [%sgzp *]
-      =^  wor  grub  (caching-play p.gen)
-      ~_  duck(sut wor)
+      ~_  =^  wor  grub  (caching-play p.gen)
+          duck(sut wor)
       $(gen q.gen)
     ::
         [%sggr *]
@@ -14246,8 +14246,8 @@
       (hint [sut p.gen] rig)
     ::
         [%sgzp *]
-      =^  rig  grub  $(gen p.gen)
-      ~_  duck(sut rig)
+      ~_  =^  rig  grub  ^$(gen p.gen)
+          duck(sut rig)
       $(gen q.gen)
     ::
         [%sggr *]
@@ -14262,11 +14262,11 @@
     ::
         [%wtcl *]
       =^  fex  grub  (caching-gain p.gen)
+      =^  wux  grub  (caching-lose p.gen)
       =^  won  grub
         ?:  =(%void fex)
           [%void grub]
         $(sut fex, gen q.gen)
-      =^  wux  grub  (caching-lose p.gen)
       =^  tew  grub
         ?:  =(%void wux)
           [%void grub]
@@ -14281,9 +14281,8 @@
       [bool grub]
     ::
         [%dbug *]
-      =^  rig  grub  $(gen q.gen)
       ~_  (show %o p.gen)
-      [rig grub]
+      $(gen q.gen)
     ::
         [%zpcm *]
       $(gen p.gen)
