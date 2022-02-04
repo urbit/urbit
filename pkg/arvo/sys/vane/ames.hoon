@@ -312,10 +312,6 @@
       dat=(rsh 3^70 purr)
   ==
 ::
-++  verify-response-packet
-  |=  rawr
-  !!
-::
 ++  decode-response-msg
   |=  partial-fine  ::TODO  maybe take @ instead
   ^-  roar
@@ -325,12 +321,11 @@
     |=  num=@ud
     =/  frag=byts  (~(got by fragments) num)
     dat.frag
-  =+  sig=(end 3^64 mess)
-  :-  sig
+  :-  sig=(cut 3 [0 64] mess)
+  =+  dat=(rsh 3^64 mess)
+  ?~  dat  ~
   ~|  [%fine %response-not-cask]
-  ;;((cask) (cue (rsh 3^64 mess)))
-::
-
+  ;;((cask) (cue dat))
 ::  +decode-packet: deserialize packet from bytestream or crash
 ::
 ++  decode-packet
@@ -697,7 +692,7 @@
 ::
 +$  roar  ::  response message
   $:  sig=@
-      dat=(cask)
+      dat=$@(~ (cask))
   ==
 ::  $partial-fine: partial remote scry response
 ::
@@ -2749,46 +2744,6 @@
       =/  =peer-state
         (got-peer-state ship)
       lane:(need route.peer-state)
-    ::
-    ++  decode-request
-      |=  =hoot
-      ^-  twit
-      :-  sig=(cut 3 [0 64] hoot)
-      -:(decode-request-info (rsh 3^64 hoot))
-    ::
-    ++  decode-request-info
-      |=  =hoot
-      ^-  [=peep =purr]
-      =+  num=(cut 3 [0 4] hoot)
-      =+  len=(cut 3 [4 2] hoot)
-      =+  pat=(cut 3 [6 len] hoot)
-      :-  [(stab pat) num]
-      ::  if there is data remaining, it's the response
-      (rsh [3 (add 6 len)] hoot)
-    ::
-    ++  decode-response-packet
-      |=  =purr
-      =;  =rawr
-        ~?  !=(wid.rawr (met 3 dat.rawr))  [%fine %unexpected-dat-size]
-        rawr
-      :*  sig=(cut 3 [0 64] purr)
-          siz=(cut 3 [64 4] purr)
-          wid=(cut 3 [68 2] purr)
-          dat=(rsh 3^70 purr)
-      ==
-    ::
-    ++  decode-response-msg
-      |=  partial-fine  ::TODO  maybe take @ instead
-      ^-  roar
-      =/  mess=@
-        %+  can  3  ::TODO  just (rep 13 -)
-        %+  turn  (gulf 1 num-fragments)
-        ~(got by fragments)
-      :-  sig=(cut 3 [0 64] mess)
-      =+  dat=(rsh 3^64 mess)
-      ?~  dat  ~
-      ~|  [%fine %response-not-cask]
-      ;;((cask) (cue dat))
     ::
     ++  send-request
       |=  [=ship =path num=@ud]
