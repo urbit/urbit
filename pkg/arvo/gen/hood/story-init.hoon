@@ -14,7 +14,7 @@
 =/  existing-story  .^(? %cu /(scot %p our)/[desk]/(scot %da now)/story)
 ?:  ?&(existing-story !overwrite)
   ~&  >>  "Error: {<desk>}/story already exists. Set the optional parameter `overwrite` to `%.y` to forcibly wipe"
-  ::  XX could use a better way to noop 
+  ::  XX could use a better way to noop
   :-  %helm-pass  [%d %noop ~]
 =|  tale=story
 :-  %helm-pass

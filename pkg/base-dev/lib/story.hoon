@@ -5,8 +5,6 @@
 ++  dif-ju
   |=  [a=story b=story]
   ^-  story
-  ::  0 - b = -b. how do we negate a jug/"infinite" set lol?
-  ::  a - 0 = a   (not impl.)
   ::  uno := (a-b) + (merged items in both a and b) + (b-a)
   ::  ret := (a-b) + (merged items in both a and b)  
   ::  ret = (~(int by a) uno)  :: preserve only the entries whose keys are in a
@@ -56,7 +54,7 @@
     (prose-to-text i.proses-list)
   %-  tail
   %^  spin  ;;((list prose) t.proses-list)  :: XX WHY DO WE NEED ;;
-  (prose-to-text i.proses-list)
+    (prose-to-text i.proses-list)
   |=  [prz=prose state=tape]
   ^-  [prose tape]
   :-  prz
