@@ -46,8 +46,7 @@
     [/text/x-urb-story (as-octs:mimes:html (of-wain:format txt))]
   ++  txt
     ^-  wain
-    ::  XX code clean up: cleaner snoc
-    %+  snoc  :: ensures terminating newline is present
+    %-  snoc  :_  ''  :: ensures terminating newline is present
     %+  murn  ~(tap by tale)
     |=  [[=tako:clay =proses]]
     ^-  (unit cord)
@@ -59,7 +58,6 @@
       (proses-to-text proses)
       "---"
     ==
-    ''
   --
 ++  grab
   |%                                             ::  convert from
