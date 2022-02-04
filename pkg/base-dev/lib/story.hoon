@@ -11,8 +11,10 @@
   ::  ret = (~(int by a) uno)  :: preserve only the entries whose keys are in a
   ::
   ::
-  ::  uno doesn't work if first argument is empty map
-  ?:  =(~ a)  b
+  ::  if 0 is the empty set,
+  ::  a \ 0 = a
+  ::  0 \ b = 0  :: anything not in 0 but in b is by default 0
+  ?:  =(~ a)  ~
   ~&  a
   =/  uno=story
     ::~!  ((~(uno by story-a) story-a) |=(* *proses))
