@@ -1,5 +1,6 @@
 /-  *story
 !:
+^?
 |%
 ::  XX generalize move to hoon.hoon
 ++  dif-ju
