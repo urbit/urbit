@@ -3,8 +3,9 @@
 ** the main loop of the daemon process
 */
 #include "all.h"
-#include "vere/vere.h"
 #include "ur/ur.h"
+#include "vere/ivory.h"
+#include "vere/vere.h"
 #include <curl/curl.h>
 #include <uv.h>
 

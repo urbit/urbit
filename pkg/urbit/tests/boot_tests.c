@@ -1,6 +1,7 @@
 #include "all.h"
-#include "vere/vere.h"
 #include "ur/ur.h"
+#include "vere/ivory.h"
+#include "vere/vere.h"
 
 /* _setup(): prepare for tests.
 */
