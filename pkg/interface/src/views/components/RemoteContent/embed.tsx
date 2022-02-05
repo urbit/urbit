@@ -161,6 +161,7 @@ const EmbedContainer = styled(UnstyledEmbedContainer)`
   grid-template-rows: 1fr -webkit-max-content 1fr;
   grid-template-columns: 1fr max-content 1fr;
   grid-template-columns: 1fr -webkit-max-content 1fr;
+  position: relative;
   height: 100%;
   display: ${IS_SAFARI ? 'flex' : 'grid'};
   flex-direction: column;

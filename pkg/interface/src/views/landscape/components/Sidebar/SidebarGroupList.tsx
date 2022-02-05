@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Associations, Graph, resourceAsPath, Unreads } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
 import _ from 'lodash';
@@ -326,6 +326,11 @@ export function SidebarGroupList({
 }): ReactElement {
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(s => s.groups);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 8000);
+  }, []);
 
   const groupList = Object.values(associations?.groups || {})
     .filter(e => e?.group in groups)
@@ -349,7 +354,7 @@ export function SidebarGroupList({
 
   if (messages) {
     return <SidebarGroup {...props} workspace={{ type: 'messages' }} />;
-  } else if (!groupList.length) {
+  } else if (!groupList.length && loading) {
     return <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
       <LoadingSpinner />
     </Box>;

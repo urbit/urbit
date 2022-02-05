@@ -1,5 +1,6 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, deSig, Graph, Group } from '@urbit/api';
+import { Association, deSig, Graph, GraphNode, Group } from '@urbit/api';
+import { BigIntOrderedMap } from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt, { BigInteger } from 'big-integer';
 import React, {
   Component, ReactNode
@@ -95,6 +96,13 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     const { graph, association } = this.props;
     const first = graph.peekLargest()?.[0];
     const [, , ship, name] = association.resource.split('/');
+
+    const graphArray = Array.from(graph).filter(
+      ([idx, node]) => typeof node?.post !== 'string'
+    );
+
+    const orm = new BigIntOrderedMap<GraphNode>().gas(graphArray);
+
     if (!first) {
       return (
         <Col
@@ -128,9 +136,9 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
           origin="top"
           offset={0}
           style={style}
-          data={graph}
+          data={orm}
           averageHeight={100}
-          size={graph.size}
+          size={orm.size}
           pendingSize={this.props.pendingSize}
           renderer={this.renderItem}
           loadRows={this.fetchLinks}

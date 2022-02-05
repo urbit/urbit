@@ -56,22 +56,8 @@ export function UqbarHome(props) {
         </Tile> */}
         <Tile>
           <Col display="flex" alignItems="center" justifyContent="center" height="100%">
-            <Sigil
-              ship={window.ship}
-              size={60}
-              display='block'
-              color={'black'}
-              classes={sigilClass}
-              icon
-              padding={12}
-            />
-            <Text mt={3} textAlign="center" fontWeight="bold">~{window.ship}</Text>
-          </Col>
-        </Tile>
-        <Tile>
-          <Col display="flex" alignItems="center" justifyContent="center" height="100%">
             <ModalButton
-              icon="Plus"
+              icon="CreateGroup"
               bg="white"
               color="black"
               text="New Group"
@@ -90,7 +76,7 @@ export function UqbarHome(props) {
               onClick={() => history.push({ search: '?join-kind=group' })}
             >
               <Row backgroundColor="white" gapX="2" p={2} height="100%" width="100%" alignItems="center">
-                <Icon icon="BootNode" />
+                <Icon icon="Plus" />
                 <Text fontWeight="medium" whiteSpace="nowrap">Join Group</Text>
               </Row>
             </Button>

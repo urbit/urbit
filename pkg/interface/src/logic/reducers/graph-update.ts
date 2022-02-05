@@ -280,13 +280,14 @@ export const addNodes = (json, state) => {
     return [graph, flatGraph, threadGraphs];
   };
 
-  const addSigs = _.get(json, 'add-signatures', false);
-  if (addSigs) {
+  const addOrRemoveSigs = _.get(json, 'add-signatures', false) || _.get(json, 'remove-signatures', false);
+  console.log(0, addOrRemoveSigs)
+  if (addOrRemoveSigs) {
     if (!('graphs' in state) || !('flatGraphs' in state) || !('threadGraphs' in state)) {
       return state;
     }
 
-    const { signatures, uid: { index, resource: { name, ship } } } = addSigs;
+    const { signatures, uid: { index, resource: { name, ship } } } = addOrRemoveSigs;
     const resource = `${ship}/${name}`;
 
     if (!(resource in state.graphs)) {

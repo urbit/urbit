@@ -253,7 +253,7 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
 
     setMessage(value);
 
-    if (!value.includes('~'))
+    if (!group || !value.includes('~'))
       return;
 
     const sigMatch = SIG_REGEX.test(value);

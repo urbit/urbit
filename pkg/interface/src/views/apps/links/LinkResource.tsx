@@ -88,7 +88,7 @@ export function LinkResource(props: LinkResourceProps) {
                   />
               ) : (
                 <LinkBlocks key={rid} graph={graph} association={resource} />
-                )}
+              )}
           </Col>
           );
         }}

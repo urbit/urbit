@@ -65,7 +65,7 @@ module.exports = {
         exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react)\/).*/
       },
       {
-        test: /\.css$/i,
+        test: /\.(sc|c)ss$/i,
         use: [
           // Creates `style` nodes from JS strings
           'style-loader',

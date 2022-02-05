@@ -97,7 +97,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
                 onClick={() => history.push({ search: createJoinParams('groups') })}
               >
                 <Row backgroundColor="white" gapX="2" p={2} height="100%" width="100%" alignItems="center">
-                  <Icon icon="BootNode" />
+                  <Icon icon="Plus" />
                   <Text fontWeight="medium" whiteSpace="nowrap">Join Group</Text>
                 </Row>
               </Button>

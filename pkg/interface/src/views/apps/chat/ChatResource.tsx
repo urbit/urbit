@@ -1,4 +1,4 @@
-import { Association, Content, createPost, fetchIsAllowed, Post, removePosts, deSig } from '@urbit/api';
+import { Association, Content, createPost, fetchIsAllowed, Post, removePosts, deSig, createUnmanagedGraph } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import React, {
   ReactElement, useCallback,
@@ -7,22 +7,29 @@ import React, {
   useMemo, useState
 } from 'react';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
-import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import { getPermalinkForGraph, parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
-import { useGroupForAssoc } from '~/logic/state/group';
+import useGroupState, { useGroupForAssoc } from '~/logic/state/group';
 import useHarkState, { useHarkStat } from '~/logic/state/hark';
 import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
 import airlock from '~/logic/api';
 import { disallowedShipsForOurContact } from '~/logic/lib/contact';
 import shallow from 'zustand/shallow';
-import { toHarkPath } from '~/logic/lib/util';
+import { stringToSymbol, toHarkPath } from '~/logic/lib/util';
+import useMetadataState from '~/logic/state/metadata';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
   const graph = graphs[`${ship}/${name}`];
   return graph?.size ?? 0;
 };
+
+export interface LinkCollection {
+  path: string;
+  title: string;
+}
 
 type ChatResourceProps = {
   association: Association;
@@ -33,6 +40,9 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const { association } = props;
   const { resource } = association;
   const [toShare, setToShare] = useState<string[] | string | undefined>();
+  const { associations } = useMetadataState();
+  const groups = useGroupState(state => state.groups);
+  const waiter = useWaitForProps({ groups }, 5000);
   const group = useGroupForAssoc(association)!;
   const graph = useGraphForAssoc(association);
   const stats = useHarkStat(toHarkPath(association.resource));
@@ -93,8 +103,16 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
     [group]
   );
 
-const fetchMessages = useCallback(async (newer: boolean) => {
-  const pageSize = 100;
+  const collections = useMemo(() => !isAdmin ? [] : Object.keys(associations.graph).filter((channel) => {
+    const assoc = associations.graph[channel];
+    return assoc.group === association.group && assoc.metadata.config.graph === 'link';
+  }).map(path => ({
+    title: associations.graph[path].metadata.title,
+    path
+  })), [associations, association, isAdmin]);
+
+  const fetchMessages = useCallback(async (newer: boolean) => {
+    const pageSize = 100;
 
     const [, , ship, name] = resource.split('/');
     const graphSize = graph?.size ?? 0;
@@ -140,7 +158,9 @@ const fetchMessages = useCallback(async (newer: boolean) => {
   const onLike = useCallback(async ({ author, signatures, index }: Post) => {
     if (window.ship !== author) {
       const { ship, name } = resourceFromPath(resource);
+      console.log(0, signatures)
       const remove = signatures.find(({ ship }) => ship === window.ship);
+      console.log(1, remove)
 
       const body = remove
         ? {
@@ -155,6 +175,7 @@ const fetchMessages = useCallback(async (newer: boolean) => {
             signatures: []
           }
         }; // like
+        console.log(2, body)
       await airlock.thread({
         inputMark: 'graph-update-3',
         outputMark: 'json',
@@ -164,6 +185,45 @@ const fetchMessages = useCallback(async (newer: boolean) => {
       });
     }
   }, [resource]);
+
+  const onBookmark = useCallback(async (msg: Post, permalink: string, collection: LinkCollection) => {
+    let path = collection.path;
+    const isMyBookmarks = collection.title === 'My Bookmarks';
+
+    if (isMyBookmarks && !associations.graph[collection.path]) {
+      const name = 'My Bookmarks';
+      const resId = `${stringToSymbol(name)}-${Math.floor(Math.random() * 10000)}`;
+
+      try {
+        const description = '';
+        const moduleType = 'link';
+        await airlock.thread(createUnmanagedGraph(
+          window.ship,
+          resId,
+          name,
+          description,
+          { invite: { pending: [] } },
+          moduleType
+        ));
+
+        await waiter(p => Boolean(p.groups?.[`/ship/~${window.ship}/${resId}`]));
+        path = `/ship/~${window.ship}/${resId}`;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    const [,,,collectionName] = path.split('/');
+    const url = permalink;
+    const text = url; // maybe add an option to customize the title, or use some other default?
+    const contents = url.startsWith('web+urbitgraph:/')
+      ?  [{ text }, permalinkToReference(parsePermalink(url)!)]
+      :  [{ text }, { url }];
+
+    const parentIndex = ''; // this is always empty elsewhere
+    const post = createPost(window.ship, contents, parentIndex);
+    addPost(`~${window.ship}`, collectionName, post);
+  }, [associations, groups, waiter]);
 
   const dismissUnread = useCallback(() => {
     useHarkState.getState().readCount(toHarkPath(association.resource));
@@ -190,13 +250,15 @@ const fetchMessages = useCallback(async (newer: boolean) => {
         onReply,
         onDelete,
         onLike,
+        onSubmit,
+        onBookmark,
         fetchMessages,
         dismissUnread,
         getPermalink,
         isAdmin,
-        onSubmit,
         group,
-        association
+        association,
+        collections
       }}
     />
   );

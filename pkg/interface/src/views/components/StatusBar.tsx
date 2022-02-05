@@ -39,8 +39,9 @@ const StatusBar = (props) => {
   const { notificationsCount } = useHarkState();
   const { unreadDmCount } = useDmUnreads();
   const groups = useMetadataState(s => s.associations.groups);
+  const isHome = props.location.pathname === '/';
 
-  let title = '';
+  let title = `~${window.ship}`;
   if (props.location.pathname.includes('~landscape')) {
     const [, , , groupShip, groupName] = props.location.pathname.split('/');
     title = groups[`/ship/${groupShip}/${groupName}`]?.metadata?.title;
@@ -111,6 +112,7 @@ const StatusBar = (props) => {
         textOverflow="ellipsis"
         whiteSpace="nowrap"
         overflow="hidden"
+        mono={isHome}
       >
         {title}
       </H3>

@@ -15,6 +15,7 @@ import ChatInput from './ChatInput';
 import ChatWindow from './ChatWindow';
 import { CodeMirrorShim } from './ChatEditor';
 import { IS_MOBILE } from '~/logic/lib/platform';
+import { LinkCollection } from '../ChatResource';
 
 
 interface useChatStoreType {
@@ -73,6 +74,7 @@ interface ChatPaneProps {
   onReply: (msg: Post) => string;
   onDelete?: (msg: Post) => void;
   onLike?: (msg: Post) => void;
+  onBookmark?: (msg: Post, permalink: string, collection: LinkCollection) => void;
   /**
    * Fetch more messages
    *
@@ -101,6 +103,13 @@ interface ChatPaneProps {
    * string - path of group
    */
   promptShare?: string[] | string;
+  /**
+   *
+   * Collections of links in the current group
+   *
+   * string[] - array of collections with title and path
+   */
+  collections?: LinkCollection[];
 }
 
 export function ChatPane(props: ChatPaneProps): ReactElement {
@@ -117,8 +126,10 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     onSubmit,
     onDelete,
     onLike,
+    onBookmark,
+    fetchMessages,
     promptShare = [],
-    fetchMessages
+    collections = []
   } = props;
   const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
@@ -169,7 +180,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
         showOurContact={promptShare.length === 0 && !showBanner}
         pendingSize={Object.keys(graphTimesentMap).length}
         scrollTo={scrollTo ? bigInt(scrollTo) : undefined}
-        {...{ graph, unreadCount, onReply, onDelete, onLike, dismissUnread, fetchMessages, isAdmin, getPermalink }}
+        {...{ graph, unreadCount, onReply, onDelete, onLike, onBookmark, dismissUnread, fetchMessages, isAdmin, getPermalink, collections }}
       />
       {canWrite && (
         <ChatInput

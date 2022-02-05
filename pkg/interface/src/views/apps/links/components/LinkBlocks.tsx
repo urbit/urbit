@@ -90,6 +90,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
               );
             }
             const [i, node] = block;
+
             return typeof node.post === 'string' ? (
               <Col
                 key={i.toString()}

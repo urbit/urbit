@@ -70,7 +70,6 @@ export const Content = (props) => {
   }, [history.goForward]));
 
   useShortcut('navBack', useCallback((e) => {
-    console.log('HERE')
     e.preventDefault();
     e.stopImmediatePropagation();
     history.goBack();

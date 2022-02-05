@@ -7,6 +7,7 @@ import bigInt, { BigInteger } from 'big-integer';
 import React, { Component } from 'react';
 import { GraphScroller } from '~/views/components/GraphScroller';
 import VirtualScroller from '~/views/components/VirtualScroller';
+import { LinkCollection } from '../ChatResource';
 import ChatMessage from './ChatMessage';
 import UnreadNotice from './UnreadNotice';
 
@@ -22,11 +23,13 @@ type ChatWindowProps = {
   onReply: (msg: Post) => void;
   onDelete: (msg: Post) => void;
   onLike: (msg: Post) => void;
+  onBookmark: (msg: Post, permalink: string, collection: LinkCollection) => void;
   dismissUnread: () => void;
   pendingSize?: number;
   showOurContact: boolean;
   getPermalink: (index: BigInteger) => string | undefined;
   isAdmin: boolean;
+  collections: LinkCollection[];
 };
 
 interface ChatWindowState {
@@ -197,9 +200,11 @@ class ChatWindow extends Component<
       onReply,
       onDelete,
       onLike,
+      onBookmark,
       getPermalink,
       dismissUnread,
-      isAdmin
+      isAdmin,
+      collections
     } = this.props;
     const permalink = getPermalink(index);
     const messageProps = {
@@ -207,9 +212,11 @@ class ChatWindow extends Component<
       onReply,
       onDelete,
       onLike,
+      onBookmark,
       permalink,
       dismissUnread,
-      isAdmin
+      isAdmin,
+      collections
     };
 
     const msg = graph.get(index)?.post;
@@ -232,12 +239,14 @@ class ChatWindow extends Component<
     const prevIdx = keys[graphIdx - 1];
     const nextIdx = keys[graphIdx + 1];
     const isLastRead: boolean = this.state.unreadIndex.eq(index);
+    const isBookmarked = false;
     const props = {
       highlighted,
       scrollWindow,
       isPending,
       isLastRead,
       isLastMessage,
+      isBookmarked,
       msg,
       ...messageProps
     };

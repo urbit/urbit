@@ -1,11 +1,10 @@
 /* eslint-disable max-lines-per-function */
-import { BaseImage, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Contact, MentionContent, Post, resourceFromPath } from '@urbit/api';
+import { BaseImage, Box, Icon, Row, Rule, Text } from '@tlon/indigo-react';
+import { Contact, MentionContent, Post } from '@urbit/api';
 import bigInt from 'big-integer';
 import moment from 'moment';
 import React, {
   Ref,
-  useCallback,
   useEffect,
   useMemo, useState
 } from 'react';
@@ -13,14 +12,14 @@ import VisibilitySensor from 'react-visibility-sensor';
 import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
-import airlock from '~/logic/api';
 import { citeNickname, daToUnix, useHovering, uxToHex } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
 import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/state/settings';
-import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
+import { LinkCollection } from '../ChatResource';
+import MessageActions from './MessageActions';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -291,108 +290,13 @@ export const UnreadMarker = React.forwardRef(
   }
 );
 
-const MessageActionItem = (props) => {
-  return (
-    <Row
-      color='black'
-      cursor='pointer'
-      fontSize={1}
-      fontWeight='500'
-      px={3}
-      py={2}
-      onClick={props.onClick}
-    >
-      <Text fontWeight='500' color={props.color}>
-        {props.children}
-      </Text>
-    </Row>
-  );
-};
-
-const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink, onLike }) => {
-  const isOwn = () => msg.author === window.ship;
-  const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
-  const showCopyMessageLink = Boolean(permalink);
-  const showDelete = (isAdmin || isOwn()) && onDelete;
-  const showDropdown = showCopyMessageLink || showDelete;
-
-  return (
-    <Box
-      borderRadius={1}
-      backgroundColor='white'
-      border='1px solid'
-      borderColor='lightGray'
-      position='absolute'
-      top='-12px'
-      right={2}
-    >
-      <Row>
-        <Box
-          padding={1}
-          size={'24px'}
-          cursor='pointer'
-          onClick={() => onReply(msg)}
-        >
-          <Icon icon='Chat' size={3} />
-        </Box>
-        <Box
-          padding={1}
-          size={'24px'}
-          cursor='pointer'
-          onClick={() => onLike(msg)}
-        >
-          <Icon icon='CheckmarkBold' size="20px" mt="-2px" ml="-2px" />
-        </Box>
-        <Dropdown
-          dropWidth='250px'
-          width='auto'
-          alignY='top'
-          alignX='right'
-          flexShrink={0}
-          offsetY={8}
-          offsetX={-24}
-          options={
-            <Col
-              py={2}
-              backgroundColor='white'
-              color='washedGray'
-              border={1}
-              borderRadius={2}
-              borderColor='lightGray'
-              boxShadow='0px 0px 0px 3px'
-            >
-              <MessageActionItem onClick={() => onReply(msg)}>
-                Reply
-              </MessageActionItem>
-              {/* <MessageActionItem onClick={e => console.log(e)}>
-                View Signature
-              </MessageActionItem> */}
-              {showCopyMessageLink && (
-                <MessageActionItem onClick={doCopy}>
-                  {copyDisplay}
-                </MessageActionItem>
-              )}
-              {showDelete && (
-                <MessageActionItem onClick={e => onDelete(msg)} color='red'>
-                  Delete Message
-                </MessageActionItem>
-              )}
-            </Col>
-          }>
-            <Box padding={1} size={'24px'} cursor='pointer'>
-              <Icon icon='Menu' size={3} />
-            </Box>
-          </Dropdown>
-      </Row>
-    </Box>
-  );
-};
-
 const MessageWrapper = (props) => {
   const { transcluded, hideHover, highlighted, numLikes, didLike, msg, onLike } = props;
   const { hovering, bind } = useHovering();
   const showHover = (transcluded === 0) && hovering && !hideHover;
   const dark = useDark();
+
+  // console.log('MSG', msg)
 
   return (
     <Box
@@ -429,6 +333,7 @@ interface ChatMessageProps {
   permalink?: string;
   transcluded?: number;
   isAdmin?: boolean;
+  isBookmarked?: boolean;
   isReply?: boolean;
   className?: string;
   isPending?: boolean;
@@ -443,6 +348,8 @@ interface ChatMessageProps {
   showOurContact: boolean;
   onDelete?: () => void;
   onLike?: (msg: Post) => void;
+  onBookmark?: (msg: Post, permalink: string, collection: LinkCollection) => void,
+  collections: LinkCollection[],
 }
 const emptyCallback = () => {};
 
@@ -462,7 +369,10 @@ function ChatMessage(props: ChatMessageProps) {
     dismissUnread = () => null,
     permalink = '',
     onLike,
-    isReply = false
+    onBookmark,
+    isBookmarked= false,
+    isReply = false,
+    collections
   } = props;
 
   if (typeof msg === 'string' || !msg) {
@@ -526,9 +436,12 @@ function ChatMessage(props: ChatMessageProps) {
     onReply,
     onDelete,
     onLike,
+    onBookmark,
+    isBookmarked,
     isAdmin,
     numLikes,
-    didLike
+    didLike,
+    collections
   };
 
   const message = useMemo(() => (
