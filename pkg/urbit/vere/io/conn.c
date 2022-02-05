@@ -417,6 +417,92 @@ _conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
   }
 }
 
+/* _conn_run_peel(): respond to a %peel request.
+**
+**  %peel is a runtime scry-like interface. it accepts $path-like
+**  arguments, i.e. nul-terminated lists of $knot. it responds
+**  as scry does, with a (unit (unit)), where ~ means "request
+**  was not understood" and `~ means "request understood; empty
+**  response".
+*/
+static void
+_conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
+{
+  u3_noun   i_dat, t_dat, it_dat, tt_dat;
+  u3_noun   res;
+
+  if ( c3n == u3r_cell(dat, &i_dat, &t_dat) ) {
+    res = u3_nul;
+  }
+  else if ( u3_nul == t_dat ) {
+    //  zero-argument requests.
+    //
+    switch (i_dat) {
+      default: {
+        res = u3_nul;
+        break;
+      }
+      //  simple health check.
+      //
+      case c3__live: {
+        res = u3nt(u3_nul, u3_nul, c3y);
+        break;
+      }
+      //  true iff the %khan vane is live (meaning %fyrd is supported.)
+      case c3__khan: {
+        res = u3nt(u3_nul, u3_nul, con_u->kan_o);
+        break;
+      }
+      //  vere version.
+      //
+      case c3__v: {
+        res = u3nt(u3_nul, u3_nul, u3i_string(URBIT_VERSION));
+        break;
+      }
+    }
+  }
+  else if ( c3n == u3r_cell(t_dat, &it_dat, &tt_dat) ) {
+    //  non-list structure, not understood.
+    //
+    res = u3_nul;
+  }
+  else if ( u3_nul == tt_dat ) {
+    //  one-argument requests.
+    //
+    switch (i_dat) {
+      default: {
+        res = u3_nul;
+        break;
+      }
+      case c3__port: {
+        switch (it_dat) {
+          default: {
+            res = u3_nul;
+          }
+          case c3__ames: {
+            res = u3nt(u3_nul, u3_nul, u3_Host.ops_u.por_s);
+            break;
+          }
+          case c3__http: {
+            //  TODO  return public http port.
+            //
+            res = u3nc(u3_nul, u3_nul);
+            break;
+          }
+        }
+        break;
+      }
+    }
+  }
+  else {
+    //  unknown request.
+    //
+    res = u3_nul;
+  }
+  u3z(dat);
+  _conn_send_noun(can_u, u3nc(rid, res));
+}
+
 /* _conn_moor_poke(): called on message read from u3_moor.
 */
 static void
@@ -486,73 +572,7 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__peel: {
-        u3_noun       i_dat, t_dat;
-
-        if ( (c3n == u3r_cell(dat, &i_dat, &t_dat)) ) {
-          can_u->mor_u.bal_f(can_u, -5, "peel-bad");
-        }
-        else {
-          //  TODO  require u3_nul == t_dat where appropriate
-          //
-          switch (i_dat) {
-            default: {
-              can_u->mor_u.bal_f(can_u, -6, "peel-unknown");
-              break;
-            }
-            //  simple health check.
-            //
-            case c3__live: {
-              _conn_send_noun(can_u, u3nt(u3k(rid), u3_nul, c3y));
-              break;
-            }
-            //  say whether the %khan vane is working.
-            //
-            case c3__khan: {
-              _conn_send_noun(can_u, u3nt(u3k(rid), u3_nul, con_u->kan_o));
-              break;
-            }
-            //  get vere version.
-            //
-            case c3__v: {
-              _conn_send_noun(can_u, u3nt(u3k(rid), u3_nul,
-                                          u3i_string(URBIT_VERSION)));
-              break;
-            }
-            //  get port.
-            //
-            case c3__port: {
-              u3_noun it_dat, tt_dat;
-
-              if (  (c3n == u3r_cell(t_dat, &it_dat, &tt_dat))
-                 || (u3_nul != tt_dat) )
-              {
-                can_u->mor_u.bal_f(can_u, -8, "port-bad");
-              }
-              else {
-                switch (it_dat) {
-                  default: {
-                    can_u->mor_u.bal_f(can_u, -9, "port-unknown");
-                    break;
-                  }
-                  case c3__ames: {
-                    _conn_send_noun(can_u, u3nt(u3k(rid), u3_nul,
-                                                u3_Host.ops_u.por_s));
-                    break;
-                  }
-                  case c3__http: {
-                    //  TODO  get http configuration
-                    //
-                    _conn_send_noun(can_u, u3nc(u3k(rid), u3_nul));
-                    break;
-                  }
-                }
-              }
-              break;
-            }
-            //  TODO: fill in rest of %peel namespace.
-            //
-          }
-        }
+        _conn_run_peel(con_u, can_u, u3k(rid), u3k(dat));
         break;
       }
 
