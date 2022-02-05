@@ -77,7 +77,7 @@
 ::
 ::  Parsers
 ::
-++  parse-commit
+++  parse-commit-hash
   ;~  sfix
     ;~  pfix  (jest 'commit: ')
       (cook @uv ;~(pfix (jest '0v') viz:ag))
@@ -92,26 +92,19 @@
     (jest '\0a\0a')
   ==
 ::
-++  parse-body-single
+++  parse-body
+  %+  cook  of-wain:format
   %-  star
   ;~  less
     ;~(pose (jest '|||\0a') (jest '---\0a'))
     (cook crip ;~(sfix (star prn) (just '\0a')))
   ==
 ::
-++  parse-prose-single  ;~(plug parse-title parse-body-single)
-++  parse-rest-proses     (star ;~(pfix (jest '|||\0a') parse-prose-single))
-++  parse-proses        ;~(plug parse-prose-single parse-rest-proses)
-++  parse-chapter       ;~(plug parse-commit parse-proses)
-++  parse-story           (star ;~(sfix parse-chapter (jest '---\0a')))
-::
-::  Parse prose: a title, followed by a body
-::
-::  Parse proses: a prose, followed by zero or more proses, representing conflicts
-::
-::  Parse chapters (story entries): a commit followed by one or more proses
-::
-::  Parse story: zero or more chapters
-::
-::
+++  parse-prose-single    ;~(plug parse-title parse-body)  ::`$-(nail (like prose))`
+++  parse-rest-proses     (star ;~(pfix (jest '|||\0a') parse-prose-single))  ::`$-(nail (like (list prose)))`
+++  parse-proses          (cook silt ;~(plug parse-prose-single parse-rest-proses))  :: `$-(nail (like proses))`
+++  parse-chapter         ;~(plug parse-commit-hash parse-proses)  :: `$-(nail (like chapter))`
+++  parse-story           (cook ~(gas by *story) (star ;~(sfix parse-chapter (jest '---\0a'))))
+::  N.B. if instead of writing conflicting messages all under one conflict and you split them up (which is not supported notation), 
+::  we will overwrite previous entries with later ones (due to the nature of gas:by)
 --

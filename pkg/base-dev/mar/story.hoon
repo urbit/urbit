@@ -65,16 +65,6 @@
   ++  mime                                       ::  retrieve form %mime
     |=  [p=mite q=octs]
     =/  story-text    `@t`q.q
-    =/  parsed-story  `(list [@uv (list [@t wain])])`(rash story-text parse-story)
-    ^-  story
-    %-  ~(gas by *story)
-    %+  turn  parsed-story
-    |=  [tak=tako:clay proses-list=(list [@t wain])]
-    ^-  chapter
-    :-  tak
-    %-  silt
-    %+  turn  proses-list
-    |=  [[title=@t body=(list @t)]]
-    [title (of-wain:format body)]
+    `story`(rash story-text parse-story)
   --
 --
