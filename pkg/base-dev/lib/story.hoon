@@ -6,26 +6,22 @@
 ++  dif-ju
   |=  [a=story b=story]
   ^-  story
+  ::  if 0 is the empty set,
+  ::  a \ 0 = a
+  ::  0 \ b = 0  :: anything in 0 but not in b is by definition 0
+  ::
+  ?:  =(~ a)  ~
+  ~&  a
   ::  uno := (a-b) + (merged items in both a and b) + (b-a)
   ::  ret := (a-b) + (merged items in both a and b)  
   ::  ret = (~(int by a) uno)  :: preserve only the entries whose keys are in a
-  ::
-  ::
-  ::  if 0 is the empty set,
-  ::  a \ 0 = a
-  ::  0 \ b = 0  :: anything not in 0 but in b is by default 0
-  ?:  =(~ a)  ~
-  ~&  a
   =/  uno=story
-    ::~!  ((~(uno by story-a) story-a) |=(* *proses))
-    ::~!  ((~(uno by `story`a) `story`a) |=(* *proses))
     %-  (~(uno by a) b)
     |=  [k=tako:clay proses-a=proses proses-b=proses]
     ^-  proses
     (~(dif in proses-a) proses-b)
   ::
-  =/  ret=story  ::story-a  
-    (~(int by a) uno)
+  =/  ret=story  (~(int by a) uno)
   :: normalizing step, remove any keys with null sets, 
   :: which can occur if proses-a == proses-b above
   %-  ~(gas by *story)
@@ -69,8 +65,8 @@
   ==
 ::
 ++  prose-to-text
-  |=  pro=prose
-  =/  [title=@t body=@t]  pro
+  |=  prz=prose
+  =/  [title=@t body=@t]  prz
   ^-  tape
   ;:  welp
     "{(trip title)}"
