@@ -636,7 +636,6 @@
           c3_c*            pax_c;               //  pier directory
           c3_w             lif_w;               //  lifecycle barrier
           c3_d             who_d[2];            //  identity
-          c3_c*            who_c;               //  identity as C string
           c3_o             fak_o;               //  yes iff fake security
           c3_o             liv_o;               //  fully live
           u3_disk*         log_u;               //  event log
@@ -675,7 +674,6 @@
         u3_pier_spin(u3_pier* pir_u);
 
 #     define u3L  u3_Host.lup_u             //  global event loop
-#     define u3Z  (&(u3_Raft))
 #     define u3K  u3_King
 
   /** Global variables.
