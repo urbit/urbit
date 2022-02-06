@@ -7,13 +7,13 @@
         [[syd=desk ~] ~]
     ==
 ::
-::  List all commit messages for the given desk
+::  (Internal) List all commit messages for the given desk, 
+::  including orphans (i.e. ones that have no connection to the file graph)
 ::
-::  TODO remove this outdated generator, superseded by story-log
-=/  our  p.bec
-=/  tale=story  .^(story %cx /(scot %p our)/[syd]/(scot %da now)/story)
+=/  our            p.bec
+=/  tale=story     .^(story %cx /(scot %p our)/[syd]/(scot %da now)/story)
 =/  story-to-mime  .^($-(story mime) %cf /(scot %p our)/[syd]/(scot %da now)/story/mime)
-=/  tale-mime   (story-to-mime tale)
-=/  tale-text  `@t`q.q.tale-mime
+=/  tale-mime      (story-to-mime tale)
+=/  tale-text      `@t`q.q.tale-mime
 :-  %tang
 [tale-text ~]

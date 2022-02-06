@@ -4074,9 +4074,10 @@
         =/  tako-b  (slav %uv i.t.t.pax)
         =/  yaki-a  (~(got by hut.ran) tako-a)
         =/  yaki-b  (~(got by hut.ran) tako-b)
-        %+  turn  ~(tap in (find-merge-points yaki-a yaki-b))
+        %+  turn    ~(tap in (find-merge-points yaki-a yaki-b))
         |=  =yaki
         r.yaki
+      ::
           %base
         ?>  ?=(^ t.t.pax)
         :^  ~  ~  %uvs  !>
