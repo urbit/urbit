@@ -53,7 +53,7 @@
     ::  Otherwise, record the current message if exists
     ?:  ?&(?=(^ mergebase.state) =(u.mergebase.state r.current-commit))
       [result=result.state mergebase=~]
-    commit-loop(current-commit parent-commit, state [?~(msg result.state [u.msg result.state]) mergebase.state])
+    commit-loop(current-commit parent-commit, result.state ?~(msg result.state [u.msg result.state]))
   ::
       [tako:clay tako:clay ~]
     ::
