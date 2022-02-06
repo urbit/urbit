@@ -442,15 +442,40 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
         res = u3_nul;
         break;
       }
+      //  command list.
+      //
+      case c3__help: {
+        res = u3i_list(
+            u3nc(c3__args, u3_nul),
+            u3nc(c3__help, u3_nul),
+            u3nc(c3__khan, u3_nul),
+            u3nc(c3__live, u3_nul),
+            u3nc(c3__mass, u3_nul),
+            u3nc(c3__port, u3nt(c3__ames, c3__http, u3_nul)),
+            u3nc(c3__v, u3_nul),
+            u3nc(c3__vars, u3_nul),
+            u3_none);
+        res = u3nt(u3_nul, u3_nul, res);
+        break;
+      }
       //  simple health check.
       //
       case c3__live: {
-        res = u3nt(u3_nul, u3_nul, c3y);
+        res = u3nt(u3_nul, u3_nul, u3K.pir_u->liv_o);
         break;
       }
       //  true iff the %khan vane is live (meaning %fyrd is supported.)
+      //
       case c3__khan: {
         res = u3nt(u3_nul, u3_nul, con_u->kan_o);
+        break;
+      }
+      //  |mass output
+      //
+      case c3__mass: {
+        //  TODO
+        //
+        res = u3nc(u3_nul, u3_nul);
         break;
       }
       //  raw command-line options.
@@ -462,7 +487,18 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
         for ( arg_c = u3_Host.ops_u.arg_v; 0 != *arg_c; arg_c++ ) {
           res = u3nc(u3i_string(*arg_c), res);
         }
-        res = u3v_do("flop", res);
+        res = u3nt(u3_nul, u3_nul, u3kb_flop(res));
+        break;
+      }
+      //  runtime metrics list.
+      //
+      case c3__vars: {
+        res = u3i_list(
+          //  TODO  actual metrics (these are surprisingly hard to get at)
+          //
+          u3nc(u3i_string("example-metric"), 1234),
+          u3_none);
+        res = u3nt(u3_nul, u3_nul, res);
         break;
       }
       //  vere version.
