@@ -460,13 +460,9 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
 
         res = u3_nul;
         for ( arg_c = u3_Host.ops_u.arg_v; 0 != *arg_c; arg_c++ ) {
-          u3l_log("%p\n", *arg_c);
-          u3l_log("%s\n", *arg_c);
           res = u3nc(u3i_string(*arg_c), res);
         }
-        u3l_log("here\n");
         res = u3v_do("flop", res);
-        u3l_log("here\n");
         break;
       }
       //  vere version.

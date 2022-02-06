@@ -92,7 +92,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.arg_v[ch_i] = strdup(argv[ch_i]);
   }
   u3_Host.ops_u.arg_v[argc] = 0;
-  u3l_log("%s %d\n", u3_Host.ops_u.arg_v[0], argc);
 
   while ( -1 != (ch_i=getopt(argc, argv,
                  "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
