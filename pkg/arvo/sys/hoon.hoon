@@ -13282,10 +13282,12 @@
       =^  mil  grub  (caching-mint %noun [%wing q.gen])
       =^  mir  grub  (caching-mint(sut dox) %noun [%wing q.gen])
       =/  syx  [p=(cove q.mil) q=(cove q.mir)]
+      ?.  =(p.syx q.syx)
+        ~>(%mean.'mull-bonk-a' !!)
       =^  fil  grub  (caching-fish(sut p.waz) p.syx)
       =^  fir  grub  (caching-fish(sut q.waz) q.syx)
       =/  pov  [p=fil q=fir]
-      ?.  &(=(p.syx q.syx) =(p.pov q.pov))
+      ?.  =(fil fir)
         ~>(%mean.'mull-bonk-a' !!)
       (caching-beth bool)
     ::
