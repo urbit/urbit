@@ -2,6 +2,11 @@
 
 #include "c/queue.h"
 
+#include "c/portable.h"
+#include "c/types.h"
+#include "c/defs.h"
+
+
 //! Single element of a doubly-linked list.
 struct _node {
   void*         dat_v;  //!< payload data
@@ -17,3 +22,11 @@ struct _c3_queue {
   _node* las_u;  //!< last node in queue
   size_t len_i;  //!< length of queue in nodes
 };
+
+
+c3_queue*
+c3_queue_init(void)
+{
+  c3_queue* que_u = c3_calloc(sizeof(*que_u));
+  return que_u;
+}
