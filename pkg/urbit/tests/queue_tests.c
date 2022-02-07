@@ -40,12 +40,14 @@ _test_push_back(void)
   // Push a bunch of numbers.
   {
     c3_queue* que_u = c3_queue_init();
+    c3_assert(NULL == c3_queue_peek_back(que_u));
     size_t len_i = 10;
     for ( size_t idx_i = 0; idx_i < len_i; idx_i++ ) {
       c3_assert(idx_i == c3_queue_length(que_u));
       size_t* dat_i = c3_queue_push_back(que_u, &idx_i, sizeof(idx_i));
       c3_assert(NULL != dat_i);
       c3_assert(idx_i == *dat_i);
+      c3_assert(idx_i == *(size_t*)c3_queue_peek_back(que_u));
     }
     c3_assert(len_i == c3_queue_length(que_u));
     // We leak the memory associated with the nodes here, but that's okay
@@ -56,6 +58,7 @@ _test_push_back(void)
   // Push a bunch of strings.
   {
     c3_queue* que_u = c3_queue_init();
+    c3_assert(NULL == c3_queue_peek_back(que_u));
     static char* strs_c[] = {
       "antonio",
       "bingbing",
@@ -70,6 +73,7 @@ _test_push_back(void)
       char* dat_c = c3_queue_push_back(que_u, str_c, 1 + strlen(str_c));
       c3_assert(NULL != dat_c);
       c3_assert(0 == strcmp(str_c, dat_c));
+      c3_assert(0 == strcmp(str_c, (char*)c3_queue_peek_back(que_u)));
     }
     c3_assert(len_i == c3_queue_length(que_u));
     // We leak the memory associated with the nodes here, but that's okay
