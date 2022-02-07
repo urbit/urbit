@@ -6,22 +6,10 @@
 
 #include <stddef.h>
 
-//! Single element of a doubly-linked list.
-struct _c3_node {
-  void*            dat_v;  //!< payload data
-  size_t           siz_i;  //!< size of payload data in bytes
-  struct _c3_node* nex_u;  //!< next node
-  struct _c3_node* pre_u;  //!< previous node
-};
-typedef struct _c3_node c3_node;
 
-//! Queue abstraction backed by a doubly-linked list.
-struct _c3_queue {
-  c3_node* fir_u;  //!< first node in queue
-  c3_node* las_u;  //!< last node in queue
-  size_t   len_i;  //!< length of queue in nodes
-};
+//! Opaque queue type.
 typedef struct _c3_queue c3_queue;
+
 
 //! Create a new queue.
 //!
