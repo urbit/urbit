@@ -24,6 +24,16 @@ struct _c3_queue {
 };
 
 
+static _node*
+_create_node(const void* const dat_v, size_t siz_i)
+{
+  _node* nod_u = c3_calloc(sizeof(*nod_u));
+  nod_u->siz_i = siz_i;
+  nod_u->dat_v = c3_malloc(nod_u->siz_i);
+  memcpy(nod_u->dat_v, dat_v, nod_u->siz_i);
+  return nod_u;
+}
+
 c3_queue*
 c3_queue_init(void)
 {
@@ -36,4 +46,32 @@ size_t
 c3_queue_length(const c3_queue* const que_u)
 {
   return (NULL == que_u) ? 0 : que_u->len_i;
+}
+
+
+void*
+c3_queue_push_back(c3_queue* const que_u,
+                   const void* const dat_v,
+                   const size_t siz_i)
+{
+  if ( NULL == que_u || NULL == dat_v ) {
+    return NULL;
+  }
+
+  _node* nod_u = _create_node(dat_v, siz_i);
+
+  if ( 0 == c3_queue_length(que_u) ) {
+    c3_assert(NULL == que_u->fir_u && NULL == que_u->las_u);
+    que_u->fir_u = nod_u;
+    que_u->las_u = nod_u;
+  }
+  else {
+    c3_assert(NULL != que_u->fir_u && NULL != que_u->las_u);
+    que_u->las_u->nex_u = nod_u;
+    nod_u->pre_u = que_u->las_u;
+    que_u->las_u = nod_u;
+  }
+  que_u->len_i++;
+
+  return nod_u->dat_v;
 }

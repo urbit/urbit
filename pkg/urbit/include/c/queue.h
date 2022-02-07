@@ -43,14 +43,19 @@ c3_queue_length(const c3_queue* const que_u);
 //! @param[in] siz_i  Size of the payload in bytes.
 //!
 //! @return NULL  `que_u` was NULL.
+//! @return NULL  `dat_v` was NULL.
 //! @return       Heap-allocated pointer to the newly added node's payload.
 //!               Should NOT be freed by caller.
 void*
-c3_queue_push_back(c3_queue* const que_u, const void* dat_v, const size_t siz_i);
+c3_queue_push_back(c3_queue* const que_u,
+                   const void* const dat_v,
+                   const size_t siz_i);
 
 //! See c3_queue_push_back().
 void*
-c3_queue_push_front(c3_queue* const que_u, const void* dat_v, const size_t siz_i);
+c3_queue_push_front(c3_queue* const que_u,
+                    const void* const dat_v,
+                    const size_t siz_i);
 
 
 //! Get the last node from the back of `que_u`.
