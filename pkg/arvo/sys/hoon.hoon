@@ -13146,9 +13146,11 @@
       (~(mull caching-et p.gen q.gen) gol dox)
     ::
         [%dtkt *]
+      =^  foo  grub  $(gen q.gen, gol %noun)
       $(gen [%kttr p.gen])
     ::
         [%dtls *]
+      =^  foo  grub  $(gen p.gen, gol [%atom %$ ~])
       (caching-beth [%atom %$ ~])
     ::
         [%sand *]
@@ -13160,12 +13162,17 @@
       (caching-beth rig)
     ::
         [%dttr *]
+      =^  foo  grub  $(gen p.gen, gol %noun)
+      =^  bar  grub  $(gen q.gen, gol %noun)
       (caching-beth %noun)
     ::
         [%dtts *]
+      =^  foo  grub  $(gen p.gen, gol %noun)
+      =^  bar  grub  $(gen q.gen, gol %noun)
       (caching-beth bool)
     ::
         [%dtwt *]
+      =^  foo  grub  $(gen p.gen, gol %noun)
       (caching-beth bool) ::  XX  =|
     ::
         [%hand *]
@@ -13183,6 +13190,7 @@
       =^  wor  grub  (caching-play p.gen)
       =^  lef  grub  (caching-nice wor)
       =^  rig  grub  (caching-play(sut dox) p.gen)
+      =^  foo  grub  $(gen q.gen, gol lef)
       :_  grub
       [p=lef q=rig]
     ::
