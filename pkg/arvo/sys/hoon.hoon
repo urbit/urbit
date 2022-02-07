@@ -10581,7 +10581,8 @@
       ::
           [%face *]
         =^  val  grub  dext(sut q.sut)
-        [(face p.sut val) grub]
+        :_  grub
+        (face p.sut val)
       ::
           [%fork *]
         =/  yed  ~(tap in p.sut)
@@ -10968,7 +10969,8 @@
       =^  rye  grub  (caching-find(sut dox) %read hyp)
       ?:  ?=(%| -.lef)
         ?>  &(?=(%| -.rye) ?=(~ rig))
-        [[p.p.lef p.p.rye] grub]
+        :_  grub
+        [p.p.lef p.p.rye]
       ?>  ?=(%& -.rye)
       =;  [par=(pair type type) grun=_grub]
         ?.  vet
@@ -11934,6 +11936,8 @@
     ::  tal: map from battery axis to foot
     ::
     =;  tal=(map @ud hoon)
+      ::  produce lazy battery
+      ::
       =/  =stencil
         :+  %lazy  1
         |=  axe=@ud
@@ -11947,7 +11951,8 @@
             sut  (core sut [nym hud %gold] sut [[%lazy 1 ..^$] ~] dom)
           ==
         hemped
-      [[stencil ~] grub]
+      :_  grub
+      [stencil ~]
     ::
     %-  ~(gas by *(map @ud hoon))
     =|  yeb=(list (pair @ud hoon))
