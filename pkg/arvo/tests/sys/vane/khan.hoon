@@ -3,16 +3,14 @@
 =/  khan-gate  (khan-raw ~nul)
 |%
 ++  test-khan-fyrd-start-args
-  =^  results1  khan-gate
+  =^  born-moves  khan-gate
     %-  khan-call  :*
       khan-gate
       now=~1111.1.1
       scry=scry-provides-mark
       call-args=[duct=~[/initial-born-duct] ~ [%born ~]]
-      ^=  moves-check
-        |=  mev=(list move:khan-gate)
-        (expect-eq !>(~) !>(mev))
     ==
+  =/  results-0  (expect-eq !>(~) !>(born-moves))
   =/  =fyrd:khan  [%base %nonexistent %noun %noun ~]
   =/  now=@da  (add ~1111.1.1 ~s1)
   =/  =dais:clay  dais-noun
@@ -20,7 +18,7 @@
     :*  ~  `%'khan-fyrd--0vsome.ductt'  [~nul %base %da now]
         %nonexistent  (vale.dais ~)
     ==
-  =^  results2  khan-gate
+  =^  start-moves  khan-gate
     %-  khan-call
       :*  khan-gate
           now
@@ -28,55 +26,58 @@
           ^=  call-args
             :*  duct=~[//khan/1/0vsome.ductt]  ~
                 %fyrd  fyrd
-            ==
-          ^=  moves-check
-            |=  mev=(list move:khan-gate)
-            ^-  tang
-            =/  r0  (expect-eq !>(2) !>((lent mev)))
-            =/  r1
-              %+  expect-eq
-                !>  :*  ~[//khan/1/0vsome.ductt]
-                        %pass  //g  %g  %deal
-                        [~nul ~nul]  %spider  %watch
-                        /thread-result/'khan-fyrd--0vsome.ductt'
-                    ==
-                !>  (head mev)
-            ::  XX this is somewhat verbose because we do not
-            ::  have a +expect-eq for recursive vases, and spider
-            ::  takes a double-nested vase. so we first test that
-            ::  the poke is correct aside from the vase; then we
-            ::  check that the outer vase is correct aside from
-            ::  the inner vase; then we check that the inner vase
-            ::  is correct.
-            ::
-            =/  rem  (rear mev)
-            =/  r2
-              %+  expect-eq
-                !>  :*  ~[//khan/1/0vsome.ductt]
-                        %pass  //g  %g  %deal
-                        [~nul ~nul]  %spider  %poke
-                        %spider-start  ~
-                    ==
-                !>  rem(+1023 ~)
-            =/  vez=*  +1023:(rear mev)
-            =/  r3
-              ;;  tang
-              %+  slum  expect-eq
-              :-  !>  args(+31 ~)
-                  !>  +.vez(+31 ~)
-            =/  r4
-              ;;  tang
-              %+  slum  expect-eq
-              :-  +31.args
-                  +31.+.vez
-            ;:  weld
-              r0
-              r1
-              r2
-              r3
-              r4
       ==    ==
-  (weld results1 results2)
+  =/  results-0  (expect !>(=(2 (lent start-moves))))
+  =/  results-1
+    %+  expect-eq
+      !>  :*  ~[//khan/1/0vsome.ductt]
+              %pass  //g  %g  %deal
+              [~nul ~nul]  %spider  %watch
+              /thread-result/'khan-fyrd--0vsome.ductt'
+          ==
+      !>  (head start-moves)
+  =/  start-move  (rear start-moves)
+  =/  results-2
+    (expect !>(=(~[//khan/1/0vsome.ductt] p.start-move)))
+  =-  :(weld results-0 results-1 results-2 rest)
+  ^=  rest
+  ?.  ?=(%pass -.q.start-move)
+    ~&  >>>  [exp+%pass act+-.q.start-move]
+    (expect !>(|))
+  ?.  =(//g wire.q.start-move)
+    ~&  >>>  [exp+//g act+wire.q.start-move]
+    (expect !>(|))
+  ?.  =(%deal +<.note.q.start-move)
+    ~&  >>>  [exp+%deal [%act +<.note.q.start-move]]
+    (expect !>(|))
+  ?.  =([~nul ~nul] p.note.q.start-move)
+    ~&  >>>  [exp+[~nul ~nul] act+p.note.q.start-move]
+    (expect !>(|))
+  ?.  =(%spider q.note.q.start-move)
+    ~&  >>>  [exp+%spider act+q.note.q.start-move]
+    (expect !>(|))
+  ?.  ?=(%poke -.r.note.q.start-move)
+    ~&  >>>  [exp+%poke act+-.r.note.q.start-move]
+    (expect !>(|))
+  ?.  ?=(%spider-start p.cage.r.note.q.start-move)
+    ~&  >>>  [exp+%spider-start act+p.cage.r.note.q.start-move]
+    (expect !>(|))
+  =/  args
+    !<  [p=(unit @ta) q=(unit @ta) r=beak s=term t=vase]
+    q.cage.r.note.q.start-move
+  ?.  =(~ p.args)
+    ~&  >>>  bad-par+p.args
+    (expect !>(|))
+  ?.  =(`'khan-fyrd--0vsome.ductt' q.args)
+    ~&  >>>  bad-tid+q.args
+    (expect !>(|))
+  ?.  =([~nul %base %da now] r.args)
+    ~&  >>>  bad-beak+r.args
+    (expect !>(|))
+  ?.  =(%nonexistent s.args)
+    ~&  >>>  bad-name+s.args
+    (expect !>(|))
+  (expect-eq !>(~) t.args)
 ::  ++  test-khan-take-dud
 ::    !!
 ::  ++  test-khan-take-watch-fail
@@ -94,17 +95,11 @@
                 dud=(unit goof)
                 wrapped-task=(hobo task:khan)
             ==
-          $=  moves-check
-            $-  (list move:khan-gate)  tang
       ==
-  ^-  [tang _khan-gate]
+  ^-  [(list move:khan-gate) _khan-gate]
   =/  khan-core
     (khan-gate now eny=`@uvJ`0xdead.beef scry=scry)
-  =^  moves  khan-gate
-    (call:khan-core [duct dud wrapped-task]:call-args)
-  =/  output=tang
-    (moves-check moves)
-  [output khan-gate]
+  (call:khan-core [duct dud wrapped-task]:call-args)
 ++  dais-noun  ^-  dais:clay
   |_  sam=vase
   ++  diff  !!
