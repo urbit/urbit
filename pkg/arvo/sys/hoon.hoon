@@ -12724,8 +12724,8 @@
     ::
         [%sgzp *]
       =^  lef  grub  (caching-play p.gen)
-      =^  rig  grub  $(gen q.gen)
       ~_  duck(sut lef)
+      =^  rig  grub  $(gen q.gen)
       [rig grub]
     ::
         [%sggr *]
@@ -12814,8 +12814,8 @@
     ::
         [%lost *]
       ?:  vet
-        =^  wor  grub  (caching-play p.gen)
-        ~_  (dunk(sut wor) 'lost')
+        ~_  =^  wor  grub  (caching-play p.gen)
+            (dunk(sut wor) 'lost')
         ~>(%mean.'mint-lost' !!)
       :_  grub
       [%void [%0 0]]
