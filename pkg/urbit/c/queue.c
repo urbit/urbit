@@ -75,3 +75,30 @@ c3_queue_push_back(c3_queue* const que_u,
 
   return nod_u->dat_v;
 }
+
+void*
+c3_queue_push_front(c3_queue* const que_u,
+                    const void* const dat_v,
+                    const size_t siz_i)
+{
+  if ( NULL == que_u || NULL == dat_v ) {
+    return NULL;
+  }
+
+  _node* nod_u = _create_node(dat_v, siz_i);
+
+  if ( 0 == c3_queue_length(que_u) ) {
+    c3_assert(NULL == que_u->fir_u && NULL == que_u->las_u);
+    que_u->fir_u = nod_u;
+    que_u->las_u = nod_u;
+  }
+  else {
+    c3_assert(NULL != que_u->fir_u && NULL != que_u->las_u);
+    que_u->fir_u->pre_u = nod_u;
+    nod_u->nex_u = que_u->fir_u;
+    que_u->fir_u = nod_u;
+  }
+  que_u->len_i++;
+
+  return nod_u->dat_v;
+}
