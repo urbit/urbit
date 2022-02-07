@@ -30,3 +30,10 @@ c3_queue_init(void)
   c3_queue* que_u = c3_calloc(sizeof(*que_u));
   return que_u;
 }
+
+
+size_t
+c3_queue_length(const c3_queue* const que_u)
+{
+  return (NULL == que_u) ? 0 : que_u->len_i;
+}
