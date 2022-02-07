@@ -63,6 +63,7 @@ c3_queue_push_front(c3_queue* const que_u,
 //! @param[in] que_u
 //!
 //! @return NULL  `que_u` was NULL.
+//! @return NULL  `que_u` was empty.
 //! @return       Heap-allocated pointer to the last node's payload in `que_u`.
 //!               Should NOT be freed by caller.
 void*

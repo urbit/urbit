@@ -103,8 +103,15 @@ c3_queue_push_front(c3_queue* const que_u,
   return nod_u->dat_v;
 }
 
+
 void*
 c3_queue_peek_back(const c3_queue* const que_u)
 {
   return (0 == c3_queue_length(que_u)) ? NULL : que_u->las_u->dat_v;
+}
+
+void*
+c3_queue_peek_front(const c3_queue* const que_u)
+{
+  return (0 == c3_queue_length(que_u)) ? NULL : que_u->fir_u->dat_v;
 }
