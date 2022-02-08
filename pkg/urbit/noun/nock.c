@@ -1,12 +1,13 @@
 /* g/n.c
 **
 */
+#include <stdarg.h>
 #include "all.h"
 
 // define to have each opcode printed as it executes,
 // along with some other debugging info
 #        undef VERBOSE_BYTECODE
-//#define VERBOSE_BYTECODE 1
+//~define VERBOSE_BYTECODE 1
 
 #if 0
 // Retained for debugging purposes.
@@ -805,7 +806,8 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
     if ( c3y == u3ud(op) ) {
       switch ( op ) {
         default:
-          buf_y[i_w] = (c3_y) u3h(ops);
+          // should just reuse op
+          buf_y[i_w] = (c3_y) op;
           break;
 
         /* registration site index args */
@@ -1247,12 +1249,12 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   c3_w tot_w = 0;
   u3_noun cod, arg, hed, tel;
   u3x_cell(fol, &cod, &arg);
-  if ( c3y == u3du(cod) ) {
-    tot_w += _n_comp(ops, cod, c3n, c3n);
-    ++tot_w; _n_emit(ops, SWAP);
-    tot_w += _n_comp(ops, arg, c3n, c3n);
-    ++tot_w; _n_emit(ops, (c3y == los_o ) ? AULT : AUTO);
-  }
+  if ( c3y == u3du(cod) ) {                               // [bus            ..]
+    tot_w += _n_comp(ops, cod, c3n, c3n);                 // [hed bus        ..] // compute head: don't lose, not in tail
+    ++tot_w; _n_emit(ops, SWAP);                          // [bus hed        ..]
+    tot_w += _n_comp(ops, arg, c3n, c3n);                 // [tel bus hed    ..] // compute tail: don't lose, not in tail
+    ++tot_w; _n_emit(ops, (c3y == los_o ) ? AULT : AUTO); // [ [hed tel]     ..]
+  }                                                       // [ [hed tel] bus ..]
   else switch ( cod ) {
     case 0:
       if ( c3n == u3ud(arg) ) {
@@ -1286,12 +1288,12 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
     case 1:
       switch ( arg ) {
         case 0:
-          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
+          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0); // actual 0
           break;
         case 1:
-          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
+          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1); // actual 1
           break;
-        default:
+        default: // these are all indexes
           op_y = (c3y == los_o)
                ? (arg <= 0xFF ? LILB : arg <= 0xFFFF ? LILS : LIBL)  // overflows to LISL
                : (arg <= 0xFF ? LITB : arg <= 0xFFFF ? LITS : LIBK); // overflows to LISK
@@ -1318,7 +1320,10 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       break;
 
     case 4:
+      // outputed opcodes (backwards like stacktrace), argument, keep/lose on stack AND refcount, tail or not
+      // HERE: ops, arg, you lose if I do, we're not a tail call,
       tot_w += _n_comp(ops, arg, los_o, c3n);
+      // BUMP replaces the top of the stack with its result
       ++tot_w; _n_emit(ops, BUMP);
       break;
 
@@ -1748,8 +1753,8 @@ _n_prog_free(u3n_prog* pog_u)
 }
 
 void slog_me(c3_l pri_l, c3_c* message) {
-  c3_c str_c[strlen(message)+1];
-  snprintf(str_c, strlen(message), "%s", message);
+  c3_c str_c[strlen(message)+2];
+  snprintf(str_c, strlen(message)+1, "%s", message);
   u3t_slog(
     u3nc(
       pri_l,
@@ -1812,18 +1817,17 @@ slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
 }
 
 void
-xray(c3_l pri_l, u3_noun fol) {
-  c3_w ip_w = 0;
+xray(c3_l pri_l, u3_noun fol, c3_w ip_w) {
   u3n_prog* pog_u = _n_bite(fol);
   c3_y* pog = pog_u->byc_u.ops_y;
-  slog_bytecode(pri_l, pog, 0);
+  slog_bytecode(pri_l, pog, ip_w);
   _n_prog_free(pog_u);
 }
 
-void //u3n_prog*
-orry(u3_noun fol) {
-  // TODO: replace with a call for the outer context
-  //return _n_bite(fol);
+void
+orry(c3_l pri_l, u3n_prog* pog_u, c3_w ip_w) {
+  c3_y* pog = pog_u->byc_u.ops_y;
+  slog_bytecode(pri_l, pog, ip_w);
 }
 
 // ---------------END DANEs EDIT -----
@@ -1837,7 +1841,7 @@ orry(u3_noun fol) {
 **                 any hints herein must be whitelisted in _n_burn().
 */
 static c3_o
-_n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
+_n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out, int arg_count, ...)
 {
   u3_noun p_hin, q_hin;
   if ( c3__bout == u3h(hin) ) {
@@ -1845,10 +1849,22 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
     *out = u3i_cell(u3h(hin), now);
   }
   else if ( (c3y == u3r_cell(hin, &p_hin, &q_hin)) &&
-  (c3__xray == p_hin) ) {
-    c3_c str_c[64];
-    u3_noun info;
-    xray(0, q_hin);
+  (c3__orry == p_hin) && arg_count > 0 ) {
+    va_list args;
+    va_start(args, arg_count);
+    u3n_prog* pog_u = va_arg(args, u3n_prog*);
+    c3_w ip_w = va_arg(args, c3_w);
+    va_end(args);
+    orry(0, pog_u, ip_w);
+    *out = u3_nul;
+  }
+  else if ( (c3y == u3r_cell(hin, &p_hin, &q_hin)) &&
+  (c3__xray == p_hin) && arg_count > 0 ) {
+    va_list args;
+    va_start(args, arg_count);
+    c3_w ip_w = va_arg(args, c3_w);
+    va_end(args);
+    xray(0, q_hin, ip_w);
     *out = u3_nul;
   }
   else {
@@ -1874,18 +1890,6 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
     u3t_slog(u3nc(0, u3i_string(str_c)));
     u3z(delta);
   }
-  //else if ( (c3y == u3r_cell(tok, &p_tok, &q_tok)) &&
-  //((c3__orry == p_tok) || (c3__xray == p_tok)) ) {
-  //  c3_c str_c[64];
-  //  if ( c3__orry == p_tok ) {
-  //    snprintf(str_c, 63, "outer bytecode");
-  //  }
-  //  else {
-  //    snprintf(str_c, 63, "inner bytecode");
-  //  }
-  //  u3t_slog(u3nc(0, u3i_string(str_c)));
-  //  //slog_bytecode(0, (u3n_prog*)q_tok);
-  //}
   else {
     c3_assert( u3_nul == tok );
   }
@@ -1903,18 +1907,44 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
 **                 any hints herein must be whitelisted in _n_burn().
 */
 static c3_o
-_n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
+_n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu, int arg_count, ...)
 {
   if ( c3__bout == u3h(hin) ) {
     u3_atom now = u3i_chub(u3t_trace_time());
     *clu = u3i_trel(u3h(hin), *clu, now);
   }
-  //else if ( c3__orry == u3h(hin) ) {
-  //  u3_noun info = (u3_noun)orry(u3t(hin));
-  //  *clu = u3i_trel(u3h(hin), *clu, info);
-  //}
-  else if ( c3__xray == u3h(hin) ) {
-    *clu = u3i_trel(u3h(hin), *clu, u3t(hin));
+  else if ( c3__orry == u3h(hin) && arg_count > 0) {
+    u3_noun p_q_tok, q_q_tok;
+    c3_assert(c3y == u3r_cell(*clu, &p_q_tok, &q_q_tok));
+    c3_c str_c[64];
+    c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
+    snprintf(str_c, 63, "%%orry");
+    //NOTE: these are backwards from the style used by %bout
+    //      likewise I may want to update how nara and hela print headlines as well
+    //u3t_dynamic_header(pri_l, u3k(q_q_tok), u3i_string(str_c));
+    u3t_dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
+    va_list args;
+    va_start(args, arg_count);
+    u3n_prog* pog_u = va_arg(args, u3n_prog*);
+    c3_w ip_w = va_arg(args, c3_w);
+    va_end(args);
+    orry(pri_l, pog_u, ip_w);
+    *clu = u3_nul;
+  }
+  else if ( c3__xray == u3h(hin) && arg_count > 0) {
+    u3_noun p_q_tok, q_q_tok;
+    c3_assert(c3y == u3r_cell(*clu, &p_q_tok, &q_q_tok));
+    c3_c str_c[64];
+    snprintf(str_c, 63, "%%xray");
+    c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
+    //u3t_dynamic_header(pri_l, u3k(q_q_tok), u3i_string(str_c));
+    u3t_dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
+    va_list args;
+    va_start(args, arg_count);
+    c3_w ip_w = va_arg(args, c3_w);
+    va_end(args);
+    xray(pri_l, u3t(hin), ip_w);
+    *clu = u3_nul;
   }
   else {
     u3z(*clu);
@@ -1963,27 +1993,6 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
 
     u3z(delta);
   }
-  else if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok)) &&
-      ( (c3__orry == p_tok) || (c3__xray == p_tok) )
-  ) {
-    u3_noun p_q_tok, q_q_tok;
-    c3_assert(c3y == u3r_cell(q_tok, &p_q_tok, &q_q_tok));
-    c3_c str_c[64];
-    if ( c3__orry == p_tok ) {
-      snprintf(str_c, 63, "outer bytecode");
-    }
-    else {
-      snprintf(str_c, 63, "inner bytecode");
-    }
-    c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
-    u3t_dynamic_header(pri_l, u3k(q_q_tok), u3i_string(str_c));
-    if ( c3__orry == p_tok ) {
-      // DO NOTHING
-    }
-    else {
-      xray(pri_l, r_tok);
-    }
-  }
   else {
     c3_assert( u3_nul == tok );
   }
@@ -2027,6 +2036,7 @@ typedef struct {
 static u3_noun
 _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 {
+
   /* OPCODE TABLE */
   static void* lab[] = {
     &&do_halt, &&do_bail,
@@ -2486,13 +2496,13 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-        fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", u3x_at(sit_u->axe, o), top);
-        _n_print_byc(pog, ip_w);
+        //fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", u3x_at(sit_u->axe, o), top);
+        //_n_print_byc(pog, ip_w);
 #endif
       }
 #ifdef VERBOSE_BYTECODE
       else {
-        fprintf(stderr, "tail jet\r\n");
+        //fprintf(stderr, "tail jet\r\n");
       }
 #endif
       BURN();
@@ -2655,15 +2665,16 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     hilt_fore_in:
       x   = u3k(pog_u->lit_u.non[x]);
       top = _n_peek(off);   // bus
-      /*
-      if ( c3__xray == u3h(x) ) {
-        // TODO: we can thread stuff HERE
-        x = _n_hilt_fore(x, *top, &o);
+      c3_c str_c[64];
+      if ( c3__orry == u3h(x) ) {
+        x = _n_hilt_fore(x, *top, &o, 2, pog_u, ip_w);
+      }
+      else if ( c3__xray == u3h(x) ) {
+        x = _n_hilt_fore(x, *top, &o, 1, ip_w);
       }
       else {
-        x = _n_hilt_fore(x, *top, &o);
-      }*/
-      x = _n_hilt_fore(x, *top, &o);
+        x = _n_hilt_fore(x, *top, &o, 0);
+      }
       _n_push(mov, off, o);
       _n_swap(mov, off);    // bus
       _n_push(mov, off, x); // shortcircuit if c3n
@@ -2679,15 +2690,15 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       x   = u3k(pog_u->lit_u.non[x]);
       o   = _n_pep(mov, off);   //  [bus]
       top = _n_peek(off);
-      /*
-      if ( c3__xray == u3h(x) ) {
-        // TODO: we can thread stuff HERE
-        x = _n_hint_fore(x, *top, &o);
+      c3_c str_d[64];
+      if ( c3__orry == u3h(x) ) {
+        x = _n_hint_fore(x, *top, &o, 2, pog_u, ip_w);
       }
-      else {
-        x = _n_hint_fore(x, *top, &o);
-      }*/
-      x   = _n_hint_fore(x, *top, &o);
+      else if ( c3__xray == u3h(x) ) {
+        x = _n_hint_fore(x, *top, &o, 1, ip_w);
+      } else {
+        x = _n_hint_fore(x, *top, &o, 0);
+      }
       _n_push(mov, off, o);     //  [tok bus]
       _n_swap(mov, off);        //  [bus tok]
       _n_push(mov, off, x);     //  [kip bus tok]
