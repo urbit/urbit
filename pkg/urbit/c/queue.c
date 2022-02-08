@@ -26,6 +26,12 @@ struct _c3_queue {
   size_t len_i;  //!< length of queue in nodes
 };
 
+//! Queue iterator.
+struct _c3_queue_iter {
+  size_t sar_i;  //!< starting location
+  _node* cur_u;  //!< current node in queue
+};
+
 //==============================================================================
 // Static functions
 //==============================================================================
