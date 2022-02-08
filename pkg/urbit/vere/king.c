@@ -344,6 +344,8 @@ _king_get_atom(c3_c* url_c)
   CURL *curl;
   CURLcode result;
   long cod_l;
+  c3_y  try_y = 0;
+  u3_noun pro = u3_none;
 
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
@@ -357,32 +359,35 @@ _king_get_atom(c3_c* url_c)
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
 
-  result = curl_easy_perform(curl);
-  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+  while ( u3_none == pro && 5 > try_y ) {
+    sleep(try_y++);
+    result = curl_easy_perform(curl);
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
 
-  //  XX retry?
-  //
-  if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s\n",
-            url_c, curl_easy_strerror(result));
+    //  XX retry?
+    //
+    if ( CURLE_OK != result ) {
+      u3l_log("failed to fetch %s: %s\n",
+              url_c, curl_easy_strerror(result));
+    }
+    else if ( 300 <= cod_l ) {
+      u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
+    }
+    else {
+      curl_easy_cleanup(curl);
+      pro = u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
+      c3_free(buf_u.base);
+      break;
+    }
+  }
+
+  if ( u3_none == pro ) {
+    u3l_log("consistently failed to fetch %s.\n", url_c);
     u3_king_bail();
     exit(1);
   }
-  if ( 300 <= cod_l ) {
-    u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
-    u3_king_bail();
-    exit(1);
-  }
 
-  curl_easy_cleanup(curl);
-
-  {
-    u3_noun pro = u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
-
-    c3_free(buf_u.base);
-
-    return pro;
-  }
+  return pro;
 }
 
 /* _get_cmd_output(): Run a shell command and capture its output.
