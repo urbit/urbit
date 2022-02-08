@@ -168,6 +168,47 @@ _king_boot_done(void* ptr_v, c3_o ret_o)
   u3K.pir_u = u3_pier_stay(sag_w, u3i_string(u3_Host.dir_c));
 }
 
+/* _king_prop(): events from prop arguments
+*/
+u3_noun
+_king_prop()
+{
+  u3_noun mor = u3_nul;
+  while ( 0 != u3_Host.ops_u.vex_u ) {
+    u3_even* vex_u = u3_Host.ops_u.vex_u;
+    switch ( vex_u->kin_i ) {
+      case 1: {  //  file
+        u3_atom jam = u3m_file(vex_u->loc_c);
+        mor = u3nc(u3ke_cue(jam), mor);
+      } break;
+
+      case 2: {  //  url
+        u3_atom jam = _king_get_atom(vex_u->loc_c);
+        mor = u3nc(u3ke_cue(jam), mor);
+      } break;
+
+      case 3: {  //  name
+        //NOTE  this implementation limits us to max 20 char prop names
+        c3_c url_c[80];
+        sprintf(url_c,
+                "https://bootstrap.urbit.org/props/%s.jam",
+                vex_u->loc_c);
+        u3_atom jam = _king_get_atom(url_c);
+        mor = u3nc(u3ke_cue(jam), mor);
+        c3_free(url_c);
+      }
+
+      default: {
+        u3l_log("invalid prop source %d", vex_u->kin_i);
+        exit(1);
+      }
+    }
+
+    u3_Host.ops_u.vex_u = vex_u->pre_u;
+  }
+  return mor;
+}
+
 /* _king_fake(): boot with fake keys
 */
 void
@@ -178,7 +219,7 @@ _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
   //  XX pass kelvin
   //
   c3_d  key_d[4] = {0};
-  u3_noun msg    = u3nq(c3__boot, pill, vent, u3_nul);
+  u3_noun msg    = u3nq(c3__boot, pill, vent, _king_prop());
 
   u3_lord_boot(u3_Host.dir_c, sag_w, key_d, msg,
                (void*)0, _king_boot_done);
@@ -224,42 +265,8 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 
   {
     c3_d   key_d[4] = {0};
-    u3_noun  msg, mor = u3_nul;
-
-    //  include additional bootstrap events if provided
-    //
-    while ( 0 != u3_Host.ops_u.vex_u ) {
-      u3_even* vex_u = u3_Host.ops_u.vex_u;
-      switch ( vex_u->kin_i ) {
-        case 1: {  //  file
-          u3_atom jam = u3m_file(vex_u->loc_c);
-          mor = u3nc(u3ke_cue(jam), mor);
-        } break;
-
-        case 2: {  //  url
-          u3_atom jam = _king_get_atom(vex_u->loc_c);
-          mor = u3nc(u3ke_cue(jam), mor);
-        } break;
-
-        case 3: {  //  name
-          //NOTE  this implementation limits us to max 20 char prop names
-          c3_c url_c[80];
-          sprintf(url_c,
-                  "https://bootstrap.urbit.org/props/%s.jam",
-                  vex_u->loc_c);
-          u3_atom jam = _king_get_atom(url_c);
-          mor = u3nc(u3ke_cue(jam), mor);
-          c3_free(url_c);
-        }
-
-        default: {
-          u3l_log("invalid prop source %d", vex_u->kin_i);
-          exit(1);
-        }
-      }
-
-      u3_Host.ops_u.vex_u = vex_u->pre_u;
-    }
+    u3_noun     msg = u3_nul;
+    u3_noun     mor = _king_prop();
 
     //  include additional key configuration events if we have multiple keys
     //
@@ -278,8 +285,8 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 
       if ( u3_nul != ves ) {
         u3_noun pro = u3nq(c3__prop,
-                           u3i_string("dawn"),
-                           u3i_string("post-userspace"),
+                           c3__dawn,
+                           c3__hind,
                            ves);
         mor = u3nc(pro, mor);
       }

@@ -140,7 +140,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   {
     switch ( ch_i ) {
       case 1: case 2: case 3: {  //  prop-*
-        printf("hit!\n");
         u3_even* nex_u = c3_calloc(sizeof(*nex_u));
         nex_u->kin_i = ch_i;
         nex_u->loc_c = strdup(optarg);
