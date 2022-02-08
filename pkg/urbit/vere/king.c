@@ -195,7 +195,6 @@ _king_prop()
                 vex_u->loc_c);
         u3_atom jam = _king_get_atom(url_c);
         mor = u3nc(u3ke_cue(jam), mor);
-        c3_free(url_c);
       }
 
       default: {
