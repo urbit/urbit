@@ -1,6 +1,6 @@
 //! @file list_tests.c
 
-#include "c/queue.h"
+#include "c/list.h"
 
 #include "c/portable.h"
 #include "c/types.h"

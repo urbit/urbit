@@ -1,4 +1,4 @@
-//! @file queue.h
+//! @file list.h
 //! Generic list abstraction backed by a doubly linked list.
 
 #ifndef C3_LIST_H
