@@ -21,9 +21,10 @@ typedef struct _node _node;
 
 //! Queue abstraction backed by a doubly-linked list.
 struct _c3_queue {
-  _node* fir_u;  //!< first node in queue
-  _node* las_u;  //!< last node in queue
-  size_t len_i;  //!< length of queue in nodes
+  _node*         fir_u;  //!< first node in queue
+  _node*         las_u;  //!< last node in queue
+  size_t         len_i;  //!< length of queue in nodes
+  c3_queue_iter* itr_u;  //!< NULL if no open iterator
 };
 
 //! Queue iterator.
@@ -180,4 +181,35 @@ c3_queue_push_front(c3_queue* const que_u,
   que_u->len_i++;
 
   return nod_u->dat_v;
+}
+
+c3_queue_iter*
+c3_queue_iter_init(c3_queue* const que_u, const size_t sar_i)
+{
+  if ( 0 == c3_queue_length(que_u) || NULL != que_u->itr_u ) {
+    return NULL;
+  }
+
+  que_u->itr_u = c3_malloc(sizeof(que_u->itr_u));
+  que_u->itr_u->sar_i = sar_i;
+
+  switch ( que_u->itr_u->sar_i ) {
+    case C3_QUEUE_ITER_FRONT:
+      que_u->itr_u->cur_u = que_u->fir_u;
+      break;
+    case C3_QUEUE_ITER_BACK:
+      que_u->itr_u->cur_u = que_u->las_u;
+      break;
+    default:
+      c3_free(que_u->itr_u);
+      que_u->itr_u = NULL;
+      break;
+  }
+  return que_u->itr_u;
+}
+
+void*
+c3_queue_iter_step(const c3_queue* const que_u, c3_queue_iter* const itr_u)
+{
+  return NULL;
 }
