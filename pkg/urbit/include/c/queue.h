@@ -79,6 +79,7 @@ c3_queue_peek_front(const c3_queue* const que_u);
 //! @param[in] que_u
 //!
 //! @return NULL  `que_u` was NULL.
+//! @return NULL  `que_u` was empty.
 //! @return       Heap-allocated pointer to the payload of the node that was
 //!               popped from the back of `que_u`. MUST be freed by caller.
 void*

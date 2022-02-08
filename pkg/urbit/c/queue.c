@@ -115,3 +115,31 @@ c3_queue_peek_front(const c3_queue* const que_u)
 {
   return (0 == c3_queue_length(que_u)) ? NULL : que_u->fir_u->dat_v;
 }
+
+
+void*
+c3_queue_pop_back(c3_queue* const que_u)
+{
+  if ( NULL == que_u ) {
+    return NULL;
+  }
+
+  if ( NULL == que_u->las_u ) {
+    c3_assert(NULL == que_u->fir_u);
+    return NULL;
+  }
+
+  _node* nod_u = que_u->las_u;
+  que_u->las_u = que_u->las_u->pre_u;
+  if ( NULL == que_u->las_u ) {
+    que_u->fir_u = NULL;
+  }
+  else {
+    que_u->las_u->nex_u = NULL;
+  }
+  void* dat_v = nod_u->dat_v;
+  c3_free(nod_u);
+  que_u->len_i--;
+
+  return dat_v;
+}
