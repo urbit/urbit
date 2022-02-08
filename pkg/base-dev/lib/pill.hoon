@@ -351,7 +351,7 @@
   ++  install
     |=  [as=desk =beak pri=?]
     ^-  prop
-    :^  %prop  %install  %hind
+    :^  %prop  (rap 3 %install '-' as ~)  %hind
     ::TODO  will exclude non-:directories files, such as /changelog/txt
     =-  (murn - same)
     ^-  (list (unit ovum))
