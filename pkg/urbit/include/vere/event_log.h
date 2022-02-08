@@ -1,5 +1,5 @@
 //! @file event_log.h
-//! Persistent, replayable event log of nouns.
+//! Persistent, replayable event log.
 
 #ifndef VERE_EVENT_LOG_H
 #define VERE_EVENT_LOG_H
@@ -13,6 +13,13 @@
 //! Opaque event log type. `struct _evtlog` should be defined in the source file
 //! that implements this interface.
 typedef struct _evtlog u3_evtlog;
+
+//! Type of callback function used to play a single event in u3_evtlog_replay().
+//!
+//! @param[in] byt_y  Serialized event buffer.
+//! @param[in] len_i  Length of event buffer in bytes.
+typedef void (*const u3_evtlog_play)(const c3_y* const byt_y,
+                                     const size_t len_i);
 
 
 //! Create/open an event log rooted at `dir_c`.
@@ -92,7 +99,7 @@ u3_evtlog_commit(u3_evtlog* const log_u);
 //! @return     Number of events left to replay in `log_u`.
 c3_ws
 u3_evtlog_replay(u3_evtlog* const log_u,
-                 void (*const fun_f)(const u3_noun),
+                 const u3_evtlog_play fun_f,
                  const size_t siz_i);
 
 
