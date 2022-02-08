@@ -30,6 +30,38 @@ size_t
 c3_queue_length(const c3_queue* const que_u);
 
 
+//! Get the last node's payload from the back of `que_u`.
+//!
+//! @param[in] que_u
+//!
+//! @return NULL  `que_u` was NULL.
+//! @return NULL  `que_u` was empty.
+//! @return       Heap-allocated pointer to the last node's payload in `que_u`.
+//!               Should NOT be freed by caller.
+void*
+c3_queue_peek_back(const c3_queue* const que_u);
+
+//! See c3_queue_peek_back().
+void*
+c3_queue_peek_front(const c3_queue* const que_u);
+
+
+//! Remove the last node's payload from the back of `que_u`.
+//!
+//! @param[in] que_u
+//!
+//! @return NULL  `que_u` was NULL.
+//! @return NULL  `que_u` was empty.
+//! @return       Heap-allocated pointer to the payload of the node that was
+//!               popped from the back of `que_u`. MUST be freed by caller.
+void*
+c3_queue_pop_back(c3_queue* const que_u);
+
+//! See c3_queue_pop_back().
+void*
+c3_queue_pop_front(c3_queue* const que_u);
+
+
 //! Push a new node onto the back of `que_u`.
 //!
 //! When pushing a new element onto `que_u`, `siz_i` bytes from `dat_v` are
@@ -56,37 +88,5 @@ void*
 c3_queue_push_front(c3_queue* const que_u,
                     const void* const dat_v,
                     const size_t siz_i);
-
-
-//! Get the last node from the back of `que_u`.
-//!
-//! @param[in] que_u
-//!
-//! @return NULL  `que_u` was NULL.
-//! @return NULL  `que_u` was empty.
-//! @return       Heap-allocated pointer to the last node's payload in `que_u`.
-//!               Should NOT be freed by caller.
-void*
-c3_queue_peek_back(const c3_queue* const que_u);
-
-//! See c3_queue_peek_back().
-void*
-c3_queue_peek_front(const c3_queue* const que_u);
-
-
-//! Remove the last node from the back of `que_u`.
-//!
-//! @param[in] que_u
-//!
-//! @return NULL  `que_u` was NULL.
-//! @return NULL  `que_u` was empty.
-//! @return       Heap-allocated pointer to the payload of the node that was
-//!               popped from the back of `que_u`. MUST be freed by caller.
-void*
-c3_queue_pop_back(c3_queue* const que_u);
-
-//! See c3_queue_pop_back().
-void*
-c3_queue_pop_front(c3_queue* const que_u);
 
 #endif /* ifndef C3_QUEUE_H */
