@@ -63,6 +63,8 @@
     ~&  >>>  [exp+%spider-start act+p.cage.r.note.q.start-move]
     (expect !>(|))
   =/  args
+    ::  XX  $start-args in %/app/spider/hoon
+    ::
     !<  [p=(unit @ta) q=(unit @ta) r=beak s=term t=vase]
     q.cage.r.note.q.start-move
   ?.  =(~ p.args)
@@ -84,8 +86,27 @@
 ::    !!
 ::  ++  test-khan-take-poke-fail
 ::    !!
-::  ++  test-khan-take-full-run
-::    !!
+++  test-khan-take-full-run
+  =^  born-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=~1111.1.1
+      scry=scry-provides-mark
+      call-args=[duct=~[/sup] ~ [%born ~]]
+    ==
+  =^  call-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s1)
+      scry=scry-provides-mark
+      ^=  call-args
+        :*  duct=~[//khan/1/0v0]  ~
+            %fyrd
+            %base  %nonexistent  %noun  %noun  ~
+    ==  ==
+  ::  TODO  take: %watch-ack, %poke-ack, %thread-done %fact, %kick
+  ::
+  !!
 ++  khan-call
   |=  $:  khan-gate=_khan-gate
           now=@da
@@ -94,8 +115,7 @@
             $:  =duct
                 dud=(unit goof)
                 wrapped-task=(hobo task:khan)
-            ==
-      ==
+      ==    ==
   ^-  [(list move:khan-gate) _khan-gate]
   =/  khan-core
     (khan-gate now eny=`@uvJ`0xdead.beef scry=scry)
