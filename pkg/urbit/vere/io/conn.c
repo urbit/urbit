@@ -417,7 +417,7 @@ _conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
   }
 }
 
-/* _conn_run_peel(): respond to a %peel request.
+/* _conn_read_peel(): produces response to a %peel request.
 **
 **  %peel is a runtime scry-like interface. it accepts $path-like
 **  arguments, i.e. nul-terminated lists of $knot. it responds
@@ -425,8 +425,8 @@ _conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
 **  was not understood" and `~ means "request understood; empty
 **  response".
 */
-static void
-_conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
+static u3_noun
+_conn_read_peel(u3_conn* con_u, u3_noun dat)
 {
   u3_noun   i_dat, t_dat, it_dat, tt_dat;
   u3_noun   res;
@@ -445,7 +445,9 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
       //  command list.
       //
       case c3__help: {
-        res = u3i_list(
+        res = u3nt(
+          u3_nul, u3_nul,
+          u3i_list(
             u3nc(c3__args, u3_nul),
             u3nc(c3__help, u3_nul),
             u3nc(c3__khan, u3_nul),
@@ -454,8 +456,7 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
             u3nc(c3__port, u3nt(c3__ames, c3__http, u3_nul)),
             u3nc(c3__v, u3_nul),
             u3nc(c3__vars, u3_nul),
-            u3_none);
-        res = u3nt(u3_nul, u3_nul, res);
+            u3_none));
         break;
       }
       //  simple health check.
@@ -473,7 +474,7 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
       //  |mass output
       //
       case c3__mass: {
-        //  TODO
+        //  TODO  |mass
         //
         res = u3nc(u3_nul, u3_nul);
         break;
@@ -493,12 +494,13 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
       //  runtime metrics list.
       //
       case c3__vars: {
-        res = u3i_list(
-          //  TODO  actual metrics (these are surprisingly hard to get at)
-          //
-          u3nc(u3i_string("example-metric"), 1234),
-          u3_none);
-        res = u3nt(u3_nul, u3_nul, res);
+        res = u3nt(
+          u3_nul, u3_nul,
+          u3i_list(
+            //  TODO  actual metrics (these are surprisingly hard to get at)
+            //
+            u3nc(u3i_string("example-metric"), 1234),
+            u3_none));
         break;
       }
       //  vere version.
@@ -526,13 +528,14 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
         switch (it_dat) {
           default: {
             res = u3_nul;
+            break;
           }
           case c3__ames: {
             res = u3nt(u3_nul, u3_nul, u3_Host.ops_u.por_s);
             break;
           }
           case c3__http: {
-            //  TODO  return public http port.
+            //  TODO  public http port.
             //
             res = u3nc(u3_nul, u3_nul);
             break;
@@ -547,8 +550,7 @@ _conn_run_peel(u3_conn* con_u, u3_chan* can_u, u3_noun rid, u3_noun dat)
     //
     res = u3_nul;
   }
-  u3z(dat);
-  _conn_send_noun(can_u, u3nc(rid, res));
+  u3z(dat); return res;
 }
 
 /* _conn_moor_poke(): called on message read from u3_moor.
@@ -620,7 +622,9 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       }
 
       case c3__peel: {
-        _conn_run_peel(con_u, can_u, u3k(rid), u3k(dat));
+        _conn_send_noun(
+          can_u, u3nc(u3k(rid),
+                      _conn_read_peel(con_u, u3k(dat))));
         break;
       }
 
@@ -668,8 +672,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
             u3_pier_pack(con_u->car_u.pir_u);
             break;
           }
-          //  TODO: more commands.
-          //  TODO: send updates, success/failure?
+          //  TODO  more %urth commands
+          //  TODO  send updates, success/failure?
           //
         }
         break;
