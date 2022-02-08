@@ -79,7 +79,7 @@
   ?.  =(%nonexistent s.args)
     ~&  >>>  bad-name+s.args
     (expect !>(|))
-  (expect-eq !>(~) t.args)
+  (expect-eq !>(`~) t.args)
 ::  ++  test-khan-take-dud
 ::    !!
 ::  ++  test-khan-take-watch-fail

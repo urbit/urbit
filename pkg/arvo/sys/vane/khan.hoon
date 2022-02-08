@@ -1,4 +1,33 @@
 ::  %khan, thread runner
+::
+::  this vane presents a command/response interface for running
+::  threads. two modes are supported: %fard for intra-arvo
+::  requests (i.e. within the same kernel space) and %fyrd for
+::  external requests (e.g. from the unix control plane.)
+::
+::  both modes take a thread start request consisting of a
+::  namespace, thread name, and input data; they respond over the
+::  same duct with either success or failure. %fard takes its
+::  input arguments as a $vase and produces $arow, which contains
+::  a $vase on success (or $tang on failure). %fyrd takes an
+::  output mark and input `(cask)` (short for `(cask *)`); it
+::  produces $avow, which contains a `(cask)` on success.
+::
+::  %fard passes its arguments and produces its result
+::  unmodified. %fyrd does mark conversion on both ends, and
+::  additionally lifts its input into a $unit. this second step
+::  is done because threads conventionally take their input as a
+::  $unit, with ~ for the case of "no arguments".
+::
+::  n.b. the current convention for threads is to use !< to
+::  unpack their input into a well-defined type. !< imposes the
+::  requirement that the input type nests within the specified
+::  type. this limits %fyrd to threads with inputs for which a
+::  named mark exists; it is impossible to use %noun in general
+::  since it does not nest. to support using the %noun mark for
+::  inputs, it would be sufficient to convert threads to use ;;
+::  rather than !< on their inputs, at the cost of losing type
+::  validation.
 !:
 !?  164
 ::
@@ -100,7 +129,7 @@
     =/  =dais:clay  (get-dais beak p.data.fyd rof)
     =/  args
       :*  ~  `tid  beak  name.fyd
-          (vale.dais q.data.fyd)
+          (slam !>(some) (vale.dais q.data.fyd))
       ==
     =/  start-moves=(list move)
       %+  turn
