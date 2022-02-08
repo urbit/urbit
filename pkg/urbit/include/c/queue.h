@@ -143,6 +143,6 @@ c3_queue_iter_step(const c3_queue* const que_u, c3_queue_iter* const itr_u);
 //! @param[in] que_u  If NULL, no action is taken.
 //! @param[in] itr_u  If NULL, no action is taken.
 void
-c3_queue_iter_free(c3_queue* const que_u, const c3_queue_iter* const itr_u);
+c3_queue_iter_free(c3_queue* const que_u, c3_queue_iter* const itr_u);
 
 #endif /* ifndef C3_QUEUE_H */
