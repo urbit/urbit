@@ -857,8 +857,8 @@
       --
     ::
         [%depth-first @ @ ~]
-      =/  count=(unit atom)  (rush i.t.t.t.t.path dem:ag)
-      =/  start=(unit atom)  (rush i.t.t.t.t.t.path dem:ag)
+      =/  count=(unit atom)  (rush i.t.t.t.t.t.path dem:ag)
+      =/  start=(unit atom)  (rush i.t.t.t.t.t.t.path dem:ag)
       ?:  ?=(~ count)
         [~ ~]
       :-  ~  :-  ~  :-  mar
