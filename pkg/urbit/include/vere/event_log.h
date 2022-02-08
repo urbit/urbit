@@ -7,8 +7,6 @@
 #include "c/portable.h"
 #include "c/types.h"
 
-#include "noun/aliases.h"
-
 
 //! Opaque event log type. `struct _evtlog` should be defined in the source file
 //! that implements this interface.
@@ -34,16 +32,19 @@ u3_evtlog*
 u3_evtlog_init(const c3_c* const dir_c);
 
 
-//! Append `eve` to the end of `log_u` without writing to non-volatile
+//! Append event to the end of `log_u` without writing to non-volatile
 //! memory.
 //!
 //! @param[in] log_u
-//! @param[in] eve    Event to append.
+//! @param[in] byt_y  Serialized event buffer.
+//! @param[in] len_i  Length of event buffer in bytes.
 //!
-//! @return -1  `eve` could not be appended.
-//! @return 0   `eve` was successfully appended.
+//! @return -1  Event could not be appended.
+//! @return 0   Event was successfully appended.
 c3_ws
-u3_evtlog_append(u3_evtlog* const log_u, u3_noun eve);
+u3_evtlog_append(u3_evtlog* const log_u,
+                 const c3_y* const byt_y,
+                 const size_t len_i);
 
 
 //! Commit the contents of `log_u` to non-volatile memory.
