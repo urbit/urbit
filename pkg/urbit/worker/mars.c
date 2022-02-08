@@ -969,6 +969,8 @@ _mars_boot_make(u3_boot_opts* inp_u,
                 u3_meta*      met_u)
 {
   u3_noun pil, ven, mor, who;
+  u3_noun pre = u3_nul;
+  u3_noun aft = u3_nul;
 
   //  parse boot command
   //
@@ -1002,9 +1004,6 @@ _mars_boot_make(u3_boot_opts* inp_u,
         met_u->fak_o = c3n;
 
         if ( c3n == u3r_cell(dat, &who, 0) ) {
-          return c3n;
-        }
-        if ( c3n == u3r_cell(who, &who, 0) ) {
           return c3n;
         }
       } break;
@@ -1066,38 +1065,39 @@ _mars_boot_make(u3_boot_opts* inp_u,
       use = u3nc(u3nc(wir, cad), use);
     }
 
-    u3_noun mos = mor;
-    u3_noun pre = u3_nul;
-    u3_noun aft = u3_nul;
-    while ( u3_nul != mos ) {
-      u3_noun mot = u3h(mos);
+    {
+      u3_noun mos = mor;
+      while ( u3_nul != mos ) {
+        u3_noun mot = u3h(mos);
 
-      switch ( u3h(mot) ) {
-        case c3__prop: {
-          u3_noun ter, met, ves;
+        switch ( u3h(mot) ) {
+          case c3__prop: {
+            u3_noun ter, met, ves;
 
-          if ( c3n == u3r_trel(u3t(mot), &met, &ter, &ves) ) {
-            u3m_p("invalid prop", u3t(mot));
-            break;
-          }
+            if ( c3n == u3r_trel(u3t(mot), &met, &ter, &ves) ) {
+              u3m_p("invalid prop", u3t(mot));
+              break;
+            }
 
-          if ( c3__fore == ter ) {
-            u3m_p("prop: fore", met);
-            pre = u3kb_weld(pre, ves);
-          }
-          else if ( c3__hind == ter ) {
-            u3m_p("prop: hind", met);
-            aft = u3kb_weld(aft, ves);
-          }
-          else {
-            u3m_p("unrecognized prop tier", ter);
-          }
-        } break;
+            if ( c3__fore == ter ) {
+              u3m_p("prop: fore", met);
+              pre = u3kb_weld(pre, u3k(ves));
+            }
+            else if ( c3__hind == ter ) {
+              u3m_p("prop: hind", met);
+              aft = u3kb_weld(aft, u3k(ves));
+            }
+            else {
+              u3m_p("unrecognized prop tier", ter);
+            }
+          } break;
 
-        default: u3m_p("unrecognized boot sequence enhancement", u3h(mot));
+          default: u3m_p("unrecognized boot sequence enhancement", u3h(mot));
+        }
+
+        mos = u3t(mos);
       }
-
-      mos = u3t(mos);
+      u3z(mor);
     }
 
     //  timestamp events, cons list

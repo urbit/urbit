@@ -151,7 +151,7 @@ _king_boot(u3_noun bul)
   u3z(bul);
 }
 
-/* _king_fake(): boot with fake keys
+/* _king_boot_done(): boot done
 */
 static void
 _king_boot_done(void* ptr_v, c3_o ret_o)
@@ -242,7 +242,8 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
         } break;
 
         case 3: {  //  name
-          c3_c* url_c = c3_malloc(80);
+          //NOTE  this implementation limits us to max 20 char prop names
+          c3_c url_c[80];
           sprintf(url_c,
                   "https://bootstrap.urbit.org/props/%s.jam",
                   vex_u->loc_c);
