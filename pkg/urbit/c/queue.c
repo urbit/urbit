@@ -211,5 +211,24 @@ c3_queue_iter_init(c3_queue* const que_u, const size_t sar_i)
 void*
 c3_queue_iter_step(const c3_queue* const que_u, c3_queue_iter* const itr_u)
 {
-  return NULL;
+  if ( 0 == c3_queue_length(que_u) ||
+       NULL == itr_u               ||
+       que_u->itr_u != itr_u       ||
+       NULL == itr_u->cur_u )
+  {
+    return NULL;
+  }
+
+  void* dat_v = itr_u->cur_u->dat_v;
+  switch ( itr_u->sar_i ) {
+    case C3_QUEUE_ITER_FRONT:
+      itr_u->cur_u = itr_u->cur_u->nex_u;
+      break;
+    case C3_QUEUE_ITER_BACK:
+      itr_u->cur_u = itr_u->cur_u->pre_u;
+      break;
+    default:
+      c3_assert(!"queue: invalid starting location");
+  }
+  return dat_v;
 }

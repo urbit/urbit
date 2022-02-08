@@ -128,6 +128,7 @@ c3_queue_iter_init(c3_queue* const que_u, const size_t sar_i);
 //! @return NULL  `que_u` is NULL.
 //! @return NULL  `que_u` is empty.
 //! @return NULL  `itr_u` is NULL.
+//! @return NULL  `itr_u` is not a valid iterator over `que_u`.
 //! @return NULL  `itr_u` has advanced past the end of `que_u`.
 //! @return       Heap-allocated pointer to the node under `itr_u`. Must NOT be
 //!               freed by caller.
