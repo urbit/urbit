@@ -137,7 +137,8 @@ c3_queue_iter_step(const c3_queue* const que_u, c3_queue_iter* const itr_u);
 
 //! Close `itr_u` over `que_u`, freeing `itr_u`'s resources and marking `que_u`
 //! as eligible for a new iterator, which can be created with
-//! c3_queue_iter_init().
+//! c3_queue_iter_init(). If `itr_u` does not belong to `que_u`, no action is
+//! taken.
 //!
 //! @param[in] que_u  If NULL, no action is taken.
 //! @param[in] itr_u  If NULL, no action is taken.

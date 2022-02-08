@@ -232,3 +232,12 @@ c3_queue_iter_step(const c3_queue* const que_u, c3_queue_iter* const itr_u)
   }
   return dat_v;
 }
+
+void
+c3_queue_iter_free(c3_queue* const que_u, const c3_queue_iter* const itr_u) {
+  if ( NULL == que_u || NULL == itr_u || que_u->itr_u != itr_u ) {
+    return;
+  }
+  c3_free(itr_u);
+  que_u->itr_u = NULL;
+}
