@@ -25,6 +25,8 @@ import { mockNotifications } from './mock-data';
 import { useMockData } from './util';
 
 export interface HarkState {
+  count: number;
+  fetchCount: () => Promise<void>;
   seen: Timebox;
   unseen: Timebox;
   archive: BigIntOrderedMap<Timebox>;
@@ -66,6 +68,7 @@ export const reduceGraph = [
 export const useHarkStore = createState<HarkState>(
   'Hark',
   (set, get) => ({
+    count: 0,
     seen: {},
     unseen: useMockData ? mockNotifications : {},
     archive: new BigIntOrderedMap<Timebox>(),
@@ -75,10 +78,19 @@ export const useHarkStore = createState<HarkState>(
       mentions: false,
       watching: []
     },
-
     set: (f) => {
       const newState = produce(get(), f);
       set(newState);
+    },
+    fetchCount: async () => {
+      const count = await api.scry({
+        app: "hark-store",
+        path: "/count"
+      });
+
+      get().set(state => {
+        state.count = count;
+      });
     },
     archiveAll: async () => {
       get().set((draft) => {
@@ -99,9 +111,13 @@ export const useHarkStore = createState<HarkState>(
       await api.poke(archive(bin, lid));
     },
     opened: async () => {
-      reduceHark({ opened: null });
+      let date = new Date();
+      let tz = date.getTimezoneOffset();
+      console.log(`Opened: ${tz}`);
+      
+      reduceHark({ opened: tz });
 
-      await api.poke(opened);
+      await api.poke(opened(tz));
     },
     getMore: async () => {
       const { archive: arch } = get();
@@ -113,7 +129,7 @@ export const useHarkStore = createState<HarkState>(
       reduceHark(update);
     }
   }),
-  ['archive', 'unseen', 'seen'],
+  ['archive', 'unseen', 'seen', 'count'],
   [
     (set, get) =>
       createSubscription('hark-graph-hook', '/updates', (j) => {

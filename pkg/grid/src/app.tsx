@@ -63,7 +63,9 @@ const AppRoutes = () => {
       fetchLag();
 
       useContactState.getState().initialize(api);
-      useHarkStore.getState().initialize(api);
+      const { initialize, fetchCount } = useHarkStore.getState();
+      initialize(api);
+      fetchCount();
 
       Mousetrap.bind(['command+/', 'ctrl+/'], () => {
         push('/leap/search');

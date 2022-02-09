@@ -4,15 +4,15 @@ import { Timebox } from '@urbit/api';
 import { Link, LinkProps } from 'react-router-dom';
 import { Bullet } from '../components/icons/Bullet';
 import { Cross } from '../components/icons/Cross';
-import { useHarkStore } from '../state/hark';
+import { HarkState, useHarkStore } from '../state/hark';
 import { useLeapStore } from './Nav';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed' | 'open';
 
-function getNotificationsState(isOpen: boolean, box: Timebox): NotificationsState {
-  const notifications = Object.values(box);
+function getNotificationsState(isOpen: boolean, state: HarkState): NotificationsState {
+  const unreads = Object.values(state.unseen);
   if (
-    notifications.filter(
+    unreads.filter(
       ({ bin }) => bin.place.desk === window.desk && ['/lag', 'blocked'].includes(bin.place.path)
     ).length > 0
   ) {
@@ -23,7 +23,7 @@ function getNotificationsState(isOpen: boolean, box: Timebox): NotificationsStat
   }
 
   // TODO: when real structure, this should be actually be unread not just existence
-  if (notifications.length > 0) {
+  if (state.count) {
     return 'unread';
   }
 
@@ -41,8 +41,9 @@ export const NotificationsLink = ({
   notificationsOpen,
   shouldDim
 }: NotificationsLinkProps) => {
-  const unseen = useHarkStore((s) => s.unseen);
-  const state = getNotificationsState(notificationsOpen, unseen);
+  const hark = useHarkStore();
+  const state = getNotificationsState(notificationsOpen, hark);
+  console.log(hark.count);
   const select = useLeapStore((s) => s.select);
   const clearSelection = useCallback(() => select(null), [select]);
 
@@ -62,7 +63,7 @@ export const NotificationsLink = ({
       onClick={clearSelection}
     >
       {state === 'empty' && <Bullet className="w-6 h-6" />}
-      {state === 'unread' && Object.keys(unseen).length}
+      {state === 'unread' && hark.count}
       {state === 'attention-needed' && (
         <span className="h2">
           ! <span className="sr-only">Attention needed</span>

@@ -7,6 +7,7 @@ import { useHarkStore } from '../state/hark';
 import { Inbox } from './notifications/Inbox';
 
 export const Notifications = ({ history }: RouteComponentProps) => {
+  const count = useHarkStore(s => s.count);
   const markAllAsRead = () => {
     const { archiveAll } = useHarkStore.getState();
     archiveAll();
@@ -25,7 +26,6 @@ export const Notifications = ({ history }: RouteComponentProps) => {
       useHarkStore.getState().opened();
     };
   }, []);
-  // const select = useLeapStore((s) => s.select);
 
   return (
     <ErrorBoundary
