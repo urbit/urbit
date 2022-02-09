@@ -55,6 +55,19 @@ _main_presig(c3_c* txt_c)
   return new_c;
 }
 
+/* _main_add_prop(): add a boot prop to u3_Host.ops_u.vex_u.
+*/
+u3_even*
+_main_add_prop(c3_i kin_i, c3_c* loc_c)
+{
+  u3_even* nex_u = c3_calloc(sizeof(*nex_u));
+  nex_u->kin_i = kin_i;
+  nex_u->loc_c = loc_c;
+  nex_u->pre_u = u3_Host.ops_u.vex_u;
+  u3_Host.ops_u.vex_u = nex_u;
+  return nex_u;
+}
+
 /* _main_getopt(): extract option map from command line.
 */
 static u3_noun
@@ -140,11 +153,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   {
     switch ( ch_i ) {
       case 1: case 2: case 3: {  //  prop-*
-        u3_even* nex_u = c3_calloc(sizeof(*nex_u));
-        nex_u->kin_i = ch_i;
-        nex_u->loc_c = strdup(optarg);
-        nex_u->pre_u = u3_Host.ops_u.vex_u;
-        u3_Host.ops_u.vex_u = nex_u;
+        _main_add_prop(ch_i, strdup(optarg));
         break;
       }
       case 'X': {
@@ -389,7 +398,7 @@ _main_getopt(c3_i argc, c3_c** argv)
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
     u3_Host.ops_u.url_c =
-      "https://bootstrap.urbit.org/urbit-v" URBIT_VERSION ".pill";
+      "https://bootstrap.urbit.org/props/brass.pill";
   }
   else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
@@ -425,6 +434,15 @@ _main_getopt(c3_i argc, c3_c** argv)
       fprintf(stderr, "keyfile %s not found\n", u3_Host.ops_u.key_c);
       return c3n;
     }
+  }
+
+  //  if we're not in lite mode, include the default props
+  //
+  if ( u3_Host.ops_u.lit == c3n ) {
+    _main_add_prop(3, "garden");
+    _main_add_prop(3, "landscape");
+    _main_add_prop(3, "webterm");
+    _main_add_prop(3, "bitcoin");
   }
 
   return c3y;
