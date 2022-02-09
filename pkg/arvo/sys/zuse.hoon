@@ -2248,6 +2248,8 @@
               |=  x=@I
               ^-  (unit point)
               =/  c  curve
+              ?.  (lth x p.domain.c)
+                ~
               =/  fop  field-p.c
               =+  [fadd fpow]=[sum.fop exp.fop]
               =/  cp  (fadd (fpow 3 x) 7)
@@ -2285,6 +2287,7 @@
             :-  96
             (rep 8 ~[m x.pp t])
           =/  kp  (mod rand n.domain.c)
+          ?<  =(0 kp)
           =/  rr  (mul-point-scalar g.domain.c kp)
           =/  k
             ?:  =(0 (mod y.rr 2))
