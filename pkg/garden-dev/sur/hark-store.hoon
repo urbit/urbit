@@ -61,8 +61,7 @@
 ::
 +$  lid
   $%  [%archive =time]
-      [%seen ~]
-      [%unseen ~]
+      [%unread ~]
   ==
 ::  $content: Notification content
 +$  content
@@ -120,7 +119,7 @@
       [%archive-all ~]
       ::  %opened: User opened notifications, reset timeboxing logic.
       ::
-      [%opened ~]
+      [%opened zone=@ud]
       ::
       ::  XX: previously in hark-store, now deprecated
       ::  the hooks responsible for creating notifications may offer pokes

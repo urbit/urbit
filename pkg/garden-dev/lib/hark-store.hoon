@@ -136,12 +136,13 @@
     :~  bin+(^bin bin)
         notification+(^notification notification)
     ==
+  ::
   ++  lid
     |=  l=^lid
     ^-  json
     %+  frond  -.l
     ?-  -.l
-      ?(%seen %unseen)  ~
+      %unread             ~
       %archive             s+(scot %ud time.l)
     ==
   ::
@@ -209,8 +210,7 @@
   ++  lid
     %-  of
     :~  archive+sd
-        unseen+ul
-        seen+ul
+        unread+ul
     ==
   ::
   ++  archive
@@ -224,7 +224,7 @@
     %-  of
     :~  archive-all+ul
         archive+archive
-        opened+ul
+        opened+ni
         read-count+place
         read-each+read-each
         read-note+bin
