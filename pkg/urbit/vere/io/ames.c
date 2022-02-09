@@ -862,7 +862,6 @@ _ames_czar(u3_pact* pac_u)
   u3_ames* sam_u = pac_u->sam_u;
 
   c3_y imp_y = pac_u->imp_y;
-  u3l_log("ames: send to %u\n", imp_y);
 
   pac_u->lan_u.por_s = _ames_czar_port(imp_y);
 
@@ -960,8 +959,6 @@ _fine_put_cache(u3_ames* sam_u, u3_noun pax, u3_noun lis)
     cur_w++;
     u3z(key);
   }
-  u3l_log("put %u packets at\n", cur_w);
-  u3m_p("path", pax);
 }
 
 /* _fine_ef_howl(): broadcast notification of newly bound data
@@ -981,22 +978,19 @@ _fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis)
     u3_noun her = who;
     while ( her != u3_nul ) {
       // TODO: prime cache maybe???
-      //u3m_p("her", her);
 
-      /*u3_weak lac =  _ames_lane_from_cache(sam_u->lax_p, u3h(her));
+      u3_weak lac =  _ames_lane_from_cache(sam_u->lax_p, u3h(her));
       if ( lac == u3_none ) {
         u3l_log("no lane\n");
-        u3m_p("for", u3h(her));
         her = u3t(her);
         continue;
-      }*/
+      }
       u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
       pac_u->sam_u = sam_u;
-      c3_d her_d[2];
-      u3r_chubs(0, 2, her_d, u3k(u3h(her)));
 
-      // TODO: fix for non-galaxy case
-      pac_u->imp_y = her_d[0];
+      c3_d lan_d = u3r_chub(0, lac);
+      pac_u->lan_u.pip_w = (c3_w)lan_d;
+      pac_u->lan_u.por_s = (c3_s)(lan_d >> 32);
 
       _fine_got_pack(pac_u, u3h(lis));
       her = u3t(her);
@@ -1396,7 +1390,7 @@ static void _fine_got_pack(u3_pact* pac_u, u3_noun fra)
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, fra);
 
 
-  _ames_czar(pac_u); //_fine_send(pac_u);
+  _fine_send(pac_u);
 
   u3z(fra);
 }
@@ -1661,7 +1655,13 @@ _ames_hear(u3_ames* sam_u,
     c3_free(hun_y);
     return;
   }
-  else if (c3n == is_ames_o) {
+
+  u3_prel pre_u;
+
+  // we always overwrite this later
+  _ames_sift_prelude(&pac_u->hed_u, &pac_u->bod_u.pre_u, len_w - 4, hun_y + 4);
+  
+  if (c3n == is_ames_o) {
     _fine_hear(sam_u, *lan_u, len_w, hun_y);
     return;
   }
@@ -2003,7 +2003,6 @@ _ames_kick_newt(u3_ames* sam_u, u3_noun tag, u3_noun dat)
     case c3__howl: {
       u3_noun pat = u3k(u3h(dat));
       u3_noun lis = u3k(u3t(dat));
-      u3l_log("fine: howl\n");
       _fine_ef_howl(sam_u, pat, lis);
       ret_o = c3y;
     } break;
