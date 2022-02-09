@@ -467,7 +467,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
   c3_c *use_c[] = {
     "Urbit: a personal server operating function\n",
     "https://urbit.org\n",
-    "Version " URBIT_VERSION "\n",
+    "Version " URBIT_VERSION " (git " URBIT_GITHASH ")\n",
     "\n",
     "Usage: %s [options...] ship_name\n",
     "where ship_name is a @p phonetic representation of an urbit address\n",
@@ -554,7 +554,7 @@ u3_ve_sysopt()
 static void
 report(void)
 {
-  printf("urbit %s\n", URBIT_VERSION);
+  printf("urbit %s git %s\n", URBIT_VERSION, URBIT_GITHASH);
   printf("gmp: %s\n", gmp_version);
 #if !defined(U3_OS_mingw)
   printf("sigsegv: %d.%d\n",
@@ -704,7 +704,7 @@ main(c3_i   argc,
 
   printf("~\n");
   //  printf("welcome.\n");
-  printf("urbit %s\n", URBIT_VERSION);
+  printf("urbit %s (git %s)\n", URBIT_VERSION, URBIT_GITHASH);
 
   // prints the absolute path of the pier
   //

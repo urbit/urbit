@@ -3,6 +3,7 @@
 set -euo pipefail
 
 URBIT_VERSION="$(cat ./version)"
+URBIT_GITHASH="$(git rev-parse --short HEAD)"
 
 # we require pkg-config metadata to statically link these
 #
@@ -36,6 +37,7 @@ defmacro () {
 }
 
 defmacro URBIT_VERSION "\"$URBIT_VERSION\""
+defmacro URBIT_GITHASH "\"$URBIT_GITHASH\""
 
 opt_debug=
 opt_static=
