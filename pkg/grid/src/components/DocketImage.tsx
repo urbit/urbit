@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Docket } from '@urbit/api/docket';
+import { Docket } from '@urbit/api';
 import cn from 'classnames';
 import { useTileColor } from '../tiles/useTileColor';
 

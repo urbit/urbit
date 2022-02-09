@@ -4,8 +4,7 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { ignoreGroup, listenGroup } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, ignoreGroup, listenGroup } from '@urbit/api';
 import React from 'react';
 import useHarkState from '~/logic/state/hark';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';

@@ -9,32 +9,40 @@
 =/  m  (strand:strandio ,vase)
 |^
 ^-  form:m
-:: =*  not-sent  (pure:m !>(%.n^next-gas-price))
 ::
 =/  =address:ethereum  (address-from-prv:key:ethereum pk)
 ;<  expected-nonce=@ud  bind:m
   (get-next-nonce:ethio endpoint address)
-::  if chain expects a different nonce, don't send this transaction
-::
-?.  =(nonce expected-nonce)
-  ~&  [%unexpected-nonce nonce expected+expected-nonce]
-  (pure:m !>(%.n^[%not-sent %unexpected-nonce]))
-::  if a gas-price of 0 was specified, fetch the recommended one
-::
-;<  use-gas-price=@ud  bind:m
-  ?:  =(0 next-gas-price)  fetch-gas-price
-  (pure:(strand:strandio @ud) next-gas-price)
-::
 =/  batch-data=octs
   %+  cad:naive  3
   %-  flop
   %+  roll  txs
   |=  [=raw-tx:naive out=(list octs)]
   [raw.raw-tx 65^sig.raw-tx out]
-::  TODO: keep this to avoid sending bad batches or disregard?
+::  if the batch is malformed, emit error to kick it out of sending
 ::
 ?~  (parse-roll:naive q.batch-data)
   (pure:m !>(%.n^[%not-sent %batch-parse-error]))
+::  if chain expects a different nonce, don't send this transaction
+::
+?.  =(nonce expected-nonce)
+  ~&  >>>  [%unexpected-nonce nonce expected+expected-nonce]
+  %-  pure:m
+  !>  ^-  [%.n @tas @t]
+  :+  %.n
+    %not-sent
+  ?:  (lth expected-nonce nonce)
+    ::  if ahead, it will use the same next-gas-price when resending
+    ::
+    %ahead-nonce
+  ::  if behind, start out-of-sync flow
+  ::
+  %behind-nonce
+::  if a gas-price of 0 was specified, fetch the recommended one
+::
+;<  use-gas-price=@ud  bind:m
+  ?:  =(0 next-gas-price)  fetch-gas-price
+  (pure:(strand:strandio @ud) next-gas-price)
 ::
 ::  each l2 signature is 65 bytes + XX bytes for the raw data
 ::  from the ethereum yellow paper:
@@ -72,7 +80,8 @@
 ::  log batch tx-hash to getTransactionReceipt(tx-hash)
 ::
 ~?  &(?=(%result -.response) ?=(%s -.res.response))
-  ^-([nonce=@ud batch-hash=@t] nonce^(so:dejs:format res.response))
+  ^-  [nonce=@ud batch-hash=@t gas=@ud]
+  nonce^(so:dejs:format res.response)^use-gas-price
 %-  pure:m
 !>  ^-  (each @ud [term @t])
 ::  TODO: capture if the tx fails (e.g. Runtime Error: revert)
@@ -101,10 +110,13 @@
   ;<  rep=(unit client-response:iris)  bind:m
     take-maybe-response:strandio
   =*  fallback
-    ~&  %fallback-gas-price
-    (pure:m 10.000.000.000)
+    ~&  >>  %fallback-gas-price
+    (pure:m fallback-gas-price)
   ?.  ?&  ?=([~ %finished *] rep)
           ?=(^ full-file.u.rep)
+          ::  get suggested price only for mainnet txs
+          ::
+          =(chain-id 1)
       ==
     fallback
   ?~  jon=(de-json:html q.data.u.full-file.u.rep)
@@ -115,7 +127,7 @@
     (mul 1.000.000.000 u.res)  ::NOTE  gwei to wei
   %.  u.jon
   =,  dejs-soft:format
-  (ot 'result'^(ot 'FastGasPrice'^ni ~) ~)
+  (ot 'result'^(ot 'FastGasPrice'^(su dem) ~) ~)
 ::
 ++  send-batch
   |=  [endpoint=@ta batch=@ux]

@@ -1,5 +1,4 @@
-import { Content, GraphNode, unixToDa } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import { BigIntOrderedMap, Content, GraphNode, unixToDa } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 
 export const makeComment = (

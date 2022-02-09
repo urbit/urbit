@@ -1,6 +1,6 @@
 ::  metadata-push-hook [landscape]:
 ::
-/-  *group, *invite-store, store=metadata-store
+/-  *group, *invite-store, store=metadata-store, group-store
 /+  default-agent, verb, dbug, grpl=group, push-hook,
     resource, mdl=metadata, gral=graph, agentio
 ~%  %group-hook-top  ..part  ~
@@ -29,6 +29,14 @@
 --
 ::
 ::
+=+
+  ^=  hook-core
+  |_  =bowl:gall
+  +*  io    ~(. agentio bowl)
+      pass   pass:io
+  ++  watch-groups  (~(watch-our pass /groups) %group-store /groups)
+  --
+::
 =|  state-zero
 =*  state  -
 %-  agent:dbug
@@ -43,11 +51,20 @@
     met       ~(. mdl bowl)
     gra       ~(. gral bowl)
     io        ~(. agentio bowl)
+    hc        ~(. hook-core bowl) 
     pass      pass:io
 ::
-++  on-init  on-init:def
-++  on-save  !>(~)
-++  on-load  on-load:def
+++  on-init
+  :_  this
+  ~[watch-groups:hc]
+::
+++  on-save  !>(state)
+++  on-load
+  |=  =vase
+  =+  !<(old=versioned-state vase)
+  ?:  ?=([%0 ~] old)  `this
+  :_  this
+  ~[watch-groups:hc]
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -82,7 +99,44 @@
     ==
   --
 ::
-++  on-agent  on-agent:def
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ?.  ?=([%groups ~] wire)
+    (on-agent:def wire sign)
+  ?+  -.sign  (on-agent:def wire sign)
+    %kick  :_(this ~[watch-groups:hc])
+  ::
+      %fact
+    ?.  =(p.cage.sign %group-update-0)  `this
+    =+  !<(=update:group-store q.cage.sign)
+    ?.  ?=(%remove-members -.update)  `this
+    |^
+    =/  graphs=(set resource)
+      (hosting-graphs resource.update)
+    :_  this
+    %+  weld
+       (turn ~(tap in graphs) (cury revoke %graph-push-hook))
+    ?.  =(entity.resource.update our.bowl)  ~
+    (revoke %metadata-push-hook resource.update)^~
+    ::
+    ++  revoke
+      |=  [=dude:gall rid=resource]
+      =/  =action:push-hook  [%revoke ships.update rid]
+      =/  =cage              push-hook-action+!>(action)
+      (poke-our:pass dude cage)
+    ::
+    ++  hosting-graphs
+      |=  rid=resource
+      ^-  (set resource)
+      =/  graphs=associations:store
+        (app-metadata-for-group:met resource.update %graph)
+      %-  ~(gas in *(set resource))
+      %+  murn  ~(tap in ~(key by graphs))
+      |=  [app=term graph=resource]
+      ?.  =(our.bowl entity.graph)  ~
+      `graph
+    --
+  ==
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
