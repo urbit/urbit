@@ -13,7 +13,6 @@
 //! Single element of a doubly-linked list.
 struct _node {
   void*         dat_v;  //!< payload data
-  size_t        siz_i;  //!< size of payload data in bytes
   struct _node* nex_u;  //!< next node
   struct _node* pre_u;  //!< previous node
 };
@@ -38,12 +37,11 @@ struct _c3_list_iter {
 //==============================================================================
 
 static _node*
-_create_node(const void* const dat_v, size_t siz_i)
+_create_node(const void* const dat_v, const size_t siz_i)
 {
   _node* nod_u = c3_calloc(sizeof(*nod_u));
-  nod_u->siz_i = siz_i;
-  nod_u->dat_v = c3_malloc(nod_u->siz_i);
-  memcpy(nod_u->dat_v, dat_v, nod_u->siz_i);
+  nod_u->dat_v = c3_malloc(siz_i);
+  memcpy(nod_u->dat_v, dat_v, siz_i);
   return nod_u;
 }
 
