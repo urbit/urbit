@@ -119,7 +119,7 @@
       [%archive-all ~]
       ::  %opened: User opened notifications, reset timeboxing logic.
       ::
-      [%opened zone=@ud]
+      [%opened zone=@s]
       ::
       ::  XX: previously in hark-store, now deprecated
       ::  the hooks responsible for creating notifications may offer pokes

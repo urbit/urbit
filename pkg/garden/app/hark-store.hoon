@@ -32,7 +32,7 @@
   $:  places=(map place:store stats:store)
       unread=timebox:store
       =archive:store  :: (mop @da timebox:store)
-      zone=@ud
+      zone=@s
   ==
 ::
 +$  state-2
@@ -137,11 +137,14 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-   ::
-     [%x %count ~]
-    ``numb+!>(~(wyt by unread))
-
-    ::
+  ::
+    [%x %count ~]  ``numb+!>(~(wyt by unread))
+  ::
+      [%x %unread ~]
+    :^  ~  ~  %hark-update
+    !>  ^-  update:store
+    [%timebox unread/~ ~(val by unread)]
+  ::
       [%x %recent %inbox @ @ ~]
     =/  date=@da
       (slav %ud i.t.t.t.path)
@@ -411,7 +414,8 @@
   ::
   ::
   ++  opened
-    |=  zon=@ud
+    |=  zon=@s
+    ~&  zone/zon
     =.  zone       zon
     =.  poke-core  (turn-places |=(=stats:store stats(timebox ~)))
     =.  poke-core  (give %opened zon)

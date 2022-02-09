@@ -219,12 +219,23 @@
         bin+bin
     ==
   ::
+  ++  ns
+    |=  jon=json
+    ^-  @s
+    ?>  ?=([%n *] jon)
+    %+  rash  p.jon
+    %+  cook  new:si
+    ;~  plug
+      ;~(pose (cold %| (jest '-')) (easy %&))
+      dem
+    ==
+  ::
   ++  action
     ^-  $-(json ^action)
     %-  of
     :~  archive-all+ul
         archive+archive
-        opened+ni
+        opened+ns
         read-count+place
         read-each+read-each
         read-note+bin
