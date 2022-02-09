@@ -1,6 +1,7 @@
 import { Box, Row, Text } from '@tlon/indigo-react';
 import { omit } from 'lodash';
 import Mousetrap from 'mousetrap';
+import fuzzy from 'fuzzy';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import React, {
@@ -40,10 +41,22 @@ const SEARCHED_CATEGORIES = [
   'other',
   'groups',
   'subscriptions',
-  'apps'
 ];
 const settingsSel = (s: SettingsState) => s.leap;
 const CAT_LIMIT = 6;
+
+/**
+ * Flatten `catMap` according to ordering in `cats`
+ */
+function flattenCattegoryMap(cats: string[], catMap: Map<string, OmniboxItem[]>) {
+  let res = [] as OmniboxItem[];
+  cats.forEach(cat => {
+    res = res.concat(_.take(catMap.get(cat), CAT_LIMIT));
+  });
+
+  return res;
+
+}
 
 export function Omnibox(props: OmniboxProps): ReactElement {
   const location = useLocation();
@@ -57,7 +70,6 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const contactState = useContactState(state => state.contacts);
   const notificationCount = useHarkState(state => state.notificationsCount);
   const invites = useInviteState(state => state.invites);
-  const tiles = useLaunchState(state => state.tiles);
   const [leapCursor, setLeapCursor] = useState('pointer');
 
   const contacts = useMemo(() => {
@@ -83,12 +95,11 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     return makeIndex(
       contacts,
       associations,
-      tiles,
       selectedGroup,
       groups,
       leapConfig
     );
-  }, [selectedGroup, leapConfig, contacts, associations, groups, tiles]);
+  }, [selectedGroup, leapConfig, contacts, associations, groups]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle();
@@ -127,29 +138,28 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     );
   }, [index]);
 
-  const results = useMemo(() => {
+  const [results, categoryOrder] = useMemo(
+    (): [Map<string, OmniboxItem[]>, string[]]  => {
     if (query.length <= 1) {
-      return initialResults;
+      return [initialResults, ['other']];
     }
     const q = query.toLowerCase();
     const resultsMap = new Map<string, OmniboxItem[]>();
+    let categoryMaxes: Record<string, number> = {};
+
     SEARCHED_CATEGORIES.map((category) => {
       const categoryIndex = index.get(category);
-      resultsMap.set(
-        category,
-        categoryIndex.filter((result) => {
-          return (
-            result.title.toLowerCase().includes(q) ||
-            result.link.toLowerCase().includes(q) ||
-            result.app.toLowerCase().includes(q) ||
-            (result.host !== null
-              ? result.host.toLowerCase().includes(q)
-              : false)
-          );
-        })
-      );
+      const fuzzied = fuzzy
+        .filter(q, categoryIndex, { extract: res => res.title });
+      categoryMaxes[category] = fuzzied
+        .map(a => a.score)
+        .reduce((a,b) => Math.max(a,b), 0);
+      resultsMap.set(category, fuzzied.map(a => a.original));
     });
-    return resultsMap;
+    let order = Object.entries(categoryMaxes)
+      .sort(([,a],[,b]) => b - a)
+      .map(([id]) => id);
+    return [resultsMap, order];
   }, [query, index]);
 
   const navigate = useCallback(
@@ -184,7 +194,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   );
 
   const setPreviousSelected = useCallback(() => {
-    const flattenedResults = Array.from(results.values()).map(f.take(CAT_LIMIT)).flat();
+    const flattenedResults = flattenCattegoryMap(categoryOrder, results);
     const totalLength = flattenedResults.length;
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
@@ -204,10 +214,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       const { app, link } = flattenedResults[totalLength - 1];
       setSelected([app, link]);
     }
-  }, [results, selected]);
+  }, [results, categoryOrder, selected]);
 
   const setNextSelected = useCallback(() => {
-    const flattenedResults = Array.from(results.values()).map(f.take(CAT_LIMIT)).flat();
+    const flattenedResults = flattenCattegoryMap(categoryOrder, results);
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
         // @ts-ignore unclear how to give this spread a return signature
@@ -226,7 +236,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       const { app, link } = flattenedResults[0];
       setSelected([app, link]);
     }
-  }, [selected, results]);
+  }, [results, categoryOrder, selected]);
 
   const setSelection = (app, link) => {
     setLeapCursor('pointer');
@@ -258,14 +268,15 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       }
       if (evt.key === 'Enter') {
         evt.preventDefault();
+        let values = flattenCattegoryMap(categoryOrder, results);
         if (selected.length) {
           navigate(selected[0], selected[1], evt.shiftKey);
-        } else if (Array.from(results.values()).flat().length === 0) {
+        } else if (values.length === 0) {
           return;
         } else {
           navigate(
-            Array.from(results.values()).flat()[0].app,
-            Array.from(results.values()).flat()[0].link,
+            values[0].app,
+            values[0].link,
             evt.shiftKey
           );
         }
@@ -278,15 +289,16 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       query,
       props.show,
       results,
+      categoryOrder,
       setPreviousSelected,
       setNextSelected
     ]
   );
 
   useEffect(() => {
-    const flattenedResultLinks: [string, string][] = Array.from(results.values())
-      .flat()
-      .map(result => [result.app, result.link]);
+    const flattenedResultLinks: [string, string][] = 
+      flattenCattegoryMap(categoryOrder, results)
+        .map(result => [result.app, result.link]);
     if (!flattenedResultLinks.includes(selected as [string, string])) {
       setSelected(flattenedResultLinks[0] || []);
     }
@@ -322,10 +334,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         borderBottomLeftRadius={2}
         borderBottomRightRadius={2}
       >
-        {SEARCHED_CATEGORIES.map(category =>
+        {categoryOrder.map(category =>
           ({
             category,
-            categoryResults: _.take(results.get(category).sort(sortResults), CAT_LIMIT)
+            categoryResults: _.take(results.get(category), CAT_LIMIT)
           })
         )
           .filter(category => category.categoryResults.length > 0)

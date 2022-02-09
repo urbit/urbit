@@ -9,15 +9,14 @@ const { execSync } = require('child_process');
 const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
 
 let devServer = {
-  contentBase: path.join(__dirname, '../public'),
   hot: true,
   port: 9000,
   host: '0.0.0.0',
   disableHostCheck: true,
   historyApiFallback: {
+    index: '/apps/landscape/index.html',
     disableDotRule: true
-  },
-  publicPath: '/apps/landscape/'
+  }
 };
 
 const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9000`);
@@ -25,7 +24,6 @@ const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost
 if(urbitrc.URL) {
   devServer = {
     ...devServer,
-    index: 'index.html',
     // headers: {
     //   'Service-Worker-Allowed': '/'
     // },
@@ -73,7 +71,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react)\/).*/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react|@urbit\/api)\/).*/
       },
       {
         test: /\.css$/i,

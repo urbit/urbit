@@ -1,5 +1,4 @@
-import { JoinRequest } from '@urbit/api';
-import { Invite } from '@urbit/api/invite';
+import { Invite, JoinRequest } from '@urbit/api';
 import React  from 'react';
 import { usePreview } from '~/logic/state/metadata';
 import { GroupInvite } from './Group';

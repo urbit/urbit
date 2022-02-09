@@ -1,6 +1,6 @@
 import { Patp } from '../lib';
-import BigIntOrderedMap from '../lib/BigIntOrderedMap';
-import BigIntArrayOrderedMap from '../lib/BigIntArrayOrderedMap';
+import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
+import { BigIntArrayOrderedMap } from '../lib/BigIntArrayOrderedMap';
 
 export interface TextContent {
   text: string;

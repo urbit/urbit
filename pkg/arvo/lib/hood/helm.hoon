@@ -1,26 +1,32 @@
 =*  card  card:agent:gall
 |%
-+$  state  state-1
++$  state  state-2
 +$  any-state
  $~  *state
- $%  state-1
+ $%  state-2
+     state-1
      state-0
  ==
-+$  state-1
-  $:  %1
-      mass-timer=[way=wire nex=@da tim=@dr]
-  ==
++$  state-2  [%2 =mass-timer]
++$  state-1  [%1 =mass-timer]
 +$  state-0  [%0 hoc=(map bone session-0)]
 +$  session-0
   $:  say=*
       mud=*
-      mass-timer=[way=wire nex=@da tim=@dr]
+      =mass-timer
   ==
+::
++$  mass-timer  [way=wire nex=@da tim=@dr]
 ::
 ++  state-0-to-1
   |=  s=state-0
-  ^-  state
+  ^-  state-1
   [%1 mass-timer:(~(got by hoc.s) 0)]
+::
+++  state-1-to-2
+  |=  s=state-1
+  ^-  state-2
+  [%2 +.s]
 --
 |=  [=bowl:gall sat=state]
 =|  moz=(list card)
@@ -38,11 +44,17 @@
   ^+  this
   ?~(caz this $(caz t.caz, this (emit i.caz)))
 ::
+++  on-init
+  (poke-serve [~ /who] %base /gen/who/hoon ~)
+::
 ++  on-load
   |=  [hood-version=@ud old=any-state]
   =<  abet
-  =?  old  ?=(%0 -.old)  (state-0-to-1 old)
-  ?>  ?=(%1 -.old)
+  =?  old   ?=(%0 -.old)  (state-0-to-1 old)
+  =?  this  ?=(%1 -.old)
+    (emil -:(poke-serve [~ /who] %base /gen/who/hoon ~))
+  =?  old   ?=(%1 -.old)  (state-1-to-2 old)
+  ?>  ?=(%2 -.old)
   this(sat old)
 ::
 ++  poke-rekey                                        ::  rotate private keys
@@ -198,6 +210,9 @@
 ::
 ++  poke
   |=  [=mark =vase]
+  ?>  ?|  ?=(%helm-hi mark)
+          =(our src):bowl
+      ==
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)

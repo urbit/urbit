@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
-import { Association } from '@urbit/api/metadata';
-import { AppName } from '@urbit/api';
+import { AppName, Association } from '@urbit/api';
 import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';

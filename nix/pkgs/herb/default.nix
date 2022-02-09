@@ -18,7 +18,7 @@ stdenvNoCC.mkDerivation {
   phases = [ "installPhase" "fixupPhase" ];
 
   installPhase = ''
-    mkdir -p $out/bin 
+    mkdir -p $out/bin
     cp $src $out/bin/herb
     chmod +x $out/bin/herb
   '';

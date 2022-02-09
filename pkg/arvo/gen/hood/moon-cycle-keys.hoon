@@ -42,4 +42,4 @@
           leaf+(scow %uw (jam seed))
       ==
   pub:ex:cub
-`[mon *id:block:jael %keys life 1 pass]
+`[mon *id:block:jael %keys [life 1 pass] %.n]
