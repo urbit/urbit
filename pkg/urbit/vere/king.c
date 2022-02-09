@@ -183,6 +183,7 @@ _king_prop()
       } break;
 
       case 2: {  //  url
+        u3l_log("boot: downloading prop %s\n", vex_u->loc_c);
         u3_atom jam = _king_get_atom(vex_u->loc_c);
         mor = u3nc(u3ke_cue(jam), mor);
       } break;
@@ -193,6 +194,7 @@ _king_prop()
         sprintf(url_c,
                 "https://bootstrap.urbit.org/props/%s.jam",
                 vex_u->loc_c);
+        u3l_log("boot: downloading prop %s\n", url_c);
         u3_atom jam = _king_get_atom(url_c);
         mor = u3nc(u3ke_cue(jam), mor);
       } break;
