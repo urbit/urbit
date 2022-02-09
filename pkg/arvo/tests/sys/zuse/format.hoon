@@ -131,6 +131,7 @@
   ++  nul  `json`~
   ++  tru  `json`[%b &]
   ++  num  `json`[%n ~.12]
+  ++  neg  `json`[%n '-3']
   ++  str  `json`[%s 'hey']
   ++  frond  `json`(frond:enjs 'foo' num)
   ++  obj  `json`(pairs:enjs ~[['foo' num] ['bar' str]])
@@ -228,6 +229,16 @@
       !>  (ni num:ex)
     %-  expect-fail
       |.  (ni tru:ex)
+    ::  as @s
+    ::
+    %+  expect-eq
+      !>  -3
+      !>  (ns neg:ex)
+    %+  expect-eq
+      !>  --12
+      !>  (ns num:ex)
+    %-  expect-fail
+      |.  (ns tru:ex)
     ::  as cord
     ::
     %+  expect-eq

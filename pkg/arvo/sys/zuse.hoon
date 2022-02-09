@@ -3389,6 +3389,14 @@
       |=  jon=json
       ?>  ?=([%n *] jon)
       (rash p.jon dem)
+    ::                                                  ::  ++ns:dejs:format
+    ++  ns                                              ::  number as signed
+      |=  jon=json
+      ^-  @s
+      ?>  ?=([%n *] jon)
+      %+  rash  p.jon
+      %+  cook  new:si
+      ;~(plug ;~(pose (cold %| (jest '-')) (easy %&)) dem)
     ::                                                  ::  ++no:dejs:format
     ++  no                                              ::  number as cord
       |=(jon=json ?>(?=([%n *] jon) p.jon))
