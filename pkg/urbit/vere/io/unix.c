@@ -1,5 +1,36 @@
 /* vere/unix.c
 **
+**  this file is responsible for maintaining a bidirectional
+**  mapping between the contents of a clay desk and a directory
+**  in a unix filesystem.
+**
+**  TODO  this driver is crufty and overdue for a rewrite.
+**  aspirationally, the rewrite should do sanity checking and
+**  transformations at the noun level to convert messages from
+**  arvo into sets of fs operations on trusted inputs, and
+**  inverse transformations and checks for fs contents to arvo
+**  messages.
+**
+**  the two relevant transformations to apply are:
+**
+**  1. bidirectionally map file contents to atoms
+**  2. bidirectionally map arvo $path <-> unix relative paths
+**
+**  the first transform is trivial. the second poses some
+**  challenges: an arvo $path is a list of $knot, and the $knot
+**  space intersects with invalid unix paths in the three cases
+**  of: %$ (the empty knot), '.', and '..'. we escape these by
+**  prepending a '!' to the filename corresponding to the $knot,
+**  yielding unix files named '!', '!.', and '!..'.
+**
+**  there is also the case of the empty path. we elide empty
+**  paths from this wrapper, which always uses the last path
+**  component as the file extension/mime-type.
+**
+**  these transforms are implemented, but they ought to be
+**  implemented in one place, prior to any fs calls; as-is, they
+**  are sprinkled throughout the file updating code.
+**
 */
 #include "all.h"
 #include <ftw.h>

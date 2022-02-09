@@ -123,6 +123,14 @@
         rut;})
 
     /* Asserting unix fs wrappers.
+    **
+    **  these all crash the process if passed a non-canonical
+    **  path (i.e., one containing '.', '..', or the empty path
+    **  component), so make sure you don't pass them one. if you
+    **  find yourself fighting with them, then please delete them
+    **  and do a sed search-and-replace to remove the `c3_` from
+    **  their call sites; their goal is to decrease maintenance
+    **  burden, not increase it.
     */
       // defined in vere/io/unix.c.
       c3_t u3_unix_cane(const c3_c* pax_c);
