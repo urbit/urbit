@@ -195,7 +195,7 @@ _king_prop()
                 vex_u->loc_c);
         u3_atom jam = _king_get_atom(url_c);
         mor = u3nc(u3ke_cue(jam), mor);
-      }
+      } break;
 
       default: {
         u3l_log("invalid prop source %d", vex_u->kin_i);
