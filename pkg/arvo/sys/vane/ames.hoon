@@ -1331,7 +1331,9 @@
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  if we don't know them, ask jael for their keys and enqueue
+    ::  If we don't know them, ask Jael for their keys. On comets, this will
+    ::  also cause us to send a self-attestation to the sender. The packet
+    ::  itself is dropped; we can assume it will be resent.
     ::
     ?.  ?=([~ %known *] sndr-state)
       (enqueue-alien-todo sndr.packet |=(alien-agenda +<))
@@ -1713,9 +1715,7 @@
   ++  on-trim  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
-  ::    Also requests key and life from Jael on first request.
-  ::    If we're a comet talking to another comet, sends our
-  ::    self-attestation packet.
+  ::    Also attempts to discover keys and life on first request.
   ::
   ++  enqueue-alien-todo
     |=  [=ship mutate=$-(alien-agenda alien-agenda)]
@@ -1734,19 +1734,20 @@
     =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
     ?:  already-pending
       event-core
-    ::  On first contact, ask Jael for ship's life and keys. Comets aren't in
-    ::  Jael, though, so don't bother asking. If we're a comet talking to
-    ::  another comet, send our self-attestation immediately.
+    ::  ask Jael for (non-comet) ship's life and keys
     ::
-    ?:  =(%pawn (clan:title ship))
-      ?:  =(%pawn (clan:title our))
-        (send-blob | ship (attestation-packet ship 1))
-      event-core
+    ?.  =(%pawn (clan:title ship))
+      ::  NB: we specifically look for this wire in +public-keys-give in
+      ::  Jael.  if you change it here, you must change it there.
+      ::
+      (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
+    ::  Request a comet's self-attesation by firing a sendkeys packet. If we're
+    ::  also a comet, send our self-attestation instead; this induces the same
+    ::  response, and thus saves a roundtrip.
     ::
-    ::  NB: we specifically look for this wire in +public-keys-give in
-    ::  Jael.  if you change it here, you must change it there.
-    ::
-    (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
+    ?.  =(%pawn (clan:title our))
+      (send-blob | ship (sendkeys-packet ship))
+    (send-blob | ship (attestation-packet ship 1))
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane,
@@ -1831,6 +1832,23 @@
         ^=   sndr-life  life.ames-state
         ^=        rcvr  her
         ^=   rcvr-life  her-life
+    ==
+  ::  +sendkeys-packet: generate a request for a self-attestation.
+  ::
+  ::    Sent by non-comets to comets.  Not acked.
+  ::
+  ++  sendkeys-packet
+    |=  her=ship
+    ^-  blob
+    ?>  ?=(%pawn (clan:title her))
+    %-  encode-packet
+    %-  encode-shut-packet
+    :*  ^=    shut-packet  *shut-packet
+        ^=  symmetric-key  *symmetric-key
+        ^=           sndr  our
+        ^=           rcvr  her
+        ^=      sndr-life  0
+        ^=      rcvr-life  0
     ==
   ::  +get-peer-state: lookup .her state or ~
   ::
