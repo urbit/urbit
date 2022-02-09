@@ -94,7 +94,7 @@ export default function S3Form(_props: {}): ReactElement {
             S3 Buckets
           </Text>
           <Text gray>
-            Your &apos;active&apos; bucket will be the one used when Groups uploads a
+            Your &apos;active&apos; bucket will be the one used when EScape uploads a
             file
           </Text>
         </Col>

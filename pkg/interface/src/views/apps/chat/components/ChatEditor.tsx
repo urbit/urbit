@@ -120,9 +120,8 @@ const MobileBox = styled(Box)`
 const AutocompleteSuggestionRow = styled(Row)`
   color: rgba(33,157,255,1);
   height: 28px;
-  padding: 2px;
-  border-radius: 4px;
   cursor: pointer;
+  padding: 6px 45px;
   &:hover {
     text-decoration: underline;
   }
@@ -166,6 +165,8 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
   const [enteredUser, setEnteredUser] = useState('');
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const [mentionedUsers, setMentionedUsers] = useState<string[]>([]);
+  const [mentionCursor, setMentionCursor] = useState(0);
+  const [disableAutocomplete, setDisableAutocomplete] = useState(false);
   const memberArray = useMemo(() => [...(group?.members || [])], [group]);
 
   const disableSpellcheck = useSettingsState(s => s.calm.disableSpellcheck);
@@ -174,6 +175,23 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
     message,
     setMessage
   } = useChatStore();
+
+  const selectMember = useCallback((patp: string) => () => {
+    const replaceText = (text, regex, set) => {
+      const matches = text.match(regex);
+      const newMention = matches.find(m => !ob.isValidPatp(m.trim()));
+      set(text.replace(regex, newMention[0] === ' ' ? ` ${patp}` : patp));
+    };
+
+    if (SIG_REGEX.test(message)) {
+      replaceText(message, SIG_REGEX, setMessage);
+    } else if (MENTION_REGEX.test(message)) {
+      replaceText(message, MENTION_REGEX, setMessage);
+    }
+
+    setShowAutocomplete(false);
+    editor.focus();
+  }, [editor, message, setMessage, mentionedUsers, setMentionedUsers, memberArray]);
 
   const onKeyPress = (e: KeyboardEvent, editor: CodeMirrorShim) => {
     if (!editor) {
@@ -220,27 +238,13 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
     }
   }, [inCodeMode, placeholder]);
 
-  const selectMember = useCallback((patp: string) => () => {
-    const replaceText = (text, regex, set) => {
-      const matches = text.match(regex);
-      const newMention = matches.find(m => !ob.isValidPatp(m.trim()));
-      set(text.replace(regex, newMention[0] === ' ' ? ` ${patp}` : patp));
-    };
-
-    if (SIG_REGEX.test(message)) {
-      replaceText(message, SIG_REGEX, setMessage);
-    } else if (MENTION_REGEX.test(message)) {
-      replaceText(message, MENTION_REGEX, setMessage);
-    }
-
-    setShowAutocomplete(false);
-    editor.focus();
-  }, [editor, message, setMessage, mentionedUsers, setMentionedUsers, memberArray]);
-
   const setAutocompleteValues = (show, suggestions, user) => {
     setShowAutocomplete(show);
     setAutoCompleteSuggestions(suggestions.map(s => `~${s}`));
     setEnteredUser(user);
+    if (!show && !suggestions.length && !user) {
+      setDisableAutocomplete(false);
+    }
   };
 
   const messageChange = useCallback((editor, data, value) => {
@@ -282,7 +286,11 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
     } else {
       setAutocompleteValues(false, [], '');
     }
-  }, [group, setAutocompleteValues]);
+
+    setMentionCursor(0);
+  }, [group, setAutocompleteValues, autocompleteSuggestions]);
+
+  const hasSuggestions = autocompleteSuggestions.length > 0;
 
   const codeTheme = inCodeMode ? ' code' : '';
   const options = {
@@ -290,10 +298,29 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
     theme: 'tlon' + codeTheme,
     placeholder: inCodeMode ? 'Code...' : placeholder,
     extraKeys: {
+      'Up': hasSuggestions && (() => {
+        if (mentionCursor > 0) {
+          setMentionCursor(mentionCursor - 1);
+        }
+      }),
+      'Down': hasSuggestions && (() => {
+        if (mentionCursor < autocompleteSuggestions.length - 1) {
+          setMentionCursor(mentionCursor + 1);
+        }
+      }),
       'Enter': submit,
       'Esc': () => {
-        editor?.getInputField().blur();
-      }
+        if (hasSuggestions) {
+          setAutoCompleteSuggestions([]);
+          setDisableAutocomplete(true);
+          setTimeout(() => editor?.getInputField().focus(), 1);
+        } else {
+          editor?.getInputField().blur();
+        }
+      },
+      'Tab': hasSuggestions && (() => {
+        selectMember(autocompleteSuggestions[mentionCursor])();
+      })
     }
   };
 
@@ -314,8 +341,17 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
   const renderAutocompleteSection = () => {
     if (autocompleteSuggestions.length) {
       return <>
-        {autocompleteSuggestions.map(suggestion => (
-          <AutocompleteSuggestionRow key={suggestion} onClick={selectMember(suggestion)}>
+        {autocompleteSuggestions.map((suggestion, i) => (
+          <AutocompleteSuggestionRow
+            key={suggestion}
+            onClick={selectMember(suggestion)}
+            backgroundColor={mentionCursor === i ? 'washedGray' : undefined}
+            ref={(ele) => {
+              if (ele && mentionCursor === i) {
+                ele.scrollIntoView();
+              }
+            }}
+          >
             <Text mono color="rgba(33,157,255,1)">{suggestion}</Text>
           </AutocompleteSuggestionRow>
         ))}
@@ -351,7 +387,7 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
       overflow={showAutocomplete ? 'visible' : 'auto'}
       position='relative'
     >
-      {showAutocomplete && !invitedUsers.includes(enteredUser) && <Box
+      {(showAutocomplete && !invitedUsers.includes(enteredUser) && !disableAutocomplete) && <Box
         className="autocomplete-patp"
         position="absolute"
         top={`-${Math.min((autocompleteSuggestions.length || 1) * 28 + 11, 95)}px`}
@@ -359,8 +395,6 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
         height={`${Math.min((autocompleteSuggestions.length || 1) * 28 + 10, 94)}px`}
         overflowY="scroll"
         overflowX="visible"
-        px="43px"
-        py={1}
         background={dark ? 'black' : 'white'}
         border="1px solid lightgray"
         borderColor={dark ? 'black' : ''}
@@ -412,7 +446,6 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
             onPaste={onPaste as any}
           />
       }
-
     </Row>
   );
 });

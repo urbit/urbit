@@ -74,7 +74,7 @@ interface ChatPaneProps {
   onReply: (msg: Post) => string;
   onDelete?: (msg: Post) => void;
   onLike?: (msg: Post) => void;
-  onBookmark?: (msg: Post, permalink: string, collection: LinkCollection) => void;
+  onBookmark?: (msg: Post, permalink: string, collection: LinkCollection, add: boolean) => void;
   /**
    * Fetch more messages
    *

@@ -1,10 +1,10 @@
-import { Col, Text } from '@tlon/indigo-react';
+import { Box, Button, Col, Icon, Text } from '@tlon/indigo-react';
 import {
   Graph,
   GraphNode, Post
 } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
-import React, { Component } from 'react';
+import React, { Component, SyntheticEvent } from 'react';
 import { GraphScroller } from '~/views/components/GraphScroller';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import { LinkCollection } from '../ChatResource';
@@ -23,7 +23,7 @@ type ChatWindowProps = {
   onReply: (msg: Post) => void;
   onDelete: (msg: Post) => void;
   onLike: (msg: Post) => void;
-  onBookmark: (msg: Post, permalink: string, collection: LinkCollection) => void;
+  onBookmark: (msg: Post, permalink: string, collection: LinkCollection, add: boolean) => void;
   dismissUnread: () => void;
   pendingSize?: number;
   showOurContact: boolean;
@@ -37,6 +37,7 @@ interface ChatWindowState {
   idle: boolean;
   initialized: boolean;
   unreadIndex: BigInteger;
+  isAtEnd: boolean;
 }
 
 interface RendererProps {
@@ -63,10 +64,12 @@ class ChatWindow extends Component<
       fetchPending: false,
       idle: true,
       initialized: true,
-      unreadIndex: bigInt.zero
+      unreadIndex: bigInt.zero,
+      isAtEnd: true
     };
 
     this.scrollToUnread = this.scrollToUnread.bind(this);
+    this.scrollToEnd = this.scrollToEnd.bind(this);
     this.handleWindowBlur = this.handleWindowBlur.bind(this);
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
@@ -76,10 +79,15 @@ class ChatWindow extends Component<
   }
 
   componentDidMount() {
-    this.calculateUnreadIndex();
-    if(this.props.scrollTo) {
+    const unreadIndex = this.calculateUnreadIndex();
+    if (this.props.scrollTo) {
       this.virtualList!.scrollLocked = false;
       this.virtualList!.scrollToIndex(this.props.scrollTo);
+    } else if (unreadIndex && !this.dismissedInitialUnread()) {
+      this.virtualList!.scrollLocked = false;
+      this.virtualList!.scrollToIndex(unreadIndex);
+    } else if (!this.dismissedInitialUnread()) {
+      setTimeout(this.scrollToUnread, 1);
     }
   }
 
@@ -108,6 +116,8 @@ class ChatWindow extends Component<
     this.setState({
       unreadIndex
     });
+
+    return unreadIndex;
   }
 
   dismissedInitialUnread(): boolean {
@@ -187,10 +197,22 @@ class ChatWindow extends Component<
     this.virtualList?.scrollToIndex(this.state.unreadIndex);
   }
 
-  onScroll = ({ scrollTop }) => {
+  scrollToEnd(): void {
+    const mostRecentIndex = this.props.graph.peekLargest()?.[0];
+    if (!mostRecentIndex || mostRecentIndex.eq(bigInt.zero)) {
+      return;
+    }
+
+    this.virtualList?.scrollToIndex(mostRecentIndex);
+  }
+
+  onScroll = (event: SyntheticEvent<HTMLDListElement, Event>) => {
+    const scrollTop = event.target.scrollTop;
     if (!this.state.idle && scrollTop > IDLE_THRESHOLD) {
       this.setState({ idle: true });
     }
+
+    this.setState({ isAtEnd: scrollTop < 80 });
   }
 
   renderer = React.forwardRef(({ index, scrollWindow }: RendererProps, ref) => {
@@ -239,14 +261,12 @@ class ChatWindow extends Component<
     const prevIdx = keys[graphIdx - 1];
     const nextIdx = keys[graphIdx + 1];
     const isLastRead: boolean = this.state.unreadIndex.eq(index);
-    const isBookmarked = false;
     const props = {
       highlighted,
       scrollWindow,
       isPending,
       isLastRead,
       isLastMessage,
-      isBookmarked,
       msg,
       ...messageProps
     };
@@ -287,6 +307,13 @@ class ChatWindow extends Component<
           dismissUnread={this.props.dismissUnread}
           onClick={this.scrollToUnread}
          />)}
+        {!this.state.isAtEnd && (
+          <Box position="absolute" bottom="12px" right="12px" zIndex={1}>
+            <Button onClick={this.scrollToEnd} cursor='pointer'>
+              <Icon icon="ChevronSouth" />
+            </Button>
+          </Box>
+         )}
         <GraphScroller
           ref={(list) => {
             this.virtualList = list;
@@ -296,7 +323,6 @@ class ChatWindow extends Component<
           style={virtScrollerStyle}
           onBottomLoaded={this.onBottomLoaded}
           onTopLoaded={this.onTopLoaded}
-          // @ts-ignore paging @liam-fitzgerald on virtualscroller props
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}

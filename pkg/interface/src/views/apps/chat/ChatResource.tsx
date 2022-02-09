@@ -1,24 +1,23 @@
-import { Association, Content, createPost, fetchIsAllowed, Post, removePosts, deSig, createUnmanagedGraph } from '@urbit/api';
+import { Association, Content, createPost, fetchIsAllowed, Post, removePosts, deSig } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import React, {
   ReactElement, useCallback,
   useEffect,
-
   useMemo, useState
 } from 'react';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
-import { getPermalinkForGraph, parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
-import useGroupState, { useGroupForAssoc } from '~/logic/state/group';
+import { useGroupForAssoc } from '~/logic/state/group';
 import useHarkState, { useHarkStat } from '~/logic/state/hark';
 import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
 import airlock from '~/logic/api';
 import { disallowedShipsForOurContact } from '~/logic/lib/contact';
 import shallow from 'zustand/shallow';
-import { stringToSymbol, toHarkPath } from '~/logic/lib/util';
+import { toHarkPath } from '~/logic/lib/util';
 import useMetadataState from '~/logic/state/metadata';
-import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import useBookmarks from '~/logic/lib/hooks/useBookmarks';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
@@ -41,11 +40,10 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const { resource } = association;
   const [toShare, setToShare] = useState<string[] | string | undefined>();
   const { associations } = useMetadataState();
-  const groups = useGroupState(state => state.groups);
-  const waiter = useWaitForProps({ groups }, 5000);
   const group = useGroupForAssoc(association)!;
   const graph = useGraphForAssoc(association);
   const stats = useHarkStat(toHarkPath(association.resource));
+  const { onBookmark } = useBookmarks();
   const unreadCount = stats.count;
   const canWrite = group ? isWriter(group, resource) : false;
   const [
@@ -185,45 +183,6 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
       });
     }
   }, [resource]);
-
-  const onBookmark = useCallback(async (msg: Post, permalink: string, collection: LinkCollection) => {
-    let path = collection.path;
-    const isMyBookmarks = collection.title === 'My Bookmarks';
-
-    if (isMyBookmarks && !associations.graph[collection.path]) {
-      const name = 'My Bookmarks';
-      const resId = `${stringToSymbol(name)}-${Math.floor(Math.random() * 10000)}`;
-
-      try {
-        const description = '';
-        const moduleType = 'link';
-        await airlock.thread(createUnmanagedGraph(
-          window.ship,
-          resId,
-          name,
-          description,
-          { invite: { pending: [] } },
-          moduleType
-        ));
-
-        await waiter(p => Boolean(p.groups?.[`/ship/~${window.ship}/${resId}`]));
-        path = `/ship/~${window.ship}/${resId}`;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    const [,,,collectionName] = path.split('/');
-    const url = permalink;
-    const text = url; // maybe add an option to customize the title, or use some other default?
-    const contents = url.startsWith('web+urbitgraph:/')
-      ?  [{ text }, permalinkToReference(parsePermalink(url)!)]
-      :  [{ text }, { url }];
-
-    const parentIndex = ''; // this is always empty elsewhere
-    const post = createPost(window.ship, contents, parentIndex);
-    addPost(`~${window.ship}`, collectionName, post);
-  }, [associations, groups, waiter]);
 
   const dismissUnread = useCallback(() => {
     useHarkState.getState().readCount(toHarkPath(association.resource));

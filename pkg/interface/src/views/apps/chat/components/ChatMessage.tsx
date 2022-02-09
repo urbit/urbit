@@ -333,7 +333,6 @@ interface ChatMessageProps {
   permalink?: string;
   transcluded?: number;
   isAdmin?: boolean;
-  isBookmarked?: boolean;
   isReply?: boolean;
   className?: string;
   isPending?: boolean;
@@ -348,7 +347,7 @@ interface ChatMessageProps {
   showOurContact: boolean;
   onDelete?: () => void;
   onLike?: (msg: Post) => void;
-  onBookmark?: (msg: Post, permalink: string, collection: LinkCollection) => void,
+  onBookmark?: (msg: Post, permalink: string, collection: LinkCollection, add: boolean) => void,
   collections: LinkCollection[],
 }
 const emptyCallback = () => {};
@@ -370,7 +369,6 @@ function ChatMessage(props: ChatMessageProps) {
     permalink = '',
     onLike,
     onBookmark,
-    isBookmarked= false,
     isReply = false,
     collections
   } = props;
@@ -437,7 +435,6 @@ function ChatMessage(props: ChatMessageProps) {
     onDelete,
     onLike,
     onBookmark,
-    isBookmarked,
     isAdmin,
     numLikes,
     didLike,

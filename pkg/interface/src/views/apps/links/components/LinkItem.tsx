@@ -11,6 +11,7 @@ import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import { PermalinkEmbed } from '../../permalinks/embed';
 import airlock from '~/logic/api';
+import useSettingsState from '~/logic/state/settings';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -34,6 +35,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     return <Redirect to="/~404" />;
   }
 
+  const { putEntry } = useSettingsState.getState();
   const remoteRef = useRef<HTMLDivElement>(null);
   const setRef = useCallback((el: HTMLDivElement | null ) => {
     remoteRef.current = el;
@@ -49,21 +51,14 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
   }, [resource, index]);
 
   useEffect(() => {
-    function onBlur() {
-      // FF will only update on next tick
-      setTimeout(() => {
-        if(document.activeElement instanceof HTMLIFrameElement
-          // @ts-ignore forwardref prop passing
-          && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
-          markRead();
-        }
-      });
-    }
-    window.addEventListener('blur', onBlur);
-    return () => {
-      window.removeEventListener('blur', onBlur);
-    };
-  }, [markRead]);
+    setTimeout(() => {
+      if(document.activeElement instanceof HTMLIFrameElement
+        // @ts-ignore forwardref prop passing
+        && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
+        markRead();
+      }
+    });
+  }, []);
 
   const URLparser = new RegExp(
     /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
@@ -98,6 +93,12 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
       airlock.poke(removePosts(`~${ship}`, name, [node.post.index]));
+
+      // If the default bookmark title changes, this will have to be found in some other way.
+      const permalinkText = node.post.contents.find(({ text }) => text?.includes('web+urbitgraph://'));
+      if (permalinkText?.text) {
+        putEntry('bookmarks', permalinkText.text, '');
+      }
     }
   };
 

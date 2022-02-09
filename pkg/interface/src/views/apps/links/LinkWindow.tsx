@@ -131,6 +131,19 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
 
     return (
       <Col width="100%" height="calc(100% - 48px)" position="relative">
+        {(this.canWrite() && !orm.size) && <Col
+          mx="auto"
+          mt={4}
+          maxWidth="768px"
+          width="100%"
+          flexShrink={0}
+          px={3}
+        >
+          <LinkSubmit
+            name={name}
+            ship={deSig(ship)}
+          />
+        </Col>}
         {/* @ts-ignore calling @liam-fitzgerald on virtualscroller */}
         <GraphScroller
           origin="top"

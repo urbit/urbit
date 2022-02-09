@@ -48,12 +48,12 @@ export default function Settings(props: {}) {
         <SettingsItem
           to="display"
           title="Display"
-          description="Customize visual interfaces across Groups"
+          description="Customize visual interfaces across EScape"
         />
         <SettingsItem
           to="calm"
           title="CalmEngine"
-          description="Modulate vearious elements across Groups to maximize calmness"
+          description="Modulate vearious elements across EScape to maximize calmness"
         />
         <SettingsItem
           to="s3"
@@ -63,7 +63,7 @@ export default function Settings(props: {}) {
         <SettingsItem
           to="security"
           title="Security"
-          description="Manage sessions, login credentials, and Groups access"
+          description="Manage sessions, login credentials, and EScape access"
         />
         {/*
         <SettingsItem

@@ -27,6 +27,7 @@ export function RemoteContentWrapper(props: RemoteContentWrapperProps) {
   const [unfold, setUnfold] = useState(false);
   const toggleUnfold = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setUnfold(s => !s);
   }, []);
 

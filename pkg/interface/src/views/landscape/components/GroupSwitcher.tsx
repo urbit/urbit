@@ -116,7 +116,7 @@ return (
     >
       <Row flexGrow={1} alignItems="center" justifyContent="space-between">
         <Dropdown
-          width="auto"
+          width="100%"
           dropWidth="231px"
           alignY="top"
           options={
@@ -171,7 +171,7 @@ return (
           }
         >
           <Row flexGrow={1} alignItems="center" justifyContent="space-between" width='100%' minWidth={0} flexShrink={0}>
-            <Row flexGrow={1} alignItems="center" width='100%' minWidth={0} flexShrink={0}>
+            <Row flexGrow={1} alignItems="center" minWidth={0} flexShrink={0} width={showTitleActions ? 'auto' : '100%'}>
               { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
               <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
             </Row>
@@ -181,7 +181,7 @@ return (
               handleSubmit={setConfig}
               workspace={workspace}
             />}
-            {props.workspace?.type === 'uqbar-home' && <Icon icon="Plus" />}
+            {props.workspace?.type === 'uqbar-home' && <Icon icon="Plus" ml="-16px" />}
           </Row>
         </Dropdown>
         <Row pr={3} verticalAlign="middle">

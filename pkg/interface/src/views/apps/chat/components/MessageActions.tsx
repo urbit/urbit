@@ -1,12 +1,14 @@
 /* eslint-disable max-lines-per-function */
 import { Box, Col, Icon, Image, Row, Text } from '@tlon/indigo-react';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useCopy } from '~/logic/lib/useCopy';
 import { Dropdown } from '~/views/components/Dropdown';
 import BookmarkIcon from '~/assets/img/bookmark-icon.png';
 import BookmarkIconSolid from '~/assets/img/bookmark-icon-solid.png';
 import useMetadataState from '~/logic/state/metadata';
 import './MessageActions.scss';
+import { LinkCollection } from '../ChatResource';
+import useSettingsState from '~/logic/state/settings';
 
 const MessageActionItem = ({ onClick, color, children }: { onClick: () => void; color?: string; children: any }) => {
   return (
@@ -26,10 +28,12 @@ const MessageActionItem = ({ onClick, color, children }: { onClick: () => void; 
   );
 };
 
-const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, isBookmarked, permalink, collections }) => {
+const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, permalink, collections }) => {
   const { associations } = useMetadataState();
+  const { bookmarks } = useSettingsState.getState();
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
+  const bookmarked = useMemo(() => bookmarks[permalink], [bookmarks]);
   const showCopyMessageLink = Boolean(permalink);
   const showDelete = (isAdmin || isOwn()) && onDelete;
   const myBookmarksPath = useMemo(() => Object.keys(associations.graph).find((path) => {
@@ -38,14 +42,16 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, i
   }), [associations]);
   const collectionList = [{ title: 'My Bookmarks', path: myBookmarksPath || 'mybookmarks' }, ...collections];
 
-  const bookmarkIcon = <Box padding={1} size={'24px'} cursor='pointer'>
-    <Image
-      referrerPolicy="no-referrer"
-      src={isBookmarked ? BookmarkIconSolid : BookmarkIcon}
-      className='bookmarkIcon'
-      onError={console.warn}
-    />
-  </Box>;
+  const toggleBookmark = useCallback((collection?: LinkCollection) => () => {
+    onBookmark(msg, permalink, collection || '', !bookmarked);
+  }, [msg, permalink, bookmarked]);
+
+  const bookmarkIcon = <Image
+    referrerPolicy="no-referrer"
+    src={bookmarked ? BookmarkIconSolid : BookmarkIcon}
+    className='bookmarkIcon'
+    onError={console.warn}
+  />;
 
   return (
     <Box
@@ -74,33 +80,39 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, i
           onClick={() => onLike(msg)}
         >
           <Icon icon='CheckmarkBold' size="20px" mt="-2px" ml="-2px" />
-        </Box>
-        <Dropdown
-          dropWidth='250px'
-          width='auto'
-          alignY='top'
-          alignX='right'
-          flexShrink={0}
-          offsetY={8}
-          offsetX={-24}
-          options={
-            <Col
-              py={2}
-              backgroundColor='white'
-              color='washedGray'
-              border={1}
-              borderRadius={2}
-              borderColor='lightGray'
-              boxShadow='0px 0px 0px 3px'
-            >
-              {collectionList.map(c => <MessageActionItem key={c.path} onClick={() => onBookmark(msg, permalink, c)}>
-                {c.title}
-              </MessageActionItem>)}
-            </Col>
-          }
-        >
-          {bookmarkIcon}
-        </Dropdown> */}
+        </Box> */}
+        {bookmarked ? (
+          <Box padding={1} size={'24px'} cursor='pointer' onClick={toggleBookmark()}>
+            {bookmarkIcon}
+          </Box>
+        ) : (
+          <Dropdown
+            dropWidth='250px'
+            width='auto'
+            alignY='top'
+            alignX='right'
+            flexShrink={0}
+            offsetY={8}
+            offsetX={-24}
+            options={
+              <Col
+                py={2}
+                backgroundColor='white'
+                color='washedGray'
+                border={1}
+                borderRadius={2}
+                borderColor='lightGray'
+                boxShadow='0px 0px 0px 3px'
+              >
+                {collectionList.map(c => <MessageActionItem key={c.path} onClick={toggleBookmark(c)}>
+                  {c.title}
+                </MessageActionItem>)}
+              </Col>
+            }
+          >
+            <Box padding={1} size={'24px'} cursor='pointer'>{bookmarkIcon}</Box>
+          </Dropdown>
+        )}
         <Dropdown
           dropWidth='250px'
           width='auto'

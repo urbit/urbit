@@ -85,7 +85,7 @@ const DebugPane = () => {
             Debug Menu
           </Text>
           <Text gray>
-            Debug Groups state. Click any state to see its contents and drill down.
+            Debug EScape state. Click any state to see its contents and drill down.
           </Text>
         </Col>
         <StoreDebugger name="Contacts" useStore={useContactState} />
