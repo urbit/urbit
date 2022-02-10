@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.14",
+    "version": "0.1.15",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -186,6 +186,12 @@
           }
         },
         {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
+          }
+        },
+        {
           "name": "from",
           "schema": {
             "$ref": "#/components/schemas/From"
@@ -226,6 +232,12 @@
           "name": "sig",
           "schema": {
             "$ref": "#/components/schemas/Signature"
+          }
+        },
+        {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
           }
         },
         {
@@ -272,6 +284,12 @@
           }
         },
         {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
+          }
+        },
+        {
           "name": "from",
           "schema": {
             "$ref": "#/components/schemas/From"
@@ -312,6 +330,12 @@
           "name": "sig",
           "schema": {
             "$ref": "#/components/schemas/Signature"
+          }
+        },
+        {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
           }
         },
         {
@@ -358,6 +382,12 @@
           }
         },
         {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
+          }
+        },
+        {
           "name": "from",
           "schema": {
             "$ref": "#/components/schemas/From"
@@ -398,6 +428,12 @@
           "name": "sig",
           "schema": {
             "$ref": "#/components/schemas/Signature"
+          }
+        },
+        {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
           }
         },
         {
@@ -444,6 +480,12 @@
           }
         },
         {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
+          }
+        },
+        {
           "name": "from",
           "schema": {
             "$ref": "#/components/schemas/From"
@@ -484,6 +526,12 @@
           "name": "sig",
           "schema": {
             "$ref": "#/components/schemas/Signature"
+          }
+        },
+        {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
           }
         },
         {
@@ -530,6 +578,12 @@
           }
         },
         {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
+          }
+        },
+        {
           "name": "from",
           "schema": {
             "$ref": "#/components/schemas/From"
@@ -573,6 +627,12 @@
           }
         },
         {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
+          }
+        },
+        {
           "name": "from",
           "schema": {
             "$ref": "#/components/schemas/From"
@@ -613,6 +673,12 @@
           "name": "sig",
           "schema": {
             "$ref": "#/components/schemas/Signature"
+          }
+        },
+        {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
           }
         },
         {
@@ -1702,6 +1768,12 @@
           }
         },
         {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
+          }
+        },
+        {
           "name": "hash",
           "schema": {
             "$ref": "#/components/schemas/hash32"
@@ -1814,6 +1886,12 @@
           "name": "sig",
           "schema": {
             "$ref": "#/components/schemas/Signature"
+          }
+        },
+        {
+          "name": "force",
+          "schema": {
+            "$ref": "#/components/schemas/Force"
           }
         },
         {
@@ -2473,8 +2551,7 @@
         "required": ["forced", "tx", "address"],
         "properties": {
           "forced": {
-            "type": "boolean",
-            "title": "Forced"
+            "$ref": "#/components/schemas/Force"
           },
           "rawTx": {
             "$ref": "#/components/schemas/L2Transaction"
@@ -2628,6 +2705,11 @@
           },
           "dns": { "$ref": "#/components/schemas/DNS" }
         }
+      },
+      "Force": {
+        "title": "Force",
+        "description": "If true, forces the Roller to include this transaction, even if it fails to validate.",
+        "type": "boolean"
       }
     }
   },
