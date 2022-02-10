@@ -12778,8 +12778,8 @@
       =^  ref  grub  (caching-play p.gen)
       =^  fid  grub  (caching-find %read q.gen)
       ~|  [%test q.gen]
-      =;  [=nock =_grub]
-        =^  nic  grub  (caching-nice bool)
+      =;  [=nock grun=_grub]
+        =^  nic  grub  (caching-nice(grub grun) bool)
         [[nic nock] grub]
       |-  ^-  [nock _grub]
       ?-  -.fid
