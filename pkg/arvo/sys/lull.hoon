@@ -547,6 +547,35 @@
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
         heeds=(set duct)
+        =scry-state
+    ==
+  +$  scry-state
+    $:  order=(map path @ud)
+        seq=@ud
+        keens=((mop @ud keen-state) lte)
+        metrics=pump-metrics
+    ==
+  +$  keen-state
+    $:  wan=(list want)  ::  request packets
+        hav=(list have)  ::  response packets, backward
+        num-fragments=@ud
+        num-received=@ud
+    ==
+  +$  want
+    $:  fra=@ud
+        =hoot
+        last-sent=@da
+        tries=@ud
+        skips=@ud
+    ==
+  +$  have
+    $:  fra=@ud
+        rawr
+    ==
+  +$  rawr  ::  response packet  ::TODO  meow
+    $:  sig=@
+        siz=@ud
+        byts
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
