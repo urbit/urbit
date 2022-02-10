@@ -10441,9 +10441,8 @@
     ==
   ::
   ++  caching-bran
-    ~+
     =|  gil=(set type)
-    |-  ~+  ^-  [seminoun:musk _grub]
+    |-  ^-  [seminoun:musk _grub]
     ?-    sut
         %noun
       :_  grub
