@@ -12722,8 +12722,8 @@
       [(hint [sut p.gen] p.hum) q.hum]
     ::
         [%sgzp *]
-      =^  lef  grub  (caching-play p.gen)
-      ~_  duck(sut lef)
+      ~_  =^  lef  grub  (caching-play p.gen)
+          duck(sut lef)
       =^  rig  grub  $(gen q.gen)
       [rig grub]
     ::
