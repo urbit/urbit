@@ -974,8 +974,8 @@ _fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis)
   if ( who == u3_none ) {
     u3l_log("no listeners\n");
   } else {
+    u3_noun her = u3qdi_tap(who);
 
-    u3_noun her = who;
     while ( her != u3_nul ) {
       // TODO: prime cache maybe???
 
@@ -1398,14 +1398,14 @@ static void _fine_got_pack(u3_pact* pac_u, u3_noun fra)
 static void _fine_bide(u3_pact* pac_u, u3_noun pax)
 {
   u3_ames* sam_u = pac_u->sam_u;
-  u3_weak lis = u3h_get(sam_u->fin_s.bid_p, pax);
+  u3_weak set = u3h_get(sam_u->fin_s.bid_p, pax);
 
-  if ( u3_none == lis ) {
-    lis = u3_nul;
+  if ( u3_none == set ) {
+    set = u3_nul;
   }
 
   u3_noun her = u3i_chubs(2, pac_u->req_u.pre_u.sen_d);
-  u3_noun new = u3nc(her, lis);
+  u3_noun new = u3qdi_put(set, her);
 
   u3h_put(sam_u->fin_s.bid_p, pax, new);
 
@@ -1454,6 +1454,7 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
 
   if ( fra == u3_none ) {
     u3l_log("fragment number out of range\n");
+    _ames_pact_free(pac_u);
   } else {
     _fine_got_pack(pac_u, fra);
   }
@@ -1660,6 +1661,12 @@ _ames_hear(u3_ames* sam_u,
 
   // we always overwrite this later
   _ames_sift_prelude(&pac_u->hed_u, &pac_u->bod_u.pre_u, len_w - 4, hun_y + 4);
+  {
+    u3_noun her = u3i_chubs(2, pac_u->bod_u.pre_u.sen_d);
+    u3_noun las = u3_ames_encode_lane(*lan_u);
+
+    _ames_lane_into_cache(sam_u->lax_p, her, las);
+  }
   
   if (c3n == is_ames_o) {
     _fine_hear(sam_u, *lan_u, len_w, hun_y);
