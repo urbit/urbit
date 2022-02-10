@@ -93,7 +93,7 @@ case $(tr A-Z a-z <<< $cpu) in
   x86_64)
      defmacro U3_OS_ENDIAN_little 1
      ;;
-  aarch64)
+  arm64|aarch64)
      defmacro U3_OS_ENDIAN_little 1
      defmacro U3_CPU_aarch64 1
      ;;

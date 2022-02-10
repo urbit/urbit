@@ -1,7 +1,3 @@
-/* include/all.h
-**
-** This file is in the public domain.
-*/
 #   include "config.h"
   /** c3: C environment.
   **/

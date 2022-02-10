@@ -1,7 +1,6 @@
-/* include/c/defs.h
-**
-** This file is in the public domain.
-*/
+#ifndef C3_DEFS_H
+#define C3_DEFS_H
+
   /** Loobeans - inverse booleans to match nock.
   **/
 #     define c3y      0
@@ -122,3 +121,5 @@
           c3_assert(!"memory lost");                            \
         }                                                       \
         rut;})
+
+#endif /* ifndef C3_DEFS_H */

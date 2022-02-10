@@ -1,9 +1,9 @@
-/* i/n/a.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_ALLOCATE_H
+#define U3_ALLOCATE_H
 
 #include <openssl/opensslv.h>
+
+#include "manage.h"
 
   /**  Constants.
   **/
@@ -199,57 +199,101 @@
                                       c3_wiseof(u3a_box)  ) )
     /* Inside a noun.
     */
+
+    /* u3a_is_cat(): yes if noun [som] is direct atom.
+    */
 #     define u3a_is_cat(som)    (((som) >> 31) ? c3n : c3y)
+
+    /* u3a_is_dog(): yes if noun [som] is indirect noun.
+    */
 #     define u3a_is_dog(som)    (((som) >> 31) ? c3y : c3n)
 
-#     define u3a_is_pug(som)    ((2 == ((som) >> 30)) ? c3y : c3n)
-#     define u3a_is_pom(som)    ((3 == ((som) >> 30)) ? c3y : c3n)
+    /* u3a_is_pug(): yes if noun [som] is indirect atom.
+    */
+#     define u3a_is_pug(som)    ((0b10 == ((som) >> 30)) ? c3y : c3n)
+
+    /* u3a_is_pom(): yes if noun [som] is indirect cell.
+    */
+#     define u3a_is_pom(som)    ((0b11 == ((som) >> 30)) ? c3y : c3n)
+
+    /* u3a_to_off(): mask off bits 30 and 31 from noun [som].
+    */
 #     define u3a_to_off(som)    ((som) & 0x3fffffff)
+
+    /* u3a_to_ptr(): convert noun [som] into generic pointer into loom.
+    */
 #     define u3a_to_ptr(som)    (u3a_into(u3a_to_off(som)))
+
+    /* u3a_to_wtr(): convert noun [som] into word pointer into loom.
+    */
 #     define u3a_to_wtr(som)    ((c3_w *)u3a_to_ptr(som))
+
+    /* u3a_to_pug(): set bit 31 of [off].
+    */
 #     define u3a_to_pug(off)    (off | 0x80000000)
+
+    /* u3a_to_pom(): set bits 30 and 31 of [off].
+    */
 #     define u3a_to_pom(off)    (off | 0xc0000000)
 
+    /* u3a_is_atom(): yes if noun [som] is direct atom or indirect atom.
+    */
 #     define u3a_is_atom(som)    c3o(u3a_is_cat(som), \
                                          u3a_is_pug(som))
+    /* u3a_is_cell: yes if noun [som] is cell.
+    */
 #     define u3a_is_cell(som)    u3a_is_pom(som)
 
+    /* u3a_h(): get head of cell [som]. Bail if [som] is not cell.
+    */
 #     define u3a_h(som) \
         ( _(u3a_is_cell(som)) \
            ? ( ((u3a_cell *)u3a_to_ptr(som))->hed )\
            : u3m_bail(c3__exit) )
 
+    /* u3a_t(): get tail of cell [som]. Bail if [som] is not cell.
+    */
 #     define u3a_t(som) \
         ( _(u3a_is_cell(som)) \
            ? ( ((u3a_cell *)u3a_to_ptr(som))->tel )\
            : u3m_bail(c3__exit) )
 
+    /* u3a_into(): convert loom offset [x] into generic pointer.
+    */
 #     define  u3a_into(x) ((void *)(u3_Loom + (x)))
+
+    /* u3a_outa(): convert pointer [p] into word offset into loom.
+    */
 #     define  u3a_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
 
+    /* u3a_is_north(): yes if road [r] is north road.
+    */
 #     define  u3a_is_north(r)  __(r->cap_p > r->hat_p)
+
+    /* u3a_is_south(): yes if road [r] is south road.
+    */
 #     define  u3a_is_south(r)  !u3a_is_north(r)
 
-    /* u3a_open(): words of contiguous free space in [r]
+    /* u3a_open(): words of contiguous free space in road [r]
     */
 #     define  u3a_open(r)  ( (c3y == u3a_is_north(r)) \
                              ? (c3_w)(r->cap_p - r->hat_p) \
                              : (c3_w)(r->hat_p - r->cap_p) )
 
-    /* u3a_full(): words of [r];
+    /* u3a_full(): total words in road [r];
     ** u3a_full(r) == u3a_heap(r) + u3a_temp(r) + u3a_open(r)
     */
 #     define  u3a_full(r)  ( (c3y == u3a_is_north(r)) \
                              ? (c3_w)(r->mat_p - r->rut_p) \
                              : (c3_w)(r->rut_p - r->mat_p) )
 
-    /* u3a_heap(): words of heap in [r]
+    /* u3a_heap(): words of heap in road [r]
     */
 #     define  u3a_heap(r)  ( (c3y == u3a_is_north(r)) \
                              ? (c3_w)(r->hat_p - r->rut_p) \
                              : (c3_w)(r->rut_p - r->hat_p) )
 
-    /* u3a_temp(): words of stack in [r]
+    /* u3a_temp(): words of stack in road [r]
     */
 #     define  u3a_temp(r)  ( (c3y == u3a_is_north(r)) \
                              ? (c3_w)(r->mat_p - r->cap_p) \
@@ -355,12 +399,6 @@
             u3R->cap_p += pil_u->mov_ws;
             return u3a_peek(pil_u);
           }
-
-        //  we have to forward-declare u3m_bail() here, as our
-        //  headers don't have the necessary guards.
-        //
-          c3_i
-          u3m_bail(c3_m how_m) __attribute__((noreturn));
 
         /* u3a_pile_sane(): bail on invalid road stack state.
         */
@@ -682,3 +720,5 @@
         */
           c3_c*
           u3a_string(u3_atom a);
+
+#endif /* ifndef U3_ALLOCATE_H */
