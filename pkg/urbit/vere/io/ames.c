@@ -198,6 +198,16 @@ _ames_panc_free(u3_panc* pac_u)
   c3_free(pac_u);
 }
 
+/* _lane_scry_path(): format scry path for retrieving a lane
+*/
+static inline u3_noun _lane_scry_path(u3_noun who)
+{
+  return u3nq(u3i_string("peers"),
+              u3dc("scot", 'p', who),
+              u3i_string("forward-lane"),
+              u3_nul);
+}
+
 static void _log_prel(u3_prel* pre_u)
 {
   u3l_log("-- PRELUDE --\n");
@@ -961,6 +971,47 @@ _fine_put_cache(u3_ames* sam_u, u3_noun pax, u3_noun lis)
   }
 }
 
+/*  _fine_lane_scry_cb(): learn lane to send response on
+*/
+static void
+_fine_lane_scry_cb(void* vod_p, u3_noun nun)
+{
+  u3_pact* pac_u = vod_p;
+  u3_ames* sam_u = pac_u->sam_u;
+  u3_weak    las = u3r_at(7, nun);
+
+  //  if scry fails, just drop the packet
+  //
+  if ( u3_none == las ) {
+    u3l_log("failed to scry\n");
+    _ames_pact_free(pac_u);
+  }
+  else {
+
+    //  cache the scry result for later use
+    //
+    _ames_lane_into_cache(sam_u->lax_p,
+                          u3i_chubs(2, pac_u->bod_u.pre_u.rec_d),
+                          u3k(las));
+
+    //  if there is no lane, drop the packet
+    //
+    if ( u3_nul == las ) {
+      _ames_pact_free(pac_u);
+    }
+    //  if there is a lane, forward the packet on it
+    //
+    else {
+      c3_d lan_d = u3r_chub(0, las);
+      pac_u->lan_u.pip_w = (c3_w)lan_d;
+      pac_u->lan_u.por_s = (c3_s)(lan_d >> 32);
+      _fine_send(pac_u);
+    }
+  }
+
+  u3z(nun);
+}
+
 /* _fine_ef_howl(): broadcast notification of newly bound data
  */
 static void
@@ -968,33 +1019,43 @@ _fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis)
 {
   u3_noun pas = lis;
 
+  // put packets in cache
   _fine_put_cache(sam_u, pax, pas);
 
+
+  // iterate over subscribers, sending immediately if we have the lane
+  // else, scry for a lane
   u3_weak who = u3h_get(sam_u->fin_s.bid_p, pax);
   if ( who == u3_none ) {
     u3l_log("no listeners\n");
   } else {
     u3_noun her = u3qdi_tap(who);
+    u3_noun him = her; // original ref for counting
 
     while ( her != u3_nul ) {
-      // TODO: prime cache maybe???
 
       u3_weak lac =  _ames_lane_from_cache(sam_u->lax_p, u3h(her));
-      if ( lac == u3_none ) {
-        u3l_log("no lane\n");
-        her = u3t(her);
-        continue;
-      }
+
       u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
       pac_u->sam_u = sam_u;
 
-      c3_d lan_d = u3r_chub(0, lac);
-      pac_u->lan_u.pip_w = (c3_w)lan_d;
-      pac_u->lan_u.por_s = (c3_s)(lan_d >> 32);
-
       _fine_got_pack(pac_u, u3h(lis));
+      if ( lac == u3_none ) {
+        u3l_log("no lane\n");
+        u3_noun pax = _lane_scry_path(u3k(u3h(her)));
+        u3_pier_peek_last(sam_u->pir_u, u3_nul, c3__ax,
+                          u3_nul, pax, pac_u, _fine_lane_scry_cb);
+      } else {
+        c3_d lan_d = u3r_chub(0, lac);
+        pac_u->lan_u.pip_w = (c3_w)lan_d;
+        pac_u->lan_u.por_s = (c3_s)(lan_d >> 32);
+
+        _fine_send(pac_u);
+      }
+
       her = u3t(her);
     }
+    u3z(him);
   }
 }
 
@@ -1230,6 +1291,8 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
   u3z(las);
 }
 
+
+
 /*  _ames_lane_scry_cb(): learn lane to forward packet on
 */
 static void
@@ -1353,10 +1416,8 @@ _ames_try_forward(u3_ames* sam_u,
     //
     else {
       sam_u->sat_u.foq_d++;
-      u3_noun pax = u3nq(u3i_string("peers"),
-                         u3dc("scot", 'p', u3i_chubs(2, bod_u->pre_u.rec_d)),
-                         u3i_string("forward-lane"),
-                         u3_nul);
+      u3_noun pax = _lane_scry_path(u3i_chubs(2, bod_u->pre_u.rec_d));
+
       u3_pier_peek_last(sam_u->pir_u, u3_nul, c3__ax,
                         u3_nul, pax, pac_u, _ames_lane_scry_cb);
     }
@@ -1388,9 +1449,6 @@ static void _fine_got_pack(u3_pact* pac_u, u3_noun fra)
   pac_u->hun_y = c3_calloc(pac_u->len_w);
   
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, fra);
-
-
-  _fine_send(pac_u);
 
   u3z(fra);
 }
@@ -1430,9 +1488,9 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c)); 
 
   if(pas == u3_none) {
-    // TODO: send %bide
     _fine_bide(pac_u, u3k(pax));
     _ames_pact_free(pac_u);
+
     u3z(pax);
     u3z(nun);
     return;
@@ -1457,6 +1515,7 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
     _ames_pact_free(pac_u);
   } else {
     _fine_got_pack(pac_u, fra);
+    _fine_send(pac_u);
   }
 
   u3z(pas);
@@ -1535,6 +1594,7 @@ static void _fine_hear_request(u3_ames* sam_u,
     
   } else {
     _fine_got_pack(pac_u, u3k(cac));
+    _fine_send(pac_u);
   }
 
   u3z(pat);
