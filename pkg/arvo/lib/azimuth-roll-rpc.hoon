@@ -526,8 +526,12 @@
 ++  process-rpc
   |=  [id=@t params=(map @t json) action=l2-tx over-quota=$-(@p ?)]
   ^-  [(unit cage) response:rpc]
-  ?.  =((lent ~(tap by params)) 5)
+  ?.  ?|  =((lent ~(tap by params)) 4)
+          =((lent ~(tap by params)) 5)
+      ==
     [~ ~(params error:json-rpc id)]
+  =?  params  =((lent ~(tap by params)) 4)
+    (~(put by params) 'force' b+|)
   =+  ^-  $:  sig=(unit @)
               from=(unit [=ship proxy:naive])
               addr=(unit @ux)
