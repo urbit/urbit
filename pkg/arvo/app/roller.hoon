@@ -31,7 +31,7 @@
 ::
 |%
 +$  app-state
-  $:  %4
+  $:  %5
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
       ::  finding: sig+raw-tx hash reverse lookup for txs in sending map
@@ -263,8 +263,8 @@
         [~d7 7 ~m5 ~m1]
       =,  old-state
       :*  %1
-          pending  sending  finding  history
-          ship-quota  next-nonce  next-batch
+          pending  ^-((tree [l1-tx-pointer old-send-tx]) sending)
+          finding  history  ship-quota  next-nonce  next-batch
           pre  own  pk  slice  quota  derive
           frequency  endpoint  contract  chain-id
           resend-time  update-rate
@@ -294,7 +294,7 @@
           resend-time  update-rate
       ==
     =?  old-state  ?=(%3 -.old-state)
-      ^-  app-state
+      ^-  state-4
       =,  old-state
       =/  fallback-gas-price=@ud  10.000.000.000
       :*  %4
@@ -305,10 +305,26 @@
           frequency  endpoint  contract  chain-id
           resend-time  update-rate  fallback-gas-price
       ==
-    ?>  ?=(%4 -.old-state)
+    =?  old-state  ?=(%4 -.old-state)
+      ^-  app-state
+      =/  new-sending=(tree [l1-tx-pointer send-tx])
+        %+  run:ors:dice  sending.old-state
+        |=  old=old-send-tx
+        ^-  send-tx
+        old(txs (turn txs.old (lead |)))
+      =,  old-state
+      :*  %5
+          pending  new-sending  finding  history
+          ship-quota  allowances
+          next-nonce  next-batch  next-slice
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate  fallback-gas-price
+      ==
+    ?>  ?=(%5 -.old-state)
     [cards this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1 state-2 state-3 app-state)
+    ++  app-states  $%(state-0 state-1 state-2 state-3 state-4 app-state)
     ++  state-0
       $:  %0
           pending=(list pend-tx)
@@ -330,7 +346,7 @@
     ++  state-1
       $:  %1
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           ship-quota=(map ship @ud)
@@ -353,7 +369,7 @@
     ++  state-2
       $:  %2
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           ship-quota=(map ship @ud)
@@ -373,10 +389,11 @@
           resend-time=@dr
           update-rate=@dr
       ==
+    ::
     ++  state-3
       $:  %3
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           ship-quota=(map ship @ud)
@@ -397,6 +414,35 @@
           chain-id=@
           resend-time=@dr
           update-rate=@dr
+      ==
+    ::
+    +$  old-send-tx  [next-gas-price=@ud sent=? txs=(list =raw-tx:naive)]
+    ::
+    ++  state-4
+      $:  %4
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer old-send-tx])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          allowances=(map ship (unit @ud))
+          next-nonce=(unit @ud)
+          next-batch=time
+          next-slice=time
+          pre=^state:naive
+          own=owners
+          spo=sponsors
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
+          fallback-gas-price=@ud
       ==
     --
   ::
@@ -499,8 +545,18 @@
         [%resend @ @ ~]
       =/  [address=@ux nonce=@ud]
         [(slav %ux i.t.wire) (rash i.t.t.wire dem)]
-      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-        %wake  [(send-roll:do address nonce) this]
+      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
+          %wake
+        =/  cards=(list card)  (send-roll:do address nonce)
+        =?  sending
+          ?&  ?=(~ cards)
+              =(0 (lent txs:(got:ors:dice sending [address nonce])))
+          ==
+          ~&  >  "empty sending, removing {<[nonce address]>}"
+          =^  *  sending
+            (del:ors:dice sending [address nonce])
+          sending
+        [cards this]
       ==
     ==
   ::
@@ -776,7 +832,7 @@
     ::
     =*  key  key.i.sorted
     =*  val  val.i.sorted
-    =+  txs=(turn txs.val |=(=raw-tx:naive [| 0x0 *time raw-tx]))
+    =+  txs=(turn txs.val |=([force=? =raw-tx:naive] [force 0x0 *time raw-tx]))
     =^  [new-valid=_txs nups=_ups]  state
       (apply-txs txs %sending `nonce.key)
     ::  we only hear updates for this nonce if it has been sent
@@ -784,8 +840,7 @@
     =.  valid  ::=?  valid  sent.val
       %^  put:ors:dice  valid
         key
-      ::  TODO: too much functional hackery?
-      val(txs (turn new-valid (cork tail (cork tail tail))))
+      val(txs (turn new-valid |=([force=? * * =raw-tx:naive] force^raw-tx)))
     $(sorted t.sorted, ups (welp ups nups))
   ::
   ++  apply-txs
@@ -809,8 +864,13 @@
       ?:  gud  [~ history]
       =.  time.tx
         ?:  ?=(%pending type)  time.tx
-        =+  wer=(~(got by finding) keccak)
-        ?>(?=(^ wer) time.wer)
+        ?~  wer=(~(get by finding) keccak)
+          ~&  >>>  "missing %sending tx in finding"^[ship raw-tx]
+          now.bowl
+        ?@  u.wer
+          ~&  >>>  "weird tx in finding gud: {<gud>} {<u.wer>}"^[ship raw-tx]
+          now.bowl
+        time.u.wer
       (update-history:dice history [tx]~ %failed)
     =?  finding  !gud  (~(put by finding) keccak %failed)
     =.  updates  :(welp up-2 up-1 updates)
@@ -1031,7 +1091,7 @@
           sending
         %^  put:ors:dice  sending
           [address nonce]
-        [0 | (turn pending (cork tail (cork tail tail)))]
+        [0 | (turn pending |=([force=? * * =raw-tx:naive] force^raw-tx))]
       ::
           finding
         %-  ~(gas by finding)
@@ -1139,7 +1199,7 @@
     ::
     ++  process-l2-txs
       %+  roll  txs.q
-      |=  [=raw-tx:naive nif=_finding sih=_history]
+      |=  [[@ =raw-tx:naive] nif=_finding sih=_history]
       =/  =keccak  (hash-raw-tx:lib raw-tx)
       |^
       ?~  val=(~(get by nif) keccak)
@@ -1205,8 +1265,8 @@
       nonce
       fallback-gas-price
     ::
-      =<  [next-gas-price txs]
-      (got:ors:dice sending [address nonce])
+      =<  [next-gas-price (turn txs tail)]
+      [. (got:ors:dice sending [address nonce])]
   ==
 ::  +on-batch-result: await resend after thread success or failure
 ::
@@ -1242,11 +1302,11 @@
     ::  if the thread crashed, we don't know the gas used,
     ::  so we udpate it manually, same as the thread would do
     ::
-    %_  send-tx
-      next-gas-price
-        ?:  =(0 next-gas-price.send-tx)
-          fallback-gas-price
-        (add next-gas-price.send-tx 5.000.000.000)
+    %_    send-tx
+        next-gas-price
+      ?:  =(0 next-gas-price.send-tx)
+        fallback-gas-price
+      (add next-gas-price.send-tx 5.000.000.000)
     ==
   :_  state
   ?:  ?&  !sent.send-tx
@@ -1291,6 +1351,7 @@
   ?~  wer=(~(get by finding) keccak)
     ::  tx not submitted by this roller
     ::
+    ~&  >>  "weird tx diff <keccak>"
     [~ state]
   ?@  u.wer
     ~?  &(?=(%confirmed u.wer) ?=(~ err.diff))
@@ -1309,7 +1370,7 @@
     ?~  sen=(get:ors:dice sending [address nonce])
       ~?  lverb  [dap.bowl %weird-double-remove nonce+nonce]
       sending
-    ?~  nin=(find [raw-tx.diff]~ txs.u.sen)
+    ?~  nin=(find [raw-tx.diff]~ (turn txs.u.sen tail))
       ~?  lverb  [dap.bowl %weird-unknown nonce+nonce]
       sending
     =.  txs.u.sen  (oust [u.nin 1] txs.u.sen)
