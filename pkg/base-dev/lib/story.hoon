@@ -52,7 +52,7 @@
   ?:  ?=([prose ~] proses-list)
     (prose-to-text i.proses-list)
   %-  tail
-  %^  spin  ;;((list prose) t.proses-list)  :: XX WHY DO WE NEED ;;
+  %^  spin  `(list prose)`t.proses-list
     (prose-to-text i.proses-list)
   |=  [prz=prose state=tape]
   ^-  [prose tape]
