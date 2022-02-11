@@ -11903,7 +11903,7 @@
     ^-  [nock _grub]
     ~+
     =+  %hemp-141
-    ?-  hud
+    ?-    hud
         %dry
       =^  val  grub  (caching-mint gol gen)
       [q.val grub]
