@@ -550,6 +550,7 @@
         =/  cards=(list card)  (send-roll:do address nonce)
         =?  sending
           ?&  ?=(~ cards)
+              (has:ors:dice sending [address nonce])
               =(0 (lent txs:(got:ors:dice sending [address nonce])))
           ==
           ~&  >  "empty sending, removing {<[nonce address]>}"
