@@ -511,17 +511,20 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
         res = u3nt(
           u3_nul, u3_nul,
           u3i_list(
-            u3nc(u3i_string("ames-drop-count"),         u3M.sat_u->dop_d),
-            u3nc(u3i_string("ames-crash-count"),        u3M.sat_u->fal_d),
+            u3nc(u3i_string("ames-drop-count"),     u3i_chub(u3M.sat_u->dop_d)),
+            u3nc(u3i_string("ames-crash-count"),    u3i_chub(u3M.sat_u->fal_d)),
             u3nc(u3i_string("ames-successive-scry-failures"),
-                                                        u3M.sat_u->saw_d),
-            u3nc(u3i_string("ames-failed-headers"),     u3M.sat_u->hed_d),
-            u3nc(u3i_string("ames-version-mismatches"), u3M.sat_u->vet_d),
-            u3nc(u3i_string("ames-invalid-mugs"),       u3M.sat_u->mut_d),
-            u3nc(u3i_string("ames-failed-bodies"),      u3M.sat_u->bod_d),
-            u3nc(u3i_string("ames-forward-queue-size"), u3M.sat_u->foq_d),
-            u3nc(u3i_string("ames-forwards"),           u3M.sat_u->fow_d),
-            u3nc(u3i_string("ames-forwards-dropped"),   u3M.sat_u->fod_d),
+                                                    u3i_chub(u3M.sat_u->saw_d)),
+            u3nc(u3i_string("ames-failed-headers"), u3i_chub(u3M.sat_u->hed_d)),
+            u3nc(u3i_string("ames-version-mismatches"),
+                                                    u3i_chub(u3M.sat_u->vet_d)),
+            u3nc(u3i_string("ames-invalid-mugs"),   u3i_chub(u3M.sat_u->mut_d)),
+            u3nc(u3i_string("ames-failed-bodies"),  u3i_chub(u3M.sat_u->bod_d)),
+            u3nc(u3i_string("ames-forward-queue-size"),
+                                                    u3i_chub(u3M.sat_u->foq_d)),
+            u3nc(u3i_string("ames-forwards"),       u3i_chub(u3M.sat_u->fow_d)),
+            u3nc(u3i_string("ames-forwards-dropped"),
+                                                    u3i_chub(u3M.sat_u->fod_d)),
             //  TODO  http/other stats, ames cached lanes count
             //
             u3_none));
