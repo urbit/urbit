@@ -5,13 +5,13 @@
 **
 **  the control plane nominally consumes input described by:
 **
-**      $:  request-id=@                                ::  id sent in response
-**      $%  [%fyrd fyrd-args=*]                         ::  run a thread
-**          [%peek peek-args=*]                         ::  scry
-**          [%peel peel-args=*]                         ::  runtime peek
-**          [%ovum ovum-args=*]                         ::  inject raw ovum
-**          [%urth urth-args=*]                         ::  runtime command
-**      ==  ==
+**      $:  request-id=@                                   ::  id for response
+**      $%  [%fyrd fyrd-args=*]                            ::  run a thread
+**          [%peek peek-args=*]                            ::  scry
+**          [%peel peel-args=*]                            ::  runtime peek
+**          [%ovum ovum-args=*]                            ::  inject raw ovum
+**          [%urth urth-args=*]                            ::  runtime command
+**      ==  ==                                             ::
 **
 **  request-id is a client-supplied atomic identifier that will
 **  be returned along with the response, to allow correlating
@@ -21,9 +21,9 @@
 **  described in the ++khan section of sys/lull.hoon. to
 **  summarize:
 **
-**      +$  task  $%(... [%fyrd p=fyrd])                ::
-**      +$  fyrd  [=bear name=term =mark data=(cask)]   ::  thread request
-**      +$  bear  $@(desk [desk case])                  ::  partial +beak
+**      +$  task  $%(... [%fyrd p=fyrd])                   ::
+**      +$  fyrd  [=bear name=term =out=mark data=(cask)]  ::  thread request
+**      +$  bear  $@(desk beak)                            ::  partial $beak
 **
 **  the passed mark is applied to the output. the cask (short for
 **  (cask *)) at data contains the input mark. e.g. to run -code
@@ -48,8 +48,11 @@
 **      ==
 **
 **  %peel is a runtime "peek". it exposes an unprincipled
-**  namespace allowing querying of various metrics about the
-**  state of vere.
+**  scry-like namespace allowing querying of various metrics
+**  about the state of vere. /help produces a list of available
+**  commands. /args produces the command-line arguments used to
+**  start vere. /vars produces runtime metrics at the moment in
+**  time that the request was received.
 **
 **  %ovum is a raw kernel move, to be injected directly into
 **  arvo. needless to say this will void your warranty. usually
