@@ -35,7 +35,7 @@
 **
 **  responses to %fyrd are either %fail if something went wrong
 **  in the driver, or %avow to indicate success or failure from
-**  %khan. +avow is: (each (cask) goof).
+**  %khan. $avow is: (each (cask) goof).
 **
 **  %peek is a namespace read request (aka scry), and will be
 **  forwarded directly to arvo. its arguments are the nom of the
@@ -49,16 +49,26 @@
 **
 **  %peel is a runtime "peek". it exposes an unprincipled
 **  scry-like namespace allowing querying of various metrics
-**  about the state of vere. /help produces a list of available
-**  commands. /args produces the command-line arguments used to
-**  start vere. /vars produces runtime metrics at the moment in
-**  time that the request was received.
+**  about the state of vere. it accepts $path-like arguments,
+**  i.e. nul-terminated lists of $knot. it responds as scry
+**  does, with a (unit (unit)), where ~ means "request was not
+**  understood" and [~ ~] means "request understood; empty
+**  response."
+**
+**  the %peek path /help produces a list of available commands.
+**  /args produces the command-line arguments used to start vere.
+**  /vars produces runtime metrics at the moment in time that the
+**  request was received.
 **
 **  %ovum is a raw kernel move, to be injected directly into
 **  arvo. needless to say this will void your warranty. usually
-**  you want to use %fyrd instead.
+**  you want to use %fyrd instead. updates will be sent tracking
+**  the ovum lifecycle: %work when work begins, %done when it
+**  is finished, %drop if it is dropped, and %bail with a stack
+**  trace if it fails.
 **
-**  %urth is a command for the runtime.
+**  %urth is a command for the runtime. these are acked with %.y
+**  on receipt. no further updates are provided.
 **
 **  messages use newt framing. because the framing begins with
 **  a magic byte (^I, horizontal tab), any messages that do not
@@ -420,13 +430,7 @@ _conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
   }
 }
 
-/* _conn_read_peel(): produces response to a %peel request.
-**
-**  %peel is a runtime scry-like interface. it accepts $path-like
-**  arguments, i.e. nul-terminated lists of $knot. it responds
-**  as scry does, with a (unit (unit)), where ~ means "request
-**  was not understood" and `~ means "request understood; empty
-**  response".
+/* _conn_read_peel(): response to a %peel request, sans rid.
 */
 static u3_noun
 _conn_read_peel(u3_conn* con_u, u3_noun dat)
@@ -498,6 +502,9 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       //
       case c3__vars: {
         if ( c3n == u3K.pir_u->liv_o ) {
+          //  empty response if pier is not yet live, since ames
+          //  state may not yet be wired up.
+          //
           res = u3nc(u3_nul, u3_nul);
           break;
         }
