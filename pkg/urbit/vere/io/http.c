@@ -1621,6 +1621,13 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
                      (c3y == htp_u->lop) ? "loopback" : "public"));
     }
 
+    //  update http port in metrics as well.
+    //  XX  remove check for not-sec.
+    //
+    if ( c3n == htp_u->sec && c3n == htp_u->lop ) {
+      u3M.per_s = htp_u->por_s;
+    }
+
     htp_u = htp_u->nex_u;
   }
 

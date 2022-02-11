@@ -41,18 +41,7 @@
       c3_o           see_o;             //  can scry
       c3_o           fit_o;             //  filtering active
     } fig_u;                            //
-    struct {                            //    stats:
-      c3_d           dop_d;             //  drop count
-      c3_d           fal_d;             //  crash count
-      c3_d           saw_d;             //  successive scry failures
-      c3_d           hed_d;             //  failed to read header
-      c3_d           vet_d;             //  version mismatches filtered
-      c3_d           mut_d;             //  invalid mugs filtered
-      c3_d           bod_d;             //  failed to read body
-      c3_d           foq_d;             //  forward queue size
-      c3_d           fow_d;             //  forwarded count
-      c3_d           fod_d;             //  forwards dropped count
-    } sat_u;                            //
+    u3_asat          sat_u;             //    stats
   } u3_ames;
 
 /* u3_head: ames packet header
@@ -1273,6 +1262,7 @@ _ames_io_start(u3_ames* sam_u)
   else {
     u3l_log("ames: live on %d (localhost only)\n", sam_u->pir_u->por_s);
   }
+  u3M.par_s = sam_u->pir_u->por_s;
 
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 
@@ -1561,6 +1551,7 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->io.info_f = _ames_io_info;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
+  u3M.sat_u = &sam_u->sat_u;
 
   {
     u3_noun now;

@@ -494,12 +494,26 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       //  runtime metrics list.
       //
       case c3__vars: {
+        if ( c3n == u3K.pir_u->liv_o ) {
+          res = u3nc(u3_nul, u3_nul);
+          break;
+        }
         res = u3nt(
           u3_nul, u3_nul,
           u3i_list(
-            //  TODO  actual metrics (these are surprisingly hard to get at)
+            u3nc(u3i_string("ames-drop-count"),         u3M.sat_u->dop_d),
+            u3nc(u3i_string("ames-crash-count"),        u3M.sat_u->fal_d),
+            u3nc(u3i_string("ames-successive-scry-failures"),
+                                                        u3M.sat_u->saw_d),
+            u3nc(u3i_string("ames-failed-headers"),     u3M.sat_u->hed_d),
+            u3nc(u3i_string("ames-version-mismatches"), u3M.sat_u->vet_d),
+            u3nc(u3i_string("ames-invalid-mugs"),       u3M.sat_u->mut_d),
+            u3nc(u3i_string("ames-failed-bodies"),      u3M.sat_u->bod_d),
+            u3nc(u3i_string("ames-forward-queue-size"), u3M.sat_u->foq_d),
+            u3nc(u3i_string("ames-forwards"),           u3M.sat_u->fow_d),
+            u3nc(u3i_string("ames-forwards-dropped"),   u3M.sat_u->fod_d),
+            //  TODO  http/other stats, ames cached lanes count
             //
-            u3nc(u3i_string("example-metric"), 1234),
             u3_none));
         break;
       }
@@ -531,13 +545,11 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
             break;
           }
           case c3__ames: {
-            res = u3nt(u3_nul, u3_nul, u3_Host.ops_u.por_s);
+            res = u3nt(u3_nul, u3_nul, u3M.par_s);
             break;
           }
           case c3__http: {
-            //  TODO  public http port.
-            //
-            res = u3nc(u3_nul, u3_nul);
+            res = u3nt(u3_nul, u3_nul, u3M.per_s);
             break;
           }
         }
