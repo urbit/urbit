@@ -364,7 +364,6 @@ _conn_peek_cb(void* ptr_v, u3_noun res)
 {
   u3_cran* ran_u = (u3_cran*)ptr_v;
   u3_chan* can_u = ran_u->can_u;
-  u3_cran* inn_u;
 
   if ( !can_u ) {
     //  chan was closed; noop.
@@ -383,7 +382,6 @@ _conn_ovum_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_cran* ran_u = egg_u->ptr_v;
   u3_chan* can_u = ran_u->can_u;
-  u3_cran* inn_u;
 
   u3_auto_bail_slog(egg_u, u3k(lud));
   if ( !can_u ) {
