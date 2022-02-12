@@ -10,7 +10,11 @@ import useSettingsState from '../state/settings';
 import useLocalState from '../state/local';
 import useStorageState from '../state/storage';
 
-export async function bootstrapApi() {
+export async function bootstrapApi(reset = false) {
+  if (reset) {
+    airlock.reset();
+  }
+
   airlock.onError = async (err) => {
     airlock.reset();
     console.log('AIRLOCK ERROR', err);
@@ -42,3 +46,4 @@ export async function bootstrapApi() {
   await Promise.all(promises);
 }
 
+window.bootstrapApi = bootstrapApi;

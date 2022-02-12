@@ -2,6 +2,8 @@ import {
   Box,
   Col,
 
+  H3,
+
   Icon, Row,
   Text
 } from '@tlon/indigo-react';
@@ -77,8 +79,10 @@ workspace: Workspace;
 baseUrl: string;
 recentGroups: string[];
 isAdmin: any;
+changingSort: boolean;
+toggleChangingSort: () => void;
 }) {
-const { workspace, isAdmin } = props;
+const { workspace, isAdmin, changingSort, toggleChangingSort } = props;
 const associations = useMetadataState(state => state.associations);
 const title = getTitleFromWorkspace(associations, workspace);
 const groupPath = getGroupFromWorkspace(workspace);
@@ -93,7 +97,30 @@ const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     hideUnjoined: false
   }
 );
-const showTitleActions = (props.workspace?.type === 'messages' || props.workspace?.type === 'home');
+const showTitleActions = (props.workspace?.type === 'messages' || props.workspace?.type === 'home' || props.workspace?.type === 'uqbar-home');
+
+if (changingSort) {
+  return (
+    <Row
+      width="100%"
+      alignItems="center"
+      flexShrink={0}
+      height='48px'
+      backgroundColor="white"
+      position="sticky"
+      top="0px"
+      pl={3}
+      borderBottom='1px solid'
+      borderColor='lightGray'
+      borderRight="1px solid lightGray"
+      cursor='pointer'
+      onClick={toggleChangingSort}
+    >
+      <Icon icon="ArrowWest" size="20px" ml="-8px" mr={2} />
+      <H3>Sort Groups</H3>
+    </Row>
+  );
+}
 
 return (
   <Row
@@ -174,14 +201,15 @@ return (
             <Row flexGrow={1} alignItems="center" minWidth={0} flexShrink={0} width={showTitleActions ? 'auto' : '100%'}>
               { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
               <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
+              {props.workspace?.type === 'uqbar-home' && <Icon icon="Plus" ml={2} />}
             </Row>
             {showTitleActions && <TitleActions
               baseUrl={props.baseUrl}
               initialValues={config}
               handleSubmit={setConfig}
               workspace={workspace}
+              toggleChangingSort={toggleChangingSort}
             />}
-            {props.workspace?.type === 'uqbar-home' && <Icon icon="Plus" ml="-16px" />}
           </Row>
         </Dropdown>
         <Row pr={3} verticalAlign="middle">

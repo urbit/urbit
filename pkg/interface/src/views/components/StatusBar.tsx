@@ -1,16 +1,5 @@
-import {
-  BaseImage,
-  Box,
-  Button,
-  Col,
-  H3,
-  Icon,
-  Image,
-  Row,
-  Text
-} from '@tlon/indigo-react';
-import React, { useMemo } from 'react';
-import { patp } from 'urbit-ob';
+import { BaseImage, Box, Button, Col, H3, Icon, Image, Row, Text } from '@tlon/indigo-react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -21,12 +10,11 @@ import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
-import useHarkState, { useHarkDm } from '~/logic/state/hark';
+import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
 import UqbarLogo from '~/assets/img/uqbar-logo.png';
-import useGraphState, { useInbox } from '~/logic/state/graph';
-import _ from 'lodash';
 import { useDmUnreads } from '~/logic/lib/useDmUnreads';
+import { bootstrapApi } from '~/logic/api/bootstrap';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
@@ -40,6 +28,10 @@ const StatusBar = (props) => {
   const { unreadDmCount } = useDmUnreads();
   const groups = useMetadataState(s => s.associations.groups);
   const isHome = props.location.pathname === '/';
+
+  const refreshConnections = useCallback(() => {
+    bootstrapApi(true);
+  }, []);
 
   let title = `~${window.ship}`;
   if (props.location.pathname.includes('~landscape')) {
@@ -117,13 +109,10 @@ const StatusBar = (props) => {
         {title}
       </H3>
       <Row justifyContent='flex-end'>
-        <StatusBarItem
+        {process.env.LANDSCAPE_STREAM === 'development' && <StatusBarItem
           width='32px'
           mr={2}
           backgroundColor='yellow'
-          display={
-            process.env.LANDSCAPE_STREAM === 'development' ? 'flex' : 'none'
-          }
           justifyContent='center'
           flexShrink={0}
           onClick={() =>
@@ -135,6 +124,14 @@ const StatusBar = (props) => {
           }
         >
           <Icon icon="Bug" color="#000000" />
+        </StatusBarItem>}
+        <StatusBarItem
+          as={Button}
+          width='32px'
+          mr={2}
+          onClick={refreshConnections}
+        >
+          <Icon icon='ArrowRefresh' />
         </StatusBarItem>
         <StatusBarItem
           as={Link}

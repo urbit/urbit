@@ -2,7 +2,7 @@ import {
   Box,
     Col
 } from '@tlon/indigo-react';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import { roleForShip } from '~/logic/lib/group';
 import { IS_MOBILE } from '~/logic/lib/platform';
@@ -30,8 +30,9 @@ interface SidebarProps {
 }
 
 export function Sidebar(props: SidebarProps): ReactElement | null {
-  const { selected, workspace } = props;
+  const { baseUrl, selected, workspace, recentGroups } = props;
   const groupPath = getGroupFromWorkspace(workspace);
+  const [changingSort, setChangingSort] = useState(false);
 
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     `group-config:${groupPath || 'home'}`,
@@ -60,10 +61,12 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
   return (
     <Box>
       <GroupSwitcher
-        recentGroups={props.recentGroups}
-        baseUrl={props.baseUrl}
+        recentGroups={recentGroups}
+        baseUrl={baseUrl}
         isAdmin={isAdmin}
-        workspace={props.workspace}
+        workspace={workspace}
+        changingSort={changingSort}
+        toggleChangingSort={() => setChangingSort(!changingSort)}
       />
       {(!IS_MOBILE || !focusMessages) && <ScrollbarLessCol
         display="flex"
@@ -82,11 +85,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         pb={1}
       >
         <Box mt={2} />
-        <SidebarGroupList
-          config={config}
-          selected={selected}
-          baseUrl={props.baseUrl}
-        />
+        <SidebarGroupList {...{ config, selected, baseUrl, changingSort }} />
       </ScrollbarLessCol>}
       {(!IS_MOBILE || focusMessages) && <ScrollbarLessCol
         display="flex"
@@ -101,12 +100,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         position="relative"
         height={messagesHeight}
       >
-        <SidebarGroupList
-          config={config}
-          selected={selected}
-          baseUrl={props.baseUrl}
-          messages
-        />
+        <SidebarGroupList {...{ config, selected, baseUrl }} messages />
       </ScrollbarLessCol>}
     </Box>
   );

@@ -69,7 +69,6 @@ class ChatWindow extends Component<
     };
 
     this.scrollToUnread = this.scrollToUnread.bind(this);
-    this.scrollToEnd = this.scrollToEnd.bind(this);
     this.handleWindowBlur = this.handleWindowBlur.bind(this);
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
@@ -197,14 +196,7 @@ class ChatWindow extends Component<
     this.virtualList?.scrollToIndex(this.state.unreadIndex);
   }
 
-  scrollToEnd(): void {
-    const mostRecentIndex = this.props.graph.peekLargest()?.[0];
-    if (!mostRecentIndex || mostRecentIndex.eq(bigInt.zero)) {
-      return;
-    }
-
-    this.virtualList?.scrollToIndex(mostRecentIndex);
-  }
+  scrollToEnd = () => this.virtualList?.resetScroll();
 
   onScroll = (event: SyntheticEvent<HTMLDListElement, Event>) => {
     const scrollTop = event.target.scrollTop;

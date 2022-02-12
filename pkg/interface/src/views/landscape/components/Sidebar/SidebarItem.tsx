@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { ReactNode } from 'react';
+import React, { MouseEvent, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 import { Link, useHistory } from 'react-router-dom';
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
@@ -42,18 +42,18 @@ export function SidebarItemBase(props: {
   hasUnread: boolean;
   unreadCount?: number;
   isSynced?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
   title: string | ReactNode;
   mono?: boolean;
   fontSize?: string;
   pending?: boolean;
   isGroup?: boolean;
   indent?: number;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent) => void;
 }) {
   const {
     title,
-    children,
+    children = null,
     to,
     selected,
     groupSelected = false,
@@ -68,6 +68,7 @@ export function SidebarItemBase(props: {
     indent = 0,
     onClick
   } = props;
+  const history = useHistory();
   const color = isSynced
     ? selected || (!isGroup && hasUnread)
       ? 'black'
@@ -101,7 +102,6 @@ export function SidebarItemBase(props: {
     >
       <Row width="100%" alignItems="center" flex="1 auto" minWidth="0">
         {children}
-
         <Row
           width="100%"
           flexShrink={2}
@@ -126,9 +126,13 @@ export function SidebarItemBase(props: {
             {title}
           </Text>
           {title === 'Messages' && (
-            <Link style={{ display: 'inline-block', margin: '4px 0 0 16px' }} to="/~landscape/messages/new">
+            <Box style={{ display: 'inline-block', margin: '4px 0 0 16px' }} onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              history.push('/~landscape/messages/new')
+            }}>
               <Icon icon="Plus" color="gray" pr='12px' />
-            </Link>
+            </Box>
           )}
           {hasNotification && (
             <Box>

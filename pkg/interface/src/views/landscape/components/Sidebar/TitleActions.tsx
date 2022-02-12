@@ -17,6 +17,7 @@ export function TitleActions(props: {
   baseUrl: string;
   workspace: Workspace;
   handleSubmit: (s: any) => void;
+  toggleChangingSort: () => void;
 }): ReactElement {
   const onSubmit = useCallback(
     (values: SidebarListConfig, actions: FormikHelpers<SidebarListConfig>) => {
@@ -26,6 +27,7 @@ export function TitleActions(props: {
     [props.handleSubmit]
   );
   const groupPath = getGroupFromWorkspace(props.workspace);
+  const isHome = props.workspace.type === 'uqbar-home';
 
   return (
     <Row
@@ -65,49 +67,53 @@ export function TitleActions(props: {
             <Icon icon="Plus" color="gray" pr='12px' />
           </Dropdown>
         )
-        : (
-      <Link style={{ display: 'inline-block' }}
-        to={groupPath
-          ? `/~landscape${groupPath}/new`
-          : `/~landscape/${props.workspace?.type}/new`}
-      >
-          <Icon icon="Plus" color="gray" pr='12px' />
-      </Link>
+        : !isHome && (
+          <Link style={{ display: 'inline-block' }}
+            to={groupPath
+              ? `/~landscape${groupPath}/new`
+              : `/~landscape/${props.workspace?.type}/new`}
+          >
+              <Icon icon="Plus" color="gray" pr='12px' />
+          </Link>
           )
         }
-      <Dropdown
-        flexShrink={0}
-        width="auto"
-        alignY="top"
-        alignX={['right', 'left']}
-        options={
-          <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
-            <Col bg="white" borderRadius={1} border={1} borderColor="lightGray">
-              <Col
-                gapY={2}
-                borderBottom={1}
-                borderBottomColor="washedGray"
-                p={2}
-              >
-                <Box>
-                  <Text color="gray">Sort Order</Text>
-                </Box>
-                <Radio mb={1} label="A -> Z" id="asc" name="sortBy" />
-                <Radio label="Last Updated" id="lastUpdated" name="sortBy" />
+      {isHome ? (
+        <Icon color="gray" icon="Adjust" onClick={props.toggleChangingSort} />
+      ) : (
+        <Dropdown
+          flexShrink={0}
+          width="auto"
+          alignY="top"
+          alignX={['right', 'left']}
+          options={
+            <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
+              <Col bg="white" borderRadius={1} border={1} borderColor="lightGray">
+                <Col
+                  gapY={2}
+                  borderBottom={1}
+                  borderBottomColor="washedGray"
+                  p={2}
+                >
+                  <Box>
+                    <Text color="gray">Sort Order</Text>
+                  </Box>
+                  <Radio mb={1} label="A -> Z" id="asc" name="sortBy" />
+                  <Radio label="Last Updated" id="lastUpdated" name="sortBy" />
+                </Col>
+                <Col px={2}>
+                  <Checkbox
+                    my={3}
+                    id="hideUnjoined"
+                    label="Hide Unsubscribed Channels"
+                  />
+                </Col>
               </Col>
-              <Col px={2}>
-                <Checkbox
-                  my={3}
-                  id="hideUnjoined"
-                  label="Hide Unsubscribed Channels"
-                />
-              </Col>
-            </Col>
-          </FormikOnBlur>
-        }
-      >
-        <Icon color="gray" icon="Adjust" />
-      </Dropdown>
+            </FormikOnBlur>
+          }
+        >
+          <Icon color="gray" icon="Adjust" />
+        </Dropdown>
+      )}
       </Box>
     </Row>
   );

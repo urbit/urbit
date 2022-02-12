@@ -178,38 +178,38 @@ class App extends React.Component {
     return (
       <ThemeProvider theme={theme}>
         <ShortcutContextProvider>
-        <Helmet>
-          {window.ship.length < 14
-            ? <link rel="icon" type="image/svg+xml" href={svgDataURL(favicon())} />
-            : null}
-        </Helmet>
-        <Root>
-          <Router basename="/apps/escape">
-            <ErrorBoundary>
-              <StatusBarWithRouter
-                props={this.props}
-                ourContact={ourContact}
-                connection={'foo'}
-                subscription={this.subscription}
-                ship={this.ship}
-              />
-            </ErrorBoundary>
-            <ErrorBoundary>
-              <Omnibox
-                show={this.props.omniboxShown}
-                toggle={this.props.toggleOmnibox}
-              />
-            </ErrorBoundary>
-            <ErrorBoundary>
-              <Content
-                ship={this.ship}
-                subscription={this.subscription}
-                connection={'aa'}
-              />
-            </ErrorBoundary>
-          </Router>
-        </Root>
-        <div id="portal-root" />
+          <Helmet>
+            {window.ship.length < 14
+              ? <link rel="icon" type="image/svg+xml" href={svgDataURL(favicon())} />
+              : null}
+          </Helmet>
+          <Root>
+            <Router basename="/apps/escape">
+              <ErrorBoundary>
+                <StatusBarWithRouter
+                  props={this.props}
+                  ourContact={ourContact}
+                  connection={'foo'}
+                  subscription={this.subscription}
+                  ship={this.ship}
+                />
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <Omnibox
+                  show={this.props.omniboxShown}
+                  toggle={this.props.toggleOmnibox}
+                />
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <Content
+                  ship={this.ship}
+                  subscription={this.subscription}
+                  connection={'aa'}
+                />
+              </ErrorBoundary>
+            </Router>
+          </Root>
+          <div id="portal-root" />
         </ShortcutContextProvider>
       </ThemeProvider>
     );

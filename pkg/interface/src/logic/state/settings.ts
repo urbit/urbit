@@ -49,7 +49,8 @@ export interface SettingsState {
   leap: {
     categories: LeapCategories[];
   };
-  bookmarks: { [key: string]: string }
+  bookmarks: { [key: string]: string },
+  groupSorter: { order: string }
 }
 
 export const selectSettingsState = <K extends keyof (SettingsState & BaseState<SettingsState>)>(keys: K[]) =>
@@ -95,6 +96,9 @@ const useSettingsState = createState<SettingsState>(
       readGroup: 'shift+Escape'
     },
     bookmarks: {},
+    groupSorter: {
+      order: JSON.stringify([])
+    },
     getAll: async () => {
       const { desk } = await airlock.scry(getDeskSettings((window as any).desk));
       get().set((s) => {

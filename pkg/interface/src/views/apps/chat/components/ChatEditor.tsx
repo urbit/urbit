@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import { BaseTextArea, Box, Row, Text } from '@tlon/indigo-react';
+import { BaseTextArea, Box, Row } from '@tlon/indigo-react';
 import { Association, Group, invite } from '@urbit/api';
 import * as ob from 'urbit-ob';
 import 'codemirror/addon/display/placeholder';
@@ -16,6 +16,7 @@ import airlock from '~/logic/api';
 import '../css/custom.css';
 import { useChatStore } from './ChatPane';
 import { useDark } from '~/logic/state/join';
+import { AutocompletePatp } from './AutocompletePatp';
 
 export const SIG_REGEX = /(?:^|\s)(~)(?=\s|$)/;
 export const MENTION_REGEX = /(?:^|\s)(~)(?![a-z]{6}\-[a-z]{6}[?=\s|$])(?![a-z]{6}[?=\s|$])([a-z\-]+)(?=\s|$)/;
@@ -114,16 +115,6 @@ const MobileBox = styled(Box)`
     content: attr(data-value) ' ';
     visibility: hidden;
     white-space: pre-wrap;
-  }
-`;
-
-const AutocompleteSuggestionRow = styled(Row)`
-  color: rgba(33,157,255,1);
-  height: 28px;
-  cursor: pointer;
-  padding: 6px 45px;
-  &:hover {
-    text-decoration: underline;
   }
 `;
 
@@ -257,7 +248,7 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
 
     setMessage(value);
 
-    if (!group || !value.includes('~'))
+    if (!group || memberArray.length > 200 || !value.includes('~'))
       return;
 
     const sigMatch = SIG_REGEX.test(value);
@@ -298,16 +289,16 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
     theme: 'tlon' + codeTheme,
     placeholder: inCodeMode ? 'Code...' : placeholder,
     extraKeys: {
-      'Up': hasSuggestions && (() => {
+      'Up': hasSuggestions ? (() => {
         if (mentionCursor > 0) {
           setMentionCursor(mentionCursor - 1);
         }
-      }),
-      'Down': hasSuggestions && (() => {
+      }) : undefined,
+      'Down': hasSuggestions ? (() => {
         if (mentionCursor < autocompleteSuggestions.length - 1) {
           setMentionCursor(mentionCursor + 1);
         }
-      }),
+      }) : undefined,
       'Enter': submit,
       'Esc': () => {
         if (hasSuggestions) {
@@ -318,9 +309,9 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
           editor?.getInputField().blur();
         }
       },
-      'Tab': hasSuggestions && (() => {
+      'Tab': hasSuggestions ? (() => {
         selectMember(autocompleteSuggestions[mentionCursor])();
-      })
+      }) : undefined
     }
   };
 
@@ -337,40 +328,6 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
       console.error(e);
     }
   }, [enteredUser, invitedUsers, setInvitedUsers]);
-
-  const renderAutocompleteSection = () => {
-    if (autocompleteSuggestions.length) {
-      return <>
-        {autocompleteSuggestions.map((suggestion, i) => (
-          <AutocompleteSuggestionRow
-            key={suggestion}
-            onClick={selectMember(suggestion)}
-            backgroundColor={mentionCursor === i ? 'washedGray' : undefined}
-            ref={(ele) => {
-              if (ele && mentionCursor === i) {
-                ele.scrollIntoView();
-              }
-            }}
-          >
-            <Text mono color="rgba(33,157,255,1)">{suggestion}</Text>
-          </AutocompleteSuggestionRow>
-        ))}
-      </>;
-    } else if (isAdmin) {
-      return <AutocompleteSuggestionRow onClick={inviteMissingUser} whiteSpace="nowrap">
-        <Text>
-          Invite <Text mono color="rgba(33,157,255,1)">{enteredUser}</Text> to group
-        </Text>
-      </AutocompleteSuggestionRow>;
-    }
-
-    // TODO?: if group is public and mention is not in group, give option to share group with user
-    return <AutocompleteSuggestionRow>
-      <Text whiteSpace="nowrap">
-        <Text mono color="rgba(33,157,255,1)">{enteredUser}</Text> is not in this group
-      </Text>
-    </AutocompleteSuggestionRow>;
-  };
 
   return (
     <Row
@@ -399,7 +356,14 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
         border="1px solid lightgray"
         borderColor={dark ? 'black' : ''}
       >
-        {renderAutocompleteSection()}
+        {<AutocompletePatp
+          isAdmin={isAdmin}
+          suggestions={autocompleteSuggestions}
+          enteredUser={enteredUser}
+          inviteMissingUser={inviteMissingUser}
+          mentionCursor={mentionCursor}
+          selectMember={selectMember}
+        />}
       </Box>}
       {isMobile
         ? <MobileBox

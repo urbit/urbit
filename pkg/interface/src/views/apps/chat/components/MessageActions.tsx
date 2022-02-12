@@ -1,14 +1,15 @@
 /* eslint-disable max-lines-per-function */
-import { Box, Col, Icon, Image, Row, Text } from '@tlon/indigo-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import React, { useCallback, useMemo } from 'react';
 import { useCopy } from '~/logic/lib/useCopy';
 import { Dropdown } from '~/views/components/Dropdown';
-import BookmarkIcon from '~/assets/img/bookmark-icon.png';
-import BookmarkIconSolid from '~/assets/img/bookmark-icon-solid.png';
+import BookmarkIcon from '~/assets/img/bookmark.svg';
+import BookmarkIconSolid from '~/assets/img/bookmark-fill.svg';
 import useMetadataState from '~/logic/state/metadata';
 import './MessageActions.scss';
 import { LinkCollection } from '../ChatResource';
 import useSettingsState from '~/logic/state/settings';
+import { useDark } from '~/logic/state/join';
 
 const MessageActionItem = ({ onClick, color, children }: { onClick: () => void; color?: string; children: any }) => {
   return (
@@ -31,6 +32,7 @@ const MessageActionItem = ({ onClick, color, children }: { onClick: () => void; 
 const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, permalink, collections }) => {
   const { associations } = useMetadataState();
   const { bookmarks } = useSettingsState.getState();
+  const dark = useDark();
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
   const bookmarked = useMemo(() => bookmarks[permalink], [bookmarks]);
@@ -46,12 +48,8 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, p
     onBookmark(msg, permalink, collection || '', !bookmarked);
   }, [msg, permalink, bookmarked]);
 
-  const bookmarkIcon = <Image
-    referrerPolicy="no-referrer"
-    src={bookmarked ? BookmarkIconSolid : BookmarkIcon}
-    className='bookmarkIcon'
-    onError={console.warn}
-  />;
+  const bookmarkStyle = { transform: 'scale(0.75)', color: dark ? 'white' : 'black' };
+  const bookmarkIcon = bookmarked ? <BookmarkIconSolid style={bookmarkStyle} /> : <BookmarkIcon style={bookmarkStyle} />;
 
   return (
     <Box
@@ -73,16 +71,20 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, p
         >
           <Icon icon='Chat' size={3} />
         </Box>
-        {/* <Box
+        <Box
           padding={1}
           size={'24px'}
           cursor='pointer'
           onClick={() => onLike(msg)}
         >
           <Icon icon='CheckmarkBold' size="20px" mt="-2px" ml="-2px" />
-        </Box> */}
+        </Box>
         {bookmarked ? (
-          <Box padding={1} size={'24px'} cursor='pointer' onClick={toggleBookmark()}>
+          <Box padding={1} size={'20px'} cursor='pointer' onClick={toggleBookmark()}>
+            {bookmarkIcon}
+          </Box>
+        ) : collectionList.length === 1 ? (
+          <Box padding={1} size={'20px'} cursor='pointer' onClick={toggleBookmark(collectionList[0])}>
             {bookmarkIcon}
           </Box>
         ) : (

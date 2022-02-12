@@ -296,8 +296,6 @@ const MessageWrapper = (props) => {
   const showHover = (transcluded === 0) && hovering && !hideHover;
   const dark = useDark();
 
-  // console.log('MSG', msg)
-
   return (
     <Box
       py={transcluded ? '2px' : '1'}
@@ -309,7 +307,7 @@ const MessageWrapper = (props) => {
       {...bind}
     >
       {props.children}
-      {/* {(numLikes > 0 && !transcluded) && <Row
+      {(numLikes > 0 && !transcluded) && <Row
         onClick={() => onLike(msg)}
         backgroundColor={didLike ? 'washedBlue' : 'washedGray'}
         width="fit-content" p="1px 4px"
@@ -319,7 +317,7 @@ const MessageWrapper = (props) => {
         cursor="pointer">
         <Icon icon="CheckmarkBold" size={20} color={didLike ? 'rgba(33,157,255,1)' : 'black'} />
         <Text color={didLike ? 'rgba(33,157,255,1)' : undefined}>{numLikes}</Text>
-      </Row>} */}
+      </Row>}
       {showHover ? <MessageActions {...props} /> : null}
     </Box>
   );

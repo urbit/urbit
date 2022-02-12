@@ -1,108 +1,25 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Associations, Graph, resourceAsPath, Unreads } from '@urbit/api';
-import { patp, patp2dec } from 'urbit-ob';
+import React, { MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Associations, resourceAsPath } from '@urbit/api';
 import _ from 'lodash';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 import { SidebarAssociationItem, SidebarDmItem, SidebarItemBase, SidebarPendingItem } from './SidebarItem';
 import useGraphState, { useInbox } from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
-import { alphabeticalOrder, getFeedPath, getResourcePath, modulo } from '~/logic/lib/util';
-import { SidebarListConfig, SidebarSort } from './types';
+import { getFeedPath, getResourcePath, modulo } from '~/logic/lib/util';
+import { SidebarListConfig } from './types';
 import { Workspace } from '~/types/workspace';
 import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { useHistory } from 'react-router';
-import { useShortcut } from '~/logic/state/settings';
+import useSettingsState, { useShortcut } from '~/logic/state/settings';
 import useGroupState from '~/logic/state/group';
 import useInviteState from '~/logic/state/invite';
 import { getGraphUnreads, sortGroupsAlph } from '~/views/apps/launch/components/Groups';
 import { Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import { useQuery } from '~/logic/lib/useQuery';
 import { IS_MOBILE } from '~/logic/lib/platform';
-
-function dmUnreads(unreads) {
-  let unreadCount = 0;
-  for (const key in unreads) {
-    if (key.includes('dm-inbox')) {
-      unreadCount += unreads[key]?.count || 0;
-    }
-  }
-  return unreadCount;
-}
-
-function sidebarSort(unreads: Unreads, pending: string[]): Record<SidebarSort, (a: string, b: string) => number> {
-  const { associations } = useMetadataState.getState();
-  const alphabetical = (a: string, b: string) => {
-    const aAssoc = associations[a];
-    const bAssoc = associations[b];
-    const aTitle = aAssoc?.metadata?.title || a;
-    const bTitle = bAssoc?.metadata?.title || b;
-
-    return alphabeticalOrder(aTitle, bTitle);
-  };
-
-  const lastUpdated = (a: string, b: string) => {
-    const aPend = pending.includes(a);
-    const bPend = pending.includes(b);
-    if(aPend && !bPend) {
-      return -1;
-    }
-    if(bPend && !aPend) {
-      return 1;
-    }
-    const aUpdated = a.startsWith('~')
-      ?  (unreads?.[`/graph/~${window.ship}/dm-inbox/${patp2dec(a)}`]?.last || 0)
-      :  (unreads?.[`/graph/${a.slice(6)}`]?.last || 0);
-
-    const bUpdated = b.startsWith('~')
-      ?  (unreads?.[`/graph/~${window.ship}/dm-inbox/${patp2dec(b)}`]?.last || 0)
-      :  (unreads?.[`/graph/${b.slice(6)}`]?.last || 0);
-
-    return bUpdated - aUpdated || alphabetical(a, b);
-  };
-
-  return {
-    asc: alphabetical,
-    lastUpdated
-  };
-}
-
-function getItems(associations: Associations, workspace: Workspace, inbox: Graph, pending: string[]) {
-   const filtered = Object.keys(associations.graph).filter((a) => {
-     const assoc = associations.graph[a];
-     if (!('graph' in assoc.metadata.config)) {
-       return false;
-    } else if (workspace?.type === 'group') {
-      const group = workspace.group;
-      return group ? (
-        assoc.group === group &&
-        !assoc.metadata.hidden
-      ) : (
-        !(assoc.group in associations.groups) &&
-        'graph' in assoc.metadata.config &&
-        assoc.metadata.config.graph !== 'chat' &&
-        !assoc.metadata.hidden
-      );
-    } else if (workspace?.type === 'messages') {
-      return (
-        !assoc.metadata.hidden &&
-        !(assoc.group in associations.groups) &&
-        assoc.metadata.config.graph === 'chat'
-      );
-    } else {
-      return (
-        !(assoc.group in associations.groups) &&
-        assoc.metadata.config.graph !== 'chat'
-      );
-    }
-   });
-  const direct: string[] = workspace.type !== 'messages' ? []
-    : inbox.keys().map(x => patp(x.toString()));
-  const pend = workspace.type !== 'messages'
-    ? []
-    : pending;
-
-  return _.union(direct, pend, filtered);
-}
+import { dmUnreads, getItems, sidebarSort } from './util';
+import { GroupOrder, SidebarGroupSorter } from './SidebarGroupSorter';
 
 function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   config: SidebarListConfig;
@@ -111,6 +28,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   title?: string;
   workspace: Workspace;
 }): ReactElement {
+  const groupRef = useRef<HTMLElement>(null);
   const isMessages = workspace.type === 'messages';
   const isHome = workspace.type === 'home';
   const isGroup = workspace.type === 'group';
@@ -119,6 +37,12 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
     (isHome && baseUrl.includes('home')) ||
     (workspace.type === 'group' && (baseUrl.replace('/~landscape', '') === workspace.group || baseUrl.includes(`${workspace.group}/resource`)));
   const [collapsed, setCollapsed] = useState(!groupSelected && !isMessages);
+
+  useEffect(() => {
+    if (isGroup && groupSelected && groupRef.current) {
+      groupRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [isGroup, groupSelected, groupRef]);
 
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(s => s.groups);
@@ -196,7 +120,7 @@ function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   const feedPath = getFeedPath(association);
 
   return (
-    <Box>
+    <Box ref={groupRef}>
       {!isMobileMessages && <SidebarItemBase
         to={to}
         selected={groupSelected}
@@ -291,7 +215,7 @@ function PendingSidebarGroup({ path }: PendingSidebarGroupProps) {
   const { preview, error } = usePreview(path);
   const title = preview?.metadata?.title || path;
   const { toQuery } = useQuery();
-  const onClick = (e) => {
+  const onClick = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     history.push(toQuery({ 'join-kind': 'groups', 'join-path': path }));
@@ -317,40 +241,82 @@ function PendingSidebarGroup({ path }: PendingSidebarGroupProps) {
 
 export function SidebarGroupList({
   messages = false,
+  changingSort = false,
   ...props
 }: {
   config: SidebarListConfig;
   baseUrl: string;
+  changingSort?: boolean;
   selected?: string;
   messages?: boolean;
 }): ReactElement {
-  const associations = useMetadataState(state => state.associations);
-  const groups = useGroupState(s => s.groups);
+  const { associations } = useMetadataState();
+  const { groups } = useGroupState();
+  const { groupSorter, putEntry } = useSettingsState.getState();
+  const [groupOrder, setGroupOrder] = useState<GroupOrder>(JSON.parse(groupSorter.order || '[]'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 8000);
   }, []);
 
-  const groupList = Object.values(associations?.groups || {})
-    .filter(e => e?.group in groups)
-    .sort(sortGroupsAlph);
+  const saveGroupOrder = useCallback((newOrder) => {
+    putEntry('groupSorter', 'order', JSON.stringify(newOrder));
+    setGroupOrder(newOrder);
+  }, [putEntry, setGroupOrder]);
 
-  const joining = useGroupState((s) =>
+  const handleDragAndDrop = useCallback(({ source, destination }) => {
+    if (!destination) {
+      return;
+    }
+    // TODO: figure out how to drag onto folders
+    const items = Array.from(groupOrder);
+    const [reorderedItem] = items.splice(source.index, 1);
+    items.splice(destination.index, 0, reorderedItem);
+    saveGroupOrder(items);
+  }, [groupOrder, saveGroupOrder]);
+
+  const groupList = useMemo(() => Object.values(associations?.groups || {})
+    .filter(e => e?.group in groups)
+    .sort(sortGroupsAlph), [associations, groups]);
+
+  useEffect(() => {
+    const newGroupOrder = JSON.parse(groupSorter.order || '[]');
+    if (newGroupOrder.length) {
+      setGroupOrder(newGroupOrder);
+    }
+  }, [groupSorter]);
+
+  useEffect(() => {
+    if (!groupOrder.length) {
+      return;
+    }
+    // add groups to groupSorter.order if they're missing (as in, recently joined)
+    let sortedGroups = [];
+    for (const key in groupOrder) {
+      if (typeof groupOrder[key] === 'string') {
+        sortedGroups.push(groupOrder[key]);
+      } else {
+        sortedGroups = sortedGroups.concat(groupOrder[key]?.groups || []);
+      }
+    }
+    const missingGroups = groupList.map(({ group }) => group).filter(g => !sortedGroups.includes(g));
+    if (missingGroups.length) {
+      saveGroupOrder(groupOrder.concat(missingGroups));
+    }
+  }, [groupList]);
+
+  const joining = useGroupState(s =>
     _.omit(
       _.pickBy(s.pendingJoin || {}, req => req.app === 'groups' && req.progress != 'abort'),
       groupList.map(g => g.group)
     )
   );
-  const invites = useInviteState(
-    s =>
-      Object.values(s.invites?.['groups'] || {}).map(inv =>
-        resourceAsPath(inv?.resource)
-      ) || []
+
+  const invites = useInviteState(s => Object.values(s.invites?.['groups'] || {}).map(inv => resourceAsPath(inv?.resource)) || []);
+  const pending = _.union(invites, Object.keys(joining)).filter(group =>
+    !(group in (groups?.groups || {})) && !(group in (associations.groups || {}))
   );
-  const pending = _.union(invites, Object.keys(joining)).filter(group => {
-    return !(group in (groups?.groups || {})) && !(group in (associations.groups || {}));
-  });
 
   if (messages) {
     return <SidebarGroup {...props} workspace={{ type: 'messages' }} />;
@@ -358,22 +324,44 @@ export function SidebarGroupList({
     return <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
       <LoadingSpinner />
     </Box>;
-  };
+  }
+
+  if (changingSort) {
+    return <DragDropContext onDragEnd={handleDragAndDrop}>
+      <SidebarGroupSorter groupOrder={groupOrder} />
+    </DragDropContext>;
+  }
 
   return (
     <>
       <SidebarGroup {...props} workspace={{ type: 'home' }} />
-      {groupList.map((g) => {
-        return (
-          <SidebarGroup
-            key={g.group}
-            {...props}
-            workspace={{ type: 'group', group: g.group }}
-            title={g.metadata.title}
-          />
-        );
-      })}
-      {pending.map((p) => <PendingSidebarGroup key={p} path={p} />)}
+      {groupOrder.length ? groupOrder.map((go) => {
+        if (typeof go === 'string') {
+          const g = associations.groups[go];
+          if (!g) {
+            return null;
+          }
+
+          return (
+            <SidebarGroup
+              key={g.group}
+              {...props}
+              workspace={{ type: 'group', group: g.group }}
+              title={g.metadata.title}
+            />
+          );
+        }
+
+        // TODO: handle folders in groupOrder
+        return null;
+      }) : (
+        groupList.map((g: any) => <SidebarGroup 
+          key={g.group} {...props}
+          workspace={{ type: 'group', group: g.group }}
+          title={g.metadata.title}
+        />)
+      )}
+      {pending.map(p => <PendingSidebarGroup key={p} path={p} />)}
     </>
   );
 }

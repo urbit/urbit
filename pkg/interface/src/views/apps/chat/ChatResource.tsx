@@ -156,9 +156,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const onLike = useCallback(async ({ author, signatures, index }: Post) => {
     if (window.ship !== author) {
       const { ship, name } = resourceFromPath(resource);
-      console.log(0, signatures)
       const remove = signatures.find(({ ship }) => ship === window.ship);
-      console.log(1, remove)
 
       const body = remove
         ? {
@@ -173,14 +171,17 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
             signatures: []
           }
         }; // like
-        console.log(2, body)
-      await airlock.thread({
-        inputMark: 'graph-update-3',
-        outputMark: 'json',
-        threadName: `${remove ? 'remove' : 'add'}-signatures`,
-        desk: 'escape',
-        body
-      });
+
+      // TODO: remove this check once the remove-signatures backend has been updated. Right now it removes all signatures, which is wrong
+      if (!remove) {
+        await airlock.thread({
+          inputMark: 'graph-update-3',
+          outputMark: 'json',
+          threadName: `${remove ? 'remove' : 'add'}-signatures`,
+          desk: 'escape',
+          body
+        });
+      }
     }
   }, [resource]);
 

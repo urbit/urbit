@@ -281,7 +281,6 @@ export const addNodes = (json, state) => {
   };
 
   const addOrRemoveSigs = _.get(json, 'add-signatures', false) || _.get(json, 'remove-signatures', false);
-  console.log(0, addOrRemoveSigs)
   if (addOrRemoveSigs) {
     if (!('graphs' in state) || !('flatGraphs' in state) || !('threadGraphs' in state)) {
       return state;

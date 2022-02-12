@@ -96,7 +96,6 @@ const useHarkState = createState<HarkState>(
     },
     opened: async () => {
       reduceStateN(get(), { opened: null }, [reduce]);
-
       await api.poke(opened);
     },
     archiveNote: async (bin: HarkBin, lid: HarkLid) => {

@@ -1,19 +1,15 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Image, Text, Row, Button, Icon, H2, Col, H3 } from '@tlon/indigo-react';
+import { Box, Text, Row, Button, Icon, H2, Col } from '@tlon/indigo-react';
 import { NewGroup } from '~/views/landscape/components/NewGroup';
 import ModalButton from '~/views/apps/launch/components/ModalButton';
 import Tile from '~/views/apps/launch/components/tiles/tile';
 import { ScrollbarLessBox } from '~/views/apps/launch/App';
-import { Sigil } from '~/logic/lib/sigil';
-import { useDark } from '~/logic/state/join';
 import { version } from '~/../package.json';
+import { NewBox } from '~/views/apps/notifications/NewBox';
 
 export function UqbarHome(props) {
   const history = useHistory();
-  const dark = useDark();
-
-  const sigilClass = dark ? 'mix-blend-diff' : 'mix-blend-darken';
 
   return (
     <ScrollbarLessBox
@@ -24,6 +20,7 @@ export function UqbarHome(props) {
       mt={3}
     >
       <H2 mb={3} ml={3}>EScape from Eternal September <Text fontSize="16px">(v{version})</Text></H2>
+      <NewBox hideLabel />
       <Box
         mx={2}
         display="grid"
@@ -53,7 +50,7 @@ export function UqbarHome(props) {
               </Text>
             </Row>
           </Box>
-        </Tile> */}
+        </Tile>
         <Tile>
           <Col display="flex" alignItems="center" justifyContent="center" height="100%">
             <ModalButton
@@ -81,7 +78,7 @@ export function UqbarHome(props) {
               </Row>
             </Button>
           </Col>
-        </Tile>
+        </Tile> */}
       </Box>
     </ScrollbarLessBox>
   );
