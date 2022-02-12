@@ -954,7 +954,7 @@
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
         heeds=(set duct)
-        =scry-state
+        scry=scry-state
     ==
   +$  scry-state
     $:  order=(map path @ud)
@@ -967,13 +967,13 @@
         hav=(list have)  ::  response packets, backward
         num-fragments=@ud
         num-received=@ud
+        next-wake=(unit @da)
+        listeners=(set duct)
     ==
   +$  want
     $:  fra=@ud
         =hoot
-        last-sent=@da
-        tries=@ud
-        skips=@ud
+        packet-state
     ==
   +$  have
     $:  fra=@ud
@@ -1134,7 +1134,7 @@
     ==
   +$  packet-state
     $:  last-sent=@da
-        retries=@ud
+        tries=_1
         skips=@ud
     ==
   ::  $message-sink-state: state of |message-sink to assemble messages
