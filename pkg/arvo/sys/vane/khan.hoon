@@ -31,24 +31,24 @@
 !:
 !?  164
 ::
+=,  khan
 |=  our=ship
 =>  |%                                                  ::  %khan types
-    +$  move  [p=duct q=(wite note gift:khan)]          ::
+    +$  move  [p=duct q=(wite note gift)]               ::
     +$  note                                            ::    out request $->
       $~  [%g %deal *sock *term *deal:gall]             ::
       $%  $:  %g                                        ::    to %gall
               $>(%deal task:gall)                       ::  full transmission
           ==                                            ::
           $:  %k                                        ::    to self
-              $>(%fard task:khan)                       ::  internal thread
+              $>(%fard task)                            ::  internal thread
       ==  ==                                            ::
     +$  sign                                            ::    in response $<-
       $%  $:  %gall                                     ::    from %gall
               $>(%unto gift:gall)                       ::  update
           ==                                            ::
           $:  %khan                                     ::    from self
-              $>  ?(%arow %avow)                        ::  thread result
-              gift:khan                                 ::
+              $>  ?(%arow %avow)  gift                  ::  thread result
       ==  ==                                            ::
     +$  khan-state                                      ::
       [%2 hey=duct]                                     ::  current unix duct
@@ -56,7 +56,7 @@
 =>
 |%
 ++  get-beak
-  |=  [=bear:khan now=@da]
+  |=  [=bear now=@da]
   ?@(bear [our bear %da now] bear)
 ++  get-dais
   |=  [=beak =mark rof=roof]
@@ -108,16 +108,16 @@
 =*  khan-gate  .
 ^?
 |%
-::  +call: handle a +task:khan request
+::  +call: handle a +task request
 ::
 ++  call
   |=  $:  hen=duct
           dud=(unit goof)
-          wrapped-task=(hobo task:khan)
+          wrapped-task=(hobo task)
       ==
   ^-  [(list move) _khan-gate]
   ::
-  =/  =task:khan  ((harden task:khan) wrapped-task)
+  =/  =task  ((harden task) wrapped-task)
   ?+    -.task  [~ khan-gate]
       %born
     [~ khan-gate(hey hen)]
@@ -200,14 +200,15 @@
   ::
       %khan
     ?.  ?=(%arow +<.hin)  ~
-    ?~  hen  ~
+    ?~  tea  ~
     ?.  ?=(%fyrd -.tea)  ~
     =*  row  p.hin
     ?.  ?=(%& -.row)
       [hen %give %avow row]~
-    =/  [=beak =mark]  (read-wire tea)
+    =/  [=beak =mark]
+      (read-wire tea)
     =/  =dais:clay  (get-dais beak mark rof)
-    =/  =vase  (vale:dais q.p.row)
+    =/  =vase       (vale:dais q.p.row)
     [hen %give %avow %& mark q.vase]~
   ==
 --
