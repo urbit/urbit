@@ -9,6 +9,7 @@ daemon = $(wildcard daemon/*.c)
 worker = $(wildcard worker/*.c)
 tests  = $(wildcard tests/*.c)
 bench  = $(wildcard bench/*.c)
+wireshark = $(wildcard wireshark/*.c)
 
 compat := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.c))
 
@@ -76,6 +77,12 @@ build/urbit-worker: $(common_objs) $(worker_objs)
 	@echo CC -o $@
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
+
+build/ames-wireshark: $(common_objs) $(worker_objs)
+	@echo CC -o $@
+	@mkdir -p ./build
+	@$(CC) wireshark/main.c $(LDFLAGS) -o $@
+
 
 # CCDEPS and CCEXTRA are empty except in MingW build,
 # which uses them to inject a C source transform step
