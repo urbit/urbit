@@ -1440,7 +1440,7 @@
     ?~  sen=(get:ors:dice sending [address nonce])
       ~?  lverb  [dap.bowl %weird-double-remove nonce+nonce]
       sending
-    ?~  nin=(find [raw-tx.diff]~ (turn txs.u.sen tail))
+    ?~  nin=(find [raw-tx.diff]~ (turn txs.u.sen (cork tail tail)))
       ~?  lverb  [dap.bowl %weird-unknown nonce+nonce]
       sending
     =.  txs.u.sen  (oust [u.nin 1] txs.u.sen)
