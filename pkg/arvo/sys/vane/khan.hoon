@@ -8,10 +8,10 @@
 ::  both modes take a thread start request consisting of a
 ::  namespace, thread name, and input data; they respond over the
 ::  same duct with either success or failure. %fard takes its
-::  input arguments as a $vase and produces $arow, which contains
+::  input arguments as a $vase and produces %arow, which contains
 ::  a $vase on success (or $tang on failure). %fyrd takes an
 ::  output mark and input `(cask)` (short for `(cask *)`); it
-::  produces $avow, which contains a `(cask)` on success.
+::  produces %avow, which contains a `(cask)` on success.
 ::
 ::  %fard passes its arguments and produces its result
 ::  unmodified. %fyrd does mark conversion on both ends, and
@@ -32,31 +32,32 @@
 !?  164
 ::
 |=  our=ship
-=>  |%
-    +$  move  [p=duct q=(wite note gift:khan)]
-    +$  note                                            ::  out request $->
-      $~  [%g %deal *sock *term *deal:gall]
-      $%  $:  %g                                        ::  to %gall
+=>  |%                                                  ::  %khan types
+    +$  move  [p=duct q=(wite note gift:khan)]          ::
+    +$  note                                            ::    out request $->
+      $~  [%g %deal *sock *term *deal:gall]             ::
+      $%  $:  %g                                        ::    to %gall
               $>(%deal task:gall)                       ::  full transmission
+          ==                                            ::
+          $:  %k                                        ::    to self
+              $>(%fard task:khan)                       ::  internal thread
       ==  ==                                            ::
-    +$  sign                                            ::  in response $<-
-      $%  $:  %gall
-              $>(%unto gift:gall)
-          ==
-          $:  %khan
-              $>  ?(%arow %avow)
-              gift:khan
-      ==  ==
-    +$  khan-state
-      $:  %1
-          hey=duct                                      ::  current unix duct
-          run=(map duct thread-state)                   ::  running threads
-      ==
-    +$  thread-state
-      [tid=@ta p=(unit [mak=mark bek=beak])]
-    --
+    +$  sign                                            ::    in response $<-
+      $%  $:  %gall                                     ::    from %gall
+              $>(%unto gift:gall)                       ::  update
+          ==                                            ::
+          $:  %khan                                     ::    from self
+              $>  ?(%arow %avow)                        ::  thread result
+              gift:khan                                 ::
+      ==  ==                                            ::
+    +$  khan-state                                      ::
+      [%2 hey=duct]                                     ::  current unix duct
+    --                                                  ::
 =>
 |%
+++  get-beak
+  |=  [=bear:khan now=@da]
+  ?@(bear [our bear %da now] bear)
 ++  get-dais
   |=  [=beak =mark rof=roof]
   ^-  dais:clay
@@ -66,6 +67,32 @@
     ~|(%mark-invalid !!)
   ?>  =(%dais p.u.u.ret)
   !<(dais:clay q.u.u.ret)
+++  make-wire
+  |=  [=beak =mark]
+  ^-  wire
+  :~  %fyrd
+      (scot %p p.beak)
+      q.beak
+      -.r.beak
+      ?-  -.r.beak
+        %da   (scot %da p.r.beak)
+        %tas  p.r.beak
+        %ud   (scot %ud p.r.beak)
+      ==
+      mark
+  ==
+++  read-wire
+  |=  =wire
+  ^-  (pair beak mark)
+  =/  ras  (snag 4 wire)
+  :_  (snag 5 wire)
+  :+  (slav %p (snag 1 wire))
+    (snag 2 wire)
+  ?+  (snag 3 wire)  !!
+    %da   [%da (slav %da ras)]
+    %tas  [%tas ras]
+    %ud   [%ud (slav %ud ras)]
+  ==
 ++  start-spider
   |=  [our=@p =vase]
   ^-  note
@@ -93,72 +120,46 @@
   =/  =task:khan  ((harden task:khan) wrapped-task)
   ?+    -.task  [~ khan-gate]
       %born
-    :-  ~
-    %=  khan-gate
-      hey  hen
-      run  *(map duct thread-state)
-    ==
+    [~ khan-gate(hey hen)]
   ::
       %fard
-    =*  fad  p.task
-    =/  tid=@ta
-      (cat 3 'khan-fard--' (scot %uv (sham eny)))
-    =/  =beak
-      ?@(bear.fad [our bear.fad %da now] bear.fad)
-    =/  args
-      [~ `tid beak name.fad data.fad]
+    =*  fyd       p.task
+    =/  =beak     (get-beak bear.fyd now)
+    =/  wir=wire  (head hen)
+    =/  rid=@ta   (rear wir)
+    =/  tid=@ta   (cat 3 'khan-fyrd--' rid)
+    =/  args      [~ `tid beak name.fyd args.fyd]
     =/  start-moves=(list move)
       %+  turn
         :~  (watch-spider our /thread-result/[tid])
             (start-spider our !>(args))
         ==
       |=(=note ^-(move [hen %pass //g note]))
-    =.  run  (~(put by run) hen tid ~)
     [start-moves khan-gate]
   ::
       %fyrd
-    =/  wir=wire  (head hen)
-    =/  rid=@ta   (rear wir)
-    =*  fyd  p.task
-    ?:  (~(has by run) hen)
-      ~|(%fyrd-duplicate-rid !!)
-    =/  tid=@ta
-      (cat 3 'khan-fyrd--' rid)
-    =/  =beak
-      ?@(bear.fyd [our bear.fyd %da now] bear.fyd)
-    =/  =dais:clay  (get-dais beak p.data.fyd rof)
-    =/  args
-      :*  ~  `tid  beak  name.fyd
-          (slam !>(some) (vale.dais q.data.fyd))
-      ==
-    =/  start-moves=(list move)
-      %+  turn
-        :~  (watch-spider our /thread-result/[tid])
-            (start-spider our !>(args))
-        ==
-      |=(=note ^-(move [hen %pass //g note]))
-    =.  run  (~(put by run) hen tid `[out-mark.fyd beak])
-    [start-moves khan-gate]
+    =*  fyd         p.task
+    =/  =beak       (get-beak bear.fyd now)
+    =/  =dais:clay  (get-dais beak p.q.args.fyd rof)
+    =/  =vase
+      (slam !>(some) (vale.dais q.q.args.fyd))
+    =/  =wire  (make-wire beak p.args.fyd)
+    :_  khan-gate
+    [hen %pass wire %k %fard bear.fyd name.fyd vase]~
   ==
 ::  +load: migrate an old state to a new khan version
 ::
 ++  load
   |=  $=  old
-      $%  $:  %0
-              hey=duct
-              run=(map duct [tid=@ta mak=mark bek=beak])
-          ==
+      $%  [?(%0 %1) hey=duct *]
           khan-state
       ==
   ^+  khan-gate
   =/  new=khan-state
-    ?:  ?=(%0 -.old)
-      :+  %1
-        hey.old
-      %-  ~(urn by run.old)
-      |=  [a=duct b=[tid=@ta mak=mark bek=beak]]
-      [tid.b `[mak.b bek.b]]
-    old
+    ?:  ?=(%2 -.old)
+      old
+    :-  %2
+    hey.old
   khan-gate(state new)
 ::  +scry: nothing to see as yet
 ::
@@ -174,45 +175,39 @@
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _khan-gate]
   ?^  dud
-    =.  run  (~(del by run) hen)
     ~|(%khan-take-dud (mean tang.u.dud))
-  ?.  ?=(%gall -.hin)
-    [~ khan-gate]
-  ?+    -.p.hin  [~ khan-gate]
-      ?(%poke-ack %watch-ack)
-    ?~  p.p.hin  [~ khan-gate]
-    =.  run  (~(del by run) hen)
-    %-  (slog 'khan-ack' u.p.p.hin)
-    :_  khan-gate
-    =/  tad  (~(got by run) hen)
-    ?~  p.tad
+  :_  khan-gate
+  ?-    -.hin
+      %gall
+    ?+    -.p.hin  ~
+        ?(%poke-ack %watch-ack)
+      ?~  p.p.hin  ~
+      %-  (slog 'khan-ack' u.p.p.hin)
       [hen %give %arow %| -.p.hin u.p.p.hin]~
-    [hen %give %avow %| -.p.hin u.p.p.hin]~
-  ::
-      %fact
-    =*  cag  cage.p.hin
-    ?+    p.cag  ~&(bad-fact+p.cag !!)
-        %thread-fail
-      =/  =tang  !<(tang q.cag)
-      %-  (slog 'khan-fact' tang)
-      :_  khan-gate
-      =/  tad  (~(got by run) hen)
-      ?~  p.tad
-        [hen %give %arow %| p.cag tang]~
-      [hen %give %avow %| p.cag tang]~
     ::
-        %thread-done
-      :_  khan-gate
-      =/  tad  (~(got by run) hen)
-      ?~  p.tad
+        %fact
+      =*  cag  cage.p.hin
+      ?+    p.cag  ~&(bad-fact+p.cag !!)
+          %thread-fail
+        =/  =tang  !<(tang q.cag)
+        %-  (slog 'khan-fact' tang)
+        [hen %give %arow %| p.cag tang]~
+      ::
+          %thread-done
         [hen %give %arow %& q.cag]~
-      =/  mak  mak.u.p.tad
-      =/  bek  bek.u.p.tad
-      =/  =dais:clay  (get-dais bek mak rof)
-      =/  =vase  (vale:dais q.q.cag)
-      [hen %give %avow %& mak q.vase]~
+      ==
     ==
-      %kick
-    [~ khan-gate(run (~(del by run) hen))]
+  ::
+      %khan
+    ?.  ?=(%arow +<.hin)  ~
+    ?~  hen  ~
+    ?.  ?=(%fyrd -.tea)  ~
+    =*  row  p.hin
+    ?.  ?=(%& -.row)
+      [hen %give %avow row]~
+    =/  [=beak =mark]  (read-wire tea)
+    =/  =dais:clay  (get-dais beak mark rof)
+    =/  =vase  (vale:dais q.p.row)
+    [hen %give %avow %& mark q.vase]~
   ==
 --

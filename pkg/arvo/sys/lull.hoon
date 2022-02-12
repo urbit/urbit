@@ -2098,24 +2098,22 @@
 ++  khan  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%arow p=arow]                                  ::  in-arvo result
-        [%avow p=avow]                                  ::  external result
+    $%  [%arow p=(avow vase)]                           ::  in-arvo result
+        [%avow p=(avow (cask))]                         ::  external result
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         [%done ~]                                       ::  socket closed
-        [%fard p=fard]                                  ::  in-arvo thread
-        [%fyrd p=fyrd]                                  ::  external thread
+        [%fard p=(fyrd vase)]                           ::  in-arvo thread
+        [%fyrd p=(fyrd (pair mark (cask)))]             ::  external thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
     ==                                                  ::
   ::                                                    ::
-  +$  arow  (each vase goof)                            ::  %fard result
-  +$  avow  (each (cask) goof)                          ::  %fyrd result
-  +$  bear  $@(desk beak)                               ::  local desk/case
-  +$  fard  [=bear name=term data=vase]                 ::  intra-arvo thread
-  +$  fyrd  [=bear name=term =out=mark data=(cask)]     ::  external thread
+  ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
+  +$  bear  $@(desk beak)                               ::  partial $beak
+  ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  external thread
   --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
