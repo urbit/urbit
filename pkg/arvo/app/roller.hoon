@@ -31,7 +31,7 @@
 ::
 |%
 +$  app-state
-  $:  %5
+  $:  %6
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
       ::  finding: sig+raw-tx hash reverse lookup for txs in sending map
@@ -263,7 +263,7 @@
         [~d7 7 ~m5 ~m1]
       =,  old-state
       :*  %1
-          pending  ^-((tree [l1-tx-pointer old-send-tx]) sending)
+          pending  ^-((tree [l1-tx-pointer old-send-tx-4]) sending)
           finding  history  ship-quota  next-nonce  next-batch
           pre  own  pk  slice  quota  derive
           frequency  endpoint  contract  chain-id
@@ -306,11 +306,11 @@
           resend-time  update-rate  fallback-gas-price
       ==
     =?  old-state  ?=(%4 -.old-state)
-      ^-  app-state
-      =/  new-sending=(tree [l1-tx-pointer send-tx])
+      ^-  state-5
+      =/  new-sending=(tree [l1-tx-pointer old-send-tx-5])
         %+  run:ors:dice  sending.old-state
-        |=  old=old-send-tx
-        ^-  send-tx
+        |=  old=old-send-tx-4
+        ^-  old-send-tx-5
         old(txs (turn txs.old (lead |)))
       =,  old-state
       :*  %5
@@ -321,10 +321,45 @@
           frequency  endpoint  contract  chain-id
           resend-time  update-rate  fallback-gas-price
       ==
-    ?>  ?=(%5 -.old-state)
+    =?  old-state  ?=(%5 -.old-state)
+      ^-  app-state
+      =/  new-sending=(tree [l1-tx-pointer send-tx])
+        %+  run:ors:dice  sending.old-state
+        |=  old=old-send-tx-5
+        ^-  send-tx
+        %=    old
+            txs
+          %+  turn  txs.old
+          |=  [force=? =raw-tx:naive]
+          =/  sign-address=(unit @ux)
+            (extract-address:lib raw-tx pre chain-id)
+          :_  [force raw-tx]
+          ?.  ?=(^ sign-address)
+            0x0
+          u.sign-address
+        ==
+      =,  old-state
+      :*  %6
+          pending  new-sending  finding  history
+          ship-quota  allowances
+          next-nonce  next-batch  next-slice
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate  fallback-gas-price
+      ==
+    ?>  ?=(%6 -.old-state)
     [cards this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1 state-2 state-3 state-4 app-state)
+    ++  app-states
+      $%  state-0
+          state-1
+          state-2
+          state-3
+          state-4
+          state-5
+          app-state
+      ==
+    ::
     ++  state-0
       $:  %0
           pending=(list pend-tx)
@@ -346,7 +381,7 @@
     ++  state-1
       $:  %1
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer old-send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx-4])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           ship-quota=(map ship @ud)
@@ -369,7 +404,7 @@
     ++  state-2
       $:  %2
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer old-send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx-4])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           ship-quota=(map ship @ud)
@@ -393,7 +428,7 @@
     ++  state-3
       $:  %3
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer old-send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx-4])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           ship-quota=(map ship @ud)
@@ -416,12 +451,42 @@
           update-rate=@dr
       ==
     ::
-    +$  old-send-tx  [next-gas-price=@ud sent=? txs=(list =raw-tx:naive)]
+    +$  old-send-tx-4  [next-gas-price=@ud sent=? txs=(list =raw-tx:naive)]
     ::
     ++  state-4
       $:  %4
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer old-send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx-4])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          allowances=(map ship (unit @ud))
+          next-nonce=(unit @ud)
+          next-batch=time
+          next-slice=time
+          pre=^state:naive
+          own=owners
+          spo=sponsors
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
+          fallback-gas-price=@ud
+      ==
+    ::
+    +$  old-send-tx-5
+      [next-gas-price=@ud sent=? txs=(list [force=? =raw-tx:naive])]
+    ::
+    ++  state-5
+      $:  %5
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer old-send-tx-5])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           ship-quota=(map ship @ud)
@@ -833,15 +898,17 @@
     ::
     =*  key  key.i.sorted
     =*  val  val.i.sorted
-    =+  txs=(turn txs.val |=([force=? =raw-tx:naive] [force 0x0 *time raw-tx]))
+    =/  txs=(list pend-tx)
+      %+  turn  txs.val
+      |=([addr=@ux force=? =raw-tx:naive] force^addr^*time^raw-tx)
     =^  [new-valid=_txs nups=_ups]  state
       (apply-txs txs %sending `nonce.key)
+    =/  new-sending
+     (turn new-valid |=([force=? addr=@ux * =raw-tx:naive] addr^force^raw-tx))
     ::  we only hear updates for this nonce if it has been sent
     ::
     =.  valid  ::=?  valid  sent.val
-      %^  put:ors:dice  valid
-        key
-      val(txs (turn new-valid |=([force=? * * =raw-tx:naive] force^raw-tx)))
+      (put:ors:dice valid key val(txs new-sending))
     $(sorted t.sorted, ups (welp ups nups))
   ::
   ++  apply-txs
@@ -872,6 +939,7 @@
           ~&  >>>  "weird tx in finding gud: {<gud>} {<u.wer>}"^[ship raw-tx]
           now.bowl
         time.u.wer
+      ~?  =(0x0 address.tx)  %weird-null-tx-address^'apply-txs'
       (update-history:dice history [tx]~ %failed)
     =?  finding  !gud  (~(put by finding) keccak %failed)
     =.  updates  :(welp up-2 up-1 updates)
@@ -1092,7 +1160,8 @@
           sending
         %^  put:ors:dice  sending
           [address nonce]
-        [0 | (turn pending |=([force=? * * =raw-tx:naive] force^raw-tx))]
+        :+  0  |
+        (turn pending |=([force=? addr=@ux * =raw-tx:naive] addr^force^raw-tx))
       ::
           finding
         %-  ~(gas by finding)
@@ -1145,11 +1214,11 @@
 ::    If %.y, the roller has been trying to send a batch for a whole frequency.
 ::
 ::    The cause of not sending the previous batch can happen because
-::    of thread failure (see line 1251) or because the private key loaded onto
+::    of thread failure or because the private key loaded onto
 ::    the roller was used for something other than signing L2 batches right
 ::    after the send-batch thread started.
 ::
-::    After reaching this state, any subsequents attempts have failed (L: 1251)
+::    After reaching this state, any subsequents attempts have failed
 ::    (prior to updating the sending nonce if we hit the on-out-of-sync case)
 ::    which would possibly require a manual intervention (e.g. changing the
 ::    ethereum node URL, adding funds to the roller's address, manually bumping
@@ -1200,7 +1269,7 @@
     ::
     ++  process-l2-txs
       %+  roll  txs.q
-      |=  [[@ =raw-tx:naive] nif=_finding sih=_history]
+      |=  [[@ @ =raw-tx:naive] nif=_finding sih=_history]
       =/  =keccak  (hash-raw-tx:lib raw-tx)
       |^
       ?~  val=(~(get by nif) keccak)
@@ -1266,7 +1335,7 @@
       nonce
       fallback-gas-price
     ::
-      =<  [next-gas-price (turn txs tail)]
+      =<  [next-gas-price (turn txs (cork tail tail))]
       [. (got:ors:dice sending [address nonce])]
   ==
 ::  +on-batch-result: await resend after thread success or failure
@@ -1393,6 +1462,7 @@
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
   ::
+  ~?  =(0x0 tx-address)  %weird-null-tx-address^'on-naive-diff'
   =^  updates  history
     %^    update-history:dice
         history
