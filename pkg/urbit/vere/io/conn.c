@@ -678,14 +678,9 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
             can_u->mor_u.bal_f(can_u, -7, "urth-bad");
             break;
           }
-          case c3__cram: {
+          case c3__meld: {
             //  ack immediately.
             //
-            _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
-            u3_pier_cram(con_u->car_u.pir_u);
-            break;
-          }
-          case c3__meld: {
             _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
             u3_pier_meld(con_u->car_u.pir_u);
             break;
