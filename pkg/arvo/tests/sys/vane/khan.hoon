@@ -203,14 +203,72 @@
       !>([~[//khan/2/0v0] %give %arow %& !>(%res)])
       !>((head all-take-moves))
   :(weld results-0 results-1 results-2)
-::  ++  test-khan-take-dud
-::    !!
-::  ++  test-khan-take-watch-fail
-::    !!
-::  ++  test-khan-take-poke-fail
-::    !!
-::  ++  test-khan-take-full-run-fyrd
-::    !!
+++  test-khan-take-full-run-fyrd
+  =^  born-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=~1111.1.1
+      scry=scry-provides-mark
+      call-args=[duct=~[/a] ~ [%born ~]]
+    ==
+  =^  fyrd-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s1)
+      scry=scry-provides-mark
+      ^=  call-args
+        duct=~[//khan/0v0/1/0v2]  ~
+        %fyrd  [%base %fake %noun %noun ~]
+    ==
+  =/  results-0  (expect !>(=(1 (lent fyrd-moves))))
+  =/  fard-move  (head fyrd-moves)
+  ?>  ?=(%pass -.q.fard-move)
+  ?>  ?=(%k -.note.q.fard-move)
+  =*  wir  wire.q.fard-move
+  ::  don't assert the structure of wir; we leave that up to
+  ::  %khan as an implementation detail.
+  ::
+  =/  =duct  [wir ~[//khan/0v0/1/0v2]]
+  =^  fard-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s2)
+      scry=scry-provides-mark
+      ^=  call-args
+        duct=duct  ~
+        +.note.q.fard-move
+    ==
+  ::  we do not simulate the inner gall moves here, which might
+  ::  cause weirdness if the implementation becomes stateful.
+  ::
+  =^  arow-moves  khan-gate
+    %-  khan-take  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s3)
+      scry=scry-provides-mark
+      ^=  take-args
+        wire=wir
+        duct=~[//khan/0v0/1/0v2]
+        dud=~
+        [%khan %arow %& !>(%res)]
+    ==
+  =/  results-1  (expect !>(=(1 (lent arow-moves))))
+  =/  row  (head arow-moves)
+  =/  results-2
+    %+  expect-eq
+      !>(~[//khan/0v0/1/0v2])
+      !>(p.row)
+  =/  results-3
+    %+  expect-eq
+      !>([%give %avow %& %noun %res])
+      !>(q.row)
+  :(weld results-0 results-1 results-2 results-3)
+::  remaining cases to test:
+::    {%fard, %fyrd} x
+::    {dud, watch-ack fail, poke-ack fail, thread-fail}
+::  watch-ack, poke-ack, thread-fail should all produce negative
+::  arow/avow. hen is dud taken? what should it produce?
+::
 ++  khan-call
   |=  $:  khan-gate=_khan-gate
           now=@da
