@@ -327,8 +327,9 @@ export function SidebarGroupList({
   }
 
   if (changingSort) {
+    const groupsToSort = groupOrder.length ? groupOrder : groupList.map(g => g.group);
     return <DragDropContext onDragEnd={handleDragAndDrop}>
-      <SidebarGroupSorter groupOrder={groupOrder} />
+      <SidebarGroupSorter groupOrder={groupsToSort} />
     </DragDropContext>;
   }
 

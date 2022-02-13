@@ -32,7 +32,7 @@ function GroupCard({ title, group, index }: { title: string; group: string; inde
 export function SidebarGroupSorter({ groupOrder = [] }: { groupOrder: GroupOrder }): ReactElement {
   const { associations } = useMetadataState();
 
-  const getTitle = useCallback((g: string | GroupFolder) => typeof g === 'string' ? associations.groups[g]?.metadata?.title : g.folder, [associations]);
+  const getTitle = useCallback((g: string | GroupFolder) => typeof g === 'string' ? associations.groups[g]?.metadata?.title : g?.folder, [associations]);
 
   return (
     <Droppable droppableId="groups" style={{ width: '100%' }}>
