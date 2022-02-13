@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useCopy } from '~/logic/lib/useCopy';
 import { Dropdown } from '~/views/components/Dropdown';
 import BookmarkIcon from '~/assets/img/bookmark.svg';
@@ -38,6 +38,7 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, p
   const bookmarked = useMemo(() => bookmarks[permalink], [bookmarks]);
   const showCopyMessageLink = Boolean(permalink);
   const showDelete = (isAdmin || isOwn()) && onDelete;
+  const [bookmarkSuccess, setBookmarkSuccess] = useState(false);
   const myBookmarksPath = useMemo(() => Object.keys(associations.graph).find((path) => {
     const assoc = associations.graph[path];
     return assoc.group === path && assoc.metadata.title === 'My Bookmarks' && assoc.metadata.config.graph === 'link';
@@ -46,10 +47,13 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, p
 
   const toggleBookmark = useCallback((collection?: LinkCollection) => () => {
     onBookmark(msg, permalink, collection || '', !bookmarked);
+    setBookmarkSuccess(!bookmarked);
   }, [msg, permalink, bookmarked]);
 
-  const bookmarkStyle = { transform: 'scale(0.75)', color: dark ? 'white' : 'black' };
-  const bookmarkIcon = bookmarked ? <BookmarkIconSolid style={bookmarkStyle} /> : <BookmarkIcon style={bookmarkStyle} />;
+  const bookmarkStyle = { height: 15, width: 12, paddingLeft: 1, color: dark ? 'white' : 'black' };
+  const bookmarkIcon = bookmarked
+    ? <BookmarkIconSolid style={bookmarkStyle} className="actionIcon" />
+    : <BookmarkIcon style={bookmarkStyle} className="actionIcon" />;
 
   return (
     <Box
@@ -69,7 +73,7 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, p
           cursor='pointer'
           onClick={() => onReply(msg)}
         >
-          <Icon icon='Chat' size={3} />
+          <Icon icon='Chat' size={3} className="actionIcon" />
         </Box>
         <Box
           padding={1}
@@ -77,7 +81,7 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, p
           cursor='pointer'
           onClick={() => onLike(msg)}
         >
-          <Icon icon='CheckmarkBold' size="20px" mt="-2px" ml="-2px" />
+          <Icon icon='CheckmarkBold' size="20px" mt="-2px" ml="-2px" className="actionIcon" />
         </Box>
         {bookmarked ? (
           <Box padding={1} size={'20px'} cursor='pointer' onClick={toggleBookmark()}>
@@ -106,9 +110,12 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, p
                 borderColor='lightGray'
                 boxShadow='0px 0px 0px 3px'
               >
-                {collectionList.map(c => <MessageActionItem key={c.path} onClick={toggleBookmark(c)}>
-                  {c.title}
-                </MessageActionItem>)}
+                {bookmarkSuccess
+                  ? <Text color='black' fontSize={1} fontWeight='500' px={3} py={2}>Bookmarked!</Text>
+                  : collectionList.map(c => <MessageActionItem key={c.path} onClick={toggleBookmark(c)}>
+                    {c.title}
+                  </MessageActionItem>)
+                }
               </Col>
             }
           >
@@ -153,7 +160,7 @@ const MessageActions = ({ onReply, onDelete, onLike, onBookmark, msg, isAdmin, p
           }
         >
           <Box padding={1} size={'24px'} cursor='pointer'>
-            <Icon icon='Menu' size={3} />
+            <Icon icon='Menu' size={3} className="actionIcon" />
           </Box>
         </Dropdown>
       </Row>

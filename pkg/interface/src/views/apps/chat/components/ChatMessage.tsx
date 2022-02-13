@@ -5,6 +5,7 @@ import bigInt from 'big-integer';
 import moment from 'moment';
 import React, {
   Ref,
+  useCallback,
   useEffect,
   useMemo, useState
 } from 'react';
@@ -19,6 +20,7 @@ import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/stat
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { LinkCollection } from '../ChatResource';
+import { LikeIndicator } from './LikeIndicator';
 import MessageActions from './MessageActions';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -291,10 +293,19 @@ export const UnreadMarker = React.forwardRef(
 );
 
 const MessageWrapper = (props) => {
-  const { transcluded, hideHover, highlighted, numLikes, didLike, msg, onLike } = props;
+  const { transcluded, hideHover, highlighted, likers, didLike, msg, onLike } = props;
   const { hovering, bind } = useHovering();
   const showHover = (transcluded === 0) && hovering && !hideHover;
   const dark = useDark();
+  const [isLiked, setIsLiked] = useState(didLike);
+
+  const likeMessage = useCallback((msg) => {
+    if (isLiked && !didLike) {
+      return;
+    }
+    onLike(msg);
+    setIsLiked(!isLiked);
+  }, [isLiked, didLike, onLike]);
 
   return (
     <Box
@@ -307,18 +318,8 @@ const MessageWrapper = (props) => {
       {...bind}
     >
       {props.children}
-      {(numLikes > 0 && !transcluded) && <Row
-        onClick={() => onLike(msg)}
-        backgroundColor={didLike ? 'washedBlue' : 'washedGray'}
-        width="fit-content" p="1px 4px"
-        borderRadius={2}
-        m="4px 0px 0px 44px"
-        border={dark ? '1px solid white' : undefined}
-        cursor="pointer">
-        <Icon icon="CheckmarkBold" size={20} color={didLike ? 'rgba(33,157,255,1)' : 'black'} />
-        <Text color={didLike ? 'rgba(33,157,255,1)' : undefined}>{numLikes}</Text>
-      </Row>}
-      {showHover ? <MessageActions {...props} /> : null}
+      <LikeIndicator {...{ transcluded, isLiked, didLike, dark, likers }} onLike={() => onLike(msg)} />
+      {showHover ? <MessageActions {...{ ...props, onLike: likeMessage }} /> : null}
     </Box>
   );
 };
@@ -418,7 +419,7 @@ function ChatMessage(props: ChatMessageProps) {
     [date, renderSigil]
   );
 
-  const numLikes = msg.signatures.length - 1;
+  const likers = msg.signatures.filter(({ ship }) => ship !== msg.author).map(({ ship }) => ship);
   const didLike = Boolean(msg.author !== window.ship && msg.signatures.find(({ ship }) => ship === window.ship));
 
   const messageProps = {
@@ -434,7 +435,7 @@ function ChatMessage(props: ChatMessageProps) {
     onLike,
     onBookmark,
     isAdmin,
-    numLikes,
+    likers,
     didLike,
     collections
   };

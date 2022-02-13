@@ -117,7 +117,7 @@ if (changingSort) {
       onClick={toggleChangingSort}
     >
       <Icon icon="ArrowWest" size="20px" ml="-8px" mr={2} />
-      <H3>Sort Groups</H3>
+      <H3>Order Groups</H3>
     </Row>
   );
 }
@@ -203,13 +203,15 @@ return (
               <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               {props.workspace?.type === 'uqbar-home' && <Icon icon="Plus" ml={2} />}
             </Row>
-            {showTitleActions && <TitleActions
-              baseUrl={props.baseUrl}
-              initialValues={config}
-              handleSubmit={setConfig}
-              workspace={workspace}
-              toggleChangingSort={toggleChangingSort}
-            />}
+            {showTitleActions && (
+              <TitleActions
+                baseUrl={props.baseUrl}
+                initialValues={config}
+                handleSubmit={setConfig}
+                workspace={workspace}
+                toggleChangingSort={toggleChangingSort}
+              />
+            )}
           </Row>
         </Dropdown>
         <Row pr={3} verticalAlign="middle">

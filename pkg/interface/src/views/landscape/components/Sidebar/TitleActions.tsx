@@ -1,5 +1,5 @@
 import {
-  Box, Col, Icon, Text, Row,
+  Box, Button, Col, Icon, Text, Row,
   ManagedCheckboxField as Checkbox, ManagedRadioButtonField as Radio
 } from '@tlon/indigo-react';
 import { FormikHelpers } from 'formik';
@@ -78,7 +78,7 @@ export function TitleActions(props: {
           )
         }
       {isHome ? (
-        <Icon color="gray" icon="Adjust" onClick={props.toggleChangingSort} />
+        <Button onClick={props.toggleChangingSort}>Order Groups</Button>
       ) : (
         <Dropdown
           flexShrink={0}
