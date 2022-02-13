@@ -19,14 +19,14 @@
         %nonexistent  (vale.dais ~)
     ==
   =^  start-moves  khan-gate
-    %-  khan-call
-      :*  khan-gate
-          now
-          scry=scry-provides-mark
-          ^=  call-args
-            :*  duct=~[//khan/1/0vsome.ductt]  ~
-                %fyrd  fyrd
-      ==    ==
+    %-  khan-call  :*
+      khan-gate
+      now
+      scry=scry-provides-mark
+      ^=  call-args
+        :*  duct=~[//khan/1/0vsome.ductt]  ~
+            %fyrd  fyrd
+    ==  ==
   =/  results-1  (expect !>(=(1 (lent start-moves))))
   =/  mev  (head start-moves)
   =/  results-2
@@ -126,13 +126,88 @@
     ~&  >>>  bad-name+s.args
     (expect !>(|))
   (expect-eq !>(~) t.args)
+++  test-khan-take-full-run-fard
+  =^  born-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=~1111.1.1
+      scry=scry-provides-mark
+      call-args=[duct=~[/a] ~ [%born ~]]
+    ==
+  =/  results-0  (expect-eq !>(~) !>(born-moves))
+  =/  fard=(fyrd:khan vase)  [%base %fake !>(~)]
+  =^  start-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s1)
+      scry=scry-provides-mark
+      ^=  call-args
+        :*  duct=~[//khan/2/0v0]  ~
+            %fard  fard
+    ==  ==
+  =^  watch-ack-moves  khan-gate
+    %-  khan-take  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s2)
+      scry=scry-provides-mark
+      ^=  take-args
+        wire=//g
+        duct=~[//khan/2/0v0]
+        dud=~
+        [%gall %unto %watch-ack ~]
+    ==
+  =^  poke-ack-moves  khan-gate
+    %-  khan-take  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s3)
+      scry=scry-provides-mark
+      ^=  take-args
+        wire=//g
+        duct=~[//khan/2/0v0]
+        dud=~
+        [%gall %unto %poke-ack ~]
+    ==
+  =^  thread-done-moves  khan-gate
+    %-  khan-take  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s4)
+      scry=scry-provides-mark
+      ^=  take-args
+        wire=//g
+        duct=~[//khan/2/0v0]
+        dud=~
+        [%gall %unto %fact %thread-done !>(%res)]
+    ==
+  =^  kick-moves  khan-gate
+    %-  khan-take  :*
+      khan-gate
+      now=(add ~1111.1.1 ~s5)
+      scry=scry-provides-mark
+      ^=  take-args
+        wire=//g
+        duct=~[//khan/2/0v0]
+        dud=~
+        [%gall %unto %kick ~]
+    ==
+  =/  all-take-moves
+    ;:  weld
+      watch-ack-moves
+      poke-ack-moves
+      thread-done-moves
+      kick-moves
+    ==
+  =/  results-1
+    %-  expect  !>(=(1 (lent all-take-moves)))
+  =/  results-2
+    %+  expect-eq
+      !>([~[//khan/2/0v0] %give %arow %& !>(%res)])
+      !>((head all-take-moves))
+  :(weld results-0 results-1 results-2)
 ::  ++  test-khan-take-dud
 ::    !!
 ::  ++  test-khan-take-watch-fail
 ::    !!
 ::  ++  test-khan-take-poke-fail
-::    !!
-::  ++  test-khan-take-full-run-fard
 ::    !!
 ::  ++  test-khan-take-full-run-fyrd
 ::    !!
@@ -149,6 +224,20 @@
   =/  khan-core
     (khan-gate now eny=`@uvJ`0xdead.beef scry=scry)
   (call:khan-core [duct dud wrapped-task]:call-args)
+++  khan-take
+  |=  $:  khan-gate=_khan-gate
+          now=@da
+          scry=roof
+          $=  take-args
+            $:  =wire
+                =duct
+                dud=(unit goof)
+                =sign:khan-gate
+      ==    ==
+  ^-  [(list move:khan-gate) _khan-gate]
+  =/  khan-core
+    (khan-gate now eny=`@uvJ`0xdead.beef scry=scry)
+  (take:khan-core [wire duct dud sign]:take-args)
 ++  dais-noun  ^-  dais:clay
   |_  sam=vase
   ++  diff  !!

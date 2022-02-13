@@ -118,6 +118,8 @@
   ^-  [(list move) _khan-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
+  ?^  dud
+    ~|(%khan-call-dud (mean tang.u.dud))
   ?+    -.task  [~ khan-gate]
       %born
     [~ khan-gate(hey hen)]
