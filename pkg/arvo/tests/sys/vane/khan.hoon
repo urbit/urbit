@@ -263,11 +263,88 @@
       !>([%give %avow %& %noun %res])
       !>(q.row)
   :(weld results-0 results-1 results-2 results-3)
+++  test-khan-fard-watch-ack-fail
+  =^  born-moves  khan-gate
+    %-  khan-call-all  :*
+      khan-gate  now=~1111.1.1  sep=~s1  scry=scry-provides-mark
+      :~  [~[/a] ~ %born ~]
+          [~[//khan/0v0/1/0v0] ~ %fard %base %hi %noun %noun ~]
+      ==
+    ==
+  =^  watch-ack-moves  khan-gate
+    %-  khan-take  :*
+      khan-gate  now=~1111.1.2  scry=scry-provides-mark
+      ^=  take-args
+        //g  ~[//khan/0v0/1/0v0]  ~
+        %gall  %unto  %watch-ack  `~['fail']
+    ==
+  =/  results-0  (expect !>(=(1 (lent watch-ack-moves))))
+  =/  mev  (head watch-ack-moves)
+  =/  results-1
+    %+  expect-eq
+      !>([~[//khan/0v0/1/0v0] %give %arow %| %watch-ack ~['fail']])
+      !>(mev)
+  (weld results-0 results-1)
+++  test-khan-fard-poke-ack-fail
+  =^  call-moves  khan-gate
+    %-  khan-call-all  :*
+      khan-gate  now=~1111.1.1  sep=~s1  scry=scry-provides-mark
+      :~  [~[/a] ~ %born ~]
+          [~[//khan/0v0/1/0v0] ~ %fard %base %hi %noun %noun ~]
+      ==
+    ==
+  =^  take-moves  khan-gate
+    %-  khan-take-all  :*
+      khan-gate  now=~1111.1.2  sep=~s1  scry=scry-provides-mark
+      :~  [//g ~[//khan/0v0/1/0v0] ~ %gall %unto %watch-ack ~]
+          :*  //g  ~[//khan/0v0/1/0v0]  ~
+              %gall  %unto  %poke-ack  `~['fail']
+          ==
+          [//g ~[//khan/0v0/1/0v0] ~ %gall %unto %kick ~]
+      ==
+    ==
+  =/  results-0  (expect !>(=(1 (lent take-moves))))
+  =/  mev  (head take-moves)
+  =/  results-1
+    %+  expect-eq
+      !>([~[//khan/0v0/1/0v0] %give %arow %| %poke-ack ~['fail']])
+      !>(mev)
+  (weld results-0 results-1)
+++  test-khan-fard-thread-fail
+  =^  call-moves  khan-gate
+    %-  khan-call-all  :*
+      khan-gate  now=~1111.1.1  sep=~s1  scry=scry-provides-mark
+      :~  [~[/a] ~ %born ~]
+          [~[//khan/0v0/1/0v0] ~ %fard %base %hi %noun %noun ~]
+      ==
+    ==
+  =^  take-moves  khan-gate
+    %-  khan-take-all  :*
+      khan-gate  now=~1111.1.2  sep=~s1  scry=scry-provides-mark
+      :~  [//g ~[//khan/0v0/1/0v0] ~ %gall %unto %watch-ack ~]
+          [//g ~[//khan/0v0/1/0v0] ~ %gall %unto %poke-ack ~]
+          :*  //g  ~[//khan/0v0/1/0v0]  ~
+              %gall  %unto  %fact  %thread-fail
+              !>([%woops ~['fail']])
+          ==
+          [//g ~[//khan/0v0/1/0v0] ~ %gall %unto %kick ~]
+      ==
+    ==
+  =/  results-0  (expect !>(=(1 (lent take-moves))))
+  =/  mev  (head take-moves)
+  =/  results-1
+    %+  expect-eq
+      !>  :*  ~[//khan/0v0/1/0v0]  %give
+              %arow  %|  %thread-fail  ~['woops' 'fail']
+          ==
+      !>(mev)
+  (weld results-0 results-1)
 ::  remaining cases to test:
-::    {%fard, %fyrd} x
-::    {dud, watch-ack fail, poke-ack fail, thread-fail}
-::  watch-ack, poke-ack, thread-fail should all produce negative
-::  arow/avow. hen is dud taken? what should it produce?
+::    call dud
+::    %fard dud
+::    %fyrd x:
+::      {dud, watch-ack fail, poke-ack fail, thread-fail}
+::  TODO  when can dud happen?
 ::
 ++  khan-call
   |=  $:  khan-gate=_khan-gate
@@ -282,6 +359,26 @@
   =/  khan-core
     (khan-gate now eny=`@uvJ`0xdead.beef scry=scry)
   (call:khan-core [duct dud wrapped-task]:call-args)
+++  khan-call-all
+  |=  $:  khan-gate=_khan-gate
+          now=@da
+          sep=@dr
+          scry=roof
+          call-list=(list [p=duct q=(unit goof) r=(hobo task:khan)])
+      ==
+  ^-  [(list move:khan-gate) _khan-gate]
+  =+  i=0
+  =/  mev=(list move:khan-gate)  ~
+  |-
+  ?~  call-list  [mev khan-gate]
+  =^  mov  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=(add now (mul sep i))
+      scry=scry
+      call-args=i.call-list
+    ==
+  $(i +(i), call-list t.call-list, mev (weld mev mov))
 ++  khan-take
   |=  $:  khan-gate=_khan-gate
           now=@da
@@ -296,6 +393,26 @@
   =/  khan-core
     (khan-gate now eny=`@uvJ`0xdead.beef scry=scry)
   (take:khan-core [wire duct dud sign]:take-args)
+++  khan-take-all
+  |=  $:  khan-gate=_khan-gate
+          now=@da
+          sep=@dr
+          scry=roof
+          take-list=(list [p=wire q=duct r=(unit goof) s=sign:khan-gate])
+      ==
+  ^-  [(list move:khan-gate) _khan-gate]
+  =+  i=0
+  =/  mev=(list move:khan-gate)  ~
+  |-
+  ?~  take-list  [mev khan-gate]
+  =^  mov  khan-gate
+    %-  khan-take  :*
+      khan-gate
+      now=(add now (mul sep i))
+      scry=scry
+      take-args=i.take-list
+    ==
+  $(i +(i), take-list t.take-list, mev (weld mev mov))
 ++  dais-noun  ^-  dais:clay
   |_  sam=vase
   ++  diff  !!
