@@ -145,63 +145,21 @@
         :*  duct=~[//khan/2/0v0]  ~
             %fard  fard
     ==  ==
-  =^  watch-ack-moves  khan-gate
-    %-  khan-take  :*
-      khan-gate
-      now=(add ~1111.1.1 ~s2)
-      scry=scry-provides-mark
-      ^=  take-args
-        wire=//g
-        duct=~[//khan/2/0v0]
-        dud=~
-        [%gall %unto %watch-ack ~]
-    ==
-  =^  poke-ack-moves  khan-gate
-    %-  khan-take  :*
-      khan-gate
-      now=(add ~1111.1.1 ~s3)
-      scry=scry-provides-mark
-      ^=  take-args
-        wire=//g
-        duct=~[//khan/2/0v0]
-        dud=~
-        [%gall %unto %poke-ack ~]
-    ==
-  =^  thread-done-moves  khan-gate
-    %-  khan-take  :*
-      khan-gate
-      now=(add ~1111.1.1 ~s4)
-      scry=scry-provides-mark
-      ^=  take-args
-        wire=//g
-        duct=~[//khan/2/0v0]
-        dud=~
-        [%gall %unto %fact %thread-done !>(%res)]
-    ==
-  =^  kick-moves  khan-gate
-    %-  khan-take  :*
-      khan-gate
-      now=(add ~1111.1.1 ~s5)
-      scry=scry-provides-mark
-      ^=  take-args
-        wire=//g
-        duct=~[//khan/2/0v0]
-        dud=~
-        [%gall %unto %kick ~]
-    ==
-  =/  all-take-moves
-    ;:  weld
-      watch-ack-moves
-      poke-ack-moves
-      thread-done-moves
-      kick-moves
+  =^  take-moves  khan-gate
+    %-  khan-take-all  :*
+      khan-gate  now=~1111.1.2  sep=~s1  scry=scry-provides-mark
+      :~  [//g ~[//khan/2/0v0] ~ %gall %unto %watch-ack ~]
+          [//g ~[//khan/2/0v0] ~ %gall %unto %poke-ack ~]
+          [//g ~[//khan/2/0v0] ~ %gall %unto %fact %thread-done !>(%res)]
+          [//g ~[//khan/2/0v0] ~ %gall %unto %kick ~]
+      ==
     ==
   =/  results-1
-    %-  expect  !>(=(1 (lent all-take-moves)))
+    %-  expect  !>(=(1 (lent take-moves)))
   =/  results-2
     %+  expect-eq
       !>([~[//khan/2/0v0] %give %arow %& !>(%res)])
-      !>((head all-take-moves))
+      !>((head take-moves))
   :(weld results-0 results-1 results-2)
 ++  test-khan-take-full-run-fyrd
   =^  born-moves  khan-gate
@@ -225,21 +183,9 @@
   ?>  ?=(%pass -.q.fard-move)
   ?>  ?=(%k -.note.q.fard-move)
   =*  wir  wire.q.fard-move
-  ::  don't assert the structure of wir; we leave that up to
-  ::  %khan as an implementation detail.
-  ::
-  =/  =duct  [wir ~[//khan/0v0/1/0v2]]
-  =^  fard-moves  khan-gate
-    %-  khan-call  :*
-      khan-gate
-      now=(add ~1111.1.1 ~s2)
-      scry=scry-provides-mark
-      ^=  call-args
-        duct=duct  ~
-        +.note.q.fard-move
-    ==
-  ::  we do not simulate the inner gall moves here, which might
-  ::  cause weirdness if the implementation becomes stateful.
+  ::  do not test the structure of wir; it is an implementation
+  ::  detail. also do not plan the %fard move, i.e. suppose that
+  ::  %khan is stateless.
   ::
   =^  arow-moves  khan-gate
     %-  khan-take  :*
