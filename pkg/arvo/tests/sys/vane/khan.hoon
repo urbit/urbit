@@ -285,11 +285,36 @@
           ==
       !>(mev)
   (weld results-0 results-1)
+++  test-khan-fyrd-arow-fail
+  =^  call-moves  khan-gate
+    %-  khan-call-all  :*
+      khan-gate  now=~1111.1.1  sep=~s1  scry=scry-provides-mark
+      :~  [~[/a] ~ %born ~]
+          [~[//khan/0v0/1/0v0] ~ %fyrd %base %a %noun %noun ~]
+      ==
+    ==
+  =/  results-0  (expect !>(=(1 (lent call-moves))))
+  =/  fard-move  (head call-moves)
+  ?>  ?=(%pass -.q.fard-move)
+  =*  wir  wire.q.fard-move
+  =^  arow-moves  khan-gate
+    %-  khan-take  :*
+      khan-gate  now=~1111.1.2  scry=scry-provides-mark
+      ^=  take-args
+        wir  ~[//khan/0v0/1/0v0]  ~
+        %khan  %arow  %|  %watch-ack  ~['fail']
+    ==
+  =/  results-1  (expect !>(=(1 (lent arow-moves))))
+  =/  mev  (head arow-moves)
+  =/  results-2
+    %+  expect-eq
+      !>([~[//khan/0v0/1/0v0] %give %avow %| %watch-ack ~['fail']])
+      !>(mev)
+  :(weld results-0 results-1 results-2)
 ::  remaining cases to test:
 ::    call dud
-::    %fard dud
-::    %fyrd x:
-::      {dud, watch-ack fail, poke-ack fail, thread-fail}
+::    take dud
+::    input/output mark scry failure
 ::  TODO  when can dud happen?
 ::
 ++  khan-call
