@@ -60,10 +60,6 @@
     ==
   =/  fard=(fyrd:khan vase)  [%base %nonexistent !>(~)]
   =/  now=@da  (add ~1111.1.1 ~s1)
-  =/  args
-    :*  ~  `%'khan-fyrd--0vthat.ductt'  [~nul %base %da now]
-        %nonexistent  !>(~)
-    ==
   =^  start-moves  khan-gate
     %-  khan-call  :*
       khan-gate
@@ -82,50 +78,35 @@
               /thread-result/'khan-fyrd--0vthat.ductt'
           ==
       !>  (head start-moves)
-  =/  start-move  (rear start-moves)
-  =/  results-2
-    (expect !>(=(~[//khan/1/0vthat.ductt] p.start-move)))
-  =-  :(weld results-0 results-1 results-2 rest)
-  ^=  rest
-  ?.  ?=(%pass -.q.start-move)
-    ~&  >>>  [exp+%pass act+-.q.start-move]
-    (expect !>(|))
-  ?.  =(//g wire.q.start-move)
-    ~&  >>>  [exp+//g act+wire.q.start-move]
-    (expect !>(|))
-  ?.  ?=(%deal +<.note.q.start-move)
-    ~&  >>>  [exp+%deal [%act +<.note.q.start-move]]
-    (expect !>(|))
-  ?.  =([~nul ~nul] p.note.q.start-move)
-    ~&  >>>  [exp+[~nul ~nul] act+p.note.q.start-move]
-    (expect !>(|))
-  ?.  =(%spider q.note.q.start-move)
-    ~&  >>>  [exp+%spider act+q.note.q.start-move]
-    (expect !>(|))
-  ?.  ?=(%poke -.r.note.q.start-move)
-    ~&  >>>  [exp+%poke act+-.r.note.q.start-move]
-    (expect !>(|))
-  ?.  ?=(%spider-start p.cage.r.note.q.start-move)
-    ~&  >>>  [exp+%spider-start act+p.cage.r.note.q.start-move]
-    (expect !>(|))
-  =/  args
+  =/  mev  (rear start-moves)
+  =/  results-2  (expect-eq !>(~[//khan/1/0vthat.ductt]) !>(p.mev))
+  ?>  ?=(%pass -.q.mev)
+  =/  results-3  (expect-eq !>(//g) !>(wire.q.mev))
+  =*  not  note.q.mev
+  =/  results-4  (expect-eq !>(%g) !>(-.not))
+  ?>  ?=(%deal +<.not)
+  =/  results-5  (expect-eq !>([~nul ~nul]) !>(p.not))
+  =/  results-6  (expect-eq !>(%spider) !>(q.not))
+  ?>  ?=(%poke -.r.not)
+  =*  cag  cage.r.not
+  ?>  ?=(%spider-start p.cag)
+  =/  rags
     ::  XX  $start-args in %/app/spider/hoon
     ::
     !<  [p=(unit @ta) q=(unit @ta) r=beak s=term t=vase]
-    q.cage.r.note.q.start-move
-  ?.  =(~ p.args)
-    ~&  >>>  bad-par+p.args
-    (expect !>(|))
-  ?.  =(`'khan-fyrd--0vthat.ductt' q.args)
-    ~&  >>>  bad-tid+q.args
-    (expect !>(|))
-  ?.  =([~nul %base %da now] r.args)
-    ~&  >>>  bad-beak+r.args
-    (expect !>(|))
-  ?.  =(%nonexistent s.args)
-    ~&  >>>  bad-name+s.args
-    (expect !>(|))
-  (expect-eq !>(~) t.args)
+    q.cag
+  =/  results-7
+    %+  expect-eq
+      !>  :*  ~  `%'khan-fyrd--0vthat.ductt'
+              [~nul %base %da now]  %nonexistent  ~
+          ==
+      !>(rags(t ~))
+  =/  results-8  (expect-eq !>(~) t.rags)
+  ;:  weld
+    results-0  results-1  results-2
+    results-3  results-4  results-5
+    results-6  results-7  results-8
+  ==
 ++  test-khan-take-full-run-fard
   =^  born-moves  khan-gate
     %-  khan-call  :*
