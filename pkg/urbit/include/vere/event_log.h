@@ -14,9 +14,11 @@ typedef struct _evtlog u3_evtlog;
 
 //! Type of callback function used to play a single event in u3_evtlog_replay().
 //!
+//! @param[in] ide_d  Event ID.
 //! @param[in] byt_y  Serialized event buffer.
 //! @param[in] len_i  Length of event buffer in bytes.
-typedef void (*const u3_evtlog_play)(const c3_y* const byt_y,
+typedef void (*const u3_evtlog_play)(const c3_d ide_d,
+                                     const c3_y* const byt_y,
                                      const size_t len_i);
 
 
