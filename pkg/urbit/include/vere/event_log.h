@@ -37,6 +37,8 @@ u3_evtlog_init(const c3_c* const dir_c);
 //! Append event to the end of `log_u` without writing to non-volatile
 //! memory.
 //!
+//! @note u3_evtlog_append() will copy the contents of `byt_y`.
+//!
 //! @param[in] log_u
 //! @param[in] byt_y  Serialized event buffer.
 //! @param[in] len_i  Length of event buffer in bytes.
