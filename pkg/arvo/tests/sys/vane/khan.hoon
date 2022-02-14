@@ -88,7 +88,7 @@
   ?>  ?=(%poke -.r.not)
   =*  cag  cage.r.not
   ?>  ?=(%spider-start p.cag)
-  =/  rags
+  =/  rag
     ::  XX  $start-args in %/app/spider/hoon
     ::
     !<  [p=(unit @ta) q=(unit @ta) r=beak s=term t=vase]
@@ -98,8 +98,8 @@
       !>  :*  ~  `%'khan-fyrd--0vthat.ductt'
               [~nul %base %da now]  %nonexistent  ~
           ==
-      !>(rags(t ~))
-  =/  results-8  (expect-eq !>(~) t.rags)
+      !>(rag(t ~))
+  =/  results-8  (expect-eq !>(~) t.rag)
   ;:  weld
     results-0  results-1  results-2
     results-3  results-4  results-5
