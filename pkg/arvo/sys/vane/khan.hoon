@@ -84,10 +84,10 @@
 ++  read-wire
   |=  =wire
   ^-  (pair beak mark)
-  =/  ras  (snag 4 wire)
   :_  (snag 5 wire)
   :+  (slav %p (snag 1 wire))
     (snag 2 wire)
+  =/  ras  (snag 4 wire)
   ?+  (snag 3 wire)  !!
     %da   [%da (slav %da ras)]
     %tas  [%tas ras]
