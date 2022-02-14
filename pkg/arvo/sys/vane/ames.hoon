@@ -2598,7 +2598,7 @@
                 ==
             ++  ke-core  .
             ++  ke-abet  
-              :: =.  ke-core  ke-set-wake
+              =.  ke-core  ke-set-wake
               =/  gone=?
                 =,  keen
                 ::  num-fragments is 0 when unknown (i.e. no response
@@ -2648,23 +2648,8 @@
                 $(marked [want marked])
               =.  tries.want  +(tries.want)
               =.  last-sent.want  now
-              =.  ke-core  (ke-send hoot.want)
+              =.  ke-core  (ke-send [fra hoot]:want)
               $(marked [want marked])
-            ::
-            ++  ke-retrieve-req
-              =|  naw=(list want)
-              =/  og  wan.keen
-              |=  fra=@ud
-              ^-  [(unit want) (list want)]
-              ?:  =(~ wan.keen)  `og
-              =^  =want  wan.keen  wan.keen
-              :: ?:  (gth fra.want fra)  
-              ::   `og
-              ?.  =(fra.want fra)
-                $(naw [want naw])
-              =.  tries.want  +(tries.want)
-              =.  last-sent.want  now
-              [`want (welt naw [want wan.keen])]
             ::
             ++  ke-start
               ~|  tried-to-start-request-already-in-progress/path
@@ -2686,52 +2671,48 @@
               |=  =rawr
               ^+  ke-core
               =-  ke-core(keen -)
-              %_  keen
-                num-fragments  siz.rawr
               ::
-                  wan  
+              =/  paz=(list want)
                 %+  turn  (gulf 1 siz.rawr)
                 |=  fra=@ud
                 ^-  want
-                [fra (ke-encode-req fra) now 0 0]
+                [fra (ke-encode-req fra) now 1 0]
+              ::
+              %_  keen
+                num-fragments  siz.rawr
+                wan  paz
+                nex  paz
               ==
             ::  +ke-continue: send packets according to normal congestion flow
-            ::  2,3,4 -> 
-            ::    2    <- 
-            ::  3,4,5  ->
-            ::  3,4,5  ->
+            ::
             ++  ke-continue
-              =/  start   +(num-received.keen)
-              =/  ceil    (sub num-fragments.keen num-received.keen)
-              =/  len     (min ceil num-slots:ke-gauge)
-              =/  end     (add start len)
-              =/  fra=@ud  start
-              |-  
-              ?:  =(fra end)
-                ke-core
-              =/  [req=(unit want) new-wants=_wan.keen]
-                (ke-retrieve-req fra)
-              ?~  req  $(fra +(fra))
-              ?.  =(tries.u.req 1)  $(fra +(fra))
-              =.  wan.keen  new-wants
-              =.  ke-core  (ke-send hoot.u.req)
-              $(fra +(fra))
+              =|  inx=@ud
+              =/  max  num-slots:ke-gauge
+              |-  ^+  ke-core
+              ?:  =(~ nex.keen)  ke-core
+              ?:  =(inx max)     ke-core
+              =^  =want  nex.keen  nex.keen
+              =.  ke-core  (ke-emit hoot.want)
+              $(inx +(inx))
             ::
             ++  ke-send
-              |=  =hoot
+              |=  [fra=@ud =hoot]
               =.  metrics.scry  (on-sent:ke-gauge 1)
+              =.  nex.keen
+                =|  xen=(list want)
+                |-  ^+  nex.keen
+                =^  =want  nex.keen  nex.keen
+                ?:  =(fra fra.want)
+                  (welt xen nex.keen)
+                $(xen [want xen])
+              (ke-emit hoot)
+            ::
+            ++  ke-emit
+              |=  =hoot
+              ^+  ke-core
               =-  ke-core(event-core -)
               %-  emit
               [unix-duct.ames-state %give %send pe-lane `@ux`hoot]
-            ::
-            ++  ke-req
-              |=  fra=@ud
-              =^  req  wan.keen
-                (ke-retrieve-req fra)
-              ?~  req  
-                ~&  missing/fra
-                ke-core
-              (ke-send hoot.u.req)
             ::
             ++  ke-decode-full
               =,  keen
@@ -2828,7 +2809,8 @@
                 =.  next-wake.keen  next-wake
                 (ke-wait u.next-wake)
               ke-core
-            ::  TODO: almost identical to +on-take-wake
+            ::  +ke-take-wake: handle request packet timeout
+            ::
             ++  ke-take-wake
               ^+  ke-core
               =.  pe-core  %-  pe-update-qos
@@ -2845,9 +2827,13 @@
                       !=(%czar (clan:title ship))
                   ==
                 route.peer(direct.u %.n)
-              ::  handle timeout
+              ::
               =.  metrics.scry  on-timeout:ke-gauge
-              (ke-req fra:(head wan.keen))
+              ?>  ?=(^ wan.keen)
+              =:  tries.i.wan.keen  +(tries.i.wan.keen)
+                  last-sent.i.wan.keen  now
+                ==
+              (ke-send [fra hoot]:i.wan.keen)
             --
           --
         ++  on-keen

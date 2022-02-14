@@ -964,11 +964,13 @@
     ==
   +$  keen-state
     $:  wan=(list want)  ::  request packets
+        nex=(list want)  ::  request packets, unsent
         hav=(list have)  ::  response packets, backward
         num-fragments=@ud
         num-received=@ud
         next-wake=(unit @da)
         listeners=(set duct)
+        last-sent=(list [@ud @da])
     ==
   +$  want
     $:  fra=@ud
