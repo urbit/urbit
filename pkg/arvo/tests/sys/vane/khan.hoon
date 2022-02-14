@@ -1,3 +1,8 @@
+::  remaining cases to test:
+::    call dud
+::    take dud
+::  TODO  when can dud happen?
+::
 /+  *test
 /=  khan-raw  /sys/vane/khan
 =/  khan-gate  (khan-raw ~nul)
@@ -13,11 +18,6 @@
   =/  results-0  (expect-eq !>(~) !>(born-moves))
   =/  fyrd=(fyrd:khan (pair mark (cask)))  [%base %nonexistent %noun %noun ~]
   =/  now=@da  (add ~1111.1.1 ~s1)
-  =/  =dais:clay  dais-noun
-  =/  args
-    :*  ~  `%'khan-fyrd--0vsome.ductt'  [~nul %base %da now]
-        %nonexistent  (vale.dais ~)
-    ==
   =^  start-moves  khan-gate
     %-  khan-call  :*
       khan-gate
@@ -162,9 +162,8 @@
   ?>  ?=(%pass -.q.fard-move)
   ?>  ?=(%k -.note.q.fard-move)
   =*  wir  wire.q.fard-move
-  ::  do not test the structure of wir; it is an implementation
-  ::  detail. also do not plan the %fard move, i.e. suppose that
-  ::  %khan is stateless.
+  ::  XX may erroneously break if %khan keeps state dependent on
+  ::  its inner %fard.
   ::
   =^  arow-moves  khan-gate
     %-  khan-take  :*
@@ -290,12 +289,41 @@
       !>([~[//khan/0v0/1/0v0] %give %avow %| %watch-ack ~['fail']])
       !>(mev)
   :(weld results-0 results-1 results-2)
-::  remaining cases to test:
-::    call dud
-::    take dud
-::    input/output mark scry failure
-::  TODO  when can dud happen?
-::
+++  test-khan-fyrd-no-input-mark
+  =^  born-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      ~1111.1.1
+      scry-provides-mark
+      ~[/a]  ~  %born  ~
+    ==
+  %-  expect-fail
+  |.
+  %-  khan-call  :*
+    khan-gate
+    (add ~1111.1.1 ~s1)
+    scry-provides-mark
+    ~[//khan/0v0/1/0v0]  ~
+    %fyrd  %base  %a  %noun  %bad-mark  ~
+  ==
+++  test-khan-fyrd-no-output-mark
+  =^  call-moves  khan-gate
+    %-  khan-call-all  :*
+      khan-gate  ~1111.1.1  ~s1  scry-provides-mark
+      :~  [~[/a] ~ %born ~]
+          [~[//khan/0v0/1/0v0] ~ %fyrd %base %a %bad-mark %noun ~]
+      ==
+    ==
+  %-  expect-fail
+  |.
+  %-  khan-take  :*
+    khan-gate
+    ~1111.1.2
+    scry-provides-mark
+    /fyrd/~nul/base/da/~1111.1.1..00.00.01/bad-mark
+    ~[//khan/0v0/1/0v0]  ~
+    [%khan %arow %& !>(~)]
+  ==
 ++  khan-call
   |=  $:  khan-gate=_khan-gate
           now=@da
