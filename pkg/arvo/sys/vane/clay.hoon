@@ -170,6 +170,7 @@
       pud=(unit [=desk =yoki])                          ::  pending update
       ::  REMOVE on next upgrade
       dist-upgraded=_|                                  ::  are we in dist yet?
+      sad=(map ship @da)                                ::  scry known broken
   ==                                                    ::
 ::
 ::  Object store.
@@ -235,8 +236,9 @@
 +$  update-state
   $:  =duct
       =rave
+      scry=(unit @da)  ::  timeout timer if scry
       have=(map lobe blob)
-      need=(list lobe)
+      need=(list [=path =lobe])
       nako=(qeu (unit nako))
       busy=_|
   ==
@@ -292,7 +294,7 @@
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(%plea task:ames)                           ::
+          $>(?(%plea %keen %yawn) task:ames)            ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
@@ -332,6 +334,7 @@
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
+                  %tune                                 ::  scry response
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -1320,6 +1323,20 @@
     =/  =path  [%question desk (scot %ud index) ~]
     (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
+  ++  send-over-scry
+    |=  [kind=@ta =duct =ship index=@ud =desk =mood]
+    ^-  [timeout=@da _..send-over-scry]
+    =/  =time  (add now ~m1)
+    =/  =wire  /[kind]/(scot %p ship)/[desk]/(scot %ud index)
+    =/  =path
+      =,  mood
+      [(cat 3 %c care) (scot %p ship) desk (scot case) path]
+    :-  time
+    %-  emil
+    :~  [hen %pass wire %a %keen path]
+        [hen %pass wire %b %wait time]
+    ==
+  ::
   ++  foreign-capable
     |=  =rave
     |^
@@ -1354,6 +1371,27 @@
       (run-if-future rove.wov |=(@da (bait hen +<)))
     |-  ^+  +>+.$
     =/  =rave  (rove-to-rave rove.wov)
+    ::  if it is a single request, and
+    ::  :ship's remote scry isn't known to be broken,
+    ::  or we learned it was broken more than an hour ago,
+    ::
+    ?:  ?&  ?=(%sing -.rave)
+        ?|  !(~(has by sad) her)
+            (lth now (add ~h1 (~(got by sad) her)))
+        ==  ==
+      ::  send request as remote scry
+      ::TODO  can be deduplicated with the below?
+      ::
+      =*  inx  nix.u.ref
+      =^  time=@da  +>+.$
+        =<  ?>(?=(^ ref) .)
+        (send-over-scry %warp-index hen her inx syd mood.rave)
+      %=  +>+.$
+        nix.u.ref  +(nix.u.ref)
+        bom.u.ref  (~(put by bom.u.ref) inx [hen rave `time ~ ~ ~ |])
+        fod.u.ref  (~(put by fod.u.ref) hen inx)
+      ==
+    ::
     =.  rave
       ?.  ?=([%sing %v *] rave)  rave
       [%many %| [%ud let.dom] case.mood.rave path.mood.rave]
@@ -1367,7 +1405,7 @@
       (send-over-ames hen her inx syd `rave)
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
-      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ |])
+      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ ~ |])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
@@ -1457,7 +1495,7 @@
     ?~  yen
       =.  lab.dom  (~(put by lab.dom) bel yon)
       ..park
-    ::  an aeon is bound to this label, 
+    ::  an aeon is bound to this label,
     ::  but it is the same as the existing one, so we no-op
     ::
     ?:  =(u.yen yon)
@@ -2992,11 +3030,24 @@
     ::
     ?~  nux=(~(get by fod.u.ref) hen)
       ..cancel-request(ref `(unit rind)`ref)  ::  XX TMI
+    =/  sat  (~(got by bom.u.ref) u.nux)
     =:  fod.u.ref  (~(del by fod.u.ref) hen)
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
-    %.  [hen her u.nux [syd ~]]
-    send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
+    ::  cancel the request as appropriate
+    ::
+    ?~  scry.sat
+      %.  [hen her u.nux [syd ~]]
+      send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
+    =/  =path
+      ~|  [%strange-scried-request rave.sat]
+      ?>  ?=(%sing -.rave.sat)
+      =,  mood.rave.sat
+      [(cat 3 %c care) (scot %p her) syd (scot case) path]
+    %-  emil
+    :~  [hen %pass / %a %yawn path]
+        [hen %pass / %b %rest u.scry.sat]
+    ==
   ::
   ::  Handles a request.
   ::
@@ -3018,6 +3069,19 @@
     ?~  new-sub
       ..start-request
     (duce for u.new-sub)
+  ::
+  ::TODO  should this try-fill-sub or w/e in case its now in our cache?
+  ++  retry-with-ames
+    |=  inx=@ud
+    ^+  ..retry-with-ames
+    ~|  [%strange-retry-no-request her syd inx]
+    ?>  ?=(^ ref)
+    =/  sat=update-state  (~(got by bom.u.ref) inx)
+    =.  ..retry-with-ames
+      =<  ?>(?=(^ ref) .)
+      (send-over-ames hen her inx syd `rave.sat)
+    =.  bom.u.ref  (~(put by bom.u.ref) inx sat(scry ~))
+    ..retry-with-ames
   ::
   ::  Called when a foreign ship answers one of our requests.
   ::
@@ -3147,6 +3211,12 @@
       [u.ruv |]
     =/  done=?  |
     =.  hen  duct.sat
+    ::  if the request was done over scry, clear the timeout timer
+    ::
+    =?  ..foreign-update  ?=(^ scry.sat)
+      =<  ?>(?=(^ ref) .)
+      (emit hen %pass / %b %rest u.scry.sat)
+    =.  scry.sat  ~
     |%
     ++  abet
       ^+  ..foreign-update
@@ -3169,27 +3239,27 @@
         work
       ?>  ?=(%nako p.r.u.rut)
       =/  nako  ;;(nako q.r.u.rut)
-      =/  missing  (missing-blobs nako)
-      =.  need.sat  `(list lobe)`(welp need.sat ~(tap in missing))
+      =.  need.sat  (welp need.sat (missing-blobs nako))
       =.  nako.sat  (~(put to nako.sat) ~ nako)
       work
     ::
     ++  missing-blobs
       |=  =nako
-      ^-  (set lobe)
+      ^-  (list [path lobe])
       =/  yakis  ~(tap in lar.nako)
-      |-  ^-  (set lobe)
+      |-  ^-  (list [path lobe])
       =*  yaki-loop  $
       ?~  yakis
         ~
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
-      |-  ^-  (set lobe)
+      |-  ^-  (list [path lobe])
       =*  blob-loop  $
       ?~  lobes
         yaki-loop(yakis t.yakis)
       ?:  (~(has by lat.ran) lobe.i.lobes)
         blob-loop(lobes t.lobes)
-      (~(put in blob-loop(lobes t.lobes)) lobe.i.lobes)
+      :-  i.lobes
+      blob-loop(lobes t.lobes)
     ::
     ::  Receive backfill response
     ::
@@ -3202,7 +3272,10 @@
               !(~(has by lat.ran) q.q.blob)
               !(~(has by have.sat) q.q.blob)
           ==
-        [q.q.blob need.sat]
+        ::NOTE  we have already fallen back to the ames case,
+        ::      so we do not need the real path here anymore.
+        ::REVIEW  right? or is this considered too fragile?
+        [[/ q.q.blob] need.sat]
       ::  We can't put a blob in lat.ran if its parent isn't already
       ::  there.  Unions are in reverse order so we don't overwrite
       ::  existing blobs.
@@ -3244,19 +3317,34 @@
       ::  another desk updating concurrently, or a previous update on this
       ::  same desk).
       ::
-      ?:  ?|  (~(has by lat.ran) i.need.sat)
-              (~(has by have.sat) i.need.sat)
+      ?:  ?|  (~(has by lat.ran) lobe.i.need.sat)
+              (~(has by have.sat) lobe.i.need.sat)
           ==
         $(need.sat t.need.sat)
       ::  Otherwise, fetch the next blob
       ::
-      =/  =fill  [%0 syd i.need.sat]
-      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
-      =/  =path  [%backfill syd (scot %ud inx) ~]
-      =.  ..foreign-update
+      =^  time=(unit @da)  ..foreign-update
         =<  ?>(?=(^ ref) .)
+        ::  if it is a single request, and
+        ::  :ship's remote scry isn't known to be broken,
+        ::  or we learned it was broken more than an hour ago,
+        ::
+        ?:  ?&  ?=(%sing -.rave.sat)
+            ?|  !(~(has by sad) her)
+                (lth now (add ~h1 (~(got by sad) her)))
+            ==  ==
+          ::  make the request over remote scry
+          ::
+          =/  =mood  [%x case.mood.rave.sat path.i.need.sat]
+          [`- +]:(send-over-scry %back-index hen her inx syd mood)
+        ::  otherwise, request over ames
+        ::
+        :-  ~
+        =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
+        =/  =path  [%backfill syd (scot %ud inx) ~]
+        =/  =fill  [%0 syd lobe.i.need.sat]
         (emit hen %pass wire %a %plea her %c path fill)
-      ..abet(busy.sat &)
+      ..abet(busy.sat &, scry.sat time)
     ::
     ::  When we get a %w foreign update, store this in our state.
     ::
@@ -4587,16 +4675,53 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%10 raft-10]
+        $%  [%11 raft-11]
+            [%10 raft-10]
             [%9 raft-9]
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-10  raft
+      +$  raft-11  raft
+      +$  raft-10
+        $:  rom=room
+            hoy=(map ship rung-10)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+            dist-upgraded=_|
+        ==
+      +$  rung-10
+        $:  rus=(map desk rede-10)
+        ==
+      +$  rede-10
+        $:  lim=@da
+            ref=(unit rind-10)
+            qyx=cult
+            dom=dome
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  rind-10
+        $:  nix=@ud
+            bom=(map @ud update-state-10)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-10
+        $:  =duct
+            =rave
+            have=(map lobe blob)
+            need=(list lobe)
+            nako=(qeu (unit nako))
+            busy=_|
+        ==
       +$  raft-9
         $:  rom=room                                    ::  domestic
-            hoy=(map ship rung)                         ::  foreign
+            hoy=(map ship rung-10)                      ::  foreign
             ran=rang                                    ::  hashes
             mon=(map term beam)                         ::  mount points
             hez=(unit duct)                             ::  sync duct
@@ -4637,7 +4762,7 @@
         ==
       +$  rede-8
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-10)
             qyx=cult
             dom=dome-8
             per=regs
@@ -4668,7 +4793,7 @@
         ==
       +$  rede-7
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-10)
             qyx=cult
             dom=dome-8
             per=regs
@@ -4705,7 +4830,7 @@
         ==
       +$  rede-6
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-10)
             qyx=cult
             dom=dome-6
             per=regs
@@ -4715,11 +4840,12 @@
       --
   |=  old=raft-any
   |^
-  =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
-  =?  old  ?=(%7 -.old)  8+(raft-7-to-8 +.old)
-  =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
-  =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
-  ?>  ?=(%10 -.old)
+  =?  old  ?=(%6 -.old)   7+(raft-6-to-7 +.old)
+  =?  old  ?=(%7 -.old)   8+(raft-7-to-8 +.old)
+  =?  old  ?=(%8 -.old)   9+(raft-8-to-9 +.old)
+  =?  old  ?=(%9 -.old)   10+(raft-9-to-10 +.old)
+  =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
+  ?>  ?=(%11 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4778,7 +4904,7 @@
       |=  =rung-8
       %-  ~(run by rus.rung-8)
       |=  =rede-8
-      ^-  rede
+      ^-  rede-10
       =/  dom  dom.rede-8
       rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
     ==
@@ -4787,6 +4913,26 @@
     |=  raf=raft-9
     ^-  raft-10
     raf(pud [pud.raf dist-upgraded=|])
+  ::  +raft-10-to-11: remove dist flag, add scry availability tracker
+  ::
+  ++  raft-10-to-11
+    |=  raf=raft-10
+    ^-  raft-11
+    =-  raf(hoy -, dist-upgraded [dist-upgraded.raf ~])
+    %-  ~(run by hoy.raf)
+    |=  =rung-10
+    %-  ~(run by rus.rung-10)
+    |=  =rede-10
+    ^-  rede
+    =-  rede-10(ref -)
+    ?~  ref.rede-10  ~
+    =-  ref.rede-10(bom.u -)
+    %-  ~(run by bom.u.ref.rede-10)
+    |=  update-state-10
+    ^-  update-state
+    ::NOTE  putting / paths is fine, the path is only used
+    ::      when dealing with scry responses
+    [duct rave ~ have (turn need (lead /)) nako busy]
   --
 ::
 ++  scry                                              ::  inspect
@@ -4911,16 +5057,36 @@
       ::  TODO better error handling
       !!
     ::
-        %boon
-      =+  ;;  res=(unit rand)  payload.hin
-      ::
+        ?(%boon %tune)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =^  mos  ruf
+        =;  res=(unit rand)
+          =/  den  ((de now rof hen ruf) her desk)
+          abet:(take-foreign-answer:den index res)
+        ?:  ?=(%boon +<.hin)  ;;((unit rand) payload.hin)
+        %+  bind  data.hin
+        |=  =(cask)
+        ^-  rand
+        ::REVIEW  this feels a bit dumb, but the alternative
+        ::        is reconstructing it from ref:den instead,
+        ::        which is also weird in its own ways.
+        =+  (need (de-omen path.hin))
+        =/  =care  ;;(care ?@(vis (rsh 3 vis) car.vis))
+        [[care r.bem q.bem] s.bem cask]
+      [mos ..^$]
+    ::
+        %wake
+      =/  her=ship   (slav %p i.t.tea)
+      =/  =desk      (slav %tas i.t.t.tea)
+      =/  index=@ud  (slav %ud i.t.t.t.tea)
+      ~&  [%clay %scry-broken her]
+      =^  mos  ruf
+        =.  sad.ruf  (~(put by sad.ruf) her now)
         =/  den  ((de now rof hen ruf) her desk)
-        abet:(take-foreign-answer:den index res)
+        abet:(retry-with-ames:den index)
       [mos ..^$]
     ==
   ::
@@ -4940,12 +5106,15 @@
       ::  TODO better error handling
       !!
     ::
-        %boon
-      =+  ;;  =blob  payload.hin
-      ::
+        ?(%boon %tune)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
+      ::
+      =/  =blob
+        ?:  ?=(%boon +<.hin)  ;;(blob payload.hin)
+        ?~  data.hin  ~|(%now-what !!)  ::TODO
+        [%direct (page-to-lobe u.data.hin) u.data.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
@@ -5018,6 +5187,7 @@
       ::  handled in the wire dispatcher
       ::
       %boon  !!
+      %tune  !!
       %lost  !!
       %onto  !!
       %unto  !!
