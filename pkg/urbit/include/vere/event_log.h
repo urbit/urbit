@@ -41,6 +41,9 @@ u3_evtlog_init(const c3_c* const dir_c);
 //! @param[in] byt_y  Serialized event buffer.
 //! @param[in] len_i  Length of event buffer in bytes.
 //!
+//! @return -1  `log_u` is NULL.
+//! @return -1  `byt_y` is NULL.
+//! @return -1  `len_i` is 0.
 //! @return -1  Event could not be appended.
 //! @return     Event ID of successfully appended event. This is a positive
 //!             integer, which implies that the ID of the first event in the log
@@ -57,6 +60,7 @@ u3_evtlog_append(u3_evtlog* const log_u,
 //!
 //! @param[in] log_u
 //!
+//! @return -1  `log_u` is NULL.
 //! @return -1  `log_u` contents could not be committed.
 //! @return     Event ID of the last appended event to be committed.
 c3_ws
