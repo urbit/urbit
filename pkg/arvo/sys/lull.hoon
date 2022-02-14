@@ -2106,13 +2106,14 @@
     $%  $>(%born vane-task)                             ::  new unix process
         [%done ~]                                       ::  socket closed
         [%fard p=(fyrd vase)]                           ::  in-arvo thread
-        [%fyrd p=(fyrd (pair mark (cask)))]             ::  external thread
+        [%fyrd p=(fyrd cast)]                           ::  external thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
     ==                                                  ::
   ::                                                    ::
   ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
   +$  bear  $@(desk beak)                               ::  partial $beak
+  +$  cast  (pair mark (cask))                          ::  marked input/output
   ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  external thread
   --  ::khan
 ::
