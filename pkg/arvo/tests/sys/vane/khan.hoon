@@ -33,19 +33,17 @@
     %+  expect-eq
       !>  ~[//khan/1/0vsome.ductt]
       !>  p.mev
-  =-  :(weld results-0 results-1 results-2 rest)
-  ^=  rest
-  ?.  ?=(%pass -.q.mev)  !!
+  ?>  ?=(%pass -.q.mev)
   =/  results-3
     %+  expect-eq
       !>  /fyrd/~nul/base/da/~1111.1.1..00.00.01/noun
       !>  wire.q.mev
   =/  results-4  (expect-eq !>(%k) !>(-.note.q.mev))
-  =-  :(weld results-3 results-4 rest)
-  ^=  rest
-  ?.  ?=(%fard +<.note.q.mev)  !!
+  ?>  ?=(%fard +<.note.q.mev)
   =/  fad  p.note.q.mev
   ;:  weld
+    results-0  results-1  results-2
+    results-3  results-4
     (expect-eq !>(%base) !>(bear.fad))
     (expect-eq !>(%nonexistent) !>(name.fad))
     (expect-eq !>(`~) args.fad)
