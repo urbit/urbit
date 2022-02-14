@@ -8,16 +8,16 @@
 ::  both modes take a thread start request consisting of a
 ::  namespace, thread name, and input data; they respond over the
 ::  same duct with either success or failure. %fard takes its
-::  input arguments as a $vase and produces %arow, which contains
-::  a $vase on success (or $tang on failure). %fyrd takes an
-::  output mark and input `(cask)` (short for `(cask *)`); it
-::  produces %avow, which contains a `(cask)` on success.
+::  input arguments as a vase and produces %arow, which contains
+::  a vase on success (or tang on failure). %fyrd takes an output
+::  mark and input crag; it produces %avow, which contains a crag
+::  on success.
 ::
 ::  %fard passes its arguments and produces its result
 ::  unmodified. %fyrd does mark conversion on both ends, and
 ::  additionally lifts its input into a $unit. this second step
 ::  is done because threads conventionally take their input as a
-::  $unit, with ~ for the case of "no arguments".
+::  unit, with ~ for the case of "no arguments".
 ::
 ::  n.b. the current convention for threads is to use !< to
 ::  unpack their input into a well-defined type. !< imposes the

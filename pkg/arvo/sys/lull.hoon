@@ -2099,7 +2099,7 @@
   |%
   +$  gift                                              ::  out result <-$
     $%  [%arow p=(avow vase)]                           ::  in-arvo result
-        [%avow p=(avow (cask))]                         ::  external result
+        [%avow p=(avow crag)]                           ::  external result
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
@@ -2113,8 +2113,8 @@
   ::                                                    ::
   ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
   +$  bear  $@(desk beak)                               ::  partial $beak
-  +$  cast  (pair mark (cask))                          ::  marked input/output
-  ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  external thread
+  +$  cast  (pair mark crag)                            ::  mark-converted input
+  ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  thread run request
   --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$

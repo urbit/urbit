@@ -13,6 +13,7 @@
 ::  $case: global version
 ::  $cage: marked vase
 ::  +cask: marked data builder
+::  $crag: raw marked noun
 ::  $desk: local workspace
 ::  $dock: message target
 ::  $gang: infinite set of peers
@@ -44,6 +45,7 @@
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
++$  crag  (cask *)
 +$  desk  @tas
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))

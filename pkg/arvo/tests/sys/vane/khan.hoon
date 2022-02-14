@@ -16,7 +16,7 @@
       call-args=[duct=~[/initial-born-duct] ~ [%born ~]]
     ==
   =/  results-0  (expect-eq !>(~) !>(born-moves))
-  =/  fyrd=(fyrd:khan cast:khan)  [%base %nonexistent %noun %noun ~]
+  =/  fyrd=(fyrd:khan crag)  [%base %nonexistent %noun %noun ~]
   =/  now=@da  (add ~1111.1.1 ~s1)
   =^  start-moves  khan-gate
     %-  khan-call  :*
