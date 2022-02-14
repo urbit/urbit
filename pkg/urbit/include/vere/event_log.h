@@ -42,7 +42,9 @@ u3_evtlog_init(const c3_c* const dir_c);
 //! @param[in] len_i  Length of event buffer in bytes.
 //!
 //! @return -1  Event could not be appended.
-//! @return 0   Event was successfully appended.
+//! @return     Event ID of successfully appended event. This is a positive
+//!             integer, which implies that the ID of the first event in the log
+//!             is 1.
 c3_ws
 u3_evtlog_append(u3_evtlog* const log_u,
                  const c3_y* const byt_y,
@@ -56,7 +58,7 @@ u3_evtlog_append(u3_evtlog* const log_u,
 //! @param[in] log_u
 //!
 //! @return -1  `log_u` contents could not be committed.
-//! @return 0   `log_u` contents were successfully committed.
+//! @return     Event ID of the last appended event to be committed.
 c3_ws
 u3_evtlog_commit(u3_evtlog* const log_u);
 
