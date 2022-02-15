@@ -39,7 +39,7 @@ const PromptIfDirty = () => {
 export function MarkdownEditor(
   props: MarkdownEditorProps & PropFunc<typeof Box>
 ) {
-  const { onBlur, placeholder, value, onChange, ...boxProps } = props;
+  const { onBlur, placeholder, value, height, onChange, ...boxProps } = props;
 
   const options = {
     mode: MARKDOWN_CONFIG,
@@ -94,7 +94,7 @@ export function MarkdownEditor(
       border={1}
       borderColor="lightGray"
       borderRadius={2}
-      height={['calc(100% - 22vh)', '100%']}
+      height={height || ['calc(100% - 22vh)', '100%']}
       {...boxProps}
     >
       <PromptIfDirty />

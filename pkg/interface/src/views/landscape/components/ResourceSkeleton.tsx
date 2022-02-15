@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Box, Col, Icon, Text } from '@tlon/indigo-react';
+import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { AppName, Association } from '@urbit/api';
 import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -14,6 +14,8 @@ import useGroupState from '~/logic/state/group';
 import { Dropdown } from '~/views/components/Dropdown';
 import RichText from '~/views/components/RichText';
 import { MessageInvite } from '~/views/landscape/components/MessageInvite';
+import { IS_MOBILE } from '~/logic/lib/platform';
+import useMetadataState from '~/logic/state/metadata';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -69,7 +71,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     app = association.metadata.config.graph as AppName;
   }
   const rid = association.resource;
-  const groups = useGroupState(state => state.groups);
+  const { groups } = useGroupState();
+  const { associations } = useMetadataState();
   const { hideNicknames } = useSettingsState(selectCalmState);
   const group = groups[association.group];
   let workspace = association.group;
@@ -124,7 +127,15 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Box>
   );
 
-  const titleText = (
+  // TODO: if a resource of a group, show breadcrumbs on mobile
+  const titleText = IS_MOBILE && workspace === association.group
+  ? (
+    <Row width="100%">
+      <Text maxWidth="40%" textOverflow='ellipsis' overflow='hidden' whiteSpace='nowrap' fontWeight={600} fontSize="14px">{associations.groups[workspace]?.metadata?.title}</Text>
+      <Text fontWeight={600} fontSize="14px" mx={1}>{'>'}</Text>
+      <Text maxWidth="40%" textOverflow='ellipsis' overflow='hidden' whiteSpace='nowrap' fontWeight={600} fontSize="14px">{title}</Text>
+    </Row>
+  ) : (
     <Text
       mono={urbitOb.isValidPatp(title)}
       fontSize={2}

@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
 import { useIdlingState } from '~/logic/lib/idling';
+import { IS_MOBILE } from '~/logic/lib/platform';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
 import { citeNickname, daToUnix, useHovering, uxToHex } from '~/logic/lib/util';
@@ -318,7 +319,7 @@ const MessageWrapper = (props) => {
       {...bind}
     >
       {props.children}
-      <LikeIndicator {...{ transcluded, isLiked, didLike, dark, likers }} onLike={() => onLike(msg)} />
+      <LikeIndicator {...{ transcluded, isLiked, didLike, dark, likers, showLikers: IS_MOBILE && hovering }} onLike={() => likeMessage(msg)} />
       {showHover ? <MessageActions {...{ ...props, onLike: likeMessage }} /> : null}
     </Box>
   );

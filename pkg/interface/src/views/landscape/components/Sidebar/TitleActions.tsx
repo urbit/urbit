@@ -9,8 +9,11 @@ import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { Workspace } from '~/types/workspace';
 import { Dropdown } from '~/views/components/Dropdown';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import { StatusBarItem } from '~/views/components/StatusBarItem';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
+import { bootstrapApi } from '~/logic/api/bootstrap';
 import { SidebarListConfig } from './types';
+import { IS_MOBILE } from '~/logic/lib/platform';
 
 export function TitleActions(props: {
   initialValues: SidebarListConfig;
@@ -28,6 +31,9 @@ export function TitleActions(props: {
   );
   const groupPath = getGroupFromWorkspace(props.workspace);
   const isHome = props.workspace.type === 'uqbar-home';
+  const refreshConnections = useCallback(() => {
+    bootstrapApi(true);
+  }, []);
 
   return (
     <Row
@@ -78,7 +84,19 @@ export function TitleActions(props: {
           )
         }
       {isHome ? (
-        <Button onClick={props.toggleChangingSort}>Order Groups</Button>
+        <>
+          <Button onClick={props.toggleChangingSort}>Order {IS_MOBILE ? '' : 'Groups'}</Button>
+          {IS_MOBILE && (
+            <StatusBarItem
+              as={Button}
+              width='32px'
+              ml={2}
+              onClick={refreshConnections}
+            >
+              <Icon icon='ArrowRefresh' />
+            </StatusBarItem>
+          )}
+        </>
       ) : (
         <Dropdown
           flexShrink={0}

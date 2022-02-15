@@ -1,16 +1,9 @@
-import {
-    Col,
-
-    ManagedCheckboxField, Text
-} from '@tlon/indigo-react';
+import { Col, ManagedCheckboxField, Text } from '@tlon/indigo-react';
 import { Form, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React from 'react';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
-import {
-    LeapCategories,
-    leapCategories
-} from '~/types';
+import { LeapCategories, leapCategories } from '~/types';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { ShuffleFields } from '~/views/components/ShuffleFields';
 import { BackButton } from './BackButton';
@@ -19,6 +12,7 @@ const labels: Record<LeapCategories, string> = {
   updates: 'Notifications',
   profile: 'Profile',
   messages: 'Messages',
+  settings: 'Settings',
   logout: 'Log Out'
 };
 

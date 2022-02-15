@@ -1,4 +1,4 @@
-export const leapCategories = ['mychannel', 'messages', 'updates', 'profile', 'logout'];
+export const leapCategories = ['mychannel', 'messages', 'updates', 'profile', 'settings', 'logout'];
 
 export type LeapCategories = typeof leapCategories[number];
 

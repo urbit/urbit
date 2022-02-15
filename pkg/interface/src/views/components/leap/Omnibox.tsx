@@ -7,7 +7,6 @@ import React, {
   ReactElement, useCallback,
   useEffect, useMemo,
   useRef,
-
   useState
 } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -26,6 +25,7 @@ import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { Portal } from '../Portal';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
+import { leapCategories } from '~/types';
 
 interface OmniboxProps {
   show: boolean;
@@ -61,6 +61,14 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const leapConfig = useSettingsState(settingsSel);
   const omniboxRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const { putEntry } = useSettingsState.getState();
+
+  useEffect(() => {
+    // TODO: remove this in future versions
+    if (!leapConfig.categories.includes('settings')) {
+      putEntry('leap', 'categories', leapCategories);
+    }
+  }, []);
 
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<[] | [string, string]>([]);
@@ -169,7 +177,8 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         app === 'Links' ||
         app === 'Terminal' ||
         app === 'home' ||
-        app === 'notifications'
+        app === 'notifications' ||
+        app === 'settings'
       ) {
         if(shift && app === 'profile') {
           // TODO: hacky, fix
@@ -292,7 +301,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   );
 
   useEffect(() => {
-    const flattenedResultLinks: [string, string][] = 
+    const flattenedResultLinks: [string, string][] =
       flattenCattegoryMap(categoryOrder, results)
         .map(result => [result.app, result.link]);
     if (!flattenedResultLinks.includes(selected as [string, string])) {

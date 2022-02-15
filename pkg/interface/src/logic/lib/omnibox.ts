@@ -67,6 +67,7 @@ const otherIndex = function(config) {
     profile: result('Profile', `/~profile/~${window.ship}`, 'profile', null),
     updates: result('Notifications', '/~notifications', 'notifications', null),
     messages: result('Messages', '/~landscape/messages', 'messages', null),
+    settings: result('Settings', '/~settings', 'settings', null),
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
   for(const cat of config.categories) {

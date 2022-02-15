@@ -177,6 +177,17 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           ) : null}
         </Box>
       );
+    } else if (icon === 'settings') {
+      graphic = (
+        <Icon
+          display='inline-block'
+          verticalAlign='middle'
+          icon='Gear'
+          mr={2}
+          size='18px'
+          color={iconFill}
+        />
+      );
     } else {
       graphic = (
         <Icon

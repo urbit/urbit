@@ -5,11 +5,13 @@ import { NewGroup } from '~/views/landscape/components/NewGroup';
 import ModalButton from '~/views/apps/launch/components/ModalButton';
 import Tile from '~/views/apps/launch/components/tiles/tile';
 import { ScrollbarLessBox } from '~/views/apps/launch/App';
-import { version } from '~/../package.json';
+import useHarkState from "~/logic/state/hark";
 import { NewBox } from '~/views/apps/notifications/NewBox';
+import { version } from '~/../package.json';
 
 export function UqbarHome(props) {
   const history = useHistory();
+  const { notificationsCount } = useHarkState();
 
   return (
     <ScrollbarLessBox
@@ -20,6 +22,7 @@ export function UqbarHome(props) {
       mt={3}
     >
       <H2 mb={3} ml={3}>EScape from Eternal September <Text fontSize="16px">(v{version})</Text></H2>
+      {notificationsCount === 0 && <Text ml={3}>No notifications</Text>}
       <NewBox hideLabel />
       <Box
         mx={2}

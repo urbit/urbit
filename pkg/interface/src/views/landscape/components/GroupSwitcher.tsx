@@ -1,14 +1,13 @@
 import {
   Box,
   Col,
-
   H3,
-
   Icon, Row,
   Text
 } from '@tlon/indigo-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { IS_MOBILE } from '~/logic/lib/platform';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { uxToHex } from '~/logic/lib/util';
 import { getGroupFromWorkspace, getTitleFromWorkspace } from '~/logic/lib/workspace';
@@ -200,7 +199,15 @@ return (
           <Row flexGrow={1} alignItems="center" justifyContent="space-between" width='100%' minWidth={0} flexShrink={0}>
             <Row flexGrow={1} alignItems="center" minWidth={0} flexShrink={0} width={showTitleActions ? 'auto' : '100%'}>
               { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
-              <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
+              {IS_MOBILE && workspace.type === 'uqbar-home' ? (
+                <Text mono flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' maxWidth="135px" style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>
+                  ~{window.ship}
+                </Text>
+              ) : (
+                <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>
+                  {title}
+                </Text>
+              )}
               {props.workspace?.type === 'uqbar-home' && <Icon icon="Plus" ml={2} />}
             </Row>
             {showTitleActions && (

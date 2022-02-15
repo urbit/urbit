@@ -17,8 +17,10 @@ import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
+import { IS_MOBILE, isMobileWeb } from '~/logic/lib/platform';
 
 import ErrorBoundary from '~/views/components/ErrorBoundary';
+import { MobileNavbar } from '~/views/components/navigation/MobileNavbar';
 import './apps/chat/css/custom.css';
 import Omnibox from './components/leap/Omnibox';
 import StatusBar from './components/StatusBar';
@@ -175,6 +177,7 @@ class App extends React.Component {
     const theme = this.getTheme();
 
     const { ourContact } = this.props;
+
     return (
       <ThemeProvider theme={theme}>
         <ShortcutContextProvider>
@@ -185,7 +188,7 @@ class App extends React.Component {
           </Helmet>
           <Root>
             <Router basename="/apps/escape">
-              <ErrorBoundary>
+              {!IS_MOBILE && <ErrorBoundary>
                 <StatusBarWithRouter
                   props={this.props}
                   ourContact={ourContact}
@@ -193,7 +196,7 @@ class App extends React.Component {
                   subscription={this.subscription}
                   ship={this.ship}
                 />
-              </ErrorBoundary>
+              </ErrorBoundary>}
               <ErrorBoundary>
                 <Omnibox
                   show={this.props.omniboxShown}
@@ -207,6 +210,9 @@ class App extends React.Component {
                   connection={'aa'}
                 />
               </ErrorBoundary>
+              {IS_MOBILE && <ErrorBoundary>
+                <MobileNavbar props={this.props} />
+              </ErrorBoundary>}
             </Router>
           </Root>
           <div id="portal-root" />
@@ -246,4 +252,3 @@ const WithApp = React.forwardRef((props, ref) => {
 WarmApp.whyDidYouRender = true;
 
 export default WithApp;
-
