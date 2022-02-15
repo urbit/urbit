@@ -2,6 +2,7 @@
 ::  %lull: arvo structures
 ::
 =>  ..part
+~%  %lull  ..part  ~
 |%
 ++  lull  %330
 ::                                                      ::  ::
@@ -960,7 +961,6 @@
     $:  order=(map path @ud)
         seq=@ud
         keens=((mop @ud keen-state) lte)
-        metrics=pump-metrics
     ==
   +$  keen-state
     $:  wan=(list want)  ::  request packets
@@ -970,7 +970,7 @@
         num-received=@ud
         next-wake=(unit @da)
         listeners=(set duct)
-        last-sent=(list [@ud @da])
+        metrics=pump-metrics
     ==
   +$  want
     $:  fra=@ud
