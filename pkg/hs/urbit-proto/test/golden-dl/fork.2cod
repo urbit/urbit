@@ -1,7 +1,0 @@
-^-  ?($7303014 $7496034)
-%foo
-
-Nest
-  { cod = Atom 7303014 Rock "tas"
-  , typ = Fork (fromList [ 7303014 , 7496034 ]) ""
-  }

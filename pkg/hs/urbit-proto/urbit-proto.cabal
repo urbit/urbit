@@ -23,13 +23,19 @@ library
       Deppy.ToUntyped
       Hoon.Core
       Nock
+      Practice.DependentHoon
+      Practice.DependentHoon2
+      Practice.DependentHoon3
       Practice.DependentLambda
+      Practice.Hoon2DependentHoon
+      Practice.Hoon2DependentHoon3
       Practice.Hoon2DependentLambda
       Practice.HoonCommon
       Practice.HoonSyntax
       Practice.Render
       Practice.SimpleHoon
       Practice.SimpleLambda
+      Practice.TopLevelDH3
       Practice.TopLevelDL
       Rule
       SimpleNoun
@@ -192,6 +198,7 @@ test-suite proto-test
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      DependentHoon3GoldenTests
       DependentLambdaGoldenTests
       DeppyCoreTests
       HoonSyntaxGoldenTests

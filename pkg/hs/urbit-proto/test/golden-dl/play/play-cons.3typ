@@ -1,7 +1,0 @@
-{$foo @ud}
-
-Base
-  { loft =
-      Cell
-        (Fork (fromList [ 7303014 ]) "tas") (Scope (Look (F (Aura "ud"))))
-  }

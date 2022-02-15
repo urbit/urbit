@@ -27,6 +27,7 @@ data Bass
 
 data Hoon
   = Wung Wing
+  | Wild  -- Wildcard / _ skin
   | Adam Grit Atom Aura
   --
   | Bass Bass
@@ -276,7 +277,10 @@ scat = wide $ choice
     , hoon <&> Wtzp
     , pure (Bass Vod)
     ]
-  , char '_' *> hoon <&> Bccb  -- XX why ktcl bccb in orig?
+  , char '_' *> choice
+    [ hoon <&> Bccb  -- XX why ktcl bccb in orig?
+    , pure Wild
+    ]
   , char '~' $> Adam Rock 0 "n"  -- XX should this be sand? vs %~
   , char '$' *> choice
     [ rock (\a au -> Bass $ Fok [a] au)

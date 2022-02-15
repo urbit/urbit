@@ -362,7 +362,9 @@ eval sem = \case
 
   Core bat pay -> Base $ Core bat (go pay)
 
-  Name n c -> Base $ Name n $ go c  -- NB: we do not strip names during eval!
+  -- As part of the "based" approach to faces we strip them out of values and
+  -- rely entirely on the ambient type (which we must track)
+  Name n c -> Base $ go c
 
   Plus c -> Base case go c of
     Atom a g au -> Atom (a + 1) g au
@@ -497,18 +499,18 @@ instance Show Fit where
 -- | Perform subtyping, coercibility, or equality check.
 -- XX figure out proper encoding of recursion via cores or gates
 fits :: Vary a => Con a -> Fit -> Type a -> Type a -> Check ()
-fits con fit t u = act (ActFits (nom con) fit t u) $ go con fit t u
+fits con fit t u = go con fit t u
  where
   go :: Vary a => Con a -> Fit -> Type a -> Type a -> Check ()
-  go con fit t u = case (loft t, loft u) of
+  go con fit t u = act (ActFits (nom con) fit t u) $ case (loft t, loft u) of
     -- These have to come first to avoid being excluded by the (_, Foo{}) cases.
     (Mask n c, Mask m d) | n == m -> go con fit (Base c) (Base d)
     (Mask _ c, d)
       | FitSame <- fit -> fitsFail
       | otherwise      -> go con fit (Base c) (Base d)
     (c, Mask _ d)
-      | FitSame <- fit  -> fitsFail
-      | otherwise       -> go con fit (Base c) (Base d)
+      | FitCast <- fit  -> go con fit (Base c) (Base d)
+      | otherwise       -> fitsFail
 
     (Look x, Look y) | x == y -> pure ()
     {-
@@ -823,7 +825,7 @@ work con fit e tau@(Base t) = act (ActWork (nom con) fit e tau)
                                                (grow $ Base t)
                               _ -> playFits
 
-    Name n c -> case t of Mask m t | n == m -> work con fit c tau
+    Name n c -> case t of Mask m t | n == m -> work con fit c (Base t)
                           _ -> playFits
 
     -- elimination forms just use nest
@@ -904,7 +906,7 @@ play con cod = act (ActPlay (nom con) cod) case cod of
   Slam c d -> do
     (td, tr) <- needGate con =<< play con c
     work con FitNest d td
-    pure $ flow con c tr
+    pure $ flow con d tr
 
   Wing w c -> do
     t <- play con c

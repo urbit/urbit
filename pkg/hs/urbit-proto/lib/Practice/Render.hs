@@ -5,11 +5,10 @@ import ClassyPrelude
 import Data.Either (fromRight)
 import Data.List (unfoldr)
 import Data.Text (stripEnd)
-import Data.Void
 import Urbit.Atom (atomUtf8)
 
-import Practice.DependentLambda
-import Practice.Hoon2DependentLambda
+import Practice.DependentHoon3
+import Practice.Hoon2DependentHoon3
 import Practice.HoonCommon
 import Practice.HoonSyntax
 
@@ -153,49 +152,62 @@ instance (Rolling a, Rolling b) => Rolling (Either a b) where
 instance (Rolling a, Rolling b) => Rolling (a, b) where
   roll (a, b) = Huge $ Rose "" "" [tank $ roll a, tank $ roll b]
 
-instance Rolling (Code Void) where
-  roll = roll . shut absurd
+instance {-# OVERLAPPING #-} Rolling (Code Wing) where
+  roll = roll . shut
 
-instance Rolling (Base Void) where
-  roll = roll . loft
+instance Show a => Rolling (Code a) where
+  roll = roll . shut . fmap (singleton . Ally . tshow)
 
-instance Rolling (Code Term) where
-  roll = roll . shut id
+instance Show a => Rolling (Base a) where
+  roll = roll . lock
 
-instance Rolling (Base Term) where
-  roll = roll . loft
+instance Rolling (Pelt Wing) where
+  roll = roll . flap
 
 instance Rolling [Act] where
   roll as = Huge $ Rose "trace:" "" $ map (tank . roll) $ reverse as
 
 instance Rolling Act where
   roll = \case
-    ActFits e f t u -> Huge $ Stem (tshow f <> ":") "" []
-      [ ("have", tank $ roll $ fmap e t, Leaf "")
-      , ("need", tank $ roll $ fmap e u, Leaf "")
+    ActFits f t u -> Huge $ Stem (tshow f <> ":") "" []
+      [ ("have", tank $ roll t, Leaf "")
+      , ("need", tank $ roll u, Leaf "")
       ]
-    ActFind e t w -> Huge $ Stem "find:" "" []
-      [ ("type", tank $ roll $ fmap e t, Leaf "")
+    ActFind t w -> Huge $ Stem "find:" "" []
+      [ ("type", tank $ roll t, Leaf "")
       , ("wing", tank $ roll w, Leaf "")
       ]
-    ActWork e f c t -> Huge $ Stem "work:" "" []
+    ActToil f p t -> Huge $ Stem "toil:" "" []
       [ ("mode", Leaf $ tshow f,         Leaf "")
-      , ("code", tank $ roll $ fmap e c, Leaf "")
-      , ("type", tank $ roll $ fmap e t, Leaf "")
+      , ("skin", tank $ roll p, Leaf "")
+      , ("type", tank $ roll t, Leaf "")
       ]
-    ActPlay e c -> Huge $ Stem "play:" "" []
-      [ ("code", tank $ roll $ fmap e c, Leaf "")
+    ActRomp p -> Huge $ Stem "romp:" "" []
+      [ ("skin", tank $ roll p, Leaf "")
+      ]
+
+    ActWork f c t -> Huge $ Stem "work:" "" []
+      [ ("mode", Leaf $ tshow f,         Leaf "")
+      , ("code", tank $ roll c, Leaf "")
+      , ("type", tank $ roll t, Leaf "")
+      ]
+    ActPlay c -> Huge $ Stem "play:" "" []
+      [ ("code", tank $ roll c, Leaf "")
       ]
     ActNote t -> Huge $ Palm "note:" [Leaf t]
 
 
 instance Rolling Fail where
   roll = \case
-    FitsFail e f t u -> Huge $ Stem (tshow f <> "-fail:") "" []
-      [ ("have", tank $ roll $ fmap e t, Leaf "")
-      , ("need", tank $ roll $ fmap e u, Leaf "")
+    FindFail f t -> Huge $ Stem ("find." <> f) "" []
+      [ ("type", tank $ roll t, Leaf "")
       ]
-    NeedGate e t -> Huge $ Palm "need-gate:" [tank $ roll $ fmap e t]
+    FitsFail f t u -> Huge $ Stem (tshow f <> "-fail:") "" []
+      [ ("have", tank $ roll t, Leaf "")
+      , ("need", tank $ roll u, Leaf "")
+      ]
+    RompWild p -> Huge $ Palm "romp-wild:" [tank $ roll p]
+    NeedGate t -> Huge $ Palm "need-gate:" [tank $ roll t]
     BailNote t -> Huge $ Palm "bail-note:" [Leaf t]
     BailFail -> leaf "bail-fail:"
 
@@ -216,22 +228,11 @@ chip = chop 40
 render :: Rolling r => r -> Text
 render = renderRoll . roll
 
-printLimb :: Limb -> Text
-printLimb = \case
-  Axis a -> "+" <> tshow a
-  Ally "" -> "%"
-  Ally n -> n
-
 instance Rolling Limb where
   roll = leaf . printLimb
 
 instance Rolling Wing where
-  roll w = leaf (go w)
-   where
-    go = \case
-      []     -> "."
-      [l]    -> printLimb l
-      l:ls   -> printLimb l <> "." <> go ls
+  roll = leaf . printWing
 
 going :: ((Kind, Text) -> (Kind, Text)) -> (Tank -> Tank) -> Roll -> Roll
 going f g r = chip case smol r of
@@ -329,6 +330,7 @@ instance Rolling Bass where
 instance Rolling Hoon where
   roll = \case
     Wung w -> roll w
+    Wild -> leaf "_"
     Adam Rock a au -> leaf $ showRock a au
     Adam Sand a au -> leaf $ showSand a au
     --

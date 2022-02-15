@@ -25,3 +25,17 @@ data Limb
   = Axis Axis
   | Ally Term
   deriving (Eq, Ord, Read, Show)
+
+type Nat = Natural
+
+printLimb :: Limb -> Text
+printLimb = \case
+  Axis a -> "+" <> tshow a
+  Ally "" -> "%"
+  Ally n -> n
+
+printWing :: Wing -> Text
+printWing = \case
+  [] -> "."
+  [l] -> printLimb l
+  l:ls -> printLimb l <> "." <> printWing ls

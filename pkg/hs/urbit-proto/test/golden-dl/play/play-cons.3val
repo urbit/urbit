@@ -1,3 +1,0 @@
-[%foo 2]
-
-Base { loft = Cons (Atom 7303014 Rock "tas") (Atom 2 Sand "ud") }

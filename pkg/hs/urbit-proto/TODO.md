@@ -1,12 +1,67 @@
 # TODO
 
-[x] Explain the system to Ted.
-[.] Explain this TODO list to Ted.
-[.] Add variable info to every binder.
-[x] Make core do rock/sand correctly.
-[x] Write a resugarer
-[x] Write a rudamentary printer for the cst
-[x] Add Failure sum and propagate these through the failure points of Check
-[x] Add Activities and push them
-[x] Print out the Failure and Activity stack on type error
-[x] Debug the failing test case.
+[ ] Dump keikaku into this list.
+
+## Based Hoon
+
+[x] Get rid of shitty special case ideas from pairing with Phil
+[x] Make Name eval away
+[ ] Make eval take a type and rely on its facial structure in look via find
+[ ] Fix all call sites
+[ ] Test it
+[ ] Ugh review all past tests
+
+## Begin work on subject-oriented prototype in parallel
+
+[ ] Figure out when I want to do this. Maybe just when stuck / bored / want to.
+[ ] Start this todo list
+
+## Pattern matching
+
+[ ] Establish mentally a notion of "derms" which are skinlike Codes
+[ ] Establish work and play for derms
+[ ] Establish "meld" (type refinement) with derms or whatever this was
+    - Fix this todo item
+[ ] Pushing semantics for facial extraction
+[ ] The Cas rule (do we still need?)
+[ ] Test
+
+## $@, $^
+[ ] Establish syntax for "power types" $(...), $<
+[ ] Establish a better name for power types
+[ ] Desugar power types
+[ ] Implement the proper semantics for power types, possibly cf Cardelli 1980s
+[ ] Add syntax for $@, $^
+[ ] Add desugaring
+[ ] Implement nesting rules
+[ ] Implement work/play in types with a view towards the power constraint
+[ ] Adjust work/play on pattern matching
+[ ] Test
+
+## Recursive types
+[ ] Re-find readings.
+[ ] Read that reading I found to see if we actually benefit from doing something
+    more interesting from the obvious.
+
+## Repl
+[ ] Establish a skin that does multiline reading using readline and echos
+[ ] Feed through the layers and print type and value
+[ ] Add the ability to import a standard library
+[ ] BONUS figure out multiline history properly goddamn it
+
+## Other things
+[ ] I've wontfixed on variance of higher order types. Don't expect anyone to
+    care for a while, but this is a potential research project later, maybe for
+    an intern
+[ ] The $ syntax has garnered suspicion.
+[ ] The reversal of the subject has garnered suspicion.
+[ ] We need to understand caching compilers a la ollef but in the applicative
+    context.
+[ ] We probably also need to understand Jared's work on caching better.
+[ ] Do we have a problem equating $: and :-? The problem I have in mind is that
+    the right hand side of $: needs to be evaluated relative to an enlarged
+    subject, but this is not the case with :-.
+[ ] Keep thinking, on an ongoing basis, about unifying $= with ^=.
+[ ] Remember whether %= needs to wait for subject orientation. I think so.
+[ ] Look over all XXs and FIXMEs
+[ ] Should we model a wing as an empty centis?

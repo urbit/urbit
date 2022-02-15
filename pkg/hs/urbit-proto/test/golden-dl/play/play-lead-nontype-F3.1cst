@@ -1,5 +1,0 @@
-$?
-++  foo  1
---
-
-Bcwt (fromList [ ( "foo" , Adam Sand 1 "ud" ) ])

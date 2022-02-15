@@ -1,8 +1,0 @@
-[1 [4 5 6] 2 3]
-
-Cons
-  (Atom 1 Sand "ud")
-  (Cons
-     (Cons
-        (Atom 4 Sand "ud") (Cons (Atom 5 Sand "ud") (Atom 6 Sand "ud")))
-     (Cons (Atom 2 Sand "ud") (Atom 3 Sand "ud")))

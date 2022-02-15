@@ -1,3 +1,0 @@
-a|b=@
-
-Base { loft = Mask "a" (Name "b" (Aura "")) }

@@ -1,3 +1,0 @@
-[2 3]
-
-Base { loft = Cons (Atom 2 Sand "ud") (Atom 3 Sand "ud") }

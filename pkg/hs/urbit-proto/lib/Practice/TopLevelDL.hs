@@ -1,7 +1,8 @@
-{-# LANGUAGE OverlappingInstances, UndecidableInstances #-}
+-- {-# LANGUAGE OverlappingInstances, UndecidableInstances #-}
 
 module Practice.TopLevelDL where
 
+{-
 import ClassyPrelude
 
 import Bound
@@ -34,7 +35,7 @@ road baseName txt = (cst, cod, val, typ)
     c <- cst
     o <- first ErrOpen $ open c
     maybe (Left $ ErrFree $ F.toList o) Right $ closed o
-  val = eval absurd <$> cod
+  val = undefined --eval absurd <$> cod
   typ = do
     c <- cod
     first ErrType $ runReaderT (play (Con absurd absurd absurd) c) []
@@ -44,3 +45,4 @@ ride t = let (_, Right c, _, _) = road "" t in c
 
 instance Show a => Rolling a where
   roll = leaf . tshow
+-}

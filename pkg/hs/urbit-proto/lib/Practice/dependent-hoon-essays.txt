@@ -1,0 +1,123 @@
+## Tracking shape information in the type of Code
+
+Basically, to what extent do we want to create a "subject-oriented version of
+the Bound library", and to what extent is it even possible? Doing this will rule
+out a bunch of hairy errors but has proven difficult in practice. Here are the
+three possibilities:
+
+1. Track the shape of the subject that the hoon is being run against.
+
+2. Track both the input and the output shape.
+
+3. Do not track.
+
+## Refining the subject given semiknowledge
+
+When we gain knowledge about a part of the subject, the type should be refined
+(i.e. evaluated further). When does this happen? The obvious answer is "at the
+time of knowledge". This is a difference from the Bound/variable approach in
+which, I think, this step necessarily happens late. I'm too stupid to think
+straight now.
+
+Basically suppose we have {a/? ?:(a @ ^)} and the knowledge [& _]. What should
+happen to the subject type?
+
+1. It is refined to {a/? @}. This is a loss of information and seems strictly
+wrong. It suggests that a could be | consistent with + being 3 but this is not
+so.
+
+2. It is refined to {a/$& @}. The fact that we can do this is a peculiarity of
+atoms which will not be present elsewhere, *but maybe it should be*. This
+direction would involve losing the seminoun and going in on singleton types /
+"expression forks" everywhere, which actually maybe should be prototyped. Maybe
+this is cool and correct.
+
+3. Nothing. Rather, when you traverse the subject type each time, you are
+required to evaluate the right type ?:(a @ ^) against the left seminoun & to get
+the fully evaluated right type @. Obviously cache becomes important here; you'll
+do this e.g. every time you traverse into that part of the subject with find.
+
+The third option also has the virtue that it "keeps open" the dependencies for
+us, so that when a %= happens, uh, well you'd better read the next section.
+
+
+## How should modifying the subject interact with the seminoun?
+
+Let's understand this question in three different phases, one for each basic
+rune which can give rise to a change in subject. (I disregard .*, which is
+untyped, and therefore doesn't pose a question for the type checker.)
+
+The first rune is +=. For parallelism I'll give an example, but you really don't
+need it:
+
+    =+  a=1
+    +(a)
+
+So if before the first line the subject type is T and the seminoun is S, then
+after it, the subject type will be {T a=@} and the seminoun will be [S a=1].
+
+As you can see, += fits very naturally into our model and doesn't pose any
+questions. The subject and seminoun are grown on the right in the obvious way.
+
+What about =>? The obvious idea is that when a tisgar occurs, the subject type
+changes to the (product) type of the left expression, and the seminoun is
+replaced by the left expression. But now perhaps we see the problem: The semi
+may be stuck on wings into the old subject, which need to be tracked in the
+semantics somehow, and, even worse, the type can be stuck on wings into the old
+subject (for example, when tisgaling the lus of a dependent cell).
+
+There are three possible approaches to this problem.
+
+1. Under tisgal, we set the seminoun to "no knowledge" rather than copy over an
+expression with meaningless wings. We then infer the type of the new subject,
+and scan it. If it's not a "closed type" we error at the location of the tisgal.
+What "scan" and "closed" mean here is actually a nontrivial, mechanically
+complex consideration which I still have to think out.
+
+2. Like 1, except rather than erroring on the type, we upcast to noun any
+problematic part. This has all the mechanical complexities of #1, except we now
+also need to understand what "part" means. Intuitively, {(vect n @) @}, where
+n is free, should upcast to {* @} rather than *.
+
+Instead of proceeding to the third proposal right away, I want to give an
+example that I think will illustrate why I think neither of these approaches is
+adequate:
+
+    |=  [a/@ b/(vect n *)]
+    ^-  {(vect n *) (vect n *)}
+    ?-  n
+      0     [~ ~]
+      +(m)  [. .]:b
+
+Setting aside the artificality of this code, [. .]:thing is the idiomatic way
+to duplicate a thing, so, uh, we'd like to support it. But under proposals 1 and
+2, the type of the expression [. .]:b will be {* *}, which certainly doesn't
+nest under the demanded {(vect n *) (vect n *)}. This illustrates that tisgal
+"composes" poorly with the rest of the language, which seems rather unsatisfactory
+for a programming paradigm in which the tisgal is the point.
+
+It's also interesting to note that while n is meaningless under the tisgal, once
+*the whole tisgal completes*, and we are back to the outer context, it becomes
+meaningful again. So something stacklike is going on here.
+
+## Plan
+
+1. Strip Ally limbs in work/play. This "cools" a Code into a Cold. Then Colds
+are minted into nocks or give rise to seminouns and types. The type of play/work
+should make clear that types and semis are alowed to refer to outer subjects,
+but not the output Cold.
+
+2. Maintain a stack of subjects (Type-Semi pairs), which is pushed to with each
+tisgal or centis.
+
+3. The Cons ast constructor pushes the head to the subject when evaluating the
+tail, a la phil's proposal. This is required to properly represent the result
+of tislus in the seminoun. It does not propose a problem for centis because of
+subject pushing. Unfortunately, it does not allow us to get rid of the {}/[]
+distinction, because {} pushes the value, not the type. (But think about this
+more.) As for nock representation, there are three options. A) Just compile all
+[] to nock 7 or whatever, possibly changing the nock spec. B) In mint (cold ->
+nock), detect whether any code under the tail uses the head and generate
+accordingly, adjusting axes if not. C) Use separate abstract syntax for pushy
+and parallel cells. Possibly do not provide user syntax for pushy cells other
+than => =+.

@@ -1,7 +1,0 @@
-$.  @
-++  foo  1
---
-
-Gold
-  (fromList [ ( "foo" , Scope (Look (F (Atom 1 Sand "ud"))) ) ])
-  (Aura "")

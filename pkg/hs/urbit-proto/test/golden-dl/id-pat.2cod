@@ -1,7 +1,0 @@
-^-  $-(@ @)
-|=(a a)
-
-Nest
-  { cod = Lamb "a" (Scope (Wing [] (Look (B ()))))
-  , typ = Gate (Aura "") (Scope (Look (F (Aura ""))))
-  }

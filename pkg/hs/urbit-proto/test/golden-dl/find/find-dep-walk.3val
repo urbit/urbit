@@ -1,9 +1,0 @@
-b:[1 2 3]
-
-Base
-  { loft =
-      Wing
-        [ Ally "b" ]
-        (Cons
-           (Atom 1 Sand "ud") (Cons (Atom 2 Sand "ud") (Atom 3 Sand "ud")))
-  }

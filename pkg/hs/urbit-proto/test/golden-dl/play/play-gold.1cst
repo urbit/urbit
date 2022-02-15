@@ -1,8 +1,0 @@
-$.  @
-++  bar  $
-++  foo  @
---
-
-Bcdt
-  (Bass (Aur ""))
-  (fromList [ ( "bar" , Bass Typ ) , ( "foo" , Bass (Aur "") ) ])

@@ -1,3 +1,0 @@
-|=(a a)
-
-Base { loft = Lamb "a" (Scope (Wing [] (Look (B ())))) }

@@ -1,3 +1,0 @@
-?
-
-Base { loft = Fork (fromList [ 0 , 1 ]) "f" }
