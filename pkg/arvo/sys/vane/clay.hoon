@@ -168,8 +168,6 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
-      ::  REMOVE on next upgrade
-      dist-upgraded=_|                                  ::  are we in dist yet?
       sad=(map ship @da)                                ::  scry known broken
   ==                                                    ::
 ::
@@ -1658,106 +1656,14 @@
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     =.  ..park  (emil (print q.old-yaki data))
-    =?  ..park  &(updated !dist-upgraded.ruf)  migrate-dist
     wake:(ergo mim)
-    ::
-    ++  migrate-dist
-      ~>  %slog.0^'clay: migrating for third-party software distribution'
-      |^  ^+  ..park
-      =.  ..park  purge
-      ::  first make sure gall has molted and has :hood running
-      ::
-      =.  ..park  (emit hen %pass /dist/hood %g %jolt %home %hood)
-      ::  now ask :hood to install all the new desks
-      ::
-      ::  NOTE: reverse order, since we're prepending moves each time
-      ::
-      =.  ..park  (install-from-tmp %bitcoin)
-      =.  ..park  (install-from-tmp %webterm)
-      =.  ..park  (install-from-tmp %landscape)
-      =.  ..park  (install-from-tmp %garden)
-      =.  ..park  (install-from-tmp %base)
-      ..park(dist-upgraded.ruf &)
-      ::
-      ++  purge
-        ^+  ..park
-        =/  wux=(list [=wove dux=(set duct)])  ~(tap by qyx)
-        |-  ^+  ..park
-        ?~  wux  ..park
-        =/  rov  rove.wove.i.wux
-        =?    qyx
-            ?+  -.rov  |
-              %sing  ?=([%a * %app %publish %hoon ~] mood.rov)
-              %next  ?=([%a * %app %publish %hoon ~] mood.rov)
-            ==
-          (~(del by qyx) wove.i.wux)
-        $(wux t.wux)
-      ::
-      ++  install-from-tmp
-        |=  =desk
-        ^+  ..park
-        =/  sen  (^^sein:title rof our now our)
-        %-  lime
-        |^  ^-  (list move)
-        =-  (murn - same)
-        ^-  (list (unit move))
-        :~  `create-desk
-            `install-local
-          ::
-            ?:  =(sen our)  ~
-            `install-remote
-          ::
-            ?:  =(%base desk)  ~
-            `publish-desk
-        ==
-        ::
-        ++  create-desk  ^-  move
-          :^  hen  %pass  /dist/create/[desk]
-          %^  new-desk:cloy  desk
-            (latest-tako %home)
-          ;;((map path page) (cue (get-tmp-jam desk)))
-        ::
-        ++  publish-desk  ^-  move
-          :^  hen  %pass  /dist/public/[desk]
-          [%c %perm desk / %r `[%black ~]]
-        ::
-        ++  install-local  ^-  move
-          :^  hen  %pass  /dist/install-local/[desk]
-          [%g %deal [our our] %hood %poke %kiln-install !>([desk our desk])]
-        ::
-        ++  install-remote  ^-  move
-          =/  rem  ?:(=(%base desk) %kids desk)
-          ::
-          :^  hen  %pass  /dist/install-remote/[desk]
-          [%g %deal [our our] %hood %poke %kiln-install !>([desk sen rem])]
-        --
-      ::
-      ++  latest-tako
-        |=  =desk
-        ^-  (unit tako)
-        ?~  doj=(~(get by dos.rom) desk)  ~
-        =,  dom.u.doj
-        (~(get by hit) let)
-      ::
-      ++  get-tmp-jam
-        |=  =desk
-        ^-  @
-        ~|  [%missing-tmp-desk-jam desk]
-        ?~  tmp=(~(get by dir.ank.dom) ~.tmp)  !!
-        ?~  new=(~(get by dir.u.tmp) desk)     !!
-        ?~  jam=(~(get by dir.u.new) ~.jam)    !!
-        ?~  fil.u.jam                          !!
-        =*  fil  u.fil.u.jam
-        ?>  =(%jam p.q.fil)
-        ;;(@ q.q.q.fil)
-      --
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
     ++  is-kernel-path  |=(pax=path ?=([%sys *] pax))
     ::
     ++  did-kernel-update
       |=  invalid=(set path)
-      ?.  |(=(%base syd) &(=(%home syd) !dist-upgraded.ruf))
+      ?.  =(%base syd)
         |
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
@@ -4513,7 +4419,7 @@
     [mos ..^$]
   ::
       %init
-    [~ ..^$(hun.rom.ruf hen, dist-upgraded.ruf &)]
+    [~ ..^$(hun.rom.ruf hen)]
   ::
       %into
     =.  hez.ruf  `hen
@@ -4918,7 +4824,7 @@
   ++  raft-10-to-11
     |=  raf=raft-10
     ^-  raft-11
-    =-  raf(hoy -, dist-upgraded [dist-upgraded.raf ~])
+    =-  raf(hoy -, dist-upgraded ~)
     %-  ~(run by hoy.raf)
     |=  =rung-10
     %-  ~(run by rus.rung-10)
