@@ -1,4 +1,4 @@
-import React, { MouseEvent, useMemo, useState } from 'react';
+import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Box, Icon, Image, Row } from '@tlon/indigo-react';
 import UqbarLogo from '~/assets/img/uqbar-logo.png';
@@ -66,6 +66,20 @@ export function MobileNavbar() {
   const { unreadDmCount } = useDmUnreads();
   const [currentPathname, setCurrentPathname] = useState(history.location.pathname);
 
+  useEffect(() => {
+    const { innerWidth, innerHeight } = window;
+    document.write([
+        '<style>',
+        '.mobileNavbar { display: none; }',
+        '@media screen and (orientation: portrait) and (min-height: ' + (Math.max(innerWidth, innerHeight) - 30) + 'px)',
+        '{ .mobileNavbar { display: inherit; } }',
+        '@media screen and (orientation: landscape) and (min-height: ' + (Math.min(innerWidth, innerHeight) - 50) + 'px)',
+        '{ .mobileNavbar { display: inherit; } }',
+        '</style>'
+    ].join(' '));
+  }, []);
+
+  // 
   const options: NavItemLinkProps[] = useMemo(() => [
     {
       icon: 'Home',
@@ -100,7 +114,7 @@ export function MobileNavbar() {
     || 0;
 
   return (
-    <Row backgroundColor="washedGray" height="40px">
+    <Row className="mobileNavbar" backgroundColor="washedGray" height="40px">
       {options.map(({ icon, to }) => <Link key={icon} to={to} onClick={onClick(icon, to)}>
         <MobileNavItem icon={icon}
           selected={currentPathname.includes(to) && icon !== 'Menu'}
