@@ -122,6 +122,8 @@ _mars_fact(u3_mars* mar_u,
     };
 
     u3_disk_plan(mar_u->log_u, &tac_u);
+    u3_disk_commit(mar_u->log_u);
+
     u3z(job);
   }
 
@@ -1147,7 +1149,19 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
     return c3n;  //  XX cleanup
   }
 
-  u3_disk_plan_list(log_u, ova);
+  // Enqueue completed event list.
+  //
+  {
+    u3_noun i, t = ova;
+    while ( u3_nul != t ) {
+      u3x_cell(t, &i, &t);
+      // NB, boot mugs are 0
+      //
+      u3_fact tac_u = { .mug_l = 0, .job = i };
+      u3_disk_plan(log_u, &tac_u);
+    }
+    u3z(ova);
+  }
 
   if ( c3n == u3_disk_sync(log_u) ) {
     return c3n;  //  XX cleanup

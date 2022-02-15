@@ -1,5 +1,5 @@
-/* vere/disk.c
-*/
+//! @file disk.c
+
 #include "vere/disk.h"
 
 #include "all.h"
@@ -10,14 +10,47 @@
 #undef DISK_TRACE_JAM
 #undef DISK_TRACE_CUE
 
+//! Serialized fact
+typedef struct {
+  c3_d             eve_d;
+  size_t           len_i;
+  c3_y*            hun_y;
+} u3_feat;
+
 struct _u3_disk_walk {
   u3_lmdb_walk  itr_u;
   u3_disk*      log_u;
   c3_o          liv_o;
 };
 
-/* _disk_commit_done(): commit complete.
- */
+//! Free memory associated with a log object.
+static void
+_disk_free(u3_disk* log_u)
+{
+  if ( NULL == log_u ) {
+    return;
+  }
+
+  if ( NULL != log_u->dir_c ) {
+    c3_free(log_u->dir_c);
+  }
+
+  if ( NULL != log_u->urb_c ) {
+    c3_free(log_u->urb_c);
+  }
+
+  if ( NULL != log_u->log_c ) {
+    c3_free(log_u->log_c);
+  }
+
+  if ( NULL != log_u->put_u ) {
+    c3_queue_free(log_u->put_u);
+  }
+
+  c3_free(log_u);
+}
+
+//! Commit complete.
 static void
 _disk_commit_done(u3_disk* log_u)
 {
@@ -48,27 +81,18 @@ _disk_commit_done(u3_disk* log_u)
     log_u->sav_u.don_f(log_u->sav_u.ptr_v, eve_d + (len_w - 1), ret_o);
   }
 
-  {
-    u3_feat* fet_u = log_u->put_u.ext_u;
-
-    while ( fet_u && (fet_u->eve_d <= log_u->dun_d) ) {
-      log_u->put_u.ext_u = fet_u->nex_u;
-      c3_free(fet_u->hun_y);
-      c3_free(fet_u);
-      fet_u = log_u->put_u.ext_u;
+  while ( 1 ) {
+    u3_feat* fet_u = c3_queue_peek_front(log_u->put_u);
+    if ( !fet_u || fet_u->eve_d > log_u->dun_d ) {
+      break;
     }
-  }
-
-  if ( !log_u->put_u.ext_u ) {
-    log_u->put_u.ent_u = 0;
+    c3_assert((void*)fet_u == c3_queue_pop_front(log_u->put_u));
+    c3_free(fet_u->hun_y);
+    c3_free(fet_u);
   }
 }
 
-static void
-_disk_commit(u3_disk* log_u);
-
-/* _disk_commit_after_cb(): on the main thread, finish write
-*/
+//! On the main thread, finish write
 static void
 _disk_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
 {
@@ -78,12 +102,11 @@ _disk_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
 
   if ( UV_ECANCELED != sas_i ) {
     _disk_commit_done(log_u);
-    _disk_commit(log_u);
+    u3_disk_commit(log_u);
   }
 }
 
-/* _disk_commit_cb(): off the main thread, write event-batch.
-*/
+//! Off the main thread, write event-batch.
 static void
 _disk_commit_cb(uv_work_t* ted_u)
 {
@@ -96,27 +119,9 @@ _disk_commit_cb(uv_work_t* ted_u)
                                     log_u->sav_u.siz_i);
 }
 
-/* _disk_commit_start(): queue async event-batch write.
-*/
-static void
-_disk_commit_start(u3_disk* log_u)
-{
-  c3_assert( c3n == log_u->sav_u.ted_o );
-  log_u->sav_u.ted_o = c3y;
-
-  //  queue asynchronous work to happen on another thread
-  //
-  uv_queue_work(u3L, &log_u->sav_u.ted_u, _disk_commit_cb,
-                                          _disk_commit_after_cb);
-}
-
-/* u3_disk_etch(): serialize an event for persistence.
-*/
-c3_w
-u3_disk_etch(u3_disk* log_u,
-             u3_noun    eve,
-             c3_l     mug_l,
-             c3_y**   out_y)
+//! Serialize an event.
+static size_t
+_disk_serialize_fact(u3_disk* log_u, u3_fact* tac_u, u3_feat* fet_u)
 {
   //  XX check version number
   //
@@ -128,14 +133,17 @@ u3_disk_etch(u3_disk* log_u,
   //  XX needs api redesign to limit allocations
   //
   {
-    u3_atom mat = u3qe_jam(eve);
+    u3_atom mat = u3qe_jam(tac_u->job);
     c3_w  len_w = u3r_met(3, mat);
-    c3_y* dat_y = c3_malloc(4 + len_w);
-    dat_y[0] = mug_l & 0xff;
-    dat_y[1] = (mug_l >> 8) & 0xff;
-    dat_y[2] = (mug_l >> 16) & 0xff;
-    dat_y[3] = (mug_l >> 24) & 0xff;
-    u3r_bytes(0, len_w, dat_y + 4, mat);
+
+    fet_u->hun_y = c3_malloc(4 + len_w);
+    fet_u->hun_y[0] = tac_u->mug_l & 0xff;
+    fet_u->hun_y[1] = (tac_u->mug_l >> 8) & 0xff;
+    fet_u->hun_y[2] = (tac_u->mug_l >> 16) & 0xff;
+    fet_u->hun_y[3] = (tac_u->mug_l >> 24) & 0xff;
+    u3r_bytes(0, len_w, fet_u->hun_y + 4, mat);
+
+    fet_u->len_i = 4 + len_w;
 
 #ifdef DISK_TRACE_JAM
     u3t_event_trace("king disk jam", 'E');
@@ -143,17 +151,14 @@ u3_disk_etch(u3_disk* log_u,
 
     u3z(mat);
 
-    *out_y = dat_y;
-    return len_w + 4;
+    return fet_u->len_i;
   }
 }
 
-/* _disk_batch(): create a write batch
-*/
+//! Create a write batch
 static c3_o
 _disk_batch(u3_disk* log_u)
 {
-  u3_feat* fet_u = log_u->put_u.ext_u;
   c3_w     len_w = log_u->sen_d - log_u->dun_d;
 
   if (  !len_w
@@ -164,6 +169,7 @@ _disk_batch(u3_disk* log_u)
   else {
     len_w = c3_min(len_w, 100);
 
+    u3_feat*  fet_u = c3_queue_peek_front(log_u->put_u);
     c3_assert( fet_u );
     c3_assert( (1ULL + log_u->dun_d) == fet_u->eve_d );
 
@@ -178,7 +184,7 @@ _disk_batch(u3_disk* log_u)
       log_u->sav_u.byt_y[i_w] = fet_u->hun_y;
       log_u->sav_u.siz_i[i_w] = fet_u->len_i;
 
-      fet_u = fet_u->nex_u;
+      fet_u = c3_queue_peek(log_u->put_u, 1 + i_w);
     }
 
     log_u->hit_w[len_w]++;
@@ -187,81 +193,51 @@ _disk_batch(u3_disk* log_u)
   }
 }
 
-/* _disk_commit(): commit all available events, if idle.
-*/
-static void
-_disk_commit(u3_disk* log_u)
+//! @n (1) Queue async event-batch write to happen on another thread.
+void
+u3_disk_commit(u3_disk* log_u)
 {
-  if ( c3y == _disk_batch(log_u) ) {
-#ifdef VERBOSE_DISK
-    if ( 1 == len_w ) {
-      fprintf(stderr, "disk: (%" PRIu64 "): commit: request\r\n",
-                      log_u->sav_u.eve_d);
-    }
-    else {
-      fprintf(stderr, "disk: (%" PRIu64 "-%" PRIu64 "): commit: request\r\n",
-                      log_u->sav_u.eve_d,
-                      (log_u->sav_u.eve_d + log_u->sav_u.len_w - 1));
-    }
-#endif
-
-    _disk_commit_start(log_u);
+  if ( c3n == _disk_batch(log_u) ) {
+    return;
   }
-}
 
-/* _disk_plan(): enqueue serialized fact (feat) for persistence.
-*/
-static void
-_disk_plan(u3_disk* log_u,
-           c3_l     mug_l,
-           u3_noun    job)
-{
-  u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
-  fet_u->eve_d = ++log_u->sen_d;
-  fet_u->len_i = (size_t)u3_disk_etch(log_u, job, mug_l, &fet_u->hun_y);
-  fet_u->nex_u = 0;
-
-  if ( !log_u->put_u.ent_u ) {
-    c3_assert( !log_u->put_u.ext_u );
-    log_u->put_u.ent_u = log_u->put_u.ext_u = fet_u;
+#ifdef VERBOSE_DISK
+  if ( 1 == len_w ) {
+    fprintf(stderr, "disk: (%" PRIu64 "): commit: request\r\n",
+            log_u->sav_u.eve_d);
   }
   else {
-    log_u->put_u.ent_u->nex_u = fet_u;
-    log_u->put_u.ent_u = fet_u;
+    fprintf(stderr, "disk: (%" PRIu64 "-%" PRIu64 "): commit: request\r\n",
+            log_u->sav_u.eve_d,
+            log_u->sav_u.eve_d + log_u->sav_u.len_w - 1);
+  }
+#endif /* ifndef VERBOSE_DISK */
+
+  // (1)
+  {
+    c3_assert( c3n == log_u->sav_u.ted_o );
+    log_u->sav_u.ted_o = c3y;
+
+    uv_queue_work(u3L,
+                  &log_u->sav_u.ted_u,
+                  _disk_commit_cb,
+                  _disk_commit_after_cb);
   }
 }
 
-/* u3_disk_plan(): enqueue completed event for persistence.
-*/
+//! Enqueue fact for persistence.
 void
 u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
   c3_assert( (1ULL + log_u->sen_d) == tac_u->eve_d );
 
-  _disk_plan(log_u, tac_u->mug_l, tac_u->job);
+  u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
+  fet_u->eve_d = ++log_u->sen_d;
+  fet_u->len_i = _disk_serialize_fact(log_u, tac_u, fet_u);
 
-  _disk_commit(log_u);
+  c3_queue_push_back(log_u->put_u, fet_u, sizeof(*fet_u));
 }
 
-/* u3_disk_plan_list(): enqueue completed event list, without autocommit.
-*/
-void
-u3_disk_plan_list(u3_disk* log_u, u3_noun lit)
-{
-  u3_noun i, t = lit;
-
-  while ( u3_nul != t ) {
-    u3x_cell(t, &i, &t);
-    //  NB, boot mugs are 0
-    //
-    _disk_plan(log_u, 0, i);
-  }
-
-  u3z(lit);
-}
-
-/* u3_disk_sync(): commit planned events.
-*/
 c3_o
 u3_disk_sync(u3_disk* log_u)
 {
@@ -286,8 +262,6 @@ u3_disk_sync(u3_disk* log_u)
   return ret_o;
 }
 
-/* u3_disk_async(): active autosync with callbacks.
-*/
 void
 u3_disk_async(u3_disk*     log_u,
               void*        ptr_v,
@@ -299,26 +273,21 @@ u3_disk_async(u3_disk*     log_u,
   log_u->sav_u.don_f = don_f;
 }
 
-/* u3_disk_sift(): parse a persisted event buffer.
-*/
-c3_o
-u3_disk_sift(u3_disk* log_u,
-             size_t   len_i,
-             c3_y*    dat_y,
-             c3_l*    mug_l,
-             u3_noun*   job)
+//! Parse a persisted event buffer.
+static c3_o
+_disk_deserialize_fact(u3_disk* log_u, u3_feat* fet_u, u3_fact* tac_u)
 {
   //  XX check version
   //
 
-  if ( 4 >= len_i ) {
+  if ( 4 >= fet_u->len_i ) {
     return c3n;
   }
   else {
-    *mug_l = dat_y[0]
-           ^ (dat_y[1] <<  8)
-           ^ (dat_y[2] << 16)
-           ^ (dat_y[3] << 24);
+    tac_u->mug_l = fet_u->hun_y[0]
+                 ^ (fet_u->hun_y[1] <<  8)
+                 ^ (fet_u->hun_y[2] << 16)
+                 ^ (fet_u->hun_y[3] << 24);
 
 #ifdef DISK_TRACE_CUE
     u3t_event_trace("king disk cue", 'B');
@@ -326,7 +295,7 @@ u3_disk_sift(u3_disk* log_u,
 
     //  XX u3m_soft?
     //
-    *job = u3ke_cue(u3i_bytes(len_i - 4, dat_y + 4));
+    tac_u->job = u3ke_cue(u3i_bytes(fet_u->len_i - 4, fet_u->hun_y + 4));
 
 #ifdef DISK_TRACE_CUE
     u3t_event_trace("king disk cue", 'E');
@@ -342,8 +311,7 @@ struct _cd_list {
   c3_l     mug_l;
 };
 
-/* _disk_read_list_cb(): lmdb read callback, invoked for each event in order
-*/
+//! Lmdb read callback, invoked for each event in order
 static c3_o
 _disk_read_list_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
 {
@@ -351,22 +319,19 @@ _disk_read_list_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   u3_disk* log_u = ven_u->log_u;
 
   {
-    u3_noun job;
-    c3_l  mug_l;
-
-    if ( c3n == u3_disk_sift(log_u, val_i, (c3_y*)val_p, &mug_l, &job) ) {
+    u3_feat fet_u = { .len_i = val_i, .hun_y = val_p };
+    u3_fact tac_u;
+    if ( c3n == _disk_deserialize_fact(log_u, &fet_u, &tac_u) ) {
       return c3n;
     }
 
-    ven_u->mug_l = mug_l;
-    ven_u->eve   = u3nc(job, ven_u->eve);
+    ven_u->mug_l = tac_u.mug_l;
+    ven_u->eve   = u3nc(tac_u.job, ven_u->eve);
   }
 
   return c3y;
 }
 
-/* u3_disk_read_list(): synchronously read a cons list of events.
-*/
 u3_weak
 u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l)
 {
@@ -386,8 +351,6 @@ u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l)
   }
 }
 
-/* u3_disk_walk_init(): init iterator.
-*/
 u3_disk_walk*
 u3_disk_walk_init(u3_disk* log_u,
                   c3_d     eve_d,
@@ -405,8 +368,6 @@ u3_disk_walk_init(u3_disk* log_u,
   return wok_u;
 }
 
-/* u3_disk_walk_live(): check if live.
-*/
 c3_o
 u3_disk_walk_live(u3_disk_walk* wok_u)
 {
@@ -417,8 +378,6 @@ u3_disk_walk_live(u3_disk_walk* wok_u)
   return wok_u->liv_o;
 }
 
-/* u3_disk_walk_step(): get next fact.
-*/
 c3_o
 u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
 {
@@ -433,10 +392,8 @@ u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
     return wok_u->liv_o = c3n;
   }
 
-  if ( c3n == u3_disk_sift(log_u, len_i,
-                           (c3_y*)buf_v,
-                           &tac_u->mug_l,
-                           &tac_u->job) )
+  u3_feat fet_u = { .len_i = len_i, .hun_y = buf_v };
+  if ( c3n == _disk_deserialize_fact(log_u, &fet_u, tac_u) )
   {
     fprintf(stderr, "disk: (%" PRIu64 "): sift fail\r\n", tac_u->eve_d);
     return wok_u->liv_o = c3n;
@@ -445,8 +402,6 @@ u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u)
   return c3y;
 }
 
-/* u3_disk_walk_done(): close iterator.
-*/
 void
 u3_disk_walk_done(u3_disk_walk* wok_u)
 {
@@ -454,24 +409,18 @@ u3_disk_walk_done(u3_disk_walk* wok_u)
   c3_free(wok_u);
 }
 
-/* _disk_save_meta(): serialize atom, save as metadata at [key_c].
-*/
+//! Serialize atom, save as metadata at [key_c].
 static c3_o
 _disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
 {
   c3_w  len_w = u3r_met(3, dat);
-  c3_y* byt_y = c3_malloc(len_w);
-  u3r_bytes(0, len_w, byt_y, dat);
+  c3_y  byt_y[len_w];
+  u3r_bytes(0, sizeof(byt_y), byt_y, dat);
 
-  {
-    c3_o ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
-    c3_free(byt_y);
-    return ret_o;
-  }
+  c3_o ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, sizeof(byt_y), byt_y);
+  return ret_o;
 }
 
-/* u3_disk_save_meta(): save metadata.
-*/
 c3_o
 u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u)
 {
@@ -492,20 +441,25 @@ u3_disk_save_meta(u3_disk* log_u, const u3_meta* met_u)
   return c3y;
 }
 
-/* _disk_meta_read_cb(): copy [val_p] to atom [ptr_v] if present.
-*/
+//! Copy array to an atom.
+//!
+//! @param[out] dst_v  Address of destination atom.
+//! @param[in]  len_i  Length of source array in bytes.
+//! @param[in]  val_v  Source array.
+//!
+//! @n (1) Confirm unique, non-NULL source and destination addresses.
 static void
-_disk_meta_read_cb(void* ptr_v, size_t val_i, void* val_p)
+_disk_meta_read_cb(void* dst_v, size_t len_i, void* src_v)
 {
-  u3_weak* mat = ptr_v;
-
-  if ( val_p ) {
-    *mat = u3i_bytes(val_i, val_p);
+  // (1)
+  if ( src_v == dst_v ) {
+    return;
   }
+
+  *(u3_atom*)dst_v = u3i_bytes(len_i, src_v);
 }
 
-/* _disk_read_meta(): read metadata at [key_c], deserialize.
-*/
+//! Read metadata at [key_c], deserialize.
 static u3_weak
 _disk_read_meta(u3_disk* log_u, const c3_c* key_c)
 {
@@ -514,8 +468,6 @@ _disk_read_meta(u3_disk* log_u, const c3_c* key_c)
   return dat;
 }
 
-/* u3_disk_read_meta(): read metadata.
-*/
 c3_o
 u3_disk_read_meta(u3_disk* log_u, u3_meta* met_u)
 {
@@ -568,16 +520,15 @@ u3_disk_read_meta(u3_disk* log_u, u3_meta* met_u)
   return c3y;
 }
 
-/* u3_disk_exit(): close the log.
-*/
+//! @n (1) Cancel write thread.
+//!        XX can deadlock when called from signal handler.
+//!        XX revise SIGTSTP handling.
+//! @n (2) Close database.
+//! @n (3) Dispose of planned writes.
 void
 u3_disk_exit(u3_disk* log_u)
 {
-  //  cancel write thread
-  //
-  //    XX can deadlock when called from signal handler
-  //    XX revise SIGTSTP handling
-  //
+  // (1)
   if ( c3y == log_u->sav_u.ted_o ) {
     c3_i sas_i;
 
@@ -587,37 +538,29 @@ u3_disk_exit(u3_disk* log_u)
     while ( UV_EBUSY == sas_i );
   }
 
-  //  close database
-  //
+  // (2)
   u3_lmdb_exit(log_u->mdb_u);
 
-  //  dispose planned writes
-  //
-
+  // (3)
   {
-    u3_feat* fet_u = log_u->put_u.ext_u;
-
-    while ( fet_u && (fet_u->eve_d <= log_u->dun_d) ) {
-      log_u->put_u.ext_u = fet_u->nex_u;
+    while ( 1 ) {
+      u3_feat* fet_u = c3_queue_peek_front(log_u->put_u);
+      if ( !fet_u || fet_u->eve_d > log_u->dun_d ) {
+        break;
+      }
+      c3_assert((void*)fet_u == c3_queue_pop_front(log_u->put_u));
       c3_free(fet_u->hun_y);
       c3_free(fet_u);
-      fet_u = log_u->put_u.ext_u;
     }
   }
 
-  u3_dire_free(log_u->dir_u);
-  u3_dire_free(log_u->urb_u);
-  u3_dire_free(log_u->com_u);
-
-  c3_free(log_u);
+  _disk_free(log_u);
 
 #if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
   u3t_trace_close();
 #endif
 }
 
-/* u3_disk_info(): print status info.
-*/
 void
 u3_disk_info(u3_disk* log_u)
 {
@@ -630,7 +573,7 @@ u3_disk_info(u3_disk* log_u)
 
     u3l_log("    batch:\n");
 
-    for ( i_w = 0; i_w < 100; i_w++ ) {
+    for ( i_w = 0; i_w < c3_arr_len(log_u->hit_w); i_w++ ) {
       len_w = log_u->hit_w[i_w];
       if ( len_w ) {
         u3l_log("      %u: %u\n", i_w, len_w);
@@ -638,20 +581,30 @@ u3_disk_info(u3_disk* log_u)
     }
   }
 
-  if ( log_u->put_u.ext_u ) {
-    if ( log_u->put_u.ext_u != log_u->put_u.ent_u ) {
+  switch ( c3_queue_length(log_u->put_u) ) {
+    case 0:
+      break;
+    case 1:
+      u3l_log("    save: %" PRIu64 "\n",
+              ((u3_feat*)c3_queue_peek_front(log_u->put_u))->eve_d);
+      break;
+    default:
       u3l_log("    save: %" PRIu64 "-%" PRIu64 "\n",
-              log_u->put_u.ext_u->eve_d,
-              log_u->put_u.ent_u->eve_d);
-    }
-    else {
-      u3l_log("    save: %" PRIu64 "\n", log_u->put_u.ext_u->eve_d);
-    }
+              ((u3_feat*)c3_queue_peek_front(log_u->put_u))->eve_d,
+              ((u3_feat*)c3_queue_peek_back(log_u->put_u))->eve_d);
+      break;
   }
 }
 
-/* u3_disk_init(): load or create pier directories and event log.
-*/
+//! @n (1) Create/load the pier directory.
+//! @n (2) Create/load `$pier/.urb`.
+//! @n (3) Create/load `$pier/.urb/put`.
+//! @n (4) Create/load `$pier/.urb/get`.
+//! @n (5) Create/load `$pier/.urb/log`.
+//! @n (6) Initialize database. Arbitrarily choose 1TB as a "large enough" mapsize.
+//!        Per the LMDB docs:
+//!        "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
+//! @n (7) Get the latest event number from the db.
 u3_disk*
 u3_disk_init(c3_c* pax_c)
 {
@@ -659,109 +612,104 @@ u3_disk_init(c3_c* pax_c)
   log_u->liv_o = c3n;
   log_u->sav_u.ted_o = c3n;
   log_u->sav_u.ted_u.data = log_u;
-  log_u->put_u.ent_u = log_u->put_u.ext_u = 0;
 
-  //  create/load pier directory
-  //
+  // (1)
   {
-    if ( 0 == (log_u->dir_u = u3_foil_folder(pax_c)) ) {
-      fprintf(stderr, "disk: failed to load pier at %s\r\n", pax_c);
-      c3_free(log_u);
+    log_u->dir_c = c3_malloc(1 + strlen(pax_c));
+    c3_assert(NULL != log_u->dir_c);
+    c3_assert(log_u->dir_c == strcpy(log_u->dir_c, pax_c));
+    if ( -1 == mkdir(log_u->dir_c, 0700) && EEXIST != errno ) {
+      fprintf(stderr, "disk: failed to load pier at %s\r\n", log_u->dir_c);
+      _disk_free(log_u);
       return 0;
     }
   }
 
-  //  create/load $pier/.urb
-  //
+  // (2)
   {
-    c3_c* urb_c = c3_malloc(6 + strlen(pax_c));
-
-    strcpy(urb_c, pax_c);
-    strcat(urb_c, "/.urb");
-
-    if ( 0 == (log_u->urb_u = u3_foil_folder(urb_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb in %s\r\n", pax_c);
-      c3_free(urb_c);
-      c3_free(log_u);
+    static const c3_c urb_c[] = "/.urb";
+    c3_ws siz_ws = strlen(log_u->dir_c) + sizeof(urb_c);
+    log_u->urb_c = c3_malloc(siz_ws);
+    c3_assert(NULL != log_u->urb_c);
+    c3_assert(siz_ws - 1 == snprintf(log_u->urb_c, siz_ws, "%s%s", log_u->dir_c, urb_c));
+    if ( -1 == mkdir(log_u->urb_c, 0700) && EEXIST != errno ) {
+      fprintf(stderr, "disk: failed to load %s in %s\r\n", urb_c, log_u->dir_c);
+      _disk_free(log_u);
       return 0;
     }
-    c3_free(urb_c);
   }
 
-  //  create/load $pier/.urb/put and $pier/.urb/get
-  //
   {
-    c3_c* dir_c = c3_malloc(10 + strlen(pax_c));
+    static const c3_c put_c[] = "/put";
+    static const c3_c get_c[] = "/get";
+    _Static_assert(sizeof(put_c) == sizeof(get_c));
+    c3_ws siz_ws = strlen(log_u->urb_c) + c3_max(sizeof(put_c), sizeof(get_c));
+    c3_c dir_c[siz_ws];
 
-    strcpy(dir_c, pax_c);
-    strcat(dir_c, "/.urb/put");
-    mkdir(dir_c, 0700);
-
-    strcpy(dir_c, pax_c);
-    strcat(dir_c, "/.urb/get");
-    mkdir(dir_c, 0700);
-
-    c3_free(dir_c);
-  }
-
-  //  create/load $pier/.urb/log, initialize db
-  //
-  {
-    c3_c* log_c = c3_malloc(10 + strlen(pax_c));
-
-    strcpy(log_c, pax_c);
-    strcat(log_c, "/.urb/log");
-
-    if ( 0 == (log_u->com_u = u3_foil_folder(log_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb/log in %s\r\n", pax_c);
-      c3_free(log_c);
-      c3_free(log_u);
+    // (3)
+    c3_assert(siz_ws - 1 == snprintf(dir_c, siz_ws, "%s%s", log_u->urb_c, put_c));
+    if ( -1 == mkdir(dir_c, 0700) && EEXIST != errno ) {
+      fprintf(stderr, "disk: failed to load %s in %s\r\n", put_c, log_u->urb_c);
+      _disk_free(log_u);
       return 0;
     }
 
-    //  Arbitrarily choosing 1TB as a "large enough" mapsize
-    //
-    //  per the LMDB docs:
-    //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
-    //
-    {
-      #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
-        const size_t siz_i = 64424509440;
-      #else
-        const size_t siz_i = 1099511627776;
-      #endif
-
-      if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_c, siz_i)) ) {
-        fprintf(stderr, "disk: failed to initialize database\r\n");
-        c3_free(log_c);
-        c3_free(log_u);
-        return 0;
-      }
+    // (4)
+    c3_assert(siz_ws - 1 == snprintf(dir_c, siz_ws, "%s%s", log_u->urb_c, get_c));
+    if ( -1 == mkdir(dir_c, 0700) && EEXIST != errno ) {
+      fprintf(stderr, "disk: failed to load %s in %s\r\n", get_c, log_u->urb_c);
+      _disk_free(log_u);
+      return 0;
     }
-
-    c3_free(log_c);
   }
 
-  //  get the latest event number from the db
-  //
+  // (5)
+  {
+    static const c3_c log_c[] = "/log";
+    c3_ws siz_ws = strlen(log_u->urb_c) + sizeof(log_c);
+    log_u->log_c = c3_malloc(siz_ws);
+    c3_assert(NULL != log_u->log_c);
+    c3_assert(siz_ws - 1 == snprintf(log_u->log_c, siz_ws, "%s%s", log_u->urb_c, log_c));
+    if ( -1 == mkdir(log_u->log_c, 0700) && EEXIST != errno ) {
+      fprintf(stderr, "disk: failed to load %s in %s\r\n", log_u->log_c, log_u->urb_c);
+      _disk_free(log_u);
+      return 0;
+    }
+  }
+
+  // (6)
+  {
+    static const size_t siz_i =
+#if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
+    0xf00000000;
+#else
+    0x10000000000;
+#endif
+    if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_u->log_c, siz_i)) ) {
+      fprintf(stderr, "disk: failed to initialize database\r\n");
+      _disk_free(log_u);
+      return 0;
+    }
+  }
+
+  // (7)
   {
     log_u->dun_d = 0;
     c3_d fir_d;
-
     if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
       fprintf(stderr, "disk: failed to load latest event from database\r\n");
-      c3_free(log_u);
+      _disk_free(log_u);
       return 0;
     }
-
     log_u->sen_d = log_u->dun_d;
   }
-
-  log_u->liv_o = c3y;
 
 #if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
   u3t_trace_open(pax_c);
 #endif
+
+  log_u->liv_o = c3y;
+  log_u->put_u = c3_queue_init();
 
   return log_u;
 }
