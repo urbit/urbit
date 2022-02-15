@@ -905,6 +905,10 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case BUSH: case SANB:
         case KITB: case MITB:
         case HILB: case HINB:
+          // check tail of op for being xray
+          // if so call a rendering and cons to tail of op
+          // like sip list in melt?
+          // take interpret buffy upto nef_w
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
           break;
@@ -1056,7 +1060,8 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       }
 
       case c3__orry:
-      case c3__xray:
+      case c3__xray: // add a case that packs more info into HILB
+                     // place nef_w into HILB trel
       case c3__bout: {
         u3_noun fen = u3_nul;
         c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
@@ -1066,7 +1071,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         ++nef_w; _n_emit(&fen, u3nc(SBIP, 1));
 
         //  call hilt_fore
-        //  HILB overflows to HILS
+        //  HILB overflows to HILS - this becomes hin
         ++tot_w; _n_emit(ops, u3nc(HILB, u3nc(u3k(hif), u3k(nef))));
         // if fore return c3n, skip fen
         ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
@@ -1752,7 +1757,8 @@ _n_prog_free(u3n_prog* pog_u)
   u3a_free(pog_u);
 }
 
-void slog_me(c3_l pri_l, c3_c* message) {
+void
+slog_me(c3_l pri_l, c3_c* message) {
   c3_c str_c[strlen(message)+2];
   snprintf(str_c, strlen(message)+1, "%s", message);
   u3t_slog(
