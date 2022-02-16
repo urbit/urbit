@@ -131,13 +131,12 @@
     =/  rid=@ta   (rear wir)
     =/  tid=@ta   (cat 3 'khan-fyrd--' rid)
     =/  args      [~ `tid beak name.fyd args.fyd]
-    =/  start-moves=(list move)
-      %+  turn
-        :~  (watch-spider our /thread-result/[tid])
-            (start-spider our !>(args))
-        ==
-      |=(=note ^-(move [hen %pass //g note]))
-    [start-moves khan-gate]
+    :_  khan-gate
+    %+  turn
+      :~  (watch-spider our /thread-result/[tid])
+          (start-spider our !>(args))
+      ==
+    |=(=note ^-(move [hen %pass //g note]))
   ::
       %fyrd
     =*  fyd         p.task
@@ -160,8 +159,7 @@
   =/  new=khan-state
     ?:  ?=(%2 -.old)
       old
-    :-  %2
-    hey.old
+    [%2 hey.old]
   khan-gate(state new)
 ::  +scry: nothing to see as yet
 ::
