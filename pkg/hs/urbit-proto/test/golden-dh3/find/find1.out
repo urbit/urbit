@@ -1,0 +1,121 @@
+PARSED
+
+=/  a
+  :*  p=1
+      q=[1 2]
+      r=42
+      s=r=$
+      q=[1 2 3]
+      t=[u=4 v=5]
+  ==
+:*  a
+    p.a
+    q.a
+    +3.q.a
+    r.a
+    s.a
+    r.s.a
+    t.a
+    u.t.a
+    v.t.a
+    +2.t.a
+    +3.t.a
+    +3.a
+    +6.a
+==
+
+CODE
+
+=+  ^=  a
+    :*  p=1
+        q=[1 2]
+        r=42
+        s=r=$
+        q=[1 2 3]
+        t=[u=4 v=5]
+    ==
+:*  a
+    p.a
+    q.a
+    +3.q.a
+    r.a
+    s.a
+    r.s.a
+    t.a
+    u.t.a
+    v.t.a
+    +2.t.a
+    +3.t.a
+    +3.a
+    +6.a
+==
+
+COLD
+
+=+  [1 [1 2] 42 $ [1 2 3] 4 5]
+:*  +3
+    +6
+    +126
+    +253
+    +30
+    +62
+    +62
+    +127
+    +254
+    +255
+    +254
+    +255
+    +7
+    +14
+==
+
+TYPE
+
+=>  [0 1 [1 2] 42 $ [1 2 3] 4 5]
+$:  =>  [0 0]
+    $:  p|@ud
+        q|{@ud @ud}
+        r|@ud
+        s|r|$
+        q|{@ud @ud @ud}
+        t|{u|@ud v|@ud}
+    ==
+    @ud
+    {@ud @ud @ud}
+    {@ud @ud}
+    @ud
+    r|$
+    $
+    {u|@ud v|@ud}
+    @ud
+    @ud
+    u|@ud
+    v|@ud
+    $:  q|{@ud @ud}
+        r|@ud
+        s|r|$
+        q|{@ud @ud @ud}
+        t|{u|@ud v|@ud}
+    ==
+    q|{@ud @ud}
+==
+Cell' (Cell' (Mask' "p" (Aura' "ud")) (Cons' (Atom' 0 Sand "") (Atom' 0 Sand "")) (Cell (Mask "q" (Cell (Aura "ud") (Aura "ud"))) (Cell (Mask "r" (Aura "ud")) (Cell (Mask "s" (Mask "r" Type)) (Cell (Mask "q" (Cell (Aura "ud") (Cell (Aura "ud") (Aura "ud")))) (Mask "t" (Cell (Mask "u" (Aura "ud")) (Mask "v" (Aura "ud"))))))))) (Cons' (Atom' 0 Sand "") (Cons' (Atom' 1 Sand "ud") (Cons' (Cons' (Atom' 1 Sand "ud") (Atom' 2 Sand "ud")) (Cons' (Atom' 42 Sand "ud") (Cons' Type' (Cons' (Cons' (Atom' 1 Sand "ud") (Cons' (Atom' 2 Sand "ud") (Atom' 3 Sand "ud"))) (Cons' (Atom' 4 Sand "ud") (Atom' 5 Sand "ud")))))))) (Cell (Aura "ud") (Cell (Cell (Aura "ud") (Cell (Aura "ud") (Aura "ud"))) (Cell (Cell (Aura "ud") (Aura "ud")) (Cell (Aura "ud") (Cell (Mask "r" Type) (Cell Type (Cell (Cell (Mask "u" (Aura "ud")) (Mask "v" (Aura "ud"))) (Cell (Aura "ud") (Cell (Aura "ud") (Cell (Mask "u" (Aura "ud")) (Cell (Mask "v" (Aura "ud")) (Cell (Cell (Mask "q" (Cell (Aura "ud") (Aura "ud"))) (Cell (Mask "r" (Aura "ud")) (Cell (Mask "s" (Mask "r" Type)) (Cell (Mask "q" (Cell (Aura "ud") (Cell (Aura "ud") (Aura "ud")))) (Mask "t" (Cell (Mask "u" (Aura "ud")) (Mask "v" (Aura "ud")))))))) (Mask "q" (Cell (Aura "ud") (Aura "ud")))))))))))))))
+
+BASE
+
+:*  [1 [1 2] 42 $ [1 2 3] 4 5]
+    1
+    [1 2 3]
+    [2 3]
+    42
+    $
+    $
+    [4 5]
+    4
+    5
+    4
+    5
+    [[1 2] 42 $ [1 2 3] 4 5]
+    1
+    2
+==

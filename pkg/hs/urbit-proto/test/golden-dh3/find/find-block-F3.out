@@ -1,0 +1,31 @@
+PARSED
+
+=/  a
+  p=q=1
+q.a
+
+CODE
+
+=+  a=p=q=1
+q.a
+
+ERROR
+
+  trace:  play:
+          code  =+  a=p=q=1
+                q.a
+
+
+          play:
+          code  q.a
+
+          find:
+          wing  q.a
+          type  =>  0
+                {* a|p|q|@ud}
+
+
+
+  find.q
+  type  p|q|@ud
+

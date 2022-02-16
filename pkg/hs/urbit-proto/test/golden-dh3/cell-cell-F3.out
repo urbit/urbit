@@ -1,0 +1,37 @@
+PARSED
+
+^-  {@ @}
+{@ @}
+
+CODE
+
+^-  {@ @}
+{@ @}
+
+ERROR
+
+  trace:  play:
+          code  ^-  {@ @}
+                {@ @}
+
+
+          work:
+          mode  nest
+          code  {@ @}
+          type  =>  0
+                {@ @}
+
+
+          nest:
+          have  $
+          need  =>  0
+                {@ @}
+
+
+
+  nest-fail:
+  have  $
+  need  =>  0
+        {@ @}
+
+

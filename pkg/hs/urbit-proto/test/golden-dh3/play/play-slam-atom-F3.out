@@ -1,0 +1,15 @@
+PARSED
+
+(1 2)
+
+CODE
+
+(1 2)
+
+ERROR
+
+  trace:  play:
+          code  (1 2)
+
+
+  need-gate:  @ud

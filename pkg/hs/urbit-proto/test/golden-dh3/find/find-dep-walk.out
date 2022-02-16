@@ -1,0 +1,41 @@
+PARSED
+
+=/  f
+  ^-  $-(@ $)
+  |=(a {@ @})
+=/  c
+  ^-  {a|@ b|(f a)}
+  [1 2 3]
+b.c
+
+CODE
+
+=+  ^=  f
+    ^-  $-(@ $)
+    |=(a {@ @})
+=+  ^=  c
+    ^-  {a|@ b|(f a)}
+    [1 2 3]
+b.c
+
+COLD
+
+=+  |=(a {@ @})
+=+  [1 2 3]
++7
+
+TYPE
+
+=>  :-  :+  :-  0
+            =>  0
+            |=(_ {@ @})
+          0
+        =>  0
+        |=(_ {@ @})
+    1
+{@ @}
+Cell' (Aura' "") (Cons' (Cons' (Cons' (Atom' 0 Sand "") (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura "")))) (Cons' (Atom' 0 Sand "") (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura ""))))) (Atom' 1 Sand "ud")) (Aura "")
+
+BASE
+
+[2 3]

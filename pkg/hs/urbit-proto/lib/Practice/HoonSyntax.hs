@@ -163,10 +163,7 @@ vul = string "::"
 -- The actual parser -----------------------------------------------------------
 
 hoon :: Parser Hoon
-hoon = choice
-  [ rune
-  , long
-  ]
+hoon = modally rune long
 
 skin :: Parser Skin
 skin = hoon
@@ -252,7 +249,7 @@ rune = choice
 -- | Irregular forms including binary operators.
 long :: Parser Hoon
 long = wide do
-  hd <- scat
+  hd <- rune <|> scat
   choice
     [ char '='  *> hoon <&> Ktts hd
     , char '|'  *> spec <&> Bcts hd

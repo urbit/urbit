@@ -204,8 +204,8 @@ lock = \case
     Clls h j k -> Clkt (lock x) h j k
     Clkt h j k l -> Cltr [lock x, h, j, k, l]
     Cltr hs -> Cltr (lock x : hs)
-    h -> Cnhp (lock x) h
-  Lamb' x c -> Brts (lock x) (shut $ fmap hack c)
+    h -> Clhp (lock x) h
+  Lamb' x c -> Tsgr (lock x) $ Brts Wild (shut $ fmap hack c)
   Name' f x -> Ktts (Wung [Ally f]) (lock x)
   --
   Plus' x -> Dtls (lock x)
@@ -219,8 +219,10 @@ lock = \case
   --
   Aura' au -> Bass (Aur au)
   Fork' as au -> Bass (Fok (toList as) au)
-  Cell' t s c -> Bccl (lock t) [Brts (lock s) (shut $ fmap hack c)]
-  Gate' t s c -> Bchp (lock t) $ Brts (lock s) (shut $ fmap hack c)
+  Cell' t s c -> Tsgr (lock s) $ Bccl (lock t) case shut $ fmap hack c of
+    Bccl h hs -> h:hs
+    h -> [h]
+  Gate' t s c -> Tsgr (lock s) $ Bchp (lock t) (shut $ fmap hack c)
   Mask' f x -> Bcts (Wung [Ally f]) (lock x)
   Noun' -> Bass Non
   Void' -> Bass Vod

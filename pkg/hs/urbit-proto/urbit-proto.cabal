@@ -23,11 +23,8 @@ library
       Deppy.ToUntyped
       Hoon.Core
       Nock
-      Practice.DependentHoon
-      Practice.DependentHoon2
       Practice.DependentHoon3
       Practice.DependentLambda
-      Practice.Hoon2DependentHoon
       Practice.Hoon2DependentHoon3
       Practice.Hoon2DependentLambda
       Practice.HoonCommon

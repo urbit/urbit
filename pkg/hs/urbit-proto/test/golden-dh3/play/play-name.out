@@ -1,0 +1,20 @@
+PARSED
+
+a=1
+
+CODE
+
+a=1
+
+COLD
+
+1
+
+TYPE
+
+a|@ud
+Mask' "a" (Aura' "ud")
+
+BASE
+
+1

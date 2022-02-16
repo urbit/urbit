@@ -46,6 +46,8 @@ data Code a
   | Nest { cod :: Code a, typ :: Code a }
   deriving (Functor, Foldable, Traversable)
 
+deriving instance Show a => Show (Code a)
+
 -- | A desugared skin; i.e., a pattern.
 data Pelt a
   = Punt                    -- ^ _     wildcard
@@ -57,6 +59,8 @@ data Pelt a
   | Pest (Pelt a) (Code a)  -- ^ /   patern nest
   -- | Past (Pelt a) (Code a)  -- ^ ``  pattern cast
   deriving (Functor, Foldable, Traversable)
+
+deriving instance Show a => Show (Pelt a)
 
 -- | Air-chilled wing. In the course of type checking, a Code with ordinary
 -- wings in it, such as a.b, is translated into on where those wings have been
@@ -181,6 +185,8 @@ data Base a
   | Type'
   deriving (Functor, Foldable, Traversable)
 
+deriving instance Show a => Show (Base a)
+
 -- | Read a value back into code, with reference to the current level.
 loft :: Level -> Base a -> Code (Hop Stub a)
 loft lvl = \case
@@ -202,7 +208,7 @@ loft lvl = \case
   -- If my understanding is correct, this single difference is the way in which
   -- subject oriented programming is easier to understand than de Bruijn.
   --
-  Lamb' s a -> With (loft lvl s) $ Lamb Punt a
+  Lamb' s a -> Lamb Punt $ luft lvl s a -- With (loft lvl s) $ Lamb Punt a
   Name' n a -> Name n (loft lvl a)
   --
   Plus' a -> Plus (loft lvl a)
@@ -211,12 +217,16 @@ loft lvl = \case
   --
   Aura' au -> Aura au
   Fork' as au -> Fork as au
-  Cell' t s c -> With (loft lvl s) $ Cell (loft lvl t) c
-  Gate' t s c -> With (loft lvl s) $ Gate (loft lvl t) c
+  -- previously With (loft lvl s) $ Cell (loft lvl t) c, but this made test
+  -- output unpleasant. Same with gate
+  Cell' t s c -> Cell (loft lvl t) (luft lvl s c)
+  Gate' t s c -> Gate (loft lvl t) (luft lvl s c)
   Mask' n b -> Mask n (loft lvl b)
   Noun' -> Noun
   Void' -> Void
   Type' -> Type
+ where
+  luft l sub cod = loft (l + 1) $ eval (Cons' sub $ Stop' (Leg' (l + 1, 3))) cod
 
 -- | Axially project a value; i.e. implement Nock 0 or 9.
 look :: Stub -> Base a -> Base a
@@ -373,7 +383,7 @@ hop R = peg 3
 
 peg :: Axis -> Axis -> Axis
 peg a = \case
-  0 -> 0  -- I guess? the hoon diverges
+  0 -> error "zero axis"  -- I guess? the hoon diverges
   1 -> a
   2 -> a * 2
   3 -> a * 2 + 1
@@ -382,7 +392,7 @@ peg a = \case
 -- | Combo of cap and mas. FIXME name change.
 cut :: Axis -> Maybe (Step, Axis)
 cut = \case
-  0 -> Nothing
+  0 -> error "zero axis"
   1 -> Nothing
   2 -> Just (L, 1)
   3 -> Just (R, 1)
@@ -415,7 +425,7 @@ find sub@Con{lvl, sut, ken} win = act (ActFind sut win) do
  where
   fond :: Con a -> Wing -> Check (Stub, Con a)
   fond con@Con{lvl, sut, ken} = \case
-    [] -> pure (Leg 0, con)
+    [] -> pure (Leg 1, con)
     l:ls -> fond sub ls >>= \case
       -- (_, Arm{}) -> bail undefined  -- arm must occur leftmost
       (Leg a, con) -> do
@@ -443,12 +453,12 @@ find sub@Con{lvl, sut, ken} win = act (ActFind sut win) do
     (_,           _)           -> bailFail
 
   ally :: Var a => Con a -> Term -> Check (Stub, Con a)
-  ally con f = maybe (bail $ FindFail f sut) pure $ lope con
+  ally con@Con{sut} f = maybe (bail $ FindFail f sut) pure $ lope con
    where
     lope :: Con a -> Maybe (Stub, Con a)
     lope con@Con{sut, ken} = case sut of
       Mask' g t
-        | f == g    -> pure (Leg 1, con)
+        | f == g    -> pure (Leg 1, con{sut=t})
         | otherwise -> Nothing
 
       Cell' t s c -> asum
@@ -852,12 +862,14 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay cod) case cod of
 
   Name n c -> do
     (x, t) <- play con c
-    pure (Name n x, Mask' n t)
+    -- XX The fact that I want to strip name here bodes mildly ill for mask-name
+    -- unification.
+    pure (x, Mask' n t)
 
   Plus c -> do
     -- Following 140, we do not propagate aura.
     x <- work con FitNest c (Aura' "")
-    pure (x, Aura' "")
+    pure (Plus x, Aura' "")
 
   Slam c d -> do
     (x, ct) <- play con c

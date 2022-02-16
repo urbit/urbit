@@ -1,0 +1,21 @@
+PARSED
+
+$-(t|$ t)
+
+CODE
+
+$-(t|$ t)
+
+COLD
+
+$-(t|$ +3)
+
+TYPE
+
+$
+Type'
+
+BASE
+
+=>  0
+$-(t|$ +3)

@@ -42,7 +42,7 @@ testEachPass file =
         "PARSED\n\n" <> renderLBS cst <>
         "\n\nCODE\n\n" <> renderLBS cod <>
         "\n\nCOLD\n\n" <> renderLBS cld <>
-        "\n\nTYPE\n\n" <> renderLBS typ <>
+        "\n\nTYPE\n\n" <> renderLBS typ <> "\n" <> encodeUtf8 (LT.fromStrict $ tshow typ) <>
         "\n\nBASE\n\n" <> renderLBS bas
 
  where

@@ -1,0 +1,44 @@
+PARSED
+
+^-  {@ @ @}
+[1 2]
+
+CODE
+
+^-  {@ @ @}
+[1 2]
+
+ERROR
+
+  trace:  play:
+          code  ^-  {@ @ @}
+                [1 2]
+
+
+          work:
+          mode  nest
+          code  [1 2]
+          type  =>  0
+                {@ @ @}
+
+
+          work:
+          mode  nest
+          code  2
+          type  =>  [0 1]
+                {@ @}
+
+
+          nest:
+          have  @ud
+          need  =>  [0 1]
+                {@ @}
+
+
+
+  nest-fail:
+  have  @ud
+  need  =>  [0 1]
+        {@ @}
+
+

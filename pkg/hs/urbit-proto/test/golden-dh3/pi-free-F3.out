@@ -1,0 +1,33 @@
+PARSED
+
+$-(t|$ q)
+
+CODE
+
+$-(t|$ q)
+
+ERROR
+
+  trace:  play:
+          code  $-(t|$ q)
+
+          work:
+          mode  nest
+          code  q
+          type  $
+
+          play:
+          code  q
+
+          find:
+          wing  q
+          type  =>  0
+                {* t|$}
+
+
+
+  find.q
+  type  =>  0
+        {* t|$}
+
+

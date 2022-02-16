@@ -174,8 +174,8 @@ instance Rolling Act where
       , ("need", tank $ roll u, Leaf "")
       ]
     ActFind t w -> Huge $ Stem "find:" "" []
-      [ ("type", tank $ roll t, Leaf "")
-      , ("wing", tank $ roll w, Leaf "")
+      [ ("wing", tank $ roll w, Leaf "")
+      , ("type", tank $ roll t, Leaf "")
       ]
     ActToil f p t -> Huge $ Stem "toil:" "" []
       [ ("mode", Leaf $ tshow f,         Leaf "")

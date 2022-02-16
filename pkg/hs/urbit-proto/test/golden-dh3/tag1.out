@@ -1,0 +1,20 @@
+PARSED
+
+%1
+
+CODE
+
+%1
+
+COLD
+
+%1
+
+TYPE
+
+$1
+Fork' (fromList [1]) "ud"
+
+BASE
+
+%1

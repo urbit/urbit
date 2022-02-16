@@ -1,0 +1,21 @@
+PARSED
+
+[1 [4 5 6] 2 3]
+
+CODE
+
+[1 [4 5 6] 2 3]
+
+COLD
+
+[1 [4 5 6] 2 3]
+
+TYPE
+
+=>  0
+{@ud {@ud @ud @ud} @ud @ud}
+Cell' (Aura' "ud") (Atom' 0 Sand "") (Cell (Cell (Aura "ud") (Cell (Aura "ud") (Aura "ud"))) (Cell (Aura "ud") (Aura "ud")))
+
+BASE
+
+[1 [4 5 6] 2 3]
