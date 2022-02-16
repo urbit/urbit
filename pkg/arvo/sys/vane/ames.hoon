@@ -311,12 +311,13 @@
       wid=(cut 3 [68 2] purr)
       dat=(rsh 3^70 purr)
   ==
+++  response-size  13  ::  1kb 
 ::
 ++  decode-response-msg
   |=  [total=@ud hav=(list have)]
   ^-  roar
   =/  mess=@
-    %+  rep  13
+    %+  rep  response-size
     %+  turn  (flop hav)
     |=  =have
     dat.have
@@ -1103,11 +1104,6 @@
   =?  old-state  ?=(%5 -.old-state)  %6^(state-5-to-6 +.old-state)
   ::
   ?>  ?=(%6 -.old-state)
-  =.  peers.old-state
-    %-  ~(run by peers.old-state)
-    |=  =ship-state
-    ?.  ?=(%known -.ship-state)  ship-state
-    ship-state(scry *scry-state)
   ames-gate(ames-state +.old-state)
   ::
   ++  state-5-to-6
@@ -2556,7 +2552,6 @@
             =.  order.scry
               (~(put by order.scry) path keen-id)
             =|  =keen-state
-            =.  wan.keen-state  ~  :: TODO
             =.  keens.scry  (put:orm keens.scry keen-id keen-state)
             ke-abet:ke-start:(ke-abed:keen-core path)
           ::
@@ -2607,8 +2602,7 @@
             ::
             ++  ke-show
               =,  keen
-              :*  wan=(lent wan)
-                  nex=(lent nex) 
+              :*  nex=(lent nex) 
                   hav=(lent hav)
                   num-fragments=num-fragments
                   num-received=num-received
@@ -2626,6 +2620,7 @@
             ::
             ++  ke-abed 
               |=  p=^path
+              ~|  no-keen-for-path/p
               =.  keen-id  (~(got by order.scry) p)
               ke-core(path p, keen (got:orm keens.scry keen-id))
             ::
@@ -2640,6 +2635,8 @@
               ^-  (unit ^path)
               ?^  out  out
               ?:(=(id i) `p ~)
+            ++  ke-deq
+              (deq want)
             ::
             ++  ke-encode-req
               |=  frag=@ud
@@ -2647,36 +2644,40 @@
           ::
             ++  ke-on-ack
               =|  marked=(list want)
-              =/  wan   wan.keen
               |=  fra=@ud 
-              =/  og  ke-core
-              |-  ^-  [found=? _ke-core]
-              ?:  =(~ wan)  
-                ~&  missing-ack/fra
-                [| og]
-              =^  =want  wan   wan
+              ^-  [? _ke-core]
+              =;  [[found=? cor=_ke-core] wan=(pha want)]
+                ?.  found
+                  [found ke-core]
+                [found cor(wan.keen wan)]
+              %^  (dip-left:ke-deq ,[found=? cor=_ke-core])  wan.keen
+                [| ke-core]
+              |=  [[found=? cor=_ke-core] =want]
+              ^-  [(unit _want) stop=? [found=? cor=_ke-core]]
+              =.  ke-core  cor
               ?:  =(fra fra.want)
-                =.  metrics.keen  
+                =.  metrics.keen
                   (on-ack:ke-gauge +>.want)
-                [& ke-core(wan.keen (welt marked wan))]
+                [~ %.y %.y ke-core]
               =.  skips.want  +(skips.want)
               =^  resend=?  metrics.keen
                 (on-skipped-packet:ke-gauge +>.want)
               ?.  resend
-                $(marked [want marked])
+                [`want %.n found ke-core]
               =.  tries.want  +(tries.want)
               =.  last-sent.want  now
-              =.  ke-core  
+              =.  ke-core
                 (ke-resend [fra hoot]:want)
-              $(marked [want marked])
+              [`want %.n found ke-core]
             ::
             ++  ke-start
               ~|  tried-to-start-request-already-in-progress/path
+              ~&  start/now
               ?>  =(num-fragments.keen 0)
               =/  fra=@  1
               =/  req  (ke-encode-req fra)
               =/  =want  [fra req now 1 0]
-              =.  wan.keen  ~[want]
+              =.  wan.keen  (cons:ke-deq *(pha ^want) want)
               =.  metrics.keen  (on-sent:ke-gauge 1)
               =-  ke-core(event-core -)
               %-  emit
@@ -2702,7 +2703,6 @@
               ::
               %_  keen
                 num-fragments  siz.rawr
-                wan  paz
                 nex  (tail paz)
               ==
             ::  +ke-continue: send packets according to normal congestion flow
@@ -2713,32 +2713,14 @@
               =/  max  num-slots:ke-gauge
               |-  ^+  ke-core
               ?:  |(=(~ nex.keen) =(inx max))
-                (ke-update-last-sent (flop sent))
-              =^  =want  nex.keen  nex.keen
-              =.  metrics.keen  (on-sent:ke-gauge 1)
-              =.  ke-core  (ke-emit hoot.want)
-              $(inx +(inx), sent [fra.want sent])
-            ::
-            ++  ke-update-last-sent
-              !.
-              =|  naw=(list want)
-              |=  sent=(list @ud)
-              ?:  =(~ wan.keen)
-                ?~  sent  
-                  =.  wan.keen 
-                    (welt naw wan.keen)
-                  ke-core
-                ~&  bad-update-fra/sent  !!
-              =^  =want  wan.keen  wan.keen
-              ?~  sent
-                =.  wan.keen 
-                  (welt [want naw] wan.keen)
                 ke-core
-              ?.  =(i.sent fra.want)
-                $(naw [want naw])
+              =^  =want  nex.keen  nex.keen
               =.  last-sent.want  now
               =.  tries.want  +(tries.want)
-              $(sent t.sent, naw [want naw])
+              =.  wan.keen  (snoc:ke-deq wan.keen want)
+              =.  metrics.keen  (on-sent:ke-gauge 1)
+              =.  ke-core  (ke-emit hoot.want)
+              $(inx +(inx))
             ::
             ++  ke-resend
               |=  [fra=@ud =hoot]
@@ -2753,6 +2735,7 @@
             ::
             ++  ke-decode-full
               =,  keen
+              ~&  num/num-received
               ~|  %frag-mismatch
               ~|  have/num-received
               ~|  need/num-fragments
@@ -2760,16 +2743,6 @@
               ?>  =((lent hav) num-received)
               (decode-response-msg num-fragments hav)
             ::
-            ++  ke-is-dupe-ack
-              |=  fra=@ud
-              ^-  ?
-              ?:  =(num-fragments.keen 0)  |
-              ?:  =(~ wan.keen)  &
-              =^  =want  wan.keen  wan.keen
-              ?.  =(fra fra.want)
-                $
-              |
-
             ::
             ++  ke-rcv
               |=  [fra=@ud =purr =lane:ames]
@@ -2781,23 +2754,21 @@
               ?:  =(0 siz.rawr)
                 ?>  =(~ dat.rawr)
                 (ke-done sig.rawr ~)
-              ~|  out-of-order/fra
-              ~|  wanted/+(num-received.keen)
-              ?:  (ke-is-dupe-ack fra)  ke-core
               ::  update congestion, or fill details
               ::
               =?  ke-core  =(0 num-fragments.keen)
                 ?>  =(fra 1)
                 (ke-first-rcv rawr)
               ::
-              :: ?>  =(fra +(num-received.keen))  :: TODO: fix OoO
-              ~|  failed-signature/sig
-              ?>  (veri:keys ship life.peer [sig dat]:rawr)
+              ~|  failed-signature/fra^`@ux`sig.rawr
+              ~|  life.peer
+              ?>  (veri-fra:keys ship life.peer path fra [dat sig]:rawr)
               =^  found=?  ke-core
                 (ke-on-ack fra)
+              ::
               ?.  found
                 ::  discard changes
-                ~&  missing-fra/fra
+                ~&  dupe-ack/fra
                 og
               =/  =have   [fra rawr]
               =.  hav.keen
@@ -2823,8 +2794,9 @@
             ++  ke-set-wake
               ^+  ke-core
               =/  next-wake=(unit @da)
-                ?~  wan.keen    ~
-                `(next-expiry:ke-gauge +>:i.wan.keen)
+                 =/  want=(unit want)  (peek-left:ke-deq wan.keen)
+                 ?~  want  ~
+                `(next-expiry:ke-gauge +>:u.want)
               ?:  =(next-wake next-wake.keen)
                 ke-core
               =?  ke-core  !=(~ next-wake.keen)
@@ -2855,12 +2827,15 @@
                   ==
                 route.peer(direct.u %.n)
               =.  metrics.keen  on-timeout:ke-gauge
-              ::
-              ?>  ?=(^ wan.keen)
-              =:  tries.i.wan.keen  +(tries.i.wan.keen)
-                  last-sent.i.wan.keen  now
+              =^  want=(unit want)  wan.keen
+                (pop-left:ke-deq wan.keen)
+              ~|  %took-wake-for-empty-want
+              ?>  ?=(^ want)
+              =:  tries.u.want  +(tries.u.want)
+                  last-sent.u.want  now
                 ==
-              (ke-resend [fra hoot]:i.wan.keen)
+              =.  wan.keen  (cons:ke-deq wan.keen u.want)
+              (ke-resend [fra hoot]:u.want)
             --
           --
         ++  on-keen
@@ -2999,7 +2974,7 @@
       ::NOTE  path is expected to be a namespace path without the ship
       ^-  hoot  ^-  @
       =+  bod=(request-body path num)
-      =+  sig=64^(fil 5 16 0xdead.beef)  :: 64^(sign:keys dat.bod)
+      =+  sig=64^(sign:keys dat.bod)
       =+  syn=(can 3 sig bod ~)
       %+  con  0b100  ::NOTE  request bit
       %^  encode-packet  |
@@ -3024,10 +2999,9 @@
       ::  prepend a signature and split the data into 1024-byte fragments
       ::
       =/  frag=(list @)
-        =/  sig=@  :: (full:keys path data)
-          (fil 5 16 0xdead.beef)
+        =/  sig=@  (full:keys path data)
         ?~  data  [sig]~
-        %+  rip  13  ::NOTE  1024 bytes
+        %+  rip  response-size  ::NOTE  1024 bytes
         (cat 3 sig (jam data))  ::TODO  should include life
       ::  sign & packetize the fragments
       ::
@@ -3046,8 +3020,7 @@
             wid^dat        ::  response data fragment
         ==
       =/  sig=byts
-        64^(fil 5 16 0xcafe.face)
-        :: 64^(sign:keys (can 3 req bod ~))
+        64^(sign-fra:keys path num dat)
       (can 3 req sig bod ~)
     ::
     ++  keys
@@ -3058,6 +3031,14 @@
       ++  full
         |=  [=path data=$@(~ (cask))]
         (sign (mess our life.ames-state path data))
+      ::
+      ++  sign-fra
+        |=  [=path fra=@ dat=@ux]
+        (sign (jam path fra dat))
+      ::
+      ++  veri-fra
+        |=  [who=ship lyf=life =path fra=@ dat=@ux sig=@]
+        (veri who lyf sig (jam path fra dat))
       ::
       ++  sign
         sigh:as:crypto-core.ames-state
@@ -3082,9 +3063,8 @@
       ++  veri
         |=  [who=ship lyf=life sig=@ dat=@]
         ^-  ?
-        &
-        :: =/  =^pass  (pass who lyf)
-        :: (safe:as:(com:nu:crub:crypto pass) sig dat)
+        =/  =^pass  (pass who lyf)
+        (safe:as:(com:nu:crub:crypto pass) sig dat)
       ::
       ++  meri
         |=  [who=ship lyf=life pax=path sig=@ dat=$@(~ (cask))]
@@ -3140,7 +3120,7 @@
             ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
             siz.rawr
           +(num-received)
-        ?>  (veri:keys from life [sig dat]:rawr)
+        :: ?>  (veri:keys from life path.peep num.peep dat.rawr)
         (~(put by fragments) num.peep [wid dat]:rawr)
       ::
       ?:  =(num-fragments num-received):partial
