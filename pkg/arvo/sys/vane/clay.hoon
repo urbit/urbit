@@ -2981,7 +2981,6 @@
       ..start-request
     (duce for u.new-sub)
   ::
-  ::TODO  should this try-fill-sub or w/e in case its now in our cache?
   ++  retry-with-ames
     |=  inx=@ud
     ^+  ..retry-with-ames
@@ -2990,8 +2989,6 @@
     =/  sat=update-state  (~(got by bom.u.ref) inx)
     =.  ..retry-with-ames
       =<  ?>(?=(^ ref) .)
-      ::REVIEW  isn't this a bit much, if we're already partway through?
-      ::        do we not want to just call into +work in that case?
       (send-over-ames hen her inx syd `rave.sat)
     =.  bom.u.ref  (~(put by bom.u.ref) inx sat(scry ~))
     ..retry-with-ames
@@ -4997,9 +4994,8 @@
         %+  bind  data.hin
         |=  =(cask)
         ^-  rand
-        ::REVIEW  this feels a bit dumb, but the alternative
-        ::        is reconstructing it from ref:den instead,
-        ::        which is also weird in its own ways.
+        ::  retrieve the request from the scry path
+        ::
         =+  (need (de-omen path.hin))
         =/  =care  ;;(care ?@(vis (rsh 3 vis) car.vis))
         [[care r.bem q.bem] s.bem cask]
