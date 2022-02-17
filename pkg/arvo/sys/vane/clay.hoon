@@ -236,7 +236,7 @@
       =rave
       scry=(unit @da)                                   ::  if scry, timeout
       have=(map lobe blob)
-      need=(list $@(lobe [when=@da =path =lobe]))       ::  opt deets for scry
+      need=(list $@(lobe [=aeon =path =lobe]))          ::  opt deets for scry
       nako=(qeu (unit nako))
       busy=_|
   ==
@@ -3166,16 +3166,14 @@
     ++  missing-blobs
       |=  =nako
       =|  miss=(set lobe)
-      ^-  (list [@da path lobe])
-      ::REVIEW  should this get sorted so that we prefer getting files
-      ::        from the latest commit, if there are duplicates?
+      ^-  (list [aeon path lobe])
       =/  yakis  ~(tap in lar.nako)
-      |-  ^-  (list [@da path lobe])
+      |-  ^-  (list [aeon path lobe])
       =*  yaki-loop  $
       ?~  yakis
         ~
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
-      |-  ^-  (list [@da path lobe])
+      |-  ^-  (list [aeon path lobe])
       =*  blob-loop  $
       ?~  lobes
         yaki-loop(yakis t.yakis)
@@ -3184,8 +3182,16 @@
               (~(has in miss) lobe)
           ==
         blob-loop(lobes t.lobes)
-      :-  [t.i.yakis i.lobes]
-      blob-loop(lobes t.lobes, miss (~(put in miss) lobe))
+      =;  =aeon
+        :-  [aeon i.lobes]
+        blob-loop(lobes t.lobes, miss (~(put in miss) lobe))
+      ::  find the aeon corresponding to the commit containing this lobe.
+      ::  we unfortunately do not have a reverse lookup map.
+      ::
+      =/  l=(list [a=aeon t=tako])  ~(tap by gar.nako)
+      |-
+      ?~  l  ~|([%missing-aeon-for-tako her syd `@uw`tako] !!)
+      ?:(=(r.i.yakis t.i.l) a.i.l $(l t.l))
     ::
     ::  Receive backfill response
     ::
@@ -3262,7 +3268,7 @@
           ::  make the request over remote scry
           ::
           =/  =mood
-            [%x da+when path]:i.need.sat
+            [%x ud+aeon path]:i.need.sat
           [`- +]:(send-over-scry %back-index hen her inx syd mood)
         ::  otherwise, request over ames
         ::
