@@ -12230,7 +12230,7 @@
     =^  lazed  grub  (caching-laze nym hud dom)
     =/  yet  (core sut [nym hud %gold] sut lazed dom)
     =/  hum  (core dox [nym hud %gold] dox lazed dom)
-    =^  val  grub  (caching-balk(sut yet) hum hud dom)
+    =^  val  grub  (caching-balk(sut yet) hum hud dom) :: XX why?
     :_  grub
     [yet hum]
   ::
@@ -12358,8 +12358,7 @@
         =^  val  grub
           |-  ^-  [(set gol-type) _grub]
           ?~  tys
-            :_  grub
-            ~
+            [~ grub]
           =^  a  grub  ^$(log i.tys)
           =^  b  grub  $(tys t.tys)
           :_  grub
@@ -12377,7 +12376,14 @@
           [%cell *]  (nice log &)
           [%core *]  ~_  leaf+"core-number-of-chapters"
                      (nice log =(~(wyt by dom) ~(wyt by q.r.q.log)))
-          [%fork *]  log
+          [%fork *]
+        =/  tys  ~(tap in p.log)
+        |-  ^-  gol-type
+        ?~  tys
+          log
+        =/  a  ^$(log i.tys)
+        =/  b  $(tys t.tys)
+        log
       ==
     ::  get map of tomes if exists
     ::
