@@ -10421,8 +10421,9 @@
     [p.pro %1 p.u.jon]
   ::
   ++  bran
+    ~+
     =+  gil=*(set type)
-    |-  ^-  seminoun:musk
+    |-  ~+  ^-  seminoun:musk
     ?-    sut
       %noun      [full/[~ ~ ~] ~]
       %void      [full/[~ ~ ~] ~]
@@ -11900,6 +11901,8 @@
     ::
     |=  [hud=poly gol=type gen=hoon]
     ^-  [nock _grub]
+    ~+
+    =+  %hemp-141
     ?-    hud
         %dry
       =^  val  grub  (caching-mint gol gen)
@@ -11915,6 +11918,8 @@
     ::
     |=  [hud=poly gol=type gen=hoon]
     ^-  nock
+    ~+
+    =+  %hemp-141
     ?-  hud
       %dry  q:(mint gol gen)
       %wet  q:(mint(vet |) gol gen)
@@ -11924,7 +11929,9 @@
     ::  produce lazy core generator for static execution
     ::
     |=  [nym=(unit term) hud=poly dom=(map term tome)]
+    ~+
     ^-  [seminoun _grub]
+    =+  %hemp-141
     ::  tal: map from battery axis to foot
     ::
     =;  tal=(map @ud hoon)
@@ -12001,7 +12008,9 @@
     ::  produce lazy core generator for static execution
     ::
     |=  [nym=(unit term) hud=poly dom=(map term tome)]
+    ~+
     ^-  seminoun
+    =+  %hemp-141
     ::  tal: map from battery axis to foot
     ::
     =;  tal=(map @ud hoon)
