@@ -236,7 +236,7 @@
       =rave
       scry=(unit @da)  ::  timeout timer if scry
       have=(map lobe blob)
-      need=(list [=path =lobe])
+      need=(list [when=@da =path =lobe])
       nako=(qeu (unit nako))
       busy=_|
   ==
@@ -3159,21 +3159,27 @@
     ::
     ++  missing-blobs
       |=  =nako
-      ^-  (list [path lobe])
+      =|  miss=(set lobe)
+      ^-  (list [@da path lobe])
+      ::REVIEW  should this get sorted so that we prefer getting files
+      ::        from the latest commit, if there are duplicates?
       =/  yakis  ~(tap in lar.nako)
-      |-  ^-  (list [path lobe])
+      |-  ^-  (list [@da path lobe])
       =*  yaki-loop  $
       ?~  yakis
         ~
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
-      |-  ^-  (list [path lobe])
+      |-  ^-  (list [@da path lobe])
       =*  blob-loop  $
       ?~  lobes
         yaki-loop(yakis t.yakis)
-      ?:  (~(has by lat.ran) lobe.i.lobes)
+      =*  lobe  lobe.i.lobes
+      ?:  ?|  (~(has by lat.ran) lobe)
+              (~(has in miss) lobe)
+          ==
         blob-loop(lobes t.lobes)
-      :-  i.lobes
-      blob-loop(lobes t.lobes)
+      :-  [t.i.yakis i.lobes]
+      blob-loop(lobes t.lobes, miss (~(put in miss) lobe))
     ::
     ::  Receive backfill response
     ::
@@ -3187,9 +3193,12 @@
               !(~(has by have.sat) q.q.blob)
           ==
         ::NOTE  we have already fallen back to the ames case,
+        ::      (scry responses always come in as %direct blobs)
         ::      so we do not need the real path here anymore.
         ::REVIEW  right? or is this considered too fragile?
-        [[/ q.q.blob] need.sat]
+        ::        actually yeah, we might retry scry later...
+        ::TODO  also wouldn't this want to check if lobe was already in need?
+        [[*@da / q.q.blob] need.sat]
       ::  We can't put a blob in lat.ran if its parent isn't already
       ::  there.  Unions are in reverse order so we don't overwrite
       ::  existing blobs.
@@ -3243,13 +3252,13 @@
         ::  :ship's remote scry isn't known to be broken,
         ::  or we learned it was broken more than an hour ago,
         ::
-        ?:  ?&  ?=(%sing -.rave.sat)
-            ?|  !(~(has by sad) her)
-                (lth now (add ~h1 (~(got by sad) her)))
-            ==  ==
+        ?:  ?|  !(~(has by sad) her)
+                (lth now (add scry-retry-time (~(got by sad) her)))
+            ==
           ::  make the request over remote scry
           ::
-          =/  =mood  [%x case.mood.rave.sat path.i.need.sat]
+          =/  =mood
+            [%x da+when path]:i.need.sat
           [`- +]:(send-over-scry %back-index hen her inx syd mood)
         ::  otherwise, request over ames
         ::
@@ -4846,7 +4855,9 @@
     ^-  update-state
     ::NOTE  putting / paths is fine, the path is only used
     ::      when dealing with scry responses
-    [duct rave ~ have (turn need (lead /)) nako busy]
+    ::TODO  but that isn't actually true, is it? we might fall back to
+    ::      scry in the middle, right?
+    [duct rave ~ have (turn need (corl (lead *@da) (lead /))) nako busy]
   --
 ::
 ++  scry                                              ::  inspect
