@@ -7143,13 +7143,13 @@
 +$  garb  (trel (unit term) poly vair)                  ::  core
 ::
 ++  lru                                                    ::  compiler cache
-  :*  nes=(lu (pair type type) ?)                          ::  +nest
-      res=(lu (pair type hoon) type)                       ::  +rest
-      mit=(lu (pair type hoon) (pair type nock))           ::  +mint
-      mul=(lu (qual type type type hoon) (pair type type)) ::  +mull
-      fis=(lu (pair type axis) nock)                       ::  +fish
-      cro=(lu (pair type type) type)                       ::  +crop
-      fus=(lu (pair type type) type)                       ::  +fuse
+  :*  nes=(lu (trel ? type type) ?)                                 ::  +nest
+      res=(lu (trel ? type hoon) type)                              ::  +rest
+      mit=(lu (qual ? type type hoon) (pair type nock))             ::  +mint
+      mul=(lu (pair ? (qual type type type hoon)) (pair type type)) ::  +mull
+      fis=(lu (trel ? type axis) nock)                              ::  +fish
+      cro=(lu (trel ? type type) type)                              ::  +crop
+      fus=(lu (trel ? type type) type)                              ::  +fuse
   ==
 ::
 +$  grub                                                    ::  ut cache
@@ -7160,10 +7160,10 @@
       fis=_(new:fis:lru 100)                                ::  +fish
       cro=_(new:cro:lru 2.450)                              ::  +crop
       fus=_(new:fus:lru 2.450)                              ::  +fuse
-      nen=(map (pair type type) ?)                          ::  internal +nest
-      con=(map (pair type type) type)                       ::  internal +crop
-      fun=(map (pair type type) type)                       ::  internal +fuse
-      fin=(map (pair type axis) nock)                       ::  internal +fish
+      nen=(map (trel ? type type) ?)                        ::  internal +nest
+      con=(map (trel ? type type) type)                     ::  internal +crop
+      fun=(map (trel ? type type) type)                     ::  internal +fuse
+      fin=(map (trel ? type axis) nock)                     ::  internal +fish
   ==                                                    ::
 ::
 +$  pony                                                ::  raw match
