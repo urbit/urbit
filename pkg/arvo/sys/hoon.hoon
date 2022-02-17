@@ -12426,11 +12426,9 @@
       ^-  [type _grub]
       ?~  dag
         [%noun grub]
-      %.  u.dag
-      |=  a=(map term hoon)
       =/  gen=hoon
         ~_  leaf+"unexpected-arm.{(trip nam)}"
-        (~(got by a) nam)
+        (~(got by u.dag) nam)
       (caching-play(sut log) gen)
     ::
     ++  nice
