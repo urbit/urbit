@@ -234,9 +234,9 @@
 +$  update-state
   $:  =duct
       =rave
-      scry=(unit @da)  ::  timeout timer if scry
+      scry=(unit @da)                                   ::  if scry, timeout
       have=(map lobe blob)
-      need=(list [when=@da =path =lobe])
+      need=(list $@(lobe [when=@da =path =lobe]))       ::  opt deets for scry
       nako=(qeu (unit nako))
       busy=_|
   ==
@@ -3192,13 +3192,7 @@
               !(~(has by lat.ran) q.q.blob)
               !(~(has by have.sat) q.q.blob)
           ==
-        ::NOTE  we have already fallen back to the ames case,
-        ::      (scry responses always come in as %direct blobs)
-        ::      so we do not need the real path here anymore.
-        ::REVIEW  right? or is this considered too fragile?
-        ::        actually yeah, we might retry scry later...
-        ::TODO  also wouldn't this want to check if lobe was already in need?
-        [[*@da / q.q.blob] need.sat]
+        [q.q.blob need.sat]
       ::  We can't put a blob in lat.ran if its parent isn't already
       ::  there.  Unions are in reverse order so we don't overwrite
       ::  existing blobs.
@@ -3240,21 +3234,25 @@
       ::  another desk updating concurrently, or a previous update on this
       ::  same desk).
       ::
-      ?:  ?|  (~(has by lat.ran) lobe.i.need.sat)
-              (~(has by have.sat) lobe.i.need.sat)
+      =/  =lobe
+        ?@  i.need.sat  i.need.sat
+        lobe.i.need.sat
+      ?:  ?|  (~(has by lat.ran) lobe)
+              (~(has by have.sat) lobe)
           ==
         $(need.sat t.need.sat)
       ::  Otherwise, fetch the next blob
       ::
       =^  time=(unit @da)  ..foreign-update
         =<  ?>(?=(^ ref) .)
-        ::  if it is a single request, and
-        ::  :ship's remote scry isn't known to be broken,
+        ::  if we know a revision & path for the blob,
+        ::  and :ship's remote scry isn't known to be broken,
         ::  or we learned it was broken more than an hour ago,
         ::
-        ?:  ?|  !(~(has by sad) her)
+        ?:  ?&  ?=(^ i.need.sat)
+            ?|  !(~(has by sad) her)
                 (lth now (add scry-retry-time (~(got by sad) her)))
-            ==
+            ==  ==
           ::  make the request over remote scry
           ::
           =/  =mood
@@ -3265,7 +3263,7 @@
         :-  ~
         =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
         =/  =path  [%backfill syd (scot %ud inx) ~]
-        =/  =fill  [%0 syd lobe.i.need.sat]
+        =/  =fill  [%0 syd lobe]
         (emit hen %pass wire %a %plea her %c path fill)
       ..abet(busy.sat &, scry.sat time)
     ::
@@ -4853,11 +4851,7 @@
     %-  ~(run by bom.u.ref.rede-10)
     |=  update-state-10
     ^-  update-state
-    ::NOTE  putting / paths is fine, the path is only used
-    ::      when dealing with scry responses
-    ::TODO  but that isn't actually true, is it? we might fall back to
-    ::      scry in the middle, right?
-    [duct rave ~ have (turn need (corl (lead *@da) (lead /))) nako busy]
+    [duct rave ~ have need nako busy]
   --
 ::
 ++  scry                                              ::  inspect
