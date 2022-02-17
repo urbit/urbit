@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { AppName, Association } from '@urbit/api';
-import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
+import React, { ReactElement, ReactNode, useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
@@ -16,6 +16,8 @@ import RichText from '~/views/components/RichText';
 import { MessageInvite } from '~/views/landscape/components/MessageInvite';
 import { IS_MOBILE } from '~/logic/lib/platform';
 import useMetadataState from '~/logic/state/metadata';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import { useCopy } from '~/logic/lib/useCopy';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -77,6 +79,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const group = groups[association.group];
   let workspace = association.group;
   const [actionsWidth, setActionsWidth] = useState(0);
+  const permalink = useMemo(() => getPermalinkForGraph(association.group, association.resource), [association]);
+  const { doCopy, copyDisplay } = useCopy(permalink, <Icon icon='Copy' color='gray' pr={2} />, <Icon icon='Checkmark' color='gray' pr={2} />);
 
   if (group?.hidden && app === 'chat') {
     workspace = '/messages';
@@ -131,9 +135,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const titleText = IS_MOBILE && workspace === association.group
   ? (
     <Row width="100%">
-      <Text maxWidth="40%" textOverflow='ellipsis' overflow='hidden' whiteSpace='nowrap' fontWeight={600} fontSize="14px">{associations.groups[workspace]?.metadata?.title}</Text>
+      <Text maxWidth="38%" textOverflow='ellipsis' overflow='hidden' whiteSpace='nowrap' fontWeight={600} fontSize="14px">{associations.groups[workspace]?.metadata?.title}</Text>
       <Text fontWeight={600} fontSize="14px" mx={1}>{'>'}</Text>
-      <Text maxWidth="40%" textOverflow='ellipsis' overflow='hidden' whiteSpace='nowrap' fontWeight={600} fontSize="14px">{title}</Text>
+      <Text maxWidth="38%" textOverflow='ellipsis' overflow='hidden' whiteSpace='nowrap' fontWeight={600} fontSize="14px">{title}</Text>
     </Row>
   ) : (
     <Text
@@ -205,6 +209,12 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
         </Link>
       ) : null;
 
+  const copyControl = (
+    <Box onClick={doCopy} cursor="pointer">
+      {copyDisplay}
+    </Box>
+  );
+
   const menuControl = (
     <Link to={`${baseUrl}/settings`}>
       <Icon icon='Menu' color='gray' pr={2} />
@@ -247,6 +257,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           {...bind}
         >
           {extraControls}
+          {copyControl}
           {menuControl}
         </Box>
       </Box>

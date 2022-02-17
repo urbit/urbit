@@ -126,7 +126,7 @@ return (
     width="100%"
     alignItems="center"
     flexShrink={0}
-    height='48px'
+    minHeight='48px'
     backgroundColor="white"
     position="sticky"
     top="0px"
@@ -196,11 +196,11 @@ return (
             </Col>
           }
         >
-          <Row flexGrow={1} alignItems="center" justifyContent="space-between" width='100%' minWidth={0} flexShrink={0}>
-            <Row flexGrow={1} alignItems="center" minWidth={0} flexShrink={0} width={showTitleActions ? 'auto' : '100%'}>
+          <Row className="title-row" flexWrap="wrap" flexGrow={1} alignItems="center" justifyContent="space-between" width='100%' minWidth={0} flexShrink={0}>
+            <Row flexGrow={1} alignItems="center" minWidth={0} flexShrink={0} width={showTitleActions ? 'auto' : '100%'} py={2}>
               { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
               {IS_MOBILE && workspace.type === 'uqbar-home' ? (
-                <Text mono flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' maxWidth="135px" style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>
+                <Text mono flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' maxWidth="100%" style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>
                   ~{window.ship}
                 </Text>
               ) : (

@@ -56,16 +56,6 @@ export function GroupSettings(props: GroupSettingsProps) {
               <Text fontSize={2} fontWeight="600">
                 Channels
               </Text>
-              {isAdmin && (
-                <Box mt={3}>
-                  <Link to={`/~landscape${groupPath}/new`}>
-                    <Row display="flex" alignItems="center">
-                      <Icon icon="Plus" color="gray" pr={1} />
-                      <Text>Add Channel</Text>
-                    </Row>
-                  </Link>
-                </Box>
-              )}
               <Box mt="16px" mb="8px">
                 <Text color="gray">Sort Order</Text>
               </Box>

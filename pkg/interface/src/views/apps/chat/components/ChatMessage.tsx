@@ -420,7 +420,9 @@ function ChatMessage(props: ChatMessageProps) {
     [date, renderSigil]
   );
 
-  const likers = msg.signatures.filter(({ ship }) => ship !== msg.author).map(({ ship }) => ship);
+  const likers = msg.signatures
+    .map(({ ship }) => ship)
+    .filter((ship, ind, arr) => ship !== msg.author && arr.indexOf(ship) === ind);
   const didLike = Boolean(msg.author !== window.ship && msg.signatures.find(({ ship }) => ship === window.ship));
 
   const messageProps = {

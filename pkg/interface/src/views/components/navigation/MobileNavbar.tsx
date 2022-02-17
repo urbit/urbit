@@ -5,10 +5,12 @@ import UqbarLogo from '~/assets/img/uqbar-logo.png';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
 import useHarkState from '~/logic/state/hark';
 import { useDmUnreads } from '~/logic/lib/useDmUnreads';
+import { isMobileApp } from '~/logic/lib/platform';
+import { bootstrapApi } from '~/logic/api/bootstrap';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
-type NavItemIcon = 'Home' | 'Messages' | 'Notifications' | 'Menu';
+type NavItemIcon = 'Home' | 'Messages' | 'Notifications' | 'ArrowRefresh' | 'Menu';
 
 interface MobileNavItemProps {
   icon: NavItemIcon;
@@ -27,11 +29,14 @@ function MobileNavItem({
 }: MobileNavItemProps) {
   return (
     <Box p={2}
-      width="25vw"
+      width="20vw"
+      height="100%"
       display="flex"
       flexDirection="column"
+      justifyContent="center"
       alignItems="center"
       position="relative"
+      backgroundColor="washedGray"
     >
       {icon === 'Home' ? (
         <Image
@@ -71,15 +76,14 @@ export function MobileNavbar() {
     document.write([
         '<style>',
         '.mobileNavbar { display: none; }',
-        '@media screen and (orientation: portrait) and (min-height: ' + (Math.max(innerWidth, innerHeight) - 30) + 'px)',
+        '@media screen and (orientation: portrait) and (min-height: ' + (Math.max(innerWidth, innerHeight) - 10) + 'px)',
         '{ .mobileNavbar { display: inherit; } }',
-        '@media screen and (orientation: landscape) and (min-height: ' + (Math.min(innerWidth, innerHeight) - 50) + 'px)',
+        '@media screen and (orientation: landscape) and (min-height: ' + (Math.min(innerWidth, innerHeight) - 30) + 'px)',
         '{ .mobileNavbar { display: inherit; } }',
         '</style>'
     ].join(' '));
   }, []);
 
-  // 
   const options: NavItemLinkProps[] = useMemo(() => [
     {
       icon: 'Home',
@@ -94,16 +98,25 @@ export function MobileNavbar() {
       to: '/~notifications'
     },
     {
+      icon: 'ArrowRefresh',
+      to: '#'
+    },
+    {
       icon: 'Menu',
       to: '/'
     }
   ], []);
 
   const onClick = (icon: NavItemIcon, to: string) => (e: MouseEvent) => {
-    if (icon === 'Menu') {
+    if (icon === 'Menu' || icon === 'ArrowRefresh') {
       e.preventDefault();
       e.stopPropagation();
-      toggleOmnibox();
+
+      if (icon === 'Menu') {
+        toggleOmnibox();
+      } else if (icon === 'ArrowRefresh') {
+        bootstrapApi(true);
+      }
     } else {
       setCurrentPathname(to);
     }
@@ -114,7 +127,7 @@ export function MobileNavbar() {
     || 0;
 
   return (
-    <Row className="mobileNavbar" backgroundColor="washedGray" height="40px">
+    <Row className="mobileNavbar" backgroundColor="white" height={isMobileApp() ? '60px' : '50px'}>
       {options.map(({ icon, to }) => <Link key={icon} to={to} onClick={onClick(icon, to)}>
         <MobileNavItem icon={icon}
           selected={currentPathname.includes(to) && icon !== 'Menu'}

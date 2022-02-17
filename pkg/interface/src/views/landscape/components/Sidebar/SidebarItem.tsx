@@ -48,6 +48,7 @@ export function SidebarItemBase(props: {
   fontSize?: string;
   pending?: boolean;
   isGroup?: boolean;
+  isAdmin?: boolean;
   indent?: number;
   onClick?: (e: MouseEvent) => void;
 }) {
@@ -65,6 +66,7 @@ export function SidebarItemBase(props: {
     mono = false,
     pending = false,
     isGroup = false,
+    isAdmin = false,
     indent = 0,
     onClick
   } = props;
@@ -156,6 +158,15 @@ export function SidebarItemBase(props: {
             </Box>
           )}
         </Row>
+        {isAdmin && (
+          <Box>
+            <Link to={`${to}/new`}>
+              <Row display="flex" alignItems="center">
+                <Icon icon="Plus" color="gray" pl={1} />
+              </Row>
+            </Link>
+          </Box>
+        )}
       </Row>
     </HoverBoxLink>
   );

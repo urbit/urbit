@@ -1,10 +1,10 @@
 :~  title+'EScape'
     info+'EScape from Eternal September. The UI from Uqbar.'
     color+0xf2.f3ef  :: purple is 0x72.7bf2 pink is 0xdd.7c8a
-    glob-http+['https://escape-app-dist.s3.us-east-2.amazonaws.com/glob-0vj61of.elc1v.9ghbo.ceg69.j9kmb.glob' 0vj61of.elc1v.9ghbo.ceg69.j9kmb]
+    glob-http+['https://escape-app-dist.s3.us-east-2.amazonaws.com/glob-0v7.jfvto.chab0.f9bn9.418u9.k74v1.glob' 0v7.jfvto.chab0.f9bn9.418u9.k74v1]
     base+'escape'
     image+'https://escape-app-dist.s3.us-east-2.amazonaws.com/uqbar-logo.png'
-    version+[0 1 6]
+    version+[0 1 7]
     website+'https://uqbar.network'
     license+'MIT'
 ==

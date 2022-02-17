@@ -26,6 +26,7 @@ import { Portal } from '../Portal';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 import { leapCategories } from '~/types';
+import { IS_MOBILE } from '~/logic/lib/platform';
 
 interface OmniboxProps {
   show: boolean;

@@ -30,6 +30,7 @@ export function Titlebar(props: TitlebarProps) {
       setActionsWidth(entry.target.getBoundingClientRect().width);
     }, [])
   );
+  
   const menuControl = (
     <Link to={`${baseUrl}/settings`}>
       <Icon icon="Menu" color="gray" pr={2} />
