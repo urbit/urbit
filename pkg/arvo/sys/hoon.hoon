@@ -12397,7 +12397,7 @@
       ^-  (unit (map term hoon))
       %+  bind  dog
       |=  a=(map term tome)
-      ~_  leaf+"unexpcted-chapter.{(trip nam)}"
+      ~_  leaf+"unexpected-chapter.{(trip nam)}"
       q:(~(got by a) nam)
     ::  check we have the expected number of arms
     ::
@@ -12547,7 +12547,7 @@
       ^-  (unit (map term hoon))
       %+  bind  dog
       |=  a=(map term tome)
-      ~_  leaf+"unexpcted-chapter.{(trip nam)}"
+      ~_  leaf+"unexpected-chapter.{(trip nam)}"
       q:(~(got by a) nam)
     ::  check we have the expected number of arms
     ::
