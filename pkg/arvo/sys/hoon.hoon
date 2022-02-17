@@ -12253,63 +12253,63 @@
     =^  checked  grub  (core-check gol)
     =/  log  (chapters-check checked)
     =/  dog  (get-tomes log)
-    =^  dez  grub
-      =^  lazed  grub  (caching-laze nym hud dom)
-      =.  sut  (core sut [nym hud %gold] sut lazed dom)
+    =;  [dez=?(~ ^) =_grub]
+      =/  cor  (core sut [nym hud mel] sut [[%full ~] dez] dom)
+      :_  grub
+      [cor [%1 dez]]
+    =^  lazed  grub  (caching-laze nym hud dom)
+    =.  sut  (core sut [nym hud %gold] sut lazed dom)
+    |-  ^-  [?(~ ^) _grub]
+    ?:  ?=(~ dom)
+      [~ grub]
+    =^  dov=?(~ ^)  grub
+      =/  dab=(map term hoon)  q.q.n.dom
+      =/  dag  (arms-check dab (get-arms dog p.n.dom))
       |-  ^-  [?(~ ^) _grub]
-      ?:  ?=(~ dom)
+      ?:  ?=(~ dab)
         [~ grub]
-      =^  dov=?(~ ^)  grub
-        =/  dab=(map term hoon)  q.q.n.dom
-        =/  dag  (arms-check dab (get-arms dog p.n.dom))
-        |-  ^-  [?(~ ^) _grub]
-        ?:  ?=(~ dab)
-          [~ grub]
-        =^  gog  grub  (get-arm-type log dag p.n.dab)
-        =^  vad  grub  (caching-hemp hud gog q.n.dab)
-        ?-    dab
-            [* ~ ~]
-          [vad grub]
-        ::
-            [* ~ *]
-          =^  val  grub  $(dab r.dab)
-          :_  grub
-          [vad val]
-        ::
-            [* * ~]
-          =^  val  grub  $(dab l.dab)
-          :_  grub
-          [vad val]
-        ::
-            [* * *]
-          =^  lef  grub  $(dab l.dab)
-          =^  rig  grub  $(dab r.dab)
-          :_  grub
-          [vad lef rig]
-        ==
-      ?-      dom
+      =^  gog  grub  (get-arm-type log dag p.n.dab)
+      =^  vad  grub  (caching-hemp hud gog q.n.dab)
+      ?-    dab
           [* ~ ~]
-        [dov grub]
+        [vad grub]
       ::
           [* ~ *]
-        =^  val  grub  $(dom r.dom)
+        =^  val  grub  $(dab r.dab)
         :_  grub
-        [dov val]
+        [vad val]
       ::
           [* * ~]
-        =^  val  grub  $(dom l.dom)
+        =^  val  grub  $(dab l.dab)
         :_  grub
-        [dov val]
+        [vad val]
       ::
           [* * *]
-        =^  lef  grub  $(dom l.dom)
-        =^  rig  grub  $(dom r.dom)
+        =^  lef  grub  $(dab l.dab)
+        =^  rig  grub  $(dab r.dab)
         :_  grub
-        [dov lef rig]
+        [vad lef rig]
       ==
-    =/  cor  (core sut [nym hud mel] sut [[%full ~] dez] dom)
-    :_  grub
-    [cor [%1 dez]]
+    ?-      dom
+        [* ~ ~]
+      [dov grub]
+    ::
+        [* ~ *]
+      =^  val  grub  $(dom r.dom)
+      :_  grub
+      [dov val]
+    ::
+        [* * ~]
+      =^  val  grub  $(dom l.dom)
+      :_  grub
+      [dov val]
+    ::
+        [* * *]
+      =^  lef  grub  $(dom l.dom)
+      =^  rig  grub  $(dom r.dom)
+      :_  grub
+      [dov lef rig]
+    ==
     ::
     ::  all the below arms are used for gol checking and should have no
     ::  effect other than giving more specific errors
