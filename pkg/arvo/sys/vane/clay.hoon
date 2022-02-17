@@ -361,6 +361,8 @@
 ::  %utilities
 ::
 |%
+++  scry-timeout-time  ~m1
+++  scry-retry-time    ~h1
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
 ++  sort-by-head
@@ -1324,7 +1326,7 @@
   ++  send-over-scry
     |=  [kind=@ta =duct =ship index=@ud =desk =mood]
     ^-  [timeout=@da _..send-over-scry]
-    =/  =time  (add now ~m1)
+    =/  =time  (add now scry-timeout-time)
     =/  =wire  /[kind]/(scot %p ship)/[desk]/(scot %ud index)
     =/  =path
       =,  mood
@@ -1334,6 +1336,11 @@
     :~  [hen %pass wire %a %keen path]
         [hen %pass wire %b %wait time]
     ==
+  ::
+  ++  cancel-scry-timeout
+    |=  [kind=@ta =duct =ship index=@ud =desk time=@da]
+    =/  =wire  /[kind]/(scot %p ship)/[desk]/(scot %ud index)
+    (emit duct %pass wire %b %rest time)
   ::
   ++  foreign-capable
     |=  =rave
@@ -1369,13 +1376,15 @@
       (run-if-future rove.wov |=(@da (bait hen +<)))
     |-  ^+  +>+.$
     =/  =rave  (rove-to-rave rove.wov)
+    =?   rave  ?=([%sing %v *] rave)
+      [%many %| [%ud let.dom] case.mood.rave path.mood.rave]
     ::  if it is a single request, and
     ::  :ship's remote scry isn't known to be broken,
     ::  or we learned it was broken more than an hour ago,
     ::
     ?:  ?&  ?=(%sing -.rave)
         ?|  !(~(has by sad) her)
-            (lth now (add ~h1 (~(got by sad) her)))
+            (lth now (add scry-retry-time (~(got by sad) her)))
         ==  ==
       ::  send request as remote scry
       ::TODO  can be deduplicated with the below?
@@ -1389,10 +1398,6 @@
         bom.u.ref  (~(put by bom.u.ref) inx [hen rave `time ~ ~ ~ |])
         fod.u.ref  (~(put by fod.u.ref) hen inx)
       ==
-    ::
-    =.  rave
-      ?.  ?=([%sing %v *] rave)  rave
-      [%many %| [%ud let.dom] case.mood.rave path.mood.rave]
     ::
     ?.  (foreign-capable rave)
       ~|([%clay-bad-foreign-request-care rave] !!)
@@ -3003,6 +3008,9 @@
     ?>  ?=(^ ref)
     =+  ruv=(~(get by bom.u.ref) inx)
     ?~  ruv  +>.$
+    =?  ..take-foreign-answer  ?=(^ scry.u.ruv)
+      =<  ?>(?=(^ ref) .)
+      (cancel-scry-timeout %warp-index hen her inx syd u.scry.u.ruv)
     =/  rav=rave  rave.u.ruv
     ?:  ?=(%many -.rav)
       abet:(apex:(foreign-update inx) rut)
@@ -3121,7 +3129,7 @@
     ::
     =?  ..foreign-update  ?=(^ scry.sat)
       =<  ?>(?=(^ ref) .)
-      (emit hen %pass / %b %rest u.scry.sat)
+      (cancel-scry-timeout %back-index hen her inx syd u.scry.sat)
     =.  scry.sat  ~
     |%
     ++  abet
