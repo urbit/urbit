@@ -5039,14 +5039,16 @@
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
-      =/  =blob
-        ?:  ?=(%boon +<.hin)  ;;(blob payload.hin)
-        ?~  data.hin  ~|(%now-what !!)  ::TODO
-        [%direct (page-to-lobe u.data.hin) u.data.hin]
+      =/  blob=(unit blob)
+        ?:  ?=(%boon +<.hin)  `;;(blob payload.hin)
+        ?~  data.hin  ~
+        `[%direct (page-to-lobe u.data.hin) u.data.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        abet:abet:(take-backfill:(foreign-update:den index) blob)
+        ?~  blob
+          abet:(retry-with-ames:den index)
+        abet:abet:(take-backfill:(foreign-update:den index) u.blob)
       [mos ..^$]
     ::
          %wake
