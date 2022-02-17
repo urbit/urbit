@@ -2990,6 +2990,8 @@
     =/  sat=update-state  (~(got by bom.u.ref) inx)
     =.  ..retry-with-ames
       =<  ?>(?=(^ ref) .)
+      ::REVIEW  isn't this a bit much, if we're already partway through?
+      ::        do we not want to just call into +work in that case?
       (send-over-ames hen her inx syd `rave.sat)
     =.  bom.u.ref  (~(put by bom.u.ref) inx sat(scry ~))
     ..retry-with-ames
@@ -4998,6 +5000,8 @@
       [mos ..^$]
     ::
         %wake
+      ?^  error.hin
+        [[hen %slip %d %flog %crud %wake u.error.hin]~ ..^$]
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
@@ -5038,6 +5042,18 @@
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
         abet:abet:(take-backfill:(foreign-update:den index) blob)
+      [mos ..^$]
+    ::
+         %wake
+      ?^  error.hin
+        [[hen %slip %d %flog %crud %wake u.error.hin]~ ..^$]
+      =/  her=ship   (slav %p i.t.tea)
+      =/  =desk      (slav %tas i.t.t.tea)
+      =/  index=@ud  (slav %ud i.t.t.t.tea)
+      =^  mos  ruf
+        =.  sad.ruf  (~(put by sad.ruf) her now)
+        =/  den  ((de now rof hen ruf) her desk)
+        abet:(retry-with-ames:den index)
       [mos ..^$]
     ==
   ::
