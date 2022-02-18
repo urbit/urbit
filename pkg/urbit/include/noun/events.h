@@ -31,9 +31,9 @@
     /* u3e_image: memory segment, open file.
     */
       typedef struct _u3e_image {
-        c3_c* nam_c;                        //  segment name
-        c3_i  fid_i;                        //  open file, or 0
-        c3_w  pgs_w;                        //  length in pages
+        const c3_c* nam_c;  //!< segment name
+        c3_i        fid_i;  //!< open file, or 0
+        c3_w        pgs_w;  //!< length in pages
       } u3e_image;
 
     /* u3e_pool: entire memory system.

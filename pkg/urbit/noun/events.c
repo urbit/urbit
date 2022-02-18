@@ -71,6 +71,12 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+//! North segment image file name.
+static const c3_c nor_nam_c[] = "north.bin";
+
+//! South segment image file name.
+static const c3_c sou_nam_c[] = "south.bin";
+
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
 */
@@ -247,7 +253,7 @@ _ce_image_open(u3e_image* img_u)
   snprintf(ful_c, 8192, "%s/.urb/chk", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, img_u->nam_c);
   if ( -1 == (img_u->fid_i = open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
     return c3n;
@@ -831,8 +837,8 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
 static void
 _ce_backup(void)
 {
-  u3e_image nop_u = { .nam_c = "north", .pgs_w = 0 };
-  u3e_image sop_u = { .nam_c = "south", .pgs_w = 0 };
+  u3e_image nop_u = { .nam_c = nor_nam_c, .pgs_w = 0 };
+  u3e_image sop_u = { .nam_c = sou_nam_c, .pgs_w = 0 };
   c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
@@ -845,14 +851,14 @@ _ce_backup(void)
     return;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, nop_u.nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/bhk/%s", u3P.dir_c, nop_u.nam_c);
 
   if ( -1 == (nop_u.fid_i = open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
     return;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, sop_u.nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/bhk/%s", u3P.dir_c, sop_u.nam_c);
 
   if ( -1 == (sop_u.fid_i = open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
@@ -864,7 +870,7 @@ _ce_backup(void)
   {
 
     unlink(ful_c);
-    snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, nop_u.nam_c);
+    snprintf(ful_c, 8192, "%s/.urb/bhk/%s", u3P.dir_c, nop_u.nam_c);
     unlink(ful_c);
     snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
     rmdir(ful_c);
@@ -956,8 +962,8 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   c3_assert(0 == (1 << (2 + u3a_page)) % sysconf(_SC_PAGESIZE));
 
   u3P.dir_c = dir_c;
-  u3P.nor_u.nam_c = "north";
-  u3P.sou_u.nam_c = "south";
+  u3P.nor_u.nam_c = nor_nam_c;
+  u3P.sou_u.nam_c = sou_nam_c;
 
   //  XX review dryrun requirements, enable or remove
   //
