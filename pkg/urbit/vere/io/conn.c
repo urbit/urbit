@@ -560,6 +560,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   u3_noun   can, rid, tag, dat;
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_conn*  con_u = can_u->san_u->con_u;
+  c3_i      err_i = 0;
+  c3_c*     err_c;
 
   jar = u3s_cue_xeno_with(con_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
@@ -570,7 +572,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
        (c3n == u3r_cell(can, &tag, &dat)) ||
        (c3n == u3ud(rid)) )
   {
-    can_u->mor_u.bal_f(can_u, -2, "jar-bad");
+    err_i = -2; err_c = "jar-bad";
+    goto _moor_poke_out;
   }
   else {
     u3_atom rud = u3dc("scot", c3__uv, u3k(rid));
@@ -583,7 +586,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     u3z(rud);
     switch (tag) {
       default: {
-        can_u->mor_u.bal_f(can_u, -3, "tag-unknown");
+        err_i = -3; err_c = "tag-unknown";
+        goto _moor_poke_out;
       } break;
 
       case c3__fyrd: {
@@ -626,7 +630,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         u3_noun tar, wir, cad;
 
         if ( (c3n == u3r_trel(dat, &tar, &wir, &cad)) ) {
-          can_u->mor_u.bal_f(can_u, -6, "ovum-bad");
+          err_i = -6; err_c = "ovum-bad";
+          goto _moor_poke_out;
         }
         else {
           u3_cran* ran_u = c3_calloc(sizeof(u3_cran));
@@ -645,7 +650,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       case c3__urth: {
         switch (dat) {
           default: {
-            can_u->mor_u.bal_f(can_u, -7, "urth-bad");
+            err_i = -7; err_c = "urth-bad";
+            goto _moor_poke_out;
           } break;
           case c3__meld: {
             //  ack immediately.
@@ -664,7 +670,11 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       } break;
     }
   }
+_moor_poke_out:
   u3z(jar);
+  if ( 0 != err_i ) {
+    can_u->mor_u.bal_f(can_u, err_i, err_c);
+  }
 }
 
 /* _conn_sock_cb(): socket connection callback.
