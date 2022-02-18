@@ -60,10 +60,9 @@
 **
 **  %ovum is a raw kernel move, to be injected directly into
 **  arvo. needless to say this will void your warranty. usually
-**  you want to use %fyrd instead. updates will be sent tracking
-**  the ovum lifecycle: %work when work begins, %done when it
-**  is finished, %drop if it is dropped, and %bail with a stack
-**  trace if it fails.
+**  you want to use %fyrd instead. an update will be sent: %done
+**  on successful completion, %bail with a stack trace on error,
+**  or %drop if the ovum is dropped.
 **
 **  %urth is a command for the runtime. these are acked with %.y
 **  on receipt. no further updates are provided.
@@ -400,28 +399,20 @@ _conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
 {
   u3_cran*  ran_u = egg_u->ptr_v;
   u3_chan*  can_u = ran_u->can_u;
-  c3_m      new_m;
 
-  if ( can_u ) {
-    switch (new_e) {
-      default: c3_assert(!"not reached");
-      case u3_ovum_drop: new_m = c3__drop; break;
-      case u3_ovum_work: new_m = c3__work; break;
-      case u3_ovum_done: new_m = c3__done; break;
-    }
-    _conn_send_noun(can_u, u3nt(u3k(ran_u->rid), c3__news, new_m));
-  }
   if ( u3_ovum_done == new_e ||
        u3_ovum_drop == new_e )
   {
-    u3z(ran_u->rid);
-    if ( !can_u ) {
-      //  chan was closed; free.
-      //
-      c3_free(ran_u);
+    if ( can_u ) {
+      _conn_send_noun(can_u,
+                      u3nt(ran_u->rid, c3__news,
+                           ( u3_ovum_done == new_e
+                             ? c3__done
+                             : c3__drop )));
+      _conn_drop_cran(can_u, ran_u);
     }
     else {
-      _conn_drop_cran(can_u, ran_u);
+      u3z(ran_u->rid); c3_free(ran_u);
     }
   }
 }
