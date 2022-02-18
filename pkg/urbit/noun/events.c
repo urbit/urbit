@@ -837,54 +837,6 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
   return c3y;
 }
 
-/* _ce_backup();
-*/
-static void
-_ce_backup(void)
-{
-  u3e_image nop_u = { .nam_c = nor_nam_c, .pgs_w = 0 };
-  u3e_image sop_u = { .nam_c = sou_nam_c, .pgs_w = 0 };
-  c3_i mod_i = O_RDWR | O_CREAT;
-  c3_c ful_c[8193];
-
-  snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
-
-  if ( mkdir(ful_c, 0700) ) {
-    if ( EEXIST != errno ) {
-      fprintf(stderr, "loom: image backup: %s\r\n", strerror(errno));
-    }
-    return;
-  }
-
-  snprintf(ful_c, 8192, "%s/.urb/bhk/%s", u3P.dir_c, nop_u.nam_c);
-
-  if ( -1 == (nop_u.fid_i = open(ful_c, mod_i, 0666)) ) {
-    fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
-    return;
-  }
-
-  snprintf(ful_c, 8192, "%s/.urb/bhk/%s", u3P.dir_c, sop_u.nam_c);
-
-  if ( -1 == (sop_u.fid_i = open(ful_c, mod_i, 0666)) ) {
-    fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
-    return;
-  }
-
-  if (  (c3n == _ce_image_copy(&u3P.nor_u, &nop_u))
-     || (c3n == _ce_image_copy(&u3P.sou_u, &sop_u)) )
-  {
-
-    unlink(ful_c);
-    snprintf(ful_c, 8192, "%s/.urb/bhk/%s", u3P.dir_c, nop_u.nam_c);
-    unlink(ful_c);
-    snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
-    rmdir(ful_c);
-  }
-
-  close(nop_u.fid_i);
-  close(sop_u.fid_i);
-}
-
 /*
   u3e_save(): save current changes.
 
@@ -948,7 +900,18 @@ u3e_save(void)
   _ce_patch_free(pat_u);
   _ce_patch_delete();
 
-  _ce_backup();
+  c3_c pax_c[8193];
+  snprintf(pax_c, sizeof(pax_c), "%s/.urb/bhk", u3P.dir_c);
+  if ( mkdir(pax_c, 0700) ) {
+    if ( EEXIST != errno ) {
+      fprintf(stderr, "loom: failed to create %s: %s\r\n",
+              pax_c, strerror(errno));
+    }
+    return;
+  }
+  if ( c3n == u3e_copy(pax_c) ) {
+    fprintf(stderr, "loom: failed to copy snapshot to %s\r\n", pax_c);
+  }
 }
 
 //! @n (1) Attempt to create north image file in `dir_c`.
