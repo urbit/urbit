@@ -920,7 +920,7 @@ u3e_save(void)
 c3_o
 u3e_copy(const c3_c* const dir_c)
 {
-  c3_o sas_o = c3n;
+  c3_o suc_o = c3n;
   static c3_i fla_i = O_RDWR | O_CREAT;
   static const mode_t mod_u = 0666;
 
@@ -946,7 +946,7 @@ u3e_copy(const c3_c* const dir_c)
   if ( (c3y == _ce_image_copy(&u3P.nor_u, &nop_u)) &&
        (c3y == _ce_image_copy(&u3P.sou_u, &sop_u)) )
   {
-    sas_o = c3y;
+    suc_o = c3y;
     goto close_south;
   }
 
@@ -957,7 +957,7 @@ close_south:
 close_north:
   close(nop_u.fid_i);
 exit:
-  return sas_o;
+  return suc_o;
 }
 
 /* u3e_live(): start the checkpointing system.
