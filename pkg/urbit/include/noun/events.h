@@ -69,6 +69,12 @@
       void
       u3e_save(void);
 
+//! Copy the snapshot to `dir_c`.
+//!
+//! @param[in] dir_c  Must not be NULL and must already exist.
+c3_o
+u3e_copy(const c3_c* const dir_c);
+
     /* u3e_live(): start the persistence system.  Return c3y if no image.
     */
       c3_o

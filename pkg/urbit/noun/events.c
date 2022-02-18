@@ -940,6 +940,12 @@ u3e_save(void)
   _ce_backup();
 }
 
+c3_o
+u3e_copy(const c3_c* const dir_c)
+{
+  return c3n;
+}
+
 /* u3e_live(): start the checkpointing system.
 */
 c3_o
