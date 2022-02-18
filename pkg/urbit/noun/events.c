@@ -951,10 +951,50 @@ u3e_save(void)
   _ce_backup();
 }
 
+//! @n (1) Attempt to create north image file in `dir_c`.
+//! @n (2) Attempt to create south image file in `dir_c`.
+//! @n (3) Copy north and south image files to `dir_c` from `u3P.dir_c`.
 c3_o
 u3e_copy(const c3_c* const dir_c)
 {
-  return c3n;
+  c3_o sas_o = c3n;
+  static c3_i fla_i = O_RDWR | O_CREAT;
+  static const mode_t mod_u = 0666;
+
+  // (1)
+  u3e_image nop_u = { .nam_c = nor_nam_c, .pgs_w = 0 };
+  c3_c pan_c[8193];
+  snprintf(pan_c, sizeof(pan_c), "%s/%s", dir_c, nop_u.nam_c);
+  if ( -1 == (nop_u.fid_i = open(pan_c, fla_i, mod_u)) ) {
+    fprintf(stderr, "loom: failed to open %s: %s\r\n", pan_c, strerror(errno));
+    goto exit;
+  }
+
+  // (2)
+  u3e_image sop_u = { .nam_c = sou_nam_c, .pgs_w = 0 };
+  c3_c pas_c[8193];
+  snprintf(pas_c, sizeof(pas_c), "%s/%s", dir_c, sop_u.nam_c);
+  if ( -1 == (sop_u.fid_i = open(pas_c, fla_i, mod_u)) ) {
+    fprintf(stderr, "loom: failed to open %s: %s\r\n", pas_c, strerror(errno));
+    goto close_north;
+  }
+
+  // (3)
+  if ( (c3y == _ce_image_copy(&u3P.nor_u, &nop_u)) &&
+       (c3y == _ce_image_copy(&u3P.sou_u, &sop_u)) )
+  {
+    sas_o = c3y;
+    goto close_south;
+  }
+
+  unlink(pas_c);
+  unlink(pan_c);
+close_south:
+  close(sop_u.fid_i);
+close_north:
+  close(nop_u.fid_i);
+exit:
+  return sas_o;
 }
 
 /* u3e_live(): start the checkpointing system.
