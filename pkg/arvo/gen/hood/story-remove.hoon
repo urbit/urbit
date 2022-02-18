@@ -14,14 +14,16 @@
 ::      should we allow a bare `|story-remove` to remove the last commit message on the current desk?
 ::      leaning towards no, and potentially even making the case non-optional
 =/  our                p.bec
-=?  cas  =(*case cas)  da+now  :: use current commit if cas not provided
-
+=?  cas  =(*case cas)  r.bec  :: use case from beak if cas not provided
+:: TODO case existence check
 =/  tak
   ?:  ?=([%tako tako:clay] cas)
     p.cas
   .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
 ::
-=/  tale=story         .^(story %cx /(scot %p our)/[syd]/(scot %da now)/story)
+=/  pax            /(scot %p our)/[desk]/(scot cas)/story
+?.  .^(? %cu pax)  tang+['Error: No story file found. Please use |story-init to create one.' ~]
+=/  tale=story     .^(story %cx pax)
 =.  tale
   ?:  =(*prose prz)
     (~(del by tale) tak)

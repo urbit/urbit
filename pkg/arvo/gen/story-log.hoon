@@ -11,12 +11,14 @@
 |^
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec  :: use current desk if user didn't provide
-=/  cas=case              da+now
-=/  tale                  .^(story %cx /(scot %p our)/[desk]/(scot %da now)/story)
+=/  cas=case              r.bec  :: use case from beak
+=/  pax                   /(scot %p our)/[desk]/(scot cas)/story
+?.  .^(? %cu pax)         tang+['Error: No story file found. Please use |story-init to create one.' ~]
+=/  tale                  .^(story %cx pax)
 =/  current-tako          .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
 =/  current-yaki          .^(yaki:clay %cs /(scot %p our)/[desk]/(scot cas)/yaki/(scot %uv current-tako))
 :-  %tang
-(story-log [our desk] current-yaki tale)
+(story-log [our desk cas] current-yaki tale)
 ::::
 ::  Remarks:
 ::
@@ -25,9 +27,8 @@
 ::  2. the inner loop, `ancestor-loop`, which threads left-to-right on reverse-ancestors
 ::::
 ++  story-log
-  |=  [[our=ship syd=^desk] current-commit=yaki:clay tale=story]
+  |=  [[our=ship syd=^desk cas=case] current-commit=yaki:clay tale=story]
   ^-  tang
-  =/  cas=case  da+now
   ::
   %-  flop  :: least-recent-first -> most-recent-first
   %-  head  :: result from state
@@ -100,6 +101,7 @@
     =.  state            ancestor-loop(reverse-ancestors t.reverse-ancestors)  :: traverse rightwards
     state
   ==
+::
 ++  msg-from-commit
   |=  [commit=yaki:clay tale=story]
   ^-  (unit cord)
@@ -111,5 +113,4 @@
     (tako-to-text:lib r.commit)
     (proses-to-text:lib u.proses)
   ==
-::
 --

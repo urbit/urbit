@@ -7,8 +7,6 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[~] =desk overwrite=_| ~]
     ==
-::
-::
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec  :: use current desk if user didn't provide
 =/  existing-story        .^(? %cu /(scot %p our)/[desk]/(scot %da now)/story)
