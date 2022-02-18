@@ -902,21 +902,15 @@ u3e_save(void)
 
   c3_c pax_c[8193];
   snprintf(pax_c, sizeof(pax_c), "%s/.urb/bhk", u3P.dir_c);
-  if ( mkdir(pax_c, 0700) ) {
-    if ( EEXIST != errno ) {
-      fprintf(stderr, "loom: failed to create %s: %s\r\n",
-              pax_c, strerror(errno));
-    }
-    return;
-  }
   if ( c3n == u3e_copy(pax_c) ) {
     fprintf(stderr, "loom: failed to copy snapshot to %s\r\n", pax_c);
   }
 }
 
-//! @n (1) Attempt to create north image file in `dir_c`.
-//! @n (2) Attempt to create south image file in `dir_c`.
-//! @n (3) Copy north and south image files to `dir_c` from `u3P.dir_c`.
+//! @n (1) Attempt to `dir_c`.
+//! @n (2) Attempt to create north image file in `dir_c`.
+//! @n (3) Attempt to create south image file in `dir_c`.
+//! @n (4) Copy north and south image files to `dir_c` from `u3P.dir_c`.
 c3_o
 u3e_copy(const c3_c* const dir_c)
 {
@@ -925,6 +919,13 @@ u3e_copy(const c3_c* const dir_c)
   static const mode_t mod_u = 0666;
 
   // (1)
+  if ( 0 != mkdir(dir_c, 0700) && EEXIST != errno ) {
+    fprintf(stderr, "loom: failed to create %s: %s\r\n",
+            dir_c, strerror(errno));
+    goto exit;
+  }
+
+  // (2)
   u3e_image nop_u = { .nam_c = nor_nam_c, .pgs_w = 0 };
   c3_c pan_c[8193];
   snprintf(pan_c, sizeof(pan_c), "%s/%s", dir_c, nop_u.nam_c);
@@ -933,7 +934,7 @@ u3e_copy(const c3_c* const dir_c)
     goto exit;
   }
 
-  // (2)
+  // (3)
   u3e_image sop_u = { .nam_c = sou_nam_c, .pgs_w = 0 };
   c3_c pas_c[8193];
   snprintf(pas_c, sizeof(pas_c), "%s/%s", dir_c, sop_u.nam_c);
@@ -942,7 +943,7 @@ u3e_copy(const c3_c* const dir_c)
     goto close_north;
   }
 
-  // (3)
+  // (4)
   if ( (c3y == _ce_image_copy(&u3P.nor_u, &nop_u)) &&
        (c3y == _ce_image_copy(&u3P.sou_u, &sop_u)) )
   {
@@ -952,6 +953,7 @@ u3e_copy(const c3_c* const dir_c)
 
   unlink(pas_c);
   unlink(pan_c);
+  rmdir(dir_c);
 close_south:
   close(sop_u.fid_i);
 close_north:
