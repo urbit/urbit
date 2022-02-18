@@ -1,0 +1,65 @@
+PARSED
+
+=+  a=[1 2]
+=+  b=[3 4]
+=+  c=[5 6 7]
+:*  =>  a
+    +2
+    =>  +2
+    .
+    =>  +2
+    [b a]
+    =>  +3
+    c
+    =>  c
+    +2
+==
+
+CODE
+
+=+  a=[1 2]
+=+  b=[3 4]
+=+  c=[5 6 7]
+:*  =>  a
+    +2
+    =>  +2
+    .
+    =>  +2
+    [b a]
+    =>  +3
+    c
+    =>  c
+    +2
+==
+
+COLD
+
+=+  [1 2]
+=+  [3 4]
+=+  [5 6 7]
+:*  =>  +9
+    +2
+    =>  +2
+    +1
+    =>  +2
+    [+3 +5]
+    =>  +3
+    +1
+    =>  +3
+    +2
+==
+
+TYPE
+
+=>  [[[0 1 2] 3 4] 5 6 7]
+$:  @ud
+    {{* a|{@ud @ud}} b|{@ud @ud}}
+    {{@ud @ud} @ud @ud}
+    {@ud @ud @ud}
+    @ud
+==
+Cell' (Aura' "ud") (Cons' (Cons' (Cons' (Atom' 0 Sand "") (Cons' (Atom' 1 Sand "ud") (Atom' 2 Sand "ud"))) (Cons' (Atom' 3 Sand "ud") (Atom' 4 Sand "ud"))) (Cons' (Atom' 5 Sand "ud") (Cons' (Atom' 6 Sand "ud") (Atom' 7 Sand "ud")))) (Cell (Cell (Cell Noun (Mask "a" (Cell (Aura "ud") (Aura "ud")))) (Mask "b" (Cell (Aura "ud") (Aura "ud")))) (Cell (Cell (Cell (Aura "ud") (Aura "ud")) (Cell (Aura "ud") (Aura "ud"))) (Cell (Cell (Aura "ud") (Cell (Aura "ud") (Aura "ud"))) (Aura "ud"))))
+
+BASE
+
+[1 [[0 1 2] 3 4] [[3 4] 1 2] [5 6 7] 5]

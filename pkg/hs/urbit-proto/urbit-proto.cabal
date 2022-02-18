@@ -114,6 +114,7 @@ library
     , para
     , parser-combinators
     , pretty-show
+    , smallcheck
     , text
     , transformers
     , transformers-compat
@@ -182,6 +183,7 @@ executable proto
     , para
     , parser-combinators
     , pretty-show
+    , smallcheck
     , text
     , transformers
     , transformers-compat
@@ -198,6 +200,7 @@ test-suite proto-test
       DependentHoon3GoldenTests
       DependentLambdaGoldenTests
       DeppyCoreTests
+      DH3PropertyTests
       HoonSyntaxGoldenTests
       Spec
       Paths_urbit_proto
@@ -260,6 +263,7 @@ test-suite proto-test
     , para
     , parser-combinators
     , pretty-show
+    , smallcheck
     , tasty
     , tasty-golden
     , tasty-hunit

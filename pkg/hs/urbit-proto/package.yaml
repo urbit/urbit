@@ -19,6 +19,7 @@ dependencies:
   - para
   - parser-combinators
   - pretty-show
+  - smallcheck
   - text
   - transformers
   - transformers-compat

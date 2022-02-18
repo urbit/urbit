@@ -5,15 +5,18 @@ import ClassyPrelude hiding (even, find)
 import Control.Monad.Reader
 import Data.Set (isSubsetOf)
 
-import Practice.HoonCommon (Atom, Axis, Grit(..), Term, Wing, Limb(..), Nat)
+import Practice.HoonCommon
+  (Atom, Aura, Axis, Bass(..), Grit(..), Term, Wing, Limb(..), Nat)
 
 -- | Desugared hoon. Depending on the stage of compilation, different wing types
 -- are permitted. As a rough overview, the compiler pipeline is:
 --
---   Hoon  ---open--->  Code Wing  ---------play--->  Code Stub, Type
---                      Code Wing, Type  ---work--->  Code Stub
---                                                      \
---                                                       ---mint--->  Nock
+--   Hoon  ---open--->  Soft  ---------play--->  Code Stub, Type
+--                      Soft, Type  ---work--->  Code Stub
+--                                                | \
+--                                                |  ---mint--->  Nock
+--                                                \
+--                                                 ---eval---> Base
 --
 -- The Wing type allows all wings, while the Stub type allows only raw axes and
 -- arm pulls. In this way, name resolution and type checking is separated from
@@ -21,10 +24,29 @@ import Practice.HoonCommon (Atom, Axis, Grit(..), Term, Wing, Limb(..), Nat)
 -- where we would otherwise suffer horribly because the fully winged language is
 -- not Liskov compliant).
 --
+{-data Soft
+  = Wng Wing
+  | Atm Atom Grit Aura
+  | Lam Pelt Soft
+  | Fac Pelt Soft
+  --
+  | Plu Soft
+  | Sla Soft
+  | Equ Soft
+  --
+  | Bas Bass
+  | Cll Soft Soft
+  | Gat Soft Soft
+  --
+  | Wit Soft Soft
+  | Pus Soft Soft
+  | Fit { fit :: Fit, sof :: Soft, tpe :: Soft }
+  deriving (Eq, Ord, Show)-}
+
 data Code a
   = Wing a
   --
-  | Atom Atom Grit Term
+  | Atom Atom Grit Aura
   | Cons (Code a) (Code a)
   | Lamb (Pelt a) (Code a)
   | Name Term (Code a)
@@ -32,8 +54,8 @@ data Code a
   | Plus (Code a)
   | Slam (Code a) (Code a)
   --
-  | Aura Term
-  | Fork (Set Atom) Term
+  | Aura Aura
+  | Fork (Set Atom) Aura
   | Cell (Code a) (Code a)
   | Gate (Code a) (Code a)
   | Mask Term (Code a)
@@ -44,7 +66,7 @@ data Code a
   | With (Code a) (Code a)
   | Push (Code a) (Code a)
   | Nest { cod :: Code a, typ :: Code a }
-  deriving (Functor, Foldable, Traversable)
+  deriving (Functor, Foldable, Traversable, Generic)
 
 deriving instance Show a => Show (Code a)
 
@@ -58,7 +80,7 @@ data Pelt a
   -- TODO figure out syntax for as-patterns. can we reuse pace?
   | Pest (Pelt a) (Code a)  -- ^ /   patern nest
   -- | Past (Pelt a) (Code a)  -- ^ ``  pattern cast
-  deriving (Functor, Foldable, Traversable)
+  deriving (Functor, Foldable, Traversable, Generic)
 
 deriving instance Show a => Show (Pelt a)
 
@@ -133,7 +155,7 @@ type Cold = Code Stub
 data Hop b a
   = New b  -- ^ reference to current subject
   | Old a  -- ^ reference to outer subject
-  deriving (Functor, Foldable, Traversable)
+  deriving (Functor, Foldable, Traversable, Generic)
 
 instance (Show a, Show b) => Show (Hop a b) where
   show = \case
@@ -165,7 +187,7 @@ data Base a
   = Stop' Rump
   | Fore' a
   --
-  | Atom' Atom Grit Term
+  | Atom' Atom Grit Aura
   | Cons' (Base a) (Base a)
   | Lamb' (Base a) {- ^ closed-over subject -} (Code (Hop Stub a))
   | Name' Term (Base a)
@@ -175,15 +197,15 @@ data Base a
   | Slam' (Base a) (Base a)
   | Look' (Base a) Stub
   --
-  | Aura' Term
-  | Fork' (Set Atom) Term
+  | Aura' Aura
+  | Fork' (Set Atom) Aura
   | Cell' (Type a) (Base a) {- ^ closed-over subject -} (Code (Hop Stub a))
   | Gate' (Type a) (Base a) {- ^ closed-over subject -} (Code (Hop Stub a))
   | Mask' Term (Base a)
   | Noun'
   | Void'
   | Type'
-  deriving (Functor, Foldable, Traversable)
+  deriving (Functor, Foldable, Traversable, Generic)
 
 deriving instance Show a => Show (Base a)
 
@@ -316,6 +338,72 @@ shew Con{lvl, sut, ken} b t = Con
   , ken = Cons' ken b
   }
 
+-- | Grow the base because we have passed under a tisgar
+grow :: Base a -> Base (Hop Rump a)
+grow = \case
+  Stop' r -> Fore' (New r)
+  Fore' x -> Fore' (Old x)
+  --
+  Atom' a g au -> Atom' a g au
+  Cons' x y -> Cons' (grow x) (grow y)
+  Lamb' x c -> Lamb' (grow x) (crow c)
+  Name' f x -> Name' f (grow x)
+  --
+  Plus' x -> Plus' (grow x)
+  Slam' x y -> Slam' (grow x) (grow y)
+  Look' x st -> Look' (grow x) st
+  --
+  Aura' au -> Aura' au
+  Fork' as au -> Fork' as au
+  Cell' x y c -> Cell' (grow x) (grow y) (crow c)
+  Gate' x y c -> Gate' (grow x) (grow y) (crow c)
+  Mask' f x -> Mask' f (grow x)
+  Noun' -> Noun'
+  Void' -> Void'
+  Type' -> Type'
+ where
+  crow :: Code (Hop Stub a) -> Code (Hop Stub (Hop Rump a))
+  crow = fmap \case
+    -- lookups into the closure are NOT changed; this is okay because the stuck
+    -- seminoun references in the value in the clousre ARE.
+    New x -> New x
+    Old x -> Old (Old x)
+
+-- | On exiting a tisgar, pare down the type to remove any opaque references to
+-- the inner subject, but actually it's an invariant violation for any to exist.
+pare :: Show a => Base (Hop Rump a) -> Check (Base a)
+pare bas = go bas
+ where
+  go = \case
+    Stop' r -> bail (PareFree r bas)
+    Fore' (New r) -> pure $ Stop' r
+    Fore' (Old x) -> pure $ Fore' x
+    --
+    Atom' a g au -> pure $ Atom' a g au
+    Cons' x y -> Cons' <$> go x <*> go y
+    Lamb' x c -> Lamb' <$> go x <*> care c
+    Name' f x -> Name' f <$> go x
+    --
+    Plus' x -> Plus' <$> go x
+    Slam' x y -> Slam' <$> go x <*> go y
+    Look' x st -> flip Look' st <$> go x
+    --
+    Aura' au    -> pure $ Aura' au
+    Fork' as au -> pure $ Fork' as au
+    Cell' x y c -> Cell' <$> go x <*> go y <*> care c
+    Gate' x y c -> Gate' <$> go x <*> go y <*> care c
+    Mask' f x -> Mask' f <$> go x
+    Noun' -> pure Noun'
+    Void' -> pure Void'
+    Type' -> pure Type'
+
+  care :: Show a => Code (Hop Stub (Hop Rump a)) -> Check (Code (Hop Stub a))
+  care = traverse \case
+    New st      -> pure $ New st
+    Old (New r) -> bail (PareFree r bas)
+    Old (Old x) -> pure $ Old x
+
+
 -- | Construct a nondependent cell type. Thinking of providing this "freely"
 -- as another constructor under Cell for efficiency. Make sure you know your
 -- cell type is nondependent before attempting this!
@@ -328,10 +416,10 @@ cell' Con{lvl, ken} l r = Cell' l ken $ loft lvl r
 
 -- | Mode for fit-checking in `fits`: nest, cast, or exact equality.
 data Fit
-  = FitCast  -- ^ perform a coercibility check; i.e. ignore auras
+  = FitSame  -- ^ perform a type (or value) equivalence check
   | FitNest  -- ^ perform a subtyping check
-  | FitSame  -- ^ perform a type (or value) equivalence check
-  deriving (Eq, Ord)
+  | FitCast  -- ^ perform a coercibility check; i.e. ignore auras
+  deriving (Eq, Ord, Generic)
 
 instance Show Fit where
   show = \case
@@ -352,7 +440,8 @@ data Act
   | ActNote Text
 
 data Fail
-  = forall a. Show a => FindFail Term (Type a)
+  = forall a. Show a => PareFree Rump (Base (Hop Rump a))
+  | forall a. Show a => FindFail Term (Type a)
   | forall a. Show a => FitsFail Fit (Type a) (Type a)
   -- | forall a. Show a => SkinRash (Code a)  -- ^ not a valid pattern
   | RompWild (Pelt Wing)  -- ^ not enough info to extract type from pelt
@@ -818,7 +907,11 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork fit cod typ)
     Void{} -> playFits
     Type{} -> playFits
 
-    With c d -> undefined
+    With c d -> do
+      (x, t) <- play con c
+      let kan = eval ken (fmap New x)
+      y <- work Con{lvl=0, sut=(grow t), ken=(grow kan)} fit d (grow typ)
+      pure $ With x y
 
     Push c d -> do
       (x, t) <- play con c
@@ -901,7 +994,12 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay cod) case cod of
 
   Type -> pure (Type, Type')
 
-  With c d -> undefined
+  With c d -> do
+      (x, t) <- play con c
+      let kan = eval ken (fmap New x)
+      (y, u) <- play Con{lvl=0, sut=(grow t), ken=(grow kan)} d
+      ret <- pare u
+      pure (With x y, ret)
 
   Push c d -> do
     (x, t) <- play con c
@@ -923,3 +1021,7 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay cod) case cod of
 doze :: Stub -> Wing
 doze = \case
   Leg a -> [Axis a]
+
+-- | Use a subject type to read back wing information in a much less shitty way.
+rest :: Var a => Type a -> Code Stub -> Code Wing
+rest typ = undefined

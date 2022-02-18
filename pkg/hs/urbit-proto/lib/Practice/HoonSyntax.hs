@@ -11,19 +11,8 @@ import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 import Urbit.Atom (utf8Atom)
 
-import Practice.HoonCommon (Atom, Aura, Term, Grit(..), Wing, Limb(..))
-
--- | Base type
-data Bass
-  = Non
-  | Cel
-  | Flg
-  | Nul
-  | Vod
-  | Fok [Atom] Aura
-  | Aur Aura
-  | Typ
-  deriving (Eq, Ord, Show)
+import Practice.HoonCommon
+  (Atom, Aura, Bass(..), Term, Grit(..), Wing, Limb(..))
 
 data Hoon
   = Wung Wing

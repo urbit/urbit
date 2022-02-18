@@ -51,6 +51,6 @@ testEachPass file =
 testsIO :: IO TestTree
 testsIO = do
   tests <- listTests
-  pure $ testGroup "DependentLambda tests" $ fmap testEachPass tests
+  pure $ testGroup "DependentHoon3 golden tests" $ fmap testEachPass tests
 
 

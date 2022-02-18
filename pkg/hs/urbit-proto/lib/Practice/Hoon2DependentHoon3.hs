@@ -130,6 +130,9 @@ open = \case
     Cltr [h] -> flay h
     Cltr (h:hs) -> Pair <$> flay h <*> flay (Cltr hs)
     --
+    Kthp h j -> Pest <$> flay j <*> open h
+    Ktfs h j -> Pest <$> flay h <*> open j
+    --
     _ -> Left "flay-meat: expression in pattern context"
 
 shut :: Code Wing -> Hoon

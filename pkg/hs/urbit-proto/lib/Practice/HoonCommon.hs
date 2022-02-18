@@ -6,9 +6,21 @@ import Numeric.Natural
 
 type Atom = Natural
 
+type Aura = Term
+
 type Axis = Atom
 
-type Aura = Term
+-- | Base type
+data Bass
+  = Non
+  | Cel
+  | Flg
+  | Nul
+  | Vod
+  | Fok [Atom] Aura
+  | Aur Aura
+  | Typ
+  deriving (Eq, Ord, Show)
 
 -- | A @tas. Frankly, would prefer to rename this `name`.
 type Term = Text
@@ -17,14 +29,14 @@ type Term = Text
 data Grit
   = Rock  -- ^ should be taken to be of singleton type
   | Sand  -- ^ should be taken to be of broader type
-  deriving (Eq, Ord, Read, Show)
+  deriving (Eq, Ord, Read, Show, Generic)
 
 type Wing = [Limb]
 
 data Limb
   = Axis Axis
   | Ally Term
-  deriving (Eq, Ord, Read, Show)
+  deriving (Eq, Ord, Read, Show, Generic)
 
 type Nat = Natural
 
