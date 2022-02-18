@@ -1,3 +1,4 @@
+::  story: Attach a commit message to the commit associated with a given case on a given desk
 ::
 ::::
   ::
@@ -7,7 +8,7 @@
         [[=prose ~] =desk cas=case ~]
     ==
 ::
-::  Add a commit message to a given case on a given desk. Stores conflicting messages.
+::  
 ::
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec   :: use current desk if user didn't provide

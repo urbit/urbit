@@ -1,3 +1,4 @@
+::  story: (Internal) List all commit messages for the given desk including orphans
 ::
 ::::
   ::
@@ -6,10 +7,6 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[~] =desk ~]
     ==
-::
-::  (Internal) List all commit messages for the given desk, 
-::  including orphans (i.e. ones that have no connection to the file graph)
-::
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec  :: use current desk if user didn't provide
 =/  tale=story            .^(story %cx /(scot %p our)/[desk]/(scot %da now)/story)

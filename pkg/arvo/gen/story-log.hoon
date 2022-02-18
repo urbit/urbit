@@ -1,3 +1,4 @@
+::  story: log commits in order
 ::
 ::::
   ::

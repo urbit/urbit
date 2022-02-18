@@ -1,3 +1,4 @@
+::  story: Create a story file for a given desk, optionally overwriting an existing one
 ::
 ::::
   ::
@@ -7,7 +8,6 @@
         [[~] =desk overwrite=_| ~]
     ==
 ::
-::  Create a story file for a given desk 
 ::
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec  :: use current desk if user didn't provide

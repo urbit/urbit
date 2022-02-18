@@ -1,3 +1,4 @@
+::  story: Remove any commit message(s) for a given desk, optionally targeting a specific case or prose
 ::
 ::::
   ::
@@ -6,8 +7,6 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[syd=desk ~] cas=case prz=prose ~]
     ==
-::
-::  Remove any commit message(s) for a given desk, optionally targeting a specific case or prose
 ::
 ::  XX: story set and story init both have desk and case as optional.
 ::      however, it seems a bit odd to allow both optional here
