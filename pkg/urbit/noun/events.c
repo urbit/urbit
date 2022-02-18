@@ -247,7 +247,6 @@ u3e_fault(void* adr_v, c3_i ser_i)
 static c3_o
 _ce_image_open(u3e_image* img_u)
 {
-  c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s", u3P.dir_c);
@@ -260,7 +259,7 @@ _ce_image_open(u3e_image* img_u)
   mkdir(ful_c, 0700);
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, img_u->nam_c);
-  if ( -1 == (img_u->fid_i = open(ful_c, mod_i, 0666)) ) {
+  if ( -1 == (img_u->fid_i = open(ful_c, O_RDWR | O_CREAT, 0666)) ) {
     fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
     return c3n;
   }
