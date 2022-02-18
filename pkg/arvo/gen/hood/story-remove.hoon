@@ -5,7 +5,7 @@
 /-  *story
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [[syd=desk ~] cas=cash prz=prose ~]
+        [[=desk ~] cas=cash prz=prose ~]
     ==
 ::
 ::  XX: story set and story init both have desk and case as optional.
@@ -21,12 +21,14 @@
     p.cas
   .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
 ::
-=/  pax            /(scot %p our)/[desk]/(scot cas)/story
-?.  .^(? %cu pax)  tang+['Error: No story file found. Please use |story-init to create one.' ~]
+=/  pax            /(scot %p our)/[desk]/(scot %da now)/story
+?:  !.^(? %cu pax)
+  ~&  >>  "Error: desk {<desk>} does not exist."
+  helm-pass+[%d %noop ~]
 =/  tale=story     .^(story %cx pax)
 =.  tale
   ?:  =(*prose prz)
     (~(del by tale) tak)
   (~(del ju tale) tak prz)
 :-  %helm-pass
-[%c [%info syd %& [/story %ins story+!>(tale)]~]]
+[%c [%info desk %& [/story %ins story+!>(tale)]~]]

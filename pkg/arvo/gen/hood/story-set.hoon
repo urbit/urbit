@@ -20,7 +20,9 @@
   .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
 ::
 =/  pax            /(scot %p our)/[desk]/(scot cas)/story
-?.  .^(? %cu pax)  tang+['Error: No story file found. Please use |story-init to create one.' ~]
+?:  !.^(? %cu pax)
+  ~&  >>  "Error: desk {<desk>} does not exist."
+  helm-pass+[%d %noop ~]
 =/  tale=story     .^(story %cx /(scot %p our)/[desk]/(scot %da now)/story)
 =.  tale           (~(put ju tale) tak prose)
 :-  %helm-pass
