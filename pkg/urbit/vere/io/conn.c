@@ -484,18 +484,6 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
         res = u3nc(u3_nul, u3_nul);
         break;
       }
-      //  raw command-line options.
-      //
-      case c3__args: {
-        c3_c** arg_c;
-
-        res = u3_nul;
-        for ( arg_c = u3_Host.ops_u.arg_v; 0 != *arg_c; arg_c++ ) {
-          res = u3nc(u3i_string(*arg_c), res);
-        }
-        res = u3nt(u3_nul, u3_nul, u3kb_flop(res));
-        break;
-      }
       //  runtime metrics list.
       //
       case c3__vars: {

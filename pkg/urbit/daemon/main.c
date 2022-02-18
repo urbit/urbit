@@ -88,12 +88,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  u3_Host.ops_u.arg_v = c3_malloc((argc + 1) * sizeof(c3_c*));
-  for ( ch_i = 0; ch_i < argc; ch_i++ ) {
-    u3_Host.ops_u.arg_v[ch_i] = strdup(argv[ch_i]);
-  }
-  u3_Host.ops_u.arg_v[argc] = 0;
-
   static struct option lop_u[] = {
     { "arvo",                required_argument, NULL, 'A' },
     { "abort",               no_argument,       NULL, 'a' },

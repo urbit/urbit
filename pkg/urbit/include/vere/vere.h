@@ -270,7 +270,6 @@
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
-        c3_c**  arg_v;                      //  NULL-terminated raw arguments
         c3_c*   arv_c;                      //  -A, initial sync from
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
