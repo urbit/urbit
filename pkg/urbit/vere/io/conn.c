@@ -50,10 +50,8 @@
 **  %peel is a runtime "peek". it exposes an unprincipled
 **  scry-like namespace allowing querying of various metrics
 **  about the state of vere. it accepts $path-like arguments,
-**  i.e. nul-terminated lists of $knot. it responds as scry
-**  does, with a (unit (unit)), where ~ means "request was not
-**  understood" and [~ ~] means "request understood; empty
-**  response."
+**  i.e. nul-terminated lists of $knot. it responds with a
+**  (unit).
 **
 **  the %peek path /help produces a list of available commands.
 **  /args produces the command-line arguments used to start vere.
@@ -449,8 +447,8 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       //  command list.
       //
       case c3__help: {
-        res = u3nt(
-          u3_nul, u3_nul,
+        res = u3nc(
+          u3_nul,
           u3i_list(
             u3nc(c3__help, u3_nul),
             u3nc(c3__khan, u3_nul),
@@ -464,19 +462,19 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       //  simple health check.
       //
       case c3__live: {
-        res = u3nt(u3_nul, u3_nul, u3K.pir_u->liv_o);
+        res = u3nc(u3_nul, u3K.pir_u->liv_o);
       } break;
       //  true iff the %khan vane is live (meaning %fyrd is supported.)
       //
       case c3__khan: {
-        res = u3nt(u3_nul, u3_nul, con_u->kan_o);
+        res = u3nc(u3_nul, con_u->kan_o);
       } break;
       //  |mass output
       //
       case c3__mass: {
         //  TODO  |mass
         //
-        res = u3nc(u3_nul, u3_nul);
+        res = u3_nul;
       } break;
       //  runtime metrics list.
       //
@@ -488,8 +486,8 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
           res = u3nc(u3_nul, u3_nul);
           break;
         }
-        res = u3nt(
-          u3_nul, u3_nul,
+        res = u3nc(
+          u3_nul,
           u3i_list(
             u3nc(u3i_string("ames-drop-count"),     u3i_chub(u3M.sat_u->dop_d)),
             u3nc(u3i_string("ames-crash-count"),    u3i_chub(u3M.sat_u->fal_d)),
@@ -512,7 +510,7 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       //  vere version.
       //
       case c3__v: {
-        res = u3nt(u3_nul, u3_nul, u3i_string(URBIT_VERSION));
+        res = u3nc(u3_nul, u3i_string(URBIT_VERSION));
       } break;
     }
   }
@@ -534,10 +532,10 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
             res = u3_nul;
           } break;
           case c3__ames: {
-            res = u3nt(u3_nul, u3_nul, u3M.par_s);
+            res = u3nc(u3_nul, u3M.par_s);
           } break;
           case c3__http: {
-            res = u3nt(u3_nul, u3_nul, u3M.per_s);
+            res = u3nc(u3_nul, u3M.per_s);
           } break;
         }
       } break;
