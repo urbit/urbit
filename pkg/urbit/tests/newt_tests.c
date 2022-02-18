@@ -23,7 +23,7 @@ _newt_encode(u3_atom mat, c3_w* len_w)
 
   //  write header
   //
-  buf_y[0] = 0x9;
+  buf_y[0] = 0x0;
   buf_y[1] = ( met_w        & 0xff);
   buf_y[2] = ((met_w >>  8) & 0xff);
   buf_y[3] = ((met_w >> 16) & 0xff);

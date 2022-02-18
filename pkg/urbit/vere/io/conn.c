@@ -68,8 +68,8 @@
 **  on receipt. no further updates are provided.
 **
 **  messages use newt framing. because the framing begins with
-**  a magic byte (^I, horizontal tab), any messages that do not
-**  contain that byte are reserved for future use.
+**  a null byte, any messages that do not contain that byte are
+**  reserved for future use.
 **
 */
 #include <inttypes.h>

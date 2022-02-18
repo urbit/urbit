@@ -4,9 +4,9 @@
 **
 **  framing is 5 bytes long. first byte is a version tag; a
 **  character that should never otherwise appear in a message
-**  intended for urbit. right now we use 0x9, horizontal tab.
-**  next 32 bits are little-endian byte count. after that is the
-**  indicated number of bytes, which are the +jam of a noun.
+**  intended for urbit. right now we use 0x0. next 32 bits are
+**  little-endian byte count. after that is the indicated number
+**  of bytes, which are the +jam of a noun.
 **
 **  the implementation is relatively inefficient and could
 **  lose a few copies, mallocs, etc.
@@ -147,7 +147,7 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
 
           //  check for version tag and nonzero length
           //
-          if ( 0x9 != hed_y[0] || !met_d ) {
+          if ( 0x0 != hed_y[0] || !met_d ) {
             return c3n;
           }
 
@@ -435,7 +435,7 @@ u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y)
 
   //  write header
   //
-  req_u->hed_y[0] = 0x9;
+  req_u->hed_y[0] = 0x0;
   req_u->hed_y[1] = ( len_d        & 0xff);
   req_u->hed_y[2] = ((len_d >>  8) & 0xff);
   req_u->hed_y[3] = ((len_d >> 16) & 0xff);
