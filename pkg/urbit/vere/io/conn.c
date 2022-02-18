@@ -452,7 +452,6 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
         res = u3nt(
           u3_nul, u3_nul,
           u3i_list(
-            u3nc(c3__args, u3_nul),
             u3nc(c3__help, u3_nul),
             u3nc(c3__khan, u3_nul),
             u3nc(c3__live, u3_nul),
