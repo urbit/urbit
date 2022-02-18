@@ -77,6 +77,12 @@ static const c3_c nor_nam_c[] = "north.bin";
 //! South segment image file name.
 static const c3_c sou_nam_c[] = "south.bin";
 
+//! Control patch file name.
+static const c3_c ctl_nam_c[] = "control.bin";
+
+//! Memory patch file name.
+static const c3_c mem_nam_c[] = "memory.bin";
+
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
 */
@@ -344,15 +350,15 @@ _ce_patch_create(u3_ce_patch* pat_u)
   snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, ctl_nam_c);
   if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
-    fprintf(stderr, "loom: patch open control.bin: %s\r\n", strerror(errno));
+    fprintf(stderr, "loom: patch open %s: %s\r\n", ctl_nam_c, strerror(errno));
     c3_assert(0);
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, mem_nam_c);
   if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
-    fprintf(stderr, "loom: patch open memory.bin: %s\r\n", strerror(errno));
+    fprintf(stderr, "loom: patch open %s: %s\r\n", mem_nam_c, strerror(errno));
     c3_assert(0);
   }
 }
@@ -364,10 +370,10 @@ _ce_patch_delete(void)
 {
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, ctl_nam_c);
   unlink(ful_c);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, mem_nam_c);
   unlink(ful_c);
 }
 
@@ -442,12 +448,12 @@ _ce_patch_open(void)
   snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, ctl_nam_c);
   if ( -1 == (ctl_i = open(ful_c, O_RDWR)) ) {
     return 0;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, mem_nam_c);
   if ( -1 == (mem_i = open(ful_c, O_RDWR)) ) {
     close(ctl_i);
 
