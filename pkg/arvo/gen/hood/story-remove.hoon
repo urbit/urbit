@@ -5,7 +5,7 @@
 /-  *story
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [[syd=desk ~] cas=case prz=prose ~]
+        [[syd=desk ~] cas=cash prz=prose ~]
     ==
 ::
 ::  XX: story set and story init both have desk and case as optional.
@@ -15,7 +15,12 @@
 ::      leaning towards no, and potentially even making the case non-optional
 =/  our                p.bec
 =?  cas  =(*case cas)  da+now  :: use current commit if cas not provided
-=/  tak                .^(tako:clay %cs /(scot %p our)/[syd]/(scot cas)/tako/~)
+
+=/  tak
+  ?:  ?=([%tako tako:clay] cas)
+    p.cas
+  .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
+::
 =/  tale=story         .^(story %cx /(scot %p our)/[syd]/(scot %da now)/story)
 =.  tale
   ?:  =(*prose prz)
