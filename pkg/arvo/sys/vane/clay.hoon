@@ -1145,6 +1145,9 @@
         !>([0 *@da])
       !>([let.dom t:(~(got by hut.ran) (~(got by hit.dom) let.dom))])
     =+  nao=(case-to-aeon case.mun)
+    ?:  ?=([%s case %case ~] mun)
+      ::  case existence check
+      [``[%& %flag !>(!=(~ nao))] fod.dom.red]
     ?~(nao [~ fod.dom.red] (read-at-aeon:ze for u.nao mun))
   ::
   ::  Queue a move.
@@ -4022,7 +4025,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%tako %yaki %blob %hash %cage %open %late %base %base-tako) * *] pax)
+      ?.  ?=([?(%tako %yaki %blob %hash %cage %open %late %base %base-tako %case) * *] pax)
         `~
       ?-    i.pax
           %tako
@@ -4065,8 +4068,10 @@
         ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
           %late  !!  :: handled in +aver
+          %case  !!  :: handled in +aver
           %base-tako
-        :: XX this ignores the given beak
+        ::  XX this ignores the given beak
+        ::  maybe move to +aver?
         ?>  ?=(^ t.t.pax)
         :^  ~  ~  %uvs  !>
         ^-  (list @uv)
