@@ -557,10 +557,10 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
 static void
 _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
-  u3_weak             jar;
-  u3_noun             can, rid, tag, dat;
-  u3_chan*            can_u = (u3_chan*)ptr_v;
-  u3_conn*            con_u = can_u->san_u->con_u;
+  u3_weak   jar;
+  u3_noun   can, rid, tag, dat;
+  u3_chan*  can_u = (u3_chan*)ptr_v;
+  u3_conn*  con_u = can_u->san_u->con_u;
 
   jar = u3s_cue_xeno_with(con_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
@@ -574,9 +574,9 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     can_u->mor_u.bal_f(can_u, -2, "jar-bad");
   }
   else {
-    u3_atom           rud = u3dc("scot", c3__uv, u3k(rid));
-    c3_c*             tag_c = u3r_string(tag);
-    c3_c*             rid_c = u3r_string(rud);
+    u3_atom rud = u3dc("scot", c3__uv, u3k(rid));
+    c3_c*   tag_c = u3r_string(tag);
+    c3_c*   rid_c = u3r_string(rud);
 
     u3l_log("conn: %s %s\n", tag_c, rid_c);
     c3_free(tag_c);
@@ -593,11 +593,11 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
                           u3nt(u3k(rid), c3__fail, u3i_string("khan-miss")));
         }
         else {
-          u3_noun     wir = u3nc(c3__khan,
-                                 u3nq(u3dc("scot", c3__uv, con_u->sev_l),
-                                      u3dc("scot", c3__ud, can_u->coq_l),
-                                      u3dc("scot", c3__uv, u3k(rid)),
-                                      u3_nul));
+          u3_noun wir = u3nc(c3__khan,
+                             u3nq(u3dc("scot", c3__uv, con_u->sev_l),
+                                  u3dc("scot", c3__ud, can_u->coq_l),
+                                  u3dc("scot", c3__uv, u3k(rid)),
+                                  u3_nul));
 
           u3_auto_peer(
             u3_auto_plan(&con_u->car_u,
@@ -607,8 +607,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       } break;
 
       case c3__peek: {
-        u3_cran*      ran_u = c3_calloc(sizeof(u3_cran));
-        u3_noun       gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
+        u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
+        u3_noun   gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
 
         ran_u->rid = u3k(rid);
         ran_u->can_u = can_u;
@@ -624,13 +624,13 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       } break;
 
       case c3__ovum: {
-        u3_noun       tar, wir, cad;
+        u3_noun tar, wir, cad;
 
         if ( (c3n == u3r_trel(dat, &tar, &wir, &cad)) ) {
           can_u->mor_u.bal_f(can_u, -6, "ovum-bad");
         }
         else {
-          u3_cran*    ran_u = c3_calloc(sizeof(u3_cran));
+          u3_cran* ran_u = c3_calloc(sizeof(u3_cran));
 
           ran_u->rid = u3k(rid);
           ran_u->can_u = can_u;
