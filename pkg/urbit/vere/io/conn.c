@@ -445,8 +445,7 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
     switch (i_dat) {
       default: {
         res = u3_nul;
-        break;
-      }
+      } break;
       //  command list.
       //
       case c3__help: {
@@ -462,28 +461,24 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
             u3nc(c3__v, u3_nul),
             u3nc(c3__vars, u3_nul),
             u3_none));
-        break;
-      }
+      } break;
       //  simple health check.
       //
       case c3__live: {
         res = u3nt(u3_nul, u3_nul, u3K.pir_u->liv_o);
-        break;
-      }
+      } break;
       //  true iff the %khan vane is live (meaning %fyrd is supported.)
       //
       case c3__khan: {
         res = u3nt(u3_nul, u3_nul, con_u->kan_o);
-        break;
-      }
+      } break;
       //  |mass output
       //
       case c3__mass: {
         //  TODO  |mass
         //
         res = u3nc(u3_nul, u3_nul);
-        break;
-      }
+      } break;
       //  runtime metrics list.
       //
       case c3__vars: {
@@ -514,14 +509,12 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
             //  TODO  http/other stats, ames cached lanes count
             //
             u3_none));
-        break;
-      }
+      } break;
       //  vere version.
       //
       case c3__v: {
         res = u3nt(u3_nul, u3_nul, u3i_string(URBIT_VERSION));
-        break;
-      }
+      } break;
     }
   }
   else if ( c3n == u3r_cell(t_dat, &it_dat, &tt_dat) ) {
@@ -535,25 +528,20 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
     switch (i_dat) {
       default: {
         res = u3_nul;
-        break;
-      }
+      } break;
       case c3__port: {
         switch (it_dat) {
           default: {
             res = u3_nul;
-            break;
-          }
+          } break;
           case c3__ames: {
             res = u3nt(u3_nul, u3_nul, u3M.par_s);
-            break;
-          }
+          } break;
           case c3__http: {
             res = u3nt(u3_nul, u3_nul, u3M.per_s);
-            break;
-          }
+          } break;
         }
-        break;
-      }
+      } break;
     }
   }
   else {
@@ -597,8 +585,7 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     switch (tag) {
       default: {
         can_u->mor_u.bal_f(can_u, -3, "tag-unknown");
-        break;
-      }
+      } break;
 
       case c3__fyrd: {
         if ( c3n == con_u->kan_o ) {
@@ -617,8 +604,7 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
                          u3_ovum_init(0, c3__k, wir, u3k(can))),
             0, 0, _conn_poke_bail);
         }
-        break;
-      }
+      } break;
 
       case c3__peek: {
         u3_cran*      ran_u = c3_calloc(sizeof(u3_cran));
@@ -629,15 +615,13 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         ran_u->nex_u = can_u->ran_u;
         can_u->ran_u = ran_u;
         u3_pier_peek(con_u->car_u.pir_u, gan, u3k(dat), ran_u, _conn_peek_cb);
-        break;
-      }
+      } break;
 
       case c3__peel: {
         _conn_send_noun(
           can_u, u3nc(u3k(rid),
                       _conn_read_peel(con_u, u3k(dat))));
-        break;
-      }
+      } break;
 
       case c3__ovum: {
         u3_noun       tar, wir, cad;
@@ -657,33 +641,28 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
                          u3_ovum_init(0, u3k(tar), u3k(wir), u3k(cad))),
             ran_u, _conn_ovum_news, _conn_ovum_bail);
         }
-        break;
-      }
+      } break;
 
       case c3__urth: {
         switch (dat) {
           default: {
             can_u->mor_u.bal_f(can_u, -7, "urth-bad");
-            break;
-          }
+          } break;
           case c3__meld: {
             //  ack immediately.
             //
             _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
             u3_pier_meld(con_u->car_u.pir_u);
-            break;
-          }
+          } break;
           case c3__pack: {
             _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
             u3_pier_pack(con_u->car_u.pir_u);
-            break;
-          }
+          } break;
           //  TODO  more %urth commands
           //  TODO  send updates, success/failure?
           //
         }
-        break;
-      }
+      } break;
     }
   }
   u3z(jar);
