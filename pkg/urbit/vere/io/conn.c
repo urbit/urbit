@@ -474,28 +474,15 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
           //  empty response if pier is not yet live, since ames
           //  state may not yet be wired up.
           //
-          res = u3nc(u3_nul, u3_nul);
+          res = u3_nul;
           break;
         }
         res = u3nc(
           u3_nul,
           u3i_list(
-            u3nc(u3i_string("ames-drop-count"),     u3i_chub(u3M.sat_u->dop_d)),
-            u3nc(u3i_string("ames-crash-count"),    u3i_chub(u3M.sat_u->fal_d)),
-            u3nc(u3i_string("ames-successive-scry-failures"),
-                                                    u3i_chub(u3M.sat_u->saw_d)),
-            u3nc(u3i_string("ames-failed-headers"), u3i_chub(u3M.sat_u->hed_d)),
-            u3nc(u3i_string("ames-version-mismatches"),
-                                                    u3i_chub(u3M.sat_u->vet_d)),
-            u3nc(u3i_string("ames-invalid-mugs"),   u3i_chub(u3M.sat_u->mut_d)),
-            u3nc(u3i_string("ames-failed-bodies"),  u3i_chub(u3M.sat_u->bod_d)),
-            u3nc(u3i_string("ames-forward-queue-size"),
-                                                    u3i_chub(u3M.sat_u->foq_d)),
-            u3nc(u3i_string("ames-forwards"),       u3i_chub(u3M.sat_u->fow_d)),
-            u3nc(u3i_string("ames-forwards-dropped"),
-                                                    u3i_chub(u3M.sat_u->fod_d)),
-            //  TODO  http/other stats, ames cached lanes count
+            //  TODO  actual metrics (these are surprisingly hard to get at)
             //
+            u3nc(u3i_string("example-metric"), 1234),
             u3_none));
       } break;
       //  vere version.
@@ -523,11 +510,15 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
             res = u3_nul;
           } break;
           case c3__ames: {
-            res = u3nc(u3_nul, u3M.par_s);
-          } break;
+            res = u3nc(u3_nul, u3_Host.ops_u.por_s);
+            break;
+          }
           case c3__http: {
-            res = u3nc(u3_nul, u3M.per_s);
-          } break;
+            //  TODO  public http port.
+            //
+            res = u3nc(u3_nul, u3_nul);
+            break;
+          }
         }
       } break;
     }

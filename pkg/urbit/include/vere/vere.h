@@ -667,44 +667,19 @@
           uv_timer_t       tim_u;               //  gc timer
         } u3_king;
 
-      /* u3_mets: metrics tracking.
-      */
-        typedef struct _uf_mets {
-          c3_s          par_s;                  //  ames port
-          c3_s          per_s;                  //  public http port
-          struct _asat* sat_u;                  //  ames metrics
-        } u3_mets;
-
-      /* u3_asat: ames metrics. (if you change this, edit conn.c.)
-      */
-        typedef struct _asat {                  //    stats:
-          c3_d           dop_d;                 //  drop count
-          c3_d           fal_d;                 //  crash count
-          c3_d           saw_d;                 //  successive scry failures
-          c3_d           hed_d;                 //  failed to read header
-          c3_d           vet_d;                 //  version mismatches filtered
-          c3_d           mut_d;                 //  invalid mugs filtered
-          c3_d           bod_d;                 //  failed to read body
-          c3_d           foq_d;                 //  forward queue size
-          c3_d           fow_d;                 //  forwarded count
-          c3_d           fod_d;                 //  forwards dropped count
-        } u3_asat;                              //
-
       /* u3_pier_spin(): (re-)activate idle handler
       */
         void
         u3_pier_spin(u3_pier* pir_u);
 
-#     define u3K  u3_King
 #     define u3L  u3_Host.lup_u             //  global event loop
-#     define u3M  u3_Mets                   //  global metrics
+#     define u3K  u3_King
 
   /** Global variables.
   **/
     c3_global  u3_host   u3_Host;
-    c3_global  u3_king   u3_King;
     c3_global  c3_c*     u3_Local;
-    c3_global  u3_mets   u3_Mets;
+    c3_global  u3_king   u3_King;
 
   /** Functions.
   **/
