@@ -53,7 +53,7 @@
 **  i.e. nul-terminated lists of $knot. it responds with a
 **  (unit).
 **
-**  the %peek path /help produces a list of available commands.
+**  the %peel path /help produces a list of available commands.
 **  /args produces the command-line arguments used to start vere.
 **  /vars produces runtime metrics at the moment in time that the
 **  request was received.
