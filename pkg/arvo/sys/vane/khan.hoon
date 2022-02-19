@@ -125,12 +125,11 @@
     [~ khan-gate(hey hen)]
   ::
       %fard
-    =*  fyd       p.task
-    =/  =beak     (get-beak bear.fyd now)
-    =/  wir=wire  (head hen)
-    =/  rid=@ta   (rear wir)
-    =/  tid=@ta   (cat 3 'khan-fyrd--' rid)
-    =/  args      [~ `tid beak name.fyd args.fyd]
+    =/  tid=@ta
+      (cat 3 'khan-fyrd--' (scot %uv (sham eny)))
+    =*  fyd     p.task
+    =/  =beak   (get-beak bear.fyd now)
+    =/  args    [~ `tid beak name.fyd args.fyd]
     :_  khan-gate
     %+  turn
       :~  (watch-spider our /thread-result/[tid])
@@ -139,12 +138,13 @@
     |=(=note ^-(move [hen %pass //g note]))
   ::
       %fyrd
-    =*  fyd         p.task
-    =/  =beak       (get-beak bear.fyd now)
-    =/  =dais:clay  (get-dais beak p.q.args.fyd rof)
+    =*  fyd     p.task
+    =/  =beak   (get-beak bear.fyd now)
+    =/  =dais:clay
+      (get-dais beak p.q.args.fyd rof)
     =/  =vase
       (slam !>(some) (vale.dais q.q.args.fyd))
-    =/  =wire  (make-wire beak p.args.fyd)
+    =/  =wire   (make-wire beak p.args.fyd)
     :_  khan-gate
     [hen %pass wire %k %fard bear.fyd name.fyd vase]~
   ==
