@@ -483,8 +483,8 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
         while ( car_u ) {
           if ( car_u->io.info_f ) {
             res = u3nc(
-                u3nc(car_u->nam_m, car_u->io.info_f(car_u)),
-                res);
+              u3nc(car_u->nam_m, car_u->io.info_f(car_u)),
+              res);
           }
           car_u = car_u->nex_u;
         }
