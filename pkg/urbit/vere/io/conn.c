@@ -422,8 +422,8 @@ _conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
 static u3_noun
 _conn_read_peel(u3_conn* con_u, u3_noun dat)
 {
-  u3_noun   i_dat, t_dat, it_dat, tt_dat;
-  u3_noun   res;
+  u3_noun i_dat, t_dat, it_dat, tt_dat;
+  u3_noun res;
 
   if ( c3n == u3r_cell(dat, &i_dat, &t_dat) ) {
     res = u3_nul;
