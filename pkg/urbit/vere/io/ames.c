@@ -1521,6 +1521,8 @@ _ames_io_slog(u3_auto* car_u)
 
 # define FLAG(a) ( (c3y == a) ? "&" : "|" )
 
+  //  TODO  rewrite in terms of info_f
+  //
   u3l_log("      config:\n");
   u3l_log("        filtering: %s\n", FLAG(sam_u->fig_u.fit_o));
   u3l_log("         can send: %s\n", FLAG(sam_u->fig_u.net_o));
