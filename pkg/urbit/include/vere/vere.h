@@ -655,6 +655,8 @@
                          (void*, c3_w, u3_noun);//
           // XX remove
           c3_s             por_s;               //  UDP port
+          c3_s             per_s;               //  http port
+          c3_s             pes_s;               //  https port
           u3_save*         sav_u;               //  autosave
           struct _u3_pier* nex_u;               //  next in list
         } u3_pier;

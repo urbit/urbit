@@ -422,8 +422,9 @@ _conn_ovum_news(u3_ovum* egg_u, u3_ovum_news new_e)
 static u3_noun
 _conn_read_peel(u3_conn* con_u, u3_noun dat)
 {
-  u3_noun i_dat, t_dat, it_dat, tt_dat;
-  u3_noun res;
+  u3_pier*  pir_u = con_u->car_u.pir_u;
+  u3_noun   i_dat, t_dat, it_dat, tt_dat;
+  u3_noun   res;
 
   if ( c3n == u3r_cell(dat, &i_dat, &t_dat) ) {
     res = u3_nul;
@@ -445,7 +446,7 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
             u3nc(c3__khan, u3_nul),
             u3nc(c3__live, u3_nul),
             u3nc(c3__mass, u3_nul),
-            u3nc(c3__port, u3nt(c3__ames, c3__http, u3_nul)),
+            u3nc(c3__port, u3nq(c3__ames, c3__htls, c3__http, u3_nul)),
             u3nc(c3__v, u3_nul),
             u3nc(c3__vars, u3_nul),
             u3_none));
@@ -453,7 +454,7 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       //  simple health check.
       //
       case c3__live: {
-        res = u3nc(u3_nul, u3K.pir_u->liv_o);
+        res = u3nc(u3_nul, pir_u->liv_o);
       } break;
       //  true iff the %khan vane is live (meaning %fyrd is supported.)
       //
@@ -470,7 +471,6 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       //  runtime metrics list.
       //
       case c3__vars: {
-        u3_pier* pir_u = con_u->car_u.pir_u;
         u3_auto* car_u;
 
         res = u3_nul;
@@ -515,15 +515,14 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
             res = u3_nul;
           } break;
           case c3__ames: {
-            res = u3nc(u3_nul, u3_Host.ops_u.por_s);
-            break;
-          }
+            res = u3nc(u3_nul, pir_u->por_s);
+          } break;
+          case c3__htls: {
+            res = u3nc(u3_nul, pir_u->pes_s);
+          } break;
           case c3__http: {
-            //  TODO  public http port.
-            //
-            res = u3nc(u3_nul, u3_nul);
-            break;
-          }
+            res = u3nc(u3_nul, pir_u->per_s);
+          } break;
         }
       } break;
     }

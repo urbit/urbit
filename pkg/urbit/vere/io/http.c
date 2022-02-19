@@ -1612,6 +1612,7 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
   c3_free(paf_c);
 
   u3_http* htp_u = htd_u->htp_u;
+  u3_pier* pir_u = htd_u->car_u.pir_u;
 
   c3_c temp[32];
   while ( 0 != htp_u ) {
@@ -1621,6 +1622,14 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
                      (c3y == htp_u->lop) ? "loopback" : "public"));
     }
 
+    if ( c3n == htp_u->lop ) {
+      if ( c3y == htp_u->sec ) {
+        pir_u->pes_s = htp_u->por_s;
+      }
+      else {
+        pir_u->per_s = htp_u->por_s;
+      }
+    }
     htp_u = htp_u->nex_u;
   }
 
