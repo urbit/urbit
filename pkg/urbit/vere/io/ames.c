@@ -1488,10 +1488,10 @@ _ames_io_exit(u3_auto* car_u)
   uv_close(&sam_u->had_u, _ames_exit_cb);
 }
 
-/* _ames_io_info(): print status info.
+/* _ames_io_slog(): print status info.
 */
 static void
-_ames_io_info(u3_auto* car_u)
+_ames_io_slog(u3_auto* car_u)
 {
   u3_ames* sam_u = (u3_ames*)car_u;
 
@@ -1558,7 +1558,7 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->nam_m = c3__ames;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _ames_io_talk;
-  car_u->io.info_f = _ames_io_info;
+  car_u->io.slog_f = _ames_io_slog;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
 

@@ -1491,7 +1491,7 @@ u3_pier_info(u3_pier* pir_u)
         }
 
         if ( wok_u->car_u ) {
-          u3_auto_info(wok_u->car_u);
+          u3_auto_slog(wok_u->car_u);
         }
       }
     } break;

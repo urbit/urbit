@@ -586,7 +586,7 @@
       */
         typedef struct _u3_auto_cb {
           void (*talk_f)(struct _u3_auto*);
-          void (*info_f)(struct _u3_auto*);
+          void (*slog_f)(struct _u3_auto*);
           c3_o (*kick_f)(struct _u3_auto*, u3_noun, u3_noun);
           void (*exit_f)(struct _u3_auto*);  // XX close_cb?
         } u3_auto_cb;
@@ -845,10 +845,10 @@
         u3_auto*
         u3_auto_init(u3_pier* pir_u);
 
-      /* u3_auto_info(): print status info.
+      /* u3_auto_slog(): print status info.
       */
         void
-        u3_auto_info(u3_auto* car_u);
+        u3_auto_slog(u3_auto* car_u);
 
       /* u3_auto_exit(): close all drivers.
       */

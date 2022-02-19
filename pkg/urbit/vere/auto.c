@@ -353,10 +353,10 @@ u3_auto_exit(u3_auto* car_u)
   }
 }
 
-/* u3_auto_info(): print status info.
+/* u3_auto_slog(): print status info.
 */
 void
-u3_auto_info(u3_auto* car_u)
+u3_auto_slog(u3_auto* car_u)
 {
   u3_auto* nex_u;
 
@@ -373,9 +373,9 @@ u3_auto_info(u3_auto* car_u)
 
     //  XX details
     //
-    if ( car_u->io.info_f ) {
+    if ( car_u->io.slog_f ) {
       c3_l cod_l = u3a_lush(car_u->nam_m);
-      car_u->io.info_f(car_u);
+      car_u->io.slog_f(car_u);
       u3a_lop(cod_l);
     }
 
@@ -394,7 +394,7 @@ _auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
     return nex_u;
   }
 
-  //  assert that io callbacks are present (info_f is optional)
+  //  assert that io callbacks are present (slog_f is optional)
   //
   c3_assert( car_u->io.talk_f );
   c3_assert( car_u->io.kick_f );
