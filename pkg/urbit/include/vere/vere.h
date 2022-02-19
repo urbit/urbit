@@ -585,10 +585,11 @@
       /* u3_auto_cb: i/o driver callbacks
       */
         typedef struct _u3_auto_cb {
-          void (*talk_f)(struct _u3_auto*);
-          void (*slog_f)(struct _u3_auto*);
-          c3_o (*kick_f)(struct _u3_auto*, u3_noun, u3_noun);
-          void (*exit_f)(struct _u3_auto*);  // XX close_cb?
+          void    (*talk_f)(struct _u3_auto*);
+          u3_noun (*info_f)(struct _u3_auto*);
+          void    (*slog_f)(struct _u3_auto*);
+          c3_o    (*kick_f)(struct _u3_auto*, u3_noun, u3_noun);
+          void    (*exit_f)(struct _u3_auto*);  // XX close_cb?
         } u3_auto_cb;
 
       /* u3_auto: abstract i/o driver

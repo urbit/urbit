@@ -470,20 +470,25 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       //  runtime metrics list.
       //
       case c3__vars: {
-        if ( c3n == u3K.pir_u->liv_o ) {
-          //  empty response if pier is not yet live, since ames
-          //  state may not yet be wired up.
+        u3_pier* pir_u = con_u->car_u.pir_u;
+        u3_auto* car_u;
+
+        res = u3_nul;
+        if ( u3_psat_work != pir_u->sat_e ) {
+          //  empty response if drivers are not live.
           //
-          res = u3_nul;
           break;
         }
-        res = u3nc(
-          u3_nul,
-          u3i_list(
-            //  TODO  actual metrics (these are surprisingly hard to get at)
-            //
-            u3nc(u3i_string("example-metric"), 1234),
-            u3_none));
+        car_u = pir_u->wok_u->car_u;
+        while ( car_u ) {
+          if ( car_u->io.info_f ) {
+            res = u3nc(
+                u3nc(car_u->nam_m, car_u->io.info_f(car_u)),
+                res);
+          }
+          car_u = car_u->nex_u;
+        }
+        res = u3nc(u3_nul, res);
       } break;
       //  vere version.
       //

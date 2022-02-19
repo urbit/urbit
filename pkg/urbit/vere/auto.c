@@ -394,7 +394,7 @@ _auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
     return nex_u;
   }
 
-  //  assert that io callbacks are present (slog_f is optional)
+  //  assert that io callbacks are present (info_f and slog_f are optional)
   //
   c3_assert( car_u->io.talk_f );
   c3_assert( car_u->io.kick_f );

@@ -1488,6 +1488,30 @@ _ames_io_exit(u3_auto* car_u)
   uv_close(&sam_u->had_u, _ames_exit_cb);
 }
 
+/* _ames_io_info(): produce status info.
+*/
+static u3_noun
+_ames_io_info(u3_auto* car_u)
+{
+  u3_ames*  sam_u = (u3_ames*)car_u;
+
+  return u3i_list(
+      u3nc(u3i_string("filtering"),         sam_u->fig_u.fit_o),
+      u3nc(u3i_string("can-send"),          sam_u->fig_u.net_o),
+      u3nc(u3i_string("can-scry"),          sam_u->fig_u.see_o),
+      u3nc(u3i_string("dropped"),           u3i_chub(sam_u->sat_u.dop_d)),
+      u3nc(u3i_string("forwards-dropped"),  u3i_chub(sam_u->sat_u.fod_d)),
+      u3nc(u3i_string("forwards-pending"),  u3i_chub(sam_u->sat_u.foq_d)),
+      u3nc(u3i_string("forwarded"),         u3i_chub(sam_u->sat_u.fow_d)),
+      u3nc(u3i_string("filtered-hed"),      u3i_chub(sam_u->sat_u.hed_d)),
+      u3nc(u3i_string("filtered-ver"),      u3i_chub(sam_u->sat_u.vet_d)),
+      u3nc(u3i_string("filtered-mug"),      u3i_chub(sam_u->sat_u.mut_d)),
+      u3nc(u3i_string("filtered-bod"),      u3i_chub(sam_u->sat_u.bod_d)),
+      u3nc(u3i_string("crashed"),           u3i_chub(sam_u->sat_u.fal_d)),
+      u3nc(u3i_string("cached-lanes"),      u3i_word(u3h_wyt(sam_u->lax_p))),
+      u3_none);
+}
+
 /* _ames_io_slog(): print status info.
 */
 static void
@@ -1558,6 +1582,7 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->nam_m = c3__ames;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _ames_io_talk;
+  car_u->io.info_f = _ames_io_info;
   car_u->io.slog_f = _ames_io_slog;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;

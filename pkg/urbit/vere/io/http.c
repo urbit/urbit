@@ -2113,6 +2113,23 @@ _http_io_exit(u3_auto* car_u)
   _http_release_ports_file(u3_Host.dir_c);
 }
 
+/* _http_io_info(): produce status info.
+*/
+static u3_noun
+_http_io_info(u3_auto* car_u)
+{
+  u3_httd* htd_u = (u3_httd*)car_u;
+  c3_y sec_y = 0;
+  u3_hreq* seq_u = htd_u->fig_u.seq_u;
+  while ( 0 != seq_u ) {
+    sec_y++;
+    seq_u = seq_u->nex_u;
+  }
+  return u3i_list(
+      u3nc(u3i_string("slogstreams"), sec_y),
+      u3_none);
+}
+
 /* _http_io_slog(): print status info.
 */
 static void
@@ -2139,6 +2156,7 @@ u3_http_io_init(u3_pier* pir_u)
   car_u->nam_m = c3__http;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _http_io_talk;
+  car_u->io.info_f = _http_io_info;
   car_u->io.slog_f = _http_io_slog;
   car_u->io.kick_f = _http_io_kick;
   car_u->io.exit_f = _http_io_exit;
