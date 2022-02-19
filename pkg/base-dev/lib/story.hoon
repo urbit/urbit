@@ -11,7 +11,6 @@
   ::  0 \ b = 0  :: anything in 0 but not in b is by definition 0
   ::
   ?:  =(~ a)  ~
-  ~&  a
   ::  uno := (a-b) + (merged items in both a and b) + (b-a)
   ::  ret := (a-b) + (merged items in both a and b)  
   ::  ret = (~(int by a) uno)  :: preserve only the entries whose keys are in a

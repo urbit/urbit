@@ -15,7 +15,9 @@
 ::      leaning towards no, and potentially even making the case non-optional
 =/  our                p.bec
 =?  cas  =(*case cas)  r.bec  :: use case from beak if cas not provided
-:: TODO case existence check
+?:  !.^(? %cs /(scot %cs /(scot %p our)/[desk]/(scot cas)/case))
+  ~&  >>  "Error: invalid case {<cas>} provided"
+  helm-pass+[%d %noop ~]
 =/  tak
   ?:  ?=([%tako tako:clay] cas)
     p.cas
