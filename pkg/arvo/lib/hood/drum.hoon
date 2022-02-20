@@ -105,14 +105,15 @@
   ::                                                    ::  ::
 |%
 ++  en-gill                                           ::  gill to wire
-  |=  gyl=gill:gall
+  |=  [ses=@tas gyl=gill:gall]
   ^-  wire
-  ::TODO  include session?
-  [%drum %phat (scot %p p.gyl) q.gyl ~]
+  [%drum %phat (scot %p p.gyl) q.gyl ?:(=(%$ ses) ~ [ses ~])]
 ::
 ++  de-gill                                           ::  gill from wire
-  |=  way=wire  ^-  gill:gall
-  ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
+  |=  way=wire  ^-  [@tas gill:gall]
+  ?>  ?=([@ @ ?(~ [@ ~])] way)
+  :-  ?~(t.t.way %$ i.t.t.way)
+  [(slav %p i.way) i.t.way]
 --
 ::
 |=  [hid=bowl:gall state]
@@ -135,10 +136,15 @@
   =.  dev  (~(gut by bin) ses *source)
   this
 ::
+++  open
+  %+  cork  de-gill
+  |=  [s=@tas g=gill:gall]
+  [g (prep s)]
+::
 ++  diff-sole-effect-phat                             ::  app event
   |=  [way=wire fec=sole-effect]
   =<  se-abet  =<  se-view
-  =+  gyl=(de-gill way)
+  =^  gyl  this  (open way)
   ?:  (se-aint gyl)  +>.$
   (se-diff gyl fec)
 ::
@@ -228,7 +234,7 @@
 ++  reap-phat                                         ::  ack connect
   |=  [way=wire saw=(unit tang)]
   =<  se-abet  =<  se-view
-  =+  gyl=(de-gill way)
+  =^  gyl  this  (open way)
   ?~  saw
     (se-join gyl)
   ::  Don't print stack trace because we probably just crashed to
@@ -240,7 +246,7 @@
   |=  [way=wire saw=(unit tang)]
   =<  se-abet  =<  se-view
   ?~  saw  +>
-  =+  gyl=(de-gill way)
+  =^  gyl  this  (open way)
   ?:  (se-aint gyl)  +>.$
   %-  se-dump:(se-drop:(se-pull gyl) & gyl)
   :_  u.saw
@@ -264,7 +270,7 @@
 ++  quit-phat                                         ::
   |=  way=wire
   =<  se-abet  =<  se-view
-  =+  gyl=(de-gill way)
+  =^  gyl  this  (open way)
   ~&  [%drum-quit src.hid gyl]
   (se-drop %| gyl)
 ::                                                    ::  ::
@@ -279,7 +285,11 @@
   :_  (flop moz)
   =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
   ::TODO  remove /drum after dill cleans up
-  [%give %fact ~[/drum /dill/[ses]] %dill-blit !>(dill-blit)]
+  ::TODO  but once we remove it, the empty trailing segment of
+  ::      /dill/[ses] would prevent outsiders from subscribing
+  ::      to the default session...
+  =/  to=(list path)  [/dill/[ses] ?~(ses ~[/drum] ~)]
+  [%give %fact to %dill-blit !>(dill-blit)]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -518,19 +528,18 @@
 ::
 ++  se-poke                                           ::  send a poke
   |=  [gyl=gill:gall par=cage]
-  (se-emit %pass (en-gill gyl) %agent gyl %poke par)
+  (se-emit %pass (en-gill ses gyl) %agent gyl %poke par)
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl=gill:gall
   ~>  %slog.0^leaf/"drum: link {<[p q]:gyl>}"
-  ::TODO  include session
-  =/  =path  /sole/(cat 3 'drum_' (scot %p our.hid))
+  =/  =path  (id-to-path:sole our.hid ses)
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [%pass (en-gill gyl) %agent gyl %watch path]
+  [%pass (en-gill ses gyl) %agent gyl %watch path]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl=gill:gall
-  (se-emit %pass (en-gill gyl) %agent gyl %leave ~)
+  (se-emit %pass (en-gill ses gyl) %agent gyl %leave ~)
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl=gill:gall
@@ -555,7 +564,7 @@
     ^+  +>
     (ta-poke %sole-action !>(act))
   ::
-  ++  ta-id  (cat 3 'drum_' (scot %p our.hid))        ::  per-ship duct id
+  ++  ta-id  [our.hid ses]                            ::  per-ship-session id
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key=?(%d %l %r %u)

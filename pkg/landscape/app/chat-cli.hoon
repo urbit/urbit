@@ -16,15 +16,15 @@
 +$  card  card:shoe
 ::
 +$  versioned-state
-  $%  state-3
+  $%  state-4
+      state-3
       state-2
       state-1
       state-0
   ==
 ::
-+$  state-3
-  $:  %3
-      ::TODO  support multiple sessions
++$  state-4
+  $:  %4
       sessions=(map sole-id session)                ::  sole sessions
       bound=(map resource glyph)                    ::  bound resource glyphs
       binds=(jug glyph resource)                    ::  resource glyph lookup
@@ -33,7 +33,17 @@
       timez=(pair ? @ud)                            ::  timezone adjustment
   ==
 ::
-+$  sole-id  @ta
++$  state-3
+  $:  %3
+      sessions=(map @ta session)
+      bound=(map resource glyph)
+      binds=(jug glyph resource)
+      settings=(set term)
+      width=@ud
+      timez=(pair ? @ud)
+  ==
+::
++$  sole-id  sole-id:shoe
 +$  session
   $:  viewing=(set resource)                        ::  connected graphs
       history=(list uid:post)                       ::  scrollback pointers
@@ -115,7 +125,7 @@
   ==                                                ::
 ::
 --
-=|  state-3
+=|  state-4
 =*  state  -
 ::
 %-  agent:dbug
@@ -258,14 +268,14 @@
       settings  width  timez
     ==
   ::
-  =^  cards  u.old
+  =^  cards-1  u.old
     ?.  ?=(%2 -.u.old)  [~ u.old]
     :-  :~  [%pass /chat-store %agent [our-self %chat-store] %leave ~]
             [%pass /invites %agent [our.bowl %invite-store] %leave ~]
         ==
     ^-  state-3
     :-  %3
-    :*  %+  ~(put in *(map sole-id session))
+    :*  %+  ~(put in *(map @ta session))
           (cat 3 'drum_' (scot %p our.bowl))
         :*  ~  ~  0
           ::
@@ -290,14 +300,29 @@
         timez.u.old
     ==
   ::
-  ?>  ?=(%3 -.u.old)
+  =^  cards-2  u.old
+    ?.  ?=(%3 -.u.old)  [~ u.old]
+    :-  %+  turn  ~(tap in ~(key by sessions.u.old))
+        |=  id=@ta
+        ^-  card:agent:gall
+        [%give %kick ~[/sole/[id]] ~]
+    =-  u.old(- %4, sessions -)
+    %-  ~(gas by *(map sole-id session))
+    %+  murn  ~(tap by sessions.u.old)
+    |=  [id=@ta s=session]
+    (bind (upgrade-id:sole:shoe id) (late s))
+  ::
+  ?>  ?=(%4 -.u.old)
   :_  u.old
-  %+  welp
-    cards
-  ?:  %-  ~(has by wex.bowl)
-      [/graph-store our-self %graph-store]
-    ~
-  ~[connect]
+  ;:  welp
+    cards-1
+    cards-2
+  ::
+    ?:  %-  ~(has by wex.bowl)
+        [/graph-store our-self %graph-store]
+      ~
+    ~[connect]
+  ==
 ::  +connect: connect to the graph-store
 ::
 ++  connect

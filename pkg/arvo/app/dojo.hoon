@@ -10,9 +10,9 @@
 ::::                                                    ::  ::::
   ::                                                    ::    ::
 =>  |%                                                  ::  external structures
-    +$  id  @tasession                                  ::  session id
+    +$  id  sole-id                                     ::  session id
     +$  house                                           ::  all state
-      $:  %8
+      $:  %9
           egg=@u                                        ::  command count
           hoc=(map id session)                          ::  conversations
           acl=(set ship)                                ::  remote access whitelist
@@ -1019,13 +1019,14 @@
     |=  =card:agent:gall
     ^+  +>
     =?  card  ?=(%pass -.card)
-      card(p [id p.card])
+      ^-  card:agent:gall
+      card(p [(scot %p who.id) ses.id p.card])
     %_(+> moz [card moz])
   ::
   ++  he-diff                                           ::  emit update
     |=  fec=sole-effect
     ^+  +>
-    (he-card %give %fact ~[/sole/[id]] %sole-effect !>(fec))
+    (he-card %give %fact ~[(id-to-path:sole id)] %sole-effect !>(fec))
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
@@ -1533,21 +1534,47 @@
 ::
 ++  on-load
   |=  ole=vase
+  ^-  (quip card:agent:gall _..on-init)
   |^  =+  old=!<(house-any ole)
       =?  old  ?=(%5 -.old)
+        ^-  house-any
+        ^-  house-6
         (house-5-to-6 old)
       =?  old  ?=(?(%6 %7) -.old)
         (house-6-7-to-8 +.old)
-      ?>  ?=(%8 -.old)
-      `..on-init(state old)
+      =^  caz  old
+        ?.  ?=(%8 -.old)  [~ old]
+        (house-8-to-9 old)
+      ?>  ?=(%9 -.old)
+      [caz ..on-init(state old)]
   ::
-  +$  house-any  $%(house house-7 house-6 house-5)
+  +$  house-any  $%(house house-8 house-7 house-6 house-5)
+  ::
+  +$  id-8  @tasession
+  +$  house-8
+      $:  %8
+          egg=@u
+          hoc=(map id-8 session)
+          acl=(set ship)
+      ==
+  ++  house-8-to-9
+    |=  old=house-8
+    ^-  (quip card:agent:gall house)
+    :-  %+  turn  ~(tap in ~(key by hoc.old))
+        |=  id=@ta
+        ^-  card:agent:gall
+        [%give %kick ~[/sole/[id]] ~]
+    =-  [%9 egg.old - acl.old]
+    %-  ~(gas by *(map sole-id session))
+    %+  murn  ~(tap by hoc.old)
+    |=  [id=@ta s=session]
+    (bind (upgrade-id:sole id) (late s))
   ::
   +$  house-7        [%7 house-6-7]
   +$  house-6        [%6 house-6-7]
   +$  house-6-7
     $:  egg=@u                                        ::  command count
-        hoc=(map id session-6)                        ::  conversations
+        hoc=(map id-8 session-6)                      ::  conversations
         acl=(set ship)                                ::  remote access whitelist
     ==                                                ::
   +$  session-6                                       ::  per conversation
@@ -1574,9 +1601,10 @@
     old(poy ~, -.dir [our.hid %base ud+0])
   ::
   +$  house-5
-    [%5 egg=@u hoc=(map id session)]
+    [%5 egg=@u hoc=(map id-8 session-6)]
   ++  house-5-to-6
     |=  old=house-5
+    ^-  house-6
     [%6 egg.old hoc.old *(set ship)]
   --
 ::
@@ -1630,8 +1658,7 @@
   ?>  ?|  (team:title our.hid src.hid)
           (~(has in acl) src.hid)
       ==
-  ?>  ?=([%sole @ ~] path)
-  =/  id  i.t.path
+  =/  =id  (need (path-to-id:sole path))
   =?  hoc  (~(has by hoc) id)
     ~&  [%dojo-peer-replaced id]
     (~(del by hoc) id)
@@ -1643,7 +1670,7 @@
 ++  on-leave
   |=  =path
   ?>  ?=([%sole *] path)
-  =.  hoc  (~(del by hoc) t.path)
+  =.  hoc  (~(del by hoc) (need (path-to-id:sole path)))
   [~ ..on-init]
 ::
 ++  on-peek
@@ -1652,13 +1679,15 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ?>  ?=([@ @ *] wire)
-  =/  =session  (~(got by hoc) i.wire)
-  =/  he-full  ~(. he hid i.wire ~ session)
+  ^-  (quip card:agent:gall _..on-init)
+  ?>  ?=([@ @ @ *] wire)
+  =/  =id  [(slav %p i.wire) i.t.wire]
+  =/  =session  (~(got by hoc) id)
+  =/  he-full  ~(. he hid id ~ session)
   =^  moves  state
     =<  he-abet
     ^+  he
-    ?+  i.t.wire  ~|([%dojo-bad-on-agent wire -.sign] !!)
+    ?+  i.t.t.wire  ~|([%dojo-bad-on-agent wire -.sign] !!)
       %poke  (he-unto:he-full t.wire sign)
       %wool  (he-wool:he-full t.wire sign)
     ==

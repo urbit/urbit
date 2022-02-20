@@ -13,15 +13,15 @@
 /-  *sole
 /+  sole, auto=language-server-complete
 |%
-+$  state-0
-  $:  %0
-      soles=(map @ta sole-share)
++$  state-1
+  $:  %1
+      soles=(map sole-id sole-share)
   ==
 ::  $card: standard gall cards plus shoe effects
 ::
 +$  card
   $%  card:agent:gall
-      [%shoe sole-ids=(list @ta) effect=shoe-effect]  ::  ~ sends to all soles
+      [%shoe sole-ids=(list sole-id) effect=shoe-effect]  ::  ~ sends to all
   ==
 ::  $shoe-effect: easier sole-effects
 ::
@@ -47,30 +47,30 @@
   ::    if the head of the result is true, instantly run the command
   ::
   ++  command-parser
-    |~  sole-id=@ta
+    |~  =sole-id
     |~(nail *(like [? command-type]))
   ::  +tab-list: autocomplete options for the session (to match +command-parser)
   ::
   ++  tab-list
-    |~  sole-id=@ta
+    |~  =sole-id
     ::  (list [@t tank])
     *(list (option:auto tank))
   ::  +on-command: called when a valid command is run
   ::
   ++  on-command
-    |~  [sole-id=@ta command=command-type]
+    |~  [=sole-id command=command-type]
     *(quip card _^|(..on-init))
   ::
   ++  can-connect
-    |~  sole-id=@ta
+    |~  =sole-id
     *?
   ::
   ++  on-connect
-    |~  sole-id=@ta
+    |~  =sole-id
     *(quip card _^|(..on-init))
   ::
   ++  on-disconnect
-    |~  sole-id=@ta
+    |~  =sole-id
     *(quip card _^|(..on-init))
   ::
   ::NOTE  standard gall agent arms below, though they may produce %shoe cards
@@ -119,27 +119,27 @@
   |*  [shoe=* command-type=mold]
   |_  =bowl:gall
   ++  command-parser
-    |=  sole-id=@ta
+    |=  =sole-id
     (easy *[? command-type])
   ::
   ++  tab-list
-    |=  sole-id=@ta
+    |=  =sole-id
     ~
   ::
   ++  on-command
-    |=  [sole-id=@ta command=command-type]
+    |=  [=sole-id command=command-type]
     [~ shoe]
   ::
   ++  can-connect
-    |=  sole-id=@ta
+    |=  =sole-id
     (team:title [our src]:bowl)
   ::
   ++  on-connect
-    |=  sole-id=@ta
+    |=  =sole-id
     [~ shoe]
   ::
   ++  on-disconnect
-    |=  sole-id=@ta
+    |=  =sole-id
     [~ shoe]
   --
 ::  +agent: creates wrapper core that handles sole events and calls shoe arms
@@ -147,7 +147,7 @@
 ++  agent
   |*  command-type=mold
   |=  =(shoe command-type)
-  =|  state-0
+  =|  state-1
   =*  state  -
   ^-  agent:gall
   =>
@@ -164,8 +164,7 @@
         %+  turn
           ?^  sole-ids.card  sole-ids.card
           ~(tap in ~(key by soles))
-        |=  sole-id=@ta
-        /sole/[sole-id]
+        id-to-path:sole
       ::
           %table
         =;  fez=(list sole-effect)
@@ -202,9 +201,36 @@
     ?.  ?=([%shoe-app ^] q.old-state)
       =^  cards  shoe  (on-load:og old-state)
       [(deal cards) this]
-    =^  old-inner  state  +:!<([%shoe-app vase state-0] old-state)
-    =^  cards      shoe   (on-load:og old-inner)
-    [(deal cards) this]
+    |^  =|  old-outer=state-any
+        =^  old-inner  old-outer
+          +:!<([%shoe-app vase state-any] old-state)
+          :: ~!  q.old-state
+          :: ?+  +>.q.old-state  !!
+          ::   [%0 *]  +:!<([%shoe-app vase state-0] old-state)
+          ::   [%1 *]  +:!<([%shoe-app vase state-1] old-state)
+          :: ==
+        =^  caz  shoe  (on-load:og old-inner)
+        =^  cuz  old-outer
+          ?.  ?=(%0 -.old-outer)  [~ old-outer]
+          (state-0-to-1 old-outer)
+        ?>  ?=(%1 -.old-outer)
+        [(weld cuz (deal caz)) this(state old-outer)]
+    ::
+    +$  state-any  $%(state-1 state-0)
+    +$  state-0    [%0 soles=(map @ta sole-share)]
+    ++  state-0-to-1
+      |=  old=state-0
+      ^-  (quip card:agent:gall state-1)
+      :-  %+  turn  ~(tap in ~(key by soles.old))
+          |=  id=@ta
+          ^-  card:agent:gall
+          [%give %kick ~[/sole/[id]] ~]
+      :-  %1
+      %-  ~(gas by *(map sole-id sole-share))
+      %+  murn  ~(tap by soles.old)
+      |=  [id=@ta s=sole-share]
+      (bind (upgrade-id:sole id) (late s))
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -326,19 +352,18 @@
   ++  on-watch
     |=  =path
     ^-  (quip card:agent:gall agent:gall)
-    ?.  ?=([%sole @ ~] path)
+    ?~  sole-id=(path-to-id:sole path)
       =^  cards  shoe
         (on-watch:og path)
       [(deal cards) this]
-    =*  sole-id  i.t.path
-    ?>  (can-connect:og sole-id)
-    =.  soles  (~(put by soles) sole-id *sole-share)
+    ?>  (can-connect:og u.sole-id)
+    =.  soles  (~(put by soles) u.sole-id *sole-share)
     =^  cards  shoe
-      (on-connect:og sole-id)
+      (on-connect:og u.sole-id)
     :_  this
     %-  deal
     :_  cards
-    [%shoe [sole-id]~ %sole %pro & dap.bowl "> "]
+    [%shoe [u.sole-id]~ %sole %pro & dap.bowl "> "]
   ::
   ++  on-leave
     |=  =path
