@@ -2127,16 +2127,42 @@ _http_io_exit(u3_auto* car_u)
 static u3_noun
 _http_io_info(u3_auto* car_u)
 {
-  u3_httd* htd_u = (u3_httd*)car_u;
-  c3_y sec_y = 0;
-  u3_hreq* seq_u = htd_u->fig_u.seq_u;
+  u3_httd*  htd_u = (u3_httd*)car_u;
+  u3_http*  htp_u = htd_u->htp_u;
+  c3_w      sec_w = 0;
+  u3_hreq*  seq_u = htd_u->fig_u.seq_u;
+  u3_noun   res = u3_nul;
+
+  //  XX review: metrics
+  //
   while ( 0 != seq_u ) {
-    sec_y++;
+    sec_w++;
     seq_u = seq_u->nex_u;
   }
-  return u3i_list(
-      u3nc(u3i_string("slogstreams"), sec_y),
-      u3_none);
+  res = u3nc(
+      u3nc(
+        u3i_string("global"),
+        u3i_list(
+          u3nc(u3i_string("instance"), htd_u->sev_l),
+          u3nc(u3i_string("open-slogstreams"), u3i_word(sec_w)),
+          u3_none)),
+      res);
+
+  while ( 0 != htp_u ) {
+    res = u3nc(
+      u3nc(
+        u3dc("scot", c3__ui, htp_u->por_s),
+        u3i_list(
+          u3nc(u3i_string("secure"), htp_u->sec),
+          u3nc(u3i_string("loopback"), htp_u->lop),
+          u3nc(u3i_string("live"), htp_u->liv),
+          u3nc(u3i_string("instance"), htp_u->sev_l),
+          u3nc(u3i_string("connections"), htp_u->coq_l),
+          u3_none)),
+      res);
+    htp_u = htp_u->nex_u;
+  }
+  return res;
 }
 
 /* _http_io_slog(): print status info.
