@@ -132,7 +132,7 @@
 ::
 ++  prep
   |=  s=@tas
-  =.  ses  ses
+  =.  ses  s
   =.  dev  (~(gut by bin) ses *source)
   this
 ::
