@@ -1,6 +1,6 @@
 import React, { MouseEvent, ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { resourceAsPath } from '@urbit/api';
-import _ from 'lodash';
+import _, { find } from 'lodash';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import { SidebarItemBase } from './SidebarItem';
@@ -104,10 +104,10 @@ export function SidebarGroupList({
     // add groups to groupSorter.order if they're missing (as in, recently joined)
     let sortedGroups = [];
     for (const key in groupOrder) {
-      if (typeof groupOrder[key] === 'string') {
+      if (typeof groupOrder[key] === 'string' && groupList.find(e => e?.group === groupOrder[key])) {
         sortedGroups.push(groupOrder[key]);
-      } else {
-        sortedGroups = sortedGroups.concat(groupOrder[key]?.groups || []);
+      } else if (!(typeof groupOrder[key] === 'string') && groupOrder[key]?.groups) {
+        sortedGroups = sortedGroups.concat(groupOrder[key]?.groups);
       }
     }
     const missingGroups = groupList.map(({ group }) => group).filter(g => !sortedGroups.includes(g));

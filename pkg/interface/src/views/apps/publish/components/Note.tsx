@@ -46,7 +46,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(rootUrl);
   };
 
-
   const comments = getComments(note);
   const [, title, , post] = getLatestRevision(note);
   const index = note.post.index.split('/');
@@ -56,7 +55,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
     airlock.poke(markEachAsRead(toHarkPlace(association.resource), `/${index[1]}`));
     // Unread may be malformed, dismiss anyway
     // TODO: remove when %read-graph is implemented
-    airlock.poke(markEachAsRead(toHarkPlace(association.resource), `/1`));
+    airlock.poke(markEachAsRead(toHarkPlace(association.resource), '/1'));
   }, [association, props.note]);
 
   const adminLinks: JSX.Element[] = [];

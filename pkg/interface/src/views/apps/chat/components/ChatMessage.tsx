@@ -13,7 +13,6 @@ import VisibilitySensor from 'react-visibility-sensor';
 import { useIdlingState } from '~/logic/lib/idling';
 import { IS_MOBILE } from '~/logic/lib/platform';
 import { Sigil } from '~/logic/lib/sigil';
-import { useCopy } from '~/logic/lib/useCopy';
 import { citeNickname, daToUnix, useHovering, uxToHex } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
@@ -89,9 +88,8 @@ export const MessageAuthor = React.memo<any>(({
     ? 'mix-blend-diff'
     : 'mix-blend-darken';
 
-  const { copyDisplay, doCopy, didCopy } = useCopy(`~${msg.author}`, shipName);
   const { hovering, bind } = useHovering();
-  const nameMono = !(showNickname || didCopy);
+  const nameMono = !showNickname;
 
   const img =
     contact?.avatar && !hideAvatars ? (
@@ -127,18 +125,6 @@ export const MessageAuthor = React.memo<any>(({
     );
   return (
     <Box pb="1" display='flex' alignItems='center'>
-      <Box
-       height={24}
-        pr={2}
-        mt={'1px'}
-        pl={props.transcluded ? '11px' : '12px'}
-        cursor='pointer'
-        position='relative'
-      >
-        <ProfileOverlay cursor='auto' ship={msg.author}>
-          {img}
-        </ProfileOverlay>
-      </Box>
       <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
         <Box
           flexShrink={0}
@@ -146,21 +132,34 @@ export const MessageAuthor = React.memo<any>(({
           pt={1}
           pb={1}
           display='flex'
-          alignItems='baseline'
+          alignItems='center'
         >
-          <Text
-            fontSize={1}
-            mr={2}
-            flexShrink={1}
-            mono={nameMono}
-            fontWeight={nameMono ? '400' : '500'}
+          <Box
+            height={24}
+            pr={2}
+            mt={'1px'}
+            pl={props.transcluded ? '11px' : '12px'}
             cursor='pointer'
-            onClick={doCopy}
-            title={`~${msg.author}`}
+            position='relative'
           >
-            {copyDisplay}
-          </Text>
-          <Text whiteSpace='nowrap' flexShrink={0} fontSize={0} gray>
+            <ProfileOverlay cursor='auto' ship={msg.author}>
+              <Row alignItems="center">
+                {img}
+                <Text
+                  fontSize={1}
+                  ml={2}
+                  mt="2px"
+                  flexShrink={1}
+                  mono={nameMono}
+                  fontWeight={nameMono ? '400' : '500'}
+                  cursor='pointer'
+                >
+                  {shipName}
+                </Text>
+              </Row>
+            </ProfileOverlay>
+          </Box>
+          <Text whiteSpace='nowrap' flexShrink={0} fontSize={0} mt="5px" gray>
             {timestamp}
           </Text>
           <Text

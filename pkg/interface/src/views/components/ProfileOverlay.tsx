@@ -1,14 +1,5 @@
-import {
-  BaseImage, Box,
-
-  BoxProps,
-  Center, Col,
-
-  Icon, Row,
-
-  Text
-} from '@tlon/indigo-react';
-import { cite, uxToHex } from '@urbit/api';
+import { BaseImage, Box, BoxProps, Button, Center, Col, Icon, IconIndex, LoadingSpinner, Row, Text } from '@tlon/indigo-react';
+import { uxToHex } from '@urbit/api';
 import shallow from 'zustand/shallow';
 import _ from 'lodash';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -25,6 +16,10 @@ import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
 import { citeNickname } from '~/logic/lib/util';
+import api from '~/logic/api';
+import useDocketState from '~/logic/state/docket';
+import { PALS_APP, PALS_HOST } from '~/logic/constants/install';
+import { ModalOverlay } from './ModalOverlay';
 
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Col)`
@@ -34,6 +29,117 @@ const FixedOverlay = styled(Col)`
   -o-transition: all 0.1s ease-out;
   transition: all 0.1s ease-out;
 `;
+
+const ActionRow = styled(Row)`
+  padding: 4px;
+  width: 80%;
+  cursor: pointer;
+  &:hover {
+    background-color: ${p => p.theme.colors.washedGray};
+  }
+`;
+
+const PalsInfo = () => {
+  const { addAlly, requestTreaty, installDocket } = useDocketState();
+  const [hasPalsApp, setHasPalsApp] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
+
+  useEffect(() => {
+    const getPalsData = async () => {
+      try {
+        const data = await api.scry({
+          app: 'pals',
+          path: '/'
+        });
+        setHasPalsApp(true);
+        console.log('PALS DATA:', data)
+      } catch (err) {
+        // TODO: figure out which one means app isn't installed
+      }
+    };
+
+    getPalsData();
+  }, []);
+  const isMutual = false;
+  const isLeech = false;
+  const isTarget = false;
+
+  const handleSendRequest = useCallback(() => {
+    if (hasPalsApp) {
+      // send pals request, also on line below
+    } else {
+      setShowInstallModal(true);
+    }
+  }, [hasPalsApp]);
+
+  const handleInstall = useCallback(async () => {
+    setIsInstalling(true);
+    setShowInstallModal(false);
+    try {
+      await addAlly(PALS_HOST);
+      await requestTreaty(PALS_HOST, PALS_APP);
+      await installDocket(PALS_HOST, PALS_APP);
+      setHasPalsApp(true);
+    } catch (err) {
+      console.warn('PALS INSTALL ERROR:', err);
+    } finally {
+      setIsInstalling(false);
+    }
+  }, [setIsInstalling, setShowInstallModal, addAlly, requestTreaty, installDocket, setHasPalsApp]);
+
+  const getActionProps = () : { icon: keyof IconIndex; text: string | Element; onClick?: () => void } => {
+    if (isMutual) {
+      return { icon: 'Users', text: 'You are pals' };
+    } else if (isLeech) {
+      return { icon: 'Clock', text: 'Pals request pending', onClick: () => null };
+    } else if (isTarget) {
+      return { icon: 'CheckmarkBold', text: 'Accept pals request', onClick: () => null };
+    }
+
+    // TODO: if %pals isn't installed, show a modal with the option to install %pals
+    return { icon: 'CreateGroup', text: 'Send pals request', onClick: handleSendRequest };
+  };
+
+  if (showInstallModal) {
+    return (
+      <ModalOverlay
+        bg="transparent"
+        height="100%"
+        width="100%"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        dismiss={() => setShowInstallModal(false)}
+      >
+        <Box backgroundColor="white" p={4} borderRadius={3} display="flex" flexDirection="column" alignItems="center">
+          <Text>You do not have <Text mono>%pals</Text> installed,<br /> would you like to install it?</Text>
+          <Row mt={3}>
+            <Button color="white" backgroundColor="black" onClick={() => setShowInstallModal(false)} >Cancel</Button>
+            <Button ml={2} onClick={handleInstall}>Install</Button>
+          </Row>
+        </Box>
+      </ModalOverlay>
+    );
+  } else if (isInstalling) {
+    return (
+      <ActionRow width="80%">
+        <LoadingSpinner />
+        <Text ml={2}>Installing...</Text>
+      </ActionRow>
+    );
+  }
+
+  const { icon, text, onClick } = getActionProps();
+
+  return (
+    <ActionRow width="80%" onClick={onClick}>
+      <Icon icon={icon} size={16} mr={2} />
+      <Text>{text}</Text>
+    </ActionRow>
+  );
+};
 
 type ProfileOverlayProps = BoxProps & {
   ship: string;
@@ -149,20 +255,9 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         height='250px'
         width='250px'
         padding={3}
-        justifyContent='center'
+        alignItems='center'
       >
-        <Row color='black' padding={3} position='absolute' top={0} left={0}>
-           {!isOwn && (
-             <Icon
-               icon='Chat'
-               size={16}
-               cursor='pointer'
-               onClick={() => history.push(`/~landscape/messages/dm/~${ship}`)}
-             />
-           )}
-         </Row>
         <Box
-          alignSelf='center'
           height='72px'
           cursor='pointer'
           onClick={() => history.push(`/~profile/~${ship}`)}
@@ -171,16 +266,8 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         >
           {img}
         </Box>
-        <Col
-          position='absolute'
-          overflow='hidden'
-          minWidth={0}
-          width='100%'
-          padding={3}
-          bottom={0}
-          left={0}
-        >
-          <Row width='100%'>
+        <Col width="100%" alignItems="center">
+          <Row>
             <Text
               fontWeight='600'
               mono={!showNickname}
@@ -223,6 +310,15 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
             </RichText>
           )}
         </Col>
+        {!isOwn && (
+          <>
+            <ActionRow mt={2} onClick={() => history.push(`/~landscape/messages/dm/~${ship}`)}>
+              <Icon icon='Chat' size={16} mr={2} />
+              <Text>Message</Text>
+            </ActionRow>
+            {/* <PalsInfo /> */}
+          </>
+        )}
       </FixedOverlay>
     </Portal>
     )}

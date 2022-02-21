@@ -24,7 +24,7 @@ export function LikeIndicator ({
 }: LikeIndicatorProps) {
   const { hovering, bind } = useHovering();
 
-  if (transcluded || !likers.length) {
+  if (transcluded || (!likers.length && !isLiked)) {
     return null;
   }
 

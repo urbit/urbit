@@ -27,6 +27,7 @@ import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 import { leapCategories } from '~/types';
 import { IS_MOBILE } from '~/logic/lib/platform';
+import { postReactNativeMessage } from '~/logic/lib/reactNative';
 
 interface OmniboxProps {
   show: boolean;
@@ -179,13 +180,17 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         app === 'Terminal' ||
         app === 'home' ||
         app === 'notifications' ||
-        app === 'settings'
+        app === 'settings' ||
+        app === 'logout'
       ) {
-        if(shift && app === 'profile') {
+        if (shift && app === 'profile') {
           // TODO: hacky, fix
           link = link.replace('~profile', '~landscape/messages/dm');
         }
-        if(link.startsWith('?')) {
+        if (app === 'logout') {
+          postReactNativeMessage({ type: 'logout' });
+        }
+        if (link.startsWith('?')) {
           history.push({
             search: link
           });

@@ -253,7 +253,7 @@ const renderers = {
         fontSize={0}
         style={{ whiteSpace: 'pre-wrap' }}
       >
-        {value}
+        {value.replace('&nbsp;', '')}
       </Text>
     );
   },
@@ -326,7 +326,7 @@ const renderers = {
         overflowX="auto"
         style={{ whiteSpace: 'pre' }}
       >
-        {value}
+        {value.replace('&nbsp;', '')}
       </Text>
     );
     return tall ? <Box mb={2}>{inner}</Box> : inner;
@@ -421,6 +421,7 @@ export function Graphdown<T extends {} = {}>(
     <Renderer
       transcluded={transcluded}
       depth={depth}
+      tall={tall}
       {...rest}
       {...nodeRest}
     >

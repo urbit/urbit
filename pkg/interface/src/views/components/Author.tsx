@@ -2,8 +2,7 @@ import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
 import moment from 'moment';
 import React, { ReactElement, ReactNode } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
-import { useCopy } from '~/logic/lib/useCopy';
-import { cite, citeNickname, uxToHex } from '~/logic/lib/util';
+import { citeNickname, uxToHex } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
 import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/state/settings';
@@ -35,7 +34,7 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
     unread,
     isRelativeTime,
     dontShowTime,
-    lineHeight = 'tall',
+    lineHeight = 1,
     gray = false,
     ...rest
   } = props;
@@ -52,7 +51,6 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
   const { hideAvatars } = useSettingsState(selectCalmState);
   const name = citeNickname(ship, showNickname, contact?.nickname);
   const stamp = moment(date);
-  const { copyDisplay, doCopy } = useCopy(`~${ship}`, name);
 
   const sigil = fullNotIcon ? (
     <Sigil ship={ship} size={size} color={color} padding={sigilPadding} />
@@ -77,35 +75,32 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
     <Row {...rest} alignItems='center' width='auto'>
       <Box
         height={`${size}px`}
-        overflow='hidden'
         position='relative'
         cursor='pointer'
       >
-        {showImage && (
-          <ProfileOverlay ship={ship}>
-            {img}
-          </ProfileOverlay>
-        )}
+        <ProfileOverlay ship={ship}>
+          <Row alignItems="center">
+            {showImage && img}
+            <Text
+              ml={showImage ? 2 : 0}
+              color={gray ? 'gray': 'black'}
+              fontSize='1'
+              cursor='pointer'
+              lineHeight={lineHeight}
+              fontFamily={showNickname ? 'sans' : 'mono'}
+              fontWeight={showNickname ? '500' : '400'}
+              mr={showNickname ? 0 : '2px'}
+              mt={showNickname ? 0 : '0px'}
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+            >
+              {name}
+            </Text>
+          </Row>
+        </ProfileOverlay>
       </Box>
       <Box display='flex' alignItems='baseline'>
-        <Text
-          ml={showImage ? 2 : 0}
-          color={gray ? 'gray': 'black'}
-          fontSize='1'
-          cursor='pointer'
-          lineHeight={lineHeight}
-          fontFamily={showNickname ? 'sans' : 'mono'}
-          fontWeight={showNickname ? '500' : '400'}
-          mr={showNickname ? 0 : '2px'}
-          mt={showNickname ? 0 : '0px'}
-          overflow="hidden"
-          textOverflow="ellipsis"
-          whiteSpace="nowrap"
-          title={showNickname ? cite(ship) : contact?.nickname}
-          onClick={doCopy}
-        >
-          {copyDisplay}
-        </Text>
         { !dontShowTime && time && (
           <Timestamp
             height="fit-content"

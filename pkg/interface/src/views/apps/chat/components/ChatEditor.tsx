@@ -159,13 +159,8 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
   const [mentionCursor, setMentionCursor] = useState(0);
   const [disableAutocomplete, setDisableAutocomplete] = useState(false);
   const memberArray = useMemo(() => [...(group?.members || [])], [group]);
-
   const disableSpellcheck = useSettingsState(s => s.calm.disableSpellcheck);
-
-  const {
-    message,
-    setMessage
-  } = useChatStore();
+  const { message, setMessage } = useChatStore();
 
   const selectMember = useCallback((patp: string) => () => {
     const replaceText = (text, regex, set) => {
@@ -238,6 +233,11 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
     }
   };
 
+  const onSubmit = useCallback((msg: string) => {
+    submit(msg);
+    setAutocompleteValues(false, [], '');
+  }, [setAutocompleteValues, submit]);
+
   const messageChange = useCallback((editor, data, value) => {
     if (message !== '' && value == '') {
       setMessage(value);
@@ -299,7 +299,7 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({
           setMentionCursor(mentionCursor + 1);
         }
       }) : undefined,
-      'Enter': submit,
+      'Enter': onSubmit,
       'Esc': () => {
         if (hasSuggestions) {
           setAutoCompleteSuggestions([]);

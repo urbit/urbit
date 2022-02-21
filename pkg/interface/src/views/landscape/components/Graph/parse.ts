@@ -1,7 +1,5 @@
 import remark from 'remark';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
-import RemarkBreaks from 'remark-breaks';
-import ResumeParse from './resume';
 import newlines from './remark-break';
 
 export interface ParserSettings {
@@ -18,14 +16,14 @@ const DISABLED_BLOCK_TOKENS = [
   'setextHeading',
   'html',
   'definition',
-  'table',
+  'table'
 ];
 
 const DISABLED_INLINE_TOKENS = ['autoLink', 'url', 'email', 'reference', 'html'];
 
 const tallParser = remark().freeze();
 
-export const parseTall = (text: string) => tallParser.parse(text);
+export const parseTall = (text: string) => tallParser.parse(text.replace(/\n/gi, '\n &nbsp;'));
 
 const wideParser = remark()
   .use([
@@ -33,10 +31,10 @@ const wideParser = remark()
       RemarkDisableTokenizers,
       {
         block: DISABLED_BLOCK_TOKENS,
-        inline: DISABLED_INLINE_TOKENS,
-      },
+        inline: DISABLED_INLINE_TOKENS
+      }
     ],
     newlines
-  ])
+  ]);
 
-export const parseWide = (text: string) => wideParser.parse(text);
+export const parseWide = (text: string) => wideParser.parse(text.replace(/\n/gi, '\n &nbsp;'));

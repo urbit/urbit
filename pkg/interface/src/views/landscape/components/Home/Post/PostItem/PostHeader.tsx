@@ -36,8 +36,10 @@ const PostHeader = (props: PostHeaderProps): ReactElement => {
   const resource = resourceFromPath(graphPath);
 
   const doDelete = () => {
-    const { ship, name } = resource;
-    airlock.poke(removePosts(ship, name, [post.index]));
+    if (confirm('Are you sure you want to delete this note?')) {
+      const { ship, name } = resource;
+      airlock.poke(removePosts(ship, name, [post.index]));
+    }
   };
 
   return (
