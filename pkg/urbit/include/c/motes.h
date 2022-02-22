@@ -1197,7 +1197,6 @@
 #   define c3__ubin   c3_s4('u','b','i','n')
 #   define c3__ubit   c3_s4('u','b','i','t')
 #   define c3__ud     c3_s2('u','d')
-#   define c3__ui     c3_s2('u','i')
 #   define c3__ulib   c3_s4('u','l','i','b')
 #   define c3__un     c3_s2('u','n')
 #   define c3__uniq   c3_s4('u','n','i','q')
