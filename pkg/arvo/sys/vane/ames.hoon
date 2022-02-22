@@ -3023,7 +3023,7 @@
         =/  sig=@  (full:keys path data)
         ?~  data  [sig]~
         %+  rip  response-size  ::NOTE  1024 bytes
-        (cat 3 sig (jam data))  ::TODO  should include life
+        (cat 9 sig (jam data))  ::TODO  should include life
       ::  sign & packetize the fragments
       ::
       %-  head
