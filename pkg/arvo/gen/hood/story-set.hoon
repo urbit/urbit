@@ -21,7 +21,7 @@
     p.cas
   .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
 ::
-=/  pax            /(scot %p our)/[desk]/(scot cas)/story
+=/  pax            /(scot %p our)/[desk]/(scot %da now)/story
 ?:  !.^(? %cu pax)
   ~&  >>  "Error: No story file found. Please use |story-init to create one."
   helm-pass+[%d %noop ~]
