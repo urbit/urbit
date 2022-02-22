@@ -12,6 +12,8 @@
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec  :: use current desk if user didn't provide
 =/  cas=case              r.bec  :: use case from beak
+?:  !(~(has in .^((set ^desk) %cd /(scot %p our)/$/(scot %da now))) desk)
+  tang+[leaf+"Error: desk {<desk>} does not exist." ~]
 =/  pax                   /(scot %p our)/[desk]/(scot cas)/story
 ?:  !.^(? %cu pax)         tang+['Error: No story file found. Please use |story-init to create one.' ~]
 =/  tale                  .^(story %cx pax)

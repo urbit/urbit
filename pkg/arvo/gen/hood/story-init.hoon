@@ -9,6 +9,9 @@
     ==
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec  :: use current desk if user didn't provide
+?:  !(~(has in .^((set ^desk) %cd /(scot %p our)/$/(scot %da now))) desk)
+  ~&  >>  "Error: desk {<desk>} does not exist."
+  helm-pass+[%d %noop ~]
 =/  existing-story        .^(? %cu /(scot %p our)/[desk]/(scot %da now)/story)
 ?:  ?&(existing-story !overwrite)
   ~&  >>  "Error: /{(trip (slav %tas desk))}/story already exists. Set the optional parameter `overwrite` to `%.y` to forcibly overwrite."
