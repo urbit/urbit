@@ -13,12 +13,12 @@
 ?:  !(~(has in .^((set ^desk) %cd /(scot %p our)/$/(scot %da now))) desk)
   ~&  >>  "Error: desk {<desk>} does not exist."
   helm-pass+[%d %noop ~]
-?:  !.^(? %cs /(scot %p our)/[desk]/(scot cas)/case)
-  ~&  >>  "Error: invalid case {<cas>} provided"
-  helm-pass+[%d %noop ~]
-=/  tak
+=/  tak=tako:clay
   ?:  ?=([%tako tako:clay] cas)
     p.cas
+  ?:  !.^(? %cs /(scot %p our)/[desk]/(scot cas)/case)
+    ~&  >>  "Error: invalid case {<cas>} provided"
+    !!
   .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
 ::
 =/  pax            /(scot %p our)/[desk]/(scot %da now)/story
