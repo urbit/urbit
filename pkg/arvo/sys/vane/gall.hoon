@@ -1753,8 +1753,16 @@
       (sort ~(tap by queued) aor)
     ::
     =/  running
-      =/  active  (~(run by yokes.state) |=(yoke [%.y +<]))
-      (sort ~(tap by active) aor)
+      %+  turn  (sort ~(tap by yokes.state) aor)
+      |=  [dap=term =yoke]
+      ^-  mass
+      =/  met=(list mass)
+        =/  dat  (mo-peek:mo dap [~ ship] %x /whey/noun)
+        ?:  ?=(?(~ [~ ~]) dat)  ~
+        (fall ((soft (list mass)) q.q.u.u.dat) ~)
+      ?~  met
+        dap^&+yoke
+      dap^|+(welp met dot+&+yoke ~)
     ::
     =/  maz=(list mass)
       :~  [%foreign %.y contacts.state]
