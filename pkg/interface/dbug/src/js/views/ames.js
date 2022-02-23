@@ -101,7 +101,7 @@ export class Ames extends Component {
             <td>fragment-num</td>
             <td>num-fragments</td>
             <td>last-sent</td>
-            <td>retries</td>
+            <td>tries</td>
             <td>skips</td>
           </tr>
           <tr>
@@ -109,7 +109,7 @@ export class Ames extends Component {
             <td>{live['fragment-num']}</td>
             <td>{live['num-fragments']}</td>
             <td>{msToDa(live['last-sent'])}</td>
-            <td>{live.retries}</td>
+            <td>{live.tries}</td>
             <td>{live.skips}</td>
           </tr>
         </tbody></table>

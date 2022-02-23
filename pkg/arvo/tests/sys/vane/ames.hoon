@@ -2,8 +2,8 @@
 /=  ames  /sys/vane/ames
 ::  construct some test fixtures
 ::
-=/  nec  (ames ~nec)
-=/  bud  (ames ~bud)
+=/  nec  ^$:((ames ~nec))
+=/  bud  ^$:((ames ~bud))
 =/  comet  (ames ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
 ::
 =.  now.nec        ~1111.1.1
@@ -358,18 +358,19 @@
 ::
 ++  test-fine-response
   ^-  tang
+  =/  datum=@ux  (fil 5 32 0xdead.beef)
   =/  want=path  /cz/~bud/kids/1/sys
-  =/  net=path   /cz/kids/1/sys
+  =/  net=path   /cz/~bud/kids/1/sys
+  =.  rof.bud
+    |=(* ``noun+!>(datum))
   =/  =beam  [[~bud %$ da+now:bud] (welp /fine/message net)]
   =/  [=mark =vase]  (need (need (scry bud %x beam)))
   =+  !<(=song:ames vase)
-  =/   partial
-    %-  ~(gas by *(map @ud byts))
-    ^-  (list [@ud byts])
+  =/   partial=(list have:ames)
     %-  head 
     %^  spin  song  1
     |=  [blob=@ux num=@ud]
-    ^-  [[_num byts] _num]
+    ^-  [have:ames _num]
     :_  +(num)
     =/  [is-ames=? =packet:ames]  (decode-packet:ames `@ux`blob)
     ?>  ?=(%| is-ames)
@@ -379,12 +380,24 @@
     ~&  rawr-siz/`@ux`siz.rawr
     ~&  rawr-wid/`@ux`wid.rawr
     ~&  rawr-dat/`@ux`dat.rawr
-    :-  num
-    [wid dat]:rawr
-  =/  num-frag=@ud  ~(wyt by partial)
+    [num rawr]
+  ::
+  =/  num-frag=@ud  (lent partial)
   =/   =roar:ames
-    (decode-response-msg:ames num-frag num-frag partial)
-  ~&  roar
-  ~!  .
-  (expect-eq !>(1) !>(1))
+    (decode-response-msg:ames num-frag (flop partial))
+  %+  welp
+    =/  dat
+      ?>  ?=(^ dat.roar)
+      ;;(@ux q.dat.roar)
+    (expect-eq !>(dat) !>(datum))
+  =/  event-core
+    ~!  nec
+    =/   foo  [*@da *@ rof.nec]
+    (per-event:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
+  %-  zing
+  %+  turn  partial
+  |=  [fra=@ud sig=@ siz=@ud byts] 
+  %+  expect-eq  !>(%.y) 
+  !>((veri-fra:keys:fine:event-core ~bud life.ames-state.bud want fra dat sig))
+
 --

@@ -702,7 +702,7 @@
                   'fragment-num'^(numb fragment-num)
                   'num-fragments'^(numb num-fragments)
                   'last-sent'^(time last-sent)
-                  'retries'^(numb retries)
+                  'tries'^(numb tries)
                   'skips'^(numb skips)
               ==
             ::

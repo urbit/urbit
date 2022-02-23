@@ -2,6 +2,7 @@
 ::  %lull: arvo structures
 ::
 =>  ..part
+~%  %lull  ..part  ~
 |%
 ++  lull  %330
 ::                                                      ::  ::
@@ -35,6 +36,714 @@
       max-size=_2.048
       depth=_1
   ==
+::
+++  welt
+  ~/  %welt
+  |*  [a=(list) b=(list)]
+  =>  .(a ^.(homo a), b ^.(homo b))
+  |-  ^+  b
+  ?~  a  b
+  $(a t.a, b [i.a b])
+::
+::  +afx: polymorphic node type for finger trees
+::
+++  afx
+  |$  [val]
+  $%  [%1 p=val ~]
+      [%2 p=val q=val ~]
+      [%3 p=val q=val r=val ~]
+      [%4 p=val q=val r=val s=val ~]
+  ==
+::
+::  +pha: finger tree
+::
+++  pha
+  |$  [val]
+  $~  [%nul ~]
+  $%  [%nul ~]
+      [%one p=val]
+      [%big p=(afx val) q=(pha val) r=(afx val)]
+  ==
+::
+++  deq
+  |*  val=mold
+  |%
+  ::
+  ::  +|  %utilities
+  ::
+  ++  make-afx
+    |=  ls=(list val)
+    ?+  ls  ~|(bad-finger/(lent ls) !!)
+     [* ~]        [%1 ls]
+     [* * ~]      [%2 ls]
+     [* * * ~]    [%3 ls]
+     [* * * * ~]  [%4 ls]
+    ==
+  ::
+  ++  afx-to-pha
+    |=  =(afx val)
+    ^-  (pha val)
+    (apl *(pha val) +.afx)
+  ::
+  ::  +|  %left-biased-operations
+  ::
+  ::  +pop-left: remove leftmost value from tree
+  ::
+  ++  pop-left 
+    |=  a=(pha val)
+    ^-  [val=(unit val) pha=(pha val)]
+    ?-  -.a
+      %nul  ~^a
+    ::
+      %one  [`p.a nul/~]
+    ::
+        %big
+      [`p.p.a (big-left +.+.p.a q.a r.a)]
+   ==
+  ::
+  ::  +peek-left: inspect leftmost value
+  ::
+  ++  peek-left
+    |=  a=(pha val)
+    ^-  (unit val)
+    ?-  -.a
+      %nul  ~
+      %one  `p.a
+      %big  `p.p.a
+   ==
+  ::
+  ++  apl
+    |=  [a=(pha val) vals=(list val)]
+    ^-  (pha val)
+    =.  vals  (flop vals)
+    |-  
+    ?~  vals  a
+    $(a (cons a i.vals), vals t.vals)
+  ::
+  ::
+  ++  dip-left
+    |*  state=mold
+    |=  $:  a=(pha val)
+            =state
+            f=$-([state val] [(unit val) ? state])
+        ==
+    ^+  [state a]
+    =/  acc  [stop=`?`%.n state=state]
+    =|  new=(pha val)
+    |-  
+    ?:  stop.acc  
+      :: cat new and old
+      [state.acc (weld a new)]
+    =^  val=(unit val)  a
+      (pop-left a)
+    ?~  val
+      [state.acc new]
+    =^  res=(unit ^val)  acc
+      (f state.acc u.val)
+    ?~  res  $
+    $(new (snoc new u.res))
+  ::
+  ++  big-left
+    |=  [ls=(list val) a=(pha val) sf=(afx val)]
+    ^-  (pha val)
+    ?.  =(~ ls)
+      [%big (make-afx ls) a sf]
+    =/  [val=(unit val) inner=_a]
+      (pop-left a)
+    ?~  val
+      (afx-to-pha sf) 
+    [%big [%1 u.val ~] inner sf]
+  ::
+  ++  cons
+    =|  b=(list val)
+    |=  [a=(pha val) c=val]
+    ^-  (pha val)
+    =.  b  [c b]
+    |-  
+    ?~  b  a
+    ?-  -.a
+    ::
+        %nul  
+      $(a [%one i.b], b t.b)
+    ::
+        %one
+      %=  $  
+         b  t.b
+         a  [%big [%1 i.b ~] [%nul ~] [%1 p.a ~]]
+      ==
+    ::
+        %big
+      ?.  ?=(%4 -.p.a)
+        %=    $
+            b  t.b
+        ::
+            a
+          ?-  -.p.a
+            %1  big/[[%2 i.b p.p.a ~] q.a r.a]
+            %2  big/[[%3 i.b p.p.a q.p.a ~] q.a r.a]
+            %3  big/[[%4 i.b p.p.a q.p.a r.p.a ~] q.a r.a]
+           ==
+        ==
+      =/  inner
+        $(a q.a, b ~[s.p.a r.p.a q.p.a])
+      =.  inner
+        $(a inner, b t.b)
+      big/[[%2 i.b p.p.a ~] inner r.a]
+    ==
+  ::
+  ::  +|  %right-biased-operations
+  ::
+  ::  +snoc: append to end (right) of tree
+  ::
+  ++  snoc
+    |=  [a=(pha val) b=val]
+    ^+  a
+    ?-  -.a
+      %nul  [%one b]
+    ::
+        %one
+      :-  %big
+      :*  [%1 p.a ~]
+          [%nul ~]
+          [%1 b ~]
+      ==
+    ::
+        %big
+      ?-  -.r.a
+      ::
+          %1
+        :-  %big
+        [p.a q.a [%2 p.r.a b ~]]
+      ::
+          %2
+        :-  %big
+        [p.a q.a [%3 p.r.a q.r.a b ~]]
+      ::
+          %3
+        :-  %big
+        [p.a q.a [%4 p.r.a q.r.a r.r.a b ~]]
+      ::
+          %4
+        =/  inner
+          $(a q.a, b p.r.a)
+        =.  inner
+          $(a inner, b q.r.a)
+        =.  inner
+          $(a inner, b r.r.a)
+        :-  %big
+        :*  p.a
+            inner
+            [%2 s.r.a b ~]
+        ==
+      ==
+    ==
+  ::  +apr: append list to end (right) of tree
+  ::
+  ++  apr
+    |=  [a=(pha val) vals=(list val)]
+    ^-  (pha val)
+    ?~  vals  a
+    $(a (snoc a i.vals), vals t.vals)
+  ::
+  ::  +big-right: construct a tree, automatically balancing the right
+  ::  side
+  ++  big-right
+    |=  [pf=(afx val) a=(pha val) ls=(list val)]
+    ^-  (pha val)
+    ?.  =(~ ls)
+      [%big pf a (make-afx ls)]
+    =/  [val=(unit val) inner=_a]
+      (pop-right a)
+    ?~  val
+      (afx-to-pha pf) 
+    [%big pf inner [%1 u.val ~]]
+  ::
+  ::  +pop-right: remove rightmost value from tree
+  ::
+  ++  pop-right 
+    |=  a=(pha val)
+    ^-  [val=(unit val) pha=(pha val)]
+    ?-  -.a
+      %nul  ~^a
+    ::
+      %one  [`p.a nul/~]
+    ::
+        %big
+      =/  ls=(list val)  +.r.a
+      =^  item  ls  (flop ls)
+      [`item (big-right p.a q.a (flop ls))]
+   ==
+  ::
+  ++  peek-right
+    |=  a=(pha val)
+    ?-  -.a
+      %nul  ~
+      %one  `p.a
+      %big  (rear +.r.a)
+   ==
+  ::
+  ::  +|  %manipulation
+  ::  
+  ::  +weld: concatenate two trees
+  ::
+  ::    O(log n)
+  ++  weld
+    =|  c=(list val)
+    |=  [a=(pha val) b=(pha val)]
+    ^-  (pha val)
+    ?-  -.b
+      %nul  (apr a c)
+      %one  (snoc (apr a c) p.b)
+    ::
+        %big
+      ?-  -.a
+        %nul  (apl b c)
+        %one  (cons (apl b c) p.a)
+      ::
+          %big
+        :-  %big
+        =-  [p.a - r.b]
+        $(a q.a, b q.b, c :(welp +.r.a c +.p.b))
+      ==
+    ==
+  ::  +tap: transform tree to list
+  ::
+  ++  tap
+    =|  res=(list val)
+    |=  a=(pha val)
+    !.
+    |^  ^+  res
+    ?-  -.a
+      %nul  ~
+      %one  ~[p.a]
+    ::
+        %big
+      =/  fst=_res
+        (tap-afx p.a)
+      =/  lst=_res
+        (tap-afx r.a)
+      =/  mid=_res
+        $(a q.a)
+      :(welp fst mid lst)
+    ==
+    ++  tap-afx
+      |=  ax=(afx val)
+      ^+  res
+      ?-  -.ax
+        %1  +.ax
+        %2  +.ax
+        %3  +.ax
+        %4  +.ax
+      ==
+    --
+  --
+::
+::  +mop: constructs and validates ordered ordered map based on key,
+::  val, and comparator gate
+::
+++  mop
+  |*  [key=mold value=mold]
+  |=  ord=$-([key key] ?)
+  |=  a=*
+  =/  b  ;;((tree [key=key val=value]) a)
+  ?>  (apt:((on key value) ord) b)
+  b
+::
+::
+++  ordered-map  on
+::  +on: treap with user-specified horizontal order, ordered-map
+::
+::  WARNING: ordered-map will not work properly if two keys can be
+::  unequal under noun equality but equal via the compare gate
+::
+++  on
+  ~/  %on
+  |*  [key=mold val=mold]
+  =>  |%
+      +$  item  [key=key val=val]
+      --
+  ::  +compare: item comparator for horizontal order
+  ::
+  ~%  %comp  +>+  ~
+  |=  compare=$-([key key] ?)
+  ~%  %core    +  ~
+  |%
+  ::  +all: apply logical AND boolean test on all values
+  ::
+  ++  all
+    ~/  %all
+    |=  [a=(tree item) b=$-(item ?)]
+    ^-  ?
+    |-
+    ?~  a
+      &
+    ?&((b n.a) $(a l.a) $(a r.a))
+  ::  +any: apply logical OR boolean test on all values
+  ::
+  ++  any
+    ~/  %any
+    |=  [a=(tree item) b=$-(item ?)]
+    |-  ^-  ?
+    ?~  a
+      |
+    ?|((b n.a) $(a l.a) $(a r.a))
+  ::  +apt: verify horizontal and vertical orderings
+  ::
+  ++  apt
+    ~/  %apt
+    |=  a=(tree item)
+    =|  [l=(unit key) r=(unit key)]
+    |-  ^-  ?
+    ::  empty tree is valid
+    ::
+    ?~  a  %.y
+    ::  nonempty trees must maintain several criteria
+    ::
+    ?&  ::  if .n.a is left of .u.l, assert horizontal comparator
+        ::
+        ?~(l %.y (compare key.n.a u.l))
+        ::  if .n.a is right of .u.r, assert horizontal comparator
+        ::
+        ?~(r %.y (compare u.r key.n.a))
+        ::  if .a is not leftmost element, assert vertical order between
+        ::  .l.a and .n.a and recurse to the left with .n.a as right
+        ::  neighbor
+        ::
+        ?~(l.a %.y &((mor key.n.a key.n.l.a) $(a l.a, l `key.n.a)))
+        ::  if .a is not rightmost element, assert vertical order
+        ::  between .r.a and .n.a and recurse to the right with .n.a as
+        ::  left neighbor
+        ::
+        ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
+    ==
+  ::  +bap: convert to list, right to left
+  ::
+  ++  bap
+    ~/  %bap
+    |=  a=(tree item)
+    ^-  (list item)
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    $(a r.a, b [n.a $(a l.a)])
+  ::  +del: delete .key from .a if it exists, producing value iff deleted
+  ::
+  ++  del
+    ~/  %del
+    |=  [a=(tree item) =key]
+    ^-  [(unit val) (tree item)]
+    ?~  a  [~ ~]
+    ::  we found .key at the root; delete and rebalance
+    ::
+    ?:  =(key key.n.a)
+      [`val.n.a (nip a)]
+    ::  recurse left or right to find .key
+    ::
+    ?:  (compare key key.n.a)
+      =+  [found lef]=$(a l.a)
+      [found a(l lef)]
+    =+  [found rig]=$(a r.a)
+    [found a(r rig)]
+  ::  +dip: stateful partial inorder traversal
+  ::
+  ::    Mutates .state on each run of .f.  Starts at .start key, or if
+  ::    .start is ~, starts at the head.  Stops when .f produces .stop=%.y.
+  ::    Traverses from left to right keys.
+  ::    Each run of .f can replace an item's value or delete the item.
+  ::
+  ++  dip
+    ~/  %dip
+    |*  state=mold
+    |=  $:  a=(tree item)
+            =state
+            f=$-([state item] [(unit val) ? state])
+        ==
+    ^+  [state a]
+    ::  acc: accumulator
+    ::
+    ::    .stop: set to %.y by .f when done traversing
+    ::    .state: threaded through each run of .f and produced by +abet
+    ::
+    =/  acc  [stop=`?`%.n state=state]
+    =<  abet  =<  main
+    |%
+    ++  this  .
+    ++  abet  [state.acc a]
+    ::  +main: main recursive loop; performs a partial inorder traversal
+    ::
+    ++  main
+      ^+  this
+      ::  stop if empty or we've been told to stop
+      ::
+      ?:  =(~ a)  this
+      ?:  stop.acc  this
+      ::  inorder traversal: left -> node -> right, until .f sets .stop
+      ::
+      =.  this  left
+      ?:  stop.acc  this
+      =^  del  this  node
+      =?  this  !stop.acc  right
+      =?  a  del  (nip a)
+      this
+    ::  +node: run .f on .n.a, updating .a, .state, and .stop
+    ::
+    ++  node
+      ^+  [del=*? this]
+      ::  run .f on node, updating .stop.acc and .state.acc
+      ::
+      ?>  ?=(^ a)
+      =^  res  acc  (f state.acc n.a)
+      ?~  res
+        [del=& this]
+      [del=| this(val.n.a u.res)]
+    ::  +left: recurse on left subtree, copying mutant back into .l.a
+    ::
+    ++  left
+      ^+  this
+      ?~  a  this
+      =/  lef  main(a l.a)
+      lef(a a(l a.lef))
+    ::  +right: recurse on right subtree, copying mutant back into .r.a
+    ::
+    ++  right
+      ^+  this
+      ?~  a  this
+      =/  rig  main(a r.a)
+      rig(a a(r a.rig))
+    --
+  ::  +gas: put a list of items
+  ::
+  ++  gas
+    ~/  %gas
+    |=  [a=(tree item) b=(list item)]
+    ^-  (tree item)
+    ?~  b  a
+    $(b t.b, a (put a i.b))
+  ::  +get: get val at key or return ~
+  ::
+  ++  get
+    ~/  %get
+    |=  [a=(tree item) b=key]
+    ^-  (unit val)
+    ?~  a  ~
+    ?:  =(b key.n.a)
+      `val.n.a
+    ?:  (compare b key.n.a)
+      $(a l.a)
+    $(a r.a)
+  ::  +got: need value at key
+  ::
+  ++  got
+    |=  [a=(tree item) b=key]
+    ^-  val
+    (need (get a b))
+  ::  +has: check for key existence
+  ::
+  ++  has
+    ~/  %has
+    |=  [a=(tree item) b=key]
+    ^-  ?
+    !=(~ (get a b))
+  ::  +lot: take a subset range excluding start and/or end and all elements
+  ::  outside the range
+  ::
+  ++  lot
+    ~/  %lot
+    |=  $:  tre=(tree item)
+            start=(unit key)
+            end=(unit key)
+        ==
+    ^-  (tree item)
+    |^
+    ?:  ?&(?=(~ start) ?=(~ end))
+      tre
+    ?~  start
+      (del-span tre %end end)
+    ?~  end
+      (del-span tre %start start)
+    ?>  (compare u.start u.end)
+    =.  tre  (del-span tre %start start)
+    (del-span tre %end end)
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=?(%start %end) c=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  c  a
+      ?-  b
+          %start
+        ::  found key
+        ?:  =(key.n.a u.c)
+          (nip a(l ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          ::  found key to the left of start
+          $(a (nip a(l ~)))
+        ::  found key to the right of start
+        a(l $(a l.a))
+      ::
+          %end
+        ::  found key
+        ?:  =(u.c key.n.a)
+          (nip a(r ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          :: found key to the left of end
+          a(r $(a r.a))
+        :: found key to the right of end
+        $(a (nip a(r ~)))
+      ==
+    --
+  ::  +nip: remove root; for internal use
+  ::
+  ++  nip
+    ~/  %nip
+    |=  a=(tree item)
+    ^-  (tree item)
+    ?>  ?=(^ a)
+    ::  delete .n.a; merge and balance .l.a and .r.a
+    ::
+    |-  ^-  (tree item)
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (mor key.n.l.a key.n.r.a)
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
+  ::
+  ::  +pop: produce .head (leftmost item) and .rest or crash if empty
+  ::
+  ++  pop
+    ~/  %pop
+    |=  a=(tree item)
+    ^-  [head=item rest=(tree item)]
+    ?~  a    !!
+    ?~  l.a  [n.a r.a]
+    =/  l  $(a l.a)
+    :-  head.l
+    ::  load .rest.l back into .a and rebalance
+    ::
+    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
+      a(l rest.l)
+    rest.l(r a(r r.rest.l))
+  ::  +pry: produce head (leftmost item) or null
+  ::
+  ++  pry
+    ~/  %pry
+    |=  a=(tree item)
+    ^-  (unit item)
+    ?~  a    ~
+    |-
+    ?~  l.a  `n.a
+    $(a l.a)
+  ::  +put: ordered item insert
+  ::
+  ++  put
+    ~/  %put
+    |=  [a=(tree item) =key =val]
+    ^-  (tree item)
+    ::  base case: replace null with single-item tree
+    ::
+    ?~  a  [n=[key val] l=~ r=~]
+    ::  base case: overwrite existing .key with new .val
+    ::
+    ?:  =(key.n.a key)  a(val.n val)
+    ::  if item goes on left, recurse left then rebalance vertical order
+    ::
+    ?:  (compare key key.n.a)
+      =/  l  $(a l.a)
+      ?>  ?=(^ l)
+      ?:  (mor key.n.a key.n.l)
+        a(l l)
+      l(r a(l r.l))
+    ::  item goes on right; recurse right then rebalance vertical order
+    ::
+    =/  r  $(a r.a)
+    ?>  ?=(^ r)
+    ?:  (mor key.n.a key.n.r)
+      a(r r)
+    r(l a(r l.r))
+  ::  +ram: produce tail (rightmost item) or null
+  ::
+  ++  ram
+    ~/  %ram
+    |=  a=(tree item)
+    ^-  (unit item)
+    ?~  a    ~
+    |-
+    ?~  r.a  `n.a
+    $(a r.a)
+  ::  +run: apply gate to transform all values in place
+  ::
+  ++  run
+    ~/  %run
+    |*  [a=(tree item) b=$-(val *)]
+    |-
+    ?~  a  a
+    [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
+  ::  +tab: tabulate a subset excluding start element with a max count
+  ::
+  ++  tab
+    ~/  %tab
+    |=  [a=(tree item) b=(unit key) c=@]
+    ^-  (list item)
+    |^
+    (flop e:(tabulate (del-span a b) b c))
+    ::
+    ++  tabulate
+      |=  [a=(tree item) b=(unit key) c=@]
+      ^-  [d=@ e=(list item)]
+      ?:  ?&(?=(~ b) =(c 0))
+        [0 ~]
+      =|  f=[d=@ e=(list item)]
+      |-  ^+  f
+      ?:  ?|(?=(~ a) =(d.f c))  f
+      =.  f  $(a l.a)
+      ?:  =(d.f c)  f
+      =.  f  [+(d.f) [n.a e.f]]
+      ?:(=(d.f c) f $(a r.a))
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  b  a
+      ?:  =(key.n.a u.b)
+        r.a
+      ?:  (compare key.n.a u.b)
+        $(a r.a)
+      a(l $(a l.a))
+    --
+  ::  +tap: convert to list, left to right
+  ::
+  ++  tap
+    ~/  %tap
+    |=  a=(tree item)
+    ^-  (list item)
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    $(a l.a, b [n.a $(a r.a)])
+  ::  +uni: unify two ordered maps
+  ::
+  ::    .b takes precedence over .a if keys overlap.
+  ::
+  ++  uni
+    ~/  %uni
+    |=  [a=(tree item) b=(tree item)]
+    ^-  (tree item)
+    ?~  b  a
+    ?~  a  b
+    ?:  =(key.n.a key.n.b)
+      [n=n.b l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
+    ?:  (mor key.n.a key.n.b)
+      ?:  (compare key.n.b key.n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ?:  (compare key.n.a key.n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
+  --
+
 ::
 +$  deco  ?(~ %bl %br %un)                              ::  text decoration
 +$  json                                                ::  normal json value
@@ -513,7 +1222,7 @@
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         heeds=(set duct)
-        keens=(set path)
+        keens=(jug path duct)
     ==
   ::  $peer-state: state for a peer with known life and keys
   ::
@@ -547,6 +1256,36 @@
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
         heeds=(set duct)
+        scry=scry-state
+    ==
+  +$  scry-state
+    $:  order=(map path @ud)
+        seq=@ud
+        keens=((mop @ud keen-state) lte)
+    ==
+  +$  keen-state
+    $:  wan=(pha want)   ::  request packets, sent
+        nex=(list want)  ::  request packets, unsent
+        hav=(list have)  ::  response packets, backward
+        num-fragments=@ud
+        num-received=@ud
+        next-wake=(unit @da)
+        listeners=(set duct)
+        metrics=pump-metrics
+    ==
+  +$  want
+    $:  fra=@ud
+        =hoot
+        packet-state
+    ==
+  +$  have
+    $:  fra=@ud
+        rawr
+    ==
+  +$  rawr  ::  response packet  ::TODO  meow
+    $:  sig=@
+        siz=@ud
+        byts
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
@@ -698,7 +1437,7 @@
     ==
   +$  packet-state
     $:  last-sent=@da
-        retries=@ud
+        tries=_1
         skips=@ud
     ==
   ::  $message-sink-state: state of |message-sink to assemble messages
