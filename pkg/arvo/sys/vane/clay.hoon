@@ -361,8 +361,8 @@
 ::  %utilities
 ::
 |%
-++  scry-timeout-time  ~m1
-++  scry-retry-time    ~h1
+++  scry-timeout-time  ~s5
+++  scry-retry-time    ~s30
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
 ++  sort-by-head
@@ -1331,6 +1331,7 @@
     =/  =path
       =,  mood
       [(cat 3 %c care) (scot %p ship) desk (scot case) path]
+    ~&  scrying/path^index
     :-  time
     %-  emil
     :~  [hen %pass wire %a %keen path]
@@ -1382,9 +1383,9 @@
     ::  :ship's remote scry isn't known to be broken,
     ::  or we learned it was broken more than an hour ago,
     ::
-    ?:  ?&  ?=(%sing -.rave)
+    ?:  ?&  ?=([%sing %x *] rave)
         ?|  !(~(has by sad) her)
-            (lth now (add scry-retry-time (~(got by sad) her)))
+            (gth now (add scry-retry-time (~(got by sad) her)))
         ==  ==
       ::  send request as remote scry
       ::TODO  can be deduplicated with the below?
@@ -3008,8 +3009,11 @@
     |=  [inx=@ud rut=(unit rand)]
     ^+  +>
     ?>  ?=(^ ref)
+    ~&  take-foreign/inx
     =+  ruv=(~(get by bom.u.ref) inx)
-    ?~  ruv  +>.$
+    ?~  ruv  
+      ~&  %bad-answer
+       +>.$
     =?  ..take-foreign-answer  ?=(^ scry.u.ruv)
       =<  ?>(?=(^ ref) .)
       (cancel-scry-timeout %warp-index hen her inx syd u.scry.u.ruv)
@@ -3253,7 +3257,7 @@
         ::
         ?:  ?&  ?=(^ i.need.sat)
             ?|  !(~(has by sad) her)
-                (lth now (add scry-retry-time (~(got by sad) her)))
+                (gth now (add scry-retry-time (~(got by sad) her)))
             ==  ==
           ::  make the request over remote scry
           ::
@@ -4985,6 +4989,7 @@
       ::
       =^  mos  ruf
         =;  res=(unit rand)
+          ~&  taking-foreign-answer/=(~ res)
           =/  den  ((de now rof hen ruf) her desk)
           abet:(take-foreign-answer:den index res)
         ?:  ?=(%boon +<.hin)  ;;((unit rand) payload.hin)

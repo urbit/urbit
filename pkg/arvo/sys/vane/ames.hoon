@@ -2555,6 +2555,15 @@
             =.  keens.scry  (put:orm keens.scry keen-id keen-state)
             ke-abet:ke-start:(ke-abed:keen-core path)
           ::
+          ::  TODO: fix, only cancel on when no more subscribers
+          ++  pe-yawn
+            |=  =path
+            =/  keen-id=@ud  (~(got by order.scry) path)
+            =.  order.scry  (~(del by order.scry) path)
+            =.  keens.scry  +:(del:orm keens.scry keen-id)
+            ~&  yawn/path
+            pe-core
+          ::
           ++  pe-hear
             |=  [=lane =packet]
             ?>  =(sndr-tick.packet (mod life.peer 16))
@@ -2687,8 +2696,15 @@
               |=  [sig=@ data=$@(~ (cask))]
               ?>  (meri:keys ship life.peer path sig data)
               ~&  got-response/path
-              ::  TODO: notify subscribers
-              ke-core
+              =/  listeners  ~(tap in listeners.keen)
+              =/  dat=(unit (cask))
+               ?~(data ~ `data)
+              |-  ^+  ke-core
+              ?~  listeners
+                ke-core
+              =.  event-core
+                (emit i.listeners %give %tune path dat)
+              $(listeners t.listeners)
             ::
             ++  ke-first-rcv
               |=  =rawr
@@ -2739,6 +2755,7 @@
               ~|  %frag-mismatch
               ~|  have/num-received
               ~|  need/num-fragments
+              ~|  path/path
               ?>  =(num-fragments num-received)
               ?>  =((lent hav) num-received)
               (decode-response-msg num-fragments hav)
@@ -2854,8 +2871,12 @@
         ++  on-yawn
           |=  =path
           ^+  event-core
-          =.  want.state  (~(del ju want.state) path duct)
-          event-core
+          =/  omen
+            ~|  [%fine %invalid-namespace-path path]
+            (need (de-omen path))
+          =/  peer-core  (pe-abed:fine-peer p.bem.omen)
+          ?~  peer-core  !!
+          pe-abet:(pe-yawn:u.peer-core path)
         ::
         ++  on-bide
           |=  =path
