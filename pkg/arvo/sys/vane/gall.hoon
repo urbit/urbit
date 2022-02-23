@@ -1757,7 +1757,7 @@
       |=  [dap=term =yoke]
       ^-  mass
       =/  met=(list mass)
-        =/  dat  (mo-peek:mo dap [~ ship] %x /whey/noun)
+        =/  dat  (mo-peek:mo | dap [~ ship] %x /whey/mass)
         ?:  ?=(?(~ [~ ~]) dat)  ~
         (fall ((soft (list mass)) q.q.u.u.dat) ~)
       ?~  met
