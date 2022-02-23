@@ -641,8 +641,24 @@
   ==
 +$  ship-state-5
   $%  [%alien alien-agenda-5]
-      [%known peer-state]
+      [%known peer-state-5]
   ==
+::
++$  peer-state-5
+  $:  $:  =symmetric-key
+          =life
+          =public-key
+          sponsor=ship
+      ==
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+  ==
+::
 +$  alien-agenda-5
   $:  messages=(list [=duct =plea])
       packets=(set =blob)
@@ -1109,17 +1125,20 @@
   ++  state-5-to-6
     |=  old=ames-state-5
     ^-  ^ames-state
-    %=  old
-      peers        (~(run by peers.old) ship-state-5-to-6)
-      bug          [bug.old *fine-state]
-      crypto-core  (nol:nu:crub:crypto sec:ex:crypto-core.old)
+    :*  peers=(~(run by peers.old) ship-state-5-to-6)
+        unix-duct.old
+        life.old
+        crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
+        bug.old
+        *fine-state
     ==
   ::
   ++  ship-state-5-to-6
     |=  old=ship-state-5
     ^-  ship-state
-    ?.  ?=(%alien -.old)  old
-    old(heeds [heeds.old ~])
+    ?:  ?=(%alien -.old)  
+      old(heeds [heeds.old ~])
+    old(heeds [heeds.old *scry-state])
   ::
   ++  state-4-to-5
     |=  ames-state=ames-state-5
