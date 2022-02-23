@@ -1222,7 +1222,7 @@
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         heeds=(set duct)
-        keens=(set path)
+        keens=(jug path duct)
     ==
   ::  $peer-state: state for a peer with known life and keys
   ::

@@ -629,7 +629,6 @@
       =life
       crypto-core=acru:ames
       =bug
-      =fine-state
   ==
 ::
 +$  ames-state-5
@@ -687,18 +686,7 @@
         ++  com  |~(a=pass ^?(..nu))
     --
   --
-::  $fine-state: remote scry subsystem state
 ::
-::    hear: awaiting existence
-::    want: awaiting response
-::    part: partial responses
-::
-+$  fine-state
-  $:  hear=(jug path duct)
-      want=(jug path duct)
-      part=(map path partial-fine)
-      ::TODO  re-send request timers?
-  ==
 +$  twit  ::  signed request
   $:  signature=@
       peep
@@ -1130,7 +1118,6 @@
         life.old
         crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
         bug.old
-        *fine-state
     ==
   ::
   ++  ship-state-5-to-6
@@ -1881,9 +1868,8 @@
         ::  apply remote scry requests
         ::
         =.  event-core
-          %+  roll  ~(tap in keens.todos)
-          |=  [=path core=_event-core]
-          (send-request:fine:core ship path 1)
+          =<  pe-abet
+          (pe-meet-alien:(need (pe-abed:fine-peer:fine ship)) keens.todos)
         ::
         event-core(duct original-duct)
       --
@@ -2541,7 +2527,6 @@
     --
   ::
   ++  fine
-    =*  state  fine-state.ames-state
     =<  |%
         ++  fine-peer
           |_  $:  =ship
@@ -2563,20 +2548,30 @@
             event-core
           ++  pe-lane  (get-lane ship)
           ++  pe-keen
-            |=  =path
+            |=  [=path =^duct]
             ?:  (~(has by order.scry) path)
-              ke-abet:ke-sub:(ke-abed:keen-core path)
+              ke-abet:(ke-sub:(ke-abed:keen-core path) duct)
             =/  keen-id=@ud  seq.scry
             =.  seq.scry  +(seq.scry)
             =.  order.scry
               (~(put by order.scry) path keen-id)
             =|  =keen-state
             =.  keens.scry  (put:orm keens.scry keen-id keen-state)
-            ke-abet:ke-start:(ke-abed:keen-core path)
+            ke-abet:(ke-start:(ke-abed:keen-core path) duct)
+          ::
+          ++  pe-meet-alien
+            |=  agenda=(jug path ^duct)
+            %+  roll  ~(tap by agenda)
+            |=  [[=path ducts=(set ^duct)] cor=_pe-core]
+            ^+  cor
+            %+  roll  ~(tap in ducts)
+            |=  [=^duct c=_cor]
+            ^+  c
+            (pe-keen:c path duct)
           ::
           ++  pe-yawn
             |=  =path
-            ke-abet:ke-unsub:(ke-abed:keen-core path)
+            ke-abet:(ke-unsub:(ke-abed:keen-core path) duct)
           ::
           ++  pe-hear
             |=  [=lane =packet]
@@ -2697,8 +2692,9 @@
               [`want %.n found ke-core]
             ::
             ++  ke-start
+              |=  =^duct
               ~&  start/now
-              =.  ke-core  ke-sub
+              =.  ke-core  (ke-sub duct)
               ?>  =(num-fragments.keen 0)
               =/  fra=@  1
               =/  req  (ke-encode-req fra)
@@ -2760,11 +2756,13 @@
               (ke-emit hoot)
             ::
             ++  ke-sub
+              |=  =^duct
               =.  listeners.keen  (~(put in listeners.keen) duct)
               ke-core
             ::  scry is autocancelled in +ke-abet if no more listeners
             ::
             ++  ke-unsub
+              |=  =^duct
               =.  listeners.keen  (~(del in listeners.keen) duct)
               ke-core
             ::
@@ -2904,10 +2902,10 @@
             (need (de-omen path))
           =*  ship  p.bem.omen
           =/  peer-core  (pe-abed:fine-peer ship)
-          ?^  peer-core  pe-abet:(pe-keen:u.peer-core path)
+          ?^  peer-core  pe-abet:(pe-keen:u.peer-core path duct)
           %+  enqueue-alien-todo  ship
           |=  todos=alien-agenda
-          todos(keens (~(put in keens.todos) path))
+          todos(keens (~(put ju keens.todos) path duct))
         ::
         ++  on-yawn
           |=  =path
@@ -2923,7 +2921,6 @@
         ++  on-bide
           |=  =path
           ^+  event-core
-          =.  hear.state  (~(put ju hear.state) path duct)
           ::  TODO: other vanes?
           (bide-clay path)
         ::
@@ -2950,14 +2947,10 @@
           =/  cas=(unit (cask))
             ?~  riot  ~
             `[p q.q]:r.u.riot
-          =/  wanted        (~(get ju want.state) pax)
-          =.  want.state    (~(del by want.state) pax)
           =/  =song
             (encode-response pax (fall cas ~))
-          %-  emil
-          %+  turn  [unix-duct.ames-state ~(tap in wanted)]
-          |=  d=^duct
-          [d %give %howl pax song]
+          %-  emit
+          [unix-duct.ames-state %give %howl pax song]
         ::
         ++  on-take-wake
           |=  [=wire error=(unit tang)]
@@ -3141,74 +3134,6 @@
       =/  =peer-state
         (got-peer-state ship)
       lane:(need route.peer-state)
-    ::
-    ++  send-request
-      |=  [=ship =path num=@ud]
-      ^+  event-core
-      =/  =lane:ames  (get-lane ship)
-      =/  =hoot       (encode-request ship path 1)
-      %-  emit
-      [unix-duct.ames-state %give %send lane `@ux`hoot]
-    ::
-    ++  process-response
-      |=  [[from=ship =life] =path sig=@ data=$@(~ (cask))]
-      ^+  event-core
-      ?>  (meri:keys from life path sig data)
-      ~&  got-response/path
-      =.  event-core
-        %-  emil
-        %+  turn  ~(tap in (~(get ju want.state) path))
-        (late [%give %tune path ?@(data data `data)])
-      =.  want.state  (~(del by want.state) path)
-      =.  part.state  (~(del by part.state) path)
-      event-core
-    ::
-    ++  handle-response
-      |=  [[from=ship =life =lane:ames] =peep =rawr]
-      ^+  event-core
-      ?:  =(0 siz.rawr)
-        ?>  =(~ dat.rawr)
-        (process-response [from life] path.peep sig.rawr ~)
-      ?.  (~(has by part.state) path.peep)
-        ::  we did not initiate this request, or it's been cancelled
-        ::
-        !!
-      =/  partial=partial-fine
-        (~(got by part.state) path.peep)
-      =.  partial
-        ?:  (~(has by fragments.partial) num.peep)
-          partial
-        =,  partial
-        :+  ~|  [%fine %response-size-changed have=num-fragments new=siz.rawr]
-            ?>  |(=(0 num-fragments) =(num-fragments siz.rawr))
-            siz.rawr
-          +(num-received)
-        :: ?>  (veri:keys from life path.peep num.peep dat.rawr)
-        (~(put by fragments) num.peep [wid dat]:rawr)
-      ::
-      ?:  =(num-fragments num-received):partial
-        ::  we have all the parts now, construct the full response
-        ::
-        =|  =roar
-        (process-response [from life] path.peep [sig dat]:roar)
-      ::  otherwise, store the part, and send out the next request
-      ::
-      =.  part.state  (~(put by part.state) path.peep partial)
-      =/  next-num=@ud
-        =/  next=@ud  +(num.peep)
-        ::  we should receive responses in order, but in case we don't...
-        ::
-        |-
-        ?.  (~(has by fragments.partial) next)  next
-        $(next +((mod next num-fragments.partial)))
-      ::
-      =/  =hoot  (encode-request from path.peep next-num)
-      ::TODO  ask amsden, should we shotgun? we can tweak this
-      ::      for now (mvp) though, stay 1-to-1
-      ::TODO  update lane in ames state
-      ::TODO  is reusing the lane fine?
-      %-  emit
-      [unix-duct.ames-state %give %send lane `@ux`hoot]
     --
   --
 ::  +make-message-pump: constructor for |message-pump
