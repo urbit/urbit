@@ -1059,7 +1059,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         return _n_comp(ops, nef, los_o, tel_o);
       }
 
-      case c3__orry:
+      case c3__meme:
       case c3__xray: // add a case that packs more info into HILB
                      // place nef_w into HILB trel
       case c3__bout: {
@@ -1097,7 +1097,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
 
-          case c3__orry:
+          case c3__meme:
           case c3__xray:
           case c3__bout: {
             u3_noun fen = u3_nul;
@@ -1830,12 +1830,6 @@ xray(c3_l pri_l, u3_noun fol, c3_w ip_w) {
   _n_prog_free(pog_u);
 }
 
-void
-orry(c3_l pri_l, u3n_prog* pog_u, c3_w ip_w) {
-  c3_y* pog = pog_u->byc_u.ops_y;
-  slog_bytecode(pri_l, pog, ip_w);
-}
-
 // ---------------END DANEs EDIT -----
 
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
@@ -1854,14 +1848,7 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out, int arg_count, ...)
     u3_atom now = u3i_chub(u3t_trace_time());
     *out = u3i_cell(u3h(hin), now);
   }
-  else if ( (c3y == u3r_cell(hin, &p_hin, &q_hin)) &&
-  (c3__orry == p_hin) && arg_count > 0 ) {
-    va_list args;
-    va_start(args, arg_count);
-    u3n_prog* pog_u = va_arg(args, u3n_prog*);
-    c3_w ip_w = va_arg(args, c3_w);
-    va_end(args);
-    orry(0, pog_u, ip_w);
+  else if ( (c3y == u3r_cell(hin, &p_hin, &q_hin)) && (c3__meme == p_hin) ) {
     *out = u3_nul;
   }
   else if ( (c3y == u3r_cell(hin, &p_hin, &q_hin)) &&
@@ -1919,22 +1906,8 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu, int arg_count, ...)
     u3_atom now = u3i_chub(u3t_trace_time());
     *clu = u3i_trel(u3h(hin), *clu, now);
   }
-  else if ( c3__orry == u3h(hin) && arg_count > 0) {
-    u3_noun p_q_tok, q_q_tok;
-    c3_assert(c3y == u3r_cell(*clu, &p_q_tok, &q_q_tok));
-    c3_c str_c[64];
-    c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
-    snprintf(str_c, 63, "%%orry");
-    //NOTE: these are backwards from the style used by %bout
-    //      likewise I may want to update how nara and hela print headlines as well
-    //u3t_dynamic_header(pri_l, u3k(q_q_tok), u3i_string(str_c));
-    u3t_dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
-    va_list args;
-    va_start(args, arg_count);
-    u3n_prog* pog_u = va_arg(args, u3n_prog*);
-    c3_w ip_w = va_arg(args, c3_w);
-    va_end(args);
-    orry(pri_l, pog_u, ip_w);
+  else if ( c3__meme == u3h(hin) ) {
+    u3z(*clu);
     *clu = u3_nul;
   }
   else if ( c3__xray == u3h(hin) && arg_count > 0) {
@@ -2672,10 +2645,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       x   = u3k(pog_u->lit_u.non[x]);
       top = _n_peek(off);   // bus
       c3_c str_c[64];
-      if ( c3__orry == u3h(x) ) {
-        x = _n_hilt_fore(x, *top, &o, 2, pog_u, ip_w);
-      }
-      else if ( c3__xray == u3h(x) ) {
+      if ( c3__xray == u3h(x) ) {
         x = _n_hilt_fore(x, *top, &o, 1, ip_w);
       }
       else {
@@ -2697,10 +2667,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       o   = _n_pep(mov, off);   //  [bus]
       top = _n_peek(off);
       c3_c str_d[64];
-      if ( c3__orry == u3h(x) ) {
-        x = _n_hint_fore(x, *top, &o, 2, pog_u, ip_w);
-      }
-      else if ( c3__xray == u3h(x) ) {
+      if ( c3__xray == u3h(x) ) {
         x = _n_hint_fore(x, *top, &o, 1, ip_w);
       } else {
         x = _n_hint_fore(x, *top, &o, 0);

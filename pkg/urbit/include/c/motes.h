@@ -814,7 +814,6 @@
 #   define c3__or     c3_s2('o','r')
 #   define c3__ord    c3_s3('o','r','d')
 #   define c3__orth   c3_s4('o','r','t','h')
-#   define c3__orry   c3_s4('o','r','r','y')
 #   define c3__outd   c3_s4('o','u','t','d')
 #   define c3__ov     c3_s2('o','v')
 #   define c3__over   c3_s4('o','v','e','r')

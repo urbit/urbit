@@ -136,11 +136,10 @@
       void
       u3t_dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message);
 
-    /* u3t_orry(): collect the bytecode data
-     * for the context containing the 'calling' hint
+    /* u3t_meme(): report memory stats at call time
      */
       u3_noun
-      u3t_orry();
+      u3t_meme();
 
     /* u3t_xray(): collect the bytecode data
      * for the expression wrapped in the 'calling' hint
