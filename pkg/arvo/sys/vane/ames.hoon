@@ -2788,9 +2788,7 @@
                 (ke-on-ack fra)
               ::
               ?.  found
-                ::  discard changes
-                ~&  dupe-ack/fra
-                og
+                (ke-fast-retransmit:og fra)
               =/  =have   [fra rawr]
               =.  hav.keen
                 `(list ^have)`[have hav.keen]
@@ -2798,6 +2796,23 @@
               ?:  =(num-fragments num-received):keen
                 (ke-done [sig dat]:ke-decode-full)
               ke-continue
+            ::
+            ++  ke-fast-retransmit
+              |=  fra=@ud
+              =;  [cor=_ke-core wants=(pha want)]
+                cor(wan.keen wants)
+              %^  (dip-left:ke-deq ,cor=_ke-core)  wan.keen
+                ke-core
+              |=  [cor=_ke-core =want]
+              ^-  [(unit ^want) stop=? cor=_ke-core]
+              ?.  (lte fra.want fra)
+                [`want & cor]
+              ?:  (gth (next-expiry:ke-gauge:cor +>.want) now)
+                [`want & cor]
+              =.  last-sent.want  now
+              =.  cor
+                (ke-emit:cor hoot.want)
+              [`want | cor]
             ::
             ++  ke-gauge
               =*  bug  bug.ames-state
