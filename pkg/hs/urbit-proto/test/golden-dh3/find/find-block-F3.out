@@ -22,10 +22,10 @@ ERROR
           find:
           wing  q.a
           type  =>  0
-                {* a|p|q|@ud}
+                {* a=p=q=@ud}
 
 
 
   find.q
-  type  p|q|@ud
+  type  p=q=@ud
 

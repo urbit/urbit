@@ -51,6 +51,9 @@ fitsNestCast = forAll @Identity \t u ->
 instance (Ord a, Serial m a) => Serial m (Set a) where
   series = setFromList <$> series
 
+instance (Ord a, Serial m a, Serial m b) => Serial m (Map a b) where
+  series = mapFromList <$> series
+
 instance Monad m => Serial m Term where
   series = generate $ \n -> take (1+n)
     [ "a"
@@ -63,8 +66,8 @@ instance Monad m => Serial m Term where
 
 instance Monad m => Serial m Fit
 instance Monad m => Serial m Grit
+instance Monad m => Serial m Face
 instance Serial m a => Serial m (Code a)
-instance Serial m a => Serial m (Pelt a)
 instance Serial m a => Serial m (Base a)
 
 instance Serial m a => Serial m (Hop a b) where

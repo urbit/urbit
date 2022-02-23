@@ -5,6 +5,7 @@ import ClassyPrelude
 import Data.Either (fromRight)
 import Data.List (unfoldr)
 import Data.Text (stripEnd)
+import Data.Void
 import Urbit.Atom (atomUtf8)
 
 import Practice.DependentHoon3
@@ -141,6 +142,9 @@ tankLines = \case
 class Rolling r where
   roll :: r -> Roll
 
+instance Rolling Void where
+  roll = absurd
+
 instance Rolling Text where
   roll = leaf
 
@@ -152,16 +156,16 @@ instance (Rolling a, Rolling b) => Rolling (Either a b) where
 instance (Rolling a, Rolling b) => Rolling (a, b) where
   roll (a, b) = Huge $ Rose "" "" [tank $ roll a, tank $ roll b]
 
-instance {-# OVERLAPPING #-} Rolling (Code Wing) where
+instance Rolling Soft where
   roll = roll . shut
 
 instance Show a => Rolling (Code a) where
-  roll = roll . shut . fmap (singleton . Ally . tshow)
+  roll = roll . rest
 
 instance Show a => Rolling (Base a) where
   roll = roll . lock
 
-instance Rolling (Pelt Wing) where
+instance Rolling Pelt where
   roll = roll . flap
 
 instance Rolling [Act] where
@@ -199,6 +203,10 @@ instance Rolling Act where
 
 instance Rolling Fail where
   roll = \case
+    PareFree r b -> Huge $ Stem "pare-free:" "" []
+      [ ("rump", Leaf $ tshow r, Leaf "")
+      , ("base", tank $ roll b, Leaf "")
+      ]
     FindFail f t -> Huge $ Stem ("find." <> f) "" []
       [ ("type", tank $ roll t, Leaf "")
       ]

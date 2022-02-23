@@ -8,13 +8,13 @@ a=1
 
 COLD
 
-1
+a=1
 
 TYPE
 
-a|@ud
-Mask' "a" (Aura' "ud")
+a=@ud
+Face' [Mask "a"] (Aura' "ud")
 
 BASE
 
-1
+a=1

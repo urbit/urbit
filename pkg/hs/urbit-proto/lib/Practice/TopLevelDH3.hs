@@ -24,14 +24,14 @@ instance Rolling Err where
 data Result a
   = ResType
     { cst :: Hoon
-    , cod :: Code Wing
-    , cld :: Code Stub
+    , cod :: Soft
+    , cld :: Code Void
     , typ :: Type a
     , bas :: Base a
     }
   | ResOpen
     { cst :: Hoon
-    , cod :: Code Wing
+    , cod :: Soft
     , ert :: ([Act], Fail)
     }
   | ResRead
@@ -41,6 +41,8 @@ data Result a
   | ResNone
     { err :: Text
     }
+
+deriving instance Show a => Show (Result a)
 
 -- | The "empty" subject context.
 scam :: Con Void
@@ -58,5 +60,5 @@ road filename con txt =
           case runReaderT (play con cod) [] of
             Left ert -> ResOpen{..}
             Right (cld, typ) ->
-              let bas = eval (ken con) (fmap New cld)
+              let bas = eval (ken con) (vacuous cld)
               in ResType{..}

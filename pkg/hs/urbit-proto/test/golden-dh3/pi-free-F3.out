@@ -4,12 +4,12 @@ $-(t|$ q)
 
 CODE
 
-$-(t|$ q)
+$-(t=$ q)
 
 ERROR
 
   trace:  play:
-          code  $-(t|$ q)
+          code  $-(t=$ q)
 
           work:
           mode  nest
@@ -22,12 +22,12 @@ ERROR
           find:
           wing  q
           type  =>  0
-                {* t|$}
+                {* t=$}
 
 
 
   find.q
   type  =>  0
-        {* t|$}
+        {* t=$}
 
 

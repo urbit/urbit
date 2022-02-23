@@ -14,27 +14,29 @@ CODE
     ^-  $-(@ $)
     |=(a {@ @})
 =+  ^=  c
-    ^-  {a|@ (f a)}
+    ^-  {a=@ (f a)}
     [1 2 3]
 +3.c
 
 COLD
 
-=+  |=(a {@ @})
-=+  [1 2 3]
+=+  f=|=(_ {@ @})
+=+  c=[1 2 3]
 +7
 
 TYPE
 
 =>  :-  :+  :-  0
+            ^=  f
             =>  0
             |=(_ {@ @})
           0
+        ^=  f
         =>  0
         |=(_ {@ @})
     1
 {@ @}
-Cell' (Aura' "") (Cons' (Cons' (Cons' (Atom' 0 Sand "") (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura "")))) (Cons' (Atom' 0 Sand "") (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura ""))))) (Atom' 1 Sand "ud")) (Aura "")
+Cell' (Aura' "") (Cons' (Cons' (Cons' (Atom' 0 Sand "") (Face' [Mask "f"] (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura ""))))) (Cons' (Atom' 0 Sand "") (Face' [Mask "f"] (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura "")))))) (Atom' 1 Sand "ud")) (Aura "")
 
 BASE
 

@@ -1,0 +1,10 @@
+PARSED
+
+$?
+++  bar  {@ @}
+++  foo  @
+--
+
+ERROR
+
+unsupported $?

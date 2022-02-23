@@ -4,11 +4,11 @@ PARSED
 
 CODE
 
-{t|$ t}
+{t=$ t}
 
 COLD
 
-{t|$ +3}
+{t=$ +3}
 
 TYPE
 
@@ -18,4 +18,4 @@ Type'
 BASE
 
 =>  0
-{t|$ +3}
+{t=$ +3}

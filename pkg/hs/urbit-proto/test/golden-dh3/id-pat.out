@@ -1,0 +1,24 @@
+PARSED
+
+^-  $-(@ @)
+|=(a a)
+
+CODE
+
+^-  $-(@ @)
+|=(a a)
+
+COLD
+
+|=(_ +3)
+
+TYPE
+
+=>  0
+$-(@ @)
+Gate' (Aura' "") (Atom' 0 Sand "") (Aura "")
+
+BASE
+
+=>  0
+|=(_ +3)
