@@ -2574,14 +2574,9 @@
             =.  keens.scry  (put:orm keens.scry keen-id keen-state)
             ke-abet:ke-start:(ke-abed:keen-core path)
           ::
-          ::  TODO: fix, only cancel on when no more subscribers
           ++  pe-yawn
             |=  =path
-            =/  keen-id=@ud  (~(got by order.scry) path)
-            =.  order.scry  (~(del by order.scry) path)
-            =.  keens.scry  +:(del:orm keens.scry keen-id)
-            ~&  yawn/path
-            pe-core
+            ke-abet:ke-unsub:(ke-abed:keen-core path)
           ::
           ++  pe-hear
             |=  [=lane =packet]
@@ -2620,7 +2615,10 @@
                 =,  keen
                 ::  num-fragments is 0 when unknown (i.e. no response
                 ::  yet)
-                &(!=(0 num-fragments) =(num-fragments num-received))
+                ::  if no-one is listening, kill request
+                ?|  =(~ listeners.keen)
+                    &(!=(0 num-fragments) =(num-fragments num-received))
+                ==
               ?:  gone
                 ke-abet-gone
               =.  ke-core  ke-set-wake
@@ -2763,6 +2761,11 @@
             ::
             ++  ke-sub
               =.  listeners.keen  (~(put in listeners.keen) duct)
+              ke-core
+            ::  scry is autocancelled in +ke-abet if no more listeners
+            ::
+            ++  ke-unsub
+              =.  listeners.keen  (~(del in listeners.keen) duct)
               ke-core
             ::
             ++  ke-emit
@@ -2913,7 +2916,8 @@
             ~|  [%fine %invalid-namespace-path path]
             (need (de-omen path))
           =/  peer-core  (pe-abed:fine-peer p.bem.omen)
-          ?~  peer-core  !!
+          ?~  peer-core  
+            ~|(%no-ship-for-yawn !!)
           pe-abet:(pe-yawn:u.peer-core path)
         ::
         ++  on-bide
