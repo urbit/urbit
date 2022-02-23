@@ -1312,6 +1312,10 @@
   ::
   ++  static-ford-args  [ank.dom ~ ~ lat.ran fod.dom]
   ::
+  ++  request-wire
+    |=  [kind=@ta =ship =desk index=@ud]
+    /[kind]/(scot %p ship)/[desk]/(scot %ud index)
+  ::
   ::  Transfer a request to another ship's clay.
   ::
   ++  send-over-ames
@@ -1319,7 +1323,7 @@
     ^+  +>
     ::
     =/  =desk  p.riff
-    =/  =wire  /warp-index/(scot %p ship)/(scot %tas desk)/(scot %ud index)
+    =/  =wire  (request-wire %warp-index ship desk index)
     =/  =path  [%question desk (scot %ud index) ~]
     (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
@@ -1327,7 +1331,7 @@
     |=  [kind=@ta =duct =ship index=@ud =desk =mood]
     ^-  [timeout=@da _..send-over-scry]
     =/  =time  (add now scry-timeout-time)
-    =/  =wire  /[kind]/(scot %p ship)/[desk]/(scot %ud index)
+    =/  =wire  (request-wire kind ship desk index)
     =/  =path
       =,  mood
       [(cat 3 %c care) (scot %p ship) desk (scot case) path]
@@ -1337,9 +1341,9 @@
         [hen %pass wire %b %wait time]
     ==
   ::
-  ++  cancel-scry-timeout
+  ++  cancel-scry-timeout  ::TODO  make arg order more consistent
     |=  [kind=@ta =duct =ship index=@ud =desk time=@da]
-    =/  =wire  /[kind]/(scot %p ship)/[desk]/(scot %ud index)
+    =/  =wire  (request-wire kind ship desk index)
     (emit duct %pass wire %b %rest time)
   ::
   ++  foreign-capable
@@ -3266,7 +3270,7 @@
         ::  otherwise, request over ames
         ::
         :-  ~
-        =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
+        =/  =wire  (request-wire %back-index her syd inx)
         =/  =path  [%backfill syd (scot %ud inx) ~]
         =/  =fill  [%0 syd lobe]
         (emit hen %pass wire %a %plea her %c path fill)
