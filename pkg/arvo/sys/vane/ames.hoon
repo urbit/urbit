@@ -2546,7 +2546,7 @@
           ++  pe-keen
             |=  =path
             ?:  (~(has by order.scry) path)
-              pe-core
+              ke-abet:ke-sub:(ke-abed:keen-core path)
             =/  keen-id=@ud  seq.scry
             =.  seq.scry  +(seq.scry)
             =.  order.scry
@@ -2680,8 +2680,8 @@
               [`want %.n found ke-core]
             ::
             ++  ke-start
-              ~|  tried-to-start-request-already-in-progress/path
               ~&  start/now
+              =.  ke-core  ke-sub
               ?>  =(num-fragments.keen 0)
               =/  fra=@  1
               =/  req  (ke-encode-req fra)
@@ -2741,6 +2741,10 @@
             ++  ke-resend
               |=  [fra=@ud =hoot]
               (ke-emit hoot)
+            ::
+            ++  ke-sub
+              =.  listeners.keen  (~(put in listeners.keen) duct)
+              ke-core
             ::
             ++  ke-emit
               |=  =hoot
