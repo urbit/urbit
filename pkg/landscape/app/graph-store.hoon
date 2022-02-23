@@ -617,6 +617,16 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  (on-peek:def path)
+      [%x %whey ~]
+    =/  liv=(list mass)
+      (sort (turn ~(tap by graphs) |=([[* n=term] g=*] n^&+g)) aor)
+    =/  log=(list mass)
+      (sort (turn ~(tap by update-logs) |=([[* n=term] l=*] n^&+l)) aor)
+    =/  sil=(list mass)
+      (sort (turn ~(tap by archive) |=([[* n=term] g=*] n^&+g)) aor)
+    :^  ~  ~  %mass
+    !>(`(list mass)`[live+|+liv logs+|+log ?~(sil ~ [silo+|+sil ~])])
+  ::
     [%x %export ~]  ``noun+!>(state)
   ::
       [%x %keys ~]
