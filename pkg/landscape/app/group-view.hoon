@@ -295,12 +295,14 @@
   ::
   ++  rollback
     |^
-    =/  =request:view  (~(got by joining) rid)
+    =/  =request:view     (~(got by joining) rid)
     ?+  progress.request  ~|(cannot-rollback/progress.request !!)
-      %start     start
-      %added     added
-      %metadata  metadata
+      %start                        start
+      %added                        added
+      %metadata                     metadata
+      ?(%no-perms %strange %abort)  error
     ==
+    ++  error   jn-core
     ++  start   jn-core
     ++  added   (emit del-us:pass)
     ++  metadata  (emit:added remove-pull-groups:pass)
