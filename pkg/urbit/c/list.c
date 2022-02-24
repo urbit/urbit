@@ -52,8 +52,7 @@ _create_node(const void* const dat_v, const size_t siz_i)
 c3_list*
 c3_list_init(void)
 {
-  c3_list* lis_u = c3_calloc(sizeof(*lis_u));
-  return lis_u;
+  return c3_calloc(sizeof(c3_list));
 }
 
 size_t
