@@ -143,6 +143,8 @@ function PendingGroup(props: PendingGroupProps) {
         <Box>
           {!joining ? (
             <Text color="blue">Invited</Text>
+          ) : joining === 'no-perms' || joining == 'strange' ? (
+            <Text color="red">Join Failed</Text>
           ) : joining !== "done" ? (
             <Text gray>Joining...</Text>
           ) : (
