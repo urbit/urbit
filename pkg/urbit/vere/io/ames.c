@@ -1563,10 +1563,18 @@ static void _fine_hear_request(u3_ames* sam_u,
 
   c3_assert( c3y == _fine_sift_requ(&hed_u, &req_u, len_w, hun_y));
 
-  u3_noun pat = u3do("stab", u3i_string(req_u.pat_c));
-  u3_noun key = u3nc(u3k(pat), u3i_word(req_u.fra_w));
+  u3_noun rul = u3v_wish("stap");
+  u3_noun pat = u3dc("rush", u3i_string(req_u.pat_c), rul);
+  if ( u3_nul == pat ) {
+    u3l_log("bad request\n");
 
-  u3_weak cac =  u3h_git(sam_u->fin_s.sac_p, key);
+    u3z(pat);
+    return;
+  }
+
+  u3_noun key = u3nc(u3k(u3t(pat)), u3i_word(req_u.fra_w));
+
+  u3_weak cac = u3h_git(sam_u->fin_s.sac_p, key);
 
   u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
 
@@ -1587,7 +1595,7 @@ static void _fine_hear_request(u3_ames* sam_u,
     // cache miss
     u3_noun pax = u3nt(u3i_string("fine"),
                       u3i_string("message"),
-                      u3k(pat));
+                      u3k(u3t(pat)));
 
     u3_pier_peek_last(sam_u->car_u.pir_u, u3_nul, c3__ax, u3_nul, 
                       pax, pac_u, _fine_pack_scry_cb);
@@ -1597,7 +1605,8 @@ static void _fine_hear_request(u3_ames* sam_u,
     _fine_send(pac_u);
   }
 
-  u3z(pat);
+  //u3z(pat);
+  //u3z(rul);
 }
 
 
