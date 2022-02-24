@@ -130,29 +130,30 @@
       void
       u3t_boot(void);
 
-    /* u3t_dynamic_header: slog a vere headline, and hoon hint with
-     * a given indent-style c3_l int (assumed 0-3).
-     */
+    /* u3t_slog_cap(): slog a tank with a caption with
+    ** a given priority c3_l (assumed 0-3).
+    */
       void
-      u3t_dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message);
+      u3t_slog_cap(c3_l pri_l, u3_noun cap, u3_noun tan);
 
-    /* u3t_slog_trace: given an indent-style c3_l int and a raw stack tax
-     * flop the order into start-to-end, render, and slog each item
-     * until done.
-     */
+    /* u3t_slog_trace(): given a c3_l priority pri and a raw stack tax
+    ** flop the order into start-to-end, render, and slog each item
+    ** until done.
+    */
       void
       u3t_slog_trace(c3_l pri_l, u3_noun tax);
 
-    /* u3t_nara: slog only the deepest road's trace
-     */
+    /* u3t_slog_nara(): slog only the deepest road's trace with
+    ** c3_l priority pri
+    */
       void
-      u3t_nara(c3_l pri_l);
+      u3t_slog_nara(c3_l pri_l);
 
-    /* u3t_hela: join all roads' traces together into one tax
-     * and pass it to slog_trace allong with the given pri_l
-     */
+    /* u3t_slog_hela(): join all roads' traces together into one tax
+    ** and pass it to slog_trace along with the given c3_l priority pri_l
+    */
       void
-      u3t_hela(c3_l pri_l);
+      u3t_slog_hela(c3_l pri_l);
 
   /** Globals.
   **/

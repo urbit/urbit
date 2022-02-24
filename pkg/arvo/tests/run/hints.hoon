@@ -1,16 +1,21 @@
 ::  Test that these hints do not crash the runtime
-::    we only test the dynamic hints here
-::    also, there is no need to include the hints for dynamic %bout
+::    there is no need to include the hints for dynamic %bout
 ::    since all hoon tests exersize dynamic %bout
 |%
-::  this tests that the short trace hint
-::  is safe to run or ignore
-++  test-nara
-  ~>  %nara.[1 leaf+"nara trace hint test"]
+::  these test that the hilt-trace hints
+::  are safe to run or ignore
+++  test-hela-hilt
+  ~>  %hela
   ~
-::  this tests that the full trace hint
-::  is safe to run or ignore
-++  test-hela
-  ~>  %hela.[1 leaf+"hela trace hint test"]
+++  test-nara-hilt
+  ~>  %nara
+  ~
+::  these test that the hint-trace hints
+::  are safe to run or ignore
+++  test-hela-hint
+  ~>  %hela.[1 leaf+"test-hela-trace-hint"]
+  ~
+++  test-nara-hint
+  ~>  %nara.[1 leaf+"test-nara-trace-hint"]
   ~
 --

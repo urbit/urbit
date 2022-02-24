@@ -1698,20 +1698,28 @@ u3n_find(u3_noun key, u3_noun fol)
 static c3_o
 _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 {
-  if ( c3__bout == u3h(hin) ) {
-    u3_atom now = u3i_chub(u3t_trace_time());
-    *out = u3i_cell(u3h(hin), now);
-  }
-  else if ( c3__nara == u3h(hin) ) {
-    u3t_nara(0);
-    *out = u3_nul;
-  }
-  else if ( c3__hela == u3h(hin) ) {
-    u3t_hela(0);
-    *out = u3_nul;
-  }
-  else {
-    *out = u3_nul;
+  u3_noun tag, fol;
+  u3x_cell(hin, &tag, &fol);
+
+  switch ( tag ) {
+    case c3__bout: {
+      u3_atom now = u3i_chub(u3t_trace_time());
+      *out = u3i_cell(tag, now);
+    } break;
+
+    case c3__nara : {
+      u3t_slog_nara(0);
+      *out = u3_nul;
+    } break;
+
+    case c3__hela : {
+      u3t_slog_hela(0);
+      *out = u3_nul;
+    } break;
+
+    default: {
+      *out = u3_nul;
+    } break;
   }
 
   u3z(hin);
@@ -1733,11 +1741,6 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
     u3t_slog(u3nc(0, u3i_string(str_c)));
     u3z(delta);
   }
-  else if ( (c3y == u3r_cell(tok, &p_tok, &q_tok)) &&
-      ((c3__nara == p_tok) || (c3__hela == p_tok))
-  ) {
-    // DO NOTHING
-  }
   else {
     c3_assert( u3_nul == tok );
   }
@@ -1757,13 +1760,41 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)
 static c3_o
 _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
 {
-  if ( c3__bout == u3h(hin) || c3__nara == u3h(hin) || c3__hela == u3h(hin) ) {
-    u3_atom now = u3i_chub(u3t_trace_time());
-    *clu = u3i_trel(u3h(hin), *clu, now);
-  }
-  else {
-    u3z(*clu);
-    *clu = u3_nul;
+  u3_noun tag, fol;
+  u3x_cell(hin, &tag, &fol);
+
+  switch ( tag ) {
+    case c3__bout: {
+      u3_atom now = u3i_chub(u3t_trace_time());
+      *clu = u3nt(u3k(tag), *clu, now);
+    } break;
+
+    case c3__nara: {
+      u3_noun pri, tan;
+      if ( c3y == u3r_cell(*clu, &pri, &tan) ) {
+        c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
+        u3t_slog_cap(pri_l, u3i_string("trace of"), u3k(tan));
+        u3t_slog_nara(pri_l);
+      }
+      u3z(*clu);
+      *clu = u3_nul;
+    } break;
+
+    case c3__hela: {
+      u3_noun pri, tan;
+      if ( c3y == u3r_cell(*clu, &pri, &tan) ) {
+        c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
+        u3t_slog_cap(pri_l, u3i_string("trace of"), u3k(tan));
+        u3t_slog_hela(pri_l);
+      }
+      u3z(*clu);
+      *clu = u3_nul;
+    } break;
+
+    default: {
+      u3z(*clu);
+      *clu = u3_nul;
+    } break;
   }
 
   u3z(hin);
@@ -1796,33 +1827,8 @@ _n_hint_hind(u3_noun tok, u3_noun pro)
     // prepend the priority to form a cell of the same shape q_tok
     // send this to ut3_slog so that it can be logged out
     c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
-    u3t_dynamic_header(pri_l, u3k(q_q_tok), u3i_string(str_c));
+    u3t_slog_cap(pri_l, u3k(q_q_tok), u3i_string(str_c));
     u3z(delta);
-  }
-  else if ( (c3y == u3r_trel(tok, &p_tok, &q_tok, &r_tok)) &&
-      ((c3__nara == p_tok) || (c3__hela == p_tok))
-  ) {
-    // unpack q_tok to get the priority integer and the tank
-    // p_q_tok is the priority, q_q_tok is the tank we will work with
-    u3_noun p_q_tok, q_q_tok;
-    c3_assert(c3y == u3r_cell(q_tok, &p_q_tok, &q_q_tok));
-
-    // format the timing report
-    c3_c str_c[64];
-    snprintf(str_c, 63, "trace of");
-
-    // join the timing report with the original tank from q_q_tok like so:
-    // "q_q_tok: report"
-    // prepend the priority to form a cell of the same shape q_tok
-    // send this to ut3_slog so that it can be logged out
-    c3_l pri_l = c3y == u3a_is_cat(p_q_tok) ? p_q_tok : 0;
-    u3t_dynamic_header(pri_l, u3i_string(str_c), u3k(q_q_tok));
-    if (c3__nara == p_tok) {
-      u3t_nara(pri_l);
-    }
-    else {
-      u3t_hela(pri_l);
-    }
   }
   else {
     c3_assert( u3_nul == tok );

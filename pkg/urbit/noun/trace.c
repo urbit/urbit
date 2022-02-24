@@ -590,11 +590,12 @@ u3t_boff(void)
   }
 }
 
-/* where pir_l is the priority, headline is provided by the c-caller
- * and message is provided by the hint-caller
- */
+
+/* u3t_slog_cap(): slog a tank with a caption with
+** a given priority c3_l (assumed 0-3).
+*/
 void
-u3t_dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message)
+u3t_slog_cap(c3_l pri_l, u3_noun cap, u3_noun tan)
 {
   u3t_slog(
     u3nc(
@@ -602,17 +603,19 @@ u3t_dynamic_header(c3_l pri_l, u3_noun headline, u3_noun message)
       u3nt(
         c3__rose,
         u3nt(u3nt(':', ' ', u3_nul), u3_nul, u3_nul),
-        u3nt(headline, message, u3_nul)
+        u3nt(cap, tan, u3_nul)
       )
     )
   );
 }
 
-/* This flops the given tax and slogs it entry by entry.
- */
+
+/* u3t_slog_trace(): given a c3_l priority pri and a raw stack tax
+** flop the order into start-to-end, render, and slog each item
+** until done.
+*/
 void
-u3t_slog_trace
-(c3_l pri_l, u3_noun tax)
+u3t_slog_trace(c3_l pri_l, u3_noun tax)
 {
   // render the stack
   // Note: ton is a reference to a data struct
@@ -636,24 +639,23 @@ u3t_slog_trace
   u3z(ton);
 }
 
-/* this function calls slog_trace on the same road
- * as the wrapped hoon function was called in effectively
- * showing only the short trace from just after the most
- * recent virtualization, down into the wrap site
- * it takes a c3_l pri_l
- */
+
+/* u3t_slog_nara(): slog only the deepest road's trace with
+** c3_l priority pri
+*/
 void
-u3t_nara(c3_l pri_l)
+u3t_slog_nara(c3_l pri_l)
 {
   u3_noun tax = u3k(u3R->bug.tax);
   u3t_slog_trace(pri_l, tax);
 }
 
-/* this function joins all the road traces together
- * into a sinlge trace, which it sends to slog_trace
- */
+
+/* u3t_slog_hela(): join all roads' traces together into one tax
+** and pass it to slog_trace along with the given c3_l priority pri_l
+*/
 void
-u3t_hela(c3_l pri_l)
+u3t_slog_hela(c3_l pri_l)
 {
   // rod_u protects us from mutating the global state
   u3_road* rod_u = u3R;
