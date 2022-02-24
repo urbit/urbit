@@ -2707,6 +2707,7 @@
             ::
             ++  ke-done
               |=  [sig=@ data=$@(~ (cask))]
+              ~&  path
               ?>  (meri:keys ship life.peer path sig data)
               ~&  got-response/path
               =/  listeners  ~(tap in listeners.keen)

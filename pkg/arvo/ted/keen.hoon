@@ -6,7 +6,16 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ arg=path] arg)
-;<  ~  bind:m  (send-raw-card:strandio %pass / %arvo %a %keen arg)
-;<  [wire sign=sign-arvo]  bind:m  take-sign-arvo:strandio
-?>  ?=(%tune +<.sign)
-(pure:m !>(data.sign))
+;<  dat=(unit (cask))  bind:m
+  (keen:strandio arg)
+?~  dat
+  (pure:m !>(~))
+;<  =bowl:spider  bind:m  get-bowl:strandio
+=+  .^  =dais:clay  %cb
+        /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[p.u.dat]
+    ==
+=/  res  (mule |.((vale.dais q.u.dat)))
+?:  ?=(%| -.res)
+  ~|(%keen-mark-fail (mean leaf+"-keen: ames vale fail {<mark>}" p.res))
+(pure:m p.res)
+

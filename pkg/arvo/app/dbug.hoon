@@ -524,7 +524,7 @@
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
           'heeds'^(set-array heeds from-duct)
-          'keens'^(set-array keens path)
+          'keens'^(set-array ~(key by keens) path)
       ==
     ::
     ::  json for known peer is structured to closely match the peer-state type.
