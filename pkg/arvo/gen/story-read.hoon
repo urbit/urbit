@@ -20,19 +20,19 @@
 =/  current-tako          .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
 =/  current-yaki          .^(yaki:clay %cs /(scot %p our)/[desk]/(scot cas)/yaki/(scot %uv current-tako))
 :-  %tang
-(story-log [our desk cas] current-yaki tale)
+(story-read [our desk cas] current-yaki tale)
 ::::
 ::  Remarks:
 ::
-::  There are two recursions in the log file:
+::  There are two recursions in the logging process:
 ::  1. the outer loop, `commit-loop` which threads downwards into each commit by ancestor
 ::  2. the inner loop, `ancestor-loop`, which threads left-to-right on reverse-ancestors
 ::
-::  +story-log outputs a tang with the least-recent commits at the head of the list,
+::  +story-read outputs a tang with the least-recent commits at the head of the list,
 ::  even though we want most-recent commits to end up printing first.
 ::  But because dojo prints tangs in reverse, we don't flop the results 
 ::::
-++  story-log
+++  story-read
   |=  [[our=ship syd=^desk cas=case] current-commit=yaki:clay tale=story]
   ^-  tang
   %-  head  :: result from state
