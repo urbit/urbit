@@ -15,8 +15,6 @@
     ~(tap by n)
   |-  =*  loop  $
   ^-  form:m
-  ~&  n/n
-  ~&  ns/ns
   ?~  ns  (pure:m n)
   ?:  =(0 q.i.ns)
     =.  n  (~(del by n) p.i.ns)
@@ -44,6 +42,25 @@
     [%add-note bin body]
   ::
   (poke-our %hark-store cage)
+::
+++  opened
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  =cage
+    :-  %hark-action
+    !>  ^-  action:hark
+    [%opened -360]
+  (poke-our %hark-store cage)
+::
+++  new-day
+  |=  offset=@ud
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  =cage
+    :-  %noun
+    !>([%new-day offset])
+  (poke-our %hark-store cage)
+
 ++  default-notes
   %-  ~(gas by *notes)
   =/  =place:hark
@@ -51,19 +68,20 @@
   ^-  (list [bin:hark @ud])
   :~  [/foo^place 1]
       [/bar^place 2]
-      [/baz^place 3]
+      [/baz^place 4]
   ==
 --
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-:: =+  !<(m-notes=(unit notes) arg)
+::  =+  !<([~ offset=@ud] arg)
 =/  =notes  default-notes :: (fall m-notes default-notes)
+=/  inx=@ud  7
 |-  =*  loop  $
-?:  =(~ notes)
-  (pure:m *vase)
 ;<  new-notes=_notes  bind:m 
   (do-run notes)
-;<  ~  bind:m
-  (sleep:strandio ~s5)
-loop(notes new-notes)
+?:  |(=(inx 0) =(~ notes))
+  (pure:m *vase)
+;<  ~  bind:m  opened
+;<  ~  bind:m  (new-day inx)
+loop(inx (dec inx))

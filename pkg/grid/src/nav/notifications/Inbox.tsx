@@ -5,6 +5,7 @@ import { BaseBlockedNotification, RuntimeLagNotification } from './SystemNotific
 import { useNotifications } from '../../state/notifications';
 import { useHarkStore } from '../../state/hark';
 import { OnboardingNotification } from './OnboardingNotification';
+import moment from 'moment';
 
 function renderNotification(notification: Notification, key: string, lid: HarkLid) {
   // Special casing
@@ -34,38 +35,44 @@ export const Inbox = ({ archived = false }) => {
 
   useEffect(() => {
     useHarkStore.getState().getMore();
-  }, [archived]);
+  }, []);
 
-  if (archived ? archive.size === 0 : Object.keys({ ...seen, ...unseen }).length === 0) {
-    return <Empty />;
+  useEffect(() => {
+    return () => {
+      useHarkStore.getState().opened();
+    };
+
+  }, []);
+
+  if (false && archived ? archive.size === 0 : Object.keys({ ...seen, ...unseen }).length === 0) {
+    //return <Empty />;
   }
 
   return (
     <div className="text-gray-400 space-y-2 overflow-y-auto">
-      {archived ? (
-        Array.from(archive).map(([key, box]) => {
-          return Object.entries(box)
-            .sort(([, a], [, b]) => b.time - a.time)
-            .map(([binId, n]) =>
-              renderNotification(n, `${key.toString()}-${binId}`, { time: key.toString() })
-            );
-        })
-      ) : (
+      {Object.entries(unseen).length > 0 ? (
         <>
-          <header>Unseen</header>
+          <header>Unread</header>
           <section className="space-y-2">
             {Object.entries(unseen)
-              .sort(([, a], [, b]) => b.time - a.time)
-              .map(([binId, n]) => renderNotification(n, `unseen-${binId}`, { unseen: null }))}
-          </section>
-          <header>Seen</header>
-          <section className="space-y-2">
-            {Object.entries(seen)
               .sort(([, a], [, b]) => b.time - a.time)
               .map(([binId, n]) => renderNotification(n, `seen-${binId}`, { seen: null }))}
           </section>
         </>
-      )}
+      ) : null}
+
+      {Array.from(archive).map(([key, box], idx) => (
+        <>
+          <header>{moment().subtract(idx, 'days').startOf('day').calendar()}</header>
+          <section className="space-y-2">
+            {Object.entries(box)
+              .sort(([, a], [, b]) => b.time - a.time)
+              .map(([binId, n]) =>
+                renderNotification(n, `${key.toString()}-${binId}`, { time: key.toString() })
+              )}
+          </section>
+        </>
+      ))}
     </div>
   );
 };

@@ -34,13 +34,14 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
   const { desk } = notification.bin.place;
   const binId = harkBinToId(notification.bin);
   const id = `notif-${notification.time}-${binId}`;
+  console.log(notification);
 
   const charge = useCharge(desk);
-  const first = notification.body?.[0];
+  const first = notification.body?.items?.[0];
   if (!first || !charge) {
     return null;
   }
-  const contents = map(notification.body, 'content').filter((c) => c.length > 0);
+  const contents = map(notification.body.items, 'content').filter((c) => c.length > 0);
   const large = contents.length === 0;
   const archive = () => {
     useHarkStore.getState().archiveNote(notification.bin, lid);
@@ -87,7 +88,7 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
       </header>
       {contents.length > 0 ? (
         <div className="note-grid-body leading-tight sm:leading-normal space-y-2">
-          {take(contents, MAX_CONTENTS).map((content) => (
+          {contents.map((content) => (
             <p className="">
               <NotificationText contents={content} />
             </p>

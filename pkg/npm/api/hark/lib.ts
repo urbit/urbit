@@ -66,8 +66,8 @@ export const archive = (bin: HarkBin, lid: HarkLid): Poke<unknown> =>
     }
   });
 
-export const opened = harkAction({
-  opened: null
+export const opened = (tz: number) => harkAction({
+  opened: tz
 });
 
 export const markCountAsRead = (place: HarkPlace): Poke<unknown> =>

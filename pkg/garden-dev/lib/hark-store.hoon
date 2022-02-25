@@ -12,7 +12,7 @@
     ^-  json
     %+  frond  -.upd
     ?+  -.upd  a+~
-        %added      (notification +.upd)
+        %added      (notification-lite +.upd)
         %add-note   (add-note +.upd)
         %timebox  (timebox +.upd)
         %more     (more +.upd)
@@ -43,11 +43,11 @@
     ==
   ::
   ++  archived
-    |=  [t=^time l=^lid n=^notification]
+    |=  [t=^time l=^lid n=^notification-lite]
     %-  pairs
     :~  lid+(lid l)
         time+s+(scot %ud t)
-        notification+(notification n)
+        notification+(notification-lite n)
     ==
   ::
   ++  note-read
@@ -93,8 +93,8 @@
     :~  place+(place place.bin)
         path+s+(spat path.bin)
     ==
-  ++  notification
-    |=  ^notification
+  ++  notification-lite
+    |=  ^notification-lite
     ^-  json
     %-  pairs
     :~  time+(time date)
@@ -102,9 +102,9 @@
         body+(bodies body)
     ==
   ++  bodies
-    |=  bs=(list ^body)
+    |=  bs=(^trunc-list ^body)
     ^-  json
-    a+(turn bs body)
+    (trunc-list body bs)
   ::
   ++  contents
     |=  cs=(list ^content)
@@ -131,10 +131,10 @@
     ==
   :: 
   ++  binned-notification
-    |=  [=^bin =^notification]
+    |=  [=^bin =^notification-lite]
     %-  pairs
     :~  bin+(^bin bin)
-        notification+(^notification notification)
+        notification+(^notification-lite notification-lite)
     ==
   ::
   ++  lid
@@ -147,12 +147,21 @@
     ==
   ::
   ++  timebox
-    |=  [li=^lid l=(list ^notification)]
+    |=  [li=^lid l=(list ^notification-lite)]
     ^-  json
     %-  pairs
     :~  lid+(lid li)
-        notifications+a+(turn l notification)
+        notifications+a+(turn l notification-lite)
     ==
+  ++  trunc-list
+    |*  [enc=$-(* json) trunc=(^trunc-list)]
+    %-  pairs
+    :~  length+(numb p.trunc)
+        items+a+(turn q.trunc enc)
+    ==
+        
+
+
   ::
   ++  read-each
     |=  [p=^place pax=^path]

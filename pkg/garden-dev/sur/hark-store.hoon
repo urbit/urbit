@@ -81,9 +81,14 @@
 ::
 +$  notification
   [date=@da =bin body=(list body)]
++$  notification-lite
+  [date=@da =bin body=(trunc-list body)]
 ::  $timebox: Group of notificatons
 +$  timebox
   (map bin notification)
+::
++$  timebox-lite
+  (map bin notification-lite)
 ::  $archive: Archived notifications, ordered by time
 +$  archive
   ((mop @da timebox) gth)
@@ -137,18 +142,21 @@
       last=@da
       timebox=(unit @da)
   ==
+++  trunc-list
+  |$  [item]
+  (pair @ud (list item))
 ::  
 +$  update
   $%  action
       :: %more: more updates
-      [%archived =time =lid =notification]
+      [%archived =time =lid =notification-lite]
       [%more more=(list update)]
       :: %note-read: note has been read with timestamp
       [%note-read =time =bin]
-      [%added =notification]
+      [%added =notification-lite]
       :: %timebox: description of timebox. 
       ::
-      [%timebox =lid =(list notification)]
+      [%timebox =lid list=(list notification-lite)]
       :: %place-stats: description of .stats for a .place
       [%place-stats =place =stats]
       :: %place-stats: stats for all .places

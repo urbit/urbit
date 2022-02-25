@@ -112,8 +112,9 @@ export const useHarkStore = createState<HarkState>(
     },
     opened: async () => {
       let date = new Date();
-      let tz = date.getTimezoneOffset();
-      console.log(`Opened: ${tz}`);
+      // sign is backwards for some reason
+      // see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset#description
+      let tz = -1 * date.getTimezoneOffset();
       
       reduceHark({ opened: tz });
 
@@ -126,6 +127,7 @@ export const useHarkStore = createState<HarkState>(
         app: 'hark-store',
         path: `/recent/inbox/${idx}/5`
       });
+      console.log(update);
       reduceHark(update);
     }
   }),
@@ -172,6 +174,7 @@ function reduceHark(u: any) {
       set((draft) => {
         const time = makePatDa(lid.archive);
         const old = draft.archive.get(time) || {};
+        console.log(notifications);
         notifications.forEach((note: any) => {
           const binId = harkBinToId(note.bin);
           old[binId] = note;
@@ -199,6 +202,9 @@ function reduceHark(u: any) {
       draft.archive = draft.archive.set(time, timebox);
     });
   } else if ('opened' in u) {
+    // TODO:
+
+    return;
     set((draft) => {
       const bins = Object.keys(draft.unseen);
       bins.forEach((bin) => {

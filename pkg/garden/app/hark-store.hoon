@@ -12,6 +12,7 @@
 ::  
 /-  store=hark-store
 /+  verb, dbug, default-agent, re=hark-unreads, agentio
+/+  tempo
 ::
 ::
 ~%  %hark-store-top  ..part  ~
@@ -34,6 +35,21 @@
       =archive:store  :: (mop @da timebox:store)
       zone=@s
   ==
+++  list-max  5
+++  truncate-list
+  |*  ls=(list)
+  ^+  ?>(?=(^ ls) *(trunc-list:store _i.ls))
+  [(lent ls) (scag list-max ls)]
+::
+++  truncate-notification
+  |=  =notification:store
+  =,  notification
+  [date bin (truncate-list body)]
+::
+++  truncate-timebox
+  |=  ls=(list notification:store)
+  ^-  (list notification-lite:store)
+  (turn ls truncate-notification)
 ::
 +$  state-2
   [%2 *]
@@ -86,6 +102,8 @@
     pass  pass:io
 ::
 ++  on-init
+  =/  key=@da   (sub now.bowl ~d7)
+  =.  archive  (put:orm archive key *timebox:store)
   `this
 ::
 ++  on-save  !>(-.state)
@@ -127,7 +145,7 @@
     ^-  update:store
     :-  %more
     ^-  (list update:store)
-    :~  [%timebox unread+~ ~(val by unread)]
+    :~  [%timebox unread+~ (truncate-timebox ~(val by unread))]
         :: [%timebox seen+~ ~(val by seen)]
         [%all-stats places]
     ==
@@ -143,7 +161,7 @@
       [%x %unread ~]
     :^  ~  ~  %hark-update
     !>  ^-  update:store
-    [%timebox unread/~ ~(val by unread)]
+    [%timebox unread/~ (truncate-timebox ~(val by unread))]
   ::
       [%x %recent %inbox @ @ ~]
     =/  date=@da
@@ -156,7 +174,7 @@
     %+  turn  (tab:orm archive `date length)
     |=  [time=@da =timebox:store]
     ^-  update:store
-    [%timebox archive+time ~(val by timebox)]
+    [%timebox archive+time (truncate-timebox ~(val by timebox))]
   ==
 ::
 ++  on-poke
@@ -175,8 +193,12 @@
   ++  poke-noun
     |=  val=*
     ?+  val  ~|(%bad-noun-poke !!)
-      %print  ~&(+.state [~ state])
-      %clear  [~ state(. *inflated-state)]
+      %print    ~&(+.state [~ state])
+      %clear    [~ state(. *inflated-state)]
+      [%new-day num=@ud]  (new-day:ha num.val)
+        %boxes
+      ~&  (turn (tap:orm archive) head)
+      `state
         %sane
       ~&  +.state
       ~&  inflate
@@ -200,9 +222,13 @@
 ++  on-arvo  
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
-  ?.  ?=([%autoseen ~] wire)
-    (on-arvo:def wire sign-arvo)
-  `this
+  =^  cards  state
+    ?+    wire  :_(state -:(on-arvo:def wire sign-arvo))
+       [%autoseen ~]  `state
+       [%new-day ~]   (new-day:ha 0)
+     ==
+  [cards this]
+
 ::
 ++  on-fail   on-fail:def
 --
@@ -210,6 +236,16 @@
 +*  met  ~(. metadata bowl)
     io   ~(. agentio bowl)
     pass  pass:io
+    tz    ~(. tz:tempo zone)
+++  new-day
+  |=  offset=@ud
+  ^-  (quip card _state)
+  =/  now    (from-utc:tz (sub now.bowl (mul ~d1 offset)))
+  ~&  now/now
+  =/  start  (to-utc:tz (start-of-day:tempo now))
+  =.  archive  (put:orm archive start *timebox:store)
+  `state
+::
 ++  poke-engine
   |_  [out=(list update:store) cards=(list card)]
   ++  poke-core  .
@@ -287,7 +323,7 @@
       [now.bowl bin [body body.existing-notif]]
     =.  poke-core
       (put-lid unread/~ bin new)
-    (give %added new)
+    (give %added (truncate-notification new))
   ::
   ++  del-place
     |=  =place:store
@@ -310,7 +346,7 @@
     =/  =notification:store  (need (get-lid lid bin))
     =.  poke-core  (del-lid lid bin)
     =.  poke-core  (put-lid archive+now.bowl bin notification)
-    (give %archived now.bowl lid notification)
+    (give %archived now.bowl lid (truncate-notification notification))
   ::
   ++  read-note
     |=  =bin:store
@@ -415,7 +451,6 @@
   ::
   ++  opened
     |=  zon=@s
-    ~&  zone/zon
     =.  zone       zon
     =.  poke-core  (turn-places |=(=stats:store stats(timebox ~)))
     =.  poke-core  (give %opened zon)
@@ -426,10 +461,16 @@
   ++  opened-note
     |=  =bin:store
     ^+  poke-core
+    :: ?:  =(1 1)  poke-core
     =/  old
       (~(got by unread) bin)
     =.  poke-core
       (del-lid unread/~ bin) 
+    =/  [key=@da =timebox:store]
+      (need (pry:orm archive))
+    ~&  key/key
+    =.  timebox  (~(put by timebox) bin old)
+    =.  archive  (put:orm archive key timebox)
     poke-core
     :: =/  se  (~(get by seen) bin)
     :: %^  put-lid  seen/~  bin 
