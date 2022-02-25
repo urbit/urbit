@@ -140,11 +140,11 @@
       %fyrd
     =*  fyd     p.task
     =/  =beak   (get-beak bear.fyd now)
+    =/  =wire   (make-wire beak p.args.fyd)
     =/  =dais:clay
       (get-dais beak p.q.args.fyd rof)
     =/  =vase
       (slam !>(some) (vale.dais q.q.args.fyd))
-    =/  =wire   (make-wire beak p.args.fyd)
     :_  khan-gate
     [hen %pass wire %k %fard bear.fyd name.fyd vase]~
   ==
