@@ -107,6 +107,8 @@ data Code a
   --
   | Plus (Code a)
   | Slam (Code a) (Code a)
+  | Test (Code a) (Code a) (Code a)
+  | Fish Fish Axis  -- Do not allow direct fishing for arm pulls; cf 140?
   --
   | Aura Aura
   | Fork (Set Atom) Aura
@@ -161,6 +163,14 @@ instance Show Stub where
 data Face
   = Mask Term                       -- ^ blocking face
   | Link (Map Term (Axis, [Face]))  -- ^ non-blocking alias
+  deriving (Eq, Ord, Show, Generic)
+
+-- | Computational content of a refutable pattern. All you need to know to
+-- check for match at nock/eval time.
+data Fish
+  = Tuna            -- ^ definite match
+  | Sole Atom       -- ^ equality match
+  | Char Fish Fish  -- ^ cellular match
   deriving (Eq, Ord, Show, Generic)
 
 -- | The system of "levels," analogous to de Bruijn levels, allows for a stable
@@ -270,6 +280,9 @@ data Base a
 
 deriving instance Show a => Show (Base a)
 
+
+-- Compile-time evaluator ------------------------------------------------------
+
 -- | Read a value back into code, with reference to the current level.
 loft :: Level -> Base a -> Code a
 loft lvl = \case
@@ -318,12 +331,13 @@ look s b = home s $ walk a b
     Leg a -> a
 
   walk a b = case (cut a, b) of
-    (Nothing,     c)               -> c
-    (_,           Look' c (Leg i)) -> Look' c $ Leg (peg i a)
-    (_,           Face' _ c)       -> walk a c
-    (Just (L, b), Cons' c _)       -> walk b c
-    (Just (R, b), Cons' _ c)       -> walk b c
-    (Just _,      _)               -> Look' b s
+    (Nothing,     c)                   -> c
+    (_,           Rump' (Leg' (l, x))) -> Rump' $ Leg' (l, peg x a)
+    (_,           Look' c (Leg i))     -> Look' c $ Leg (peg i a)
+    (_,           Face' _ c)           -> walk a c
+    (Just (L, b), Cons' c _)           -> walk b c
+    (Just (R, b), Cons' _ c)           -> walk b c
+    (Just _,      _)                   -> Look' b s
 
   home s b = case s of
     Leg _ -> b
@@ -372,17 +386,89 @@ eval sub = \case
 evil :: Base a -> Code Void -> Base a
 evil ken = eval ken . vacuous
 
---
--- Type checking resources
---
+
+-- The type checking monad -----------------------------------------------------
+
+type Var a = (Eq a, Show a)
 
 -- | Type checking monad
 type Check = ReaderT [Act] (Either ([Act], Fail))
 
+-- | Error reporting context, analogous to stack trace item. As the compiler
+-- recurses deeper into its operations, it pushes these descriptions to a stack
+-- so they can serve as breadcrumbs in error messages.
+data Act
+  = forall a. Show a => ActFits Fit (Type a) (Type a)
+  | forall a. Show a => ActFind (Type a) Wing
+  | forall a. Show a => ActMeld (Base a) (Base a)
+  | forall a. Show a => ActFuse (Base a, Type a) Pelt
+  | forall a. Show a => ActCrop (Type a) Pelt
+  |                     ActFish Pelt
+  | forall a. Show a => ActToil Fit Pelt (Type a)
+  |                     ActRomp Pelt
+  | forall a. Show a => ActWork Fit Soft (Type a)
+  |                     ActPlay Soft
+  |                     ActNote Text
+
+-- | Compiler errors.
+data Fail
+  -- | Invariant violation: unknown seminoun on exiting tisgar.
+  = forall a. Show a => PareFree Rump (Base (Hop Rump a))
+  -- | Cannot locate the given ally in the subject.
+  | forall a. Show a => FindFail Term (Type a)
+  -- | The two types do not {nest, cast, equal each other}.
+  | forall a. Show a => FitsFail Fit (Type a) (Type a)
+  -- | While fusing, cannot merge equality onto seminoun.
+  | forall a. Show a => MeldFail (Base a) (Base a)
+  -- | During fuse, pattern not compatible with expected type.
+  | forall a. Show a => FuseFail (Base a, Type a) Pelt
+  -- | It is not acceptable to cast/nest in pelts you are fishing with.
+  | FuseFits Fit
+  -- | During crop, pattern not compatible with expected type.
+  | forall a. Show a => CropFail (Type a) Pelt
+  -- | It is not acceptable to cast/nest in pelts you are fishing with.
+  | CropFits Fit
+  -- | Equality patterns not supported in fish. XX
+  | FishSame Soft
+  -- | Pike is less delicious to eat than the other kinds of fish.
+  | FishPike Pelt Pelt
+  -- | Your pelt performs a test, which is not permitted in this context.
+  | forall a. Show a => ToilFish Pelt (Type a)
+  -- | Your pelt performs a test, which is not permitted in this context.
+  | RompPart Soft
+  -- | Please add extra casts/nests to your pelt; we cannot infer the type.
+  | RompWild Pelt
+  -- | You are trying to slam something which is not a gate.
+  | forall a. Show a => NeedGate (Type a)
+  | BailNote Text  -- ^ failure with note
+  | BailFail  -- ^ unspecified failure
+
+deriving instance (Show Act)
+deriving instance (Show Fail)
+
+-- | Push an error reporting stack frame.
+act :: Act -> Check b -> Check b
+act a = local (a:)
+
+bail :: Fail -> Check a
+bail f = ask >>= \as -> lift $ Left (as, f)
+
+bailSwap :: (Fail -> Fail) -> Check a -> Check a
+bailSwap f chk = ReaderT \r -> case runReaderT chk r of
+  Left (acts, err) -> Left (acts, f err)
+  Right x -> Right x
+
+bailFail :: Check a
+bailFail = bail BailFail
+
+
+-- Context management ----------------------------------------------------------
+
+-- | What we know about the subject
 data Con a = Con
-  { lvl :: Level
-  , sut :: Type a
-  , ken :: Base a
+  { lvl :: Level   -- ^ number of =+s we have passed under since =>
+  , sut :: Type a  -- ^ type of the subject
+  , ken :: Base a  -- ^ seminoun of current subject
   }
 
 -- | Grow the subject without knowledge, using an unevaluated type
@@ -532,57 +618,7 @@ face' fs = \case
   b -> Face' fs b
 
 
--- | Mode for fit-checking in `fits`: nest, cast, or exact equality.
-data Fit
-  = FitSame  -- ^ perform a type (or value) equivalence check
-  | FitNest  -- ^ perform a subtyping check
-  | FitCast  -- ^ perform a coercibility check; i.e. ignore auras
-  deriving (Eq, Ord, Generic)
-
-instance Show Fit where
-  show = \case
-    FitCast -> "cast"
-    FitNest -> "nest"
-    FitSame -> "same"
-
-type Var a = (Eq a, Show a)
-
--- | Error reporting context, analogous to stack trace item.
-data Act
-  = forall a. Show a => ActFits Fit (Type a) (Type a)
-  | forall a. Show a => ActFind (Type a) Wing
-  | forall a. Show a => ActToil Fit Pelt (Type a)
-  | ActRomp Pelt
-  | forall a. Show a => ActWork Fit Soft (Type a)
-  | ActPlay Soft
-  | ActNote Text
-
-data Fail
-  = forall a. Show a => PareFree Rump (Base (Hop Rump a))
-  | forall a. Show a => FindFail Term (Type a)
-  | forall a. Show a => FitsFail Fit (Type a) (Type a)
-  -- | forall a. Show a => SkinRash (Code a)  -- ^ not a valid pattern
-  | RompWild Pelt  -- ^ not enough info to extract type from pelt
-  | forall a. Show a => NeedGate (Type a)  -- ^ type is not a gate
-  | BailNote Text  -- ^ failure with note
-  | BailFail  -- ^ unspecified failure
-
-deriving instance (Show Act)
-deriving instance (Show Fail)
-
--- | Push an error reporting stack frame.
-act :: Act -> Check b -> Check b
-act a = local (a:)
-
-bail :: Fail -> Check a
-bail f = ask >>= \as -> lift $ Left (as, f)
-
-bailFail :: Check a
-bailFail = bail BailFail
-
---
--- Axial operations
---
+-- Axial operations ------------------------------------------------------------
 
 data Step = L | R
   deriving (Eq, Ord, Show)
@@ -622,9 +658,75 @@ pole :: Axis -> Stub -> Stub
 pole a = \case
   Leg b -> Leg (peg a b)
 
---
--- Core operations of the compiler
---
+
+--------------------------------------------------------------------------------
+-- Core operations of the compiler ---------------------------------------------
+--------------------------------------------------------------------------------
+
+-- Find ------------------------------------------------------------------------
+
+-- | Zipper on the subject to return from find. That way if you edit the subject
+-- at that point you can put it back together.
+data Line a = Line
+  { llv :: Level
+  , lem :: Base a
+  , lyt :: Type a
+  , sez :: [SemiLayer a]
+  , tez :: [TypeLayer a]
+  }
+
+data SemiLayer a
+  = SeL (Base a)           -- ^ [_ b]
+  | SeR (Base a)           -- ^ [b _]
+  | SeF [Face]             -- ^ f=_
+
+data TypeLayer a
+  = TyL (Base a) (Code a)  -- ^ =>  b  {_ c}
+  | TyR (Base a) (Base a)  -- ^ =>  c  {b _}
+  | TyF [Face]             -- ^ f=_
+
+-- TODO
+-- 1. Write seal :: Line a -> Con a
+-- 2. Edit find to return a Line
+-- 3. Write crop and fuse.
+
+{-
+seal :: Line a -> Con a
+seal Line{llv, lem, lyt, sez, tez} = case (sez, tez) of
+  ([], []) -> Con{lvl=llv, ken=lem, sut=lyt}
+  (sel:sez, _) -> case sel of
+    SeL b -> seal Line{llv, lem=(Cons' lem b), lyt, sez, tez}
+    SeR b -> seal Line{llv, lem=(Cons' b lem), lyt, sez, tez}
+    SeF f -> seal Line{llv, lem=(Face' f lem), lyt, sez, tez}
+  (_, tel:tez) -> case tel of
+    -- XX we should maybe do simul traverse, eta beta to inline new seminoun
+    -- into the right of the cell type. In Cell-Rail hoon, Rails become Cells
+    -- here.
+    TyL s c -> seal Line{llv, lem, lyt=(Cell' lyt s c), sez, tez}
+    TyR b   -> seal Line{llv, lem, lyt=(Cell' b lyt),   sez, tez}  -- XX ?
+    TyF f   -> seal Line{llv, lem, lyt=(face' f lyt),   sez, tez}
+-}
+
+-- | Strip faces and combine adjacent rumps.
+repo :: Var a => Base a -> Base a
+repo = \case
+  Face' _ b -> repo b
+  -- Cons' b c -> case (repo b, repo c) of
+  --  (Rump' (Leg' (l, a)), Rump' (Leg' (m, b)))
+  --    | Just (n, c) <- conj (l, a) (m, b) -> Rump' $ Leg' (n, c)
+  --  (x, y) -> Cons' x y
+  -- Noun' -> Both' (Aura' "") $ Cell' Noun' (Atom' 0 Rock "") Noun'
+  b -> b
+ -- where
+ --  conj :: (Level, Axis) -> (Level, Axis) -> Maybe (Level, Axis)
+ --  conj (l, a) (m, b)
+ --    | l < m                 = conj (m, peg (2 ^ (m - l)) a) (m, b)
+ --    | l > m                 = conj (l, a) (l, peg (2 ^ (l - m)) b)
+ --    | Just (L, x) <- cut a
+ --    , Just (R, y) <- cut b
+ --    , a == b                = Just (l, a `div` 2)
+ --    | otherwise             = Nothing
+
 
 -- | Resolve the names in a Wing, producing the type of that part of the subject
 -- and an axial representation of the wing.
@@ -687,41 +789,9 @@ find sub@Con{lvl, sut, ken} win = act (ActFind sut win) do
       -- Gold/Lead
 
       _ -> Nothing
-{-
--- | Inflate pattern to seminoun.
-fill :: Pelt a -> Semi a
-fill = \case
-  Punt -> Wing Stop
-  Peer _ -> Wing Stop
-  Part c -> fmap Roll c
-  Pair p q -> Cons (fill p) (fill q)
-  Pace f p -> Name f (fill p)  -- although we could also strip the face
-  Pest p t -> fill p
 
--- | Asymetrically merge pattern onto seminoun
-meld :: Con a -> Semi a -> Pelt a -> Check (Semi a)
-meld con ken pet = act (ActMeld con pet) $ go ken pet
- where
-  go ken = \case
-    Punt -> ken
-    Peer _ -> ken
-    Part c -> (fits FitSame con (Roll <$> c) ken $> ken) <|> case c of
-      -- XX think more about this criterion. what if a = b = %foo and
-      -- we are melding to %bar? This should also be meld-vain.
-      -- I think the seminoun needs to be evaluated.
-      -- Yes, both the seminoun and the expression in the pattern need to be
-      -- evaluated, although frankly I don't know if we'll ever expose the full
-      -- power of equality patterns to the user.
-      a@Atom{} -> undefined
--}
 
-{-
--- | Produce a seminoun corresponding to a pattern and a leveled axis modeling
--- the location of the subject being refined.
-fill :: Con a => (Level, Axis) -> Pelt Stub -> Base a
-fill (lvl, a) = \case
-  Punt -> Stop' (Leg' (lvl, a))
--}
+-- Pelt system -----------------------------------------------------------------
 
 -- | Strip masks, but not links, from outside of type.
 clip :: Type a -> Type a
@@ -740,64 +810,194 @@ clop = \case
 clap :: Axis -> Map Term (Axis, [Face]) -> Map Term (Axis, [Face])
 clap a = fmap \(b, fs) -> (peg a b, fs)
 
--- | Given a pattern, verify that it is compatibile with the given type.
--- This also effects a chilling step although it is not clear yet whether this
--- is needed or should take on some different form (e.g. stripping Pace and
--- Pest).
-toil :: Var a => Con a -> Fit -> Pelt -> Type a -> Check [Face]
-toil con@Con{ken} fit pet typ = act (ActToil fit pet typ) case pet of
-  Punt -> pure []
-  Peer f -> pure [Mask f]
-  Part c -> do
-    -- Arguably you should be able to put any equality pattern here, without
-    -- regard for type. The ones of the wrong type won't match. But we don't
-    -- do this. It might also make sense to have toil return a new type? But
-    -- this feels like it's veering close to fuse. I think actually literally
-    -- deleting this function and using fuse instead may be correct.
-    -- Specifically, fuse *should* have widening behavior on casts, and crop
-    -- should discard casts.
-    _ <- work con fit c typ -- Note nonreversal
-    pure []
-  Pair p q -> case typ of
-    Face' _ t -> toil con fit pet t
+-- | Extract the non-computational content from a pelt (i.e. the faces).
+derm :: Pelt -> [Face]
+derm = \case
+  Punt -> []
+  Peer m -> [Mask m]
+  Part _ -> []
+  Pair p q -> [Link $ clap 2 (clop (derm p)) ++ clap 3 (clop (derm q))]
+  Pons p q -> derm p ++ derm q
+  Pest p _ -> derm p
+
+-- | Verify that a pattern is irrefutable TODO.
+tofu :: Pelt -> Check ()
+tofu = undefined
+
+-- | Extract the computational content from a pelt (i.e. the testing part).
+fish :: Pelt -> Check Fish
+fish fis = act (ActFish fis) case fis of
+  Punt -> pure Tuna
+  Peer _ -> pure Tuna
+  Part (Atm a _ _) -> pure $ Sole a
+  Part s -> bail (FishSame s)
+  Pair p q -> char <$> fish p <*> fish q
+  Pons p q -> do
+    h <- fish p
+    j <- fish q
+    bailSwap (const $ FishPike p q) $ pike h j
+  Pest p _ -> fish p
+ where
+  -- conjunction of fishes
+  pike :: Fish -> Fish -> Check Fish
+  pike Tuna h = pure h
+  pike h Tuna = pure h
+  pike (Char h j) (Char k l) = Char <$> pike h k <*> pike j l
+  pike (Sole a) (Sole b) | a == b = pure $ Sole a
+  pike (Sole _) _ = bailFail
+  pike _ (Sole _) = bailFail
+
+  -- product of fishes
+  char :: Fish -> Fish -> Fish
+  char Tuna Tuna = Tuna
+  char h    j    = Char h j
+
+{-
+-- | Merge pelt onto seminoun.
+meld :: Var a => Base a -> Pelt -> Check (Base a)
+meld sem pet = act (ActMeld sem pet) case pet of
+  Punt -> pure sem
+  Peer _ -> pure sem
+  Part (Atm a g au) -> case {- repo -} sem of
+    -- XX arguably should accumulate "equality constraints" e.g. suppose we have
+    --   =+  a=...
+    --   =+  b=a
+    --   ?:  ?=(%foo b)
+    -- we should learn that both b and a are %foo in the yes branch.
+    -- XX should we also do matching on Fore's?
+    Rump' _ -> pure $ Atom' a g au
+    Atom' a' g' au' | a == a' -> pure $ Atom' a g au  -- XX g au
+    _ -> bail (MeldFail sem pet)
+  Part s ->
+    -- XX no support yet for equality patterns
+    bail (MeldSame sem s)
+  Pair p q -> Cons' <$> meld (look (Leg 2) sem) p <*> meld (look (Leg 3) sem) q
+  Pons p q -> do b <- meld sem q; meld b p  -- right happens first
+  Pest p _ -> meld sem p
+-}
+
+-- | Merge two seminouns. XX eventually this should accumulate "equality
+-- constraints" which can be piped into fits as extra assumptions.
+meld :: Var a => Base a -> Base a -> Check (Base a)
+meld b c = case (repo b, repo c) of
+  (Rump'{},   a)                       -> pure a
+  (a,         Rump'{})                 -> pure a
+  (Cons' b c, Cons' b' c')             -> Cons' <$> meld b b' <*> meld c c'
+  (Atom' a g au, Atom' b _ _) | a == b -> pure $ Atom' a g au
+  _                                    -> bail (MeldFail b c)
+
+-- | Refine scrutinee type and seminoun on the assumption that the pelt matches.
+fuse :: forall a. Var a
+     => Con a -> (Base a, Type a) -> Pelt -> Check (Base a, Type a)
+fuse con@Con{lvl, ken} (b, t) pet = act (ActFuse (b, t) pet) case pet of
+  Punt -> pure (b, t)
+  Peer _ -> pure (b, t)
+  Part s -> do
+    (x, t') <- play con s
+    fits FitNest t' t
+    (, t') <$> meld b (evil ken x)
+  Pair p q -> case repo t of
     Cell' t s c -> do
-      fs <- toil con fit p t
-      gs <- toil con fit q undefined
-      pure [Link $ clap 2 (clop fs) <> clap 3 (clop gs)]
-  Pons p q -> (++) <$> toil con fit p typ <*> toil con fit q typ
+      let x = look (Leg 2) b
+      let y = look (Leg 3) b
+      (x', t') <- fuse con (x, t) p
+      (y', u') <- fuse con (y, eval (Cons' s x) c) q
+      pure (Cons' x' y', Cell' t' ken $ loft lvl u')
+    _ -> bail (FuseFail (b, t) pet)
+  Pons p q -> do (b, t) <- fuse con (b, t) q; fuse con (b, t) p
+  Pest _ _ -> bail (FuseFits FitNest)
+
+-- | Refine scrutinee type on the assumption that pelt does NOT match.
+crop :: forall a. Var a
+     => Con a -> Type a -> Pelt -> Check (Type a)
+crop con@Con{lvl, ken} t pet = act (ActCrop t pet) case pet of
+  Punt -> pure Void'
+  Peer _ -> pure Void'
+  Part s -> do
+    -- seems bad that this check duplicates fuse
+    work con FitNest s t
+    case (s, repo t) of
+      (Atm a g au, Fork' as au') -> pure $ Fork' (deleteSet a as) au'  -- XX au
+      (_, t) -> pure t
+  Pair p q -> case repo t of
+    Cell' t s c -> do
+      t' <- crop con t p
+      u <- crop con (eval s c) q
+      fis <- fish q
+      let c' = Test (Fish fis 3) (loft lvl u) c
+      pure $ Cell' t' s c'
+    _ -> bail (CropFail t pet)
+  Pons p q -> do t <- crop con t q; crop con t p
+  Pest _ _ -> bail (FuseFits FitNest)
+
+
+-- | Given a pattern, verify that it is compatibile with the given type.
+-- Produce a new, broader type corresponding to any upcasts we may have made.
+-- This type will not have faces. To get the faces, run derm.
+toil :: Var a => Con a -> Fit -> Pelt -> Base a -> Type a -> Check (Type a)
+toil con@Con{ken, lvl} fit pet sem typ = act (ActToil fit pet typ) case pet of
+  Punt -> pure typ
+  Peer f -> pure typ
+  Part s -> case (s, repo typ) of
+    -- NOTE support for this is the only thing blocking merge of toil and romp
+    -- (romp would be toil against Noun once we have $@ and repo), and then
+    -- we would test that the fish is Tuna to check irrefutability. I guess
+    -- another idea would be for fish to make use of type info to avoid unnec
+    -- testing. Uhh, that seems way better?
+    -- XX the above comment seems wrong
+    (Atm a Rock au, Fork' as ag) | setToList as == [a] -> pure typ
+    _ -> bail (ToilFish pet typ)
+  Pair p q -> case repo typ of
+    Cell' t s c -> do
+      let x = look (Leg 2) sem
+      let y = look (Leg 3) sem
+      u <- toil con fit p x t
+      -- you could demand a seminoun be passed in to do this more aggro ugh
+      v <- toil con fit q y (eval (Cons' s x) c)
+      pure (Cell' u ken $ loft lvl v)
+    _ -> bail (ToilFish pet typ)
+  Pons p q -> toil con fit p sem =<< toil con fit q sem typ
   Pest p c -> do
-    -- In a future in which we also store types in the link section of Face,
-    -- we can store the larger type that the user specified in the pattern.
-    -- Otherwise this is kind of a dead letter.
     x <- work con FitNest c Type'
     let t = evil ken x
     -- Important: the type is reversed here. In this sense, pelts are
     -- contravariant.
     fits fit typ t
-    toil con FitNest p t
+    toil con FitNest p sem t
 
 -- | Return the nest-largest type compatible with a pattern, along with
 -- information on the masking and non-masking faces it applies
-romp :: Var a => Con a -> Pelt -> Check ([Face], Type a)
-romp con@Con{ken} pet = act (ActRomp pet) case pet of
+romp :: Var a => Con a -> Pelt -> Check (Type a)
+romp con@Con{ken, lvl} pet = act (ActRomp pet) case pet of
   Punt -> bail (RompWild pet)
   Peer _ -> bail (RompWild pet)
-  Part c -> do (x, t) <- play con c; pure ([], t)
+  Part c -> do (x, t) <- play con c; pure t
   Pair p q -> do
-    (fs, t) <- romp con p
-    (gs, u) <- romp con q
-    -- XX think about whether this should be a dependent cell
-    pure ([Link $ clap 2 (clop fs) <> clap 3 (clop gs)], cell' con t u)
+    t <- romp con p
+    u <- romp (hide' con t) q  -- XX I think this hide is ok only for lam, but..
+    pure (Cell' t ken $ loft lvl u)
   Pons p q -> do
-    -- As an arbitrary policy decision, we mandate types in the right pattern.
-    (gs, t) <- romp con q
-    fs <- toil con FitNest p t
-    pure (fs ++ gs, t)
+    t <- romp con q
+    toil con FitNest p (Rump' $ Leg' (lvl + 1, 3)) t
   Pest p c -> do
     x <- work con FitNest c Type'
-    let t = evil ken x
-    fs <- toil con FitNest p t
-    pure (fs, t)
+    toil con FitNest p (Rump' $ Leg' (lvl + 1, 3)) (evil ken x)
+
+
+-- The calculus of types -------------------------------------------------------
+
+-- | Mode for fit-checking in `fits`: nest, cast, or exact equality.
+data Fit
+  = FitSame  -- ^ perform a type (or value) equivalence check
+  | FitNest  -- ^ perform a subtyping check
+  | FitCast  -- ^ perform a coercibility check; i.e. ignore auras
+  deriving (Eq, Ord, Generic)
+
+instance Show Fit where
+  show = \case
+    FitCast -> "cast"
+    FitNest -> "nest"
+    FitSame -> "same"
 
 -- | Perform subtyping, coercibility, or equality check.
 -- XX figure out proper encoding of recursion via cores or gates
@@ -995,6 +1195,9 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
     -- The below will actually occur: e.g. stuck variables, applications
     _ -> [Fore' var]
 
+
+-- Type checking ---------------------------------------------------------------
+
 -- | Given subject type and knowledge, verify that code has result type.
 -- Since the expected result type is known in this mode, we can lighten the
 -- user's annotation burden, e.g. on |= argument. Read about "bidirectional type
@@ -1005,8 +1208,6 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork fit cod typ)
   let playFits = do (x, t') <- play con cod
                     fits fit t' typ
                     pure x
-      evil :: Code Void -> Base a
-      evil = eval ken . vacuous
   in case cod of
     Wng{} -> playFits
 
@@ -1026,7 +1227,7 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork fit cod typ)
       Face' fs t -> work con fit cod t
       Cell' t sub e -> do
         x <- work con fit c t
-        let can@Con{ken=kan} = shew con (evil x) t
+        let can@Con{ken=kan} = shew con (evil ken x) t
         y <- work can fit d (eval kan e)
         pure (Cons x y)
       _ -> playFits
@@ -1034,10 +1235,9 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork fit cod typ)
     Lam p c -> case typ of
       Face' fs t -> work con fit cod t
       Gate' t sub e -> do
-        fs <- toil con fit p t
-        -- FIXME we must gain or lose faces according to the pelt, not merely
-        -- rely on the supplied type!
-        let can@Con{ken=kan} = hide' con $ face' fs t
+        t' <- toil con fit p (Rump' $ Leg' (lvl + 1, 3)) t
+        let fs = derm p
+        let can@Con{ken=kan} = hide' con $ face' fs t'
         y <- work can fit c (eval kan e)
         pure (Lamb y)
       _ -> playFits
@@ -1046,9 +1246,11 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork fit cod typ)
       -- XX think about whether we should instead play here, so that toil can
       -- operate against a more specific scrutinee type.
       x <- work con fit c typ
-      fs <- toil con fit p typ
+      -- XX It's strictly wrong to use typ here; we should use the result of
+      -- playing c. But playing c could fail, so...
+      _ <- toil con fit p (evil ken x) typ
+      let fs = derm p
       pure (Face fs x)
-
 
     -- elimination forms just use nest
     Plu{} -> playFits
@@ -1064,13 +1266,13 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork fit cod typ)
 
     Wit c d -> do
       (x, t) <- play con c
-      let kan = evil x
+      let kan = evil ken x
       y <- work Con{lvl=0, sut=(grow t), ken=(grow kan)} fit d (grow typ)
       pure $ With x y
 
     Pus c d -> do
       (x, t) <- play con c
-      work (shew con (evil x) t) fit d typ
+      work (shew con (evil ken x) t) fit d typ
 
     Net{} -> playFits
     Cat{} -> playFits
@@ -1105,21 +1307,18 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay cod) case cod of
 
   Lam p c -> do
     -- TODO replace with gold core
-    (fs, t) <- romp con p
+    t <- romp con p
+    let fs = derm p
     (x, u) <- play (hide' con $ face' fs t) c
     pure (Lamb x, Gate' t ken (loft (lvl + 1) u))
 
   Fac p c -> do
     (x, t) <- play con c
-    fs <- toil con FitNest p t
-    pure (face fs x, face' fs t)
-
-
-  {-Name n c -> do
-    (x, t) <- play con c
-    -- XX The fact that I want to strip name here bodes mildly ill for mask-name
-    -- unification.
-    pure (x, Face' n t)-}
+    t' <- toil con FitNest p (evil ken x) t
+    let fs = derm p
+    -- XX think about under what circumstances we can strip the first face.
+    -- It's annoying to have these lying around in the seminoun.
+    pure (face fs x, face' fs t')
 
   Plu c -> do
     -- Following 140, we do not propagate aura.

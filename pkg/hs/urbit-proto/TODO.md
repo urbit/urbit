@@ -1,6 +1,44 @@
 # TODO
 
 [ ] Dump keikaku into this list.
+[ ] Rewrite this very out of date list. Wow.
+
+Consider a subject of type
+
+    $%  [%a ?(%a %b)]
+        [%b ?(%a %b)]
+    ==
+
+Then in
+
+    ?:  ?=([%a %a] .)
+      X
+    Y
+
+at X the subject should be of type {$a $a}, but at Y the subject should be of
+type {?(%a %b) ?:(?=(%a +3) $b ?(%a %b))}.
+
+Meanwhile against a subject of type
+
+    [[? ?] ?]
+
+the test
+
+    ?:  ?=([& & &] .)
+      X
+    Y
+
+gives rise to type {{? ?} ?:(?=([& &] +3) $| ?)}, and
+
+   [? ? ?]
+
+with
+
+    [& & &]
+
+gives rise to type
+
+   {? ?:(?=(& +3) +3) {? ?:(?=(& +3) $| ?)} {? ?}}
 
 ## Based Hoon
 

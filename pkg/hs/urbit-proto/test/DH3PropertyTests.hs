@@ -67,6 +67,7 @@ instance Monad m => Serial m Term where
 instance Monad m => Serial m Fit
 instance Monad m => Serial m Grit
 instance Monad m => Serial m Face
+instance Monad m => Serial m Fish
 instance Serial m a => Serial m (Code a)
 instance Serial m a => Serial m (Base a)
 

@@ -8,7 +8,7 @@ import Data.Text (stripEnd)
 import Data.Void
 import Urbit.Atom (atomUtf8)
 
-import Practice.DependentHoon3
+import Practice.DependentHoon3 hiding (Line)
 import Practice.Hoon2DependentHoon3
 import Practice.HoonCommon
 import Practice.HoonSyntax
