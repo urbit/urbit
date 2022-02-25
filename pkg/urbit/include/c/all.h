@@ -12,5 +12,6 @@
 #include "c/types.h"
 #include "c/defs.h"
 #include "c/motes.h"
+#include "c/path.h"
 
 #endif /* ifndef C3_ALL_H */
