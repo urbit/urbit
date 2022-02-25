@@ -74,6 +74,17 @@ The test suite can similarly be run via a simple:
 make test
 ```
 
+To build the source-level documentation, use:
+
+```
+make doc
+```
+
+Source-level documentation is a work-in-progress and (partial) coverage is only
+available for the following subdirectories:
+
+- [pkg/urbit/](https://github.com/urbit/urbit/tree/master/pkg/urbit)
+
 Note that some of the Makefile targets need access to pills tracked via [git
 LFS][git-lfs], so you'll also need to have those available locally:
 
