@@ -13336,31 +13336,32 @@
     ++  wisp  !:                                        ::  core tail
       ?.  tol  fail
       %+  cook
-        |=  a=(list (pair term (map term hoon)))
+        |=  a=(list [wit=whit wap=(pair term (map term hoon))])
         ^-  (map term tome)
         =<  p
         |-  ^-  (pair (map term tome) (map term hoon))
         ?~  a  [~ ~]
         =/  mor  $(a t.a)
-        =.  q.i.a
-          %-  ~(urn by q.i.a)
+        =.  q.wap.i.a
+          %-  ~(urn by q.wap.i.a)
           |=  b=(pair term hoon)  ^+  +.b
+          ::  tests for duplicate arms between two chapters
           ?.  (~(has by q.mor) p.b)  +.b
           [%eror (weld "duplicate arm: +" (trip p.b))]
-        :_  (~(uni by q.mor) q.i.a)
+        :_  (~(uni by q.mor) q.wap.i.a)
         %+  ~(put by p.mor)
-          p.i.a
-        :-  *what
-        ?.  (~(has by p.mor) p.i.a)
-          q.i.a
-        [[%$ [%eror (weld "duplicate chapter: |" (trip p.i.a))]] ~ ~]
+          p.wap.i.a
+        :-  boy.wit.i.a  :: body of the whit set as the what
+        ?.  (~(has by p.mor) p.wap.i.a)
+          q.wap.i.a
+        [[%$ [%eror (weld "duplicate chapter: |" (trip p.wap.i.a))]] ~ ~]
       ::
       ;~  pose
         dun
         ;~  sfix
           ;~  pose
-            (most muck ;~(pfix (jest '+|') ;~(pfix gap whip)))
-            ;~(plug (stag %$ whap) (easy ~))
+            (most muck ;~(plug apex:docs ;~(pfix (jest '+|') ;~(pfix gap whip))))
+            ;~(plug (stag *whit (stag %$ whap)) (easy ~))
           ==
           gap
           dun
