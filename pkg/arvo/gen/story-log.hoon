@@ -15,7 +15,7 @@
 ?:  !(~(has in .^((set ^desk) %cd /(scot %p our)/$/(scot %da now))) desk)
   tang+[leaf+"Error: desk {<desk>} does not exist." ~]
 =/  pax                   /(scot %p our)/[desk]/(scot cas)/story
-?:  !.^(? %cu pax)         tang+['Error: No story file found. Please use |story-init to create one.' ~]
+?:  !.^(? %cu pax)        tang+['Error: No story file found. Please use |story-init to create one.' ~]
 =/  tale                  .^(story %cx pax)
 =/  current-tako          .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
 =/  current-yaki          .^(yaki:clay %cs /(scot %p our)/[desk]/(scot cas)/yaki/(scot %uv current-tako))
@@ -27,12 +27,14 @@
 ::  There are two recursions in the log file:
 ::  1. the outer loop, `commit-loop` which threads downwards into each commit by ancestor
 ::  2. the inner loop, `ancestor-loop`, which threads left-to-right on reverse-ancestors
+::
+::  +story-log outputs a tang with the least-recent commits at the head of the list,
+::  even though we want most-recent commits to end up printing first.
+::  But because dojo prints tangs in reverse, we don't flop the results 
 ::::
 ++  story-log
   |=  [[our=ship syd=^desk cas=case] current-commit=yaki:clay tale=story]
   ^-  tang
-  ::
-  %-  flop  :: least-recent-first -> most-recent-first
   %-  head  :: result from state
   =|  state=[result=tang mergebase=(unit tako:clay)]
   |-
@@ -44,8 +46,8 @@
   ?-    reverse-ancestors
       ~
     ::  stop here and return the current message
-    =/  msg=(unit cord)  (msg-from-commit current-commit tale)
-    [?~(msg result.state [u.msg result.state]) mergebase=~]
+    =/  msg=(list cord)  (msg-from-commit current-commit tale)
+    [(weld msg result.state) mergebase=~]
   ::
       [tako:clay ~]
     =/  parent=tako:clay  i.reverse-ancestors
@@ -57,7 +59,7 @@
     ::  Otherwise, record the current message if exists
     ?:  ?&(?=(^ mergebase.state) =(u.mergebase.state r.current-commit))
       [result=result.state mergebase=~]
-    commit-loop(current-commit parent-commit, result.state ?~(msg result.state [u.msg result.state]))
+    commit-loop(current-commit parent-commit, result.state (weld msg result.state))
   ::
       [tako:clay tako:clay ~]
     ::
@@ -75,9 +77,10 @@
     =/  mainline=tako:clay               i.t.reverse-ancestors
     =/  mergebases                       .^((list tako:clay) %cs /(scot %p our)/[syd]/(scot cas)/base-tako/(scot %uv mainline)/(scot %uv sideline))  :: XX base-tako ignores beak
     =/  next-mergebase=(unit tako:clay)  ?~(mergebases ~ (some i.mergebases))  :: take the first valid mergebase (by convention) if exists, else none
+    :: ~&  "Debug: Mergebase is null? {<=(~ next-mergebase)>}"
     =/  sideline-commit=yaki:clay        .^(yaki:clay %cs /(scot %p our)/[syd]/(scot cas)/yaki/(scot %uv sideline))
     =/  mainline-commit=yaki:clay        .^(yaki:clay %cs /(scot %p our)/[syd]/(scot cas)/yaki/(scot %uv mainline))
-    =/  msg=(unit cord)                  (msg-from-commit current-commit tale)
+    =/  msg=(list cord)                  (msg-from-commit current-commit tale)
     ::
     ::  1 - process current commit
     ::  2 - recur and queue processing on all commits on the sideline
@@ -86,7 +89,7 @@
     ::  Because mainline messages are cons'd to result last, they are 
     ::  (by definition) towards the less recent side of the resulting flopped list
     ::
-    =.  state  [result=?~(msg result.state [u.msg result.state]) mergebase=next-mergebase]  :: 1
+    =.  state  [result=(weld msg result.state) mergebase=next-mergebase]  :: 1
     =.  state  commit-loop(current-commit sideline-commit)                                  :: 2
     =.  state  commit-loop(current-commit mainline-commit)                                  :: 3
     state
@@ -106,10 +109,11 @@
 ::
 ++  msg-from-commit
   |=  [commit=yaki:clay tale=story]
-  ^-  (unit cord)
+  ^-  (list cord)
   =/  proses  (~(get by tale) r.commit)
   ?~  proses  ~
-  %-  some
+  %-  flop    :: fix formatting reversal in dojo
+  %-  to-wain:format
   %-  crip
   ;:  welp
     (tako-to-text:lib r.commit)
