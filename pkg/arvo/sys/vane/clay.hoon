@@ -2286,7 +2286,8 @@
         continuation-yaki  merged-yaki
         merges  t.merges
         hut.ran  (~(put by hut.ran) r.merged-yaki merged-yaki)
-        lat.rag  (~(uni by lat.rag) lat.u.merge-result)
+        lat.rag  (~(uni by lat.u.merge-result) lat.rag)
+        lat.ran  (~(uni by lat.u.merge-result) lat.ran)
         parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
       ==
     ==
