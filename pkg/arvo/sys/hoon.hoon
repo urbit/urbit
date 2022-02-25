@@ -13226,45 +13226,65 @@
     ::
     ++  boog  !:                                        ::  core arms
       %+  knee  [p=*term q=*hoon]  |.  ~+
+      %+  cook
+        |=  [a=whit b=term c=whit d=hoon]
+        =+  e=(glom a c)
+        ?~  boy.e
+          [b d]
+        [b [%note [%help ~ [p.u.boy.e q.u.boy.e]] d]]
       ;~  pose
-        ;~  pfix  (jest '++')
-          ;~  plug
-            ;~(pfix gap ;~(pose (cold %$ buc) sym))
-            ;~(pfix gap loaf)
+        ;~  plug
+          apex:docs
+          ;~  pfix  (jest '++')
+            ;~  plug
+              ;~(pfix gap ;~(pose (cold %$ buc) sym))
+              apse:docs
+              ;~(pfix gap loaf)
+            ==
           ==
         ==
       ::
         %+  cook
-          |=  [b=term d=spec]
-          [b [%ktcl [%name b d]]]
-        ;~  pfix  (jest '+$')
-          ;~  plug
-            ;~(pfix gap sym)
-            ;~(pfix gap loan)
+          |=  [a=whit b=term c=whit d=spec]
+          [a b c [%ktcl [%name b d]]]
+        ;~  plug
+          apex:docs
+          ;~  pfix  (jest '+$')
+            ;~  plug
+              ;~(pfix gap sym)
+              apse:docs
+              ;~(pfix gap loan)
+            ==
           ==
         ==
       ::
         %+  cook
-          |=  [b=term c=(list term) e=spec]
-          ^-  [term hoon]
-          :-  b
-          :+  %brtr
-            :-  %bccl
-            =-  ?>(?=(^ -) -)
-            ::  for each .term in .c, produce $=(term $~(* $-(* *)))
-            ::  ie {term}=mold
-            ::
-            %+  turn  c
-            |=  =term
-            ^-  spec
-            =/  tar  [%base %noun]
-            [%bcts term [%bcsg tar [%bchp tar tar]]]
-          [%ktcl [%made [b c] e]]
-        ;~  pfix  (jest '+*')
-          ;~  plug
-            ;~(pfix gap sym)
-            ;~(pfix gap (ifix [sel ser] (most ace sym)))
-            ;~(pfix gap loan)
+          |=  [a=whit b=term d=hoon]
+          [a b *whit d]
+        ;~  plug
+          apex:docs  :: this doesn't work, not sure why yet
+          %+  cook
+            |=  [b=term c=(list term) e=spec]
+            ^-  [term hoon]
+            :-  b
+            :+  %brtr
+              :-  %bccl
+              =-  ?>(?=(^ -) -)
+              ::  for each .term in .c, produce $=(term $~(* $-(* *)))
+              ::  ie {term}=mold
+              ::
+              %+  turn  c
+              |=  =term
+              ^-  spec
+              =/  tar  [%base %noun]
+              [%bcts term [%bcsg tar [%bchp tar tar]]]
+            [%ktcl [%made [b c] e]]
+          ;~  pfix  (jest '+*')
+            ;~  plug
+              ;~(pfix gap sym)
+              ;~(pfix gap (ifix [sel ser] (most ace sym)))
+              ;~(pfix gap loan)
+            ==
           ==
         ==
       ==
