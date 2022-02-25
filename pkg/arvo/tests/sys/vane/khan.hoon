@@ -68,12 +68,15 @@
             %fard  fard
     ==  ==
   =/  results-0  (expect !>(=(2 (lent start-moves))))
+  ::  XX  overspecified
+  ::
+  =/  expected-tid  (cat 3 'khan-fyrd--' (scot %uv (sham 0xdead.beef)))
   =/  results-1
     %+  expect-eq
       !>  :*  ~[//khan/1/0vthat.ductt]
               %pass  //g  %g  %deal
               [~nul ~nul]  %spider  %watch
-              /thread-result/'khan-fyrd--0vthat.ductt'
+              /thread-result/[expected-tid]
           ==
       !>  (head start-moves)
   =/  mev  (rear start-moves)
@@ -95,7 +98,7 @@
     q.cag
   =/  results-7
     %+  expect-eq
-      !>  :*  ~  `%'khan-fyrd--0vthat.ductt'
+      !>  :*  ~  `expected-tid
               [~nul %base %da now]  %nonexistent  ~
           ==
       !>(rag(t ~))
