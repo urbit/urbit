@@ -1705,8 +1705,9 @@ _cm_crypto()
   u3je_secp_init();
 }
 
-/* u3m_init(): start the environment.
-*/
+//! Start the environment.
+//!
+//! @note u3l_log() should not be used here.
 void
 u3m_init(void)
 {
@@ -1737,17 +1738,19 @@ u3m_init(void)
                          MAP_ANON | MAP_PRIVATE,
                          -1, 0);
 
-      u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
-      u3l_log("see urbit.org/using/install/#about-swap-space"
+      fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      fprintf(stderr,
+              "see urbit.org/using/install/#about-swap-space"
               " for adding swap space\r\n");
       if ( -1 != (c3_ps)dyn_v ) {
-        u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
+        fprintf(stderr,
+                "if porting to a new platform, try U3_OS_LoomBase %p\r\n",
                 dyn_v);
       }
       exit(1);
     }
 
-    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
+    fprintf(stderr, "loom: mapped %dMB\r\n", len_w >> 20);
   }
 }
 
@@ -1765,17 +1768,15 @@ u3m_stop()
 /* u3m_boot(): start the u3 system. return next event, starting from 1.
 */
 c3_d
-u3m_boot(c3_c* dir_c)
+u3m_boot(c3_c* dir_c, c3_o (*sap_f)(c3_c* dir_c))
 {
-  c3_o nuu_o;
-
   /* Activate the loom.
   */
   u3m_init();
 
   /* Activate the storage system.
   */
-  nuu_o = u3e_live(c3n, dir_c);
+  c3_o nuu_o = sap_f(dir_c);
 
   /* Activate tracing.
   */
@@ -1798,6 +1799,7 @@ u3m_boot(c3_c* dir_c)
   /* Reactivate jets on old kernel.
   */
   if ( c3n == nuu_o ) {
+
     u3j_ream();
     u3n_ream();
 

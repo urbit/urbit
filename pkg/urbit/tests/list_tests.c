@@ -322,7 +322,7 @@ _test_iter(void)
     size_t        idx_i = 0;
     while ( nod_u ) {
       c3_assert(idx_i++ == *(size_t*)c3_list_data(nod_u));
-      nod_u = c3_list_next(nod_u);
+      nod_u = nod_u->nex_u;
     }
   }
 
@@ -338,7 +338,7 @@ _test_iter(void)
     size_t        idx_i = 0;
     while ( nod_u ) {
       c3_assert(idx_i++ == *(size_t*)c3_list_data(nod_u));
-      nod_u = c3_list_prev(nod_u);
+      nod_u = nod_u->pre_u;
     }
   }
 }

@@ -15,13 +15,10 @@
 //==============================================================================
 
 //! Doubly-linked list node.
-//!
-//! The next, previous, and data fields should never be accessed
-//! directly for compatibility reasons. Instead, use c3_list_next(),
-//! c3_list_prev(), and c3_list_data() (respectively).
 typedef struct _c3_list_node {
   struct _c3_list_node* nex_u;   //!< next node
   struct _c3_list_node* pre_u;   //!< previous node
+  size_t                len_i;   //!< length of `dat_y` in bytes
   c3_y                  dat_y[]; //!< payload data
 } c3_list_node;
 
@@ -42,6 +39,24 @@ typedef enum {
 } c3_list_end;
 
 //==============================================================================
+// Macros
+//==============================================================================
+
+//! Error handling wrapper for c3_list API calls that return 0/NULL on failure
+//! and non-zero/non-NULL on success.
+//!
+//! @param[in] list_call       c3_list API call.
+//! @param[in] failure_action  Statement to execute after logging failure.
+#define try_list(list_call, failure_action, ...)                               \
+  do {                                                                         \
+    if ( !(list_call) ) {                                                      \
+      fprintf(stderr, "list: " __VA_ARGS__);                                   \
+      fprintf(stderr, "\r\n");                                                 \
+      failure_action;                                                          \
+    }                                                                          \
+  } while ( 0 )
+
+//==============================================================================
 // Functions
 //==============================================================================
 
@@ -59,25 +74,11 @@ c3_list_len(const c3_list* const lis_u)
   return lis_u ? lis_u->len_i : 0;
 }
 
-//! Get the successor node of a list node.
-static inline c3_list_node*
-c3_list_next(const c3_list_node* const nod_u)
-{
-  return nod_u->nex_u;
-}
-
-//! Get the predecessor node of a list node.
-static inline c3_list_node*
-c3_list_prev(const c3_list_node* const nod_u)
-{
-  return nod_u->pre_u;
-}
-
 //! Get the payload data from a list node.
 static inline void*
 c3_list_data(const c3_list_node* const nod_u)
 {
-  return (void*)nod_u->dat_y;
+  return nod_u ? (void*)nod_u->dat_y : NULL;
 }
 
 //! Add a new node onto the end of `lis_u`.

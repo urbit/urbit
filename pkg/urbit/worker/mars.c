@@ -1,10 +1,18 @@
-/* worker/mars.c
-**
-**  the main loop of a serf process.
-*/
+//! @file mars.c
+//!
+//! Main loop of a serf process.
+
 #include "all.h"
-#include <vere/vere.h>
-#include <vere/mars.h>
+#include "c/bile.h"
+#include "c/list.h"
+#include "c/path.h"
+#include "vere/vere.h"
+#include "vere/evlo.h"
+#include "vere/mars.h"
+
+//==============================================================================
+// Functions
+//==============================================================================
 
 c3_c tac_c[256];  //  tracing label
 
@@ -110,41 +118,41 @@ _mars_grab(u3_noun sac)
 }
 
 /* _mars_fact(): commit a fact and enqueue its effects.
-*/
+ */
+
+//! @n (1) TRANSFER.
 static void
-_mars_fact(u3_mars* mar_u,
-           u3_noun    job,
-           u3_noun    pro)
+_mars_fact(u3_mars* mar_u, u3_noun job, u3_noun pro)
 {
   {
-    u3_fact tac_u = {
-      .job   = job,
-      .mug_l = mar_u->mug_l,
-      .eve_d = mar_u->dun_d
+    u3_gift gif_u = {
+      .sat_e = u3_gift_fact_e,
+      .eve_d = mar_u->dun_d,
     };
 
-    u3_disk_plan(mar_u->log_u, &tac_u);
-    u3z(job);
+    u3s_jam_xeno(pro, &gif_u.len_d, &gif_u.hun_y);
+    u3z(pro);
+
+    c3_list_pushb(mar_u->gif_u, &gif_u, sizeof(gif_u));
   }
 
   {
-    u3_gift* gif_u = c3_malloc(sizeof(*gif_u));
-    gif_u->nex_u = 0;
-    gif_u->sat_e = u3_gift_fact_e;
-    gif_u->eve_d = mar_u->dun_d;
+    u3_atom mat = u3ke_jam(job);
+    c3_w  len_w = u3r_met(3, mat);
 
-    u3s_jam_xeno(pro, &gif_u->len_d, &gif_u->hun_y);
-    u3z(pro);
+    c3_l   mug_l = mar_u->mug_l;
+    size_t len_i = sizeof(mug_l) + len_w;
+    c3_y   dat_y[len_i];
+    dat_y[0] = mug_l & 0xff;
+    dat_y[1] = (mug_l >> 8) & 0xff;
+    dat_y[2] = (mug_l >> 16) & 0xff;
+    dat_y[3] = (mug_l >> 24) & 0xff;
+    u3r_bytes(0, len_w, dat_y + sizeof(mug_l), mat);
+    u3z(mat);
 
-    if ( !mar_u->gif_u.ent_u ) {
-      c3_assert( !mar_u->gif_u.ext_u );
-      mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = gif_u;
-    }
-    else {
-      mar_u->gif_u.ent_u->nex_u = gif_u;
-      mar_u->gif_u.ent_u = gif_u;
-    }
+    u3_evlo_commit(mar_u->log_u, dat_y, len_i);
   }
+
 }
 
 /* _mars_gift(): enqueue response message.
@@ -152,22 +160,15 @@ _mars_fact(u3_mars* mar_u,
 static void
 _mars_gift(u3_mars* mar_u, u3_noun pro)
 {
-  u3_gift* gif_u = c3_malloc(sizeof(*gif_u));
-  gif_u->nex_u = 0;
-  gif_u->sat_e = u3_gift_rest_e;
-  gif_u->ptr_v = 0;
+  u3_gift gif_u = {
+    .sat_e = u3_gift_rest_e,
+    .ptr_v = NULL,
+  };
 
-  u3s_jam_xeno(pro, &gif_u->len_d, &gif_u->hun_y);
+  u3s_jam_xeno(pro, &gif_u.len_d, &gif_u.hun_y);
   u3z(pro);
 
-  if ( !mar_u->gif_u.ent_u ) {
-    c3_assert( !mar_u->gif_u.ext_u );
-    mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = gif_u;
-  }
-  else {
-    mar_u->gif_u.ent_u->nex_u = gif_u;
-    mar_u->gif_u.ent_u = gif_u;
-  }
+  c3_list_pushb(mar_u->gif_u, &gif_u, sizeof(gif_u));
 }
 
 /* _mars_make_crud(): construct error-notification event.
@@ -582,28 +583,23 @@ _mars_flush(u3_mars* mar_u)
 {
 top:
   {
-    u3_gift* gif_u = mar_u->gif_u.ext_u;
+    u3_gift* gif_u = c3_list_data(c3_list_peekf(mar_u->gif_u));
 
     //  XX gather i/o
     //
     while (  gif_u
           && (  (u3_gift_rest_e == gif_u->sat_e)
-             || (gif_u->eve_d <= mar_u->log_u->dun_d)) )
+             || (gif_u->eve_d <= u3_evlo_last_commit(mar_u->log_u)) ) )
     {
       u3_newt_send(mar_u->out_u, gif_u->len_d, gif_u->hun_y);
 
-      mar_u->gif_u.ext_u = gif_u->nex_u;
-      c3_free(gif_u);
-      gif_u = mar_u->gif_u.ext_u;
-    }
-
-    if ( !mar_u->gif_u.ext_u ) {
-      mar_u->gif_u.ent_u = 0;
+      c3_free(c3_list_popf(mar_u->gif_u));
+      gif_u = c3_list_data(c3_list_peekf(mar_u->gif_u));
     }
   }
 
   if (  (u3_mars_work_e != mar_u->sat_e)
-     && (mar_u->log_u->dun_d == mar_u->dun_d) )
+     && (u3_evlo_last_commit(mar_u->log_u) == mar_u->dun_d) )
   {
     if ( u3_mars_save_e == mar_u->sat_e ) {
       u3e_save();
@@ -616,10 +612,10 @@ top:
     else if ( u3_mars_exit_e == mar_u->sat_e ) {
       //  XX wire up to signal handler
       //
-      u3_disk_slog(mar_u->log_u);
+      u3_evlo_info(mar_u->log_u);
 
       u3e_save();
-      u3_disk_exit(mar_u->log_u);
+      u3_evlo_close(mar_u->log_u);
       u3s_cue_xeno_done(mar_u->sil_u);
       u3t_trace_close();
       _mars_damp_file();
@@ -654,7 +650,7 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 {
   c3_o ret_o = c3n;
 
-  _mars_step_trace(mar_u->dir_c);
+  _mars_step_trace(mar_u->dir_u->str_c);
 
   //  XX optimize for stateless tasks w/ peek-next
   //
@@ -696,14 +692,13 @@ _mars_timer_cb(uv_timer_t* tim_u)
   _mars_flush(mar_u);
 }
 
-/* _mars_disk_cb(): mars commit result callback.
-*/
-static void
-_mars_disk_cb(void* ptr_v, c3_d eve_d, c3_o ret_o)
+//! Callback invoked upon completion of successful commit to event log.
+static c3_t
+_evlo_commit_cb(void* ptr_v, c3_d ide_d, c3_t suc_t)
 {
   u3_mars* mar_u = ptr_v;
 
-  if ( c3n == ret_o ) {
+  if ( !suc_t ) {
     //  XX better
     //
     fprintf(stderr, "mars: commit fail\r\n");
@@ -711,205 +706,205 @@ _mars_disk_cb(void* ptr_v, c3_d eve_d, c3_o ret_o)
   }
 
   _mars_flush(mar_u);
+  return 1;
 }
 
-/* _mars_poke_play(): replay an event.
-*/
-static u3_noun
-_mars_poke_play(u3_mars* mar_u, c3_d eve_d, u3_noun job)
+//! Callback invoked for each event during event log replay. See u3_evlo_play
+//! for description of parameters.
+static c3_t
+_evlo_replay_cb(void*        ptr_v,
+                c3_d         cur_d,
+                c3_d         las_d,
+                c3_y* const  byt_y,
+                const size_t len_i)
 {
-  c3_w  pre_w = u3a_open(u3R);
+  static c3_t fir_t = 1;
+  if ( fir_t ) {
+    if ( las_d == cur_d ) {
+      fprintf(stderr, "play: event %" PRIu64 "\r\n", las_d);
+    }
+    else {
+      fprintf(stderr,
+              "play: events %" PRIu64 "-%" PRIu64 "\r\n",
+              cur_d,
+              las_d);
+    }
+    fprintf(stderr, "---------------- playback starting ----------------\r\n");
+  }
+
+  c3_t     suc_t = 0;
+  u3_mars* mar_u = ptr_v;
+
+  mar_u->sen_d = cur_d;
+
+  c3_assert(sizeof(c3_l) < len_i);
+  c3_l mug_l = byt_y[0] ^ (byt_y[1] << 8) ^ (byt_y[2] << 16) ^ (byt_y[3] << 24);
+  u3_noun evt = u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4)); // XXX
+
+  c3_w    pre_w = u3a_open(u3R);
   u3_noun vir;
-
-  if ( c3n == u3v_poke_sure(0, job, &vir) ) {
+  if ( c3n == u3v_poke_sure(0, evt, &vir) ) {
     u3z(vir);
-    return c3n;
+    fprintf(stderr, "play (%" PRIu64 "): failed\r\n", cur_d);
+    goto end;
   }
-
   u3z(_mars_sure_feck(mar_u, pre_w, vir));
-  return c3y;
-}
 
-/* _mars_play_batch(): replay a batch of events.
-*/
-static c3_o
-_mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
-{
-  u3_disk*      log_u = mar_u->log_u;
-  u3_disk_walk* wok_u = u3_disk_walk_init(log_u, mar_u->dun_d + 1, bat_w);
-  u3_fact       tac_u;
-
-  while ( c3y == u3_disk_walk_live(wok_u) ) {
-    if ( c3n == u3_disk_walk_step(wok_u, &tac_u) ) {
-      u3_disk_walk_done(wok_u);
-      return c3n;
-    }
-
-    c3_assert( ++mar_u->sen_d == tac_u.eve_d );
-
-    if ( c3n == _mars_poke_play(mar_u, tac_u.eve_d, tac_u.job) ) {
-      //  XX produce/print trace, reclaim on meme, retry on %intr, &c
-      //
-      fprintf(stderr, "play (%" PRIu64 "): failed\r\n", tac_u.eve_d);
-      mar_u->sen_d = mar_u->dun_d;
-      u3_disk_walk_done(wok_u);
-      return c3n;
-    }
-
-    mar_u->mug_l = u3r_mug(u3A->roc);
-
-    if ( tac_u.mug_l && (mar_u->mug_l != tac_u.mug_l) ) {
-      fprintf(stderr, "play (%" PRIu64 "): mug mismatch "
-                      "expected %08x, actual %08x\r\n",
-                      tac_u.eve_d, tac_u.mug_l, mar_u->mug_l);
-
-      if ( c3y == mug_o ) {
-        mar_u->sen_d = mar_u->dun_d;
-        u3_disk_walk_done(wok_u);
-        return c3n;
-      }
-    }
-
-    mar_u->dun_d = mar_u->sen_d;
+  // (4)
+  mar_u->mug_l = u3r_mug(u3A->roc);
+  if ( mug_l && mar_u->mug_l != mug_l ) {
+    fprintf(stderr,
+            "play: mug mismatch on event %" PRIu64
+            ": expected %08x, actual %08x\r\n",
+            mar_u->sen_d,
+            mug_l,
+            mar_u->mug_l);
   }
 
-  u3_disk_walk_done(wok_u);
+  mar_u->dun_d = mar_u->sen_d;
 
-  return c3y;
-}
-
-/* u3_mars_play(): replay all newer logged events.
-*/
-void
-u3_mars_play(u3_mars* mar_u, c3_d eve_d)
-{
-  u3_disk* log_u = mar_u->log_u;
-
-  if ( !eve_d ) {
-    eve_d = log_u->dun_d;
-  }
-  else {
-    c3_assert( eve_d > mar_u->dun_d );
-    eve_d = c3_min(eve_d, log_u->dun_d);
-  }
-
-  u3l_log("---------------- playback starting ----------------\r\n");
-
-  if ( (1ULL + eve_d) == log_u->dun_d ) {
-    u3l_log("play: event %" PRIu64 "\r\n", log_u->dun_d);
-  }
-  else if ( eve_d != log_u->dun_d ) {
-    u3l_log("play: events %" PRIu64 "-%" PRIu64 " of %" PRIu64 "\r\n",
-            (c3_d)(1ULL + mar_u->dun_d),
-            eve_d,
-            log_u->dun_d);
-  }
-  else {
-    u3l_log("play: events %" PRIu64 "-%" PRIu64 "\r\n",
-            (c3_d)(1ULL + mar_u->dun_d),
-            eve_d);
-  }
-
-  while ( mar_u->dun_d < eve_d ) {
-    c3_w bat_w = eve_d - mar_u->dun_d;
-    c3_assert( (mar_u->dun_d + bat_w) == eve_d );
-
-    _mars_step_trace(mar_u->dir_c);
-
-    //  XX get batch from args
-    //
-    if ( c3n == _mars_play_batch(mar_u, c3n, c3_min(bat_w, 500)) ) {
-      u3l_log("play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
-      u3e_save();
-      //  XX exit code, cb
-      //
-      exit(1);
-    }
-
-    u3l_log("play (%" PRIu64 "): done\r\n", mar_u->dun_d);
-
-    //  XX refactor |mass
-    //
+  // XX refactor |mass
+  // XX get batch size from args
+  static const c3_d bat_d = 1;
+  if ( 0 == cur_d % bat_d || las_d == cur_d ) {
     u3z(mar_u->sac);
     mar_u->sac = u3_nul;
     _mars_post(mar_u);
+    fprintf(stderr, "play (%" PRIu64 "): done\r\n", mar_u->dun_d);
   }
 
-  u3l_log("---------------- playback complete ----------------\r\n");
+  if ( las_d == cur_d ) {
+    fprintf(stderr, "---------------- playback complete ----------------\r\n");
+    fir_t = 1;
+  }
+  else {
+    fir_t = 0;
+  }
+  suc_t = 1;
+
+end:
+  return suc_t;
 }
 
-static c3_o
-_mars_do_boot(u3_disk* log_u, c3_d eve_d)
+//! Callback invoked for each boot event during boot sequence replay. Create
+//! single event out of boot events over repeated calls to _evlo_boot_cb() and
+//! attempt to boot once the single event has been assembled. See u3_evlo_play
+//! for description of parameters.
+static c3_t
+_evlo_boot_cb(void*        ptr_v,
+              c3_d         cur_d,
+              c3_d         las_d,
+              c3_y* const  byt_y,
+              const size_t len_i)
 {
-  u3_weak eve;
-  c3_l  mug_l;
+  static u3_noun evt = u3_nul;
+  evt                = u3nc(u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4)), evt);
 
-  if ( u3_none == (eve = u3_disk_read_list(log_u, 1, eve_d, &mug_l)) ) {
-    fprintf(stderr, "boot: read failed\r\n");
-    return c3n;
+  if ( cur_d < las_d ) {
+    goto succeed;
   }
 
-  u3l_log("--------------- bootstrap starting ----------------\r\n");
-
-  if ( c3n == u3v_boot(eve) ) {
-    return c3n;
+  evt = u3kb_flop(evt);
+  fprintf(stderr, "--------------- bootstrap starting ----------------\r\n");
+  c3_o suc_o = u3v_boot(evt);
+  evt        = u3_nul;
+  if ( c3n == suc_o ) {
+    fprintf(stderr, "boot: failed to evaluate boot event\r\n");
+    goto fail;
   }
+  fprintf(stderr, "--------------- bootstrap complete ----------------\r\n");
 
-  u3l_log("--------------- bootstrap complete ----------------\r\n");
-  return c3y;
+  u3e_save();
+
+  goto succeed;
+
+fail:
+  return 0;
+
+succeed:
+  return 1;
 }
 
-/* u3_mars_init(): init mars, replay if necessary.
-*/
+//! Load the event log, replaying events if necessary, and send ready status
+//! message.
+//!
+//! @param[in] dir_c  Pier directory.
+//! @param[in] inn_u
+//! @param[in] out_u
+//!
+//! @return NULL  Failed to load epochs from `<dir_c>/.urb/log`.
+//! @return NULL  Failed to play boot events.
+//! @return NULL  Failed to replay events.
+//! @return       Mars handle.
+//!
+//! @n (1) XX load/set secrets.
+//! @n (2) Play boot events if necessary.
+//! @n (3) Turn on async commit mode for last epoch.
+//! @n (4) These must be set after the replay in order to adhere to the
+//!        invariant that all noun references be roots when calling the u3_evlo
+//!        interface.
+//! @n (5) Send ready status message. XX version negotation.
+//! @n (6) XX check return, make interval configurable.
 u3_mars*
-u3_mars_init(c3_c*    dir_c,
-             u3_moat* inn_u,
-             u3_mojo* out_u,
-             c3_d     eve_d)
+u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
 {
-  u3_mars* mar_u = c3_malloc(sizeof(*mar_u));
-  mar_u->dir_c = dir_c;
-  mar_u->inn_u = inn_u;
-  mar_u->out_u = out_u;
-  mar_u->sen_d = mar_u->dun_d = u3A->eve_d;
-  mar_u->mug_l = u3r_mug(u3A->roc);
-  mar_u->pac_o = mar_u->rec_o = mar_u->mut_o = c3n;
-  mar_u->sac   = u3_nul;
-  mar_u->sat_e = u3_mars_work_e;
-  mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = 0;
-  mar_u->xit_f = 0;
-
-  mar_u->sil_u = u3s_cue_xeno_init();
-
-  //  initialize persistence
-  //
-  //    XX load/set secrets
-  //
-  if ( !(mar_u->log_u = u3_disk_init(dir_c)) ) {
-    fprintf(stderr, "mars: disk init fail\r\n");
-    c3_free(mar_u);
-    return 0;
+  u3_mars* mar_u;
+  {
+    mar_u  = c3_calloc(sizeof(*mar_u));
+    *mar_u = (u3_mars){
+      .dir_u = c3_path_fv(1, dir_c),
+      .sen_d = u3A->eve_d,
+      .dun_d = u3A->eve_d,
+      .pac_o = c3n,
+      .rec_o = c3n,
+      .mut_o = c3n,
+      .sac   = u3_nul,
+      .inn_u = inn_u,
+      .out_u = out_u,
+      .sat_e = u3_mars_work_e,
+      .gif_u = c3_list_init(),
+    };
   }
 
-  if ( c3n == u3_disk_read_meta(mar_u->log_u, &(mar_u->met_u)) ) {
-    fprintf(stderr, "mars: disk meta fail\r\n");
-    u3_disk_exit(mar_u->log_u);
-    c3_free(mar_u);
-    return 0;
-  }
+  { // (1)
+    c3_path_push(mar_u->dir_u, ".urb");
+    c3_path_push(mar_u->dir_u, "log");
+    try_evlo(mar_u->log_u = u3_evlo_open(mar_u->dir_u, &mar_u->met_u),
+             goto free_mars,
+             "failed to open event log at %s",
+             mar_u->dir_u->str_c);
 
-  if ( !mar_u->dun_d ) {
-    if ( c3n == _mars_do_boot(mar_u->log_u, mar_u->met_u.lif_w) ) {
-      fprintf(stderr, "mars: boot fail\r\n");
-      u3_disk_exit(mar_u->log_u);
-      c3_free(mar_u);
-      return 0;
+    if ( 0 == mar_u->dun_d ) { // (2)
+      try_evlo(u3_evlo_replay(mar_u->log_u,
+                              mar_u->dun_d,
+                              mar_u->met_u.lif_w,
+                              _evlo_boot_cb,
+                              NULL),
+               goto free_event_log,
+               "failed to evaluate boot sequence");
+      mar_u->sen_d = mar_u->dun_d = mar_u->met_u.lif_w;
     }
 
-    mar_u->sen_d = mar_u->dun_d = mar_u->met_u.lif_w;
-    u3e_save();
+    try_evlo(u3_evlo_replay(mar_u->log_u,
+                            mar_u->dun_d,
+                            0,
+                            _evlo_replay_cb,
+                            mar_u),
+             goto free_mars,
+             "failed to replay event log");
+    c3_path_pop(mar_u->dir_u);
+    c3_path_pop(mar_u->dir_u);
+
+    u3_evlo_acon asy_u = {
+      .lup_u = u3L,
+      .com_f = _evlo_commit_cb,
+      .ptr_v = mar_u,
+    };
+    u3_evlo_commit_mode(mar_u->log_u, &asy_u); // (3)
   }
 
+  // TODO(peter): incorporate
+#if 0
   if ( eve_d && (eve_d <= mar_u->dun_d) ) {
     fprintf(stderr, "mars: replay-to %" PRIu64
                     " already done (at %" PRIu64 ")\r\n",
@@ -931,37 +926,52 @@ u3_mars_init(c3_c*    dir_c,
     c3_free(mar_u);
     exit(0);
   }
+#endif
 
-  //  send ready status message
-  //
-  //    XX version negotiation
-  //
-  {
+  { // (4)
+    mar_u->mug_l = u3r_mug(u3A->roc);
+    mar_u->sil_u = u3s_cue_xeno_init();
+  }
+
+  { // (5)
     c3_d  len_d;
     c3_y* hun_y;
     u3_noun wyn = u3_nul;
-    u3_noun msg = u3nq(c3__ripe,
-                       u3nc(2, wyn),
-                       u3nc(u3i_chubs(2, mar_u->met_u.who_d),
-                            mar_u->met_u.fak_o),
-                       u3nc(u3i_chub(mar_u->dun_d),
-                            mar_u->mug_l));
+    u3_noun msg
+      = u3nq(c3__ripe,
+          u3nc(2, wyn),
+          u3nc(u3i_chubs(2, mar_u->met_u.who_d), mar_u->met_u.fak_o),
+          u3nc(u3i_chub(mar_u->dun_d), mar_u->mug_l));
 
     u3s_jam_xeno(msg, &len_d, &hun_y);
     u3_newt_send(mar_u->out_u, len_d, hun_y);
     u3z(msg);
   }
 
-  u3_disk_async(mar_u->log_u, mar_u, _mars_disk_cb);
+  // (6)
+  {
+    uv_timer_init(u3L, &(mar_u->sav_u.tim_u));
+    uv_timer_start(&(mar_u->sav_u.tim_u), _mars_timer_cb, 120000, 120000);
+  }
 
-  //  XX check return, make interval configurable
-  //
-  uv_timer_init(u3L, &(mar_u->sav_u.tim_u));
-  uv_timer_start(&(mar_u->sav_u.tim_u), _mars_timer_cb, 120000, 120000);
+  {
+    mar_u->sav_u.eve_d      = mar_u->dun_d;
+    mar_u->sav_u.tim_u.data = mar_u;
+  }
 
-  mar_u->sav_u.eve_d = mar_u->dun_d;
-  mar_u->sav_u.tim_u.data = mar_u;
+  goto succeed;
 
+free_event_log:
+  u3_evlo_close(mar_u->log_u);
+  c3_free(mar_u->log_u);
+free_mars:
+  c3_free(mar_u->dir_u);
+  c3_free(mar_u->gif_u);
+  c3_free(mar_u);
+fail:
+  return NULL;
+
+succeed:
   return mar_u;
 }
 
@@ -1152,6 +1162,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
   }
 
   u3r_chubs(0, 2, met_u->who_d, who);
+  met_u->ver_w = 1; // elo_ver_w
 
   {
     u3_noun bot, mod, use;
@@ -1272,73 +1283,107 @@ _mars_boot_make(u3_boot_opts* inp_u,
   return c3y;
 }
 
-/* u3_mars_boot(): boot a ship.
-*
-*  $=  com
-*  $:  pill=[p=@ q=(unit ovum)]
-*      $=  vent
-*      $%  [%fake p=ship]
-*          [%dawn p=seed]
-*      ==
-*      more=(list prop)
-*  ==
-*
-*/
+//! Boot a ship.
+//!
+//! Only happens at the inception of the ship's lifetime.
+//!
+//! ```
+//!  $=  com
+//!  $:  pill=[p=@ q=(unit ovum)]
+//!      $=  vent
+//!      $%  [%fake p=ship]
+//!          [%dawn p=seed]
+//!      ==
+//!      more=(list ovum)
+//!  ==
+//!  ```
+//!
+//! @n (1) Create `<pier>`, `<pier>/.urb`, `<pier>/.urb/put`, `<pier>/.urb/get`,
+//!        and `<pier>/.urb/log`.
+//! @n (2) Commit boot events to the event log.
+//! @n (3) Serialize boot event noun into buffer.
+//! @n (4) First four bytes are for mug, and the mug for boot events is 0.
+//! @n (5) Create single event out of boot events and attempt to boot.
 c3_o
 u3_mars_boot(c3_c* dir_c, u3_noun com)
 {
-  u3_boot_opts inp_u;
-  u3_meta      met_u;
-  u3_noun        ova;
+  c3_o suc_o = c3n;
 
-  //  XX source properly
+  // XX source properly
   //
-  inp_u.veb_o = c3y;
-  inp_u.lit_o = c3n;
-  inp_u.ver_u.nam_m = c3__zuse;
-  inp_u.ver_u.ver_w = 419;
-
-  gettimeofday(&inp_u.tim_u, 0);
-  c3_rand(inp_u.eny_w);
-
+  u3_boot_opts inp_u;
   {
+    inp_u.veb_o       = c3n;
+    inp_u.lit_o       = c3y;
+    inp_u.ver_u.nam_m = c3__zuse;
+    inp_u.ver_u.ver_w = 419;
+
+    gettimeofday(&inp_u.tim_u, 0);
+    c3_rand(inp_u.eny_w);
     u3_noun now = u3_time_in_tv(&inp_u.tim_u);
     inp_u.sev_l = u3r_mug(now);
     u3z(now);
   }
 
+  u3_meta met_u;
+  u3_noun ova;
   if ( c3n == _mars_boot_make(&inp_u, com, &ova, &met_u) ) {
     fprintf(stderr, "boot: preparation failed\r\n");
-    return c3n;
+    goto end;
   }
 
-  u3_disk* log_u;
+  // (1)
+  c3_path* pax_u = c3_path_fv(1, dir_c);
+  mkdir(pax_u->str_c, 0700);
 
-  if ( !(log_u = u3_disk_init(dir_c)) ) {
-    fprintf(stderr, "boot: disk init fail\r\n");
-    return c3n;
+  c3_path_push(pax_u, ".urb");
+  mkdir(pax_u->str_c, 0700);
+
+  c3_path_push(pax_u, "put");
+  mkdir(pax_u->str_c, 0700);
+  c3_path_pop(pax_u);
+
+  c3_path_push(pax_u, "get");
+  mkdir(pax_u->str_c, 0700);
+  c3_path_pop(pax_u);
+
+  c3_path_push(pax_u, "log");
+  u3_evlo* log_u = u3_evlo_new(pax_u, &met_u);
+
+  u3_noun i, t = ova;
+  while ( u3_nul != t ) { // (2)
+    u3x_cell(t, &i, &t);
+
+    // (3)
+    u3_atom mat   = u3qe_jam(i);
+    c3_w    len_w = u3r_met(3, mat);
+    c3_y    dat_y[4 + len_w];
+    dat_y[0] = dat_y[1] = dat_y[2] = dat_y[3] = 0; // (4)
+    u3r_bytes(0, len_w, dat_y + 4, mat);
+    u3z(mat);
+
+    if ( !u3_evlo_commit(log_u, dat_y, 4 + len_w) ) {
+      fprintf(stderr, "boot: failed to commit boot event to event log\r\n");
+      goto free_event_log;
+    }
   }
-
-  if ( c3n == u3_disk_save_meta(log_u, &met_u) ) {
-    return c3n;  //  XX cleanup
-  }
-
-  u3_disk_plan_list(log_u, ova);
-
-  if ( c3n == u3_disk_sync(log_u) ) {
-    return c3n;  //  XX cleanup
-  }
+  u3z(ova);
 
   _mars_step_trace(dir_c);
 
-  if ( c3n == _mars_do_boot(log_u, log_u->dun_d) ) {
-    return c3n;  //  XX cleanup
+  if ( !u3_evlo_replay(log_u, 0, met_u.lif_w, _evlo_boot_cb, NULL) ) { // (5)
+    goto free_event_log;
   }
+  suc_o = c3y;
 
-  u3e_save();
-  u3_disk_exit(log_u);
+free_event_log:
+  u3_evlo_close(log_u);
+  c3_free(log_u);
+  c3_free(pax_u);
 
-  return c3y;
+end:
+  return suc_o;
+#undef create_dir
 }
 
 /* u3_mars_grab(): garbage collect.

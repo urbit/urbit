@@ -2,7 +2,6 @@
 */
 #include "all.h"
 #include "vere/vere.h"
-#include "vere/db/lmdb.h"
 #include <ent.h>
 
 #define PIER_WORK_BATCH 10ULL

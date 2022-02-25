@@ -4,6 +4,8 @@
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
+#include "vere/evlo.h"
+#include "vere/meta.h"
 #include "vere/vere.h"
 #if !defined(U3_OS_mingw)
 #include <sigsegv.h>
@@ -14,7 +16,6 @@
 #include <openssl/ssl.h>
 #include <h2o.h>
 #include <curl/curl.h>
-#include <vere/db/lmdb.h>
 #include <getopt.h>
 
 #include "ca-bundle.h"
@@ -699,27 +700,28 @@ _stop_on_boot_completed_cb()
 static c3_i
 _debug_db_stats(const c3_c* dir_c)
 {
-#if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
-  const size_t siz_i = 64424509440;
-#else
-  const size_t siz_i = 1099511627776;
-#endif
+  c3_i ret_i = 1;
+  c3_path* dir_u = c3_path_fv(3, dir_c, ".urb", "log");
+  u3_meta  met_u;
+  u3_evlo* log_u = u3_evlo_open(dir_u, &met_u);
 
-  c3_c* log_c = c3_malloc(10 + strlen(dir_c));
-
-  strcpy(log_c, dir_c);
-  strcat(log_c, "/.urb/log");
-
-  MDB_env* mdb_u = u3_lmdb_init(log_c, siz_i);
-
-  if ( mdb_u ) {
-    u3_lmdb_stat(mdb_u, stdout);
-    u3_lmdb_exit(mdb_u);
-    return 0;
+  if ( !log_u ) {
+    goto free;
   }
-  else {
-    return 1;
+  c3_list_node* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
+  while ( nod_u ) {
+    u3_epoc* poc_u = c3_list_data(nod_u);
+    u3_epoc_info(poc_u);
+    nod_u = nod_u->nex_u;
   }
+
+  ret_i = 0;
+free:
+  u3_evlo_close(log_u);
+  c3_free(log_u);
+  c3_free(dir_u);
+
+  return ret_i;
 }
 
 c3_i

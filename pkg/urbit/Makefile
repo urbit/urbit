@@ -1,7 +1,7 @@
 include config.mk
 include $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
 
-c 	 = $(wildcard c/*.c)
+c    = $(wildcard c/*.c)
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
 ur   = $(wildcard ur/*.c)

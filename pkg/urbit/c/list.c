@@ -10,6 +10,7 @@ static c3_list_node*
 _create_node(const void* const dat_v, const size_t siz_i)
 {
   c3_list_node* nod_u = c3_calloc(sizeof(*nod_u) + siz_i);
+  nod_u->len_i        = siz_i;
   memcpy(nod_u->dat_y, dat_v, siz_i);
   return nod_u;
 }
