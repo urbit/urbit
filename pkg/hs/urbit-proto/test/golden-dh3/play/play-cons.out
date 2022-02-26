@@ -8,7 +8,7 @@ CODE
 
 COLD
 
-[%foo 2]
+["foo" 2]
 
 TYPE
 
@@ -17,4 +17,4 @@ TYPE
 
 BASE
 
-[%foo 2]
+["foo" 2]

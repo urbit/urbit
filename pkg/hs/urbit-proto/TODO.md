@@ -24,7 +24,7 @@ Meanwhile against a subject of type
 
 the test
 
-    ?:  ?=([& & &] .)
+    ?:  ?=([[& &] &] .)
       X
     Y
 

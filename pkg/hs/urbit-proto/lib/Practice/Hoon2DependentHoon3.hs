@@ -181,7 +181,7 @@ lock = \case
   Rump' r -> Wung [Ally $ tshow r]
   Fore' x -> Wung [Ally $ tshow $ Old @Text x]
   --
-  Atom' a g au -> Adam g a au
+  Atom' a -> Adam Sand a (heuAura a)
   Cons' x y -> case lock y of
     Clhp h j -> Clls (lock x) h j
     Clls h j k -> Clkt (lock x) h j k

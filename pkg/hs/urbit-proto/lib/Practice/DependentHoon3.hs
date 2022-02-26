@@ -10,7 +10,6 @@ import Data.Set (isSubsetOf)
 import Data.Void
 
 import Practice.HoonCommon
-  (Atom, Aura, Axis, Bass(..), Grit(..), Term, Wing, Limb(..), Nat)
 
 -- | Desugared hoon. As a rough overview, the compiler pipeline is:
 --
@@ -103,7 +102,7 @@ data Code a
   = Stub Stub
   | Fore a
   --
-  | Atom Atom Grit Aura
+  | Atom Atom
   | Cons (Code a) (Code a)
   | Lamb (Code a)
   --
@@ -262,7 +261,7 @@ data Base a
   = Rump' Rump
   | Fore' a
   --
-  | Atom' Atom Grit Aura
+  | Atom' Atom
   | Cons' (Base a) (Base a)
   | Lamb' (Base a) {- ^ closed-over subject -} (Code a)
   --
@@ -293,7 +292,7 @@ loft lvl = \case
   Rump' (Leg' (l, a)) -> Stub (Leg $ peg (2 ^ (lvl - l)) a)
   Fore' x -> Fore x
   --
-  Atom' a g au -> Atom a g au
+  Atom' a -> Atom a
   Cons' a b -> Cons (loft lvl a) (loft lvl b)
   -- NOTE Kovacs has the rule `VLam x t -> Lam x (quote (l + 1) (t $$ VVar l))`
   -- corresponding to our
@@ -351,7 +350,7 @@ eval sub = \case
   Stub s -> look s sub
   Fore x -> Fore' x
   --
-  Atom a g au -> Atom' a g au
+  Atom a -> Atom' a
   Cons c d -> Cons' (eval sub c) (eval sub d)
   Lamb a -> Lamb' sub a
   --
@@ -360,7 +359,7 @@ eval sub = \case
    where
     go = \case
       Face' _ b -> go b
-      Atom' a g au -> Atom' (a + 1) g au
+      Atom' a -> Atom' (a + 1)
       b -> Plus' b
   Slam c d -> go (eval sub c)
    where
@@ -577,7 +576,7 @@ grow = \case
   Rump' r -> Fore' (New r)
   Fore' x -> Fore' (Old x)
   --
-  Atom' a g au -> Atom' a g au
+  Atom' a -> Atom' a
   Cons' x y -> Cons' (grow x) (grow y)
   Lamb' x c -> Lamb' (grow x) (crow c)
   --
@@ -602,7 +601,7 @@ grow = \case
     Stub st -> Stub st
     Fore x -> Fore (Old x)
     --
-    Atom a g au -> Atom a g au
+    Atom a -> Atom a
     Cons c d -> Cons (crow c) (crow d)
     Lamb c -> Lamb (crow c)
     --
@@ -631,7 +630,7 @@ pare bas = go bas
     Fore' (New r) -> pure $ Rump' r
     Fore' (Old x) -> pure $ Fore' x
     --
-    Atom' a g au -> pure $ Atom' a g au
+    Atom' a -> pure $ Atom' a
     Cons' x y -> Cons' <$> go x <*> go y
     Lamb' x c -> Lamb' <$> go x <*> care c
     --
@@ -655,7 +654,7 @@ pare bas = go bas
     Fore (New r) -> bail (PareFree r bas)
     Fore (Old x) -> pure $ Fore x
     --
-    Atom a g au -> pure $ Atom a g au
+    Atom a -> pure $ Atom a
     Cons c d -> Cons <$> care c <*> care d
     Lamb c -> Lamb <$> care c
     --
@@ -801,7 +800,7 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
   -- FitSame which does equality rather than subtyping, and switch to it under
   -- eliminators such as Slam (XX and other eliminators and introductors?).
   --
-  (Atom' a _ _, Atom' b _ _) | a == b -> pure ()
+  (Atom' a, Atom' b) | a == b -> pure ()
   (Atom'{}, _) -> fitsFail
   (_, Atom'{}) -> fitsFail
 
@@ -933,7 +932,7 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
   cases var = \case
     Aura' _ -> [Fore' var]  -- or: [Atom' 0 Sand au, Plus' (Fore' var)]?
     -- This is the case we need to make $% work.
-    Fork' cs au -> fmap (\a -> Atom' a Rock au) $ toList cs
+    Fork' cs au -> fmap Atom' $ toList cs
     -- NOTE it is actually possible to do something cool here, but it would
     -- require constructing an infinite, splittable fresh variable supply.
     Cell' t s c -> [Fore' var]
@@ -1167,11 +1166,11 @@ meld sem pet = act (ActMeld sem pet) case pet of
 -- constraints" which can be piped into fits as extra assumptions.
 meld :: (MonadCheck m, Var a) => Base a -> Base a -> m (Base a)
 meld b c = case (repo b, repo c) of
-  (Rump'{},   a)                       -> pure a
-  (a,         Rump'{})                 -> pure a
-  (Cons' b c, Cons' b' c')             -> Cons' <$> meld b b' <*> meld c c'
-  (Atom' a g au, Atom' b _ _) | a == b -> pure $ Atom' a g au
-  _                                    -> bail (MeldFail b c)
+  (Rump'{},   a)                      -> pure a
+  (a,         Rump'{})                -> pure a
+  (Cons' b c, Cons' b' c')            -> Cons' <$> meld b b' <*> meld c c'
+  (Atom' a,   Atom' b)      | a == b  -> pure $ Atom' a
+  _                                   -> bail (MeldFail b c)
 
 -- | Refine scrutinee type and seminoun on the assumption that the pelt matches.
 fuse :: forall a m. (MonadCheck m, Var a)
@@ -1375,9 +1374,9 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
     (st, t) <- find con w
     pure (Stub st, t)
 
-  Atm a Rock t -> pure (Atom a Rock t, Fork' (singleton a) t)
+  Atm a Rock t -> pure (Atom a, Fork' (singleton a) t)
 
-  Atm a Sand t -> pure (Atom a Sand t, Aura' t)
+  Atm a Sand t -> pure (Atom a, Aura' t)
 
   Cns c d -> do
     (x, t) <- play con c
@@ -1471,7 +1470,7 @@ rest = \case
   Stub (Leg a) -> Wng [Axis a]
   Fore x -> Wng [Ally $ tshow @(Hop () a) $ Old x]  -- hack for printing
   --
-  Atom a g au -> Atm a g au
+  Atom a -> Atm a Sand (heuAura a)
   Cons c d -> Cns (rest c) (rest d)
   -- XX this loss of facial information may be unfortunate for diagnostic
   -- purposes. Think about this. Fixed by doze?

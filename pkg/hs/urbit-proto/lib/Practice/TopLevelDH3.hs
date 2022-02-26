@@ -6,7 +6,6 @@ import Data.Void
 
 import Practice.DependentHoon3
 import Practice.Hoon2DependentHoon3
-import Practice.HoonCommon
 import Practice.HoonSyntax
 import Practice.Render
 
@@ -48,7 +47,7 @@ deriving instance (Show a, Show extra) => Show (Result extra a)
 
 -- | The "empty" subject context.
 scam :: Con Void
-scam = Con 0 Noun' (Atom' 0 Sand "")
+scam = Con 0 Noun' (Atom' 0)
 
 -- | Perform all passes of the compiler on the given text
 ride :: Var a => FilePath -> Con a -> Text -> Result () a

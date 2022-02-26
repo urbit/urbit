@@ -2,7 +2,10 @@ module Practice.HoonCommon where
 
 import ClassyPrelude
 
+import Data.Char
 import Numeric.Natural
+
+import Urbit.Atom (atomUtf8)
 
 type Atom = Natural
 
@@ -51,3 +54,10 @@ printWing = \case
   [] -> "."
   [l] -> printLimb l
   l:ls -> printLimb l <> "." <> printWing ls
+
+heuAura :: Atom -> Aura
+heuAura a = case a of
+  0 -> ""
+  _ -> case atomUtf8 a of
+    Right t | length t > 1 && all isPrint t -> "t"
+    _ -> ""
