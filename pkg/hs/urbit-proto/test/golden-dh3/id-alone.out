@@ -16,7 +16,6 @@ TYPE
 $-  =>  0
     {$ +3}
 +6
-Gate' (Cell' Type' (Atom' 0 Sand "") (Stub +3)) (Atom' 0 Sand "") (Stub +6)
 
 BASE
 

@@ -14,7 +14,6 @@ TYPE
 
 =>  0
 {@ud {@ud @ud @ud} @ud @ud}
-Cell' (Aura' "ud") (Atom' 0 Sand "") (Cell (Cell (Aura "ud") (Cell (Aura "ud") (Aura "ud"))) (Cell (Aura "ud") (Aura "ud")))
 
 BASE
 

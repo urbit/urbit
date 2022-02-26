@@ -57,7 +57,6 @@ $:  @
     $-({t=$ +3} +6)
     $-({t=$ +3} +6)
 ==
-Cell' (Aura' "") (Cons' (Atom' 0 Sand "") (Face' (Mask "id") (Lamb' (Atom' 0 Sand "") (Stub +7)))) (Cell Noun (Cell (Cell (Aura "") (Aura "")) (Cell (Cell Noun Noun) (Cell (Fork (fromList [0,1]) "f") (Cell (Gate (Cell (Face (Mask "t") Type) (Stub +3)) (Stub +6)) (Cell (Gate (Cell (Face (Mask "t") Type) (Stub +3)) (Stub +6)) (Gate (Cell (Face (Mask "t") Type) (Stub +3)) (Stub +6))))))))
 
 BASE
 

@@ -13,7 +13,6 @@ COLD
 TYPE
 
 $1
-Fork' (fromList [1]) "ud"
 
 BASE
 

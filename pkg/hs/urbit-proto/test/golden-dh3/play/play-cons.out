@@ -14,7 +14,6 @@ TYPE
 
 =>  0
 {$foo @ud}
-Cell' (Fork' (fromList [7303014]) "tas") (Atom' 0 Sand "") (Aura "ud")
 
 BASE
 

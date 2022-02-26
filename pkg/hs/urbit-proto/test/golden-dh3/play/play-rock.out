@@ -13,7 +13,6 @@ COLD
 TYPE
 
 $foo
-Fork' (fromList [7303014]) "tas"
 
 BASE
 

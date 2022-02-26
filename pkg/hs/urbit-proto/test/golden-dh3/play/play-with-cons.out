@@ -58,7 +58,6 @@ $:  @ud
     {@ud @ud @ud}
     @ud
 ==
-Cell' (Aura' "ud") (Cons' (Cons' (Cons' (Atom' 0 Sand "") (Face' (Mask "a") (Cons' (Atom' 1 Sand "ud") (Atom' 2 Sand "ud")))) (Face' (Mask "b") (Cons' (Atom' 3 Sand "ud") (Atom' 4 Sand "ud")))) (Face' (Mask "c") (Cons' (Atom' 5 Sand "ud") (Cons' (Atom' 6 Sand "ud") (Atom' 7 Sand "ud"))))) (Cell (Cell (Cell Noun (Face (Mask "a") (Cell (Aura "ud") (Aura "ud")))) (Face (Mask "b") (Cell (Aura "ud") (Aura "ud")))) (Cell (Cell (Cell (Aura "ud") (Aura "ud")) (Cell (Aura "ud") (Aura "ud"))) (Cell (Cell (Aura "ud") (Cell (Aura "ud") (Aura "ud"))) (Aura "ud"))))
 
 BASE
 
