@@ -13,7 +13,6 @@ ERROR
   trace:  play:
           lvl   0
           sut   *
-          ken   0
           ----
           code  ^-  {@ @ @}
                 [1 2]
@@ -22,26 +21,18 @@ ERROR
           work:
           lvl   0
           sut   *
-          ken   0
           ----
           mode  nest
           code  [1 2]
-          type  =>  0
-                {@ @ @}
-
+          type  {@ @ @}
 
           work:
-          lvl   1
-          sut   =>  0
-                {* @}
-
-          ken   [0 1]
+          lvl   0
+          sut   *
           ----
           mode  nest
           code  2
-          type  =>  [0 1]
-                {@ @}
-
+          type  {@ @}
 
           nest:
           have  @ud

@@ -1307,8 +1307,8 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
       Face' fs t -> work con fit cod t
       Cell' t sub e -> do
         x <- work con fit c t
-        let can@Con{ken=kan} = shew con (evil ken x) t
-        y <- work can fit d (eval kan e)
+        let u = eval (Cons' sub $ evil ken x) e
+        y <- work con fit d u
         pure (Cons x y)
       _ -> playFits
 
@@ -1317,8 +1317,9 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
       Gate' t sub e -> do
         t' <- toil con fit p (Rump' $ Leg' (lvl + 1, 3)) t
         let fs = derm p
-        let can@Con{ken=kan} = hide' con $ face' fs t'
-        y <- work can fit c (eval kan e)
+        let can = hide' con $ face' fs t'
+        let u = eval (Cons' sub $ Rump' $ Leg' (lvl + 1, 3)) e
+        y <- work can fit c u
         pure (Lamb y)
       _ -> playFits
 

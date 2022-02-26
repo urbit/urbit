@@ -30,12 +30,12 @@ Cltr
   , Wtpm
       [ Wtpm [ Adam Sand 1 "ud" , Adam Sand 3 "ud" ] , Adam Sand 2 "ud" ]
   , Wtpm []
-  , Adam Sand 0 "f"
+  , Adam Rock 0 "f"
   , Wtbr [ Adam Sand 1 "ud" ]
   , Wtbr
       [ Wtbr [ Adam Sand 1 "ud" , Adam Sand 2 "ud" ] , Adam Sand 3 "ud" ]
   , Wtbr []
-  , Adam Sand 1 "f"
+  , Adam Rock 1 "f"
   , Adam Sand 122641728207952671039841640 "t"
   , Adam Sand 10076 "t"
   , Cncl

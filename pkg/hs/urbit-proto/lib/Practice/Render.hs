@@ -188,8 +188,8 @@ instance Rolling Act where
       ]
     ActFind Con{lvl, sut, ken} w -> Huge $ Stem "find:" "" []
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll sut,  Leaf "")
-      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
+      -- , ("ken ", tank $ roll ken,  Leaf "")
       , ("----", Leaf "",          Leaf "")
       , ("wing", tank $ roll w,    Leaf "")
       ]
@@ -199,19 +199,19 @@ instance Rolling Act where
       ]
     ActFuse Con{lvl, sut, ken} (b, t) p -> Huge $ Stem "fuse:" "" []
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll sut,  Leaf "")
-      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
+      -- , ("ken ", tank $ roll ken,  Leaf "")
       , ("----", Leaf "",          Leaf "")
       , ("semi", tank $ roll b,    Leaf "")
-      , ("type", tank $ roll t,    Leaf "")
+      , ("type", tank $ roll $ loft lvl t,    Leaf "")
       , ("skin", tank $ roll p,    Leaf "")
       ]
     ActCrop Con{lvl, sut, ken} t p -> Huge $ Stem "fuse:" "" []
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll sut,  Leaf "")
-      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
+      -- , ("ken ", tank $ roll ken,  Leaf "")
       , ("----", Leaf "",          Leaf "")
-      , ("type", tank $ roll t,    Leaf "")
+      , ("type", tank $ roll $ loft lvl sut,    Leaf "")
       , ("skin", tank $ roll p,    Leaf "")
       ]
     ActFish p -> Huge $ Stem "fish:" "" []
@@ -219,33 +219,33 @@ instance Rolling Act where
       ]
     ActToil Con{lvl, sut, ken} f p t -> Huge $ Stem "toil:" "" []
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll sut,  Leaf "")
-      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
+      -- , ("ken ", tank $ roll ken,  Leaf "")
       , ("----", Leaf "",          Leaf "")
       , ("mode", Leaf $ tshow f,   Leaf "")
       , ("skin", tank $ roll p,    Leaf "")
-      , ("type", tank $ roll t,    Leaf "")
+      , ("type", tank $ roll $ loft lvl t,    Leaf "")
       ]
     ActRomp Con{lvl, sut, ken} p -> Huge $ Stem "romp:" "" []
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll sut,  Leaf "")
-      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
+      -- , ("ken ", tank $ roll ken,  Leaf "")
       , ("----", Leaf "",          Leaf "")
       , ("skin", tank $ roll p,    Leaf "")
       ]
     ActWork Con{lvl, sut, ken} f c t -> Huge $ Stem "work:" "" []
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll sut,  Leaf "")
-      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
+      -- , ("ken ", tank $ roll ken,  Leaf "")
       , ("----", Leaf "",          Leaf "")
       , ("mode", Leaf $ tshow f,   Leaf "")
       , ("code", tank $ roll c,    Leaf "")
-      , ("type", tank $ roll t,    Leaf "")
+      , ("type", tank $ roll $ loft lvl t,    Leaf "")
       ]
     ActPlay Con{lvl, sut, ken} c -> Huge $ Stem "play:" "" []
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll sut,  Leaf "")
-      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
+      -- , ("ken ", tank $ roll ken,  Leaf "")
       , ("----", Leaf "",          Leaf "")
       , ("code", tank $ roll c, Leaf "")
       ]
