@@ -1,0 +1,24 @@
+PARSED
+
+|=([t/$ x/t] x)
+
+CODE
+
+|=([t/$ x/t] x)
+
+COLD
+
+|=(_ +7)
+
+TYPE
+
+=>  0
+$-  =>  0
+    {$ +3}
++6
+Gate' (Cell' Type' (Atom' 0 Sand "") (Stub +3)) (Atom' 0 Sand "") (Stub +6)
+
+BASE
+
+=>  0
+|=(_ +7)

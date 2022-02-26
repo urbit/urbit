@@ -173,7 +173,7 @@ flap = \case
     Cltr hs -> Cltr (flap p : hs)
     h -> Clhp (flap p) h
   Pons p q -> Ktts (flap p) (flap q)
-  Pest p c -> Kthp (flap p) (shut c)
+  Pest p c -> Ktfs (flap p) (shut c)
 
 -- | Hack to make Bases pretty printable somehow
 lock :: Show a => Base a -> Hoon

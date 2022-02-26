@@ -29,21 +29,26 @@ testEachPass :: FilePath -> TestTree
 testEachPass file =
   goldenVsString baseName (replaceExtension file ".out") do
     txt <- readFileUtf8 file
-    pure case road baseName scam txt of
-      ResNone{err} ->
-        "ERROR\n\n" <> renderLBS err
-      ResRead{cst, ero} ->
-        "PARSED\n\n" <> renderLBS cst <> "\n\nERROR\n\n" <> renderLBS ero
-      ResOpen{cst, cod, ert} ->
-        "PARSED\n\n" <> renderLBS cst <>
-        "\n\nCODE\n\n" <> renderLBS cod <>
-        "\n\nERROR\n\n" <> renderLBS ert
-      ResType{cst, cod, cld, typ, bas} ->
-        "PARSED\n\n" <> renderLBS cst <>
-        "\n\nCODE\n\n" <> renderLBS cod <>
-        "\n\nCOLD\n\n" <> renderLBS cld <>
-        "\n\nTYPE\n\n" <> renderLBS typ <> "\n" <> encodeUtf8 (LT.fromStrict $ tshow typ) <>
-        "\n\nBASE\n\n" <> renderLBS bas
+    case road baseName scam txt of
+      ResNone{err} -> do
+        pure $ "ERROR\n\n" <> renderLBS err
+      ResRead{cst, ero} -> do
+        pure $ "PARSED\n\n" <> renderLBS cst <> "\n\nERROR\n\n" <> renderLBS ero
+      ResOpen{cst, cod, ert, mor} -> do
+        writeFile (replaceExtension file ".trace") $ encodeUtf8 $ render mor
+        pure $
+          "PARSED\n\n" <> renderLBS cst <>
+          "\n\nCODE\n\n" <> renderLBS cod <>
+          "\n\nERROR\n\n" <> renderLBS ert
+      ResType{cst, cod, cld, typ, bas, mor} -> do
+        writeFile (replaceExtension file ".trace") $ encodeUtf8 $ render mor
+        pure $
+          "PARSED\n\n" <> renderLBS cst <>
+          "\n\nCODE\n\n" <> renderLBS cod <>
+          "\n\nCOLD\n\n" <> renderLBS cld <>
+          "\n\nTYPE\n\n" <> renderLBS typ <>
+              "\n" <> encodeUtf8 (LT.fromStrict $ tshow typ) <>
+          "\n\nBASE\n\n" <> renderLBS bas
 
  where
   baseName = takeBaseName file

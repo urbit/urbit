@@ -2,7 +2,9 @@ module Practice.DependentHoon3 where
 
 import ClassyPrelude hiding (even, find)
 
+import Control.Monad.Except
 import Control.Monad.Reader
+import Control.Monad.State
 import Data.Function ((&))
 import Data.Set (isSubsetOf)
 import Data.Void
@@ -286,7 +288,7 @@ deriving instance Show a => Show (Base a)
 -- | Read a value back into code, with reference to the current level.
 loft :: Level -> Base a -> Code a
 loft lvl = \case
-  -- XX we should have some printout here if lvl > l, which is a serious
+  -- XX we should have some printout here if lvl < l, which is a serious
   -- invariant violation that should be more legible
   Rump' (Leg' (l, a)) -> Stub (Leg $ peg (2 ^ (lvl - l)) a)
   Fore' x -> Fore x
@@ -391,24 +393,41 @@ evil ken = eval ken . vacuous
 
 type Var a = (Eq a, Show a)
 
--- | Type checking monad
-type Check = ReaderT [Act] (Either ([Act], Fail))
+class (Monad m, Alternative m) => MonadCheck m where
+  -- | Push an error reporting stack frame.
+  act :: Act -> m a -> m a
+
+  -- | Report an error.
+  bail :: Fail -> m a
+
+  -- | Change the error message of the error, if any, that occurs within the
+  -- computation.
+  bailSwap :: (Fail -> Fail) -> m a -> m a
+
+  -- | Leave a message to be embedded in the trace. Has no effect in non-tracing
+  -- modes.
+  note :: Note -> m ()
+
+-- | Fail with no message.
+bailFail :: MonadCheck m => m a
+bailFail = bail BailFail
 
 -- | Error reporting context, analogous to stack trace item. As the compiler
 -- recurses deeper into its operations, it pushes these descriptions to a stack
 -- so they can serve as breadcrumbs in error messages.
 data Act
-  = forall a. Show a => ActFits Fit (Type a) (Type a)
-  | forall a. Show a => ActFind (Type a) Wing
+  =                     ActRoot
+  | forall a. Show a => ActFits Fit (Type a) (Type a)
+  | forall a. Show a => ActFind (Con a) Wing
   | forall a. Show a => ActMeld (Base a) (Base a)
-  | forall a. Show a => ActFuse (Base a, Type a) Pelt
-  | forall a. Show a => ActCrop (Type a) Pelt
+  | forall a. Show a => ActFuse (Con a) (Base a, Type a) Pelt
+  | forall a. Show a => ActCrop (Con a) (Type a) Pelt
   |                     ActFish Pelt
-  | forall a. Show a => ActToil Fit Pelt (Type a)
-  |                     ActRomp Pelt
-  | forall a. Show a => ActWork Fit Soft (Type a)
-  |                     ActPlay Soft
-  |                     ActNote Text
+  | forall a. Show a => ActToil (Con a) Fit Pelt (Type a)
+  | forall a. Show a => ActRomp (Con a) Pelt
+  | forall a. Show a => ActWork (Con a) Fit Soft (Type a)
+  | forall a. Show a => ActPlay (Con a) Soft
+  |                     ActDone
 
 -- | Compiler errors.
 data Fail
@@ -443,23 +462,78 @@ data Fail
   | BailNote Text  -- ^ failure with note
   | BailFail  -- ^ unspecified failure
 
+-- | Log items. Appear only in trace mode.
+data Note
+  = forall a. Var a => NoteType Text (Type a)
+  | forall a. Var a => NoteBase Text (Base a)
+  | forall a. Var a => NoteCode Text (Code a)
+
+instance Semigroup Fail where
+  f <> _ = f  -- report first failure
+
+instance Monoid Fail where
+  mempty = BailNote "mempty"
+
 deriving instance (Show Act)
 deriving instance (Show Fail)
+deriving instance (Show Note)
 
--- | Push an error reporting stack frame.
-act :: Act -> Check b -> Check b
-act a = local (a:)
+-- | Basic type checking monad.
+newtype Check a = Check { unCheck :: ReaderT [Act] (Either ([Act], Fail)) a }
+  deriving newtype (Functor, Applicative, Monad)
 
-bail :: Fail -> Check a
-bail f = ask >>= \as -> lift $ Left (as, f)
+-- | Run the computation in basic type checking mode
+runCheck :: Check a -> Either ([Act], Fail) a
+runCheck chk = runReaderT (unCheck chk) []
 
-bailSwap :: (Fail -> Fail) -> Check a -> Check a
-bailSwap f chk = ReaderT \r -> case runReaderT chk r of
-  Left (acts, err) -> Left (acts, f err)
-  Right x -> Right x
+instance Alternative Check where
+  empty = bailFail
+  Check (ReaderT c) <|> Check (ReaderT d) = Check $ ReaderT \r -> c r <> d r
 
-bailFail :: Check a
-bailFail = bail BailFail
+instance MonadCheck Check where
+  act a chk = Check $ local (a:) (unCheck chk)
+  bail f = Check $ ask >>= \as -> lift $ Left (as, f)
+  bailSwap f chk = Check $ ReaderT \r -> case runReaderT (unCheck chk) r of
+    Left (acts, err) -> Left (acts, f err)
+    Right x -> Right x
+  note _ = pure ()
+
+data ActTree
+  = ActTree Act [ActTree]  -- ^ most recent act at front
+  | ActNote Note
+  deriving Show
+
+type Trace a = ExceptT Fail (State [ActTree]) a
+
+runTrace :: Trace a -> (ActTree, Either Fail a)
+runTrace tac = (tree zipper, res)
+ where
+  (res, zipper) = runState (runExceptT tac) [ActTree ActRoot []]
+
+  tree zz = foldl' insertTree (ActTree ActDone []) zz
+
+insertTree :: ActTree -> ActTree -> ActTree
+insertTree inner _outer@(ActTree a cs) = ActTree a (inner : cs)
+
+instance MonadCheck (ExceptT Fail (State [ActTree])) where
+  act a m = do
+    modify' (ActTree a [] :)
+    res <- m
+    modify' \(inner:outer:rest) -> insertTree inner outer : rest
+    pure res
+  bail = throwError
+  bailSwap f m = catchError m (\e -> throwError (f e))
+  note n = modify' \(outer:rest) -> insertTree (ActNote n) outer : rest
+
+
+traceToStack :: ActTree -> [Act]
+traceToStack = reverse . go
+ where
+  go = \case
+    ActTree ActDone [] -> []
+    ActTree a [] -> [a]
+    ActTree ActRoot (t:_) -> go t
+    ActTree a (t:_) -> a : go t
 
 
 -- Context management ----------------------------------------------------------
@@ -470,6 +544,8 @@ data Con a = Con
   , sut :: Type a  -- ^ type of the subject
   , ken :: Base a  -- ^ seminoun of current subject
   }
+
+deriving instance (Show a) => Show (Con a)
 
 -- | Grow the subject without knowledge, using an unevaluated type
 hide :: Con a -> Code a -> Con a
@@ -547,7 +623,7 @@ grow = \case
 
 -- | On exiting a tisgar, pare down the type to remove any opaque references to
 -- the inner subject, but actually it's an invariant violation for any to exist.
-pare :: Show a => Base (Hop Rump a) -> Check (Base a)
+pare :: (MonadCheck m, Show a) => Base (Hop Rump a) -> m (Base a)
 pare bas = go bas
  where
   go = \case
@@ -572,7 +648,7 @@ pare bas = go bas
     Void' -> pure Void'
     Type' -> pure Type'
 
-  care :: Show a => Code (Hop Rump a) -> Check (Code a)
+  care :: (MonadCheck m, Show a) => Code (Hop Rump a) -> m (Code a)
   care = \case
     -- This stays put because it's actually an axis into the stored closure.
     Stub st -> pure $ Stub st
@@ -730,12 +806,13 @@ repo = \case
 
 -- | Resolve the names in a Wing, producing the type of that part of the subject
 -- and an axial representation of the wing.
-find :: forall a. Var a => Con a -> Wing -> Check (Stub, Type a)
-find sub@Con{lvl, sut, ken} win = act (ActFind sut win) do
+find :: forall a m. (MonadCheck m, Var a)
+     => Con a -> Wing -> m (Stub, Type a)
+find sub@Con{lvl, sut, ken} win = act (ActFind sub win) do
   (st, Con{sut}) <- fond sub win
   pure (st, sut)
  where
-  fond :: Con a -> Wing -> Check (Stub, Con a)
+  fond :: Con a -> Wing -> m (Stub, Con a)
   fond con@Con{lvl, sut, ken} = \case
     [] -> pure (Leg 1, con)
     l:ls -> fond sub ls >>= \case
@@ -744,13 +821,13 @@ find sub@Con{lvl, sut, ken} win = act (ActFind sut win) do
         (st, con) <- limb con l
         pure (pole a st, con)
 
-  limb :: Con a -> Limb -> Check (Stub, Con a)
+  limb :: Con a -> Limb -> m (Stub, Con a)
   limb con = \case
     Axis a -> (Leg a,) <$> axis con a
     Ally f -> ally con f
 
   -- XX what should meaningfully happen with lvl here? or should we strip it out
-  axis :: Con a -> Axis -> Check (Con a)
+  axis :: Con a -> Axis -> m (Con a)
   axis con@Con{sut, ken} a = case (cut a, sut) of
     (Nothing,     _)           -> pure con
     (_,           Face' _ t)   -> axis con{sut=t} a
@@ -764,10 +841,10 @@ find sub@Con{lvl, sut, ken} win = act (ActFind sut win) do
     -- XX an old note reads: "arguably for Liskov, should be Noun :("; rethink
     (_,           _)           -> bailFail
 
-  ally :: Var a => Con a -> Term -> Check (Stub, Con a)
+  ally :: Var a => Con a -> Term -> m (Stub, Con a)
   ally con@Con{sut} f = maybe (bail $ FindFail f sut) id $ lope con
    where
-    lope :: Con a -> Maybe (Check (Stub, Con a))
+    lope :: Con a -> Maybe (m (Stub, Con a))
     lope con@Con{sut, ken} = case sut of
       Face' [] t -> lope con{sut=t}
       Face' (Mask m : fs) t
@@ -821,11 +898,12 @@ derm = \case
   Pest p _ -> derm p
 
 -- | Verify that a pattern is irrefutable TODO.
-tofu :: Pelt -> Check ()
+tofu :: MonadCheck m
+     => Pelt -> m ()
 tofu = undefined
 
 -- | Extract the computational content from a pelt (i.e. the testing part).
-fish :: Pelt -> Check Fish
+fish :: forall m. MonadCheck m => Pelt -> m Fish
 fish fis = act (ActFish fis) case fis of
   Punt -> pure Tuna
   Peer _ -> pure Tuna
@@ -839,7 +917,7 @@ fish fis = act (ActFish fis) case fis of
   Pest p _ -> fish p
  where
   -- conjunction of fishes
-  pike :: Fish -> Fish -> Check Fish
+  pike :: Fish -> Fish -> m Fish
   pike Tuna h = pure h
   pike h Tuna = pure h
   pike (Char h j) (Char k l) = Char <$> pike h k <*> pike j l
@@ -878,7 +956,7 @@ meld sem pet = act (ActMeld sem pet) case pet of
 
 -- | Merge two seminouns. XX eventually this should accumulate "equality
 -- constraints" which can be piped into fits as extra assumptions.
-meld :: Var a => Base a -> Base a -> Check (Base a)
+meld :: (MonadCheck m, Var a) => Base a -> Base a -> m (Base a)
 meld b c = case (repo b, repo c) of
   (Rump'{},   a)                       -> pure a
   (a,         Rump'{})                 -> pure a
@@ -887,9 +965,9 @@ meld b c = case (repo b, repo c) of
   _                                    -> bail (MeldFail b c)
 
 -- | Refine scrutinee type and seminoun on the assumption that the pelt matches.
-fuse :: forall a. Var a
-     => Con a -> (Base a, Type a) -> Pelt -> Check (Base a, Type a)
-fuse con@Con{lvl, ken} (b, t) pet = act (ActFuse (b, t) pet) case pet of
+fuse :: forall a m. (MonadCheck m, Var a)
+     => Con a -> (Base a, Type a) -> Pelt -> m (Base a, Type a)
+fuse con@Con{lvl, ken} (b, t) pet = act (ActFuse con (b, t) pet) case pet of
   Punt -> pure (b, t)
   Peer _ -> pure (b, t)
   Part s -> do
@@ -908,9 +986,9 @@ fuse con@Con{lvl, ken} (b, t) pet = act (ActFuse (b, t) pet) case pet of
   Pest _ _ -> bail (FuseFits FitNest)
 
 -- | Refine scrutinee type on the assumption that pelt does NOT match.
-crop :: forall a. Var a
-     => Con a -> Type a -> Pelt -> Check (Type a)
-crop con@Con{lvl, ken} t pet = act (ActCrop t pet) case pet of
+crop :: forall a m. (MonadCheck m, Var a)
+     => Con a -> Type a -> Pelt -> m (Type a)
+crop con@Con{lvl, ken} t pet = act (ActCrop con t pet) case pet of
   Punt -> pure Void'
   Peer _ -> pure Void'
   Part s -> do
@@ -934,8 +1012,10 @@ crop con@Con{lvl, ken} t pet = act (ActCrop t pet) case pet of
 -- | Given a pattern, verify that it is compatibile with the given type.
 -- Produce a new, broader type corresponding to any upcasts we may have made.
 -- This type will not have faces. To get the faces, run derm.
-toil :: Var a => Con a -> Fit -> Pelt -> Base a -> Type a -> Check (Type a)
-toil con@Con{ken, lvl} fit pet sem typ = act (ActToil fit pet typ) case pet of
+toil :: (MonadCheck m, Var a)
+     => Con a -> Fit -> Pelt -> Base a -> Type a -> m (Type a)
+toil con@Con{ken, lvl} fit pet sem typ = act (ActToil con fit pet typ)
+ case pet of
   Punt -> pure typ
   Peer f -> pure typ
   Part s -> case (s, repo typ) of
@@ -944,7 +1024,8 @@ toil con@Con{ken, lvl} fit pet sem typ = act (ActToil fit pet typ) case pet of
     -- we would test that the fish is Tuna to check irrefutability. I guess
     -- another idea would be for fish to make use of type info to avoid unnec
     -- testing. Uhh, that seems way better?
-    -- XX the above comment seems wrong
+    -- XX the above comment seems wrong. Yes, it should be Void, not Noun.
+    -- Also XX Void needs to be accepted in a lot of places, like Slam head...
     (Atm a Rock au, Fork' as ag) | setToList as == [a] -> pure typ
     _ -> bail (ToilFish pet typ)
   Pair p q -> case repo typ of
@@ -954,7 +1035,7 @@ toil con@Con{ken, lvl} fit pet sem typ = act (ActToil fit pet typ) case pet of
       u <- toil con fit p x t
       -- you could demand a seminoun be passed in to do this more aggro ugh
       v <- toil con fit q y (eval (Cons' s x) c)
-      pure (Cell' u ken $ loft lvl v)
+      pure (Cell' u ken $ loft (lvl + 1) v)
     _ -> bail (ToilFish pet typ)
   Pons p q -> toil con fit p sem =<< toil con fit q sem typ
   Pest p c -> do
@@ -967,15 +1048,18 @@ toil con@Con{ken, lvl} fit pet sem typ = act (ActToil fit pet typ) case pet of
 
 -- | Return the nest-largest type compatible with a pattern, along with
 -- information on the masking and non-masking faces it applies
-romp :: Var a => Con a -> Pelt -> Check (Type a)
-romp con@Con{ken, lvl} pet = act (ActRomp pet) case pet of
+romp :: (MonadCheck m, Var a)
+     => Con a -> Pelt -> m (Type a)
+romp con@Con{ken, lvl} pet = act (ActRomp con pet) case pet of
   Punt -> bail (RompWild pet)
   Peer _ -> bail (RompWild pet)
   Part c -> do (x, t) <- play con c; pure t
   Pair p q -> do
     t <- romp con p
-    u <- romp (hide' con t) q  -- XX I think this hide is ok only for lam, but..
-    pure (Cell' t ken $ loft lvl u)
+    let fs = derm p
+    -- XX I think this hide is ok only for lam, but also romp only lam :/
+    u <- romp (hide' con $ face' fs t) q
+    pure (Cell' t ken $ loft (lvl + 1) u)
   Pons p q -> do
     t <- romp con q
     toil con FitNest p (Rump' $ Leg' (lvl + 1, 3)) t
@@ -1002,7 +1086,8 @@ instance Show Fit where
 -- | Perform subtyping, coercibility, or equality check.
 -- XX figure out proper encoding of recursion via cores or gates
 -- XX figure out how seminouns should apply here, if at all
-fits :: forall a. Var a => Fit -> Type a -> Type a -> Check ()
+fits :: forall a m. (MonadCheck m, Var a)
+     => Fit -> Type a -> Type a -> m ()
 fits fit t u = act (ActFits fit t u) case (t, u) of
   (Face' _ v, w) -> fits fit v w
   (v, Face' _ w) -> fits fit v w
@@ -1202,9 +1287,9 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
 -- Since the expected result type is known in this mode, we can lighten the
 -- user's annotation burden, e.g. on |= argument. Read about "bidirectional type
 -- checking" to learn more.
-work :: forall a. Var a
-     => Con a -> Fit -> Soft -> Type a -> Check (Code Void)
-work con@Con{lvl, sut, ken} fit cod typ = act (ActWork fit cod typ)
+work :: forall a m. (MonadCheck m, Var a)
+     => Con a -> Fit -> Soft -> Type a -> m (Code Void)
+work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
   let playFits = do (x, t') <- play con cod
                     fits fit t' typ
                     pure x
@@ -1279,17 +1364,17 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork fit cod typ)
 
 -- | Require the given type to be a function type.
 -- XX Deppy had a cas rule here; why?
-needGate :: Var a
-         => Con a -> Type a -> Check (Type a, Base a, Code a)
+needGate :: (MonadCheck m, Var a)
+         => Con a -> Type a -> m (Type a, Base a, Code a)
 needGate con = \case
   Gate' t s c -> pure (t, s, c)
   Face' _ t -> needGate con t
   t -> bail $ NeedGate t
 
 -- | Given subject type and knowledge, determine product type of code
-play :: forall a. Var a
-     => Con a -> Soft -> Check (Code Void, Type a)
-play con@Con{lvl, sut, ken} cod = act (ActPlay cod) case cod of
+play :: forall a m. (MonadCheck m, Var a)
+     => Con a -> Soft -> m (Code Void, Type a)
+play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
   Wng w -> do
     (st, t) <- find con w
     pure (Stub st, t)
@@ -1329,7 +1414,7 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay cod) case cod of
     (x, ct) <- play con c
     (at, s, rc) <- needGate con ct
     y <- work con FitNest d at
-    pure (Slam x y, eval (Cons' s $ evil ken x) rc)
+    pure (Slam x y, eval (Cons' s $ evil ken y) rc)
 
   Equ c d -> undefined
 
@@ -1385,7 +1470,7 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay cod) case cod of
 
 -- | Read code back to soft, making no attempt to untranslate axes to wings with
 -- names.
-rest :: forall a. Show a => Code a -> Soft
+rest :: forall a m. Show a => Code a -> Soft
 rest = \case
   Stub (Leg a) -> Wng [Axis a]
   Fore x -> Wng [Ally $ tshow @(Hop () a) $ Old x]  -- hack for printing

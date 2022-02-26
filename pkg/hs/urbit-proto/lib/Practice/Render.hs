@@ -171,35 +171,85 @@ instance Rolling Pelt where
 instance Rolling [Act] where
   roll as = Huge $ Rose "trace:" "" $ map (tank . roll) $ reverse as
 
+instance Rolling ActTree where
+  roll = \case
+    ActTree a cs -> Huge $ Rose "" ""
+      [ tank $ roll a
+      , Rose "" "" $ map (tank . roll) $ reverse cs
+      ]
+    ActNote n -> roll n
+
 instance Rolling Act where
   roll = \case
+    ActRoot -> leaf "root"
     ActFits f t u -> Huge $ Stem (tshow f <> ":") "" []
       [ ("have", tank $ roll t, Leaf "")
       , ("need", tank $ roll u, Leaf "")
       ]
-    ActFind t w -> Huge $ Stem "find:" "" []
-      [ ("wing", tank $ roll w, Leaf "")
-      , ("type", tank $ roll t, Leaf "")
+    ActFind Con{lvl, sut, ken} w -> Huge $ Stem "find:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("sut ", tank $ roll sut,  Leaf "")
+      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("----", Leaf "",          Leaf "")
+      , ("wing", tank $ roll w,    Leaf "")
       ]
-    ActToil f p t -> Huge $ Stem "toil:" "" []
-      [ ("mode", Leaf $ tshow f,         Leaf "")
-      , ("skin", tank $ roll p, Leaf "")
-      , ("type", tank $ roll t, Leaf "")
+    ActMeld b c -> Huge $ Stem "meld:" "" []
+      [ ("base", tank $ roll b, Leaf "")
+      , ("diff", tank $ roll b, Leaf "")
       ]
-    ActRomp p -> Huge $ Stem "romp:" "" []
+    ActFuse Con{lvl, sut, ken} (b, t) p -> Huge $ Stem "fuse:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("sut ", tank $ roll sut,  Leaf "")
+      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("----", Leaf "",          Leaf "")
+      , ("semi", tank $ roll b,    Leaf "")
+      , ("type", tank $ roll t,    Leaf "")
+      , ("skin", tank $ roll p,    Leaf "")
+      ]
+    ActCrop Con{lvl, sut, ken} t p -> Huge $ Stem "fuse:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("sut ", tank $ roll sut,  Leaf "")
+      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("----", Leaf "",          Leaf "")
+      , ("type", tank $ roll t,    Leaf "")
+      , ("skin", tank $ roll p,    Leaf "")
+      ]
+    ActFish p -> Huge $ Stem "fish:" "" []
       [ ("skin", tank $ roll p, Leaf "")
       ]
-
-    ActWork f c t -> Huge $ Stem "work:" "" []
-      [ ("mode", Leaf $ tshow f,         Leaf "")
+    ActToil Con{lvl, sut, ken} f p t -> Huge $ Stem "toil:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("sut ", tank $ roll sut,  Leaf "")
+      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("----", Leaf "",          Leaf "")
+      , ("mode", Leaf $ tshow f,   Leaf "")
+      , ("skin", tank $ roll p,    Leaf "")
+      , ("type", tank $ roll t,    Leaf "")
+      ]
+    ActRomp Con{lvl, sut, ken} p -> Huge $ Stem "romp:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("sut ", tank $ roll sut,  Leaf "")
+      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("----", Leaf "",          Leaf "")
+      , ("skin", tank $ roll p,    Leaf "")
+      ]
+    ActWork Con{lvl, sut, ken} f c t -> Huge $ Stem "work:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("sut ", tank $ roll sut,  Leaf "")
+      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("----", Leaf "",          Leaf "")
+      , ("mode", Leaf $ tshow f,   Leaf "")
+      , ("code", tank $ roll c,    Leaf "")
+      , ("type", tank $ roll t,    Leaf "")
+      ]
+    ActPlay Con{lvl, sut, ken} c -> Huge $ Stem "play:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("sut ", tank $ roll sut,  Leaf "")
+      , ("ken ", tank $ roll ken,  Leaf "")
+      , ("----", Leaf "",          Leaf "")
       , ("code", tank $ roll c, Leaf "")
-      , ("type", tank $ roll t, Leaf "")
       ]
-    ActPlay c -> Huge $ Stem "play:" "" []
-      [ ("code", tank $ roll c, Leaf "")
-      ]
-    ActNote t -> Huge $ Palm "note:" [Leaf t]
-
+    ActDone -> leaf "done"
 
 instance Rolling Fail where
   roll = \case
@@ -218,6 +268,21 @@ instance Rolling Fail where
     NeedGate t -> Huge $ Palm "need-gate:" [tank $ roll t]
     BailNote t -> Huge $ Palm "bail-note:" [Leaf t]
     BailFail -> leaf "bail-fail:"
+
+instance Rolling Note where
+  roll = \case
+    NoteType msg t -> Huge $ Stem "note:" "" []
+      [ ("text", Leaf msg,      Leaf "")
+      , ("type", tank $ roll t, Leaf "")
+      ]
+    NoteBase msg b -> Huge $ Stem "note:" "" []
+      [ ("text", Leaf msg,      Leaf "")
+      , ("base", tank $ roll b, Leaf "")
+      ]
+    NoteCode msg c -> Huge $ Stem "note:" "" []
+      [ ("text", Leaf msg,      Leaf "")
+      , ("code", tank $ roll c, Leaf "")
+      ]
 
 -- | Limit the width of a wide form in two ways.
 chop :: Int -> Roll -> Roll

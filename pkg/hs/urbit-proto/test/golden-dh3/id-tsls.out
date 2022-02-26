@@ -1,0 +1,32 @@
+PARSED
+
+=+  123
+=/  id
+  |=([t/$ x/t] x)
+id
+
+CODE
+
+=+  123
+=+  id=|=([t/$ x/t] x)
+id
+
+COLD
+
+=+  123
+=+  id=|=(_ +7)
++3
+
+TYPE
+
+=>  [[0 123] 0 123]
+$-  =>  [[0 123] 0 123]
+    {$ +3}
++6
+Face' [] (Gate' (Cell' Type' (Cons' (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud")) (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud"))) (Stub +3)) (Cons' (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud")) (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud"))) (Stub +6))
+
+BASE
+
+^=  id
+=>  [0 123]
+|=(_ +7)

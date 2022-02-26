@@ -278,9 +278,9 @@ scat = wide $ choice
     , wing <&> Wung   -- e.g. `%` itself, but also `%.%`, etc.
     ]
   , run  "&" Wtpm hoon
-  , char '&' *> pure (Adam Sand 0 "f")
+  , char '&' *> pure (Adam Rock 0 "f")
   , run  "|" Wtbr hoon
-  , char '|' *> pure (Adam Sand 1 "f")
+  , char '|' *> pure (Adam Rock 1 "f")
   , run1 ""  Cncl hoon hoon
   , char '*' $> Bass Non
   , char '@' *> mote <&> Bass . Aur

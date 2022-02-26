@@ -9,6 +9,10 @@ CODE
 ERROR
 
   trace:  play:
+          lvl   0
+          sut   *
+          ken   0
+          ----
           code  (1 2)
 
 

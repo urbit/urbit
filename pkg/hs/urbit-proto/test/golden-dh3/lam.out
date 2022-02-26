@@ -4,9 +4,7 @@ PARSED
 
 CODE
 
-|=  ^-  a
-    @
-a
+|=(a/@ a)
 
 COLD
 

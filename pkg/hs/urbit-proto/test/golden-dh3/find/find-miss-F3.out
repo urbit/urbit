@@ -12,18 +12,31 @@ q.a
 ERROR
 
   trace:  play:
+          lvl   0
+          sut   *
+          ken   0
+          ----
           code  =+  a=p=1
                 q.a
 
 
           play:
+          lvl   1
+          sut   =>  0
+                {* a=p=@ud}
+
+          ken   [0 a=p=1]
+          ----
           code  q.a
 
           find:
-          wing  q.a
-          type  =>  0
+          lvl   1
+          sut   =>  0
                 {* a=p=@ud}
 
+          ken   [0 a=p=1]
+          ----
+          wing  q.a
 
 
   find.q

@@ -9,21 +9,40 @@ $-(t=$ q)
 ERROR
 
   trace:  play:
+          lvl   0
+          sut   *
+          ken   0
+          ----
           code  $-(t=$ q)
 
           work:
+          lvl   1
+          sut   =>  0
+                {* t=$}
+
+          ken   [0 +1_3]
+          ----
           mode  nest
           code  q
           type  $
 
           play:
+          lvl   1
+          sut   =>  0
+                {* t=$}
+
+          ken   [0 +1_3]
+          ----
           code  q
 
           find:
-          wing  q
-          type  =>  0
+          lvl   1
+          sut   =>  0
                 {* t=$}
 
+          ken   [0 +1_3]
+          ----
+          wing  q
 
 
   find.q

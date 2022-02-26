@@ -25,7 +25,7 @@ tests = testGroup "DependentHoon3 property tests (small)"
   ]
 
 c :: Check () -> Bool
-c x = case runReaderT x [] of
+c x = case runCheck x of
   Left{}  -> False
   Right{} -> True
 

@@ -21,18 +21,20 @@ instance Rolling Err where
     ErrOpen t -> roll t
     ErrType t -> roll t
 
-data Result a
+data Result extra a
   = ResType
     { cst :: Hoon
     , cod :: Soft
     , cld :: Code Void
     , typ :: Type a
     , bas :: Base a
+    , mor :: extra
     }
   | ResOpen
     { cst :: Hoon
     , cod :: Soft
     , ert :: ([Act], Fail)
+    , mor :: extra
     }
   | ResRead
     { cst :: Hoon
@@ -42,14 +44,30 @@ data Result a
     { err :: Text
     }
 
-deriving instance Show a => Show (Result a)
+deriving instance (Show a, Show extra) => Show (Result extra a)
 
 -- | The "empty" subject context.
 scam :: Con Void
 scam = Con 0 Noun' (Atom' 0 Sand "")
 
 -- | Perform all passes of the compiler on the given text
-road :: Var a => FilePath -> Con a -> Text -> Result a
+ride :: Var a => FilePath -> Con a -> Text -> Result () a
+ride filename con txt =
+  case parse vest filename txt of
+    Left err -> ResNone{..}
+    Right cst ->
+      case open cst of
+        Left ero -> ResRead{..}
+        Right cod ->
+          let mor = () in
+          case runCheck (play con cod) of
+            Left ert -> ResOpen{..}
+            Right (cld, typ) ->
+              let bas = eval (ken con) (vacuous cld)
+              in ResType{..}
+
+-- | Perform all passes of the compiler on the given text, tracing execution.
+road :: Var a => FilePath -> Con a -> Text -> Result ActTree a
 road filename con txt =
   case parse vest filename txt of
     Left err -> ResNone{..}
@@ -57,8 +75,10 @@ road filename con txt =
       case open cst of
         Left ero -> ResRead{..}
         Right cod ->
-          case runReaderT (play con cod) [] of
-            Left ert -> ResOpen{..}
-            Right (cld, typ) ->
+          case runTrace (play con cod) of
+            (mor, Left er) ->
+              let ert = (traceToStack mor, er)
+              in ResOpen{..}
+            (mor, Right (cld, typ)) ->
               let bas = eval (ken con) (vacuous cld)
               in ResType{..}
