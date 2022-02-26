@@ -48,6 +48,7 @@ export function SidebarItemBase(props: {
   fontSize?: string;
   pending?: boolean;
   isGroup?: boolean;
+  locked?: boolean;
   isAdmin?: boolean;
   indent?: number;
   onClick?: (e: MouseEvent) => void;
@@ -66,6 +67,7 @@ export function SidebarItemBase(props: {
     mono = false,
     pending = false,
     isGroup = false,
+    locked = false,
     isAdmin = false,
     indent = 0,
     onClick
@@ -156,6 +158,9 @@ export function SidebarItemBase(props: {
             >
               {unreadCount}
             </Box>
+          )}
+          {locked && (
+            <Icon color="gray" icon="Locked" size={14} ml={hasUnread ? 0 : '6px'} mr="6px" />
           )}
         </Row>
         {isAdmin && (

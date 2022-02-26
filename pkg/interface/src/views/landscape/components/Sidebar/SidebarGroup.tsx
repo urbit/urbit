@@ -117,6 +117,7 @@ export function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
   const association = isGroup ? associations?.groups[workspace.group] : undefined;
   const feedPath = getFeedPath(association);
   const isAdmin = isGroup && roleForShip(groups[workspace.group], window.ship) === 'admin';
+  const locked = isGroup && Boolean(groups[association.group]?.policy?.invite);
 
   return (
     <Box ref={groupRef}>
@@ -131,6 +132,7 @@ export function SidebarGroup({ baseUrl, selected, config, workspace, title }: {
         pending={isPending}
         onClick={() => setCollapsed(isMessages ? false : !collapsed)}
         isGroup
+        locked={locked}
         isAdmin={isAdmin}
       >
         {!isMessages && (

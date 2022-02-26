@@ -67,7 +67,7 @@ h2 {
 }
 
 .clamp-message {
-  max-width: calc(100% - 36px - 1.5rem);
+  max-width: calc(100% - 1.5rem);
 }
 
 .mono {

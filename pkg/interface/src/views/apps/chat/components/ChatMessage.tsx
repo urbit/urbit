@@ -16,6 +16,7 @@ import { Sigil } from '~/logic/lib/sigil';
 import { citeNickname, daToUnix, useHovering, uxToHex } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
+import usePalsState from '~/logic/state/pals';
 import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/state/settings';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
@@ -61,6 +62,7 @@ export const MessageAuthor = React.memo<any>(({
   ...props
 }) => {
   const dark = useDark();
+  const { pals } = usePalsState();
   let contact: Contact | null = useContact(`~${msg.author}`);
 
   const date = daToUnix(bigInt(msg.index.split('/').reverse()[0]));
@@ -90,6 +92,7 @@ export const MessageAuthor = React.memo<any>(({
 
   const { hovering, bind } = useHovering();
   const nameMono = !showNickname;
+  const isPal = Boolean(pals.outgoing[msg.author]?.ack);
 
   const img =
     contact?.avatar && !hideAvatars ? (
@@ -156,6 +159,7 @@ export const MessageAuthor = React.memo<any>(({
                 >
                   {shipName}
                 </Text>
+                {isPal && <Icon icon="Users" size={12} ml={2} mt="3px" />}
               </Row>
             </ProfileOverlay>
           </Box>

@@ -1,4 +1,4 @@
-import { BaseImage, Box, BoxProps, Button, Center, Col, Icon, IconIndex, LoadingSpinner, Row, Text } from '@tlon/indigo-react';
+import { BaseImage, Box, BoxProps, Button, Center, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { uxToHex } from '@urbit/api';
 import shallow from 'zustand/shallow';
 import _ from 'lodash';
@@ -16,10 +16,7 @@ import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
 import { citeNickname } from '~/logic/lib/util';
-import api from '~/logic/api';
-import useDocketState from '~/logic/state/docket';
-import { PALS_APP, PALS_HOST } from '~/logic/constants/install';
-import { ModalOverlay } from './ModalOverlay';
+import { PalsProfileInfo } from './Pals/PalsProfileInfo';
 
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Col)`
@@ -30,7 +27,7 @@ const FixedOverlay = styled(Col)`
   transition: all 0.1s ease-out;
 `;
 
-const ActionRow = styled(Row)`
+export const ActionRow = styled(Row)`
   padding: 4px;
   width: 80%;
   cursor: pointer;
@@ -38,108 +35,6 @@ const ActionRow = styled(Row)`
     background-color: ${p => p.theme.colors.washedGray};
   }
 `;
-
-const PalsInfo = () => {
-  const { addAlly, requestTreaty, installDocket } = useDocketState();
-  const [hasPalsApp, setHasPalsApp] = useState(false);
-  const [isInstalling, setIsInstalling] = useState(false);
-  const [showInstallModal, setShowInstallModal] = useState(false);
-
-  useEffect(() => {
-    const getPalsData = async () => {
-      try {
-        const data = await api.scry({
-          app: 'pals',
-          path: '/'
-        });
-        setHasPalsApp(true);
-        console.log('PALS DATA:', data)
-      } catch (err) {
-        // TODO: figure out which one means app isn't installed
-      }
-    };
-
-    getPalsData();
-  }, []);
-  const isMutual = false;
-  const isLeech = false;
-  const isTarget = false;
-
-  const handleSendRequest = useCallback(() => {
-    if (hasPalsApp) {
-      // send pals request, also on line below
-    } else {
-      setShowInstallModal(true);
-    }
-  }, [hasPalsApp]);
-
-  const handleInstall = useCallback(async () => {
-    setIsInstalling(true);
-    setShowInstallModal(false);
-    try {
-      await addAlly(PALS_HOST);
-      await requestTreaty(PALS_HOST, PALS_APP);
-      await installDocket(PALS_HOST, PALS_APP);
-      setHasPalsApp(true);
-    } catch (err) {
-      console.warn('PALS INSTALL ERROR:', err);
-    } finally {
-      setIsInstalling(false);
-    }
-  }, [setIsInstalling, setShowInstallModal, addAlly, requestTreaty, installDocket, setHasPalsApp]);
-
-  const getActionProps = () : { icon: keyof IconIndex; text: string | Element; onClick?: () => void } => {
-    if (isMutual) {
-      return { icon: 'Users', text: 'You are pals' };
-    } else if (isLeech) {
-      return { icon: 'Clock', text: 'Pals request pending', onClick: () => null };
-    } else if (isTarget) {
-      return { icon: 'CheckmarkBold', text: 'Accept pals request', onClick: () => null };
-    }
-
-    // TODO: if %pals isn't installed, show a modal with the option to install %pals
-    return { icon: 'CreateGroup', text: 'Send pals request', onClick: handleSendRequest };
-  };
-
-  if (showInstallModal) {
-    return (
-      <ModalOverlay
-        bg="transparent"
-        height="100%"
-        width="100%"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        dismiss={() => setShowInstallModal(false)}
-      >
-        <Box backgroundColor="white" p={4} borderRadius={3} display="flex" flexDirection="column" alignItems="center">
-          <Text>You do not have <Text mono>%pals</Text> installed,<br /> would you like to install it?</Text>
-          <Row mt={3}>
-            <Button color="white" backgroundColor="black" onClick={() => setShowInstallModal(false)} >Cancel</Button>
-            <Button ml={2} onClick={handleInstall}>Install</Button>
-          </Row>
-        </Box>
-      </ModalOverlay>
-    );
-  } else if (isInstalling) {
-    return (
-      <ActionRow width="80%">
-        <LoadingSpinner />
-        <Text ml={2}>Installing...</Text>
-      </ActionRow>
-    );
-  }
-
-  const { icon, text, onClick } = getActionProps();
-
-  return (
-    <ActionRow width="80%" onClick={onClick}>
-      <Icon icon={icon} size={16} mr={2} />
-      <Text>{text}</Text>
-    </ActionRow>
-  );
-};
 
 type ProfileOverlayProps = BoxProps & {
   ship: string;
@@ -252,71 +147,72 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         boxShadow='0px 0px 0px 3px'
         zIndex={3}
         fontSize={0}
-        height='250px'
-        width='250px'
+        width='300px'
         padding={3}
         alignItems='center'
       >
-        <Box
-          height='72px'
+        <Row
+          height='60px'
           cursor='pointer'
           onClick={() => history.push(`/~profile/~${ship}`)}
           overflow='hidden'
           borderRadius={2}
         >
-          {img}
-        </Box>
-        <Col width="100%" alignItems="center">
-          <Row>
-            <Text
-              fontWeight='600'
-              mono={!showNickname}
-              textOverflow='ellipsis'
-              overflow='hidden'
-              whiteSpace='pre'
-              marginBottom={0}
-              cursor='pointer'
-              display={didCopy ? 'none' : 'block'}
-              onClick={doCopy}
+          <Box height="60px" width="60px">
+            {img}
+          </Box>
+          <Col ml={2} alignSelf="center">
+            <Row onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  doCopy();
+                }}
             >
-              {citeNickname(ship, showNickname, contact?.nickname)}
-            </Text>
-            <Text
-              fontWeight='600'
-              marginBottom={0}
-            >
-              {copyDisplay}
-            </Text>
-          </Row>
-          {isOwn ? (
-            <ProfileStatus
-              ship={`~${ship}`}
-              contact={contact}
-            />
-          ) : (
-            <RichText
-              display='inline-block'
-              width='100%'
-              minWidth={0}
-              textOverflow='ellipsis'
-              overflow='hidden'
-              whiteSpace='pre'
-              mb={0}
-              disableRemoteContent
-              gray
-              title={contact?.status ? contact.status : ''}
-            >
-              {contact?.status ? contact.status : ''}
-            </RichText>
-          )}
-        </Col>
+              <Text
+                fontWeight='600'
+                mono={!showNickname}
+                textOverflow='ellipsis'
+                overflow='hidden'
+                whiteSpace='pre'
+                marginBottom={0}
+                cursor='pointer'
+                display={didCopy ? 'none' : 'block'}
+              >
+                {citeNickname(ship, showNickname, contact?.nickname)}
+              </Text>
+              <Text
+                fontWeight='600'
+                marginBottom={0}
+              >
+                {copyDisplay}
+              </Text>
+            </Row>
+            {isOwn ? (
+              <ProfileStatus
+                ship={`~${ship}`}
+                contact={contact}
+              />
+            ) : (
+              <RichText
+                display='inline-block'
+                minWidth={0}
+                mb={0}
+                disableRemoteContent
+                gray
+                title={contact?.status ? contact.status : ''}
+              >
+                {contact?.status ? contact.status : ''}
+              </RichText>
+            )}
+          </Col>
+        </Row>
         {!isOwn && (
           <>
             <ActionRow mt={2} onClick={() => history.push(`/~landscape/messages/dm/~${ship}`)}>
               <Icon icon='Chat' size={16} mr={2} />
               <Text>Message</Text>
             </ActionRow>
-            {/* <PalsInfo /> */}
+            <PalsProfileInfo ship={ship} />
           </>
         )}
       </FixedOverlay>

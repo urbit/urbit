@@ -1,6 +1,6 @@
 {
   "name": "interface",
-  "version": "0.1.8",
+  "version": "0.1.10",
   "description": "",
   "main": "index.js",
   "private": true,
@@ -47,7 +47,7 @@
     "react-virtuoso": "^0.20.3",
     "react-visibility-sensor": "^5.1.1",
     "remark": "^12.0.0",
-    "remark-breaks": "^2.0.2",
+    "remark-breaks": "2.0.1",
     "remark-disable-tokenizers": "1.1.0",
     "stacktrace-js": "^2.0.2",
     "style-loader": "^1.3.0",
