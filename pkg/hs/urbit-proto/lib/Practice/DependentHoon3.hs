@@ -739,6 +739,219 @@ pole a = \case
 -- Core operations of the compiler ---------------------------------------------
 --------------------------------------------------------------------------------
 
+-- The calculus of types -------------------------------------------------------
+
+-- | Mode for fit-checking in `fits`: nest, cast, or exact equality.
+data Fit
+  = FitSame  -- ^ perform a type (or value) equivalence check
+  | FitNest  -- ^ perform a subtyping check
+  | FitCast  -- ^ perform a coercibility check; i.e. ignore auras
+  deriving (Eq, Ord, Generic)
+
+instance Show Fit where
+  show = \case
+    FitCast -> "cast"
+    FitNest -> "nest"
+    FitSame -> "same"
+
+-- | Perform subtyping, coercibility, or equality check.
+-- XX figure out proper encoding of recursion via cores or gates
+-- XX figure out how seminouns should apply here, if at all
+fits :: forall a m. (MonadCheck m, Var a)
+     => Fit -> Type a -> Type a -> m ()
+fits fit t u = act (ActFits fit t u) case (t, u) of
+  (Face' _ v, w) -> fits fit v w
+  (v, Face' _ w) -> fits fit v w
+
+  (Noun', Noun') -> pure ()
+  (Noun', _) -> fitsFail
+  (_, Noun') -> case fit of
+    FitSame -> fitsFail
+    FitNest -> pure ()
+    FitCast -> pure ()
+
+  (Void', Void') -> pure ()
+  (Void', _) -> case fit of
+    FitSame -> fitsFail
+    FitNest -> pure ()
+    FitCast -> pure ()
+  (_, Void') -> fitsFail
+
+  (Rump' r, Rump' s)
+    | r == s    -> pure ()
+    | otherwise -> fitsFail
+  (Rump'{}, _) -> fitsFail
+  (_, Rump'{}) -> fitsFail
+
+  (Fore' r, Fore' s)
+    | r == s    -> pure ()
+    | otherwise -> fitsFail
+  (Fore'{}, _) -> fitsFail
+  (_, Fore'{}) -> fitsFail
+
+  -- XX confirm this, but I do think we have to decide definitional equality
+  -- of terms as part of nest. E.g. Suppose someone has opaquely defined
+  -- vect/$-(@ $ $) in their context. Because it's opaque, we cannot rely on
+  -- inlining the definition in the context of nest checking. Thus to decide
+  -- (vect 1 @) <?= (vect 1 *), we must determine that vect and vect are the
+  -- same variable, 1 and 1 are the same term, and @ <= *.
+  --
+  -- But the above has a serious problem. Is vect covariant or contravariant?
+  -- The rule implied above implicitly treats all such "opaque type functions"
+  -- as covariant which is WRONG. Absent some variance marking solution,
+  -- these should presumably be regarded as invariant.
+  --
+  -- To make invariance work, the proposed solution is to add a third Fit mode
+  -- FitSame which does equality rather than subtyping, and switch to it under
+  -- eliminators such as Slam (XX and other eliminators and introductors?).
+  --
+  (Atom' a _ _, Atom' b _ _) | a == b -> pure ()
+  (Atom'{}, _) -> fitsFail
+  (_, Atom'{}) -> fitsFail
+
+  (Cons' v w, Cons' v' w') -> do fits fit v v'; fits fit w w'
+  (Cons'{}, _) -> fitsFail
+  (_, Cons'{}) -> fitsFail
+
+  -- Evaluate the function bodies against a fresh opaque symbol. To get a fresh
+  -- symbol, we have a bunch of options:
+  --   - Track level as an argument to fits, as Kovacs does, incrementing under
+  --     binders. We can then use (lvl + 1, 3) as the new Rump. Downside: not
+  --     clear how to get this value when comparing two RTTIs at runtime.
+  --     Although, in fact, rtts wil NEVER have rumps, so...
+  --   - Possibly, store a level in each saved, closed over, subject, taking the
+  --     larger of the two. Think hard about whether this actually works.
+  --   - Use Bound library style bullshit. Change the `a` type argument to allow
+  --     an extra variable. This is a bit weird because the Codes are actually
+  --     Hop Stub a, and bases have an extra Rump in them (so they are kinda
+  --     Hop Rump a, except we couldn't get away with literally doing that), so
+  --     we have to insert the variable just under the top level. But it works.
+  --     On the other hand in a strict language paying the fmap cost upfront is
+  --     not great? But we know for a fact that we'll be processing the entire
+  --     body on success anyway, so? But also subtyping means if we're clever
+  --     we can avoid fmapping entirely, if a can be encoded such that it's a
+  --     subtype of Hop Stub a.
+  --
+  (Lamb'{}, Lamb'{}) -> fits fit (eval (Cons' s new) c) (eval (Cons' z new) d)
+   where
+    new = Fore' (New ())
+    Lamb' s c = fmap Old t
+    Lamb' z d = fmap Old u
+
+  (Lamb'{}, _) -> fits fit (eval (Cons' s new) c) (Slam' x new)
+   where
+    new = Fore' (New ())
+    Lamb' s c = fmap Old t
+    x = fmap Old u
+
+  (_, Lamb'{}) -> fits fit (Slam' x new) (eval (Cons' z new) d)
+   where
+    new = Fore' (New ())
+    x = fmap Old t
+    Lamb' z d = fmap Old u
+
+  -- Elimination forms. Note that since Base, we will only encounter these
+  -- "stuck" on some variable, possibly nested.
+  (Plus' v, Plus' w) -> fits fit v w
+  (Plus'{}, _) -> fitsFail
+  (_, Plus'{}) -> fitsFail
+
+  -- Since it hasn't been evaluated away, we are dealing with an opaque type
+  -- function application. This means we have no choice but to regard the
+  -- function as invariant in its argument.
+  (Slam' v w, Slam' v' w') -> do fits fit v v'; fits FitSame w w'
+  (Slam'{}, _) -> fitsFail
+  (_, Slam'{}) -> fitsFail
+
+  -- The assumption is that these are fully evaluated. This rules out Looks
+  -- stacked on top of Looks, as well of Looks on top of cells. Accordingly the
+  -- rules are pretty tight. I don't think there's any equiv of the beta-eta
+  -- conversion we saw above with functions here.
+  (Look' b st, Look' c ub)
+    | st == ub  -> fits fit b c
+    | otherwise -> fitsFail
+  (Look'{}, _) -> fitsFail
+  (_, Look'{}) -> fitsFail
+
+  (Aura' au, Aura' ag) -> case fit of
+    FitCast -> pure ()
+    FitNest -> if ag `isPrefixOf` au then pure () else fitsFail
+    FitSame -> if ag ==           au then pure () else fitsFail
+
+  (Fork' cs au, Aura' ag) | fit /= FitSame -> fits @a fit (Aura' au) (Aura' ag)
+
+  (Fork' cs au, Fork' ds ag) -> do
+    fits @a fit (Aura' au) (Aura' ag)
+    case fit of
+      FitSame -> when (cs /= ds) fitsFail
+      FitNest -> unless (cs `isSubsetOf` ds) fitsFail
+      FitCast -> unless (cs `isSubsetOf` ds) fitsFail
+
+  (Cell' v _ _, Cell' w _ _) -> do
+    fits fit v w
+    let
+      fresh = New ()
+      Cell' _ s c = fmap Old t
+      Cell' _ z d = fmap Old u
+    -- use the smaller type to do case analysis, if applicable
+    for_ (cases fresh u) \cas ->
+      fits fit
+        (eval (Cons' s cas) c)
+        (eval (Cons' z cas) d)
+
+  (Gate' v _ _, Gate' w _ _) -> do
+    -- Recall that the argument to a gate is contravariant
+    fits fit w v
+    let
+      fresh = New ()
+      Gate' _ s c = fmap Old t
+      Gate' _ z d = fmap Old u
+    -- use the smaller type to do case analysis, if applicable
+    for_ (cases fresh w) \cas ->
+      fits fit
+        (eval (Cons' s cas) c)
+        (eval (Cons' z cas) d)
+
+  (Type', Type') -> pure ()
+
+  (Aura'{}, _) -> fitsFail
+  (_, Aura'{}) -> fitsFail
+  (Fork'{}, _) -> fitsFail
+  (_, Fork'{}) -> fitsFail
+  (Cell'{}, _) -> fitsFail
+  (_, Cell'{}) -> fitsFail
+  (Gate'{}, _) -> fitsFail
+  (_, Gate'{}) -> fitsFail
+
+
+ where
+  fitsFail = bail (FitsFail fit t u)
+
+  -- For "finite" types, instead of generating a fresh variable, produce all
+  -- the "cases" of that type. This could be generalized in a bunch of ways:
+  --   - atoms: generate [0, +(<fresh>)]
+  --   - cells of finite types
+  -- The compiler accordingly does "case analysis" for cell and gate types,
+  -- implementing the proper rules for $% nesting as a special case.
+  cases :: b {- ^ fresh variable supply -} -> Type a -> [Base b]
+  cases var = \case
+    Aura' _ -> [Fore' var]  -- or: [Atom' 0 Sand au, Plus' (Fore' var)]?
+    -- This is the case we need to make $% work.
+    Fork' cs au -> fmap (\a -> Atom' a Rock au) $ toList cs
+    -- NOTE it is actually possible to do something cool here, but it would
+    -- require constructing an infinite, splittable fresh variable supply.
+    Cell' t s c -> [Fore' var]
+    -- It is absolutely infeasable to enumerate all gates
+    Gate'{} -> [Fore' var]
+    -- Also an important case
+    Face' _ t -> cases var t
+    Noun' -> [Fore' var]
+    Void' -> [Fore' var]
+    Type' -> [Fore' var]
+    -- The below will actually occur: e.g. stuck variables, applications
+    _ -> [Fore' var]
+
+
 -- Find ------------------------------------------------------------------------
 
 -- | Zipper on the subject to return from find. That way if you edit the subject
@@ -1066,219 +1279,6 @@ romp con@Con{ken, lvl} pet = act (ActRomp con pet) case pet of
   Pest p c -> do
     x <- work con FitNest c Type'
     toil con FitNest p (Rump' $ Leg' (lvl + 1, 3)) (evil ken x)
-
-
--- The calculus of types -------------------------------------------------------
-
--- | Mode for fit-checking in `fits`: nest, cast, or exact equality.
-data Fit
-  = FitSame  -- ^ perform a type (or value) equivalence check
-  | FitNest  -- ^ perform a subtyping check
-  | FitCast  -- ^ perform a coercibility check; i.e. ignore auras
-  deriving (Eq, Ord, Generic)
-
-instance Show Fit where
-  show = \case
-    FitCast -> "cast"
-    FitNest -> "nest"
-    FitSame -> "same"
-
--- | Perform subtyping, coercibility, or equality check.
--- XX figure out proper encoding of recursion via cores or gates
--- XX figure out how seminouns should apply here, if at all
-fits :: forall a m. (MonadCheck m, Var a)
-     => Fit -> Type a -> Type a -> m ()
-fits fit t u = act (ActFits fit t u) case (t, u) of
-  (Face' _ v, w) -> fits fit v w
-  (v, Face' _ w) -> fits fit v w
-
-  (Noun', Noun') -> pure ()
-  (Noun', _) -> fitsFail
-  (_, Noun') -> case fit of
-    FitSame -> fitsFail
-    FitNest -> pure ()
-    FitCast -> pure ()
-
-  (Void', Void') -> pure ()
-  (Void', _) -> case fit of
-    FitSame -> fitsFail
-    FitNest -> pure ()
-    FitCast -> pure ()
-  (_, Void') -> fitsFail
-
-  (Rump' r, Rump' s)
-    | r == s    -> pure ()
-    | otherwise -> fitsFail
-  (Rump'{}, _) -> fitsFail
-  (_, Rump'{}) -> fitsFail
-
-  (Fore' r, Fore' s)
-    | r == s    -> pure ()
-    | otherwise -> fitsFail
-  (Fore'{}, _) -> fitsFail
-  (_, Fore'{}) -> fitsFail
-
-  -- XX confirm this, but I do think we have to decide definitional equality
-  -- of terms as part of nest. E.g. Suppose someone has opaquely defined
-  -- vect/$-(@ $ $) in their context. Because it's opaque, we cannot rely on
-  -- inlining the definition in the context of nest checking. Thus to decide
-  -- (vect 1 @) <?= (vect 1 *), we must determine that vect and vect are the
-  -- same variable, 1 and 1 are the same term, and @ <= *.
-  --
-  -- But the above has a serious problem. Is vect covariant or contravariant?
-  -- The rule implied above implicitly treats all such "opaque type functions"
-  -- as covariant which is WRONG. Absent some variance marking solution,
-  -- these should presumably be regarded as invariant.
-  --
-  -- To make invariance work, the proposed solution is to add a third Fit mode
-  -- FitSame which does equality rather than subtyping, and switch to it under
-  -- eliminators such as Slam (XX and other eliminators and introductors?).
-  --
-  (Atom' a _ _, Atom' b _ _) | a == b -> pure ()
-  (Atom'{}, _) -> fitsFail
-  (_, Atom'{}) -> fitsFail
-
-  (Cons' v w, Cons' v' w') -> do fits fit v v'; fits fit w w'
-  (Cons'{}, _) -> fitsFail
-  (_, Cons'{}) -> fitsFail
-
-  -- Evaluate the function bodies against a fresh opaque symbol. To get a fresh
-  -- symbol, we have a bunch of options:
-  --   - Track level as an argument to fits, as Kovacs does, incrementing under
-  --     binders. We can then use (lvl + 1, 3) as the new Rump. Downside: not
-  --     clear how to get this value when comparing two RTTIs at runtime.
-  --     Although, in fact, rtts wil NEVER have rumps, so...
-  --   - Possibly, store a level in each saved, closed over, subject, taking the
-  --     larger of the two. Think hard about whether this actually works.
-  --   - Use Bound library style bullshit. Change the `a` type argument to allow
-  --     an extra variable. This is a bit weird because the Codes are actually
-  --     Hop Stub a, and bases have an extra Rump in them (so they are kinda
-  --     Hop Rump a, except we couldn't get away with literally doing that), so
-  --     we have to insert the variable just under the top level. But it works.
-  --     On the other hand in a strict language paying the fmap cost upfront is
-  --     not great? But we know for a fact that we'll be processing the entire
-  --     body on success anyway, so? But also subtyping means if we're clever
-  --     we can avoid fmapping entirely, if a can be encoded such that it's a
-  --     subtype of Hop Stub a.
-  --
-  (Lamb'{}, Lamb'{}) -> fits fit (eval (Cons' s new) c) (eval (Cons' z new) d)
-   where
-    new = Fore' (New ())
-    Lamb' s c = fmap Old t
-    Lamb' z d = fmap Old u
-
-  (Lamb'{}, _) -> fits fit (eval (Cons' s new) c) (Slam' x new)
-   where
-    new = Fore' (New ())
-    Lamb' s c = fmap Old t
-    x = fmap Old u
-
-  (_, Lamb'{}) -> fits fit (Slam' x new) (eval (Cons' z new) d)
-   where
-    new = Fore' (New ())
-    x = fmap Old t
-    Lamb' z d = fmap Old u
-
-  -- Elimination forms. Note that since Base, we will only encounter these
-  -- "stuck" on some variable, possibly nested.
-  (Plus' v, Plus' w) -> fits fit v w
-  (Plus'{}, _) -> fitsFail
-  (_, Plus'{}) -> fitsFail
-
-  -- Since it hasn't been evaluated away, we are dealing with an opaque type
-  -- function application. This means we have no choice but to regard the
-  -- function as invariant in its argument.
-  (Slam' v w, Slam' v' w') -> do fits fit v v'; fits FitSame w w'
-  (Slam'{}, _) -> fitsFail
-  (_, Slam'{}) -> fitsFail
-
-  -- The assumption is that these are fully evaluated. This rules out Looks
-  -- stacked on top of Looks, as well of Looks on top of cells. Accordingly the
-  -- rules are pretty tight. I don't think there's any equiv of the beta-eta
-  -- conversion we saw above with functions here.
-  (Look' b st, Look' c ub)
-    | st == ub  -> fits fit b c
-    | otherwise -> fitsFail
-  (Look'{}, _) -> fitsFail
-  (_, Look'{}) -> fitsFail
-
-  (Aura' au, Aura' ag) -> case fit of
-    FitCast -> pure ()
-    FitNest -> if ag `isPrefixOf` au then pure () else fitsFail
-    FitSame -> if ag ==           au then pure () else fitsFail
-
-  (Fork' cs au, Aura' ag) | fit /= FitSame -> fits @a fit (Aura' au) (Aura' ag)
-
-  (Fork' cs au, Fork' ds ag) -> do
-    fits @a fit (Aura' au) (Aura' ag)
-    case fit of
-      FitSame -> when (cs /= ds) fitsFail
-      FitNest -> unless (cs `isSubsetOf` ds) fitsFail
-      FitCast -> unless (cs `isSubsetOf` ds) fitsFail
-
-  (Cell' v _ _, Cell' w _ _) -> do
-    fits fit v w
-    let
-      fresh = New ()
-      Cell' _ s c = fmap Old t
-      Cell' _ z d = fmap Old u
-    -- use the smaller type to do case analysis, if applicable
-    for_ (cases fresh u) \cas ->
-      fits fit
-        (eval (Cons' s cas) c)
-        (eval (Cons' z cas) d)
-
-  (Gate' v _ _, Gate' w _ _) -> do
-    -- Recall that the argument to a gate is contravariant
-    fits fit w v
-    let
-      fresh = New ()
-      Gate' _ s c = fmap Old t
-      Gate' _ z d = fmap Old u
-    -- use the smaller type to do case analysis, if applicable
-    for_ (cases fresh w) \cas ->
-      fits fit
-        (eval (Cons' s cas) c)
-        (eval (Cons' z cas) d)
-
-  (Type', Type') -> pure ()
-
-  (Aura'{}, _) -> fitsFail
-  (_, Aura'{}) -> fitsFail
-  (Fork'{}, _) -> fitsFail
-  (_, Fork'{}) -> fitsFail
-  (Cell'{}, _) -> fitsFail
-  (_, Cell'{}) -> fitsFail
-  (Gate'{}, _) -> fitsFail
-  (_, Gate'{}) -> fitsFail
-
-
- where
-  fitsFail = bail (FitsFail fit t u)
-
-  -- For "finite" types, instead of generating a fresh variable, produce all
-  -- the "cases" of that type. This could be generalized in a bunch of ways:
-  --   - atoms: generate [0, +(<fresh>)]
-  --   - cells of finite types
-  -- The compiler accordingly does "case analysis" for cell and gate types,
-  -- implementing the proper rules for $% nesting as a special case.
-  cases :: b {- ^ fresh variable supply -} -> Type a -> [Base b]
-  cases var = \case
-    Aura' _ -> [Fore' var]  -- or: [Atom' 0 Sand au, Plus' (Fore' var)]?
-    -- This is the case we need to make $% work.
-    Fork' cs au -> fmap (\a -> Atom' a Rock au) $ toList cs
-    -- NOTE it is actually possible to do something cool here, but it would
-    -- require constructing an infinite, splittable fresh variable supply.
-    Cell' t s c -> [Fore' var]
-    -- It is absolutely infeasable to enumerate all gates
-    Gate'{} -> [Fore' var]
-    -- Also an important case
-    Face' _ t -> cases var t
-    Noun' -> [Fore' var]
-    Void' -> [Fore' var]
-    Type' -> [Fore' var]
-    -- The below will actually occur: e.g. stuck variables, applications
-    _ -> [Fore' var]
 
 
 -- Type checking ---------------------------------------------------------------
