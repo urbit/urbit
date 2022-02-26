@@ -17,7 +17,7 @@ COLD
 TYPE
 
 @ud
-Face' [] (Aura' "ud")
+Aura' "ud"
 
 BASE
 

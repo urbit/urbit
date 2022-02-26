@@ -23,7 +23,7 @@ TYPE
 $-  =>  [[0 123] 0 123]
     {$ +3}
 +6
-Face' [] (Gate' (Cell' Type' (Cons' (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud")) (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud"))) (Stub +3)) (Cons' (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud")) (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud"))) (Stub +6))
+Gate' (Cell' Type' (Cons' (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud")) (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud"))) (Stub +3)) (Cons' (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud")) (Cons' (Atom' 0 Sand "") (Atom' 123 Sand "ud"))) (Stub +6)
 
 BASE
 

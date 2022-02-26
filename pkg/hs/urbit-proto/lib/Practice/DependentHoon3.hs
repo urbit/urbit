@@ -116,7 +116,7 @@ data Code a
   | Fork (Set Atom) Aura
   | Cell (Code a) (Code a)
   | Gate (Code a) (Code a)
-  | Face [Face] (Code a)
+  | Face Face (Code a)
   | Noun
   | Void
   | Type
@@ -274,7 +274,7 @@ data Base a
   | Fork' (Set Atom) Aura
   | Cell' (Type a) (Base a) {- ^ closed-over subject -} (Code a)
   | Gate' (Type a) (Base a) {- ^ closed-over subject -} (Code a)
-  | Face' [Face] (Base a)
+  | Face' Face (Base a)
   | Noun'
   | Void'
   | Type'
@@ -684,14 +684,10 @@ cell' :: Con a -> Base a -> Base a -> Base a
 cell' Con{lvl, ken} l r = Cell' l ken $ loft lvl r
 
 face :: [Face] -> Code a -> Code a
-face fs = \case
-  Face gs c -> Face (fs ++ gs) c
-  c -> Face fs c
+face fs b = foldr Face b fs
 
 face' :: [Face] -> Base a -> Base a
-face' fs = \case
-  Face' gs b -> Face' (fs ++ gs) b
-  b -> Face' fs b
+face' fs b = foldr Face' b fs
 
 
 -- Axial operations ------------------------------------------------------------
@@ -1059,13 +1055,12 @@ find sub@Con{lvl, sut, ken} win = act (ActFind sub win) do
    where
     lope :: Con a -> Maybe (m (Stub, Con a))
     lope con@Con{sut, ken} = case sut of
-      Face' [] t -> lope con{sut=t}
-      Face' (Mask m : fs) t
-        | f == m    -> Just $ pure (Leg 1, con{sut=(Face' fs t)})
+      Face' (Mask m) t
+        | f == m    -> Just $ pure (Leg 1, con{sut=t})
         | otherwise -> Nothing
-      Face' (Link ls : fs) t
+      Face' (Link ls) t
         | Just (a, fs) <- lookup f ls -> Just $ (Leg a,) <$> axis con a
-        | otherwise                   -> lope con{sut=(Face' fs t)}
+        | otherwise                   -> lope con{sut=t}
 
       Cell' t s c -> asum
         -- NB: We look to the right first, because =+ now pushes to the right.
@@ -1086,7 +1081,8 @@ find sub@Con{lvl, sut, ken} win = act (ActFind sub win) do
 -- | Strip masks, but not links, from outside of type.
 clip :: Type a -> Type a
 clip = \case
-  Face' fs t -> Face' (fs & filter \case Mask{} -> False; Link{} -> True) t
+  Face' Mask{} t -> t
+  Face' l@Link{} t -> Face' l t
   t -> t
 
 -- | Upgrade outer mask to link.
@@ -1335,7 +1331,7 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
       -- playing c. But playing c could fail, so...
       _ <- toil con fit p (evil ken x) typ
       let fs = derm p
-      pure (Face fs x)
+      pure (face fs x)
 
     -- elimination forms just use nest
     Plu{} -> playFits
@@ -1490,9 +1486,8 @@ rest = \case
   Cell Noun Noun -> Bas Cel
   Cell c d -> Cll (rest c) (rest d)
   Gate c d -> Gat (rest c) (rest d)
-  Face [] c -> rest c
-  Face (Mask m : fs) c -> Fac (Peer m) (rest (Face fs c))
-  Face (Link ls : fs) c -> Fac Punt (rest (Face fs c))  -- FIXME ?
+  Face (Mask m) c -> Fac (Peer m) (rest c)
+  Face (Link ls) c -> Fac Punt (rest c)  -- FIXME ?
   Noun -> Bas Non
   Void -> Bas Vod
   Type -> Bas Typ

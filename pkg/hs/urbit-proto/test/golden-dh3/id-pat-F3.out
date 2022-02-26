@@ -49,12 +49,6 @@ ERROR
                 {@ @}
 
 
-          nest:
-          have  @
-          need  =>  [0 +1_3]
-                {@ @}
-
-
 
   nest-fail:
   have  @

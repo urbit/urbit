@@ -13,7 +13,7 @@ a=@
 TYPE
 
 a=$
-Face' [Mask "a"] Type'
+Face' (Mask "a") Type'
 
 BASE
 

@@ -13,7 +13,7 @@ a=1
 TYPE
 
 a=@ud
-Face' [Mask "a"] (Aura' "ud")
+Face' (Mask "a") (Aura' "ud")
 
 BASE
 

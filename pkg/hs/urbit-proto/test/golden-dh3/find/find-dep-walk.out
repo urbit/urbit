@@ -36,7 +36,7 @@ TYPE
         |=(_ {@ @})
     1
 {@ @}
-Face' [] (Cell' (Aura' "") (Cons' (Cons' (Cons' (Atom' 0 Sand "") (Face' [Mask "f"] (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura ""))))) (Cons' (Atom' 0 Sand "") (Face' [Mask "f"] (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura "")))))) (Atom' 1 Sand "ud")) (Aura ""))
+Cell' (Aura' "") (Cons' (Cons' (Cons' (Atom' 0 Sand "") (Face' (Mask "f") (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura ""))))) (Cons' (Atom' 0 Sand "") (Face' (Mask "f") (Lamb' (Atom' 0 Sand "") (Cell (Aura "") (Aura "")))))) (Atom' 1 Sand "ud")) (Aura "")
 
 BASE
 

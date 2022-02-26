@@ -206,9 +206,8 @@ lock = \case
     h -> [h]
   Gate' t s c -> Tsgr (lock s) $ Bchp (lock t) (shut . rest $ fmap hack c)
   --Mask' f x -> Ktts (Wung [Ally f]) (lock x)
-  Face' [] x -> lock x
-  Face' (Mask m : fs) x -> Ktts (Wung [Ally m]) (lock (Face' fs x))
-  Face' (Link ls : fs) x -> Ktts Wild (lock (Face' fs x))  -- FIXME ?
+  Face' (Mask m) x -> Ktts (Wung [Ally m]) (lock x)
+  Face' (Link ls) x -> Ktts Wild (lock x)  -- FIXME ?
   Noun' -> Bass Non
   Void' -> Bass Vod
   Type' -> Bass Typ
