@@ -8,7 +8,7 @@ import Data.Text (stripEnd)
 import Data.Void
 import Urbit.Atom (atomUtf8)
 
-import Practice.DependentHoon3 hiding (Line)
+import Practice.DependentHoon3 hiding (Line, chip)
 import Practice.Hoon2DependentHoon3
 import Practice.HoonCommon
 import Practice.HoonSyntax
@@ -496,6 +496,7 @@ instance Rolling Hoon where
     Wtpm hs -> running "?&" "==" "&(" ")" $ map roll hs
     Wtpt w h j -> Huge $ Palm "?@" [tank $ roll w, tank $ roll h, tank $ roll j]
     Wtts s h -> fixed "?=" "?=(" ")" [roll s, roll h]
+    Wtwt h j -> Huge $ Palm "??" [tank $ roll h, tank $ roll j]
     Wtzp h -> case roll h of
       Smol _ t x -> Smol Long (Palm "?!" [t]) ("!" <> x)
       Huge t -> Huge $ Palm "?!" [t]

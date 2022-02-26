@@ -92,6 +92,7 @@ data Hoon
   | Wtpm [Hoon]
   | Wtpt Wing Hoon Hoon
   | Wtts Skin Hoon
+  | Wtwt Hoon Hoon  -- ^ "rhetorical" test which must succeed at compile-time
   | Wtzp Hoon
   --
   | Zpzp
@@ -226,6 +227,7 @@ rune = choice
   , run  "?&" Wtpm hoon
   , r3   "?@" Wtpt wing hoon hoon
   , r2   "?=" Wtts skin hoon
+  , r2   "??" Wtwt hoon hoon
   , r1   "?!" Wtzp hoon
   ]
  where

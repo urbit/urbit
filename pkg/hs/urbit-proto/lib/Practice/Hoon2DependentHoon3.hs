@@ -22,7 +22,7 @@ open = \case
   Bccn cs -> do
     let fork = Bass $ Fok [a | (a, _, _) <- cs] "" -- FIXME aura
     let pats = [(Adam Rock a au, s) | (a, au, s) <- cs]
-    open $ Bccl fork [Wthp [Axis 3] pats]
+    open $ Bccl fork [Kthp (Bass Typ) $ Wthp [Axis 3] pats]
   Bcdt s m -> Left "unsupported $." --cook s m unmask open (flip Gold)
   Bchp s t -> Gat <$> open s <*> open t
   Bckt{} -> Left "unsupported $^"
@@ -86,15 +86,21 @@ open = \case
   Tssg{} -> Left "unsupported =~"
   --
   Wtbr{} -> Left "unsupported ?|"
-  Wthp{} -> Left "unsupported ?-"
-  Wtcl{} -> Left "unsupported ?:"
-  Wtdt{} -> Left "unsupported ?."
-  Wtkt{} -> Left "unsupported ?^"
+  Wthp w [] -> Left "empty ?-"
+  Wthp w [(s, h)] -> Rhe <$> open (Wtts s $ Wung w) <*> open h
+  Wthp w ((s, h):cs) ->
+    Tes <$> open (Wtts s $ Wung w) <*> open h <*> open (Wthp w cs)
+  Wtcl h j k -> Tes <$> open h <*> open j <*> open k
+  Wtdt h j k -> open $ Wtcl j h k
+  -- we possibly want to move "^" from being a type to being a skin exclusively
+  Wtkt w h j -> open $ Wtcl (Wtts (Clhp Wild Wild) (Wung w)) h j
   Wtgl{} -> Left "unsupported ?>"
   Wtgr{} -> Left "unsupported ?<"
   Wtpm{} -> Left "unsupported ?&"
-  Wtpt{} -> Left "unsupported ?@"
-  Wtts{} -> Left "unsupported ?="
+  -- this suggests we probably want a skin notation for "any atom"; "@@"?
+  Wtpt w h j -> open $ Wtcl (Wtts (Clhp Wild Wild) (Wung w)) j h
+  Wtts s h -> Fis <$> flay s <*> open h
+  Wtwt h j -> Rhe <$> open h <*> open j
   Wtzp{} -> Left "unsupported ?!"
   --
   Zpzp -> Left "unsupported !!"
@@ -146,6 +152,9 @@ shut = \case
     Cltr hs -> Cncl (shut c) hs
     h -> Cnhp (shut c) h
   Equ c d -> Dtts (shut c) (shut d)
+  Tes c d e -> Wtcl (shut c) (shut d) (shut e)
+  Rhe c d -> Wtwt (shut c) (shut d)
+  Fis p c -> Wtts (flap p) (shut c)
   --
   Bas b -> Bass b
   Cll c d -> case shut d of
@@ -197,6 +206,9 @@ lock = \case
     Clkt h j k l -> Cncl (lock x) [h, j, k, l]
     Cltr hs -> Cncl (lock x) hs
     h -> Cnhp (lock x) h
+  Equl' x y -> Dtts (lock x) (lock y)
+  Test' x y z -> Wtcl (lock x) (lock y) (lock z)
+  Fish' f x -> Wtts (flap $ pond f) (lock x)
   Look' x (Leg a) -> Tsgl (Wung [Axis a]) (lock x)
   --
   Aura' au -> Bass (Aur au)

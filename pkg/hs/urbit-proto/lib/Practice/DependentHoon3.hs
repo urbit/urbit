@@ -1,12 +1,11 @@
 module Practice.DependentHoon3 where
 
-import ClassyPrelude hiding (even, find)
+import ClassyPrelude hiding (even, find, join)
 
-import Control.Monad.Except
-import Control.Monad.Reader
-import Control.Monad.State
-import Data.Function ((&))
-import Data.Set (isSubsetOf)
+import Control.Monad.Except hiding (join)
+import Control.Monad.Reader hiding (join)
+import Control.Monad.State hiding (join)
+import Data.Set (isSubsetOf, toAscList)
 import Data.Void
 
 import Practice.HoonCommon
@@ -41,6 +40,9 @@ data Soft
   | Plu Soft
   | Sla Soft Soft
   | Equ Soft Soft
+  | Tes Soft Soft Soft
+  | Rhe Soft Soft
+  | Fis Pelt Soft
   --
   | Bas Bass
   | Cll Soft Soft
@@ -108,8 +110,9 @@ data Code a
   --
   | Plus (Code a)
   | Slam (Code a) (Code a)
+  | Equl (Code a) (Code a)
   | Test (Code a) (Code a) (Code a)
-  | Fish Fish Axis  -- Do not allow direct fishing for arm pulls; cf 140?
+  | Fish Fish (Code a)
   --
   | Aura Aura
   | Fork (Set Atom) Aura
@@ -124,6 +127,7 @@ data Code a
   | Push (Code a) (Code a)
   deriving (Functor, Foldable, Traversable, Generic)
 
+deriving instance Eq   a => Eq   (Code a)
 deriving instance Show a => Show (Code a)
 
 -- | Air-chilled wing. In the course of type checking, a Code with ordinary
@@ -267,6 +271,9 @@ data Base a
   --
   | Plus' (Base a)
   | Slam' (Base a) (Base a)
+  | Equl' (Base a) (Base a)
+  | Test' (Base a) (Base a) (Base a)
+  | Fish' Fish (Base a)
   | Look' (Base a) Stub
   --
   | Aura' Aura
@@ -279,13 +286,19 @@ data Base a
   | Type'
   deriving (Functor, Foldable, Traversable, Generic)
 
+deriving instance Eq a   => Eq   (Base a)
 deriving instance Show a => Show (Base a)
+
+-- | Shorthand for the boolean type, which is commonly used.
+pattern Flag' :: Base a
+pattern Flag' <- Fork' (toAscList -> [0, 1]) "f" where
+  Flag' = Fork' (setFromList [0, 1]) "f"
 
 
 -- Compile-time evaluator ------------------------------------------------------
 
 -- | Read a value back into code, with reference to the current level.
-loft :: Level -> Base a -> Code a
+loft :: Eq a => Level -> Base a -> Code a
 loft lvl = \case
   -- XX we should have some printout here if lvl < l, which is a serious
   -- invariant violation that should be more legible
@@ -309,6 +322,9 @@ loft lvl = \case
   --
   Plus' a -> Plus (loft lvl a)
   Slam' a b -> Slam (loft lvl a) (loft lvl b)
+  Equl' a b -> Equl (loft lvl a) (loft lvl b)
+  Test' a b c -> Test (loft lvl a) (loft lvl b) (loft lvl c)
+  Fish' f a -> Fish f (loft lvl a)
   Look' a s -> With (loft lvl a) $ Stub s
   --
   Aura' au -> Aura au
@@ -345,7 +361,7 @@ look s b = home s $ walk a b
 
 -- | Given a seminoun representing the subject, evaluate code into a seminoun
 -- product.
-eval :: Base a -> Code a -> Base a
+eval :: Eq a => Base a -> Code a -> Base a
 eval sub = \case
   Stub s -> look s sub
   Fore x -> Fore' x
@@ -368,6 +384,15 @@ eval sub = \case
       -- TODO replace with gold core thing
       Lamb' s c -> eval (Cons' s $ eval sub d) c
       b -> Slam' b (eval sub d)
+  Equl c d -> equl (eval sub c) (eval sub d)
+  Test c d e -> go (eval sub c)
+   where
+    go = \case
+      Face' _ b -> go b
+      Atom' 0 -> eval sub d
+      Atom' 1 -> eval sub e
+      x      -> Test' x (eval sub d) (eval sub e)  -- Laziness!
+  Fish f c -> fish f (eval sub c)
   --
   Aura au -> Aura' au
   Fork as au -> Fork' as au
@@ -380,11 +405,80 @@ eval sub = \case
   --
   With c d -> eval (eval sub c) d
   Push c d -> eval (Cons' sub $ eval sub c) d
+ where
+  -- How do we emulate nocklike equality of functions and nouns at compile time?
+  -- Answer: if your program depends on nocklike behavior, the evaluator gets
+  -- stuck on the relevant term. That is,
+  --
+  --    .=  1  |=  x  x
+  --
+  -- "evaluates to itself" at compile time. This is a legitimate thing to do
+  -- because "evaluation" here is a stand in for the equivalence relation on
+  -- terms that the compiler uses to decide nesting, that is, x ~ y iff eval x
+  -- == eval y. We are free to choose any equivalence relation finer than
+  -- extensional/behavioral equivalence. Indeed, Dependent Haskell plans to use
+  -- *textual equality*. In this way, the runtime evaluator is allowed to be
+  -- "more fully featured" than the compile time one, without loss of integrity.
+  equl c d = case out c d of
+    Just True  -> Atom' 0
+    Just False -> Atom' 1
+    Nothing    -> Equl' c d
+   where
+    -- Return True or False if we have a difinitive answer; Nothing if we should
+    -- get stuck. It is NEVER okay to return a different boolean from runtime.
+    -- It is always okay to return Nothing, though of course the more often you
+    -- do that the fewer the programs that will type check.
+    out c d = case (c, d) of
+      -- recall that the seminoun may have spurious faces on termlikes
+      -- XX uh oh, but this is not legit to do for type equl. Uhh, I think
+      -- maybe ^=/$= unification may make nock generation impossible??
+      -- Uh further thought, I think we can actually solve by checking if the
+      -- think we're ^=ing works to $? Very cool.
+      (Face' _ b, c) -> out b c
+      (b, Face' _ c) -> out b c
+      -- !!!
+      -- modulo the problems with faces above, I think we can now just do this
+      -- the only thing blocking us was grit and aura in Atom'. Specifically,
+      -- our equivalence relation here is coarse precisely where mint fails
+      -- to be injective (and on unknowns/stuck values, of course)
+      _ | c == d    -> Just True
+        | otherwise -> Nothing
+      {-
+      (Atom' a, Atom' b) -> Just (a == b)
+      -- TODO presumes types always encode as cells
+      (Atom'{}, _) -> Just False
+      (_, Atom'{}) -> Just False
+      (Cons' c d, Cons' c' d') -> (&&) <$> out c c' <*> out d d'
+      -- sure I can do textual equality for you
+      -- this is actually an example of where FitSame is WRONG for this
+      -- it will do eta-beta, which is MORE EQUALITIES than you'll get from .=
+      -- at runtime, so it is NOT OKAY to call it here.
+      (Lamb' s c, Lamb' s' c') -> (&& (c == c')) <$> out s s'
+      -}
+
+  fish h b =case out h b of
+    Just True  -> Atom' 0
+    Just False -> Atom' 1
+    Nothing    -> Fish' h b
+   where
+    out h b = case (h, b) of
+      (Tuna, _) -> Just True
+      (_, Face' _ b) -> out h b
+      (Sole a, Atom' b)
+        | a == b    -> Just True
+        | otherwise -> Just False
+      (Sole a, Cons'{}) -> Just False
+      (Sole{}, _) -> Nothing
+      (Char{}, Atom'{}) -> Just False
+      (Char h j, Cons' b c) -> (&&) <$> out h b <*> out j c
+      -- I guess I could also let you see that gates are cells, but I don't want
+      -- to right now?
+      (Char{}, _) -> Nothing
 
 -- | Take typechecking result, which will lack Fore and evaluate it against
 -- subject with arbitrary Fores. In a subtyping language, this would not be
 -- necessary.
-evil :: Base a -> Code Void -> Base a
+evil :: Eq a => Base a -> Code Void -> Base a
 evil ken = eval ken . vacuous
 
 
@@ -415,35 +509,35 @@ bailFail = bail BailFail
 -- recurses deeper into its operations, it pushes these descriptions to a stack
 -- so they can serve as breadcrumbs in error messages.
 data Act
-  =                     ActRoot
-  | forall a. Show a => ActFits Fit (Type a) (Type a)
-  | forall a. Show a => ActFind (Con a) Wing
-  | forall a. Show a => ActMeld (Base a) (Base a)
-  | forall a. Show a => ActFuse (Con a) (Base a, Type a) Pelt
-  | forall a. Show a => ActCrop (Con a) (Type a) Pelt
-  |                     ActFish Pelt
-  | forall a. Show a => ActToil (Con a) Fit Pelt (Type a)
-  | forall a. Show a => ActRomp (Con a) Pelt
-  | forall a. Show a => ActWork (Con a) Fit Soft (Type a)
-  | forall a. Show a => ActPlay (Con a) Soft
-  |                     ActDone
+  =                    ActRoot
+  | forall a. Var a => ActFits Fit (Type a) (Type a)
+  | forall a. Var a => ActFind (Con a) Wing
+  | forall a. Var a => ActMeld (Base a) (Base a)
+  | forall a. Var a => ActFuse (Con a) (Base a, Type a) Pelt
+  | forall a. Var a => ActCrop (Con a) (Type a) Pelt
+  |                    ActFish Pelt
+  | forall a. Var a => ActToil (Con a) Fit Pelt (Type a)
+  | forall a. Var a => ActRomp (Con a) Pelt
+  | forall a. Var a => ActWork (Con a) Fit Soft (Type a)
+  | forall a. Var a => ActPlay (Con a) Soft
+  |                    ActDone
 
 -- | Compiler errors.
 data Fail
   -- | Invariant violation: unknown seminoun on exiting tisgar.
-  = forall a. Show a => PareFree Rump (Base (Hop Rump a))
+  = forall a. Var a => PareFree Rump (Base (Hop Rump a))
   -- | Cannot locate the given ally in the subject.
-  | forall a. Show a => FindFail Term (Type a)
+  | forall a. Var a => FindFail Term (Type a)
   -- | The two types do not {nest, cast, equal each other}.
-  | forall a. Show a => FitsFail Fit (Type a) (Type a)
+  | forall a. Var a => FitsFail Fit (Type a) (Type a)
   -- | While fusing, cannot merge equality onto seminoun.
-  | forall a. Show a => MeldFail (Base a) (Base a)
+  | forall a. Var a => MeldFail (Base a) (Base a)
   -- | During fuse, pattern not compatible with expected type.
-  | forall a. Show a => FuseFail (Base a, Type a) Pelt
+  | forall a. Var a => FuseFail (Base a, Type a) Pelt
   -- | It is not acceptable to cast/nest in pelts you are fishing with.
   | FuseFits Fit
   -- | During crop, pattern not compatible with expected type.
-  | forall a. Show a => CropFail (Type a) Pelt
+  | forall a. Var a => CropFail (Type a) Pelt
   -- | It is not acceptable to cast/nest in pelts you are fishing with.
   | CropFits Fit
   -- | Equality patterns not supported in fish. XX
@@ -451,13 +545,17 @@ data Fail
   -- | Pike is less delicious to eat than the other kinds of fish.
   | FishPike Pelt Pelt
   -- | Your pelt performs a test, which is not permitted in this context.
-  | forall a. Show a => ToilFish Pelt (Type a)
+  | forall a. Var a => ToilFish Pelt (Type a)
   -- | Your pelt performs a test, which is not permitted in this context.
   | RompPart Soft
   -- | Please add extra casts/nests to your pelt; we cannot infer the type.
   | RompWild Pelt
   -- | You are trying to slam something which is not a gate.
-  | forall a. Show a => NeedGate (Type a)
+  | forall a. Var a => NeedGate (Type a)
+  -- | A rhetorical question had a non-rhetorical answer.
+  | forall a. Var a => WorkMiss (Base a) Soft
+  -- | A rhetorical question had a non-rhetorical answer.
+  | forall a. Var a => PlayMiss (Base a) Soft
   | BailNote Text  -- ^ failure with note
   | BailFail  -- ^ unspecified failure
 
@@ -513,6 +611,7 @@ runTrace tac = (tree zipper, res)
 
 insertTree :: ActTree -> ActTree -> ActTree
 insertTree inner _outer@(ActTree a cs) = ActTree a (inner : cs)
+insertTree _ ActNote{} = error "I can't be bothered to write safe printf code"
 
 instance MonadCheck (ExceptT Fail (State [ActTree])) where
   act a m = do
@@ -529,6 +628,7 @@ traceToStack :: ActTree -> [Act]
 traceToStack = reverse . go
  where
   go = \case
+    ActNote _ -> []
     ActTree ActDone [] -> []
     ActTree a [] -> [a]
     ActTree ActRoot (t:_) -> go t
@@ -555,7 +655,7 @@ hide Con{lvl, sut, ken} x = Con
   }
 
 -- | Grow the subject without knowledge
-hide' :: Con a -> Type a -> Con a
+hide' :: Eq a => Con a -> Type a -> Con a
 hide' Con{lvl, sut, ken} t = Con
   { lvl = lvl + 1
   , sut = Cell' sut ken $ loft (lvl + 1) t
@@ -563,7 +663,7 @@ hide' Con{lvl, sut, ken} t = Con
   }
 
 -- | Grow the subject with knowledge
-shew :: Con a -> Base a -> Type a -> Con a
+shew :: Eq a => Con a -> Base a -> Type a -> Con a
 shew Con{lvl, sut, ken} b t = Con
   { lvl = lvl + 1
   , sut = Cell' sut ken $ loft (lvl + 1) t
@@ -582,6 +682,9 @@ grow = \case
   --
   Plus' x -> Plus' (grow x)
   Slam' x y -> Slam' (grow x) (grow y)
+  Equl' x y -> Equl' (grow x) (grow y)
+  Test' x y z -> Test' (grow x) (grow y) (grow z)
+  Fish' f x -> Fish' f (grow x)
   Look' x st -> Look' (grow x) st
   --
   Aura' au -> Aura' au
@@ -607,6 +710,9 @@ grow = \case
     --
     Plus c -> Plus (crow c)
     Slam c d -> Slam (crow c) (crow d)
+    Equl x y -> Equl (crow x) (crow y)
+    Test x y z -> Test (crow x) (crow y) (crow z)
+    Fish f x -> Fish f (crow x)
     --
     Aura au -> Aura au
     Fork as au -> Fork as au
@@ -622,7 +728,7 @@ grow = \case
 
 -- | On exiting a tisgar, pare down the type to remove any opaque references to
 -- the inner subject, but actually it's an invariant violation for any to exist.
-pare :: (MonadCheck m, Show a) => Base (Hop Rump a) -> m (Base a)
+pare :: (MonadCheck m, Var a) => Base (Hop Rump a) -> m (Base a)
 pare bas = go bas
  where
   go = \case
@@ -636,6 +742,9 @@ pare bas = go bas
     --
     Plus' x -> Plus' <$> go x
     Slam' x y -> Slam' <$> go x <*> go y
+    Equl' x y -> Equl' <$> go x <*> go y
+    Test' x y z -> Test' <$> go x <*> go y <*> go z
+    Fish' f x -> Fish' f <$> go x
     Look' x st -> flip Look' st <$> go x
     --
     Aura' au    -> pure $ Aura' au
@@ -660,6 +769,9 @@ pare bas = go bas
     --
     Plus c -> Plus <$> care c
     Slam c d -> Slam <$> care c <*> care d
+    Equl c d -> Equl <$> care c <*> care d
+    Test c d e -> Test <$> care c <*> care d <*> care e
+    Fish f c -> Fish f <$> care c
     --
     Aura au -> pure $ Aura au
     Fork as au -> pure $ Fork as au
@@ -679,7 +791,7 @@ pare bas = go bas
 --
 -- The only difference between dependent and nondependent cells here is that we
 -- loft below at lvl, rather than lvl + 1. XX think hard about this and test!
-cell' :: Con a -> Base a -> Base a -> Base a
+cell' :: Eq a => Con a -> Base a -> Base a -> Base a
 cell' Con{lvl, ken} l r = Cell' l ken $ loft lvl r
 
 face :: [Face] -> Code a -> Code a
@@ -735,6 +847,14 @@ pole a = \case
 --------------------------------------------------------------------------------
 
 -- The calculus of types -------------------------------------------------------
+
+-- | Try to calculate union of types
+join :: (MonadCheck m, Var a) => Type a -> Type a -> m (Type a)
+join _ _ = bail $ BailNote "join: Not implemented. Please put a ^- on your ?:"
+
+-- | Try to calculate intersection of types
+meet :: (MonadCheck m, Var a) => Type a -> Type a -> m (Type a)
+meet = undefined
 
 -- | Mode for fit-checking in `fits`: nest, cast, or exact equality.
 data Fit
@@ -847,7 +967,7 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
 
   -- Elimination forms. Note that since Base, we will only encounter these
   -- "stuck" on some variable, possibly nested.
-  (Plus' v, Plus' w) -> fits fit v w
+  (Plus' v, Plus' w) -> fits FitSame v w
   (Plus'{}, _) -> fitsFail
   (_, Plus'{}) -> fitsFail
 
@@ -857,6 +977,26 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
   (Slam' v w, Slam' v' w') -> do fits fit v v'; fits FitSame w w'
   (Slam'{}, _) -> fitsFail
   (_, Slam'{}) -> fitsFail
+
+  (Equl' v w, Equl' v' w') -> asum
+    [ fits FitSame v v' >> fits FitSame w w'
+    , fits FitSame v w' >> fits FitSame w v'
+    ]
+  (Equl'{}, _) -> fitsFail
+  (_, Equl'{}) -> fitsFail
+
+  (Test' u v w, Test' u' v' w') -> do
+    fits FitSame u u'
+    fits fit v v'
+    fits fit w w'
+  (Test'{}, _) -> fitsFail
+  (_, Test'{}) -> fitsFail
+
+  (Fish' f v, Fish' f' v') -> do
+    when (f /= f') fitsFail
+    fits FitSame v v'
+  (Fish'{}, _) -> fitsFail
+  (_, Fish'{}) -> fitsFail
 
   -- The assumption is that these are fully evaluated. This rules out Looks
   -- stacked on top of Looks, as well of Looks on top of cells. Accordingly the
@@ -1015,10 +1155,10 @@ repo = \case
 -- | Resolve the names in a Wing, producing the type of that part of the subject
 -- and an axial representation of the wing.
 find :: forall a m. (MonadCheck m, Var a)
-     => Con a -> Wing -> m (Stub, Type a)
+     => Con a -> Wing -> m (Stub, Base a, Type a)
 find sub@Con{lvl, sut, ken} win = act (ActFind sub win) do
-  (st, Con{sut}) <- fond sub win
-  pure (st, sut)
+  (st, Con{ken=b, sut=t}) <- fond sub win
+  pure (st, b, t)
  where
   fond :: Con a -> Wing -> m (Stub, Con a)
   fond con@Con{lvl, sut, ken} = \case
@@ -1130,13 +1270,21 @@ fish fis = act (ActFish fis) case fis of
   pike h Tuna = pure h
   pike (Char h j) (Char k l) = Char <$> pike h k <*> pike j l
   pike (Sole a) (Sole b) | a == b = pure $ Sole a
-  pike (Sole _) _ = bailFail
-  pike _ (Sole _) = bailFail
+  pike Sole{} _ = bailFail
+  pike _ Sole{} = bailFail
 
   -- product of fishes
   char :: Fish -> Fish -> Fish
   char Tuna Tuna = Tuna
   char h    j    = Char h j
+
+-- | Convert a fish back into a pelt. The name is meant to invoke releasing a
+-- fish after catching it.
+pond :: Fish -> Pelt
+pond = \case
+  Tuna -> Punt
+  Sole a -> Part (Atm a Sand (heuAura a))
+  Char h j -> Pair (pond h) (pond j)
 
 {-
 -- | Merge pelt onto seminoun.
@@ -1201,21 +1349,26 @@ crop con@Con{lvl, ken} t pet = act (ActCrop con t pet) case pet of
   Peer _ -> pure Void'
   Part s -> do
     -- seems bad that this check duplicates fuse
-    work con FitNest s t
-    case (s, repo t) of
-      (Atm a g au, Fork' as au') -> pure $ Fork' (deleteSet a as) au'  -- XX au
+    x <- work con FitNest s t
+    case (evil ken x, repo t) of
+      (Atom' a, Fork' as au) ->
+        let as' = deleteSet a as
+        in pure if as' == mempty
+          then Void'
+          else Fork' as' au
       (_, t) -> pure t
   Pair p q -> case repo t of
     Cell' t s c -> do
-      t' <- crop con t p
-      u <- crop con (eval s c) q
-      fis <- fish q
-      let c' = Test (Fish fis 3) (loft lvl u) c
-      pure $ Cell' t' s c'
+      crop con t p >>= \case
+        Void' -> pure Void'
+        t' -> do
+          u <- crop con (eval s c) q
+          fis <- fish q
+          let c' = Test (Fish fis $ Stub $ Leg 3) (loft lvl u) c
+          pure $ Cell' t' s c'
     _ -> bail (CropFail t pet)
   Pons p q -> do t <- crop con t q; crop con t p
   Pest _ _ -> bail (FuseFits FitNest)
-
 
 -- | Given a pattern, verify that it is compatibile with the given type.
 -- Produce a new, broader type corresponding to any upcasts we may have made.
@@ -1278,6 +1431,23 @@ romp con@Con{ken, lvl} pet = act (ActRomp con pet) case pet of
 
 -- Type checking ---------------------------------------------------------------
 
+-- | Type check the condition of a Test, producing its Code as well as the
+-- possibly refined subjects for the branches to be checked against.
+chip :: (MonadCheck m, Var a)
+     => Con a -> Soft -> m (Code Void, Con a, Con a)
+chip con = \case
+  Fis p (Wng w) -> do
+    (st, b, t) <- find con w
+    (tb, tt) <- fuse con (b, t) p
+    ft <- crop con t p
+    h <- fish p
+    -- XX TODO FIXME rezip the find zipper
+    pure (Fish h $ Stub st, con, con)
+
+  sof -> do
+    x <- work con FitNest sof Flag'
+    pure (x, con, con)
+
 -- | Given subject type and knowledge, verify that code has result type.
 -- Since the expected result type is known in this mode, we can lighten the
 -- user's annotation burden, e.g. on |= argument. Read about "bidirectional type
@@ -1337,6 +1507,22 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
     Plu{} -> playFits
     Sla{} -> playFits
     Equ{} -> playFits
+    Fis{} -> playFits  -- not inside Tes
+
+    Tes c d e -> do
+      (x, tru, fal) <- chip con c
+      y <- work tru fit d typ
+      z <- work fal fit e typ
+      pure (Test x y x)
+
+    -- "rhetorical" tests are required to evaluate to true at compile time.
+    -- this will be a rigorous exercise of the crop/fuse system and will be
+    -- our mechanism of exhaustiveness checking.
+    Rhe c d -> do
+      x <- work con FitNest c Flag'
+      case evil ken x of
+        Atom' 0 -> work con fit d typ
+        b -> bail (WorkMiss b d)
 
     -- likewise with types
     Bas{} -> playFits
@@ -1372,7 +1558,7 @@ play :: forall a m. (MonadCheck m, Var a)
      => Con a -> Soft -> m (Code Void, Type a)
 play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
   Wng w -> do
-    (st, t) <- find con w
+    (st, _, t) <- find con w
     pure (Stub st, t)
 
   Atm a Rock t -> pure (Atom a, Fork' (singleton a) t)
@@ -1412,7 +1598,32 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
     y <- work con FitNest d at
     pure (Slam x y, eval (Cons' s $ evil ken y) rc)
 
-  Equ c d -> undefined
+  Equ c d -> do
+    (x, _) <- play con c
+    (y, _) <- play con d
+    pure (Equl x y, Flag')
+
+  Tes c d e -> do
+    (x, tru, fal) <- chip con c
+    (y, t) <- play tru d
+    (z, u) <- play fal e
+    r <- join t u
+    pure (Test x y z, r)
+
+  -- "rhetorical" tests are required to evaluate to true at compile time.
+  -- this will be a rigorous exercise of the crop/fuse system and will be
+  -- our mechanism of exhaustiveness checking.
+  Rhe c d -> do
+    x <- work con FitNest c Flag'
+    case evil ken x of
+      Atom' 0 -> play con d
+      b -> bail (PlayMiss b d)
+
+  -- For Fis not inside Tes
+  Fis p c -> do
+    f <- fish p
+    (x, _) <- play con c
+    pure (Fish f x, Flag')
 
   Bas (Aur au) -> pure (Aura au, Type')
 
@@ -1441,11 +1652,11 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
   Bas Typ -> pure (Type, Type')
 
   Wit c d -> do
-      (x, t) <- play con c
-      let kan = evil ken x
-      (y, u) <- play Con{lvl=0, sut=(grow t), ken=(grow kan)} d
-      ret <- pare u
-      pure (With x y, ret)
+    (x, t) <- play con c
+    let kan = evil ken x
+    (y, u) <- play Con{lvl=0, sut=(grow t), ken=(grow kan)} d
+    ret <- pare u
+    pure (With x y, ret)
 
   Pus c d -> do
     (x, t) <- play con c
@@ -1479,6 +1690,9 @@ rest = \case
   --
   Plus c -> Plu (rest c)
   Slam c d -> Sla (rest c) (rest d)
+  Equl c d -> Equ (rest c) (rest d)
+  Test c d e -> Tes (rest c) (rest d) (rest e)
+  Fish h c -> Fis (pond h) (rest c)
   --
   Aura au -> Bas (Aur au)
   Fork as "f" | as == setFromList [0, 1] -> Bas Flg
