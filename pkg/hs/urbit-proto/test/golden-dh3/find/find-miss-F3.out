@@ -20,6 +20,22 @@ ERROR
 
 
           play:
+          lvl   0
+          sut   *
+          ----
+          code  a=p=1
+
+          play:
+          lvl   0
+          sut   *
+          ----
+          code  p=1
+
+          nest:
+          have  p=@ud
+          need  $
+
+          play:
           lvl   1
           sut   {* a=p=@ud}
           ----

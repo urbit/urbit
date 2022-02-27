@@ -511,6 +511,7 @@ bailFail = bail BailFail
 data Act
   =                    ActRoot
   | forall a. Var a => ActFits Fit (Type a) (Type a)
+  | forall a. Var a => ActSeal (Con a) (Line a)
   | forall a. Var a => ActFind (Con a) Wing
   | forall a. Var a => ActMeld (Base a) (Base a)
   | forall a. Var a => ActFuse (Con a) (Base a, Type a) Pelt
@@ -526,6 +527,8 @@ data Act
 data Fail
   -- | Invariant violation: unknown seminoun on exiting tisgar.
   = forall a. Var a => PareFree Rump (Base (Hop Rump a))
+  -- | Invariant violation: malformed find zipper. Type and semi out of sync.
+  | forall a. Var a => SealSync (Con a) [SemiLayer a] [TypeLayer a]
   -- | Cannot locate the given ally in the subject.
   | forall a. Var a => FindFail Term (Type a)
   -- | The two types do not {nest, cast, equal each other}.
@@ -546,16 +549,14 @@ data Fail
   | FishPike Pelt Pelt
   -- | Your pelt performs a test, which is not permitted in this context.
   | forall a. Var a => ToilFish Pelt (Type a)
-  -- | Your pelt performs a test, which is not permitted in this context.
-  | RompPart Soft
   -- | Please add extra casts/nests to your pelt; we cannot infer the type.
   | RompWild Pelt
   -- | You are trying to slam something which is not a gate.
   | forall a. Var a => NeedGate (Type a)
   -- | A rhetorical question had a non-rhetorical answer.
-  | forall a. Var a => WorkMiss (Base a) Soft
+  | forall a. Var a => WorkMiss Soft (Base a)
   -- | A rhetorical question had a non-rhetorical answer.
-  | forall a. Var a => PlayMiss (Base a) Soft
+  | forall a. Var a => PlayMiss Soft (Base a)
   | BailNote Text  -- ^ failure with note
   | BailFail  -- ^ unspecified failure
 
@@ -566,7 +567,7 @@ data Note
   | forall a. Var a => NoteCode Text (Code a)
 
 instance Semigroup Fail where
-  f <> _ = f  -- report first failure
+  _ <> f = f  -- report last failure in fallback list
 
 instance Monoid Fail where
   mempty = BailNote "mempty"
@@ -1092,44 +1093,64 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
 -- | Zipper on the subject to return from find. That way if you edit the subject
 -- at that point you can put it back together.
 data Line a = Line
-  { llv :: Level
-  , lem :: Base a
+  { lem :: Base a
   , lyt :: Type a
   , sez :: [SemiLayer a]
   , tez :: [TypeLayer a]
   }
+  deriving Show
 
 data SemiLayer a
   = SeL (Base a)           -- ^ [_ b]
   | SeR (Base a)           -- ^ [b _]
-  | SeF [Face]             -- ^ f=_
+  deriving Show
 
 data TypeLayer a
-  = TyL (Base a) (Code a)  -- ^ =>  b  {_ c}
-  | TyR (Base a) (Base a)  -- ^ =>  c  {b _}
-  | TyF [Face]             -- ^ f=_
+  = TyL (Base a) (Code a)  -- ^ {_ [b]c}
+  | TyR (Base a)           -- ^ {b _}
+  | TyF Face               -- ^ f=_
+  deriving Show
 
 -- TODO
 -- 1. Write seal :: Line a -> Con a
 -- 2. Edit find to return a Line
 -- 3. Write crop and fuse.
 
-{-
-seal :: Line a -> Con a
-seal Line{llv, lem, lyt, sez, tez} = case (sez, tez) of
-  ([], []) -> Con{lvl=llv, ken=lem, sut=lyt}
-  (sel:sez, _) -> case sel of
-    SeL b -> seal Line{llv, lem=(Cons' lem b), lyt, sez, tez}
-    SeR b -> seal Line{llv, lem=(Cons' b lem), lyt, sez, tez}
-    SeF f -> seal Line{llv, lem=(Face' f lem), lyt, sez, tez}
-  (_, tel:tez) -> case tel of
-    -- XX we should maybe do simul traverse, eta beta to inline new seminoun
-    -- into the right of the cell type. In Cell-Rail hoon, Rails become Cells
-    -- here.
-    TyL s c -> seal Line{llv, lem, lyt=(Cell' lyt s c), sez, tez}
-    TyR b   -> seal Line{llv, lem, lyt=(Cell' b lyt),   sez, tez}  -- XX ?
-    TyF f   -> seal Line{llv, lem, lyt=(face' f lyt),   sez, tez}
--}
+-- | Close up the find zipper, producing a refined subject, respecting deps.
+-- Invariant: You may only do this if the type (`lyt`) you supply here is a
+-- subtype of the one you get from find. That is, this function is appropriate
+-- for crop/fuse but not for Edit.
+--
+-- What's the difference? Consider a subject of type {@ ?:((even +3) ^ @)}. If
+-- the @ in the head is refined to $1, it is still valid to form back up the
+-- dependent cell. On the other hand, if the type of the head is changed to
+-- (list term), the putative dependent cell type will fail to type check,
+-- because one cannot ask whether a list is even. Accordingly, the cell must
+-- be changed to non-dependent in this case. Since the refinements made by
+-- crop/fuse always pass to subtypes, they use this function, while Edit uses
+-- the other function (not implemented yet).
+seal :: (MonadCheck m, Var a) => Con a -> Line a -> m (Base a, Type a)
+seal con lin@Line{lem, lyt, sez, tez} = act (ActSeal con lin) case (sez, tez) of
+  ([], []) -> pure (lem, lyt)
+  (_, TyF f : tez) -> seal con Line
+    { lem
+    , lyt = Face' f lyt
+    , sez
+    , tez
+    }
+  (SeL sr : sez, TyL clo tr : tez) -> seal con Line
+    { lem = Cons' sr lem
+    , lyt = Cell' lyt clo tr
+    , sez
+    , tez
+    }
+  (SeR sl : sez, TyR tl : tez) -> seal con Line
+    { lem = Cons' sl lem
+    , lyt = cell' con tl lyt
+    , sez
+    , tez
+    }
+  _ -> bail (SealSync con sez tez)
 
 -- | Strip faces and combine adjacent rumps.
 repo :: Var a => Base a -> Base a
@@ -1244,6 +1265,12 @@ derm = \case
   Pair p q -> [Link $ clap 2 (clop (derm p)) ++ clap 3 (clop (derm q))]
   Pons p q -> derm p ++ derm q
   Pest p _ -> derm p
+
+-- XX rename
+mred :: Face -> Pelt
+mred = \case
+  Mask m -> Peer m
+  Link _ -> Punt  -- XX FIXME
 
 -- | Verify that a pattern is irrefutable TODO.
 tofu :: MonadCheck m
@@ -1501,7 +1528,10 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
       -- playing c. But playing c could fail, so...
       _ <- toil con fit p (evil ken x) typ
       let fs = derm p
-      pure (face fs x)
+      asum
+        [ fits FitNest typ Type' >> pure (face fs x)
+        , pure x
+        ]
 
     -- elimination forms just use nest
     Plu{} -> playFits
@@ -1513,7 +1543,7 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
       (x, tru, fal) <- chip con c
       y <- work tru fit d typ
       z <- work fal fit e typ
-      pure (Test x y x)
+      pure (Test x y z)
 
     -- "rhetorical" tests are required to evaluate to true at compile time.
     -- this will be a rigorous exercise of the crop/fuse system and will be
@@ -1522,7 +1552,7 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
       x <- work con FitNest c Flag'
       case evil ken x of
         Atom' 0 -> work con fit d typ
-        b -> bail (WorkMiss b d)
+        b -> bail (WorkMiss c b)
 
     -- likewise with types
     Bas{} -> playFits
@@ -1585,7 +1615,11 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
     let fs = derm p
     -- XX think about under what circumstances we can strip the first face.
     -- It's annoying to have these lying around in the seminoun.
-    pure (face fs x, face' fs t')
+    -- XX confirm this is right
+    asum
+      [ fits FitNest t Type' >> pure (face fs x, face' fs t')
+      , pure (x, face' fs t')
+      ]
 
   Plu c -> do
     -- Following 140, we do not propagate aura.
@@ -1617,7 +1651,7 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
     x <- work con FitNest c Flag'
     case evil ken x of
       Atom' 0 -> play con d
-      b -> bail (PlayMiss b d)
+      b -> bail (PlayMiss c b)
 
   -- For Fis not inside Tes
   Fis p c -> do

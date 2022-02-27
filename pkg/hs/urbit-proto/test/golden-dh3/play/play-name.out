@@ -8,7 +8,7 @@ a=1
 
 COLD
 
-a=1
+1
 
 TYPE
 
@@ -16,4 +16,4 @@ a=@ud
 
 BASE
 
-a=1
+1

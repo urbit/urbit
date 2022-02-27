@@ -1,0 +1,81 @@
+PARSED
+
+%.  %b
+|=  color/?($114 $103 $98)
+?-(color %r "red", %g "green", %b "black")
+
+CODE
+
+%-  |=  color/?($114 $103 $98)
+    ?:  ?=(%r color)
+      "red"
+    ?:  ?=(%g color)
+      "green"
+    ??  ?=(%b color)
+    "black"
+%b
+
+ERROR
+
+  trace:  play:
+          lvl   0
+          sut   *
+          ----
+          code  %-  |=  color/?($114 $103 $98)
+                    ?:  ?=(%r color)
+                      "red"
+                    ?:  ?=(%g color)
+                      "green"
+                    ??  ?=(%b color)
+                    "black"
+                %b
+
+
+          play:
+          lvl   0
+          sut   *
+          ----
+          code  |=  color/?($114 $103 $98)
+                ?:  ?=(%r color)
+                  "red"
+                ?:  ?=(%g color)
+                  "green"
+                ??  ?=(%b color)
+                "black"
+
+
+          play:
+          lvl   1
+          sut   {* color=?($98 $103 $114)}
+          ----
+          code  ?:  ?=(%r color)
+                  "red"
+                ?:  ?=(%g color)
+                  "green"
+                ??  ?=(%b color)
+                "black"
+
+
+          play:
+          lvl   1
+          sut   {* color=?($98 $103 $114)}
+          ----
+          code  ?:  ?=(%g color)
+                  "green"
+                ??  ?=(%b color)
+                "black"
+
+
+          play:
+          lvl   1
+          sut   {* color=?($98 $103 $114)}
+          ----
+          code  ??  ?=(%b color)
+                "black"
+
+
+
+  play-miss:
+  test  ?=(%b color)
+  base  ?=(98 +1_3)
+
