@@ -288,7 +288,7 @@ instance Rolling Fail where
       [ ("sez ", tank $ rollSLs lvl sez, Leaf "")
       , ("tez ", tank $ rollTLs lvl tez, Leaf "")
       ]
-    FindFail f t -> Huge $ Stem ("find." <> f) "" []
+    FindFail f t -> Huge $ Stem ("find." <> printLimb f) "" []
       [ ("type", tank $ roll t, Leaf "")
       ]
     FitsFail f t u -> Huge $ Stem (tshow f <> "-fail:") "" []

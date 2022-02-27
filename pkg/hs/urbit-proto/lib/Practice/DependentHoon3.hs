@@ -530,7 +530,7 @@ data Fail
   -- | Invariant violation: malformed find zipper. Type and semi out of sync.
   | forall a. Var a => SealSync (Con a) [SemiLayer a] [TypeLayer a]
   -- | Cannot locate the given ally in the subject.
-  | forall a. Var a => FindFail Term (Type a)
+  | forall a. Var a => FindFail Limb (Type a)
   -- | The two types do not {nest, cast, equal each other}.
   | forall a. Var a => FitsFail Fit (Type a) (Type a)
   -- | While fusing, cannot merge equality onto seminoun.
@@ -1129,9 +1129,9 @@ data TypeLayer a
 -- be changed to non-dependent in this case. Since the refinements made by
 -- crop/fuse always pass to subtypes, they use this function, while Edit uses
 -- the other function (not implemented yet).
-seal :: (MonadCheck m, Var a) => Con a -> Line a -> m (Base a, Type a)
+seal :: (MonadCheck m, Var a) => Con a -> Line a -> m (Con a)
 seal con lin@Line{lem, lyt, sez, tez} = act (ActSeal con lin) case (sez, tez) of
-  ([], []) -> pure (lem, lyt)
+  ([], []) -> pure Con{lvl=lvl con, ken=lem, sut=lyt}
   (_, TyF f : tez) -> seal con Line
     { lem
     , lyt = Face' f lyt
@@ -1176,60 +1176,93 @@ repo = \case
 -- | Resolve the names in a Wing, producing the type of that part of the subject
 -- and an axial representation of the wing.
 find :: forall a m. (MonadCheck m, Var a)
-     => Con a -> Wing -> m (Stub, Base a, Type a)
-find sub@Con{lvl, sut, ken} win = act (ActFind sub win) do
-  (st, Con{ken=b, sut=t}) <- fond sub win
-  pure (st, b, t)
+     => Con a -> Wing -> m (Stub, Line a)
+find sub win = act (ActFind sub win) do
+  fond sub Line{lem=ken sub, lyt=sut sub, sez=[], tez=[]} win
  where
-  fond :: Con a -> Wing -> m (Stub, Con a)
-  fond con@Con{lvl, sut, ken} = \case
-    [] -> pure (Leg 1, con)
-    l:ls -> fond sub ls >>= \case
+  fond :: Con a -> Line a -> Wing -> m (Stub, Line a)
+  fond con lin@Line{lem, lyt, sez, tez} = \case
+    [] -> pure (Leg 1, lin)
+    l:ls -> fond con lin ls >>= \case
       -- (_, Arm{}) -> bail undefined  -- arm must occur leftmost
-      (Leg a, con) -> do
-        (st, con) <- limb con l
+      (Leg a, lin) -> do
+        (st, con) <- limb con lin l
         pure (pole a st, con)
 
-  limb :: Con a -> Limb -> m (Stub, Con a)
-  limb con = \case
-    Axis a -> (Leg a,) <$> axis con a
-    Ally f -> ally con f
+  limb :: Con a -> Line a -> Limb -> m (Stub, Line a)
+  limb con lin = \case
+    Axis a -> (Leg a,) <$> axis con lin a
+    Ally f -> ally con lin f
 
   -- XX what should meaningfully happen with lvl here? or should we strip it out
-  axis :: Con a -> Axis -> m (Con a)
-  axis con@Con{sut, ken} a = case (cut a, sut) of
-    (Nothing,     _)           -> pure con
-    (_,           Face' _ t)   -> axis con{sut=t} a
-    (Just (L, a), Cell' t _ _) -> axis con{sut=t, ken=(look (Leg 2) ken)} a
+  axis :: Con a -> Line a -> Axis -> m (Line a)
+  axis con lin@Line{lem, lyt, sez, tez} a = case (cut a, lyt) of
+    (Nothing, _) -> pure lin
+
+    (_, Face' f t) -> axis con lin
+      { lyt = t
+      , tez = TyF f : tez
+      }
+      a
+
+    (Just (L, a), Cell' tl s tr) -> axis con lin
+      { lem = look (Leg 2) lem
+      , lyt = tl
+      , sez = SeL (look (Leg 3) lem) : sez
+      , tez = TyL s tr : tez
+      }
+      a
+
     -- XX under what circumstances will it be the case that we have an equation
     -- for the value of the head, but this knowledge is not inlined into the tail?
-    (Just (R, a), Cell' _ s c) -> let hd = look (Leg 2) ken
-                                      tl = look (Leg 3) ken
-                                      ty = eval (Cons' s hd) c
-                                  in  axis con{sut=ty, ken=tl} a
+    (Just (R, a), Cell' tl s tr) -> axis con lin
+      { lem = r
+      , lyt = ty
+      , sez = SeR l : sez
+      , tez = TyR tl : tez
+      }
+      a
+     where
+      l = look (Leg 2) lem
+      r = look (Leg 3) lem
+      ty = eval (Cons' s l) tr
+
     -- XX an old note reads: "arguably for Liskov, should be Noun :("; rethink
-    (_,           _)           -> bailFail
+    (_, _) -> bail (FindFail (Axis a) lyt)
 
-  ally :: Var a => Con a -> Term -> m (Stub, Con a)
-  ally con@Con{sut} f = maybe (bail $ FindFail f sut) id $ lope con
+  ally :: Var a => Con a -> Line a -> Term -> m (Stub, Line a)
+  ally con lin@Line{lyt} f =
+    maybe (bail $ FindFail (Ally f) lyt) id $ lope con lin
    where
-    lope :: Con a -> Maybe (m (Stub, Con a))
-    lope con@Con{sut, ken} = case sut of
+    lope :: Con a -> Line a -> Maybe (m (Stub, Line a))
+    lope con lin@Line{lem, lyt, sez, tez} = case lyt of
       Face' (Mask m) t
-        | f == m    -> Just $ pure (Leg 1, con{sut=t})
+        | f == m    -> Just $ pure (Leg 1, lin{lyt=t, tez=TyF (Mask m) : tez})
         | otherwise -> Nothing
-      Face' (Link ls) t
-        | Just (a, fs) <- lookup f ls -> Just $ (Leg a,) <$> axis con a
-        | otherwise                   -> lope con{sut=t}
 
-      Cell' t s c -> asum
+      Face' (Link ls) t
+        | Just (a, fs) <- lookup f ls -> Just $ (Leg a,) <$> axis con lin a
+        | otherwise ->
+            lope con lin{lyt = t, tez = TyF (Link ls) : tez}
+
+      Cell' tl s tr -> asum
         -- NB: We look to the right first, because =+ now pushes to the right.
-        [ let hd = look (Leg 2) ken
-              tl = look (Leg 3) ken
-              ty = eval (Cons' s hd) c
-          in fmap (first (pole 3)) <$> lope con{sut=ty, ken=tl}
-        ,    fmap (first (pole 2)) <$> lope con{sut=t,  ken=(look (Leg 2) ken)}
+        [ fmap (first (pole 3)) <$> lope con lin
+          { lem = sr
+          , lyt = eval (Cons' s sl) tr
+          , sez = SeR sl : sez
+          , tez = TyR tl : tez
+          }
+        , fmap (first (pole 2)) <$> lope con lin
+          { lem = sl
+          , lyt = tl
+          , sez = SeL sr : sez
+          , tez = TyL s tr : tez
+          }
         ]
+       where
+        sl = look (Leg 2) lem
+        sr = look (Leg 3) lem
 
       -- Gold/Lead
 
@@ -1464,12 +1497,14 @@ chip :: (MonadCheck m, Var a)
      => Con a -> Soft -> m (Code Void, Con a, Con a)
 chip con = \case
   Fis p (Wng w) -> do
-    (st, b, t) <- find con w
-    (tb, tt) <- fuse con (b, t) p
-    ft <- crop con t p
+    (st, lin@Line{lem, lyt}) <- find con w
+    (tb, tt) <- fuse con (lem, lyt) p
+    tru <- seal con lin{lem=tb, lyt=tt}
+    ft <- crop con lyt p
+    fal <- seal con lin{lyt=ft}
     h <- fish p
     -- XX TODO FIXME rezip the find zipper
-    pure (Fish h $ Stub st, con, con)
+    pure (Fish h $ Stub st, tru, fal)
 
   sof -> do
     x <- work con FitNest sof Flag'
@@ -1588,8 +1623,8 @@ play :: forall a m. (MonadCheck m, Var a)
      => Con a -> Soft -> m (Code Void, Type a)
 play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
   Wng w -> do
-    (st, _, t) <- find con w
-    pure (Stub st, t)
+    (st, Line{lyt}) <- find con w
+    pure (Stub st, lyt)
 
   Atm a Rock t -> pure (Atom a, Fork' (singleton a) t)
 
