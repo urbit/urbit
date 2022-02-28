@@ -128,7 +128,7 @@
 ++  klr   klr:format
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
-++  on-init    (poke-link our.hid %dojo)
+++  on-init    (poke-link %$ our.hid %dojo)
 ::
 ++  prep
   |=  s=@tas
