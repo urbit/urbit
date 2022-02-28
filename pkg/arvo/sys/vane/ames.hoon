@@ -1424,6 +1424,20 @@
     |=  [=wire error=(unit tang)]
     ^+  event-core
     ::
+    ?:  ?=([%alien @ ~] wire)
+      ::  if we haven't received an attestation, ask again
+      ::
+      ?^  error
+        %-  (slog leaf+"ames: attestation timer failed: {<u.error>}" ~)
+        event-core
+      ?~  ship=`(unit @p)`(slaw %p i.t.wire)
+        %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
+        event-core
+      =/  ship-state  (~(get by peers.ames-state) u.ship)
+      ?:  ?=([~ %known *] ship-state)
+        event-core
+      (request-attestation u.ship)
+    ::
     =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
     ?~  res
       %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
@@ -1715,7 +1729,8 @@
   ++  on-trim  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
-  ::    Also attempts to discover keys and life on first request.
+  ::    Also requests key and life from Jael on first request.
+  ::    If talking to a comet, requests attestation packet.
   ::
   ++  enqueue-alien-todo
     |=  [=ship mutate=$-(alien-agenda alien-agenda)]
@@ -1734,20 +1749,30 @@
     =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
     ?:  already-pending
       event-core
-    ::  ask Jael for (non-comet) ship's life and keys
     ::
-    ?.  =(%pawn (clan:title ship))
-      ::  NB: we specifically look for this wire in +public-keys-give in
-      ::  Jael.  if you change it here, you must change it there.
-      ::
-      (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
-    ::  Request a comet's self-attesation by firing a sendkeys packet. If we're
-    ::  also a comet, send our self-attestation instead; this induces the same
-    ::  response, and thus saves a roundtrip.
+    ?:  =(%pawn (clan:title ship))
+      (request-attestation ship)
+    ::  NB: we specifically look for this wire in +public-keys-give in
+    ::  Jael.  if you change it here, you must change it there.
     ::
-    ?.  =(%pawn (clan:title our))
-      (send-blob | ship (sendkeys-packet ship))
-    (send-blob | ship (attestation-packet ship 1))
+    (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
+  ::  +request-attestation: helper to request attestation from comet
+  ::
+  ::    Comets will respond to any unknown peer with a self-attestation,
+  ::    so we either send a sendkeys packet (a dummy shut packet) or, if
+  ::    we're a comet, our own self-attestation, saving a roundtrip.
+  ::
+  ::    Also sets a timer to resend the request every 30s.
+  ::
+  ++  request-attestation
+    |=  =ship
+    ^+  event-core
+    =/  packet  ?.  =(%pawn (clan:title our))
+                  (sendkeys-packet ship)
+                (attestation-packet ship 1)
+    =.  event-core  (send-blob | ship packet)
+    =/  =wire  /alien/(scot %p ship)
+    (emit duct %pass wire %b %wait (add now ~s30))
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane,
