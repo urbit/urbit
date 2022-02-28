@@ -315,7 +315,7 @@
   =<  .(con +>)
   |:  $:,[[ses=@tas dev=source] con=_.]  ^+  con
   =+  xeno=se-subze-local:%_(con ses ses, dev dev)
-  xeno(ses ses.con, dev dev.con, bin (~(put by bin) ses dev.xeno))
+  xeno(ses ses.con, dev dev.con, bin (~(put by bin.xeno) ses dev.xeno))
 ::
 ++  se-subze-local
   ^+  .
