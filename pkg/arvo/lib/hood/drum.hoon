@@ -15,8 +15,7 @@
 +$  state-2  [%2 pith-2]
 ::
 +$  pith-5
-  $:  eel=(set gill:gall)                               ::  connect to
-      bin=(map @ source)                                ::  terminals
+  $:  bin=(map @ source)                                ::  terminals
   ==
 ::
 +$  pith-4
@@ -75,6 +74,7 @@
       off=@ud                                           ::  window offset
       kil=kill                                          ::  kill buffer
       inx=@ud                                           ::  ring index
+      eel=(set gill:gall)                               ::  connect to
       fug=(map gill:gall (unit target))                 ::  connections
       mir=(pair @ud stub)                               ::  mirrored terminal
   ==                                                    ::
@@ -205,12 +205,12 @@
   =?  old  ?=(%2 -.old)  [%4 [eel bin]:old]
   =?  old  ?=(%3 -.old)  [%4 [eel bin]:old]
   =?  old  ?=(%4 -.old)
-    :+  %5  eel.old
-    |^  (~(run by bin.old) source-4-to-5)
+    |^  5+(~(run by bin.old) source-4-to-5)
     ++  source-4-to-5
-      |=  s=source-4
+      |=  source-4
       ^-  source
-      s(fug (~(run by fug.s) |=(t=(unit target-4) (bind t target-4-to-5))))
+      =;  fug  [edg off kil inx eel.old fug mir]
+      (~(run by fug) |=(t=(unit target-4) (bind t target-4-to-5)))
     ::
     ++  target-4-to-5
       |=  t=target-4
