@@ -8,7 +8,7 @@ import {
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import React, { useCallback } from 'react';
-import { useHovering } from '~/logic/lib/util';
+import { deSig, useHovering } from '~/logic/lib/util';
 import useLocalState from '~/logic/state/local';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { SwipeMenu } from '~/views/components/SwipeMenu';
@@ -38,7 +38,7 @@ const NotificationText = ({ contents, ...rest }: NotificationTextProps) => {
           return (
             <Mention
               key={idx}
-              ship={content.ship}
+              ship={deSig(content.ship)}
               first={idx === 0}
               {...rest}
             />
