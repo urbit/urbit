@@ -143,7 +143,7 @@
 ::
 ++  diff-sole-effect-phat                             ::  app event
   |=  [way=wire fec=sole-effect]
-  =<  se-abet  =<  se-view
+  =<  se-abet
   =^  gyl  this  (open way)
   ?:  (se-aint gyl)  +>.$
   (se-diff gyl fec)
@@ -154,7 +154,7 @@
     (prep i.t.pax)
   ~|  [%drum-unauthorized our+our.hid src+src.hid]    ::  ourself
   ?>  (team:title our.hid src.hid)                    ::  or our own moon
-  =<  se-abet  =<  se-view
+  =<  se-abet
   (se-text "[{<src.hid>}, driving {<our.hid>}]")
 ::
 ++  poke-dill
@@ -163,7 +163,7 @@
 ::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet=dill-belt:dill
-  =<  se-abet  =<  se-view
+  =<  se-abet
   (se-belt bet)
 ::
 ++  poke-dill-blit                                    ::  terminal output
@@ -172,12 +172,12 @@
 ::
 ++  poke-link                                         ::  connect app
   |=  gyl=gill:gall
-  =<  se-abet  =<  se-view
+  =<  se-abet
   (se-link gyl)
 ::
 ++  poke-unlink                                       ::  disconnect app
   |=  gyl=gill:gall
-  =<  se-abet  =<  se-view
+  =<  se-abet
   (se-drop:(se-pull gyl) & gyl)
 ::
 ++  poke-exit                                         ::  shutdown
@@ -201,7 +201,7 @@
 ::
 ++  on-load
   |=  [hood-version=@ud old=any-state]
-  =<  se-abet  =<  se-view
+  =<  se-abet
   =?  old  ?=(%2 -.old)  [%4 [eel bin]:old]
   =?  old  ?=(%3 -.old)  [%4 [eel bin]:old]
   =?  old  ?=(%4 -.old)
@@ -233,7 +233,7 @@
 ::
 ++  reap-phat                                         ::  ack connect
   |=  [way=wire saw=(unit tang)]
-  =<  se-abet  =<  se-view
+  =<  se-abet
   =^  gyl  this  (open way)
   ?~  saw
     (se-join gyl)
@@ -244,7 +244,7 @@
 ::
 ++  take-coup-phat                                    ::  ack poke
   |=  [way=wire saw=(unit tang)]
-  =<  se-abet  =<  se-view
+  =<  se-abet
   ?~  saw  +>
   =^  gyl  this  (open way)
   ?:  (se-aint gyl)  +>.$
@@ -269,7 +269,7 @@
 ::
 ++  quit-phat                                         ::
   |=  way=wire
-  =<  se-abet  =<  se-view
+  =<  se-abet
   =^  gyl  this  (open way)
   ~&  [%drum-quit src.hid gyl]
   (se-drop %| gyl)
@@ -278,7 +278,7 @@
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
   ^-  (quip card:agent:gall state)
-  =.  .  se-subze:se-adze
+  =.  .  se-view:se-subze:se-adze
   :_  sat(bin (~(put by bin) ses dev))
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
