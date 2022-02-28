@@ -821,12 +821,23 @@
       =/  poz=vase  (dy-sore p.cig)
       =/  kev=vase
         =/  kuv=(unit vase)  (slew 7 som)
-        ?:  =(~ q.cig)
-          (fall kuv !>(~))
         =/  soz=(list [var=term vax=vase])
           %~  tap  by
           %-  ~(run by q.cig)
           |=(val=(unit dojo-source) ?~(val !>([~ ~]) (dy-vase p.u.val)))
+        ::  if the generator takes a named argument "drum-session",
+        ::  then if a value isn't already supplied, we set it to the session
+        ::  that this dojo instance is being run in.
+        ::  (dojo is, indeed, quite coupled with drum.)
+        ::
+        =?    soz
+            ?&  ?=(^ kuv)
+                (slab %both %drum-session p.u.kuv)
+                !(~(has by q.cig) %drum-session)
+            ==
+          [[%drum-session !>(ses.id)] soz]  ::TODO  does the who matter?
+        ?:  =(~ soz)
+          (fall kuv !>(~))
         ~|  keyword-arg-failure+~(key by q.cig)
         %+  slap
           (with-faces kuv+(need kuv) rep+(with-faces soz) ~)
