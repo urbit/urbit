@@ -242,23 +242,23 @@ u3e_fault(void* adr_v, c3_i ser_i)
   return 1;
 }
 
-/* _ce_image_open(): open or create image.
-*/
+//! Open/create an image.
+//!
+//! @param[in] dir_c  Directory in which the image file resides/will
+//!                   reside. Must already exist.
+//! @param[in] img_u  Image to open/create.
+//!
+//! @return c3n  Image file can't be opened.
+//! @return c3n  `fstat()` failed.
+//! @return c3n  Image file size is not a multiple of the page size.
+//! @return c3y  Otherwise.
 static c3_o
-_ce_image_open(u3e_image* img_u)
+_ce_image_open(const c3_c* const dir_c,
+               u3e_image*        img_u)
 {
   c3_c ful_c[8193];
+  snprintf(ful_c, sizeof(ful_c), "%s/%s", dir_c, img_u->nam_c);
 
-  snprintf(ful_c, 8192, "%s", u3P.dir_c);
-  mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
-  mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb/chk", u3P.dir_c);
-  mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, img_u->nam_c);
   if ( -1 == (img_u->fid_i = open(ful_c, O_RDWR | O_CREAT, 0666)) ) {
     fprintf(stderr, "loom: open %s: %s\r\n", ful_c, strerror(errno));
     return c3n;
@@ -987,8 +987,18 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   {
     //  Open image files.
     //
-    if ( (c3n == _ce_image_open(&u3P.nor_u)) ||
-         (c3n == _ce_image_open(&u3P.sou_u)) )
+    mkdir(u3P.dir_c, 0700);
+
+    c3_c dir_c[8193];
+
+    snprintf(dir_c, sizeof(dir_c), "%s/.urb", u3P.dir_c);
+    mkdir(dir_c, 0700);
+
+    snprintf(dir_c, sizeof(dir_c), "%s/.urb/chk", u3P.dir_c);
+    mkdir(dir_c, 0700);
+
+    if ( (c3n == _ce_image_open(dir_c, &u3P.nor_u)) ||
+         (c3n == _ce_image_open(dir_c, &u3P.sou_u)) )
     {
       fprintf(stderr, "boot: image failed\r\n");
       exit(1);
