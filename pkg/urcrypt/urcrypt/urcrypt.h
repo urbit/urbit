@@ -202,6 +202,16 @@ int urcrypt_secp_reco(urcrypt_secp_context* context,
                       const uint8_t key_s[32],
                       uint8_t out_x[32],
                       uint8_t out_y[32]);
+int urcrypt_secp_schnorr_sign(urcrypt_secp_context* context,
+                              uint8_t key[32],
+                              uint8_t msg[32],
+                              uint8_t aux[32],
+                              uint8_t out_sig[64]);
+// return value means signature was (not) verified
+bool urcrypt_secp_schnorr_veri(urcrypt_secp_context* context,
+                               uint8_t sig[64],
+                               uint8_t msg[32],
+                               uint8_t pub[32]);
 
 void urcrypt_scrypt_pbkdf_sha256(const uint8_t *passwd,
                                  size_t passwdlen,

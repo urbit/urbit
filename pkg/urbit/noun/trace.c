@@ -589,3 +589,87 @@ u3t_boff(void)
 #endif
   }
 }
+
+
+/* u3t_slog_cap(): slog a tank with a caption with
+** a given priority c3_l (assumed 0-3).
+*/
+void
+u3t_slog_cap(c3_l pri_l, u3_noun cap, u3_noun tan)
+{
+  u3t_slog(
+    u3nc(
+      pri_l,
+      u3nt(
+        c3__rose,
+        u3nt(u3nt(':', ' ', u3_nul), u3_nul, u3_nul),
+        u3nt(cap, tan, u3_nul)
+      )
+    )
+  );
+}
+
+
+/* u3t_slog_trace(): given a c3_l priority pri and a raw stack tax
+** flop the order into start-to-end, render, and slog each item
+** until done.
+*/
+void
+u3t_slog_trace(c3_l pri_l, u3_noun tax)
+{
+  // render the stack
+  // Note: ton is a reference to a data struct
+  // we have just allocated
+  // lit is a used as a moving cursor pointer through
+  // that allocated struct
+  // once we finish lit will be null, but ton will still
+  // point to the whole valid allocated data structure
+  // and thus we can free it safely at the end of the func
+  // to clean up after ourselves.
+  // Note: flop reverses the stack trace list 'tax'
+  u3_noun ton = u3dc("mook", 2, u3kb_flop(tax));
+  u3_noun lit = u3t(ton);
+
+  // print the stack one stack item at a time
+  while ( u3_nul != lit ) {
+    u3t_slog(u3nc(pri_l, u3k(u3h(lit)) ));
+    lit = u3t(lit);
+  }
+
+  u3z(ton);
+}
+
+
+/* u3t_slog_nara(): slog only the deepest road's trace with
+** c3_l priority pri
+*/
+void
+u3t_slog_nara(c3_l pri_l)
+{
+  u3_noun tax = u3k(u3R->bug.tax);
+  u3t_slog_trace(pri_l, tax);
+}
+
+
+/* u3t_slog_hela(): join all roads' traces together into one tax
+** and pass it to slog_trace along with the given c3_l priority pri_l
+*/
+void
+u3t_slog_hela(c3_l pri_l)
+{
+  // rod_u protects us from mutating the global state
+  u3_road* rod_u = u3R;
+
+  // inits to the the current road's trace
+  u3_noun tax = u3k(rod_u->bug.tax);
+
+  // while there is a parent road ref ...
+  while ( &(u3H->rod_u) != rod_u ) {
+    // ... point at the next road and append its stack to tax
+    rod_u = u3tn(u3_road, rod_u->par_p);
+    tax = u3kb_weld(tax, u3k(rod_u->bug.tax));
+  }
+
+  u3t_slog_trace(pri_l, tax);
+}
+

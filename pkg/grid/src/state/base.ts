@@ -4,7 +4,7 @@ import { compose } from 'lodash/fp';
 import _ from 'lodash';
 import create, { GetState, SetState, UseStore } from 'zustand';
 import { persist } from 'zustand/middleware';
-import Urbit, { SubscriptionRequestInterface } from '@urbit/http-api';
+import Urbit, { FatalError, SubscriptionRequestInterface } from '@urbit/http-api';
 import { Poke } from '@urbit/api';
 import api from './api';
 import { clearStorageMigration, createStorageKey, storageVersion, useMockData } from './util';
@@ -107,7 +107,9 @@ export function createSubscription(
     path,
     event: e,
     err: () => {},
-    quit: () => {}
+    quit: () => {
+      throw new FatalError("subscription clogged");
+    }
   };
   // TODO: err, quit handling (resubscribe?)
   return request;
