@@ -71,7 +71,13 @@
 
 //! Copy the snapshot to `dir_c`.
 //!
-//! @param[in] dir_c  Must not be NULL and must already exist.
+//! @param[in] dir_c  Will be created if it doesn't already exist.
+//!
+//! @return c3n  `dir_c` could not be created.
+//! @return c3n  Could not create new image files.
+//! @return c3n  Could not copy contents of original image files to new
+//!              image files.
+//! @return c3y  Image files copied to `dir_c`.
 c3_o
 u3e_copy(const c3_c* const dir_c);
 

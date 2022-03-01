@@ -948,16 +948,18 @@ u3e_copy(const c3_c* const dir_c)
        (c3y == _ce_image_copy(&u3P.sou_u, &sop_u)) )
   {
     suc_o = c3y;
-    goto close_south;
   }
 
-  unlink(pas_c);
-  unlink(pan_c);
-  rmdir(dir_c);
 close_south:
   close(sop_u.fid_i);
+  if ( c3n == suc_o ) {
+    unlink(pas_c);
+  }
 close_north:
   close(nop_u.fid_i);
+  if ( c3n == suc_o ) {
+    unlink(pan_c);
+  }
 exit:
   return suc_o;
 }
