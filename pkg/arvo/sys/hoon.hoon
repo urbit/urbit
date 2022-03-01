@@ -13231,7 +13231,7 @@
         =+  e=(glom a c)
         ?~  boy.e
           [b d]
-        [b [%note [%help ~ [p.u.boy.e q.u.boy.e]] d]]
+        [b [%note help+`[u.boy.e] d]]
       ;~  pose
         ;~  plug
           apex:docs
