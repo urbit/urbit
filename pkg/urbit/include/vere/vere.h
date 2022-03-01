@@ -848,6 +848,11 @@
         u3_auto*
         u3_auto_init(u3_pier* pir_u);
 
+      /* u3_auto_info(): status info as a noun, all drivers.
+      */
+        u3_noun
+        u3_auto_info(u3_auto* car_u);
+
       /* u3_auto_slog(): print status info.
       */
         void
@@ -1312,10 +1317,15 @@
         void
         u3_pier_pack(u3_pier* pir_u);
 
-      /* u3_pier_info(): print status info.
+      /* u3_pier_info(): pier status info as noun.
+      */
+        u3_noun
+        u3_pier_info(u3_pier* pir_u);
+
+      /* u3_pier_slog(): print pier status info.
       */
         void
-        u3_pier_info(u3_pier* pir_u);
+        u3_pier_slog(u3_pier* pir_u);
 
       /* u3_pier_boot(): start the new pier system.
       */
@@ -1382,10 +1392,10 @@
         u3_pier*
         u3_king_stub(void);
 
-      /* u3_king_info(): print status info.
+      /* u3_king_slog(): print status info.
       */
         void
-        u3_king_info(void);
+        u3_king_slog(void);
 
       /* u3_king_done(): all piers closed
       */

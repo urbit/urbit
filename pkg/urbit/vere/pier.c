@@ -1436,10 +1436,80 @@ _pier_on_lord_live(void* ptr_v)
   }
 }
 
-/* u3_pier_info(): print status info.
+/* u3_pier_info(): pier status info as noun.
+*/
+u3_noun
+u3_pier_info(u3_pier* pir_u)
+{
+  //  TODO  disk/lord info
+  //
+  switch (pir_u->sat_e) {
+    default: {
+      return u3i_string("state-unknown");
+    }
+
+    case u3_psat_init: {
+      return c3__init;
+    }
+
+    case u3_psat_boot: {
+      return c3__boot;
+    }
+
+    case u3_psat_play: {
+      u3_play* pay_u = pir_u->pay_u;
+      u3_noun  pay =
+        u3i_list(
+          u3nc(u3i_string("target"), u3i_chub(pay_u->eve_d)),
+          u3nc(u3i_string("sent"), u3i_chub(pay_u->sen_d)),
+          u3nc(u3i_string("read"), u3i_chub(pay_u->req_d)),
+          u3_none);
+
+      return u3i_list(
+        u3nc(c3__play, u3i_list(u3nc(c3__all, pay), u3_none)), u3_none);
+    }
+
+    case u3_psat_work: {
+      u3_work* wok_u = pir_u->wok_u;
+      u3_noun  wok =
+        u3i_list(
+          u3nc(u3i_string("effects-released"),
+               u3i_chub(wok_u->fec_u.rel_d)),
+          u3nc(u3i_string("pending"),
+               __(wok_u->fec_u.ext_u)),
+          u3nc(u3i_string("pending-start"),
+               wok_u->fec_u.ext_u
+                 ? u3i_chub(wok_u->fec_u.ext_u->eve_d)
+                 : 0),
+          u3nc(u3i_string("pending-final"),
+               wok_u->fec_u.ent_u
+                 ? u3i_chub(wok_u->fec_u.ent_u->eve_d)
+                 : 0),
+          u3nc(u3i_string("wall"), __(wok_u->wal_u)),
+          u3nc(u3i_string("wall-event"),
+               wok_u->wal_u
+                 ? u3i_chub(wok_u->wal_u->eve_d)
+                 : 0),
+          u3_none);
+
+      return u3kb_weld(
+        u3i_list(
+          u3nc(c3__work, u3i_list(u3nc(c3__all, wok), u3_none)), u3_none),
+        wok_u->car_u
+          ? u3_auto_info(wok_u->car_u)
+          : u3_nul);
+    }
+
+    case u3_psat_done: {
+      return c3__done;
+    }
+  }
+}
+
+/* u3_pier_slog(): print status info.
 */
 void
-u3_pier_info(u3_pier* pir_u)
+u3_pier_slog(u3_pier* pir_u)
 {
   switch ( pir_u->sat_e ) {
     default: {

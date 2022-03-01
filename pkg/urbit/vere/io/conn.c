@@ -55,7 +55,7 @@
 **
 **  the %peel path /help produces a list of available commands.
 **  /args produces the command-line arguments used to start vere.
-**  /vars produces runtime metrics at the moment in time that the
+**  /info produces runtime metrics at the moment in time that the
 **  request was received.
 **
 **  %ovum is a raw kernel move, to be injected directly into
@@ -443,12 +443,12 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
           u3_nul,
           u3i_list(
             u3nc(c3__help, u3_nul),
+            u3nc(c3__info, u3_nul),
             u3nc(c3__khan, u3_nul),
             u3nc(c3__live, u3_nul),
             u3nc(c3__mass, u3_nul),
             u3nc(c3__port, u3nq(c3__ames, c3__htls, c3__http, u3_nul)),
             u3nc(c3__v, u3_nul),
-            u3nc(c3__vars, u3_nul),
             u3_none));
       } break;
       //  simple health check.
@@ -468,27 +468,10 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
         //
         res = u3_nul;
       } break;
-      //  runtime metrics list.
+      //  runtime metrics.
       //
-      case c3__vars: {
-        u3_auto* car_u;
-
-        res = u3_nul;
-        if ( u3_psat_work != pir_u->sat_e ) {
-          //  empty response if drivers are not live.
-          //
-          break;
-        }
-        car_u = pir_u->wok_u->car_u;
-        while ( car_u ) {
-          if ( car_u->io.info_f ) {
-            res = u3nc(
-              u3nc(car_u->nam_m, car_u->io.info_f(car_u)),
-              res);
-          }
-          car_u = car_u->nex_u;
-        }
-        res = u3nc(u3_nul, res);
+      case c3__info: {
+        res = u3nc(u3_nul, u3_pier_info(pir_u));
       } break;
       //  vere version.
       //

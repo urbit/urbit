@@ -353,6 +353,24 @@ u3_auto_exit(u3_auto* car_u)
   }
 }
 
+/* u3_auto_info(): status info as a noun, all drivers.
+*/
+u3_noun
+u3_auto_info(u3_auto* car_u)
+{
+  u3_noun res = u3_nul;
+
+  while ( car_u ) {
+    if ( car_u->io.info_f ) {
+      res = u3nc(
+        u3nc(car_u->nam_m, car_u->io.info_f(car_u)),
+        res);
+    }
+    car_u = car_u->nex_u;
+  }
+  return res;
+}
+
 /* u3_auto_slog(): print status info.
 */
 void
