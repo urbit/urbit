@@ -10,6 +10,7 @@
 
 #include "c/portable.h"
 #include "c/types.h"
+#include "c/bile.h"
 #include "c/defs.h"
 #include "c/motes.h"
 #include "c/path.h"
