@@ -14,6 +14,7 @@ ERROR
   trace:  play:
           lvl   0
           sut   *
+          ken   0
           ----
           code  =+  a=p=q=1
                 q.a
@@ -22,18 +23,21 @@ ERROR
           play:
           lvl   0
           sut   *
+          ken   0
           ----
           code  a=p=q=1
 
           play:
           lvl   0
           sut   *
+          ken   0
           ----
           code  p=q=1
 
           play:
           lvl   0
           sut   *
+          ken   0
           ----
           code  q=1
 
@@ -52,12 +56,14 @@ ERROR
           play:
           lvl   1
           sut   {* a=p=q=@ud}
+          ken   [0 1]
           ----
           code  q.a
 
           find:
           lvl   1
           sut   {* a=p=q=@ud}
+          ken   [0 1]
           ----
           wing  q.a
 

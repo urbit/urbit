@@ -43,6 +43,7 @@ data Soft
   | Tes Soft Soft Soft
   | Rhe Soft Soft
   | Fis Pelt Soft
+  | Run Soft Soft Soft Soft
   --
   | Bas Bass
   | Cll Soft Soft
@@ -113,6 +114,7 @@ data Code a
   | Equl (Code a) (Code a)
   | Test (Code a) (Code a) (Code a)
   | Fish Fish (Code a)
+  | Work (Code a) (Code a) (Code a) (Code a)
   --
   | Aura Aura
   | Fork (Set Atom) Aura
@@ -147,6 +149,10 @@ data Stub
 instance Show Stub where
   show = \case
     Leg a -> "+" <> show a
+
+pole :: Axis -> Stub -> Stub
+pole a = \case
+  Leg b -> Leg (peg a b)
 
 -- | A layer of facial information on a type or annotating a value to change its
 -- type.
@@ -215,9 +221,6 @@ even (l, a) (m, b)
 
 instance Eq Rump where
   Leg' la == Leg' lb = even la lb
-
--- | Code with wings fully resolved to axes.
-type Cold = Code Stub
 
 -- | Increase the number of formal wings permitted when passing under a tisgar,
 -- allowing types to refer opaquely to parts of the seminoun of the old subject.
@@ -802,47 +805,6 @@ face' :: [Face] -> Base a -> Base a
 face' fs b = foldr Face' b fs
 
 
--- Axial operations ------------------------------------------------------------
-
-data Step = L | R
-  deriving (Eq, Ord, Show)
-
-hop :: Step -> Axis -> Axis
-hop L = peg 2
-hop R = peg 3
-
-peg :: Axis -> Axis -> Axis
-peg a = \case
-  0 -> error "zero axis"  -- I guess? the hoon diverges
-  1 -> a
-  2 -> a * 2
-  3 -> a * 2 + 1
-  b -> b `mod` 2 + peg a (b `div` 2) * 2
-
--- | Combo of cap and mas. FIXME name change.
-cut :: Axis -> Maybe (Step, Axis)
-cut = \case
-  0 -> error "zero axis"
-  1 -> Nothing
-  2 -> Just (L, 1)
-  3 -> Just (R, 1)
-  a -> let Just (s, b) = cut (a `div` 2)
-       in Just (s, a `mod` 2 + b * 2)
-
-run :: Axis -> [Step]
-run = map fst . pop
-
--- | Really very sorry
-pop :: Axis -> [(Step, Axis)]
-pop a = case cut a of
-  Nothing -> []
-  Just (s, a') -> (s, a) : pop a'
-
-pole :: Axis -> Stub -> Stub
-pole a = \case
-  Leg b -> Leg (peg a b)
-
-
 --------------------------------------------------------------------------------
 -- Core operations of the compiler ---------------------------------------------
 --------------------------------------------------------------------------------
@@ -856,19 +818,6 @@ join _ _ = bail $ BailNote "join: Not implemented. Please put a ^- on your ?:"
 -- | Try to calculate intersection of types
 meet :: (MonadCheck m, Var a) => Type a -> Type a -> m (Type a)
 meet = undefined
-
--- | Mode for fit-checking in `fits`: nest, cast, or exact equality.
-data Fit
-  = FitSame  -- ^ perform a type (or value) equivalence check
-  | FitNest  -- ^ perform a subtyping check
-  | FitCast  -- ^ perform a coercibility check; i.e. ignore auras
-  deriving (Eq, Ord, Generic)
-
-instance Show Fit where
-  show = \case
-    FitCast -> "cast"
-    FitNest -> "nest"
-    FitSame -> "same"
 
 -- | Perform subtyping, coercibility, or equality check.
 -- XX figure out proper encoding of recursion via cores or gates
@@ -1403,31 +1352,50 @@ fuse con@Con{lvl, ken} (b, t) pet = act (ActFuse con (b, t) pet) case pet of
 
 -- | Refine scrutinee type on the assumption that pelt does NOT match.
 crop :: forall a m. (MonadCheck m, Var a)
-     => Con a -> Type a -> Pelt -> m (Type a)
-crop con@Con{lvl, ken} t pet = act (ActCrop con t pet) case pet of
-  Punt -> pure Void'
-  Peer _ -> pure Void'
+     => Con a -> (Base a, Type a) -> Pelt -> m (Base a, Type a)
+crop con@Con{lvl, ken} (b, t) pet = act (ActCrop con t pet) case pet of
+  Punt -> pure (b, Void')
+  Peer _ -> pure (b, Void')
   Part s -> do
     -- seems bad that this check duplicates fuse
     x <- work con FitNest s t
     case (evil ken x, repo t) of
       (Atom' a, Fork' as au) ->
         let as' = deleteSet a as
-        in pure if as' == mempty
-          then Void'
-          else Fork' as' au
-      (_, t) -> pure t
+        in pure case setToList as' of
+          []  -> (b,       Void')
+          -- this awful exercise is required because of the duplication
+          -- of info between the seminoun and the fork cases for atomic
+          -- forks. suggests we should get rid of seminoun and do arbitrary
+          -- expr forks? very ambitious though
+          [a] -> (Atom' a, Fork' as' au)
+          _   -> (b,       Fork' as' au)
+      (_, t) -> pure (b, t)
   Pair p q -> case repo t of
     Cell' t s c -> do
-      crop con t p >>= \case
-        Void' -> pure Void'
-        t' -> do
-          u <- crop con (eval s c) q
+      let lef = look (Leg 2) b
+          rit = look (Leg 3) b
+      (x, _) <- fuse con (lef, t) p
+      case eval (Cons' s x) c of
+        Void' -> do
+          (x, t) <- crop con (lef, t) p
+          undefined -- pure $ eval (Cons' s x) c
+        _ -> do
+          undefined
+          {-(y, u) <- crop con (look (Leg 3) b, eval s c) q
+          h <- fish p
+          pure $ Test (Fish h $ Stub $ Leg 3) (loft lvl u) c-}
+      {-
+      crop con (look (Leg 2) b, t) p >>= \case
+        (x, Void') -> pure (x, Void')
+        (x, t') -> do
+          (y, u) <- crop con (look (Leg 3) b, eval s c) q
           fis <- fish q
           let c' = Test (Fish fis $ Stub $ Leg 3) (loft lvl u) c
-          pure $ Cell' t' s c'
+          pure (Cons' x y, Cell' t' s c')
+        -}
     _ -> bail (CropFail t pet)
-  Pons p q -> do t <- crop con t q; crop con t p
+  Pons p q -> do (b, t) <- crop con (b, t) q; crop con (b, t) p
   Pest _ _ -> bail (FuseFits FitNest)
 
 -- | Given a pattern, verify that it is compatibile with the given type.
@@ -1500,8 +1468,8 @@ chip con = \case
     (st, lin@Line{lem, lyt}) <- find con w
     (tb, tt) <- fuse con (lem, lyt) p
     tru <- seal con lin{lem=tb, lyt=tt}
-    ft <- crop con lyt p
-    fal <- seal con lin{lyt=ft}
+    (fb, ft) <- crop con (lem, lyt) p
+    fal <- seal con lin{lem=fb, lyt=ft}
     h <- fish p
     -- XX TODO FIXME rezip the find zipper
     pure (Fish h $ Stub st, tru, fal)
@@ -1588,6 +1556,8 @@ work con@Con{lvl, sut, ken} fit cod typ = act (ActWork con fit cod typ)
       case evil ken x of
         Atom' 0 -> work con fit d typ
         b -> bail (WorkMiss c b)
+
+    Run{} -> playFits
 
     -- likewise with types
     Bas{} -> playFits
@@ -1693,6 +1663,14 @@ play con@Con{lvl, sut, ken} cod = act (ActPlay con cod) case cod of
     f <- fish p
     (x, _) <- play con c
     pure (Fish f x, Flag')
+
+  Run sv st fom pt -> do
+    st' <- work con FitNest st Type'
+    sv' <- work con FitNest sv (evil ken st')
+    (fom', _) <- play con fom  -- HACK XX fix when we have recursive types
+    pt' <- work con FitNest pt Type'
+    let ret = Test (Equl (Atom 0) (Stub $ Leg 3)) sv' (Aura "t")
+    pure (Work st' sv' fom' pt', Cell' Flag' ken $ vacuous ret)
 
   Bas (Aur au) -> pure (Aura au, Type')
 

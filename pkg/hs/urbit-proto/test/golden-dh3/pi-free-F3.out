@@ -11,12 +11,14 @@ ERROR
   trace:  play:
           lvl   0
           sut   *
+          ken   0
           ----
           code  $-(t=$ q)
 
           work:
           lvl   1
           sut   {* t=$}
+          ken   [0 +3]
           ----
           mode  nest
           code  q
@@ -25,12 +27,14 @@ ERROR
           play:
           lvl   1
           sut   {* t=$}
+          ken   [0 +3]
           ----
           code  q
 
           find:
           lvl   1
           sut   {* t=$}
+          ken   [0 +3]
           ----
           wing  q
 

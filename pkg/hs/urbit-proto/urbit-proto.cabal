@@ -24,6 +24,7 @@ library
       Hoon.Core
       Nock
       Practice.DependentHoon3
+      Practice.DependentHoon4
       Practice.DependentLambda
       Practice.Hoon2DependentHoon3
       Practice.Hoon2DependentLambda

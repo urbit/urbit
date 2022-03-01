@@ -11,12 +11,14 @@ ERROR
   trace:  play:
           lvl   0
           sut   *
+          ken   0
           ----
           code  {1 2}
 
           work:
           lvl   0
           sut   *
+          ken   0
           ----
           mode  nest
           code  1

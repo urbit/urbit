@@ -2,11 +2,13 @@ PARSED
 
 %.  %b
 |=  color/?($114 $103 $98)
+^-  @t
 ?-(color %r "red", %g "green", %b "black")
 
 CODE
 
 %-  |=  color/?($114 $103 $98)
+    ^-  @t
     ?:  ?=(%r color)
       "red"
     ?:  ?=(%g color)
@@ -15,67 +17,20 @@ CODE
     "black"
 %b
 
-ERROR
+COLD
 
-  trace:  play:
-          lvl   0
-          sut   *
-          ----
-          code  %-  |=  color/?($114 $103 $98)
-                    ?:  ?=(%r color)
-                      "red"
-                    ?:  ?=(%g color)
-                      "green"
-                    ??  ?=(%b color)
-                    "black"
-                %b
+%-  |=  _
+    ?:  ?=(114 +3)
+      "red"
+    ?:  ?=(103 +3)
+      "green"
+    "black"
+98
 
+TYPE
 
-          play:
-          lvl   0
-          sut   *
-          ----
-          code  |=  color/?($114 $103 $98)
-                ?:  ?=(%r color)
-                  "red"
-                ?:  ?=(%g color)
-                  "green"
-                ??  ?=(%b color)
-                "black"
+@t
 
+BASE
 
-          play:
-          lvl   1
-          sut   {* color=?($98 $103 $114)}
-          ----
-          code  ?:  ?=(%r color)
-                  "red"
-                ?:  ?=(%g color)
-                  "green"
-                ??  ?=(%b color)
-                "black"
-
-
-          play:
-          lvl   1
-          sut   {* color=?($98 $103 $114)}
-          ----
-          code  ?:  ?=(%g color)
-                  "green"
-                ??  ?=(%b color)
-                "black"
-
-
-          play:
-          lvl   1
-          sut   {* color=?($98 $103 $114)}
-          ----
-          code  ??  ?=(%b color)
-                "black"
-
-
-
-  play-miss:
-  test  ?=(%b color)
-  base  ?=(98 +1_3)
-
+"black"
