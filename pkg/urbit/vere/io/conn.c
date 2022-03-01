@@ -54,9 +54,17 @@
 **  (unit).
 **
 **  the %peel path /help produces a list of available commands.
-**  /args produces the command-line arguments used to start vere.
 **  /info produces runtime metrics at the moment in time that the
 **  request was received.
+**
+**  the type produced by /info is currently:
+**
+**      (list [cord (list [cord (list [cord @])])])
+**
+**  where the first layer of cord is major subsystem ('http',
+**  'ames', or 'work'), the second layer is instance identifier
+**  or 'all', and the third is metric name. most metrics are @ud,
+**  but the precise interpretation depends on the metric.
 **
 **  %ovum is a raw kernel move, to be injected directly into
 **  arvo. needless to say this will void your warranty. usually
