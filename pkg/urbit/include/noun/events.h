@@ -81,6 +81,14 @@
 c3_o
 u3e_copy(const c3_c* const dir_c);
 
+//! Load a snapshot copy from `dir_c` into memory.
+//!
+//! @param[in] dir_c  Must contain a valid snapshot.
+//!
+//! @return c3y  Success.
+c3_o
+u3e_load(const c3_c* const dir_c);
+
     /* u3e_live(): start the persistence system.  Return c3y if no image.
     */
       c3_o

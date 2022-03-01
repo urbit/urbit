@@ -964,6 +964,34 @@ exit:
   return suc_o;
 }
 
+//! @n (1)
+c3_o
+u3e_load(const c3_c* const dir_c)
+{
+  if ( !dir_c ) {
+    return c3n;
+  }
+
+  u3e_image nor_u, sou_u;
+
+  if ( (c3n == _ce_image_open(dir_c, &nor_u)) ||
+       (c3n == _ce_image_open(dir_c, &sou_u)) )
+  {
+    fprintf(stderr, "boot: failed to load snapshot in %s\r\n", dir_c);
+    exit(1);
+  }
+
+  u3e_foul();  // (1)
+
+  {
+    void* las_pag_v = u3_Loom + (1 << u3a_bits) - (1 << u3a_page);
+    _ce_image_blit(&nor_u, u3_Loom,     1 << u3a_page);
+    _ce_image_blit(&sou_u, las_pag_v, -(1 << u3a_page));
+  }
+
+  return c3y;
+}
+
 /* u3e_live(): start the checkpointing system.
 */
 c3_o
