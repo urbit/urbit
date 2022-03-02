@@ -25,11 +25,6 @@
 
   /**  Aliases.
   **/
-    /* u3du(), u3ud(): noun/cell test.
-    */
-#     define u3du(som)         (u3r_du(som))
-#     define u3ud(som)         (u3r_ud(som))
-
     /* u3do(), u3dc(), u3dt(), u3dq(): arvo calls.
     */
 #     define  u3do(txt_c, arg)         u3v_do(txt_c, arg)
