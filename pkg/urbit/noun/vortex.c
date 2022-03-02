@@ -209,28 +209,24 @@ u3_noun
 u3v_soft_peek(c3_w mil_w, u3_noun sam)
 {
   u3_noun gon = u3m_soft(mil_w, u3v_peek, sam);
-  u3_noun pro;
+  u3_noun tag, dat;
+  u3x_cell(gon, &tag, &dat);
 
-  {
-    u3_noun tag, dat;
-    u3x_cell(gon, &tag, &dat);
-
-    //  read succeeded, produce result
-    //
-    if ( u3_blip == tag ) {
-      pro = u3nc(c3y, u3k(dat));
-      u3z(gon);
-    }
-    //  read failed, produce trace
-    //
-    //    NB, reads should *not* fail deterministically
-    //
-    else {
-      pro = u3nc(c3n, gon);
-    }
+  //  read failed, produce trace
+  //
+  //    NB, reads *should not* fail deterministically
+  //
+  if ( u3_blip != tag ) {
+    return u3nc(c3n, gon);
   }
 
-  return pro;
+  //  read succeeded, produce result
+  //
+  {
+    u3_noun pro = u3nc(c3y, u3k(dat));
+    u3z(gon);
+    return pro;
+  }
 }
 
 #if 0
@@ -299,7 +295,7 @@ u3v_poke(u3_noun ovo)
   return pro;
 }
 
-/* _cv_poke_eve(): u3v_poke w/out u3A->now XX
+/* _cv_poke_eve(): u3v_poke w/out u3A->now XX replace
 */
 static u3_noun
 _cv_poke_eve(u3_noun sam)
@@ -308,9 +304,15 @@ _cv_poke_eve(u3_noun sam)
   u3_noun pro;
 
   {
-    // c3_w cod_w = u3a_lush(u3h(u3t(u3t(sam)))); // XX MEMORY_DEBUG
+# ifdef  U3_MEMORY_DEBUG
+    c3_w cod_w = u3a_lush(u3h(u3t(u3t(sam))));
+# endif
+
     pro = u3n_slam_on(fun, sam);
-    // u3a_lop(cod_w);
+
+# ifdef  U3_MEMORY_DEBUG
+    u3a_lop(cod_w);
+# endif
   }
 
   return pro;
@@ -325,9 +327,16 @@ u3v_poke_sure(c3_w mil_w, u3_noun eve, u3_noun* pro)
   u3_noun tag, dat;
   u3x_cell(gon, &tag, &dat);
 
+  //  event failed, produce trace
+  //
+  if ( u3_blip != tag ) {
+    *pro = gon;
+    return c3n;
+  }
+
   //  event succeeded, persist state and produce effects
   //
-  if ( u3_blip == tag ) {
+  {
     u3_noun vir, cor;
     u3x_cell(dat, &vir, &cor);
 
@@ -338,12 +347,6 @@ u3v_poke_sure(c3_w mil_w, u3_noun eve, u3_noun* pro)
     *pro = u3k(vir);
     u3z(gon);
     return c3y;
-  }
-  //  event failed, produce trace
-  //
-  else {
-    *pro = gon;
-    return c3n;
   }
 }
 
