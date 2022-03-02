@@ -46,7 +46,7 @@ data Pelt
 data Code a
   = Stub Stub
   | Fore a
-  | Alts (Set (Code a))
+  -- | Alts (Set (Code a))
   --
   | Atom Atom
   | Cell (Code a) (Code a)
@@ -58,7 +58,7 @@ data Code a
   | Aura Aura
   | Rail (Code a) (Code a)
   | Gate (Code a) (Code a)
-  | Fork (Code a) (Code a)
+  | Fork (Set (Code a)) (Code a)
   | Noun
   | Void
   | Type
@@ -134,7 +134,7 @@ deriving instance Show a => Show (Jamb a)
 data Semi a
   = Rump' Rump
   | Fore' a
-  | Alts' (Set (Semi a))
+  | Alts' (Set (Semi a)) (Semi a)
   --
   | Atom' Atom
   | Cell' (Semi a) (Semi a)
@@ -147,7 +147,7 @@ data Semi a
   | Aura' Aura
   | Rail' (Semi a) (Jamb a)
   | Gate' (Semi a) (Jamb a)
-  | Fork' (Semi a) (Semi a)
+  | Fork' (Set (Semi a)) (Semi a)
   | Noun'
   | Void'
   | Type'
@@ -169,20 +169,16 @@ ss >>== f = mconcat $ map f $ setToList ss
 elems :: (Ord a, Ord b) => ([a] -> [b]) -> Set a -> Set b
 elems f = setFromList . f . setToList
 
+{-
 -- | Apply a function to every alt, flattening any Alts in the result.
 alts' :: Ord a => Set (Semi a) -> (Semi a -> Semi a) -> Semi a
-alts' ss f = Alts' $ setFromList $ concatMap (split . f) $ setToList ss
+alts' ss f = Alts' $ elems (concatMap (split . f)) ss
  where
   split :: Ord a => Semi a -> [Semi a]
   split = \case
     Alts' ss -> setToList ss
     x -> [x]
-
--- | Single or alternatives
-pattern Salt' :: Set (Semi a) -> Semi a
-pattern Salt' ss <-
-  ((\case Alts' ss -> Just ss; s -> Just (singleton s)) -> Just ss)
-
+-}
 
 instance SetFunctor Code where
   smap = undefined
@@ -192,6 +188,24 @@ instance SetFunctor Semi where
 
 instance SetFunctor Jamb where
   smap f (Jamb a b) = Jamb (smap f a) (smap f b)
+
+class Peg a where
+  (/) :: a -> Axis -> a
+
+instance Peg Axis where
+  a / b = peg a b
+
+instance Peg Stub where
+  Leg a / b = Leg (a / b)
+
+instance Peg (Level, Axis) where
+  (l, a) / b = (l, a / b)
+
+instance Peg Rump where
+  Leg' la / b = Leg' (la / b)
+
+instance Ord a => Peg (Semi a) where
+  s / a = look (Leg a) s
 
 -- instance SetFunctor f => Functor f where
 --   fmap = smap
@@ -204,8 +218,8 @@ instance SetFunctor Jamb where
 -- seminoun is used to generate unknowns.
 read :: Ord a => Semi a -> Type a -> Semi a
 read nul = \case
-  Alts' ss -> alts' ss $ read nul
-  Fork' s _ -> s
+  Alts' ss s -> Alts' (smap (read nul) ss) (read nul s)
+  Fork' ss t -> Alts' ss $ read nul t
   Cell' t u -> Cell' (read (nul / 2) t) (read (nul / 3) u)
   Rail' t j -> Cell' lef rit
    where
@@ -225,9 +239,10 @@ look s b = home s $ walk a b
 
   walk a b = case (cut a, b) of
     (Nothing,     c)                   -> c
+    (_,           Alts' ss s)          -> Alts' (smap (walk a) ss) (walk a s)
     (_,           Rump' (Leg' (l, x))) -> Rump' $ Leg' (l, peg x a)
     (_,           Look' c (Leg i))     -> Look' c $ Leg (peg i a)
-  --  (_,           Face' _ c)           -> walk a c
+--  (_,           Face' _ c)           -> walk a c
     (Just (L, b), Cell' c _)           -> walk b c
     (Just (R, b), Cell' _ c)           -> walk b c
     (Just _,      _)                   -> Look' b s
@@ -235,14 +250,11 @@ look s b = home s $ walk a b
   home s b = case s of
     Leg _ -> b
 
-(/) :: Ord a => Semi a -> Axis -> Semi a
-s / a = look (Leg a) s
-
 eval :: Ord a => Semi a -> Code a -> Semi a
 eval sub = \case
   Stub s -> look s sub
   Fore x -> Fore' x
-  Alts ss -> Alts' $ smap (eval sub) ss
+  -- Alts ss -> Alts' $ smap (eval sub) ss
   --
   Atom a -> Atom' a
   Cell c d -> Cell' (eval sub c) (eval sub d)
@@ -251,7 +263,7 @@ eval sub = \case
   Plus c -> go (eval sub c)
    where
     go = \case
-      Alts' ss -> Alts' $ smap go ss
+      Alts' ss s -> Alts' (smap go ss) (go s)
       Atom' a -> Atom' (a + 1)
       x -> Plus' x
   -- FYI, this is the only source of exponentiality I am aware of.
@@ -260,7 +272,8 @@ eval sub = \case
    where
     y = eval sub d
     go = \case
-      Alts' ss -> alts' ss go
+      -- we could also lose the alts here to get rid of the explosion
+      Alts' ss s -> Alts' (smap go ss) (go s)
       Lamb' j -> jamb j $ eval sub d
       x -> Slam' x y
   --
@@ -279,7 +292,7 @@ loft lvl = \case
   -- invariant violation that should be more legible
   Rump' (Leg' (l, a)) -> Stub (Leg $ peg (2 ^ (lvl - l)) a)
   Fore' x -> Fore x
-  Alts' ss -> Alts $ smap (loft lvl) ss
+  Alts' ss s -> loft lvl s -- Alts $ smap (loft lvl) ss
   --
   Atom' a -> Atom a
   Cell' a b -> Cell (loft lvl a) (loft lvl b)
@@ -292,7 +305,7 @@ loft lvl = \case
   Aura' au -> Aura au
   Rail' l j -> Rail (loft lvl l) (luft lvl j)
   Gate' a j -> Gate (loft lvl a) (luft lvl j)
-  Fork' s t -> Fork (loft lvl s) (loft lvl t)
+  Fork' ss t -> Fork (smap (loft lvl) ss) (loft lvl t)
   Noun' -> Noun
   Void' -> Void
   Type' -> Type
@@ -476,8 +489,8 @@ fits fit t u = case (t, u) of
   (Fore'{}, _) -> fitsFail
   (_, Fore'{}) -> fitsFail
 
-  (Alts' ts, _) -> for_ ts \t -> fits fit t u
-  (_, Alts' us) -> for_ us \u -> fits fit t u
+  (Alts' ts t, _) -> fits fit t u <|> for_ ts \t -> fits fit t u
+  (_, Alts' us u) -> fits fit t u <|> for_ us \u -> fits fit t u
 
   --
 
@@ -544,14 +557,14 @@ fits fit t u = case (t, u) of
     FitNest -> if ag `isPrefixOf` au then pure () else fitsFail
     FitSame -> if ag ==           au then pure () else fitsFail
 
-  (Fork' (Salt' cs) t, Fork' (Salt' ds) u) -> do
+  (Fork' cs t, Fork' ds u) -> do
     fits fit t u
     case fit of
       FitSame -> when (cs /= ds) fitsFail
       FitNest -> unless (cs `isSubsetOf` ds) fitsFail
       FitCast -> unless (cs `isSubsetOf` ds) fitsFail
 
-  (Fork' s t, _) | fit /= FitSame -> fits fit t u
+  (Fork' ss t, _) | fit /= FitSame -> fits fit t u
 
   (Rail' v j, Rail' w k) -> do
     fits fit v w
@@ -607,17 +620,17 @@ meld b c = case (b, c) of
   (Rump'{}, a)       -> pure a
   (a,       Rump'{}) -> pure a
 
-  (a, Alts' ss) ->
+  (a, Alts' ss s) ->
     let ss' = elems (catMaybes . map (a `meld`)) ss
     in if Set.empty == ss'
       then Nothing
-      else pure $ Alts' ss'
+      else Alts' ss' <$> meld a s
 
-  (Alts' ss, a) ->
+  (Alts' ss s, a) ->
     let ss' = elems (catMaybes . map (`meld` a)) ss
     in if Set.empty == ss'
       then Nothing
-      else pure $ Alts' ss'
+      else Alts' ss' <$> meld s a
 
   (Cell' b c, Cell' b' c') -> Cell' <$> meld b b' <*> meld c c'
 
@@ -628,7 +641,7 @@ meld b c = case (b, c) of
 -- | Promote voids to top level.
 vain :: Var a => Type a -> Type a
 vain = \case
-  Fork' (Salt' s) _ | null s -> Void'
+  Fork' ss _ | null ss -> Void'
   Cell' t u -> case (vain t, vain u) of
     (Void', _) -> Void'
     (_, Void') -> Void'
@@ -639,15 +652,15 @@ vain = \case
 -- | Add an atomic constant to the collection of possibilities of a given type.
 fork :: Var a => Atom -> Type a -> Type a
 fork a t = case t of
-  Fork' (Salt' as) t -> Fork' (Alts' $ insertSet (Atom' a) as) t
-  t -> Fork' (Atom' a) t
+  Fork' as t -> Fork' (insertSet (Atom' a) as) t
+  t -> Fork' (singleton $ Atom' a) t
 
 -- | Subtract the possibility of an atomic constant from a type.
 kill :: Var a => Atom -> Type a -> Type a
 kill a t = case t of
-  Fork' (Salt' as) t -> case deleteSet (Atom' a) as of
+  Fork' as t -> case deleteSet (Atom' a) as of
     as | null as   -> Void'
-       | otherwise -> Fork' (Alts' as) t
+       | otherwise -> Fork' as t
   t -> t
 
 
