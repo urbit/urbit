@@ -32,7 +32,7 @@
 **  are sprinkled throughout the file updating code.
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <ftw.h>
 #include "vere/vere.h"
 

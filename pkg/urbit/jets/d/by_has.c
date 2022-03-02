@@ -1,7 +1,7 @@
 /* j/4/by_has.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 /* functions
 */

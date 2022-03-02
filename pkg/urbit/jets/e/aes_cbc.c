@@ -1,7 +1,7 @@
 /* j/5/aes_cbc.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <urcrypt.h>
 
 /* All of the CBC hoon truncates its key and prv inputs by passing them to

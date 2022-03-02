@@ -3,7 +3,7 @@
 */
 #define U3_GLOBAL
 #define C3_GLOBAL
-#include "all.h"
+#include "noun/all.h"
 #include "rsignal.h"
 #include <vere/serf.h>
 #include "vere/vere.h"

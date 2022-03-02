@@ -1,7 +1,7 @@
 /* j/4/by_int.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qdb_int(u3_noun a, u3_noun b)

@@ -1,12 +1,23 @@
-/* noun/urth.c
-**
-*/
-#include "all.h"
-#include "ur/ur.h"
+//! @file urth.c
+
+#include "noun/urth.h"
+
+#include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <ctype.h>
+
+#include "noun/allocate.h"
+#include "noun/events.h"
+#include "noun/hashtable.h"
+#include "noun/imprison.h"
+#include "noun/jets.h"
+#include "noun/log.h"
+#include "noun/retrieve.h"
+#include "noun/serial.h"
+#include "noun/vortex.h"
+#include "noun/xtract.h"
+#include "ur/ur.h"
 
 /* _cu_atom_to_ref(): allocate indirect atom off-loom.
 */

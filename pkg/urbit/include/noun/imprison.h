@@ -1,5 +1,11 @@
+//! @file imprison.h
+
 #ifndef U3_IMPRISON_H
 #define U3_IMPRISON_H
+
+#include "c/all.h"
+#include "noun/types.h"
+#include "noun/allocate.h"
 
   /**  Structures.
   **/
@@ -108,6 +114,7 @@
         */
           u3_noun
           u3i_cell(u3_noun a, u3_noun b);
+#         define u3nc(a, b) u3i_cell(a, b)
 
         /* u3i_defcons(): allocate cell for deferred construction.
         **            NB: [hed] and [tel] pointers MUST be filled.
@@ -119,11 +126,13 @@
         */
           u3_noun
           u3i_trel(u3_noun a, u3_noun b, u3_noun c);
+#         define u3nt(a, b, c) u3i_trel(a, b, c)
 
         /* u3i_qual(): Produce the cell `[a b c d]`.
         */
           u3_noun
           u3i_qual(u3_noun a, u3_noun b, u3_noun c, u3_noun d);
+#         define u3nq(a, b, c, d) u3i_qual(a, b, c, d)
 
         /* u3i_string(): Produce an LSB-first atom from the C string [a].
         */
@@ -139,6 +148,7 @@
         */
           u3_noun
           u3i_list(u3_weak som, ...);
+#         define u3nl u3i_list
 
         /* u3i_edit():
         **

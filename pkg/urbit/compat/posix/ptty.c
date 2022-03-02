@@ -1,7 +1,7 @@
 /* compat/posix/ptty.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include "vere/vere.h"
 #include <sys/ioctl.h>
 #include <termios.h>

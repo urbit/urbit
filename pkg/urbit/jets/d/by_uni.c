@@ -1,6 +1,6 @@
 /* j/4/by_uni.c
  */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qdb_uni(u3_noun a, u3_noun b)

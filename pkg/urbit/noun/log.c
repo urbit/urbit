@@ -1,9 +1,10 @@
-/* noun/log.c
-**
-*/
-#include "all.h"
+//! @file log.c
+
+#include "noun/log.h"
 
 #include <stdarg.h>
+
+#include "noun/options.h"
 
 void
 u3l_log(const char* format, ...)

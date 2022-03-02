@@ -1,7 +1,7 @@
 /* j/5/cue.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qe_cue(u3_atom a)

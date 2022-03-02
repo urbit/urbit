@@ -1,6 +1,8 @@
 #ifndef U3_JETS_Q_H
 #define U3_JETS_Q_H
 
+#include "noun/types.h"
+
   /** Tier 1.
   **/
     u3_noun u3qa_add(u3_atom, u3_atom);

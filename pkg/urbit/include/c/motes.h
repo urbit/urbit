@@ -1,8 +1,10 @@
+//! @file motes.h
+//! c3 constants.
+
 #ifndef C3_MOTES_H
 #define C3_MOTES_H
 
-  /** Definitions.
-  **/
+#include "c/defs.h"
 
 #   define c3__a      c3_s1('a')
 #   define c3__a50    c3_s3('a','5','0')

@@ -1,7 +1,7 @@
 /* j/6/look.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* internals

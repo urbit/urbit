@@ -1,7 +1,7 @@
 /* j/e/rs.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <softfloat.h>
 
 #define SINGNAN 0x7fc00000

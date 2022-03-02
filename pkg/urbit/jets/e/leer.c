@@ -1,7 +1,7 @@
 /* j/5/leer.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 static u3_atom
 _leer_cut(c3_w pos_w, c3_w len_w, u3_atom src)

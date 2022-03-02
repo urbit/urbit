@@ -1,5 +1,11 @@
+//! @file xtract.h
+
 #ifndef U3_XTRACT_H
 #define U3_XTRACT_H
+
+#include "c/all.h"
+#include "noun/types.h"
+#include "noun/manage.h"
 
   /**  Constants.
   **/
@@ -67,7 +73,10 @@
     **/
 #if 1
 #     define u3x_h(som)  u3a_h(som)
+#     define u3h(som)    u3x_h(som)
+
 #     define u3x_t(som)  u3a_t(som)
+#     define u3t(som)    u3x_t(som)
 #else
       /* u3x_h (u3h): head.
       */
@@ -88,6 +97,7 @@
       */
         u3_noun
         u3x_at(u3_noun axe, u3_noun som);
+#     define u3at(axe, som)    u3x_at(axe, som)
 
       /* u3x_mean():
       **

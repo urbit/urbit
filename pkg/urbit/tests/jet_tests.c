@@ -1,4 +1,4 @@
-#include "all.h"
+#include "noun/all.h"
 
 /* _setup(): prepare for tests.
 */

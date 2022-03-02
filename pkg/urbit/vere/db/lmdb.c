@@ -1,9 +1,7 @@
-/* vere/db/lmdb.c
-*/
-#include "c/portable.h"
-#include "c/types.h"
-#include "c/defs.h"
+//! @file lmdb.c
+
 #include "vere/db/lmdb.h"
+
 #include <sys/stat.h>
 
 /* mdb_logerror(): writes an error message and lmdb error code to f.

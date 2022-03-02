@@ -1,11 +1,20 @@
+//! @file retrieve.h
+
 #ifndef U3_RETRIEVE_H
 #define U3_RETRIEVE_H
+
+#include "c/all.h"
+#include "noun/types.h"
+#include "noun/allocate.h"
 
     /** u3r_*: read without ever crashing.
     **/
 #if 1
 #       define u3r_du(a)  u3a_is_cell(a)
+#       define u3du(som)  (u3r_du(som))
+
 #       define u3r_ud(a)  u3a_is_atom(a)
+#       define u3ud(som)  (u3r_ud(som))
 #else
       /* u3r_du(): c3y iff `a` is cell.
       */

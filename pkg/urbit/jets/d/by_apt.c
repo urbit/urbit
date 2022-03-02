@@ -1,7 +1,7 @@
 /* j/4/by_apt.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 static c3_o
 _by_apt(u3_noun a, u3_weak l, u3_weak r)

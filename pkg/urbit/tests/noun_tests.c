@@ -1,4 +1,4 @@
-#include "all.h"
+#include "noun/all.h"
 #include "ur/ur.h"
 #include "vere/ivory.h"
 #include "vere/vere.h"

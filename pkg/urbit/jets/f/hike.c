@@ -1,7 +1,7 @@
 /* j/6/hike.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* internal tools

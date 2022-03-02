@@ -3,7 +3,7 @@
 **  This file is in the public domain.
 */
 
-#include "all.h"
+#include "noun/all.h"
 #include "vere/vere.h"
 
     /*  assumptions:

@@ -1,7 +1,7 @@
 /* j/5/loss.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

@@ -13,7 +13,7 @@
   ```
 */
 
-#include "all.h"
+#include "noun/all.h"
 
 static c3_c* no_hashes[] = { 0 };
 

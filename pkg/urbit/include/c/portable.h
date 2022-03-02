@@ -1,3 +1,6 @@
+//! @file portable.h
+//! C and OS portability.
+
 #ifndef C3_PORTABLE_H
 #define C3_PORTABLE_H
 

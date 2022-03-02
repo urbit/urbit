@@ -1,7 +1,7 @@
 /* j/2/slag.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

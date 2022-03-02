@@ -1,7 +1,20 @@
-/* n/m.c
-**
-*/
-#include "all.h"
+//! @file manage.c
+
+#include "noun/manage.h"
+
+#include "jets/k.h"
+#include "noun/allocate.h"
+#include "noun/events.h"
+#include "noun/hashtable.h"
+#include "noun/imprison.h"
+#include "noun/jets.h"
+#include "noun/log.h"
+#include "noun/nock.h"
+#include "noun/options.h"
+#include "noun/retrieve.h"
+#include "noun/trace.h"
+#include "noun/vortex.h"
+#include "noun/xtract.h"
 #include "rsignal.h"
 #include "vere/vere.h"
 #include <errno.h>

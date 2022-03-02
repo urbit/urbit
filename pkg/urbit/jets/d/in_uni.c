@@ -1,7 +1,7 @@
 /* j/4/in_uni.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 /* internal functions
 */

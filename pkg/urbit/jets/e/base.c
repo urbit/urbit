@@ -1,7 +1,7 @@
 /* j/5/base.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 const c3_y hex_y[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
                          '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'  };

@@ -1,8 +1,20 @@
-/* g/j.c
-**
-*/
-#include "all.h"
+//! @file jets.c
+
+#include "noun/jets.h"
+
 #include <urcrypt.h>
+
+#include "jets/k.h"
+#include "jets/q.h"
+#include "noun/hashtable.h"
+#include "noun/log.h"
+#include "noun/nock.h"
+#include "noun/options.h"
+#include "noun/retrieve.h"
+#include "noun/serial.h"
+#include "noun/trace.h"
+#include "noun/vortex.h"
+#include "noun/xtract.h"
 
 /**  Data structures.
 **/

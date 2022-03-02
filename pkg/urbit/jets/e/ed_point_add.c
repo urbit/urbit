@@ -1,7 +1,7 @@
 /* gen164/5/ed_point_add.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <urcrypt.h>
 
 /* functions
