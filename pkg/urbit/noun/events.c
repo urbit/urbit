@@ -64,12 +64,16 @@
 //!   - implement demand paging / heuristic page-out.
 //!   - add a guard page in the middle of the loom to reactively handle stack overflow.
 //!   - parallelism
-//!
 
-#include "all.h"
+#include "noun/events.h"
+
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+
+#include "noun/log.h"
+#include "noun/options.h"
+#include "noun/retrieve.h"
 
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
