@@ -51,7 +51,7 @@
               $>  ?(%arow %avow)  gift                  ::  thread result
       ==  ==                                            ::
     +$  khan-state                                      ::
-      [%2 hey=duct]                                     ::  current unix duct
+      [%0 hey=duct]                                     ::  current unix duct
     --                                                  ::
 =>
 |%
@@ -156,16 +156,9 @@
 ::  +load: migrate an old state to a new khan version
 ::
 ++  load
-  |=  $=  old
-      $%  [?(%0 %1) hey=duct *]
-          khan-state
-      ==
+  |=  old=khan-state
   ^+  khan-gate
-  =/  new=khan-state
-    ?:  ?=(%2 -.old)
-      old
-    [%2 hey.old]
-  khan-gate(state new)
+  khan-gate(state old)
 ::  +scry: nothing to see as yet
 ::
 ++  scry
