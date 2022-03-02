@@ -1,6 +1,8 @@
 #ifndef C3_TYPES_H
 #define C3_TYPES_H
 
+#include "c/portable.h"
+
   /** Integer typedefs.
   **/
     /* Canonical integers.
