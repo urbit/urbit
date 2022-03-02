@@ -11945,12 +11945,12 @@
         %+  bind  (~(get by tal) axe)
         |=  gen=hoon
         ^-  nock
-        =^  hemped  grub
+        =/  hemped
           %.  [hud %noun gen]
           %=  caching-hemp
             sut  (core sut [nym hud %gold] sut [[%lazy 1 ..^$] ~] dom)
           ==
-        hemped
+        -:hemped
       :_  grub
       [stencil ~]
     ::
