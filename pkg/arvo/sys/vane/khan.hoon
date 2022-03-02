@@ -65,6 +65,7 @@
 ++  get-beak
   |=  [=bear now=@da]
   ?@(bear [our bear %da now] bear)
+::
 ++  get-dais
   |=  [=beak =mark rof=roof]
   ^-  dais:clay
@@ -74,6 +75,7 @@
     ~|(mark-invalid+mark !!)
   ?>  =(%dais p.u.u.ret)
   !<(dais:clay q.u.u.ret)
+::
 ++  get-tube
   |=  [=beak =mark =out=mark rof=roof]
   ^-  tube:clay
@@ -83,10 +85,12 @@
     ~|(tube-invalid+[mark out-mark] !!)
   ?>  =(%tube p.u.u.ret)
   !<(tube:clay q.u.u.ret)
+::
 ++  make-wire
   |=  [=beak =mark]
   ^-  wire
   [%fyrd (en-beam beak mark ~)]
+::
 ++  read-wire
   |=  =wire
   ^-  (pair beak mark)
@@ -94,10 +98,12 @@
   ?>  ?=([%fyrd ^] wire)
   =/  =beam  (need (de-beam t.wire))
   ?>(?=([@ ~] s.beam) beam(s i.s.beam))
+::
 ++  start-spider
   |=  [our=@p =vase]
   ^-  note
   [%g %deal [our our] %spider %poke %spider-start vase]
+::
 ++  watch-spider
   |=  [our=@p =path]
   ^-  note
