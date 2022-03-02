@@ -24,7 +24,7 @@ _disk_commit_done(u3_disk* log_u)
   c3_o ret_o = log_u->sav_u.ret_o;
 
 #ifdef VERBOSE_DISK
-  c3_c* msg_c = ( c3Y == ret_o ) ? "complete" : "failed";
+  c3_c* msg_c = ( c3y == ret_o ) ? "complete" : "failed";
 
   if ( 1 == len_w ) {
     fprintf(stderr, "disk: (%" PRIu64 "): commit: %s\r\n", eve_d, msg_c);
@@ -36,7 +36,6 @@ _disk_commit_done(u3_disk* log_u)
                     msg_c);
   }
 #endif
-
 
   if ( c3y == ret_o ) {
     log_u->dun_d += len_w;
@@ -108,42 +107,46 @@ _disk_commit_start(u3_disk* log_u)
                                           _disk_commit_after_cb);
 }
 
-/* u3_disk_etch(): serialize an event for persistence.
+/* u3_disk_etch(): serialize an event for persistence. RETAIN [eve]
 */
-c3_w
+size_t
 u3_disk_etch(u3_disk* log_u,
              u3_noun    eve,
              c3_l     mug_l,
              c3_y**   out_y)
 {
-  //  XX check version number
-  //
+  size_t len_i;
+  c3_y*  dat_y;
 
-  #ifdef DISK_TRACE_JAM
-  u3t_event_trace("king disk jam", 'B');
+#ifdef DISK_TRACE_JAM
+  u3t_event_trace("disk etch", 'B');
 #endif
 
+  //  XX check version number in log_u
   //  XX needs api redesign to limit allocations
   //
   {
     u3_atom mat = u3qe_jam(eve);
     c3_w  len_w = u3r_met(3, mat);
-    c3_y* dat_y = c3_malloc(4 + len_w);
+
+    len_i = 4 + len_w;
+    dat_y = c3_malloc(len_i);
+
     dat_y[0] = mug_l & 0xff;
     dat_y[1] = (mug_l >> 8) & 0xff;
     dat_y[2] = (mug_l >> 16) & 0xff;
     dat_y[3] = (mug_l >> 24) & 0xff;
     u3r_bytes(0, len_w, dat_y + 4, mat);
 
+    u3z(mat);
+  }
+
 #ifdef DISK_TRACE_JAM
-    u3t_event_trace("king disk jam", 'E');
+  u3t_event_trace("disk etch", 'E');
 #endif
 
-    u3z(mat);
-
-    *out_y = dat_y;
-    return len_w + 4;
-  }
+  *out_y = dat_y;
+  return len_i;
 }
 
 /* _disk_batch(): create a write batch
@@ -154,35 +157,32 @@ _disk_batch(u3_disk* log_u)
   u3_feat* fet_u = log_u->put_u.ext_u;
   c3_w     len_w = log_u->sen_d - log_u->dun_d;
 
-  if (  !len_w
-     || (c3y == log_u->sav_u.ted_o) )
-  {
+  if ( !len_w || (c3y == log_u->sav_u.ted_o) ) {
     return c3n;
   }
-  else {
-    len_w = c3_min(len_w, 100);
 
+  len_w = c3_min(len_w, 100);
+
+  c3_assert( fet_u );
+  c3_assert( (1ULL + log_u->dun_d) == fet_u->eve_d );
+
+  log_u->sav_u.ret_o = c3n;
+  log_u->sav_u.eve_d = fet_u->eve_d;
+  log_u->sav_u.len_w = len_w;
+
+  for ( c3_w i_w = 0; i_w < len_w; ++i_w ) {
     c3_assert( fet_u );
-    c3_assert( (1ULL + log_u->dun_d) == fet_u->eve_d );
+    c3_assert( (log_u->sav_u.eve_d + i_w) == fet_u->eve_d );
 
-    log_u->sav_u.ret_o = c3n;
-    log_u->sav_u.eve_d = fet_u->eve_d;
-    log_u->sav_u.len_w = len_w;
+    log_u->sav_u.byt_y[i_w] = fet_u->hun_y;
+    log_u->sav_u.siz_i[i_w] = fet_u->len_i;
 
-    for ( c3_w i_w = 0; i_w < len_w; ++i_w ) {
-      c3_assert( fet_u );
-      c3_assert( (log_u->sav_u.eve_d + i_w) == fet_u->eve_d );
-
-      log_u->sav_u.byt_y[i_w] = fet_u->hun_y;
-      log_u->sav_u.siz_i[i_w] = fet_u->len_i;
-
-      fet_u = fet_u->nex_u;
-    }
-
-    log_u->hit_w[len_w]++;
-
-    return c3y;
+    fet_u = fet_u->nex_u;
   }
+
+  log_u->hit_w[len_w]++;
+
+  return c3y;
 }
 
 /* _disk_commit(): commit all available events, if idle.
@@ -306,32 +306,30 @@ u3_disk_sift(u3_disk* log_u,
              c3_l*    mug_l,
              u3_noun*   job)
 {
-  //  XX check version
-  //
-
   if ( 4 >= len_i ) {
     return c3n;
   }
-  else {
-    *mug_l = dat_y[0]
-           ^ (dat_y[1] <<  8)
-           ^ (dat_y[2] << 16)
-           ^ (dat_y[3] << 24);
 
 #ifdef DISK_TRACE_CUE
-    u3t_event_trace("king disk cue", 'B');
+  u3t_event_trace("disk sift", 'B');
 #endif
 
-    //  XX u3m_soft?
-    //
-    *job = u3ke_cue(u3i_bytes(len_i - 4, dat_y + 4));
+  //  XX check version in log_u
+  //
+  *mug_l = dat_y[0]
+         ^ (dat_y[1] <<  8)
+         ^ (dat_y[2] << 16)
+         ^ (dat_y[3] << 24);
+
+  //  XX u3m_soft?
+  //
+  *job = u3ke_cue(u3i_bytes(len_i - 4, dat_y + 4));
 
 #ifdef DISK_TRACE_CUE
-    u3t_event_trace("king disk cue", 'E');
+  u3t_event_trace("disk sift", 'E');
 #endif
 
-    return c3y;
-  }
+  return c3y;
 }
 
 struct _cd_list {
@@ -370,18 +368,14 @@ u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l)
 {
   struct _cd_list ven_u = { log_u, u3_nul, 0 };
 
-  if ( c3n == u3_lmdb_read(log_u->mdb_u,
-                           &ven_u,
-                           eve_d,
-                           len_d,
-                           _disk_read_list_cb) )
+  if ( c3n == u3_lmdb_read(log_u->mdb_u, &ven_u,
+                           eve_d, len_d, _disk_read_list_cb) )
   {
     return u3_none;
   }
-  else {
-    *mug_l = ven_u.mug_l;
-    return u3kb_flop(ven_u.eve);
-  }
+
+  *mug_l = ven_u.mug_l;
+  return u3kb_flop(ven_u.eve);
 }
 
 /* u3_disk_walk_init(): init iterator.

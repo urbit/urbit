@@ -850,9 +850,9 @@
         u3_disk*
         u3_disk_init(c3_c* pax_c);
 
-      /* u3_disk_etch(): serialize an event for persistence.
+      /* u3_disk_etch(): serialize an event for persistence. RETAIN [eve]
       */
-        c3_w
+        size_t
         u3_disk_etch(u3_disk* log_u,
                      u3_noun    eve,
                      c3_l     mug_l,
