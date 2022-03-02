@@ -116,7 +116,6 @@
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
 =*  khan-gate  .
-=.  tic  0
 ^?
 |%
 ::  +call: handle a +task request
@@ -140,7 +139,7 @@
       %^  cat  3
         'khan-fyrd--'
       (scot %uv (sham (mix tic eny)))
-    =.  tic     +(tic)
+    =.  tic     (mod +(tic) (bex 128))
     =*  fyd     p.task
     =/  =beak   (get-beak bear.fyd now)
     =/  args    [~ `tid beak name.fyd q.args.fyd]
