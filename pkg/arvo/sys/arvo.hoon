@@ -13,12 +13,12 @@
 ::  $case: global version
 ::  $cage: marked vase
 ::  +cask: marked data builder
-::  $crag: raw marked noun
 ::  $desk: local workspace
 ::  $dock: message target
 ::  $gang: infinite set of peers
 ::  $mark: symbolic content type
 ::  $mien: orientation
+::  $page: untyped cage
 ::  +omen: namespace path and data
 ::  $ship: network identity
 ::  $sink: subscription
@@ -45,12 +45,12 @@
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
-+$  crag  (cask)
 +$  desk  @tas
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))
 +$  mark  @tas
 +$  mien  [our=ship now=@da eny=@uvJ]
++$  page  (cask)
 ++  omen  |$  [a]  (pair path (cask a))
 +$  ship  @p
 +$  sink  (trel bone ship path)

@@ -857,7 +857,6 @@
         [%| p=@tas]                                     ::  label
     ==                                                  ::
   +$  open  $-(path vase)                               ::  get prelude
-  +$  page  (cask *)                                    ::  untyped cage
   +$  plop  blob                                        ::  unvalidated blob
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
@@ -2099,7 +2098,7 @@
   |%
   +$  gift                                              ::  out result <-$
     $%  [%arow p=(avow cage)]                           ::  in-arvo result
-        [%avow p=(avow crag)]                           ::  external result
+        [%avow p=(avow page)]                           ::  external result
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
@@ -2115,7 +2114,7 @@
   ::                                                    ::
   ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
   +$  bear  $@(desk beak)                               ::  partial $beak
-  +$  cast  (pair mark crag)                            ::  output mark + input
+  +$  cast  (pair mark page)                            ::  output mark + input
   ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  thread run request
   --  ::khan
 ::
