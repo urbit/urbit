@@ -88,7 +88,7 @@
 ::  +wite: kernel action/error builder
 ::
 +$  ball  (wite [vane=term task=maze] maze)
-+$  card  (cask)
++$  card  (pair @tas *)
 +$  duct  (list wire)
 ++  hobo
   |$  [a]
