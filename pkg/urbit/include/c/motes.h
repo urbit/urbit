@@ -1,6 +1,8 @@
 #ifndef C3_MOTES_H
 #define C3_MOTES_H
 
+#include "c/defs.h"
+
   /** Definitions.
   **/
 

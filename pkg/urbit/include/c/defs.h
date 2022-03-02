@@ -1,6 +1,8 @@
 #ifndef C3_DEFS_H
 #define C3_DEFS_H
 
+#include "c/types.h"
+
   /** Loobeans - inverse booleans to match nock.
   **/
 #     define c3y      0
