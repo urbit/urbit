@@ -1,5 +1,5 @@
-import { Scry } from '../http-api/src'
-import { Poke } from '../http-api/src/types';
+import { Scry } from '../../http-api/src'
+import { Poke } from '../../http-api/src/types';
 import { Belt, Task, SessionTask } from './types';
 
 export const pokeTask = (session: string, task: Task): Poke<SessionTask> => ({

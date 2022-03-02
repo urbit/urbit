@@ -53,8 +53,8 @@ export type Belt =
 export type Task =
   | { belt: Belt }
   | { blew: { w: number, h: number } }
-  | { flow: { term: string, apps: Array<{ who: string, app: string }> } }
   | { hail: null }
-  | { hook: null }
+  | { open: { term: string, apps: Array<{ who: string, app: string }> } }
+  | { shut: null }
 
 export type SessionTask = { session: string } & Task

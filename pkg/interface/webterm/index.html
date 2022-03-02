@@ -27,6 +27,44 @@
         margin: 0;
         padding: 0;
       }
+
+      .buffer-container {
+        height: calc(100% - 33px);
+      }
+
+      div.tabs {
+        height: 33px;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        padding: 5px 0;
+        border-bottom: 1px solid black;
+      }
+
+      div.tabs > * {
+        margin-left: 5px;
+        margin-right: 5px;
+        border: solid 1px black;
+        padding: 7px;
+        cursor: pointer;
+      }
+
+      div.tab {
+        text-align: center;
+        /* display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: space-between; */
+      }
+
+      div.tabs > div.selected > a.session-name {
+        font-weight: bold;
+      }
+
+      div.tabs > a.delete-session {
+        padding: 5px;
+      }
+
     </style>
   </head>
   <body>
