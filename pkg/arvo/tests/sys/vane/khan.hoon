@@ -144,6 +144,41 @@
       !>([~[//khan/2/0v0] %give %arow %& %noun !>(%res)])
       !>((head take-moves))
   :(weld results-0 results-1 results-2)
+++  test-khan-multi-fard
+  =^  born-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      now=~1162.1.1
+      scry=scry-provides-mark
+      call-args=[duct=~[/a] ~ [%born ~]]
+    ==
+  =/  fard=(fyrd:khan cage)  [%base %fake %noun !>(~)]
+  =/  khan-call-args  :*
+    now=(add ~1162.1.1 ~s1)
+    scry=scry-provides-mark
+    ^=  call-args  :*
+      duct=~[//khan/2/0va]  ~  %fard  fard
+    ==
+  ==
+  =^  start-1-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      khan-call-args
+    ==
+  =^  start-2-moves  khan-gate
+    %-  khan-call  :*
+      khan-gate
+      khan-call-args
+    ==
+  =/  results-1
+    %+  expect-spider-start-tid
+      'khan-fyrd--0vir6kv.ci3nm.a8rcs.kua3e.9sp7o'
+    start-1-moves
+  =/  results-2
+    %+  expect-spider-start-tid
+      'khan-fyrd--0v4.la9d1.uc5cu.ngv3f.pbo8a.mlc5f'
+    start-2-moves
+  (weld results-1 results-2)
 ++  test-khan-take-full-run-fyrd
   =^  born-moves  khan-gate
     %-  khan-call  :*
@@ -328,6 +363,25 @@
     ~[//khan/0v0/1/0v0]  ~
     [%khan %arow %& %noun !>(~)]
   ==
+++  expect-spider-start-tid
+  |=  [tid=@ta mev=(list move:khan-gate)]
+  ?>  ?=([^ ^ ~] mev)
+  =*  watch-move  i.mev
+  =*  start-move  i.t.mev
+  ?>  ?=([* %pass * %g %deal * %spider %watch *] watch-move)
+  =/  results-1
+    %+  expect-eq
+      !>(/thread-result/[tid])
+      !>(path.r.note.q.watch-move)
+  ?>  ?=([* %pass * %g %deal * %spider %poke %spider-start *] start-move)
+  =/  start-args
+    !<  [p=(unit @ta) q=(unit @ta) r=beak s=term t=vase]
+    q.cage.r.note.q.start-move
+  =/  results-2
+    %+  expect-eq
+      !>  `tid
+      !>  q.start-args
+  (weld results-1 results-2)
 ++  khan-call
   |=  $:  khan-gate=_khan-gate
           now=@da
