@@ -1,6 +1,6 @@
 module Practice.DependentHoon4 where
 
-import ClassyPrelude hiding (even, find, join, read)
+import ClassyPrelude hiding ((/), even, find, join, read)
 
 import Control.Monad.Except hiding (join)
 import Control.Monad.Reader hiding (join)
@@ -58,7 +58,7 @@ data Code a
   | Aura Aura
   | Rail (Code a) (Code a)
   | Gate (Code a) (Code a)
-  | Fork (Set (Code a)) (Code a)
+  | Fork (Code a) (Code a)
   | Noun
   | Void
   | Type
@@ -85,9 +85,11 @@ pole a = \case
 
 type Level = Nat
 
+type Loc = (Level, Axis)
+
 -- | Frozen wing.
 data Rump
-  = Leg' (Level, Axis)
+  = Leg' Loc
 
 instance Show Rump where
   show = \case
@@ -145,7 +147,7 @@ data Semi a
   | Aura' Aura
   | Rail' (Semi a) (Jamb a)
   | Gate' (Semi a) (Jamb a)
-  | Fork' (Set (Semi a)) (Semi a)
+  | Fork' (Semi a) (Semi a)
   | Noun'
   | Void'
   | Type'
@@ -164,6 +166,9 @@ instance SetFunctor Set where
 (>>==) :: (Ord a, Ord b) => Set a -> (a -> Set b) -> Set b
 ss >>== f = mconcat $ map f $ setToList ss
 
+elems :: (Ord a, Ord b) => ([a] -> [b]) -> Set a -> Set b
+elems f = setFromList . f . setToList
+
 -- | Apply a function to every alt, flattening any Alts in the result.
 alts' :: Ord a => Set (Semi a) -> (Semi a -> Semi a) -> Semi a
 alts' ss f = Alts' $ setFromList $ concatMap (split . f) $ setToList ss
@@ -172,6 +177,12 @@ alts' ss f = Alts' $ setFromList $ concatMap (split . f) $ setToList ss
   split = \case
     Alts' ss -> setToList ss
     x -> [x]
+
+-- | Single or alternatives
+pattern Salt' :: Set (Semi a) -> Semi a
+pattern Salt' ss <-
+  ((\case Alts' ss -> Just ss; s -> Just (singleton s)) -> Just ss)
+
 
 instance SetFunctor Code where
   smap = undefined
@@ -189,16 +200,18 @@ instance SetFunctor Jamb where
 -- Evaluator -------------------------------------------------------------------
 
 -- | Read a seminoun representing what we know about the *values* of the subject
--- from the type of the subject.
-read :: Ord a => Type a -> Semi a
-read = \case
-  Alts' ss -> alts' ss read
-  Fork' ss _ -> Alts' ss
-  Cell' t u -> Cell' (read t) (read u)
+-- from the type of the subject. Where we don't know anything, the given
+-- seminoun is used to generate unknowns.
+read :: Ord a => Semi a -> Type a -> Semi a
+read nul = \case
+  Alts' ss -> alts' ss $ read nul
+  Fork' s _ -> s
+  Cell' t u -> Cell' (read (nul / 2) t) (read (nul / 3) u)
   Rail' t j -> Cell' lef rit
    where
-    lef = read t
-    rit = read $ jamb j lef
+    lef = read (nul / 2) t
+    rit = read (nul / 3) $ jamb j lef
+  _ -> nul
 
 jamb :: Ord a => Jamb a -> Semi a -> Semi a
 jamb Jamb{..} arg = eval (Cell' arg clo) cod
@@ -221,6 +234,9 @@ look s b = home s $ walk a b
 
   home s b = case s of
     Leg _ -> b
+
+(/) :: Ord a => Semi a -> Axis -> Semi a
+s / a = look (Leg a) s
 
 eval :: Ord a => Semi a -> Code a -> Semi a
 eval sub = \case
@@ -276,7 +292,7 @@ loft lvl = \case
   Aura' au -> Aura au
   Rail' l j -> Rail (loft lvl l) (luft lvl j)
   Gate' a j -> Gate (loft lvl a) (luft lvl j)
-  Fork' ss t -> Fork (smap (loft lvl) ss) (loft lvl t)
+  Fork' s t -> Fork (loft lvl s) (loft lvl t)
   Noun' -> Noun
   Void' -> Void
   Type' -> Type
@@ -528,22 +544,34 @@ fits fit t u = case (t, u) of
     FitNest -> if ag `isPrefixOf` au then pure () else fitsFail
     FitSame -> if ag ==           au then pure () else fitsFail
 
-  (Fork' cs t, _) | fit /= FitSame -> fits fit t u
-
-  (Fork' cs t, Fork' ds u) -> do
+  (Fork' (Salt' cs) t, Fork' (Salt' ds) u) -> do
     fits fit t u
     case fit of
       FitSame -> when (cs /= ds) fitsFail
       FitNest -> unless (cs `isSubsetOf` ds) fitsFail
       FitCast -> unless (cs `isSubsetOf` ds) fitsFail
 
+  (Fork' s t, _) | fit /= FitSame -> fits fit t u
+
   (Rail' v j, Rail' w k) -> do
     fits fit v w
-    fits fit (jamb j $ read v) (jamb k $ read w)
+    fits fit (jamb j' $ read new v') (jamb k' $ read new w')
+   where
+    v' = smap Old v
+    w' = smap Old w
+    j' = smap Old j
+    k' = smap Old k
+    new = Fore' (New ())
 
   (Gate' v j, Gate' w k) -> do
     fits fit v w
-    fits fit (jamb j $ read v) (jamb k $ read w)
+    fits fit (jamb j' $ read new v') (jamb k' $ read new w')
+   where
+    v' = smap Old v
+    w' = smap Old w
+    j' = smap Old j
+    k' = smap Old k
+    new = Fore' (New ())
 
   (Type', Type') -> pure ()
 
@@ -560,30 +588,33 @@ fits fit t u = case (t, u) of
   fitsFail = bail (FitsFail fit t u)
 
 
+
+
 -- Find ------------------------------------------------------------------------
 
 
-peek :: (MonadCheck m, Var a) => Type a -> Axis -> m (Type a)
-peek a typ = undefined
+peek :: (MonadCheck m, Var a) => Loc -> Type a -> Axis -> m (Type a)
+peek loc a typ = undefined
 
 -- Pelt system -----------------------------------------------------------------
 
 repo :: Type a -> Type a
 repo = id  -- XX faces
 
+-- | Intersect seminouns.
 meld :: (Var a) => Semi a -> Semi a -> Maybe (Semi a)
-meld b c = case (repo b, repo c) of
+meld b c = case (b, c) of
   (Rump'{}, a)       -> pure a
   (a,       Rump'{}) -> pure a
 
   (a, Alts' ss) ->
-    let ss' = setFromList $ catMaybes $ map (a `meld`) $ setToList ss
+    let ss' = elems (catMaybes . map (a `meld`)) ss
     in if Set.empty == ss'
       then Nothing
       else pure $ Alts' ss'
 
   (Alts' ss, a) ->
-    let ss' = setFromList $ catMaybes $ map (`meld` a) $ setToList ss
+    let ss' = elems (catMaybes . map (`meld` a)) ss
     in if Set.empty == ss'
       then Nothing
       else pure $ Alts' ss'
@@ -594,33 +625,58 @@ meld b c = case (repo b, repo c) of
 
   _ -> Nothing
 
+-- | Promote voids to top level.
 vain :: Var a => Type a -> Type a
 vain = \case
-  Fork' s _ | s == Set.empty -> Void'
+  Fork' (Salt' s) _ | null s -> Void'
+  Cell' t u -> case (vain t, vain u) of
+    (Void', _) -> Void'
+    (_, Void') -> Void'
+    (t, u) -> Cell' t u
+  Rail' t j -> Rail' t j  -- XX FIXME
   t -> t
 
-fork :: Var a => Semi a -> Type a -> Type a
-fork s t = vain case (s, t) of
-  (Alts' ss, Fork' zz t) -> Fork' (Set.intersection ss zz) t
-  (s, Fork' zz t) ->
-    Fork' (setFromList $ catMaybes $ map (meld s) $ setToList zz) t
-  (Alts' ss, t) -> Fork' ss t
-  (s, t) -> Fork' (Set.singleton s) t
+-- | Add an atomic constant to the collection of possibilities of a given type.
+fork :: Var a => Atom -> Type a -> Type a
+fork a t = case t of
+  Fork' (Salt' as) t -> Fork' (Alts' $ insertSet (Atom' a) as) t
+  t -> Fork' (Atom' a) t
+
+-- | Subtract the possibility of an atomic constant from a type.
+kill :: Var a => Atom -> Type a -> Type a
+kill a t = case t of
+  Fork' (Salt' as) t -> case deleteSet (Atom' a) as of
+    as | null as   -> Void'
+       | otherwise -> Fork' (Alts' as) t
+  t -> t
+
 
 fuse :: forall a m. (MonadCheck m, Var a)
-     => Type a -> Pelt -> m (Type a)
-fuse typ pet = case pet of
+     => Loc -> Type a -> Pelt -> m (Type a)
+fuse loc typ pet = case pet of
   Punt -> pure typ
-  Part a -> pure $ fork (Atom' a) typ
+  Part a -> pure $ fork a typ
   Pair p q -> do
-    t <- peek typ 2
-    u <- peek typ 3
-    t <- fuse t p
-    u <- fuse u q
+    t <- peek loc typ 2
+    u <- peek loc typ 3
+    t <- fuse loc t p
+    u <- fuse loc u q
     pure (Cell' t u)
 
 crop :: forall a m. (MonadCheck m, Var a)
-     => Con a -> Type a -> Pelt -> m (Type a)
-crop con typ pet = case pet of
+     => Loc -> Type a -> Pelt -> m (Type a)
+crop loc@(lvl, axe) typ pet = case pet of
   Punt -> pure Void'
+  Part a -> pure $ kill a typ
+  Pair p q -> do
+    t <- peek loc typ 2
+    u <- peek loc typ 3
+    tSmol <- crop loc t p
+    crop loc u q >>= \case
+      Void' -> pure (Cell' tSmol u)
+      u     -> pure (Cell' t     tes)
+       where
+        fis = undefined -- Fish' (fish p) tSmol t
+        tes = undefined -- Test' fis tSmol t
+
 
