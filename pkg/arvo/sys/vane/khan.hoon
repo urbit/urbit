@@ -58,7 +58,10 @@
               $>(?(%arow %avow) gift)                   ::  thread result
       ==  ==                                            ::
     +$  khan-state                                      ::
-      [%0 hey=duct]                                     ::  current unix duct
+      $:  %0                                            ::    state v0
+          hey=duct                                      ::  unix duct
+          tic=@ud                                       ::  tid counter
+      ==                                                ::
     --                                                  ::
 =>
 |%
@@ -113,6 +116,7 @@
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
 =*  khan-gate  .
+=.  tic  0
 ^?
 |%
 ::  +call: handle a +task request
@@ -133,7 +137,10 @@
   ::
       %fard
     =/  tid=@ta
-      (cat 3 'khan-fyrd--' (scot %uv (sham eny)))
+      %^  cat  3
+        'khan-fyrd--'
+      (scot %uv (sham (mix tic eny)))
+    =.  tic     +(tic)
     =*  fyd     p.task
     =/  =beak   (get-beak bear.fyd now)
     =/  args    [~ `tid beak name.fyd q.args.fyd]
