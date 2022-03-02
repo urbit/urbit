@@ -8,26 +8,33 @@
 ::  both modes take a thread start request consisting of a
 ::  namespace, thread name, and input data; they respond over the
 ::  same duct with either success or failure. %fard takes its
-::  input arguments as a vase and produces %arow, which contains
-::  a vase on success (or tang on failure). %fyrd takes an output
+::  input arguments as a cage and produces %arow, which contains
+::  a cage on success (or tang on failure). %fyrd takes an output
 ::  mark and input crag; it produces %avow, which contains a crag
 ::  on success.
 ::
-::  %fard passes its arguments and produces its result
-::  unmodified. %fyrd does mark conversion on both ends, and
-::  additionally lifts its input into a $unit. this second step
-::  is done because threads conventionally take their input as a
-::  unit, with ~ for the case of "no arguments".
+::  threads currently expect input and produce output as vase,
+::  not cage. %fard/%arow use cage instead since this is the
+::  eventual desired thread API; however, the input mark is
+::  currently ignored, and the output mark is always %noun. (for
+::  forward compatibility, it is safe to specify %noun as the
+::  input mark.)
+::
+::  %fyrd does mark conversion on both ends, and additionally
+::  lifts its input into a $unit. this second step is done
+::  because threads conventionally take their input as a unit,
+::  with ~ for the case of "no arguments".
 ::
 ::  n.b. the current convention for threads is to use !< to
-::  unpack their input into a well-defined type. !< imposes the
-::  requirement that the input type nests within the specified
-::  type. this limits %fyrd to threads with inputs for which a
-::  named mark exists; it is impossible to use %noun in general
-::  since it does not nest. to support using the %noun mark for
-::  inputs, it would be sufficient to convert threads to use ;;
-::  rather than !< on their inputs, at the cost of losing type
-::  validation.
+::  unpack their input vase. !< imposes the requirement that the
+::  input type nests within the specified type. this limits %fyrd
+::  to threads with inputs for which a named mark exists; it is
+::  impossible to use %noun in general since it does not nest.
+::  threads written against the current vase-based API could use
+::  ;; instead of !< to unpack their input, thus allowing the
+::  use of %fyrd with %noun. however the eventual solution is
+::  probably to make threads consume and produce cages, and do
+::  mark conversion where appropriate.
 !:
 !?  164
 ::
