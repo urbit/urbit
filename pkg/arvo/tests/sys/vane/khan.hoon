@@ -36,7 +36,7 @@
   ?>  ?=(%pass -.q.mev)
   =/  results-3
     %+  expect-eq
-      !>  /fyrd/~nul/base/da/~1162.1.1..00.00.01/noun
+      !>  /fyrd/~nul/base/~1162.1.1..00.00.01/noun
       !>  wire.q.mev
   =/  results-4  (expect-eq !>(%k) !>(-.note.q.mev))
   ?>  ?=(%fard +<.note.q.mev)

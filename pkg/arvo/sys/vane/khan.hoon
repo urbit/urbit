@@ -55,7 +55,7 @@
               $>(%unto gift:gall)                       ::  update
           ==                                            ::
           $:  %khan                                     ::    from self
-              $>  ?(%arow %avow)  gift                  ::  thread result
+              $>(?(%arow %avow) gift)                   ::  thread result
       ==  ==                                            ::
     +$  khan-state                                      ::
       [%0 hey=duct]                                     ::  current unix duct
@@ -86,34 +86,14 @@
 ++  make-wire
   |=  [=beak =mark]
   ^-  wire
-  :~  %fyrd
-      (scot %p p.beak)
-      q.beak
-      -.r.beak
-      (scot r.beak)
-      mark
-  ==
-++  read-case
-  |=  a=[p=@ @]
-  ^-  case
-  ::  XX  should be:
-  ::    ?>  ?=(?(%da %tas %ud) p.a)
-  ::    [p.a (slav a)]
-  ::
-  ?+  p.a   !!
-    %da   [p.a (slav a)]
-    %tas  [p.a (slav a)]
-    %ud   [p.a (slav a)]
-  ==
+  [%fyrd (en-beam beak mark ~)]
 ++  read-wire
   |=  =wire
   ^-  (pair beak mark)
   ~|  khan-read-wire+wire
-  ?>  ?=([%fyrd @ @ @ @ @ ~] wire)
-  :_  i.t.t.t.t.t.wire
-  :+  (slav %p i.t.wire)
-    i.t.t.wire
-  (read-case [i i.t]:t.t.t.wire)
+  ?>  ?=([%fyrd ^] wire)
+  =/  =beam  (need (de-beam t.wire))
+  ?>(?=([@ ~] s.beam) beam(s i.s.beam))
 ++  start-spider
   |=  [our=@p =vase]
   ^-  note
