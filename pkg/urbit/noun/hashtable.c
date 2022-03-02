@@ -1,7 +1,11 @@
-/* g/h.c
-**
-*/
-#include "all.h"
+//! @file hashtable.c
+
+#include "noun/hashtable.h"
+
+#include "noun/aliases.h"
+#include "noun/imprison.h"
+#include "noun/retrieve.h"
+#include "noun/xtract.h"
 
 /* CUT_END(): extract [b_w] low bits from [a_w]
 */
