@@ -1,7 +1,12 @@
-/* noun/imprison.c
-**
-*/
-#include "all.h"
+//! @file imprison.c
+
+#include "noun/imprison.h"
+
+#include "jets/k.h"
+#include "jets/q.h"
+#include "noun/retrieve.h"
+#include "noun/trace.h"
+#include "noun/xtract.h"
 
 /* _ci_slab_size(): calculate slab bloq-size, checking for overflow.
 */

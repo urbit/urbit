@@ -1,5 +1,10 @@
+//! @file imprison.h
+
 #ifndef U3_IMPRISON_H
 #define U3_IMPRISON_H
+
+#include "noun/types.h"
+#include "noun/allocate.h"
 
   /**  Structures.
   **/
