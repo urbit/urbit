@@ -45,7 +45,7 @@
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
-+$  crag  (cask *)
++$  crag  (cask)
 +$  desk  @tas
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))
