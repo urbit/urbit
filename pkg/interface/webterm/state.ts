@@ -3,15 +3,17 @@ import { FitAddon } from 'xterm-addon-fit';
 import create from 'zustand';
 import produce from 'immer';
 
-type Session  = { term: Terminal, fit: FitAddon };
-type Sessions = { [id: string]: Session; }
+export type Session  = { term: Terminal, fit: FitAddon, hasBell: boolean } | null;
+export type Sessions = { [id: string]: Session; }
 
 export interface TermState {
   sessions: Sessions,
   selected: string,
   slogstream: null | EventSource,
-  theme: 'auto' | 'light' | 'dark'
-};
+  theme: 'auto' | 'light' | 'dark',
+  //TODO: figure out the type
+  set: any,
+}
 
 const useTermState = create<TermState>((set, get) => ({
   sessions: {} as Sessions,
