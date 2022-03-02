@@ -27,7 +27,8 @@ export const useSlogstream = (session: Session) => {
   // was originally implemented with the assumption
   // that there is only one session; we may need to
   // push it to the Session (i.e, each session has its
-  // own stream)
+  // own stream)? 
+  // After conversation with Mark, we should only do this for Default stream
   const slogstream = useTermState(s => s.slogstream);
 
   const setupSlog = useCallback(() => {
@@ -71,5 +72,5 @@ export const useSlogstream = (session: Session) => {
     if (!slogstream) {
       setupSlog();
     }
-  });
+  }, []);
 };

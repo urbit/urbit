@@ -47,7 +47,7 @@ export default function TermApp(props: TermAppProps) {
     <>
       <ThemeProvider theme={dark ? _dark : _light}>
         <Reset />
-        <Tabs />aaa
+        <Tabs />
         <Buffer name={selected} />
       </ThemeProvider>
     </>
