@@ -1,5 +1,11 @@
+//! @file nock.h
+
 #ifndef U3_NOCK_H
 #define U3_NOCK_H
+
+#include "noun/types.h"
+#include "noun/allocate.h"
+#include "noun/jets.h"
 
   /** Data structures.
   ***
