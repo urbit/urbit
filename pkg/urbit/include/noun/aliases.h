@@ -3,10 +3,6 @@
 
   /**  Constants.
   **/
-    /* u3_none - u3_noun which is not a noun.
-    */
-#     define u3_none  (u3_noun)0xffffffff
-
     /* u3_nul: 0, hoon ~.
     */
 #     define u3_nul   0
@@ -14,48 +10,6 @@
     /* u3_blip: 0, hoon %$.
     */
 #     define u3_blip  0
-
-
-  /**  Typedefs.
-  **/
-    /* u3_post: pointer offset into u3_Loom; _p suffix; declare as u3p().
-    */
-      typedef c3_w      u3_post;
-#     define u3p(type)  u3_post
-
-    /* u3_noun: tagged noun pointer.
-    **
-    **  If bit 31 is 0, a u3_noun is a direct 31-bit atom ("cat").
-    **  If bit 31 is 1 and bit 30 0, an indirect atom ("pug").
-    **  If bit 31 is 1 and bit 30 1, an indirect cell ("pom").
-    **
-    ** Bits 0-29 are a word offset against u3_Loom (u3_post).
-    */
-      typedef c3_w u3_noun;
-
-    /* u3_weak: u3_noun which may be u3_none (not a noun).
-    */
-      typedef u3_noun u3_weak;
-
-    /* u3_atom: u3_noun which must be an atom.
-    */
-      typedef u3_noun u3_atom;
-
-    /* u3_term: u3_noun which must be a term (@tas).
-    */
-      typedef u3_noun u3_term;
-
-    /* u3_cell, u3_trel, u3_qual, u3_quin: cell, triple, quadruple, quintuple.
-    */
-      typedef u3_noun u3_cell;
-      typedef u3_noun u3_trel;
-      typedef u3_noun u3_qual;
-      typedef u3_noun u3_quin;
-
-    /* u3_funk, u3_funq: unary and binary noun functions.
-    */
-      typedef u3_noun (*u3_funk)(u3_noun);
-      typedef u3_noun (*u3_funq)(u3_noun, u3_noun);
 
 
   /**  Macros.
