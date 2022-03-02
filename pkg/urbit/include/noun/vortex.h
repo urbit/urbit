@@ -1,6 +1,10 @@
+//! @file vortex.h
+
 #ifndef U3_VORTEX_H
 #define U3_VORTEX_H
 
+#include "noun/types.h"
+#include "noun/allocate.h"
 #include "noun/imprison.h"
 
   /**  Data structures.
