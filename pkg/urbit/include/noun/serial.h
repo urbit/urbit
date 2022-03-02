@@ -1,5 +1,11 @@
+//! @file serial.h
+
 #ifndef U3_SERIAL_H
 #define U3_SERIAL_H
+
+#include "noun/types.h"
+#include "noun/allocate.h"
+#include "noun/imprison.h"
 
     /*  opaque handles
     */
