@@ -47,11 +47,6 @@
 #     define u3du(som)         (u3r_du(som))
 #     define u3ud(som)         (u3r_ud(som))
 
-    /* u3k(), u3z(): reference counts.
-    */
-#     define u3k(som)          u3a_gain(som)
-#     define u3z(som)          u3a_lose(som)
-
     /* u3do(), u3dc(), u3dt(), u3dq(): arvo calls.
     */
 #     define  u3do(txt_c, arg)         u3v_do(txt_c, arg)

@@ -543,6 +543,7 @@
         */
           u3_weak
           u3a_gain(u3_weak som);
+#         define u3k(som)          u3a_gain(som)
 
         /* u3a_take(): gain, copying juniors.
         */
@@ -558,6 +559,7 @@
         */
           void
           u3a_lose(u3_weak som);
+#         define u3z(som)          u3a_lose(som)
 
         /* u3a_wash(): wash all lazy mugs in subtree.  RETAIN.
         */
