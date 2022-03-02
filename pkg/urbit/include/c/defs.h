@@ -5,9 +5,6 @@
 
   /** Loobeans - inverse booleans to match nock.
   **/
-#     define c3y      0
-#     define c3n      1
-
 #     define _(x)        (c3y == (x))
 #     define __(x)       ((x) ? c3y : c3n)
 #     define c3a(x, y)   __(_(x) && _(y))
