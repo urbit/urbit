@@ -192,6 +192,9 @@ instance SetFunctor Jamb where
 class Peg a where
   (/) :: a -> Axis -> a
 
+instance Peg Void where
+  _ / _ = error "impossible"
+
 instance Peg Axis where
   a / b = peg a b
 
@@ -204,11 +207,26 @@ instance Peg (Level, Axis) where
 instance Peg Rump where
   Leg' la / b = Leg' (la / b)
 
-instance Ord a => Peg (Semi a) where
-  s / a = look (Leg a) s
+instance (Peg a, Peg b) => Peg (Hop b a) where
+  Old x / a = Old $ x / a
+  New x / a = New $ x / a
 
--- instance SetFunctor f => Functor f where
+instance (Ord a, Peg a) => Peg (Semi a) where
+  s / a = case (cut a, s) of
+    (Nothing,     s)                   -> s
+    (_,           Alts' ss s)          -> Alts' (smap (/ a) ss) (s / a)
+    (_,           Rump' r)             -> Rump' $ r / a
+    (_,           Fore' x)             -> Fore' $ x / a
+    (_,           Look' c st)          -> Look' c $ st / a
+--  (_,           Face' _ c)           -> walk a c
+    (Just (L, a), Cell' s _)           -> s / a
+    (Just (R, a), Cell' _ s)           -> s / a
+    (Just _,      _)                   -> Look' s (Leg a)
+
+-- instance Functor f => SetFunctor f where
 --   fmap = smap
+
+type Var a = (Eq a, Ord a, Show a, Peg a)
 
 
 -- Evaluator -------------------------------------------------------------------
@@ -216,7 +234,7 @@ instance Ord a => Peg (Semi a) where
 -- | Read a seminoun representing what we know about the *values* of the subject
 -- from the type of the subject. Where we don't know anything, the given
 -- seminoun is used to generate unknowns.
-read :: Ord a => Semi a -> Type a -> Semi a
+read :: Var a => Semi a -> Type a -> Semi a
 read nul = \case
   Alts' ss s -> Alts' (smap (read nul) ss) (read nul s)
   Fork' ss t -> Alts' ss $ read nul t
@@ -227,30 +245,21 @@ read nul = \case
     rit = read (nul / 3) $ jamb j lef
   _ -> nul
 
-jamb :: Ord a => Jamb a -> Semi a -> Semi a
+jamb :: Var a => Jamb a -> Semi a -> Semi a
 jamb Jamb{..} arg = eval (Cell' arg clo) cod
 
 -- | Axially project a value; i.e. implement Nock 0 or 9.
-look :: Ord a => Stub -> Semi a -> Semi a
-look s b = home s $ walk a b
+look :: Var a => Stub -> Semi a -> Semi a
+look st b = home $ b / a
  where
-  a = case s of
+  a = case st of
     Leg a -> a
 
-  walk a b = case (cut a, b) of
-    (Nothing,     c)                   -> c
-    (_,           Alts' ss s)          -> Alts' (smap (walk a) ss) (walk a s)
-    (_,           Rump' (Leg' (l, x))) -> Rump' $ Leg' (l, peg x a)
-    (_,           Look' c (Leg i))     -> Look' c $ Leg (peg i a)
---  (_,           Face' _ c)           -> walk a c
-    (Just (L, b), Cell' c _)           -> walk b c
-    (Just (R, b), Cell' _ c)           -> walk b c
-    (Just _,      _)                   -> Look' b s
-
-  home s b = case s of
+  home :: Semi a -> Semi a
+  home b = case st of
     Leg _ -> b
 
-eval :: Ord a => Semi a -> Code a -> Semi a
+eval :: Var a => Semi a -> Code a -> Semi a
 eval sub = \case
   Stub s -> look s sub
   Fore x -> Fore' x
@@ -286,7 +295,7 @@ eval sub = \case
   With c d -> eval (eval sub c) d
   Push c d -> eval (Cell' (eval sub c) sub) d
 
-loft :: Ord a => Level -> Semi a -> Code a
+loft :: Var a => Level -> Semi a -> Code a
 loft lvl = \case
   -- XX we should have some printout here if lvl < l, which is a serious
   -- invariant violation that should be more legible
@@ -319,8 +328,6 @@ evil ken = eval ken . vacuous -}
 
 
 -- The type checking monad -----------------------------------------------------
-
-type Var a = (Eq a, Ord a, Show a)
 
 class (Monad m, Alternative m) => MonadCheck m where
   -- | Push an error reporting stack frame.
@@ -520,15 +527,15 @@ fits fit t u = case (t, u) of
   --     subtype of Hop Stub a.
   --
   (Lamb' j, Lamb' k) -> fits fit (jamb (smap Old j) new) (jamb (smap Old k) new)
-    where new = Fore' (New ())
+    where new = Fore' @(Hop Axis a) (New 1)
 
   -- XX should we read and do comb explosion?
 
   (Lamb' j, _) -> fits fit (jamb (smap Old j) new) (Slam' (smap Old u) new)
-    where new = Fore' (New ())
+    where new = Fore' @(Hop Axis a) (New 1)
 
   (_, Lamb' k) -> fits fit (Slam' (smap Old t) new) (jamb (smap Old k) new)
-    where new = Fore' (New ())
+    where new = Fore' @(Hop Axis a) (New 1)
 
 
   (Plus' v, Plus' w) -> fits FitSame v w
@@ -574,7 +581,7 @@ fits fit t u = case (t, u) of
     w' = smap Old w
     j' = smap Old j
     k' = smap Old k
-    new = Fore' (New ())
+    new = Fore' @(Hop Axis a) (New 1)
 
   (Gate' v j, Gate' w k) -> do
     fits fit v w
@@ -584,7 +591,7 @@ fits fit t u = case (t, u) of
     w' = smap Old w
     j' = smap Old j
     k' = smap Old k
-    new = Fore' (New ())
+    new = Fore' @(Hop Axis a) (New 1)
 
   (Type', Type') -> pure ()
 
