@@ -25,12 +25,6 @@
 
   /**  Aliases.
   **/
-    /* u3h(), u3t(), u3at(): noun fragments.
-    */
-#     define u3h(som)          u3x_h(som)
-#     define u3t(som)          u3x_t(som)
-#     define u3at(axe, som)    u3x_at(axe, som)
-
     /* u3nc(), u3nt(), u3nq(): tuple composition.
     */
 #     define u3nc(a, b)        u3i_cell(a, b)
