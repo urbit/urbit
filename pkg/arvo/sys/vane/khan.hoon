@@ -62,11 +62,20 @@
   |=  [=beak =mark rof=roof]
   ^-  dais:clay
   ?~  ret=(rof ~ %cb beak /[mark])
-    ~|(%mark-unknown !!)
+    ~|(mark-unknown+mark !!)
   ?~  u.ret
-    ~|(%mark-invalid !!)
+    ~|(mark-invalid+mark !!)
   ?>  =(%dais p.u.u.ret)
   !<(dais:clay q.u.u.ret)
+++  get-tube
+  |=  [=beak =mark =out=mark rof=roof]
+  ^-  tube:clay
+  ?~  ret=(rof ~ %cc beak /[mark]/[out-mark])
+    ~|(tube-unknown+[mark out-mark] !!)
+  ?~  u.ret
+    ~|(tube-invalid+[mark out-mark] !!)
+  ?>  =(%tube p.u.u.ret)
+  !<(tube:clay q.u.u.ret)
 ++  make-wire
   |=  [=beak =mark]
   ^-  wire
@@ -134,7 +143,7 @@
       (cat 3 'khan-fyrd--' (scot %uv (sham eny)))
     =*  fyd     p.task
     =/  =beak   (get-beak bear.fyd now)
-    =/  args    [~ `tid beak name.fyd args.fyd]
+    =/  args    [~ `tid beak name.fyd q.args.fyd]
     :_  khan-gate
     %+  turn
       :~  (watch-spider our /thread-result/[tid])
@@ -150,8 +159,8 @@
       (get-dais beak p.q.args.fyd rof)
     =/  =vase
       (slap (vale.dais q.q.args.fyd) !,(*hoon [~ u=.]))
-    :_  khan-gate
-    [hen %pass wire %k %fard bear.fyd name.fyd vase]~
+    =-  [[hen %pass wire -]~ khan-gate]
+    [%k %fard bear.fyd name.fyd p.q.args.fyd vase]
   ==
 ::  +load: migrate an old state to a new khan version
 ::
@@ -192,7 +201,7 @@
         [hen %give %arow %| p.cag tang]~
       ::
           %thread-done
-        [hen %give %arow %& q.cag]~
+        [hen %give %arow %& %noun q.cag]~
       ==
     ==
   ::
@@ -205,8 +214,10 @@
       [hen %give %avow row]~
     =/  [=beak =mark]
       (read-wire tea)
-    =/  =dais:clay  (get-dais beak mark rof)
-    =/  =vase       (vale:dais q.p.row)
+    =/  =tube:clay
+      (get-tube beak p.p.row mark rof)
+    =/  =vase
+      (tube q.p.row)
     [hen %give %avow %& mark q.vase]~
   ==
 --

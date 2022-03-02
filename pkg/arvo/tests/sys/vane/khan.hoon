@@ -46,7 +46,8 @@
     results-3  results-4
     (expect-eq !>(%base) !>(bear.fad))
     (expect-eq !>(%nonexistent) !>(name.fad))
-    (expect-eq !>(`~) args.fad)
+    (expect-eq !>(%noun) !>(p.args.fad))
+    (expect-eq !>(`~) q.args.fad)
   ==
 ++  test-khan-fard-start-args
   =^  born-moves  khan-gate
@@ -56,7 +57,7 @@
       scry=scry-provides-mark
       call-args=[duct=~[/initial-born-duct] ~ [%born ~]]
     ==
-  =/  fard=(fyrd:khan vase)  [%base %nonexistent !>(~)]
+  =/  fard=(fyrd:khan cage)  [%base %nonexistent %noun !>(~)]
   =/  now=@da  (add ~1111.1.1 ~s1)
   =^  start-moves  khan-gate
     %-  khan-call  :*
@@ -117,7 +118,7 @@
       call-args=[duct=~[/a] ~ [%born ~]]
     ==
   =/  results-0  (expect-eq !>(~) !>(born-moves))
-  =/  fard=(fyrd:khan vase)  [%base %fake !>(~)]
+  =/  fard=(fyrd:khan cage)  [%base %fake %noun !>(~)]
   =^  start-moves  khan-gate
     %-  khan-call  :*
       khan-gate
@@ -140,7 +141,7 @@
     %-  expect  !>(=(1 (lent take-moves)))
   =/  results-2
     %+  expect-eq
-      !>([~[//khan/2/0v0] %give %arow %& !>(%res)])
+      !>([~[//khan/2/0v0] %give %arow %& %noun !>(%res)])
       !>((head take-moves))
   :(weld results-0 results-1 results-2)
 ++  test-khan-take-full-run-fyrd
@@ -177,7 +178,7 @@
         wire=wir
         duct=~[//khan/0v0/1/0v2]
         dud=~
-        [%khan %arow %& !>(%res)]
+        [%khan %arow %& %noun !>(%res)]
     ==
   =/  results-1  (expect !>(=(1 (lent arow-moves))))
   =/  row  (head arow-moves)
@@ -325,7 +326,7 @@
     scry-provides-mark
     /fyrd/~nul/base/da/~1111.1.1..00.00.01/bad-mark
     ~[//khan/0v0/1/0v0]  ~
-    [%khan %arow %& !>(~)]
+    [%khan %arow %& %noun !>(~)]
   ==
 ++  khan-call
   |=  $:  khan-gate=_khan-gate
@@ -403,6 +404,9 @@
   ++  pact  !!
   ++  vale  |=(=noun !>(;;(^noun noun)))
   --
+++  tube-noun-noun  ^-  tube:clay
+  |=  =vase
+  !>(!<(noun vase))
 ++  scry-provides-mark  ^-  roof
   |=  [gang =view =beam]
   ^-  (unit (unit cage))
@@ -410,5 +414,9 @@
     :^  ~  ~  %dais
     !>  ^-  dais:clay
     dais-noun
+  ?:  &(=(%cc view) =(/noun/noun s.beam))
+    :^  ~  ~  %tube
+    !>  ^-  tube:clay
+    tube-noun-noun
   ~
 --

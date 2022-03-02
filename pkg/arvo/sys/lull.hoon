@@ -2098,14 +2098,16 @@
 ++  khan  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%arow p=(avow vase)]                           ::  in-arvo result
+    $%  [%arow p=(avow cage)]                           ::  in-arvo result
         [%avow p=(avow crag)]                           ::  external result
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         [%done ~]                                       ::  socket closed
-        [%fard p=(fyrd vase)]                           ::  in-arvo thread
+        ::  XX  mark ignored
+        ::
+        [%fard p=(fyrd cage)]                           ::  in-arvo thread
         [%fyrd p=(fyrd cast)]                           ::  external thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -2113,7 +2115,7 @@
   ::                                                    ::
   ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
   +$  bear  $@(desk beak)                               ::  partial $beak
-  +$  cast  (pair mark crag)                            ::  mark-converted input
+  +$  cast  (pair mark crag)                            ::  output mark + input
   ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  thread run request
   --  ::khan
 ::
