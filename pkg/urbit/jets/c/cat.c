@@ -1,7 +1,7 @@
 /* j/3/cat.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

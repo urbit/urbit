@@ -1,7 +1,7 @@
 /* j/2/levy.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
   static u3_noun
   _levy_in(u3j_site* sit_u, u3_noun a)

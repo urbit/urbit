@@ -1,7 +1,7 @@
 /* j/6/cell.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

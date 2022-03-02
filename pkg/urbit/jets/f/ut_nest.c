@@ -1,7 +1,7 @@
 /* j/6/ut_nest.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3wfu_nest_dext(u3_noun dext_core)

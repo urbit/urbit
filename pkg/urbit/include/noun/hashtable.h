@@ -1,5 +1,11 @@
+//! @file hashtable.h
+
 #ifndef U3_HASHTABLE_H
 #define U3_HASHTABLE_H
+
+#include "c/all.h"
+#include "noun/types.h"
+#include "noun/allocate.h"
 
   /**  Data structures.
   **/

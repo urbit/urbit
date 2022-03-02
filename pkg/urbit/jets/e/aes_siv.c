@@ -1,7 +1,7 @@
 /* j/5/aes_ecb.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <urcrypt.h>
 
 typedef int (*urcrypt_siv)(c3_y*, size_t,

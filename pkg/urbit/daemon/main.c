@@ -3,7 +3,7 @@
 */
 #define U3_GLOBAL
 #define C3_GLOBAL
-#include "all.h"
+#include "noun/all.h"
 #include "vere/vere.h"
 #if !defined(U3_OS_mingw)
 #include <sigsegv.h>

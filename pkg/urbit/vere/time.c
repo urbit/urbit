@@ -1,7 +1,7 @@
 /* vere/time.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include "vere/vere.h"
 
 /* u3_time_sec_in(): urbit seconds from unix time.

@@ -1,7 +1,7 @@
 /* j/2/snag.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

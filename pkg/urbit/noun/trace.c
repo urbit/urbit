@@ -1,12 +1,19 @@
-/* g/t.c  -
-**
-** This file is in the public domain.
-*/
-#include "all.h"
-#include "vere/vere.h"
+//! @file trace.c
+
+#include "noun/trace.h"
+
 #include <pthread.h>
 #include <time.h>
 #include <sys/stat.h>
+
+#include "jets/k.h"
+#include "noun/allocate.h"
+#include "noun/log.h"
+#include "noun/options.h"
+#include "noun/retrieve.h"
+#include "noun/vortex.h"
+#include "noun/xtract.h"
+#include "vere/vere.h"
 
 static c3_o _ct_lop_o;
 

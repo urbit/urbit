@@ -1,7 +1,7 @@
 /* jets/d/by_dif.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 /* internal functions
 */

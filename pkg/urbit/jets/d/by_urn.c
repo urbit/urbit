@@ -1,7 +1,7 @@
 /* j/4/by_urn.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 static u3_noun
 _by_urn(u3_noun a, u3j_site* sit_u)

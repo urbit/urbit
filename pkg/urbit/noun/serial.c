@@ -1,11 +1,17 @@
-/* noun/serial.c
-**
-*/
+//! @file serial.c
 
-#include "all.h"
-#include "ur/ur.h"
+#include "noun/serial.h"
+
 #include <errno.h>
 #include <fcntl.h>
+
+#include "jets/k.h"
+#include "jets/q.h"
+#include "noun/hashtable.h"
+#include "noun/retrieve.h"
+#include "noun/vortex.h"
+#include "noun/xtract.h"
+#include "ur/ur.h"
 
 /* _cs_jam_buf: struct for tracking the fibonacci-allocated jam of a noun
 */

@@ -1,7 +1,7 @@
 /* j/c/muk.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <murmur3.h>
 
 /* functions

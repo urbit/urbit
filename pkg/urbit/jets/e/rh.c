@@ -1,7 +1,7 @@
 /* j/e/rh.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <softfloat.h>
 
 #define HALFNAN 0x7e00

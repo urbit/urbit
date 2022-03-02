@@ -1,7 +1,7 @@
 /* j/2/flop.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qb_flop(u3_noun a)

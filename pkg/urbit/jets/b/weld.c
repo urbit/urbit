@@ -1,7 +1,7 @@
 /* j/2/weld.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qb_weld(u3_noun a, u3_noun b)

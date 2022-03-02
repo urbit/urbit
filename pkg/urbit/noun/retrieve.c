@@ -1,8 +1,13 @@
-/* g/r.c
-**
-*/
-#include "all.h"
+//! @file retrieve.c
+
+#include "noun/retrieve.h"
+
 #include <murmur3.h>
+
+#include "noun/hashtable.h"
+#include "noun/imprison.h"
+#include "noun/trace.h"
+#include "noun/xtract.h"
 
 /* _frag_word(): fast fragment/branch prediction for top word.
 */

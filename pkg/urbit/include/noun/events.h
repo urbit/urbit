@@ -1,5 +1,10 @@
+//! @file events.h
+
 #ifndef U3_EVENTS_H
 #define U3_EVENTS_H
+
+#include "c/all.h"
+#include "noun/allocate.h"
 
   /** Data structures.
   **/

@@ -1,7 +1,7 @@
 /* j/5/lune.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
   u3_noun

@@ -1,7 +1,7 @@
 /* j/5/blake.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <urcrypt.h>
 
 /* functions

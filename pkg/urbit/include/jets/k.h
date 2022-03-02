@@ -1,6 +1,8 @@
 #ifndef U3_JETS_K_H
 #define U3_JETS_K_H
 
+#include "noun/types.h"
+
   /** Tier 1.
   **/
     u3_noun u3ka_add(u3_noun a, u3_noun b);

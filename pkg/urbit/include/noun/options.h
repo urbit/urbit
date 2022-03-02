@@ -1,6 +1,9 @@
 #ifndef U3_OPTIONS_H
 #define U3_OPTIONS_H
 
+#include "c/all.h"
+#include "noun/types.h"
+
   /** Data structures.
   **/
     /* u3o_config: process / system configuration.

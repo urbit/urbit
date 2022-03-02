@@ -1,7 +1,7 @@
 /* j/e/rd.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <softfloat.h>
 
 #define DOUBNAN 0x7ff8000000000000

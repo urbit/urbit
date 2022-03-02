@@ -1,4 +1,4 @@
-#include "all.h"
+#include "noun/all.h"
 #include "rsignal.h"
 #include "vere/vere.h"
 

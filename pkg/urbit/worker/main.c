@@ -2,7 +2,7 @@
 **
 **  the main loop of a serf process.
 */
-#include "all.h"
+#include "noun/all.h"
 #include "rsignal.h"
 #include <vere/vere.h>
 #include <vere/serf.h>

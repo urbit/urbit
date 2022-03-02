@@ -1,7 +1,7 @@
         /* j/5/secp.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include "urcrypt.h"
 #include <ent.h>
 

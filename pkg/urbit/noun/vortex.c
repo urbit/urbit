@@ -1,8 +1,14 @@
-/* g/v.c
-**
-*/
-#include "all.h"
-#include <stdio.h>
+//! @file vortex.c
+
+#include "noun/vortex.h"
+
+#include "jets/k.h"
+#include "noun/defs.h"
+#include "noun/log.h"
+#include "noun/nock.h"
+#include "noun/retrieve.h"
+#include "noun/trace.h"
+#include "noun/xtract.h"
 
 #define _CVX_LOAD  4
 #define _CVX_PEEK 22

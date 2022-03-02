@@ -99,7 +99,7 @@
 #include <uv.h>
 #include <errno.h>
 
-#include "all.h"
+#include "noun/all.h"
 #include "vere/vere.h"
 
 #ifdef  _WIN32

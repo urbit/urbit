@@ -1,7 +1,7 @@
 /* j/5/trip.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qe_trip(u3_atom a)

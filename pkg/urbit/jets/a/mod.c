@@ -1,7 +1,7 @@
 /* j/1/mod.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

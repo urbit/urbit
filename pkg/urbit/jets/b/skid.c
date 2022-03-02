@@ -1,7 +1,7 @@
 /* j/2/skid.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qb_skid(u3_noun a, u3_noun b)

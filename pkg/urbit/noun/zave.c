@@ -1,7 +1,10 @@
-/* g/z.c
-**
-*/
-#include "all.h"
+//! @file zave.c
+
+#include "noun/zave.h"
+
+#include "noun/allocate.h"
+#include "noun/hashtable.h"
+#include "noun/imprison.h"
 
 /* u3z_key(): construct a memo cache-key.  Arguments retained.
 */
