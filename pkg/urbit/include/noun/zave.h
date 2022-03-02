@@ -1,5 +1,9 @@
+//! @file zave.h
+
 #ifndef U3_ZAVE_H
 #define U3_ZAVE_H
+
+#include "noun/types.h"
 
   /**  Memoization.
   ***
