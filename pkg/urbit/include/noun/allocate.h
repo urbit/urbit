@@ -265,11 +265,14 @@
 
     /* u3a_into(): convert loom offset [x] into generic pointer.
     */
-#     define  u3a_into(x) ((void *)(u3_Loom + (x)))
+#     define  u3a_into(x)   ((void *)(u3_Loom + (x)))
+#     define  u3to(type, x) ((type *) u3a_into(x))
+#     define  u3tn(type, x) (x == 0) ? (void *)0 :  ((type *) u3a_into(x))
 
     /* u3a_outa(): convert pointer [p] into word offset into loom.
     */
-#     define  u3a_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
+#     define  u3a_outa(p)   (((c3_w*)(void*)(p)) - u3_Loom)
+#     define  u3of(type, x) (u3a_outa((type *)x))
 
     /* u3a_is_north(): yes if road [r] is north road.
     */
