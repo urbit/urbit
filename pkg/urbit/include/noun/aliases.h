@@ -25,13 +25,6 @@
 
   /**  Aliases.
   **/
-    /* u3do(), u3dc(), u3dt(), u3dq(): arvo calls.
-    */
-#     define  u3do(txt_c, arg)         u3v_do(txt_c, arg)
-#     define  u3dc(txt_c, a, b)        u3v_do(txt_c, u3nc(a, b))
-#     define  u3dt(txt_c, a, b, c)     u3v_do(txt_c, u3nt(a, b, c))
-#     define  u3dq(txt_c, a, b, c, d)  u3v_do(txt_c, u3nq(a, b, c, d))
-
     /* u3to(), u3of(): offset/pointer conversion.
     */
 #     define  u3to(type, x) ((type *) u3a_into(x))
