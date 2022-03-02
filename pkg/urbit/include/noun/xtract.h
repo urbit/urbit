@@ -1,5 +1,12 @@
+//! @file xtract.h
+
 #ifndef U3_XTRACT_H
 #define U3_XTRACT_H
+
+#include "c/defs.h"
+#include "c/motes.h"
+#include "noun/types.h"
+#include "noun/manage.h"
 
   /**  Constants.
   **/
