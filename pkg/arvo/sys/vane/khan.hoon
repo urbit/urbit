@@ -74,25 +74,30 @@
       (scot %p p.beak)
       q.beak
       -.r.beak
-      ?-  -.r.beak
-        %da   (scot %da p.r.beak)
-        %tas  p.r.beak
-        %ud   (scot %ud p.r.beak)
-      ==
+      (scot r.beak)
       mark
+  ==
+++  read-case
+  |=  a=[p=@ @]
+  ^-  case
+  ::  XX  should be:
+  ::    ?>  ?=(?(%da %tas %ud) p.a)
+  ::    [p.a (slav a)]
+  ::
+  ?+  p.a   !!
+    %da   [p.a (slav a)]
+    %tas  [p.a (slav a)]
+    %ud   [p.a (slav a)]
   ==
 ++  read-wire
   |=  =wire
   ^-  (pair beak mark)
-  :_  (snag 5 wire)
-  :+  (slav %p (snag 1 wire))
-    (snag 2 wire)
-  =/  ras  (snag 4 wire)
-  ?+  (snag 3 wire)  !!
-    %da   [%da (slav %da ras)]
-    %tas  [%tas ras]
-    %ud   [%ud (slav %ud ras)]
-  ==
+  ~|  khan-read-wire+wire
+  ?>  ?=([%fyrd @ @ @ @ @ ~] wire)
+  :_  i.t.t.t.t.t.wire
+  :+  (slav %p i.t.wire)
+    i.t.t.wire
+  (read-case [i i.t]:t.t.t.wire)
 ++  start-spider
   |=  [our=@p =vase]
   ^-  note
