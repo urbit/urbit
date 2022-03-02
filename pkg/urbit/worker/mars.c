@@ -4,7 +4,7 @@
 */
 #include "all.h"
 #include <vere/vere.h>
-#include <vere/db/lmdb.h>
+#include <vere/mars.h>
 
 /*
 ::  peek=[gang (each path $%([%once @tas @tas path] [%beam @tas beam]))]
@@ -41,11 +41,16 @@ static void
 _mars_grab(u3_noun sac)
 {
   if ( u3_nul == sac) {
+    //  XX review u3o_check_corrupt
+    //
     if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
-      u3m_grab(sac, u3_none);
+      u3m_grab(u3_none);
     }
+
+    return;
   }
-  else {
+
+  {
     c3_w tot_w = 0;
     FILE* fil_u;
 
@@ -287,35 +292,24 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
 /* _mars_poke(): attempt to compute an event.
 */
 static c3_o
-_mars_poke(c3_w   mil_w,
-           c3_o   rep_o,
-           u3_noun* eve,
-           u3_noun* out)
+_mars_poke(c3_w mil_w, u3_noun* eve, u3_noun* out)
 {
-  u3_noun pro;
-
-  if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), &pro) ) {
-    *out = pro;
+  if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), out) ) {
     return c3y;
   }
-  else if ( c3n == rep_o ) {
-    *out = u3nc(pro, u3_nul);
-    return c3n;
-  }
-  else {
-    u3_noun dud = pro;
+
+  {
+    u3_noun dud = *out;
 
     *eve = _mars_make_crud(*eve, u3k(dud));
 
-    if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), &pro) ) {
+    if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), out) ) {
       u3z(dud);
-      *out = pro;
       return c3y;
     }
-    else {
-      *out = u3nt(dud, pro, u3_nul);
-      return c3n;
-    }
+
+    *out = u3nt(dud, *out, u3_nul);
+    return c3n;
   }
 }
 
@@ -351,7 +345,7 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
         return c3n;
       }
 
-      //  XX timestamp
+      //  XX better timestamps
       //
       {
         u3_noun now;
@@ -366,7 +360,7 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
       pre_w = u3a_open(u3R);
       mar_u->sen_d++;
 
-      if ( c3y == _mars_poke(mil_w, c3y, &job, &pro) ) {
+      if ( c3y == _mars_poke(mil_w, &job, &pro) ) {
         mar_u->dun_d = mar_u->sen_d;
         mar_u->mug_l = u3r_mug(u3A->roc);
         mar_u->mut_o = c3y;
@@ -399,7 +393,8 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
       _mars_gift(mar_u, u3nc(c3__peek, u3v_soft_peek(mil_w, sam)));
     } break;
 
-    // XX remove /support cram?
+    //  XX support cram?
+    //
     case c3__sync: {
       u3_noun nul;
 
@@ -613,9 +608,8 @@ _mars_disk_cb(void* ptr_v, c3_d eve_d, c3_o ret_o)
     fprintf(stderr, "mars: commit fail\r\n");
     exit(1);
   }
-  else {
-    _mars_flush(mar_u);
-  }
+
+  _mars_flush(mar_u);
 }
 
 /* _mars_poke_play(): replay an event.
@@ -626,19 +620,13 @@ _mars_poke_play(u3_mars* mar_u, c3_d eve_d, u3_noun job)
   c3_w  pre_w = u3a_open(u3R);
   u3_noun vir;
 
-  if ( c3y == u3v_poke_sure(0, job, &vir) ) {
-    u3z(_mars_sure_feck(mar_u, pre_w, vir));
-    return c3y;
+  if ( c3n == u3v_poke_sure(0, job, &vir) ) {
+    u3z(vir);
+    return c3n;
   }
 
-  //  XX produce/print trace, reclaim on meme, retry on %intr, &c
-  //
-  // {
-  //   u3_noun mot, tan;
-  //   u3x_cell(vir, &mot, &tan);
-  // }
-  u3z(vir);
-  return c3n;
+  u3z(_mars_sure_feck(mar_u, pre_w, vir));
+  return c3y;
 }
 
 /* _mars_play_batch(): replay a batch of events.
@@ -659,6 +647,8 @@ _mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
     c3_assert( ++mar_u->sen_d == tac_u.eve_d );
 
     if ( c3n == _mars_poke_play(mar_u, tac_u.eve_d, tac_u.job) ) {
+      //  XX produce/print trace, reclaim on meme, retry on %intr, &c
+      //
       fprintf(stderr, "play (%" PRIu64 "): failed\r\n", tac_u.eve_d);
       mar_u->sen_d = mar_u->dun_d;
       u3_disk_walk_done(wok_u);

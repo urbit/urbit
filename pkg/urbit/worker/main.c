@@ -5,6 +5,7 @@
 #include "all.h"
 #include "rsignal.h"
 #include <vere/vere.h>
+#include <vere/mars.h>
 #include <vere/serf.h>
 #include <vere/db/lmdb.h>
 
