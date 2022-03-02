@@ -3,6 +3,8 @@
 
 #include <uv.h>
 
+#include "noun/serial.h"
+
   /** Quasi-tunable parameters.
   **/
     /* First kernel this executable can boot.

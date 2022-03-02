@@ -1,5 +1,9 @@
+//! @file manage.h
+
 #ifndef U3_MANAGE_H
 #define U3_MANAGE_H
+
+#include "noun/types.h"
 
     /** System management.
     **/
