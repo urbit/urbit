@@ -1,9 +1,14 @@
+//! @file allocate.h
+
 #ifndef U3_ALLOCATE_H
 #define U3_ALLOCATE_H
 
 #include <openssl/opensslv.h>
 
-#include "manage.h"
+#include "c/motes.h"
+#include "noun/types.h"
+#include "noun/aliases.h"
+#include "noun/manage.h"
 
   /**  Constants.
   **/

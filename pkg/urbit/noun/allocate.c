@@ -1,7 +1,15 @@
-/* g/a.c
-**
-*/
-#include "all.h"
+//! @file allocate.c
+
+#include "noun/allocate.h"
+
+#include "c/defs.h"
+#include "noun/hashtable.h"
+#include "noun/log.h"
+#include "noun/options.h"
+#include "noun/retrieve.h"
+#include "noun/trace.h"
+#include "noun/vortex.h"
+#include "noun/xtract.h"
 
 //  declarations of inline functions
 //
