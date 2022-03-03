@@ -1,4 +1,5 @@
 //! @file types.h
+//! c3 types.
 
 #ifndef C3_TYPES_H
 #define C3_TYPES_H

@@ -1,3 +1,6 @@
+//! @file defs.h
+//! c3 macros.
+
 #ifndef C3_DEFS_H
 #define C3_DEFS_H
 
