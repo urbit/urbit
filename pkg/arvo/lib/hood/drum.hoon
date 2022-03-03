@@ -171,21 +171,22 @@
   se-abet:(se-blit-sys bit)
 ::
 ++  poke-link                                         ::  connect app
-  |=  gyl=gill:gall
+  |=  [ses=@tas gyl=gill:gall]
   =<  se-abet
-  (se-link gyl)
+  (se-link:(prep ses) gyl)
 ::
 ++  poke-unlink                                       ::  disconnect app
-  |=  gyl=gill:gall
+  |=  [ses=@ta gyl=gill:gall]
   =<  se-abet
-  (se-drop:(se-pull gyl) & gyl)
+  (se-drop:(se-pull:(prep ses) gyl) & gyl)
 ::
 ++  poke-exit                                         ::  shutdown
   |=  ~
   se-abet:(se-blit-sys `dill-blit:dill`[%qit ~])
 ::
 ++  poke-put                                          ::  write file
-  |=  [pax=path txt=@]
+  |=  [pax=path arg=$@(@ [@tas @])]
+  =^  txt  +>  ?@(arg [arg +>] [+.arg (prep -.arg)])
   se-abet:(se-blit-sys [%sav pax txt])                ::
 ::
 ++  poke
@@ -368,7 +369,7 @@
       [%cru *]  (se-dump:(se-text (trip p.bet)) q.bet)
       [%hey *]  +>(mir [0 ~])                         ::  refresh
       [%rez *]  +>(edg (dec p.bet))                   ::  resize window
-      [%yow *]  ~&([%no-yow -.bet] +>)
+      [%yow *]  (se-link p.bet)
     ==
   =+  gul=se-agon
   ?:  |(?=(~ gul) (se-aint u.gul))
