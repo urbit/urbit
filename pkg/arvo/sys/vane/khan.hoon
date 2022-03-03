@@ -103,12 +103,12 @@
   ?>(?=([@ ~] s.beam) beam(s i.s.beam))
 ::
 ++  start-spider
-  |=  [our=@p =vase]
+  |=  =vase
   ^-  note
   [%g %deal [our our] %spider %poke %spider-start vase]
 ::
 ++  watch-spider
-  |=  [our=@p =path]
+  |=  =path
   ^-  note
   [%g %deal [our our] %spider %watch path]
 --
@@ -132,21 +132,21 @@
     ~|(%khan-call-dud (mean tang.u.dud))
   ?+    -.task  [~ khan-gate]
       %born
-    [~ khan-gate(hey hen)]
+    [~ khan-gate(hey hen, tic 0)]
   ::
       %fard
     =/  tid=@ta
       %^  cat  3
         'khan-fyrd--'
       (scot %uv (sham (mix tic eny)))
-    =.  tic     (mod +(tic) (bex 128))
+    =.  tic     +(tic)
     =*  fyd     p.task
     =/  =beak   (get-beak bear.fyd now)
     =/  args    [~ `tid beak name.fyd q.args.fyd]
     :_  khan-gate
     %+  turn
-      :~  (watch-spider our /thread-result/[tid])
-          (start-spider our !>(args))
+      :~  (watch-spider /thread-result/[tid])
+          (start-spider !>(args))
       ==
     |=(=note ^-(move [hen %pass //g note]))
   ::
