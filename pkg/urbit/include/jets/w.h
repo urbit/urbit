@@ -1,6 +1,8 @@
 #ifndef U3_JETS_W_H
 #define U3_JETS_W_H
 
+#include "noun/types.h"
+
   /** Tier 1.
   **/
     u3_noun u3wa_add(u3_noun);
