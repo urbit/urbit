@@ -5,13 +5,13 @@
 **
 **  the control plane nominally consumes input described by:
 **
-**      $:  request-id=@                                   ::  id for response
-**      $%  [%fyrd fyrd-args=*]                            ::  run a thread
-**          [%peek peek-args=*]                            ::  scry
-**          [%peel peel-args=*]                            ::  runtime peek
-**          [%ovum ovum-args=*]                            ::  inject raw ovum
-**          [%urth urth-args=*]                            ::  runtime command
-**      ==  ==                                             ::
+**      $:  request-id=@                                  ::  id for response
+**      $%  [%fyrd fyrd-args=*]                           ::  run a thread
+**          [%peek peek-args=*]                           ::  scry
+**          [%peel peel-args=*]                           ::  runtime peek
+**          [%ovum ovum-args=*]                           ::  inject raw ovum
+**          [%urth urth-args=*]                           ::  runtime command
+**      ==  ==                                            ::
 **
 **  request-id is a client-supplied atomic identifier that will
 **  be returned along with the response, to allow correlating
@@ -21,21 +21,22 @@
 **  described in the ++khan section of sys/lull.hoon. to
 **  summarize:
 **
-**      +$  task  $%(... [%fyrd p=fyrd])                   ::
-**      +$  fyrd  [=bear name=term =out=mark data=(cask)]  ::  thread request
-**      +$  bear  $@(desk beak)                            ::  partial $beak
+**      +$  task  $%(... [%fyrd p=(fyrd cast)])           ::
+**      +$  bear  $@(desk beak)                           ::  partial $beak
+**      +$  cast  (pair mark page)                        ::  output mark +input
+**      ++  fyrd  |$  [a]  [=bear name=term args=a]       ::  thread run request
 **
-**  the passed mark is applied to the output. the cask (short for
-**  (cask *)) at data contains the input mark. e.g. to run -code
-**  with ~ as input, receiving output as a +tape, with request-id
-**  set to 32, send the +jam of this noun over the socket with
-**  newt framing:
+**  the cast's mark is applied to the output. the page (untyped
+**  cage, or pair of mark and noun) in args contains the input
+**  mark. e.g. to run -hi with the ship ~zod as input, receiving
+**  output as a tape, with request-id set to 32, send the +jam of
+**  this noun over the socket with newt framing:
 **
-**      [32 %fyrd [%base %code %tape [%noun ~]]]
+**      [32 %fyrd [%base %hi %tape [%ship ~zod]]]
 **
 **  responses to %fyrd are either %fail if something went wrong
 **  in the driver, or %avow to indicate success or failure from
-**  %khan. $avow is: (each (cask) goof).
+**  %khan. the body of avow is (each page goof).
 **
 **  %peek is a namespace read request (aka scry), and will be
 **  forwarded directly to arvo. its arguments are the nom of the
