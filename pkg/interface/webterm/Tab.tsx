@@ -1,16 +1,20 @@
 import { DEFAULT_SESSION } from './constants';
 import React, { useCallback } from 'react';
-import useTermState from './state';
+import useTermState, { Session } from './state';
 import { style } from 'styled-system';
 import api from './api';
 import { pokeTask } from '@urbit/api/term';
 
-export const Tab = ( { session, name } ) => {
+interface TabProps {
+  session: Session;
+  name: string;
+}
+
+export const Tab = ( { session, name }: TabProps ) => {
 
   const isSelected = useTermState().selected === name;
 
   const onClick = () => {
-    console.log('click!', name);
     useTermState.getState().set((state) => {
       state.selected = name;
       state.sessions[name].hasBell = false;
@@ -18,9 +22,18 @@ export const Tab = ( { session, name } ) => {
     useTermState.getState().sessions[name]?.term?.focus();
   }
 
-  const onDelete = (e) => {
+  const onDelete = useCallback(async (e) => {
     e.stopPropagation();
-    api.poke(pokeTask(name, { shut: null }));
+
+    // clean up subscription
+    if(session && session.subscriptionId) {
+      await api.unsubscribe(session.subscriptionId);
+    }
+
+    // DELETE
+    await api.poke(pokeTask(name, { shut: null }));
+
+    // remove from zustand
     useTermState.getState().set(state => {
       if (state.selected === name) {
         state.selected = DEFAULT_SESSION;
@@ -28,8 +41,7 @@ export const Tab = ( { session, name } ) => {
       state.names = state.names.filter(n => n !== name);
       delete state.sessions[name];
     });
-    //TODO  clean up the subscription
-  }
+  }, [session]);
 
   return (
     <div className={'tab ' + isSelected ? 'selected' : ''}>

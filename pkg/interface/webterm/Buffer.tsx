@@ -162,7 +162,7 @@ export default function Buffer({ name, selected }: BufferProps) {
     //
     term.write(csi('?9h'));
 
-    const ses: Session = { term, fit, hasBell: false };
+    const ses: Session = { term, fit, hasBell: false, subscriptionId: null  };
 
     //  set up event handlers
     //
@@ -174,7 +174,7 @@ export default function Buffer({ name, selected }: BufferProps) {
 
     //  open subscription
     //
-    await api.subscribe({ app: 'herm', path: '/session/'+name+'/view',
+    ses.subscriptionId = await api.subscribe({ app: 'herm', path: '/session/'+name+'/view',
       event: (e) => {
         showBlit(ses.term, e);
         if (e.bel && !selected) {
@@ -189,7 +189,7 @@ export default function Buffer({ name, selected }: BufferProps) {
         console.error('oops quit, pls handle');
       }
     });
-
+  
     useTermState.getState().set((state) => {
       state.sessions[name] = ses;
     });
