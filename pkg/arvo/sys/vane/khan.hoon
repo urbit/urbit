@@ -10,7 +10,7 @@
 ::  same duct with either success or failure. %fard takes its
 ::  input arguments as a cage and produces %arow, which contains
 ::  a cage on success (or tang on failure). %fyrd takes an output
-::  mark and input crag; it produces %avow, which contains a crag
+::  mark and input page; it produces %avow, which contains a page
 ::  on success.
 ::
 ::  threads currently expect input and produce output as vase,
