@@ -1,9 +1,17 @@
+//! @file vere.h
+//!
+//! TODO(peter):
+//! - Rename `vere/vere.h` as `vere/all.h` to match the convention used in
+//!   `c/all.h` and `noun/all.h`.
+//! - Create module-specific header files for all vere modules.
+//! - Include vere module-specific header files in `vere/all.h`.
+
 #ifndef U3_VERE_H
 #define U3_VERE_H
 
 #include <uv.h>
 
-#include "noun/serial.h"
+#include "noun/all.h"
 
   /** Quasi-tunable parameters.
   **/
