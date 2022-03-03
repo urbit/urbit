@@ -1,6 +1,9 @@
 #ifndef U3_LOG_H
 #define U3_LOG_H
 
+#include "c/all.h"
+#include "noun/types.h"
+
 /* u3l_log(): logs to stderr or redirects to configured function.
 */
   void

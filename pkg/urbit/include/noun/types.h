@@ -3,7 +3,7 @@
 #ifndef U3_TYPES_H
 #define U3_TYPES_H
 
-#include "c/types.h"
+#include "c/all.h"
 
 //! Pointer offset into u3_Loom.
 //!

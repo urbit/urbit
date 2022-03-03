@@ -5,7 +5,6 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#include "c/defs.h"
 #include "jets/k.h"
 #include "jets/q.h"
 #include "noun/hashtable.h"

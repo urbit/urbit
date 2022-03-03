@@ -2,7 +2,6 @@
 
 #include "noun/allocate.h"
 
-#include "c/defs.h"
 #include "noun/hashtable.h"
 #include "noun/log.h"
 #include "noun/options.h"

@@ -3,7 +3,7 @@
 #ifndef U3_URTH_H
 #define U3_URTH_H
 
-#include "c/types.h"
+#include "c/all.h"
 
     /**  Functions.
     **/

@@ -3,6 +3,7 @@
 #ifndef U3_ZAVE_H
 #define U3_ZAVE_H
 
+#include "c/all.h"
 #include "noun/types.h"
 
   /**  Memoization.

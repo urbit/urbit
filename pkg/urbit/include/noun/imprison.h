@@ -3,6 +3,7 @@
 #ifndef U3_IMPRISON_H
 #define U3_IMPRISON_H
 
+#include "c/all.h"
 #include "noun/types.h"
 #include "noun/allocate.h"
 

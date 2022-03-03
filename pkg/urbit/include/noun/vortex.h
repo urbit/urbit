@@ -3,6 +3,7 @@
 #ifndef U3_VORTEX_H
 #define U3_VORTEX_H
 
+#include "c/all.h"
 #include "noun/types.h"
 #include "noun/allocate.h"
 #include "noun/imprison.h"

@@ -3,8 +3,7 @@
 #ifndef U3_XTRACT_H
 #define U3_XTRACT_H
 
-#include "c/defs.h"
-#include "c/motes.h"
+#include "c/all.h"
 #include "noun/types.h"
 #include "noun/manage.h"
 

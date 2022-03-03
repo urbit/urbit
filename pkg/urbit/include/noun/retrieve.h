@@ -3,6 +3,7 @@
 #ifndef U3_RETRIEVE_H
 #define U3_RETRIEVE_H
 
+#include "c/all.h"
 #include "noun/types.h"
 #include "noun/allocate.h"
 

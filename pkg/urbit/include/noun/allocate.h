@@ -5,7 +5,7 @@
 
 #include <openssl/opensslv.h>
 
-#include "c/motes.h"
+#include "c/all.h"
 #include "noun/types.h"
 #include "noun/aliases.h"
 #include "noun/manage.h"
