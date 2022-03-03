@@ -1,50 +1,61 @@
-module Practice.Hoon2DependentHoon3 where
+module Practice.Hoon2DependentHoon4 where
 
 import ClassyPrelude
 
-import Practice.DependentHoon3
-import Practice.HoonCommon
+import Practice.DependentHoon4
+import Practice.HoonCommon hiding (Bass(..))
+import Practice.HoonCommon (Bass)
+import qualified Practice.HoonCommon as HC
 import Practice.HoonSyntax
 
 type Desugar = Either Text
 
 open :: Hoon -> Desugar Soft
 open = \case
-  Wung w -> pure $ Wng w
+  Wung w -> pure $ Wng (map (\case Axis a -> a) w)
   Wild -> Left "open-skin: unexpected '_' in non-skin position"
   Adam g a au -> pure $ Atm a g au
   --
-  Bass b -> pure $ Bas b
+  Bass HC.Non -> pure $ Non
+  Bass HC.Cel -> pure $ Cel Non Non
+  Bass HC.Flg -> pure $ Fok Nothing [Atm 0 Rock "f", Atm 1 Rock "f"]
+  Bass HC.Nul -> pure $ Fok Nothing [Atm 0 Rock "n"]
+  Bass (HC.Fok as au) -> pure $ Fok Nothing (map (\a -> Atm a Rock au) as)
+  Bass HC.Vod -> pure $ Vod
+  Bass (HC.Aur au) -> pure $ Aur au
+  Bass HC.Typ -> pure $ Typ
+  Bcbr{} -> Left "unsupported $|"
   Bccb h -> Left "unsupported _"
   Bccl s [] -> open s
-  Bccl s (s':ss) -> Cll <$> open s <*> open (Bccl s' ss)
-  Bccn [] -> pure $ Bas Vod
+  Bccl s (s':ss) -> Ral <$> open s <*> open (Bccl s' ss)
+  Bccn [] -> pure $ Vod
   Bccn cs -> do
-    let fork = Bass $ Fok [a | (a, _, _) <- cs] "" -- FIXME aura
+    let fork = Bass $ HC.Fok [a | (a, _, _) <- cs] "" -- FIXME aura
     let pats = [(Adam Rock a au, s) | (a, au, s) <- cs]
-    open $ Bccl fork [Kthp (Bass Typ) $ Wthp [Axis 3] pats]
+    open $ Bccl fork [Kthp (Bass HC.Typ) $ Wthp [Axis 3] pats]
   Bcdt s m -> Left "unsupported $." --cook s m unmask open (flip Gold)
   Bchp s t -> Gat <$> open s <*> open t
   Bckt{} -> Left "unsupported $^"
   Bcts s h -> open $ Ktts s h  -- TODO remove this later and fix tests
   Bcpt{} -> Left "unsupported $@"
-  --Bcwt m -> Left "unsupported $?" --Lead <$> traverse open m
+  Bcwt t cs -> Fok <$> (Just <$> open t) <*> traverse open cs
+  Bczp{} -> Left "unsupported $!"
   --
   Brcn{} -> Left "unsupported |%"
   Brts s h -> Lam <$> flay s <*> open h
   --
-  Clcb h j -> Cns <$> open j <*> open h
-  Clkt h j k l -> Cns <$> open h
-                       <*> (Cns <$> open j
-                                 <*> (Cns <$> open k
+  Clcb h j -> Cel <$> open j <*> open h
+  Clkt h j k l -> Cel <$> open h
+                       <*> (Cel <$> open j
+                                 <*> (Cel <$> open k
                                            <*> open l))
-  Clhp h j -> Cns <$> open h <*> open j
-  Clls h j k -> Cns <$> open h <*> (Cns <$> open j <*> open k)
+  Clhp h j -> Cel <$> open h <*> open j
+  Clls h j k -> Cel <$> open h <*> (Cel <$> open j <*> open k)
   Clsg [] -> pure $ Atm 0 Rock "n"
-  Clsg (h:hs) -> Cns <$> open h <*> open (Clsg hs)
+  Clsg (h:hs) -> Cel <$> open h <*> open (Clsg hs)
   Cltr [] -> Left "empty :*"
   Cltr [h] -> open h
-  Cltr (h:hs) -> Cns <$> open h <*> open (Cltr hs)
+  Cltr (h:hs) -> Cel <$> open h <*> open (Cltr hs)
   --
   Cndt h j -> Sla <$> open j <*> open h
   Cnhp h j -> Sla <$> open h <*> open j
@@ -67,7 +78,8 @@ open = \case
   Ktfs h s -> do typ <- open s; sof <- open h; pure Net {typ, sof}
   Ktzp s h -> do typ <- open s; sof <- open h; pure Cat {typ, sof}
   Ktwt h -> Left "unsupported ^? lead cast"  -- XX fixme soon
-  Ktts s h -> Fac <$> flay s <*> open h
+  --Ktts s h -> Fac <$> flay s <*> open h
+  Ktcn h -> Sin <$> open h
   Ktcl{} -> Left "unsupported ^: mold"
   --
   Sgfs{} -> Left "unsupported ~/"
@@ -108,8 +120,8 @@ open = \case
 flay :: Hoon -> Desugar Pelt
 flay = \case
   Wild -> pure Punt
-  Wung [Ally f] -> pure $ Peer f
-  Adam g a au -> pure $ Part $ Atm a g au
+  --Wung [Ally f] -> pure $ Peer f
+  Adam g a au -> pure $ Part a
   --
   Clcb h j -> Pair <$> flay j <*> flay h
   Clkt h j k l -> Pair <$> flay h
@@ -118,30 +130,30 @@ flay = \case
                                            <*> flay l))
   Clhp h j -> Pair <$> flay h <*> flay j
   Clls h j k -> Pair <$> flay h <*> (Pair <$> flay j <*> flay k)
-  Clsg [] -> pure $ Part $ Atm 0 Rock "n"
+  Clsg [] -> pure $ Part 0
   Clsg (h:hs) -> Pair <$> flay h <*> flay (Clsg hs)
   Cltr [] -> Left "empty :*"
   Cltr [h] -> flay h
   Cltr (h:hs) -> Pair <$> flay h <*> flay (Cltr hs)
   --
-  Kthp h j -> Pest <$> flay j <*> open h
-  Ktfs h j -> Pest <$> flay h <*> open j
+  -- Kthp h j -> Pest <$> flay j <*> open h
+  -- Ktfs h j -> Pest <$> flay h <*> open j
   --
   _ -> Left "flay-meat: expression in pattern context"
 
 shut :: Soft -> Hoon
 shut = \case
-  Wng w -> Wung w
+  Wng w -> Wung $ map Axis w
   --
   Atm a g au -> Adam g a au
-  Cns c d -> case shut d of
+  Cel c d -> case shut d of
     Clhp h j -> Clls (shut c) h j
     Clls h j k -> Clkt (shut c) h j k
     Clkt h j k l -> Cltr [shut c, h, j, k, l]
     Cltr hs -> Cltr (shut c : hs)
     h -> Clhp (shut c) h
   Lam p c -> Brts (flap p) (shut c)
-  Fac p c -> Ktts (flap p) (shut c)
+  --Fac p c -> Ktts (flap p) (shut c)
   --Core b p -> Tsgr (shut p) (Brcn $ fmap (shut (unname e p) . fromScope) b)
   --
   Plu c -> Dtls (shut c)
@@ -156,48 +168,51 @@ shut = \case
   Rhe c d -> Wtwt (shut c) (shut d)
   Fis p c -> Wtts (flap p) (shut c)
   --
-  Bas b -> Bass b
-  Cll c d -> case shut d of
+  Ral c d -> case shut d of
     Bccl s ss -> Bccl (shut c) (s:ss)
     s -> Bccl (shut c) [s]
   Gat c d -> Bchp (shut c) (shut d)
+  Non -> Bass HC.Non
+  Vod -> Bass HC.Vod
+  Typ -> Bass HC.Typ
   --
   Wit c d -> Tsgr (shut c) (shut d)
   Pus c d -> Tsls (shut c) (shut d)
   --Case c ss ds -> error "open: case"
   Net{sof, typ} -> Kthp (shut typ) (shut sof)  -- XX should print as / wide
   Cat{sof, typ} -> Ktzp (shut typ) (shut sof)
+  Sin c -> Ktcn (shut c)
 
 flap :: Pelt -> Hoon
 flap = \case
   Punt -> Wild
-  Peer f -> Wung [Ally f]
-  Part c -> case c of
-    Atm a g au -> Adam g a au
-    _ -> error "flap-part: no syntax yet for complex equality patterns" -- XX
+  --Peer f -> Wung [Ally f]
+  Part a -> Adam Rock a (heuAura a)
   Pair p q -> case flap q of
     Clhp h j -> Clls (flap p) h j
     Clls h j k -> Clkt (flap p) h j k
     Clkt h j k l -> Cltr [flap p, h, j, k, l]
     Cltr hs -> Cltr (flap p : hs)
     h -> Clhp (flap p) h
-  Pons p q -> Ktts (flap p) (flap q)
-  Pest p c -> Ktfs (flap p) (shut c)
+  --Pons p q -> Ktts (flap p) (flap q)
+  --Pest p c -> Ktfs (flap p) (shut c)
 
--- | Hack to make Bases pretty printable somehow
-lock :: Show a => Base a -> Hoon
+-- | Hack to make Bases pretty printable somehow. This is for the implementor
+-- and should not be used in user-facing diagnostics.
+lock :: Var a => Semi a -> Hoon
 lock = \case
   Rump' r -> Wung [Ally $ tshow r]
   Fore' x -> Wung [Ally $ tshow $ Old @Text x]
+  Alts' ss s -> undefined
   --
   Atom' a -> Adam Sand a (heuAura a)
-  Cons' x y -> case lock y of
+  Cell' x y -> case lock y of
     Clhp h j -> Clls (lock x) h j
     Clls h j k -> Clkt (lock x) h j k
     Clkt h j k l -> Cltr [lock x, h, j, k, l]
     Cltr hs -> Cltr (lock x : hs)
     h -> Clhp (lock x) h
-  Lamb' x c -> Tsgr (lock x) $ Brts Wild (shut . rest $ c)
+  Lamb' (Jamb c x) -> Tsgr (lock x) $ Brts Wild (shut . rest $ c)
   --
   Plus' x -> Dtls (lock x)
   Slam' x y ->  case lock y of
@@ -211,18 +226,18 @@ lock = \case
   Fish' f x -> Wtts (flap $ pond f) (lock x)
   Look' x (Leg a) -> Tsgl (Wung [Axis a]) (lock x)
   --
-  Aura' au -> Bass (Aur au)
-  Fork' as au -> Bass (Fok (toList as) au)
-  Cell' t s c -> Tsgr (lock s) $ Bccl (lock t) case shut . rest $ c of
+  Aura' au -> Bass (HC.Aur au)
+  Fork' as au -> (Cnhp Wild Wild) -- XX Bass (HC.Fok (toList as) au)
+  Rail' t (Jamb c s) -> Tsgr (lock s) $ Bccl (lock t) case shut . rest $ c of
     Bccl h hs -> h:hs
     h -> [h]
-  Gate' t s c -> Tsgr (lock s) $ Bchp (lock t) (shut . rest $ fmap hack c)
-  --Mask' f x -> Ktts (Wung [Ally f]) (lock x)
-  Face' (Mask m) x -> Ktts (Wung [Ally m]) (lock x)
-  Face' (Link ls) x -> Ktts Wild (lock x)  -- FIXME ?
-  Noun' -> Bass Non
-  Void' -> Bass Vod
-  Type' -> Bass Typ
+  Gate' t (Jamb c s) ->
+    Tsgr (lock s) $ Bchp (lock t) (shut . rest $ smap hack c)
+  --Face' (Mask m) x -> Ktts (Wung [Ally m]) (lock x)
+  --Face' (Link ls) x -> Ktts Wild (lock x)  -- FIXME ?
+  Noun' -> Bass HC.Non
+  Void' -> Bass HC.Vod
+  Type' -> Bass HC.Typ
  where
   hack :: Show a => a -> Wing
   hack = singleton . Ally . tshow

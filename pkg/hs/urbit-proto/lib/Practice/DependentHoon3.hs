@@ -459,7 +459,7 @@ eval sub = \case
       (Lamb' s c, Lamb' s' c') -> (&& (c == c')) <$> out s s'
       -}
 
-  fish h b =case out h b of
+  fish h b = case out h b of
     Just True  -> Atom' 0
     Just False -> Atom' 1
     Nothing    -> Fish' h b
@@ -1035,7 +1035,12 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
     Type' -> [Fore' var]
     -- The below will actually occur: e.g. stuck variables, applications
     _ -> [Fore' var]
-
+^-
+$!
+++  foo  @
+--
+|%
+++
 
 -- Find ------------------------------------------------------------------------
 

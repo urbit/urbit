@@ -13,23 +13,29 @@ import Practice.HoonCommon hiding (Bass(..))
 
 data Soft
   = Wng [Axis]
-  | Atm Atom Aura
-  | Cel Aura Aura
-  | Lam Pelt Aura
+  | Atm Atom Grit Aura
+  | Cel Soft Soft
+  | Lam Pelt Soft
   --
   | Plu Soft
-  | Sla Soft
+  | Sla Soft Soft
+  | Equ Soft Soft
+  | Tes Soft Soft Soft
+  | Rhe Soft Soft
+  | Fis Pelt Soft
   --
-  | Ara Aura
+  | Aur Aura
   | Ral Soft Soft
   | Gat Soft Soft
-  | Fok [Soft] Soft
+  | Fok (Maybe Soft) [Soft]
   | Non
   | Vod
   | Typ
   --
   | Wit Soft Soft
   | Pus Soft Soft
+  | Net { sof :: Soft, typ :: Soft }
+  | Cat { sof :: Soft, typ :: Soft }
   | Sin Soft
   deriving (Eq, Ord, Show, Generic)
 
@@ -43,6 +49,8 @@ data Pelt
   -- | Past (Pelt a) (Code a)  -- ^ ``  pattern cast
   deriving (Eq, Ord, Show, Generic)
 
+-- TODO "Duet" for $@
+
 data Code a
   = Stub Stub
   | Fore a
@@ -54,6 +62,9 @@ data Code a
   --
   | Plus (Code a)
   | Slam (Code a) (Code a)
+  | Equl (Code a) (Code a)
+  | Test (Code a) (Code a) (Code a)
+  | Fish Fish (Code a)
   --
   | Aura Aura
   | Rail (Code a) (Code a)
@@ -78,6 +89,14 @@ data Stub
 instance Show Stub where
   show = \case
     Leg a -> "+" <> show a
+
+-- | Computational content of a refutable pattern. All you need to know to
+-- check for match at nock/eval time.
+data Fish
+  = Tuna            -- ^ definite match
+  | Sole Atom       -- ^ equality match
+  | Char Fish Fish  -- ^ cellular match
+  deriving (Eq, Ord, Show, Generic)
 
 pole :: Axis -> Stub -> Stub
 pole a = \case
@@ -134,7 +153,7 @@ deriving instance Show a => Show (Jamb a)
 data Semi a
   = Rump' Rump
   | Fore' a
-  | Alts' (Set (Semi a)) (Semi a)
+  | ALTS' (Set (Semi a)) (Semi a)
   --
   | Atom' Atom
   | Cell' (Semi a) (Semi a)
@@ -142,6 +161,9 @@ data Semi a
   --
   | Plus' (Semi a)
   | Slam' (Semi a) (Semi a)
+  | Equl' (Semi a) (Semi a)
+  | Test' (Semi a) (Semi a) (Semi a)
+  | Fish' Fish (Semi a)
   | Look' (Semi a) Stub
   --
   | Aura' Aura
@@ -152,6 +174,19 @@ data Semi a
   | Void'
   | Type'
   deriving (Generic)
+
+{-# COMPLETE Rump', Fore', Alts', Atom', Cell', Lamb', Plus', Slam', Equl',
+  Test', Fish', Look', Aura', Rail', Gate', Fork', Noun', Void', Type' #-}
+pattern Alts' :: Ord a => Set (Semi a) -> Semi a -> Semi a
+pattern Alts' ss s <- ALTS' ss s where
+  Alts' ss s = case setToList ss of
+    [s] -> s
+    _ -> ALTS' ss s
+
+-- | Shorthand for the boolean type, which is commonly used.
+pattern Flag' :: Ord a => Semi a
+pattern Flag' <- Fork' (toAscList -> [Atom' 0, Atom' 1]) (Aura' "f") where
+  Flag' = Fork' (setFromList [Atom' 0, Atom' 1]) (Aura' "f")
 
 deriving instance Eq   a => Eq   (Semi a)
 deriving instance Ord  a => Ord  (Semi a)
@@ -238,6 +273,7 @@ read :: Var a => Semi a -> Type a -> Semi a
 read nul = \case
   Alts' ss s -> Alts' (smap (read nul) ss) (read nul s)
   Fork' ss t -> Alts' ss $ read nul t
+  Test' b t f -> Test' b (read nul t) (read nul f)   -- XX correct?
   Cell' t u -> Cell' (read (nul / 2) t) (read (nul / 3) u)
   Rail' t j -> Cell' lef rit
    where
@@ -285,15 +321,50 @@ eval sub = \case
       Alts' ss s -> Alts' (smap go ss) (go s)
       Lamb' j -> jamb j $ eval sub d
       x -> Slam' x y
+  -- The logic in the Alts' smart constructor makes this legit, I hope.
+  Equl c d -> case (eval sub c, eval sub d) of
+    (x, y) | x == y    -> Atom' 0
+           | otherwise -> Equl' x y
+  Test c d e -> go (eval sub c)
+   where
+    go = \case
+      Atom' 0 -> eval sub d
+      Atom' 1 -> eval sub e
+      x      -> Test' x (eval sub d) (eval sub e)  -- Laziness!
+  Fish f c -> fish f (eval sub c)
   --
   Aura au -> Aura' au
   Rail c d -> Gate' (eval sub c) (Jamb d sub)
   Gate c d -> Gate' (eval sub c) (Jamb d sub)
+  Fork cs c -> Fork' (smap (eval sub) cs) (eval sub c)
   Noun -> Noun'
   Void -> Void'
   Type -> Type'
   With c d -> eval (eval sub c) d
   Push c d -> eval (Cell' (eval sub c) sub) d
+ where
+  fish :: Var a => Fish -> Semi a -> Semi a
+  fish h b = case out h b of
+    Just True  -> Atom' 0
+    Just False -> Atom' 1
+    Nothing    -> Fish' h b
+   where
+    out h b = case (h, b) of
+      (Tuna, _) -> Just True
+      (_, Alts' bs b) -> case map (out h) $ setToList bs of
+        rs | all (== Just True)  rs -> Just True
+           | all (== Just False) rs -> Just False
+           | otherwise              -> out h b
+      (Sole a, Atom' b)
+        | a == b    -> Just True
+        | otherwise -> Just False
+      (Sole a, Cell'{}) -> Just False
+      (Sole{}, _) -> Nothing
+      (Char{}, Atom'{}) -> Just False
+      (Char h j, Cell' b c) -> (&&) <$> out h b <*> out j c
+      -- I guess I could also let you see that gates are cells, but I don't want
+      -- to right now?
+      (Char{}, _) -> Nothing
 
 loft :: Var a => Level -> Semi a -> Code a
 loft lvl = \case
@@ -322,9 +393,49 @@ loft lvl = \case
   luft l Jamb{..} =
     loft (l + 1) $ eval (Cell' (Rump' (Leg' (l + 1, 2))) clo) cod
 
-{-
-evil :: Ord a => Semi a -> Code Void -> Semi a
-evil ken = eval ken . vacuous -}
+
+evil :: Ord a => Type a -> Code Void -> Semi a
+evil ken = undefined
+
+-- The fish calculus -----------------------------------------------------------
+
+-- | One fish can eat another
+prey :: Fish -> Fish -> Bool
+prey big lit = case (big, lit) of
+  (Tuna, _)              -> True
+  (Sole a, Sole b)
+    | a == b             -> True
+    | otherwise          -> False
+  (Sole{}, _)            -> False
+  (Char h j, Char h' j') -> prey h h' && prey j j'
+  (Char{}, _)            -> False
+
+-- | Fish can evolve to become land-dwelling animals
+lung :: Var a => Fish -> Semi a -> Maybe (Semi a)
+lung fis ken = case (fis, ken) of
+  (Tuna, _)         -> Just ken
+  (Sole a, Atom' b)
+    | a == b        -> Just (Atom' b)
+    | otherwise     -> Nothing
+  (Sole{}, Cell'{}) -> Nothing
+  (Sole a, _)       -> Just (Atom' a)
+  (Char{}, Atom'{}) -> Nothing
+  (Char h j, _)     -> Cell' <$> lung h (ken / 2) <*> lung j (ken / 2)
+
+-- To make the below, Tuna must be annotated with all possibilities, or we have
+-- an "or" pattern and forbid Tuna, using type checker to enumerate, but also
+-- somehow undoing this in code generation? Do we need yet another type?
+-- We could parametrize tuna, use Fish (Set (Fish Void)) here and Fish () there?
+-- In the presence of a type one can convert from the latter to the former?
+-- Want also to avoid explosions but I think this can be solved by nesting tunas
+
+-- | Two fish can swim together
+herd :: Fish -> Fish -> Fish
+herd = undefined
+
+-- | Fish can be truant
+fear :: Fish -> Fish -> [Fish]
+fear = undefined
 
 
 -- The type checking monad -----------------------------------------------------
@@ -353,12 +464,18 @@ bailFail = bail BailFail
 -- so they can serve as breadcrumbs in error messages.
 data Act
   =                    ActRoot
+  | forall a. Var a => ActWork (Con a) Fit Soft (Type a)
+  | forall a. Var a => ActPlay (Con a) Soft
   |                    ActDone
 
 -- | Compiler errors.
 data Fail
   -- | The two types do not {nest, cast, equal each other}.
   = forall a. Var a => FitsFail Fit (Type a) (Type a)
+  -- | A rhetorical question had a non-rhetorical answer.
+  | forall a. Var a => WorkMiss Soft (Semi a)
+  -- | A rhetorical question had a non-rhetorical answer.
+  | forall a. Var a => PlayMiss Soft (Semi a)
   | BailNote Text  -- ^ failure with note
   | BailFail  -- ^ unspecified failure
 
@@ -446,6 +563,133 @@ data Con a = Con
   }
 
 deriving instance (Show a) => Show (Con a)
+
+hide :: Con a -> Type a -> Con a
+hide Con{lvl, sut} typ = Con
+  { lvl = lvl + 1
+  , sut = Cell' typ sut
+  }
+
+shew :: Var a => Con a -> Semi a -> Type a -> Con a
+shew Con{lvl, sut} ken typ = Con
+  { lvl = lvl + 1
+  , sut = Cell' (Fork' (singleton ken) typ) sut
+  }
+{-
+-- | Grow the type because we have passed under a tisgar
+grow :: Type a -> Type (Hop Rump a)
+grow = \case
+  Rump' r -> Fore' (New r)
+  Fore' x -> Fore' (Old x)
+  --
+  Atom' a -> Atom' a
+  Cell' x y -> Cell' (grow x) (grow y)
+  Lamb' x c -> Lamb' (grow x) (crow c)
+  --
+  Plus' x -> Plus' (grow x)
+  Slam' x y -> Slam' (grow x) (grow y)
+  Equl' x y -> Equl' (grow x) (grow y)
+  Test' x y z -> Test' (grow x) (grow y) (grow z)
+  Fish' f x -> Fish' f (grow x)
+  Look' x st -> Look' (grow x) st
+  --
+  Aura' au -> Aura' au
+  Fork' as au -> Fork' as au
+  Rail' x y c -> Rail' (grow x) (grow y) (crow c)
+  Gate' x y c -> Gate' (grow x) (grow y) (crow c)
+  --Face' fs x -> Face' fs (grow x)
+  Noun' -> Noun'
+  Void' -> Void'
+  Type' -> Type'
+
+ where
+  crow :: Code a -> Code (Hop Rump a)
+  crow = \case
+    -- lookups into the closure are NOT changed; this is okay because the stuck
+    -- seminoun references in the value in the clousre ARE.
+    Stub st -> Stub st
+    Fore x -> Fore (Old x)
+    --
+    Atom a -> Atom a
+    Cell c d -> Cell (crow c) (crow d)
+    Lamb c -> Lamb (crow c)
+    --
+    Plus c -> Plus (crow c)
+    Slam c d -> Slam (crow c) (crow d)
+    Equl x y -> Equl (crow x) (crow y)
+    Test x y z -> Test (crow x) (crow y) (crow z)
+    Fish f x -> Fish f (crow x)
+    --
+    Aura au -> Aura au
+    Fork as au -> Fork as au
+    Rail c d -> Rail (crow c) (crow d)
+    Gate c d -> Gate (crow c) (crow d)
+    --Face fs c -> Face fs (crow c)
+    Noun -> Noun
+    Void -> Void
+    Type -> Type
+    --
+    With c d -> With (crow c) (crow d)
+    Push c d -> Push (crow c) (crow d)
+
+-- | On exiting a tisgar, pare down the type to remove any opaque references to
+-- the inner subject, but actually it's an invariant violation for any to exist.
+pare :: (MonadCheck m, Var a) => Semi (Hop Rump a) -> m (Semi a)
+pare bas = go bas
+ where
+  go = \case
+    Rump' r -> bail (PareFree r bas)
+    Fore' (New r) -> pure $ Rump' r
+    Fore' (Old x) -> pure $ Fore' x
+    --
+    Atom' a -> pure $ Atom' a
+    Cell' x y -> Cell' <$> go x <*> go y
+    Lamb' x c -> Lamb' <$> go x <*> care c
+    --
+    Plus' x -> Plus' <$> go x
+    Slam' x y -> Slam' <$> go x <*> go y
+    Equl' x y -> Equl' <$> go x <*> go y
+    Test' x y z -> Test' <$> go x <*> go y <*> go z
+    Fish' f x -> Fish' f <$> go x
+    Look' x st -> flip Look' st <$> go x
+    --
+    Aura' au    -> pure $ Aura' au
+    Fork' as au -> pure $ Fork' as au
+    Rail' x y c -> Rail' <$> go x <*> go y <*> care c
+    Gate' x y c -> Gate' <$> go x <*> go y <*> care c
+    --Face' fs x -> Face' fs <$> go x
+    Noun' -> pure Noun'
+    Void' -> pure Void'
+    Type' -> pure Type'
+
+  care :: (MonadCheck m, Show a) => Code (Hop Rump a) -> m (Code a)
+  care = \case
+    -- This stays put because it's actually an axis into the stored closure.
+    Stub st -> pure $ Stub st
+    Fore (New r) -> bail (PareFree r bas)
+    Fore (Old x) -> pure $ Fore x
+    --
+    Atom a -> pure $ Atom a
+    Cell c d -> Cell <$> care c <*> care d
+    Lamb c -> Lamb <$> care c
+    --
+    Plus c -> Plus <$> care c
+    Slam c d -> Slam <$> care c <*> care d
+    Equl c d -> Equl <$> care c <*> care d
+    Test c d e -> Test <$> care c <*> care d <*> care e
+    Fish f c -> Fish f <$> care c
+    --
+    Aura au -> pure $ Aura au
+    Fork as au -> pure $ Fork as au
+    Rail c d -> Rail <$> care c <*> care d
+    Gate c d -> Gate <$> care c <*> care d
+    --Face fs c -> Face fs <$> care c
+    Noun -> pure Noun
+    Void -> pure Void
+    Type -> pure Type
+    --
+    With c d -> With <$> care c <*> care d
+    Push c d -> Push <$> care c <*> care d -}
 
 
 --------------------------------------------------------------------------------
@@ -549,6 +793,26 @@ fits fit t u = case (t, u) of
   (Slam'{}, _) -> fitsFail
   (_, Slam'{}) -> fitsFail
 
+  (Equl' v w, Equl' v' w') -> asum
+    [ fits FitSame v v' >> fits FitSame w w'
+    , fits FitSame v w' >> fits FitSame w v'
+    ]
+  (Equl'{}, _) -> fitsFail
+  (_, Equl'{}) -> fitsFail
+
+  (Test' u v w, Test' u' v' w') -> do
+    fits FitSame u u'
+    fits fit v v'
+    fits fit w w'
+  (Test'{}, _) -> fitsFail
+  (_, Test'{}) -> fitsFail
+
+  (Fish' f v, Fish' f' v') -> do
+    when (f /= f') fitsFail
+    fits FitSame v v'
+  (Fish'{}, _) -> fitsFail
+  (_, Fish'{}) -> fitsFail
+
   -- The assumption is that these are fully evaluated. This rules out Looks
   -- stacked on top of Looks, as well of Looks on top of cells. Accordingly the
   -- rules are pretty tight. I don't think there's any equiv of the beta-eta
@@ -583,6 +847,24 @@ fits fit t u = case (t, u) of
     k' = smap Old k
     new = Fore' @(Hop Axis a) (New 1)
 
+  (Rail' v j, Cell' w u) -> do
+    fits fit v w
+    fits fit (jamb j' $ read new v') u'
+   where
+    v' = smap Old v
+    j' = smap Old j
+    u' = smap Old u
+    new = Fore' @(Hop Axis a) (New 1)
+
+  (Cell' v u, Rail' w k) -> do
+    fits fit v w
+    fits fit u' (jamb k' $ read new w')
+   where
+    u' = smap Old u
+    w' = smap Old w
+    k' = smap Old k
+    new = Fore' @(Hop Axis a) (New 1)
+
   (Gate' v j, Gate' w k) -> do
     fits fit v w
     fits fit (jamb j' $ read new v') (jamb k' $ read new w')
@@ -601,6 +883,8 @@ fits fit t u = case (t, u) of
   (_, Fork'{}) -> fitsFail
   (Cell'{}, _) -> fitsFail
   (_, Cell'{}) -> fitsFail
+  (Rail'{}, _) -> fitsFail
+  (_, Rail'{}) -> fitsFail
   (Gate'{}, _) -> fitsFail
   (_, Gate'{}) -> fitsFail
 
@@ -616,10 +900,44 @@ fits fit t u = case (t, u) of
 peek :: (MonadCheck m, Var a) => Loc -> Type a -> Axis -> m (Type a)
 peek loc a typ = undefined
 
+data Line a = Line
+  { lem :: Semi a
+  , las :: [Dash a]
+  }
+
+data Dash a
+
+deriving instance (Show a) => Show (Line a)
+deriving instance (Show a) => Show (Dash a)
+
+find :: forall a m. (MonadCheck m, Var a)
+     => Type a -> [Axis] -> m (Stub, Line a)
+find = undefined
+
 -- Pelt system -----------------------------------------------------------------
 
 repo :: Type a -> Type a
 repo = id  -- XX faces
+
+-- | Extract the computational content from a pelt (i.e. the testing part).
+fish :: Pelt -> Fish
+fish fis = case fis of
+  Punt -> Tuna
+  Part a -> Sole a
+  Pair p q -> char (fish p) (fish q)
+ where
+  -- product of fishes
+  char :: Fish -> Fish -> Fish
+  char Tuna Tuna = Tuna
+  char h    j    = Char h j
+
+-- | Convert a fish back into a pelt. The name is meant to invoke releasing a
+-- fish after catching it.
+pond :: Fish -> Pelt
+pond = \case
+  Tuna -> Punt
+  Sole a -> Part a
+  Char h j -> Pair (pond h) (pond j)
 
 -- | Intersect seminouns.
 meld :: (Var a) => Semi a -> Semi a -> Maybe (Semi a)
@@ -646,6 +964,7 @@ meld b c = case (b, c) of
   _ -> Nothing
 
 -- | Promote voids to top level.
+{-
 vain :: Var a => Type a -> Type a
 vain = \case
   Fork' ss _ | null ss -> Void'
@@ -655,6 +974,7 @@ vain = \case
     (t, u) -> Cell' t u
   Rail' t j -> Rail' t j  -- XX FIXME
   t -> t
+-}
 
 -- | Add an atomic constant to the collection of possibilities of a given type.
 fork :: Var a => Atom -> Type a -> Type a
@@ -696,7 +1016,305 @@ crop loc@(lvl, axe) typ pet = case pet of
       Void' -> pure (Cell' tSmol u)
       u     -> pure (Cell' t     tes)
        where
-        fis = undefined -- Fish' (fish p) tSmol t
-        tes = undefined -- Test' fis tSmol t
+        fis = Fish' (fish p) undefined
+        tes = Test' fis tSmol t
 
+
+-- Type checking ---------------------------------------------------------------
+
+-- | Type check the condition of a Test, producing its Code as well as the
+-- possibly refined subjects for the branches to be checked against.
+chip :: (MonadCheck m, Var a)
+     => Con a -> Soft -> m (Code Void, Con a, Con a)
+chip con = \case
+  Fis p (Wng w) -> undefined {-do
+    (st, lin@Line{lem, lyt}) <- find con w
+    (tb, tt) <- fuse con (lem, lyt) p
+    tru <- seal con lin{lem=tb, lyt=tt}
+    (fb, ft) <- crop con (lem, lyt) p
+    fal <- seal con lin{lem=fb, lyt=ft}
+    h <- fish p
+    -- XX TODO FIXME rezip the find zipper
+    pure (Fish h $ Stub st, tru, fal)-}
+
+  sof -> do
+    x <- work con FitNest sof Flag'
+    pure (x, con, con)
+
+-- | Given subject type and knowledge, verify that code has result type.
+-- Since the expected result type is known in this mode, we can lighten the
+-- user's annotation burden, e.g. on |= argument. Read about "bidirectional type
+-- checking" to learn more.
+work :: forall a m. (MonadCheck m, Var a)
+     => Con a -> Fit -> Soft -> Type a -> m (Code Void)
+work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
+  let playFits = do (x, t') <- play con cod
+                    fits fit t' gol
+                    pure x
+  in case cod of
+    Wng{} -> playFits
+
+    -- for introduction forms except atoms, we push the type constraint inward
+    -- this allows the user to type-annotate the whole of a big data structure
+    -- indcluding cores and gates, without having to also annotate the insides
+    -- unless they want to.
+    Atm{} -> playFits
+
+    Cel c d -> case gol of
+      -- Face' fs t -> work con fit cod t
+      Type' -> playFits
+      Cell' t u -> do
+        x <- work con fit c t
+        y <- work con fit d u
+        pure (Cell x y)
+      Rail' t j -> do
+        x <- work con fit c t
+        let u = jamb j $ evil sut x
+        y <- work con fit d u
+        pure (Cell x y)
+      _ -> playFits
+
+    Lam p c -> case gol of
+      -- Face' fs t -> work con fit cod t
+      Gate' t j-> do
+        --t' <- toil con fit p (Rump' $ Leg' (lvl + 1, 3)) t
+        --let fs = derm p
+        --let can = hide' con $ face' fs t'
+        --let u = eval (Cons' sub $ Rump' $ Leg' (lvl + 1, 3)) e
+        --y <- work can fit c u
+        undefined -- pure (Lamb y)
+      _ -> playFits
+
+    {-Fac p c -> do
+      -- XX think about whether we should instead play here, so that toil can
+      -- operate against a more specific scrutinee type.
+      x <- work con fit c typ
+      -- XX It's strictly wrong to use typ here; we should use the result of
+      -- playing c. But playing c could fail, so...
+      _ <- toil con fit p (evil ken x) typ
+      let fs = derm p
+      asum
+        [ fits FitNest typ Type' >> pure (face fs x)
+        , pure x
+        ]-}
+
+    -- elimination forms just use nest
+    Plu{} -> playFits
+    Sla{} -> playFits
+    Equ{} -> playFits
+    Fis{} -> playFits  -- not inside Tes
+
+    Tes c d e -> do
+      (x, tru, fal) <- chip con c
+      y <- work tru fit d gol
+      z <- work fal fit e gol
+      pure (Test x y z)
+
+    -- "rhetorical" tests are required to evaluate to true at compile time.
+    -- this will be a rigorous exercise of the crop/fuse system and will be
+    -- our mechanism of exhaustiveness checking.
+    Rhe c d -> do
+      x <- work con FitNest c Flag'
+      case evil sut x of
+        Atom' 0 -> work con fit d gol
+        b -> bail (WorkMiss c b)
+
+    --Run{} -> playFits
+
+    -- likewise with types
+    Ral{} -> playFits
+    Gat{} -> playFits
+    --Gold{} -> playFits
+    --Lead{} -> playFits
+
+    {-Wit c d -> do
+      (x, t) <- play con c
+      let kan = evil ken x
+      y <- work Con{lvl=0, sut=(grow t), ken=(grow kan)} fit d (grow typ)
+      pure $ With x y-}
+
+    Pus c d -> do
+      (x, t) <- play con c
+      work (shew con (evil sut x) t) fit d gol
+
+    Net{} -> playFits
+    Cat{} -> playFits
+
+-- | Require the given type to be a function type.
+-- XX Deppy had a cas rule here; why?
+{-needGate :: (MonadCheck m, Var a)
+         => Con a -> Type a -> m (Type a, Semi a, Code a)
+needGate con = \case
+  Gate' t s c -> pure (t, s, c)
+  Face' _ t -> needGate con t
+  t -> bail $ NeedGate t-}
+
+-- | Given subject type and knowledge, determine product type of code
+play :: forall a m. (MonadCheck m, Var a)
+     => Con a -> Soft -> m (Code Void, Type a)
+play con@Con{lvl, sut} cod = act (ActPlay con cod) undefined
+  {-Wng w -> do
+    (st, Line{lyt}) <- find con w
+    pure (Stub st, lyt)
+
+  Atm a Rock t -> pure (Atom a, Fork' (singleton a) t)
+
+  Atm a Sand t -> pure (Atom a, Aura' t)
+
+  Cns c d -> do
+    (x, t) <- play con c
+    (y, u) <- play con d
+    -- XX the below invocation appears identical to "constructing a nondependent
+    -- cell". Think hard about this.
+    pure (Cons x y, Cell' t ken (loft (lvl + 1) u))
+
+  Lam p c -> do
+    -- TODO replace with gold core
+    t <- romp con p
+    let fs = derm p
+    (x, u) <- play (hide' con $ face' fs t) c
+    pure (Lamb x, Gate' t ken (loft (lvl + 1) u))
+
+  Fac p c -> do
+    (x, t) <- play con c
+    t' <- toil con FitNest p (evil ken x) t
+    let fs = derm p
+    -- XX think about under what circumstances we can strip the first face.
+    -- It's annoying to have these lying around in the seminoun.
+    -- XX confirm this is right
+    asum
+      [ fits FitNest t Type' >> pure (face fs x, face' fs t')
+      , pure (x, face' fs t')
+      ]
+
+  Plu c -> do
+    -- Following 140, we do not propagate aura.
+    x <- work con FitNest c (Aura' "")
+    pure (Plus x, Aura' "")
+
+  Sla c d -> do
+    (x, ct) <- play con c
+    (at, s, rc) <- needGate con ct
+    y <- work con FitNest d at
+    pure (Slam x y, eval (Cons' s $ evil ken y) rc)
+
+  Equ c d -> do
+    (x, _) <- play con c
+    (y, _) <- play con d
+    pure (Equl x y, Flag')
+
+  Tes c d e -> do
+    (x, tru, fal) <- chip con c
+    (y, t) <- play tru d
+    (z, u) <- play fal e
+    r <- join t u
+    pure (Test x y z, r)
+
+  -- "rhetorical" tests are required to evaluate to true at compile time.
+  -- this will be a rigorous exercise of the crop/fuse system and will be
+  -- our mechanism of exhaustiveness checking.
+  Rhe c d -> do
+    x <- work con FitNest c Flag'
+    case evil ken x of
+      Atom' 0 -> play con d
+      b -> bail (PlayMiss c b)
+
+  -- For Fis not inside Tes
+  Fis p c -> do
+    f <- fish p
+    (x, _) <- play con c
+    pure (Fish f x, Flag')
+
+  Run sv st fom pt -> do
+    st' <- work con FitNest st Type'
+    sv' <- work con FitNest sv (evil ken st')
+    (fom', _) <- play con fom  -- HACK XX fix when we have recursive types
+    pt' <- work con FitNest pt Type'
+    let ret = Test (Equl (Atom 0) (Stub $ Leg 3)) sv' (Aura "t")
+    pure (Work st' sv' fom' pt', Cell' Flag' ken $ vacuous ret)
+
+  Bas (Aur au) -> pure (Aura au, Type')
+
+  Bas Flg -> pure (Fork (setFromList [0, 1]) "f", Type')
+
+  Bas Nul -> pure (Fork (setFromList [0]) "n", Type')
+
+  Bas (Fok as au) -> pure (Fork (setFromList as) au, Type')
+
+  Bas Cel -> pure (Cell Noun Noun, Type')
+
+  Cll c d -> do
+    x <- work con FitNest c Type'
+    y <- work (hide con (vacuous x)) FitNest d Type'
+    pure (Cell x y, Type')
+
+  Gat c d -> do
+    x <- work con FitNest c Type'
+    y <- work (hide con (vacuous x)) FitNest d Type'
+    pure (Gate x y, Type')
+
+  Bas Non -> pure (Noun, Type')
+
+  Bas Vod -> pure (Void, Type')
+
+  Bas Typ -> pure (Type, Type')
+
+  Wit c d -> do
+    (x, t) <- play con c
+    let kan = evil ken x
+    (y, u) <- play Con{lvl=0, sut=(grow t), ken=(grow kan)} d
+    ret <- pare u
+    pure (With x y, ret)
+
+  Pus c d -> do
+    (x, t) <- play con c
+    (y, u) <- play (shew con (evil ken x) t) d
+    pure (Push x y, u)
+
+  Net{sof, typ} -> do
+    x <- work con FitNest typ Type'
+    let t = evil ken x
+    y <- work con FitNest sof t
+    pure (y, t)
+
+  Cat{sof, typ} -> do
+    x <- work con FitNest typ Type'
+    let t = evil ken x
+    y <- work con FitCast sof t
+    pure (y, t)-}
+
+-- | Read code back to soft, making no attempt to untranslate axes to wings with
+-- names.
+rest :: forall a m. Ord a => Code a -> Soft
+rest = \case
+  Stub (Leg a) -> Wng [a]
+  Fore x -> Wng [1337] -- [Ally $ tshow @(Hop () a) $ Old x]  -- hack for printing
+  --
+  Atom a -> Atm a Sand (heuAura a)
+  Cell c d -> Cel (rest c) (rest d)
+  -- XX this loss of facial information may be unfortunate for diagnostic
+  -- purposes. Think about this. Fixed by doze?
+  Lamb c -> Lam Punt (rest c)
+  --
+  Plus c -> Plu (rest c)
+  Slam c d -> Sla (rest c) (rest d)
+  Equl c d -> Equ (rest c) (rest d)
+  Test c d e -> Tes (rest c) (rest d) (rest e)
+  Fish h c -> Fis (pond h) (rest c)
+  --
+  Aura au -> Aur au
+  Rail c d -> Ral (rest c) (rest d)
+  Gate c d -> Gat (rest c) (rest d)
+  Fork ss t -> Fok (Just $ rest t) (map rest $ toList ss)
+  -- Face (Mask m) c -> Fac (Peer m) (rest c)
+  -- Face (Link ls) c -> Fac Punt (rest c)  -- FIXME ?
+  Noun -> Non
+  Void -> Vod
+  Type -> Typ
+  With c d -> Wit (rest c) (rest d)
+  Push c d -> Pus (rest c) (rest d)
+
+-- | Use a subject type to read back wing information in a much less shitty way.
+doze :: Var a => Type a -> Code Stub -> Soft
+doze typ = undefined
 

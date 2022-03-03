@@ -13,7 +13,7 @@ import Practice.HoonSyntax
 type Desugar = Either Text
 
 open :: Hoon -> Desugar (Code Term)
-open = \case
+open = undefined{-\case
   Wung w@(last -> Ally x)  -> pure $ Wing (init w) (Look x)
   Wung _ -> Left "unsupported wing"
   Adam g a au -> pure $ Atom a g au
@@ -163,10 +163,10 @@ open = \case
     []   -> go h
     j:js -> case fac h of
       Nothing -> make <$> go h <*> (blow <$> boil j js fac go make)
-      Just f  -> make <$> go h <*> (abstract1 f <$> boil j js fac go make)
+      Just f  -> make <$> go h <*> (abstract1 f <$> boil j js fac go make)-}
 
 shut :: (a -> Term) -> Code a -> Hoon
-shut e = \case
+shut e = undefined{-\case
   Look a -> Wung [Ally $ e a]
   --
   Atom a g au -> Adam g a au
@@ -217,4 +217,4 @@ shut e = \case
 
   unmask e = \case
     Mask t _ -> \case B () -> t;     F x -> e x
-    _        -> \case B () -> "???"; F x -> e x
+    _        -> \case B () -> "???"; F x -> e x-}

@@ -20,6 +20,7 @@ data Hoon
   | Adam Grit Atom Aura
   --
   | Bass Bass
+  | Bcbr (Map Term Spec)  -- ^ lead core type (prev $!, then $?) XX overlap ?(%|)
   | Bccb Hoon  -- ^ type of expression
   | Bccl Spec [Spec]  -- ^ tuple
   | Bccn [(Atom, Aura, Spec)]  -- ^ tagged union
@@ -28,7 +29,8 @@ data Hoon
   | Bckt Spec Spec  -- ^ god save me
   | Bcts Skin Spec  -- ^ facialized type
   | Bcpt Spec Spec  -- ^ atomic-cellular disjunction
-  | Bcwt (Map Term Spec)  -- ^ lead core type (prev $!)
+  | Bcwt Spec [Hoon]  -- ^ fork type
+  | Bczp Spec [Hoon]  -- ^ crop type (speculative)
   --
   | Brcn (Map Term Hoon)
   | Brts Skin Hoon
@@ -63,6 +65,7 @@ data Hoon
   | Ktwt Hoon  -- ^ lead
   | Ktts Skin Hoon  -- ^ apply faces
   | Ktcl Spec  -- ^ mold
+  | Ktcn Hoon
   | Ktzp Spec Hoon
   --
   | Sgfs Term Hoon
@@ -164,7 +167,8 @@ spec = hoon
 -- | Regular forms.
 rune :: Parser Hoon
 rune = choice
-  [ r1   "$_" Bccb hoon
+  [ hop  "$|" Bcbr term spec
+  , r1   "$_" Bccb hoon
   , run1 "$:" Bccl hoon hoon
   , run  "$%" id spec >>= bccn
   , hop1 "$." Bcdt spec term spec
@@ -172,7 +176,8 @@ rune = choice
   , r2   "$^" Bckt spec spec
   , r2   "$=" Bcts skin spec
   , r2   "$@" Bcpt spec spec
-  , hop  "$?" Bcwt term spec
+  , run1 "$?" Bcwt spec hoon
+  , run1 "$!" Bczp spec hoon
   --
   , hop  "|%" Brcn term hoon
   , r2   "|=" Brts skin hoon
@@ -203,6 +208,7 @@ rune = choice
   , r1   "^?" Ktwt hoon
   , r2   "^=" Ktts skin hoon
   , r1   "^:" Ktcl spec
+  , r1   "^%" Ktcn hoon
   , r2   "^!" Ktzp spec hoon
   --
   , r2   "~/" Sgfs (char '%' >> term) hoon
@@ -247,6 +253,8 @@ long = wide do
     , char '/'  *> spec <&> Ktfs hd
     , char '\\' *> hoon <&> Kthp hd
     , char ':'  *> hoon <&> Tsgl hd
+    , run  "?"  (Bcwt hd) hoon
+    , run  "!"  (Bczp hd) hoon
     , case hd of Wung w -> do
                    char '('
                    edits <- sepBy ((,) <$> wing <* ace <*> hoon) (string ", ")
@@ -291,7 +299,7 @@ scat = wide $ choice
   -- XX '.'?
   -- TODO autonamer
   , r2   "=" Dtts hoon hoon
-  -- XX multiaura
+  -- XX multiaura XX XX port to new syntax
   , run  "?" (\as -> Bass $ Fok as "") (char '$' *> rock \a _ -> a)
   , char '?' *> pure (Bass Flg)
   , char '[' *> (Cltr <$> sepBy hoon ace) <* char ']'  -- XX read rupl

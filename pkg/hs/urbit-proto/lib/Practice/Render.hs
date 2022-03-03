@@ -486,7 +486,8 @@ instance Rolling Hoon where
     Bckt s t -> fixed "$^" "$^(" ")" [roll s, roll t]
     Bcts s t -> binary "$=" "|" (roll s) (roll t)
     Bcpt s t -> fixed "$@" "$@(" ")" [roll s, roll t]
-    Bcwt ms -> Huge $ Stem "$?" "--" [] (arms ms)
+    Bcwt m ms -> Huge $ Rose "$?" "==" (map (tank . roll) $ m:ms)
+    Bczp m ms -> Huge $ Rose "$!" "==" (map (tank . roll) $ m:ms)
     --
     Brcn ms -> Huge $ Stem "|%" "--" [] (arms ms)
     Brts s h -> fixed "|=" "|=(" ")" [roll s, roll h]
