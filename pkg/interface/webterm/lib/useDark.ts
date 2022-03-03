@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useTheme } from './settings';
-import useTermState from './state';
+import useTermState from '../state';
 
 export function useDark() {
   const [osDark, setOsDark] = useState(false);
@@ -11,12 +10,11 @@ export function useDark() {
       setOsDark(e.matches);
     };
     setOsDark(themeWatcher.matches);
-    themeWatcher.addListener(update);
+    themeWatcher.addEventListener('change', update);
 
     return () => {
-      themeWatcher.removeListener(update);
+      themeWatcher.removeEventListener('change', update);
     }
-
   }, []);
 
   const theme = useTermState(s => s.theme);

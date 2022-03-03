@@ -12,8 +12,7 @@ import useTermState from './state';
 import React from 'react';
 import { Box, Col } from '@tlon/indigo-react';
 import { makeTheme } from './lib/theme';
-import { useDark } from './join';
-import { showBlit, csi, showSlog } from './lib/blit';
+import { showBlit, csi } from './lib/blit';
 
 const termConfig: ITerminalOptions = {
   logLevel: 'warn',
@@ -138,11 +137,11 @@ const onInput = (name: string, session: Session, e: string) => {
 interface BufferProps {
   name: string,
   selected: boolean,
+  dark: boolean,
 }
 
-export default function Buffer({ name, selected }: BufferProps) {
+export default function Buffer({ name, selected, dark }: BufferProps) {
   const container = useRef<HTMLDivElement>(null);
-  const dark = useDark();
 
   const session: Session = useTermState(s => s.sessions[name]);
 
@@ -210,10 +209,6 @@ export default function Buffer({ name, selected }: BufferProps) {
     let newContainer = containerRef || container.current;
     if(session && newContainer) {
       container.current = newContainer;
-      console.log('newcont', newContainer);
-      // session.term.open(newContainer);
-    } else {
-      console.log('kaboom', session);
     }
   }, [session]);
 

@@ -44,7 +44,7 @@ export const Tab = ( { session, name }: TabProps ) => {
   }, [session]);
 
   return (
-    <div className={'tab ' + isSelected ? 'selected' : ''}>
+    <div className={'tab ' + (isSelected ? 'selected' : '')}>
       <a className='session-name' onClick={onClick}>
         {session?.hasBell ? '🔔 ' : ''}
         {name === DEFAULT_SESSION ? 'default' : name}

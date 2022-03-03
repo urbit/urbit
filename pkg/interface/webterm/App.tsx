@@ -1,13 +1,12 @@
-/* eslint-disable max-lines */
 import React, {
   useCallback, useEffect
 } from 'react';
 
-import useTermState, { Sessions } from './state';
-import { useDark } from './join';
+import useTermState from './state';
+import { useDark } from './lib/useDark';
 import api from './api';
 
-import { Reset, _dark, _light } from '@tlon/indigo-react';
+import { _dark, _light } from '@tlon/indigo-react';
 
 import 'xterm/css/xterm.css';
 
@@ -83,11 +82,10 @@ export default function TermApp(props: TermAppProps) {
   return (
     <>
       <ThemeProvider theme={dark ? _dark : _light}>
-        <Reset />
         <Tabs />
         <div className="buffer-container">
           {names.map(name => {
-            return <Buffer name={name} selected={name === selected} />;
+            return <Buffer name={name} selected={name === selected} dark={dark}/>;
           })}
         </div>
       </ThemeProvider>

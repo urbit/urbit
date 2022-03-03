@@ -29,7 +29,7 @@ export const Tabs = () => {
           <Tab session={sessions[n]} name={n} key={i} />
         );
       })}
-      <button onClick={onAddClick}>+</button>
+      <button className="tab" onClick={onAddClick}>+</button>
     </div>
   );
 };
