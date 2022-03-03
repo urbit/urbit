@@ -29,4 +29,8 @@
 #include "noun/xtract.h"
 #include "noun/zave.h"
 
+#include "jets/k.h"
+#include "jets/q.h"
+#include "jets/w.h"
+
 #endif /* ifndef U3_ALL_H */
