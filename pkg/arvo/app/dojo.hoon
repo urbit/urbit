@@ -1706,14 +1706,16 @@
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
-  ?>  ?=([@ *] wire)
-  =/  =session  (~(got by hoc) i.wire)
-  =/  he-full  ~(. he hid i.wire ~ session)
+  ^-  (quip card:agent:gall _..on-init)
+  ?>  ?=([@ @ *] wire)
+  =/  =id  [(slav %p i.wire) i.t.wire]
+  =/  =session  (~(got by hoc) id)
+  =/  he-full  ~(. he hid id ~ session)
   =^  moves  state
     =<  he-abet
     ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
-        %writ           (he-writ:he-full t.wire +>.sign-arvo)
-        %http-response  (he-http-response:he-full t.wire +>.sign-arvo)
+        %writ           (he-writ:he-full t.t.wire +>.sign-arvo)
+        %http-response  (he-http-response:he-full t.t.wire +>.sign-arvo)
     ==
   [moves ..on-init]
 ::  if dojo fails unexpectedly, kill whatever each session is working on
