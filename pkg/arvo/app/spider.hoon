@@ -648,7 +648,6 @@
 ::
 ++  yarn-to-byk
   |=  [=yarn =bowl:gall]
-
   =/  [* * =desk]
     ~|  "no desk associated with {<tid>}"
      %-  ~(got by serving.state)  (yarn-to-tid yarn)
@@ -666,5 +665,4 @@
     %cc
     /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[from]/[to]
   ==
-
 --
