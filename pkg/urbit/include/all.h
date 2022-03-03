@@ -9,7 +9,7 @@
   /** u3: noun environment.
   **/
 #   include "noun/types.h"
-#   include "noun/aliases.h"   //  general u3
+#   include "noun/defs.h"   //  general u3
 
 #   include "noun/allocate.h"  //  u3a: allocation
 #   include "noun/events.h"    //  u3e: persistence

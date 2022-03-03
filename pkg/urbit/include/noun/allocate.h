@@ -7,7 +7,7 @@
 
 #include "c/all.h"
 #include "noun/types.h"
-#include "noun/aliases.h"
+#include "noun/defs.h"
 #include "noun/manage.h"
 
   /**  Constants.

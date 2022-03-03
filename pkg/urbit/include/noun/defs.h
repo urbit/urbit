@@ -1,5 +1,11 @@
-#ifndef U3_ALIASES_H
-#define U3_ALIASES_H
+//! @file defs.h
+//! Module-independent u3 macros.
+
+#ifndef U3_DEFS_H
+#define U3_DEFS_H
+
+#include "c/all.h"
+#include "noun/manage.h"
 
   /**  Constants.
   **/
@@ -22,4 +28,4 @@
     */
 #     define u3_assent(x)  if ( !_(x) ) { u3m_bail(c3__exit); }
 
-#endif /* ifndef U3_ALIASES_H */
+#endif /* ifndef U3_DEFS_H */

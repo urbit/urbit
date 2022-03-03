@@ -11,8 +11,8 @@
 #include "c/all.h"
 
 #include "noun/types.h"
-#include "noun/aliases.h"
 #include "noun/allocate.h"
+#include "noun/defs.h"
 #include "noun/events.h"
 #include "noun/hashtable.h"
 #include "noun/imprison.h"

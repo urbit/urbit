@@ -2,7 +2,7 @@
 
 #include "noun/hashtable.h"
 
-#include "noun/aliases.h"
+#include "noun/defs.h"
 #include "noun/imprison.h"
 #include "noun/retrieve.h"
 #include "noun/xtract.h"

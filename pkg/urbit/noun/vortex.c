@@ -3,7 +3,7 @@
 #include "noun/vortex.h"
 
 #include "jets/k.h"
-#include "noun/aliases.h"
+#include "noun/defs.h"
 #include "noun/log.h"
 #include "noun/nock.h"
 #include "noun/retrieve.h"

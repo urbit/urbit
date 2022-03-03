@@ -1,3 +1,6 @@
+//! @file log.h
+//! Logging.
+
 #ifndef U3_LOG_H
 #define U3_LOG_H
 
