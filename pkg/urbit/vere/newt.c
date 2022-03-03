@@ -9,7 +9,7 @@
 **  the implementation is relatively inefficient and could
 **  lose a few copies, mallocs, etc.
 */
-#include "all.h"
+#include "noun/all.h"
 #include "vere/vere.h"
 
 /* _newt_mess_head(): await next msg header.

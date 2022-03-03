@@ -1,7 +1,7 @@
 /* j/1/lth.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qa_lth(u3_atom a, u3_atom b)

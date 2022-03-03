@@ -1,7 +1,7 @@
 /* j/4/in_put.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 /* functions
 */

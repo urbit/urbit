@@ -1,7 +1,7 @@
 /* j/e/rq.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <softfloat.h>
 
 #define QUADNAN 0x7fff800000000000

@@ -1,7 +1,7 @@
 /* j/3/fein.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <murmur3.h>
 
 //  +tail:ob constant parameters to +fe:ob

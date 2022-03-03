@@ -1,7 +1,7 @@
 /* j/6/fuse.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3wfu_fuse(u3_noun cor)

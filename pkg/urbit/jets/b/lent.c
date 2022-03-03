@@ -1,7 +1,7 @@
 /* j/2/lent.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 STATIC_ASSERT( (UINT32_MAX > u3a_cells),
                "length precision" );

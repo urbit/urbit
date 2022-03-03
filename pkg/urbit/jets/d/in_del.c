@@ -1,7 +1,7 @@
 /* j/4/in_del.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 /* functions
 */

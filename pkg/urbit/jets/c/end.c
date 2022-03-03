@@ -1,7 +1,7 @@
 /* j/3/end.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qc_end(u3_atom a,

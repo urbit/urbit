@@ -1,7 +1,7 @@
 /* j/4/in_rep.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 //  [a] is RETAINED, [out] is TRANSFERRED
 //

@@ -1,7 +1,7 @@
 /* j/2/scag.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qb_scag(u3_atom a, u3_noun b)

@@ -1,7 +1,7 @@
 /* j/6/core.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

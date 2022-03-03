@@ -1,6 +1,6 @@
 /* worker/serf.c
 */
-#include "all.h"
+#include "noun/all.h"
 #include <vere/vere.h>
 #include <vere/serf.h>
 

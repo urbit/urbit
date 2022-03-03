@@ -1,7 +1,7 @@
 /* j/5/mink.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
   u3_noun
   u3we_mink(u3_noun cor)

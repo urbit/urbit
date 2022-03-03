@@ -1,7 +1,7 @@
 /* j/3/slaw.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 #include <ctype.h>
 

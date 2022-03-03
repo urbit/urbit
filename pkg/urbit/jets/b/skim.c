@@ -1,7 +1,7 @@
 /* j/2/skim.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3qb_skim(u3_noun a, u3_noun b)

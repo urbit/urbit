@@ -1,7 +1,7 @@
 /* j/5/shar.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <urcrypt.h>
 
   static u3_atom

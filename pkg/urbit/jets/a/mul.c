@@ -1,7 +1,7 @@
 /* j/1/mul.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

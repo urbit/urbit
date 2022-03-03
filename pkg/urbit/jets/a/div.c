@@ -1,7 +1,7 @@
 /* j/1/div.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

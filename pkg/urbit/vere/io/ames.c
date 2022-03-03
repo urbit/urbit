@@ -1,7 +1,7 @@
 /* vere/ames.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include "vere/vere.h"
 #include "ur/serial.h"
 

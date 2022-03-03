@@ -1,7 +1,7 @@
 /* j/6/ut_rest.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 u3_noun
 u3wfu_rest(u3_noun cor)

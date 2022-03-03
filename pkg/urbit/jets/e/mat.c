@@ -1,7 +1,7 @@
 /* j/3/mat.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
 /* functions

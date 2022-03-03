@@ -1,4 +1,4 @@
-#include "all.h"
+#include "noun/all.h"
 
 #define TRUE 1
 #define FALSE 0

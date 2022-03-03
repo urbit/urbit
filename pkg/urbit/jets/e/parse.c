@@ -1,7 +1,7 @@
 /* j/5/parse.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 
 
   static u3_noun

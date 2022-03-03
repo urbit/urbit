@@ -1,7 +1,7 @@
 /* j/5/sha1.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <urcrypt.h>
 
 /* functions

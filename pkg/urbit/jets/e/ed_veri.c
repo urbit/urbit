@@ -1,7 +1,7 @@
 /* gen164/5/ed_veri.c
 **
 */
-#include "all.h"
+#include "noun/all.h"
 #include <urcrypt.h>
 
 /* functions
