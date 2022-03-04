@@ -6608,6 +6608,27 @@
           ==                                            ::
 +$  what  (unit (pair cord (list sect)))                ::  help slogan/section
 +$  wing  (list limb)                                   ::  search path
++$  cape  (pair (map @ud wine) wine)                    ::
++$  wine                                                ::
+          $@  $?  %noun                                 ::
+                  %path                                 ::
+                  %type                                 ::
+                  %void                                 ::
+                  %wall                                 ::
+                  %wool                                 ::
+                  %yarn                                 ::
+              ==                                        ::
+          $%  [%mato p=term]                            ::
+              [%core p=(list @ta) q=wine]               ::
+              [%face p=term q=wine]                     ::
+              [%list p=term q=wine]                     ::
+              [%pear p=term q=@]                        ::
+              [%bcwt p=(list wine)]                     ::
+              [%plot p=(list wine)]                     ::
+              [%stop p=@ud]                             ::
+              [%tree p=term q=wine]                     ::
+              [%unit p=term q=wine]                     ::
+          ==                                            ::
 ::
 ::  +block: abstract identity of resource awaited
 ::
@@ -10893,29 +10914,6 @@
     ==
   --
 ++  us                                                  ::  prettyprinter
-  =>  |%
-      +$  cape  [p=(map @ud wine) q=wine]               ::
-      +$  wine                                          ::
-                $@  $?  %noun                           ::
-                        %path                           ::
-                        %type                           ::
-                        %void                           ::
-                        %wall                           ::
-                        %wool                           ::
-                        %yarn                           ::
-                    ==                                  ::
-                $%  [%mato p=term]                      ::
-                    [%core p=(list @ta) q=wine]         ::
-                    [%face p=term q=wine]               ::
-                    [%list p=term q=wine]               ::
-                    [%pear p=term q=@]                  ::
-                    [%bcwt p=(list wine)]               ::
-                    [%plot p=(list wine)]               ::
-                    [%stop p=@ud]                       ::
-                    [%tree p=term q=wine]               ::
-                    [%unit p=term q=wine]               ::
-                ==                                      ::
-      --
   |_  sut=type
   ++  dash
     |=  [mil=tape lim=char lam=tape]
