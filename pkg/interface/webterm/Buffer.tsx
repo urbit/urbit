@@ -13,6 +13,7 @@ import React from 'react';
 import { Box, Col } from '@tlon/indigo-react';
 import { makeTheme } from './lib/theme';
 import { showBlit, csi } from './lib/blit';
+import { DEFAULT_SESSION } from './constants';
 
 const termConfig: ITerminalOptions = {
   logLevel: 'warn',
@@ -146,7 +147,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
   const session: Session = useTermState(s => s.sessions[name]);
 
   const initSession = useCallback(async (name: string, dark: boolean) => {
-    console.log('setting up', name);
+    console.log('setting up', name === DEFAULT_SESSION ? 'default' : name);
 
     //  set up xterm terminal
     //
@@ -234,7 +235,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     if (container.current) {
       container.current.style.backgroundColor = theme.background || '';
     }
-  }, [dark]);
+  }, [session, dark]);
 
   useEffect(() => {
     if (session && selected && !session.term.isOpen) {
