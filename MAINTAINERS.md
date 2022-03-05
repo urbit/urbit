@@ -169,6 +169,11 @@ command):
 > |merge %landscape our %base
 > |merge %bitcoin our %base
 > |merge %webterm our %base
+> |mount %
+> |mount %garden
+> |mount %landscape
+> |mount %bitcoin
+> |mount %webterm
 % rsync -avL --delete pkg/arvo/ zod/base/
 % for desk in garden landscape bitcoin webterm; do \
     rsync -avL --delete pkg/$desk/ zod/$desk/ \
