@@ -45,6 +45,8 @@
 ::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
+::    run-nonce: unique for each rebuild
+::    sub-nonce: app-wide global %watch nonce
 ::    live: is this agent running? TODO document better
 ::    stats: TODO document
 ::    watches: incoming and outgoing subscription state
@@ -54,8 +56,9 @@
 ::
 +$  yoke
   $:  control-duct=duct
-      nonce=@t
-      live=?  ::TODO  remove, replaced by -.agent
+      run-nonce=@t
+      sub-nonce=@
+      live=?
       =stats
       =watches
       agent=(each agent vase)
@@ -127,7 +130,7 @@
 ::
 +$  egg
   $:  control-duct=duct
-      nonce=@t
+      run-nonce=@t
       live=?
       =stats
       =watches
@@ -357,7 +360,7 @@
         control-duct  hen
         beak          bek
         agent         &+agent
-        nonce         (scot %uw (end 5 (shas %yoke-nonce eny)))
+        run-nonce         (scot %uw (end 5 (shas %yoke-nonce eny)))
       ==
     ::
     =/  old  mo-core
@@ -455,7 +458,7 @@
       [%a %plea ship %g path ames-request-all]
     ::
     =.  outstanding.state
-      =/  stand
+      =/  stan
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
     (mo-pass wire note-arvo)
@@ -738,7 +741,7 @@
     ?~  yoke
       %-  (slog leaf+"gall: {<dap>} dead, got {<+<.sign-arvo>}" ~)
       mo-core
-    ?.  =(nonce.u.yoke i.t.wire)
+    ?.  =(run-nonce.u.yoke i.t.wire)
       %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
       mo-core
     ?.  ?=([?(%gall %behn) %unto *] sign-arvo)
@@ -1133,19 +1136,25 @@
             tang.neet
           ==
         =.  wire
+          :^  %use  agent-name  run-nonce.current-agent
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]
             %huck   [%out (scot %p ship.neet) name.neet wire]
             %arvo   [(scot %p attributing.agent-routes) wire]
           ==
-        =.  wire  [%use agent-name nonce.yoke wire]
+        ::  increment nonce for new subscription
+        ::
+        =?    run-nonce.current-agent
+            &(?=(%agent -.neet) ?=(?(%watch %watch-as) -.deal.neet))
+          +(run-nonce.current-agent
+        ::
         =/  =note-arvo
           ?-  -.neet
             %arvo   note-arvo.neet
             %huck   note-arvo.neet
             %agent  [%g %deal [our ship.neet] [name deal]:neet]
           ==
-        [duct %pass wire note-arvo]~
+        [system-duct.state %pass wire note-arvo]~
       ==
     ::  +ap-breach: ship breached, so forget about them
     ::
@@ -1665,17 +1674,13 @@
         $(moves t.moves, new-moves [move new-moves])
       =/  =wire  p.move.move
       ?>  ?=([%use @ @ %out @ @ *] wire)
-      =/  short-wire  t.t.t.t.t.t.wire
-      =/  =dock  [q.p q]:q.move.move
-      =/  =path
-        ?-  -.r.q.move.move
-          %watch     path.r.q.move.move
-          %watch-as  path.r.q.move.move
-        ==
-      ?:  (~(has by outbound.watches.yoke) short-wire dock)
+      =/  [sys-wire=^wire sub-wire=^wire]  [(scag 6 wire) (slag 6 wire)]
+      =/  [=dock =deal]  [[q.p q] r]:q.move.move
+      ::
+      ?:  (~(has by outbound.watches.yoke) sub-wire dock)
         =.  ap-core
           =/  =tang
-            ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
+            ~[leaf+"subscribe wire not unique" >agent-name< >sub-wire< >dock<]
           =/  have
             (~(got by outbound.watches.yoke) short-wire dock)
           %-  (slog >out=have< tang)
