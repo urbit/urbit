@@ -1495,25 +1495,21 @@ _ames_io_info(u3_auto* car_u)
 {
   u3_ames*  sam_u = (u3_ames*)car_u;
 
-  return u3nc(
-    u3nc(
-      c3__all,
-      u3i_list(
-        u3nc(u3i_string("filtering"),         sam_u->fig_u.fit_o),
-        u3nc(u3i_string("can-send"),          sam_u->fig_u.net_o),
-        u3nc(u3i_string("can-scry"),          sam_u->fig_u.see_o),
-        u3nc(u3i_string("dropped"),           u3i_chub(sam_u->sat_u.dop_d)),
-        u3nc(u3i_string("forwards-dropped"),  u3i_chub(sam_u->sat_u.fod_d)),
-        u3nc(u3i_string("forwards-pending"),  u3i_chub(sam_u->sat_u.foq_d)),
-        u3nc(u3i_string("forwarded"),         u3i_chub(sam_u->sat_u.fow_d)),
-        u3nc(u3i_string("filtered-hed"),      u3i_chub(sam_u->sat_u.hed_d)),
-        u3nc(u3i_string("filtered-ver"),      u3i_chub(sam_u->sat_u.vet_d)),
-        u3nc(u3i_string("filtered-mug"),      u3i_chub(sam_u->sat_u.mut_d)),
-        u3nc(u3i_string("filtered-bod"),      u3i_chub(sam_u->sat_u.bod_d)),
-        u3nc(u3i_string("crashed"),           u3i_chub(sam_u->sat_u.fal_d)),
-        u3nc(u3i_string("cached-lanes"),      u3i_word(u3h_wyt(sam_u->lax_p))),
-        u3_none)),
-    u3_nul);
+  return u3i_list(
+    u3_pier_mase("filtering",        sam_u->fig_u.fit_o),
+    u3_pier_mase("can-send",         sam_u->fig_u.net_o),
+    u3_pier_mase("can-scry",         sam_u->fig_u.see_o),
+    u3_pier_mase("dropped",          u3i_chub(sam_u->sat_u.dop_d)),
+    u3_pier_mase("forwards-dropped", u3i_chub(sam_u->sat_u.fod_d)),
+    u3_pier_mase("forwards-pending", u3i_chub(sam_u->sat_u.foq_d)),
+    u3_pier_mase("forwarded",        u3i_chub(sam_u->sat_u.fow_d)),
+    u3_pier_mase("filtered-hed",     u3i_chub(sam_u->sat_u.hed_d)),
+    u3_pier_mase("filtered-ver",     u3i_chub(sam_u->sat_u.vet_d)),
+    u3_pier_mase("filtered-mug",     u3i_chub(sam_u->sat_u.mut_d)),
+    u3_pier_mase("filtered-bod",     u3i_chub(sam_u->sat_u.bod_d)),
+    u3_pier_mase("crashed",          u3i_chub(sam_u->sat_u.fal_d)),
+    u3_pier_mase("cached-lanes",     u3i_word(u3h_wyt(sam_u->lax_p))),
+    u3_none);
 }
 
 /* _ames_io_slog(): print status info.

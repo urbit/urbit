@@ -1436,6 +1436,22 @@ _pier_on_lord_live(void* ptr_v)
   }
 }
 
+/* u3_pier_mass(): construct a $mass branch with noun/list.
+*/
+u3_noun
+u3_pier_mass(u3_atom cod, u3_noun lit)
+{
+  return u3nt(cod, c3n, lit);
+}
+
+/* u3_pier_mase(): construct a $mass leaf.
+*/
+u3_noun
+u3_pier_mase(c3_c* cod_c, u3_noun dat)
+{
+  return u3nt(u3i_string(cod_c), c3y, dat);
+}
+
 /* u3_pier_info(): pier status info as noun.
 */
 u3_noun
@@ -1445,63 +1461,56 @@ u3_pier_info(u3_pier* pir_u)
   //
   switch (pir_u->sat_e) {
     default: {
-      return u3i_string("state-unknown");
+      return u3_pier_mass(u3i_string("state-unknown"), u3_nul);
     }
 
     case u3_psat_init: {
-      return c3__init;
+      return u3_pier_mass(c3__init, u3_nul);
     }
 
     case u3_psat_boot: {
-      return c3__boot;
+      return u3_pier_mass(c3__boot, u3_nul);
     }
 
     case u3_psat_play: {
       u3_play* pay_u = pir_u->pay_u;
-      u3_noun  pay =
-        u3i_list(
-          u3nc(u3i_string("target"), u3i_chub(pay_u->eve_d)),
-          u3nc(u3i_string("sent"), u3i_chub(pay_u->sen_d)),
-          u3nc(u3i_string("read"), u3i_chub(pay_u->req_d)),
-          u3_none);
 
-      return u3i_list(
-        u3nc(c3__play, u3i_list(u3nc(c3__all, pay), u3_none)), u3_none);
+      return u3_pier_mass(c3__play,
+        u3i_list(
+          u3_pier_mase("target", u3i_chub(pay_u->eve_d)),
+          u3_pier_mase("sent", u3i_chub(pay_u->sen_d)),
+          u3_pier_mase("read", u3i_chub(pay_u->req_d)),
+          u3_none));
     }
 
     case u3_psat_work: {
-      u3_work* wok_u = pir_u->wok_u;
-      u3_noun  wok =
+      u3_work*  wok_u = pir_u->wok_u;
+      u3_noun   wok = u3_pier_mass(c3__work,
         u3i_list(
-          u3nc(u3i_string("effects-released"),
-               u3i_chub(wok_u->fec_u.rel_d)),
-          u3nc(u3i_string("pending"),
-               __(wok_u->fec_u.ext_u)),
-          u3nc(u3i_string("pending-start"),
-               wok_u->fec_u.ext_u
-                 ? u3i_chub(wok_u->fec_u.ext_u->eve_d)
-                 : 0),
-          u3nc(u3i_string("pending-final"),
-               wok_u->fec_u.ent_u
-                 ? u3i_chub(wok_u->fec_u.ent_u->eve_d)
-                 : 0),
-          u3nc(u3i_string("wall"), __(wok_u->wal_u)),
-          u3nc(u3i_string("wall-event"),
-               wok_u->wal_u
-                 ? u3i_chub(wok_u->wal_u->eve_d)
-                 : 0),
-          u3_none);
+          u3_pier_mase("effects-released", u3i_chub(wok_u->fec_u.rel_d)),
+          u3_pier_mase("pending-any", __(wok_u->fec_u.ext_u)),
+          u3_pier_mase("pending-start",
+                       ( wok_u->fec_u.ext_u
+                         ? u3i_chub(wok_u->fec_u.ext_u->eve_d)
+                         : 0 )),
+          u3_pier_mase("pending-final",
+                       ( wok_u->fec_u.ent_u
+                         ? u3i_chub(wok_u->fec_u.ent_u->eve_d)
+                         : 0 )),
+          u3_pier_mase("wall-any", __(wok_u->wal_u)),
+          u3_pier_mase("wall-event",
+                       ( wok_u->wal_u
+                         ? u3i_chub(wok_u->wal_u->eve_d)
+                         : 0)),
+          u3_none));
 
-      return u3kb_weld(
-        u3i_list(
-          u3nc(c3__work, u3i_list(u3nc(c3__all, wok), u3_none)), u3_none),
-        wok_u->car_u
-          ? u3_auto_info(wok_u->car_u)
-          : u3_nul);
+      return u3_pier_mass(c3__pier,
+        u3i_list(wok, u3_pier_mass(c3__auto, u3_auto_info(wok_u->car_u)),
+                 u3_none));
     }
 
     case u3_psat_done: {
-      return c3__done;
+      return u3_pier_mass(c3__done, u3_nul);
     }
   }
 }

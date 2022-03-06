@@ -2131,7 +2131,7 @@ _http_io_info(u3_auto* car_u)
   u3_http*  htp_u = htd_u->htp_u;
   c3_w      sec_w = 0;
   u3_hreq*  seq_u = htd_u->fig_u.seq_u;
-  u3_noun   res = u3_nul;
+  u3_noun   res;
 
   //  XX review: metrics
   //
@@ -2139,30 +2139,26 @@ _http_io_info(u3_auto* car_u)
     sec_w++;
     seq_u = seq_u->nex_u;
   }
-  res = u3nc(
-      u3nc(
-        c3__all,
-        u3i_list(
-          u3nc(u3i_string("instance"), htd_u->sev_l),
-          u3nc(u3i_string("open-slogstreams"), u3i_word(sec_w)),
-          u3_none)),
-      res);
+  res = u3i_list(
+    u3_pier_mase("instance", htd_u->sev_l),
+    u3_pier_mase("open-slogstreams", u3i_word(sec_w)),
+    u3_none);
 
   while ( 0 != htp_u ) {
     res = u3nc(
-      u3nc(
+      u3_pier_mass(
         u3dc("scot", c3__uv, htp_u->sev_l),
         u3i_list(
-          u3nc(u3i_string("secure"), htp_u->sec),
-          u3nc(u3i_string("loopback"), htp_u->lop),
-          u3nc(u3i_string("live"), htp_u->liv),
-          u3nc(u3i_string("port"), htp_u->por_s),
-          u3nc(u3i_string("connections"), htp_u->coq_l),
+          u3_pier_mase("secure",      htp_u->sec),
+          u3_pier_mase("loopback",    htp_u->lop),
+          u3_pier_mase("live",        htp_u->liv),
+          u3_pier_mase("port",        htp_u->por_s),
+          u3_pier_mase("connections", htp_u->coq_l),
           u3_none)),
       res);
     htp_u = htp_u->nex_u;
   }
-  return res;
+  return u3kb_flop(res);
 }
 
 /* _http_io_slog(): print status info.

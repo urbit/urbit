@@ -848,7 +848,7 @@
         u3_auto*
         u3_auto_init(u3_pier* pir_u);
 
-      /* u3_auto_info(): status info as a noun, all drivers.
+      /* u3_auto_info(): status info as a (list mass), all drivers.
       */
         u3_noun
         u3_auto_info(u3_auto* car_u);
@@ -1371,6 +1371,16 @@
       */
         c3_w
         u3_pier_mark(FILE* fil_u);
+
+      /* u3_pier_mase(): construct a $mass leaf.
+      */
+        u3_noun
+        u3_pier_mase(c3_c* cod_c, u3_noun dat);
+
+      /* u3_pier_mass(): construct a $mass branch with noun/list.
+      */
+        u3_noun
+        u3_pier_mass(u3_atom cod, u3_noun lit);
 
       /* u3_dawn_come(): mine a comet
       */

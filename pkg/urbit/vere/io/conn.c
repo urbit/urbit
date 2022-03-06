@@ -58,14 +58,13 @@
 **  /info produces runtime metrics at the moment in time that the
 **  request was received.
 **
-**  the type produced by /info is currently:
+**  the type produced by /info is $mass:
 **
-**      (list [cord (list [cord (list [cord @])])])
+**      +$  mass  (pair cord (each * (list mass)))
 **
-**  where the first layer of cord is major subsystem ('http',
-**  'ames', or 'work'), the second layer is instance identifier
-**  or 'all', and the third is metric name. most metrics are @ud,
-**  but the precise interpretation depends on the metric.
+**  where the leaves are conventionally @ud, but the precise
+**  interpretation depends on the metric (e.g. loobean settings
+**  or integer counters.)
 **
 **  %ovum is a raw kernel move, to be injected directly into
 **  arvo. needless to say this will void your warranty. usually
