@@ -18,45 +18,45 @@ cleanup () {
 trap cleanup EXIT
 
 # Update pill strategy to ensure correct staging
-herb ./pier -p hood -d "+hood/mount /=home="
+herb ./pier -p hood -d "+hood/mount /=base="
 
-until [ -d ./pier/home ]; do
+until [ -d ./pier/base ]; do
   sleep 1
 done
 
 # Update :lens, :dojo and dependencies
 # FIXME: reduce this list
-cp $ARVO/app/lens.hoon   ./pier/home/app/
-cp $ARVO/app/dojo.hoon   ./pier/home/app/
-cp $ARVO/lib/plume.hoon  ./pier/home/lib/
-cp $ARVO/lib/server.hoon ./pier/home/lib/
-cp $ARVO/lib/sole.hoon   ./pier/home/lib/
-cp $ARVO/lib/xray.hoon   ./pier/home/lib/
-cp $ARVO/lib/pprint.hoon ./pier/home/lib/      
+cp $ARVO/app/lens.hoon   ./pier/base/app/
+cp $ARVO/app/dojo.hoon   ./pier/base/app/
+cp $ARVO/lib/plume.hoon  ./pier/base/lib/
+cp $ARVO/lib/server.hoon ./pier/base/lib/
+cp $ARVO/lib/sole.hoon   ./pier/base/lib/
+cp $ARVO/lib/xray.hoon   ./pier/base/lib/
+cp $ARVO/lib/pprint.hoon ./pier/base/lib/      
 
-mkdir -p ./pier/home/mar/lens/
+mkdir -p ./pier/base/mar/lens/
 
-cp $ARVO/mar/lens/*      ./pier/home/mar/lens/
+cp $ARVO/mar/lens/*      ./pier/base/mar/lens/
 
-cp $ARVO/sur/lens.hoon   ./pier/home/sur/
-cp $ARVO/sur/plum.hoon   ./pier/home/sur/
-cp $ARVO/sur/sole.hoon   ./pier/home/sur/
-cp $ARVO/sur/xray.hoon   ./pier/home/sur/
+cp $ARVO/sur/lens.hoon   ./pier/base/sur/
+cp $ARVO/sur/plum.hoon   ./pier/base/sur/
+cp $ARVO/sur/sole.hoon   ./pier/base/sur/
+cp $ARVO/sur/xray.hoon   ./pier/base/sur/
 
 # Update +solid and its dependencies
-cp $ARVO/lib/pill.hoon   ./pier/home/lib/
-cp $ARVO/gen/solid.hoon  ./pier/home/gen/
+cp $ARVO/lib/pill.hoon   ./pier/base/lib/
+cp $ARVO/gen/solid.hoon  ./pier/base/gen/
 
-chmod -R u+rw ./pier/home/
+chmod -R u+rw ./pier/base/
 
-herb ./pier -p hood -d "+hood/commit %home"
-herb ./pier -p hood -d "+hood/unmount %home"
+herb ./pier -p hood -d "+hood/commit %base"
+herb ./pier -p hood -d "+hood/unmount %base"
 
 # FIXME: horrible hack to ensure the update is applied first
 sleep 10
 
 # Stage new desk for pill contents
-herb ./pier -p hood -d '+hood/merge %stage our %home'
+herb ./pier -p hood -d '+hood/merge %stage our %base'
 herb ./pier -p hood -d "+hood/mount /=stage="
 
 until [ -d ./pier/stage ]; do

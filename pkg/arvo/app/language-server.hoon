@@ -196,7 +196,7 @@
   %+  turn
     ~(tap in ~(key by builds))
   |=  uri=@t
-  [%pass /ford/[uri] %arvo %c %warp our.bow %home ~]
+  [%pass /ford/[uri] %arvo %c %warp our.bow %base ~]
 ::
 ++  handle-did-close
   |=  [uri=@t version=(unit @)]
@@ -208,7 +208,7 @@
   =.  builds
     (~(del by builds) uri)
   :_  state
-  [%pass /ford/[uri] %arvo %c %warp our.bow %home ~]~
+  [%pass /ford/[uri] %arvo %c %warp our.bow %base ~]~
 ::
 ++  handle-did-save
   |=  [uri=@t version=(unit @)]
@@ -248,7 +248,7 @@
     (~(put by builds) uri q.r.u.p.gift)
   =.  ford-diagnostics
     (~(del by ford-diagnostics) uri)
-  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open/foo)
+  =+  .^(=open:clay %cs /(scot %p our.bow)/base/(scot %da now.bow)/open/foo)
   =/  =type  -:(open (uri-to-path:build uri))
   =.  preludes
     (~(put by preludes) uri type)
@@ -271,7 +271,7 @@
     ?:  eager
       [%sing %a da+now.bow path]
     [%next %a da+now.bow path]
-  [%pass /ford/[uri] %arvo %c %warp our.bow %home `rave]
+  [%pass /ford/[uri] %arvo %c %warp our.bow %base `rave]
 ::
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur

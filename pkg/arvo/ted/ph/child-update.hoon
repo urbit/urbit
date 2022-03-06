@@ -8,7 +8,7 @@
 ;<  ~                bind:m  start-simple
 ;<  ~                bind:m  (init-ship ~bud |)
 ;<  ~                bind:m  (init-ship ~marbud |)
-;<  [path @t]        bind:m  (modify ~bud %home)
+;<  [path @t]        bind:m  (modify ~bud %base)
 ;<  [=path file=@t]  bind:m  (modify ~bud %kids)
 ;<  ~                bind:m  (check-touched ~marbud %kids path file)
 ;<  ~                bind:m  end

@@ -20,7 +20,7 @@
     ==
   ::
       [%all ~]
-    =+  .^(=arch %cy /(scot %p our.bowl)/home/(scot %da now.bowl)/ted/ph)
+    =+  .^(=arch %cy /(scot %p our.bowl)/base/(scot %da now.bowl)/ted/ph)
     %+  turn  (turn ~(tap by dir.arch) head)
     |=  =term
     (cat 3 'ph-' term)

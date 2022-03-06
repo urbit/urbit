@@ -456,7 +456,7 @@
   ^-  card
   =-  [%pass /export/[nom] %arvo %c %info -]
   %+  foal:space:userlib
-    /(scot %p our.bowl)/home/(scot %da now.bowl)/gaze-exports/[nom]/txt
+    /(scot %p our.bowl)/base/(scot %da now.bowl)/gaze-exports/[nom]/txt
   [%txt !>(dat)]
 ::
 ::  +peek-x: accept gall scry

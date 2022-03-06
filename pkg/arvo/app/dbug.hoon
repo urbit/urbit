@@ -786,7 +786,7 @@
 ++  v-clay
   =,  clay
   |%
-  ++  start-path  /(scot %p our.bowl)/home/(scot %da now.bowl)
+  ++  start-path  /(scot %p our.bowl)/base/(scot %da now.bowl)
   ::
   +$  commit
     [=tako parents=(list tako) children=(list tako) wen=@da content-hash=@uvI]
