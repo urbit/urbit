@@ -1088,8 +1088,9 @@
         [%clr ~]                                        ::  clear the screen
         [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor col/pos
         [%klr p=stub]                                   ::  put styled
-        [%put p=(list @c)]                              ::  put text at cursor
+        [%mor p=(list blit)]                            ::  multiple blits
         [%nel ~]                                        ::  newline
+        [%put p=(list @c)]                              ::  put text at cursor
         [%sag p=path q=*]                               ::  save to jamfile
         [%sav p=path q=@]                               ::  save to file
         [%url p=@t]                                     ::  activate url
@@ -1099,12 +1100,12 @@
     $%  belt                                            ::  client input
         [%cru p=@tas q=(list tank)]                     ::  echo error
         [%hey ~]                                        ::  refresh
+        ::TODO  inconsistent with %hit and %hop
         [%rez p=@ud q=@ud]                              ::  resize, cols, rows
         [%yow p=gill:gall]                              ::  connect to app
     ==                                                  ::
   +$  dill-blit                                         ::  arvo output
     $%  blit                                            ::  client output
-        [%mor p=(list dill-blit)]                       ::  multiple blits
         [%qit ~]                                        ::  close console
     ==                                                  ::
   +$  flog                                              ::  sent to %dill

@@ -18,6 +18,7 @@
       %nel  b+&
       %url  s+p.blit
       %wyp  b+&
+      %mor  a+(turn p.blit ^blit)
     ::
         %sag
       %-  pairs

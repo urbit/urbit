@@ -10,7 +10,9 @@ export const csi = (cmd: string, ...args: number[]) => {
 export const showBlit = (term: Terminal, blit: Blit) => {
   let out = '';
 
-  if ('bel' in blit) {
+  if ('mor' in blit) {
+    return blit.mor.map(b => showBlit(term, b));
+  } else if ('bel' in blit) {
     out += '\x07';
   } else if ('clr' in blit) {
     term.clear();

@@ -1353,7 +1353,17 @@ _term_ef_blit(u3_utty* uty_u,
       _term_it_show_tour(uty_u, u3k(u3t(blt)));
     } break;
 
-    case c3__mor:  //TMP  backwards compatibility
+    case c3__mor: {
+      if (u3_nul != u3t(blt)) {
+        u3_noun bis = u3t(blt);
+        while (u3_nul != bis) {
+          _term_ef_blit(uty_u, u3k(u3h(bis)));
+          bis = u3t(bis);
+        }
+        break;
+      }
+      //TMP  fall through to nel for backwards compatibility
+    }
     case c3__nel: {
       _term_it_show_nel(uty_u);
     } break;

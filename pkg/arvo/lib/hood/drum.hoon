@@ -122,7 +122,7 @@
 =+  (~(gut by bin) ses *source)
 =*  dev  -
 =|  moz=(list card:agent:gall)
-=|  biz=(list dill-blit:dill)
+=|  biz=(list blit:dill)  ::TODO  should be per-session
 |%
 ++  this  .
 ++  klr   klr:format
@@ -284,13 +284,13 @@
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
   :_  (flop moz)
-  =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
+  =/  =blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
   ::TODO  remove /drum after dill cleans up
   ::TODO  but once we remove it, the empty trailing segment of
   ::      /dill/[ses] would prevent outsiders from subscribing
   ::      to the default session...
   =/  to=(list path)  [/dill/[ses] ?~(ses ~[/drum] ~)]
-  [%give %fact to %dill-blit !>(dill-blit)]
+  [%give %fact to %dill-blit !>(blit)]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -473,7 +473,7 @@
   +>(eel (~(put in eel) gyl))
 ::
 ++  se-blit                                           ::  give output
-  |=  bil=dill-blit:dill
+  |=  bil=blit:dill
   +>(biz [bil biz])
 ::
 ++  se-blit-sys                                       ::  output to system
@@ -640,7 +640,7 @@
         %d  ?^  buf.say.inp
               ta-del
             ?:  =([our.hid %dojo] gyl)
-              +>(..ta (se-blit qit+~))                ::  quit pier
+              +>(..ta (se-blit-sys %qit ~))           ::  quit pier
             +>(..ta (se-klin gyl))                    ::  unlink app
         %e  +>(pos.inp (lent buf.say.inp))
         %f  (ta-aro %r)

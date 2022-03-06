@@ -178,13 +178,10 @@
       ++  from                                          ::  receive blit
         |=  bit=dill-blit
         ^+  +>
-        ?:  ?=(%mor -.bit)
-          |-  ^+  +>.^$
-          ?~  p.bit  +>.^$
-          $(p.bit t.p.bit, +>.^$ ^$(bit i.p.bit))
         ?:  ?=(%qit -.bit)
           (dump %logo ~)
-        (done %blit [bit ~])
+        ::TODO  so why is this a (list blit) again?
+        (done %blit bit ~)
       ::
       ++  sponsor
         ^-  ship

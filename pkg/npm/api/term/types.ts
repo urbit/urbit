@@ -27,8 +27,9 @@ export type Blit =
   | { clr: null }                                       //  clear the screen
   | { hop: number | { r: number, c: number } }          //  set cursor col/pos
   | { klr: Stub[] }                                     //  put styled
-  | { put: string[] }                                   //  put text at cursor
+  | { mor: Blit[] }                                     //  multiple blits
   | { nel: null }                                       //  newline
+  | { put: string[] }                                   //  put text at cursor
   | { sag: { path: string, file: string } }             //  save to jamfile
   | { sav: { path: string, file: string } }             //  save to file
   | { url: string }                                     //  activate url
