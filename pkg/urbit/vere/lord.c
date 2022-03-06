@@ -1107,17 +1107,33 @@ _lord_on_serf_bail(void*       ptr_v,
   _lord_bail(god_u);
 }
 
-/* u3_lord_info(): print status info.
+/* u3_lord_info(): status info as $mass.
+*/
+u3_noun
+u3_lord_info(u3_lord* god_u)
+{
+  return u3_pier_mass(
+    c3__lord,
+    u3i_list(
+      u3_pier_mase("live",  god_u->liv_o),
+      u3_pier_mase("event", u3i_chub(god_u->eve_d)),
+      u3_pier_mase("mug",   god_u->mug_l),
+      u3_pier_mase("queue", u3i_word(god_u->dep_w)),
+      u3_newt_moat_info(&god_u->out_u),
+      u3_none));
+}
+
+/* u3_lord_slog(): print status info.
 */
 void
-u3_lord_info(u3_lord* god_u)
+u3_lord_slog(u3_lord* god_u)
 {
   u3l_log("  lord: live=%s, event=%" PRIu64 ", mug=%x, queue=%u\n",
           ( c3y == god_u->liv_o ) ? "&" : "|",
           god_u->eve_d,
           god_u->mug_l,
           god_u->dep_w);
-  u3_newt_moat_info(&god_u->out_u);
+  u3_newt_moat_slog(&god_u->out_u);
 }
 
 /* u3_lord_init(): instantiate child process.

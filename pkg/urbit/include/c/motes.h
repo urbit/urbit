@@ -696,6 +696,7 @@
 #   define c3__look   c3_s4('l','o','o','k')
 #   define c3__loop   c3_s4('l','o','o','p')
 #   define c3__lorb   c3_s4('l','o','r','b')
+#   define c3__lord   c3_s4('l','o','r','d')
 #   define c3__lort   c3_s4('l','o','r','t')
 #   define c3__lose   c3_s4('l','o','s','e')
 #   define c3__loss   c3_s4('l','o','s','s')

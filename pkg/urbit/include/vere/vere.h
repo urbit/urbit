@@ -990,10 +990,15 @@
                      c3_d      key_d[4],
                      u3_lord_cb cb_u);
 
-      /* u3_lord_info(): print status info.
+      /* u3_lord_info(): status info as a $mass.
+      */
+        u3_noun
+        u3_lord_info(u3_lord* god_u);
+
+      /* u3_lord_slog(): print status info.
       */
         void
-        u3_lord_info(u3_lord* god_u);
+        u3_lord_slog(u3_lord* god_u);
 
       /* u3_lord_exit(): shutdown gracefully.
       */
@@ -1253,10 +1258,15 @@
         void
         u3_newt_read(u3_moat* mot_u);
 
-      /* u3_newt_moat_info(); print status info.
+      /* u3_newt_moat_info(): status info as $mass.
+      */
+        u3_noun
+        u3_newt_moat_info(u3_moat* mot_u);
+
+      /* u3_newt_moat_slog(); print status info.
       */
         void
-        u3_newt_moat_info(u3_moat* mot_u);
+        u3_newt_moat_slog(u3_moat* mot_u);
 
       /* u3_newt_moat_stop(); newt stop/close input stream.
       */

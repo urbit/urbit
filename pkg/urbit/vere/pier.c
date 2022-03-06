@@ -1459,8 +1459,6 @@ u3_pier_info(u3_pier* pir_u)
 {
   u3_noun nat;
 
-  //  TODO  lord info
-  //
   switch (pir_u->sat_e) {
     default: {
       nat = u3_pier_mass(u3i_string("state-unknown"), u3_nul);
@@ -1519,6 +1517,7 @@ u3_pier_info(u3_pier* pir_u)
     u3i_list(
       nat,
       u3_disk_info(pir_u->log_u),
+      u3_lord_info(pir_u->god_u),
       u3_none));
 }
 
@@ -1592,7 +1591,7 @@ u3_pier_slog(u3_pier* pir_u)
   }
 
   if ( pir_u->god_u ) {
-    u3_lord_info(pir_u->god_u);
+    u3_lord_slog(pir_u->god_u);
   }
 }
 

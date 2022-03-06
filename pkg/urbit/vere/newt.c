@@ -352,10 +352,28 @@ u3_newt_read(u3_moat* mot_u)
   _newt_read_init(mot_u, _newt_read_cb);
 }
 
-/* u3_newt_moat_info(); print status info.
+/* u3_newt_moat_info(): status info as $mass.
+*/
+u3_noun
+u3_newt_moat_info(u3_moat* mot_u)
+{
+  u3_meat*  met_u = mot_u->ext_u;
+  c3_w      len_w = 0;
+
+  while ( met_u ) {
+    len_w++;
+    met_u = met_u->nex_u;
+  }
+  return u3_pier_mass(
+    c3__moat,
+    u3i_list(u3_pier_mase("pending-inbound", u3i_word(len_w)),
+             u3_none));
+}
+
+/* u3_newt_moat_slog(); print status info.
 */
 void
-u3_newt_moat_info(u3_moat* mot_u)
+u3_newt_moat_slog(u3_moat* mot_u)
 {
   u3_meat* met_u = mot_u->ext_u;
   c3_w     len_w = 0;
