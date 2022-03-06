@@ -1457,35 +1457,38 @@ u3_pier_mase(c3_c* cod_c, u3_noun dat)
 u3_noun
 u3_pier_info(u3_pier* pir_u)
 {
-  //  TODO  disk/lord info
+  u3_noun nat;
+
+  //  TODO  lord info
   //
   switch (pir_u->sat_e) {
     default: {
-      return u3_pier_mass(u3i_string("state-unknown"), u3_nul);
-    }
+      nat = u3_pier_mass(u3i_string("state-unknown"), u3_nul);
+    } break;
 
     case u3_psat_init: {
-      return u3_pier_mass(c3__init, u3_nul);
-    }
+      nat = u3_pier_mass(c3__init, u3_nul);
+    } break;
 
     case u3_psat_boot: {
-      return u3_pier_mass(c3__boot, u3_nul);
-    }
+      nat = u3_pier_mass(c3__boot, u3_nul);
+    } break;
 
     case u3_psat_play: {
       u3_play* pay_u = pir_u->pay_u;
 
-      return u3_pier_mass(c3__play,
+      nat = u3_pier_mass(c3__play,
         u3i_list(
           u3_pier_mase("target", u3i_chub(pay_u->eve_d)),
           u3_pier_mase("sent", u3i_chub(pay_u->sen_d)),
           u3_pier_mase("read", u3i_chub(pay_u->req_d)),
           u3_none));
-    }
+    } break;
 
     case u3_psat_work: {
       u3_work*  wok_u = pir_u->wok_u;
-      u3_noun   wok = u3_pier_mass(c3__work,
+
+      nat = u3_pier_mass(c3__work,
         u3i_list(
           u3_pier_mase("effects-released", u3i_chub(wok_u->fec_u.rel_d)),
           u3_pier_mase("pending-any", __(wok_u->fec_u.ext_u)),
@@ -1502,17 +1505,21 @@ u3_pier_info(u3_pier* pir_u)
                        ( wok_u->wal_u
                          ? u3i_chub(wok_u->wal_u->eve_d)
                          : 0)),
+          u3_pier_mass(c3__auto, u3_auto_info(wok_u->car_u)),
           u3_none));
-
-      return u3_pier_mass(c3__pier,
-        u3i_list(wok, u3_pier_mass(c3__auto, u3_auto_info(wok_u->car_u)),
-                 u3_none));
-    }
+    } break;
 
     case u3_psat_done: {
-      return u3_pier_mass(c3__done, u3_nul);
-    }
+      nat = u3_pier_mass(c3__done, u3_nul);
+    } break;
   }
+
+  return u3_pier_mass(
+    c3__pier,
+    u3i_list(
+      nat,
+      u3_disk_info(pir_u->log_u),
+      u3_none));
 }
 
 /* u3_pier_slog(): print status info.
@@ -1581,7 +1588,7 @@ u3_pier_slog(u3_pier* pir_u)
   }
 
   if ( pir_u->log_u ) {
-    u3_disk_info(pir_u->log_u);
+    u3_disk_slog(pir_u->log_u);
   }
 
   if ( pir_u->god_u ) {

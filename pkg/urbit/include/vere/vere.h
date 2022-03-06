@@ -931,10 +931,15 @@
         u3_disk*
         u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
 
-      /* u3_disk_info(): print status info.
+      /* u3_disk_info(): status info as $mass.
+      */
+        u3_noun
+        u3_disk_info(u3_disk* log_u);
+
+      /* u3_disk_slog(): print status info.
       */
         void
-        u3_disk_info(u3_disk* log_u);
+        u3_disk_slog(u3_disk* log_u);
 
       /* u3_disk_exit(): close [log_u] and dispose.
       */
@@ -1317,7 +1322,7 @@
         void
         u3_pier_pack(u3_pier* pir_u);
 
-      /* u3_pier_info(): pier status info as noun.
+      /* u3_pier_info(): pier status info as $mass.
       */
         u3_noun
         u3_pier_info(u3_pier* pir_u);
