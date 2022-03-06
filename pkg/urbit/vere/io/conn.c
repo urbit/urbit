@@ -56,15 +56,18 @@
 **
 **  the %peel path /help produces a list of available commands.
 **  /info produces runtime metrics at the moment in time that the
-**  request was received.
-**
-**  the type produced by /info is $mass:
+**  request was received. the type produced by /info is $mass:
 **
 **      +$  mass  (pair cord (each * (list mass)))
 **
-**  where the leaves are conventionally @ud, but the precise
-**  interpretation depends on the metric (e.g. loobean settings
-**  or integer counters.)
+**  where the leaves are conventionally @ud, but the
+**  precise interpretation depends on the metric (e.g.
+**  loobean settings or integer counters.) it is acceptable
+**  to flatten the list by prepending the parent cord
+**  to each child element with a separator, e.g.:
+**  [%pier %| [%ames %| [%packets-sent %& 37] ~] ~] could be
+**  rendered as 'pier-ames-packets-sent'. this transformation is
+**  guaranteed to result in unique names.
 **
 **  %ovum is a raw kernel move, to be injected directly into
 **  arvo. needless to say this will void your warranty. usually
