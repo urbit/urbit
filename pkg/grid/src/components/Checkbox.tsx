@@ -20,7 +20,6 @@ export const Checkbox: React.FC<RadixCheckbox.CheckboxProps> = ({
     <div className="flex content-center space-x-2">
       <RadixCheckbox.Root
         className={classNames('default-ring rounded-lg bg-white h-7 w-7', className)}
-        // style={{ width: 28, height: 28 }}
         checked={proxyChecked}
         onCheckedChange={proxyOnCheckedChange}
         disabled={disabled}
