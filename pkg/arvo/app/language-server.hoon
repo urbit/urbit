@@ -218,7 +218,7 @@
   :_  (give-rpc-notification (get-diagnostics uri))
   :*
     %pass
-    /commit˘
+    /commit
     %agent
     [our.bow %hood]
     %poke
@@ -250,7 +250,7 @@
     (~(put by builds) uri q.r.u.p.gift)
   =.  ford-diagnostics
     (~(del by ford-diagnostics) uri)
-  =/  bek  byk.bow
+  =/  bek  byk.bow(r da+now.bow)
   =/  desks=(list desk)  ~(tap in .^((set desk) %cd (en-beam bek /)))
   =|  dek=desk
   |-
