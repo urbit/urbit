@@ -64,11 +64,13 @@ export const TileGrid = ({ menu }: TileGridProps) => {
       }
     >
       <div className="grid justify-center grid-cols-2 sm:grid-cols-[repeat(auto-fit,minmax(auto,250px))] gap-4 px-4 md:px-8 w-full max-w-6xl">
-        {order.map((desk) => (
-          <TileContainer desk={desk}>
-            <Tile key={desk} charge={charges[desk]} desk={desk} disabled={menu === 'upgrading'} />
-          </TileContainer>
-        ))}
+        {order
+          .filter((d) => d !== window.desk)
+          .map((desk) => (
+            <TileContainer desk={desk}>
+              <Tile key={desk} charge={charges[desk]} desk={desk} disabled={menu === 'upgrading'} />
+            </TileContainer>
+          ))}
       </div>
     </DndProvider>
   );
