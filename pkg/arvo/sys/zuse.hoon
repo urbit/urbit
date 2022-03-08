@@ -5515,4 +5515,57 @@
   ?.  ?=(%soft -.wrapped)
     wrapped
   ;;(task +.wrapped)
+::
+::
+++  balk
+  =<  bulk
+  |%
+  +$  bulk
+    $:  [her=ship rif=rift lyf=life]
+        [van=@ta car=@ta cas=case]
+        spr=spur
+    ==
+  ::
+  ++  de-path-soft
+    |=  [=rift =life =path]
+    ^-  (unit bulk)
+    ::  [care ship desk case path]
+    ?.  ?=([@ @ @ @ *] path)
+      ~
+    =/  van=@ta  (end 3 i.path)
+    =/  car=@ta  (rsh 3 i.path)
+    ?~  her=(slaw %p i.t.path)
+      ~
+    ?~  cas=(de-case i.t.t.t.path)
+      ~
+    :-  ~
+    :*  [u.her rift life]
+        [van car u.cas]
+        [i.t.t.path t.t.t.t.path]
+    ==
+  ::
+  ++  de-path
+    |=  [=rift =life =path]
+    ^-  bulk
+    (need (de-path-soft +<))
+  ::
+  ++  en-path
+    |=  =bulk
+    ^-  path
+    ?>  ?=([@ *] spr.bulk)
+    :*  (cat 3 van.bulk car.bulk)
+        (scot %p her.bulk)
+        i.spr.bulk
+        (scot cas.bulk)
+        t.spr.bulk
+    ==
+  ::
+  ++  en-roof
+    |=  =bulk
+    ^-  (unit [vis=view bem=beam])
+    ?.  ?=(^ spr.bulk)  ~
+    =/  bem=beam  [[her i.spr cas] t.spr]:bulk
+    =+  vis=(cat 3 van.bulk car.bulk)
+    `[vis bem]
+  --
 --
