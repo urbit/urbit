@@ -62,7 +62,7 @@ const readInput = (term: Terminal, e: string): Belt[] => {
     } else if (13 === c) {
       belts.push({ ret: null });
     } else if (c <= 26) {
-      let k = String.fromCharCode(96 + c);
+      const k = String.fromCharCode(96 + c);
       //NOTE  prevent remote shut-downs
       if ('d' !== k) {
         belts.push({ mod: { mod: 'ctl', key: k } });
@@ -178,7 +178,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
       event: (e) => {
         showBlit(ses.term, e);
         if (e.bel && !selected) {
-          useTermState.getState().set(state => {
+          useTermState.getState().set((state) => {
             state.sessions[name].hasBell = true;
           });
         }
@@ -189,7 +189,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
         console.error('oops quit, pls handle');
       }
     });
-  
+
     useTermState.getState().set((state) => {
       state.sessions[name] = ses;
     });
@@ -207,7 +207,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
   //  on selected change, maybe setup the term, or put it into the container
   //
   const setContainer = useCallback((containerRef: HTMLDivElement | null) => {
-    let newContainer = containerRef || container.current;
+    const newContainer = containerRef || container.current;
     if(session && newContainer) {
       container.current = newContainer;
     }
@@ -216,7 +216,6 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     //  on-init, open slogstream and fetch existing sessions
   //
   useEffect(() => {
-
     window.addEventListener('resize', onResize(session));
 
     return () => {
@@ -239,10 +238,10 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
 
   useEffect(() => {
     if (session && selected && !session.term.isOpen) {
-      session!.term.open(container.current);
-      session!.fit.fit();
-      session!.term.focus();
-      session!.term.isOpen = true;
+      session.term.open(container.current);
+      session.fit.fit();
+      session.term.focus();
+      session.term.isOpen = true;
     }
   }, [selected, session]);
 
@@ -256,7 +255,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
         bg='white'
         fontFamily='mono'
         overflow='hidden'
-        style={selected ? {} : {display: 'none'}}
+        style={selected ? {} : { display: 'none' }}
       >
       <Col
         width='100%'

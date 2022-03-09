@@ -20,11 +20,7 @@ import Buffer from './Buffer';
 import { DEFAULT_SESSION } from './constants';
 import { showSlog } from './lib/blit';
 
-type TermAppProps = {
-  ship: string;
-}
-
-export default function TermApp(props: TermAppProps) {
+export default function TermApp() {
   const { names, selected } = useTermState();
   const dark = useDark();
 
@@ -41,7 +37,7 @@ export default function TermApp(props: TermAppProps) {
     let available = false;
     const slog = new EventSource('/~_~/slog', { withCredentials: true });
 
-    slog.onopen = (e) => {
+    slog.onopen = () => {
       console.log('slog: opened stream');
       available = true;
     };
@@ -84,8 +80,8 @@ export default function TermApp(props: TermAppProps) {
       <ThemeProvider theme={dark ? _dark : _light}>
         <Tabs />
         <div className="buffer-container">
-          {names.map(name => {
-            return <Buffer name={name} selected={name === selected} dark={dark}/>;
+          {names.map((name) => {
+            return <Buffer key={name} name={name} selected={name === selected} dark={dark} />;
           })}
         </div>
       </ThemeProvider>

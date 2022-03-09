@@ -1,7 +1,6 @@
 import { DEFAULT_SESSION } from './constants';
 import React, { useCallback } from 'react';
 import useTermState, { Session } from './state';
-import { style } from 'styled-system';
 import api from './api';
 import { pokeTask } from '@urbit/api/term';
 
@@ -11,7 +10,6 @@ interface TabProps {
 }
 
 export const Tab = ( { session, name }: TabProps ) => {
-
   const isSelected = useTermState().selected === name;
 
   const onClick = () => {
@@ -20,7 +18,7 @@ export const Tab = ( { session, name }: TabProps ) => {
       state.sessions[name].hasBell = false;
     });
     useTermState.getState().sessions[name]?.term?.focus();
-  }
+  };
 
   const onDelete = useCallback(async (e) => {
     e.stopPropagation();
@@ -34,7 +32,7 @@ export const Tab = ( { session, name }: TabProps ) => {
     await api.poke(pokeTask(name, { shut: null }));
 
     // remove from zustand
-    useTermState.getState().set(state => {
+    useTermState.getState().set((state) => {
       if (state.selected === name) {
         state.selected = DEFAULT_SESSION;
       }

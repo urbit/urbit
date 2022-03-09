@@ -14,7 +14,7 @@ export function useDark() {
 
     return () => {
       themeWatcher.removeEventListener('change', update);
-    }
+    };
   }, []);
 
   const theme = useTermState(s => s.theme);
