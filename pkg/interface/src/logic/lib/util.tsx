@@ -229,6 +229,18 @@ export function deSig(ship: string): string {
   return ship.replace('~', '');
 }
 
+export function preSig(ship: string): string {
+  if (!ship) {
+    return '';
+  }
+
+  if (ship.startsWith('~')) {
+    return ship;
+  }
+
+  return '~'.concat(ship);
+}
+
 export function uxToHex(ux: string) {
   if (ux.length > 2 && ux.substr(0, 2) === '0x') {
     const value = ux.substr(2).replace('.', '').padStart(6, '0');
