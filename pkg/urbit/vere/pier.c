@@ -821,12 +821,13 @@ _pier_wyrd_card(u3_pier* pir_u)
   u3_noun ver = u3nt(u3i_string(VERE_NAME),
                      u3dc("scot", c3__ta, u3i_string(URBIT_VERSION)),
                      u3_nul);
-  u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),  //  XX from both king and serf?
-                     u3nc(c3__lull, 330),        //  XX define
-                     u3nc(c3__arvo, 240),        //  XX from both king and serf?
-                     u3nc(c3__hoon, 140),        //  god_u->hon_y
-                     u3nc(c3__nock, 4),          //  god_u->noc_y
-                     u3_none);
+  u3_noun kel
+    = u3i_list(u3nc(c3__zuse, VERE_ZUSE), // XX from both king and serf?
+               u3nc(c3__lull, 330),       // XX define
+               u3nc(c3__arvo, 240),       // XX from both king and serf?
+               u3nc(c3__hoon, 140),       // god_u->hon_y
+               u3nc(c3__nock, 4),         // god_u->noc_y
+               u3_none);
   u3_noun wir = u3nc(c3__arvo, u3_nul);
   return u3nt(c3__wyrd, u3nc(sen, ver), kel);
 }
