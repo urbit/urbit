@@ -7781,7 +7781,7 @@
       [%bcgl *]  $(mod q.mod)
       [%bcgr *]  $(mod q.mod)
       [%bckt *]  $(mod q.mod)
-      [%bcls *]  $(mod q.mod)
+      [%bcls *]  [%note [%know p.mod] $(mod q.mod)]
       [%bcmc *]  ::  borrow sample
                  ::
                  [%tsgl [%$ 6] p.mod]
@@ -7832,7 +7832,7 @@
       [%bchp *]  (decorate (function:clear p.mod q.mod))
       [%bcmc *]  (decorate (home [%tsgl [%limb %$] p.mod]))
       [%bcsg *]  [%ktls example(mod q.mod) (home p.mod)]
-      [%bcls *]  (decorate example(mod q.mod))
+      [%bcls *]  (decorate [%note [%know p.mod] example(mod q.mod)])
       [%bcts *]  (decorate [%ktts p.mod example:clear(mod q.mod)])
       [%bcdt *]  (decorate (home (interface %gold p.mod q.mod)))
       [%bcfs *]  (decorate (home (interface %iron p.mod q.mod)))
@@ -8189,7 +8189,7 @@
           relative:clear(mod q.mod)
         relative:clear(mod p.mod)
       ::
-        [%bcls *]  relative(mod q.mod)
+        [%bcls *]  [%note [%know p.mod] relative(mod q.mod)]
         [%bcdt *]  (decorate (home (interface %gold p.mod q.mod)))
         [%bcfs *]  (decorate (home (interface %iron p.mod q.mod)))
         [%bczp *]  (decorate (home (interface %lead p.mod q.mod)))
@@ -10914,6 +10914,7 @@
                     [%stop p=@ud]                       ::
                     [%tree p=term q=wine]               ::
                     [%unit p=term q=wine]               ::
+                    [%name p=stud q=wine]               ::
                 ==                                      ::
       --
   |_  sut=type
@@ -11004,6 +11005,11 @@
           [%unit *]
         =^  cox  gid  $(q.ham q.q.ham)
         :_(gid [%rose [" " (weld (trip p.q.ham) "(") ")"] cox ~])
+      ::
+          [%name *]
+        :_  gid
+        ?@  p.q.ham  (cat 3 '#' mark.p.q.ham)
+        (rap 3 '#' auth.p.q.ham (spat type.p.q.ham) ~)
       ==
     --
   ::
@@ -11191,6 +11197,9 @@
       ?~  wal
         ~
       [~ %rose [[' ' ~] ['[' ~] [']' ~]] [%leaf '~' ~] u.wal ~]
+    ::
+        [%name *]
+      $(q.ham q.q.ham)
     ==
   ::
   ++  doge
@@ -11295,7 +11304,9 @@
       ==
     ::
         [%hint *]
-      $(sut q.sut)
+      =+  yad=$(sut q.sut)
+      ?.  ?=(%know -.q.p.sut)  yad
+      [p.yad [%name p.q.p.sut q.yad]]
     ::
         [%face *]
       =+  yad=$(sut q.sut)
@@ -13010,6 +13021,7 @@
                   ['=' (rune tis %bcts exqg)]
                   ['?' (rune wut %bcwt exqs)]
                   [';' (rune mic %bcmc expa)]
+                  ['+' (rune lus %bcls exqg)]
               ==
             ==
         :-  '%'
@@ -13080,6 +13092,7 @@
                   ['-' (stag %ktcl (rune hep %bchp exqb))]
                   ['=' (stag %ktcl (rune tis %bcts exqg))]
                   ['?' (stag %ktcl (rune wut %bcwt exqs))]
+                  ['+' (stag %ktcl (rune lus %bcls exqg))]
                   ['.' (rune dot %kttr exqa)]
                   [',' (rune com %ktcl exqa)]
               ==
