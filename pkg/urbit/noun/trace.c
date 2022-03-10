@@ -241,7 +241,7 @@ u3t_samp(void)
         */
         u3R->pro.day = u3nt(u3nq(0, 0, 0, u3nq(0, 0, 0, 0)), 0, 0);
       }
-      u3R->pro.day = u3dt("pi-noon", mot_l, lab, u3R->pro.day);
+      u3R->pro.day = u3v_dt("pi-noon", mot_l, lab, u3R->pro.day);
     }
     u3R = rod_u;
   }
