@@ -460,7 +460,7 @@ u3_pier_peek_last(u3_pier*   pir_u,
 static u3_noun
 _pier_stab(u3_noun pac)
 {
-  return u3do("stab", pac);
+  return u3v_do("stab", pac);
 }
 
 /* _pier_on_scry_done(): scry callback.
@@ -496,7 +496,7 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
         ext_c = "jam";
       }
       else if ( c3y == u3a_is_atom(res) ) {
-        out   = u3dc("scot", u3k(puf), u3k(res));
+        out   = u3v_dc("scot", u3k(puf), u3k(res));
         ext_c = "txt";
       }
       else {
@@ -584,7 +584,7 @@ _pier_work_init(u3_pier* pir_u)
   //  XX this is messy, revise
   //
   if ( u3_Host.ops_u.pek_c ) {
-    u3_noun pex = u3do("stab", u3i_string(u3_Host.ops_u.pek_c));
+    u3_noun pex = u3v_do("stab", u3i_string(u3_Host.ops_u.pek_c));
     u3_noun car;
     u3_noun dek;
     u3_noun pax;
@@ -795,7 +795,7 @@ _pier_wyrd_card(u3_pier* pir_u)
 
     now   = u3_time_in_tv(&tim_u);
     sev_l = u3r_mug(now);
-    sen   = u3dc("scot", c3__uv, sev_l);
+    sen   = u3v_dc("scot", c3__uv, sev_l);
 
     u3z(now);
   }
@@ -803,14 +803,15 @@ _pier_wyrd_card(u3_pier* pir_u)
   //  XX god_u not necessarily available yet, refactor call sites
   //
   u3_noun ver = u3nt(u3i_string(VERE_NAME),
-                     u3dc("scot", c3__ta, u3i_string(URBIT_VERSION)),
+                     u3v_dc("scot", c3__ta, u3i_string(URBIT_VERSION)),
                      u3_nul);
-  u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),  //  XX from both king and serf?
-                     u3nc(c3__lull, VERE_LULL),  //  XX from both king and serf?
-                     u3nc(c3__arvo, 240),        //  XX from both king and serf?
-                     u3nc(c3__hoon, 140),        //  god_u->hon_y
-                     u3nc(c3__nock, 4),          //  god_u->noc_y
-                     u3_none);
+  u3_noun kel
+    = u3i_list(u3nc(c3__zuse, VERE_ZUSE), // XX from both king and serf?
+               u3nc(c3__lull, VERE_LULL), // XX from both king and serf?
+               u3nc(c3__arvo, 240),       // XX from both king and serf?
+               u3nc(c3__hoon, 140),       // god_u->hon_y
+               u3nc(c3__nock, 4),         // god_u->noc_y
+               u3_none);
   u3_noun wir = u3nc(c3__arvo, u3_nul);
   return u3nt(c3__wyrd, u3nc(sen, ver), kel);
 }
@@ -2363,7 +2364,7 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
   //  We are calling nock here, but hopefully need no protection.
   //
   else {
-    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(tac));
+    u3_noun wol = u3v_dc("wash", u3nc(tab_l, col_l), u3k(tac));
 
     _pier_dump_wall(fil_u, wol);
   }
@@ -2386,7 +2387,7 @@ u3_pier_punt(c3_l tab_l, u3_noun tac)
 {
   u3_noun cat = tac;
 
-  while ( c3y == u3r_du(cat) ) {
+  while ( c3y == u3du(cat) ) {
     u3_pier_tank(tab_l, 0, u3k(u3h(cat)));
     cat = u3t(cat);
   }
@@ -2422,7 +2423,7 @@ void
 u3_pier_punt_ovum(const c3_c* cap_c, u3_noun wir, u3_noun tag)
 {
   c3_c* tag_c = u3r_string(tag);
-  u3_noun riw = u3do("spat", wir);
+  u3_noun riw = u3v_do("spat", wir);
   c3_c* wir_c = u3r_string(riw);
 
   u3l_log("%s: %%%s event on %s failed\r\n\n", cap_c, tag_c, wir_c);
@@ -2437,7 +2438,7 @@ u3_pier_punt_ovum(const c3_c* cap_c, u3_noun wir, u3_noun tag)
 void
 u3_pier_sway(c3_l tab_l, u3_noun tax)
 {
-  u3_noun mok = u3dc("mook", 2, tax);
+  u3_noun mok = u3v_dc("mook", 2, tax);
 
   u3_pier_punt(tab_l, u3k(u3t(mok)));
   u3z(mok);

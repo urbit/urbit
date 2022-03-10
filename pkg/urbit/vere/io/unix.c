@@ -1141,7 +1141,7 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
       //  XX remove u3A->sen
       //
       u3_noun wir = u3nt(c3__sync,
-                        u3dc("scot", c3__uv, unx_u->sev_l),
+                        u3v_dc("scot", c3__uv, unx_u->sev_l),
                         u3_nul);
       u3_noun cad = u3nq(c3__into, _unix_string_to_knot(mon_u->nam_c), all,
                          can);
@@ -1574,7 +1574,7 @@ u3_unix_io_init(u3_pier* pir_u)
   unx_u->pax_c = strdup(pir_u->pax_c);
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
-  unx_u->sat = u3do("sane", c3__ta);
+  unx_u->sat = u3v_do("sane", c3__ta);
 
   u3_auto* car_u = &unx_u->car_u;
   car_u->nam_m = c3__unix;

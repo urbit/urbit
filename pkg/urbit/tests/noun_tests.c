@@ -1660,19 +1660,19 @@ _test_lily()
   c3_l    lit_l;
   c3_w    big_w[] = {0, 0, 1};
   u3_noun big = u3i_words(3, big_w);
-  u3_noun cod = u3dc("scot", c3__uv, big);
+  u3_noun cod = u3v_dc("scot", c3__uv, big);
 
   if ( c3y == u3v_lily(c3__uv, cod, &lit_l) ) {
     printf("*** fail _test_lily-1\n");
     exit(1);
   }
-  cod = u3dc("scot", c3__ud, 0x7fffffff);
+  cod = u3v_dc("scot", c3__ud, 0x7fffffff);
   if ( (c3n == u3v_lily(c3__ud, cod, &lit_l)) ||
        (0x7fffffff != lit_l) ) {
     printf("*** fail _test_lily-2a\n");
     exit(1);
   }
-  cod = u3dc("scot", c3__ux, u3i_word(0x80000000));
+  cod = u3v_dc("scot", c3__ux, u3i_word(0x80000000));
   if ( c3y == u3v_lily(c3__ux, cod, &lit_l) ) {
     printf("*** fail _test_lily-2b\n");
     exit(1);

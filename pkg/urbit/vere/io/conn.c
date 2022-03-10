@@ -232,7 +232,7 @@ _conn_read_wire(u3_noun   wir,
         {
           u3z(wir); return c3n;
         }
-        uco = u3dc("slaw", c3__uv, u3k(r_pud));
+        uco = u3v_dc("slaw", c3__uv, u3k(r_pud));
         if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
              (u3_nul != p_uco) )
         {
@@ -312,8 +312,8 @@ _conn_close_chan(u3_shan* san_u, u3_chan* can_u)
     u3_noun wir, cad;
 
     wir = u3nq(c3__khan,
-               u3dc("scot", c3__uv, con_u->sev_l),
-               u3dc("scot", c3__ud, can_u->coq_l),
+               u3v_dc("scot", c3__uv, con_u->sev_l),
+               u3v_dc("scot", c3__ud, can_u->coq_l),
                u3_nul);
     cad = u3nc(c3__done, u3_nul);
     u3_auto_peer(
@@ -570,7 +570,7 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     goto _moor_poke_out;
   }
 
-  rud = u3dc("scot", c3__uv, u3k(rid));
+  rud = u3v_dc("scot", c3__uv, u3k(rid));
   tag_c = u3r_string(tag);
   rid_c = u3r_string(rud);
   u3l_log("conn: %s %s\n", tag_c, rid_c);
@@ -588,8 +588,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
         goto _moor_poke_out;
       }
       wir = u3nc(c3__khan,
-                 u3nq(u3dc("scot", c3__uv, con_u->sev_l),
-                      u3dc("scot", c3__ud, can_u->coq_l), u3k(rud), u3_nul));
+                 u3nq(u3v_dc("scot", c3__uv, con_u->sev_l),
+                      u3v_dc("scot", c3__ud, can_u->coq_l), u3k(rud), u3_nul));
       u3_auto_peer(
         u3_auto_plan(&con_u->car_u,
                      u3_ovum_init(0, c3__k, wir, u3k(can))),
@@ -777,7 +777,7 @@ _conn_io_talk(u3_auto* car_u)
   u3_conn* con_u = (u3_conn*)car_u;
   u3_shan* san_u;
   u3_noun  wir = u3nt(c3__khan,
-                      u3dc("scot", c3__uv, con_u->sev_l),
+                      u3v_dc("scot", c3__uv, con_u->sev_l),
                       u3_nul);
   u3_noun  cad = u3nc(c3__born, u3_nul);
 

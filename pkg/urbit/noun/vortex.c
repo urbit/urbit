@@ -166,7 +166,7 @@ u3v_do(const c3_c* txt_c, u3_noun sam)
 static u3_noun
 _cv_scot(u3_noun dim)
 {
-  return u3do("scot", dim);
+  return u3v_do("scot", dim);
 }
 
 /* u3v_time(): set the reck time.
@@ -196,7 +196,7 @@ c3_o
 u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 {
   c3_w    wad_w;
-  u3_noun uco = u3dc("slaw", fot, u3k(txt));
+  u3_noun uco = u3v_dc("slaw", fot, u3k(txt));
   u3_noun p_uco, q_uco;
 
   if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
@@ -221,6 +221,54 @@ u3v_peek(u3_noun sam)
   u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
   return u3n_slam_on(fun, sam);
 }
+
+#if 0
+/* _cv_mole(): parse simple atomic mole.
+*/
+static c3_o
+_cv_mole(u3_noun  fot,
+         u3_noun  san,
+         c3_d*    ato_d)
+{
+  u3_noun uco = u3v_do("slay", san);
+  u3_noun p_uco, q_uco, r_uco, s_uco;
+
+  if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
+       (0 != p_uco) ||
+       (0 != q_uco) ||
+       (c3n == u3r_sing(fot, r_uco)) )
+  {
+    u3l_log("strange mole %s\n", u3r_string(san)));
+
+    u3z(fot); u3z(uco); return c3n;
+  }
+  else {
+    *ato_d = u3r_chub(0, s_uco);
+
+    u3z(fot); u3z(uco); return c3y;
+  }
+}
+
+/* _cv_lily(): parse little atom.
+*/
+static c3_o
+_cv_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
+{
+  c3_d ato_d;
+
+  if ( c3n == _cv_mole(fot, txt, &ato_d) ) {
+    return c3n;
+  } else {
+    if ( ato_d >= 0x80000000ULL ) {
+      return c3n;
+    } else {
+      *tid_l = (c3_l) ato_d;
+
+      return c3y;
+    }
+  }
+}
+#endif
 
 /* u3v_poke(): insert and apply an input ovum (protected).
 */
@@ -261,8 +309,8 @@ u3v_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
 
   //  We are calling nock here, but hopefully need no protection.
   //
-  while ( c3y == u3r_du(cat) ) {
-    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
+  while ( c3y == u3du(cat) ) {
+    u3_noun wol = u3v_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
     u3m_wall(wol);
     cat = u3t(cat);
@@ -276,7 +324,7 @@ u3v_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
 void
 u3v_sway(u3_noun blu, c3_l tab_l, u3_noun tax)
 {
-  u3_noun mok = u3dc("mook", 2, tax);
+  u3_noun mok = u3v_dc("mook", 2, tax);
 
   u3v_punt(blu, tab_l, u3k(u3t(mok)));
   u3z(mok);

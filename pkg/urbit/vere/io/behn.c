@@ -166,7 +166,7 @@ _behn_io_talk(u3_auto* car_u)
   //  XX remove [sev_l]
   //
   u3_noun wir = u3nt(c3__behn,
-                     u3dc("scot", c3__uv, teh_u->sev_l),
+                     u3v_dc("scot", c3__uv, teh_u->sev_l),
                      u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
