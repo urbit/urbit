@@ -554,9 +554,9 @@ _cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
 
   //  parse the url out of the new style url passed to us.
   //
-  u3_noun unit_pul = u3do("de-purl:html", u3k(url));
+  u3_noun unit_pul = u3v_do("de-purl:html", u3k(url));
 
-  if ( c3n == u3r_du(unit_pul) ) {
+  if ( c3n == u3du(unit_pul) ) {
     c3_c* url_c = u3r_string(url);
     u3l_log("cttp: unable to parse url:\n    %s\n", url_c);
     c3_free(url_c);
@@ -718,7 +718,7 @@ _cttp_http_client_receive(u3_creq* ceq_u, c3_w sas_w, u3_noun mes, u3_noun uct)
   //  XX inject partial responses as separate events
   //
   u3_noun wir = u3nt(u3i_string("http-client"),
-                     u3dc("scot", c3__uv, ctp_u->sev_l),
+                     u3v_dc("scot", c3__uv, ctp_u->sev_l),
                      u3_nul);
   u3_noun cad = u3nt(u3i_string("receive"),
                     ceq_u->num_l,
@@ -1050,7 +1050,7 @@ _cttp_io_talk(u3_auto* car_u)
   //  XX remove u3A->sen
   //
   u3_noun wir = u3nt(u3i_string("http-client"),
-                     u3dc("scot", c3__uv, ctp_u->sev_l),
+                     u3v_dc("scot", c3__uv, ctp_u->sev_l),
                      u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 

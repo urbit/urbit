@@ -55,7 +55,7 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
   else {
     {
       c3_c* tag_c = u3r_string(u3h(cad));
-      u3_noun ser = u3do("spat", u3k(riw));
+      u3_noun ser = u3v_do("spat", u3k(riw));
       c3_c* wir_c = u3r_string(ser);
 
       u3l_log("pier: injecting %%%s event on %s\n", tag_c, wir_c);
@@ -79,7 +79,7 @@ static void
 _fore_import(u3_auto* car_u, c3_c* pax_c)
 {
   u3_noun arc = u3ke_cue(u3m_file(pax_c));
-  u3_noun imp = u3dt("cat", 3, u3i_string("#import_"), arc);
+  u3_noun imp = u3v_dt("cat", 3, u3i_string("#import_"), arc);
   u3_noun siz = u3r_met(3, imp);
   u3_noun dat = u3nt(u3_nul, siz, imp);
 

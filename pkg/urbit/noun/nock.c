@@ -163,7 +163,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
     u3R->pro.nox_d += 1;
 #endif
 
-    if ( c3y == u3r_du(hib) ) {
+    if ( c3y == u3du(hib) ) {
       u3_noun poz, riv;
 
       poz = _n_nock_on(u3k(bus), u3k(hib));
@@ -176,11 +176,11 @@ _n_nock_on(u3_noun bus, u3_noun fol)
       default: return u3m_bail(c3__exit);
 
       case 0: {
-        if ( c3n == u3r_ud(gal) ) {
+        if ( c3n == u3ud(gal) ) {
           return u3m_bail(c3__exit);
         }
         else {
-          u3_noun pro = u3k(u3at(gal, bus));
+          u3_noun pro = u3k(u3x_at(gal, bus));
 
           u3a_lose(bus); u3a_lose(fol);
           return pro;
@@ -211,7 +211,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         u3_noun gof, pro;
 
         gof = _n_nock_on(bus, u3k(gal));
-        pro = u3r_du(gof);
+        pro = u3du(gof);
 
         u3a_lose(gof); u3a_lose(fol);
         return pro;
@@ -309,11 +309,11 @@ _n_nock_on(u3_noun bus, u3_noun fol)
             return pro;
           }
           else {
-            if ( c3n == u3r_ud(b_gal) ) {
+            if ( c3n == u3ud(b_gal) ) {
               return u3m_bail(c3__exit);
             }
             else {
-              u3_noun nex = u3k(u3at(b_gal, seb));
+              u3_noun nex = u3k(u3x_at(b_gal, seb));
 
               u3a_lose(fol);
               bus = seb;
@@ -332,7 +332,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         {
           u3_noun zep, hod, nex;
 
-          if ( c3y == u3r_du(p_gal) ) {
+          if ( c3y == u3du(p_gal) ) {
             u3_noun b_gal = u3h(p_gal);
             u3_noun c_gal = u3t(p_gal);
             u3_noun d_gal = q_gal;

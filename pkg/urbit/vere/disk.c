@@ -760,7 +760,7 @@ u3_disk_info(u3_disk* log_u)
   while ( red_u ) {
     red = u3nc(
       u3_pier_mass(
-        u3dc("scot", c3__ux, u3i_chub((c3_d)red_u)),
+        u3v_dc("scot", c3__ux, u3i_chub((c3_d)red_u)),
         u3i_list(
           u3_pier_mase("start", u3i_chub(red_u->eve_d)),
           u3_pier_mase("final", u3i_chub(red_u->eve_d + red_u->len_d - 1)),

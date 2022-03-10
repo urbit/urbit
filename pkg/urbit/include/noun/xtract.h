@@ -93,11 +93,10 @@
         u3_noun
         u3x_good(u3_weak som);
 
-      /* u3x_at (u3at): fragment.
+      /* u3x_at: fragment.
       */
         u3_noun
         u3x_at(u3_noun axe, u3_noun som);
-#     define u3at(axe, som)    u3x_at(axe, som)
 
       /* u3x_mean():
       **

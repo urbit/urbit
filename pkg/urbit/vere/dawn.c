@@ -178,7 +178,7 @@ _dawn_eth_rpc(c3_c* url_c, u3_noun oct)
 static void
 _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
 {
-  u3_noun how = u3dc("scot", 'p', u3k(who));
+  u3_noun how = u3v_dc("scot", 'p', u3k(who));
   c3_c* how_c = u3r_string(u3k(how));
 
   c3_c* rac_c;
@@ -245,7 +245,7 @@ _dawn_turf(c3_c* dns_c)
 
   u3_noun par = u3v_wish("thos:de-purl:html");
   u3_noun dns = u3i_string(dns_c);
-  u3_noun rul = u3dc("rush", u3k(dns), u3k(par));
+  u3_noun rul = u3v_dc("rush", u3k(dns), u3k(par));
 
   if ( (u3_nul == rul) || (c3n == u3h(u3t(rul))) ) {
     u3l_log("boot: invalid domain specified with -H %s\r\n", dns_c);
@@ -267,7 +267,7 @@ _dawn_turf(c3_c* dns_c)
 static u3_noun
 _dawn_sponsor(u3_noun who, u3_noun rac, u3_noun pot)
 {
-  u3_noun uni = u3dc("sponsor:dawn", u3k(who), u3k(pot));
+  u3_noun uni = u3v_dc("sponsor:dawn", u3k(who), u3k(pot));
 
   if ( c3n == u3h(uni) ) {
     _dawn_fail(who, rac, u3nc(u3t(uni), u3_nul));
@@ -288,7 +288,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 {
   u3_noun sed, pos, pon, zar, tuf;
 
-  u3_noun rank = u3do("clan:title", u3k(ship));
+  u3_noun rank = u3v_do("clan:title", u3k(ship));
 
   c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
     u3_Host.ops_u.eth_c :
@@ -312,10 +312,10 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
               u3_Host.ops_u.who_c);
 
       {
-        u3_noun oct = u3do("point:give:dawn", u3k(ship));
+        u3_noun oct = u3v_do("point:give:dawn", u3k(ship));
         u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
 
-        pot = _dawn_need_unit(u3dc("point:take:dawn", u3k(ship), u3k(luh)),
+        pot = _dawn_need_unit(u3v_dc("point:take:dawn", u3k(ship), u3k(luh)),
                               "boot: failed to retrieve public keys");
         u3z(oct); u3z(luh);
       }
@@ -331,7 +331,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
     //  (each seed (lest error=@tas))
     //
-    sed = u3dq("veri:dawn", u3k(ship), u3k(feed), u3k(pot), u3k(liv));
+    sed = u3v_dq("veri:dawn", u3k(ship), u3k(feed), u3k(pot), u3k(liv));
 
     if ( c3n == u3h(sed) ) {
       // bails, won't return
@@ -353,7 +353,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     u3_noun oct = u3v_wish("czar:give:dawn");
     u3_noun raz = _dawn_eth_rpc(url_c, u3k(oct));
 
-    zar = _dawn_need_unit(u3do("czar:take:dawn", u3k(raz)),
+    zar = _dawn_need_unit(u3v_do("czar:take:dawn", u3k(raz)),
                           "boot: failed to retrieve galaxy table");
     u3z(oct); u3z(raz);
   }
@@ -369,7 +369,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     u3_noun oct = u3v_wish("turf:give:dawn");
     u3_noun fut = _dawn_eth_rpc(url_c, u3k(oct));
 
-    tuf = _dawn_need_unit(u3do("turf:take:dawn", u3k(fut)),
+    tuf = _dawn_need_unit(u3v_do("turf:take:dawn", u3k(fut)),
                           "boot: failed to retrieve network domains");
     u3z(oct); u3z(fut);
   }
@@ -380,7 +380,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     //  print message
     //
     {
-      u3_noun who = u3dc("scot", 'p', u3k(pos));
+      u3_noun who = u3v_dc("scot", 'p', u3k(pos));
       c3_c* who_c = u3r_string(who);
       u3l_log("boot: retrieving keys for sponsor %s\r\n", who_c);
       u3z(who);
@@ -390,10 +390,10 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     //  retrieve +point:azimuth of pos (sponsor of ship)
     //
     {
-      u3_noun oct = u3do("point:give:dawn", u3k(pos));
+      u3_noun oct = u3v_do("point:give:dawn", u3k(pos));
       u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
 
-      son = _dawn_need_unit(u3dc("point:take:dawn", u3k(pos), u3k(luh)),
+      son = _dawn_need_unit(u3v_dc("point:take:dawn", u3k(pos), u3k(luh)),
                             "boot: failed to retrieve sponsor keys");
       // append to sponsor chain list
       //
@@ -405,7 +405,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     //
     u3z(ship); u3z(rank);
     ship = pos;
-    rank = u3do("clan:title", u3k(ship));
+    rank = u3v_do("clan:title", u3k(ship));
     pos = _dawn_sponsor(u3k(ship), u3k(rank), u3k(son));
 
     u3z(son);
@@ -439,12 +439,12 @@ _dawn_come(u3_noun stars)
     u3l_log("boot: mining a comet. May take up to an hour.\r\n");
     u3l_log("If you want to boot faster, get an Urbit identity.\r\n");
 
-    seed = u3dc("come:dawn", u3k(stars), u3k(eny));
+    seed = u3v_dc("come:dawn", u3k(stars), u3k(eny));
     u3z(eny);
   }
 
   {
-    u3_noun who = u3dc("scot", 'p', u3k(u3h(seed)));
+    u3_noun who = u3v_dc("scot", 'p', u3k(u3h(seed)));
     c3_c* who_c = u3r_string(who);
 
     u3l_log("boot: found comet %s\r\n", who_c);
@@ -453,7 +453,7 @@ _dawn_come(u3_noun stars)
   //
 #if 0
     {
-      u3_noun key = u3dc("scot", c3__uw, u3qe_jam(seed));
+      u3_noun key = u3v_dc("scot", c3__uw, u3qe_jam(seed));
       c3_c* key_c = u3r_string(key);
 
       u3l_log("boot: comet private key\n  %s\n", key_c);

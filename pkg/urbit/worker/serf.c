@@ -196,7 +196,7 @@ _serf_grab(u3_noun sac)
 
 #ifdef U3_MEMORY_LOG
     {
-      u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
+      u3_noun wen = u3v_dc("scot", c3__da, u3k(u3A->now));
       c3_c* wen_c = u3r_string(wen);
 
       c3_c nam_c[2048];
@@ -827,7 +827,7 @@ _serf_writ_live_exit(u3_serf* sef_u, c3_w cod_w)
     FILE* fil_u;
 
     {
-      u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
+      u3_noun wen = u3v_dc("scot", c3__da, u3k(u3A->now));
       c3_c* wen_c = u3r_string(wen);
 
       c3_c nam_c[2048];

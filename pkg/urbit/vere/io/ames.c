@@ -543,7 +543,7 @@ _ames_czar_here(u3_pact* pac_u, time_t now, struct sockaddr_in* add_u)
   c3_w     pip_w = ntohl(add_u->sin_addr.s_addr);
 
   if ( pip_w != old_w ) {
-    u3_noun nam = u3dc("scot", c3__if, u3i_word(pip_w));
+    u3_noun nam = u3v_dc("scot", c3__if, u3i_word(pip_w));
     c3_c* nam_c = u3r_string(nam);
 
     u3l_log("ames: czar %s: ip %s\n", pac_u->dns_c, nam_c);
@@ -609,7 +609,7 @@ _ames_czar(u3_pact* pac_u)
   //  if we don't have a galaxy domain, no-op
   //
   if ( !sam_u->dns_c ) {
-    u3_noun nam = u3dc("scot", 'p', pac_u->imp_y);
+    u3_noun nam = u3v_dc("scot", 'p', pac_u->imp_y);
     c3_c*  nam_c = u3r_string(nam);
     u3l_log("ames: no galaxy domain for %s, no-op\r\n", nam_c);
 
@@ -643,7 +643,7 @@ _ames_czar(u3_pact* pac_u)
       c3_i sas_i;
 
       {
-        u3_noun nam = u3dc("scot", 'p', pac_u->imp_y);
+        u3_noun nam = u3v_dc("scot", 'p', pac_u->imp_y);
         c3_c* nam_c = u3r_string(nam);
 
         //  NB: . separator not counted, as [nam_c] includes a ~ that we skip
@@ -847,8 +847,8 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
   }
 
   if ( u3C.wag_w & u3o_verbose ) {
-    u3_noun sen = u3dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.sen_d));
-    u3_noun rec = u3dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.rec_d));
+    u3_noun sen = u3v_dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.sen_d));
+    u3_noun rec = u3v_dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.rec_d));
     c3_c* sen_c = u3r_string(sen);
     c3_c* rec_c = u3r_string(rec);
     c3_y* pip_y = (c3_y*)&pac_u->ore_u.pip_w;
@@ -1029,7 +1029,7 @@ _ames_try_forward(u3_ames* sam_u,
     else {
       sam_u->sat_u.foq_d++;
       u3_noun pax = u3nq(u3i_string("peers"),
-                         u3dc("scot", 'p', u3i_chubs(2, bod_u->rec_d)),
+                         u3v_dc("scot", 'p', u3i_chubs(2, bod_u->rec_d)),
                          u3i_string("forward-lane"),
                          u3_nul);
       u3_pier_peek_last(sam_u->pir_u, u3_nul, c3__ax,
@@ -1217,7 +1217,7 @@ _ames_io_start(u3_ames* sam_u)
 {
   c3_s     por_s = sam_u->pir_u->por_s;
   u3_noun    who = u3i_chubs(2, sam_u->pir_u->who_d);
-  u3_noun    rac = u3do("clan:title", u3k(who));
+  u3_noun    rac = u3v_do("clan:title", u3k(who));
   c3_i     ret_i;
 
   if ( c3__czar == rac ) {
@@ -1355,7 +1355,7 @@ _ames_io_talk(u3_auto* car_u)
     //  XX remove [sev_l]
     //
     u3_noun wir = u3nt(c3__newt,
-                       u3dc("scot", c3__uv, sam_u->sev_l),
+                       u3v_dc("scot", c3__uv, sam_u->sev_l),
                        u3_nul);
     u3_noun cad = u3nc(c3__born, u3_nul);
 

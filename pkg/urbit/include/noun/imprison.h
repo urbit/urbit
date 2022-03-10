@@ -148,7 +148,6 @@
         */
           u3_noun
           u3i_list(u3_weak som, ...);
-#         define u3nl u3i_list
 
         /* u3i_edit():
         **
