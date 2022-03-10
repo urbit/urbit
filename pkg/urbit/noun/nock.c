@@ -180,7 +180,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
           return u3m_bail(c3__exit);
         }
         else {
-          u3_noun pro = u3k(u3at(gal, bus));
+          u3_noun pro = u3k(u3x_at(gal, bus));
 
           u3a_lose(bus); u3a_lose(fol);
           return pro;
@@ -313,7 +313,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
               return u3m_bail(c3__exit);
             }
             else {
-              u3_noun nex = u3k(u3at(b_gal, seb));
+              u3_noun nex = u3k(u3x_at(b_gal, seb));
 
               u3a_lose(fol);
               bus = seb;
