@@ -63,6 +63,16 @@ async function getServerConnection(url) {
         handlers.forEach(({ handle }) => {
           handle(responseData);
         });
+      },
+      onerror: () => {
+        throw new Error('failed to initiate stream');
+      },
+      onclose: () => {
+        const handlers = serverConnection.listeners.slice();
+        handlers.forEach(({ close }) => {
+          close();
+        });
+        clearConnection();
       }
     });
 
@@ -83,25 +93,31 @@ registerRoute(
   async ({ url }) => {
     const id = url.searchParams.get('id');
     url.searchParams.delete('id');
-    const connection = await getServerConnection(url.href);
-    isDev && console.log(connection);
+    try {
+      const connection = await getServerConnection(url.href);
+      isDev && console.log(connection);
 
-    const stream = new ReadableStream({
-      start: (controller) => {
-        controller.enqueue(encodeEvent({ data: 'hello!' }));
-        connection.count += 1;
-        isDev && console.log('current', connection.count, id);
+      const stream = new ReadableStream({
+        start: (controller) => {
+          controller.enqueue(encodeEvent({ data: 'hello!' }));
+          connection.count += 1;
+          isDev && console.log('current', connection.count, id);
 
-        connection.listeners.push({
-          id,
-          handle: (responseData) => controller.enqueue(responseData),
-          close: () => controller.close()
-        });
-      }
-    });
+          connection.listeners.push({
+            id,
+            handle: (responseData) => controller.enqueue(responseData),
+            close: () => controller.close()
+          });
+        }
+      });
 
-    isDev && console.log('initiating stream', serverConnection.url);
-    return new Response(stream, { headers: sseHeaders });
+      isDev && console.log('initiating stream', serverConnection.url);
+      return new Response(stream, { headers: sseHeaders });
+    } catch (error) {
+      return new Response(error?.message, {
+        status: 500
+      });
+    }
   }
 );
 
@@ -212,11 +228,16 @@ function clearConnection(url) {
   delete serverConnection.listeners;
   delete serverConnection.count;
 
+  if (!url) {
+    isDev && console.log('root connection closed');
+    return;
+  }
+
   fetch(url, {
     body: JSON.stringify([{ action: 'delete' }]),
     method: 'PUT'
   });
-  isDev && console.log('closing', url);
+  isDev && console.log('closing root connection', url);
 }
 
 function encodeEvent({ data, event, retry, id }) {
