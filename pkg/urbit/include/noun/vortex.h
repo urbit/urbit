@@ -65,7 +65,7 @@
       u3v_do(const c3_c* txt_c, u3_noun arg);
 #     define  u3v_dc(txt_c, a, b)        u3v_do(txt_c, u3nc(a, b))
 #     define  u3v_dt(txt_c, a, b, c)     u3v_do(txt_c, u3nt(a, b, c))
-#     define  u3dq(txt_c, a, b, c, d)  u3v_do(txt_c, u3nq(a, b, c, d))
+#     define  u3v_dq(txt_c, a, b, c, d)  u3v_do(txt_c, u3nq(a, b, c, d))
 
     /* u3v_wish(): text expression with cache.
     */

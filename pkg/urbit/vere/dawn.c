@@ -331,7 +331,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
     //  (each seed (lest error=@tas))
     //
-    sed = u3dq("veri:dawn", u3k(ship), u3k(feed), u3k(pot), u3k(liv));
+    sed = u3v_dq("veri:dawn", u3k(ship), u3k(feed), u3k(pot), u3k(liv));
 
     if ( c3n == u3h(sed) ) {
       // bails, won't return
