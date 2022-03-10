@@ -166,7 +166,7 @@ u3v_do(const c3_c* txt_c, u3_noun sam)
 static u3_noun
 _cv_scot(u3_noun dim)
 {
-  return u3do("scot", dim);
+  return u3v_do("scot", dim);
 }
 
 /* u3v_time(): set the reck time.
@@ -207,7 +207,7 @@ _cv_mole(u3_noun  fot,
          u3_noun  san,
          c3_d*    ato_d)
 {
-  u3_noun uco = u3do("slay", san);
+  u3_noun uco = u3v_do("slay", san);
   u3_noun p_uco, q_uco, r_uco, s_uco;
 
   if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||

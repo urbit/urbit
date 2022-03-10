@@ -288,7 +288,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 {
   u3_noun sed, pos, pon, zar, tuf;
 
-  u3_noun rank = u3do("clan:title", u3k(ship));
+  u3_noun rank = u3v_do("clan:title", u3k(ship));
 
   c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
     u3_Host.ops_u.eth_c :
@@ -312,7 +312,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
               u3_Host.ops_u.who_c);
 
       {
-        u3_noun oct = u3do("point:give:dawn", u3k(ship));
+        u3_noun oct = u3v_do("point:give:dawn", u3k(ship));
         u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
 
         pot = _dawn_need_unit(u3dc("point:take:dawn", u3k(ship), u3k(luh)),
@@ -353,7 +353,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     u3_noun oct = u3v_wish("czar:give:dawn");
     u3_noun raz = _dawn_eth_rpc(url_c, u3k(oct));
 
-    zar = _dawn_need_unit(u3do("czar:take:dawn", u3k(raz)),
+    zar = _dawn_need_unit(u3v_do("czar:take:dawn", u3k(raz)),
                           "boot: failed to retrieve galaxy table");
     u3z(oct); u3z(raz);
   }
@@ -369,7 +369,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     u3_noun oct = u3v_wish("turf:give:dawn");
     u3_noun fut = _dawn_eth_rpc(url_c, u3k(oct));
 
-    tuf = _dawn_need_unit(u3do("turf:take:dawn", u3k(fut)),
+    tuf = _dawn_need_unit(u3v_do("turf:take:dawn", u3k(fut)),
                           "boot: failed to retrieve network domains");
     u3z(oct); u3z(fut);
   }
@@ -390,7 +390,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     //  retrieve +point:azimuth of pos (sponsor of ship)
     //
     {
-      u3_noun oct = u3do("point:give:dawn", u3k(pos));
+      u3_noun oct = u3v_do("point:give:dawn", u3k(pos));
       u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
 
       son = _dawn_need_unit(u3dc("point:take:dawn", u3k(pos), u3k(luh)),
@@ -405,7 +405,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     //
     u3z(ship); u3z(rank);
     ship = pos;
-    rank = u3do("clan:title", u3k(ship));
+    rank = u3v_do("clan:title", u3k(ship));
     pos = _dawn_sponsor(u3k(ship), u3k(rank), u3k(son));
 
     u3z(son);

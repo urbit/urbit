@@ -460,7 +460,7 @@ u3_pier_peek_last(u3_pier*   pir_u,
 static u3_noun
 _pier_stab(u3_noun pac)
 {
-  return u3do("stab", pac);
+  return u3v_do("stab", pac);
 }
 
 /* _pier_on_scry_done(): scry callback.
@@ -601,7 +601,7 @@ _pier_work_init(u3_pier* pir_u)
   //  XX this is messy, revise
   //
   if ( u3_Host.ops_u.pek_c ) {
-    u3_noun pex = u3do("stab", u3i_string(u3_Host.ops_u.pek_c));
+    u3_noun pex = u3v_do("stab", u3i_string(u3_Host.ops_u.pek_c));
     u3_noun car;
     u3_noun dek;
     u3_noun pax;
@@ -2333,7 +2333,7 @@ void
 u3_pier_punt_ovum(const c3_c* cap_c, u3_noun wir, u3_noun tag)
 {
   c3_c* tag_c = u3r_string(tag);
-  u3_noun riw = u3do("spat", wir);
+  u3_noun riw = u3v_do("spat", wir);
   c3_c* wir_c = u3r_string(riw);
 
   u3l_log("%s: %%%s event on %s failed\r\n\n", cap_c, tag_c, wir_c);

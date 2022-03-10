@@ -55,7 +55,7 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
   else {
     {
       c3_c* tag_c = u3r_string(u3h(cad));
-      u3_noun ser = u3do("spat", u3k(riw));
+      u3_noun ser = u3v_do("spat", u3k(riw));
       c3_c* wir_c = u3r_string(ser);
 
       u3l_log("pier: injecting %%%s event on %s\n", tag_c, wir_c);

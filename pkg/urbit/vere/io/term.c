@@ -694,7 +694,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 
       //  XX  implement directly here and jet
       //
-      wug = u3do("taft", huv);
+      wug = u3v_do("taft", huv);
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;
       _term_io_belt(uty_u, u3nt(c3__txt, wug, u3_nul));

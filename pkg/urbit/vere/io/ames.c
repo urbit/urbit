@@ -1217,7 +1217,7 @@ _ames_io_start(u3_ames* sam_u)
 {
   c3_s     por_s = sam_u->pir_u->por_s;
   u3_noun    who = u3i_chubs(2, sam_u->pir_u->who_d);
-  u3_noun    rac = u3do("clan:title", u3k(who));
+  u3_noun    rac = u3v_do("clan:title", u3k(who));
   c3_i     ret_i;
 
   if ( c3__czar == rac ) {

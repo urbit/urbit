@@ -236,7 +236,7 @@ u3_auto_next(u3_auto* car_u, u3_noun* ovo)
 static void
 _auto_kick_lost(u3_noun pax, u3_noun fav)
 {
-  u3_noun tox = u3do("spat", u3k(pax));
+  u3_noun tox = u3v_do("spat", u3k(pax));
   c3_c* tag_c = u3r_string(u3h(fav));
   c3_c* pax_c = u3r_string(tox);
 
