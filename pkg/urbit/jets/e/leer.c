@@ -72,7 +72,7 @@ u3we_lore(u3_noun cor)
   u3_noun lub;
 
   if ( (u3_none == (lub = u3r_at(u3x_sam, cor))) ||
-       (c3n == u3ud(lub)) )
+       (c3n == u3ia(lub)) )
   {
     return u3m_bail(c3__fail);
   } else {
@@ -120,7 +120,7 @@ u3we_leer(u3_noun cor)
 {
   u3_noun txt = u3x_at(u3x_sam, cor);
 
-  if ( c3n == u3ud(txt) ) {
+  if ( c3n == u3ia(txt) ) {
     return u3m_bail(c3__fail);
   }
 

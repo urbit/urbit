@@ -29,8 +29,8 @@
     u3_noun wid, dat;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &wid, u3x_sam_3, &dat, 0)) ||
-         (c3n == u3ud(wid)) ||
-         (c3n == u3ud(dat)) )
+         (c3n == u3ia(wid)) ||
+         (c3n == u3ia(dat)) )
     {
       return u3m_bail(c3__exit);
     }

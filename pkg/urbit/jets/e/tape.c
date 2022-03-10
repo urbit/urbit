@@ -24,7 +24,7 @@
       if ( u3_nul == a ) {
         return c3y;
       }
-      if ( c3n == u3ud(u3h(a)) ) {
+      if ( c3n == u3ia(u3h(a)) ) {
         return c3n;
       }
       a = u3t(a);

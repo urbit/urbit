@@ -73,7 +73,7 @@
     u3_noun a;
 
     if ( (u3_none == (a = u3r_at(u3x_sam, cor))) ||
-         (c3n == u3ud(a)) )
+         (c3n == u3ia(a)) )
     {
       return u3m_bail(c3__exit);
     } else {
@@ -88,8 +88,8 @@
 
     if ( (u3_none == (a = u3r_at(u3x_sam_2, cor))) ||
          (u3_none == (b = u3r_at(u3x_sam_3, cor))) ||
-         (c3n == u3ud(a)) ||
-         (c3n == u3ud(b)) )
+         (c3n == u3ia(a)) ||
+         (c3n == u3ia(b)) )
     {
       return u3m_bail(c3__exit);
     } else {
@@ -104,8 +104,8 @@
 
     if ( (u3_none == (a = u3r_at(u3x_sam_2, cor))) ||
          (u3_none == (b = u3r_at(u3x_sam_3, cor))) ||
-         (c3n == u3ud(a)) ||
-         (c3n == u3ud(b)) )
+         (c3n == u3ia(a)) ||
+         (c3n == u3ia(b)) )
     {
       return u3m_bail(c3__exit);
     } else {
@@ -120,8 +120,8 @@
 
     if ( (u3_none == (sal = u3r_at(u3x_sam_2, cor))) ||
          (u3_none == (ruz = u3r_at(u3x_sam_3, cor))) ||
-         (c3n == u3ud(sal)) ||
-         (c3n == u3ud(ruz)) )
+         (c3n == u3ia(sal)) ||
+         (c3n == u3ia(ruz)) )
     {
       return u3m_bail(c3__exit);
     } else {

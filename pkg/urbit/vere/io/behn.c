@@ -105,7 +105,7 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
 
   if ( (u3_nul != wen) &&
        (c3y == u3ic(wen)) &&
-       (c3y == u3ud(u3t(wen))) )
+       (c3y == u3ia(u3t(wen))) )
   {
     struct timeval tim_tv;
     gettimeofday(&tim_tv, 0);

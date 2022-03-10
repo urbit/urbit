@@ -42,8 +42,8 @@ typedef int (*urcrypt_ecb)(c3_y*, c3_y[16], c3_y[16]);
     u3_noun a, b;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ||
-         c3n == u3ud(a) ||
-         c3n == u3ud(b) ) {
+         c3n == u3ia(a) ||
+         c3n == u3ia(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("ecba-en", _cqea_ecba_en(a, b));
@@ -65,8 +65,8 @@ typedef int (*urcrypt_ecb)(c3_y*, c3_y[16], c3_y[16]);
     u3_noun a, b;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ||
-         c3n == u3ud(a) ||
-         c3n == u3ud(b) ) {
+         c3n == u3ia(a) ||
+         c3n == u3ia(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("ecba-de", _cqea_ecba_de(a, b));
@@ -88,8 +88,8 @@ typedef int (*urcrypt_ecb)(c3_y*, c3_y[16], c3_y[16]);
     u3_noun a, b;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ||
-         c3n == u3ud(a) ||
-         c3n == u3ud(b) ) {
+         c3n == u3ia(a) ||
+         c3n == u3ia(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("ecbb-en", _cqea_ecbb_en(a, b));
@@ -111,8 +111,8 @@ typedef int (*urcrypt_ecb)(c3_y*, c3_y[16], c3_y[16]);
     u3_noun a, b;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ||
-         c3n == u3ud(a) ||
-         c3n == u3ud(b) ) {
+         c3n == u3ia(a) ||
+         c3n == u3ia(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("ecbb-de", _cqea_ecbb_de(a, b));
@@ -134,8 +134,8 @@ typedef int (*urcrypt_ecb)(c3_y*, c3_y[16], c3_y[16]);
     u3_noun a, b;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ||
-         c3n == u3ud(a) ||
-         c3n == u3ud(b) ) {
+         c3n == u3ia(a) ||
+         c3n == u3ia(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("ecbc-en", _cqea_ecbc_en(a, b));
@@ -157,8 +157,8 @@ typedef int (*urcrypt_ecb)(c3_y*, c3_y[16], c3_y[16]);
     u3_noun a, b;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ||
-         c3n == u3ud(a) ||
-         c3n == u3ud(b) ) {
+         c3n == u3ia(a) ||
+         c3n == u3ia(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("ecbc-de", _cqea_ecbc_de(a, b));

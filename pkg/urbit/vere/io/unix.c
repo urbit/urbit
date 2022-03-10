@@ -535,7 +535,7 @@ _unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c);
 static u3_umon*
 _unix_get_mount_point(u3_unix* unx_u, u3_noun mon)
 {
-  if ( c3n == u3ud(mon) ) {
+  if ( c3n == u3ia(mon) ) {
     c3_assert(!"mount point must be an atom");
     u3z(mon);
     return NULL;
@@ -754,7 +754,7 @@ _unix_free_mount_point(u3_unix* unx_u, u3_umon* mon_u)
 static void
 _unix_delete_mount_point(u3_unix* unx_u, u3_noun mon)
 {
-  if ( c3n == u3ud(mon) ) {
+  if ( c3n == u3ia(mon) ) {
     c3_assert(!"mount point must be an atom");
     u3z(mon);
     return;

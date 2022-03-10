@@ -118,8 +118,8 @@ u3we_sign(u3_noun cor)
                         u3x_sam_2,  &has,
                         u3x_sam_3,  &prv,
                         0)) ||
-       (c3n == u3ud(has)) ||
-       (c3n == u3ud(prv))) {
+       (c3n == u3ia(has)) ||
+       (c3n == u3ia(prv))) {
     return u3m_bail(c3__exit);
   }
   else {
@@ -163,10 +163,10 @@ u3we_reco(u3_noun cor)
                         u3x_sam_14,  &sir,
                         u3x_sam_15,  &sis,
                         0)) ||
-       (c3n == u3ud(has)) ||
-       (c3n == u3ud(siv)) ||
-       (c3n == u3ud(sir)) ||
-       (c3n == u3ud(sis)) ) {
+       (c3n == u3ia(has)) ||
+       (c3n == u3ia(siv)) ||
+       (c3n == u3ia(sir)) ||
+       (c3n == u3ia(sis)) ) {
     return u3m_bail(c3__exit);
   }
   else {
@@ -200,8 +200,8 @@ u3we_make(u3_noun cor)
                         u3x_sam_2,  &has,
                         u3x_sam_3,  &prv,
                         0)) ||
-       (c3n == u3ud(has)) ||
-       (c3n == u3ud(prv)) ) {
+       (c3n == u3ia(has)) ||
+       (c3n == u3ia(prv)) ) {
     return u3m_bail(c3__exit);
   }
   else {
@@ -244,9 +244,9 @@ u3we_sosi(u3_noun cor)
                         u3x_sam_6,  &mes,
                         u3x_sam_7,  &aux,
                         0)) ||
-       (c3n == u3ud(key)) ||
-       (c3n == u3ud(mes)) ||
-       (c3n == u3ud(aux)) )
+       (c3n == u3ia(key)) ||
+       (c3n == u3ia(mes)) ||
+       (c3n == u3ia(aux)) )
   {
     return u3m_bail(c3__exit);
   }
@@ -285,9 +285,9 @@ u3we_sove(u3_noun cor)
                         u3x_sam_6,  &mes,
                         u3x_sam_7,  &sig,
                         0)) ||
-       (c3n == u3ud(pub)) ||
-       (c3n == u3ud(mes)) ||
-       (c3n == u3ud(sig)) )
+       (c3n == u3ia(pub)) ||
+       (c3n == u3ia(mes)) ||
+       (c3n == u3ia(sig)) )
   {
     return u3m_bail(c3__exit);
   }

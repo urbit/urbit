@@ -99,7 +99,7 @@ _ct_sane(u3_noun lab)
 {
   if ( u3_nul != lab ) {
     c3_assert(c3y == u3ic(lab));
-    c3_assert(c3y == u3ud(u3h(lab)));
+    c3_assert(c3y == u3ia(u3h(lab)));
     _ct_sane(u3t(lab));
   }
 }

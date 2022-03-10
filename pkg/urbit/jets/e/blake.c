@@ -49,9 +49,9 @@
     if ( c3n == u3r_mean(cor, u3x_sam_2, &msg,
                               u3x_sam_6, &key,
                               u3x_sam_7, &out, 0) ||
-                u3r_cell(msg, &wid, &dat) || u3ud(wid) || u3ud(dat) ||
-                u3r_cell(key, &wik, &dak) || u3ud(wik) || u3ud(dak) ||
-                u3ud(out) )
+                u3r_cell(msg, &wid, &dat) || u3ia(wid) || u3ia(dat) ||
+                u3r_cell(key, &wik, &dak) || u3ia(wik) || u3ia(dak) ||
+                u3ia(out) )
     {
       return u3m_bail(c3__exit);
     } else {

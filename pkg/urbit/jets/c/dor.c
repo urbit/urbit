@@ -14,8 +14,8 @@
       return c3y;
     }
     else {
-      if ( c3y == u3ud(a) ) {
-        if ( c3y == u3ud(b) ) {
+      if ( c3y == u3ia(a) ) {
+        if ( c3y == u3ia(b) ) {
           return u3qa_lth(a, b);
         }
         else {
@@ -23,7 +23,7 @@
         }
       }
       else {
-        if ( c3y == u3ud(b) ) {
+        if ( c3y == u3ia(b) ) {
           return c3n;
         }
         else {

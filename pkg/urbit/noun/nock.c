@@ -72,7 +72,7 @@ _n_hint(u3_noun zep,
     }
 
     case c3__live: {
-      if ( c3y == u3ud(hod) ) {
+      if ( c3y == u3ia(hod) ) {
         u3t_off(noc_o);
         u3t_heck(hod);
         u3t_on(noc_o);
@@ -176,7 +176,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
       default: return u3m_bail(c3__exit);
 
       case 0: {
-        if ( c3n == u3ud(gal) ) {
+        if ( c3n == u3ia(gal) ) {
           return u3m_bail(c3__exit);
         }
         else {
@@ -309,7 +309,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
             return pro;
           }
           else {
-            if ( c3n == u3ud(b_gal) ) {
+            if ( c3n == u3ia(b_gal) ) {
               return u3m_bail(c3__exit);
             }
             else {
@@ -778,7 +778,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
 
   while ( i_w-- > 0 ) {
     u3_noun op = u3h(ops);
-    if ( c3y == u3ud(op) ) {
+    if ( c3y == u3ia(op) ) {
       switch ( op ) {
         default:
           buf_y[i_w] = (c3_y) u3h(ops);
@@ -1158,7 +1158,7 @@ _n_formulaic(u3_noun fol)
   }
   else switch ( op ) {
     case 0:
-      return ( c3y == u3ud(ar) );
+      return ( c3y == u3ia(ar) );
     case 1:
       return 1;
     case 3:
@@ -1177,7 +1177,7 @@ _n_formulaic(u3_noun fol)
         (_n_formulaic(b) || _n_formulaic(c));
     case 9:
       return (c3y == u3r_cell(ar, &a, &b))
-        && (c3y == u3ud(a))
+        && (c3y == u3ia(a))
         && _n_formulaic(b);
     case 10:
       if ( c3n == u3r_cell(ar, &a, &b) ) {
@@ -1186,7 +1186,7 @@ _n_formulaic(u3_noun fol)
       if ( c3n == u3ic(a) ) {
         return 0;
       }
-      if ( c3n == u3ud(u3h(a)) ) {
+      if ( c3n == u3ia(u3h(a)) ) {
         return 0;
       }
       return _n_formulaic(u3t(a)) && _n_formulaic(b);
@@ -1197,11 +1197,11 @@ _n_formulaic(u3_noun fol)
       if ( !_n_formulaic(b) ) {
         return 0;
       }
-      if ( c3y == u3ud(a) ) {
+      if ( c3y == u3ia(a) ) {
         return 1;
       }
       else {
-        return ( c3y == u3ud(u3h(a)) ) && _n_formulaic(u3t(a));
+        return ( c3y == u3ia(u3h(a)) ) && _n_formulaic(u3t(a));
       }
     default:
       return 0;
@@ -1231,7 +1231,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   }
   else switch ( cod ) {
     case 0:
-      if ( c3n == u3ud(arg) ) {
+      if ( c3n == u3ia(arg) ) {
         u3m_bail(c3__exit);
         return 0;
       }
@@ -2402,7 +2402,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 
     do_heck:
       x = _n_pep(mov, off);
-      if ( c3y == u3ud(x) ) {
+      if ( c3y == u3ia(x) ) {
         u3t_off(noc_o);
         u3t_heck(x);
         u3t_on(noc_o);

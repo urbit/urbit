@@ -589,7 +589,7 @@ _cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
 
   //  XX this should be checked against a whitelist
   //
-  c3_assert( c3y == u3ud(method) );
+  c3_assert( c3y == u3ia(method) );
   ceq_u->met_c = u3r_string(method);
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
 

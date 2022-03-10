@@ -389,7 +389,7 @@ _cj_by_gut(u3_noun a, u3_noun b)
 static c3_c*
 _cj_chum(u3_noun chu)
 {
-  if ( _(u3ud(chu)) ) {
+  if ( _(u3ia(chu)) ) {
     return u3r_string(chu);
   }
   else {
@@ -451,7 +451,7 @@ _cj_je_fsck(u3_noun clu)
 
       if ( (c3n == u3r_cell(r_clu, &ir_clu, &tr_clu)) ||
            (c3n == u3r_cell(ir_clu, &pir_clu, &qir_clu)) ||
-           (c3n == u3ud(pir_clu)) )
+           (c3n == u3ia(pir_clu)) )
       {
         u3z(huk); u3z(clu); c3_free(nam_c); return u3_none;
       }

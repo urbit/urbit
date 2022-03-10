@@ -46,7 +46,7 @@
     u3_noun lub;
 
     if ( (u3_none == (lub = u3r_at(u3x_sam, cor))) ||
-         (c3n == u3ud(lub)) )
+         (c3n == u3ia(lub)) )
     {
       return u3m_bail(c3__fail);
     } else {
