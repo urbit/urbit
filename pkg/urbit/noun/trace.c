@@ -86,7 +86,7 @@ u3t_heck(u3_atom cog)
       if ( 0 == u3R->pro.day ) {
         u3R->pro.day = u3v_do("doss", 0);
       }
-      u3R->pro.day = u3dc("pi-heck", u3i_string(str_c), u3R->pro.day);
+      u3R->pro.day = u3v_dc("pi-heck", u3i_string(str_c), u3R->pro.day);
     }
     u3R = rod_u;
   }
@@ -634,7 +634,7 @@ u3t_slog_trace(c3_l pri_l, u3_noun tax)
   // and thus we can free it safely at the end of the func
   // to clean up after ourselves.
   // Note: flop reverses the stack trace list 'tax'
-  u3_noun ton = u3dc("mook", 2, u3kb_flop(tax));
+  u3_noun ton = u3v_dc("mook", 2, u3kb_flop(tax));
   u3_noun lit = u3t(ton);
 
   // print the stack one stack item at a time

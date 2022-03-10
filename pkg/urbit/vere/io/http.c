@@ -398,9 +398,9 @@ static u3_noun
 _http_req_to_duct(u3_hreq* req_u)
 {
   return u3nc(u3i_string("http-server"),
-              u3nq(u3dc("scot", c3__uv, req_u->hon_u->htp_u->sev_l),
-                   u3dc("scot", c3__ud, req_u->hon_u->coq_l),
-                   u3dc("scot", c3__ud, req_u->seq_l),
+              u3nq(u3v_dc("scot", c3__uv, req_u->hon_u->htp_u->sev_l),
+                   u3v_dc("scot", c3__ud, req_u->hon_u->coq_l),
+                   u3v_dc("scot", c3__ud, req_u->seq_l),
                    u3_nul));
 }
 
@@ -897,7 +897,7 @@ _http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
 
     u3_noun pax = u3nq(u3i_string("authenticated"),
                        u3i_string("cookie"),
-                       u3dc("scot", 't', coo),
+                       u3v_dc("scot", 't', coo),
                        u3_nul);
     u3_pier_peek_last(hon_u->htp_u->htd_u->car_u.pir_u, u3_nul, c3__ex,
                       u3_nul, pax, rec_u, _http_seq_continue);
@@ -1417,7 +1417,7 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
     // XX move this to post serv_start and put the port in the name
 #if 0
     c3_c* pax_c = u3_Host.dir_c;
-    u3_noun now = u3dc("scot", c3__da, u3k(u3A->now));
+    u3_noun now = u3v_dc("scot", c3__da, u3k(u3A->now));
     c3_c* now_c = u3r_string(now);
     c3_c* nam_c = ".access.log";
     c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(now_c) + strlen(nam_c);
@@ -1736,7 +1736,7 @@ _http_serv_start_all(u3_httd* htd_u)
     //  XX remove [sen]
     //
     u3_noun wir = u3nt(u3i_string("http-server"),
-                       u3dc("scot", c3__uv, htd_u->sev_l),
+                       u3v_dc("scot", c3__uv, htd_u->sev_l),
                        u3_nul);
     u3_noun cad = u3nt(c3__live, non, sec);
 
@@ -1852,7 +1852,7 @@ _http_io_talk(u3_auto* car_u)
   //  XX remove [sen]
   //
   u3_noun wir = u3nt(u3i_string("http-server"),
-                     u3dc("scot", c3__uv, htd_u->sev_l),
+                     u3v_dc("scot", c3__uv, htd_u->sev_l),
                      u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
@@ -1956,7 +1956,7 @@ _http_stream_slog(void* vop_p, c3_w pri_w, u3_noun tan)
       else {
         u3_noun blu = u3_term_get_blew(0);
         c3_l  col_l = u3h(blu);
-        wol = u3dc("wash", u3nc(0, col_l), u3k(tan));
+        wol = u3v_dc("wash", u3nc(0, col_l), u3k(tan));
         u3z(blu);
       }
 
@@ -2020,7 +2020,7 @@ _reck_mole(u3_noun  fot,
            u3_noun  san,
            c3_d*    ato_d)
 {
-  u3_noun uco = u3dc("slaw", fot, san);
+  u3_noun uco = u3v_dc("slaw", fot, san);
   u3_noun p_uco, q_uco;
 
   if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||

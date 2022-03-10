@@ -1141,7 +1141,7 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
       //  XX remove u3A->sen
       //
       u3_noun wir = u3nt(c3__sync,
-                        u3dc("scot", c3__uv, unx_u->sev_l),
+                        u3v_dc("scot", c3__uv, unx_u->sev_l),
                         u3_nul);
       u3_noun cad = u3nq(c3__into, _unix_string_to_knot(mon_u->nam_c), all,
                          can);

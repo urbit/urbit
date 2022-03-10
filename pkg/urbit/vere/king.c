@@ -385,7 +385,7 @@ _boothack_key(u3_noun kef)
   u3_weak ship = u3_none;
 
   {
-    u3_noun des = u3dc("slaw", c3__uw, u3k(kef));
+    u3_noun des = u3v_dc("slaw", c3__uw, u3k(kef));
 
     if ( u3_nul == des ) {
       c3_c* kef_c = u3r_string(kef);
@@ -418,7 +418,7 @@ _boothack_key(u3_noun kef)
 
   if ( 0 != u3_Host.ops_u.who_c ) {
     u3_noun woh = u3i_string(u3_Host.ops_u.who_c);
-    u3_noun whu = u3dc("slaw", 'p', u3k(woh));
+    u3_noun whu = u3v_dc("slaw", 'p', u3k(woh));
 
     if ( u3_nul == whu ) {
       u3l_log("dawn: invalid ship specified with -w %s\r\n",
@@ -429,7 +429,7 @@ _boothack_key(u3_noun kef)
     if ( (u3_none != ship) &&
          (c3n == u3r_sing(ship, u3t(whu))) )
     {
-      u3_noun how = u3dc("scot", 'p', u3k(ship));
+      u3_noun how = u3v_dc("scot", 'p', u3k(ship));
       c3_c* how_c = u3r_string(u3k(how));
       u3l_log("dawn: mismatch between -w %s and -K %s\r\n",
               u3_Host.ops_u.who_c, how_c);
@@ -459,7 +459,7 @@ _boothack_doom(void)
   }
   else if ( 0 != u3_Host.ops_u.fak_c ) {
     u3_noun fak = u3i_string(u3_Host.ops_u.fak_c);
-    u3_noun whu = u3dc("slaw", 'p', u3k(fak));
+    u3_noun whu = u3v_dc("slaw", 'p', u3k(fak));
 
     if ( u3_nul == whu ) {
       u3l_log("boot: malformed -F ship %s\r\n", u3_Host.ops_u.fak_c);
@@ -916,7 +916,7 @@ u3_king_grab(void* vod_p)
   {
     //  XX date will not match up with that of the worker
     //
-    u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
+    u3_noun wen = u3v_dc("scot", c3__da, u3k(u3A->now));
     c3_c* wen_c = u3r_string(wen);
 
     c3_c nam_c[2048];

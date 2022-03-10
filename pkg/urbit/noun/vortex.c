@@ -287,7 +287,7 @@ u3v_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
   //  We are calling nock here, but hopefully need no protection.
   //
   while ( c3y == u3du(cat) ) {
-    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
+    u3_noun wol = u3v_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
     u3m_wall(wol);
     cat = u3t(cat);
@@ -301,7 +301,7 @@ u3v_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
 void
 u3v_sway(u3_noun blu, c3_l tab_l, u3_noun tax)
 {
-  u3_noun mok = u3dc("mook", 2, tax);
+  u3_noun mok = u3v_dc("mook", 2, tax);
 
   u3v_punt(blu, tab_l, u3k(u3t(mok)));
   u3z(mok);

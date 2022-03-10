@@ -109,7 +109,7 @@ _term_close_cb(uv_handle_t* han_t)
   }
 
   {
-    u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
+    u3_noun tid = u3v_dc("scot", c3__ud, tty_u->tid_l);
     u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
     u3_pier_plan(u3k(pax), u3nc(c3__hook, u3_nul));
     u3z(pax);
@@ -622,7 +622,7 @@ _term_ovum_plan(u3_auto* car_u, u3_noun wir, u3_noun cad)
 static void
 _term_io_belt(u3_utty* uty_u, u3_noun blb)
 {
-  //  XX s/b u3dc("scot", c3__ud, uty_u->tid_l)
+  //  XX s/b u3v_dc("scot", c3__ud, uty_u->tid_l)
   //
   u3_noun wir = u3nt(c3__term, '1', u3_nul);
   u3_noun cad = u3nc(c3__belt, blb);
