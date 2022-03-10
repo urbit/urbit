@@ -43,7 +43,7 @@ u3kdb_get(u3_noun a,
   u3_noun c = u3qdb_get(a, b);
   u3z(a); u3z(b);
 
-  if ( c3n == u3r_du(c) ) {
+  if ( c3n == u3du(c) ) {
     u3z(c);
     return u3_none;
   }

@@ -2297,7 +2297,7 @@ u3_pier_punt(c3_l tab_l, u3_noun tac)
 {
   u3_noun cat = tac;
 
-  while ( c3y == u3r_du(cat) ) {
+  while ( c3y == u3du(cat) ) {
     u3_pier_tank(tab_l, 0, u3k(u3h(cat)));
     cat = u3t(cat);
   }
