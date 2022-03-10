@@ -174,21 +174,34 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
 
     //  open subscription
     //
-    ses.subscriptionId = await api.subscribe({ app: 'herm', path: '/session/'+name+'/view',
-      event: (e) => {
-        showBlit(ses.term, e);
-        if (e.bel && !selected) {
+    const initSubscription = async () => {
+      const subscriptionId = await api.subscribe({
+        app: 'herm', path: '/session/' + name + '/view',
+        event: (e) => {
+          showBlit(ses.term, e);
+          if (e.bel && !selected) {
+            useTermState.getState().set((state) => {
+              state.sessions[name].hasBell = true;
+            });
+          }
+          //TODO  should handle %bye on this higher level though, for deletion
+        },
+        err: (e, id) => {
+          console.log(`subscription error, id ${id}:`, e);
+        },
+        quit: async () => {  //  quit
+          console.error('oops quit, reconnecting...');
+          const newSubscriptionId = await initSubscription();
           useTermState.getState().set((state) => {
-            state.sessions[name].hasBell = true;
+            state.sessions[name].subscriptionId = newSubscriptionId;
           });
         }
-        //TODO  should handle %bye on this higher level though, for deletion
-      },
-      quit: () => {  //  quit
-        // TODO  show user a message
-        console.error('oops quit, pls handle');
-      }
-    });
+      });
+
+      return subscriptionId;
+    };
+
+    ses.subscriptionId = await initSubscription();
 
     useTermState.getState().set((state) => {
       state.sessions[name] = ses;
