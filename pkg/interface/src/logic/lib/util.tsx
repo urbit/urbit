@@ -234,11 +234,11 @@ export function preSig(ship: string): string {
     return '';
   }
 
-  if (ship.startsWith('~')) {
-    return ship;
+  if (ship.trim().startsWith('~')) {
+    return ship.trim();
   }
 
-  return '~'.concat(ship);
+  return '~'.concat(ship.trim());
 }
 
 export function uxToHex(ux: string) {
