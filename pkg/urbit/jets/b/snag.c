@@ -17,13 +17,13 @@
       c3_w len_w = a;
 
       while ( len_w ) {
-        if ( c3n == u3du(b) ) {
+        if ( c3n == u3ic(b) ) {
           return u3m_bail(c3__exit);
         }
         b = u3t(b);
         len_w--;
       }
-      if ( c3n == u3du(b) ) {
+      if ( c3n == u3ic(b) ) {
         return u3m_bail(c3__exit);
       }
       return u3k(u3h(b));

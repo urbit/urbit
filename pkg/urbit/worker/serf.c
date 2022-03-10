@@ -99,7 +99,7 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
     fprintf(fil_u, "mistyped mass\r\n");
     return tot_w;
   }
-  else if ( _(u3du(h_mas)) ) {
+  else if ( _(u3ic(h_mas)) ) {
     _serf_space(fil_u, den);
     fprintf(fil_u, "mistyped mass head\r\n");
     {
@@ -160,7 +160,7 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
     else if ( c3n == it_mas ) {
       fprintf(fil_u, "\r\n");
 
-      while ( _(u3du(tt_mas)) ) {
+      while ( _(u3ic(tt_mas)) ) {
         tot_w += _serf_prof(fil_u, den+2, u3h(tt_mas));
         tt_mas = u3t(tt_mas);
       }

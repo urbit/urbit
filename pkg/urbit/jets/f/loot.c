@@ -18,7 +18,7 @@
       u3_noun n_dom, l_dom, r_dom;
 
       u3r_trel(dom, &n_dom, &l_dom, &r_dom);
-      if ( c3n == u3du(n_dom) ) {
+      if ( c3n == u3ic(n_dom) ) {
         return u3m_bail(c3__fail);
       }
       else {

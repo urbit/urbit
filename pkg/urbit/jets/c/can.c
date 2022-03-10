@@ -29,9 +29,9 @@
           if ( 0 == cab ) {
             break;
           }
-          if ( c3n == u3du(cab) ) return u3m_bail(c3__fail);
+          if ( c3n == u3ic(cab) ) return u3m_bail(c3__fail);
           i_cab = u3h(cab);
-          if ( c3n == u3du(i_cab) ) return u3m_bail(c3__fail);
+          if ( c3n == u3ic(i_cab) ) return u3m_bail(c3__fail);
           pi_cab = u3h(i_cab);
           qi_cab = u3t(i_cab);
           if ( c3n == u3a_is_cat(pi_cab) ) return u3m_bail(c3__fail);

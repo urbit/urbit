@@ -18,7 +18,7 @@
       u3_noun n_dab, l_dab, r_dab;
 
       u3r_trel(dab, &n_dab, &l_dab, &r_dab);
-      if ( c3n == u3du(n_dab) ) {
+      if ( c3n == u3ic(n_dab) ) {
         // return u3m_bail(c3__fail);
         u3l_log("bad look\r\n");
         return u3m_bail(c3__exit) ;
@@ -28,7 +28,7 @@
         u3_noun qn_dab = u3t(n_dab);
 
         if ( (u3_nul == l_dab) && (u3_nul == r_dab) ) {
-          if ( (c3y == u3du(qn_dab)) &&
+          if ( (c3y == u3ic(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                         u3k(axe),
@@ -39,7 +39,7 @@
           }
         }
         else if ( (u3_nul == l_dab) ) {
-          if ( (c3y == u3du(qn_dab)) &&
+          if ( (c3y == u3ic(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                         u3qc_peg(axe, 2),
@@ -60,7 +60,7 @@
           }
         }
         else if ( (u3_nul == r_dab) ) {
-          if ( (c3y == u3du(qn_dab)) &&
+          if ( (c3y == u3ic(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                         u3qc_peg(axe, 2),
@@ -81,7 +81,7 @@
           }
         }
         else {
-          if ( (c3y == u3du(qn_dab)) &&
+          if ( (c3y == u3ic(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                         u3qc_peg(axe, 2),

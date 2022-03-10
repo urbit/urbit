@@ -9,7 +9,7 @@
 
     /** u3r_*: read without ever crashing.
     **/
-#       define u3du(som)  (u3a_is_cell(som))
+#       define u3ic(som)  (u3a_is_cell(som))
 #       define u3ud(som)  (u3a_is_atom(som))
 
       /* u3r_at(): fragment `a` of `b`, or u3_none.

@@ -9,10 +9,10 @@
   static u3_noun
   _norm(u3_noun a)
   {
-    if ( c3n == u3du(a) ) {
+    if ( c3n == u3ic(a) ) {
       return u3_nul;
     } else {
-      return u3nc(((c3y == u3du(u3h(a))) ? u3_nul : u3k(u3h(a))),
+      return u3nc(((c3y == u3ic(u3h(a))) ? u3_nul : u3k(u3h(a))),
                   _norm(u3t(a)));
     }
   }

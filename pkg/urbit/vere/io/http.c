@@ -1803,8 +1803,8 @@ u3_http_ef_form(u3_httd* htd_u, u3_noun fig)
 
   if ( (c3n == u3r_qual(fig, &sec, &pro, &log, &red) ) ||
        // confirm sec is a valid (unit ^)
-       !( u3_nul == sec || ( c3y == u3du(sec) &&
-                             c3y == u3du(u3t(sec)) &&
+       !( u3_nul == sec || ( c3y == u3ic(sec) &&
+                             c3y == u3ic(u3t(sec)) &&
                              u3_nul == u3h(sec) ) ) ||
        // confirm valid flags ("loobeans")
        !( c3y == pro || c3n == pro ) ||

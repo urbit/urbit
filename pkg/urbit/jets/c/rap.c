@@ -30,7 +30,7 @@
           if ( 0 == cab ) {
             break;
           }
-          else if ( c3n == u3du(cab) ) {
+          else if ( c3n == u3ic(cab) ) {
             return u3m_bail(c3__exit);
           }
           else if ( c3n == u3ud(h_cab = u3h(cab)) ) {

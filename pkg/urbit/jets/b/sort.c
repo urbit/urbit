@@ -18,7 +18,7 @@
     if ( 0 == a ) {
       return u3nc(u3_nul, u3_nul);
     }
-    else if ( c3n == u3du(a) ) {
+    else if ( c3n == u3ic(a) ) {
       return u3m_bail(c3__exit);
     } else {
       u3_noun acc = _split_in(sit_u, u3t(a), second);
@@ -44,7 +44,7 @@
     if ( 0 == list ) {
       return u3_nul;
     }
-    else if ( c3n == u3du(list) ) {
+    else if ( c3n == u3ic(list) ) {
       return u3m_bail(c3__exit);
     } else {
       u3_noun hed, tal;

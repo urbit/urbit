@@ -274,7 +274,7 @@
   {
     while ( 1 ) {
       if ( u3_nul == lix ) return c3y;
-      if ( c3n == u3du(lix) ) return c3n;
+      if ( c3n == u3ic(lix) ) return c3n;
       lix = u3t(lix);
     }
   }

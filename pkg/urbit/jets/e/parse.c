@@ -67,7 +67,7 @@
     u3_noun zac;
 
     u3x_cell(tub, &p_tub, &q_tub);
-    if ( c3n == u3du(q_tub) ) {
+    if ( c3n == u3ic(q_tub) ) {
       return _fail(tub);
     }
     else {
@@ -94,7 +94,7 @@
     u3_noun p_vex, q_vex;
 
     u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return u3k(vex);
     } else {
       u3_noun uq_vex = u3t(q_vex);
@@ -109,7 +109,7 @@
       u3x_cell(yit, &p_yit, &q_yit);
       yur = _last(p_vex, p_yit);
 
-      if ( c3n == u3du(q_yit) ) {
+      if ( c3n == u3ic(q_yit) ) {
         ret = u3nc(yur, u3k(q_vex));
       }
       else {
@@ -166,7 +166,7 @@
 
     u3x_cell(vex, &p_vex, &q_vex);
 
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return vex;
     }
     else {
@@ -211,7 +211,7 @@
 
     u3x_cell(vex, &p_vex, &q_vex);
 
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return vex;
     }
     else {
@@ -256,7 +256,7 @@
     u3_noun p_vex, q_vex;
 
     u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return u3k(vex);
     } else {
       u3_noun uq_vex = u3t(q_vex);
@@ -271,7 +271,7 @@
       u3x_cell(yit, &p_yit, &q_yit);
       yur = _last(p_vex, p_yit);
 
-      if ( c3n == u3du(q_yit) ) {
+      if ( c3n == u3ic(q_yit) ) {
         ret = u3nc(yur, u3k(q_yit));
       }
       else {
@@ -346,7 +346,7 @@
     u3_noun p_vex, q_vex;
 
     u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return u3k(vex);
     }
     else {
@@ -362,7 +362,7 @@
       u3x_cell(yit, &p_yit, &q_yit);
       yur = _last(p_vex, p_yit);
 
-      if ( c3n == u3du(q_yit) ) {
+      if ( c3n == u3ic(q_yit) ) {
         ret = u3nc(yur, u3_nul);
       }
       else {
@@ -377,7 +377,7 @@
         goy = _last(yur, p_wam);
         u3z(yur);
 
-        if ( c3n == u3du(q_wam) ) {
+        if ( c3n == u3ic(q_wam) ) {
           ret = u3nc(goy, u3_nul);
         } else {
           u3_noun uq_wam = u3t(q_wam);
@@ -425,7 +425,7 @@
 
     u3x_cell(vex, &p_vex, &q_vex);
 
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return vex;
     }
     else {
@@ -479,7 +479,7 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( c3n == u3ic(q_tub) ) {
       return _fail(tub);
     }
     else {
@@ -515,13 +515,13 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( c3n == u3ic(q_tub) ) {
       return _fail(tub);
     }
     else {
       u3_noun iq_tub = u3h(q_tub);
 
-      while ( c3y == u3du(bud) ) {
+      while ( c3y == u3ic(bud) ) {
         if ( c3y == u3r_sing(u3h(bud), iq_tub) ) {
           return _next(tub);
         }
@@ -552,7 +552,7 @@
     u3_noun p_vex, q_vex;
 
     u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return u3k(vex);
     }
     else {
@@ -593,7 +593,7 @@
     u3_noun p_vex, q_vex;
 
     u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return u3k(vex);
     }
     else {
@@ -609,7 +609,7 @@
       u3x_cell(yit, &p_yit, &q_yit);
       yur = _last(p_vex, p_yit);
 
-      if ( c3n == u3du(q_yit) ) {
+      if ( c3n == u3ic(q_yit) ) {
         ret = u3nc(yur, u3k(q_yit));
       }
       else {
@@ -648,7 +648,7 @@
     u3_noun p_vex, q_vex;
 
     u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3y == u3du(q_vex) ) {
+    if ( c3y == u3ic(q_vex) ) {
       return u3k(vex);
     } else {
       u3_noun roq = u3x_good(u3n_kick_on(u3k(sab)));
@@ -684,7 +684,7 @@
     u3_noun p_vex, q_vex;
 
     u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return u3k(vex);
     }
     else {
@@ -699,7 +699,7 @@
       u3x_cell(yit, &p_yit, &q_yit);
       yur = _last(p_vex, p_yit);
 
-      if ( c3n == u3du(q_yit) ) {
+      if ( c3n == u3ic(q_yit) ) {
         ret = u3nc(yur, u3_nul);
       }
       else {
@@ -739,7 +739,7 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( c3n == u3ic(q_tub) ) {
       return _fail(tub);
     }
     else {
@@ -787,7 +787,7 @@
 
     u3x_cell(vex, &p_vex, &q_vex);
 
-    if ( c3n == u3du(q_vex) ) {
+    if ( c3n == u3ic(q_vex) ) {
       return vex;
     }
     else {
@@ -832,7 +832,7 @@
       return u3m_bail(c3__fail);
     }
     else {
-      if ( c3n == u3du(wan) ) {
+      if ( c3n == u3ic(wan) ) {
         if ( !_(u3a_is_cat(wan)) ) {
           return u3m_bail(c3__fail);
         }
@@ -856,7 +856,7 @@
     u3_noun p_tub, q_tub;
 
     u3x_cell(tub, &p_tub, &q_tub);
-    if ( c3n == u3du(q_tub) ) {
+    if ( c3n == u3ic(q_tub) ) {
       return _fail(tub);
     }
     else {
@@ -866,7 +866,7 @@
         return u3m_bail(c3__fail);
       }
       else while ( 1 ) {
-        if ( c3n == u3du(hel) ) {
+        if ( c3n == u3ic(hel) ) {
           return _fail(tub);
         }
         else {
@@ -877,7 +877,7 @@
           u3x_trel(hel, &n_hel, &l_hel, &r_hel);
           u3x_cell(n_hel, &pn_hel, &qn_hel);
 
-          if ( (c3n == u3du(pn_hel)) ) {
+          if ( (c3n == u3ic(pn_hel)) ) {
             bit_o = __((iq_tub == pn_hel));
           }
           else {
