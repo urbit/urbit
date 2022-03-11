@@ -1592,7 +1592,7 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
             else {
               u3_noun bis = dat;
 
-              while ( c3y == u3ic(bis) ) {
+              while ( c3y == u3du(bis) ) {
                 _term_ef_blit(uty_u, u3k(u3h(bis)));
                 bis = u3t(bis);
               }

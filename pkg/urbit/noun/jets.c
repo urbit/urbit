@@ -240,7 +240,7 @@ _cj_axis(u3_noun fol)
 {
   u3_noun p_fol, q_fol, r_fol;
 
-  while ( _(u3ic(fol)) && (11 == u3h(fol)) )
+  while ( _(u3du(fol)) && (11 == u3h(fol)) )
     { fol = u3t(u3t(fol)); }
 
   if ( !_(u3r_trel(fol, &p_fol, &q_fol, &r_fol)) ) {
@@ -258,7 +258,7 @@ _cj_axis(u3_noun fol)
       { u3l_log("axis: bad b\r\n"); return 0; }
     if ( !_(u3a_is_cat(q_fol)) )
       { u3l_log("axis: bad c\r\n"); return 0; }
-    if ( !_(u3ic(r_fol)) || (0 != u3h(r_fol)) || (1 != u3t(r_fol)) )
+    if ( !_(u3du(r_fol)) || (0 != u3h(r_fol)) || (1 != u3t(r_fol)) )
       { u3l_log("axis: bad d\r\n"); return 0; }
 
     return q_fol;
@@ -427,10 +427,10 @@ _cj_je_fsck(u3_noun clu)
   if ( 0 == (nam_c = _cj_chum(p_clu)) ) {
     u3z(clu); return u3_none;
   }
-  while ( _(u3ic(q_clu)) && (11 == u3h(q_clu)) ) {
+  while ( _(u3du(q_clu)) && (11 == u3h(q_clu)) ) {
     q_clu = u3t(u3t(q_clu));
   }
-  if ( !_(u3ic(q_clu)) ) {
+  if ( !_(u3du(q_clu)) ) {
     u3z(clu); c3_free(nam_c); return u3_none;
   }
 
@@ -446,7 +446,7 @@ _cj_je_fsck(u3_noun clu)
   {
     huk = 0;
 
-    while ( _(u3ic(r_clu)) ) {
+    while ( _(u3du(r_clu)) ) {
       u3_noun ir_clu, tr_clu, pir_clu, qir_clu;
 
       if ( (c3n == u3r_cell(r_clu, &ir_clu, &tr_clu)) ||
@@ -939,8 +939,8 @@ _cj_hook_in(u3_noun     cor,
   u3_weak   loc, col;
   u3_noun   roc, tem, got, pat, nam, huc;
 
-  if ( c3n == u3ic(cor) ) {
-    u3l_log("_cj_hook_in failure: c3n == u3ic(cor)\r\n");
+  if ( c3n == u3du(cor) ) {
+    u3l_log("_cj_hook_in failure: c3n == u3du(cor)\r\n");
     return u3m_bail(c3__fail);
   }
 
@@ -1150,8 +1150,8 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
   u3_noun   hax = 1;
   u3j_site* sit_u = &(han_u->sit_u);
 
-  if ( c3n == u3ic(cor) ) {
-    u3l_log("fail in _cj_hank_fill (c3n == u3ic(cor))");
+  if ( c3n == u3du(cor) ) {
+    u3l_log("fail in _cj_hank_fill (c3n == u3du(cor))");
     return u3m_bail(c3__fail);
   }
 
@@ -1685,7 +1685,7 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
 {
   u3_noun loc;
   u3t_on(glu_o);
-  if ( c3n == u3ic(cor) || c3n == u3ic(u3t(cor)) ) {
+  if ( c3n == u3du(cor) || c3n == u3du(u3t(cor)) ) {
     u3m_bail(c3__exit);
     return;
   }
@@ -1769,7 +1769,7 @@ _cj_minx(u3_noun cey, u3_noun cor)
     u3_noun pat;
 
     par = u3r_at(axe, cor);
-    if ( u3_none == par || c3n == u3ic(par) ) {
+    if ( u3_none == par || c3n == u3du(par) ) {
       u3l_log("fund: %s is bogus\r\n", u3r_string(nam));
       return u3_none;
     }
@@ -1917,7 +1917,7 @@ static u3_weak
 _cj_mile(u3_noun clu, u3_noun cor)
 {
   u3_weak loc = u3_none;
-  if ( c3n == u3ic(cor) ) {
+  if ( c3n == u3du(cor) ) {
     u3z(clu);
     u3z(cor);
   }

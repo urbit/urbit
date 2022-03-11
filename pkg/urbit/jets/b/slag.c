@@ -19,7 +19,7 @@
       c3_w len_w = a;
 
       while ( len_w ) {
-        if ( c3n == u3ic(b) ) {
+        if ( c3n == u3du(b) ) {
           return u3_nul;
         }
         b = u3t(b);

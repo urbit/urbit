@@ -1352,7 +1352,7 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
 {
   c3_assert( c3y == dir_u->dir );
 
-  if ( c3n == u3ic(pax) ) {
+  if ( c3n == u3du(pax) ) {
     if ( u3_nul == pax ) {
       u3l_log("can't sync out file as top-level, strange\r\n");
     }
@@ -1362,7 +1362,7 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
     u3z(pax); u3z(mim);
     return;
   }
-  else if ( c3n == u3ic(u3t(pax)) ) {
+  else if ( c3n == u3du(u3t(pax)) ) {
     u3l_log("can't sync out file as top-level, strangely\r\n");
     u3z(pax); u3z(mim);
   }
@@ -1455,7 +1455,7 @@ u3_unix_ef_hill(u3_unix* unx_u, u3_noun hil)
 {
   u3_noun mon;
 
-  for ( mon = hil; c3y == u3ic(mon); mon = u3t(mon) ) {
+  for ( mon = hil; c3y == u3du(mon); mon = u3t(mon) ) {
     u3_umon* mon_u = _unix_get_mount_point(unx_u, u3k(u3h(mon)));
     _unix_scan_mount_point(unx_u, mon_u);
   }

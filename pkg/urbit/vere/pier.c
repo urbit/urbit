@@ -1627,7 +1627,7 @@ _pier_pill_parse(u3_noun pil)
   u3_boot bot_u;
   u3_noun pil_p, pil_q;
 
-  c3_assert( c3y == u3ic(pil) );
+  c3_assert( c3y == u3du(pil) );
   u3x_cell(pil, &pil_p, &pil_q);
 
   {
@@ -1746,7 +1746,7 @@ _pier_boot_make(u3_noun who,
 
   //  include additional key configuration events if we have multiple keys
   //
-  if ( (u3_none != fed) && (c3y == u3ic(u3h(fed))) ) {
+  if ( (u3_none != fed) && (c3y == u3du(u3h(fed))) ) {
     u3_noun wir = u3nt(c3__j, c3__seed, u3_nul);
     u3_noun tag = u3i_string("rekey");
     u3_noun kyz = u3t(u3t(fed));
@@ -2193,7 +2193,7 @@ _pier_dump_tape(FILE* fil_u, u3_noun tep)
 {
   u3_noun tap = tep;
 
-  while ( c3y == u3ic(tap) ) {
+  while ( c3y == u3du(tap) ) {
     c3_c car_c;
 
     //  XX this utf-8 caution is unwarranted
@@ -2297,7 +2297,7 @@ u3_pier_punt(c3_l tab_l, u3_noun tac)
 {
   u3_noun cat = tac;
 
-  while ( c3y == u3ic(cat) ) {
+  while ( c3y == u3du(cat) ) {
     u3_pier_tank(tab_l, 0, u3k(u3h(cat)));
     cat = u3t(cat);
   }

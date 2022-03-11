@@ -163,7 +163,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
     u3R->pro.nox_d += 1;
 #endif
 
-    if ( c3y == u3ic(hib) ) {
+    if ( c3y == u3du(hib) ) {
       u3_noun poz, riv;
 
       poz = _n_nock_on(u3k(bus), u3k(hib));
@@ -211,7 +211,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         u3_noun gof, pro;
 
         gof = _n_nock_on(bus, u3k(gal));
-        pro = u3ic(gof);
+        pro = u3du(gof);
 
         u3a_lose(gof); u3a_lose(fol);
         return pro;
@@ -332,7 +332,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         {
           u3_noun zep, hod, nex;
 
-          if ( c3y == u3ic(p_gal) ) {
+          if ( c3y == u3du(p_gal) ) {
             u3_noun b_gal = u3h(p_gal);
             u3_noun c_gal = u3t(p_gal);
             u3_noun d_gal = q_gal;
@@ -364,10 +364,10 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         val = u3m_soft_esc(u3k(ref), u3k(gof));
         u3t_on(noc_o);
 
-        if ( !_(u3ic(val)) ) {
+        if ( !_(u3du(val)) ) {
           u3m_bail(u3nt(1, gof, 0));
         }
-        if ( !_(u3ic(u3t(val))) ) {
+        if ( !_(u3du(u3t(val))) ) {
           //
           //  replace with proper error stack push
           //
@@ -558,7 +558,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
 
   while ( u3_nul != ops ) {
     op  = u3h(ops);
-    if ( c3n == u3ic(op) ) {
+    if ( c3n == u3du(op) ) {
       switch ( op ) {
         default:
           siz_y[i_w] = 1;
@@ -1022,7 +1022,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 {
   c3_w tot_w = 0;
 
-  if ( c3n == u3ic(hif) ) {
+  if ( c3n == u3du(hif) ) {
     //  compile whitelisted atomic hints to dispatch protocol;
     //  compute and drop all others;
     //
@@ -1153,7 +1153,7 @@ _n_formulaic(u3_noun fol)
   if ( c3n == u3r_cell(fol, &op, &ar) ) {
     return 0;
   }
-  if ( c3y == u3ic(op) ) {
+  if ( c3y == u3du(op) ) {
     return _n_formulaic(op) && _n_formulaic(ar);
   }
   else switch ( op ) {
@@ -1183,7 +1183,7 @@ _n_formulaic(u3_noun fol)
       if ( c3n == u3r_cell(ar, &a, &b) ) {
         return 0;
       }
-      if ( c3n == u3ic(a) ) {
+      if ( c3n == u3du(a) ) {
         return 0;
       }
       if ( c3n == u3ud(u3h(a)) ) {
@@ -1223,7 +1223,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   c3_w tot_w = 0;
   u3_noun cod, arg, hed, tel;
   u3x_cell(fol, &cod, &arg);
-  if ( c3y == u3ic(cod) ) {
+  if ( c3y == u3du(cod) ) {
     tot_w += _n_comp(ops, cod, c3n, c3n);
     ++tot_w; _n_emit(ops, SWAP);
     tot_w += _n_comp(ops, arg, c3n, c3n);
@@ -1301,14 +1301,14 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
     case 5: {
       u3x_cell(arg, &hed, &tel);
 
-      if ( c3n == u3ic(hed) ) {
+      if ( c3n == u3du(hed) ) {
         u3m_bail(c3__exit);
         return 0;
       }
       else {
         c3_t hec_t, tec_t;
         hec_t = (1 == u3h(hed));
-        if ( c3n == u3ic(tel) ) {
+        if ( c3n == u3du(tel) ) {
           u3m_bail(c3__exit);
           break;
         }
@@ -1864,7 +1864,7 @@ _n_kick(u3_noun cor, u3j_site* sit_u)
 static inline u3_noun
 _n_kale(u3_noun a)
 {
-  if ( c3n == u3ic(a) ) {
+  if ( c3n == u3du(a) ) {
     u3m_bail(c3__exit);
   }
   return a;
@@ -2158,7 +2158,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     do_deep:
       top  = _n_peek(off);
       o    = *top;
-      *top = u3ic(o);
+      *top = u3du(o);
       u3z(o);
       BURN();
 
@@ -2367,11 +2367,11 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       x   = u3m_soft_esc(u3k(*top), u3k(o));
       u3t_on(noc_o);
 
-      if ( c3n == u3ic(x) ) {
+      if ( c3n == u3du(x) ) {
         u3m_bail(u3nc(1, o));
         return u3_none;
       }
-      else if ( c3n == u3ic(u3t(x)) ) {
+      else if ( c3n == u3du(u3t(x)) ) {
         u3t_push(u3nt(c3__hunk, *top, o));
         u3m_bail(c3__exit);
         return u3_none;

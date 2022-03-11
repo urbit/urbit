@@ -18,7 +18,7 @@
 
         u3r_trel(con, &p_con, &q_con, &r_con);
         u3r_cell(r_con, &hr_con, &tr_con);
-        if ( (c3y == u3ic(hr_con)) &&
+        if ( (c3y == u3du(hr_con)) &&
              (u3_nul == u3h(hr_con)) &&
              (u3_nul == u3t(hr_con)) )
         {
@@ -62,7 +62,7 @@
   {
     u3_noun p_sut, q_sut;
 
-    if ( c3n == u3ic(sut) ) switch ( sut ) {
+    if ( c3n == u3du(sut) ) switch ( sut ) {
       default: u3m_bail(c3__fail); return;
 
       case c3__noun:

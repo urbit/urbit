@@ -11,7 +11,7 @@
     } else {
       u3_noun loz;
 
-      if ( c3n == u3ic(a) ) {
+      if ( c3n == u3du(a) ) {
         return u3m_bail(c3__exit);
       }
       else switch ( (loz = u3j_gate_slam(sit_u, u3k(u3h(a)))) ) {

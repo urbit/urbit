@@ -204,7 +204,7 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 void
 _king_pier(u3_noun pier)
 {
-  if ( (c3n == u3ic(pier)) ||
+  if ( (c3n == u3du(pier)) ||
        (c3n == u3ud(u3t(pier))) ) {
     u3m_p("daemon: invalid pier", pier);
     exit(1);

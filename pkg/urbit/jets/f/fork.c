@@ -31,7 +31,7 @@
       u3_noun i_yed = u3h(yed);
 
       if ( c3__void != i_yed ) {
-        if ( (c3y == u3ic(i_yed)) && (c3__fork == u3h(i_yed)) ) {
+        if ( (c3y == u3du(i_yed)) && (c3__fork == u3h(i_yed)) ) {
           lez = u3kdi_uni(lez, u3k(u3t(i_yed)));
         }
         else {
