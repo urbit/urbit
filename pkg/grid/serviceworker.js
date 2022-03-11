@@ -35,54 +35,58 @@ const encoder = new TextEncoder();
 const serverConnection = {};
 // For each request opens only one server connection and use it for next requests with the same url
 async function getServerConnection(url) {
-  if (!serverConnection.url) {
-    serverConnection.url = url;
-  }
+  return new Promise((resolve, reject) => {
+    if (!serverConnection.url) {
+      serverConnection.url = url;
+    }
 
-  if (!serverConnection.source) {
-    const listeners = [];
-    const source = new AbortController();
-    fetchEventSource(serverConnection.url || url, {
-      credentials: 'include',
-      accept: '*',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      signal: source.signal,
-      openWhenHidden: true,
-      onmessage: (event) => {
-        const parsedData = JSON.parse(event.data);
-        isDev && console.log(event.data);
+    if (!serverConnection.source) {
+      const listeners = [];
+      const source = new AbortController();
+      fetchEventSource(serverConnection.url || url, {
+        credentials: 'include',
+        accept: '*',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        signal: source.signal,
+        openWhenHidden: true,
+        onopen: () => {
+          serverConnection.source = source;
+          serverConnection.listeners = listeners;
+          serverConnection.count = 0;
+          serverConnection.eventId = 0;
+          resolve(serverConnection);
+        },
+        onmessage: (event) => {
+          const parsedData = JSON.parse(event.data);
+          isDev && console.log(event.data);
 
-        // if (!('ok' in parsedData)) {
-        serverConnection.eventId = parseInt(parsedData.id, 10);
-        // }
+          // if (!('ok' in parsedData)) {
+          serverConnection.eventId = parseInt(parsedData.id, 10);
+          // }
 
-        const responseData = encodeEvent(event);
-        const handlers = serverConnection.listeners.slice();
-        handlers.forEach(({ handle }) => {
-          handle(responseData);
-        });
-      },
-      onerror: () => {
-        throw new Error('failed to initiate stream');
-      },
-      onclose: () => {
-        const handlers = serverConnection.listeners.slice();
-        handlers.forEach(({ close }) => {
-          close();
-        });
-        clearConnection();
-      }
-    });
-
-    serverConnection.source = source;
-    serverConnection.listeners = listeners;
-    serverConnection.count = 0;
-    serverConnection.eventId = 0;
-  }
-
-  return serverConnection;
+          const responseData = encodeEvent(event);
+          const handlers = serverConnection.listeners.slice();
+          handlers.forEach(({ handle }) => {
+            handle(responseData);
+          });
+        },
+        onerror: () => {
+          reject(new Error('failed to initiate stream'));
+        },
+        onclose: () => {
+          const handlers = serverConnection.listeners.slice();
+          handlers.forEach(({ close }) => {
+            close();
+          });
+          clearConnection();
+        }
+      });
+    } else {
+      resolve(serverConnection);
+    }
+  });
 }
 
 registerRoute(
