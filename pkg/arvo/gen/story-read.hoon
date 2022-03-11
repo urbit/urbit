@@ -90,8 +90,8 @@
     ::  (by definition) towards the less recent side of the resulting flopped list
     ::
     =.  state  [result=(weld msg result.state) mergebase=next-mergebase]  :: 1
-    =.  state  commit-loop(current-commit sideline-commit)                                  :: 2
-    =.  state  commit-loop(current-commit mainline-commit)                                  :: 3
+    =.  state  commit-loop(current-commit sideline-commit)                :: 2
+    =.  state  commit-loop(current-commit mainline-commit)                :: 3
     state
   ::
       [tako:clay tako:clay tako:clay *]
