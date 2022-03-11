@@ -15,11 +15,9 @@
   tang+[leaf+"Error: desk {<desk>} does not exist." ~]
 ?:  !.^(? %cu pax)
   tang+['Error: No story file found. Please use |story-init to create one.' ~]
-=/  story-to-mime  
-  .^($-(story mime) %cf /(scot %p our)/[desk]/(scot cas)/story/mime)
+=/  story-to-txt
+  .^($-(story wain) %cf /(scot %p our)/[desk]/(scot cas)/story/txt)
 ::
-=/  tale=story  .^(story %cx pax)
-=/  tale-mime   (story-to-mime tale)
-=/  tale-text   `@t`q.q.tale-mime
-:-  %tang
-[tale-text ~]
+=/  tale        .^(story %cx pax)
+=/  tale-text  (story-to-txt tale)
+tang+tale-text
