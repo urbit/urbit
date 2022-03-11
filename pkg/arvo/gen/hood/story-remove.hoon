@@ -1,4 +1,6 @@
-::  story: Remove any commit message(s) for a given desk, optionally targeting a specific case or prose
+::  story: Remove any commit message(s) for a given commit
+::
+::  Optionally targeting a specific desk or prose
 ::
 ::::
   ::

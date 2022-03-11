@@ -1,4 +1,6 @@
-::  story: Attach a commit message to the commit associated with a given case on a given desk
+::  story: Attach a commit message (to the last commit by default)
+::
+::  Optionally takes a case and desk
 ::
 ::::
   ::

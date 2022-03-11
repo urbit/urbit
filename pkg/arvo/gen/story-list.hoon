@@ -1,4 +1,4 @@
-::  story: (Internal) List all commit messages for the given desk including orphans
+::  story: List unordered commit messages for the given desk, including orphans
 ::
 ::::
   ::
@@ -13,10 +13,13 @@
 =/  pax                   /(scot %p our)/[desk]/(scot cas)/story
 ?:  !(~(has in .^((set ^desk) %cd /(scot %p our)/$/(scot %da now))) desk)
   tang+[leaf+"Error: desk {<desk>} does not exist." ~]
-?:  !.^(? %cu pax)         tang+['Error: No story file found. Please use |story-init to create one.' ~]
-=/  tale=story            .^(story %cx pax)
-=/  story-to-mime         .^($-(story mime) %cf /(scot %p our)/[desk]/(scot cas)/story/mime)
-=/  tale-mime             (story-to-mime tale)
-=/  tale-text             `@t`q.q.tale-mime
+?:  !.^(? %cu pax)
+  tang+['Error: No story file found. Please use |story-init to create one.' ~]
+=/  story-to-mime  
+  .^($-(story mime) %cf /(scot %p our)/[desk]/(scot cas)/story/mime)
+::
+=/  tale=story  .^(story %cx pax)
+=/  tale-mime   (story-to-mime tale)
+=/  tale-text   `@t`q.q.tale-mime
 :-  %tang
 [tale-text ~]

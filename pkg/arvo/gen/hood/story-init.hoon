@@ -1,4 +1,4 @@
-::  story: Create a story file for a given desk, optionally overwriting an existing one
+::  story: Create a story file for a given desk, optionally overwriting
 ::
 ::::
   ::
@@ -14,7 +14,8 @@
   helm-pass+[%d %noop ~]
 =/  existing-story        .^(? %cu /(scot %p our)/[desk]/(scot %da now)/story)
 ?:  ?&(existing-story !overwrite)
-  ~&  >>  "Error: /{(trip (slav %tas desk))}/story already exists. Set the optional parameter `overwrite` to `%.y` to forcibly overwrite."
+  ~&  >>  "Error: /{(trip (slav %tas desk))}/story already exists."
+  ~&  >>  "To forcibly overwrite, use `=overwrite %.y`"
   ::  XX could use a better way to noop
   helm-pass+[%d %noop ~]
 =|  tale=story

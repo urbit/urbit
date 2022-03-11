@@ -99,11 +99,14 @@
     (cook crip ;~(sfix (star prn) (just '\0a')))
   ==
 ::
-++  parse-prose-single    ;~(plug parse-title parse-body)  ::`$-(nail (like prose))`
-++  parse-rest-proses     (star ;~(pfix (jest '|||\0a') parse-prose-single))  ::`$-(nail (like (list prose)))`
-++  parse-proses          (cook silt ;~(plug parse-prose-single parse-rest-proses))  :: `$-(nail (like proses))`
-++  parse-chapter         ;~(plug parse-commit-hash parse-proses)  :: `$-(nail (like chapter))`
-++  parse-story           (cook ~(gas by *story) (star ;~(sfix parse-chapter (jest '---\0a'))))
-::  N.B. if instead of writing conflicting messages all under one conflict and you split them up (which is not supported notation), 
-::  we will overwrite previous entries with later ones (due to the nature of gas:by)
+++  parse-prose        ;~(plug parse-title parse-body)
+++  parse-rest-proses  (star ;~(pfix (jest '|||\0a') parse-prose))
+++  parse-proses       (cook silt ;~(plug parse-prose parse-rest-proses))
+++  parse-chapter      ;~(plug parse-commit-hash parse-proses)
+++  parse-story
+  (cook ~(gas by *story) (star ;~(sfix parse-chapter (jest '---\0a'))))
+::
+::  N.B: If conflicting messages are written individually,
+::  instead of under the same commit, we will overwrite previous entries
+::  with later ones due to the nature of gas:by.
 --

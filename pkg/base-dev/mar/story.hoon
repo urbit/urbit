@@ -1,6 +1,5 @@
 /-  *story
 /+  *story
-!:
 |_  tale=story
 ++  grad
   |%
@@ -14,7 +13,8 @@
     [(dif-ju tory tale) (dif-ju tale tory)]
   ++  pact
     |=  dif=story-diff
-    ::  compute the new story after applying dif to tale
+    ::  Compute the new story after applying dif to tale.
+    ::
     ^-  story
     =.  tale  (uni-ju tale additions.dif)
     =.  tale  (dif-ju tale deletions.dif)
@@ -25,8 +25,10 @@
     =/  joined-additions  (uni-ju additions.ali additions.bob)
     =/  joined-deletions  (uni-ju deletions.ali deletions.bob)
     ::
-    :: in a true join, we'd do an intersection and see if the vals are not exactly the same
-    :: which means we have a conflict, then we'd produce null, kick the flow to mash
+    ::  In a true join, we'd do a set intersection on the keys.
+    ::  If they're not equal, we have a conflict.
+    ::  In this case, we'd produce null and kick the flow to +mash
+    ::
     %-  some
     [joined-additions joined-deletions]
   ++  mash
@@ -58,9 +60,9 @@
     ==
   --
 ++  grab
-  |%                                             ::  convert from
-  ++  noun  story                                ::  clam from %noun
-  ++  mime                                       ::  retrieve form %mime
+  |%                                                    ::  convert from
+  ++  noun  story                                       ::  clam from %noun
+  ++  mime                                              ::  retrieve from %mime
     |=  [p=mite q=octs]
     =/  story-text    `@t`q.q
     `story`(rash story-text parse-story)
