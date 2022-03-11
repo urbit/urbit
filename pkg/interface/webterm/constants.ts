@@ -11,7 +11,7 @@ export const DEFAULT_SESSION = '';
 export const SESSION_ID_REGEX = /(^[a-z]{1}[a-z\d-]*[a-z\d]{1}$)|(^[a-z]{1}$)/;
 
 /**
- * Open a session with a given agent using `[agent]![session_name]
+ * Open a session with a given agent using `[agent]![session_name]`
  *
  * For example:
  * ```

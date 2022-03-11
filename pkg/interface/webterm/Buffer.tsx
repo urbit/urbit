@@ -14,6 +14,7 @@ import { Box, Col } from '@tlon/indigo-react';
 import { makeTheme } from './lib/theme';
 import { showBlit, csi } from './lib/blit';
 import { DEFAULT_SESSION } from './constants';
+import { retry } from './lib/retry';
 
 const termConfig: ITerminalOptions = {
   logLevel: 'warn',
@@ -191,10 +192,16 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
         },
         quit: async () => {  //  quit
           console.error('oops quit, reconnecting...');
-          const newSubscriptionId = await initSubscription();
-          useTermState.getState().set((state) => {
-            state.sessions[name].subscriptionId = newSubscriptionId;
-          });
+          try {
+            const newSubscriptionId = await retry(initSubscription, () => {
+              console.log('attempting to reconnect ...');
+            }, 5);
+            useTermState.getState().set((state) => {
+              state.sessions[name].subscriptionId = newSubscriptionId;
+            });
+          } catch (error) {
+            console.log('unable to reconnect', error);
+          }
         }
       });
 
