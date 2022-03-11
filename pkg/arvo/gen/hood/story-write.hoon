@@ -5,7 +5,7 @@
 /-  *story
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [[=prose ~] =desk cas=cash ~]
+        [[title=@t body=$@(~ [p=@t ~])] =desk cas=cash ~]
     ==
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec   :: use current desk if user didn't provide
@@ -26,6 +26,7 @@
   ~&  >>  "Error: No story file found. Please use |story-init to create one."
   helm-pass+[%d %noop ~]
 =/  tale=story     .^(story %cx /(scot %p our)/[desk]/(scot %da now)/story)
+=/  =prose         [title ?~(body '' p.body)]
 =.  tale           (~(put ju tale) tak prose)
 :-  %helm-pass
 [%c [%info desk %& [/story %ins story+!>(tale)]~]]
