@@ -2,8 +2,6 @@
 /+  *story
 !:
 |_  tale=story
-+$  story-diff       [additions=story deletions=story]
-::
 ++  grad
   |%
   ++  form  %story-diff
