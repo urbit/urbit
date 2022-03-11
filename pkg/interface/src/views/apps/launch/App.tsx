@@ -12,7 +12,7 @@ import ModalButton from './components/ModalButton';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import './css/custom.css';
-import { JoinRoute } from '~/views/landscape/components/Join/Join';
+import { createJoinParams, JoinRoute } from '~/views/landscape/components/Join/Join';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -36,7 +36,7 @@ export const LaunchApp = (): ReactElement | null => {
         </title>
       </Helmet>
       <Route path='/join/:ship/:name'>
-        <JoinRoute modal />
+        <JoinRoute />
       </Route>
       <ScrollbarLessBox
         height='100%'
@@ -90,7 +90,7 @@ export const LaunchApp = (): ReactElement | null => {
                 border={0}
                 p={0}
                 borderRadius={2}
-                onClick={() => history.push({ search: '?join-kind=group' })}
+                onClick={() => history.push({ search: createJoinParams('groups') })}
               >
                 <Row backgroundColor='white' gapX='2' p={2} height='100%' width='100%' alignItems='center'>
                   <Icon icon='BootNode' />

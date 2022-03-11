@@ -167,9 +167,11 @@ export function ShipSearch<I extends string, V extends Value<I>>(
       name={id}
       render={(arrayHelpers) => {
         const onAdd = (ship: string) => {
-          setFieldValue(name(), ship);
-          inputIdx.current += 1;
-          arrayHelpers.push('');
+          if (!pills.includes(ship)) {
+            setFieldValue(name(), ship);
+            inputIdx.current += 1;
+            arrayHelpers.push('');
+          }
         };
 
         const onRemove = (idx: number) => {

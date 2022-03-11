@@ -45,7 +45,7 @@ export function SidebarListHeader(props: {
 
   const metadata = associations?.groups?.[groupPath]?.metadata;
   const memberMetadata =
-    groupPath ? metadata.vip === 'member-metadata' : false;
+    groupPath && metadata ? metadata.vip === 'member-metadata' : false;
 
   const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
 

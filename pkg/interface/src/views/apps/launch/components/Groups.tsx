@@ -22,6 +22,7 @@ import useSettingsState, {
 } from "~/logic/state/settings";
 import Tile from "../components/tiles/tile";
 import { useQuery } from "~/logic/lib/useQuery";
+import { createJoinParams } from "~/views/landscape/components/Join/Join";
 
 const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
@@ -123,8 +124,7 @@ function PendingGroup(props: PendingGroupProps) {
   const title = preview?.metadata?.title || path;
   const { toQuery } = useQuery();
   const onClick = () => {
-    const { ship, name } = resourceFromPath(path);
-    history.push(toQuery({ "join-kind": "groups", "join-path": path }));
+    history.push(toQuery(createJoinParams('groups', path, null, false)));
   };
 
   const joining = useGroupState((s) => s.pendingJoin[path]?.progress);
@@ -143,6 +143,8 @@ function PendingGroup(props: PendingGroupProps) {
         <Box>
           {!joining ? (
             <Text color="blue">Invited</Text>
+          ) : joining === 'no-perms' || joining == 'strange' ? (
+            <Text color="red">Join Failed</Text>
           ) : joining !== "done" ? (
             <Text gray>Joining...</Text>
           ) : (

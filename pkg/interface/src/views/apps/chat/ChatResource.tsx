@@ -90,7 +90,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   );
 
   const isAdmin = useMemo(
-    () => (group ? _.includes(group.tags.role.admin, `~${window.ship}`) : false),
+    () => (group ? _.includes(group.tags.role.admin, deSig(window.ship)) : false),
     [group]
   );
 

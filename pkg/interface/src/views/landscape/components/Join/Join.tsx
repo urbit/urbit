@@ -9,15 +9,16 @@ import {
   ContinuousProgressBar
 } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import useGroupState from '~/logic/state/group';
 import { useInviteForResource } from '~/logic/state/invite';
-import { usePreview } from '~/logic/state/metadata';
+import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { joinError, joinLoad, JoinProgress, join, JoinRequest, decline, Invite } from '@urbit/api';
 import airlock from '~/logic/api';
 import { useQuery } from '~/logic/lib/useQuery';
 import { JoinDesc, JoinSkeleton } from './Skeleton';
+import { preSig } from '~/logic/lib/util';
 
 interface InviteWithUid extends Invite {
   uid: string;
@@ -148,8 +149,9 @@ function JoinError(props: {
   desc: JoinDesc;
   request: JoinRequest;
   modal: boolean;
+  dismiss: () => void;
 }) {
-  const { desc, request, modal } = props;
+  const { dismiss, desc, request, modal } = props;
   const { preview } = usePreview(desc.group);
   const group = preview?.metadata?.title ?? desc.group;
   const title = `Joining ${group} failed`;
@@ -158,12 +160,26 @@ function JoinError(props: {
       ? 'You do not have the correct permissions'
       : 'An unexpected error occurred';
 
+  const onRetry = () => {
+    useGroupState.getState().abortJoin(desc.group);
+    const [,,ship,name] = group.split('/');
+    airlock.poke(
+      join(ship, name, desc.kind, false, false)
+    );
+  };
+
+  const onAbort = () => {
+    useGroupState.getState().abortJoin(desc.group);
+    dismiss();
+  };
+
   return (
     <JoinSkeleton modal={modal} title={title} desc={desc}>
       <Col p='4' gapY='4'>
         <Text fontWeight='medium'>{explanation}</Text>
-        <Row>
-          <Button>Dismiss</Button>
+        <Row gapX="2">
+          <Button onClick={onRetry} primary>Retry</Button>
+          <Button onClick={onAbort} destructive>Abort</Button>
         </Row>
       </Col>
     </JoinSkeleton>
@@ -182,6 +198,8 @@ export function Join(props: JoinProps) {
   const { group, kind } = desc;
   const [, , ship, name] = group.split('/');
   const graph = kind === 'graph';
+  const associations = useMetadataState(s => s.associations);
+  const joined = graph ? associations.graph[group] : associations.groups[group];
   const finishedPath = redir
     ? redir
     : graph
@@ -189,14 +207,23 @@ export function Join(props: JoinProps) {
     : `/~landscape/ship/${ship}/${name}`;
 
   const history = useHistory();
-  const joinRequest = useGroupState((s) => s.pendingJoin[group]);
+  const joinRequest = useGroupState(s => s.pendingJoin[group]);
+  const [openedRequest, setOpenedRequest] = useState<JoinRequest>();
   const invite = useInviteForResource(kind, ship, name);
 
-  const isDone = joinRequest && joinRequest.progress === 'done';
+  const isDone = openedRequest && openedRequest.progress === 'done' && joined;
   const isErrored =
-    joinRequest && joinError.includes(joinRequest.progress as any);
+  openedRequest && joinError.includes(openedRequest.progress as any);
   const isLoading =
-    joinRequest && joinLoad.includes(joinRequest.progress as any);
+  openedRequest && joinLoad.includes(openedRequest.progress as any);
+
+  // If we opened this modal from a join request,
+  // don't let the request getting deleted move us to the wrong state
+  useEffect(() => {
+    if (joinRequest) {
+      setOpenedRequest(joinRequest);
+    }
+  }, [joinRequest]);
 
   useEffect(() => {
     if (isDone && desc.kind == 'graph') {
@@ -216,11 +243,11 @@ export function Join(props: JoinProps) {
       modal={modal}
       dismiss={dismiss}
       desc={desc}
-      request={joinRequest}
+      request={openedRequest}
       finished={finishedPath}
     />
   ) : isErrored ? (
-    <JoinError modal={modal} desc={desc} request={joinRequest} />
+    <JoinError dismiss={dismiss} modal={modal} desc={desc} request={openedRequest} />
   ) : (
     <JoinInitial modal={modal} dismiss={dismiss} desc={desc} invite={invite} />
   );
@@ -243,7 +270,7 @@ export function JoinPrompt(props: JoinPromptProps) {
   };
 
   const onSubmit = async ({ link }: PromptFormSchema) => {
-    const path = `/ship/${link}`;
+    const path = `/ship/${preSig(link)}`;
     history.push({
       search: appendQuery({ 'join-path': path })
     });
@@ -336,21 +363,46 @@ export function JoinDone(props: JoinDoneProps) {
   );
 }
 
-export function JoinRoute(props: { graph?: boolean; modal?: boolean }) {
-  const { graph = false } = props;
+export interface JoinParams extends Record<string, string> {
+  'join-kind': JoinKind;
+  'join-path'?: string;
+  redir?: string;
+}
+
+export function createJoinParams(kind: JoinKind, path?: string, redirect?: string, inLink?: true): string;
+export function createJoinParams(kind: JoinKind, path?: string, redirect?: string, inLink?: false): JoinParams;
+export function createJoinParams(kind: JoinKind, path?: string, redirect?: string, inLink = true) {
+  const params = {
+    'join-kind': kind
+  };
+
+  if (path) {
+    params['join-path'] = path;
+  }
+
+  if (redirect) {
+    params['redir'] = redirect;
+  }
+
+  return inLink ? '?' + new URLSearchParams(params).toString() : params;
+}
+
+export function JoinRoute() {
   const { query } = useQuery();
   const history = useHistory();
   const { pathname } = useLocation();
   const kind = query.get('join-kind');
-  const path = query.get('join-path');
+  const path = query.get('join-path')?.replace('web+urbitgraph://group/', '');
   const redir = query.get('redir');
+
   if (!kind) {
     return null;
   }
+
   const desc: JoinDesc = path
     ? {
         group: path,
-        kind: graph ? 'graph' : 'groups',
+        kind: kind === 'graph' ? 'graph' : 'groups'
       }
     : undefined;
 
