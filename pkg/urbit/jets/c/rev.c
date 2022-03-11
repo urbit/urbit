@@ -29,9 +29,9 @@
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &boz,
                                u3x_sam_6, &len,
                                u3x_sam_7, &dat, 0)) ||
-         (c3n == u3ia(boz)) ||
-         (c3n == u3ia(len)) ||
-         (c3n == u3ia(dat)) )
+         (c3n == u3ud(boz)) ||
+         (c3n == u3ud(len)) ||
+         (c3n == u3ud(dat)) )
     {
       return u3m_bail(c3__exit);
     } else {

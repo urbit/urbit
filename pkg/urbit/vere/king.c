@@ -205,7 +205,7 @@ void
 _king_pier(u3_noun pier)
 {
   if ( (c3n == u3ic(pier)) ||
-       (c3n == u3ia(u3t(pier))) ) {
+       (c3n == u3ud(u3t(pier))) ) {
     u3m_p("daemon: invalid pier", pier);
     exit(1);
   }
@@ -406,7 +406,7 @@ _boothack_key(u3_noun kef)
 
     //  if it's a single seed, we can trivially sanity-check early
     //
-    if ( c3y == u3ia(u3h(seed)) ) {
+    if ( c3y == u3ud(u3h(seed)) ) {
       //  local reference, not counted
       //
       ship = u3h(seed);

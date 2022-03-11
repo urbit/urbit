@@ -14,7 +14,7 @@ u3we_trip(u3_noun cor)
 {
   u3_noun a = u3x_at(u3x_sam, cor);
 
-  if ( c3n == u3ia(a) ) {
+  if ( c3n == u3ud(a) ) {
     return u3m_bail(c3__exit);
   }
 

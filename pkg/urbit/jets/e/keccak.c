@@ -26,7 +26,7 @@
     c3_w    len_w; \
     u3_noun len, tom; \
     u3x_mean(cor, u3x_sam_2, &len, u3x_sam_3, &tom, 0); \
-    return ( (c3n == u3ia(len)) || (c3n == u3ia(tom)) ) \
+    return ( (c3n == u3ud(len)) || (c3n == u3ud(tom)) ) \
       ? u3m_bail(c3__exit) \
       : (!u3r_word_fit(&len_w, len)) \
       ? u3m_bail(c3__fail) \

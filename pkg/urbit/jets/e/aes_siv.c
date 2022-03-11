@@ -22,7 +22,7 @@ _cqea_measure_ads(u3_noun ads, c3_w* soc_w, c3_w *mat_w, c3_w *dat_w)
 
   for ( a_w = b_w = 0, t = ads; u3_nul != t; ++a_w ) {
     u3x_cell(t, &i, &t);
-    if ( c3n == u3ia(i) ) {
+    if ( c3n == u3ud(i) ) {
       u3m_bail(c3__exit);
       return;
     }
@@ -188,8 +188,8 @@ u3wea_siva_en(u3_noun cor)
   if ( c3n == u3r_mean(cor, u3x_sam, &txt,
                        u3x_con_sam_2, &key,
                        u3x_con_sam_3, &ads, 0) ||
-       c3n == u3ia(key) ||
-       c3n == u3ia(txt) ) {
+       c3n == u3ud(key) ||
+       c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
     return u3l_punt("siva-en", _cqea_siva_en(key, ads, txt));
@@ -224,8 +224,8 @@ u3wea_siva_de(u3_noun cor)
                        u3x_sam_7, &txt,
                        u3x_con_sam_2, &key,
                        u3x_con_sam_3, &ads, 0) ||
-       c3n == u3ia(key) ||
-       c3n == u3ia(txt) ) {
+       c3n == u3ud(key) ||
+       c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
     return u3l_punt("siva-de", _cqea_siva_de(key, ads, iv, len, txt));
@@ -256,8 +256,8 @@ u3wea_sivb_en(u3_noun cor)
   if ( c3n == u3r_mean(cor, u3x_sam, &txt,
                        u3x_con_sam_2, &key,
                        u3x_con_sam_3, &ads, 0) ||
-       c3n == u3ia(key) ||
-       c3n == u3ia(txt) ) {
+       c3n == u3ud(key) ||
+       c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
     return u3l_punt("sivb-en", _cqea_sivb_en(key, ads, txt));
@@ -292,8 +292,8 @@ u3wea_sivb_de(u3_noun cor)
                        u3x_sam_7, &txt,
                        u3x_con_sam_2, &key,
                        u3x_con_sam_3, &ads, 0) ||
-       c3n == u3ia(key) ||
-       c3n == u3ia(txt) ) {
+       c3n == u3ud(key) ||
+       c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
     return u3l_punt("sivb-de", _cqea_sivb_de(key, ads, iv, len, txt));
@@ -323,8 +323,8 @@ u3wea_sivc_en(u3_noun cor)
   if ( c3n == u3r_mean(cor, u3x_sam, &txt,
                        u3x_con_sam_2, &key,
                        u3x_con_sam_3, &ads, 0) ||
-       c3n == u3ia(key) ||
-       c3n == u3ia(txt) ) {
+       c3n == u3ud(key) ||
+       c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
     return u3l_punt("sivc-en", _cqea_sivc_en(key, ads, txt));
@@ -359,8 +359,8 @@ u3wea_sivc_de(u3_noun cor)
                        u3x_sam_7, &txt,
                        u3x_con_sam_2, &key,
                        u3x_con_sam_3, &ads, 0) ||
-       c3n == u3ia(key) ||
-       c3n == u3ia(txt) ) {
+       c3n == u3ud(key) ||
+       c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
     return u3l_punt("sivc-de", _cqea_sivc_de(key, ads, iv, len, txt));

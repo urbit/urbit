@@ -30,8 +30,8 @@
     u3_noun pub, sek;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &pub, u3x_sam_3, &sek, 0)) ||
-         (c3n == u3ia(pub)) ||
-         (c3n == u3ia(sek)) )
+         (c3n == u3ud(pub)) ||
+         (c3n == u3ud(sek)) )
     {
       return u3m_bail(c3__exit);
     } else {

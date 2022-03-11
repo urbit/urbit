@@ -1360,7 +1360,7 @@ u3wcp_ins(u3_noun cor)
   u3_noun a;
   u3x_mean(cor, u3x_sam, &a, 0);
 
-  if ( c3n == u3ia(a) ) {
+  if ( c3n == u3ud(a) ) {
     return u3m_bail(c3__fail);
   }
 
@@ -1382,7 +1382,7 @@ u3wcp_ind(u3_noun cor)
   u3_noun a;
   u3x_mean(cor, u3x_sam, &a, 0);
 
-  if ( c3n == u3ia(a) ) {
+  if ( c3n == u3ud(a) ) {
     return u3m_bail(c3__fail);
   }
 
@@ -1395,7 +1395,7 @@ u3wcp_tos(u3_noun cor)
   u3_noun a;
 
   if ( (c3n == u3r_mean(cor, u3x_sam, &a, 0)) ||
-       (c3n == u3ia(a)) ||
+       (c3n == u3ud(a)) ||
        (a >= 256) )
   {
     return u3m_bail(c3__exit);
@@ -1413,7 +1413,7 @@ u3wcp_tod(u3_noun cor)
   u3_noun a;
 
   if ( (c3n == u3r_mean(cor, u3x_sam, &a, 0)) ||
-       (c3n == u3ia(a)) ||
+       (c3n == u3ud(a)) ||
        (a >= 256) )
   {
     return u3m_bail(c3__exit);

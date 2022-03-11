@@ -717,7 +717,7 @@
 
       return u3_none;
 
-      if ( c3y == u3ia(gen) ) {
+      if ( c3y == u3ud(gen) ) {
         // printf("studly\n");
         // u3_err("stud m", gen);
         return u3m_bail(c3__exit);
@@ -839,7 +839,7 @@
     {
       u3_noun p_gen, q_gen;
 
-      if ( c3y == u3ia(gen) ) {
+      if ( c3y == u3ud(gen) ) {
         return u3nc(u3k(gen), u3_nul);
       }
       else switch ( u3h(gen) ) {

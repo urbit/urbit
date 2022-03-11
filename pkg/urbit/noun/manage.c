@@ -703,8 +703,8 @@ u3m_bail(u3_noun how)
 
   /* Printf some metadata.
   */
-  if ( c3__exit != how && (_(u3ia(how)) || 1 != u3h(how)) ) {
-    if ( _(u3ia(how)) ) {
+  if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
+    if ( _(u3ud(how)) ) {
       c3_c str_c[5];
 
       str_c[0] = ((how >> 0) & 0xff);
@@ -715,7 +715,7 @@ u3m_bail(u3_noun how)
       fprintf(stderr, "\r\nbail: %s\r\n", str_c);
     }
     else {
-      c3_assert(_(u3ia(u3h(how))));
+      c3_assert(_(u3ud(u3h(how))));
       fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
     }
   }
@@ -746,7 +746,7 @@ u3m_bail(u3_noun how)
 
   /* Reconstruct a correct error ball.
   */
-  if ( _(u3ia(how)) ) {
+  if ( _(u3ud(how)) ) {
     switch ( how ) {
       case c3__exit: {
         how = u3nc(2, u3R->bug.tax);

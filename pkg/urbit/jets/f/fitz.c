@@ -57,8 +57,8 @@
     u3_noun yaz, wix;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &yaz, u3x_sam_3, &wix, 0)) ||
-         (c3n == u3ia(yaz)) ||
-         (c3n == u3ia(wix)) )
+         (c3n == u3ud(yaz)) ||
+         (c3n == u3ud(wix)) )
     {
       return u3m_bail(c3__fail);
     } else {

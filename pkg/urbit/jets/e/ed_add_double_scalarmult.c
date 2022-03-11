@@ -35,9 +35,9 @@
                                u3x_sam_6, &b,
                                u3x_sam_14, &c,
                                u3x_sam_15, &d, 0)) ||
-         (c3n == u3ia(a)) ||
-         (c3n == u3ia(b)) ||
-         (c3n == u3ia(c)) )
+         (c3n == u3ud(a)) ||
+         (c3n == u3ud(b)) ||
+         (c3n == u3ud(c)) )
     {
       return u3m_bail(c3__exit);
     } else {

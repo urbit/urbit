@@ -53,8 +53,8 @@ typedef int (*urcrypt_cbc)(c3_y**,
     u3_noun a, b, c;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &c, 60, &a, 61, &b, 0) ||
-         c3n == u3ia(a) ||
-         c3n == u3ia(b) ) {
+         c3n == u3ud(a) ||
+         c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("cbca-en", _cqea_cbca_en(a, b, c));
@@ -77,8 +77,8 @@ typedef int (*urcrypt_cbc)(c3_y**,
     u3_noun a, b, c;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &c, 60, &a, 61, &b, 0) ||
-         c3n == u3ia(a) ||
-         c3n == u3ia(b) ) {
+         c3n == u3ud(a) ||
+         c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("cbca-de", _cqea_cbca_de(a, b, c));
@@ -101,8 +101,8 @@ typedef int (*urcrypt_cbc)(c3_y**,
     u3_noun a, b, c;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &c, 60, &a, 61, &b, 0) ||
-         c3n == u3ia(a) ||
-         c3n == u3ia(b) ) {
+         c3n == u3ud(a) ||
+         c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("cbcb-en", _cqea_cbcb_en(a, b, c));
@@ -125,8 +125,8 @@ typedef int (*urcrypt_cbc)(c3_y**,
     u3_noun a, b, c;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &c, 60, &a, 61, &b, 0) ||
-         c3n == u3ia(a) ||
-         c3n == u3ia(b) ) {
+         c3n == u3ud(a) ||
+         c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("cbcb-de", _cqea_cbcb_de(a, b, c));
@@ -149,8 +149,8 @@ typedef int (*urcrypt_cbc)(c3_y**,
     u3_noun a, b, c;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &c, 60, &a, 61, &b, 0) ||
-         c3n == u3ia(a) ||
-         c3n == u3ia(b) ) {
+         c3n == u3ud(a) ||
+         c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("cbcc-en", _cqea_cbcc_en(a, b, c));
@@ -173,8 +173,8 @@ typedef int (*urcrypt_cbc)(c3_y**,
     u3_noun a, b, c;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &c, 60, &a, 61, &b, 0) ||
-         c3n == u3ia(a) ||
-         c3n == u3ia(b) ) {
+         c3n == u3ud(a) ||
+         c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3l_punt("cbcc-de", _cqea_cbcc_de(a, b, c));

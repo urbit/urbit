@@ -33,7 +33,7 @@
           else if ( c3n == u3ic(cab) ) {
             return u3m_bail(c3__exit);
           }
-          else if ( c3n == u3ia(h_cab = u3h(cab)) ) {
+          else if ( c3n == u3ud(h_cab = u3h(cab)) ) {
             return u3m_bail(c3__exit);
           }
           else if ( (tot_w + (len_w = u3r_met(a_g, h_cab))) < tot_w ) {
@@ -75,7 +75,7 @@
     u3_noun a, b;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0)) ||
-         (c3n == u3ia(a)) )
+         (c3n == u3ud(a)) )
     {
       return u3m_bail(c3__exit);
     } else {

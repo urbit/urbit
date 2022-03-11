@@ -56,10 +56,10 @@
                                 u3x_sam_12, &b,
                                 u3x_sam_13, &c,
                                 u3x_sam_7,  &d, 0)) ||
-         (c3n == u3ia(a)) ||
-         (c3n == u3ia(b)) ||
-         (c3n == u3ia(c)) ||
-         (c3n == u3ia(d)) )
+         (c3n == u3ud(a)) ||
+         (c3n == u3ud(b)) ||
+         (c3n == u3ud(c)) ||
+         (c3n == u3ud(d)) )
     {
       return u3m_bail(c3__exit);
     } else {
