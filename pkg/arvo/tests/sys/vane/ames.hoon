@@ -1,5 +1,6 @@
 /+  *test
 /=  ames  /sys/vane/ames
+/=  jael  /sys/vane/jael
 ::  construct some test fixtures
 ::
 =/  nec  (ames ~nec)
@@ -36,7 +37,7 @@
 =/  bud-sym  (derive-symmetric-key:ames nec-pub bud-sec)
 ?>  =(nec-sym bud-sym)
 ::
-=/  comet-sym  (derive-symmetric-key:ames bud-pub comet-sec)  
+=/  comet-sym  (derive-symmetric-key:ames bud-pub comet-sec)
 ::
 =.  peers.ames-state.nec
   %+  ~(put by peers.ames-state.nec)  ~bud
@@ -44,6 +45,7 @@
   =.  -.peer-state
     :*  symmetric-key=bud-sym
         life=3
+        rift=0
         public-key=bud-pub
         sponsor=~nec
     ==
@@ -56,6 +58,7 @@
   =.  -.peer-state
     :*  symmetric-key=nec-sym
         life=2
+        rift=0
         public-key=nec-pub
         sponsor=~nec
     ==
@@ -195,7 +198,7 @@
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   =^  moves2  bud
     =/  =point:ames
-      :*  rift=1
+      :*  rift=0
           life=4
           keys=[[life=4 [crypto-suite=1 `@`nec-pub]] ~ ~]
           sponsor=`~bus
@@ -213,7 +216,7 @@
   ::
     %+  expect-eq
       !>  %-  sy
-          :~  :^  ~[//unix]  %pass  /bone/~bus/1
+          :~  :^  ~[//unix]  %pass  /bone/~bus/0/1
               [%g %plea ~bus %g /talk [%first %post]]
           ::
               :^  ~[//unix]  %pass  /qos
@@ -267,7 +270,7 @@
       !>  :~  :*  ~[//unix]  %pass  /qos  %d  %flog  %text
                   "; {<our.comet>} is your neighbor"
               ==
-              :*  ~[//unix]  %pass  /bone/(scot %p our.comet)/1
+              :*  ~[//unix]  %pass  /bone/(scot %p our.comet)/0/1
                   %g  %plea  our.comet  plea
           ==  ==
       !>  moves1
@@ -280,11 +283,11 @@
   =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
   ::  ~bud -> %done -> ~nec
   ::
-  =^  moves3  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
+  =^  moves3  bud  (take bud /bone/~nec/0/1 ~[//unix] %g %done ~)
   =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
   ::  ~bud -> %boon -> ~nec
   ::
-  =^  moves5  bud  (take bud /bone/~nec/1 ~[//unix] %g %boon [%post 'first1!!'])
+  =^  moves5  bud  (take bud /bone/~nec/0/1 ~[//unix] %g %boon [%post 'first1!!'])
   =^  moves6  nec  (call nec ~[//unix] %hear (snag-packet 0 moves5))
   ::  ~nec -> %done -> ~bud (just make sure ~bud doesn't crash on ack)
   ::
@@ -293,7 +296,7 @@
   ;:  weld
     %+  expect-eq
       !>  :~  [~[//unix] %pass /qos %d %flog %text "; ~nec is your neighbor"]
-              [~[//unix] %pass /bone/~nec/1 %g %plea ~nec %g /talk [%get %post]]
+              [~[//unix] %pass /bone/~nec/0/1 %g %plea ~nec %g /talk [%get %post]]
           ==
       !>  moves2
   ::
@@ -318,7 +321,7 @@
   ::  ~bud -> nack -> ~nec
   ::
   =/  =error:ames  [%flub [%leaf "sinusoidal repleneration"]~]
-  =^  moves3  bud  (take bud /bone/~nec/1 ~[/bud] %g %done `error)
+  =^  moves3  bud  (take bud /bone/~nec/0/1 ~[/bud] %g %done `error)
   =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
   ::  ~bud -> nack-trace -> ~nec
   ::
@@ -330,4 +333,87 @@
   %+  expect-eq
     !>  [~[/g/talk] %give %done `error]
     !>  (snag 1 `(list move:ames)`moves5)
+::
+++  test-old-ames-wire  ^-  tang
+  =^  moves1  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
+  %+  expect-eq
+    !>  %-  sy
+        :_  ~
+        [~[//unix] %pass /parse-wire %d %flog %text "; ames dropping old wire format"]
+    !>  (sy ,.moves1)
+:: ::
+++  test-dangling-bone  ^-  tang
+  ::  ~nec -> %plea -> ~bud
+  ::
+  =^  moves1  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
+  =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  ::  ~bud receives a gift from %jael with ~nec's new rift
+  ::
+  =^  moves3  bud
+    %-  take
+    :^  bud  /public-keys  ~[//unix]
+    ^-  sign:ames
+    [%jael %public-keys %diff who=~nec %rift from=0 to=1]
+  ::  %gall has a pending wire with the old rift, so sending a gift to
+  ::  %ames on it will drop that request, and print a message to the user
+  ::
+  =^  moves3  bud  (take bud /bone/~nec/0/1 ~[//unix] %g %done ~)
+  ::
+  %+  expect-eq
+    !>  %-  sy
+        :_  ~
+        :*   ~[//unix]
+             %pass
+             /parse-wire
+             %d
+             %flog
+             %text
+             "; ames dropping wire with old rift (0)"
+        ==
+    !>  (sy ,.moves3)
+::
+++  test-ames-flow-with-new-rift  ^-  tang
+  ::  ~bunecd receives a gift from %jael with ~bud's new rift
+  ::
+  =^  moves1  nec
+    %-  take
+    :^  nec  /public-keys  ~[//unix]
+    ^-  sign:ames
+    [%jael %public-keys %diff who=~bud %rift from=0 to=1]
+  ::  now we try a normal message flow using the new rift in the wire
+  ::  ~nec -> %plea -> ~bud
+  ::
+  =^  moves2  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
+  =^  moves3  bud  (call bud ~[//unix] %hear (snag-packet 0 moves2))
+  ::  ~bud -> %done -> ~nec
+  ::
+  =^  moves4  bud  (take bud /bone/~nec/1/1 ~[//unix] %g %done ~)
+  =^  moves5  nec  (call nec ~[//unix] %hear (snag-packet 0 moves4))
+  ::  ~bud -> %boon -> ~nec
+  ::
+  =^  moves6  bud  (take bud /bone/~nec/1/1 ~[//unix] %g %boon [%post '¡hola!'])
+  =^  moves7  nec  (call nec ~[//unix] %hear (snag-packet 0 moves6))
+  ::  ~nec -> %done -> ~bud (just make sure ~bud doesn't crash on ack)
+  ::
+  =^  moves8  bud  (call bud ~[//unix] %hear (snag-packet 0 moves7))
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  :~  [~[//unix] %pass /qos %d %flog %text "; ~nec is your neighbor"]
+              [~[//unix] %pass /bone/~nec/0/1 %g %plea ~nec %g /talk [%get %post]]
+          ==
+      !>  moves3
+  ::
+    %+  expect-eq
+      !>  %-  sy
+          :~  [~[/ames] %pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.03]
+              [~[//unix] %pass /qos %d %flog %text "; ~bud is your neighbor"]
+              [~[/g/talk] %give %done error=~]
+          ==
+      !>  (sy ,.moves5)
+  ::
+    %+  expect-eq
+      !>  [~[/g/talk] %give %boon [%post '¡hola!']]
+      !>  (snag 0 `(list move:ames)`moves7)
+  ==
 --
