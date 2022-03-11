@@ -18,6 +18,7 @@
 ::  $gang: infinite set of peers
 ::  $mark: symbolic content type
 ::  $mien: orientation
+::  $page: untyped cage
 ::  +omen: namespace path and data
 ::  $ship: network identity
 ::  $sink: subscription
@@ -49,6 +50,7 @@
 +$  gang  (unit (set ship))
 +$  mark  @tas
 +$  mien  [our=ship now=@da eny=@uvJ]
++$  page  (cask)
 ++  omen  |$  [a]  (pair path (cask a))
 +$  ship  @p
 +$  sink  (trel bone ship path)
@@ -86,7 +88,7 @@
 ::  +wite: kernel action/error builder
 ::
 +$  ball  (wite [vane=term task=maze] maze)
-+$  card  (cask)
++$  card  (pair @tas *)
 +$  duct  (list wire)
 ++  hobo
   |$  [a]
@@ -1677,6 +1679,7 @@
     %g  %gall
     %i  %iris
     %j  %jael
+    %k  %khan
   ==
 --  =>
 ::

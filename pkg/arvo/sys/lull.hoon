@@ -768,7 +768,7 @@
           [r=@uxD g=@uxD b=@uxD]                        ::  24bit true color
 +$  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::::
-::::                      ++ethereum-types                ::  eth surs for jael
+::::                    ++ethereum-types                  ::  eth surs for jael
   ::                                                    ::::
 ++  ethereum-types
   |%
@@ -782,7 +782,7 @@
   ++  events  (set event-id)
   --
 ::                                                      ::::
-::::                      ++azimuth-types                 ::  az surs for jael
+::::                    ++azimuth-types                   ::  az surs for jael
   ::                                                    ::::
 ++  azimuth-types
   =,  ethereum-types
@@ -862,7 +862,7 @@
       [%plea =ship =plea:ames]
   ==
 ::                                                      ::::
-::::                      ++http                        ::
+::::                    ++http                          ::
   ::                                                    ::::
 ::  http: shared representations of http concepts
 ::
@@ -1049,7 +1049,7 @@
     ==
   --
 ::                                                      ::::
-::::                      ++ames                          ::  (1a) network
+::::                    ++ames                            ::  (1a) network
   ::                                                    ::::
 ++  ames  ^?
   |%
@@ -1246,6 +1246,7 @@
   +$  peer-state
     $:  $:  =symmetric-key
             =life
+            =rift
             =public-key
             sponsor=ship
         ==
@@ -1619,7 +1620,6 @@
         [%| p=@tas]                                     ::  label
     ==                                                  ::
   +$  open  $-(path vase)                               ::  get prelude
-  +$  page  (cask *)                                    ::  untyped cage
   +$  plop  blob                                        ::  unvalidated blob
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
@@ -2668,6 +2668,7 @@
         [%private-keys ~]                             ::  sub to privates
         [%public-keys ships=(set ship)]               ::  sub to publics
         [%rekey =life =ring]                          ::  update private keys
+        [%resend ~]                                   ::  resend private key
         [%ruin ships=(set ship)]                      ::  pretend breach
         $>(%trim vane-task)                           ::  trim state
         [%turf ~]                                     ::  view domains
@@ -2742,8 +2743,8 @@
     +$  udiffs  (list [=ship =udiff])
     +$  udiff
       $:  =id:block
-      $%  [%rift =rift]
-          [%keys key-update]
+      $%  [%rift =rift boot=?]
+          [%keys key-update boot=?]
           [%spon sponsor=(unit @p)]
           [%disavow ~]
       ==  ==
@@ -2757,14 +2758,14 @@
           %rift
         ?.  (gth rift.a-udiff rift.a-point)
           ~
-        ~?  !=(rift.a-udiff +(rift.a-point))
+        ~?  &(!=(rift.a-udiff +(rift.a-point)) !boot.a-udiff)
           [%udiff-to-diff-skipped-rift a-udiff a-point]
         `[%rift rift.a-point rift.a-udiff]
       ::
           %keys
         ?.  (gth life.a-udiff life.a-point)
           ~
-        ~?  !=(life.a-udiff +(life.a-point))
+        ~?  &(!=(life.a-udiff +(life.a-point)) !boot.a-udiff)
           [%udiff-to-diff-skipped-life a-udiff a-point]
         :^  ~  %keys
           [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
@@ -2853,6 +2854,32 @@
     +$  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+::                                                      ::::
+::::                    ++khan                            ::  (1i) threads
+  ::                                                    ::::
+++  khan  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%arow p=(avow cage)]                           ::  in-arvo result
+        [%avow p=(avow page)]                           ::  external result
+    ==                                                  ::
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%done ~]                                       ::  socket closed
+        ::  XX  mark ignored
+        ::
+        [%fard p=(fyrd cage)]                           ::  in-arvo thread
+        [%fyrd p=(fyrd cast)]                           ::  external thread
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+    ==                                                  ::
+  ::                                                    ::
+  ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
+  +$  bear  $@(desk beak)                               ::  partial $beak
+  +$  cast  (pair mark page)                            ::  output mark + input
+  ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  thread run request
+  --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2864,6 +2891,7 @@
       gift:gall
       gift:iris
       gift:jael
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2874,6 +2902,7 @@
       task:gall
       task:iris
       task:jael
+      task:khan
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2885,6 +2914,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%k task:khan]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -2906,6 +2936,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
+      [%khan gift:khan]
   ==
 ::  $unix-task: input from unix
 ::

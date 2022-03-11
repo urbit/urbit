@@ -201,22 +201,41 @@
   :+  (add 4 next-bone.ossuary)
     (~(put by by-duct.ossuary) duct next-bone.ossuary)
   (~(put by by-bone.ossuary) next-bone.ossuary duct)
-::  +make-bone-wire: encode ship and bone in wire for sending to vane
+::  +make-bone-wire: encode ship, rift and bone in wire for sending to vane
 ::
 ++  make-bone-wire
-  |=  [her=ship =bone]
+  |=  [her=ship =rift =bone]
   ^-  wire
   ::
-  /bone/(scot %p her)/(scot %ud bone)
-::  +parse-bone-wire: decode ship and bone from wire from local vane
+  /bone/(scot %p her)/(scot %ud rift)/(scot %ud bone)
+::  +parse-bone-wire: decode ship, bone and rift from wire from local vane
 ::
 ++  parse-bone-wire
   |=  =wire
-  ^-  [her=ship =bone]
+  ^-  %-  unit
+      $%  [%old her=ship =bone]
+          [%new her=ship =rift =bone]
+      ==
+  ?.  ?|  ?=([%bone @ @ @ ~] wire)
+          ?=([%bone @ @ ~] wire)
+      ==
+    ::  ignore malformed wires
+    ::
+    ~
+  ?+    wire  ~
+      [%bone @ @ ~]
+    ::  later on we drop events that come in an old wire but
+    ::  tracking it here let us print a notification to the user
+    ::
+    `[%old `@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
   ::
-  ~|  %ames-wire-bone^wire
-  ?>  ?=([%bone @ @ ~] wire)
-  [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
+      [%bone @ @ @ ~]
+    %-  some
+    :^    %new
+        `@p`(slav %p i.t.wire)
+      `@ud`(slav %ud i.t.t.wire)
+    `@ud`(slav %ud i.t.t.t.wire)
+  ==
 ::  +make-pump-timer-wire: construct wire for |packet-pump timer
 ::
 ++  make-pump-timer-wire
@@ -446,6 +465,8 @@
 ::
 ++  encode-shut-packet
   ~/  %encode-shut-packet
+  :: TODO add rift to signed messages to prevent replay attacks?
+  ::
   |=  $:  =shut-packet
           =symmetric-key
           sndr=ship
@@ -550,6 +571,7 @@
       ::
       $:  =symmetric-key
           =her=life
+          =her=rift
           =her=public-key
           her-sponsor=ship
   ==  ==
@@ -576,6 +598,8 @@
 ::
 ::    This data structure gets signed and jammed to form the .contents
 ::    field of a $packet.
+::
+:: TODO add rift to prevent replay attacks
 ::
 +$  open-packet
   $:  =public-key
@@ -613,34 +637,25 @@
 ::
 +$  naxplanation  [=message-num =error]
 ::
-+|  %statics
-::
-::  $ames-state: state for entire vane
-::
-::    peers:       states of connections to other ships
-::    unix-duct:   handle to give moves to unix
-::    life:        our $life; how many times we've rekeyed
-::    crypto-core: interface for encryption and signing
-::    bug:         debug printing configuration
-::
-+$  ames-state
-  $:  peers=(map ship ship-state)
++$  ames-state-4  ames-state-5
++$  ames-state-5
+  $:  peers=(map ship ship-state-5)
       =unix=duct
       =life
       crypto-core=acru:ames
       =bug
   ==
 ::
-+$  ames-state-5
-  $:  peers=(map ship ship-state-5)
-      =unix=duct
-      =life
-      crypto-core=acru-5
-      =bug
-  ==
++$  ship-state-4  ship-state-5
 +$  ship-state-5
-  $%  [%alien alien-agenda-5]
+  $%  [%alien alien-agenda-6]
       [%known peer-state-5]
+  ==
+::
++$  alien-agenda-6
+  $:  messages=(list [=duct =plea])
+      packets=(set =blob)
+      heeds=(set duct)
   ==
 ::
 +$  peer-state-5
@@ -658,11 +673,53 @@
       heeds=(set duct)
   ==
 ::
-+$  alien-agenda-5
-  $:  messages=(list [=duct =plea])
-      packets=(set =blob)
++$  ship-state-6
+  $%  [%alien alien-agenda-6]
+      [%known peer-state-6]
+  ==
+::
++$  peer-state-6
+  $:  $:  =symmetric-key
+          =life
+          =rift
+          =public-key
+          sponsor=ship
+      ==
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
       heeds=(set duct)
   ==
++$  ames-state-6
+  $:  peers=(map ship ship-state-6)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      =bug
+  ==
+::
++|  %statics
+::
+::  $ames-state: state for entire vane
+::
+::    peers:       states of connections to other ships
+::    unix-duct:   handle to give moves to unix
+::    life:        our $life; how many times we've rekeyed
+::    crypto-core: interface for encryption and signing
+::    bug:         debug printing configuration
+::
++$  ames-state
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      =rift
+      crypto-core=acru:ames
+      =bug
+  ==
+::
 ++  acru-5  $_  ^?
   |%
   ++  as  ^?
@@ -877,7 +934,6 @@
       |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
       ::
       =/  =task  ((harden task) wrapped-task)
-      ::
       ::  reject larval error notifications
       ::
       ?^  dud
@@ -967,15 +1023,15 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%6 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%7 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=ames-state-5
+                      state=ames-state-4
                   ==
-                  [%adult state=ames-state-5]
+                  [%adult state=ames-state-4]
               ==  ==
               $:  %5
               $%  $:  %larva
@@ -987,11 +1043,17 @@
               $:  %6
               $%  $:  %larva
                       events=(qeu queued-event)
+                      state=ames-state-6
+                  ==
+                  [%adult state=ames-state-6]
+              ==  ==
+              $:  %7
+              $%  $:  %larva
+                      events=(qeu queued-event)
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
-              ==  ==
-          ==
+          ==  ==  ==
       ?-    old
           [%4 %adult *]  (load:adult-core %4 state.old)
       ::
@@ -1001,12 +1063,14 @@
         =.  adult-gate     (load:adult-core %4 state.old)
         larval-gate
       ::
-          [%5 %adult *]  (load:adult-core %5 state.old)
+          [%5 %adult *]
+        ~>  %slog.1^leaf/"ames: larva reload"
+        =.  adult-gate     (load:adult-core %5 state.old)
+        larval-gate
       ::
           [%5 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %5 state.old)
         larval-gate
       ::
           [%6 %adult *]  (load:adult-core %6 state.old)
@@ -1015,6 +1079,14 @@
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %6 state.old)
+        larval-gate
+      ::
+          [%7 %adult *]  (load:adult-core %7 state.old)
+      ::
+          [%7 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %7 state.old)
         larval-gate
       ==
     --
@@ -1099,33 +1171,61 @@
 ++  load
   |^
   |=  $=  old-state
-      $%  [%4 ames-state-5]
+      $%  [%4 ames-state-4]
           [%5 ames-state-5]
-          [%6 ^ames-state]
+          [%6 ames-state-6]
+          [%7 ^ames-state]
       ==
   ^+  ames-gate
   =?  old-state  ?=(%4 -.old-state)  %5^(state-4-to-5 +.old-state)
   =?  old-state  ?=(%5 -.old-state)  %6^(state-5-to-6 +.old-state)
+  =?  old-state  ?=(%6 -.old-state)  %7^(state-6-to-7 +.old-state)
   ::
-  ?>  ?=(%6 -.old-state)
+  ?>  ?=(%7 -.old-state)
   ames-gate(ames-state +.old-state)
   ::
-  ++  state-5-to-6
-    |=  old=ames-state-5
+  ++  state-6-to-7
+    |=  old=ames-state-6
     ^-  ^ames-state
-    :*  peers=(~(run by peers.old) ship-state-5-to-6)
+    =+  !<  =rift
+        q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
+    :*  peers=(~(run by peers.old) ship-state-6-to-7)
         unix-duct.old
         life.old
+        rift
         crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
         bug.old
     ==
   ::
-  ++  ship-state-5-to-6
-    |=  old=ship-state-5
+  ++  ship-state-6-to-7
+    |=  old=ship-state-6
     ^-  ship-state
     ?:  ?=(%alien -.old)  
       old(heeds [heeds.old ~])
     old(heeds [heeds.old *scry-state])
+  ::
+  ++  state-5-to-6
+    |=  ames-state=ames-state-5
+    ^-  ames-state-6
+    :_  +.ames-state
+    %-  ~(rut by peers.ames-state)
+    |=  [=ship ship-state=ship-state-5]
+    ^-  ship-state-6
+    ?.  ?=(%known -.ship-state)
+      ship-state
+    =/  peer-state=peer-state-5  +.ship-state
+    =|  =rift
+    =/  scry=(unit (unit cage))
+      (rof ~ %j `beam`[[our %rift %da now] /(scot %p ship)])
+    =?  rift  ?=([~ ~ ^] scry)
+      ;;(@ud q.q:u.u.scry)
+    =/  peer-state=peer-state-6
+      :_  +.peer-state
+      =,  -.peer-state
+      [symmetric-key life rift public-key sponsor]
+    ^-  ship-state-6
+    [-.ship-state peer-state]
+
   ::
   ++  state-4-to-5
     |=  ames-state=ames-state-5
@@ -1311,31 +1411,61 @@
     ^+  event-core
     ::  relay the vane ack to the foreign peer
     ::
-    =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
-    ::
+    ?~  parsed=(parse-bone-wire wire)
+      ::  no-op?
+      ::
+      =/  =tape  "; ames dropping malformed wire"
+      (emit duct %pass /parse-wire %d %flog %text tape)
+    ?>  ?=([@ her=ship *] u.parsed)
+    =*  her  her.u.parsed
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now channel-state -.peer-state]
+
     =/  peer-core    (make-peer-core peer-state channel)
+    |^
+    ?-    u.parsed
+        [%old *]
+      ::  ignore events from old wire
+      ::
+      =/  =tape  "; ames dropping old wire format"
+      (emit duct %pass /parse-wire %d %flog %text tape)
+    ::
+        [%new *]
+      ?:  (lth rift.u.parsed rift.peer-state)
+        ::  ignore events from an old rift
+        ::
+        =/  =tape  "; ames dropping wire with old rift ({<rift.u.parsed>})"
+        (emit duct %pass /parse-wire %d %flog %text tape)
+      ?~  error
+        (send-ack bone.u.parsed)
+      (send-nack bone.u.parsed u.error)
+    ==
     ::  if processing succeded, send positive ack packet and exit
     ::
-    ?~  error
+    ++  send-ack
+      |=  =bone
+      ^+  event-core
       abet:(run-message-sink:peer-core bone %done ok=%.y)
     ::  failed; send message nack packet
     ::
-    =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n)
-    =/  =^peer-state  (got-peer-state her)
-    =/  =^channel     [[our her] now channel-state -.peer-state]
-    ::  construct nack-trace message, referencing .failed $message-num
-    ::
-    =/  failed=message-num  last-acked:(~(got by rcv.peer-state) bone)
-    =/  =naxplanation  [failed u.error]
-    =/  =message-blob  (jam naxplanation)
-    ::  send nack-trace message on associated .nack-trace-bone
-    ::
-    =.  peer-core              (make-peer-core peer-state channel)
-    =/  nack-trace-bone=^bone  (mix 0b10 bone)
-    ::
-    abet:(run-message-pump:peer-core nack-trace-bone %memo message-blob)
+    ++  send-nack
+      |=  [=bone =^error]
+      ^+  event-core
+      =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n)
+      =/  =^peer-state  (got-peer-state her)
+      =/  =^channel     [[our her] now channel-state -.peer-state]
+      ::  construct nack-trace message, referencing .failed $message-num
+      ::
+      =/  failed=message-num  last-acked:(~(got by rcv.peer-state) bone)
+      =/  =naxplanation  [failed error]
+      =/  =message-blob  (jam naxplanation)
+      ::  send nack-trace message on associated .nack-trace-bone
+      ::
+      =.  peer-core              (make-peer-core peer-state channel)
+      =/  nack-trace-bone=^bone  (mix 0b10 bone)
+      ::
+      abet:(run-message-pump:peer-core nack-trace-bone %memo message-blob)
+    --
   ::  +on-sift: handle request to filter debug output by ship
   ::
   ++  on-sift
@@ -1596,12 +1726,28 @@
     |=  [=wire payload=*]
     ^+  event-core
     ::
-    =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
+    ?~  parsed=(parse-bone-wire wire)
+      =/  =tape  "; ames dropping malformed wire"
+      (emit duct %pass /parse-wire %d %flog %text tape)
     ::
-    =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now channel-state -.peer-state]
+    ?>  ?=([@ her=ship *] u.parsed)
+    =/  =peer-state  (got-peer-state her.u.parsed)
+    =/  =channel     [[our her.u.parsed] now channel-state -.peer-state]
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
+    ?-    u.parsed
+        [%old *]
+      =/  =tape  "; ames dropping old wire"
+      (emit duct %pass /parse-wire %d %flog %text tape)
+    ::
+        [%new *]
+      =,  u.parsed
+      ?:  (lth rift rift.peer-state)
+        ::  ignore events from an old rift
+        ::
+        =/  =tape  "; ames dropping wire with old rift ({<rift>})"
+        (emit duct %pass /parse-wire %d %flog %text tape)
+      abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
+    ==
   ::  +on-plea: handle request to send message
   ::
   ++  on-plea
@@ -1693,7 +1839,8 @@
         ::
         ?-    public-keys-result
             [%diff @ %rift *]
-          event-core
+          :: event-core
+          (on-publ-rift [who to.diff]:public-keys-result)
         ::
             [%diff @ %keys *]
           (on-publ-rekey [who to.diff]:public-keys-result)
@@ -1808,10 +1955,12 @@
       ?~  sponsor
         ~|  %ames-lost-sponsor^our^ship  !!
       ::
-      =/  =peer-state         (got-peer-state ship)
-      =.  sponsor.peer-state  u.sponsor
-      ::
-      =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
+      =/  state=(unit peer-state)  (get-peer-state ship)
+      ?~  state
+        %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
+        event-core
+      =.  sponsor.u.state   u.sponsor
+      =.  peers.ames-state  (~(put by peers.ames-state) ship %known u.state)
       event-core
     ::  +on-publ-full: handle new pki data for peer(s)
     ::
@@ -1873,6 +2022,24 @@
         ::
         event-core(duct original-duct)
       --
+    ::  on-publ-rift: XX
+    ::
+    ++  on-publ-rift
+      |=  [=ship =rift]
+      ^+  event-core
+      ?~  ship-state=(~(get by peers.ames-state) ship)
+        ::  print error here? %rift was probably called before %keys
+        ::
+        ~>  %slog.1^leaf/"ames: missing peer-state on-publ-rift"
+        event-core
+      ?:  ?=([%alien *] u.ship-state)
+        ::  ignore aliens
+        ::
+        event-core
+      =/  =peer-state       +.u.ship-state
+      =.  rift.peer-state   rift
+      =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
+      event-core
     ::
     ++  insert-peer-state
       |=  [=ship =point]
@@ -1921,7 +2088,6 @@
       (rof ~ %j `beam`[[our %turf %da now] /])
     ::
     (emit unix-duct.ames-state %give %turf turfs)
-  ::  +on-trim: handle request to free memory
   ::  +on-vega: handle kernel reload
   ::  +on-trim: handle request to free memory
   ::
@@ -2505,7 +2671,7 @@
           ::
           =+  ;;  =plea  message
           ::
-          =/  =wire  (make-bone-wire her.channel bone)
+          =/  =wire  (make-bone-wire her.channel her-rift.channel bone)
           ::
           ?+  vane.plea  ~|  %ames-evil-vane^our^her.channel^vane.plea  !!
             %a  (emit duct %pass wire %a %plea her.channel plea)
@@ -3212,6 +3378,8 @@
   ++  on-done
     |=  [=message-num =ack]
     ^+  message-pump
+    ~?  (gte message-num next.state)
+      "unsent message from the future"^[message-num next.state current.state]
     ::  unsent messages from the future should never get acked
     ::
     ?>  (lth message-num next.state)

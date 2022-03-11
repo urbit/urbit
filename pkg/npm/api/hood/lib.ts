@@ -1,6 +1,5 @@
 import { Poke, Scry } from '../lib';
 import { Vats, Vat } from './types';
-import _ from 'lodash';
 
 export const getVats: Scry = {
   app: 'hood',
@@ -98,13 +97,17 @@ export function getBlockers(vats: Vats): string[] {
   if(!blockedOn) {
     return blockers;
   }
-  _.forEach(_.omit(vats, 'base'), (vat, desk) => {
-    // assuming only %zuse
-    const kelvins = _.map((vat.arak.rail?.next || []), n => n.weft.kelvin);
-    if(!(kelvins.includes(blockedOn))) {
-      blockers.push(desk);
-    }
-  });
+
+  Object.entries(vats)
+    .filter(([desk]) => desk !== 'base')
+    .forEach(([desk, vat]) => {
+      // assuming only %zuse
+      const woofs = vat.arak.rail?.next || [];
+      const kelvins = woofs.map(n => n.weft.kelvin);
+      if(!(kelvins.includes(blockedOn))) {
+        blockers.push(desk);
+      }
+    });
 
   return blockers;
 }

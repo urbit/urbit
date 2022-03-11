@@ -1,5 +1,5 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { invite } from '@urbit/api/groups';
+import { invite } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
