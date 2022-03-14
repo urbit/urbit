@@ -8221,6 +8221,9 @@
           [%brcn *]
         [%brcn lab.wit q.gen]  :: populate (unit term) with lab.wit
         ::
+          [%brpt *]
+        [%brpt lab.wit q.gen]  :: populate (unit term) with lab.wit
+        ::
           [%brdt *]
         [%brdt lab.wit q.gen]
       ==
