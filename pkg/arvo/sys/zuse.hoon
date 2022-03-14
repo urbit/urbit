@@ -5625,6 +5625,7 @@
 ::
 ++  balk
   =<  bulk
+  !:
   |%
   +$  bulk
     $:  [her=ship rif=rift lyf=life]
@@ -5632,46 +5633,58 @@
         spr=spur
     ==
   ::
-  ++  de-path-soft
-    |=  [=rift =life =path]
+  ++  de-part
+    |=  [=ship =rift =life =(pole knot)]
     ^-  (unit bulk)
-    ::  [care ship desk case path]
-    ?.  ?=([@ @ @ @ *] path)
-      ~
-    =/  van=@ta  (end 3 i.path)
-    =/  car=@ta  (rsh 3 i.path)
-    ?~  her=(slaw %p i.t.path)
-      ~
-    ?~  cas=(de-case i.t.t.t.path)
-      ~
+    ?.  ?=([van=@ car=@ cas=@ spr=*] pole)  ~
+    ?~  cas=(de-case cas.pole)   ~
     :-  ~
-    :*  [u.her rift life]
-        [van car u.cas]
-        [i.t.t.path t.t.t.t.path]
+    :*  [ship rift life]
+        [van.pole car.pole u.cas]
+        spr.pole
+    ==
+  ::
+  ++  de-path-soft
+    |=  =(pole knot)
+    ^-  (unit bulk)
+    ::  [ship rift life vane care case path]
+    ?.  ?=([her=@ rif=@ lyf=@ van=@ car=@ cas=@ spr=*] pole)
+      ~
+    ?~  her=(slaw %p her.pole)   ~
+    ?~  rif=(slaw %ud rif.pole)  ~
+    ?~  lyf=(slaw %ud lyf.pole)  ~
+    ?~  cas=(de-case cas.pole)   ~
+    :-  ~
+    :*  [u.her u.rif u.lyf]
+        [van.pole car.pole u.cas]
+        spr.pole
     ==
   ::
   ++  de-path
-    |=  [=rift =life =path]
+    |=  =path
     ^-  bulk
     (need (de-path-soft +<))
   ::
   ++  en-path
     |=  =bulk
     ^-  path
-    ?>  ?=([@ *] spr.bulk)
-    :*  (cat 3 van.bulk car.bulk)
-        (scot %p her.bulk)
-        i.spr.bulk
+    :*  (scot %p her.bulk)
+        (scot %ud rif.bulk)
+        (scot %ud lyf.bulk)
+        van.bulk
+        car.bulk
         (scot cas.bulk)
-        t.spr.bulk
+        spr.bulk
     ==
   ::
   ++  en-roof
     |=  =bulk
-    ^-  (unit [vis=view bem=beam])
-    ?.  ?=(^ spr.bulk)  ~
-    =/  bem=beam  [[her i.spr cas] t.spr]:bulk
+    ^-  [vis=view bem=beam]
+    =/  [des=desk pax=path]
+      ?^  spr.bulk  spr.bulk
+      [%$ ~]
+    =/  bem=beam  =,(bulk [[her des cas] pax])
     =+  vis=(cat 3 van.bulk car.bulk)
-    `[vis bem]
+    [vis bem]
   --
 --

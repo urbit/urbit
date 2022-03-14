@@ -1334,7 +1334,7 @@
     ~&  scrying/path^index
     :-  time
     %-  emil
-    :~  [hen %pass wire %a %keen path]
+    :~  [hen %pass wire %a %keen ship path]
         [hen %pass wire %b %wait time]
     ==
   ::
@@ -2957,7 +2957,7 @@
       =,  mood.rave.sat
       [(cat 3 %c care) (scot %p her) syd (scot case) path]
     %-  emil
-    :~  [hen %pass / %a %yawn path]
+    :~  [hen %pass / %a %yawn her path]
         [hen %pass / %b %rest u.scry.sat]
     ==
   ::

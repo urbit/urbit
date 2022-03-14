@@ -1083,8 +1083,9 @@
         [%jilt =ship]
         $>(%plea vane-task)
     ::
-        [%keen =path]
-        [%yawn =path]
+        [%keen =ship =path]
+        [%pine =ship =path]
+        [%yawn =ship =path]
         [%bide =path]
     ::
         $>(%born vane-task)

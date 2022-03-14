@@ -1130,6 +1130,7 @@
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
     ::
+      %pine  (on-pine:fine:event-core +.task)
       %keen  (on-keen:fine:event-core +.task)
       %yawn  (on-yawn:fine:event-core +.task)
       %bide  (on-bide:fine:event-core +.task)
@@ -1165,7 +1166,7 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%6 %adult ames-state]
+++  stay  [%7 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
@@ -1363,7 +1364,8 @@
     ::  so we need to give it the right shape
     ::
     =*  path  t.t.tyl
-    ?~  nom=(de-omen path)  ~
+    ?~  blk=(de-path-soft:balk path)  ~
+    =+  nom=(en-roof:balk u.blk)
     ::  we only support scrying into clay,
     ::  and only if the data is fully public.
     ::
@@ -1374,7 +1376,7 @@
     :: ?>  ?=(^ u.pem)
     :: =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
     :: ?>  =([%black ~ ~] rul.r.per)
-    =+  res=(rof lyc u.nom)
+    =+  res=(rof lyc nom)
     ::TODO  suggests we need to factor differently
     =+  ven=(per-event [now 0v0 rof] *duct ames-state)
     ?-  res
@@ -1411,10 +1413,12 @@
     ^+  event-core
     ::  relay the vane ack to the foreign peer
     ::
+    ?:  ?=([%fine %pine *] wire)
+      event-core
     ?~  parsed=(parse-bone-wire wire)
       ::  no-op?
       ::
-      =/  =tape  "; ames dropping malformed wire"
+      =/  =tape  "; ames dropping malformed wire {<wire>}"
       (emit duct %pass /parse-wire %d %flog %text tape)
     ?>  ?=([@ her=ship *] u.parsed)
     =*  her  her.u.parsed
@@ -1725,9 +1729,14 @@
   ++  on-take-boon
     |=  [=wire payload=*]
     ^+  event-core
+    ?:  ?=([%fine %pine @ *] wire)
+      ?~  her=(slaw %p i.t.t.wire)
+        =/  =tape  "; fine dropping malformed wire {<wire>}"
+        (emit duct %pass /parse-wire %d %flog %text tape)
+      (on-pine-boon:fine u.her t.t.t.wire payload)
     ::
     ?~  parsed=(parse-bone-wire wire)
-      =/  =tape  "; ames dropping malformed wire"
+      =/  =tape  "; ames dropping malformed wire {<wire>}"
       (emit duct %pass /parse-wire %d %flog %text tape)
     ::
     ?>  ?=([@ her=ship *] u.parsed)
@@ -1761,6 +1770,13 @@
       %+  enqueue-alien-todo  ship
       |=  todos=alien-agenda
       todos(messages [[duct plea] messages.todos])
+    ~&  plea/ship^path.plea
+      ~&  ((soft balk) payload.plea)
+    ::
+    ?:  &(=(/pine path.plea) =(our her:;;(balk payload.plea)))
+      ~&  ship^plea
+      ~&  ;;(balk payload.plea)
+      (on-pine-plea:fine ship payload.plea)
     ::
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now channel-state -.peer-state]
@@ -2725,6 +2741,26 @@
             =.  keens.scry  (put:orm keens.scry keen-id keen-state)
             ke-abet:(ke-start:(ke-abed:keen-core path) duct)
           ::
+          ++  pe-pine
+            |=  =path
+            ~&  pe-pine/path^ship
+            ^+  pe-core
+            ?~  blk=(de-part:balk ship rift.peer life.peer path)
+              !!  :: XX: ???
+            =+  wir=`wire`[%fine %pine (scot %p ship) path]
+            =.  event-core
+              (emit duct %pass wir %a %plea ship %a /pine `*`u.blk)
+            pe-core
+          ::
+          ++  pe-pine-boon
+            |=  [=path payload=*]
+            ^+  pe-core
+            ?~  blk=(de-part:balk ship rift.peer life.peer path)
+              !!
+            =+  ;;(case=@ud payload)
+            ~&  finished-pine/u.blk^case
+            (pe-keen path duct)
+          ::
           ++  pe-meet-alien
             |=  agenda=(jug path ^duct)
             %+  roll  ~(tap by agenda)
@@ -2744,10 +2780,11 @@
             ?>  =(sndr-tick.packet (mod life.peer 16))
             ::
             =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
-            ?.  (~(has by order.scry) path.peep)
+            =/  =path  (slag 3 path.peep)
+            ?.  (~(has by order.scry) path)
               ~&(dead-response/peep pe-core)
             =<  ke-abet
-            (ke-rcv:(ke-abed:keen-core path.peep) num.peep purr lane)
+            (ke-rcv:(ke-abed:keen-core path) num.peep purr lane)
           ::
           ++  pe-update-qos
             |=  =new=qos
@@ -2824,10 +2861,15 @@
               ?:(=(id i) `p ~)
             ++  ke-deq
               (deq want)
+            ++  ke-full-path
+               :^    (scot %p ship)
+                   (scot %ud rift.peer)
+                 (scot %ud life.peer)
+               path
             ::
             ++  ke-encode-req
               |=  frag=@ud
-              (encode-request ship path frag)
+              (encode-request ship ke-full-path frag)
           ::
             ++  ke-on-ack
               =|  marked=(list want)
@@ -2873,8 +2915,7 @@
             ::
             ++  ke-done
               |=  [sig=@ data=$@(~ (cask))]
-              ~&  path
-              ?>  (meri:keys ship life.peer path sig data)
+              ?>  (meri:keys ship life.peer ke-full-path sig data)
               ~&  got-response/path
               =/  listeners  ~(tap in listeners.keen)
               =/  dat=(unit (cask))
@@ -2970,7 +3011,7 @@
               ::
               ~|  failed-signature/fra^`@ux`sig.rawr
               ~|  life.peer
-              ?>  (veri-fra:keys ship life.peer path fra [dat sig]:rawr)
+              ?>  (veri-fra:keys ship life.peer ke-full-path fra [dat sig]:rawr)
               =^  found=?  ke-core
                 (ke-on-ack fra)
               ::
@@ -3061,13 +3102,57 @@
               (ke-resend [fra hoot]:u.want)
             --
           --
-        ++  on-keen
-          |=  =path
+        ::
+        ++  on-pine-plea
+          |=  [=ship payload=*]
+          ~&  on-pine-plea/ship
           ^+  event-core
-          =/  omen
-            ~|  [%fine %invalid-namespace-path path]
-            (need (de-omen path))
-          =*  ship  p.bem.omen
+          =+  ;;(blk=balk payload)
+          ?>  =(%c van.blk)
+          =.  car.blk  %w
+          =.  cas.blk  da+now
+          =.  spr.blk  
+            ?>  ?=(^ spr.blk)
+            ^-  path
+            ~[i.spr.blk]
+          ~&  (en-roof:balk blk)
+          =+  !<(=cass:clay q:(need (need (rof ~ (en-roof:balk blk)))))
+          =.  event-core
+            (emit duct %give %boon ud.cass)
+          (emit duct %give %done ~)
+        ::
+        ++  on-pine-boon
+          |=  [=ship =path payload=*]
+          ~&  on-pine-boon/path^ship
+          =/  pe-core  (need (pe-abed:fine-peer ship))
+          pe-abet:(pe-pine-boon:pe-core path payload)
+        ::
+        ++  on-pine
+          |=  [=ship =path]
+          ~&  on-pine/ship^path
+          ^+  event-core
+          ?.  =(our ship)
+            =/  peer-core
+              (pe-abed:fine-peer ship)
+            ?~  peer-core
+              !!  ::  TODO: alien handling
+            pe-abet:(pe-pine:u.peer-core path)
+          ::  XX: crashing correct behaviour?
+          =+  blk=(need (de-part:balk our rift.ames-state life.ames-state path))
+          ?>  ?=(%c van.blk)
+          =+  nom=(en-roof:balk blk(car %w, cas [%da now]))
+          =+  cag=(rof ~ nom)
+          ?-  cag
+            ~      !!
+            [~ ~]  !!  :: XX: correct?
+          ::
+              [~ ~ *]
+            =+  !<(=cass:clay q.u.u.cag)
+            (emit duct %give %boon `*`ud.cass)
+          ==
+        ++  on-keen
+          |=  [=ship =path]
+          ^+  event-core
           =/  peer-core  (pe-abed:fine-peer ship)
           ?^  peer-core  pe-abet:(pe-keen:u.peer-core path duct)
           %+  enqueue-alien-todo  ship
@@ -3075,7 +3160,7 @@
           todos(keens (~(put ju keens.todos) path duct))
         ::
         ++  on-yawn
-          |=  =path
+          |=  [=ship =path]
           ^+  event-core
           =/  omen
             ~|  [%fine %invalid-namespace-path path]
@@ -3097,7 +3182,6 @@
           ?>  ?=([@ @ *] path)
           =/  =wire
             (welp /fine/bide path)
-          =/  =ship  (slav %p i.t.path)
           =/  [vis=view bem=beam]
             (need (de-omen path))
           =+  ;;  =care:clay
