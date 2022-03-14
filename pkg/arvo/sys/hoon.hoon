@@ -6440,7 +6440,7 @@
     [%brcb p=spec q=alas r=(map term tome)]             ::  |_
     [%brcl p=hoon q=hoon]                               ::  |:
     [%brcn p=(unit term) q=(map term tome)]             ::  |%
-    [%brdt p=hoon]                                      ::  |.
+    [%brdt p=(unit term) q=hoon]                        ::  |.
     [%brkt p=hoon q=(map term tome)]                    ::  |^
     [%brhp p=hoon]                                      ::  |-
     [%brsg p=spec q=hoon]                               ::  |~
@@ -8213,12 +8213,16 @@
     ::
     ++  apply-whit
       ^-  hoon
+      ::  if wit is empty, just return the hoon
       ?:  =([~ ~ ~ ~] wit)
         gen
       ?+    gen  gen
         ::
           [%brcn *]
-        [%brcn lab.wit q.gen]
+        [%brcn lab.wit q.gen]  :: populate (unit term) with lab.wit
+        ::
+          [%brdt *]
+        [%brdt lab.wit q.gen]
       ==
     --
   ::
@@ -8439,10 +8443,10 @@
                    |=  =hoon
                    ?~  q.gen  hoon
                    [%tstr [p.i.q.gen ~] q.i.q.gen $(q.gen t.q.gen)]
-        [%brcl *]  [%tsls p.gen [%brdt q.gen]]
-        [%brdt *]  :+  %brcn  ~
+        [%brcl *]  [%tsls p.gen [%brdt ~ q.gen]]  ::TODO ~ added when modifying %brdt, change to be appropriate docs
+        [%brdt *]  :+  %brcn  p.gen  :: (docs) ~ changed to p.gen. builds a |% with an arm named $
                    =-  [[%$ ~ -] ~ ~]
-                   (~(put by *(map term hoon)) %$ p.gen)
+                   (~(put by *(map term hoon)) %$ q.gen)
         [%brkt *]  :+  %tsgl  [%limb %$]
                    :+  %brcn  ~
                    =+  zil=(~(get by q.gen) %$)
@@ -8451,7 +8455,7 @@
                      [*what [[%$ p.gen] ~ ~]]
                    %+  ~(put by q.gen)  %$
                    [p.u.zil (~(put by q.u.zil) %$ p.gen)]
-        [%brhp *]  [%tsgl [%limb %$] [%brdt p.gen]]
+        [%brhp *]  [%tsgl [%limb %$] [%brdt ~ p.gen]]  :: TODO ~ added when modifying %brdt. change to appropriate docs
         [%brsg *]  [%ktbr [%brts p.gen q.gen]]
         [%brtr *]  :+  %tsls  [%kttr p.gen]
                    :+  %brpt  ~
@@ -8460,7 +8464,7 @@
         [%brts *]  :+  %brcb  p.gen
                    =-  [~ [[%$ ~ -] ~ ~]]
                    (~(put by *(map term hoon)) %$ q.gen)
-        [%brwt *]  [%ktwt %brdt p.gen]
+        [%brwt *]  [%ktwt %brdt ~ p.gen]  :: TODO ~ added when modifying %brdt. change to appropriate docs
     ::
         [%clkt *]  [p.gen q.gen r.gen s.gen]
         [%clls *]  [p.gen q.gen r.gen]
@@ -8521,10 +8525,10 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%rock %tas u.fek]
-        [%brdt [%cncl [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]]
+        [%brdt ~ [%cncl [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]] :: (doccords) added ~ for %brdt
       q.gen
     ::
-        [%sgcb *]  [%sggr [%mean [%brdt p.gen]] q.gen]
+        [%sgcb *]  [%sggr [%mean [%brdt ~ p.gen]] q.gen]  :: (doccords) added ~ for %brdt
         [%sgcn *]
       :+  %sggl
         :-  %fast
@@ -8622,7 +8626,7 @@
           :+  %tsgl                                     ::
             [%wing [%| 0 ~] [%& 6] ~]                   ::
           [%limb %b]                                    ::
-        :-  %brdt                                       ::  |.
+        :+  %brdt  ~                                    ::  |.  (doccords) added ~ for %brdt
         :^    %cnls                                     ::  %+
             [%tsgr [%limb %v] p.gen]                    ::      =>(v {p.gen})
           [%cncl [%limb %b] [%limb %c] ~]               ::    (b c)
@@ -13080,7 +13084,7 @@
                   ['%' (runo cen %brcn ~ expe)]
                   ['@' (runo pat %brpt ~ expe)]
                   [':' (rune col %brcl expb)]
-                  ['.' (rune dot %brdt expa)]
+                  ['.' (runo dot %brdt ~ expa)]
                   ['-' (rune hep %brhp expa)]
                   ['^' (rune ket %brkt expx)]
                   ['~' (rune sig %brsg exqc)]
