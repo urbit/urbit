@@ -6,7 +6,7 @@ import {
   Button,
   ManagedTextInputField,
   ManagedCheckboxField,
-  ContinuousProgressBar,
+  ContinuousProgressBar
 } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -20,6 +20,7 @@ import airlock from '~/logic/api';
 import { joinError, joinLoad, JoinProgress } from '@urbit/api';
 import { useQuery } from '~/logic/lib/useQuery';
 import { JoinKind, JoinDesc, JoinSkeleton } from './Skeleton';
+import { preSig } from '~/logic/lib/util';
 
 interface InviteWithUid extends Invite {
   uid: string;
@@ -32,7 +33,7 @@ interface FormSchema {
 
 const initialValues = {
   autojoin: false,
-  shareContact: false,
+  shareContact: false
 };
 
 function JoinForm(props: {
@@ -173,7 +174,6 @@ function JoinError(props: {
     useGroupState.getState().abortJoin(desc.group);
     dismiss();
   };
-  
 
   return (
     <JoinSkeleton modal={modal} title={title} desc={desc}>
@@ -272,7 +272,7 @@ export function JoinPrompt(props: JoinPromptProps) {
   };
 
   const onSubmit = async ({ link }: PromptFormSchema) => {
-    const path = `/ship/${link}`;
+    const path = `/ship/${preSig(link)}`;
     history.push({
       search: appendQuery({ 'join-path': path })
     });
