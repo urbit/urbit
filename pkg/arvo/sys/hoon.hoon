@@ -8207,6 +8207,21 @@
     ==
   |_  gen=hoon
   ::
+  ::  This door takes in a whit and annotates gen as appropriate
+  ++  docs-engine
+    |_  wit=whit
+    ::
+    ++  apply-whit
+      ^-  hoon
+      ?:  =([~ ~ ~ ~] wit)
+        gen
+      ?+    gen  gen
+        ::
+          [%brcn *]
+        [%brcn lab.wit q.gen]
+      ==
+    --
+  ::
   ++  grip
     |=  =skin
     =|  rel=wing
@@ -13673,9 +13688,26 @@
         [%spec spec %base %noun]
       wyde
     ==
+  ::
+  ::  +wrap is for tagging arbitrary hoons. This is where most of the doccords
+  ::  logic lives - the modifications to +boog and +wisp are for tagging arms
+  ::  and chapter labels, while +wrap handles hoons inside of arms and cores.
+  ++  wrap
+    |*  fel=rule
+    %+  cook
+      |=  [a=whit b=hoon c=whit]
+      ^-  hoon
+      ~(apply-whit ~(docs-engine ap b) (glom a c))
+    ::
+    ;~  plug
+      apex:docs
+      fel
+      apse:docs
+    ==
+  ::
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.(~+((wart ;~(pose expression:(norm &) long lute apex:(sail &)))))
+    |.(~+((wart (wrap ;~(pose expression:(norm &) long lute apex:(sail &))))))
   ++  till                                              ::  mold tall form
     %+  knee  *spec
     |.(~+((wert ;~(pose structure:(norm &) scad))))
