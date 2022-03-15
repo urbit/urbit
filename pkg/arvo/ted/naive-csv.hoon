@@ -14,7 +14,8 @@
 ::  - success or failure
 ::  - function name
 ::
-/-  spider
+/-  rpc=json-rpc,
+    spider
 ::
 /+  dice,
     ethereum,
@@ -63,7 +64,8 @@
   ::
   +$  events-time  (list [event-log:rpc:ethereum timestamp=@da])
   ::
-  ++  node-url  'http://eth-mainnet.urbit.org:8545'
+  ::++  node-url  'http://eth-mainnet.urbit.org:8545'
+  ++  node-url  'https://mainnet.infura.io/v3/13a985885cd243cc886062ad2f345e16'  :: infura free tier node
   --
 |%
   ++  process-logs
@@ -79,7 +81,46 @@
         leaf+"processing {<net>} ethereum logs with {<(lent logs)>} total events, of which {<(lent l2-logs)>} are l2 events"
     =/  blocks=(list @ud)  (get-block-numbers l2-logs)
     ::;<  out=(list [block=@ud timestamp=@da])  bind:m  (get-timestamps blocks)
-    (pure:m !>(blocks))
+    =/  tx-hashes=(list @ux)  (get-tx-hashes l2-logs)
+    ;<  out=(list [@t json])  bind:m  (get-tx-receipts tx-hashes)
+    (pure:m !>(-.out))
+  ::
+  ++  get-tx-receipts
+    |=  tx-hashes=(list @ux)
+    =/  m  (strand ,(list [@t json]))
+    ^-  form:m
+    =|  out=(list [@t json])
+    |^  ^-  form:m
+      =*  loop  $
+      ?:  =(~ tx-hashes)  (pure:m out)
+      ;<  res=(list [@t json])  bind:m
+        (request-receipts (scag 100 tx-hashes))
+      %_  loop
+        out        (weld out res)
+        tx-hashes  (slag 100 tx-hashes)
+      ==
+    ::
+    ++  request-receipts
+      |=  tx-hashes=(list @ux)
+      %+  request-batch-rpc-strict:ethio  node-url
+      %+  turn  tx-hashes
+      |=  txh=@ux
+      ^-  [(unit @t) request:rpc:ethereum]
+      :-  `(crip '0' 'x' ((x-co:co 64) txh))
+      [%eth-get-transaction-receipt txh]
+    ::
+    ::  ++  parse-results
+    ::    |=  res=(list [@t json])
+    ::    ^+  out
+    ::    %+  turn  res
+    ::    |=  [id=@t =json]
+    ::    ^-  [@ux @ud]
+    ::    :-  (slav %ux id)
+    ::    %-  parse-hex-result:rpc:ethereum
+    ::    ~|  json
+    ::    ?>  ?=(%o -.json)
+    ::    (~(got by p.json) 'gasUsed')
+    --
   ::
   ++  get-timestamps
     ::  TODO: would be better to call the eth-get-timestamps thread directly
@@ -94,7 +135,7 @@
       ;<  res=(list [@t json])  bind:m
         (request-blocks (scag 100 blocks))
       %_  loop
-        out  (weld out (parse-results res))
+        out     (weld out (parse-results res))
         blocks  (slag 100 blocks)
       ==
     ::
@@ -156,5 +197,12 @@
     %+  turn  logs
     |=  log=event-log:rpc:ethereum
     :: shouldn't crash since +filter-l2 already checks if mined.log is empty
-    block-number.(need mined.log)
+    block-number:(need mined.log)
+  ::
+  ++  get-tx-hashes
+    |=  logs=events  ^-  (list @ux)
+    %+  turn  logs
+    |=  log=event-log:rpc:ethereum
+    :: shouldn't crash since +filter-l2 already checks if mined.log is empty
+    transaction-hash:(need mined.log)
 --
