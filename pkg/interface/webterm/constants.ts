@@ -6,9 +6,8 @@ export const DEFAULT_SESSION = '';
  * - must start with an alphabetical
  * - can be composed of alphanumerics with hyphens
  * - can be length 1 or longer
- * - cannot begin or end with a hyphen
  */
-export const SESSION_ID_REGEX = /(^[a-z]{1}[a-z\d-]*[a-z\d]{1}$)|(^[a-z]{1}$)/;
+export const SESSION_ID_REGEX = /(^[a-z]{1}[a-z\d-]*$)/;
 
 /**
  * Open a session with a given agent using `[agent]![session_name]`
@@ -23,4 +22,4 @@ export const SESSION_ID_REGEX = /(^[a-z]{1}[a-z\d-]*[a-z\d]{1}$)|(^[a-z]{1}$)/;
  * Note that the second capture group after the ! is composed of the session ID
  * regex above.
  */
-export const AGENT_SESSION_REGEX = /^([a-z]{4})!(([a-z]{1}[a-z\d-]*[a-z\d]{1}$)|(^[a-z]{1}))/;
+export const AGENT_SESSION_REGEX = /^([a-z]{1}[a-z\d-]*)!([a-z]{1}[a-z\d-]*$)/;
