@@ -17,7 +17,7 @@ import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { joinError, joinLoad, JoinProgress, join, JoinRequest, decline, Invite } from '@urbit/api';
 import airlock from '~/logic/api';
 import { useQuery } from '~/logic/lib/useQuery';
-import { JoinDesc, JoinSkeleton } from './Skeleton';
+import { JoinDesc, JoinKind, JoinSkeleton } from './Skeleton';
 import { preSig } from '~/logic/lib/util';
 
 interface InviteWithUid extends Invite {

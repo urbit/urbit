@@ -45,7 +45,6 @@ export interface HarkState {
   notificationsGroupConfig: string[];
   unreads: Unreads;
   archiveNote: (bin: HarkBin, lid: HarkLid) => Promise<void>;
-  readCount: (path: string) => Promise<void>;
   readGraph: (graph: string) => Promise<void>;
   readGroup: (group: string) => Promise<void>;
 }
@@ -61,20 +60,20 @@ const useHarkState = createState<HarkState>(
     },
     readGraph: async (graph: string) => {
       const prefix = `/graph/${graph.slice(6)}`;
-      let counts = [] as string[];
-      let eaches = [] as [string, string][];
+      const counts = [] as string[];
+      const eaches = [] as [string, string][];
       Object.entries(get().unreads).forEach(([path, unreads]) => {
         if (path.startsWith(prefix)) {
           if(unreads.count > 0) {
             counts.push(path);
           }
-          unreads.each.forEach(unread => {
+          unreads.each.forEach((unread) => {
             eaches.push([path, unread]);
           });
         }
       });
-      get().set(draft => {
-        counts.forEach(path => {
+      get().set((draft) => {
+        counts.forEach((path) => {
           draft.unreads[path].count = 0;
         });
         eaches.forEach(([path, each]) => {
@@ -87,8 +86,7 @@ const useHarkState = createState<HarkState>(
       ].map(pok => api.poke(pok)));
     },
     readGroup: async (group: string) => {
-      const graphs = 
-        _.pickBy(useMetadataState.getState().associations.graph, a => a.group === group);
+      const graphs = _.pickBy(useMetadataState.getState().associations.graph, a => a.group === group);
       await Promise.all(Object.keys(graphs).map(get().readGraph));
     },
     readCount: async (path) => {
