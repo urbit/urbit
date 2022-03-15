@@ -1,4 +1,5 @@
 export const DEFAULT_SESSION = '';
+export const DEFAULT_HANDLER = 'hood';
 
 /**
  * Session ID validity:

@@ -191,7 +191,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
           console.log(`subscription error, id ${id}:`, e);
         },
         quit: async () => {  //  quit
-          console.error('oops quit, reconnecting...');
+          console.error('quit, reconnecting...');
           try {
             const newSubscriptionId = await retry(initSubscription, () => {
               console.log('attempting to reconnect ...');

@@ -1,4 +1,8 @@
-import { AGENT_SESSION_REGEX, SESSION_ID_REGEX } from '../constants';
+import {
+  DEFAULT_HANDLER,
+  AGENT_SESSION_REGEX,
+  SESSION_ID_REGEX
+} from '../constants';
 import useTermState from '../state';
 import api from '../api';
 import { pokeTask } from '@urbit/api/term';
@@ -8,10 +12,10 @@ export const useAddSession = () => {
   const { names } = useTermState();
 
   const addSession = useCallback(async () => {
-    let agent = 'hood'; // default agent
+    let agent = DEFAULT_HANDLER;
     let sessionName: string;
 
-    const userInput = prompt('please entew a session name uwu');
+    const userInput = prompt('Please enter an alpha-numeric session name.');
     // user canceled or did not enter a value
     if (!userInput) {
       return;
@@ -42,6 +46,7 @@ export const useAddSession = () => {
     }
 
     try {
+      //TODO  eventually, customizable app pre-linking?
       await api.poke(pokeTask(sessionName, { open: { term: agent, apps: [{ who: '~' + (window as any).ship, app: 'dojo' }] } }));
       useTermState.getState().set((state) => {
         state.names = [sessionName, ...state.names].sort();
