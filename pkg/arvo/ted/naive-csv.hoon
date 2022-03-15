@@ -74,6 +74,7 @@
     =/  m  (strand ,vase)
     ^-  form:m
     ;<  logs=events  bind:m  (scry events /gx/azimuth/logs/noun)
+    =/  logs  (scag 50 logs)  :: to make debugging faster
     =/  [naive-contract=@ux chain-id=@]
       [naive chain-id]:(get-network:dice net)
     =/  l2-logs=events  (filter-l2 logs naive-contract)
@@ -82,21 +83,21 @@
     =/  blocks=(list @ud)  (get-block-numbers l2-logs)
     ::;<  out=(list [block=@ud timestamp=@da])  bind:m  (get-timestamps blocks)
     =/  tx-hashes=(list @ux)  (get-tx-hashes l2-logs)
-    ;<  out=(list [@t json])  bind:m  (get-tx-receipts tx-hashes)
-    (pure:m !>(-.out))
+    ;<  out=(list [@ux @ud])  bind:m  (get-gas-prices tx-hashes)
+    (pure:m !>(out))
   ::
-  ++  get-tx-receipts
+  ++  get-gas-prices
     |=  tx-hashes=(list @ux)
-    =/  m  (strand ,(list [@t json]))
+    =/  m  (strand ,(list [@ux @ud]))
     ^-  form:m
-    =|  out=(list [@t json])
+    =|  out=(list [@ux @ud])
     |^  ^-  form:m
       =*  loop  $
       ?:  =(~ tx-hashes)  (pure:m out)
       ;<  res=(list [@t json])  bind:m
         (request-receipts (scag 100 tx-hashes))
       %_  loop
-        out        (weld out res)
+        out        (weld out (parse-results res))
         tx-hashes  (slag 100 tx-hashes)
       ==
     ::
@@ -109,17 +110,17 @@
       :-  `(crip '0' 'x' ((x-co:co 64) txh))
       [%eth-get-transaction-receipt txh]
     ::
-    ::  ++  parse-results
-    ::    |=  res=(list [@t json])
-    ::    ^+  out
-    ::    %+  turn  res
-    ::    |=  [id=@t =json]
-    ::    ^-  [@ux @ud]
-    ::    :-  (slav %ux id)
-    ::    %-  parse-hex-result:rpc:ethereum
-    ::    ~|  json
-    ::    ?>  ?=(%o -.json)
-    ::    (~(got by p.json) 'gasUsed')
+    ++  parse-results
+      |=  res=(list [@t json])
+      ^-  (list [@ux @ud])
+      %+  turn  res
+      |=  [id=@t =json]
+      ^-  [@ux @ud]
+      :-  (hex-to-num:ethereum id)
+      %-  parse-hex-result:rpc:ethereum
+      ~|  json
+      ?>  ?=(%o -.json)
+      (~(got by p.json) 'gasUsed')  :: returns the amount of gas used, not gas price
     --
   ::
   ++  get-timestamps
