@@ -18,6 +18,7 @@ export const useAddSession = () => {
     const userInput = prompt('Please enter an alpha-numeric session name.');
     // user canceled or did not enter a value
     if (!userInput) {
+      alert('A valid name is required to create a new session');
       return;
     }
 
@@ -25,6 +26,7 @@ export const useAddSession = () => {
     if (AGENT_SESSION_REGEX.test(userInput)) {
       const match = AGENT_SESSION_REGEX.exec(userInput);
       if (!match) {
+        alert('Invalid format. Valid syntax: agent!session-name');
         return;
       }
       agent = match[1];
@@ -33,15 +35,18 @@ export const useAddSession = () => {
     } else if (SESSION_ID_REGEX.test(userInput)) {
       const match = SESSION_ID_REGEX.exec(userInput);
       if (!match) {
+        alert('Invalid format. Valid syntax: session-name');
         return;
       }
       sessionName = match[1];
     } else {
+      alert('Invalid format. Valid syntax: session-name');
       return;
     }
 
-    // avoid nil or duplicate sessions
-    if(!sessionName || names.includes(sessionName)) {
+    // prevent duplicate sessions
+    if(names.includes(sessionName)) {
+      alert(`Session name must be unique ("${sessionName}" already in use)`);
       return;
     }
 
