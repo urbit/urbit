@@ -78,8 +78,8 @@
     %-  %-  slog  :_  ~
         leaf+"processing {<net>} ethereum logs with {<(lent logs)>} total events, of which {<(lent l2-logs)>} are l2 events"
     =/  blocks=(list @ud)  (get-block-numbers l2-logs)
-    ;<  out=(list [block=@ud timestamp=@da])  bind:m  (get-timestamps blocks)
-    (pure:m !>(out))
+    ::;<  out=(list [block=@ud timestamp=@da])  bind:m  (get-timestamps blocks)
+    (pure:m !>(blocks))
   ::
   ++  get-timestamps
     ::  TODO: would be better to call the eth-get-timestamps thread directly
@@ -145,28 +145,16 @@
     ::  (pure:m !>(blocks))
   ::
   ++  filter-l2
-    |=  [logs=events naive-contract=@ux]  ^-  events
-    =|  l2-logs=events
-    |-
-    ?~  logs  l2-logs
-    =/  log=event-log:rpc:ethereum  i.logs
-    ?~  mined.log  $(logs t.logs)
-    ?.  =(naive-contract address.log)
-      $(logs t.logs)
-    %=  $
-      l2-logs     (weld l2-logs ~[i.logs])
-      logs        t.logs
-    ==
+  |=  [logs=events naive-contract=@ux]  ^-  events
+  %+  skim  logs
+  |=  log=event-log:rpc:ethereum  ^-  ?
+  ?~  mined.log  %.n
+  =(naive-contract address.log)
   ::
   ++  get-block-numbers
-    |=  =events  ^-  (list @ud)
-    =|  blocks=(list @ud)
-    |-
-    ?~  events  blocks
-    ?~  mined.i.events  $(events t.events)
-    %=  $
-      events  t.events
-      blocks  (weld blocks ~[block-number.u.mined.i.events])
-    ==
-  ::
+    |=  logs=events  ^-  (list @ud)
+    %+  turn  logs
+    |=  log=event-log:rpc:ethereum
+    :: shouldn't crash since +filter-l2 already checks if mined.log is empty
+    block-number.(need mined.log)
 --
