@@ -14,8 +14,9 @@
 ::  - success or failure
 ::  - function name
 ::
-/-  rpc=json-rpc,
-    spider
+::  TODO: change block maps to ordered maps
+::
+/-  spider
 ::
 /+  dice,
     ethereum,
@@ -45,13 +46,12 @@
   +$  net  ?(%mainnet %ropsten %local %default)
   ::
   +$  roll-data
-    $:  block-number=number:block
-        timestamp=@da
-        roller-address=@ux
-        roll-hash=*
-        tx-hash=*
+    $:  roller-address=@ux
+        roll-hash=@ux
+        tx-hash=@ux
         gas-price=@ud
     ==
+  ::
   +$  l2-event-data
     $:  =roll-data
         sending-ship=@p
@@ -67,6 +67,7 @@
   ::++  node-url  'http://eth-mainnet.urbit.org:8545'
   ++  node-url  'https://mainnet.infura.io/v3/13a985885cd243cc886062ad2f345e16'  :: infura free tier node
   --
+::
 |%
   ++  process-logs
     |=  arg=vase
@@ -80,24 +81,35 @@
     =/  l2-logs=events  (filter-l2 logs naive-contract)
     %-  %-  slog  :_  ~
         leaf+"processing {<net>} ethereum logs with {<(lent logs)>} total events, of which {<(lent l2-logs)>} are l2 events"
-    =/  blocks=(list @ud)  (get-block-numbers l2-logs)
-    ::;<  out=(list [block=@ud timestamp=@da])  bind:m  (get-timestamps blocks)
+    =/  blocks=(list @ud)     (get-block-numbers l2-logs)
     =/  tx-hashes=(list @ux)  (get-tx-hashes l2-logs)
-    ;<  out=(list [@ux @ud])  bind:m  (get-gas-prices tx-hashes)
-    (pure:m !>(out))
+    =/  block-jar=(jar @ud @ux)  (block-tx-jar l2-logs)
+    ;<  timestamps=(map @ud @da)  bind:m  (get-timestamps blocks)
+    ;<  gas-prices=(map @ux @ud)  bind:m  (get-gas-prices tx-hashes)
+    (pure:m !>(block-jar))
+  ::  ++  collate-roll-data
+  ::    |=  $:  blocks=(list @ud)
+  ::            l2-logs=events
+  ::            timestamps=(list [block=@ud timestamp=@da])
+  ::            gas-prices=(list [@ux @ud])
+  ::        ==
+  ::    =|  block-map=(map @ud [timestamp=@da (list roll-data)])
+  ::    |-
+  ::    ?~  blocks  block-map
+  ::    =/  block=@ud  i.block
   ::
   ++  get-gas-prices
     |=  tx-hashes=(list @ux)
-    =/  m  (strand ,(list [@ux @ud]))
+    =/  m  (strand ,(map @ux @ud))
     ^-  form:m
-    =|  out=(list [@ux @ud])
+    =|  out=(map @ux @ud)
     |^  ^-  form:m
       =*  loop  $
       ?:  =(~ tx-hashes)  (pure:m out)
       ;<  res=(list [@t json])  bind:m
         (request-receipts (scag 100 tx-hashes))
       %_  loop
-        out        (weld out (parse-results res))
+        out        (~(gas by out) (parse-results res))
         tx-hashes  (slag 100 tx-hashes)
       ==
     ::
@@ -127,16 +139,16 @@
     ::  TODO: would be better to call the eth-get-timestamps thread directly
     ::  rather than copy and paste the code for it here
     |=  blocks=(list @ud)
-    =/  m  (strand ,(list [@ud @da]))
+    =/  m  (strand ,(map @ud @da))
     ^-  form:m
-    =|  out=(list [block=@ud timestamp=@da])
+    =|  out=(map @ud @da)
     |^  ^-  form:m
       =*  loop  $
       ?:  =(~ blocks)  (pure:m out)
       ;<  res=(list [@t json])  bind:m
         (request-blocks (scag 100 blocks))
       %_  loop
-        out     (weld out (parse-results res))
+        out     (~(gas by out) (parse-results res))
         blocks  (slag 100 blocks)
       ==
     ::
@@ -151,7 +163,7 @@
     ::
     ++  parse-results
       |=  res=(list [@t json])
-      ^+  out
+      ^-  (list [@ud @da])
       %+  turn  res
       |=  [id=@t =json]
       ^-  [@ud @da]
@@ -192,6 +204,18 @@
     |=  log=event-log:rpc:ethereum  ^-  ?
     ?~  mined.log  %.n
     =(naive-contract address.log)
+  ::
+  ++  block-tx-jar
+    |=  logs=events  ^-  (jar @ud @ux)
+    =|  block-jar=(jar @ud @ux)
+    |-
+    ?~  logs  block-jar
+    :: shouldn't crash since +filter-l2 already checks if mined.log is empty
+    =+  (need mined.i.logs)
+    %=  $
+      logs  t.logs
+      block-jar  (~(add ja block-jar) [block-number transaction-hash]:-)
+    ==
   ::
   ++  get-block-numbers
     |=  logs=events  ^-  (list @ud)
