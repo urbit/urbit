@@ -192,7 +192,7 @@ export function makeResource(ship: string, name: string) {
 }
 
 export const isWriter = (group: Group, resource: string, ship: string) => {
-  const graph = group.tags?.graph;
+  const graph = group?.tags?.graph;
   const writers: string[] | undefined = graph && (graph[resource] as any)?.writers;
   const admins = group?.tags?.role?.admin ?? [];
   if (typeof writers === 'undefined') {
