@@ -145,11 +145,11 @@
     ::  (pure:m !>(blocks))
   ::
   ++  filter-l2
-  |=  [logs=events naive-contract=@ux]  ^-  events
-  %+  skim  logs
-  |=  log=event-log:rpc:ethereum  ^-  ?
-  ?~  mined.log  %.n
-  =(naive-contract address.log)
+    |=  [logs=events naive-contract=@ux]  ^-  events
+    %+  skim  logs
+    |=  log=event-log:rpc:ethereum  ^-  ?
+    ?~  mined.log  %.n
+    =(naive-contract address.log)
   ::
   ++  get-block-numbers
     |=  logs=events  ^-  (list @ud)
