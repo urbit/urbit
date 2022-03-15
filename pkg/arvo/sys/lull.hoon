@@ -1109,6 +1109,7 @@
   ::    Remote Scry Gifts
   ::    %tune: found data for arvo
   ::    %howl: full response packets
+  ::    %miss: no case for %pine
   ::
   ::    System and Lifecycle Gifts
   ::
@@ -1116,13 +1117,15 @@
   ::
   +$  gift
     $%  [%boon payload=*]
+        [%miss ~]
         [%clog =ship]
         [%done error=(unit error)]
         [%lost ~]
         [%send =lane =blob]
     ::
-        [%tune =path data=(unit (cask))]
+        [%tune =path sign=@ux data=(unit (cask))]
         [%howl =path =song]
+        [%miss =path]
     ::
         [%turf turfs=(list turf)]
     ==
@@ -1224,6 +1227,7 @@
         packets=(set =blob)
         heeds=(set duct)
         keens=(jug path duct)
+        pines=(jug path duct)
     ==
   ::  $peer-state: state for a peer with known life and keys
   ::

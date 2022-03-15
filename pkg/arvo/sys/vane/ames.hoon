@@ -1202,7 +1202,7 @@
     |=  old=ship-state-6
     ^-  ship-state
     ?:  ?=(%alien -.old)  
-      old(heeds [heeds.old ~])
+      old(heeds [heeds.old ~ ~])
     old(heeds [heeds.old *scry-state])
   ::
   ++  state-5-to-6
@@ -1770,12 +1770,8 @@
       %+  enqueue-alien-todo  ship
       |=  todos=alien-agenda
       todos(messages [[duct plea] messages.todos])
-    ~&  plea/ship^path.plea
-      ~&  ((soft balk) payload.plea)
     ::
     ?:  &(=(/pine path.plea) =(our her:;;(balk payload.plea)))
-      ~&  ship^plea
-      ~&  ;;(balk payload.plea)
       (on-pine-plea:fine ship payload.plea)
     ::
     =/  =peer-state  +.u.ship-state
@@ -2033,8 +2029,10 @@
         ::  apply remote scry requests
         ::
         =.  event-core
-          =<  pe-abet
-          (pe-meet-alien:(need (pe-abed:fine-peer:fine ship)) keens.todos)
+          =+  pe-core=(need (pe-abed:fine-peer:fine ship))
+          =.  pe-core  (pe-meet-alien-keen:pe-core keens.todos)
+          =.  pe-core  (pe-meet-alien-pine:pe-core pines.todos)
+          pe-abet:pe-core
         ::
         event-core(duct original-duct)
       --
@@ -2742,8 +2740,7 @@
             ke-abet:(ke-start:(ke-abed:keen-core path) duct)
           ::
           ++  pe-pine
-            |=  =path
-            ~&  pe-pine/path^ship
+            |=  [=path =^duct]
             ^+  pe-core
             ?~  blk=(de-part:balk ship rift.peer life.peer path)
               !!  :: XX: ???
@@ -2758,12 +2755,22 @@
             ?~  blk=(de-part:balk ship rift.peer life.peer path)
               !!
             =+  ;;(case=@ud payload)
-            ~&  finished-pine/u.blk^case
-            (pe-keen path duct)
+            =.  cas.u.blk  ud+case
+            (pe-keen (slag 3 (en-path:balk u.blk)) duct)
           ::
-          ++  pe-meet-alien
-            |=  agenda=(jug path ^duct)
-            %+  roll  ~(tap by agenda)
+          ++  pe-meet-alien-pine
+            |=  pines=(jug path ^duct)
+            %+  roll  ~(tap by pines)
+            |=  [[=path ducts=(set ^duct)] cor=_pe-core]
+            ^+  cor
+            %+  roll  ~(tap in ducts)
+            |=  [=^duct c=_cor]
+            ^+  c
+            (pe-pine:c path duct)
+          ::
+          ++  pe-meet-alien-keen
+            |=  keens=(jug path ^duct)
+            %+  roll  ~(tap by keens)
             |=  [[=path ducts=(set ^duct)] cor=_pe-core]
             ^+  cor
             %+  roll  ~(tap in ducts)
@@ -2924,7 +2931,7 @@
               ?~  listeners
                 ke-core
               =.  event-core
-                (emit i.listeners %give %tune path dat)
+                (emit i.listeners %give %tune ke-full-path sig dat)
               $(listeners t.listeners)
             ::
             ++  ke-first-rcv
@@ -2983,7 +2990,6 @@
             ::
             ++  ke-decode-full
               =,  keen
-              ~&  num/num-received
               ~|  %frag-mismatch
               ~|  have/num-received
               ~|  need/num-fragments
@@ -3105,7 +3111,6 @@
         ::
         ++  on-pine-plea
           |=  [=ship payload=*]
-          ~&  on-pine-plea/ship
           ^+  event-core
           =+  ;;(blk=balk payload)
           ?>  =(%c van.blk)
@@ -3115,7 +3120,6 @@
             ?>  ?=(^ spr.blk)
             ^-  path
             ~[i.spr.blk]
-          ~&  (en-roof:balk blk)
           =+  !<(=cass:clay q:(need (need (rof ~ (en-roof:balk blk)))))
           =.  event-core
             (emit duct %give %boon ud.cass)
@@ -3123,20 +3127,20 @@
         ::
         ++  on-pine-boon
           |=  [=ship =path payload=*]
-          ~&  on-pine-boon/path^ship
           =/  pe-core  (need (pe-abed:fine-peer ship))
           pe-abet:(pe-pine-boon:pe-core path payload)
         ::
         ++  on-pine
           |=  [=ship =path]
-          ~&  on-pine/ship^path
           ^+  event-core
           ?.  =(our ship)
             =/  peer-core
               (pe-abed:fine-peer ship)
-            ?~  peer-core
-              !!  ::  TODO: alien handling
-            pe-abet:(pe-pine:u.peer-core path)
+            ?^  peer-core
+              pe-abet:(pe-pine:u.peer-core path duct)
+            %+  enqueue-alien-todo  ship
+            |=  todos=alien-agenda
+            todos(pines (~(put ju keens.todos) path duct))
           ::  XX: crashing correct behaviour?
           =+  blk=(need (de-part:balk our rift.ames-state life.ames-state path))
           ?>  ?=(%c van.blk)
@@ -3144,7 +3148,7 @@
           =+  cag=(rof ~ nom)
           ?-  cag
             ~      !!
-            [~ ~]  !!  :: XX: correct?
+            [~ ~]  (emit duct %give %miss (en-path:balk blk))
           ::
               [~ ~ *]
             =+  !<(=cass:clay q.u.u.cag)
@@ -3182,14 +3186,15 @@
           ?>  ?=([@ @ *] path)
           =/  =wire
             (welp /fine/bide path)
-          =/  [vis=view bem=beam]
-            (need (de-omen path))
-          =+  ;;  =care:clay
-              ?^  vis  car.vis
-              (rsh 3^1 vis)
+          =+  blk=(de-path:balk path)
+          ?>  ?=(%c van.blk)
+          =/  [des=desk spr=spur]
+            ?^  spr.blk  spr.blk
+            [%$ ~]
+          =+  ;;(=care:clay car.blk)
           =/  =rave:clay
-            [%sing care r.bem s.bem]
-          (emit duct %pass wire %c %warp p.bem q.bem `rave)
+            [%sing care cas.blk spr]
+          (emit duct %pass wire %c %warp her.blk des `rave)
         ::
         ++  on-take-clay-bide
           |=  [=wire =riot:clay]
