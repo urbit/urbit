@@ -782,7 +782,7 @@
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
-    =|  cached-state=[?(%5 %~) ames-state-5]
+    =|  cached-state=(unit [%5 ames-state-5])
     ::
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
@@ -800,13 +800,14 @@
         ~|(%ames-larval-call-dud (mean tang.u.dud))
       ::
       =/  update-ready=?
-        ?&  ?=([%5 *] cached-state)
+        ?&  ?=(^ cached-state)
             ?=(~ queued-events)
         ==
       ?:  update-ready
         =.  ames-state.adult-gate
-          (state-5-to-6:load:adult-core +.cached-state)
-        =.  -.cached-state  %~
+          ?>  ?=(^ cached-state)
+          (state-5-to-6:load:adult-core +.u.cached-state)
+        =.  cached-state  ~
         ~>  %slog.1^leaf/"ames: metamorphosis reload"
         [~ adult-gate]
       ::  %born: set .unix-duct and start draining .queued-events
@@ -882,13 +883,14 @@
           %take  (take:adult-core [wire duct ~ sign]:+.first-event)
         ==
       =/  update-ready=?
-        ?&  ?=([%5 *] cached-state)
+        ?&  ?=(^ cached-state)
             ?=(~ queued-events)
         ==
       ?:  update-ready
         =.  ames-state.adult-gate
-          (state-5-to-6:load:adult-core +.cached-state)
-        =.  -.cached-state  %~
+          ?>  ?=(^ cached-state)
+          (state-5-to-6:load:adult-core +.u.cached-state)
+        =.  cached-state  ~
         ~>  %slog.1^leaf/"ames: metamorphosis reload"
         [moves adult-gate]
       ::  .queued-events has been cleared; metamorphose
@@ -937,7 +939,7 @@
         larval-gate
       ::
           [%5 %adult *]
-        =.  cached-state  [%5 state.old]
+        =.  cached-state  `[%5 state.old]
         ~>  %slog.1^leaf/"ames: larva reload"
         larval-gate
       ::
@@ -1068,11 +1070,10 @@
     ?.  ?=(%known -.ship-state)
       ship-state
     =/  peer-state=peer-state-5  +.ship-state
-    =|  =rift
-    =/  scry=(unit (unit cage))
+    =/  =rift
+      ;;  @ud
+      =<  q.q  %-  need  %-  need
       (rof ~ %j `beam`[[our %rift %da now] /(scot %p ship)])
-    =?  rift  ?=([~ ~ ^] scry)
-      ;;(@ud q.q:u.u.scry)
     =/  =^peer-state
       :_  +.peer-state
       =,  -.peer-state
