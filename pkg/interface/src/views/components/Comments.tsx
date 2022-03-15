@@ -7,12 +7,12 @@ import {
   Group,
   markCountAsRead,
   addPost,
+  isWriter,
   resourceFromPath
 } from '@urbit/api';
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
-import { isWriter } from '~/logic/lib/group';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
@@ -137,7 +137,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const harkPath = toHarkPath(association.resource, parentIndex);
   const readCount = children.length - getUnreadCount(unreads, harkPath);
 
-  const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
+  const canComment = isWriter(group, association.resource, window.ship) || association.metadata.vip === 'reader-comments';
 
   return (
     <Col {...rest} minWidth={0}>

@@ -1,4 +1,3 @@
-import { readGroup } from '@urbit/api';
 import _ from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import Helmet from 'react-helmet';
@@ -13,25 +12,26 @@ import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
-import { DmResource } from '~/views/apps/chat/DmResource';
 import { Workspace } from '~/types/workspace';
 import '~/views/apps/links/css/custom.css';
 import '~/views/apps/publish/css/custom.css';
 import { Loading } from '~/views/components/Loading';
-import { UnjoinedResource } from '~/views/components/UnjoinedResource';
-import { EmptyGroupHome } from './Home/EmptyGroupHome';
-import { GroupHome } from './Home/GroupHome';
 import { InvitePopover } from './InvitePopover';
-import { NewChannel } from './NewChannel';
 import { PopoverRoutes } from './PopoverRoutes';
-import { Resource } from './Resource';
 import { Skeleton } from './Skeleton';
-import {Join, JoinRoute} from './Join/Join';
+import { EmptyGroupHome } from './Home/EmptyGroupHome';
+import { Join } from './Join/Join';
 
 interface GroupsPaneProps {
   baseUrl: string;
   workspace: Workspace;
 }
+
+const DmResource = React.lazy(() => import('~/views/apps/chat/DmResource').then(module => ({ default: module.DmResource })));
+const Resource = React.lazy(() => import('./Resource').then(module => ({ default: module.Resource })));
+const UnjoinedResource = React.lazy(() => import('~/views/components/UnjoinedResource').then(module => ({ default: module.UnjoinedResource })));
+const GroupHome = React.lazy(() => import('./Home/GroupHome').then(module => ({ default: module.GroupHome })));
+const NewChannel = React.lazy(() => import('./NewChannel').then(module => ({ default: module.NewChannel })));
 
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, workspace } = props;
@@ -65,7 +65,6 @@ export function GroupsPane(props: GroupsPaneProps) {
     if(group in pendingJoin) {
       doneJoin(group);
     }
-
 
     return () => {
       setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
@@ -183,31 +182,29 @@ export function GroupsPane(props: GroupsPaneProps) {
             </>
           );
         }}
-    />
-    <Route
-      path={relativePath('/pending/:ship/:name')}
-      render={(routeProps) => {
-        const { ship, name } = routeProps.match.params as Record<string, string>;
-        const desc =  {
-          group: `/ship/${ship}/${name}`,
-          kind: 'graph' as const
-        };
-       return (<Skeleton
-        mobileHide
-        recentGroups={recentGroups}
-        {...props}
-        baseUrl={baseUrl}
-      >
-        <Box width="100%">
-          <Join desc={desc} />
-        </Box>
-      </Skeleton>
-       )
-
-
-      }}
-    >
-    </Route>
+      />
+      <Route
+        path={relativePath('/pending/:ship/:name')}
+        render={(routeProps) => {
+          const { ship, name } = routeProps.match.params as Record<string, string>;
+          const desc =  {
+            group: `/ship/${ship}/${name}`,
+            kind: 'graph' as const
+          };
+          return (
+            <Skeleton
+              mobileHide
+              recentGroups={recentGroups}
+              {...props}
+              baseUrl={baseUrl}
+            >
+              <Box width="100%">
+                <Join desc={desc} />
+              </Box>
+            </Skeleton>
+          );
+        }}
+      />
       <Route
         path={relativePath('/new')}
         render={(routeProps) => {
@@ -254,7 +251,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                       associations={associations}
                     />
                 )}
-               {popovers(routeProps, baseUrl)}
+                {popovers(routeProps, baseUrl)}
               </Skeleton>
             </>
           );

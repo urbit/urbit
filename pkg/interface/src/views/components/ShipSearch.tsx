@@ -36,7 +36,7 @@ const getNicknameForShips = (groups: Groups, contacts: Rolodex, selected: string
   const peerSet = new Set<string>();
   const nicknames = new Map<string, string[]>();
   _.forEach(groups, (group, path) => {
-    if (group.members.size > 0) {
+    if (group.members.length > 0) {
       const groupEntries = group.members.values();
       for (const member of groupEntries) {
         if(!selected.includes(member)) {

@@ -6,7 +6,7 @@ import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 import { Profile } from './components/Profile';
 
-export default function ProfileScreen(props: any) {
+export default function ProfileScreen() {
   const contacts = useContactState(state => state.contacts);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   return (
