@@ -4,7 +4,6 @@ module.exports = {
     '@babel/transform-runtime',
     '@babel/plugin-proposal-object-rest-spread',
     '@babel/plugin-proposal-optional-chaining',
-    '@babel/plugin-proposal-class-properties',
-    process.env.NODE_ENV !== 'production' && 'react-refresh/babel'
+    '@babel/plugin-proposal-class-properties'
   ]
 };

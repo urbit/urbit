@@ -107,7 +107,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
       'process.env.LANDSCAPE_STORAGE_VERSION': JSON.stringify(Date.now()),
-      'process.env.LANDSCAPE_LAST_WIPE': JSON.stringify('2021-10-20'),
+      'process.env.LANDSCAPE_LAST_WIPE': JSON.stringify('2021-10-20')
     }),
 
     // new CleanWebpackPlugin(),
