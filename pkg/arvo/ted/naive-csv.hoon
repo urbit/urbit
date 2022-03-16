@@ -85,8 +85,8 @@
     =/  tx-hashes=(list @ux)     (get-tx-hashes l2-logs)
     =/  block-jar=(jar @ud @ux)  (block-tx-jar l2-logs)
     ;<  timestamps=(map @ud @da)  bind:m  (get-timestamps blocks)
-    ;<  gas-prices=(map @ux @ud)  bind:m  (get-gas-prices tx-hashes)
-    =/  rolling  (collate-roll-data blocks block-jar timestamps gas-prices)
+    ;<  tx-data=(map @ux [gas=@ud sender=@ux])  bind:m  (get-tx-data tx-hashes)
+    =/  rolling  (collate-roll-data blocks block-jar timestamps tx-data)
     (pure:m !>(rolling))
   ::
   ++  collate-roll-data
@@ -94,28 +94,29 @@
             block-jar=(jar @ud @ux)
             ::l2-logs=events
             timestamps=(map @ud @da)
-            gas-prices=(map @ux @ud)
+            tx-data=(map @ux [gas=@ud sender=@ux])
         ==
-    =|  block-map=(map @ud [timestamp=@da gas=(map @ux @ud)])
+    =|  block-map=(map @ud [timestamp=@da tx=(map @ux [gas=@ud sender=@ux])])
     |-
     ?~  blocks  block-map
     =/  block  i.blocks
     =/  tx-hashes  (~(get ja block-jar) block)
-    =/  tx-gas=(map @ux @ud)
-      %-  ~(gas by *(map @ux @ud))
+    =/  tx=(map @ux [gas=@ud sender=@ux])
+      %-  ~(gas by *(map @ux [gas=@ud sender=@ux]))
       %+  turn  tx-hashes
       |=  txh=@ux
-      [txh (~(got by gas-prices) txh)]
+      [txh (~(got by tx-data) txh)]
     %=  $
       blocks     t.blocks
-      block-map  (~(put by block-map) block [(~(got by timestamps) block) tx-gas])
+      block-map  (~(put by block-map) block [(~(got by timestamps) block) tx])
     ==
   ::
-  ++  get-gas-prices
+  ++  get-tx-data
+    :: retrieves transaction receipts for rolls, extracting the gas cost and sender
     |=  tx-hashes=(list @ux)
-    =/  m  (strand ,(map @ux @ud))
+    =/  m  (strand ,(map @ux [gas=@ud sender=@ux]))
     ^-  form:m
-    =|  out=(map @ux @ud)
+    =|  out=(map @ux [gas=@ud sender=@ux])
     |^  ^-  form:m
       =*  loop  $
       ?:  =(~ tx-hashes)  (pure:m out)
@@ -137,15 +138,19 @@
     ::
     ++  parse-results
       |=  res=(list [@t json])
-      ^-  (list [@ux @ud])
+      ^-  (list [txh=@ux [gas=@ud sender=@ux]])
       %+  turn  res
       |=  [id=@t =json]
-      ^-  [@ux @ud]
+      ^-  [txh=@ux [gas=@ud sender=@ux]]
       :-  (hex-to-num:ethereum id)
+      :-  %-  parse-hex-result:rpc:ethereum
+        ~|  json
+        ?>  ?=(%o -.json)
+        (~(got by p.json) 'gasUsed')  :: returns the amount of gas used, not gas price
       %-  parse-hex-result:rpc:ethereum
       ~|  json
       ?>  ?=(%o -.json)
-      (~(got by p.json) 'gasUsed')  :: returns the amount of gas used, not gas price
+      (~(got by p.json) 'from')
     --
   ::
   ++  get-timestamps
