@@ -81,22 +81,35 @@
     =/  l2-logs=events  (filter-l2 logs naive-contract)
     %-  %-  slog  :_  ~
         leaf+"processing {<net>} ethereum logs with {<(lent logs)>} total events, of which {<(lent l2-logs)>} are l2 events"
-    =/  blocks=(list @ud)     (get-block-numbers l2-logs)
-    =/  tx-hashes=(list @ux)  (get-tx-hashes l2-logs)
+    =/  blocks=(list @ud)        (get-block-numbers l2-logs)
+    =/  tx-hashes=(list @ux)     (get-tx-hashes l2-logs)
     =/  block-jar=(jar @ud @ux)  (block-tx-jar l2-logs)
     ;<  timestamps=(map @ud @da)  bind:m  (get-timestamps blocks)
     ;<  gas-prices=(map @ux @ud)  bind:m  (get-gas-prices tx-hashes)
-    (pure:m !>(block-jar))
-  ::  ++  collate-roll-data
-  ::    |=  $:  blocks=(list @ud)
-  ::            l2-logs=events
-  ::            timestamps=(list [block=@ud timestamp=@da])
-  ::            gas-prices=(list [@ux @ud])
-  ::        ==
-  ::    =|  block-map=(map @ud [timestamp=@da (list roll-data)])
-  ::    |-
-  ::    ?~  blocks  block-map
-  ::    =/  block=@ud  i.block
+    =/  rolling  (collate-roll-data blocks block-jar timestamps gas-prices)
+    (pure:m !>(rolling))
+  ::
+  ++  collate-roll-data
+    |=  $:  blocks=(list @ud)
+            block-jar=(jar @ud @ux)
+            ::l2-logs=events
+            timestamps=(map @ud @da)
+            gas-prices=(map @ux @ud)
+        ==
+    =|  block-map=(map @ud [timestamp=@da gas=(map @ux @ud)])
+    |-
+    ?~  blocks  block-map
+    =/  block  i.blocks
+    =/  tx-hashes  (~(get ja block-jar) block)
+    =/  tx-gas=(map @ux @ud)
+      %-  ~(gas by *(map @ux @ud))
+      %+  turn  tx-hashes
+      |=  txh=@ux
+      [txh (~(got by gas-prices) txh)]
+    %=  $
+      blocks     t.blocks
+      block-map  (~(put by block-map) block [(~(got by timestamps) block) tx-gas])
+    ==
   ::
   ++  get-gas-prices
     |=  tx-hashes=(list @ux)
