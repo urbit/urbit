@@ -6440,7 +6440,7 @@
     [%brcb p=spec q=alas r=(map term tome)]             ::  |_
     [%brcl p=hoon q=hoon]                               ::  |:
     [%brcn p=(unit term) q=(map term tome)]             ::  |%
-    [%brdt p=(unit term) q=hoon]                        ::  |.
+    [%brdt p=hoon]                                      ::  |.
     [%brkt p=hoon q=(map term tome)]                    ::  |^
     [%brhp p=hoon]                                      ::  |-
     [%brsg p=spec q=hoon]                               ::  |~
@@ -8213,12 +8213,12 @@
     ::
     ++  apply-whit
       ^-  hoon
-      ::  if wit is empty, just return the hoon
       ?:  =([~ ~ ~ ~] wit)
         gen
       ?+    gen  gen
         ::
           [%brcn *]
+<<<<<<< HEAD
         [%brcn lab.wit q.gen]  :: populate (unit term) with lab.wit
         ::
           [%brpt *]
@@ -8226,6 +8226,9 @@
         ::
           [%brdt *]
         [%brdt lab.wit q.gen]
+=======
+        [%brcn lab.wit q.gen]
+>>>>>>> parent of 0dc3498a6f (hoon: change %brdt AST to support doccords label)
       ==
     --
   ::
@@ -8446,10 +8449,10 @@
                    |=  =hoon
                    ?~  q.gen  hoon
                    [%tstr [p.i.q.gen ~] q.i.q.gen $(q.gen t.q.gen)]
-        [%brcl *]  [%tsls p.gen [%brdt ~ q.gen]]  ::TODO ~ added when modifying %brdt, change to be appropriate docs
-        [%brdt *]  :+  %brcn  p.gen  :: (docs) ~ changed to p.gen. builds a |% with an arm named $
+        [%brcl *]  [%tsls p.gen [%brdt q.gen]]
+        [%brdt *]  :+  %brcn  ~
                    =-  [[%$ ~ -] ~ ~]
-                   (~(put by *(map term hoon)) %$ q.gen)
+                   (~(put by *(map term hoon)) %$ p.gen)
         [%brkt *]  :+  %tsgl  [%limb %$]
                    :+  %brcn  ~
                    =+  zil=(~(get by q.gen) %$)
@@ -8458,7 +8461,7 @@
                      [*what [[%$ p.gen] ~ ~]]
                    %+  ~(put by q.gen)  %$
                    [p.u.zil (~(put by q.u.zil) %$ p.gen)]
-        [%brhp *]  [%tsgl [%limb %$] [%brdt ~ p.gen]]  :: TODO ~ added when modifying %brdt. change to appropriate docs
+        [%brhp *]  [%tsgl [%limb %$] [%brdt p.gen]]
         [%brsg *]  [%ktbr [%brts p.gen q.gen]]
         [%brtr *]  :+  %tsls  [%kttr p.gen]
                    :+  %brpt  ~
@@ -8467,7 +8470,7 @@
         [%brts *]  :+  %brcb  p.gen
                    =-  [~ [[%$ ~ -] ~ ~]]
                    (~(put by *(map term hoon)) %$ q.gen)
-        [%brwt *]  [%ktwt %brdt ~ p.gen]  :: TODO ~ added when modifying %brdt. change to appropriate docs
+        [%brwt *]  [%ktwt %brdt p.gen]
     ::
         [%clkt *]  [p.gen q.gen r.gen s.gen]
         [%clls *]  [p.gen q.gen r.gen]
@@ -8528,10 +8531,10 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%rock %tas u.fek]
-        [%brdt ~ [%cncl [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]] :: (doccords) added ~ for %brdt
+        [%brdt [%cncl [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]]
       q.gen
     ::
-        [%sgcb *]  [%sggr [%mean [%brdt ~ p.gen]] q.gen]  :: (doccords) added ~ for %brdt
+        [%sgcb *]  [%sggr [%mean [%brdt p.gen]] q.gen]
         [%sgcn *]
       :+  %sggl
         :-  %fast
@@ -8629,7 +8632,7 @@
           :+  %tsgl                                     ::
             [%wing [%| 0 ~] [%& 6] ~]                   ::
           [%limb %b]                                    ::
-        :+  %brdt  ~                                    ::  |.  (doccords) added ~ for %brdt
+        :-  %brdt                                       ::  |.
         :^    %cnls                                     ::  %+
             [%tsgr [%limb %v] p.gen]                    ::      =>(v {p.gen})
           [%cncl [%limb %b] [%limb %c] ~]               ::    (b c)
@@ -13087,7 +13090,7 @@
                   ['%' (runo cen %brcn ~ expe)]
                   ['@' (runo pat %brpt ~ expe)]
                   [':' (rune col %brcl expb)]
-                  ['.' (runo dot %brdt ~ expa)]
+                  ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
                   ['^' (rune ket %brkt expx)]
                   ['~' (rune sig %brsg exqc)]
