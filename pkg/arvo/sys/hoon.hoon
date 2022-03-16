@@ -8217,8 +8217,8 @@
         gen
       ?+    gen  gen
         ::
-        $?  [%brbc *]  [%brcb *]  [%brcl *]  [%brdt *]  [%brkt *]
-            [%brhp *]  [%brsg *]  [%brtr *]  [%brts *]  [%brwt *]  ==
+          $?  [%brbc *]  [%brcb *]  [%brcl *]  [%brdt *]  [%brkt *]
+              [%brhp *]  [%brsg *]  [%brtr *]  [%brts *]  [%brwt *]  ==
         ?~  boy.wit
           gen
         [%note help+`u.boy.wit gen]
