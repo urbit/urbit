@@ -4268,63 +4268,61 @@
     ::
     ::  +en:json: encode +json to cord
     ::
-    ::  Temporarily encodes +json to tape, then converts to cord. Encoding
-    ::  logic will be replaced with cord-parsing version shortly.
-    ::
     ++  en
       ~%  %en  +>+  ~
-      |^  |=  val=^json
-          ^-  @t
-          (crip (apex val ""))
-      ::                                               ::  ++apex:en:json:html
-      ++  apex
-        |=  [val=^json rez=tape]
-        ^-  tape
-        ?~  val  (weld "null" rez)
+      |^  |=  jon=^json
+          ^-  cord
+          (rap 3 (flop (onto jon ~)))
+      ++  onto
+        |=  [val=^json out=(list @t)]
+        ^+  out
+        ?~  val  ['null' out]
         ?-    -.val
             %a
-          :-  '['
-          =.  rez  [']' rez]
+          ?~  p.val  ['[]' out]
+          =.  out    ['[' out]
           !.
-          ?~  p.val  rez
-          |-
-          ?~  t.p.val  ^$(val i.p.val)
-          ^$(val i.p.val, rez [',' $(p.val t.p.val)])
-      ::
-            %b  (weld ?:(p.val "true" "false") rez)
-            %n  (weld (trip p.val) rez)
-            %s
-          :-  '"'
-          =.  rez  ['"' rez]
-          =+  viz=(trip p.val)
-          !.
-          |-  ^-  tape
-          ?~  viz  rez
-          =+  hed=(jesc i.viz)
-          ?:  ?=([@ ~] hed)
-            [i.hed $(viz t.viz)]
-          (weld hed $(viz t.viz))
-      ::
+          |-  ^+  out
+          =.  out  ^$(val i.p.val)
+          ?~(t.p.val [']' out] $(p.val t.p.val, out [',' out]))
+        ::
+            %b  [?:(p.val 'true' 'false') out]
+            %n  [p.val out]
+            %s  [(scap p.val) out]
+        ::
             %o
-          :-  '{'
-          =.  rez  ['}' rez]
-          =+  viz=~(tap by p.val)
-          ?~  viz  rez
+          =/  viz  ~(tap by p.val)
+          ?~  viz  ['{}' out]
+          =.  out  ['{' out]
           !.
-          |-  ^+  rez
-          ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-          =.  rez  [',' $(viz t.viz)]
-          ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+          |-  ^+  out
+          =.  out  ^$(val q.i.viz, out [':' [(scap p.i.viz) out]])
+          ?~(t.viz ['}' out] $(viz t.viz, out [',' out]))
         ==
-      ::                                               ::  ++jesc:en:json:html
-      ++  jesc                                         ::  escaped
-        =+  utf=|=(a=@ ['\\' 'u' ((x-co 4):co a)])
-        |=  a=@  ^-  tape
-        ?+  a  ?:(&((gth a 0x1f) !=(a 0x7f)) [a ~] (utf a))
-          %10  "\\n"
-          %34  "\\\""
-          %92  "\\\\"
-        ==
+      ::
+      ++  scap
+        |=  val=@t
+        ^-  @t
+        =/  out=(list @t)  ['"' ~]
+        =/  len  (met 3 val)
+        =|  [i=@ud pos=@ud]
+        |-  ^-  @t
+        ?:  =(len i)
+          (rap 3 (flop ['"' (rsh [3 pos] val) out]))
+        =/  car  (cut 3 [i 1] val)
+        ?:  ?&  (gth car 0x1f)
+                !=(car 0x22)
+                !=(car 0x5C)
+                !=(car 0x7F)
+            ==
+          $(i +(i))
+        =/  cap
+          ?+  car  (crip '\\' 'u' ((x-co 4):co car))
+            %10    '\\n'
+            %'"'   '\\"'
+            %'\\'  '\\\\'
+          ==
+        $(i +(i), pos +(i), out [cap (cut 3 [pos (sub i pos)] val) out])
       --  ::en
     ::
     ::  +de:json: parse cord to +json
