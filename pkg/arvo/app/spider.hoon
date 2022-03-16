@@ -72,9 +72,6 @@
       running=(list yarn)
       tid=(map tid yarn)
   ==
-::
-+$  start-args
-  [parent=(unit tid) use=(unit tid) =beak file=term =vase]
 --
 ::
 ::  Trie operations
@@ -250,7 +247,7 @@
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %spider-input  (on-poke-input:sc !<(input vase))
-        %spider-start  (handle-start-thread:sc !<(start-args vase))
+        %spider-start  (handle-start-thread:sc !<(start-args:spider vase))
         %spider-stop   (handle-stop-thread:sc !<([tid ?] vase))
       ::
           %handle-http-request
@@ -349,7 +346,7 @@
   =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
   =/  input=vase  (slop !>(~) (tube !>(body)))
   =/  boc  bec
-  =/  =start-args  [~ `tid boc(q desk, r da+now.bowl) thread input]
+  =/  =start-args:spider  [~ `tid boc(q desk, r da+now.bowl) thread input]
   (handle-start-thread start-args)
 ::
 ++  on-poke-input
