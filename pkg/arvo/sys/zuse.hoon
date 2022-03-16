@@ -4259,265 +4259,234 @@
         (cook |=(a=@ (sub a 49)) (shim '1' '9'))
       ==
     --  ::mimes
-  ::
-  ++  en-json-c
-    ~%  %en-json  ..part  ~
-    |=  val=json
-    ^-  @t
-    (crip (en-json val))
-  ::                                                    ::  ++en-json:html
-  ++  en-json                                           ::  print json
-    |^  |=(val=json (apex val ""))
-    ::                                                  ::  ++apex:en-json:html
-    ++  apex
-      |=  [val=json rez=tape]
-      ^-  tape
-      ?~  val  (weld "null" rez)
-      ?-    -.val
-          %a
-        :-  '['
-        =.  rez  [']' rez]
-        !.
-        ?~  p.val  rez
-        |-
-        ?~  t.p.val  ^$(val i.p.val)
-        ^$(val i.p.val, rez [',' $(p.val t.p.val)])
-     ::
-          %b  (weld ?:(p.val "true" "false") rez)
-          %n  (weld (trip p.val) rez)
-          %s
-        :-  '"'
-        =.  rez  ['"' rez]
-        =+  viz=(trip p.val)
-        !.
-        |-  ^-  tape
-        ?~  viz  rez
-        =+  hed=(jesc i.viz)
-        ?:  ?=([@ ~] hed)
-          [i.hed $(viz t.viz)]
-        (weld hed $(viz t.viz))
-     ::
-          %o
-        :-  '{'
-        =.  rez  ['}' rez]
-        =+  viz=~(tap by p.val)
-        ?~  viz  rez
-        !.
-        |-  ^+  rez
-        ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-        =.  rez  [',' $(viz t.viz)]
-        ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-      ==
-    ::                                                  ::  ++jesc:en-json:html
-    ++  jesc                                            ::  escaped
-      =+  utf=|=(a=@ ['\\' 'u' ((x-co 4):co a)])
-      |=  a=@  ^-  tape
-      ?+  a  ?:(&((gth a 0x1f) !=(a 0x7f)) [a ~] (utf a))
-        %10  "\\n"
-        %34  "\\\""
-        %92  "\\\\"
-      ==
-    --  ::en-json
-  ::                                                    ::  ++de-json:html
-  ++  de-json                                           ::  parse JSON
-    ~%  %de-json  ..part  ~
-    =<  |=(a=cord `(unit json)`(rush a apex))
+  ::                                                    ::
+  ::::                    ++json:html                   ::  (2e2) JSON
+    ::                                                  ::::
+  ++  json  ^?
+    ~%  %json  ..part  ~
     |%
-    ::                                                  ::  ++abox:de-json:html
-    ++  abox                                            ::  array
-      %+  stag  %a
-      (ifix [sel (wish ser)] (more (wish com) apex))
-    ::                                                  ::  ++apex:de-json:html
-    ++  apex                                            ::  any value
-      %+  knee  *json  |.  ~+
-      %+  ifix  [spac spac]
-      ;~  pose
-        (cold ~ (jest 'null'))
-        (stag %b bool)
-        (stag %s stri)
-        (cook |=(s=tape [%n p=(rap 3 s)]) numb)
-        abox
-        obox
-      ==
-    ::                                                  ::  ++bool:de-json:html
-    ++  bool                                            ::  boolean
-      ;~  pose
-        (cold & (jest 'true'))
-        (cold | (jest 'false'))
-      ==
-    ::                                                  ::  ++esca:de-json:html
-    ++  esca                                            ::  escaped character
-      ;~  pfix  bas
-        =*  loo
-          =*  lip
-            ^-  (list (pair @t @))
-            [b+8 t+9 n+10 f+12 r+13 ~]
-          =*  wow
-            ^~
-            ^-  (map @t @)
-            (malt lip)
-          (sear ~(get by wow) low)
-        ;~(pose doq fas bas loo unic)
-      ==
-    ::                                                  ::  ++expo:de-json:html
-    ++  expo                                            ::  exponent
-      ;~  (comp weld)
-        (piec (mask "eE"))
-        (mayb (piec (mask "+-")))
-        (plus nud)
-      ==
-    ::                                                  ::  ++frac:de-json:html
-    ++  frac                                            ::  fraction
-      ;~(plug dot (plus nud))
-    ::                                                  ::  ++jcha:de-json:html
-    ++  jcha                                            ::  string character
-      ;~(pose ;~(less doq bas (shim 32 255)) esca)
-    ::                                                  ::  ++mayb:de-json:html
-    ++  mayb                                            ::  optional
-      |*(bus=rule ;~(pose bus (easy ~)))
-    ::                                                  ::  ++numb:de-json:html
-    ++  numb                                            ::  number
-      ;~  (comp weld)
-        (mayb (piec hep))
-        ;~  pose
-          (piec (just '0'))
-          ;~(plug (shim '1' '9') (star nud))
-        ==
-        (mayb frac)
-        (mayb expo)
-      ==
-    ::                                                  ::  ++obje:de-json:html
-    ++  obje                                            ::  object list
-      %+  ifix  [(wish kel) (wish ker)]
-      (more (wish com) pear)
-    ::                                                  ::  ++obox:de-json:html
-    ++  obox                                            ::  object
-      (stag %o (cook malt obje))
-    ::                                                  ::  ++pear:de-json:html
-    ++  pear                                            ::  key-value
-      ;~(plug ;~(sfix (wish stri) (wish col)) apex)
-    ::                                                  ::  ++piec:de-json:html
-    ++  piec                                            ::  listify
-      |*  bus=rule
-      (cook |=(a=@ [a ~]) bus)
-    ::                                                  ::  ++stri:de-json:html
-    ++  stri                                            ::  string
-      %+  sear
-        |=  a=cord
-        ?.  (sune a)  ~
-        (some a)
-      (cook crip (ifix [doq doq] (star jcha)))
-    ::                                                  ::  ++spac:de-json:html
-    ++  spac                                            ::  whitespace
-      (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
-    ::                                                  ::  ++unic:de-json:html
-    ++  unic                                            ::  escaped UTF16
-      =*  lob  0x0
-      =*  hsb  0xd800
-      =*  lsb  0xdc00
-      =*  hib  0xe000
-      =*  hil  0x1.0000
-      |^
-        %+  cook
-          |=  a=@
+    ::
+    ::  +en:json: encode +json to cord
+    ::
+    ::  Temporarily encodes +json to tape, then converts to cord. Encoding
+    ::  logic will be replaced with cord-parsing version shortly.
+    ::
+    ++  en
+      ~%  %en  +>+  ~
+      |^  |=  val=^json
           ^-  @t
-          (tuft a)
-        ;~  pfix  (just 'u')
-          ;~(pose solo pair)
+          (crip (apex val ""))
+      ::                                               ::  ++apex:en:json:html
+      ++  apex
+        |=  [val=^json rez=tape]
+        ^-  tape
+        ?~  val  (weld "null" rez)
+        ?-    -.val
+            %a
+          :-  '['
+          =.  rez  [']' rez]
+          !.
+          ?~  p.val  rez
+          |-
+          ?~  t.p.val  ^$(val i.p.val)
+          ^$(val i.p.val, rez [',' $(p.val t.p.val)])
+      ::
+            %b  (weld ?:(p.val "true" "false") rez)
+            %n  (weld (trip p.val) rez)
+            %s
+          :-  '"'
+          =.  rez  ['"' rez]
+          =+  viz=(trip p.val)
+          !.
+          |-  ^-  tape
+          ?~  viz  rez
+          =+  hed=(jesc i.viz)
+          ?:  ?=([@ ~] hed)
+            [i.hed $(viz t.viz)]
+          (weld hed $(viz t.viz))
+      ::
+            %o
+          :-  '{'
+          =.  rez  ['}' rez]
+          =+  viz=~(tap by p.val)
+          ?~  viz  rez
+          !.
+          |-  ^+  rez
+          ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+          =.  rez  [',' $(viz t.viz)]
+          ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
         ==
-      ++  quad                                        ::  parse num from 4 hex
-        (bass 16 (stun [4 4] hit))
-      ++  meat                                        ::  gen gate for sear:
-        |=  [bot=@ux top=@ux flp=?]                   ::  accept num in range,
-        |=  sur=@ux                                   ::  optionally reduce
-        ^-  (unit @)
-        ?.  &((gte sur bot) (lth sur top))
-          ~
-        %-  some
-        ?.  flp  sur
-        (sub sur bot)
-      ++  solo                                        ::  single valid UTF16
+      ::                                               ::  ++jesc:en:json:html
+      ++  jesc                                         ::  escaped
+        =+  utf=|=(a=@ ['\\' 'u' ((x-co 4):co a)])
+        |=  a=@  ^-  tape
+        ?+  a  ?:(&((gth a 0x1f) !=(a 0x7f)) [a ~] (utf a))
+          %10  "\\n"
+          %34  "\\\""
+          %92  "\\\\"
+        ==
+      --  ::en
+    ::
+    ::  +de:json: parse cord to +json
+    ::
+    ++  de
+      ~%  %de  +>+  ~
+      |^  |=  a=cord
+          ^-  (unit ^json)
+          (rush a apex)
+      ::                                               ::  ++abox:de:json:html
+      ++  abox                                         ::  array
+        %+  stag  %a
+        (ifix [sel (wish ser)] (more (wish com) apex))
+      ::                                               ::  ++apex:de:json:html
+      ++  apex                                         ::  any value
+        %+  knee  *^json  |.  ~+
+        %+  ifix  [spac spac]
         ;~  pose
-          (sear (meat lob hsb |) quad)
-          (sear (meat hib hil |) quad)
+          (cold ~ (jest 'null'))
+          (stag %b bool)
+          (stag %s stri)
+          (cook |=(s=tape [%n p=(rap 3 s)]) numb)
+          abox
+          obox
         ==
-      ++  pair                                        ::  UTF16 surrogate pair
-        %+  cook
-          |=  [hig=@ low=@]
+      ::                                               ::  ++bool:de:json:html
+      ++  bool                                         ::  boolean
+        ;~  pose
+          (cold & (jest 'true'))
+          (cold | (jest 'false'))
+        ==
+      ::                                               ::  ++esca:de:json:html
+      ++  esca                                         ::  escaped character
+        ;~  pfix  bas
+          =*  loo
+            =*  lip
+              ^-  (list (pair @t @))
+              [b+8 t+9 n+10 f+12 r+13 ~]
+            =*  wow
+              ^~
+              ^-  (map @t @)
+              (malt lip)
+            (sear ~(get by wow) low)
+          ;~(pose doq fas bas loo unic)
+        ==
+      ::                                               ::  ++expo:de:json:html
+      ++  expo                                         ::  exponent
+        ;~  (comp weld)
+          (piec (mask "eE"))
+          (mayb (piec (mask "+-")))
+          (plus nud)
+        ==
+      ::                                               ::  ++frac:de:json:html
+      ++  frac                                         ::  fraction
+        ;~(plug dot (plus nud))
+      ::                                               ::  ++jcha:de:json:html
+      ++  jcha                                         ::  string character
+        ;~(pose ;~(less doq bas (shim 32 255)) esca)
+      ::                                               ::  ++mayb:de:json:html
+      ++  mayb                                         ::  optional
+        |*(bus=rule ;~(pose bus (easy ~)))
+      ::                                               ::  ++numb:de:json:html
+      ++  numb                                         ::  number
+        ;~  (comp weld)
+          (mayb (piec hep))
+          ;~  pose
+            (piec (just '0'))
+            ;~(plug (shim '1' '9') (star nud))
+          ==
+          (mayb frac)
+          (mayb expo)
+        ==
+      ::                                               ::  ++obje:de:json:html
+      ++  obje                                         ::  object list
+        %+  ifix  [(wish kel) (wish ker)]
+        (more (wish com) pear)
+      ::                                               ::  ++obox:de:json:html
+      ++  obox                                         ::  object
+        (stag %o (cook malt obje))
+      ::                                               ::  ++pear:de:json:html
+      ++  pear                                         ::  key-value
+        ;~(plug ;~(sfix (wish stri) (wish col)) apex)
+      ::                                               ::  ++piec:de:json:html
+      ++  piec                                         ::  listify
+        |*  bus=rule
+        (cook |=(a=@ [a ~]) bus)
+      ::                                               ::  ++stri:de:json:html
+      ++  stri                                         ::  string
+        %+  sear
+          |=  a=cord
+          ?.  (sune a)  ~
+          (some a)
+        (cook crip (ifix [doq doq] (star jcha)))
+      ::                                               ::  ++spac:de:json:html
+      ++  spac                                         ::  whitespace
+        (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
+      ::                                               ::  ++unic:de:json:html
+      ++  unic                                         ::  escaped UTF16
+        =*  lob  0x0
+        =*  hsb  0xd800
+        =*  lsb  0xdc00
+        =*  hib  0xe000
+        =*  hil  0x1.0000
+        |^
+          %+  cook
+            |=  a=@
             ^-  @t
-            :(add hil low (lsh [1 5] hig))
-        ;~  plug
-          (sear (meat hsb lsb &) quad)
-          ;~  pfix  (jest '\\u')
-            (sear (meat lsb hib &) quad)
+            (tuft a)
+          ;~  pfix  (just 'u')
+            ;~(pose solo pair)
           ==
-        ==
-      --
-    ::                                                  ::  ++utfe:de-json:html
-    ++  utfe                                            ::  UTF-8 sequence
-      ;~  less  doq  bas
-        =*  qua
-          %+  cook
-          |=  [a=@ b=@ c=@ d=@]
-            :((cury cat 3) a b c d)
+        ++  quad                                       ::  parse num from 4 hex
+          (bass 16 (stun [4 4] hit))                   
+        ++  meat                                       ::  gen gate for sear:
+          |=  [bot=@ux top=@ux flp=?]                  ::  accept num in range,
+          |=  sur=@ux                                  ::  optionally reduce
+          ^-  (unit @)
+          ?.  &((gte sur bot) (lth sur top))
+            ~
+          %-  some
+          ?.  flp  sur
+          (sub sur bot)
+        ++  solo                                       ::  single valid UTF16
           ;~  pose
-            ;~  plug
-              (shim 241 243)
-              (shim 128 191)
-              (shim 128 191)
-              (shim 128 191)
-            ==
-            ;~  plug
-              (just '\F0')
-              (shim 144 191)
-              (shim 128 191)
-              (shim 128 191)
-            ==
-            ;~  plug
-              (just '\F4')
-              (shim 128 143)
-              (shim 128 191)
-              (shim 128 191)
-            ==
+            (sear (meat lob hsb |) quad)
+            (sear (meat hib hil |) quad)
           ==
-        =*  tre
+        ++  pair                                       ::  UTF16 surrogate pair
           %+  cook
-          |=  [a=@ b=@ c=@]
-            :((cury cat 3) a b c)
-          ;~  pose
-            ;~  plug
-              ;~  pose
-                (shim 225 236)
-                (shim 238 239)
-              ==
-              (shim 128 191)
-              (shim 128 191)
-            ==
-            ;~  plug
-              (just '\E0')
-              (shim 160 191)
-              (shim 128 191)
-            ==
-            ;~  plug
-              (just '\ED')
-              (shim 128 159)
-              (shim 128 191)
-            ==
-          ==
-        =*  dos
-          %+  cook
-          |=  [a=@ b=@]
-            (cat 3 a b)
+            |=  [hig=@ low=@]
+              ^-  @t
+              :(add hil low (lsh [1 5] hig))
           ;~  plug
-            (shim 194 223)
-            (shim 128 191)
+            (sear (meat hsb lsb &) quad)
+            ;~  pfix  (jest '\\u')
+              (sear (meat lsb hib &) quad)
+            ==
           ==
-        ;~(pose qua tre dos)
-      ==
-    ::                                                  ::  ++wish:de-json:html
-    ++  wish                                            ::  with whitespace
-      |*(sef=rule ;~(pfix spac sef))
-    --  ::de-json
+        --
+      ::                                               ::  ++wish:de:json:html
+      ++  wish                                         ::  with whitespace
+        |*(sef=rule ;~(pfix spac sef))
+      --  ::de
+    --  ::json
+  ::
+  ::  +en-json:html: encode +json to +tape
+  ::
+  ::  XX Deprecated; use +en:json:html
+  ::
+  ++  en-json
+    |=  jon=^json
+    ^-  tape
+    (trip (en:json jon))
+  ::
+  ::  +de-json:html: parse cord to (unit json)
+  ::
+  ::  XX Deprecated; use +de:json:html
+  ::
+  ++  de-json
+    |=  a=cord
+    ^-  (unit ^json)
+    (de:json a)
   ::                                                    ::  ++en-xml:html
   ++  en-xml                                            ::  xml printer
     =<  |=(a=manx `tape`(apex a ~))

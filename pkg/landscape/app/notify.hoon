@@ -294,7 +294,7 @@
       =/  =mime-data:iris  u.full-file.client-response.sign-arvo
       ?>  =('application/json' type.mime-data)
       =/  jon=json
-        (fall (rush (@t q.data.mime-data) apex:de-json:html) *json)
+        (fall (de-json:html (@t q.data.mime-data)) *json)
       =/  [sid=@t message=@t]
         %.  jon
         %-  ot:dejs:format

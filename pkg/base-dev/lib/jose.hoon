@@ -29,11 +29,9 @@
 ::
 ::    XX move %zuse with sorting optional?
 ::
-++  en-json-sort                                 ::  XX rename
+++  en-json-sort
   |^  |=([sor=$-(^ ?) val=json] (apex val sor ""))
-  ::                                                  ::  ++apex:en-json:html
   ++  apex
-    =,  en-json:html
     |=  [val=json sor=$-(^ ?) rez=tape]
     ^-  tape
     ?~  val  (weld "null" rez)
@@ -74,6 +72,14 @@
       =.  rez  [',' $(viz t.viz)]
       ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
     ==
+    ++  jesc
+      =+  utf=|=(a=@ ['\\' 'u' ((x-co 4):co a)])
+      |=  a=@  ^-  tape
+      ?+  a  ?:(&((gth a 0x1f) !=(a 0x7f)) [a ~] (utf a))
+        %10  "\\n"
+        %34  "\\\""
+        %92  "\\\\"
+      ==
   --
 ::  %/lib/jose
 ::
