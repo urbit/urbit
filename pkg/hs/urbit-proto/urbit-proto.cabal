@@ -28,6 +28,7 @@ library
       Practice.DependentLambda
       Practice.ForkKill
       Practice.Hoon2DependentHoon3
+      Practice.Hoon2DependentHoon4
       Practice.Hoon2DependentLambda
       Practice.HoonCommon
       Practice.HoonSyntax

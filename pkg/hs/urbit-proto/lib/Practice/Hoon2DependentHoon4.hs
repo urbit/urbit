@@ -12,7 +12,7 @@ type Desugar = Either Text
 
 open :: Hoon -> Desugar Soft
 open = \case
-  Wung w -> pure $ Wng (map (\case Axis a -> a) w)
+  Wung w -> pure $ Wng w
   Wild -> Left "open-skin: unexpected '_' in non-skin position"
   Adam g a au -> pure $ Atm a g au
   --
@@ -143,7 +143,7 @@ flay = \case
 
 shut :: Soft -> Hoon
 shut = \case
-  Wng w -> Wung $ map Axis w
+  Wng w -> Wung w
   --
   Atm a g au -> Adam g a au
   Cel c d -> case shut d of

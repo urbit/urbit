@@ -1035,12 +1035,7 @@ fits fit t u = act (ActFits fit t u) case (t, u) of
     Type' -> [Fore' var]
     -- The below will actually occur: e.g. stuck variables, applications
     _ -> [Fore' var]
-^-
-$!
-++  foo  @
---
-|%
-++
+
 
 -- Find ------------------------------------------------------------------------
 
