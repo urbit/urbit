@@ -8218,17 +8218,11 @@
       ?+    gen  gen
         ::
           [%brcn *]
-<<<<<<< HEAD
         [%brcn lab.wit q.gen]  :: populate (unit term) with lab.wit
         ::
           [%brpt *]
         [%brpt lab.wit q.gen]  :: populate (unit term) with lab.wit
         ::
-          [%brdt *]
-        [%brdt lab.wit q.gen]
-=======
-        [%brcn lab.wit q.gen]
->>>>>>> parent of 0dc3498a6f (hoon: change %brdt AST to support doccords label)
       ==
     --
   ::
