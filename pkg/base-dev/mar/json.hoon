@@ -13,7 +13,7 @@
 ++  grow                                                ::  convert to
   |%
   ++  mime  [/application/json (as-octs:mimes -:txt)]   ::  convert to %mime
-  ++  txt   [(crip (en:json jon))]~
+  ++  txt   [(en:json jon)]~
   --
 ++  grab
   |%                                                    ::  convert from
