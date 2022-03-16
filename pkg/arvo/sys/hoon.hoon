@@ -8217,12 +8217,21 @@
         gen
       ?+    gen  gen
         ::
+        $?  [%brbc *]  [%brcb *]  [%brcl *]  [%brdt *]  [%brkt *]
+            [%brhp *]  [%brsg *]  [%brtr *]  [%brts *]  [%brwt *]  ==
+        ?~  boy.wit
+          gen
+        [%note help+`u.boy.wit gen]
+        ::
           [%brcn *]
-        [%brcn lab.wit q.gen]  :: populate (unit term) with lab.wit
+        ?~  boy.wit
+          [%brcn lab.wit q.gen]
+        [%note help+`u.boy.wit [%brcn lab.wit q.gen]]
         ::
           [%brpt *]
-        [%brpt lab.wit q.gen]  :: populate (unit term) with lab.wit
-        ::
+        ?~  boy.wit
+          [%brcn lab.wit q.gen]
+        [%note help+`u.boy.wit [%brpt lab.wit q.gen]]
       ==
     --
   ::
