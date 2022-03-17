@@ -41,6 +41,7 @@ export interface AppReference {
 
 export interface MentionContent {
   mention: string;
+  emphasis?: 'bold' | 'italic';
 }
 export type Content =
   | TextContent

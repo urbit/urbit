@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { FunctionComponent } from 'react';
+import { useDrag } from 'react-dnd';
 import { chadIsRunning } from '@urbit/api';
 import { TileMenu } from './TileMenu';
 import { Spinner } from '../components/Spinner';
@@ -9,6 +10,7 @@ import { ChargeWithDesk } from '../state/docket';
 import { useTileColor } from './useTileColor';
 import { useVat } from '../state/kiln';
 import { Bullet } from '../components/icons/Bullet';
+import { dragTypes } from './TileGrid';
 
 type TileProps = {
   charge: ChargeWithDesk;
@@ -28,13 +30,23 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk, disabled = fa
   const link = getAppHref(href);
   const backgroundColor = suspended ? suspendColor : active ? tileColor || 'purple' : suspendColor;
 
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: dragTypes.TILE,
+    item: { desk },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging()
+    })
+  }));
+
   return (
     <a
+      ref={drag}
       href={active ? link : undefined}
       target="_blank"
       rel="noreferrer"
       className={classNames(
-        'group relative font-semibold aspect-w-1 aspect-h-1 rounded-3xl default-ring focus-visible:ring-4 overflow-hidden',
+        'group absolute font-semibold w-full h-full rounded-3xl default-ring focus-visible:ring-4 overflow-hidden',
+        isDragging && 'opacity-0',
         lightText && active && !loading ? 'text-gray-200' : 'text-gray-800',
         !active && 'cursor-default'
       )}
@@ -48,7 +60,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk, disabled = fa
             <>
               {loading && <Spinner className="h-6 w-6 mr-2" />}
               <span className="text-gray-500">
-                {suspended ? 'Suspended' : loading ? 'Installing' : hung ? 'Errored' : null }
+                {suspended ? 'Suspended' : loading ? 'Installing' : hung ? 'Errored' : null}
               </span>
             </>
           )}

@@ -622,6 +622,9 @@
       [%x %keys ~]
     :-  ~  :-  ~  :-  mar
     !>(`update:store`[now.bowl [%keys ~(key by graphs)]])
+      [%x %archived-keys ~]
+    :-  ~  :-  ~  :-  mar
+    !>(`update:store`[now.bowl [%keys ~(key by archive)]])
   ::
       [%x %tag-queries *]
     :-  ~  :-  ~  :-  mar
@@ -636,7 +639,7 @@
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
     =/  marked-graph=(unit marked-graph:store)
-      (~(get by graphs) [ship term])
+      (~(get by archive) [ship term])
     ?~  marked-graph  [~ ~]
     =*  graph  p.u.marked-graph
     =*  mark   q.u.marked-graph
