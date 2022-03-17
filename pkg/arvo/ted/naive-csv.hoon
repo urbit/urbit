@@ -98,32 +98,36 @@
       (get-timestamps blocks)
     ;<  tx-data=(map keccak [gas=@ud sender=address])  bind:m
       (get-tx-data tx-hashes)
-    =/  rolls-by-block=(jar blocknum [roll-hash=keccak effects:naive])
-      (run-logs-from-state nas.snap logs net naive-contract chain-id)
-    =/  rolling  (collate-roll-data blocks block-jar timestamps tx-data)
+    =/  rolls-map=(map blocknum (map keccak effects:naive))
+      (run-logs-from-state-map nas.snap logs net naive-contract chain-id)
+    =/  rolling  (collate-roll-data blocks block-jar rolls-map timestamps tx-data)
     ::
-    (pure:m !>(rolls-by-block))
+    (pure:m !>(rolling))
   ::
   ++  collate-roll-data
     |=  $:  blocks=(list blocknum)
             block-jar=(jar blocknum keccak)
-            ::l2-logs=events
+            rolls-map=(map blocknum (map keccak effects:naive))
             timestamps=(map blocknum @da)
             tx-data=(map keccak [gas=@ud sender=address])
         ==
-    =|  block-map=(map blocknum [timestamp=@da tx=(map keccak [gas=@ud sender=address])])
+    =|  $=  block-map
+        %+  map  blocknum  [timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
+    ^+  block-map
     |-
     ?~  blocks  block-map
-    =/  block  i.blocks
-    =/  tx-hashes  (~(get ja block-jar) block)
-    =/  tx=(map keccak [gas=@ud sender=address])
-      %-  ~(gas by *(map keccak [gas=@ud sender=address]))
+    =/  block=blocknum  i.blocks
+    =/  tx-hashes=(list keccak)  (~(get ja block-jar) block)
+    =/  rolls=(map keccak [[gas=@ud sender=address] =effects:naive])
+      %-  ~(gas by *(map keccak [[gas=@ud sender=address] =effects:naive]))
       %+  turn  tx-hashes
-      |=  txh=keccak  ^-  [txh=keccak [gas=@ud sender=address]]
-      [txh (~(got by tx-data) txh)]
+      |=  txh=keccak
+      :-  txh
+      [(~(got by tx-data) txh) (~(got by (~(got by rolls-map) block)) txh)]
     %=  $
       blocks     t.blocks
-      block-map  (~(put by block-map) block [(~(got by timestamps) block) tx])
+      block-map  %+  ~(put by block-map)  block
+                 [(~(got by timestamps) block) rolls]
     ==
   ::
   ++  get-tx-data
@@ -210,14 +214,14 @@
   ++  get-roll-data  ~
   ::    ::  passes L2 rolls into naive.hoon to get the transactions stored within
   ::  ::
-  ++  run-logs-from-state
+  ++  run-logs-from-state-map
     |=  $:  nas=^state:naive
             logs=events
             =net
             naive-contract=address
             chain-id=@ud
         ==
-    =|  out=(jar blocknum [roll-hash=keccak effects:naive])
+    =|  out=(map blocknum (map keccak effects:naive))
     ^+  out
     ::  We need to run the state transitions to see what the individual
     ::  transactions were, as well as whether they succeeded or failed.
@@ -229,7 +233,7 @@
     ?~  logs  out
     =/  log=event-log:rpc:ethereum  i.logs
     ?~  mined.log
-      ~&  >>  'empty log!'
+      ~&  >>  'empty log'
       $(logs t.logs)
     =/  block=blocknum  block-number.u.mined.log
     =/  =^input:naive
@@ -246,10 +250,18 @@
     %=  $
       logs  t.logs
       out   ?.  =(%bat +<.input)
-              out  :: skip L1 logs
-            (~(add ja out) block [transaction-hash.u.mined.log effects])
+              out  ::  skip L1 logs
+            :: there's probably a better way to do this
+            =/  cur-map=(unit (map keccak effects:naive))
+              (~(get by out) block)
+            ?~  cur-map
+              %+  ~(put by out)  block
+              ^-  (map keccak effects:naive)
+              (my [[transaction-hash.u.mined.log effects]~])
+            =.  u.cur-map
+              (~(put by u.cur-map) transaction-hash.u.mined.log effects)
+            (~(put by out) block u.cur-map)
     ==
-    ::
   ::
   ++  filter-l2
     |=  [logs=events naive-contract=address]  ^-  events
