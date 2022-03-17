@@ -41,15 +41,15 @@
   ::  imported logs is cast as $events
   +$  events  (list event-log:rpc:ethereum)
   +$  address   address:naive  :: @ux
-  +$  hash      @ux            :: used for transaction and roll hashes
+  +$  keccak    @ux            :: used for transaction and roll hashes
   +$  blocknum  number:block   :: @udblocknumber
   ::
-  +$  net  ?(%mainnet %ropsten %local %default)
+  +$  net  net:dice    ::?(%mainnet %ropsten %local %default)
   ::
   +$  roll-data
     $:  roller-address=address
-        roll-hash=hash
-        tx-hash=hash
+        roll-hash=keccak
+        tx-hash=keccak
         gas-price=@ud
     ==
   ::
@@ -83,29 +83,29 @@
     %-  %-  slog  :_  ~
         leaf+"processing {<net>} ethereum logs with {<(lent logs)>} total events, of which {<(lent l2-logs)>} are l2 events"
     =/  blocks=(list blocknum)        (get-block-numbers l2-logs)
-    =/  tx-hashes=(list hash)     (get-tx-hashes l2-logs)
-    =/  block-jar=(jar blocknum hash)  (block-tx-jar l2-logs)
+    =/  tx-hashes=(list keccak)     (get-tx-hashes l2-logs)
+    =/  block-jar=(jar blocknum keccak)  (block-tx-jar l2-logs)
     ;<  timestamps=(map blocknum @da)  bind:m  (get-timestamps blocks)
-    ;<  tx-data=(map hash [gas=@ud sender=address])  bind:m  (get-tx-data tx-hashes)
+    ;<  tx-data=(map keccak [gas=@ud sender=address])  bind:m  (get-tx-data tx-hashes)
     =/  rolling  (collate-roll-data blocks block-jar timestamps tx-data)
     (pure:m !>(rolling))
   ::
   ++  collate-roll-data
     |=  $:  blocks=(list blocknum)
-            block-jar=(jar blocknum hash)
+            block-jar=(jar blocknum keccak)
             ::l2-logs=events
             timestamps=(map blocknum @da)
-            tx-data=(map hash [gas=@ud sender=address])
+            tx-data=(map keccak [gas=@ud sender=address])
         ==
-    =|  block-map=(map blocknum [timestamp=@da tx=(map hash [gas=@ud sender=address])])
+    =|  block-map=(map blocknum [timestamp=@da tx=(map keccak [gas=@ud sender=address])])
     |-
     ?~  blocks  block-map
     =/  block  i.blocks
     =/  tx-hashes  (~(get ja block-jar) block)
-    =/  tx=(map hash [gas=@ud sender=address])
-      %-  ~(gas by *(map hash [gas=@ud sender=address]))
+    =/  tx=(map keccak [gas=@ud sender=address])
+      %-  ~(gas by *(map keccak [gas=@ud sender=address]))
       %+  turn  tx-hashes
-      |=  txh=hash  ^-  [txh=hash [gas=@ud sender=address]]
+      |=  txh=keccak  ^-  [txh=keccak [gas=@ud sender=address]]
       [txh (~(got by tx-data) txh)]
     %=  $
       blocks     t.blocks
@@ -114,10 +114,10 @@
   ::
   ++  get-tx-data
     :: retrieves transaction receipts for rolls, extracting the gas cost and sender
-    |=  tx-hashes=(list hash)
-    =/  m  (strand ,(map hash [gas=@ud sender=address]))
+    |=  tx-hashes=(list keccak)
+    =/  m  (strand ,(map keccak [gas=@ud sender=address]))
     ^-  form:m
-    =|  out=(map hash [gas=@ud sender=address])
+    =|  out=(map keccak [gas=@ud sender=address])
     |^  ^-  form:m
       =*  loop  $
       ?:  =(~ tx-hashes)  (pure:m out)
@@ -129,20 +129,20 @@
       ==
     ::
     ++  request-receipts
-      |=  tx-hashes=(list hash)
+      |=  tx-hashes=(list keccak)
       %+  request-batch-rpc-strict:ethio  node-url
       %+  turn  tx-hashes
-      |=  txh=hash
+      |=  txh=keccak
       ^-  [(unit @t) request:rpc:ethereum]
       :-  `(crip '0' 'x' ((x-co:co 64) txh))
       [%eth-get-transaction-receipt txh]
     ::
     ++  parse-results
       |=  res=(list [@t json])
-      ^-  (list [txh=hash [gas=@ud sender=address]])
+      ^-  (list [txh=keccak [gas=@ud sender=address]])
       %+  turn  res
       |=  [id=@t =json]
-      ^-  [txh=hash [gas=@ud sender=address]]
+      ^-  [txh=keccak [gas=@ud sender=address]]
       :-  (hex-to-num:ethereum id)
       :-  %-  parse-hex-result:rpc:ethereum
         ~|  json
@@ -225,8 +225,8 @@
     =(naive-contract address.log)
   ::
   ++  block-tx-jar
-    |=  logs=events  ^-  (jar blocknum hash)
-    =|  block-jar=(jar blocknum hash)
+    |=  logs=events  ^-  (jar blocknum keccak)
+    =|  block-jar=(jar blocknum keccak)
     |-
     ?~  logs  block-jar
     :: shouldn't crash since +filter-l2 already checks if mined.log is empty
@@ -244,7 +244,7 @@
     block-number:(need mined.log)
   ::
   ++  get-tx-hashes
-    |=  logs=events  ^-  (list hash)
+    |=  logs=events  ^-  (list keccak)
     %+  turn  logs
     |=  log=event-log:rpc:ethereum
     :: shouldn't crash since +filter-l2 already checks if mined.log is empty
