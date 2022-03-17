@@ -16,17 +16,24 @@
 ::
 ::  TODO: change block maps to ordered maps
 ::
-/-  spider
+/-  dice,
+    spider
 ::
 /+  dice,
     ethereum,
     ethio,
     naive,
+    naive-tx=naive-transactions,
     *strandio
 ::
 ::  imports most recent downloaded logs
 ::/*  logs  %eth-logs  /app/azimuth/logs/eth-logs
 ::/*  logs  %eth-logs  /app/azimuth/tid/eth-logs
+::
+::  starting snapshot. this may not be the right starting point once we have
+::  clay tombstoning and the snapshot may be updated
+/*  snap  %azimuth-snapshot  /app/azimuth/version-0/azimuth-snapshot
+::
 =,  strand=strand:spider
 =,  jael
 ::
@@ -79,16 +86,23 @@
     =/  logs  (scag 50 logs)  :: to make debugging faster
     =/  [naive-contract=address chain-id=@]
       [naive chain-id]:(get-network:dice net)
+    =/  snap=snap-state:dice  snap
+    ::
     =/  l2-logs=events  (filter-l2 logs naive-contract)
     %-  %-  slog  :_  ~
         leaf+"processing {<net>} ethereum logs with {<(lent logs)>} total events, of which {<(lent l2-logs)>} are l2 events"
-    =/  blocks=(list blocknum)        (get-block-numbers l2-logs)
-    =/  tx-hashes=(list keccak)     (get-tx-hashes l2-logs)
+    =/  blocks=(list blocknum)           (get-block-numbers l2-logs)
+    =/  tx-hashes=(list keccak)          (get-tx-hashes l2-logs)
     =/  block-jar=(jar blocknum keccak)  (block-tx-jar l2-logs)
-    ;<  timestamps=(map blocknum @da)  bind:m  (get-timestamps blocks)
-    ;<  tx-data=(map keccak [gas=@ud sender=address])  bind:m  (get-tx-data tx-hashes)
+    ;<  timestamps=(map blocknum @da)                  bind:m
+      (get-timestamps blocks)
+    ;<  tx-data=(map keccak [gas=@ud sender=address])  bind:m
+      (get-tx-data tx-hashes)
+    =/  rolls-by-block=(jar blocknum [roll-hash=keccak effects:naive])
+      (run-logs-from-state nas.snap logs net naive-contract chain-id)
     =/  rolling  (collate-roll-data blocks block-jar timestamps tx-data)
-    (pure:m !>(rolling))
+    ::
+    (pure:m !>(rolls-by-block))
   ::
   ++  collate-roll-data
     |=  $:  blocks=(list blocknum)
@@ -193,29 +207,49 @@
       ?>  ?=(%o -.json)
       (~(got by p.json) 'timestamp')
     --
-    ::  TODO: make this return a list of processed events
-    ::  along with gas costs and timestamps
-    ::  |-
-    ::  ?~  events
-    ::    'no events!'
-    ::  =/  log=event-log:rpc:ethereum  i.events
-    ::  ?~  mined.log
-    ::    'empty log!'
-    ::  =/  =^input:naive
-    ::    :-  block-number.u.mined.log
-    ::    ?.  =(naive-contract address.log)
-    ::      :-  %log
-    ::      [address.log (data-to-hex:dice data.log) topics.log]
-    ::    ?~  input.u.mined.log
-    ::      ~&  >  'empty L2 transaction'
-    ::      [%bat *@]
-    ::    [%bat u.input.u.mined.log]
-    ::  ?:  ?=(%log +<.input)
-    ::    $(events t.events)
-    ::  $(events t.events)
-    ::  ?~  l2-logs
-    ::    (pure:m !>(net))
-    ::  (pure:m !>(blocks))
+  ++  get-roll-data  ~
+  ::    ::  passes L2 rolls into naive.hoon to get the transactions stored within
+  ::  ::
+  ++  run-logs-from-state
+    |=  $:  nas=^state:naive
+            logs=events
+            =net
+            naive-contract=address
+            chain-id=@ud
+        ==
+    =|  out=(jar blocknum [roll-hash=keccak effects:naive])
+    ^+  out
+    ::  We need to run the state transitions to see what the individual
+    ::  transactions were, as well as whether they succeeded or failed.
+    ::
+    %-  %-  slog  :_  ~
+      leaf+"processing state transitions beginning from stored snapshot"
+    ::
+    |-
+    ?~  logs  out
+    =/  log=event-log:rpc:ethereum  i.logs
+    ?~  mined.log
+      ~&  >>  'empty log!'
+      $(logs t.logs)
+    =/  block=blocknum  block-number.u.mined.log
+    =/  =^input:naive
+      :-  block
+      ?.  =(naive-contract address.log)
+        :-  %log
+        [address.log (data-to-hex:dice data.log) topics.log]
+      ?~  input.u.mined.log
+        ~&  >>  'empty L2 transaction'
+        [%bat *@]
+      [%bat u.input.u.mined.log]
+    =^  =effects:naive  nas
+      (%*(. naive lac |) verifier:naive-tx chain-id nas input)
+    %=  $
+      logs  t.logs
+      out   ?.  =(%bat +<.input)
+              out  :: skip L1 logs
+            (~(add ja out) block [transaction-hash.u.mined.log effects])
+    ==
+    ::
   ::
   ++  filter-l2
     |=  [logs=events naive-contract=address]  ^-  events
