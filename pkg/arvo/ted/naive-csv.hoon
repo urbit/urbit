@@ -41,7 +41,7 @@
   ::  imported logs is cast as $events
   +$  events  (list event-log:rpc:ethereum)
   +$  address   address:naive  :: @ux
-  +$  hash     @ux             :: used for transaction and roll hashes
+  +$  hash      @ux            :: used for transaction and roll hashes
   +$  blocknum  number:block   :: @udblocknumber
   ::
   +$  net  ?(%mainnet %ropsten %local %default)
