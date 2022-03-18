@@ -328,7 +328,7 @@
         void     (*bot_f)();                //  call when chis is up
       } u3_host;                            //  host == computer == process
 
-    /**  New pier system.
+    /**  Pier system.
     **/
       /* u3_ovum_news: u3_ovum lifecycle events
       */
@@ -756,7 +756,7 @@
         c3_d
         u3_time_gap_ms(u3_noun now, u3_noun wen);
 
-    /**  ward: common structure lifecycle
+    /**  Common structure lifecycle.
     **/
       /* u3_dent_init(): initialize file record.
       */
@@ -841,7 +841,7 @@
         c3_w
         u3_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot);
 
-    /**  New vere
+    /**  IO drivers.
     **/
       /* u3_auto_init(): initialize all drivers.
       */
@@ -1050,41 +1050,14 @@
         void
         u3_lord_peek(u3_lord* god_u, u3_pico* pic_u);
 
-    /**  Filesystem (new api).
-    **/
-      /* u3_walk_load(): load file or bail.
-      */
-        u3_noun
-        u3_walk_load(c3_c* pas_c);
-
-      /* u3_walk_safe(): load file or 0.
-      */
-        u3_noun
-        u3_walk_safe(c3_c* pas_c);
-
-      /* u3_walk_save(): save file or bail.
-      */
-        void
-        u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax);
-
-      /* u3_walk(): traverse `dir_c` to produce an arch, updating `old`.
-      */
-        u3_noun
-        u3_walk(const c3_c* dir_c, u3_noun old);
-
-      /* u3_path(): C unix path in computer for file or directory.
-      */
-        c3_c*
-        u3_path(c3_o    fyl, u3_noun pax);
-
-    /**  Filesystem (async)
+    /**  Filesystem (async).
     **/
       /* u3_foil_folder(): load directory, blockingly.  create if nonexistent.
       */
         u3_dire*
         u3_foil_folder(const c3_c* pax_c);         //  directory object, or 0
 
-    /**  Terminal, new style.
+    /**  Terminal.
     **/
       /* u3_term_start_spinner(): prepare spinner state. RETAIN.
       */
@@ -1182,8 +1155,18 @@
         u3_save_io_exit(u3_pier *pir_u);
 
 
-    /**  Storage, new school.
+    /**  Storage.
     **/
+      /* u3_unix_save(): save file undir .../.urb/put or bail.
+      */
+        void
+        u3_unix_save(c3_c* pax_c, u3_atom pad);
+
+      /* u3_unix_cane(): true iff (unix) path is canonical.
+      */
+        c3_t
+        u3_unix_cane(const c3_c* pax_c);
+
       /* u3_unix_initial_into_card(): create initial filesystem sync card.
       */
         u3_noun
@@ -1222,14 +1205,14 @@
         u3_auto*
         u3_conn_io_init(u3_pier* pir_u);
 
-    /**  fore, first events
+    /**  fore, first events.
     **/
       /* u3_hind_io_init(): initialize fore
       */
         u3_auto*
         u3_fore_io_init(u3_pier* pir_u);
 
-    /**  hind, defaults
+    /**  hind, defaults.
     **/
       /* u3_hind_io_init(): initialize hint
       */
@@ -1342,7 +1325,7 @@
         void
         u3_pier_slog(u3_pier* pir_u);
 
-      /* u3_pier_boot(): start the new pier system.
+      /* u3_pier_boot(): start the pier.
       */
         u3_pier*
         u3_pier_boot(c3_w    wag_w,                 //  config flags
@@ -1352,7 +1335,7 @@
                      u3_noun pax,                   //  path to pier
                      u3_weak fed);                  //  extra private keys
 
-      /* u3_pier_stay(): restart the new pier system.
+      /* u3_pier_stay(): restart the pier.
       */
         u3_pier*
         u3_pier_stay(c3_w wag_w, u3_noun pax);

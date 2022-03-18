@@ -6,7 +6,7 @@ import {
   Button,
   ManagedTextInputField,
   ManagedCheckboxField,
-  ContinuousProgressBar,
+  ContinuousProgressBar
 } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -20,6 +20,7 @@ import airlock from '~/logic/api';
 import { joinError, joinLoad, JoinProgress } from '@urbit/api';
 import { useQuery } from '~/logic/lib/useQuery';
 import { JoinKind, JoinDesc, JoinSkeleton } from './Skeleton';
+import { preSig } from '~/logic/lib/util';
 
 interface InviteWithUid extends Invite {
   uid: string;
@@ -32,7 +33,7 @@ interface FormSchema {
 
 const initialValues = {
   autojoin: false,
-  shareContact: false,
+  shareContact: false
 };
 
 function JoinForm(props: {
@@ -150,22 +151,37 @@ function JoinError(props: {
   desc: JoinDesc;
   request: JoinRequest;
   modal: boolean;
+  dismiss: () => void;
 }) {
-  const { desc, request, modal } = props;
+  const { dismiss, desc, request, modal } = props;
   const { preview } = usePreview(desc.group);
   const group = preview?.metadata?.title ?? desc.group;
   const title = `Joining ${group} failed`;
   const explanation =
     request.progress === 'no-perms'
       ? 'You do not have the correct permissions'
-      : 'An unexpected error occurred';
+    : 'An unexpected error occurred';
+
+  const onRetry = () => {
+    useGroupState.getState().abortJoin(desc.group);
+    const [,,ship,name] = group.split('/');
+    airlock.poke(
+      join(ship, name, desc.kind, false, false)
+    );
+  };
+
+  const onAbort = () => {
+    useGroupState.getState().abortJoin(desc.group);
+    dismiss();
+  };
 
   return (
     <JoinSkeleton modal={modal} title={title} desc={desc}>
       <Col p='4' gapY='4'>
         <Text fontWeight='medium'>{explanation}</Text>
-        <Row>
-          <Button>Dismiss</Button>
+        <Row gapX="2">
+          <Button onClick={onRetry} primary>Retry</Button>
+          <Button onClick={onAbort} destructive>Abort</Button>
         </Row>
       </Col>
     </JoinSkeleton>
@@ -233,7 +249,7 @@ export function Join(props: JoinProps) {
       finished={finishedPath}
     />
   ) : isErrored ? (
-    <JoinError modal={modal} desc={desc} request={openedRequest} />
+    <JoinError dismiss={dismiss} modal={modal} desc={desc} request={openedRequest} />
   ) : (
     <JoinInitial modal={modal} dismiss={dismiss} desc={desc} invite={invite} />
   );
@@ -256,7 +272,7 @@ export function JoinPrompt(props: JoinPromptProps) {
   };
 
   const onSubmit = async ({ link }: PromptFormSchema) => {
-    const path = `/ship/${link}`;
+    const path = `/ship/${preSig(link)}`;
     history.push({
       search: appendQuery({ 'join-path': path })
     });
