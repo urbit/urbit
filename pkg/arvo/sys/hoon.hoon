@@ -8215,10 +8215,18 @@
       ^-  hoon
       ?:  =([~ ~ ~ ~] wit)
         gen
+      |^
       ?+    gen  gen
+        ::  non-recursive hoons
+        ::  %knit can contain hoons, but since its supposed to be printed as a
+        ::  string, I think I can ignore the recursion?
+          $?  [%rock *]  [%sand *]  [%wing *]  [%knit *]  [%bust *]  ==
+        wrap-boy
+        ::
         ::  bar runes
           $?  [%brbc *]  [%brcb *]  [%brcl *]  [%brdt *]  [%brkt *]
               [%brhp *]  [%brsg *]  [%brtr *]  [%brts *]  [%brwt *]  ==
+        :: TODO: handle recursion
         ?~  boy.wit
           gen
         [%note help+`u.boy.wit gen]
@@ -8240,6 +8248,11 @@
         [%tsfs [%help `u.boy.wit p.gen] q.gen r.gen]
 ::        [%tsfs help+`u.boy.wit p.gen q.gen r.gen]
       ==
+      ::
+      ++  wrap-boy
+        ?~  boy.wit  gen
+        [%note help+`u.boy.wit gen]
+      --
     --
   ::
   ++  grip
