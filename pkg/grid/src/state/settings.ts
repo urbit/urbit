@@ -21,6 +21,9 @@ interface BaseSettingsState {
     theme: 'light' | 'dark' | 'auto';
     doNotDisturb: boolean;
   };
+  tiles: {
+    order: string[];
+  };
   putEntry: (bucket: string, key: string, value: Value) => Promise<void>;
   [ref: string]: unknown;
 }
@@ -70,6 +73,9 @@ export const useSettingsState = createState<BaseSettingsState>(
     display: {
       theme: 'auto',
       doNotDisturb: true
+    },
+    tiles: {
+      order: []
     },
     loaded: false,
     putEntry: async (bucket, key, val) => {
