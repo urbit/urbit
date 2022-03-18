@@ -366,7 +366,7 @@ u3_auto_info(u3_auto* car_u)
     }
     car_u = car_u->nex_u;
   }
-  return lit;
+  return u3kb_flop(lit);
 }
 
 /* u3_auto_slog(): print status info.
