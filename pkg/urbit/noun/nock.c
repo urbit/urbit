@@ -388,102 +388,107 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 // the opcode's enum name, string representation, and computed goto into a
 // single structure.
 #define OPCODES                                                                \
-  /* general purpose */                                                        \
-  X(HALT, "halt", &&do_halt),  /*  0 */                                        \
-  X(BAIL, "bail", &&do_bail),  /*  1 */                                        \
+  /* non-nock bytecodes */                                                     \
+  X(HALT, "halt", &&do_halt),  /*  0: terminator, end of bytcode program */    \
+  X(BAIL, "bail", &&do_bail),  /*  1: deterministic crash */                   \
+  /* stack manipulation */                                                     \
   X(COPY, "copy", &&do_copy),  /*  2 */                                        \
   X(SWAP, "swap", &&do_swap),  /*  3 */                                        \
   X(TOSS, "toss", &&do_toss),  /*  4 */                                        \
-  X(AUTO, "auto", &&do_auto),  /*  5 */                                        \
-  X(AULT, "ault", &&do_ault),  /*  6 */                                        \
-  X(SNOC, "snoc", &&do_snoc),  /*  7 */                                        \
-  X(SNOL, "snol", &&do_snol),  /*  8 */                                        \
-  X(HEAD, "head", &&do_head),  /*  9 */                                        \
-  X(HELD, "held", &&do_held),  /* 10 */                                        \
-  X(TAIL, "tail", &&do_tail),  /* 11 */                                        \
-  X(TALL, "tall", &&do_tall),  /* 12 */                                        \
-  /* fragment (keep) */                                                        \
-  X(FABK, "fabk", &&do_fabk),  /* 13 */                                        \
-  X(FASK, "fask", &&do_fask),  /* 14 */                                        \
-  X(FIBK, "fibk", &&do_fibk),  /* 15 */                                        \
-  X(FISK, "fisk", &&do_fisk),  /* 16 */                                        \
-  /* fragment (lose) */                                                        \
-  X(FABL, "fabl", &&do_fabl),  /* 17 */                                        \
-  X(FASL, "fasl", &&do_fasl),  /* 18 */                                        \
-  X(FIBL, "fibl", &&do_fibl),  /* 19 */                                        \
-  X(FISL, "fisl", &&do_fisl),  /* 20 */                                        \
-  /* literal (keep) */                                                         \
-  X(LIT0, "lit0", &&do_lit0),  /* 21 */                                        \
-  X(LIT1, "lit1", &&do_lit1),  /* 22 */                                        \
-  X(LITB, "litb", &&do_litb),  /* 23 */                                        \
-  X(LITS, "lits", &&do_lits),  /* 24 */                                        \
-  X(LIBK, "libk", &&do_libk),  /* 25 */                                        \
-  X(LISK, "lisk", &&do_lisk),  /* 26 */                                        \
-  /* literal (lose) */                                                         \
-  X(LIL0, "lil0", &&do_lil0),  /* 27 */                                        \
-  X(LIL1, "lil1", &&do_lil1),  /* 28 */                                        \
-  X(LILB, "lilb", &&do_lilb),  /* 29 */                                        \
-  X(LILS, "lils", &&do_lils),  /* 30 */                                        \
-  X(LIBL, "libl", &&do_libl),  /* 31 */                                        \
-  X(LISL, "lisl", &&do_lisl),  /* 32 */                                        \
-  /* nock */                                                                   \
+  /* auto-cons */                                                              \
+  X(AUTO, "auto", &&do_auto),  /*  5: keep */                                  \
+  X(AULT, "ault", &&do_ault),  /*  6: lose */                                  \
+  /* general purposes */                                                       \
+  X(SNOC, "snoc", &&do_snoc),  /*  7: keep */                                  \
+  X(SNOL, "snol", &&do_snol),  /*  8: lose */                                  \
+  /* nock 0: head */                                                           \
+  X(HEAD, "head", &&do_head),  /*  9: keep */                                  \
+  X(HELD, "held", &&do_held),  /* 10: lose */                                  \
+  /* nock 0: tail */                                                           \
+  X(TAIL, "tail", &&do_tail),  /* 11: keep */                                  \
+  X(TALL, "tall", &&do_tall),  /* 12: lose */                                  \
+  /* nock 0: fragment (keep) */                                                \
+  X(FABK, "fabk", &&do_fabk),  /* 13: c3_y */                                  \
+  X(FASK, "fask", &&do_fask),  /* 14: c3_s */                                  \
+  X(FIBK, "fibk", &&do_fibk),  /* 15: c3_y */                                  \
+  X(FISK, "fisk", &&do_fisk),  /* 16: c3_s */                                  \
+  /* nock 0: fragment (lose) */                                                \
+  X(FABL, "fabl", &&do_fabl),  /* 17: c3_y */                                  \
+  X(FASL, "fasl", &&do_fasl),  /* 18: c3_s */                                  \
+  X(FIBL, "fibl", &&do_fibl),  /* 19: c3_y */                                  \
+  X(FISL, "fisl", &&do_fisl),  /* 20: c3_s */                                  \
+  /* nock 1: literal (keep) */                                                 \
+  X(LIT0, "lit0", &&do_lit0),  /* 21: a literal 0 */                           \
+  X(LIT1, "lit1", &&do_lit1),  /* 22: a literal 1 */                           \
+  X(LITB, "litb", &&do_litb),  /* 23: c3_y */                                  \
+  X(LITS, "lits", &&do_lits),  /* 24: c3_s */                                  \
+  X(LIBK, "libk", &&do_libk),  /* 25: c3_y */                                  \
+  X(LISK, "lisk", &&do_lisk),  /* 26: c3_s */                                  \
+  /* nock 1: literal (lose) */                                                 \
+  X(LIL0, "lil0", &&do_lil0),  /* 27: a literal 0 */                           \
+  X(LIL1, "lil1", &&do_lil1),  /* 28: a literal 1 */                           \
+  X(LILB, "lilb", &&do_lilb),  /* 29: c3_y */                                  \
+  X(LILS, "lils", &&do_lils),  /* 30: c3_s */                                  \
+  X(LIBL, "libl", &&do_libl),  /* 31: c3_y */                                  \
+  X(LISL, "lisl", &&do_lisl),  /* 32: c3_s */                                  \
+  /* nock 2: nock (lose) */                                                    \
   X(NOLK, "nolk", &&do_nolk),  /* 33 */                                        \
   X(NOCT, "noct", &&do_noct),  /* 34 */                                        \
   X(NOCK, "nock", &&do_nock),  /* 35 */                                        \
-  /* 3 & 4 */                                                                  \
+  /* nock 3 & 4 */                                                             \
   X(DEEP, "deep", &&do_deep),  /* 36 */                                        \
   X(BUMP, "bump", &&do_bump),  /* 37 */                                        \
-  /* equality */                                                               \
-  X(SAM0, "sam0", &&do_sam0),  /* 38 */                                        \
-  X(SAM1, "sam1", &&do_sam1),  /* 39 */                                        \
-  X(SAMB, "samb", &&do_samb),  /* 40 */                                        \
-  X(SAMS, "sams", &&do_sams),  /* 41 */                                        \
-  X(SANB, "sanb", &&do_sanb),  /* 42 */                                        \
-  X(SANS, "sans", &&do_sans),  /* 43 */                                        \
+  /* nock 5: equality */                                                       \
+  X(SAM0, "sam0", &&do_sam0),  /* 38: test that it is equal to 0 */            \
+  X(SAM1, "sam1", &&do_sam1),  /* 39: test that it is equal to 1 */            \
+  X(SAMB, "samb", &&do_samb),  /* 40: test equality for vars size c3_b */      \
+  X(SAMS, "sams", &&do_sams),  /* 41: test equality for vars size c3_s */      \
+  X(SANB, "sanb", &&do_sanb),  /* 42: test equality for vars size c3_b */      \
+  X(SANS, "sans", &&do_sans),  /* 43: test equality for vars size c3_s */      \
   X(SAME, "same", &&do_same),  /* 44 */                                        \
   X(SALM, "salm", &&do_salm),  /* 45 */                                        \
   X(SAMC, "samc", &&do_samc),  /* 46 */                                        \
-  /* unconditional skips */                                                    \
-  X(SBIP, "sbip", &&do_sbip),  /* 47 */                                        \
-  X(SIPS, "sips", &&do_sips),  /* 48 */                                        \
-  X(SWIP, "swip", &&do_swip),  /* 49 */                                        \
-  /* conditional skips */                                                      \
-  X(SBIN, "sbin", &&do_sbin),  /* 50 */                                        \
-  X(SINS, "sins", &&do_sins),  /* 51 */                                        \
-  X(SWIN, "swin", &&do_swin),  /* 52 */                                        \
+  /* related to nock 6: unconditional skips */                                 \
+  X(SBIP, "sbip", &&do_sbip),  /* 47: c3_b */                                  \
+  X(SIPS, "sips", &&do_sips),  /* 48: c3_s */                                  \
+  X(SWIP, "swip", &&do_swip),  /* 49: c3_l */                                  \
+  /* related to nock 6: conditional skips */                                   \
+  X(SBIN, "sbin", &&do_sbin),  /* 50: c3_b */                                  \
+  X(SINS, "sins", &&do_sins),  /* 51: c3_s */                                  \
+  X(SWIN, "swin", &&do_swin),  /* 52: c3_l */                                  \
   /* nock 9 */                                                                 \
-  X(KICB, "kicb", &&do_kicb),  /* 53 */                                        \
-  X(KICS, "kics", &&do_kics),  /* 54 */                                        \
-  X(TICB, "ticb", &&do_ticb),  /* 55 */                                        \
-  X(TICS, "tics", &&do_tics),  /* 56 */                                        \
-  /* nock 12 */                                                                \
+  X(KICB, "kicb", &&do_kicb),  /* 53: c3_b */                                  \
+  X(KICS, "kics", &&do_kics),  /* 54: c3_s */                                  \
+  X(TICB, "ticb", &&do_ticb),  /* 55: c3_b */                                  \
+  X(TICS, "tics", &&do_tics),  /* 56: c3_s */                                  \
+  /* nock 12: scry (only defined in arvo, not in base nock spec) */            \
   X(WILS, "wils", &&do_wils),  /* 57 */                                        \
   X(WISH, "wish", &&do_wish),  /* 58 */                                        \
-  /* hint processing */                                                        \
-  X(BUSH, "bush", &&do_bush),  /* 59 */                                        \
-  X(SUSH, "sush", &&do_sush),  /* 60 */                                        \
+  /* nock 11: hint processing */                                               \
+  X(BUSH, "bush", &&do_bush),  /* 59: c3_b */                                  \
+  X(SUSH, "sush", &&do_sush),  /* 60: c3_s */                                  \
   X(DROP, "drop", &&do_drop),  /* 61 */                                        \
   X(HECK, "heck", &&do_heck),  /* 62 */                                        \
   X(SLOG, "slog", &&do_slog),  /* 63 */                                        \
-  /* fast (keep) */                                                            \
-  X(BAST, "bast", &&do_bast),  /* 64 */                                        \
-  X(SAST, "sast", &&do_sast),  /* 65 */                                        \
-  /* fast (lose) */                                                            \
-  X(BALT, "balt", &&do_balt),  /* 66 */                                        \
-  X(SALT, "salt", &&do_salt),  /* 67 */                                        \
-  /* memo (keep) */                                                            \
-  X(SKIB, "skib", &&do_skib),  /* 68 */                                        \
-  X(SKIS, "skis", &&do_skis),  /* 69 */                                        \
-  /* memo (lose) */                                                            \
-  X(SLIB, "slib", &&do_slib),  /* 70 */                                        \
-  X(SLIS, "slis", &&do_slis),  /* 71 */                                        \
+  /* nock 11: fast (keep) */                                                   \
+  X(BAST, "bast", &&do_bast),  /* 64: c3_b */                                  \
+  X(SAST, "sast", &&do_sast),  /* 65: c3_s */                                  \
+  /* nock 11: fast (lose) */                                                   \
+  X(BALT, "balt", &&do_balt),  /* 66: c3_b */                                  \
+  X(SALT, "salt", &&do_salt),  /* 67: c3_s */                                  \
+  /* nock 11: memo (keep) */                                                   \
+  X(SKIB, "skib", &&do_skib),  /* 68: c3_b */                                  \
+  X(SKIS, "skis", &&do_skis),  /* 69: c3_s */                                  \
+  /* nock 11: memo (lose) */                                                   \
+  X(SLIB, "slib", &&do_slib),  /* 70: c3_b */                                  \
+  X(SLIS, "slis", &&do_slis),  /* 71: c3_s */                                  \
   X(SAVE, "save", &&do_save),  /* 72 */                                        \
-  /* before formula */                                                         \
+  /* nock 11: before formula */                                                \
   X(HILB, "hilb", &&do_hilb),  /* 73: atomic,    byte  */                      \
   X(HILS, "hils", &&do_hils),  /* 74: atomic,    short */                      \
   X(HINB, "hinb", &&do_hinb),  /* 75: arbitrary, byte  */                      \
   X(HINS, "hins", &&do_hins),  /* 76: arbitrary, short */                      \
-  /* after formula */                                                          \
+  /* nock 11: after formula */                                                 \
   X(HILK, "hilk", &&do_hilk),  /* 77: atomic,    keep */                       \
   X(HILL, "hill", &&do_hill),  /* 78: atomic,    lose */                       \
   X(HINK, "hink", &&do_hink),  /* 79: arbitrary, keep */                       \
@@ -495,20 +500,20 @@ _n_nock_on(u3_noun bus, u3_noun fol)
   X(KUTT, "kutt", &&do_kutt),  /* 84 */                                        \
   X(MUSM, "musm", &&do_musm),  /* 85 */                                        \
   X(KUSM, "kusm", &&do_kusm),  /* 86 */                                        \
-  X(MUTB, "mutb", &&do_mutb),  /* 87 */                                        \
-  X(MUTS, "muts", &&do_muts),  /* 88 */                                        \
-  X(MITB, "mitb", &&do_mitb),  /* 89 */                                        \
-  X(MITS, "mits", &&do_mits),  /* 90 */                                        \
-  X(KUTB, "kutb", &&do_kutb),  /* 91 */                                        \
-  X(KUTS, "kuts", &&do_kuts),  /* 92 */                                        \
-  X(KITB, "kitb", &&do_kitb),  /* 93 */                                        \
-  X(KITS, "kits", &&do_kits),  /* 94 */                                        \
+  X(MUTB, "mutb", &&do_mutb),  /* 87: c3_b */                                  \
+  X(MUTS, "muts", &&do_muts),  /* 88: c3_s */                                  \
+  X(MITB, "mitb", &&do_mitb),  /* 89: c3_b */                                  \
+  X(MITS, "mits", &&do_mits),  /* 90: c3_s, seems unused in codebase */        \
+  X(KUTB, "kutb", &&do_kutb),  /* 91: c3_b */                                  \
+  X(KUTS, "kuts", &&do_kuts),  /* 92: c3_s */                                  \
+  X(KITB, "kitb", &&do_kitb),  /* 93: c3_b */                                  \
+  X(KITS, "kits", &&do_kits),  /* 94: c3_s, seems unused in codebase */        \
   X(LAST,   NULL,      NULL),  /* 95 */
-
 // Opcodes. Define X to select the enum name from OPCODES.
 #define X(opcode, name, indirect_jump) opcode
 enum { OPCODES };
 #undef X
+/* TODO: opcodes for nock 7 & 8 seem to be missing */
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
@@ -779,7 +784,8 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
     if ( c3y == u3ud(op) ) {
       switch ( op ) {
         default:
-          buf_y[i_w] = (c3_y) u3h(ops);
+          // just reuse op
+          buf_y[i_w] = (c3_y) op;
           break;
 
         /* registration site index args */
@@ -877,6 +883,49 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case BUSH: case SANB:
         case KITB: case MITB:
         case HILB: case HINB:
+          /* TODO:
+          ** check tail of op for being xray
+          ** if so call a rendering and cons to tail of op
+          ** like sip list in melt?
+          ** take interpret buffy upto nef_w
+          */
+
+          // check tail of op for being xray
+          /*if ( c3__xray == u3k(u3t(op)) ) {
+            // TODO: render everything called until this point
+            //       ie take whatever the analog of fol is, and run it through
+            //       something like _slog_bytecode without sloging it, to convert
+            //       it to a u3i_string, then store that to the tail of op
+            // TODO: cons the rendered data to tail of op
+            // TODO: slog out info on what is compiling right now
+            u3_noun op_string = u3i_string("xray");
+            switch ( cod ) {
+              default: break;
+              case FIBK: u3t_slog_cap(1, u3i_string("FIBK"), op_string); break;
+              case FIBL: u3t_slog_cap(1, u3i_string("FIBL"), op_string); break;
+              case LIBK: u3t_slog_cap(1, u3i_string("LIBK"), op_string); break;
+              case LIBL: u3t_slog_cap(1, u3i_string("LIBL"), op_string); break;
+              case BUSH: u3t_slog_cap(1, u3i_string("BUSH"), op_string); break;
+              case SANB: u3t_slog_cap(1, u3i_string("SANB"), op_string); break;
+              case KITB: u3t_slog_cap(1, u3i_string("KITB"), op_string); break;
+              case MITB: u3t_slog_cap(1, u3i_string("MITB"), op_string); break;
+              case HILB: u3t_slog_cap(1, u3i_string("HILB"), op_string); break;
+              case HINB: u3t_slog_cap(1, u3i_string("HINB"), op_string); break;
+            }
+
+            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
+            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
+
+            // NOTE: buf_y is pog_u->byc_u.ops_y ie it is arg #1 for render bytecode
+            // NOTE: ___ is arg #2 for render_bytecode (aka c3_w her_w)
+            // i_W
+            _slog_bytecode(1, buf_y, 0);
+            _slog_bytecode(1, pog_u->byc_u.ops_y, 0);
+          }
+          else {
+            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
+            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
+          }*/
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
           break;
@@ -956,12 +1005,12 @@ static void _n_print_stack(u3p(u3_noun) empty) {
 }
 #endif
 
-#ifdef VERBOSE_BYTECODE
+//#ifdef VERBOSE_BYTECODE
 // Define X to select the opcode string representation from OPCODES.
 # define X(opcode, name, indirect_jump) name
 static c3_c* opcode_names[] = { OPCODES };
 # undef X
-#endif
+//#endif
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -998,6 +1047,12 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       default: {
         return _n_comp(ops, nef, los_o, tel_o);
       }
+      /* TODO:
+      ** for case xray pack more info into HILB
+      ** place nef_w into HILB trel
+      */
+      case c3__xray:
+      case c3__meme:
       case c3__nara:
       case c3__hela:
       case c3__bout: {
@@ -1009,7 +1064,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         ++nef_w; _n_emit(&fen, u3nc(SBIP, 1));
 
         //  call hilt_fore
-        //  HILB overflows to HILS
+        //  HILB overflows to HILS - NOTE: this becomes hin
         ++tot_w; _n_emit(ops, u3nc(HILB, u3nc(u3k(hif), u3k(nef))));
         // if fore return c3n, skip fen
         ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
@@ -1034,6 +1089,12 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             ++tot_w; _n_emit(ops, TOSS);
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
+          /* TODO:
+          ** for case xray pack more info into HILB
+          ** place nef_w into HINB trel
+          */
+          case c3__xray:
+          case c3__meme:
           case c3__nara:
           case c3__hela:
           case c3__bout: {
@@ -1047,7 +1108,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             // push clue
             tot_w += _n_comp(ops, hod, c3n, c3n);
             //  call hint_fore
-            //  HINB overflows to HINS
+            //  HINB overflows to HINS - NOTE: does this also becom hin?
             ++tot_w; _n_emit(ops, u3nc(HINB, u3nc(u3k(zep), u3k(nef))));
             // if fore return c3n, skip fen
             ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
@@ -1192,11 +1253,11 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   u3_noun cod, arg, hed, tel;
   u3x_cell(fol, &cod, &arg);
   if ( c3y == u3du(cod) ) {
-    tot_w += _n_comp(ops, cod, c3n, c3n);
-    ++tot_w; _n_emit(ops, SWAP);
-    tot_w += _n_comp(ops, arg, c3n, c3n);
-    ++tot_w; _n_emit(ops, (c3y == los_o ) ? AULT : AUTO);
-  }
+    tot_w += _n_comp(ops, cod, c3n, c3n);                 // [hed bus       ..] // compute head: don't lose, not in tail
+    ++tot_w; _n_emit(ops, SWAP);                          // [bus hed       ..]
+    tot_w += _n_comp(ops, arg, c3n, c3n);                 // [tel bus hed   ..] // compute tail: don't lose, not in tail
+    ++tot_w; _n_emit(ops, (c3y == los_o ) ? AULT : AUTO); // [[hed tel]     ..]
+  }                                                       // [[hed tel] bus ..]
   else switch ( cod ) {
     case 0:
       if ( c3n == u3ud(arg) ) {
@@ -1230,12 +1291,12 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
     case 1:
       switch ( arg ) {
         case 0:
-          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
+          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0); // an actual value of 0
           break;
         case 1:
-          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
+          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1); // an actual value of 1
           break;
-        default:
+        default: // these are all indexes
           op_y = (c3y == los_o)
                ? (arg <= 0xFF ? LILB : arg <= 0xFFFF ? LILS : LIBL)  // overflows to LISL
                : (arg <= 0xFF ? LITB : arg <= 0xFFFF ? LITS : LIBK); // overflows to LISK
@@ -1665,6 +1726,139 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
+//-------------------DANE------
+/* _n_prog_free(): free memory retained by program
+*/
+static void
+_n_prog_free_willy(u3n_prog* pog_u)
+{
+  c3_w i_w;
+  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
+    u3z(pog_u->lit_u.non[i_w]);
+  }
+  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
+    u3z(pog_u->mem_u.sot_u[i_w].key);
+  }
+  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
+    u3j_site_lose(&(pog_u->cal_u.sit_u[i_w]));
+  }
+  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
+    u3j_rite_lose(&(pog_u->reg_u.rit_u[i_w]));
+  }
+  u3a_free(pog_u);
+}
+
+
+int
+_intlen (int value)
+{
+  int x=!value;
+  while(value){
+    value/=10;
+    x++;
+  }
+  return x;
+}
+
+int _is_valid_op(int go) {
+  return (go == 0 || go == 1 || go == 2 | go == 4);
+}
+int _is_pair_op(int go) {
+  return (go == 1 || go == 2 | go == 4);
+}
+
+void
+_slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
+  c3_w ip_w = 0;
+  // NOTE: if we change the main loop, we should c/p
+  //       it back up here to replace this loop,
+  //       then replace all string ops with increments
+  //       thats how I did it in the first place.
+  // lets count the chars in this string
+  unsigned int s_ln = 1; // opening "{"
+  // set go to an invalid value, so we can break imeadately if needed
+  unsigned int go = 5;
+  while ( pog[ip_w] ) {
+    go = _n_arg(pog[ip_w]);
+    // no need to stay here if we cant print it
+    if (!_is_valid_op(go)) break;
+    ip_w++;    // move ip_w for reading a opcode name
+    s_ln += 4; // opcode name, which is always 4 char long
+    if (_is_pair_op(go)) {
+      // add the len of the number
+      s_ln += _intlen(
+        go == 4 ? _n_rewo(pog, &ip_w):
+        go == 2 ? _n_resh(pog, &ip_w):
+        pog[ip_w++]);
+      s_ln+= 3; // "[", the space between the opcode and number, "]"
+    }
+    s_ln++; // add trailing space before next word in string
+    if (ip_w == her_w) s_ln +=3; // add "[*]" before next word
+  }
+  s_ln += 5; //add "halt}" to end of the bytecode
+
+  // reset ip_w so we can loop again
+  ip_w = 0;
+  c3_c str_c[s_ln];
+  str_c[0] = 0;
+  strcat(str_c, "{");
+  go = 5;
+  while ( pog[ip_w] ) {
+    go = _n_arg(pog[ip_w]);
+    // no need to stay here if we cant print it
+    if (!_is_valid_op(go)) break;
+
+    // add open brace if the opcode pairs with a number
+    if (_is_pair_op(go)) strcat(str_c, "[");
+
+    // add the opcode name
+    strncat(str_c, opcode_names[pog[ip_w++]], 4);
+
+    // finish the pair
+    if (_is_pair_op(go)) {
+      // add the space
+      strcat(str_c, " ");
+      // get the number
+      int num =
+        go == 4 ? _n_rewo(pog, &ip_w):
+        go == 2 ? _n_resh(pog, &ip_w):
+        pog[ip_w++];
+      if (num == 0) {
+        // handle a litteral zero
+        strcat(str_c, "0");
+      }
+      else {
+        // add underscores to the buffer for the number
+        for (int x = _intlen(num); x > 0; x--) strcat(str_c, "_");
+        // get the index of the last underscore we added
+        int f = strlen(str_c)-1;
+        // add num to the string by decrementing into str_c,
+        // stuffing the tail of num into each slot
+        while (num > 0) {
+          str_c[f--] = (num%10)+'0';
+          num /= 10;
+        }
+      }
+      // add the closing brace
+      strcat(str_c, "]");
+    }
+    strcat(str_c, " ");
+    if (ip_w == her_w) strcat(str_c, "[*]");
+  }
+  strcat(str_c, "halt}");
+  u3t_slog_cap(pri_l, u3i_string("bytecode"), u3i_string(str_c));
+}
+
+
+void
+_xray(c3_l pri_l, u3_noun fol) {
+  u3n_prog* pog_u = _n_bite(fol);
+  c3_y* pog = pog_u->byc_u.ops_y;
+  _slog_bytecode(pri_l, pog, pog_u->byc_u.len_w-1);
+  _n_prog_free_willy(pog_u);
+}
+// ---------------END DANEs EDIT -----
+
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
 **            hin: [hint-atom, formula]. TRANSFER
 **            bus: subject. RETAIN
@@ -1692,6 +1886,16 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 
     case c3__hela : {
       u3t_slog_hela(0);
+      *out = u3_nul;
+    } break;
+
+    case c3__meme : {
+      u3t_slog_meme(0);
+      *out = u3_nul;
+    } break;
+
+    case c3__xray : {
+      _xray(0, fol);
       *out = u3_nul;
     } break;
 
@@ -1764,6 +1968,28 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
         c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
         u3t_slog_cap(pri_l, u3i_string("trace of"), u3k(tan));
         u3t_slog_hela(pri_l);
+      }
+      u3z(*clu);
+      *clu = u3_nul;
+    } break;
+
+    case c3__meme : {
+      u3_noun pri, tan;
+      if ( c3y == u3r_cell(*clu, &pri, &tan) ) {
+        c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
+        u3t_slog_cap(pri_l, u3i_string("memeory profile at"), u3k(tan));
+        u3t_slog_meme(pri_l);
+      }
+      u3z(*clu);
+      *clu = u3_nul;
+    } break;
+
+    case c3__xray : {
+      u3_noun pri, tan;
+      if ( c3y == u3r_cell(*clu, &pri, &tan) ) {
+        c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
+        u3t_slog_cap(pri_l, u3i_string("bytecode of"), u3k(tan));
+        _xray(pri_l, fol);
       }
       u3z(*clu);
       *clu = u3_nul;
@@ -2987,3 +3213,4 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 
   return u3n_nock_et(gul, bus, fol);
 }
+
