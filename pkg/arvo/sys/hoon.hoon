@@ -8216,7 +8216,7 @@
       ?:  =([~ ~ ~ ~] wit)
         gen
       ?+    gen  gen
-        ::
+        ::  bar runes
           $?  [%brbc *]  [%brcb *]  [%brcl *]  [%brdt *]  [%brkt *]
               [%brhp *]  [%brsg *]  [%brtr *]  [%brts *]  [%brwt *]  ==
         ?~  boy.wit
@@ -8232,6 +8232,13 @@
         ?~  boy.wit
           [%brcn lab.wit q.gen]
         [%note help+`u.boy.wit [%brpt lab.wit q.gen]]
+        ::
+        :: tis runes
+          [%tsfs *]
+        ?~  boy.wit
+          gen
+        [%tsfs [%help `u.boy.wit p.gen] q.gen r.gen]
+::        [%tsfs help+`u.boy.wit p.gen q.gen r.gen]
       ==
     --
   ::
