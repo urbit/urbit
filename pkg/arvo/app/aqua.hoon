@@ -33,6 +33,7 @@
           pil=$>(%pill pill)
           assembled=*
           tym=@da
+          fresh-piers=(map ship [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
       ==
@@ -154,6 +155,29 @@
     =.  snap  assembled
     ~&  pill-size=(met 3 (jam snap))
     ..abet-pe
+  ::
+  ::  store post-pill ship for later re-use
+  ::
+  ++  ahoy
+    =?  fresh-piers  !(~(has by fresh-piers) who)
+      %+  ~(put by fresh-piers)  who
+      [pier-data (~(get ja unix-boths) who)]
+    ..ahoy
+  ::
+  ::  restore post-pill ship for re-use
+  ::
+  ++  yaho
+    =/  fresh  (~(got by fresh-piers) who)
+    =.  pier-data  pier.fresh
+    =.  boths.fresh  (flop boths.fresh)
+    |-
+    ?~  boths.fresh  ..yaho
+    =.  ..yaho
+      ?-  -.i.boths.fresh
+        %effect  (publish-effect +.i.boths.fresh)
+        %event   (publish-event +.i.boths.fresh)
+      ==
+    $(boths.fresh t.boths.fresh)
   ::
   ::  Enqueue events to child arvo
   ::
@@ -381,6 +405,7 @@
       %0
     ~&  %suc
     =.  assembled  +7.p.res
+    =.  fresh-piers  ~
     this
   ::
       %1
@@ -506,6 +531,10 @@
   ?-  -.ae
   ::
       %init-ship
+    ?:  (~(has by fresh-piers) who.ae)
+      ~&  [%aqua %cached-init who.ae]
+      =.  this  abet-pe:yaho:(pe who.ae)
+      (pe who.ae)
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
@@ -543,7 +572,7 @@
             [/a/newt/0v1n.2m9vh %born ~]
         ==
       ==
-    =.  this  abet-pe:initted
+    =.  this  abet-pe:ahoy:initted
     (pe who.ae)
   ::
       %pause-events
