@@ -241,9 +241,10 @@ _conn_read_wire(u3_noun   wir,
         if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
              (u3_nul != p_uco) )
         {
-          u3z(wir); return c3n;
+          u3z(uco); u3z(wir); return c3n;
         }
         *rid = u3k(q_uco);
+        u3z(uco);
       }
     }
     u3z(wir); return c3y;
