@@ -34,7 +34,7 @@
 **
 **      [32 %fyrd [%base %hi %tape [%ship ~zod]]]
 **
-**  responses to %fyrd are either %fail if something went wrong
+**  responses to %fyrd are either %bail if something went wrong
 **  in the driver, or %avow to indicate success or failure from
 **  %khan. the body of avow is (each page goof).
 **
@@ -572,7 +572,7 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
       case c3__fyrd: {
         if ( c3n == con_u->kan_o ) {
           _conn_send_noun(can_u,
-                          u3nt(u3k(rid), c3__fail, u3i_string("khan-miss")));
+                          u3nt(u3k(rid), c3__bail, u3i_string("khan-miss")));
         }
         else {
           u3_noun wir = u3nc(c3__khan,
