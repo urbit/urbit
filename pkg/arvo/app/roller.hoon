@@ -724,7 +724,7 @@
           [cards this]
         ::
             %thread-done
-          =+   !<(result=(each @ud [term @t]) q.cage.sign)
+          =+   !<(result=(each [@ud @ud] [term @t]) q.cage.sign)
           =^  cards  state
             (on-batch-result:do address nonce result)
           [cards this]
@@ -1341,8 +1341,9 @@
 ::  +on-batch-result: await resend after thread success or failure
 ::
 ++  on-batch-result
-  |=  [=address:ethereum nonce=@ud result=(each @ud [term @t])]
+  |=  [=address:ethereum nonce=@ud result=(each [@ud @ud] [term @t])]
   ^-  (quip card _state)
+  |^
   ::  print error if there was one
   ::
   ~?  ?=(%| -.result)  [dap.bowl %send-error +.p.result]
@@ -1360,6 +1361,24 @@
       (del:ors:dice sending [address nonce])
     `state
   =/  =send-tx  (got:ors:dice sending [address nonce])
+  ::  if the number of txs sent is less than the ones in sending, we remove
+  ::  them from the latest sending batch and add them on top of the pending list
+  ::
+  =/  n-txs=@ud  ?:(?=(%& -.result) -.p.result (lent txs.send-tx))
+  =/  not-sent=(list [=address:naive force=? =raw-tx:naive])
+    (slag n-txs txs.send-tx)
+  =/  partial-send=?  &(?=(%& -.result) (lth n-txs (lent txs.send-tx)))
+  =?  txs.send-tx   partial-send
+    (oust [n-txs (lent txs.send-tx)] txs.send-tx)
+  =?  pending       partial-send
+    (fix-not-sent-pending not-sent)
+  =/  [nif=_finding sih=_history]
+    (fix-not-sent-status not-sent)
+  =:  finding  nif
+      history  sih
+    ==
+  ~?  partial-send  [%extracting-txs-from-batch (lent not-sent)]
+  ::
   =?  sending  ?|  ?=(%& -.result)
                    ?=([%| %crash *] result)
                ==
@@ -1368,9 +1387,16 @@
     ::  update gas price for this tx in state
     ::
     ?:  ?=(%& -.result)
-      send-tx(next-gas-price p.result, sent &)
-    ::  if the thread crashed, we don't know the gas used,
-    ::  so we udpate it manually, same as the thread would do
+      send-tx(next-gas-price +.p.result, sent &)
+    ::  if the thread crashed, we don't know the gas used, so we udpate it
+    ::  manually, same as the thread would do. this has the problem of causing
+    ::  the batch to be blocked if the thread keeps crashing, and we don't have
+    ::  enough funds to pay.
+    ::
+    ::  on the other hand if the thread fails because +fetch-gas-price fails
+    ::  (e.g. API change), and our fallback gas price is too low, the batch will
+    ::  also be blocked, if we don't increase the next-gas-price, so either way
+    ::  the batch will be stuck because of another underlying issue.
     ::
     %_    send-tx
         next-gas-price
@@ -1400,6 +1426,44 @@
   %+  wait:b:sys
     /resend/(scot %ux address)/(scot %ud nonce)
   (add resend-time now.bowl)
+  ::
+  ++  fix-not-sent-pending
+    |=  not-sent=(list [=address:naive force=? =raw-tx:naive])
+    =;  txs=(list pend-tx)
+      (weld txs pending)
+    ::  TODO: this would not be needed if txs.send-tx was a (list pend-tx)
+    ::
+    %+  murn  not-sent
+    |=  [=address:naive force=? =raw-tx:naive]
+    =/  =keccak  (hash-raw-tx:lib raw-tx)
+    ?~  wer=(~(get by finding) keccak)
+      ~&  >>>  %missing-tx-in-finding
+      ~
+    ?@  u.wer
+      ~&  >>>  %missing-tx-in-finding
+      ~
+    `[force address time.u.wer raw-tx]
+  ::
+  ++  fix-not-sent-status
+    |=  not-sent=(list [=address:naive force=? =raw-tx:naive])
+    %+  roll  not-sent
+    |=  [[@ @ =raw-tx:naive] nif=_finding sih=_history]
+    =/  =keccak  (hash-raw-tx:lib raw-tx)
+    ?~  val=(~(get by nif) keccak)
+      [nif sih]
+    ?.  ?=(^ u.val)
+      [nif sih]
+    =*  time      time.u.val
+    =*  address   address.u.val
+    =*  ship      ship.from.tx.raw-tx
+    =/  l2-tx     (l2-tx +<.tx.raw-tx)
+    =/  =roll-tx  [ship %pending keccak l2-tx]
+    =+  txs=(~(got by sih) address)
+    =.  txs  +:(del:orh:dice txs time)
+    :-  (~(del by nif) keccak)
+    %+  ~(put by sih)  address
+    (put:orh:dice txs [time roll-tx])
+  --
 ::  +on-naive-diff: process l2 tx confirmations
 ::
 ++  on-naive-diff

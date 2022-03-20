@@ -88,6 +88,8 @@
 +$  send-tx
   $:  next-gas-price=@ud
       sent=?
+      ::  TODO: make txs as (list pend-tx)?
+      ::
       txs=(list [=address:naive force=? =raw-tx:naive])
   ==
 +$  part-tx
