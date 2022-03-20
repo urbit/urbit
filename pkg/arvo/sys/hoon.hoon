@@ -8580,15 +8580,7 @@
       ==
     ::
         [%mcfs *]  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
-        [%mcgl *]
-      :^    %cnls
-          :+  %cnhp
-            q.gen
-          [%ktcl p.gen]
-        r.gen
-      :+  %brts
-        p.gen
-      s.gen
+        [%mcgl *]  [%cnls [%cnhp q ktcl+p] r [%brts p [%tsgr $+3 s]]]:gen
     ::
         [%mcsg *]                                       ::                  ;~
       |-  ^-  hoon
