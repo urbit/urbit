@@ -531,7 +531,7 @@
   ?-  -.ae
   ::
       %init-ship
-    ?:  (~(has by fresh-piers) who.ae)
+    ?:  &(fake.ae (~(has by fresh-piers) who.ae))
       ~&  [%aqua %cached-init who.ae]
       =.  this  abet-pe:yaho:(pe who.ae)
       (pe who.ae)
@@ -572,7 +572,9 @@
             [/a/newt/0v1n.2m9vh %born ~]
         ==
       ==
-    =.  this  abet-pe:ahoy:initted
+    =.  this
+      ?.  fake.ae  abet-pe:initted
+      abet-pe:ahoy:initted
     (pe who.ae)
   ::
       %pause-events
