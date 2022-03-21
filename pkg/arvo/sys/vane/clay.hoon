@@ -5044,14 +5044,51 @@
     %+  turn  (sort ~(tap by dos.rom.ruf) aor)
     |=  [=desk =dojo]
     :+  desk  %|
+    |^
     :~  ankh+&+ank.dom.dojo
         mime+&+mim.dom.dojo
-        ford-files+&+files.fod.dom.dojo
-        ford-naves+&+naves.fod.dom.dojo
-        ford-marks+&+marks.fod.dom.dojo
-        ford-casts+&+casts.fod.dom.dojo
-        ford-tubes+&+tubes.fod.dom.dojo
+        ford-files+|+files
+        ford-naves+|+naves
+        ford-marks+|+marks
+        ford-casts+|+casts
+        ford-tubes+|+tubes
     ==
+    ++  marks
+      ^-  (list mass)
+      %+  turn  (sort ~(tap by marks.fod.dom.dojo) aor)
+      |=  [=mark res=*]
+      ^-  mass
+      [mark %& res]
+    ::
+    ++  casts
+      ^-  (list mass)
+      %+  turn  (sort ~(tap by casts.fod.dom.dojo) aor)
+      |=  [=mars res=*]
+      ^-  mass
+      [`@t`(rap 3 [a '-' b ~]:mars) %& res]
+    ::
+    ++  naves
+      ^-  (list mass)
+      %+  turn  (sort ~(tap by naves.fod.dom.dojo) aor)
+      |=  [=mark res=*]
+      ^-  mass
+      [mark %& res]
+    ::
+    ++  tubes
+      ^-  (list mass)
+      %+  turn  (sort ~(tap by tubes.fod.dom.dojo) aor)
+      |=  [=mars res=*]
+      ^-  mass
+      [`@t`(rap 3 [a '-' b ~]:mars) %& res]
+    ::
+
+    ++  files
+      ^-  (list mass)
+      %+  turn  (sort ~(tap by files.fod.dom.dojo) aor)
+      |=  [=path res=*]
+      ^-  mass
+      [(spat path) %& res]
+    --
   :~  domestic+|+domestic
       foreign+&+hoy.ruf
       :+  %object-store  %|
