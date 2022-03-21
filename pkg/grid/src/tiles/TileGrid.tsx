@@ -54,11 +54,7 @@ export const TileGrid = ({ menu }: TileGridProps) => {
     } else if (order.length > chargeKeys.length && hasChargeKeys) {
       useSettingsState
         .getState()
-        .putEntry(
-          'tiles',
-          'order',
-          uniq(order.filter((key) => !(key in charges)).concat(chargeKeys))
-        );
+        .putEntry('tiles', 'order', uniq(order.filter((key) => key in charges).concat(chargeKeys)));
     }
   }, [charges, order, loaded]);
 
