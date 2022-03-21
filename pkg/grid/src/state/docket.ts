@@ -27,7 +27,7 @@ import {
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
 import { fakeRequest, normalizeUrbitColor, useMockData } from './util';
-import { Status, useAsyncCall } from '../logic/useAsyncCall';
+import { Status } from '../logic/useAsyncCall';
 
 export interface ChargeWithDesk extends Charge {
   desk: string;
