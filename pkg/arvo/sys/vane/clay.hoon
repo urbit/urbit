@@ -9,6 +9,17 @@
 ::  worth noting that many of the clay-related structures are defined in zuse.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+=/  bud
+  ^~
+  =/  zuse  !>(..zuse)
+  :*  zuse=zuse
+      nave=(slap zuse !,(*hoon nave:clay))
+      cork=(slap zuse !,(*hoon cork))
+      same=(slap zuse !,(*hoon same))
+      mime=(slap zuse !,(*hoon mime))
+      cass=(slap zuse !,(*hoon cass:clay))
+  ==
+::
 |=  our=ship
 =,  clay
 =>  |%
@@ -548,7 +559,7 @@
         :_  nub
         ^-  vase  ::  vase of nave
         %+  slap
-          (with-faces deg+deg tub+tub but+but cor+cor nave+!>(nave) ~)
+          (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
         !,  *hoon
         =/  typ  _+<.cor
         =/  dif  diff:deg
@@ -569,7 +580,7 @@
         --
       :_  nub
       ^-  vase  ::  vase of nave
-      %+  slap  (slop (with-face cor+cor) !>(..zuse))
+      %+  slap  (slop (with-face cor+cor) zuse.bud)
       !,  *hoon
       =/  typ  _+<.cor
       =/  dif  _*diff:grad:cor
@@ -612,9 +623,10 @@
         =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
         [dais.res nub]
       =^  nav=vase  nub  (build-nave mak)
-      :: ~>  %slog.0^leaf/"ford: make dais {<mak>}"
+      ::~>  %slog.0^leaf/"ford: make dais {<mak>}"
       :_  nub
       ^-  dais
+      =>  [..zuse nav=nav]
       |_  sam=vase
       ++  diff
         |=  new=vase
@@ -633,8 +645,8 @@
         =/  res=vase
           %+  slam  (slap nav limb/%mash)
           %+  slop
-            :(slop !>(ship.a) !>(desk.a) diff.a)
-          :(slop !>(ship.b) !>(desk.b) diff.b)
+            :(slop =>([..zuse ship.a] !>(+)) =>([..zuse desk.a] !>(+)) diff.a)
+          :(slop =>([..zuse ship.b] !>(+)) =>([..zuse desk.b] !>(+)) diff.b)
         ?~  q.res
           ~
         `(slap res !,(*hoon ?>((^ .) u)))
@@ -652,7 +664,7 @@
       ^-  [vase state]
       ~|  error-building-cast+[a b]
       ?:  =([%mime %hoon] [a b])
-        :_(nub !>(|=(m=mime q.q.m)))
+        :_(nub =>(..zuse !>(|=(m=mime q.q.m))))
       ?^  got=(~(get by casts.cache.nub) [a b])
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
@@ -696,7 +708,7 @@
       ?:  ?=(%& -.rab)
         (compose-casts a !<(mark p.rab) b)
       ?:  ?=(%noun b)
-        :_(nub !>(|=(* +<)))
+        :_(nub same.bud)
       ~|(no-cast-from+[a b] !!)
     ::
     ++  compose-casts
@@ -706,7 +718,7 @@
       =^  dos=vase  nub  (build-cast y z)
       :_  nub
       %+  slap
-        (with-faces uno+uno dos+dos cork+!>(cork) ~)
+        (with-faces uno+uno dos+dos cork+=>([..zuse cork] !>(+)) ~)
       !,(*hoon (cork uno dos))
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
@@ -728,7 +740,7 @@
         [tube.res nub]
       =^  gat=vase  nub  (build-cast a b)
       :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
-      :_(nub |=(v=vase (slam gat v)))
+      :_(nub =>([..zuse gat=gat] |=(v=vase (slam gat v))))
     ::
     ++  lobe-to-page
       |=  =lobe
@@ -761,7 +773,7 @@
       ?:  =(%hoon p.page)
         :_(nub [%hoon -:!>(*@t) q.page])
       ?:  =(%mime p.page)
-        :_(nub [%mime !>(;;(mime q.page))])
+        :_(nub [%mime =>([..zuse ;;(mime q.page)] !>(+))])
       =^  =dais  nub  (build-dais p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
@@ -784,7 +796,7 @@
         =/  txt=wain  (to-wain:format ;;(@t q.old))
         =+  ;;(dif=(urge cord) q.diff)
         =/  new=@t  (of-wain:format (lurk:differ txt dif))
-        :_(nub [%hoon !>(new)])
+        :_(nub [%hoon =>([..zuse new] !>(+))])
       =^  dys=dais  nub  (build-dais p.old)
       =^  syd=dais  nub  (build-dais p.diff)
       :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
@@ -858,7 +870,7 @@
     ::
     ++  run-pile
       |=  =pile
-      =/  sut=vase  !>(..zuse)
+      =/  sut=vase  zuse.bud
       =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
