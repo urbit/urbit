@@ -293,8 +293,8 @@
         c3_o    lit;                        //  -l, lite mode
         c3_c*   til_c;                      //  -n, play till eve_d
         c3_o    pro;                        //  -P, profile
-        c3_s    per_s;                      //  -h, http port
-        c3_s    pes_s;                      //  -T, http/tls port
+        c3_s    per_s;                      //      http port
+        c3_s    pes_s;                      //      https port
         c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
