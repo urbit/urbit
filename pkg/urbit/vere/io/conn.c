@@ -461,6 +461,7 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
             u3nc(c3__mass, u3_nul),
             u3nc(c3__port, u3nq(c3__ames, c3__htls, c3__http, u3_nul)),
             u3nc(c3__v, u3_nul),
+            u3nc(c3__who, u3_nul),
             u3_none));
       } break;
       //  simple health check.
@@ -490,6 +491,9 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       case c3__v: {
         res = u3nc(u3_nul, u3i_string(URBIT_VERSION));
       } break;
+      case c3__who: {
+        res = u3nc(u3_nul, u3i_chubs(2, pir_u->who_d));
+      }
     }
   }
   else if ( c3n == u3r_cell(t_dat, &it_dat, &tt_dat) ) {
