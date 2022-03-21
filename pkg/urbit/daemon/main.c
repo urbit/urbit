@@ -151,6 +151,8 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "replay-to",           required_argument, NULL, 'n' },
     { "profile",             no_argument,       NULL, 'P' },
     { "ames-port",           required_argument, NULL, 'p' },
+    { "http-port",           required_argument, NULL, 'h' },
+    { "https-port",          required_argument, NULL, 'T' },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
     { "replay-from",         required_argument, NULL, 'r' },
@@ -167,9 +169,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     { NULL, 0, NULL, 0 },
   };
 
-  while ( -1 != (ch_i=getopt_long(argc, argv,
-                 "A:B:C:DF:G:H:I:J:K:LPRSX:Y:Z:ab:cde:gi:jk:ln:p:qr:stu:vw:x",
-                 lop_u, &lid_i)) )
+  while ( -1 != (ch_i = getopt_long(argc, argv,
+                                    "A:B:C:DF:G:H:I:J:K:LPRST:X:Y:Z:"
+                                    "ab:cde:gh:i:jk:ln:p:qr:stu:vw:x",
+                                    lop_u, &lid_i)) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -258,6 +261,18 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.por_s = arg_w;
+        break;
+      }
+      case 'h': {
+        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
+          return c3n;
+        } else u3_Host.ops_u.per_s = arg_w;
+        break;
+      }
+      case 'T': {
+        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
+          return c3n;
+        } else u3_Host.ops_u.pes_s = arg_w;
         break;
       }
       case 'R': {

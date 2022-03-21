@@ -1715,7 +1715,12 @@ _http_serv_start_all(u3_httd* htd_u)
     // its reference count must be incremented with SSL_CTX_up_ref
 
     if ( 0 != htd_u->tls_u ) {
-      por_s = ( c3y == for_u->pro ) ? 8443 : 443;
+      if ( 0 == htd_u->car_u.pir_u->pes_s ) {
+        por_s = ( c3y == for_u->pro ) ? 8443 : 443;
+      }
+      else {
+        por_s = htd_u->car_u.pir_u->pes_s;
+      }
       htp_u = _http_serv_new(htd_u, por_s, c3y, c3n);
       htp_u->h2o_u = _http_serv_init_h2o(htd_u->tls_u, for_u->log, for_u->red);
 
@@ -1726,7 +1731,12 @@ _http_serv_start_all(u3_httd* htd_u)
 
   //  HTTP server.
   {
-    por_s = ( c3y == for_u->pro ) ? 8080 : 80;
+    if ( 0 == htd_u->car_u.pir_u->per_s ) {
+      por_s = ( c3y == for_u->pro ) ? 8080 : 80;
+    }
+    else {
+      por_s = htd_u->car_u.pir_u->per_s;
+    }
     htp_u = _http_serv_new(htd_u, por_s, c3n, c3n);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 

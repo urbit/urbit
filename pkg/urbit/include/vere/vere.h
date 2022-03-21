@@ -293,6 +293,8 @@
         c3_o    lit;                        //  -l, lite mode
         c3_c*   til_c;                      //  -n, play till eve_d
         c3_o    pro;                        //  -P, profile
+        c3_s    per_s;                      //  -h, http port
+        c3_s    pes_s;                      //  -T, http/tls port
         c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
@@ -653,11 +655,12 @@
           void*            sop_p;               //  slog stream data
           void           (*sog_f)               //  slog stream callback
                          (void*, c3_w, u3_noun);//
-          // XX remove
-          c3_s             por_s;               //  UDP port
+          //  XX remove
           c3_s             per_s;               //  http port
-          c3_s             pes_s;               //  https port
+          c3_s             pes_s;               //  htls port
+          c3_s             por_s;               //  ames port
           u3_save*         sav_u;               //  autosave
+          //  XX end remove
           struct _u3_pier* nex_u;               //  next in list
         } u3_pier;
 
