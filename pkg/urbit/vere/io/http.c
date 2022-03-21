@@ -1483,7 +1483,8 @@ _http_serv_start(u3_http* htp_u)
         u3_king_bail();
       }
       if ( c3y == htp_u->dis ) {
-        u3l_log("http: %s\n", uv_strerror(sas_i));
+        u3l_log("http: listen (%" PRIu16 "): %s\n", htp_u->por_s,
+                uv_strerror(sas_i));
         u3_king_bail();
       }
       if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
