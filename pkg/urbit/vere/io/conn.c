@@ -79,7 +79,7 @@
 **  on receipt. no further updates are provided.
 **
 **  messages use newt framing. because the framing begins with
-**  a null byte, any messages that do not contain that byte are
+**  a tag byte, any messages that do not contain that byte are
 **  reserved for future use.
 **
 */
