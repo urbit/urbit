@@ -59,6 +59,7 @@ typedef struct _u3_h2o_serv {
     c3_w             sev_l;             //  server number
     c3_w             coq_l;             //  next connection number
     c3_s             por_s;             //  running port
+    c3_o             dis;               //  manually-configured port
     c3_o             sec;               //  logically secure
     c3_o             lop;               //  loopback-only
     c3_o             liv;               //  c3n == shutdown
@@ -1306,12 +1307,13 @@ _http_serv_close(u3_http* htp_u)
 /* _http_serv_new(): create new http server.
 */
 static u3_http*
-_http_serv_new(u3_httd* htd_u, c3_s por_s, c3_o sec, c3_o lop)
+_http_serv_new(u3_httd* htd_u, c3_s por_s, c3_o dis, c3_o sec, c3_o lop)
 {
   u3_http* htp_u = c3_malloc(sizeof(*htp_u));
 
   htp_u->coq_l = 1;
   htp_u->por_s = por_s;
+  htp_u->dis = dis;
   htp_u->sec = sec;
   htp_u->lop = lop;
   htp_u->liv = c3y;
@@ -1450,9 +1452,10 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
 static void
 _http_serv_start(u3_http* htp_u)
 {
-  struct sockaddr_in adr_u;
-  memset(&adr_u, 0, sizeof(adr_u));
+  u3_pier*            pir_u = htp_u->htd_u->car_u.pir_u;
+  struct sockaddr_in  adr_u;
 
+  memset(&adr_u, 0, sizeof(adr_u));
   adr_u.sin_family = AF_INET;
   adr_u.sin_addr.s_addr = ( c3y == htp_u->lop ) ?
                           htonl(INADDR_LOOPBACK) :
@@ -1479,6 +1482,11 @@ _http_serv_start(u3_http* htp_u)
         u3l_log("http: ip address not available\n");
         u3_king_bail();
       }
+      if ( c3y == htp_u->dis ) {
+        u3l_log("http: listen (%" PRIu16 "): %s\n", htp_u->por_s,
+                uv_strerror(sas_i));
+        u3_king_bail();
+      }
       if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
         if ( (c3y == htp_u->sec) && (443 == htp_u->por_s) ) {
           htp_u->por_s = 8443;
@@ -1488,6 +1496,16 @@ _http_serv_start(u3_http* htp_u)
         }
         else {
           htp_u->por_s++;
+          //  XX
+          //
+          if ( c3n == htp_u->lop ) {
+            if ( c3y == htp_u->sec ) {
+              pir_u->pes_s = htp_u->por_s;
+            }
+            else {
+              pir_u->per_s = htp_u->por_s;
+            }
+          }
         }
 
         continue;
@@ -1622,14 +1640,6 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
                      (c3y == htp_u->lop) ? "loopback" : "public"));
     }
 
-    if ( c3n == htp_u->lop ) {
-      if ( c3y == htp_u->sec ) {
-        pir_u->pes_s = htp_u->por_s;
-      }
-      else {
-        pir_u->per_s = htp_u->por_s;
-      }
-    }
     htp_u = htp_u->nex_u;
   }
 
@@ -1694,13 +1704,13 @@ _http_search_req(u3_httd* htd_u,
 static void
 _http_serv_start_all(u3_httd* htd_u)
 {
-  u3_http* htp_u;
-  c3_s por_s;
-
-  u3_noun sec = u3_nul;
-  u3_noun non = u3_none;
-
-  u3_form* for_u = htd_u->fig_u.for_u;
+  u3_http*  htp_u;
+  u3_pier*  pir_u = htd_u->car_u.pir_u;
+  c3_s      por_s;
+  u3_noun   sec = u3_nul;
+  u3_noun   non = u3_none;
+  u3_noun   dis;
+  u3_form*  for_u = htd_u->fig_u.for_u;
 
   c3_assert( 0 != for_u );
 
@@ -1715,8 +1725,15 @@ _http_serv_start_all(u3_httd* htd_u)
     // its reference count must be incremented with SSL_CTX_up_ref
 
     if ( 0 != htd_u->tls_u ) {
-      por_s = ( c3y == for_u->pro ) ? 8443 : 443;
-      htp_u = _http_serv_new(htd_u, por_s, c3y, c3n);
+      if ( 0 == pir_u->pes_s ) {
+        por_s = ( c3y == for_u->pro ) ? 8443 : 443;
+        dis = c3n;
+      }
+      else {
+        por_s = pir_u->pes_s;
+        dis = c3y;
+      }
+      htp_u = _http_serv_new(htd_u, por_s, dis, c3y, c3n);
       htp_u->h2o_u = _http_serv_init_h2o(htd_u->tls_u, for_u->log, for_u->red);
 
       _http_serv_start(htp_u);
@@ -1726,8 +1743,15 @@ _http_serv_start_all(u3_httd* htd_u)
 
   //  HTTP server.
   {
-    por_s = ( c3y == for_u->pro ) ? 8080 : 80;
-    htp_u = _http_serv_new(htd_u, por_s, c3n, c3n);
+    if ( 0 == pir_u->per_s ) {
+      por_s = ( c3y == for_u->pro ) ? 8080 : 80;
+      dis = c3n;
+    }
+    else {
+      por_s = pir_u->per_s;
+      dis = c3y;
+    }
+    htp_u = _http_serv_new(htd_u, por_s, dis, c3n, c3n);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 
     _http_serv_start(htp_u);
@@ -1737,7 +1761,7 @@ _http_serv_start_all(u3_httd* htd_u)
   //  Loopback server.
   {
     por_s = 12321;
-    htp_u = _http_serv_new(htd_u, por_s, c3n, c3y);
+    htp_u = _http_serv_new(htd_u, por_s, c3n, c3n, c3y);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 
     _http_serv_start(htp_u);
