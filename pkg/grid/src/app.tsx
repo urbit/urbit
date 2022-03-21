@@ -10,7 +10,7 @@ import useContactState from './state/contact';
 import api from './state/api';
 import { useMedia } from './logic/useMedia';
 import { useHarkStore } from './state/hark';
-import { useTheme } from './state/settings';
+import { useSettingsState, useTheme } from './state/settings';
 import { useLocalState } from './state/local';
 import { ErrorAlert } from './components/ErrorAlert';
 import { useErrorHandler } from './logic/useErrorHandler';
@@ -52,6 +52,10 @@ const AppRoutes = () => {
   useEffect(
     handleError(() => {
       window.name = 'grid';
+
+      const { initialize: settingsInitialize, fetchAll } = useSettingsState.getState();
+      settingsInitialize(api);
+      fetchAll();
 
       const { fetchDefaultAlly, fetchAllies, fetchCharges } = useDocketState.getState();
       fetchDefaultAlly();
