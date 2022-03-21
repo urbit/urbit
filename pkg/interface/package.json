@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "private": true,
+  "engines": {
+    "node": "16.14.0"
+  },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@radix-ui/react-dialog": "^0.1.0",
