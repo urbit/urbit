@@ -828,11 +828,13 @@ _conn_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   u3_conn*  con_u = (u3_conn*)car_u;
   u3_noun   tag, dat;
   c3_l      sev_l, coq_l;
-  u3_weak   rid = u3_none;
+  u3_atom   rid;
 
-  if ( (c3n == _conn_read_wire(wir, c3__khan, &sev_l, &coq_l, &rid)) ||
-       (c3n == u3r_cell(cad, &tag, &dat)) ||
-       (con_u->sev_l != sev_l) )
+  if ( c3n == _conn_read_wire(wir, c3__khan, &sev_l, &coq_l, &rid) ) {
+    u3z(cad); return c3n;
+  }
+  if ( (con_u->sev_l != sev_l) ||
+       (c3n == u3r_cell(cad, &tag, &dat)) )
   {
     u3z(rid); u3z(cad); return c3n;
   }
