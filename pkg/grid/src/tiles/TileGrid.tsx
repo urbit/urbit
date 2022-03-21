@@ -37,10 +37,20 @@ export const TileGrid = ({ menu }: TileGridProps) => {
     const hasKeys = order && !!order.length;
     const chargeKeys = Object.keys(charges);
 
+    // Correct order state, fill if none, remove duplicates, and remove
+    // old uninstalled app keys
     if (!hasKeys) {
       useSettingsState.getState().putEntry('tiles', 'order', chargeKeys);
     } else if (order.length < chargeKeys.length) {
       useSettingsState.getState().putEntry('tiles', 'order', uniq(order.concat(chargeKeys)));
+    } else if (order.length > chargeKeys.length) {
+      useSettingsState
+        .getState()
+        .putEntry(
+          'tiles',
+          'order',
+          uniq(order.filter((key) => !(key in charges)).concat(chargeKeys))
+        );
     }
   }, [charges, order]);
 
@@ -65,7 +75,7 @@ export const TileGrid = ({ menu }: TileGridProps) => {
     >
       <div className="grid justify-center grid-cols-2 sm:grid-cols-[repeat(auto-fit,minmax(auto,250px))] gap-4 px-4 md:px-8 w-full max-w-6xl">
         {order
-          .filter((d) => d !== window.desk)
+          .filter((d) => d !== window.desk && d in charges)
           .map((desk) => (
             <TileContainer desk={desk}>
               <Tile key={desk} charge={charges[desk]} desk={desk} disabled={menu === 'upgrading'} />
