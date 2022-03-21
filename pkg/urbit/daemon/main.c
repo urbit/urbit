@@ -151,8 +151,8 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "replay-to",           required_argument, NULL, 'n' },
     { "profile",             no_argument,       NULL, 'P' },
     { "ames-port",           required_argument, NULL, 'p' },
-    { "http-port",           required_argument, NULL, 'h' },
-    { "https-port",          required_argument, NULL, 'T' },
+    { "http-port",           required_argument, NULL, c3__http },
+    { "https-port",          required_argument, NULL, c3__htls },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
     { "replay-from",         required_argument, NULL, 'r' },
@@ -169,10 +169,9 @@ _main_getopt(c3_i argc, c3_c** argv)
     { NULL, 0, NULL, 0 },
   };
 
-  while ( -1 != (ch_i = getopt_long(argc, argv,
-                                    "A:B:C:DF:G:H:I:J:K:LPRST:X:Y:Z:"
-                                    "ab:cde:gh:i:jk:ln:p:qr:stu:vw:x",
-                                    lop_u, &lid_i)) )
+  while ( -1 != (ch_i=getopt_long(argc, argv,
+                 "A:B:C:DF:G:H:I:J:K:LPRSX:Y:Z:ab:cde:gi:jk:ln:p:qr:stu:vw:x",
+                 lop_u, &lid_i)) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -263,13 +262,13 @@ _main_getopt(c3_i argc, c3_c** argv)
         } else u3_Host.ops_u.por_s = arg_w;
         break;
       }
-      case 'h': {
+      case c3__http: {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.per_s = arg_w;
         break;
       }
-      case 'T': {
+      case c3__htls: {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.pes_s = arg_w;
@@ -549,6 +548,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-n, --replay-to NUMBER        Replay up to event\n",
     "-P, --profile                 Profiling\n",
     "-p, --ames-port PORT          Set the ames port to bind to\n",
+    "    --http-port PORT          Set the http port to bind to\n",
+    "    --https-port PORT         Set the https port to bind to\n",
     "-q, --quiet                   Quiet\n",
     "-R, --versions                Report urbit build info\n",
     "-r, --replay-from NUMBER      Load snapshot from event\n",
