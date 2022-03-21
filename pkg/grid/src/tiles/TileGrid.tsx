@@ -25,30 +25,38 @@ export const dragTypes = {
   TILE: 'tile'
 };
 
-export const selTiles = (s: SettingsState) => s.tiles;
+export const selTiles = (s: SettingsState) => ({
+  order: s.tiles.order,
+  loaded: s.loaded
+});
 
 export const TileGrid = ({ menu }: TileGridProps) => {
   const charges = useCharges();
   const chargesLoaded = Object.keys(charges).length > 0;
-  const { order } = useSettingsState(selTiles);
+  const { order, loaded } = useSettingsState(selTiles);
   const isMobile = useMedia('(pointer: coarse)');
 
   useEffect(() => {
     const hasKeys = order && !!order.length;
     const chargeKeys = Object.keys(charges);
+    const hasChargeKeys = chargeKeys.length > 0;
+
+    if (!loaded) {
+      return;
+    }
 
     // Correct order state, fill if none, remove duplicates, and remove
     // old uninstalled app keys
-    if (!hasKeys) {
+    if (!hasKeys && hasChargeKeys) {
       useSettingsState.getState().putEntry('tiles', 'order', chargeKeys);
     } else if (order.length < chargeKeys.length) {
       useSettingsState.getState().putEntry('tiles', 'order', uniq(order.concat(chargeKeys)));
-    } else if (order.length > chargeKeys.length && chargeKeys.length !== 0) {
+    } else if (order.length > chargeKeys.length && hasChargeKeys) {
       useSettingsState
         .getState()
         .putEntry('tiles', 'order', uniq(order.filter((key) => key in charges).concat(chargeKeys)));
     }
-  }, [charges, order]);
+  }, [charges, order, loaded]);
 
   if (!chargesLoaded) {
     return <span>Loading...</span>;
@@ -73,8 +81,8 @@ export const TileGrid = ({ menu }: TileGridProps) => {
         {order
           .filter((d) => d !== window.desk && d in charges)
           .map((desk) => (
-            <TileContainer desk={desk}>
-              <Tile key={desk} charge={charges[desk]} desk={desk} disabled={menu === 'upgrading'} />
+            <TileContainer key={desk} desk={desk}>
+              <Tile charge={charges[desk]} desk={desk} disabled={menu === 'upgrading'} />
             </TileContainer>
           ))}
       </div>
