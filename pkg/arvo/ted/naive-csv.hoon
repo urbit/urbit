@@ -14,6 +14,11 @@
 ::  - success or failure
 ::  - function name
 ::
+::  A lot of the data-scrounging here is stuff that %roller already keeps track
+::  of. We could just scry it from there, but then this thread needs to be run
+::  on the roller ship. So we rebuild the list of historical transactions
+::  ourselves so that this can run from any ship.
+::
 ::  TODO: change block maps to ordered maps
 ::
 /-  dice,
@@ -46,32 +51,42 @@
 =>
   |%
   ::  imported logs is cast as $events
-  +$  events  (list event-log:rpc:ethereum)
+  +$  events    (list event-log:rpc:ethereum)
   +$  address   address:naive  :: @ux
   +$  keccak    @ux            :: used for transaction and roll hashes
   +$  blocknum  number:block   :: @udblocknumber
   ::
-  +$  net  net:dice    ::?(%mainnet %ropsten %local %default)
+  +$  net       net:dice       ::?(%mainnet %ropsten %local %default)
   ::
-  +$  roll-data
-    $:  roller-address=address
-        roll-hash=keccak
-        tx-hash=keccak
-        gas-price=@ud
-    ==
+  +$  block-map  %+  map  blocknum
+    [timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
   ::
-  +$  l2-event-data
-    $:  =roll-data
-        sending-ship=@p
-        sending-proxy=proxy:naive
-        nonce=nonce:naive
-        data-length=* :: maybe octs?
-        action=*
-        suc=?
-    ==
+  +$  action  $?  %transfer-point
+                  %spawn
+                  %configure-keys
+                  %escape
+                  %cancel-escape
+                  %adopt
+                  %reject
+                  %detach
+                  %set-management-proxy
+                  %set-spawn-proxy
+                  %set-transfer-proxy
+               ==
   ::
-  +$  events-time  (list [event-log:rpc:ethereum timestamp=@da])
-  ::
+  +$  tx-data  $:  block=blocknum
+                   timestamp=@da
+                   roller=address
+                   roll-hash=keccak
+                   tx-hash=keccak
+                   sender=ship
+                   proxy=proxy:naive
+                   nonce=nonce:naive
+                   gas=@ud
+                   length=@
+                   suc=?
+                   =action
+                ==
   ::++  node-url  'http://eth-mainnet.urbit.org:8545'
   ++  node-url  'https://mainnet.infura.io/v3/13a985885cd243cc886062ad2f345e16'  :: infura free tier node
   --
@@ -100,9 +115,10 @@
       (get-tx-data tx-hashes)
     =/  rolls-map=(map blocknum (map keccak effects:naive))
       (run-logs-from-state-map nas.snap logs net naive-contract chain-id)
-    =/  rolling  (collate-roll-data blocks block-jar rolls-map timestamps tx-data)
+    =/  rolling=block-map  (collate-roll-data blocks block-jar rolls-map timestamps tx-data)
+    =/  flat  (flatten-data rolling)
     ::
-    (pure:m !>(rolling))
+    (pure:m !>(flat))
   ::
   ++  collate-roll-data
     |=  $:  blocks=(list blocknum)
@@ -111,8 +127,10 @@
             timestamps=(map blocknum @da)
             tx-data=(map keccak [gas=@ud sender=address])
         ==
-    =|  $=  block-map
-        %+  map  blocknum  [timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
+    ::  =|  $=  block-map
+    ::      %+  map  blocknum
+    ::      [timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
+    =|  =block-map
     ^+  block-map
     |-
     ?~  blocks  block-map
@@ -129,6 +147,165 @@
       block-map  %+  ~(put by block-map)  block
                  [(~(got by timestamps) block) rolls]
     ==
+  ::
+  ++  flatten-data
+    |=  =block-map
+    =|  tx-list=(list tx-data)
+    ^+  tx-list
+    =/  blocks=(list blocknum)  ~(tap in ~(key by block-map))
+    ::  recurse through each block, getting the rolls submitted in that block,
+    ::  their timestamp, and the gas price of that roll
+    |-  ^-  (list tx-data)
+    ?~  blocks  tx-list
+    =/  block=blocknum  i.blocks
+    =/  val=[timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
+      (~(got by block-map) block)
+    =/  timestamp  timestamp.val
+    =/  block-rolls  rolls.val
+::    =/  [timestamp block-rolls]
+::      [timestamp rolls]:(~(got by block-map) block)
+    =/  roll-list=(list keccak)
+      ~(tap in ~(key by block-rolls))
+    =|  block-tx-list=(list tx-data)
+    ::  recurse through each roll, getting the transaction data from the effects
+    |-
+    ?~  roll-list
+      %=  ^$
+        blocks  t.blocks
+        tx-list  (welp tx-list block-tx-list)
+      ==
+    =/  roll-hash=keccak  i.roll-list
+    =/  roll=[[gas=@ud sender=address] =effects:naive]
+      (~(got by block-rolls) roll-hash)
+    ::  recurse through the list of effects, building up transaction data as we
+    ::  go. there's a choice here to use the effects, or the submitted
+    ::  raw-tx. the effects include whether or not a transaction failed,
+    ::  which is important data not a part of the submitted raw-tx. we
+    ::  could determine this ourselves, but we build the effects anyways when
+    ::  computing the state transitions, so we may as well use them.
+    ::
+    ::  an individual transaction results in up to 3 diffs: a %nonce, a %tx, and
+    ::  a %point. they always appear in this order. successful transactions
+    ::  always have all 3, while failed transactions only have %nonce and %tx.
+    ::  note that the nonce listed is always the expected nonce - we can't know
+    ::  what nonce was actually submitted without the private key of the signer.
+    =|  roll-tx-list=(list tx-data)
+    =|  nonce-and-tx=[_| _|]
+    =/  =tx-data  :*  block  timestamp  sender.roll  roll-hash  *keccak  *ship
+                      *proxy:naive  *nonce:naive  gas.roll  *@  |  *action
+                  ==
+    |-
+    ::  if we've gotten both the %nonce and %tx diff from a transaction, add the
+    ::  tx-data to the list of tx for the roll
+    ?:  =([& &] nonce-and-tx)
+      %=  $  :: should this be %_ ?
+        roll-tx-list  (snoc roll-tx-list tx-data)
+        nonce-and-tx  [| |]
+        tx-data       *_tx-data  :: reset tx-data
+      ==
+    ::  if we've finished looping through the effects, add the tx list from the
+    ::  roll to the list of tx for the block
+    ::
+    ?~  effects.roll
+       %=  ^$
+         roll-list      t.roll-list
+         block-tx-list  (welp block-tx-list roll-tx-list)
+       ==
+    ::
+    =/  =diff:naive  i.effects.roll
+    ?+    diff
+      $(effects.roll t.effects.roll)  :: we ignore %operator, %dns, and %point diffs
+    ::
+        [%nonce *]
+      %=  $
+        -.nonce-and-tx  &
+        nonce.tx-data   nonce.diff
+        sender.tx-data  ship.diff
+        proxy.tx-data   proxy.diff
+        effects.roll    t.effects.roll
+      ==
+    ::
+      ::  the conditional here is to ensure that a %tx diff is from
+      ::  the same submitted tx as the nonce that should have come
+      ::  before it. this should never happen, but maybe you need
+      ::  to flop effects to get things in the right order. this also
+      ::  isn't perfect - the tx could be from the same ship and proxy
+      ::  but different nonce.
+        [%tx *]
+      ?.  ?&  =(sender.tx-data ship.from.tx.raw-tx.diff)
+              =(proxy.tx-data proxy.from.tx.raw-tx.diff)
+          ==
+        ~&  >>  '%tx associated to a different ship than %nonce!'
+        !!
+      %=  $
+        +.nonce-and-tx  &
+        effects.roll    t.effects.roll
+        length.tx-data  -.raw.raw-tx.diff
+        tx-hash.tx-data  (hash-raw-tx:naive-tx raw-tx.diff)
+        action.tx-data  +<.tx.raw-tx.diff
+        suc.tx-data     ?~  err.diff  &  |
+      ==
+    ==
+  ::
+  ::  ++  flatten-data
+  ::    ::  Takes in rolls-map and makes it suitable to be saved as a csv
+  ::    |=  =rolls-map
+  ::    =/  blocks=(list blocknum)  ~(tap in ~(key by rolls-map))
+  ::    =|  data=(list (list @t))
+  ::    :-  %-  crip
+  ::        ;:  weld
+  ::          "block number,"
+  ::          "timestamp,"
+  ::          "roller addres,"
+  ::          "roll hash,"
+  ::          ::"tx hash,"
+  ::          "sending ship,"
+  ::          "sending proxy,"
+  ::          "nonce,"
+  ::          "gas price,"
+  ::          "length of input data,"
+  ::          "success or failure,"
+  ::          "function name"
+  ::        ==
+  ::    ::  TODO: four nested traps is a bit much. figure out something better
+  ::    |-
+  ::    ?~  blocks  data
+  ::    =/  block=blocknum  i.blocks
+  ::    =/  timestamp=@da  timestamp:(~(got by rolls-map) block)
+  ::    =/  roll-list=(list keccak)  ~(tap in ~(key by rolls:(~(got by rolls-map) block)))
+  ::    =|  tx-by-roll=(list @t)
+  ::    |-
+  ::    ?~  roll-list  tx-by-roll
+  ::    =/  txh=keccak  i.roll-list
+  ::    ::=/  [gas=@da sender=address]  -:(~(got by (~(got by rolls-map) block)) txh)
+  ::    =+  -:(~(got by (~(got by rolls-map) block)) txh)
+  ::    =/  cur-batch=effects:naive  effects:(~(got by (~(got by rolls-map) block) txh))
+  ::    ::  a given transaction in a batch has several diffs: a %nonce, followed by a %tx, and then
+  ::    ::  one or more %points. I think...
+  ::    ::  This assumes that the %tx following a %nonce come from the same transaction.
+  ::    |-
+  ::    ?~  cur-batch  stuff
+  ::    =/  effect=diff:naive  i.cur-batch
+  ::    =|  [=ship:naive =proxy:naive =nonce:naive length=@ud suc=? function=@tas done=_%.n]
+  ::    |-  ::  iterate until you get both a %nonce and a %tx
+  ::    ?-  effect
+  ::      [%nonce *]     =.  nonce  nonce.effect  ^$(cur-batch t.cur-batch)
+  ::      [%tx *]        =:
+  ::      [%operator *]  $(cur-batch t.cur-batch)
+  ::      [%dns *]       $(cur-batch t.cur-batch)
+  ::      [%point *]
+  ::    =/  glue-diffs=(list effects:naive)
+  ::      |-
+  ::      =|  =effects:naive
+  ::      ?~
+  ::    %-  crip
+  ::    ;:  weld
+  ::      (scow %ux block)
+  ::      (scow %da timestamp)
+  ::      (scow %ux address)
+  ::      (scow %ux txh)
+  ::      :: transaction hash
+  ::      (scow %p ship)
   ::
   ++  get-tx-data
     :: retrieves transaction receipts for rolls, extracting the gas cost and sender
@@ -211,9 +388,7 @@
       ?>  ?=(%o -.json)
       (~(got by p.json) 'timestamp')
     --
-  ++  get-roll-data  ~
-  ::    ::  passes L2 rolls into naive.hoon to get the transactions stored within
-  ::  ::
+  ::
   ++  run-logs-from-state-map
     |=  $:  nas=^state:naive
             logs=events
