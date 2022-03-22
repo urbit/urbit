@@ -89,7 +89,6 @@ export function Notification(props: {
   }
 
   const onClick = (e: any) => {
-    console.log({ notification });
     const redirectFromLink = getNotificationRedirectFromLink(first.link);
     const redirectFromPlacePath =
       getNotificationRedirectFromPlacePath(notification);
