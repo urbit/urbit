@@ -17,7 +17,10 @@ import { map, take, uniqBy } from 'lodash';
 import { Mention } from '~/views/components/MentionText';
 import { PropFunc } from '~/types';
 import { useHistory } from 'react-router-dom';
-import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
+import {
+  getNotificationRedirectFromLink,
+  getNotificationRedirectFromPlacePath
+} from '~/logic/lib/notificationRedirects';
 
 export interface NotificationProps {
   notification: INotification;
@@ -44,7 +47,11 @@ const NotificationText = ({ contents, ...rest }: NotificationTextProps) => {
             />
           );
         }
-        return <Text key={idx} {...rest}>{content.text}</Text>;
+        return (
+          <Text key={idx} {...rest}>
+            {content.text}
+          </Text>
+        );
       })}
     </>
   );
@@ -59,7 +66,7 @@ export function Notification(props: {
   const key = `${harkLidToId(lid)}-${harkBinToId(notification.bin)}`;
   const history = useHistory();
 
-  const isMobile = useLocalState(s => s.mobile);
+  const isMobile = useLocalState((s) => s.mobile);
 
   const onArchive = useCallback(
     async (e) => {
@@ -73,10 +80,8 @@ export function Notification(props: {
   );
 
   const { hovering, bind } = useHovering();
-  const dedupedBody = uniqBy(notification.body, item => item.link);
-  const contents = map(dedupedBody, 'content').filter(
-    c => c.length > 0
-  );
+  const dedupedBody = uniqBy(notification.body, (item) => item.link);
+  const contents = map(dedupedBody, 'content').filter((c) => c.length > 0);
   const first = notification.body[0];
   if (!first) {
     // should be unreachable
@@ -84,9 +89,14 @@ export function Notification(props: {
   }
 
   const onClick = (e: any) => {
-    const redirect = getNotificationRedirect(first.link);
-    if(redirect) {
-      history.push(redirect);
+    console.log({ notification });
+    const redirectFromLink = getNotificationRedirectFromLink(first.link);
+    const redirectFromPlacePath =
+      getNotificationRedirectFromPlacePath(notification);
+    if (redirectFromLink) {
+      history.push(redirectFromLink);
+    } else if (redirectFromPlacePath) {
+      history.push(redirectFromPlacePath);
     } else {
       console.log('no redirect');
     }
