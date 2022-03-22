@@ -264,8 +264,8 @@
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
-++  lead  |*(* |*(* [+>+< +<]))                          ::  put head
-++  late  |*(* |*(* [+< +>+<]))                          ::  put tail
+++  lead  |*(* |*(* [+>+< +<]))                         ::  put head
+++  late  |*(* |*(* [+< +>+<]))                         ::  put tail
 ::
 ::  #  %containers
 ::
