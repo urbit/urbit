@@ -117,8 +117,10 @@
       (run-logs-from-state-map nas.snap logs net naive-contract chain-id)
     =/  rolling=block-map  (collate-roll-data blocks block-jar rolls-map timestamps tx-data)
     =/  flat  (flatten-data rolling)
+    =/  csv=(list cord)  (make-csv flat)
+    ;<  ~  bind:m  (export-csv csv)
     ::
-    (pure:m !>(flat))
+    (pure:m !>(csv))
   ::
   ++  collate-roll-data
     |=  $:  blocks=(list blocknum)
@@ -158,14 +160,9 @@
     |-  ^-  (list tx-data)
     ?~  blocks  tx-list
     =/  block=blocknum  i.blocks
-    =/  val=[timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
-      (~(got by block-map) block)
-    =/  timestamp  timestamp.val
-    =/  block-rolls  rolls.val
-::    =/  [timestamp block-rolls]
-::      [timestamp rolls]:(~(got by block-map) block)
+    =/  bor  (~(got by block-map) block)
     =/  roll-list=(list keccak)
-      ~(tap in ~(key by block-rolls))
+      ~(tap in ~(key by rolls.bor))
     =|  block-tx-list=(list tx-data)
     ::  recurse through each roll, getting the transaction data from the effects
     |-
@@ -176,7 +173,7 @@
       ==
     =/  roll-hash=keccak  i.roll-list
     =/  roll=[[gas=@ud sender=address] =effects:naive]
-      (~(got by block-rolls) roll-hash)
+      (~(got by rolls.bor) roll-hash)
     ::  recurse through the list of effects, building up transaction data as we
     ::  go. there's a choice here to use the effects, or the submitted
     ::  raw-tx. the effects include whether or not a transaction failed,
@@ -191,8 +188,8 @@
     ::  what nonce was actually submitted without the private key of the signer.
     =|  roll-tx-list=(list tx-data)
     =|  nonce-and-tx=[_| _|]
-    =/  =tx-data  :*  block  timestamp  sender.roll  roll-hash  *keccak  *ship
-                      *proxy:naive  *nonce:naive  gas.roll  *@  |  *action
+    =/  =tx-data  :*  block  timestamp.bor  sender.roll  roll-hash  *keccak
+                      *ship  *proxy:naive  *nonce:naive  gas.roll  *@  |  *action
                   ==
     |-
     ::  if we've gotten both the %nonce and %tx diff from a transaction, add the
@@ -238,74 +235,61 @@
         ~&  >>  '%tx associated to a different ship than %nonce!'
         !!
       %=  $
-        +.nonce-and-tx  &
-        effects.roll    t.effects.roll
-        length.tx-data  -.raw.raw-tx.diff
+        +.nonce-and-tx   &
+        effects.roll     t.effects.roll
+        length.tx-data   -.raw.raw-tx.diff
         tx-hash.tx-data  (hash-raw-tx:naive-tx raw-tx.diff)
-        action.tx-data  +<.tx.raw-tx.diff
-        suc.tx-data     ?~  err.diff  &  |
+        action.tx-data   +<.tx.raw-tx.diff
+        suc.tx-data      ?~  err.diff  &  |
       ==
     ==
   ::
-  ::  ++  flatten-data
-  ::    ::  Takes in rolls-map and makes it suitable to be saved as a csv
-  ::    |=  =rolls-map
-  ::    =/  blocks=(list blocknum)  ~(tap in ~(key by rolls-map))
-  ::    =|  data=(list (list @t))
-  ::    :-  %-  crip
-  ::        ;:  weld
-  ::          "block number,"
-  ::          "timestamp,"
-  ::          "roller addres,"
-  ::          "roll hash,"
-  ::          ::"tx hash,"
-  ::          "sending ship,"
-  ::          "sending proxy,"
-  ::          "nonce,"
-  ::          "gas price,"
-  ::          "length of input data,"
-  ::          "success or failure,"
-  ::          "function name"
-  ::        ==
-  ::    ::  TODO: four nested traps is a bit much. figure out something better
-  ::    |-
-  ::    ?~  blocks  data
-  ::    =/  block=blocknum  i.blocks
-  ::    =/  timestamp=@da  timestamp:(~(got by rolls-map) block)
-  ::    =/  roll-list=(list keccak)  ~(tap in ~(key by rolls:(~(got by rolls-map) block)))
-  ::    =|  tx-by-roll=(list @t)
-  ::    |-
-  ::    ?~  roll-list  tx-by-roll
-  ::    =/  txh=keccak  i.roll-list
-  ::    ::=/  [gas=@da sender=address]  -:(~(got by (~(got by rolls-map) block)) txh)
-  ::    =+  -:(~(got by (~(got by rolls-map) block)) txh)
-  ::    =/  cur-batch=effects:naive  effects:(~(got by (~(got by rolls-map) block) txh))
-  ::    ::  a given transaction in a batch has several diffs: a %nonce, followed by a %tx, and then
-  ::    ::  one or more %points. I think...
-  ::    ::  This assumes that the %tx following a %nonce come from the same transaction.
-  ::    |-
-  ::    ?~  cur-batch  stuff
-  ::    =/  effect=diff:naive  i.cur-batch
-  ::    =|  [=ship:naive =proxy:naive =nonce:naive length=@ud suc=? function=@tas done=_%.n]
-  ::    |-  ::  iterate until you get both a %nonce and a %tx
-  ::    ?-  effect
-  ::      [%nonce *]     =.  nonce  nonce.effect  ^$(cur-batch t.cur-batch)
-  ::      [%tx *]        =:
-  ::      [%operator *]  $(cur-batch t.cur-batch)
-  ::      [%dns *]       $(cur-batch t.cur-batch)
-  ::      [%point *]
-  ::    =/  glue-diffs=(list effects:naive)
-  ::      |-
-  ::      =|  =effects:naive
-  ::      ?~
-  ::    %-  crip
-  ::    ;:  weld
-  ::      (scow %ux block)
-  ::      (scow %da timestamp)
-  ::      (scow %ux address)
-  ::      (scow %ux txh)
-  ::      :: transaction hash
-  ::      (scow %p ship)
+  ++  export-csv
+    |=  in=(list cord)
+    =/  m  (strand ,~)
+    ^-  form:m
+    ;<  =bowl:spider  bind:m  get-bowl
+    =-  (send-raw-card %pass / %arvo %c %info -)
+    %+  foal:space:userlib
+      /(scot %p our.bowl)/base/(scot %da now.bowl)/naive-exports/csv/txt
+    [%txt !>(in)]
+  ::
+  ++  make-csv
+    ::  Takes in rolls-map and makes it suitable to be saved as a csv
+    |=  in=(list tx-data)
+    ^-  (list cord)
+    :-  %-  crip
+        ;:  weld
+          "block number,"
+          "timestamp,"
+          "roller addres,"
+          "roll hash,"
+          "tx hash,"
+          "sending ship,"
+          "sending proxy,"
+          "nonce,"
+          "gas price,"
+          "length of input data,"
+          "success or failure,"
+          "function name"
+        ==
+    %+  turn  in
+      |=  =tx-data
+      %-  crip
+      ;:  weld
+        (scow %ux block.tx-data)      ","
+        (scow %da timestamp.tx-data)  ","
+        (scow %ux roller.tx-data)     ","
+        (scow %ux roll-hash.tx-data)  ","
+        (scow %ux tx-hash.tx-data)    ","
+        (scow %p sender.tx-data)      ","
+        (scow %tas proxy.tx-data)     ","
+        (scow %ud nonce.tx-data)      ","
+        (scow %ud gas.tx-data)        ","
+        (scow %$ length.tx-data)      ","
+        (scow %f suc.tx-data)         ","
+        (scow %tas action.tx-data)
+      ==
   ::
   ++  get-tx-data
     :: retrieves transaction receipts for rolls, extracting the gas cost and sender
