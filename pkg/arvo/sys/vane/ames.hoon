@@ -435,8 +435,19 @@
   =/  cyf  (rsh [3 18] content.packet)
   ~|  ames-decrypt+[[sndr rcvr origin]:packet len siv]
   =/  vec  ~[sndr.packet rcvr.packet sndr-life rcvr-life]
-  ;;  shut-packet  %-  cue  %-  need
-  (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
+  =/  =noun
+    %-  cue  %-  need
+    (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
+  ;;  shut-packet
+  ?:  ?=(shut-packet noun)
+    noun
+  =*  meat  +>.noun
+  ?:  ?=(%& -.meat)   noun
+  ?:  ?=(%& +<.meat)  noun
+  =*  ack  +>.meat
+  =/  [ok=? lag=@dr]  ?>(?=([? @dr] ack) ack)
+  =.  ack  [ok %.n lag]
+  noun
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
 ::
 ::    Type 0: galaxy or star -- 2 bytes
@@ -582,7 +593,7 @@
       crypto-core=acru:ames
       =bug
   ==
-+$  ames-state-6  ames-state
+::
 +$  ames-state-4  ames-state-5
 +$  ames-state-5
   $:  peers=(map ship ship-state-5)
@@ -591,30 +602,12 @@
       crypto-core=acru:ames
       =bug
   ==
-+$  ship-state-6
-  $%  [%alien alien-agenda]
-      [%known peer-state-6]
-  ==
-+$  peer-state-6
-  $:  $:  =symmetric-key
-          =life
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      =qos
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-      closing=(set bone)
-      corked=(set bone)
-  ==
+::
 +$  ship-state-5
     $%  [%alien alien-agenda]
         [%known peer-state-5]
     ==
+::
 +$  peer-state-5
   $:  $:  =symmetric-key
          =life
@@ -899,9 +892,9 @@
               $:  %6
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=ames-state-6
+                      state=_ames-state.adult-gate
                   ==
-                  [%adult state=ames-state-6]
+                  [%adult state=_ames-state.adult-gate]
               ==  ==
          ==
       ?-    old
@@ -1008,7 +1001,7 @@
   |=  $=  old-state
       $%  [%4 ames-state-4]
           [%5 ames-state-5]
-          [%6 ames-state-6]
+          [%6 ^ames-state]
       ==
   |^
   ^+  ames-gate
@@ -1037,33 +1030,17 @@
   ::
   ++  state-5-to-6
     |=  ames-state=ames-state-5
-    ^-  ames-state-6
-    %=    ames-state
-        peers
-      ^-  (map ship ship-state)
-      %-  ~(run by peers.ames-state)
-      |=  ship-state=ship-state-5
-      ^-  ship-state-6
-      ?.  ?=(%known -.ship-state)
-        ship-state
-      :-  %known
-      ^-  peer-state-6
-      :*  :*  symmetric-key.ship-state
-              life.ship-state
-              public-key.ship-state
-              sponsor.ship-state
-          ==
-          route.ship-state
-          qos.ship-state
-          ossuary.ship-state
-          snd.ship-state
-          rcv.ship-state
-          nax.ship-state
-          heeds.ship-state
-          closing=*(set bone)
-          corked=*(set bone)
-      ==
-    ==
+    ^-  ^^ames-state
+    :_  +.ames-state
+    %-  ~(run by peers.ames-state)
+    |=  ship-state=ship-state-5
+    ^-  ^ship-state
+    ?.  ?=(%known -.ship-state)
+      ship-state
+    :-  %known
+    ^-  peer-state
+    :-  +<.ship-state
+    [route qos ossuary snd rcv nax heeds ~ ~]:ship-state
   --
 ::  +scry: dereference namespace
 ::
@@ -1212,9 +1189,8 @@
     ::  if processing succeded, send positive ack packet and exit
     ::
     ?~  error
-    ?:  (~(has in closing.peer-state) bone)
-      abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.y)
-    abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.n)
+      =/  cork=?  (~(has in closing.peer-state) bone)
+      abet:(run-message-sink:peer-core bone %done ok=%.y cork)
     ::  failed; send message nack packet
     ::
     =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n cork=%.n)
@@ -2274,14 +2250,16 @@
       ::
       ++  on-pump-cork
         ^+  peer-core
-        =.  by-duct.ossuary.peer-state
-          (~(del by by-duct.ossuary.peer-state) (got-duct bone))
-        =.  by-bone.ossuary.peer-state
-          (~(del by by-bone.ossuary.peer-state) bone)
-        =.  snd.peer-state  (~(del by snd.peer-state) bone)
-        =.  rcv.peer-state  (~(del by rcv.peer-state) bone)
-        =.  corked.peer-state  (~(put in corked.peer-state) bone)
-        =.  closing.peer-state  (~(del in closing.peer-state) bone)
+        =.  peer-state
+          =,  peer-state
+          %_  peer-state
+            snd              (~(del by snd) bone)
+            rcv              (~(del by rcv) bone)
+            corked           (~(put in corked) bone)
+            closing          (~(del in closing) bone)
+            by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
+            by-bone.ossuary  (~(del by by-bone.ossuary) bone)
+          ==
         peer-core
       ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
@@ -2443,7 +2421,7 @@
         ?:  ?|  (~(has in closing.peer-state) bone)
                 (~(has in corked.peer-state) bone)
             ==
-        peer-core
+          peer-core
         %-  %+  trace  msg.veb
             =/  dat  [her.channel bone=bone message-num=message-num]
             |.("sink plea {<dat>}")
