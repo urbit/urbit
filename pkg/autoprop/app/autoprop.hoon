@@ -24,6 +24,7 @@
   $:  %0
       make=(map @ta [next=(unit @da) =task])            ::  things to make
       hear=(set desk)                                   ::  observed desks
+      vers=path                                         ::  runtime version
       sole=@ta                                          ::  the way out
   ==
 ::
@@ -65,10 +66,12 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     des   ~(. (default:shoe this command) bowl)
+    rev   rev:.^(vere %$ /(scot %p our.bowl)//(scot %da now.bowl)/zen/ver)
 ::
 ++  on-init
   ^-  (quip card _this)
-  [~ this]
+  :_  this(vers rev)
+  [%pass /vers %arvo %b %wait (add now.bowl ~m5)]~
 ::
 ++  on-save   !>(state)
 ++  on-load
@@ -181,7 +184,7 @@
     |^  =*  base  base.task
         :+  %sag
           =/  ver=@ta
-            =+  .^(vere %$ /(scot %p our.bowl)//(scot %da now.bowl)/zen/ver)
+            =+  rev=rev
             ?.  ?=([%vere @ ~] rev)
               (rap 3 (join '-' rev))
             (fall (slaw %ta i.t.rev) i.t.rev)
@@ -238,6 +241,23 @@
     =|  cards=(list card)
     |-
     ?~  tasks  [cards this]
+    =^  caz  this  (on-command sole %run i.tasks)
+    $(tasks t.tasks, cards (weld cards caz))
+  ::
+  ?:  ?=([%vers ~] wire)
+    ::  on-wake, republish props if we're on a new runtime
+    ::
+    ?>  ?=(%wake +<.sign)
+    =/  next=card
+      [%pass /vers %arvo %b %wait (add now.bowl ~m5)]
+    ?^  error.sign
+      %-  (slog 'on-wake vers failed' u.error.sign)
+      [[next]~ this]
+    ?:  =(rev vers)  [[next]~ this]
+    =/  tasks=(list @ta)  ~(tap in ~(key by make))
+    =|  cards=(list card)
+    |-
+    ?~  tasks  [[next cards] this]
     =^  caz  this  (on-command sole %run i.tasks)
     $(tasks t.tasks, cards (weld cards caz))
   ::
