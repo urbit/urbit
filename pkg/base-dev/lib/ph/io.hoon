@@ -127,7 +127,7 @@
   ;<  ~  bind:m  (send-azimuth-action %breach who)
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~  bind:m  (sleep ~s1)
+  ;<  ~  bind:m  (sleep ~s10)
   ;<  =bowl:spider  bind:m  get-bowl
   =/  aqua-pax
     :-  %i

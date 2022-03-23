@@ -395,6 +395,8 @@
   |=  p=pill
   ^-  (quip card:agent:gall _state)
   ?<  ?=(%ivory -.p)
+  ::TODO  should replace azimuth snapshot with stub?
+  ::      keeping it in brings ships out of sync with aqua's azimuth state...
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
@@ -531,6 +533,10 @@
   ?-  -.ae
   ::
       %init-ship
+    ::TODO  maybe we could cache "real" ships too if we just injected
+    ::      latest keys afterwards.
+    ::      would still need separate "fake" and "real" caches though,
+    ::      can't change the fake flag...
     ?:  &(fake.ae (~(has by fresh-piers) who.ae))
       ~&  [%aqua %cached-init who.ae]
       =.  this  abet-pe:yaho:(pe who.ae)
@@ -570,6 +576,7 @@
             [/e/http-server/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
             [/a/newt/0v1n.2m9vh %born ~]
+            [/d/term/1 %hail ~]
         ==
       ==
     =.  this
@@ -803,7 +810,7 @@
       get-czars
       ~[~['arvo' 'netw' 'ork']]
       0
-      `(need (de-purl:html 'http://localhost:8545'))
+      `(need (de-purl:html 'http://fake.aqua.domain/'))
   ==
 ::
 ::  Should only do galaxies
