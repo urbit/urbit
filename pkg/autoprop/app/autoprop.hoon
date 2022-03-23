@@ -180,9 +180,14 @@
       ==
     |^  =*  base  base.task
         :+  %sag
+          =/  ver=@ta
+            =+  .^(vere %$ /(scot %p our.bowl)//(scot %da now.bowl)/zen/ver)
+            ?.  ?=([%vere @ ~] rev)
+              (rap 3 (join '-' rev))
+            (fall (slaw %ta i.t.rev) i.t.rev)
           ?-  -.task
-            ?(%solid %brass %ivory)  /[dap.bowl]/[name]/pill
-            %desk                    /[dap.bowl]/[name]/jam
+            ?(%solid %brass %ivory)  /[dap.bowl]/[ver]/[name]/pill
+            %desk                    /[dap.bowl]/[ver]/[name]/jam
           ==
         ?-  -.task
           %ivory  (ivory:libpill (sys base))
