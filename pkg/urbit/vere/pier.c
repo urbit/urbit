@@ -70,19 +70,10 @@ _pier_work_send(u3_work* wok_u)
     u3_ovum* egg_u;
     u3_pico* pic_u;
     u3_noun ovo;
-    // u3_noun    ovo, now, bit = u3qc_bex(48);
-
-    // {
-    //   struct timeval tim_tv;
-    //   gettimeofday(&tim_tv, 0);
-    //   now = u3_time_in_tv(&tim_tv);
-    // }
 
     while ( len_w && car_u && (egg_u = u3_auto_next(car_u, &ovo)) ) {
       len_w--;
       u3_lord_work(god_u, egg_u, ovo);
-      // u3_lord_work(god_u, egg_u, u3nc(u3k(now), ovo));
-      // now = u3ka_add(now, u3k(bit));
 
       //  queue events depth first
       //
@@ -105,8 +96,6 @@ _pier_work_send(u3_work* wok_u)
       u3_lord_peek(god_u, pic_u);
       u3_pico_free(pic_u);
     }
-
-    // u3z(now); u3z(bit);
   }
 }
 
