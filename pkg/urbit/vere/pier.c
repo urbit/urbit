@@ -1435,10 +1435,95 @@ _pier_on_lord_live(void* ptr_v)
   }
 }
 
-/* u3_pier_info(): print status info.
+/* u3_pier_mass(): construct a $mass branch with noun/list.
+*/
+u3_noun
+u3_pier_mass(u3_atom cod, u3_noun lit)
+{
+  return u3nt(cod, c3n, lit);
+}
+
+/* u3_pier_mase(): construct a $mass leaf.
+*/
+u3_noun
+u3_pier_mase(c3_c* cod_c, u3_noun dat)
+{
+  return u3nt(u3i_string(cod_c), c3y, dat);
+}
+
+/* u3_pier_info(): pier status info as noun.
+*/
+u3_noun
+u3_pier_info(u3_pier* pir_u)
+{
+  u3_noun nat;
+
+  switch (pir_u->sat_e) {
+    default: {
+      nat = u3_pier_mass(u3i_string("state-unknown"), u3_nul);
+    } break;
+
+    case u3_psat_init: {
+      nat = u3_pier_mass(c3__init, u3_nul);
+    } break;
+
+    case u3_psat_boot: {
+      nat = u3_pier_mass(c3__boot, u3_nul);
+    } break;
+
+    case u3_psat_play: {
+      u3_play* pay_u = pir_u->pay_u;
+
+      nat = u3_pier_mass(c3__play,
+        u3i_list(
+          u3_pier_mase("target", u3i_chub(pay_u->eve_d)),
+          u3_pier_mase("sent", u3i_chub(pay_u->sen_d)),
+          u3_pier_mase("read", u3i_chub(pay_u->req_d)),
+          u3_none));
+    } break;
+
+    case u3_psat_work: {
+      u3_work*  wok_u = pir_u->wok_u;
+
+      nat = u3_pier_mass(c3__work,
+        u3i_list(
+          u3_pier_mase("effects-released", u3i_chub(wok_u->fec_u.rel_d)),
+          u3_pier_mase("pending-any", __(wok_u->fec_u.ext_u)),
+          u3_pier_mase("pending-start",
+                       ( wok_u->fec_u.ext_u
+                         ? u3i_chub(wok_u->fec_u.ext_u->eve_d)
+                         : 0 )),
+          u3_pier_mase("pending-final",
+                       ( wok_u->fec_u.ent_u
+                         ? u3i_chub(wok_u->fec_u.ent_u->eve_d)
+                         : 0 )),
+          u3_pier_mase("wall-any", __(wok_u->wal_u)),
+          u3_pier_mase("wall-event",
+                       ( wok_u->wal_u
+                         ? u3i_chub(wok_u->wal_u->eve_d)
+                         : 0)),
+          u3_pier_mass(c3__auto, u3_auto_info(wok_u->car_u)),
+          u3_none));
+    } break;
+
+    case u3_psat_done: {
+      nat = u3_pier_mass(c3__done, u3_nul);
+    } break;
+  }
+
+  return u3_pier_mass(
+    c3__pier,
+    u3i_list(
+      nat,
+      u3_disk_info(pir_u->log_u),
+      u3_lord_info(pir_u->god_u),
+      u3_none));
+}
+
+/* u3_pier_slog(): print status info.
 */
 void
-u3_pier_info(u3_pier* pir_u)
+u3_pier_slog(u3_pier* pir_u)
 {
   switch ( pir_u->sat_e ) {
     default: {
@@ -1490,7 +1575,7 @@ u3_pier_info(u3_pier* pir_u)
         }
 
         if ( wok_u->car_u ) {
-          u3_auto_info(wok_u->car_u);
+          u3_auto_slog(wok_u->car_u);
         }
       }
     } break;
@@ -1501,11 +1586,11 @@ u3_pier_info(u3_pier* pir_u)
   }
 
   if ( pir_u->log_u ) {
-    u3_disk_info(pir_u->log_u);
+    u3_disk_slog(pir_u->log_u);
   }
 
   if ( pir_u->god_u ) {
-    u3_lord_info(pir_u->god_u);
+    u3_lord_slog(pir_u->god_u);
   }
 }
 
@@ -1524,6 +1609,8 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
 
   // XX remove
   //
+  pir_u->per_s = u3_Host.ops_u.per_s;
+  pir_u->pes_s = u3_Host.ops_u.pes_s;
   pir_u->por_s = u3_Host.ops_u.por_s;
   pir_u->sav_u = c3_calloc(sizeof(u3_save));
 

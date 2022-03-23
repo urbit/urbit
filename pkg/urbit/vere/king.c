@@ -3,12 +3,11 @@
 ** the main loop of the daemon process
 */
 #include "all.h"
-#include "vere/vere.h"
 #include "ur/ur.h"
+#include "vere/ivory.h"
+#include "vere/vere.h"
 #include <curl/curl.h>
 #include <uv.h>
-
-#include "ivory.h"
 
 //  stash config flags for worker
 //
@@ -621,7 +620,7 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
     case SIGINFO:
 #endif
     case SIGUSR1: {
-      u3_king_info();
+      u3_king_slog();
       break;
     }
   }
@@ -827,12 +826,12 @@ _king_forall(void (*pir_f)(u3_pier*))
   }
 }
 
-/* u3_king_info(): print status info.
+/* u3_king_slog(): print status info.
 */
 void
-u3_king_info(void)
+u3_king_slog(void)
 {
-  _king_forall(u3_pier_info);
+  _king_forall(u3_pier_slog);
 }
 
 /* _king_forall_unlink(): run on all piers, unlinking from king.

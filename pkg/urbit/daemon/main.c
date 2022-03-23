@@ -151,6 +151,8 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "replay-to",           required_argument, NULL, 'n' },
     { "profile",             no_argument,       NULL, 'P' },
     { "ames-port",           required_argument, NULL, 'p' },
+    { "http-port",           required_argument, NULL, c3__http },
+    { "https-port",          required_argument, NULL, c3__htls },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
     { "replay-from",         required_argument, NULL, 'r' },
@@ -258,6 +260,18 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.por_s = arg_w;
+        break;
+      }
+      case c3__http: {
+        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
+          return c3n;
+        } else u3_Host.ops_u.per_s = arg_w;
+        break;
+      }
+      case c3__htls: {
+        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
+          return c3n;
+        } else u3_Host.ops_u.pes_s = arg_w;
         break;
       }
       case 'R': {
@@ -534,6 +548,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-n, --replay-to NUMBER        Replay up to event\n",
     "-P, --profile                 Profiling\n",
     "-p, --ames-port PORT          Set the ames port to bind to\n",
+    "    --http-port PORT          Set the http port to bind to\n",
+    "    --https-port PORT         Set the https port to bind to\n",
     "-q, --quiet                   Quiet\n",
     "-R, --versions                Report urbit build info\n",
     "-r, --replay-from NUMBER      Load snapshot from event\n",

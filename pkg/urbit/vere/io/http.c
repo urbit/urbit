@@ -59,6 +59,7 @@ typedef struct _u3_h2o_serv {
     c3_w             sev_l;             //  server number
     c3_w             coq_l;             //  next connection number
     c3_s             por_s;             //  running port
+    c3_o             dis;               //  manually-configured port
     c3_o             sec;               //  logically secure
     c3_o             lop;               //  loopback-only
     c3_o             liv;               //  c3n == shutdown
@@ -1306,12 +1307,13 @@ _http_serv_close(u3_http* htp_u)
 /* _http_serv_new(): create new http server.
 */
 static u3_http*
-_http_serv_new(u3_httd* htd_u, c3_s por_s, c3_o sec, c3_o lop)
+_http_serv_new(u3_httd* htd_u, c3_s por_s, c3_o dis, c3_o sec, c3_o lop)
 {
   u3_http* htp_u = c3_malloc(sizeof(*htp_u));
 
   htp_u->coq_l = 1;
   htp_u->por_s = por_s;
+  htp_u->dis = dis;
   htp_u->sec = sec;
   htp_u->lop = lop;
   htp_u->liv = c3y;
@@ -1450,9 +1452,10 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
 static void
 _http_serv_start(u3_http* htp_u)
 {
-  struct sockaddr_in adr_u;
-  memset(&adr_u, 0, sizeof(adr_u));
+  u3_pier*            pir_u = htp_u->htd_u->car_u.pir_u;
+  struct sockaddr_in  adr_u;
 
+  memset(&adr_u, 0, sizeof(adr_u));
   adr_u.sin_family = AF_INET;
   adr_u.sin_addr.s_addr = ( c3y == htp_u->lop ) ?
                           htonl(INADDR_LOOPBACK) :
@@ -1479,6 +1482,11 @@ _http_serv_start(u3_http* htp_u)
         u3l_log("http: ip address not available\n");
         u3_king_bail();
       }
+      if ( c3y == htp_u->dis ) {
+        u3l_log("http: listen (%" PRIu16 "): %s\n", htp_u->por_s,
+                uv_strerror(sas_i));
+        u3_king_bail();
+      }
       if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
         if ( (c3y == htp_u->sec) && (443 == htp_u->por_s) ) {
           htp_u->por_s = 8443;
@@ -1488,6 +1496,16 @@ _http_serv_start(u3_http* htp_u)
         }
         else {
           htp_u->por_s++;
+          //  XX
+          //
+          if ( c3n == htp_u->lop ) {
+            if ( c3y == htp_u->sec ) {
+              pir_u->pes_s = htp_u->por_s;
+            }
+            else {
+              pir_u->per_s = htp_u->por_s;
+            }
+          }
         }
 
         continue;
@@ -1612,6 +1630,7 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
   c3_free(paf_c);
 
   u3_http* htp_u = htd_u->htp_u;
+  u3_pier* pir_u = htd_u->car_u.pir_u;
 
   c3_c temp[32];
   while ( 0 != htp_u ) {
@@ -1635,9 +1654,12 @@ _http_release_ports_file(c3_c *pax_c)
 {
   c3_c* nam_c = ".http.ports";
   c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
-
   c3_c* paf_c = c3_malloc(len_w);
-  snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
+  c3_i  wit_i;
+
+  wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
+  c3_assert(wit_i > 0);
+  c3_assert(len_w == (c3_w)wit_i + 1);
 
   c3_unlink(paf_c);
   c3_free(paf_c);
@@ -1682,13 +1704,13 @@ _http_search_req(u3_httd* htd_u,
 static void
 _http_serv_start_all(u3_httd* htd_u)
 {
-  u3_http* htp_u;
-  c3_s por_s;
-
-  u3_noun sec = u3_nul;
-  u3_noun non = u3_none;
-
-  u3_form* for_u = htd_u->fig_u.for_u;
+  u3_http*  htp_u;
+  u3_pier*  pir_u = htd_u->car_u.pir_u;
+  c3_s      por_s;
+  u3_noun   sec = u3_nul;
+  u3_noun   non = u3_none;
+  u3_noun   dis;
+  u3_form*  for_u = htd_u->fig_u.for_u;
 
   c3_assert( 0 != for_u );
 
@@ -1703,8 +1725,15 @@ _http_serv_start_all(u3_httd* htd_u)
     // its reference count must be incremented with SSL_CTX_up_ref
 
     if ( 0 != htd_u->tls_u ) {
-      por_s = ( c3y == for_u->pro ) ? 8443 : 443;
-      htp_u = _http_serv_new(htd_u, por_s, c3y, c3n);
+      if ( 0 == pir_u->pes_s ) {
+        por_s = ( c3y == for_u->pro ) ? 8443 : 443;
+        dis = c3n;
+      }
+      else {
+        por_s = pir_u->pes_s;
+        dis = c3y;
+      }
+      htp_u = _http_serv_new(htd_u, por_s, dis, c3y, c3n);
       htp_u->h2o_u = _http_serv_init_h2o(htd_u->tls_u, for_u->log, for_u->red);
 
       _http_serv_start(htp_u);
@@ -1714,8 +1743,15 @@ _http_serv_start_all(u3_httd* htd_u)
 
   //  HTTP server.
   {
-    por_s = ( c3y == for_u->pro ) ? 8080 : 80;
-    htp_u = _http_serv_new(htd_u, por_s, c3n, c3n);
+    if ( 0 == pir_u->per_s ) {
+      por_s = ( c3y == for_u->pro ) ? 8080 : 80;
+      dis = c3n;
+    }
+    else {
+      por_s = pir_u->per_s;
+      dis = c3y;
+    }
+    htp_u = _http_serv_new(htd_u, por_s, dis, c3n, c3n);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 
     _http_serv_start(htp_u);
@@ -1725,7 +1761,7 @@ _http_serv_start_all(u3_httd* htd_u)
   //  Loopback server.
   {
     por_s = 12321;
-    htp_u = _http_serv_new(htd_u, por_s, c3n, c3y);
+    htp_u = _http_serv_new(htd_u, por_s, c3n, c3n, c3y);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 
     _http_serv_start(htp_u);
@@ -2015,50 +2051,6 @@ _http_seq_heartbeat_cb(uv_timer_t* tim_u)
                  HEARTBEAT_TIMEOUT, 0);
 }
 
-/* _reck_mole(): parse simple atomic mole.
-*/
-static u3_noun
-_reck_mole(u3_noun  fot,
-           u3_noun  san,
-           c3_d*    ato_d)
-{
-  u3_noun uco = u3dc("slaw", fot, san);
-  u3_noun p_uco, q_uco;
-
-  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
-       (u3_nul != p_uco) )
-  {
-    u3l_log("strange mole %s\n", u3r_string(san));
-
-    u3z(fot); u3z(uco); return c3n;
-  }
-  else {
-    *ato_d = u3r_chub(0, q_uco);
-
-    u3z(fot); u3z(uco); return c3y;
-  }
-}
-
-/* _reck_lily(): parse little atom.
-*/
-static u3_noun
-_reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
-{
-  c3_d ato_d;
-
-  if ( c3n == _reck_mole(fot, txt, &ato_d) ) {
-    return c3n;
-  } else {
-    if ( ato_d >= 0x80000000ULL ) {
-      return c3n;
-    } else {
-      *tid_l = (c3_l) ato_d;
-
-      return c3y;
-    }
-  }
-}
-
 /* _http_io_kick(): apply effects.
 */
 static c3_o
@@ -2085,7 +2077,7 @@ _http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 
 
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
-         (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
+         (c3n == u3v_lily(c3__uv, u3k(p_pud), &sev_l)) )
     {
       u3z(wir); u3z(cad);
       return c3n;
@@ -2096,7 +2088,7 @@ _http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
     }
     else {
       if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
-           (c3n == _reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
+           (c3n == u3v_lily(c3__ud, u3k(q_pud), &coq_l)) )
       {
         u3z(wir); u3z(cad);
         return c3n;
@@ -2107,7 +2099,7 @@ _http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
       } else {
         if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
              (u3_nul != s_pud) ||
-             (c3n == _reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
+             (c3n == u3v_lily(c3__ud, u3k(r_pud), &seq_l)) )
         {
           u3z(wir); u3z(cad);
           return c3n;
@@ -2154,10 +2146,49 @@ _http_io_exit(u3_auto* car_u)
   _http_release_ports_file(u3_Host.dir_c);
 }
 
-/* _http_io_info(): print status info.
+/* _http_io_info(): produce status info.
+*/
+static u3_noun
+_http_io_info(u3_auto* car_u)
+{
+  u3_httd*  htd_u = (u3_httd*)car_u;
+  u3_http*  htp_u = htd_u->htp_u;
+  c3_w      sec_w = 0;
+  u3_hreq*  seq_u = htd_u->fig_u.seq_u;
+  u3_noun   res;
+
+  //  XX review: metrics
+  //
+  while ( 0 != seq_u ) {
+    sec_w++;
+    seq_u = seq_u->nex_u;
+  }
+  res = u3i_list(
+    u3_pier_mase("instance", htd_u->sev_l),
+    u3_pier_mase("open-slogstreams", u3i_word(sec_w)),
+    u3_none);
+
+  while ( 0 != htp_u ) {
+    res = u3nc(
+      u3_pier_mass(
+        u3dc("scot", c3__uv, htp_u->sev_l),
+        u3i_list(
+          u3_pier_mase("secure",      htp_u->sec),
+          u3_pier_mase("loopback",    htp_u->lop),
+          u3_pier_mase("live",        htp_u->liv),
+          u3_pier_mase("port",        htp_u->por_s),
+          u3_pier_mase("connections", htp_u->coq_l),
+          u3_none)),
+      res);
+    htp_u = htp_u->nex_u;
+  }
+  return u3kb_flop(res);
+}
+
+/* _http_io_slog(): print status info.
 */
 static void
-_http_io_info(u3_auto* car_u)
+_http_io_slog(u3_auto* car_u)
 {
   u3_httd* htd_u = (u3_httd*)car_u;
   c3_y sec_y = 0;
@@ -2181,6 +2212,7 @@ u3_http_io_init(u3_pier* pir_u)
   car_u->liv_o = c3n;
   car_u->io.talk_f = _http_io_talk;
   car_u->io.info_f = _http_io_info;
+  car_u->io.slog_f = _http_io_slog;
   car_u->io.kick_f = _http_io_kick;
   car_u->io.exit_f = _http_io_exit;
 
