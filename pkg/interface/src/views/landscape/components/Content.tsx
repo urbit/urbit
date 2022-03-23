@@ -8,7 +8,7 @@ import { useShortcut } from '~/logic/state/settings';
 import { Loading } from '~/views/components/Loading';
 import LaunchApp from '~/views/apps/launch/App';
 
-import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
+import { getNotificationRedirectFromLink } from '~/logic/lib/notificationRedirects';
 import { JoinRoute } from './Join/Join';
 import useInviteState from '~/logic/state/invite';
 import useMetadataState from '~/logic/state/metadata';
@@ -38,7 +38,7 @@ export const Content = () => {
       return;
     }
     if(query.has('grid-note')) {
-      history.push(getNotificationRedirect(query.get('grid-note')!));
+      history.push(getNotificationRedirectFromLink(query.get('grid-note')!));
     } else if(query.has('grid-link')) {
       const link = decodeURIComponent(query.get('grid-link')!);
       history.push(`/perma${link}`);
