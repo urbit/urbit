@@ -857,7 +857,6 @@
         [%| p=@tas]                                     ::  label
     ==                                                  ::
   +$  open  $-(path vase)                               ::  get prelude
-  +$  page  (cask *)                                    ::  untyped cage
   +$  plop  blob                                        ::  unvalidated blob
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
@@ -2092,6 +2091,32 @@
     +$  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+::                                                      ::::
+::::                    ++khan                            ::  (1i) threads
+  ::                                                    ::::
+++  khan  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%arow p=(avow cage)]                           ::  in-arvo result
+        [%avow p=(avow page)]                           ::  external result
+    ==                                                  ::
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%done ~]                                       ::  socket closed
+        ::  XX  mark ignored
+        ::
+        [%fard p=(fyrd cage)]                           ::  in-arvo thread
+        [%fyrd p=(fyrd cast)]                           ::  external thread
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+    ==                                                  ::
+  ::                                                    ::
+  ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
+  +$  bear  $@(desk beak)                               ::  partial $beak
+  +$  cast  (pair mark page)                            ::  output mark + input
+  ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  thread run request
+  --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2103,6 +2128,7 @@
       gift:gall
       gift:iris
       gift:jael
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2113,6 +2139,7 @@
       task:gall
       task:iris
       task:jael
+      task:khan
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2124,6 +2151,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%k task:khan]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -2145,6 +2173,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
+      [%khan gift:khan]
   ==
 ::  $unix-task: input from unix
 ::
