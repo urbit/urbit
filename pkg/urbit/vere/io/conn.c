@@ -17,6 +17,14 @@
 **  be returned along with the response, to allow correlating
 **  responses with requests.
 **
+**  responses are [request-id=@ data=*]. if the driver encounters
+**  an error, then it will try to send a %bail response with
+**  request-id set to 0, i.e.:
+**
+**      [0 %bail error-code=@ error-string=@t]
+**
+**  and subsequently close the connection.
+**
 **  %fyrd is a request to run a thread. its arguments are
 **  described in the ++khan section of sys/lull.hoon. to
 **  summarize:
@@ -34,9 +42,10 @@
 **
 **      [32 %fyrd [%base %hi %tape [%ship ~zod]]]
 **
-**  responses to %fyrd are either %bail if something went wrong
-**  in the driver, or %avow to indicate success or failure from
-**  %khan. the body of avow is (each page goof).
+**  responses to %fyrd are:
+**
+**      +$  gift  $%(... [%avow p=(avow page)])           ::
+**      ++  avow  |$  [a]  (each a goof)                  ::
 **
 **  %peek is a namespace read request (aka scry), and will be
 **  forwarded directly to arvo. its arguments are the nom of the
@@ -118,6 +127,7 @@ u3_conn_io_init(u3_pier* pir_u)
   typedef struct _u3_chan {
     struct _u3_moor   mor_u;            //  message handler
     c3_l              coq_l;            //  connection number
+    c3_o              liv_o;            //  connection live
     struct _u3_shan*  san_u;            //  server backpointer
     struct _u3_cran*  ran_u;            //  request list
   } u3_chan;
@@ -313,7 +323,7 @@ _conn_close_chan(u3_shan* san_u, u3_chan* can_u)
 
   //  send a close event to arvo and stop reading.
   //
-  if ( c3y == con_u->kan_o ) {
+  if ( _(con_u->kan_o) ) {
     u3_noun wir, cad;
 
     wir = u3nq(c3__khan,
@@ -339,6 +349,11 @@ _conn_moor_bail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 
   if ( err_i != UV_EOF ) {
     u3l_log("conn: moor bail %zd %s\n", err_i, err_c);
+    if ( _(can_u->liv_o) ) {
+      _conn_send_noun(can_u, u3nq(0, c3__bail, u3i_word(err_i),
+                      u3i_string(err_c)));
+      can_u->liv_o = c3n;
+    }
   }
   _conn_close_chan(san_u, can_u);
 }
