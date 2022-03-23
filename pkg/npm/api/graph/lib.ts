@@ -386,6 +386,14 @@ export const addDmMessage = (our: PatpNoSig, ship: Patp, contents: Content[]): P
 const encodeIndex = (idx: string) => idx.split('/').map(decToUd).join('/');
 
 /**
+ * Fetch all graph keys
+ */
+export const getKeys = (): Scry => ({
+  app: 'graph-store',
+  path: '/keys'
+});
+
+/**
  * Fetch newest (larger keys) nodes in a graph under some index
  *
  * @param ship ship of graph

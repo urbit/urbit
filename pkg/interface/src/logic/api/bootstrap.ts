@@ -31,19 +31,26 @@ export async function bootstrapApi() {
     useLocalState.setState({ subscription: 'connected' });
   };
 
-  [useGraphState].map(s => s.getState()?.clear?.());
-  useGraphState.getState().getShallowChildren(`~${window.ship}`, 'dm-inbox');
+  const {
+    clear,
+    getKeys,
+    getShallowChildren
+  } = useGraphState.getState();
+  clear();
+  getKeys();
+  getShallowChildren(`~${window.ship}`, 'dm-inbox');
+  useHarkState.getState().getUnreads();
 
   const promises = [
-    useHarkState,
+    useGraphState,
     useMetadataState,
     useGroupState,
     useContactState,
     useSettingsState,
-    useLaunchState,
     useInviteState,
-    useGraphState,
-    useStorageState
+    useHarkState,
+    useStorageState,
+    useLaunchState
   ].map(state => state.getState().initialize(airlock));
   await Promise.all(promises);
 }
