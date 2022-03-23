@@ -540,11 +540,13 @@ static void
 _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_weak   jar;
-  u3_noun   can, rid, tag, dat;
+  u3_noun   can, rid, tag, dat, rud = u3_nul;
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_conn*  con_u = can_u->san_u->con_u;
   c3_i      err_i = 0;
   c3_c*     err_c;
+  c3_c*     tag_c;
+  c3_c*     rid_c;
 
   jar = u3s_cue_xeno_with(con_u->sil_u, len_d, byt_y);
   if ( u3_none == jar ) {
@@ -558,103 +560,95 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     err_i = -2; err_c = "jar-bad";
     goto _moor_poke_out;
   }
-  else {
-    u3_atom rud = u3dc("scot", c3__uv, u3k(rid));
-    c3_c*   tag_c = u3r_string(tag);
-    c3_c*   rid_c = u3r_string(rud);
 
-    u3l_log("conn: %s %s\n", tag_c, rid_c);
-    c3_free(tag_c);
-    c3_free(rid_c);
-    u3z(rud);
-    switch (tag) {
-      default: {
-        err_i = -3; err_c = "tag-unknown";
+  rud = u3dc("scot", c3__uv, u3k(rid));
+  tag_c = u3r_string(tag);
+  rid_c = u3r_string(rud);
+  u3l_log("conn: %s %s\n", tag_c, rid_c);
+  c3_free(tag_c); c3_free(rid_c);
+
+  switch (tag) {
+    default: {
+      err_i = -3; err_c = "tag-unknown";
+      goto _moor_poke_out;
+    } break;
+
+    case c3__fyrd: {
+      u3_noun wir;
+
+      if ( c3n == con_u->kan_o ) {
+        err_i = -8; err_c = "khan-miss";
         goto _moor_poke_out;
-      } break;
+      }
+      wir = u3nc(c3__khan,
+                 u3nq(u3dc("scot", c3__uv, con_u->sev_l),
+                      u3dc("scot", c3__ud, can_u->coq_l), u3k(rud), u3_nul));
+      u3_auto_peer(
+        u3_auto_plan(&con_u->car_u,
+                     u3_ovum_init(0, c3__k, wir, u3k(can))),
+        0, 0, _conn_poke_bail);
+    } break;
 
-      case c3__fyrd: {
-        if ( c3n == con_u->kan_o ) {
-          _conn_send_noun(can_u,
-                          u3nt(u3k(rid), c3__bail, u3i_string("khan-miss")));
-        }
-        else {
-          u3_noun wir = u3nc(c3__khan,
-                             u3nq(u3dc("scot", c3__uv, con_u->sev_l),
-                                  u3dc("scot", c3__ud, can_u->coq_l),
-                                  u3dc("scot", c3__uv, u3k(rid)),
-                                  u3_nul));
+    case c3__peek: {
+      u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
+      u3_noun   gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
 
-          u3_auto_peer(
-            u3_auto_plan(&con_u->car_u,
-                         u3_ovum_init(0, c3__k, wir, u3k(can))),
-            0, 0, _conn_poke_bail);
-        }
-      } break;
+      ran_u->rid = u3k(rid);
+      ran_u->can_u = can_u;
+      ran_u->nex_u = can_u->ran_u;
+      can_u->ran_u = ran_u;
+      u3_pier_peek(con_u->car_u.pir_u, gan, u3k(dat), ran_u, _conn_peek_cb);
+    } break;
 
-      case c3__peek: {
-        u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
-        u3_noun   gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
+    case c3__peel: {
+      _conn_send_noun(
+        can_u, u3nc(u3k(rid),
+                    _conn_read_peel(con_u, u3k(dat))));
+    } break;
 
-        ran_u->rid = u3k(rid);
-        ran_u->can_u = can_u;
-        ran_u->nex_u = can_u->ran_u;
-        can_u->ran_u = ran_u;
-        u3_pier_peek(con_u->car_u.pir_u, gan, u3k(dat), ran_u, _conn_peek_cb);
-      } break;
+    case c3__ovum: {
+      u3_noun   tar, wir, cad;
+      u3_cran*  ran_u;
 
-      case c3__peel: {
-        _conn_send_noun(
-          can_u, u3nc(u3k(rid),
-                      _conn_read_peel(con_u, u3k(dat))));
-      } break;
+      if ( (c3n == u3r_trel(dat, &tar, &wir, &cad)) ) {
+        err_i = -6; err_c = "ovum-bad";
+        goto _moor_poke_out;
+      }
+      ran_u = c3_calloc(sizeof(u3_cran));
+      ran_u->rid = u3k(rid);
+      ran_u->can_u = can_u;
+      ran_u->nex_u = can_u->ran_u;
+      can_u->ran_u = ran_u;
+      u3_auto_peer(
+        u3_auto_plan(&con_u->car_u,
+                     u3_ovum_init(0, u3k(tar), u3k(wir), u3k(cad))),
+        ran_u, _conn_ovum_news, _conn_ovum_bail);
+    } break;
 
-      case c3__ovum: {
-        u3_noun tar, wir, cad;
-
-        if ( (c3n == u3r_trel(dat, &tar, &wir, &cad)) ) {
-          err_i = -6; err_c = "ovum-bad";
+    case c3__urth: {
+      switch (dat) {
+        default: {
+          err_i = -7; err_c = "urth-bad";
           goto _moor_poke_out;
-        }
-        else {
-          u3_cran* ran_u = c3_calloc(sizeof(u3_cran));
-
-          ran_u->rid = u3k(rid);
-          ran_u->can_u = can_u;
-          ran_u->nex_u = can_u->ran_u;
-          can_u->ran_u = ran_u;
-          u3_auto_peer(
-            u3_auto_plan(&con_u->car_u,
-                         u3_ovum_init(0, u3k(tar), u3k(wir), u3k(cad))),
-            ran_u, _conn_ovum_news, _conn_ovum_bail);
-        }
-      } break;
-
-      case c3__urth: {
-        switch (dat) {
-          default: {
-            err_i = -7; err_c = "urth-bad";
-            goto _moor_poke_out;
-          } break;
-          case c3__meld: {
-            //  ack immediately.
-            //
-            _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
-            u3_pier_meld(con_u->car_u.pir_u);
-          } break;
-          case c3__pack: {
-            _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
-            u3_pier_pack(con_u->car_u.pir_u);
-          } break;
-          //  TODO  more %urth commands
-          //  TODO  send updates, success/failure?
+        } break;
+        case c3__meld: {
+          //  ack immediately.
           //
-        }
-      } break;
-    }
+          _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
+          u3_pier_meld(con_u->car_u.pir_u);
+        } break;
+        case c3__pack: {
+          _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
+          u3_pier_pack(con_u->car_u.pir_u);
+        } break;
+        //  TODO  more %urth commands
+        //  TODO  send updates, success/failure?
+        //
+      }
+    } break;
   }
 _moor_poke_out:
-  u3z(jar);
+  u3z(rud); u3z(jar);
   if ( 0 != err_i ) {
     can_u->mor_u.bal_f(can_u, err_i, err_c);
   }
