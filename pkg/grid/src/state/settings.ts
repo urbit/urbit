@@ -25,6 +25,9 @@ interface BaseSettingsState {
     order: string[];
   };
   loaded: boolean;
+  browserSettings: {
+    settings: string;
+  };
   putEntry: (bucket: string, key: string, value: Value) => Promise<void>;
   fetchAll: () => Promise<void>;
   [ref: string]: unknown;
@@ -79,6 +82,9 @@ export const useSettingsState = createState<BaseSettingsState>(
     tiles: {
       order: []
     },
+    browserSettings: {
+      settings: ''
+    },
     loaded: false,
     putEntry: async (bucket, key, val) => {
       const poke = doPutEntry(window.desk, bucket, key, val);
@@ -109,4 +115,25 @@ export const useSettingsState = createState<BaseSettingsState>(
 const selTheme = (s: SettingsState) => s.display.theme;
 export function useTheme() {
   return useSettingsState(selTheme);
+}
+
+const selBrowserSettings = (s: SettingsState) => s.browserSettings.settings;
+export function useBrowserSettings() {
+  const settings = useSettingsState(selBrowserSettings);
+  console.log({ settings });
+  return settings !== '' ? JSON.parse(settings) : [];
+}
+
+export function useProtocolHandling(browserId: string) {
+  const settings = useBrowserSettings();
+  const { protocolHandling = false } =
+    settings.filter((el: any) => el.browserId === browserId)[0] ?? false;
+  return protocolHandling;
+}
+
+export function useBrowserNotifications(browserId: string) {
+  const settings = useBrowserSettings();
+  const { browserNotifications = false } =
+    settings.filter((el: any) => el.browserId === browserId)[0] ?? false;
+  return browserNotifications;
 }
