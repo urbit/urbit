@@ -98,16 +98,16 @@
     =/  pax=path  /naive-exports/csv  :: data will be saved here
     =/  m  (strand ,vase)
     ^-  form:m
-    ;<  logs=events  bind:m  (scry events /gx/azimuth/logs/noun)
-    =/  logs  (scag 50 logs)  :: to make debugging faster
+    ;<  =events  bind:m  (scry events /gx/azimuth/logs/noun)
+    =/  events  (scag 50 events)  :: to make debugging faster
     =/  [naive-contract=address chain-id=@]
       [naive chain-id]:(get-network:dice net)
     =/  snap=snap-state:dice  snap
     %-  %-  slog  :_  ~
-        leaf+"processing {<net>} ethereum logs with {<(lent logs)>} events"
+        leaf+"processing {<net>} ethereum logs with {<(lent events)>} events"
     ::
     =/  =rolls-map
-      (compute-effects nas.snap logs net naive-contract chain-id)
+      (compute-effects nas.snap events net naive-contract chain-id)
     ::  I think this should work, but child threads seem to be broken
     ::  ;<  =thread-result  bind:m
     ::    %+  await-thread
@@ -341,7 +341,7 @@
   ::  determine whether the transactions were valid.
   ++  compute-effects
     |=  $:  nas=^state:naive
-            logs=events
+            =events
             =net
             naive-contract=address
             chain-id=@ud
@@ -352,11 +352,11 @@
       leaf+"processing state transitions beginning from stored snapshot"
     ::
     |-
-    ?~  logs  out
-    =/  log=event-log:rpc:ethereum  i.logs
+    ?~  events  out
+    =/  log=event-log:rpc:ethereum  i.events
     ?~  mined.log
       ~&  >>  'empty log'
-      $(logs t.logs)
+      $(events t.events)
     =/  block=blocknum  block-number.u.mined.log
     =/  =^input:naive
       :-  block
@@ -370,7 +370,7 @@
     =^  =effects:naive  nas
       (%*(. naive lac |) verifier:naive-tx chain-id nas input)
     %=  $
-      logs  t.logs
+      events  t.events
       out   ?.  =(%bat +<.input)
               out  ::  skip L1 logs
             :: there's probably a better way to do this
