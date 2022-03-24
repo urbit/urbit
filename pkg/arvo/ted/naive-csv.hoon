@@ -55,11 +55,10 @@
   +$  address   address:naive  :: @ux
   +$  keccak    @ux            :: used for transaction and roll hashes
   +$  blocknum  number:block   :: @udblocknumber
-  ::
   +$  net       net:dice       ::?(%mainnet %ropsten %local %default)
-  ::
   +$  block-map  %+  map  blocknum
     [timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
+  +$  rolls-map  (map blocknum (map keccak effects:naive))
   ::
   +$  action  $?  %transfer-point
                   %spawn
@@ -83,18 +82,20 @@
                    proxy=proxy:naive
                    nonce=nonce:naive
                    gas=@ud
-                   length=@
+                   length=@ux
                    suc=?
                    =action
                 ==
-  ::++  node-url  'http://eth-mainnet.urbit.org:8545'
-  ++  node-url  'https://mainnet.infura.io/v3/13a985885cd243cc886062ad2f345e16'  :: infura free tier node
   --
 ::
 |%
+  ::  +process-logs is the main process. it grabs the azimuth snapshop, runs
+  ::  +naive on the logs, grabs the timestamps and gas costs for each roll,
+  ::  then flattens them into a list of $tx-data and saves them to disk.
   ++  process-logs
     |=  arg=vase
-    =+  !<([~ =net] arg)
+    =+  !<([~ =net node-url=@t] arg)
+    =/  pax=path  /naive-exports/csv  :: data will be saved here
     =/  m  (strand ,vase)
     ^-  form:m
     ;<  logs=events  bind:m  (scry events /gx/azimuth/logs/noun)
@@ -102,67 +103,67 @@
     =/  [naive-contract=address chain-id=@]
       [naive chain-id]:(get-network:dice net)
     =/  snap=snap-state:dice  snap
-    ::
-    =/  l2-logs=events  (filter-l2 logs naive-contract)
     %-  %-  slog  :_  ~
-        leaf+"processing {<net>} ethereum logs with {<(lent logs)>} total events, of which {<(lent l2-logs)>} are l2 events"
-    =/  blocks=(list blocknum)           (get-block-numbers l2-logs)
-    =/  tx-hashes=(list keccak)          (get-tx-hashes l2-logs)
-    =/  block-jar=(jar blocknum keccak)  (block-tx-jar l2-logs)
-    ;<  timestamps=(map blocknum @da)                  bind:m
-      (get-timestamps blocks)
-    ;<  tx-data=(map keccak [gas=@ud sender=address])  bind:m
-      (get-tx-data tx-hashes)
-    =/  rolls-map=(map blocknum (map keccak effects:naive))
-      (run-logs-from-state-map nas.snap logs net naive-contract chain-id)
-    =/  rolling=block-map  (collate-roll-data blocks block-jar rolls-map timestamps tx-data)
-    =/  flat  (flatten-data rolling)
-    =/  csv=(list cord)  (make-csv flat)
-    ;<  ~  bind:m  (export-csv csv)
+        leaf+"processing {<net>} ethereum logs with {<(lent logs)>} events"
     ::
-    (pure:m !>(csv))
+    =/  =rolls-map
+      (compute-effects nas.snap logs net naive-contract chain-id)
+    ::  I think this should work, but child threads seem to be broken
+    ::  ;<  =thread-result  bind:m
+    ::    %+  await-thread
+    ::      %eth-get-timestamps
+    ::    !>([node-url ~(tap in ~(key by rolls-map))])
+    ;<  timestamps=(map blocknum @da)  bind:m
+      (get-timestamps node-url ~(tap in ~(key by rolls-map)))
+    ;<  roll-receipts=(map keccak [gas=@ud sender=address])  bind:m
+      (get-roll-receipts node-url (get-roll-hashes rolls-map))
+    =/  csv=(list cord)
+      (make-csv (flatten (collate-roll-data rolls-map timestamps roll-receipts)))
+    ;<  ~  bind:m  (export-csv csv pax)
+    ::
+    (pure:m !>((crip :(weld "data saved to %" (spud pax) "/txt"))))
   ::
+  ::  +collate-roll-data throws naive:effects, timestamps, and gas costs into
+  ::  one $block-map
   ++  collate-roll-data
-    |=  $:  blocks=(list blocknum)
-            block-jar=(jar blocknum keccak)
-            rolls-map=(map blocknum (map keccak effects:naive))
+    |=  $:  =rolls-map
             timestamps=(map blocknum @da)
-            tx-data=(map keccak [gas=@ud sender=address])
+            roll-receipts=(map keccak [gas=@ud sender=address])
         ==
-    ::  =|  $=  block-map
-    ::      %+  map  blocknum
-    ::      [timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
+    =/  blocks=(list blocknum)  ~(tap in ~(key by rolls-map))
     =|  =block-map
     ^+  block-map
     |-
     ?~  blocks  block-map
     =/  block=blocknum  i.blocks
-    =/  tx-hashes=(list keccak)  (~(get ja block-jar) block)
     =/  rolls=(map keccak [[gas=@ud sender=address] =effects:naive])
       %-  ~(gas by *(map keccak [[gas=@ud sender=address] =effects:naive]))
-      %+  turn  tx-hashes
+      %+  turn  ~(tap in ~(key by (~(got by rolls-map) block)))
       |=  txh=keccak
-      :-  txh
-      [(~(got by tx-data) txh) (~(got by (~(got by rolls-map) block)) txh)]
+      :+  txh
+        (~(got by roll-receipts) txh)
+      (~(got by (~(got by rolls-map) block)) txh)
     %=  $
       blocks     t.blocks
-      block-map  %+  ~(put by block-map)  block
+      block-map  %+  ~(put by block-map)
+                   block
                  [(~(got by timestamps) block) rolls]
     ==
   ::
-  ++  flatten-data
+  ::  +flatten takes a $block-map and creates a $tx-data for every transaction
+  ::  in every roll, returned as a (list tx-data)
+  ++  flatten
     |=  =block-map
+    =/  blocks=(list blocknum)  ~(tap in ~(key by block-map))
     =|  tx-list=(list tx-data)
     ^+  tx-list
-    =/  blocks=(list blocknum)  ~(tap in ~(key by block-map))
-    ::  recurse through each block, getting the rolls submitted in that block,
-    ::  their timestamp, and the gas price of that roll
-    |-  ^-  (list tx-data)
+    ::  recurse through the list of blocks, getting the rolls submitted in that
+    ::  block, their timestamp, and the gas price of that roll
+    |-
     ?~  blocks  tx-list
     =/  block=blocknum  i.blocks
-    =/  bor  (~(got by block-map) block)
-    =/  roll-list=(list keccak)
-      ~(tap in ~(key by rolls.bor))
+    =/  bok  (~(got by block-map) block)
+    =/  roll-list=(list keccak)  ~(tap in ~(key by rolls.bok))
     =|  block-tx-list=(list tx-data)
     ::  recurse through each roll, getting the transaction data from the effects
     |-
@@ -173,7 +174,7 @@
       ==
     =/  roll-hash=keccak  i.roll-list
     =/  roll=[[gas=@ud sender=address] =effects:naive]
-      (~(got by rolls.bor) roll-hash)
+      (~(got by rolls.bok) roll-hash)
     ::  recurse through the list of effects, building up transaction data as we
     ::  go. there's a choice here to use the effects, or the submitted
     ::  raw-tx. the effects include whether or not a transaction failed,
@@ -188,21 +189,20 @@
     ::  what nonce was actually submitted without the private key of the signer.
     =|  roll-tx-list=(list tx-data)
     =|  nonce-and-tx=[_| _|]
-    =/  =tx-data  :*  block  timestamp.bor  sender.roll  roll-hash  *keccak
+    =/  =tx-data  :*  block  timestamp.bok  sender.roll  roll-hash  *keccak
                       *ship  *proxy:naive  *nonce:naive  gas.roll  *@  |  *action
                   ==
     |-
     ::  if we've gotten both the %nonce and %tx diff from a transaction, add the
     ::  tx-data to the list of tx for the roll
     ?:  =([& &] nonce-and-tx)
-      %=  $  :: should this be %_ ?
+      %=  $
         roll-tx-list  (snoc roll-tx-list tx-data)
         nonce-and-tx  [| |]
         tx-data       *_tx-data  :: reset tx-data
       ==
     ::  if we've finished looping through the effects, add the tx list from the
     ::  roll to the list of tx for the block
-    ::
     ?~  effects.roll
        %=  ^$
          roll-list      t.roll-list
@@ -211,89 +211,39 @@
     ::
     =/  =diff:naive  i.effects.roll
     ?+    diff
-      $(effects.roll t.effects.roll)  :: we ignore %operator, %dns, and %point diffs
+      $(effects.roll t.effects.roll)  :: we ignore %operator, %dns, %point diffs
     ::
+    ::  %nonce is always the first diff from a given transaction.
         [%nonce *]
       %=  $
         -.nonce-and-tx  &
-        nonce.tx-data   nonce.diff
         sender.tx-data  ship.diff
+        nonce.tx-data   nonce.diff
         proxy.tx-data   proxy.diff
         effects.roll    t.effects.roll
       ==
     ::
-      ::  the conditional here is to ensure that a %tx diff is from
-      ::  the same submitted tx as the nonce that should have come
-      ::  before it. this should never happen, but maybe you need
-      ::  to flop effects to get things in the right order. this also
-      ::  isn't perfect - the tx could be from the same ship and proxy
-      ::  but different nonce.
+    ::  %tx is always the second diff from a given transaction.
         [%tx *]
-      ?.  ?&  =(sender.tx-data ship.from.tx.raw-tx.diff)
-              =(proxy.tx-data proxy.from.tx.raw-tx.diff)
-          ==
-        ~&  >>  '%tx associated to a different ship than %nonce!'
-        !!
       %=  $
         +.nonce-and-tx   &
         effects.roll     t.effects.roll
-        length.tx-data   -.raw.raw-tx.diff
-        tx-hash.tx-data  (hash-raw-tx:naive-tx raw-tx.diff)
         action.tx-data   +<.tx.raw-tx.diff
         suc.tx-data      ?~  err.diff  &  |
+        length.tx-data   `@`-.raw.raw-tx.diff
+        tx-hash.tx-data  (hash-raw-tx:naive-tx raw-tx.diff)
       ==
     ==
   ::
-  ++  export-csv
-    |=  in=(list cord)
-    =/  m  (strand ,~)
-    ^-  form:m
-    ;<  =bowl:spider  bind:m  get-bowl
-    =-  (send-raw-card %pass / %arvo %c %info -)
-    %+  foal:space:userlib
-      /(scot %p our.bowl)/base/(scot %da now.bowl)/naive-exports/csv/txt
-    [%txt !>(in)]
-  ::
-  ++  make-csv
-    ::  Takes in rolls-map and makes it suitable to be saved as a csv
-    |=  in=(list tx-data)
-    ^-  (list cord)
-    :-  %-  crip
-        ;:  weld
-          "block number,"
-          "timestamp,"
-          "roller addres,"
-          "roll hash,"
-          "tx hash,"
-          "sending ship,"
-          "sending proxy,"
-          "nonce,"
-          "gas price,"
-          "length of input data,"
-          "success or failure,"
-          "function name"
-        ==
-    %+  turn  in
-      |=  =tx-data
-      %-  crip
-      ;:  weld
-        (scow %ux block.tx-data)      ","
-        (scow %da timestamp.tx-data)  ","
-        (scow %ux roller.tx-data)     ","
-        (scow %ux roll-hash.tx-data)  ","
-        (scow %ux tx-hash.tx-data)    ","
-        (scow %p sender.tx-data)      ","
-        (scow %tas proxy.tx-data)     ","
-        (scow %ud nonce.tx-data)      ","
-        (scow %ud gas.tx-data)        ","
-        (scow %$ length.tx-data)      ","
-        (scow %f suc.tx-data)         ","
-        (scow %tas action.tx-data)
-      ==
-  ::
-  ++  get-tx-data
-    :: retrieves transaction receipts for rolls, extracting the gas cost and sender
-    |=  tx-hashes=(list keccak)
+  ::  +get-roll-receipts retrieves transaction receipts for rolls, extracting
+  ::  the gas cost and sender, then returns a map from tx hashes to [gas sender]
+  ++  get-roll-receipts
+    ::  TODO: this should be made into a separate thread for use by others, but
+    ::  it has the same issue with child threads as get-timestamps
+    |=  [node-url=@t tx-hashes=(list keccak)]
+    %-  %-  slog  :_  ~
+      leaf+"getting l2 roll receipts from ethereum node"
+    ::=/  tx-hashes=(list keccak)  (get-roll-hashes rolls-map)
     =/  m  (strand ,(map keccak [gas=@ud sender=address]))
     ^-  form:m
     =|  out=(map keccak [gas=@ud sender=address])
@@ -301,42 +251,54 @@
       =*  loop  $
       ?:  =(~ tx-hashes)  (pure:m out)
       ;<  res=(list [@t json])  bind:m
-        (request-receipts (scag 100 tx-hashes))
+        (request-receipts (scag 100 tx-hashes) node-url)
       %_  loop
         out        (~(gas by out) (parse-results res))
         tx-hashes  (slag 100 tx-hashes)
       ==
     ::
     ++  request-receipts
-      |=  tx-hashes=(list keccak)
+      |=  [tx-hashes=(list keccak) node-url=@t]
       %+  request-batch-rpc-strict:ethio  node-url
       %+  turn  tx-hashes
-      |=  txh=keccak
+      |=  =keccak
       ^-  [(unit @t) request:rpc:ethereum]
-      :-  `(crip '0' 'x' ((x-co:co 64) txh))
-      [%eth-get-transaction-receipt txh]
+      :-  `(crip '0' 'x' ((x-co:co 64) keccak))
+      [%eth-get-transaction-receipt keccak]
     ::
     ++  parse-results
       |=  res=(list [@t json])
-      ^-  (list [txh=keccak [gas=@ud sender=address]])
+      ^-  (list [=keccak [gas=@ud sender=address]])
       %+  turn  res
       |=  [id=@t =json]
-      ^-  [txh=keccak [gas=@ud sender=address]]
+      ^-  [=keccak [gas=@ud sender=address]]
       :-  (hex-to-num:ethereum id)
       :-  %-  parse-hex-result:rpc:ethereum
         ~|  json
         ?>  ?=(%o -.json)
-        (~(got by p.json) 'gasUsed')  :: returns the amount of gas used, not gas price
+        (~(got by p.json) 'gasUsed')                    :: gas used in wei
       %-  parse-hex-result:rpc:ethereum
       ~|  json
       ?>  ?=(%o -.json)
       (~(got by p.json) 'from')
     --
   ::
+  ::  +get-roll-hashes makes a list of hashes of all transactions from $rolls-map
+  ++  get-roll-hashes
+    |=  =rolls-map  ^-  (list keccak)
+    %-  zing
+    %+  turn  ~(val by rolls-map)
+    |=  a=(map keccak effects:naive)
+    ~(tap in ~(key by a))
+  ::
+  ::  +get-timestamps retrieves the timestamps for a list of block numbers
   ++  get-timestamps
     ::  TODO: would be better to call the eth-get-timestamps thread directly
-    ::  rather than copy and paste the code for it here
-    |=  blocks=(list blocknum)
+    ::  rather than copy and paste the code for it here, but child threads seem
+    ::  to be broken.
+    |=  [node-url=@t blocks=(list blocknum)]
+    %-  %-  slog  :_  ~
+      leaf+"getting timestamps from ethereum node"
     =/  m  (strand ,(map blocknum @da))
     ^-  form:m
     =|  out=(map blocknum @da)
@@ -344,14 +306,14 @@
       =*  loop  $
       ?:  =(~ blocks)  (pure:m out)
       ;<  res=(list [@t json])  bind:m
-        (request-blocks (scag 100 blocks))
+        (request-blocks (scag 100 blocks) node-url)
       %_  loop
         out     (~(gas by out) (parse-results res))
         blocks  (slag 100 blocks)
       ==
     ::
     ++  request-blocks
-      |=  blocks=(list blocknum)
+      |=  [blocks=(list blocknum) node-url=@t]
       %+  request-batch-rpc-strict:ethio  node-url
       %+  turn  blocks
       |=  block=blocknum
@@ -373,18 +335,19 @@
       (~(got by p.json) 'timestamp')
     --
   ::
-  ++  run-logs-from-state-map
+  ::  +compute-effects calls +naive to compute the state transitions for all
+  ::  logs, but it returns a map that only has the effects for L2 transactions,
+  ::  leaving out L1 transactions. we need to compute all of them in order to
+  ::  determine whether the transactions were valid.
+  ++  compute-effects
     |=  $:  nas=^state:naive
             logs=events
             =net
             naive-contract=address
             chain-id=@ud
         ==
-    =|  out=(map blocknum (map keccak effects:naive))
+    =|  out=rolls-map
     ^+  out
-    ::  We need to run the state transitions to see what the individual
-    ::  transactions were, as well as whether they succeeded or failed.
-    ::
     %-  %-  slog  :_  ~
       leaf+"processing state transitions beginning from stored snapshot"
     ::
@@ -411,47 +374,62 @@
       out   ?.  =(%bat +<.input)
               out  ::  skip L1 logs
             :: there's probably a better way to do this
-            =/  cur-map=(unit (map keccak effects:naive))
-              (~(get by out) block)
-            ?~  cur-map
+            =/  cur  (~(get by out) block)
+            ?~  cur
               %+  ~(put by out)  block
-              ^-  (map keccak effects:naive)
               (my [[transaction-hash.u.mined.log effects]~])
-            =.  u.cur-map
-              (~(put by u.cur-map) transaction-hash.u.mined.log effects)
-            (~(put by out) block u.cur-map)
+            %+  ~(jab by out)  u.cur
+            |=  m=(map keccak effects:naive)
+            (~(put by m) transaction-hash.u.mined.log effects)
     ==
   ::
-  ++  filter-l2
-    |=  [logs=events naive-contract=address]  ^-  events
-    %+  skim  logs
-    |=  log=event-log:rpc:ethereum  ^-  ?
-    ?~  mined.log  %.n
-    =(naive-contract address.log)
+  ::  +export-csv writes a (list cord) as csv to disk at .pax
+  ++  export-csv
+    |=  [in=(list cord) pax=path]
+    =/  m  (strand ,~)
+    ^-  form:m
+    ;<  =bowl:spider  bind:m  get-bowl
+    =-  (send-raw-card %pass / %arvo %c %info -)
+    %+  foal:space:userlib
+      :(weld /(scot %p our.bowl)/base/(scot %da now.bowl) pax /txt)
+    [%txt !>(in)]
   ::
-  ++  block-tx-jar
-    |=  logs=events  ^-  (jar blocknum keccak)
-    =|  block-jar=(jar blocknum keccak)
-    |-
-    ?~  logs  block-jar
-    :: shouldn't crash since +filter-l2 already checks if mined.log is empty
-    =+  (need mined.i.logs)
-    %=  $
-      logs  t.logs
-      block-jar  (~(add ja block-jar) [block-number transaction-hash]:-)
-    ==
-  ::
-  ++  get-block-numbers
-    |=  logs=events  ^-  (list blocknum)
-    %+  turn  logs
-    |=  log=event-log:rpc:ethereum
-    :: shouldn't crash since +filter-l2 already checks if mined.log is empty
-    block-number:(need mined.log)
-  ::
-  ++  get-tx-hashes
-    |=  logs=events  ^-  (list keccak)
-    %+  turn  logs
-    |=  log=event-log:rpc:ethereum
-    :: shouldn't crash since +filter-l2 already checks if mined.log is empty
-    transaction-hash:(need mined.log)
+  ::  +make-csv takes in a (list tx-data) and makes it into a (list cord) to be
+  ::  saved as a csv file
+  ++  make-csv
+    |=  in=(list tx-data)
+    ^-  (list cord)
+    %-  flop
+    :-  %-  crip
+        ;:  weld
+          "block number,"
+          "timestamp,"
+          "roller address,"
+          "roll hash,"
+          "tx hash,"
+          "sending ship,"
+          "sending proxy,"
+          "nonce,"
+          "gas price,"
+          "length of input data,"
+          "success or failure,"
+          "function name"
+        ==
+    %+  turn  in
+      |=  =tx-data
+      %-  crip
+      ;:  weld
+        (scow %ud block.tx-data)      ","
+        (scow %da timestamp.tx-data)  ","
+        (scow %ux roller.tx-data)     ","
+        (scow %ux roll-hash.tx-data)  ","
+        (scow %ux tx-hash.tx-data)    ","
+        (scow %p sender.tx-data)      ","
+        (scow %tas proxy.tx-data)     ","
+        (scow %ud nonce.tx-data)      ","
+        (scow %ud gas.tx-data)        ","
+        (scow %ux length.tx-data)     ","
+        (scow %f suc.tx-data)         ","
+        (scow %tas action.tx-data)
+      ==
 --
