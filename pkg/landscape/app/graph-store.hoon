@@ -10,16 +10,17 @@
       [%2 network:zero:store]
       [%3 network:one:store]
       [%4 network:store]
-      state-5
+      [%5 network:store]
+      state-6
   ==
-::
-+$  state-5  [%5 network:store]
+::-
++$  state-6  [%6 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 ++  mar      %graph-update-3
 --
 ::
-=|  state-5
+=|  state-6
 =*  state  -
 ::
 %-  agent:dbug
@@ -81,7 +82,21 @@
       (gas:orm-log ~ [now.bowl logged-update] ~)
     ==
   ::
-    %5  [cards this(state old)]
+      %5
+    %_  $
+      -.old  %6
+    ::
+        update-logs.old
+      %-  ~(rut by update-logs.old)
+      |=  [=resource:store =update-log:store]
+      ^-  update-log:store
+      ?:  =(our.bowl entity.resource)
+        update-log
+      %+  gas:orm-log  *update-log:store
+      (scag 2 (tap:orm-log update-log))
+    ==
+  ::
+    %6  [cards this(state old)]
   ==
 ::
 ++  on-watch
