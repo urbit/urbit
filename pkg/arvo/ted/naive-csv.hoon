@@ -41,7 +41,6 @@
 =,  strand=strand:spider
 =,  jael
 ::
-::
 ^-  thread:spider
 =<  process-logs
 =>
