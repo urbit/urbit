@@ -415,6 +415,25 @@
     `[(weld pax pat) %mime !>(u.mim)]
   ::
   [deletes changes]
+::
+::  Safely add items to an object store.
+::
+::  It's important that first argument is the old and second is the new.
+::  In general the rule is that if one side has a tombstone, we want to
+::  use the other side.  Additionally, if the old one was %direct, we
+::  don't want to overwrite that with a %delta, since that could create
+::  loops where they didn't exist.
+::
+++  uni-blobs
+  |=  [old=(map lobe blob) new=(map lobe blob)]
+  ^-  (map lobe blob)
+  %-  (~(uno by old) new)
+  |=  [=lobe o=blob n=blob]
+  ?-    -.o
+      %direct  o
+      %delta   o
+      %dead    n
+  ==
 --  =>
 ~%  %clay  +  ~
 |%
@@ -1500,7 +1519,7 @@
     |=  [updated=? =yoki =rang]
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
-        lat.ran  (~(uni by lat.rang) lat.ran)
+        lat.ran  (uni-blobs lat.ran lat.rang)
       ==
     =/  new-data=(map path (each page lobe))
       ?-  -.yoki
@@ -1572,7 +1591,7 @@
     =:  let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
-        lat.ran  (~(uni by new-blobs) lat.ran)
+        lat.ran  (uni-blobs lat.ran new-blobs)
       ==
     =.  file-store.args  lat.ran
     ::
@@ -2245,7 +2264,7 @@
         continuation-yaki  merged-yaki
         merges  t.merges
         hut.ran  (~(put by hut.ran) r.merged-yaki merged-yaki)
-        lat.rag  (~(uni by lat.rag) lat.u.merge-result)
+        lat.rag  (uni-blobs lat.rag lat.u.merge-result)
         parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
       ==
     ==
@@ -2723,7 +2742,7 @@
           :-  (~(put by hat) pax p.blob)
           ?:  (~(has by lat) p.blob)
             lat
-          (~(put by lat) p.blob blob)
+          (uni-blobs lat (malt [p.blob blob] ~))
         =/  hat=(map path lobe)                         ::  all the content
           %-  ~(uni by old)
           %-  ~(uni by new.dal)
@@ -3183,13 +3202,12 @@
           ==
         [q.q.blob need.sat]
       ::  We can't put a blob in lat.ran if its parent isn't already
-      ::  there.  Unions are in reverse order so we don't overwrite
-      ::  existing blobs.
+      ::  there.
       ::
       =.  ..abet
         ?:  &(?=(%delta -.blob) !(~(has by lat.ran) q.q.blob))
-          ..abet(have.sat (~(uni by (malt [p.blob `^blob`blob] ~)) have.sat))
-        ..abet(lat.ran (~(uni by (malt [p.blob blob] ~)) lat.ran))
+          ..abet(have.sat (uni-blobs have.sat (malt [p.blob `^blob`blob] ~)))
+        ..abet(lat.ran (uni-blobs lat.ran (malt [p.blob blob] ~)))
       work(busy.sat |)
     ::
     ::  Fetch next blob
@@ -3206,7 +3224,7 @@
         ::  not use the one in the rave, since that will apply to the
         ::  end of subscription.
         ::
-        =.  lat.ran  (~(uni by have.sat) lat.ran)
+        =.  lat.ran  (uni-blobs lat.ran have.sat)
         |-  ^+  ..abet
         ?:  =(~ nako.sat)
           ..abet
@@ -3256,7 +3274,7 @@
       =/  nut  (turn ~(tap in lar.nako) |=(=yaki [r.yaki yaki]))
       =/  hut  (~(uni by (malt nut)) hut.ran)
       =/  nat  (turn ~(tap in bar.nako) |=(=blob [p.blob blob]))
-      =/  lat  (~(uni by (malt nat)) lat.ran)
+      =/  lat  (uni-blobs lat.ran (malt nat))
       ::  traverse updated state and sanity check
       ::
       =+  ~|  :*  %bad-foreign-update
