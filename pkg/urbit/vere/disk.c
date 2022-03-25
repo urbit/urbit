@@ -216,7 +216,7 @@ _disk_plan(u3_disk* log_u,
 {
   u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
   fet_u->eve_d = ++log_u->sen_d;
-  fet_u->len_i = (size_t)u3_disk_etch(log_u, job, mug_l, &fet_u->hun_y);
+  fet_u->len_i = u3_disk_etch(log_u, job, mug_l, &fet_u->hun_y);
   fet_u->nex_u = 0;
 
   if ( !log_u->put_u.ent_u ) {
