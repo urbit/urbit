@@ -17,8 +17,7 @@ export const useAddSession = () => {
 
     const userInput = prompt('Please enter an alpha-numeric session name.');
     // user canceled or did not enter a value
-    if (!userInput) {
-      alert('A valid name is required to create a new session');
+    if (null === userInput) {
       return;
     }
 
