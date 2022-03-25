@@ -1,26 +1,28 @@
-:: This thread grabs the latest Ethereum logs and produces a csv file
-:: containing the following data on L2 transactions:
+::  naive-csv: produces csv file containing L2 transaction data
 ::
-::  - block number
-::  - timestamp
-::  - roller address
-::  - roll hash
-::  - tx hash
-::  - sending ship
-::  - sending proxy
-::  - nonce
-::  - gas price
-::  - length of input data
-::  - success or failure
-::  - function name
-::  - spawning ship (^sein:title)
+::    takes in the network to use and the ethereum node url to grab data from.
+::    it starts with the azimuth snapshot and scries the logs from %azimuth.
+::    it then produces a csv file containing the following data on L2
+::    transactions:
 ::
-::  A lot of the data-scrounging here is stuff that %roller already keeps track
-::  of. We could just scry it from there, but then this thread needs to be run
-::  on the roller ship. So we rebuild the list of historical transactions
-::  ourselves so that this can run from any ship.
+::    - block number
+::    - timestamp
+::    - roller address
+::    - roll hash
+::    - tx hash
+::    - sending ship
+::    - sending proxy
+::    - nonce
+::    - gas price
+::    - length of input data
+::    - success or failure
+::    - function name
+::    - spawning ship (^sein:title)
 ::
-::  TODO: change block maps to ordered maps
+::    A lot of the data-scrounging here is stuff that %roller already keeps track
+::    of. We could just scry it from there, but then this thread needs to be run
+::    on the roller ship. So we rebuild the list of historical transactions
+::    ourselves so that this can run from any ship.
 ::
 /-  dice,
     spider
@@ -32,10 +34,6 @@
     naive-tx=naive-transactions,
     *strandio
 ::
-::  imports most recent downloaded logs
-::/*  logs  %eth-logs  /app/azimuth/logs/eth-logs
-::/*  logs  %eth-logs  /app/azimuth/tid/eth-logs
-::
 ::  starting snapshot. this may not be the right starting point once we have
 ::  clay tombstoning and the snapshot may be updated
 /*  snap  %azimuth-snapshot  /app/azimuth/version-0/azimuth-snapshot
@@ -43,9 +41,6 @@
 =,  strand=strand:spider
 =,  jael
 ::
-::  takes in the network to use. note that this filters logs for transactions to
-::  the appropriate contract address - this won't get you e.g. ropsten logs if
-::  you run it with net=%ropsten on a mainnet ship
 ::
 ^-  thread:spider
 =<  process-logs
@@ -105,16 +100,13 @@
     =/  [naive-contract=address chain-id=@]
       [naive chain-id]:(get-network:dice net)
     =/  snap=snap-state:dice  snap
-    %-  %-  slog  :_  ~
-        leaf+"processing {<net>} ethereum logs with {<(lent events)>} events"
     ::
     ;<  ~  bind:m
-      %-  flog-text  %+  weld  "naive-csv: processing {<net>} ethereum logs"
+      %-  flog-text  %+  weld  "naive-csv: processing {<net>} ethereum logs "
                                "with {<(lent events)>} events"
     =/  =rolls-map
       (compute-effects nas.snap events net naive-contract chain-id)
-    %-  %-  slog  :_  ~
-      leaf+"getting timestamps from ethereum node"
+    ;<  ~  bind:m  (flog-text "naive-csv: getting timestamps")
     ;<  tim=thread-result  bind:m
       %+  await-thread  %eth-get-timestamps
       !>([node-url ~(tap in ~(key by rolls-map))])
@@ -124,6 +116,7 @@
                       [%.n *]  ~|  'naive-csv: %eth-get-timestamps failed'  !!
                     ==
     ;<  ~  bind:m  (flog-text "naive-csv: got timestamps")
+    ;<  ~  bind:m  (flog-text "naive-csv: getting tx receipts")
     ;<  gaz=thread-result  bind:m
       %+  await-thread  %eth-get-tx-receipts
       !>([node-url (get-roll-hashes rolls-map)])
@@ -136,8 +129,9 @@
     =/  csv=(list cord)
       (make-csv (flatten (collate-roll-data rolls-map timestamps gas-sender)))
     ;<  ~  bind:m  (export-csv csv pax)
+    ;<  ~  bind:m  (flog-text :(weld "naive-csv: csv saved to %" (spud pax) "/"))
     ::
-    (pure:m !>((crip :(weld "data saved to %" (spud pax) "/"))))
+    (pure:m !>(~))
   ::
   ::  +collate-roll-data throws naive:effects, timestamps, and gas costs into
   ::  one $block-map
@@ -289,14 +283,12 @@
         ==
     =|  out=rolls-map
     ^+  out
-    %-  %-  slog  :_  ~
-      leaf+"processing state transitions beginning from stored snapshot"
     ::
     |-
     ?~  events  out
     =/  log=event-log:rpc:ethereum  i.events
     ?~  mined.log
-      ~&  >>  'empty log'
+      ~&  >>  'naive-csv: empty log'
       $(events t.events)
     =/  block=blocknum  block-number.u.mined.log
     =/  =^input:naive
@@ -305,7 +297,7 @@
         :-  %log
         [address.log (data-to-hex:dice data.log) topics.log]
       ?~  input.u.mined.log
-        ~&  >>  'empty L2 transaction'
+        ~&  >>  'naive-csv: empty L2 transaction'
         [%bat *@]
       [%bat u.input.u.mined.log]
     =^  =effects:naive  nas
