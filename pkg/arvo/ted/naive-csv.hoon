@@ -13,6 +13,7 @@
 ::  - length of input data
 ::  - success or failure
 ::  - function name
+::  - spawning ship (^sein:title)
 ::
 ::  A lot of the data-scrounging here is stuff that %roller already keeps track
 ::  of. We could just scry it from there, but then this thread needs to be run
@@ -85,6 +86,7 @@
                    length=@ux
                    suc=?
                    =action
+                   parent=ship
                 ==
   --
 ::
@@ -189,17 +191,17 @@
     ::  what nonce was actually submitted without the private key of the signer.
     =|  roll-tx-list=(list tx-data)
     =|  nonce-and-tx=[_| _|]
-    =/  =tx-data  :*  block  timestamp.bok  sender.roll  roll-hash  *keccak
-                      *ship  *proxy:naive  *nonce:naive  gas.roll  *@  |  *action
+    =/  =tx-data  :*  block  timestamp.bok  sender.roll  roll-hash  *keccak  *ship
+                      *proxy:naive  *nonce:naive  gas.roll  *@  |  *action  *ship
                   ==
     |-
     ::  if we've gotten both the %nonce and %tx diff from a transaction, add the
     ::  tx-data to the list of tx for the roll
     ?:  =([& &] nonce-and-tx)
       %=  $
-        roll-tx-list  (snoc roll-tx-list tx-data)
         nonce-and-tx  [| |]
-        tx-data       *_tx-data  :: reset tx-data
+        tx-data       *_tx-data  :: reset tx-data TODO: why does this seem to work?
+        roll-tx-list  (snoc roll-tx-list tx-data)
       ==
     ::  if we've finished looping through the effects, add the tx list from the
     ::  roll to the list of tx for the block
@@ -221,6 +223,7 @@
         nonce.tx-data   nonce.diff
         proxy.tx-data   proxy.diff
         effects.roll    t.effects.roll
+        parent.tx-data  (^sein:title ship.diff)
       ==
     ::
     ::  %tx is always the second diff from a given transaction.
@@ -399,7 +402,6 @@
   ++  make-csv
     |=  in=(list tx-data)
     ^-  (list cord)
-    %-  flop
     :-  %-  crip
         ;:  weld
           "block number,"
@@ -413,7 +415,8 @@
           "gas price,"
           "length of input data,"
           "success or failure,"
-          "function name"
+          "function name,"
+          "parent"
         ==
     %+  turn  in
       |=  =tx-data
@@ -430,6 +433,7 @@
         (scow %ud gas.tx-data)        ","
         (scow %ux length.tx-data)     ","
         (scow %f suc.tx-data)         ","
-        (scow %tas action.tx-data)
+        (scow %tas action.tx-data)    ","
+        (scow %p parent.tx-data)
       ==
 --
