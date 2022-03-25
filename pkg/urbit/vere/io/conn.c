@@ -549,13 +549,27 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
   u3z(dat); return res;
 }
 
+/* _conn_make_cran(): alloc/init new request.
+*/
+static u3_cran*
+_conn_make_cran(u3_chan* can_u, u3_atom rid)
+{
+  u3_cran*  ran_u = c3_calloc(sizeof(*ran_u));
+
+  ran_u->rid = rid;
+  ran_u->can_u = can_u;
+  ran_u->nex_u = can_u->ran_u;
+  can_u->ran_u = ran_u;
+  return ran_u;
+}
+
 /* _conn_moor_poke(): called on message read from u3_moor.
 */
 static void
 _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_weak   jar;
-  u3_noun   can, rid, tag, dat, rud = u3_nul;
+  u3_noun   can, rid, tag, dat, rud = u3_nul, tar, wir, cad;
   u3_chan*  can_u = (u3_chan*)ptr_v;
   u3_conn*  con_u = can_u->san_u->con_u;
   c3_i      err_i = 0;
@@ -589,8 +603,6 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     } break;
 
     case c3__fyrd: {
-      u3_noun wir;
-
       if ( c3n == con_u->kan_o ) {
         err_i = -8; err_c = "khan-miss";
         goto _moor_poke_out;
@@ -605,14 +617,8 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     } break;
 
     case c3__peek: {
-      u3_cran*  ran_u = c3_calloc(sizeof(u3_cran));
-      u3_noun   gan = u3nc(u3_nul, u3_nul);   //  `~: read from self
-
-      ran_u->rid = u3k(rid);
-      ran_u->can_u = can_u;
-      ran_u->nex_u = can_u->ran_u;
-      can_u->ran_u = ran_u;
-      u3_pier_peek(con_u->car_u.pir_u, gan, u3k(dat), ran_u, _conn_peek_cb);
+      u3_pier_peek(con_u->car_u.pir_u, u3nc(u3_nul, u3_nul), u3k(dat),
+                   _conn_make_cran(can_u, u3k(rid)), _conn_peek_cb);
     } break;
 
     case c3__peel: {
@@ -622,22 +628,14 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
     } break;
 
     case c3__ovum: {
-      u3_noun   tar, wir, cad;
-      u3_cran*  ran_u;
-
       if ( (c3n == u3r_trel(dat, &tar, &wir, &cad)) ) {
         err_i = -6; err_c = "ovum-bad";
         goto _moor_poke_out;
       }
-      ran_u = c3_calloc(sizeof(u3_cran));
-      ran_u->rid = u3k(rid);
-      ran_u->can_u = can_u;
-      ran_u->nex_u = can_u->ran_u;
-      can_u->ran_u = ran_u;
       u3_auto_peer(
         u3_auto_plan(&con_u->car_u,
                      u3_ovum_init(0, u3k(tar), u3k(wir), u3k(cad))),
-        ran_u, _conn_ovum_news, _conn_ovum_bail);
+        _conn_make_cran(can_u, u3k(rid)), _conn_ovum_news, _conn_ovum_bail);
     } break;
 
     case c3__urth: {
