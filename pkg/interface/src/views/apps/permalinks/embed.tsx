@@ -16,6 +16,7 @@ import { TranscludedNode } from './TranscludedNode';
 import styled from 'styled-components';
 import Author from '~/views/components/Author';
 import useDocketState, { useTreaty } from '~/logic/state/docket';
+import { createJoinParams } from '~/views/landscape/components/Join/Join';
 
 function Placeholder(type) {
   const lines = (type) => {
@@ -115,7 +116,11 @@ function GraphPermalink(
     })();
   }, [pending, graph, index]);
   const showTransclusion = Boolean(association && node && transcluded < 1);
-  const permalink = getPermalinkForGraph(group, graph, index);
+  const permalink = (() => {
+    const link = `/perma${getPermalinkForGraph(group, graph, index).slice(16)}`;
+    return (!association && !loading)
+      ? { search: createJoinParams('groups', group, link)  } :  link;
+  })();
 
   const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2) ?? ['Unknown', 'Unknown'];
   const [nodeChannelHost, nodeChannelName] = association?.resource
@@ -140,7 +145,7 @@ function GraphPermalink(
   return (
     <Col
       as={Link}
-      to={`/perma${permalink.slice(16)}`}
+      to={permalink}
       width="100%"
       bg="white"
       maxWidth={full ? null : '500px'}

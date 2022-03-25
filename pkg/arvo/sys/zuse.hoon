@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %420
+++  zuse  %419
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -2235,6 +2235,112 @@
         =/  pub  (from.j qj)
         ?<  =([0 0] pub)
         pub
+      ++  schnorr
+        ~%  %schnorr  ..schnorr  ~
+        =>  |%
+            ++  tagged-hash
+              |=  [tag=@ [l=@ x=@]]
+              =+  hat=(sha-256:sha (swp 3 tag))
+              %-  sha-256l:sha
+              :-  (add 64 l)
+              (can 3 ~[[l x] [32 hat] [32 hat]])
+            ++  lift-x
+              |=  x=@I
+              ^-  (unit point)
+              =/  c  curve
+              ?.  (lth x p.domain.c)
+                ~
+              =/  fop  field-p.c
+              =+  [fadd fpow]=[sum.fop exp.fop]
+              =/  cp  (fadd (fpow 3 x) 7)
+              =/  y  (fpow (rsh [0 2] +(p.domain.c)) cp)
+              ?.  =(cp (fpow 2 y))
+                ~
+              %-  some  :-  x
+              ?:  =(0 (mod y 2))
+                y
+              (sub p.domain.c y)
+            --
+        |%
+        ::
+        ++  sign                                        ::  schnorr signature
+          ~/  %sosi
+          |=  [sk=@I m=@I a=@I]
+          ^-  @J
+          ?>  (gte 32 (met 3 m))
+          ?>  (gte 32 (met 3 a))
+          =/  c  curve
+          ::  implies (gte 32 (met 3 sk))
+          ::
+          ?<  |(=(0 sk) (gte sk n.domain.c))
+          =/  pp
+            (mul-point-scalar g.domain.c sk)
+          =/  d
+            ?:  =(0 (mod y.pp 2))
+              sk
+            (sub n.domain.c sk)
+          =/  t
+            %+  mix  d
+            (tagged-hash 'BIP0340/aux' [32 a])
+          =/  rand
+            %+  tagged-hash  'BIP0340/nonce'
+            :-  96
+            (rep 8 ~[m x.pp t])
+          =/  kp  (mod rand n.domain.c)
+          ?<  =(0 kp)
+          =/  rr  (mul-point-scalar g.domain.c kp)
+          =/  k
+            ?:  =(0 (mod y.rr 2))
+              kp
+            (sub n.domain.c kp)
+          =/  e
+            %-  mod
+            :_  n.domain.c
+            %+  tagged-hash  'BIP0340/challenge'
+            :-  96
+            (rep 8 ~[m x.pp x.rr])
+          =/  sig
+            %^  cat  8
+              (mod (add k (mul e d)) n.domain.c)
+            x.rr
+          ?>  (verify x.pp m sig)
+          sig
+        ::
+        ++  verify                                      ::  schnorr verify
+          ~/  %sove
+          |=  [pk=@I m=@I sig=@J]
+          ^-  ?
+          ?>  (gte 32 (met 3 pk))
+          ?>  (gte 32 (met 3 m))
+          ?>  (gte 64 (met 3 sig))
+          =/  c  curve
+          =/  pup  (lift-x pk)
+          ?~  pup
+            %.n
+          =/  pp  u.pup
+          =/  r  (cut 8 [1 1] sig)
+          ?:  (gte r p.domain.c)
+            %.n
+          =/  s  (end 8 sig)
+          ?:  (gte s n.domain.c)
+            %.n
+          =/  e
+            %-  mod
+            :_  n.domain.c
+            %+  tagged-hash  'BIP0340/challenge'
+            :-  96
+            (rep 8 ~[m x.pp r])
+          =/  aa
+            (mul-point-scalar g.domain.c s)
+          =/  bb
+            (mul-point-scalar pp (sub n.domain.c e))
+          ?:  &(=(x.aa x.bb) !=(y.aa y.bb))             ::  infinite?
+            %.n
+          =/  rr  (add-points aa bb)
+          ?.  =(0 (mod y.rr 2))
+            %.n
+          =(r x.rr)
+        --
       --
     --
   ::
@@ -4422,7 +4528,7 @@
     ::                                                  ::  ++chrd:de-xml:html
     ++  chrd                                            ::  character data
       %+  cook  |=(a=tape ^-(mars ;/(a)))
-      (plus ;~(less doq ;~(pose (just `@`10) escp)))
+      (plus ;~(pose (just `@`10) escp))
     ::                                                  ::  ++comt:de-xml:html
     ++  comt                                            ::  comments
       =-  (ifix [(jest '<!--') (jest '-->')] (star -))
@@ -4910,13 +5016,20 @@
   ++  cite                                              ::  render ship
     |=  who=@p
     ^-  tape
-    =+  kind=(clan who)
-    =+  name=(scow %p who)
-    ?:  =(%earl kind)
-      :(weld "~" (swag [15 6] name) "^" (swag [22 6] name))
-    ?:  =(%pawn kind)
-      :(weld (swag [0 7] name) "_" (swag [51 6] name))
-    name
+    =/  wid  (met 4 who)
+    ?:  (lte wid 2)  (scow %p who)
+    ?:  (lte wid 4)
+      =/  nom  (scow %p (end 5 who))
+      :(weld (scag 7 nom) "^" (slag 8 nom))
+    %-  trip
+    %+  rap  3
+    :~  '~'
+        (tos:po (cut 3 [(dec (mul wid 2)) 1] who))
+        (tod:po (cut 3 [(mul (dec wid) 2) 1] who))
+        '_'
+        (tos:po (cut 3 [1 1] who))
+        (tod:po (end 3 who))
+    ==
   ::                                                    ::  ++saxo:title
   ++  saxo                                              ::  autocanon
     |=  [our=ship now=@da who=ship]

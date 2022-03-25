@@ -1,15 +1,18 @@
-import { pick } from 'lodash';
+import { pick, pickBy, partition } from 'lodash';
 import React, { useCallback } from 'react';
-import { kilnBump } from '@urbit/api/hood';
+import { kilnBump } from '@urbit/api';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
 import { Elbow } from '../../components/icons/Elbow';
 import api from '../../state/api';
 import { useCharges } from '../../state/docket';
+import useKilnState, { useVat } from '../../state/kiln';
 
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
+import { Vat } from '@urbit/api';
+import {useHistory} from 'react-router-dom';
 
 export const RuntimeLagNotification = () => (
   <section
@@ -35,16 +38,29 @@ export const RuntimeLagNotification = () => (
   </section>
 );
 
+function vatIsBlocked(newKelvin: number, vat: Vat) {
+  return !(vat.arak?.rail?.next || []).find(({ aeon, weft }) => weft.kelvin === newKelvin);
+}
+
 export const BaseBlockedNotification = () => {
-  const desks: string[] = [];
+  const base = useVat('base');
+  const { push } = useHistory();
+  // TODO: assert weft.name === 'zuse'??
+  const newKelvin = base?.arak?.rail?.next?.[0]?.weft?.kelvin || 420;
   const charges = useCharges();
-  const blockedCharges = Object.values(pick(charges, desks));
+  const [blocked, unblocked] = useKilnState((s) => {
+    const [b, u] = partition(Object.entries(s.vats), ([desk, vat]) => vatIsBlocked(newKelvin, vat));
+    return [b.map(([d]) => d), u.map(([d]) => d)] as const;
+  });
+
+  const blockedCharges = Object.values(pick(charges, blocked));
   const count = blockedCharges.length;
 
   const handlePauseOTAs = useCallback(() => {}, []);
 
   const handleArchiveApps = useCallback(async () => {
     api.poke(kilnBump(true));
+    push('/leap/upgrading');
   }, []);
 
   return (

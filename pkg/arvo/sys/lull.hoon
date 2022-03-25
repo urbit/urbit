@@ -851,7 +851,7 @@
   +$  mool  [=case paths=(set (pair care path))]        ::  requests in desk
   +$  nori                                              ::  repository action
     $%  [%& p=soba]                                     ::  delta
-        [%| p=@tas]                                     ::  label
+        [%| p=@tas q=(unit aeon)]                       ::  label
     ==                                                  ::
   +$  nuri                                              ::  repository action
     $%  [%& p=suba]                                     ::  delta
@@ -1907,6 +1907,8 @@
         [%private-keys ~]                             ::  sub to privates
         [%public-keys ships=(set ship)]               ::  sub to publics
         [%rekey =life =ring]                          ::  update private keys
+        [%resend ~]                                   ::  resend private key
+        [%ruin ships=(set ship)]                      ::  pretend breach
         $>(%trim vane-task)                           ::  trim state
         [%turf ~]                                     ::  view domains
         $>(%vega vane-task)                           ::  report upgrade
@@ -1980,8 +1982,8 @@
     +$  udiffs  (list [=ship =udiff])
     +$  udiff
       $:  =id:block
-      $%  [%rift =rift]
-          [%keys key-update]
+      $%  [%rift =rift boot=?]
+          [%keys key-update boot=?]
           [%spon sponsor=(unit @p)]
           [%disavow ~]
       ==  ==
@@ -1995,14 +1997,14 @@
           %rift
         ?.  (gth rift.a-udiff rift.a-point)
           ~
-        ~?  !=(rift.a-udiff +(rift.a-point))
+        ~?  &(!=(rift.a-udiff +(rift.a-point)) !boot.a-udiff)
           [%udiff-to-diff-skipped-rift a-udiff a-point]
         `[%rift rift.a-point rift.a-udiff]
       ::
           %keys
         ?.  (gth life.a-udiff life.a-point)
           ~
-        ~?  !=(life.a-udiff +(life.a-point))
+        ~?  &(!=(life.a-udiff +(life.a-point)) !boot.a-udiff)
           [%udiff-to-diff-skipped-life a-udiff a-point]
         :^  ~  %keys
           [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]

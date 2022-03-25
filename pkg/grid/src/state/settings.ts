@@ -5,7 +5,7 @@ import {
   putEntry as doPutEntry,
   getDeskSettings,
   DeskData
-} from '@urbit/api/settings';
+} from '@urbit/api';
 import _ from 'lodash';
 import {
   BaseState,
@@ -21,7 +21,12 @@ interface BaseSettingsState {
     theme: 'light' | 'dark' | 'auto';
     doNotDisturb: boolean;
   };
+  tiles: {
+    order: string[];
+  };
+  loaded: boolean;
   putEntry: (bucket: string, key: string, value: Value) => Promise<void>;
+  fetchAll: () => Promise<void>;
   [ref: string]: unknown;
 }
 
@@ -71,6 +76,9 @@ export const useSettingsState = createState<BaseSettingsState>(
       theme: 'auto',
       doNotDisturb: true
     },
+    tiles: {
+      order: []
+    },
     loaded: false,
     putEntry: async (bucket, key, val) => {
       const poke = doPutEntry(window.desk, bucket, key, val);
@@ -79,8 +87,8 @@ export const useSettingsState = createState<BaseSettingsState>(
     fetchAll: async () => {
       const result = (await api.scry<DeskData>(getDeskSettings(window.desk))).desk;
       const newState = {
-        loaded: true,
-        ..._.mergeWith(get(), result, (obj, src) => (_.isArray(src) ? src : undefined))
+        ..._.mergeWith(get(), result, (obj, src) => (_.isArray(src) ? src : undefined)),
+        loaded: true
       };
       set(newState);
     }
@@ -92,6 +100,7 @@ export const useSettingsState = createState<BaseSettingsState>(
         const data = _.get(e, 'settings-event', false);
         if (data) {
           reduceStateN(get(), data, reduceUpdate);
+          set({ loaded: true });
         }
       })
   ]

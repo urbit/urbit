@@ -29,7 +29,7 @@ released.
 ### Release branches
 
 Release branches are code that is ready to release.  All release branch names
-should start with `release/`.
+should start with `next/`.
 
 All code must be reviewed before being pushed to a release branch.  Thus,
 feature branches should be PR'd against a release branch, not master.
@@ -41,57 +41,55 @@ be released together -- unless one of the underlying commits is separately put
 on a release branch.
 
 Here's a worked example.  The rule is to make however many branches are useful,
-and no more.  This example is not prescriptive, the developers making the
+and no more.  This example is not prescriptive; the developers making the
 changes may add, remove, or rename branches in this flow at will.
 
 Suppose you (plural, the dev community at large) complete some work in a
-userspace app, and you put it in `release/next-userspace`.  Separately, you make
-a small JS change.  If you PR it to `release/next-userspace`, then it will only
-be released at the same time as the app changes.  Maybe this is fine, or maybe
-you want this change to go out quickly, and the change in
-`release/next-userspace` is relatively risky, so you don't want to push it out
-on Friday afternoon.  In this case, put the change in another release branch,
-say `release/next-js`.  Now either can be released independently.
+userspace app, and you put it in `next/landscape`.  Separately, you make a small
+JS change.  If you PR it to `next/landscape`, then it will only be released at
+the same time as the app changes.  Maybe this is fine, or maybe you want this
+change to go out quickly, and the change in `next/landscape` is relatively
+risky, so you don't want to push it out on Friday afternoon.  In this case, put
+the change in another release branch, say `next/js`.  Now either can be released
+independently.
 
-Suppose you do further work that you want to PR to `release/next-userspace`, but
-it depends on your fixes in `release/next-js`.  Simply merge `release/next-js`
-into either your feature branch or `release/next-userspace` and PR your finished
-work to `release/next-userspace`.  Now there is a one-way coupling:
-`release/next-userspace` contains `release/next-js`, so releasing it will
-implicitly release `release/next-js`.  However, you can still release
-`release/next-js` independently.
+Suppose you do further work that you want to PR to `next/landscape`, but it
+depends on your fixes in `next/js`.  Simply merge `next/js` into either your
+feature branch or `next/landscape` and PR your finished work to
+`next/landscape`.  Now there is a one-way coupling: `next/landscape` contains
+`next/js`, so releasing it will implicitly release `next/js`.  However, you can
+still release `next/js` independently.
 
-This scheme extends to other branches, like `release/next-kernel` or
-`release/os1.1` or `release/ford-fusion`.  Some branches may be long-lived and
-represent simply the "next" release of something, while others will have a
-definite lifetime that corresponds to development of a particular feature or
-numbered release.
+This scheme extends to other branches, like `next/base` or `next/os1.1` or
+`next/ford-fusion`.  Some branches may be long-lived and represent simply the
+"next" release of something, while others will have a definite lifetime that
+corresponds to development of a particular feature or numbered release.
 
 Since they are "done", release branches should be considered "public", in the
 sense that others may depend on them at will.  Thus, never rebase a release
 branch.
 
 When cutting a new release, you can filter branches with `git branch --list
-'release/*'` or by typing "release/" in the branch filter on Github.  This will
-give you the list of branches which have passed review and may be merged to
-master and released.  When choosing which branches to release, make sure you
-understand the risks of releasing them immediately.  If merging these produces
-nontrivial conflicts, consider asking the developers on those branches to merge
-between themselves.  In many cases a developer can do this directly, but if it's
+'next/*'` or by typing "next/" in the branch filter on Github.  This will give
+you the list of branches which have passed review and may be merged to master
+and released.  When choosing which branches to release, make sure you understand
+the risks of releasing them immediately.  If merging these produces nontrivial
+conflicts, consider asking the developers on those branches to merge between
+themselves.  In many cases a developer can do this directly, but if it's
 sufficiently nontrivial, this may be a reviewed PR of one release branch into
 another.
 
-### Non-OTAable release branches
+#### Standard release branches
 
-In some cases, work is completed which cannot be OTA'd as written.  For example,
-the code may lack state adapters, or it may not properly handle outstanding
-subscriptions.  It could also be code which is planned to be released only upon
-a breach (network-wide or rolling).
+While you can always create non-standard release branches to stage for a
+particular release, most changes should go through the following:
 
-In this case, the code may be PR'd to a `na-release/` branch.  All rules are the
-same as for release branches, except that the code does not need to apply
-cleanly to an existing ship.  If you later write state adapter or otherwise make
-it OTAable, then you may PR it to a release branch.
+- next/base -- changes to the %base desk in pkg/arvo
+- next/garden -- changes to the %garden desk
+- next/landscape -- changes to the %landscape desk
+- next/bitcoin -- changes to the %bitcoin desk
+- next/webterm -- changes to the %webterm desk
+- next/vere -- changes to the runtime
 
 ### Other cases
 
@@ -161,11 +159,49 @@ so that I can type e.g. `git mu origin/foo 1337`.
 
 If you're making a Vere release, just play it safe and update all the pills.
 
+To produce multi pills, you will need to set up an environment with the
+appropriate desks with the appropriate contents, doing something like the
+following (where `> ` denotes an urbit command and `% ` denotes a unix shell
+command):
+
+```console
+> |merge %garden our %base
+> |merge %landscape our %base
+> |merge %bitcoin our %base
+> |merge %webterm our %base
+> |mount %
+> |mount %garden
+> |mount %landscape
+> |mount %bitcoin
+> |mount %webterm
+% rsync -avL --delete pkg/arvo/ zod/base/
+% rm -rf zod/base/tests/
+% for desk in garden landscape bitcoin webterm; do \
+    rsync -avL --delete pkg/$desk/ zod/$desk/ \
+  done
+> |commit %base
+> |commit %garden
+> |commit %landscape
+> |commit %bitcoin
+> |commit %webterm
+> .multi/pill +solid %base %garden %landscape %bitcoin %webterm
+> .multi-brass/pill +brass %base %garden %landscape %bitcoin %webterm
+```
+
+And then of course:
+
+```console
+> .solid/pill +solid
+> .brass/pill +brass
+> .ivory/pill +ivory
+```
+
 For an Urbit OS release, after all the merge commits, make a release with the
 commit message "release: urbit-os-v1.0.xx".  This commit should have up-to-date
-artifacts from pkg/interface and a new solid pill.  If neither the pill nor the
-JS need to be updated (e.g if the pill was already updated in the previous merge
-commit), consider making the release commit with --allow-empty.
+artifacts from pkg/interface and a new version number in the desk.docket-0 of
+any desk which changed.  If neither the pill nor the JS need to be updated (e.g
+if the pill was already updated in the previous merge commit), consider making
+the release commit with --allow-empty.
 
 If anything in `pkg/interface` has changed, ensure it has been built and
 deployed properly.  You'll want to do this before making a pill, since you want
@@ -191,21 +227,23 @@ What you should do here depends on the type of release being made.
 
 First, for Urbit OS releases:
 
-If it's a very trivial hotfix that you know isn't going to break
-anything, tag it as `urbit-os-vx.y.z`.  Here 'x' refers to the product version
-(e.g. OS1, OS2..), 'y' to the continuity era in that version, and 'z' to an
-OTA patch counter.  So for a hotfix version, you'll just want to increment 'z'.
+If it's a very trivial hotfix that you know isn't going to break anything, tag
+it as `urbit-os-vx.y`.  Here 'x' is the major version and 'y' is an OTA patch
+counter.  Change `urbit-os` to e.g. `landscape` or another desk if that's what you're
+releasing.  If you're releasing changes to more than one desk, add a separate
+tag for each desk (but only make one announcment email/post, with all of the
+desks listed).
 
 Use an annotated tag, i.e.
 
 ```
-git tag -a urbit-os-vx.y.z
+git tag -a urbit-os-vx.y
 ```
 
 The tag format should look something like this:
 
 ```
-urbit-os-vx.y.z
+urbit-os-vx.y
 
 This release will be pushed to the network as an over-the-air update.
 
@@ -236,17 +274,17 @@ If the commit descriptions are too poor to easily do this, then again, yell at
 your fellow contributors to make them better in the future.
 
 If it's *not* a trivial hotfix, you should probably make any number of release
-candidate tags (e.g. `urbit-os-vx.y.z.rc1`, `urbit-os-vx.y.z.rc2`, ..), test
+candidate tags (e.g. `urbit-os-vx.y.rc1`, `urbit-os-vx.y.rc2`, ..), test
 them, and after you confirm one of them is good, tag the release as
-`urbit-os-vx.y.z`.
+`urbit-os-vx.y`.
 
 For Vere releases:
 
-Tag the release as `urbit-vx.y.z`.  The tag format should look something like
+Tag the release as `urbit-vx.y`.  The tag format should look something like
 this:
 
 ```
-urbit-vx.y.z
+urbit-vx.y
 
 Note that this Vere release will by default boot fresh ships using an Urbit OS
 va.b.c pill.
@@ -254,10 +292,10 @@ va.b.c pill.
 Release binaries:
 
 (linux64)
-https://bootstrap.urbit.org/urbit-vx.y.z-linux64.tgz
+https://bootstrap.urbit.org/urbit-vx.y-linux64.tgz
 
 (macOS)
-https://bootstrap.urbit.org/urbit-vx.y.z-darwin.tgz
+https://bootstrap.urbit.org/urbit-vx.y-darwin.tgz
 
 Release notes:
 
@@ -295,10 +333,10 @@ and stars to the rest of the network.
 For consistency, I create a release tarball and then rsync the files in.
 
 ```
-$ wget https://github.com/urbit/urbit/archive/urbit-os-vx.y.z.tar.gz
-$ tar xzf urbit-os-vx.y.z.tar.gz
+$ wget https://github.com/urbit/urbit/archive/urbit-os-vx.y.tar.gz
+$ tar xzf urbit-os-vx.y.tar.gz
 $ herb zod -p hood -d "+hood/mount /=home="
-$ rsync -zr --delete urbit-urbit-os-vx.y.z/pkg/arvo/ zod/home
+$ rsync -zr --delete urbit-urbit-os-vx.y/pkg/arvo/ zod/home
 $ herb zod -p hood -d "+hood/commit %home"
 $ herb zod -p hood -d "+hood/merge %kids our %home"
 ```
@@ -306,16 +344,11 @@ $ herb zod -p hood -d "+hood/merge %kids our %home"
 For Vere updates, this means simply shutting down each desired ship, installing
 the new binary, and restarting the pier with it.
 
-#### Continuous deployment
-
-A subset of release branches are deployed continuously to the network. Thus far
-this only includes `release/next-userspace`, which deploys livenet-compatible
-changes to select QA ships. Any push to master will automatically
-merge master into `release/next-userspace` to keep the streams at parity.
-
 ### Announce the update
 
 Post an announcement to urbit-dev.  The tag annotation, basically, is fine here
--- I usually add the %base hash (for Urbit OS releases) and the release binary
+-- I usually add the %cz hash (for Urbit OS releases) and the release binary
 URLs (for Vere releases).  Check the urbit-dev archives for examples of these
 announcements.
+
+Post the same announcement to the group feed of Urbit Community.

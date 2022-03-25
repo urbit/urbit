@@ -241,7 +241,17 @@ function createMockSysNotification(path: string, body: HarkBody[] = []) {
 }
 
 const lag = createMockSysNotification('/lag');
-const blocked = createMockSysNotification('/blocked');
+const blocked = {
+  bin: {
+    place: {
+      desk: window.desk,
+      path: '/desk/base'
+    },
+    path: '/blocked'
+  },
+  time: Date.now() - 3_600,
+  body: []
+};
 const onboard = createMockSysNotification('/onboard');
 
 const updateNotification = createMockSysNotification('/desk/bitcoin', [

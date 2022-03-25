@@ -1,9 +1,9 @@
-import { Col, Row, Text, Icon } from '@tlon/indigo-react';
-import { Metadata } from '@urbit/api';
-import React, { ReactElement, ReactNode } from 'react';
-import { PropFunc, IconRef } from '~/types';
-import { MetadataIcon } from './MetadataIcon';
-import { useCopy } from '~/logic/lib/useCopy';
+import { Col, Row, Text, Icon } from "@tlon/indigo-react";
+import { Metadata } from "@urbit/api";
+import React, { ReactElement, ReactNode } from "react";
+import { PropFunc, IconRef } from "~/types";
+import { MetadataIcon } from "./MetadataIcon";
+import { useCopy } from "~/logic/lib/useCopy";
 interface GroupSummaryProps {
   metadata: Metadata;
   memberCount: number;
@@ -28,11 +28,12 @@ export function GroupSummary(
   } = props;
   const { doCopy, copyDisplay } = useCopy(
     `web+urbitgraph://group${resource?.slice(5)}`,
-    'Copy',
-    'Checkmark'
+    "Copy",
+    "Checkmark"
   );
+
   return (
-    <Col {...rest} gapY={4} maxWidth={['100%', '288px']}>
+    <Col gapY={4} maxWidth={["100%", "288px"]} {...rest}>
       <Row gapX={2} width="100%">
         <MetadataIcon
           width="40px"
@@ -53,9 +54,9 @@ export function GroupSummary(
             {props?.AllowCopy && (
               <Icon
                 color="gray"
-                icon={props?.locked ? 'Locked' : (copyDisplay as IconRef)}
+                icon={props?.locked ? "Locked" : (copyDisplay as IconRef)}
                 onClick={!props?.locked ? doCopy : null}
-                cursor={props?.locked ? 'default' : 'pointer'}
+                cursor={props?.locked ? "default" : "pointer"}
               />
             )}
           </Row>
@@ -69,8 +70,8 @@ export function GroupSummary(
           </Row>
         </Col>
       </Row>
-      <Row width="100%">
-        {metadata.description && (
+      {metadata.description.length > 0 && (
+        <Row width="100%">
           <Text
             gray
             width="100%"
@@ -80,8 +81,8 @@ export function GroupSummary(
           >
             {metadata.description}
           </Text>
-        )}
-      </Row>
+        </Row>
+      )}
       {children}
     </Col>
   );

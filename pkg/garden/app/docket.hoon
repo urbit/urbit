@@ -168,6 +168,11 @@
     %+  turn  ~(tap by charges)
     |=  [=desk =charge]
     [desk (get-light-charge charge)]
+    ::
+      [%x %charges @ %version ~]
+    ?~  charge=(~(get by charges) i.t.t.path)
+      [~ ~]
+    ``noun+!>(version.docket.u.charge)
   ==
 ::
 ++  on-agent

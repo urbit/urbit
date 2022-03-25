@@ -1,9 +1,9 @@
 :~  title+'Terminal'
-    info+'A web interface to your Urbit\'s command line (the dojo).'
+    info+'A web interface to your Urbit\'s command line.'
     color+0x2e.4347
-    glob-http+['https://bootstrap.urbit.org/glob-0v6.ak34j.nao8k.dhqs4.s2atf.td1lc.glob' 0v6.ak34j.nao8k.dhqs4.s2atf.td1lc]
+    glob-http+['https://bootstrap.urbit.org/glob-0v7.1hgb7.euged.6oj3e.cdhdg.rah02.glob' 0v7.1hgb7.euged.6oj3e.cdhdg.rah02]
     base+'webterm'
-    version+[0 0 1]
+    version+[1 0 1]
     website+'https://tlon.io'
     license+'MIT'
 ==
