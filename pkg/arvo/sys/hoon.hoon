@@ -9121,7 +9121,7 @@
                   ==
       [%face *]  [%face p.sut burp(sut q.sut)]
       [%fork *]  [%fork (~(run in p.sut) |=(type burp(sut +<)))]
-      [%hint *]  (hint p.sut burp(sut q.sut))
+      [%hint *]  (hint [burp(sut p.p.sut) q.p.sut] burp(sut q.sut))
       [%hold *]  [%hold burp(sut p.sut) q.sut]
     ==
   ::
