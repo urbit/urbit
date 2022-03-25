@@ -828,6 +828,7 @@
 #   define c3__ov     c3_s2('o','v')
 #   define c3__over   c3_s4('o','v','e','r')
 #   define c3__ovum   c3_s4('o','v','u','m')
+#   define c3__p      c3_s1('p')
 #   define c3__pack   c3_s4('p','a','c','k')
 #   define c3__pair   c3_s4('p','a','i','r')
 #   define c3__palm   c3_s4('p','a','l','m')

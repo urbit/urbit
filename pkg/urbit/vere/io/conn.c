@@ -102,18 +102,6 @@
 #include "all.h"
 #include "vere/vere.h"
 
-#ifdef  _WIN32
-
-//  TODO  windows
-//
-u3_auto*
-u3_conn_io_init(u3_pier* pir_u)
-{
-  return NULL;
-}
-
-#else   //  _WIN32
-
 /* u3_cran: control plane request.
 */
   typedef struct _u3_cran {
@@ -685,6 +673,26 @@ _conn_sock_cb(uv_stream_t* sem_u, c3_i tas_i)
 static void
 _conn_init_sock(u3_shan* san_u)
 {
+#ifdef _WIN32
+  u3_pier*  pir_u = san_u->con_u->car_u.pir_u;
+  u3_atom   who = u3dc("scot", c3__p, u3i_chubs(2, pir_u->who_d));
+  c3_c*     who_c = u3r_string(who);
+  c3_c      pip_c[256];
+  c3_i      ret_i;
+
+  u3z(who);
+  ret_i = snprintf(pip_c, sizeof(pip_c), "\\\\.\\pipe\\urbit-conn-%s", who_c + 1);
+  c3_assert(19 + strlen(who_c) == ret_i);
+  c3_free(who_c);
+  ret_i = uv_pipe_init(u3L, &san_u->pyp_u, 0);
+  c3_assert(!ret_i);
+  ret_i = uv_pipe_bind(&san_u->pyp_u, pip_c);
+  c3_assert(!ret_i);
+  ret_i = uv_listen((uv_stream_t*)&san_u->pyp_u, 0, _conn_sock_cb);
+  c3_assert(!ret_i);
+  u3l_log("conn: listening on %s\n", pip_c);
+
+#else   //  _WIN32
   //  the full socket path is limited to about 108 characters,
   //  and we want it to be relative to the pier. save our current
   //  path, chdir to the pier, open the socket at the desired
@@ -722,6 +730,7 @@ _conn_init_sock(u3_shan* san_u)
     u3l_log("conn: chdir: %s\n", uv_strerror(errno));
     goto _conn_sock_err_close;
   }
+  u3l_log("conn: listening on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
   return;
 
 _conn_sock_err_close:
@@ -735,6 +744,7 @@ _conn_sock_err_chdir:
     u3l_log("conn: chdir: %s\n", uv_strerror(errno));
   }
   u3_king_bail();
+#endif  //  _WIN32
 }
 
 /* _conn_born_news(): initialization complete; %khan available.
@@ -786,7 +796,6 @@ _conn_io_talk(u3_auto* car_u)
   con_u->san_u = san_u;
   _conn_init_sock(san_u);
   car_u->liv_o = c3y;
-  u3l_log("conn: live on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
 }
 
 /* _conn_ef_handle(): handle result.
@@ -908,5 +917,3 @@ u3_conn_io_init(u3_pier* pir_u)
 
   return car_u;
 }
-
-#endif  //  _WIN32
