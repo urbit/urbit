@@ -179,8 +179,6 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
-      ::  REMOVE on next upgrade
-      dist-upgraded=_|                                  ::  are we in dist yet?
   ==                                                    ::
 ::
 ::  Object store.
@@ -419,16 +417,17 @@
 ::  Safely add items to an object store.
 ::
 ::  It's important that first argument is the old and second is the new.
-::  In general the rule is that if one side has a tombstone, we want to
-::  use the other side.  Additionally, if the old one was %direct, we
-::  don't want to overwrite that with a %delta, since that could create
-::  loops where they didn't exist.
+::  The rule is that if one side has a tombstone, we want to use the
+::  other side.  Additionally, if the old one was %direct, we don't want
+::  to overwrite that with a %delta, since that could create loops where
+::  they didn't exist.
 ::
 ++  uni-blobs
   |=  [old=(map lobe blob) new=(map lobe blob)]
   ^-  (map lobe blob)
   %-  (~(uno by old) new)
   |=  [=lobe o=blob n=blob]
+  ^-  blob
   ?-    -.o
       %direct  o
       %delta   o
@@ -1442,7 +1441,7 @@
     ?~  yen
       =.  lab.dom  (~(put by lab.dom) bel yon)
       ..park
-    ::  an aeon is bound to this label, 
+    ::  an aeon is bound to this label,
     ::  but it is the same as the existing one, so we no-op
     ::
     ?:  =(u.yen yon)
@@ -1605,106 +1604,15 @@
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     =.  ..park  (emil (print q.old-yaki data))
-    =?  ..park  &(updated !dist-upgraded.ruf)  migrate-dist
     wake:(ergo mim)
     ::
-    ++  migrate-dist
-      ~>  %slog.0^'clay: migrating for third-party software distribution'
-      |^  ^+  ..park
-      =.  ..park  purge
-      ::  first make sure gall has molted and has :hood running
-      ::
-      =.  ..park  (emit hen %pass /dist/hood %g %jolt %home %hood)
-      ::  now ask :hood to install all the new desks
-      ::
-      ::  NOTE: reverse order, since we're prepending moves each time
-      ::
-      =.  ..park  (install-from-tmp %bitcoin)
-      =.  ..park  (install-from-tmp %webterm)
-      =.  ..park  (install-from-tmp %landscape)
-      =.  ..park  (install-from-tmp %garden)
-      =.  ..park  (install-from-tmp %base)
-      ..park(dist-upgraded.ruf &)
-      ::
-      ++  purge
-        ^+  ..park
-        =/  wux=(list [=wove dux=(set duct)])  ~(tap by qyx)
-        |-  ^+  ..park
-        ?~  wux  ..park
-        =/  rov  rove.wove.i.wux
-        =?    qyx
-            ?+  -.rov  |
-              %sing  ?=([%a * %app %publish %hoon ~] mood.rov)
-              %next  ?=([%a * %app %publish %hoon ~] mood.rov)
-            ==
-          (~(del by qyx) wove.i.wux)
-        $(wux t.wux)
-      ::
-      ++  install-from-tmp
-        |=  =desk
-        ^+  ..park
-        =/  sen  (^^sein:title rof our now our)
-        %-  lime
-        |^  ^-  (list move)
-        =-  (murn - same)
-        ^-  (list (unit move))
-        :~  `create-desk
-            `install-local
-          ::
-            ?:  =(sen our)  ~
-            `install-remote
-          ::
-            ?:  =(%base desk)  ~
-            `publish-desk
-        ==
-        ::
-        ++  create-desk  ^-  move
-          :^  hen  %pass  /dist/create/[desk]
-          %^  new-desk:cloy  desk
-            (latest-tako %home)
-          ;;((map path page) (cue (get-tmp-jam desk)))
-        ::
-        ++  publish-desk  ^-  move
-          :^  hen  %pass  /dist/public/[desk]
-          [%c %perm desk / %r `[%black ~]]
-        ::
-        ++  install-local  ^-  move
-          :^  hen  %pass  /dist/install-local/[desk]
-          [%g %deal [our our] %hood %poke %kiln-install !>([desk our desk])]
-        ::
-        ++  install-remote  ^-  move
-          =/  rem  ?:(=(%base desk) %kids desk)
-          ::
-          :^  hen  %pass  /dist/install-remote/[desk]
-          [%g %deal [our our] %hood %poke %kiln-install !>([desk sen rem])]
-        --
-      ::
-      ++  latest-tako
-        |=  =desk
-        ^-  (unit tako)
-        ?~  doj=(~(get by dos.rom) desk)  ~
-        =,  dom.u.doj
-        (~(get by hit) let)
-      ::
-      ++  get-tmp-jam
-        |=  =desk
-        ^-  @
-        ~|  [%missing-tmp-desk-jam desk]
-        ?~  tmp=(~(get by dir.ank.dom) ~.tmp)  !!
-        ?~  new=(~(get by dir.u.tmp) desk)     !!
-        ?~  jam=(~(get by dir.u.new) ~.jam)    !!
-        ?~  fil.u.jam                          !!
-        =*  fil  u.fil.u.jam
-        ?>  =(%jam p.q.fil)
-        ;;(@ q.q.q.fil)
-      --
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
     ++  is-kernel-path  |=(pax=path ?=([%sys *] pax))
     ::
     ++  did-kernel-update
       |=  invalid=(set path)
-      ?.  |(=(%base syd) &(=(%home syd) !dist-upgraded.ruf))
+      ?.  |(=(%base syd) &(=(%home syd)))
         |
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
@@ -4267,7 +4175,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%10                                       ::  vane version
+    $:  ver=%11                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4363,7 +4271,7 @@
     [mos ..^$]
   ::
       %init
-    [~ ..^$(hun.rom.ruf hen, dist-upgraded.ruf &)]
+    [~ ..^$(hun.rom.ruf hen)]
   ::
       %into
     =.  hez.ruf  `hen
@@ -4553,22 +4461,70 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%10 raft-10]
+        $%  [%11 raft-11]
+            [%10 raft-10]
             [%9 raft-9]
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-10  raft
+      +$  raft-11  raft
+      +$  raft-10
+        $:  rom=room-10
+            hoy=(map ship rung-10)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+            dist-upgraded=_|
+        ==
+      +$  room-10
+        $:  hun=duct
+            dos=(map desk dojo-10)
+        ==
+      +$  dojo-10
+        $:  qyx=cult-10
+            dom=dome
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  cult-10  (jug wove-10 duct)
+      +$  wove-10  [for=(unit [=ship ver=@ud]) =rove-10]
+      +$  rove-10
+        $%  [%sing =mood]
+            [%next =mood aeon=(unit aeon) =cach-10]
+            $:  %mult
+                =mool
+                aeon=(unit aeon)
+                old-cach=(map [=care =path] cach-10)
+                new-cach=(map [=care =path] cach-10)
+            ==
+            [%many track=? =moat lobes=(map path lobe)]
+        ==
+      +$  cach-10  (unit (unit (each cage lobe)))
+      +$  rung-10
+        $:  rus=(map desk rede-10)
+        ==
+      +$  rede-10
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult-10
+            dom=dome
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
       +$  raft-9
-        $:  rom=room                                    ::  domestic
-            hoy=(map ship rung)                         ::  foreign
-            ran=rang                                    ::  hashes
-            mon=(map term beam)                         ::  mount points
-            hez=(unit duct)                             ::  sync duct
-            cez=(map @ta crew)                          ::  permission groups
-            pud=(unit [=desk =yoki])                    ::  pending update
-        ==                                              ::
+        $:  rom=room-10
+            hoy=(map ship rung-10)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+        ==
       +$  raft-8
         $:  rom=room-8
             hoy=(map ship rung-8)
@@ -4586,7 +4542,7 @@
         $:  rus=(map desk rede-8)
         ==
       +$  dojo-8
-        $:  qyx=cult
+        $:  qyx=cult-10
             dom=dome-8
             per=regs
             pew=regs
@@ -4604,7 +4560,7 @@
       +$  rede-8
         $:  lim=@da
             ref=(unit rind)
-            qyx=cult
+            qyx=cult-10
             dom=dome-8
             per=regs
             pew=regs
@@ -4627,7 +4583,7 @@
         $:  rus=(map desk rede-7)
         ==
       +$  dojo-7
-        $:  qyx=cult
+        $:  qyx=cult-10
             dom=dome-8
             per=regs
             pew=regs
@@ -4635,36 +4591,36 @@
       +$  rede-7
         $:  lim=@da
             ref=(unit rind)
-            qyx=cult
+            qyx=cult-10
             dom=dome-8
             per=regs
             pew=regs
         ==
       +$  ford-cache-7  ford-cache
       +$  raft-6
-        $:  rom=room-6                                  ::  domestic
-            hoy=(map ship rung-6)                       ::  foreign
-            ran=rang                                    ::  hashes
-            mon=(map term beam)                         ::  mount points
-            hez=(unit duct)                             ::  sync duct
-            cez=(map @ta crew)                          ::  permission groups
-            pud=(unit [=desk =yoki])                    ::  pending update
+        $:  rom=room-6
+            hoy=(map ship rung-6)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
         ==                                              ::
       +$  room-6  [hun=duct dos=(map desk dojo-6)]
       +$  dojo-6
-        $:  qyx=cult                                    ::  subscribers
-            dom=dome-6                                  ::  desk state
-            per=regs                                    ::  read perms per path
-            pew=regs                                    ::  write perms per path
+        $:  qyx=cult-10
+            dom=dome-6
+            per=regs
+            pew=regs
         ==
       +$  dome-6
-        $:  ank=ankh                                    ::  state
-            let=aeon                                    ::  top id
-            hit=(map aeon tako)                         ::  versions by id
-            lab=(map @tas aeon)                         ::  labels
-            mim=(map path mime)                         ::  mime cache
-            fod=ford-cache-6                            ::  ford cache
-            fer=*                                       ::  reef cache
+        $:  ank=ankh
+            let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            mim=(map path mime)
+            fod=ford-cache-6
+            fer=*
         ==
       +$  rung-6
         $:  rus=(map desk rede-6)
@@ -4672,7 +4628,7 @@
       +$  rede-6
         $:  lim=@da
             ref=(unit rind)
-            qyx=cult
+            qyx=cult-10
             dom=dome-6
             per=regs
             pew=regs
@@ -4685,7 +4641,8 @@
   =?  old  ?=(%7 -.old)  8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
   =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
-  ?>  ?=(%10 -.old)
+  =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
+  ?>  ?=(%11 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4735,7 +4692,7 @@
         dos.rom
       %-  ~(run by dos.rom.raf)
       |=  =dojo-8
-      ^-  dojo
+      ^-  dojo-10
       =/  dom  dom.dojo-8
       dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
     ::
@@ -4744,7 +4701,7 @@
       |=  =rung-8
       %-  ~(run by rus.rung-8)
       |=  =rede-8
-      ^-  rede
+      ^-  rede-10
       =/  dom  dom.rede-8
       rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
     ==
@@ -4753,6 +4710,71 @@
     |=  raf=raft-9
     ^-  raft-10
     raf(pud [pud.raf dist-upgraded=|])
+  ::
+  ::  +raft-10-to-11: remove .dist-upgraded and upgrade +cach
+  ++  raft-10-to-11
+    |=  raf=raft-10
+    ^-  raft-11
+    |^
+    %=    raf
+        |6       pud.raf
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  =dojo-10
+      ^-  dojo
+      dojo-10(qyx (cult-10-to-cult qyx.dojo-10))
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-10
+      %-  ~(run by rus.rung-10)
+      |=  =rede-10
+      rede-10(qyx (cult-10-to-cult qyx.rede-10))
+    ==
+    ++  cult-10-to-cult
+      |=  qyx=cult-10
+      ^-  cult
+      =/  qux=(list [=wove-10 ducts=(set duct)])  ~(tap by qyx)
+      %-  malt
+      |-  ^-  (list [wove (set duct)])
+      ?~  qux
+        ~
+      :_  $(qux t.qux)
+      %=    i.qux
+          rove-10.wove-10
+        ?-    -.rove-10.wove-10.i.qux
+            %sing  rove-10.wove-10.i.qux
+            %many  rove-10.wove-10.i.qux
+            %next
+          %=  rove-10.wove-10.i.qux
+            cach-10  (cach-10-to-cach cach-10.rove-10.wove-10.i.qux)
+          ==
+        ::
+            %mult
+          %=  rove-10.wove-10.i.qux
+            old-cach  (caches-10-to-caches old-cach.rove-10.wove-10.i.qux)
+            new-cach  (caches-10-to-caches new-cach.rove-10.wove-10.i.qux)
+          ==
+        ==
+      ==
+    ::
+    ++  cach-10-to-cach
+      |=  =cach-10
+      ^-  cach
+      ?~  cach-10
+        ~
+      ?~  u.cach-10
+        [~ ~]
+      ?-  -.u.u.cach-10
+        %&  ``p.u.u.cach-10
+        %|  ~
+      ==
+    ::
+    ++  caches-10-to-caches
+      |=  caches-10=(map [=care =path] cach-10)
+      ^-  (map [=care =path] cach)
+      (~(run by caches-10) cach-10-to-cach)
+    --
   --
 ::
 ++  scry                                              ::  inspect
