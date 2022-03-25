@@ -2,7 +2,6 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
-import gcpManager from '~/logic/lib/gcpManager';
 import { svgDataURL } from '~/logic/lib/util';
 import history from '~/logic/lib/history';
 import { favicon } from '~/logic/state/contact';
@@ -79,10 +78,6 @@ const StatusBarWithRouter = withRouter(StatusBar);
 
 const App: React.FunctionComponent = () => {
   const { theme, display } = useThemeWatcher();
-
-  React.useEffect(() => {
-    gcpManager.start();
-  }, []);
 
   return (
     <ThemeProvider theme={theme}>

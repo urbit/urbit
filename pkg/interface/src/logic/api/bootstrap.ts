@@ -32,17 +32,26 @@ export async function bootstrapApi() {
     useLocalState.setState({ subscription: 'connected' });
   };
 
-  await airlock.eventSource();
+  await useMetadataState.getState().initialize(airlock);
+
+  const path = window.location.pathname;
+  const inGroup = path.startsWith('/apps/landscape/~landscape/ship');
+  const inDms = path.startsWith('/apps/landscape/~landscape/messages');
   const {
     getKeys,
     getShallowChildren
   } = useGraphState.getState();
-  getKeys();
-  useHarkState.getState().getUnreads();
-  getShallowChildren(`~${window.ship}`, 'dm-inbox');
 
-  [
-    useMetadataState,
+  if (inDms) {
+    getShallowChildren(`~${window.ship}`, 'dm-inbox');
+  }
+
+  if (inGroup || inDms) {
+    getKeys();
+    useHarkState.getState().getUnreads();
+  }
+
+  const subs = [
     useGroupState,
     useContactState,
     useHarkState,
@@ -52,6 +61,9 @@ export async function bootstrapApi() {
     useLaunchState,
     useGraphState
   ].map(state => state.getState().initialize(airlock));
+
+  await Promise.all(subs);
+
   useSettingsState.getState().getAll();
   gcpManager.start();
 }
