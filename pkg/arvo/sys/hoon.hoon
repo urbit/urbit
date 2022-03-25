@@ -9052,7 +9052,7 @@
     ::
     ^-  type
     ~+
-    ~=  sut
+    =-  ?.(=(sut -) - sut)
     ?+  sut      sut
       [%cell *]  [%cell burp(sut p.sut) burp(sut q.sut)]
       [%core *]  :+  %core
