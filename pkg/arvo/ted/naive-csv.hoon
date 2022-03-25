@@ -108,22 +108,33 @@
     %-  %-  slog  :_  ~
         leaf+"processing {<net>} ethereum logs with {<(lent events)>} events"
     ::
+    ;<  ~  bind:m
+      %-  flog-text  %+  weld  "naive-csv: processing {<net>} ethereum logs"
+                               "with {<(lent events)>} events"
     =/  =rolls-map
       (compute-effects nas.snap events net naive-contract chain-id)
     %-  %-  slog  :_  ~
       leaf+"getting timestamps from ethereum node"
-    ;<  =thread-result  bind:m
+    ;<  tim=thread-result  bind:m
       %+  await-thread  %eth-get-timestamps
       !>([node-url ~(tap in ~(key by rolls-map))])
     =/  timestamps  %-  ~(gas by *(map blocknum @da))
-                    ?-  thread-result
-                      [%.y *]  ;;((list [@ud @da]) q.p.thread-result)
-                      [%.n *]  ~|  '%eth-get-timestamps failed'  !!
+                    ?-  tim
+                      [%.y *]  ;;((list [@ud @da]) q.p.tim)
+                      [%.n *]  ~|  'naive-csv: %eth-get-timestamps failed'  !!
                     ==
-    ;<  roll-receipts=(map keccak [gas=@ud sender=address])  bind:m
-      (get-roll-receipts node-url (get-roll-hashes rolls-map))
+    ;<  ~  bind:m  (flog-text "naive-csv: got timestamps")
+    ;<  gaz=thread-result  bind:m
+      %+  await-thread  %eth-get-tx-receipts
+      !>([node-url (get-roll-hashes rolls-map)])
+    =/  gas-sender  %-  ~(gas by *(map keccak [gas=@ud sender=address]))
+                    ?-  gaz
+                      [%.y *]  (parse-gas-sender ;;((list [@t json]) q.p.gaz))
+                      [%.n *]  ~|  'naive-csv: %eth-get-tx-receipts failed'  !!
+                    ==
+    ;<  ~  bind:m  (flog-text "naive-csv: got tx receipts")
     =/  csv=(list cord)
-      (make-csv (flatten (collate-roll-data rolls-map timestamps roll-receipts)))
+      (make-csv (flatten (collate-roll-data rolls-map timestamps gas-sender)))
     ;<  ~  bind:m  (export-csv csv pax)
     ::
     (pure:m !>((crip :(weld "data saved to %" (spud pax) "/"))))
@@ -241,52 +252,21 @@
       ==
     ==
   ::
-  ::  +get-roll-receipts retrieves transaction receipts for rolls, extracting
-  ::  the gas cost and sender, then returns a map from tx hashes to [gas sender]
-  ++  get-roll-receipts
-    ::  TODO: this should be made into a separate thread for use by others, but
-    ::  it has the same issue with child threads as get-timestamps
-    |=  [node-url=@t tx-hashes=(list keccak)]
-    %-  %-  slog  :_  ~
-      leaf+"getting l2 roll receipts from ethereum node"
-    =/  m  (strand ,(map keccak [gas=@ud sender=address]))
-    ^-  form:m
-    =|  out=(map keccak [gas=@ud sender=address])
-    |^  ^-  form:m
-      =*  loop  $
-      ?:  =(~ tx-hashes)  (pure:m out)
-      ;<  res=(list [@t json])  bind:m
-        (request-receipts (scag 100 tx-hashes) node-url)
-      %_  loop
-        out        (~(gas by out) (parse-results res))
-        tx-hashes  (slag 100 tx-hashes)
-      ==
-    ::
-    ++  request-receipts
-      |=  [tx-hashes=(list keccak) node-url=@t]
-      %+  request-batch-rpc-strict:ethio  node-url
-      %+  turn  tx-hashes
-      |=  =keccak
-      ^-  [(unit @t) request:rpc:ethereum]
-      :-  `(crip '0' 'x' ((x-co:co 64) keccak))
-      [%eth-get-transaction-receipt keccak]
-    ::
-    ++  parse-results
-      |=  res=(list [@t json])
-      ^-  (list [=keccak [gas=@ud sender=address]])
-      %+  turn  res
-      |=  [id=@t =json]
-      ^-  [=keccak [gas=@ud sender=address]]
-      :-  (hex-to-num:ethereum id)
-      :-  %-  parse-hex-result:rpc:ethereum
-        ~|  json
-        ?>  ?=(%o -.json)
-        (~(got by p.json) 'effectiveGasPrice')                    :: gas used in wei
-      %-  parse-hex-result:rpc:ethereum
+  ++  parse-gas-sender
+    |=  res=(list [@t json])
+    ^-  (list [=keccak [gas=@ud sender=address]])
+    %+  turn  res
+    |=  [id=@t =json]
+    ^-  [=keccak [gas=@ud sender=address]]
+    :-  (hex-to-num:ethereum id)
+    :-  %-  parse-hex-result:rpc:ethereum
       ~|  json
       ?>  ?=(%o -.json)
-      (~(got by p.json) 'from')
-    --
+      (~(got by p.json) 'effectiveGasPrice')                    :: gas used in wei
+    %-  parse-hex-result:rpc:ethereum
+    ~|  json
+    ?>  ?=(%o -.json)
+    (~(got by p.json) 'from')
   ::
   ::  +get-roll-hashes makes a list of hashes of all transactions from $rolls-map
   ++  get-roll-hashes
