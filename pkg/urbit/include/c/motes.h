@@ -794,6 +794,7 @@
 #   define c3__no     c3_s2('n','o')
 #   define c3__noah   c3_s4('n','o','a','h')
 #   define c3__nock   c3_s4('n','o','c','k')
+#   define c3__noco   c3_s4('n','o','c','o')
 #   define c3__none   c3_s4('n','o','n','e')
 #   define c3__noop   c3_s4('n','o','o','p')
 #   define c3__nop    c3_s3('n','o','p')

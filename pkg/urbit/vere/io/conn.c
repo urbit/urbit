@@ -894,26 +894,27 @@ _conn_io_exit(u3_auto* car_u)
 u3_auto*
 u3_conn_io_init(u3_pier* pir_u)
 {
-  u3_conn*          con_u = c3_calloc(sizeof(*con_u));
-  u3_auto*          car_u = &con_u->car_u;
+  u3_conn*        con_u;
+  u3_auto*        car_u;
+  u3_noun         now;
+  struct timeval  tim_u;
 
+  if ( c3n == u3_Host.ops_u.con ) {
+    return NULL;
+  }
+  con_u = c3_calloc(sizeof(*con_u));
   con_u->sil_u = u3s_cue_xeno_init();
   con_u->kan_o = c3n;
+  car_u = &con_u->car_u;
   car_u->nam_m = c3__conn;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _conn_io_talk;
   car_u->io.kick_f = _conn_io_kick;
   car_u->io.exit_f = _conn_io_exit;
 
-  {
-    u3_noun         now;
-    struct timeval  tim_u;
-
-    gettimeofday(&tim_u, 0);
-    now = u3_time_in_tv(&tim_u);
-    con_u->sev_l = u3r_mug(now);
-    u3z(now);
-  }
-
+  gettimeofday(&tim_u, 0);
+  now = u3_time_in_tv(&tim_u);
+  con_u->sev_l = u3r_mug(now);
+  u3z(now);
   return car_u;
 }
