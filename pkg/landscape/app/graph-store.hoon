@@ -153,6 +153,15 @@
         %tags               ~|('cannot send %tags as poke' !!)
         %tag-queries        ~|('cannot send %tag-queries as poke' !!)
     ==
+    ++  put-update-log
+      |=  [=resource:store =update-log:store =time =logged-update:store]
+      ^-  update-log:store
+      ?:  =(our.bowl entity.resource)
+        (put:orm-log update-log time logged-update)
+      %+  gas:orm-log  *update-log:store
+      :~  (need (pry:orm-log update-log))
+          [time logged-update]
+      ==
     ::
     ++  add-graph
       |=  $:  =time
@@ -209,7 +218,7 @@
       ?>  is-valid
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
-        (put:orm-log update-log time [time [%add-nodes resource nodes]])
+        (put-update-log resource update-log time [time %add-nodes resource nodes])
       ::
       :-  (give [/updates]~ [%add-nodes resource nodes])
       %_  state
@@ -347,7 +356,9 @@
         (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
-        (put:orm-log update-log time [time [%remove-posts resource indices]])
+        %^  put-update-log  resource
+          update-log
+        [time time %remove-posts resource indices]
       :-  (give [/updates]~ [%remove-posts resource indices])
       %_  state
         update-logs  (~(put by update-logs) resource update-log)
@@ -434,8 +445,9 @@
         (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
-        (put:orm-log update-log time [time [%add-signatures uid signatures]])
-      ::
+        %^  put-update-log  resource
+          update-log
+        [time time %add-signatures uid signatures]
       :-  (give [/updates]~ [%add-signatures uid signatures])
       %_  state
           update-logs  (~(put by update-logs) resource update-log)
@@ -482,9 +494,9 @@
         (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
-        %^  put:orm-log  update-log
-          time
-        [time [%remove-signatures uid signatures]]
+        %^  put-update-log  resource
+          update-log
+        [time time %remove-signatures uid signatures]
       ::
       :-  (give [/updates]~ [%remove-signatures uid signatures])
       %_  state
