@@ -123,7 +123,7 @@
       (make-csv (flatten (collate-roll-data rolls-map timestamps roll-receipts)))
     ;<  ~  bind:m  (export-csv csv pax)
     ::
-    (pure:m !>((crip :(weld "data saved to %" (spud pax) "/txt"))))
+    (pure:m !>((crip :(weld "data saved to %" (spud pax) "/"))))
   ::
   ::  +collate-roll-data throws naive:effects, timestamps, and gas costs into
   ::  one $block-map
@@ -246,7 +246,6 @@
     |=  [node-url=@t tx-hashes=(list keccak)]
     %-  %-  slog  :_  ~
       leaf+"getting l2 roll receipts from ethereum node"
-    ::=/  tx-hashes=(list keccak)  (get-roll-hashes rolls-map)
     =/  m  (strand ,(map keccak [gas=@ud sender=address]))
     ^-  form:m
     =|  out=(map keccak [gas=@ud sender=address])
@@ -394,7 +393,11 @@
     ;<  =bowl:spider  bind:m  get-bowl
     =-  (send-raw-card %pass / %arvo %c %info -)
     %+  foal:space:userlib
-      :(weld /(scot %p our.bowl)/base/(scot %da now.bowl) pax /txt)
+      ;:  weld
+        /(scot %p our.bowl)/base/(scot %da now.bowl)
+        pax
+        /(scot %da now.bowl)/txt
+      ==
     [%txt !>(in)]
   ::
   ::  +make-csv takes in a (list tx-data) and makes it into a (list cord) to be
