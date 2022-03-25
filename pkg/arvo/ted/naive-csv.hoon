@@ -206,7 +206,7 @@
     ?:  =([& &] nonce-and-tx)
       %=  $
         nonce-and-tx  [| |]
-        tx-data       *_tx-data  :: reset tx-data TODO: why does this seem to work?
+        tx-data       *_tx-data  :: reset tx-data
         roll-tx-list  (snoc roll-tx-list tx-data)
       ==
     ::  if we've finished looping through the effects, add the tx list from the
