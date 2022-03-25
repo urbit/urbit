@@ -225,7 +225,6 @@ _conn_read_wire(u3_noun   wir,
     {
       u3z(wir); return c3n;
     }
-
     if ( u3_nul == t_pud ) {
       *coq_l = 0; *rid = 0;
     }
@@ -235,7 +234,6 @@ _conn_read_wire(u3_noun   wir,
       {
         u3z(wir); return c3n;
       }
-
       if ( u3_nul == tt_pud ) {
         *rid = 0;
       }
@@ -246,7 +244,6 @@ _conn_read_wire(u3_noun   wir,
         {
           u3z(wir); return c3n;
         }
-
         uco = u3dc("slaw", c3__uv, u3k(r_pud));
         if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
              (u3_nul != p_uco) )
@@ -468,16 +465,13 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       case c3__help: {
         res = u3nc(
           u3_nul,
-          u3i_list(
-            u3nc(c3__help, u3_nul),
-            u3nc(c3__info, u3_nul),
-            u3nc(c3__khan, u3_nul),
-            u3nc(c3__live, u3_nul),
-            u3nc(c3__mass, u3_nul),
-            u3nc(c3__port, u3nq(c3__ames, c3__htls, c3__http, u3_nul)),
-            u3nc(c3__v, u3_nul),
-            u3nc(c3__who, u3_nul),
-            u3_none));
+          u3i_list(u3nc(c3__help, u3_nul), u3nc(c3__info, u3_nul),
+                   u3nc(c3__khan, u3_nul), u3nc(c3__live, u3_nul),
+                   u3nc(c3__mass, u3_nul),
+                   u3nc(c3__port,
+                        u3i_list(c3__ames, c3__htls, c3__http, u3_none)),
+                   u3nc(c3__v, u3_nul), u3nc(c3__who, u3_nul),
+                   u3_none));
       } break;
       //  simple health check.
       //
@@ -506,14 +500,14 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
       case c3__v: {
         res = u3nc(u3_nul, u3i_string(URBIT_VERSION));
       } break;
+      //  current ship.
+      //
       case c3__who: {
         res = u3nc(u3_nul, u3i_chubs(2, pir_u->who_d));
       }
     }
   }
   else if ( c3n == u3r_cell(t_dat, &it_dat, &tt_dat) ) {
-    //  non-list structure, not understood.
-    //
     res = u3_nul;
   }
   else if ( u3_nul == tt_dat ) {
@@ -542,8 +536,6 @@ _conn_read_peel(u3_conn* con_u, u3_noun dat)
     }
   }
   else {
-    //  unknown request.
-    //
     res = u3_nul;
   }
   u3z(dat); return res;
@@ -623,8 +615,7 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
 
     case c3__peel: {
       _conn_send_noun(
-        can_u, u3nc(u3k(rid),
-                    _conn_read_peel(con_u, u3k(dat))));
+        can_u, u3nc(u3k(rid), _conn_read_peel(con_u, u3k(dat))));
     } break;
 
     case c3__ovum: {
@@ -645,8 +636,6 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
           goto _moor_poke_out;
         } break;
         case c3__meld: {
-          //  ack immediately.
-          //
           _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
           u3_pier_meld(con_u->car_u.pir_u);
         } break;
@@ -654,9 +643,6 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
           _conn_send_noun(can_u, u3nc(u3k(rid), c3y));
           u3_pier_pack(con_u->car_u.pir_u);
         } break;
-        //  TODO  more %urth commands
-        //  TODO  send updates, success/failure?
-        //
       }
     } break;
   }
