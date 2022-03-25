@@ -32,24 +32,22 @@ export async function bootstrapApi() {
     useLocalState.setState({ subscription: 'connected' });
   };
 
+  await airlock.eventSource();
   const {
-    clear,
     getKeys,
     getShallowChildren
   } = useGraphState.getState();
-  clear();
   getKeys();
   useHarkState.getState().getUnreads();
   getShallowChildren(`~${window.ship}`, 'dm-inbox');
-  await airlock.eventSource();
 
   [
     useMetadataState,
     useGroupState,
     useContactState,
+    useHarkState,
     useSettingsState,
     useInviteState,
-    useHarkState,
     useStorageState,
     useLaunchState,
     useGraphState
