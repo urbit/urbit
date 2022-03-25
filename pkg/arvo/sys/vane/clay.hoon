@@ -4426,6 +4426,34 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %tomb
+    =/  used=(unit beam)
+      =/  desks=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
+      |-
+      =*  desk-loop  $
+      ?~  desks
+        ~
+      ?:  =(0 let.dom.dojo.i.desks)
+        desk-loop(desks t.desks)
+      =/  =yaki
+        %-  ~(got by hut.ran.ruf)
+        %-  ~(got by hit.dom.dojo.i.desks)
+        let.dom.dojo.i.desks
+      =/  paths=(list [=path =lobe])  ~(tap by q.yaki)
+      |-
+      =*  path-loop  $
+      ?~  paths
+        desk-loop(desks t.desks)
+      ?:  =(lobe.req lobe.i.paths)
+        `[[our desk.i.desks ud+let.dom.dojo.i.desks] path.i.paths]
+      path-loop(paths t.paths)
+    ::
+    ?^  used
+      %-  (slog leaf+"clay: file used in {<(en-beam u.used)>}" ~)
+      [~ ..^$]
+    =.  lat.ran.ruf  (~(put by lat.ran.ruf) lobe.req %dead lobe.req ~)
+    [~ ..^$]
+  ::
       %trim  [~ ..^$]
   ::
       %vega

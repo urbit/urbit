@@ -773,6 +773,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%tomb =lobe]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%warp wer=ship rif=riff]                       ::  internal file req
