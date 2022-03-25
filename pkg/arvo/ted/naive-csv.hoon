@@ -110,13 +110,16 @@
     ::
     =/  =rolls-map
       (compute-effects nas.snap events net naive-contract chain-id)
-    ::  I think this should work, but child threads seem to be broken
-    ::  ;<  =thread-result  bind:m
-    ::    %+  await-thread
-    ::      %eth-get-timestamps
-    ::    !>([node-url ~(tap in ~(key by rolls-map))])
-    ;<  timestamps=(map blocknum @da)  bind:m
-      (get-timestamps node-url ~(tap in ~(key by rolls-map)))
+    %-  %-  slog  :_  ~
+      leaf+"getting timestamps from ethereum node"
+    ;<  =thread-result  bind:m
+      %+  await-thread  %eth-get-timestamps
+      !>([node-url ~(tap in ~(key by rolls-map))])
+    =/  timestamps  %-  ~(gas by *(map blocknum @da))
+                    ?-  thread-result
+                      [%.y *]  ;;((list [@ud @da]) q.p.thread-result)
+                      [%.n *]  ~|  '%eth-get-timestamps failed'  !!
+                    ==
     ;<  roll-receipts=(map keccak [gas=@ud sender=address])  bind:m
       (get-roll-receipts node-url (get-roll-hashes rolls-map))
     =/  csv=(list cord)
@@ -292,50 +295,6 @@
     %+  turn  ~(val by rolls-map)
     |=  a=(map keccak effects:naive)
     ~(tap in ~(key by a))
-  ::
-  ::  +get-timestamps retrieves the timestamps for a list of block numbers
-  ++  get-timestamps
-    ::  TODO: would be better to call the eth-get-timestamps thread directly
-    ::  rather than copy and paste the code for it here, but child threads seem
-    ::  to be broken.
-    |=  [node-url=@t blocks=(list blocknum)]
-    %-  %-  slog  :_  ~
-      leaf+"getting timestamps from ethereum node"
-    =/  m  (strand ,(map blocknum @da))
-    ^-  form:m
-    =|  out=(map blocknum @da)
-    |^  ^-  form:m
-      =*  loop  $
-      ?:  =(~ blocks)  (pure:m out)
-      ;<  res=(list [@t json])  bind:m
-        (request-blocks (scag 100 blocks) node-url)
-      %_  loop
-        out     (~(gas by out) (parse-results res))
-        blocks  (slag 100 blocks)
-      ==
-    ::
-    ++  request-blocks
-      |=  [blocks=(list blocknum) node-url=@t]
-      %+  request-batch-rpc-strict:ethio  node-url
-      %+  turn  blocks
-      |=  block=blocknum
-      ^-  [(unit @t) request:rpc:ethereum]
-      :-  `(scot %ud block)
-      [%eth-get-block-by-number block |]
-    ::
-    ++  parse-results
-      |=  res=(list [@t json])
-      ^-  (list [blocknum @da])
-      %+  turn  res
-      |=  [id=@t =json]
-      ^-  [blocknum @da]
-      :-  (slav %ud id)
-      %-  from-unix:chrono:userlib
-      %-  parse-hex-result:rpc:ethereum
-      ~|  json
-      ?>  ?=(%o -.json)
-      (~(got by p.json) 'timestamp')
-    --
   ::
   ::  +compute-effects calls +naive to compute the state transitions for all
   ::  logs, but it returns a map that only has the effects for L2 transactions,
