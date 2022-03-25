@@ -766,7 +766,7 @@
             des=desk                                    ::  target desk
             bas=beak                                    ::  base desk
             con=(list [beak germ])                      ::  merges
-        ==
+        ==                                              ::
         [%mont pot=term bem=beam]                       ::  mount to unix
         [%dirk des=desk]                                ::  mark mount dirty
         [%ogre pot=$@(desk beam)]                       ::  delete mount point
@@ -779,12 +779,12 @@
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::
-  ::
+  ::                                                    ::
   ::::                                                  ::  (1c2)
-    ::
+    ::                                                  ::
   +$  aeon  @ud                                         ::  version number
   +$  ankh                                              ::  fs node (new)
-    $~  [~ ~]
+    $~  [~ ~]                                           ::
     $:  fil=(unit [p=lobe q=cage])                      ::  file
         dir=(map @ta ankh)                              ::  folders
     ==                                                  ::
@@ -795,14 +795,12 @@
         [%direct p=lobe q=page]                         ::  immediate
         [%dead p=lobe ~]                                ::  tombstone
     ==                                                  ::
-  ::  +cable: a reference to something on the filesystem
-  ::    face: the face to wrap around the imported file
-  ::    file-path: location in clay
-  +$  cable
-    $:  face=(unit term)
-        file-path=term
-    ==
-  +$  care  ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
+  +$  cable                                             :: lib/sur/mark ref
+    $:  face=(unit term)                                ::
+        file-path=term                                  ::
+    ==                                                  ::
+  +$  care                                              ::  clay submode
+    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
   +$  case                                              ::  ship desk case spur
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label
@@ -881,9 +879,9 @@
     ==                                                  ::
   +$  regs  (map path rule)                             ::  rules for paths
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
-  +$  riff-any
-    $%  [%1 =riff]
-    ==
+  +$  riff-any                                          ::
+    $%  [%1 =riff]                                      ::
+    ==                                                  ::
   +$  rite                                              ::  new permissions
     $%  [%r red=(unit rule)]                            ::  for read
         [%w wit=(unit rule)]                            ::  for write
