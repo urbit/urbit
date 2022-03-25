@@ -330,7 +330,7 @@
       ==                                                ::
       $:  %behn                                         ::
           $%  $>(%wake gift:behn)                       ::  timer activate
-              $>(%writ gift)                            ::  XX %slip
+              $>(%writ gift)                            ::
       ==  ==                                            ::
       $:  %clay                                         ::
           $>  $?  %mere                                 ::
@@ -1098,7 +1098,7 @@
 ++  de                                                  ::  per desk
   |=  [now=@da rof=roof hen=duct raft]
   |=  [her=ship syd=desk]
-  ::  XX ruf=raft crashes in the compiler
+  ::  NB: ruf=raft crashes in the compiler
   ::
   =*  ruf  |3.+6.^$
   ::
@@ -1478,9 +1478,9 @@
   ::
   ::    Guaranteed to finish in one event.
   ::
-  ::    XX  needs to check that head is ancestor of tako
-  ::    XX  needs to check tako in rang
-  ::    XX  needs to check that commit doesn't have same date
+  ::    TODO: needs to check that head is ancestor of tako
+  ::    TODO: needs to check tako in rang
+  ::    TODO: needs to check that commit doesn't have same date
   ::
   ++  park
     =/  check-sane  |
@@ -1993,7 +1993,7 @@
         ==
       ::  Assert we calculated the same change-cages w/o cache
       ::
-      ::  XX remove deletes
+      ::  ? remove deletes
       ::
       =/  all-changes=(map path (each page lobe))
         =/  original=(map path (each page lobe))
@@ -2950,20 +2950,20 @@
       ?.((~(has in b) hen) c [a c])
     ::
     ?~  ref
-      =>  .(ref `(unit rind)`ref)             ::  XX TMI
-      ?:  =(~ wos)  ..cancel-request                    ::  XX handle?
+      =>  .(ref `(unit rind)`ref)
+      ?:  =(~ wos)  ..cancel-request          ::  TODO handle?
       |-  ^+  ..cancel-request
       ?~  wos  ..cancel-request
       =.  ..cancel-request  (run-if-future rove.i.wos |=(@da (best hen +<)))
       $(wos t.wos)
     ::
     ?~  nux=(~(get by fod.u.ref) hen)
-      ..cancel-request(ref `(unit rind)`ref)  ::  XX TMI
+      ..cancel-request(ref `(unit rind)`ref)
     =:  fod.u.ref  (~(del by fod.u.ref) hen)
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
     %.  [hen her u.nux [syd ~]]
-    send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
+    send-over-ames(ref `(unit rind)`ref)
   ::
   ::  Handles a request.
   ::
@@ -3656,8 +3656,6 @@
     ::  These convert between aeon (version number), tako (commit hash), yaki
     ::  (commit data structure), lobe (content hash), and blob (content).
     ::
-    ::    XX the following are duplicated from the +state core
-    ::
     ++  aeon-to-tako  ~(got by hit.dom)
     ++  aeon-to-yaki  |=(=aeon (tako-to-yaki (aeon-to-tako aeon)))
     ++  lobe-to-blob  ~(got by lat.ran)
@@ -4255,7 +4253,7 @@
   ::
   =/  req=task  ((harden task) wrapped-task)
   ::
-  ::  XX handle error notifications
+  ::  TODO handle error notifications
   ::
   ?^  dud
     [[[hen %slip %d %flog %crud [-.req tang.u.dud]] ~] ..^$]
