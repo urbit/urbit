@@ -57,6 +57,7 @@ const AppRoutes = () => {
   useEffect(() => {
     // Check if user has previously stored settings for this browser.
     // If not, send a notification prompting them to do so.
+    // Set both settings to false so that they're not bugged again.
     if (browserId !== '') {
       const thisBrowserSettings = settings.filter((el: any) => el.browserId === browserId)[0];
       if (!thisBrowserSettings) {
@@ -77,6 +78,10 @@ const AppRoutes = () => {
             }
           )
         );
+        const newSettings = [{ browserId, protocolHandling: false, browserNotifications: false }];
+        useSettingsState
+          .getState()
+          .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
       }
     }
   }, [browserId]);
