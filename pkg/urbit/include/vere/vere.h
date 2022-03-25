@@ -471,10 +471,7 @@
           c3_c*                pax_c;           //  directory
           c3_d                 key_d[4];        //  image key
           c3_o                 liv_o;           //  live
-          c3_y                 hon_y;           //  hoon kelvin
-          c3_y                 noc_y;           //  nock kelvin
           c3_d                 eve_d;           //  last event completed
-          c3_l                 mug_l;           //  mug at eve_d
           u3_lord_cb            cb_u;           //  callbacks
           c3_o                 pin_o;           //  spinning
           c3_w                 dep_w;           //  queue depth

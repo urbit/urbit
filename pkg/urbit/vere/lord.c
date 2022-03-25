@@ -239,17 +239,17 @@ _lord_plea_ripe(u3_lord* god_u, u3_noun dat)
 
   {
     u3_noun a, b, c, pro, wyn, who, fak, eve, mug;
-    c3_y pro_y, hon_y, noc_y;
+    c3_y pro_y;
     c3_d eve_d;
     c3_l mug_l;
 
+    //  XX parse out version values
+    //
     if (  (c3n == u3r_trel(dat, &a, &b, &c))
        || (c3n == u3r_cell(a, &pro, &wyn))
        || (c3n == u3r_safe_byte(pro, &pro_y))
        || (c3n == u3r_cell(b, &who, &fak))
        || (c3n == u3r_cell(c, &eve, &mug))
-       // || (c3n == u3r_safe_byte(hon, &hon_y))
-       // || (c3n == u3r_safe_byte(noc, &noc_y))
        || (c3n == u3r_safe_chub(eve, &eve_d))
        || (c3n == u3r_safe_word(mug, &mug_l)) )
     {
@@ -262,13 +262,10 @@ _lord_plea_ripe(u3_lord* god_u, u3_noun dat)
       return;
     }
 
-    //  XX pass who/fak to cb
+    //  XX pass who/fak to cb, save mug_l?
     //
 
     god_u->eve_d = eve_d;
-    // god_u->mug_l = mug_l;
-    // god_u->hon_y = hon_y;
-    // god_u->noc_y = noc_y;
   }
 
 
@@ -539,8 +536,9 @@ _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
       _lord_plea_flog(god_u, u3k(dat));
     } break;
 
+    //  XX track snapshot state, mug_l, notification cb?
+    //
     case c3__sync: {
-      u3l_log("lord: sync\n");
     } break;
 
     case c3__live: {
@@ -867,10 +865,9 @@ _lord_on_serf_bail(void*       ptr_v,
 void
 u3_lord_info(u3_lord* god_u)
 {
-  u3l_log("  lord: live=%s, event=%" PRIu64 ", mug=%x, queue=%u\n",
+  u3l_log("  lord: live=%s, event=%" PRIu64 ", queue=%u\n",
           ( c3y == god_u->liv_o ) ? "&" : "|",
           god_u->eve_d,
-          god_u->mug_l,
           god_u->dep_w);
   u3_newt_moat_info(&god_u->out_u);
 }
