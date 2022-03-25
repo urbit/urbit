@@ -70,7 +70,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
   const onSubmit = async (values: FormSchema, actions) => {
     const name = channelName(values);
     const resId: string =
-      stringToSymbol(values.name) +
+      await stringToSymbol(values.name) +
       (workspace?.type !== 'messages'
         ? `-${Math.floor(Math.random() * 10000)}`
         : '');
