@@ -9,6 +9,7 @@ import useLaunchState from '../state/launch';
 import useSettingsState from '../state/settings';
 import useLocalState from '../state/local';
 import useStorageState from '../state/storage';
+import gcpManager from '../lib/gcpManager';
 
 export async function bootstrapApi() {
   airlock.onError = (e) => {
@@ -38,11 +39,11 @@ export async function bootstrapApi() {
   } = useGraphState.getState();
   clear();
   getKeys();
-  getShallowChildren(`~${window.ship}`, 'dm-inbox');
   useHarkState.getState().getUnreads();
+  getShallowChildren(`~${window.ship}`, 'dm-inbox');
+  await airlock.eventSource();
 
-  const promises = [
-    useGraphState,
+  [
     useMetadataState,
     useGroupState,
     useContactState,
@@ -50,8 +51,9 @@ export async function bootstrapApi() {
     useInviteState,
     useHarkState,
     useStorageState,
-    useLaunchState
+    useLaunchState,
+    useGraphState
   ].map(state => state.getState().initialize(airlock));
-  await Promise.all(promises);
+  useSettingsState.getState().getAll();
+  gcpManager.start();
 }
-

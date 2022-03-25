@@ -1,6 +1,3 @@
-import Mousetrap from 'mousetrap';
-import shallow from 'zustand/shallow';
-import 'mousetrap-global-bind';
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Router, withRouter } from 'react-router-dom';
@@ -9,9 +6,7 @@ import gcpManager from '~/logic/lib/gcpManager';
 import { svgDataURL } from '~/logic/lib/util';
 import history from '~/logic/lib/history';
 import { favicon } from '~/logic/state/contact';
-import useLocalState, { selectLocalState } from '~/logic/state/local';
-import useSettingsState, { selectSettingsState, SettingsState } from '~/logic/state/settings';
-import useGraphState, { GraphState } from '~/logic/state/graph';
+import { SettingsState } from '~/logic/state/settings';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
 
 import ErrorBoundary from '~/views/components/ErrorBoundary';
@@ -22,7 +17,6 @@ import './css/fonts.css';
 import './css/indigo-static.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
-import { bootstrapApi } from '~/logic/api/bootstrap';
 import { uxToHex } from '@urbit/api';
 import { useThemeWatcher } from '~/logic/lib/useThemeWatcher';
 
@@ -83,27 +77,11 @@ const Root = styled.div<RootProps>`
 
 const StatusBarWithRouter = withRouter(StatusBar);
 
-const selLocal = selectLocalState(['toggleOmnibox']);
-const selSettings = selectSettingsState(['display', 'getAll']);
-const selGraph = (s: GraphState) => s.getShallowChildren;
-
 const App: React.FunctionComponent = () => {
-  const { getAll } = useSettingsState(selSettings, shallow);
-  const { toggleOmnibox } = useLocalState(selLocal);
-  const getShallowChildren = useGraphState(selGraph);
   const { theme, display } = useThemeWatcher();
 
   React.useEffect(() => {
-    bootstrapApi();
-    getShallowChildren(`~${window.ship}`, 'dm-inbox');
-
-    getAll();
     gcpManager.start();
-    Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      toggleOmnibox();
-    });
   }, []);
 
   return (
