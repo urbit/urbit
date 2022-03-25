@@ -109,6 +109,8 @@ case $(tr A-Z a-z <<< $os) in
      mpkgs=(cmake curl gcc jq make)
      pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
 
+     export MAKE=mingw32-make
+
      . compat/poor-mans-nix-shell.sh mingw
      compat/create-include-files.sh 'stat -c %s' /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
 
