@@ -21,7 +21,7 @@ export const showBlit = (term: Terminal, blit: Blit) => {
     if (typeof blit.hop === 'number') {
       out += csi('H', term.rows, blit.hop + 1);
     } else {
-      out += csi('H', term.rows - blit.hop.r, blit.hop.c + 1);
+      out += csi('H', term.rows - blit.hop.y, blit.hop.x + 1);
     }
     out += csi('s');  //  save cursor position
   } else if ('put' in blit) {

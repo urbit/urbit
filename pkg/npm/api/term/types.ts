@@ -25,7 +25,7 @@ export type Stub = {
 export type Blit =
   | { bel: null }                                       //  make a noise
   | { clr: null }                                       //  clear the screen
-  | { hop: number | { r: number, c: number } }          //  set cursor col/pos
+  | { hop: number | { x: number, y: number } }          //  set cursor col/pos
   | { klr: Stub[] }                                     //  put styled
   | { mor: Blit[] }                                     //  multiple blits
   | { nel: null }                                       //  newline
@@ -43,7 +43,7 @@ export type Bolt =
   | { aro: 'd' | 'l' | 'r' | 'u' }
   | { bac: null }
   | { del: null }
-  | { hit: { r: number, c: number } }
+  | { hit: { x: number, y: number } }
   | { ret: null }
 
 export type Belt =

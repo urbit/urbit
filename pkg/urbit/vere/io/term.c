@@ -405,7 +405,7 @@ _term_it_show_blank(u3_utty* uty_u)
  *    it is clipped to stay within the window.
  */
 static void
-_term_it_move_cursor(u3_utty* uty_u, c3_w row_w, c3_w col_w)
+_term_it_move_cursor(u3_utty* uty_u, c3_w col_w, c3_w row_w)
 {
   c3_l row_l = uty_u->tat_u.siz.row_l;
   c3_l col_l = uty_u->tat_u.siz.col_l;
@@ -698,7 +698,9 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       c3_y row_y = cay_y - 32;
       //  only acknowledge button 1 presses within our window
       if ( 1 != tat_u->esc.ton_y && row_y <= tat_u->siz.row_l ) {
-        _term_io_belt(uty_u, u3nt(c3__hit, tat_u->siz.row_l - row_y, tat_u->esc.col_y - 1));
+        _term_io_belt(uty_u, u3nt(c3__hit,
+                                  tat_u->esc.col_y - 1,
+                                  tat_u->siz.row_l - row_y));
       }
       tat_u->esc.mou = c3n;
       tat_u->esc.ton_y = tat_u->esc.col_y = 0;
@@ -1334,7 +1336,7 @@ _term_ef_blit(u3_utty* uty_u,
     case c3__hop: {
       u3_noun pos = u3t(blt);
       if ( c3y == u3r_ud(pos) ) {
-        _term_it_move_cursor(uty_u, 0, pos);
+        _term_it_move_cursor(uty_u, pos, 0);
       }
       else {
         _term_it_move_cursor(uty_u, u3h(pos), u3t(pos));

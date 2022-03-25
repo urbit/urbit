@@ -90,7 +90,7 @@ const readInput = (term: Terminal, e: string): Belt[] => {
             if (1 === m) {
               const c = e.charCodeAt(2) - 32;
               const r = e.charCodeAt(3) - 32;
-              belts.push({ hit: { r: term.rows - r, c: c - 1 } });
+              belts.push({ hit: { y: term.rows - r, x: c - 1 } });
             }
             e = e.slice(3);
             break;
