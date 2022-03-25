@@ -47,6 +47,7 @@ const AppRoutes = () => {
   const handleError = useErrorHandler();
   const browserId = useBrowserId();
   const settings = useBrowserSettings();
+  const { loaded } = useSettingsState.getState();
 
   useEffect(() => {
     getId().then((value) => {
@@ -58,7 +59,7 @@ const AppRoutes = () => {
     // Check if user has previously stored settings for this browser.
     // If not, send a notification prompting them to do so.
     // Set both settings to false so that they're not bugged again.
-    if (browserId !== '') {
+    if (browserId !== '' && loaded) {
       const thisBrowserSettings = settings.filter((el: any) => el.browserId === browserId)[0];
       if (!thisBrowserSettings) {
         api.poke(
@@ -84,7 +85,7 @@ const AppRoutes = () => {
           .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
       }
     }
-  }, [browserId]);
+  }, [browserId, loaded]);
 
   useEffect(() => {
     const query = new URLSearchParams(search);
