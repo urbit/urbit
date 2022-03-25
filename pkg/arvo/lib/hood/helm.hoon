@@ -109,6 +109,17 @@
     this
   (emit %pass / %arvo %j %moon u.sed)
 ::
+++  poke-moon-breach
+  |=  =ship
+  ?>  ?|  =(our src):bowl
+          =(src.bowl ship)
+      ==
+  ?>  =(%earl (clan:title ship))
+  ?>  =(our.bowl (sein:title our.bowl now.bowl ship))
+  =/  =rift
+    +(.^(rift j+/(scot %p our.bowl)/rift/(scot %da now.bowl)/(scot %p ship)))
+  abet:(emit %pass / %arvo %j %moon ship *id:block:jael %rift rift %.n)
+::
 ++  poke-code
   |=  act=?(~ %reset)
   =<  abet
@@ -225,6 +236,7 @@
 ++  poke
   |=  [=mark =vase]
   ?>  ?|  ?=(%helm-hi mark)
+          ?=(%helm-moon-breach mark)
           =(our src):bowl
       ==
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
@@ -242,6 +254,7 @@
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
     %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)
     %helm-moon             =;(f (f !<(_+<.f vase)) poke-moon)
+    %helm-moon-breach      =;(f (f !<(_+<.f vase)) poke-moon-breach)
     %helm-pack             =;(f (f !<(_+<.f vase)) poke-pack)
     %helm-pass             =;(f (f !<(_+<.f vase)) poke-pass)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
