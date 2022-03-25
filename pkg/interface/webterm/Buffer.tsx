@@ -12,7 +12,7 @@ import useTermState from './state';
 import React from 'react';
 import { Box, Col } from '@tlon/indigo-react';
 import { makeTheme } from './lib/theme';
-import { showBlit, csi } from './lib/blit';
+import { showBlit, csi, hasBell } from './lib/blit';
 import { DEFAULT_SESSION } from './constants';
 import { retry } from './lib/retry';
 
@@ -180,7 +180,8 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
         app: 'herm', path: '/session/' + name + '/view',
         event: (e) => {
           showBlit(ses.term, e);
-          if (e.bel && !selected) {
+          //NOTE  getting selected from state because selected prop is stale
+          if (hasBell(e) && (useTermState.getState().selected !== name)) {
             useTermState.getState().set((state) => {
               state.sessions[name].hasBell = true;
             });

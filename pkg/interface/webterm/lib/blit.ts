@@ -73,3 +73,13 @@ export const showSlog = (term: Terminal, slog: string) => {
            + csi('r')
            + csi('u'));
 };
+
+export const hasBell = (blit: Blit) => {
+  if ('bel' in blit) {
+    return true;
+  } else if ('mor' in blit) {
+    return blit.mor.some(hasBell);
+  } else {
+    return false;
+  }
+}
