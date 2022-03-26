@@ -928,12 +928,16 @@ _mars_sift_pill(u3_noun  pil,
     c3_w  len_w = 0;
     u3_noun ova = *use;
     u3_noun new = u3_nul;
-    u3_noun ovo;
+    u3_noun ovo, tag;
 
     while ( u3_nul != ova ) {
       ovo = u3h(ova);
+      tag = u3h(u3t(ovo));
 
-      if ( c3__into == u3h(u3t(ovo)) ) {
+      if (  (c3__into == tag)
+         || (  (c3__park == tag)
+            && (c3__base == u3h(u3t(u3t(ovo)))) ) )
+      {
         c3_assert( 0 == len_w );
         len_w++;
         ovo = u3t(pil_q);
