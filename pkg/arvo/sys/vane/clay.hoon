@@ -245,7 +245,7 @@
   $:  =duct
       =rave
       have=(map lobe blob)
-      need=(list lobe)
+      need=[let=(list lobe) old=(list lobe)]
       nako=(qeu (unit nako))
       busy=_|
   ==
@@ -263,8 +263,6 @@
 ::
 ::  Like a +$rave but with caches of current versions for %next and %many.
 ::  Generally used when we store a request in our state somewhere.
-::
-::  XX needs state upgrade, was (unit (unit (each cage lobe)))
 ::
 +$  cach  (unit (unit cage))                            ::  cached result
 +$  wove  [for=(unit [=ship ver=@ud]) =rove]            ::  stored source + req
@@ -1351,7 +1349,7 @@
       (send-over-ames hen her inx syd `rave)
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
-      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ |])
+      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ [~ ~] ~ |])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
@@ -3076,26 +3074,34 @@
       ?>  ?=(%nako p.r.u.rut)
       =/  nako  ;;(nako q.r.u.rut)
       =/  missing  (missing-blobs nako)
-      =.  need.sat  `(list lobe)`(welp need.sat ~(tap in missing))
+      =.  let.need.sat  (welp let.need.sat ~(tap in let.missing))
+      =.  old.need.sat  (welp old.need.sat ~(tap in old.missing))
       =.  nako.sat  (~(put to nako.sat) ~ nako)
       work
     ::
     ++  missing-blobs
       |=  =nako
-      ^-  (set lobe)
+      ^-  [let=(set lobe) old=(set lobe)]
+      =/  let-tako  (~(got by gar.nako) let.nako)
+      =|  let-lobes=(set lobe)
+      =|  old-lobes=(set lobe)
       =/  yakis  ~(tap in lar.nako)
-      |-  ^-  (set lobe)
+      |-  ^-  [(set lobe) (set lobe)]
       =*  yaki-loop  $
       ?~  yakis
-        ~
+        [let-lobes old-lobes]
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
-      |-  ^-  (set lobe)
+      |-  ^-  [(set lobe) (set lobe)]
       =*  blob-loop  $
       ?~  lobes
         yaki-loop(yakis t.yakis)
-      ?:  (~(has by lat.ran) lobe.i.lobes)
+      =/  lob  (~(get by lat.ran) lobe.i.lobes)
+      ?~  lob
+        =.  old-lobes  (~(put in old-lobes) lobe.i.lobes)
         blob-loop(lobes t.lobes)
-      (~(put in blob-loop(lobes t.lobes)) lobe.i.lobes)
+      =?  let-lobes  &(=(let-tako r.i.yakis) ?=(%dead -.u.lob))
+        (~(put in let-lobes) lobe.i.lobes)
+      blob-loop(lobes t.lobes)
     ::
     ::  Receive backfill response
     ::
@@ -3103,12 +3109,29 @@
       |=  =blob
       ^+  ..abet
       ?:  lost  ..abet
-      =?    need.sat
-          ?&  ?=(%delta -.blob)
-              !(~(has by lat.ran) q.q.blob)
-              !(~(has by have.sat) q.q.blob)
+      ?:  ?&  ?=(%dead -.blob)
+              (lien let.need.sat |=(=lobe =(p.blob lobe)))
           ==
-        [q.q.blob need.sat]
+        %-  (slog leaf+"clay: got dead backfill but need answer for {<p.blob>}" ~)
+        ..abet
+      =?  need.sat  ?=(%delta -.blob)
+        ?.  (lien let.need.sat |=(=lobe =(p.blob lobe)))
+          ?:  ?&  !(~(has by lat.ran) q.q.blob)
+                  !(~(has by have.sat) q.q.blob)
+              ==
+            [let.need.sat [q.q.blob old.need.sat]]
+          need.sat
+        =/  one  (~(get by lat.ran) q.q.blob)
+        =/  two  (~(get by have.sat) q.q.blob)
+        ?:  ?&  ?|  ?=(~ one)
+                    ?=(%dead -.u.one)
+                ==
+                ?|  ?=(~ two)
+                    ?=(%dead -.u.two)
+                ==
+            ==
+          [[q.q.blob let.need.sat] old.need.sat]
+        need.sat
       ::  We can't put a blob in lat.ran if its parent isn't already
       ::  there.
       ::
@@ -3125,7 +3148,7 @@
       ?:  busy.sat
         ..abet
       |-  ^+  ..abet
-      ?:  =(~ need.sat)
+      ?:  =([~ ~] need.sat)
         ::  NB: if you change to release nakos as we get enough blobs
         ::  for them instead of all at the end, you *must* store the
         ::  `lim` that should be applied after the nako is complete and
@@ -3142,20 +3165,35 @@
         =.  ..abet  (apply-foreign-update u.next)
         =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)
         $
-      ?>  ?=(^ need.sat)
-      ::  This is what removes an item from `need`.  This happens every
-      ::  time we take a backfill response, but it could happen more than
-      ::  once if we somehow got this data in the meantime (maybe from
-      ::  another desk updating concurrently, or a previous update on this
-      ::  same desk).
-      ::
-      ?:  ?|  (~(has by lat.ran) i.need.sat)
-              (~(has by have.sat) i.need.sat)
+      ?~  let.need.sat
+        ::  This is what removes an item from `need`.  This happens every
+        ::  time we take a backfill response, but it could happen more than
+        ::  once if we somehow got this data in the meantime (maybe from
+        ::  another desk updating concurrently, or a previous update on this
+        ::  same desk).
+        ::
+        ?>  ?=(^ old.need.sat)
+        ?:  ?|  (~(has by lat.ran) i.old.need.sat)
+                (~(has by have.sat) i.old.need.sat)
+            ==
+          $(old.need.sat t.old.need.sat)
+        (fetch i.old.need.sat)
+      =/  one  (~(get by lat.ran) i.let.need.sat)
+      =/  two  (~(get by have.sat) i.let.need.sat)
+      ?:  ?|  ?&  ?=(^ one)
+                  !?=(%dead -.u.one)
+              ==
+              ?&  ?=(^ two)
+                  !?=(%dead -.u.two)
+              ==
           ==
-        $(need.sat t.need.sat)
-      ::  Otherwise, fetch the next blob
-      ::
-      =/  =fill  [%0 syd i.need.sat]
+        $(let.need.sat t.let.need.sat)
+      (fetch i.let.need.sat)
+    ::
+    ++  fetch
+      |=  =lobe
+      ^+  ..abet
+      =/  =fill  [%0 syd lobe]
       =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
       =/  =path  [%backfill syd (scot %ud inx) ~]
       =.  ..foreign-update
@@ -4389,6 +4427,22 @@
     ?^  used
       %-  (slog leaf+"clay: file used in {<(en-beam u.used)>}" ~)
       [~ ..^$]
+    ::
+    =/  based=(unit lobe)
+      =/  lobes=(list [=lobe =blob])  ~(tap by lat.ran.ruf)
+      |-
+      ?~  lobes
+        ~
+      ?:  ?&  ?=(%delta -.blob.i.lobes)
+              =(lobe.req q.q.blob.i.lobes)
+          ==
+        `p.blob.i.lobes
+      $(lobes t.lobes)
+    ::
+    ?^  based
+      %-  (slog leaf+"clay: file is base of delta for {<u.based>}" ~)
+      [~ ..^$]
+    ::
     =.  lat.ran.ruf  (~(put by lat.ran.ruf) lobe.req %dead lobe.req ~)
     [~ ..^$]
   ::
@@ -4509,12 +4563,26 @@
         ==
       +$  rede-10
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-10)
             qyx=cult-10
             dom=dome
             per=regs
             pew=regs
             fiz=melt
+        ==
+      +$  rind-10
+        $:  nix=@ud
+            bom=(map @ud update-state-10)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-10
+        $:  =duct
+            =rave
+            have=(map lobe blob)
+            need=(list lobe)
+            nako=(qeu (unit nako))
+            busy=_|
         ==
       +$  raft-9
         $:  rom=room-10
@@ -4559,7 +4627,7 @@
         ==
       +$  rede-8
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-10)
             qyx=cult-10
             dom=dome-8
             per=regs
@@ -4590,7 +4658,7 @@
         ==
       +$  rede-7
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-10)
             qyx=cult-10
             dom=dome-8
             per=regs
@@ -4627,7 +4695,7 @@
         ==
       +$  rede-6
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-10)
             qyx=cult-10
             dom=dome-6
             per=regs
@@ -4711,7 +4779,12 @@
     ^-  raft-10
     raf(pud [pud.raf dist-upgraded=|])
   ::
-  ::  +raft-10-to-11: remove .dist-upgraded and upgrade +cach
+  ::  +raft-10-to-11:
+  ::
+  ::    remove .dist-upgraded
+  ::    upgrade +cach
+  ::    upgrade need:update-state
+  ::
   ++  raft-10-to-11
     |=  raf=raft-10
     ^-  raft-11
@@ -4729,7 +4802,18 @@
       |=  =rung-10
       %-  ~(run by rus.rung-10)
       |=  =rede-10
-      rede-10(qyx (cult-10-to-cult qyx.rede-10))
+      %=    rede-10
+          qyx  (cult-10-to-cult qyx.rede-10)
+          ref
+        ?~  ref.rede-10
+          ~
+        %=    ref.rede-10
+            bom.u
+          %-  ~(run by bom.u.ref.rede-10)
+          |=  =update-state-10
+          update-state-10(need [need.update-state-10 ~])
+        ==
+      ==
     ==
     ++  cult-10-to-cult
       |=  qyx=cult-10
