@@ -4402,50 +4402,7 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
-      %tomb
-    =/  used=(unit beam)
-      =/  desks=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
-      |-
-      =*  desk-loop  $
-      ?~  desks
-        ~
-      ?:  =(0 let.dom.dojo.i.desks)
-        desk-loop(desks t.desks)
-      =/  =yaki
-        %-  ~(got by hut.ran.ruf)
-        %-  ~(got by hit.dom.dojo.i.desks)
-        let.dom.dojo.i.desks
-      =/  paths=(list [=path =lobe])  ~(tap by q.yaki)
-      |-
-      =*  path-loop  $
-      ?~  paths
-        desk-loop(desks t.desks)
-      ?:  =(lobe.req lobe.i.paths)
-        `[[our desk.i.desks ud+let.dom.dojo.i.desks] path.i.paths]
-      path-loop(paths t.paths)
-    ::
-    ?^  used
-      %-  (slog leaf+"clay: file used in {<(en-beam u.used)>}" ~)
-      [~ ..^$]
-    ::
-    =/  based=(unit lobe)
-      =/  lobes=(list [=lobe =blob])  ~(tap by lat.ran.ruf)
-      |-
-      ?~  lobes
-        ~
-      ?:  ?&  ?=(%delta -.blob.i.lobes)
-              =(lobe.req q.q.blob.i.lobes)
-          ==
-        `p.blob.i.lobes
-      $(lobes t.lobes)
-    ::
-    ?^  based
-      %-  (slog leaf+"clay: file is base of delta for {<u.based>}" ~)
-      [~ ..^$]
-    ::
-    =.  lat.ran.ruf  (~(put by lat.ran.ruf) lobe.req %dead lobe.req ~)
-    [~ ..^$]
-  ::
+      %tomb  (tomb clue.req)
       %trim  [~ ..^$]
   ::
       %vega
@@ -5165,4 +5122,77 @@
           blobs+&+lat.ran.ruf
       ==
   ==
+::  +tomb: safely remove objects
+::
+++  tomb
+  |=  =clue
+  ^-  [(list move) _..^$]
+  |^
+  ?-    -.clue
+      %lobe  `(tomb-lobe lobe.clue &)
+      %all
+    =/  lobes=(list [=lobe =blob])  ~(tap by lat.ran.ruf)
+    |-
+    ?~  lobes
+      `..^^^$
+    =.  ..^^^$  (tomb-lobe lobe.i.lobes &)
+    $(lobes t.lobes)
+  ==
+  ::
+  ++  tomb-lobe
+    |=  [lob=lobe veb=?]
+    ^+  ..^^^$
+    =/  bol  (~(get by lat.ran.ruf) lob)
+    ?~  bol
+      (noop veb leaf+"clay: lobe doesn't exist" ~)
+    ?:  ?=(%dead -.u.bol)
+      (noop veb leaf+"clay: file already tombstoned" ~)
+    ::
+    =/  used=(unit beam)
+      =/  desks=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
+      |-
+      =*  desk-loop  $
+      ?~  desks
+        ~
+      ?:  =(0 let.dom.dojo.i.desks)
+        desk-loop(desks t.desks)
+      =/  =yaki
+        %-  ~(got by hut.ran.ruf)
+        %-  ~(got by hit.dom.dojo.i.desks)
+        let.dom.dojo.i.desks
+      =/  paths=(list [=path =lobe])  ~(tap by q.yaki)
+      |-
+      =*  path-loop  $
+      ?~  paths
+        desk-loop(desks t.desks)
+      ?:  =(lob lobe.i.paths)
+        `[[our desk.i.desks ud+let.dom.dojo.i.desks] path.i.paths]
+      path-loop(paths t.paths)
+    ::
+    ?^  used
+      (noop veb leaf+"clay: file used in {<(en-beam u.used)>}" ~)
+    ::
+    =/  based=(unit lobe)
+      =/  lobes=(list [=lobe =blob])  ~(tap by lat.ran.ruf)
+      |-
+      ?~  lobes
+        ~
+      ?:  ?&  ?=(%delta -.blob.i.lobes)
+              =(lob q.q.blob.i.lobes)
+          ==
+        `p.blob.i.lobes
+      $(lobes t.lobes)
+    ::
+    ?^  based
+      (noop veb leaf+"clay: file is base of delta for {<u.based>}" ~)
+    ::
+    =.  lat.ran.ruf  (~(put by lat.ran.ruf) lob %dead lob ~)
+    (noop veb leaf+"clay: file successfully tombstoned" ~)
+  ::
+  ++  noop
+    |=  [veb=? =tang]
+    ?.  veb
+      ..^^^$
+    ((slog tang) ..^^^$)
+  --
 --

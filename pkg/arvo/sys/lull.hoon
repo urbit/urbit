@@ -773,7 +773,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
-        [%tomb =lobe]                                   ::  tombstone specific
+        [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%warp wer=ship rif=riff]                       ::  internal file req
@@ -808,6 +808,10 @@
         [%ud p=@ud]                                     ::  number
     ==                                                  ::
   +$  cass  [ud=@ud da=@da]                             ::  cases for revision
+  +$  clue                                              ::  murder weapon
+    $%  [%lobe =lobe]                                   ::  specific lobe
+        [%all ~]                                        ::  all safe targets
+    ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
