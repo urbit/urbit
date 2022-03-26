@@ -153,6 +153,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "ames-port",           required_argument, NULL, 'p' },
     { "http-port",           required_argument, NULL, c3__http },
     { "https-port",          required_argument, NULL, c3__htls },
+    { "no-conn",             no_argument,       NULL, c3__noco },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
     { "replay-from",         required_argument, NULL, 'r' },
@@ -272,6 +273,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.pes_s = arg_w;
+        break;
+      }
+      case c3__noco: {
+        u3_Host.ops_u.con = c3n;
         break;
       }
       case 'R': {
@@ -564,6 +569,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-x, --exit                    Exit immediately\n",
     "-Y, --scry-into FILE          Optional name of file (for -X)\n",
     "-Z, --scry-format FORMAT      Optional file format ('jam', or aura, for -X)\n",
+    "    --no-conn                 Do not run control plane\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
