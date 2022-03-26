@@ -42,7 +42,7 @@
     =-  [[307 ['location' -]~] ~]
     %^  cat  3
       '/~/login?redirect='
-    url.request.inbound-request
+    (crip (en-urlt:html (trip url.request.inbound-request)))
   ::
   ::  +require-authorization-simple:
   ::      redirect to the login page when unauthenticated
