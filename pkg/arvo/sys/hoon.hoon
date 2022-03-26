@@ -1453,7 +1453,6 @@
 ++  by                                                  ::  map engine
   ~/  %by
   =|  a=(tree (pair))  ::  (map)
-  =*  node  ?>(?=(^ a) n.a)
   |@
   ++  all                                               ::  logical AND
     ~/  %all
@@ -1717,14 +1716,14 @@
     =+  b=a
     |@
     ++  $
-      |=  meg=$-([_p:node _q:node _q:node] _q:node)
+      |*  meg=$-([* * *] *)
       |-  ^+  a
       ?~  b
         a
       ?~  a
         b
       ?:  =(p.n.b p.n.a)
-        :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
+        :+  [p.n.a `_?>(?=(^ a) q.n.a)`(meg p.n.a q.n.a q.n.b)]
           $(b l.b, a l.a)
         $(b r.b, a r.a)
       ?:  (mor p.n.a p.n.b)
