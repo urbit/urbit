@@ -4024,16 +4024,13 @@
       ^-  (unit (unit cage))
       ?:  ?=([%bloc ~] pax)
         :^  ~  ~  %noun
-        :-  -:!>(*(map lobe blob))
-        ^-  (map lobe blob)
-        %-  %~  rep  in
-            %-  reachable-takos
-            (~(got by hit.dom) let.dom)
-        |=  [t=tako o=(map lobe blob)]
-        %-  ~(gas by o)
-        %+  turn
+        !>  ^-  (set page)
+        %-  ~(rep in (reachable-takos (~(got by hit.dom) yon)))
+        |=  [t=tako o=(set page)]
+        %-  ~(gas in o)
+        %+  murn
           ~(val by q:(~(got by hut.ran) t))
-        |=(l=lobe [l (~(got by lat.ran) l)])
+        |=(l=lobe =/(b (~(got by lat.ran) l) ?:(?=(%delta -.b) ~ `q.b)))
       ::
       ?.  ?=([?(%yaki %blob %hash %cage %open %late %base) * *] pax)
         `~
@@ -4526,7 +4523,12 @@
     [mos ..^$]
   ::
       %prep
-    [~ ..^$(lat.ran.ruf (~(uni by lat.req) lat.ran.ruf))]
+    =/  lat
+      %+  roll  gap.req
+      |=  [p=page m=(map lobe blob)]
+      =/  l=@uv  (page-to-lobe p)
+      (~(put by m) l [%direct l p])
+    [~ ..^$(lat.ran.ruf (~(uni by lat) lat.ran.ruf))]
   ::
       %perm
     =^  mos  ruf

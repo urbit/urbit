@@ -104,11 +104,11 @@
 ++  prep-ovum
   |=  dez=(list path)
   ^-  unix-event
-  =-  ~&  clay-blobs+~(wyt by -)
-      [/c/inflate [%prep -]]
+  =-  ~&  clay-blobs+~(wyt in -)
+      [/c/inflate [%prep ~(tap in -)]]
   %+  roll  dez
-  |=  [bas=path out=(map lobe:clay blob:clay)]
-  %-  ~(uni by out)
+  |=  [bas=path out=(set page:clay)]
+  %-  ~(uni in out)
   .^(_out %cs (snoc bas %bloc))
 ::
 ::  +user-files: all userspace hoon files
