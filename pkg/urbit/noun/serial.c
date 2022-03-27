@@ -73,6 +73,12 @@ _cs_jam_fib_mat(struct _cs_jam_fib* fib_u, u3_noun a)
     c3_w a_w = u3r_met(0, a);
     c3_w b_w = c3_bits_word(a_w);
 
+    //  check for overflow on length-encoding: u3a_is_cat(1 << b_w)
+    //
+    if ( 30 < b_w ) {
+      u3m_bail(c3__fail);
+    }
+
     _cs_jam_fib_chop(fib_u, b_w+1, 1 << b_w);
     _cs_jam_fib_chop(fib_u, b_w-1, a_w & ((1 << (b_w-1)) - 1));
     _cs_jam_fib_chop(fib_u, a_w, a);
