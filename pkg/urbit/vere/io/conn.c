@@ -554,8 +554,6 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   u3_conn*  con_u = can_u->san_u->con_u;
   c3_i      err_i = 0;
   c3_c*     err_c;
-  c3_c*     tag_c;
-  c3_c*     rid_c;
 
   jar = u3s_cue_xeno_with(con_u->sil_u, len_d, byt_y);
 
@@ -573,10 +571,13 @@ _conn_moor_poke(void* ptr_v, c3_d len_d, c3_y* byt_y)
   }
 
   rud = u3dc("scot", c3__uv, u3k(rid));
-  tag_c = u3r_string(tag);
-  rid_c = u3r_string(rud);
-  u3l_log("conn: %s %s\n", tag_c, rid_c);
-  c3_free(tag_c); c3_free(rid_c);
+
+  // {
+  //   c3_c* tag_c = u3r_string(tag);
+  //   c3_c* rid_c = u3r_string(rud);
+  //   u3l_log("conn: %s %s\n", tag_c, rid_c);
+  //   c3_free(tag_c); c3_free(rid_c);
+  // }
 
   switch (tag) {
     default: {
@@ -876,9 +877,7 @@ _conn_io_exit(u3_auto* car_u)
       u3l_log("conn: failed to unlink socket: %s\n", uv_strerror(errno));
     }
   }
-  else {
-    u3l_log("conn: unlinked %s\n", paf_c);
-  }
+
   c3_free(paf_c);
 
   {
