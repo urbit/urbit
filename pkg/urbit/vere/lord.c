@@ -745,11 +745,9 @@ u3_lord_pack(u3_lord* god_u)
 void
 u3_lord_exit(u3_lord* god_u)
 {
-  u3l_log("lord: exit\n");
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_exit;
 
-  u3l_log("lord: exit sending\n");
   _lord_send(god_u, _lord_writ_make(god_u, wit_u));
 
   //  exit expected
@@ -758,8 +756,7 @@ u3_lord_exit(u3_lord* god_u)
   god_u->inn_u.bal_f = _lord_bail_noop;
 
   //  XX set timer, then halt
-
-  u3l_log("lord: exit sent\n");
+  //
 }
 
 /* u3_lord_stall(): send SIGINT
@@ -1016,8 +1013,6 @@ _lord_on_serf_boot_exit(uv_process_t* cub_u,
   _lord_boot* bot_u = cub_u->data;
   void (*done_f)(void*, c3_o) = bot_u->done_f;
   void* ptr_v = bot_u->ptr_v;
-
-  fprintf(stderr, "king: exit %" PRId64 " signal %i\r\n", sas_i, sig_i);
 
   //  XX pax_c, pipes, &c
   //
