@@ -5,6 +5,7 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import gcpManager from '~/logic/lib/gcpManager';
 import { svgDataURL } from '~/logic/lib/util';
 import history from '~/logic/lib/history';
@@ -36,6 +37,13 @@ function ensureValidHex(color) {
   return parsedColor.startsWith('#') ? parsedColor : `#${parsedColor}`;
 }
 
+const getId = async () => {
+  const fpPromise = FingerprintJS.load();
+  const fp = await fpPromise;
+  const result = await fp.get();
+  return result.visitorId;
+};
+
 interface RootProps {
   display: SettingsState['display'];
 }
@@ -48,7 +56,7 @@ const Root = styled.div<RootProps>`
   padding-right: env(safe-area-inset-right, 0px);
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  
+
   margin: 0;
   ${p => p.display.backgroundType === 'url' ? `
     background-image: url('${p.display.background}');
@@ -96,6 +104,10 @@ const App: React.FunctionComponent = () => {
   React.useEffect(() => {
     bootstrapApi();
     getShallowChildren(`~${window.ship}`, 'dm-inbox');
+
+    getId().then((value) => {
+      useLocalState.setState({ browserId: value });
+    });
 
     getAll();
     gcpManager.start();
