@@ -1,11 +1,1 @@
-|_  err=*
-++  grab
-  |%
-  ++  noun  (pair term tang)
-  --
-++  grow
-  |%
-  ++  noun  err
-  --
-++  grad  %noun
---
+/home/poprox/Dropbox/Tlon/urbit/pkg/base-dev/mar/thread-fail.hoon

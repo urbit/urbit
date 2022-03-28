@@ -1,11 +1,1 @@
-|_  res=*
-++  grab
-  |%
-  ++  noun  *
-  --
-++  grow
-  |%
-  ++  noun  res
-  --
-++  grad  %noun
---
+/home/poprox/Dropbox/Tlon/urbit/pkg/base-dev/mar/thread-done.hoon
