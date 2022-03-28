@@ -84,7 +84,8 @@ export function RemoteContentImageEmbed(
         referrerPolicy="no-referrer"
         flexShrink={0}
         src={url}
-        height="100%"
+        height="192px"
+        maxWidth="192px"
         width="100%"
         objectFit="contain"
         borderRadius={2}
