@@ -1,1 +1,1 @@
-/home/poprox/Dropbox/Tlon/urbit/pkg/base-dev/mar/thread-done.hoon
+../../base-dev/mar/thread-done.hoon
