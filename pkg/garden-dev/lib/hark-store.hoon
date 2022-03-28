@@ -171,7 +171,7 @@
 ++  dejs
   =,  dejs:format
   |%
-  ++  ship  (su ;~(pfix fed:ag))
+  ++  ship  (su ;~(pfix sig fed:ag))
   :: TODO: fix +stab 
   ::
   ++  pa
