@@ -136,6 +136,7 @@
 ::
 ++  poke
   |=  [=mark =vase]
+  ?>  =(our src):hid
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
     %drum-dill-belt      =;(f (f !<(_+<.f vase)) poke-dill-belt)
     %drum-dill-blit      =;(f (f !<(_+<.f vase)) poke-dill-blit)

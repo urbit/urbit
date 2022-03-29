@@ -1593,10 +1593,12 @@
       ?~  sponsor
         ~|  %ames-lost-sponsor^our^ship  !!
       ::
-      =/  =peer-state         (got-peer-state ship)
-      =.  sponsor.peer-state  u.sponsor
-      ::
-      =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
+      =/  state=(unit peer-state)  (get-peer-state ship)
+      ?~  state
+        %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
+        event-core
+      =.  sponsor.u.state   u.sponsor
+      =.  peers.ames-state  (~(put by peers.ames-state) ship %known u.state)
       event-core
     ::  +on-publ-full: handle new pki data for peer(s)
     ::

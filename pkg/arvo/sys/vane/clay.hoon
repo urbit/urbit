@@ -1145,6 +1145,9 @@
         !>([0 *@da])
       !>([let.dom t:(~(got by hut.ran) (~(got by hit.dom) let.dom))])
     =+  nao=(case-to-aeon case.mun)
+    ?:  ?=([%s case %case ~] mun)
+      ::  case existence check
+      [``[%& %flag !>(!=(~ nao))] fod.dom.red]
     ?~(nao [~ fod.dom.red] (read-at-aeon:ze for u.nao mun))
   ::
   ::  Queue a move.
@@ -2283,7 +2286,8 @@
         continuation-yaki  merged-yaki
         merges  t.merges
         hut.ran  (~(put by hut.ran) r.merged-yaki merged-yaki)
-        lat.rag  (~(uni by lat.rag) lat.u.merge-result)
+        lat.rag  (~(uni by lat.u.merge-result) lat.rag)
+        lat.ran  (~(uni by lat.u.merge-result) lat.ran)
         parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
       ==
     ==
@@ -4022,9 +4026,15 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash %cage %open %late %base) * *] pax)
+      ?.  ?=([?(%tako %yaki %blob %hash %cage %open %late %base %base-tako %case) * *] pax)
         `~
       ?-    i.pax
+          %tako
+        =/  tak=(unit tako)  (~(get by hit.dom) yon)
+        ?~  tak
+          ~
+        ``tako+[-:!>(*tako) u.tak]
+      ::
           %yaki
         =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
         ?~  yak
@@ -4059,6 +4069,21 @@
         ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
           %late  !!  :: handled in +aver
+          %case  !!  :: handled in +aver
+          %base-tako
+        ::  XX this ignores the given beak
+        ::  maybe move to +aver?
+        ?>  ?=(^ t.t.pax)
+        :^  ~  ~  %uvs  !>
+        ^-  (list @uv)
+        =/  tako-a  (slav %uv i.t.pax)
+        =/  tako-b  (slav %uv i.t.t.pax)
+        =/  yaki-a  (~(got by hut.ran) tako-a)
+        =/  yaki-b  (~(got by hut.ran) tako-b)
+        %+  turn    ~(tap in (find-merge-points yaki-a yaki-b))
+        |=  =yaki
+        r.yaki
+      ::
           %base
         ?>  ?=(^ t.t.pax)
         :^  ~  ~  %uvs  !>

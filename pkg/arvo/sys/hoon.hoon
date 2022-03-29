@@ -264,8 +264,8 @@
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
-++  lead  |*(* |*(* [+>+< +<]))                          ::  put head
-++  late  |*(* |*(* [+< +>+<]))                          ::  put tail
+++  lead  |*(* |*(* [+>+< +<]))                         ::  put head
+++  late  |*(* |*(* [+< +>+<]))                         ::  put tail
 ::
 ::  #  %containers
 ::
@@ -1454,7 +1454,6 @@
 ++  by                                                  ::  map engine
   ~/  %by
   =|  a=(tree (pair))  ::  (map)
-  =*  node  ?>(?=(^ a) n.a)
   |@
   ++  all                                               ::  logical AND
     ~/  %all
@@ -1718,14 +1717,14 @@
     =+  b=a
     |@
     ++  $
-      |=  meg=$-([_p:node _q:node _q:node] _q:node)
+      |*  meg=$-([* * *] *)
       |-  ^+  a
       ?~  b
         a
       ?~  a
         b
       ?:  =(p.n.b p.n.a)
-        :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
+        :+  [p.n.a `_?>(?=(^ a) q.n.a)`(meg p.n.a q.n.a q.n.b)]
           $(b l.b, a l.a)
         $(b r.b, a r.a)
       ?:  (mor p.n.a p.n.b)
@@ -9454,15 +9453,7 @@
       ==
     ::
         [%mcfs *]  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
-        [%mcgl *]
-      :^    %cnls
-          :+  %cnhp
-            q.gen
-          [%ktcl p.gen]
-        r.gen
-      :+  %brts
-        p.gen
-      s.gen
+        [%mcgl *]  [%cnls [%cnhp q ktcl+p] r [%brts p [%tsgr $+3 s]]]:gen
     ::
         [%mcsg *]                                       ::                  ;~
       |-  ^-  hoon
@@ -10495,7 +10486,7 @@
     ::
     ^-  type
     ~+
-    ~=  sut
+    =-  ?.(=(sut -) - sut)
     ?+  sut      sut
       [%cell *]  [%cell burp(sut p.sut) burp(sut q.sut)]
       [%core *]  :+  %core
@@ -10509,7 +10500,7 @@
                   ==
       [%face *]  [%face p.sut burp(sut q.sut)]
       [%fork *]  [%fork (~(run in p.sut) |=(type burp(sut +<)))]
-      [%hint *]  (hint p.sut burp(sut q.sut))
+      [%hint *]  (hint [burp(sut p.p.sut) q.p.sut] burp(sut q.sut))
       [%hold *]  [%hold burp(sut p.sut) q.sut]
     ==
   ::
