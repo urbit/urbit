@@ -443,9 +443,6 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
     case c3__exit: {
       u3z(jar);
       mar_u->sat_e = u3_mars_exit_e;
-      //  XX wire up to signal handler
-      //
-      u3_disk_info(mar_u->log_u);
     } break;
   }
 
@@ -536,9 +533,16 @@ top:
       goto top;
     }
     else if ( u3_mars_exit_e == mar_u->sat_e ) {
+      //  XX wire up to signal handler
+      //
+      u3_disk_info(mar_u->log_u);
+
+      u3e_save();
+
+      u3_disk_exit(mar_u->log_u);
+
       //  XX exit cb ?
       //
-      u3e_save();
       exit(0);
     }
   }
