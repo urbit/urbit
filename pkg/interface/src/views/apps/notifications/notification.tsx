@@ -81,7 +81,6 @@ export function Notification(props: {
 
   const { hovering, bind } = useHovering();
   const dedupedBody = uniqBy(notification.body, item => item.link);
-  // @ts-ignore TODO fix HarkBody definition for time, is string, should be number.
   const orderedByTime = dedupedBody.sort((a, b) => b.time - a.time);
   const contents = map(orderedByTime, 'content').filter(c => c.length > 0);
   const first = notification.body[0];
