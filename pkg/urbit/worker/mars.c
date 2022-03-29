@@ -1015,7 +1015,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
 
     //  parse pill
     //
-    if ( c3n == _mars_sift_pill(pil, &bot, &mod, &use) ) { // transfer [pil]
+    if ( c3n == _mars_sift_pill(u3k(pil), &bot, &mod, &use) ) {
       return c3n;
     }
 
@@ -1040,7 +1040,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
       cad = _mars_wyrd_card(inp_u->ver_u.nam_m,
                             inp_u->ver_u.ver_w,
                             inp_u->sev_l);
-      mod = u3nc(u3nc(wir, cad), mod);              // transfer [wir]
+      mod = u3nc(u3nc(wir, cad), mod);  //  transfer [wir]
     }
 
     //  prepend legacy boot event to the userpace sequence
@@ -1049,7 +1049,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
     //
     {
       u3_noun wir = u3nq(c3__d, c3__term, '1', u3_nul);
-      u3_noun cad = u3nt(c3__boot, inp_u->lit_o, ven); // transfer
+      u3_noun cad = u3nt(c3__boot, inp_u->lit_o, u3k(ven));
       use = u3nc(u3nc(wir, cad), use);
     }
 
@@ -1057,11 +1057,11 @@ _mars_boot_make(u3_boot_opts* inp_u,
     //
     {
       u3_noun now = u3_time_in_tv(&inp_u->tim_u);
-      u3_noun bit = u3qc_bex(48);   //  1/2^16 seconds
+      u3_noun bit = u3qc_bex(48);       //  1/2^16 seconds
       u3_noun eve = u3kb_flop(bot);
 
       {
-        u3_noun  lit = u3kb_weld(mod, u3kb_weld(use, mor));
+        u3_noun  lit = u3kb_weld(mod, u3kb_weld(use, u3k(mor)));
         u3_noun i, t = lit;
 
         while ( u3_nul != t ) {
@@ -1077,6 +1077,8 @@ _mars_boot_make(u3_boot_opts* inp_u,
       u3z(now); u3z(bit);
     }
   }
+
+  u3z(com);
 
   return c3y;
 }

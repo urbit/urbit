@@ -461,22 +461,26 @@ _cw_pack(c3_i argc, c3_c* argv[])
 static c3_o
 _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 {
-  fprintf(stderr, "boot: writ\r\n");
-
   u3_weak jar = u3s_cue_xeno_with(sil_u, len_d, byt_y);
   u3_noun com;
 
   if (  (u3_none == jar)
-     || (c3n == u3r_p(jar, c3__boot, &com))
-     || (c3n == u3_mars_boot(u3V.dir_c, com)) )
+     || (c3n == u3r_p(jar, c3__boot, &com)) )
   {
-    fprintf(stderr, "boot: fail\r\n");
+    fprintf(stderr, "boot: parse fail\r\n");
     exit(1);
   }
   else {
-    fprintf(stderr, "boot: good\r\n");
-    exit(0);
+    u3k(com);
+    u3z(jar);
+
+    if ( c3n == u3_mars_boot(u3V.dir_c, com) ) {
+      fprintf(stderr, "boot: fail\r\n");
+      exit(1);
+    }
   }
+
+  exit(0);
 
   return c3y;
 }
