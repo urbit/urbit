@@ -66,7 +66,7 @@ export function Notification(props: {
   const key = `${harkLidToId(lid)}-${harkBinToId(notification.bin)}`;
   const history = useHistory();
 
-  const isMobile = useLocalState((s) => s.mobile);
+  const isMobile = useLocalState(s => s.mobile);
 
   const onArchive = useCallback(
     async (e) => {
@@ -80,8 +80,9 @@ export function Notification(props: {
   );
 
   const { hovering, bind } = useHovering();
-  const dedupedBody = uniqBy(notification.body, (item) => item.link);
-  const contents = map(dedupedBody, 'content').filter((c) => c.length > 0);
+  const dedupedBody = uniqBy(notification.body, item => item.link);
+  const orderedByTime = dedupedBody.sort((a, b) => b.time - a.time);
+  const contents = map(orderedByTime, 'content').filter(c => c.length > 0);
   const first = notification.body[0];
   if (!first) {
     // should be unreachable
