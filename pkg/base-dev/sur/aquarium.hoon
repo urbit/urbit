@@ -24,7 +24,16 @@
       aqua-event
   ==
 ::
-+$  unix-event  unix-event:pill-lib
++$  unix-event  ::NOTE  like unix-event:pill-lib but for all tasks
+  %+  pair  wire
+  $%  [%wack p=@]
+      [%what p=(list (pair path (cask)))]
+      [%whom p=ship]
+      [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
+      [%wyrd p=vere]
+      [%verb p=(unit ?)]
+      task-arvo
+  ==
 +$  pill        pill:pill-lib
 ::
 +$  aqua-event

@@ -466,7 +466,7 @@
       =/  slim-dirs=(list path)
         ~[/app /ted /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
       :_  ~
-      %-  unix-event
+      %-  unix-event:pill-lib
       %-  %*(. file-ovum:pill-lib directories slim-dirs)
       /(scot %p our.hid)/work/(scot %da now.hid)
     =^  ms  state  (poke-pill pil)
