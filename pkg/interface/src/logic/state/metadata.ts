@@ -9,7 +9,7 @@ import {
 import airlock from '~/logic/api';
 import history from '~/logic/lib/history';
 import { reduce } from '../reducers/metadata-update';
-import { getNotificationRedirect } from '../lib/notificationRedirects';
+import { getNotificationRedirectFromLink } from '../lib/notificationRedirects';
 
 export const METADATA_MAX_PREVIEW_WAIT = 150000;
 
@@ -127,7 +127,7 @@ function handleGridRedirect() {
   const query = new URLSearchParams(window.location.search);
 
   if(query.has('grid-note')) {
-    history.push(getNotificationRedirect(query.get('grid-note')));
+    history.push(getNotificationRedirectFromLink(query.get('grid-note')));
   } else if(query.has('grid-link')) {
     const link = decodeURIComponent(query.get('grid-link')!);
     history.push(`/perma${link}`);

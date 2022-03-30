@@ -11,6 +11,7 @@ import { clearStorageMigration, createStorageKey, storageVersion, wait } from '~
 export type SubscriptionStatus = 'connected' | 'disconnected' | 'reconnecting';
 
 export interface LocalState {
+  browserId: string;
   theme: 'light' | 'dark' | 'auto';
   hideAvatars: boolean;
   hideNicknames: boolean;
@@ -42,6 +43,7 @@ export const selectLocalState =
   <K extends keyof LocalState>(keys: K[]) => f.pick<LocalState, K>(keys);
 
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
+  browserId: '',
   dark: false,
   mobile: false,
   breaks: {
@@ -129,6 +131,11 @@ function withLocalState<P, S extends keyof LocalState, C extends React.Component
 const selOsDark = (s: LocalState) => s.dark;
 export function useOsDark() {
   return useLocalState(selOsDark);
+}
+
+const selBrowserId = (s: LocalState) => s.browserId;
+export function useBrowserId() {
+  return useLocalState(selBrowserId);
 }
 
 export { useLocalState as default, withLocalState };

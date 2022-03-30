@@ -2,7 +2,6 @@ import { Box } from '@tlon/indigo-react';
 import React, { Suspense, useCallback, useEffect } from 'react';
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 import { useShortcut } from '~/logic/state/settings';
 import { Loading } from '~/views/components/Loading';
@@ -13,7 +12,7 @@ import Profile from '~/views/apps/profile/profile';
 import Notifications from '~/views/apps/notifications/notifications';
 import ErrorComponent from '~/views/components/Error';
 
-import { getNotificationRedirect } from '~/logic/lib/notificationRedirects';
+import { getNotificationRedirectFromLink } from '~/logic/lib/notificationRedirects';
 import { JoinRoute } from './Join/Join';
 import useInviteState from '~/logic/state/invite';
 import useMetadataState from '~/logic/state/metadata';
@@ -37,7 +36,7 @@ export const Content = () => {
       return;
     }
     if(query.has('grid-note')) {
-      history.push(getNotificationRedirect(query.get('grid-note')!));
+      history.push(getNotificationRedirectFromLink(query.get('grid-note')!));
     } else if(query.has('grid-link')) {
       const link = decodeURIComponent(query.get('grid-link')!);
       history.push(`/perma${link}`);
@@ -55,22 +54,6 @@ export const Content = () => {
     e.stopImmediatePropagation();
     history.goBack();
   }, [history.goBack]));
-
-  const [hasProtocol, setHasProtocol] = useLocalStorageState(
-    'registeredProtocol', false
-  );
-
-  useEffect(() => {
-    if(!hasProtocol && window?.navigator?.registerProtocolHandler) {
-      try {
-        window.navigator.registerProtocolHandler('web+urbitgraph', '/perma?ext=%s', 'Urbit Links');
-        console.log('registered protocol');
-        setHasProtocol(true);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }, [hasProtocol]);
 
   return (
     <Container>

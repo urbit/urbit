@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
+    "@fingerprintjs/fingerprintjs": "^3.3.3",
     "@radix-ui/react-dialog": "^0.1.0",
     "@reach/disclosure": "^0.10.5",
     "@reach/menu-button": "^0.10.5",
