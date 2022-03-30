@@ -17,11 +17,26 @@
 ::  :aqua [%file ~[~bud ~dev] %/sys/vane]
 ::  :aqua [%pause-events ~[~bud ~dev]]
 ::
+::TODO  niceties:
+::  - %init-ship that lets you overwrite any existing ones,
+::    for starting out clean with a new test flow
+::    - or maybe just a %full-reset poke?
+::  - if ph can't be fast, it should be totally non-interactive
+::  - for fast, options:
+::    - hand-made pills for testing
+::    - make flags that are easy to set somehow for the things (eth timer, packet size)
+::      - adding flag to ames is easy
+::      - eth-watcher lets you modify in-place
+::        - make sure this doesn't cause a kick/rewatch/restart,
+::          since that might fix some bugs.
+::  - really want to be able to |link into aqua ships,
+::    aqua should proxy watches.
+::  - support arbitrary tasks, instead of just +unix-task
 ::
 ::  We get ++unix-event and ++pill from /-aquarium
 ::
 /-  aquarium
-/+  pill, azimuth, default-agent, aqua-azimuth, dbug, verb
+/+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
 =,  pill-lib=pill
 =,  aquarium
 =>  $~  |%
@@ -399,8 +414,24 @@
   |=  p=pill
   ^-  (quip card:agent:gall _state)
   ?<  ?=(%ivory -.p)
-  ::TODO  should replace azimuth snapshot with stub?
-  ::      keeping it in brings ships out of sync with aqua's azimuth state...
+  =.  userspace-ova.p
+    ::  if there is an azimuth-snapshot in the pill, we stub it out,
+    ::  since it would interfere with aqua's azimuth simulation.
+    ::
+    ^+  userspace-ova.p
+    %+  turn  userspace-ova.p
+    |=  e=unix-event:pill-lib
+    ^+  e
+    ?.  ?=(%park -.q.e)   e
+    ?.  ?=(%& -.yok.q.e)  e
+    =-  e(q.p.yok.q -)
+    ^-  (map path (each page lobe:clay))
+    %-  ~(urn by q.p.yok.q.e)
+    |=  [=path fil=(each page lobe:clay)]
+    ^+  fil
+    ?.  =(/app/azimuth/version-0/azimuth-snapshot path)  fil
+    ?:  ?=(%| -.fil)  fil
+    &+azimuth-snapshot+[%0 [0x0 0] *^state:naive ~ ~]
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
