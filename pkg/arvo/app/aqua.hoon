@@ -571,12 +571,16 @@
         ::
         userspace-ova.pil  :: load os
         ::
-        :~  [/b/behn/0v1n.2m9vh %born ~]
+        :*  [/b/behn/0v1n.2m9vh %born ~]
             [/i/http-client/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
             [/a/newt/0v1n.2m9vh %born ~]
             [/d/term/1 %hail ~]
+          ::
+            ?:  fake.ae  ~
+            =+  [%raw-poke %noun %refresh-rate ~s30]
+            [/g/aqua/reduce-refresh-rate %deal [. .]:who.ae %azimuth -]~
         ==
       ==
     =.  this
