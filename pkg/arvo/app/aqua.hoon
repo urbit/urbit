@@ -33,7 +33,7 @@
           pil=$>(%pill pill)
           assembled=*
           tym=@da
-          fresh-piers=(map ship [=pier boths=(list unix-both)])
+          fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
       ==
@@ -136,6 +136,8 @@
 ::  Represents a single ship's state.
 ::
 ++  pe
+  ::NOTE  if we start needing the fake flag outside of +ahoy and +yaho,
+  ::      probably add it as an argument here.
   |=  who=ship
   =+  (~(gut by ships.piers) who *pier)
   =*  pier-data  -
@@ -159,15 +161,17 @@
   ::  store post-pill ship for later re-use
   ::
   ++  ahoy
-    =?  fresh-piers  !(~(has by fresh-piers) who)
-      %+  ~(put by fresh-piers)  who
+    |=  fake=?
+    =?  fresh-piers  !(~(has by fresh-piers) [who fake])
+      %+  ~(put by fresh-piers)  [who fake]
       [pier-data (~(get ja unix-boths) who)]
     ..ahoy
   ::
   ::  restore post-pill ship for re-use
   ::
   ++  yaho
-    =/  fresh  (~(got by fresh-piers) who)
+    |=  fake=?
+    =/  fresh  (~(got by fresh-piers) [who fake])
     =.  pier-data  pier.fresh
     =.  boths.fresh  (flop boths.fresh)
     |-
@@ -533,14 +537,18 @@
   ?-  -.ae
   ::
       %init-ship
-    ::TODO  maybe we could cache "real" ships too if we just injected
-    ::      latest keys afterwards.
-    ::      would still need separate "fake" and "real" caches though,
-    ::      can't change the fake flag...
-    ?:  &(fake.ae (~(has by fresh-piers) who.ae))
-      ~&  [%aqua %cached-init who.ae]
-      =.  this  abet-pe:yaho:(pe who.ae)
-      (pe who.ae)
+    ?:  (~(has by fresh-piers) [who fake]:ae)
+      ~&  [%aqua %cached-init +.ae]
+      =.  this  abet-pe:(yaho fake):[ae (pe who.ae)]
+      ?:  fake.ae  (pe who.ae)
+      ::  for real ships, make sure they have their latest keys
+      ::
+      %.  who.ae
+      =<  pe:abet-pe:plow
+      %-  push-events:(pe who.ae)
+      =/  =life  lyfe:(~(got by lives.azi.piers) who.ae)
+      =/  =ring  sec:ex:(get-keys:aqua-azimuth who.ae life)
+      [/j/aqua/rekey %rekey life ring]~
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
@@ -584,8 +592,7 @@
         ==
       ==
     =.  this
-      ?.  fake.ae  abet-pe:initted
-      abet-pe:ahoy:initted
+      abet-pe:(ahoy fake):[ae initted]
     (pe who.ae)
   ::
       %pause-events
