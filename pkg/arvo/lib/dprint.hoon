@@ -46,7 +46,7 @@
             docs=what
             sut=type
             con=coil
-            chapter-id=@
+            chapter-id=term
         ==
     ==
   ::
@@ -155,9 +155,9 @@
   ==
 :>    grabs the docs for an arm.
 ++  select-arm-docs
-  |=  [arm-doc=what fot=foot sut=type]
+  |=  [arm-doc=what gen=hoon sut=type]
   ^-  [what what what]
-  =+  foot-type=(~(play ut sut) p.fot)
+  =+  foot-type=(~(play ut sut) gen)
   =/  raw-doc=what  (docs-from-type foot-type)
   ::  if the arm builds a core, get the docs for the default arm
   ::  in that core
@@ -168,11 +168,115 @@
   ::  i think at least one of these will always be empty
   :+  arm-doc  raw-doc  core-doc
 ::
+:>    returns an overview of the arms in a specific chapter
+++  arms-in-chapter
+  |=  [sut=type con=coil chapter-id=term]
+  ^-  overview
+  =/  chapter-tome  (~(got by q.r.con) chapter-id)
+  (sort-overview (arms-as-overview q.chapter-tome sut))
+::
+:>    sort items in an overview in alphabetical order
+++  sort-overview
+  |=  ovr=overview
+  ^-  overview
+  %+  sort  ovr
+    |=  [lhs=overview-item rhs=overview-item]
+    (aor (get-overview-name lhs) (get-overview-name rhs))
+::
+:>    returns the name of an overview
+++  get-overview-name
+  |=  ovr=overview-item
+  ?-  ovr
+    [%header *]  ""
+    [%item *]    name.ovr
+  ==
+::
+:>    translate a tome into an overview
+++  arms-as-overview
+  |=  [a=(map term hoon) sut=type]
+  ^-  overview
+  *overview
+::
 ::  :>  #
 ::  :>  #  %printing
 ::  :>  #
 ::  :>    functions which display output of various types
 ::  +|  %printing
+:>    prints a doccords item
+++  print-item
+  |=  =item
+  ^-  tang
+  ?-  item
+    [%view *]     (print-overview items.item)
+    [%core *]     (print-core +.item)
+    [%arm *]      (print-arm +.item)
+    [%chapter *]  (print-chapter +.item)
+    [%face *]     (print-face +.item)
+  ==
+::
+:>    renders documentation for a full core
+++  print-core
+  |=  [name=tape docs=what sut=type con=coil uit=(unit item)]
+  ^-  tang
+  *tang
+::
+++  print-chapter
+  |=  [name=tape doc=what sut=type con=coil chapter-id=term]
+  ^-  tang
+  ;:  weld
+    (print-header name doc)
+  ::
+    ?~  doc
+      ~
+    (print-sections q.u.doc)
+  ::
+    =+  arms=(arms-in-chapter sut con chapter-id)
+    ?~  arms
+      ~
+    (print-overview [%header `['arms:' ~] arms]~)
+  ==
+::
+:>    renders documentation for a single arm in a core
+++  print-arm
+  |=  [name=tape docs=what gen=hoon sut=type]
+  ^-  tang
+  =+  [main-doc raw-doc product-doc]=(select-arm-docs docs gen sut)
+  %+  weld
+    (print-header name main-doc)
+    ?~  product-doc
+      ~
+    %+  weld
+      `tang`[[%leaf ""] [%leaf "product:"] ~]
+      (print-header "" product-doc)
+::
+++  print-face
+  |=  [name=tape doc=what children=(unit item)]
+  ^-  tang
+  %+  weld
+    (print-header name doc)
+    ?~  children
+      ~
+    (print-item u.children)
+::
+++  print-header
+  |=  [name=tape doc=what]
+  ^-  tang
+  ?~  name
+    ?~  doc
+      [%leaf "(undocumented)"]~
+    %+  weld
+     `tang`[%leaf "{(trip p.u.doc)}"]~
+     (print-sections q.u.doc)
+  ?~  doc
+    [%leaf name]~
+  %+  weld
+    `tang`[%leaf "{name}: {(trip p.u.doc)}"]~
+    (print-sections q.u.doc)
+::
+++  print-overview
+  |=  ovr=overview
+  ^-  tang
+  *tang
 ::
 :>    renders a list of sections as tang
 :>
