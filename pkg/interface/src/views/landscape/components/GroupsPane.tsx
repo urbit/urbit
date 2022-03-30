@@ -21,17 +21,16 @@ import { PopoverRoutes } from './PopoverRoutes';
 import { Skeleton } from './Skeleton';
 import { EmptyGroupHome } from './Home/EmptyGroupHome';
 import { Join } from './Join/Join';
+import { Resource } from './Resource';
+import { DmResource } from '~/views/apps/chat/DmResource';
+import { UnjoinedResource } from '~/views/components/UnjoinedResource';
+import { NewChannel } from './NewChannel';
+import { GroupHome } from './Home/GroupHome';
 
 interface GroupsPaneProps {
   baseUrl: string;
   workspace: Workspace;
 }
-
-const DmResource = React.lazy(() => import('~/views/apps/chat/DmResource').then(module => ({ default: module.DmResource })));
-const Resource = React.lazy(() => import('./Resource').then(module => ({ default: module.Resource })));
-const UnjoinedResource = React.lazy(() => import('~/views/components/UnjoinedResource').then(module => ({ default: module.UnjoinedResource })));
-const GroupHome = React.lazy(() => import('./Home/GroupHome').then(module => ({ default: module.GroupHome })));
-const NewChannel = React.lazy(() => import('./NewChannel').then(module => ({ default: module.NewChannel })));
 
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, workspace } = props;
@@ -93,170 +92,170 @@ export function GroupsPane(props: GroupsPaneProps) {
     );
 
   return (
-    <Switch>
-      <Route
-        path={relativePath('/dm/:ship')}
-        render={({ match }) => {
-          const { ship } = match.params as Record<string, string>;
+      <Switch>
+        <Route
+          path={relativePath('/dm/:ship')}
+          render={({ match }) => {
+            const { ship } = match.params as Record<string, string>;
 
-          return (
-            <Skeleton
-              mobileHide
-              recentGroups={recentGroups}
-              selected={ship}
-              {...props}
-              baseUrl={match.path}
-            > <DmResource ship={ship} />
-
-            </Skeleton>
-
-          );
-        }}
-      />
-      <Route
-        path={[relativePath('/resource/:app/(ship)?/:host/:name')]}
-        render={(routeProps) => {
-          const { app, host, name } = routeProps.match.params as Record<
-            string,
-            string
-          >;
-
-          const resource = `/ship/${host}/${name}`;
-          const association = associations.graph[resource];
-          const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
-
-          if (!association) {
-            return <Loading />;
-          }
-
-          return (
-            <Skeleton
-              mobileHide
-              recentGroups={recentGroups}
-              selected={resource}
-              {...props}
-              baseUrl={resourceUrl}
-            >
-              <Resource
-                workspace={props.workspace}
-                association={association}
-                baseUrl={baseUrl}
-              />
-              {popovers(routeProps, resourceUrl)}
-            </Skeleton>
-          );
-        }}
-      />
-      <Route
-        path={relativePath('/join/:app/(ship)?/:host/:name')}
-        render={(routeProps) => {
-          const { app, host, name } = routeProps.match.params;
-          const appPath = `/ship/${host}/${name}`;
-          const association = associations.graph[appPath];
-          const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
-          let title = groupAssociation?.metadata?.title ?? 'Groups';
-
-          if (!association) {
-            return <Loading />;
-          }
-
-          title += ` - ${association.metadata.title}`;
-          return (
-            <>
-              <Helmet defer={false}>
-                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
-              </Helmet>
+            return (
               <Skeleton
-                recentGroups={recentGroups}
                 mobileHide
-                selected={appPath}
+                recentGroups={recentGroups}
+                selected={ship}
                 {...props}
-                baseUrl={baseUrl}
+                baseUrl={match.path}
+              > <DmResource ship={ship} />
+
+              </Skeleton>
+
+            );
+          }}
+        />
+        <Route
+          path={[relativePath('/resource/:app/(ship)?/:host/:name')]}
+          render={(routeProps) => {
+            const { app, host, name } = routeProps.match.params as Record<
+              string,
+              string
+            >;
+
+            const resource = `/ship/${host}/${name}`;
+            const association = associations.graph[resource];
+            const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
+
+            if (!association) {
+              return <Loading />;
+            }
+
+            return (
+              <Skeleton
+                mobileHide
+                recentGroups={recentGroups}
+                selected={resource}
+                {...props}
+                baseUrl={resourceUrl}
               >
-                <UnjoinedResource
-                  baseUrl={baseUrl}
+                <Resource
+                  workspace={props.workspace}
                   association={association}
+                  baseUrl={baseUrl}
                 />
                 {popovers(routeProps, resourceUrl)}
               </Skeleton>
-            </>
-          );
-        }}
-      />
-      <Route
-        path={relativePath('/pending/:ship/:name')}
-        render={(routeProps) => {
-          const { ship, name } = routeProps.match.params as Record<string, string>;
-          const desc =  {
-            group: `/ship/${ship}/${name}`,
-            kind: 'graph' as const
-          };
-          return (
-            <Skeleton
-              mobileHide
-              recentGroups={recentGroups}
-              {...props}
-              baseUrl={baseUrl}
-            >
-              <Box width="100%">
-                <Join desc={desc} />
-              </Box>
-            </Skeleton>
-          );
-        }}
-      />
-      <Route
-        path={relativePath('/new')}
-        render={(routeProps) => {
-          return (
-            <Skeleton mobileHide recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
-              <NewChannel
-                {...routeProps}
-                baseUrl={baseUrl}
-                group={groupPath}
-                workspace={workspace}
-              />
-              {popovers(routeProps, baseUrl)}
-            </Skeleton>
-          );
-        }}
-      />
-      <Route
-        path={[relativePath('/'), relativePath('/feed+')]}
-        render={(routeProps) => {
-          const shouldHideSidebar =
-            routeProps.location.pathname.includes('/feed');
-          const title = groupAssociation?.metadata?.title ?? 'Groups';
-          return (
-            <>
-              <Helmet defer={false}>
-                <title>
-                  {notificationsCount ? `(${String(notificationsCount)}) ` : ''}
-                  { title }
-                </title>
-              </Helmet>
+            );
+          }}
+        />
+        <Route
+          path={relativePath('/join/:app/(ship)?/:host/:name')}
+          render={(routeProps) => {
+            const { app, host, name } = routeProps.match.params;
+            const appPath = `/ship/${host}/${name}`;
+            const association = associations.graph[appPath];
+            const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
+            let title = groupAssociation?.metadata?.title ?? 'Groups';
+
+            if (!association) {
+              return <Loading />;
+            }
+
+            title += ` - ${association.metadata.title}`;
+            return (
+              <>
+                <Helmet defer={false}>
+                  <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
+                </Helmet>
+                <Skeleton
+                  recentGroups={recentGroups}
+                  mobileHide
+                  selected={appPath}
+                  {...props}
+                  baseUrl={baseUrl}
+                >
+                  <UnjoinedResource
+                    baseUrl={baseUrl}
+                    association={association}
+                  />
+                  {popovers(routeProps, resourceUrl)}
+                </Skeleton>
+              </>
+            );
+          }}
+        />
+        <Route
+          path={relativePath('/pending/:ship/:name')}
+          render={(routeProps) => {
+            const { ship, name } = routeProps.match.params as Record<string, string>;
+            const desc =  {
+              group: `/ship/${ship}/${name}`,
+              kind: 'graph' as const
+            };
+            return (
               <Skeleton
-                {...props}
-                mobileHide={shouldHideSidebar}
+                mobileHide
                 recentGroups={recentGroups}
+                {...props}
                 baseUrl={baseUrl}
               >
-                { workspace.type === 'group' ? (
-                  <GroupHome
-                    baseUrl={baseUrl}
-                    groupPath={groupPath}
-                  />
-                  ) : (
-                    <EmptyGroupHome
-                      associations={associations}
-                    />
-                )}
+                <Box width="100%">
+                  <Join desc={desc} />
+                </Box>
+              </Skeleton>
+            );
+          }}
+        />
+        <Route
+          path={relativePath('/new')}
+          render={(routeProps) => {
+            return (
+              <Skeleton mobileHide recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
+                <NewChannel
+                  {...routeProps}
+                  baseUrl={baseUrl}
+                  group={groupPath}
+                  workspace={workspace}
+                />
                 {popovers(routeProps, baseUrl)}
               </Skeleton>
-            </>
-          );
-        }}
-      />
-    </Switch>
+            );
+          }}
+        />
+        <Route
+          path={[relativePath('/'), relativePath('/feed+')]}
+          render={(routeProps) => {
+            const shouldHideSidebar =
+              routeProps.location.pathname.includes('/feed');
+            const title = groupAssociation?.metadata?.title ?? 'Groups';
+            return (
+              <>
+                <Helmet defer={false}>
+                  <title>
+                    {notificationsCount ? `(${String(notificationsCount)}) ` : ''}
+                    { title }
+                  </title>
+                </Helmet>
+                <Skeleton
+                  {...props}
+                  mobileHide={shouldHideSidebar}
+                  recentGroups={recentGroups}
+                  baseUrl={baseUrl}
+                >
+                  { workspace.type === 'group' ? (
+                    <GroupHome
+                      baseUrl={baseUrl}
+                      groupPath={groupPath}
+                    />
+                    ) : (
+                      <EmptyGroupHome
+                        associations={associations}
+                      />
+                  )}
+                  {popovers(routeProps, baseUrl)}
+                </Skeleton>
+              </>
+            );
+          }}
+        />
+      </Switch>
   );
 }

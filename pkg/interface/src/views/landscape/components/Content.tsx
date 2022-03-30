@@ -6,6 +6,11 @@ import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 import { useShortcut } from '~/logic/state/settings';
 import { Loading } from '~/views/components/Loading';
 import LaunchApp from '~/views/apps/launch/App';
+import Landscape from '~/views/landscape';
+import Settings from '~/views/apps/settings/settings';
+import Profile from '~/views/apps/profile/profile';
+import Notifications from '~/views/apps/notifications/notifications';
+import ErrorComponent from '~/views/components/Error';
 
 import { getNotificationRedirectFromLink } from '~/logic/lib/notificationRedirects';
 import { JoinRoute } from './Join/Join';
@@ -18,12 +23,6 @@ export const Container = styled(Box)`
    width: 100%;
    height: calc(100% - 62px);
 `;
-
-const Landscape = React.lazy(() => import('~/views/landscape/index'));
-const Settings = React.lazy(() => import('~/views/apps/settings/settings'));
-const Profile = React.lazy(() => import('~/views/apps/profile/profile'));
-const Notifications = React.lazy(() => import('~/views/apps/notifications/notifications'));
-const ErrorComponent = React.lazy(() => import('~/views/components/Error'));
 
 export const Content = () => {
   const history = useHistory();

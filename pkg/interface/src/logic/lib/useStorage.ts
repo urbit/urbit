@@ -1,4 +1,4 @@
-import S3 from 'aws-sdk/clients/s3';
+import S3Client from './S3Client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useStorageState from '../state/storage';
 import GcpClient from './GcpClient';
@@ -32,7 +32,7 @@ const useStorage = ({ accept = '*' } = { accept: '*' }): IuseStorage => {
           !s3.credentials.secretAccessKey) {
         return;
       }
-      client.current = new S3({
+      client.current = new S3Client({
         credentials: s3.credentials,
         endpoint: s3.credentials.endpoint
       });
