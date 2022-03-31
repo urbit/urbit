@@ -287,7 +287,7 @@
   ~?  >>  debug  %select-arm-docs
   ^-  [what what what]
   =+  hoon-type=(~(play ut sut) gen)
-  ~?  >>>  debug  hoon-type
+  ::~?  >>>  debug  hoon-type
   =/  product-doc=what  (what-from-type hoon-type)
   ~?  >  debug  product-doc
   ::  if the arm builds a core, get the docs for the default arm
@@ -305,20 +305,28 @@
     :: if there is a product doc, then step through the hint and check for a core
     ?:  ?=([%hint *] hoon-type)
       ~?  >  debug  %step-through-hint
-      =+  inner-type=(~(play ut q.hoon-type) gen)
-      :: using mule since it crashes if there's not a core
-      =/  res  (mule |.((~(play ut inner-type) [%limb %$])))
-      ?-  -.res
-        %|  ~
-        %&  (what-from-type p.res)
+      ::=+  inner-type=(~(play ut q.hoon-type) gen)
+      ::=/  res  (mule |.((~(play ut inner-type) [%limb %$])))
+      ::  pretty sure having to use mule twice here means im doing something wrong
+      =/  h-res  (mule |.((~(play ut q.hoon-type) gen)))
+      ?-    -.h-res
+          %|
+        ~
+      ::
+          %&
+        =/  in-res  (mule |.((~(play ut p.h-res) [%limb %$])))
+        ?-  -.in-res
+          %|  ~
+          %&  (what-from-type p.in-res)
+        ==
       ==
     ~
   ::  i think arm-doc and product-doc might always be the same
   ::  upon further reflection, i think this is a limitation of the wrapping
   ::  approach
-  ~?  >  debug  :*  %arm-doc  arm-doc
+  ~?  >  debug  :*  %arm-doc      arm-doc
                     %product-doc  product-doc
-                    %core-doc  core-doc
+                    %core-doc     core-doc
                 ==
   :+  arm-doc  product-doc  core-doc
 ::
@@ -495,6 +503,7 @@
       ~
     (print-item u.children)
 ::
+:>    prints name and docs only
 ++  print-header
   |=  [name=tape doc=what]
   ^-  tang
@@ -511,9 +520,39 @@
     (print-sections q.u.doc)
 ::
 ++  print-overview
-  |=  ovr=overview
+  |=  =overview
   ^-  tang
-  *tang
+  =|  out=tang
+  |-
+  ?~  overview  out
+  =/  oitem  i.overview
+  ?-    oitem
+      [%header *]
+    %=  $
+      overview  t.overview
+      out  ;:  weld
+             out
+             ?~  doc.oitem  ~
+             `tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
+             ?~  doc.oitem  ~
+             (print-sections q.u.doc.oitem)
+             ^$(overview children.oitem)
+           ==
+    ==
+  ::
+      [%item *]
+    %=  $
+      overview  t.overview
+      out  ;:  weld
+             out
+             `tang`[[%leaf ""] [%leaf name.oitem] ~]
+             ?~  doc.oitem  ~
+             `tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
+             ?~  doc.oitem  ~
+             (print-sections q.u.doc.oitem)
+           ==
+    ==
+  ==
 ::
 :>    renders a list of sections as tang
 :>
