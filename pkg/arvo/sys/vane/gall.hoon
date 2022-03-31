@@ -1200,7 +1200,7 @@
             %huck   note-arvo.neet
             %agent  [%g %deal [our ship.neet] [name deal]:neet]
           ==
-        [system-duct.state %pass wire note-arvo]~
+        [duct %pass wire note-arvo]~
       ==
     ::  +ap-breach: ship breached, so forget about them
     ::
@@ -1497,6 +1497,8 @@
             (on-bad-nonce nonce.u.got)
           run-sign
       ::
+      ++  sub-key  [agent-wire dock]
+      ++  ingest   (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
       ++  run-sign
         ?-    -.sign
             %poke-ack  !!
@@ -1533,6 +1535,7 @@
           ::
           ingest-and-check-error
         ==
+      ::
       ++  on-missing
         %.  ap-core
         %-  slog  :~
@@ -1540,6 +1543,7 @@
           leaf+"{<dock>}: {<[nonce=nonce agent-wire]>}"
           >wire=wire<
         ==
+      ::
       ++  on-bad-nonce
         |=  stored-nonce=@
         %.  ap-core
@@ -1551,9 +1555,6 @@
           leaf+"{<dock>}: {<agent-wire>}"
           >wire=wire<
         ==
-      ::
-      ++  sub-key  [agent-wire dock]
-      ++  ingest   (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
       ::
       ++  ingest-and-check-error
         ^+  ap-core
@@ -1776,9 +1777,10 @@
       =.  p.move.move
         (weld sys-wire [(scot %ud sub-nonce.yoke) sub-wire])
       %_    $
-          moves  t.moves
-          new-moves  [move new-moves]
+          moves            t.moves
+          new-moves       [move new-moves]
           sub-nonce.yoke  +(sub-nonce.yoke)
+      ::
           outbound.watches.yoke
         %+  ~(put by outbound.watches.yoke)  [sub-wire dock]
         :+  acked=|
