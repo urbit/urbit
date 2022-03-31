@@ -19,7 +19,7 @@ export default class S3Client implements StorageClient {
       this.client = new this.S3(this.config);
     }
 
-    return this.client.upload(params);
+    return this.client.upload(params).promise();
   }
 
   upload(params: UploadParams): StorageUpload {
