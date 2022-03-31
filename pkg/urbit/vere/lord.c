@@ -1000,8 +1000,30 @@ typedef struct _lord_boot {
   c3_c*                pax_c;           //  directory
   c3_d                 key_d[4];        //  image key
   void*                ptr_v;
+  c3_o                 ret_o;
   void (*done_f)(void*, c3_o);
 } _lord_boot;
+
+/* _lord_on_serf_boot_exit_cb(): finish handling subprocess exit.
+*/
+static void
+_lord_on_serf_boot_exit_cb(void*       ptr_v,
+                           ssize_t     err_i,
+                           const c3_c* err_c)
+{
+  _lord_boot* bot_u               = ptr_v;
+  c3_o        ret_o               = bot_u->ret_o;
+  void     (*done_f)(void*, c3_o) = bot_u->done_f;
+
+  ptr_v = bot_u->ptr_v;
+
+  u3s_cue_xeno_done(bot_u->sil_u);
+  c3_free(bot_u);
+
+  if ( done_f ) {
+    done_f(ptr_v, ret_o);
+  }
+}
 
 /* _lord_on_serf_boot_exit(): handle subprocess exit.
 */
@@ -1011,18 +1033,15 @@ _lord_on_serf_boot_exit(uv_process_t* cub_u,
                         c3_i          sig_i)
 {
   _lord_boot* bot_u = cub_u->data;
-  void (*done_f)(void*, c3_o) = bot_u->done_f;
-  void* ptr_v = bot_u->ptr_v;
 
-  //  XX pax_c, pipes, &c
-  //
-  u3s_cue_xeno_done(bot_u->sil_u);
-  c3_free(bot_u);
+  bot_u->ret_o = ( !sas_i && !sig_i ) ? c3y : c3n;
 
-  if ( done_f ) {
-    c3_o ret_o = ( !sas_i && !sig_i ) ? c3y : c3n;
-    done_f(ptr_v, ret_o);
-  }
+  u3_newt_moat_stop(&bot_u->out_u, _lord_on_serf_boot_exit_cb);
+  u3_newt_mojo_stop(&bot_u->inn_u, _lord_bail_noop);
+
+  //  XX add stderr?
+
+  uv_close((uv_handle_t*)cub_u, 0);
 }
 
 /* _lord_on_serf_boot_bail(): handle subprocess error.
@@ -1145,6 +1164,9 @@ u3_lord_boot(c3_c* pax_c,
     uv_pipe_init(u3L, &bot_u->inn_u.pyp_u, 0);
     uv_timer_init(u3L, &bot_u->out_u.tim_u);
     uv_pipe_init(u3L, &bot_u->out_u.pyp_u, 0);
+
+    //  XX add stderr?
+    //
 
     bot_u->cod_u[0].flags = UV_CREATE_PIPE | UV_READABLE_PIPE;
     bot_u->cod_u[0].data.stream = (uv_stream_t *)&bot_u->inn_u;
