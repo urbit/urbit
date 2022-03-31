@@ -40,6 +40,7 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
   const handleChange = useCallback((val: string) => {
     setUrl(val);
     setValid(URLparser.test(val) || Boolean(parsePermalink(val)));
+    setError('');
   }, []);
 
   const handleError = useCallback((err: Error) => {

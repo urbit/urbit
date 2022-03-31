@@ -121,7 +121,10 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   }, []);
 
   const { canUpload, drag } = useFileUpload({
-    onSuccess: url => onSubmit([{ url }]),
+    onSuccess: (url) => {
+      onSubmit([{ url }]);
+      setUploadError('');
+    },
     onError: handleUploadError
   });
 
@@ -179,6 +182,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           placeholder="Message..."
           uploadError={uploadError}
+          setUploadError={setUploadError}
           handleUploadError={handleUploadError}
         />
       )}

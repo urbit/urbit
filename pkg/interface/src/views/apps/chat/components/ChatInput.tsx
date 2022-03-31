@@ -37,6 +37,7 @@ type ChatInputProps = PropsWithChildren<
     placeholder: string;
     onSubmit: (contents: Content[]) => void;
     uploadError: string;
+    setUploadError: (val: string) => void;
     handleUploadError: (err: Error) => void;
   }
 >;
@@ -98,6 +99,7 @@ export const ChatInput = React.forwardRef(
       placeholder,
       onSubmit,
       uploadError,
+      setUploadError,
       handleUploadError
     }: ChatInputProps,
     ref
@@ -130,6 +132,7 @@ export const ChatInput = React.forwardRef(
       } else {
         onSubmit([{ url }]);
       }
+      setUploadError('');
     }
 
     function toggleCode() {

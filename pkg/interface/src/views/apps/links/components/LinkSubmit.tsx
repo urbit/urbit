@@ -36,7 +36,10 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   }, []);
 
   const { canUpload, uploading, promptUpload, drag, onPaste } = useFileUpload({
-    onSuccess: setLinkValue,
+    onSuccess: (url) => {
+      setLinkValue(url);
+      setError('');
+    },
     onError: handleError,
     multiple: false
   });
@@ -59,7 +62,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     setLinkValid(false);
   };
 
-  const validateLink = link => {
+  const validateLink = (link: any) => {
     const URLparser = new RegExp(
       /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
     );
@@ -85,12 +88,12 @@ const LinkSubmit = (props: LinkSubmitProps) => {
       if (hasProvider(linkValue)) {
         fetch(`https://noembed.com/embed?url=${linkValue}`)
           .then(response => response.json())
-          .then(result => {
+          .then((result) => {
             if (result.title && !linkTitle) {
               setLinkTitle(result.title);
             }
           })
-          .catch(error => {
+          .catch((error) => {
             /* noop*/
           });
       } else if (!linkTitle) {
@@ -122,7 +125,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   useEffect(onLinkChange, [linkValue]);
 
-  const onKeyPress = e => {
+  const onKeyPress = (e: any) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       doPost();
