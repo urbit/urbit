@@ -120,7 +120,6 @@ export function useTheme() {
 const selBrowserSettings = (s: SettingsState) => s.browserSettings.settings;
 export function useBrowserSettings() {
   const settings = useSettingsState(selBrowserSettings);
-  console.log({ settings });
   return settings !== '' ? JSON.parse(settings) : [];
 }
 
