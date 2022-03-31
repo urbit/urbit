@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import { Box } from '@tlon/indigo-react';
 import {
   Route,
-  RouteComponentProps, Switch
+  RouteComponentProps, Switch, useLocation
 } from 'react-router-dom';
 import { useShortcut } from '~/logic/state/settings';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
@@ -26,6 +26,7 @@ import { DmResource } from '~/views/apps/chat/DmResource';
 import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { NewChannel } from './NewChannel';
 import { GroupHome } from './Home/GroupHome';
+import useGraphState from '~/logic/state/graph';
 
 interface GroupsPaneProps {
   baseUrl: string;
@@ -34,6 +35,7 @@ interface GroupsPaneProps {
 
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, workspace } = props;
+  const location = useLocation();
   const associations = useMetadataState(state => state.associations);
   const notificationsCount = useHarkState(state => state.notificationsCount);
 
@@ -54,6 +56,20 @@ export function GroupsPane(props: GroupsPaneProps) {
     'recent-groups',
     []
   );
+
+  useEffect(() => {
+    const {
+      getKeys,
+      getShallowChildren
+    } = useGraphState.getState();
+
+    useHarkState.getState().getUnreads();
+    getKeys();
+
+    if (location.pathname.startsWith('/~landscape/messages')) {
+      getShallowChildren(`~${window.ship}`, 'dm-inbox');
+    }
+  }, []);
 
   useEffect(() => {
     if (workspace.type !== 'group') {
