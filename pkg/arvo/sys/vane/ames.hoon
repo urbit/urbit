@@ -2314,19 +2314,23 @@
       ::  +on-sink-cork: handle flow kill after server ames has taken %done
       ::
       ++  on-sink-cork
-        :: resetting timer for boons
-        =.  peer-core
+        ^+  peer-core
         =/  =message-pump-state
           (~(gut by snd.peer-state) bone *message-pump-state)
-        ?~  next-wake=next-wake.packet-pump-state.message-pump-state  peer-core
-        =/  wire  (make-pump-timer-wire her.channel bone)
-        =/  duct  ~[/ames]
-        (emit duct %pass wire %b %rest u.next-wake)
-        ::
-        =.  rcv.peer-state  (~(del by rcv.peer-state) bone)
-        =.  snd.peer-state  (~(del by snd.peer-state) bone)
-        =.  corked.peer-state  (~(put in corked.peer-state) bone)
-        =.  closing.peer-state  (~(del in closing.peer-state) bone)
+        =?  peer-core  ?=(^ next-wake.packet-pump-state.message-pump-state)
+          =*  next-wake  u.next-wake.packet-pump-state.message-pump-state
+          =/  =wire  (make-pump-timer-wire her.channel bone)
+          :: resetting timer for boons
+          ::
+          (emit [/ames]~ %pass wire %b %rest next-wake)
+        =.  peer-state
+          =,  peer-state
+          %_  peer-state
+            rcv      (~(del by rcv) bone)
+            snd      (~(del by snd) bone)
+            corked   (~(put in corked) bone)
+            closing  (~(del in closing) bone)
+          ==
         peer-core
       ::  +on-sink-send: emit ack packet as requested by |message-sink
       ::
@@ -2364,7 +2368,7 @@
         ?:  ?|  (~(has in closing.peer-state) bone)
                 (~(has in corked.peer-state) bone)
             ==
-        peer-core
+          peer-core
         ::  send ack unconditionally
         ::
         =.  peer-core  (emit (got-duct bone) %give %boon message)
@@ -2494,9 +2498,14 @@
       %memo  (on-memo message-blob.task)
       %wake  (run-packet-pump %wake current.state)
       %hear
-        ?-  -.ack-meat.task
-          %&  (on-hear [message-num fragment-num=p.ack-meat]:task)
-          %|  (on-done [[message-num ?:(ok.p.ack-meat [%ok ~] [%nack ~])] cork.p.ack-meat]:task)
+        ?-    -.ack-meat.task
+            %&
+         (on-hear [message-num fragment-num=p.ack-meat]:task)
+        ::
+            %|
+          =*  ack  p.ack-meat.task
+          %-  on-done
+          [[message-num:task ?:(ok.ack [%ok ~] [%nack ~])] cork.ack]
         ==
       %near  (on-done [[message-num %naxplanation error]:naxplanation.task %&])
     ==
