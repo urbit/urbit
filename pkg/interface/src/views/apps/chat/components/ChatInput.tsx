@@ -204,7 +204,6 @@ export const ChatInput = React.forwardRef(
                 color={inCodeMode ? 'blue' : 'black'}
               />
             </IconBox>
-            {console.log({ uploadError })}
             {canUpload && (
               <IconBox>
                 {uploadError == '' && uploading && <LoadingSpinner />}
