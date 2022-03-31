@@ -54,7 +54,9 @@ export function SidebarListHeader(props: {
   const feedPath = groupPath ? getFeedPath(associations.groups[groupPath]) : undefined;
 
   const unreadCount = useHarkState(
-    s => s.unreads?.graph?.[feedPath ?? '']?.['/']?.unreads as number ?? 0
+    s => feedPath
+    ? (s.unreads?.[`/graph/${feedPath.slice(6)}` ?? '']?.count as number ?? 0)
+    : 0
   );
 
   return (

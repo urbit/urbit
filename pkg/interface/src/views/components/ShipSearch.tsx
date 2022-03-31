@@ -204,7 +204,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
               onChange={onChange}
               onSelect={onAdd}
             />
-            <Row minHeight="34px" flexWrap="wrap">
+            <Row overflowX="auto" maxHeight="192px" minHeight="34px" flexWrap="wrap">
               {pills.map((s, i) => (
                 <Row
                   fontFamily="mono"

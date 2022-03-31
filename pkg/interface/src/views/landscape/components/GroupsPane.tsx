@@ -213,7 +213,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 {...props}
                 baseUrl={baseUrl}
               >
-                <Box width="100%">
+                <Box overflow="auto">
                   <Join desc={desc} />
                 </Box>
               </Skeleton>
