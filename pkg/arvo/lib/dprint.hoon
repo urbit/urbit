@@ -427,7 +427,24 @@
 ++  print-core
   |=  [name=tape docs=what sut=type con=coil uit=(unit item)]
   ^-  tang
-  *tang
+  =+  [arms chapters]=(arm-and-chapter-overviews sut con name)
+  ;:  weld
+    ::  cores don't have names
+    (print-header *tape *what)
+  ::
+    ?~  arms
+      ~
+    (print-overview [%header `['arms:' ~] arms]~)
+  ::
+    ?~  chapters
+      ~
+    (print-overview [%header `['chapters:' ~] chapters]~)
+  ::
+    =+  compiled=(item-as-overview uit)
+    ?~  compiled
+      ~
+    (print-overview [%header `['compiled against: ' ~] compiled]~)
+  ==
 ::
 ++  print-chapter
   |=  [name=tape doc=what sut=type con=coil chapter-id=term]
