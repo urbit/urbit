@@ -1,4 +1,5 @@
 ::  A library for printing doccords
+=/  debug  &
 =>
   |%
   :>    an overview of all named things in the type.
@@ -58,13 +59,17 @@
 :>
 :>  this gate is called recursively to find the path (topic) in the type
 :>  (sut). once it finds the correct part of the type, it switches to
-:>  +build-inspectable-recursively to describe that part of the type
+:>  +signify to describe that part of the type
 ++  find-item-in-type
-  |=  [topics=(list term) sut=type]
+  ::  TODO make this work with a list of topics
+  |=  [topic=term sut=type]
   ^-  (unit item)
-  ?~  topics
-    ~  ::(build-inspectable-recursively sut)
+  ::  ?~  topics
+  ::    ::  we have no more search paths TODO: return the rest as an overview
+  ::    (signify sut)
   ?-  sut
+      %noun      ~
+      %void      ~
       [%atom *]  ~
   ::
       [%cell *]
@@ -77,20 +82,21 @@
     ::  cores don't have any doc structure inside of them. i probably need to
     ::  check that they're wrapped with a %hint type. so this just looks for
     ::  docs on the arms
-    =+  arm=(find-arm-in-coil i.topics q.sut)
+    =+  arm=(find-arm-in-coil topic q.sut)
     ?~  arm
       ::  the current topic is not an arm in the core
       $(sut p.sut)
     ::  check to see if the arm is wrapped with a note
     =+  wat=(unwrap-note u.arm)
-    `[%arm (trip i.topics) wat u.arm p.sut]
+    `[%arm (trip topic) wat u.arm p.sut]
+   :: `[%arm (trip topic) wat u.arm q.q.sut]  :: what's the difference if i use the type in the coil?
     ::  TODO: check for chapter docs
   ::
       [%face *]
     ?.  ?=(term p.sut)
       ::  TODO: handle tune case
       ~
-    ?.  =(i.topics p.sut)
+    ?.  =(topic p.sut)
       ::  this face has a name, but not the one we're looking for
       ~
     ::  faces need to be checked to see if they're wrapped
@@ -107,18 +113,88 @@
     res
   ::
      [%hint *]
-  ::  this is probably where most of the action should take place. it should
-  ::  grab the docs from the hint and then look inside of the type to see where
-  ::  it ought to go
-    ~
+   ::  If we found a help hint, it is wrapping a type for which we might want to
+   ::  produce an item, so we should peek inside of it to see what type it is
+   ::  and grab the docs from +signify
+   ::
+   ::  check to see if type inside the hint is a match
+   ::  TODO: should i be trying to match both types in the hint?
+   ::  TODO: actually hints can be nested, if e.g. an arm has a product with a hint, whose
+   ::  product also has a hint. so this won't actually work for nested hints as written
+   ?:  (shallow-match topic q.sut)
+     =/  wat=what  (unwrap-hint sut)
+     =/  itm=(unit item)  (signify q.sut)
+     ?~  itm
+       ~
+     `(emblazen u.itm wat)
+::     (emblazen (need (signify q.sut)) (unwrap-hint sut))
+   $(sut q.sut)
   ::
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
   ::
-     %noun  ~
-     %void  ~
   ==
 ::
-:>  checks if a hoon is wrapped with a help note, and returns it if so
+:>    non-recursive check to see if type matches search
+:>
+:>  this is for applying help hints to types when searching for a match. hints
+:>  are only for the type theyre immediately wrapping, not something nested
+:>  deeper, so we dont always want to recurse
+++  shallow-match
+  |=  [topic=term sut=type]
+  ^-  ?
+  ?+  sut  %.n
+    [%atom *]  %.n  :: should we allow doccords on individual atoms? i think they should be for faces
+    [%core *]  !=(~ (find ~[topic] (sloe sut)))
+    [%face *]  ?.  ?=(term p.sut)
+                 %.n  :: TODO: handle tune case
+               =(topic p.sut)
+  ==
+::
+:>    changes a type into a item
+:>
+:>  this does not actually assign the docs, since they usually come from a hint
+:>  wrapping the type.
+++  signify
+  |=  sut=type
+  ^-  (unit item)
+  ?-  sut
+  ::
+      [%atom *]  ~
+  ::
+      [%cell *]
+    %+  join-items
+      $(sut p.sut)
+    $(sut q.sut)
+  ::
+      [%core *]
+    =/  name  ~  :: should check if core is built with an arm and use that name?
+    =*  compiled-against  $(sut p.sut)
+    `[%core (trip name) *what p.sut q.sut compiled-against]
+  ::
+     [%face *]
+    ?.  ?=(term p.sut)
+      ::  TODO: handle tune case
+      ~
+    =*  compiled-against  $(sut q.sut)
+    `[%face (trip p.sut) *what compiled-against]
+  ::
+    [%fork *]
+  =*  types  ~(tap in p.sut)
+  =*  items  (turn types signify)
+  (roll items join-items)
+  ::
+    [%hint *]
+  =*  rest-type  $(sut q.sut)
+  ::  check to see if it is a help hint
+  ?>  ?=(%help -.q.p.sut)
+  `[%view [%header `crib.p.q.p.sut (item-as-overview rest-type)]~]
+  ::
+    [%hold *]  $(sut (~(play ut p.sut) q.sut))
+    %noun  ~
+    %void  ~
+  ==
+
+:>    checks if a hoon is wrapped with a help note, and returns it if so
 ++  unwrap-note
   |=  gen=hoon
   ^-  what
@@ -128,11 +204,41 @@
     ~
   ~
 ::
+:>    checks if a hint type is a help hint and returns the docs if so
+++  unwrap-hint
+  |=  sut=type
+  ^-  what
+  ::  should I care what the type in the (pair type note) is?
+  ?.  ?=([%hint *] sut)
+    ~?  >  debug  %not-hint-type
+    ~
+  ?>(?=(%help -.q.p.sut) `crib.p.q.p.sut)
+::
+:>    inserts docs into an item
+:>
+:>  most docs are going to be found in hint types wrapping another type. when
+:>  we come across a hint, we grab the docs from the hint and then build the
+:>  item for the type it wrapped. since building an item is handled separately,
+:>  this item will initially have no docs in it, so we add it in after with this
+:>
+:>  the exceptions to this are %chapter and %view items. chapters have an axis
+:>  for docs in their $tome structure, and %views are summaries of several types
+++  emblazen
+  |=  [=item =what]
+  ~?  >>  debug  %emblazen
+  ^+  item
+  ?+  item  item  :: no-op on %chapter and %view
+    ?([%core *] [%arm *] [%face *])  ?~  docs.item
+                                       item(docs what)
+                                     ~?  >  debug  %docs-in-item
+                                     item(docs what)
+  ==
+::
 :>  if arm-name is an arm in con, return its hoon and potentially the note wrapping it (?)
 ++  find-arm-in-coil
   |=  [arm-name=term con=coil]
+  ~?  >>  debug  %find-arm-in-coil
   ^-  (unit hoon)
-  ::
   =/  tomes=(list [p=term q=tome])  ~(tap by q.r.con)
   |-
   ?~  tomes
@@ -140,33 +246,72 @@
   =+  item=(~(get by q.q.i.tomes) arm-name)
   ?~  item
     $(tomes t.tomes)
-::  ?:  =([%note *] u.item)  :: the arm is wrapped with a %note
-::    [~ p.u.item u.item]  :: maybe i should check for the note later
   `u.item
 ::
 :>    gets the documentation inside of a type
 ++  docs-from-type
+  ::  TODO: the following comment doesn't appear because of some issue with product
+  ::  docs, unless i erase the arm-doc
+  :>  testing
   |=  sut=type
   ^-  what
   ?+  sut  ~
-    [%core *]  ~  :: should this get the chapter docs?
-    [%hint *]  ?>(?=(%help -.q.p.sut) `crib.p.q.p.sut)
+    [%core *]  ~?  >>  debug  %docs-from-type-core  ~  :: should this get the chapter docs?
+    [%hint *]  ~?  >>  debug  %docs-from-type-hint  ?>(?=(%help -.q.p.sut) `crib.p.q.p.sut)
     [%hold *]  $(sut (~(play ut p.sut) q.sut))
   ==
+::
 :>    grabs the docs for an arm.
+:>
+:>  there are three possible places with relevant docs for an arm:
+:>  docs for the arm itself, docs for the product of the arm, and
+:>  if the arm builds a core, docs for the default arm of that core.
+:>  arm-doc: docs wrapping the arm - this should have already been found
+:>  raw-doc: docs for the product of the arm
+:>  core-doc: docs for the default arm of the core produced by the arm
 ++  select-arm-docs
   |=  [arm-doc=what gen=hoon sut=type]
+  ~?  >>  debug  %select-arm-docs
   ^-  [what what what]
-  =+  foot-type=(~(play ut sut) gen)
-  =/  raw-doc=what  (docs-from-type foot-type)
+  =+  hoon-type=(~(play ut sut) gen)
+  ~?  >>>  debug  hoon-type
+  =/  raw-doc=what  (docs-from-type hoon-type)
+  ~?  >  debug  raw-doc
   ::  if the arm builds a core, get the docs for the default arm
   ::  in that core
   =/  core-doc=what
-    ?.  ?=([%core *] foot-type)
+    ?.  ?=([%core *] hoon-type)
+      ~?  >  debug  %no-core-product
       ~
-    (docs-from-type (~(play ut foot-type) [%limb %$]))
-  ::  i think at least one of these will always be empty
+    (docs-from-type (~(play ut hoon-type) [%limb %$]))
+  ::  i think arm-doc and raw-doc might always be the same
+  ~?  >  debug  :+  arm-doc  raw-doc  core-doc
   :+  arm-doc  raw-doc  core-doc
+::
+:>    returns an overview for a cores arms and chapters
+:>
+:>  returns an overview for arms which are part of unnamed chapters, and
+:>  an overview of the named chapters
+++  arm-and-chapter-overviews
+  |=  [sut=type con=coil core-name=tape]
+  ^-  [overview overview]
+  =|  arm-docs=overview
+  =|  chapter-docs=overview
+  =/  tomes  ~(tap by q.r.con)
+  |-
+  ?~  tomes
+    [(sort-overview arm-docs) (sort-overview chapter-docs)]
+  =*  current  i.tomes  ::[term tome]
+  ?~  p.current
+    :: chapter has no name. add documentation for its arms to arm-docs
+    =.  arm-docs  (weld arm-docs (arms-as-overview q.q.current sut))
+    $(tomes t.tomes)
+  ::  chapter has a name. add to list of chapters
+  =.  chapter-docs
+    %+  weld  chapter-docs
+    ^-  overview
+    [%item :(weld (trip -.current) ":" core-name) p.q.current]~
+  $(tomes t.tomes)
 ::
 :>    returns an overview of the arms in a specific chapter
 ++  arms-in-chapter
@@ -180,8 +325,8 @@
   |=  ovr=overview
   ^-  overview
   %+  sort  ovr
-    |=  [lhs=overview-item rhs=overview-item]
-    (aor (get-overview-name lhs) (get-overview-name rhs))
+  |=  [lhs=overview-item rhs=overview-item]
+  (aor (get-overview-name lhs) (get-overview-name rhs))
 ::
 :>    returns the name of an overview
 ++  get-overview-name
@@ -193,10 +338,49 @@
 ::
 :>    translate a tome into an overview
 ++  arms-as-overview
+  ::  currently this doesn't do anything until i implement arm-doc
   |=  [a=(map term hoon) sut=type]
   ^-  overview
-  *overview
+  %+  turn  ~(tap by a)
+  |=  ar=(pair term hoon)
+  =/  doc  (select-arm-docs *what q.ar sut)  :: *what should be from the hint wrapper
+  [%item (weld "++" (trip p.ar)) -.doc]
 ::
+:>    changes an item into an overview
+++  item-as-overview
+  |=  uit=(unit item)
+  ^-  overview
+  ?~  uit  ~
+  =+  itm=(need uit)
+  ?-  itm
+  ::
+      [%view *]  items.itm
+  ::
+      [%core *]
+    ?~  name.itm
+      (item-as-overview children.itm)
+    :-  [%item name.itm docs.itm]
+    (item-as-overview children.itm)
+  ::
+      [%arm *]
+    [%item name.itm docs.itm]~
+  ::
+      [%chapter *]
+    [%item name.itm docs.itm]~
+  ::
+      [%face *]
+    ?~  name.itm
+      ~
+    [%item name.itm docs.itm]~
+  ==
+::
+:>    combines two (unit items) together
+++  join-items
+  |=  [lhs=(unit item) rhs=(unit item)]
+  ^-  (unit item)
+  ?~  lhs  rhs
+  ?~  rhs  lhs
+  `[%view (weld (item-as-overview lhs) (item-as-overview rhs))]
 ::  :>  #
 ::  :>  #  %printing
 ::  :>  #
@@ -240,15 +424,17 @@
 ++  print-arm
   |=  [name=tape docs=what gen=hoon sut=type]
   ^-  tang
+  ~?  >>  debug  %print-arm
   =+  [main-doc raw-doc product-doc]=(select-arm-docs docs gen sut)
   %+  weld
     (print-header name main-doc)
-    ?~  product-doc
-      ~
+    ::  ?~  product-doc
+    ::    ~
     %+  weld
       `tang`[[%leaf ""] [%leaf "product:"] ~]
       (print-header "" product-doc)
 ::
+:>    renders documentation for a face
 ++  print-face
   |=  [name=tape doc=what children=(unit item)]
   ^-  tang
