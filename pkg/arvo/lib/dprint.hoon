@@ -255,16 +255,22 @@
   `u.gen
 ::
 :>    gets the documentation inside of a type
-++  docs-from-type
-  ::  TODO: the following comment doesn't appear because of some issue with product
-  ::  docs, unless i erase the arm-doc
+++  what-from-type
   :>  testing
   |=  sut=type
   ^-  what
-  ?+  sut  ~
-    [%core *]  ~?  >>  debug  %docs-from-type-core  ~  :: should this get the chapter docs?
-    [%hint *]  ~?  >>  debug  %docs-from-type-hint  ?>(?=(%help -.q.p.sut) `crib.p.q.p.sut)
-    [%hold *]  ~?  >>  debug  %docs-from-type-hold  $(sut (~(play ut p.sut) q.sut))
+  ?+    sut
+      ~
+  ::
+      [%core *]
+    ~?  >>  debug  %what-from-type-core  ~  :: should this get the chapter docs?
+  ::
+      [%hold *]
+    ~?  >>  debug  %what-from-type-hold  $(sut (~(play ut p.sut) q.sut))
+  ::
+      [%hint *]
+    ~?  >>  debug  :-  %what-from-type-hint  -.q.p.sut
+    ?:  ?=(%help -.q.p.sut)  `crib.p.q.p.sut  ~
   ==
 ::
 :>    grabs the docs for an arm.
@@ -282,7 +288,7 @@
   ^-  [what what what]
   =+  hoon-type=(~(play ut sut) gen)
   ~?  >>>  debug  hoon-type
-  =/  product-doc=what  (docs-from-type hoon-type)
+  =/  product-doc=what  (what-from-type hoon-type)
   ~?  >  debug  product-doc
   ::  if the arm builds a core, get the docs for the default arm
   ::  in that core
@@ -295,7 +301,7 @@
       ?.  ?=([%core *] hoon-type)
         ~?  >  debug  %no-core-product
         ~
-      (docs-from-type (~(play ut hoon-type) [%limb %$]))
+      (what-from-type (~(play ut hoon-type) [%limb %$]))
     :: if there is a product doc, then step through the hint and check for a core
     ?:  ?=([%hint *] hoon-type)
       ~?  >  debug  %step-through-hint
@@ -304,13 +310,16 @@
       =/  res  (mule |.((~(play ut inner-type) [%limb %$])))
       ?-  -.res
         %|  ~
-        %&  (docs-from-type p.res)
+        %&  (what-from-type p.res)
       ==
     ~
   ::  i think arm-doc and product-doc might always be the same
   ::  upon further reflection, i think this is a limitation of the wrapping
   ::  approach
-  ~?  >  debug  :*  %arm-doc  arm-doc  %product-doc  product-doc  %core-doc  core-doc  ==
+  ~?  >  debug  :*  %arm-doc  arm-doc
+                    %product-doc  product-doc
+                    %core-doc  core-doc
+                ==
   :+  arm-doc  product-doc  core-doc
 ::
 :>    returns an overview for a cores arms and chapters
@@ -467,14 +476,14 @@
   |=  [name=tape docs=what gen=hoon sut=type]
   ^-  tang
   ~?  >>  debug  %print-arm
-  =+  [main-doc raw-doc product-doc]=(select-arm-docs docs gen sut)
-  %+  weld
+  =+  [main-doc product-doc core-doc]=(select-arm-docs docs gen sut)
+  ;:  weld
     (print-header name main-doc)
-    ::  ?~  product-doc
-    ::    ~
-    %+  weld
-      `tang`[[%leaf ""] [%leaf "product:"] ~]
-      (print-header "" product-doc)
+    `tang`[[%leaf ""] [%leaf "product:"] ~]
+    (print-header "" product-doc)
+    `tang`[[%leaf ""] [%leaf "default arm in core:"] ~]
+    (print-header "" core-doc)
+  ==
 ::
 :>    renders documentation for a face
 ++  print-face
