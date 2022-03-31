@@ -5,7 +5,6 @@ import f  from 'lodash/fp';
 import { Association, Patp } from '@urbit/api';
 import { enableMapSet } from 'immer';
 /* eslint-disable max-lines */
-import anyAscii from 'any-ascii';
 import bigInt, { BigInteger } from 'big-integer';
 import { IconRef, Workspace } from '~/types';
 
@@ -410,7 +409,8 @@ export function getContactDetails(contact: any) {
   return { nickname, color, member, avatar };
 }
 
-export function stringToSymbol(str: string) {
+export async function stringToSymbol(str: string) {
+  const anyAscii = (await import('any-ascii')).default;
   const ascii = anyAscii(str);
   let result = '';
   for (let i = 0; i < ascii.length; i++) {

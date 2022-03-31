@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Box, LoadingSpinner, Action, Row } from '@tlon/indigo-react';
+import { Box, LoadingSpinner, Action, Row, Icon, Text } from '@tlon/indigo-react';
 
 import { StatelessUrlInput } from '~/views/components/StatelessUrlInput';
 import SubmitDragger from '~/views/components/SubmitDragger';
@@ -21,6 +21,7 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
   const [url, setUrl] = useState(props.url || '');
   const [valid, setValid] = useState(false);
   const [focussed, setFocussed] = useState(false);
+  const [error, setError] = useState<string>('');
 
   const addPost = useGraphState(selGraph);
 
@@ -39,10 +40,16 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
   const handleChange = useCallback((val: string) => {
     setUrl(val);
     setValid(URLparser.test(val) || Boolean(parsePermalink(val)));
+    setError('');
+  }, []);
+
+  const handleError = useCallback((err: Error) => {
+    setError(err.message);
   }, []);
 
   const { uploading, canUpload, promptUpload, drag } = useFileUpload({
-    onSuccess: handleChange
+    onSuccess: handleChange,
+    onError: handleError
   });
 
   const doPost = () => {
@@ -64,7 +71,7 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
   };
 
   const onKeyPress = useCallback(
-    (e) => {
+    (e: any) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         doPost();
@@ -89,22 +96,43 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
       backgroundColor="washedGray"
       {...drag.bind}
     >
-      {drag.dragging && <SubmitDragger />}
+      {drag.dragging && canUpload && <SubmitDragger />}
       {uploading ? (
-        <Box
-          display="flex"
-          width="100%"
-          height="100%"
-          position="absolute"
-          left={0}
-          right={0}
-          bg="white"
-          zIndex={9}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <LoadingSpinner />
-        </Box>
+        error != '' ? (
+          <Box
+            display="flex"
+            flexDirection="column"
+            width="100%"
+            height="100%"
+            padding={3}
+            position="absolute"
+            left={0}
+            right={0}
+            bg="white"
+            zIndex={9}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Icon icon="ExclaimationMarkBold" size={32} />
+            <Text bold>{error}</Text>
+            <Text>Please check your S3 settings.</Text>
+          </Box>
+        ) : (
+          <Box
+            display="flex"
+            width="100%"
+            height="100%"
+            position="absolute"
+            left={0}
+            right={0}
+            bg="white"
+            zIndex={9}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <LoadingSpinner />
+          </Box>
+        )
       ) : (
         <StatelessUrlInput
           value={url}
@@ -114,6 +142,7 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
           focussed={focussed}
           onBlur={onBlur}
           promptUpload={promptUpload}
+          handleError={handleError}
           onKeyPress={onKeyPress}
           center
         />
@@ -125,7 +154,11 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
         p="2"
         justifyContent="row-end"
       >
-        <Action onClick={doPost} disabled={!valid} backgroundColor="transparent">
+        <Action
+          onClick={doPost}
+          disabled={!valid}
+          backgroundColor="transparent"
+        >
           Post
         </Action>
       </Row>

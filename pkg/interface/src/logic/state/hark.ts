@@ -35,6 +35,7 @@ export interface HarkState {
   doNotDisturb: boolean;
   poke: (poke: Poke<any>) => Promise<void>;
   getMore: () => Promise<boolean>;
+  getUnreads: () => Promise<void>;
   opened: () => void;
   readCount: (path: string) => Promise<void>;
   // getTimeSubset: (start?: Date, end?: Date) => Promise<void>;
@@ -120,6 +121,13 @@ const useHarkState = createState<HarkState>(
       });
       reduceStateN(useHarkState.getState(), update, [reduce]);
       return get().archive?.size === oldSize;
+    },
+    getUnreads: async (): Promise<void> => {
+      const update = await api.scry({
+        app: 'hark-store',
+        path: '/all-stats'
+      });
+      reduceStateN(useHarkState.getState(), update, [reduce]);
     },
     unseen: {},
     seen: {},

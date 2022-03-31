@@ -7,7 +7,9 @@ import {
   Row,
   Text
 } from '@tlon/indigo-react';
-import React from 'react';
+import Mousetrap from 'mousetrap';
+import 'mousetrap-global-bind';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -45,6 +47,14 @@ const StatusBar = () => {
     ) : (
       <Sigil ship={ship} size={16} color={color} icon />
     );
+
+  useEffect(() => {
+    Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      toggleOmnibox();
+    });
+  }, []);
 
   return (
     <Box
