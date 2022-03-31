@@ -167,7 +167,6 @@ export const ChatInput = React.forwardRef(
                   boxShadow="0px 0px 0px 3px"
                   zIndex={3}
                   fontSize={0}
-                  height="75px"
                   width="250px"
                   padding={3}
                   justifyContent="center"
