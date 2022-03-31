@@ -7199,7 +7199,6 @@
   |=  [p=(pair type note) q=type]
   ^-  type
   ?:  =(%void q)  %void
-  ?:  =(%noun q)  %noun
   [%hint p q]
 ::
 ++  face                                                ::  make %face type
