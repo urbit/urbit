@@ -17,22 +17,6 @@
 ::  :aqua [%file ~[~bud ~dev] %/sys/vane]
 ::  :aqua [%pause-events ~[~bud ~dev]]
 ::
-::TODO  niceties:
-::  - %init-ship that lets you overwrite any existing ones,
-::    for starting out clean with a new test flow
-::    - or maybe just a %full-reset poke?
-::  - if ph can't be fast, it should be totally non-interactive
-::  - for fast, options:
-::    - hand-made pills for testing
-::    - make flags that are easy to set somehow for the things (eth timer, packet size)
-::      - adding flag to ames is easy
-::      - eth-watcher lets you modify in-place
-::        - make sure this doesn't cause a kick/rewatch/restart,
-::          since that might fix some bugs.
-::  - really want to be able to |link into aqua ships,
-::    aqua should proxy watches.
-::  - support arbitrary tasks, instead of just +unix-task
-::
 ::  We get ++unix-event and ++pill from /-aquarium
 ::
 /-  aquarium
