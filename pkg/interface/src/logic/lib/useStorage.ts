@@ -10,7 +10,7 @@ export interface IuseStorage {
   upload: (file: File, bucket: string) => Promise<string>;
   uploadDefault: (file: File) => Promise<string>;
   uploading: boolean;
-  promptUpload: () => Promise<string>;
+  promptUpload: (onError?: (err: Error) => void) => Promise<string>;
 }
 
 const useStorage = ({ accept = '*' } = { accept: '*' }): IuseStorage => {
@@ -85,7 +85,7 @@ const useStorage = ({ accept = '*' } = { accept: '*' }): IuseStorage => {
   }, [s3, upload]);
 
   const promptUpload = useCallback(
-    (): Promise<string> => {
+    (onError?: (err: Error) => void): Promise<string> => {
       return new Promise((resolve, reject) => {
         const fileSelector = document.createElement('input');
         fileSelector.setAttribute('type', 'file');
@@ -95,6 +95,9 @@ const useStorage = ({ accept = '*' } = { accept: '*' }): IuseStorage => {
           const files = fileSelector.files;
           if (!files || files.length <= 0) {
             reject();
+          } else if (onError) {
+            uploadDefault(files[0]).then(resolve).catch(err => onError(err));
+            document.body.removeChild(fileSelector);
           } else {
             uploadDefault(files[0]).then(resolve);
             document.body.removeChild(fileSelector);
