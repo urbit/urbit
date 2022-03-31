@@ -82,19 +82,17 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   // resume doesn't work properly
   reconnect: async () => {
     const { errorCount } = get();
-    set(s => ({ errorCount: s.errorCount+1, subscription: 'reconnecting' }));
-
-    if(errorCount > 5) {
-      set({ subscription: 'disconnected' });
+    if(errorCount > 1) {
       return;
     }
-    await wait(Math.pow(2, errorCount) * 750);
+    set(s => ({ subscription: 'reconnecting', errorCount: s.errorCount + 1 }));
+    console.log(get().errorCount);
 
     try {
-      airlock.reset();
       await bootstrapApi();
     } catch (e) {
-      console.error(`Retrying connection, attempt #${errorCount}`);
+      console.error(e);
+      set({ subscription: 'disconnected' });
     }
   },
   bootstrap: async () => {

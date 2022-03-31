@@ -12,9 +12,17 @@ import useStorageState from '../state/storage';
 import gcpManager from '../lib/gcpManager';
 
 export async function bootstrapApi() {
+  airlock.reset();
   airlock.onError = (e) => {
     (async () => {
-      const { reconnect } = useLocalState.getState();
+      const { reconnect, errorCount, set } = useLocalState.getState();
+      console.log(errorCount);
+      if(errorCount > 1) {
+        set(s => {
+          s.subscription = 'disconnected';
+        });
+        return;
+      }
       try {
         await reconnect();
       } catch (e) {
