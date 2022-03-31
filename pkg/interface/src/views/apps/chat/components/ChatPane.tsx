@@ -114,8 +114,15 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
   const { restore, setMessage } = useChatStore(s => ({ setMessage: s.setMessage, restore: s.restore }));
+  const [uploadError, setUploadError] = useState<string>('');
+
+  const handleUploadError = useCallback((err: Error) => {
+    setUploadError(err.message);
+  }, []);
+
   const { canUpload, drag } = useFileUpload({
-    onSuccess: url => onSubmit([{ url }])
+    onSuccess: url => onSubmit([{ url }]),
+    onError: handleUploadError
   });
 
   useEffect(() => {
@@ -171,6 +178,8 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
           onSubmit={onSubmit}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           placeholder="Message..."
+          uploadError={uploadError}
+          handleUploadError={handleUploadError}
         />
       )}
     </Col>

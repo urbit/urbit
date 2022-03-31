@@ -4,7 +4,6 @@ import VisibilitySensor from 'react-visibility-sensor';
 import React, {
   FC,
   PropsWithChildren,
-  useCallback,
   useEffect,
   useRef,
   useState
@@ -37,6 +36,8 @@ type ChatInputProps = PropsWithChildren<
     ourContact?: Contact;
     placeholder: string;
     onSubmit: (contents: Content[]) => void;
+    uploadError: string;
+    handleUploadError: (err: Error) => void;
   }
 >;
 
@@ -90,11 +91,20 @@ const MobileSubmitButton = ({ enabled, onSubmit }) => (
 );
 
 export const ChatInput = React.forwardRef(
-  ({ ourContact, hideAvatars, placeholder, onSubmit }: ChatInputProps, ref) => {
+  (
+    {
+      ourContact,
+      hideAvatars,
+      placeholder,
+      onSubmit,
+      uploadError,
+      handleUploadError
+    }: ChatInputProps,
+    ref
+  ) => {
     const chatEditor = useRef<CodeMirrorShim>(null);
     useImperativeHandle(ref, () => chatEditor.current);
     const [inCodeMode, setInCodeMode] = useState(false);
-    const [uploadError, setUploadError] = useState<string>('');
     const [showPortal, setShowPortal] = useState(false);
     const [visible, setVisible] = useState(false);
     const innerRef = useRef<HTMLDivElement>(null);
@@ -108,14 +118,10 @@ export const ChatInput = React.forwardRef(
 
     useOutsideClick(innerRef, () => setShowPortal(false));
 
-    const handleError = useCallback((err: Error) => {
-      setUploadError(err.message);
-    }, []);
-
     const { message, setMessage } = useChatStore();
     const { canUpload, uploading, promptUpload, onPaste } = useFileUpload({
       onSuccess: uploadSuccess,
-      onError: handleError
+      onError: handleUploadError
     });
 
     function uploadSuccess(url: string, source: FileUploadSource) {
@@ -195,26 +201,25 @@ export const ChatInput = React.forwardRef(
                 color={inCodeMode ? 'blue' : 'black'}
               />
             </IconBox>
+            {console.log({ uploadError })}
             {canUpload && (
               <IconBox>
-                {uploading ? (
-                  uploadError != '' ? (
-                    <Icon
-                      icon="ExclaimationMark"
-                      cursor="pointer"
-                      onClick={() => setShowPortal(true)}
-                    />
-                  ) : (
-                    <LoadingSpinner />
-                  )
-                ) : (
+                {uploadError == '' && uploading && <LoadingSpinner />}
+                {uploadError !== '' && (
+                  <Icon
+                    icon="ExclaimationMark"
+                    cursor="pointer"
+                    onClick={() => setShowPortal(true)}
+                  />
+                )}
+                {uploadError == '' && !uploading && (
                   <Icon
                     icon="Attachment"
                     cursor="pointer"
                     width="16"
                     height="16"
                     onClick={() =>
-                      promptUpload(handleError).then(url =>
+                      promptUpload(handleUploadError).then(url =>
                         uploadSuccess(url, 'direct')
                       )
                     }
