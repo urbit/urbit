@@ -81,12 +81,19 @@
       [%core *]
     ::  cores don't have any doc structure inside of them. i probably need to
     ::  check that they're wrapped with a %hint type. so this just looks for
-    ::  docs on the arms
+    ::  docs on the arms.
+    ::
+    ::  cores also can't have names right now. %brcn and %brpt have a slot in
+    ::  their AST for the name, but it doesn't end up in the their type. so
+    ::  if i want core names right now, i'd have to look inside their AST, and
+    ::  only |% and |@ cores would have names, which is silly.
     =+  arm=(find-arm-in-coil topic q.sut)
     ?~  arm
       ::  the current topic is not an arm in the core
       $(sut p.sut)
     ::  check to see if the arm is wrapped with a note
+    ::  TODO: this is taking docs from the AST rather than the type. is that
+    ::  the right thing to do here?
     =+  wat=(unwrap-note u.arm)
     `[%arm (trip topic) wat u.arm p.sut]
    :: `[%arm (trip topic) wat u.arm q.q.sut]  :: what's the difference if i use the type in the coil?
@@ -126,8 +133,8 @@
      =/  itm=(unit item)  (signify q.sut)
      ?~  itm
        ~
-     `(emblazen u.itm wat)
-::     (emblazen (need (signify q.sut)) (unwrap-hint sut))
+     `(emblazon u.itm wat)
+::     (emblazon (need (signify q.sut)) (unwrap-hint sut))
    $(sut q.sut)
   ::
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
@@ -157,10 +164,10 @@
 ++  signify
   |=  sut=type
   ^-  (unit item)
-  ?-  sut
+  ?-    sut
   ::
       [%atom *]  ~
-  ::
+    ::
       [%cell *]
     %+  join-items
       $(sut p.sut)
@@ -171,27 +178,26 @@
     =*  compiled-against  $(sut p.sut)
     `[%core (trip name) *what p.sut q.sut compiled-against]
   ::
-     [%face *]
+      [%face *]
     ?.  ?=(term p.sut)
-      ::  TODO: handle tune case
-      ~
+      ~  ::  TODO: handle tune case
     =*  compiled-against  $(sut q.sut)
     `[%face (trip p.sut) *what compiled-against]
   ::
-    [%fork *]
-  =*  types  ~(tap in p.sut)
-  =*  items  (turn types signify)
-  (roll items join-items)
-  ::
-    [%hint *]
-  =*  rest-type  $(sut q.sut)
-  ::  check to see if it is a help hint
-  ?>  ?=(%help -.q.p.sut)
-  `[%view [%header `crib.p.q.p.sut (item-as-overview rest-type)]~]
-  ::
-    [%hold *]  $(sut (~(play ut p.sut) q.sut))
-    %noun  ~
-    %void  ~
+      [%fork *]
+    =*  types  ~(tap in p.sut)
+    =*  items  (turn types signify)
+    (roll items join-items)
+    ::
+      [%hint *]
+    =*  rest-type  $(sut q.sut)
+    ::  check to see if it is a help hint
+    ?>  ?=(%help -.q.p.sut)
+    `[%view [%header `crib.p.q.p.sut (item-as-overview rest-type)]~]
+    ::
+      [%hold *]  $(sut (~(play ut p.sut) q.sut))
+      %noun  ~
+      %void  ~
   ==
 
 :>    checks if a hoon is wrapped with a help note, and returns it if so
@@ -223,9 +229,9 @@
 :>
 :>  the exceptions to this are %chapter and %view items. chapters have an axis
 :>  for docs in their $tome structure, and %views are summaries of several types
-++  emblazen
+++  emblazon
   |=  [=item =what]
-  ~?  >>  debug  %emblazen
+  ~?  >>  debug  %emblazon
   ^+  item
   ?+  item  item  :: no-op on %chapter and %view
     ?([%core *] [%arm *] [%face *])  ?~  docs.item
@@ -234,7 +240,7 @@
                                      item(docs what)
   ==
 ::
-:>  if arm-name is an arm in con, return its hoon and potentially the note wrapping it (?)
+:>    looks for an arm in a coil and returns its hoon
 ++  find-arm-in-coil
   |=  [arm-name=term con=coil]
   ~?  >>  debug  %find-arm-in-coil
@@ -243,10 +249,10 @@
   |-
   ?~  tomes
     ~
-  =+  item=(~(get by q.q.i.tomes) arm-name)
-  ?~  item
+  =+  gen=(~(get by q.q.i.tomes) arm-name)
+  ?~  gen
     $(tomes t.tomes)
-  `u.item
+  `u.gen
 ::
 :>    gets the documentation inside of a type
 ++  docs-from-type
@@ -258,7 +264,7 @@
   ?+  sut  ~
     [%core *]  ~?  >>  debug  %docs-from-type-core  ~  :: should this get the chapter docs?
     [%hint *]  ~?  >>  debug  %docs-from-type-hint  ?>(?=(%help -.q.p.sut) `crib.p.q.p.sut)
-    [%hold *]  $(sut (~(play ut p.sut) q.sut))
+    [%hold *]  ~?  >>  debug  %docs-from-type-hold  $(sut (~(play ut p.sut) q.sut))
   ==
 ::
 :>    grabs the docs for an arm.
@@ -266,8 +272,9 @@
 :>  there are three possible places with relevant docs for an arm:
 :>  docs for the arm itself, docs for the product of the arm, and
 :>  if the arm builds a core, docs for the default arm of that core.
+:>
 :>  arm-doc: docs wrapping the arm - this should have already been found
-:>  raw-doc: docs for the product of the arm
+:>  product-doc: docs for the product of the arm
 :>  core-doc: docs for the default arm of the core produced by the arm
 ++  select-arm-docs
   |=  [arm-doc=what gen=hoon sut=type]
@@ -275,18 +282,36 @@
   ^-  [what what what]
   =+  hoon-type=(~(play ut sut) gen)
   ~?  >>>  debug  hoon-type
-  =/  raw-doc=what  (docs-from-type hoon-type)
-  ~?  >  debug  raw-doc
+  =/  product-doc=what  (docs-from-type hoon-type)
+  ~?  >  debug  product-doc
   ::  if the arm builds a core, get the docs for the default arm
   ::  in that core
+  ::
+  ::  this is broken if it also has an arm-doc. if i have an arm-doc, i
+  ::  need to strip off the first hint and then check if i have a core, i think
   =/  core-doc=what
-    ?.  ?=([%core *] hoon-type)
-      ~?  >  debug  %no-core-product
-      ~
-    (docs-from-type (~(play ut hoon-type) [%limb %$]))
-  ::  i think arm-doc and raw-doc might always be the same
-  ~?  >  debug  :+  arm-doc  raw-doc  core-doc
-  :+  arm-doc  raw-doc  core-doc
+    :: if product-doc is empty, just go right on and check if its a core
+    ?~  product-doc
+      ?.  ?=([%core *] hoon-type)
+        ~?  >  debug  %no-core-product
+        ~
+      (docs-from-type (~(play ut hoon-type) [%limb %$]))
+    :: if there is a product doc, then step through the hint and check for a core
+    ?:  ?=([%hint *] hoon-type)
+      ~?  >  debug  %step-through-hint
+      =+  inner-type=(~(play ut q.hoon-type) gen)
+      :: using mule since it crashes if there's not a core
+      =/  res  (mule |.((~(play ut inner-type) [%limb %$])))
+      ?-  -.res
+        %|  ~
+        %&  (docs-from-type p.res)
+      ==
+    ~
+  ::  i think arm-doc and product-doc might always be the same
+  ::  upon further reflection, i think this is a limitation of the wrapping
+  ::  approach
+  ~?  >  debug  :*  %arm-doc  arm-doc  %product-doc  product-doc  %core-doc  core-doc  ==
+  :+  arm-doc  product-doc  core-doc
 ::
 :>    returns an overview for a cores arms and chapters
 :>
