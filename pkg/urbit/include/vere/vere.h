@@ -257,6 +257,14 @@
         c3_w   fun_w;                       //  file counter
       } u3_trac;
 
+    /* u3_even: event specifier
+    */
+     typedef struct _u3_even {
+       c3_i             kin_i;
+       c3_c*            loc_c;
+       struct _u3_even* pre_u;
+     } u3_even;
+
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
@@ -297,6 +305,7 @@
         c3_c*   pek_c;                      //  -X, scry path (/vc/desk/path)
         c3_c*   puk_c;                      //  -Y, scry result filename
         c3_c*   puf_c;                      //  -Z, scry result format
+        u3_even* vex_u;                     //  --prop-*, boot enhanchements
       } u3_opts;
 
     /* u3_host: entire host.

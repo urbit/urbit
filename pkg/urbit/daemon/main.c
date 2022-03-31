@@ -93,6 +93,19 @@ _main_repath(c3_c* pax_c)
   return rel_c;
 }
 
+/* _main_add_prop(): add a boot prop to u3_Host.ops_u.vex_u.
+*/
+u3_even*
+_main_add_prop(c3_i kin_i, c3_c* loc_c)
+{
+  u3_even* nex_u = c3_calloc(sizeof(*nex_u));
+  nex_u->kin_i = kin_i;
+  nex_u->loc_c = loc_c;  //  XX _main_repath whereappropriate?
+  nex_u->pre_u = u3_Host.ops_u.vex_u;
+  u3_Host.ops_u.vex_u = nex_u;
+  return nex_u;
+}
+
 /* _main_getopt(): extract option map from command line.
 */
 static u3_noun
@@ -164,6 +177,11 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "exit",                no_argument,       NULL, 'x' },
     { "scry-into",           required_argument, NULL, 'Y' },
     { "scry-format",         required_argument, NULL, 'Z' },
+    //
+    { "prop-file",           required_argument, NULL, 1 },
+    { "prop-url",            required_argument, NULL, 2 },
+    { "prop-name",           required_argument, NULL, 3 },
+    //
     { NULL, 0, NULL, 0 },
   };
 
@@ -172,6 +190,10 @@ _main_getopt(c3_i argc, c3_c** argv)
                  lop_u, &lid_i)) )
   {
     switch ( ch_i ) {
+      case 1: case 2: case 3: {  //  prop-*
+        _main_add_prop(ch_i, strdup(optarg));
+        break;
+      }
       case 'X': {
         u3_Host.ops_u.pek_c = strdup(optarg);
         break;
@@ -407,7 +429,7 @@ _main_getopt(c3_i argc, c3_c** argv)
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
     u3_Host.ops_u.url_c =
-      "https://bootstrap.urbit.org/urbit-v" URBIT_VERSION ".pill";
+      "https://bootstrap.urbit.org/props/" URBIT_VERSION "/brass.pill";
   }
   else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
@@ -425,12 +447,33 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
+  if ( u3_Host.ops_u.vex_u != 0 ) {
+    struct stat s;
+    u3_even* vex_u = u3_Host.ops_u.vex_u;
+    while ( vex_u != 0 ) {
+      if ( vex_u->kin_i == 1 && stat(vex_u->loc_c, &s) != 0 ) {
+        fprintf(stderr, "events file %s not found\n", vex_u->loc_c);
+        return c3n;
+      }
+      vex_u = vex_u->pre_u;
+    }
+  }
+
   if ( u3_Host.ops_u.key_c != 0 ) {
     struct stat s;
     if ( stat(u3_Host.ops_u.key_c, &s) != 0 ) {
       fprintf(stderr, "keyfile %s not found\n", u3_Host.ops_u.key_c);
       return c3n;
     }
+  }
+
+  //  if we're not in lite mode, include the default props
+  //
+  if ( u3_Host.ops_u.lit == c3n ) {
+    _main_add_prop(3, "garden");
+    _main_add_prop(3, "landscape");
+    _main_add_prop(3, "webterm");
+    _main_add_prop(3, "bitcoin");
   }
 
   return c3y;

@@ -81,6 +81,8 @@ void _king_doom(u3_noun doom);
     void _king_fake(u3_noun ship, u3_noun pill, u3_noun path);
   void _king_pier(u3_noun pier);
 
+static u3_noun _king_get_atom(c3_c* url_c);
+
 /* _king_defy_fate(): invalid fate
 */
 void
@@ -149,7 +151,7 @@ _king_boot(u3_noun bul)
   u3z(bul);
 }
 
-/* _king_fake(): boot with fake keys
+/* _king_boot_done(): boot done
 */
 static void
 _king_boot_done(void* ptr_v, c3_o ret_o)
@@ -166,6 +168,48 @@ _king_boot_done(void* ptr_v, c3_o ret_o)
   u3K.pir_u = u3_pier_stay(sag_w, u3i_string(u3_Host.dir_c));
 }
 
+/* _king_prop(): events from prop arguments
+*/
+u3_noun
+_king_prop()
+{
+  u3_noun mor = u3_nul;
+  while ( 0 != u3_Host.ops_u.vex_u ) {
+    u3_even* vex_u = u3_Host.ops_u.vex_u;
+    switch ( vex_u->kin_i ) {
+      case 1: {  //  file
+        u3_atom jam = u3m_file(vex_u->loc_c);
+        mor = u3nc(u3ke_cue(jam), mor);
+      } break;
+
+      case 2: {  //  url
+        u3l_log("boot: downloading prop %s\n", vex_u->loc_c);
+        u3_atom jam = _king_get_atom(vex_u->loc_c);
+        mor = u3nc(u3ke_cue(jam), mor);
+      } break;
+
+      case 3: {  //  name
+        //NOTE  this implementation limits us to max 38 char prop names
+        c3_c url_c[80];
+        sprintf(url_c,
+                "https://bootstrap.urbit.org/props/" URBIT_VERSION "/%s.jam",
+                vex_u->loc_c);
+        u3l_log("boot: downloading prop %s\n", url_c);
+        u3_atom jam = _king_get_atom(url_c);
+        mor = u3nc(u3ke_cue(jam), mor);
+      } break;
+
+      default: {
+        u3l_log("invalid prop source %d", vex_u->kin_i);
+        exit(1);
+      }
+    }
+
+    u3_Host.ops_u.vex_u = vex_u->pre_u;
+  }
+  return mor;
+}
+
 /* _king_fake(): boot with fake keys
 */
 void
@@ -176,7 +220,7 @@ _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
   //  XX pass kelvin
   //
   c3_d  key_d[4] = {0};
-  u3_noun msg    = u3nq(c3__boot, pill, vent, u3_nul);
+  u3_noun msg    = u3nq(c3__boot, pill, vent, _king_prop());
 
   u3_lord_boot(u3_Host.dir_c, sag_w, key_d, msg,
                (void*)0, _king_boot_done);
@@ -222,7 +266,8 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 
   {
     c3_d   key_d[4] = {0};
-    u3_noun  msg, mor = u3_nul;;
+    u3_noun     msg = u3_nul;
+    u3_noun     mor = _king_prop();
 
     //  include additional key configuration events if we have multiple keys
     //
@@ -230,12 +275,21 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
       u3_noun wir = u3nt(c3__j, c3__seed, u3_nul);
       u3_noun tag = u3i_string("rekey");
       u3_noun kyz = u3t(u3t(feed));
+      u3_noun ves = u3_nul;
       u3_noun cad;
 
       while ( u3_nul != kyz ) {
         cad = u3nc(u3k(tag), u3k(u3h(kyz)));
-        mor = u3nc(u3nc(u3k(wir), cad), mor);
+        ves = u3nc(u3nc(u3k(wir), cad), ves);
         kyz = u3t(kyz);
+      }
+
+      if ( u3_nul != ves ) {
+        u3_noun pro = u3nq(c3__prop,
+                           c3__dawn,
+                           c3__hind,
+                           ves);
+        mor = u3nc(pro, mor);
       }
 
       u3z(tag); u3z(wir);
@@ -291,6 +345,8 @@ _king_get_atom(c3_c* url_c)
   CURL *curl;
   CURLcode result;
   long cod_l;
+  c3_y  try_y = 0;
+  u3_noun pro = u3_none;
 
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
@@ -304,32 +360,35 @@ _king_get_atom(c3_c* url_c)
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
 
-  result = curl_easy_perform(curl);
-  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+  while ( u3_none == pro && 5 > try_y ) {
+    sleep(try_y++);
+    result = curl_easy_perform(curl);
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
 
-  //  XX retry?
-  //
-  if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s\n",
-            url_c, curl_easy_strerror(result));
+    //  XX retry?
+    //
+    if ( CURLE_OK != result ) {
+      u3l_log("failed to fetch %s: %s\n",
+              url_c, curl_easy_strerror(result));
+    }
+    else if ( 300 <= cod_l ) {
+      u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
+    }
+    else {
+      curl_easy_cleanup(curl);
+      pro = u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
+      c3_free(buf_u.base);
+      break;
+    }
+  }
+
+  if ( u3_none == pro ) {
+    u3l_log("consistently failed to fetch %s.\n", url_c);
     u3_king_bail();
     exit(1);
   }
-  if ( 300 <= cod_l ) {
-    u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
-    u3_king_bail();
-    exit(1);
-  }
 
-  curl_easy_cleanup(curl);
-
-  {
-    u3_noun pro = u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
-
-    c3_free(buf_u.base);
-
-    return pro;
-  }
+  return pro;
 }
 
 /* _get_cmd_output(): Run a shell command and capture its output.

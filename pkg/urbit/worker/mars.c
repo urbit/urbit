@@ -561,7 +561,7 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
     u3_weak jar = _mars_cue(mar_u, len_d, hun_y);
 
     //  parse errors are fatal
-    // 
+    //
     if (  (u3_none == jar)
        || (c3n == _mars_work(mar_u, jar)) )
     {
@@ -967,6 +967,8 @@ _mars_boot_make(u3_boot_opts* inp_u,
                 u3_meta*      met_u)
 {
   u3_noun pil, ven, mor, who;
+  u3_noun pre = u3_nul;
+  u3_noun aft = u3_nul;
 
   //  parse boot command
   //
@@ -1061,6 +1063,43 @@ _mars_boot_make(u3_boot_opts* inp_u,
       use = u3nc(u3nc(wir, cad), use);
     }
 
+    {
+      u3_noun mos = mor;
+      while ( u3_nul != mos ) {
+        u3_noun mot = u3h(mos);
+
+        switch ( u3h(mot) ) {
+          case c3__prop: {
+            u3_noun ter, met, ves;
+
+            if ( c3n == u3r_trel(u3t(mot), &met, &ter, &ves) ) {
+              u3m_p("invalid prop", u3t(mot));
+              break;
+            }
+
+            if ( c3__fore == ter ) {
+              u3m_p("prop: fore", met);
+              pre = u3kb_weld(pre, u3k(ves));
+            }
+            else if ( c3__hind == ter ) {
+              u3m_p("prop: hind", met);
+              aft = u3kb_weld(aft, u3k(ves));
+            }
+            else {
+              u3m_p("unrecognized prop tier", ter);
+            }
+          } break;
+
+          default: u3m_p("unrecognized boot sequence enhancement", u3h(mot));
+        }
+
+        mos = u3t(mos);
+      }
+
+      //  XX refactor, this was wrong
+      // u3z(mor);
+    }
+
     //  timestamp events, cons list
     //
     {
@@ -1069,7 +1108,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
       u3_noun eve = u3kb_flop(bot);
 
       {
-        u3_noun  lit = u3kb_weld(mod, u3kb_weld(use, u3k(mor)));
+        u3_noun  lit = u3kb_weld(mod, u3kb_weld(pre, u3kb_weld(use, aft)));
         u3_noun i, t = lit;
 
         while ( u3_nul != t ) {
@@ -1099,7 +1138,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
 *      $%  [%fake p=ship]
 *          [%dawn p=seed]
 *      ==
-*      more=(list ovum)
+*      more=(list prop)
 *  ==
 *
 */

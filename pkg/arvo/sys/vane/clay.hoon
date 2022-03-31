@@ -1457,7 +1457,7 @@
     ?~  yen
       =.  lab.dom  (~(put by lab.dom) bel yon)
       ..park
-    ::  an aeon is bound to this label, 
+    ::  an aeon is bound to this label,
     ::  but it is the same as the existing one, so we no-op
     ::
     ?:  =(u.yen yon)
@@ -4022,6 +4022,19 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
+      ?:  ?=([%bloc ~] pax)
+        :^  ~  ~  %noun
+        :-  -:!>(*(map lobe blob))
+        ^-  (map lobe blob)
+        %-  %~  rep  in
+            %-  reachable-takos
+            (~(got by hit.dom) let.dom)
+        |=  [t=tako o=(map lobe blob)]
+        %-  ~(gas by o)
+        %+  turn
+          ~(val by q:(~(got by hut.ran) t))
+        |=(l=lobe [l (~(got by lat.ran) l)])
+      ::
       ?.  ?=([?(%yaki %blob %hash %cage %open %late %base) * *] pax)
         `~
       ?-    i.pax
@@ -4511,6 +4524,9 @@
       =/  den  ((de now rof hen ruf) our syd)
       abet:(park:den & yoki *rang)
     [mos ..^$]
+  ::
+      %prep
+    [~ ..^$(lat.ran.ruf (~(uni by lat.req) lat.ran.ruf))]
   ::
       %perm
     =^  mos  ruf
