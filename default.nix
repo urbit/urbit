@@ -69,7 +69,7 @@ let
   # Cross vs static build dependencies can be selectively overridden for
   # inputs like python etc.
   callPackage =
-    pkgsNative.lib.callPackageWith (pkgsStatic // libLocal // pkgsLocal);
+    pkgsTopLevel.lib.callPackageWith (pkgsStatic // libLocal // pkgsLocal);
 
   # Local library import-from-derivation functions such as fetchGitHubLFS, etc.
   libLocal = pkgsNative.callPackage ./nix/lib { };
@@ -164,6 +164,6 @@ let
     if enableStatic && pkgsCross.stdenv.hostPlatform.libc == "glibc" then
       builtins.trace "warning: statically linking against glibc."
     else
-      pkgsNative.lib.id;
+      pkgsTopLevel.lib.id;
 
 in checkPlatform (pkgsLocal // pkgsExtra)
