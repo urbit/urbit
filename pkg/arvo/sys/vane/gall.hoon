@@ -1751,8 +1751,22 @@
       ?:  ?=([* %pass * %g %deal * * %leave *] move)
         =/  =wire  p.move.move
         ?>  ?=([%use @ @ %out @ @ *] wire)
-        =/  sub-wire  t.t.t.t.t.t.wire
-        =/  =dock  [q.p q]:q.move.move
+        =/  =dock           [q.p q]:q.move.move
+        =/  sys-wire=^wire  (scag 6 `^wire`wire)
+        =/  sub-wire=^wire  (slag 6 `^wire`wire)
+        ::
+        ?.  (~(has by outbound.watches.yoke) sub-wire dock)
+          =.  ap-core
+            =/  =tang
+              :~  leaf+"got %leave for missing subscription"
+                  >agent-name<  >sub-wire<  >dock<
+              ==
+            (ap-error %leave-missing-subscription tang)
+          $(moves t.moves)
+        =/  have=[acked=? =path nonce=@]
+          (~(got by outbound.watches.yoke) sub-wire dock)
+        =.  p.move.move
+          (weld sys-wire [(scot %ud nonce.have) sub-wire])
         =.  outbound.watches.yoke
           (~(del by outbound.watches.yoke) [sub-wire dock])
         $(moves t.moves, new-moves [move new-moves])
