@@ -4307,6 +4307,93 @@
       $(b (rsh [3 len] b))
   ==
 ::
+++  sune                                                ::  all chars utf8 sanity
+  |=  b=@t
+  ^-  ?
+  ?:  =(0 b)  &
+  ?.  (sung b)  |
+  $(b (rsh [3 (teff b)] b))
+::
+++  sung                                                ::  first char utf8 sanity
+  |^  |=  b=@t
+      ^-  ?
+      =+  len=(teff b)
+      ?:  =(4 len)  (quad b)
+      ?:  =(3 len)  (tres b)
+      ?:  =(2 len)  (dos b)
+      (lte (end 3 b) 127)
+  ::
+  ++  dos
+    |=  b=@t
+    ^-  ?
+    =+  :-  one=(cut 3 [0 1] b)
+            two=(cut 3 [1 1] b)
+    ?&  (rang one 194 223)
+        (cont two)
+    ==
+  ::
+  ++  tres
+    |=  b=@t
+    ^-  ?
+    =+  :+  one=(cut 3 [0 1] b)
+            two=(cut 3 [1 1] b)
+            tre=(cut 3 [2 1] b)
+    ?&
+      ?|
+        ?&  |((rang one 225 236) (rang one 238 239))
+            (cont two)
+        ==
+        ::
+        ?&  =(224 one)
+            (rang two 160 191)
+        ==
+        ::
+        ?&  =(237 one)
+            (rang two 128 159)
+        ==
+      ==
+      ::
+      (cont tre)
+    ==
+  ::
+  ++  quad
+    |=  b=@t
+    ^-  ?
+    =+  :^  one=(cut 3 [0 1] b)
+            two=(cut 3 [1 1] b)
+            tre=(cut 3 [2 1] b)
+            for=(cut 3 [3 1] b)
+    ?&
+      ?|
+        ?&  (rang one 241 243)
+            (cont two)
+        ==
+        ::
+        ?&  =(240 one)
+            (rang two 144 191)
+        ==
+        ::
+        ?&  =(244 one)
+            (rang two 128 143)
+        ==
+      ==
+      ::
+      (cont tre)
+      (cont for)
+    ==
+  ::
+  ++  cont
+    |=  a=@
+    ^-  ?
+    (rang a 128 191)
+  ::
+  ++  rang
+    |=  [a=@ bot=@ top=@]
+    ^-  ?
+    ?>  (lte bot top)
+    &((gte a bot) (lte a top))
+  --
+::
 ++  ruth                                                ::  biblical sanity
   |=  [a=@ta b=*]
   ^-  @
