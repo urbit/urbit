@@ -27,6 +27,7 @@ import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { NewChannel } from './NewChannel';
 import { GroupHome } from './Home/GroupHome';
 import useGraphState from '~/logic/state/graph';
+import { deSig } from '@urbit/api';
 
 interface GroupsPaneProps {
   baseUrl: string;
@@ -59,17 +60,27 @@ export function GroupsPane(props: GroupsPaneProps) {
 
   useEffect(() => {
     const {
+      graphs,
+      graphKeys,
       getKeys,
       getShallowChildren
     } = useGraphState.getState();
+    const dmGraph = graphs[`${deSig(window.ship)}/dm-inbox`];
+    console.log(graphs, dmGraph);
 
-    useHarkState.getState().getUnreads();
-    getKeys();
+    if (graphKeys.size === 0) {
+      getKeys();
+    }
 
-    if (location.pathname.startsWith('/~landscape/messages')) {
+    const { unreads, getUnreads } = useHarkState.getState();
+    if (Object.keys(unreads).length === 0) {
+      getUnreads();
+    }
+
+    if (location.pathname.startsWith('/~landscape/messages') && !dmGraph) {
       getShallowChildren(`~${window.ship}`, 'dm-inbox');
     }
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     if (workspace.type !== 'group') {

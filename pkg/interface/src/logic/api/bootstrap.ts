@@ -57,4 +57,13 @@ export async function bootstrapApi() {
 
   useSettingsState.getState().getAll();
   gcpManager.start();
+
+  const {
+    getKeys,
+    getShallowChildren
+  } = useGraphState.getState();
+
+  useHarkState.getState().getUnreads();
+  getKeys();
+  getShallowChildren(`~${window.ship}`, 'dm-inbox');
 }
