@@ -30,4 +30,5 @@ let
 
 in pkgs // {
   pkgsStatic = pkgs.pkgsStatic.extend (import ./overlays/static.nix);
+  stdenv = if pkgs.stdenv.isDarwin then pkgs.llvmPackages_9.stdenv else pkgs.stdenv;
 }
