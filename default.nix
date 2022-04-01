@@ -72,7 +72,7 @@ let
     pkgsTopLevel.lib.callPackageWith (pkgsStatic // libLocal // pkgsLocal);
 
   # Local library import-from-derivation functions such as fetchGitHubLFS, etc.
-  libLocal = pkgsNative.callPackage ./nix/lib { };
+  libLocal = pkgsTopLevel.lib.callPackageWith pkgsNative ./nix/lib { };
 
   # Local vendored packages defined in ./pkg.
   # For non-vendored nixpkgs specific package overrides, see ./nix/overlays.
