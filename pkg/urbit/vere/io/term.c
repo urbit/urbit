@@ -147,6 +147,7 @@ u3_term_log_init(void)
 
       uty_u->tat_u.fut.len_w = 0;
       uty_u->tat_u.fut.wid_w = 0;
+      uty_u->tat_u.fut.imp   = u3_nul;
     }
 
     //  default size
@@ -636,8 +637,27 @@ _term_io_belt(u3_utty* uty_u, u3_noun blb)
   }
 }
 
-/* _term_io_suck_char(): process a single character.
+/* _term_io_spit(): input the buffer (if any), then input the belt (if any)
 */
+static void
+_term_io_spit(u3_utty* uty_u, u3_noun bet) {
+  u3_utat* tat_u = &uty_u->tat_u;
+  if (u3_nul != tat_u->fut.imp) {
+    _term_io_belt(uty_u, u3nc(c3__txt, u3kb_flop(tat_u->fut.imp)));
+    tat_u->fut.imp = u3_nul;
+  }
+  if (u3_none != bet) {
+    _term_io_belt(uty_u, bet);
+  }
+}
+
+/* _term_io_suck_char(): process a single character.
+ *
+ *    Note that this accumulates simple inputs in a buffer, and is not
+ *    guaranteed to flush it fully. After a call (or sequence of calls)
+ *    to this function, please call _term_io_spit(uty_u, u3_none) to
+ *    flush any remainder.
+ */
 static void
 _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 {
@@ -652,10 +672,10 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
           _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
           break;
         }
-        case 'A': _term_io_belt(uty_u, u3nc(c3__aro, 'u')); break;
-        case 'B': _term_io_belt(uty_u, u3nc(c3__aro, 'd')); break;
-        case 'C': _term_io_belt(uty_u, u3nc(c3__aro, 'r')); break;
-        case 'D': _term_io_belt(uty_u, u3nc(c3__aro, 'l')); break;
+        case 'A': _term_io_spit(uty_u, u3nc(c3__aro, 'u')); break;
+        case 'B': _term_io_spit(uty_u, u3nc(c3__aro, 'd')); break;
+        case 'C': _term_io_spit(uty_u, u3nc(c3__aro, 'r')); break;
+        case 'D': _term_io_spit(uty_u, u3nc(c3__aro, 'l')); break;
       //
         case 'M': tat_u->esc.mou = c3y; break;
       }
@@ -667,13 +687,13 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
         //  XX for backwards compatibility, check kelvin version
         //  and fallback to [%met @c]
         //
-        _term_io_belt(uty_u, u3nt(c3__mod, c3__met, cay_y));
+        _term_io_spit(uty_u, u3nt(c3__mod, c3__met, cay_y));
       }
       else if ( 8 == cay_y || 127 == cay_y ) {
         tat_u->esc.ape = c3n;
         //  XX backwards compatibility [%met @c]
         //
-        _term_io_belt(uty_u, u3nq(c3__mod, c3__met, c3__bac, u3_nul));
+        _term_io_spit(uty_u, u3nq(c3__mod, c3__met, c3__bac, u3_nul));
       }
       else if ( ('[' == cay_y) || ('O' == cay_y) ) {
         tat_u->esc.bra = c3y;
@@ -698,7 +718,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       c3_y row_y = cay_y - 32;
       //  only acknowledge button 1 presses within our window
       if ( 1 != tat_u->esc.ton_y && row_y <= tat_u->siz.row_l ) {
-        _term_io_belt(uty_u, u3nt(c3__hit,
+        _term_io_spit(uty_u, u3nt(c3__hit,
                                   tat_u->esc.col_y - 1,
                                   tat_u->siz.row_l - row_y));
       }
@@ -720,28 +740,28 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       wug = u3do("taft", huv);
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;
-      _term_io_belt(uty_u, u3nt(c3__txt, wug, u3_nul));
+      tat_u->fut.imp = u3nc(wug, tat_u->fut.imp);
     }
   }
   //  individual characters
   //
   else {
     if ( (cay_y >= 32) && (cay_y < 127) ) {  //  visual ascii
-      _term_io_belt(uty_u, u3nt(c3__txt, cay_y, u3_nul));
+      tat_u->fut.imp = u3nc(cay_y, tat_u->fut.imp);
     }
     else if ( 0 == cay_y ) {  //  null
       _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
     }
     else if ( 8 == cay_y || 127 == cay_y ) {  //  backspace & delete
-      _term_io_belt(uty_u, u3nc(c3__bac, u3_nul));
+      _term_io_spit(uty_u, u3nc(c3__bac, u3_nul));
     }
     else if ( 10 == cay_y || 13 == cay_y ) {  //  newline & carriage return
-      _term_io_belt(uty_u, u3nc(c3__ret, u3_nul));
+      _term_io_spit(uty_u, u3nc(c3__ret, u3_nul));
     }
     else if ( cay_y <= 26 ) {
       //  XX backwards compatibility [%ctl @c]
       //
-      _term_io_belt(uty_u, u3nt(c3__mod, c3__ctl, ('a' + (cay_y - 1))));
+      _term_io_spit(uty_u, u3nt(c3__mod, c3__ctl, ('a' + (cay_y - 1))));
     }
     else if ( 27 == cay_y ) {
       tat_u->esc.ape = c3y;
@@ -799,6 +819,7 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       for ( i=0; i < siz_i; i++ ) {
         _term_io_suck_char(uty_u, buf[i]);
       }
+      _term_io_spit(uty_u, u3_none);
     }
   }
 }
