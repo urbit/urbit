@@ -698,10 +698,36 @@ u3_disk_exit(u3_disk* log_u)
 #endif
 }
 
-/* u3_disk_info(): print status info.
+/* u3_disk_info(): status info as a (list mass).
+*/
+u3_noun
+u3_disk_info(u3_disk* log_u)
+{
+  u3_noun lit = u3i_list(
+    u3_pier_mase("live",        log_u->liv_o),
+    u3_pier_mase("event", u3i_chub(log_u->dun_d)),
+    u3_none);
+
+  //  XX revise, include batches
+  //
+  if ( log_u->put_u.ext_u ) {
+    lit = u3nc(
+      u3_pier_mass(
+        c3__save,
+        u3i_list(
+          u3_pier_mase("save-start", u3i_chub(log_u->put_u.ext_u->eve_d)),
+          u3_pier_mase("save-final", u3i_chub(log_u->put_u.ent_u->eve_d)),
+          u3_none)),
+      lit);
+  }
+
+  return u3_pier_mass(c3__disk, lit);
+}
+
+/* u3_disk_slog(): print status info.
 */
 void
-u3_disk_info(u3_disk* log_u)
+u3_disk_slog(u3_disk* log_u)
 {
   u3l_log("  disk: live=%s, event=%" PRIu64 "\n",
           ( c3y == log_u->liv_o ) ? "&" : "|",

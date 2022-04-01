@@ -67,6 +67,11 @@
       void
       u3v_time(u3_noun now);
 
+    /* u3v_lily(): parse little atom.
+    */
+      c3_o
+      u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l);
+
     /* u3v_peek(): query the reck namespace.
     */
       u3_noun

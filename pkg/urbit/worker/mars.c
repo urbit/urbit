@@ -535,7 +535,7 @@ top:
     else if ( u3_mars_exit_e == mar_u->sat_e ) {
       //  XX wire up to signal handler
       //
-      u3_disk_info(mar_u->log_u);
+      u3_disk_slog(mar_u->log_u);
 
       u3e_save();
 

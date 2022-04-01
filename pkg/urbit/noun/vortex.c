@@ -194,6 +194,29 @@ _cv_time_bump(u3_reck* rec_u)
 }
 #endif
 
+/* u3v_lily(): parse little atom.
+*/
+c3_o
+u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
+{
+  c3_w    wad_w;
+  u3_noun uco = u3dc("slaw", fot, u3k(txt));
+  u3_noun p_uco, q_uco;
+
+  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
+       (u3_nul != p_uco) ||
+       (c3n == u3r_safe_word(q_uco, &wad_w)) ||
+       (wad_w & 0x80000000) )
+  {
+    u3l_log("strange lily %s\n", u3r_string(txt));
+    u3z(txt); u3z(uco); return c3n;
+  }
+  else {
+    *tid_l = (c3_l)wad_w;
+    u3z(txt); u3z(uco); return c3y;
+  }
+}
+
 /* u3v_peek(): query the reck namespace (protected).
 */
 u3_noun
@@ -228,54 +251,6 @@ u3v_soft_peek(c3_w mil_w, u3_noun sam)
     return pro;
   }
 }
-
-#if 0
-/* _cv_mole(): parse simple atomic mole.
-*/
-static c3_o
-_cv_mole(u3_noun  fot,
-         u3_noun  san,
-         c3_d*    ato_d)
-{
-  u3_noun uco = u3do("slay", san);
-  u3_noun p_uco, q_uco, r_uco, s_uco;
-
-  if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
-       (0 != p_uco) ||
-       (0 != q_uco) ||
-       (c3n == u3r_sing(fot, r_uco)) )
-  {
-    u3l_log("strange mole %s\n", u3r_string(san)));
-
-    u3z(fot); u3z(uco); return c3n;
-  }
-  else {
-    *ato_d = u3r_chub(0, s_uco);
-
-    u3z(fot); u3z(uco); return c3y;
-  }
-}
-
-/* _cv_lily(): parse little atom.
-*/
-static c3_o
-_cv_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
-{
-  c3_d ato_d;
-
-  if ( c3n == _cv_mole(fot, txt, &ato_d) ) {
-    return c3n;
-  } else {
-    if ( ato_d >= 0x80000000ULL ) {
-      return c3n;
-    } else {
-      *tid_l = (c3_l) ato_d;
-
-      return c3y;
-    }
-  }
-}
-#endif
 
 /* u3v_poke(): insert and apply an input ovum (protected).
 */
