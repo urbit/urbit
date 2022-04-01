@@ -40,7 +40,7 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
   if (!first || !charge) {
     return null;
   }
-  const orderedByTime = notification.body.sort((a, b) => b.time - a.time);
+  const orderedByTime = notification.body.sort((a, b) => a.time - b.time);
   const contents = map(orderedByTime, 'content').filter((c) => c.length > 0);
   const large = contents.length === 0;
   const archive = () => {
