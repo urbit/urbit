@@ -19,6 +19,7 @@ import { Tabs } from './Tabs';
 import Buffer from './Buffer';
 import { DEFAULT_SESSION } from './constants';
 import { showSlog } from './lib/blit';
+import { InfoButton } from './InfoButton';
 
 export default function TermApp() {
   const { names, selected } = useTermState();
@@ -78,7 +79,10 @@ export default function TermApp() {
   return (
     <>
       <ThemeProvider theme={dark ? _dark : _light}>
-        <Tabs />
+        <div className="header">
+          <Tabs />
+          <InfoButton />
+        </div>
         <div className="buffer-container">
           {names.map((name) => {
             return <Buffer key={name} name={name} selected={name === selected} dark={dark} />;
