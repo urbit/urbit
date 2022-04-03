@@ -687,10 +687,9 @@
   ++  ta-hit                                          ::  hear click
     |=  [x=@ud y=@ud]
     ^+  +>
-    ?.  =(0 y)  +>
     =/  pol=@ud
       (lent-char:klr (make:klr cad.pom))
-    ?:  (lth x pol)  +>.$
+    =?  x  (lth x pol)  pol
     +>.$(pos.inp (min (sub x pol) (lent buf.say.inp)))
   ::
   ++  ta-erl                                          ::  hear local error
