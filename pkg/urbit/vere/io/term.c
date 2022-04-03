@@ -1762,6 +1762,10 @@ _term_io_exit(u3_auto* car_u)
     //
     _term_it_dump_buf(uty_u, &uty_u->ufo_u.mof_u);
 
+    //  move cursor to the end
+    //
+    _term_it_move_cursor(uty_u, 0, uty_u->tat_u.siz.row_l - 1);
+
     //  NB, closed in u3_term_log_exit()
     //
     uv_read_stop((uv_stream_t*)&(uty_u->pin_u));
