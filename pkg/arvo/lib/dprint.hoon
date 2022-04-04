@@ -52,9 +52,9 @@
     ==
   ::
   --
+:>  #  %dprint
 |%
-::  arms for finding docs in types
-::+|  %searching
++|  %searching
 :>    returns the item to print while searching through topic
 :>
 :>  this gate is called recursively to find the path (topic) in the type
@@ -83,21 +83,22 @@
     ::  check that they're wrapped with a %hint type. so this just looks for
     ::  docs on the arms.
     ::
-    ::  cores also can't have names right now. %brcn and %brpt have a slot in
-    ::  their AST for the name, but it doesn't end up in the their type. so
-    ::  if i want core names right now, i'd have to look inside their AST, and
-    ::  only |% and |@ cores would have names, which is silly.
+    =+  core-name=p.p.q.sut
+    ?:  =(`topic core-name)
+      ::  if core-name matches topic, return the core as a (unit item)
+      (signify sut)
+    =+  chapters=~(key by q.r.q.sut)
+    ?:  (~(has in chapters) topic)
+      ::  if there is a chapter with a name matching the topic, return chapter
+      ::  as a (unit item)
+      =/  docs=what  p:(~(got by q.r.q.sut) topic)
+      `[%chapter (trip topic) docs sut q.sut topic]
     =+  arm=(find-arm-in-coil topic q.sut)
     ?~  arm
-      ::  the current topic is not an arm in the core
+      ::  the current topic is not an arm in the core, recurse into type
       $(sut p.sut)
-    ::  check to see if the arm is wrapped with a note
-    ::  TODO: this is taking docs from the AST rather than the type. is that
-    ::  the right thing to do here?
     =+  wat=(unwrap-note u.arm)
     `[%arm (trip topic) wat u.arm p.sut]
-   :: `[%arm (trip topic) wat u.arm q.q.sut]  :: what's the difference if i use the type in the coil?
-    ::  TODO: check for chapter docs
   ::
       [%face *]
     ?.  ?=(term p.sut)
@@ -174,9 +175,11 @@
     $(sut q.sut)
   ::
       [%core *]
-    =/  name  ~  :: should check if core is built with an arm and use that name?
+    =/  name=(unit term)  p.p.q.sut  :: should check if core is built with an arm and use that name?
     =*  compiled-against  $(sut p.sut)
-    `[%core (trip name) *what p.sut q.sut compiled-against]
+    ?~  name
+      `[%core ~ *what p.sut q.sut compiled-against]
+    `[%core (trip u.name) *what p.sut q.sut compiled-against]
   ::
       [%face *]
     ?.  ?=(term p.sut)
@@ -427,7 +430,7 @@
 ::  :>  #  %printing
 ::  :>  #
 ::  :>    functions which display output of various types
-::  +|  %printing
++|  %printing
 :>    prints a doccords item
 ++  print-item
   |=  =item
