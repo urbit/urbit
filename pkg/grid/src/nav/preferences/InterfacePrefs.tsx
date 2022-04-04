@@ -77,7 +77,10 @@ export function InterfacePrefs() {
             Automatically open urbit links when using this browser.
             {!linkHandlingAllowed && (
               <>
-                , <strong className="text-orange-500">requires HTTPS</strong>
+                ,{' '}
+                <strong className="text-orange-500">
+                  Unavailable with this browser/connection.
+                </strong>
               </>
             )}
           </p>
