@@ -87,7 +87,7 @@ export function RemoteContentImageEmbed(
         height="192px"
         maxWidth="192px"
         width="100%"
-        objectFit="contain"
+        objectFit="cover"
         borderRadius={2}
         onError={onError}
         {...props}
