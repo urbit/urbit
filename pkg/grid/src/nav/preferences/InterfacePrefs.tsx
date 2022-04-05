@@ -1,7 +1,7 @@
 import React from 'react';
 import { Setting } from '../../components/Setting';
 import {
-  useBrowserNotifications,
+  setBrowserSetting,
   useBrowserSettings,
   useProtocolHandling,
   useSettingsState
@@ -12,16 +12,13 @@ export function InterfacePrefs() {
   const settings = useBrowserSettings();
   const browserId = useBrowserId();
   const protocolHandling = useProtocolHandling(browserId);
-  const browserNotifications = useBrowserNotifications(browserId);
   const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
   const linkHandlingAllowed = secure && 'registerProtocolHandler' in window.navigator;
   const setProtocolHandling = (setting: boolean) => {
-    const newSettings = [{ browserId, protocolHandling: setting, browserNotifications }];
-    if (!settings.includes(newSettings)) {
-      useSettingsState
-        .getState()
-        .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
-    }
+    const newSettings = setBrowserSetting(settings, { protocolHandling: setting }, browserId);
+    useSettingsState
+      .getState()
+      .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
   };
 
   const toggleProtoHandling = async () => {

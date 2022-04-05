@@ -12,7 +12,13 @@ import useContactState from './state/contact';
 import api from './state/api';
 import { useMedia } from './logic/useMedia';
 import { useHarkStore } from './state/hark';
-import { useSettingsState, useBrowserSettings, useTheme } from './state/settings';
+import {
+  useSettingsState,
+  useBrowserSettings,
+  useTheme,
+  setBrowserSetting,
+  getBrowserSetting
+} from './state/settings';
 import { useBrowserId, useLocalState } from './state/local';
 import { ErrorAlert } from './components/ErrorAlert';
 import { useErrorHandler } from './logic/useErrorHandler';
@@ -60,7 +66,7 @@ const AppRoutes = () => {
     // If not, send a notification prompting them to do so.
     // Set both settings to false so that they're not bugged again.
     if (browserId !== '' && loaded) {
-      const thisBrowserSettings = settings.filter((el: any) => el.browserId === browserId)[0];
+      const thisBrowserSettings = getBrowserSetting(settings, browserId);
       if (!thisBrowserSettings) {
         api.poke(
           addNote(
@@ -79,7 +85,11 @@ const AppRoutes = () => {
             }
           )
         );
-        const newSettings = [{ browserId, protocolHandling: false, browserNotifications: false }];
+        const newSettings = setBrowserSetting(
+          settings,
+          { protocolHandling: false, browserNotifications: false },
+          browserId
+        );
         useSettingsState
           .getState()
           .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));

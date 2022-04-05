@@ -19,10 +19,11 @@ import { unstable_batchedUpdates } from 'react-dom';
 import produce from 'immer';
 import _ from 'lodash';
 import api from './api';
-import { useSettingsState } from './settings';
+import { getBrowserSetting, parseBrowserSettings, useSettingsState } from './settings';
 import { BaseState, createState, createSubscription, reduceStateN } from './base';
 import { mockNotifications } from './mock-data';
 import { useMockData } from './util';
+import { useLocalState } from './local';
 
 export interface HarkState {
   seen: Timebox;
@@ -126,24 +127,24 @@ export const useHarkStore = createState<HarkState>(
       createSubscription('hark-store', '/updates', (u) => {
         /* eslint-ignore-next-line camelcase */
         unstable_batchedUpdates(() => {
-          reduceHark(u);
+          reduceHark(u, useSettingsState.getState().display.doNotDisturb);
         });
       })
   ]
 );
 
-function reduceHark(u: any) {
+function reduceHark(u: any, dnd = false) {
   const { set } = useHarkStore.getState();
   if (!u) {
     return;
   }
   if ('more' in u) {
     u.more.forEach((upd: any) => {
-      reduceHark(upd);
+      reduceHark(upd, dnd);
     });
   } else if ('all-stats' in u) {
     // TODO: probably ignore?
-  } else if ('added' in u) {
+  } else if ('added' in u && !dnd) {
     set((draft) => {
       const { bin } = u.added;
       const binId = harkBinToId(bin);
@@ -240,7 +241,12 @@ api.subscribe({
   path: '/notes',
   event: (u: any) => {
     if ('add-note' in u) {
-      if (useSettingsState.getState().display.doNotDisturb) {
+      const { browserSettings } = useSettingsState.getState();
+      const { browserId } = useLocalState.getState();
+      const settings = parseBrowserSettings(browserSettings.settings);
+      const browserNotifications = getBrowserSetting(settings, browserId)?.browserNotifications;
+
+      if (!browserNotifications) {
         return;
       }
       const { bin, body } = u['add-note'];

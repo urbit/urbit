@@ -8,8 +8,16 @@ import {
   useSettingsState,
   useBrowserNotifications,
   useBrowserSettings,
-  useProtocolHandling
+  SettingsState,
+  setBrowserSetting
 } from '../../state/settings';
+
+const selDnd = (s: SettingsState) => s.display.doNotDisturb;
+async function toggleDnd() {
+  const state = useSettingsState.getState();
+  const curr = selDnd(state);
+  await state.putEntry('display', 'doNotDisturb', !curr);
+}
 
 const selMentions = (s: HarkState) => s.notificationsGraphConfig.mentions;
 async function toggleMentions() {
@@ -18,20 +26,18 @@ async function toggleMentions() {
 }
 
 export const NotificationPrefs = () => {
+  const doNotDisturb = useSettingsState(selDnd);
   const mentions = useHarkStore(selMentions);
   const settings = useBrowserSettings();
   const browserId = useBrowserId();
   const browserNotifications = useBrowserNotifications(browserId);
-  const protocolHandling = useProtocolHandling(browserId);
   const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
 
   const setBrowserNotifications = (setting: boolean) => {
-    const newSettings = [{ browserId, browserNotifications: setting, protocolHandling }];
-    if (!settings.includes(newSettings)) {
-      useSettingsState
-        .getState()
-        .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
-    }
+    const newSettings = setBrowserSetting(settings, { browserNotifications: setting }, browserId);
+    useSettingsState
+      .getState()
+      .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
   };
 
   const toggleNotifications = async () => {
@@ -47,6 +53,26 @@ export const NotificationPrefs = () => {
     <>
       <h2 className="h3 mb-7">Notifications</h2>
       <div className="space-y-3">
+        <Setting
+          on={doNotDisturb}
+          toggle={toggleDnd}
+          name="Do Not Disturb"
+          disabled={doNotDisturb && !secure}
+        >
+          <p>
+            Block visual desktop notifications whenever Urbit software produces a notification
+            badge.
+          </p>
+          <p>
+            Turning this &quot;off&quot; will prompt your browser to ask if you&apos;d like to
+            enable notifications
+            {!secure && (
+              <>
+                , <strong className="text-orange-500">requires HTTPS</strong>
+              </>
+            )}
+          </p>
+        </Setting>
         <Setting
           on={browserNotifications}
           toggle={toggleNotifications}
