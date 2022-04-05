@@ -16,7 +16,7 @@ let
 
   # See https://github.com/urbit/urbit/issues/5561
   oFlags =
-    if stdenv.hostPlatform.system == "aarch64-darwin"
+    if stdenv.isDarwin
     then (if enableDebug then [ "-O0" "-g" ] else [ "-O3" ])
     else [ (if enableDebug then "-O0" else "-O3") "-g" ];
 
