@@ -256,56 +256,76 @@
     $(tomes t.tomes)
   `u.gen
 ::
-:>    gets the documentation inside of a type
-++  what-from-type
-  :>  testing
+:>    gets the documentation inside of a hint, or a hold that plays to a hint
+++  what-from-hint
   |=  sut=type
   ^-  what
   ?+    sut
       ~
   ::
-      [%core *]
-    ~?  >>  debug  %what-from-type-core  ~  :: should this get the chapter docs?
-  ::
       [%hold *]
-    ~?  >>  debug  %what-from-type-hold  $(sut (~(play ut p.sut) q.sut))
+    ~?  >>  debug  %what-from-hint-hold  $(sut (~(play ut p.sut) q.sut))
   ::
       [%hint *]
-    ~?  >>  debug  :-  %what-from-type-hint  -.q.p.sut
+    ~?  >>  debug  :-  %what-from-hint-hint  -.q.p.sut
     ?:  ?=(%help -.q.p.sut)  `crib.p.q.p.sut  ~
+  ==
+:>    gets the $help from a %help %hint type and returns it as a unit
+++  help-from-hint
+  |=  sut=type
+  ^-  (unit help)
+  ?+    sut  ~
+      [%hold *]
+    ~?  >>  debug  %help-from-hold  $(sut (~(play ut p.sut) q.sut))
+  ::
+      [%hint *]
+    ~?  >>  debug  %help-from-hint
+    ?.  ?=(%help -.q.p.sut)
+      ~
+    (some p.q.p.sut)
   ==
 ::
 :>    returns 0, 1, or 2 whats for an arm
+:>
+:>  this arm should be handed the compiled type of the hoon of an arm, as well
+:>  as the name of that arm. it checks for up to 2 nested hints on the outermost
+:>  layer of the type. if you have 2, it is presumed to be arm-doc followed by
+:>  product-doc. if you only have one, we check links in the $help of the hint
+:>  to determine whether it is an arm doc or product doc.
+:>
+:>  this returns ~ if there are no docs. if there are docs, the first one is the
+:>  arm-doc, and the second one is the product-doc.
 ++  arm-product-docs
-  |=  [sut=type name=tape]
+  |=  [sut=type name=term]
   ^-  (unit [what what])
   =/  doc-one=(unit help)
-    ?:  ?=([%hint [* [%help ^]] *] sut)
-      `p.q.p.sut
-    ~
+    (help-from-hint sut)
   ?~  doc-one
-    ::  no need to look for a second doc if there is no first one
-    ~
+    ~?  >  debug  %doc-one-empty
+    ~  ::  no need to look for a second doc if there is no first one
+  ::  technically doc-two doesn't need to be a help, i could just grab the what
+  ::  directly since we aren't testing it to see if its an arm-doc, but it makes
+  ::  the code more confusing to use a different structure.
   =/  doc-two=(unit help)
     ?>  ?=([%hint *] sut)
-      ?:  ?=([%hint [* [%help ^]] *] q.sut)
-        `p.q.p.q.sut
-      ~
+    (help-from-hint q.sut)
   ?~  doc-two
+    ~?  >  debug  %doc-two-empty
     ?~  links.u.doc-one
       :: if links are empty, doc-one is a product-doc
-      [~ [~ `crib.u.doc-one]]
-    ?:  =([%funk `@tas`(crip name)] i.links.u.doc-one)
+      [~ [~ (some crib.u.doc-one)]]
+    ?:  =([%funk name] i.links.u.doc-one)
       :: if links are non-empty, check that the link is for the arm
-      [~ [`crib.u.doc-one ~]]
+      ~?  >  debug  %link-match
+      [~ [(some crib.u.doc-one) ~]]
     ~?  >  debug  %link-doesnt-match-arm
     :: this shouldn't happen at this point in time
-    [~ [`crib.u.doc-one ~]]
+    [~ [(some crib.u.doc-one) ~]]
   ::  doc-two is non-empty. make sure that doc-one is an arm-doc
   ?~  links.u.doc-one
     ~?  >  debug  %doc-one-empty-link
-    [~ [`crib.u.doc-one `crib.u.doc-two]]
-  [~ [`crib.u.doc-one `crib.u.doc-two]]
+    [~ [(some crib.u.doc-one) (some crib.u.doc-two)]]
+  [~ [(some crib.u.doc-one) (some crib.u.doc-two)]]
 ::
 :>    grabs the docs for an arm.
 :>
@@ -313,38 +333,42 @@
 :>  docs for the arm itself, docs for the product of the arm, and
 :>  if the arm builds a core, docs for the default arm of that core.
 :>
-:>  arm-doc: docs wrapping the arm
+:>  arm-doc: docs written above the the arm
 :>  product-doc: docs for the product of the arm
 :>  core-doc: docs for the default arm of the core produced by the arm
-++  select-arm-docs
+++  all-arm-docs
   |=  [gen=hoon sut=type name=tape]
-  ~?  >  debug  %select-arm-docs
+  ~?  >  debug  %all-arm-docs
   ^-  [what what what]
   =+  hoon-type=(~(play ut sut) gen)
-  =+  arm-prod=(arm-product-docs hoon-type name)
+  =+  arm-prod=(arm-product-docs hoon-type `@tas`(crip name))
   ~?  >>  debug  arm-prod
   |^
   :: check arm-prod to determine how many layers to look into the type
   :: for core docs
   =/  depth=@  ?~  arm-prod  0
     (add =(~ +<.arm-prod) =(~ +>.arm-prod))
-  ?+  depth  [~ ~ ~]
-    %0  [~ ~ (check-core hoon-type)]
+  ?+  depth  ``~
+    %0  ``(extract hoon-type)
     %1  :+  +<.arm-prod
           +>.arm-prod
         ?>  ?=([%hint *] hoon-type)
-        (check-core q.hoon-type)
+        (extract q.hoon-type)
     %2  :+  +<.arm-prod
           +>.arm-prod
         ?>  ?=([%hint *] hoon-type)
         ?>  ?=([%hint *] q.hoon-type)
-        (check-core q.q.hoon-type)
+        (extract q.q.hoon-type)
   ==
-  ++  check-core
+  :>    grabs the first doc for the default arm of a core
+  :>
+  :>  this could end up being an arm doc or a product doc. or it might even
+  :>  produce another core with docs in that. should I care?
+  ++  extract
     |=  sut=type
     ^-  what
     ?:  ?=([%core *] sut)
-      (what-from-type (~(play ut sut) [%limb %$]))
+      (what-from-hint (~(play ut sut) [%limb %$]))
     ~
   --
 ::
@@ -402,7 +426,7 @@
   ^-  overview
   %+  turn  ~(tap by a)
   |=  ar=(pair term hoon)
-  =+  [adoc pdoc cdoc]=(select-arm-docs q.ar sut (trip p.ar))
+  =+  [adoc pdoc cdoc]=(all-arm-docs q.ar sut (trip p.ar))
   [%item (weld "++" (trip p.ar)) adoc]
 ::
 :>    changes an item into an overview
@@ -440,10 +464,7 @@
   ?~  lhs  rhs
   ?~  rhs  lhs
   `[%view (weld (item-as-overview lhs) (item-as-overview rhs))]
-::  :>  #
-::  :>  #  %printing
-::  :>  #
-::  :>    functions which display output of various types
+::
 +|  %printing
 :>    prints a doccords item
 ++  print-item
@@ -501,13 +522,13 @@
   |=  [name=tape docs=what gen=hoon sut=type]
   ^-  tang
   ~?  >>  debug  %print-arm
-  =+  [main-doc product-doc core-doc]=(select-arm-docs gen sut name)
+  =+  [adoc pdoc cdoc]=(all-arm-docs gen sut name)
   ;:  weld
-    (print-header name main-doc)
+    (print-header name adoc)
     `tang`[[%leaf ""] [%leaf "product:"] ~]
-    (print-header "" product-doc)
+    (print-header "" pdoc)
     `tang`[[%leaf ""] [%leaf "default arm in core:"] ~]
-    (print-header "" core-doc)
+    (print-header "" cdoc)
   ==
 ::
 :>    renders documentation for a face
