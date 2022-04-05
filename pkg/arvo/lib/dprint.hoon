@@ -206,16 +206,6 @@
       %noun  ~
       %void  ~
   ==
-
-:>    checks if a hoon is wrapped with a help note, and returns it if so
-++  unwrap-note
-  |=  gen=hoon
-  ^-  what
-  ?:  ?=([%note *] gen)
-    ?:  ?=([%help *] p.gen)
-      `crib.p.p.gen
-    ~
-  ~
 ::
 :>    checks if a hint type is a help hint and returns the docs if so
 ++  unwrap-hint
