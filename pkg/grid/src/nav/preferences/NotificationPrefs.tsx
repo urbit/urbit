@@ -3,14 +3,13 @@ import React from 'react';
 import { Setting } from '../../components/Setting';
 import { pokeOptimisticallyN } from '../../state/base';
 import { HarkState, reduceGraph, useHarkStore } from '../../state/hark';
-import { useSettingsState, SettingsState } from '../../state/settings';
-
-const selDnd = (s: SettingsState) => s.display.doNotDisturb;
-async function toggleDnd() {
-  const state = useSettingsState.getState();
-  const curr = selDnd(state);
-  await state.putEntry('display', 'doNotDisturb', !curr);
-}
+import { useBrowserId } from '../../state/local';
+import {
+  useSettingsState,
+  useBrowserNotifications,
+  useBrowserSettings,
+  useProtocolHandling
+} from '../../state/settings';
 
 const selMentions = (s: HarkState) => s.notificationsGraphConfig.mentions;
 async function toggleMentions() {
@@ -19,27 +18,43 @@ async function toggleMentions() {
 }
 
 export const NotificationPrefs = () => {
-  const doNotDisturb = useSettingsState(selDnd);
   const mentions = useHarkStore(selMentions);
+  const settings = useBrowserSettings();
+  const browserId = useBrowserId();
+  const browserNotifications = useBrowserNotifications(browserId);
+  const protocolHandling = useProtocolHandling(browserId);
   const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+
+  const setBrowserNotifications = (setting: boolean) => {
+    const newSettings = [{ browserId, browserNotifications: setting, protocolHandling }];
+    if (!settings.includes(newSettings)) {
+      useSettingsState
+        .getState()
+        .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
+    }
+  };
+
+  const toggleNotifications = async () => {
+    if (!browserNotifications) {
+      Notification.requestPermission();
+      setBrowserNotifications(true);
+    } else {
+      setBrowserNotifications(false);
+    }
+  };
 
   return (
     <>
       <h2 className="h3 mb-7">Notifications</h2>
       <div className="space-y-3">
         <Setting
-          on={doNotDisturb}
-          toggle={toggleDnd}
-          name="Do Not Disturb"
-          disabled={doNotDisturb && !secure}
+          on={browserNotifications}
+          toggle={toggleNotifications}
+          name="Show desktop notifications"
+          disabled={!secure}
         >
           <p>
-            Block visual desktop notifications whenever Urbit software produces a notification
-            badge.
-          </p>
-          <p>
-            Turning this &quot;off&quot; will prompt your browser to ask if you&apos;d like to
-            enable notifications
+            Show desktop notifications in this browser.
             {!secure && (
               <>
                 , <strong className="text-orange-500">requires HTTPS</strong>

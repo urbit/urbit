@@ -23,14 +23,6 @@ export function InterfacePrefs() {
         .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
     }
   };
-  const setBrowserNotifications = (setting: boolean) => {
-    const newSettings = [{ browserId, browserNotifications: setting, protocolHandling }];
-    if (!settings.includes(newSettings)) {
-      useSettingsState
-        .getState()
-        .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
-    }
-  };
 
   const toggleProtoHandling = async () => {
     if (!protocolHandling && window?.navigator?.registerProtocolHandler) {
@@ -54,15 +46,6 @@ export function InterfacePrefs() {
     }
   };
 
-  const toggleNotifications = async () => {
-    if (!browserNotifications) {
-      Notification.requestPermission();
-      setBrowserNotifications(true);
-    } else {
-      setBrowserNotifications(false);
-    }
-  };
-
   return (
     <>
       <h2 className="h3 mb-7">Interface Settings</h2>
@@ -80,21 +63,6 @@ export function InterfacePrefs() {
                 <strong className="text-orange-500">
                   Unavailable with this browser/connection.
                 </strong>
-              </>
-            )}
-          </p>
-        </Setting>
-        <Setting
-          on={browserNotifications}
-          toggle={toggleNotifications}
-          name="Show desktop notifications"
-          disabled={!secure}
-        >
-          <p>
-            Show desktop notifications in this browser.
-            {!secure && (
-              <>
-                , <strong className="text-orange-500">requires HTTPS</strong>
               </>
             )}
           </p>
