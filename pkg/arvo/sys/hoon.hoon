@@ -8242,10 +8242,7 @@
         ::
         :: tis runes
           [%tsfs *]
-        ?~  boy.wit
-          gen
-        [%tsfs [%help `u.boy.wit p.gen] q.gen r.gen]
-::        [%tsfs help+`u.boy.wit p.gen q.gen r.gen]
+        wrap-boy
       ==
       ::
       ++  wrap-boy
