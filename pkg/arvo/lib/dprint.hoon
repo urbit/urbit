@@ -31,7 +31,9 @@
         ::  inspecting a single arm on a core
         $:  %arm
             name=tape
-            docs=what
+            adoc=what
+            pdoc=what
+            cdoc=what
             gen=hoon
             sut=type
         ==
@@ -97,8 +99,8 @@
     ?~  arm
       ::  the current topic is not an arm in the core, recurse into sut
       $(sut p.sut)
-    =+  wat=(unwrap-note u.arm)
-    `[%arm (trip topic) wat u.arm p.sut]
+    =+  [adoc pdoc cdoc]=(all-arm-docs u.arm p.sut (trip topic))
+    `[%arm (trip topic) adoc pdoc cdoc u.arm p.sut]
   ::
       [%face *]
     ?.  ?=(term p.sut)
@@ -129,12 +131,15 @@
    ::  TODO: should i be trying to match both types in the hint?
    ::  TODO: actually hints can be nested, if e.g. an arm has a product with a hint, whose
    ::  product also has a hint. so this won't actually work for nested hints as written
+   ::
+   ::  this should only be doing something for cores right now. you run into an
+   ::  arm's name before you run into its docs
    ?:  (shallow-match topic q.sut)
      =/  wat=what  (unwrap-hint sut)
-     =/  itm=(unit item)  (signify q.sut)
-     ?~  itm
+     =/  uitm=(unit item)  (signify q.sut)
+     ?~  uitm
        ~
-     `(emblazon u.itm wat)
+     `(emblazon u.uitm wat)
    $(sut q.sut)
   ::
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
@@ -224,22 +229,15 @@
 ::
 :>    inserts docs into an item
 :>
-:>  most docs are going to be found in hint types wrapping another type. when
-:>  we come across a hint, we grab the docs from the hint and then build the
-:>  item for the type it wrapped. since building an item is handled separately,
-:>  this item will initially have no docs in it, so we add it in after with this
-:>
-:>  the exceptions to this are %chapter and %view items. chapters have an axis
-:>  for docs in their $tome structure, and %views are summaries of several types
+:>  when matching for a core or a face type, the docs for that type will be in
+:>  a hint that wraps it. thus we end up producing an item for that type, then
+:>  need to add the docs to it.
 ++  emblazon
   |=  [=item =what]
   ~?  >>  debug  %emblazon
   ^+  item
-  ?+  item  item  :: no-op on %chapter and %view
-    ?([%core *] [%arm *] [%face *])  ?~  docs.item
-                                       item(docs what)
-                                     ~?  >  debug  %docs-in-item
-                                     item(docs what)
+  ?+  item  item  :: no-op on %chapter, %arm, $view
+    ?([%core *] [%face *])  item(docs what)
   ==
 ::
 :>    looks for an arm in a coil and returns its hoon
@@ -282,7 +280,7 @@
     ~?  >>  debug  %help-from-hint
     ?.  ?=(%help -.q.p.sut)
       ~
-    (some p.q.p.sut)
+    `p.q.p.sut
   ==
 ::
 :>    returns 0, 1, or 2 whats for an arm
@@ -313,19 +311,19 @@
     ~?  >  debug  %doc-two-empty
     ?~  links.u.doc-one
       :: if links are empty, doc-one is a product-doc
-      [~ [~ (some crib.u.doc-one)]]
+      [~ [~ `crib.u.doc-one]]
     ?:  =([%funk name] i.links.u.doc-one)
       :: if links are non-empty, check that the link is for the arm
       ~?  >  debug  %link-match
-      [~ [(some crib.u.doc-one) ~]]
+      [~ [`crib.u.doc-one ~]]
     ~?  >  debug  %link-doesnt-match-arm
     :: this shouldn't happen at this point in time
-    [~ [(some crib.u.doc-one) ~]]
+    [~ [`crib.u.doc-one ~]]
   ::  doc-two is non-empty. make sure that doc-one is an arm-doc
   ?~  links.u.doc-one
     ~?  >  debug  %doc-one-empty-link
-    [~ [(some crib.u.doc-one) (some crib.u.doc-two)]]
-  [~ [(some crib.u.doc-one) (some crib.u.doc-two)]]
+    [~ [`crib.u.doc-one `crib.u.doc-two]]
+  [~ [`crib.u.doc-one `crib.u.doc-two]]
 ::
 :>    grabs the docs for an arm.
 :>
@@ -446,7 +444,7 @@
     (item-as-overview children.itm)
   ::
       [%arm *]
-    [%item name.itm docs.itm]~
+    [%item name.itm adoc.itm]~
   ::
       [%chapter *]
     [%item name.itm docs.itm]~
@@ -484,8 +482,7 @@
   ^-  tang
   =+  [arms chapters]=(arm-and-chapter-overviews sut con name)
   ;:  weld
-    ::  cores don't have names
-    (print-header *tape *what)
+    (print-header name docs)
   ::
     ?~  arms
       ~
@@ -519,10 +516,9 @@
 ::
 :>    renders documentation for a single arm in a core
 ++  print-arm
-  |=  [name=tape docs=what gen=hoon sut=type]
+  |=  [name=tape adoc=what pdoc=what cdoc=what gen=hoon sut=type]
   ^-  tang
   ~?  >>  debug  %print-arm
-  =+  [adoc pdoc cdoc]=(all-arm-docs gen sut name)
   ;:  weld
     (print-header name adoc)
     `tang`[[%leaf ""] [%leaf "product:"] ~]
