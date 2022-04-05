@@ -571,7 +571,7 @@
 ::    was processed during a single Arvo event. At the moment, .lag is
 ::    always zero.
 ::
-+$  ack-meat  (each fragment-num [ok=? cork=? lag=@dr])
++$  ack-meat  (each fragment-num [ok=? lag=@dr])
 ::  $naxplanation: nack trace; explains which message failed and why
 ::
 +$  naxplanation  [=message-num =error]
@@ -2209,7 +2209,8 @@
       =/  =message-pump-state
         (~(gut by snd.peer-state) bone *message-pump-state)
       ::
-      =/  message-pump    (make-message-pump message-pump-state channel)
+      =/  closing=?       (~(has in closing.peer-state) bone)
+      =/  message-pump    (make-message-pump message-pump-state channel closing)
       =^  pump-gifts      message-pump-state  (work:message-pump task)
       =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
       ::  process effects from |message-pump
@@ -2464,7 +2465,7 @@
 ::  +make-message-pump: constructor for |message-pump
 ::
 ++  make-message-pump
-  |=  [state=message-pump-state =channel]
+  |=  [state=message-pump-state =channel closing=?]
   =*  veb  veb.bug.channel
   =|  gifts=(list message-pump-gift)
   ::
@@ -2503,9 +2504,21 @@
          (on-hear [message-num fragment-num=p.ack-meat]:task)
         ::
             %|
+          ~&  [current.state message+message-num:task]
+          =/  cork=?
+            =/  top-live
+              (pry:packet-queue:*make-packet-pump live.packet-pump-state.state)
+            ::  If we send a %cork and get an ack, we can know by
+            ::  sequence number that the ack is for the %cork message
+            ::
+            ?&  closing
+                ?=(^ top-live)
+                =(1 ~(wyt by live.packet-pump-state.state))
+                =(message-num:task message-num.key.u.top-live)
+            ==
           =*  ack  p.ack-meat.task
           %-  on-done
-          [[message-num:task ?:(ok.ack [%ok ~] [%nack ~])] cork.ack]
+          [[message-num:task ?:(ok.ack [%ok ~] [%nack ~])] cork]
         ==
       %near  (on-done [[message-num %naxplanation error]:naxplanation.task %&])
     ==
@@ -3170,7 +3183,7 @@
       ::
       =/  ok=?  !(~(has in nax.state) seq)
       %-  (trace rcv.veb |.("send dupe message ack {<seq=seq>} ok={<ok>}"))
-      (give %send seq %| ok %| lag=`@dr`0)
+      (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
     ::    Only true if we've heard some packets we haven't acked, which
@@ -3291,7 +3304,7 @@
     =.  last-acked.state  +(last-acked.state)
     =?  nax.state  !ok  (~(put in nax.state) message-num)
     ::
-    =.  message-sink  (give %send message-num %| ok cork lag=`@dr`0)
+    =.  message-sink  (give %send message-num %| ok lag=`@dr`0)
     =?  message-sink  cork  (give %cork ~)
     =/  next  ~(top to pending-vane-ack.state)
     ?~  next
