@@ -95,7 +95,7 @@
       `[%chapter (trip topic) docs sut q.sut topic]
     =+  arm=(find-arm-in-coil topic q.sut)
     ?~  arm
-      ::  the current topic is not an arm in the core, recurse into type
+      ::  the current topic is not an arm in the core, recurse into sut
       $(sut p.sut)
     =+  wat=(unwrap-note u.arm)
     `[%arm (trip topic) wat u.arm p.sut]
@@ -135,7 +135,6 @@
      ?~  itm
        ~
      `(emblazon u.itm wat)
-::     (emblazon (need (signify q.sut)) (unwrap-hint sut))
    $(sut q.sut)
   ::
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
@@ -276,62 +275,79 @@
     ?:  ?=(%help -.q.p.sut)  `crib.p.q.p.sut  ~
   ==
 ::
+:>    returns 0, 1, or 2 whats for an arm
+++  arm-product-docs
+  |=  [sut=type name=tape]
+  ^-  (unit [what what])
+  =/  doc-one=(unit help)
+    ?:  ?=([%hint [* [%help ^]] *] sut)
+      `p.q.p.sut
+    ~
+  ?~  doc-one
+    ::  no need to look for a second doc if there is no first one
+    ~
+  =/  doc-two=(unit help)
+    ?>  ?=([%hint *] sut)
+      ?:  ?=([%hint [* [%help ^]] *] q.sut)
+        `p.q.p.q.sut
+      ~
+  ?~  doc-two
+    ?~  links.u.doc-one
+      :: if links are empty, doc-one is a product-doc
+      [~ [~ `crib.u.doc-one]]
+    ?:  =([%funk `@tas`(crip name)] i.links.u.doc-one)
+      :: if links are non-empty, check that the link is for the arm
+      [~ [`crib.u.doc-one ~]]
+    ~?  >  debug  %link-doesnt-match-arm
+    :: this shouldn't happen at this point in time
+    [~ [`crib.u.doc-one ~]]
+  ::  doc-two is non-empty. make sure that doc-one is an arm-doc
+  ?~  links.u.doc-one
+    ~?  >  debug  %doc-one-empty-link
+    [~ [`crib.u.doc-one `crib.u.doc-two]]
+  [~ [`crib.u.doc-one `crib.u.doc-two]]
+::
 :>    grabs the docs for an arm.
 :>
 :>  there are three possible places with relevant docs for an arm:
 :>  docs for the arm itself, docs for the product of the arm, and
 :>  if the arm builds a core, docs for the default arm of that core.
 :>
-:>  arm-doc: docs wrapping the arm - this should have already been found
+:>  arm-doc: docs wrapping the arm
 :>  product-doc: docs for the product of the arm
 :>  core-doc: docs for the default arm of the core produced by the arm
 ++  select-arm-docs
-  |=  [arm-doc=what gen=hoon sut=type]
-  ~?  >>  debug  %select-arm-docs
+  |=  [gen=hoon sut=type name=tape]
+  ~?  >  debug  %select-arm-docs
   ^-  [what what what]
   =+  hoon-type=(~(play ut sut) gen)
-  ::~?  >>>  debug  hoon-type
-  =/  product-doc=what  (what-from-type hoon-type)
-  ~?  >  debug  product-doc
-  ::  if the arm builds a core, get the docs for the default arm
-  ::  in that core
-  ::
-  ::  this is broken if it also has an arm-doc. if i have an arm-doc, i
-  ::  need to strip off the first hint and then check if i have a core, i think
-  =/  core-doc=what
-    :: if product-doc is empty, just go right on and check if its a core
-    ?~  product-doc
-      ?.  ?=([%core *] hoon-type)
-        ~?  >  debug  %no-core-product
-        ~
-      (what-from-type (~(play ut hoon-type) [%limb %$]))
-    :: if there is a product doc, then step through the hint and check for a core
-    ?:  ?=([%hint *] hoon-type)
-      ~?  >  debug  %step-through-hint
-      ::=+  inner-type=(~(play ut q.hoon-type) gen)
-      ::=/  res  (mule |.((~(play ut inner-type) [%limb %$])))
-      ::  pretty sure having to use mule twice here means im doing something wrong
-      =/  h-res  (mule |.((~(play ut q.hoon-type) gen)))
-      ?-    -.h-res
-          %|
-        ~
-      ::
-          %&
-        =/  in-res  (mule |.((~(play ut p.h-res) [%limb %$])))
-        ?-  -.in-res
-          %|  ~
-          %&  (what-from-type p.in-res)
-        ==
-      ==
+  =+  arm-prod=(arm-product-docs hoon-type name)
+  ~?  >>  debug  arm-prod
+  ^-  [what what what]
+  |^
+  :: use arm-prod to determine how many layers to look into the type
+  :: for core docs
+  =/  depth=@  (add !=(~ +<.arm-prod) !=(~ +>.arm-prod))
+  ^-  [what what what]
+  ?+  depth  [~ ~ ~]
+    %0  [~ ~ (check-core hoon-type)]
+    %1  :+  +<.arm-prod
+          +>.arm-prod
+        ?>  ?=([%hint *] hoon-type)
+        (check-core q.hoon-type)
+    %2  :+  +<.arm-prod
+          +>.arm-prod
+        ?>  ?=([%hint *] hoon-type)
+        ?>  ?=([%hint *] q.hoon-type)
+        (check-core q.q.hoon-type)
+  ==
+  ++  check-core
+    |=  sut=type
+    ^-  what
+    ?:  ?=([%core *] sut)
+      (what-from-type (~(play ut sut) [%limb %$]))
     ~
-  ::  i think arm-doc and product-doc might always be the same
-  ::  upon further reflection, i think this is a limitation of the wrapping
-  ::  approach
-  ~?  >  debug  :*  %arm-doc      arm-doc
-                    %product-doc  product-doc
-                    %core-doc     core-doc
-                ==
-  :+  arm-doc  product-doc  core-doc
+  --
 ::
 :>    returns an overview for a cores arms and chapters
 :>
@@ -383,13 +399,12 @@
 ::
 :>    translate a tome into an overview
 ++  arms-as-overview
-  ::  currently this doesn't do anything until i implement arm-doc
   |=  [a=(map term hoon) sut=type]
   ^-  overview
   %+  turn  ~(tap by a)
   |=  ar=(pair term hoon)
-  =/  doc  (select-arm-docs *what q.ar sut)  :: *what should be from the hint wrapper
-  [%item (weld "++" (trip p.ar)) -.doc]
+  =+  [adoc pdoc cdoc]=(select-arm-docs q.ar sut (trip p.ar))
+  [%item (weld "++" (trip p.ar)) adoc]
 ::
 :>    changes an item into an overview
 ++  item-as-overview
@@ -487,7 +502,7 @@
   |=  [name=tape docs=what gen=hoon sut=type]
   ^-  tang
   ~?  >>  debug  %print-arm
-  =+  [main-doc product-doc core-doc]=(select-arm-docs docs gen sut)
+  =+  [main-doc product-doc core-doc]=(select-arm-docs gen sut name)
   ;:  weld
     (print-header name main-doc)
     `tang`[[%leaf ""] [%leaf "product:"] ~]
