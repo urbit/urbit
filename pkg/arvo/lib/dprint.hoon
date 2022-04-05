@@ -323,12 +323,11 @@
   =+  hoon-type=(~(play ut sut) gen)
   =+  arm-prod=(arm-product-docs hoon-type name)
   ~?  >>  debug  arm-prod
-  ^-  [what what what]
   |^
-  :: use arm-prod to determine how many layers to look into the type
+  :: check arm-prod to determine how many layers to look into the type
   :: for core docs
-  =/  depth=@  (add !=(~ +<.arm-prod) !=(~ +>.arm-prod))
-  ^-  [what what what]
+  =/  depth=@  ?~  arm-prod  0
+    (add =(~ +<.arm-prod) =(~ +>.arm-prod))
   ?+  depth  [~ ~ ~]
     %0  [~ ~ (check-core hoon-type)]
     %1  :+  +<.arm-prod
