@@ -12,7 +12,7 @@
 ;<  ~  bind:m  (init-ship ~bud |)
 ;<  ~  bind:m  (init-ship ~marbud |)
 ;<  ~  bind:m  (init-ship ~linnup-torsyx |)
-::TODO  not supported!
+::TODO  real moons not supported!
 ;<  ~  bind:m  (init-ship ~linnup-torsyx-linnup-torsyx |)
 ;<  ~  bind:m  (send-hi ~bud ~linnup-torsyx-linnup-torsyx)
 ;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~marbud)
