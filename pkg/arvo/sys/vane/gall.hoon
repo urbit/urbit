@@ -111,6 +111,7 @@
       %poke
       %leave
       %missing
+      %cork
   ==
 ::  |migrate: data structures for upgrades
 ::
@@ -508,10 +509,11 @@
     =.  outstanding.state
       =/  stand
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
-      (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
-    ?.  ?=(%leave -.deal)
-      (mo-pass wire note-arvo)
+      %+  ~(put by outstanding.state)  [wire hen]
+      (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave %cork]))
     =.  mo-core  (mo-pass wire note-arvo)
+    ?.  ?=(%leave -.deal)
+      mo-core
     (mo-pass wire [%a [%cork ship]])
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
@@ -734,7 +736,12 @@
             (~(put to *(qeu remote-request)) %missing)
           ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)
-          [rr (~(put by outstanding.state) [full-wire hen] stand)]
+          ~?  &(=(rr %cork) ?=(^ stand))
+            [%outstanding-queue-not-empty wire hen]
+          :-  rr
+          ?:  ?=(%cork rr)
+            (~(del by outstanding.state) [full-wire hen])
+          (~(put by outstanding.state) [full-wire hen] stand)
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
@@ -750,6 +757,7 @@
         %watch     (mo-give %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
         %leave     mo-core
+        %cork      mo-core
         %missing   (mo-give:(mo-give %unto %watch-ack err) %unto %poke-ack err)
       ==
     ::
@@ -1756,13 +1764,10 @@
         =/  sub-wire=^wire  (slag 6 `^wire`wire)
         ::
         ?.  (~(has by outbound.watches.yoke) sub-wire dock)
-          =.  ap-core
-            =/  =tang
-              :~  leaf+"got %leave for missing subscription"
-                  >agent-name<  >sub-wire<  >dock<
-              ==
-            (ap-error %leave-missing-subscription tang)
-          $(moves t.moves)
+          =;  =tang
+            %-  (slog tang)
+            $(moves t.moves)
+          [leaf+"gall: {<agent-name>} missing subscription, got %leave"]~
         =/  have=[acked=? =path nonce=@]
           (~(got by outbound.watches.yoke) sub-wire dock)
         =.  p.move.move
