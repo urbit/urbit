@@ -41,8 +41,10 @@ on:
       - 'pkg/ge-additions/**'
       - 'pkg/libaes_siv/**'
       - 'pkg/urbit/**'
+      - 'pkg/urcrypt/**'
       - 'bin/**'
       - 'nix/**'
+      - default.nix
   pull_request:
     paths:
       - 'pkg/arvo/**'
@@ -51,8 +53,10 @@ on:
       - 'pkg/ge-additions/**'
       - 'pkg/libaes_siv/**'
       - 'pkg/urbit/**'
+      - 'pkg/urcrypt/**'
       - 'bin/**'
       - 'nix/**'
+      - default.nix
 
 jobs:
   urbit:
