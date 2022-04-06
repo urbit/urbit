@@ -784,11 +784,7 @@
   ::::                                                  ::  (1c2)
     ::                                                  ::
   +$  aeon  @ud                                         ::  version number
-  +$  ankh                                              ::  fs node (new)
-    $~  [~ ~]                                           ::
-    $:  fil=(unit [p=lobe q=cage])                      ::  file
-        dir=(map @ta ankh)                              ::  folders
-    ==                                                  ::
+  +$  ankh  (axal [p=lobe q=cage])                      ::  fs node (new)
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
   +$  blob                                              ::  fs blob

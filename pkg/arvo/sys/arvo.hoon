@@ -5,7 +5,7 @@
 ++  arvo  %240
 ::
 ::  $arch: node identity
-::  $axal: fundamental node, recursive
+::  $axal: fundamental node, recursive (trie)
 ::  $axil: fundamental node
 ::  $beak: global context
 ::  $beam: global name
@@ -417,8 +417,15 @@
 ++  de
   =|  fat=(axal)
   |@
+  ++  del
+    |=  pax=path
+    ?~  pax  [~ dir.fat]
+    =/  kid  (~(get by dir.fat) i.pax)
+    ?~  kid  fat
+    $(fat u.kid, pax t.pax)
+  ::  Descend to the axal at this path
   ::
-  ++  get
+  ++  dip
     |=  pax=path
     ^+  fat
     ?~  pax  fat
@@ -426,20 +433,51 @@
     ?~  kid  [~ ~]
     $(fat u.kid, pax t.pax)
   ::
-  ++  put
-    |*  [pax=path dat=*]
-    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat)
-    ^+  fat
-    ?~  pax  fat(fil `dat)
-    =/  kid  (~(get by dir.fat) i.pax)
-    =/  new  (fall kid fat(fil ~, dir ~))
-    fat(dir (~(put by dir.fat) i.pax $(fat new, pax t.pax)))
-  ::
   ++  gas
     |=  lit=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
     ^+  fat
     ?~  lit  fat
     $(fat (put p.i.lit q.i.lit), lit t.lit)
+  ::  Fetch file at longest existing prefix of the path
+  ::
+  ++  get
+    |=  pax=path
+    ^+  [path fat]
+    ?~  pax  [~ fil.fat]
+    =/  kid  (~(get by dir.fat) i.pax)
+    ?~  kid  [pax fil.fat]
+    =/  low  $(fat u.kid, pax t.pax)
+    ?~  +.low
+      [pax fil.fat]
+    low
+  ::
+  ++  has
+    |=  pax=path
+    !=(~ fil:(dip pax))
+  ::  Delete subtree
+  ::
+  ++  lop
+    |=  pax=path
+    ^+  fat
+    ?~  pax  fat
+    |-
+    ?~  t.pax  fat(dir (~(del by dir.fat) i.pax))
+    =/  kid  (~(get by dir.fat) i.pax)
+    ?~  kid  fat
+    fat(dir (~(put by dir.fat) i.pax $(fat u.kid, pax t.pax)))
+  ::  Serialize subppath to map
+  ::
+  ++  mup
+    ^-  (map path _?>(?=(^ fil.fat) u.fil.fat))
+    (~(gas by *(map path _?>(?=(^ fil.fat) u.fil.fat))) tap)
+  ::
+  ++  put
+    |*  [pax=path dat=*]
+    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat)
+    ^+  fat
+    ?~  pax  fat(fil `dat)
+    =/  kid  (~(gut by dir.fat) i.pax ^+(fat [~ ~]))
+    fat(dir (~(put by dir.fat) i.pax $(fat kid, pax t.pax)))
   ::
   ++  tap
     =|  pax=path
@@ -781,7 +819,7 @@
       ::
       =*  pax  p.i.fal
       =*  dat  q.i.fal
-      =/  hav  (~(get de fat) pax)
+      =/  hav  (~(dip de fat) pax)
       =?  del  |(?=(~ fil.hav) !=(u.fil.hav dat))
          ?:  ?=([%sys *] pax)
            del(sys (~(put by sys.del) pax dat))
@@ -799,7 +837,7 @@
         `[`(sole u.arv) [/sys/arvo u.arv] ~]
       =/  rav
         ~|  %usurp-hoon-no-arvo
-        ((bond |.((need fil:(~(get de fat) /sys/arvo)))) arv)
+        ((bond |.((need fil:(~(dip de fat) /sys/arvo)))) arv)
       ~!  rav
       :+  ~
         [`(sole u.hun) (sole rav)]
@@ -817,7 +855,7 @@
           (~(put de fat) /sys/lull u.hav)
         :_  fat
         ~|  %adorn-no-lull
-        ?.(all ~ `(sole (need fil:(~(get de fat) /sys/lull))))
+        ?.(all ~ `(sole (need fil:(~(dip de fat) /sys/lull))))
       ::  zuse: shared library
       ::
       ::    %lull is the subject of %zuse; force all if we have a new %lull
@@ -829,7 +867,7 @@
           (~(put de fat) /sys/zuse u.hav)
         :_  fat
         ~|  %adorn-no-zuse
-        ?.(all ~ `(sole (need fil:(~(get de fat) /sys/zuse))))
+        ?.(all ~ `(sole (need fil:(~(dip de fat) /sys/zuse))))
       ::  kernel modules
       ::
       ::    %zuse is the subject of the vanes; force all if we have a new %zuse
@@ -839,7 +877,7 @@
       =?  nav  all
         %-  ~(gas by nav)
         %+  turn
-          ~(tap by dir:(~(get de fat) /sys/vane))
+          ~(tap by dir:(~(dip de fat) /sys/vane))
         |=([name=@ta _fat] [`@tas`name (sole (need fil))])
       ::
       =^  new  fat
@@ -1505,7 +1543,7 @@
           [%fad %lac ~]  ``noun/!>(lac.fad)
           [%zen %lag ~]  ``noun/!>(lag.zen)
           [%zen %ver ~]  ``noun/!>(ver.zen)
-          [%mod %fat *]  ``noun/!>((~(get de fat.mod) t.t.s.bem))
+          [%mod %fat *]  ``noun/!>((~(dip de fat.mod) t.t.s.bem))
         ==
       ::
       ++  poke

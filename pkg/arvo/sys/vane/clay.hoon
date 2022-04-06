@@ -50,17 +50,6 @@
 =>  |%
 +$  aeon  @ud                                           ::  version number
 ::
-::  Recursive structure of a desk's data.
-::
-::  We keep an ankh only for the current version of local desks.  Everywhere
-::  else we store it as (map path lobe).
-::
-+$  ankh                                                ::  expanded node
-  $~  [~ ~]
-  $:  fil=(unit [p=lobe q=cage])                        ::  file
-      dir=(map @ta ankh)                                ::  folders
-  ==                                                    ::
-::
 ::  Part of ++mery, representing the set of changes between the mergebase and
 ::  one of the desks being merged.
 ::
@@ -569,7 +558,7 @@
         [cage nub]
       ?<  (~(has in deletes) path)
       ~|  %file-not-found^path
-      :_(nub (need (~(get an:cloy ankh) path)))
+      :_(nub q:(need fil:(~(dip ^de ankh) path)))
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
@@ -910,10 +899,9 @@
       |=  =path
       ^-  [(map @ta vase) state]
       =/  fiz=(list @ta)
-        =/  nuk=(unit _ankh)  (~(dug an:cloy ankh) path)
-        ?~  nuk  ~
+        =/  nuk=_ankh  (~(dip ^de ankh) path)
         %+  murn
-          ~(tap by dir.u.nuk)
+          ~(tap by dir.nuk)
         |=  [nom=@ta nak=_ankh]
         ?.  ?=([~ [~ *] *] (~(get by dir.nak) %hoon))  ~
         `nom
@@ -1108,7 +1096,7 @@
         $(paz t.paz)
       ?:  (~(has by changes) pux)
         pux
-      ?^  (~(get an:cloy ankh) pux)
+      ?:  [?=(^ .)]:fil:(~(dip ^de ankh) pux)
         pux
       $(paz t.paz)
     --
@@ -4080,7 +4068,7 @@
       ?:  &(?=(~ ref) =(let.dom yon))
         :_  fod.dom  :-  ~
         %+  bind
-          fil.ank:(descend-path:(zu ank.dom) pax)
+          fil:(~(dip ^de ank.dom) pax)
         |=(a=[p=lobe q=cage] q.a)
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
@@ -4207,23 +4195,6 @@
           %y  [(read-y yon path.mun) fod.dom]
           %z  [(read-z yon path.mun) fod.dom]
         ==
-      --
-    ::  Traverse an ankh.
-    ::
-    ++  zu                                              ::  filesystem
-      |=  ank=ankh                                      ::  filesystem state
-      =|  ram=path                                      ::  reverse path into
-      |%
-      ++  descend                                       ::  descend
-        |=  lol=@ta
-        ^+  +>
-        =+  you=(~(get by dir.ank) lol)
-        +>.$(ram [lol ram], ank ?~(you [~ ~] u.you))
-      ::
-      ++  descend-path                                  ::  descend recursively
-        |=  way=path
-        ^+  +>
-        ?~(way +> $(way t.way, +> (descend i.way)))
       --
     --
   --
