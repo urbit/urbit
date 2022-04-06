@@ -32,6 +32,7 @@ export const NotificationPrefs = () => {
   const browserId = useBrowserId();
   const browserNotifications = useBrowserNotifications(browserId);
   const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+  const notificationsAllowed = secure && 'Notification' in window;
 
   const setBrowserNotifications = (setting: boolean) => {
     const newSettings = setBrowserSetting(settings, { browserNotifications: setting }, browserId);
@@ -53,37 +54,25 @@ export const NotificationPrefs = () => {
     <>
       <h2 className="h3 mb-7">Notifications</h2>
       <div className="space-y-3">
-        <Setting
-          on={doNotDisturb}
-          toggle={toggleDnd}
-          name="Do Not Disturb"
-          disabled={doNotDisturb && !secure}
-        >
+        <Setting on={doNotDisturb} toggle={toggleDnd} name="Do Not Disturb">
           <p>
-            Block visual desktop notifications whenever Urbit software produces a notification
-            badge.
-          </p>
-          <p>
-            Turning this &quot;off&quot; will prompt your browser to ask if you&apos;d like to
-            enable notifications
-            {!secure && (
-              <>
-                , <strong className="text-orange-500">requires HTTPS</strong>
-              </>
-            )}
+            Blocks Urbit notifications in Landscape from appearing as badges and prevents browser
+            notifications if enabled.
           </p>
         </Setting>
         <Setting
           on={browserNotifications}
           toggle={toggleNotifications}
-          name="Show desktop notifications"
-          disabled={!secure}
+          name="Show Desktop Notifications"
+          disabled={!notificationsAllowed}
         >
           <p>
             Show desktop notifications in this browser.
             {!secure && (
               <>
-                , <strong className="text-orange-500">requires HTTPS</strong>
+                <strong className="text-orange-500">
+                  Unavailable with this browser/connection.
+                </strong>
               </>
             )}
           </p>

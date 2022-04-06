@@ -127,24 +127,24 @@ export const useHarkStore = createState<HarkState>(
       createSubscription('hark-store', '/updates', (u) => {
         /* eslint-ignore-next-line camelcase */
         unstable_batchedUpdates(() => {
-          reduceHark(u, useSettingsState.getState().display.doNotDisturb);
+          reduceHark(u);
         });
       })
   ]
 );
 
-function reduceHark(u: any, dnd = false) {
+function reduceHark(u: any) {
   const { set } = useHarkStore.getState();
   if (!u) {
     return;
   }
   if ('more' in u) {
     u.more.forEach((upd: any) => {
-      reduceHark(upd, dnd);
+      reduceHark(upd);
     });
   } else if ('all-stats' in u) {
     // TODO: probably ignore?
-  } else if ('added' in u && !dnd) {
+  } else if ('added' in u) {
     set((draft) => {
       const { bin } = u.added;
       const binId = harkBinToId(bin);
@@ -241,12 +241,12 @@ api.subscribe({
   path: '/notes',
   event: (u: any) => {
     if ('add-note' in u) {
-      const { browserSettings } = useSettingsState.getState();
+      const { browserSettings, display } = useSettingsState.getState();
       const { browserId } = useLocalState.getState();
       const settings = parseBrowserSettings(browserSettings.settings);
       const browserNotifications = getBrowserSetting(settings, browserId)?.browserNotifications;
 
-      if (!browserNotifications) {
+      if (!browserNotifications || display.doNotDisturb) {
         return;
       }
       const { bin, body } = u['add-note'];
