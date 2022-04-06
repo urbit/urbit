@@ -1,12 +1,37 @@
 ::  clay (4c), revision control
 !:
-::  This is split in three top-level sections:  structure definitions, main
-::  logic, and arvo interface.
+::  The way to understand Clay is to take it section-by-section:
+::
+::  - Data structures.  You *must* start here; make sure you understand
+::  the entire contents of +raft.
+::
+::  - Individual reads.  +aver is the entry point, follow it through
+::  +read-at-aeon to understand each kind of read.
+::
+::  - Subscriptions.  +wake is the center of this mechanism; nothing
+::  else responds to subscriptions.  +wake has no arguments, which means
+::  every subscription response happens when something in Clay's *state*
+::  has changed.  No edge-triggered responses.
+::
+::  - Receiving foreign data.  For individual requests, this is
+::  +take-foreign-answer.  For sync requests (%many, which is %sing %v
+::  for a foreign desk), this is +foreign-update.
+::
+::  - Ford.  +ford builds hoon files and gives files their types.
+::  Read +build-file for the first, and +read-file is the second.
+::
+::  - Writing to a desk.  Every write to a desk goes through +park, read
+::  it thoroughly.
+::
+::  - Merges.  Control flow starts at +start-merge, then +merge, but
+::  everything is scaffolding for +merge-by-germ, which is the ideal of
+::  a merge function: it takes two commits and a merge strategy and
+::  produces a new commit.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 ::  Here are the structures.  `++raft` is the formal arvo state.  It's also
-::  worth noting that many of the clay-related structures are defined in zuse.
+::  worth noting that many of the clay-related structures are defined in lull.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =/  bud
@@ -2117,7 +2142,7 @@
     =|  rag=rang
     =/  clean-state  ..take-fuse
     =/  initial-dome=dome:clay  (need (~(got by sto.fiz) bas.fiz))
-    =/  continuation-yaki=yaki
+    =/  next-yaki=yaki
       (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
     =/  parents=(list tako)  ~[(~(got by hit.initial-dome) let.initial-dome)]
     =/  merges  con.fiz
@@ -2125,10 +2150,10 @@
     ^+  ..take-fuse
     ?~  merges
       =.  ..take-fuse  (done-fuse clean-state %& ~)
-      (park | [%| continuation-yaki(p (flop parents))] rag)
+      (park | [%| next-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
     =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
-    =/  result  (merge-helper p.bec q.bec g ali-dom `continuation-yaki)
+    =/  result  (merge-helper p.bec q.bec g ali-dom `next-yaki)
     ?-    -.result
         %|
       =/  failing-merge=tape  "{<bec>} {<g>}"
@@ -2147,31 +2172,29 @@
         ::
         (done-fuse clean-state %& conflicts.u.merge-result)
       =/  merged-yaki=yaki
-      ?-    -.new.u.merge-result
-          %|
-        +.new.u.merge-result
-      ::
-          %&
-        ::
-        ::  Convert the yuki to yaki
-        ::
-        =/  yuk=yuki  +.new.u.merge-result
-        =/  lobes=(map path lobe)
-          %-  ~(run by q.yuk)
-          |=  val=(each page lobe)
-          ^-  lobe
-          ?-  -.val
-            %&  (page-to-lobe +.val)
-            %|  +.val
-          ==
-        (make-yaki p.yuk lobes now)
-      ==
+        ?-    -.new.u.merge-result
+            %|  +.new.u.merge-result
+            %&
+          ::
+          ::  Convert the yuki to yaki
+          ::
+          =/  yuk=yuki  +.new.u.merge-result
+          =/  lobes=(map path lobe)
+            %-  ~(run by q.yuk)
+            |=  val=(each page lobe)
+            ^-  lobe
+            ?-  -.val
+              %&  (page-to-lobe +.val)
+              %|  +.val
+            ==
+          (make-yaki p.yuk lobes now)
+        ==
       %=  $
-        continuation-yaki  merged-yaki
-        merges  t.merges
-        hut.ran  (~(put by hut.ran) r.merged-yaki merged-yaki)
-        lat.rag  (uni-blobs lat.rag lat.u.merge-result)
-        parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
+        next-yaki  merged-yaki
+        merges     t.merges
+        hut.ran    (~(put by hut.ran) r.merged-yaki merged-yaki)
+        lat.rag    (uni-blobs lat.rag lat.u.merge-result)
+        parents    [(~(got by hit.ali-dom) let.ali-dom) parents]
       ==
     ==
     ::  +done-fuse: restore state after a fuse is attempted, whether it
@@ -2198,9 +2221,7 @@
     =/  result=(each (unit merge-result) (pair term tang))
       (merge-helper ali-ship ali-desk germ ali-dome ~)
     ?-    -.result
-        %|
-      (done %| +.result)
-    ::
+        %|  (done %| +.result)
         %&
       =/  mr=(unit merge-result)  +.result
       ?~  mr
@@ -2212,17 +2233,17 @@
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe blob)]
   ::
   ++  merge-helper
-    |=  [=ali=ship =ali=desk =germ ali-dome=dome:clay continuation-yaki=(unit yaki)]
+    |=  [=ali=ship =ali=desk =germ ali-dome=dome:clay next-yaki=(unit yaki)]
     ^-  (each (unit merge-result) [term tang])
     |^
     ^-  (each (unit merge-result) [term tang])
     =/  ali-yaki=yaki  (~(got by hut.ran) (~(got by hit.ali-dome) let.ali-dome))
     =/  bob-yaki=(unit yaki)
-      ?~  continuation-yaki
+      ?~  next-yaki
         ?~  let.dom
           ~
         (~(get by hut.ran) (~(got by hit.dom) let.dom))
-      continuation-yaki
+      next-yaki
     =/  res  (mule |.((merge-by-germ ali-yaki bob-yaki)))
     ?-  -.res
       %&  &+p.res
