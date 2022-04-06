@@ -552,7 +552,7 @@
   ?-  -.ae
   ::
       %init-ship
-    ?:  (~(has by fresh-piers) [who fake]:ae)
+    ?:  &(fake.ae (~(has by fresh-piers) [who fake]:ae))
       ~&  [%aqua %cached-init +.ae]
       =.  this  abet-pe:(yaho fake):[ae (pe who.ae)]
       ?:  fake.ae  (pe who.ae)
