@@ -333,6 +333,44 @@
     u3_noun u3wes_gte(u3_noun);
     u3_noun u3wes_gth(u3_noun);
 
+    // FIXME
+
+    u3_noun u3we_qat_zero(u3_noun);
+    u3_noun u3we_qat_peak(u3_noun);
+    u3_noun u3we_qat_feud(u3_noun);
+    u3_noun u3we_qat_rule(u3_noun);
+    u3_noun u3we_qat_lex(u3_noun);
+    u3_noun u3we_qat_fuse(u3_noun);
+    u3_noun u3we_qat_funk(u3_noun);
+    u3_noun u3we_qat_wane(u3_noun);
+    u3_noun u3we_qat_get(u3_noun);
+    u3_noun u3we_qat_del(u3_noun);
+    u3_noun u3we_qat_raw(u3_noun);
+    u3_noun u3we_qat_put(u3_noun);
+    u3_noun u3we_qat_vip(u3_noun);
+    u3_noun u3we_qat_bot(u3_noun);
+    u3_noun u3we_qat_cut(u3_noun);
+    u3_noun u3we_qat_see(u3_noun);
+
+    u3_noun u3we_qah_zero(u3_noun);
+    u3_noun u3we_qah_peak(u3_noun);
+    u3_noun u3we_qah_feud(u3_noun);
+    u3_noun u3we_qah_rule(u3_noun);
+    u3_noun u3we_qah_lex(u3_noun);
+    u3_noun u3we_qah_fuse(u3_noun);
+    u3_noun u3we_qah_funk(u3_noun);
+    u3_noun u3we_qah_wane(u3_noun);
+    u3_noun u3we_qah_get(u3_noun);
+    u3_noun u3we_qah_del(u3_noun);
+    u3_noun u3we_qah_raw(u3_noun);
+    u3_noun u3we_qah_put(u3_noun);
+    u3_noun u3we_qah_vip(u3_noun);
+    u3_noun u3we_qah_bot(u3_noun);
+    u3_noun u3we_qah_cut(u3_noun);
+    u3_noun u3we_qah_see(u3_noun);
+
+    // FIXME
+
   /** Tier 6.
   **/
     u3_noun u3wf_bull(u3_noun);
