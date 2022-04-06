@@ -11,16 +11,17 @@
 =+  !<([url=@t tx-hashes=(list @ux)] args)
 =/  m  (strand ,vase)
 =|  out=(list [@t json])
-|^  ^-  form:m
-  =*  loop  $
-  ?:  =(~ tx-hashes)  (pure:m !>(out))
-  ;<  res=(list [@t json])  bind:m
-    (request-receipts url (scag 100 tx-hashes))
-  %_  loop
-    out        (welp out res)
-    tx-hashes  (slag 100 tx-hashes)
-  ==
-  ::
+|^
+^-  form:m
+=*  loop  $
+?:  =(~ tx-hashes)  (pure:m !>(out))
+;<  res=(list [@t json])  bind:m
+  (request-receipts url (scag 100 tx-hashes))
+%_  loop
+  out        (welp out res)
+  tx-hashes  (slag 100 tx-hashes)
+==
+::
 ++  request-receipts
   |=  [url=@t tx-hashes=(list @ux)]
   %+  request-batch-rpc-strict:ethio  url
@@ -29,5 +30,4 @@
   ^-  [(unit @t) request:rpc:ethereum]
   :-  `(crip '0' 'x' ((x-co:co 64) txh))
   [%eth-get-transaction-receipt txh]
-::
 --

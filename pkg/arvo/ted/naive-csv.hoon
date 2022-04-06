@@ -33,9 +33,9 @@
     naive,
     naive-tx=naive-transactions,
     *strandio
-::
 ::  starting snapshot. this may not be the right starting point once we have
 ::  clay tombstoning and the snapshot may be updated
+::
 /*  snap  %azimuth-snapshot  /app/azimuth/version-0/azimuth-snapshot
 ::
 =,  strand=strand:spider
@@ -50,10 +50,12 @@
   +$  address   address:naive  :: @ux
   +$  keccak    @ux            :: used for transaction and roll hashes
   +$  blocknum  number:block   :: @udblocknumber
-  +$  net       net:dice       ::?(%mainnet %ropsten %local %default)
-  +$  block-map
-    %+  map  blocknum
-    [timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
+  +$  net       net:dice       :: ?(%mainnet %ropsten %local %default)
+  +$  roll-dat                 :: all data required for each roll
+    [[gas=@ud sender=address] =effects:naive]
+  +$  block-dat                :: all data required for each block
+    [timestamp=@da rolls=(map keccak roll-dat)]
+  +$  block-map  (map blocknum block-dat)
   +$  rolls-map  (map blocknum (map keccak effects:naive))
   ::
   +$  action
@@ -70,26 +72,28 @@
         %set-transfer-proxy
     ==
   ::
-  +$  tx-data  $:  block=blocknum
-                   timestamp=@da
-                   roller=address
-                   roll-hash=keccak
-                   tx-hash=keccak
-                   sender=ship
-                   proxy=proxy:naive
-                   nonce=nonce:naive
-                   gas=@ud
-                   length=@ux
-                   suc=?
-                   =action
-                   parent=ship
-                ==
+  +$  tx-data
+    $:  block=blocknum
+        timestamp=@da
+        roller=address
+        roll-hash=keccak
+        tx-hash=keccak
+        sender=ship
+        proxy=proxy:naive
+        nonce=nonce:naive
+        gas=@ud
+        length=@ux
+        suc=?
+        =action
+        parent=ship
+    ==
   --
 ::
 |%
   ::  +process-logs is the main process. it grabs the azimuth snapshop, runs
   ::  +naive on the logs, grabs the timestamps and gas costs for each roll,
   ::  then flattens them into a list of $tx-data and saves them to disk.
+  ::
   ++  process-logs
     |=  arg=vase
     =+  !<([~ =net node-url=@t] arg)
@@ -97,6 +101,7 @@
     =/  m  (strand ,vase)
     ^-  form:m
     ;<  =events  bind:m  (scry events /gx/azimuth/logs/noun)
+    =/  events  (scag 50 events)
     =/  [naive-contract=address chain-id=@]
       [naive chain-id]:(get-network:dice net)
     =/  snap=snap-state:dice  snap
@@ -132,9 +137,9 @@
     ;<  ~  bind:m  (flog-text :(weld "naive-csv: csv saved to %" (spud pax) "/"))
     ::
     (pure:m !>(~))
-  ::
   ::  +collate-roll-data throws naive:effects, timestamps, and gas costs into
   ::  one $block-map
+  ::
   ++  collate-roll-data
     |=  $:  =rolls-map
             timestamps=(map blocknum @da)
@@ -159,32 +164,33 @@
                    block
                  [(~(got by timestamps) block) rolls]
     ==
-  ::
   ::  +flatten takes a $block-map and creates a $tx-data for every transaction
   ::  in every roll, returned as a (list tx-data)
+  ::
   ++  flatten
     |=  =block-map
-    =/  blocks=(list blocknum)  ~(tap in ~(key by block-map))
+    =/  blocks=(list [blocknum block-dat])  ~(tap by block-map)
     =|  tx-list=(list tx-data)
     ^+  tx-list
     ::  recurse through the list of blocks, getting the rolls submitted in that
     ::  block, their timestamp, and the gas price of that roll
+    ::
     |-
+    =*  block-loop  $
     ?~  blocks  tx-list
-    =/  block=blocknum  i.blocks
-    =/  bok  (~(got by block-map) block)
-    =/  roll-list=(list keccak)  ~(tap in ~(key by rolls.bok))
+    =/  block=[=blocknum =block-dat]  i.blocks
+    =/  roll-list=(list [=keccak =roll-dat])  ~(tap by rolls.block-dat.block)
     =|  block-tx-list=(list tx-data)
     ::  recurse through each roll, getting the transaction data from the effects
+    ::
     |-
+    =*  roll-loop  $
     ?~  roll-list
-      %=  ^$
-        blocks  t.blocks
+      %=  block-loop
+        blocks   t.blocks
         tx-list  (welp tx-list block-tx-list)
       ==
-    =/  roll-hash=keccak  i.roll-list
-    =/  roll=[[gas=@ud sender=address] =effects:naive]
-      (~(got by rolls.bok) roll-hash)
+    =/  roll=[=keccak =roll-dat]  i.roll-list
     ::  recurse through the list of effects, building up transaction data as we
     ::  go. there's a choice here to use the effects, or the submitted
     ::  raw-tx. the effects include whether or not a transaction failed,
@@ -197,52 +203,58 @@
     ::  always have all 3, while failed transactions only have %nonce and %tx.
     ::  note that the nonce listed is always the expected nonce - we can't know
     ::  what nonce was actually submitted without the private key of the signer.
+    ::
     =|  roll-tx-list=(list tx-data)
     =|  nonce-and-tx=[_| _|]
-    =/  =tx-data  :*  block  timestamp.bok  sender.roll  roll-hash  *keccak  *ship
-                      *proxy:naive  *nonce:naive  gas.roll  *@  |  *action  *ship
+    =/  =tx-data  :*  blocknum.block  timestamp.block-dat.block
+                      sender.roll-dat.roll  keccak.roll  *keccak  *ship
+                      *proxy:naive  *nonce:naive  gas.roll-dat.roll  *@
+                      |  *action  *ship
                   ==
     |-
+    =*  effect-loop   $
     ::  if we've gotten both the %nonce and %tx diff from a transaction, add the
     ::  tx-data to the list of tx for the roll
+    ::
     ?:  =([& &] nonce-and-tx)
-      %=  $
+      %=  effect-loop
         nonce-and-tx  [| |]
         tx-data       *_tx-data  :: reset tx-data
         roll-tx-list  (snoc roll-tx-list tx-data)
       ==
     ::  if we've finished looping through the effects, add the tx list from the
     ::  roll to the list of tx for the block
-    ?~  effects.roll
-       %=  ^$
+    ::
+    ?~  effects.roll-dat.roll
+       %=  roll-loop
          roll-list      t.roll-list
          block-tx-list  (welp block-tx-list roll-tx-list)
        ==
     ::
-    =/  =diff:naive  i.effects.roll
+    =/  =diff:naive  i.effects.roll-dat.roll
     ?+    diff
-      $(effects.roll t.effects.roll)  :: we ignore %operator, %dns, %point diffs
-    ::
+      $(effects.roll-dat.roll t.effects.roll-dat.roll)  :: we ignore %operator, %dns, %point diffs
     ::  %nonce is always the first diff from a given transaction.
-        [%nonce *]
-      %=  $
-        -.nonce-and-tx  &
-        sender.tx-data  ship.diff
-        nonce.tx-data   nonce.diff
-        proxy.tx-data   proxy.diff
-        effects.roll    t.effects.roll
-        parent.tx-data  (^sein:title ship.diff)
-      ==
     ::
+        [%nonce *]
+      %=  effect-loop
+        -.nonce-and-tx         &
+        sender.tx-data         ship.diff
+        nonce.tx-data          nonce.diff
+        proxy.tx-data          proxy.diff
+        parent.tx-data         (^sein:title ship.diff)
+        effects.roll-dat.roll  t.effects.roll-dat.roll
+      ==
     ::  %tx is always the second diff from a given transaction.
+    ::
         [%tx *]
-      %=  $
+      %=  effect-loop
         +.nonce-and-tx   &
-        effects.roll     t.effects.roll
-        action.tx-data   +<.tx.raw-tx.diff
-        suc.tx-data      ?~  err.diff  &  |
-        length.tx-data   `@`-.raw.raw-tx.diff
-        tx-hash.tx-data  (hash-raw-tx:naive-tx raw-tx.diff)
+        effects.roll-dat.roll     t.effects.roll-dat.roll
+        action.tx-data            +<.tx.raw-tx.diff
+        suc.tx-data               ?~  err.diff  &  |
+        length.tx-data            `@`-.raw.raw-tx.diff
+        tx-hash.tx-data           (hash-raw-tx:naive-tx raw-tx.diff)
       ==
     ==
   ::
@@ -261,19 +273,19 @@
     ~|  json
     ?>  ?=(%o -.json)
     (~(got by p.json) 'from')
-  ::
   ::  +get-roll-hashes makes a list of hashes of all transactions from $rolls-map
+  ::
   ++  get-roll-hashes
     |=  =rolls-map  ^-  (list keccak)
     %-  zing
     %+  turn  ~(val by rolls-map)
     |=  a=(map keccak effects:naive)
     ~(tap in ~(key by a))
-  ::
   ::  +compute-effects calls +naive to compute the state transitions for all
   ::  logs, but it returns a map that only has the effects for L2 transactions,
   ::  leaving out L1 transactions. we need to compute all of them in order to
   ::  determine whether the transactions were valid.
+  ::
   ++  compute-effects
     |=  $:  nas=^state:naive
             =events
@@ -314,8 +326,8 @@
             %+  ~(put by out)  block
             (~(put by u.cur) transaction-hash.u.mined.log effects)
     ==
-  ::
   ::  +export-csv writes a (list cord) as csv to disk at .pax
+  ::
   ++  export-csv
     |=  [in=(list cord) pax=path]
     =/  m  (strand ,~)
@@ -329,9 +341,9 @@
         /(scot %da now.bowl)/txt
       ==
     [%txt !>(in)]
-  ::
   ::  +make-csv takes in a (list tx-data) and makes it into a (list cord) to be
   ::  saved as a csv file
+  ::
   ++  make-csv
     |=  in=(list tx-data)
     ^-  (list cord)
