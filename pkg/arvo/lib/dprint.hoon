@@ -59,16 +59,17 @@
 +|  %searching
 :>    returns the item to print while searching through topic
 :>
-:>  this gate is called recursively to find the path (topic) in the type
-:>  (sut). once it finds the correct part of the type, it switches to
-:>  +signify to describe that part of the type
+:>  this gate is optionally called recursively to find the path (topic) in the
+:>  type (sut). once it finds the correct part of the type, it switches to
+:>  +signify to describe that part of the type. recursion is turned off (for some
+:>  cases) when a hint type is found, in case it is wrapping a match.
 ++  find-item-in-type
   ::  TODO make this work with a list of topics
-  |=  [topic=term sut=type]
+  |=  [topics=(list term) sut=type rec=?]
   ^-  (unit item)
-  ::  ?~  topics
-  ::    ::  we have no more search paths TODO: return the rest as an overview
-  ::    (signify sut)
+  ?~  topics
+      ::  we have no more search paths, return an overview of what remains
+      (signify sut)
   ?-  sut
       %noun      ~
       %void      ~
@@ -77,6 +78,7 @@
       [%cell *]
     =+  lhs=$(sut p.sut)
     ?~  lhs
+      ::  not sure if this should recurse when rec=%.n
       $(sut q.sut)
     lhs
   ::
@@ -86,31 +88,47 @@
     ::  docs on the arms.
     ::
     =+  core-name=p.p.q.sut
-    ?:  =(`topic core-name)
-      ::  if core-name matches topic, return the core as a (unit item)
-      (signify sut)
+    ?:  !=(`i.topics core-name)
+      ::  the current topic isn't the top level core name
+      ::  else, look for an arm matching the name
+      =+  arm=(find-arm-in-coil i.topics q.sut)
+      ?~  arm
+        ::  the current topic is not an arm in the core, recurse into sut
+        ?:(rec $(sut p.sut) ~)
+        ::$(sut p.sut)
+      :: else, return the arm as docs
+      =+  [adoc pdoc cdoc]=(all-arm-docs u.arm p.sut (trip i.topics))
+      `[%arm (trip i.topics) adoc pdoc cdoc u.arm p.sut]
+    ::  the core name matches. check to see if there are any topics left
+    ?~  t.topics
+      ::  we matched the core name and have no further topics. return the core
+      =*  compiled-against  (signify p.sut)
+      `[%core (trip i.topics) *what p.sut q.sut compiled-against]
+    ::  we matched the core name, but there are still topics left
+    ::  check to see if one the chapters matches the next topic
     =+  chapters=~(key by q.r.q.sut)
-    ?:  (~(has in chapters) topic)
-      ::  if there is a chapter with a name matching the topic, return chapter
-      ::  as a (unit item)
-      =/  docs=what  p:(~(got by q.r.q.sut) topic)
-      `[%chapter (trip topic) docs sut q.sut topic]
-    =+  arm=(find-arm-in-coil topic q.sut)
-    ?~  arm
-      ::  the current topic is not an arm in the core, recurse into sut
-      $(sut p.sut)
-    =+  [adoc pdoc cdoc]=(all-arm-docs u.arm p.sut (trip topic))
-    `[%arm (trip topic) adoc pdoc cdoc u.arm p.sut]
+    ?.  (~(has in chapters) i.t.topics)
+      ::  the core name matched, but nothing inside of it did. return null
+      ~
+    ::  if there is a chapter with a name matching the topic, return chapter
+    ::  as a (unit item)
+    =/  docs=what  p:(~(got by q.r.q.sut) i.topics)
+    `[%chapter (trip i.topics) docs sut q.sut i.topics]
   ::
       [%face *]
     ?.  ?=(term p.sut)
       ::  TODO: handle tune case
       ~
-    ?.  =(topic p.sut)
+    ?.  =(i.topics p.sut)
       ::  this face has a name, but not the one we're looking for
       ~
-    ::  faces need to be checked to see if they're wrapped
-    ~
+    ?~  t.topics
+      ::  we found a match, and there are no further topics
+      ::  this might have been wrapped with a hint type, that case will handle
+      ::  docs for this face
+      `[%face (trip p.sut) *what (signify q.sut)]
+    ::  the first topic matched the face, but there are more left.
+    ?:(rec $(topics t.topics, sut q.sut) ~)
   ::
       [%fork *]
     =/  types=(list type)  ~(tap in p.sut)
@@ -134,13 +152,18 @@
    ::
    ::  this should only be doing something for cores right now. you run into an
    ::  arm's name before you run into its docs
-   ?:  (shallow-match topic q.sut)
-     =/  wat=what  (unwrap-hint sut)
-     =/  uitm=(unit item)  (signify q.sut)
-     ?~  uitm
-       ~
-     `(emblazon u.uitm wat)
-   $(sut q.sut)
+   ::
+   ::?:  (shallow-match i.topics q.sut)
+   =/  shallow-match=(unit item)  $(sut q.sut, rec %.n)
+   ?~  shallow-match
+     ::  hint isn't wrapping a match, so step through it
+     $(sut q.sut, rec %.y)
+   ::  hint was wrapping a match, so signify the type and emblazon it
+  :: =/  wat=what  (unwrap-hint sut)
+   `(emblazon u.shallow-match (unwrap-hint sut))
+   ::=/  uitm=(unit item)  (signify q.sut)
+   ::?~  uitm
+   ::  ~
   ::
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
   ::

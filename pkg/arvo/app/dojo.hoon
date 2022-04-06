@@ -54,7 +54,7 @@
               r=@t
           ==
           [%poke p=goal]                                ::  poke app
-          [%help p=term]                                ::  doccords
+          [%help p=(list term)]                                ::  doccords
           [%show p=?(%0 %1 %2 %3 %4 %5)]                ::  val/type/hoon/xray
           [%verb p=term]                                ::  store variable
       ==                                                ::
@@ -184,11 +184,11 @@
         ;~  pose
           ;~  pfix  ace
             %+  cook
-              |=  a=term
+              |=  a=(list term)
               [[%help a] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
-            sym  :: should be (most col sym) once i switch to (list term)
+            (most col sym)
           ==
-          (easy [[%help %$] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
+          (easy [[%help ~[%$]] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
         ==
       ==
     ::
@@ -681,9 +681,9 @@
       ==
     ::
     ++  dy-inspect
-      |=  [topic=term sut=type]
+      |=  [topics=(list term) sut=type]
       %+  dy-rash  %tan
-      =+  to-display=(find-item-in-type:dprint topic sut)
+      =+  to-display=(find-item-in-type:dprint topics sut %.y)
       ?~  to-display
         [%leaf "Could not find help"]~
       (flop (print-item:dprint u.to-display))
