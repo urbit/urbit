@@ -449,26 +449,6 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
   return c3y;
 }
 
-/* _mars_work(): deserialize a task.
-*/
-static u3_weak
-_mars_cue(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
-{
-  u3_weak jar;
-
-#ifdef MARS_TRACE_CUE
-  u3t_event_trace("mars ipc cue", 'B');
-#endif
-
-  jar = u3s_cue_xeno_with(mar_u->sil_u, len_d, hun_y);
-
-#ifdef MARS_TRACE_CUE
-  u3t_event_trace("mars ipc cue", 'E');
-#endif
-
-  return jar;
-}
-
 /* _mars_post(): update mars state post-task.
 */
 void
@@ -558,7 +538,7 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
   //  XX optimize for save/cram w/ peek-next
   //
   if ( u3_mars_work_e == mar_u->sat_e ) {
-    u3_weak jar = _mars_cue(mar_u, len_d, hun_y);
+    u3_weak jar = u3s_cue_xeno_with(mar_u->sil_u, len_d, hun_y);
 
     //  parse errors are fatal
     //
