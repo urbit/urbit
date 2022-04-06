@@ -956,18 +956,7 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
     return 0;
   }
 
-  //  XX move to mars
-  //
-#if 0
-  if ( c3y == u3_Host.ops_u.veb ) {
-    FILE* fil_u = u3_term_io_hija();
-    u3_lmdb_stat(pir_u->log_u->mdb_u, fil_u);
-    u3_term_io_loja(1);
-  }
-#endif
-
   u3z(pax);
-
   return pir_u;
 }
 

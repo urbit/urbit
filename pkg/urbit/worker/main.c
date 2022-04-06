@@ -329,10 +329,16 @@ _cw_info(c3_i argc, c3_c* argv[])
 {
   c3_assert( 3 <= argc );
 
-  c3_c* dir_c = argv[2];
-  c3_d  eve_d = u3m_boot(dir_c);
+  c3_c*    dir_c = argv[2];
+  c3_d     eve_d = u3m_boot(dir_c);
+  u3_disk* log_u = u3_disk_init(dir_c);  //  XX s/b try_aquire lock
 
   fprintf(stderr, "urbit-worker: %s at event %" PRIu64 "\r\n", dir_c, eve_d);
+
+  u3_disk_slog(log_u);
+  u3_lmdb_stat(log_u->mdb_u, stderr);
+
+  u3_disk_exit(log_u);
   u3m_stop();
 }
 
