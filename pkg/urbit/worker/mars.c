@@ -967,8 +967,6 @@ _mars_boot_make(u3_boot_opts* inp_u,
                 u3_meta*      met_u)
 {
   u3_noun pil, ven, mor, who;
-  u3_noun pre = u3_nul;
-  u3_noun aft = u3_nul;
 
   //  parse boot command
   //
@@ -1053,7 +1051,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
       mod = u3nc(u3nc(wir, cad), mod);  //  transfer [wir]
     }
 
-    //  prepend legacy boot event to the userpace sequence
+    //  prepend legacy boot event to the userspace sequence
     //
     //    XX do something about this wire
     //
@@ -1063,16 +1061,22 @@ _mars_boot_make(u3_boot_opts* inp_u,
       use = u3nc(u3nc(wir, cad), use);
     }
 
+    //  add props before/after the userspace sequence
+    //
     {
-      u3_noun mos = mor;
-      while ( u3_nul != mos ) {
-        u3_noun mot = u3h(mos);
+      u3_noun pre = u3_nul;
+      u3_noun aft = u3_nul;
+
+      while ( u3_nul != mor ) {
+        u3_noun mot = u3h(mor);
 
         switch ( u3h(mot) ) {
           case c3__prop: {
             u3_noun ter, met, ves;
 
             if ( c3n == u3r_trel(u3t(mot), &met, &ter, &ves) ) {
+              //  XX fatal error?
+              //
               u3m_p("invalid prop", u3t(mot));
               break;
             }
@@ -1086,18 +1090,21 @@ _mars_boot_make(u3_boot_opts* inp_u,
               aft = u3kb_weld(aft, u3k(ves));
             }
             else {
+              //  XX fatal error?
+              //
               u3m_p("unrecognized prop tier", ter);
             }
           } break;
 
+          //  XX fatal error?
+          //
           default: u3m_p("unrecognized boot sequence enhancement", u3h(mot));
         }
 
-        mos = u3t(mos);
+        mor = u3t(mor);
       }
 
-      //  XX refactor, this was wrong
-      // u3z(mor);
+      use = u3kb_weld(pre, u3kb_weld(use, aft));
     }
 
     //  timestamp events, cons list
@@ -1108,7 +1115,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
       u3_noun eve = u3kb_flop(bot);
 
       {
-        u3_noun  lit = u3kb_weld(mod, u3kb_weld(pre, u3kb_weld(use, aft)));
+        u3_noun  lit = u3kb_weld(mod, use);
         u3_noun i, t = lit;
 
         while ( u3_nul != t ) {
