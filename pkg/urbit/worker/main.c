@@ -1,145 +1,74 @@
 /* worker/main.c
 **
-**  the main loop of a serf process.
+**  mars process entrypoints; utility grab-bag.
 */
 #include "all.h"
 #include "rsignal.h"
 #include <vere/vere.h>
 #include <vere/mars.h>
-#include <vere/serf.h>
 #include <vere/db/lmdb.h>
 
-#include "ur/hashcons.h"
+static u3_moat      inn_u;  //  input stream
+static u3_mojo      out_u;  //  output stream
 
-static u3_serf        u3V;             //  one serf per process
-static u3_moat      inn_u;             //  input stream
-static u3_mojo      out_u;             //  output stream
-static u3_cue_xeno* sil_u;             //  cue handle
-static u3_disk*     log_u;
-
-#undef SERF_TRACE_JAM
-#undef SERF_TRACE_CUE
-
-/* _cw_serf_fail(): failure stub.
+/* _cw_io_fail(): failure stub.
 */
 static void
-_cw_serf_fail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
+_cw_io_fail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
   if ( UV_EOF == err_i ) {
-    fprintf(stderr, "serf: pier unexpectedly shut down\r\n");
+    fprintf(stderr, "mars: urth unexpectedly shut down\r\n");
   }
   else {
-    fprintf(stderr, "serf: pier error: %s\r\n", err_c);
+    fprintf(stderr, "mars: ipc error: %s\r\n", err_c);
   }
 
   exit(1);
 }
 
-/* _cw_serf_send(): send plea back to daemon.
+/* _cw_io_send(): send plea back to daemon.
 */
 static void
-_cw_serf_send(u3_noun pel)
+_cw_io_send(u3_noun pel)
 {
   c3_d  len_d;
   c3_y* byt_y;
 
-#ifdef SERF_TRACE_JAM
-  u3t_event_trace("serf ipc jam", 'B');
-#endif
-
   u3s_jam_xeno(pel, &len_d, &byt_y);
-
-#ifdef SERF_TRACE_JAM
-  u3t_event_trace("serf ipc jam", 'E');
-#endif
-
   u3_newt_send(&out_u, len_d, byt_y);
+
   u3z(pel);
 }
 
-/* _cw_serf_send_slog(): send hint output (hod is [priority tank]).
+/* _cw_io_send_slog(): send hint output (hod is [priority tank]).
 */
 static void
-_cw_serf_send_slog(u3_noun hod)
+_cw_io_send_slog(u3_noun hod)
 {
-  _cw_serf_send(u3nc(c3__slog, hod));
+  _cw_io_send(u3nc(c3__slog, hod));
 }
 
-/* _cw_serf_send_stdr(): send stderr output (%flog)
+/* _cw_io_send_stdr(): send stderr output (%flog)
 */
 static void
-_cw_serf_send_stdr(c3_c* str_c)
+_cw_io_send_stdr(c3_c* str_c)
 {
-  _cw_serf_send(u3nc(c3__flog, u3i_string(str_c)));
+  _cw_io_send(u3nc(c3__flog, u3i_string(str_c)));
 }
 
-
-/* _cw_serf_step_trace(): initialize or rotate trace file.
+/* _cw_init_io(): initialize i/o streams.
 */
 static void
-_cw_serf_step_trace(void)
+_cw_init_io(uv_loop_t* lup_u)
 {
-  if ( u3C.wag_w & u3o_trace ) {
-    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
-      u3t_trace_open(u3V.dir_c);
-    }
-    else if ( u3_Host.tra_u.con_w >= 100000 ) {
-      u3t_trace_close();
-      u3t_trace_open(u3V.dir_c);
-    }
-  }
-}
-
-/* _cw_serf_writ(): process a command from the king.
-*/
-static c3_o
-_cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
-{
-  u3_weak jar;
-  u3_noun ret;
-
-  _cw_serf_step_trace();
-
-#ifdef SERF_TRACE_CUE
-  u3t_event_trace("serf ipc cue", 'B');
-#endif
-
-  jar = u3s_cue_xeno_with(sil_u, len_d, byt_y);
-
-#ifdef SERF_TRACE_CUE
-  u3t_event_trace("serf ipc cue", 'E');
-#endif
-
-  if (  (u3_none == jar)
-     || (c3n == u3_serf_writ(&u3V, jar, &ret)) )
-  {
-    _cw_serf_fail(0, -1, "bad jar");
-  }
-  else {
-    _cw_serf_send(ret);
-
-    //  all references must now be counted, and all roots recorded
-    //
-    u3_serf_post(&u3V);
-  }
-
-  return c3y;
-}
-
-/* _cw_serf_stdio(): fix up std io handles
-*/
-static void
-_cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
-{
-  //  the serf is spawned with [FD 0] = events and [FD 1] = effects
+  //  mars is spawned with [FD 0] = events and [FD 1] = effects
   //  we dup [FD 0 & 1] so we don't accidently use them for something else
   //  we replace [FD 0] (stdin) with a fd pointing to /dev/null
   //  we replace [FD 1] (stdout) with a dup of [FD 2] (stderr)
   //
   c3_i nul_i = c3_open(c3_dev_null, O_RDWR, 0);
-
-  *inn_i = dup(0);
-  *out_i = dup(1);
+  c3_i inn_i = dup(0);
+  c3_i out_i = dup(1);
 
   dup2(nul_i, 0);
   dup2(2, 1);
@@ -150,96 +79,17 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
   //
   setvbuf(stdout, NULL, _IONBF, 0);
   setvbuf(stderr, NULL, _IONBF, 0);
-}
-
-/* _cw_serf_stdio(): cleanup on serf exit.
-*/
-static void
-_cw_serf_exit(void)
-{
-  u3s_cue_xeno_done(sil_u);
-  u3t_trace_close();
-}
-
-#if defined(U3_OS_mingw)
-/* _mingw_ctrlc_cb(): invoked when the lord signals the Ctrl-C event
-*/
-static void
-_mingw_ctrlc_cb(PVOID param, BOOLEAN timedOut)
-{
-  rsignal_raise(SIGINT);
-}
-#endif
-
-/* _cw_serf_commence(); initialize and run serf
-*/
-static void
-_cw_serf_commence(c3_i argc, c3_c* argv[])
-{
-  c3_i inn_i, out_i;
-  _cw_serf_stdio(&inn_i, &out_i);
-
-  #if defined(U3_OS_mingw)
-  c3_assert( 8 == argc );
-
-  //  Initialize serf's end of Ctrl-C handling
-  //
-  {
-    HANDLE h;
-    if ( 1 != sscanf(argv[7], "%u", &h) ) {
-      fprintf(stderr, "serf: Ctrl-C event: bad handle %s: %s\r\n", argv[7], strerror(errno));
-    } else
-    if ( !RegisterWaitForSingleObject(&h, h, _mingw_ctrlc_cb, NULL, INFINITE, 0) ) {
-      fprintf(stderr, "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n", h, GetLastError());
-    }
-  }
-  #else
-  c3_assert( 7 == argc );
-  #endif
-
-  uv_loop_t* lup_u = uv_default_loop();
-  c3_c*      dir_c = argv[2];
-  c3_c*      key_c = argv[3];
-  c3_c*      wag_c = argv[4];
-  c3_c*      hap_c = argv[5];
-  c3_d       eve_d = 0;
-
-  if ( 1 != sscanf(argv[6], "%" PRIu64 "", &eve_d) ) {
-    fprintf(stderr, "serf: rock: invalid number '%s'\r\n", argv[4]);
-  }
-
-  memset(&u3V, 0, sizeof(u3V));
-  memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
-
-  //  load passkey
-  //
-  //    XX and then ... use passkey
-  //
-  {
-    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
-                  &u3V.key_d[0],
-                  &u3V.key_d[1],
-                  &u3V.key_d[2],
-                  &u3V.key_d[3]);
-  }
-
-  //  load runtime config
-  //
-  {
-    sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
-    sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
-  }
 
   //  Ignore SIGPIPE signals.
   //
-  #ifndef U3_OS_mingw
+#ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
-  #endif
+#endif
 
   //  configure pipe to daemon process
   //
@@ -258,78 +108,47 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
 
     uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
   }
+}
 
-  sil_u = u3s_cue_xeno_init();
+#ifdef U3_OS_mingw
+/* _cw_intr_win_cb(): invoked when urth signals ctrl-c.
+*/
+static void
+_cw_intr_win_cb(PVOID param, BOOLEAN timedOut)
+{
+  rsignal_raise(SIGINT);
+}
 
-  //  set up writing
-  //
-  out_u.ptr_v = &u3V;
-  out_u.bal_f = _cw_serf_fail;
-
-  //  set up reading
-  //
-  inn_u.ptr_v = &u3V;
-  inn_u.pok_f = _cw_serf_writ;
-  inn_u.bal_f = _cw_serf_fail;
-
-  //  setup loom
-  //
-  {
-    u3V.dir_c = strdup(dir_c);
-    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
-
-    if ( eve_d ) {
-      //  XX need not be fatal, need a u3m_reboot equivalent
-      //  XX can spuriously fail do to corrupt memory-image checkpoint,
-      //  need a u3m_half_boot equivalent
-      //  workaround is to delete/move the checkpoint in case of corruption
-      //
-      if ( c3n == u3u_uncram(u3V.dir_c, eve_d) ) {
-        fprintf(stderr, "serf (%" PRIu64 "): rock load failed\r\n", eve_d);
-        exit(1);
-      }
+/* _cw_intr_win(): initialize ctrl-c handling.
+*/
+static void
+_cw_intr_win(c3_c* han_c)
+{
+  HANDLE h;
+  if ( 1 != sscanf(han_c, "%u", &h) ) {
+    fprintf(stderr, "mars: ctrl-c event: bad handle %s: %s\r\n",
+            han_c, strerror(errno));
+  }
+  else {
+    if ( !RegisterWaitForSingleObject(&h, h, _cw_intr_win_cb,
+                                      NULL, INFINITE, 0) )
+    {
+      fprintf(stderr,
+        "mars: ctrl-c event: RegisterWaitForSingleObject(%u) failed (%d)\r\n",
+        h, GetLastError());
     }
   }
-
-  //  set up logging
-  //
-  //    XX must be after u3m_boot due to u3l_log
-  //
-  {
-    u3C.stderr_log_f = _cw_serf_send_stdr;
-    u3C.slog_f = _cw_serf_send_slog;
-  }
-
-  u3V.xit_f = _cw_serf_exit;
-
-#if defined(SERF_TRACE_JAM) || defined(SERF_TRACE_CUE)
-  u3t_trace_open(u3V.dir_c);
-#endif
-
-  //  start serf
-  //
-  {
-    _cw_serf_send(u3_serf_init(&u3V));
-  }
-
-  //  start reading
-  //
-  u3_newt_read(&inn_u);
-
-  //  enter loop
-  //
-  uv_run(lup_u, UV_RUN_DEFAULT);
-  u3m_stop();
 }
+#endif
 
 /* _cw_info(); print pier info
 */
 static void
 _cw_info(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert( 1 <= argc );
 
-  c3_c*    dir_c = argv[2];
+  c3_c*    dir_c = argv[0];
   c3_d     eve_d = u3m_boot(dir_c);
   u3_disk* log_u = u3_disk_init(dir_c);  //  XX s/b try_aquire lock
 
@@ -347,12 +166,12 @@ _cw_info(c3_i argc, c3_c* argv[])
 static void
 _cw_grab(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert( 1 <= argc );
 
-  c3_c* dir_c = argv[2];
+  c3_c* dir_c = argv[0];
   u3m_boot(dir_c);
   u3C.wag_w |= u3o_hashless;
-  u3_serf_grab();
+  u3_mars_grab();
   u3m_stop();
 }
 
@@ -361,9 +180,9 @@ _cw_grab(c3_i argc, c3_c* argv[])
 static void
 _cw_cram(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert( 1 <= argc );
 
-  c3_c*    dir_c = argv[2];
+  c3_c*    dir_c = argv[0];
   c3_d     eve_d = u3m_boot(dir_c);
   u3_disk* log_u = u3_disk_init(dir_c);  //  XX s/b try_aquire lock
   c3_o     ret_o;
@@ -394,10 +213,10 @@ _cw_cram(c3_i argc, c3_c* argv[])
 static void
 _cw_queu(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 4 <= argc );
+  c3_assert( 2 <= argc );
 
-  c3_c*    dir_c = argv[2];
-  c3_c*    eve_c = argv[3];
+  c3_c*    dir_c = argv[0];
+  c3_c*    eve_c = argv[1];
   u3_disk* log_u = u3_disk_init(dir_c);  //  XX s/b try_aquire lock
   c3_d     eve_d;
 
@@ -408,9 +227,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
   else {
     fprintf(stderr, "urbit-worker: queu: preparing\r\n");
 
-    memset(&u3V, 0, sizeof(u3V));
-    u3V.dir_c = strdup(dir_c);
-    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
+    u3m_boot(dir_c);
 
     //  XX can spuriously fail due to corrupt memory-image checkpoint,
     //  need a u3m_half_boot equivalent
@@ -434,19 +251,19 @@ _cw_queu(c3_i argc, c3_c* argv[])
 static void
 _cw_meld(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert( 1 <= argc );
 
-  c3_c*    dir_c = argv[2];
+  c3_c*    dir_c = argv[0];
   u3_disk* log_u = u3_disk_init(dir_c);  //  XX s/b try_aquire lock
 
   u3C.wag_w |= u3o_hashless;
   u3m_boot(dir_c);
 
-  u3_serf_grab();
+  u3_mars_grab();
 
   u3u_meld();
 
-  u3_serf_grab();
+  u3_mars_grab();
 
   u3e_save();
   u3_disk_exit(log_u);
@@ -457,9 +274,9 @@ _cw_meld(c3_i argc, c3_c* argv[])
 static void
 _cw_pack(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  c3_assert( 1 <= argc );
 
-  c3_c*    dir_c = argv[2];
+  c3_c*    dir_c = argv[0];
   u3_disk* log_u = u3_disk_init(dir_c);  //  XX s/b try_aquire lock
 
   u3m_boot(dir_c);
@@ -475,7 +292,8 @@ _cw_pack(c3_i argc, c3_c* argv[])
 static c3_o
 _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 {
-  u3_weak jar = u3s_cue_xeno_with(sil_u, len_d, byt_y);
+  u3_weak jar = u3s_cue_xeno(len_d, byt_y);
+
   u3_noun com;
 
   if (  (u3_none == jar)
@@ -488,7 +306,9 @@ _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
     u3k(com);
     u3z(jar);
 
-    if ( c3n == u3_mars_boot(u3V.dir_c, com) ) {
+    //  XX get [dir_c] from elsewhere
+    //
+    if ( c3n == u3_mars_boot(u3P.dir_c, com) ) {
       fprintf(stderr, "boot: fail\r\n");
       exit(1);
     }
@@ -499,128 +319,58 @@ _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
   return c3y;
 }
 
+/* _cw_boot(): initialize, await boot msg.
+*/
 static void
 _cw_boot(c3_i argc, c3_c* argv[])
 {
-  if ( 6 > argc ) {
+  if ( 4 > argc ) {
     fprintf(stderr, "boot: missing args\r\n");
     exit(1);
   }
 
-  c3_i inn_i, out_i;
-  _cw_serf_stdio(&inn_i, &out_i);
+  uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
+  c3_c*      dir_c = argv[0];
+  c3_c*      key_c = argv[1]; // XX use passkey
+  c3_c*      wag_c = argv[2];
+  c3_c*      hap_c = argv[3];
 
-  uv_loop_t* lup_u = uv_default_loop();
-  c3_c*      dir_c = argv[2];
-  c3_c*      key_c = argv[3];
-  c3_c*      wag_c = argv[4];
-  c3_c*      hap_c = argv[5];
+  //  XX windows ctrl-c?
+
+  _cw_init_io(lup_u);
 
   fprintf(stderr, "boot: %s\r\n", dir_c);
-
-  memset(&u3V, 0, sizeof(u3V));
-  memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
-
-  //  load passkey
-  //
-  //    XX and then ... use passkey
-  //
-  {
-    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
-                  &u3V.key_d[0],
-                  &u3V.key_d[1],
-                  &u3V.key_d[2],
-                  &u3V.key_d[3]);
-  }
 
   //  load runtime config
   //
   {
+    memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
     sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
   }
 
-  //  Ignore SIGPIPE signals.
+  //  set up stdio read/write callbacks
   //
-  #ifndef U3_OS_mingw
-  {
-    struct sigaction sig_s = {{0}};
-    sigemptyset(&(sig_s.sa_mask));
-    sig_s.sa_handler = SIG_IGN;
-    sigaction(SIGPIPE, &sig_s, 0);
-  }
-  #endif
-
-  //  configure pipe to daemon process
-  //
-  {
-    c3_i err_i;
-
-    err_i = uv_timer_init(lup_u, &inn_u.tim_u);
-    c3_assert(!err_i);
-    err_i = uv_pipe_init(lup_u, &inn_u.pyp_u, 0);
-    c3_assert(!err_i);
-    uv_pipe_open(&inn_u.pyp_u, inn_i);
-
-    err_i = uv_pipe_init(lup_u, &out_u.pyp_u, 0);
-    c3_assert(!err_i);
-    uv_pipe_open(&out_u.pyp_u, out_i);
-
-    uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
-  }
-
-  sil_u = u3s_cue_xeno_init();
-
-  //  set up writing
-  //
-  out_u.ptr_v = &u3V;
-  out_u.bal_f = _cw_serf_fail;
-
-  //  set up reading
-  //
-  inn_u.ptr_v = &u3V;
+  inn_u.ptr_v = 0;
   inn_u.pok_f = _cw_boot_writ;
-  inn_u.bal_f = _cw_serf_fail;
+  inn_u.bal_f = _cw_io_fail;
+  out_u.ptr_v = 0;
+  out_u.bal_f = _cw_io_fail;
 
   //  setup loom
   //
-  {
-    //  XX create directory, error if exists (non-empty?)
-    //
-    u3V.dir_c = strdup(dir_c);
-
-    // if ( 0 != mkdir(dir_c, 0700) ) {
-    //   fprintf(stderr, "boot: mkdir %s\n", strerror(errno));
-    //   exit(1);
-    // }
-
-    // {
-    //   c3_c* urb_c[2048];
-    //   snprintf(urb_c, 2048, "%s/.urb", u3V.dir_c);
-
-    //   if ( 0 != mkdir(urb_c, 0700) ) {
-    //     fprintf(stderr, "boot: mkdir .urb %s\n", strerror(errno));
-    //     exit(1);
-    //   }
-    // }
-
-    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
-  }
+  //    XX s/b explicitly initialization, not maybe-restore
+  //
+  u3m_boot(dir_c);
 
   //  set up logging
   //
   //    XX must be after u3m_boot due to u3l_log
   //
   {
-    u3C.stderr_log_f = _cw_serf_send_stdr;
-    u3C.slog_f = _cw_serf_send_slog;
+    u3C.stderr_log_f = _cw_io_send_stdr;
+    u3C.slog_f = _cw_io_send_slog;
   }
-
-  u3V.xit_f = _cw_serf_exit;
-
-// #if defined(SERF_TRACE_JAM) || defined(SERF_TRACE_CUE)
-//   u3t_trace_open(u3V.dir_c);
-// #endif
 
   //  start reading
   //
@@ -636,92 +386,43 @@ _cw_boot(c3_i argc, c3_c* argv[])
 static void
 _cw_work(c3_i argc, c3_c* argv[])
 {
+#ifdef U3_OS_mingw
   if ( 6 > argc ) {
+#else
+  if ( 5 > argc ) {
+#endif
     fprintf(stderr, "work: missing args\n");
     exit(1);
   }
 
-  c3_i inn_i, out_i;
-  _cw_serf_stdio(&inn_i, &out_i);
-
-  #if defined(U3_OS_mingw)
-  c3_assert( 8 == argc );
-
-  //  Initialize serf's end of Ctrl-C handling
-  //
-  {
-    HANDLE h;
-    if ( 1 != sscanf(argv[7], "%u", &h) ) {
-      fprintf(stderr, "serf: Ctrl-C event: bad handle %s: %s\r\n", argv[7], strerror(errno));
-    } else
-    if ( !RegisterWaitForSingleObject(&h, h, _mingw_ctrlc_cb, NULL, INFINITE, 0) ) {
-      fprintf(stderr, "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n", h, GetLastError());
-    }
-  }
-  #else
-  c3_assert( 7 == argc );
-  #endif
-
   uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
-  c3_c*      dir_c = argv[2];
-  c3_c*      key_c = argv[3];
-  c3_c*      wag_c = argv[4];
-  c3_c*      hap_c = argv[5];
+  c3_c*      dir_c = argv[0];
+  c3_c*      key_c = argv[1]; // XX use passkey
+  c3_c*      wag_c = argv[2];
+  c3_c*      hap_c = argv[3];
+  c3_c*      roc_c = argv[4]; // XX replay-to?
+#ifdef U3_OS_mingw
+  c3_c*      han_c = argv[5];
+  _cw_intr_win(han_c);
+#endif
 
-  //  XX argv[6] is roc_c
-  //
+  _cw_init_io(lup_u);
 
   fprintf(stderr, "work: %s\r\n", dir_c);
-
-  memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
-
-  //  load passkey
-  //
-  //    XX and then ... use passkey
-  //
-  {
-    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
-                  &u3V.key_d[0],
-                  &u3V.key_d[1],
-                  &u3V.key_d[2],
-                  &u3V.key_d[3]);
-  }
 
   //  load runtime config
   //
   {
+    memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
     sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
   }
 
-  //  Ignore SIGPIPE signals.
+  //  XX use
   //
-  #ifndef U3_OS_mingw
-  {
-    struct sigaction sig_s = {{0}};
-    sigemptyset(&(sig_s.sa_mask));
-    sig_s.sa_handler = SIG_IGN;
-    sigaction(SIGPIPE, &sig_s, 0);
-  }
-  #endif
-
-  //  configure pipe to daemon process
-  //
-  {
-    c3_i err_i;
-
-    err_i = uv_timer_init(lup_u, &inn_u.tim_u);
-    c3_assert(!err_i);
-    err_i = uv_pipe_init(lup_u, &inn_u.pyp_u, 0);
-    c3_assert(!err_i);
-    uv_pipe_open(&inn_u.pyp_u, inn_i);
-
-    err_i = uv_pipe_init(lup_u, &out_u.pyp_u, 0);
-    c3_assert(!err_i);
-    uv_pipe_open(&out_u.pyp_u, out_i);
-
-    uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
-  }
+  // if ( 1 != sscanf(argv[6], "%" PRIu64 "", &eve_d) ) {
+  //   fprintf(stderr, "mars: rock: invalid number '%s'\r\n", argv[4]);
+  // }
 
   //  setup loom XX strdup?
   //
@@ -732,37 +433,31 @@ _cw_work(c3_i argc, c3_c* argv[])
   //    XX must be after u3m_boot due to u3l_log
   //
   {
-    u3C.stderr_log_f = _cw_serf_send_stdr;
-    u3C.slog_f = _cw_serf_send_slog;
+    u3C.stderr_log_f = _cw_io_send_stdr;
+    u3C.slog_f = _cw_io_send_slog;
   }
 
-// #if defined(SERF_TRACE_JAM) || defined(SERF_TRACE_CUE)
-//   u3t_trace_open(u3V.dir_c);
-// #endif
-
-  //  setup loop XX strdup, exit cb
+  //  setup mars
   //
   {
+    //  XX set exit cb
+    //
     u3_mars* mar_u = u3_mars_init(dir_c, &inn_u, &out_u);
 
     if ( !mar_u ) {
       fprintf(stderr, "mars: init failed\r\n");
-      //  XX exit codes
+      //  XX cleanup, exit codes
       //
       exit(1);
     }
 
-    //  set up reading
+    //  set up stdio read/write callbacks
     //
     inn_u.ptr_v = mar_u;
     inn_u.pok_f = (u3_moor_poke)u3_mars_kick;
-    inn_u.bal_f = _cw_serf_fail;
-
-
-    //  set up writing XX
-    //
+    inn_u.bal_f = _cw_io_fail; // XX cleanup
     out_u.ptr_v = mar_u;
-    out_u.bal_f = _cw_serf_fail;
+    out_u.bal_f = _cw_io_fail; // XX cleanup
   }
 
   //  start reading
@@ -777,29 +472,26 @@ _cw_work(c3_i argc, c3_c* argv[])
 /* _cw_usage(): print urbit-worker usage.
 */
 static void
-_cw_usage(c3_i argc, c3_c* argv[])
+_cw_usage(c3_c* s)
 {
   fprintf(stderr,
-          "\rurbit-worker usage:\n"
-          "  print pier info:\n"
-          "    %s info <pier>\n\n"
-          "  gc persistent state:\n"
-          "    %s grab <pier>\n\n"
-          "  compact persistent state:\n"
-          "    %s pack <pier>\n\n"
-          "  deduplicate persistent state:\n"
-          "    %s meld <pier>\n\n"
-          "  jam persistent state:\n"
-          "    %s cram <pier>\n\n"
-          "  cue persistent state:\n"
-          "    %s queu <pier> <at-event>\n\n"
-          "  run as a 'serf':\n"
-          "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
-          #if defined(U3_OS_mingw)
-          " <ctrlc-handle>"
-          #endif
-          "\n",
-          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+    "\rusage:\n"
+    "  %s cram <pier>               jam state:\n"
+    "  %s grab <pier>               measure memory usage:\n"
+    "  %s info <pier>               print pier info:\n"
+    "  %s meld <pier>               deduplicate snapshot:\n"
+    "  %s pack <pier>               defragment snapshot:\n"
+    "  %s queu <pier> <at-event>    cue state:\n"
+    "\nmars, ipc:\n"
+    "  boot a pier:\n"
+    "    %s boot <pier> <key> <flags> <cache-size>\n"
+    "  run a pier:\n"
+    "    %s work <pier> <key> <flags> <cache-size> <at-event>" // XX replay-to?
+#ifdef U3_OS_mingw
+    " <ctrlc-handle>"
+#endif
+    "\n",
+    s, s, s, s, s, s, s, s);
 }
 
 /* main(): main() when run as urbit-worker
@@ -809,54 +501,49 @@ main(c3_i argc, c3_c* argv[])
 {
   //  urbit-worker commands and positional arguments, by analogy
   //
-  //    $@  ~               :: usage
-  //    $%  [%cram dir=@t]
-  //        [%queu dir=@t eve=@ud]
-  //        [%pack dir=@t]
-  //        [%serf dir=@t key=@t wag=@t hap=@ud eve=@ud]
+  //    $@  ~                                             ::  usage
+  //    $%  [%cram dir=@t]                                ::  jam state
+  //        [%grab dir=@t]                                ::  gc
+  //        [%info dir=@t]                                ::  print
+  //        [%meld dir=@t]                                ::  deduplicate
+  //        [%pack dir=@t]                                ::  defragment
+  //        [%queu dir=@t eve=@ud]                        ::  cue state
+  //    ::                                                ::    ipc:
+  //        [%boot dir=@t key=@t wag=@t hap=@ud]          ::  boot
+  //        [%work dir=@t key=@t wag=@t hap=@ud eve=@ud]  ::  run
   //    ==
   //
   //    NB: don't print to anything other than stderr;
-  //    other streams may have special requirements (in the case of "serf")
+  //    other streams may be used for ipc.
   //
-  if ( 2 > argc ) {
-    _cw_usage(argc, argv);
-    exit(1);
-  }
-  else {
-    if ( 0 == strcmp("work", argv[1]) ) {
-      _cw_work(argc, argv);
+  if ( (2 < argc) && 4 == strlen(argv[1]) ) {
+    c3_m mot_m;
+    {
+      c3_c* s = argv[1]; mot_m = c3_s4(s[0], s[1], s[2], s[3]);
     }
-    if ( 0 == strcmp("serf", argv[1]) ) {
-      _cw_serf_commence(argc, argv);
+
+    argc -= 2;
+    argv += 2;
+
+    switch ( mot_m ) {
+      case c3__cram: _cw_cram(argc, argv); break;
+      case c3__grab: _cw_grab(argc, argv); break;
+      case c3__info: _cw_info(argc, argv); break;
+      case c3__meld: _cw_meld(argc, argv); break;
+      case c3__pack: _cw_pack(argc, argv); break;
+      case c3__queu: _cw_queu(argc, argv); break;
+
+      case c3__boot: _cw_boot(argc, argv); break;
+      case c3__work: _cw_work(argc, argv); break;
     }
-    else if ( 0 == strcmp("boot", argv[1]) ) {
-      _cw_boot(argc, argv);
-    }
-    else if ( 0 == strcmp("info", argv[1]) ) {
-      _cw_info(argc, argv);
-    }
-    else if ( 0 == strcmp("grab", argv[1]) ) {
-      _cw_grab(argc, argv);
-    }
-    else if ( 0 == strcmp("cram", argv[1]) ) {
-      _cw_cram(argc, argv);
-    }
-    else if ( 0 == strcmp("queu", argv[1]) ) {
-      _cw_queu(argc, argv);
-    }
-    else if ( 0 == strcmp("meld", argv[1]) ) {
-      _cw_meld(argc, argv);
-    }
-    else if ( 0 == strcmp("pack", argv[1]) ) {
-      _cw_pack(argc, argv);
-    }
-    else {
-      fprintf(stderr, "unknown command '%s'\r\n", argv[1]);
-      _cw_usage(argc, argv);
-      exit(1);
-    }
+
+    return 0;
   }
 
-  return 0;
+  if ( 1 < argc) {
+    fprintf(stderr, "unknown command '%s'\r\n", argv[1]);
+  }
+
+  _cw_usage(argv[0]);
+  return 1;
 }
