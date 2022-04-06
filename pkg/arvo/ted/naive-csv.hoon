@@ -322,7 +322,6 @@
       events  t.events
       out   ?.  =(%bat +<.input)
               out  ::  skip L1 logs
-            :: there's probably a better way to do this
             =/  cur  (~(get by out) blocknum)
             ?~  cur
               %+  ~(put by out)  blocknum
