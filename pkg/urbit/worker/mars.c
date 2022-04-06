@@ -474,6 +474,43 @@ _mars_post(u3_mars* mar_u)
   }
 }
 
+/* _mars_damp_file(): write sampling-profiler output.
+*/
+static void
+_mars_damp_file(void)
+{
+  if ( u3C.wag_w & u3o_debug_cpu ) {
+    FILE* fil_u;
+
+    {
+      u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
+      c3_c* wen_c = u3r_string(wen);
+
+      c3_c nam_c[2048];
+      snprintf(nam_c, 2048, "%s/.urb/put/profile", u3P.dir_c);
+
+      struct stat st;
+      if ( -1 == stat(nam_c, &st) ) {
+        c3_mkdir(nam_c, 0700);
+      }
+
+      c3_c man_c[2054];
+      snprintf(man_c, 2053, "%s/%s.txt", nam_c, wen_c);
+
+      fil_u = c3_fopen(man_c, "w");
+
+      c3_free(wen_c);
+      u3z(wen);
+    }
+
+    u3t_damp(fil_u);
+
+    {
+      fclose(fil_u);
+    }
+  }
+}
+
 /* _mars_flush(): send pending gifts.
 */
 static void
@@ -521,6 +558,7 @@ top:
       u3_disk_exit(mar_u->log_u);
       u3s_cue_xeno_done(mar_u->sil_u);
       u3t_trace_close();
+      _mars_damp_file();
 
       //  XX dispose [mar_u], exit cb ?
       //
