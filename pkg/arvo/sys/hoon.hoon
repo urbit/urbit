@@ -8450,7 +8450,7 @@
         [%tell *]  [%cncl [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         [%wing *]  [%cnts p.gen ~]
         [%yell *]  [%cncl [%limb %cain] [%zpgr [%cltr p.gen]] ~]
-        [%note *]  q.gen
+        ::[%note *]  q.gen
     ::
         [%brbc *]  =-  ?~  -  !!
                        [%brtr [%bccl -] [%ktcl body.gen]]
