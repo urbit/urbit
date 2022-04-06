@@ -118,7 +118,9 @@
     =/  timestamps  %-  ~(gas by *(map blocknum @da))
                     ?-  tim
                       [%.y *]  ;;((list [@ud @da]) q.p.tim)
-                      [%.n *]  ~|  'naive-csv: %eth-get-timestamps failed'  !!
+                      [%.n *]
+                        =>  (mean 'naive-csv: %eth-get-timestamps failed' p.tim)
+                        !!
                     ==
     ;<  ~  bind:m  (flog-text "naive-csv: got timestamps")
     ;<  ~  bind:m  (flog-text "naive-csv: getting tx receipts")
@@ -128,7 +130,9 @@
     =/  gas-sender  %-  ~(gas by *(map keccak [gas=@ud sender=address]))
                     ?-  gaz
                       [%.y *]  (parse-gas-sender ;;((list [@t json]) q.p.gaz))
-                      [%.n *]  ~|  'naive-csv: %eth-get-tx-receipts failed'  !!
+                      [%.n *]
+                        =>  (mean 'naive-csv: %eth-tx-receipts failed' p.gaz)
+                        !!
                     ==
     ;<  ~  bind:m  (flog-text "naive-csv: got tx receipts")
     =/  csv=(list cord)
