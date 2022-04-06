@@ -16,6 +16,12 @@ import {
 } from './base';
 import api from './api';
 
+interface BrowserSetting {
+  browserId: string;
+  browserNotifications: boolean;
+  protocolHandling: boolean;
+}
+
 interface BaseSettingsState {
   display: {
     theme: 'light' | 'dark' | 'auto';
@@ -26,7 +32,7 @@ interface BaseSettingsState {
   };
   loaded: boolean;
   browserSettings: {
-    settings: string;
+    settings: Stringified<BrowserSetting[]>;
   };
   putEntry: (bucket: string, key: string, value: Value) => Promise<void>;
   fetchAll: () => Promise<void>;
@@ -83,7 +89,7 @@ export const useSettingsState = createState<BaseSettingsState>(
       order: []
     },
     browserSettings: {
-      settings: ''
+      settings: '' as Stringified<BrowserSetting[]>
     },
     loaded: false,
     putEntry: async (bucket, key, val) => {
@@ -117,22 +123,51 @@ export function useTheme() {
   return useSettingsState(selTheme);
 }
 
+export function parseBrowserSettings(settings: Stringified<BrowserSetting[]>): BrowserSetting[] {
+  return settings !== '' ? JSON.parse<BrowserSetting[]>(settings) : [];
+}
+
+export function getBrowserSetting(
+  settings: BrowserSetting[],
+  browserId: string
+): BrowserSetting | undefined {
+  return settings.find((el) => el.browserId === browserId);
+}
+
+export function setBrowserSetting(
+  settings: BrowserSetting[],
+  newSetting: Partial<BrowserSetting>,
+  browserId: string
+): BrowserSetting[] {
+  const oldSettings = settings.slice(0);
+  const oldSettingIndex = oldSettings.findIndex((s) => s.browserId === browserId);
+  const setting = {
+    ...oldSettings[oldSettingIndex],
+    browserId,
+    ...newSetting
+  };
+
+  if (oldSettingIndex >= 0) {
+    oldSettings.splice(oldSettingIndex, 1);
+  }
+
+  return [...oldSettings, setting];
+}
+
 const selBrowserSettings = (s: SettingsState) => s.browserSettings.settings;
-export function useBrowserSettings() {
+export function useBrowserSettings(): BrowserSetting[] {
   const settings = useSettingsState(selBrowserSettings);
-  return settings !== '' ? JSON.parse(settings) : [];
+  return parseBrowserSettings(settings);
 }
 
-export function useProtocolHandling(browserId: string) {
+export function useProtocolHandling(browserId: string): boolean {
   const settings = useBrowserSettings();
-  const { protocolHandling = false } =
-    settings.filter((el: any) => el.browserId === browserId)[0] ?? false;
-  return protocolHandling;
+  const browserSetting = getBrowserSetting(settings, browserId);
+  return browserSetting?.protocolHandling ?? false;
 }
 
-export function useBrowserNotifications(browserId: string) {
+export function useBrowserNotifications(browserId: string): boolean {
   const settings = useBrowserSettings();
-  const { browserNotifications = false } =
-    settings.filter((el: any) => el.browserId === browserId)[0] ?? false;
-  return browserNotifications;
+  const browserSetting = getBrowserSetting(settings, browserId);
+  return browserSetting?.browserNotifications ?? false;
 }

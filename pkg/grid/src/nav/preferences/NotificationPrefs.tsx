@@ -8,8 +8,16 @@ import {
   useSettingsState,
   useBrowserNotifications,
   useBrowserSettings,
-  useProtocolHandling
+  SettingsState,
+  setBrowserSetting
 } from '../../state/settings';
+
+const selDnd = (s: SettingsState) => s.display.doNotDisturb;
+async function toggleDnd() {
+  const state = useSettingsState.getState();
+  const curr = selDnd(state);
+  await state.putEntry('display', 'doNotDisturb', !curr);
+}
 
 const selMentions = (s: HarkState) => s.notificationsGraphConfig.mentions;
 async function toggleMentions() {
@@ -18,20 +26,19 @@ async function toggleMentions() {
 }
 
 export const NotificationPrefs = () => {
+  const doNotDisturb = useSettingsState(selDnd);
   const mentions = useHarkStore(selMentions);
   const settings = useBrowserSettings();
   const browserId = useBrowserId();
   const browserNotifications = useBrowserNotifications(browserId);
-  const protocolHandling = useProtocolHandling(browserId);
   const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+  const notificationsAllowed = secure && 'Notification' in window;
 
   const setBrowserNotifications = (setting: boolean) => {
-    const newSettings = [{ browserId, browserNotifications: setting, protocolHandling }];
-    if (!settings.includes(newSettings)) {
-      useSettingsState
-        .getState()
-        .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
-    }
+    const newSettings = setBrowserSetting(settings, { browserNotifications: setting }, browserId);
+    useSettingsState
+      .getState()
+      .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
   };
 
   const toggleNotifications = async () => {
@@ -47,17 +54,25 @@ export const NotificationPrefs = () => {
     <>
       <h2 className="h3 mb-7">Notifications</h2>
       <div className="space-y-3">
+        <Setting on={doNotDisturb} toggle={toggleDnd} name="Do Not Disturb">
+          <p>
+            Blocks Urbit notifications in Landscape from appearing as badges and prevents browser
+            notifications if enabled.
+          </p>
+        </Setting>
         <Setting
           on={browserNotifications}
           toggle={toggleNotifications}
-          name="Show desktop notifications"
-          disabled={!secure}
+          name="Show Desktop Notifications"
+          disabled={!notificationsAllowed}
         >
           <p>
             Show desktop notifications in this browser.
             {!secure && (
               <>
-                , <strong className="text-orange-500">requires HTTPS</strong>
+                <strong className="text-orange-500">
+                  Unavailable with this browser/connection.
+                </strong>
               </>
             )}
           </p>
