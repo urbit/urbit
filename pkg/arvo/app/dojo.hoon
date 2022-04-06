@@ -3,7 +3,7 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  *sole, lens                                         ::  console structures
-/+  sole, pprint,                                       ::
+/+  sole, pprint, dprint,                               ::
     auto=language-server-complete,                      ::
     easy-print=language-server-easy-print               ::
 ::                                                      ::  ::
@@ -54,6 +54,7 @@
               r=@t
           ==
           [%poke p=goal]                                ::  poke app
+          [%help p=term]                                ::  doccords
           [%show p=?(%0 %1 %2 %3 %4 %5)]                ::  val/type/hoon/xray
           [%verb p=term]                                ::  store variable
       ==                                                ::
@@ -176,6 +177,18 @@
         ;~  pose
           (parse-variable (cold %sur hep) ;~(pfix gap parse-cables))
           (parse-variable (cold %lib lus) ;~(pfix gap parse-cables))
+        ==
+      ==
+    ::
+      ;~  pfix  hax
+        ;~  pose
+          ;~  pfix  ace
+            %+  cook
+              |=  a=term
+              [[%help a] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
+            sym  :: should be (most col sym) once i switch to (list term)
+          ==
+          (easy [[%help %$] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
         ==
       ==
     ::
@@ -624,6 +637,9 @@
         ++  maar  ?:  =(%noun p.cay)  ~
                   [[%rose [~ "    " ~] >p.cay< ~] ~]
         --
+      ::
+          %help
+        (dy-inspect p.p.mad p.q.cay)
       ==
     ::
     ++  dy-show  |=(cay=cage (dy-print cay ~))
@@ -663,6 +679,15 @@
           :-  i=""
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
+    ::
+    ++  dy-inspect
+      |=  [topic=term sut=type]
+      %+  dy-rash  %tan
+      =+  to-display=(find-item-in-type:dprint topic sut)
+      ?~  to-display
+        [%leaf "Could not find help"]~
+      (print-item:dprint u.to-display)
+    ::
   ++  dy-show-type-noun
     |=  a=type  ^-  tank
     =-  >[-]<
