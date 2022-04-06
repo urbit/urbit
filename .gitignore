@@ -64,6 +64,14 @@ result-*
 /rel
 /tus
 /wex
+/dyn
+/hec
+/lux
+/mul
+/nub
+/sed
+/ted
+/ben
 
 # NodeJS
 node_modules
