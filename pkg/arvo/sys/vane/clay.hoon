@@ -558,7 +558,7 @@
         [cage nub]
       ?<  (~(has in deletes) path)
       ~|  %file-not-found^path
-      :_(nub q:(need fil:(~(dip ^de ankh) path)))
+      :_(nub q:(need (~(get ^de ankh) path)))
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
@@ -1096,7 +1096,7 @@
         $(paz t.paz)
       ?:  (~(has by changes) pux)
         pux
-      ?:  [?=(^ .)]:fil:(~(dip ^de ankh) pux)
+      ?^  (~(get ^de ankh) pux)
         pux
       $(paz t.paz)
     --
@@ -4068,7 +4068,7 @@
       ?:  &(?=(~ ref) =(let.dom yon))
         :_  fod.dom  :-  ~
         %+  bind
-          fil:(~(dip ^de ank.dom) pax)
+          (~(get ^de ank.dom) pax)
         |=(a=[p=lobe q=cage] q.a)
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
