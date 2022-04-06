@@ -294,23 +294,56 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
 static c3_o
 _mars_poke(c3_w mil_w, u3_noun* eve, u3_noun* out)
 {
-  if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), out) ) {
-    return c3y;
-  }
+  c3_c tag_c[9];
+  c3_o ret_o;
+
+#ifdef U3_EVENT_TIME_DEBUG
+  struct timeval b4;
+  gettimeofday(&b4, 0);
 
   {
+    u3_noun tag = u3h(u3t(u3t(*eve)));
+    u3r_bytes(0, 8, (c3_y*)tag_c, tag);
+    tag_c[8] = 0;
+
+    if ( c3__belt != tag ) {
+      u3l_log("mars: (%" PRIu64 ") %%%s\r\n", u3A->eve_d + 1, tag_c);
+    }
+  }
+#endif
+
+  if ( c3n == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), out)) ) {
     u3_noun dud = *out;
 
     *eve = _mars_make_crud(*eve, u3k(dud));
 
-    if ( c3y == u3v_poke_sure(mil_w, u3k(*eve), out) ) {
-      u3z(dud);
-      return c3y;
+    if ( c3n == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), out)) ) {
+      *out = u3nt(dud, *out, u3_nul);
     }
-
-    *out = u3nt(dud, *out, u3_nul);
-    return c3n;
+    else {
+      u3z(dud);
+    }
   }
+
+#ifdef U3_EVENT_TIME_DEBUG
+  {
+    c3_w      ms_w, clr_w;
+    struct timeval f2, d0;
+    gettimeofday(&f2, 0);
+    timersub(&f2, &b4, &d0);
+
+    ms_w  = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+    clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
+
+    if ( clr_w != 2 ) {
+      u3l_log("\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
+              clr_w, tag_c, u3A->eve_d + 1, ms_w,
+              (int) (d0.tv_usec % 1000) / 10);
+    }
+  }
+#endif
+
+  return ret_o;
 }
 
 /* _mars_work(): perform a task.
@@ -360,6 +393,8 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
       pre_w = u3a_open(u3R);
       mar_u->sen_d++;
 
+      //  XX needs u3_event_trace
+      //
       if ( c3y == _mars_poke(mil_w, &job, &pro) ) {
         mar_u->dun_d = mar_u->sen_d;
         mar_u->mug_l = u3r_mug(u3A->roc);
