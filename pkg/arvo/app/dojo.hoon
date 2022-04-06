@@ -686,7 +686,7 @@
       =+  to-display=(find-item-in-type:dprint topic sut)
       ?~  to-display
         [%leaf "Could not find help"]~
-      (print-item:dprint u.to-display)
+      (flop (print-item:dprint u.to-display))
     ::
   ++  dy-show-type-noun
     |=  a=type  ^-  tank
