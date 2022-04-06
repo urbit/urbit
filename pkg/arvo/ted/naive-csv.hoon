@@ -209,21 +209,23 @@
     ::  what nonce was actually submitted without the private key of the signer.
     ::
     =|  roll-tx-list=(list tx-data)
+    =|  =tx-data
     =|  nonce-and-tx=[_| _|]
-    =/  =tx-data  :*  blocknum.block  timestamp.block-dat.block
-                      sender.roll-dat.roll  keccak.roll  *keccak  *ship
-                      *proxy:naive  *nonce:naive  gas.roll-dat.roll  *@
-                      |  *action  *ship
-                  ==
     |-
     =*  effect-loop   $
+    ::  if we are processing a new transaction, initialize the parts of tx-data
+    ::  that are identical for every transaction in the roll
+    =?  tx-data  =([| |] nonce-and-tx)
+      :*  blocknum.block  timestamp.block-dat.block  sender.roll-dat.roll
+          keccak.roll  *keccak  *ship  *proxy:naive  *nonce:naive
+          gas.roll-dat.roll  *@  |  *action  *ship
+      ==
     ::  if we've gotten both the %nonce and %tx diff from a transaction, add the
     ::  tx-data to the list of tx for the roll
     ::
     ?:  =([& &] nonce-and-tx)
       %=  effect-loop
         nonce-and-tx  [| |]
-        tx-data       *_tx-data  :: reset tx-data
         roll-tx-list  (snoc roll-tx-list tx-data)
       ==
     ::  if we've finished looping through the effects, add the tx list from the
@@ -236,8 +238,10 @@
        ==
     ::
     =/  =diff:naive  i.effects.roll-dat.roll
+    ::  we ignore %operator, %dns, %point diffs
+    ::
     ?+    diff
-      $(effects.roll-dat.roll t.effects.roll-dat.roll)  :: we ignore %operator, %dns, %point diffs
+      $(effects.roll-dat.roll t.effects.roll-dat.roll)
     ::  %nonce is always the first diff from a given transaction.
     ::
         [%nonce *]
