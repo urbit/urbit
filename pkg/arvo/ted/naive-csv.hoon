@@ -276,7 +276,7 @@
     :-  %-  parse-hex-result:rpc:ethereum
       ~|  json
       ?>  ?=(%o -.json)
-      (~(got by p.json) 'effectiveGasPrice')                    :: gas used in wei
+      (~(got by p.json) 'effectiveGasPrice')                   :: gas used in wei
     %-  parse-hex-result:rpc:ethereum
     ~|  json
     ?>  ?=(%o -.json)
