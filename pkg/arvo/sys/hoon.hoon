@@ -11001,7 +11001,7 @@
           [%name *]
         :_  gid
         ?@  p.q.ham  (cat 3 '#' mark.p.q.ham)
-        (rap 3 '#' auth.p.q.ham (spat type.p.q.ham) ~)
+        (rap 3 '#' auth.p.q.ham '+' (spat type.p.q.ham) ~)
       ==
     --
   ::
