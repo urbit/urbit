@@ -509,6 +509,7 @@
   |=  [name=tape adoc=what pdoc=what cdoc=what gen=hoon sut=type]
   ^-  tang
   ~?  >>  debug  %print-arm
+  %-  flop
   ;:  weld
     (print-header name adoc)
     `tang`[[%leaf ""] [%leaf "product:"] ~]
