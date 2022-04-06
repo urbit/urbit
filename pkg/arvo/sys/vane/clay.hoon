@@ -125,11 +125,15 @@
 ::  having changed; this lets us short-circuit that in some cases.
 ::  Whenever you give an `%ergo`, you must update this.
 ::
+::  XX state upgrade, added `tom` and `nor`
+::
 +$  dome
   $:  ank=ankh                                          ::  state
       let=aeon                                          ::  top id
       hit=(map aeon tako)                               ::  versions by id
       lab=(map @tas aeon)                               ::  labels
+      ::  tom=(map tako norm)                               ::  tomb policies
+      ::  nor=norm                                          ::  future policy
       mim=(map path mime)                               ::  mime cache
       fod=ford-cache                                    ::  ford cache
   ==                                                    ::
@@ -183,6 +187,10 @@
       lar=(set yaki)                                    ::  new commits
       bar=(set plop)                                    ::  new content
   ==                                                    ::
+::
+::  Tombstone policy
+::
++$  norm  (axal ?)
 ::
 ::  Formal vane state.
 ::
@@ -4423,7 +4431,7 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
-      %tomb  (tomb clue.req)
+      %tomb  (tomb-clue:tomb clue.req)
       %trim  [~ ..^$]
   ::
       %vega
@@ -5143,26 +5151,29 @@
           blobs+&+lat.ran.ruf
       ==
   ==
-::  +tomb: safely remove objects
 ::
 ++  tomb
-  |=  =clue
-  ^-  [(list move) _..^$]
-  |^
-  ?-    -.clue
-      %lobe  `(tomb-lobe lobe.clue &)
-      %all
-    =/  lobes=(list [=lobe =blob])  ~(tap by lat.ran.ruf)
-    |-
-    ?~  lobes
-      `..^^^$
-    =.  ..^^^$  (tomb-lobe lobe.i.lobes &)
-    $(lobes t.lobes)
-  ==
+  |%
+  ::  +tomb-clue: safely remove objects
+  ::
+  ++  tomb-clue
+    |=  =clue
+    ^-  [(list move) _..^$]
+    ?-    -.clue
+        %lobe  `(tomb-lobe lobe.clue &)
+        %all
+      =/  lobes=(list [=lobe =blob])  ~(tap by lat.ran.ruf)
+      |-
+      ?~  lobes
+        `..^^$
+      =.  ..^^$  (tomb-lobe lobe.i.lobes &)
+      $(lobes t.lobes)
+    ==
+  ::  +tomb-lobe: remove specific lobe
   ::
   ++  tomb-lobe
     |=  [lob=lobe veb=?]
-    ^+  ..^^^$
+    ^+  ..^$
     =/  bol  (~(get by lat.ran.ruf) lob)
     ?~  bol
       (noop veb leaf+"clay: lobe doesn't exist" ~)
@@ -5213,7 +5224,7 @@
   ++  noop
     |=  [veb=? =tang]
     ?.  veb
-      ..^^^$
-    ((slog tang) ..^^^$)
+      ..^$
+    ((slog tang) ..^$)
   --
 --
