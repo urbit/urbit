@@ -374,7 +374,7 @@
       |=  =tx-data
       %-  crip
       ;:  weld
-        (scow %ud blocknum.tx-data)      ","
+        (scow %ud blocknum.tx-data)   ","
         (scow %da timestamp.tx-data)  ","
         (scow %ux roller.tx-data)     ","
         (scow %ux roll-hash.tx-data)  ","
