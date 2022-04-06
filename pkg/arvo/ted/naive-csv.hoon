@@ -73,7 +73,7 @@
     ==
   ::
   +$  tx-data
-    $:  block=blocknum
+    $:  =blocknum
         timestamp=@da
         roller=address
         roll-hash=keccak
@@ -149,24 +149,24 @@
             timestamps=(map blocknum @da)
             roll-receipts=(map keccak [gas=@ud sender=address])
         ==
-    =/  blocks=(list blocknum)  ~(tap in ~(key by rolls-map))
+    =/  blocknums=(list blocknum)  ~(tap in ~(key by rolls-map))
     =|  =block-map
     ^+  block-map
     |-
-    ?~  blocks  block-map
-    =/  block=blocknum  i.blocks
+    ?~  blocknums  block-map
+    =/  =blocknum  i.blocknums
     =/  rolls=(map keccak [[gas=@ud sender=address] =effects:naive])
       %-  ~(gas by *(map keccak [[gas=@ud sender=address] =effects:naive]))
-      %+  turn  ~(tap in ~(key by (~(got by rolls-map) block)))
+      %+  turn  ~(tap in ~(key by (~(got by rolls-map) blocknum)))
       |=  txh=keccak
       :+  txh
         (~(got by roll-receipts) txh)
-      (~(got by (~(got by rolls-map) block)) txh)
+      (~(got by (~(got by rolls-map) blocknum)) txh)
     %=  $
-      blocks     t.blocks
+      blocknums     t.blocknums
       block-map  %+  ~(put by block-map)
-                   block
-                 [(~(got by timestamps) block) rolls]
+                   blocknum
+                 [(~(got by timestamps) blocknum) rolls]
     ==
   ::  +flatten takes a $block-map and creates a $tx-data for every transaction
   ::  in every roll, returned as a (list tx-data)
@@ -306,9 +306,9 @@
     ?~  mined.log
       ~&  >>  'naive-csv: empty log'
       $(events t.events)
-    =/  block=blocknum  block-number.u.mined.log
+    =/  =blocknum  block-number.u.mined.log
     =/  =^input:naive
-      :-  block
+      :-  blocknum
       ?.  =(naive-contract address.log)
         :-  %log
         [address.log (data-to-hex:dice data.log) topics.log]
@@ -323,11 +323,11 @@
       out   ?.  =(%bat +<.input)
               out  ::  skip L1 logs
             :: there's probably a better way to do this
-            =/  cur  (~(get by out) block)
+            =/  cur  (~(get by out) blocknum)
             ?~  cur
-              %+  ~(put by out)  block
+              %+  ~(put by out)  blocknum
               (my [[transaction-hash.u.mined.log effects]~])
-            %+  ~(put by out)  block
+            %+  ~(put by out)  blocknum
             (~(put by u.cur) transaction-hash.u.mined.log effects)
     ==
   ::  +export-csv writes a (list cord) as csv to disk at .pax
@@ -371,7 +371,7 @@
       |=  =tx-data
       %-  crip
       ;:  weld
-        (scow %ud block.tx-data)      ","
+        (scow %ud blocknum.tx-data)      ","
         (scow %da timestamp.tx-data)  ","
         (scow %ux roller.tx-data)     ","
         (scow %ux roll-hash.tx-data)  ","
