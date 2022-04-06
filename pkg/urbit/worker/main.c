@@ -379,6 +379,7 @@ _cw_boot(c3_i argc, c3_c* argv[])
   //  enter loop
   //
   uv_run(lup_u, UV_RUN_DEFAULT);
+  u3m_stop();
 }
 
 /* _cw_work(): resume and run; replay and start event processing
@@ -467,6 +468,7 @@ _cw_work(c3_i argc, c3_c* argv[])
   //  enter loop
   //
   uv_run(lup_u, UV_RUN_DEFAULT);
+  u3m_stop();
 }
 
 /* _cw_usage(): print urbit-worker usage.
