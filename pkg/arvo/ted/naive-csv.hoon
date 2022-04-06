@@ -51,22 +51,24 @@
   +$  keccak    @ux            :: used for transaction and roll hashes
   +$  blocknum  number:block   :: @udblocknumber
   +$  net       net:dice       ::?(%mainnet %ropsten %local %default)
-  +$  block-map  %+  map  blocknum
+  +$  block-map
+    %+  map  blocknum
     [timestamp=@da rolls=(map keccak [[gas=@ud sender=address] =effects:naive])]
   +$  rolls-map  (map blocknum (map keccak effects:naive))
   ::
-  +$  action  $?  %transfer-point
-                  %spawn
-                  %configure-keys
-                  %escape
-                  %cancel-escape
-                  %adopt
-                  %reject
-                  %detach
-                  %set-management-proxy
-                  %set-spawn-proxy
-                  %set-transfer-proxy
-               ==
+  +$  action
+    $?  %transfer-point
+        %spawn
+        %configure-keys
+        %escape
+        %cancel-escape
+        %adopt
+        %reject
+        %detach
+        %set-management-proxy
+        %set-spawn-proxy
+        %set-transfer-proxy
+    ==
   ::
   +$  tx-data  $:  block=blocknum
                    timestamp=@da
@@ -309,9 +311,8 @@
             ?~  cur
               %+  ~(put by out)  block
               (my [[transaction-hash.u.mined.log effects]~])
-            %+  ~(jab by out)  u.cur
-            |=  m=(map keccak effects:naive)
-            (~(put by m) transaction-hash.u.mined.log effects)
+            %+  ~(put by out)  block
+            (~(put by u.cur) transaction-hash.u.mined.log effects)
     ==
   ::
   ::  +export-csv writes a (list cord) as csv to disk at .pax
