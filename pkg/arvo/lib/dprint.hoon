@@ -324,13 +324,16 @@
 :>  arm-doc: docs written above the the arm
 :>  product-doc: docs for the product of the arm
 :>  core-doc: docs for the default arm of the core produced by the arm
+:>  this will be the first of the arm-doc or product-doc on the default
+:>  arm. maybe this should be recursive and/or give both but its a decision
+:>  ill leave for later
 ++  all-arm-docs
   |=  [gen=hoon sut=type name=tape]
   ~?  >  debug  %all-arm-docs
   ^-  [what what what]
   =+  hoon-type=(~(play ut sut) gen)
   =+  arm-prod=(arm-product-docs hoon-type `@tas`(crip name))
-  ~?  >>  debug  arm-prod
+  ~?  >>  debug  :-  %arm-prod  arm-prod
   |^
   :: check arm-prod to determine how many layers to look into the type
   :: for core docs
@@ -350,14 +353,18 @@
   ==
   :>    grabs the first doc for the default arm of a core
   :>
-  :>  this could end up being an arm doc or a product doc. or it might even
-  :>  produce another core with docs in that. should I care?
+  :>  this could end up being an arm doc or a product doc.
   ++  extract
     |=  sut=type
     ^-  what
-    ?:  ?=([%core *] sut)
-      (what-from-hint (~(play ut sut) [%limb %$]))
-    ~
+    ?.  ?=([%core *] sut)
+      ~?  >  debug  %no-nested-core  ~
+    ~?  >  debug  %found-nested-core
+    =+  carm=(find-arm-in-coil %$ q.sut)
+    ?~  carm  ~?  >  debug  %empty-carm  ~
+    ~?  >  debug  %found-default-arm
+    =+  carm-type=(~(play ut p.sut) u.carm)
+    (what-from-hint carm-type)
   --
 ::
 :>    returns an overview for a cores arms and chapters
