@@ -518,12 +518,29 @@ top:
       u3_disk_slog(mar_u->log_u);
 
       u3e_save();
-
       u3_disk_exit(mar_u->log_u);
+      u3s_cue_xeno_done(mar_u->sil_u);
+      u3t_trace_close();
 
-      //  XX exit cb ?
+      //  XX dispose [mar_u], exit cb ?
       //
       exit(0);
+    }
+  }
+}
+
+/* _mars_step_trace(): initialize or rotate trace file.
+*/
+static void
+_mars_step_trace(const c3_c* dir_c)
+{
+  if ( u3C.wag_w & u3o_trace ) {
+    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
+      u3t_trace_open(dir_c);
+    }
+    else if ( u3_Host.tra_u.con_w >= 100000 ) {
+      u3t_trace_close();
+      u3t_trace_open(dir_c);
     }
   }
 }
@@ -534,6 +551,8 @@ c3_o
 u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 {
   c3_o ret_o = c3n;
+
+  _mars_step_trace(mar_u->dir_c);
 
   //  XX optimize for save/cram w/ peek-next
   //
@@ -552,10 +571,6 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
     }
 
     _mars_post(mar_u);
-
-    //  XX
-    //
-    // _cw_serf_step_trace();
 
     ret_o = c3y;
   }
@@ -680,6 +695,8 @@ u3_mars_play(u3_mars* mar_u)
   }
 
   while ( mar_u->dun_d < log_u->dun_d ) {
+    _mars_step_trace(mar_u->dir_c);
+
     //  XX get batch from args
     //
     if ( c3n == _mars_play_batch(mar_u, c3n, 500) ) {
@@ -731,6 +748,7 @@ u3_mars_init(c3_c*    dir_c,
              u3_mojo* out_u)
 {
   u3_mars* mar_u = c3_malloc(sizeof(*mar_u));
+  mar_u->dir_c = dir_c;
   mar_u->inn_u = inn_u;
   mar_u->out_u = out_u;
   mar_u->sen_d = mar_u->dun_d = u3A->eve_d;
@@ -1173,6 +1191,8 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
   if ( c3n == u3_disk_sync(log_u) ) {
     return c3n;  //  XX cleanup
   }
+
+  _mars_step_trace(dir_c);
 
   if ( c3n == _mars_do_boot(log_u, log_u->dun_d) ) {
     return c3n;  //  XX cleanup
