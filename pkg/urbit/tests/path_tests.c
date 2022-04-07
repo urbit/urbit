@@ -13,8 +13,8 @@ _test_path_fv(void)
   {
     c3_path* pax_u;
     c3_assert(pax_u = c3_path_fv(0));
-    c3_assert(0 == strcmp("", pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp("", c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid relative canonical path with one component.
@@ -22,8 +22,8 @@ _test_path_fv(void)
     static const c3_c* const exp_c = "fanfun-mocbud";
     c3_path*                 pax_u;
     c3_assert(pax_u = c3_path_fv(1, "fanfun-mocbud"));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid absolute canonical path with one component.
@@ -31,8 +31,8 @@ _test_path_fv(void)
     static const c3_c* const exp_c = "/";
     c3_path*                 pax_u;
     c3_assert(pax_u = c3_path_fv(1, "/"));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid relative canonical path with two components.
@@ -40,8 +40,8 @@ _test_path_fv(void)
     static const c3_c* const exp_c = "~/master-morzod";
     c3_path*                 pax_u;
     c3_assert(pax_u = c3_path_fv(2, "~", "master-morzod"));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid absolute canonical path with two components.
@@ -49,8 +49,8 @@ _test_path_fv(void)
     static const c3_c* const exp_c = "/silsyn-wathep";
     c3_path*                 pax_u;
     c3_assert(pax_u = c3_path_fv(2, "/", "silsyn-wathep"));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid relative canonical path with more than two components.
@@ -66,8 +66,8 @@ _test_path_fv(void)
                                  "path",
                                  "with_underscores",
                                  "and-dashes"));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid absolute canonical path with more than two components.
@@ -84,8 +84,8 @@ _test_path_fv(void)
                                  "path",
                                  "with_underscores",
                                  "and-dashes"));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid absolute non-canonical path with three components.
@@ -93,8 +93,8 @@ _test_path_fv(void)
     static const c3_c* const exp_c = "/";
     c3_path*                 pax_u;
     c3_assert(pax_u = c3_path_fv(3, "/", "tmp", ".."));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid relative non-canonical path with five components.
@@ -103,8 +103,8 @@ _test_path_fv(void)
     c3_path*                 pax_u;
     c3_assert(pax_u
               = c3_path_fv(5, "fanfun-mocbud", ".urb", "log", "..", ".."));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 
   // Valid absolute non-canonical path with two components.
@@ -112,8 +112,8 @@ _test_path_fv(void)
     static const c3_c* const exp_c = "/";
     c3_path*                 pax_u;
     c3_assert(pax_u = c3_path_fv(2, "/", ".."));
-    c3_assert(0 == strcmp(exp_c, pax_u->str_c));
-    c3_free(pax_u);
+    c3_assert(0 == strcmp(exp_c, c3_path_str(pax_u)));
+    c3_path_free(pax_u);
   }
 }
 
@@ -124,35 +124,34 @@ _test_path_push_pop(void)
   {
     c3_path* pax_u;
     c3_assert(pax_u = c3_path_fv(1, "/"));
-    c3_assert(0 == strcmp("/", pax_u->str_c));
+    c3_assert(0 == strcmp("/", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "fanfun");
-    c3_assert(0 == strcmp("/fanfun", pax_u->str_c));
+    c3_assert(0 == strcmp("/fanfun", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "mocbud");
-    c3_assert(0 == strcmp("/fanfun/mocbud", pax_u->str_c));
+    c3_assert(0 == strcmp("/fanfun/mocbud", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "some-moon-name");
-    c3_assert(0 == strcmp("/fanfun/mocbud/some-moon-name", pax_u->str_c));
+    c3_assert(0 == strcmp("/fanfun/mocbud/some-moon-name", c3_path_str(pax_u)));
 
     c3_path_pop(pax_u);
-    c3_assert(0 == strcmp("/fanfun/mocbud", pax_u->str_c));
+    c3_assert(0 == strcmp("/fanfun/mocbud", c3_path_str(pax_u)));
 
     c3_path_pop(pax_u);
-    c3_assert(0 == strcmp("/fanfun", pax_u->str_c));
+    c3_assert(0 == strcmp("/fanfun", c3_path_str(pax_u)));
 
     c3_path_pop(pax_u);
-    c3_assert(0 == strcmp("/", pax_u->str_c));
+    c3_assert(0 == strcmp("/", c3_path_str(pax_u)));
 
     c3_path_pop(pax_u);
-    c3_assert(0 == strcmp("", pax_u->str_c));
-    c3_assert(0 == pax_u->len_i);
+    c3_assert(0 == strcmp("", c3_path_str(pax_u)));
 
     c3_path_pop(pax_u);
     c3_path_pop(pax_u);
     c3_path_pop(pax_u);
 
-    c3_free(pax_u);
+    c3_path_free(pax_u);
   }
 
   // Push special components onto relative path.
@@ -161,33 +160,33 @@ _test_path_push_pop(void)
     c3_assert(pax_u = c3_path_fv(2, "~", "fanfun-mocbud"));
 
     c3_path_push(pax_u, "its-snack-time");
-    c3_assert(0 == strcmp("~/fanfun-mocbud/its-snack-time", pax_u->str_c));
+    c3_assert(0 == strcmp("~/fanfun-mocbud/its-snack-time", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, ".");
-    c3_assert(0 == strcmp("~/fanfun-mocbud/its-snack-time", pax_u->str_c));
+    c3_assert(0 == strcmp("~/fanfun-mocbud/its-snack-time", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "");
-    c3_assert(0 == strcmp("~/fanfun-mocbud/its-snack-time", pax_u->str_c));
+    c3_assert(0 == strcmp("~/fanfun-mocbud/its-snack-time", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, NULL);
-    c3_assert(0 == strcmp("~/fanfun-mocbud/its-snack-time", pax_u->str_c));
+    c3_assert(0 == strcmp("~/fanfun-mocbud/its-snack-time", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "..");
-    c3_assert(0 == strcmp("~/fanfun-mocbud", pax_u->str_c));
+    c3_assert(0 == strcmp("~/fanfun-mocbud", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "..");
-    c3_assert(0 == strcmp("~", pax_u->str_c));
+    c3_assert(0 == strcmp("~", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "..");
-    c3_assert(0 == strcmp("", pax_u->str_c));
+    c3_assert(0 == strcmp("", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "/");
-    c3_assert(0 == strcmp("/", pax_u->str_c));
+    c3_assert(0 == strcmp("/", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "..");
-    c3_assert(0 == strcmp("/", pax_u->str_c));
+    c3_assert(0 == strcmp("/", c3_path_str(pax_u)));
 
-    c3_free(pax_u);
+    c3_path_free(pax_u);
   }
 
   // Start with empty path.
@@ -196,22 +195,22 @@ _test_path_push_pop(void)
     c3_assert(pax_u = c3_path_fv(0));
 
     c3_path_push(pax_u, "a");
-    c3_assert(0 == strcmp("a", pax_u->str_c));
+    c3_assert(0 == strcmp("a", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "b");
-    c3_assert(0 == strcmp("a/b", pax_u->str_c));
+    c3_assert(0 == strcmp("a/b", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "c");
-    c3_assert(0 == strcmp("a/b/c", pax_u->str_c));
+    c3_assert(0 == strcmp("a/b/c", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "d");
-    c3_assert(0 == strcmp("a/b/c/d", pax_u->str_c));
+    c3_assert(0 == strcmp("a/b/c/d", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "e");
-    c3_assert(0 == strcmp("a/b/c/d/e", pax_u->str_c));
+    c3_assert(0 == strcmp("a/b/c/d/e", c3_path_str(pax_u)));
 
     c3_path_push(pax_u, "f");
-    c3_assert(0 == strcmp("a/b/c/d/e/f", pax_u->str_c));
+    c3_assert(0 == strcmp("a/b/c/d/e/f", c3_path_str(pax_u)));
 
     c3_path_pop(pax_u);
     c3_path_pop(pax_u);
@@ -220,9 +219,9 @@ _test_path_push_pop(void)
     c3_path_pop(pax_u);
     c3_path_pop(pax_u);
 
-    c3_assert(0 == strcmp("", pax_u->str_c));
+    c3_assert(0 == strcmp("", c3_path_str(pax_u)));
 
-    c3_free(pax_u);
+    c3_path_free(pax_u);
   }
 }
 

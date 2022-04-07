@@ -64,7 +64,7 @@ _epoc_path(const c3_path* const par_u, const c3_d fir_d)
   c3_c dir_c[sizeof(epo_pre_c) + sizeof(lar_c)];
   snprintf(dir_c, sizeof(dir_c), "%s%" PRIu64, epo_pre_c, fir_d);
 
-  return c3_path_fv(2, par_u->str_c, dir_c);
+  return c3_path_fv(2, c3_path_str(par_u), dir_c);
 }
 
 //! Open an epoch LMDB environment.
@@ -101,10 +101,11 @@ _lmdb_init(const c3_path* const pax_u)
            goto close_env,
            "failed to set max number of databases");
 
-  try_lmdb(mdb_env_open(env_u, pax_u->str_c, 0, 0664),
+  const c3_c* pax_c = c3_path_str(pax_u);
+  try_lmdb(mdb_env_open(env_u, pax_c, 0, 0664),
            goto close_env,
            "failed to open environment at %s",
-           pax_u->str_c);
+           pax_c);
 
   goto succeed;
 
@@ -183,12 +184,12 @@ _move(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c)
   c3_t suc_t = 0;
 
   c3_path_push(src_u, nam_c);
-  if ( 0 != access(src_u->str_c, R_OK | W_OK) ) {
+  if ( 0 != access(c3_path_str(src_u), R_OK | W_OK) ) {
     goto pop_src_path;
   }
 
   c3_path_push(dst_u, nam_c);
-  if ( 0 != rename(src_u->str_c, dst_u->str_c) ) {
+  if ( 0 != rename(c3_path_str(src_u), c3_path_str(dst_u)) ) {
     goto pop_dst_path;
   }
 
@@ -206,7 +207,7 @@ end:
 static inline c3_t
 _is_first_epoc(const c3_path* const pax_u)
 {
-  c3_c* sar_c = strstr(pax_u->str_c, fir_nam_c);
+  c3_c* sar_c = strstr(c3_path_str(pax_u), fir_nam_c);
   return sar_c && 0 == strcmp(sar_c, fir_nam_c);
 }
 
@@ -230,7 +231,7 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
   poc_u->fir_d = fir_d;
   poc_u->las_d = fir_d - 1;
   poc_u->pax_u = _epoc_path(par_u, poc_u->fir_d);
-  mkdir(poc_u->pax_u->str_c, 0700);
+  mkdir(c3_path_str(poc_u->pax_u), 0700);
 
   if ( !(poc_u->env_u = _lmdb_init(poc_u->pax_u)) ) {
     goto free_epoc;
@@ -238,7 +239,7 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
 
   if ( epo_min_d != fir_d ) {
     u3e_save();
-    c3_assert(c3y == u3e_copy(poc_u->pax_u->str_c)); // (1)
+    c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u))); // (1)
   }
   else {
     c3_path_push(poc_u->pax_u, lif_nam_c);
@@ -277,7 +278,7 @@ u3_epoc_migrate(const c3_path* const par_u,
   poc_u->fir_d   = epo_min_d;
   poc_u->las_d   = epo_min_d - 1;
   poc_u->pax_u   = _epoc_path(par_u, epo_min_d);
-  mkdir(poc_u->pax_u->str_c, 0700);
+  mkdir(c3_path_str(poc_u->pax_u), 0700);
 
   { // (1)
     if ( !_move(src_u, poc_u->pax_u, "data.mdb") ) {
@@ -385,7 +386,7 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
 
   u3_epoc* poc_u = c3_calloc(sizeof(*poc_u));
 
-  poc_u->pax_u = c3_path_fv(1, pax_u->str_c);
+  poc_u->pax_u = c3_path_fv(1, c3_path_str(pax_u));
 
   if ( !(poc_u->env_u = _lmdb_init(poc_u->pax_u)) ) {
     goto free_epoc;
@@ -614,7 +615,7 @@ u3_epoc_close(u3_epoc* const poc_u)
     mdb_env_close(poc_u->env_u);
   }
   if ( poc_u->pax_u ) {
-    c3_free(poc_u->pax_u);
+    c3_path_free(poc_u->pax_u);
   }
 }
 

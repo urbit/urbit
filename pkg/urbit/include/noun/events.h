@@ -38,10 +38,10 @@ typedef struct {
 
 //! Incremental snapshot system.
 typedef struct {
-  c3_c*     dir_c;                 //!< path to
-  c3_w      dit_w[u3a_pages >> 5]; //!< pages touched since last u3e_save()
-  u3e_image nor_u;                 //!< north segment
-  u3e_image sou_u;                 //!< south segment
+  const c3_c* dir_c;                 //!< path to
+  c3_w        dit_w[u3a_pages >> 5]; //!< pages touched since last u3e_save()
+  u3e_image   nor_u;                 //!< north segment
+  u3e_image   sou_u;                 //!< south segment
 } u3e_pool;
 
 //==============================================================================
@@ -96,7 +96,7 @@ u3e_copy(const c3_c* const dir_c);
 //!
 //! @return c3n  Existing snapshot loaded.
 c3_o
-u3e_load(c3_c* dir_c);
+u3e_load(const c3_c* dir_c);
 
 //! Start the incremental snapshot system.
 //!
@@ -105,7 +105,7 @@ u3e_load(c3_c* dir_c);
 //! @return c3y  No existing snapshot.
 //! @return c3n  Existing snapshot loaded.
 c3_o
-u3e_live(c3_c* dir_c);
+u3e_live(const c3_c* dir_c);
 
 //! Disable dirty page tracking allowing read/write of entire loom.
 c3_o

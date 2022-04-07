@@ -52,16 +52,17 @@ c3_bile_open(const c3_path* const pax_u)
 
   bil_u->pax_u = c3_path_fp(pax_u);
 
-  try_syscall(bil_u->fid_i = open(bil_u->pax_u->str_c, O_RDWR | O_CREAT, 0666),
+  const c3_c* pax_c = c3_path_str(bil_u->pax_u);
+  try_syscall(bil_u->fid_i = open(pax_c, O_RDWR | O_CREAT, 0666),
               goto free_file,
               "failed to open %s",
-              bil_u->pax_u->str_c);
+              pax_c);
 
   struct stat buf_u;
   try_syscall(fstat(bil_u->fid_i, &buf_u),
               goto close_file,
               "failed to get %s stats",
-              bil_u->pax_u->str_c);
+              pax_c);
 
   bil_u->len_i = buf_u.st_size;
   goto succeed;
@@ -118,7 +119,7 @@ c3_bile_put_raw(c3_bile* const    bil_u,
   goto succeed;
 
 abandon_write: // (3)
-  try_syscall(truncate(bil_u->pax_u->str_c, bil_u->len_i), goto fail);
+  try_syscall(truncate(c3_path_str(bil_u->pax_u), bil_u->len_i), goto fail);
   try_syscall(lseek(bil_u->fid_i, bil_u->len_i, SEEK_SET), goto fail);
   bil_u->off_i = bil_u->len_i;
 fail:

@@ -650,7 +650,7 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 {
   c3_o ret_o = c3n;
 
-  _mars_step_trace(mar_u->dir_u->str_c);
+  _mars_step_trace(c3_path_str(mar_u->dir_u));
 
   //  XX optimize for stateless tasks w/ peek-next
   //
@@ -872,7 +872,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     try_evlo(mar_u->log_u = u3_evlo_open(mar_u->dir_u, &mar_u->met_u),
              goto free_mars,
              "failed to open event log at %s",
-             mar_u->dir_u->str_c);
+             c3_path_str(mar_u->dir_u));
 
     if ( 0 == mar_u->dun_d ) { // (2)
       try_evlo(u3_evlo_replay(mar_u->log_u,
@@ -1305,7 +1305,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
 //! @n (4) First four bytes are for mug, and the mug for boot events is 0.
 //! @n (5) Create single event out of boot events and attempt to boot.
 c3_o
-u3_mars_boot(c3_c* dir_c, u3_noun com)
+u3_mars_boot(const c3_c* dir_c, u3_noun com)
 {
   c3_o suc_o = c3n;
 
@@ -1334,17 +1334,17 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
 
   // (1)
   c3_path* pax_u = c3_path_fv(1, dir_c);
-  mkdir(pax_u->str_c, 0700);
+  mkdir(c3_path_str(pax_u), 0700);
 
   c3_path_push(pax_u, ".urb");
-  mkdir(pax_u->str_c, 0700);
+  mkdir(c3_path_str(pax_u), 0700);
 
   c3_path_push(pax_u, "put");
-  mkdir(pax_u->str_c, 0700);
+  mkdir(c3_path_str(pax_u), 0700);
   c3_path_pop(pax_u);
 
   c3_path_push(pax_u, "get");
-  mkdir(pax_u->str_c, 0700);
+  mkdir(c3_path_str(pax_u), 0700);
   c3_path_pop(pax_u);
 
   c3_path_push(pax_u, "log");
@@ -1379,7 +1379,7 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
 free_event_log:
   u3_evlo_close(log_u);
   c3_free(log_u);
-  c3_free(pax_u);
+  c3_path_free(pax_u);
 
 end:
   return suc_o;

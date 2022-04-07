@@ -86,10 +86,10 @@ extern const c3_d epo_min_d;
 //==============================================================================
 
 //! Get the path of an epoch.
-static inline c3_c*
+static inline const c3_c*
 u3_epoc_path(const u3_epoc* const poc_u)
 {
-  return poc_u->pax_u->str_c;
+  return c3_path_str(poc_u->pax_u);
 }
 
 //! Get the ID of the first committed event in an epoch.

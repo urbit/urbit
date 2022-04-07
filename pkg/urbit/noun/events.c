@@ -942,7 +942,7 @@ exit:
 }
 
 c3_o
-u3e_load(c3_c* dir_c)
+u3e_load(const c3_c* dir_c)
 {
   c3_assert(dir_c);
 
@@ -970,7 +970,7 @@ u3e_load(c3_c* dir_c)
 /* u3e_live(): start the checkpointing system.
 */
 c3_o
-u3e_live(c3_c* dir_c)
+u3e_live(const c3_c* dir_c)
 {
   c3_o nuu_o = c3n;
 

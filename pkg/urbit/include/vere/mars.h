@@ -61,17 +61,17 @@ typedef struct {
 // Functions
 //==============================================================================
 
-//! Boot a new ship.
+//! Try to send a task into mars.
 c3_o
-u3_mars_boot(c3_c* dir_c, u3_noun com);
+u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y);
 
 //! Restart an existing ship.
 u3_mars*
 u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d);
 
-//! Try to send a task into mars.
+//! Boot a new ship.
 c3_o
-u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y);
+u3_mars_boot(const c3_c* dir_c, u3_noun com);
 
 //! Garbage collect.
 void

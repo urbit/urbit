@@ -5,6 +5,17 @@
 #include "c/defs.h"
 
 //==============================================================================
+// Types
+//==============================================================================
+
+//! File path. Typedefed to c3_path.
+struct _c3_path {
+  size_t cap_i; //!< number of bytes allocated for `str_c`
+  size_t len_i; //!< length of `str_c` (equivalent to `strlen(str_c)`)
+  c3_c*  str_c; //!< path string (null-terminated)
+};
+
+//==============================================================================
 // Constants
 //==============================================================================
 
@@ -75,6 +86,12 @@ c3_path_fv(const size_t tok_i, ...)
   return c3_path_fa(tok_c, tok_i);
 }
 
+const c3_c*
+c3_path_str(const c3_path* const pax_u)
+{
+  return pax_u->str_c;
+}
+
 //! @n (1) The root directory is its own parent.
 //! @n (2) Double the needed size to minimize future allocations.
 void
@@ -130,6 +147,12 @@ c3_path_pop(c3_path* const pax_u)
   }
   *sep_c       = '\0';
   pax_u->len_i = strlen(pax_u->str_c);
+}
+
+c3_t
+c3_path_eq(const c3_path* const lef_u, const c3_path* const rih_u)
+{
+  return lef_u && rih_u && 0 == strcmp(lef_u->str_c, rih_u->str_c);
 }
 
 void

@@ -10,7 +10,7 @@ static inline void
 _cleanup(c3_path* const pax_u, c3_bile* bil_u)
 {
   c3_free(pax_u);
-  unlink(bil_u->pax_u->str_c);
+  unlink(c3_path_str(bil_u->pax_u));
   c3_bile_close(bil_u);
   c3_free(bil_u);
 }

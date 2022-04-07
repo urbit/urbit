@@ -273,10 +273,10 @@ u3_evlo*
 u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u)
 {
   u3_evlo* log_u = c3_calloc(sizeof(*log_u));
-  if ( !(log_u->pax_u = c3_path_fv(1, pax_u->str_c)) ) {
+  if ( !(log_u->pax_u = c3_path_fv(1, c3_path_str(pax_u))) ) {
     goto free_event_log;
   }
-  mkdir(log_u->pax_u->str_c, 0700);
+  mkdir(c3_path_str(log_u->pax_u), 0700);
 
   if ( !_create_metadata_files(log_u, met_u) ) { // (1)
     goto free_event_log;
@@ -311,13 +311,13 @@ u3_evlo*
 u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u)
 {
   u3_evlo* log_u = c3_calloc(sizeof(*log_u));
-  if ( !(log_u->pax_u = c3_path_fv(1, pax_u->str_c)) ) {
+  if ( !(log_u->pax_u = c3_path_fv(1, c3_path_str(pax_u))) ) {
     goto free_event_log;
   }
 
   { // (1)
     c3_path_push(log_u->pax_u, "data.mdb");
-    c3_i ret_i = access(log_u->pax_u->str_c, R_OK | W_OK);
+    c3_i ret_i = access(c3_path_str(log_u->pax_u), R_OK | W_OK);
     c3_path_pop(log_u->pax_u);
     if ( 0 == ret_i ) {
       if ( !_migrate(log_u, met_u) ) {
@@ -347,7 +347,7 @@ u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u)
 
   c3_c(*ent_c)[sizeof(((struct dirent*)NULL)->d_name)];
   size_t ent_i;
-  if ( !_read_epoc_dirs(log_u->pax_u->str_c, &ent_c, &ent_i) ) {
+  if ( !_read_epoc_dirs(c3_path_str(log_u->pax_u), &ent_c, &ent_i) ) {
     goto free_event_log;
   }
 
@@ -604,7 +604,7 @@ u3_evlo_close(u3_evlo* const log_u)
   }
 
   if ( log_u->pax_u ) {
-    c3_free(log_u->pax_u);
+    c3_path_free(log_u->pax_u);
   }
 
   { // (2)

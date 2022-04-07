@@ -21,29 +21,13 @@
 // Types
 //==============================================================================
 
-//! Path handle.
-typedef struct {
-  size_t cap_i;   //!< number of bytes allocated for `str_c`
-  size_t len_i;   //!< length of `str_c` (equivalent to `strlen(str_c)`)
-  c3_c*  str_c;   //!< path string (null-terminated)
-} c3_path;
+//! File path.
+struct _c3_path;
+typedef struct _c3_path c3_path;
 
 //==============================================================================
 // Functions
 //==============================================================================
-
-//! Determine if two paths are equivalent.
-//!
-//! @param[in] lef_u  Path handle.
-//! @param[in] rih_u  Path handle.
-//!
-//! @return 0  Paths don't match.
-//! @return 1  Paths match.
-static inline c3_t
-c3_path_eq(const c3_path* const lef_u, const c3_path* const rih_u)
-{
-  return lef_u && rih_u && 0 == strcmp(lef_u->str_c, rih_u->str_c);
-}
 
 //! Construct a path from an array of strings.
 //!
@@ -74,11 +58,20 @@ c3_path_fp(const c3_path* const pax_u);
 //!
 //! @param[in] tok_i  Number of components of the path. If 0, an empty path is
 //!                   created.
-//! @param[in] ...    Components of the path. Must be valid C string.
+//! @param[in] ...    Components of the path. Must be valid C string(s).
 //!
 //! @return  Path handle. Must be freed by caller.
 c3_path*
 c3_path_fv(const size_t tok_i, ...);
+
+//! Get the string representation of a path.
+//!
+//! @param[in] pax_u  Path handle.
+//!
+//! @return  String representation of `pax_u` or NULL if `pax_u` is NULL or
+//!          empty.
+const c3_c*
+c3_path_str(const c3_path* const pax_u);
 
 //! Push a component onto the end of a path.
 //!
@@ -96,6 +89,16 @@ c3_path_push(c3_path* pax_u, const c3_c* const tok_c);
 //! @param[in] pax_u  Path handle.
 void
 c3_path_pop(c3_path* const pax_u);
+
+//! Determine if two paths are equivalent.
+//!
+//! @param[in] lef_u  Path handle.
+//! @param[in] rih_u  Path handle.
+//!
+//! @return 0  Paths don't match.
+//! @return 1  Paths match.
+c3_t
+c3_path_eq(const c3_path* const lef_u, const c3_path* const rih_u);
 
 //! Free a path.
 //!
