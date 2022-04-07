@@ -27,7 +27,6 @@ export function LinkDetail(props: LinkDetailProps) {
   return (
     /*  @ts-ignore indio props?? */
     <Row height="100%" width="100%" flexDirection={['column', 'column', 'row']} {...rest}>
-      <LinkBlockItem minWidth="0" minHeight="0" height={['50%', '50%', '100%']} width={['100%', '100%', 'calc(100% - 350px)']} flexGrow={0} border={0} node={node} />
       <LinkBlockItem
         minWidth="0"
         minHeight="0"
