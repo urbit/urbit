@@ -2064,6 +2064,7 @@
         ?>  ?=(^ xap)
         ?.  ?=(%hoon i.xap)  ~
         :^  ~  (flop t.xap)  %hoon
+        ~|  pax=path
         ?-  -.dat
           %&  (page-to-cord p.dat)
           %|  (lobe-to-cord p.dat)
@@ -5327,15 +5328,43 @@
       ..^$
     ((slog tang) ..^$)
   ::
+  ++  draw-raft
+    ^-  (set [norm yaki])
+    =/  room-yakis
+      =/  rooms=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
+      |-  ^-  (set [norm yaki])
+      ?~  rooms
+        ~
+      ~&  >  desk=desk.i.rooms
+      (~(uni in $(rooms t.rooms)) (draw-dome dom.dojo.i.rooms))
+    =/  rung-yakis
+      =/  rungs=(list [=ship =rung])  ~(tap by hoy.ruf)
+      |-  ^-  (set [norm yaki])
+      ?~  rungs
+        ~
+      %-  ~(uni in $(rungs t.rungs))
+      =/  redes=(list [=desk =rede])  ~(tap by rus.rung.i.rungs)
+      |-  ^-  (set [norm yaki])
+      ?~  redes
+        ~
+      ~&  >  [ship=ship.i.rungs desk=desk.i.redes]
+      (~(uni in $(redes t.redes)) (draw-dome dom.rede.i.redes))
+    (~(uni in room-yakis) rung-yakis)
+  ::
   ++  draw-dome
     |=  =dome
     ^-  (set [norm yaki])
+    =/  keep-all=norm  (~(put ^de *norm) / &)
     =/  =aeon  1
     |-  ^-  (set [norm yaki])
     ?:  (lth let.dome aeon)
       ~
     =/  =tako  (~(got by hit.dome) aeon)
-    (~(uni in (draw-tako tom.dome nor.dome tako)) $(aeon +(aeon)))
+    =/  nor
+      ?:  =(let.dome aeon)
+        keep-all
+      nor.dome
+    (~(uni in (draw-tako tom.dome nor tako)) $(aeon +(aeon)))
   ::
   ++  draw-tako
     |=  [tom=(map tako norm) nor=norm =tako]
@@ -5350,8 +5379,10 @@
       (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
     (~(put in takos) norm yaki)
   ::
-  ::
   ::  +pick: copying gc based on norms
+  ::
+  ::  XX somehow this seems to be able to tombstone something in our
+  ::  head!
   ::
   ++  pick
     =|  lat=(map lobe blob)
@@ -5363,30 +5394,7 @@
     ::
     ++  pick-raft
       ^+  ..pick-raft
-      =.  ..pick-raft
-        =/  rooms=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
-        |-  ^+  ..pick-raft
-        ?~  rooms
-          ..pick-raft
-        $(rooms t.rooms, ..pick-raft (pick-dome dom.dojo.i.rooms))
-      =.  ..pick-raft
-        =/  rungs=(list [=ship =rung])  ~(tap by hoy.ruf)
-        |-  ^+  ..pick-raft
-        ?~  rungs
-          ..pick-raft
-        =.  ..pick-raft
-          =/  redes=(list [=desk =rede])  ~(tap by rus.rung.i.rungs)
-          |-
-          ?~  redes
-            ..pick-raft
-          $(redes t.redes, ..pick-raft (pick-dome dom.rede.i.redes))
-        $(rungs t.rungs)
-      ..pick-raft
-    ::
-    ++  pick-dome
-      |=  =dome
-      ^+  ..pick-raft
-      =/  yakis=(list [=norm =yaki])  ~(tap in (draw-dome dome))
+      =/  yakis=(list [=norm =yaki])  ~(tap in draw-raft)
       |-  ^+  ..pick-raft
       ?~  yakis
         ..pick-raft
@@ -5422,8 +5430,7 @@
       ?-    -.u.bob
           %dead    [[lobe u.bob] ~ ~]
           %direct  [[lobe u.bob] ~ ~]
-          %delta
-        (~(put by $(lobe q.u.bob)) lobe u.bob)
+          %delta   (~(put by $(lobe q.u.bob)) lobe u.bob)
       ==
     --
   --
