@@ -70,6 +70,7 @@
   ::  TODO make this work with a list of topics
   |=  [topics=(list term) sut=type rec=?]
   ^-  (unit item)
+  ~?  >  debug  topics
   ?~  topics
       ::  we have no more search paths, return an overview of what remains
       (signify sut)
@@ -258,8 +259,25 @@
 ++  what-from-hint
   |=  sut=type
   ^-  what
-  ?+    sut
-      ~
+  ?-    sut
+   ::   ~?  >  debug  %what-from-hint-miss  ~
+      %noun  ~?  >>  debug  %what-from-hint-noun-miss  ~
+      %void  ~?  >>  debug  %what-from-hint-void-miss  ~
+  ::
+      [%core *]
+    ~?  >>  debug  %what-from-hint-core-miss  ~
+  ::
+      [%cell *]
+    ~?  >>  debug  %what-from-hint-cell-miss  ~
+  ::
+      [%face *]
+    ~?  >>  debug  %what-from-hint-face-miss  ~
+  ::
+      [%fork *]
+    ~?  >>  debug  %what-from-hint-fork-miss  ~
+  ::
+      [%atom *]
+    ~?  >>  debug  %what-from-hint-atom-miss  ~
   ::
       [%hold *]
     ~?  >>  debug  %what-from-hint-hold  $(sut (~(play ut p.sut) q.sut))
@@ -311,6 +329,7 @@
     ~?  >  debug  %doc-two-empty
     ?~  links.u.doc-one
       :: if links are empty, doc-one is a product-doc
+      ~?  >  debug  %link-empty
       [~ [~ `crib.u.doc-one]]
     ?:  =([%funk name] i.links.u.doc-one)
       :: if links are non-empty, check that the link is for the arm
@@ -343,7 +362,7 @@
   ^-  [what what what]
   =+  hoon-type=(~(play ut sut) gen)
   =+  arm-prod=(arm-product-docs hoon-type `@tas`(crip name))
-  ~?  >>  debug  :-  %arm-prod  arm-prod
+  ::~?  >>  debug  :-  %arm-prod  arm-prod
   |^
   :: check arm-prod to determine how many layers to look into the type
   :: for core docs
@@ -373,6 +392,7 @@
     =+  carm=(find-arm-in-coil %$ q.sut)
     ?~  carm  ~?  >  debug  %empty-carm  ~
     ~?  >  debug  %found-default-arm
+    ::~?  >>>  debug  u.carm
     =+  carm-type=(~(play ut p.sut) u.carm)
     (what-from-hint carm-type)
   --
@@ -474,6 +494,7 @@
 :>    prints a doccords item
 ++  print-item
   |=  =item
+  ~?  >>  debug  %print-item
   ^-  tang
   ?-  item
     [%view *]     (print-overview items.item)
@@ -539,6 +560,7 @@
 ++  print-face
   |=  [name=tape doc=what children=(unit item)]
   ^-  tang
+  ~?  >>  debug  %print-face
   %+  weld
     (print-header name doc)
     ?~  children
@@ -549,6 +571,7 @@
 ++  print-header
   |=  [name=tape doc=what]
   ^-  tang
+  ~?  >>  debug  %print-header
   ?~  name
     ?~  doc
       [%leaf "(undocumented)"]~
@@ -564,6 +587,7 @@
 ++  print-overview
   |=  =overview
   ^-  tang
+  ~?  >>  debug  %print-overview
   =|  out=tang
   |-
   ?~  overview  out
