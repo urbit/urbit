@@ -447,7 +447,7 @@
   ::
   ++  fit
     |=  pax=path
-    ^+  [path fat]
+    ^+  [pax fil.fat]
     ?~  pax  [~ fil.fat]
     =/  kid  (~(get by dir.fat) i.pax)
     ?~  kid  [pax fil.fat]

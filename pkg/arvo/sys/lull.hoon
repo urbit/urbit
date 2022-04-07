@@ -788,6 +788,11 @@
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
   +$  blob                                              ::  fs blob
+    $%  [%delta p=lobe q=lobe r=page]                   ::  delta on q
+        [%direct p=lobe q=page]                         ::  immediate
+        [%dead p=lobe ~]                                ::  tombstone
+    ==                                                  ::
+  +$  blub                                              ::  over-the-wire blob
     $%  [%delta p=lobe q=[p=mark q=lobe] r=page]        ::  delta on q
         [%direct p=lobe q=page]                         ::  immediate
         [%dead p=lobe ~]                                ::  tombstone
@@ -858,7 +863,7 @@
     ==                                                  ::
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  (cask *)                                    ::  untyped cage
-  +$  plop  blob                                        ::  unvalidated blob
+  +$  plop  blub                                        ::  unvalidated blob
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe blob)                             ::  data

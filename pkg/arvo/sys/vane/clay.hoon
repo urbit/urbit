@@ -114,15 +114,13 @@
 ::  having changed; this lets us short-circuit that in some cases.
 ::  Whenever you give an `%ergo`, you must update this.
 ::
-::  XX state upgrade, added `tom` and `nor`
-::
 +$  dome
   $:  ank=ankh                                          ::  state
       let=aeon                                          ::  top id
       hit=(map aeon tako)                               ::  versions by id
       lab=(map @tas aeon)                               ::  labels
-      ::  tom=(map tako norm)                               ::  tomb policies
-      ::  nor=norm                                          ::  future policy
+      tom=(map tako norm)                               ::  tomb policies
+      nor=norm                                          ::  default policy
       mim=(map path mime)                               ::  mime cache
       fod=ford-cache                                    ::  ford cache
   ==                                                    ::
@@ -453,6 +451,24 @@
       %delta   o
       %dead    n
   ==
+::
+++  blob-to-blub
+  |=  =blob
+  ^-  blub
+  ?-  -.blob
+    %dead    blob
+    %direct  blob
+    %delta   blob(q [%blub q.blob])
+  ==
+::
+++  blub-to-blob
+  |=  =blub
+  ^-  blob
+  ?-  -.blub
+    %dead    blub
+    %direct  blub
+    %delta   blub(q q.q.blub)
+  ==
 --  =>
 ~%  %clay  +  ~
 |%
@@ -781,7 +797,7 @@
           %dead    ~|(lobe-to-page-dead+lobe !!)
           %direct  [q.blob nub]
           %delta
-        =/  [[=mark =parent=^lobe] diff=page]  [q r]:blob
+        =/  [=parent=^lobe diff=page]  [q r]:blob
         =^  parent-page  nub  $(blob (~(got by file-store) parent-lobe))
         =^  =cage  nub  (run-pact parent-page diff)
         [[p q.q]:cage nub]
@@ -796,7 +812,7 @@
           %dead    [~ nub]
           %direct  [`q.blob nub]
           %delta
-        =/  [[=mark =parent=^lobe] diff=page]  [q r]:blob
+        =/  [=parent=^lobe diff=page]  [q r]:blob
         =^  parent-page  nub  $(blob (~(got by file-store) parent-lobe))
         ?~  parent-page
           [~ nub]
@@ -1800,7 +1816,7 @@
         :-  %|
         %+  lurk:differ
           =-  ?:(?=(%| -<) p.- (to-wain:format p.-))
-          $(lobe q.q.blob)
+          $(lobe q.blob)
         ;;((urge cord) q.r.blob)
       ==
     ::
@@ -3053,7 +3069,7 @@
   ++  give-backfill
     |=  =lobe
     ^+  ..give-backfill
-    (emit hen %give %boon (lobe-to-blob:ze lobe))
+    (emit hen %give %boon (blob-to-blub (lobe-to-blob:ze lobe)))
   ::
   ::  Ingest foreign update, requesting missing blobs if necessary
   ::
@@ -3123,9 +3139,10 @@
     ::  Receive backfill response
     ::
     ++  take-backfill
-      |=  =blob
+      |=  =blub
       ^+  ..abet
       ?:  lost  ..abet
+      =/  =blob  (blub-to-blob blub)
       ?:  ?&  ?=(%dead -.blob)
               (lien let.need.sat |=(=lobe =(p.blob lobe)))
           ==
@@ -3133,13 +3150,13 @@
         ..abet
       =?  need.sat  ?=(%delta -.blob)
         ?.  (lien let.need.sat |=(=lobe =(p.blob lobe)))
-          ?:  ?&  !(~(has by lat.ran) q.q.blob)
-                  !(~(has by have.sat) q.q.blob)
+          ?:  ?&  !(~(has by lat.ran) q.blob)
+                  !(~(has by have.sat) q.blob)
               ==
-            [let.need.sat [q.q.blob old.need.sat]]
+            [let.need.sat [q.blob old.need.sat]]
           need.sat
-        =/  one  (~(get by lat.ran) q.q.blob)
-        =/  two  (~(get by have.sat) q.q.blob)
+        =/  one  (~(get by lat.ran) q.blob)
+        =/  two  (~(get by have.sat) q.blob)
         ?:  ?&  ?|  ?=(~ one)
                     ?=(%dead -.u.one)
                 ==
@@ -3147,13 +3164,13 @@
                     ?=(%dead -.u.two)
                 ==
             ==
-          [[q.q.blob let.need.sat] old.need.sat]
+          [[q.blob let.need.sat] old.need.sat]
         need.sat
       ::  We can't put a blob in lat.ran if its parent isn't already
       ::  there.
       ::
       =.  ..abet
-        ?:  &(?=(%delta -.blob) !(~(has by lat.ran) q.q.blob))
+        ?:  &(?=(%delta -.blob) !(~(has by lat.ran) q.blob))
           ..abet(have.sat (uni-blobs have.sat (malt [p.blob `^blob`blob] ~)))
         ..abet(lat.ran (uni-blobs lat.ran (malt [p.blob blob] ~)))
       work(busy.sat |)
@@ -3236,7 +3253,7 @@
       =/  hit  (~(uni by hit.dom) gar.nako)
       =/  nut  (turn ~(tap in lar.nako) |=(=yaki [r.yaki yaki]))
       =/  hut  (~(uni by (malt nut)) hut.ran)
-      =/  nat  (turn ~(tap in bar.nako) |=(=blob [p.blob blob]))
+      =/  nat  (turn ~(tap in bar.nako) |=(=blub [p.blub (blub-to-blob blub)]))
       =/  lat  (uni-blobs lat.ran (malt nat))
       ::  traverse updated state and sanity check
       ::
@@ -3658,7 +3675,7 @@
       ^-  (unit mark)
       =>  (lobe-to-blob a)
       ?-  -
-        %delta      `p.q
+        %delta      `p.r
         %direct     `p.q
         %dead       ~
       ==
@@ -4089,7 +4106,7 @@
               %dead    ~
               %direct  `;;(@t q.q.bol)
               %delta
-            =+  txt=$(u.lob q.q.bol)
+            =+  txt=$(u.lob q.bol)
             ?~  txt
               ~
             ?>  ?=(%txt-diff p.r.bol)
@@ -4213,7 +4230,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%11                                       ::  vane version
+    $:  ver=%12                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4472,18 +4489,77 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%11 raft-11]
+        $%  [%12 raft-12]
+            [%11 raft-11]
             [%10 raft-10]
             [%9 raft-9]
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-11  raft
+      +$  raft-12  raft
+      +$  raft-11
+        $:  rom=room-11
+            hoy=(map ship rung-11)
+            ran=rang-11
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+        ==
+      +$  rang-11
+        $:  hut=(map tako yaki)
+            lat=(map lobe blub)
+        ==
+      +$  room-11
+        $:  hun=duct
+            dos=(map desk dojo-11)
+        ==
+      +$  dojo-11
+        $:  qyx=cult
+            dom=dome-11
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dome-11
+        $:  ank=ankh
+            let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            mim=(map path mime)
+            fod=ford-cache
+        ==
+      +$  rung-11
+        $:  rus=(map desk rede-11)
+        ==
+      +$  rede-11
+        $:  lim=@da
+            ref=(unit rind-11)
+            qyx=cult
+            dom=dome-11
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  rind-11
+        $:  nix=@ud
+            bom=(map @ud update-state-11)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-11
+        $:  =duct
+            =rave
+            have=(map lobe blub)
+            need=[let=(list lobe) old=(list lobe)]
+            nako=(qeu (unit nako))
+            busy=_|
+        ==
       +$  raft-10
         $:  rom=room-10
             hoy=(map ship rung-10)
-            ran=rang
+            ran=rang-11
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4496,7 +4572,7 @@
         ==
       +$  dojo-10
         $:  qyx=cult-10
-            dom=dome
+            dom=dome-11
             per=regs
             pew=regs
             fiz=melt
@@ -4522,7 +4598,7 @@
         $:  lim=@da
             ref=(unit rind-10)
             qyx=cult-10
-            dom=dome
+            dom=dome-11
             per=regs
             pew=regs
             fiz=melt
@@ -4536,7 +4612,7 @@
       +$  update-state-10
         $:  =duct
             =rave
-            have=(map lobe blob)
+            have=(map lobe blub)
             need=(list lobe)
             nako=(qeu (unit nako))
             busy=_|
@@ -4544,7 +4620,7 @@
       +$  raft-9
         $:  rom=room-10
             hoy=(map ship rung-10)
-            ran=rang
+            ran=rang-11
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4553,7 +4629,7 @@
       +$  raft-8
         $:  rom=room-8
             hoy=(map ship rung-8)
-            ran=rang
+            ran=rang-11
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4594,7 +4670,7 @@
       +$  raft-7
         $:  rom=room-7
             hoy=(map ship rung-7)
-            ran=rang
+            ran=rang-11
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4625,7 +4701,7 @@
       +$  raft-6
         $:  rom=room-6
             hoy=(map ship rung-6)
-            ran=rang
+            ran=rang-11
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4667,7 +4743,8 @@
   =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
   =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
-  ?>  ?=(%11 -.old)
+  =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
+  ?>  ?=(%12 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4744,21 +4821,24 @@
   ::
   ++  raft-10-to-11
     |=  raf=raft-10
-    ^-  raft-11
     |^
+    ^-  raft-11
     %=    raf
         |6       pud.raf
         dos.rom
+      ^-  (map desk dojo-11)
       %-  ~(run by dos.rom.raf)
       |=  =dojo-10
-      ^-  dojo
+      ^-  dojo-11
       dojo-10(qyx (cult-10-to-cult qyx.dojo-10))
     ::
         hoy
+      ^-  (map ship rung-11)
       %-  ~(run by hoy.raf)
       |=  =rung-10
       %-  ~(run by rus.rung-10)
       |=  =rede-10
+      ^-  rede-11
       %=    rede-10
           qyx  (cult-10-to-cult qyx.rede-10)
           ref
@@ -4768,6 +4848,7 @@
             bom.u
           %-  ~(run by bom.u.ref.rede-10)
           |=  =update-state-10
+          ^-  update-state-11
           update-state-10(need [need.update-state-10 ~])
         ==
       ==
@@ -4816,6 +4897,43 @@
       ^-  (map [=care =path] cach)
       (~(run by caches-10) cach-10-to-cach)
     --
+  ::
+  ::  +raft-11-to-12:
+  ::
+  ::    add tom and nor to dome
+  ::    remove parent-mark from delta blobs
+  ::
+  ++  raft-11-to-12
+    |=  raf=raft-11
+    ^-  raft-12
+    =/  keep-all=norm  (~(put ^de *norm) / &)
+    %=    raf
+        lat.ran  (~(run by lat.ran.raf) blub-to-blob)
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  =dojo-11
+      ^-  dojo
+      dojo-11(|4.dom [~ keep-all |4.dom.dojo-11])
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-11
+      %-  ~(run by rus.rung-11)
+      |=  =rede-11
+      ^-  rede
+      %=    rede-11
+          |4.dom  [~ keep-all |4.dom.rede-11]
+          ref
+        ?~  ref.rede-11
+          ~
+        %=    ref.rede-11
+            bom.u
+          %-  ~(run by bom.u.ref.rede-11)
+          |=  =update-state-11
+          update-state-11(have (~(run by have.update-state-11) blub-to-blob))
+        ==
+      ==
+    ==
   --
 ::
 ++  scry                                              ::  inspect
@@ -4967,7 +5085,7 @@
       !!
     ::
         %boon
-      =+  ;;  =blob  payload.hin
+      =+  ;;  =blub  payload.hin
       ::
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
@@ -4975,7 +5093,7 @@
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        abet:abet:(take-backfill:(foreign-update:den index) blob)
+        abet:abet:(take-backfill:(foreign-update:den index) blub)
       [mos ..^$]
     ==
   ::
@@ -5181,7 +5299,7 @@
       ?~  lobes
         ~
       ?:  ?&  ?=(%delta -.blob.i.lobes)
-              =(lob q.q.blob.i.lobes)
+              =(lob q.blob.i.lobes)
           ==
         `p.blob.i.lobes
       $(lobes t.lobes)
