@@ -1,4 +1,17 @@
 //! @file epoc.c
+//!
+//! Event log epoch containing a snapshot representing the state before the
+//! application of the first event in the epoch along with an LMDB instance
+//! containing all events in the epoch.
+//!
+//! As an example, the directory layout for epoch `0i101` is:
+//! ```console
+//! 0i101/
+//!   data.mdb
+//!   lock.mdb
+//!   north.bin
+//!   south.bin
+//! ```
 
 #include "vere/epoc.h"
 
@@ -9,8 +22,35 @@
 #include "vere/vere.h"
 
 //==============================================================================
+// Types
+//==============================================================================
+
+//! Iterator over an epoch's events.
+struct _u3_epoc_iter {
+  c3_t        ope_t; //!< true if iterator is open
+  MDB_txn*    txn_u; //!< LMDB read-only transaction
+  MDB_dbi     dbi_u; //!< LMDB database handle
+  MDB_cursor* cur_u; //!< LMDB cursor
+  c3_d        fir_d; //!< starting event ID of iterator
+  c3_d        cur_d; //!< current event ID of iterator
+};
+
+//! Epoch.
+struct _u3_epoc {
+  c3_path*     pax_u; //!< path to epoch directory
+  MDB_env*     env_u; //!< LMDB environment
+  c3_d         fir_d; //!< ID of first committed event
+  c3_d         las_d; //!< ID of last committed event
+  u3_epoc_iter itr_u; //!< iterator
+};
+
+//==============================================================================
 // Constants
 //==============================================================================
+
+const c3_w epo_ver_w = 1;
+
+const size_t epo_siz_i = sizeof(u3_epoc);
 
 const c3_c epo_pre_c[] = "0i";
 
@@ -22,7 +62,10 @@ const c3_d epo_min_d = 1ULL;
 //! Name of the directory housing the first epoch.
 static const c3_c const fir_nam_c[] = "0i1";
 
-//! Name of file containing the lifecycle length.
+//! Name of binary file containing the epoch version number.
+static const c3_c const ver_nam_c[] = "version.bin";
+
+//! Name of binary file containing the lifecycle length.
 static const c3_c const lif_nam_c[] = "lifecycle.bin";
 
 //==============================================================================
@@ -47,8 +90,6 @@ static const c3_c const lif_nam_c[] = "lifecycle.bin";
 //==============================================================================
 // Static functions
 //==============================================================================
-// Note that the `static` keyword is not used so that tests can surface
-// these functions by declaring the function prototype in the test file.
 
 //! Build an epoch path of the form `<par_c>/0i<fir_d>`.
 //!
@@ -56,7 +97,7 @@ static const c3_c const lif_nam_c[] = "lifecycle.bin";
 //! @param[in] fir_d
 //!
 //! @n (1) This is the largest possible unsigned 64-bit number.
-c3_path*
+static c3_path*
 _epoc_path(const c3_path* const par_u, const c3_d fir_d)
 {
   static const c3_c const lar_c[] = "18446744073709551615"; // (1)
@@ -79,7 +120,7 @@ _epoc_path(const c3_path* const par_u, const c3_d fir_d)
 //!
 //! @n (1) From the LMDB docs: "The [map size] value should be chosen as large
 //!        as possible, to accommodate future growth of the database."
-MDB_env*
+static MDB_env*
 _lmdb_init(const c3_path* const pax_u)
 {
   c3_i     ret_i;
@@ -179,7 +220,7 @@ end:
 //! @return 0  File could not be moved.
 //! @return 1  File was successfully moved.
 static c3_t
-_move(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c)
+_move_file(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c)
 {
   c3_t suc_t = 0;
 
@@ -215,10 +256,13 @@ _is_first_epoc(const c3_path* const pax_u)
 // Functions
 //==============================================================================
 
-//! @n (1) Take snapshot to save the state before the first event in the
-//!        epoch is applied unless this is the very first epoch.
+//! @n (1) Write the epoch version number to a file.
 //! @n (2) Convert to network byte order to ensure portability across platforms
 //!        of varying endianness.
+//! @n (3) Take snapshot to save the state before the first event in the
+//!        epoch is applied unless this is the very first epoch.
+//! @n (4) Write the lifecycle length to a file if this is the very first epoch.
+//! @n (5) See (2).
 u3_epoc*
 u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
 {
@@ -237,13 +281,24 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     goto free_epoc;
   }
 
-  if ( epo_min_d != fir_d ) {
-    u3e_save();
-    c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u))); // (1)
+  { // (1)
+    c3_path_push(poc_u->pax_u, ver_nam_c);
+    c3_w ver_w = htonl(epo_ver_w); // (2)
+    if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
+      goto free_epoc;
+    }
+    c3_path_pop(poc_u->pax_u);
   }
-  else {
+
+  if ( epo_min_d != fir_d ) { // (3)
+#ifndef U3_EPOC_TEST
+    u3e_save();
+    c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u)));
+#endif
+  }
+  else { // (4)
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    lif_w = htonl(lif_w); // (2)
+    lif_w = htonl(lif_w); // (5)
     if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
       goto free_epoc;
     }
@@ -265,6 +320,10 @@ succeed:
 //! @n (1) Relocate LDMB instance to the newly created epoch.
 //! @n (2) TODO(peter).
 //! @n (3) Read metadata out of LMDB instance.
+//! @n (4) Write metadata to binary files.
+//! @n (5) Convert to network byte order to ensure portability across platforms
+//!        of varying endianness.
+//! @n (6) See (5).
 u3_epoc*
 u3_epoc_migrate(const c3_path* const par_u,
                 c3_path* const       src_u,
@@ -281,10 +340,10 @@ u3_epoc_migrate(const c3_path* const par_u,
   mkdir(c3_path_str(poc_u->pax_u), 0700);
 
   { // (1)
-    if ( !_move(src_u, poc_u->pax_u, "data.mdb") ) {
+    if ( !_move_file(src_u, poc_u->pax_u, "data.mdb") ) {
       goto free_epoc;
     }
-    if ( !_move(src_u, poc_u->pax_u, "lock.mdb") ) {
+    if ( !_move_file(src_u, poc_u->pax_u, "lock.mdb") ) {
       goto rename_data_mdb;
     }
   }
@@ -349,9 +408,16 @@ u3_epoc_migrate(const c3_path* const par_u,
     mdb_txn_abort(txn_u);
   }
 
-  { // (3)
+  { // (4)
+    c3_path_push(poc_u->pax_u, ver_nam_c);
+    c3_w ver_w = htonl(met_u->ver_w); // (5)
+    if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
+      goto rename_lock_mdb;
+    }
+    c3_path_pop(poc_u->pax_u);
+
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    c3_w lif_w = htonl(met_u->lif_w);
+    c3_w lif_w = htonl(met_u->lif_w); // (6)
     if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
       goto rename_lock_mdb;
     }
@@ -363,9 +429,9 @@ u3_epoc_migrate(const c3_path* const par_u,
 abort_txn:
   mdb_txn_abort(txn_u);
 rename_lock_mdb:
-  c3_assert(_move(poc_u->pax_u, src_u, "lock.mdb"));
+  c3_assert(_move_file(poc_u->pax_u, src_u, "lock.mdb"));
 rename_data_mdb:
-  c3_assert(_move(poc_u->pax_u, src_u, "data.mdb"));
+  c3_assert(_move_file(poc_u->pax_u, src_u, "data.mdb"));
 free_epoc:
   u3_epoc_close(poc_u);
   c3_free(poc_u);
@@ -376,7 +442,11 @@ succeed:
   return poc_u;
 }
 
-//! @n (1) Read contents of lifecycle file.
+//! @n (1) Read contents of version file.
+//! @n (2) We'll need to do something more sophisticated than a simple assertion
+//!        when we bump the epoch version number for the first time, but this is
+//!        fine for now.
+//! @n (3) Read contents of lifecycle file.
 u3_epoc*
 u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
 {
@@ -392,13 +462,23 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
     goto free_epoc;
   }
 
-  if ( _is_first_epoc(pax_u) ) { // (1)
-    c3_path_push(poc_u->pax_u, lif_nam_c);
-    c3_t suc_t = c3_bile_read_existing(poc_u->pax_u, lif_w, sizeof(*lif_w));
-    c3_path_pop(poc_u->pax_u);
-    if ( !suc_t ) {
+  { // (1)
+    c3_path_push(poc_u->pax_u, ver_nam_c);
+    c3_w ver_w;
+    if ( !c3_bile_read_existing(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
       goto free_epoc;
     }
+    ver_w = ntohl(ver_w);
+    c3_path_pop(poc_u->pax_u);
+    c3_assert(epo_ver_w == ver_w); // (2)
+  }
+
+  if ( _is_first_epoc(pax_u) ) { // (3)
+    c3_path_push(poc_u->pax_u, lif_nam_c);
+    if ( !c3_bile_read_existing(poc_u->pax_u, lif_w, sizeof(*lif_w)) ) {
+      goto free_epoc;
+    }
+    c3_path_pop(poc_u->pax_u);
     *lif_w = ntohl(*lif_w);
   }
 
@@ -415,6 +495,61 @@ fail:
 
 succeed:
   return poc_u;
+}
+
+const c3_path*
+u3_epoc_path(const u3_epoc* const poc_u)
+{
+  return poc_u->pax_u;
+}
+
+const c3_c*
+u3_epoc_path_str(const u3_epoc* const poc_u)
+{
+  return c3_path_str(poc_u->pax_u);
+}
+
+c3_d
+u3_epoc_first_commit(const u3_epoc* const poc_u)
+{
+  return poc_u->fir_d;
+}
+
+c3_d
+u3_epoc_last_commit(const u3_epoc* const poc_u)
+{
+  return poc_u->las_d;
+}
+
+c3_d
+u3_epoc_first_evt(const u3_epoc* const poc_u)
+{
+  return u3_epoc_first_commit(poc_u) - 1;
+}
+
+c3_t
+u3_epoc_is_empty(const u3_epoc* const poc_u)
+{
+  return poc_u->las_d < poc_u->fir_d;
+}
+
+size_t
+u3_epoc_len(const u3_epoc* const poc_u)
+{
+  return u3_epoc_is_empty(poc_u) ? 0 : poc_u->las_d + 1 - poc_u->fir_d;
+}
+
+c3_t
+u3_epoc_has(const u3_epoc* const poc_u, const c3_d ide_d)
+{
+  return u3_epoc_first_commit(poc_u) <= ide_d
+         && ide_d <= u3_epoc_last_commit(poc_u);
+}
+
+c3_t
+u3_epoc_is_first(const u3_epoc* const poc_u)
+{
+  return u3_epoc_has(poc_u, epo_min_d);
 }
 
 c3_t
@@ -584,7 +719,7 @@ u3_epoc_iter_close(u3_epoc* const poc_u)
 void
 u3_epoc_info(const u3_epoc* const poc_u)
 {
-  fprintf(stderr, "epoc: %s\r\n", u3_epoc_path(poc_u));
+  fprintf(stderr, "epoc: %s\r\n", u3_epoc_path_str(poc_u));
 
   MDB_stat    mst_u;
   MDB_envinfo mei_u;

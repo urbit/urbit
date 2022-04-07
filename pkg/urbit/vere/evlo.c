@@ -86,13 +86,13 @@ _migrate(u3_evlo* const log_u, u3_meta* const met_u)
 
   { // (1)
     try_list(log_u->epo_u.lis_u = c3_list_init(), goto fail);
-    c3_list_pushb(log_u->epo_u.lis_u, poc_u, sizeof(*poc_u));
+    c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
   }
 
   { // (2)
     poc_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
-    c3_list_pushb(log_u->epo_u.lis_u, poc_u, sizeof(*poc_u));
+    c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
     log_u->epo_u.cur_u = _rollover(log_u);
   }
@@ -287,7 +287,7 @@ u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u)
     u3_epoc* poc_u;
     try_epoc(poc_u = u3_epoc_new(log_u->pax_u, epo_min_d, met_u->lif_w),
              goto free_event_log);
-    c3_list_pushb(log_u->epo_u.lis_u, poc_u, sizeof(*poc_u));
+    c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
     log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
   }
@@ -362,7 +362,7 @@ u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u)
     else {
       try_epoc(poc_u = u3_epoc_open(log_u->pax_u, NULL), goto free_dir_entries);
     }
-    c3_list_pushb(log_u->epo_u.lis_u, poc_u, sizeof(*poc_u));
+    c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
     c3_path_pop(log_u->pax_u);
   }
@@ -425,7 +425,7 @@ u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i)
   if ( 0 == log_u->eve_d % epo_len_i ) { // (2)
     u3_epoc* new_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
     c3_assert(new_u);
-    c3_list_pushb(epo_u, new_u, sizeof(*new_u));
+    c3_list_pushb(epo_u, new_u, epo_siz_i);
     c3_free(new_u);
   }
 
@@ -496,7 +496,7 @@ u3_evlo_replay(u3_evlo* const log_u,
   if ( !u3_epoc_is_first(poc_u) ) {
     cur_d = u3_epoc_first_evt(poc_u) <= u3A->eve_d
               ? u3A->eve_d
-              : u3m_boot(u3_epoc_path(poc_u), u3e_load);
+              : u3m_boot(u3_epoc_path_str(poc_u), u3e_load);
   }
   cur_d++;
 
@@ -576,7 +576,7 @@ u3_evlo_info(const u3_evlo* const log_u)
     u3_epoc* poc_u = c3_lode_data(nod_u);
     fprintf(stderr,
             "    %s: first commit=%" PRIu64 ", last commit=%" PRIu64 "\r\n",
-            u3_epoc_path(poc_u),
+            u3_epoc_path_str(poc_u),
             u3_epoc_first_commit(poc_u),
             u3_epoc_last_commit(poc_u));
     nod_u = c3_lode_next(nod_u);
