@@ -788,31 +788,19 @@
         1
         lyfe
     ==
-  ::NOTE  if you use this separately, add spam-logs call here maybe?
-  :: =/  =pass  pub:ex:(get-keys:aqua-azimuth who lyfe)
-  :: (inject-udiffs [who [0x0 0] %keys [lyfe 1 pass] |] ~)
-  [~ state]
+  state
 ::
 ++  breach
   |=  who=@p
-  ^-  (quip card:agent:gall _state)
-  ~&  [%aqua-breach who]
-  =^  *  state  (cycle-keys who)
+  ^-  _state
+  =.  state  (cycle-keys who)
   =/  prev   (~(got by lives.azi.piers) who)
   =/  rut  +(rut.prev)
   =.  lives.azi.piers  (~(put by lives.azi.piers) who [lyfe.prev rut])
   =.  logs.azi.piers
     %+  weld  logs.azi.piers
     [(broke-continuity:lo:aqua-azimuth who rut) ~]
-  :: =.  state  (spam-logs 10)
-  =/   lyfe  lyfe:(~(got by lives.azi.piers) who)
-  =/  =pass  pub:ex:(get-keys:aqua-azimuth who lyfe)
-  ::TODO  i think we're misinterpreting the boot flag, but it dont matter anyway
-  :: %-  inject-udiffs
-  :: :~  [who [0x0 0] %keys [lyfe 1 pass] &]
-  ::     [who [0x0 0] %rift rut &]
-  :: ==
-  [~ (spam-logs 10)]
+  (spam-logs 10)
 ::
 ++  dawn
   |=  who=ship
