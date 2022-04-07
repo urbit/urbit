@@ -719,7 +719,13 @@ u3_epoc_iter_close(u3_epoc* const poc_u)
 void
 u3_epoc_info(const u3_epoc* const poc_u)
 {
-  fprintf(stderr, "epoc: %s\r\n", u3_epoc_path_str(poc_u));
+  fprintf(stderr, "  epoc: %s\r\n", u3_epoc_path_str(poc_u));
+  fprintf(stderr,
+          "    first commit: %" PRIu64 "\r\n",
+          u3_epoc_first_commit(poc_u));
+  fprintf(stderr,
+          "    last commit: %" PRIu64 "\r\n",
+          u3_epoc_last_commit(poc_u));
 
   MDB_stat    mst_u;
   MDB_envinfo mei_u;
@@ -727,13 +733,13 @@ u3_epoc_info(const u3_epoc* const poc_u)
   (void)mdb_env_stat(poc_u->env_u, &mst_u);
   (void)mdb_env_info(poc_u->env_u, &mei_u);
 
-  fprintf(stderr, "  map size: %zu\n", mei_u.me_mapsize);
-  fprintf(stderr, "  page size: %u\n", mst_u.ms_psize);
-  fprintf(stderr, "  max pages: %zu\n", mei_u.me_mapsize / mst_u.ms_psize);
-  fprintf(stderr, "  number of pages used: %zu\n", mei_u.me_last_pgno + 1);
-  fprintf(stderr, "  last transaction ID: %zu\n", mei_u.me_last_txnid);
-  fprintf(stderr, "  max readers: %u\n", mei_u.me_maxreaders);
-  fprintf(stderr, "  number of readers used: %u\n", mei_u.me_numreaders);
+  fprintf(stderr, "    map size: %zu\r\n", mei_u.me_mapsize);
+  fprintf(stderr, "    page size: %u\r\n", mst_u.ms_psize);
+  fprintf(stderr, "    max pages: %zu\r\n", mei_u.me_mapsize / mst_u.ms_psize);
+  fprintf(stderr, "    number of pages used: %zu\r\n", mei_u.me_last_pgno + 1);
+  fprintf(stderr, "    last transaction ID: %zu\r\n", mei_u.me_last_txnid);
+  fprintf(stderr, "    max readers: %u\r\n", mei_u.me_maxreaders);
+  fprintf(stderr, "    number of readers used: %u\r\n", mei_u.me_numreaders);
 }
 
 //! @n (1) Cancel thread that is performing async commits.

@@ -708,13 +708,7 @@ _debug_db_stats(const c3_c* dir_c)
   if ( !log_u ) {
     goto free;
   }
-  c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
-  while ( nod_u ) {
-    u3_epoc* poc_u = c3_lode_data(nod_u);
-    u3_epoc_info(poc_u);
-    nod_u = c3_lode_next(nod_u);
-  }
-
+  u3_evlo_info(log_u);
   ret_i = 0;
 free:
   u3_evlo_close(log_u);

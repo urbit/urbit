@@ -1,4 +1,5 @@
 //! @file evlo.h
+//!
 //! Event log.
 //!
 //! @warning Do *not* call into this module unless *all* noun references are
@@ -54,25 +55,9 @@ typedef struct {
   c3_t         suc_t; //!< commit success flag
 } u3_evlo_acon;
 
-//! Event log handle.
-typedef struct {
-  c3_path*     pax_u;   //!< path to event log directory
-  c3_d         eve_d;   //!< ID of youngest event
-  struct {
-    c3_list*   lis_u;   //!< list of epochs (front is oldest, back is youngest)
-    u3_epoc*   cur_u;   //!< current epoch
-  } epo_u;              //!< epochs
-  struct {
-    c3_list*   lis_u;   //!< list of events pending commit
-    size_t     req_i;   //!< number of events in commit request
-  } eve_u;              //!< events pending commit
-  enum {
-    u3_evlo_sync = 0,   //!< sync commit mode
-    u3_evlo_async,      //!< async commit mode
-  } mod_e;              //!< commit mode
-  c3_t         act_t;   //!< active commit flag
-  u3_evlo_acon asy_u;   //!< async commit context
-} u3_evlo;
+//! Event log.
+struct _u3_evlo;
+typedef struct _u3_evlo u3_evlo;
 
 //==============================================================================
 // Macros
@@ -96,23 +81,14 @@ typedef struct {
 // Functions
 //==============================================================================
 
-static inline c3_d
-u3_evlo_first_commit(const u3_evlo* const log_u)
-{
-  return epo_min_d;
-}
-
-static inline c3_d
-u3_evlo_last_commit(const u3_evlo* const log_u)
-{
-  return u3_epoc_last_commit(log_u->epo_u.cur_u);
-}
-
 //! Create a new event log.
 //!
 //! @param[in] pax_u  Root directory of event log. Will be created if it
 //!                   doesn't already exist.
 //! @param[in] met_u  Pier metadata.
+//!
+//! @return NULL  New event log could not be created.
+//! @return       Handle to new event log.
 u3_evlo*
 u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u);
 
@@ -120,8 +96,19 @@ u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u);
 //!
 //! @param[in]  pax_u  Root directory of event log.
 //! @param[out] met_u  Pier metadata.
+//!
+//! @return NULL  Existing event log could not be opened.
+//! @return       Handle to open event log.
 u3_evlo*
 u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u);
+
+//! Get the ID of the last committed event in an event log.
+//!
+//! @param[in] log_u  Event log handle. Must not be NULL.
+//!
+//! @return  ID of last committed event in `log_u`.
+c3_d
+u3_evlo_last_commit(const u3_evlo* const log_u);
 
 //! Set the commit mode of an event log to synchronous (the default) or
 //! asynchronous. Must not be called when async commits are in progress.
@@ -137,6 +124,10 @@ u3_evlo_commit_mode(u3_evlo* const log_u, u3_evlo_acon* asy_u);
 //! @param[in] log_u  Event log handle.
 //! @param[in] byt_y  Serialized event.
 //! @param[in] byt_i  Length of `byt_y` in bytes.
+//!
+//! @return 0  Event could not be committed.
+//! @return 1  Event was committed (synchronous commit mode).
+//! @return 1  Event was scheduled to be committed (asynchronous commit mode).
 c3_t
 u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i);
 
@@ -148,6 +139,9 @@ u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i);
 //!                   remaining committed events will be replayed.
 //! @param[in] pla_f  Replay function invoked on each event.
 //! @param[in] ptr_v  Context passed to replay function.
+//!
+//! @return 0  Replay failed.
+//! @return 1  Replay succeeded.
 c3_t
 u3_evlo_replay(u3_evlo* const log_u,
                c3_d           cur_d,

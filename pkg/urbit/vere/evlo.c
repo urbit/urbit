@@ -1,9 +1,35 @@
 //! @file evlo.c
+//!
+//! Epoch-backed event log.
 
 #include "vere/evlo.h"
 
 #include "all.h"
 #include "c/bile.h"
+
+//==============================================================================
+// Types
+//==============================================================================
+
+//! Event log. Typedefed to `u3_evlo`.
+struct _u3_evlo {
+  c3_path*     pax_u;   //!< path to event log directory
+  c3_d         eve_d;   //!< ID of youngest event
+  struct {
+    c3_list*   lis_u;   //!< list of epochs (front is oldest, back is youngest)
+    u3_epoc*   cur_u;   //!< current epoch
+  } epo_u;              //!< epochs
+  struct {
+    c3_list*   lis_u;   //!< list of events pending commit
+    size_t     req_i;   //!< number of events in commit request
+  } eve_u;              //!< events pending commit
+  enum {
+    u3_evlo_sync = 0,   //!< sync commit mode
+    u3_evlo_async,      //!< async commit mode
+  } mod_e;              //!< commit mode
+  c3_t         act_t;   //!< active commit flag
+  u3_evlo_acon asy_u;   //!< async commit context
+};
 
 //==============================================================================
 // Constants
@@ -385,6 +411,12 @@ succeed:
   return log_u;
 }
 
+c3_d
+u3_evlo_last_commit(const u3_evlo* const log_u)
+{
+  return u3_epoc_last_commit(log_u->epo_u.cur_u);
+}
+
 void
 u3_evlo_commit_mode(u3_evlo* const log_u, u3_evlo_acon* asy_u)
 {
@@ -567,24 +599,19 @@ u3_evlo_info(const u3_evlo* const log_u)
   }
 
   fprintf(stderr,
-          "\r\nevlo: event=%" PRIu64 "\r\n",
+          "\r\nevlo: last commit: %" PRIu64 "\r\n",
           u3_evlo_last_commit(log_u));
-
-  fprintf(stderr, "  epochs:\r\n");
-  c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
-  while ( nod_u ) {
-    u3_epoc* poc_u = c3_lode_data(nod_u);
-    fprintf(stderr,
-            "    %s: first commit=%" PRIu64 ", last commit=%" PRIu64 "\r\n",
-            u3_epoc_path_str(poc_u),
-            u3_epoc_first_commit(poc_u),
-            u3_epoc_last_commit(poc_u));
-    nod_u = c3_lode_next(nod_u);
-  }
 
   fprintf(stderr,
           "  events pending commit: %lu\r\n",
           c3_list_len(log_u->eve_u.lis_u));
+
+  c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
+  while ( nod_u ) {
+    u3_epoc* poc_u = c3_lode_data(nod_u);
+    u3_epoc_info(poc_u);
+    nod_u = c3_lode_next(nod_u);
+  }
 }
 
 //! @n (1) Cancel thread that is performing async commits.
