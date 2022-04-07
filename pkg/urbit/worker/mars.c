@@ -611,8 +611,9 @@ top:
     }
     else if ( u3_mars_exit_e == mar_u->sat_e ) {
       //  XX wire up to signal handler
-      //
-      u3_evlo_info(mar_u->log_u);
+      // Printing out what is essentially debug information for the event log on
+      // exit seems unnecessary.
+      //u3_evlo_info(mar_u->log_u);
 
       u3e_save();
       u3_evlo_close(mar_u->log_u);
@@ -797,17 +798,19 @@ _evlo_boot_cb(void*        ptr_v,
               c3_y* const  byt_y,
               const size_t len_i)
 {
-  static u3_noun evt = u3_nul;
-  evt                = u3nc(u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4)), evt);
+  u3_noun* evt = (u3_noun*)ptr_v;
+  if ( u3_nul == *evt ) {
+    fprintf(stderr, "--------------- bootstrap starting ----------------\r\n");
+  }
+  *evt = u3nc(u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4)), *evt);
 
   if ( cur_d < las_d ) {
     goto succeed;
   }
 
-  evt = u3kb_flop(evt);
-  fprintf(stderr, "--------------- bootstrap starting ----------------\r\n");
-  c3_o suc_o = u3v_boot(evt);
-  evt        = u3_nul;
+  *evt       = u3kb_flop(*evt);
+  c3_o suc_o = u3v_boot(*evt);
+  *evt       = u3_nul;
   if ( c3n == suc_o ) {
     fprintf(stderr, "boot: failed to evaluate boot event\r\n");
     goto fail;
@@ -875,23 +878,21 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
              c3_path_str(mar_u->dir_u));
 
     if ( 0 == mar_u->dun_d ) { // (2)
+      u3_noun evt = u3_nul;
       try_evlo(u3_evlo_replay(mar_u->log_u,
                               mar_u->dun_d,
                               mar_u->met_u.lif_w,
                               _evlo_boot_cb,
-                              NULL),
+                              &evt),
                goto free_event_log,
                "failed to evaluate boot sequence");
       mar_u->sen_d = mar_u->dun_d = mar_u->met_u.lif_w;
     }
 
-    try_evlo(u3_evlo_replay(mar_u->log_u,
-                            mar_u->dun_d,
-                            0,
-                            _evlo_replay_cb,
-                            mar_u),
-             goto free_mars,
-             "failed to replay event log");
+    try_evlo(
+      u3_evlo_replay(mar_u->log_u, mar_u->dun_d, 0, _evlo_replay_cb, mar_u),
+      goto free_mars,
+      "failed to replay event log");
     c3_path_pop(mar_u->dir_u);
     c3_path_pop(mar_u->dir_u);
 
@@ -934,14 +935,14 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
   }
 
   { // (5)
-    c3_d  len_d;
-    c3_y* hun_y;
+    c3_d    len_d;
+    c3_y*   hun_y;
     u3_noun wyn = u3_nul;
     u3_noun msg
       = u3nq(c3__ripe,
-          u3nc(2, wyn),
-          u3nc(u3i_chubs(2, mar_u->met_u.who_d), mar_u->met_u.fak_o),
-          u3nc(u3i_chub(mar_u->dun_d), mar_u->mug_l));
+             u3nc(2, wyn),
+             u3nc(u3i_chubs(2, mar_u->met_u.who_d), mar_u->met_u.fak_o),
+             u3nc(u3i_chub(mar_u->dun_d), mar_u->mug_l));
 
     u3s_jam_xeno(msg, &len_d, &hun_y);
     u3_newt_send(mar_u->out_u, len_d, hun_y);
@@ -1371,7 +1372,8 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
 
   _mars_step_trace(dir_c);
 
-  if ( !u3_evlo_replay(log_u, 0, met_u.lif_w, _evlo_boot_cb, NULL) ) { // (5)
+  u3_noun evt = u3_nul;
+  if ( !u3_evlo_replay(log_u, 0, met_u.lif_w, _evlo_boot_cb, &evt) ) { // (5)
     goto free_event_log;
   }
   suc_o = c3y;

@@ -291,9 +291,6 @@ _has_active_commit(const u3_evlo* const log_u)
 //==============================================================================
 
 //! @n (1) Persist metadata.
-//!        TODO(peter): fix portability issues between machines of different
-//!                     endianness.
-//!        TODO(peter): handle event log version number
 //! @n (2) Create first epoch.
 u3_evlo*
 u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u)

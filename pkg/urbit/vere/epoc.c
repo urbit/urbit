@@ -318,7 +318,7 @@ succeed:
 }
 
 //! @n (1) Relocate LDMB instance to the newly created epoch.
-//! @n (2) TODO(peter).
+//! @n (2) The incremental snapshot must be up-to-date to successfully migrate.
 //! @n (3) Read metadata out of LMDB instance.
 //! @n (4) Write metadata to binary files.
 //! @n (5) Convert to network byte order to ensure portability across platforms
@@ -357,8 +357,17 @@ u3_epoc_migrate(const c3_path* const par_u,
   }
 
   if ( u3A->eve_d != poc_u->las_d ) { // (2)
-    // TODO(peter): write clear message explaining steps necessary to prep for
-    // migration.
+    fprintf(stderr,
+            "IMPORTANT: cannot migrate the existing event log format to the\r\n"
+            "           new epoch-based event log format because the\r\n"
+            "           incremental snapshot is not up-to-date. To resolve\r\n"
+            "           this, run your ship using version 1.8 of the urbit\r\n"
+            "           binary and exit *gracefully* using Ctrl-D. Then,\r\n"
+            "           try again using the latest version of the urbit\r\n"
+            "           binary. If you have questions or concerns, please\r\n"
+            "           file an issue against\r\n"
+            "           https://github.com/urbit/urbit and assign it to\r\n"
+            "           mcevoypeter.\r\n");
     goto rename_lock_mdb;
   }
 
