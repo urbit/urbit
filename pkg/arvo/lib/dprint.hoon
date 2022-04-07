@@ -112,8 +112,8 @@
       ~
     ::  if there is a chapter with a name matching the topic, return chapter
     ::  as a (unit item)
-    =/  docs=what  p:(~(got by q.r.q.sut) i.topics)
-    `[%chapter (trip i.topics) docs sut q.sut i.topics]
+    =/  docs=what  p:(~(got by q.r.q.sut) i.t.topics)
+    `[%chapter (trip i.t.topics) docs sut q.sut i.t.topics]
   ::
       [%face *]
     ?.  ?=(term p.sut)
