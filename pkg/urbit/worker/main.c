@@ -255,15 +255,16 @@ _cw_meld(c3_i argc, c3_c* argv[])
 
   c3_c*    dir_c = argv[0];
   u3_disk* log_u = u3_disk_init(dir_c);  //  XX s/b try_aquire lock
+  c3_w     pre_w;
 
   u3C.wag_w |= u3o_hashless;
   u3m_boot(dir_c);
 
-  u3_mars_grab();
+  pre_w = u3a_open(u3R);
 
   u3u_meld();
 
-  u3_mars_grab();
+  u3a_print_memory(stderr, "urbit-worker: meld: gained", (u3a_open(u3R) - pre_w));
 
   u3e_save();
   u3_disk_exit(log_u);
