@@ -812,6 +812,8 @@
   +$  clue                                              ::  murder weapon
     $%  [%lobe =lobe]                                   ::  specific lobe
         [%all ~]                                        ::  all safe targets
+        [%pick ~]                                       ::  collect garbage
+        [%norm =ship =desk =norm]                       ::  set norm
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
@@ -861,6 +863,7 @@
     $%  [%& p=suba]                                     ::  delta
         [%| p=@tas]                                     ::  label
     ==                                                  ::
+  +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  (cask *)                                    ::  untyped cage
   +$  plop  blub                                        ::  unvalidated blob

@@ -177,9 +177,6 @@
       bar=(set plop)                                    ::  new content
   ==                                                    ::
 ::
-::  Tombstone policy
-::
-+$  norm  (axal ?)
 ::
 ::  Formal vane state.
 ::
@@ -1465,6 +1462,11 @@
           ?~(hay | (lte u.hay u.aey))
       ==
     ==
+  ::
+  ++  set-norm
+    |=  =norm
+    =.  nor.dom  norm
+    ..park
   ::
   ::  Attach label to aeon
   ::
@@ -5259,6 +5261,13 @@
         `..^^$
       =.  ..^^$  (tomb-lobe lobe.i.lobes &)
       $(lobes t.lobes)
+    ::
+        %pick  pick
+        %norm
+      =^  mos  ruf
+        =/  den  ((de now rof *duct ruf) ship.clue desk.clue)
+        abet:(set-norm:den norm.clue)
+      [mos ..^$]
     ==
   ::  +tomb-lobe: remove specific lobe
   ::
@@ -5318,75 +5327,90 @@
       ..^$
     ((slog tang) ..^$)
   ::
+  ++  draw-dome
+    |=  =dome
+    ^-  (set [norm yaki])
+    =/  =aeon  1
+    |-  ^-  (set [norm yaki])
+    ?:  (lth let.dome aeon)
+      ~
+    =/  =tako  (~(got by hit.dome) aeon)
+    (~(uni in (draw-tako tom.dome nor.dome tako)) $(aeon +(aeon)))
+  ::
+  ++  draw-tako
+    |=  [tom=(map tako norm) nor=norm =tako]
+    ^-  (set [norm yaki])
+    ~+
+    =/  =norm  (~(gut by tom) tako nor)
+    =/  =yaki  (~(got by hut.ran.ruf) tako)
+    =/  takos
+      |-  ^-  (set [^norm ^yaki])
+      ?~  p.yaki
+        ~
+      (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
+    (~(put in takos) norm yaki)
+  ::
+  ::
   ::  +pick: copying gc based on norms
   ::
-  ::  Could reduce uni costs throughout by keeping an explicit cache
-  ::
   ++  pick
-    ^-  (map lobe blob)
+    =|  lat=(map lobe blob)
+    =|  sen=(set (map path lobe))
     |^
-    =/  room-blobs
-      =/  rooms=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
-      |-  ^-  (map lobe blob)
-      ?~  rooms
-        ~
-      (uni-blobs $(rooms t.rooms) (pick-dome dom.dojo.i.rooms))
-    =/  rung-blobs
-      =/  rungs=(list [=ship =rung])  ~(tap by hoy.ruf)
-      |-  ^-  (map lobe blob)
-      ?~  rungs
-        ~
-      %+  uni-blobs  $(rungs t.rungs)
-      =/  redes=(list [=desk =rede])  ~(tap by rus.rung.i.rungs)
-      |-
-      ?~  redes
-        ~
-      (uni-blobs $(redes t.redes) (pick-dome dom.rede.i.redes))
-    (uni-blobs room-blobs rung-blobs)
+    =.  ..pick-raft  pick-raft
+    =.  lat.ran.ruf  lat
+    `..^$
+    ::
+    ++  pick-raft
+      ^+  ..pick-raft
+      =.  ..pick-raft
+        =/  rooms=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
+        |-  ^+  ..pick-raft
+        ?~  rooms
+          ..pick-raft
+        $(rooms t.rooms, ..pick-raft (pick-dome dom.dojo.i.rooms))
+      =.  ..pick-raft
+        =/  rungs=(list [=ship =rung])  ~(tap by hoy.ruf)
+        |-  ^+  ..pick-raft
+        ?~  rungs
+          ..pick-raft
+        =.  ..pick-raft
+          =/  redes=(list [=desk =rede])  ~(tap by rus.rung.i.rungs)
+          |-
+          ?~  redes
+            ..pick-raft
+          $(redes t.redes, ..pick-raft (pick-dome dom.rede.i.redes))
+        $(rungs t.rungs)
+      ..pick-raft
     ::
     ++  pick-dome
       |=  =dome
-      ^-  (map lobe blob)
+      ^+  ..pick-raft
       =/  yakis=(list [=norm =yaki])  ~(tap in (draw-dome dome))
-      |-  ^-  (map lobe blob)
+      |-  ^+  ..pick-raft
       ?~  yakis
-        ~
-      (uni-blobs $(yakis t.yakis) (pick-yaki i.yakis))
+        ..pick-raft
+      $(yakis t.yakis, ..pick-raft (pick-yaki i.yakis))
     ::
-    ++  draw-dome
-      |=  =dome
-      ^-  (set [norm yaki])
-      =|  =aeon
-      |-  ^-  (set [norm yaki])
-      ?:  (lth let.dome aeon)
-        ~
-      =/  =tako  (~(got by hit.dome) aeon)
-      (~(uni in (draw-tako tom.dome nor.dome tako)) $(aeon +(aeon)))
-    ::
-    ++  draw-tako
-      |=  [tom=(map tako norm) nor=norm =tako]
-      ^-  (set [norm yaki])
-      ~+
-      =/  =norm  (~(gut by tom) tako nor)
-      =/  =yaki  (~(got by hut.ran.ruf) tako)
-      =/  takos
-        |-  ^-  (set [^norm ^yaki])
-        ?~  p.yaki
-          ~
-        (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
-      (~(put in takos) norm yaki)
+    ::  NB: recurring in this way with the `sen` cache provides
+    ::  approximately a 100x speedup on a mainnet moon in 4/2022
     ::
     ++  pick-yaki
       |=  [=norm =yaki]
-      ^-  (map lobe blob)
-      =/  lobes=(list [=path =lobe])  ~(tap by q.yaki)
-      |-  ^-  (map ^lobe blob)
-      ?~  lobes
-        ~
-      %+  uni-blobs  $(lobes t.lobes)
-      ?:  =([~ %&] +:(~(fit ^de norm) path.i.lobes))
-         (pick-lobe lobe.i.lobes)
-      [[lobe.i.lobes %dead lobe.i.lobes ~] ~ ~]
+      ^+  ..pick-raft
+      |-  ^+  ..pick-raft
+      ?~  q.yaki
+        ..pick-raft
+      ?:  (~(has in sen) q.yaki)
+        ..pick-raft
+      =.  sen  (~(put in sen) q.yaki)
+      =/  bob  (~(get by lat) q.n.q.yaki)
+      =?  lat  ?|(?=(~ bob) ?=([~ %dead *] bob))
+        ?:  =([~ %&] +:(~(fit ^de norm) p.n.q.yaki))
+          (uni-blobs lat (pick-lobe q.n.q.yaki))
+        (~(put by lat) q.n.q.yaki %dead q.n.q.yaki ~)
+      =.  ..pick-raft  $(q.yaki l.q.yaki)
+      $(q.yaki r.q.yaki)
     ::
     ++  pick-lobe
       |=  =lobe
