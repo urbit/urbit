@@ -23,7 +23,7 @@ c3_c tac_c[256];  //  tracing label
       [%exit ~]
       [%peek mil=@ peek]
       [%poke mil=@ ovum]  ::  XX replacement y/n
-      [%sync ?(%cram %save) ~] :: XX remove cram?
+      [%sync %save ~]
   ==
 +$  gift                                                ::  mars -> urth
   $%  [%live ~]
@@ -459,8 +459,6 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
       _mars_gift(mar_u, u3nc(c3__peek, u3v_soft_peek(mil_w, sam)));
     } break;
 
-    //  XX support cram?
-    //
     case c3__sync: {
       u3_noun nul;
 
@@ -658,7 +656,7 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 
   _mars_step_trace(mar_u->dir_c);
 
-  //  XX optimize for save/cram w/ peek-next
+  //  XX optimize for stateless tasks w/ peek-next
   //
   if ( u3_mars_work_e == mar_u->sat_e ) {
     u3_weak jar = u3s_cue_xeno_with(mar_u->sil_u, len_d, hun_y);

@@ -461,7 +461,6 @@
           void (*work_done_f)(void*, u3_ovum*, u3_noun act);
           void (*work_bail_f)(void*, u3_ovum*, u3_noun lud);
           void (*save_f)(void*);
-          void (*cram_f)(void*);
           void (*bail_f)(void*);
           void (*exit_f)(void*);
         } u3_lord_cb;
@@ -1003,11 +1002,6 @@
         c3_o
         u3_lord_save(u3_lord* god_u);
 
-      /* u3_lord_cram(): save portable state.
-      */
-        c3_o
-        u3_lord_cram(u3_lord* god_u);
-
       /* u3_lord_meld(): globally deduplicate persistent state.
       */
         void
@@ -1254,11 +1248,6 @@
       */
         c3_o
         u3_pier_save(u3_pier* pir_u);
-
-      /* u3_pier_cram(): save a portable snapshot.
-      */
-        c3_o
-        u3_pier_cram(u3_pier* pir_u);
 
       /* u3_pier_meld(): globally deduplicate persistent state.
       */

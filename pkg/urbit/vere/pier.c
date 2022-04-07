@@ -735,29 +735,6 @@ _pier_on_lord_save(void* ptr_v)
   // _pier_next(pir_u);
 }
 
-/* _pier_on_lord_cram(): worker state-export complete (portable snapshot).
-*/
-static void
-_pier_on_lord_cram(void* ptr_v)
-{
-  u3_pier* pir_u = ptr_v;
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): lord: cram\r\n", pir_u->god_u->eve_d);
-#endif
-
-  //  XX review
-  //
-
-  // if ( u3_psat_done == pir_u->sat_e ) {
-  //   fprintf(stderr, "snap cb exit\r\n");
-  //   u3_lord_exit(pir_u->god_u);
-  // }
-  // else {
-    // _pier_next(pir_u);
-  // }
-}
-
 /* _pier_on_lord_exit(): worker shutdown.
 */
 static void
@@ -928,7 +905,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
       .work_done_f = _pier_on_lord_work_done,
       .work_bail_f = _pier_on_lord_work_bail,
       .save_f = _pier_on_lord_save,
-      .cram_f = _pier_on_lord_cram,
       .bail_f = _pier_on_lord_bail,
       .exit_f = _pier_on_lord_exit
     };
@@ -973,25 +949,6 @@ u3_pier_save(u3_pier* pir_u)
   //
   if ( u3_psat_work == pir_u->sat_e ) {
     u3_lord_save(pir_u->god_u);
-    return c3y;
-  }
-
-  return c3n;
-}
-
-/* u3_pier_cram(): save a portable snapshot.
-*/
-c3_o
-u3_pier_cram(u3_pier* pir_u)
-{
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): cram: plan\r\n", pir_u->god_u->eve_d);
-#endif
-
-  //  XX revise
-  //
-  if ( u3_psat_work == pir_u->sat_e ) {
-    u3_lord_cram(pir_u->god_u);
     return c3y;
   }
 

@@ -25,7 +25,7 @@
       [%exit ~]
       [%peek mil=@ peek]
       [%poke mil=@ ovum]  ::  XX replacement y/n
-      [%sync ?(%cram %save) ~] :: XX remove cram?
+      [%sync %save ~]
   ==
 ::  +gift: from mars to urth
 ::
@@ -701,15 +701,6 @@ u3_lord_save(u3_lord* god_u)
 {
   _lord_send(god_u, u3nt(c3__sync, c3__save, u3_nul));
   return c3y;
-}
-
-/* u3_lord_cram(): save portable state.
-*/
-c3_o
-u3_lord_cram(u3_lord* god_u)
-{
-  // _lord_send(god_u, u3nt(c3__sync, c3__cram, u3_nul));
-  return c3n;
 }
 
 /* u3_lord_meld(): globally deduplicate persistent state.
