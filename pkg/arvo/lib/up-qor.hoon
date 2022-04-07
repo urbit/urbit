@@ -331,4 +331,105 @@
   ^-  (unit (pair elem pro))
   ?~  a  ~
   `[n.a (sec t.a m.a)]
+::
+++  apt                                             ::  check correctness
+  ~/  %apt
+  |=  a=pro
+  |^  ^-  ?
+  ?.  uni
+    ~&  %apt-uni
+    uni
+  ?.  hep
+    ~&  %apt-hep
+    hep
+  ?.  bin
+    ~&  %apt-bin
+    bin
+  ?.  ann
+    ~&  %apt-ann
+    ann
+  &
+  ::
+  ++  tap                                             ::  convert to list
+    |=  a=pro
+    =|  b=(list elem)
+    |-  ^+  b
+    =/  tor  (see a)
+    ?~  tor  b
+    ?-  -.tor
+      %sing  [n.tor b]
+      %play  (weld $(a l.tor) $(a r.tor))
+    ==
+  ::
+  ++  key                                             ::  list of keys
+    |=  a=pro
+    ^-  (list k)
+    (turn (tap a) |=(=elem k.elem))
+  ::
+  ++  lex                                           ::  muggish lex order
+    |=  [p=@ k=k q=@ l=k]
+    ^-  ?
+    ?:  =(p q)
+      (gor k l)
+    (lth p q)
+  ::
+  ++  uni                                           ::  has unique keys
+    =/  l  (sort (key a) gor)
+    =|  a=(unit k)
+    |-  ^-  ?
+    ?~  l  &
+    ?:  =(a (some i.l))  |
+    $(l t.l, a (some i.l))
+  ::
+  ++  hep                                           ::  min-heap prop
+    ?~  a  &
+    |-  ^-  ?
+    ?~  t.a  &
+    ?-  -.t.a
+        %llos
+      =/  b=lnode  p.t.a
+      ?&  (lex p.n.a k.n.a p.n.b k.n.b)
+          $(k.n.a k.n.b, p.n.a p.n.b, t.a l.b)
+          $(t.a r.b)
+      ==
+        %rlos
+      =/  b=lnode  p.t.a
+      ?&  (lex p.n.a k.n.a p.n.b k.n.b)
+          $(t.a l.b)
+          $(k.n.a k.n.b, p.n.a p.n.b, t.a r.b)
+      ==
+    ==
+  ::
+  ++  bin                                           ::  binary search tree
+    |-  ^-  ?
+    =/  tor  (see a)
+    ?~  tor  &
+    ?-  -.tor
+        %sing  &
+        %play
+      =/  k  (top l.tor)
+      ?&  (levy (key l.tor) |=(* (gor +< k)))
+          (levy (key r.tor) |=(* |(=(k +<) !(gor +< k))))
+          $(a l.tor)
+          $(a r.tor)
+      ==
+    ==
+  ::
+  ++  ann                                           ::  correct annotations
+    =/  calc
+      |=  t=ltree
+      ^-  @
+      ?~  t  0
+      ?-  -.t
+        %llos  +((add $(t l.p.t) $(t r.p.t)))
+        %rlos  +((add $(t l.p.t) $(t r.p.t)))
+      ==
+    ?~  a  &
+    |-  ^-  ?
+    ?~  t.a  =(0 (calc t.a))
+    ?&  =(s.t.a (calc t.a))
+        $(t.a l.p.t.a)
+        $(t.a r.p.t.a)
+    ==
+  --
 --

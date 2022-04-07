@@ -28,12 +28,14 @@ u3_noun
 u3qe_qat_feud(u3_atom m, u3_atom k, u3_atom l)
 {
   u3_atom n = u3qe_mask(m);
-  u3_atom a = u3qc_dis(k, n);
-  u3_atom b = u3qc_dis(l, n);
+  u3_atom p = u3qc_dis(n, 0x7fffffff);
+  u3_atom a = u3qc_dis(k, p);
+  u3_atom b = u3qc_dis(l, p);
 
   u3_atom pro = ( a == b ) ? c3n : c3y;
 
   u3z(n);
+  u3z(p);
   u3z(a);
   u3z(b);
 

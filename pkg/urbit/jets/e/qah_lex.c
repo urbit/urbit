@@ -3,20 +3,7 @@
 c3_o
 u3qe_qah_lex(u3_atom p, u3_atom k, u3_atom q, u3_atom l)
 {
-  if (c3y == u3r_sing(p, q)) {
-    u3_atom h = u3r_mug(k);
-    u3_atom i = u3r_mug(l);
-
-    u3_atom pro = u3qa_lth(h, i);
-
-    u3z(h);
-    u3z(i);
-
-    return pro;
-  }
-  else {
-    return u3qa_lth(p, q);
-  }
+  return ( c3y == u3r_sing(p, q) ) ? u3qc_gor(k, l) : u3qa_lth(p, q);
 }
 
 u3_noun

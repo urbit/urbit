@@ -32,7 +32,7 @@
   ~/  %feud                                           ::
   |=  [m=@ k=k l=k]                                   ::  m determines 'high'
   ^-  ?
-  =/  n  (mix (not 5 1 (dec m)) m)
+  =/  n  (dis (mix (not 5 1 (dec m)) m) 0x7fff.ffff)
   !=((dis (mug k) n) (dis (mug l) n))
 ::  tree manipulation
 ::
@@ -51,7 +51,7 @@
   |=  [p=@ k=k q=@ l=k]
   ^-  ?
   ?:  =(p q)
-    (lth (mug k) (mug l))
+    (gor k l)
   (lth p q)
 ::
 ++  fuse                                              ::  disjoint tree merge
