@@ -683,7 +683,7 @@
     ++  dy-inspect
       |=  [topics=(list term) sut=type]
       %+  dy-rash  %tan
-      =+  to-display=(find-item-in-type:dprint topics sut %.y)
+      =+  to-display=(find-item-in-type:dprint (flop topics) sut %.y)
       ?~  to-display
         [%leaf "Could not find help"]~
       (flop (print-item:dprint u.to-display))
