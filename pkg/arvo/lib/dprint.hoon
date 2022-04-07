@@ -56,6 +56,9 @@
   --
 :>  #  %dprint
 |%
+:>    contains arms used for looking for docs inside of a type
+:>
+:>  the entrypoint for finding docs within a type is +find-item-in-type.
 +|  %searching
 :>    returns the item to print while searching through topic
 :>
@@ -505,12 +508,13 @@
 ++  print-chapter
   |=  [name=tape doc=what sut=type con=coil chapter-id=term]
   ^-  tang
+  ~?  >  debug  %print-chapter
   ;:  weld
     (print-header name doc)
   ::
-    ?~  doc
-      ~
-    (print-sections q.u.doc)
+    ::?~  doc
+    ::  ~
+    ::(print-sections q.u.doc)
   ::
     =+  arms=(arms-in-chapter sut con chapter-id)
     ?~  arms
@@ -572,8 +576,8 @@
              out
              ?~  doc.oitem  ~
              `tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
-             ?~  doc.oitem  ~
-             (print-sections q.u.doc.oitem)
+             ::?~  doc.oitem  ~
+             ::(print-sections q.u.doc.oitem)
              ^$(overview children.oitem)
            ==
     ==
@@ -586,8 +590,8 @@
              `tang`[[%leaf ""] [%leaf name.oitem] ~]
              ?~  doc.oitem  ~
              `tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
-             ?~  doc.oitem  ~
-             (print-sections q.u.doc.oitem)
+             ::?~  doc.oitem  ~
+             ::(print-sections q.u.doc.oitem)
            ==
     ==
   ==
