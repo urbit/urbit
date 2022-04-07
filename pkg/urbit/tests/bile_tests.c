@@ -10,7 +10,7 @@ static inline void
 _cleanup(c3_path* const pax_u, c3_bile* bil_u)
 {
   c3_free(pax_u);
-  unlink(c3_path_str(bil_u->pax_u));
+  unlink(c3_bile_path_str(bil_u));
   c3_bile_close(bil_u);
   c3_free(bil_u);
 }
@@ -22,8 +22,8 @@ _test_bile_open(void)
     c3_path* const pax_u = c3_path_fv(3, "/", "tmp", "giraffe.bin");
     c3_bile*       bil_u = c3_bile_open(pax_u);
     c3_assert(bil_u);
-    c3_assert(0 == bil_u->len_i);
-    c3_assert(c3_path_eq(pax_u, bil_u->pax_u));
+    c3_assert(0 == c3_bile_len(bil_u));
+    c3_assert(c3_path_eq(pax_u, c3_bile_path(bil_u)));
     _cleanup(pax_u, bil_u);
   }
 }
@@ -36,17 +36,17 @@ _test_bile_put_get_raw(void)
     c3_path* const pax_u = c3_path_fv(3, "/", "tmp", "elephant.bin");
     c3_bile*       bil_u = c3_bile_open(pax_u);
     c3_assert(bil_u);
-    c3_assert(0 == bil_u->len_i);
-    c3_assert(c3_path_eq(pax_u, bil_u->pax_u));
+    c3_assert(0 == c3_bile_len(bil_u));
+    c3_assert(c3_path_eq(pax_u, c3_bile_path(bil_u)));
 
     static c3_c inn_c[] = "nile river";
     c3_assert(c3_bile_put_raw(bil_u, inn_c, sizeof(inn_c)));
 
-    c3_assert(sizeof(inn_c) == bil_u->len_i);
+    c3_assert(sizeof(inn_c) == c3_bile_len(bil_u));
 
-    c3_c out_c[bil_u->len_i];
+    c3_c out_c[c3_bile_len(bil_u)];
     c3_assert(c3_bile_get_raw(bil_u, out_c, sizeof(out_c)));
-    c3_assert(sizeof(inn_c) == bil_u->len_i);
+    c3_assert(sizeof(inn_c) == c3_bile_len(bil_u));
     c3_assert(0 == strcmp(inn_c, out_c));
 
     _cleanup(pax_u, bil_u);
@@ -57,20 +57,21 @@ _test_bile_put_get_raw(void)
     c3_path* const pax_u = c3_path_fv(3, "/", "tmp", "gazelle.bin");
     c3_bile*       bil_u = c3_bile_open(pax_u);
     c3_assert(bil_u);
-    c3_assert(0 == bil_u->len_i);
-    c3_assert(c3_path_eq(pax_u, bil_u->pax_u));
+    c3_assert(0 == c3_bile_len(bil_u));
+    c3_assert(c3_path_eq(pax_u, c3_bile_path(bil_u)));
 
     static c3_c in1_c[] = "zambezi river";
     c3_assert(c3_bile_put_raw(bil_u, in1_c, sizeof(in1_c)));
-    c3_assert(sizeof(in1_c) == bil_u->len_i);
+    c3_assert(sizeof(in1_c) == c3_bile_len(bil_u));
 
     static c3_c in2_c[] = "lake victoria";
     c3_assert(c3_bile_put_raw(bil_u, in2_c, sizeof(in2_c)));
-    c3_assert(sizeof(in1_c) + sizeof(in2_c) == bil_u->len_i);
+    c3_assert(sizeof(in1_c) + sizeof(in2_c) == c3_bile_len(bil_u));
 
     static c3_c in3_c[] = "great rift valley";
     c3_assert(c3_bile_put_raw(bil_u, in3_c, sizeof(in3_c)));
-    c3_assert(sizeof(in1_c) + sizeof(in2_c) + sizeof(in3_c) == bil_u->len_i);
+    c3_assert(sizeof(in1_c) + sizeof(in2_c) + sizeof(in3_c)
+              == c3_bile_len(bil_u));
 
     c3_c ou1_c[sizeof(in1_c)];
     c3_assert(c3_bile_get_raw(bil_u, ou1_c, sizeof(ou1_c)));
@@ -92,23 +93,23 @@ _test_bile_put_get_raw(void)
     c3_path* const pax_u = c3_path_fv(3, "/", "tmp", "hippo.bin");
     c3_bile*       bil_u = c3_bile_open(pax_u);
     c3_assert(bil_u);
-    c3_assert(0 == bil_u->len_i);
-    c3_assert(c3_path_eq(pax_u, bil_u->pax_u));
+    c3_assert(0 == c3_bile_len(bil_u));
+    c3_assert(c3_path_eq(pax_u, c3_bile_path(bil_u)));
 
     static c3_c inn_c[] = "bandama river";
     c3_assert(c3_bile_put_raw(bil_u, inn_c, sizeof(inn_c)));
 
-    c3_assert(sizeof(inn_c) == bil_u->len_i);
+    c3_assert(sizeof(inn_c) == c3_bile_len(bil_u));
 
     c3_bile_close(bil_u);
 
     c3_assert(bil_u = c3_bile_open(pax_u));
-    c3_assert(sizeof(inn_c) == bil_u->len_i);
-    c3_assert(c3_path_eq(pax_u, bil_u->pax_u));
+    c3_assert(sizeof(inn_c) == c3_bile_len(bil_u));
+    c3_assert(c3_path_eq(pax_u, c3_bile_path(bil_u)));
 
     c3_c out_c[sizeof(inn_c)];
     c3_assert(c3_bile_get_raw(bil_u, out_c, sizeof(out_c)));
-    c3_assert(sizeof(inn_c) == bil_u->len_i);
+    c3_assert(sizeof(inn_c) == c3_bile_len(bil_u));
     c3_assert(0 == strcmp(inn_c, out_c));
 
     _cleanup(pax_u, bil_u);
@@ -119,12 +120,12 @@ _test_bile_put_get_raw(void)
     c3_path* const pax_u = c3_path_fv(3, "/", "tmp", "crocodile.bin");
     c3_bile*       bil_u = c3_bile_open(pax_u);
     c3_assert(bil_u);
-    c3_assert(0 == bil_u->len_i);
-    c3_assert(c3_path_eq(pax_u, bil_u->pax_u));
+    c3_assert(0 == c3_bile_len(bil_u));
+    c3_assert(c3_path_eq(pax_u, c3_bile_path(bil_u)));
 
     static c3_c in1_c[] = "okavango river";
     c3_assert(c3_bile_put_raw(bil_u, in1_c, sizeof(in1_c)));
-    c3_assert(sizeof(in1_c) == bil_u->len_i);
+    c3_assert(sizeof(in1_c) == c3_bile_len(bil_u));
 
     c3_c ou1_c[sizeof(in1_c)];
     c3_assert(c3_bile_get_raw(bil_u, ou1_c, sizeof(ou1_c)));
@@ -132,7 +133,7 @@ _test_bile_put_get_raw(void)
 
     static c3_c in2_c[] = "volta river";
     c3_assert(c3_bile_put_raw(bil_u, in2_c, sizeof(in2_c)));
-    c3_assert(sizeof(in1_c) + sizeof(in2_c) == bil_u->len_i);
+    c3_assert(sizeof(in1_c) + sizeof(in2_c) == c3_bile_len(bil_u));
 
     c3_assert(c3_bile_get_raw(bil_u, ou1_c, sizeof(ou1_c)));
     c3_assert(0 == strcmp(in1_c, ou1_c));

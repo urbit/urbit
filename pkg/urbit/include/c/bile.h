@@ -17,16 +17,9 @@
 // Types
 //==============================================================================
 
-//! Binary file handle.
-//!
-//! Must only be created via c3_bile_open() and disposed of via
-//! c3_bile_close().
-typedef struct {
-  c3_i     fid_i; //!< file descriptor
-  size_t   len_i; //!< length of file in bytes
-  size_t   off_i; //!< offset into file that file descriptor is at
-  c3_path* pax_u; //!< path to file
-} c3_bile;
+//! Binary file.
+struct _c3_bile;
+typedef struct _c3_bile c3_bile;
 
 //==============================================================================
 // Functions
@@ -42,6 +35,30 @@ typedef struct {
 //! @return       Binary file handle.
 c3_bile*
 c3_bile_open(const c3_path* const pax_u);
+
+//! Get the length in bytes of a binary file.
+//!
+//! @param[in] bil_u  Binary file handle.
+//!
+//! @return  Length in bytes or 0 if `bil_u` is NULL.
+size_t
+c3_bile_len(const c3_bile* const bil_u);
+
+//! Get the file path of a binary file.
+//!
+//! @param[in] bil_u  Binary file handle.
+//!
+//! @return  File path or NULL if `bil_u` is NULL.
+const c3_path*
+c3_bile_path(const c3_bile* const bil_u);
+
+//! Get the string representation of a binary file's file path.
+//!
+//! @param[in] bil_u  Binary file handle.
+//!
+//! @return  String representation of the file path or NULL if `bil_u` is NULL.
+const c3_c*
+c3_bile_path_str(const c3_bile* const bil_u);
 
 //! Append a raw byte array to a binary file.
 //!
@@ -103,7 +120,7 @@ c3_bile_write_new(const c3_path* const pax_u,
 {
   c3_t     suc_t = 0;
   c3_bile* bil_u = c3_bile_open(pax_u);
-  if ( !bil_u || 0 < bil_u->len_i ) {
+  if ( !bil_u || 0 < c3_bile_len(bil_u) ) {
     goto end;
   }
 
@@ -134,7 +151,7 @@ c3_bile_read_existing(const c3_path* const pax_u,
 {
   c3_t     suc_t = 0;
   c3_bile* bil_u = c3_bile_open(pax_u);
-  if ( !bil_u || bil_u->len_i < dat_i ) {
+  if ( !bil_u || c3_bile_len(bil_u) < dat_i ) {
     goto end;
   }
 

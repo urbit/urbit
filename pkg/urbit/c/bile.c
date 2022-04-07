@@ -8,6 +8,18 @@
 #include <sys/stat.h>
 
 //==============================================================================
+// Types
+//==============================================================================
+
+//! Binary file.
+struct _c3_bile {
+  c3_i     fid_i; //!< file descriptor
+  size_t   len_i; //!< length of file in bytes
+  size_t   off_i; //!< offset into file that file descriptor is at
+  c3_path* pax_u; //!< path to file
+};
+
+//==============================================================================
 // Macros
 //==============================================================================
 
@@ -77,6 +89,24 @@ fail:
 
 succeed:
   return bil_u;
+}
+
+size_t
+c3_bile_len(const c3_bile* const bil_u)
+{
+  return bil_u ? bil_u->len_i : 0;
+}
+
+const c3_path*
+c3_bile_path(const c3_bile* const bil_u)
+{
+  return bil_u ? bil_u->pax_u : NULL;
+}
+
+const c3_c*
+c3_bile_path_str(const c3_bile* const bil_u)
+{
+  return bil_u ? c3_path_str(bil_u->pax_u) : NULL;
 }
 
 //! @n (1) Seek to the end of the file to ensure append-only behavior.
