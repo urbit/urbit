@@ -169,7 +169,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "no-conn",             no_argument,       NULL, c3__noco },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
-    { "replay-from",         required_argument, NULL, 'r' },
     { "skip-battery-hashes", no_argument,       NULL, 'S' },
     { "autoselect-pill",     no_argument,       NULL, 's' },
     { "no-tty",              no_argument,       NULL, 't' },
@@ -189,7 +188,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   };
 
   while ( -1 != (ch_i=getopt_long(argc, argv,
-                 "A:B:C:DF:G:H:I:J:K:LPRSX:Y:Z:ab:cde:gi:jk:ln:p:qr:stu:vw:x",
+                 "A:B:C:DF:G:H:I:J:K:LPRSX:Y:Z:ab:cde:gi:jk:ln:p:qstu:vw:x",
                  lop_u, &lid_i)) )
   {
     switch ( ch_i ) {
@@ -304,10 +303,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'R': {
         u3_Host.ops_u.rep = c3y;
         return c3y;
-      }
-      case 'r': {
-        u3_Host.ops_u.roc_c = strdup(optarg);
-        break;
       }
       case 'i': {
         u3_Host.ops_u.imp_c = _main_repath(optarg);
@@ -603,7 +598,6 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "    --https-port PORT         Set the https port to bind to\n",
     "-q, --quiet                   Quiet\n",
     "-R, --versions                Report urbit build info\n",
-    "-r, --replay-from NUMBER      Load snapshot from event\n",
     "-S, --skip-battery-hashes     Disable battery hashing\n",
     // XX find a way to re-enable
     // "-s, --autoselect-pill      Pill URL from arvo git hash\n",

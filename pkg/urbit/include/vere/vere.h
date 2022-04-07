@@ -296,7 +296,6 @@
         c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
-        c3_c*   roc_c;                      //  -r, load rock by eve_d
         c3_o    has;                        //  -S, Skip battery hashes
         c3_o    git;                        //  -s, pill url from arvo git hash
         c3_o    tem;                        //  -t, Disable terminal/tty assumptions
