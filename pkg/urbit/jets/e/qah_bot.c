@@ -30,10 +30,8 @@ u3qe_qah_bot(u3_noun a)
       u3x_qual(u3t(a), &ka, &pa, &va, &ta);
       u3x_trel(ta, &ma, &la, &ra);
 
-      u3_noun pro = u3nq(u3k(ka), u3k(pa), u3k(va),
-                      u3qe_qah_fuse(ma, la, ra));
-
-      return pro;
+      return u3nc(u3_nul,
+               u3nq(u3k(ka), u3k(pa), u3k(va), u3qe_qah_fuse(ma, la, ra)));
     }
   }
 }

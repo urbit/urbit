@@ -96,7 +96,7 @@ u3qe_qat_fuse(u3_atom m, u3_noun l, u3_noun r)
               if ( c3y == u3qe_qat_lex(p_l, k_l, p_r, k_r) ) {
                 return u3nq(c3__bin, u3k(k_l), u3k(p_l),
                          u3nq(u3k(v_l), u3k(m),
-                            u3qe_qat_fuse(m_l, l_l, r_l), u3k(r)));
+                           u3qe_qat_fuse(m_l, l_l, r_l), u3k(r)));
               }
               else {
                 return u3nq(c3__bin, u3k(k_r), u3k(p_r),
