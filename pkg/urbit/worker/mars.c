@@ -6,6 +6,8 @@
 #include <vere/vere.h>
 #include <vere/mars.h>
 
+c3_c tac_c[256];  //  tracing label
+
 /*
 ::  peek=[gang (each path $%([%once @tas @tas path] [%beam @tas beam]))]
 ::  ovum=ovum
@@ -294,8 +296,33 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
 static c3_o
 _mars_poke(c3_w mil_w, u3_noun* eve, u3_noun* out)
 {
+  c3_t tac_t = !!( u3C.wag_w & u3o_trace );
   c3_c tag_c[9];
   c3_o ret_o;
+
+  // XX refactor tracing, avoid allocation
+  //
+  if ( tac_t ) {
+    u3_noun wir = u3h(u3t(*eve));
+    u3_noun tag = u3h(u3t(u3t(*eve)));
+    c3_c* wir_c = u3m_pretty_path(wir);
+    c3_w  len_w;
+
+    u3r_bytes(0, 8, (c3_y*)tag_c, tag);
+    tag_c[8] = 0;
+
+    //  ellipses for trunctation
+    //
+    if ( sizeof(tac_c) <
+         snprintf(tac_c, sizeof(tac_c), "poke %%%s on %s", tag_c, wir_c) )
+    {
+      memset(tac_c + (sizeof(tac_c) - 4), '.', 3);
+      tac_c[255] = 0;
+    }
+
+    u3t_event_trace(tac_c, 'b');
+    c3_free(wir_c);
+  }
 
 #ifdef U3_EVENT_TIME_DEBUG
   struct timeval b4;
@@ -342,6 +369,10 @@ _mars_poke(c3_w mil_w, u3_noun* eve, u3_noun* out)
     }
   }
 #endif
+
+  if ( tac_t ) {
+    u3t_event_trace(tac_c, 'e');
+  }
 
   return ret_o;
 }
