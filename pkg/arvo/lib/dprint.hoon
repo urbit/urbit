@@ -169,22 +169,6 @@
   ::
   ==
 ::
-:>    non-recursive check to see if type matches search
-:>
-:>  this is for applying help hints to types when searching for a match. hints
-:>  are only for the type theyre immediately wrapping, not something nested
-:>  deeper, so we dont always want to recurse
-++  shallow-match
-  |=  [topic=term sut=type]
-  ^-  ?
-  ?+  sut  %.n
-    [%atom *]  %.n  :: should we allow doccords on individual atoms? i think they should be for faces
-    [%core *]  !=(~ (find ~[topic] (sloe sut)))
-    [%face *]  ?.  ?=(term p.sut)
-                 %.n  :: TODO: handle tune case
-               =(topic p.sut)
-  ==
-::
 :>    changes a type into a item
 :>
 :>  this does not actually assign the docs, since they usually come from a hint
