@@ -186,7 +186,7 @@ _move(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c)
   if ( 0 != access(src_u->str_c, R_OK | W_OK) ) {
     goto pop_src_path;
   }
-  
+
   c3_path_push(dst_u, nam_c);
   if ( 0 != rename(src_u->str_c, dst_u->str_c) ) {
     goto pop_dst_path;
@@ -195,11 +195,11 @@ _move(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c)
   suc_t = 1;
 
 pop_src_path:
-    c3_path_pop(src_u);
+  c3_path_pop(src_u);
 pop_dst_path:
-    c3_path_pop(dst_u);
+  c3_path_pop(dst_u);
 end:
-    return suc_t;
+  return suc_t;
 }
 
 //! True if the path is the path to the first epoch, false otherwise.
@@ -274,9 +274,9 @@ u3_epoc_migrate(const c3_path* const par_u,
   }
 
   u3_epoc* poc_u = c3_calloc(sizeof(*poc_u));
-  poc_u->fir_d = epo_min_d;
-  poc_u->las_d = epo_min_d - 1;
-  poc_u->pax_u = _epoc_path(par_u, epo_min_d);
+  poc_u->fir_d   = epo_min_d;
+  poc_u->las_d   = epo_min_d - 1;
+  poc_u->pax_u   = _epoc_path(par_u, epo_min_d);
   mkdir(poc_u->pax_u->str_c, 0700);
 
   { // (1)
@@ -417,7 +417,7 @@ succeed:
 }
 
 c3_t
-u3_epoc_commit(u3_epoc* const poc_u, c3_list_node* nod_u, const size_t len_i)
+u3_epoc_commit(u3_epoc* const poc_u, const c3_lode* nod_u, const size_t len_i)
 {
   MDB_txn* txn_u;
   try_lmdb(mdb_txn_begin(poc_u->env_u, NULL, 0, &txn_u),
@@ -436,14 +436,17 @@ u3_epoc_commit(u3_epoc* const poc_u, c3_list_node* nod_u, const size_t len_i)
       goto abort_txn;
     }
     MDB_val key_u = {.mv_data = &ide_d, .mv_size = sizeof(ide_d)};
-    MDB_val val_u = {.mv_data = nod_u->dat_y, .mv_size = nod_u->len_i};
+    MDB_val val_u = {
+      .mv_data = c3_lode_data(nod_u),
+      .mv_size = c3_lode_len(nod_u),
+    };
 
     try_lmdb(mdb_put(txn_u, dbi_u, &key_u, &val_u, MDB_NOOVERWRITE),
              goto abort_txn,
              "failed to write event %" PRIu64,
              ide_d);
 
-    nod_u = nod_u->nex_u;
+    nod_u = c3_lode_next(nod_u);
   }
 
   try_lmdb(mdb_txn_commit(txn_u),
@@ -591,7 +594,7 @@ u3_epoc_info(const u3_epoc* const poc_u)
   fprintf(stderr, "  map size: %zu\n", mei_u.me_mapsize);
   fprintf(stderr, "  page size: %u\n", mst_u.ms_psize);
   fprintf(stderr, "  max pages: %zu\n", mei_u.me_mapsize / mst_u.ms_psize);
-  fprintf(stderr, "  number of pages used: %zu\n", mei_u.me_last_pgno+1);
+  fprintf(stderr, "  number of pages used: %zu\n", mei_u.me_last_pgno + 1);
   fprintf(stderr, "  last transaction ID: %zu\n", mei_u.me_last_txnid);
   fprintf(stderr, "  max readers: %u\n", mei_u.me_maxreaders);
   fprintf(stderr, "  number of readers used: %u\n", mei_u.me_numreaders);

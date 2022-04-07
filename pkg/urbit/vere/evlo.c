@@ -2,8 +2,8 @@
 
 #include "vere/evlo.h"
 
-#include "c/bile.h"
 #include "all.h"
+#include "c/bile.h"
 
 //==============================================================================
 // Constants
@@ -35,7 +35,7 @@ static const size_t epo_len_i = 100;
 static c3_t
 _create_metadata_files(const u3_evlo* const log_u, const u3_meta* const met_u)
 {
-  c3_t  suc_t = 0;
+  c3_t        suc_t = 0;
   const void* dat_v;
 
   c3_path_push(log_u->pax_u, fak_nam_c);
@@ -58,7 +58,7 @@ end:
 static inline u3_epoc*
 _rollover(u3_evlo* const log_u)
 {
-  return log_u->epo_u.cur_u = c3_list_data(c3_list_peekb(log_u->epo_u.lis_u));
+  return log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
 }
 
 //! Migrate from old non-epoch-based event log to epoch-based event log.
@@ -91,7 +91,7 @@ _migrate(u3_evlo* const log_u, u3_meta* const met_u)
   }
 
   { // (2)
-    poc_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0); 
+    poc_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, sizeof(*poc_u));
     c3_free(poc_u);
     log_u->epo_u.cur_u = _rollover(log_u);
@@ -225,25 +225,25 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
 static void
 _uv_commit_cb(uv_work_t* req_u)
 {
-  u3_evlo*      log_u = req_u->data;
-  u3_epoc*      poc_u = log_u->epo_u.cur_u;
-  c3_list_node* nod_u = c3_list_peekf(log_u->eve_u.lis_u);
-  size_t        len_i = log_u->eve_u.req_i;
-  log_u->asy_u.suc_t  = u3_epoc_commit(poc_u, nod_u, len_i);
+  u3_evlo* log_u     = req_u->data;
+  u3_epoc* poc_u     = log_u->epo_u.cur_u;
+  c3_lode* nod_u     = c3_list_peekf(log_u->eve_u.lis_u);
+  size_t   len_i     = log_u->eve_u.req_i;
+  log_u->asy_u.suc_t = u3_epoc_commit(poc_u, nod_u, len_i);
 }
 
 //! Find the epoch of the event log that the given event ID is a part of.
 static u3_epoc*
 _find_epoc(u3_evlo* const log_u, const c3_d ide_d)
 {
-  c3_list_node* nod_u = c3_list_peekb(log_u->epo_u.lis_u);
-  u3_epoc*      poc_u;
+  c3_lode* nod_u = c3_list_peekb(log_u->epo_u.lis_u);
+  u3_epoc* poc_u;
   while ( nod_u ) {
-    poc_u = c3_list_data(nod_u);
+    poc_u = c3_lode_data(nod_u);
     if ( u3_epoc_has(poc_u, ide_d) ) {
       break;
     }
-    nod_u = nod_u->pre_u;
+    nod_u = c3_lode_prev(nod_u);
   }
   return nod_u ? poc_u : NULL;
 }
@@ -289,7 +289,7 @@ u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u)
              goto free_event_log);
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, sizeof(*poc_u));
     c3_free(poc_u);
-    log_u->epo_u.cur_u = c3_list_data(c3_list_peekb(log_u->epo_u.lis_u));
+    log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
   }
 
   try_list(log_u->eve_u.lis_u = c3_list_init(), goto free_event_log);
@@ -360,14 +360,13 @@ u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u)
                goto free_dir_entries);
     }
     else {
-      try_epoc(poc_u = u3_epoc_open(log_u->pax_u, NULL),
-               goto free_dir_entries);
+      try_epoc(poc_u = u3_epoc_open(log_u->pax_u, NULL), goto free_dir_entries);
     }
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, sizeof(*poc_u));
     c3_free(poc_u);
     c3_path_pop(log_u->pax_u);
   }
-  log_u->epo_u.cur_u = c3_list_data(c3_list_peekb(log_u->epo_u.lis_u));
+  log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
   log_u->eve_d       = u3_epoc_last_commit(log_u->epo_u.cur_u);
 
   try_list(log_u->eve_u.lis_u = c3_list_init(), goto free_dir_entries);
@@ -435,9 +434,9 @@ u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i)
       if ( _is_full(poc_u) ) {
         poc_u = _rollover(log_u);
       }
-      log_u->eve_u.req_i  = _request_len(poc_u, eve_u);
-      c3_list_node* nod_u = c3_list_peekf(eve_u);
-      log_u->act_t        = 1;
+      log_u->eve_u.req_i = _request_len(poc_u, eve_u);
+      c3_lode* nod_u     = c3_list_peekf(eve_u);
+      log_u->act_t       = 1;
       if ( !u3_epoc_commit(poc_u, nod_u, log_u->eve_u.req_i) ) {
         goto fail;
       }
@@ -530,12 +529,12 @@ end:
 
   cur_d++;
 
-  c3_list_node* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
-  u3_epoc*      poc_u = NULL;
-  c3_d          end_d = 0;
+  c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
+  u3_epoc* poc_u = NULL;
+  c3_d     end_d = 0;
   while ( 1 ) {
     if ( !poc_u ) {
-      poc_u = c3_list_data(nod_u);
+      poc_u = c3_lode_data(nod_u);
       end_d = u3_epoc_last_commit(poc_u);
       try_epoc(u3_epoc_iter_open(poc_u, cur_d), exit(9));
     }
@@ -553,7 +552,7 @@ end:
     else if ( end_d < cur_d ) {
       u3_epoc_iter_close(poc_u);
       poc_u = NULL;
-      nod_u = nod_u->nex_u;
+      nod_u = c3_lode_next(nod_u);
     }
   }
   return 1;
@@ -572,15 +571,15 @@ u3_evlo_info(const u3_evlo* const log_u)
           u3_evlo_last_commit(log_u));
 
   fprintf(stderr, "  epochs:\r\n");
-  c3_list_node* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
+  c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
   while ( nod_u ) {
-    u3_epoc* poc_u = c3_list_data(nod_u);
+    u3_epoc* poc_u = c3_lode_data(nod_u);
     fprintf(stderr,
-        "    %s: first commit=%" PRIu64 ", last commit=%" PRIu64 "\r\n",
-        u3_epoc_path(poc_u),
-        u3_epoc_first_commit(poc_u),
-        u3_epoc_last_commit(poc_u));
-    nod_u = nod_u->nex_u;
+            "    %s: first commit=%" PRIu64 ", last commit=%" PRIu64 "\r\n",
+            u3_epoc_path(poc_u),
+            u3_epoc_first_commit(poc_u),
+            u3_epoc_last_commit(poc_u));
+    nod_u = c3_lode_next(nod_u);
   }
 
   fprintf(stderr,
@@ -611,9 +610,9 @@ u3_evlo_close(u3_evlo* const log_u)
   { // (2)
     c3_list* epo_u = log_u->epo_u.lis_u;
     if ( epo_u ) {
-      c3_list_node* nod_u;
+      c3_lode* nod_u;
       while ( nod_u = c3_list_popf(epo_u) ) {
-        u3_epoc* poc_u = c3_list_data(nod_u);
+        u3_epoc* poc_u = c3_lode_data(nod_u);
         u3_epoc_close(poc_u);
         c3_free(nod_u);
       }

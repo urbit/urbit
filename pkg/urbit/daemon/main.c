@@ -708,11 +708,11 @@ _debug_db_stats(const c3_c* dir_c)
   if ( !log_u ) {
     goto free;
   }
-  c3_list_node* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
+  c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
   while ( nod_u ) {
-    u3_epoc* poc_u = c3_list_data(nod_u);
+    u3_epoc* poc_u = c3_lode_data(nod_u);
     u3_epoc_info(poc_u);
-    nod_u = nod_u->nex_u;
+    nod_u = c3_lode_next(nod_u);
   }
 
   ret_i = 0;

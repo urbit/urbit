@@ -583,7 +583,7 @@ _mars_flush(u3_mars* mar_u)
 {
 top:
   {
-    u3_gift* gif_u = c3_list_data(c3_list_peekf(mar_u->gif_u));
+    u3_gift* gif_u = c3_lode_data(c3_list_peekf(mar_u->gif_u));
 
     //  XX gather i/o
     //
@@ -594,7 +594,7 @@ top:
       u3_newt_send(mar_u->out_u, gif_u->len_d, gif_u->hun_y);
 
       c3_free(c3_list_popf(mar_u->gif_u));
-      gif_u = c3_list_data(c3_list_peekf(mar_u->gif_u));
+      gif_u = c3_lode_data(c3_list_peekf(mar_u->gif_u));
     }
   }
 

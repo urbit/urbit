@@ -181,7 +181,7 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w);
 //!                   event as payload.
 //! @param[in] len_i  Number of events to commit.
 c3_t
-u3_epoc_commit(u3_epoc* const poc_u, c3_list_node* nod_u, const size_t len_i);
+u3_epoc_commit(u3_epoc* const poc_u, const c3_lode* nod_u, const size_t len_i);
 
 //! Open an iterator within an epoch.
 //!

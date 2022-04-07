@@ -1,4 +1,5 @@
 //! @file list.h
+//!
 //! Generic list abstraction backed by a doubly linked list.
 
 #ifndef C3_LIST_H
@@ -14,23 +15,13 @@
 // Types
 //==============================================================================
 
-//! Doubly-linked list node.
-typedef struct _c3_list_node {
-  struct _c3_list_node* nex_u;   //!< next node
-  struct _c3_list_node* pre_u;   //!< previous node
-  size_t                len_i;   //!< length of `dat_y` in bytes
-  c3_y                  dat_y[]; //!< payload data
-} c3_list_node;
+//! Doubly-linked list.
+struct _c3_list;
+typedef struct _c3_list c3_list;
 
-//! Doubly-linked list handle.
-//!
-//! The length field should never be accessed directly for compatibility
-//! reasons. Instead, use c3_list_len().
-typedef struct {
-  c3_list_node* fro_u; //!< node at front of list
-  c3_list_node* bak_u; //!< node at back of list
-  size_t        len_i; //!< number of nodes in list
-} c3_list;
+//! Doubly-linked list node.
+struct _c3_list_node;
+typedef struct _c3_list_node c3_lode;
 
 //! Sentinel values used to indicate which end of the list to operate on.
 typedef enum {
@@ -68,22 +59,16 @@ c3_list*
 c3_list_init(void);
 
 //! Get number of nodes in a list.
-static inline size_t
-c3_list_len(const c3_list* const lis_u)
-{
-  return lis_u ? lis_u->len_i : 0;
-}
-
-//! Get the payload data from a list node.
-static inline void*
-c3_list_data(const c3_list_node* const nod_u)
-{
-  return nod_u ? (void*)nod_u->dat_y : NULL;
-}
-
-//! Add a new node onto the end of `lis_u`.
 //!
-//! When pushing a new element onto `lis_u`, `siz_i` bytes from `dat_v` are
+//! @param[in] lis_u  List handle.
+//!
+//! @return  Number of nodes in `lis_u` or 0 if `lis_u` is NULL.
+size_t
+c3_list_len(const c3_list* const lis_u);
+
+//! Add a new node onto the end of a list.
+//!
+//! When pushing a new element onto a list, `siz_i` bytes from `dat_v` are
 //! copied to the payload field of the newly allocated node.
 //!
 //! @param[in] lis_u  If NULL, behavior is undefined.
@@ -113,7 +98,7 @@ c3_list_pushf(c3_list* const lis_u, const void* const dat_v, const size_t siz_i)
   c3_list_push(lis_u, C3_LIST_FRONT, dat_v, siz_i);
 }
 
-//! Get an end node from `lis_u`.
+//! Get an end node from a list.
 //!
 //! @param[in] lis_u  If NULL, behavior is undefined.
 //! @param[in] end_i  If C3_LIST_FRONT, peek the front of `lis_u`.
@@ -122,49 +107,81 @@ c3_list_pushf(c3_list* const lis_u, const void* const dat_v, const size_t siz_i)
 //!                   undefined.
 //!
 //! @return NULL  `lis_u` is empty.
-//! @return       Specified end node of `lis_u`. MUST NOT be freed by caller.
-c3_list_node*
+//! @return       Specified end node of `lis_u`. Must NOT be freed by caller.
+c3_lode*
 c3_list_peek(const c3_list* const lis_u, const c3_list_end end_i);
 
 //! Get back node from a list. See c3_list_peek().
-static inline c3_list_node*
+static inline c3_lode*
 c3_list_peekb(const c3_list* const lis_u)
 {
   return c3_list_peek(lis_u, C3_LIST_BACK);
 }
 
 //! Get front node from a list. See c3_list_peek().
-static inline c3_list_node*
+static inline c3_lode*
 c3_list_peekf(const c3_list* const lis_u)
 {
   return c3_list_peek(lis_u, C3_LIST_FRONT);
 }
 
-//! Remove an end node from `lis_u`.
+//! Remove an end node from a list.
 //!
 //! @param[in] lis_u  If NULL, behavior is undefined.
 //! @param[in] end_i  If C3_LIST_FRONT, pop the front of `lis_u`.
-// If C3_LIST_BACK, pop the back of `lis_u`.
-// If neither C3_LIST_FRONT nor C3_LIST_BACK, behavior is
-// undefined.
-//
+//!                   If C3_LIST_BACK, pop the back of `lis_u`.
+//!                   If neither C3_LIST_FRONT nor C3_LIST_BACK, behavior is
+//!                   undefined.
+//!
 //! @return NULL  `lis_u` is empty.
-//! @return       Specified end node of `lis_u`. MUST be freed by caller.
-c3_list_node*
+//! @return       Specified end node of `lis_u`. Must be freed by caller.
+c3_lode*
 c3_list_pop(c3_list* const lis_u, const c3_list_end end_i);
 
 //! Pop back node from a list. See c3_list_pop().
-static inline c3_list_node*
+static inline c3_lode*
 c3_list_popb(c3_list* const lis_u)
 {
   return c3_list_pop(lis_u, C3_LIST_BACK);
 }
 
 //! Pop front node from a list. See c3_list_pop().
-static inline c3_list_node*
+static inline c3_lode*
 c3_list_popf(c3_list* const lis_u)
 {
   return c3_list_pop(lis_u, C3_LIST_FRONT);
 }
+
+//! Get the successor of a list node.
+//!
+//! @param[in]  List node handle.
+//!
+//! @return  Successor of `nod_u` or NULL if `nod_u` is NULL.
+c3_lode*
+c3_lode_next(const c3_lode* const nod_u);
+
+//! Get the predecessor of a list node.
+//!
+//! @param[in]  List node handle.
+//!
+//! @return  Predecessor of `nod_u` or NULL if `nod_u` is NULL.
+c3_lode*
+c3_lode_prev(const c3_lode* const nod_u);
+
+//! Get the payload data of a list node.
+//!
+//! @param[in] nod_u  List node handle.
+//!
+//! @return  Payload data of `nod_u` or NULL if `nod_u` is NULL.
+void*
+c3_lode_data(const c3_lode* const nod_u);
+
+//! Get the length in bytes of a list node's payload data.
+//!
+//! @param[in] nod_u  List node handle.
+//!
+//! @return  Length of payload data of `nod_u` or 0 if `nod_u` is NULL.
+size_t
+c3_lode_len(const c3_lode* const nod_u);
 
 #endif /* ifndef C3_LIST_H */
