@@ -397,12 +397,13 @@ _cw_work(c3_i argc, c3_c* argv[])
     exit(1);
   }
 
+  c3_d       eve_d = 0;
   uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
   c3_c*      dir_c = argv[0];
   c3_c*      key_c = argv[1]; // XX use passkey
   c3_c*      wag_c = argv[2];
   c3_c*      hap_c = argv[3];
-  c3_c*      roc_c = argv[4]; // XX replay-to?
+  c3_c*      eve_c = argv[4];
 #ifdef U3_OS_mingw
   c3_c*      han_c = argv[5];
   _cw_intr_win(han_c);
@@ -418,13 +419,11 @@ _cw_work(c3_i argc, c3_c* argv[])
     memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
     sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
-  }
 
-  //  XX use
-  //
-  // if ( 1 != sscanf(argv[6], "%" PRIu64 "", &eve_d) ) {
-  //   fprintf(stderr, "mars: rock: invalid number '%s'\r\n", argv[4]);
-  // }
+    if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
+      fprintf(stderr, "mars: replay-to invalid: '%s'\r\n", eve_c);
+    }
+  }
 
   //  setup loom XX strdup?
   //
@@ -444,7 +443,7 @@ _cw_work(c3_i argc, c3_c* argv[])
   {
     //  XX set exit cb
     //
-    u3_mars* mar_u = u3_mars_init(dir_c, &inn_u, &out_u);
+    u3_mars* mar_u = u3_mars_init(dir_c, &inn_u, &out_u, eve_d);
 
     if ( !mar_u ) {
       fprintf(stderr, "mars: init failed\r\n");
@@ -489,7 +488,7 @@ _cw_usage(c3_c* s)
     "  boot a pier:\n"
     "    %s boot <pier> <key> <flags> <cache-size>\n"
     "  run a pier:\n"
-    "    %s work <pier> <key> <flags> <cache-size> <at-event>" // XX replay-to?
+    "    %s work <pier> <key> <flags> <cache-size> <replay-to>"
 #ifdef U3_OS_mingw
     " <ctrlc-handle>"
 #endif

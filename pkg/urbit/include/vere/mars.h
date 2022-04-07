@@ -69,7 +69,8 @@
       u3_mars*
       u3_mars_init(c3_c*    dir_c,
                    u3_moat* inn_u,
-                   u3_mojo* out_u);
+                   u3_mojo* out_u,
+                   c3_d     eve_d);
 
     /* u3_mars_kick(): try to send a task into mars.
     */

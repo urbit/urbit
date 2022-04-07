@@ -783,27 +783,44 @@ _mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
 /* u3_mars_play(): replay all newer logged events.
 */
 void
-u3_mars_play(u3_mars* mar_u)
+u3_mars_play(u3_mars* mar_u, c3_d eve_d)
 {
   u3_disk* log_u = mar_u->log_u;
 
+  if ( !eve_d ) {
+    eve_d = log_u->dun_d;
+  }
+  else {
+    c3_assert( eve_d > mar_u->dun_d );
+    eve_d = c3_min(eve_d, log_u->dun_d);
+  }
+
   u3l_log("---------------- playback starting ----------------\r\n");
 
-  if ( (1ULL + mar_u->dun_d) == log_u->dun_d ) {
+  if ( (1ULL + eve_d) == log_u->dun_d ) {
     u3l_log("play: event %" PRIu64 "\r\n", log_u->dun_d);
+  }
+  else if ( eve_d != log_u->dun_d ) {
+    u3l_log("play: events %" PRIu64 "-%" PRIu64 " of %" PRIu64 "\r\n",
+            (c3_d)(1ULL + mar_u->dun_d),
+            eve_d,
+            log_u->dun_d);
   }
   else {
     u3l_log("play: events %" PRIu64 "-%" PRIu64 "\r\n",
             (c3_d)(1ULL + mar_u->dun_d),
-            log_u->dun_d);
+            eve_d);
   }
 
-  while ( mar_u->dun_d < log_u->dun_d ) {
+  while ( mar_u->dun_d < eve_d ) {
+    c3_w bat_w = eve_d - mar_u->dun_d;
+    c3_assert( (mar_u->dun_d + bat_w) == eve_d );
+
     _mars_step_trace(mar_u->dir_c);
 
     //  XX get batch from args
     //
-    if ( c3n == _mars_play_batch(mar_u, c3n, 500) ) {
+    if ( c3n == _mars_play_batch(mar_u, c3n, c3_min(bat_w, 500)) ) {
       u3l_log("play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
       u3e_save();
       //  XX exit code, cb
@@ -849,7 +866,8 @@ _mars_do_boot(u3_disk* log_u, c3_d eve_d)
 u3_mars*
 u3_mars_init(c3_c*    dir_c,
              u3_moat* inn_u,
-             u3_mojo* out_u)
+             u3_mojo* out_u,
+             c3_d     eve_d)
 {
   u3_mars* mar_u = c3_malloc(sizeof(*mar_u));
   mar_u->dir_c = dir_c;
@@ -894,9 +912,26 @@ u3_mars_init(c3_c*    dir_c,
     u3e_save();
   }
 
+  if ( eve_d && (eve_d <= mar_u->dun_d) ) {
+    fprintf(stderr, "mars: replay-to %" PRIu64
+                    " already done (at %" PRIu64 ")\r\n",
+                    eve_d, mar_u->dun_d);
+    u3_disk_exit(mar_u->log_u);
+    c3_free(mar_u);
+    return 0;
+  }
+
   if ( mar_u->log_u->dun_d > mar_u->dun_d ) {
-    u3_mars_play(mar_u);
+    u3_mars_play(mar_u, eve_d);
     u3e_save();
+  }
+
+  //  XX do something better
+  //
+  if ( mar_u->log_u->dun_d > mar_u->dun_d ) {
+    u3_disk_exit(mar_u->log_u);
+    c3_free(mar_u);
+    exit(0);
   }
 
   //  send ready status message
