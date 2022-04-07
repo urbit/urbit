@@ -25,7 +25,7 @@
 +$  arch  (axil @uvI)
 ++  axal
   |$  [item]
-  [fil=(unit item) dir=(map @ta $)]
+  [fil=(unit item) dir=(map @ta (axal item)]
 ++  axil
   |$  [item]
   [fil=(unit item) dir=(map @ta ~)]
@@ -458,7 +458,7 @@
   ::
   ++  has
     |=  pax=path
-    !=(~ fil:(dip pax))
+    !=(~ (get pax))
   ::  Delete subtree
   ::
   ++  lop
@@ -470,11 +470,6 @@
     =/  kid  (~(get by dir.fat) i.pax)
     ?~  kid  fat
     fat(dir (~(put by dir.fat) i.pax $(fat u.kid, pax t.pax)))
-  ::  Serialize to map
-  ::
-  ++  tar
-    ^-  (map path _?>(?=(^ fil.fat) u.fil.fat))
-    (~(gas by *(map path _?>(?=(^ fil.fat) u.fil.fat))) tap)
   ::
   ++  put
     |*  [pax=path dat=*]
@@ -496,6 +491,10 @@
       dir  t.dir
       out  ^$(pax (weld pax /[p.i.dir]), fat q.i.dir)
     ==
+  ::  Serialize to map
+  ::
+  ++  tar
+    (~(gas by *(map path _?>(?=(^ fil.fat) u.fil.fat))) tap)
   --
 ::
 ++  wa                                                  ::  cached compile
