@@ -258,4 +258,120 @@
     =/  per  $(a r.a)
     [p.per [%bin k.a p.a v.a m.a l.a q.per]]
   ==
+::
+++  apt                                             ::  check correctness
+  ~/  %apt
+  |=  a=pri
+  |^  ^-  ?
+  ?.  gud
+    ~&  %apt-gud
+    gud
+  ?.  uni
+    ~&  %apt-uni
+    uni
+  ?.  hep
+    ~&  %apt-hep
+    hep
+  ?.  val
+    ~&  %apt-val
+    val
+  &
+  ::
+  ++  gud                                           ::  has good nils
+    ^-  ?
+    ?~  a  %&
+    ?-  -.a
+        %tip  %&
+    ::
+        %bin
+      ?:  &(?=(~ l.a) ?=(~ r.a))  %|
+      &(gud(a l.a) gud(a r.a))
+    ==
+  ::
+  ++  col                                           ::  collect keys
+    |=  [a=pri l=(list @)]
+    |-  ^-  (list @)
+    ?~  a  l
+    ?-  -.a
+      %tip  [k.a l]
+      %bin  $(l $(l [k.a l], a l.a), a r.a)
+    ==
+  ::
+  ++  uni                                           ::  has unique keys
+    =/  l  (sort (col a `(list @)`~) gor)
+    =|  k=(unit @)
+    |-  ^-  ?
+    ?~  l
+      %&
+    ?:  =(k (some i.l))
+      %|
+    $(l t.l, k (some i.l))
+  ::
+  ++  hep                                           ::  min-heap
+    ?~  a  %&
+    |^  ^-  ?
+    ?-  -.a
+      %tip  %&
+      %bin  &((loop l.a p.a) (loop r.a p.a))
+    ==
+    ++  loop
+      |=  [b=pri q=@]
+      ^-  ?
+      ?~  b  %&
+      ?-  -.b
+        %tip  (lte q p.b)
+        %bin  &((lte q p.b) (loop l.b p.b) (loop r.b p.b))
+      ==
+    --
+  ::
+  ++  val                                           ::  valid mask
+    ?~  a  %&
+    |^  ^-  ?
+    ?-  -.a
+      %tip  %&
+      %bin  &((mok m.a l.a r.a) (lop l.a m.a %lef) (lop r.a m.a %rig))
+    ==
+    ++  mok
+      |=  [n=@ l=pri r=pri]
+      ^-  ?
+      =/  s  (chi l)
+      =/  t  (chi r)
+      ?:  |(?=(~ s) ?=(~ t))
+        %&
+      =(n (rsh 0 (bex (xeb (mix (mug u.s) (mug u.t))))))
+    ::
+    ++  lop
+      |=  [b=pri n=@ s=?(%lef %rig)]
+      ^-  ?
+      ?~  b  %&
+      ?-    -.b
+          %tip
+        (kek n s k.b)
+      ::
+          %bin
+        ?&  (kek n s k.b)
+            (mok m.b l.b r.b)
+            (lop l.b m.b %lef)
+            (lop r.b m.b %rig)
+        ==
+     ==
+    ::
+    ++  kek
+      |=  [n=@ s=?(%lef %rig) k=@]
+      ^-  ?
+      ?-  s
+        %lef  =(0 (dis n (mug k)))
+        %rig  =(n (dis n (mug k)))
+      ==
+    ::
+    ++  chi
+      |=  b=pri
+      ^-  (unit @)
+      ?~  b  ~
+      ?-  -.b
+        %tip  `k.b
+        %bin  `k.b
+      ==
+    --
+  --
 --
