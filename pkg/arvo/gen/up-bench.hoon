@@ -23,7 +23,11 @@
       %qah-get
       %qat-see
       %qah-see
-    :: XX monotonic del
+    :: monotonic del
+      %map-del
+      %qor-del
+      %qat-del
+      %qah-del
     :: XX bot
   ==
 ::
@@ -217,4 +221,68 @@
   ?:  (gth j n)
     %done
   $(l (see:qah pos j n), j +(j))
+::
+    %map-del
+  =|  acc=(map @ @)
+  =/  pos
+    |-  ^+  acc
+    ?:  (gth j n)
+      ?:  apt
+        ?>  ~(apt by acc)  acc
+      acc
+    $(acc (~(put by acc) j j), j +(j))
+  =|  l=_acc
+  ~>  %bout
+  |-
+  ?:  (gth j n)
+    %done
+  $(l (~(del by pos) j), j +(j))
+::
+    %qor-del
+  =|  acc=pro:qor
+  =/  pos
+    |-  ^+  acc
+    ?:  (gth j n)
+      ?:  apt
+        ?>  (apt:qor acc)  acc
+      acc
+    $(acc (put:qor acc j j j), j +(j))
+  =|  l=_acc
+  ~>  %bout
+  |-
+  ?:  (gth j n)
+    %done
+  $(l (del:qor pos j), j +(j))
+::
+    %qat-del
+  =|  acc=pri:qat
+  =/  pos
+    |-  ^+  acc
+    ?:  (gth j n)
+      ?:  apt
+        ?>  (apt:qat acc)  acc
+      acc
+    $(acc (put:qat acc j j j), j +(j))
+  =|  l=_acc
+  ~>  %bout
+  |-  ^-  %done
+  ?:  (gth j n)
+    %done
+  $(l (del:qat pos j), j +(j))
+::
+    %qah-del
+  =|  acc=pri:qah
+  =/  pos
+    |-  ^+  acc
+    ?:  (gth j n)
+      ?:  apt
+        ?>  (apt:qah acc)  acc
+      acc
+    $(acc (put:qah acc j j j), j +(j))
+  =|  l=_acc
+  ~>  %bout
+  |-
+  ?:  (gth j n)
+    %done
+  $(l (del:qah pos j), j +(j))
 ==

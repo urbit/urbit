@@ -17,7 +17,7 @@ u3qe_qat_del(u3_noun a, u3_noun k)
       return u3m_bail(c3__exit);
 
     case c3__tip: {
-      return (c3y == u3r_sing(k, u3h(u3t(a)))) ? u3_nul : u3k(a);
+      return ( c3y == u3r_sing(k, u3h(u3t(a))) ) ? u3_nul : u3k(a);
     }
 
     case c3__bin: {
@@ -26,7 +26,7 @@ u3qe_qat_del(u3_noun a, u3_noun k)
       u3x_qual(u3t(a), &ka, &pa, &va, &ta);
       u3x_trel(ta, &ma, &la, &ra);
 
-      if (c3y == u3qe_qat_feud(k, ka, ma)) {
+      if (c3y == u3qe_qat_feud(ma, k, ka)) {
         return u3k(a);
       }
       else if (c3y == u3r_sing(k, ka)) {
