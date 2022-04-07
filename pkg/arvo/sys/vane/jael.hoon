@@ -427,6 +427,13 @@
       %-  curd  =<  abet
       (private-keys:~(feel su hen now pki etn) life.tac ring.tac)
     ::
+    ::  resend private key to subscribers
+    ::
+        %resend
+      %-  curd  =<  abet
+      %-  ~(exec su hen now pki etn)
+      [yen.own.pki [%give %private-keys [lyf jaw]:own.pki]]
+    ::
     ::  register moon keys
     ::
         %moon
@@ -733,14 +740,18 @@
     =/  a-point=point  (~(gut by pos.zim.pki) ship.i.udiffs *point)
     =/  a-diff=(unit diff:point)  (udiff-to-diff:point udiff.i.udiffs a-point)
     =?  this-su  ?=(^ a-diff)
-      ::  if this about our keys, and we already know these, start using them
-      ::
-      =?  lyf.own
+      =?    this-su
           ?&  =(our ship.i.udiffs)
               ?=(%keys -.u.a-diff)
               (~(has by jaw.own) life.to.u.a-diff)
           ==
-        life.to.u.a-diff
+        ::  if this about our keys, and we already know these, start using them
+        ::
+        =.  lyf.own  life.to.u.a-diff
+        ::  notify subscribers (ames) to start using our new private keys
+        ::
+        (exec yen.own [%give %private-keys [lyf jaw]:own])
+      ::
       (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
     $(udiffs t.udiffs)
   ::

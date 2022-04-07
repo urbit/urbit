@@ -16,6 +16,7 @@ import { TranscludedNode } from './TranscludedNode';
 import styled from 'styled-components';
 import Author from '~/views/components/Author';
 import useDocketState, { useTreaty } from '~/logic/state/docket';
+import { createJoinParams } from '~/views/landscape/components/Join/Join';
 
 function Placeholder(type) {
   const lines = (type) => {
@@ -118,8 +119,7 @@ function GraphPermalink(
   const permalink = (() => {
     const link = `/perma${getPermalinkForGraph(group, graph, index).slice(16)}`;
     return (!association && !loading)
-      ? { search: `?join-kind=group&join-path=${encodeURIComponent(group)}&redir=${encodeURIComponent(link)}`  }
-        :  link
+      ? { search: createJoinParams('groups', group, link)  } :  link;
   })();
 
   const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2) ?? ['Unknown', 'Unknown'];

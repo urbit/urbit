@@ -1,4 +1,4 @@
-import { setMentions } from '@urbit/api/dist';
+import { setMentions } from '@urbit/api';
 import React from 'react';
 import { Setting } from '../../components/Setting';
 import { pokeOptimisticallyN } from '../../state/base';
