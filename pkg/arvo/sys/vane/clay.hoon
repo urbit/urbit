@@ -28,6 +28,8 @@
 ::  a merge function: it takes two commits and a merge strategy and
 ::  produces a new commit.
 ::
+::  - Tombstoning.  This is in +tomb.
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 ::  Here are the structures.  `++raft` is the formal arvo state.  It's also
@@ -5315,5 +5317,90 @@
     ?.  veb
       ..^$
     ((slog tang) ..^$)
+  ::
+  ::  +pick: copying gc based on norms
+  ::
+  ::  Could reduce uni costs throughout by keeping an explicit cache
+  ::
+  ++  pick
+    ^-  (map lobe blob)
+    |^
+    =/  room-blobs
+      =/  rooms=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
+      |-  ^-  (map lobe blob)
+      ?~  rooms
+        ~
+      (uni-blobs $(rooms t.rooms) (pick-dome dom.dojo.i.rooms))
+    =/  rung-blobs
+      =/  rungs=(list [=ship =rung])  ~(tap by hoy.ruf)
+      |-  ^-  (map lobe blob)
+      ?~  rungs
+        ~
+      %+  uni-blobs  $(rungs t.rungs)
+      =/  redes=(list [=desk =rede])  ~(tap by rus.rung.i.rungs)
+      |-
+      ?~  redes
+        ~
+      (uni-blobs $(redes t.redes) (pick-dome dom.rede.i.redes))
+    (uni-blobs room-blobs rung-blobs)
+    ::
+    ++  pick-dome
+      |=  =dome
+      ^-  (map lobe blob)
+      =/  yakis=(list [=norm =yaki])  ~(tap in (draw-dome dome))
+      |-  ^-  (map lobe blob)
+      ?~  yakis
+        ~
+      (uni-blobs $(yakis t.yakis) (pick-yaki i.yakis))
+    ::
+    ++  draw-dome
+      |=  =dome
+      ^-  (set [norm yaki])
+      =|  =aeon
+      |-  ^-  (set [norm yaki])
+      ?:  (lth let.dome aeon)
+        ~
+      =/  =tako  (~(got by hit.dome) aeon)
+      (~(uni in (draw-tako tom.dome nor.dome tako)) $(aeon +(aeon)))
+    ::
+    ++  draw-tako
+      |=  [tom=(map tako norm) nor=norm =tako]
+      ^-  (set [norm yaki])
+      ~+
+      =/  =norm  (~(gut by tom) tako nor)
+      =/  =yaki  (~(got by hut.ran.ruf) tako)
+      =/  takos
+        |-  ^-  (set [^norm ^yaki])
+        ?~  p.yaki
+          ~
+        (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
+      (~(put in takos) norm yaki)
+    ::
+    ++  pick-yaki
+      |=  [=norm =yaki]
+      ^-  (map lobe blob)
+      =/  lobes=(list [=path =lobe])  ~(tap by q.yaki)
+      |-  ^-  (map ^lobe blob)
+      ?~  lobes
+        ~
+      %+  uni-blobs  $(lobes t.lobes)
+      ?:  =([~ %&] +:(~(fit ^de norm) path.i.lobes))
+         (pick-lobe lobe.i.lobes)
+      [[lobe.i.lobes %dead lobe.i.lobes ~] ~ ~]
+    ::
+    ++  pick-lobe
+      |=  =lobe
+      ^-  (map ^lobe blob)
+      =/  bob=(unit blob)  (~(get by lat.ran.ruf) lobe)
+      ?~  bob
+        %-  (slog leaf+"clay: picking strange lobe {<lobe>}")
+        ~
+      ?-    -.u.bob
+          %dead    [[lobe u.bob] ~ ~]
+          %direct  [[lobe u.bob] ~ ~]
+          %delta
+        (~(put by $(lobe q.u.bob)) lobe u.bob)
+      ==
+    --
   --
 --
