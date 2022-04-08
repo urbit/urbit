@@ -15,7 +15,7 @@
 
 #ifdef U3_EPOC_TEST
 
-static const c3_c const dir_c[] = "/tmp/event_log";
+static const c3_c dir_c[] = "/tmp/event_log";
 
 static void
 test_u3_epoc_new(void)

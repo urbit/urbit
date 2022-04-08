@@ -60,13 +60,13 @@ const c3_c epo_pre_c[] = "0i";
 const c3_d epo_min_d = 1ULL;
 
 //! Name of the directory housing the first epoch.
-static const c3_c const fir_nam_c[] = "0i1";
+static const c3_c fir_nam_c[] = "0i1";
 
 //! Name of binary file containing the epoch version number.
-static const c3_c const ver_nam_c[] = "version.bin";
+static const c3_c ver_nam_c[] = "version.bin";
 
 //! Name of binary file containing the lifecycle length.
-static const c3_c const lif_nam_c[] = "lifecycle.bin";
+static const c3_c lif_nam_c[] = "lifecycle.bin";
 
 //==============================================================================
 // Macros
@@ -100,7 +100,7 @@ static const c3_c const lif_nam_c[] = "lifecycle.bin";
 static c3_path*
 _epoc_path(const c3_path* const par_u, const c3_d fir_d)
 {
-  static const c3_c const lar_c[] = "18446744073709551615"; // (1)
+  static const c3_c lar_c[] = "18446744073709551615"; // (1)
 
   c3_c dir_c[sizeof(epo_pre_c) + sizeof(lar_c)];
   snprintf(dir_c, sizeof(dir_c), "%s%" PRIu64, epo_pre_c, fir_d);

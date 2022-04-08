@@ -36,13 +36,13 @@ struct _u3_evlo {
 //==============================================================================
 
 //! Name of file containing the fake bit.
-static const c3_c const fak_nam_c[] = "fake.bin";
+static const c3_c fak_nam_c[] = "fake.bin";
 
 //! Name of file containing event log version.
-static const c3_c const ver_nam_c[] = "version.bin";
+static const c3_c ver_nam_c[] = "version.bin";
 
 //! Name of file containing the name of the ship.
-static const c3_c const who_nam_c[] = "who.bin";
+static const c3_c who_nam_c[] = "who.bin";
 
 //! Event log version number.
 static const c3_w elo_ver_w = 1;
