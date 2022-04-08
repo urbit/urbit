@@ -77,7 +77,8 @@ export function GroupSwitcher(props: {
   isAdmin: any;
 }) {
   const { workspace, isAdmin } = props;
-  const isMobile = useMedia('(max-width: 639px)')
+  const isMobile = useMedia('(max-width: 639px)');
+  const path = isMobile ? '/popover' : '/popover/settings';
   const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
   const metadata = (workspace.type === 'home' || workspace.type  === 'messages')
@@ -146,26 +147,14 @@ export function GroupSwitcher(props: {
                       />
                       <Text> Participants</Text>
                     </GroupSwitcherItem>
-                    {isMobile ? (
-                      <GroupSwitcherItem to={navTo('/popover')}>
-                        <Icon
-                          mr={2}
-                          color="gray"
-                          icon="Gear"
-                        />
-                        <Text> Group Settings</Text>
-                      </GroupSwitcherItem>
-
-                      ) : (
-                      <GroupSwitcherItem to={navTo('/popover/settings')}>
-                        <Icon
-                          mr={2}
-                          color="gray"
-                          icon="Gear"
-                        />
-                        <Text> Group Settings</Text>
-                      </GroupSwitcherItem>
-                    )}
+                    <GroupSwitcherItem to={navTo(path)}>
+                      <Icon
+                        mr={2}
+                        color="gray"
+                        icon="Gear"
+                      />
+                      <Text> Group Settings</Text>
+                    </GroupSwitcherItem>
                     {isAdmin && (<GroupSwitcherItem bottom to={navTo('/invites')}>
                       <Icon
                         mr={2}
@@ -195,15 +184,9 @@ export function GroupSwitcher(props: {
                     ml='12px'
                   />
                 </Link>)}
-                {isMobile ? (
-                  <Link to={navTo('/popover')}>
-                    <Icon color='gray' display="inline-block" ml={'12px'} icon="Gear" />
-                  </Link>
-                  ) : (
-                  <Link to={navTo('/popover/settings')}>
-                    <Icon color='gray' display="inline-block" ml={'12px'} icon="Gear" />
-                  </Link>
-                )}
+                <Link to={navTo(path)}>
+                  <Icon color='gray' display="inline-block" ml={'12px'} icon="Gear" />
+                </Link>
               </>
             )}
           </Row>
