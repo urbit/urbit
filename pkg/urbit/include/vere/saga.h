@@ -1,4 +1,4 @@
-//! @file evlo.h
+//! @file saga.h
 //!
 //! Event log.
 //!
@@ -24,7 +24,7 @@
 
 //! User-provided function to replay an event.
 //!
-//! @param[in] ptr_v  Context provided to u3_evlo_replay() as `ptr_v`.
+//! @param[in] ptr_v  Context provided to u3_saga_replay() as `ptr_v`.
 //! @param[in] cur_d  ID of current event in replay.
 //! @param[in] las_d  ID of last event to be replayed.
 //! @param[in] byt_y  Serialized event.
@@ -32,7 +32,7 @@
 //!
 //! @return 0  Event replay failed.
 //! @return 1  Event replay succeeded.
-typedef c3_t (*u3_evlo_play)(void*        ptr_v,
+typedef c3_t (*u3_saga_play)(void*        ptr_v,
                              c3_d         cur_d,
                              c3_d         las_d,
                              c3_y* const  byt_y,
@@ -41,37 +41,37 @@ typedef c3_t (*u3_evlo_play)(void*        ptr_v,
 //! User-provided function to execute on main thread after an async batch commit
 //! has completed.
 //!
-//! @param[in] ptr_v  Context provided to u3_evlo_commit_mode() as `ptr_v`.
+//! @param[in] ptr_v  Context provided to u3_saga_commit_mode() as `ptr_v`.
 //! @param[in] suc_d  ID of last event committed in async batch commit.
 //! @param[in] suc_t  True if the commit succeeded.
-typedef c3_t (*u3_evlo_news)(void* ptr_v, c3_d ide_d, c3_t suc_t);
+typedef c3_t (*u3_saga_news)(void* ptr_v, c3_d ide_d, c3_t suc_t);
 
 //! Event log async commit mode context.
 typedef struct {
   uv_loop_t*   lup_u; //!< libuv event loop
   uv_work_t    req_u; //!< libuv work queue handle
-  u3_evlo_news com_f; //!< callback invoked upon commit completion
+  u3_saga_news com_f; //!< callback invoked upon commit completion
   void*        ptr_v; //!< user context passed to `com_f`
   c3_t         suc_t; //!< commit success flag
-} u3_evlo_acon;
+} u3_saga_acon;
 
 //! Event log.
-struct _u3_evlo;
-typedef struct _u3_evlo u3_evlo;
+struct _u3_saga;
+typedef struct _u3_saga u3_saga;
 
 //==============================================================================
 // Macros
 //==============================================================================
 
-//! Error handling wrapper for u3_evlo API calls that return 0/NULL on failure
+//! Error handling wrapper for u3_saga API calls that return 0/NULL on failure
 //! and non-zero/non-NULL on success.
 //!
-//! @param[in] evlo_call       u3_evlo API call.
+//! @param[in] saga_call       u3_saga API call.
 //! @param[in] failure_action  Statement to execute after logging failure.
-#define try_evlo(evlo_call, failure_action, ...)                               \
+#define try_saga(saga_call, failure_action, ...)                               \
   do {                                                                         \
-    if ( !(evlo_call) ) {                                                      \
-      fprintf(stderr, "evlo: " __VA_ARGS__);                                   \
+    if ( !(saga_call) ) {                                                      \
+      fprintf(stderr, "saga: " __VA_ARGS__);                                   \
       fprintf(stderr, "\r\n");                                                 \
       failure_action;                                                          \
     }                                                                          \
@@ -89,18 +89,18 @@ typedef struct _u3_evlo u3_evlo;
 //!
 //! @return NULL  New event log could not be created.
 //! @return       Handle to new event log.
-u3_evlo*
-u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u);
+u3_saga*
+u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u);
 
-//! Load an existing event log created with u3_evlo_new().
+//! Load an existing event log created with u3_saga_new().
 //!
 //! @param[in]  pax_u  Root directory of event log.
 //! @param[out] met_u  Pier metadata.
 //!
 //! @return NULL  Existing event log could not be opened.
 //! @return       Handle to open event log.
-u3_evlo*
-u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u);
+u3_saga*
+u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u);
 
 //! Get the ID of the last committed event in an event log.
 //!
@@ -108,7 +108,7 @@ u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u);
 //!
 //! @return  ID of last committed event in `log_u`.
 c3_d
-u3_evlo_last_commit(const u3_evlo* const log_u);
+u3_saga_last_commit(const u3_saga* const log_u);
 
 //! Set the commit mode of an event log to synchronous (the default) or
 //! asynchronous. Must not be called when async commits are in progress.
@@ -117,7 +117,7 @@ u3_evlo_last_commit(const u3_evlo* const log_u);
 //! @param[in] asy_u  Async context to use for async commits. If NULL, sets
 //!                   commit mode to synchronous.
 void
-u3_evlo_commit_mode(u3_evlo* const log_u, u3_evlo_acon* asy_u);
+u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u);
 
 //! Commit an event to an event log.
 //!
@@ -129,7 +129,7 @@ u3_evlo_commit_mode(u3_evlo* const log_u, u3_evlo_acon* asy_u);
 //! @return 1  Event was committed (synchronous commit mode).
 //! @return 1  Event was scheduled to be committed (asynchronous commit mode).
 c3_t
-u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i);
+u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i);
 
 //! Replay part or all of an event log.
 //!
@@ -143,23 +143,23 @@ u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i);
 //! @return 0  Replay failed.
 //! @return 1  Replay succeeded.
 c3_t
-u3_evlo_replay(u3_evlo* const log_u,
+u3_saga_replay(u3_saga* const log_u,
                c3_d           cur_d,
                c3_d           las_d,
-               u3_evlo_play   pla_f,
+               u3_saga_play   pla_f,
                void*          ptr_v);
 
 //! Print status info about an event log.
 //!
 //! @param[in]  Event log handle.
 void
-u3_evlo_info(const u3_evlo* const log_u);
+u3_saga_info(const u3_saga* const log_u);
 
 //! Gracefully dispose of an event log's resources. Does not free the event log
 //! handle itself.
 //!
 //! @param[in] log_u  Event log handle.
 void
-u3_evlo_close(u3_evlo* const log_u);
+u3_saga_close(u3_saga* const log_u);
 
 #endif /* ifndef U3_VERE_EVLO_H */

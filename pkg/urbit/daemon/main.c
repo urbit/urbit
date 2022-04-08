@@ -4,7 +4,7 @@
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
-#include "vere/evlo.h"
+#include "vere/saga.h"
 #include "vere/lock.h"
 #include "vere/meta.h"
 #include "vere/vere.h"
@@ -708,18 +708,18 @@ _debug_db_stats(const c3_c* dir_c)
   c3_path_push(dir_u, ".urb");
   c3_path_push(dir_u, "log");
   u3_meta  met_u;
-  u3_evlo* log_u = u3_evlo_open(dir_u, &met_u);
+  u3_saga* log_u = u3_saga_open(dir_u, &met_u);
   c3_path_pop(dir_u);
   c3_path_pop(dir_u);
 
   if ( !log_u ) {
     goto free;
   }
-  u3_evlo_info(log_u);
+  u3_saga_info(log_u);
   ret_i = 0;
 free:
   u3_lock_release(dir_u);
-  u3_evlo_close(log_u);
+  u3_saga_close(log_u);
   c3_free(log_u);
   c3_path_free(dir_u);
 

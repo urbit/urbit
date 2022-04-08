@@ -8,7 +8,7 @@
 
 #include <uv.h>
 
-#include "vere/evlo.h"
+#include "vere/saga.h"
 
 //==============================================================================
 // Types
@@ -39,7 +39,7 @@ typedef struct {
   c3_o     rec_o;    //!< reclaim cache
   c3_o     mut_o;    //!< mutated kerne
   u3_noun  sac;      //!< space measurement
-  u3_evlo* log_u;    //!< event log
+  u3_saga* log_u;    //!< event log
   u3_meta  met_u;    //!< metadata
   struct {
     uv_timer_t tim_u; //!< timer

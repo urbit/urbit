@@ -1,8 +1,8 @@
-//! @file evlo.c
+//! @file saga.c
 //!
 //! Epoch-backed event log.
 
-#include "vere/evlo.h"
+#include "vere/saga.h"
 
 #include "all.h"
 #include "c/bile.h"
@@ -11,8 +11,8 @@
 // Types
 //==============================================================================
 
-//! Event log. Typedefed to `u3_evlo`.
-struct _u3_evlo {
+//! Event log. Typedefed to `u3_saga`.
+struct _u3_saga {
   c3_path*     pax_u;   //!< path to event log directory
   c3_d         eve_d;   //!< ID of youngest event
   struct {
@@ -24,11 +24,11 @@ struct _u3_evlo {
     size_t     req_i;   //!< number of events in commit request
   } eve_u;              //!< events pending commit
   enum {
-    u3_evlo_sync = 0,   //!< sync commit mode
-    u3_evlo_async,      //!< async commit mode
+    u3_saga_sync = 0,   //!< sync commit mode
+    u3_saga_async,      //!< async commit mode
   } mod_e;              //!< commit mode
   c3_t         act_t;   //!< active commit flag
-  u3_evlo_acon asy_u;   //!< async commit context
+  u3_saga_acon asy_u;   //!< async commit context
 };
 
 //==============================================================================
@@ -59,7 +59,7 @@ static const size_t epo_len_i = 100;
 //! @param[in] log_u  Event log handle.
 //! @param[in] met_u  Pier metadata.
 static c3_t
-_create_metadata_files(const u3_evlo* const log_u, const u3_meta* const met_u)
+_create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u)
 {
   c3_t        suc_t = 0;
   const void* dat_v;
@@ -82,7 +82,7 @@ end:
 }
 
 static inline u3_epoc*
-_rollover(u3_evlo* const log_u)
+_rollover(u3_saga* const log_u)
 {
   return log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
 }
@@ -97,7 +97,7 @@ _rollover(u3_evlo* const log_u)
 //!        commit to the first epoch, which is almost certainly larger than the
 //!        configured max epoch length.
 static c3_t
-_migrate(u3_evlo* const log_u, u3_meta* const met_u)
+_migrate(u3_saga* const log_u, u3_meta* const met_u)
 {
   u3_epoc* poc_u = u3_epoc_migrate(log_u->pax_u, log_u->pax_u, met_u);
   if ( !poc_u ) {
@@ -198,7 +198,7 @@ _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
 }
 
 static inline void
-_remove_committed_events(u3_evlo* const log_u)
+_remove_committed_events(u3_saga* const log_u)
 {
   c3_list* eve_u = log_u->eve_u.lis_u;
   size_t   len_i = log_u->eve_u.req_i;
@@ -231,7 +231,7 @@ _request_len(const u3_epoc* const poc_u, const c3_list* const eve_u)
 static void
 _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
 {
-  u3_evlo* log_u = req_u->data;
+  u3_saga* log_u = req_u->data;
   log_u->act_t   = 0;
 
   c3_t suc_t = log_u->asy_u.suc_t;
@@ -243,7 +243,7 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
   log_u->asy_u.com_f(log_u->asy_u.ptr_v, las_d, suc_t);
 
   if ( UV_ECANCELED != sas_i ) { // (1)
-    u3_evlo_commit(log_u, NULL, 0);
+    u3_saga_commit(log_u, NULL, 0);
   }
 }
 
@@ -251,7 +251,7 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
 static void
 _uv_commit_cb(uv_work_t* req_u)
 {
-  u3_evlo* log_u     = req_u->data;
+  u3_saga* log_u     = req_u->data;
   u3_epoc* poc_u     = log_u->epo_u.cur_u;
   c3_lode* nod_u     = c3_list_peekf(log_u->eve_u.lis_u);
   size_t   len_i     = log_u->eve_u.req_i;
@@ -260,7 +260,7 @@ _uv_commit_cb(uv_work_t* req_u)
 
 //! Find the epoch of the event log that the given event ID is a part of.
 static u3_epoc*
-_find_epoc(u3_evlo* const log_u, const c3_d ide_d)
+_find_epoc(u3_saga* const log_u, const c3_d ide_d)
 {
   c3_lode* nod_u = c3_list_peekb(log_u->epo_u.lis_u);
   u3_epoc* poc_u;
@@ -275,13 +275,13 @@ _find_epoc(u3_evlo* const log_u, const c3_d ide_d)
 }
 
 static inline c3_t
-_is_async(const u3_evlo* const log_u)
+_is_async(const u3_saga* const log_u)
 {
-  return u3_evlo_async == log_u->mod_e;
+  return u3_saga_async == log_u->mod_e;
 }
 
 static inline c3_t
-_has_active_commit(const u3_evlo* const log_u)
+_has_active_commit(const u3_saga* const log_u)
 {
   return log_u->act_t;
 }
@@ -292,10 +292,10 @@ _has_active_commit(const u3_evlo* const log_u)
 
 //! @n (1) Persist metadata.
 //! @n (2) Create first epoch.
-u3_evlo*
-u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u)
+u3_saga*
+u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
 {
-  u3_evlo* log_u = c3_calloc(sizeof(*log_u));
+  u3_saga* log_u = c3_calloc(sizeof(*log_u));
   if ( !(log_u->pax_u = c3_path_fv(1, c3_path_str(pax_u))) ) {
     goto free_event_log;
   }
@@ -320,7 +320,7 @@ u3_evlo_new(const c3_path* const pax_u, const u3_meta* const met_u)
   goto succeed;
 
 free_event_log:
-  u3_evlo_close(log_u);
+  u3_saga_close(log_u);
   c3_free(log_u);
   return NULL;
 
@@ -330,10 +330,10 @@ succeed:
 
 //! @n (1) Attempt to migrate old non-epoch-based event log.
 //! @n (2) Read metadata from filesystem.
-u3_evlo*
-u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u)
+u3_saga*
+u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
 {
-  u3_evlo* log_u = c3_calloc(sizeof(*log_u));
+  u3_saga* log_u = c3_calloc(sizeof(*log_u));
   if ( !(log_u->pax_u = c3_path_fv(1, c3_path_str(pax_u))) ) {
     goto free_event_log;
   }
@@ -400,7 +400,7 @@ u3_evlo_open(const c3_path* const pax_u, u3_meta* const met_u)
 free_dir_entries:
   c3_free(ent_c);
 free_event_log:
-  u3_evlo_close(log_u);
+  u3_saga_close(log_u);
   c3_free(log_u);
   return NULL;
 
@@ -409,21 +409,21 @@ succeed:
 }
 
 c3_d
-u3_evlo_last_commit(const u3_evlo* const log_u)
+u3_saga_last_commit(const u3_saga* const log_u)
 {
   return u3_epoc_last_commit(log_u->epo_u.cur_u);
 }
 
 void
-u3_evlo_commit_mode(u3_evlo* const log_u, u3_evlo_acon* asy_u)
+u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u)
 {
   if ( !asy_u ) {
-    log_u->mod_e = u3_evlo_sync;
+    log_u->mod_e = u3_saga_sync;
     return;
   }
 
-  log_u->mod_e = u3_evlo_async;
-  log_u->asy_u = (u3_evlo_acon){
+  log_u->mod_e = u3_saga_async;
+  log_u->asy_u = (u3_saga_acon){
     .lup_u      = asy_u->lup_u,
     .req_u.data = log_u,
     .com_f      = asy_u->com_f,
@@ -438,7 +438,7 @@ u3_evlo_commit_mode(u3_evlo* const log_u, u3_evlo_acon* asy_u)
 //!        of the current epoch, but the new epoch cannot be switched to until
 //!        that enqueued event is actually committed.
 c3_t
-u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i)
+u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
 {
   c3_list* eve_u = log_u->eve_u.lis_u;
   if ( byt_y ) { // (1)
@@ -459,7 +459,7 @@ u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i)
   }
 
   switch ( log_u->mod_e ) {
-    case u3_evlo_sync:
+    case u3_saga_sync:
       if ( _is_full(poc_u) ) {
         poc_u = _rollover(log_u);
       }
@@ -472,7 +472,7 @@ u3_evlo_commit(u3_evlo* const log_u, c3_y* const byt_y, const size_t byt_i)
       _remove_committed_events(log_u);
       log_u->act_t = 0;
       goto succeed;
-    case u3_evlo_async:
+    case u3_saga_async:
       if ( !_has_active_commit(log_u) ) {
         if ( _is_full(poc_u) ) {
           poc_u = _rollover(log_u);
@@ -498,10 +498,10 @@ succeed:
 //!        that epoch's events (the default).
 //! @n (2) Replay by replaying all epoch's events.
 c3_t
-u3_evlo_replay(u3_evlo* const log_u,
+u3_saga_replay(u3_saga* const log_u,
                c3_d           cur_d,
                c3_d           las_d,
-               u3_evlo_play   pla_f,
+               u3_saga_play   pla_f,
                void*          ptr_v)
 {
 #ifndef U3_REPLAY_FULL /* (1) */
@@ -517,7 +517,7 @@ u3_evlo_replay(u3_evlo* const log_u,
   }
 
   u3_epoc* poc_u;
-  try_evlo(poc_u = _find_epoc(log_u, las_d),
+  try_saga(poc_u = _find_epoc(log_u, las_d),
            goto end,
            "no epoch has event %" PRIu64,
            las_d);
@@ -589,15 +589,15 @@ end:
 }
 
 void
-u3_evlo_info(const u3_evlo* const log_u)
+u3_saga_info(const u3_saga* const log_u)
 {
   if ( !log_u ) {
     return;
   }
 
   fprintf(stderr,
-          "\r\nevlo: last commit: %" PRIu64 "\r\n",
-          u3_evlo_last_commit(log_u));
+          "\r\nsaga: last commit: %" PRIu64 "\r\n",
+          u3_saga_last_commit(log_u));
 
   fprintf(stderr,
           "  events pending commit: %lu\r\n",
@@ -617,7 +617,7 @@ u3_evlo_info(const u3_evlo* const log_u)
 //! @n (2) Free epochs.
 //! @n (3) Free events pending commit.
 void
-u3_evlo_close(u3_evlo* const log_u)
+u3_saga_close(u3_saga* const log_u)
 {
   if ( !log_u ) {
     return;

@@ -36,7 +36,7 @@ u3_lock_acquire(c3_path* const pax_u)
       c3_w       idx_w;
       const c3_w cnt_w = 32;
       fprintf(stderr,
-              "evlo: stopping process %u, live in %s...\r\n",
+              "saga: stopping process %u, live in %s...\r\n",
               pid_w,
               pax_c);
       for ( idx_w = 0; idx_w < cnt_w; idx_w++ ) {
@@ -49,17 +49,17 @@ u3_lock_acquire(c3_path* const pax_u)
         }
       }
       if ( cnt_w == idx_w ) {
-        fprintf(stderr, "evlo: process %u seems unkillable!\r\n", pid_w);
+        fprintf(stderr, "saga: process %u seems unkillable!\r\n", pid_w);
         c3_assert(0);
       }
-      fprintf(stderr, "evlo: stopped old process %u\r\n", pid_w);
+      fprintf(stderr, "saga: stopped old process %u\r\n", pid_w);
     }
     fclose(lok_u);
     c3_unlink(pax_c);
   }
 
   if ( !(lok_u = c3_fopen(pax_c, "w")) ) {
-    fprintf(stderr, "evlo: unable to open %s\r\n", pax_c);
+    fprintf(stderr, "saga: unable to open %s\r\n", pax_c);
     c3_assert(0);
   }
 

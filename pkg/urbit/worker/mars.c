@@ -7,7 +7,7 @@
 #include "c/list.h"
 #include "c/path.h"
 #include "vere/vere.h"
-#include "vere/evlo.h"
+#include "vere/saga.h"
 #include "vere/lock.h"
 #include "vere/mars.h"
 
@@ -151,7 +151,7 @@ _mars_fact(u3_mars* mar_u, u3_noun job, u3_noun pro)
     u3r_bytes(0, len_w, dat_y + sizeof(mug_l), mat);
     u3z(mat);
 
-    u3_evlo_commit(mar_u->log_u, dat_y, len_i);
+    u3_saga_commit(mar_u->log_u, dat_y, len_i);
   }
 
 }
@@ -590,7 +590,7 @@ top:
     //
     while (  gif_u
           && (  (u3_gift_rest_e == gif_u->sat_e)
-             || (gif_u->eve_d <= u3_evlo_last_commit(mar_u->log_u)) ) )
+             || (gif_u->eve_d <= u3_saga_last_commit(mar_u->log_u)) ) )
     {
       u3_newt_send(mar_u->out_u, gif_u->len_d, gif_u->hun_y);
 
@@ -600,7 +600,7 @@ top:
   }
 
   if (  (u3_mars_work_e != mar_u->sat_e)
-     && (u3_evlo_last_commit(mar_u->log_u) == mar_u->dun_d) )
+     && (u3_saga_last_commit(mar_u->log_u) == mar_u->dun_d) )
   {
     if ( u3_mars_save_e == mar_u->sat_e ) {
       u3e_save();
@@ -614,11 +614,11 @@ top:
       //  XX wire up to signal handler
       // Printing out what is essentially debug information for the event log on
       // exit seems unnecessary.
-      //u3_evlo_info(mar_u->log_u);
+      //u3_saga_info(mar_u->log_u);
 
       u3e_save();
       u3_lock_release(mar_u->dir_u);
-      u3_evlo_close(mar_u->log_u);
+      u3_saga_close(mar_u->log_u);
       u3s_cue_xeno_done(mar_u->sil_u);
       u3t_trace_close();
       _mars_damp_file();
@@ -697,7 +697,7 @@ _mars_timer_cb(uv_timer_t* tim_u)
 
 //! Callback invoked upon completion of successful commit to event log.
 static c3_t
-_evlo_commit_cb(void* ptr_v, c3_d ide_d, c3_t suc_t)
+_saga_commit_cb(void* ptr_v, c3_d ide_d, c3_t suc_t)
 {
   u3_mars* mar_u = ptr_v;
 
@@ -712,10 +712,10 @@ _evlo_commit_cb(void* ptr_v, c3_d ide_d, c3_t suc_t)
   return 1;
 }
 
-//! Callback invoked for each event during event log replay. See u3_evlo_play
+//! Callback invoked for each event during event log replay. See u3_saga_play
 //! for description of parameters.
 static c3_t
-_evlo_replay_cb(void*        ptr_v,
+_saga_replay_cb(void*        ptr_v,
                 c3_d         cur_d,
                 c3_d         las_d,
                 c3_y* const  byt_y,
@@ -790,11 +790,11 @@ end:
 }
 
 //! Callback invoked for each boot event during boot sequence replay. Create
-//! single event out of boot events over repeated calls to _evlo_boot_cb() and
-//! attempt to boot once the single event has been assembled. See u3_evlo_play
+//! single event out of boot events over repeated calls to _saga_boot_cb() and
+//! attempt to boot once the single event has been assembled. See u3_saga_play
 //! for description of parameters.
 static c3_t
-_evlo_boot_cb(void*        ptr_v,
+_saga_boot_cb(void*        ptr_v,
               c3_d         cur_d,
               c3_d         las_d,
               c3_y* const  byt_y,
@@ -846,7 +846,7 @@ succeed:
 //! @n (2) Play boot events if necessary.
 //! @n (3) Turn on async commit mode for last epoch.
 //! @n (4) These must be set after the replay in order to adhere to the
-//!        invariant that all noun references be roots when calling the u3_evlo
+//!        invariant that all noun references be roots when calling the u3_saga
 //!        interface.
 //! @n (5) Send ready status message. XX version negotation.
 //! @n (6) XX check return, make interval configurable.
@@ -877,36 +877,36 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
   { // (1)
     c3_path_push(mar_u->dir_u, ".urb");
     c3_path_push(mar_u->dir_u, "log");
-    try_evlo(mar_u->log_u = u3_evlo_open(mar_u->dir_u, &mar_u->met_u),
+    try_saga(mar_u->log_u = u3_saga_open(mar_u->dir_u, &mar_u->met_u),
              goto release_lock,
              "failed to open event log at %s",
              c3_path_str(mar_u->dir_u));
 
     if ( 0 == mar_u->dun_d ) { // (2)
       u3_noun evt = u3_nul;
-      try_evlo(u3_evlo_replay(mar_u->log_u,
+      try_saga(u3_saga_replay(mar_u->log_u,
                               mar_u->dun_d,
                               mar_u->met_u.lif_w,
-                              _evlo_boot_cb,
+                              _saga_boot_cb,
                               &evt),
                goto free_event_log,
                "failed to evaluate boot sequence");
       mar_u->sen_d = mar_u->dun_d = mar_u->met_u.lif_w;
     }
 
-    try_evlo(
-      u3_evlo_replay(mar_u->log_u, mar_u->dun_d, 0, _evlo_replay_cb, mar_u),
+    try_saga(
+      u3_saga_replay(mar_u->log_u, mar_u->dun_d, 0, _saga_replay_cb, mar_u),
       goto free_mars,
       "failed to replay event log");
     c3_path_pop(mar_u->dir_u);
     c3_path_pop(mar_u->dir_u);
 
-    u3_evlo_acon asy_u = {
+    u3_saga_acon asy_u = {
       .lup_u = u3L,
-      .com_f = _evlo_commit_cb,
+      .com_f = _saga_commit_cb,
       .ptr_v = mar_u,
     };
-    u3_evlo_commit_mode(mar_u->log_u, &asy_u); // (3)
+    u3_saga_commit_mode(mar_u->log_u, &asy_u); // (3)
   }
 
   // TODO(peter): incorporate
@@ -969,7 +969,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
   goto succeed;
 
 free_event_log:
-  u3_evlo_close(mar_u->log_u);
+  u3_saga_close(mar_u->log_u);
   c3_free(mar_u->log_u);
 release_lock:
   u3_lock_release(lok_u);
@@ -1358,7 +1358,7 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
   c3_path_pop(pax_u);
 
   c3_path_push(pax_u, "log");
-  u3_evlo* log_u = u3_evlo_new(pax_u, &met_u);
+  u3_saga* log_u = u3_saga_new(pax_u, &met_u);
 
   c3_path_pop(pax_u);
   c3_path_pop(pax_u);
@@ -1376,7 +1376,7 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
     u3r_bytes(0, len_w, dat_y + 4, mat);
     u3z(mat);
 
-    if ( !u3_evlo_commit(log_u, dat_y, 4 + len_w) ) {
+    if ( !u3_saga_commit(log_u, dat_y, 4 + len_w) ) {
       fprintf(stderr, "boot: failed to commit boot event to event log\r\n");
       goto free_event_log;
     }
@@ -1386,13 +1386,13 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
   _mars_step_trace(dir_c);
 
   u3_noun evt = u3_nul;
-  if ( !u3_evlo_replay(log_u, 0, met_u.lif_w, _evlo_boot_cb, &evt) ) { // (5)
+  if ( !u3_saga_replay(log_u, 0, met_u.lif_w, _saga_boot_cb, &evt) ) { // (5)
     goto free_event_log;
   }
   suc_o = c3y;
 
 free_event_log:
-  u3_evlo_close(log_u);
+  u3_saga_close(log_u);
   c3_free(log_u);
   u3_lock_release(pax_u);
   c3_path_free(pax_u);
