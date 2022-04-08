@@ -20,7 +20,7 @@ u3qdu_toy(u3_noun a, u3_noun b)
     u3x_trel(n_a, &k_n_a, &p_n_a, &v_n_a);
     u3x_trel(n_b, &k_n_b, &p_n_b, &v_n_b);
 
-    if ( c3y == u3qdu_win(p_n_a, k_n_a, p_n_b, k_n_b) ) {
+    if ( c3y == u3qdu_lex(p_n_a, k_n_a, p_n_b, k_n_b) ) {
       return u3nt(u3k(n_a), u3qdu_rbal(n_b, t_a, m_a, t_b), u3k(m_b));
     }
     else {

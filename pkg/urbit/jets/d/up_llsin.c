@@ -26,7 +26,6 @@ u3qdu_llsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
 
     case c3__llos: {
       u3_noun k_n_a, t_a;
-
       u3x_cell(n_a, &k_n_a, &t_a);
 
       u3_noun p_n_a = u3h(t_a);
@@ -35,7 +34,7 @@ u3qdu_llsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
         return u3m_bail(c3__exit);
       }
 
-      if ( c3y == u3qdu_win(p_n_a, k_n_a, p_n_b, k_n_b) ) {
+      if ( c3y == u3qdu_lex(p_n_a, k_n_a, p_n_b, k_n_b) ) {
         u3_noun pre = u3qdu_rlos(n_b, l_a, m_a, l_b);
         u3_noun pro = u3qdu_llos(n_a, pre, m_b, r_b);
 
@@ -44,7 +43,7 @@ u3qdu_llsin(u3_noun n_a, u3_noun l_a, u3_noun m_a, u3_noun r_a)
         return pro;
       }
       else {
-        u3_noun pre = u3qdu_rlos(n_a, l_a, m_a, l_b);
+        u3_noun pre = u3qdu_llos(n_a, l_a, m_a, l_b);
         u3_noun pro = u3qdu_llos(n_b, pre, m_b, r_b);
 
         u3z(pre);
