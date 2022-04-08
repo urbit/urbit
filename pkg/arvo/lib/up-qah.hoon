@@ -28,11 +28,11 @@
   ^-  @
   (rsh 0 (bex (xeb (mix (mug k) (mug l)))))
 ::
-++  feud                                              ::  high bits differ
-  ~/  %feud                                           ::
-  |=  [m=@ k=k l=k]                                   ::  m determines 'high'
+++  feud                                                ::  high bits differ
+  ~/  %feud
+  |=  [m=@ k=k l=k]
   ^-  ?
-  =/  n  (dis (mix (not 5 1 (dec m)) m) 0x7fff.ffff)
+  =/  n  (mix (mix (dec m) 0x7fff.ffff) m)              ::  31-bit high mask
   !=((dis (mug k) n) (dis (mug l) n))
 ::  tree manipulation
 ::
