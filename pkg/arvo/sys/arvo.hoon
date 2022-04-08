@@ -1,4 +1,5 @@
 =>  ..ride  =>
+!:
 |%
 +|  %global
 ::
@@ -25,7 +26,7 @@
 +$  arch  (axil @uvI)
 ++  axal
   |$  [item]
-  [fil=(unit item) dir=(map @ta (axal item)]
+  [fil=(unit item) dir=(map @ta $)]
 ++  axil
   |$  [item]
   [fil=(unit item) dir=(map @ta ~)]
