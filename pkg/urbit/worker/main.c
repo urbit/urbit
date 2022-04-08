@@ -4,8 +4,9 @@
 */
 #include "all.h"
 #include "rsignal.h"
-#include <vere/vere.h>
-#include <vere/mars.h>
+#include "vere/vere.h"
+#include "vere/lock.h"
+#include "vere/mars.h"
 
 static u3_moat      inn_u;  //  input stream
 static u3_mojo      out_u;  //  output stream
@@ -143,24 +144,42 @@ _cw_intr_win(c3_c* han_c)
 //! Get a handle to the event log.
 //!
 //! @param[in] dir_c  Pier directory.
-//!
-//! @n (1) XX s/b try_aquire lock.
 static inline u3_evlo*
-_cw_evlo(const c3_c* const dir_c)
+_cw_evlo_open(const c3_c* const dir_c)
 {
   if ( !dir_c ) {
     return NULL;
   }
-  c3_path* pax_u = c3_path_fv(3, dir_c, ".urb", "log");
+  c3_path* pax_u = c3_path_fv(1, dir_c);
+  u3_lock_acquire(pax_u);
+  c3_path_push(pax_u, ".urb");
+  c3_path_push(pax_u, "log");
+
   u3_meta met_u;
-  u3_evlo* log_u = u3_evlo_open(pax_u, &met_u); // (1)
+  u3_evlo* log_u = u3_evlo_open(pax_u, &met_u);
+  
   c3_path_free(pax_u);
   return log_u;
 }
 
-//! Print pier info.
+//! Close handle to event log.
 //!
-//! @n (1) XX s/b try_aquire lock.
+//! @param[in] dir_c  Pier directory.
+//! @param[in] log_u  Event log handle.
+static inline void
+_cw_evlo_close(const c3_c* const dir_c, u3_evlo* const log_u)
+{
+  if ( !dir_c || !log_u ) {
+    return;
+  }
+  u3_evlo_close(log_u);
+  c3_free(log_u);
+  c3_path* pax_u = c3_path_fv(1, dir_c);
+  u3_lock_release(pax_u);
+  c3_path_free(pax_u);
+}
+
+//! Print pier info.
 static void
 _cw_info(c3_i argc, c3_c* argv[])
 {
@@ -168,7 +187,7 @@ _cw_info(c3_i argc, c3_c* argv[])
 
   c3_c*    dir_c = argv[0];
   c3_d     eve_d = u3m_boot(dir_c, u3e_live);
-  u3_evlo* log_u = _cw_evlo(dir_c);
+  u3_evlo* log_u = _cw_evlo_open(dir_c);
 
   fprintf(stderr,
           "urbit-worker: %s at event %" PRIu64 "\r\n",
@@ -176,7 +195,8 @@ _cw_info(c3_i argc, c3_c* argv[])
           eve_d);
 
   u3_evlo_info(log_u);
-  c3_free(log_u);
+
+  _cw_evlo_close(dir_c, log_u);
 
   u3m_stop();
 }
@@ -206,7 +226,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
   c3_o     ret_o = c3n;
   c3_c*    dir_c = argv[0];
   c3_d     eve_d = u3m_boot(dir_c, u3e_live);
-  u3_evlo* log_u = _cw_evlo(dir_c);
+  u3_evlo* log_u = _cw_evlo_open(dir_c);
 
   fprintf(stderr, "urbit-worker: cram: preparing\r\n");
 
@@ -220,8 +240,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
   //  save even on failure, as we just did all the work of deduplication
   //
   u3e_save();
-  u3_evlo_close(log_u);
-  c3_free(log_u);
+  _cw_evlo_close(dir_c, log_u);
 
   if ( c3n == ret_o ) {
     exit(1);
@@ -239,7 +258,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
 
   c3_c*    dir_c = argv[0];
   c3_c*    eve_c = argv[1];
-  u3_evlo* log_u = _cw_evlo(dir_c);
+  u3_evlo* log_u = _cw_evlo_open(dir_c);
   c3_d     eve_d;
 
   if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
@@ -261,8 +280,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
     }
 
     u3e_save();
-    u3_evlo_close(log_u);
-    c3_free(log_u);
+    _cw_evlo_close(dir_c, log_u);
 
     fprintf(stderr, "urbit-worker: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
     u3m_stop();
@@ -277,7 +295,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
   c3_assert( 1 <= argc );
 
   c3_c*    dir_c = argv[0];
-  u3_evlo* log_u = _cw_evlo(dir_c);
+  u3_evlo* log_u = _cw_evlo_open(dir_c);
   c3_w     pre_w;
 
   u3C.wag_w |= u3o_hashless;
@@ -290,8 +308,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
   u3a_print_memory(stderr, "urbit-worker: meld: gained", (u3a_open(u3R) - pre_w));
 
   u3e_save();
-  u3_evlo_close(log_u);
-  c3_free(log_u);
+  _cw_evlo_close(dir_c, log_u);
 }
 
 /* _cw_pack(); compact memory, save, and exit.
@@ -302,14 +319,13 @@ _cw_pack(c3_i argc, c3_c* argv[])
   c3_assert( 1 <= argc );
 
   c3_c*    dir_c = argv[0];
-  u3_evlo* log_u = _cw_evlo(dir_c);
+  u3_evlo* log_u = _cw_evlo_open(dir_c);
 
   u3m_boot(dir_c, u3e_live);
   u3a_print_memory(stderr, "urbit-worker: pack: gained", u3m_pack());
 
   u3e_save();
-  u3_evlo_close(log_u);
-  c3_free(log_u);
+  _cw_evlo_close(dir_c, log_u);
   u3m_stop();
 }
 

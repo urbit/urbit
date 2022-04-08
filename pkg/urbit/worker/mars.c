@@ -8,6 +8,7 @@
 #include "c/path.h"
 #include "vere/vere.h"
 #include "vere/evlo.h"
+#include "vere/lock.h"
 #include "vere/mars.h"
 
 //==============================================================================
@@ -616,6 +617,7 @@ top:
       //u3_evlo_info(mar_u->log_u);
 
       u3e_save();
+      u3_lock_release(mar_u->dir_u);
       u3_evlo_close(mar_u->log_u);
       u3s_cue_xeno_done(mar_u->sil_u);
       u3t_trace_close();
@@ -869,11 +871,14 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     };
   }
 
+  c3_path* const lok_u = c3_path_fp(mar_u->dir_u);
+  u3_lock_acquire(lok_u);
+
   { // (1)
     c3_path_push(mar_u->dir_u, ".urb");
     c3_path_push(mar_u->dir_u, "log");
     try_evlo(mar_u->log_u = u3_evlo_open(mar_u->dir_u, &mar_u->met_u),
-             goto free_mars,
+             goto release_lock,
              "failed to open event log at %s",
              c3_path_str(mar_u->dir_u));
 
@@ -960,13 +965,17 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     mar_u->sav_u.tim_u.data = mar_u;
   }
 
+  c3_path_free(lok_u);
   goto succeed;
 
 free_event_log:
   u3_evlo_close(mar_u->log_u);
   c3_free(mar_u->log_u);
+release_lock:
+  u3_lock_release(lok_u);
+  c3_path_free(lok_u);
 free_mars:
-  c3_free(mar_u->dir_u);
+  c3_path_free(mar_u->dir_u);
   c3_free(mar_u->gif_u);
   c3_free(mar_u);
 fail:
@@ -1351,6 +1360,10 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
   c3_path_push(pax_u, "log");
   u3_evlo* log_u = u3_evlo_new(pax_u, &met_u);
 
+  c3_path_pop(pax_u);
+  c3_path_pop(pax_u);
+  u3_lock_acquire(pax_u);
+
   u3_noun i, t = ova;
   while ( u3_nul != t ) { // (2)
     u3x_cell(t, &i, &t);
@@ -1381,6 +1394,7 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
 free_event_log:
   u3_evlo_close(log_u);
   c3_free(log_u);
+  u3_lock_release(pax_u);
   c3_path_free(pax_u);
 
 end:
