@@ -3936,9 +3936,10 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash %cage %open %late %base) * *] pax)
+      ?.  ?=([?(%tako %yaki %blob %hash %cage %open %late %base) * *] pax)
         `~
       ?-    i.pax
+          %tako  ``tako+[-:!>(*tako) (aeon-to-tako:ze yon)]
           %yaki
         =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
         ?~  yak
