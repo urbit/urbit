@@ -1,5 +1,5 @@
 { stdenv, autoreconfHook, pkgconfig
-, libaes_siv, openssl, secp256k1
+, libaes_siv, libecc, openssl, secp256k1
 , enableStatic ? stdenv.hostPlatform.isStatic }:
 
 stdenv.mkDerivation rec {
@@ -17,5 +17,5 @@ stdenv.mkDerivation rec {
     [ autoreconfHook pkgconfig ];
 
   propagatedBuildInputs =
-    [ openssl secp256k1 libaes_siv ];
+    [ openssl secp256k1 libaes_siv libecc ];
 }

@@ -21,6 +21,18 @@
         "url": "https://github.com/h2o/h2o/archive/v2.2.6.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "libecc": {
+      "branch": "master",
+      "description": "library for elliptic curve cryptography",
+      "homepage": "https://github.com/ANSSI-FR/libecc",
+      "owner": "ANSSI-FR",
+      "repo": "libecc",
+      "rev": "v0.9.5.1",
+      "sha256": "026lacdlfsmw2hvlw331fmf22lrnfw7181w6a1rz33a8bnfiy734",
+      "type": "tarball",
+      "url": "https://github.com/ANSSI-FR/libecc/archive/v0.9.5.1.tar.gz",
+      "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "libaes_siv": {
         "branch": "master",
         "description": null,

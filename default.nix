@@ -79,6 +79,8 @@ let
 
     libaes_siv = callPackage ./nix/pkgs/libaes_siv { inherit (pkgsNative) cmake; };
 
+    libecc = callPackage ./nix/pkgs/libecc { };
+
     murmur3 = callPackage ./nix/pkgs/murmur3 { };
 
     softfloat3 = callPackage ./nix/pkgs/softfloat3 { };
