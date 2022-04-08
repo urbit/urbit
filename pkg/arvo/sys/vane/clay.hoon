@@ -2064,7 +2064,7 @@
         ?>  ?=(^ xap)
         ?.  ?=(%hoon i.xap)  ~
         :^  ~  (flop t.xap)  %hoon
-        ~|  pax=path
+        ~|  [pax=pax p.dat]
         ?-  -.dat
           %&  (page-to-cord p.dat)
           %|  (lobe-to-cord p.dat)
@@ -5230,7 +5230,6 @@
       ^-  mass
       [`@t`(rap 3 [a '-' b ~]:mars) %& res]
     ::
-
     ++  files
       ^-  (list mass)
       %+  turn  (sort ~(tap by files.fod.dom.dojo) aor)
@@ -5381,12 +5380,9 @@
   ::
   ::  +pick: copying gc based on norms
   ::
-  ::  XX somehow this seems to be able to tombstone something in our
-  ::  head!
-  ::
   ++  pick
     =|  lat=(map lobe blob)
-    =|  sen=(set (map path lobe))
+    =|  sen=(set [norm (map path lobe)])
     |^
     =.  ..pick-raft  pick-raft
     =.  lat.ran.ruf  lat
@@ -5409,9 +5405,9 @@
       |-  ^+  ..pick-raft
       ?~  q.yaki
         ..pick-raft
-      ?:  (~(has in sen) q.yaki)
+      ?:  (~(has in sen) norm q.yaki)
         ..pick-raft
-      =.  sen  (~(put in sen) q.yaki)
+      =.  sen  (~(put in sen) norm q.yaki)
       =/  bob  (~(get by lat) q.n.q.yaki)
       =?  lat  ?|(?=(~ bob) ?=([~ %dead *] bob))
         ?:  =([~ %&] +:(~(fit ^de norm) p.n.q.yaki))
