@@ -59,10 +59,10 @@ export function StatelessUrlInput(props: StatelessUrlInputProps) {
                 >
                   upload
                 </Text>{' '}
-                a file, or paste a link here
+                a file, or paste a URL here
               </>
             ) : (
-              'Paste a link here'
+              'Paste a URL here'
             )}
           </Text>
         </Box>

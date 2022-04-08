@@ -128,6 +128,7 @@ return false;
                   {(window.ship == post?.author && !disabled) ? (
                     <ActionLink
                       color="blue"
+                      bg="white"
                       to={{
                         pathname: props.baseUrl,
                         search: `?edit=${commentIndex}`
