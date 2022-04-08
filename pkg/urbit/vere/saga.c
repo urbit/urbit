@@ -177,7 +177,7 @@ _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
   size_t         cap_i = 16;
   c3_c(*dst_c)[siz_i]  = c3_malloc(cap_i * siz_i);
   size_t dst_i         = 0;
-  while ( ent_u = readdir(dir_u) ) {
+  while ( (ent_u = readdir(dir_u)) ) {
     if ( !_is_epoc_dir(ent_u->d_name) ) {
       continue;
     }
@@ -635,7 +635,7 @@ u3_saga_close(u3_saga* const log_u)
     c3_list* epo_u = log_u->epo_u.lis_u;
     if ( epo_u ) {
       c3_lode* nod_u;
-      while ( nod_u = c3_list_popf(epo_u) ) {
+      while ( (nod_u = c3_list_popf(epo_u)) ) {
         u3_epoc* poc_u = c3_lode_data(nod_u);
         u3_epoc_close(poc_u);
         c3_free(nod_u);

@@ -24,7 +24,7 @@ u3_lock_acquire(c3_path* const pax_u)
   FILE*       lok_u;
   const c3_c* pax_c = c3_path_str(pax_u);
 
-  if ( lok_u = c3_fopen(pax_c, "r") ) {
+  if ( (lok_u = c3_fopen(pax_c, "r")) ) {
     if ( 1 != fscanf(lok_u, "%" SCNu32, &pid_w) ) {
       fprintf(stderr, "lockfile %s is corrupt!\r\n", pax_c);
       kill(getpid(), SIGTERM);
