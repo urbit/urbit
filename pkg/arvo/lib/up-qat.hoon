@@ -32,7 +32,7 @@
   ~/  %feud                                           ::
   |=  [m=@ k=k l=k]                                   ::  m determines 'high'
   ^-  ?
-  =/  n  (dis (mix (not 5 1 (dec m)) m) 0x7fff.ffff)
+  =/  n  (mix (not 5 1 (dec m)) m)
   !=((dis k n) (dis l n))
 ::  tree manipulation
 ::
