@@ -236,12 +236,11 @@
         ?>  ~(apt by acc)  acc
       acc
     $(acc (~(put by acc) j j), j +(j))
-  =|  l=_acc
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?:  =(~ pos)
     %done
-  $(l (~(del by pos) j), j +(j))
+  $(pos (~(del by pos) j), j +(j))
 ::
     %qor-del
   =|  acc=pro:qor
@@ -254,7 +253,7 @@
     $(acc (put:qor acc j j j), j +(j))
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?~  pos
     %done
   $(pos (del:qor pos j), j +(j))
 ::
@@ -269,7 +268,7 @@
     $(acc (put:qat acc j j j), j +(j))
   ~>  %bout
   |-  ^-  %done
-  ?:  (gth j n)
+  ?~  pos
     %done
   $(pos (del:qat pos j), j +(j))
 ::
@@ -284,7 +283,7 @@
     $(acc (put:qah acc j j j), j +(j))
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?~  pos
     %done
   $(pos (del:qah pos j), j +(j))
 ::

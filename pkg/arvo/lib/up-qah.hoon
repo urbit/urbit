@@ -22,7 +22,7 @@
   ^-  ?
   =(0 (dis (mug k) m))
 ::
-++  peak                                              ::  max differing bit
+++  peak                                                ::  max differing bit
   ~/  %peak
   |=  [k=k l=k]
   ^-  @
@@ -36,9 +36,9 @@
   !=((dis (mug k) n) (dis (mug l) n))
 ::  tree manipulation
 ::
-++  rule                                               ::  decide branch
-  ~/  %rule                                            ::
-  |=  [k=k p=@ v=v a=pri b=pri]                        ::  a must be nonempty
+++  rule                                                ::  decide branch
+  ~/  %rule                                             ::
+  |=  [k=k p=@ v=v a=pri b=pri]                         ::  a must be nonempty
   ^-  pri
   =/  l  +<.a
   =/  m  (peak k l)
@@ -46,7 +46,7 @@
     [%bin k p v m a b]
   [%bin k p v m b a]
 ::
-++  lex                                               ::  muggish lex order
+++  lex                                                 ::  muggish lex order
   ~/  %lex
   |=  [p=@ k=k q=@ l=k]
   ^-  ?
@@ -54,7 +54,7 @@
     (gor k l)
   (lth p q)
 ::
-++  fuse                                              ::  disjoint tree merge
+++  fuse                                                ::  disjoint tree merge
   ~/  %fuse
   |=  [m=@ l=pri r=pri]
   ^-  pri
@@ -299,7 +299,7 @@
   ::
   ++  uni                                           ::  has unique keys
     =/  l  (sort (col a `(list @)`~) gor)
-    =|  k=(unit @)
+    =|  k=(unit k)
     |-  ^-  ?
     ?~  l
       %&
@@ -357,7 +357,7 @@
      ==
     ::
     ++  kek
-      |=  [n=@ s=?(%lef %rig) k=@]
+      |=  [n=@ s=?(%lef %rig) k=k]
       ^-  ?
       ?-  s
         %lef  =(0 (dis n (mug k)))

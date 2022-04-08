@@ -117,7 +117,7 @@
   =/  b  p.r.a
   ?-  -.r.a
       %llos
-    ?:  (win [p.n.a k.n.a] [p.n.b k.n.b])
+    ?:  (lex p.n.a k.n.a p.n.b k.n.b)
       (llos n.a (rlos n.b l.a m.a l.b) m.b r.b)
     (llos n.b (llos n.a l.a m.a l.b) m.b r.b)
       %rlos
@@ -156,7 +156,7 @@
       %llos
     (llos n.b l.b m.b (rlos n.a r.b m.a r.a))
       %rlos
-    ?:  (win [p.n.a k.n.a] [p.n.b k.n.b])
+    ?:  (lex p.n.a k.n.a p.n.b k.n.b)
       (rlos n.a l.b m.b (llos n.b r.b m.a r.a))
     (rlos n.b l.b m.b (rlos n.a r.b m.a r.a))
   ==
@@ -207,7 +207,7 @@
   ^-  pro
   ?~  a  b
   ?~  b  a
-  ?:  (win [p.n.a k.n.a] [p.n.b k.n.b])
+  ?:  (lex p.n.a k.n.a p.n.b k.n.b)
     [n.a (rbal n.b t.a m.a t.b) m.b]
   [n.b (lbal n.a t.a m.a t.b) m.b]
 ::
@@ -221,12 +221,12 @@
     %rlos  (toy $(t l.p.t, m m.p.t) [n.p.t r.p.t m])
   ==
 ::
-++  win                                               ::  compare
-  ~/  %win
-  |=  [[p=@ q=*] [r=@ s=*]]
-  ?|  (lth p r)
-      ?&(=(p r) (gor q s))
-  ==
+++  lex                                           ::  muggish lex order
+  |=  [p=@ k=k q=@ l=k]
+  ^-  ?
+  ?:  =(p q)
+    (gor k l)
+  (lth p q)
 ::
 ++  top                                             ::  maximum key
   ~/  %top
@@ -246,6 +246,22 @@
     %rlos  [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
   ==
 ::  api
+::
+++  key                                             ::  list of keys
+  |=  a=pro
+  ^-  (list k)
+  (turn (tap a) |=(=elem k.elem))
+::
+++  tap                                             ::  convert to list
+  |=  a=pro
+  =|  b=(list elem)
+  |-  ^+  b
+  =/  tor  (see a)
+  ?~  tor  b
+  ?-  -.tor
+    %sing  [n.tor b]
+    %play  (weld $(a l.tor) $(a r.tor))
+  ==
 ::
 ++  put                                             :: add [key pri val]
   ~/  %put
@@ -350,29 +366,6 @@
     ann
   &
   ::
-  ++  tap                                             ::  convert to list
-    |=  a=pro
-    =|  b=(list elem)
-    |-  ^+  b
-    =/  tor  (see a)
-    ?~  tor  b
-    ?-  -.tor
-      %sing  [n.tor b]
-      %play  (weld $(a l.tor) $(a r.tor))
-    ==
-  ::
-  ++  key                                             ::  list of keys
-    |=  a=pro
-    ^-  (list k)
-    (turn (tap a) |=(=elem k.elem))
-  ::
-  ++  lex                                           ::  muggish lex order
-    |=  [p=@ k=k q=@ l=k]
-    ^-  ?
-    ?:  =(p q)
-      (gor k l)
-    (lth p q)
-  ::
   ++  uni                                           ::  has unique keys
     =/  l  (sort (key a) gor)
     =|  a=(unit k)
@@ -408,8 +401,8 @@
         %sing  &
         %play
       =/  k  (top l.tor)
-      ?&  (levy (key l.tor) |=(* (gor +< k)))
-          (levy (key r.tor) |=(* |(=(k +<) !(gor +< k))))
+      ?&  (levy (key l.tor) |=(* |(=(k +<) (gor +< k))))
+          (levy (key r.tor) |=(* |(=(k +<) (gor k +<))))
           $(a l.tor)
           $(a r.tor)
       ==
