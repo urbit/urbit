@@ -813,7 +813,8 @@
     $%  [%lobe =lobe]                                   ::  specific lobe
         [%all ~]                                        ::  all safe targets
         [%pick ~]                                       ::  collect garbage
-        [%norm =ship =desk =norm]                       ::  set norm
+        [%norm =ship =desk =norm]                       ::  set default norm
+        [%worn =ship =desk =tako =norm]                 ::  set commit norm
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission

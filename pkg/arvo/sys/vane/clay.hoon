@@ -1468,6 +1468,11 @@
     =.  nor.dom  norm
     ..park
   ::
+  ++  set-worn
+    |=  [=tako =norm]
+    =.  tom.dom  (~(put by tom.dom) tako norm)
+    ..park
+  ::
   ::  Attach label to aeon
   ::
   ++  label
@@ -5268,6 +5273,12 @@
         =/  den  ((de now rof *duct ruf) ship.clue desk.clue)
         abet:(set-norm:den norm.clue)
       [mos ..^$]
+    ::
+        %worn
+      =^  mos  ruf
+        =/  den  ((de now rof *duct ruf) ship.clue desk.clue)
+        abet:(set-worn:den tako.clue norm.clue)
+      [mos ..^$]
     ==
   ::  +tomb-lobe: remove specific lobe
   ::
@@ -5334,7 +5345,6 @@
       |-  ^-  (set [norm yaki])
       ?~  rooms
         ~
-      ~&  >  desk=desk.i.rooms
       (~(uni in $(rooms t.rooms)) (draw-dome dom.dojo.i.rooms))
     =/  rung-yakis
       =/  rungs=(list [=ship =rung])  ~(tap by hoy.ruf)
@@ -5346,7 +5356,6 @@
       |-  ^-  (set [norm yaki])
       ?~  redes
         ~
-      ~&  >  [ship=ship.i.rungs desk=desk.i.redes]
       (~(uni in $(redes t.redes)) (draw-dome dom.rede.i.redes))
     (~(uni in room-yakis) rung-yakis)
   ::
