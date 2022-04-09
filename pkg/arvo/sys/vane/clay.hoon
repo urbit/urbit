@@ -5369,11 +5369,13 @@
     ?:  (lth let.dome aeon)
       ~
     =/  =tako  (~(got by hit.dome) aeon)
-    =/  nor
-      ?:  =(let.dome aeon)
-        keep-all
-      nor.dome
-    (~(uni in (draw-tako tom.dome nor tako)) $(aeon +(aeon)))
+    =/  yakis=(set [norm yaki])
+      ?.  =(let.dome aeon)
+        ~
+      [[keep-all (~(got by hut.ran.ruf) tako)] ~ ~]
+    %-  ~(uni in yakis)
+    %-  ~(uni in (draw-tako tom.dome nor.dome tako))
+    $(aeon +(aeon))
   ::
   ++  draw-tako
     |=  [tom=(map tako norm) nor=norm =tako]
