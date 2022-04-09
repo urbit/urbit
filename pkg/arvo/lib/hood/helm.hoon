@@ -138,6 +138,12 @@
   |=  ~  =<  abet
   (emit %pass /pack %arvo %d %flog %pack ~)
 ::
+++  poke-pans
+  |=  pans=(list note-arvo)
+  ?~  pans  abet
+  =.  this  (emit %pass /helm/pans %arvo i.pans)
+  $(pans t.pans)
+::
 ++  poke-pass
   |=  =note-arvo  =<  abet
   (emit %pass /helm/pass %arvo note-arvo)
@@ -239,6 +245,7 @@
     %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
+    %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
     %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)
     %helm-moon             =;(f (f !<(_+<.f vase)) poke-moon)

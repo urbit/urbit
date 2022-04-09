@@ -4057,10 +4057,12 @@
                 let=yon
                 hit=(molt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
                 lab=(molt (skim ~(tap by lab.dom) |=([* p=@ud] (lte p yon))))
+                tom=tom.dom
+                nor=nor.dom
         ==  ==
       ?:  (gth yon let.dom)
         ~
-      ``[%dome -:!>(*dome:clay) [ank let hit lab]:dom]
+      ``[%dome -:!>(*dome:clay) [ank let hit lab tom nor]:dom]
     ::
     ::  Gets all cases refering to the same revision as the given case.
     ::
@@ -4531,7 +4533,7 @@
             dom=dome-11
             per=regs
             pew=regs
-            fiz=melt
+            fiz=melt-11
         ==
       +$  dome-11
         $:  ank=ankh
@@ -4551,7 +4553,7 @@
             dom=dome-11
             per=regs
             pew=regs
-            fiz=melt
+            fiz=melt-11
         ==
       +$  rind-11
         $:  nix=@ud
@@ -4566,6 +4568,14 @@
             need=[let=(list lobe) old=(list lobe)]
             nako=(qeu (unit nako))
             busy=_|
+        ==
+      +$  melt-11
+        [bas=beak con=(list [beak germ]) sto=(map beak (unit dome-clay-11))]
+      +$  dome-clay-11
+        $:  ank=ankh
+            let=@ud
+            hit=(map @ud tako)
+            lab=(map @tas @ud)
         ==
       +$  raft-10
         $:  rom=room-10
@@ -4586,7 +4596,7 @@
             dom=dome-11
             per=regs
             pew=regs
-            fiz=melt
+            fiz=melt-11
         ==
       +$  cult-10  (jug wove-10 duct)
       +$  wove-10  [for=(unit [=ship ver=@ud]) =rove-10]
@@ -4612,7 +4622,7 @@
             dom=dome-11
             per=regs
             pew=regs
-            fiz=melt
+            fiz=melt-11
         ==
       +$  rind-10
         $:  nix=@ud
@@ -4658,7 +4668,7 @@
             dom=dome-8
             per=regs
             pew=regs
-            fiz=melt
+            fiz=melt-11
         ==
       +$  dome-8
         $:  ank=ankh
@@ -4676,7 +4686,7 @@
             dom=dome-8
             per=regs
             pew=regs
-            fiz=melt
+            fiz=melt-11
         ==
       +$  raft-7
         $:  rom=room-7
@@ -4786,7 +4796,7 @@
       %-  ~(run by dos.rom.raf)
       |=  doj=dojo-7
       ^-  dojo-8
-      [qyx.doj dom.doj per.doj pew.doj *melt]
+      [qyx.doj dom.doj per.doj pew.doj *melt-11]
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -4794,7 +4804,7 @@
       %-  ~(run by rus.rung-7)
       |=  r=rede-7
       ^-  rede-8
-      [lim.r ref.r qyx.r dom.r per.r pew.r *melt]
+      [lim.r ref.r qyx.r dom.r per.r pew.r *melt-11]
     ==
   ::  +raft-8-to-9: remove reef cache
   ::
@@ -4924,7 +4934,7 @@
       %-  ~(run by dos.rom.raf)
       |=  =dojo-11
       ^-  dojo
-      dojo-11(|4.dom [~ keep-all |4.dom.dojo-11])
+      dojo-11(|4.dom [~ keep-all |4.dom.dojo-11], fiz *melt)
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -4934,6 +4944,7 @@
       ^-  rede
       %=    rede-11
           |4.dom  [~ keep-all |4.dom.rede-11]
+          fiz     *melt
           ref
         ?~  ref.rede-11
           ~
@@ -4952,6 +4963,7 @@
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
+  |^
   =*  ren  car
   =/  why=shop  &/p.bem
   =*  syd  q.bem
@@ -4973,6 +4985,8 @@
   ::TODO  if it ever gets filled properly, pass in the full fur.
   ::
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
+  ?:  &(=(our his) =(%$ syd) =([%da now] u.luk))
+    (read-buc u.run tyl)
   =/  den  ((de now rof [/scryduct ~] ruf) his syd)
   =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
   ?:  ?=(%| -.result)
@@ -4981,6 +4995,35 @@
   ?~  p.result               ~
   ?~  u.p.result             [~ ~]
   ``u.u.p.result
+  ::
+  ++  read-buc
+    |=  [=care =path]
+    ^-  (unit (unit cage))
+    ?~  path
+      ~
+    ?+    i.path  ~
+        %rang   ``[%rang !>(ran.ruf)]
+        %domes
+      =/  domes
+        %-  ~(gas by *cone)
+        %+  turn  ~(tap by dos.rom.ruf)
+        |=  [=desk =dojo]
+        [[our desk] [ank let hit lab tom nor]:dom.dojo]
+      =.  domes
+        %-  ~(uni by domes)
+        %-  ~(gas by *cone)
+        ^-  (list [[ship desk] dome:clay])
+        %-  zing
+        ^-  (list (list [[ship desk] dome:clay]))
+        %+  turn  ~(tap by hoy.ruf)
+        |=  [=ship =rung]
+        ^-  (list [[^ship desk] dome:clay])
+        %+  turn  ~(tap by rus.rung)
+        |=  [=desk =rede]
+        [[ship desk] [ank let hit lab tom nor]:dom.rede]
+      ``[%domes !>(`cone`domes)]
+    ==
+  --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.
 ::  This nests within +ford-cache without reference to +type, +hoon, or

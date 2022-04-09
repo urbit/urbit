@@ -816,6 +816,7 @@
         [%norm =ship =desk =norm]                       ::  set default norm
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
     ==                                                  ::
+  +$  cone  (map [ship desk] dome)                      ::  domes
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
@@ -823,6 +824,8 @@
         let=@ud                                         ::  top id
         hit=(map @ud tako)                              ::  changes by id
         lab=(map @tas @ud)                              ::  labels
+        tom=(map tako norm)                             ::  tomb policies
+        nor=norm                                        ::  default policy
     ==                                                  ::
   +$  germ                                              ::  merge style
     $?  %init                                           ::  new desk
