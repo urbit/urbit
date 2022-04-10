@@ -115,5 +115,5 @@ jobs:
           CACHIX_CACHE: ares
           CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: mingw32-make build/urbit build/urbit-worker
+      - run: mingw32-make build/urbit
       - run: build/urbit -l -d -B ../../bin/solid.pill -F bus && curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}' http://localhost:12321

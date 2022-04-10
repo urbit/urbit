@@ -527,7 +527,7 @@ _setup_ssl_curl(void* arg)
   curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, _curl_ssl_ctx_cb);
 }
 
-/* _cw_usage(): print urbit-worker usage.
+/* _cw_usage(): print utility usage.
 */
 static void
 _cw_usage(c3_c* s)
@@ -1045,13 +1045,13 @@ _cw_cram(c3_i argc, c3_c* argv[])
   c3_d  eve_d = u3m_boot(dir_c);
   c3_o  ret_o;
 
-  fprintf(stderr, "urbit-worker: cram: preparing\r\n");
+  fprintf(stderr, "urbit: cram: preparing\r\n");
 
   if ( c3n == (ret_o = u3u_cram(dir_c, eve_d)) ) {
-    fprintf(stderr, "urbit-worker: cram: unable to jam state\r\n");
+    fprintf(stderr, "urbit: cram: unable to jam state\r\n");
   }
   else {
-    fprintf(stderr, "urbit-worker: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
+    fprintf(stderr, "urbit: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
   }
 
   //  save even on failure, as we just did all the work of deduplication
@@ -1077,11 +1077,11 @@ _cw_queu(c3_i argc, c3_c* argv[])
   c3_d  eve_d;
 
   if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
-    fprintf(stderr, "urbit-worker: queu: invalid number '%s'\r\n", eve_c);
+    fprintf(stderr, "urbit: queu: invalid number '%s'\r\n", eve_c);
     exit(1);
   }
   else {
-    fprintf(stderr, "urbit-worker: queu: preparing\r\n");
+    fprintf(stderr, "urbit: queu: preparing\r\n");
 
     memset(&u3V, 0, sizeof(u3V));
     u3V.dir_c = strdup(dir_c);
@@ -1092,13 +1092,13 @@ _cw_queu(c3_i argc, c3_c* argv[])
     //  workaround is to delete/move the checkpoint in case of corruption
     //
     if ( c3n == u3u_uncram(dir_c, eve_d) ) {
-      fprintf(stderr, "urbit-worker: queu: failed\r\n");
+      fprintf(stderr, "urbit: queu: failed\r\n");
       exit(1);
     }
 
     u3e_save();
 
-    fprintf(stderr, "urbit-worker: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
+    fprintf(stderr, "urbit: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
     u3m_stop();
   }
 }
@@ -1134,7 +1134,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
   c3_c* dir_c = argv[2];
 
   u3m_boot(dir_c);
-  u3a_print_memory(stderr, "urbit-worker: pack: gained", u3m_pack());
+  u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3e_save();
   u3m_stop();
@@ -1145,7 +1145,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
 static c3_i
 _cw_utils(c3_i argc, c3_c* argv[])
 {
-  //  urbit-worker commands and positional arguments, by analogy
+  //  utility commands and positional arguments, by analogy
   //
   //    $@  ~                                             ::  usage
   //    $%  [%cram dir=@t]                                ::  jam state

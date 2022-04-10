@@ -126,7 +126,6 @@ let
 
       contents = {
         "${name}/urbit" = "${urbit}/bin/urbit";
-        "${name}/urbit-worker" = "${urbit}/bin/urbit-worker";
       };
     };
 
