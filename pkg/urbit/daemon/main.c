@@ -690,34 +690,6 @@ _stop_on_boot_completed_cb()
   u3_king_exit();
 }
 
-//  XX move to _cw_info
-//
-static c3_i
-_debug_db_stats(const c3_c* dir_c)
-{
-#if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
-  const size_t siz_i = 64424509440;
-#else
-  const size_t siz_i = 1099511627776;
-#endif
-
-  c3_c* log_c = c3_malloc(10 + strlen(dir_c));
-
-  strcpy(log_c, dir_c);
-  strcat(log_c, "/.urb/log");
-
-  MDB_env* mdb_u = u3_lmdb_init(log_c, siz_i);
-
-  if ( mdb_u ) {
-    u3_lmdb_stat(mdb_u, stdout);
-    u3_lmdb_exit(mdb_u);
-    return 0;
-  }
-  else {
-    return 1;
-  }
-}
-
 /* _cw_serf_fail(): failure stub.
 */
 static void
@@ -1028,7 +1000,23 @@ _cw_info(c3_i argc, c3_c* argv[])
   c3_c* dir_c = argv[2];
   c3_d  eve_d = u3m_boot(dir_c);
 
-  fprintf(stderr, "urbit-worker: %s at event %" PRIu64 "\r\n", dir_c, eve_d);
+  fprintf(stderr, "\r\nurbit: %s at event %" PRIu64 "\r\n", dir_c, eve_d);
+
+  {
+    u3_disk_cb cb_u = {0};
+    u3_disk*  log_u = u3_disk_init(dir_c, cb_u);
+
+    if ( !log_u ) {
+      fprintf(stderr, "urbit: failed to open event log\r\n");
+    }
+    else {
+      u3_disk_slog(log_u);
+      printf("\n");
+      u3_lmdb_stat(log_u->mdb_u, stdout);
+      u3_disk_exit(log_u);
+    }
+  }
+
   u3m_stop();
 }
 
