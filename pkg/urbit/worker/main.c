@@ -7,8 +7,6 @@
 #include <vere/vere.h>
 #include <vere/serf.h>
 
-#include "ur/hashcons.h"
-
 static u3_serf        u3V;             //  one serf per process
 static u3_moat      inn_u;             //  input stream
 static u3_mojo      out_u;             //  output stream
@@ -454,29 +452,23 @@ _cw_pack(c3_i argc, c3_c* argv[])
 /* _cw_usage(): print urbit-worker usage.
 */
 static void
-_cw_usage(c3_i argc, c3_c* argv[])
+_cw_usage(c3_c* s)
 {
   fprintf(stderr,
-          "\rurbit-worker usage:\n"
-          "  print pier info:\n"
-          "    %s info <pier>\n\n"
-          "  gc persistent state:\n"
-          "    %s grab <pier>\n\n"
-          "  compact persistent state:\n"
-          "    %s pack <pier>\n\n"
-          "  deduplicate persistent state:\n"
-          "    %s meld <pier>\n\n"
-          "  jam persistent state:\n"
-          "    %s cram <pier>\n\n"
-          "  cue persistent state:\n"
-          "    %s queu <pier> <at-event>\n\n"
-          "  run as a 'serf':\n"
-          "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
-          #if defined(U3_OS_mingw)
-          " <ctrlc-handle>"
-          #endif
-          "\n",
-          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+    "\rusage:\n"
+    "  %s cram <pier>               jam state:\n"
+    "  %s grab <pier>               measure memory usage:\n"
+    "  %s info <pier>               print pier info:\n"
+    "  %s meld <pier>               deduplicate snapshot:\n"
+    "  %s pack <pier>               defragment snapshot:\n"
+    "  %s queu <pier> <at-event>    cue state:\n"
+    "\n  run as a 'serf':\n"
+    "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
+#ifdef U3_OS_mingw
+    " <ctrlc-handle>"
+#endif
+    "\n",
+    s, s, s, s, s, s, s);
 }
 
 /* main(): main() when run as urbit-worker
@@ -486,48 +478,44 @@ main(c3_i argc, c3_c* argv[])
 {
   //  urbit-worker commands and positional arguments, by analogy
   //
-  //    $@  ~               ;; usage
-  //    $%  [%cram dir=@t]
-  //        [%queu dir=@t eve=@ud]
-  //        [%pack dir=@t]
-  //        [%serf dir=@t key=@t wag=@t hap=@ud eve=@ud]
+  //    $@  ~                                             ::  usage
+  //    $%  [%cram dir=@t]                                ::  jam state
+  //        [%grab dir=@t]                                ::  gc
+  //        [%info dir=@t]                                ::  print
+  //        [%meld dir=@t]                                ::  deduplicate
+  //        [%pack dir=@t]                                ::  defragment
+  //        [%queu dir=@t eve=@ud]                        ::  cue state
+  //    ::                                                ::    ipc:
+  //        [%serf dir=@t key=@t wag=@t hap=@ud eve=@ud]  ::  compute
   //    ==
   //
   //    NB: don't print to anything other than stderr;
-  //    other streams may have special requirements (in the case of "serf")
+  //    other streams may be used for ipc.
   //
-  if ( 2 > argc ) {
-    _cw_usage(argc, argv);
-    exit(1);
-  }
-  else {
-    if ( 0 == strcmp("serf", argv[1]) ) {
-      _cw_serf_commence(argc, argv);
+  if ( (2 < argc) && 4 == strlen(argv[1]) ) {
+    c3_m mot_m;
+    {
+      c3_c* s = argv[1]; mot_m = c3_s4(s[0], s[1], s[2], s[3]);
     }
-    else if ( 0 == strcmp("info", argv[1]) ) {
-      _cw_info(argc, argv);
+
+    switch ( mot_m ) {
+      case c3__cram: _cw_cram(argc, argv); break;
+      case c3__grab: _cw_grab(argc, argv); break;
+      case c3__info: _cw_info(argc, argv); break;
+      case c3__meld: _cw_meld(argc, argv); break;
+      case c3__pack: _cw_pack(argc, argv); break;
+      case c3__queu: _cw_queu(argc, argv); break;
+
+      case c3__serf: _cw_serf_commence(argc, argv); break;
     }
-    else if ( 0 == strcmp("grab", argv[1]) ) {
-      _cw_grab(argc, argv);
-    }
-    else if ( 0 == strcmp("cram", argv[1]) ) {
-      _cw_cram(argc, argv);
-    }
-    else if ( 0 == strcmp("queu", argv[1]) ) {
-      _cw_queu(argc, argv);
-    }
-    else if ( 0 == strcmp("meld", argv[1]) ) {
-      _cw_meld(argc, argv);
-    }
-    else if ( 0 == strcmp("pack", argv[1]) ) {
-      _cw_pack(argc, argv);
-    }
-    else {
-      fprintf(stderr, "unknown command '%s'\r\n", argv[1]);
-      _cw_usage(argc, argv);
-      exit(1);
-    }
+
+    return 0;
   }
 
-  return 0;
+  if ( 1 < argc) {
+    fprintf(stderr, "unknown command '%s'\r\n", argv[1]);
+  }
+
+  _cw_usage(argv[0]);
+  return 1;
 }
