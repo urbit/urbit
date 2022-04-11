@@ -37,6 +37,7 @@
 #     include <sys/mman.h>
 
 #   elif defined(U3_OS_osx)
+#     include <fcntl.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
