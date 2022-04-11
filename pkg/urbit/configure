@@ -24,11 +24,6 @@ deps="          \
   softfloat3    \
 "
 
-headers="       \
-  ca-bundle.h   \
-  ivory.h       \
-"
-
 echo '#pragma once' >include/config.h
 
 defmacro () {
@@ -93,7 +88,7 @@ case $(tr A-Z a-z <<< $cpu) in
   x86_64 | amd64)
      defmacro U3_OS_ENDIAN_little 1
      ;;
-  aarch64)
+  arm64|aarch64)
      defmacro U3_OS_ENDIAN_little 1
      defmacro U3_CPU_aarch64 1
      ;;
@@ -113,6 +108,8 @@ case $(tr A-Z a-z <<< $os) in
      # ensure required mingw packages are installed
      mpkgs=(cmake curl gcc jq make)
      pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
+
+     gnumake=mingw32-make
 
      . compat/poor-mans-nix-shell.sh mingw
      compat/create-include-files.sh 'stat -c %s' /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
@@ -203,10 +200,6 @@ LDFLAGS="${LDFLAGS-} $($PKG_CONFIG --libs $pkgc_deps)"
 
 for dep in $deps; do
   LDFLAGS="${LDFLAGS-} -l$dep"
-done
-
-for header in $headers; do
-  CFLAGS="${CFLAGS-} -I$header"
 done
 
 compat="${compat-posix}"

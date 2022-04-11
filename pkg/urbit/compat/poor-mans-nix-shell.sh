@@ -91,7 +91,7 @@ buildnixdep () {
     [ -e $patch ] && patch -d $dir -p 1 <$patch
     pushd $dir
     eval "$cmdprep"
-    eval $gnumake "$cmdmake"
+    eval ${MAKE} "$cmdmake"
     touch $markfil
     popd
   fi
