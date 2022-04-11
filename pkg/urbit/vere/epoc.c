@@ -82,10 +82,48 @@ static const c3_c lif_nam_c[] = "lifecycle.bin";
     c3_i ret_i = lmdb_call;                                                    \
     if ( 0 != ret_i ) {                                                        \
       fprintf(stderr, "lmdb: " __VA_ARGS__);                                   \
-      fprintf(stderr, " (%s)\r\n", mdb_strerror(ret_i));                       \
+      mdb_logerror(stderr, ret_i, "");                                         \
       failure_action;                                                          \
     }                                                                          \
   } while ( 0 )
+
+//==============================================================================
+// Patch
+//==============================================================================
+
+//! Write an error message and LMDB error code to a file stream.
+//!
+//! @param[in] f    File stream.
+//! @param[in] err  LMDB error code.
+//! @param[in] fmt  Error message format string.
+void
+mdb_logerror(FILE* f, int err, const char* fmt, ...);
+
+//! Get the size of an LMDB database file on disk.
+//!
+//! @param[in] handle  LMDB file handle.
+intmax_t
+mdb_get_filesize(mdb_filehandle_t handle);
+
+#if !defined(U3_OS_mingw)
+void
+mdb_logerror(FILE* f, int err, const char* fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(f, fmt, ap);
+  va_end(ap);
+  fprintf(f, ": %s\r\n", mdb_strerror(err));
+}
+
+intmax_t
+mdb_get_filesize(mdb_filehandle_t han_u)
+{
+  struct stat sat_u;
+  fstat(han_u, &sat_u);
+  return (intmax_t)sat_u.st_size;
+}
+#endif /* if !defined(U3_OS_mingw) */
 
 //==============================================================================
 // Static functions
