@@ -611,11 +611,6 @@ top:
       goto top;
     }
     else if ( u3_mars_exit_e == mar_u->sat_e ) {
-      //  XX wire up to signal handler
-      // Printing out what is essentially debug information for the event log on
-      // exit seems unnecessary.
-      //u3_saga_info(mar_u->log_u);
-
       u3e_save();
       u3_lock_release(mar_u->dir_u);
       u3_saga_close(mar_u->log_u);
