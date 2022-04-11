@@ -25,12 +25,12 @@ struct _c3_list {
 // Static functions
 //==============================================================================
 
-static c3_lode*
-_create_node(const void* const dat_v, const size_t siz_i)
+static inline c3_lode*
+_create_node(const void* const dat_v, const size_t dat_i)
 {
-  c3_lode* nod_u = c3_calloc(sizeof(*nod_u) + siz_i);
-  nod_u->len_i   = siz_i;
-  memcpy(nod_u->dat_y, dat_v, siz_i);
+  c3_lode* nod_u = c3_calloc(sizeof(*nod_u) + dat_i);
+  nod_u->len_i   = dat_i;
+  memcpy(nod_u->dat_y, dat_v, dat_i);
   return nod_u;
 }
 

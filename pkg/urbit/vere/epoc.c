@@ -96,6 +96,64 @@ static const c3_c lif_nam_c[] = "lifecycle.bin";
 //! @param[in] par_u  Path to parent directory.
 //! @param[in] fir_d
 //!
+//! @return  Epoch path.
+static c3_path*
+_epoc_path(const c3_path* const par_u, const c3_d fir_d);
+
+//! Determine if an epoch is the first epoch.
+//!
+//! @param[in] pax_u  Path housing epoch.
+//!
+//! @return 1  Epoch is the first epoch.
+//! @return 0  Otherwise.
+static inline c3_t
+_epoc_is_first(const c3_path* const pax_u);
+
+//! Get the first and last event numbers from an epoch's LMDB instance.
+//!
+//! @param[in]  env_u  Epoch LMDB instance.
+//! @param[out] fir_d  Will be filled with first event number.
+//! @param[out] las_d  Will be filled with last event number.
+//!
+//! @return 1  `fir_d` and `las_d` were populated with the first and last event
+//!            numbers.
+//! @return 0  Otherwise.
+static c3_t
+_lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d);
+
+//! Open an epoch's LMDB environment.
+//!
+//! An epoch's LMDB environment consists of only a single database which is used
+//! to store the epoch's events unless it's the first epoch that was created as
+//! a result of u3_epoc_migrate(), in which case the LMDB environment will
+//! contain a database for the epoch's events and another for its metadata
+//! (which is unused but retained for archival reasons).
+//!
+//! @param[in] pax_u  Path to directory containing LMDB environment.
+//!
+//! @return  NULL         LMDB environment could not be created.
+//! @return  LMDB handle  Otherwise.
+static MDB_env*
+_lmdb_init(const c3_path* const pax_u);
+
+//! Move a file to a new directory.
+//!
+//! @param[in] src_u  Source directory containing the file.
+//! @param[in] dst_u  Destination directory to contain the file.
+//! @param[in] nam_c  Name of the file.
+//!
+//! @return 1  File was successfully moved.
+//! @return 0  Otherwise.
+static c3_t
+_move_file(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c);
+
+static inline c3_t
+_epoc_is_first(const c3_path* const pax_u)
+{
+  c3_c* sar_c = strstr(c3_path_str(pax_u), fir_nam_c);
+  return sar_c && 0 == strcmp(sar_c, fir_nam_c);
+}
+
 //! @n (1) This is the largest possible unsigned 64-bit number.
 static c3_path*
 _epoc_path(const c3_path* const par_u, const c3_d fir_d)
@@ -108,62 +166,6 @@ _epoc_path(const c3_path* const par_u, const c3_d fir_d)
   return c3_path_fv(2, c3_path_str(par_u), dir_c);
 }
 
-//! Open an epoch LMDB environment.
-//!
-//! An epoch's LMDB environment consists of only a single database which is used
-//! to store the epoch's events unless it's the first epoch that was created as
-//! a result of u3_epoc_migrate(), in which case the LMDB environment will
-//! contain a database for the epoch's events and another for its metadata
-//! (which is unused but retained for archival reasons).
-//!
-//! @param[in] pax_u  Path to directory containing LMDB environment.
-//!
-//! @n (1) From the LMDB docs: "The [map size] value should be chosen as large
-//!        as possible, to accommodate future growth of the database."
-static MDB_env*
-_lmdb_init(const c3_path* const pax_u)
-{
-  c3_i     ret_i;
-  MDB_env* env_u;
-  try_lmdb(mdb_env_create(&env_u), goto fail, "failed to create environment");
-
-  // (1)
-  static size_t siz_i =
-#if ( defined(U3_CPU_aarch64) && defined(U3_OS_linux) ) || defined(U3_OS_mingw)
-    0xf00000000;
-#else
-    0x10000000000;
-#endif
-  try_lmdb(mdb_env_set_mapsize(env_u, siz_i),
-           goto close_env,
-           "failed to set map size");
-
-  try_lmdb(mdb_env_set_maxdbs(env_u, 2),
-           goto close_env,
-           "failed to set max number of databases");
-
-  const c3_c* pax_c = c3_path_str(pax_u);
-  try_lmdb(mdb_env_open(env_u, pax_c, 0, 0664),
-           goto close_env,
-           "failed to open environment at %s",
-           pax_c);
-
-  goto succeed;
-
-close_env:
-  mdb_env_close(env_u);
-fail:
-  return NULL;
-
-succeed:
-  return env_u;
-}
-
-//! Get the first and last event numbers from an epoch's LMDB instance.
-//!
-//! @param[in]  env_u  Epoch LMDB instance.
-//! @param[out] fir_d  Will be filled with first event number.
-//! @param[out] las_d  Will be filled with last event number.
 static c3_t
 _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d)
 {
@@ -211,14 +213,47 @@ end:
   return suc_t;
 }
 
-//! Move a file to a new directory.
-//!
-//! @param[in] src_u  Source directory containing the file.
-//! @param[in] dst_u  Destination directory to contain the file.
-//! @param[in] nam_c  Name of the file.
-//!
-//! @return 0  File could not be moved.
-//! @return 1  File was successfully moved.
+//! @n (1) From the LMDB docs: "The [map size] value should be chosen as large
+//!        as possible, to accommodate future growth of the database."
+static MDB_env*
+_lmdb_init(const c3_path* const pax_u)
+{
+  c3_i     ret_i;
+  MDB_env* env_u;
+  try_lmdb(mdb_env_create(&env_u), goto fail, "failed to create environment");
+
+  // (1)
+  static size_t siz_i =
+#if ( defined(U3_CPU_aarch64) && defined(U3_OS_linux) ) || defined(U3_OS_mingw)
+    0xf00000000;
+#else
+    0x10000000000;
+#endif
+  try_lmdb(mdb_env_set_mapsize(env_u, siz_i),
+           goto close_env,
+           "failed to set map size");
+
+  try_lmdb(mdb_env_set_maxdbs(env_u, 2),
+           goto close_env,
+           "failed to set max number of databases");
+
+  const c3_c* pax_c = c3_path_str(pax_u);
+  try_lmdb(mdb_env_open(env_u, pax_c, 0, 0664),
+           goto close_env,
+           "failed to open environment at %s",
+           pax_c);
+
+  goto succeed;
+
+close_env:
+  mdb_env_close(env_u);
+fail:
+  return NULL;
+
+succeed:
+  return env_u;
+}
+
 static c3_t
 _move_file(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c)
 {
@@ -242,14 +277,6 @@ pop_dst_path:
   c3_path_pop(dst_u);
 end:
   return suc_t;
-}
-
-//! True if the path is the path to the first epoch, false otherwise.
-static inline c3_t
-_is_first_epoc(const c3_path* const pax_u)
-{
-  c3_c* sar_c = strstr(c3_path_str(pax_u), fir_nam_c);
-  return sar_c && 0 == strcmp(sar_c, fir_nam_c);
 }
 
 //==============================================================================
@@ -482,7 +509,7 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
     c3_assert(epo_ver_w == ver_w); // (2)
   }
 
-  if ( _is_first_epoc(pax_u) ) { // (3)
+  if ( _epoc_is_first(pax_u) ) { // (3)
     c3_path_push(poc_u->pax_u, lif_nam_c);
     if ( !c3_bile_read_existing(poc_u->pax_u, lif_w, sizeof(*lif_w)) ) {
       goto free_epoc;

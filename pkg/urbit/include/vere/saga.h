@@ -30,8 +30,8 @@
 //! @param[in] byt_y  Serialized event.
 //! @param[in] len_i  Length of `byt_y` in bytes.
 //!
-//! @return 0  Event replay failed.
 //! @return 1  Event replay succeeded.
+//! @return 0  Otherwise.
 typedef c3_t (*u3_saga_play)(void*        ptr_v,
                              c3_d         cur_d,
                              c3_d         las_d,
@@ -44,6 +44,9 @@ typedef c3_t (*u3_saga_play)(void*        ptr_v,
 //! @param[in] ptr_v  Context provided to u3_saga_commit_mode() as `ptr_v`.
 //! @param[in] suc_d  ID of last event committed in async batch commit.
 //! @param[in] suc_t  True if the commit succeeded.
+//!
+//! @return 1  Success.
+//! @return 0  Otherwise.
 typedef c3_t (*u3_saga_news)(void* ptr_v, c3_d ide_d, c3_t suc_t);
 
 //! Event log async commit mode context.
@@ -125,9 +128,9 @@ u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u);
 //! @param[in] byt_y  Serialized event.
 //! @param[in] byt_i  Length of `byt_y` in bytes.
 //!
-//! @return 0  Event could not be committed.
-//! @return 1  Event was committed (synchronous commit mode).
-//! @return 1  Event was scheduled to be committed (asynchronous commit mode).
+//! @return 1  Event was committed (sync commit mode) or scheduled (async commit
+//!            mode).
+//! @return 0  Otherwise.
 c3_t
 u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i);
 
@@ -140,8 +143,8 @@ u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i);
 //! @param[in] pla_f  Replay function invoked on each event.
 //! @param[in] ptr_v  Context passed to replay function.
 //!
-//! @return 0  Replay failed.
 //! @return 1  Replay succeeded.
+//! @return 0  Otherwise.
 c3_t
 u3_saga_replay(u3_saga* const log_u,
                c3_d           cur_d,

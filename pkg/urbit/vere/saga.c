@@ -54,10 +54,133 @@ static const size_t epo_len_i = 100;
 // Static functions
 //==============================================================================
 
+//! Compare two epoch directory names. Used as the comparison function for
+//! qsort().
+//!
+//! @param[in] lef_v  Pointer to character array representing left epoch
+//!                   directory name.
+//! @param[in] rih_v  Pointer to character array representing right epoch
+//!                   directory name.
+//!
+//! @return <0  The left epoch is older than the right epoch.
+//! @return  0  The left epoch and right epoch are the same age (i.e. the same
+//!             epoch).
+//! @return >0  The left epoch is younger than the right epoch.
+static inline c3_i
+_cmp_epocs(const void* lef_v, const void* rih_v);
+
 //! Create metadata files for the fake bit and identity.
 //!
 //! @param[in] log_u  Event log handle.
 //! @param[in] met_u  Pier metadata.
+//!
+//! @return 1  Both files were created.
+//! @return 0  Otherwise.
+static c3_t
+_create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u);
+
+//! Determine if an epoch is full (i.e. has reached the maximum epoch length).
+//!
+//! @param[in] poc_u  Epoch handle.
+//!
+//! @return 1  Epoch is full.
+//! @return 0  Otherwise.
+static inline c3_t
+_epoc_is_full(const u3_epoc* const poc_u);
+
+//! Search an event log's list of epochs for the epoch that contains the given
+//! event ID.
+//!
+//! @param[in] log_u  Event log handle.
+//! @param[in] ide_d  Event ID to search for.
+//!
+//! @return NULL  `ide_d` does not belong to any epoch in `log_u`.
+//! @return       Epoch handle of epoch containing `ide_d`.
+static u3_epoc*
+_find_epoc(u3_saga* const log_u, const c3_d ide_d);
+
+//! Determine if a string is a valid epoch directory name.
+//!
+//! @param[in] nam_c  Name.
+//!
+//! @return 1  `nam_c` is a valid epoch directory name.
+//! @return 0  Otherwise.
+static inline c3_t
+_is_epoc_dir(const c3_c* const nam_c);
+
+//! Migrate from old non-epoch-based event log to epoch-based event log.
+//!
+//! @param[in]  log_u  Event log handle.
+//! @param[out] met_u  Pointer to pier metadata.
+//!
+//! @return 1  Migration succeeded.
+//! @return 0  Otherwise.
+static c3_t
+_migrate(u3_saga* const log_u, u3_meta* const met_u);
+
+//! Discover epoch directories in a given directory.
+//!
+//! @param[in]  dir_c  Directory to search for epoch directories.
+//! @param[out] ent_c  Pointer to array of 256-byte arrays.
+//! @param[out] ent_i  Pointer to number of elements in `*ent_c`.
+//!
+//! @return 1  Discovered one or more epoch directories.
+//! @return 0  Otherwise.
+static c3_t
+_read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i);
+
+//! Remove events that were committed in the last commit request from an event
+//! log's pending commits list.
+//!
+//! @param[in] log_u  Event log handle.
+static inline void
+_remove_committed_events(u3_saga* const log_u);
+
+//! Get the number of events that can be committed to an epoch.
+//!
+//! @param[in] poc_u  Epoch to commit to.
+//! @param[in] eve_u  List of events pending commit.
+//!
+//! @return  Number of events that can be committed to `poc_u`.
+static inline size_t
+_request_len(const u3_epoc* const poc_u, const c3_list* const eve_u);
+
+//! Update an event log's current epoch to the most recent epoch, implying that
+//! the previous current epoch just became full.
+//!
+//! @param[in,out] log_u  Event log handle. Current epoch is updated.
+//!
+//! @return  Epoch handle of new current epoch.
+static inline u3_epoc*
+_rollover(u3_saga* const log_u);
+
+//! Invoke user callback after batch async commit.
+//!
+//! @note Runs on main thread.
+//!
+//! @param[in] req_u  libuv work handle.
+//! @param[in] sas_i  libuv return status.
+static void
+_uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i);
+
+//! Kick off async batch commit.
+//!
+//! @note Runs off main thread.
+//!
+//! @param[in] req_u  libuv work handle.
+static void
+_uv_commit_cb(uv_work_t* req_u);
+
+static inline c3_i
+_cmp_epocs(const void* lef_v, const void* rih_v)
+{
+  static const size_t siz_i = sizeof(((struct dirent*)NULL)->d_name);
+  const c3_c*         lef_c = *(const c3_c(*)[siz_i])lef_v;
+  const c3_c*         rih_c = *(const c3_c(*)[siz_i])rih_v;
+  const c3_i          dif_i = strlen(lef_c) - strlen(rih_c);
+  return 0 == dif_i ? strcmp(lef_c, rih_c) : dif_i;
+}
+
 static c3_t
 _create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u)
 {
@@ -81,17 +204,19 @@ end:
   return suc_t;
 }
 
-static inline u3_epoc*
-_rollover(u3_saga* const log_u)
+static inline c3_t
+_is_epoc_dir(const c3_c* const nam_c)
 {
-  return log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
+  return 0 == strncmp(nam_c, epo_pre_c, strlen(epo_pre_c));
 }
 
-//! Migrate from old non-epoch-based event log to epoch-based event log.
-//!
-//! @param[in]  log_u  Event log handle.
-//! @param[out] met_u  Pointer to pier metadata.
-//!
+static inline c3_t
+_epoc_is_full(const u3_epoc* const poc_u)
+{
+  return !u3_epoc_is_empty(poc_u)
+         && 0 == u3_epoc_last_commit(poc_u) % epo_len_i;
+}
+
 //! @n (1) Push the newly created epoch from migration onto the epoch list.
 //! @n (2) Immediately rollover to a new epoch so that we're not attempting to
 //!        commit to the first epoch, which is almost certainly larger than the
@@ -134,47 +259,22 @@ succeed:
   return 1;
 }
 
-static inline c3_t
-_is_epoc_dir(const c3_c* const nam_c)
-{
-  return 0 == strncmp(nam_c, epo_pre_c, strlen(epo_pre_c));
-}
-
-static inline c3_i
-_cmp_epocs(const void* lef_v, const void* rih_v)
-{
-  static const size_t siz_i = sizeof(((struct dirent*)NULL)->d_name);
-  const c3_c*         lef_c = *(const c3_c(*)[siz_i])lef_v;
-  const c3_c*         rih_c = *(const c3_c(*)[siz_i])rih_v;
-  const c3_i          dif_i = strlen(lef_c) - strlen(rih_c);
-  return 0 == dif_i ? strcmp(lef_c, rih_c) : dif_i;
-}
-
-//! Discover epoch directories in a given directory.
-//!
-//! @param[in]  dir_c  Directory to search for epoch directories.
-//! @param[out] ent_c  Pointer to array of 256-byte arrays.
-//! @param[out] ent_i  Pointer to number of elements in `*ent_c`.
-//!
-//! @return 1  Discovered one or more epoch directories.
-//! @return 0  Otherwise.
-//!
 //! @n (1) Arbitrarily choose 16 as the initial guess at the max number of
 //!        epochs.
 static c3_t
 _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
 {
-  *ent_c = NULL;
-  *ent_i = 0;
-
   DIR* dir_u;
   if ( !dir_c || !ent_c || !ent_i || !(dir_u = opendir(dir_c)) ) {
     return 0;
   }
 
+  *ent_c = NULL;
+  *ent_i = 0;
+
   struct dirent* ent_u;
   const size_t   siz_i = sizeof(ent_u->d_name);
-  size_t         cap_i = 16;
+  size_t         cap_i = 16; // (1)
   c3_c(*dst_c)[siz_i]  = c3_malloc(cap_i * siz_i);
   size_t dst_i         = 0;
   while ( (ent_u = readdir(dir_u)) ) {
@@ -207,15 +307,6 @@ _remove_committed_events(u3_saga* const log_u)
   }
 }
 
-//! Determine if an epoch is full.
-static inline c3_t
-_is_full(const u3_epoc* const poc_u)
-{
-  return !u3_epoc_is_empty(poc_u)
-         && 0 == u3_epoc_last_commit(poc_u) % epo_len_i;
-}
-
-//! Get the number of events that can be committed to an epoch.
 static inline size_t
 _request_len(const u3_epoc* const poc_u, const c3_list* const eve_u)
 {
@@ -225,8 +316,12 @@ _request_len(const u3_epoc* const poc_u, const c3_list* const eve_u)
   return c3_min(rem_i, c3_list_len(eve_u));
 }
 
-//! Invoke user callback after batch async commit. On main thread.
-//!
+static inline u3_epoc*
+_rollover(u3_saga* const log_u)
+{
+  return log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
+}
+
 //! @n (1) Attempt to commit events that were enqueued after the commit began.
 static void
 _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
@@ -247,7 +342,6 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
   }
 }
 
-//! Kick off async batch commit. Off main thread.
 static void
 _uv_commit_cb(uv_work_t* req_u)
 {
@@ -258,7 +352,6 @@ _uv_commit_cb(uv_work_t* req_u)
   log_u->asy_u.suc_t = u3_epoc_commit(poc_u, nod_u, len_i);
 }
 
-//! Find the epoch of the event log that the given event ID is a part of.
 static u3_epoc*
 _find_epoc(u3_saga* const log_u, const c3_d ide_d)
 {
@@ -272,18 +365,6 @@ _find_epoc(u3_saga* const log_u, const c3_d ide_d)
     nod_u = c3_lode_prev(nod_u);
   }
   return nod_u ? poc_u : NULL;
-}
-
-static inline c3_t
-_is_async(const u3_saga* const log_u)
-{
-  return u3_saga_async == log_u->mod_e;
-}
-
-static inline c3_t
-_has_active_commit(const u3_saga* const log_u)
-{
-  return log_u->act_t;
 }
 
 //==============================================================================
@@ -460,7 +541,7 @@ u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
 
   switch ( log_u->mod_e ) {
     case u3_saga_sync:
-      if ( _is_full(poc_u) ) {
+      if ( _epoc_is_full(poc_u) ) {
         poc_u = _rollover(log_u);
       }
       log_u->eve_u.req_i = _request_len(poc_u, eve_u);
@@ -473,8 +554,8 @@ u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
       log_u->act_t = 0;
       goto succeed;
     case u3_saga_async:
-      if ( !_has_active_commit(log_u) ) {
-        if ( _is_full(poc_u) ) {
+      if ( !log_u->act_t ) {
+        if ( _epoc_is_full(poc_u) ) {
           poc_u = _rollover(log_u);
         }
         log_u->eve_u.req_i = _request_len(poc_u, eve_u);
@@ -623,7 +704,7 @@ u3_saga_close(u3_saga* const log_u)
     return;
   }
 
-  if ( _is_async(log_u) && _has_active_commit(log_u) ) { // (1)
+  if ( u3_saga_async == log_u->mod_e && log_u->act_t ) { // (1)
     while ( UV_EBUSY == uv_cancel((uv_req_t*)&log_u->asy_u.req_u) );
   }
 
