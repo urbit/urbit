@@ -9,12 +9,16 @@
     $:  %0
         chats=(map resource chat)
     ==
+  +$  circle
+    ((mop time letter) lte)
+  ++  circle-on
+    ((on time letter) lte)
   +$  log
     ((mop time diff:c) lte)
   ++  log-on
     ((on time diff:c) lte)
   +$  chat
-    (trel net log (list letter))
+    (trel net log circle)
   +$  letter  cord  :: TODO
   ::
   +$  net
@@ -193,8 +197,7 @@
       ?~  path  q.chat
       =/  =time  (slav %da i.path)
       (lot:log-on q.chat `time ~)
-    =/  =cage
-      chat-logs+!>(logs)
+    =/  =cage  chat-logs+!>(logs)
     =.  cor  (give %fact ~ cage)
     ca-core
   ::
@@ -251,7 +254,8 @@
       (ca-updates chat-update+!>([time d]))
     ?-    -.d
         %send
-      =.  r.chat  [p.d r.chat]
+      =.  r.chat  
+        (put:circle-on r.chat time p.d)
       ca-core
     ==
   --
