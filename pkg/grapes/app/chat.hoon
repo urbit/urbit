@@ -92,8 +92,11 @@
       %chat-action
     =+  !<(=action:c vase)
     =/  chat-core  (ca-abed:ca-core p.action)
-    ca-abet:(ca-update:chat-core q.action)
+    ?:  =(p.p.action our.bowl)
+      ca-abet:(ca-update:chat-core q.action)
+    ca-abet:(ca-proxy:chat-core q.action)
   ==
+  ::
   ++  join
     |=  rid=resource
     ^+  cor
@@ -189,6 +192,14 @@
         %chat-update  (ca-update !<(update:c q.cage))
       ==
     ==
+  ++  ca-proxy
+    |=  =update:c
+    ^+  ca-core
+    =/  =dock  [p.rid dap.bowl]
+    =/  =cage  chat-action+!>([rid update])
+    =.  cor
+      (emit %pass ca-area %agent dock %poke cage)
+    ca-core
   ::
   ++  ca-pub
     |=  =path
