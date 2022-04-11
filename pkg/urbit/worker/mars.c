@@ -882,7 +882,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
              "failed to open event log at %s",
              c3_path_str(mar_u->dir_u));
 
-    if ( 0 == mar_u->dun_d ) { // (2)
+    if ( 0 == mar_u->dun_d && u3_saga_needs_bootstrap(mar_u->log_u) ) { // (2)
       u3_noun evt = u3_nul;
       try_saga(u3_saga_replay(mar_u->log_u,
                               mar_u->dun_d,

@@ -113,6 +113,15 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u);
 c3_d
 u3_saga_last_commit(const u3_saga* const log_u);
 
+//! Determine if the bootstrap sequence is needed to replay an event log.
+//!
+//! @param[in] log_u  Event log handle. Must not be NULL.
+//!
+//! @return 1  `log_u` requires the boostrap sequence for replay.
+//! @return 0  Otherwise.
+c3_t
+u3_saga_needs_bootstrap(const u3_saga* const log_u);
+
 //! Set the commit mode of an event log to synchronous (the default) or
 //! asynchronous. Must not be called when async commits are in progress.
 //!

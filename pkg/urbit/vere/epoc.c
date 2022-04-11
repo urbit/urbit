@@ -60,7 +60,7 @@ const c3_c epo_pre_c[] = "0i";
 const c3_d epo_min_d = 1ULL;
 
 //! Name of the directory housing the first epoch.
-static const c3_c fir_nam_c[] = "0i1";
+const c3_c fir_nam_c[] = "0i1";
 
 //! Name of binary file containing the epoch version number.
 static const c3_c ver_nam_c[] = "version.bin";

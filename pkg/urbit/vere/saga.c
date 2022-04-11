@@ -495,6 +495,16 @@ u3_saga_last_commit(const u3_saga* const log_u)
   return u3_epoc_last_commit(log_u->epo_u.cur_u);
 }
 
+//! @n (1) Bootstrap is needed if the only epoch present is the first epoch.
+c3_t
+u3_saga_needs_bootstrap(const u3_saga* const log_u)
+{
+  c3_assert(log_u);
+  const u3_epoc* const poc_u = c3_lode_data(c3_list_peekf(log_u->epo_u.lis_u));
+  const size_t         len_i = c3_list_len(log_u->epo_u.lis_u);
+  return epo_min_d == u3_epoc_first_commit(poc_u) && 1 == len_i; // (1)
+}
+
 void
 u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u)
 {
