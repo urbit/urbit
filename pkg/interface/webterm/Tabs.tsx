@@ -6,7 +6,7 @@ import { Icon } from '@tlon/indigo-react';
 
 export const Tabs = () => {
   const { sessions, names } = useTermState();
-  const { addSession } = useAddSession();
+  const addSession = useAddSession();
 
   return (
     <div className="tabs">

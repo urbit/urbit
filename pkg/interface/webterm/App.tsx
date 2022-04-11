@@ -21,17 +21,17 @@ import { DEFAULT_SESSION } from './constants';
 import { showSlog } from './lib/blit';
 import { InfoButton } from './InfoButton';
 
+const initSessions = async () => {
+  const response = await api.scry(scrySessions());
+
+  useTermState.getState().set((state) => {
+    state.names = response.sort();
+  });
+};
+
 export default function TermApp() {
   const { names, selected } = useTermState();
   const dark = useDark();
-
-  const initSessions = useCallback(async () => {
-    const response = await api.scry(scrySessions());
-
-    useTermState.getState().set((state) => {
-      state.names = response.sort();
-    });
-  }, []);
 
   const setupSlog = useCallback(() => {
     console.log('slog: setting up...');

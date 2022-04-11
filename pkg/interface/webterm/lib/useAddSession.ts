@@ -62,7 +62,5 @@ export const useAddSession = () => {
     }
   }, [names]);
 
-  return {
-    addSession
-  };
+  return addSession;
 };
