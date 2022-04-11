@@ -185,13 +185,16 @@
         %chat-update  (ca-update !<(update:c q.cage))
       ==
     ==
-  ::  TODO: improve kick handling
+  ::
   ++  ca-pub
     |=  =path
     ^+  ca-core
+    =/  =logs:c
+      ?~  path  q.chat
+      =/  =time  (slav %da i.path)
+      (lot:log-on q.chat `time ~)
     =/  =cage
-      chat-logs+!>(q.chat)
-    ::?~  path
+      chat-logs+!>(logs)
     =.  cor  (give %fact ~ cage)
     ca-core
   ::
@@ -230,11 +233,9 @@
     =/  paths=(set path)
       %+  roll  ~(val by sup.bowl)
       |=  [[=ship =path] out=(set path)]
-      ~&  (scag 4 path)
       ?.  =((scag 4 path) (snoc ca-area %updates))
         out
       (~(put in out) path)
-    ~&  paths/paths
     ?:  =(~ paths)
       ca-core
     =.  cor
