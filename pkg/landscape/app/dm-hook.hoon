@@ -203,7 +203,8 @@
     ?>  =(1 ~(wyt by nodes))
     =/  ship-screen  (~(get ju screened) src.bowl)
     =.  ship-screen  (~(uni in ship-screen) (normalize-incoming nodes))
-    :_  state(screened (~(put by screened) src.bowl ship-screen))
+    =.  screened  (~(put by screened) src.bowl ship-screen)
+    :_  state
     =/  =action:hook
       [%pendings ~(key by screened)]
     :-  (fact:io dm-hook-action+!>(action) ~[/updates])

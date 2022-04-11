@@ -189,7 +189,8 @@ _behn_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 
   if (  (c3n == u3r_cell(wir, &i_wir, 0))
      || (c3n == u3r_cell(cad, &tag, &dat))
-     || (c3__behn != i_wir) )
+     || (c3__behn != i_wir) 
+     || (c3__doze != tag) )
   {
     ret_o = c3n;
   }

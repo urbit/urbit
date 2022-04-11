@@ -12,7 +12,7 @@ module Urbit.Vere.Term.Render
     , hijack
     ) where
 
-import ClassyPrelude
+import Urbit.Prelude
 
 import qualified System.Console.ANSI as ANSI
 

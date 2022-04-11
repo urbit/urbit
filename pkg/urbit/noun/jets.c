@@ -1835,7 +1835,8 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
           _cj_print_tas(u3h(i));
           i = u3t(i);
         }
-        u3l_log("\r\n  axe %d, jax %d,\r\n  bash ", axe, jax_l);
+        //TODO  remove extraneous newlines
+        u3l_log("  axe %d, jax %d,\r\n  bash ", axe, jax_l);
         u3r_bytes(0, 32, dig_y, bas);
         for ( i_w = 32; i_w > 0; ) {
           u3l_log("%02x", dig_y[--i_w]);

@@ -432,7 +432,7 @@ u3_noun
 u3m_file(c3_c* pas_c)
 {
   struct stat buf_b;
-  c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
+  c3_i        fid_i = c3_open(pas_c, O_RDONLY, 0644);
   c3_w        fln_w, red_w;
   c3_y*       pad_y;
 
@@ -1698,7 +1698,7 @@ _cm_crypto()
   if ( 0 == CRYPTO_set_mem_functions(&u3a_malloc_ssl,
                                      &u3a_realloc_ssl,
                                      &u3a_free_ssl) ) {
-    u3l_log("%s\r\n", "openssl initialization failed");
+    u3l_log("openssl initialization failed");
     abort();
   }
 

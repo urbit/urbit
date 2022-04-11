@@ -109,7 +109,6 @@ let
 
     urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = libLocal.testFakeShip {
-      inherit herb;
       inherit arvo;
 
       urbit = urbit-debug;

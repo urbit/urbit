@@ -585,6 +585,94 @@ u3_disk_read_meta(u3_disk* log_u,
   return c3y;
 }
 
+/* _disk_lock(): lockfile path.
+*/
+static c3_c*
+_disk_lock(c3_c* pax_c)
+{
+  c3_w  len_w = strlen(pax_c) + sizeof("/.vere.lock");
+  c3_c* paf_c = c3_malloc(len_w);
+  c3_i  wit_i;
+
+  wit_i = snprintf(paf_c, len_w, "%s/.vere.lock", pax_c);
+  c3_assert(wit_i + 1 == len_w);
+  return paf_c;
+}
+
+/* u3_disk_acquire(): acquire a lockfile, killing anything that holds it.
+*/
+static void
+u3_disk_acquire(c3_c* pax_c)
+{
+  c3_c* paf_c = _disk_lock(pax_c);
+  c3_w  pid_w;
+  FILE* loq_u;
+
+  if ( NULL != (loq_u = c3_fopen(paf_c, "r")) ) {
+    if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
+      u3l_log("lockfile %s is corrupt!", paf_c);
+      kill(getpid(), SIGTERM);
+      sleep(1); c3_assert(0);
+    }
+    else if (pid_w != getpid()) {
+      c3_w i_w;
+
+      if ( -1 != kill(pid_w, SIGTERM) ) {
+        u3l_log("disk: stopping process %d, live in %s...",
+                pid_w, pax_c);
+
+        for ( i_w = 0; i_w < 16; i_w++ ) {
+          sleep(1);
+          if ( -1 == kill(pid_w, SIGTERM) ) {
+            break;
+          }
+        }
+        if ( 16 == i_w ) {
+          for ( i_w = 0; i_w < 16; i_w++ ) {
+            if ( -1 == kill(pid_w, SIGKILL) ) {
+              break;
+            }
+            sleep(1);
+          }
+        }
+        if ( 16 == i_w ) {
+          u3l_log("disk: process %d seems unkillable!", pid_w);
+          c3_assert(0);
+        }
+        u3l_log("disk: stopped old process %u", pid_w);
+      }
+    }
+    fclose(loq_u);
+    c3_unlink(paf_c);
+  }
+
+  if ( NULL == (loq_u = c3_fopen(paf_c, "w")) ) {
+    u3l_log("disk: unable to open %s", paf_c);
+    c3_assert(0);
+  }
+
+  fprintf(loq_u, "%u\n", getpid());
+
+  {
+    c3_i fid_i = fileno(loq_u);
+    c3_sync(fid_i);
+  }
+
+  fclose(loq_u);
+  c3_free(paf_c);
+}
+
+/* u3_disk_release(): release a lockfile.
+*/
+static void
+u3_disk_release(c3_c* pax_c)
+{
+  c3_c* paf_c = _disk_lock(pax_c);
+
+  c3_unlink(paf_c);
+  c3_free(paf_c);
+}
+
 /* u3_disk_exit(): close the log.
 */
 void
@@ -633,6 +721,8 @@ u3_disk_exit(u3_disk* log_u)
     }
   }
 
+  u3_disk_release(log_u->dir_u->pax_c);
+
   u3_dire_free(log_u->dir_u);
   u3_dire_free(log_u->urb_u);
   u3_dire_free(log_u->com_u);
@@ -644,10 +734,48 @@ u3_disk_exit(u3_disk* log_u)
 #endif
 }
 
-/* u3_disk_info(): print status info.
+/* u3_disk_info(): status info as a (list mass).
+*/
+u3_noun
+u3_disk_info(u3_disk* log_u)
+{
+  u3_read* red_u = log_u->red_u;
+  u3_noun red = u3_nul;
+  u3_noun lit = u3i_list(
+    u3_pier_mase("live",        log_u->liv_o),
+    u3_pier_mase("event", u3i_chub(log_u->dun_d)),
+    u3_none);
+
+  if ( log_u->put_u.ext_u ) {
+    lit = u3nc(
+      u3_pier_mass(
+        c3__save,
+        u3i_list(
+          u3_pier_mase("save-start", u3i_chub(log_u->put_u.ext_u->eve_d)),
+          u3_pier_mase("save-final", u3i_chub(log_u->put_u.ent_u->eve_d)),
+          u3_none)),
+      lit);
+  }
+
+  while ( red_u ) {
+    red = u3nc(
+      u3_pier_mass(
+        u3dc("scot", c3__ux, u3i_chub((c3_d)red_u)),
+        u3i_list(
+          u3_pier_mase("start", u3i_chub(red_u->eve_d)),
+          u3_pier_mase("final", u3i_chub(red_u->eve_d + red_u->len_d - 1)),
+          u3_none)),
+      red);
+    red_u = red_u->nex_u;
+  }
+  lit = u3nc(u3_pier_mass(c3__read, red), lit);
+  return u3_pier_mass(c3__disk, lit);
+}
+
+/* u3_disk_slog(): print status info.
 */
 void
-u3_disk_info(u3_disk* log_u)
+u3_disk_slog(u3_disk* log_u)
 {
   u3l_log("  disk: live=%s, event=%" PRIu64,
           ( c3y == log_u->liv_o ) ? "&" : "|",
@@ -660,6 +788,7 @@ u3_disk_info(u3_disk* log_u)
       u3l_log("    read: %" PRIu64 "-%" PRIu64,
               red_u->eve_d,
               (red_u->eve_d + red_u->len_d) - 1);
+      red_u = red_u->nex_u;
     }
   }
 
@@ -697,6 +826,10 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     }
   }
 
+  //  acquire lockfile.
+  //
+  u3_disk_acquire(pax_c);
+
   //  create/load $pier/.urb
   //
   {
@@ -721,11 +854,11 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
 
     strcpy(dir_c, pax_c);
     strcat(dir_c, "/.urb/put");
-    mkdir(dir_c, 0700);
+    c3_mkdir(dir_c, 0700);
 
     strcpy(dir_c, pax_c);
     strcat(dir_c, "/.urb/get");
-    mkdir(dir_c, 0700);
+    c3_mkdir(dir_c, 0700);
 
     c3_free(dir_c);
   }
@@ -751,10 +884,11 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
     //
     {
+      const size_t siz_i =
       #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
-        const size_t siz_i = 64424509440;
+        0xf00000000;
       #else
-        const size_t siz_i = 1099511627776;
+        0x10000000000;
       #endif
 
       if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_c, siz_i)) ) {

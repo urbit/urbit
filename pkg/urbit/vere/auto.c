@@ -353,10 +353,26 @@ u3_auto_exit(u3_auto* car_u)
   }
 }
 
-/* u3_auto_info(): print status info.
+/* u3_auto_info(): status info as a (list mass), all drivers.
+*/
+u3_noun
+u3_auto_info(u3_auto* car_u)
+{
+  u3_noun lit = u3_nul;
+
+  while ( car_u ) {
+    if ( car_u->io.info_f ) {
+      lit = u3nc(u3_pier_mass(car_u->nam_m, car_u->io.info_f(car_u)), lit);
+    }
+    car_u = car_u->nex_u;
+  }
+  return u3kb_flop(lit);
+}
+
+/* u3_auto_slog(): print status info.
 */
 void
-u3_auto_info(u3_auto* car_u)
+u3_auto_slog(u3_auto* car_u)
 {
   u3_auto* nex_u;
 
@@ -373,9 +389,9 @@ u3_auto_info(u3_auto* car_u)
 
     //  XX details
     //
-    if ( car_u->io.info_f ) {
+    if ( car_u->io.slog_f ) {
       c3_l cod_l = u3a_lush(car_u->nam_m);
-      car_u->io.info_f(car_u);
+      car_u->io.slog_f(car_u);
       u3a_lop(cod_l);
     }
 
@@ -388,7 +404,13 @@ u3_auto_info(u3_auto* car_u)
 static u3_auto*
 _auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
 {
-  //  assert that io callbacks are present (info_f is optional)
+  //  skip null drivers
+  //
+  if ( !car_u ) {
+    return nex_u;
+  }
+
+  //  assert that io callbacks are present (info_f and slog_f are optional)
   //
   c3_assert( car_u->io.talk_f );
   c3_assert( car_u->io.kick_f );
@@ -408,6 +430,7 @@ u3_auto_init(u3_pier* pir_u)
 
   car_u = _auto_link(u3_hind_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_behn_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_conn_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_ames_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_http_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_cttp_io_init(pir_u), pir_u, car_u);

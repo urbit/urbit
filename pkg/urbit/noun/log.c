@@ -33,7 +33,7 @@ u3_weak
 u3l_punt(const char* name, u3_weak pro)
 {
   if ( u3_none == pro ) {
-    u3l_log("%s-punt\r\n", name);
+    u3l_log("%s-punt", name);
   }
   return pro;
 }

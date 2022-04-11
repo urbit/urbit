@@ -48,7 +48,7 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
     u3l_log("pier: invalid wire in -I ovum");
   }
   else if (  (c3n == u3a_is_atom(tar))
-          || (1 < u3r_met(3, tar)) )
+          || (4 < u3r_met(3, tar)) )
   {
     u3l_log("pier: invalid target in -I wire");
   }

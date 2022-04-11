@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { NotificationPrefs } from './preferences/NotificationPrefs';
 import { SystemUpdatePrefs } from './preferences/SystemUpdatePrefs';
 import { InterfacePrefs } from './preferences/InterfacePrefs';
+import { SecurityPrefs } from './preferences/SecurityPrefs';
 import { useCharges } from '../state/docket';
 import { AppPrefs } from './preferences/AppPrefs';
 import { DocketImage } from '../components/DocketImage';
@@ -14,6 +15,7 @@ import { LeftArrow } from '../components/icons/LeftArrow';
 import { System } from '../components/icons/System';
 import { Interface } from '../components/icons/Interface';
 import { Notifications } from '../components/icons/Notifications';
+import { Lock } from '../components/icons/Lock';
 import { getAppName } from '../state/util';
 
 interface SystemPreferencesSectionProps {
@@ -77,11 +79,11 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
       FallbackComponent={ErrorAlert}
       onReset={() => history.push('/leap/system-preferences')}
     >
-      <div className="sm:flex h-full overflow-y-auto">
+      <div className="h-full overflow-y-auto sm:flex">
         <Route exact={isMobile} path={match.url}>
-          <aside className="flex-none self-start w-full sm:w-auto min-w-60 py-4 sm:py-8 font-semibold text-black sm:text-gray-600 border-r-2 border-gray-50">
+          <aside className="self-start flex-none w-full py-4 font-semibold text-black border-r-2 sm:w-auto min-w-60 sm:py-8 sm:text-gray-600 border-gray-50">
             <nav className="px-2 sm:px-6">
-              <h2 className="sm:hidden h3 mb-4 px-2">System Preferences</h2>
+              <h2 className="px-2 mb-4 sm:hidden h3">System Preferences</h2>
               <ul className="space-y-1">
                 <SystemPreferencesSection
                   url={subUrl('notifications')}
@@ -100,6 +102,10 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
                 <SystemPreferencesSection url={subUrl('interface')} active={matchSub('interface')}>
                   <Interface className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
                   Interface Settings
+                </SystemPreferencesSection>
+                <SystemPreferencesSection url={subUrl('security')} active={matchSub('security')}>
+                  <Lock className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
+                  Security
                 </SystemPreferencesSection>
               </ul>
             </nav>
@@ -126,6 +132,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
               <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
               <Route path={`${match.url}/system-updates`} component={SystemUpdatePrefs} />
               <Route path={`${match.url}/interface`} component={InterfacePrefs} />
+              <Route path={`${match.url}/security`} component={SecurityPrefs} />
               <Route
                 path={[`${match.url}/notifications`, match.url]}
                 component={NotificationPrefs}
@@ -133,7 +140,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
             </Switch>
             <Link
               to={match.url}
-              className="inline-flex sm:hidden items-center sm:none mt-auto pt-4 h4 text-gray-400"
+              className="inline-flex items-center pt-4 mt-auto text-gray-400 sm:hidden sm:none h4"
             >
               <LeftArrow className="w-3 h-3 mr-2" /> Back
             </Link>

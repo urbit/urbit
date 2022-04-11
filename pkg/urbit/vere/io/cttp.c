@@ -558,7 +558,8 @@ _cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
 
   if ( c3n == u3r_du(unit_pul) ) {
     c3_c* url_c = u3r_string(url);
-    u3l_log("cttp: unable to parse url:\n    %s", url_c);
+    u3l_log("cttp: unable to parse url:");
+    u3l_log("      %s", url_c);
     c3_free(url_c);
     u3z(hes);
     return 0;

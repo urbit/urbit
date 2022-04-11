@@ -84,15 +84,15 @@ flush = Put $ \tbl s@S{..} -> do
 
 {-# INLINE update #-}
 update :: (S -> S) -> Put ()
-update f = Put $ \tbl s@S{..} -> pure (PutResult (f s) ())
+update f = Put $ \tbl s@S{} -> pure (PutResult (f s) ())
 
 {-# INLINE setRegOff #-}
 setRegOff :: Word -> Int -> Put ()
-setRegOff r o = update $ \s@S{..} -> (s {reg=r, off=o})
+setRegOff r o = update $ \s@S{} -> (s {reg=r, off=o})
 
 {-# INLINE setReg #-}
 setReg :: Word -> Put ()
-setReg r = update $ \s@S{..} -> (s { reg=r })
+setReg r = update $ \s@S{} -> (s { reg=r })
 
 {-# INLINE getS #-}
 getS :: Put S

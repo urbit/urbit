@@ -725,7 +725,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     //
     else if ( 0 == lan_u.por_s ) {
       if ( u3C.wag_w & u3o_verbose ) {
-        u3l_log("ames: inscrutable lane\n");
+        u3l_log("ames: inscrutable lane");
       }
       _ames_pact_free(pac_u);
     }
@@ -1488,15 +1488,41 @@ _ames_io_exit(u3_auto* car_u)
   uv_close(&sam_u->had_u, _ames_exit_cb);
 }
 
-/* _ames_io_info(): print status info.
+/* _ames_io_info(): produce status info.
+*/
+static u3_noun
+_ames_io_info(u3_auto* car_u)
+{
+  u3_ames*  sam_u = (u3_ames*)car_u;
+
+  return u3i_list(
+    u3_pier_mase("filtering",        sam_u->fig_u.fit_o),
+    u3_pier_mase("can-send",         sam_u->fig_u.net_o),
+    u3_pier_mase("can-scry",         sam_u->fig_u.see_o),
+    u3_pier_mase("dropped",          u3i_chub(sam_u->sat_u.dop_d)),
+    u3_pier_mase("forwards-dropped", u3i_chub(sam_u->sat_u.fod_d)),
+    u3_pier_mase("forwards-pending", u3i_chub(sam_u->sat_u.foq_d)),
+    u3_pier_mase("forwarded",        u3i_chub(sam_u->sat_u.fow_d)),
+    u3_pier_mase("filtered-hed",     u3i_chub(sam_u->sat_u.hed_d)),
+    u3_pier_mase("filtered-ver",     u3i_chub(sam_u->sat_u.vet_d)),
+    u3_pier_mase("filtered-mug",     u3i_chub(sam_u->sat_u.mut_d)),
+    u3_pier_mase("filtered-bod",     u3i_chub(sam_u->sat_u.bod_d)),
+    u3_pier_mase("crashed",          u3i_chub(sam_u->sat_u.fal_d)),
+    u3_pier_mase("cached-lanes",     u3i_word(u3h_wyt(sam_u->lax_p))),
+    u3_none);
+}
+
+/* _ames_io_slog(): print status info.
 */
 static void
-_ames_io_info(u3_auto* car_u)
+_ames_io_slog(u3_auto* car_u)
 {
   u3_ames* sam_u = (u3_ames*)car_u;
 
 # define FLAG(a) ( (c3y == a) ? "&" : "|" )
 
+  //  TODO  rewrite in terms of info_f
+  //
   u3l_log("      config:");
   u3l_log("        filtering: %s", FLAG(sam_u->fig_u.fit_o));
   u3l_log("         can send: %s", FLAG(sam_u->fig_u.net_o));
@@ -1559,6 +1585,7 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->liv_o = c3n;
   car_u->io.talk_f = _ames_io_talk;
   car_u->io.info_f = _ames_io_info;
+  car_u->io.slog_f = _ames_io_slog;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
 
