@@ -585,6 +585,8 @@ succeed:
   return 1;
 }
 
+//! TODO(peter): what happens if the requested replay-to event is no longer
+//! present because it was in a truncated epoch?
 //! @n (1) Replay by restoring the latest epoch's snapshot and then replaying
 //!        that epoch's events (the default).
 //! @n (2) Replay by replaying all epoch's events.
@@ -602,7 +604,7 @@ u3_saga_replay(u3_saga* const log_u,
     las_d = u3_epoc_last_commit(log_u->epo_u.cur_u);
   }
 
-  if ( las_d == cur_d ) {
+  if ( las_d <= cur_d ) {
     suc_t = 1;
     goto end;
   }

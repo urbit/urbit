@@ -59,8 +59,8 @@ const c3_c epo_pre_c[] = "0i";
 //! underflow.
 const c3_d epo_min_d = 1ULL;
 
-//! Name of the directory housing the first epoch.
-const c3_c fir_nam_c[] = "0i1";
+//! Name of directory housing first epoch. Should be `<epo_pre_c><epo_min_d>`.
+static const c3_c fir_nam_c[] = "0i1";
 
 //! Name of binary file containing the epoch version number.
 static const c3_c ver_nam_c[] = "version.bin";

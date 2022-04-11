@@ -742,7 +742,7 @@ _saga_replay_cb(void*        ptr_v,
 
   c3_assert(sizeof(c3_l) < len_i);
   c3_l mug_l = byt_y[0] ^ (byt_y[1] << 8) ^ (byt_y[2] << 16) ^ (byt_y[3] << 24);
-  u3_noun evt = u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4)); // XXX
+  u3_noun evt = u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4));
 
   c3_w    pre_w = u3a_open(u3R);
   u3_noun vir;
@@ -875,6 +875,15 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
   u3_lock_acquire(lok_u);
 
   { // (1)
+
+    if ( eve_d && eve_d <= mar_u->dun_d ) {
+      fprintf(stderr,
+              "mars: replay to %" PRIu64 " already done (at %" PRIu64 ")\r\n",
+              eve_d,
+              mar_u->dun_d);
+      goto release_lock;
+    }
+
     c3_path_push(mar_u->dir_u, ".urb");
     c3_path_push(mar_u->dir_u, "log");
     try_saga(mar_u->log_u = u3_saga_open(mar_u->dir_u, &mar_u->met_u),
@@ -894,12 +903,19 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       mar_u->sen_d = mar_u->dun_d = mar_u->met_u.lif_w;
     }
 
-    try_saga(
-      u3_saga_replay(mar_u->log_u, mar_u->dun_d, 0, _saga_replay_cb, mar_u),
-      goto free_mars,
-      "failed to replay event log");
+    try_saga(u3_saga_replay(mar_u->log_u,
+                            mar_u->dun_d,
+                            eve_d,
+                            _saga_replay_cb,
+                            mar_u),
+             goto free_event_log,
+             "failed to replay event log");
     c3_path_pop(mar_u->dir_u);
     c3_path_pop(mar_u->dir_u);
+
+    if ( u3_saga_last_commit(mar_u->log_u) > mar_u->dun_d ) {
+      goto free_event_log;
+    }
 
     u3_saga_acon asy_u = {
       .lup_u = u3L,
@@ -908,31 +924,6 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     };
     u3_saga_commit_mode(mar_u->log_u, &asy_u); // (3)
   }
-
-  // TODO(peter): incorporate
-#if 0
-  if ( eve_d && (eve_d <= mar_u->dun_d) ) {
-    fprintf(stderr, "mars: replay-to %" PRIu64
-                    " already done (at %" PRIu64 ")\r\n",
-                    eve_d, mar_u->dun_d);
-    u3_disk_exit(mar_u->log_u);
-    c3_free(mar_u);
-    return 0;
-  }
-
-  if ( mar_u->log_u->dun_d > mar_u->dun_d ) {
-    u3_mars_play(mar_u, eve_d);
-    u3e_save();
-  }
-
-  //  XX do something better
-  //
-  if ( mar_u->log_u->dun_d > mar_u->dun_d ) {
-    u3_disk_exit(mar_u->log_u);
-    c3_free(mar_u);
-    exit(0);
-  }
-#endif
 
   { // (4)
     mar_u->mug_l = u3r_mug(u3A->roc);

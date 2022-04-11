@@ -41,9 +41,6 @@ extern const c3_c epo_pre_c[];
 //! Smallest event ID that an epoch will accept.
 extern const c3_d epo_min_d;
 
-//! Name of the directory housing the first epoch.
-extern const c3_c fir_nam_c[];
-
 //==============================================================================
 // Macros
 //==============================================================================
