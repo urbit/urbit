@@ -491,14 +491,25 @@
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
-      [%swap-files ~]
+      [%swap-files des=desk]
     =.  userspace-ova.pil
       =/  slim-dirs=(list path)
-        ~[/app /ted /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
+        =/  pax
+          /(scot %p our.hid)/[des.val]/(scot %da now.hid)
+        %~  tap  in
+        %+  roll  .^((list path) %ct pax)
+        |=  [fil=path dirs=(set path)]
+        ?>  ?=(^ fil)
+        ?:  ?=([%sys ^] fil)
+          ?:  ?=([%vane *] t.fil)
+            dirs
+          (~(put in dirs) /[i.t.fil]/sys)
+        (~(put in dirs) /[i.fil])
       :_  ~
       %-  unix-event:pill-lib
-      %-  %*(. file-ovum:pill-lib directories slim-dirs)
-      /(scot %p our.hid)/work/(scot %da now.hid)
+      %+  %*(. file-ovum:pill-lib directories slim-dirs)
+        des.val
+      /(scot %p our.hid)/[des.val]/(scot %da now.hid)
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
