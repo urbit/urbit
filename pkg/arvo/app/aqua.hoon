@@ -465,12 +465,12 @@
   ::  boilerplate
   ::
   ?+  val  ~|(%bad-noun-arg !!)
-      [%swap-vanes vs=*]
-    ?>  ?=(^ boot-ova.pil)
-    ?>  ?=([%7 * %1 installed=*] i.boot-ova.pil)
-    =.  installed.i.boot-ova.pil
+      [%swap-vanes des=desk vs=*]
+    ?>  ?=([^ ^ ^ *] boot-ova.pil)
+    ?>  ?=([%7 * %1 installed=*] i.t.t.boot-ova.pil)
+    =.  installed.i.t.t.boot-ova.pil
       %+  roll  (,(list term) vs.val)
-      |=  [v=term =_installed.i.boot-ova.pil]
+      |=  [v=term =_installed.i.t.t.boot-ova.pil]
       %^  slum  installed  now.hid
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
@@ -483,10 +483,10 @@
           %j  %jael
           %g  %gall
         ==
-      =/  pax
-        /(scot %p our.hid)/work/(scot %da now.hid)/sys/vane/[vane]
-      =/  txt  .^(@ %cx (weld pax /hoon))
-      [/vane/[vane] [%veer v pax txt]]
+      =/  pre  /(scot %p our.hid)/[des.val]/(scot %da now.hid)
+      =/  pax  /sys/vane/[vane]
+      =/  txt  .^(@ %cx :(weld pre pax /hoon))
+      [/vane/[vane] what+[pax hoon+txt]~]
     =>  .(this ^+(this this))
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
