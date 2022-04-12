@@ -544,6 +544,7 @@ static u3j_harm _140_hex_qat_funk_a[] = {{".2", u3we_qat_funk, c3y}, {}};
 static u3j_harm _140_hex_qat_wane_a[] = {{".2", u3we_qat_wane, c3y}, {}};
 static u3j_harm _140_hex_qat_get_a[]  = {{".2", u3we_qat_get, c3y}, {}};
 static u3j_harm _140_hex_qat_del_a[]  = {{".2", u3we_qat_del, c3y}, {}};
+static u3j_harm _140_hex_qat_pet_a[]  = {{".2", u3we_qat_pet, c3y}, {}};
 static u3j_harm _140_hex_qat_raw_a[]  = {{".2", u3we_qat_raw, c3y}, {}};
 static u3j_harm _140_hex_qat_put_a[]  = {{".2", u3we_qat_put, c3y}, {}};
 static u3j_harm _140_hex_qat_vip_a[]  = {{".2", u3we_qat_vip, c3y}, {}};
@@ -563,6 +564,7 @@ static u3j_core _140_hex_qat_core_d[] =
   { "wane", 7, _140_hex_qat_wane_a, 0, no_hashes },
   { "get", 7,  _140_hex_qat_get_a, 0, no_hashes },
   { "del", 7,  _140_hex_qat_del_a, 0, no_hashes },
+  { "pet", 7,  _140_hex_qat_pet_a, 0, no_hashes },
   { "raw", 7,  _140_hex_qat_raw_a, 0, no_hashes },
   { "put", 7,  _140_hex_qat_put_a, 0, no_hashes },
   { "vip", 7,  _140_hex_qat_vip_a, 0, no_hashes },

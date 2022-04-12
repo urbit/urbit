@@ -152,6 +152,40 @@
     (wane k.a p.a v.a m.a l.a $(a r.a))
   ==
 ::
+++  pet                                             ::  delete view
+  ~/  %pet
+  |=  [a=pri =k]
+  |^  ^-  (unit (trel @ v pri))
+  =/  med  (omit a)
+  ?~  p.med  ~
+  `[p.u.p.med q.u.p.med q.med]
+  ::
+  ++  omit
+    |=  b=pri
+    ^-  (pair (unit (pair @ v)) pri)
+    ?~  b  [~ ~]
+    ?-    -.b
+        %tip
+      ?:  =(k k.b)
+        [`[p.b v.b] ~]
+      [~ b]
+    ::
+        %bin
+      ?:  (feud m.b k k.b)
+        [~ b]
+      ?:  =(k k.b)
+        :-  `[p.b v.b]
+        (fuse m.b l.b r.b)
+      ?:  (zero m.b k)
+        =/  med  (omit l.b)
+        :-  p.med
+        (funk k.b p.b v.b m.b q.med r.b)
+      =/  med  (omit r.b)
+      :-  p.med
+      (wane k.b p.b v.b m.b l.b q.med)
+    ==
+  --
+::
 ++  raw                                               ::  raw insert
   ~/  %raw                                            ::
   |=  [a=pri k=k p=@ v=v]                             ::  k must not exist in
