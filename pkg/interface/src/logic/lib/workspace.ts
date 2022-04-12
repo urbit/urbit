@@ -12,7 +12,7 @@ export function getTitleFromWorkspace(
       return 'Messages';
     case 'group':
       const association = associations.groups[workspace.group];
-      return association?.metadata?.title || '';
+      return association?.metadata?.title || 'Groups';
   }
 }
 
