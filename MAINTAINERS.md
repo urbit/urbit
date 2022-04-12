@@ -175,6 +175,7 @@ command):
 > |mount %bitcoin
 > |mount %webterm
 % rsync -avL --delete pkg/arvo/ zod/base/
+% rm -rf zod/base/tests/
 % for desk in garden landscape bitcoin webterm; do \
     rsync -avL --delete pkg/$desk/ zod/$desk/ \
   done
@@ -184,7 +185,7 @@ command):
 > |commit %bitcoin
 > |commit %webterm
 > .multi/pill +solid %base %garden %landscape %bitcoin %webterm
-> .brass-multi/pill +brass %base %garden %landscape %bitcoin %webterm
+> .multi-brass/pill +brass %base %garden %landscape %bitcoin %webterm
 ```
 
 And then of course:
