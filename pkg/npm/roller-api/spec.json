@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.15",
+    "version": "0.1.16",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -2274,7 +2274,7 @@
           "dominion": {
             "$ref": "#/components/schemas/Dominion"
           },
-          "networking": {
+          "network": {
             "$ref": "#/components/schemas/Networking"
           },
           "ownership": {
