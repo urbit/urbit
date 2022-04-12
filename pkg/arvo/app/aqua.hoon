@@ -96,7 +96,7 @@
       `this
     ?:  ?=([%effect @ ~] path)
       `this
-    ?.  ?=([?(%effects %effect %evens %boths) @ ~] path)
+    ?.  ?=([?(%effects %effect %events %boths) @ ~] path)
       ~|  [%aqua-bad-subscribe-path path]
       !!
     ?~  (slaw %p i.t.path)
