@@ -1,6 +1,13 @@
-import { BaseInput, Box, Button, LoadingSpinner } from '@tlon/indigo-react';
+import {
+  BaseInput,
+  Box,
+  Button,
+  Icon,
+  LoadingSpinner,
+  Text
+} from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { StatelessUrlInput } from '~/views/components/StatelessUrlInput';
 import SubmitDragger from '~/views/components/SubmitDragger';
@@ -22,15 +29,18 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const [linkTitle, setLinkTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [linkValid, setLinkValid] = useState(false);
+  const [error, setError] = useState<string>('');
 
-  const {
-    canUpload,
-    uploading,
-    promptUpload,
-    drag,
-    onPaste
-  } = useFileUpload({
-    onSuccess: setLinkValue,
+  const handleError = useCallback((err: Error) => {
+    setError(err.message);
+  }, []);
+
+  const { canUpload, uploading, promptUpload, drag, onPaste } = useFileUpload({
+    onSuccess: (url) => {
+      setLinkValue(url);
+      setError('');
+    },
+    onError: handleError,
     multiple: false
   });
 
@@ -38,25 +48,21 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     const url = linkValue;
     const text = linkTitle ? linkTitle : linkValue;
     const contents = url.startsWith('web+urbitgraph:/')
-      ?  [{ text }, permalinkToReference(parsePermalink(url)!)]
-      :  [{ text }, { url }];
+      ? [{ text }, permalinkToReference(parsePermalink(url)!)]
+      : [{ text }, { url }];
 
     setDisabled(true);
     const parentIndex = props.parentIndex || '';
     const post = createPost(window.ship, contents, parentIndex);
 
-    addPost(
-      `~${props.ship}`,
-      props.name,
-      post
-    );
+    addPost(`~${props.ship}`, props.name, post);
     setDisabled(false);
     setLinkValue('');
     setLinkTitle('');
     setLinkValid(false);
   };
 
-  const validateLink = (link) => {
+  const validateLink = (link: any) => {
     const URLparser = new RegExp(
       /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
     );
@@ -70,9 +76,9 @@ const LinkSubmit = (props: LinkSubmitProps) => {
         setLinkValue(link);
       }
     }
-    if(link.startsWith('web+urbitgraph://')) {
+    if (link.startsWith('web+urbitgraph://')) {
       const permalink = parsePermalink(link);
-      if(!permalink) {
+      if (!permalink) {
         setLinkValid(false);
         return;
       }
@@ -86,17 +92,23 @@ const LinkSubmit = (props: LinkSubmitProps) => {
             if (result.title && !linkTitle) {
               setLinkTitle(result.title);
             }
-          }).catch((error) => { /* noop*/ });
+          })
+          .catch((error) => {
+            /* noop*/
+          });
       } else if (!linkTitle) {
-        setLinkTitle(decodeURIComponent(link
-          .split('/')
-          .pop()
-          .split('.')
-          .slice(0, -1)
-          .join('.')
-          .replace('_', ' ')
-          .replace(/\d{4}\.\d{1,2}\.\d{2}\.\.\d{2}\.\d{2}\.\d{2}-/, '')
-        ));
+        setLinkTitle(
+          decodeURIComponent(
+            link
+              .split('/')
+              .pop()
+              .split('.')
+              .slice(0, -1)
+              .join('.')
+              .replace('_', ' ')
+              .replace(/\d{4}\.\d{1,2}\.\d{2}\.\.\d{2}\.\d{2}\.\d{2}-/, '')
+          )
+        );
       }
     }
     return link;
@@ -113,7 +125,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   useEffect(onLinkChange, [linkValue]);
 
-  const onKeyPress = (e) => {
+  const onKeyPress = (e: any) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       doPost();
@@ -122,60 +134,86 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   return (
     <>
-    {/* @ts-ignore archaic event type mismatch */}
+      {/* @ts-ignore archaic event type mismatch */}
       <Box
         flexShrink={0}
-        position='relative'
-        border='1px solid'
+        position="relative"
+        border="1px solid"
         borderColor={submitFocused ? 'black' : 'lightGray'}
-        width='100%'
+        width="100%"
         borderRadius={2}
         {...drag.bind}
       >
-        {uploading && <Box
-          display="flex"
-          width="100%"
-          height="100%"
-          position="absolute"
-          left={0}
-          right={0}
-          bg="white"
-          zIndex={9}
-          alignItems="center"
-          justifyContent="center"
-                      >
-          <LoadingSpinner />
-        </Box>}
-      {drag.dragging && <SubmitDragger />}
-      <StatelessUrlInput
-        value={linkValue}
-        promptUpload={promptUpload}
-        canUpload={canUpload}
-        onSubmit={doPost}
-        onChange={setLinkValue}
-        error={linkValid ? 'Invalid URL' : undefined}
-        onKeyPress={onKeyPress}
-        onPaste={onPaste}
-      />
-        <BaseInput
-          type="text"
-          pl={2}
-          backgroundColor="transparent"
-          width="100%"
-          color="black"
-          fontSize={1}
-          style={{
-            resize: 'none',
-            height: 40
-          }}
-          placeholder="Provide a title"
-          onChange={e => setLinkTitle(e.target.value)}
-          onBlur={() => setSubmitFocused(false)}
-          onFocus={() => setSubmitFocused(true)}
-          spellCheck="false"
-          onKeyPress={onKeyPress}
-          value={linkTitle}
-        />
+        {uploading ? (
+          error !== '' ? (
+            <Box
+              display="flex"
+              flexDirection="column"
+              width="100%"
+              height="100%"
+              left={0}
+              right={0}
+              bg="white"
+              zIndex={9}
+              alignItems="center"
+              justifyContent="center"
+              py={2}
+            >
+              <Icon icon="ExclaimationMarkBold" size={32} />
+              <Text bold>{error}</Text>
+              <Text>Please check your S3 settings.</Text>
+            </Box>
+          ) : (
+            <Box
+              display="flex"
+              width="100%"
+              height="100%"
+              left={0}
+              right={0}
+              bg="white"
+              zIndex={9}
+              alignItems="center"
+              justifyContent="center"
+              py={2}
+            >
+              <LoadingSpinner />
+            </Box>
+          )
+        ) : (
+          <>
+            <StatelessUrlInput
+              value={linkValue}
+              promptUpload={promptUpload}
+              canUpload={canUpload}
+              onSubmit={doPost}
+              onChange={setLinkValue}
+              error={linkValid ? 'Invalid URL' : undefined}
+              onKeyPress={onKeyPress}
+              onPaste={onPaste}
+              handleError={handleError}
+            />
+            <BaseInput
+              type="text"
+              pl={2}
+              backgroundColor="transparent"
+              width="100%"
+              color="black"
+              fontSize={1}
+              style={{
+                resize: 'none',
+                height: 40
+              }}
+              placeholder="Provide a title"
+              onChange={e => setLinkTitle(e.target.value)}
+              onBlur={() => setSubmitFocused(false)}
+              onFocus={() => setSubmitFocused(true)}
+              spellCheck="false"
+              onKeyPress={onKeyPress}
+              value={linkTitle}
+            />
+          </>
+        )}
+        {drag.dragging && <SubmitDragger />}
       </Box>
       <Box mt={2} mb={4}>
         <Button
@@ -183,7 +221,9 @@ const LinkSubmit = (props: LinkSubmitProps) => {
           flexShrink={0}
           disabled={!linkValid || disabled}
           onClick={doPost}
-        >Post link</Button>
+        >
+          Post link
+        </Button>
       </Box>
     </>
   );
