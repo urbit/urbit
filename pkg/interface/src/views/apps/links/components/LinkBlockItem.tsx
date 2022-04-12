@@ -34,11 +34,12 @@ export interface LinkBlockItemProps {
   node: GraphNode;
   size?: CenterProps['height'];
   border?: CenterProps['border'];
+  objectFit?: string;
   summary?: boolean;
 }
 
 export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
-  const { node, summary, size, m, border = 1, ...rest } = props;
+  const { node, summary, size, m, border = 1, objectFit, ...rest } = props;
   const { post, children } = node;
   const { contents, index, author } = post;
 
@@ -90,7 +91,12 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
           />
         )
       ) : isImage ? (
-        <RemoteContentImageEmbed url={url} />
+          <RemoteContentImageEmbed
+            url={url}
+            tall
+            stretch
+            objectFit={objectFit ? objectFit : "cover"}
+          />
       ) : isAudio ? (
         <AudioPlayer title={title} url={url} />
       ) : isOembed ? (
