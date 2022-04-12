@@ -13,6 +13,7 @@
       clients=(map ship binding=(unit @t))
       =whitelist
   ==
+++  clear-interval  ~d7
 ::
 +$  client-state
   $:  providers=(jug @p term)
@@ -35,16 +36,19 @@
 ::
 +$  state-2
   [%2 base-state-2]
++$  state-3
+  [%3 base-state-2]
 ::
 +$  versioned-state
   $%  state-0
       state-1
       state-2
+      state-3
   ==
 ::
 --
 ::
-=|  state-2
+=|  state-3
 =*  state  -
 ::
 %-  agent:dbug
@@ -63,6 +67,7 @@
     :_  this
     :~  (~(watch-our pass:io /hark/notes) %hark-store /notes)
         (~(watch-our pass:io /hark/updates) %hark-store /updates)
+        (~(wait pass:io /clear) (add now.bowl clear-interval))
     ==
   ::
   ++  on-save   !>(state)
@@ -74,7 +79,7 @@
     |-
     ?-  -.old
     ::
-        %2
+        %3
       =/  upd=wire  /hark/updates
       =/  not=wire  /hark/notes
       =/  =dock  [our.bowl %hark-store]
@@ -84,6 +89,12 @@
         :_(cards [%pass not %agent dock %watch /notes])
       =.  notifications.old  ~
       [(flop cards) this(state old)]
+    ::
+        %2
+      =.  cards  
+        :_  cards
+        (~(wait pass:io /clear) (add now.bowl clear-interval))
+      $(-.old %3)
     ::
         ?(%0 %1)
       %_  $
@@ -323,6 +334,13 @@
         leaf/"Error sending notfication, status: {(scow %ud status)}"
       ?~  full-file.res  ~
       ~[leaf/(trip `@t`q.data.u.full-file.res)]
+    ::
+        [%clear ~]
+      ?>  ?=([%behn %wake *] sign-arvo)
+      =.  notifications  ~
+      ~&  "notify/debug: cleared notifications"
+      :_  this
+      ~[(~(wait pass:io /clear) (add now.bowl clear-interval))]
     ==
   ::
   ++  on-fail   on-fail:def
@@ -344,16 +362,18 @@
     $(upds (welp upds us), more.upd t.more.upd)
   ::
       %read-count
-    =/  uids  ~(tap in (uids-for-place place.upd))
-    =|  upds=(list update)
-    |-  
-    ?~  uids 
-      [upds notifications]
-    %_  $
-      notifications  (~(del by notifications) i.uids)
-      upds           :_(upds [i.uids %dismiss])
-      uids           t.uids
-    ==
+    `notifications
+    ::  TODO: re-enable if/when fixed
+    ::=/  uids  ~(tap in (uids-for-place place.upd))
+    :: =|  upds=(list update)
+    ::|-  
+    ::?~  uids 
+    :: [upds notifications]
+    ::%_  $
+      :: notifications  (~(del by notifications) i.uids)
+      ::upds           :_(upds [i.uids %dismiss])
+      ::uids           t.uids
+    :: ==
   ::
       %add-note
     =/  note=notification  +.upd

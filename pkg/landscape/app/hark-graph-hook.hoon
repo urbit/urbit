@@ -542,6 +542,7 @@
       %graph-validator-publish  publish
       %graph-validator-link     link
       %graph-validator-dm       dm
+      %graph-validator-post     post
     ==
     ::
     ++  chat
