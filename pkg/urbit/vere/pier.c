@@ -1048,7 +1048,13 @@ _pier_play(u3_play* pay_u)
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
       u3_lord_save(pir_u->god_u);
-      _pier_wyrd_init(pir_u);
+
+      if ( c3y == u3_Host.ops_u.nex ) {
+        u3_pier_exit(pir_u);
+      }
+      else {
+        _pier_wyrd_init(pir_u);
+      }
     }
   }
   else {
@@ -1430,7 +1436,12 @@ _pier_on_lord_live(void* ptr_v)
       _pier_play_init(pir_u, eve_d);
     }
     else {
-      _pier_wyrd_init(pir_u);
+      if ( c3y == u3_Host.ops_u.nex ) {
+        u3_pier_exit(pir_u);
+      }
+      else {
+        _pier_wyrd_init(pir_u);
+      }
     }
   }
 }

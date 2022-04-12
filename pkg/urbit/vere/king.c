@@ -871,6 +871,12 @@ u3_king_done(void)
 {
   uv_handle_t* han_u = (uv_handle_t*)&u3K.tim_u;
 
+  if ( c3y == u3_Host.ops_u.nex ) {
+    //  XX do the needful
+    //
+    u3l_log("we gonna upgrade here\n");
+  }
+
   //  XX hack, if pier's are still linked, we're not actually done
   //
   if ( !u3K.pir_u && !uv_is_closing(han_u) ) {

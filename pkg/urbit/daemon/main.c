@@ -125,6 +125,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.has = c3y;
 
   u3_Host.ops_u.net = c3y;
+  u3_Host.ops_u.nex = c3n;
   u3_Host.ops_u.lit = c3n;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
@@ -165,6 +166,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "ames-port",           required_argument, NULL, 'p' },
     { "http-port",           required_argument, NULL, c3__http },
     { "https-port",          required_argument, NULL, c3__htls },
+    { "next",                no_argument,       NULL, c3__next },
     { "no-conn",             no_argument,       NULL, c3__noco },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
@@ -285,6 +287,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.pes_s = arg_w;
+        break;
+      }
+      case c3__next: {
+        u3_Host.ops_u.nex = c3y;
         break;
       }
       case c3__noco: {
@@ -462,6 +468,11 @@ _main_getopt(c3_i argc, c3_c** argv)
       fprintf(stderr, "keyfile %s not found\n", u3_Host.ops_u.key_c);
       return c3n;
     }
+  }
+
+  if ( u3_Host.ops_u.nuu == c3y && u3_Host.ops_u.nex == c3y ) {
+    fprintf(stderr, "upgrades cannot be performed during boot\n");
+    return c3n;
   }
 
   return c3y;
