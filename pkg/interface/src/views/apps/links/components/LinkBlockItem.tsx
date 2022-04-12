@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Icon,
-  Center,
   Row,
   Text,
   Col,
@@ -38,7 +37,7 @@ export interface LinkBlockItemProps {
 }
 
 export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
-  const { node, summary, size, m, border = 1, ...rest } = props;
+  const { node, summary, m, border = 1, ...rest } = props;
   const { post, children } = node;
   const { contents, index, author } = post;
 
@@ -64,16 +63,11 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
     history.push(`${pathname}/index${index}${search}`);
   };
   return (
-    <Center
+    <Box
       onClick={onClick}
-      border={border}
-      borderColor="lightGray"
       position="relative"
-      borderRadius="1"
-      height={size}
-      width={size}
       m={m}
-      maxHeight="100%"
+      border={border}
       {...rest}
       {...bind}
     >
@@ -123,6 +117,6 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
           </Row>
         </Col>
       </Box>
-    </Center>
+    </Box>
   );
 }

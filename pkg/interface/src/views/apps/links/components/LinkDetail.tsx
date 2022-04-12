@@ -1,4 +1,4 @@
-import { Col, Row, RowProps } from '@tlon/indigo-react';
+import { Center, Col, Row, RowProps } from '@tlon/indigo-react';
 import { Association, GraphNode, markEachAsRead, TextContent, UrlContent } from '@urbit/api';
 import React, { useEffect } from 'react';
 import { useGroup } from '~/logic/state/group';
@@ -27,12 +27,13 @@ export function LinkDetail(props: LinkDetailProps) {
   return (
     /*  @ts-ignore indio props?? */
     <Row height="100%" width="100%" flexDirection={['column', 'column', 'row']} {...rest}>
-      <LinkBlockItem minWidth="0" minHeight="0" height={['50%', '50%', '100%']} width={['100%', '100%', 'calc(100% - 350px)']} flexGrow={0} border={0} node={node} />
+      <Center flexBasis={['100%', '100%', '75%']} flexShrink={1} overflowY="scroll" >
+        <LinkBlockItem maxHeight="100%" node={node} />
+      </Center>
       <Col
-        minHeight="0"
-        flexShrink={1}
-        width={['100%', '100%', '350px']}
-        flexGrow={0}
+        flexBasis={['25%', '25%', '350px']}
+        flexShrink={0}
+        flexGrow={1}
         gapY={[2,4]}
         borderLeft={[0, 0, 1]}
         borderTop={[1, 1, 0]}
