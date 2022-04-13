@@ -218,7 +218,7 @@ function getChildren<T extends unknown>(node: T): AstContent[] {
 }
 
 export function asParent<T extends BlockContent>(node: T): Parent | undefined {
-  return ['paragraph', 'heading', 'list', 'listItem', 'table'].includes(
+  return ['paragraph', 'heading', 'list', 'listItem', 'table', 'blockquote'].includes(
     node.type
   )
     ? (node as Parent)
@@ -234,14 +234,26 @@ function stitchMerge(a: Root, b: Root) {
     const aGrandchild = getChildren(last(aChildren));
     const bGrandchild = getChildren(bChildren[0]);
     const mergedPara = {
-      ...last(aChildren),
-      children: [...aGrandchild, ...bGrandchild]
+        ...last(aChildren),
+        children: [...aGrandchild, ...bGrandchild]
     };
+
     return {
       ...a,
       children: [...aChildren.slice(0, -1), mergedPara, ...bChildren.slice(1)]
     };
   }
+
+  if (lastType === 'blockquote' && bChildren[0]?.type === 'paragraph') {
+    let grandChildren = getChildren(last(aChildren));
+    grandChildren[0].children.push(getChildren(last(bChildren))[0]);
+
+    return {
+      ...last(aChildren),
+      children: [...grandChildren, ...bChildren.slice(1)],
+    };
+  }
+
   return { ...a, children: [...aChildren, ...bChildren] };
 }
 
@@ -260,7 +272,7 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
   return _.reduce(
     asts,
     ([prevMode, ast], [mode, val]): [StitchMode, GraphAstNode] => {
-      if (prevMode === 'block') {
+      if (prevMode === 'block' || prevMode === 'inline') {
         if (mode === 'inline') {
           return [mode, stitchInlineAfterBlock(ast, val?.children ?? [])];
         }
@@ -394,7 +406,6 @@ const renderers = {
     return tall ? <Box mb={2}>{inner}</Box> : inner;
   },
   link: (props) => {
-    console.log('link props =>', props)
     return (
       <Anchor
         display="inline"
