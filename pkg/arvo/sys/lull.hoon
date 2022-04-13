@@ -906,7 +906,7 @@
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
-  +$  tako  @                                           ::  yaki ref
+  +$  tako  @uvI                                        ::  yaki ref
   +$  toro  [p=@ta q=nori]                              ::  general change
   ++  unce                                              ::  change part
     |*  a=mold                                          ::

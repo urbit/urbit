@@ -1552,9 +1552,7 @@
   ::
   ::    Guaranteed to finish in one event.
   ::
-  ::    TODO: needs to check that head is ancestor of tako
   ::    TODO: needs to check tako in rang
-  ::    TODO: needs to check that commit doesn't have same date
   ::
   ++  park
     =/  check-sane  |
@@ -1569,6 +1567,12 @@
         %&  q.p.yoki
         %|  (~(run by q.p.yoki) |=(=lobe |+lobe))
       ==
+    ?.  %-  ~(all in new-data)  ::  use +all:in so we get the key
+        |=  [=path tum=(each page lobe)]
+        ?:  |(?=(%& -.tum) !=(%dead -:(~(got by lat.ran) p.tum)))
+          &
+        (mean leaf/"clay: commit failed, file tombstoned: {<path>} {<`@uv`p.tum>}" ~)
+      !!
     ::  find desk kelvin
     ::
     =/  kel=weft  (get-kelvin yoki)
@@ -3119,25 +3123,31 @@
       =/  missing  (missing-blobs nako)
       =.  let.need.sat  (welp let.need.sat ~(tap in let.missing))
       =.  old.need.sat  (welp old.need.sat ~(tap in old.missing))
+      =.  lat.ran  (uni-blobs lat.ran hav.missing)
       =.  nako.sat  (~(put to nako.sat) ~ nako)
       work
     ::
     ++  missing-blobs
       |=  =nako
-      ^-  [let=(set lobe) old=(set lobe)]
+      ^-  [let=(set lobe) old=(set lobe) hav=(map lobe blob)]
       =/  let-tako  (~(got by gar.nako) let.nako)
       =|  let-lobes=(set lobe)
       =|  old-lobes=(set lobe)
+      =|  hav-blobs=(map lobe blob)
       =/  yakis  ~(tap in lar.nako)
-      |-  ^-  [(set lobe) (set lobe)]
+      |-  ^-  [(set lobe) (set lobe) (map lobe blob)]
       =*  yaki-loop  $
       ?~  yakis
-        [let-lobes old-lobes]
+        [let-lobes old-lobes hav-blobs]
+      =/  =norm  (~(gut by tom.dom) r.i.yakis nor.dom)
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
-      |-  ^-  [(set lobe) (set lobe)]
+      |-  ^-  [(set lobe) (set lobe) (map lobe blob)]
       =*  blob-loop  $
       ?~  lobes
         yaki-loop(yakis t.yakis)
+      ?:  =([~ %|] (~(fit ^de norm) path.i.lobes))
+        =.  hav-blobs  (~(put by hav-blobs) lobe.i.lobes %dead lobe.i.lobes ~)
+        blob-loop(lobes t.lobes)
       =/  lob  (~(get by lat.ran) lobe.i.lobes)
       ?~  lob
         =.  old-lobes  (~(put in old-lobes) lobe.i.lobes)
@@ -3159,12 +3169,6 @@
         %-  (slog leaf+"clay: got dead backfill but need answer for {<p.blob>}" ~)
         ..abet
       =?  need.sat  ?=(%delta -.blob)
-        ?.  (lien let.need.sat |=(=lobe =(p.blob lobe)))
-          ?:  ?&  !(~(has by lat.ran) q.blob)
-                  !(~(has by have.sat) q.blob)
-              ==
-            [let.need.sat [q.blob old.need.sat]]
-          need.sat
         =/  one  (~(get by lat.ran) q.blob)
         =/  two  (~(get by have.sat) q.blob)
         ?:  ?&  ?|  ?=(~ one)
@@ -4927,14 +4931,13 @@
   ++  raft-11-to-12
     |=  raf=raft-11
     ^-  raft-12
-    =/  keep-all=norm  (~(put ^de *norm) / &)
     %=    raf
         lat.ran  (~(run by lat.ran.raf) blub-to-blob)
         dos.rom
       %-  ~(run by dos.rom.raf)
       |=  =dojo-11
       ^-  dojo
-      dojo-11(|4.dom [~ keep-all |4.dom.dojo-11], fiz *melt)
+      dojo-11(|4.dom [~ *norm |4.dom.dojo-11], fiz *melt)
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -4943,7 +4946,7 @@
       |=  =rede-11
       ^-  rede
       %=    rede-11
-          |4.dom  [~ keep-all |4.dom.rede-11]
+          |4.dom  [~ *norm |4.dom.rede-11]
           fiz     *melt
           ref
         ?~  ref.rede-11
@@ -5465,9 +5468,9 @@
       =.  sen  (~(put in sen) norm q.yaki)
       =/  bob  (~(get by lat) q.n.q.yaki)
       =?  lat  ?|(?=(~ bob) ?=([~ %dead *] bob))
-        ?:  =([~ %&] +:(~(fit ^de norm) p.n.q.yaki))
-          (uni-blobs lat (pick-lobe q.n.q.yaki))
-        (~(put by lat) q.n.q.yaki %dead q.n.q.yaki ~)
+        ?:  =([~ %|] +:(~(fit ^de norm) p.n.q.yaki))
+          (~(put by lat) q.n.q.yaki %dead q.n.q.yaki ~)
+        (uni-blobs lat (pick-lobe q.n.q.yaki))
       =.  ..pick-raft  $(q.yaki l.q.yaki)
       $(q.yaki r.q.yaki)
     ::
