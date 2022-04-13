@@ -1,3 +1,5 @@
+::  Add rule to tombstone policy
+::
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] [=ship =desk =path keep=? ~] ~]
 :-  %helm-pass

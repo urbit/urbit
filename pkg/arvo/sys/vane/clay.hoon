@@ -256,7 +256,16 @@
       bom=(map @ud update-state)                        ::  outstanding
       fod=(map duct @ud)                                ::  current requests
       haw=(map mood (unit cage))                        ::  simple cache
+      sek=seek-state                                    ::  outstanding seeks
   ==                                                    ::
+::
+::  Seeking for tombstone contents
+::
+++  seek-state
+  $:  need=(list lobe)
+      have=(map lobe blob)
+      busy=_|
+  ==
 ::
 ::  Active downloads
 ::
@@ -467,6 +476,26 @@
     %dead    blub
     %direct  blub
     %delta   blub(q q.q.blub)
+  ==
+::
+++  rave-to-rove
+  |=  rav=rave
+  ^-  rove
+  ?-  -.rav
+    %sing  rav
+    %next  [- mood ~ ~]:rav
+    %mult  [- mool ~ ~ ~]:rav
+    %many  [- track moat ~]:rav
+  ==
+::
+++  rove-to-rave
+  |=  rov=rove
+  ^-  rave
+  ?-  -.rov
+    %sing  rov
+    %next  [- mood]:rov
+    %mult  [- mool]:rov
+    %many  [- track moat]:rov
   ==
 --  =>
 ~%  %clay  +  ~
@@ -1470,6 +1499,8 @@
   ::
   ++  set-worn
     |=  [=tako =norm]
+    ?:  &(=(our her) =(tako (aeon-to-tako:ze let.dom)))
+      (mean leaf+"clay: can't set norm for current commit in {<syd>}" ~)
     =.  tom.dom  (~(put by tom.dom) tako norm)
     ..park
   ::
@@ -3184,7 +3215,9 @@
       ::  there.
       ::
       =.  ..abet
-        ?:  &(?=(%delta -.blob) !(~(has by lat.ran) q.blob))
+        ?:  ?&  ?=(%delta -.blob)
+                =/  bob  (~(get by lat.ran) q.blob)
+                |(?=(~ bob) ?=(%dead -.u.bob))
           ..abet(have.sat (uni-blobs have.sat (malt [p.blob `^blob`blob] ~)))
         ..abet(lat.ran (uni-blobs lat.ran (malt [p.blob blob] ~)))
       work(busy.sat |)
@@ -3219,6 +3252,9 @@
         ::  once if we somehow got this data in the meantime (maybe from
         ::  another desk updating concurrently, or a previous update on this
         ::  same desk).
+        ::
+        ::  XX  is this an ames loop if we need something that's
+        ::  tombstoned?
         ::
         ?>  ?=(^ old.need.sat)
         ?:  ?|  (~(has by lat.ran) i.old.need.sat)
@@ -3309,6 +3345,49 @@
       ..abet
     --
   ::
+  ++  seek
+    |=  =cash
+    ^+  ..park
+    ?>  ?=(^ ref)
+    =/  =tako
+      ?:  ?=(%tako -.cash)
+        p.cash
+      (aeon-to-tako:ze (case-to-aeon cash))
+    =/  =yaki  (tako-to-yaki:ze tako)
+    =.  need.sek.u.ref
+      %+  welp  need.sek.u.ref
+      %+  murn  ~(tap by q.yaki)
+      |=  [=path =lobe]
+      =/  bob=(unit blob)  (~(get by lat.ran) lobe)
+      ?.  ?|  ?=(~ bob)
+              ?=(%dead -.u.bob)
+          ==
+        `lobe
+      ~
+    seek-work
+  ::
+  ++  seek-work
+    ^+  ..park
+    ?>  ?=(^ ref)
+    ?:  busy.sek.u.ref
+      ..park
+    ?~  need.sek.u.ref
+      =.  lat.ran  (uni-blobs lat.ran have.sek.u.ref)
+      ..park
+    =.  ..park
+      =/  =fill  [%0 syd i.need.sek.u.ref]
+      =/  =wire  /seek/(scot %p ship)/[syd]
+      =/  =path  [%seek syd ~]
+      (emit hen %pass wire %a %plea her %c path fill)
+    ..park(need.sek.u.ref t.need.sek.u.ref, busy.sek.u.ref &)
+  ::
+  ++  seek-take
+    |=  =blub
+    ^+  ..park
+    ?>  ?=(^ ref)
+    =/  =blob  (blub-to-blob blub)
+    ?:  &(?=(%delta -.blob)
+  ::
   ::  fire function if request is in future
   ::
   ++  run-if-future
@@ -3334,26 +3413,6 @@
         ==
       fun
     +>.$
-  ::
-  ++  rave-to-rove
-    |=  rav=rave
-    ^-  rove
-    ?-  -.rav
-      %sing  rav
-      %next  [- mood ~ ~]:rav
-      %mult  [- mool ~ ~ ~]:rav
-      %many  [- track moat ~]:rav
-    ==
-  ::
-  ++  rove-to-rave
-    |=  rov=rove
-    ^-  rave
-    ?-  -.rov
-      %sing  rov
-      %next  [- mood]:rov
-      %mult  [- mool]:rov
-      %many  [- track moat]:rov
-    ==
   ::
   ++  send-cards
     |=  [cards=(list card) ducts=(set duct)]
@@ -3935,7 +3994,7 @@
       ?~  x    ~
       ?~  u.x  [~ ~]
       ``[p.u.u.x !>(q.u.u.x)]
-    ::  +read-s: produce yaki or blob for given tako or lobe
+    ::  +read-s: produce miscellaneous
     ::
     ++  read-s
       |=  [yon=aeon pax=path]
@@ -4436,7 +4495,7 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
-      %tomb  (tomb-clue:tomb clue.req)
+      %tomb  (tomb-clue:tomb hen clue.req)
       %trim  [~ ..^$]
   ::
       %vega
@@ -5108,9 +5167,8 @@
       [~ ..^$]
     ::
         %lost
-      ~|  %clay-take-lost^our
-      ::  TODO better error handling
-      !!
+      %-  (slog leaf+"clay: lost warp from {<tea>}" ~)
+      [~ ..^$]
     ::
         %boon
       =+  ;;  res=(unit rand)  payload.hin
@@ -5137,9 +5195,8 @@
       [~ ..^$]
     ::
         %lost
-      ~|  %clay-take-backfill-lost^our
-      ::  TODO better error handling
-      !!
+      %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
+      [~ ..^$]
     ::
         %boon
       =+  ;;  =blub  payload.hin
@@ -5151,6 +5208,29 @@
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
         abet:abet:(take-backfill:(foreign-update:den index) blub)
+      [mos ..^$]
+    ==
+  ::
+  ?:  ?=([%seek @ @ ~] tea)
+    ?+    +<.hin  ~|  %clay-seek-strange  !!
+        %done
+      ?~  error.hin
+        [~ ..^$]
+      %-  (slog leaf+"clay: seek nack from {<tea>}" u.error.hin)
+      [~ ..^$]
+    ::
+        %lost
+      %-  (slog leaf+"clay: lost boon from {<tea>}" ~)
+      [~ ..^$]
+    ::
+        %boon
+      =+  ;;  =blub payload.hin
+      ::
+      =/  her=ship  (slav %p i.t.tea)
+      =/  =desk     (slav %tas i.t.t.tea)
+      =^  mos  ruf
+        =/  den  ((de now rof hen ruf) her desk)
+        abet:(seek-take:den blub)
       [mos ..^$]
     ==
   ::
@@ -5302,7 +5382,7 @@
   ::  +tomb-clue: safely remove objects
   ::
   ++  tomb-clue
-    |=  =clue
+    |=  [=duct =clue]
     ^-  [(list move) _..^$]
     ?-    -.clue
         %lobe  `(tomb-lobe lobe.clue &)
@@ -5317,14 +5397,20 @@
         %pick  pick
         %norm
       =^  mos  ruf
-        =/  den  ((de now rof *duct ruf) ship.clue desk.clue)
+        =/  den  ((de now rof duct ruf) ship.clue desk.clue)
         abet:(set-norm:den norm.clue)
       [mos ..^$]
     ::
         %worn
       =^  mos  ruf
-        =/  den  ((de now rof *duct ruf) ship.clue desk.clue)
+        =/  den  ((de now rof duct ruf) ship.clue desk.clue)
         abet:(set-worn:den tako.clue norm.clue)
+      [mos ..^$]
+    ::
+        %seek
+      =^  mos  ruf
+        =/  den  ((de now rof duct ruf) ship.clue desk.clue)
+        abet:(seek:den cash.clue)
       [mos ..^$]
     ==
   ::  +tomb-lobe: remove specific lobe
@@ -5487,5 +5573,30 @@
           %delta   (~(put by $(lobe q.u.bob)) lobe u.bob)
       ==
     --
-  --
+  ::
+  ++  seek
+    |=  [=ship =desk =tako]
+    =/  =yaki  (~(got by hut.ran) tako)
+    =/  lobes=(list lobe)
+      %+  murn  ~(tap by q.yaki)
+      |=  [=path =lobe]
+      =/  bob=(unit blob)  (~(get by lat.ran) lobe)
+      ?.  ?|  ?=(~ bob)
+              ?=(%dead -.u.bob)
+          ==
+        `lobe
+      ~
+    %+  turn  lobes
+    |=  =lobe
+    =/  =fill  [%0 desk lobe]
+    =/  =wire  /seek/(scot %p ship)/[desk]
+    =/  =path  [%backfill desk ~]
+    [hen %pass wire %a %plea ship %c path fill]
+  ::
+  ++  seek-take
+    |=  [=ship =desk =blub]
+    =/  =blob  (blub-to-blob blub)
+    =.  lat.ran.ruf  (uni-blobs lat.ran [p.blob blob] ~ ~)
+    !!
+  --￼
 --

@@ -1,6 +1,7 @@
+::  Perform minimal norm change to delete a file, use =dry & for dry run
+::
 ::  TODO: recognize when it's going to fail because it's in the head of
-::        a desk
-::  TODO: recognize when a reference is already weak
+::        a desk, and maybe offer to |rm
 ::
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] [target=path ~] dry=_|]
@@ -49,12 +50,14 @@
   --
 ^-  (list note-arvo)
 %+  welp
-  %+  turn  ~(tap in norms)
+  %+  murn  ~(tap in norms)
   |=  [=ship =desk =tako:clay =norm:clay =path]
+  ?:  ?=([~ %|] (~(fit de norm) path))
+    ~
   %-  (slog leaf+"tomb: {<ship desk path `@uv`tako norm path>}" ~)
   ?:  dry
-    [%d %noop ~]
-  [%c %tomb %worn ship desk tako (~(put de norm) path %|)]
+    ~
+  `[%c %tomb %worn ship desk tako (~(put de norm) path %|)]
 ?:  dry
-  [%d %noop ~]~
+  ~
 [%c %tomb %pick ~]~

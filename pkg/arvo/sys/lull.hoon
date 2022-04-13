@@ -808,6 +808,10 @@
         [%tas p=@tas]                                   ::  label
         [%ud p=@ud]                                     ::  number
     ==                                                  ::
+  +$  cash                                              ::  case or tako
+    $%  [%tako p=tako]                                  ::
+        case                                            ::
+    ==                                                  ::
   +$  cass  [ud=@ud da=@da]                             ::  cases for revision
   +$  clue                                              ::  murder weapon
     $%  [%lobe =lobe]                                   ::  specific lobe
@@ -815,6 +819,7 @@
         [%pick ~]                                       ::  collect garbage
         [%norm =ship =desk =norm]                       ::  set default norm
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
+        [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
   +$  cone  (map [ship desk] dome)                      ::  domes
   +$  crew  (set ship)                                  ::  permissions group
