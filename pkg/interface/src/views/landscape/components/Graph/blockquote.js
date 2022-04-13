@@ -120,7 +120,6 @@ function blockquote(eat, value, silent) {
 
   exit = self.enterBlock()
   contents = self.tokenizeBlock(contents.join(lineFeed), now)
-  console.log(values);
   exit()
 
   const added = add({type: 'blockquote', children: contents})
