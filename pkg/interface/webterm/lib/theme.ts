@@ -16,6 +16,7 @@ export const makeTheme = (dark: boolean): ITheme => {
     foreground: fg,
     background: bg,
     brightBlack: '#7f7f7f',  // NOTE  slogs
-    cursor: fg
+    cursor: fg,
+    selection: fg
   };
 };

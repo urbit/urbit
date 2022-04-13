@@ -33,7 +33,9 @@ const termConfig: ITerminalOptions = {
   bellSound: bel,
   //
   //  allows text selection by holding modifier (option, or shift)
-  macOptionClickForcesSelection: true
+  macOptionClickForcesSelection: true,
+  //  prevent insertion of simulated arrow keys on-altclick
+  altClickMovesCursor: false
 };
 
 const readInput = (term: Terminal, e: string): Belt[] => {
