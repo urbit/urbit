@@ -9,17 +9,29 @@
     $:  %0
         chats=(map resource chat)
     ==
-  +$  circle
-    ((mop time letter) lte)
-  ++  circle-on
-    ((on time letter) lte)
+  +$  fleet
+    ((mop time writ) lte)
+  ++  fleet-on
+    ((on time writ) lte)
   +$  log
     ((mop time diff:c) lte)
   ++  log-on
     ((on time diff:c) lte)
   +$  chat
-    (trel net log circle)
-  +$  letter  cord  :: TODO
+    (trel net log fleet)
+  ::
+  +$  writ  [seal memo]
+  ::
+  +$  seal
+    $:  =time
+        feel=(jug term ship)
+    ==
+  ::
+  +$  memo  
+    $:  author=ship
+        sent=time
+        content=cord :: TODO
+    ==
   ::
   +$  net
     $~  [%load ~]
@@ -241,7 +253,7 @@
     |=  [=update:c c=_ca-core]
     (ca-update:c update)
   ::
-  ++  ca-updates
+  ++  ca-give-updates
     |=  =cage
     ^+  ca-core
     =/  paths=(set path)
@@ -262,16 +274,28 @@
     =.  q.chat
       (put:log-on q.chat time d)
     =.  ca-core
-      (ca-updates chat-update+!>([time d]))
+      (ca-give-updates chat-update+!>([time d]))
     ?-    -.d
-        %send
+        %add-feel
+      =/  =writ  (got:fleet-on r.chat p.d)
+      =.  feel.writ  (~(put ju feel.writ) q.d src.bowl)
+      =.  r.chat   (put:fleet-on r.chat p.d writ)
+      ca-core
+    ::
+        %del-feel
+      =/  =writ  (got:fleet-on r.chat p.d)
+      =.  feel.writ  (~(del ju feel.writ) q.d src.bowl)
+      =.  r.chat   (put:fleet-on r.chat p.d writ)
+      ca-core
+   ::
+        %add
       =.  r.chat  
-        (put:circle-on r.chat time p.d)
+        (put:fleet-on r.chat time [time ~] p.d)
       ca-core
     ::
         %del
       =.  r.chat
-        +:(del:circle-on r.chat p.d)
+        +:(del:fleet-on r.chat p.d)
       ca-core
     ==
   --

@@ -1,10 +1,19 @@
 |%
 +$  resource  (pair ship term)
 +$  diff
-  $%  [%send p=cord]
+  $%  [%add p=memo]
       [%del p=time] 
-      [%react p=time q=@ta]
+      [%add-feel p=time q=term]
+      [%del-feel p=time q=term]
   ==
+::
++$  memo  
+  $:  author=ship
+      sent=time
+      content=cord :: TODO
+  ==
+::
+
 +$  action
   (pair resource update)
 +$  update
