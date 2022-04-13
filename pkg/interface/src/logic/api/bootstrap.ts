@@ -40,7 +40,7 @@ export async function bootstrapApi() {
     useLocalState.setState({ subscription: 'connected' });
   };
 
-  await useMetadataState.getState().initialize(airlock);
+  useMetadataState.getState().initialize(airlock);
 
   const subs = [
     useGroupState,
