@@ -787,16 +787,6 @@
   +$  ankh  (axal [p=lobe q=cage])                      ::  fs node (new)
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
-  +$  blob                                              ::  fs blob
-    $%  [%delta p=lobe q=lobe r=page]                   ::  delta on q
-        [%direct p=lobe q=page]                         ::  immediate
-        [%dead p=lobe ~]                                ::  tombstone
-    ==                                                  ::
-  +$  blub                                              ::  over-the-wire blob
-    $%  [%delta p=lobe q=[p=mark q=lobe] r=page]        ::  delta on q
-        [%direct p=lobe q=page]                         ::  immediate
-        [%dead p=lobe ~]                                ::  tombstone
-    ==                                                  ::
   +$  cable                                             :: lib/sur/mark ref
     $:  face=(unit term)                                ::
         file-path=term                                  ::
@@ -846,7 +836,6 @@
         %meet-that                                      ::  hers if conflict
     ==                                                  ::
   +$  lobe  @uvI                                        ::  blob ref
-  +$  maki  [p=@ta q=@ta r=@ta s=path]                  ::
   +$  miso                                              ::  ankh delta
     $%  [%del ~]                                        ::  delete
         [%ins p=cage]                                   ::  insert
@@ -875,10 +864,9 @@
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  (cask *)                                    ::  untyped cage
-  +$  plop  blub                                        ::  unvalidated blob
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
-        lat=(map lobe blob)                             ::  data
+        lat=(map lobe page)                             ::  data
     ==                                                  ::
   +$  rant                                              ::  response to request
     $:  p=[p=care q=case r=desk]                        ::  clade release book

@@ -130,14 +130,8 @@
   =/  tak  (scot %uv (~(got by hit.dom) let.dom))
   =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
   =/  lob  (scot %uv (~(got by q.yak) /sys/kelvin))
-  =/  bob  .^(blob cs/~[her syd yon %blob lob])
-  ::
-  ;;  weft
-  ?-  -.bob
-    %direct  q.q.bob
-    %delta   q.r.bob
-    %dead    ~|(%tombstoned-kelvin !!)
-  ==
+  =/  peg  .^(page cs/~[her syd yon %blob lob])
+  ;;(weft q.peg)
 ::  +read-kelvin-local: read /sys/kelvin from a local desk
 ::
 ++  read-kelvin-local
@@ -165,14 +159,8 @@
   =/  fil  (~(get by q.yak) /desk/bill)
   ?~  fil  ~
   =/  lob  (scot %uv u.fil)
-  =/  bob  .^(blob cs/~[her syd yon %blob lob])
-  ::
-  ;;  (list dude)
-  ?-  -.bob
-    %direct  q.q.bob
-    %delta   q.r.bob
-    %dead    ~|(%tombstoned-bill !!)
-  ==
+  =/  peg  .^(page cs/~[her syd yon %blob lob])
+  ;;((list dude) q.peg)
 ::  +read-bill: read contents of /desk/bill manifest
 ::
 ++  read-bill
