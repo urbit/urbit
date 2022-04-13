@@ -144,10 +144,17 @@
       mut=(list (trel path lobe cage))                  ::  mutations
   ==                                                    ::
 ::
-::  Over-the-wire backfill request
+::  Over-the-wire backfill request/response
 ::
 +$  fill
   $%  [%0 =desk =lobe]
+      [%1 =desk =lobe]
+  ==
++$  fell
+  $%  [%direct p=lobe q=page]
+      [%delta p=lobe q=[p=mark q=lobe] r=page]
+      [%dead p=lobe ~]
+      [%1 peg=(unit page)]
   ==
 ::
 ::  Ford cache
@@ -160,10 +167,6 @@
       tubes=(map mars [res=tube dez=(set [dir=? =path])])
   ==
 ::
-::  Hash of a blob, for lookup in the object store (lat.ran)
-::
-+$  lobe  @uvI                                          ::  blob ref
-::
 ::  New desk data.
 ::
 ::  Sent to other ships to update them about a particular desk.  Includes a map
@@ -174,7 +177,7 @@
   $:  gar=(map aeon tako)                               ::  new ids
       let=aeon                                          ::  next id
       lar=(set yaki)                                    ::  new commits
-      bar=(set plop)                                    ::  new content
+      bar=~                                             ::  new content
   ==                                                    ::
 ::
 ::
@@ -198,15 +201,6 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
-  ==                                                    ::
-::
-::  Object store.
-::
-::  Maps of commit hashes to commits and content hashes to content.
-::
-+$  rang                                                ::
-  $:  hut=(map tako yaki)                               ::
-      lat=(map lobe blob)                               ::
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
@@ -263,8 +257,7 @@
 +$  update-state
   $:  =duct
       =rave
-      have=(map lobe blob)
-      need=[let=(list lobe) old=(list lobe)]
+      need=(list lobe)
       nako=(qeu (unit nako))
       busy=_|
   ==
@@ -431,42 +424,14 @@
   ::
   [deletes changes]
 ::
-::  Safely add items to an object store.
-::
-::  It's important that first argument is the old and second is the new.
-::  The rule is that if one side has a tombstone, we want to use the
-::  other side.  Additionally, if the old one was %direct, we don't want
-::  to overwrite that with a %delta, since that could create loops where
-::  they didn't exist.
-::
-++  uni-blobs
-  |=  [old=(map lobe blob) new=(map lobe blob)]
-  ^-  (map lobe blob)
-  %-  (~(uno by old) new)
-  |=  [=lobe o=blob n=blob]
-  ^-  blob
-  ?-    -.o
-      %direct  o
-      %delta   o
-      %dead    n
-  ==
-::
-++  blob-to-blub
-  |=  =blob
-  ^-  blub
-  ?-  -.blob
-    %dead    blob
-    %direct  blob
-    %delta   blob(q [%blub q.blob])
-  ==
-::
-++  blub-to-blob
-  |=  =blub
-  ^-  blob
-  ?-  -.blub
-    %dead    blub
-    %direct  blub
-    %delta   blub(q q.q.blub)
+++  fell-to-page
+  |=  =fell
+  ^-  (unit page)
+  ?-  -.fell
+    %dead    ~
+    %direct  `q.fell
+    %delta   ~
+    %1       peg.fell
   ==
 --  =>
 ~%  %clay  +  ~
@@ -529,7 +494,7 @@
           $:  =ankh
               deletes=(set path)
               changes=(map path (each page lobe))
-              file-store=(map lobe blob)
+              file-store=(map lobe page)
               =ford-cache
           ==
         --
@@ -564,11 +529,11 @@
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
       ::~>  %slog.0^leaf/"ford: read file {(spud path)}"
       ?^  change=(~(get by changes) path)
-        =^  page  nub
+        =/  page
           ?:  ?=(%& -.u.change)
-            [p.u.change nub]
-          ~|  %ugly-lobe^p.u.change^path
-          (lobe-to-page p.u.change)
+            p.u.change
+          ~|  %tombstoned-file^path^p.u.change
+          (~(got by file-store) p.u.change)
         =^  cage  nub  (validate-page path page)
         [cage nub]
       ?<  (~(has in deletes) path)
@@ -786,38 +751,6 @@
       =^  gat=vase  nub  (build-cast a b)
       :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
       :_(nub =>([..zuse gat=gat] |=(v=vase (slam gat v))))
-    ::
-    ++  lobe-to-page
-      |=  =lobe
-      ^-  [page state]
-      =/  =blob  (~(got by file-store) lobe)
-      |-  ^-  [page state]
-      ?-    -.blob
-          %dead    ~|(lobe-to-page-dead+lobe !!)
-          %direct  [q.blob nub]
-          %delta
-        =/  [=parent=^lobe diff=page]  [q r]:blob
-        =^  parent-page  nub  $(blob (~(got by file-store) parent-lobe))
-        =^  =cage  nub  (run-pact parent-page diff)
-        [[p q.q]:cage nub]
-      ==
-    ::
-    ++  lobe-to-unit-page
-      |=  =lobe
-      ^-  [(unit page) state]
-      =/  =blob  (~(got by file-store) lobe)
-      |-  ^-  [(unit page) state]
-      ?-    -.blob
-          %dead    [~ nub]
-          %direct  [`q.blob nub]
-          %delta
-        =/  [=parent=^lobe diff=page]  [q r]:blob
-        =^  parent-page  nub  $(blob (~(got by file-store) parent-lobe))
-        ?~  parent-page
-          [~ nub]
-        =^  =cage  nub  (run-pact u.parent-page diff)
-        [`[p q.q]:cage nub]
-      ==
     ::
     ++  validate-page
       |=  [=path =page]
@@ -1385,7 +1318,7 @@
       (send-over-ames hen her inx syd `rave)
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
-      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ [~ ~] ~ |])
+      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ |])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
@@ -1560,7 +1493,7 @@
     |=  [updated=? =yoki =rang]
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
-        lat.ran  (uni-blobs lat.ran lat.rang)
+        lat.ran  (~(uni by lat.rang) lat.ran)
       ==
     =/  new-data=(map path (each page lobe))
       ?-  -.yoki
@@ -1569,7 +1502,7 @@
       ==
     ?.  %-  ~(all in new-data)  ::  use +all:in so we get the key
         |=  [=path tum=(each page lobe)]
-        ?:  |(?=(%& -.tum) !=(%dead -:(~(got by lat.ran) p.tum)))
+        ?:  |(?=(%& -.tum) (~(has by lat.ran) p.tum))
           &
         (mean leaf/"clay: commit failed, file tombstoned: {<path>} {<`@uv`p.tum>}" ~)
       !!
@@ -1611,11 +1544,11 @@
     ::
     =^  change-cages  ford-cache.args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
-    =/  new-blobs=(map lobe blob)
+    =/  new-pages=(map lobe page)
       %-  malt
       %+  turn  ~(tap by change-cages)
       |=  [=path =lobe =cage]
-      [lobe %direct lobe [p q.q]:cage]
+      [lobe [p q.q]:cage]
     =/  data=(map path lobe)
       %-  ~(urn by new-data)
       |=  [=path value=(each page lobe)]
@@ -1638,7 +1571,7 @@
     =:  let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
-        lat.ran  (uni-blobs lat.ran new-blobs)
+        lat.ran  (~(uni by new-pages) lat.ran)
       ==
     =.  file-store.args  lat.ran
     ::
@@ -1690,14 +1623,9 @@
       ++  lobe-to-weft
         |=  =lobe
         ^-  weft
-        =/  =blob  (lobe-to-blob:ze lobe)
-        =/  =page
-          ?-  -.blob
-            %direct  q.blob
-            %delta   r.blob
-            %dead    ~|([%sys-kelvin-tombstoned syd] !!)
-          ==
-        (page-to-weft page)
+        =/  peg=(unit page)  (~(get by lat.ran) lobe)
+        ?~  peg  ~|([%sys-kelvin-tombstoned syd] !!)
+        (page-to-weft u.peg)
       ::
       ++  page-to-weft
         |=  =page
@@ -1817,21 +1745,10 @@
     ++  lobe-to-cord
       |=  =lobe
       ^-  @t
-      =-  ?:(?=(%& -<) p.- (of-wain:format p.-))
-      |-  ^-  (each @t wain)
-      ::  got:by ok since we must have a blob for anything at `let`
-      ::
-      =/  =blob  (lobe-to-blob:ze lobe)
-      ?-    -.blob
-          %dead    ~|([%lobe-to-cord-tombstoned syd lobe] !!)
-          %direct  [%& ;;(@t q.q.blob)]
-          %delta
-        :-  %|
-        %+  lurk:differ
-          =-  ?:(?=(%| -<) p.- (to-wain:format p.-))
-          $(lobe q.blob)
-        ;;((urge cord) q.r.blob)
-      ==
+      =/  peg=(unit page)  (~(get by lat.ran) lobe)
+      ?~  peg
+        ~|([%lobe-to-cord-tombstoned syd lobe] !!)
+      ;;(@t q.u.peg)
     ::
     ::  Updated q.yaki
     ::
@@ -1964,20 +1881,15 @@
       ?~  tak
         ~
       =/  =yaki  (~(got by hut.ran) u.tak)
-      ::  Assert all blobs hash to their lobe
+      ::  Assert all pages hash to their lobe
       ::
       =/  foo
         %-  ~(urn by lat.ran)
-        |=  [=lobe =blob]
-        ?-    -.blob
-            %dead   ~
-            %delta  ~
-            %direct
-          =/  actual-lobe=^lobe  `@uv`(page-to-lobe q.blob)
-          ~|  [lobe p.blob actual-lobe]
-          ?>  &(=(lobe p.blob) =(lobe actual-lobe))
-          ~
-        ==
+        |=  [=lobe =page]
+        =/  actual-lobe=^lobe  `@uv`(page-to-lobe page)
+        ~|  [%bad-lobe have=lobe need=actual-lobe]
+        ?>  =(lobe actual-lobe)
+        ~
       ::  Assert we calculated the same change-cages w/o cache
       ::
       ::  ? remove deletes
@@ -2219,7 +2131,7 @@
         next-yaki  merged-yaki
         merges     t.merges
         hut.ran    (~(put by hut.ran) r.merged-yaki merged-yaki)
-        lat.rag    (uni-blobs lat.rag lat.u.merge-result)
+        lat.rag    (~(uni by lat.u.merge-result) lat.rag)
         parents    [(~(got by hit.ali-dom) let.ali-dom) parents]
       ==
     ==
@@ -2256,7 +2168,7 @@
       (park | new.u.mr ~ lat.u.mr)
     ==
   ::
-  +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe blob)]
+  +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe page)]
   ::
   ++  merge-helper
     |=  [=ali=ship =ali=desk =germ ali-dome=dome:clay next-yaki=(unit yaki)]
@@ -2560,9 +2472,7 @@
       ++  lobe-to-cage
         |=  =lobe
         ^-  (unit cage)
-        =^  peg=(unit page)  fod.dom
-          %-  wrap:fusion
-          (lobe-to-unit-page:(ford:fusion static-ford-args) lobe)
+        =/  peg=(unit page)  (~(get by lat.ran) lobe)
         ?~  peg
           ~
         =^  =cage  fod.dom
@@ -2688,14 +2598,15 @@
           =<  .(old q.bob)
           |=  [[pax=path ~] old=(map path lobe)]
           (~(del by old) pax)
-        =/  [hot=(map path lobe) lat=(map lobe blob)]   ::  new content
+        =/  [hot=(map path lobe) lat=(map lobe page)]   ::  new content
           %+  roll  ~(tap by both-patched)
-          |=  [[pax=path cay=cage] hat=(map path lobe) lat=(map lobe blob)]
-          =/  =blob  [%direct (page-to-lobe [p q.q]:cay) [p q.q]:cay]
-          :-  (~(put by hat) pax p.blob)
-          ?:  (~(has by lat) p.blob)
+          |=  [[pax=path cay=cage] hat=(map path lobe) lat=(map lobe page)]
+          =/  =page  [p q.q]:cay
+          =/  =lobe  (page-to-lobe page)
+          :-  (~(put by hat) pax lobe)
+          ?:  (~(has by lat) lobe)
             lat
-          (uni-blobs lat (malt [p.blob blob] ~))
+          (~(uni by (malt [lobe page] ~)) lat)
         =/  hat=(map path lobe)                         ::  all the content
           %-  ~(uni by old)
           %-  ~(uni by new.dal)
@@ -3078,14 +2989,20 @@
   ::
   ::  Respond to backfill request
   ::
-  ::  Maybe should verify the requester is allowed to access this blob?
+  ::  Maybe should verify the requester is allowed to access this lobe?
   ::
   ++  give-backfill
-    |=  =lobe
+    |=  [ver=?(%0 %1) =lobe]
     ^+  ..give-backfill
-    (emit hen %give %boon (blob-to-blub (lobe-to-blob:ze lobe)))
+    =/  peg=(unit page)  (~(get by lat.ran) lobe)
+    =/  res
+      ?-  ver
+        %0  ?~(peg ~ [%direct lobe u.peg])
+        %1  [%1 peg]
+      ==
+    (emit hen %give %boon res)
   ::
-  ::  Ingest foreign update, requesting missing blobs if necessary
+  ::  Ingest foreign update, requesting missing lobes if necessary
   ::
   ++  foreign-update
     |=  inx=@ud
@@ -3120,123 +3037,75 @@
         work
       ?>  ?=(%nako p.r.u.rut)
       =/  nako  ;;(nako q.r.u.rut)
-      =/  missing  (missing-blobs nako)
-      =.  let.need.sat  (welp let.need.sat ~(tap in let.missing))
-      =.  old.need.sat  (welp old.need.sat ~(tap in old.missing))
-      =.  lat.ran  (uni-blobs lat.ran hav.missing)
+      =/  missing  (missing-lobes nako)
+      =.  need.sat  (welp need.sat ~(tap in missing))
       =.  nako.sat  (~(put to nako.sat) ~ nako)
       work
     ::
-    ++  missing-blobs
+    ++  missing-lobes
       |=  =nako
-      ^-  [let=(set lobe) old=(set lobe) hav=(map lobe blob)]
-      =/  let-tako  (~(got by gar.nako) let.nako)
-      =|  let-lobes=(set lobe)
-      =|  old-lobes=(set lobe)
-      =|  hav-blobs=(map lobe blob)
+      ^-  (set lobe)
+      =|  missing=(set lobe)
       =/  yakis  ~(tap in lar.nako)
-      |-  ^-  [(set lobe) (set lobe) (map lobe blob)]
+      |-  ^-  (set lobe)
       =*  yaki-loop  $
       ?~  yakis
-        [let-lobes old-lobes hav-blobs]
+        missing
       =/  =norm  (~(gut by tom.dom) r.i.yakis nor.dom)
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
-      |-  ^-  [(set lobe) (set lobe) (map lobe blob)]
-      =*  blob-loop  $
+      |-  ^-  (set lobe)
+      =*  lobe-loop  $
       ?~  lobes
         yaki-loop(yakis t.yakis)
+      ?:  (~(has by lat.ran) lobe.i.lobes)
+        lobe-loop(lobes t.lobes)
       ?:  =([~ %|] (~(fit ^de norm) path.i.lobes))
-        =.  hav-blobs  (~(put by hav-blobs) lobe.i.lobes %dead lobe.i.lobes ~)
-        blob-loop(lobes t.lobes)
-      =/  lob  (~(get by lat.ran) lobe.i.lobes)
-      ?~  lob
-        =.  old-lobes  (~(put in old-lobes) lobe.i.lobes)
-        blob-loop(lobes t.lobes)
-      =?  let-lobes  &(=(let-tako r.i.yakis) ?=(%dead -.u.lob))
-        (~(put in let-lobes) lobe.i.lobes)
-      blob-loop(lobes t.lobes)
+        lobe-loop(lobes t.lobes)
+      =.  missing  (~(put in missing) lobe.i.lobes)
+      lobe-loop(lobes t.lobes)
     ::
     ::  Receive backfill response
     ::
     ++  take-backfill
-      |=  =blub
+      |=  =fell
       ^+  ..abet
       ?:  lost  ..abet
-      =/  =blob  (blub-to-blob blub)
-      ?:  ?&  ?=(%dead -.blob)
-              (lien let.need.sat |=(=lobe =(p.blob lobe)))
-          ==
-        %-  (slog leaf+"clay: got dead backfill but need answer for {<p.blob>}" ~)
-        ..abet
-      =?  need.sat  ?=(%delta -.blob)
-        =/  one  (~(get by lat.ran) q.blob)
-        =/  two  (~(get by have.sat) q.blob)
-        ?:  ?&  ?|  ?=(~ one)
-                    ?=(%dead -.u.one)
-                ==
-                ?|  ?=(~ two)
-                    ?=(%dead -.u.two)
-                ==
-            ==
-          [[q.blob let.need.sat] old.need.sat]
-        need.sat
-      ::  We can't put a blob in lat.ran if its parent isn't already
-      ::  there.
-      ::
-      =.  ..abet
-        ?:  &(?=(%delta -.blob) !(~(has by lat.ran) q.blob))
-          ..abet(have.sat (uni-blobs have.sat (malt [p.blob `^blob`blob] ~)))
-        ..abet(lat.ran (uni-blobs lat.ran (malt [p.blob blob] ~)))
+      =/  peg=(unit page)  (fell-to-page fell)
+      =?  lat.ran  ?=(^ peg)
+        (~(uni by (malt [(page-to-lobe u.peg) u.peg] ~)) lat.ran)
       work(busy.sat |)
     ::
-    ::  Fetch next blob
+    ::  Fetch next lobe
     ::
     ++  work
       ^+  ..abet
       ?:  busy.sat
         ..abet
       |-  ^+  ..abet
-      ?:  =([~ ~] need.sat)
-        ::  NB: if you change to release nakos as we get enough blobs
+      ?~  need.sat
+        ::  NB: if you change to release nakos as we get enough lobes
         ::  for them instead of all at the end, you *must* store the
         ::  `lim` that should be applied after the nako is complete and
         ::  not use the one in the rave, since that will apply to the
         ::  end of subscription.
         ::
-        =.  lat.ran  (uni-blobs lat.ran have.sat)
         |-  ^+  ..abet
         ?:  =(~ nako.sat)
           ..abet
         =^  next=(unit nako)  nako.sat  ~(get to nako.sat)
         ?~  next
           ..abet(done &)
-        =.  ..abet  (apply-foreign-update u.next)
+        =.  ..abet  =>((apply-foreign-update u.next) ?>(?=(~ need.sat) .))
         =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)
         $
-      ?~  let.need.sat
-        ::  This is what removes an item from `need`.  This happens every
-        ::  time we take a backfill response, but it could happen more than
-        ::  once if we somehow got this data in the meantime (maybe from
-        ::  another desk updating concurrently, or a previous update on this
-        ::  same desk).
-        ::
-        ?>  ?=(^ old.need.sat)
-        ?:  ?|  (~(has by lat.ran) i.old.need.sat)
-                (~(has by have.sat) i.old.need.sat)
-            ==
-          $(old.need.sat t.old.need.sat)
-        (fetch i.old.need.sat)
-      =/  one  (~(get by lat.ran) i.let.need.sat)
-      =/  two  (~(get by have.sat) i.let.need.sat)
-      ?:  ?|  ?&  ?=(^ one)
-                  !?=(%dead -.u.one)
-              ==
-              ?&  ?=(^ two)
-                  !?=(%dead -.u.two)
-              ==
-          ==
-        $(let.need.sat t.let.need.sat)
-      (fetch i.let.need.sat)
+      ::  This is what removes an item from `need`.  This happens every
+      ::  time we take a backfill response, but it could happen more than
+      ::  once if we somehow got this data in the meantime (maybe from
+      ::  another desk updating concurrently, or a previous update on this
+      ::  same desk).
+      ?:  (~(has by lat.ran) i.need.sat)
+        $(need.sat t.need.sat)
+      (fetch i.need.sat)
     ::
     ++  fetch
       |=  =lobe
@@ -3251,9 +3120,9 @@
     ::
     ::  When we get a %w foreign update, store this in our state.
     ::
-    ::  We get the commits and blobs from the nako and add them to our
-    ::  object store, then we update the map of aeons to commits and the
-    ::  latest aeon.
+    ::  We get the commits from the nako and add them to our object
+    ::  store, then we update the map of aeons to commits and the latest
+    ::  aeon.
     ::
     ++  apply-foreign-update
       |=  =nako
@@ -3261,18 +3130,14 @@
       ::  hit: updated commit-hashes by @ud case
       ::  nut: new commit-hash/commit pairs
       ::  hut: updated commits by hash
-      ::  nat: new blob-hash/blob pairs
-      ::  lat: updated blobs by hash
       ::
       =/  hit  (~(uni by hit.dom) gar.nako)
       =/  nut  (turn ~(tap in lar.nako) |=(=yaki [r.yaki yaki]))
       =/  hut  (~(uni by (malt nut)) hut.ran)
-      =/  nat  (turn ~(tap in bar.nako) |=(=blub [p.blub (blub-to-blob blub)]))
-      =/  lat  (uni-blobs lat.ran (malt nat))
       ::  traverse updated state and sanity check
       ::
       =+  ~|  :*  %bad-foreign-update
-                  [gar=gar.nako let=let.nako nut=(turn nut head) nat=(turn nat head)]
+                  [gar=gar.nako let=let.nako nut=(turn nut head)]
                   [hitdom=hit.dom letdom=let.dom]
               ==
         ?:  =(0 let.nako)
@@ -3283,12 +3148,6 @@
           ~|  [%missing-aeon aeon]  (~(got by hit) aeon)
         =/  =yaki
           ~|  [%missing-tako tako]  (~(got by hut) tako)
-        =+  %+  turn
-              ~(tap by q.yaki)
-            |=  [=path =lobe]
-            ~|  [%missing-blob path lobe]
-            ?>  (~(has by lat) lobe)
-            ~
         ?:  =(let.nako aeon)
           ~
         $(aeon +(aeon))
@@ -3299,7 +3158,6 @@
       =:  let.dom   (max let.nako let.dom)
           hit.dom   hit
           hut.ran   hut
-          lat.ran   lat
           ::  Is this correct?  Seeems like it should only go to `to` if
           ::  we've gotten all the way to the end.  Leaving this
           ::  behavior unchanged for now, but I believe it's wrong.
@@ -3677,22 +3535,12 @@
   ::
   ++  ze
     |%
-    ::  These convert between aeon (version number), tako (commit hash), yaki
-    ::  (commit data structure), lobe (content hash), and blob (content).
+    ::  These convert between aeon (version number), tako (commit hash),
+    ::  and yaki (commit data structure)
     ::
     ++  aeon-to-tako  ~(got by hit.dom)
     ++  aeon-to-yaki  |=(=aeon (tako-to-yaki (aeon-to-tako aeon)))
-    ++  lobe-to-blob  ~(got by lat.ran)
     ++  tako-to-yaki  ~(got by hut.ran)
-    ++  lobe-to-mark
-      |=  a=lobe
-      ^-  (unit mark)
-      =>  (lobe-to-blob a)
-      ?-  -
-        %delta      `p.r
-        %direct     `p.q
-        %dead       ~
-      ==
     ::
     ::  Gets a map of the data at the given path and all children of it.
     ::
@@ -3935,7 +3783,7 @@
       ?~  x    ~
       ?~  u.x  [~ ~]
       ``[p.u.u.x !>(q.u.u.x)]
-    ::  +read-s: produce yaki or blob for given tako or lobe
+    ::  +read-s: produce miscellaneous
     ::
     ++  read-s
       |=  [yon=aeon pax=path]
@@ -3951,10 +3799,10 @@
         ``yaki+[-:!>(*yaki) u.yak]
       ::
           %blob
-        =/  bol=(unit blob)  (~(get by lat.ran) (slav %uv i.t.pax))
-        ?~  bol
+        =/  peg=(unit page)  (~(get by lat.ran) (slav %uv i.t.pax))
+        ?~  peg
           ~
-        ``blob+[-:!>(*blob) u.bol]
+        ``blob+[-:!>(*page) u.peg]
       ::
           %hash
         =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
@@ -3966,12 +3814,12 @@
         ::  should save ford cache
         ::
         =/  =lobe  (slav %uv i.t.pax)
-        =^  =page  fod.dom
-          %-  wrap:fusion
-          (lobe-to-page:(ford:fusion static-ford-args) lobe)
+        =/  peg=(unit page)  (~(get by lat.ran) lobe)
+        ?~  peg
+          ~
         =^  =cage  fod.dom
           %-  wrap:fusion
-          (page-to-cage:(ford:fusion static-ford-args) page)
+          (page-to-cage:(ford:fusion static-ford-args) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
           %open
@@ -4087,9 +3935,8 @@
     ::
     ::  If it's in our ankh (current state cache), we can just produce
     ::  the result.  Otherwise, we've got to look up the node at the
-    ::  aeon to get the content hash, use that to find the blob, and use
-    ::  the blob to get the data.  We also special-case the hoon mark
-    ::  for bootstrapping purposes.
+    ::  aeon to get the content hash, use that to find the page.  We
+    ::  also special-case the hoon mark for bootstrapping purposes.
     ::
     ++  read-x
       |=  [yon=aeon pax=path]
@@ -4108,40 +3955,16 @@
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
         [[~ ~] fod.dom]
-      =+  mar=(lobe-to-mark u.lob)
+      =/  pig=(unit page)  (~(get by lat.ran) u.lob)
       ::  if tombstoned, nothing to return
       ::
-      ?~  mar
+      ?~  pig
         [~ fod.dom]
       ::  should convert any lobe to cage
       ::
-      ?:  ?=(%hoon u.mar)
-        =/  txt
-          |-  ^-  (unit @t)
-          =+  bol=(lobe-to-blob u.lob)
-          ?-  -.bol
-              %dead    ~
-              %direct  `;;(@t q.q.bol)
-              %delta
-            =+  txt=$(u.lob q.bol)
-            ?~  txt
-              ~
-            ?>  ?=(%txt-diff p.r.bol)
-            =+  dif=;;((urge cord) q.r.bol)
-            =,  format
-            =+  pac=(of-wain (lurk:differ (to-wain (cat 3 u.txt '\0a')) dif))
-            :-  ~
-            ?~  pac
-              ''
-            (end [3 (dec (met 3 pac))] pac)
-          ==
-        :_  fod.dom
-        ?~  txt
-          ~
-        [~ ~ u.mar [%atom %t ~] u.txt]
-      =^  peg=(unit page)  fod.dom
-        %-  wrap:fusion
-        (lobe-to-unit-page:(ford:fusion static-ford-args) u.lob)
+      ?:  ?=(%hoon p.u.pig)
+        [``[%hoon [%atom %t ~] ;;(@t q.u.pig)] fod.dom]
+      =/  peg=(unit page)  (~(get by lat.ran) u.lob)
       ?~  peg
         [~ fod.dom]
       =^  =cage  fod.dom
@@ -4491,7 +4314,7 @@
       =+  ;;(=fill res)
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) our desk.fill)
-        abet:(give-backfill:den lobe.fill)
+        abet:(give-backfill:den -.fill lobe.fill)
       [[[hen %give %done ~] mos] ..^$]
     ?>  ?=([%question *] pax)
     =+  ryf=;;(riff-any res)
@@ -4526,7 +4349,12 @@
         ==
       +$  rang-11
         $:  hut=(map tako yaki)
-            lat=(map lobe blub)
+            lat=(map lobe blob-11)
+        ==
+      +$  blob-11
+        $%  [%delta p=lobe q=[p=mark q=lobe] r=page]
+            [%direct p=lobe q=page]
+            [%dead p=lobe ~]
         ==
       +$  room-11
         $:  hun=duct
@@ -4568,10 +4396,16 @@
       +$  update-state-11
         $:  =duct
             =rave
-            have=(map lobe blub)
-            need=[let=(list lobe) old=(list lobe)]
-            nako=(qeu (unit nako))
+            have=(map lobe blob-11)
+            need=(list lobe)
+            nako=(qeu (unit nako-11))
             busy=_|
+        ==
+      +$  nako-11
+        $:  gar=(map aeon tako)
+            let=aeon
+            lar=(set yaki)
+            bar=(set blob-11)
         ==
       +$  melt-11
         [bas=beak con=(list [beak germ]) sto=(map beak (unit dome-clay-11))]
@@ -4630,17 +4464,9 @@
         ==
       +$  rind-10
         $:  nix=@ud
-            bom=(map @ud update-state-10)
+            bom=(map @ud update-state-11)
             fod=(map duct @ud)
             haw=(map mood (unit cage))
-        ==
-      +$  update-state-10
-        $:  =duct
-            =rave
-            have=(map lobe blub)
-            need=(list lobe)
-            nako=(qeu (unit nako))
-            busy=_|
         ==
       +$  raft-9
         $:  rom=room-10
@@ -4866,16 +4692,6 @@
       ^-  rede-11
       %=    rede-10
           qyx  (cult-10-to-cult qyx.rede-10)
-          ref
-        ?~  ref.rede-10
-          ~
-        %=    ref.rede-10
-            bom.u
-          %-  ~(run by bom.u.ref.rede-10)
-          |=  =update-state-10
-          ^-  update-state-11
-          update-state-10(need [need.update-state-10 ~])
-        ==
       ==
     ==
     ++  cult-10-to-cult
@@ -4927,12 +4743,25 @@
   ::
   ::    add tom and nor to dome
   ::    remove parent-mark from delta blobs
+  ::    change blobs to pages
+  ::    remove have from update-state
+  ::    remove bar from nako
   ::
   ++  raft-11-to-12
     |=  raf=raft-11
     ^-  raft-12
     %=    raf
-        lat.ran  (~(run by lat.ran.raf) blub-to-blob)
+        lat.ran
+      %-  ~(gas by *(map lobe page))
+      %+  murn  ~(tap by lat.ran.raf)
+      |=  [=lobe =blob-11]
+      ^-  (unit [^lobe page])
+      ?-  -.blob-11
+        %delta   ((slog 'clay: tombstoning delta!' ~) ~)
+        %dead    ~
+        %direct  `[lobe q.blob-11]
+      ==
+    ::
         dos.rom
       %-  ~(run by dos.rom.raf)
       |=  =dojo-11
@@ -4955,7 +4784,17 @@
             bom.u
           %-  ~(run by bom.u.ref.rede-11)
           |=  =update-state-11
-          update-state-11(have (~(run by have.update-state-11) blub-to-blob))
+          %=    update-state-11
+              |2
+            %=    |3.update-state-11
+                nako
+              %-  ~(gas to *(qeu (unit nako)))
+              %+  turn  ~(tap to nako.update-state-11)
+              |=  nak=(unit nako-11)
+              ?~  nak  ~
+              `u.nak(bar ~)
+            ==
+          ==
         ==
       ==
     ==
@@ -4988,7 +4827,7 @@
   ::TODO  if it ever gets filled properly, pass in the full fur.
   ::
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
-  ?:  &(=(our his) =(%$ syd) =([%da now] u.luk))
+  ?:  &(=(our his) =(%x ren) =(%$ syd) =([%da now] u.luk))
     (read-buc u.run tyl)
   =/  den  ((de now rof [/scryduct ~] ruf) his syd)
   =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
@@ -5142,7 +4981,7 @@
       !!
     ::
         %boon
-      =+  ;;  =blub  payload.hin
+      =+  ;;  =fell  payload.hin
       ::
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
@@ -5150,7 +4989,7 @@
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        abet:abet:(take-backfill:(foreign-update:den index) blub)
+        abet:abet:(take-backfill:(foreign-update:den index) fell)
       [mos ..^$]
     ==
   ::
@@ -5293,7 +5132,7 @@
       foreign+&+hoy.ruf
       :+  %object-store  %|
       :~  commits+&+hut.ran.ruf
-          blobs+&+lat.ran.ruf
+          pages+&+lat.ran.ruf
       ==
   ==
 ::
@@ -5307,7 +5146,7 @@
     ?-    -.clue
         %lobe  `(tomb-lobe lobe.clue &)
         %all
-      =/  lobes=(list [=lobe =blob])  ~(tap by lat.ran.ruf)
+      =/  lobes=(list [=lobe =page])  ~(tap by lat.ran.ruf)
       |-
       ?~  lobes
         `..^^$
@@ -5332,10 +5171,8 @@
   ++  tomb-lobe
     |=  [lob=lobe veb=?]
     ^+  ..^$
-    =/  bol  (~(get by lat.ran.ruf) lob)
-    ?~  bol
-      (noop veb leaf+"clay: lobe doesn't exist" ~)
-    ?:  ?=(%dead -.u.bol)
+    =/  peg=(unit page)  (~(get by lat.ran.ruf) lob)
+    ?~  peg
       (noop veb leaf+"clay: file already tombstoned" ~)
     ::
     =/  used=(unit beam)
@@ -5362,21 +5199,7 @@
     ?^  used
       (noop veb leaf+"clay: file used in {<(en-beam u.used)>}" ~)
     ::
-    =/  based=(unit lobe)
-      =/  lobes=(list [=lobe =blob])  ~(tap by lat.ran.ruf)
-      |-
-      ?~  lobes
-        ~
-      ?:  ?&  ?=(%delta -.blob.i.lobes)
-              =(lob q.blob.i.lobes)
-          ==
-        `p.blob.i.lobes
-      $(lobes t.lobes)
-    ::
-    ?^  based
-      (noop veb leaf+"clay: file is base of delta for {<u.based>}" ~)
-    ::
-    =.  lat.ran.ruf  (~(put by lat.ran.ruf) lob %dead lob ~)
+    =.  lat.ran.ruf  (~(del by lat.ran.ruf) lob)
     (noop veb leaf+"clay: file successfully tombstoned" ~)
   ::
   ++  noop
@@ -5439,7 +5262,7 @@
   ::  +pick: copying gc based on norms
   ::
   ++  pick
-    =|  lat=(map lobe blob)
+    =|  lat=(map lobe page)
     =|  sen=(set [norm (map path lobe)])
     |^
     =.  ..pick-raft  pick-raft
@@ -5454,7 +5277,7 @@
         ..pick-raft
       $(yakis t.yakis, ..pick-raft (pick-yaki i.yakis))
     ::
-    ::  NB: recurring in this way with the `sen` cache provides
+    ::  NB: recurring tree-wise with the `sen` cache provides
     ::  approximately a 100x speedup on a mainnet moon in 4/2022
     ::
     ++  pick-yaki
@@ -5466,26 +5289,11 @@
       ?:  (~(has in sen) norm q.yaki)
         ..pick-raft
       =.  sen  (~(put in sen) norm q.yaki)
-      =/  bob  (~(get by lat) q.n.q.yaki)
-      =?  lat  ?|(?=(~ bob) ?=([~ %dead *] bob))
-        ?:  =([~ %|] +:(~(fit ^de norm) p.n.q.yaki))
-          (~(put by lat) q.n.q.yaki %dead q.n.q.yaki ~)
-        (uni-blobs lat (pick-lobe q.n.q.yaki))
+      =/  peg=(unit page)  (~(get by lat) q.n.q.yaki)
+      =?  lat  &(?=(^ peg) !=([~ %|] +:(~(fit ^de norm) p.n.q.yaki)))
+        (~(uni by `(map lobe page)`[[q.n.q.yaki u.peg] ~ ~]) lat)
       =.  ..pick-raft  $(q.yaki l.q.yaki)
       $(q.yaki r.q.yaki)
-    ::
-    ++  pick-lobe
-      |=  =lobe
-      ^-  (map ^lobe blob)
-      =/  bob=(unit blob)  (~(get by lat.ran.ruf) lobe)
-      ?~  bob
-        %-  (slog leaf+"clay: picking strange lobe {<lobe>}")
-        ~
-      ?-    -.u.bob
-          %dead    [[lobe u.bob] ~ ~]
-          %direct  [[lobe u.bob] ~ ~]
-          %delta   (~(put by $(lobe q.u.bob)) lobe u.bob)
-      ==
     --
   --
 --
