@@ -101,7 +101,6 @@
     =/  m  (strand ,vase)
     ^-  form:m
     ;<  =events  bind:m  (scry events /gx/azimuth/logs/noun)
-    =/  events  (scag 50 events)
     =/  [naive-contract=address chain-id=@]
       [naive chain-id]:(get-network:dice net)
     =/  snap=snap-state:dice  snap
