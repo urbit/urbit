@@ -3130,6 +3130,8 @@
     ++  fetch
       |=  =lobe
       ^+  ..abet
+      ::  TODO: upgrade to %1 when most ships have upgaded
+      ::
       =/  =fill  [%0 syd lobe]
       =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
       =/  =path  [%backfill syd (scot %ud inx) ~]
@@ -3205,9 +3207,11 @@
     %-  emil
     %+  turn  lobes
     |=  =lobe
-    =/  =fill  [%1 syd lobe]
+    ::  TODO: upgrade to %1 when most ships have upgaded
+    ::
+    =/  =fill  [%0 syd lobe]
     =/  =wire  /seek/(scot %p her)/[syd]
-    =/  =path  [%seek syd ~]
+    =/  =path  [%backfill syd ~]
     [hen %pass wire %a %plea her %c path fill]
   ::
   ++  take-fell
