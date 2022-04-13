@@ -65,9 +65,7 @@ export function RemoteContent(props: RemoteContentProps) {
   };
 
   const fallback = !renderUrl ? null : (
-    <RemoteContentWrapper {...wrapperProps}>
-      <TruncatedText>{url}</TruncatedText>
-    </RemoteContentWrapper>
+    ``
   );
 
   if (isImage && remoteContentPolicy.imageShown) {
