@@ -169,9 +169,11 @@
 ::
 ::  New desk data.
 ::
-::  Sent to other ships to update them about a particular desk.  Includes a map
-::  of all new aeons to hashes of their commits, the most recent aeon, and sets
-::  of all new commits and data.
+::  Sent to other ships to update them about a particular desk.
+::  Includes a map of all new aeons to hashes of their commits, the most
+::  recent aeon, and sets of all new commits and data.  `bar` is always
+::  empty now because we expect you to request any data you don't have
+::  yet
 ::
 +$  nako                                                ::  subscription state
   $:  gar=(map aeon tako)                               ::  new ids
@@ -3057,11 +3059,11 @@
       =*  lobe-loop  $
       ?~  lobes
         yaki-loop(yakis t.yakis)
-      ?:  (~(has by lat.ran) lobe.i.lobes)
-        lobe-loop(lobes t.lobes)
-      ?:  =([~ %|] (~(fit ^de norm) path.i.lobes))
-        lobe-loop(lobes t.lobes)
-      =.  missing  (~(put in missing) lobe.i.lobes)
+      =?    missing
+          ?&  !(~(has by lat.ran) lobe.i.lobes)
+              !=([~ %|] (~(fit ^de norm) path.i.lobes))
+          ==
+        (~(put in missing) lobe.i.lobes)
       lobe-loop(lobes t.lobes)
     ::
     ::  Receive backfill response
