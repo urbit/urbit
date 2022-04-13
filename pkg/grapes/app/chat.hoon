@@ -268,6 +268,11 @@
       =.  r.chat  
         (put:circle-on r.chat time p.d)
       ca-core
+    ::
+        %del
+      =.  r.chat
+        +:(del:circle-on r.chat p.d)
+      ca-core
     ==
   --
 --
