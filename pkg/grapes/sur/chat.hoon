@@ -1,4 +1,13 @@
 |%
++$  writs  (list [=time writ])
++$  writ   [seal memo]
+::
++$  seal
+  $:  =time
+      feel=(jug term ship)
+  ==
+::
+
 +$  resource  (pair ship term)
 +$  diff
   $%  [%add p=memo]

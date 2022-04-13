@@ -153,10 +153,12 @@
   ^-  (unit (unit cage))
   ?+  path  [~ ~]
   ::
-      [%x %chat @ @ ~]
+    [%x %chat ~]  ``resources+!>(~(key by chats))
+  ::
+      [%x %chat @ @ *]
     =/  =ship  (slav %p i.t.t.path)
     =*  name   i.t.t.t.path
-    ``noun+!>((~(has by chats) [ship name]))
+    (ca-peek:(ca-abed:ca-core ship name) t.t.t.t.path)
   ==
 ::
 ++  ca-core
@@ -183,6 +185,25 @@
     ::
         [%updates ~]
       (ca-take-update sign)
+    ==
+  ::
+  ++  ca-peek
+    |=  =(pole knot)
+    ^-  (unit (unit cage))
+    ?+    pole  [~ ~]
+    ::
+        [%fleet %newest count=@ ~]
+      =/  count  (slav %ud count.pole)
+      ``writs+!>((scag count (tap:fleet-on r.chat)))
+    ::
+        [%fleet %older start=@ count=@ ~]
+      =/  count  (slav %ud count.pole)
+      =/  start  (slav %da start.pole)
+      ``writs+!>((tab:fleet-on r.chat `start count))
+    ::
+        [%fleet %writ writ=@ ~]
+      =/  writ  (slav %da writ.pole)
+      ``writ+!>((got:fleet-on r.chat writ))
     ==
   ::
   ++  ca-take-update
