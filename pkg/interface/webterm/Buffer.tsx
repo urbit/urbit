@@ -155,7 +155,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     //  set up xterm terminal
     //
     const term = new Terminal(termConfig);
-    term.setOption('theme', makeTheme(dark));
+    term.options.theme = makeTheme(dark);
     const fit = new FitAddon();
     term.loadAddon(fit);
     fit.fit();
@@ -252,7 +252,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
   useEffect(() => {
     const theme = makeTheme(dark);
     if (session) {
-      session.term.setOption('theme', theme);
+      session.term.options.theme = theme;
     }
     if (container.current) {
       container.current.style.backgroundColor = theme.background || '';
