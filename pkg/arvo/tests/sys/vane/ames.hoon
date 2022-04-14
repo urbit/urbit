@@ -3,8 +3,8 @@
 /=  jael  /sys/vane/jael
 ::  construct some test fixtures
 ::
-=/  nec  (ames ~nec)
-=/  bud  (ames ~bud)
+=/  nec    (ames ~nec)
+=/  bud    (ames ~bud)
 =/  comet  (ames ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
 ::
 =.  now.nec        ~1111.1.1
@@ -287,7 +287,7 @@
   =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
   ::  ~bud -> %boon -> ~nec
   ::
-  =^  moves5  bud  (take bud /bone/~nec/0/1 ~[//unix] %g %boon [%post 'first1!!'])
+  =^  moves5  bud  (take bud /bone/~nec/0/1 ~[//unix] %g %boon [%post 'first1'])
   =^  moves6  nec  (call nec ~[//unix] %hear (snag-packet 0 moves5))
   ::  ~nec -> %done -> ~bud (just make sure ~bud doesn't crash on ack)
   ::
@@ -296,7 +296,8 @@
   ;:  weld
     %+  expect-eq
       !>  :~  [~[//unix] %pass /qos %d %flog %text "; ~nec is your neighbor"]
-              [~[//unix] %pass /bone/~nec/0/1 %g %plea ~nec %g /talk [%get %post]]
+              :^  ~[//unix]  %pass  /bone/~nec/0/1
+              [%g %plea ~nec %g /talk [%get %post]]
           ==
       !>  moves2
   ::
@@ -309,7 +310,7 @@
       !>  (sy ,.moves4)
   ::
     %+  expect-eq
-      !>  [~[/g/talk] %give %boon [%post 'first1!!']]
+      !>  [~[/g/talk] %give %boon [%post 'first1']]
       !>  (snag 0 `(list move:ames)`moves6)
   ==
 ::
@@ -335,14 +336,19 @@
     !>  (snag 1 `(list move:ames)`moves5)
 ::
 ++  test-old-ames-wire  ^-  tang
-  =^  moves1  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
+  =^  moves0  bud  (call bud ~[/g/hood] %spew [%odd]~)
+  =^  moves1  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
+  =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  =^  moves3  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
   %+  expect-eq
     !>  %-  sy
         :_  ~
-        [~[//unix] %pass /parse-wire %d %flog %text "; ames dropping old wire format"]
-    !>  (sy ,.moves1)
-:: ::
+        :^  ~[//unix]  %pass  /on-take-done-parse-wire
+        [%d %flog %text "ames dropping old wire format: /bone/~nec/1"]
+    !>  (snag 0 `(list move:ames)`moves3)
+::
 ++  test-dangling-bone  ^-  tang
+  =^  moves0  bud  (call bud ~[/g/hood] %spew [%odd]~)
   ::  ~nec -> %plea -> ~bud
   ::
   =^  moves1  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
@@ -362,18 +368,12 @@
   %+  expect-eq
     !>  %-  sy
         :_  ~
-        :*   ~[//unix]
-             %pass
-             /parse-wire
-             %d
-             %flog
-             %text
-             "; ames dropping wire with old rift (0)"
-        ==
+        :^  ~[//unix]  %pass  /on-take-done-parse-wire
+        [%d %flog %text "ames dropping old rift wire: /bone/~nec/0/1"]
     !>  (sy ,.moves3)
 ::
 ++  test-ames-flow-with-new-rift  ^-  tang
-  ::  ~bunecd receives a gift from %jael with ~bud's new rift
+  ::  ~nec receives a gift from %jael with ~bud's new rift
   ::
   =^  moves1  nec
     %-  take
@@ -400,7 +400,8 @@
   ;:  weld
     %+  expect-eq
       !>  :~  [~[//unix] %pass /qos %d %flog %text "; ~nec is your neighbor"]
-              [~[//unix] %pass /bone/~nec/0/1 %g %plea ~nec %g /talk [%get %post]]
+              :^  ~[//unix]  %pass  /bone/~nec/0/1
+              [%g %plea ~nec %g /talk [%get %post]]
           ==
       !>  moves3
   ::
