@@ -1196,10 +1196,32 @@ _cw_utils(c3_i argc, c3_c* argv[])
   return 0;
 }
 
+/* _main_bin_path(): copy binary path, ensuring ".exe" ending on windows
+*/
+static c3_c*
+_main_bin_path(c3_c* bin_c)
+{
+#ifdef U3_OS_mingw
+  c3_w len_w = strlen(bin_c);
+
+  if ( (4 <= len_w) && !strcmp(bin_c + len_w - 4, ".exe") ) {
+    c3_c* pat_c = c3_malloc(5 + len_w);
+    sprintf(pat_c, "%s.exe", bin_c);
+    return pat_c;
+  }
+#endif
+
+  return strdup(bin_c);
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
+  //  capture binary path
+  //
+  u3_Host.wrk_c = _main_bin_path(argv[0]);
+
   //  Parse options.
   //
   if ( _cw_utils(argc, argv) ) {
@@ -1209,24 +1231,6 @@ main(c3_i   argc,
     u3_ve_usage(argc, argv);
     return 1;
   }
-
-  if ( !u3_Host.wrk_c ) {
-    u3_Host.wrk_c = strdup(argv[0]);
-  }
-
-  //  Set `u3_Host.wrk_c` to the worker executable path.
-  // c3_i urbit_exe_len = strlen(argv[0]);
-  // c3_i worker_exe_len = 1 + urbit_exe_len + strlen("-worker");
-  // u3_Host.wrk_c = c3_malloc(worker_exe_len);
-  // #if defined(U3_OS_mingw)
-  // if ( urbit_exe_len >= 4 && !strcmp(argv[0] + urbit_exe_len - 4, ".exe")) {
-  //   snprintf(u3_Host.wrk_c, worker_exe_len, "%.*s-worker.exe", urbit_exe_len - 4, argv[0]);
-  // } else {
-  //   snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
-  // }
-  // #else
-  // snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
-  // #endif
 
   if ( c3y == u3_Host.ops_u.dem ) {
     //  In daemon mode, run the urbit as a background process, but don't
