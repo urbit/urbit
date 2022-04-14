@@ -7,6 +7,7 @@ import {
   RemoteContentOembed,
   RemoteContentVideoEmbed
 } from './embed';
+import { useEmbed } from '~/logic/state/embed';
 import { TruncatedText } from '~/views/components/TruncatedText';
 import { RemoteContentWrapper } from './wrapper';
 import AsyncFallback from '../AsyncFallback';
@@ -43,6 +44,25 @@ export const IMAGE_REGEX = new RegExp(
 export const AUDIO_REGEX = new RegExp(/(\.mp3|\.wav|\.ogg|\.m4a)$/i);
 export const VIDEO_REGEX = new RegExp(/(\.mov|\.mp4|\.ogv)$/i);
 
+// This is used to prevent our oembed parser from 
+// trying to embed facebook/instagram links, which require an API key
+const isFacebookGraphDependent = (url: string) => {
+  const caseDesensitizedURL = url.toLowerCase()
+  return (caseDesensitizedURL.includes('facebook.com') || caseDesensitizedURL.includes('instagram.com'))
+}
+
+export const validOembedCheck = (url: string) => {
+  if (hasProvider(url) && !isFacebookGraphDependent(url)) {
+    const oembed = useEmbed(url)
+    const embed = oembed.read()
+    if (!embed.hasOwnProperty("error")) {
+      return true
+    }
+  }
+  return false
+}
+
+
 const emptyRef = () => {};
 export function RemoteContent(props: RemoteContentProps) {
   const {
@@ -57,7 +77,7 @@ export function RemoteContent(props: RemoteContentProps) {
   const isImage = IMAGE_REGEX.test(url);
   const isAudio = AUDIO_REGEX.test(url);
   const isVideo = VIDEO_REGEX.test(url);
-  const isOembed = hasProvider(url);
+  const isOembed = validOembedCheck(url);
   const wrapperProps = {
     url,
     tall,

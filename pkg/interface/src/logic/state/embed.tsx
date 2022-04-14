@@ -23,7 +23,7 @@ const useEmbedState = create<EmbedState>((set, get) => ({
     const search = new URLSearchParams({
       url
     });
-    const embed = await jsonFetch(`${OEMBED_PROVIDER}?${search.toString()}`);
+    const embed = await jsonFetch(`${OEMBED_PROVIDER}?${search.toString()}`)
     const { embeds: es } = get();
     set({ embeds: { ...es, [url]: embed } });
     return embed;

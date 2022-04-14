@@ -8,8 +8,7 @@ import {
   Box,
   CenterProps
 } from '@tlon/indigo-react';
-import { hasProvider } from 'oembed-parser';
-import { AUDIO_REGEX, IMAGE_REGEX } from '~/views/components/RemoteContent';
+import { AUDIO_REGEX, IMAGE_REGEX, validOembedCheck } from '~/views/components/RemoteContent';
 import { AudioPlayer } from '~/views/components/AudioPlayer';
 import { useHistory } from 'react-router';
 import { useHovering } from '~/logic/lib/util';
@@ -57,7 +56,7 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
   const isImage = IMAGE_REGEX.test(url);
   const isAudio = AUDIO_REGEX.test(url);
 
-  const isOembed = hasProvider(url);
+  const isOembed = validOembedCheck(url);
   const history = useHistory();
   const { hovering, bind } = useHovering();
   const onClick = () => {
