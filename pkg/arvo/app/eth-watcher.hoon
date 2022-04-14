@@ -512,15 +512,12 @@
     ^-  (quip card watchdog)
     ?:  (lth number.dog 30)
       `dog
-    =/  rel-number  (sub number.dog 30)
     =/  numbers=(list number:block)  ~(tap in ~(key by pending-logs.dog))
     =.  numbers  (sort numbers lth)
     =^  logs=(list event-log:rpc:ethereum)  dog
       |-  ^-  (quip event-log:rpc:ethereum watchdog)
       ?~  numbers
         `dog
-      ?:  (gth i.numbers rel-number)
-        $(numbers t.numbers)
       =^  rel-logs-1  dog
         =/  =loglist  (~(get ja pending-logs.dog) i.numbers)
         =.  pending-logs.dog  (~(del by pending-logs.dog) i.numbers)
