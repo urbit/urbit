@@ -1201,12 +1201,15 @@ _cw_utils(c3_i argc, c3_c* argv[])
 static c3_c*
 _main_bin_path(c3_c* bin_c)
 {
+  fprintf(stderr, "bin: %s\n", bin_c);
+
 #ifdef U3_OS_mingw
   c3_w len_w = strlen(bin_c);
 
   if ( (4 <= len_w) && !strcmp(bin_c + len_w - 4, ".exe") ) {
     c3_c* pat_c = c3_malloc(5 + len_w);
     sprintf(pat_c, "%s.exe", bin_c);
+    fprintf(stderr, "pat_c: %s, len_w: %u\n", pat_c, len_w);
     return pat_c;
   }
 #endif
