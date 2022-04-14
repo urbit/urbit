@@ -1221,34 +1221,35 @@
     ::  relay the vane ack to the foreign peer
     ::
     ?~  parsed=(parse-bone-wire wire)
-      ::  no-op?
+      ::  no-op
       ::
-      =/  =tape  "; ames dropping malformed wire"
-      (emit duct %pass /parse-wire %d %flog %text tape)
+      =/  =tape  "ames dropping malformed wire: {(spud wire)}"
+      (emit duct %pass /malformed-wire %d %flog %text tape)
     ?>  ?=([@ her=ship *] u.parsed)
-    =*  her  her.u.parsed
+    =*  her          her.u.parsed
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now channel-state -.peer-state]
-
     =/  peer-core    (make-peer-core peer-state channel)
     |^
-    ?-    u.parsed
-        [%old *]
-      ::  ignore events from old wire
+    ?:  ?&  ?=([%new *] u.parsed)
+            (lth rift.u.parsed rift.peer-state)
+        ==
+      ::  ignore events from an old rift
       ::
-      =/  =tape  "; ames dropping old wire format"
-      (emit duct %pass /parse-wire %d %flog %text tape)
+      ?.  odd.veb  event-core
+      (log "ames dropping old rift wire: {(spud wire)}")
+    =/  =bone
+      ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
+    =?  event-core  &(odd.veb ?=([%old *] u.parsed))
+      (log "ames parsing old wire format: {(spud wire)}")
+    ?~  error
+      (send-ack bone)
+    (send-nack bone u.error)
     ::
-        [%new *]
-      ?:  (lth rift.u.parsed rift.peer-state)
-        ::  ignore events from an old rift
-        ::
-        =/  =tape  "; ames dropping wire with old rift ({<rift.u.parsed>})"
-        (emit duct %pass /parse-wire %d %flog %text tape)
-      ?~  error
-        (send-ack bone.u.parsed)
-      (send-nack bone.u.parsed u.error)
-    ==
+    ++  log
+      |=  =tape
+      ^+  event-core
+      (emit duct %pass /on-take-done-parse-wire %d %flog %text tape)
     ::  if processing succeded, send positive ack packet and exit
     ::
     ++  send-ack
@@ -1260,7 +1261,7 @@
     ++  send-nack
       |=  [=bone =^error]
       ^+  event-core
-      =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n)
+      =.  event-core    abet:(run-message-sink:peer-core bone %done ok=%.n)
       =/  =^peer-state  (got-peer-state her)
       =/  =^channel     [[our her] now channel-state -.peer-state]
       ::  construct nack-trace message, referencing .failed $message-num
@@ -1527,29 +1528,33 @@
   ++  on-take-boon
     |=  [=wire payload=*]
     ^+  event-core
-    ::
+    |^
     ?~  parsed=(parse-bone-wire wire)
-      =/  =tape  "; ames dropping malformed wire"
-      (emit duct %pass /parse-wire %d %flog %text tape)
+      (log "ames dropping malformed wire: {(spud wire)}")
     ::
     ?>  ?=([@ her=ship *] u.parsed)
-    =/  =peer-state  (got-peer-state her.u.parsed)
-    =/  =channel     [[our her.u.parsed] now channel-state -.peer-state]
+    =*  her          her.u.parsed
+    =/  =peer-state  (got-peer-state her)
+    =/  =channel     [[our her] now channel-state -.peer-state]
     ::
-    ?-    u.parsed
-        [%old *]
-      =/  =tape  "; ames dropping old wire"
-      (emit duct %pass /parse-wire %d %flog %text tape)
+    ?:  ?&  ?=([%new *] u.parsed)
+            (lth rift.u.parsed rift.peer-state)
+        ==
+      ::  ignore events from an old rift
+      ::
+      ?.  odd.veb  event-core
+      (log "ames dropping old rift wire: {(spud wire)}")
+    =/  =bone
+      ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
+    =?  event-core  &(odd.veb ?=([%old *] u.parsed))
+      (log "ames parsing old wire: {(spud wire)}")
+    abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
     ::
-        [%new *]
-      =,  u.parsed
-      ?:  (lth rift rift.peer-state)
-        ::  ignore events from an old rift
-        ::
-        =/  =tape  "; ames dropping wire with old rift ({<rift>})"
-        (emit duct %pass /parse-wire %d %flog %text tape)
-      abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
-    ==
+    ++  log
+      |=  =tape
+      ^+  event-core
+      (emit duct %pass /on-take-boon-parse-wire %d %flog %text tape)
+    --
   ::  +on-plea: handle request to send message
   ::
   ++  on-plea
