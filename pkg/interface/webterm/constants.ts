@@ -1,5 +1,6 @@
 export const DEFAULT_SESSION = '';
 export const DEFAULT_HANDLER = 'hood';
+export const RESIZE_DEBOUNCE_MS = 100;
 
 /**
  * Session ID validity:

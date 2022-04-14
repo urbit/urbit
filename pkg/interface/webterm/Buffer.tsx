@@ -1,5 +1,6 @@
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import { debounce } from 'lodash';
 import bel from './lib/bel';
 import api from './api';
 
@@ -13,7 +14,7 @@ import React from 'react';
 import { Box, Col } from '@tlon/indigo-react';
 import { makeTheme } from './lib/theme';
 import { showBlit, csi, hasBell } from './lib/blit';
-import { DEFAULT_SESSION } from './constants';
+import { DEFAULT_SESSION, RESIZE_DEBOUNCE_MS } from './constants';
 import { retry } from './lib/retry';
 
 const termConfig: ITerminalOptions = {
@@ -120,11 +121,10 @@ const readInput = (term: Terminal, e: string): Belt[] => {
   return belts;
 };
 
-const onResize = (session: Session) => () => {
-  //TODO  debounce, if it ever becomes a problem
-  //TODO  test that we only send this to the selected session,
-  //      and that we *do* send it on-selected-change if necessary.
-  session?.fit.fit();
+const onResize = async (name: string, session: Session) => {
+  if (session) {
+    session.fit.fit();
+  }
 };
 
 const onInput = (name: string, session: Session, e: string) => {
@@ -145,7 +145,7 @@ interface BufferProps {
 }
 
 export default function Buffer({ name, selected, dark }: BufferProps) {
-  const container = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const session: Session = useTermState(s => s.sessions[name]);
 
@@ -165,7 +165,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     //
     term.write(csi('?9h'));
 
-    const ses: Session = { term, fit, hasBell: false, subscriptionId: null  };
+    const ses: Session = { term, fit, hasBell: false, subscriptionId: null };
 
     //  set up event handlers
     //
@@ -218,6 +218,15 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     });
   }, []);
 
+  const onSelect = useCallback(async () => {
+    if (session && selected) {
+      session.fit.fit();
+      session.term.focus();
+      await api.poke(pokeTask(name, { blew: { w: session.term.cols, h: session.term.rows } }));
+    }
+  }, [session, selected]);
+
+  // Effects
   // init session
   useEffect(() => {
     if(session) {
@@ -227,25 +236,27 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     initSession(name, dark);
   }, [name]);
 
-  //  on selected change, maybe setup the term, or put it into the container
-  //
-  const setContainer = useCallback((containerRef: HTMLDivElement | null) => {
-    const newContainer = containerRef || container.current;
-    if(session && newContainer) {
-      container.current = newContainer;
+  // attach to DOM when ref is available
+  useEffect(() => {
+    if(session && containerRef.current && !session.term.element) {
+      session.term.open(containerRef.current);
     }
-  }, [session]);
+  }, [session, containerRef]);
 
-    //  on-init, open slogstream and fetch existing sessions
+  //  on-init, open slogstream and fetch existing sessions
   //
   useEffect(() => {
-    window.addEventListener('resize', onResize(session));
+    if(!session) {
+      return;
+    }
+
+    const debouncedResize =  debounce(() => onResize(name, session), RESIZE_DEBOUNCE_MS);
+    window.addEventListener('resize', debouncedResize);
 
     return () => {
-      // TODO  clean up subs?
-      window.removeEventListener('resize', onResize(session));
+      window.removeEventListener('resize', debouncedResize);
     };
-  }, []);
+  }, [session]);
 
   //  on dark mode change, change terminals' theme
   //
@@ -254,24 +265,20 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     if (session) {
       session.term.options.theme = theme;
     }
-    if (container.current) {
-      container.current.style.backgroundColor = theme.background || '';
+    if (containerRef.current) {
+      containerRef.current.style.backgroundColor = theme.background || '';
     }
   }, [session, dark]);
 
+  // On select, resize, focus, and poke herm with updated cols and rows
   useEffect(() => {
-    if (session && selected && !session.term.isOpen) {
-      session.term.open(container.current);
-      session.fit.fit();
-      session.term.focus();
-      session.term.isOpen = true;
-    }
-  }, [selected, session]);
+    onSelect();
+  }, [onSelect]);
 
   return (
     !session && !selected ?
       <p>Loading...</p>
-    :
+      :
       <Box
         width='100%'
         height='100%'
@@ -280,15 +287,15 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
         overflow='hidden'
         style={selected ? {} : { display: 'none' }}
       >
-      <Col
-        width='100%'
-        height='100%'
-        minHeight='0'
-        px={['0','2']}
-        pb={['0','2']}
-        ref={setContainer}
-      >
-      </Col>
-    </Box>
+        <Col
+          width='100%'
+          height='100%'
+          minHeight='0'
+          px={['0', '2']}
+          pb={['0', '2']}
+          ref={containerRef}
+        >
+        </Col>
+      </Box>
   );
 }

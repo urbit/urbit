@@ -17,7 +17,6 @@ export const Tab = ( { session, name }: TabProps ) => {
       state.selected = name;
       state.sessions[name].hasBell = false;
     });
-    useTermState.getState().sessions[name]?.term?.focus();
   };
 
   const onDelete = useCallback(async (e) => {

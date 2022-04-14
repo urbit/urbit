@@ -11,6 +11,7 @@
     "@urbit/api": "^1.1.1",
     "@urbit/http-api": "^1.2.1",
     "file-saver": "^2.0.5",
+    "lodash": "^4.17.21",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-router-dom": "^5.2.0",
