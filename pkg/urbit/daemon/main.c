@@ -990,6 +990,22 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
+/* _cw_disk_init(); open event log
+*/
+static u3_disk*
+_cw_disk_init(c3_c* dir_c)
+{
+  u3_disk_cb cb_u = {0};
+  u3_disk*  log_u = u3_disk_init(dir_c, cb_u);
+
+  if ( !log_u ) {
+    fprintf(stderr, "unable to open event log\n");
+    exit(1);
+  }
+
+  return log_u;
+}
+
 /* _cw_info(); print pier info
 */
 static void
@@ -997,25 +1013,16 @@ _cw_info(c3_i argc, c3_c* argv[])
 {
   c3_assert( 3 <= argc );
 
-  c3_c* dir_c = argv[2];
-  c3_d  eve_d = u3m_boot(dir_c);
+  c3_c*    dir_c = argv[2];
+  c3_d     eve_d = u3m_boot(dir_c);
+  u3_disk* log_u = _cw_disk_init(dir_c);
 
   fprintf(stderr, "\r\nurbit: %s at event %" PRIu64 "\r\n", dir_c, eve_d);
 
-  {
-    u3_disk_cb cb_u = {0};
-    u3_disk*  log_u = u3_disk_init(dir_c, cb_u);
-
-    if ( !log_u ) {
-      fprintf(stderr, "urbit: failed to open event log\r\n");
-    }
-    else {
-      u3_disk_slog(log_u);
-      printf("\n");
-      u3_lmdb_stat(log_u->mdb_u, stdout);
-      u3_disk_exit(log_u);
-    }
-  }
+  u3_disk_slog(log_u);
+  printf("\n");
+  u3_lmdb_stat(log_u->mdb_u, stdout);
+  u3_disk_exit(log_u);
 
   u3m_stop();
 }
@@ -1041,8 +1048,9 @@ _cw_cram(c3_i argc, c3_c* argv[])
 {
   c3_assert( 3 <= argc );
 
-  c3_c* dir_c = argv[2];
-  c3_d  eve_d = u3m_boot(dir_c);
+  c3_c*    dir_c = argv[2];
+  c3_d     eve_d = u3m_boot(dir_c);
+  u3_disk* log_u = _cw_disk_init(dir_c); // XX s/b try_aquire lock
   c3_o  ret_o;
 
   fprintf(stderr, "urbit: cram: preparing\r\n");
@@ -1057,6 +1065,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
   //  save even on failure, as we just did all the work of deduplication
   //
   u3e_save();
+  u3_disk_exit(log_u);
 
   if ( c3n == ret_o ) {
     exit(1);
@@ -1081,11 +1090,11 @@ _cw_queu(c3_i argc, c3_c* argv[])
     exit(1);
   }
   else {
+    u3_disk* log_u = _cw_disk_init(dir_c); // XX s/b try_aquire lock
+
     fprintf(stderr, "urbit: queu: preparing\r\n");
 
-    memset(&u3V, 0, sizeof(u3V));
-    u3V.dir_c = strdup(dir_c);
-    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
+    u3m_boot(dir_c);
 
     //  XX can spuriously fail do to corrupt memory-image checkpoint,
     //  need a u3m_half_boot equivalent
@@ -1097,6 +1106,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
     }
 
     u3e_save();
+    u3_disk_exit(log_u);
 
     fprintf(stderr, "urbit: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
     u3m_stop();
@@ -1110,18 +1120,20 @@ _cw_meld(c3_i argc, c3_c* argv[])
 {
   c3_assert( 3 <= argc );
 
-  c3_c* dir_c = argv[2];
+  c3_c*    dir_c = argv[2];
+  u3_disk* log_u = _cw_disk_init(dir_c); // XX s/b try_aquire lock
+  c3_w     pre_w;
 
   u3C.wag_w |= u3o_hashless;
   u3m_boot(dir_c);
 
-  u3_serf_grab();
-
+  pre_w = u3a_open(u3R);
   u3u_meld();
-
-  u3_serf_grab();
+  u3a_print_memory(stderr, "urbit: meld: gained", (u3a_open(u3R) - pre_w));
 
   u3e_save();
+  u3_disk_exit(log_u);
+  u3m_stop();
 }
 
 /* _cw_pack(); compact memory, save, and exit.
@@ -1131,12 +1143,14 @@ _cw_pack(c3_i argc, c3_c* argv[])
 {
   c3_assert( 3 <= argc );
 
-  c3_c* dir_c = argv[2];
+  c3_c*    dir_c = argv[2];
+  u3_disk* log_u = _cw_disk_init(dir_c); // XX s/b try_aquire lock
 
   u3m_boot(dir_c);
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3e_save();
+  u3_disk_exit(log_u);
   u3m_stop();
 }
 
