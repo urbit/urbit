@@ -3788,29 +3788,24 @@
     ++  slag                                            ::  slag stub
       |=  [a=@ b=stub]
       ^-  stub
-      =+  c=(lnts-char b)
-      =+  i=(brek a c)
-      ?~  i  ~
-      =+  r=(^slag +(p.u.i) b)
-      ?:  =(a q.u.i)
-        r
-      =+  n=(snag p.u.i b)
-      :_  r  :-  p.n
-      (^slag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
+      ?:  =(0 a)  b
+      ?~  b  ~
+      =+  c=(lent q.i.b)
+      ?:  =(c a)  t.b
+      ?:  (gth c a)
+        [[p.i.b (^slag a q.i.b)] t.b]
+      $(a (sub a c), b t.b)
     ::
     ++  scag                                            ::  scag stub
       |=  [a=@ b=stub]
       ^-  stub
-      =+  c=(lnts-char b)
-      =+  i=(brek a c)
-      ?~  i  b
-      ?:  =(a q.u.i)
-        (^scag +(p.u.i) b)
-      %+  welp
-        (^scag p.u.i b)
-      =+  n=(snag p.u.i b)
-      :_  ~  :-  p.n
-      (^scag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
+      ?:  =(0 a)  ~
+      ?~  b  ~
+      =+  c=(lent q.i.b)
+      ?:  (gth c a)
+        [p.i.b (^scag a q.i.b)]~
+      :-  i.b
+      $(a (sub a c), b t.b)
     ::
     ++  swag                                            ::  swag stub
       |=  [[a=@ b=@] c=stub]
