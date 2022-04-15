@@ -1248,6 +1248,11 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
+  for ( c3_i i = 0; i < argc; i++ ) {
+    fprintf(stderr, "%s ", argv[i]);
+  };
+  printf(stderr, "\n");
+
   //  Parse options.
   //
   if ( _cw_utils(argc, argv) ) {
