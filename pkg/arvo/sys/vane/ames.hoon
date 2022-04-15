@@ -1240,7 +1240,7 @@
       (log "ames dropping old rift wire: {(spud wire)}")
     =/  =bone
       ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-    =?  event-core  &(odd.veb ?=([%old *] u.parsed))
+    =?  event-core.peer-core  &(odd.veb ?=([%old *] u.parsed))
       (log "ames parsing old wire format: {(spud wire)}")
     ?~  error
       (send-ack bone)
@@ -1536,6 +1536,7 @@
     =*  her          her.u.parsed
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now channel-state -.peer-state]
+    =/  peer-core    (make-peer-core peer-state channel)
     ::
     ?:  ?&  ?=([%new *] u.parsed)
             (lth rift.u.parsed rift.peer-state)
@@ -1546,9 +1547,9 @@
       (log "ames dropping old rift wire: {(spud wire)}")
     =/  =bone
       ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-    =?  event-core  &(odd.veb ?=([%old *] u.parsed))
+    =?  event-core.peer-core  &(odd.veb ?=([%old *] u.parsed))
       (log "ames parsing old wire: {(spud wire)}")
-    abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
+    abet:(on-memo:peer-core bone payload %boon)
     ::
     ++  log
       |=  =tape

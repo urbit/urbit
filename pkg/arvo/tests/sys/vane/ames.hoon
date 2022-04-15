@@ -341,10 +341,8 @@
   =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
   =^  moves3  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
   %+  expect-eq
-    !>  %-  sy
-        :_  ~
-        :^  ~[//unix]  %pass  /on-take-done-parse-wire
-        [%d %flog %text "ames dropping old wire format: /bone/~nec/1"]
+    !>  :^  ~[//unix]  %pass  /on-take-done-parse-wire
+        [%d %flog %text "ames parsing old wire format: /bone/~nec/1"]
     !>  (snag 0 `(list move:ames)`moves3)
 ::
 ++  test-dangling-bone  ^-  tang
