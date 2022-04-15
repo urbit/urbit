@@ -9,14 +9,14 @@
 ::  * vertical order is priority, horizontal is mug order on keys
 ::  * no collision resolution in this implementation
 ::
-+$  pri                                               ::  psq
++$  pri                                                 ::  psq
   $@  ~
   $%  [%bin k=k p=@ v=v m=@ l=pri r=pri]
       [%tip k=k p=@ v=v]
   ==
 ::  bit/mask utilities
 ::
-++  zero                                              ::  mask keeps none
+++  zero                                                ::  mask keeps none
   ~/  %zero
   |=  [m=@ k=k]
   ^-  ?
@@ -241,7 +241,7 @@
   ?~  a  [~ ~]
   ?-    -.a
       %tip
-    ?.  =(k k.a)  [~ ~]
+    ?.  =(k k.a)  [~ a]
     [`[p.a v.a] [%tip k p v.a]]
   ::
       %bin
