@@ -12,7 +12,6 @@
   typedef struct _u3_fine {
     c3_y              ver_y;               //  fine protocol
     u3p(u3h_root)     sac_p;               //  scry cache hashtable
-    u3p(u3h_root)     bid_p;               //  pending notifications
     struct _u3_ames*  sam_u;               // ames backpointer
   } u3_fine;
 
@@ -1012,52 +1011,6 @@ _fine_lane_scry_cb(void* vod_p, u3_noun nun)
   u3z(nun);
 }
 
-/* _fine_ef_howl(): broadcast notification of newly bound data
- */
-static void
-_fine_ef_howl(u3_ames* sam_u, u3_noun pax, u3_noun lis)
-{
-  u3_noun pas = lis;
-
-  // put packets in cache
-  _fine_put_cache(sam_u, pax, pas);
-
-
-  // iterate over subscribers, sending immediately if we have the lane
-  // else, scry for a lane
-  u3_weak who = u3h_get(sam_u->fin_s.bid_p, pax);
-  if ( who == u3_none ) {
-    u3l_log("no listeners\n");
-  } else {
-    u3_noun her = u3qdi_tap(who);
-    u3_noun him = her; // original ref for counting
-
-    while ( her != u3_nul ) {
-
-      u3_weak lac =  _ames_lane_from_cache(sam_u->lax_p, u3h(her));
-
-      u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
-      pac_u->sam_u = sam_u;
-
-      _fine_got_pack(pac_u, u3h(lis));
-      if ( lac == u3_none ) {
-        u3l_log("no lane\n");
-        u3_noun pax = _lane_scry_path(u3k(u3h(her)));
-        u3_pier_peek_last(sam_u->pir_u, u3_nul, c3__ax,
-                          u3_nul, pax, pac_u, _fine_lane_scry_cb);
-      } else {
-        c3_d lan_d = u3r_chub(0, lac);
-        pac_u->lan_u.pip_w = (c3_w)lan_d;
-        pac_u->lan_u.por_s = (c3_s)(lan_d >> 32);
-
-        _fine_send(pac_u);
-      }
-
-      her = u3t(her);
-    }
-    u3z(him);
-  }
-}
 
 /* _ames_ef_send(): send packet to network (v4).
 */
@@ -1453,30 +1406,6 @@ static void _fine_got_pack(u3_pact* pac_u, u3_noun fra)
   u3z(fra);
 }
 
-static void _fine_bide(u3_pact* pac_u, u3_noun pax)
-{
-  u3_ames* sam_u = pac_u->sam_u;
-  u3_weak set = u3h_get(sam_u->fin_s.bid_p, pax);
-
-  if ( u3_none == set ) {
-    set = u3_nul;
-  }
-
-  u3_noun her = u3i_chubs(2, pac_u->req_u.pre_u.sen_d);
-  u3_noun new = u3qdi_put(set, her);
-
-  u3h_put(sam_u->fin_s.bid_p, pax, new);
-
-  u3_noun cad = u3nc(c3__bide, pax);
-  u3_noun wir = u3nc(c3__fine, u3_nul);
-  u3_ovum* ovo_u = u3_ovum_init(0, c3__ames, u3k(wir), u3k(cad));
-  u3_auto_plan(&sam_u->car_u, ovo_u);
-
-  u3z(wir);
-  u3z(cad);
-}
-
-
 /* _fine_pack_scry_cb(): receive all packets for datum out of fine
  */
 static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
@@ -1488,7 +1417,6 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c)); 
 
   if(pas == u3_none) {
-    _fine_bide(pac_u, u3k(pax));
     _ames_pact_free(pac_u);
 
     u3z(pax);
@@ -2075,13 +2003,6 @@ _ames_kick_newt(u3_ames* sam_u, u3_noun tag, u3_noun dat)
       _ames_ef_turf(sam_u, u3k(dat));
       ret_o = c3y;
     } break;
-  
-    case c3__howl: {
-      u3_noun pat = u3k(u3h(dat));
-      u3_noun lis = u3k(u3t(dat));
-      _fine_ef_howl(sam_u, pat, lis);
-      ret_o = c3y;
-    } break;
 
     case c3__hoot: {
       u3_noun lan = u3k(u3h(dat));
@@ -2249,9 +2170,6 @@ u3_ames_io_init(u3_pier* pir_u)
   // 1500 bytes per packet * 100_000 = 150MB
   // 50 bytes (average) per path * 100_000 = 5MB
   sam_u->fin_s.sac_p = u3h_new_cache(100000);
-
-  // hashtable for notificatiosn
-  sam_u->fin_s.bid_p = u3h_new_cache(100000);
 
   //NOTE  some numbers on memory usage for the lane cache
   //
