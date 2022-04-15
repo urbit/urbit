@@ -1066,7 +1066,6 @@
   ::
   ::    %keen: data request from arvo
   ::    %yawn: cancel request from arvo
-  ::    %bide: unix awaiting datum creation (%howl)
   ::
   ::    System and Lifecycle Tasks
   ::
@@ -1086,7 +1085,6 @@
         [%keen =ship =path]
         [%pine =ship =path]
         [%yawn =ship =path]
-        [%bide =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -1108,7 +1106,6 @@
   ::
   ::    Remote Scry Gifts
   ::    %tune: found data for arvo
-  ::    %howl: full response packets
   ::    %miss: no case for %pine
   ::
   ::    System and Lifecycle Gifts
@@ -1124,7 +1121,6 @@
         [%send =lane =blob]
     ::
         [%tune =path sign=@ux data=(unit (cask))]
-        [%howl =path =song]
         [%miss =path]
     ::
         [%turf turfs=(list turf)]
@@ -2994,8 +2990,5 @@
       ::  %behn: wakeup
       ::
       $>(%wake task:behn)
-      ::  %ames: await namespace datum
-      ::
-      $>(%bide task:ames)
   ==
 --  ::

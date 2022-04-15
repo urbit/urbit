@@ -832,9 +832,6 @@
   $%  $:  %behn
       $%  $>(%wake gift:behn)
       ==  ==
-      $:  ?(%behn %clay)
-      $%  [%writ p=riot:clay]
-      ==  ==
       $:  %jael
       $%  [%private-keys =life vein=(map life ring)]
           [%public-keys =public-keys-result]
@@ -1133,7 +1130,6 @@
       %pine  (on-pine:fine:event-core +.task)
       %keen  (on-keen:fine:event-core +.task)
       %yawn  (on-yawn:fine:event-core +.task)
-      %bide  (on-bide:fine:event-core +.task)
     ==
   ::
   [moves ames-gate]
@@ -1153,8 +1149,6 @@
     ?-  sign
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
-    ::
-      [?(%clay %behn) %writ *]  (on-take-clay-bide:fine:event-core wire p.sign)
     ::
       [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
@@ -3173,40 +3167,6 @@
           ?~  peer-core  
             ~|(%no-ship-for-yawn !!)
           pe-abet:(pe-yawn:u.peer-core path)
-        ::
-        ++  on-bide
-          |=  =path
-          ^+  event-core
-          ::  TODO: other vanes?
-          (bide-clay path)
-        ::
-        ++  bide-clay
-          |=  =path
-          ^+  event-core
-          ?>  ?=([@ @ *] path)
-          =/  =wire
-            (welp /fine/bide path)
-          =+  blk=(de-path:balk path)
-          ?>  ?=(%c van.blk)
-          =/  [des=desk spr=spur]
-            ?^  spr.blk  spr.blk
-            [%$ ~]
-          =+  ;;(=care:clay car.blk)
-          =/  =rave:clay
-            [%sing care cas.blk spr]
-          (emit duct %pass wire %c %warp her.blk des `rave)
-        ::
-        ++  on-take-clay-bide
-          |=  [=wire =riot:clay]
-          ?>  ?=([%fine %bide @ *] wire)
-          =/  pax=path  t.t.wire
-          =/  cas=(unit (cask))
-            ?~  riot  ~
-            `[p q.q]:r.u.riot
-          =/  =song
-            (encode-response pax (fall cas ~))
-          %-  emit
-          [unix-duct.ames-state %give %howl pax song]
         ::
         ++  on-take-wake
           |=  [=wire error=(unit tang)]
