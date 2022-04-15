@@ -609,7 +609,7 @@
     ::
         [%resend @ @ ~]
       =/  [address=@ux nonce=@ud]
-        [(slav %ux i.t.wire) (rash i.t.t.wire dem)]
+        [(slav %ux i.t.wire) (slav %ud i.t.t.wire)]
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
         =/  cards=(list card)  (send-roll:do address nonce)
@@ -694,7 +694,7 @@
       |=  [address=@t nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
       =/  [address=@ux nonce=@ud]
-        [(slav %ux address) (rash nonce dem)]
+        [(slav %ux address) (slav %ud nonce)]
       ?-  -.sign
           %poke-ack
         ?~  p.sign
@@ -796,7 +796,7 @@
     ++  refresh
       |=  [nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
-      =/  failed-nonce=@ud  (rash nonce dem)
+      =/  failed-nonce=@ud  (slav %ud nonce)
       ?-  -.sign
           %poke-ack
         ?~  p.sign
