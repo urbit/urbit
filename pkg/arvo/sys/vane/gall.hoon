@@ -1493,9 +1493,13 @@
           ::
           ?:  =(~ agent-wire)
             on-missing
+          =/  has-nonce=(unit @ud)  (slaw %ud (head agent-wire))
+          ?:  &(?=(~ has-nonce) ?=(%kick -.sign))
+            on-weird-kick
           ::  pop nonce off .agent-wire and match against stored subscription
           ::
-          =:  nonce       (slav %ud (head agent-wire))
+          ?>  ?=(^ has-nonce)
+          =:  nonce       u.has-nonce
               agent-wire  (tail agent-wire)
             ==
           =/  got  (~(get by outbound.watches.yoke) sub-key)
@@ -1549,6 +1553,14 @@
         %-  slog  :~
           leaf+"{<agent-name>}: got {<-.sign>} for nonexistent subscription"
           leaf+"{<dock>}: {<[nonce=nonce agent-wire]>}"
+          >wire=wire<
+        ==
+      ::
+      ++  on-weird-kick
+        %.  run-sign
+        %-  slog  :~
+          leaf+"{<agent-name>}: got %kick for nonexistent subscription"
+          leaf+"{<dock>}: {<agent-wire>}"
           >wire=wire<
         ==
       ::

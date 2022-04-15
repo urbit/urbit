@@ -2504,7 +2504,6 @@
          (on-hear [message-num fragment-num=p.ack-meat]:task)
         ::
             %|
-          ~&  [current.state message+message-num:task]
           =/  cork=?
             =/  top-live
               (pry:packet-queue:*make-packet-pump live.packet-pump-state.state)
