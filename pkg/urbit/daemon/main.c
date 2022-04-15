@@ -829,13 +829,86 @@ _cw_serf_exit(void)
   u3t_trace_close();
 }
 
-#if defined(U3_OS_mingw)
-/* _mingw_ctrlc_cb(): invoked when the lord signals the Ctrl-C event
+/* _cw_init_io(): initialize i/o streams.
 */
 static void
-_mingw_ctrlc_cb(PVOID param, BOOLEAN timedOut)
+_cw_init_io(uv_loop_t* lup_u)
+{
+  //  mars is spawned with [FD 0] = events and [FD 1] = effects
+  //  we dup [FD 0 & 1] so we don't accidently use them for something else
+  //  we replace [FD 0] (stdin) with a fd pointing to /dev/null
+  //  we replace [FD 1] (stdout) with a dup of [FD 2] (stderr)
+  //
+  c3_i nul_i = c3_open(c3_dev_null, O_RDWR, 0);
+  c3_i inn_i = dup(0);
+  c3_i out_i = dup(1);
+
+  dup2(nul_i, 0);
+  dup2(2, 1);
+
+  close(nul_i);
+
+  //  set stream I/O to unbuffered because it's now a pipe not a console
+  //
+  setvbuf(stdout, NULL, _IONBF, 0);
+  setvbuf(stderr, NULL, _IONBF, 0);
+
+  //  Ignore SIGPIPE signals.
+  //
+#ifndef U3_OS_mingw
+  {
+    struct sigaction sig_s = {{0}};
+    sigemptyset(&(sig_s.sa_mask));
+    sig_s.sa_handler = SIG_IGN;
+    sigaction(SIGPIPE, &sig_s, 0);
+  }
+#endif
+
+  //  configure pipe to daemon process
+  //
+  {
+    c3_i err_i;
+    err_i = uv_timer_init(lup_u, &inn_u.tim_u);
+    c3_assert(!err_i);
+    err_i = uv_pipe_init(lup_u, &inn_u.pyp_u, 0);
+    c3_assert(!err_i);
+    uv_pipe_open(&inn_u.pyp_u, inn_i);
+    err_i = uv_pipe_init(lup_u, &out_u.pyp_u, 0);
+    c3_assert(!err_i);
+    uv_pipe_open(&out_u.pyp_u, out_i);
+
+    uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
+  }
+}
+
+#ifdef U3_OS_mingw
+/* _cw_intr_win_cb(): invoked when urth signals ctrl-c.
+*/
+static void
+_cw_intr_win_cb(PVOID param, BOOLEAN timedOut)
 {
   rsignal_raise(SIGINT);
+}
+
+/* _cw_intr_win(): initialize ctrl-c handling.
+*/
+static void
+_cw_intr_win(c3_c* han_c)
+{
+  HANDLE h;
+  if ( 1 != sscanf(han_c, "%" PRIu64, &h) ) {
+    fprintf(stderr, "mars: ctrl-c event: bad handle %s: %s\r\n",
+            han_c, strerror(errno));
+  }
+  else {
+    if ( !RegisterWaitForSingleObject(&h, h, _cw_intr_win_cb,
+                                      NULL, INFINITE, 0) )
+    {
+      fprintf(stderr,
+        "mars: ctrl-c event: RegisterWaitForSingleObject(%u) failed (%d)\r\n",
+        h, GetLastError());
+    }
+  }
 }
 #endif
 
@@ -844,37 +917,28 @@ _mingw_ctrlc_cb(PVOID param, BOOLEAN timedOut)
 static void
 _cw_serf_commence(c3_i argc, c3_c* argv[])
 {
-  c3_i inn_i, out_i;
-  _cw_serf_stdio(&inn_i, &out_i);
-
 #ifdef U3_OS_mingw
-  c3_assert( 8 == argc );
-
-  //  Initialize serf's end of Ctrl-C handling
-  //
-  {
-    HANDLE h;
-    if ( 1 != sscanf(argv[7], "%" PRIu64, &h) ) {
-      fprintf(stderr, "serf: Ctrl-C event: bad handle %s: %s\r\n", argv[7], strerror(errno));
-    } else
-    if ( !RegisterWaitForSingleObject(&h, h, _mingw_ctrlc_cb, NULL, INFINITE, 0) ) {
-      fprintf(stderr, "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n", h, GetLastError());
-    }
-  }
+  if ( 8 > argc ) {
 #else
-  c3_assert( 7 == argc );
+  if ( 7 > argc ) {
 #endif
+    fprintf(stderr, "serf: missing args\n");
+    exit(1);
+  }
 
-  uv_loop_t* lup_u = uv_default_loop();
+  c3_d       eve_d = 0;
+  uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
   c3_c*      dir_c = argv[2];
-  c3_c*      key_c = argv[3];
+  c3_c*      key_c = argv[3]; // XX use passkey
   c3_c*      wag_c = argv[4];
   c3_c*      hap_c = argv[5];
-  c3_d       eve_d = 0;
+  c3_c*      eve_c = argv[6];
+#ifdef U3_OS_mingw
+  c3_c*      han_c = argv[7];
+  _cw_intr_win(han_c);
+#endif
 
-  if ( 1 != sscanf(argv[6], "%" PRIu64 "", &eve_d) ) {
-    fprintf(stderr, "serf: rock: invalid number '%s'\r\n", argv[4]);
-  }
+  _cw_init_io(lup_u);
 
   memset(&u3V, 0, sizeof(u3V));
   memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
@@ -884,7 +948,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   //    XX and then ... use passkey
   //
   {
-    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
+    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64,
                   &u3V.key_d[0],
                   &u3V.key_d[1],
                   &u3V.key_d[2],
@@ -896,35 +960,10 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   {
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
     sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
-  }
 
-  //  Ignore SIGPIPE signals.
-  //
-  #ifndef U3_OS_mingw
-  {
-    struct sigaction sig_s = {{0}};
-    sigemptyset(&(sig_s.sa_mask));
-    sig_s.sa_handler = SIG_IGN;
-    sigaction(SIGPIPE, &sig_s, 0);
-  }
-  #endif
-
-  //  configure pipe to daemon process
-  //
-  {
-    c3_i err_i;
-
-    err_i = uv_timer_init(lup_u, &inn_u.tim_u);
-    c3_assert(!err_i);
-    err_i = uv_pipe_init(lup_u, &inn_u.pyp_u, 0);
-    c3_assert(!err_i);
-    uv_pipe_open(&inn_u.pyp_u, inn_i);
-
-    err_i = uv_pipe_init(lup_u, &out_u.pyp_u, 0);
-    c3_assert(!err_i);
-    uv_pipe_open(&out_u.pyp_u, out_i);
-
-    uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
+    if ( 1 != sscanf(eve_c, "%" PRIu64, &eve_d) ) {
+      fprintf(stderr, "serf: rock: invalid number '%s'\r\n", argv[4]);
+    }
   }
 
   sil_u = u3s_cue_xeno_init();
