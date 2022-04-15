@@ -1346,7 +1346,7 @@
   |^
   ::  print error if there was one
   ::
-  ~?  ?=(%| -.result)  [dap.bowl %send-error +.p.result]
+  ~?  ?=(%| -.result)  [dap.bowl %send-error nonce+nonce +.p.result]
   ::  if this nonce was removed from the queue by a
   ::  previous resend-with-higher-gas thread, it's done
   ::
@@ -1485,7 +1485,6 @@
   ?~  wer=(~(get by finding) keccak)
     ::  tx not submitted by this roller
     ::
-    ~&  >>  "weird tx diff <keccak>"
     [~ state]
   ?@  u.wer
     ~?  &(?=(%confirmed u.wer) ?=(~ err.diff))

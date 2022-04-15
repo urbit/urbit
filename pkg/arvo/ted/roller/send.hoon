@@ -40,16 +40,15 @@
 ::  if chain expects a different nonce, don't send this transaction
 ::
 ?.  =(nonce expected-nonce)
-  ~&  >>>  [%unexpected-nonce nonce expected+expected-nonce]
   %-  pure:m
   !>  ^-  [%.n @tas @t]
   :+  %.n
     %not-sent
   ?:  (lth expected-nonce nonce)
-    ::  if ahead, it will use the same next-gas-price when resending
+    ::  if ahead, use the same next-gas-price when resending
     ::
     %ahead-nonce
-  ::  if behind, start out-of-sync flow
+  ::  if behind, start out-of-sync flow if batch was not sent before
   ::
   %behind-nonce
 ::  if a gas-price of 0 was specified, fetch the recommended one
