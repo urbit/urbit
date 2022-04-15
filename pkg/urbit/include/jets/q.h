@@ -270,6 +270,7 @@
     u3_noun u3qe_qat_wane(u3_atom, u3_atom, u3_noun, u3_atom, u3_noun, u3_noun);
     u3_noun u3qe_qat_get(u3_noun, u3_atom);
     u3_noun u3qe_qat_del(u3_noun, u3_atom);
+    u3_noun u3qe_qat_pet(u3_noun, u3_atom);
     u3_noun u3qe_qat_raw(u3_noun, u3_atom, u3_atom, u3_noun);
     u3_noun u3qe_qat_put(u3_noun, u3_atom, u3_atom, u3_noun);
     u3_noun u3qe_qat_vip(u3_noun, u3_atom, u3_atom, u3_noun);

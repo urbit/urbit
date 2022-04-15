@@ -161,6 +161,7 @@
     u3_noun u3wdu_qat_make(u3_noun);
     u3_noun u3wdu_qat_tie(u3_noun);
     u3_noun u3wdu_qat_del(u3_noun);
+    u3_noun u3wdu_qat_pet(u3_noun);
     u3_noun u3wdu_qat_raw(u3_noun);
     u3_noun u3wdu_qat_put(u3_noun);
     u3_noun u3wdu_qat_jib(u3_noun);
@@ -345,6 +346,7 @@
     u3_noun u3we_qat_wane(u3_noun);
     u3_noun u3we_qat_get(u3_noun);
     u3_noun u3we_qat_del(u3_noun);
+    u3_noun u3we_qat_pet(u3_noun);
     u3_noun u3we_qat_raw(u3_noun);
     u3_noun u3we_qat_put(u3_noun);
     u3_noun u3we_qat_vip(u3_noun);
