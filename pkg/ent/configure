@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+: "${MAKE:=make}"
+
 log () {
   echo "$@" >&2;
 }
@@ -14,7 +16,7 @@ do
 
     log "Trying IMPL=$IMPL"
 
-    if IMPL=$impl make >/dev/null 2>/dev/null
+    if IMPL=$impl ${MAKE} >/dev/null 2>/dev/null
     then sed -i 's|$(error IMPL must be set)|IMPL='"$impl"'|' Makefile
          log "IMPL=$IMPL works"
          exit 0

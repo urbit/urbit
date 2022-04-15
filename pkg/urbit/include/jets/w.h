@@ -206,6 +206,9 @@
     u3_noun u3we_sign(u3_noun);
     u3_noun u3we_reco(u3_noun);
 
+    u3_noun u3we_sosi(u3_noun);
+    u3_noun u3we_sove(u3_noun);
+
     u3_noun u3we_en_base16(u3_noun);
     u3_noun u3we_de_base16(u3_noun);
 

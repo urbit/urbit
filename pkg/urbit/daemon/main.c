@@ -15,6 +15,7 @@
 #include <h2o.h>
 #include <curl/curl.h>
 #include <vere/db/lmdb.h>
+#include <getopt.h>
 
 #include "ca-bundle.h"
 
@@ -54,12 +55,50 @@ _main_presig(c3_c* txt_c)
   return new_c;
 }
 
+/* _main_repath(): canonicalize path, using dirname if needed.
+*/
+c3_c*
+_main_repath(c3_c* pax_c)
+{
+  c3_c* rel_c;
+  c3_c* fas_c;
+  c3_c* dir_c;
+  c3_w  len_w;
+  c3_i  wit_i;
+
+  c3_assert(pax_c);
+  if ( 0 != (rel_c = realpath(pax_c, 0)) ) {
+    return rel_c;
+  }
+  fas_c = strrchr(pax_c, '/');
+  if ( !fas_c ) {
+    c3_c rec_c[2048];
+
+    wit_i = snprintf(rec_c, sizeof(rec_c), "./%s", pax_c);
+    c3_assert(sizeof(rec_c) > wit_i);
+    return _main_repath(rec_c);
+  }
+  c3_assert(u3_unix_cane(fas_c + 1));
+  *fas_c = 0;
+  dir_c = realpath(pax_c, 0);
+  *fas_c = '/';
+  if ( 0 == dir_c ) {
+    return 0;
+  }
+  len_w = strlen(dir_c) + strlen(fas_c) + 1;
+  rel_c = c3_malloc(len_w);
+  wit_i = snprintf(rel_c, len_w, "%s%s", dir_c, fas_c);
+  c3_assert(len_w == wit_i + 1);
+  c3_free(dir_c);
+  return rel_c;
+}
+
 /* _main_getopt(): extract option map from command line.
 */
 static u3_noun
 _main_getopt(c3_i argc, c3_c** argv)
 {
-  c3_i ch_i;
+  c3_i ch_i, lid_i;
   c3_w arg_w;
 
   u3_Host.ops_u.abo = c3n;
@@ -87,8 +126,53 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( -1 != (ch_i=getopt(argc, argv,
-                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
+  static struct option lop_u[] = {
+    { "arvo",                required_argument, NULL, 'A' },
+    { "abort",               no_argument,       NULL, 'a' },
+    { "bootstrap",           required_argument, NULL, 'B' },
+    { "http-ip",             required_argument, NULL, 'b' },
+    { "memo-cache-limit",    required_argument, NULL, 'C' },
+    { "pier",                required_argument, NULL, 'c' },
+    { "replay",              no_argument,       NULL, 'D' },
+    { "daemon",              no_argument,       NULL, 'd' },
+    { "ethereum",            required_argument, NULL, 'e' },
+    { "fake",                required_argument, NULL, 'F' },
+    { "key-string",          required_argument, NULL, 'G' },
+    { "gc",                  no_argument,       NULL, 'g' },
+    { "dns-root",            required_argument, NULL, 'H' },
+    { "inject",              required_argument, NULL, 'I' },
+    { "import",              required_argument, NULL, 'i' },
+    { "ivory-pill",          required_argument, NULL, 'J' },
+    { "json-trace",          no_argument,       NULL, 'j' },
+    { "kernel-stage",        required_argument, NULL, 'K' },
+    { "key-file",            required_argument, NULL, 'k' },
+    { "local",               no_argument,       NULL, 'L' },
+    { "lite-boot",           no_argument,       NULL, 'l' },
+    { "replay-to",           required_argument, NULL, 'n' },
+    { "profile",             no_argument,       NULL, 'P' },
+    { "ames-port",           required_argument, NULL, 'p' },
+    { "http-port",           required_argument, NULL, c3__http },
+    { "https-port",          required_argument, NULL, c3__htls },
+    { "no-conn",             no_argument,       NULL, c3__noco },
+    { "quiet",               no_argument,       NULL, 'q' },
+    { "versions",            no_argument,       NULL, 'R' },
+    { "replay-from",         required_argument, NULL, 'r' },
+    { "skip-battery-hashes", no_argument,       NULL, 'S' },
+    { "autoselect-pill",     no_argument,       NULL, 's' },
+    { "no-tty",              no_argument,       NULL, 't' },
+    { "bootstrap-url",       required_argument, NULL, 'u' },
+    { "verbose",             no_argument,       NULL, 'v' },
+    { "name",                required_argument, NULL, 'w' },
+    { "scry",                required_argument, NULL, 'X' },
+    { "exit",                no_argument,       NULL, 'x' },
+    { "scry-into",           required_argument, NULL, 'Y' },
+    { "scry-format",         required_argument, NULL, 'Z' },
+    { NULL, 0, NULL, 0 },
+  };
+
+  while ( -1 != (ch_i=getopt_long(argc, argv,
+                 "A:B:C:DF:G:H:I:J:K:LPRSX:Y:Z:ab:cde:gi:jk:ln:p:qr:stu:vw:x",
+                 lop_u, &lid_i)) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -96,7 +180,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'Y': {
-        u3_Host.ops_u.puk_c = strdup(optarg);
+        u3_Host.ops_u.puk_c = _main_repath(optarg);
         break;
       }
       case 'Z': {
@@ -104,11 +188,11 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'J': {
-        u3_Host.ops_u.lit_c = strdup(optarg);
+        u3_Host.ops_u.lit_c = _main_repath(optarg);
         break;
       }
       case 'B': {
-        u3_Host.ops_u.pil_c = strdup(optarg);
+        u3_Host.ops_u.pil_c = _main_repath(optarg);
         break;
       }
       case 'b': {
@@ -120,7 +204,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'A': {
-        u3_Host.ops_u.arv_c = strdup(optarg);
+        u3_Host.ops_u.arv_c = _main_repath(optarg);
         break;
       }
       case 'H': {
@@ -128,7 +212,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'I': {
-        u3_Host.ops_u.jin_c = strdup(optarg);
+        u3_Host.ops_u.jin_c = _main_repath(optarg);
         break;
       }
       case 'C': {
@@ -166,7 +250,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'k': {
-        u3_Host.ops_u.key_c = strdup(optarg);
+        u3_Host.ops_u.key_c = _main_repath(optarg);
         break;
       }
       case 'n': {
@@ -179,6 +263,22 @@ _main_getopt(c3_i argc, c3_c** argv)
         } else u3_Host.ops_u.por_s = arg_w;
         break;
       }
+      case c3__http: {
+        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
+          return c3n;
+        } else u3_Host.ops_u.per_s = arg_w;
+        break;
+      }
+      case c3__htls: {
+        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
+          return c3n;
+        } else u3_Host.ops_u.pes_s = arg_w;
+        break;
+      }
+      case c3__noco: {
+        u3_Host.ops_u.con = c3n;
+        break;
+      }
       case 'R': {
         u3_Host.ops_u.rep = c3y;
         return c3y;
@@ -188,7 +288,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'i': {
-        u3_Host.ops_u.imp_c = strdup(optarg);
+        u3_Host.ops_u.imp_c = _main_repath(optarg);
         break;
       }
       case 'L': { u3_Host.ops_u.net = c3n; break; }
@@ -248,7 +348,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
     }
 
-    u3_Host.dir_c = strdup(argv[optind]);
+    u3_Host.dir_c = _main_repath(argv[optind]);
   }
 
   //  daemon mode (-d) implies disabling terminal assumptions (-t)
@@ -276,9 +376,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       exit(1);
     }
   }
-
-  c3_t imp_t = ((0 != u3_Host.ops_u.who_c) &&
-                (4 == strlen(u3_Host.ops_u.who_c)));
 
   if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
     fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
@@ -319,10 +416,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
     return c3n;
-  }
-
-  if ( u3_Host.ops_u.eth_c == 0 && imp_t ) {
-    u3_Host.ops_u.eth_c = "http://eth-mainnet.urbit.org:8545";
   }
 
   if ( u3_Host.ops_u.url_c != 0 && u3_Host.ops_u.pil_c != 0 ) {
@@ -437,37 +530,46 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "where ship_name is a @p phonetic representation of an urbit address\n",
     "without the leading '~', and options is some subset of the following:\n",
     "\n",
-    "-A dir        Use dir for initial clay sync\n",
-    "-B pill       Bootstrap from this pill\n",
-    "-b ip         Bind HTTP server to this IP address\n",
-    "-C limit      Set memo cache max size; 0 means uncapped\n",
-    "-c pier       Create a new urbit in pier/\n",
-    "-D            Recompute from events\n",
-    "-d            Daemon mode; implies -t\n",
-    "-e url        Urbit ID (L2) gateway\n",
-    "-F ship       Fake keys; also disables networking\n",
-    "-G string     Private key string (see also -k)\n",
-    "-g            Set GC flag\n",
-    "-i jam_file   import pier state\n",
-    "-j            Create json trace file in .urb/put/trace\n",
-    "-K stage      Start at Hoon kernel version stage\n",
-    "-k file-path  Private key file (see also -G)\n",
-    "-L            local networking only\n",
-    "-P            Profiling\n",
-    "-p ames_port  Set the ames port to bind to\n",
-    "-q            Quiet\n",
-    "-R            Report urbit build info\n",
-    "-S            Disable battery hashing\n",
+    "-A, --arvo DIR                Use dir for initial clay sync\n",
+    "-a, --abort                   Abort aggressively\n",
+    "-B, --bootstrap PILL          Bootstrap from this pill\n",
+    "-b, --http-ip IP              Bind HTTP server to this IP address\n",
+    "-C, --memo-cache-limit LIMIT  Set memo cache max size; 0 means uncapped\n",
+    "-c, --pier PIER               Create a new urbit in pier/\n",
+    "-D, --replay                  Recompute from events\n",
+    "-d, --daemon                  Daemon mode; implies -t\n",
+    "-e, --ethereum URL            Ethereum gateway\n",
+    "-F, --fake SHIP               Fake keys; also disables networking\n",
+    "-G, --key-string STRING       Private key string (@uw, see also -k)\n"
+    "-g, --gc                      Set GC flag\n",
+    "-I, --inject FILE             Inject event from jamfile\n",
+    "-i, --import FILE             Import pier state from jamfile\n",
+    "-J, --ivory-pill PILL         Use custom ivory pill\n",
+    "-j, --json-trace              Create json trace file in .urb/put/trace\n",
+    "-K, --kernel-stage STAGE      Start at Hoon kernel version stage\n",
+    "-k, --key-file KEYS           Private key file (see also -G)\n",
+    "-L, --local                   Local networking only\n",
+    "-l, --lite-boot               Most-minimal startup\n",
+    "-n, --replay-to NUMBER        Replay up to event\n",
+    "-P, --profile                 Profiling\n",
+    "-p, --ames-port PORT          Set the ames port to bind to\n",
+    "    --http-port PORT          Set the http port to bind to\n",
+    "    --https-port PORT         Set the https port to bind to\n",
+    "-q, --quiet                   Quiet\n",
+    "-R, --versions                Report urbit build info\n",
+    "-r, --replay-from NUMBER      Load snapshot from event\n",
+    "-S, --skip-battery-hashes     Disable battery hashing\n",
     // XX find a way to re-enable
-    // "-s            Pill URL from arvo git hash\n",
-    "-t            Disable terminal/tty assumptions\n",
-    "-u url        URL from which to download pill\n",
-    "-v            Verbose\n",
-    "-w name       Boot as ~name\n",
-    "-X path       Scry, write to file, then exit\n"
-    "-x            Exit immediately\n",
-    "-Y file       Optional name of file (for -X and -o)\n"
-    "-Z format     Optional file format ('jam', or aura, for -X)\n"
+    // "-s, --autoselect-pill      Pill URL from arvo git hash\n",
+    "-t, --no-tty                  Disable terminal/tty assumptions\n",
+    "-u, --bootstrap-url URL       URL from which to download pill\n",
+    "-v, --verbose                 Verbose\n",
+    "-w, --name NAME               Boot as ~name\n",
+    "-X, --scry PATH               Scry, write to file, then exit\n",
+    "-x, --exit                    Exit immediately\n",
+    "-Y, --scry-into FILE          Optional name of file (for -X)\n",
+    "-Z, --scry-format FORMAT      Optional file format ('jam', or aura, for -X)\n",
+    "    --no-conn                 Do not run control plane\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
@@ -663,31 +765,7 @@ main(c3_i   argc,
   printf("~\n");
   //  printf("welcome.\n");
   printf("urbit %s\n", URBIT_VERSION);
-
-  // prints the absolute path of the pier
-  //
-  c3_c* abs_c = realpath(u3_Host.dir_c, 0);
-
-  // if the ship is being booted, we use realpath(). Otherwise, we use getcwd()
-  // with a memory-allocation loop
-  //
-  if (abs_c == NULL) {
-    c3_i mprint_i = 1000;
-    abs_c = c3_malloc(mprint_i);
-
-    // allocates more memory as needed if the path is too large
-    //
-    while ( abs_c != getcwd(abs_c, mprint_i) ) {
-      c3_free(abs_c);
-      mprint_i *= 2;
-      abs_c = c3_malloc(mprint_i);
-    }
-    printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
-    c3_free(abs_c);
-  } else {
-    printf("boot: home is %s\n", abs_c);
-    c3_free(abs_c);
-  }
+  printf("boot: home is %s\n", u3_Host.dir_c);
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem ) {
@@ -770,7 +848,7 @@ main(c3_i   argc,
 
     //  starting u3m configures OpenSSL memory functions, so we must do it
     //  before any OpenSSL allocations
-    // 
+    //
     u3m_boot_lite();
 
     //  Initialize OpenSSL for client and server
