@@ -3,7 +3,8 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useState
+  useState,
+  useRef
 } from 'react';
 import styled from 'styled-components';
 import UnstyledEmbedContainer from 'react-oembed-container';
@@ -333,8 +334,9 @@ export const RemoteContentOembed = React.forwardRef<
   RemoteContentOembedProps
 >((props, ref) => {
   const { url, renderUrl = false, thumbnail = false, ...rest } = props;
-  const oembed = useEmbed(url);
-  const embed = oembed.read();
+
+  const oembed = useRef(useEmbed(url))
+  const embed = oembed.current.read()
   const fallbackError  = new Error('fallback');
 
   const [aspect, width, height] = useMemo(() => {
