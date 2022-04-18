@@ -457,9 +457,7 @@ const renderers = {
     </Box>
   ),
   'graph-url': ({ url, tall }) => (
-    <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent key={url} url={url} tall={tall} />
-    </Box>
+     <RemoteContent key={url} url={url} tall={tall} />
   ),
   'graph-reference': ({ reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
