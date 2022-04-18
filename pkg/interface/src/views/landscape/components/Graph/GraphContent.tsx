@@ -147,13 +147,14 @@ const contentToMdAst = (tall: boolean) => (
     ];
   } else if ('url' in content) {
     return [
-      'block',
+      'inline',
       {
         type: 'root',
         children: [
           {
-            type: 'graph-url',
-            url: content.url
+            type: 'link',
+            url: content.url,
+            children: [{type: 'text', value: content.url}]
           }
         ]
       }
