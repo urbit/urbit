@@ -68,6 +68,8 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       position="relative"
       m={m}
       border={border}
+      borderColor="lightGray"
+      borderRadius="1"
       {...rest}
       {...bind}
     >
