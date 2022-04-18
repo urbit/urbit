@@ -12,8 +12,6 @@ import create from 'zustand';
 import produce from 'immer';
 import { useCallback } from 'react';
 import api from './api';
-import { fakeRequest, useMockData } from './util';
-import { mockVats } from './mock-data';
 
 interface KilnState {
   vats: Vats;
@@ -26,15 +24,10 @@ interface KilnState {
   set: (s: KilnState) => void;
 }
 const useKilnState = create<KilnState>((set, get) => ({
-  vats: useMockData ? mockVats : {},
-  lag: !!useMockData,
+  vats: {},
+  lag: false,
   loaded: false,
   fetchVats: async () => {
-    if (useMockData) {
-      await fakeRequest({}, 500);
-      set({ loaded: true });
-      return;
-    }
     const vats = await api.scry<Vats>(getVats);
     set({ vats, loaded: true });
   },
@@ -43,19 +36,6 @@ const useKilnState = create<KilnState>((set, get) => ({
     set({ lag });
   },
   changeOTASource: async (ship: string) => {
-    if (useMockData) {
-      await fakeRequest('');
-      set(
-        produce((draft: KilnState) => {
-          if (!draft.vats.base.arak.rail) {
-            return;
-          }
-          draft.vats.base.arak.rail.ship = ship;
-        })
-      );
-      return;
-    }
-
     await api.poke(kilnInstall(ship, 'kids', 'base'));
   },
   toggleOTAs: async (desk: string, on: boolean) => {
@@ -73,7 +53,7 @@ const useKilnState = create<KilnState>((set, get) => ({
       })
     );
 
-    await (useMockData ? fakeRequest('') : api.poke(on ? kilnResume(desk) : kilnPause(desk)));
+    await api.poke(on ? kilnResume(desk) : kilnPause(desk));
     await get().fetchVats(); // refresh vat state
   },
   set: produce(set)

@@ -1,5 +1,5 @@
 import { Handler } from '@urbit/mock-http-api';
-import { mockAllies, mockCharges } from './mock-data';
+import { mockAllies, mockCharges, mockVats } from './mock-data';
 
 export const handlers: Handler[] = [
   {
@@ -21,6 +21,11 @@ export const handlers: Handler[] = [
     app: 'hood',
     path: '/kiln/lag',
     func: () => false
+  },
+  {
+    app: 'hood',
+    path: '/kiln/vats',
+    func: () => mockVats
   },
   {
     app: 'settings-store',
