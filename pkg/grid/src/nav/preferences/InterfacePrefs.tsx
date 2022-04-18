@@ -1,7 +1,7 @@
 import React from 'react';
 import { Setting } from '../../components/Setting';
 import {
-  useBrowserNotifications,
+  setBrowserSetting,
   useBrowserSettings,
   useProtocolHandling,
   useSettingsState
@@ -12,24 +12,13 @@ export function InterfacePrefs() {
   const settings = useBrowserSettings();
   const browserId = useBrowserId();
   const protocolHandling = useProtocolHandling(browserId);
-  const browserNotifications = useBrowserNotifications(browserId);
   const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
   const linkHandlingAllowed = secure && 'registerProtocolHandler' in window.navigator;
   const setProtocolHandling = (setting: boolean) => {
-    const newSettings = [{ browserId, protocolHandling: setting, browserNotifications }];
-    if (!settings.includes(newSettings)) {
-      useSettingsState
-        .getState()
-        .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
-    }
-  };
-  const setBrowserNotifications = (setting: boolean) => {
-    const newSettings = [{ browserId, browserNotifications: setting, protocolHandling }];
-    if (!settings.includes(newSettings)) {
-      useSettingsState
-        .getState()
-        .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
-    }
+    const newSettings = setBrowserSetting(settings, { protocolHandling: setting }, browserId);
+    useSettingsState
+      .getState()
+      .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
   };
 
   const toggleProtoHandling = async () => {
@@ -54,15 +43,6 @@ export function InterfacePrefs() {
     }
   };
 
-  const toggleNotifications = async () => {
-    if (!browserNotifications) {
-      Notification.requestPermission();
-      setBrowserNotifications(true);
-    } else {
-      setBrowserNotifications(false);
-    }
-  };
-
   return (
     <>
       <h2 className="h3 mb-7">Interface Settings</h2>
@@ -80,21 +60,6 @@ export function InterfacePrefs() {
                 <strong className="text-orange-500">
                   Unavailable with this browser/connection.
                 </strong>
-              </>
-            )}
-          </p>
-        </Setting>
-        <Setting
-          on={browserNotifications}
-          toggle={toggleNotifications}
-          name="Show desktop notifications"
-          disabled={!secure}
-        >
-          <p>
-            Show desktop notifications in this browser.
-            {!secure && (
-              <>
-                , <strong className="text-orange-500">requires HTTPS</strong>
               </>
             )}
           </p>
