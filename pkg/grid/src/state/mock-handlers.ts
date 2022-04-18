@@ -27,7 +27,7 @@ export const handlers: Handler[] = [
     path: '/desk/garden',
     func: () => {
       return {
-        thing: 'A thing'
+        desk: 'garden'
       };
     }
   }
