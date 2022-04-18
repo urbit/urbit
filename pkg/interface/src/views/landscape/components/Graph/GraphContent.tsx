@@ -446,7 +446,7 @@ const renderers = {
     );
   },
   list: ({ depth, ordered, children }) => {
-    return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
+    return ordered ? <Ol fontSize="1">{children}</Ol> : <Ul fontSize="1">{children}</Ul>;
   },
   'graph-mention': (obj) => {
     return <Mention ship={obj.ship} emphasis={obj.emphasis} />;
