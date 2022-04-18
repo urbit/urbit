@@ -31,7 +31,9 @@ export function LinkDetail(props: LinkDetailProps) {
         <LinkBlockItem maxHeight="100%" border={0} node={node} />
       </Center>
       <Col
+        flex="1 25%"
         maxWidth={['auto', 'auto', '45ch']}
+        maxHeight={['50%', '50%', 'unset']}
         gapY={[2,4]}
         borderLeft={[0, 0, 1]}
         borderTop={[1, 1, 0]}
