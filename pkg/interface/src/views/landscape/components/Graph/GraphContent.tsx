@@ -271,7 +271,7 @@ function stitchInlineAfterBlock(a: Root, b: GraphMentionNode[]) {
 }
 
 function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
-  return _.reduce(
+  const t = _.reduce(
     asts,
     ([prevMode, ast], [mode, val]): [StitchMode, GraphAstNode] => {
       if (prevMode === 'block' || prevMode === 'inline') {
@@ -298,6 +298,29 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
     },
     ['block', { type: 'root', children: [] }] as [StitchMode, GraphAstNode]
   );
+
+  t[1].children.map(c => {
+    if (c?.children) {
+      let links = [];
+      c.children.filter(k => {
+        if (k.type === 'link') {
+          links.push({
+            type: 'root',
+            children: [
+              {
+                type: 'graph-url',
+                url: k.url
+              }
+            ]
+          })
+        }
+      })
+
+      c.children.push(...links);
+    }
+  });
+
+  return t
 }
 const header = ({ children, depth, ...rest }) => {
   const level = depth;
