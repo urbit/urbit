@@ -218,7 +218,7 @@ function getChildren<T extends unknown>(node: T): AstContent[] {
 }
 
 export function asParent<T extends BlockContent>(node: T): Parent | undefined {
-  return ['paragraph', 'heading', 'list', 'listItem', 'table'].includes(
+    return ['paragraph', 'heading', 'list', 'listItem', 'table', 'blockquote'].includes(
     node.type
   )
     ? (node as Parent)
@@ -242,6 +242,20 @@ function stitchMerge(a: Root, b: Root) {
       children: [...aChildren.slice(0, -1), mergedPara, ...bChildren.slice(1)]
     };
   }
+
+  // example of joining blockquote made of several types
+  // eg: text, url, text
+  // this might be a bit naive as we check only for paragraphs
+  if (lastType === 'blockquote' && bChildren[0]?.type === 'paragraph') {
+    let grandChildren = getChildren(last(aChildren));
+    grandChildren[0].children.push(getChildren(last(bChildren))[0]);
+
+    return {
+      ...last(aChildren),
+      children: grandChildren,
+    };
+  }
+
   return { ...a, children: [...aChildren, ...bChildren] };
 }
 
@@ -260,7 +274,7 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
   return _.reduce(
     asts,
     ([prevMode, ast], [mode, val]): [StitchMode, GraphAstNode] => {
-      if (prevMode === 'block') {
+      if (prevMode === 'block' || prevMode === 'inline') {
         if (mode === 'inline') {
           return [mode, stitchInlineAfterBlock(ast, val?.children ?? [])];
         }
