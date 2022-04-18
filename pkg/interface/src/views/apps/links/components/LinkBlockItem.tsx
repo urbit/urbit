@@ -109,8 +109,8 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
                 {title}
               </Text>
               <Row gapX="1" alignItems="center">
-              <Icon icon="Chat" color="black" />
-              <Text>{children.size}</Text>
+                <Icon icon="Chat" color="black" />
+                <Text>{children.size}</Text>
               </Row>
             </Row>
             <Row width="100%">
