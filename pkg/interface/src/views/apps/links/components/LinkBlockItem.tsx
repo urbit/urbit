@@ -71,52 +71,54 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       {...rest}
       {...bind}
     >
-      <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
-        {isReference ? (
-        summary ? (
-          <RemoteContentPermalinkEmbed
-            reference={content[0] as ReferenceContent}
-          />
-        ) : (
-          <PermalinkEmbed
-            link={referenceToPermalink(content[0] as ReferenceContent).link}
-            transcluded={0}
-          />
-        )
-      ) : isImage ? (
-        <RemoteContentImageEmbed url={url} />
-      ) : isAudio ? (
-        <AudioPlayer title={title} url={url} />
-      ) : isOembed ? (
-        <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} />
-      ) : (
-        <RemoteContentEmbedFallback url={url} />
-      )}
-    </AsyncFallback>
-      <Box
-        backgroundColor="white"
-        display={summary && hovering ? 'block' : 'none'}
-        width="100%"
-        height="64px"
-        position="absolute"
-        left="0"
-        bottom="0"
-      >
-        <Col width="100%" height="100%" p="2" justifyContent="space-between">
-          <Row justifyContent="space-between" width="100%">
-            <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
-              {title}
-            </Text>
-            <Row gapX="1" alignItems="center">
+      <Col height="100%" justifyContent="center" alignItems="center">
+        <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
+          {isReference ? (
+            summary ? (
+              <RemoteContentPermalinkEmbed
+                reference={content[0] as ReferenceContent}
+                />
+            ) : (
+              <PermalinkEmbed
+                link={referenceToPermalink(content[0] as ReferenceContent).link}
+                transcluded={0}
+                />
+            )
+          ) : isImage ? (
+            <RemoteContentImageEmbed url={url} />
+          ) : isAudio ? (
+            <AudioPlayer title={title} url={url} />
+          ) : isOembed ? (
+            <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} />
+          ) : (
+            <RemoteContentEmbedFallback url={url} />
+          )}
+        </AsyncFallback>
+        <Box
+          backgroundColor="white"
+          display={summary && hovering ? 'block' : 'none'}
+          width="100%"
+          height="64px"
+          position="absolute"
+          left="0"
+          bottom="0"
+        >
+          <Col width="100%" height="100%" p="2" justifyContent="space-between">
+            <Row justifyContent="space-between" width="100%">
+              <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
+                {title}
+              </Text>
+              <Row gapX="1" alignItems="center">
               <Icon icon="Chat" color="black" />
               <Text>{children.size}</Text>
+              </Row>
             </Row>
-          </Row>
-          <Row width="100%">
-            <Author ship={author} date={post['time-sent']} showImage></Author>
-          </Row>
-        </Col>
-      </Box>
+            <Row width="100%">
+              <Author ship={author} date={post['time-sent']} showImage></Author>
+            </Row>
+          </Col>
+        </Box>
+      </Col>
     </Box>
   );
 }
