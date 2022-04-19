@@ -435,19 +435,8 @@
   =/  cyf  (rsh [3 18] content.packet)
   ~|  ames-decrypt+[[sndr rcvr origin]:packet len siv]
   =/  vec  ~[sndr.packet rcvr.packet sndr-life rcvr-life]
-  =/  =noun
-    %-  cue  %-  need
-    (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
-  ;;  shut-packet
-  ?:  ?=(shut-packet noun)
-    noun
-  =*  meat  +>.noun
-  ?:  ?=(%& -.meat)   noun
-  ?:  ?=(%& +<.meat)  noun
-  =*  ack  +>.meat
-  =/  [ok=? lag=@dr]  ?>(?=([? @dr] ack) ack)
-  =.  ack  [ok %.n lag]
-  noun
+  ;;  shut-packet  %-  cue  %-  need
+  (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
 ::
 ::    Type 0: galaxy or star -- 2 bytes
