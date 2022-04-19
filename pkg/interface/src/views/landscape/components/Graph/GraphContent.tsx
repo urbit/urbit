@@ -243,19 +243,6 @@ function stitchMerge(a: Root, b: Root) {
     };
   }
 
-  // example of joining blockquote made of several types
-  // eg: text, url, text
-  // this might be a bit naive as we check only for paragraphs
-  if (lastType === 'blockquote' && bChildren[0]?.type === 'paragraph') {
-    let grandChildren = getChildren(last(aChildren));
-    grandChildren[0].children.push(getChildren(last(bChildren))[0]);
-
-    return {
-      ...last(aChildren),
-      children: grandChildren,
-    };
-  }
-
   return { ...a, children: [...aChildren, ...bChildren] };
 }
 
@@ -299,25 +286,53 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
     ['block', { type: 'root', children: [] }] as [StitchMode, GraphAstNode]
   );
 
-  t[1].children.map(c => {
-    if (c?.children) {
-      let links = [];
-      c.children.filter(k => {
-        if (k.type === 'link') {
-          links.push({
-            type: 'root',
-            children: [
-              {
-                type: 'graph-url',
-                url: k.url
-              }
-            ]
-          })
-        }
-      })
+  t[1].children.map((c, idx) => {
+    if (c.type === 'blockquote' && t[1].children[idx +1] !== undefined && t[1].children[idx +1].type === 'paragraph') {
+        const next = idx !== t[1].children.length -1
+            ? t[1].children.splice(idx +1, 1)
+            : []
 
-      c.children.push(...links);
+        if (next.length > 0) {
+            t[1].children[idx].children.push(next[0])
+        }
+    };
+
+    let links = [];
+    function addRichEmbedURL(nodes) {
+      if (nodes?.children) {
+        nodes.children.filter(k => {
+          if (k.type === 'link') {
+            links.push({
+              type: 'root',
+              children: [
+                {
+                  type: 'graph-url',
+                  url: k.url
+                }
+              ]
+            })
+          } else if (k?.children) {
+            k.children.filter(o => {
+              if (o.type === 'link') {
+                links.push({
+                  type: 'root',
+                  children: [
+                    {
+                      type: 'graph-url',
+                      url: o.url
+                    }
+                  ]
+                })
+              }
+            })
+          }
+        })
+
+        nodes.children.push(...links);
+      }
     }
+    addRichEmbedURL(c)
+
   });
 
   return t
