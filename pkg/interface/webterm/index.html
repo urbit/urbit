@@ -23,13 +23,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
     <style>
       body, #root {
-        height: 100vh;
+        height: 99vh; /* prevent scrollbar on outer frame */
         margin: 0;
         padding: 0;
       }
 
       .buffer-container {
         height: calc(100% - 40px);
+        position: relative;
+      }
+
+      .terminal-container {
+        position: absolute;
+        top: 0;
       }
 
       div.header {
@@ -93,6 +99,10 @@
       }
 
       @media (prefers-color-scheme: dark) {
+        html {
+          background-color: rgb(26,26,26);
+        }
+
         div.tabs {
           background-color: rgb(26, 26, 26);
           color: rgba(255, 255, 255, 0.9);
@@ -112,7 +122,7 @@
         }
 
         div.tabs > div.selected {
-          border-bottom: black solid 1px;
+          border-bottom: rgb(26,26,26) solid 1px;
         }
 
         button.info-btn {

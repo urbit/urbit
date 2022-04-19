@@ -14,7 +14,7 @@ import React from 'react';
 import { Box, Col } from '@tlon/indigo-react';
 import { makeTheme } from './lib/theme';
 import { showBlit, csi, hasBell } from './lib/blit';
-import { DEFAULT_SESSION, RESIZE_DEBOUNCE_MS } from './constants';
+import { DEFAULT_SESSION, RESIZE_DEBOUNCE_MS, RESIZE_THRESHOLD_PX } from './constants';
 import { retry } from './lib/retry';
 
 const termConfig: ITerminalOptions = {
@@ -124,6 +124,7 @@ const readInput = (term: Terminal, e: string): Belt[] => {
 const onResize = async (name: string, session: Session) => {
   if (session) {
     session.fit.fit();
+    api.poke(pokeTask(name, { blew: { w: session.term.cols, h: session.term.rows } }));
   }
 };
 
@@ -171,9 +172,6 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     //
     term.onData(e => onInput(name, ses, e));
     term.onBinary(e => onInput(name, ses, e));
-    term.onResize((e) => {
-      api.poke(pokeTask(name, { blew: { w: e.cols, h: e.rows } }));
-    });
 
     //  open subscription
     //
@@ -218,11 +216,22 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     });
   }, []);
 
+  const shouldResize = useCallback(() => {
+    if(!session) {
+      return false;
+    }
+
+    const containerHeight = document.querySelector('.buffer-container')?.clientHeight || Infinity;
+    const terminalHeight = session.term.element?.clientHeight || 0;
+
+    return (containerHeight - terminalHeight) >= RESIZE_THRESHOLD_PX;
+  }, [session]);
+
   const onSelect = useCallback(async () => {
-    if (session && selected) {
+    if (session && selected && shouldResize()) {
       session.fit.fit();
-      session.term.focus();
       await api.poke(pokeTask(name, { blew: { w: session.term.cols, h: session.term.rows } }));
+      session.term.focus();
     }
   }, [session, selected]);
 
@@ -243,13 +252,14 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     }
   }, [session, containerRef]);
 
-  //  on-init, open slogstream and fetch existing sessions
+  //  initialize resize listeners
   //
   useEffect(() => {
     if(!session) {
       return;
     }
 
+    // TODO: use ResizeObserver for improved performance?
     const debouncedResize =  debounce(() => onResize(name, session), RESIZE_DEBOUNCE_MS);
     window.addEventListener('resize', debouncedResize);
 
@@ -285,7 +295,8 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
         bg='white'
         fontFamily='mono'
         overflow='hidden'
-        style={selected ? {} : { display: 'none' }}
+        className="terminal-container"
+        style={selected ? { zIndex: 999 } : {}}
       >
         <Col
           width='100%'
