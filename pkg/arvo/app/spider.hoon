@@ -98,7 +98,6 @@
     ~
   $(trie u.son, yarn t.yarn)
 ::
-::
 ++  has-yarn
   |=  [=trie =yarn]
   !=(~ (get-yarn trie yarn))
