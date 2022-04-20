@@ -28,7 +28,7 @@ export function LinkDetail(props: LinkDetailProps) {
     /*  @ts-ignore indio props?? */
     <Row height="100%" width="100%" flexDirection={['column', 'column', 'row']} {...rest}>
       <Center flex="3 1 75%" overflowY="scroll" >
-        <LinkBlockItem maxHeight="100%" border={0} node={node} />
+        <LinkBlockItem maxHeight="100%" border={0} node={node} objectFit="contain" />
       </Center>
       <Col
         flex="1 25%"
