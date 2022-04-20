@@ -1,7 +1,6 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, PermVariation } from '@urbit/api';
+import { Association, PermVariation, resourceFromPath } from '@urbit/api';
 import React, { useEffect } from 'react';
-import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState, { GraphState, useGraph } from '~/logic/state/graph';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';

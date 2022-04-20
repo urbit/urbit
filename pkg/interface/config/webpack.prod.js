@@ -10,7 +10,7 @@ const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
 module.exports = {
   mode: 'production',
   entry: {
-     app: './src/index.js',
+     app: './src/index.tsx',
      serviceworker: './src/serviceworker.js'
   },
   module: {

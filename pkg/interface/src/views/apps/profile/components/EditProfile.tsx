@@ -9,7 +9,6 @@ import _ from 'lodash';
 import React, { ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import { resourceFromPath } from '~/logic/lib/group';
 import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
@@ -22,7 +21,7 @@ import {
     ProfileImages, ProfileStatus
 } from './Profile';
 import airlock from '~/logic/api';
-import { editContact, setPublic } from '@urbit/api';
+import { editContact, setPublic, resourceFromPath } from '@urbit/api';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
