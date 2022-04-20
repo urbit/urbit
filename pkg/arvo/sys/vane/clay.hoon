@@ -789,7 +789,7 @@
       |=  =page
       ^-  [cage state]
       ?:  =(%hoon p.page)
-        :_(nub [%hoon -:!>(*@t) q.page])
+        :_(nub [%hoon [%atom %t ~] q.page])
       ?:  =(%mime p.page)
         :_(nub [%mime =>([..zuse ;;(mime q.page)] !>(+))])
       =^  =dais  nub  (build-dais p.page)
@@ -1245,6 +1245,8 @@
     |=  [lim=@da lok=case]
     ^-  (unit aeon)
     ?-    -.lok
+        %tas  (~(get by lab.dom) p.lok)
+        %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
         %da
       ?:  (gth p.lok lim)  ~
       |-  ^-  (unit aeon)
@@ -1257,9 +1259,6 @@
           let.dom
         [~ let.dom]
       $(let.dom (dec let.dom))
-    ::
-        %tas  (~(get by lab.dom) p.lok)
-        %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
     ==
   ::
   ++  static-ford-args  [ank.dom ~ ~ lat.ran fod.dom]
@@ -3710,6 +3709,8 @@
         (build-cast:(aeon-ford aeon) [i i.t]:path)
       :_(fod.dom [~ ~ %cast vase])
     ::
+    ::  XX move to +read-buc
+    ::
     ++  read-d
       !.
       |=  [=aeon =path]
@@ -3860,9 +3861,7 @@
           (page-to-cage:(ford:fusion static-ford-args) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
-          %open
-        ``open+!>(prelude:(ford:fusion static-ford-args))
-      ::
+          %open  ``open+!>(prelude:(ford:fusion static-ford-args))
           %late  !!  :: handled in +aver
           %base
         ?>  ?=(^ t.t.pax)
@@ -3947,8 +3946,8 @@
                 let=yon
                 hit=(molt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
                 lab=(molt (skim ~(tap by lab.dom) |=([* p=@ud] (lte p yon))))
-                tom=tom.dom
-                nor=nor.dom
+                tom=tom.dom  ::  XX  not referentially transparent, maybe this
+                nor=nor.dom  ::      should just be let and hit?
         ==  ==
       ?:  (gth yon let.dom)
         ~
@@ -3959,15 +3958,13 @@
     ::  For the %da case, we give just the canonical timestamp of the revision.
     ::
     ++  read-w
-      |=  cas=case
+      |=  yon=aeon
       ^-  (unit (unit cage))
-      =+  aey=(case-to-aeon cas)
-      ?~  aey  ~
       =-  [~ ~ %cass !>(-)]
       ^-  cass
-      :-  u.aey
-      ?:  =(0 u.aey)  `@da`0
-      t:(aeon-to-yaki u.aey)
+      :-  yon
+      ?:  =(0 yon)  `@da`0
+      t:(aeon-to-yaki yon)
     ::
     ::  Get the data at a node.
     ::
@@ -3987,24 +3984,19 @@
       ?:  &(?=(~ ref) =(let.dom yon))
         :_  fod.dom  :-  ~
         %+  bind
-          (~(get ^de ank.dom) pax)
+          (~(get ^do ank.dom) pax)
         |=(a=[p=lobe q=cage] q.a)
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
         [[~ ~] fod.dom]
-      =/  pig=(unit page)  (~(get by lat.ran) u.lob)
+      =/  peg=(unit page)  (~(get by lat.ran) u.lob)
       ::  if tombstoned, nothing to return
       ::
-      ?~  pig
+      ?~  peg
         [~ fod.dom]
       ::  should convert any lobe to cage
       ::
-      ?:  ?=(%hoon p.u.pig)
-        [``[%hoon [%atom %t ~] ;;(@t q.u.pig)] fod.dom]
-      =/  peg=(unit page)  (~(get by lat.ran) u.lob)
-      ?~  peg
-        [~ fod.dom]
       =^  =cage  fod.dom
         %-  wrap:fusion
         (page-to-cage:(ford:fusion static-ford-args) u.peg)
@@ -4048,7 +4040,7 @@
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
-      [~ ~ %uvi -:!>(*@uvI) (content-hash (tako-to-yaki u.tak) pax)]
+      [~ ~ %uvi [%atom %'uvI' ~] (content-hash (tako-to-yaki u.tak) pax)]
     ::
     ::  Get a value at an aeon.
     ::
@@ -4085,7 +4077,7 @@
           %t  [(read-t yon path.mun) fod.dom]
           %u  [(read-u yon path.mun) fod.dom]
           %v  [(read-v yon path.mun) fod.dom]
-          %w  [(read-w case.mun) fod.dom]
+          %w  [(read-w yon) fod.dom]
           %x  (read-x yon path.mun)
           %y  [(read-y yon path.mun) fod.dom]
           %z  [(read-z yon path.mun) fod.dom]
@@ -4872,9 +4864,7 @@
   ?:  ?=(%| -.result)
     %-  (slog >%clay-scry-fail< p.result)
     ~
-  ?~  p.result               ~
-  ?~  u.p.result             [~ ~]
-  ``u.u.p.result
+  p.result
   ::
   ++  read-buc
     |=  [=care =path]
