@@ -219,9 +219,6 @@
     ~
   ?+    wire  ~
       [%bone @ @ ~]
-    ::  later on we drop events that come in an old wire but
-    ::  tracking it here let us print a notification to the user
-    ::
     `[%old `@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
   ::
       [%bone @ @ @ ~]
@@ -2568,8 +2565,6 @@
   ++  on-done
     |=  [=message-num =ack]
     ^+  message-pump
-    ~?  (gte message-num next.state)
-      "unsent message from the future"^[message-num next.state current.state]
     ::  unsent messages from the future should never get acked
     ::
     ?>  (lth message-num next.state)
