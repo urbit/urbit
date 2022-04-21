@@ -542,7 +542,7 @@ _cw_usage(c3_c* s)
     "  %s queu <pier> <at-event>    cue state:\n"
     "\n  run as a 'serf':\n"
     "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
-#ifdef U3_OS_mingw
+#if defined(U3_OS_mingw) && defined(U3_INTERRUPT_EVENT)
     " <ctrlc-handle>"
 #endif
     "\n",
@@ -847,7 +847,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   c3_i inn_i, out_i;
   _cw_serf_stdio(&inn_i, &out_i);
 
-  #if defined(U3_OS_mingw)
+#if defined(U3_OS_mingw) && defined(U3_INTERRUPT_EVENT)
   c3_assert( 8 == argc );
 
   //  Initialize serf's end of Ctrl-C handling
@@ -861,9 +861,9 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
       fprintf(stderr, "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n", h, GetLastError());
     }
   }
-  #else
+#else
   c3_assert( 7 == argc );
-  #endif
+#endif
 
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[2];
@@ -1349,7 +1349,7 @@ main(c3_i   argc,
       }
     }
 
-    #if defined(U3_OS_mingw)
+#if defined(U3_OS_mingw) && defined(U3_INTERRUPT_EVENT)
     //  Initialize event used to transmit Ctrl-C to worker process
     //
     {
@@ -1359,7 +1359,7 @@ main(c3_i   argc,
         exit(1);
       }
     }
-    #endif
+#endif
 
     //  starting u3m configures OpenSSL memory functions, so we must do it
     //  before any OpenSSL allocations
