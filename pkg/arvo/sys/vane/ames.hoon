@@ -718,6 +718,25 @@
       =rift
       crypto-core=acru:ames
       =bug
+      =fine-state
+  ==
+::  $fine-state: state for encrypted scry
+::
+::    .fends: encryption state for local paths
+::    .seqs: lookup path by seq (used to decrypt incoming requests)
+::    .next-seq: next sequence number to assign a new key
+::
++$  fine-state
+  $:  fends=(map path fend-state)
+      seqs=(map @ud path)
+      next-seq=_1
+  ==
+::
++$  fend-state
+  $:  chit
+      who=(set ship)
+      gap=@dr
+      next-wake=@da
   ==
 ::
 ++  acru-5  $_  ^?

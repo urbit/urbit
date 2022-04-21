@@ -1067,6 +1067,29 @@
   ::    %keen: data request from arvo
   ::    %yawn: cancel request from arvo
   ::
+  ::    Encrypted Remote Scry Tasks
+  ::
+  ::    A `%fend` sets permissions on a path and all its subpaths.
+  ::    The `path` in a `%fend` is a local scry path with possibly empty case.
+  ::
+  ::    /c/kids//sys  ::  exposes just the /sys folder in the %kids desk
+  ::    /c/landscape  ::  exposes the whole landscape desk
+  ::
+  ::    If a `%fend` has `gap=~`, Ames chooses the interval.
+  ::
+  ::    If a `%fend` removes a ship from the whitelist (its `who` is missing
+  ::    a ship from a previous `who`), Ames will immediately create a new key.
+  ::
+  ::    To rescind all permissions on a path, pass a `%fend` with an empty set
+  ::    of ships in `who`.
+  ::
+  ::    A `%yank` resets the key for a path, once -- to be used in case a key
+  ::    is thought to have been compromised, or if an application wants to
+  ::    override the normal rotation policy for any other reason.
+  ::
+  ::    A `%coax` with `live=&` starts a subscription to the path's key.
+  ::    A `%coax` with `live=|` cancels the key subscription.
+  ::
   ::    System and Lifecycle Tasks
   ::
   ::    %born: process restart notification
@@ -1085,6 +1108,10 @@
         [%keen =ship =path]
         [%pine =ship =path]
         [%yawn =ship =path]
+    ::
+        [%coax =path live=?]
+        [%fend =path who=(set ship) gap=(unit @dr)]
+        [%yank =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -1108,6 +1135,13 @@
   ::    %tune: found data for arvo
   ::    %miss: no case for %pine
   ::
+  ::    Encrypted Remote Scry Gifts
+  ::
+  ::    `%chit`: the key for a path, sent to a subscriber
+  ::    `seq` is the key's sequence number.  The subscriber prefixes
+  ::    encrypted scry requests with this number so the publisher knows
+  ::    which key to use to decrypt the rest of the request path.
+  ::
   ::    System and Lifecycle Gifts
   ::
   ::    %turf: domain report, relayed from jael
@@ -1122,6 +1156,8 @@
     ::
         [%tune =path sign=@ux data=(unit (cask))]
         [%miss =path]
+    ::
+        [%chit =path =chit]
     ::
         [%turf turfs=(list turf)]
     ==
@@ -1264,7 +1300,11 @@
     $:  order=(map path @ud)
         seq=@ud
         keens=((mop @ud keen-state) lte)
+        chits=(axal chit)
     ==
+  ::  $chit: numbered symmetric key
+  ::
+  +$  chit  [seq=@ud key=@ux]
   +$  keen-state
     $:  wan=(pha want)   ::  request packets, sent
         nex=(list want)  ::  request packets, unsent
