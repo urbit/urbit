@@ -21,12 +21,12 @@ u3qdu_qat_raw(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
       u3x_trel(u3t(a), &ka, &pa, &va);
 
       if (c3y == u3qdu_lex(p, k, pa, ka)) {
-        return u3qdu_qat_tie(k, p, v, ka, a, u3_nul);
+        return u3qdu_rule(k, p, v, a, u3_nul);
       }
       else
       {
         u3_noun rec = u3nq(c3__tip, u3k(k), u3k(p), u3k(v));
-        u3_noun pro = u3qdu_qat_tie(ka, pa, va, k, rec, u3_nul);
+        u3_noun pro = u3qdu_rule(ka, pa, va, rec, u3_nul);
 
         u3z(rec);
 
@@ -40,14 +40,14 @@ u3qdu_qat_raw(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
       u3x_qual(u3t(a), &ka, &pa, &va, &ta);
       u3x_trel(ta, &ma, &la, &ra);
 
-      if (c3y == u3qdu_gone(k, ka, ma)) {
+      if (c3y == u3qdu_feud(ma, k, ka)) {
         if (c3y == u3qdu_lex(p, k, pa, ka)) {
-          return u3qdu_qat_tie(k, p, v, ka, a, u3_nul);
+          return u3qdu_rule(k, p, v, a, u3_nul);
         }
         else {
           u3_noun rec = u3nq(c3__tip, u3k(k), u3k(p), u3k(v));
           u3_noun rev = u3qdu_fuse(ma, la, ra);
-          u3_noun pro = u3qdu_qat_tie(ka, pa, va, k, rec, rev);
+          u3_noun pro = u3qdu_rule(ka, pa, va, rec, rev);
 
           u3z(rec);
           u3z(rev);
@@ -56,7 +56,7 @@ u3qdu_qat_raw(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
         }
       }
       else if (c3y == u3qdu_lex(p, k, pa, ka)) {
-        if (c3y == u3qdu_zero(ka, ma)) {
+        if (c3y == u3qdu_zero(ma, ka)) {
           u3_noun rev = u3qdu_qat_raw(la, ka, pa, va);
           return u3nq(c3__bin, u3k(k), u3k(p),
                      u3nq(u3k(v), u3k(ma), rev, u3k(ra)));
@@ -68,7 +68,7 @@ u3qdu_qat_raw(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
                      u3nq(u3k(v), u3k(ma), u3k(la), rev));
         }
       }
-      else if (c3y == u3qdu_zero(k, ma)) {
+      else if (c3y == u3qdu_zero(ma, k)) {
         u3_noun rev = u3qdu_qat_raw(la, k, p, v);
         return u3nq(c3__bin, u3k(ka), u3k(pa),
                   u3nq(u3k(va), u3k(ma), rev, u3k(ra)));
@@ -90,9 +90,7 @@ u3wdu_qat_raw(u3_noun cor)
 
   if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_6, &k, u3x_sam_14, &p,
                         u3x_sam_15, &v, 0)) ||
-       (c3n == u3ud(k)) ||
-       (c3n == u3ud(p)) ||
-       (c3n == u3du(v)) )
+       (c3n == u3ud(p)) )
   {
     return u3m_bail(c3__exit);
   } else {

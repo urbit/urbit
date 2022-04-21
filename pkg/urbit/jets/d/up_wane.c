@@ -1,7 +1,7 @@
 #include "all.h"
 
 u3_noun
-u3qdu_wane(u3_atom k, u3_atom p, u3_noun v, u3_atom m, u3_noun l, u3_noun r)
+u3qdu_wane(u3_noun k, u3_atom p, u3_noun v, u3_atom m, u3_noun l, u3_noun r)
 {
   if ( u3_nul == r ) {
     if  ( u3_nul == l) {
@@ -28,7 +28,7 @@ u3wdu_wane(u3_noun cor)
                      u3x_sam_30, &m, u3x_sam_62, &l, u3x_sam_63, &r, 0 )) ||
     (c3n == u3ud(m)) ||
     (c3n == u3ud(p)) ||
-    (c3n == u3ud(m))
+    (c3n == u3du(v))
     )
   {
     return u3m_bail(c3__exit);

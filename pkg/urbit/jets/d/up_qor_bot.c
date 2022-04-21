@@ -8,10 +8,14 @@ u3qdu_qor_bot(u3_noun a)
   }
   else
   {
-    u3_noun n_a, t_a, m_a;
-    u3x_trel(a, &n_a, &t_a, &m_a);
+    u3_noun na, ta, ma;
+    u3x_trel(a, &na, &ta, &ma);
 
-    return u3nt(u3_nul, u3k(n_a), u3qdu_sec(t_a, m_a));
+    u3_noun kna, pna, vna;
+    u3x_trel(na, &kna, &pna, &vna);
+
+    return u3nc(u3_nul,
+             u3nq(u3k(kna), u3k(pna), u3k(vna), u3qdu_qor_sec(ta, ma)));
   }
 }
 

@@ -1,63 +1,74 @@
 #include "all.h"
 
 static u3_noun
-_help(u3_noun pb, u3_noun buc, u3_noun k, u3_noun p, u3_noun v)
+_xfer_raw_bee(u3_noun pri, u3_noun bee)
 {
-  u3_noun k_buc, v_buc, t_buc;
-  u3x_trel(buc, &k_buc, &v_buc, &t_buc);
+  u3_noun pb, qb, rb;
+  u3x_trel(bee, &pb, &qb, &rb);
 
-  if (c3y == u3r_sing(k, k_buc)) {
-    return u3qdu_qat_make(k, p, v, t_buc);
-  }
-  else if ( (c3y == u3qa_lth(pb, p)) ||
-            ((c3y == u3r_sing(p, pb)) && (c3y == u3qc_gor(k_buc, k))) )
-  {
-    return u3nq(u3k(pb), u3k(k_buc), u3k(v_buc),
-             u3qdu_qor_put(t_buc, k, p, v));
-  }
-  else if (c3y == u3qdu_qor_has(t_buc, k)) {
-    u3_noun pre = u3qdu_qor_del(t_buc, k);
-    u3_noun pro = u3qdu_qor_put(pre, k_buc, pb, v_buc);
+  u3_noun pro = u3qdu_qat_raw(pri, pb, qb, rb);
 
-    u3z(pre);
+  u3z(bee);
 
-    return u3nq(u3k(p), u3k(k), u3k(v), pro);
-  }
-  else {
-    return u3nq(u3k(p), u3k(k), u3k(v),
-             u3qdu_qor_put(t_buc, k_buc, pb, v_buc));
-  }
+  return pro;
 }
 
 u3_noun
-u3qdu_put(u3_noun a, u3_noun k, u3_noun p, u3_noun v)
+u3qdu_put(u3_noun a, u3_noun k, u3_atom p, u3_noun v)
 {
-  u3_atom h = u3r_mug(k);
-  u3_noun ped = u3qdu_qat_pet(a, h);
+  u3_noun ped = u3qdu_qat_dew(a, k);
 
   if (u3_nul == ped) {
-    u3_noun pre = u3nt(u3k(k), u3k(v), u3_nul);
-    u3_noun pro = u3qdu_qat_raw(a, h, p, pre);
+    u3_noun val = u3nc(u3k(v), u3_nul);
+    u3_noun pro = u3qdu_qat_raw(a, k, p, val);
 
-    u3z(pre);
-
+    u3z(val);
     return pro;
   }
   else {
-    u3_noun pp, qp, rp;
-    u3x_trel(u3t(ped), &pp, &qp, &rp);
+    u3_noun l, q, buc, pri;
+    u3x_qual(u3t(ped), &l, &q, &buc, &pri);
 
-    u3_noun bee = _help(pp, qp, k, p, v);
+    u3_atom mk = u3r_mug(k);
+    u3_atom ml = u3r_mug(l);
 
-    u3_noun pb, qb;
-    u3x_cell(bee, &pb, &qb);
+    if (mk == ml) {
+      u3_noun bee = u3qdu_qor_sink(u3t(buc), k, p, v);
+      u3_noun pro = _xfer_raw_bee(pri, bee);
 
-    u3_noun pro = u3qdu_qat_raw(rp, h, pb, qb);
+      u3z(ped);
+      return pro;
+    }
+    else if ( (c3y == u3qa_lth(q, p)) ||
+              ( (c3y == u3r_sing(p, q)) && (c3y == u3qc_gor(l, k)) ) ) {
+      u3_noun bee = u3nq(u3k(l), u3k(q), u3k(u3h(buc)),
+                      u3qdu_qor_put(u3t(buc), k, p, v));
 
-    u3z(bee);
-    u3z(ped);
+      u3_noun pro = _xfer_raw_bee(pri, bee);
 
-    return pro;
+      u3z(ped);
+      return pro;
+    }
+    else {
+      if (c3y == u3qdu_qor_has(u3t(buc), k)) {
+        u3_noun pre = u3qdu_qor_del(u3t(buc), k);
+        u3_noun bee = u3qdu_qor_put(pre, l, q, u3h(buc));
+
+        u3z(pre);
+
+        u3_noun pro = _xfer_raw_bee(pri, bee);
+
+        u3z(ped);
+        return pro;
+      }
+      else {
+        u3_noun bee = u3qdu_qor_put(u3t(buc), l, q, u3h(buc));
+        u3_noun pro = _xfer_raw_bee(pri, bee);
+
+        u3z(ped);
+        return pro;
+      }
+    }
   }
 }
 

@@ -6,7 +6,7 @@ u3qdl_put(u3_noun a, u3_noun k, u3_noun v)
   u3_noun cap_a, siz_a, tic_a, pri_a;
   u3x_qual(a, &cap_a, &siz_a, &tic_a, &pri_a);
 
-  u3_noun vue = u3qdu_gun(pri_a, k, tic_a, v);
+  u3_noun vue = u3qdu_vip(pri_a, k, tic_a, v);
 
   u3_noun pv, qv;
   u3x_cell(vue, &pv, &qv);

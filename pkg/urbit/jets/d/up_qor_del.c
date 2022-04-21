@@ -41,7 +41,7 @@ u3qdu_qor_del(u3_noun a, u3_noun k)
         u3_noun rel = u3nt(u3k(n_b), u3k(r_b), u3k(m_a));
 
         u3_noun lod = u3qdu_qor_del(lel, k);
-        u3_noun pro = u3qdu_toy(lod, rel);
+        u3_noun pro = u3qdu_qor_toy(lod, rel);
 
         u3z(lod);
         u3z(lel);
@@ -54,7 +54,7 @@ u3qdu_qor_del(u3_noun a, u3_noun k)
         u3_noun rel = u3nt(u3k(n_b), u3k(r_b), u3k(m_a));
 
         u3_noun rod = u3qdu_qor_del(rel, k);
-        u3_noun pro = u3qdu_toy(lel, rod);
+        u3_noun pro = u3qdu_qor_toy(lel, rod);
 
         u3z(rod);
         u3z(lel);
@@ -75,7 +75,7 @@ u3qdu_qor_del(u3_noun a, u3_noun k)
         u3_noun rel = u3nt(u3k(n_a), u3k(r_b), u3k(m_a));
 
         u3_noun lod = u3qdu_qor_del(lel, k);
-        u3_noun pro = u3qdu_toy(lod, rel);
+        u3_noun pro = u3qdu_qor_toy(lod, rel);
 
         u3z(lod);
         u3z(lel);
@@ -88,7 +88,7 @@ u3qdu_qor_del(u3_noun a, u3_noun k)
         u3_noun rel = u3nt(u3k(n_a), u3k(r_b), u3k(m_a));
 
         u3_noun rod = u3qdu_qor_del(rel, k);
-        u3_noun pro = u3qdu_toy(lel, rod);
+        u3_noun pro = u3qdu_qor_toy(lel, rod);
 
         u3z(rod);
         u3z(lel);

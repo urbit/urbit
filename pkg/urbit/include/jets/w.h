@@ -114,60 +114,43 @@
     u3_noun u3wdi_uni(u3_noun);
     u3_noun u3wdi_wyt(u3_noun);
 
-    u3_noun u3wdu_size(u3_noun);
-    u3_noun u3wdu_llos(u3_noun);
-    u3_noun u3wdu_rlos(u3_noun);
-    u3_noun u3wdu_lbal(u3_noun);
-    u3_noun u3wdu_rbal(u3_noun);
-    u3_noun u3wdu_llbal(u3_noun);
-    u3_noun u3wdu_rrbal(u3_noun);
-    u3_noun u3wdu_lrbal(u3_noun);
-    u3_noun u3wdu_rlbal(u3_noun);
-    u3_noun u3wdu_llsin(u3_noun);
-    u3_noun u3wdu_rrsin(u3_noun);
-    u3_noun u3wdu_lrsin(u3_noun);
-    u3_noun u3wdu_rlsin(u3_noun);
-    u3_noun u3wdu_lldub(u3_noun);
-    u3_noun u3wdu_rrdub(u3_noun);
-    u3_noun u3wdu_lrdub(u3_noun);
-    u3_noun u3wdu_rldub(u3_noun);
-    u3_noun u3wdu_win(u3_noun);
-    u3_noun u3wdu_toy(u3_noun);
-    u3_noun u3wdu_sec(u3_noun);
     u3_noun u3wdu_zero(u3_noun);
-    u3_noun u3wdu_mask(u3_noun);
-    u3_noun u3wdu_gone(u3_noun);
-    u3_noun u3wdu_high(u3_noun);
-    u3_noun u3wdu_pert(u3_noun);
     u3_noun u3wdu_lex(u3_noun);
+    u3_noun u3wdu_peak(u3_noun);
+    u3_noun u3wdu_feud(u3_noun);
+    u3_noun u3wdu_rule(u3_noun);
     u3_noun u3wdu_fuse(u3_noun);
     u3_noun u3wdu_funk(u3_noun);
     u3_noun u3wdu_wane(u3_noun);
-    u3_noun u3wdu_put(u3_noun);
-    u3_noun u3wdu_bot(u3_noun);
-    u3_noun u3wdu_cut(u3_noun);
-    u3_noun u3wdu_gun(u3_noun);
-    u3_noun u3wdu_see(u3_noun);
 
-    u3_noun u3wdu_qor_top(u3_noun);
+    u3_noun u3wdu_qor_size(u3_noun);
+    u3_noun u3wdu_qor_llos(u3_noun);
+    u3_noun u3wdu_qor_rlos(u3_noun);
+    u3_noun u3wdu_qor_lbal(u3_noun);
+    u3_noun u3wdu_qor_rbal(u3_noun);
+    u3_noun u3wdu_qor_llsin(u3_noun);
+    u3_noun u3wdu_qor_rrsin(u3_noun);
+    u3_noun u3wdu_qor_lrsin(u3_noun);
+    u3_noun u3wdu_qor_rlsin(u3_noun);
+    u3_noun u3wdu_qor_toy(u3_noun);
+    u3_noun u3wdu_qor_sec(u3_noun);
+    u3_noun u3wdu_qor_sink(u3_noun);
     u3_noun u3wdu_qor_see(u3_noun);
     u3_noun u3wdu_qor_put(u3_noun);
-    u3_noun u3wdu_qor_get(u3_noun);
     u3_noun u3wdu_qor_has(u3_noun);
+    u3_noun u3wdu_qor_get(u3_noun);
     u3_noun u3wdu_qor_del(u3_noun);
     u3_noun u3wdu_qor_bot(u3_noun);
 
-    u3_noun u3wdu_qat_pour(u3_noun);
-    u3_noun u3wdu_qat_make(u3_noun);
-    u3_noun u3wdu_qat_tie(u3_noun);
     u3_noun u3wdu_qat_del(u3_noun);
-    u3_noun u3wdu_qat_pet(u3_noun);
+    u3_noun u3wdu_qat_dew(u3_noun);
     u3_noun u3wdu_qat_raw(u3_noun);
     u3_noun u3wdu_qat_put(u3_noun);
-    u3_noun u3wdu_qat_jib(u3_noun);
-    u3_noun u3wdu_qat_pet(u3_noun);
-    u3_noun u3wdu_qat_gun(u3_noun);
-    u3_noun u3wdu_qat_see(u3_noun);
+
+    u3_noun u3wdu_put(u3_noun);
+    u3_noun u3wdu_cut(u3_noun);
+    u3_noun u3wdu_vip(u3_noun);
+    u3_noun u3wdu_see(u3_noun);
 
     u3_noun u3wdl_ebb(u3_noun);
     u3_noun u3wdl_put(u3_noun);
@@ -333,45 +316,6 @@
     u3_noun u3wes_equ(u3_noun);
     u3_noun u3wes_gte(u3_noun);
     u3_noun u3wes_gth(u3_noun);
-
-    // FIXME
-
-    u3_noun u3we_qat_zero(u3_noun);
-    u3_noun u3we_qat_peak(u3_noun);
-    u3_noun u3we_qat_feud(u3_noun);
-    u3_noun u3we_qat_rule(u3_noun);
-    u3_noun u3we_qat_lex(u3_noun);
-    u3_noun u3we_qat_fuse(u3_noun);
-    u3_noun u3we_qat_funk(u3_noun);
-    u3_noun u3we_qat_wane(u3_noun);
-    u3_noun u3we_qat_get(u3_noun);
-    u3_noun u3we_qat_del(u3_noun);
-    u3_noun u3we_qat_pet(u3_noun);
-    u3_noun u3we_qat_raw(u3_noun);
-    u3_noun u3we_qat_put(u3_noun);
-    u3_noun u3we_qat_vip(u3_noun);
-    u3_noun u3we_qat_bot(u3_noun);
-    u3_noun u3we_qat_cut(u3_noun);
-    u3_noun u3we_qat_see(u3_noun);
-
-    u3_noun u3we_qah_zero(u3_noun);
-    u3_noun u3we_qah_peak(u3_noun);
-    u3_noun u3we_qah_feud(u3_noun);
-    u3_noun u3we_qah_rule(u3_noun);
-    u3_noun u3we_qah_lex(u3_noun);
-    u3_noun u3we_qah_fuse(u3_noun);
-    u3_noun u3we_qah_funk(u3_noun);
-    u3_noun u3we_qah_wane(u3_noun);
-    u3_noun u3we_qah_get(u3_noun);
-    u3_noun u3we_qah_del(u3_noun);
-    u3_noun u3we_qah_raw(u3_noun);
-    u3_noun u3we_qah_put(u3_noun);
-    u3_noun u3we_qah_vip(u3_noun);
-    u3_noun u3we_qah_bot(u3_noun);
-    u3_noun u3we_qah_cut(u3_noun);
-    u3_noun u3we_qah_see(u3_noun);
-
-    // FIXME
 
   /** Tier 6.
   **/

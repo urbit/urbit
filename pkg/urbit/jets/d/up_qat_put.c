@@ -18,9 +18,7 @@ u3wdu_qat_put(u3_noun cor)
 
   if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_6, &k, u3x_sam_14, &p,
                         u3x_sam_15, &v, 0)) ||
-       (c3n == u3ud(k)) ||
-       (c3n == u3ud(p)) ||
-       (c3n == u3du(v)) )
+       (c3n == u3ud(p)) )
   {
     return u3m_bail(c3__exit);
   } else {

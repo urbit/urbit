@@ -45,13 +45,16 @@ u3qdu_qor_get(u3_noun a, u3_noun k)
       u3_noun l_tor, r_tor;
       u3x_cell(u3t(tor), &l_tor, &r_tor);
 
-      u3_noun lop = u3qdu_qor_top(l_tor);
+      if (u3_nul == l_tor) {
+        return u3m_bail(c3__exit);
+      }
+
+      u3_noun lop = u3t(u3t(l_tor));
 
       if ( (c3y == u3r_sing(k, lop)) || (c3y == u3qc_gor(k, lop)) ) {
         u3_noun pro = u3qdu_qor_get(l_tor, k);
 
         u3z(tor);
-        u3z(lop);
 
         return pro;
       }
@@ -59,7 +62,6 @@ u3qdu_qor_get(u3_noun a, u3_noun k)
         u3_noun pro = u3qdu_qor_get(r_tor, k);
 
         u3z(tor);
-        u3z(lop);
 
         return pro;
       }
