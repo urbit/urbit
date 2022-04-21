@@ -2,7 +2,7 @@
 =*  qor  (up-qor @ @)
 =*  qat  (up-qat @)
 =*  qah  (up-qah @ @)
-=|  j=@
+=*  cor  (up @ @)
 =/  ty
   $?
     :: monotonic put
@@ -15,6 +15,8 @@
       %qah-put
       %qah-raw
       %qah-vip
+      %cor-put
+      %cor-vip
     :: monotonic get
     ::
       %map-get
@@ -23,6 +25,7 @@
       %qah-get
       %qat-see
       %qah-see
+      %cor-see
     :: monotonic del
     ::
       %map-del
@@ -34,20 +37,23 @@
       %qor-bot
       %qat-bot
       %qah-bot
+      %cor-cut
   ==
 ::
 :-  %say
-|=  [* [n=@ ty=ty ~] [apt=_| ~]]
+|=  [* [n=@ ty=ty ~] [apt=_| big=_| ~]]
 :-  %noun
 ::
 ~&  [ty n=n]
 ::
+=/  j=@  ?:(big 0xffff.ffff.ffff 0)
+=/  m=@  ?:(big (add 0xffff.ffff.ffff n) n)
 ?-    ty
     %map-put
   =|  acc=(map @ @)
   =+  ~>  %bout
       |-  ^+  acc
-      ?:  (gth j n)
+      ?:  (gth j m)
         acc
       $(acc (~(put by acc) j j), j +(j))
   ?:  apt
@@ -58,7 +64,7 @@
   =|  acc=pro:qor
   =+  ~>  %bout
       |-  ^+  acc
-      ?:  (gth j n)
+      ?:  (gth j m)
         acc
       $(acc (put:qor acc j j j), j +(j))
   ?:  apt
@@ -69,7 +75,7 @@
   =|  acc=pri:qat
   =+  ~>  %bout
       |-  ^+  acc
-      ?:  (gth j n)
+      ?:  (gth j m)
         acc
       $(acc (put:qat acc j j j), j +(j))
   ?:  apt
@@ -80,7 +86,7 @@
   =|  acc=pri:qat
   =+  ~>  %bout
       |-  ^+  acc
-      ?:  (gth j n)
+      ?:  (gth j m)
         acc
       $(acc (raw:qat acc j j j), j +(j))
   ?:  apt
@@ -91,7 +97,7 @@
   =|  acc=pri:qat
   =+  ~>  %bout
       |-  ^+  acc
-      ?:  (gth j n)
+      ?:  (gth j m)
         acc
       $(acc (vip:qat acc j j j), j +(j))
   ?:  apt
@@ -102,7 +108,7 @@
   =|  acc=pri:qah
   =+  ~>  %bout
       |-  ^+  acc
-      ?:  (gth j n)
+      ?:  (gth j m)
         acc
       $(acc (put:qah acc j j j), j +(j))
   ?:  apt
@@ -113,7 +119,7 @@
   =|  acc=pri:qah
   =+  ~>  %bout
       |-  ^+  acc
-      ?:  (gth j n)
+      ?:  (gth j m)
         acc
       $(acc (raw:qah acc j j j), j +(j))
   ?:  apt
@@ -124,18 +130,39 @@
   =|  acc=pri:qah
   =+  ~>  %bout
       |-  ^+  acc
-      ?:  (gth j n)
+      ?:  (gth j m)
         acc
       $(acc (vip:qah acc j j j), j +(j))
   ?:  apt
     (apt:qah -)
   &
 ::
+    %cor-put
+  =|  acc=pri:cor
+  =+  ~>  %bout
+      |-  ^+  acc
+      ?:  (gth j m)
+        acc
+      $(acc (put:cor acc j j j), j +(j))
+  :: ?:  apt
+  ::   (apt:qah -)
+  &
+    %cor-vip
+  =|  acc=pri:cor
+  =+  ~>  %bout
+      |-  ^+  acc
+      ?:  (gth j m)
+        acc
+      $(acc q:(vip:cor acc j j j), j +(j))
+  :: ?:  apt
+  ::   (apt:qah -)
+  &
+::
     %map-get
   =|  acc=(map @ @)
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  ~(apt by acc)  acc
       acc
@@ -143,7 +170,7 @@
   =|  l=(unit)
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?:  (gth j m)
     %done
   $(l (~(get by pos) j), j +(j))
 ::
@@ -151,7 +178,7 @@
   =|  acc=pro:qor
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qor acc)  acc
       acc
@@ -159,7 +186,7 @@
   =|  l=(unit)
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?:  (gth j m)
     %done
   $(l (get:qor pos j), j +(j))
 ::
@@ -167,7 +194,7 @@
   =|  acc=pri:qat
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qat acc)  acc
       acc
@@ -175,7 +202,7 @@
   =|  l=(unit)
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?:  (gth j m)
     %done
   $(l (get:qat pos j), j +(j))
 ::
@@ -183,7 +210,7 @@
   =|  acc=pri:qah
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qah acc)  acc
       acc
@@ -191,7 +218,7 @@
   =|  l=(unit)
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?:  (gth j m)
     %done
   $(l (get:qah pos j), j +(j))
 ::
@@ -199,7 +226,7 @@
   =|  acc=pri:qat
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qat acc)  acc
       acc
@@ -207,15 +234,15 @@
   =|  l=(pair)
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?:  (gth j m)
     %done
-  $(l (see:qat pos j n), j +(j))
+  $(l (see:qat pos j m), j +(j))
 ::
     %qah-see
   =|  acc=pri:qah
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qah acc)  acc
       acc
@@ -223,15 +250,31 @@
   =|  l=(pair)
   ~>  %bout
   |-
-  ?:  (gth j n)
+  ?:  (gth j m)
     %done
-  $(l (see:qah pos j n), j +(j))
+  $(l (see:qah pos j m), j +(j))
+::
+    %cor-see
+  =|  acc=pri:cor
+  =/  pos
+    |-  ^+  acc
+    ?:  (gth j m)
+      :: ?:  apt
+      ::   ?>  (apt:qah acc)  acc
+      acc
+    $(acc q:(vip:cor acc j j j), j +(j))
+  =|  l=(pair)
+  ~>  %bout
+  |-
+  ?:  (gth j m)
+    %done
+  $(l (see:cor pos j m), j +(j))
 ::
     %map-del
   =|  acc=(map @ @)
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  ~(apt by acc)  acc
       acc
@@ -246,7 +289,7 @@
   =|  acc=pro:qor
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qor acc)  acc
       acc
@@ -261,7 +304,7 @@
   =|  acc=pri:qat
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qat acc)  acc
       acc
@@ -276,7 +319,7 @@
   =|  acc=pri:qah
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qah acc)  acc
       acc
@@ -291,7 +334,7 @@
   =|  acc=pro:qor
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qor acc)  acc
       acc
@@ -307,7 +350,7 @@
   =|  acc=pri:qat
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qat acc)  acc
       acc
@@ -323,7 +366,7 @@
   =|  acc=pri:qah
   =/  pos
     |-  ^+  acc
-    ?:  (gth j n)
+    ?:  (gth j m)
       ?:  apt
         ?>  (apt:qah acc)  acc
       acc
@@ -335,4 +378,20 @@
   ?~  b
     %done
   $(pos s.u.b)
+::
+    %cor-cut
+  =|  acc=pri:cor
+  =/  pos
+    |-  ^+  acc
+    ?:  (gth j m)
+      :: ?:  apt
+      ::   ?>  (apt:qah acc)  acc
+      acc
+    $(acc (put:cor acc j j j), j +(j))
+  ~>  %bout
+  |-
+  =/  b  (cut:cor pos)
+  ?~  b
+    %done
+  $(pos b)
 ==
