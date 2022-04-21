@@ -375,3 +375,8 @@ export const mockVats = _.reduce(
   },
   { base: mockVat('base', true) } as Vats
 );
+
+export const mockSubscribeResponse = {
+  data: { ok: 'ok', response: 'subscribe' },
+  event: ''
+};
