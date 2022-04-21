@@ -1214,20 +1214,6 @@ main(c3_i   argc,
     u3_Host.wrk_c = strdup(argv[0]);
   }
 
-  //  Set `u3_Host.wrk_c` to the worker executable path.
-  // c3_i urbit_exe_len = strlen(argv[0]);
-  // c3_i worker_exe_len = 1 + urbit_exe_len + strlen("-worker");
-  // u3_Host.wrk_c = c3_malloc(worker_exe_len);
-  // #if defined(U3_OS_mingw)
-  // if ( urbit_exe_len >= 4 && !strcmp(argv[0] + urbit_exe_len - 4, ".exe")) {
-  //   snprintf(u3_Host.wrk_c, worker_exe_len, "%.*s-worker.exe", urbit_exe_len - 4, argv[0]);
-  // } else {
-  //   snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
-  // }
-  // #else
-  // snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
-  // #endif
-
   if ( c3y == u3_Host.ops_u.dem ) {
     //  In daemon mode, run the urbit as a background process, but don't
     //  exit from the parent process until the ship is finished booting.
