@@ -2,6 +2,28 @@
 /+  libstrand=strand, *strandio, util=ph-util, aqua-azimuth
 =,  strand=strand:libstrand
 |%
+:: $threads: list of threads to start, optionally
+::           with start arg vase
+::
++$  threads  (list $@(term (pair term vase)))
+:: $nat-arg: config for a single NAT
+::
+::   .type: restricted-cone or symmetrical
+::   .timeout: time before inactive NAT hole closes
+::             if null, no expiry
+::
++$  nat-arg
+  [type=?(%cone %symm) timeout=(unit @dr)]
+:: $ames-thread-arg: initialization args for ames thread
+::
+::   .drop-prob: 1/x probability of dropping a packet
+::               if null, no packets dropped
+::   .eny: entropy to initialize RNG for packet dropping
+::   .nat: $nat-arg for each NAT'd ship
+::
++$  ames-thread-arg
+  [drop-prob=(unit @ud) eny=@ nat=(map ship nat-arg)]
+::
 ++  send-events
   |=  events=(list aqua-event)
   =/  m  (strand ,~)
@@ -24,16 +46,26 @@
 ++  start-simple
   (start-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
 ::
+++  start-simple-ames-args
+  |=  =vase
+  (start-test aqua-ames+vase %aqua-behn %aqua-dill %aqua-eyre ~)
+::
 ++  start-azimuth
   =/  m  (strand ,~)
   ^-  form:m
   ;<(~ bind:m start-simple init)
 ::
+++  start-azimuth-ames-args
+  |=  =vase
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<(~ bind:m (start-simple-ames-args vase) init)
+::
 ++  end
   (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
 ::
 ++  start-test
-  |=  vane-threads=(list term)
+  |=  vane-threads=threads
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting"
@@ -57,7 +89,7 @@
   (pure:m ~)
 ::
 ++  end-test
-  |=  vane-threads=(list term)
+  |=  vane-threads=threads
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "done"
@@ -66,7 +98,7 @@
   (pure:m ~)
 ::
 ++  start-threads
-  |=  threads=(list term)
+  |=  =threads
   =/  m  (strand ,(map term tid:spider))
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
@@ -75,15 +107,17 @@
   =*  loop  $
   ?~  threads
     (pure:m tids)
+  =/  [name=term args=vase]
+    ?@(i.threads [i.threads *vase] i.threads)
   =/  tid
     %+  scot  %ta
-    (cat 3 (cat 3 'strand_' i.threads) (scot %uv (sham i.threads eny.bowl)))
-  =/  poke-vase  !>([`tid.bowl ~ byk.bowl i.threads *vase])
+    (cat 3 (cat 3 'strand_' name) (scot %uv (sham name eny.bowl)))
+  =/  poke-vase  !>([`tid.bowl ~ byk.bowl name args])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
-  loop(threads t.threads, tids (~(put by tids) i.threads tid))
+  loop(threads t.threads, tids (~(put by tids) name tid))
 ::
 ++  stop-threads
-  |=  threads=(list term)
+  |=  =threads
   =/  m  (strand ,~)
   ^-  form:m
   (pure:m ~)

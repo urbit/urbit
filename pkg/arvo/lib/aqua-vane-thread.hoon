@@ -5,22 +5,27 @@
 ++  vane-handler
   $_  ^|
   |_  bowl:spider
+  ++  init
+    |~  vase
+    *(quip card:agent:gall _^|(..init))
   ++  handle-unix-effect
     |~  [ship unix-effect]
-    *(quip card:agent:gall _^|(..handle-unix-effect))
+    *(quip card:agent:gall _^|(..init))
   ::
   ++  handle-arvo-response
     |~  [wire sign-arvo]
-    *(quip card:agent:gall _^|(..handle-unix-effect))
+    *(quip card:agent:gall _^|(..init))
   --
 --
 ::
 =;  core
   |=  [effect-filter=(list term) handler=vane-handler]
   ^-  thread:spider
-  |=  vase
+  |=  args=vase
   =/  m  (strand ,vase)
   ^-  form:m
+  ;<  handler=vane-handler  bind:m  (init:core args handler) 
+  |-  ^-  form:m
   =*  loop  $
   ?^  effect-filter
     =/  =path  /effect/[i.effect-filter]
@@ -35,6 +40,16 @@
   (pure:m *vase)
 ::
 |%
+++  init
+  |=  [args=vase handler=vane-handler]
+  =/  m  (strand ,vane-handler)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
+  =^  cards  handler  (~(init handler bowl) args)
+  ;<  ~  bind:m  (sleep:strandio ~s0)
+  ;<  ~  bind:m  (send-raw-cards:strandio cards)
+  (pure:m handler)
+::
 ++  handle-unix-effect
   |=  handler=vane-handler
   =/  m  (strand ,vane-handler)

@@ -34,6 +34,11 @@
 %+  aqua-vane-thread  ~[%blit]
 |_  =bowl:spider
 +*  this  .
+++  init
+  |=  args=vase
+  ^-  (quip card:agent:gall _this)
+  [~ this]
+::
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect:aquarium]
   ^-  (quip card:agent:gall _this)
