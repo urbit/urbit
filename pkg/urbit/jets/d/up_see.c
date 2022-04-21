@@ -3,20 +3,23 @@
 static u3_noun
 _stir(u3_noun k, u3_atom p, u3_noun l, u3_atom q, u3_noun buc)
 {
+  u3_noun vb, tb;
+  u3x_cell(buc, &vb, &tb);
+
   if (c3y == u3r_sing(k, l)) {
-    return u3nc(u3nt(u3_nul, u3k(q), u3k(u3h(buc))),
-             u3qdu_qor_sink(u3t(buc), k, p, u3h(buc)));
+    return u3nc(u3nt(u3_nul, u3k(q), u3k(vb)),
+             u3qdu_qor_sink(tb, k, p, vb));
   }
   else {
-    u3_noun val = u3qdu_qor_get(u3t(buc), k);
+    u3_noun val = u3qdu_qor_get(tb, k);
 
     if (u3_nul == val) {
       return u3nq(u3_nul, u3k(k), u3k(q), u3k(buc));
     }
     else {
       u3_noun pro = u3nq(u3k(val), u3k(l), u3k(q),
-                      u3nc(u3k(u3h(buc)),
-                        u3qdu_qor_put(u3t(buc), k, p, u3t(u3t(val)))));
+                      u3nc(u3k(vb),
+                        u3qdu_qor_put(tb, k, p, u3t(u3t(val)))));
 
       u3z(val);
       return pro;
@@ -66,7 +69,7 @@ u3qdu_see(u3_noun a, u3_noun k, u3_noun p)
 
     case c3__bin: {
       u3_noun ka, pa, va, ta, ma, la, ra;
-      u3x_qual(a, &ka, &pa, &va, &ta);
+      u3x_qual(u3t(a), &ka, &pa, &va, &ta);
       u3x_trel(ta, &ma, &la, &ra);
 
       if (c3y == u3qdu_feud(ma, k, ka)) {
@@ -111,7 +114,6 @@ u3qdu_see(u3_noun a, u3_noun k, u3_noun p)
                           u3nq(u3k(va), u3k(ma), u3k(qv), u3k(ra))));
 
         u3z(val);
-
         return pro;
       }
       else {
@@ -125,7 +127,6 @@ u3qdu_see(u3_noun a, u3_noun k, u3_noun p)
                           u3nq(u3k(va), u3k(ma), u3k(la), u3k(qv))));
 
         u3z(val);
-
         return pro;
       }
     }

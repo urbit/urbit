@@ -17,9 +17,11 @@ u3qdu_cut(u3_noun a)
       return u3m_bail(c3__exit);
 
     case c3__tip: {
-      u3_noun tva = u3t(u3t(u3t(u3t(a))));
-      u3_noun hol = u3qdu_qor_bot(tva);
+      u3_noun ka, pa, va, vva, tva;
+      u3x_trel(u3t(a), &ka, &pa, &va);
+      u3x_cell(va, &vva, &tva);
 
+      u3_noun hol = u3qdu_qor_bot(tva);
       u3_noun pro = (u3_nul == hol) ? u3_nul : u3nc(c3__tip, u3k(u3t(hol)));
 
       u3z(hol);
@@ -27,13 +29,14 @@ u3qdu_cut(u3_noun a)
     }
 
     case c3__bin: {
-      u3_noun ka, pa, va, ta;
+      u3_noun ka, pa, va, ta, vva, tva;
       u3_noun ma, la, ra;
 
-      u3x_qual(a, &ka, &pa, &va, &ta);
+      u3x_qual(u3t(a), &ka, &pa, &va, &ta);
+      u3x_cell(va, &vva, &tva);
       u3x_trel(ta, &ma, &la, &ra);
 
-      u3_noun hol = u3qdu_qor_bot(u3t(va));
+      u3_noun hol = u3qdu_qor_bot(tva);
 
       if (u3_nul == hol) {
         return u3qdu_fuse(ma, la, ra);
