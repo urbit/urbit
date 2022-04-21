@@ -917,6 +917,34 @@ _http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
   return 0;
 }
 
+/* _http_sat_accept(): handle incoming http request on status endpoint
+*/
+static c3_i
+_http_sat_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
+{
+  c3_o bus_o;
+  {
+    u3_hcon* hon_u = _http_rec_sock(rec_u);
+    u3_httd* htd_u = hon_u->htp_u->htd_u;
+    u3_pier* pir_u = htd_u->car_u.pir_u;
+    bus_o = pir_u->god_u->pin_o;
+  }
+
+  if ( c3y == bus_o ) {
+    rec_u->res.status = 429;
+    rec_u->res.reason = "busy";
+  }
+  else {
+    rec_u->res.status = 204;
+    rec_u->res.reason = "no content";
+  }
+
+  rec_u->res.content_length = 0;
+  h2o_send_inline(rec_u, NULL, 0);
+
+  return 0;
+}
+
 /* _http_rec_accept(); handle incoming http request from h2o.
 */
 static c3_i
@@ -1430,6 +1458,12 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
     pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/slog", 0);
     han_u = h2o_create_handler(pac_u, sizeof(*han_u));
     han_u->on_req = _http_seq_accept;
+
+    //  status (per spinner)
+    //
+    pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/healthz", 0);
+    han_u = h2o_create_handler(pac_u, sizeof(*han_u));
+    han_u->on_req = _http_sat_accept;
   }
 
   if ( c3y == log ) {
