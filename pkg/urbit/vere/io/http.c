@@ -794,19 +794,29 @@ typedef struct _h2o_uv_sock {         //  see private st_h2o_uv_socket_t
   uv_stream_t*     han_u;             //  client stream handler (u3_hcon)
 } h2o_uv_sock;
 
+/* _http_rec_sock(): u3 http connection from h2o request; hacky.
+*/
+static u3_hcon*
+_http_rec_sock(h2o_req_t* rec_u)
+{
+  h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
+                         callbacks->get_socket(rec_u->conn);
+  u3_hcon*     hon_u = (u3_hcon*)suv_u->han_u;
+
+  //  sanity check
+  //
+  c3_assert( hon_u->sok_u == &suv_u->sok_u );
+
+  return hon_u;
+}
+
 /* _http_req_prepare(): creates u3 req from h2o req and initializes its timer
 */
 static u3_hreq*
 _http_req_prepare(h2o_req_t* rec_u,
                   u3_hreq* (*new_f)(u3_hcon*, h2o_req_t*))
 {
-  h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
-                         callbacks->get_socket(rec_u->conn);
-  u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
-
-  //  sanity check
-  c3_assert( hon_u->sok_u == &suv_u->sok_u );
-
+  u3_hcon* hon_u = _http_rec_sock(rec_u);
   u3_hreq* seq_u = new_f(hon_u, rec_u);
 
   seq_u->tim_u = c3_malloc(sizeof(*seq_u->tim_u));
@@ -870,7 +880,7 @@ _http_seq_continue(void* vod_p, u3_noun nun)
 
 /* _http_seq_accept(): handle incoming http request on slogstream endpoint
 */
-static int
+static c3_i
 _http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
 {
   //  try to find a cookie header
@@ -894,9 +904,7 @@ _http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
   //  if there is a cookie, scry to see if it constitutes authentication
   //
   else {
-    h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
-                           callbacks->get_socket(rec_u->conn);
-    u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
+    u3_hcon* hon_u = _http_rec_sock(rec_u);
 
     u3_noun pax = u3nq(u3i_string("authenticated"),
                        u3i_string("cookie"),
@@ -918,7 +926,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
 
   if ( u3_none == req ) {
     if ( (u3C.wag_w & u3o_verbose) ) {
-      u3l_log("strange %.*s request\n", (int)rec_u->method.len,
+      u3l_log("strange %.*s request\n", (c3_i)rec_u->method.len,
               rec_u->method.base);
     }
     c3_c* msg_c = "bad request";
@@ -1411,11 +1419,18 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
     h2o_u->han_u->on_req = _http_rec_accept;
   }
 
-  //  register slog stream endpoint
+  //  register runtime endpoints
   //
-  h2o_pathconf_t* pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/slog", 0);
-  h2o_handler_t*  han_u = h2o_create_handler(pac_u, sizeof(*han_u));
-  han_u->on_req = _http_seq_accept;
+  {
+    h2o_pathconf_t* pac_u;
+    h2o_handler_t*  han_u;
+
+    //  slog stream
+    //
+    pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/slog", 0);
+    han_u = h2o_create_handler(pac_u, sizeof(*han_u));
+    han_u->on_req = _http_seq_accept;
+  }
 
   if ( c3y == log ) {
     // XX move this to post serv_start and put the port in the name
