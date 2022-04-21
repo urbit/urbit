@@ -1930,8 +1930,8 @@
   ::
   +$  pri                                               ::  psq
     $@  ~
-    $%  [%bin k=@ p=@ v=buc m=@ l=pri r=pri]
-        [%tip k=@ p=@ v=buc]
+    $%  [%bin =k p=@ v=buc m=@ l=pri r=pri]
+        [%tip =k p=@ v=buc]
     ==
   ::  utilities
   ::
