@@ -1220,8 +1220,8 @@
     ?~  parsed=(parse-bone-wire wire)
       ::  no-op
       ::
-      =/  =tape  "ames dropping malformed wire: {(spud wire)}"
-      (emit duct %pass /malformed-wire %d %flog %text tape)
+      ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
+      event-core
     ?>  ?=([@ her=ship *] u.parsed)
     =*  her          her.u.parsed
     =/  =peer-state  (got-peer-state her)
@@ -1233,20 +1233,19 @@
         ==
       ::  ignore events from an old rift
       ::
-      ?.  odd.veb  event-core
-      (log "ames dropping old rift wire: {(spud wire)}")
+      %-  %^  trace  odd.veb  her
+          |.("dropping old rift wire: {(spud wire)}")
+      event-core
     =/  =bone
       ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-    =?  event-core.peer-core  &(odd.veb ?=([%old *] u.parsed))
-      (log "ames parsing old wire format: {(spud wire)}")
+    =?  peer-core  ?=([%old *] u.parsed)
+      %-  %^  trace  odd.veb  her
+          |.("parsing old wire: {(spud wire)}")
+      peer-core
     ?~  error
       (send-ack bone)
     (send-nack bone u.error)
     ::
-    ++  log
-      |=  =tape
-      ^+  event-core
-      (emit duct %pass /on-take-done-parse-wire %d %flog %text tape)
     ::  if processing succeded, send positive ack packet and exit
     ::
     ++  send-ack
@@ -1525,9 +1524,9 @@
   ++  on-take-boon
     |=  [=wire payload=*]
     ^+  event-core
-    |^
     ?~  parsed=(parse-bone-wire wire)
-      (log "ames dropping malformed wire: {(spud wire)}")
+      ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
+      event-core
     ::
     ?>  ?=([@ her=ship *] u.parsed)
     =*  her          her.u.parsed
@@ -1540,19 +1539,16 @@
         ==
       ::  ignore events from an old rift
       ::
-      ?.  odd.veb  event-core
-      (log "ames dropping old rift wire: {(spud wire)}")
+      %-  %^  trace  odd.veb  her
+          |.("dropping old rift wire: {(spud wire)}")
+      event-core
     =/  =bone
       ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-    =?  event-core.peer-core  &(odd.veb ?=([%old *] u.parsed))
-      (log "ames parsing old wire: {(spud wire)}")
+    =?  peer-core  ?=([%old *] u.parsed)
+      %-  %^  trace  odd.veb  her
+          |.("parsing old wire: {(spud wire)}")
+      peer-core
     abet:(on-memo:peer-core bone payload %boon)
-    ::
-    ++  log
-      |=  =tape
-      ^+  event-core
-      (emit duct %pass /on-take-boon-parse-wire %d %flog %text tape)
-    --
   ::  +on-plea: handle request to send message
   ::
   ++  on-plea

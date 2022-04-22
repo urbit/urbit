@@ -341,9 +341,8 @@
   =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
   =^  moves3  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
   %+  expect-eq
-    !>  :^  ~[//unix]  %pass  /on-take-done-parse-wire
-        [%d %flog %text "ames parsing old wire format: /bone/~nec/1"]
-    !>  (snag 0 `(list move:ames)`moves3)
+    !>  1
+    !>  (lent `(list move:ames)`moves3)
 ::
 ++  test-dangling-bone  ^-  tang
   =^  moves0  bud  (call bud ~[/g/hood] %spew [%odd]~)
@@ -359,15 +358,12 @@
     ^-  sign:ames
     [%jael %public-keys %diff who=~nec %rift from=0 to=1]
   ::  %gall has a pending wire with the old rift, so sending a gift to
-  ::  %ames on it will drop that request, and print a message to the user
+  ::  %ames on it will drop that request, not producing any moves
   ::
   =^  moves3  bud  (take bud /bone/~nec/0/1 ~[//unix] %g %done ~)
   ::
   %+  expect-eq
-    !>  %-  sy
-        :_  ~
-        :^  ~[//unix]  %pass  /on-take-done-parse-wire
-        [%d %flog %text "ames dropping old rift wire: /bone/~nec/0/1"]
+    !>  ~
     !>  (sy ,.moves3)
 ::
 ++  test-ames-flow-with-new-rift  ^-  tang
