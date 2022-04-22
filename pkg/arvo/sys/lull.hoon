@@ -59,7 +59,7 @@
           [r=@uxD g=@uxD b=@uxD]                        ::  24bit true color
 +$  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::::
-::::                      ++ethereum-types                ::  eth surs for jael
+::::                    ++ethereum-types                  ::  eth surs for jael
   ::                                                    ::::
 ++  ethereum-types
   |%
@@ -73,7 +73,7 @@
   ++  events  (set event-id)
   --
 ::                                                      ::::
-::::                      ++azimuth-types                 ::  az surs for jael
+::::                    ++azimuth-types                   ::  az surs for jael
   ::                                                    ::::
 ++  azimuth-types
   =,  ethereum-types
@@ -153,7 +153,7 @@
       [%plea =ship =plea:ames]
   ==
 ::                                                      ::::
-::::                      ++http                        ::
+::::                    ++http                          ::
   ::                                                    ::::
 ::  http: shared representations of http concepts
 ::
@@ -340,7 +340,7 @@
     ==
   --
 ::                                                      ::::
-::::                      ++ames                          ::  (1a) network
+::::                    ++ames                            ::  (1a) network
   ::                                                    ::::
 ++  ames  ^?
   |%
@@ -513,6 +513,7 @@
   +$  peer-state
     $:  $:  =symmetric-key
             =life
+            =rift
             =public-key
             sponsor=ship
         ==
