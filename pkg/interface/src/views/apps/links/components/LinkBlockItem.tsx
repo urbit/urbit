@@ -12,6 +12,7 @@ import { AUDIO_REGEX, IMAGE_REGEX, validOembedCheck } from '~/views/components/R
 import { AudioPlayer } from '~/views/components/AudioPlayer';
 import { useHistory } from 'react-router';
 import { useHovering } from '~/logic/lib/util';
+import { useEmbed } from '~/logic/state/embed';
 import Author from '~/views/components/Author';
 import {
   GraphNode,
@@ -55,8 +56,9 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
 
   const isImage = IMAGE_REGEX.test(url);
   const isAudio = AUDIO_REGEX.test(url);
-
-  const isOembed = validOembedCheck(url);
+  const oembed = useEmbed(url);
+  const isOembed = validOembedCheck(oembed, url);
+  const embed = oembed.read();
   const history = useHistory();
   const { hovering, bind } = useHovering();
   const onClick = () => {
@@ -99,7 +101,7 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       ) : isAudio ? (
         <AudioPlayer title={title} url={url} />
       ) : isOembed ? (
-        <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} />
+        <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} embed={embed} />
       ) : (
         <RemoteContentEmbedFallback url={url} />
       )}

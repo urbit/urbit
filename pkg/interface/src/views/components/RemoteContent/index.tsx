@@ -1,4 +1,3 @@
-import { hasProvider } from 'oembed-parser';
 import React from 'react';
 import useSettingsState from '~/logic/state/settings';
 import {
@@ -8,6 +7,7 @@ import {
   RemoteContentVideoEmbed
 } from './embed';
 import { useEmbed } from '~/logic/state/embed';
+import { Suspender } from '~/logic/lib/suspend';
 import { TruncatedText } from '~/views/components/TruncatedText';
 import { RemoteContentWrapper } from './wrapper';
 import AsyncFallback from '../AsyncFallback';
@@ -51,11 +51,9 @@ const isFacebookGraphDependent = (url: string) => {
   return (caseDesensitizedURL.includes('facebook.com') || caseDesensitizedURL.includes('instagram.com'))
 }
 
-export const validOembedCheck = (url: string) => {
-  if (hasProvider(url) && !isFacebookGraphDependent(url)) {
-    const oembed = useEmbed(url)
-    const embed = oembed.read()
-    if (!embed.hasOwnProperty("error")) {
+export const validOembedCheck = (embed: Suspender<any>, url: string) => {
+  if (!isFacebookGraphDependent(url)) {
+    if (!embed.read().hasOwnProperty("error")) {
       return true
     }
   }
@@ -77,7 +75,10 @@ export function RemoteContent(props: RemoteContentProps) {
   const isImage = IMAGE_REGEX.test(url);
   const isAudio = AUDIO_REGEX.test(url);
   const isVideo = VIDEO_REGEX.test(url);
-  const isOembed = validOembedCheck(url);
+  const oembed = useEmbed(url);
+  const isOembed = validOembedCheck(oembed, url);
+  const embed = oembed.read();
+
   const wrapperProps = {
     url,
     tall,
@@ -114,7 +115,7 @@ export function RemoteContent(props: RemoteContentProps) {
   } else if (isOembed && remoteContentPolicy.oembedShown) {
     return (
       <AsyncFallback fallback={fallback}>
-        <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
+        <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} embed={embed} />
       </AsyncFallback>
     );
   }

@@ -3,8 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useState,
-  useRef
+  useState
 } from 'react';
 import styled from 'styled-components';
 import UnstyledEmbedContainer from 'react-oembed-container';
@@ -29,7 +28,7 @@ import { Link } from 'react-router-dom';
 import { AppPermalink, referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 import { RemoteContentWrapper } from './wrapper';
-import { useEmbed } from '~/logic/state/embed';
+import { Suspender } from '~/logic/lib/suspend';
 import { IS_SAFARI } from '~/logic/lib/platform';
 import useDocketState, { useTreaty } from '~/logic/state/docket';
 import { AppTile } from '~/views/apps/permalinks/embed';
@@ -320,6 +319,7 @@ type RemoteContentOembedProps = {
   renderUrl?: boolean;
   thumbnail?: boolean;
   tall?: boolean;
+  oembed: Suspender<any>;
 } & RemoteContentEmbedProps &
   PropFunc<typeof Box>;
 
@@ -333,10 +333,8 @@ export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
   RemoteContentOembedProps
 >((props, ref) => {
-  const { url, renderUrl = false, thumbnail = false, ...rest } = props;
+  const { url, embed, renderUrl = false, thumbnail = false, ...rest } = props;
 
-  const oembed = useRef(useEmbed(url))
-  const embed = oembed.current.read()
   const fallbackError  = new Error('fallback');
 
   const [aspect, width, height] = useMemo(() => {
