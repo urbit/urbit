@@ -2468,7 +2468,6 @@
           =/  =wire  (make-bone-wire her.channel her-rift.channel bone)
           ::
           ?+  vane.plea  ~|  %ames-evil-vane^our^her.channel^vane.plea  !!
-            %a  (emit duct %pass wire %a %plea her.channel plea)
             %c  (emit duct %pass wire %c %plea her.channel plea)
             %g  (emit duct %pass wire %g %plea her.channel plea)
             %j  (emit duct %pass wire %j %plea her.channel plea)
