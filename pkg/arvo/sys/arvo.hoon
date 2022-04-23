@@ -415,7 +415,7 @@
 ::
 ::  |de: axal engine
 ::
-++  de
+++  of
   =|  fat=(axal)
   |@
   ++  del
@@ -824,7 +824,7 @@
       ::
       =*  pax  p.i.fal
       =*  dat  q.i.fal
-      =/  hav  (~(get de fat) pax)
+      =/  hav  (~(get of fat) pax)
       =?  del  |(?=(~ hav) !=(u.hav dat))
          ?:  ?=([%sys *] pax)
            del(sys (~(put by sys.del) pax dat))
@@ -842,7 +842,7 @@
         `[`(sole u.arv) [/sys/arvo u.arv] ~]
       =/  rav
         ~|  %usurp-hoon-no-arvo
-        ((bond |.((need (~(get de fat) /sys/arvo)))) arv)
+        ((bond |.((need (~(get of fat) /sys/arvo)))) arv)
       ~!  rav
       :+  ~
         [`(sole u.hun) (sole rav)]
@@ -857,10 +857,10 @@
       =^  lul  fat
         ?^  hav=(~(get by sys.del) /sys/lull)
           :-  `(sole u.hav)
-          (~(put de fat) /sys/lull u.hav)
+          (~(put of fat) /sys/lull u.hav)
         :_  fat
         ~|  %adorn-no-lull
-        ?.(all ~ `(sole (need (~(get de fat) /sys/lull))))
+        ?.(all ~ `(sole (need (~(get of fat) /sys/lull))))
       ::  zuse: shared library
       ::
       ::    %lull is the subject of %zuse; force all if we have a new %lull
@@ -869,10 +869,10 @@
       =^  zus  fat
         ?^  hav=(~(get by sys.del) /sys/zuse)
           :-  `(sole u.hav)
-          (~(put de fat) /sys/zuse u.hav)
+          (~(put of fat) /sys/zuse u.hav)
         :_  fat
         ~|  %adorn-no-zuse
-        ?.(all ~ `(sole (need (~(get de fat) /sys/zuse))))
+        ?.(all ~ `(sole (need (~(get of fat) /sys/zuse))))
       ::  kernel modules
       ::
       ::    %zuse is the subject of the vanes; force all if we have a new %zuse
@@ -882,7 +882,7 @@
       =?  nav  all
         %-  ~(gas by nav)
         %+  turn
-          ~(tap by dir:(~(dip de fat) /sys/vane))
+          ~(tap by dir:(~(dip of fat) /sys/vane))
         |=([name=@ta _fat] [`@tas`name (sole (need fil))])
       ::
       =^  new  fat
@@ -895,7 +895,7 @@
         ?>  ?=([%sys %vane @tas ~] p)
         =*  nam  i.t.t.p
         ?>  ((sane %tas) nam)
-        [[`@tas`nam (sole q)] (~(put de taf) p q)]
+        [[`@tas`nam (sole q)] (~(put of taf) p q)]
       ::
       =;  van
         [[lul zus van] fat]
@@ -1480,7 +1480,7 @@
         ++  lod
           |=  kel=(list (pair path (cask)))
           ^+  ..pith
-          =.  fat.mod.sol  (~(gas de fat.mod.sol) kel)
+          =.  fat.mod.sol  (~(gas of fat.mod.sol) kel)
           %+  mod
             (~(group adapt fat.mod.sol) fil)
           %+  lien  kel
@@ -1548,7 +1548,7 @@
           [%fad %lac ~]  ``noun/!>(lac.fad)
           [%zen %lag ~]  ``noun/!>(lag.zen)
           [%zen %ver ~]  ``noun/!>(ver.zen)
-          [%mod %fat *]  ``noun/!>((~(dip de fat.mod) t.t.s.bem))
+          [%mod %fat *]  ``noun/!>((~(dip of fat.mod) t.t.s.bem))
         ==
       ::
       ++  poke
@@ -1879,7 +1879,7 @@
       =?  taf  =(~ dir.taf)     ::  XX TMI
         ~|  %larval-need-kernel
         ?>  &(?=(^ tub) ?=(^ hun.p.u.tub))
-        (~(gas de taf) q.u.tub)
+        (~(gas of taf) q.u.tub)
       ::
       =^  job=oped:part  taf  (~(adorn adapt:part taf) del |)
       =?  lul  ?=(^ lul.job)

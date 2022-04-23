@@ -560,7 +560,7 @@
         [cage nub]
       ?<  (~(has in deletes) path)
       ~|  %file-not-found^path
-      :_(nub q:(need (~(get ^de ankh) path)))
+      :_(nub q:(need (~(get of ankh) path)))
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
@@ -869,7 +869,7 @@
       |=  =path
       ^-  [(map @ta vase) state]
       =/  fiz=(list @ta)
-        =/  nuk=_ankh  (~(dip ^de ankh) path)
+        =/  nuk=_ankh  (~(dip of ankh) path)
         %+  murn
           ~(tap by dir.nuk)
         |=  [nom=@ta nak=_ankh]
@@ -1066,7 +1066,7 @@
         $(paz t.paz)
       ?:  (~(has by changes) pux)
         pux
-      ?^  (~(get ^de ankh) pux)
+      ?^  (~(get of ankh) pux)
         pux
       $(paz t.paz)
     --
@@ -3082,7 +3082,7 @@
         yaki-loop(yakis t.yakis)
       =?    missing
           ?&  !(~(has by lat.ran) lobe.i.lobes)
-              !=([~ %|] (~(fit ^de norm) path.i.lobes))
+              !=([~ %|] (~(fit of norm) path.i.lobes))
           ==
         (~(put in missing) lobe.i.lobes)
       lobe-loop(lobes t.lobes)
@@ -3984,7 +3984,7 @@
       ?:  &(?=(~ ref) =(let.dom yon))
         :_  fod.dom  :-  ~
         %+  bind
-          (~(get ^do ank.dom) pax)
+          (~(get of ank.dom) pax)
         |=(a=[p=lobe q=cage] q.a)
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
@@ -5287,7 +5287,7 @@
   ++  draw-dome
     |=  =dome
     ^-  (set [norm yaki])
-    =/  keep-all=norm  (~(put ^de *norm) / &)
+    =/  keep-all=norm  (~(put of *norm) / &)
     =/  =aeon  1
     |-  ^-  (set [norm yaki])
     ?:  (lth let.dome aeon)
@@ -5345,7 +5345,7 @@
         ..pick-raft
       =.  sen  (~(put in sen) norm q.yaki)
       =/  peg=(unit page)  (~(get by lat) q.n.q.yaki)
-      =?  lat  &(?=(^ peg) !=([~ %|] +:(~(fit ^de norm) p.n.q.yaki)))
+      =?  lat  &(?=(^ peg) !=([~ %|] +:(~(fit of norm) p.n.q.yaki)))
         (~(uni by `(map lobe page)`[[q.n.q.yaki u.peg] ~ ~]) lat)
       =.  ..pick-raft  $(q.yaki l.q.yaki)
       $(q.yaki r.q.yaki)

@@ -197,10 +197,10 @@
     ^-  (unit (unit cage))
     ?+    path  (on-peek:def path)
         [%x %tree ~]
-      ``noun+!>((turn ~(tap de running.state) head))
+      ``noun+!>((turn ~(tap of running.state) head))
     ::
         [%x %starting @ ~]
-      ``noun+!>((~(has de running.state) (~(got by tid.state) i.t.t.path)))
+      ``noun+!>((~(has of running.state) (~(got by tid.state) i.t.t.path)))
     ::
         [%x %saxo @ ~]
       ``noun+!>((~(got by tid.state) i.t.t.path))
@@ -314,7 +314,7 @@
   =/  new-tid  (fall use (new-thread-id file))
   =/  =yarn  (snoc parent-yarn new-tid)
   ::
-  ?:  (~(has de running.state) yarn)
+  ?:  (~(has of running.state) yarn)
     ~|  [%already-started yarn]
     !!
   ?:  (~(has by starting.state) yarn)
@@ -359,7 +359,7 @@
   |=  [=yarn =thread]
   ^-  (quip card ^state)
   =/  =vase  vase:(~(got by starting.state) yarn)
-  ?<  (~(has de running.state) yarn)
+  ?<  (~(has of running.state) yarn)
   =/  m  (strand ,^vase)
   =/  res  (mule |.((thread vase)))
   ?:  ?=(%| -.res)
@@ -367,7 +367,7 @@
   =/  =eval-form:eval:m
     (from-form:eval:m p.res)
   =:  starting.state  (~(del by starting.state) yarn)
-      running.state   (~(put de running.state) yarn eval-form)
+      running.state   (~(put of running.state) yarn eval-form)
     ==
   (take-input yarn ~)
 ::
@@ -378,7 +378,7 @@
   ?~  yarn
     ~&  %stopping-nonexistent-thread
     [~ state]
-  ?:  (~(has de running.state) u.yarn)
+  ?:  (~(has of running.state) u.yarn)
     ?:  nice
       (thread-done u.yarn *vase)
     (thread-fail u.yarn %cancelled ~)
@@ -394,11 +394,11 @@
   |=  [=yarn input=(unit input:strand)]
   ^-  (quip card ^state)
   =/  m  (strand ,vase)
-  ?.  (~(has de running.state) yarn)
+  ?.  (~(has of running.state) yarn)
     %-  (slog leaf+"spider got input for non-existent {<yarn>}" ~)
     `state
   =/  =eval-form:eval:m
-    (need fil:(~(dip de running.state) yarn))
+    (need fil:(~(dip of running.state) yarn))
   =|  cards=(list card)
   |-  ^-  (quip card ^state)
   =^  r=[cards=(list card) =eval-result:eval:m]  eval-form
@@ -409,7 +409,7 @@
       %&  p.out
       %|  [[~ [%fail %crash p.out]] eval-form]
     ==
-  =.  running.state  (~(put de running.state) yarn eval-form)
+  =.  running.state  (~(put of running.state) yarn eval-form)
   =/  =tid  (yarn-to-tid yarn)
   =.  cards.r
     %+  turn  cards.r
@@ -514,7 +514,7 @@
   ^-  (quip card ^state)
   =/  children=(list ^yarn)
     %+  turn
-      ~(tap de (~(dip de running.state) yarn))
+      ~(tap of (~(dip of running.state) yarn))
     |=  [child=^yarn *]
     (welp yarn child)
   |-  ^-  (quip card ^state)
@@ -524,7 +524,7 @@
   =^  cards-our  state
     =/  =^yarn  i.children
     =/  =tid  (yarn-to-tid yarn)
-    =:  running.state  (~(lop de running.state) yarn)
+    =:  running.state  (~(lop of running.state) yarn)
 
         tid.state      (~(del by tid.state) tid)
         serving.state  (~(del by serving.state) (yarn-to-tid yarn))
@@ -581,7 +581,7 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  4+state(running (turn ~(tap de running.state) head))
+  4+state(running (turn ~(tap of running.state) head))
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]

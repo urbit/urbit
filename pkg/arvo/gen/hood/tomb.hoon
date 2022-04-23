@@ -52,12 +52,12 @@
 %+  welp
   %+  murn  ~(tap in norms)
   |=  [=ship =desk =tako:clay =norm:clay =path]
-  ?:  ?=([~ %|] (~(fit de norm) path))
+  ?:  ?=([~ %|] (~(fit of norm) path))
     ~
   %-  (slog leaf+"tomb: {<ship desk path `@uv`tako norm path>}" ~)
   ?:  dry
     ~
-  `[%c %tomb %worn ship desk tako (~(put de norm) path %|)]
+  `[%c %tomb %worn ship desk tako (~(put of norm) path %|)]
 ?:  dry
   ~
 [%c %tomb %pick ~]~

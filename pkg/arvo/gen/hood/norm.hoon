@@ -9,4 +9,4 @@
   =+  .^([=@ud @da] %cs /(scot %p ship)/[desk]/1/late)
   ud+ud
 =+  .^(=dome:clay %cv /(scot %p ship)/[desk]/(scot case))
-[%c %tomb %norm ship desk (~(put de nor.dome) path keep)]
+[%c %tomb %norm ship desk (~(put of nor.dome) path keep)]
