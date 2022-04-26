@@ -342,8 +342,8 @@
   =/  =pass
     (pass-from-eth:azimuth [32^crypt 32^auth suite]:keys.net)
   ^-  (list [@p udiff:point])
-  :*  [ship id %keys [life.keys.net suite.keys.net pass] %.y]
-      [ship id %rift rift.net %.y]
+  :*  [ship id %rift rift.net %.y]
+      [ship id %keys [life.keys.net suite.keys.net pass] %.y]
       [ship id %spon ?:(has.sponsor.net `who.sponsor.net ~)]
       udiffs
   ==
