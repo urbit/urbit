@@ -2,8 +2,9 @@
 /+  *server, agentio, default-agent, multipart, dbug, verb
 |%
 +$  card  card:agent:gall
-+$  state-0
-  $:  ::  local
++$  app-state
+  $:  %2
+      ::  local
       charges=(map desk charge)
   ==
 ::  $cache: impermanent state
@@ -11,7 +12,7 @@
   by-base=(map term desk)
 ::
 +$  inflated-state
-  [state-0 cache]
+  [app-state cache]
 ::  +lac: toggle verbosity
 ++  lac  &
 ::
@@ -50,12 +51,15 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  =+  !<(old=state-0 vase)
-  =*  cha  ~(. ch q.byk.bowl)
   |^
-  =.  -.state  old
-  =.  +.state  inflate-cache
-  `this
+  =+  !<(old=app-states vase)
+  =?  old    ?=(?(~ ^) -.old)  [%1 old]
+  =^  cards  old
+    ?.  ?=(%1 -.old)  `old
+    :_  old(- %2)
+    [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>([%base %.y ~ ~])]~
+  ?>  ?=(%2 -.old)
+  [cards this(state [old inflate-cache])]
   ::
   ++  inflate-cache
     ^-  cache
@@ -64,6 +68,22 @@
     |=  [=desk =charge]
     ?.  ?=(%glob -.href.docket.charge)  ~
     `:_(desk base.href.docket.charge)
+  ::
+  +$  app-states
+    $^  state-0-ket
+    $%  state-0-sig
+        state-1
+        app-state
+    ==
+  ::
+  +$  state-1  [%1 (map desk charge)]
+  +$  state-0-sig
+    $:  ~
+    ==
+  ::
+  +$  state-0-ket
+    $:  (map desk charge)
+    ==
   --
 ::
 ++  on-save  !>(-.state)
@@ -182,7 +202,8 @@
   =^  cards  state
     ?+  wire  ~&(bad-docket-take+wire `state)
       ~  `state
-      [%kiln ~]  take-kiln
+      [%rein ~]      `state
+      [%kiln ~]      take-kiln
       [%charge @ *]  (take-charge i.t.wire t.t.wire)
     ==
   [cards this]
@@ -390,7 +411,7 @@
 |_  =bowl:gall
 ++  io    ~(. agentio bowl)
 ++  pass  pass:io
-++  def  ~(. (default-agent state %|) bowl)
+++  def   ~(. (default-agent state %|) bowl)
 ::
 ++  hash-glob  sham
 ++  cg
