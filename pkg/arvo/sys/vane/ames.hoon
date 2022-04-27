@@ -725,18 +725,26 @@
 ::    .fends: encryption state for local paths
 ::    .seqs: lookup path by seq (used to decrypt incoming requests)
 ::    .next-seq: next sequence number to assign a new key
+::    .eny: entropy used for key generation
 ::
 +$  fine-state
   $:  fends=(map path fend-state)
       seqs=(map @ud path)
       next-seq=_1
+      eny=@ux
   ==
+::  $fend-state: state for a permissioned path
+::
+::    chit: numbered key
+::    .subs: keys are all allowed ships; values are subscribed or not
+::    .gap: key rotation interval
+::    .last-rev: last time key was set
 ::
 +$  fend-state
   $:  chit
-      subs=(map ship ?)  ::  value means is-subscribed?
+      subs=(map ship ?)
       gap=@dr
-      next-wake=@da
+      last-rev=@da
   ==
 ::
 ++  acru-5  $_  ^?
@@ -1827,6 +1835,9 @@
   ::
   ++  on-init
     ^+  event-core
+    ::  initialize local entropy with salted system entropy
+    ::
+    =.  eny.fine-state.ames-state  (shas %fine eny)
     ::
     =~  (emit duct %pass /turf %j %turf ~)
         (emit duct %pass /private-keys %j %private-keys ~)
@@ -3211,24 +3222,21 @@
           =*  fends  fends.fine-state.ames-state
           =/  fen  (~(get by fends) path)
           ?~  fen
-            =*  nex  next-seq.fine-state.ames-state
-            =^  seq  nex  [nex +(nex)]
-            =/  key  (gen-key seq path)
+            =^  hit  fine-state.ames-state  gen-key
             =/  suz  (malt (turn ~(tap in who) (late |)))
             =/  gup  (fall gap ~d1)
-            =/  wen  (add now gup)
-            =.  fends  (~(put by fends) path [[seq key] suz gup wen)
+            =.  fends  (~(put by fends) path [hit suz gup now])
             ::
             !!
           !!
-        ::  +gen-key: generate random symmetric key
-        ::
-        ::    TODO: verify crypto; what happens if .eny is used twice?
+        ::  +gen-key: generate symmetric key, iterating counter and entropy
         ::
         ++  gen-key
-          |=  [seq=@ud =path]
-          ^-  @ux
-          (shas eny [duct %fine seq path])
+          ^-  [chit fine-state]
+          =*  fin  fine-state.ames-state
+          =^  seq  next-seq.fin  [next-seq.fin +(next-seq.fin)]
+          =^  key  eny.fin  (~(raws og eny.fin) 256)
+          [[seq key] fin]
         ::
         ++  on-yank
           |=  [=ship =path]
