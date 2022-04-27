@@ -278,6 +278,8 @@
 ::  Like a +$rave but with caches of current versions for %next and %many.
 ::  Generally used when we store a request in our state somewhere.
 ::
+::  TODO: remove lobes from %many
+::
 +$  cach  (unit (unit cage))                            ::  cached result
 +$  wove  [for=(unit [=ship ver=@ud]) =rove]            ::  stored source + req
 +$  rove                                                ::  stored request
@@ -2865,7 +2867,7 @@
       :_  (~(run by qyx) |=(a=(set duct) (~(del in a) hen)))
       %-  ~(rep by qyx)
       |=  [[a=wove b=(set duct)] c=(list wove)]
-      ?.((~(has in b) hen) c [a c])
+      ?:((~(has in b) hen) [a c] c)
     ::
     ?~  ref
       =>  .(ref `(unit rind)`ref)
@@ -3229,26 +3231,25 @@
   ++  run-if-future
     |=  [rov=rove fun=$-(@da _.)]
     ^+  +>.$
-    %+  fall
-      %+  bind
-        ^-  (unit @da)
-        ?-    -.rov
-            %sing
-          ?.  ?=(%da -.case.mood.rov)  ~
-          `p.case.mood.rov
-        ::
-            %next  ~
-            %mult  ~
-            %many
-          %^  hunt  lth
-            ?.  ?=(%da -.from.moat.rov)    ~
-            ?.  (lth now p.from.moat.rov)  ~
-            [~ p.from.moat.rov]
-          ?.  ?=(%da -.to.moat.rov)  ~
-          `(max now p.to.moat.rov)
-        ==
-      fun
-    +>.$
+    =/  date=(unit @da)
+      ?-    -.rov
+          %sing
+        ?.  ?=(%da -.case.mood.rov)  ~
+        `p.case.mood.rov
+      ::
+          %next  ~
+          %mult  ~
+          %many
+        %^  hunt  lth
+          ?.  ?=(%da -.from.moat.rov)    ~
+          ?.  (lth now p.from.moat.rov)  ~
+          [~ p.from.moat.rov]
+        ?.  ?=(%da -.to.moat.rov)  ~
+        `(max now p.to.moat.rov)
+      ==
+    ?~  date
+      +>.$
+    (fun u.date)
   ::
   ++  send-cards
     |=  [cards=(list card) ducts=(set duct)]
@@ -3279,7 +3280,7 @@
     =?  qux  ?=(^ new-sub)
       =/  =wove  [for.wove.i.subs u.new-sub]
       %+  ~(put by qux)  wove
-      (~(uni in ducts.i.subs) (fall (~(get by qux) wove) ~))
+      (~(uni in ducts.i.subs) (~(get ju qux) wove))
     $(subs t.subs)
   ::
   ::  Try to fill a subscription
@@ -3395,28 +3396,28 @@
       ::
       =/  changes=(map mood (unit cage))
         %+  roll  ~(tap by old-cach.rov)
-        |=  $:  [[car=care pax=path] old-cach-value=cach]
+        |=  $:  [[car=care pax=path] old-cach=cach]
                 changes=(map mood (unit cage))
             ==
-        =/  new-cach-value=cach  (~(got by new-cach.rov) car pax)
-        ?<  |(?=(~ old-cach-value) ?=(~ new-cach-value))
+        =/  new-cach=cach  (~(got by new-cach.rov) car pax)
+        ?<  |(?=(~ old-cach) ?=(~ new-cach))
         =/  new-entry=(unit (pair mood (unit cage)))
           =/  =mood  [car [%ud u.aeon.rov] pax]
-          ?~  u.new-cach-value
+          ?~  u.new-cach
             ::  if new does not exist, always notify
             ::
             `[mood ~]
-          ?~  u.old-cach-value
+          ?~  u.old-cach
             ::  added
             ::
-            `[mood `u.u.new-cach-value]
-          ?:  =([p q.q]:u.u.new-cach-value [p q.q]:u.u.old-cach-value)
+            `[mood `u.u.new-cach]
+          ?:  =([p q.q]:u.u.new-cach [p q.q]:u.u.old-cach)
             ::  unchanged
             ::
             ~
           ::  changed
           ::
-          `[mood `u.u.new-cach-value]
+          `[mood `u.u.new-cach]
         ::  if changed, save the change
         ::
         ?~  new-entry
@@ -3470,8 +3471,8 @@
       ::
       ++  complete
         |=  hav=(map (pair care path) cach)
-        ?&  ?=(^ hav)
-            (levy ~(tap by `(map (pair care path) cach)`hav) know)
+        ?&  !=(~ hav)
+            (levy ~(tap by hav) know)
         ==
       ::
       ::  know about file in cach
@@ -3512,31 +3513,25 @@
         ::
         [`rov ~]
       =/  to-aeon  (case-to-aeon to.moat.rov)
+      ::  TODO: shouldn't skip if tracking
+      ::
       =/  up-to  ?~(to-aeon let.dom u.to-aeon)
       =/  ver  ?~(far %1 ver.u.far)
-      =/  new-lobes=(map path lobe)
-        (lobes-at-path:ze for up-to path.moat.rov)
       =.  from.moat.rov  [%ud +(let.dom)]
-      =/  cards=(list card)
-        ?:  =(lobes.rov new-lobes)
-          ::  if no changes, don't produce results
-          ::
-          ~
-        ::  else changes, so produce them
-        ::
+      =/  =card
         =/  =cage
           ?:  track.rov
             [%null [%atom %n ~] ~]
           [%nako !>((make-nako:ze ver u.from-aeon up-to))]
-        [(writ ~ [%w ud+let.dom /] cage) ~]
+        (writ ~ [%w ud+let.dom /] cage)
       ?~  to-aeon
         ::  we're in the middle of the range, so produce what we can,
         ::  but don't end the subscription
         ::
-        [`rov cards]
+        [`rov card ~]
       ::  we're past the end of the range, so end subscription
       ::
-      [~ (snoc cards (writ ~))]
+      [~ [card (writ ~) ~]]
     ==
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
