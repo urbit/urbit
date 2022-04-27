@@ -1,10 +1,9 @@
 import { Action, Col, Icon, Row } from '@tlon/indigo-react';
-import { Association, Post, removePosts } from '@urbit/api';
+import { Association, Post, removePosts, resourceFromPath } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
 import useContactState from '~/logic/state/contact';
-import { resourceFromPath } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 import airlock from '~/logic/api';

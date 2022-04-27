@@ -34,6 +34,72 @@ interface GraphMentionNode {
   ship: string;
 }
 
+const addEmphasisToMention = (contents: Content[], content: Content, index: number) => {
+  const prevContent = contents[index - 1];
+  const nextContent = contents[index + 1];
+
+  if (
+    'text' in content &&
+    (content.text.trim() === '**' || content.text.trim() === '*' )
+  )  {
+    return {
+      text: ''
+    };
+  }
+  if(
+    'text' in content &&
+    content.text.endsWith('*') &&
+    !content.text.startsWith('*') &&
+    nextContent !== undefined &&
+    'mention' in nextContent
+  ) {
+    if (content.text.charAt((content.text.length - 2)) === '*') {
+      return { text: content.text.slice(0, content.text.length - 2) };
+    }
+    return { text: content.text.slice(0, content.text.length - 1) };
+  }
+  if (
+    'text' in content &&
+    content.text.startsWith('*') &&
+    !content.text.endsWith('*') &&
+    prevContent !== undefined &&
+    'mention' in contents[index - 1]
+  ) {
+    if (content.text.charAt(1) === '*') {
+      return { text: content.text.slice(2, content.text.length) };
+    }
+    return { text: content.text.slice(1, content.text.length) };
+  }
+  if (
+    'mention' in content &&
+    prevContent !== undefined &&
+    'text' in prevContent &&
+    // @ts-ignore type guard above covers this.
+    prevContent.text.endsWith('*') &&
+    nextContent !== undefined &&
+    'text' in contents[index + 1] &&
+    // @ts-ignore type guard above covers this.
+    nextContent.text.startsWith('*')
+  ) {
+    if (
+      // @ts-ignore covered by typeguard in conditions
+      prevContent.text.charAt(prevContent.text.length - 2) === '*' &&
+      // @ts-ignore covered by typeguard in conditions
+      nextContent.text.charAt(nextContent.text[1]) === '*'
+    ) {
+      return {
+        mention: content.mention,
+        emphasis: 'bold'
+      };
+    }
+    return {
+      mention: content.mention,
+      emphasis: 'italic'
+    };
+  }
+  return content;
+};
+
 const codeToMdAst = (content: CodeContent) => {
   return {
     type: 'root',
@@ -100,7 +166,8 @@ const contentToMdAst = (tall: boolean) => (
         children: [
           {
             type: 'graph-mention',
-            ship: content.mention
+            ship: content.mention,
+            emphasis: content.emphasis
           }
         ]
       }
@@ -343,7 +410,9 @@ const renderers = {
   list: ({ depth, ordered, children }) => {
     return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
   },
-  'graph-mention': ({ ship }) => <Mention ship={ship} />,
+  'graph-mention': (obj) => {
+    return <Mention ship={obj.ship} emphasis={obj.emphasis} />;
+  },
   image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent key={url} url={url} tall={tall} />
@@ -439,7 +508,10 @@ export const GraphContent = React.memo((
     transcluded = 0,
     ...rest
   } = props;
-  const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
+  const [, ast] = stitchAsts(
+    contents
+    .map((content, index) => addEmphasisToMention(contents, content, index))
+    .map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
       <Graphdown transcluded={transcluded} ast={ast} tall={tall} />
