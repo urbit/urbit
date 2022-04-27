@@ -734,7 +734,7 @@
 ::
 +$  fend-state
   $:  chit
-      who=(set ship)
+      subs=(map ship ?)  ::  value means is-subscribed?
       gap=@dr
       next-wake=@da
   ==
@@ -1149,6 +1149,10 @@
       %pine  (on-pine:fine:event-core +.task)
       %keen  (on-keen:fine:event-core +.task)
       %yawn  (on-yawn:fine:event-core +.task)
+    ::
+      %coax  (on-coax:fine:event-core +.task)
+      %fend  (on-fend:fine:event-core +.task)
+      %yank  (on-yank:fine:event-core +.task)
     ==
   ::
   [moves ames-gate]
@@ -3186,6 +3190,50 @@
           ?~  peer-core  
             ~|(%no-ship-for-yawn !!)
           pe-abet:(pe-yawn:u.peer-core path)
+        ::
+        ++  on-coax
+          |=  [=ship =path live=?]
+          ^+  event-core
+          =*  fends  fends.fine-state.ames-state
+          =/  fen  (~(get by fends) path)
+          ?~  fen
+            (mean "ames: coax-none {<ship>} {<path>}" ~)
+          ?.  (~(has by subs.u.fen) ship)
+            (mean "ames: coax-snub {<ship>} {<path>}" ~)
+          =.  fends
+            %+  ~(put by fends)  path
+            u.fen(subs (~(put by subs) ship &))
+          (emit duct %give %chit path `chit`-.u.fen)
+        ::
+        ++  on-fend
+          |=  [=path who=(set ship) gap=(unit @dr)]
+          ^+  event-core
+          =*  fends  fends.fine-state.ames-state
+          =/  fen  (~(get by fends) path)
+          ?~  fen
+            =*  nex  next-seq.fine-state.ames-state
+            =^  seq  nex  [nex +(nex)]
+            =/  key  (gen-key seq path)
+            =/  suz  (malt (turn ~(tap in who) (late |)))
+            =/  gup  (fall gap ~d1)
+            =/  wen  (add now gup)
+            =.  fends  (~(put by fends) path [[seq key] suz gup wen)
+            ::
+            !!
+          !!
+        ::  +gen-key: generate random symmetric key
+        ::
+        ::    TODO: verify crypto; what happens if .eny is used twice?
+        ::
+        ++  gen-key
+          |=  [seq=@ud =path]
+          ^-  @ux
+          (shas eny [duct %fine seq path])
+        ::
+        ++  on-yank
+          |=  [=ship =path]
+          ^+  event-core
+          !!
         ::
         ++  on-take-wake
           |=  [=wire error=(unit tang)]
