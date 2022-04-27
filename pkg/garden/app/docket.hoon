@@ -56,8 +56,12 @@
   =?  old    ?=(?(~ ^) -.old)  [%1 old]
   =^  cards  old
     ?.  ?=(%1 -.old)  `old
+    =/  rein=cage  kiln-rein+!>([%base %.y ~ ~])
+    =/  nuke=cage  kiln-uninstall+!>(%hodl)
     :_  old(- %2)
-    [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>([%base %.y ~ ~])]~
+    :~  [%pass /rein %agent [our.bowl %hood] %poke rein]
+        [%pass /nuke %agent [our.bowl %hood] %poke nuke]
+    ==
   ?>  ?=(%2 -.old)
   [cards this(state [old inflate-cache])]
   ::
@@ -202,7 +206,8 @@
   =^  cards  state
     ?+  wire  ~&(bad-docket-take+wire `state)
       ~  `state
-      [%rein ~]      `state
+      [%rein ~]      ~&(%reined `state)
+      [%nuke ~]      ~&(%nuked `state)
       [%kiln ~]      take-kiln
       [%charge @ *]  (take-charge i.t.wire t.t.wire)
     ==
