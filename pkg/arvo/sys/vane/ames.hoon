@@ -1068,6 +1068,9 @@
       ship-state
     =/  peer-state=peer-state-5  +.ship-state
     =/  =rift
+      ::  harcoded because %jael doesn't have data about comets
+      ::
+      ?:  ?=(%pawn (clan:title ship))  0
       ;;  @ud
       =<  q.q  %-  need  %-  need
       (rof ~ %j `beam`[[our %rift %da now] /(scot %p ship)])
