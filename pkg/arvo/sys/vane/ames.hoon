@@ -722,15 +722,15 @@
   ==
 ::  $fine-state: state for encrypted scry
 ::
-::    .fends: encryption state for local paths
-::    .seqs: lookup path by seq (used to decrypt incoming requests)
-::    .next-seq: next sequence number to assign a new key
+::    .fez: $fend-state's for local paths
+::    .net: lookup path by seq (used to decrypt incoming requests)
+::    .seq: next sequence number to assign a new key
 ::    .eny: entropy used for key generation
 ::
 +$  fine-state
-  $:  fends=(map path fend-state)
-      seqs=(map @ud path)
-      next-seq=_1
+  $:  fez=(map path fend-state)
+      net=(map @ud path)
+      seq=_1
       eny=@ux
   ==
 ::  $fend-state: state for a permissioned path
@@ -3205,27 +3205,27 @@
         ++  on-coax
           |=  [=ship =path live=?]
           ^+  event-core
-          =*  fends  fends.fine-state.ames-state
-          =/  fen  (~(get by fends) path)
+          =*  fez  fez.fine-state.ames-state
+          =/  fen  (~(get by fez) path)
           ?~  fen
             (mean "ames: coax-none {<ship>} {<path>}" ~)
           ?.  (~(has by subs.u.fen) ship)
             (mean "ames: coax-snub {<ship>} {<path>}" ~)
-          =.  fends
-            %+  ~(put by fends)  path
+          =.  fez
+            %+  ~(put by fez)  path
             u.fen(subs (~(put by subs) ship &))
           (emit duct %give %chit path `chit`-.u.fen)
         ::
         ++  on-fend
           |=  [=path who=(set ship) gap=(unit @dr)]
           ^+  event-core
-          =*  fends  fends.fine-state.ames-state
-          =/  fen  (~(get by fends) path)
+          =*  fin  fine-state.ames-state
+          =/  fen  (~(get by fez) path)
           ?~  fen
-            =^  hit  fine-state.ames-state  gen-key
-            =/  suz  (malt (turn ~(tap in who) (late |)))
-            =/  gup  (fall gap ~d1)
-            =.  fends  (~(put by fends) path [hit suz gup now])
+            =^  tok  fin  gen-key
+            =/  fam  (malt (turn ~(tap in who) (late |)))
+            =/  gap  (fall gap ~d1)
+            =.  fez  (~(put by fez) path [tok fam gap now])
             ::
             !!
           !!
@@ -3234,8 +3234,8 @@
         ++  gen-key
           ^-  [chit fine-state]
           =*  fin  fine-state.ames-state
-          =^  seq  next-seq.fin  [next-seq.fin +(next-seq.fin)]
-          =^  key  eny.fin  (~(raws og eny.fin) 256)
+          =^  seq  seq.fin  [seq.fin +(seq.fin)]
+          =^  key  eny.fin  [- a]:(~(raws og eny.fin) 256)
           [[seq key] fin]
         ::
         ++  on-yank
