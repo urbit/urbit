@@ -335,8 +335,7 @@ export const RemoteContentOembed = React.forwardRef<
 >((props, ref) => {
   const { url, oembed, renderUrl = false, thumbnail = false, ...rest } = props;
 
-  const embed = oembed.read()
-  const fallbackError  = new Error('fallback');
+  const embed = oembed.read();
 
   const [aspect, width, height] = useMemo(() => {
     if(!('height' in embed && typeof embed.height === 'number'
@@ -374,11 +373,9 @@ export const RemoteContentOembed = React.forwardRef<
             dangerouslySetInnerHTML={{ __html: embed.html }}
           ></EmbedBox>
         </EmbedContainer>
-      ) : renderUrl ? (
+      ) : (
         <RemoteContentEmbedFallback url={url} />
-        ) : (() => {
- throw fallbackError;
-})()
+        )
       }
     </Col>
   );

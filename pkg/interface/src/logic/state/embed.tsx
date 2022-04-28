@@ -23,7 +23,8 @@ const useEmbedState = create<EmbedState>((set, get) => ({
     const search = new URLSearchParams({
       url
     });
-    const embed = await jsonFetch(`${OEMBED_PROVIDER}?${search.toString()}`)
+
+    const embed = await jsonFetch(`${OEMBED_PROVIDER}?${search.toString()}`);
     return embed;
   },
   getEmbed: (url: string): Suspender<any> => {
@@ -32,7 +33,7 @@ const useEmbedState = create<EmbedState>((set, get) => ({
       return embeds[url];
     }
     const { embeds: es } = get();
-    const embed = suspend(fetch(url))
+    const embed = suspend(fetch(url), {});
     set({ embeds: { ...es, [url]: embed } });
     return embed;
   }
