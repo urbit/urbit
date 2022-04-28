@@ -333,8 +333,9 @@ export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
   RemoteContentOembedProps
 >((props, ref) => {
-  const { url, embed, renderUrl = false, thumbnail = false, ...rest } = props;
+  const { url, oembed, renderUrl = false, thumbnail = false, ...rest } = props;
 
+  const embed = oembed.read()
   const fallbackError  = new Error('fallback');
 
   const [aspect, width, height] = useMemo(() => {

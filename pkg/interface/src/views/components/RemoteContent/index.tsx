@@ -77,7 +77,6 @@ export function RemoteContent(props: RemoteContentProps) {
   const isVideo = VIDEO_REGEX.test(url);
   const oembed = useEmbed(url);
   const isOembed = validOembedCheck(oembed, url);
-  const embed = oembed.read();
 
   const wrapperProps = {
     url,
@@ -115,7 +114,7 @@ export function RemoteContent(props: RemoteContentProps) {
   } else if (isOembed && remoteContentPolicy.oembedShown) {
     return (
       <AsyncFallback fallback={fallback}>
-        <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} embed={embed} />
+        <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} oembed={oembed} />
       </AsyncFallback>
     );
   }

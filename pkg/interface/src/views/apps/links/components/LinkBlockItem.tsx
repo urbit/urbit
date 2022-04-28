@@ -58,7 +58,7 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
   const isAudio = AUDIO_REGEX.test(url);
   const oembed = useEmbed(url);
   const isOembed = validOembedCheck(oembed, url);
-  const embed = oembed.read();
+
   const history = useHistory();
   const { hovering, bind } = useHovering();
   const onClick = () => {
@@ -101,7 +101,7 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       ) : isAudio ? (
         <AudioPlayer title={title} url={url} />
       ) : isOembed ? (
-        <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} embed={embed} />
+        <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} oembed={oembed} />
       ) : (
         <RemoteContentEmbedFallback url={url} />
       )}

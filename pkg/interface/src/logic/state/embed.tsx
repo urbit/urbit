@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import create from 'zustand';
-import { suspend, Suspender , suspendWithResult } from '../lib/suspend';
+import { suspend, Suspender } from '../lib/suspend';
 import { jsonFetch } from '~/logic/lib/util';
 
 export interface EmbedState {
@@ -24,16 +24,17 @@ const useEmbedState = create<EmbedState>((set, get) => ({
       url
     });
     const embed = await jsonFetch(`${OEMBED_PROVIDER}?${search.toString()}`)
-    const { embeds: es } = get();
-    set({ embeds: { ...es, [url]: embed } });
     return embed;
   },
   getEmbed: (url: string): Suspender<any> => {
     const { fetch, embeds } = get();
     if(url in embeds) {
-      return suspendWithResult(embeds[url]);
+      return embeds[url];
     }
-    return suspend(fetch(url));
+    const { embeds: es } = get();
+    const embed = suspend(fetch(url))
+    set({ embeds: { ...es, [url]: embed } });
+    return embed;
   }
 }));
 
