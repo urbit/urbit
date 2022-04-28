@@ -33,9 +33,11 @@ u3qdu_put(u3_noun a, u3_noun k, u3_atom p, u3_noun v)
     u3_atom ml = u3r_mug(l);
 
     if (mk == ml) {
-      u3_noun bee = u3qdu_qor_sink(u3t(buc), k, p, v);
+      u3_noun mud = u3qdu_qor_put(u3t(buc), l, q, u3h(buc));
+      u3_noun bee = u3qdu_qor_sink(mud, k, p, v);
       u3_noun pro = _xfer_raw_bee(pri, bee);
 
+      u3z(mud);
       u3z(ped);
       return pro;
     }

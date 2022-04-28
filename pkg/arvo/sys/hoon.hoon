@@ -2452,7 +2452,7 @@
     =;  bee=(trel _k @ _buc)
       (raw:qat pri p.bee q.bee r.bee)
     ?:  =((mug k) (mug l))
-      (sink:qor t.buc k p v)
+      (sink:qor (put:qor t.buc l q v.buc) k p v)
     ?:  |((lth q p) &(=(p q) (gor l k)))
       :^  l  q  v.buc
       (put:qor t.buc k p v)
