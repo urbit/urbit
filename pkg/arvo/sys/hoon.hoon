@@ -7035,29 +7035,29 @@
           ==                                            ::
 +$  garb  (trel (unit term) poly vair)                  ::  core
 ::
-++  lru                                                    ::  compiler cache
-  :*  nes=(lu (trel ? type type) ?)                                 ::  +nest
-      res=(lu (trel ? type hoon) type)                              ::  +rest
-      mit=(lu (qual ? type type hoon) (pair type nock))             ::  +mint
-      mul=(lu (pair ? (qual type type type hoon)) (pair type type)) ::  +mull
-      fis=(lu (trel ? type axis) nock)                              ::  +fish
-      cro=(lu (trel ? type type) type)                              ::  +crop
-      fus=(lu (trel ? type type) type)                              ::  +fuse
-  ==
-::
-+$  grub                                                    ::  ut cache
-  $:  nes=_(new:nes:lru 17.500)                             ::  +nest
-      res=_(new:res:lru 17.500)                             ::  +rest
-      mit=_(new:mit:lru 5.000)                              ::  +mint
-      mul=_(new:mul:lru 5.000)                              ::  +mull
-      fis=_(new:fis:lru 100)                                ::  +fish
-      cro=_(new:cro:lru 2.450)                              ::  +crop
-      fus=_(new:fus:lru 2.450)                              ::  +fuse
-      nen=(map (trel ? type type) ?)                        ::  internal +nest
-      con=(map (trel ? type type) type)                     ::  internal +crop
-      fun=(map (trel ? type type) type)                     ::  internal +fuse
-      fin=(map (trel ? type axis) nock)                     ::  internal +fish
++$  grub                                                ::  compiler state
+  $:  nes=_(new:nes:lru 17.500)                         ::  +nest cache
+      res=_(new:res:lru 17.500)                         ::  +rest cache
+      mit=_(new:mit:lru 5.000)                          ::  +mint cache
+      mul=_(new:mul:lru 5.000)                          ::  +mull cache
+      fis=_(new:fis:lru 100)                            ::  +fish cache
+      cro=_(new:cro:lru 2.450)                          ::  +crop cache
+      fus=_(new:fus:lru 2.450)                          ::  +fuse cache
+      nen=(map (trel ? type type) ?)                    ::  inner +nest cache
+      con=(map (trel ? type type) type)                 ::  inner +crop cache
+      fun=(map (trel ? type type) type)                 ::  inner +fuse cache
+      fin=(map (trel ? type axis) nock)                 ::  inner +fish cache
   ==                                                    ::
+::
+++  lru                                                 ::  compiler cache
+  :*  nes=(lu (trel ? type type) ?)
+      res=(lu (trel ? type hoon) type)
+      mit=(lu (qual ? type type hoon) (pair type nock))
+      mul=(lu (pair ? (qual type type type hoon)) (pair type type))
+      fis=(lu (trel ? type axis) nock)
+      cro=(lu (trel ? type type) type)
+      fus=(lu (trel ? type type) type)
+  ==
 ::
 +$  pony                                                ::  raw match
   $@  ~                                                 ::  void
