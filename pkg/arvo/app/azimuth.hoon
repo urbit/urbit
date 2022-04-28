@@ -21,9 +21,10 @@
 =,  jael
 |%
 +$  app-state
-  $:  %5
+  $:  %6
       url=@ta
       =net
+      refresh=_~m5
       whos=(set ship)
       nas=^state:naive
       own=owners
@@ -42,9 +43,6 @@
 ::
 +$  tagged-diff  [=id:block diff:naive]
 +$  card         card:agent:gall
-::  TODO: add to state?
-::
-++  refresh      ~m5
 --
 ::
 =|  state=app-state
@@ -93,7 +91,7 @@
         `old-state
       %-  %-  slog  :_  ~
           leaf+"ship: loading snapshot with {<(lent logs.old-state)>} events"
-      =.  +.state  +.old-state
+      =.  +.state  +:(state-5-to-6 old-state)
       =^  cards  state
         (%*(run-logs do nas.state *^state:naive) logs.state)
       [(jael-update:do (to-udiffs:do cards)) state]
@@ -101,7 +99,7 @@
       ?.  ?=(%2 -.old-state)
         `old-state
       ~&  >  '%azimuth: updating to state 3'
-      =.  +.state  +.old-state
+      =.  +.state  +:(state-5-to-6 old-state)
       ::  replace naive state and indices with snapshot
       ::
       =:  nas.state   nas.snap
@@ -117,7 +115,7 @@
       %-  %-  slog  :_  ~
           leaf+"ship: processing azimuth snapshot ({<points>} points)"
       =/  snap-cards=udiffs:point  (run-state:do id.snap points.nas.state)
-      :_  [%3 +.state]
+      :_  [%3 url net whos nas own spo logs]:state
       %+  weld
         (jael-update:do snap-cards)
       ::  start getting new logs after the last id:block in the snapshot
@@ -131,17 +129,24 @@
     =^  cards-4  old-state
       ?.  ?=(%4 -.old-state)  [cards-3 old-state]
       =^  cards  this
-        %-  %*(. on-poke +.state.this +.old-state)
+        %-  %*(. on-poke +.state.this +:(state-5-to-6 old-state))
         [%azimuth-poke !>([%watch [url net]:old-state])]
       ~&  >  '%azimuth: updating to state 5'
-      [cards state.this(- %5)]
-    ?>  ?=(%5 -.old-state)
+      [cards [%5 url net whos nas own spo logs]:state.this]
+    =?  old-state  ?=(%5 -.old-state)
+      (state-5-to-6 old-state)
+    ?>  ?=(%6 -.old-state)
     [cards-4 this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1-2-3-4 app-state)
+    ++  app-states  $%(state-0 state-1-2-3-4-5 app-state)
     ::
-    +$  state-1-2-3-4
-      $:  ?(%1 %2 %3 %4)
+    ++  state-5-to-6
+      |=  state-1-2-3-4-5
+      ^-  app-state
+      [%6 url net ~m5 whos nas own spo logs]
+    ::
+    +$  state-1-2-3-4-5
+      $:  ?(%1 %2 %3 %4 %5)
           url=@ta
           =net
           whos=(set ship)
@@ -167,6 +172,9 @@
     ^-  (quip card _this)
     ?:  =(%noun mark)
       ?+    q.vase  !!
+          [%refresh-rate @]
+        =.  refresh.state  +.q.vase
+        [start:do this]
       ::
           %rerun
         =/  points=@ud  ~(wyt by points.nas.state)
@@ -245,7 +253,7 @@
         [%x %dns ~]      ``noun+!>(dns.nas.state)
         [%x %own ~]      ``noun+!>(own.state)
         [%x %spo ~]      ``noun+!>(spo.state)
-        [%x %refresh ~]  ``atom+!>(refresh)
+        [%x %refresh ~]  ``atom+!>(refresh.state)
         [%x %point @ ~]  ``noun+(point i.t.t.path)
     ==
     ::
@@ -441,8 +449,9 @@
   =/  args=vase  !>
     :+  %watch  /[dap.bowl]
     ^-  config:eth-watcher
-    :*  url.state  =(%czar (clan:title our.bowl))  refresh  ~h30
+    :*  url.state  =(%czar (clan:title our.bowl))  refresh.state  ~h30
         (max launch.net ?:(=(net.state %default) +(last-snap) 0))
+        ~
         ~[azimuth.net]
         ~[naive.net]
         (topics whos.state)
