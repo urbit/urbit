@@ -563,80 +563,6 @@ static c3_c* _140_pen_loot_ha[] = {
   0
 };
 
-  static u3j_harm _140_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
-  static c3_c* _140_pen__ut_crop_ha[] = {
-    "e2c6fc3e714a3a98ccd28423dcb9f2c6480935e26b54dd0581eb2ad7e5b16d6f",
-    0
-  };
-  static u3j_harm _140_pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
-  static c3_c* _140_pen__ut_fish_ha[] = {
-    "080caee60b5ee4616bf9568bdbceabbf044379c47466e0ae3968cb0146049a84",
-    0
-  };
-  static u3j_harm _140_pen__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
-  static c3_c* _140_pen__ut_fuse_ha[] = {
-    "519aac7b40b7018d5df00ddf3977c2ebe0c2e05bcee34796d56a1d54c15e0c84",
-    0
-  };
-  static u3j_harm _140_pen__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
-  static c3_c* _140_pen__ut_mint_ha[] = {
-    "7d980f7425b51bb10fbbd8b465b5d83f5dd4cb6e66d88758a9f7490b812a765e",
-    0
-  };
-  static u3j_harm _140_pen__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
-  static c3_c* _140_pen__ut_mull_ha[] = {
-    "c806329aefd920501ea0faa0cfb0ce3280a74408782efe6d82878ec43ec44fb7",
-    0
-  };
-
-    static u3j_harm _140_pen__ut_nest_dext_a[] = {{".2", u3wfu_nest_dext}, {}};
-    static c3_c* _140_pen__ut_nest_dext_ha[] = {
-      "72f33df96800034fc63531293f9b110e6505027195bf8a10ff94b9a1f1ef719b",
-      0
-    };
-    static u3j_core _140_pen__ut_nest_in_d[] =
-      {
-        { "nest-dext", 3, _140_pen__ut_nest_dext_a, 0, _140_pen__ut_nest_dext_ha },
-        {}
-      };
-    static c3_c* _140_pen__ut_nest_in_ha[] = {
-      "68378dfa1d1fee0b1cd9593fb561234cec2ae9371a5ffa287c3d2ab9620e198c",
-      0
-    };
-
-  static u3j_core _140_pen__ut_nest_d[] =
-    {
-      { "nest-in", 7, 0, _140_pen__ut_nest_in_d, _140_pen__ut_nest_in_ha },
-      {}
-    };
-  static c3_c* _140_pen__ut_nest_ha[] = {
-    "1e8de5d1225facc1158c92c2ea5e0dc84129cbb317fde3691e224b8c2550d950",
-    0
-  };
-
-  static u3j_harm _140_pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
-  static c3_c* _140_pen__ut_rest_ha[] = {
-    "b4a83073f4cb03898ef099fab5722a046122dc96a5332ffc82f988df6c186e74",
-    0
-  };
-
-static u3j_core _140_pen__ut_d[] =
-  {
-    { "crop", 7, _140_pen__ut_crop_a, 0, _140_pen__ut_crop_ha },
-    { "fish", 7, _140_pen__ut_fish_a, 0, _140_pen__ut_fish_ha },
-    { "fuse", 7, _140_pen__ut_fuse_a, 0, _140_pen__ut_fuse_ha },
-    { "mint", 7, _140_pen__ut_mint_a, 0, _140_pen__ut_mint_ha },
-    { "mull", 7, _140_pen__ut_mull_a, 0, _140_pen__ut_mull_ha },
-    { "nest", 7, 0, _140_pen__ut_nest_d, _140_pen__ut_nest_ha },
-    { "rest", 7, _140_pen__ut_rest_a, 0, _140_pen__ut_rest_ha },
-    {}
-  };
-
-static c3_c* _140_pen__ut_ha[] = {
-  "50c79204c82a3ba8f01e085a2e27e7716e5c7ab1929f94423ef1da92cf5ac631",
-  0
-};
-
 static u3j_hood _140_pen__ut_ho[] = {
   { "ar",     12282 },
   { "fan",  28, c3n },
@@ -718,7 +644,7 @@ static u3j_core _140_pen_d[] =
   //  XX unused, hook removed, delete source
   //
   // { "ap", 7, _140_pen__ap_a, 0, _140_pen__ap_ha },
-  { "ut", 15, 0, _140_pen__ut_d, _140_pen__ut_ha, _140_pen__ut_ho },
+  // { "ut", 15, 0, _140_pen__ut_d, _140_pen__ut_ha, _140_pen__ut_ho },
   {}
 };
 static c3_c* _140_pen_ha[] = {
