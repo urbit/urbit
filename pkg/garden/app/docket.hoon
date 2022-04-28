@@ -64,6 +64,8 @@
     ==
   ?>  ?=(%2 -.old)
   =.  -.state  old
+  ::  inflate-cache needs to be called after the state is set
+  ::
   =.  +.state  inflate-cache
   [cards this]
   ::
