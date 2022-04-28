@@ -1901,7 +1901,7 @@
 ::::  2r: priority search queue (psq), cache logic      ::
   ::                                                    ::
   ::
-++  up
+++  up                                                  ::  psq engine
   ~/  %up
   |*  [k=mold v=mold]
   ::  molds and mold builders
@@ -2197,22 +2197,6 @@
         %llos  [%play [n.p.t.a l.p.t.a m.p.t.a] [n.a r.p.t.a m.a]]
         %rlos  [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
       ==
-    ::  XX FIXME remove
-    ++  key                                             ::  list of keys
-      |=  a=pro
-      ^-  (list k)
-      (turn (tap a) |=(=elem k.elem))
-    ::  XX FIXME remove
-    ++  tap                                             ::  convert to list
-      |=  a=pro
-      =|  b=(list elem)
-      |-  ^+  b
-      =/  tor  (see a)
-      ?~  tor  b
-      ?-  -.tor
-        %sing  [n.tor b]
-        %play  (weld $(a l.tor) $(a r.tor))
-      ==
     ::
     ++  put                                             :: add [key pri val]
       ~/  %put
@@ -2240,19 +2224,10 @@
         (toy [n.b l.b m.b] $(a [n.a r.b m.a]))
       ==
     ::
-    ::  FIXME remove
-    ++  gas                                             ::  concatenate
-      ~/  %gas
-      |=  [a=pro b=(list (trel k @ v))]
-      |-  ^-  pro
-      ?~  b  a
-      $(b t.b, a (put a p.i.b q.i.b r.i.b))
-    ::
     ++  has                                             ::  contains
       ~/  %has
       |=  [a=pro =k]
       !=(~ (get a k))
-    ::  FIXME remove
     ::
     ++  get                                             ::  lookup
       ~/  %get
@@ -2307,27 +2282,6 @@
   ++  qat
     ~%  %qat  ..qat  ~
     |%
-    ::  XX FIXME remove
-    ::
-    ++  get                                             ::  lookup
-      ~/  %get
-      |=  [a=pri =k]
-      ^-  (unit (pair @ buc))
-      ?~  a  ~
-      ?-    -.a
-          %tip
-        ?.  =(k k.a)  ~
-        `[p.a v.a]
-      ::
-          %bin
-        ?:  (feud m.a k k.a)
-          ~
-        ?:  =(k k.a)
-          `[p.a v.a]
-        ?:  (zero m.a k)
-          $(a l.a)
-        $(a r.a)
-      ==
     ::
     ++  del                                             ::  delete at key k
       ~/  %del
@@ -2342,7 +2296,7 @@
           %bin
         ?:  (feud m.a k k.a)
           a
-        ?:  =((mug k) (mug k.a))                        ::  XX FIXME check
+        ?:  =((mug k) (mug k.a))
           (fuse m.a l.a r.a)
         ?:  (zero m.a k)
           (funk k.a p.a v.a m.a $(a l.a) r.a)
@@ -2416,58 +2370,8 @@
       |-  ^-  pri
       ?~  b  a
       $(b t.b, a (put a p.i.b q.i.b r.i.b))
-    ::  FIXME remove
-    ::
-    ++  bot                                             ::  min-priority view
-      ~/  %bot
-      |=  a=pri
-      ^-  (unit (qual k @ buc pri))
-      ?~  a  ~
-      %-  some
-      ?-    -.a
-          %tip  [k.a p.a v.a ~]
-          %bin  [k.a p.a v.a (fuse m.a l.a r.a)]
-      ==
-    ::  FIXME remove
-    ::
-    ++  cut                                             ::  delete min-pri
-      ~/  %cut
-      |=  a=pri
-      ^-  pri
-      =/  val  (bot a)
-      ?~  val  a
-      s.u.val
     --
   ::  pri logic
-  ::
-  ::  FIXME remove?
-  ++  put                                               ::  add [key pri val]
-    ~/  %put
-    |=  [a=pri =k p=@ =v]
-    ^-  pri
-    =/  ped  (dew:qat a k)
-    ?~  ped
-      (raw:qat a k p [v ~])
-    =/  [l=_k q=@ =buc =pri]  u.ped
-    =;  bee=(trel _k @ _buc)
-      (raw:qat pri p.bee q.bee r.bee)
-    ?:  =((mug k) (mug l))
-      (sink:qor (put:qor t.buc l q v.buc) k p v)
-    ?:  |((lth q p) &(=(p q) (gor l k)))
-      :^  l  q  v.buc
-      (put:qor t.buc k p v)
-    :^  k  p  v
-    ?:  (has:qor t.buc k)
-      (put:qor (del:qor t.buc k) l q v.buc)
-    (put:qor t.buc l q v.buc)
-  ::  FIXME remove
-  ::
-  ++  gas                                               ::  concatenate
-    ~/  %gas
-    |=  [a=pri b=(list (trel k @ v))]
-    |-  ^-  pri
-    ?~  b  a
-    $(b t.b, a (put a p.i.b q.i.b r.i.b))
   ::
   ++  cut                                               ::  delete min-pri
     ~/  %cut
@@ -2564,7 +2468,7 @@
     --
   --
 ::
-++  lu                                                  ::  +pest logic
+++  lu                                                  ::  lru cache engine
   ~/  %lu
   |*  [k=mold v=mold]
   ::
