@@ -63,7 +63,9 @@
         [%pass /nuke %agent [our.bowl %hood] %poke nuke]
     ==
   ?>  ?=(%2 -.old)
-  [cards this(state [old inflate-cache])]
+  =.  -.state  old
+  =.  +.state  inflate-cache
+  [cards this]
   ::
   ++  inflate-cache
     ^-  cache
