@@ -198,7 +198,7 @@ export const isWriter = (group: Group, resource: string, ship: string) => {
   if (typeof writers === 'undefined') {
     return true;
   } else {
-    return writers.includes(ship) || admins.includes(ship);
+    return [...writers].includes(ship) || admins.includes(ship);
   }
 };
 

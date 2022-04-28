@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import { useShortcut } from '~/logic/state/settings';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
-import { getGroupFromWorkspace } from '~/logic/lib/workspace';
+import { getGroupFromWorkspace, getTitleFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
@@ -22,7 +22,7 @@ import { Skeleton } from './Skeleton';
 import { EmptyGroupHome } from './Home/EmptyGroupHome';
 import { Join } from './Join/Join';
 import { Resource } from './Resource';
-import { DmResource } from '~/views/apps/chat/DmResource';
+import { DmResource, DmHelmet } from '~/views/apps/chat/DmResource';
 import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { NewChannel } from './NewChannel';
 import { GroupHome } from './Home/GroupHome';
@@ -126,16 +126,18 @@ export function GroupsPane(props: GroupsPaneProps) {
             const { ship } = match.params as Record<string, string>;
 
             return (
-              <Skeleton
-                mobileHide
-                recentGroups={recentGroups}
-                selected={ship}
-                {...props}
-                baseUrl={match.path}
-              > <DmResource ship={ship} />
+              <>
+                <DmHelmet ship={ship} />
+                <Skeleton
+                  mobileHide
+                  recentGroups={recentGroups}
+                  selected={ship}
+                  {...props}
+                  baseUrl={match.path}
+                > <DmResource ship={ship} />
 
-              </Skeleton>
-
+                </Skeleton>
+              </>
             );
           }}
         />
@@ -180,7 +182,7 @@ export function GroupsPane(props: GroupsPaneProps) {
             const appPath = `/ship/${host}/${name}`;
             const association = associations.graph[appPath];
             const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
-            let title = groupAssociation?.metadata?.title ?? 'Groups';
+            let title = getTitleFromWorkspace(associations, workspace);
 
             if (!association) {
               return <Loading />;
@@ -252,7 +254,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           render={(routeProps) => {
             const shouldHideSidebar =
               routeProps.location.pathname.includes('/feed');
-            const title = groupAssociation?.metadata?.title ?? 'Groups';
+            const title = getTitleFromWorkspace(associations, workspace);
             return (
               <>
                 <Helmet defer={false}>

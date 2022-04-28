@@ -97,6 +97,7 @@ export function RemoteContentImageEmbed(
         objectFit="cover"
         borderRadius={2}
         onError={onError}
+        style={{ imageRendering: '-webkit-optimize-contrast' }}
         {...props}
       />
     </Box>

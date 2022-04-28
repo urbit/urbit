@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Icon,
-  Center,
   Row,
   Text,
   Col,
@@ -39,7 +38,7 @@ export interface LinkBlockItemProps {
 }
 
 export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
-  const { node, summary, size, m, border = 1, objectFit, ...rest } = props;
+  const { node, summary, m, border = 1, objectFit, ...rest } = props;
   const { post, children } = node;
   const { contents, index, author } = post;
 
@@ -66,70 +65,69 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
     history.push(`${pathname}/index${index}${search}`);
   };
   return (
-    <Center
+    <Box
       onClick={onClick}
+      position="relative"
+      m={m}
       border={border}
       borderColor="lightGray"
-      position="relative"
       borderRadius="1"
-      height={size}
-      width={size}
-      m={m}
-      maxHeight="100%"
       {...rest}
       {...bind}
     >
-      <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
-        {isReference ? (
-        summary ? (
-          <RemoteContentPermalinkEmbed
-            reference={content[0] as ReferenceContent}
-          />
-        ) : (
-          <PermalinkEmbed
-            link={referenceToPermalink(content[0] as ReferenceContent).link}
-            transcluded={0}
-          />
-        )
-      ) : isImage ? (
-          <RemoteContentImageEmbed
-            url={url}
-            tall
-            stretch
-            objectFit={objectFit ? objectFit : "cover"}
-          />
-      ) : isAudio ? (
-        <AudioPlayer title={title} url={url} />
-      ) : isOembed ? (
-        <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} oembed={oembed} />
-      ) : (
-        <RemoteContentEmbedFallback url={url} />
-      )}
-    </AsyncFallback>
-      <Box
-        backgroundColor="white"
-        display={summary && hovering ? 'block' : 'none'}
-        width="100%"
-        height="64px"
-        position="absolute"
-        left="0"
-        bottom="0"
-      >
-        <Col width="100%" height="100%" p="2" justifyContent="space-between">
-          <Row justifyContent="space-between" width="100%">
-            <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
-              {title}
-            </Text>
-            <Row gapX="1" alignItems="center">
-              <Icon icon="Chat" color="black" />
-              <Text>{children.size}</Text>
+      <Col height="100%" justifyContent="center" alignItems="center">
+        <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
+          {isReference ? (
+            summary ? (
+              <RemoteContentPermalinkEmbed
+                reference={content[0] as ReferenceContent}
+                />
+            ) : (
+              <PermalinkEmbed
+                link={referenceToPermalink(content[0] as ReferenceContent).link}
+                transcluded={0}
+                />
+            )
+          ) : isImage ? (
+            <RemoteContentImageEmbed
+              url={url}
+              tall
+              stretch
+              objectFit={objectFit ? objectFit : "cover"}
+            />
+          ) : isAudio ? (
+            <AudioPlayer title={title} url={url} />
+          ) : isOembed ? (
+            <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} oembed={oembed} />
+          ) : (
+            <RemoteContentEmbedFallback url={url} />
+          )}
+        </AsyncFallback>
+        <Box
+          backgroundColor="white"
+          display={summary && hovering ? 'block' : 'none'}
+          width="100%"
+          height="64px"
+          position="absolute"
+          left="0"
+          bottom="0"
+        >
+          <Col width="100%" height="100%" p="2" justifyContent="space-between">
+            <Row justifyContent="space-between" width="100%">
+              <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
+                {title}
+              </Text>
+              <Row gapX="1" alignItems="center">
+                <Icon icon="Chat" color="black" />
+                <Text>{children.size}</Text>
+              </Row>
             </Row>
-          </Row>
-          <Row width="100%">
-            <Author ship={author} date={post['time-sent']} showImage></Author>
-          </Row>
-        </Col>
-      </Box>
-    </Center>
+            <Row width="100%">
+              <Author ship={author} date={post['time-sent']} showImage></Author>
+            </Row>
+          </Col>
+        </Box>
+      </Col>
+    </Box>
   );
 }
