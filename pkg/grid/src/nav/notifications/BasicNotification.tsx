@@ -40,7 +40,8 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
   if (!first || !charge) {
     return null;
   }
-  const contents = map(notification.body, 'content').filter((c) => c.length > 0);
+  const orderedByTime = notification.body.sort((a, b) => a.time - b.time);
+  const contents = map(orderedByTime, 'content').filter((c) => c.length > 0);
   const large = contents.length === 0;
   const archive = () => {
     useHarkStore.getState().archiveNote(notification.bin, lid);
@@ -66,19 +67,19 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
     >
       <header id={id} className="contents">
         <DocketImage {...charge} size={!large ? 'xs' : 'default'} className="note-grid-icon" />
-        <div className="note-grid-title font-semibold">{charge?.title || desk}</div>
-        {!large ? <Elbow className="note-grid-arrow w-6 h-6 text-gray-300" /> : null}
+        <div className="font-semibold note-grid-title">{charge?.title || desk}</div>
+        {!large ? <Elbow className="w-6 h-6 text-gray-300 note-grid-arrow" /> : null}
         <h2
           id={`${id}-title`}
-          className="note-grid-head leading-tight sm:leading-normal font-semibold text-gray-600"
+          className="font-semibold leading-tight text-gray-600 note-grid-head sm:leading-normal"
         >
           <NotificationText contents={first.title} />
         </h2>
         {!('time' in lid) ? (
-          <div className="note-grid-actions flex sm:hidden hover-none:flex pointer-coarse:flex justify-center self-center group-hover:flex">
+          <div className="flex self-center justify-center note-grid-actions sm:hidden hover-none:flex pointer-coarse:flex group-hover:flex">
             <Button
               onClick={archiveNoFollow}
-              className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-base leading-none sm:leading-normal"
+              className="px-2 py-1 text-xs leading-none sm:px-4 sm:py-2 sm:text-base sm:leading-normal"
             >
               Archive
             </Button>
@@ -86,7 +87,7 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
         ) : null}
       </header>
       {contents.length > 0 ? (
-        <div className="note-grid-body leading-tight sm:leading-normal space-y-2">
+        <div className="leading-tight note-grid-body sm:leading-normal space-y-2">
           {take(contents, MAX_CONTENTS).map((content) => (
             <p className="">
               <NotificationText contents={content} />

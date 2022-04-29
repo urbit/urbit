@@ -41,7 +41,7 @@ const useGroupState = createState<GroupState>(
     },
 
   }),
-  ['groups'],
+  [],
   [
     (set, get) =>
       createSubscription('group-store', '/groups', (e) => {

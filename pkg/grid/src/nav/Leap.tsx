@@ -103,10 +103,8 @@ export const Leap = React.forwardRef(
       (value: string) => {
         const onlySymbols = !value.match(/[\w]/g);
         const normValue = normalizeMatchString(value, onlySymbols);
-        return matches.find(
-          (m) =>
-            (m.display && normalizeMatchString(m.display, onlySymbols).startsWith(normValue)) ||
-            normalizeMatchString(m.value, onlySymbols).startsWith(normValue)
+        return matches.find((m) =>
+          normalizeMatchString(m.value, onlySymbols).startsWith(normValue)
         );
       },
       [matches]
@@ -141,7 +139,7 @@ export const Leap = React.forwardRef(
         const value = input.value.trim();
         const isDeletion = (e.nativeEvent as InputEvent).inputType === 'deleteContentBackward';
         const inputMatch = getMatch(value);
-        const matchValue = inputMatch?.display || inputMatch?.value;
+        const matchValue = inputMatch?.value;
 
         if (matchValue && inputRef.current && !isDeletion) {
           inputRef.current.value = matchValue;
@@ -207,8 +205,8 @@ export const Leap = React.forwardRef(
 
           const currentIndex = selectedMatch
             ? matches.findIndex((m) => {
-                const matchValue = m.display || m.value;
-                const searchValue = selectedMatch.display || selectedMatch.value;
+                const matchValue = m.value;
+                const searchValue = selectedMatch.value;
                 return matchValue === searchValue;
               })
             : 0;
@@ -216,9 +214,8 @@ export const Leap = React.forwardRef(
           const index = (unsafeIndex + matches.length) % matches.length;
 
           const newMatch = matches[index];
-          const matchValue = newMatch.display || newMatch.value;
           useLeapStore.setState({
-            rawInput: matchValue,
+            rawInput: newMatch.value,
             // searchInput: matchValue,
             selectedMatch: newMatch
           });
@@ -226,7 +223,6 @@ export const Leap = React.forwardRef(
       }),
       [selection, rawInput, match, matches, selectedMatch]
     );
-
 
     return (
       <div className="relative z-50 w-full">
@@ -257,7 +253,7 @@ export const Leap = React.forwardRef(
               type="text"
               ref={inputRef}
               placeholder={selection ? '' : 'Search'}
-              className="flex-1 w-full h-full px-2 h4 text-base rounded-full bg-transparent outline-none"
+              className="flex-1 w-full h-full px-2 text-base bg-transparent rounded-full outline-none h4"
               value={rawInput}
               onClick={toggleSearch}
               onFocus={onFocus}
@@ -266,14 +262,14 @@ export const Leap = React.forwardRef(
               autoComplete="off"
               aria-autocomplete="both"
               aria-controls={dropdown}
-              aria-activedescendant={selectedMatch?.display || selectedMatch?.value}
+              aria-activedescendant={selectedMatch?.value}
             />
           ) : null}
         </form>
         {menu === 'search' && (
           <Link
             to="/"
-            className="absolute top-1/2 right-2 flex-none circle-button w-8 h-8 text-gray-400 bg-gray-50 default-ring -translate-y-1/2"
+            className="absolute flex-none w-8 h-8 text-gray-400 top-1/2 right-2 circle-button bg-gray-50 default-ring -translate-y-1/2"
             onClick={() => select(null)}
           >
             <Cross className="w-3 h-3 fill-current" />
