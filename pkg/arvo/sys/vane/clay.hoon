@@ -3971,7 +3971,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%12                                       ::  vane version
+    $:  ver=%11                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4230,102 +4230,32 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%12 raft-12]
-            [%11 raft-11]
+        $%  [%11 raft-11]
             [%10 raft-10]
             [%9 raft-9]
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-12  raft
-      +$  raft-11
-        $:  rom=room-11
-            hoy=(map ship rung-11)
-            ran=rang-11
-            mon=(map term beam)
-            hez=(unit duct)
-            cez=(map @ta crew)
-            pud=(unit [=desk =yoki])
-        ==
-      +$  rang-11
-        $:  hut=(map tako yaki)
-            lat=(map lobe blob-11)
-        ==
-      +$  blob-11
-        $%  [%delta p=lobe q=[p=mark q=lobe] r=page]
-            [%direct p=lobe q=page]
-            [%dead p=lobe ~]
-        ==
-      +$  room-11
-        $:  hun=duct
-            dos=(map desk dojo-11)
-        ==
-      +$  dojo-11
-        $:  qyx=cult
-            dom=dome-11
-            per=regs
-            pew=regs
-            fiz=melt-11
-        ==
-      +$  dome-11
-        $:  ank=ankh-11
-            let=aeon
-            hit=(map aeon tako)
-            lab=(map @tas aeon)
-            mim=(map path mime)
-            fod=ford-cache
-        ==
-      +$  ankh-11  (axal [p=lobe q=cage])
-      +$  rung-11
-        $:  rus=(map desk rede-11)
-        ==
-      +$  rede-11
-        $:  lim=@da
-            ref=(unit rind-11)
-            qyx=cult
-            dom=dome-11
-            per=regs
-            pew=regs
-            fiz=melt-11
-        ==
-      +$  rind-11
-        $:  nix=@ud
-            bom=(map @ud update-state-11)
-            fod=(map duct @ud)
-            haw=(map mood (unit cage))
-        ==
-      +$  update-state-11
-        $:  =duct
-            =rave
-            have=(map lobe blob-11)
-            need=(list lobe)
-            nako=(qeu (unit nako-11))
-            busy=_|
-        ==
-      +$  nako-11
-        $:  gar=(map aeon tako)
-            let=aeon
-            lar=(set yaki)
-            bar=(set blob-11)
-        ==
-      +$  melt-11
-        [bas=beak con=(list [beak germ]) sto=(map beak (unit dome-clay-11))]
-      +$  dome-clay-11
-        $:  ank=ankh-11
-            let=@ud
-            hit=(map @ud tako)
-            lab=(map @tas @ud)
-        ==
+      +$  raft-11  raft
       +$  raft-10
         $:  rom=room-10
             hoy=(map ship rung-10)
-            ran=rang-11
+            ran=rang-10
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
             pud=(unit [=desk =yoki])
             dist-upgraded=_|
+        ==
+      +$  rang-10
+        $:  hut=(map tako yaki)
+            lat=(map lobe blob-10)
+        ==
+      +$  blob-10
+        $%  [%delta p=lobe q=[p=mark q=lobe] r=page]
+            [%direct p=lobe q=page]
+            [%dead p=lobe ~]
         ==
       +$  room-10
         $:  hun=duct
@@ -4333,10 +4263,59 @@
         ==
       +$  dojo-10
         $:  qyx=cult-10
-            dom=dome-11
+            dom=dome-10
             per=regs
             pew=regs
-            fiz=melt-11
+            fiz=melt-10
+        ==
+      +$  dome-10
+        $:  ank=ankh-10
+            let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            mim=(map path mime)
+            fod=ford-cache
+        ==
+      +$  ankh-10  (axal [p=lobe q=cage])
+      +$  rung-10
+        $:  rus=(map desk rede-10)
+        ==
+      +$  rede-10
+        $:  lim=@da
+            ref=(unit rind-10)
+            qyx=cult-10
+            dom=dome-10
+            per=regs
+            pew=regs
+            fiz=melt-10
+        ==
+      +$  rind-10
+        $:  nix=@ud
+            bom=(map @ud update-state-10)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-10
+        $:  =duct
+            =rave
+            have=(map lobe blob-10)
+            need=(list lobe)
+            nako=(qeu (unit nako-10))
+            busy=_|
+        ==
+      +$  nako-10
+        $:  gar=(map aeon tako)
+            let=aeon
+            lar=(set yaki)
+            bar=(set blob-10)
+        ==
+      +$  melt-10
+        [bas=beak con=(list [beak germ]) sto=(map beak (unit dome-clay-10))]
+      +$  dome-clay-10
+        $:  ank=ankh-10
+            let=@ud
+            hit=(map @ud tako)
+            lab=(map @tas @ud)
         ==
       +$  cult-10  (jug wove-10 duct)
       +$  wove-10  [for=(unit [=ship ver=@ud]) =rove-10]
@@ -4352,28 +4331,10 @@
             [%many track=? =moat lobes=(map path lobe)]
         ==
       +$  cach-10  (unit (unit (each cage lobe)))
-      +$  rung-10
-        $:  rus=(map desk rede-10)
-        ==
-      +$  rede-10
-        $:  lim=@da
-            ref=(unit rind-10)
-            qyx=cult-10
-            dom=dome-11
-            per=regs
-            pew=regs
-            fiz=melt-11
-        ==
-      +$  rind-10
-        $:  nix=@ud
-            bom=(map @ud update-state-11)
-            fod=(map duct @ud)
-            haw=(map mood (unit cage))
-        ==
       +$  raft-9
         $:  rom=room-10
             hoy=(map ship rung-10)
-            ran=rang-11
+            ran=rang-10
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4382,7 +4343,7 @@
       +$  raft-8
         $:  rom=room-8
             hoy=(map ship rung-8)
-            ran=rang-11
+            ran=rang-10
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4400,10 +4361,10 @@
             dom=dome-8
             per=regs
             pew=regs
-            fiz=melt-11
+            fiz=melt-10
         ==
       +$  dome-8
-        $:  ank=ankh-11
+        $:  ank=ankh-10
             let=aeon
             hit=(map aeon tako)
             lab=(map @tas aeon)
@@ -4418,12 +4379,12 @@
             dom=dome-8
             per=regs
             pew=regs
-            fiz=melt-11
+            fiz=melt-10
         ==
       +$  raft-7
         $:  rom=room-7
             hoy=(map ship rung-7)
-            ran=rang-11
+            ran=rang-10
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4454,7 +4415,7 @@
       +$  raft-6
         $:  rom=room-6
             hoy=(map ship rung-6)
-            ran=rang-11
+            ran=rang-10
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4468,7 +4429,7 @@
             pew=regs
         ==
       +$  dome-6
-        $:  ank=ankh-11
+        $:  ank=ankh-10
             let=aeon
             hit=(map aeon tako)
             lab=(map @tas aeon)
@@ -4496,8 +4457,7 @@
   =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
   =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
-  =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
-  ?>  ?=(%12 -.old)
+  ?>  ?=(%11 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4528,7 +4488,7 @@
       %-  ~(run by dos.rom.raf)
       |=  doj=dojo-7
       ^-  dojo-8
-      [qyx.doj dom.doj per.doj pew.doj *melt-11]
+      [qyx.doj dom.doj per.doj pew.doj *melt-10]
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -4536,7 +4496,7 @@
       %-  ~(run by rus.rung-7)
       |=  r=rede-7
       ^-  rede-8
-      [lim.r ref.r qyx.r dom.r per.r pew.r *melt-11]
+      [lim.r ref.r qyx.r dom.r per.r pew.r *melt-10]
     ==
   ::  +raft-8-to-9: remove reef cache
   ::
@@ -4568,34 +4528,89 @@
   ::
   ::  +raft-10-to-11:
   ::
-  ::    remove .dist-upgraded
-  ::    upgrade +cach
-  ::    upgrade need:update-state
+  ::    add tom and nor to dome
+  ::    remove parent-mark from delta blobs
+  ::    change blobs to pages
+  ::    remove have from update-state
+  ::    remove bar from nako
+  ::    remove ankh
+  ::    set cases in mon to ud+0
   ::
   ++  raft-10-to-11
     |=  raf=raft-10
     |^
     ^-  raft-11
     %=    raf
-        |6       pud.raf
+        mon  (~(run by mon.raf) |=(=beam beam(r ud+0)))
+        |6   pud.raf
+        lat.ran
+      %-  ~(gas by *(map lobe page))
+      %+  murn  ~(tap by lat.ran.raf)
+      |=  [=lobe =blob-10]
+      ^-  (unit [^lobe page])
+      ?-  -.blob-10
+        %delta   ((slog 'clay: tombstoning delta!' ~) ~)
+        %dead    ~
+        %direct  `[lobe q.blob-10]
+      ==
+    ::
         dos.rom
-      ^-  (map desk dojo-11)
       %-  ~(run by dos.rom.raf)
       |=  =dojo-10
-      ^-  dojo-11
-      dojo-10(qyx (cult-10-to-cult qyx.dojo-10))
+      ^-  dojo
+      %=    dojo-10
+          fiz  *melt
+          qyx  (cult-10-to-cult qyx.dojo-10)
+          dom
+        :*  let.dom.dojo-10
+            hit.dom.dojo-10
+            lab.dom.dojo-10
+            ~
+            *norm
+            |4.dom.dojo-10
+        ==
+      ==
     ::
         hoy
-      ^-  (map ship rung-11)
       %-  ~(run by hoy.raf)
       |=  =rung-10
       %-  ~(run by rus.rung-10)
       |=  =rede-10
-      ^-  rede-11
+      ^-  rede
       %=    rede-10
-          qyx  (cult-10-to-cult qyx.rede-10)
+          fiz     *melt
+          qyx     (cult-10-to-cult qyx.rede-10)
+          dom
+        :*  let.dom.rede-10
+            hit.dom.rede-10
+            lab.dom.rede-10
+            ~
+            *norm
+            |4.dom.rede-10
+        ==
+      ::
+          ref
+        ?~  ref.rede-10
+          ~
+        %=    ref.rede-10
+            bom.u
+          %-  ~(run by bom.u.ref.rede-10)
+          |=  =update-state-10
+          %=    update-state-10
+              |2
+            %=    |3.update-state-10
+                nako
+              %-  ~(gas to *(qeu (unit nako)))
+              %+  turn  ~(tap to nako.update-state-10)
+              |=  nak=(unit nako-10)
+              ?~  nak  ~
+              `u.nak(bar ~)
+            ==
+          ==
+        ==
       ==
     ==
+    ::
     ++  cult-10-to-cult
       |=  qyx=cult-10
       ^-  cult
@@ -4640,87 +4655,6 @@
       ^-  (map [=care =path] cach)
       (~(run by caches-10) cach-10-to-cach)
     --
-  ::
-  ::  +raft-11-to-12:
-  ::
-  ::    add tom and nor to dome
-  ::    remove parent-mark from delta blobs
-  ::    change blobs to pages
-  ::    remove have from update-state
-  ::    remove bar from nako
-  ::    remove ankh
-  ::    set cases in mon to ud+0
-  ::
-  ++  raft-11-to-12
-    |=  raf=raft-11
-    ^-  raft-12
-    %=    raf
-        mon  (~(run by mon.raf) |=(=beam beam(r ud+0)))
-        lat.ran
-      %-  ~(gas by *(map lobe page))
-      %+  murn  ~(tap by lat.ran.raf)
-      |=  [=lobe =blob-11]
-      ^-  (unit [^lobe page])
-      ?-  -.blob-11
-        %delta   ((slog 'clay: tombstoning delta!' ~) ~)
-        %dead    ~
-        %direct  `[lobe q.blob-11]
-      ==
-    ::
-        dos.rom
-      %-  ~(run by dos.rom.raf)
-      |=  =dojo-11
-      ^-  dojo
-      %=    dojo-11
-          fiz  *melt
-          dom
-        :*  let.dom.dojo-11
-            hit.dom.dojo-11
-            lab.dom.dojo-11
-            ~
-            *norm
-            |4.dom.dojo-11
-        ==
-      ==
-    ::
-        hoy
-      %-  ~(run by hoy.raf)
-      |=  =rung-11
-      %-  ~(run by rus.rung-11)
-      |=  =rede-11
-      ^-  rede
-      %=    rede-11
-          fiz     *melt
-          dom
-        :*  let.dom.rede-11
-            hit.dom.rede-11
-            lab.dom.rede-11
-            ~
-            *norm
-            |4.dom.rede-11
-        ==
-      ::
-          ref
-        ?~  ref.rede-11
-          ~
-        %=    ref.rede-11
-            bom.u
-          %-  ~(run by bom.u.ref.rede-11)
-          |=  =update-state-11
-          %=    update-state-11
-              |2
-            %=    |3.update-state-11
-                nako
-              %-  ~(gas to *(qeu (unit nako)))
-              %+  turn  ~(tap to nako.update-state-11)
-              |=  nak=(unit nako-11)
-              ?~  nak  ~
-              `u.nak(bar ~)
-            ==
-          ==
-        ==
-      ==
-    ==
   --
 ::
 ++  scry                                              ::  inspect
