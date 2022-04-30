@@ -156,6 +156,24 @@
       [%1 peg=(unit page)]
   ==
 ::
++$  pour
+  $%  [%dir ~]  ::  XX  should include entire directory as value
+      [%none ~]
+      [%file =vase]
+  ==
++$  leak  (map path pour)
+::  files includes a path for ease of garbage collection
+::
+::  XX leak should be recursive
+::
++$  flow
+  $:  files=(map [=path =lobe =leak] vase)
+      naves=(map [=mark =leak] vase)
+      marks=(map [=mark =leak] dais)
+      casts=(map [=mars =leak] vase)
+      tubes=(map [=mars =leak] tube)
+  ==
+::
 ::  Ford cache
 ::
 +$  ford-cache
@@ -194,10 +212,13 @@
 ::  --  `cez` is a collection of named permission groups.
 ::  --  `pud` is an update that's waiting on a kernel upgrade
 ::
+::  XX  add fad
+::
 +$  raft                                                ::  filesystem
   $:  rom=room                                          ::  domestic
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
+      fad=flow                                          ::  ford cache
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
@@ -510,13 +531,14 @@
         +$  state
           $:  baked=(map path cage)
               cache=ford-cache
-              stack=(list (set [dir=? =path]))
+              spill=flow
               cycle=(set build)
           ==
         +$  args
-          $:  files=(map path (each page lobe))
+          $:  gc=?
+              files=(map path (each page lobe))
               file-store=(map lobe page)
-              =ford-cache
+              =flow
           ==
         --
     |=  args
@@ -525,14 +547,6 @@
     =|  nub=state
     =.  cache.nub  ford-cache
     |%
-    ::  +pop-stack: pop build stack, copying deps downward
-    ::
-    ++  pop-stack
-      ^-  [(set [dir=? =path]) _stack.nub]
-      =^  top=(set [dir=? =path])  stack.nub  stack.nub
-      =?  stack.nub  ?=(^ stack.nub)
-        stack.nub(i (~(uni in i.stack.nub) top))
-      [top stack.nub]
     ::  +read-file: retrieve marked, validated file contents at path
     ::
     ++  read-file
@@ -546,7 +560,7 @@
         =.  baked.nub  (~(put by baked.nub) path res)
         [res nub]
       ?:  (~(has in cycle.nub) vale+path)
-        ~|(cycle+vale+path^stack.nub !!)
+        ~|(cycle+vale+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
       ::~>  %slog.0^leaf/"ford: read file {(spud path)}"
       =/  file
@@ -564,18 +578,18 @@
       |=  mak=mark
       ^-  [vase state]
       ~|  %error-building-mark^mak
-      ?^  got=(~(get by naves.cache.nub) mak)
-        =?  stack.nub  ?=(^ stack.nub)
-          stack.nub(i (~(uni in i.stack.nub) dez.u.got))
-        [res.u.got nub]
+      =^  =leak  nub  (deps-to-leak (sy (all-deps %mar mak)) ~)
+      ?^  got=(~(get by naves.fad.nub) mak leak)
+        =?  spill.nub  gc  (~(put by naves.spill.nub) [mak leak] u.got)
+        [u.got nub]
+      ?:  gc
+        [[[%atom %tas ~] %gc-sentinel] nub]
       ?:  (~(has in cycle.nub) mark+mak)
-        ~|(cycle+mark+mak^stack.nub !!)
+        ~|(cycle+mark+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) mark+mak)
-      =.  stack.nub  [~ stack.nub]
       =;  res=[=vase nub=state]
         =.  nub  nub.res
-        =^  top  stack.nub  pop-stack
-        =.  naves.cache.nub  (~(put by naves.cache.nub) mak [vase.res top])
+        =.  naves.fad.nub  (~(put by naves.fad.nub) [mak leak] vase.res)
         [vase.res nub]
       :: ~>  %slog.0^leaf/"ford: make mark {<mak>}"
       =^  cor=vase  nub  (build-fit %mar mak)
@@ -638,18 +652,18 @@
       |=  mak=mark
       ^-  [dais state]
       ~|  %error-building-dais^mak
-      ?^  got=(~(get by marks.cache.nub) mak)
-        =?  stack.nub  ?=(^ stack.nub)
-          stack.nub(i (~(uni in i.stack.nub) dez.u.got))
-        [res.u.got nub]
+      =^  =leak  nub  (deps-to-leak (sy (all-deps %mar mak)) ~)
+      ?^  got=(~(get by marks.fad.nub) mak leak)
+        =?  spill.nub  gc  (~(put by marks.spill.nub) [mak leak] u.got)
+        [u.got nub]
+      ?:  gc
+        [*dais nub]
       ?:  (~(has in cycle.nub) dais+mak)
-        ~|(cycle+dais+mak^stack.nub !!)
+        ~|(cycle+dais+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) dais+mak)
-      =.  stack.nub  [~ stack.nub]
       =;  res=[=dais nub=state]
         =.  nub  nub.res
-        =^  top  stack.nub  pop-stack
-        =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
+        =.  marks.fad.nub  (~(put by marks.fad.nub) [mak leak] dais.res)
         [dais.res nub]
       =^  nav=vase  nub  (build-nave mak)
       ::~>  %slog.0^leaf/"ford: make dais {<mak>}"
@@ -694,17 +708,19 @@
       ~|  error-building-cast+[a b]
       ?:  =([%mime %hoon] [a b])
         :_(nub =>(..zuse !>(|=(m=mime q.q.m))))
-      ?^  got=(~(get by casts.cache.nub) [a b])
-        =?  stack.nub  ?=(^ stack.nub)
-          stack.nub(i (~(uni in i.stack.nub) dez.u.got))
-        [res.u.got nub]
+      =^  =leak  nub
+        %-  deps-to-leak  :_  ~
+        (~(uni in (sy (all-deps %mar a))) (sy (all-deps %mar b)))
+      ?^  got=(~(get by casts.fad.nub) [a b] leak)
+        =?  spill.nub  gc  (~(put by casts.spill.nub) [[a b] leak] u.got)
+        [u.got nub]
+      ?:  gc
+        [[[%atom %tas ~] %gc-sentinel] nub]
       ?:  (~(has in cycle.nub) cast+[a b])
-        ~|(cycle+cast+[a b]^stack.nub !!)
-      =.  stack.nub  [~ stack.nub]
+        ~|(cycle+cast+[a b]^cycle.nub !!)
       =;  res=[=vase nub=state]
         =.  nub  nub.res
-        =^  top  stack.nub  pop-stack
-        =.  casts.cache.nub  (~(put by casts.cache.nub) [a b] [vase.res top])
+        =.  casts.fad.nub  (~(put by casts.fad.nub) [[a b] leak] vase.res)
         [vase.res nub]
       ::  try +grow; is there a +grow core with a .b arm?
       ::
@@ -755,17 +771,19 @@
       |=  [a=mark b=mark]
       ^-  [tube state]
       ~|  error-building-tube+[a b]
-      ?^  got=(~(get by tubes.cache.nub) [a b])
-        =?  stack.nub  ?=(^ stack.nub)
-          stack.nub(i (~(uni in i.stack.nub) dez.u.got))
-        [res.u.got nub]
+      =^  =leak  nub
+        %-  deps-to-leak  :_  ~
+        (~(uni in (sy (all-deps %mar a))) (sy (all-deps %mar b)))
+      ?^  got=(~(get by tubes.fad.nub) [a b] leak)
+        =?  spill.nub  gc  (~(put by tubes.spill.nub) [[a b] leak] u.got)
+        [u.got nub]
+      ?:  gc
+        [*tube nub]
       ?:  (~(has in cycle.nub) tube+[a b])
-        ~|(cycle+tube+[a b]^stack.nub !!)
-      =.  stack.nub  [~ stack.nub]
+        ~|(cycle+tube+[a b]^cycle.nub !!)
       =;  res=[=tube nub=state]
         =.  nub  nub.res
-        =^  top  stack.nub  pop-stack
-        =.  tubes.cache.nub  (~(put by tubes.cache.nub) [a b] [tube.res top])
+        =.  tubes.fad.nub  (~(put by tubes.fad.nub) [[a b] leak] tube.res)
         [tube.res nub]
       =^  gat=vase  nub  (build-cast a b)
       :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
@@ -833,24 +851,29 @@
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
-      ?^  got=(~(get by files.cache.nub) path)
-        =?  stack.nub  ?=(^ stack.nub)
-          stack.nub(i (~(uni in i.stack.nub) dez.u.got))
-        [res.u.got nub]
       ?:  (~(has in cycle.nub) file+path)
-        ~|(cycle+file+path^stack.nub !!)
+        ~|(cycle+file+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
-      =.  stack.nub
-        =-  [(sy - ~) stack.nub]
-        ?:(?=(%| -.dep) dep [& dir.p.dep])
       :: ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
+      ::  TODO: should only parse prelude
+      ::  TODO: cache parsing
+      ::
+      =^  key  nub
+        =^  =leak  nub  (deps-to-leak (pile-to-deps pile))
+        =/  =lobe  (~(got by files) path)
+        [lobe pours]
+      ?^  got=(~(get by files.fad.nub) key)
+        =?  spill.nub  gc  (~(put by files.spill.nub) key u.got)
+        [u.got nub]
+      ?:  gc
+        [[[%atom %tas ~] %gc-sentinel] nub]
+      ::
       =^  res=vase  nub  (run-pile pile)
-      =^  top  stack.nub  pop-stack
-      =.  files.cache.nub  (~(put by files.cache.nub) path [res top])
+      =.  files.fad.nub  (~(put by files.fad.nub) key res)
       [res nub]
     ::
     ++  build-file
@@ -1066,6 +1089,48 @@
       ?:  (~(has by files) pux)
         pux
       $(paz t.paz)
+    ::
+    ++  all-deps
+      |=  [=term suf=term]
+      ^-  (list path)
+      %+  turn  (segments suf)
+      |=  seg=path
+      [term (snoc path %hoon)]
+    ::
+    ++  pile-to-deps
+      |=  =pile
+      ^-  [fil=(set path) dir=(set path)]
+      :_  (sy (turn raz.pile |=([* * =path] path)))
+      %-  ~(uni in *(set path))
+        (sy (zing (turn sur.pile |=(=taut (add-deps %sur pax.taut)))))
+      %-  ~(uni in *(set path))
+        (sy (zing (turn lib.pile |=(=taut (add-deps %lib pax.taut)))))
+      %-  ~(uni in *(set path))
+        (sy (turn raw.pile |=([* =path] path)))
+      %-  ~(uni in *(set path))
+        (sy (zing (turn maz.pile |=([* =mark] (add-deps %mar mark)))))
+      %-  ~(uni in *(set path))
+        (sy (turn caz.pile |=([* =mark *] (add-deps %mar mark)))))
+      %-  ~(uni in *(set path))
+        (sy (turn caz.pile |=([* * =mark] (add-deps %mar mark)))))
+      (sy (turn bar.pile |=([* * =path] path)))
+    ::
+    ++  deps-to-leak
+      |=  [fil=(set path) dir=(set path)]
+      ^-  [leak state]
+      =/  =leak
+        %-  ~(gas by *leak)
+        %+  turn  ~(tap by dir)
+        |=  =path
+        [path %dir ~]
+      =/  fils  ~(tap in fil)
+      |-  ^-  leak
+      ?~  fils
+        leak
+      ?.  (~(has by files) i.fils)
+        $(fils t.fils, leak (~(put by leak) i.fils %none ~))
+      =^  =vase  nub  (build-file i.fils)
+      $(fils t.fils, leak (~(put by leak) i.fils %file vase))
     --
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1550,9 +1615,7 @@
         ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after kernel update" .)
     ::  clear caches if zuse reloaded
     ::
-    =.  fod.dom
-      ?:  updated  *ford-cache
-      (promote-ford fod.dom invalid)
+    =?  fod.dom  updated  *ford-cache
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -1599,7 +1662,7 @@
     =^  mim  ford-cache.args
       (checkout-mime args deletes ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
-    =.  fod.dom  ford-cache.args
+    =.  fod.dom  (collect-flow ford-cache.args)
     =.  ..park  (emil (print q.old-yaki data))
     wake:(ergo 0 mim)
     ::
@@ -1695,6 +1758,43 @@
         (~(del by old) pax)
       =/  pre=_changes  (~(run by old) |=(lob=lobe |+lob))
       (~(uni by pre) changes)
+    ::
+    ::  Garbage collect the ford cache
+    ::
+    ++  collect-flow
+      |=  fad=flow
+      ^-  flow
+      =/  desks=(list (map path (each cage lobe)))
+        %+  welp
+          %+  murn  ~(tap by dos.rom.ruf)
+          |=  =dojo
+          ?:  =(0 let.dom.dojo)
+            ~
+          `u=(~(got by hut.ran) (~(got by hit.dom.dojo) let.dom.dojo))
+        %-  zing
+        %+  turn  ~(tap by hoy.ruf)
+        |=  =rung
+        %+  murn  ~(tap by rus.rung)
+        |=  =rede
+        ?:  =(0 let.dom.rede)
+          ~
+        :-  ~  ^=  u
+        %-  ~(run by (~(got by hut.ran) (~(got by hit.dom.rede) let.dom.rede)))
+        |=  =lobe
+        |+lobe
+      =|  =flow
+      =/  files  ~(tap by files.fad)
+      |-  ^+  flow
+      ?^  files
+        =/  keep
+          %+  lien  desks
+          |=  hat=(map path (each cage lobe))
+          ?~  got=(~(get by hat) path.i.files)
+            |
+          ?.  =(lobe.i.files u.got)
+            |
+          (build-file:(ford:fusion & hat lat.ran fad) path.i.files)
+
     ::
     ::  Keep any parts of the ford cache whose dependencies didn't change
     ::
