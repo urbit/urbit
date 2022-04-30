@@ -154,7 +154,7 @@ const contentToMdAst = (tall: boolean) => (
           {
             type: 'link',
             url: content.url,
-            children: [{type: 'text', value: content.url}]
+            children: [{ type: 'text', value: content.url }]
           }
         ]
       }
@@ -198,7 +198,7 @@ function stitchInline(a: any, b: any) {
       last.children.push({
         type: 'paragraph',
         children: []
-      })
+      });
     }
   }
   if (last?.children) {
@@ -302,17 +302,17 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
     if (c.type === 'blockquote' && t[1].children[idx +1] !== undefined && t[1].children[idx +1].type === 'paragraph') {
         const next = idx !== t[1].children.length -1
             ? t[1].children.splice(idx +1, 1)
-            : []
+            : [];
 
         if (next.length > 0) {
-            t[1].children[idx].children.push(next[0])
+            t[1].children[idx].children.push(next[0]);
         }
-    };
+    }
 
-    let links = [];
+    const links = [];
     function addRichEmbedURL(nodes) {
       if (nodes?.children) {
-        nodes.children.filter(k => {
+        nodes.children.filter((k) => {
           if (k.type === 'link') {
             links.push({
               type: 'root',
@@ -322,9 +322,9 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
                   url: k.url
                 }
               ]
-            })
+            });
           } else if (k?.children) {
-            k.children.filter(o => {
+            k.children.filter((o) => {
               if (o.type === 'link') {
                 links.push({
                   type: 'root',
@@ -334,20 +334,19 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
                       url: o.url
                     }
                   ]
-                })
+                });
               }
-            })
+            });
           }
-        })
+        });
 
         nodes.children.push(...links);
       }
     }
-    addRichEmbedURL(c)
-
+    addRichEmbedURL(c);
   });
 
-  return t
+  return t;
 }
 const header = ({ children, depth, ...rest }) => {
   const level = depth;
