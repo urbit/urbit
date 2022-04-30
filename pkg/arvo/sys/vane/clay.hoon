@@ -117,8 +117,7 @@
 ::  Whenever you give an `%ergo`, you must update this.
 ::
 +$  dome
-  $:  ank=ankh                                          ::  state
-      let=aeon                                          ::  top id
+  $:  let=aeon                                          ::  top id
       hit=(map aeon tako)                               ::  versions by id
       lab=(map @tas aeon)                               ::  labels
       tom=(map tako norm)                               ::  tomb policies
@@ -515,9 +514,7 @@
               cycle=(set build)
           ==
         +$  args
-          $:  =ankh
-              deletes=(set path)
-              changes=(map path (each page lobe))
+          $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               =ford-cache
           ==
@@ -552,17 +549,15 @@
         ~|(cycle+vale+path^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
       ::~>  %slog.0^leaf/"ford: read file {(spud path)}"
-      ?^  change=(~(get by changes) path)
-        =/  page
-          ?:  ?=(%& -.u.change)
-            p.u.change
-          ~|  %tombstoned-file^path^p.u.change
-          (~(got by file-store) p.u.change)
-        =^  cage  nub  (validate-page path page)
-        [cage nub]
-      ?<  (~(has in deletes) path)
-      ~|  %file-not-found^path
-      :_(nub q:(need (~(get of ankh) path)))
+      =/  file
+        ~|  %file-not-found^path
+        (~(got by files) path)
+      =/  page
+        ?:  ?=(%& -.file)
+          p.file
+        ~|  %tombstoned-file^path^p.file
+        (~(got by file-store) p.file)
+      (validate-page path page)
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
@@ -871,12 +866,16 @@
       |=  =path
       ^-  [(map @ta vase) state]
       =/  fiz=(list @ta)
-        =/  nuk=_ankh  (~(dip of ankh) path)
-        %+  murn
-          ~(tap by dir.nuk)
-        |=  [nom=@ta nak=_ankh]
-        ?.  ?=([~ [~ *] *] (~(get by dir.nak) %hoon))  ~
-        `nom
+        =/  len  (lent path)
+        %+  murn  ~(tap by files)
+        |=  [pax=^path *]
+        ^-  (unit @ta)
+        ?.  =(path (scag len pax))
+          ~
+        =/  pat  (slag len pax)
+        ?:  ?=([@ %hoon ~] pat)
+          `i.pat
+        ~
       ::
       =|  rez=(map @ta vase)
       |-
@@ -1064,11 +1063,7 @@
       |-  ^-  path
       ?~  paz  ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
-      ?:  (~(has in deletes) pux)
-        $(paz t.paz)
-      ?:  (~(has by changes) pux)
-        pux
-      ?^  (~(get of ankh) pux)
+      ?:  (~(has by files) pux)
         pux
       $(paz t.paz)
     --
@@ -1263,7 +1258,6 @@
       $(let.dom (dec let.dom))
     ==
   ::
-  ++  static-ford-args  [ank.dom ~ ~ lat.ran fod.dom]
   ::  Create a ford appropriate for the aeon
   ::
   ::  Don't forget to call +aeon-ford-cache!
@@ -1271,10 +1265,8 @@
   ++  aeon-ford
     |=  yon=aeon
     %-  ford:fusion
-    ?:  =(let.dom yon)
-      static-ford-args
-    =/  changes  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    [*ankh ~ changes lat.ran *ford-cache]
+    =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
+    [files lat.ran ?:(=(yon let.dom) fod.dom *ford-cache)]
   ::  Produce ford cache appropriate for the aeon
   ::
   ++  aeon-ford-cache
@@ -1546,7 +1538,6 @@
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
     ::  promote ford cache
-    ::  promote and fill in ankh
     ::  promote and fill in mime cache
     ::
     =/  invalid  (~(uni in deletes) ~(key by changes))
@@ -1562,10 +1553,15 @@
     =.  fod.dom
       ?:  updated  *ford-cache
       (promote-ford fod.dom invalid)
-    =?  ank.dom  updated  *ankh
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
-    =/  =args:ford:fusion  [ank.dom deletes changes lat.ran fod.dom]
+    =/  files
+      =/  original=(map path (each page lobe))
+        (~(run by q.old-yaki) |=(=lobe |+lobe))
+      %-  ~(dif by (~(uni by original) changes))
+      %-  ~(gas by *(map path (each page lobe)))
+      (turn ~(tap in deletes) |=(=path [path |+*lobe]))
+    =/  =args:ford:fusion  [files lat.ran fod.dom]
     ::
     =^  change-cages  ford-cache.args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -1600,11 +1596,6 @@
       ==
     =.  file-store.args  lat.ran
     ::
-    =^  ankh  ford-cache.args
-      (checkout-ankh args deletes change-cages ank.dom)
-    =/  null  (sane-ankh sane-continuation ankh)
-    =.  ankh.args  ankh
-    =.  ank.dom  ankh
     =^  mim  ford-cache.args
       (checkout-mime args deletes ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -1800,59 +1791,6 @@
         ==
       [(~(put by built) path [lobe cage]) ford-cache.ford-args]
     ::
-    ::  Update ankh
-    ::
-    ++  checkout-ankh
-      |=  $:  =ford=args:ford:fusion
-              deletes=(set path)
-              changes=(map path [lobe cage])
-              =ankh
-          ==
-      ^+  [ankh ford-cache.ford-args]
-      ::  Delete
-      ::
-      =.  ankh
-        =/  dels  ~(tap in deletes)
-        |-  ^-  ^ankh
-        =*  outer-loop  $
-        ?~  dels
-          ankh
-        =.  ankh
-          |-  ^-  ^ankh
-          =*  inner-loop  $
-          ?~  i.dels
-            ankh(fil ~)
-          %=    ankh
-              dir
-            %+  ~(put by dir.ankh)  i.i.dels
-            %=  inner-loop
-              i.dels  t.i.dels
-              ankh    (~(gut by dir.ankh) i.i.dels *^ankh)
-            ==
-          ==
-        outer-loop(dels t.dels)
-      ::  Add/change
-      ::
-      =/  cans=(list [=path =lobe =cage])  ~(tap by changes)
-      |-  ^+  [ankh ford-cache.ford-args]
-      =*  outer-loop  $
-      ?~  cans
-        [ankh ford-cache.ford-args]
-      =^  new-ankh  ford-cache.ford-args
-        |-  ^+  [ankh ford-cache.ford-args]
-        =*  inner-loop  $
-        ?^  path.i.cans
-          =^  child-ankh  ford-cache.ford-args
-            %=  inner-loop
-              path.i.cans  t.path.i.cans
-              ankh         (~(gut by dir.ankh) i.path.i.cans *^ankh)
-            ==
-          :-  ankh(dir (~(put by dir.ankh) i.path.i.cans child-ankh))
-          ford-cache.ford-args
-        [ankh(fil `[lobe.i.cans cage.i.cans]) ford-cache.ford-args]
-      =.  ankh  new-ankh
-      outer-loop(cans t.cans)
-    ::
     ::  Print notification to console
     ::
     ++  print
@@ -1923,7 +1861,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [*ankh ~ all-changes lat.ran *ford-cache]
+      =/  =args:ford:fusion  [all-changes lat.ran *ford-cache]
       =^  all-change-cages  ford-cache.args
         (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
@@ -1934,59 +1872,6 @@
           !!
         $(ccs t.ccs)
       `[all-change-cages args]
-    ::
-    ++  sane-ankh
-      |=  $:  $=  cont
-              (unit [all-changes=(map path [lobe cage]) =ford=args:ford:fusion])
-              =test=ankh
-          ==
-      ?.  check-sane
-        ~
-      ::  Assert all new lobes are reachable.
-      ::
-      ::  Needs to run after dome is updated
-      ::
-      =/  tak=(unit tako)  (~(get by hit.dom) let.dom)
-      ?~  tak
-        ~
-      =/  =yaki  (~(got by hut.ran) u.tak)
-      =/  files=(list [=path =lobe])  ~(tap by q.yaki)
-      |-  ^+  *sane-ankh
-      ?^  files
-        ?.  (~(has by lat.ran) lobe.i.files)
-          ~|  missing-lobe=[path lobe]
-          !!
-        $(files t.files)
-      ::
-      ::  Assert we can rebuild the ankh
-      ::
-      ?~  cont
-        ~
-      =+  u.cont
-      =^  ankh  ford-cache.ford-args
-        (checkout-ankh ford-args ~ all-changes *ankh)
-      =|  =path
-      |-  ^-  ~
-      =*  loop  $
-      =/  fil   (bind fil.ankh |=([=lobe =cage] [lobe p.cage q.q.cage]))
-      =/  test  (bind fil.ankh |=([=lobe =cage] [lobe p.cage q.q.cage]))
-      ?.  =(fil test)
-        ~|  [%not-same-file path ?=(~ fil.ankh) ?=(~ fil.test-ankh)]
-        ~|  ?~(fil.ankh ~ [[p p.q]:u.fil.ankh `@uv`(page-to-lobe [p q.q]:q.u.fil.ankh)])
-        ~|  ?~(fil.test-ankh ~ [[p p.q]:u.fil.test-ankh `@uv`(page-to-lobe [p q.q]:q.u.fil.test-ankh)])
-        !!
-      ?.  =(~(key by dir.ankh) ~(key by dir.test-ankh))
-        ~|  [%not-same-children path ~(key by dir.ankh) ~(key by dir.test-ankh)]
-        !!
-      =<  ~
-      %+  turn  ~(tap by dir.ankh)
-      |=  [=@ta =child=^ankh]
-      ~|  sane-ankh=[path ta]
-      %=  loop
-        path       (snoc path ta)
-        ankh       child-ankh
-        test-ankh  (~(got by dir.test-ankh) ta)
-      ==
     ::
     ::  Delay current update until sys update is complete
     ::
@@ -2502,7 +2387,7 @@
           ~
         =^  =cage  fod.dom
           %-  wrap:fusion
-          (page-to-cage:(ford:fusion static-ford-args) u.peg)
+          (page-to-cage:(aeon-ford let.dom) u.peg)
         `cage
       ::
       ++  get-dais
@@ -2510,7 +2395,7 @@
         ^-  dais
         =^  =dais  fod.dom
           %-  wrap:fusion
-          (build-dais:(ford:fusion static-ford-args) mark)
+          (build-dais:(aeon-ford let.dom) mark)
         dais
       ::
       ::  Diff two files on bob-desk
@@ -2790,10 +2675,10 @@
       ..mount
     =.  mon  (~(put by mon) pot [her syd case] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) let.dom))
-    =/  changes  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion  [ank.dom ~ changes lat.ran fod.dom]
+    =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
+    =/  =args:ford:fusion  [files lat.ran fod.dom]
     =^  mim  ford-cache.args
-      (checkout-mime args ~ ~(key by changes))
+      (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     (ergo mim)
@@ -2993,10 +2878,11 @@
         %-  mule  |.
         %-  wrap:fusion
         ::  Use %base's marks to validate, so we don't have to build the
-        ::  foreign hoon/zuse
+        ::  foreign marks
         ::
-        =/  args  %*(static-ford-args . dom dom:(~(got by dos.rom) %base))
-        (page-to-cage:(ford:fusion args) peg)
+        =/  base-dome  dom:(~(got by dos.rom) %base)
+        =/  f  (%*(aeon-ford . dom base-dome) let.base-dome)
+        (page-to-cage:f peg)
       ?:  ?=(%| -.vale-result)
         %-  (slog >%validate-x-failed< p.vale-result)
         ~
@@ -3552,10 +3438,6 @@
   ::
   ::  The dome is composed of the following:
   ::
-  ::  --  `ank` is the ankh, which is the file data itself.  An ankh is both
-  ::      a possible file and a possible directory.  An ankh has both:
-  ::      --  `fil`, a possible file, stored as both a cage and its hash
-  ::      --  `dir`, a map of @ta to more ankhs.
   ::  --  `let` is the number of the most recent revision.
   ::  --  `hit` is a map of revision numbers to commit hashes.
   ::  --  `lab` is a map of labels to revision numbers.
@@ -3853,10 +3735,10 @@
           ~
         =^  =cage  fod.dom
           %-  wrap:fusion
-          (page-to-cage:(ford:fusion static-ford-args) u.peg)
+          (page-to-cage:(aeon-ford yon) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
-          %open  ``open+!>(prelude:(ford:fusion static-ford-args))
+          %open  ``open+!>(prelude:(aeon-ford yon))
           %late  !!  :: handled in +aver
           %base
         ?>  ?=(^ t.t.pax)
@@ -3928,25 +3810,19 @@
     ::
     ::  Gets the dome (desk state) at a particular aeon.
     ::
-    ::  For past aeons, we don't give an actual ankh in the dome, but the rest
-    ::  of the data is legit. We also never send the mime cache over the wire.
-    ::
     ++  read-v
       |=  [yon=aeon pax=path]
       ^-  (unit (unit [%dome (hypo dome:clay)]))
       ?:  (lth yon let.dom)
         :*  ~  ~  %dome  -:!>(*dome:clay)
             ^-  dome:clay
-            :*  ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
-                let=yon
+            :*  let=yon
                 hit=(molt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
                 lab=(molt (skim ~(tap by lab.dom) |=([* p=@ud] (lte p yon))))
-                tom=tom.dom  ::  XX  not referentially transparent, maybe this
-                nor=nor.dom  ::      should just be let and hit?
         ==  ==
       ?:  (gth yon let.dom)
         ~
-      ``[%dome -:!>(*dome:clay) [ank let hit lab tom nor]:dom]
+      ``[%dome -:!>(*dome:clay) [let hit lab]:dom]
     ::
     ::  Gets all cases refering to the same revision as the given case.
     ::
@@ -3963,10 +3839,8 @@
     ::
     ::  Get the data at a node.
     ::
-    ::  If it's in our ankh (current state cache), we can just produce
-    ::  the result.  Otherwise, we've got to look up the node at the
-    ::  aeon to get the content hash, use that to find the page.  We
-    ::  also special-case the hoon mark for bootstrapping purposes.
+    ::  Use ford to read the file.  Note this special-cases the hoon
+    ::  mark for bootstrapping purposes.
     ::
     ++  read-x
       |=  [yon=aeon pax=path]
@@ -3976,11 +3850,6 @@
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         [~ fod.dom]
-      ?:  &(?=(~ ref) =(let.dom yon))
-        :_  fod.dom  :-  ~
-        %+  bind
-          (~(get of ank.dom) pax)
-        |=(a=[p=lobe q=cage] q.a)
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
@@ -3994,7 +3863,7 @@
       ::
       =^  =cage  fod.dom
         %-  wrap:fusion
-        (page-to-cage:(ford:fusion static-ford-args) u.peg)
+        (page-to-cage:(aeon-ford yon) u.peg)
       [``cage fod.dom]
     ::
     ::  Gets an arch (directory listing) at a node.
@@ -4393,13 +4262,14 @@
             fiz=melt-11
         ==
       +$  dome-11
-        $:  ank=ankh
+        $:  ank=ankh-11
             let=aeon
             hit=(map aeon tako)
             lab=(map @tas aeon)
             mim=(map path mime)
             fod=ford-cache
         ==
+      +$  ankh-11  (axal [p=lobe q=cage])
       +$  rung-11
         $:  rus=(map desk rede-11)
         ==
@@ -4435,7 +4305,7 @@
       +$  melt-11
         [bas=beak con=(list [beak germ]) sto=(map beak (unit dome-clay-11))]
       +$  dome-clay-11
-        $:  ank=ankh
+        $:  ank=ankh-11
             let=@ud
             hit=(map @ud tako)
             lab=(map @tas @ud)
@@ -4526,7 +4396,7 @@
             fiz=melt-11
         ==
       +$  dome-8
-        $:  ank=ankh
+        $:  ank=ankh-11
             let=aeon
             hit=(map aeon tako)
             lab=(map @tas aeon)
@@ -4591,7 +4461,7 @@
             pew=regs
         ==
       +$  dome-6
-        $:  ank=ankh
+        $:  ank=ankh-11
             let=aeon
             hit=(map aeon tako)
             lab=(map @tas aeon)
@@ -4771,6 +4641,7 @@
   ::    change blobs to pages
   ::    remove have from update-state
   ::    remove bar from nako
+  ::    remove ankh
   ::
   ++  raft-11-to-12
     |=  raf=raft-11
@@ -4791,7 +4662,17 @@
       %-  ~(run by dos.rom.raf)
       |=  =dojo-11
       ^-  dojo
-      dojo-11(|4.dom [~ *norm |4.dom.dojo-11], fiz *melt)
+      %=    dojo-11
+          fiz  *melt
+          dom
+        :*  let.dom.dojo-11
+            hit.dom.dojo-11
+            lab.dom.dojo-11
+            ~
+            *norm
+            |4.dom.dojo-11
+        ==
+      ==
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -4800,8 +4681,16 @@
       |=  =rede-11
       ^-  rede
       %=    rede-11
-          |4.dom  [~ *norm |4.dom.rede-11]
           fiz     *melt
+          dom
+        :*  let.dom.rede-11
+            hit.dom.rede-11
+            lab.dom.rede-11
+            ~
+            *norm
+            |4.dom.rede-11
+        ==
+      ::
           ref
         ?~  ref.rede-11
           ~
@@ -4873,7 +4762,7 @@
         %-  ~(gas by *cone)
         %+  turn  ~(tap by dos.rom.ruf)
         |=  [=desk =dojo]
-        [[our desk] [ank let hit lab tom nor]:dom.dojo]
+        [[our desk] [let hit lab]:dom.dojo]
       =.  domes
         %-  ~(uni by domes)
         %-  ~(gas by *cone)
@@ -4885,7 +4774,7 @@
         ^-  (list [[^ship desk] dome:clay])
         %+  turn  ~(tap by rus.rung)
         |=  [=desk =rede]
-        [[ship desk] [ank let hit lab tom nor]:dom.rede]
+        [[ship desk] [let hit lab]:dom.rede]
       ``[%domes !>(`cone`domes)]
     ==
   --
@@ -5129,8 +5018,7 @@
     |=  [=desk =dojo]
     :+  desk  %|
     |^
-    :~  ankh+&+ank.dom.dojo
-        mime+&+mim.dom.dojo
+    :~  mime+&+mim.dom.dojo
         ford-files+|+files
         ford-naves+|+naves
         ford-marks+|+marks

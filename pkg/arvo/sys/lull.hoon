@@ -784,7 +784,6 @@
   ::::                                                  ::  (1c2)
     ::                                                  ::
   +$  aeon  @ud                                         ::  version number
-  +$  ankh  (axal [p=lobe q=cage])                      ::  fs node (new)
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
   +$  cable                                             :: lib/sur/mark ref
@@ -815,12 +814,9 @@
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
-    $:  ank=ankh                                        ::  state
-        let=@ud                                         ::  top id
+    $:  let=@ud                                         ::  top id
         hit=(map @ud tako)                              ::  changes by id
         lab=(map @tas @ud)                              ::  labels
-        tom=(map tako norm)                             ::  tomb policies
-        nor=norm                                        ::  default policy
     ==                                                  ::
   +$  germ                                              ::  merge style
     $?  %init                                           ::  new desk
@@ -836,7 +832,7 @@
         %meet-that                                      ::  hers if conflict
     ==                                                  ::
   +$  lobe  @uvI                                        ::  blob ref
-  +$  miso                                              ::  ankh delta
+  +$  miso                                              ::  file delta
     $%  [%del ~]                                        ::  delete
         [%ins p=cage]                                   ::  insert
         [%dif p=cage]                                   ::  mutate from diff
