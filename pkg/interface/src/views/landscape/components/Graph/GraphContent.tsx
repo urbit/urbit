@@ -187,8 +187,20 @@ function stitchInline(a: any, b: any) {
   if (!a?.children) {
     throw new Error('Bad stitchInline call: missing root');
   }
+
   const lastParaIdx = a.children.length - 1;
   const last = a.children[lastParaIdx];
+
+  // wrap bare link in list-item inside a p node
+  // for better typography consistency
+  if (last?.type === 'listItem') {
+    if (last?.children.length === 0) {
+      last.children.push({
+        type: 'paragraph',
+        children: []
+      })
+    }
+  }
   if (last?.children) {
     const ros = {
       ...a,
