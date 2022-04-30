@@ -1601,7 +1601,7 @@
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     =.  ..park  (emil (print q.old-yaki data))
-    wake:(ergo mim)
+    wake:(ergo 0 mim)
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -2638,9 +2638,9 @@
   ::  Emit update to unix sync
   ::
   ++  ergo
-    |=  mim=(map path (unit mime))
+    |=  [yon=aeon mim=(map path (unit mime))]
     ^+  ..park
-    =/  must  (must-ergo her syd mon (turn ~(tap by mim) head))
+    =/  must  (must-ergo her syd yon mon (turn ~(tap by mim) head))
     %-  emil
     %+  turn  ~(tap by must)
     |=  [pot=term len=@ud pak=(set path)]
@@ -2653,7 +2653,7 @@
   ::  Output is a map of mount points to {length-of-mounted-path set-of-paths}.
   ::
   ++  must-ergo
-    |=  [our=ship syd=desk mon=(map term beam) can=(list path)]
+    |=  [our=ship syd=desk yon=aeon mon=(map term beam) can=(list path)]
     ^-  (map term (pair @ud (set path)))
     %-  malt  ^-  (list (trel term @ud (set path)))
     %+  murn  ~(tap by mon)
@@ -2662,7 +2662,7 @@
     =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
     %+  skim  can
     |=  pax=path
-    &(=(p.bem our) =(q.bem syd) =(s.bem (scag (lent s.bem) pax)))
+    &(=(p.bem our) =(q.bem syd) =(r.bem ud+yon) =(s.bem (scag (lent s.bem) pax)))
   ::
   ::  Mount a beam to unix
   ::
@@ -2673,15 +2673,22 @@
     ?^  old-mon
       %-  (slog >%already-mounted< >u.old-mon< ~)
       ..mount
-    =.  mon  (~(put by mon) pot [her syd case] spur)
-    =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) let.dom))
+    =/  yon  (case-to-aeon case)
+    ?~  yon
+      %-  (slog >%unknown-case< >[her syd case spur]< ~)
+      ..mount
+    =/  for-yon  ?:(=(let.dom u.yon) 0 u.yon)
+    =.  mon
+      (~(put by mon) pot [her syd ud+for-yon] spur)
+    =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion  [files lat.ran fod.dom]
+    =/  =args:ford:fusion
+      [files lat.ran ?:(=(yon let.dom) fod.dom *ford-cache)]
     =^  mim  ford-cache.args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
-    (ergo mim)
+    (ergo for-yon mim)
   ::
   ::  Set permissions for a node.
   ::
@@ -4642,11 +4649,13 @@
   ::    remove have from update-state
   ::    remove bar from nako
   ::    remove ankh
+  ::    set cases in mon to ud+0
   ::
   ++  raft-11-to-12
     |=  raf=raft-11
     ^-  raft-12
     %=    raf
+        mon  (~(run by mon.raf) |=(=beam beam(r ud+0)))
         lat.ran
       %-  ~(gas by *(map lobe page))
       %+  murn  ~(tap by lat.ran.raf)
