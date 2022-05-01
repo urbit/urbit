@@ -159,24 +159,26 @@
 ::  Ford build with content.
 ::
 +$  pour
-  $%  [%nave =mark]
+  $%  [%file =path]
+      [%nave =mark]
       [%dais =mark]
       [%cast =mars]
       [%tube =mars]
       ::  leafs
       ::
-      [%file =path lob=(unit lobe)]
+      [%vale =path lob=(unit lobe)]
       [%arch =path =(map path lobe)]
   ==
 ::
 ::  Ford build without content.
 ::
 +$  poor
-  $%  [%nave =mark]
+  $%  [%file =path]
+      [%nave =mark]
       [%dais =mark]
       [%cast =mars]
       [%tube =mars]
-      [%file =path]
+      [%vale =path]
       [%arch =path]
   ==
 ::
@@ -529,7 +531,7 @@
   ::
   ++  wrap
     |*  [* state:ford]
-    [+<- +<+>- +<+>+>-]  ::  [result cache.state spill.state]
+    [+<- +<+< +<+>+<]  ::  [result cache.state spill.state]
   ::
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
@@ -543,21 +545,12 @@
   ::
   ++  ford
     =>  |%
-        +$  build
-          $%  [%file =path]
-              [%mark =mark]
-              [%dais =mark]
-              [%cast =mars]
-              [%tube =mars]
-              [%vale =path]
-              [%poor =poor]
-          ==
         +$  state
-          $:  baked=(map path cage)
-              cache=ford-cache
-              cycle=(set build)
+          $:  cache=ford-cache
+              cycle=(set poor)
               spill=(set leak)
               drain=(map poor leak)
+              stack=(list (set leak))
           ==
         +$  args
           $:  files=(map path (each page lobe))
@@ -577,17 +570,21 @@
     ::
     ++  read-file
       |=  =path
+      (%*(. read-file-k gain |) path)
+    ::
+    ++  read-file-k
+      =/  gain  &
+      |=  =path
       ^-  [cage state]
       ~|  %error-validating^path
-      ?^  got=(~(get by baked.nub) path)
-        [u.got nub]
-      =;  [res=cage bun=state]
-        =.  nub  bun
-        =.  baked.nub  (~(put by baked.nub) path res)
-        [res nub]
+      =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
+      %-  soak-cage
+      %^  gain-leak  gain  [%vale path]
+      |=  nob=state
+      =.  nub  nob
       ::~>  %slog.0^leaf/"ford: read file {(spud path)}"
       =/  file
         ~|  %file-not-found^path
@@ -597,7 +594,9 @@
           p.file
         ~|  %tombstoned-file^path^p.file
         (~(got by file-store) p.file)
-      (validate-page path page)
+      =^  =cage  nub  (validate-page-k path page)
+      [[%cage cage] nub]
+    ::
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
@@ -614,21 +613,22 @@
       =/  gain  &
       |=  mak=mark
       ~|  %error-building-mark^mak
-      %-  soak-vase
-      %^  gain-leak  gain  [%nave mak]
-      |=  nob=state
-      =.  nub  nob
-      ?:  (~(has in cycle.nub) mark+mak)
-        ~|(cycle+mark+mak^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) mark+mak)
+      =.  stack.nub  [~ stack.nub]
+      ?:  (~(has in cycle.nub) nave+mak)
+        ~|(cycle+nave+mak^cycle.nub !!)
+      =.  cycle.nub  (~(put in cycle.nub) nave+mak)
       :: ~>  %slog.0^leaf/"ford: make mark {<mak>}"
       =^  cor=vase  nub  (build-fit-k %mar mak)
       =/  gad=vase  (slap cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
-        =^  [%vase deg=vase]  nub  $(mak mok)
+        =^  deg=vase  nub  $(mak mok, gain &)
         =^  tub=vase  nub  (build-cast-k mak mok)
         =^  but=vase  nub  (build-cast-k mok mak)
+        %-  soak-vase
+        %^  gain-leak  gain  [%nave mak]
+        |=  nob=state
+        =.  nub  nob
         :_  nub  :-  %vase
         ^-  vase  ::  vase of nave
         %+  slap
@@ -651,6 +651,10 @@
           (but (pact:deg (tub v) d))
         ++  vale  noun:grab:cor
         --
+      %-  soak-vase
+      %^  gain-leak  gain  [%nave mak]
+      |=  nob=state
+      =.  nub  nob
       :_  nub  :-  %vase
       ^-  vase  ::  vase of nave
       %+  slap  (slop (with-face cor+cor) zuse.bud)
@@ -687,14 +691,15 @@
       |=  mak=mark
       ^-  [dais state]
       ~|  %error-building-dais^mak
-      %-  soak-dais
-      %^  gain-leak  gain  [%dais mak]
-      |=  nob=state
-      =.  nub  nob
+      =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) dais+mak)
         ~|(cycle+dais+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) dais+mak)
       =^  nav=vase  nub  (build-nave-k mak)
+      %-  soak-dais
+      %^  gain-leak  gain  [%dais mak]
+      |=  nob=state
+      =.  nub  nob
       ::~>  %slog.0^leaf/"ford: make dais {<mak>}"
       :_  nub  :-  %dais
       ^-  dais
@@ -740,12 +745,9 @@
       |=  [a=mark b=mark]
       ^-  [vase state]
       ~|  error-building-cast+[a b]
+      =.  stack.nub  [~ stack.nub]
       ?:  =([%mime %hoon] [a b])
         :_(nub =>(..zuse !>(|=(m=mime q.q.m))))
-      %-  soak-vase
-      %^  gain-leak  gain  [%cast a b]
-      |=  nob=state
-      =.  nub  nob
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
       ::  try +grow; is there a +grow core with a .b arm?
@@ -759,6 +761,10 @@
           p.lab
         ::  +grow core has .b arm; use that
         ::
+        %-  soak-vase
+        %^  gain-leak  gain  [%cast a b]
+        |=  nob=state
+        =.  nub  nob
         :_  nub  :-  %vase
         %+  slap  (with-faces cor+old ~)
         ^-  hoon
@@ -770,23 +776,35 @@
       =^  new=vase  nub  (build-fit-k %mar b)
       =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
+        %-  soak-vase
+        %^  gain-leak  gain  [%cast a b]
+        |=  nob=state
+        =.  nub  nob
         :_(nub vase+p.rab)
       ::  try +jump
       ::
       =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
       ?:  ?=(%& -.jum)
-        (compose-casts a !<(mark p.jum) b)
+        (compose-casts gain a !<(mark p.jum) b)
       ?:  ?=(%& -.rab)
-        (compose-casts a !<(mark p.rab) b)
+        (compose-casts gain a !<(mark p.rab) b)
       ?:  ?=(%noun b)
+        %-  soak-vase
+        %^  gain-leak  gain  [%cast a b]
+        |=  nob=state
+        =.  nub  nob
         :_(nub vase+same.bud)
       ~|(no-cast-from+[a b] !!)
     ::
     ++  compose-casts
-      |=  [x=mark y=mark z=mark]
-      ^-  [[%vase vase] state]
+      |=  [gain=? x=mark y=mark z=mark]
+      ^-  [vase state]
       =^  uno=vase  nub  (build-cast-k x y)
       =^  dos=vase  nub  (build-cast-k y z)
+      %-  soak-vase
+      %^  gain-leak  gain  [%cast x z]
+      |=  nob=state
+      =.  nub  nob
       :_  nub  :-  %vase
       %+  slap
         (with-faces uno+uno dos+dos cork+=>([..zuse cork] !>(+)) ~)
@@ -802,13 +820,14 @@
       |=  [a=mark b=mark]
       ^-  [tube state]
       ~|  error-building-tube+[a b]
+      =.  stack.nub  [~ stack.nub]
+      ?:  (~(has in cycle.nub) tube+[a b])
+        ~|(cycle+tube+[a b]^cycle.nub !!)
+      =^  gat=vase  nub  (build-cast-k a b)
       %-  soak-tube
       %^  gain-leak  gain  [%tube a b]
       |=  nob=state
       =.  nub  nob
-      ?:  (~(has in cycle.nub) tube+[a b])
-        ~|(cycle+tube+[a b]^cycle.nub !!)
-      =^  gat=vase  nub  (build-cast-k a b)
       :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
       :_(nub [%tube =>([..zuse gat=gat] |=(v=vase (slam gat v)))])
     ::
@@ -823,6 +842,17 @@
       =^  =tube  nub  (build-tube p.page mak)
       :_(nub [mak (tube vax)])
     ::
+    ++  validate-page-k
+      |=  [=path =page]
+      ^-  [cage state]
+      ~|  validate-page-fail+path^from+p.page
+      =/  mak=mark  (head (flop path))
+      ?:  =(mak p.page)
+        (page-to-cage-k page)
+      =^  [mark vax=vase]  nub  (page-to-cage-k page)
+      =^  =tube  nub  (build-tube-k p.page mak)
+      :_(nub [mak (tube vax)])
+    ::
     ++  page-to-cage
       |=  =page
       ^-  [cage state]
@@ -831,6 +861,16 @@
       ?:  =(%mime p.page)
         :_(nub [%mime =>([..zuse ;;(mime q.page)] !>(+))])
       =^  =dais  nub  (build-dais p.page)
+      :_(nub [p.page (vale:dais q.page)])
+    ::
+    ++  page-to-cage-k
+      |=  =page
+      ^-  [cage state]
+      ?:  =(%hoon p.page)
+        :_(nub [%hoon [%atom %t ~] q.page])
+      ?:  =(%mime p.page)
+        :_(nub [%mime =>([..zuse ;;(mime q.page)] !>(+))])
+      =^  =dais  nub  (build-dais-k p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
     ++  cast-path
@@ -842,6 +882,18 @@
       ?:  =(mok mak)
         [cag nub]
       =^  =tube  nub  (build-tube mok mak)
+      ~|  error-running-cast+[path mok mak]
+      :_(nub [mak (tube q.cag)])
+    ::
+    ++  cast-path-k
+      |=  [=path mak=mark]
+      ^-  [cage state]
+      =/  mok  (head (flop path))
+      ~|  error-casting-path+[path mok mak]
+      =^  cag=cage  nub  (read-file-k path)
+      ?:  =(mok mak)
+        [cag nub]
+      =^  =tube  nub  (build-tube-k mok mak)
       ~|  error-running-cast+[path mok mak]
       :_(nub [mak (tube q.cag)])
     ::
@@ -865,137 +917,8 @@
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
       =.  hoon.pile  !,(*hoon .)
-      =^  res=vase  nub  (run-pile pile)
+      =^  res=vase  nub  (run-prelude pile)
       res
-    ::
-    ::  TODO: should only parse prelude
-    ::  TODO: cache parsing
-    ::
-    ++  build-leak
-      |=  por=poor
-      ^-  [leak state]
-      |^  (leak-poor por)
-      ++  leak-poor
-        |=  =poor
-        ^-  [leak state]
-        ?^  got=(~(get by drain.nub) poor)
-          [u.got nub]
-        =;  [res=leak bun=state]
-          =.  nub  bun
-          =.  drain.nub  (~(put by drain.nub) poor res)
-          [res nub]
-        ~|  %error-getting-dependencies^poor
-        ?:  (~(has in cycle.nub) poor+poor)
-          ~|(cycle+poor+poor^cycle.nub !!)
-        =.  cycle.nub  (~(put in cycle.nub) poor+poor)
-        ?-    -.poor
-            %nave
-          =^  leaks  nub  (leak-mark mark.poor)
-          [[poor leaks] nub]
-        ::
-            %dais
-          =^  leaks  nub  (leak-mark mark.poor)
-          [[poor leaks] nub]
-        ::
-            %cast
-          =^  leaks-a  nub  (leak-mark a.mars.poor)
-          =^  leaks-b  nub  (leak-mark b.mars.poor)
-          [[poor (~(uni in leaks-a) leaks-b)] nub]
-        ::
-            %tube
-          =^  leaks-a  nub  (leak-mark a.mars.poor)
-          =^  leaks-b  nub  (leak-mark b.mars.poor)
-          [[poor (~(uni in leaks-a) leaks-b)] nub]
-        ::
-            %file
-          ?~  lob=(~(get by files) path.poor)
-            [[[%file path.poor ~] ~] nub]
-          =/  =lobe
-            ?-  -.u.lob
-              %&  (page-to-lobe p.u.lob)
-              %|  p.u.lob
-            ==
-          =^  cag=cage  nub  (read-file path.poor)
-          ?.  ?=(%hoon p.cag)
-            ::  could include mark definition?
-            ::
-            [[[%file path.poor `lobe] ~] nub]
-          =/  tex=tape  (trip !<(@t q.cag))
-          =/  =pile  (parse-pile path.poor tex)
-          =^  leaks  nub  (leak-pile pile)
-          [[[%file path.poor `lobe] leaks] nub]
-        ::
-            %arch
-          ::  TODO: overly conservative, should be only direct hoon
-          ::  children
-          ::
-          =/  dip  (dip-hat path.poor)
-          =^  leaks  nub  (leak-poors (turn ~(tap by dip) |=([=path *] [%file path])))
-          :_  nub  :_  leaks
-          ^-  pour
-          :+  %arch  path.poor
-          %-  ~(run by dip)
-          |=  file=(each page lobe)
-          ?-  -.file
-            %&  (page-to-lobe p.file)
-            %|  p.file
-          ==
-        ==
-      ::
-      ++  leak-poors
-        |=  poors=(list poor)
-        ^-  [(set leak) state]
-        =|  leaks=(set leak)
-        |-  ^-  [(set leak) state]
-        ?~  poors
-          [leaks nub]
-        =^  lek  nub  (leak-poor i.poors)
-        $(leaks (~(put in leaks) lek), poors t.poors)
-      ::
-      ++  leak-mark
-        |=  =mark
-        ^-  [(set leak) state]
-        (leak-poors (turn (all-fits %mar mark) |=(=path [%file path])))
-      ::
-      ++  leak-pile
-        |=  =pile
-        ^-  [(set leak) state]
-        =|  leaks=(set leak)
-        =^  leaks-a  nub
-          %-  leak-poors
-          %-  zing
-          %+  turn  sur.pile
-          |=  =taut
-          %+  turn  (all-fits %sur pax.taut)
-          |=  =path
-          [%file path]
-        =^  leaks-b  nub
-          %-  leak-poors
-          %-  zing
-          %+  turn  lib.pile
-          |=  =taut
-          %+  turn  (all-fits %lib pax.taut)
-          |=  =path
-          [%file path]
-        =^  leaks-c  nub
-          (leak-poors (turn raw.pile |=([* =path] [%file path])))
-        =^  leaks-d  nub
-          (leak-poors (turn raz.pile |=([* * =path] [%arch path])))
-        =^  leaks-e  nub
-          (leak-poors (turn maz.pile |=([* =mark] [%nave mark])))
-        =^  leaks-f  nub
-          (leak-poors (turn caz.pile |=([* =mars] [%tube mars])))
-        =^  leaks-g  nub
-          (leak-poors (turn bar.pile |=([* * =path] [%file path])))
-        :_  nub
-        %-  ~(uni in leaks-a)
-        %-  ~(uni in leaks-b)
-        %-  ~(uni in leaks-c)
-        %-  ~(uni in leaks-d)
-        %-  ~(uni in leaks-e)
-        %-  ~(uni in leaks-f)
-        leaks-g
-      --
     ::
     ++  build-dependency
       |=  dep=(each [dir=path fil=path] path)
@@ -1008,19 +931,21 @@
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
-      %-  soak-vase
-      %^  gain-leak  gain  [%file path]
-      |=  nob=state
-      =.  nub  nob
+      =.  stack.nub  [~ stack.nub]
       ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
-      =^  cag=cage  nub  (read-file path)
+      =^  cag=cage  nub  (read-file-k path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
-      =^  res=vase  nub  (run-pile pile)
+      =^  sut=vase  nub  (run-prelude pile)
+      %-  soak-vase
+      %^  gain-leak  gain  [%file path]
+      |=  nob=state
+      =.  nub  nob
+      =/  res=vase  (road |.((slap sut hoon.pile)))
       [[%vase res] nub]
     ::
     ++  build-file
@@ -1065,7 +990,7 @@
       =^  res  nub   (build-dependency-k &+[path pax])
       $(fiz t.fiz, rez (~(put by rez) nom res))
     ::
-    ++  run-pile
+    ++  run-prelude
       |=  =pile
       =/  sut=vase  zuse.bud
       =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
@@ -1075,8 +1000,7 @@
       =^  sut=vase  nub  (run-maz sut maz.pile)
       =^  sut=vase  nub  (run-caz sut caz.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
-      =/  res=vase  (road |.((slap sut hoon.pile)))
-      [res nub]
+      [sut nub]
     ::
     ++  parse-pile
       |=  [pax=path tex=tape]
@@ -1219,7 +1143,7 @@
       |=  [sut=vase bar=(list [face=term =mark =path])]
       ^-  [vase state]
       ?~  bar  [sut nub]
-      =^  =cage  nub  (cast-path [path mark]:i.bar)
+      =^  =cage  nub  (cast-path-k [path mark]:i.bar)
       =.  p.q.cage  [%face face.i.bar p.q.cage]
       $(sut (slop q.cage sut), bar t.bar)
     ::
@@ -1269,6 +1193,36 @@
               $(p +.p, pax +.pax)
       ==  ==
     ::
+    ++  poor-to-pour
+      |=  =poor
+      ^-  pour
+      ?+    -.poor  poor
+          %vale
+        :+  %vale  path.poor
+        ?~  lob=(~(get by files) path.poor)
+          ~
+        :-  ~
+        ?-  -.u.lob
+          %&  (page-to-lobe p.u.lob)
+          %|  p.u.lob
+        ==
+      ::
+          %arch
+        =/  dip  (dip-hat path.poor)
+        :+  %arch  path.poor
+        %-  ~(run by dip)
+        |=  file=(each page lobe)
+        ?-  -.file
+          %&  (page-to-lobe p.file)
+          %|  p.file
+        ==
+      ==
+    ::
+    ++  soak-cage
+      |=  [=soak nub=state]
+      ?>  ?=(%cage -.soak)
+      [cage.soak nub]
+    ::
     ++  soak-vase
       |=  [=soak nub=state]
       ?>  ?=(%vase -.soak)
@@ -1292,21 +1246,39 @@
     ++  gain-leak
       |=  [gain=? =poor next=$-(state [soak state])]
       ^-  [soak state]
-      =^  =leak  nub  (build-leak poor)
+      ~&  [gain=gain not-top=?=([* * *] stack.nub) stack.nub]
+      =^  top=(set leak)  stack.nub  stack.nub
+      =/  =leak  [(poor-to-pour poor) top]
+      =.  cycle.nub  (~(del in cycle.nub) poor)
+      =?  stack.nub  ?=(^ stack.nub)
+        stack.nub(i (~(put in i.stack.nub) leak))
       =/  spilt  (~(has in spill.nub) leak)
-      =/  refs   (add ?:(gain 1 0) ?:(spilt 0 1))
+      %-  (slog leaf+"spilt: {<spilt>}" ~)
+      =/  refs   ?:(spilt 0 1)
       =?  spill.nub  !spilt  (~(put in spill.nub) leak)
       ?^  got=(~(get by cache.nub) leak)
         =/  tape-1  "ford: cache {<pour.leak>}: adding {<refs>}"
         =/  tape-2  ", giving {<(add refs refs.u.got)>}"
         %-  (slog leaf+(welp tape-1 tape-2) ~)
-        =.  cache.nub
+        =?  cache.nub  !=(0 refs)
           (~(put by cache.nub) leak [(add refs refs.u.got) soak.u.got])
         [soak.u.got nub]
       %-  (slog leaf+"ford: cache {<pour.leak>}: creating with {<refs>}" ~)
       =^  =soak  nub  (next nub)
       =.  cache.nub  (~(put by cache.nub) leak [refs soak])
-      [soak nub]
+      ::  If we're creating a cache entry, add refs to our dependencies
+      ::
+      =.  refs  (add refs ?:(gain 1 0))
+      =/  deps  ~(tap in deps.leak)
+      |-
+      ?~  deps
+        [soak nub]
+      =/  got  (~(got by cache.nub) i.deps)
+      %-  =/  tape-1  "ford: cache {<pour.leak>} for {<pour.i.deps>}"
+          =/  tape-2  ": bumping to ref {<refs.got>}"
+          (slog leaf+(welp tape-1 tape-2) ~)
+      =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
+      $(deps t.deps)
     --
   ::
   ++  lose-leak
