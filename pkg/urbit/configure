@@ -109,7 +109,7 @@ case $(tr A-Z a-z <<< $os) in
      mpkgs=(cmake curl gcc jq make)
      pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
 
-     export MAKE=mingw32-make
+     gnumake=mingw32-make
 
      . compat/poor-mans-nix-shell.sh mingw
      compat/create-include-files.sh 'stat -c %s' /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
@@ -156,10 +156,11 @@ case $(tr A-Z a-z <<< $os) in
      deps="$deps kvm" # XX use new compat.mk pattern
      ;;
   *openbsd*)
-     # pkg_add bash automake libtool jq gtar cmake gmake libsigsegv
+     # pkg_add bash automake libtool jq gtar cmake gmake libsigsegv gmp
      # Tested versions:
         # bash-5.1.8 automake-1.16.3 (autoconf-2.69p3) libtool-2.4.2p2
         # jq-1.6p0 gtar-1.34-static cmake-3.20.3p0v0 gmake-4.3 libsigsegv-2.12
+        # gmp-6.2.1p0
 
      gnutar=gtar
      gnumake=gmake
