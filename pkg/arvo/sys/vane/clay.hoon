@@ -1312,6 +1312,10 @@
   ::
   ++  static-ford-args  [ank.dom ~ ~ lat.ran fod.dom]
   ::
+  ++  request-wire
+    |=  [kind=@ta =ship =desk index=@ud]
+    /[kind]/(scot %p ship)/[desk]/(scot %ud index)
+  ::
   ::  Transfer a request to another ship's clay.
   ::
   ++  send-over-ames
@@ -1319,7 +1323,7 @@
     ^+  +>
     ::
     =/  =desk  p.riff
-    =/  =wire  /warp-index/(scot %p ship)/(scot %tas desk)/(scot %ud index)
+    =/  =wire  (request-wire %warp-index ship desk index)
     =/  =path  [%question desk (scot %ud index) ~]
     (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
@@ -1327,10 +1331,10 @@
     |=  [kind=@ta =duct =ship index=@ud =desk =mood]
     ^-  [timeout=@da _..send-over-scry]
     =/  =time  (add now scry-timeout-time)
-    =/  =wire  /[kind]/(scot %p ship)/[desk]/(scot %ud index)
+    =/  =wire  (request-wire kind ship desk index)
     =/  =path
       =,  mood
-      [(cat 3 %c care) (scot %p ship) desk (scot case) path]
+      [%c care (scot case) desk path]
     ~&  scrying/path^index
     :-  time
     %-  emil
@@ -1338,9 +1342,9 @@
         [hen %pass wire %b %wait time]
     ==
   ::
-  ++  cancel-scry-timeout
+  ++  cancel-scry-timeout  ::TODO  make arg order more consistent
     |=  [kind=@ta =duct =ship index=@ud =desk time=@da]
-    =/  =wire  /[kind]/(scot %p ship)/[desk]/(scot %ud index)
+    =/  =wire  (request-wire kind ship desk index)
     (emit duct %pass wire %b %rest time)
   ::
   ++  foreign-capable
@@ -2957,8 +2961,18 @@
       =,  mood.rave.sat
       [(cat 3 %c care) (scot %p her) syd (scot case) path]
     %-  emil
-    :~  [hen %pass / %a %yawn her path]
-        [hen %pass / %b %rest u.scry.sat]
+    ::NOTE  we don't know exactly which kind of request is exstant at
+    ::      this time. or at least it seems very hard to find out.
+    ::      so instead we simply emit the cancellation moves on both
+    ::      possible wires. one will silently no-op, the other will
+    ::      do what we want. this is ugly, but we should refactor the
+    ::      separate flows eventually anyway.
+    =/  x=wire  (request-wire %warp-index her syd u.nux)
+    =/  y=wire  (request-wire %back-index her syd u.nux)
+    :~  [hen %pass x %a %yawn her path]
+        [hen %pass y %a %yawn her path]
+        [hen %pass x %b %rest u.scry.sat]
+        [hen %pass y %b %rest u.scry.sat]
     ==
   ::
   ::  Handles a request.
@@ -2982,12 +2996,31 @@
       ..start-request
     (duce for u.new-sub)
   ::
+  ::  +retry-with-ames: we tried scrying. now try with ames instead.
+  ::
   ++  retry-with-ames
-    |=  inx=@ud
+    |=  [kind=@ta inx=@ud]
     ^+  ..retry-with-ames
     ~|  [%strange-retry-no-request her syd inx]
     ?>  ?=(^ ref)
     =/  sat=update-state  (~(got by bom.u.ref) inx)
+    ::  clean up scry request & timer
+    ::
+    =.  ..retry-with-ames
+      =<  ?>(?=(^ ref) .)
+      ~|  [%strange-retry-not-scry her syd inx scry.sat -.rave]
+      ?>  ?=(^ scry.sat)
+      ?>  ?=(%sing -.rave.sat)
+      =/  =wire  (request-wire kind her syd inx)
+      =/  =path
+        =,  mood.rave.sat
+        [(cat 3 %c care) (scot %p her) syd (scot case) path]
+      %-  emil
+      :~  [hen %pass wire %b %rest u.scry.sat]
+          [hen %pass wire %a %yawn her path]
+      ==
+    ::  re-send over ames
+    ::
     =.  ..retry-with-ames
       =<  ?>(?=(^ ref) .)
       (send-over-ames hen her inx syd `rave.sat)
@@ -3008,7 +3041,7 @@
     ?>  ?=(^ ref)
     ~&  take-foreign/inx
     =+  ruv=(~(get by bom.u.ref) inx)
-    ?~  ruv  
+    ?~  ruv
       ~&  %bad-answer
        +>.$
     =?  ..take-foreign-answer  ?=(^ scry.u.ruv)
@@ -3270,7 +3303,7 @@
         ::  otherwise, request over ames
         ::
         :-  ~
-        =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
+        =/  =wire  (request-wire %back-index her syd inx)
         =/  =path  [%backfill syd (scot %ud inx) ~]
         =/  =fill  [%0 syd lobe]
         (emit hen %pass wire %a %plea her %c path fill)
@@ -5016,7 +5049,7 @@
       =^  mos  ruf
         =.  sad.ruf  (~(put by sad.ruf) her now)
         =/  den  ((de now rof hen ruf) her desk)
-        abet:(retry-with-ames:den index)
+        abet:(retry-with-ames:den %warp-index index)
       [mos ..^$]
     ==
   ::
@@ -5049,7 +5082,7 @@
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
         ?~  blob
-          abet:(retry-with-ames:den index)
+          abet:(retry-with-ames:den %back-index index)
         abet:abet:(take-backfill:(foreign-update:den index) u.blob)
       [mos ..^$]
     ::
@@ -5062,7 +5095,7 @@
       =^  mos  ruf
         =.  sad.ruf  (~(put by sad.ruf) her now)
         =/  den  ((de now rof hen ruf) her desk)
-        abet:(retry-with-ames:den index)
+        abet:(retry-with-ames:den %back-index index)
       [mos ..^$]
     ==
   ::

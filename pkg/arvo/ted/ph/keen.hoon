@@ -7,6 +7,7 @@
 ;<  ~  bind:m  start-simple
 ;<  ~  bind:m  (init-ship ~bud &)
 ;<  ~  bind:m  (init-ship ~dev &)
-;<  ~  bind:m  (send-hi ~bud ~dev)
+;<  ~  bind:m  (dojo ~bud "-keen /cx/~dev/kids/1/desk/bill")
+;<  ~  bind:m  (wait-for-output ~bud "[ ~")
 ;<  ~  bind:m  end
 (pure:m *vase)

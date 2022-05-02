@@ -331,10 +331,10 @@
   (take-wake `until)
 ::
 ++  keen
-  |=  =path
+  |=  [=ship =path]
   =/  m  (strand ,(unit (cask)))
   ^-  form:m
-  =/  =card:agent:gall  [%pass /keen %arvo %a %keen path]
+  =/  =card:agent:gall  [%pass /keen %arvo %a %keen ship path]
   ;<  ~  bind:m  (send-raw-card card)
   ;<  [wire sign=sign-arvo]  bind:m  take-sign-arvo
   ?>  ?=(%tune +<.sign)
@@ -759,7 +759,7 @@
   ;<  =bowl:spider  bind:m  get-bowl
   =/  tid
     (scot %ta (cat 3 (cat 3 'strand_' file) (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid beak file args])
+  =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid beak file args])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~  bind:m  (sleep ~s0)  ::  wait for thread to start
   (pure:m tid)
@@ -773,7 +773,7 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
   =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid file args])
+  =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid byk.bowl file args])
   ;<  ~      bind:m  (watch-our /awaiting/[tid] %spider /thread-result/[tid])
   ;<  ~      bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~      bind:m  (sleep ~s0)  ::  wait for thread to start

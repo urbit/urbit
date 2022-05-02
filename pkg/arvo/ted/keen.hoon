@@ -5,7 +5,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ arg=path] arg)
+=+  !<([~ arg=[ship path]] arg)
 ;<  dat=(unit (cask))  bind:m
   (keen:strandio arg)
 ?~  dat
