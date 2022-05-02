@@ -1069,26 +1069,26 @@
   ::
   ::    Encrypted Remote Scry Tasks
   ::
-  ::    A `%fend` sets permissions on a path and all its subpaths.
-  ::    The `path` in a `%fend` is a local scry path with possibly empty case.
+  ::    A %fend sets permissions on a path and all its subpaths.
+  ::    The path in a %fend is a local scry path with possibly empty case.
   ::
   ::    /c/kids//sys  ::  exposes just the /sys folder in the %kids desk
   ::    /c/landscape  ::  exposes the whole landscape desk
   ::
-  ::    If a `%fend` has `gap=~`, Ames chooses the interval.
+  ::    If a %fend has gap=~, Ames chooses the interval.
   ::
-  ::    If a `%fend` removes a ship from the whitelist (its `who` is missing
-  ::    a ship from a previous `who`), Ames will immediately create a new key.
+  ::    If a %fend removes a ship from the whitelist (its .who is missing
+  ::    a ship from a previous .who), Ames will immediately create a new key.
   ::
-  ::    To rescind all permissions on a path, pass a `%fend` with an empty set
-  ::    of ships in `who`.
+  ::    To rescind all permissions on a path, pass a %fend with an empty set
+  ::    of ships in .who.
   ::
-  ::    A `%yank` resets the key for a path, once -- to be used in case a key
+  ::    A %yank resets the key for a path, once -- to be used in case a key
   ::    is thought to have been compromised, or if an application wants to
   ::    override the normal rotation policy for any other reason.
   ::
-  ::    A `%coax` with `live=&` starts a subscription to the path's key.
-  ::    A `%coax` with `live=|` cancels the key subscription.
+  ::    A %coax with live=& starts a subscription to the path's key.
+  ::    A %coax with live=| cancels the key subscription.
   ::
   ::    System and Lifecycle Tasks
   ::
@@ -1111,7 +1111,7 @@
     ::
         [%coax =ship =path live=?]
         [%fend =path who=(set ship) gap=(unit @dr)]
-        [%yank =ship =path]
+        [%yank =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -1137,10 +1137,13 @@
   ::
   ::    Encrypted Remote Scry Gifts
   ::
-  ::    `%chit`: the key for a path, sent to a subscriber
-  ::    `seq` is the key's sequence number.  The subscriber prefixes
+  ::    %chit: the key for a path, sent to a subscriber
+  ::    .seq is the key's sequence number.  The subscriber prefixes
   ::    encrypted scry requests with this number so the publisher knows
   ::    which key to use to decrypt the rest of the request path.
+  ::
+  ::    %snub: courtesy notification over the wire that we have kicked the
+  ::    subscriber ship from receiving more %chit's for this path.
   ::
   ::    System and Lifecycle Gifts
   ::
@@ -1158,6 +1161,7 @@
         [%miss =path]
     ::
         [%chit =path =chit]
+        [%snub =path]
     ::
         [%turf turfs=(list turf)]
     ==

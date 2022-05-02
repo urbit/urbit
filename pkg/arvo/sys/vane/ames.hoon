@@ -736,13 +736,13 @@
 ::  $fend-state: state for a permissioned path
 ::
 ::    chit: numbered key
-::    .subs: keys are all allowed ships; values are subscribed or not
+::    .subs: keys are all allowed ships; values are subscription ducts
 ::    .gap: key rotation interval
 ::    .last-rev: last time key was set
 ::
 +$  fend-state
   $:  chit
-      subs=(map ship ?)
+      subs=(map ship (unit duct))
       gap=@dr
       last-rev=@da
   ==
@@ -3225,10 +3225,73 @@
             =^  tok  fin  gen-key
             =/  fam  (malt (turn ~(tap in who) (late |)))
             =/  gap  (fall gap ~d1)
-            =.  fez  (~(put by fez) path [tok fam gap now])
-            ::
-            !!
-          !!
+            =:  net.fin  (~(put by net.fin) seq.tok path)
+                fez.fin  (~(put by fez.fin) path [tok fam gap now])
+              ==
+            (emit duct %pass fend+path %b %wait (add now gap))
+          ::  no ships were removed; keep same key
+          ::
+          =/  snubbed  (~(dif in ~(key by subs.u.fen)) who)
+          =/  snub-dux
+            (murn ~(tap in snubbed) ~(get by subs.u.fen))
+          ::
+          ?:  =(~ snubbed)
+            =-  event-core(fez.fin -)
+            =-  (~(put by fez.fin) path u.fen(subs -))
+            %+  roll  ~(tap in who)
+            |=  [=ship fam=_subs.u.fen]
+            ?:  (~(has by fam) ship)
+              fam
+            (~(put by fam) ship ~)
+          :: some ships were removed; rekey
+          ::
+          =.  net.fin  (~(del by net.fin) seq.u.fen)
+          =.  event-core
+            =/  wen  (add [last-rev gap]:u.fen)
+            (emit duct %pass fend/path %b %rest wen)
+          =^  tok  fin  gen-key
+          =/  gap  (fall gap ~d1)
+          =/  fam
+            %+  roll  ~(tap in who)
+            |=  [=ship fam=_subs.u.fen]
+            ?:  (~(has by fam) ship)
+              fam
+            (~(put by fam) ship ~)
+          =:  net.fin  (~(put by net.fin) seq.tok path)
+              fez.fin  (~(put by fez.fin) path [tok fam gap now])
+            ==
+          =.  event-core
+            (emit duct %pass fend+path %b %wait (add now gap))
+          =.  event-core
+            |-  ^+  snub-dux
+            ?~  snub-dux  event-core
+            =.  event-core
+              (emit i.snub-dux %give %snub path)
+            $(snub-dux t.snub-dux)
+          ::
+          =/  dux  ~(val by subs.u.fen)
+          |-  ^+  event-core
+          ?~  dux  event-core
+          ?~  i.dux
+            $(dux t.dux)
+          $(dux t.dux, event-core (emit u.i.dux %give %chit path tok))
+        ::
+        ++  on-yank
+          |=  =path
+          ^+  event-core
+          =*  fin  fine-state.ames-state
+          =/  fen  (~(get by fez) path)
+          ?~  fen
+            (mean leaf/"ames: yank-none {<path>}" ~)
+          =.  net.fin  (~(del by net.fin) seq.u.fen)
+          =.  event-core
+            =/  wen  (add [last-rev gap]:u.fen)
+            (emit duct %pass fend/path %b %rest wen)
+          =^  tok  fin  gen-key
+          =:  net.fin  (~(put by net.fin) seq.tok path)
+              fez.fin  (~(put by fez.fin) path u.fen(- tok, last-rev now))
+            ==
+          (emit duct %pass fend+path %b %wait (add now gap.u.fen))
         ::  +gen-key: generate symmetric key, iterating counter and entropy
         ::
         ++  gen-key
@@ -3237,11 +3300,6 @@
           =^  seq  seq.fin  [seq.fin +(seq.fin)]
           =^  key  eny.fin  [- a]:(~(raws og eny.fin) 256)
           [[seq key] fin]
-        ::
-        ++  on-yank
-          |=  [=ship =path]
-          ^+  event-core
-          !!
         ::
         ++  on-take-wake
           |=  [=wire error=(unit tang)]
