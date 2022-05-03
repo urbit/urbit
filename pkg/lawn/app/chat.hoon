@@ -58,8 +58,8 @@
 ::        [/lawn/chat/chan/[id=@ta]/leave ~]
 ::        [/lawn/chat/chan/[id=@ta]/add sent=@da content=@t]
 ::        [/lawn/chat/chan/[id=@ta]/del =time]
-::        [/lawn/chat/chan/[id=@ta]/writ/[time=@da]/feel/add =term]
-::        [/lawn/chat/chan/[id=@ta]/writ/[time=@da]/feel/del =term]
+::        [/lawn/chat/chan/[id=@ta]/writ/feel/add =time =term]
+::        [/lawn/chat/chan/[id=@ta]/writ/feel/del =time =term]
 ::    ==
 ::
 +$  task  ::  inbound poke
