@@ -2,11 +2,6 @@
 ::  agent-specific data structures; unofficial optional helper core
 ::
 |%
-+$  wave
-  $%  $:  [[%tas %chan] [%ta id=@ta] ~]
-          =wave:chat-pub]
-  ==  ==
-::
 +$  state-0  [%0 ~]
 +$  subs
   $:  $=  chat-pub
@@ -37,11 +32,13 @@
       task:groups
   ==
 +$  wave-gift
-  $%  [%chat-pub =wave:chat-pub rock=(unit rock:wave:chat-pub)]
-  ==
+  $%  $:  [[%tas %chan] [%ta id=@ta] ~]
+          =wave:chat-pub
+  ==  ==
 +$  wave-sign
-  $%  [%chat-pub [=wave =rock]:chat-pub]
-  ==
+  $%  $:  [[%tas %chan] [%ta id=@ta] ~]
+          [=wave =rock]:chat-pub]
+  ==  ==
 --
 ::  agent descriptor core, all arms required
 |%
