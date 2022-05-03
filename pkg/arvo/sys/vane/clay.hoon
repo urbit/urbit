@@ -1220,9 +1220,9 @@
       =^  =soak  nub
         ?^  got=(~(get by cache.nub) leak)
           =/  refs   ?:(spilt 0 1)
-          =/  tape-1  "ford: cache {<pour.leak>}: adding {<refs>}"
-          =/  tape-2  ", giving {<(add refs refs.u.got)>}"
-          %-  (slog leaf+(welp tape-1 tape-2) ~)
+          ::  %-  =/  tape-1  "ford: cache {<pour.leak>}: adding {<refs>}"
+          ::      =/  tape-2  ", giving {<(add refs refs.u.got)>}"
+          ::      (slog leaf+(welp tape-1 tape-2) ~)
           =?  cache.nub  !=(0 refs)
             (~(put by cache.nub) leak [(add refs refs.u.got) soak.u.got])
           [soak.u.got nub]
@@ -1236,9 +1236,9 @@
         ?~  deps
           [soak nub]
         =/  got  (~(got by cache.nub) i.deps)
-        %-  =/  tape-1  "ford: cache {<pour.leak>} for {<pour.i.deps>}"
-            =/  tape-2  ": bumping to ref {<refs.got>}"
-            (slog leaf+(welp tape-1 tape-2) ~)
+        ::  %-  =/  tape-1  "ford: cache {<pour.leak>} for {<pour.i.deps>}"
+        ::      =/  tape-2  ": bumping to ref {<refs.got>}"
+        ::      (slog leaf+(welp tape-1 tape-2) ~)
         =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
         $(deps t.deps)
       ?:  spilt
