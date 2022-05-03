@@ -209,7 +209,7 @@
 ::    Refcount includes references from other items in the cache, and
 ::    from spills in each desk
 ::
-+$  ford-cache  (map leak [refs=@ud =soak])
++$  flow  (map leak [refs=@ud =soak])
 ::
 ::  New desk data.
 ::
@@ -243,7 +243,7 @@
   $:  rom=room                                          ::  domestic
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
-      fad=ford-cache                                    ::  ford cache
+      fad=flow                                          ::  ford cache
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
@@ -546,7 +546,7 @@
   ++  ford
     =>  |%
         +$  state
-          $:  cache=ford-cache
+          $:  cache=flow
               cycle=(set poor)
               spill=(set leak)
               drain=(map poor leak)
@@ -555,7 +555,7 @@
         +$  args
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
-              cache=ford-cache
+              cache=flow
               spill=(set leak)
           ==
         --
@@ -1208,8 +1208,8 @@
     --
   ::
   ++  lose-leak
-    |=  [fad=ford-cache =leak]
-    ^-  ford-cache
+    |=  [fad=flow =leak]
+    ^-  flow
     ?~  got=(~(get by fad) leak)
       %-  (slog leaf+"ford: lose missing leak {<leak>}" ~)
       fad
@@ -1223,15 +1223,15 @@
     %-  (slog leaf+"ford: cache {<pour.leak>}: freeing" ~)
     =.  fad  (~(del by fad) leak)
     =/  leaks  ~(tap in deps.leak)
-    |-  ^-  ford-cache
+    |-  ^-  flow
     ?~  leaks
       fad
     =.  fad  ^$(leak i.leaks)
     $(leaks t.leaks)
   ::
   ++  lose-leaks
-    |=  [fad=ford-cache leaks=(set leak)]
-    ^-  ford-cache
+    |=  [fad=flow leaks=(set leak)]
+    ^-  flow
     =/  leaks  ~(tap in leaks)
     |-
     ?~  leaks
@@ -1430,7 +1430,7 @@
   ::
   ::  Create a ford appropriate for the aeon
   ::
-  ::  Don't forget to call +aeon-ford-cache!
+  ::  Don't forget to call +aeon-flow!
   ::
   ++  aeon-ford
     |=  yon=aeon
@@ -1439,8 +1439,8 @@
     [files lat.ran fad ?:(=(yon let.dom) fod.dom *(set leak))]
   ::  Produce ford cache appropriate for the aeon
   ::
-  ++  aeon-ford-cache
-    |*  [yon=aeon res=* fud=ford-cache fod=(set leak)]
+  ++  aeon-flow
+    |*  [yon=aeon res=* fud=flow fod=(set leak)]
     :-  res
     ^+  ..park
     ?:  &(?=(~ ref) =(let.dom yon))
@@ -1932,7 +1932,7 @@
           ==
       ^+  [built ford-args]
       =.  ford-args  cache
-      =/  [=cage fud=ford-cache fod=(set leak)]
+      =/  [=cage fud=flow fod=(set leak)]
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
         %-  wrap:fusion
         (read-file:(ford:fusion ford-args) path)
@@ -2771,7 +2771,7 @@
     |-  ^-  [(map path (unit mime)) args:ford:fusion]
     ?~  cans
       [mim ford-args]
-    =/  [=cage fud=ford-cache fod=(set leak)]
+    =/  [=cage fud=flow fod=(set leak)]
       ~|  mime-cast-fail+i.cans
       (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
     =.  cache.ford-args  fud
@@ -3676,7 +3676,7 @@
       ^-  [(unit (unit cage)) _..park]
       =^  =vase  ..park
         ~_  leaf/"clay: %a build failed {<[syd aeon path]>}"
-        %+  aeon-ford-cache  aeon
+        %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-file:(aeon-ford aeon) path)
       :_(..park [~ ~ %vase !>(vase)])
@@ -3688,7 +3688,7 @@
       ?.  ?=([@ ~] path)
         [[~ ~] ..park]
       =^  =dais  ..park
-        %+  aeon-ford-cache  aeon
+        %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-dais:(aeon-ford aeon) i.path)
       :_(..park [~ ~ %dais !>(dais)])
@@ -3700,7 +3700,7 @@
       ?.  ?=([@ @ ~] path)
         [[~ ~] ..park]
       =^  =tube  ..park
-        %+  aeon-ford-cache  aeon
+        %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-tube:(aeon-ford aeon) [i i.t]:path)
       :_(..park [~ ~ %tube !>(tube)])
@@ -3712,7 +3712,7 @@
       ?.  ?=([@ ~] path)
         [[~ ~] ..park]
       =^  =vase  ..park
-        %+  aeon-ford-cache  aeon
+        %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-nave:(aeon-ford aeon) i.path)
       :_(..park [~ ~ %nave vase])
@@ -3724,7 +3724,7 @@
       ?.  ?=([@ @ ~] path)
         [[~ ~] ..park]
       =^  =vase  ..park
-        %+  aeon-ford-cache  aeon
+        %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-cast:(aeon-ford aeon) [i i.t]:path)
       :_(..park [~ ~ %cast vase])
@@ -4005,7 +4005,7 @@
       ::  should convert any lobe to cage
       ::
       =^  =cage  ..park
-        %+  aeon-ford-cache  yon
+        %+  aeon-flow  yon
         %-  wrap:fusion
         (page-to-cage:(aeon-ford yon) u.peg)
       [``cage ..park]
@@ -4644,7 +4644,7 @@
       |=  =dojo-8
       ^-  dojo-10
       =/  dom  dom.dojo-8
-      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
+      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -4653,7 +4653,7 @@
       |=  =rede-8
       ^-  rede-10
       =/  dom  dom.rede-8
-      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
+      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
     ==
   ::  +raft-9-to-10: add .dist-upgraded
   ++  raft-9-to-10
@@ -4749,7 +4749,7 @@
       ==
     ::
         |3
-      :-  *ford-cache
+      :-  *flow
       %=  |3.raf
         mon  (~(run by mon.raf) |=(=beam beam(r ud+0)))
         |3   pud.raf
@@ -4868,7 +4868,7 @@
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.
-::  This nests within +ford-cache without reference to +type, +hoon, or
+::  This nests within +flow without reference to +type, +hoon, or
 ::  anything else in the sample of cache objects.  Otherwise we would be
 ::  contravariant in the those types, which makes them harder to change.
 ::
