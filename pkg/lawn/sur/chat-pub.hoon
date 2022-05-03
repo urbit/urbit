@@ -7,11 +7,16 @@
   $:  =time
       feel=(jug term ship)
   ==
++$  memo
+  $:  author=ship
+      sent=@da
+      content=@t
+  ==
 +$  chan-wave
   $%  [%add writ]
-      [%del =time]
-      [%add-feel =time =term =ship]
-      [%del-feel =time =term =ship]
+      [%del =ship =time]
+      [%add-feel =ship =time =term]
+      [%del-feel =ship =time =term]
   ==
 +$  meta-wave
   $%  [%image @t]
@@ -27,7 +32,6 @@
       =meta
   ==
 +$  chan  ((mop @da post) lte)
-+$  memo  [author=ship sent=@da content=@t]
 +$  meta
   $:  title=@t
       description=@t
@@ -44,13 +48,19 @@
     |=  wav=chan-wave
     |^  ^+  chan.rock
     ?-    -.wav
-      %add  (put:ord chan.rock [time +]:wav)
-      %del  (del:ord chan.rock time.wav)
-      %add-feel  (wash-feel & [time term ship]:wav)
-      %del-feel  (wash-feel | [time term ship]:wav)
+        %add  (put:ord chan.rock [time +]:wav)
+        %del
+      ::  only the post's author can delete it
+      ::
+      =/  author  author:(need (get:ord chan.rock time.wav))
+      ?>  =(ship.wav author)
+      (del:ord chan.rock time.wav)
+    ::
+        %add-feel  (wash-feel & [ship time term]:wav)
+        %del-feel  (wash-feel | [ship time term]:wav)
     ==
     ++  wash-feel
-      |=  [add=? =time =term =ship]
+      |=  [add=? =ship =time =term]
       =/  =writ  (need (get:ord chan.rock time))
       ?:  add
         writ(feel (~(put ju feel.writ) term ship))

@@ -82,8 +82,8 @@
     ::  from userspace
     ::
     $%  [%wave =path =cage]
-        [%poke-ack =ship =path]
-        [%gaze-ack =ship =path]
+        [%poke-ack =ship =path err=(unit tang)]
+        [%gaze-ack =ship =path err=(unit tang)]
     ::  from the kernel
     ::  %behn
         [%wake ~]
