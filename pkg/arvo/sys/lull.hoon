@@ -351,6 +351,7 @@
   ::    %hear: packet from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
+  ::    %cork: request to delete message flow
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -366,6 +367,7 @@
     $%  [%hear =lane =blob]
         [%heed =ship]
         [%jilt =ship]
+        [%cork =ship]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
@@ -524,6 +526,8 @@
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
         heeds=(set duct)
+        closing=(set bone)
+        corked=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
@@ -1653,7 +1657,7 @@
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat                                              ::  outgoing subs
     %+  map  [=wire =ship =term]                        ::
-    [acked=? =path]                                     ::
+    [acked=? =path nonce=@]                             ::
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
