@@ -93,12 +93,13 @@
 =/  nog  [fex=*(list note) =pubs]
 =>  |%
     ++  chan-path  |=(id=@ta (snoc wer.bowl (scot %ta id)))
-    ++  wash-chat
-      |=  [=path =wave:chat-pub]
+    ++  wave-chat
+      |=  [id=@ta =wave:chat-pub]
       ^+  nog
+      =/  pax  (chan-path id)
       =/  =rock:chat-pub
-        (wash:chat-pub rock:(~(got by pubs) path) wave)
-      [[wave `rock] (~(put by pubs) path [wave rock])]
+        (wash:chat-pub rock:(~(got by pubs.nog) pax) wave)
+      [[wave `rock] (~(put by pubs.nog) pax [wave rock])]
     ::
     ++  crag-chat
       |=  id=@ta
@@ -111,7 +112,7 @@
       |=  [id=@ta add=? =ship]
       ^+  nog
       =/  pax  (chan-path id)
-      =/  pub  (~(got by pubs) pax)
+      =/  pub  (~(got by pubs.nog) pax)
       =/  crew
         ?~  crew.meta.pub  ~
         ?:  add
@@ -123,7 +124,7 @@
     ++  is-member
       |=  [=ship id=@ta]
       ^-  ?
-      =/  crew  crew:(~(got by pubs) (chan-path id))
+      =/  crew  crew:(~(got by pubs.nog) (chan-path id))
       ?~  crew
         &
       (~(has in u.crew) ship)
