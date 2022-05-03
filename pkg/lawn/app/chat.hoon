@@ -64,21 +64,14 @@
       [%tas %chat]
       [%tas %chan]
       [%ta id=@ta]
-      $%  [[%tas %create] ~]
-          [[%tas %join] ~]
-          [[%tas %leave] ~]
-          $:  [[%tas %writ] [%tas %add] ~]
-              [sent=@da content=@t]
-          ==
-          $:  [[%tas %writ] [%tas %del] ~]
-              =time
-          ==
-          $:  [[%tas %feel] [%tas %add] ~]
-              [=time =term]
-          ==
-          $:  [[%tas %feel] [%tas %del] ~]
-              [=time =term]
-  ==  ==  ==
+      $%  [[[%tas %create] ~] ~]
+          [[[%tas %join] ~] ~]
+          [[[%tas %leave] ~] ~]
+          [[[%tas %writ] [%tas %add] ~] sent=@da content=@t]
+          [[[%tas %writ] [%tas %del] ~] =time]
+          [[[%tas %feel] [%tas %add] ~] =time =term]
+          [[[%tas %feel] [%tas %del] ~] =time =term]
+  ==  ==
 +$  sign
   $%  $<(%wave sign:gall)
       wave-sign
