@@ -180,7 +180,7 @@
 ::    Sprig is a fast-lookup index over the global ford cache.  The only
 ::    goal is to make cache hits fast.
 ::
-+$  flue  [spill=(set leak) sprig=(map mist soak)]
++$  flue  [spill=(set leak) sprig=(map mist [=leak =soak])]
 ::
 ::  Ford build without content.
 ::
@@ -600,8 +600,11 @@
       ^-  [cage state]
       ~|  %error-validating^path
       %-  soak-cage
+      %+  gain-sprig  vale+path  |.
       ?^  got=(~(get by sprig.nub) vale+path)
-        [u.got nub]
+        =?  stack.nub  ?=(^ stack.nub)
+          stack.nub(i (~(put in i.stack.nub) leak.u.got))
+        [soak.u.got nub]
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^cycle.nub !!)
@@ -628,8 +631,7 @@
       ^-  [vase state]
       ~|  %error-building-mark^mak
       %-  soak-vase
-      ?^  got=(~(get by sprig.nub) nave+mak)
-        [u.got nub]
+      %+  gain-sprig  nave+mak  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) nave+mak)
         ~|(cycle+nave+mak^cycle.nub !!)
@@ -639,7 +641,7 @@
       =/  gad=vase  (slap cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
-        =^  deg=vase  nub  $(mak mok)
+        =^  deg=vase  nub  ^$(mak mok)
         =^  tub=vase  nub  (build-cast mak mok)
         =^  but=vase  nub  (build-cast mok mak)
         %+  gain-leak  nave+mak
@@ -702,8 +704,7 @@
       ^-  [dais state]
       ~|  %error-building-dais^mak
       %-  soak-dais
-      ?^  got=(~(get by sprig.nub) dais+mak)
-        [u.got nub]
+      %+  gain-sprig  dais+mak  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) dais+mak)
         ~|(cycle+dais+mak^cycle.nub !!)
@@ -753,8 +754,7 @@
       ^-  [vase state]
       ~|  error-building-cast+[a b]
       %-  soak-vase
-      ?^  got=(~(get by sprig.nub) cast+a^b)
-        [u.got nub]
+      %+  gain-sprig  cast+a^b  |.
       =.  stack.nub  [~ stack.nub]
       ?:  =([%mime %hoon] [a b])
         :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
@@ -822,8 +822,7 @@
       ^-  [tube state]
       ~|  error-building-tube+[a b]
       %-  soak-tube
-      ?^  got=(~(get by sprig.nub) tube+a^b)
-        [u.got nub]
+      %+  gain-sprig  tube+a^b  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) tube+[a b])
         ~|(cycle+tube+[a b]^cycle.nub !!)
@@ -897,8 +896,7 @@
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
       %-  soak-vase
-      ?^  got=(~(get by sprig.nub) file+path)
-        [u.got nub]
+      %+  gain-sprig  file+path  |.
       =.  stack.nub  [~ stack.nub]
       ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       ?:  (~(has in cycle.nub) file+path)
@@ -929,8 +927,7 @@
       |=  =path
       ^-  [(map @ta vase) state]
       %-  soak-arch
-      ?^  got=(~(get by sprig.nub) arch+path)
-        [u.got nub]
+      %+  gain-sprig  arch+path  |.
       %+  gain-leak  arch+path
       |=  nob=state
       =.  nub  nob
@@ -1208,6 +1205,15 @@
       ?>  ?=(%arch -.soak)
       [dir.soak nub]
     ::
+    ++  gain-sprig
+      |=  [=mist next=(trap [soak state])]
+      ^-  [soak state]
+      ?~  got=(~(get by sprig.nub) mist)
+        $:next
+      =?  stack.nub  ?=(^ stack.nub)
+        stack.nub(i (~(put in i.stack.nub) leak.u.got))
+      [soak.u.got nub]
+    ::
     ++  gain-leak
       |=  [=mist next=$-(state [soak state])]
       ^-  [soak state]
@@ -1245,7 +1251,7 @@
         [soak nub]
       ::  %-  (slog leaf+"ford: spilt: {<spilt>}" ~)
       =:  spill.nub  (~(put in spill.nub) leak)
-          sprig.nub  (~(put by sprig.nub) mist soak)
+          sprig.nub  (~(put by sprig.nub) mist leak soak)
         ==
       [soak nub]
     --
