@@ -123,7 +123,7 @@
       tom=(map tako norm)                               ::  tomb policies
       nor=norm                                          ::  default policy
       mim=(map path mime)                               ::  mime cache
-      fod=(set leak)                                    ::  ford cache
+      fod=flue                                          ::  ford cache
   ==                                                    ::
 ::
 ::  Commit state.
@@ -149,12 +149,38 @@
   $%  [%0 =desk =lobe]
       [%1 =desk =lobe]
   ==
+::
 +$  fell
   $%  [%direct p=lobe q=page]
       [%delta p=lobe q=[p=mark q=lobe] r=page]
       [%dead p=lobe ~]
       [%1 peg=(unit page)]
   ==
+::
+::  Global ford cache
+::
+::    Refcount includes references from other items in the cache, and
+::    from spills in each desk
+::
+::    This is optimized for minimizing the number of rebuilds, and given
+::    that, minimizing the amount of memory used.  It is relatively slow
+::    to lookup, because generating a cache key can be fairly slow (for
+::    files, it requires parsing; for tubes, it even requires building
+::    the marks).
+::
++$  flow  (map leak [refs=@ud =soak])
+::
+::  Per-desk ford cache
+::
+::    Spill is the set of "roots" we have into the global ford cache.
+::    We add a root for everything referenced directly or indirectly on
+::    a desk, then invalidate them on commit only if their dependencies
+::    change.
+::
+::    Sprig is a fast-lookup index over the global ford cache.  The only
+::    goal is to make cache hits fast.
+::
++$  flue  [spill=(set leak) sprig=(map poor soak)]
 ::
 ::  Ford build with content.
 ::
@@ -190,7 +216,6 @@
       [%arch dir=(map @ta vase)]
       [%dais =dais]
       [%tube =tube]
-      [%none ~]
   ==
 ::
 ::  Ford cache key
@@ -203,13 +228,6 @@
   $:  =pour
       deps=(set leak)
   ==
-::
-::  Ford cache
-::
-::    Refcount includes references from other items in the cache, and
-::    from spills in each desk
-::
-+$  flow  (map leak [refs=@ud =soak])
 ::
 ::  New desk data.
 ::
@@ -473,6 +491,14 @@
   ::
   [deletes changes]
 ::
+++  pour-to-poor
+  |=  =pour
+  ^-  poor
+  ?+    -.pour  pour
+      %vale  [%vale path.pour]
+      %arch  [%arch path.pour]
+  ==
+::
 ++  fell-to-page
   |=  =fell
   ^-  (unit page)
@@ -531,7 +557,7 @@
   ::
   ++  wrap
     |*  [* state:ford]
-    [+<- +<+< +<+>+<]  ::  [result cache.state spill.state]
+    [+<- +<+< +<+>-]  ::  [result cache.state flue]
   ::
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
@@ -547,8 +573,8 @@
     =>  |%
         +$  state
           $:  cache=flow
+              flue
               cycle=(set poor)
-              spill=(set leak)
               drain=(map poor leak)
               stack=(list (set leak))
           ==
@@ -556,7 +582,7 @@
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               cache=flow
-              spill=(set leak)
+              flue
           ==
         --
     |=  args
@@ -565,6 +591,7 @@
     =|  nub=state
     =.  cache.nub  cache
     =.  spill.nub  spill
+    =.  sprig.nub  sprig
     |%
     ::  +read-file: retrieve marked, validated file contents at path
     ::
@@ -572,12 +599,14 @@
       |=  =path
       ^-  [cage state]
       ~|  %error-validating^path
+      %-  soak-cage
+      ?^  got=(~(get by sprig.nub) vale+path)
+        [u.got nub]
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
-      %-  soak-cage
-      %+  gain-leak  [%vale path]
+      %+  gain-leak  vale+path
       |=  nob=state
       =.  nub  nob
       ::~>  %slog.0^leaf/"ford: read file {(spud path)}"
@@ -598,6 +627,9 @@
       |=  mak=mark
       ^-  [vase state]
       ~|  %error-building-mark^mak
+      %-  soak-vase
+      ?^  got=(~(get by sprig.nub) nave+mak)
+        [u.got nub]
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) nave+mak)
         ~|(cycle+nave+mak^cycle.nub !!)
@@ -610,8 +642,7 @@
         =^  deg=vase  nub  $(mak mok)
         =^  tub=vase  nub  (build-cast mak mok)
         =^  but=vase  nub  (build-cast mok mak)
-        %-  soak-vase
-        %+  gain-leak  [%nave mak]
+        %+  gain-leak  nave+mak
         |=  nob=state
         =.  nub  nob
         :_  nub  :-  %vase
@@ -636,8 +667,7 @@
           (but (pact:deg (tub v) d))
         ++  vale  noun:grab:cor
         --
-      %-  soak-vase
-      %+  gain-leak  [%nave mak]
+      %+  gain-leak  nave+mak
       |=  nob=state
       =.  nub  nob
       :_  nub  :-  %vase
@@ -671,13 +701,15 @@
       |=  mak=mark
       ^-  [dais state]
       ~|  %error-building-dais^mak
+      %-  soak-dais
+      ?^  got=(~(get by sprig.nub) dais+mak)
+        [u.got nub]
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) dais+mak)
         ~|(cycle+dais+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) dais+mak)
       =^  nav=vase  nub  (build-nave mak)
-      %-  soak-dais
-      %+  gain-leak  [%dais mak]
+      %+  gain-leak  dais+mak
       |=  nob=state
       =.  nub  nob
       ::~>  %slog.0^leaf/"ford: make dais {<mak>}"
@@ -720,9 +752,12 @@
       |=  [a=mark b=mark]
       ^-  [vase state]
       ~|  error-building-cast+[a b]
+      %-  soak-vase
+      ?^  got=(~(get by sprig.nub) cast+a^b)
+        [u.got nub]
       =.  stack.nub  [~ stack.nub]
       ?:  =([%mime %hoon] [a b])
-        :_(nub =>(..zuse !>(|=(m=mime q.q.m))))
+        :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
       ::  try +grow; is there a +grow core with a .b arm?
@@ -736,8 +771,7 @@
           p.lab
         ::  +grow core has .b arm; use that
         ::
-        %-  soak-vase
-        %+  gain-leak  [%cast a b]
+        %+  gain-leak  cast+a^b
         |=  nob=state
         =.  nub  nob
         :_  nub  :-  %vase
@@ -751,8 +785,7 @@
       =^  new=vase  nub  (build-fit %mar b)
       =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
-        %-  soak-vase
-        %+  gain-leak  [%cast a b]
+        %+  gain-leak  cast+a^b
         |=  nob=state
         =.  nub  nob
         :_(nub vase+p.rab)
@@ -764,8 +797,7 @@
       ?:  ?=(%& -.rab)
         (compose-casts a !<(mark p.rab) b)
       ?:  ?=(%noun b)
-        %-  soak-vase
-        %+  gain-leak  [%cast a b]
+        %+  gain-leak  cast+a^b
         |=  nob=state
         =.  nub  nob
         :_(nub vase+same.bud)
@@ -773,11 +805,10 @@
     ::
     ++  compose-casts
       |=  [x=mark y=mark z=mark]
-      ^-  [vase state]
+      ^-  [soak state]
       =^  uno=vase  nub  (build-cast x y)
       =^  dos=vase  nub  (build-cast y z)
-      %-  soak-vase
-      %+  gain-leak  [%cast x z]
+      %+  gain-leak  cast+x^z
       |=  nob=state
       =.  nub  nob
       :_  nub  :-  %vase
@@ -790,12 +821,14 @@
       |=  [a=mark b=mark]
       ^-  [tube state]
       ~|  error-building-tube+[a b]
+      %-  soak-tube
+      ?^  got=(~(get by sprig.nub) tube+a^b)
+        [u.got nub]
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) tube+[a b])
         ~|(cycle+tube+[a b]^cycle.nub !!)
       =^  gat=vase  nub  (build-cast a b)
-      %-  soak-tube
-      %+  gain-leak  [%tube a b]
+      %+  gain-leak  tube+a^b
       |=  nob=state
       =.  nub  nob
       :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
@@ -863,6 +896,9 @@
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
+      %-  soak-vase
+      ?^  got=(~(get by sprig.nub) file+path)
+        [u.got nub]
       =.  stack.nub  [~ stack.nub]
       ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       ?:  (~(has in cycle.nub) file+path)
@@ -873,8 +909,7 @@
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
       =^  sut=vase  nub  (run-prelude pile)
-      %-  soak-vase
-      %+  gain-leak  [%file path]
+      %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
       =/  res=vase  (road |.((slap sut hoon.pile)))
@@ -894,7 +929,9 @@
       |=  =path
       ^-  [(map @ta vase) state]
       %-  soak-arch
-      %+  gain-leak  [%arch path]
+      ?^  got=(~(get by sprig.nub) arch+path)
+        [u.got nub]
+      %+  gain-leak  arch+path
       |=  nob=state
       =.  nub  nob
       =/  fiz=(list @ta)
@@ -1180,31 +1217,37 @@
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(put in i.stack.nub) leak))
       =/  spilt  (~(has in spill.nub) leak)
-      ::  %-  (slog leaf+"ford: spilt: {<spilt>}" ~)
-      =?  spill.nub  !spilt  (~(put in spill.nub) leak)
-      ?^  got=(~(get by cache.nub) leak)
-        =/  refs   ?:(spilt 0 1)
-        =/  tape-1  "ford: cache {<pour.leak>}: adding {<refs>}"
-        =/  tape-2  ", giving {<(add refs refs.u.got)>}"
-        %-  (slog leaf+(welp tape-1 tape-2) ~)
-        =?  cache.nub  !=(0 refs)
-          (~(put by cache.nub) leak [(add refs refs.u.got) soak.u.got])
-        [soak.u.got nub]
-      %-  (slog leaf+"ford: cache {<pour.leak>}: creating" ~)
-      =^  =soak  nub  (next nub)
-      =.  cache.nub  (~(put by cache.nub) leak [1 soak])
-      ::  If we're creating a cache entry, add refs to our dependencies
-      ::
-      =/  deps  ~(tap in deps.leak)
-      |-
-      ?~  deps
+      =^  =soak  nub
+        ?^  got=(~(get by cache.nub) leak)
+          =/  refs   ?:(spilt 0 1)
+          =/  tape-1  "ford: cache {<pour.leak>}: adding {<refs>}"
+          =/  tape-2  ", giving {<(add refs refs.u.got)>}"
+          %-  (slog leaf+(welp tape-1 tape-2) ~)
+          =?  cache.nub  !=(0 refs)
+            (~(put by cache.nub) leak [(add refs refs.u.got) soak.u.got])
+          [soak.u.got nub]
+        %-  (slog leaf+"ford: cache {<pour.leak>}: creating" ~)
+        =^  =soak  nub  (next nub)
+        =.  cache.nub  (~(put by cache.nub) leak [1 soak])
+        ::  If we're creating a cache entry, add refs to our dependencies
+        ::
+        =/  deps  ~(tap in deps.leak)
+        |-
+        ?~  deps
+          [soak nub]
+        =/  got  (~(got by cache.nub) i.deps)
+        %-  =/  tape-1  "ford: cache {<pour.leak>} for {<pour.i.deps>}"
+            =/  tape-2  ": bumping to ref {<refs.got>}"
+            (slog leaf+(welp tape-1 tape-2) ~)
+        =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
+        $(deps t.deps)
+      ?:  spilt
         [soak nub]
-      =/  got  (~(got by cache.nub) i.deps)
-      %-  =/  tape-1  "ford: cache {<pour.leak>} for {<pour.i.deps>}"
-          =/  tape-2  ": bumping to ref {<refs.got>}"
-          (slog leaf+(welp tape-1 tape-2) ~)
-      =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
-      $(deps t.deps)
+      ::  %-  (slog leaf+"ford: spilt: {<spilt>}" ~)
+      =:  spill.nub  (~(put in spill.nub) leak)
+          sprig.nub  (~(put by sprig.nub) poor soak)
+        ==
+      [soak nub]
     --
   ::
   ++  lose-leak
@@ -1436,11 +1479,11 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    [files lat.ran fad ?:(=(yon let.dom) fod.dom *(set leak))]
+    [files lat.ran fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
   ++  aeon-flow
-    |*  [yon=aeon res=* fud=flow fod=(set leak)]
+    |*  [yon=aeon res=* fud=flow fod=flue]
     :-  res
     ^+  ..park
     ?:  &(?=(~ ref) =(let.dom yon))
@@ -1726,9 +1769,9 @@
     ::
     =/  old-fod  fod.dom
     =.  fod.dom
-      ?:  updated  *(set leak)
+      ?:  updated  [~ ~]
       (promote-ford fod.dom invalid)
-    =.  fad  (lose-leaks:fusion fad (~(dif in old-fod) fod.dom))
+    =.  fad  (lose-leaks:fusion fad (~(dif in spill.old-fod) spill.fod.dom))
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -1774,7 +1817,7 @@
     ::
     =^  mim  args  (checkout-mime args deletes ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
-    =.  fod.dom  spill.args
+    =.  fod.dom  [spill sprig]:args
     =.  fad      cache.args
     =.  ..park  (emil (print q.old-yaki data))
     wake:(ergo 0 mim)
@@ -1873,11 +1916,11 @@
       (~(uni by pre) changes)
     ::
     ++  promote-ford
-      |=  [fod=(set leak) invalid=(set path)]
-      ^-  (set leak)
-      =/  old=(list leak)  ~(tap in fod)
-      =|  new=(set leak)
-      |-  ^-  (set leak)
+      |=  [fod=flue invalid=(set path)]
+      ^-  flue
+      =/  old=(list leak)  ~(tap in spill.fod)
+      =|  new=flue
+      |-  ^-  flue
       ?~  old
         new
       =/  invalid
@@ -1902,7 +1945,12 @@
                 $(deps t.deps)
             ==
         ==
-      =?  new  !invalid  (~(put in new) i.old)
+      =?  new  !invalid
+        :-  (~(put in spill.new) i.old)
+        =/  =poor  (pour-to-poor pour.i.old)
+        ?~  got=(~(get by sprig.fod) poor)
+          sprig.new
+        (~(put by sprig.new) poor u.got)
       $(old t.old)
     ::
     ++  page-to-cord
@@ -1932,12 +1980,13 @@
           ==
       ^+  [built ford-args]
       =.  ford-args  cache
-      =/  [=cage fud=flow fod=(set leak)]
+      =/  [=cage fud=flow fod=flue]
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
         %-  wrap:fusion
         (read-file:(ford:fusion ford-args) path)
       =.  cache.ford-args  fud
-      =.  spill.ford-args  fod
+      =.  spill.ford-args  spill.fod
+      =.  sprig.ford-args  sprig.fod
       =/  =lobe
         ?-  -.change
           %|  p.change
@@ -2018,7 +2067,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran ~ *(set leak)]
+      =/  =args:ford:fusion  [all-changes lat.ran ~ ~ ~]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -2771,11 +2820,12 @@
     |-  ^-  [(map path (unit mime)) args:ford:fusion]
     ?~  cans
       [mim ford-args]
-    =/  [=cage fud=flow fod=(set leak)]
+    =/  [=cage fud=flow fod=flue]
       ~|  mime-cast-fail+i.cans
       (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
     =.  cache.ford-args  fud
-    =.  spill.ford-args  fod
+    =.  spill.ford-args  spill.fod
+    =.  sprig.ford-args  sprig.fod
     =^  mim  ford-args  $(cans t.cans)
     [(~(put by mim) i.cans `!<(mime q.cage)) ford-args]
   ::
@@ -2841,7 +2891,7 @@
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
     =/  =args:ford:fusion
-      [files lat.ran fad ?:(=(yon let.dom) fod.dom *(set leak))]
+      [files lat.ran fad ?:(=(yon let.dom) fod.dom [~ ~])]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -4694,6 +4744,7 @@
             *norm
             mim.dom.dojo-10
             ~
+            ~
         ==
       ==
     ::
@@ -4713,6 +4764,7 @@
             ~
             *norm
             mim.dom.rede-10
+            ~
             ~
         ==
       ::
@@ -4879,7 +4931,7 @@
       dos.rom
     %-  ~(run by dos.rom.ruf)
     |=  =dojo
-    dojo(fod.dom ~)
+    dojo(fod.dom `flue`[~ ~])
   ::
       hoy
     %-  ~(run by hoy.ruf)
@@ -4888,7 +4940,7 @@
         rus
       %-  ~(run by rus.rung)
       |=  =rede
-      rede(fod.dom ~)
+      rede(fod.dom `flue`[~ ~])
     ==
   ==
 ::
@@ -5107,7 +5159,7 @@
     |=  [=desk =dojo]
     :+  desk  %|
     :~  mime+&+mim.dom.dojo
-        spill+&+fod.dom.dojo
+        flue+&+fod.dom.dojo
         dome+&+dom.dojo
     ==
   :~  domestic+|+domestic
