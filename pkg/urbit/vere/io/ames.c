@@ -65,7 +65,7 @@
     c3_l mug_l;                         //  truncated mug hash of u3_body
     c3_o rel_o;                         //  relayed?
   } u3_head;
-  
+
 /* u3_prel: ames/fine packet prelude
 */
   typedef struct _u3_prel {
@@ -88,7 +88,7 @@
 /* u3_resp: fine packet response */
   typedef struct _u3_resp {
     u3_prel  pre_u;
-    // request: 
+    // request:
     c3_w    fra_w;                        // fragment number
     c3_s    len_s;                        // path length
     c3_c*   pat_c;                       // path as ascii
@@ -160,7 +160,7 @@ _ames_alloc(uv_handle_t* had_u,
 }
 
 static void
-_ames_pact_free(u3_pact* pac_u) 
+_ames_pact_free(u3_pact* pac_u)
 {
   if ( 0 == pac_u->typ_y ) {          // ames packet
   } else if ( 1 == pac_u->typ_y ) {  // fine request
@@ -228,7 +228,7 @@ static void _log_requ(u3_requ* req_u)
   return;
 }
 
-static void 
+static void
 _log_bytes(c3_y* byt_y, c3_w len_w)
 {
   int i;
@@ -360,7 +360,7 @@ _ames_sift_prelude(u3_head* hed_u,
 
 /* _fine_sift_requ(): parse request body, returning success
 */
-static c3_o 
+static c3_o
 _fine_sift_requ(u3_head* hed_u,
                 u3_requ* req_u,
                 c3_w     len_w,
@@ -401,11 +401,11 @@ _fine_sift_requ(u3_head* hed_u,
   memcpy(req_u->pat_c, req_y, req_u->len_s);
   req_u->pat_c[req_u->len_s] = '\0';
   return c3y;
-} 
+}
 
 /* _fine_sift_resp(): parse response body, returning success
 */
-static c3_o 
+static c3_o
 _fine_sift_resp(u3_head* hed_u,
                 u3_resp* res_u,
                 c3_w     len_w,
@@ -516,7 +516,7 @@ _ames_etch_head(u3_head* hed_u, c3_y buf_y[4])
 /* _ames_etch_prelude(): serialize packet prelude
 */
 static c3_y
-_ames_etch_prelude(u3_head* hed_u, u3_prel* pre_u, c3_y* buf_y) 
+_ames_etch_prelude(u3_head* hed_u, u3_prel* pre_u, c3_y* buf_y)
 {
   c3_y  rog_y = ( c3y == hed_u->rel_o ) ? 6 : 0;           //  origin len
   c3_y  sen_y = 2 << pre_u->sic_y;
@@ -526,7 +526,7 @@ _ames_etch_prelude(u3_head* hed_u, u3_prel* pre_u, c3_y* buf_y)
 
   // copy lives
   buf_y[0] = (pre_u->sic_y & 0xf) ^ ((pre_u->ric_y & 0xf) << 4);
-  
+
   _ames_ship_of_chubs(pre_u->sen_d, sen_y, buf_y + 1);
   _ames_ship_of_chubs(pre_u->rec_d, rec_y, buf_y + 1 + sen_y);
 
@@ -564,7 +564,7 @@ _fine_etch_resp(u3_head* hed_u,
   memcpy(pac_y + sen_y + 6, res_u->pat_c, res_u->len_s);
 
   memcpy(pac_y + sen_y + 6 + res_u->len_s, &res_u->sig_y, 64 + 4 + 4 + 2);
-  
+
   return len_w;
 }
 
@@ -955,7 +955,7 @@ _ames_czar(u3_pact* pac_u)
 /* _fine_put_cache(): put list of packets into cache
  */
 static void
-_fine_put_cache(u3_ames* sam_u, u3_noun pax, u3_noun lis) 
+_fine_put_cache(u3_ames* sam_u, u3_noun pax, u3_noun lis)
 {
   u3_noun beg = lis;
 
@@ -1032,7 +1032,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
 
   u3_head hed_u;
   _ames_sift_head(&hed_u, pac_u->hun_y);
-  pac_u->typ_y = 
+  pac_u->typ_y =
     hed_u.sim_o == c3y ? 0 :
     hed_u.req_o == c3y ? 1 : 2;
 
@@ -1396,11 +1396,11 @@ _ames_skip(u3_body* bod_u) {
 }
 #endif
 
-static void _fine_got_pack(u3_pact* pac_u, u3_noun fra) 
+static void _fine_got_pack(u3_pact* pac_u, u3_noun fra)
 {
   pac_u->len_w = u3r_met(3, fra);
   pac_u->hun_y = c3_calloc(pac_u->len_w);
-  
+
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, fra);
 
   u3z(fra);
@@ -1414,7 +1414,7 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   u3_pact* pac_u = vod_p;
   u3_ames* sam_u = pac_u->sam_u;
   u3_weak  pas = u3r_at(7, nun);
-  u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c)); 
+  u3_noun pax = u3do("stab", u3i_string(pac_u->req_u.pat_c));
 
   if(pas == u3_none) {
     _ames_pact_free(pac_u);
@@ -1426,7 +1426,7 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   c3_assert( 1 == pac_u->typ_y );
   u3_weak fra = u3_none;
   _fine_put_cache(sam_u, pax, pas);
-  
+
   c3_w cur_w = 1;
 
   // find requested fragment
@@ -1462,7 +1462,7 @@ static void _fine_hear_response(u3_ames* sam_u,
   c3_w num_w = res_u.num_w;
   c3_w fra_w = res_u.fra_w;
 
-  u3_noun cad = u3nt(c3__hear, 
+  u3_noun cad = u3nt(c3__hear,
                      u3nc(c3n, u3_ames_encode_lane(lan_u)),
                      u3i_bytes(len_w, hun_y));
 
@@ -1525,9 +1525,9 @@ static void _fine_hear_request(u3_ames* sam_u,
                       u3i_string("message"),
                       u3k(u3t(pat)));
 
-    u3_pier_peek_last(sam_u->car_u.pir_u, u3_nul, c3__ax, u3_nul, 
+    u3_pier_peek_last(sam_u->car_u.pir_u, u3_nul, c3__ax, u3_nul,
                       pax, pac_u, _fine_pack_scry_cb);
-    
+
   } else {
     _fine_got_pack(pac_u, u3k(cac));
     _fine_send(pac_u);
@@ -1581,7 +1581,7 @@ _fine_request(u3_ames* sam_u,
   u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
   u3_head* hed_u = c3_calloc(sizeof(*hed_u));
   u3_requ* req_u = c3_calloc(sizeof(*req_u));
-  
+
   c3_w req_w = u3r_met(3, req);
   c3_y* req_y = c3_calloc(req_w);
   u3r_bytes(0, req_w, req_y, req);
@@ -1642,7 +1642,7 @@ _ames_hear(u3_ames* sam_u,
   //
   //
   c3_o is_ames_o = _ames_sift_head(&pac_u->hed_u, hun_y);
-  
+
   if (4 > len_w) {
     sam_u->sat_u.hed_d++;
     if ( 0 == (sam_u->sat_u.hed_d % 100000) ) {
@@ -1664,7 +1664,7 @@ _ames_hear(u3_ames* sam_u,
 
     _ames_lane_into_cache(sam_u->lax_p, her, las);
   }
-  
+
   if (c3n == is_ames_o) {
     _fine_hear(sam_u, *lan_u, len_w, hun_y);
     return;
@@ -2166,7 +2166,7 @@ u3_ames_io_init(u3_pier* pir_u)
   sam_u->fig_u.fit_o = c3n;
 
   // hashtable for scry cache
-  // 
+  //
   // 1500 bytes per packet * 100_000 = 150MB
   // 50 bytes (average) per path * 100_000 = 5MB
   sam_u->fin_s.sac_p = u3h_new_cache(100000);
