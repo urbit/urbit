@@ -180,7 +180,19 @@
 ::    Sprig is a fast-lookup index over the global ford cache.  The only
 ::    goal is to make cache hits fast.
 ::
-+$  flue  [spill=(set leak) sprig=(map poor soak)]
++$  flue  [spill=(set leak) sprig=(map mist soak)]
+::
+::  Ford build without content.
+::
++$  mist
+  $%  [%file =path]
+      [%nave =mark]
+      [%dais =mark]
+      [%cast =mars]
+      [%tube =mars]
+      [%vale =path]
+      [%arch =path]
+  ==
 ::
 ::  Ford build with content.
 ::
@@ -194,18 +206,6 @@
       ::
       [%vale =path lob=(unit lobe)]
       [%arch =path =(map path lobe)]
-  ==
-::
-::  Ford build without content.
-::
-+$  poor
-  $%  [%file =path]
-      [%nave =mark]
-      [%dais =mark]
-      [%cast =mars]
-      [%tube =mars]
-      [%vale =path]
-      [%arch =path]
   ==
 ::
 ::  Ford result.
@@ -491,9 +491,9 @@
   ::
   [deletes changes]
 ::
-++  pour-to-poor
+++  pour-to-mist
   |=  =pour
-  ^-  poor
+  ^-  mist
   ?+    -.pour  pour
       %vale  [%vale path.pour]
       %arch  [%arch path.pour]
@@ -574,8 +574,8 @@
         +$  state
           $:  cache=flow
               flue
-              cycle=(set poor)
-              drain=(map poor leak)
+              cycle=(set mist)
+              drain=(map mist leak)
               stack=(list (set leak))
           ==
         +$  args
@@ -1158,13 +1158,13 @@
               $(p +.p, pax +.pax)
       ==  ==
     ::
-    ++  poor-to-pour
-      |=  =poor
+    ++  mist-to-pour
+      |=  =mist
       ^-  pour
-      ?+    -.poor  poor
+      ?+    -.mist  mist
           %vale
-        :+  %vale  path.poor
-        ?~  lob=(~(get by files) path.poor)
+        :+  %vale  path.mist
+        ?~  lob=(~(get by files) path.mist)
           ~
         :-  ~
         ?-  -.u.lob
@@ -1173,8 +1173,8 @@
         ==
       ::
           %arch
-        =/  dip  (dip-hat path.poor)
-        :+  %arch  path.poor
+        =/  dip  (dip-hat path.mist)
+        :+  %arch  path.mist
         %-  ~(run by dip)
         |=  file=(each page lobe)
         ?-  -.file
@@ -1209,11 +1209,11 @@
       [dir.soak nub]
     ::
     ++  gain-leak
-      |=  [=poor next=$-(state [soak state])]
+      |=  [=mist next=$-(state [soak state])]
       ^-  [soak state]
       =^  top=(set leak)  stack.nub  stack.nub
-      =/  =leak  [(poor-to-pour poor) top]
-      =.  cycle.nub  (~(del in cycle.nub) poor)
+      =/  =leak  [(mist-to-pour mist) top]
+      =.  cycle.nub  (~(del in cycle.nub) mist)
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(put in i.stack.nub) leak))
       =/  spilt  (~(has in spill.nub) leak)
@@ -1245,7 +1245,7 @@
         [soak nub]
       ::  %-  (slog leaf+"ford: spilt: {<spilt>}" ~)
       =:  spill.nub  (~(put in spill.nub) leak)
-          sprig.nub  (~(put by sprig.nub) poor soak)
+          sprig.nub  (~(put by sprig.nub) mist soak)
         ==
       [soak nub]
     --
@@ -1947,10 +1947,10 @@
         ==
       =?  new  !invalid
         :-  (~(put in spill.new) i.old)
-        =/  =poor  (pour-to-poor pour.i.old)
-        ?~  got=(~(get by sprig.fod) poor)
+        =/  =mist  (pour-to-mist pour.i.old)
+        ?~  got=(~(get by sprig.fod) mist)
           sprig.new
-        (~(put by sprig.new) poor u.got)
+        (~(put by sprig.new) mist u.got)
       $(old t.old)
     ::
     ++  page-to-cord
