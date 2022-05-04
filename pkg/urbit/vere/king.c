@@ -231,54 +231,67 @@ _king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
   return siz_t;
 }
 
-/* _king_get_atom(): HTTP GET url_c, produce the response body as an atom.
+/* _king_curl_bytes(): HTTP GET url_c, produce response body bytes.
 **  XX deduplicate with dawn.c
 */
-static u3_noun
-_king_get_atom(c3_c* url_c)
+static c3_i
+_king_curl_bytes(c3_c* url_c, c3_w* len_w, c3_y** hun_y)
 {
-  CURL *curl;
-  CURLcode result;
-  long cod_l;
-
+  c3_i     ret_i = 0;
+  CURL    *cul_u;
+  CURLcode res_i;
+  long     cod_i;
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
-  if ( !(curl = curl_easy_init()) ) {
+  if ( !(cul_u = curl_easy_init()) ) {
     u3l_log("failed to initialize libcurl\n");
     exit(1);
   }
 
-  u3K.ssl_curl_f(curl);
-  curl_easy_setopt(curl, CURLOPT_URL, url_c);
-  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
-  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
+  u3K.ssl_curl_f(cul_u);
+  curl_easy_setopt(cul_u, CURLOPT_URL, url_c);
+  curl_easy_setopt(cul_u, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
+  curl_easy_setopt(cul_u, CURLOPT_WRITEDATA, (void*)&buf_u);
 
-  result = curl_easy_perform(curl);
-  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+  res_i = curl_easy_perform(cul_u);
+  curl_easy_getinfo(cul_u, CURLINFO_RESPONSE_CODE, &cod_i);
 
   //  XX retry?
   //
-  if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s\n",
-            url_c, curl_easy_strerror(result));
+  if ( CURLE_OK != res_i ) {
+    u3l_log("curl: failed %s: %s\n", url_c, curl_easy_strerror(res_i));
+    ret_i = -1;
+  }
+  if ( 300 <= cod_i ) {
+    u3l_log("curl: error %s: HTTP %ld\n", url_c, cod_i);
+    ret_i = -2;
+  }
+
+  curl_easy_cleanup(cul_u);
+
+  *len_w = buf_u.len;
+  *hun_y = (c3_y*)buf_u.base;
+
+  return ret_i;
+}
+
+/* _king_get_atom(): HTTP GET url_c, produce response body as atom.
+*/
+static u3_noun
+_king_get_atom(c3_c* url_c)
+{
+  c3_w  len_w;
+  c3_y* hun_y;
+  u3_noun pro;
+
+  if ( _king_curl_bytes(url_c, &len_w, &hun_y) ) {
     u3_king_bail();
     exit(1);
   }
-  if ( 300 <= cod_l ) {
-    u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
-    u3_king_bail();
-    exit(1);
-  }
 
-  curl_easy_cleanup(curl);
-
-  {
-    u3_noun pro = u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
-
-    c3_free(buf_u.base);
-
-    return pro;
-  }
+  pro = u3i_bytes(len_w, hun_y);
+  c3_free(hun_y);
+  return pro;
 }
 
 /* _get_cmd_output(): Run a shell command and capture its output.
