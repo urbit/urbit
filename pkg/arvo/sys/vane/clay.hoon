@@ -204,7 +204,7 @@
       [%tube =mars]
       ::  leafs
       ::
-      [%vale =path lob=(unit lobe)]
+      [%vale =path =lobe]
       [%arch =path =(map path lobe)]
   ==
 ::
@@ -923,7 +923,6 @@
     ::    such as /path/file/hoon, but not /path/more/file/hoon.
     ::
     ++  build-directory
-      =/  gain  &
       |=  =path
       ^-  [(map @ta vase) state]
       %-  soak-arch
@@ -1161,12 +1160,11 @@
       ?+    -.mist  mist
           %vale
         :+  %vale  path.mist
-        ?~  lob=(~(get by files) path.mist)
-          ~
-        :-  ~
-        ?-  -.u.lob
-          %&  (page-to-lobe p.u.lob)
-          %|  p.u.lob
+        ~|  %file-not-found-mist^path.mist
+        =/  lob  (~(got by files) path.mist)
+        ?-  -.lob
+          %&  (page-to-lobe p.lob)
+          %|  p.lob
         ==
       ::
           %arch
@@ -1180,30 +1178,11 @@
         ==
       ==
     ::
-    ++  soak-cage
-      |=  [=soak nub=state]
-      ?>  ?=(%cage -.soak)
-      [cage.soak nub]
-    ::
-    ++  soak-vase
-      |=  [=soak nub=state]
-      ?>  ?=(%vase -.soak)
-      [vase.soak nub]
-    ::
-    ++  soak-dais
-      |=  [=soak nub=state]
-      ?>  ?=(%dais -.soak)
-      [dais.soak nub]
-    ::
-    ++  soak-tube
-      |=  [=soak nub=state]
-      ?>  ?=(%tube -.soak)
-      [tube.soak nub]
-    ::
-    ++  soak-arch
-      |=  [=soak nub=state]
-      ?>  ?=(%arch -.soak)
-      [dir.soak nub]
+    ++  soak-cage  |=([s=soak n=state] ?>(?=(%cage -.s) [cage.s n]))
+    ++  soak-vase  |=([s=soak n=state] ?>(?=(%vase -.s) [vase.s n]))
+    ++  soak-dais  |=([s=soak n=state] ?>(?=(%dais -.s) [dais.s n]))
+    ++  soak-tube  |=([s=soak n=state] ?>(?=(%tube -.s) [tube.s n]))
+    ++  soak-arch  |=([s=soak n=state] ?>(?=(%arch -.s) [dir.s n]))
     ::
     ++  gain-sprig
       |=  [=mist next=(trap [soak state])]
