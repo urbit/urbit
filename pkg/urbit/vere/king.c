@@ -294,6 +294,47 @@ _king_get_atom(c3_c* url_c)
   return pro;
 }
 
+/* _king_get_next(): get next vere version string, if it exists.
+*/
+static c3_i
+_king_get_next(c3_c** out_c)
+{
+  c3_c* ver_c;
+  c3_c* url_c;
+  c3_w  len_w;
+  c3_y* hun_y;
+  c3_i  ret_i;
+
+  ret_i = asprintf(&url_c, "https://bootstrap.urbit.org/vere/%s/next", URBIT_VERSION);
+  c3_assert( ret_i > 0 );
+
+  if ( !_king_curl_bytes(url_c, &len_w, &hun_y) ) {
+    ret_i = asprintf(&ver_c, "%*.s", len_w, hun_y);
+    c3_assert( ret_i > 0 );
+  }
+  else {
+    if ( _king_curl_bytes("https://bootstrap.urbit.org/vere/last",
+                          &len_w, &hun_y) )
+    {
+      c3_free(url_c);
+      return -2;
+    }
+
+    ret_i = asprintf(&ver_c, "%*.s", len_w, hun_y);
+    c3_assert( ret_i > 0 );
+  }
+
+  c3_free(url_c);
+
+  if ( 0 == strcmp(ver_c, URBIT_VERSION) ) {
+    c3_free(ver_c);
+    return -1;
+  }
+
+  *out_c = ver_c;
+  return 0;
+}
+
 /* _get_cmd_output(): Run a shell command and capture its output.
    Exits with an error if the command fails or produces no output.
    The 'out_c' parameter should be an array of sufficient length to hold
@@ -885,9 +926,27 @@ u3_king_done(void)
   uv_handle_t* han_u = (uv_handle_t*)&u3K.tim_u;
 
   if ( c3y == u3_Host.ops_u.nex ) {
-    //  XX do the needful
-    //
-    u3l_log("we gonna upgrade here\n");
+    c3_c* ver_c;
+
+    switch ( _king_get_next(&ver_c) ) {
+      case -2: {
+        u3l_log("vere: unable to check for next version\n");
+      } break;
+
+      case -1: {
+        u3l_log("vere: up to date\n");
+      } break;
+
+      case 0: {
+        u3l_log("vere: next: %s\n", ver_c);
+
+        //  XX do the needful
+        //
+        c3_free(ver_c);
+      } break;
+
+      default: c3_assert(0);
+    }
   }
 
   //  XX hack, if pier's are still linked, we're not actually done
