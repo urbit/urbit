@@ -4904,6 +4904,8 @@
       ``[%domes !>(`cone`domes)]
     ==
   ::
+  ::  Check for refcount errors
+  ::
   ++  sweep
     ^-  (list [need=@ud have=@ud leak])
     =/  marked=(map leak [need=@ud have=@ud])
