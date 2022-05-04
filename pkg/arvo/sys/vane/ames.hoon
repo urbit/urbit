@@ -1816,7 +1816,9 @@
     |=  [=wire error=(unit tang)]
     ^+  event-core
     ?:  ?=([%fine %behn %wake *] wire)
-      (on-take-wake:fine t.t.t.wire error)
+      (on-take-fine-wake:fine t.t.t.wire error)
+    ?:  ?=([%fend *] wire)
+      (on-take-fend-wake:fine t.wire error)
     ::
     =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
     ?~  res
@@ -3224,40 +3226,33 @@
           =/  old  (~(get by fez) lug)
           |^  ^+  event-core
           ?~  old=(~(get by fez) lug)
-            (new-fend lug (add-who ~ who) ~)
+            (rev-fend lug (add-who ~ who) *fend-state)
           ::
           =/  nut  (~(got by net.fin) u.old)
           =/  snubs  (~(dif in ~(key by subs.nut)) who)
+          =/  snub-map  (malt (turn ~(tap in snubs) (late ~)))
+          =.  subs.nut  (~(dif by subs.nut) snub-map)
+          =.  subs.nut  (add-who subs.nut who)
           ::  no ships were removed; keep same key
           ::
           ?:  =(~ snubs)
-            =/  fam  (add-who subs.nut who)
-            =.  net.fin  (~(put by net.fin) u.old nut(subs fam))
+            =.  net.fin  (~(put by net.fin) u.old nut)
             event-core
+          ::  all ships were removed; delete %fend entirely
+          ::
+          ?:  ?=(~ fam)
+            (del-fend lug u.old nut &)
           :: some ship were removed; rekey and kill old timer
           ::
-          =.  net.fin  (~(del by net.fin) u.old)
-          =.  event-core
-            =/  wen  (add [last-rev gap]:nut)
-            (emit duct %pass fend/path %b %rest wen)
+          =.  event-core  (del-fend lug u.old nut |)
           ::  kick all snubs who are subscribed
           ::
-          =/  dux  (murn ~(tap in snubbed) ~(got by subs.nut))
-          =.  event-core
-            |-  ^+  snub-dux
-            ?~  dux  event-core
-            $(dux t.dux, event-core (emit i.dux %give %snub path))
+          =/  snub-dux  (murn ~(tap in snubbed) ~(got by subs.nut))
+          =.  event-core  (emil (turn snub-dux (late [%give %snub path])))
           ::  replace allowed ships with .who and set new timer 
           ::
-          =.  event-core
-            %+  new-fend  lug  (add-who subs.nut who)
-            (~(dif by subs.nut) (turn ~(tap in snubs) (late ~)))
-          ::  send new key to live subscribers
-          ::
-          =/  dux  (murn ~(val by subs.nut) same)
-          |-  ^+  event-core
-          ?~  dux  event-core
-          $(dux t.dux, event-core (emit i.dux %give %chit path seq key))
+          (rev-fend lug nut)
+        ::  +on-yank: rekey a %fend path once, resetting timer
         ::
         ++  on-yank
           |=  =path
@@ -3268,27 +3263,39 @@
           ?~  old
             (mean leaf/"ames: yank-none {<[duct path]>}" ~)
           =/  nut  (~(got by net.fin) u.old)
-          =.  event-core  (del-fend lug u.old |)
-          (new-fend [duct path] subs.nut)
+          =.  event-core  (del-fend lug u.old nut |)
+          (rev-fend lug nut)
+        ::  +rev-fend: overwrite key and timer for a %fend path
         ::
-        ++  new-fend
-          |=  [[=duct =path] fam=(map ship (unit duct))]
+        ++  rev-fend
+          |=  [[=duct =path] nut=fend-state]
           ^+  event-core
+          =*  fin  fine-state.ames-state
           =^  [seq=@ud key=@ux]  fin  gen-key
-          =/  gap  (fall gap ~d1)
-          =:  net.fin  (~(put by net.fin) [duct path] seq)
-              fez.fin  (~(put by fez.fin) seq [key fam gap now])
+          =:  net.fin  (~(put by fez.fin) [duct path] seq)
+              fez.fin  (~(put by net.fin) seq nut(key key, last-rev now))
             ==
-          (emit duct %pass fend+path %b %wait (add now gap))
+          ::  set new timer
+          ::
+          =/  wen  (add now gap.nut)
+          =.  event-core  (emit duct %pass fend/path %b %wait wen)
+          ::  send new key to live subscribers
+          ::
+          =/  dux  (murn ~(val by subs.nut) same)
+          (emil (turn dux (late [%give %chit path seq key])))
+        ::  +del-fend: remove key from path, canceling timer
+        ::
+        ::    If .fez, also deletes old .fend-state.
         ::
         ++  del-fend
-          |=  [[=duct =path] old=@ud fez=?]
+          |=  [[=duct =path] old=@ud nut=fend-state fez=?]
           ^+  event-core
-          =/  nut  (~(got by net.fin) old)
+          =*  fin  fine-state.ames-state
           =.  net.fin  (~(del by net.fin) old)
           =?  fez.fin  fez  (~(del by fez.fin) [duct path])
           =/  wen  (add [last-rev gap]:nut)
           (emit duct %pass fend/path %b %rest wen)
+        ::  +add-who: add a set of ships to a subscriber map
         ::
         ++  add-who
           |=  [fam=(map ship (unit duct)) who=(set ship)]
@@ -3302,20 +3309,47 @@
           =^  seq  seq.fin  [seq.fin +(seq.fin)]
           =^  key  eny.fin  [- a]:(~(raws og eny.fin) 256)
           [[seq key] fin]
+        ::  +on-take-fend-wake: rekey timer fired
         ::
-        ++  on-take-wake
+        ::    This must not crash deterministically.  If it crashes, it's
+        ::    a fluke; print and run it again.
+        ::
+        ++  on-take-fend-wake
           |=  [=wire error=(unit tang)]
           ^+  event-core
-          ~|  fine-on-take-wake/wire
-          ?^  error
-            %-  (slog leaf/"bad wake" u.error)
+          =*  fin  fine-state.ames-state
+          %-  ?~  error
+                same
+              (slog leaf/"ames: wake-fend" u.error)
+          ~|  fine-on-take-fend-wake/wire
+          ?>  ?=([%fend *] wire)
+          =/  path  t.wire
+          =/  lug  [duct path]
+          ?~  seq=(~(get by fez.fin) lug)
+            ~>  %slog.leaf/"ames: fend-gone {(spud wire)}"
             event-core
-          ::  TODO: handle error case
+          =/  nut  (~(got by net.fin) u.seq)
+          =.  fez.fin  (~(put by fez.fin) u.seq nut(last-rev now))
+          (emit duct %pass fend+path %b %wait (add now gap.nut))
+        ::  +on-take-fine-wake: scry request re-send timer fired
+        ::
+        ::    This must not crash deterministically.  If it crashes, it's
+        ::    a fluke; print and run it again.
+        ::
+        ++  on-take-fine-wake
+          |=  [=wire error=(unit tang)]
+          ^+  event-core
+          %-  ?~  error
+                same
+              (slog leaf/"ames: wake-fine" u.error)
+          ~|  fine-on-take-wake/wire
           ?>  ?=([@ *] wire)
           =/  =ship  (slav %p i.wire)
-          ~|  %no-ship-for-wake
-          =/  peer-core  (need (pe-abed:fine-peer ship))
-          pe-abet:(pe-take-wake:peer-core t.wire)
+          =/  pe  (pe-abed:fine-peer ship)
+          ?~  pe
+            ~>  %slog.0^leaf/"ames: no ship for %wake {(spud wire)}"
+            event-core
+          pe-abet:(pe-take-wake:u.pe t.wire)
         ::
         ++  on-hear-response
           |=  [=lane =packet dud=(unit goof)]
