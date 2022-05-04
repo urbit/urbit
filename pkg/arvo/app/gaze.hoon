@@ -210,6 +210,7 @@
       refresh-rate
       timeout-time
       public:mainnet-contracts
+      ~
       ~[azimuth delegated-sending]:mainnet-contracts
       ~
       ~

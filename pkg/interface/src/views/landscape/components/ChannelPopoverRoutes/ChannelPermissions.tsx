@@ -5,12 +5,11 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { addTag, Association, Group, PermVariation, removeTag, metadataEdit, deSig } from '@urbit/api';
+import { addTag, Association, Group, PermVariation, removeTag, metadataEdit, deSig, resourceFromPath } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
 import * as Yup from 'yup';
-import { resourceFromPath } from '~/logic/lib/group';
 import { FormGroupChild } from '~/views/components/FormGroup';
 import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWritePerms } from '../ChannelWritePerms';

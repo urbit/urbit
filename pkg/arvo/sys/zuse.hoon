@@ -3854,55 +3854,6 @@
   ++  new-desk
     |=  [=desk tako=(unit tako) files=(map path page)]
     [%c %park desk &/[(drop tako) (~(run by files) (lead %&))] *rang]
-  ::  +an: $ankh interface door
-  ::
-  ++  an
-    |_  nak=ankh
-    ::  +dug: produce ankh at path
-    ::
-    ++  dug
-      |=  =path
-      ^-  (unit ankh)
-      ?~  path  `nak
-      ?~  kid=(~(get by dir.nak) i.path)
-        ~
-      $(nak u.kid, path t.path)
-    ::  +get: produce file at path
-    ::
-    ++  get
-      |=  =path
-      ^-  (unit cage)
-      ?~  nik=(dug path)  ~
-      ?~  fil.u.nik       ~
-      `q.u.fil.u.nik
-    ::  +mup: convert sub-tree at .pre to (map path [lobe cage])
-    ::
-    ++  mup
-      |=  pre=path
-      =-  ~?  =(~ -)  [%oh-no-empty pre]
-          -
-      ^-  (map path [lobe cage])
-      =/  nek=(unit ankh)  (dug pre)
-      ?~  nek
-        ~&  [%oh-no-empty-pre pre ~(key by dir.nak)]
-        ~
-      =.  nak  u.nek
-      ~?  =(~ nak)  [%oh-no-empty-nak pre]
-      =|  pax=path
-      =|  res=(map path [=lobe =cage])
-      |-  ^+  res
-      =?  res  ?=(^ fil.nak)  (~(put by res) pax u.fil.nak)
-      :: =/  anz=(list [seg=@ta =ankh])  ~(tap by dir.nak)
-      :: |-  ^+  res
-      :: ?~  anz  res
-      :: %_  $
-      ::   anz  t.anz
-      ::   res  ^$(pax (snoc pax seg.i.anz), nak ankh.i.anz)
-      :: ==
-      %+  roll  ~(tap by dir.nak)
-      |=  [[seg=@ta =ankh] res=_res]
-      ^$(pax (snoc pax seg), nak ankh, res res)
-    --
   --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy

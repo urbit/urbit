@@ -781,6 +781,6 @@
   ;<  ~      bind:m  (take-kick /awaiting/[tid])
   ?+  p.cage  ~|([%strange-thread-result p.cage file tid] !!)
     %thread-done  (pure:m %& q.cage)
-    %thread-fail  (pure:m %| !<([term tang] q.cage))
+    %thread-fail  (pure:m %| ;;([term tang] q.q.cage))
   ==
 --

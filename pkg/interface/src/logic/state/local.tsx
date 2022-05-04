@@ -11,6 +11,7 @@ import { clearStorageMigration, createStorageKey, storageVersion, wait } from '~
 export type SubscriptionStatus = 'connected' | 'disconnected' | 'reconnecting';
 
 export interface LocalState {
+  browserId: string;
   theme: 'light' | 'dark' | 'auto';
   hideAvatars: boolean;
   hideNicknames: boolean;
@@ -42,6 +43,7 @@ export const selectLocalState =
   <K extends keyof LocalState>(keys: K[]) => f.pick<LocalState, K>(keys);
 
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
+  browserId: '',
   dark: false,
   mobile: false,
   breaks: {
@@ -80,19 +82,17 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   // resume doesn't work properly
   reconnect: async () => {
     const { errorCount } = get();
-    set(s => ({ errorCount: s.errorCount+1, subscription: 'reconnecting' }));
-
-    if(errorCount > 5) {
-      set({ subscription: 'disconnected' });
+    if(errorCount > 1) {
       return;
     }
-    await wait(Math.pow(2, errorCount) * 750);
+    set(s => ({ subscription: 'reconnecting', errorCount: s.errorCount + 1 }));
+    console.log(get().errorCount);
 
     try {
-      airlock.reset();
       await bootstrapApi();
     } catch (e) {
-      console.error(`Retrying connection, attempt #${errorCount}`);
+      console.error(e);
+      set({ subscription: 'disconnected' });
     }
   },
   bootstrap: async () => {
@@ -129,6 +129,11 @@ function withLocalState<P, S extends keyof LocalState, C extends React.Component
 const selOsDark = (s: LocalState) => s.dark;
 export function useOsDark() {
   return useLocalState(selOsDark);
+}
+
+const selBrowserId = (s: LocalState) => s.browserId;
+export function useBrowserId() {
+  return useLocalState(selBrowserId);
 }
 
 export { useLocalState as default, withLocalState };

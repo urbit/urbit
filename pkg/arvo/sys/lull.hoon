@@ -89,7 +89,7 @@
   ::
   ::  +pop-left: remove leftmost value from tree
   ::
-  ++  pop-left 
+  ++  pop-left
     |=  a=(pha val)
     ^-  [val=(unit val) pha=(pha val)]
     ?-  -.a
@@ -116,7 +116,7 @@
     |=  [a=(pha val) vals=(list val)]
     ^-  (pha val)
     =.  vals  (flop vals)
-    |-  
+    |-
     ?~  vals  a
     $(a (cons a i.vals), vals t.vals)
   ::
@@ -130,8 +130,8 @@
     ^+  [state a]
     =/  acc  [stop=`?`%.n state=state]
     =|  new=(pha val)
-    |-  
-    ?:  stop.acc  
+    |-
+    ?:  stop.acc
       :: cat new and old
       [state.acc (weld a new)]
     =^  val=(unit val)  a
@@ -151,7 +151,7 @@
     =/  [val=(unit val) inner=_a]
       (pop-left a)
     ?~  val
-      (afx-to-pha sf) 
+      (afx-to-pha sf)
     [%big [%1 u.val ~] inner sf]
   ::
   ++  cons
@@ -159,15 +159,15 @@
     |=  [a=(pha val) c=val]
     ^-  (pha val)
     =.  b  [c b]
-    |-  
+    |-
     ?~  b  a
     ?-  -.a
     ::
-        %nul  
+        %nul
       $(a [%one i.b], b t.b)
     ::
         %one
-      %=  $  
+      %=  $
          b  t.b
          a  [%big [%1 i.b ~] [%nul ~] [%1 p.a ~]]
       ==
@@ -255,12 +255,12 @@
     =/  [val=(unit val) inner=_a]
       (pop-right a)
     ?~  val
-      (afx-to-pha pf) 
+      (afx-to-pha pf)
     [%big pf inner [%1 u.val ~]]
   ::
   ::  +pop-right: remove rightmost value from tree
   ::
-  ++  pop-right 
+  ++  pop-right
     |=  a=(pha val)
     ^-  [val=(unit val) pha=(pha val)]
     ?-  -.a
@@ -283,7 +283,7 @@
    ==
   ::
   ::  +|  %manipulation
-  ::  
+  ::
   ::  +weld: concatenate two trees
   ::
   ::    O(log n)
@@ -1724,53 +1724,55 @@
             des=desk                                    ::  target desk
             bas=beak                                    ::  base desk
             con=(list [beak germ])                      ::  merges
-        ==
+        ==                                              ::
         [%mont pot=term bem=beam]                       ::  mount to unix
         [%dirk des=desk]                                ::  mark mount dirty
         [%ogre pot=$@(desk beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::
-  ::
+  ::                                                    ::
   ::::                                                  ::  (1c2)
-    ::
+    ::                                                  ::
   +$  aeon  @ud                                         ::  version number
-  +$  ankh                                              ::  fs node (new)
-    $~  [~ ~]
-    $:  fil=(unit [p=lobe q=cage])                      ::  file
-        dir=(map @ta ankh)                              ::  folders
-    ==                                                  ::
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
-  +$  blob                                              ::  fs blob
-    $%  [%delta p=lobe q=[p=mark q=lobe] r=page]        ::  delta on q
-        [%direct p=lobe q=page]                         ::  immediate
+  +$  cable                                             :: lib/sur/mark ref
+    $:  face=(unit term)                                ::
+        file-path=term                                  ::
     ==                                                  ::
-  ::  +cable: a reference to something on the filesystem
-  ::    face: the face to wrap around the imported file
-  ::    file-path: location in clay
-  +$  cable
-    $:  face=(unit term)
-        file-path=term
-    ==
-  +$  care  ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
+  +$  care                                              ::  clay submode
+    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
   +$  case                                              ::  ship desk case spur
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label
         [%ud p=@ud]                                     ::  number
     ==                                                  ::
+  +$  cash                                              ::  case or tako
+    $%  [%tako p=tako]                                  ::
+        case                                            ::
+    ==                                                  ::
   +$  cass  [ud=@ud da=@da]                             ::  cases for revision
+  +$  clue                                              ::  murder weapon
+    $%  [%lobe =lobe]                                   ::  specific lobe
+        [%all ~]                                        ::  all safe targets
+        [%pick ~]                                       ::  collect garbage
+        [%norm =ship =desk =norm]                       ::  set default norm
+        [%worn =ship =desk =tako =norm]                 ::  set commit norm
+        [%seek =ship =desk =cash]                       ::  fetch source blobs
+    ==                                                  ::
+  +$  cone  (map [ship desk] dome)                      ::  domes
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
-    $:  ank=ankh                                        ::  state
-        let=@ud                                         ::  top id
+    $:  let=@ud                                         ::  top id
         hit=(map @ud tako)                              ::  changes by id
         lab=(map @tas @ud)                              ::  labels
     ==                                                  ::
@@ -1788,8 +1790,7 @@
         %meet-that                                      ::  hers if conflict
     ==                                                  ::
   +$  lobe  @uvI                                        ::  blob ref
-  +$  maki  [p=@ta q=@ta r=@ta s=path]                  ::
-  +$  miso                                              ::  ankh delta
+  +$  miso                                              ::  file delta
     $%  [%del ~]                                        ::  delete
         [%ins p=cage]                                   ::  insert
         [%dif p=cage]                                   ::  mutate from diff
@@ -1814,11 +1815,11 @@
     $%  [%& p=suba]                                     ::  delta
         [%| p=@tas]                                     ::  label
     ==                                                  ::
+  +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
-  +$  plop  blob                                        ::  unvalidated blob
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
-        lat=(map lobe blob)                             ::  data
+        lat=(map lobe page)                             ::  data
     ==                                                  ::
   +$  rant                                              ::  response to request
     $:  p=[p=care q=case r=desk]                        ::  clade release book
@@ -1837,9 +1838,9 @@
     ==                                                  ::
   +$  regs  (map path rule)                             ::  rules for paths
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
-  +$  riff-any
-    $%  [%1 =riff]
-    ==
+  +$  riff-any                                          ::
+    $%  [%1 =riff]                                      ::
+    ==                                                  ::
   +$  rite                                              ::  new permissions
     $%  [%r red=(unit rule)]                            ::  for read
         [%w wit=(unit rule)]                            ::  for write
@@ -1851,7 +1852,7 @@
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
-  +$  tako  @                                           ::  yaki ref
+  +$  tako  @uvI                                        ::  yaki ref
   +$  toro  [p=@ta q=nori]                              ::  general change
   ++  unce                                              ::  change part
     |*  a=mold                                          ::

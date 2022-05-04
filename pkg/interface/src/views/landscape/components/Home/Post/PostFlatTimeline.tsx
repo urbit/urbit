@@ -1,9 +1,8 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, Group } from '@urbit/api';
+import { Association, Group, resourceFromPath } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { Loading } from '~/views/components/Loading';
 import { useFlatGraph } from '~/logic/state/graph';
-import { resourceFromPath } from '~/logic/lib/group';
 import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';
 
