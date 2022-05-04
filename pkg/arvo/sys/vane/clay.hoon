@@ -5312,7 +5312,6 @@
   ++  draw-dome
     |=  =dome
     ^-  (set [norm yaki])
-    =/  keep-all=norm  (~(put of *norm) / &)
     =/  =aeon  1
     |-  ^-  (set [norm yaki])
     ?:  (lth let.dome aeon)
@@ -5321,7 +5320,7 @@
     =/  yakis=(set [norm yaki])
       ?.  =(let.dome aeon)
         ~
-      [[keep-all (~(got by hut.ran.ruf) tako)] ~ ~]
+      [[*norm (~(got by hut.ran.ruf) tako)] ~ ~]
     %-  ~(uni in yakis)
     %-  ~(uni in (draw-tako tom.dome nor.dome tako))
     $(aeon +(aeon))
@@ -5355,6 +5354,7 @@
       |-  ^+  ..pick-raft
       ?~  yakis
         ..pick-raft
+      ::  ~&  >  [%picking [norm r.yaki]:i.yakis]
       $(yakis t.yakis, ..pick-raft (pick-yaki i.yakis))
     ::
     ::  NB: recurring tree-wise with the `sen` cache provides
@@ -5369,7 +5369,8 @@
       ?:  (~(has in sen) norm q.yaki)
         ..pick-raft
       =.  sen  (~(put in sen) norm q.yaki)
-      =/  peg=(unit page)  (~(get by lat) q.n.q.yaki)
+      =/  peg=(unit page)  (~(get by lat.ran.ruf) q.n.q.yaki)
+      ::  ~&  >>  [%picking-lobe ?=(^ peg) +:(~(fit of norm) p.n.q.yaki) n.q.yaki]
       =?  lat  &(?=(^ peg) !=([~ %|] +:(~(fit of norm) p.n.q.yaki)))
         (~(uni by `(map lobe page)`[[q.n.q.yaki u.peg] ~ ~]) lat)
       =.  ..pick-raft  $(q.yaki l.q.yaki)
