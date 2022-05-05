@@ -325,7 +325,7 @@
       =rave
       scry=(unit @da)                                   ::  if scry, timeout
       have=(map lobe fell)
-      need=(list $@(lobe [=aeon =path =lobe]))          ::  opt deets for scry
+      need=(list lobe)
       nako=(qeu (unit nako))
       busy=_|
   ==
@@ -1503,13 +1503,11 @@
     (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
   ++  send-over-scry
-    |=  [kind=@ta =duct =ship index=@ud =desk =mood]
+    |=  [kind=@ta =duct =ship index=@ud =desk =path]
     ^-  [timeout=@da _..send-over-scry]
     =/  =time  (add now scry-timeout-time)
     =/  =wire  (request-wire kind ship desk index)
-    =/  =path
-      =,  mood
-      [%c care (scot case) desk path]
+    =.   path  [%c path]
     ~&  scrying/path^index
     :-  time
     %-  emil
@@ -1572,7 +1570,8 @@
       =*  inx  nix.u.ref
       =^  time=@da  +>+.$
         =<  ?>(?=(^ ref) .)
-        (send-over-scry %warp-index hen her inx syd mood.rave)
+        =/  =path  =,(mood.rave [care (scot case) syd path])
+        (send-over-scry %warp-index hen her inx syd path)
       %=  +>+.$
         nix.u.ref  +(nix.u.ref)
         bom.u.ref  (~(put by bom.u.ref) inx [hen rave `time ~ ~ ~ |])
@@ -3267,41 +3266,32 @@
         work
       ?>  ?=(%nako p.r.u.rut)
       =/  nako  ;;(nako q.r.u.rut)
-      =.  need.sat  (welp need.sat (missing-lobes nako))
+      =/  missing   (missing-lobes nako)
+      =.  need.sat  (welp need.sat ~(tap in missing))
       =.  nako.sat  (~(put to nako.sat) ~ nako)
       work
     ::
     ++  missing-lobes
       |=  =nako
-      =|  miss=(set lobe)
-      ^-  (list [aeon path lobe])
+      ^-  (set lobe)
+      =|  missing=(set lobe)
       =/  yakis  ~(tap in lar.nako)
-      |-  ^-  (list [aeon path lobe])
+      |-  ^-  (set lobe)
       =*  yaki-loop  $
       ?~  yakis
-        ~
+        missing
       =/  =norm  (~(gut by tom.dom) r.i.yakis nor.dom)
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
-      |-  ^-  (list [aeon path lobe])
-      =*  blob-loop  $
+      |-  ^-  (set lobe)
+      =*  lobe-loop  $
       ?~  lobes
         yaki-loop(yakis t.yakis)
-      =*  lobe  lobe.i.lobes
-      ?:  ?|  (~(has by lat.ran) lobe)
-              =([~ %|] (~(fit of norm) path.i.lobes))
-              (~(has in miss) lobe)
+      =?    missing
+          ?&  !(~(has by lat.ran) lobe.i.lobes)
+              !=([~ %|] (~(fit of norm) path.i.lobes))
           ==
-        blob-loop(lobes t.lobes)
-      =;  =aeon
-        :-  [aeon i.lobes]
-        blob-loop(lobes t.lobes, miss (~(put in miss) lobe))
-      ::  find the aeon corresponding to the commit containing this lobe.
-      ::  we unfortunately do not have a reverse lookup map.
-      ::
-      =/  l=(list [a=aeon t=tako])  ~(tap by gar.nako)
-      |-
-      ?~  l  ~|([%missing-aeon-for-tako her syd `@uw`r.i.yakis] !!)
-      ?:(=(r.i.yakis t.i.l) a.i.l $(l t.l))
+        (~(put in missing) lobe.i.lobes)
+      lobe-loop(lobes t.lobes)
     ::
     ::  Receive backfill response
     ::
@@ -3341,30 +3331,23 @@
       ::  another desk updating concurrently, or a previous update on this
       ::  same desk).
       ::
-      =/  =lobe
-        ?@  i.need.sat  i.need.sat
-        lobe.i.need.sat
-      ?:  ?|  (~(has by lat.ran) lobe)
-              (~(has by have.sat) lobe)
-          ==
+      =*  lobe  i.need.sat
+      ?:  (~(has by lat.ran) lobe)
         $(need.sat t.need.sat)
       ::  otherwise, fetch the next blob (aka fell)
       ::
       =^  time=(unit @da)  ..foreign-update
         =<  ?>(?=(^ ref) .)
-        ::  if we know a revision & path for the blob,
-        ::  and :ship's remote scry isn't known to be broken,
+        ::  if :ship's remote scry isn't known to be broken,
         ::  or we learned it was broken more than an hour ago,
         ::
-        ?:  ?&  ?=(^ i.need.sat)
-            ?|  !(~(has by sad) her)
+        ?:  ?|  !(~(has by sad) her)
                 (gth now (add scry-retry-time (~(got by sad) her)))
-            ==  ==
+            ==
           ::  make the request over remote scry
           ::
-          =/  =mood
-            [%x ud+aeon path]:i.need.sat
-          [`- +]:(send-over-scry %back-index hen her inx syd mood)
+          =/  =path  /x/0//lobe/(scot %uv i.need.sat)
+          [`- +]:(send-over-scry %back-index hen her inx syd path)
         ::  otherwise, request over ames
         ::
         :-  ~
@@ -4931,7 +4914,6 @@
           %=    update-state-10
               |2
             :-  `(unit @da)`~
-            ^-  [(map lobe fell) (list $@(lobe [aeon path lobe])) (qeu (unit nako)) _|]
             %=    |2.update-state-10
                 nako
               %-  ~(gas to *(qeu (unit nako)))
@@ -5036,6 +5018,8 @@
   ::TODO  if it ever gets filled properly, pass in the full fur.
   ::
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
+  ?:  &(=(%x ren) =(%$ syd) =([%ud 0] u.luk))
+    (read-buc-public u.run tyl)
   ?:  &(=(our his) =(%x ren) =(%$ syd) =([%da now] u.luk))
     (read-buc u.run tyl)
   =/  den  ((de now rof [/scryduct ~] ruf) his syd)
@@ -5044,6 +5028,16 @@
     %-  (slog >%clay-scry-fail< p.result)
     ~
   p.result
+  ::
+  ++  read-buc-public
+    |=  [=care =path]
+    ^-  (unit (unit cage))
+    ?+  path  ~
+        [%lobe @ ~]
+      ?~  hash=(slaw %uv i.t.path)  ~
+      ?~  page=(~(get by lat.ran.ruf) u.hash)  ~
+      ``[%page !>(u.page)]
+    ==
   ::
   ++  read-buc
     |=  [=care =path]
@@ -5270,7 +5264,8 @@
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
         ?~  data.hin  ~
-        `[%direct (page-to-lobe u.data.hin) u.data.hin]
+        ?>  =(%page p.u.data.hin)
+        `[%direct (page-to-lobe u.data.hin) ;;(page q.u.data.hin)]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
