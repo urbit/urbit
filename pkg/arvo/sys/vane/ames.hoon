@@ -934,7 +934,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%6 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%7 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1072,7 +1072,7 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%6 %adult ames-state]
+++  stay  [%7 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
