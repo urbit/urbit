@@ -3,37 +3,37 @@
 ::
 =,  strand=strand:spider
 ::
-::  send on /spider/garden/json/get-dudes/json
+::  send on /desk/dude
 ::
 |%
 ++  buds                                                 ::  get agents currently running
-  |=  p=@tas
-  =/  m  (strand ,(list @tas))
+  |=  p=desk
+  =/  m  (strand ,(list dude:gall))
   ^-  form:m
-  ?.  =(%base p)
-    ;<  q=(list @tas)  bind:m  (suds p)
+  ?.  =(%$ p)
+    ;<  q=(list dude:gall)  bind:m  (suds p)
     (pure:m q)
-  ;<  q=(list @tas)  bind:m  duds
-  =|  r=(list (list @tas))
+  ;<  q=(list desk)  bind:m  duds
+  =|  r=(list (list dude:gall))
   |-  ^-  form:m
-  =*  loop  $
+  =*  s  $
   ?~  q  (pure:m (zing r))
-  ;<  t=(list @tas)  bind:m  (suds i.q)
-  loop(q t.q, r [t r])
+  ;<  t=(list dude:gall)  bind:m  (suds i.q)
+  s(q t.q, r [t r])
 ::
 ++  suds                                                 ::  clean %ge scry
-  |=  p=@tas
-  =/  m  (strand ,(list @tas))
+  |=  p=desk
+  =/  m  (strand ,(list dude:gall))
   ^-  form:m
-  ;<  q=(set [@tas ?])  bind:m
-    (scry (set ,[@tas ?]) /ge/(scot %tas p))
+  ;<  q=(set [dude:gall ?])  bind:m
+    (scry (set ,[dude:gall ?]) /ge/(scot %tas p))
   %-  pure:m
-  (murn ~(tap in q) |=([@tas ?] ?.(+.+< ~ `-.+<)))
+  (murn ~(tap in q) |=([dude:gall ?] ?.(+.+< ~ `-.+<)))
 ::
 ++  duds                                                 ::  get desks
-  =/  m  (strand ,(list @tas))
+  =/  m  (strand ,(list desk))
   ^-  form:m
-  ;<  p=(set @tas)  bind:m  (scry (set ,@tas) /cd/base)
+  ;<  p=(set desk)  bind:m  (scry (set ,desk) /cd/base)
   (pure:m ~(tap in p))
 --
 ::
