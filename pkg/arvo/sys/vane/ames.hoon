@@ -1647,7 +1647,7 @@
     ::  if it's %cork plea passed to ames from its sink,
     ::  give %done and process flow closing after +on-take-done call
     ::
-    ?:  &(=(vane.plea %a) =(path.plea `path`/flow) ?=([%cork *] payload.plea))
+    ?:  &(=(vane.plea %a) =(path.plea `path`/close) ?=(~ payload.plea))
       (emit duct %give %done ~)
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-cork: handle request to kill a flow
@@ -1680,8 +1680,7 @@
     ::
     =/  state=(unit peer-state)  (get-peer-state her.u.res)
     ?~  state
-      %-  (slog leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~)
-      event-core
+      (slog leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~)
     ::
     =/  =channel  [[our her.u.res] now channel-state -.u.state]
     ::
@@ -2586,7 +2585,27 @@
         =/  target-bone=^bone  (mix 0b10 bone)
         ::  notify |message-pump that this message got naxplained
         ::
-        (run-message-pump target-bone %near naxplanation)
+        =.  peer-core  (run-message-pump target-bone %near naxplanation)
+        ::
+        ?.  (~(has in closing.peer-state) target-bone)
+          peer-core
+        =/  =message-pump-state
+          (~(gut by snd.peer-state) target-bone *message-pump-state)
+        =/  message-pump
+          (make-message-pump message-pump-state channel %.y)
+        ::  we don't process the gifts here and instead wait for
+        ::  the timer to handle the %cork plea added to the pump
+        ::
+        =^  *  message-pump-state
+          %-  work:message-pump
+          %memo^(dedup-message (jim [%a /flow [%cork ~]]))
+        =.  snd.peer-state
+          (~(put by snd.peer-state) target-bone message-pump-state)
+        ::  if we get a naxplanation for a %cork, the publisher is behind
+        ::  receiving the OTA, so we set up a timer to retry in one hour.
+        ::
+        =/  =wire  (make-pump-timer-wire her.channel target-bone)
+        (emit [/ames]~ %pass wire %b %wait `@da`(add now ~h1))
       ::  +on-sink-plea: handle request message received by |message-sink
       ::
       ++  on-sink-plea
@@ -2605,13 +2624,15 @@
           ::  fresh plea; pass to client vane
           ::
           =+  ;;  =plea  message
-          ::  if this plea is %cork, put to closing
-          ::
-          =?  closing.peer-state  ?=([%cork *] payload.plea)
-            (~(put in closing.peer-state) bone)
-          ::
           =/  =wire  (make-bone-wire her.channel her-rift.channel bone)
           ::
+          ::
+          ?:  =(vane.plea %a)
+            ::  only ames-to-ames %cork pleas are handled
+            ::
+            ?>  &(?=([%cork *] payload.plea) =(path.plea `path`/flow))
+            =.  closing.peer-state  (~(put in closing.peer-state) bone)
+            (emit duct %pass wire %a %plea her.channel [%a /close ~])
           ?+  vane.plea  ~|  %ames-evil-vane^our^her.channel^vane.plea  !!
             %c  (emit duct %pass wire %c %plea her.channel plea)
             %g  (emit duct %pass wire %g %plea her.channel plea)
