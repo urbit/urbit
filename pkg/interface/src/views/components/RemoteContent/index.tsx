@@ -4,7 +4,8 @@ import {
   RemoteContentAudioEmbed,
   RemoteContentImageEmbed,
   RemoteContentOembed,
-  RemoteContentVideoEmbed
+  RemoteContentVideoEmbed,
+  RemoteContentEmbedFallback
 } from './embed';
 import { useEmbed } from '~/logic/state/embed';
 import { Suspender } from '~/logic/lib/suspend';
@@ -60,9 +61,18 @@ export const validOembedCheck = (embed: Suspender<any>, url: string) => {
   return false
 }
 
+export const RemoteContent = (props: RemoteContentProps) => {
+  const {url, ...rest} = props
+  return(
+    <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
+          <RemoteContentInner url={url} {...rest}/>
+    </AsyncFallback>
+  )
+}
+
 
 const emptyRef = () => {};
-export function RemoteContent(props: RemoteContentProps) {
+function RemoteContentInner(props: RemoteContentProps) {
   const {
     url,
     embedRef = emptyRef,

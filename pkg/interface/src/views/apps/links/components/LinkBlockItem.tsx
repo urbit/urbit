@@ -37,7 +37,31 @@ export interface LinkBlockItemProps {
   summary?: boolean;
 }
 
-export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
+export const LinkBlockItem = (props: LinkBlockItemProps & CenterProps) => {
+  const { node, ...rest } = props;
+  const { post } = node;
+  const { contents } = post;
+
+  const [{ text: title }, ...content] = contents as [
+    TextContent,
+    UrlContent | ReferenceContent
+  ];
+  let url = '';
+  if ('url' in content?.[0]) {
+    url = content[0].url;
+  }
+
+  return(
+    <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
+      <LinkBlockItemInner
+        node={node}
+        {...rest}
+      />
+    </AsyncFallback>
+  );
+}
+
+function LinkBlockItemInner(props: LinkBlockItemProps & CenterProps) {
   const { node, summary, m, border = 1, objectFit, ...rest } = props;
   const { post, children } = node;
   const { contents, index, author } = post;
@@ -76,7 +100,6 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       {...bind}
     >
       <Col height="100%" justifyContent="center" alignItems="center">
-        <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
           {isReference ? (
             summary ? (
               <RemoteContentPermalinkEmbed
@@ -102,7 +125,6 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
           ) : (
             <RemoteContentEmbedFallback url={url} />
           )}
-        </AsyncFallback>
         <Box
           backgroundColor="white"
           display={summary && hovering ? 'block' : 'none'}
