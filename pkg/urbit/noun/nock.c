@@ -384,6 +384,9 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 
 // Several opcodes "overflow" (from byte to short index) to their successor, so
 // order can matter here.
+// Note that we use an X macro (https://en.wikipedia.org/wiki/X_Macro) to unify
+// the opcode's enum name, string representation, and computed goto into a
+// single structure.
 #define OPCODES                                                                \
   /* general purpose */                                                        \
   X(HALT, "halt", &&do_halt),  /*  0 */                                        \
@@ -502,7 +505,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
   X(KITS, "kits", &&do_kits),  /* 94 */                                        \
   X(LAST,   NULL,      NULL),  /* 95 */
 
-// Opcodes.
+// Opcodes. Define X to select the enum name from OPCODES.
 #define X(opcode, name, indirect_jump) opcode
 enum { OPCODES };
 #undef X
@@ -954,6 +957,7 @@ static void _n_print_stack(u3p(u3_noun) empty) {
 #endif
 
 #ifdef VERBOSE_BYTECODE
+// Define X to select the opcode string representation from OPCODES.
 # define X(opcode, name, indirect_jump) name
 static c3_c* opcode_names[] = { OPCODES };
 # undef X
@@ -1848,7 +1852,8 @@ static u3_noun
 _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 {
 
-  // Opcode jump table.
+  // Opcode jump table. Define X to select the opcode computed goto from
+  // OPCODES.
 # define X(opcode, name, indirect_jump) indirect_jump
   static void* lab[] = { OPCODES };
 # undef X
