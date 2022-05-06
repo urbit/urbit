@@ -50,4 +50,4 @@
 =,  format
 ;<  breh=(list @tas)  bind:m  (buds (so:dejs u.know))
 %-  pure:m  
-!>(`json`(frond:enjs 'buds' a+(turn breh |=(@tas s++<))))
+!>(`json`(frond:enjs 'buds' a+(turn breh |=(@tas s+[+<]))))
