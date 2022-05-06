@@ -1680,6 +1680,7 @@
     ::
     =/  state=(unit peer-state)  (get-peer-state her.u.res)
     ?~  state
+      %.  event-core
       (slog leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~)
     ::
     =/  =channel  [[our her.u.res] now channel-state -.u.state]
@@ -2630,6 +2631,7 @@
           ?:  =(vane.plea %a)
             ::  only ames-to-ames %cork pleas are handled
             ::
+            ~|  %non-cork-ames-plea^our^her.channel^path.plea
             ?>  &(?=([%cork *] payload.plea) =(path.plea `path`/flow))
             =.  closing.peer-state  (~(put in closing.peer-state) bone)
             (emit duct %pass wire %a %plea her.channel [%a /close ~])
