@@ -39,6 +39,9 @@
       ::  %watch: configure node url and network
       ::
       [%watch url=@ta =net]
+      ::  %kick: re-start %azimuth subscriptions
+      ::
+      [%kick ~]
   ==
 ::
 +$  tagged-diff  [=id:block diff:naive]
@@ -49,6 +52,39 @@
 %-  agent:dbug
 %+  verb  |
 ^-  agent:gall
+::  Cards
+::
+=>  |%
+    ++  subscribe-to-eth-watcher
+      |=  =bowl:gall
+      ^-  card
+      :*  %pass  /eth-watcher  %agent  [our.bowl %eth-watcher]
+          %watch  /logs/[dap.bowl]
+      ==
+    ::
+    ++  listen-to-azimuth
+      |=  [ships=(set ship) =source:jael]
+      ^-  card
+      [%pass /lo %arvo %j %listen ships source]
+    ::
+    ++  nuke-azimuth-tracker
+      |=  =bowl:gall
+      ^-  card
+      :*  %pass  /old-tracker  %agent  [our.bowl %hood]
+          %poke  %kiln-nuke  !>([%azimuth-tracker %|])
+      ==
+    ::
+    ++  init-timer
+      |=  =bowl:gall
+      ^-  card
+      [%pass /init %arvo %b %wait now.bowl]
+    ::
+    ++  start-log-retrieval
+      |=  [=ship args=vase]
+      ^-  card
+      [%pass /wa %agent [ship %eth-watcher] %poke %eth-watcher-poke args]
+    --
+::
 =<
   |_  =bowl:gall
   +*  this  .
@@ -70,12 +106,7 @@
     :_  this
     ?:  .^(? %j /(scot %p our.bowl)/fake/(scot %da now.bowl))
       ~
-    :~  :*  %pass  /old-tracker  %agent  [our.bowl %hood]
-            %poke  %kiln-nuke  !>([%azimuth-tracker %|])
-        ==
-      ::
-        [%pass /init %arvo %b %wait now.bowl]
-    ==
+    ~[(nuke-azimuth-tracker bowl) (init-timer bowl)]
   ::
   ++  on-save   !>(state)
   ++  on-load
@@ -184,10 +215,8 @@
         [(jael-update:do udiffs) this]
       ::
           %resub
-        :_  this  :_  ~
-        :*  %pass  /eth-watcher  %agent  [our.bowl %eth-watcher]
-            %watch  /logs/[dap.bowl]
-        ==
+        :_  this
+        [(subscribe-to-eth-watcher bowl)]~
       ::
           %resnap
         =:  nas.state  nas.snap
@@ -202,7 +231,28 @@
     =+  !<(poke=poke-data vase)
     ?-    -.poke
         %listen
-      [[%pass /lo %arvo %j %listen (silt whos.poke) source.poke]~ this]
+      [[(listen-to-azimuth (silt whos.poke) source.poke)]~ this]
+    ::
+        %kick
+      =/  last-block=@
+        ?^  logs.state
+          number:(last-block-id:dice logs.state)
+        ~&  >>  %no-logs-in-azimuth-state
+        last-snap
+      :_  this
+      =/  cards=(list card)
+        :-  ::  %jael will re-subscribe to get all azimuth diffs
+            ::
+            (listen-to-azimuth ~ [%| dap.bowl])
+        ::  we poke eth-watcher to retrieve logs from the latest we have
+        ::
+        %*(start do last-snap last-block)
+      ::  resubscribe if we somehow get unsubscribed from eth-watcher
+      ::
+      ?:  (~(has by wex.bowl) [/eth-watcher our.bowl %eth-watcher])
+        cards
+      ~&  >>  %resubscribing-to-eth-watcher
+      [(subscribe-to-eth-watcher bowl) cards]
     ::
         %watch
       =:  nas.state   ?:(?=(%default net.poke) nas.snap *^state:naive)
@@ -288,7 +338,7 @@
     ::  doing :azimuth|watch caused a l2-sig-fail when using the eth-log
     ::  snapshot because we were not updating nas with the saved logs.
     ::
-    ::  now (L: 189) nas.state is loaded with the contents of the snapshot,
+    ::  now nas.state is loaded with the contents of the snapshot,
     ::  if we are on the %default network.
     ::
     =^  effects  state  (run-logs:do loglist.diff)
@@ -305,12 +355,7 @@
       %-  (slog 'azimuth: failed to initialize!' ~)
       `this
     :_  this
-    :~  :*  %pass  /eth-watcher  %agent  [our.bowl %eth-watcher]
-            %watch  /logs/[dap.bowl]
-        ==
-      ::
-        [%pass /lo %arvo %j %listen ~ [%| dap.bowl]]
-    ==
+    ~[(subscribe-to-eth-watcher bowl) (listen-to-azimuth ~ [%| dap.bowl])]
   ::
   ++  on-fail   on-fail:def
   --
@@ -421,7 +466,6 @@
 ++  jael-update
   |=  =udiffs:point
   ^-  (list card)
-  ::  ?:  &  ~  ::  XX
   :-  [%give %fact ~[/] %azimuth-udiffs !>(udiffs)]
   |-  ^-  (list card)
   ?~  udiffs
@@ -456,5 +500,5 @@
         ~[naive.net]
         (topics whos.state)
     ==
-  [%pass /wa %agent [our.bowl %eth-watcher] %poke %eth-watcher-poke args]~
+  [(start-log-retrieval our.bowl args)]~
 --
