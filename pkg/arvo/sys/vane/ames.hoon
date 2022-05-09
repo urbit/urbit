@@ -927,13 +927,12 @@
                   [%adult state=_ames-state.adult-gate]
           ==  ==  ==
       ?-    old
-          [%4 %adult *]  (load:adult-core %4 state.old)
+          [%4 %adult *]
+        $(old [%5 %adult (state-4-to-5:load:adult-core state.old)])
       ::
           [%4 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
-        =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %4 state.old)
-        larval-gate
+        =.  state.old  (state-4-to-5:load:adult-core state.old)
+        $(-.old %5)
       ::
           [%5 %adult *]
         =.  cached-state  `[%5 state.old]
@@ -1027,19 +1026,13 @@
 ::  +load: load in old state after reload
 ::
 ++  load
-  =<  |=  $=  old-state
-          $%  [%4 ames-state-4]
-              [%5 ames-state-5]
-              [%6 ^ames-state]
-          ==
+  =<  |=  old-state=[%6 ^ames-state]
       ^+  ames-gate
-      =?  old-state  ?=(%4 -.old-state)  %5^(state-4-to-5 +.old-state)
-      ::  XX  this would crash with ames-state-5 but load is never
-      ::  called with it -- the upgrade is handled by the larval load
-      ::
       ?>  ?=(%6 -.old-state)
       ames-gate(ames-state +.old-state)
   |%
+  ::  +state-4-to-5 called from larval-ames
+  ::
   ++  state-4-to-5
     |=  ames-state=ames-state-4
     ^-  ames-state-4
@@ -1056,6 +1049,7 @@
         message-pump-state
       ship-state
     ames-state
+  ::  +state-5-to-6 called from larval-ames
   ::
   ++  state-5-to-6
     |=  ames-state=ames-state-5
