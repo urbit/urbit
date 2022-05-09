@@ -4,12 +4,16 @@
 ::
 =>  =>
     ::  This core is for testing core and chapter docs.
-    :>  #  %test-core
+    :>  #  %core-test
     :>
     :>    core-summary
     :>
     :>  core-description
     |%
+    :>    chapter-summary
+    :>
+    :>  chapter-description
+    +|  %chapter-test
     ++  empty  ~
     --
   ::
@@ -20,6 +24,7 @@
   +|  %types
   +$  arm-dox  [tape what what what]
   +$  core-dox  [tape what]
+  +$  chapter-dox  [tape what]
   ::
   +|  %helper-functions
   ++  get-item
@@ -39,6 +44,13 @@
     ^-  core-dox
     =/  itm=item  (get-item a)
     ?>  ?=([%core *] itm)
+    [name docs]:itm
+  ::
+  ++  get-chapter-dox
+    |=  a=(list term)
+    ^-  chapter-dox
+    =/  itm=item  (get-item a)
+    ?>  ?=([%chapter *] itm)
     [name docs]:itm
   ::
   +|  %docs-for-arms
@@ -362,8 +374,16 @@
 ::
 ++  test-core
   %+  expect-eq
-    !>  (get-core-dox ~[%test-core])
+    !>  (get-core-dox ~[%core-test])
   ::
     !>  ^-  core-dox
-    ["test-core" `['core-summary' ~[~[[%.y 'core-description']]]]]
+    ["core-test" `['core-summary' ~[~[[%.y 'core-description']]]]]
+::
+++  test-chapter
+  %+  expect-eq
+    !>  (get-chapter-dox ~[%core-test %chapter-test])
+  ::
+    !>  ^-  chapter-dox
+    ["chapter-test" `['chapter-summary' ~[~[[%.y 'chapter-description']]]]]
+::
 --
