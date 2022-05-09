@@ -811,7 +811,7 @@
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
-    =|  cached-state=(unit [%6 ames-state-6])
+    =|  cached-state=(unit [%5 ames-state-5])
     ::
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
@@ -834,8 +834,9 @@
         ==
       ?:  update-ready
         =.  ames-state.adult-gate
+          %-  state-6-to-7:load:adult-core
           ?>  ?=(^ cached-state)
-          (state-6-to-7:load:adult-core +.u.cached-state)
+          (state-5-to-6:load:adult-core +.u.cached-state)
         =.  cached-state  ~
         ~>  %slog.1^leaf/"ames: metamorphosis reload"
         [~ adult-gate]
@@ -917,8 +918,9 @@
         ==
       ?:  update-ready
         =.  ames-state.adult-gate
+          %-  state-6-to-7:load:adult-core
           ?>  ?=(^ cached-state)
-          (state-6-to-7:load:adult-core +.u.cached-state)
+          (state-5-to-6:load:adult-core +.u.cached-state)
         =.  cached-state  ~
         ~>  %slog.1^leaf/"ames: metamorphosis reload"
         [moves adult-gate]
@@ -973,22 +975,22 @@
         =.  state.old  (state-4-to-5:load:adult-core state.old)
         $(-.old %5)
       ::
-          [%5 %adult *]  (load:adult-core %5 state.old)
+          [%5 %adult *]
+        =.  cached-state  `[%5 state.old]
+        ~>  %slog.1^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%5 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %5 state.old)
         larval-gate
       ::
-          [%6 %adult *]
-        =.  cached-state  `[%6 state.old]
-        ~>  %slog.1^leaf/"ames: larva reload"
-        larval-gate
+          [%6 %adult *]  (load:adult-core %6 state.old)
       ::
           [%6 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %6 state.old)
         larval-gate
        ::
           [%7 %adult *]  (load:adult-core %7 state.old)
@@ -1075,9 +1077,13 @@
 ::  +load: load in old state after reload
 ::
 ++  load
-  =<  |=  old-state=[%6 ^ames-state]
+  =<  |=  $=  old-state
+          $%  [%6 ames-state-6]
+              [%7 ^ames-state]
+          ==
       ^+  ames-gate
-      ?>  ?=(%6 -.old-state)
+      =?  old-state  ?=(%6 -.old-state)  %7^(state-6-to-7 +.old-state)
+      ?>  ?=(%7 -.old-state)
       ames-gate(ames-state +.old-state)
   ::
   |%
