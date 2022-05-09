@@ -2,13 +2,24 @@
 ::
 /+  *test, *dprint
 ::
-=>
+=>  =>
+    ::  This core is for testing core and chapter docs.
+    :>  #  %test-core
+    :>
+    :>    core-summary
+    :>
+    :>  core-description
+    |%
+    ++  empty  ~
+    --
+  ::
   :>  #  %test-arms
   :>
   :>    arms used for testing arm documentation
   |%
   +|  %types
   +$  arm-dox  [tape what what what]
+  +$  core-dox  [tape what]
   ::
   +|  %helper-functions
   ++  get-item
@@ -22,6 +33,13 @@
     =/  itm=item  (get-item a)
     ?>  ?=([%arm *] itm)
     [name adoc pdoc cdoc]:itm
+  ::
+  ++  get-core-dox
+    |=  a=(list term)
+    ^-  core-dox
+    =/  itm=item  (get-item a)
+    ?>  ?=([%core *] itm)
+    [name docs]:itm
   ::
   +|  %docs-for-arms
   ++  no-doc  ~
@@ -341,4 +359,11 @@
         `['product-doc' ~]
       `['core-doc' ~]
   ==
+::
+++  test-core
+  %+  expect-eq
+    !>  (get-core-dox ~[%test-core])
+  ::
+    !>  ^-  core-dox
+    ["test-core" `['core-summary' ~[~[[%.y 'core-description']]]]]
 --
