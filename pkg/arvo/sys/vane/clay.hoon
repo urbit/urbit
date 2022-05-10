@@ -5225,13 +5225,13 @@
         flue+&+fod.dom.dojo
         dome+&+dom.dojo
     ==
-  :~  domestic+|+domestic
-      foreign+&+hoy.ruf
-      ford-cache+&+fad.ruf
-      :+  %object-store  %|
+  :~  :+  %object-store  %|
       :~  commits+&+hut.ran.ruf
           pages+&+lat.ran.ruf
       ==
+      domestic+|+domestic
+      foreign+&+hoy.ruf
+      ford-cache+&+fad.ruf
   ==
 ::
 ++  tomb
