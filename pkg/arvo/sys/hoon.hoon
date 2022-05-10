@@ -7865,7 +7865,12 @@
     ::
     :+  %brcl
       [%ktsg spore]
-    ~(relative analyze:(descend 7) 6)
+    :+  %tsls
+      ~(relative analyze:(descend 7) 6)
+    ::  trigger unifying equality
+    ::
+    :+  %tsls  [%dtts $/14 $/2]
+    $/6
   ::
   ++  analyze
     ::  normalize a fragment of the subject
