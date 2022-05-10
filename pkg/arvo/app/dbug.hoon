@@ -825,15 +825,16 @@
     ^-  (list commit)
     %+  turn  yakis
     |=  =yaki
-    :*  r.yaki  p.yaki
+    =/  =tako  (yaki-to-tako:clay yaki)
+    :*  tako  p.yaki
         =/  candidates
           %+  turn
-            (skim yakis |=(can=^yaki (lien p.can |=(=tako =(r.yaki tako)))))
+            (skim yakis |=(can=^yaki (lien p.can |=(t=^tako =(tako t)))))
           |=  can=^yaki
-          r.can
+          (yaki-to-tako can)
         ~(tap in (silt candidates))
         t.yaki
-        .^(@uvI %cs (weld start-path /hash/(scot %uv r.yaki)))
+        .^(@uvI %cs (weld start-path /hash/(scot %uv tako)))
     ==
   ::
   ++  trace-tako

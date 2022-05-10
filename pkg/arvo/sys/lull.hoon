@@ -1853,6 +1853,7 @@
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
   +$  tako  @uvI                                        ::  yaki ref
+  +$  taku  [=ship =desk =aeon]                         ::  exact yaki ref
   +$  toro  [p=@ta q=nori]                              ::  general change
   ++  unce                                              ::  change part
     |*  a=mold                                          ::
@@ -1867,9 +1868,9 @@
         q=(map path (each page lobe))                   ::  namespace
     ==                                                  ::
   +$  yaki                                              ::  commit
-    $:  p=(list tako)                                   ::  parents
+    $:  p=(list tako)  ::TODO  maybe [tako taku]        ::  parents
         q=(map path lobe)                               ::  namespace
-        r=tako                                          ::  self-reference
+        r=taku                                          ::  self-reference
         t=@da                                           ::  date
     ==                                                  ::
   ::
@@ -1877,15 +1878,13 @@
   ::
   ++  page-to-lobe  |=(page (shax (jam +<)))
   ::
-  ::  +make-yaki: make commit out of a list of parents, content, and date.
+  ::  +yaki-to-tako: hash a yaki to get a tako.
   ::
-  ++  make-yaki
-    |=  [p=(list tako) q=(map path lobe) t=@da]
-    ^-  yaki
-    =+  ^=  has
-        %^  cat  7  (sham [%yaki (roll p add) q t])
-        (sham [%tako (roll p add) q t])
-    [p q has t]
+  ++  yaki-to-tako
+    |=  yaki  ::  ~+
+    =+  s=(roll p add)
+    %^  cat  7  (sham [%yaki s q t])
+    (sham [%tako s q t])
   ::  $pile: preprocessed hoon source file
   ::
   ::    /-  sur-file            ::  surface imports from /sur

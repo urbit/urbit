@@ -1842,13 +1842,15 @@
       ..park
     =/  =yaki
       ?-  -.yoki
-        %&  (make-yaki p.p.yoki data now)
+        %&  [p.p.yoki data [her syd +(let.dom)] now]
         %|  ?>  =(data q.p.yoki)
             p.yoki
       ==
+    =/  =tako
+      (yaki-to-tako yaki)
     =:  let.dom  +(let.dom)
-        hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
-        hut.ran  (~(put by hut.ran) r.yaki yaki)
+        hit.dom  (~(put by hit.dom) +(let.dom) tako)
+        hut.ran  (~(put by hut.ran) tako yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
       ==
     =.  file-store.args  lat.ran
@@ -2278,12 +2280,13 @@
               %&  (page-to-lobe +.val)
               %|  +.val
             ==
-          (make-yaki p.yuk lobes now)
+          ::REVIEW  sane? idk!
+          [p.yuk lobes [p.bas.fiz q.bas.fiz let.initial-dome] now]
         ==
       %=  $
         next-yaki  merged-yaki
         merges     t.merges
-        hut.ran    (~(put by hut.ran) r.merged-yaki merged-yaki)
+        hut.ran    (~(put by hut.ran) (yaki-to-tako merged-yaki) merged-yaki)
         lat.rag    (~(uni by lat.u.merge-result) lat.rag)
         lat.ran    (~(uni by lat.u.merge-result) lat.ran)
         parents    [(~(got by hit.ali-dom) let.ali-dom) parents]
@@ -2354,6 +2357,8 @@
         `[conflicts=~ new=|+ali-yaki lat=~]
       ::
       =/  bob-yaki  (need bob-yaki)
+      =/  ali-tako  (yaki-to-tako ali-yaki)
+      =/  bob-tako  (yaki-to-tako bob-yaki)
       |^
       ^-  (unit merge-result)
       ?-    germ
@@ -2364,11 +2369,11 @@
       ::  bob as parents.
       ::
           %only-this
-        ?:  =(r.ali-yaki r.bob-yaki)
+        ?:  =(ali-tako bob-tako)
           ~
         :*  ~
             conflicts=~
-            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki q.bob-yaki)]
+            new=&+[[bob-tako ali-tako ~] (to-yuki q.bob-yaki)]
             lat=~
         ==
       ::
@@ -2378,11 +2383,11 @@
       ::  parents.
       ::
           %only-that
-        ?:  =(r.ali-yaki r.bob-yaki)
+        ?:  =(ali-tako bob-tako)
           ~
         :*  ~
             conflicts=~
-            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki q.ali-yaki)]
+            new=&+[[bob-tako ali-tako ~] (to-yuki q.ali-yaki)]
             lat=~
         ==
       ::
@@ -2391,12 +2396,12 @@
       ::  which are not in the destination desk.
       ::
           %take-this
-        ?:  =(r.ali-yaki r.bob-yaki)
+        ?:  =(ali-tako bob-tako)
           ~
         =/  new-data  (~(uni by q.ali-yaki) q.bob-yaki)
         :*  ~
             conflicts=~
-            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
+            new=&+[[bob-tako ali-tako ~] (to-yuki new-data)]
             lat=~
         ==
       ::
@@ -2405,12 +2410,12 @@
       ::  which are not in the source commit.
       ::
           %take-that
-        ?:  =(r.ali-yaki r.bob-yaki)
+        ?:  =(ali-tako bob-tako)
           ~
         =/  new-data  (~(uni by q.bob-yaki) q.ali-yaki)
         :*  ~
             conflicts=~
-            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
+            new=&+[[bob-tako ali-tako ~] (to-yuki new-data)]
             lat=~
         ==
       ::
@@ -2423,22 +2428,22 @@
       ::  commit to bob's desk and checkout.
       ::
           %fine
-        ?:  =(r.ali-yaki r.bob-yaki)
+        ?:  =(ali-tako bob-tako)
           ~
-        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
+        ?:  (~(has in (reachable-takos:ze bob-tako)) ali-tako)
           ~
-        ?.  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
+        ?.  (~(has in (reachable-takos:ze ali-tako)) bob-tako)
           ~_  %bad-fine-merge
           ~|  "tried fast-forward but is not ancestor or descendant"
           !!
         `[conflicts=~ new=|+ali-yaki lat=~]
       ::
           ?(%meet %mate %meld %meet-this %meet-that)
-        ?:  =(r.ali-yaki r.bob-yaki)
+        ?:  =(ali-tako bob-tako)
           ~
-        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
+        ?:  (~(has in (reachable-takos:ze bob-tako)) ali-tako)
           ~
-        ?:  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
+        ?:  (~(has in (reachable-takos:ze ali-tako)) bob-tako)
           $(germ %fine)
         =/  merge-points  (find-merge-points ali-yaki bob-yaki)
         ?~  merge-points
@@ -2503,7 +2508,7 @@
           cal.bob-diffs
         :*  ~
             conflicts=~
-            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki hat)]
+            new=&+[[bob-tako ali-tako ~] (to-yuki hat)]
             lat=~
         ==
       ==
@@ -2771,7 +2776,10 @@
           cab
         =/  del=(map path ?)
           (~(run by (~(uni by old.dal) old.dob)) |=(~ %|))
-        =/  new  &+[[r.bob r.ali ~] (~(run by hat) |=(=lobe |+lobe))]
+        =/  new=yoki
+          :+  %&
+            [(yaki-to-tako bob) (yaki-to-tako ali) ~]
+          (~(run by hat) |=(=lobe |+lobe))
         :*  ~
             (silt (turn ~(tap by con) head))
             new
@@ -2790,10 +2798,10 @@
     ^-  (set yaki)
     ::  Loop through ancestors breadth-first, lazily generating ancestry
     ::
-    =/  ali-takos  (reachable-takos:ze r.ali-yaki)
+    =/  ali-takos  (reachable-takos:ze (yaki-to-tako ali-yaki))
     ::  Tako worklist
     ::
-    =/  takos=(qeu tako)  [r.bob-yaki ~ ~]
+    =/  takos=(qeu tako)  [(yaki-to-tako bob-yaki) ~ ~]
     ::  Mergebase candidates.  Have proven they're common ancestors, but
     ::  not that they're a most recent
     ::
@@ -3280,7 +3288,8 @@
       =*  yaki-loop  $
       ?~  yakis
         ~
-      =/  =norm  (~(gut by tom.dom) r.i.yakis nor.dom)
+      =/  =tako  (yaki-to-tako i.yakis)
+      =/  =norm  (~(gut by tom.dom) tako nor.dom)
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
       |-  ^-  (list [aeon path lobe])
       =*  blob-loop  $
@@ -3292,16 +3301,8 @@
               (~(has in miss) lobe)
           ==
         blob-loop(lobes t.lobes)
-      =;  =aeon
-        :-  [aeon i.lobes]
-        blob-loop(lobes t.lobes, miss (~(put in miss) lobe))
-      ::  find the aeon corresponding to the commit containing this lobe.
-      ::  we unfortunately do not have a reverse lookup map.
-      ::
-      =/  l=(list [a=aeon t=tako])  ~(tap by gar.nako)
-      |-
-      ?~  l  ~|([%missing-aeon-for-tako her syd `@uw`r.i.yakis] !!)
-      ?:(=(r.i.yakis t.i.l) a.i.l $(l t.l))
+      :-  [aeon.r.i.yakis i.lobes]
+      blob-loop(lobes t.lobes, miss (~(put in miss) lobe))
     ::
     ::  Receive backfill response
     ::
@@ -3389,7 +3390,7 @@
       ::  hut: updated commits by hash
       ::
       =/  hit  (~(uni by hit.dom) gar.nako)
-      =/  nut  (turn ~(tap in lar.nako) |=(=yaki [r.yaki yaki]))
+      =/  nut  (turn ~(tap in lar.nako) |=(=yaki [(yaki-to-tako yaki) yaki]))
       =/  hut  (~(uni by (malt nut)) hut.ran)
       ::  traverse updated state and sanity check
       ::
@@ -4082,8 +4083,7 @@
         =/  yaki-a  (~(got by hut.ran) tako-a)
         =/  yaki-b  (~(got by hut.ran) tako-b)
         %+  turn    ~(tap in (find-merge-points yaki-a yaki-b))
-        |=  =yaki
-        r.yaki
+        yaki-to-tako
       ::
           %base
         ?>  ?=(^ t.t.pax)
@@ -4096,8 +4096,7 @@
         =/  our-yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
         =/  other-yaki  (~(got by hut.ran) (~(got by hit.other) let.other))
         %+  turn  ~(tap in (find-merge-points other-yaki our-yaki))
-        |=  =yaki
-        r.yaki
+        yaki-to-tako
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
@@ -4645,8 +4644,14 @@
       +$  nako-10
         $:  gar=(map aeon tako)
             let=aeon
-            lar=(set yaki)
+            lar=(set yaki-10)
             bar=(set blob-10)
+        ==
+      +$  yaki-10
+        $:  p=(list tako)
+            q=(map path lobe)
+            r=tako
+            t=@da
         ==
       +$  melt-10
         [bas=beak con=(list [beak germ]) sto=(map beak (unit dome-clay-10))]
@@ -4938,7 +4943,10 @@
               %+  turn  ~(tap to nako.update-state-10)
               |=  nak=(unit nako-10)
               ?~  nak  ~
-              `u.nak(bar ~)
+              =-  `u.nak(bar ~, lar -)
+              %-  ~(run in lar.u.nak)
+              ::TODO  how to find taku?
+              |=(yaki-10 `yaki`[p q *taku t])
             ==
           ==
         ==
