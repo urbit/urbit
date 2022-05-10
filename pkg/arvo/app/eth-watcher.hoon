@@ -367,6 +367,17 @@
       =/  dog=watchdog
         ?:  restart  *watchdog
         (~(got by dogs.state) path.poke)
+      =+  pending=(sort ~(tap in ~(key by pending-logs.dog)) lth)
+      =?  pending-logs.dog
+          ?:  restart  |
+          ?~  pending  |
+          (gte i.pending from.config.poke)
+        ?>  ?=(^ pending)
+        ::  if there are pending logs newer than what we poke with,
+        ::  we need to clear those too avoid processing duplicates
+        ::
+        ~&  %dropping-unreleased-logs^[from+i.pending n+(lent pending)]
+        ~
       %_  dog
         -       config.poke
         number  from.config.poke
