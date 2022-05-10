@@ -28,7 +28,7 @@ import { Link } from 'react-router-dom';
 import { AppPermalink, referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 import { RemoteContentWrapper } from './wrapper';
-import { useEmbed } from '~/logic/state/embed';
+import { Suspender } from '~/logic/lib/suspend';
 import { IS_SAFARI } from '~/logic/lib/platform';
 import useDocketState, { useTreaty } from '~/logic/state/docket';
 import { AppTile } from '~/views/apps/permalinks/embed';
@@ -320,6 +320,7 @@ type RemoteContentOembedProps = {
   renderUrl?: boolean;
   thumbnail?: boolean;
   tall?: boolean;
+  oembed: Suspender<any>;
 } & RemoteContentEmbedProps &
   PropFunc<typeof Box>;
 
@@ -333,10 +334,9 @@ export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
   RemoteContentOembedProps
 >((props, ref) => {
-  const { url, renderUrl = false, thumbnail = false, ...rest } = props;
-  const oembed = useEmbed(url);
+  const { url, oembed, renderUrl = false, thumbnail = false, ...rest } = props;
+
   const embed = oembed.read();
-  const fallbackError  = new Error('fallback');
 
   const [aspect, width, height] = useMemo(() => {
     if(!('height' in embed && typeof embed.height === 'number'
@@ -374,11 +374,9 @@ export const RemoteContentOembed = React.forwardRef<
             dangerouslySetInnerHTML={{ __html: embed.html }}
           ></EmbedBox>
         </EmbedContainer>
-      ) : renderUrl ? (
+      ) : (
         <RemoteContentEmbedFallback url={url} />
-        ) : (() => {
- throw fallbackError;
-})()
+        )
       }
     </Col>
   );
