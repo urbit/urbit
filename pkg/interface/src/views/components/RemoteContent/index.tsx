@@ -130,7 +130,7 @@ function RemoteContentInner(props: RemoteContentProps) {
     return (
       <Box mt={1} mb={2} flexShrink={0}>
         <AsyncFallback fallback={fallback}>
-          <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
+          <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} oembed={oembed} />
         </AsyncFallback>
       </Box>
     );
