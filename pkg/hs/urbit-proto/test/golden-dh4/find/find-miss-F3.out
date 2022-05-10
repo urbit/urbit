@@ -1,0 +1,53 @@
+PARSED
+
+=/  a
+  p=1
+q.a
+
+SOFT
+
+=+  a=p=1
+q.a
+
+ERROR
+
+  trace:  play:
+          lvl   0
+          sut   0|*
+          ----
+          code  =+  a=p=1
+                q.a
+
+
+          play:
+          lvl   0
+          sut   0|*
+          ----
+          code  a=p=1
+
+          play:
+          lvl   0
+          sut   0|*
+          ----
+          code  p=1
+
+          nest:
+          have  p=@ud
+          need  $
+
+          play:
+          lvl   1
+          sut   [1|a=p=@ud 0|*]
+          ----
+          code  q.a
+
+          find:
+          loc   (1,1)
+          sut   [1|a=p=@ud 0|*]
+          ----
+          wing  q.a
+
+
+  find.q
+  type  p=@ud
+

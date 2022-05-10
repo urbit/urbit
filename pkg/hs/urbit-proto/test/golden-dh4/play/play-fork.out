@@ -1,0 +1,19 @@
+PARSED
+
+?(%foo %bar)
+
+SOFT
+
+?(%foo %bar)
+
+CODE
+
+?(%foo %bar)
+
+TYPE
+
+$
+
+BASE
+
+?(%foo %bar)

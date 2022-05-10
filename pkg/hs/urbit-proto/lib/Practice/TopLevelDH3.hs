@@ -8,6 +8,7 @@ import Practice.DependentHoon3
 import Practice.Hoon2DependentHoon3
 import Practice.HoonSyntax
 import Practice.Render
+import Practice.RenderDH3Orphans()
 
 data Err
   = ErrRead Text

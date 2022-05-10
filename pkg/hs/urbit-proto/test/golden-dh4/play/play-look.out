@@ -1,0 +1,23 @@
+PARSED
+
+=/  a
+  1
+a
+
+SOFT
+
+=+  a=1
+a
+
+CODE
+
+=+  1
++2
+
+TYPE
+
+@ud
+
+BASE
+
+1

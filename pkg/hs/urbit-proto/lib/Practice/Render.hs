@@ -7,10 +7,6 @@ import Data.List (unfoldr)
 import Data.Text (stripEnd)
 import Data.Void
 import Urbit.Atom (atomUtf8)
-
-import Practice.DependentHoon3 hiding (Line, chip)
-import qualified Practice.DependentHoon3 as DH3
-import Practice.Hoon2DependentHoon3
 import Practice.HoonCommon
 import Practice.HoonSyntax
 
@@ -146,8 +142,25 @@ class Rolling r where
 instance Rolling Void where
   roll = absurd
 
+instance Rolling () where
+  roll () = leaf "~"
+
 instance Rolling Text where
   roll = leaf
+
+instance Rolling Int where
+  roll i = leaf $ tshow i
+
+instance Rolling Atom where
+  roll a = leaf $ tshow a
+
+instance (Rolling a) => Rolling (Maybe a) where
+  roll = \case
+    Nothing -> leaf "~"
+    Just a -> going
+      (\(k, s) -> (k, "`" <> s))
+      (\t -> Palm ":-" [Leaf "~", t])
+      (roll a)
 
 instance (Rolling a, Rolling b) => Rolling (Either a b) where
   roll = \case
@@ -157,197 +170,10 @@ instance (Rolling a, Rolling b) => Rolling (Either a b) where
 instance (Rolling a, Rolling b) => Rolling (a, b) where
   roll (a, b) = Huge $ Rose "" "" [tank $ roll a, tank $ roll b]
 
-instance Rolling Soft where
-  roll = roll . shut
+instance (Rolling a, Rolling b, Rolling c) => Rolling (a, b, c) where
+  roll (a, b, c) = Huge $ Rose "" ""
+    [tank $ roll a, tank $ roll b, tank $ roll c]
 
-instance Show a => Rolling (Code a) where
-  roll = roll . rest
-
-instance Show a => Rolling (Base a) where
-  roll = roll . lock
-
-instance Rolling Pelt where
-  roll = roll . flap
-
-instance Rolling [Act] where
-  roll as = Huge $ Rose "trace:" "" $ map (tank . roll) $ reverse as
-
-baseToHoon lvl bas = shut $ rest $ loft lvl bas
-
-rollSL lvl sl = roll case sl of
-  SeL r -> Clhp Wild (baseToHoon lvl r)
-  SeR l -> Clhp (baseToHoon lvl l) Wild
-
-rollTL lvl tl = roll case tl of
-  TyL b c -> Tsgr (baseToHoon lvl b) $ Bccl Wild [shut $ rest c]
-  TyR b -> Bccl (baseToHoon lvl b) [Wild]
-  TyF f -> Ktts (flap $ mred f) Wild
-
-rollSLs lvl sls =
-  Huge $ Stem "" "" [] (sls <&> \sl -> ("$$", tank $ rollSL lvl sl, Leaf ""))
-
-rollTLs lvl tls =
-  Huge $ Stem "" "" [] (tls <&> \tl -> ("**", tank $ rollTL lvl tl, Leaf ""))
-
-instance Rolling ActTree where
-  roll = \case
-    ActTree a cs -> Huge $ Rose "" ""
-      [ tank $ roll a
-      , Rose "" "" $ map (tank . roll) $ reverse cs
-      ]
-    ActNote n -> roll n
-
-instance Rolling Act where
-  roll = \case
-    ActRoot -> leaf "root"
-    ActFits f t u -> Huge $ Stem (tshow f <> ":") "" []
-      [ ("have", tank $ roll t, Leaf "")
-      , ("need", tank $ roll u, Leaf "")
-      ]
-    ActSeal Con{..} DH3.Line{lem, lyt, sez, tez} -> Huge $ Stem "seal:" "" []
-      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
-      , ("----", Leaf "",          Leaf "")
-      , ("sez ", tank $ rollSLs lvl sez, Leaf "")
-      , ("tez ", tank $ rollTLs lvl tez, Leaf "")
-      , ("lem ", tank $ roll lem, Leaf "")
-      , ("lyt ", tank $ roll lyt, Leaf "")
-      ]
-    ActFind Con{lvl, sut, ken} w -> Huge $ Stem "find:" "" []
-      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
-      , ("ken ", tank $ roll $ loft lvl ken,  Leaf "")
-      , ("----", Leaf "",          Leaf "")
-      , ("wing", tank $ roll w,    Leaf "")
-      ]
-    ActMeld b c -> Huge $ Stem "meld:" "" []
-      [ ("base", tank $ roll b, Leaf "")
-      , ("diff", tank $ roll b, Leaf "")
-      ]
-    ActFuse Con{lvl, sut, ken} (b, t) p -> Huge $ Stem "fuse:" "" []
-      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
-      , ("ken ", tank $ roll $ loft lvl ken,  Leaf "")
-      , ("----", Leaf "",          Leaf "")
-      , ("semi", tank $ roll b,    Leaf "")
-      , ("type", tank $ roll $ loft lvl t,    Leaf "")
-      , ("skin", tank $ roll p,    Leaf "")
-      ]
-    ActCrop Con{lvl, sut, ken} t p -> Huge $ Stem "fuse:" "" []
-      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
-      , ("ken ", tank $ roll $ loft lvl ken,  Leaf "")
-      , ("----", Leaf "",          Leaf "")
-      , ("type", tank $ roll $ loft lvl sut,    Leaf "")
-      , ("skin", tank $ roll p,    Leaf "")
-      ]
-    ActFish p -> Huge $ Stem "fish:" "" []
-      [ ("skin", tank $ roll p, Leaf "")
-      ]
-    ActToil Con{lvl, sut, ken} f p t -> Huge $ Stem "toil:" "" []
-      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
-      , ("ken ", tank $ roll $ loft lvl ken,  Leaf "")
-      , ("----", Leaf "",          Leaf "")
-      , ("mode", Leaf $ tshow f,   Leaf "")
-      , ("skin", tank $ roll p,    Leaf "")
-      , ("type", tank $ roll $ loft lvl t,    Leaf "")
-      ]
-    ActRomp Con{lvl, sut, ken} p -> Huge $ Stem "romp:" "" []
-      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
-      , ("ken ", tank $ roll $ loft lvl ken,  Leaf "")
-      , ("----", Leaf "",          Leaf "")
-      , ("skin", tank $ roll p,    Leaf "")
-      ]
-    ActWork Con{lvl, sut, ken} f c t -> Huge $ Stem "work:" "" []
-      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
-      , ("ken ", tank $ roll $ loft lvl ken,  Leaf "")
-      , ("----", Leaf "",          Leaf "")
-      , ("mode", Leaf $ tshow f,   Leaf "")
-      , ("code", tank $ roll c,    Leaf "")
-      , ("type", tank $ roll $ loft lvl t,    Leaf "")
-      ]
-    ActPlay Con{lvl, sut, ken} c -> Huge $ Stem "play:" "" []
-      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
-      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
-      , ("ken ", tank $ roll $ loft lvl ken,  Leaf "")
-      , ("----", Leaf "",          Leaf "")
-      , ("code", tank $ roll c, Leaf "")
-      ]
-    ActDone -> leaf "done"
-
-instance Rolling Fail where
-  roll = \case
-    PareFree r b -> Huge $ Stem "pare-free:" "" []
-      [ ("rump", Leaf $ tshow r, Leaf "")
-      , ("base", tank $ roll b, Leaf "")
-      ]
-    SealSync Con{lvl} sez tez -> Huge $ Stem "seal-sync:" "" []
-      [ ("sez ", tank $ rollSLs lvl sez, Leaf "")
-      , ("tez ", tank $ rollTLs lvl tez, Leaf "")
-      ]
-    FindFail f t -> Huge $ Stem ("find." <> printLimb f) "" []
-      [ ("type", tank $ roll t, Leaf "")
-      ]
-    FitsFail f t u -> Huge $ Stem (tshow f <> "-fail:") "" []
-      [ ("have", tank $ roll t, Leaf "")
-      , ("need", tank $ roll u, Leaf "")
-      ]
-    MeldFail b c -> Huge $ Stem "meld-fail:" "" []
-      [ ("onto", tank $ roll b, Leaf "")
-      , ("unto", tank $ roll c, Leaf "")
-      ]
-    FuseFail (b, t) p -> Huge $ Stem "fuse-fail:" "" []
-      [ ("base", tank $ roll b, Leaf "")
-      , ("type", tank $ roll t, Leaf "")
-      , ("skin", tank $ roll p, Leaf "")
-      ]
-    FuseFits f -> leaf ("fuse-" <> tshow f)
-    CropFail t p -> Huge $ Stem "crop-fail:" "" []
-      [ ("type", tank $ roll t, Leaf "")
-      , ("skin", tank $ roll p, Leaf "")
-      ]
-    CropFits f -> leaf ("crop-" <> tshow f)
-    FishSame s -> Huge $ Stem "crop-fail:" "" []
-      [ ("hoon", tank $ roll s, Leaf "")
-      ]
-    FishPike p q -> Huge $ Stem "fish-pike:" "" []
-      [ ("skin", tank $ roll p, Leaf "")
-      , ("skin", tank $ roll q, Leaf "")
-      ]
-    ToilFish p t -> Huge $ Stem "toil-fish:" "" []
-      [ ("skin", tank $ roll p, Leaf "")
-      , ("type", tank $ roll t, Leaf "")
-      ]
-    RompWild p -> Huge $ Palm "romp-wild:" [tank $ roll p]
-    NeedGate t -> Huge $ Palm "need-gate:" [tank $ roll t]
-    WorkMiss s b -> Huge $ Stem "work-miss:" "" []
-      [ ("test", tank $ roll s, Leaf "")
-      , ("base", tank $ roll b, Leaf "")
-      ]
-    PlayMiss s b -> Huge $ Stem "play-miss:" "" []
-      [ ("test", tank $ roll s, Leaf "")
-      , ("base", tank $ roll b, Leaf "")
-      ]
-    BailNote t -> Huge $ Palm "bail-note:" [Leaf t]
-    BailFail -> leaf "bail-fail"
-
-instance Rolling Note where
-  roll = \case
-    NoteType msg t -> Huge $ Stem "note:" "" []
-      [ ("text", Leaf msg,      Leaf "")
-      , ("type", tank $ roll t, Leaf "")
-      ]
-    NoteBase msg b -> Huge $ Stem "note:" "" []
-      [ ("text", Leaf msg,      Leaf "")
-      , ("base", tank $ roll b, Leaf "")
-      ]
-    NoteCode msg c -> Huge $ Stem "note:" "" []
-      [ ("text", Leaf msg,      Leaf "")
-      , ("code", tank $ roll c, Leaf "")
-      ]
 
 -- | Limit the width of a wide form in two ways.
 chop :: Int -> Roll -> Roll
@@ -461,7 +287,7 @@ instance Rolling Bass where
     Nul -> leaf "$~"
     Vod -> leaf "!"
     Fok [a] au -> leaf $ showGlow a au
-    Fok as au -> leaf $ "?(" <> intercalate " " (map (`showGlow` au) as) <> ")"
+    Fok as au -> leaf $ "?(" <> intercalate " " (map (`showRock` au) as) <> ")"
     Aur au -> leaf $ "@" <> au
     Typ -> leaf "$"
 
@@ -473,6 +299,7 @@ instance Rolling Hoon where
     Adam Sand a au -> leaf $ showSand a au
     --
     Bass b -> roll b
+    Bcbr s ms -> Huge $ Stem "$|" "--" [tank $ roll s] (arms ms)
     Bccb h -> going (\(_, s) -> (Long, "_" <> s)) (Palm "$_" . singleton)
             $ roll h
     Bccl s ss -> running "$:" "==" "{" "}" (map roll $ s:ss)
@@ -481,13 +308,16 @@ instance Rolling Hoon where
       clause = \case
         (a, au, Bccl s ss) -> tank $ roll $ Bccl (Bass $ Fok [a] au) (s:ss)
         (a, au, s) -> tank $ roll $ Bccl (Bass $ Fok [a] au) [s]
-    Bcdt s ms -> Huge $ Stem "$." "--" [tank $ roll s] (arms ms)
+    Bcgl s t -> fixed "$<" "$<(" ")" [roll s, roll t]  -- XX FIXME
+    Bcgr s t -> case (roll s, smol $ roll t) of
+      (Smol Scat _ w, Just (_, v)) -> Smol Long tnk $ w <> "?(" <> v <> ")"
+      _ -> Huge tnk
+      where tnk = Rose "$>" "==" $ map (tank . roll) [s, t]
     Bchp s t -> fixed "$-" "$-(" ")" [roll s, roll t]
     Bckt s t -> fixed "$^" "$^(" ")" [roll s, roll t]
     Bcts s t -> binary "$=" "|" (roll s) (roll t)
     Bcpt s t -> fixed "$@" "$@(" ")" [roll s, roll t]
-    Bcwt m ms -> Huge $ Rose "$?" "==" (map (tank . roll) $ m:ms)
-    Bczp m ms -> Huge $ Rose "$!" "==" (map (tank . roll) $ m:ms)
+    Bcwt ms -> Huge $ Stem "$?" "--" [] (arms ms)
     --
     Brcn ms -> Huge $ Stem "|%" "--" [] (arms ms)
     Brts s h -> fixed "|=" "|=(" ")" [roll s, roll h]
@@ -528,6 +358,7 @@ instance Rolling Hoon where
     Ktwt h -> fixed "^?" "^?(" ")" [roll h]
     Ktts s h -> binary "^=" "=" (roll s) (roll h)
     Ktcl s -> fixed "^:" "^:(" ")" [roll s]
+    Ktcn s -> fixed "^%" "^%(" ")" [roll s]
     Ktzp s h -> case (roll s, roll h) of
       (Smol _ _ ss, Smol _ _ hh) -> Smol Long tnk $ "`" <> ss <> "`" <> hh
       _ -> Huge tnk
@@ -568,5 +399,8 @@ instance Rolling Hoon where
       Huge t -> Huge $ Palm "?!" [t]
     --
     Zpzp -> leaf "!!"
+    --
+    Hxgl h j -> fixed "#<" "#<(" ")" (map roll $ [h,j])
+    Hxgr h hs -> fixed "#>" "#>(" ")" (map roll $ h:hs)
    where
     arms ms = mapToList ms <&> \(arm, typ) -> ("++", Leaf arm, tank $ roll typ)

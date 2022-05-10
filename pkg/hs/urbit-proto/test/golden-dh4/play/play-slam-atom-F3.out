@@ -1,0 +1,18 @@
+PARSED
+
+(1 2)
+
+SOFT
+
+(1 2)
+
+ERROR
+
+  trace:  play:
+          lvl   0
+          sut   0|*
+          ----
+          code  (1 2)
+
+
+  need-gate:  @ud

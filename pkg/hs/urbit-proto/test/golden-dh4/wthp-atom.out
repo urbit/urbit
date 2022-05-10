@@ -1,0 +1,40 @@
+PARSED
+
+%.  2
+|=  x=@
+^-  @t
+?-(x 1 "hello", 2 "bye", 3 "no way!", _ "end of history")
+
+SOFT
+
+%-  |=  x=@
+    ^-  @t
+    ?:  ?=(%1 x)
+      "hello"
+    ?:  ?=(%2 x)
+      "bye"
+    ?:  ?=(%3 x)
+      "no way!"
+    ??  ?=(_ x)
+    "end of history"
+2
+
+CODE
+
+%-  |=  *
+    ?:  ?=(%1 +2)
+      "hello"
+    ?:  ?=(%2 +2)
+      "bye"
+    ?:  ?=(%3 +2)
+      "no way!"
+    "end of history"
+2
+
+TYPE
+
+@t
+
+BASE
+
+"bye"

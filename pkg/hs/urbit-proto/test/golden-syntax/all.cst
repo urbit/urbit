@@ -8,7 +8,7 @@ Cltr
   , Bass (Fok [ 0 ] "n")
   , Bass Vod
   , Bass (Fok [ 1 ] "ud")
-  , Bass (Fok [ 1 , 2 ] "")
+  , Bass (Fok [ 1 , 2 ] "ud")
   , Bass (Aur "")
   , Bass (Aur "tas")
   , Bass Typ

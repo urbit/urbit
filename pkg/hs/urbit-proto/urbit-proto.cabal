@@ -33,9 +33,12 @@ library
       Practice.HoonCommon
       Practice.HoonSyntax
       Practice.Render
+      Practice.RenderDH3Orphans
+      Practice.RenderDH4Orphans
       Practice.SimpleHoon
       Practice.SimpleLambda
       Practice.TopLevelDH3
+      Practice.TopLevelDH4
       Practice.TopLevelDL
       Rule
       SimpleNoun
@@ -201,6 +204,7 @@ test-suite proto-test
   main-is: Main.hs
   other-modules:
       DependentHoon3GoldenTests
+      DependentHoon4GoldenTests
       DependentLambdaGoldenTests
       DeppyCoreTests
       DH3PropertyTests

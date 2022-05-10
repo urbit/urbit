@@ -1,0 +1,50 @@
+PARSED
+
+%.  %b
+|=  color=?(%r %g %b)
+^-  @t
+?-(color %r "red")
+
+SOFT
+
+%-  |=  color=?(%b %g %r)
+    ^-  @t
+    ??  ?=(%114 color)
+    "red"
+%b
+
+ERROR
+
+  trace:  play:
+          lvl   0
+          sut   0|*
+          ----
+          code  %-  |=  color=?(%b %g %r)
+                    ^-  @t
+                    ??  ?=(%114 color)
+                    "red"
+                %b
+
+
+          play:
+          lvl   0
+          sut   0|*
+          ----
+          code  |=  color=?(%b %g %r)
+                ^-  @t
+                ??  ?=(%114 color)
+                "red"
+
+
+          tire:
+          fish
+                >>  [%114 _]
+
+
+          type  [color=?(%b %g %r) 0|*]
+
+
+  tire-fish:
+  axis  2
+  miss  [%98 _]
+

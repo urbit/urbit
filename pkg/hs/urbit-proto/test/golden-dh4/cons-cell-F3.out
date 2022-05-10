@@ -1,0 +1,49 @@
+PARSED
+
+^-  {@ @ @}
+[1 2]
+
+SOFT
+
+^-  {@ @ @}
+[1 2]
+
+ERROR
+
+  trace:  play:
+          lvl   0
+          sut   0|*
+          ----
+          code  ^-  {@ @ @}
+                [1 2]
+
+
+          work:
+          lvl   0
+          sut   0|*
+          ----
+          mode  nest
+          code  [1 2]
+          type  {@ @ @}
+
+          work:
+          lvl   0
+          sut   0|*
+          ----
+          mode  nest
+          code  2
+          type  {@ @}
+
+          nest:
+          have  @ud
+          need  =>  [1 0]
+                {@ @}
+
+
+
+  nest-fail:
+  have  @ud
+  need  =>  [1 0]
+        {@ @}
+
+

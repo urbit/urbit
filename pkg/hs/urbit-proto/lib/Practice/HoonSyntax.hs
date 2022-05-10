@@ -11,8 +11,7 @@ import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 import Urbit.Atom (utf8Atom)
 
-import Practice.HoonCommon
-  (Atom, Aura, Bass(..), Term, Grit(..), Wing, Limb(..))
+import Practice.HoonCommon hiding (hop, run)
 
 data Hoon
   = Wung Wing
@@ -20,17 +19,17 @@ data Hoon
   | Adam Grit Atom Aura
   --
   | Bass Bass
-  | Bcbr (Map Term Spec)  -- ^ lead core type (prev $!, then $?) XX overlap ?(%|)
+  | Bcbr Spec (Map Term Spec)  -- ^ gold core type  XX overlap ?(%|)
   | Bccb Hoon  -- ^ type of expression
-  | Bccl Spec [Spec]  -- ^ tuple
+  | Bccl Spec [Spec]  -- ^ rail / dependent cell type
   | Bccn [(Atom, Aura, Spec)]  -- ^ tagged union
-  | Bcdt Spec (Map Term Spec)  -- ^ gold core type, allegedly (may change this)
+  | Bcgl Spec Skin  -- ^ crop type (speculative)
+  | Bcgr Spec Skin  -- ^ fuse type
   | Bchp Spec Spec  -- ^ function
   | Bckt Spec Spec  -- ^ god save me
-  | Bcts Skin Spec  -- ^ facialized type
+  | Bcts Hoon Spec  -- ^ singleton type
   | Bcpt Spec Spec  -- ^ atomic-cellular disjunction
-  | Bcwt Spec [Hoon]  -- ^ fork type
-  | Bczp Spec [Hoon]  -- ^ crop type (speculative)
+  | Bcwt (Map Term Spec)  -- ^ lead core type
   --
   | Brcn (Map Term Hoon)
   | Brts Skin Hoon
@@ -85,6 +84,7 @@ data Hoon
   -- | Tscm
   --
   | Wtbr [Hoon]
+  -- TODO allow arbitrary Hoon, move =+ desugaring to open.
   | Wthp Wing [(Skin, Hoon)]
   | Wtcl Hoon Hoon Hoon
   | Wtdt Hoon Hoon Hoon
@@ -99,6 +99,9 @@ data Hoon
   | Wtzp Hoon
   --
   | Zpzp
+  --
+  | Hxgl Hoon Hoon    -- for printing Kill', not parsed
+  | Hxgr Hoon [Hoon]  -- for printing Alts'; not parsed
   deriving (Eq, Ord, Show)
 
 -- | Patterns
@@ -167,17 +170,17 @@ spec = hoon
 -- | Regular forms.
 rune :: Parser Hoon
 rune = choice
-  [ hop  "$|" Bcbr term spec
+  [ hop1 "$|" Bcbr spec term spec
   , r1   "$_" Bccb hoon
   , run1 "$:" Bccl hoon hoon
   , run  "$%" id spec >>= bccn
-  , hop1 "$." Bcdt spec term spec
+  , r2   "$<" Bcgl spec skin
+  , r2   "$>" Bcgr spec skin
   , r2   "$-" Bchp spec spec
   , r2   "$^" Bckt spec spec
-  , r2   "$=" Bcts skin spec
+  , r2   "$=" Bcts hoon spec
   , r2   "$@" Bcpt spec spec
-  , run1 "$?" Bcwt spec hoon
-  , run1 "$!" Bczp spec hoon
+  , hop  "$?" Bcwt term spec
   --
   , hop  "|%" Brcn term hoon
   , r2   "|=" Brts skin hoon
@@ -239,22 +242,26 @@ rune = choice
  where
   bccn :: [Hoon] -> Parser Hoon
   bccn ss = Bccn <$> concat <$> for ss \case
+    -- XX do something more principled here.
     Bccl _ [] -> fail "$% clause must be cellular"
     Bccl (Bass (Fok as au)) (t:ts) -> pure $ map (, au, Bccl t ts) as
-    _ -> fail "$% clause must be a cell type with atomic head"
+    Bccl (Adam Rock a au) (t:ts) -> pure [(a, au, Bccl t ts)]
+    Cltr (Bass (Fok as au) : ts) -> pure $ map (, au, Cltr ts) as
+    Cltr (Adam Rock a au : ts) -> pure [(a, au, Cltr ts)]
+    t -> fail ("$% clause must be a cell type with atomic head: " <> show t)
 
 -- | Irregular forms including binary operators.
 long :: Parser Hoon
 long = wide do
   hd <- rune <|> scat
   choice
-    [ char '='  *> hoon <&> Ktts hd
-    , char '|'  *> spec <&> Bcts hd
-    , char '/'  *> spec <&> Ktfs hd
-    , char '\\' *> hoon <&> Kthp hd
-    , char ':'  *> hoon <&> Tsgl hd
-    , run  "?"  (Bcwt hd) hoon
-    , run  "!"  (Bczp hd) hoon
+    [ char   '='  *> hoon <&> Ktts hd
+    , char   '|'  *> spec <&> Bcts hd
+    , char   '/'  *> spec <&> Ktfs hd
+    , char   '\\' *> hoon <&> Kthp hd
+    , char   ':'  *> hoon <&> Tsgl hd
+    , string "?(" *> skin <* char ')' <&> Bcgr hd
+    , string "!(" *> skin <* char ')' <&> Bcgl hd
     , case hd of Wung w -> do
                    char '('
                    edits <- sepBy ((,) <$> wing <* ace <*> hoon) (string ", ")
@@ -300,7 +307,9 @@ scat = wide $ choice
   -- TODO autonamer
   , r2   "=" Dtts hoon hoon
   -- XX multiaura XX XX port to new syntax
-  , run  "?" (\as -> Bass $ Fok as "") (char '$' *> rock \a _ -> a)
+  , run  "?"
+      (\aaus -> Bass $ Fok (map fst aaus) (joinAuras $ map snd aaus))
+      (oneOf ['$', '%']  *> rock \a au -> (a, au))
   , char '?' *> pure (Bass Flg)
   , char '[' *> (Cltr <$> sepBy hoon ace) <* char ']'  -- XX read rupl
   , char '{' *> (Bccl <$> (spec <* ace) <*> sepBy spec ace) <* char '}'

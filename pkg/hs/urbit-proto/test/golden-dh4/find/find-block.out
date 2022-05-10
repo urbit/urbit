@@ -1,0 +1,23 @@
+PARSED
+
+=/  a
+  p=q=1
+q.p.a
+
+SOFT
+
+=+  a=p=q=1
+q.p.a
+
+CODE
+
+=+  1
++2
+
+TYPE
+
+@ud
+
+BASE
+
+1

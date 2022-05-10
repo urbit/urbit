@@ -9,7 +9,6 @@ Cltr
   , Bass (Fok [ 7303014 ] "tas")
   , Bass (Fok [ 32195221641981798 ] "tas")
   , Bass (Fok [ 0 ] "f")
-  , Bass (Fok [ 1 ] "f")
   , Bass (Fok [ 0 ] "n")
   , Bass (Fok [ 15653 ] "t")
   , Bass (Fok [ 1 ] "ud")

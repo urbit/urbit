@@ -3,6 +3,7 @@ module Practice.HoonCommon where
 import ClassyPrelude
 
 import Data.Char
+import Data.Text (commonPrefixes)
 import Numeric.Natural
 
 import Urbit.Atom (atomUtf8)
@@ -39,6 +40,7 @@ type Wing = [Limb]
 data Limb
   = Axis Axis
   | Ally Term
+  | Ares       -- ^ , aggressively strip metadata off of front of type
   deriving (Eq, Ord, Read, Show, Generic)
 
 type Nat = Natural
@@ -48,6 +50,7 @@ printLimb = \case
   Axis a -> "+" <> tshow a
   Ally "" -> "%"
   Ally n -> n
+  Ares -> ","
 
 printWing :: Wing -> Text
 printWing = \case
@@ -75,6 +78,15 @@ instance Show Fit where
     FitNest -> "nest"
     FitSame -> "same"
 
+joinAuras :: [Text] -> Text
+joinAuras = \case
+  [] -> ""  -- morally wrong
+  [u] -> u
+  u:us -> jon u $! joinAuras us
+ where
+  jon u v = case commonPrefixes u v of
+    Nothing -> ""
+    Just (w, _, _) -> w
 
 -- Axial operations ------------------------------------------------------------
 

@@ -1,0 +1,49 @@
+PARSED
+
+^-  $-(@ {@ @})
+|=(a=@ a)
+
+SOFT
+
+^-  $-(@ {@ @})
+|=(a=@ a)
+
+ERROR
+
+  trace:  play:
+          lvl   0
+          sut   0|*
+          ----
+          code  ^-  $-(@ {@ @})
+                |=(a=@ a)
+
+
+          work:
+          lvl   0
+          sut   0|*
+          ----
+          mode  nest
+          code  |=(a=@ a)
+          type  $-(@ {@ @})
+
+          work:
+          lvl   1
+          sut   [a=@ 0|*]
+          ----
+          mode  nest
+          code  a
+          type  {@ @}
+
+          nest:
+          have  @
+          need  =>  [+1_2 0]
+                {@ @}
+
+
+
+  nest-fail:
+  have  @
+  need  =>  [+1_2 0]
+        {@ @}
+
+

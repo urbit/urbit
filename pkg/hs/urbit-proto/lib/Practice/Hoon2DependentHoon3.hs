@@ -23,7 +23,7 @@ open = \case
     let fork = Bass $ Fok [a | (a, _, _) <- cs] "" -- FIXME aura
     let pats = [(Adam Rock a au, s) | (a, au, s) <- cs]
     open $ Bccl fork [Kthp (Bass Typ) $ Wthp [Axis 3] pats]
-  Bcdt s m -> Left "unsupported $." --cook s m unmask open (flip Gold)
+  --Bcdt s m -> Left "unsupported $." --cook s m unmask open (flip Gold)
   Bchp s t -> Gat <$> open s <*> open t
   Bckt{} -> Left "unsupported $^"
   Bcts s h -> open $ Ktts s h  -- TODO remove this later and fix tests

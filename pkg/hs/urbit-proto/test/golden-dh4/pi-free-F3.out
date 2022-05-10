@@ -1,0 +1,40 @@
+PARSED
+
+$-(t=$ q)
+
+SOFT
+
+$-(t=$ q)
+
+ERROR
+
+  trace:  play:
+          lvl   0
+          sut   0|*
+          ----
+          code  $-(t=$ q)
+
+          work:
+          lvl   1
+          sut   [t=$ 0|*]
+          ----
+          mode  nest
+          code  q
+          type  $
+
+          play:
+          lvl   1
+          sut   [t=$ 0|*]
+          ----
+          code  q
+
+          find:
+          loc   (1,1)
+          sut   [t=$ 0|*]
+          ----
+          wing  q
+
+
+  find.q
+  type  [t=$ 0|*]
+

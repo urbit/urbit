@@ -4,7 +4,6 @@ import ClassyPrelude
 
 import Practice.DependentHoon4
 import Practice.HoonCommon hiding (Bass(..))
-import Practice.HoonCommon (Bass)
 import qualified Practice.HoonCommon as HC
 import Practice.HoonSyntax
 
@@ -18,11 +17,12 @@ open = \case
   --
   Bass HC.Non -> pure $ Non
   Bass HC.Cel -> pure $ Cel Non Non
-  Bass HC.Flg -> pure $ Fok Nothing [Atm 0 Rock "f", Atm 1 Rock "f"]
-  Bass HC.Nul -> pure $ Fok Nothing [Atm 0 Rock "n"]
-  Bass (HC.Fok as au) -> pure $ Fok Nothing (map (\a -> Atm a Rock au) as)
+  Bass HC.Flg -> pure $ Aur "f" (Fork $ setFromList [0, 1])
+  Bass HC.Nul -> pure $ Aur "n" (Fork $ setFromList [0])
+  -- XX Aura
+  Bass (HC.Fok as au) -> pure $ Aur au (Fork $ setFromList as)
   Bass HC.Vod -> pure $ Vod
-  Bass (HC.Aur au) -> pure $ Aur au
+  Bass (HC.Aur au) -> pure $ Aur au Bowl
   Bass HC.Typ -> pure $ Typ
   Bcbr{} -> Left "unsupported $|"
   Bccb h -> Left "unsupported _"
@@ -32,17 +32,17 @@ open = \case
   Bccn cs -> do
     let fork = Bass $ HC.Fok [a | (a, _, _) <- cs] "" -- FIXME aura
     let pats = [(Adam Rock a au, s) | (a, au, s) <- cs]
-    open $ Bccl fork [Kthp (Bass HC.Typ) $ Wthp [Axis 3] pats]
-  Bcdt s m -> Left "unsupported $." --cook s m unmask open (flip Gold)
+    open $ Bccl fork [Kthp (Bass HC.Typ) $ Wthp [Axis 2] pats]
+  Bcgr t ss -> Left "unsupported $>" --Fok <$> open t <*> traverse flay ss
+  Bcgl{} -> Left "unsupported $<"
   Bchp s t -> Gat <$> open s <*> open t
   Bckt{} -> Left "unsupported $^"
-  Bcts s h -> open $ Ktts s h  -- TODO remove this later and fix tests
+  Bcts h s -> Sin <$> open h <*> open s
   Bcpt{} -> Left "unsupported $@"
-  Bcwt t cs -> Fok <$> (Just <$> open t) <*> traverse open cs
-  Bczp{} -> Left "unsupported $!"
+  Bcwt{} -> Left "unsupported $?"
   --
   Brcn{} -> Left "unsupported |%"
-  Brts s h -> Lam <$> flay s <*> open h
+  Brts t h -> Lam <$> open t <*> open h
   --
   Clcb h j -> Cel <$> open j <*> open h
   Clkt h j k l -> Cel <$> open h
@@ -78,8 +78,8 @@ open = \case
   Ktfs h s -> do typ <- open s; sof <- open h; pure Net {typ, sof}
   Ktzp s h -> do typ <- open s; sof <- open h; pure Cat {typ, sof}
   Ktwt h -> Left "unsupported ^? lead cast"  -- XX fixme soon
-  --Ktts s h -> Fac <$> flay s <*> open h
-  Ktcn h -> Sin <$> open h
+  Ktts s h -> Fac <$> flay s <*> open h
+  Ktcn h -> Left "unsupported ^%"
   Ktcl{} -> Left "unsupported ^: mold"
   --
   Sgfs{} -> Left "unsupported ~/"
@@ -116,11 +116,14 @@ open = \case
   Wtzp{} -> Left "unsupported ?!"
   --
   Zpzp -> Left "unsupported !!"
+  --
+  Hxgl{} -> Left "not available in user syntax: #<"
+  Hxgr{} -> Left "not available in user syntax: #>"
 
 flay :: Hoon -> Desugar Pelt
 flay = \case
   Wild -> pure Punt
-  --Wung [Ally f] -> pure $ Peer f
+  Wung [Ally f] -> pure $ Peer f
   Adam g a au -> pure $ Part a
   --
   Clcb h j -> Pair <$> flay j <*> flay h
@@ -136,10 +139,11 @@ flay = \case
   Cltr [h] -> flay h
   Cltr (h:hs) -> Pair <$> flay h <*> flay (Cltr hs)
   --
-  -- Kthp h j -> Pest <$> flay j <*> open h
-  -- Ktfs h j -> Pest <$> flay h <*> open j
+  Kthp t h -> Pest <$> flay h <*> open t
+  Ktfs h t -> Pest <$> flay h <*> open t
+  Ktzp t h -> Past <$> flay h <*> open t
   --
-  _ -> Left "flay-meat: expression in pattern context"
+  h -> Left ("flay-meat: expression in pattern context: " <> tshow h)
 
 shut :: Soft -> Hoon
 shut = \case
@@ -152,8 +156,8 @@ shut = \case
     Clkt h j k l -> Cltr [shut c, h, j, k, l]
     Cltr hs -> Cltr (shut c : hs)
     h -> Clhp (shut c) h
-  Lam p c -> Brts (flap p) (shut c)
-  --Fac p c -> Ktts (flap p) (shut c)
+  Lam c d -> Brts (shut c) (shut d)
+  Fac p c -> Ktts (flap p) (shut c)
   --Core b p -> Tsgr (shut p) (Brcn $ fmap (shut (unname e p) . fromScope) b)
   --
   Plu c -> Dtls (shut c)
@@ -168,10 +172,17 @@ shut = \case
   Rhe c d -> Wtwt (shut c) (shut d)
   Fis p c -> Wtts (flap p) (shut c)
   --
+  Aur au Bowl -> Bass (HC.Aur au)
+  Aur "n" (Fork as) | as == setFromList [0] -> Bass HC.Nul
+  Aur "f" (Fork as) | as == setFromList [0, 1] -> Bass HC.Flg
+  Aur au (Fork as) -> Bass (HC.Fok (toList as) au)
   Ral c d -> case shut d of
     Bccl s ss -> Bccl (shut c) (s:ss)
     s -> Bccl (shut c) [s]
   Gat c d -> Bchp (shut c) (shut d)
+  --Fok t ss -> Bcgr (shut t) (map flap ss)
+  Sin c t -> Bcts (shut c) (shut t)
+  Fus c p -> Bcgr (shut c) (flap p)
   Non -> Bass HC.Non
   Vod -> Bass HC.Vod
   Typ -> Bass HC.Typ
@@ -181,12 +192,11 @@ shut = \case
   --Case c ss ds -> error "open: case"
   Net{sof, typ} -> Kthp (shut typ) (shut sof)  -- XX should print as / wide
   Cat{sof, typ} -> Ktzp (shut typ) (shut sof)
-  Sin c -> Ktcn (shut c)
 
 flap :: Pelt -> Hoon
 flap = \case
   Punt -> Wild
-  --Peer f -> Wung [Ally f]
+  Peer f -> Wung [Ally f]
   Part a -> Adam Rock a (heuAura a)
   Pair p q -> case flap q of
     Clhp h j -> Clls (flap p) h j
@@ -195,7 +205,8 @@ flap = \case
     Cltr hs -> Cltr (flap p : hs)
     h -> Clhp (flap p) h
   --Pons p q -> Ktts (flap p) (flap q)
-  --Pest p c -> Ktfs (flap p) (shut c)
+  Pest p c -> Ktfs (flap p) (shut c)
+  Past p c -> Ktzp (shut c) (flap p)
 
 -- | Hack to make Bases pretty printable somehow. This is for the implementor
 -- and should not be used in user-facing diagnostics.
@@ -203,7 +214,6 @@ lock :: Var a => Semi a -> Hoon
 lock = \case
   Rump' r -> Wung [Ally $ tshow r]
   Fore' x -> Wung [Ally $ tshow $ Old @Text x]
-  Alts' ss s -> undefined
   --
   Atom' a -> Adam Sand a (heuAura a)
   Cell' x y -> case lock y of
@@ -226,15 +236,20 @@ lock = \case
   Fish' f x -> Wtts (flap $ pond f) (lock x)
   Look' x (Leg a) -> Tsgl (Wung [Axis a]) (lock x)
   --
-  Aura' au -> Bass (HC.Aur au)
-  Fork' as au -> (Cnhp Wild Wild) -- XX Bass (HC.Fok (toList as) au)
+  Aura' au Bowl -> Bass (HC.Aur au)
+  Aura' "n" (Fork as) | as == setFromList [0] -> Bass HC.Nul
+  Aura' "f" (Fork as) | as == setFromList [0, 1] -> Bass HC.Flg
+  Aura' au (Fork as) -> Bass (HC.Fok (toList as) au)
   Rail' t (Jamb c s) -> Tsgr (lock s) $ Bccl (lock t) case shut . rest $ c of
     Bccl h hs -> h:hs
     h -> [h]
   Gate' t (Jamb c s) ->
-    Tsgr (lock s) $ Bchp (lock t) (shut . rest $ smap hack c)
-  --Face' (Mask m) x -> Ktts (Wung [Ally m]) (lock x)
-  --Face' (Link ls) x -> Ktts Wild (lock x)  -- FIXME ?
+    Tsgr (lock s) $ Bchp (lock t) (shut . rest $ fmap hack c)
+--  Fork' fs t -> Bcgr (lock t) (map (flap . pond) $ setToList fs)
+  Sing' x y -> Bcts (lock x) (lock y)
+  Fuse' x f -> Bcgr (lock x) (flap $ pond f)
+  Face' (Mask m) x -> Ktts (Wung [Ally m]) (lock x)
+  Face' (Link ls) x -> Ktts Wild (lock x)  -- FIXME ?
   Noun' -> Bass HC.Non
   Void' -> Bass HC.Vod
   Type' -> Bass HC.Typ

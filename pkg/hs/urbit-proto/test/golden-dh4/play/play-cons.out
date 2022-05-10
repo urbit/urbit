@@ -1,0 +1,19 @@
+PARSED
+
+[%foo 2]
+
+SOFT
+
+[%foo 2]
+
+CODE
+
+["foo" 2]
+
+TYPE
+
+[$foo @ud]
+
+BASE
+
+["foo" 2]

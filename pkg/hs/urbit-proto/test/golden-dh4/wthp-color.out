@@ -1,0 +1,36 @@
+PARSED
+
+%.  %b
+|=  color=?(%r %g %b)
+^-  @t
+?-(color %r "red", %g "green", %b "black")
+
+SOFT
+
+%-  |=  color=?(%b %g %r)
+    ^-  @t
+    ?:  ?=(%114 color)
+      "red"
+    ?:  ?=(%103 color)
+      "green"
+    ??  ?=(%98 color)
+    "black"
+%b
+
+CODE
+
+%-  |=  *
+    ?:  ?=(%114 +2)
+      "red"
+    ?:  ?=(%103 +2)
+      "green"
+    "black"
+98
+
+TYPE
+
+@t
+
+BASE
+
+"black"

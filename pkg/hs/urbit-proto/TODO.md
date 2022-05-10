@@ -18,6 +18,19 @@ Then in
 at X the subject should be of type {$a $a}, but at Y the subject should be of
 type {?(%a %b) ?:(?=(%a +3) $b ?(%a %b))}.
 
+Continuing from Y, if we do
+
+    ?:  ?=([%a %b] .)
+      Z
+    W
+
+then at w, the type should be {$b ?(%a %b)}. How does this occur? When we fuse
+%a with the head type ?(%a %b), the result is $a, with a seminoun %a. When we
+eval the tail type expression against this, we get $b. Now, cropping from $b the
+tail of the pattern %b gets us void, so the %a-head branch is dead here. We
+proceed to $b in the head with no change to the tail.
+
+
 Meanwhile against a subject of type
 
     [[? ?] ?]
