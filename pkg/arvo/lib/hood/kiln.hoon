@@ -1050,9 +1050,7 @@
   =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(scot %da now))
   ?-  ud.cass
     %0  %init
-    *  %take-that
-    ::%1  %take-that
-    ::*   %mate
+    *   %only-that
   ==
 ::
 ++  poke
