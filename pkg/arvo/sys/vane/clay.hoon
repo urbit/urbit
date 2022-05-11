@@ -1803,12 +1803,18 @@
       ==
     =.  file-store.args  lat.ran
     ::
-    =^  mim  args  (checkout-mime args deletes ~(key by changes))
-    =.  mim.dom  (apply-changes-to-mim mim.dom mim)
+    =/  mem  (want-mime 0)
+    =/  res=[mum=(map path (unit mime)) mim=_mim.dom args=_args]
+      ?.  mem  [~ ~ args]
+      =^  mum  args  (checkout-mime args deletes ~(key by changes))
+      [mum (apply-changes-to-mim mim.dom mum) args]
+    =.  mim.dom  mim.res
+    =.  args     args.res
+    ::
     =.  fod.dom  [spill sprig]:args
     =.  fad      cache.args
-    =.  ..park  (emil (print q.old-yaki data))
-    wake:(ergo 0 mim)
+    =.  ..park   (emil (print q.old-yaki data))
+    wake:?:(mem (ergo 0 mum.res) ..park)
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -2791,6 +2797,12 @@
       takos  (~(gas to takos) new-candidates)
     ==
   ::
+  ++  want-mime
+    |=  yon=aeon
+    %-  ~(any by mon)
+    |=  =beam
+    &(=(p.beam her) =(q.beam syd) =(r.beam ud+yon))
+  ::
   ::  Update mime cache
   ::
   ++  checkout-mime
@@ -2837,7 +2849,7 @@
   ++  ergo
     |=  [yon=aeon mim=(map path (unit mime))]
     ^+  ..park
-    =/  must  (must-ergo her syd yon mon (turn ~(tap by mim) head))
+    =/  must  (must-ergo yon mon (turn ~(tap by mim) head))
     %-  emil
     %+  turn  ~(tap by must)
     |=  [pot=term len=@ud pak=(set path)]
@@ -2850,7 +2862,7 @@
   ::  Output is a map of mount points to {length-of-mounted-path set-of-paths}.
   ::
   ++  must-ergo
-    |=  [our=ship syd=desk yon=aeon mon=(map term beam) can=(list path)]
+    |=  [yon=aeon mon=(map term beam) can=(list path)]
     ^-  (map term (pair @ud (set path)))
     %-  malt  ^-  (list (trel term @ud (set path)))
     %+  murn  ~(tap by mon)
@@ -2859,7 +2871,7 @@
     =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
     %+  skim  can
     |=  pax=path
-    &(=(p.bem our) =(q.bem syd) =(r.bem ud+yon) =(s.bem (scag (lent s.bem) pax)))
+    &(=(p.bem her) =(q.bem syd) =(r.bem ud+yon) =(s.bem (scag (lent s.bem) pax)))
   ::
   ::  Mount a beam to unix
   ::
@@ -2885,6 +2897,16 @@
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     (ergo for-yon mim)
+  ::
+  ::  Unmount a beam
+  ::
+  ++  unmount
+    |=  [pot=term =case =spur]
+    ^+  ..unmount
+    ?>  ?=(^ hez.ruf)
+    =.  mon  (~(del by mon) pot)
+    =?  mim.dom  !(want-mime 0)  ~
+    (emit u.hez.ruf %give %ogre pot)
   ::
   ::  Set permissions for a node.
   ::
@@ -4309,32 +4331,33 @@
     ?~  hez.ruf
       ~&  %no-sync-duct
       [~ ..^$]
-    ?.  (~(has by mon.ruf) des.req)
-      ~&  [%not-mounted des.req]
+    ?.  (~(has by mon.ruf) pot.req)
+      ~&  [%not-mounted pot.req]
       [~ ..^$]
-    [~[[u.hez.ruf %give %dirk des.req]] ..^$]
+    [~[[u.hez.ruf %give %dirk pot.req]] ..^$]
   ::
       %ogre
-    ?~  hez.ruf
+    ?:  =(~ hez.ruf)
       ~&  %no-sync-duct
       [~ ..^$]
     =*  pot  pot.req
-    ?@  pot
-      ?.  (~(has by mon.ruf) pot)
-        ~&  [%not-mounted pot]
-        [~ ..^$]
-      :_  ..^$(mon.ruf (~(del by mon.ruf) pot))
-      [u.hez.ruf %give %ogre pot]~
-    :_  %_    ..^$
-            mon.ruf
-          %-  molt
-          %+  skip  ~(tap by mon.ruf)
-          (corl (cury test pot) tail)
-        ==
-    %+  turn
-      (skim ~(tap by mon.ruf) (corl (cury test pot) tail))
-    |=  [pon=term bem=beam]
-    [u.hez.ruf %give %ogre pon]
+    =/  bem=(list [pot=term beam])
+      ?@  pot
+        ?~  got=(~(get by mon.ruf) pot)
+          ~&  [%not-mounted pot]
+          ~
+        [pot u.got]~
+      %+  skim  ~(tap by mon.ruf)
+      |=  [=term =beam]
+      =(pot beam)
+    |-  ^-  [(list move) _..^^$]
+    ?~  bem
+      [~ ..^^$]
+    =^  moves-1  ruf
+      =/  den  ((de now rof hen ruf) p.i.bem q.i.bem)
+      abet:(unmount:den pot.i.bem r.i.bem s.i.bem)
+    =^  moves-2  ..^^$  $(bem t.bem)
+    [(weld moves-1 moves-2) ..^^$]
   ::
       %park
     =^  mos  ruf

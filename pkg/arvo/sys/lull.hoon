@@ -768,8 +768,8 @@
             con=(list [beak germ])                      ::  merges
         ==                                              ::
         [%mont pot=term bem=beam]                       ::  mount to unix
-        [%dirk des=desk]                                ::  mark mount dirty
-        [%ogre pot=$@(desk beam)]                       ::  delete mount point
+        [%dirk pot=term]                                ::  mark mount dirty
+        [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
