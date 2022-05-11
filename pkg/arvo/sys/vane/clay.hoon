@@ -842,7 +842,7 @@
         (page-to-cage page)
       =^  [mark vax=vase]  nub  (page-to-cage page)
       =^  =tube  nub  (build-tube p.page mak)
-      :_(nub [mak (tube vax)])
+      :_(nub [mak (road |.((tube vax)))])
     ::
     ++  page-to-cage
       |=  =page
@@ -864,7 +864,7 @@
         [cag nub]
       =^  =tube  nub  (build-tube mok mak)
       ~|  error-running-cast+[path mok mak]
-      :_(nub [mak (tube q.cag)])
+      :_(nub [mak (road |.((tube q.cag)))])
     ::
     ++  run-pact
       |=  [old=page diff=page]
@@ -5223,7 +5223,7 @@
     :+  desk  %|
     :~  mime+&+mim.dom.dojo
         flue+&+fod.dom.dojo
-        dome+&+dom.dojo
+        dojo+&+dojo
     ==
   :~  :+  %object-store  %|
       :~  commits+&+hut.ran.ruf
