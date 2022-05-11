@@ -3937,6 +3937,7 @@
       !.
       |=  [=tako =path]
       ^-  (unit (unit cage))
+      ~&  [%clay %d-on-desk-deprecated desk=syd %use-empty-desk]
       ?.  =(our her)
         [~ ~]
       ?^  path
@@ -5042,8 +5043,11 @@
   ::TODO  if it ever gets filled properly, pass in the full fur.
   ::
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
-  ?:  &(=(our his) =(%x ren) =(%$ syd) =([%da now] u.luk))
-    (read-buc u.run tyl)
+  ?:  &(=(our his) ?=(?(%d %x) ren) =(%$ syd) =([%da now] u.luk))
+    ?-  ren
+      %d  (read-buc-d tyl)
+      %x  (read-buc-x tyl)
+    ==
   =/  den  ((de now rof [/scryduct ~] ruf) his syd)
   =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
   ?:  ?=(%| -.result)
@@ -5051,8 +5055,14 @@
     ~
   p.result
   ::
-  ++  read-buc
-    |=  [=care =path]
+  ++  read-buc-d
+    |=  =path
+    ^-  (unit (unit cage))
+    ?^  path  ~&(%no-cd-path [~ ~])
+    [~ ~ %noun !>(~(key by dos.rom.ruf))]
+  ::
+  ++  read-buc-x
+    |=  =path
     ^-  (unit (unit cage))
     ?~  path
       ~
