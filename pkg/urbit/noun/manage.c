@@ -864,6 +864,18 @@ u3m_fall()
   _print_diff("unused free", u3R->hat_p, u3R->cap_p);
   _print_diff("freeing", u3R->rut_p, u3R->hat_p);
   _print_diff("stack", u3R->cap_p, u3R->mat_p);
+  static c3_w wat_w = 500000000;
+  if (u3to(u3_road, u3R->par_p) == &u3H->rod_u) {
+    wat_w = 500000000;
+  }
+  else {
+    wat_w = c3_min(wat_w,
+                   u3R->hat_p < u3R->cap_p ?
+                     u3R->cap_p - u3R->hat_p :
+                     u3R->hat_p - u3R->cap_p);
+  }
+  u3a_print_memory(stderr, "low water mark", wat_w);
+
 #endif
 
   u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;
