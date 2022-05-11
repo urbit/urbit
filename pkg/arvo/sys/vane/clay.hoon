@@ -6,7 +6,7 @@
 ::  the entire contents of +raft.
 ::
 ::  - Individual reads.  +aver is the entry point, follow it through
-::  +read-at-aeon to understand each kind of read.
+::  +read-at-tako to understand each kind of read.
 ::
 ::  - Subscriptions.  +wake is the center of this mechanism; nothing
 ::  else responds to subscriptions.  +wake has no arguments, which means
@@ -1374,11 +1374,11 @@
       ?~  let.dom
         !>([0 *@da])
       !>([let.dom t:(~(got by hut.ran) (~(got by hit.dom) let.dom))])
-    =+  nao=(case-to-aeon case.mun)
+    =+  tak=(case-to-tako case.mun)
     ?:  ?=([%s case %case ~] mun)
       ::  case existence check
-      [``[%flag !>(!=(~ nao))] ..park]
-    ?~(nao [~ ..park] (read-at-aeon:ze for u.nao mun))
+      [``[%flag !>(!=(~ tak))] ..park]
+    ?~(tak [~ ..park] (read-at-tako:ze for u.tak mun))
   ::
   ::  Queue a move.
   ::
@@ -1451,7 +1451,7 @@
     ?-    -.lok
         %tas  (~(get by lab.dom) p.lok)
         %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
-        %uv   ?~(yak=(~(get by hut.ran) p.lok) ~ $(lok [%da t.u.yak]))
+        %uv   `(tako-to-aeon:ze p.lok)
         %da
       ?:  (gth p.lok lim)  ~
       |-  ^-  (unit aeon)
@@ -1466,22 +1466,29 @@
       $(let.dom (dec let.dom))
     ==
   ::
+  ++  case-to-tako
+    |=  lok=case
+    ^-  (unit tako)
+    ?:  ?=(%uv -.lok)
+      ?:((~(has by hut.ran) p.lok) `p.lok ~)
+    (bind (case-to-aeon-before lim lok) aeon-to-tako:ze)
+  ::
   ::  Create a ford appropriate for the aeon
   ::
   ::  Don't forget to call +aeon-flow!
   ::
-  ++  aeon-ford
-    |=  yon=aeon
+  ++  tako-ford
+    |=  tak=tako
     %-  ford:fusion
-    =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    [files lat.ran fad ?:(=(yon let.dom) fod.dom [~ ~])]
+    =/  files  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+    [files lat.ran fad ?:(=((tako-to-aeon:ze tak) let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
-  ++  aeon-flow
-    |*  [yon=aeon res=* fud=flow fod=flue]
+  ++  tako-flow
+    |*  [tak=tako res=* fud=flow fod=flue]
     :-  res
     ^+  ..park
-    ?:  &(?=(~ ref) =(let.dom yon))
+    ?:  &(?=(~ ref) =(let.dom (tako-to-aeon:ze tak)))
       ..park(fad fud, fod.dom fod)
     :: if in the past, don't update ford cache, since any results have
     :: no roots
@@ -2632,7 +2639,7 @@
           ~
         =/  [=cage *]
           %-  wrap:fusion
-          (page-to-cage:(aeon-ford let.dom) u.peg)
+          (page-to-cage:(tako-ford (~(got by hit.dom) let.dom)) u.peg)
         `cage
       ::
       ++  get-dais
@@ -2640,7 +2647,7 @@
         ^-  dais
         =/  [=dais *]
           %-  wrap:fusion
-          (build-dais:(aeon-ford let.dom) mark)
+          (build-dais:(tako-ford (~(got by hit.dom) let.dom)) mark)
         dais
       ::
       ::  Diff two files on bob-desk
@@ -3195,7 +3202,9 @@
         ::  foreign marks
         ::
         =/  base-dome  dom:(~(got by dos.rom) %base)
-        =/  f  (%*(. aeon-ford dom base-dome) let.base-dome)
+        =/  f
+          %-  %*(. tako-ford dom base-dome)
+          (~(got by hit.base-dome) let.base-dome)
         (page-to-cage:f peg)
       ?:  ?=(%| -.vale-result)
         %-  (slog >%validate-x-failed< p.vale-result)
@@ -3533,20 +3542,20 @@
         (writ ?~(u.cache-value ~ `[mood.rov u.u.cache-value]))
       ::  else, check to see if rove is for an aeon we know
       ::
-      =/  aeon=(unit aeon)  (case-to-aeon case.mood.rov)
-      ?~  aeon
+      =/  tako=(unit tako)  (case-to-tako case.mood.rov)
+      ?~  tako
         [[`rov ~] ..park]
-      ::  we have the appropriate aeon, so read in the data
+      ::  we have the appropriate tako, so read in the data
       ::
       =^  value=(unit (unit cage))  ..park
-        (read-at-aeon:ze for u.aeon mood.rov)
+        (read-at-tako:ze for u.tako mood.rov)
       ?~  value
         ::  we don't have the data directly.  how can we fetch it?
         ::
-        ?:  =(0 u.aeon)
+        ?:  =(0v0 u.tako)
           ~&  [%clay-sing-indirect-data-0 `path`[syd '0' path.mood.rov]]
           [[~ ~] ..park]
-        ~&  [%clay-sing-indirect-data desk=syd mood=mood.rov aeon=u.aeon]
+        ~&  [%clay-sing-indirect-data desk=syd mood=mood.rov tako=u.tako]
         [[`rov ~] ..park]
       ::  we have the data, so produce the results
       ::
@@ -3803,6 +3812,16 @@
     ++  aeon-to-yaki  |=(=aeon (tako-to-yaki (aeon-to-tako aeon)))
     ++  tako-to-yaki  ~(got by hut.ran)
     ::
+    ++  tako-to-aeon
+      |=  tak=tako
+      ^-  aeon  ~+
+      ?:  =(0v0 tak)  0
+      =/  a=aeon  1
+      |-
+      ?:  (gth a let.dom)  ~|([%tako-mia tak] !!)
+      ?:  (~(has in (reachable-takos (~(got by hit.dom) a))) tak)  a
+      $(a +(a))
+    ::
     ::  Creates a nako of all the changes between a and b.
     ::
     ++  make-nako
@@ -3855,68 +3874,68 @@
     ::
     ++  read-a
       !.
-      |=  [=aeon =path]
+      |=  [=tako =path]
       ^-  [(unit (unit cage)) _..park]
       =^  =vase  ..park
-        ~_  leaf/"clay: %a build failed {<[syd aeon path]>}"
-        %+  aeon-flow  aeon
+        ~_  leaf/"clay: %a build failed {<[syd tako path]>}"
+        %+  tako-flow  tako
         %-  wrap:fusion
-        (build-file:(aeon-ford aeon) path)
+        (build-file:(tako-ford tako) path)
       :_(..park [~ ~ %vase !>(vase)])
     ::
     ++  read-b
       !.
-      |=  [=aeon =path]
+      |=  [=tako =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
         [[~ ~] ..park]
       =^  =dais  ..park
-        %+  aeon-flow  aeon
+        %+  tako-flow  tako
         %-  wrap:fusion
-        (build-dais:(aeon-ford aeon) i.path)
+        (build-dais:(tako-ford tako) i.path)
       :_(..park [~ ~ %dais !>(dais)])
     ::
     ++  read-c
       !.
-      |=  [=aeon =path]
+      |=  [=tako =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
         [[~ ~] ..park]
       =^  =tube  ..park
-        %+  aeon-flow  aeon
+        %+  tako-flow  tako
         %-  wrap:fusion
-        (build-tube:(aeon-ford aeon) [i i.t]:path)
+        (build-tube:(tako-ford tako) [i i.t]:path)
       :_(..park [~ ~ %tube !>(tube)])
     ::
     ++  read-e
       !.
-      |=  [=aeon =path]
+      |=  [=tako =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
         [[~ ~] ..park]
       =^  =vase  ..park
-        %+  aeon-flow  aeon
+        %+  tako-flow  tako
         %-  wrap:fusion
-        (build-nave:(aeon-ford aeon) i.path)
+        (build-nave:(tako-ford tako) i.path)
       :_(..park [~ ~ %nave vase])
     ::
     ++  read-f
       !.
-      |=  [=aeon =path]
+      |=  [=tako =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
         [[~ ~] ..park]
       =^  =vase  ..park
-        %+  aeon-flow  aeon
+        %+  tako-flow  tako
         %-  wrap:fusion
-        (build-cast:(aeon-ford aeon) [i i.t]:path)
+        (build-cast:(tako-ford tako) [i i.t]:path)
       :_(..park [~ ~ %cast vase])
     ::
     ::  XX move to +read-buc
     ::
     ++  read-d
       !.
-      |=  [=aeon =path]
+      |=  [=tako =path]
       ^-  (unit (unit cage))
       ?.  =(our her)
         [~ ~]
@@ -3954,7 +3973,7 @@
       $(pax (scag (dec (lent pax)) `path`pax))
     ::
     ++  may-read
-      |=  [who=ship car=care yon=aeon pax=path]
+      |=  [who=ship car=care tak=tako pax=path]
       ^-  ?
       ?+  car
         (allowed-by who pax per.red)
@@ -3963,9 +3982,7 @@
         =(who our)
       ::
           ?(%y %z)
-        =+  tak=(~(get by hit.dom) yon)
-        ?~  tak  |
-        =+  yak=(tako-to-yaki u.tak)
+        =+  yak=(tako-to-yaki tak)
         =+  len=(lent pax)
         =-  (levy ~(tap in -) |=(p=path (allowed-by who p per.red)))
         %+  roll  ~(tap in (~(del in ~(key by q.yak)) pax))
@@ -4018,9 +4035,9 @@
     ::  +read-r: %x wrapped in a vase
     ::
     ++  read-r
-      |=  [yon=aeon pax=path]
+      |=  [tak=tako pax=path]
       ^-  [(unit (unit cage)) _..park]
-      =^  x  ..park  (read-x yon pax)
+      =^  x  ..park  (read-x tak pax)
       :_  ..park
       ?~  x    ~
       ?~  u.x  [~ ~]
@@ -4028,16 +4045,13 @@
     ::  +read-s: produce miscellaneous
     ::
     ++  read-s
-      |=  [yon=aeon pax=path]
+      |=  [tak=tako pax=path]
       ^-  (unit (unit cage))
       ?.  ?=([@ * *] pax)
         `~
       ?+    i.pax  `~
           %tako
-        =/  tak=(unit tako)  (~(get by hit.dom) yon)
-        ?~  tak
-          ~
-        ``tako+[-:!>(*tako) u.tak]
+        ``tako+[-:!>(*tako) tak]
       ::
           %yaki
         =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
@@ -4066,10 +4080,10 @@
           ~
         =/  [=cage *]
           %-  wrap:fusion
-          (page-to-cage:(aeon-ford yon) u.peg)
+          (page-to-cage:(tako-ford tak) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
-          %open  ``open+!>(prelude:(aeon-ford yon))
+          %open  ``open+!>(prelude:(tako-ford tak))
           %late  !!  :: handled in +aver
           %case  !!  :: handled in +aver
           %base-tako
@@ -4094,7 +4108,7 @@
         =/  other  dom:((de now rof hen ruf) him i.t.t.pax)
         ?:  =(0 let.other)
           ~
-        =/  our-yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
+        =/  our-yaki  (~(got by hut.ran) tak)
         =/  other-yaki  (~(got by hut.ran) (~(got by hit.other) let.other))
         %+  turn  ~(tap in (find-merge-points other-yaki our-yaki))
         |=  =yaki
@@ -4103,19 +4117,15 @@
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
     ++  read-t
-      |=  [yon=aeon pax=path]
+      |=  [tak=tako pax=path]
       ^-  (unit (unit [%file-list (hypo (list path))]))
       ::  if asked for version 0, produce an empty list of files
       ::
-      ?:  =(0 yon)
+      ?:  =(0v0 tak)
         ``[%file-list -:!>(*(list path)) *(list path)]
-      ::  if asked for a future version, we don't have an answer
-      ::
-      ?~  tak=(~(get by hit.dom) yon)
-        ~
       ::  look up the yaki snapshot based on the version
       ::
-      =/  yak=yaki  (tako-to-yaki u.tak)
+      =/  yak=yaki  (tako-to-yaki tak)
       ::  calculate the path length once outside the loop
       ::
       =/  path-length  (lent pax)
@@ -4137,19 +4147,15 @@
     ::  at any of its children.
     ::
     ++  read-u
-      |=  [yon=aeon pax=path]
+      |=  [tak=tako pax=path]
       ^-  (unit (unit [%flag (hypo ?)]))
       ::  if asked for version 0, that never exists, so always give false
       ::
-      ?:  =(0 yon)
+      ?:  =(0v0 tak)
         ``[%flag -:!>(*?) |]
-      ::  if asked for a future version, we don't have an answer
-      ::
-      ?~  tak=(~(get by hit.dom) yon)
-        ~
       ::  look up the yaki snapshot based on the version
       ::
-      =/  yak=yaki  (tako-to-yaki u.tak)
+      =/  yak=yaki  (tako-to-yaki tak)
       ::  produce the result based on whether or not there's a file at :pax
       ::
       ``[%flag -:!>(*?) (~(has by q.yak) pax)]
@@ -4157,8 +4163,9 @@
     ::  Gets the dome (desk state) at a particular aeon.
     ::
     ++  read-v
-      |=  [yon=aeon pax=path]
+      |=  [tak=tako pax=path]
       ^-  (unit (unit [%dome (hypo dome:clay)]))
+      =/  yon=aeon  (tako-to-aeon:ze tak)
       ?:  (lth yon let.dom)
         :*  ~  ~  %dome  -:!>(*dome:clay)
             ^-  dome:clay
@@ -4175,13 +4182,13 @@
     ::  For the %da case, we give just the canonical timestamp of the revision.
     ::
     ++  read-w
-      |=  yon=aeon
+      |=  tak=tako
       ^-  (unit (unit cage))
       =-  [~ ~ %cass !>(-)]
-      ^-  cass
-      :-  yon
-      ?:  =(0 yon)  `@da`0
-      t:(aeon-to-yaki yon)
+      ^-  cass  ::TODO  should include %uv case
+      :-  (tako-to-aeon tak)
+      ?:  =(0v0 tak)  `@da`0
+      t:(tako-to-yaki tak)
     ::
     ::  Get the data at a node.
     ::
@@ -4189,14 +4196,11 @@
     ::  mark for bootstrapping purposes.
     ::
     ++  read-x
-      |=  [yon=aeon pax=path]
+      |=  [tak=tako pax=path]
       ^-  [(unit (unit cage)) _..park]
-      ?:  =(0 yon)
+      ?:  =(0v0 tak)
         [[~ ~] ..park]
-      =+  tak=(~(get by hit.dom) yon)
-      ?~  tak
-        [~ ..park]
-      =+  yak=(tako-to-yaki u.tak)
+      =+  yak=(tako-to-yaki tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
         [[~ ~] ..park]
@@ -4208,22 +4212,19 @@
       ::  should convert any lobe to cage
       ::
       =^  =cage  ..park
-        %+  aeon-flow  yon
+        %+  tako-flow  tak
         %-  wrap:fusion
-        (page-to-cage:(aeon-ford yon) u.peg)
+        (page-to-cage:(tako-ford tak) u.peg)
       [``cage ..park]
     ::
     ::  Gets an arch (directory listing) at a node.
     ::
     ++  read-y
-      |=  [yon=aeon pax=path]
+      |=  [tak=tako pax=path]
       ^-  (unit (unit [%arch (hypo arch)]))
-      ?:  =(0 yon)
+      ?:  =(0v0 tak)
         ``[%arch -:!>(*arch) *arch]
-      =+  tak=(~(get by hit.dom) yon)
-      ?~  tak
-        ~
-      =+  yak=(tako-to-yaki u.tak)
+      =+  yak=(tako-to-yaki tak)
       =+  len=(lent pax)
       :^  ~  ~  %arch
       ::  ~&  cy+pax
@@ -4244,14 +4245,11 @@
     ::  Gets a recursive hash of a node and all its children.
     ::
     ++  read-z
-      |=  [yon=aeon pax=path]
+      |=  [tak=tako pax=path]
       ^-  (unit (unit [%uvi (hypo @uvI)]))
-      ?:  =(0 yon)
+      ?:  =(0v0 tak)
         ``uvi+[-:!>(*@uvI) *@uvI]
-      =+  tak=(~(get by hit.dom) yon)
-      ?~  tak
-        ~
-      [~ ~ %uvi [%atom %'uvI' ~] (content-hash (tako-to-yaki u.tak) pax)]
+      [~ ~ %uvi [%atom %'uvI' ~] (content-hash (tako-to-yaki tak) pax)]
     ::
     ::  Get a value at an aeon.
     ::
@@ -4260,10 +4258,12 @@
     ::  meaning we either have the value directly or a content hash of the
     ::  value.
     ::
-    ++  read-at-aeon                                    ::    read-at-aeon:ze
-      |=  [for=(unit ship) yon=aeon mun=mood]           ::  seek and read
+    ++  read-at-tako                                    ::    read-at-tako:ze
+      |=  [for=(unit ship) tak=tako mun=mood]           ::  seek and read
       ^-  [(unit (unit cage)) _..park]
-      ?.  |(?=(~ for) (may-read u.for care.mun yon path.mun))
+      ?.  |(?=(~ for) (may-read u.for care.mun tak path.mun))
+        [~ ..park]
+      ?.  |(=(0v0 tak) (~(has by hut.ran) tak))
         [~ ..park]
       ::  virtualize to catch and produce deterministic failures
       ::
@@ -4271,27 +4271,27 @@
       |^  =/  res  (mule |.(read))
           ?:  ?=(%& -.res)  p.res
           %.  [[~ ~] ..park]
-          (slog leaf+"clay: read-at-aeon fail {<[desk=syd mun]>}" p.res)
+          (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" p.res)
       ::
       ++  read
         ^-  [(unit (unit cage)) _..park]
         ?-  care.mun
-          %a  (read-a yon path.mun)
-          %b  (read-b yon path.mun)
-          %c  (read-c yon path.mun)
-          %d  [(read-d yon path.mun) ..park]
-          %e  (read-e yon path.mun)
-          %f  (read-f yon path.mun)
+          %a  (read-a tak path.mun)
+          %b  (read-b tak path.mun)
+          %c  (read-c tak path.mun)
+          %d  [(read-d tak path.mun) ..park]
+          %e  (read-e tak path.mun)
+          %f  (read-f tak path.mun)
           %p  [(read-p path.mun) ..park]
-          %r  (read-r yon path.mun)
-          %s  [(read-s yon path.mun) ..park]
-          %t  [(read-t yon path.mun) ..park]
-          %u  [(read-u yon path.mun) ..park]
-          %v  [(read-v yon path.mun) ..park]
-          %w  [(read-w yon) ..park]
-          %x  (read-x yon path.mun)
-          %y  [(read-y yon path.mun) ..park]
-          %z  [(read-z yon path.mun) ..park]
+          %r  (read-r tak path.mun)
+          %s  [(read-s tak path.mun) ..park]
+          %t  [(read-t tak path.mun) ..park]
+          %u  [(read-u tak path.mun) ..park]
+          %v  [(read-v tak path.mun) ..park]
+          %w  [(read-w tak) ..park]
+          %x  (read-x tak path.mun)
+          %y  [(read-y tak path.mun) ..park]
+          %z  [(read-z tak path.mun) ..park]
         ==
       --
     --
