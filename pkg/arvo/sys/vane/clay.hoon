@@ -3808,7 +3808,7 @@
     ::  These convert between aeon (version number), tako (commit hash),
     ::  and yaki (commit data structure)
     ::
-    ++  aeon-to-tako  ~(got by hit.dom)
+    ++  aeon-to-tako  |=(=aeon ?:(=(0 aeon) 0v0 (~(got by hit.dom) aeon)))
     ++  aeon-to-yaki  |=(=aeon (tako-to-yaki (aeon-to-tako aeon)))
     ++  tako-to-yaki  ~(got by hut.ran)
     ::
