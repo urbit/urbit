@@ -1451,6 +1451,7 @@
     ?-    -.lok
         %tas  (~(get by lab.dom) p.lok)
         %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
+        %uv   ?~(yak=(~(get by hut.ran) p.lok) ~ $(lok [%da t.u.yak]))
         %da
       ?:  (gth p.lok lim)  ~
       |-  ^-  (unit aeon)

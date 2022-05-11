@@ -1754,6 +1754,7 @@
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label
         [%ud p=@ud]                                     ::  number
+        [%uv p=@uv]                                     ::  hash
     ==                                                  ::
   +$  cash                                              ::  case or tako
     $%  [%tako p=tako]                                  ::
