@@ -110,8 +110,7 @@ c3_path_push(c3_path* pax_u, const c3_c* const tok_c)
 
   size_t tok_i = sizeof(pax_sep_c) + strlen(tok_c);
   if ( pax_u->cap_i - pax_u->len_i < tok_i ) {
-    size_t cap_i = 2 * (pax_u->cap_i + tok_i); // (2)
-    pax_u->cap_i = cap_i;
+    pax_u->cap_i = 2 * (pax_u->cap_i + tok_i); // (2)
     pax_u->str_c = c3_realloc(pax_u->str_c, cap_i);
   }
 
