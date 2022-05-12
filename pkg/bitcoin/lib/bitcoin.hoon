@@ -74,6 +74,7 @@
       :-  ?-  network
               %main     1^0x0
               %testnet  1^0x6f
+              %regtest  1^0x6f
           ==
       ~[(hash-160:bcu pubkey)]
       ::
@@ -84,6 +85,7 @@
       :~  ?-  network
             %main     1^0x5
             %testnet  1^0xc4
+            %regtest  1^0xc4
           ==
           %-  hash-160:bcu
           (cat:byt:bcu ~[2^0x14 (hash-160:bcu pubkey)])
