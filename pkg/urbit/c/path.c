@@ -19,7 +19,7 @@ struct _c3_path {
 // Constants
 //==============================================================================
 
-//! Path separator.
+//! Path separator. Must be only a single character.
 static const c3_c pax_sep_c[] = "/";
 
 //==============================================================================
