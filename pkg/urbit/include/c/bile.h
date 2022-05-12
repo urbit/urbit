@@ -1,7 +1,7 @@
 //! @file bile.h
 //!
-//! File containing a single blob of arbitrary binary data up to 2^32 bytes in
-//! size.
+//! File containing a one or more blobs of arbitrary binary data up to
+//! 2^32 bytes in size.
 //!
 //! @note mnemonic: [b]inary f[ile] -> bile
 
@@ -32,7 +32,8 @@ typedef struct _c3_bile c3_bile;
 //! @return NULL  `pax_u` is NULL.
 //! @return NULL  File could not be opened/created.
 //! @return NULL  File size could not be determined.
-//! @return       Binary file handle.
+//! @return       Binary file handle. Must be freed by caller after calling
+//!               c3_bile_close().
 c3_bile*
 c3_bile_open(const c3_path* const pax_u);
 
@@ -67,7 +68,7 @@ c3_bile_path_str(const c3_bile* const bil_u);
 //!
 //! @param[in] bil_u  Binary file handle.
 //! @param[in] dat_v  Raw byte array.
-//! @param[in] len_i  Length of `dat_v` in bytes.
+//! @param[in] dat_i  Length of `dat_v` in bytes.
 //!
 //! @return 0  `dat_v` is NULL.
 //! @return 0  Failed to write data to binary file.
@@ -75,27 +76,26 @@ c3_bile_path_str(const c3_bile* const bil_u);
 c3_t
 c3_bile_put_raw(c3_bile* const    bil_u,
                 const void* const dat_v,
-                const size_t      len_i);
+                const size_t      dat_i);
 
 //! Read a raw byte array from a binary file.
 //!
 //! The read occurs from the beginning of the file if c3_bile_get_raw() has not
 //! been called on the binary file since c3_bile_open() was called *or* if the
-//! last call to c3_bile_get_raw() reached EOF. The exact starting position of
-//! the read can be determined by checking the `off_i` field of the c3_bile
-//! handle. If a call to c3_bile_get_raw() fails, the read offset will be
-//! restored to its previous location as if the call was never attempted.
+//! last call to c3_bile_get_raw() reached EOF. If a call to c3_bile_get_raw()
+//! fails, the read offset will be restored to its previous location as if the
+//! call was never attempted.
 //!
 //! @param[in]  bil_u  Binary file handle.
 //! @param[out] dat_v  Destination address to write raw byte array to. Must have
-//!                    enough space for `len_i` bytes.
-//! @param[in]  len_i  Length of `dat_v` in bytes.
+//!                    enough space for `dat_i` bytes.
+//! @param[in]  dat_i  Length of `dat_v` in bytes.
 //!
 //! @return 0  `dat_v` is NULL.
 //! @return 0  Failed to read data from binary file.
 //! @return 1  Success.
 c3_t
-c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t len_i);
+c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t dat_i);
 
 //! Gracefully dispose of a binary file's resources. Does not free the binary
 //! file handle itself.

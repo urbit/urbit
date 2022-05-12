@@ -116,7 +116,7 @@ c3_bile_path_str(const c3_bile* const bil_u)
 c3_t
 c3_bile_put_raw(c3_bile* const    bil_u,
                 const void* const dat_v,
-                const size_t      len_i)
+                const size_t      dat_i)
 {
   if ( !dat_v ) {
     goto fail;
@@ -128,7 +128,7 @@ c3_bile_put_raw(c3_bile* const    bil_u,
   }
 
   const c3_y* dat_y = dat_v;
-  ssize_t     lef_i = len_i;
+  ssize_t     lef_i = dat_i;
   ssize_t     wri_i;
   while ( 0 < lef_i ) {
     if ( -1 == (wri_i = write(bil_u->fid_i, dat_y, lef_i)) ) {
@@ -144,7 +144,7 @@ c3_bile_put_raw(c3_bile* const    bil_u,
       lef_i -= wri_i;
     }
   }
-  bil_u->len_i += len_i;
+  bil_u->len_i += dat_i;
   bil_u->off_i = bil_u->len_i;
   goto succeed;
 
@@ -163,7 +163,7 @@ succeed:
 //!        beginning.
 //! @n (2) Attempt the read again if we were interrupted by a signal.
 c3_t
-c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t len_i)
+c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t dat_i)
 {
   if ( !dat_v ) {
     goto fail;
@@ -175,7 +175,7 @@ c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t len_i)
   }
 
   c3_y*   dat_y = dat_v;
-  ssize_t lef_i = len_i;
+  ssize_t lef_i = dat_i;
   ssize_t rea_i;
   while ( 0 < lef_i ) {
     rea_i = read(bil_u->fid_i, dat_y, lef_i);
@@ -195,7 +195,7 @@ c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t len_i)
       lef_i -= rea_i;
     }
   }
-  bil_u->off_i += len_i;
+  bil_u->off_i += dat_i;
   goto succeed;
 
 abandon_read:
