@@ -10,7 +10,7 @@
 struct _c3_list_node {
   struct _c3_list_node* nex_u;   //!< next node
   struct _c3_list_node* pre_u;   //!< previous node
-  size_t                len_i;   //!< length of `dat_y` in bytes
+  size_t                dat_i;   //!< length of `dat_y` in bytes
   c3_y                  dat_y[]; //!< payload data
 };
 
@@ -29,7 +29,7 @@ static inline c3_lode*
 _create_node(const void* const dat_v, const size_t dat_i)
 {
   c3_lode* nod_u = c3_calloc(sizeof(*nod_u) + dat_i);
-  nod_u->len_i   = dat_i;
+  nod_u->dat_i   = dat_i;
   memcpy(nod_u->dat_y, dat_v, dat_i);
   return nod_u;
 }
@@ -139,5 +139,5 @@ c3_lode_data(const c3_lode* const nod_u)
 size_t
 c3_lode_len(const c3_lode* const nod_u)
 {
-  return nod_u ? nod_u->len_i : 0;
+  return nod_u ? nod_u->dat_i : 0;
 }
