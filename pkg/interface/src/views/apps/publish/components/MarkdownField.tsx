@@ -6,14 +6,17 @@ import { MarkdownEditor } from './MarkdownEditor';
 
 export const MarkdownField = ({
   id,
+  disabled,
   ...rest
-}: { id: string } & Parameters<typeof Box>[0]) => {
+}: { id: string; disabled?: boolean } & Parameters<typeof Box>[0]) => {
   const [{ value, onBlur }, { error, touched }, { setValue }] = useField(id);
 
   const handleBlur = useCallback(
     (e: any) => {
-      _.set(e, 'target.id', id);
-      onBlur && onBlur(e);
+      if (!disabled) {
+        _.set(e, 'target.id', id);
+        onBlur && onBlur(e);
+      }
     },
     [onBlur, id]
   );
@@ -23,7 +26,7 @@ export const MarkdownField = ({
   return (
     <Box
       overflowY="hidden"
-      height='100%'
+      height="100%"
       width="100%"
       display="flex"
       flexDirection="column"
@@ -35,6 +38,7 @@ export const MarkdownField = ({
         onBlur={handleBlur}
         value={value}
         onChange={setValue}
+        disabled={disabled}
       />
       <ErrorLabel mt={2} hasError={Boolean(error && touched)}>
         {error}
