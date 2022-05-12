@@ -1,6 +1,6 @@
 //! @file list.h
 //!
-//! Generic list abstraction backed by a doubly linked list.
+//! Generic list abstraction with O(1) push/pop.
 
 #ifndef C3_LIST_H
 #define C3_LIST_H
@@ -15,11 +15,11 @@
 // Types
 //==============================================================================
 
-//! Doubly-linked list.
+//! List.
 struct _c3_list;
 typedef struct _c3_list c3_list;
 
-//! Doubly-linked list node.
+//! List node.
 struct _c3_list_node;
 typedef struct _c3_list_node c3_lode;
 
