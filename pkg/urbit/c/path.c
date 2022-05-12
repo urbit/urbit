@@ -151,7 +151,8 @@ c3_path_pop(c3_path* const pax_u)
 c3_t
 c3_path_eq(const c3_path* const lef_u, const c3_path* const rih_u)
 {
-  return lef_u && rih_u && 0 == strcmp(lef_u->str_c, rih_u->str_c);
+  return (lef_u == rih_u)
+         || (lef_u && rih_u && 0 == strcmp(lef_u->str_c, rih_u->str_c));
 }
 
 void
