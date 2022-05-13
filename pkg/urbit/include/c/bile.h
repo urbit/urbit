@@ -80,11 +80,15 @@ c3_bile_put_raw(c3_bile* const    bil_u,
 
 //! Read a raw byte array from a binary file.
 //!
-//! The read occurs from the beginning of the file if c3_bile_get_raw() has not
-//! been called on the binary file since c3_bile_open() was called *or* if the
-//! last call to c3_bile_get_raw() reached EOF. If a call to c3_bile_get_raw()
-//! fails, the read offset will be restored to its previous location as if the
-//! call was never attempted.
+//! The read occurs from the beginning of the file if at least one of the
+//! following is true:
+//!  (1) c3_bile_get_raw() has not been called on the binary file since
+//!      c3_bile_open() was called;
+//!  (2) the last call to c3_bile_get_raw() reached EOF;
+//!  (3) c3_bile_put_raw() was called since the last call to c3_bile_get_raw().
+//! If none of these are true, then the read starts from the offset where the
+//! last read ended. If a call to c3_bile_get_raw() fails, the read offset will
+//! be restored to its previous location as if the call was never attempted.
 //!
 //! @param[in]  bil_u  Binary file handle.
 //! @param[out] dat_v  Destination address to write raw byte array to. Must have
