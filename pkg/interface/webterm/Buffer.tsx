@@ -50,7 +50,7 @@ const readInput = (term: Terminal, e: string): Belt[] => {
     //
     if (c >= 32 && c !== 127) {
       strap += e[0];
-      e = e.slice(1);
+      e = e.slice(1);  //TODO  revisit wrt (list @c) & unicode characters
       continue;
     } else if ('' !== strap) {
       belts.push({ txt: strap.split('') });
@@ -115,7 +115,11 @@ const readInput = (term: Terminal, e: string): Belt[] => {
     e = e.slice(1);
   }
   if ('' !== strap) {
-    belts.push({ txt: strap.split('') });
+    if (1 === strap.length) {
+      belts.push(strap);
+    } else {
+      belts.push({ txt: strap.split('') });
+    }
     strap = '';
   }
   return belts;
