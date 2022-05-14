@@ -2410,6 +2410,11 @@
           =/  target-bone=^bone  (mix 0b10 bone)
           ::
           (run-message-sink target-bone %drop message-num)
+        ?:  &(closing ?=(%near -.task))
+          ::  if the bone belongs to a closing flow and we got a naxplanation,
+          ::  don't relay the ack to the client vane, and wait for the next try
+          ::
+          peer-core
         ::  not a nack-trace bone; relay ack to client vane
         ::
         (emit (got-duct bone) %give %done error)
@@ -2602,6 +2607,8 @@
         ::  if we get a naxplanation for a %cork, the publisher is behind
         ::  receiving the OTA, so we set up a timer to retry in one hour.
         ::
+        %-  %+  trace  msg.veb
+            |.("resend %cork on bone={<target-bone>} in ~h1")
         =/  =wire  (make-pump-timer-wire her.channel target-bone)
         (emit [/ames]~ %pass wire %b %wait `@da`(add now ~h1))
       ::  +on-sink-plea: handle request message received by |message-sink
