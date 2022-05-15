@@ -114,6 +114,15 @@
   ?>  ?|  =(our src):bowl
           =(src.bowl ship)
       ==
+  abet:(emit %pass /helm/moon-breach/(scot %p ship) %arvo %b %wait now.bowl)
+::
+++  take-wake-moon-breach
+  |=  [way=wire error=(unit tang)]
+  ?^  error
+    %-  (slog %take-wake-moon-breach-fail u.error)
+    abet
+  ?>  ?=([@ ~] way)
+  =/  =ship  (slav %p i.way)
   ?>  =(%earl (clan:title ship))
   ?>  =(our.bowl (sein:title our.bowl now.bowl ship))
   =/  =rift
@@ -286,10 +295,12 @@
 ++  take-arvo
   |=  [=wire =sign-arvo]
   ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
-    [%automass *]  %+  take-wake-automass  t.wire
-                   ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
-    [%serv *]      %+  take-bound  t.wire
-                   ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
-    [%pass *]      abet
+    [%automass *]     %+  take-wake-automass  t.wire
+                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+    [%serv *]         %+  take-bound  t.wire
+                      ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
+    [%moon-breach *]  %+  take-wake-moon-breach  t.wire
+                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+    [%pass *]         abet
   ==
 --
