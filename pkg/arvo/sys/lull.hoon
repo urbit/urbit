@@ -1653,6 +1653,8 @@
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         $>(%plea vane-task)                             ::  network request
+        [%spew veb=(list verb)]                         ::  set verbosity
+        [%sift dudes=(list dude)]                       ::  per agent
     ==                                                  ::
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat                                              ::  outgoing subs
@@ -1693,6 +1695,9 @@
     $%  [%raw-fact =mark =noun]
         sign:agent
     ==
+  ::  TODO: add more flags?
+  ::
+  +$  verb  ?(%odd)
   ::
   ::  +agent: app core
   ::

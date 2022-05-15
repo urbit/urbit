@@ -200,6 +200,14 @@
   |=  veb=(list verb:ames)  =<  abet
   (emit %pass /helm %arvo %a %spew veb)
 ::
+++  poke-gall-sift
+  |=  dudes=(list dude:gall)  =<  abet
+  (emit %pass /helm %arvo %g %sift dudes)
+::
+++  poke-gall-verb
+  |=  veb=(list verb:gall)  =<  abet
+  (emit %pass /helm %arvo %g %spew veb)
+::
 ++  poke-ames-wake
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
@@ -237,6 +245,8 @@
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
     %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
     %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
+    %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
+    %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)

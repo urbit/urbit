@@ -4,15 +4,45 @@
 ::
 ::::
 |=  our=ship
+::  veb: verbosity flags
+::
+=/  veb-all-off
+  ::  TODO: add more flags?
+  ::
+  :*  odd=`?`%.n  ::  unusual events
+  ==
 =,  gall
 =>
 |%
++|  %helpers
+::  +trace: print if .verb is set and we're tracking .dude
+::
+++  trace
+  |=  [verb=? =dude dudes=(set dude) print=tang]
+  ^+  same
+  ?.  verb
+    same
+  ?.  =>  [dude=dude dudes=dudes in=in]
+      ~+  |(=(~ dudes) (~(has in dudes) dude))
+    same
+  (slog print)
+::
+::  $bug: debug printing configuration
+::
+::    veb: verbosity toggles
+::    dudes: app filter; if ~, print for all
+::
++$  bug
+  $:  veb=_veb-all-off
+      dudes=(set dude)
+  ==
+::
 +|  %main
 ::
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-8: overall gall state, versioned
+::  $state-9: overall gall state, versioned
 ::
 +$  state-9  [%9 state]
 ::  $state: overall gall state
@@ -22,6 +52,7 @@
 ::    contacts: other ships we're in communication with
 ::    yokes: running agents
 ::    blocked: moves to agents that haven't been started yet
+::    bug: debug printing configuration
 ::
 +$  state
   $:  system-duct=duct
@@ -29,6 +60,7 @@
       contacts=(set ship)
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
+      =bug
   ==
 ::  $watches: subscribers and publications
 ::
@@ -126,6 +158,7 @@
       contacts=(set ship)
       eggs=(map term egg)
       blocked=(map term (qeu blocked-move))
+      =bug
   ==
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
 ::
@@ -169,7 +202,7 @@
           [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
-        [%9 system-duct outstanding contacts yokes=~ blocked]:spore
+        [%9 system-duct outstanding contacts yokes=~ blocked bug]:spore
       =/  mo-core  (mo-abed:mo:adult duct)
       =.  mo-core
         =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
@@ -288,7 +321,7 @@
       ++  spore-8-to-9
         |=  old=spore-8
         ^-  ^spore
-        =-  old(- %9, eggs -)
+        =-  old(- %9, eggs -, blocked [blocked.old *bug])
         %-  ~(run by eggs.old)
         |=  =egg-8
         ^-  egg
@@ -332,6 +365,12 @@
 ++  mo
   ~%  %gall-mo  +>  ~
   |_  [hen=duct moves=(list move)]
+  ::
+  ++  trace
+    |=  [verb=? =dude print=tang]
+    ^+  same
+    (^trace verb dude dudes.bug.state print)
+  ::
   ::  +mo-abed: initialise state with the provided duct
   ::  +mo-abet: finalize, reversing moves
   ::  +mo-pass: prepend a standard %pass to the current list of moves
@@ -1024,6 +1063,28 @@
       %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
       %x  (mo-give %unto %kick ~)
     ==
+  ::  +mo-spew: handle request to set verbosity toggles on debug output
+  ::
+  ++  mo-spew
+    |=  verbs=(list verb)
+    ^+  mo-core
+    ::  start from all %.n's, then flip requested toggles
+    ::
+    =.  veb.bug.state
+      %+  roll  verbs
+      |=  [=verb acc=_veb-all-off]
+      ^+  veb.bug.state
+      ?-  verb
+        %odd  acc(odd %.y)
+      ==
+    mo-core
+  ::  +mo-sift: handle request to filter debug output by agent
+  ::
+  ++  mo-sift
+    |=  dudes=(list dude)
+    ^+  mo-core
+    =.  dudes.bug.state  (sy dudes)
+    mo-core
   ::  +ap: agent engine
   ::
   ::    An inner, agent-level core.  The sample refers to the agent we're
@@ -1038,6 +1099,12 @@
             agent-config=(list (each suss tang))
             =yoke
         ==
+    ::
+    ++  trace
+      |=  [verb=? print=tang]
+      ^+  same
+      (^trace verb agent-name print)
+    ::
     ++  ap-core  .
     ::  +ap-abed: initialise state for an agent, with the supplied routes.
     ::
@@ -1528,29 +1595,28 @@
         ::
             %watch-ack
           ?.  (~(has by outbound.watches.yoke) sub-key)
-            %-  %:  slog
-                    leaf+"{<agent-name>}: got ack for nonexistent subscription"
-                    leaf+"{<dock>}: {<agent-wire>}"
-                    >wire=wire<
-                    ~
-                  ==
-            ap-core
+            %.  ap-core
+            %+  trace  odd.veb.bug.state  :~
+              leaf+"{<agent-name>}: got ack for nonexistent subscription"
+              leaf+"{<dock>}: {<agent-wire>}"
+              >wire=wire<
+            ==
           =.  outbound.watches.yoke
             ?^  p.sign
               (~(del by outbound.watches.yoke) sub-key)
             ::
             %+  ~(jab by outbound.watches.yoke)  sub-key
             |=  val=[acked=? =path nonce=@]
-            =?  .  acked.val
-              %.(. (slog leaf+"{<agent-name>} 2nd watch-ack on {<val>}" ~))
-            val(acked &)
+            %.  val(acked &)
+            %^  trace  &(odd.veb.bug.state acked.val)
+            leaf/"{<agent-name>} 2nd watch-ack on {<val>}"  ~
           ::
           ingest-and-check-error
         ==
       ::
       ++  on-missing
         %.  ap-core
-        %-  slog  :~
+        %+  trace  odd.veb.bug.state  :~
           leaf+"{<agent-name>}: got {<-.sign>} for nonexistent subscription"
           leaf+"{<dock>}: {<[nonce=nonce agent-wire]>}"
           >wire=wire<
@@ -1558,7 +1624,7 @@
       ::
       ++  on-weird-kick
         %.  run-sign
-        %-  slog  :~
+        %+  trace  odd.veb.bug.state  :~
           leaf+"{<agent-name>}: got %kick for nonexistent subscription"
           leaf+"{<dock>}: {<agent-wire>}"
           >wire=wire<
@@ -1776,10 +1842,9 @@
         =/  sub-wire=^wire  (slag 6 `^wire`wire)
         ::
         ?.  (~(has by outbound.watches.yoke) sub-wire dock)
-          =;  =tang
-            %-  (slog tang)
-            $(moves t.moves)
-          [leaf+"gall: {<agent-name>} missing subscription, got %leave"]~
+          %.  $(moves t.moves)
+          %^  trace  odd.veb.bug.state
+          leaf/"gall: {<agent-name>} missing subscription, got %leave"  ~
         =/  have=[acked=? =path nonce=@]
           (~(got by outbound.watches.yoke) sub-wire dock)
         =.  p.move.move
@@ -1860,6 +1925,8 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
+      %spew  mo-abet:(mo-spew:mo-core veb.task)
+      %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==
