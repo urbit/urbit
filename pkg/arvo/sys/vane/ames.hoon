@@ -1440,25 +1440,27 @@
       event-core
     ::
     =/  =open-packet  (decode-open-packet packet our life.ames-state)
-    ::  store comet as peer in our state
+    ::  add comet as an %alien if we haven't already
+    ::
+    =?  peers.ames-state  ?=(~ ship-state)
+      (~(put by peers.ames-state) sndr.packet %alien *alien-agenda)
+    ::  upgrade comet to %known via on-publ-full
+    ::
+    =.  event-core
+      =/  crypto-suite=@ud  1
+      =/  =point
+        :*  ^=     rift  0
+            ^=     life  sndr-life.open-packet
+            ^=     keys  (my [sndr-life.open-packet crypto-suite public-key.open-packet]~)
+            ^=  sponsor  `(^sein:title sndr.packet)
+        ==
+      (on-publ / [%full (my [sndr.packet point]~)])
+    ::  manually add the lane to the peer state
     ::
     =.  peers.ames-state
-      %+  ~(put by peers.ames-state)  sndr.packet
-      ^-  ^ship-state
-      :-  %known
-      =|  =peer-state
-      =/  our-private-key  sec:ex:crypto-core.ames-state
-      =/  =symmetric-key
-        (derive-symmetric-key public-key.open-packet our-private-key)
-      ::
-      %_  peer-state
-        qos            [%unborn now]
-        symmetric-key  symmetric-key
-        life           sndr-life.open-packet
-        public-key     public-key.open-packet
-        sponsor        (^sein:title sndr.packet)
-        route          `[direct=%.n lane]
-      ==
+      =/  =peer-state  (gut-peer-state sndr.packet)
+      =.  route.peer-state  `[direct=%.n lane]
+      (~(put by peers.ames-state) sndr.packet %known peer-state)
     ::
     event-core
   ::  +on-hear-shut: handle receipt of encrypted packet
@@ -1468,7 +1470,9 @@
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  if we don't know them, ask jael for their keys and enqueue
+    ::  If we don't know them, ask Jael for their keys. On comets, this will
+    ::  also cause us to send a self-attestation to the sender. The packet
+    ::  itself is dropped; we can assume it will be resent.
     ::
     ?.  ?=([~ %known *] sndr-state)
       (enqueue-alien-todo sndr.packet |=(alien-agenda +<))
@@ -1576,6 +1580,20 @@
   ++  on-take-wake
     |=  [=wire error=(unit tang)]
     ^+  event-core
+    ::
+    ?:  ?=([%alien @ ~] wire)
+      ::  if we haven't received an attestation, ask again
+      ::
+      ?^  error
+        %-  (slog leaf+"ames: attestation timer failed: {<u.error>}" ~)
+        event-core
+      ?~  ship=`(unit @p)`(slaw %p i.t.wire)
+        %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
+        event-core
+      =/  ship-state  (~(get by peers.ames-state) u.ship)
+      ?:  ?=([~ %known *] ship-state)
+        event-core
+      (request-attestation u.ship)
     ::
     =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
     ?~  res
@@ -1887,7 +1905,7 @@
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
   ::    Also requests key and life from Jael on first request.
-  ::    On a comet, enqueues self-attestation packet on first request.
+  ::    If talking to a comet, requests attestation packet.
   ::
   ++  enqueue-alien-todo
     |=  [=ship mutate=$-(alien-agenda alien-agenda)]
@@ -1904,14 +1922,32 @@
     ::
     =.  todos             (mutate todos)
     =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
-    ::  ask jael for .sndr life and keys on first contact
-    ::
     ?:  already-pending
       event-core
+    ::
+    ?:  =(%pawn (clan:title ship))
+      (request-attestation ship)
     ::  NB: we specifically look for this wire in +public-keys-give in
     ::  Jael.  if you change it here, you must change it there.
     ::
     (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
+  ::  +request-attestation: helper to request attestation from comet
+  ::
+  ::    Comets will respond to any unknown peer with a self-attestation,
+  ::    so we either send a sendkeys packet (a dummy shut packet) or, if
+  ::    we're a comet, our own self-attestation, saving a roundtrip.
+  ::
+  ::    Also sets a timer to resend the request every 30s.
+  ::
+  ++  request-attestation
+    |=  =ship
+    ^+  event-core
+    =/  packet  ?.  =(%pawn (clan:title our))
+                  (sendkeys-packet ship)
+                (attestation-packet ship 1)
+    =.  event-core  (send-blob | ship packet)
+    =/  =wire  /alien/(scot %p ship)
+    (emit duct %pass wire %b %wait (add now ~s30))
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane,
@@ -1932,6 +1968,8 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ::
         ?.  ?=([~ %known *] ship-state)
+          ?:  ?=(%pawn (clan:title ship))
+            (try-next-sponsor (^sein:title ship))
           %+  enqueue-alien-todo  ship
           |=  todos=alien-agenda
           todos(packets (~(put in packets.todos) blob))
@@ -1994,6 +2032,23 @@
         ^=   sndr-life  life.ames-state
         ^=        rcvr  her
         ^=   rcvr-life  her-life
+    ==
+  ::  +sendkeys-packet: generate a request for a self-attestation.
+  ::
+  ::    Sent by non-comets to comets.  Not acked.
+  ::
+  ++  sendkeys-packet
+    |=  her=ship
+    ^-  blob
+    ?>  ?=(%pawn (clan:title her))
+    %-  encode-packet
+    %-  encode-shut-packet
+    :*  ^=    shut-packet  *shut-packet
+        ^=  symmetric-key  *symmetric-key
+        ^=           sndr  our
+        ^=           rcvr  her
+        ^=      sndr-life  0
+        ^=      rcvr-life  0
     ==
   ::  +get-peer-state: lookup .her state or ~
   ::
