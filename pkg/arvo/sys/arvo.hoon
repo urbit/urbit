@@ -1355,7 +1355,7 @@
       ::
       %+  turn
         (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
-      =/  bem=beam  [[our %home da+now] /whey]  ::TODO  %base?
+      =/  bem=beam  [[our %base da+now] /whey]  ::TODO  %base?
       |=  [nam=term =vane]
       =;  mas=(list mass)
         nam^|+(welp mas [dot+&+q.vase typ+&+p.vase sac+&+worm ~]:vane)
