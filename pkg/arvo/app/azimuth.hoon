@@ -1,4 +1,4 @@
-/-  eth-watcher, *dice
+/-  eth-watcher, *dice, *hood
 /+  ethereum,
     azimuth,
     naive,
@@ -239,6 +239,11 @@
           number:(last-block-id:dice logs.state)
         ~&  >>  %no-logs-in-azimuth-state
         last-snap
+      =+  [our=(scot %p our.bowl) now=(scot %da now.bowl)]
+      =+  .^(dudes=(set [dude:gall ?]) %ge our %base now /)
+      =/  running=?  (~(has in dudes) [%eth-watcher &])
+      =/  installed=?
+        |((~(has in dudes) [%eth-watcher &]) (~(has in dudes) [%eth-watcher |]))
       :_  this
       =/  cards=(list card)
         :-  ::  %jael will re-subscribe to get all azimuth diffs
@@ -247,6 +252,21 @@
         ::  we poke eth-watcher to retrieve logs from the latest we have
         ::
         %*(start do last-snap last-block)
+      =?  cards  !running
+        ::  restart %eth-watcher
+        ::
+        ~&  >>  %starting-eth-watcher
+        =/  rein=[desk rein]  [%base %.y [%eth-watcher ~ ~] ~]
+        :_  cards
+        [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>(rein)]
+      =?  cards  !installed
+        ::  reinstall %base desk
+        ::
+        =+  spo=(sein:title [our now our]:bowl)
+        ~&  >>  re-installing-base-from+spo
+        =/  fresh=[desk ship desk]  [%base spo %kids]
+        :_  cards
+        [%pass /fresh %agent [our.bowl %hood] %poke kiln-install+!>(fresh)]
       ::  resubscribe if we somehow get unsubscribed from eth-watcher
       ::
       ?:  (~(has by wex.bowl) [/eth-watcher our.bowl %eth-watcher])

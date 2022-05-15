@@ -978,5 +978,8 @@
 ::
 ++  hex-to-num
   |=  a=@t
-  (rash (rsh [3 2] a) hex)
+  ~|  %non-hex-cord
+  ?>  =((end [3 2] a) '0x')
+  =<  ?<(=(0 p) q)  %-  need
+  (de:base16:mimes:html (rsh [3 2] a))
 --
