@@ -175,7 +175,7 @@
           -
         ^-  config
         =,  -.dog
-        [url eager refresh-rate refresh-rate from ~ contracts batchers topics]
+        [url eager refresh-rate timeout-time from ~ contracts batchers topics]
       ::
           running
         ?~  running.dog  ~
