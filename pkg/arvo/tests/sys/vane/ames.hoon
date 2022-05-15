@@ -85,6 +85,7 @@
   =.  -.peer-state
     :*  symmetric-key=nec-marbud-sym
         life=5
+        rift=0
         public-key=marbud-pub
         sponsor=~bud
     ==
@@ -110,6 +111,7 @@
   =.  -.peer-state
     :*  symmetric-key=marbud-sym
         life=5
+        rift=0
         public-key=marbud-pub
         sponsor=~bud
     ==
@@ -121,6 +123,7 @@
   =.  -.peer-state
     :*  symmetric-key=bud-marbud-sym
         life=3
+        rift=0
         public-key=bud-pub
         sponsor=~bud
     ==
@@ -132,6 +135,7 @@
   =.  -.peer-state
     :*  symmetric-key=marbud2-sym
         life=5
+        rift=0
         public-key=marbud-pub
         sponsor=~bud
     ==
@@ -143,6 +147,7 @@
   =.  -.peer-state
     :*  symmetric-key=bud-marbud-sym
         life=3
+        rift=0
         public-key=bud-pub
         sponsor=~bud
     ==
@@ -311,112 +316,6 @@
       !>  (sy ,.moves3)
   ==
 ::
-<<<<<<< HEAD
-++  test-comet-encounter  ^-  tang
-  ::
-  =/  lane-foo=lane:ames  [%| `@ux``@`%lane-foo]
-  ::
-  =/  =open-packet:ames
-    :*  public-key=`@`comet-pub
-        sndr=our.comet
-        sndr-life=1
-        rcvr=~bud
-        rcvr-life=3
-    ==
-  =/  packet
-    ~!  ames
-    (encode-open-packet:ames open-packet crypto-core.ames-state.comet)
-  =/  blob  (encode-packet:ames packet)
-  ::
-  =^  moves0  bud  (call bud ~[//unix] %hear lane-foo blob)
-  ::
-  =/  =plea:ames  [%g /talk [%first %post]]
-  =/  =shut-packet:ames
-    :*  bone=1
-        message-num=1
-        [%& num-fragments=1 fragment-num=0 (jam plea)]
-    ==
-  =/  =packet:ames
-    %:  encode-shut-packet:ames
-      shut-packet
-      comet-sym
-      our.comet
-      ~bud
-      sndr-life=1
-      rcvr-life=3
-    ==
-  =/  blob  (encode-packet:ames packet)
-  =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
-  ::
-  ;:  weld
-    %+  expect-eq
-      !>  ~
-      !>  moves0
-  ::
-    %+  expect-eq
-      !>  :~  :*  ~[//unix]  %pass  /qos  %d  %flog  %text
-                  "; {<our.comet>} is your neighbor"
-              ==
-              :*  ~[//unix]  %pass  /bone/(scot %p our.comet)/0/1
-                  %g  %plea  our.comet  plea
-          ==  ==
-      !>  moves1
-  ==
-::
-||||||| c4bc9b3428
-++  test-comet-encounter  ^-  tang
-  ::
-  =/  lane-foo=lane:ames  [%| `@ux``@`%lane-foo]
-  ::
-  =/  =open-packet:ames
-    :*  public-key=`@`comet-pub
-        sndr=our.comet
-        sndr-life=1
-        rcvr=~bud
-        rcvr-life=3
-    ==
-  =/  packet
-    ~!  ames
-    (encode-open-packet:ames open-packet crypto-core.ames-state.comet)
-  =/  blob  (encode-packet:ames packet)
-  ::
-  =^  moves0  bud  (call bud ~[//unix] %hear lane-foo blob)
-  ::
-  =/  =plea:ames  [%g /talk [%first %post]]
-  =/  =shut-packet:ames
-    :*  bone=1
-        message-num=1
-        [%& num-fragments=1 fragment-num=0 (jam plea)]
-    ==
-  =/  =packet:ames
-    %:  encode-shut-packet:ames
-      shut-packet
-      comet-sym
-      our.comet
-      ~bud
-      sndr-life=1
-      rcvr-life=3
-    ==
-  =/  blob  (encode-packet:ames packet)
-  =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
-  ::
-  ;:  weld
-    %+  expect-eq
-      !>  ~
-      !>  moves0
-  ::
-    %+  expect-eq
-      !>  :~  :*  ~[//unix]  %pass  /qos  %d  %flog  %text
-                  "; {<our.comet>} is your neighbor"
-              ==
-              :*  ~[//unix]  %pass  /bone/(scot %p our.comet)/1
-                  %g  %plea  our.comet  plea
-          ==  ==
-      !>  moves1
-  ==
-::
-=======
->>>>>>> pr
 ++  test-message-flow  ^-  tang
   ::  ~nec -> %plea -> ~bud
   ::

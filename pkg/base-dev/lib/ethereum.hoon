@@ -949,7 +949,7 @@
   (render-hex-bytes 20 `@`a)
 ::
 ++  address-to-checksum
-  |=  =address
+  |=  a=address
   ^-  tape
   =/  hexed  (render-hex-bytes 20 `@`a)
   =/  hash  (keccak-256:keccak:crypto (as-octs:mimes:html (crip hexed)))
