@@ -601,10 +601,6 @@
       ~|  %error-validating^path
       %-  soak-cage
       %+  gain-sprig  vale+path  |.
-      ?^  got=(~(get by sprig.nub) vale+path)
-        =?  stack.nub  ?=(^ stack.nub)
-          stack.nub(i (~(put in i.stack.nub) leak.u.got))
-        [soak.u.got nub]
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^cycle.nub !!)
@@ -927,6 +923,7 @@
       ^-  [(map @ta vase) state]
       %-  soak-arch
       %+  gain-sprig  arch+path  |.
+      =.  stack.nub  [~ stack.nub]
       %+  gain-leak  arch+path
       |=  nob=state
       =.  nub  nob
