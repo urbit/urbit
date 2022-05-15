@@ -870,7 +870,7 @@ _conn_io_exit(u3_auto* car_u)
     }
   }
   else {
-    u3l_log("conn: unlinked %s\n", paf_c);
+    // u3l_log("conn: unlinked %s\n", paf_c);
   }
   c3_free(paf_c);
 
