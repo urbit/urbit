@@ -357,6 +357,7 @@
   ::
   ::    %born: process restart notification
   ::    %init: vane boot
+  ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
   ::    %spew: set verbosity toggles
   ::    %trim: release memory
@@ -370,6 +371,7 @@
     ::
         $>(%born vane-task)
         $>(%init vane-task)
+        [%prod ships=(list ship)]
         [%sift ships=(list ship)]
         [%spew veb=(list verb)]
         [%stir arg=@t]
