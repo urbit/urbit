@@ -864,6 +864,7 @@
     ==                                                  ::
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
+  +$  page  ^page                                       ::  export for compat
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe page)                             ::  data
