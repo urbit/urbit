@@ -350,6 +350,18 @@ intmax_t mdb_get_filesize(HANDLE han_u)
 
 char *realpath(const char *path, char *resolved_path)
 {
-    // TODO
-    return strdup(path);
+  //  XX  MAX_PATH
+  //
+  return _fullpath(resolved_path, path, MAX_PATH);
+}
+
+long sysconf(int name)
+{
+  SYSTEM_INFO si;
+
+  if ( _SC_PAGESIZE != name ) {
+    return -1;
+  }
+  GetNativeSystemInfo(&si);
+  return si.dwPageSize;
 }

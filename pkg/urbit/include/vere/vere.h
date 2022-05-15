@@ -1,5 +1,5 @@
-/* include/vere/vere.h
-*/
+#ifndef U3_VERE_H
+#define U3_VERE_H
 
 #include <uv.h>
 
@@ -67,7 +67,7 @@
         u3_mess_type     sat_e;             //  msg type
         union {                             //
           struct {                          //  awaiting header:
-            c3_y         len_y[8];          //    header bytes
+            c3_y         hed_y[5];          //    header bytes
             c3_y         has_y;             //    length
           } hed_u;                          //
           struct {                          //  awaiting body
@@ -274,6 +274,7 @@
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   bin_c;                      //  -b, http server bind ip
+        c3_w    hap_w;                      //  -C, cap memo cache
         c3_o    nuu;                        //  -c, new pier
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
@@ -284,7 +285,6 @@
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
         c3_c*   jin_c;                      //  -I, inject raw event
         c3_c*   imp_c;                      //  -i, import pier state
-        c3_w    hap_w;                      //  -C, cap memo cache
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
         c3_o    tra;                        //  -j, json trace
         c3_w    kno_w;                      //  -K, kernel version
@@ -293,20 +293,23 @@
         c3_o    lit;                        //  -l, lite mode
         c3_c*   til_c;                      //  -n, play till eve_d
         c3_o    pro;                        //  -P, profile
+        c3_s    per_s;                      //      http port
+        c3_s    pes_s;                      //      https port
         c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
         c3_c*   roc_c;                      //  -r, load rock by eve_d
         c3_o    has;                        //  -S, Skip battery hashes
-        c3_o    tem;                        //  -t, Disable terminal/tty assumptions
         c3_o    git;                        //  -s, pill url from arvo git hash
+        c3_o    tem;                        //  -t, Disable terminal/tty assumptions
         c3_c*   url_c;                      //  -u, pill url
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_c*   who_c;                      //  -w, begin with ticket
-        c3_o    tex;                        //  -x, exit after loading
         c3_c*   pek_c;                      //  -X, scry path (/vc/desk/path)
+        c3_o    tex;                        //  -x, exit after loading
         c3_c*   puk_c;                      //  -Y, scry result filename
         c3_c*   puf_c;                      //  -Z, scry result format
+        c3_o    con;                        //      run conn
       } u3_opts;
 
     /* u3_host: entire host.
@@ -328,7 +331,7 @@
         void     (*bot_f)();                //  call when chis is up
       } u3_host;                            //  host == computer == process
 
-    /**  New pier system.
+    /**  Pier system.
     **/
       /* u3_ovum_news: u3_ovum lifecycle events
       */
@@ -585,10 +588,11 @@
       /* u3_auto_cb: i/o driver callbacks
       */
         typedef struct _u3_auto_cb {
-          void (*talk_f)(struct _u3_auto*);
-          void (*info_f)(struct _u3_auto*);
-          c3_o (*kick_f)(struct _u3_auto*, u3_noun, u3_noun);
-          void (*exit_f)(struct _u3_auto*);  // XX close_cb?
+          void    (*talk_f)(struct _u3_auto*);
+          u3_noun (*info_f)(struct _u3_auto*);
+          void    (*slog_f)(struct _u3_auto*);
+          c3_o    (*kick_f)(struct _u3_auto*, u3_noun, u3_noun);
+          void    (*exit_f)(struct _u3_auto*);  // XX close_cb?
         } u3_auto_cb;
 
       /* u3_auto: abstract i/o driver
@@ -635,7 +639,6 @@
           c3_c*            pax_c;               //  pier directory
           c3_w             lif_w;               //  lifecycle barrier
           c3_d             who_d[2];            //  identity
-          c3_c*            who_c;               //  identity as C string
           c3_o             fak_o;               //  yes iff fake security
           c3_o             liv_o;               //  fully live
           u3_disk*         log_u;               //  event log
@@ -653,9 +656,12 @@
           void*            sop_p;               //  slog stream data
           void           (*sog_f)               //  slog stream callback
                          (void*, c3_w, u3_noun);//
-          // XX remove
-          c3_s             por_s;               //  UDP port
+          //  XX remove
+          c3_s             per_s;               //  http port
+          c3_s             pes_s;               //  htls port
+          c3_s             por_s;               //  ames port
           u3_save*         sav_u;               //  autosave
+          //  XX end remove
           struct _u3_pier* nex_u;               //  next in list
         } u3_pier;
 
@@ -674,7 +680,6 @@
         u3_pier_spin(u3_pier* pir_u);
 
 #     define u3L  u3_Host.lup_u             //  global event loop
-#     define u3Z  (&(u3_Raft))
 #     define u3K  u3_King
 
   /** Global variables.
@@ -755,7 +760,7 @@
         c3_d
         u3_time_gap_ms(u3_noun now, u3_noun wen);
 
-    /**  ward: common structure lifecycle
+    /**  Common structure lifecycle.
     **/
       /* u3_dent_init(): initialize file record.
       */
@@ -840,17 +845,22 @@
         c3_w
         u3_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot);
 
-    /**  New vere
+    /**  IO drivers.
     **/
       /* u3_auto_init(): initialize all drivers.
       */
         u3_auto*
         u3_auto_init(u3_pier* pir_u);
 
-      /* u3_auto_info(): print status info.
+      /* u3_auto_info(): status info as a (list mass), all drivers.
+      */
+        u3_noun
+        u3_auto_info(u3_auto* car_u);
+
+      /* u3_auto_slog(): print status info.
       */
         void
-        u3_auto_info(u3_auto* car_u);
+        u3_auto_slog(u3_auto* car_u);
 
       /* u3_auto_exit(): close all drivers.
       */
@@ -925,10 +935,15 @@
         u3_disk*
         u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
 
-      /* u3_disk_info(): print status info.
+      /* u3_disk_info(): status info as $mass.
+      */
+        u3_noun
+        u3_disk_info(u3_disk* log_u);
+
+      /* u3_disk_slog(): print status info.
       */
         void
-        u3_disk_info(u3_disk* log_u);
+        u3_disk_slog(u3_disk* log_u);
 
       /* u3_disk_exit(): close [log_u] and dispose.
       */
@@ -979,10 +994,15 @@
                      c3_d      key_d[4],
                      u3_lord_cb cb_u);
 
-      /* u3_lord_info(): print status info.
+      /* u3_lord_info(): status info as a $mass.
+      */
+        u3_noun
+        u3_lord_info(u3_lord* god_u);
+
+      /* u3_lord_slog(): print status info.
       */
         void
-        u3_lord_info(u3_lord* god_u);
+        u3_lord_slog(u3_lord* god_u);
 
       /* u3_lord_exit(): shutdown gracefully.
       */
@@ -1034,41 +1054,14 @@
         void
         u3_lord_peek(u3_lord* god_u, u3_pico* pic_u);
 
-    /**  Filesystem (new api).
-    **/
-      /* u3_walk_load(): load file or bail.
-      */
-        u3_noun
-        u3_walk_load(c3_c* pas_c);
-
-      /* u3_walk_safe(): load file or 0.
-      */
-        u3_noun
-        u3_walk_safe(c3_c* pas_c);
-
-      /* u3_walk_save(): save file or bail.
-      */
-        void
-        u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax);
-
-      /* u3_walk(): traverse `dir_c` to produce an arch, updating `old`.
-      */
-        u3_noun
-        u3_walk(const c3_c* dir_c, u3_noun old);
-
-      /* u3_path(): C unix path in computer for file or directory.
-      */
-        c3_c*
-        u3_path(c3_o    fyl, u3_noun pax);
-
-    /**  Filesystem (async)
+    /**  Filesystem (async).
     **/
       /* u3_foil_folder(): load directory, blockingly.  create if nonexistent.
       */
         u3_dire*
         u3_foil_folder(const c3_c* pax_c);         //  directory object, or 0
 
-    /**  Terminal, new style.
+    /**  Terminal.
     **/
       /* u3_term_start_spinner(): prepare spinner state. RETAIN.
       */
@@ -1166,8 +1159,18 @@
         u3_save_io_exit(u3_pier *pir_u);
 
 
-    /**  Storage, new school.
+    /**  Storage.
     **/
+      /* u3_unix_save(): save file undir .../.urb/put or bail.
+      */
+        void
+        u3_unix_save(c3_c* pax_c, u3_atom pad);
+
+      /* u3_unix_cane(): true iff (unix) path is canonical.
+      */
+        c3_t
+        u3_unix_cane(const c3_c* pax_c);
+
       /* u3_unix_initial_into_card(): create initial filesystem sync card.
       */
         u3_noun
@@ -1199,14 +1202,21 @@
         u3_auto*
         u3_cttp_io_init(u3_pier* pir_u);
 
-    /**  fore, first events
+    /**  Control plane.
+    **/
+      /* u3_conn_io_init(): initialize control plane I/O.
+      */
+        u3_auto*
+        u3_conn_io_init(u3_pier* pir_u);
+
+    /**  fore, first events.
     **/
       /* u3_hind_io_init(): initialize fore
       */
         u3_auto*
         u3_fore_io_init(u3_pier* pir_u);
 
-    /**  hind, defaults
+    /**  hind, defaults.
     **/
       /* u3_hind_io_init(): initialize hint
       */
@@ -1217,7 +1227,7 @@
     **/
       /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
       */
-        void
+        c3_o
         u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d);
 
       /* u3_newt_send(): write buffer to stream.
@@ -1235,10 +1245,15 @@
         void
         u3_newt_read(u3_moat* mot_u);
 
-      /* u3_newt_moat_info(); print status info.
+      /* u3_newt_moat_info(): status info as $mass.
+      */
+        u3_noun
+        u3_newt_moat_info(u3_moat* mot_u);
+
+      /* u3_newt_moat_slog(); print status info.
       */
         void
-        u3_newt_moat_info(u3_moat* mot_u);
+        u3_newt_moat_slog(u3_moat* mot_u);
 
       /* u3_newt_moat_stop(); newt stop/close input stream.
       */
@@ -1304,12 +1319,17 @@
         void
         u3_pier_pack(u3_pier* pir_u);
 
-      /* u3_pier_info(): print status info.
+      /* u3_pier_info(): pier status info as $mass.
       */
-        void
+        u3_noun
         u3_pier_info(u3_pier* pir_u);
 
-      /* u3_pier_boot(): start the new pier system.
+      /* u3_pier_slog(): print pier status info.
+      */
+        void
+        u3_pier_slog(u3_pier* pir_u);
+
+      /* u3_pier_boot(): start the pier.
       */
         u3_pier*
         u3_pier_boot(c3_w    wag_w,                 //  config flags
@@ -1319,7 +1339,7 @@
                      u3_noun pax,                   //  path to pier
                      u3_weak fed);                  //  extra private keys
 
-      /* u3_pier_stay(): restart the new pier system.
+      /* u3_pier_stay(): restart the pier.
       */
         u3_pier*
         u3_pier_stay(c3_w wag_w, u3_noun pax);
@@ -1354,6 +1374,16 @@
         c3_w
         u3_pier_mark(FILE* fil_u);
 
+      /* u3_pier_mase(): construct a $mass leaf.
+      */
+        u3_noun
+        u3_pier_mase(c3_c* cod_c, u3_noun dat);
+
+      /* u3_pier_mass(): construct a $mass branch with noun/list.
+      */
+        u3_noun
+        u3_pier_mass(u3_atom cod, u3_noun lit);
+
       /* u3_dawn_come(): mine a comet
       */
         u3_noun
@@ -1374,10 +1404,10 @@
         u3_pier*
         u3_king_stub(void);
 
-      /* u3_king_info(): print status info.
+      /* u3_king_slog(): print status info.
       */
         void
-        u3_king_info(void);
+        u3_king_slog(void);
 
       /* u3_king_done(): all piers closed
       */
@@ -1411,3 +1441,5 @@
 
         c3_w
         u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+
+#endif /* ifndef U3_VERE_H */

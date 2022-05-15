@@ -109,7 +109,6 @@ let
 
     urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = libLocal.testFakeShip {
-      inherit herb;
       inherit arvo;
 
       urbit = urbit-debug;
@@ -127,7 +126,6 @@ let
 
       contents = {
         "${name}/urbit" = "${urbit}/bin/urbit";
-        "${name}/urbit-worker" = "${urbit}/bin/urbit-worker";
       };
     };
 

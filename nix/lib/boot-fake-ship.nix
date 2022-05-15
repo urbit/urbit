@@ -1,6 +1,6 @@
-{ lib, stdenvNoCC, cacert }:
+{ lib, stdenvNoCC, curl }:
 
-{ urbit, herb, arvo ? null, pill, ship, arguments ? [ "-l" ] }:
+{ urbit, arvo ? null, pill, ship, arguments ? [ "-l" ] }:
 
 let
 
@@ -10,16 +10,11 @@ let
 in stdenvNoCC.mkDerivation {
   name = "fake-${ship}";
 
-  buildInputs = [ cacert urbit herb ];
+  buildInputs = [ curl urbit ];
 
   phases = [ "buildPhase" "installPhase " ];
 
   buildPhase = ''
-    if ! [ -f "$SSL_CERT_FILE" ]; then
-      header "$SSL_CERT_FILE doesn't exist"
-      exit 1
-    fi
-
     set -xeuo pipefail
 
     urbit ${lib.concatStringsSep " " args} ./pier
@@ -34,13 +29,27 @@ in stdenvNoCC.mkDerivation {
 
     trap cleanup EXIT
 
+    port=$(cat ./pier/.http.ports | grep loopback | tr -s ' ' '\n' | head -n 1)
+
+    lensd() {
+      curl -f -s                                                           \
+        --data "{\"source\":{\"dojo\":\"$1\"},\"sink\":{\"stdout\":null}}" \
+        "http://localhost:$port" | xargs printf %s | sed 's/\\n/\n/g'
+    }
+
+    lensa() {
+      curl -f -s                                                           \
+        --data "{\"source\":{\"dojo\":\"$2\"},\"sink\":{\"app\":\"$1\"}}"  \
+        "http://localhost:$port" | xargs printf %s | sed 's/\\n/\n/g'
+    }
+
     check () {
-      [ 3 -eq "$(herb ./pier -d 3)" ]
+      [ 3 -eq "$(lensd 3)" ]
     }
 
     if check && sleep 10 && check; then
       header "boot success"
-      herb ./pier -p hood -d '+hood/exit'
+      lensa hood '+hood/exit'
       while [ -f ./pier/.vere.lock ]; do
         echo "waiting for pier to shut down"
         sleep 5
@@ -48,8 +57,11 @@ in stdenvNoCC.mkDerivation {
     else
       header "boot failure"
       kill $(< ./pier/.vere.lock) || true
+      set +x
       exit 1
     fi
+
+    set +x
   '';
 
   installPhase = ''

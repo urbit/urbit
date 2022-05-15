@@ -9,6 +9,8 @@ markfil=.$1~
 depdirs=
 nixpath=${NIX_STORE-../build}
 
+: "${MAKE:=make}"
+
 # LDFLAGS doesn't like absolute paths
 if [ "${nixpath:0:1}" == "/" ]
 then
@@ -84,7 +86,7 @@ buildnixdep () {
     [ -e $patch ] && patch -d $dir -p 1 <$patch
     pushd $dir
     eval "$cmdprep"
-    eval make "$cmdmake"
+    eval ${MAKE} "$cmdmake"
     touch $markfil
     popd
   fi
