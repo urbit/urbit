@@ -1053,7 +1053,7 @@
         ++  create
           |=  [our=ship zus=vase lal=term pax=path txt=@t]
           ^-  vase
-          =/  cap  "vane %{(trip lal)}"
+          =/  cap  "vane: %{(trip lal)}"
           (slym (smit cap zus pax txt) our)
         ::
         ++  settle
@@ -1619,7 +1619,7 @@
   |=  [kel=wynn hun=(unit @t) van=@t]
   ^-  $-(heir (trap ^))
   ~>  %mean.'arvo: upgrade failed'
-  ~>  %slog.[1 'arvo: beginning upgrade']
+  ~>  %slog.[0 'arvo: beginning upgrade']
   ?~  hun
     =/  gat
       ~>  %slog.[0 'arvo: compiling next arvo']
@@ -1628,7 +1628,7 @@
     =/  lod
       (slap (slot 7 gat) [%limb %load])
     |=  =heir
-    |.  ~>  %slog.[1 'arvo: +load next']
+    |.  ~>  %slog.[0 'arvo: +load next']
     ;;(^ q:(slam lod !>(heir)))
   ::
   ::  hyp: hoon core type
@@ -1898,7 +1898,7 @@
         |=  [[nam=term txt=cord] =_van]
         ^+  van
         %+  ~(put by van)  nam
-        (smit "vane %{(trip nam)}" u.zus /sys/vane/[nam]/hoon txt)
+        (smit "vane: %{(trip nam)}" u.zus /sys/vane/[nam]/hoon txt)
       gub(fat `taf)
     --
 ::

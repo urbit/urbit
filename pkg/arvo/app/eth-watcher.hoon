@@ -163,7 +163,6 @@
     ==
   ::
   =?  old-state  ?=(%5 -.old-state)
-    %-  (slog leaf+"upgrading eth-watcher from %5" ~)
     ^-  app-state
     %=    old-state
         -  %6

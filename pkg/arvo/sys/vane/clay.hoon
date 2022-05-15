@@ -1749,7 +1749,8 @@
     ?:  &(=(%base syd) !updated (~(any in invalid) is-kernel-path))
       (sys-update yoki new-data)
     ::
-    ~?  (did-kernel-update invalid)  %clay-kernel-updated
+    =+  ?.  (did-kernel-update invalid)  ~
+        ((slog 'clay: kernel updated' ~) ~)
     =?  updated  updated  (did-kernel-update invalid)
     =>  ?.  updated  .
         ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after kernel update" .)

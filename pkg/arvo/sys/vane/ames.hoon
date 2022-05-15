@@ -809,7 +809,7 @@
           ?>  ?=(^ cached-state)
           (state-5-to-6:load:adult-core +.u.cached-state)
         =.  cached-state  ~
-        ~>  %slog.1^leaf/"ames: metamorphosis reload"
+        ~>  %slog.0^leaf/"ames: metamorphosis reload"
         [~ adult-gate]
       ::  %born: set .unix-duct and start draining .queued-events
       ::
@@ -892,7 +892,7 @@
           ?>  ?=(^ cached-state)
           (state-5-to-6:load:adult-core +.u.cached-state)
         =.  cached-state  ~
-        ~>  %slog.1^leaf/"ames: metamorphosis reload"
+        ~>  %slog.0^leaf/"ames: metamorphosis reload"
         [moves adult-gate]
       ::  .queued-events has been cleared; metamorphose
       ::
@@ -940,18 +940,18 @@
       ::
           [%5 %adult *]
         =.  cached-state  `[%5 state.old]
-        ~>  %slog.1^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva reload"
         larval-gate
       ::
           [%5 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
         larval-gate
       ::
           [%6 %adult *]  (load:adult-core %6 state.old)
       ::
           [%6 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %6 state.old)
         larval-gate
