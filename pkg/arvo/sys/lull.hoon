@@ -813,7 +813,9 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone  (map [ship desk] dome)                      ::  domes
+  +$  cone                                              ::  domes
+    %+  map  [ship desk]                                ::
+    [dome tom=(map tako norm) nor=norm]                 ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state

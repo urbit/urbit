@@ -4935,19 +4935,19 @@
         %-  ~(gas by *cone)
         %+  turn  ~(tap by dos.rom.ruf)
         |=  [=desk =dojo]
-        [[our desk] [let hit lab]:dom.dojo]
+        [[our desk] [[let hit lab] tom nor]:dom.dojo]
       =.  domes
         %-  ~(uni by domes)
         %-  ~(gas by *cone)
-        ^-  (list [[ship desk] dome:clay])
+        ^-  (list [[ship desk] dome:clay (map tako norm) norm])
         %-  zing
-        ^-  (list (list [[ship desk] dome:clay]))
+        ^-  (list (list [[ship desk] dome:clay (map tako norm) norm]))
         %+  turn  ~(tap by hoy.ruf)
         |=  [=ship =rung]
-        ^-  (list [[^ship desk] dome:clay])
+        ^-  (list [[^ship desk] dome:clay (map tako norm) norm])
         %+  turn  ~(tap by rus.rung)
         |=  [=desk =rede]
-        [[ship desk] [let hit lab]:dom.rede]
+        [[ship desk] [[let hit lab] tom nor]:dom.rede]
       ``[%domes !>(`cone`domes)]
     ==
   ::
