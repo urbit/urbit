@@ -2204,7 +2204,7 @@
 ++  si                                                  ::  signed integer
   ^?
   |%
-  ++  abs  |=(a=@s (add (end 0 a) (rsh 0 a)))         ::  absolute value
+  ++  abs  |=(a=@s (add (end 0 a) (rsh 0 a)))           ::  absolute value
   ++  dif  |=  [a=@s b=@s]                              ::  subtraction
            (sum a (new !(syn b) (abs b)))
   ++  dul  |=  [a=@s b=@]                               ::  modulus
