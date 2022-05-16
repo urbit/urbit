@@ -97,7 +97,8 @@ u3_epoc_migrate(const c3_path* const par_u,
 //!
 //! @param[in]  pax_u  Root directory of epoch.
 //! @param[out] lif_w  Pointer to length of boot sequence. Only relevant for
-//!                    first epoch. Can be NULL if not first epoch.
+//!                    first epoch. Can be NULL if not first epoch. If not NULL
+//!                    and not first epoch, will be set to 0.
 //!
 //! @return NULL  Existing epoch could not be opened.
 //! @return       Handle to open epoch.

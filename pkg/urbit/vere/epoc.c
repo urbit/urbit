@@ -554,6 +554,8 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
     }
     c3_path_pop(poc_u->pax_u);
     *lif_w = ntohl(*lif_w);
+  } else if ( lif_w ) {
+    *lif_w = 0;
   }
 
   if ( !_lmdb_gulf(poc_u->env_u, &poc_u->fir_d, &poc_u->las_d) ) {
