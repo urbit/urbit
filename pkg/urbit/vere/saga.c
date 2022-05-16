@@ -592,7 +592,6 @@ u3_saga_replay(u3_saga* const log_u,
                u3_saga_play   pla_f,
                void*          ptr_v)
 {
-#ifndef U3_REPLAY_FULL /* (1) */
   c3_t suc_t = 0;
 
   if ( 0 == las_d ) {
@@ -604,6 +603,7 @@ u3_saga_replay(u3_saga* const log_u,
     goto end;
   }
 
+#ifndef U3_REPLAY_FULL /* (1) */
   u3_epoc* poc_u;
   try_saga(poc_u = _find_epoc(log_u, las_d),
            goto end,
@@ -615,6 +615,7 @@ u3_saga_replay(u3_saga* const log_u,
               ? u3A->eve_d
               : u3m_boot(u3_epoc_path_str(poc_u), u3e_load);
   }
+
   cur_d++;
 
   try_epoc(u3_epoc_iter_open(poc_u, cur_d), goto take_snapshot);
@@ -627,23 +628,7 @@ u3_saga_replay(u3_saga* const log_u,
     }
     cur_d++;
   }
-  suc_t = 1;
-
-close_iterator:
-  u3_epoc_iter_close(poc_u);
-take_snapshot:
-  u3e_save();
-end:
-  return suc_t;
 #else /* (2) */
-  if ( 0 == las_d ) {
-    las_d = u3_epoc_last_commit(log_u->epo_u.cur_u);
-  }
-
-  if ( las_d == cur_d ) {
-    return 1;
-  }
-
   cur_d++;
 
   c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
@@ -653,13 +638,13 @@ end:
     if ( !poc_u ) {
       poc_u = c3_lode_data(nod_u);
       end_d = u3_epoc_last_commit(poc_u);
-      try_epoc(u3_epoc_iter_open(poc_u, cur_d), exit(9));
+      try_epoc(u3_epoc_iter_open(poc_u, cur_d), goto take_snapshot);
     }
     c3_y*  byt_y;
     size_t byt_i;
-    try_epoc(u3_epoc_iter_step(poc_u, &byt_y, &byt_i), exit(10));
+    try_epoc(u3_epoc_iter_step(poc_u, &byt_y, &byt_i), goto take_snapshot);
     if ( !pla_f(ptr_v, cur_d, las_d, byt_y, byt_i) ) {
-      return 0;
+      goto take_snapshot;
     }
     cur_d++;
     if ( las_d < cur_d ) {
@@ -672,8 +657,15 @@ end:
       nod_u = c3_lode_next(nod_u);
     }
   }
-  return 1;
-#endif
+#endif /* ifndef U3_REPLAY_FULL */
+  suc_t = 1;
+
+close_iterator:
+  u3_epoc_iter_close(poc_u);
+take_snapshot:
+  u3e_save();
+end:
+  return suc_t;
 }
 
 void
