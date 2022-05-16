@@ -691,19 +691,19 @@ u3_epoc_iter_open(u3_epoc* const poc_u, c3_d ide_d)
   }
 
   // (1)
-  MDB_txn* txn_u = poc_u->itr_u.txn_u;
+  MDB_txn* txn_u;
   try_lmdb(mdb_txn_begin(poc_u->env_u, NULL, MDB_RDONLY, &txn_u),
            goto fail,
            "failed to open read transaction");
 
   // (2)
-  MDB_dbi dbi_u = poc_u->itr_u.dbi_u;
+  MDB_dbi dbi_u;
   try_lmdb(mdb_dbi_open(txn_u, "EVENTS", MDB_INTEGERKEY, &dbi_u),
            goto abort_txn,
            "failed to open EVENTS database");
 
   // (3)
-  MDB_cursor* cur_u = poc_u->itr_u.cur_u;
+  MDB_cursor* cur_u;
   try_lmdb(mdb_cursor_open(txn_u, dbi_u, &cur_u),
            goto abort_txn,
            "failed to open cursors");
