@@ -346,14 +346,14 @@ _ce_patch_create(u3_ce_patch* pat_u)
   c3_mkdir(ful_c, 0700);
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, ctl_nam_c);
-  if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) )
+  if ( -1 == (pat_u->ctl_i = c3_open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) )
   {
     fprintf(stderr, "loom: patch open %s: %s\r\n", ctl_nam_c, strerror(errno));
     c3_assert(0);
   }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, mem_nam_c);
-  if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) )
+  if ( -1 == (pat_u->mem_i = c3_open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) )
   {
     fprintf(stderr, "loom: patch open %s: %s\r\n", mem_nam_c, strerror(errno));
     c3_assert(0);
@@ -368,10 +368,10 @@ _ce_patch_delete(void)
   c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, ctl_nam_c);
-  unlink(ful_c);
+  c3_unlink(ful_c);
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, mem_nam_c);
-  unlink(ful_c);
+  c3_unlink(ful_c);
 }
 
 /* _ce_patch_verify(): check patch data mug.
@@ -451,12 +451,12 @@ _ce_patch_open(void)
   c3_mkdir(ful_c, 0700);
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, ctl_nam_c);
-  if ( -1 == (ctl_i = open(ful_c, O_RDWR)) ) {
+  if ( -1 == (ctl_i = c3_open(ful_c, O_RDWR)) ) {
     return 0;
   }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, mem_nam_c);
-  if ( -1 == (mem_i = open(ful_c, O_RDWR)) ) {
+  if ( -1 == (mem_i = c3_open(ful_c, O_RDWR)) ) {
     close(ctl_i);
 
     _ce_patch_delete();
@@ -926,12 +926,12 @@ u3e_copy(const c3_c* const dir_c)
 close_south:
   close(sop_u.fid_i);
   if ( c3n == suc_o ) {
-    unlink(pas_c);
+    c3_unlink(pas_c);
   }
 close_north:
   close(nop_u.fid_i);
   if ( c3n == suc_o ) {
-    unlink(pan_c);
+    c3_unlink(pan_c);
   }
 exit:
   return suc_o;
