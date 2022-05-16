@@ -50,6 +50,9 @@ static const c3_w elo_ver_w = 1;
 //! Max number of events per epoch.
 static const size_t epo_len_i = 100;
 
+//! Size of the `d_name` field of `struct dirent`.
+#define dname_size sizeof(((struct dirent*)NULL)->d_name)
+
 //==============================================================================
 // Static functions
 //==============================================================================
@@ -127,7 +130,7 @@ _migrate(u3_saga* const log_u, u3_meta* const met_u);
 //! @return 1  Discovered one or more epoch directories.
 //! @return 0  Otherwise.
 static c3_t
-_read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i);
+_read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[dname_size], size_t* ent_i);
 
 //! Remove events that were committed in the last commit request from an event
 //! log's pending commits list.
@@ -174,9 +177,8 @@ _uv_commit_cb(uv_work_t* req_u);
 static inline c3_i
 _cmp_epocs(const void* lef_v, const void* rih_v)
 {
-  static const size_t siz_i = sizeof(((struct dirent*)NULL)->d_name);
-  const c3_c*         lef_c = *(const c3_c(*)[siz_i])lef_v;
-  const c3_c*         rih_c = *(const c3_c(*)[siz_i])rih_v;
+  const c3_c*         lef_c = *(const c3_c(*)[dname_size])lef_v;
+  const c3_c*         rih_c = *(const c3_c(*)[dname_size])rih_v;
   const c3_i          dif_i = strlen(lef_c) - strlen(rih_c);
   return 0 == dif_i ? strcmp(lef_c, rih_c) : dif_i;
 }
@@ -273,9 +275,8 @@ _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
   *ent_i = 0;
 
   struct dirent* ent_u;
-  const size_t   siz_i = sizeof(ent_u->d_name);
   size_t         cap_i = 16; // (1)
-  c3_c(*dst_c)[siz_i]  = c3_malloc(cap_i * siz_i);
+  c3_c(*dst_c)[dname_size]  = c3_malloc(cap_i * dname_size);
   size_t dst_i         = 0;
   while ( (ent_u = readdir(dir_u)) ) {
     if ( !_is_epoc_dir(ent_u->d_name) ) {
@@ -283,7 +284,7 @@ _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
     }
     if ( dst_i == cap_i ) {
       cap_i *= 2;
-      dst_c = c3_realloc(dst_c, cap_i * siz_i);
+      dst_c = c3_realloc(dst_c, cap_i * dname_size);
     }
     strcpy(dst_c[dst_i++], ent_u->d_name);
   }
@@ -291,7 +292,7 @@ _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
     c3_free(dst_c);
     return 0;
   }
-  qsort(dst_c, dst_i, siz_i, _cmp_epocs);
+  qsort(dst_c, dst_i, dname_size, _cmp_epocs);
   *ent_c = dst_c;
   *ent_i = dst_i;
   return 1;
@@ -449,7 +450,7 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     c3_path_pop(log_u->pax_u);
   }
 
-  c3_c(*ent_c)[sizeof(((struct dirent*)NULL)->d_name)];
+  c3_c(*ent_c)[dname_size];
   size_t ent_i;
   if ( !_read_epoc_dirs(c3_path_str(log_u->pax_u), &ent_c, &ent_i) ) {
     goto free_event_log;
@@ -742,3 +743,5 @@ u3_saga_close(u3_saga* const log_u)
     }
   }
 }
+
+#undef dname_size
