@@ -7,7 +7,7 @@
 // Types
 //==============================================================================
 
-//! 
+//! Entry for dirty page in patch control file.
 typedef struct {
   c3_w pag_w; //!< page number
   c3_w mug_w; //!< mug of page
