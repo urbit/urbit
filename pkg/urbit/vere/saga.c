@@ -176,10 +176,9 @@ _uv_commit_cb(uv_work_t* req_u);
 static inline c3_i
 _cmp_epocs(const void* lef_v, const void* rih_v)
 {
-  const c3_c*         lef_c = *(const c3_c(*)[dname_size])lef_v;
-  const c3_c*         rih_c = *(const c3_c(*)[dname_size])rih_v;
-  const c3_i          dif_i = strlen(lef_c) - strlen(rih_c);
-  return 0 == dif_i ? strcmp(lef_c, rih_c) : dif_i;
+  const c3_c* lef_c = *(const c3_c(*)[dname_size])lef_v;
+  const c3_c* rih_c = *(const c3_c(*)[dname_size])rih_v;
+  return strcmp(lef_c, rih_c);
 }
 
 static c3_t
