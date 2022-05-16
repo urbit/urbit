@@ -1385,7 +1385,6 @@ free_event_log:
 
 end:
   return suc_o;
-#undef create_dir
 }
 
 /* u3_mars_grab(): garbage collect.
