@@ -28,7 +28,7 @@
 //! @param[in] cur_d  ID of current event in replay.
 //! @param[in] las_d  ID of last event to be replayed.
 //! @param[in] byt_y  Serialized event.
-//! @param[in] len_i  Length of `byt_y` in bytes.
+//! @param[in] byt_i  Length of `byt_y` in bytes.
 //!
 //! @return 1  Event replay succeeded.
 //! @return 0  Otherwise.
@@ -36,7 +36,7 @@ typedef c3_t (*u3_saga_play)(void*        ptr_v,
                              c3_d         cur_d,
                              c3_d         las_d,
                              c3_y* const  byt_y,
-                             const size_t len_i);
+                             const size_t byt_i);
 
 //! User-provided function to execute on main thread after an async batch commit
 //! has completed.

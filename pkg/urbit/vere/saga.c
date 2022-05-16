@@ -625,9 +625,9 @@ u3_saga_replay(u3_saga* const log_u,
   try_epoc(u3_epoc_iter_open(poc_u, cur_d), goto take_snapshot);
   while ( cur_d <= las_d ) {
     c3_y*  byt_y;
-    size_t len_i;
-    try_epoc(u3_epoc_iter_step(poc_u, &byt_y, &len_i), goto close_iterator);
-    if ( !pla_f(ptr_v, cur_d, las_d, byt_y, len_i) ) {
+    size_t byt_i;
+    try_epoc(u3_epoc_iter_step(poc_u, &byt_y, &byt_i), goto close_iterator);
+    if ( !pla_f(ptr_v, cur_d, las_d, byt_y, byt_i) ) {
       goto close_iterator;
     }
     cur_d++;
@@ -661,9 +661,9 @@ end:
       try_epoc(u3_epoc_iter_open(poc_u, cur_d), exit(9));
     }
     c3_y*  byt_y;
-    size_t len_i;
-    try_epoc(u3_epoc_iter_step(poc_u, &byt_y, &len_i), exit(10));
-    if ( !pla_f(ptr_v, cur_d, las_d, byt_y, len_i) ) {
+    size_t byt_i;
+    try_epoc(u3_epoc_iter_step(poc_u, &byt_y, &byt_i), exit(10));
+    if ( !pla_f(ptr_v, cur_d, las_d, byt_y, byt_i) ) {
       return 0;
     }
     cur_d++;

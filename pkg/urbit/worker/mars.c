@@ -714,7 +714,7 @@ _saga_replay_cb(void*        ptr_v,
                 c3_d         cur_d,
                 c3_d         las_d,
                 c3_y* const  byt_y,
-                const size_t len_i)
+                const size_t byt_i)
 {
   static c3_t fir_t = 1;
   if ( fir_t ) {
@@ -735,9 +735,9 @@ _saga_replay_cb(void*        ptr_v,
 
   mar_u->sen_d = cur_d;
 
-  c3_assert(sizeof(c3_l) < len_i);
+  c3_assert(sizeof(c3_l) < byt_i);
   c3_l mug_l = byt_y[0] ^ (byt_y[1] << 8) ^ (byt_y[2] << 16) ^ (byt_y[3] << 24);
-  u3_noun evt = u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4));
+  u3_noun evt = u3ke_cue(u3i_bytes(byt_i - 4, byt_y + 4));
 
   c3_w    pre_w = u3a_open(u3R);
   u3_noun vir;

@@ -213,7 +213,7 @@ u3_epoc_iter_open(u3_epoc* const poc_u, c3_d ide_d);
 //! @param[in]  poc_u  Must not be NULL.
 //! @param[out] byt_y  Pointer to hold serialized event buffer. Must not be
 //!                    NULL. `*byt_y` must NOT be freed.
-//! @param[out] len_i  Pointer to hold `byt_y` in bytes. Must not be NULL.
+//! @param[out] byt_i  Pointer to hold `byt_y` in bytes. Must not be NULL.
 //!
 //! @return 0  `poc_u` doesn't have an open iterator.
 //! @return 0  Already consumed last event in `poc_u`.
@@ -221,7 +221,7 @@ u3_epoc_iter_open(u3_epoc* const poc_u, c3_d ide_d);
 c3_t
 u3_epoc_iter_step(u3_epoc* const poc_u,
                   c3_y** const   byt_y,
-                  size_t* const  len_i);
+                  size_t* const  byt_i);
 
 //! Close an epoch's iterator.
 //!

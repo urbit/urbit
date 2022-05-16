@@ -742,7 +742,7 @@ succeed:
 //!        u3_epoc_iter_step().
 //! @n (3) The key we fetched from database didn't match the key we expected.
 c3_t
-u3_epoc_iter_step(u3_epoc* const poc_u, c3_y** const byt_y, size_t* const len_i)
+u3_epoc_iter_step(u3_epoc* const poc_u, c3_y** const byt_y, size_t* const byt_i)
 
 {
   if ( !poc_u->itr_u.ope_t ) {
@@ -773,7 +773,7 @@ u3_epoc_iter_step(u3_epoc* const poc_u, c3_y** const byt_y, size_t* const len_i)
   }
 
   *byt_y = val_u.mv_data;
-  *len_i = val_u.mv_size;
+  *byt_i = val_u.mv_size;
   poc_u->itr_u.cur_d++;
   goto succeed;
 
