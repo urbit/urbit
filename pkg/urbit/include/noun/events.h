@@ -50,7 +50,7 @@ typedef struct {
 
 //! Global memory control.
 c3_global u3e_pool u3e_Pool;
-#define u3P u3e_Pool
+#define u3P         u3e_Pool
 
 //==============================================================================
 // Constants
@@ -103,7 +103,7 @@ u3e_load(const c3_c* dir_c);
 //!
 //! @param[in] dir_c  Directory to run the incremental snapshot system in. Will
 //!                   be created if it doesn't exist.
-//! 
+//!
 //! @return c3y  No existing snapshot.
 //! @return c3n  Existing snapshot loaded.
 c3_o
