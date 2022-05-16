@@ -1159,7 +1159,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
   }
 
   u3r_chubs(0, 2, met_u->who_d, who);
-  met_u->ver_w = 1; // elo_ver_w
+  met_u->ver_w = elo_ver_w;
 
   {
     u3_noun bot, mod, use;

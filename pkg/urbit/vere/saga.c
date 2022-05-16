@@ -44,8 +44,7 @@ static const c3_c ver_nam_c[] = "version.bin";
 //! Name of file containing the name of the ship.
 static const c3_c who_nam_c[] = "who.bin";
 
-//! Event log version number.
-static const c3_w elo_ver_w = 1;
+const c3_w elo_ver_w = 1;
 
 //! Max number of events per epoch.
 static const size_t epo_len_i = 100;
