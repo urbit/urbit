@@ -530,7 +530,7 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
 
   u3_epoc* poc_u = c3_calloc(sizeof(*poc_u));
 
-  poc_u->pax_u = c3_path_fv(1, c3_path_str(pax_u));
+  poc_u->pax_u = c3_path_fp(pax_u);
 
   if ( !(poc_u->env_u = _lmdb_init(poc_u->pax_u)) ) {
     goto free_epoc;

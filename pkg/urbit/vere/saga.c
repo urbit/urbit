@@ -377,7 +377,7 @@ u3_saga*
 u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
 {
   u3_saga* log_u = c3_calloc(sizeof(*log_u));
-  if ( !(log_u->pax_u = c3_path_fv(1, c3_path_str(pax_u))) ) {
+  if ( !(log_u->pax_u = c3_path_fp(pax_u)) ){
     goto free_event_log;
   }
   mkdir(c3_path_str(log_u->pax_u), 0700);
@@ -415,7 +415,7 @@ u3_saga*
 u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
 {
   u3_saga* log_u = c3_calloc(sizeof(*log_u));
-  if ( !(log_u->pax_u = c3_path_fv(1, c3_path_str(pax_u))) ) {
+  if ( !(log_u->pax_u = c3_path_fp(pax_u)) ) {
     goto free_event_log;
   }
 
