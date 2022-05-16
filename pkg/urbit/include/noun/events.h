@@ -78,9 +78,10 @@ u3e_fault(void* adr_v, c3_i ser_i);
 void
 u3e_save(void);
 
-//! Copy the incremental snapshot to `dir_c`.
+//! Copy the incremental snapshot to another directory.
 //!
-//! @param[in] dir_c  Will be created if it doesn't already exist.
+//! @param[in] dir_c  Target directory. Will be created if it doesn't already
+//!                   exist.
 //!
 //! @return c3n  `dir_c` could not be created.
 //! @return c3n  Could not create new image files.
@@ -90,7 +91,7 @@ u3e_save(void);
 c3_o
 u3e_copy(const c3_c* const dir_c);
 
-//! Load a snapshot copy from `dir_c` into memory.
+//! Load a snapshot copy from a directory into memory.
 //!
 //! @param[in] dir_c  Must contain a valid snapshot.
 //!
@@ -100,7 +101,8 @@ u3e_load(const c3_c* dir_c);
 
 //! Start the incremental snapshot system.
 //!
-//! @param[in]
+//! @param[in] dir_c  Directory to run the incremental snapshot system in. Will
+//!                   be created if it doesn't exist.
 //! 
 //! @return c3y  No existing snapshot.
 //! @return c3n  Existing snapshot loaded.
@@ -108,6 +110,9 @@ c3_o
 u3e_live(const c3_c* dir_c);
 
 //! Disable dirty page tracking allowing read/write of entire loom.
+//!
+//! @return c3n  Page tracking could not be disabled.
+//! @return c3y  Otherwise.
 c3_o
 u3e_yolo(void);
 

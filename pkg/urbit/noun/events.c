@@ -187,8 +187,6 @@ _ce_mapfree(void* map_v)
 }
 #endif
 
-/* u3e_fault(): handle a memory event with libsigsegv protocol.
-*/
 c3_i
 u3e_fault(void* adr_v, c3_i ser_i)
 {
@@ -967,8 +965,6 @@ u3e_load(const c3_c* dir_c)
   return c3n;
 }
 
-/* u3e_live(): start the checkpointing system.
-*/
 c3_o
 u3e_live(const c3_c* dir_c)
 {
@@ -1056,8 +1052,6 @@ u3e_live(const c3_c* dir_c)
   return nuu_o;
 }
 
-/* u3e_yolo(): disable dirty page tracking, read/write whole loom.
-*/
 c3_o
 u3e_yolo(void)
 {
@@ -1070,8 +1064,6 @@ u3e_yolo(void)
   return c3y;
 }
 
-/* u3e_foul(): dirty all the pages of the loom.
-*/
 void
 u3e_foul(void)
 {
