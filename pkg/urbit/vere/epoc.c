@@ -129,15 +129,6 @@ mdb_get_filesize(mdb_filehandle_t han_u)
 // Static functions
 //==============================================================================
 
-//! Build an epoch path of the form `<par_c>/0i<fir_d>`.
-//!
-//! @param[in] par_u  Path to parent directory.
-//! @param[in] fir_d
-//!
-//! @return  Epoch path.
-static c3_path*
-_epoc_path(const c3_path* const par_u, const c3_d fir_d);
-
 //! Determine if an epoch is the first epoch.
 //!
 //! @param[in] pax_u  Path housing epoch.
@@ -146,6 +137,15 @@ _epoc_path(const c3_path* const par_u, const c3_d fir_d);
 //! @return 0  Otherwise.
 static inline c3_t
 _epoc_is_first(const c3_path* const pax_u);
+
+//! Build an epoch path of the form `<par_c>/0i<fir_d>`.
+//!
+//! @param[in] par_u  Path to parent directory.
+//! @param[in] fir_d
+//!
+//! @return  Epoch path.
+static c3_path*
+_epoc_path(const c3_path* const par_u, const c3_d fir_d);
 
 //! Get the first and last event numbers from an epoch's LMDB instance.
 //!
