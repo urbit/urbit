@@ -640,7 +640,7 @@ take_snapshot:
   u3e_save();
 end:
   return suc_t;
-#else /* @2 */
+#else /* (2) */
   if ( 0 == las_d ) {
     las_d = u3_epoc_last_commit(log_u->epo_u.cur_u);
   }
