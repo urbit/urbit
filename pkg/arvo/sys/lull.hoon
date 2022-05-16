@@ -1657,9 +1657,8 @@
         [%sift dudes=(list dude)]                       ::  per agent
     ==                                                  ::
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
-  +$  boat                                              ::  outgoing subs
-    %+  map  [=wire =ship =term]                        ::
-    [acked=? =path nonce=@]                             ::
+  +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
+  +$  beat  (map [=wire =ship =term] nonce=@)           ::
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
