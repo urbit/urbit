@@ -795,7 +795,7 @@ _saga_boot_cb(void*        ptr_v,
               c3_y* const  byt_y,
               const size_t len_i)
 {
-  u3_noun* evt = (u3_noun*)ptr_v;
+  u3_noun* evt = ptr_v;
   if ( u3_nul == *evt ) {
     fprintf(stderr, "--------------- bootstrap starting ----------------\r\n");
   }
