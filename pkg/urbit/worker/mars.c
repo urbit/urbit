@@ -786,8 +786,9 @@ end:
 
 //! Callback invoked for each boot event during boot sequence replay. Create
 //! single event out of boot events over repeated calls to _saga_boot_cb() and
-//! attempt to boot once the single event has been assembled. See u3_saga_play
-//! for description of parameters.
+//! attempt to boot once the single event has been assembled. `ptr_v` is used to
+//! store a noun pointer that should initially be set to `u3_nul`. See
+//! u3_saga_play for description of parameters.
 static c3_t
 _saga_boot_cb(void*        ptr_v,
               c3_d         cur_d,
