@@ -1,6 +1,6 @@
 import { Terminal } from 'xterm';
 import { saveAs } from 'file-saver';
-import { Blit, Stub } from '@urbit/api/term';
+import { Blit, Stub, Stye } from '@urbit/api/term';
 import { stye } from '../lib/stye';
 
 export const csi = (cmd: string, ...args: number[]) => {
@@ -82,4 +82,48 @@ export const hasBell = (blit: Blit) => {
   } else {
     return false;
   }
-}
+};
+
+//  debug rendering
+//NOTE  doesn't behave nicely in the presence of eob %nel blits,
+//      because those aren't idempotent
+
+const blotStye: Stye = { deco: [], back: { r: 255, g: 0, b: 255 }, fore: 'k' };
+const blitToBlot = (blit: Blit): Blit => {
+  if ('mor' in blit) {
+    return { mor: blit.mor.map(blitToBlot) };
+  } else if ('put' in blit) {
+    return { klr: [{ text: blit.put, stye: blotStye }] };
+  } else if ('klr' in blit) {
+    return { klr: blit.klr.map((s: Stub) => {
+      return { text: s.text, stye: blotStye };
+    }) };
+  } else {
+    return blit;
+  }
+};
+
+const queue: {term: Terminal, blit: Blit}[] = [];
+const renderFromQueue = () => {
+  const next = queue.shift();
+  if (!next) {
+    return;
+  }
+  showBlit(next.term, next.blit);
+  if (0 === queue.length) {
+    return;
+  }
+  setTimeout(renderFromQueue, 200);
+};
+
+export const showBlitDebug = (term: Terminal, blit: Blit) => {
+  const blot = blitToBlot(blit);
+  if (0 === queue.length) {
+    showBlit(term, blot);
+    queue.push({ term, blit });
+    setTimeout(renderFromQueue, 200);
+  } else {
+    queue.push({ term, blit: blot });
+    queue.push({ term, blit });
+  }
+};
