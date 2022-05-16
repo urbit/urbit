@@ -491,13 +491,18 @@ u3_saga_last_commit(const u3_saga* const log_u)
 }
 
 //! @n (1) Bootstrap is needed if the only epoch present is the first epoch.
+//! @n (2) Bootstrap is always required on full replay.
 c3_t
 u3_saga_needs_bootstrap(const u3_saga* const log_u)
 {
+#ifndef U3_REPLAY_FULL
   c3_assert(log_u);
   const u3_epoc* const poc_u = c3_lode_data(c3_list_peekf(log_u->epo_u.lis_u));
   const size_t         len_i = c3_list_len(log_u->epo_u.lis_u);
   return epo_min_d == u3_epoc_first_commit(poc_u) && 1 == len_i; // (1)
+#else
+  return 1; // (2)
+# endif /* ifndef U3_REPLAY_FULL */
 }
 
 void
@@ -648,7 +653,6 @@ u3_saga_replay(u3_saga* const log_u,
     }
     cur_d++;
     if ( las_d < cur_d ) {
-      u3_epoc_iter_close(poc_u);
       break;
     }
     else if ( end_d < cur_d ) {
