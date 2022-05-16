@@ -18,6 +18,7 @@
 #include <curl/curl.h>
 #include <vere/db/lmdb.h>
 #include <getopt.h>
+#include <libgen.h>
 
 #include "ca-bundle.h"
 
@@ -353,8 +354,18 @@ _main_getopt(c3_i argc, c3_c** argv)
       u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
     }
     else {
-      //  XX not sure how this might be reachable
-      return c3n;
+      c3_w len_w = strlen(argv[0]);
+
+      //  no args, argv[0] == $pier/.run
+      //
+      if ( (4 <= len_w) && (0 == strcmp(argv[0] + (len_w - 4), ".run")) ) {
+        u3_Host.dir_c = _main_repath(dirname(argv[0]));
+      }
+      //  no args, invalid command
+      //
+      else {
+        return c3n;
+      }
     }
   }
   else {
