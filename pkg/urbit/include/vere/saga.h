@@ -42,7 +42,7 @@ typedef c3_t (*u3_saga_play)(void*        ptr_v,
 //! has completed.
 //!
 //! @param[in] ptr_v  Context provided to u3_saga_commit_mode() as `ptr_v`.
-//! @param[in] suc_d  ID of last event committed in async batch commit.
+//! @param[in] ide_d  ID of last event committed in async batch commit.
 //! @param[in] suc_t  True if the commit succeeded.
 //!
 //! @return 1  Success.
