@@ -818,9 +818,6 @@ u3_epoc_info(const u3_epoc* const poc_u)
   fprintf(stderr, "    number of readers used: %u\r\n", mei_u.me_numreaders);
 }
 
-//! @n (1) Cancel thread that is performing async commits.
-//!        XX can deadlock from signal handler
-//!        XX revise SIGTSTP handling
 void
 u3_epoc_close(u3_epoc* const poc_u)
 {
