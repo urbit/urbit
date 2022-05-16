@@ -309,10 +309,10 @@ _move_file(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c)
 
   suc_t = 1;
 
-pop_src_path:
-  c3_path_pop(src_u);
 pop_dst_path:
   c3_path_pop(dst_u);
+pop_src_path:
+  c3_path_pop(src_u);
 end:
   return suc_t;
 }
