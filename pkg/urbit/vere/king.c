@@ -9,6 +9,11 @@
 #include <curl/curl.h>
 #include <uv.h>
 
+//  XX use a new GCP bucket?
+//
+// static const c3_c* ver_hos_c = "https://bootstrap.urbit.org/vere";
+static const c3_c* ver_hos_c = "http://localhost:8000";
+
 //  stash config flags for worker
 //
 static c3_w sag_w;
@@ -305,27 +310,32 @@ _king_get_next(c3_c** out_c)
   c3_y* hun_y;
   c3_i  ret_i;
 
-  ret_i = asprintf(&url_c, "https://bootstrap.urbit.org/vere/%s/next", URBIT_VERSION);
+  ret_i = asprintf(&url_c, "%s/%s/next", ver_hos_c, URBIT_VERSION);
   c3_assert( ret_i > 0 );
 
   if ( !_king_curl_bytes(url_c, &len_w, &hun_y) ) {
-    ret_i = asprintf(&ver_c, "%*.s", len_w, hun_y);
+    ret_i = asprintf(&ver_c, "%.*s", len_w, hun_y);
     c3_assert( ret_i > 0 );
   }
   else {
-    if ( _king_curl_bytes("https://bootstrap.urbit.org/vere/last",
-                          &len_w, &hun_y) )
+    c3_free(url_c);
+    ret_i = asprintf(&url_c, "%s/last", ver_hos_c);
+    c3_assert( ret_i > 0 );
+
+    if ( _king_curl_bytes(url_c, &len_w, &hun_y) )
     {
       c3_free(url_c);
       return -2;
     }
 
-    ret_i = asprintf(&ver_c, "%*.s", len_w, hun_y);
+    ret_i = asprintf(&ver_c, "%.*s", len_w, hun_y);
     c3_assert( ret_i > 0 );
   }
 
   c3_free(url_c);
 
+  //  XX trim ver_c ?
+  //
   if ( 0 == strcmp(ver_c, URBIT_VERSION) ) {
     c3_free(ver_c);
     return -1;
@@ -927,6 +937,10 @@ u3_king_done(void)
 
   if ( c3y == u3_Host.ops_u.nex ) {
     c3_c* ver_c;
+
+    //  hack to ensure we only try once
+    //
+    u3_Host.ops_u.nex = c3n;
 
     switch ( _king_get_next(&ver_c) ) {
       case -2: {
