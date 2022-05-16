@@ -2006,6 +2006,19 @@
       acc
     (~(put in acc) [dude -.agent.yoke])
   ::
+  ?:  ?&  =(%n care)
+          ?=([@ @ ^] path)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    ?~  yok=(~(get by yokes.state) dap)
+      [~ ~]
+    =/  [=^ship =term =wire]
+      [(slav %p i.path) i.t.path t.t.path]
+    ?~  nonce=(~(get by beat.watches.u.yok) [wire ship term])
+      [~ ~]
+    [~ ~ atom+!>(u.nonce)]
+  ::
   ?.  =(our ship)
     ~
   ?.  =([%$ %da now] coin)
