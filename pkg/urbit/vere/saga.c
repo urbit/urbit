@@ -89,7 +89,7 @@ static inline c3_t
 _epoc_is_full(const u3_epoc* const poc_u);
 
 //! Search an event log's list of epochs for the epoch that contains the given
-//! event ID.
+//! event ID. Runs in O(n) where n is the length of the list of epochs.
 //!
 //! @param[in] log_u  Event log handle.
 //! @param[in] ide_d  Event ID to search for.
