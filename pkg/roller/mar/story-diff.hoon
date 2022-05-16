@@ -1,0 +1,1 @@
+../../base-dev/mar/story-diff.hoon
