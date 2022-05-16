@@ -148,7 +148,7 @@ static inline size_t
 _request_len(const u3_epoc* const poc_u, const c3_list* const eve_u);
 
 //! Update an event log's current epoch to the most recent epoch, implying that
-//! the previous current epoch just became full.
+//! the previous epoch just became full.
 //!
 //! @param[in,out] log_u  Event log handle. Current epoch is updated.
 //!
@@ -165,7 +165,7 @@ _rollover(u3_saga* const log_u);
 static void
 _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i);
 
-//! Kick off async batch commit.
+//! Initiate async batch commit.
 //!
 //! @note Runs off main thread.
 //!
