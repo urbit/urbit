@@ -148,7 +148,7 @@ u3_epoc_last_commit(const u3_epoc* const poc_u);
 c3_d
 u3_epoc_first_evt(const u3_epoc* const poc_u);
 
-//! Determine whether an epoch has been committed.
+//! Determine whether an epoch has been committed to.
 //!
 //! @param[in] poc_u  Epoch handle. Must not be NULL.
 //!
@@ -191,6 +191,9 @@ u3_epoc_is_first(const u3_epoc* const poc_u);
 //! @param[in] nod_u  c3_list node of first event to commit with serialized
 //!                   event as payload.
 //! @param[in] len_i  Number of events to commit.
+//!
+//! @return 0  Event could not be committed to epoc.
+//! @return 1  Otherwise.
 c3_t
 u3_epoc_commit(u3_epoc* const poc_u, const c3_lode* nod_u, const size_t len_i);
 
@@ -214,6 +217,7 @@ u3_epoc_iter_open(u3_epoc* const poc_u, c3_d ide_d);
 //!
 //! @return 0  `poc_u` doesn't have an open iterator.
 //! @return 0  Already consumed last event in `poc_u`.
+//! @return 1  Successfully got an event and stepped to the next.
 c3_t
 u3_epoc_iter_step(u3_epoc* const poc_u,
                   c3_y** const   byt_y,
