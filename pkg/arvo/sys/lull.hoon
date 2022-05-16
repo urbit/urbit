@@ -1109,8 +1109,9 @@
         [%pine =ship =path]
         [%yawn =ship =path]
     ::
-        [%coax =ship =path live=?]
-        [%fend =path who=(set ship) gap=(unit @dr)]
+        [%coax =ship =path]
+        [%fend =path]
+        [%hide =path]
         [%yank =path]
     ::
         $>(%born vane-task)

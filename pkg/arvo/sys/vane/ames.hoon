@@ -728,7 +728,7 @@
 ::    .eny: entropy used for key generation
 ::
 +$  fine-state
-  $:  fez=(map [duct path] @ud)
+  $:  fez=(map path @ud)
       net=(map @ud fend-state)
       seq=_1
       eny=@ux
@@ -736,14 +736,14 @@
 ::  $fend-state: state for a permissioned path
 ::
 ::    .key: symmetric key for this path
-::    .subs: keys are all allowed ships; values are subscription ducts
+::    .subs: subscription duct for each foreign ship
 ::    .gap: key rotation interval
 ::    .last-rev: last time key was set
 ::
 +$  fend-state
   $:  key=@ux
-      subs=(map ship (unit duct))
-      gap=@dr
+      subs=(map ship duct)
+      gap=_~h1
       last-rev=@da
   ==
 ::
@@ -3182,10 +3182,9 @@
           ?>  ?=(%c van.blk)
           =+  nom=(en-roof:balk blk(car %w, cas [%da now]))
           =+  cag=(rof ~ nom)
-          ?-  cag
-            ~      !!
-            [~ ~]  (emit duct %give %miss (en-path:balk blk))
-          ::
+          ?-    cag
+              ~      !!
+              [~ ~]  (emit duct %give %miss (en-path:balk blk))
               [~ ~ *]
             =+  !<(=cass:clay q.u.u.cag)
             (emit duct %give %boon `*`ud.cass)
@@ -3206,113 +3205,80 @@
             ~|  [%fine %invalid-namespace-path path]
             (need (de-omen path))
           =/  peer-core  (pe-abed:fine-peer p.bem.omen)
-          ?~  peer-core  
+          ?~  peer-core
             ~|(%no-ship-for-yawn !!)
           pe-abet:(pe-yawn:u.peer-core path)
+        ::  +on-coax: handle remote request for key for path
         ::
         ++  on-coax
-          |=  [=ship =path live=?]
-          ^+  event-core
-          =*  fez  fez.fine-state.ames-state
-          =/  fen  (~(get by fez) duct path)
-          ?~  fen
-            (mean "ames: coax-none {<ship>} {<path>}" ~)
-          ?.  (~(has by subs.u.fen) ship)
-            (mean "ames: coax-snub {<ship>} {<path>}" ~)
-          =.  fez
-            %+  ~(put by fez)  path
-            u.fen(subs (~(put by subs) ship &))
-          (emit duct %give %chit path `chit`-.u.fen)
-        ::
-        ++  on-fend
-          |=  [=path who=(set ship) gap=(unit @dr)]
+          |=  [=ship =path]
           ^+  event-core
           =*  fin  fine-state.ames-state
-          =/  lug  [duct path]
-          ?~  old=(~(get by fez.fin) lug)
-            =/  nut  *fend-state
-            (rev-fend lug nut(subs (add-who ~ who)))
-          ::
-          =/  nut  (~(got by net.fin) u.old)
-          =/  snubs  (~(dif in ~(key by subs.nut)) who)
-          =/  noobs  (~(dif in who) ~(key by subs.nut))
-          =/  snub-map  (malt (turn ~(tap in snubs) (late ~)))
-          =.  subs.nut  (~(dif by subs.nut) snub-map)
-          =.  subs.nut  (add-who subs.nut who)
-          ::  subscribe to %clog on 
-          ::
-          =.  event-core
-            %-  emil
-            %+  turn  ~(tap in noobs)
-            |=(=ship [duct %pass /fend/heed %a %heed ship])
-          ::  no ships were removed; keep same key
-          ::
-          ?:  =(~ snubs)
-            =.  net.fin  (~(put by net.fin) u.old nut)
-            event-core
-          ::  all ships were removed; delete %fend entirely
-          ::
-          ?:  =(~ subs.nut)
-            (del-fend lug u.old nut &)
-          :: some ship were removed; rekey and kill old timer
-          ::
-          =.  event-core  (del-fend lug u.old nut |)
-          ::  kick all snubs who are subscribed
-          ::
-          =/  snub-dux  (murn ~(tap in snubs) ~(got by subs.nut))
-          =.  event-core  (emil (turn snub-dux (late [%give %snub path])))
-          ::  replace allowed ships with .who and set new timer 
-          ::
-          (rev-fend lug nut)
-        ::  +on-yank: rekey a %fend path once, resetting timer
+          =/  seq  (~(get by fez.fin) path)
+          ?~  seq
+            (mean "ames: coax-none {<ship>} {<path>}" ~)
+          =/  nut  (~(got by net.fin) u.seq)
+          ?:  (~(has by subs.nut) ship)
+            (mean "ames: coax-over {<ship>} {<path>}" ~)
+          ?.  (can-read-path ship path)
+            (mean "ames: coax-deny {<ship>} {<path>}" ~)
+          =.  fez.fin
+            %+  ~(put by fez.fin)  path
+            nut(subs (~(put by subs.nut) ship duct))
+          (emit duct %give %chit path -.fen)
+        ::  +on-fend: set or reset key for path
+        ::  +on-hide: retract key for path
         ::
-        ++  on-yank
+        ++  on-fend  rev-fend
+        ++  on-hide  del-fend
+        ::
+        ++  can-read-path
+          |=  [=ship =path]
+          ^-  ?
+          =/  =gang  `(silt [ship]~)
+          =/  =view  [-.path %q]
+          =/  =beam  [[our %$ da/now] +.path]
+          ?=([~ ~ &] (rof gang view beam))
+        ::  +rev-fend: rekey path
+        ::
+        ++  rev-fend
+          |=  =path
+          ^+  event-core
+          (put-fend:(del-fend path) path)
+        ::  +put-fend: new key for path
+        ::
+        ++  put-fend
           |=  =path
           ^+  event-core
           =*  fin  fine-state.ames-state
-          =/  lug  [duct path]
-          =/  old  (~(get by fez.fin) lug)
-          ?~  old
-            (mean leaf/"ames: yank-none {<[duct path]>}" ~)
-          =/  nut  (~(got by net.fin) u.old)
-          =.  event-core  (del-fend lug u.old nut |)
-          (rev-fend lug nut)
-        ::  +rev-fend: overwrite key and timer for a %fend path
-        ::
-        ++  rev-fend
-          |=  [[=^duct =path] nut=fend-state]
-          ^+  event-core
-          =*  fin  fine-state.ames-state
           =^  [seq=@ud key=@ux]  fin  gen-key
-          =:  net.fin  (~(put by fez.fin) [duct path] seq)
+          =:  net.fin  (~(put by fez.fin) path seq)
               fez.fin  (~(put by net.fin) seq nut(key key, last-rev now))
             ==
-          ::  set new timer
+          ::  set rekey timer
           ::
           =/  wen  (add now gap.nut)
-          =.  event-core  (emit duct %pass fend/path %b %wait wen)
-          ::  send new key to live subscribers
-          ::
-          =/  dux  (murn ~(val by subs.nut) same)
-          (emil (turn dux (late [%give %chit path seq key])))
-        ::  +del-fend: remove key from path, canceling timer
-        ::
-        ::    If .fez, also deletes old .fend-state.
+          (emit duct %pass fend/path %b %wait wen)
+        ::  +del-fend: remove key from path
         ::
         ++  del-fend
-          |=  [[=^duct =path] old=@ud nut=fend-state fez=?]
+          |=  =path
           ^+  event-core
           =*  fin  fine-state.ames-state
-          =.  net.fin  (~(del by net.fin) old)
-          =?  fez.fin  fez  (~(del by fez.fin) [duct path])
+          ?~  seq=(~(get by fez.fin) path)
+            event-core
+          =/  nut  (~(got by net.fin) u.seq)
+          =:  net.fin  (~(del by net.fin) u.seq)
+              fez.fin  (~(del by fez.fin) path)
+            ==
+          ::  kick all subscribers
+          ::
+          =.  event-core
+            (emil (turn ~(val by subs.nut) (late [%give %snub path])))
+          ::  cancel rekey timer
+          ::
           =/  wen  (add [last-rev gap]:nut)
           (emit duct %pass fend/path %b %rest wen)
-        ::  +add-who: add a set of ships to a subscriber map
-        ::
-        ++  add-who
-          |=  [fam=(map ship (unit ^duct)) who=(set ship)]
-          ^+  fam
-          (~(uni by (malt (turn ~(tap in who) (late ~)))) fam)
         ::  +gen-key: generate symmetric key, iterating counter and entropy
         ::
         ++  gen-key
@@ -3334,12 +3300,10 @@
                 same
               (slog leaf/"ames: wake-fend" u.error)
           ~|  fine-on-take-fend-wake/path
-          ?~  seq=(~(get by fez.fin) [duct path])
+          ?~  seq=(~(get by fez.fin) path)
             ~>  %slog.leaf/"ames: fend-gone {(spud wire)}"
             event-core
-          =/  nut  (~(got by net.fin) u.seq)
-          =.  fez.fin  (~(put by fez.fin) u.seq nut(last-rev now))
-          (emit duct %pass fend+path %b %wait (add now gap.nut))
+          (rev-fend path)
         ::  +on-take-fine-wake: scry request re-send timer fired
         ::
         ::    This must not crash deterministically.  If it crashes, it's
