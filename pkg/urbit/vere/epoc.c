@@ -321,17 +321,18 @@ end:
 // Functions
 //==============================================================================
 
-//! @n (1) Write the epoch version number to a file.
-//! @n (2) Convert to network byte order to ensure portability across platforms
+//! @n (1) Protect against (unlikely) potential underflow.
+//! @n (2) Write the epoch version number to a file.
+//! @n (3) Convert to network byte order to ensure portability across platforms
 //!        of varying endianness.
-//! @n (3) Take snapshot to save the state before the first event in the
+//! @n (4) Take snapshot to save the state before the first event in the
 //!        epoch is applied unless this is the very first epoch.
-//! @n (4) Write the lifecycle length to a file if this is the very first epoch.
-//! @n (5) See (2).
+//! @n (5) Write the lifecycle length to a file if this is the very first epoch.
+//! @n (6) See (3).
 u3_epoc*
 u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
 {
-  if ( !par_u || 0 == fir_d ) { // (1)
+  if ( !par_u || 0 == fir_d ) {
     goto fail;
   }
 
@@ -339,6 +340,7 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
 
   poc_u->fir_d = fir_d;
   poc_u->las_d = fir_d - 1;
+  c3_assert(poc_u->las_d < poc_u->fir_d); // (1)
   poc_u->pax_u = _epoc_path(par_u, poc_u->fir_d);
   mkdir(c3_path_str(poc_u->pax_u), 0700);
 
@@ -346,24 +348,24 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     goto free_epoc;
   }
 
-  { // (1)
+  { // (2)
     c3_path_push(poc_u->pax_u, ver_nam_c);
-    c3_w ver_w = htonl(epo_ver_w); // (2)
+    c3_w ver_w = htonl(epo_ver_w); // (3)
     if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
       goto free_epoc;
     }
     c3_path_pop(poc_u->pax_u);
   }
 
-  if ( epo_min_d != fir_d ) { // (3)
+  if ( epo_min_d != fir_d ) { // (4)
 #ifndef U3_EPOC_TEST
     u3e_save();
     c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u)));
 #endif
   }
-  else { // (4)
+  else { // (5)
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    lif_w = htonl(lif_w); // (5)
+    lif_w = htonl(lif_w); // (6)
     if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
       goto free_epoc;
     }
@@ -382,13 +384,15 @@ succeed:
   return poc_u;
 }
 
-//! @n (1) Relocate LDMB instance to the newly created epoch.
-//! @n (2) The incremental snapshot must be up-to-date to successfully migrate.
-//! @n (3) Read metadata out of LMDB instance.
-//! @n (4) Write metadata to binary files.
-//! @n (5) Convert to network byte order to ensure portability across platforms
+//! @n (1) Protect against unlikely case where `epo_min_d` is erroneously
+//!        changed to 0.
+//! @n (2) Relocate LDMB instance to the newly created epoch.
+//! @n (3) The incremental snapshot must be up-to-date to successfully migrate.
+//! @n (4) Read metadata out of LMDB instance.
+//! @n (5) Write metadata to binary files.
+//! @n (6) Convert to network byte order to ensure portability across platforms
 //!        of varying endianness.
-//! @n (6) See (5).
+//! @n (7) See (6).
 u3_epoc*
 u3_epoc_migrate(const c3_path* const par_u,
                 c3_path* const       src_u,
@@ -401,10 +405,11 @@ u3_epoc_migrate(const c3_path* const par_u,
   u3_epoc* poc_u = c3_calloc(sizeof(*poc_u));
   poc_u->fir_d   = epo_min_d;
   poc_u->las_d   = epo_min_d - 1;
+  c3_assert(poc_u->las_d < poc_u->fir_d); // (1)
   poc_u->pax_u   = _epoc_path(par_u, epo_min_d);
   mkdir(c3_path_str(poc_u->pax_u), 0700);
 
-  { // (1)
+  { // (2)
     if ( !_move_file(src_u, poc_u->pax_u, "data.mdb") ) {
       goto free_epoc;
     }
@@ -421,7 +426,7 @@ u3_epoc_migrate(const c3_path* const par_u,
     goto rename_lock_mdb;
   }
 
-  if ( u3A->eve_d != poc_u->las_d ) { // (2)
+  if ( u3A->eve_d != poc_u->las_d ) { // (3)
     fprintf(stderr,
             "IMPORTANT: cannot migrate the existing event log format to the\r\n"
             "           new epoch-based event log format because the\r\n"
@@ -437,7 +442,7 @@ u3_epoc_migrate(const c3_path* const par_u,
   }
 
   MDB_txn* txn_u;
-  { // (3)
+  { // (4)
     try_lmdb(mdb_txn_begin(poc_u->env_u, NULL, MDB_RDONLY, &txn_u),
              goto rename_lock_mdb,
              "failed to create read-only transaction");
@@ -482,16 +487,16 @@ u3_epoc_migrate(const c3_path* const par_u,
     mdb_txn_abort(txn_u);
   }
 
-  { // (4)
+  { // (5)
     c3_path_push(poc_u->pax_u, ver_nam_c);
-    c3_w ver_w = htonl(met_u->ver_w); // (5)
+    c3_w ver_w = htonl(met_u->ver_w); // (6)
     if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
       goto rename_lock_mdb;
     }
     c3_path_pop(poc_u->pax_u);
 
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    c3_w lif_w = htonl(met_u->lif_w); // (6)
+    c3_w lif_w = htonl(met_u->lif_w); // (7)
     if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
       goto rename_lock_mdb;
     }
