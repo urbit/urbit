@@ -2,6 +2,8 @@
 //!
 //! Main loop of a serf process.
 
+#include "vere/mars.h"
+
 #include "all.h"
 #include "c/bile.h"
 #include "c/list.h"
@@ -9,7 +11,6 @@
 #include "vere/vere.h"
 #include "vere/saga.h"
 #include "vere/lock.h"
-#include "vere/mars.h"
 
 //==============================================================================
 // Functions
