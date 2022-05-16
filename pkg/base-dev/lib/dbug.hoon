@@ -84,7 +84,7 @@
         %+  sort  ~(tap by wex.bowl)
         |=  [[[a=wire *] *] [[b=wire *] *]]
         (aor a b)
-      |=  [[=wire =ship =term] [acked=? =path nonce=@]]
+      |=  [[=wire =ship =term] [acked=? =path]]
       ^-  (unit tank)
       =;  relevant=?
         ?.  relevant  ~
