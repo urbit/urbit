@@ -2641,7 +2641,8 @@
                ==
             ::
             ++  ke-abet-gone
-              =.  ke-core  ke-set-wake
+              =?  ke-core  ?=(^ next-wake.keen)
+                (ke-rest u.next-wake.keen)
               =.  keens.scry
                 +:(del:orm keens.scry keen-id)
               =.  order.scry
