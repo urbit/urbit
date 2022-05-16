@@ -1799,10 +1799,8 @@ u3m_boot(const c3_c* dir_c, c3_o (*sap_f)(const c3_c* dir_c))
   /* Reactivate jets on old kernel.
   */
   if ( c3n == nuu_o ) {
-
     u3j_ream();
     u3n_ream();
-
     return u3A->eve_d;
   }
   else {
