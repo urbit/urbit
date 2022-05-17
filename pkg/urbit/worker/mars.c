@@ -648,8 +648,6 @@ _mars_step_trace(const c3_c* dir_c)
   }
 }
 
-/* u3_mars_kick(): maybe perform a task.
-*/
 c3_o
 u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 {
@@ -833,18 +831,6 @@ succeed:
   return 1;
 }
 
-//! Load the event log, replaying events if necessary, and send ready status
-//! message.
-//!
-//! @param[in] dir_c  Pier directory.
-//! @param[in] inn_u
-//! @param[in] out_u
-//!
-//! @return NULL  Failed to load epochs from `<dir_c>/.urb/log`.
-//! @return NULL  Failed to play boot events.
-//! @return NULL  Failed to replay events.
-//! @return       Mars handle.
-//!
 //! @n (1) XX load/set secrets.
 //! @n (2) Play boot events if necessary.
 //! @n (3) Turn on async commit mode for last epoch.
@@ -1287,10 +1273,6 @@ _mars_boot_make(u3_boot_opts* inp_u,
   return c3y;
 }
 
-//! Boot a ship.
-//!
-//! Only happens at the inception of the ship's lifetime.
-//!
 //! ```
 //!  $=  com
 //!  $:  pill=[p=@ q=(unit ovum)]
@@ -1395,8 +1377,6 @@ end:
   return suc_o;
 }
 
-/* u3_mars_grab(): garbage collect.
-*/
 void
 u3_mars_grab(void)
 {

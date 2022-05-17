@@ -66,10 +66,29 @@ c3_o
 u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y);
 
 //! Restart an existing ship.
+//!
+//! Loads the event log and replays if necessary.
+//! 
+//! @param[in] dir_c  Directory housing the ship.
+//! @param[in] inn_u  Input stream.
+//! @param[in] out_u  Output stream.
+//! @param[in] eve_d  Event number to replay up to (inclusive). If 0, replay is
+//!                   performed up to the most recent event in the event log.
+//!
+//! @return NULL                       The ship could not be restarted.
+//! @return Mars state machine handle  Otherwise.
 u3_mars*
 u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d);
 
 //! Boot a new ship.
+//!
+//! Only happens once and at the very beginning of a ship's lifetime.
+//!
+//! @param[in] dir_c  Directory to house the ship.
+//! @param[in] com
+//!
+//! @return c3y  Booted successfully.
+//! @return c3n  Otherwise.
 c3_o
 u3_mars_boot(const c3_c* dir_c, u3_noun com);
 
