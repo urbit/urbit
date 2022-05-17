@@ -649,7 +649,7 @@
           (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
         !,  *hoon
         =/  typ  _+<.cor
-        =/  dif  diff:deg
+        =/  dif  _*diff:deg
         ^-  (nave typ dif)
         |%
         ++  diff
@@ -712,7 +712,7 @@
       ::~>  %slog.0^leaf/"ford: make dais {<mak>}"
       :_  nub  :-  %dais
       ^-  dais
-      =>  [..zuse nav=nav]
+      =>  [nav=nav ..zuse]
       |_  sam=vase
       ++  diff
         |=  new=vase
@@ -731,8 +731,8 @@
         =/  res=vase
           %+  slam  (slap nav limb/%mash)
           %+  slop
-            :(slop =>([..zuse ship.a] !>(+)) =>([..zuse desk.a] !>(+)) diff.a)
-          :(slop =>([..zuse ship.b] !>(+)) =>([..zuse desk.b] !>(+)) diff.b)
+            :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
+          :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
         ?~  q.res
           ~
         `(slap res !,(*hoon ?>((^ .) u)))
@@ -752,10 +752,10 @@
       %-  soak-vase
       %+  gain-sprig  cast+a^b  |.
       =.  stack.nub  [~ stack.nub]
-      ?:  =([%mime %hoon] [a b])
-        :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
+      ?:  =([%mime %hoon] [a b])
+        :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
       ::  try +grow; is there a +grow core with a .b arm?
       ::
       :: ~>  %slog.0^leaf/"ford: make cast {<a>} -> {<b>}"
@@ -809,8 +809,8 @@
       =.  nub  nob
       :_  nub  :-  %vase
       %+  slap
-        (with-faces uno+uno dos+dos cork+=>([..zuse cork] !>(+)) ~)
-      !,(*hoon (cork uno dos))
+        (with-faces uno+uno dos+dos ~)
+      !,(*hoon |=(_+<.uno (dos (uno +<))))
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
     ++  build-tube
@@ -827,7 +827,7 @@
       |=  nob=state
       =.  nub  nob
       :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
-      :_(nub [%tube =>([..zuse gat=gat] |=(v=vase (slam gat v)))])
+      :_(nub [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))])
     ::
     ++  validate-page
       |=  [=path =page]
@@ -846,7 +846,7 @@
       ?:  =(%hoon p.page)
         :_(nub [%hoon [%atom %t ~] q.page])
       ?:  =(%mime p.page)
-        :_(nub [%mime =>([..zuse ;;(mime q.page)] !>(+))])
+        :_(nub [%mime =>(..zuse =+(;;(mime q.page) !>(-)))])
       =^  =dais  nub  (build-dais p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
@@ -869,7 +869,7 @@
         =/  txt=wain  (to-wain:format ;;(@t q.old))
         =+  ;;(dif=(urge cord) q.diff)
         =/  new=@t  (of-wain:format (lurk:differ txt dif))
-        :_(nub [%hoon =>([..zuse new] !>(+))])
+        :_(nub [%hoon =>(..zuse =+(new !>(-)))])
       =^  dys=dais  nub  (build-dais p.old)
       =^  syd=dais  nub  (build-dais p.diff)
       :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
@@ -1122,7 +1122,8 @@
       ^-  path
       =/  paz  (segments pax)
       |-  ^-  path
-      ?~  paz  ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
+      ?~  paz
+        ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
       ?:  (~(has by files) pux)
         pux
@@ -1201,12 +1202,12 @@
       =/  spilt  (~(has in spill.nub) leak)
       =^  =soak  nub
         ?^  got=(~(get by cache.nub) leak)
-          =/  refs   ?:(spilt 0 1)
-          ::  %-  =/  tape-1  "ford: cache {<pour.leak>}: adding {<refs>}"
+          ::  %-  =/  refs    ?:(spilt 0 1)
+          ::      =/  tape-1  "ford: cache {<pour.leak>}: adding {<refs>}"
           ::      =/  tape-2  ", giving {<(add refs refs.u.got)>}"
           ::      (slog leaf+(welp tape-1 tape-2) ~)
-          =?  cache.nub  !=(0 refs)
-            (~(put by cache.nub) leak [(add refs refs.u.got) soak.u.got])
+          =?  cache.nub  !spilt
+            (~(put by cache.nub) leak [+(refs.u.got) soak.u.got])
           [soak.u.got nub]
         %-  (slog leaf+"ford: cache {<pour.leak>}: creating" ~)
         =^  =soak  nub  (next nub)
@@ -2263,7 +2264,10 @@
     ^+  ..merge
     ?~  riot
       (done %| %ali-unavailable ~[>[ali-ship ali-desk germ]<])
-    =/  ali-dome=dome:clay  !<(dome:clay q.r.u.riot)
+    =/  ali-dome=dome:clay
+      ?:  &(?=(@ -.q.q.r.u.riot) !=(~ -.q.q.r.u.riot))
+        !<(dome:clay q.r.u.riot)
+      +:!<([* dome:clay] q.r.u.riot)
     =/  result=(each (unit merge-result) (pair term tang))
       (merge-helper ali-ship ali-desk germ ali-dome ~)
     ?-    -.result
