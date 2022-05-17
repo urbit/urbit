@@ -784,6 +784,13 @@
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
+=<  |%
+        ++  call  ^call
+        ++  load  ^load
+        ++  scry  ^scry
+        ++  stay  ^stay
+        ++  take  ^take
+        --
     |%
     ::  +call: handle request $task
     ::
@@ -796,17 +803,8 @@
       ?^  dud
         ~|(%ames-larval-call-dud (mean tang.u.dud))
       ::
-      =/  update-ready=?
-        ?&  ?=(^ cached-state)
-            ?=(~ queued-events)
-        ==
-      ?:  update-ready
-        =.  ames-state.adult-gate
-          ?>  ?=(^ cached-state)
-          (state-5-to-6:load:adult-core +.u.cached-state)
-        =.  cached-state  ~
-        ~>  %slog.1^leaf/"ames: metamorphosis reload"
-        [~ adult-gate]
+      ?:  &(?=(^ cached-state) ?=(~ queued-events))
+        (molt ~)
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
@@ -836,11 +834,17 @@
         ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::  enqueue event if not a larval drainage timer
       ::
+      =?  queued-events  !=(/larva wire)
+        (~(put to queued-events) %take wire duct sign)
+      ::  start drainage timer if have regressed from adult ames
+      ::
+      ?:  ?&  !=(/larva wire)
+              ?=(^ cached-state)
+          ==
+        [[duct %pass /larva %b %wait now]~ larval-gate]
       ::    XX what to do with errors?
       ::
-      ?.  =(/larva wire)
-        =.  queued-events  (~(put to queued-events) %take wire duct sign)
-        [~ larval-gate]
+      ?.  =(/larva wire)  [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
       ?.  ?=([%behn %wake *] sign)
@@ -879,20 +883,10 @@
           %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
           %take  (take:adult-core [wire duct ~ sign]:+.first-event)
         ==
-      =/  update-ready=?
-        ?&  ?=(^ cached-state)
-            ?=(~ queued-events)
-        ==
-      ?:  update-ready
-        =.  ames-state.adult-gate
-          ?>  ?=(^ cached-state)
-          (state-5-to-6:load:adult-core +.u.cached-state)
-        =.  cached-state  ~
-        ~>  %slog.1^leaf/"ames: metamorphosis reload"
-        [moves adult-gate]
       ::  .queued-events has been cleared; metamorphose
       ::
       ?~  queued-events
+        ?:  ?=(^ cached-state)  (molt moves)
         ~>  %slog.0^leaf/"ames: metamorphosis"
         [moves adult-gate]
       ::  set timer to drain next event
@@ -952,6 +946,17 @@
         =.  adult-gate     (load:adult-core %6 state.old)
         larval-gate
       ==
+    ::  +molt: re-evolve to adult-ames
+    ::
+    ++  molt
+      |=  moves=(list move)
+      ^-  (quip move _adult-gate)
+      =.  ames-state.adult-gate
+        ?>  ?=(^ cached-state)
+        (state-5-to-6:load:adult-core +.u.cached-state)
+      =.  cached-state  ~
+      ~>  %slog.1^leaf/"ames: metamorphosis reload"
+      [~ adult-gate]
     --
 ::  adult ames, after metamorphosis from larva
 ::
