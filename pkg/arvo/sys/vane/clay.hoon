@@ -3083,11 +3083,14 @@
     ~|  [%strange-retry-no-request her syd inx]
     ?>  ?=(^ ref)
     =/  sat=update-state  (~(got by bom.u.ref) inx)
+    ::  mark her as having broken scry comms
+    ::
+    =.  sad  (~(put by sad) her now)
     ::  clean up scry request & timer
     ::
     =.  ..retry-with-ames
       =<  ?>(?=(^ ref) .)
-      ~|  [%strange-retry-not-scry her syd inx scry.sat -.rave]
+      ~|  [%strange-retry-not-scry her syd inx scry.sat -.rave.sat]
       ?>  ?=(^ scry.sat)
       ?>  ?=(%sing -.rave.sat)
       =/  =wire  (request-wire kind her syd inx)
@@ -3100,11 +3103,10 @@
       ==
     ::  re-send over ames
     ::
-    =.  ..retry-with-ames
-      =<  ?>(?=(^ ref) .)
+    =.  bom.u.ref  (~(put by bom.u.ref) inx sat(scry ~, busy |))
+    ?:  =(%warp-index kind)
       (send-over-ames hen her inx syd `rave.sat)
-    =.  bom.u.ref  (~(put by bom.u.ref) inx sat(scry ~))
-    ..retry-with-ames
+    abet:work:(foreign-update inx)
   ::
   ::  Called when a foreign ship answers one of our requests.
   ::
@@ -5249,7 +5251,6 @@
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ~&  [%clay %scry-broken her]
       =^  mos  ruf
-        =.  sad.ruf  (~(put by sad.ruf) her now)
         =/  den  ((de now rof hen ruf) her desk)
         abet:(retry-with-ames:den %warp-index index)
       [mos ..^$]
@@ -5294,7 +5295,6 @@
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       =^  mos  ruf
-        =.  sad.ruf  (~(put by sad.ruf) her now)
         =/  den  ((de now rof hen ruf) her desk)
         abet:(retry-with-ames:den %back-index index)
       [mos ..^$]
