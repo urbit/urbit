@@ -618,8 +618,15 @@ top:
       u3t_trace_close();
       _mars_damp_file();
 
-      //  XX dispose [mar_u], exit cb ?
-      //
+      c3_free(mar_u->dir_u);
+      for ( size_t idx_i = 0; idx_i < c3_list_len(mar_u->gif_u); idx_i++ ) {
+        c3_free(c3_list_popf(mar_u->gif_u));
+      }
+      c3_free(mar_u->gif_u);
+      c3_free(mar_u->log_u);
+      c3_free(mar_u);
+
+      // XX exit cb ?
       exit(0);
     }
   }
