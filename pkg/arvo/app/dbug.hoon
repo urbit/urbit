@@ -206,14 +206,13 @@
                 'ship'^(ship s)
                 'path'^(path p)
             ==
-          ::  TODO: display subscription nonce
           ::
           ++  outgoing
             |=  =boat:gall
             ^-  json
             :-  %a
             %+  turn  ~(tap by boat)
-            |=  [[w=wire s=^ship t=term] [a=? p=^path nonce=@]]
+            |=  [[w=wire s=^ship t=term] [a=? p=^path]]
             %-  pairs
             :~  'wire'^(path w)
                 'ship'^(ship s)
