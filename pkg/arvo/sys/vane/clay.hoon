@@ -846,7 +846,7 @@
       ?:  =(%hoon p.page)
         :_(nub [%hoon [%atom %t ~] q.page])
       ?:  =(%mime p.page)
-        :_(nub [%mime =>(..zuse =+(;;(mime q.page) !>(-)))])
+        :_(nub [%mime =>([..zuse ;;(mime q.page)] !>(-))])
       =^  =dais  nub  (build-dais p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
@@ -869,7 +869,7 @@
         =/  txt=wain  (to-wain:format ;;(@t q.old))
         =+  ;;(dif=(urge cord) q.diff)
         =/  new=@t  (of-wain:format (lurk:differ txt dif))
-        :_(nub [%hoon =>(..zuse =+(new !>(-)))])
+        :_(nub [%hoon =>([new ..zuse] !>(-))])
       =^  dys=dais  nub  (build-dais p.old)
       =^  syd=dais  nub  (build-dais p.diff)
       :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
