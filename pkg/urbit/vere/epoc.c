@@ -404,11 +404,12 @@ succeed:
 //!        of varying endianness.
 //! @n (7) See (6).
 u3_epoc*
-u3_epoc_migrate(const c3_path* const par_u,
-                c3_path* const       src_u,
+u3_epoc_migrate(c3_path* const       src_u,
+                const c3_path* const par_u,
+                const c3_d           cur_d,
                 u3_meta* const       met_u)
 {
-  if ( !par_u || !src_u ) {
+  if ( !src_u || !par_u ) {
     goto fail;
   }
 
@@ -436,7 +437,7 @@ u3_epoc_migrate(const c3_path* const par_u,
     goto rename_lock_mdb;
   }
 
-  if ( u3A->eve_d != poc_u->las_d ) { // (3)
+  if ( cur_d != poc_u->las_d ) { // (3)
     fprintf(stderr,
             "IMPORTANT: cannot migrate the existing event log format to the\r\n"
             "           new epoch-based event log format because the\r\n"

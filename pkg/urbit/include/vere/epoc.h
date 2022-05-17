@@ -81,16 +81,18 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w);
 //! @note This is intended for use in migration from the non-epoch-based event
 //!       log to the new epoch-based event log.
 //!
+//! @param[in]  src_u  Path to directory housing existing event log.
 //! @param[in]  par_u  Parent directory to house epoch. Will be created if it
 //!                    doesn't already exist.
-//! @param[in]  src_u  Path to directory housing existing event log.
+//! @param[in]  cur_d  Event number of most recently applied event.
 //! @param[out] met_u  Pointer to pier metadata.
 //!
 //! @return NULL  New epoch could not be created from old event log.
 //! @return       Handle to migrated epoch.
 u3_epoc*
-u3_epoc_migrate(const c3_path* const par_u,
-                c3_path* const       src_u,
+u3_epoc_migrate(c3_path* const       src_u,
+                const c3_path* const par_u,
+                const c3_d           cur_d,
                 u3_meta* const       met_u);
 
 //! Load an existing epoch created with u3_epoc_new().

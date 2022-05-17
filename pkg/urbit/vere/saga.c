@@ -224,7 +224,10 @@ _epoc_is_full(const u3_epoc* const poc_u)
 static c3_t
 _migrate(u3_saga* const log_u, u3_meta* const met_u)
 {
-  u3_epoc* poc_u = u3_epoc_migrate(log_u->pax_u, log_u->pax_u, met_u);
+  u3_epoc* poc_u = u3_epoc_migrate(log_u->pax_u,
+                                   log_u->pax_u,
+                                   u3A->eve_d,
+                                   met_u);
   if ( !poc_u ) {
     goto fail;
   }
