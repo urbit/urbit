@@ -972,6 +972,194 @@ _king_done_cb(uv_handle_t* han_u)
   }
 }
 
+/* _king_curl_file(): HTTP GET [url_c], write response body to [fil_u].
+*/
+static c3_i
+_king_save_file(c3_c* url_c, FILE* fil_u)
+{
+  c3_i     ret_i = 0;
+  CURL    *cul_u;
+  CURLcode res_i;
+  long     cod_i;
+
+  if ( !(cul_u = curl_easy_init()) ) {
+    u3l_log("failed to initialize libcurl\n");
+    exit(1);
+  }
+
+  u3K.ssl_curl_f(cul_u);
+  curl_easy_setopt(cul_u, CURLOPT_URL, url_c);
+  curl_easy_setopt(cul_u, CURLOPT_WRITEDATA, (void*)fil_u);
+
+  res_i = curl_easy_perform(cul_u);
+  curl_easy_getinfo(cul_u, CURLINFO_RESPONSE_CODE, &cod_i);
+
+  //  XX retry?
+  //
+  if ( CURLE_OK != res_i ) {
+    ret_i = -1;
+  }
+  if ( 300 <= cod_i ) {
+    ret_i = -2;
+  }
+
+  curl_easy_cleanup(cul_u);
+  return ret_i;
+}
+
+/* _king_get_vere(): get binary for specified arch and version.
+*/
+static c3_i
+_king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
+{
+  c3_c* bin_c;
+  c3_c* url_c;
+  FILE* fil_u;
+  c3_i  ret_i;
+
+  {
+    ret_i = asprintf(&bin_c, "%s/.bin", u3_Host.dir_c);
+    c3_assert( ret_i > 0 );
+
+    ret_i = c3_mkdir(bin_c, 0700);
+
+    if ( ret_i && (EEXIST != errno) ) {
+      fprintf(stderr, "vere: mkdir %s failed: %s\n", bin_c, strerror(errno));
+      c3_free(bin_c);
+      return -1;
+    }
+
+    c3_free(bin_c);
+
+    ret_i = asprintf(&bin_c, "%s/.bin/%s/", u3_Host.dir_c, pac_c);
+    c3_assert( ret_i > 0 );
+
+    //  XX asserting wrapper conflicts here (and is bypassed for .urb)
+    //
+    ret_i = mkdir(bin_c, 0700);
+
+    if ( ret_i && (EEXIST != errno) ) {
+      fprintf(stderr, "vere: mkdir %s failed: %s\n", bin_c, strerror(errno));
+      c3_free(bin_c);
+      return -1;
+    }
+
+    c3_free(bin_c);
+  }
+
+  //  XX windows .exe
+  //
+  ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s",
+                           u3_Host.dir_c, pac_c, ver_c, arc_c);
+  c3_assert( ret_i > 0 );
+
+  fil_u = c3_fopen(bin_c, "wb");
+
+  if ( !fil_u ) {
+    u3l_log("unable to open %s: %s\r\n", bin_c, strerror(errno));
+    c3_free(bin_c);
+    return -1;
+  }
+
+  ret_i = asprintf(&url_c, "%s/%s/%s/vere-v%s-%s",
+                   ver_hos_c, pac_c, ver_c, ver_c, arc_c);
+  c3_assert( ret_i > 0 );
+
+  if ( (ret_i = _king_save_file(url_c, fil_u)) ) {
+    u3l_log("unable to save %s to %s: %d\r\n", url_c, bin_c, ret_i);
+    c3_free(url_c);
+    c3_free(bin_c);
+    fclose(fil_u);
+    return -1; // XX
+  }
+
+  {
+    c3_i fid_i = fileno(fil_u);
+    ret_i = c3_sync(fid_i);
+
+    if ( ret_i ) {
+      fprintf(stderr, "vere: sync %s failed: %s\n", bin_c, strerror(errno));
+      c3_free(bin_c);
+      fclose(fil_u);
+      return -1;
+    }
+
+    fclose(fil_u);
+  }
+
+  ret_i = chmod(bin_c, 0755);
+
+  if ( ret_i ) {
+    fprintf(stderr, "vere: chmod %s failed: %s\n", bin_c, strerror(errno));
+    c3_free(url_c);
+    c3_free(bin_c);
+    return -1;
+  }
+
+  //  XX option
+  //
+  if ( lin_t ) {
+    c3_c* lin_c;
+
+    ret_i = asprintf(&lin_c, "%s/.run", u3_Host.dir_c); // XX ./.run.exe?
+    c3_assert( ret_i > 0 );
+
+    ret_i = unlink(lin_c);
+
+    if ( ret_i && (ENOENT != errno) ) {
+      fprintf(stderr, "vere: unlink %s failed: %s\n", lin_c, strerror(errno));
+      c3_free(lin_c);
+      c3_free(url_c);
+      c3_free(bin_c);
+      return -1;
+    }
+
+    ret_i = link(bin_c, lin_c);
+
+    if ( ret_i ) {
+      fprintf(stderr, "vere: link %s -> %s failed: %s\n",
+                      lin_c, bin_c, strerror(errno));
+      c3_free(lin_c);
+      c3_free(url_c);
+      c3_free(bin_c);
+      return -1;
+    }
+
+    c3_free(lin_c);
+  }
+
+  c3_free(url_c);
+  c3_free(bin_c);
+
+  return 0;
+}
+
+/* _king_do_upgrade(): get arch-appropriate binary at [ver_c].
+*/
+static void
+_king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
+{
+#ifdef U3_OS_ARCH
+#  ifdef U3_OS_mingw
+  c3_c* arc_c = U3_OS_ARCH ".exe"; // XX confirm
+#  else
+  c3_c* arc_c = U3_OS_ARCH;
+#  endif
+
+  //  XX get link option
+  //
+  if ( _king_get_vere(pac_c, ver_c, arc_c, 1) ) {
+    u3l_log("vere: upgrade failed\r\n");
+    u3_king_bail();
+    exit(1);
+  }
+  else {
+    u3l_log("vere: upgrade succeeded\r\n");
+    //  XX print restart instructions
+  }
+#endif
+}
+
 /* u3_king_done(): all piers closed. s/b callback
 */
 void
@@ -999,15 +1187,15 @@ u3_king_done(void)
       } break;
 
       case 0: {
-        u3l_log("vere: next: %s\n", ver_c);
-
-        //  XX do the needful
-        //
-        c3_free(ver_c);
+        u3l_log("vere: next (%%%s): %s\n", pac_c, ver_c);
+        _king_do_upgrade(pac_c, ver_c);
       } break;
 
       default: c3_assert(0);
     }
+
+    c3_free(pac_c);
+    c3_free(ver_c);
   }
 
   //  XX hack, if pier's are still linked, we're not actually done

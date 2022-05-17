@@ -101,6 +101,28 @@
 #     define ASAN_ENABLED
 #   endif
 
+  /** Platform string.
+  **/
+#   if defined(U3_OS_linux)
+#     ifdef __LP64__
+#       ifdef U3_CPU_aarch64
+#         define U3_OS_ARCH "aarch64-linux"
+#       else
+#         define U3_OS_ARCH "x86_64-linux"
+#       endif
+#     endif
+#   elif defined(U3_OS_mingw)
+#     define U3_OS_ARCH "x86_64-windows"
+#   elif defined(U3_OS_osx)
+#     ifdef __LP64__
+#       ifdef U3_CPU_aarch64
+#         define U3_OS_ARCH "aarch64-darwin"
+#       else
+#         define U3_OS_ARCH "x86_64-darwin"
+#       endif
+#     endif
+#   endif
+
   /** Address space layout.
   ***
   ***   NB: 2^29 words == 2GB
