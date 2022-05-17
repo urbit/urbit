@@ -1,6 +1,26 @@
 //! @file saga.c
 //!
 //! Epoch-backed event log.
+//!
+//! Consists of a list of epochs, each with the same maximum number of committed
+//! events, and a pair of metadata files recording the identity of the ship and
+//! whether the ship is fake. Events can be committed synchronously or
+//! asynchronously. When the most recent epoch fills up (i.e. reaches the
+//! maximum number of committed events), a new epoch is automatically created
+//! and rolled over to.
+//!
+//! As an example, the directory layout of an event log containing epochs N
+//! through M, inclusive, is:
+//! ```console
+//! fake.bin
+//! who.bin
+//! <epoch_N>/
+//! <epoch_N+1>/
+//! ...
+//! <epoch_M>/
+//! ```
+//! Note that the epoch directory names are ommitted because they are an
+//! implementation detail of the epoc module.
 
 #include "vere/saga.h"
 
@@ -37,9 +57,6 @@ struct _u3_saga {
 
 //! Name of file containing the fake bit.
 static const c3_c fak_nam_c[] = "fake.bin";
-
-//! Name of file containing event log version.
-static const c3_c ver_nam_c[] = "version.bin";
 
 //! Name of file containing the name of the ship.
 static const c3_c who_nam_c[] = "who.bin";
