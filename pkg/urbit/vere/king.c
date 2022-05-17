@@ -299,10 +299,54 @@ _king_get_atom(c3_c* url_c)
   return pro;
 }
 
+/* _king_get_pace(): get "pace" (release channel name).
+*/
+static c3_c*
+_king_get_pace(void)
+{
+  struct stat buf_u;
+  c3_y*       hun_y;
+  c3_c*       pat_c;
+  c3_w red_w, len_w;
+  c3_i ret_i, fid_i;
+
+  ret_i = asprintf(&pat_c, "%s/.bin/pace", u3_Host.dir_c);
+  c3_assert( ret_i > 0 );
+
+  fid_i = c3_open(pat_c, O_RDONLY, 0644);
+
+  if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
+    c3_free(pat_c);
+    return strdup("live");
+  }
+
+  len_w = buf_u.st_size;
+  hun_y = c3_malloc(len_w);
+  red_w = read(fid_i, hun_y, len_w);
+  close(fid_i);
+
+  if ( len_w != red_w ) {
+    c3_free(pat_c);
+    c3_free(hun_y);
+    return strdup("live");
+  }
+
+  c3_free(pat_c);
+
+  ret_i = asprintf(&pat_c, "%.*s", len_w, hun_y);
+  c3_assert( ret_i > 0 );
+
+  c3_free(hun_y);
+
+  //  XX trim pat_c ?
+  //
+  return pat_c;
+}
+
 /* _king_get_next(): get next vere version string, if it exists.
 */
 static c3_i
-_king_get_next(c3_c** out_c)
+_king_get_next(c3_c* pac_c, c3_c** out_c)
 {
   c3_c* ver_c;
   c3_c* url_c;
@@ -310,7 +354,7 @@ _king_get_next(c3_c** out_c)
   c3_y* hun_y;
   c3_i  ret_i;
 
-  ret_i = asprintf(&url_c, "%s/%s/next", ver_hos_c, URBIT_VERSION);
+  ret_i = asprintf(&url_c, "%s/%s/%s/next", ver_hos_c, pac_c, URBIT_VERSION);
   c3_assert( ret_i > 0 );
 
   if ( !_king_curl_bytes(url_c, &len_w, &hun_y) ) {
@@ -319,7 +363,7 @@ _king_get_next(c3_c** out_c)
   }
   else {
     c3_free(url_c);
-    ret_i = asprintf(&url_c, "%s/last", ver_hos_c);
+    ret_i = asprintf(&url_c, "%s/%s/last", ver_hos_c, pac_c);
     c3_assert( ret_i > 0 );
 
     if ( _king_curl_bytes(url_c, &len_w, &hun_y) )
@@ -936,13 +980,16 @@ u3_king_done(void)
   uv_handle_t* han_u = (uv_handle_t*)&u3K.tim_u;
 
   if ( c3y == u3_Host.ops_u.nex ) {
+    c3_c* pac_c;
     c3_c* ver_c;
 
     //  hack to ensure we only try once
     //
     u3_Host.ops_u.nex = c3n;
 
-    switch ( _king_get_next(&ver_c) ) {
+    pac_c = _king_get_pace();
+
+    switch ( _king_get_next(pac_c, &ver_c) ) {
       case -2: {
         u3l_log("vere: unable to check for next version\n");
       } break;
