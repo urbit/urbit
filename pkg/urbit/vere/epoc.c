@@ -71,6 +71,9 @@ static const c3_c ver_nam_c[] = "version.bin";
 //! Name of binary file containing the lifecycle length.
 static const c3_c lif_nam_c[] = "lifecycle.bin";
 
+//! Name of LMDB database holding the events.
+static const c3_c dab_nam_c[] = "EVENTS";
+
 //==============================================================================
 // Macros
 //==============================================================================
@@ -225,9 +228,10 @@ _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d)
            "failed to create read transaction");
 
   MDB_dbi dbi_u;
-  try_lmdb(mdb_dbi_open(txn_u, "EVENTS", MDB_CREATE | MDB_INTEGERKEY, &dbi_u),
+  try_lmdb(mdb_dbi_open(txn_u, dab_nam_c, MDB_CREATE | MDB_INTEGERKEY, &dbi_u),
            goto abort_txn,
-           "failed to open EVENTS database");
+           "failed to open %s database",
+           dab_nam_c);
 
   MDB_cursor* cur_u;
   try_lmdb(mdb_cursor_open(txn_u, dbi_u, &cur_u),
@@ -651,9 +655,10 @@ u3_epoc_commit(u3_epoc* const poc_u, const c3_lode* nod_u, const size_t len_i)
            "failed to create write transaction");
 
   MDB_dbi dbi_u;
-  try_lmdb(mdb_dbi_open(txn_u, "EVENTS", MDB_CREATE | MDB_INTEGERKEY, &dbi_u),
+  try_lmdb(mdb_dbi_open(txn_u, dab_nam_c, MDB_CREATE | MDB_INTEGERKEY, &dbi_u),
            goto abort_txn,
-           "failed to open EVENTS database");
+           "failed to open %s database",
+           dab_nam_c);
 
   c3_d ide_d = poc_u->las_d;
   for ( size_t idx_i = 0; idx_i < len_i; idx_i++ ) {
@@ -712,9 +717,10 @@ u3_epoc_iter_open(u3_epoc* const poc_u, c3_d ide_d)
 
   // (2)
   MDB_dbi dbi_u;
-  try_lmdb(mdb_dbi_open(txn_u, "EVENTS", MDB_INTEGERKEY, &dbi_u),
+  try_lmdb(mdb_dbi_open(txn_u, dab_nam_c, MDB_INTEGERKEY, &dbi_u),
            goto abort_txn,
-           "failed to open EVENTS database");
+           "failed to open %s database",
+           dab_nam_c);
 
   // (3)
   MDB_cursor* cur_u;
