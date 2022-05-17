@@ -1,10 +1,13 @@
 //! @file epoc.c
 //!
-//! Event log epoch containing a snapshot representing the state before the
-//! application of the first event in the epoch along with an LMDB instance
-//! containing all events in the epoch.
+//! Event log epoch containing a snapshot and an LMDB instance. The snapshot
+//! represents the state before the application of the first event committed to
+//! the LMDB instance (which is also the event number that shows up in the epoch
+//! directory name).
 //!
-//! As an example, the directory layout for epoch `0i101` is:
+//! As an example, the directory layout for epoch `0i101`, which contains a
+//! snapshot representing the state after event 100 and whose first committed
+//! event in the LMDB instance is 101, is:
 //! ```console
 //! 0i101/
 //!   data.mdb
@@ -90,6 +93,9 @@ static const c3_c lif_nam_c[] = "lifecycle.bin";
 //==============================================================================
 // Patch
 //==============================================================================
+// MinGW requires a patch to LMDB that implements a custom logging function
+// mdb_logerror(), so we need to declare mdb_logerror() here and provide an
+// implementation of it for non-MinGW systems.
 
 //! Write an error message and LMDB error code to a file stream.
 //!
