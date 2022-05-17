@@ -1861,6 +1861,10 @@
         =:  boat.watches.yoke  (~(del by boat.watches.yoke) [sub-wire dock])
             beat.watches.yoke  (~(del by beat.watches.yoke) [sub-wire dock])
           ==
+        ::  if nonce = 0, this was a pre-nonce subscription so later
+        ::  subscriptions need to start subscribing on the next nonce
+        ::
+        =?  sub-nonce.yoke  =(nonce 0)  +(sub-nonce.yoke)
         $(moves t.moves, new-moves [move new-moves])
       ?.  ?=([* %pass * %g %deal * * ?(%watch %watch-as) *] move)
         $(moves t.moves, new-moves [move new-moves])
