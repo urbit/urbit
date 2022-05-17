@@ -1850,11 +1850,14 @@
           %.  $(moves t.moves)
           %^  trace  odd.veb.bug.state
           leaf/"gall: {<agent-name>} missing subscription, got %leave"  ~
-        =/  have=[nonce=@ acked=? =path]
-          :-  (~(got by beat.watches.yoke) sub-wire dock)
-          (~(got by boat.watches.yoke) sub-wire dock)
+        =/  nonce=@  (~(got by beat.watches.yoke) sub-wire dock)
         =.  p.move.move
-          (weld sys-wire [(scot %ud nonce.have) sub-wire])
+          %+  weld  sys-wire
+          ?:  =(nonce 0)
+            ::  skip adding nonce to pre-nonce subscription wires
+            ::
+            sub-wire
+          [(scot %ud nonce) sub-wire]
         =:  boat.watches.yoke  (~(del by boat.watches.yoke) [sub-wire dock])
             beat.watches.yoke  (~(del by beat.watches.yoke) [sub-wire dock])
           ==
