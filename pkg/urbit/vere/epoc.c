@@ -462,37 +462,69 @@ u3_epoc_migrate(const c3_path* const par_u,
              goto abort_txn,
              "failed to open META database");
 
+#if 1
+#define lookup_metadata(key_string, destination)                               \
+    do {                                                                       \
+      MDB_val key_u = {                                                        \
+        .mv_data = (void*)key_string,                                          \
+        .mv_size = strlen(key_string) + 1,                                     \
+      };                                                                       \
+      MDB_val val_u;                                                           \
+      try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),                          \
+               goto abort_txn,                                                 \
+               "failed to lookup metadata value for key '%s'",                 \
+               key_string);                                                    \
+      destination = u3i_bytes(val_u.mv_size, val_u.mv_data);                   \
+    } while ( 0 )
+
+    u3_atom who;
+    lookup_metadata("who", who);
+    u3r_chubs(0, 2, met_u->who_d, who);
+    u3z(who);
+    lookup_metadata("fake", met_u->fak_o );
+    lookup_metadata("life", met_u->lif_w);
+    lookup_metadata("version", met_u->ver_w);
+#undef lookup_metadata
+#else
     MDB_val key_u, val_u;
 
-    key_u.mv_data = (void*)"who";
-    key_u.mv_size = strlen("who");
+    static const c3_c who_c[] = "who";
+    key_u.mv_data = (void*)who_c;
+    key_u.mv_size = sizeof(who_c);
     try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),
              goto abort_txn,
-             "failed to lookup metadata value for key 'who'");
+             "failed to lookup metadata value for key '%s'",
+             who_c);
     u3_atom who = u3i_bytes(val_u.mv_size, val_u.mv_data);
     u3r_chubs(0, 2, met_u->who_d, who);
     u3z(who);
 
-    key_u.mv_data = (void*)"fake";
-    key_u.mv_size = strlen("fake");
+    static const c3_c fak_c[] = "fake";
+    key_u.mv_data = (void*)fak_c;
+    key_u.mv_size = sizeof(fak_c);
     try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),
              goto abort_txn,
-             "failed to lookup metadata value for key 'fake'");
+             "failed to lookup metadata value for key '%s'",
+             fak_c);
     met_u->fak_o = u3i_bytes(val_u.mv_size, val_u.mv_data);
 
-    key_u.mv_data = (void*)"life";
-    key_u.mv_size = strlen("life");
+    static const c3_c lif_c[] = "life";
+    key_u.mv_data = (void*)lif_c;
+    key_u.mv_size = sizeof(lif_c);
     try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),
              goto abort_txn,
-             "failed to lookup metadata value for key 'life'");
+             "failed to lookup metadata value for key '%s'",
+             lif_c);
     met_u->lif_w = u3i_bytes(val_u.mv_size, val_u.mv_data);
 
-    key_u.mv_data = (void*)"version";
-    key_u.mv_size = strlen("version");
+    static const c3_c ver_c[] = "version";
+    key_u.mv_data = (void*)ver_c;
+    key_u.mv_size = sizeof(ver_c);
     try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),
              goto abort_txn,
              "failed to lookup metadata value for key 'version'");
     met_u->ver_w = u3i_bytes(val_u.mv_size, val_u.mv_data);
+#endif
 
     mdb_txn_abort(txn_u);
   }
