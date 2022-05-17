@@ -784,7 +784,7 @@
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
-=<  |%
+    =<  |%
         ++  call  ^call
         ++  load  ^load
         ++  scry  ^scry
