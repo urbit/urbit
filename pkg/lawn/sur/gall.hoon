@@ -2,42 +2,63 @@
 +$  bowl
   $:  $:  our=ship
           src=ship
-          wer=path
+          wer=path  ::  fully qualified path to agent /ship/desk/agent
       ==
       $:  act=@ud
           eny=@
           now=@da
+      ==
+      $:  pem=(set perm)  ::  all permissions this agent has
   ==  ==
+::  $pub-meta: metadata stored with each publication
 ::
 +$  pub-meta
-  $:  crew=(unit (set ship))
+  $:  rev=@ud  ::  latest revision
+      chk=@ud  ::  revision of latest checkpoint
+      int=@ud  ::  number of updates between checkpoints
   ==
+::  $sub-meta: metadata stored with each subscription
 ::
 +$  sub-meta
-  $:  live=_|
+  $:  live=_|   ::  has the publisher acked this request?
+      sent=@da  ::  when did we first subscribe?
+      pub-meta  ::  publication metadata
   ==
 ::
 ++  agent
   |%
+  ::  $vase-note: $note subtypes that would include vases if universal
+  ::
+  ::    Probably just for documentation, unless Gall wants to use this
+  ::    as an implementation detail of move type checking.
+  ::
+  +$  vase-note
+    $%  [%poke =ship =path =vase]
+        [%wave =ship =cage]
+    ==
+  ::  $move: any effect from an agent
+  +$  move
+    $%  [%pass =wire =note]
+        ::[%give =gift]  ::  why are there no gifts?
+    ==
+  ::  $note: request emitted by agent
+  ::
   +$  note
-    ::  to userspace (cages here, but statically typed from agents)
+    ::  to userspace
     ::
-    $%  [%poke =ship =path =cage]             ::  command
-        [%gaze =ship =path]                   ::  subscribe
-        [%crag =mark =path =crew]             ::  initialize publication
-        [%fend =path who=(set ship) gap=@dr]  ::  set permissions
-        [%wave =path =cage]                   ::  apply diff to publication
+    $%  [%gaze =ship =path]  ::  subscribe
+        [%crag =mark =path]  ::  initialize publication
+        [%fend =path]        ::  set permissions
     ::  to the kernel
     ::
     ::  %ames
         [%sift ships=(list ship)]
         [%spew veb=(list verb)]
     ::  %behn
-        [%wait =path date=@da]
-        [%rest =path date=@da] 
+        [%wait date=@da]
+        [%rest date=@da] 
     ::  %clay 
         [%cred nom=@ta cew=crew]
-        [%drop des=desk]
         [%info des=desk dit=(axal soya)]  ::  NOTE page not cage
         [%merg des=desk her=@p dem=desk cas=case how=germ]
         [%fuse des=desk bas=beak con=(list [beak germ])]
@@ -46,7 +67,7 @@
         [%dirk =desk]
         [%perm des=desk pax=path rit=rite]
         [%warp wer=ship rif=riff]
-    ::  %dill
+    ::  %dill  ::  TODO ask ~palfun-foslup for review
         [%belt =belt]
         [%flog =flog]
         [%crud =goof]
@@ -66,11 +87,56 @@
         [%cancel-request ~]
     ::  %jael
         [%snag ~]  ::  ask jael to track pki from this desk
-        [%full points=(map ship point)]
-        [%diff who=ship =diff:point]
-        [%breach who=ship]
+        [%listen whos=(set ship) =source]
+        [%nuke whos=(set ship)]
+        [%moon =ship =udiff:point]
+        [%public-keys ships=(set ship)]
+        [%rekey =life =ring]
+        [%ruin ships=(set ship)]
+        [%step ~]
     ==
-  ::  $soya: untrusted change to a file
+  +$  perm
+    $%  perm-arvo
+        [%gent perm-gent]
+    ==
+  +$  perm-gent
+    $%  [%call-local ?]  ::  can it poke and subscribe to local desks?
+        [%call-peers ?]  ::  can it poke and subscribe to foreign ships?
+        [%berm-local ?]  ::  can local desks poke and subscribe to it?
+        [%berm-peers ?]  ::  can foreign ships poke and subscribe to it?
+    ==
+  +$  perm-arvo
+    $%  [%ames ?(%debug)]  ::  %sift %spew
+        [%behn ?(%timer)]  ::  %wait %rest
+        ::  %mount: %mont %ogre %dirk
+        ::  %write: %info %merg %fuse
+        ::  %permissions: %cred %perm
+        ::  %query-local: %warp
+        ::  %query-peers: %werp
+        ::  %build: %warp with a ford build request $care
+        ::
+        [%clay ?(%mount %write %permissions %query-local %query-peers %build)]
+        ::  %trace: %crud
+        ::  %draw: %belt %flog %view (TODO: is this right?)
+        ::
+        [%dill ?(%trace %draw)]
+        ::  %cors: %approve-origin %reject-origin
+        ::  %serve-web: %rule %connect %disconnect
+        ::
+        [%eyre ?(%serve-web %cors)]
+        ::  %toggle: %jolt idle
+        ::  %nuke: %nuke
+        ::  %perm: set these permissions for agents
+        ::
+        [%gall ?(%toggle %perm %nuke)]
+        ::  %web-request: %request %cancel-request
+        ::
+        [%iris ?(%request-web)]
+        ::  %public-keys is always allowed, since it's public
+        ::
+        [%jael ?(%snag %moon %ruin %listen %step %rekey %private-keys)]
+    ==
+  ::  $soya: untrusted change to a file (using $page, not $cage)
   ::
   +$  soya
     $:  [%del ~]
@@ -78,15 +144,19 @@
         [%dif p=page]
         [%mut p=page]
     ==
+  ::  $vase-sign: $sign subtypes that would include vases if universal
+  ::
+  +$  vase-sign
+    $:  [%wave =path wave=cage rock=cage]
+    ==
   +$  sign
     ::  from userspace
     ::
-    $%  [%wave =path =cage]
-        [%poke-ack =ship =path err=(unit tang)]
-        [%gaze-ack =ship =path err=(unit tang)]
+    $%  [%poke-ack =ship =path dud=(unit tang)]
+        [%gaze-ack =ship =path dud=(unit tang)]
     ::  from the kernel
     ::  %behn
-        [%wake ~]
+        [%wake ~]  ::  TODO error
     ::  %clay
         [%mere p=(each (set path) (pair term tang))]
         [%writ p=riot]

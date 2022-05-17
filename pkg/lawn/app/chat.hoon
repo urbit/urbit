@@ -1,27 +1,34 @@
-/-  gall, chat-pub::, group-pub
-::  agent-specific data structures; unofficial optional helper core
+/-  gall
+/%  chat   %chat
+/%  group  %group
 ::
 |%
-+$  state-0  [%0 ~]
-+$  subs
-  $:  $=  chat-pub
-      %+  map  [=ship =path]
-      [=rock:chat-pub meta=sub-meta:gall]
-  ::
-      $=  group-pub
-      %+  map  [=ship =path]
-      [=rock:group-pub meta=sub-meta:gall]
-  ==
-::  $pubs: publication state injected by gall
+::  $state-0: versioned agent state
 ::
-+$  pubs
++$  state-0
+  $:  %0
+      buds=(map @ta (set ship))
+  ==
+::  $sub-state: subscription state injected by gall
+::
++$  sub-state
+  $:  $=  chat
+      %+  map  [=ship =path]
+      [=rock:chat meta=sub-meta:gall]
+  ::
+      $=  group
+      %+  map  [=ship =path]
+      [=rock:group meta=sub-meta:gall]
+  ==
+::  $pub-state: publication state injected by gall
+::
++$  pub-state
   %+  map  path
-  [=rock:chat-pub meta=pub-meta:gall]
+  [=rock:chat meta=pub-meta:gall]
 ::  $step: agent activation result
 ::
 ::    fex: effects
 ::    state: new agent state
-::    pubs: modified publications
 ::
 +$  step
   $:  fex=(list note)
@@ -31,23 +38,39 @@
   $%  task
       task:groups
   ==
-+$  wave-gift
+::  $wave-note: send a wave to a publication
+::
+::    If the agent applied the diff itself, .rock contains the
+::    result; otherwise, .rock is ~ and Gall will apply the diff itself.
+::    Remote subscribers should receive a mug of the new state with each
+::    diff as a sanity check to make sure the publishing agent applied
+::    the diff correctly.
+::
++$  wave-note
   $%  $:  [[%tas %chan] [%ta id=@ta] ~]
-          =wave:chat-pub
+          [=wave:chat rock=(unit rock:chat)]
   ==  ==
+::  $wave-sign: receive an update on a subscription
+::
 +$  wave-sign
   $%  $:  [[%tas %chan] [%ta id=@ta] ~]
-          [=wave =rock]:chat-pub]
+          [=wave =rock]:chat
   ==  ==
---
-::  agent descriptor core, all arms required
-|%
-++  sub-marks  ~[%chat-pub %group-pub]
-++  pub-marks  ~[%chat-pub]
-+$  note  ::  outbound effect
-  $%  $<(%poke $<(%wave note:gall))
+::
+++  subs  ~[%chat %group]  ::  marks we subscribe to
+++  pubs  ~[%chat]         ::  marks we publish
+::  $move: outbound effect
+::
++$  move
+  $%  [%pass =wire =note]
+      ::  [%give =gift]  ::  are there any gifts?
+  ==
+::  $note: outbound request
+::
++$  note
+  $%  note:agent:gall
       [%poke =ship poke-note]
-      [%wave =path wave-gift]
+      [%wave =path wave-note]
   ==
 ::  +$  task
 ::    $%  [/lawn/chat/chan/[id=@ta]/create ~]
@@ -59,7 +82,9 @@
 ::        [/lawn/chat/chan/[id=@ta]/writ/feel/del =time =term]
 ::    ==
 ::
-+$  task  ::  inbound poke
+::  $task: inbound request
+::
++$  task
   $:  [%tas %lawn]
       [%tas %chat]
       [%tas %chan]
@@ -72,52 +97,39 @@
           [[[%tas %feel] [%tas %add] ~] =time =term]
           [[[%tas %feel] [%tas %del] ~] =time =term]
   ==  ==
+::  $sign: inbound response
+::
 +$  sign
-  $%  $<(%wave sign:gall)
+  $%  sign:agent:gall
       wave-sign
   ==
 --
-::  gall uses +sub-marks and +pub-marks to inject a .pubs of the right type
+::  gall uses +subs and +pubs to inject a $sub-state and $pub-state
 ::
-|=  [=bowl state=state-0 =subs =pubs]
+|=  [=bowl state=state-0 subs=subs-state pubs=pub-state]
 =/  nog  [fex=*(list note) =pubs]
 =>  |%
+    ++  emit  |=(m=move nog(fex [m fex.nog]))
     ++  chan-path  |=(id=@ta (snoc wer.bowl (scot %ta id)))
     ++  wave-chat
-      |=  [id=@ta =wave:chat-pub]
+      |=  [id=@ta =wave:chat]
       ^+  nog
       =/  pax  (chan-path id)
-      =/  =rock:chat-pub
-        (wash:chat-pub rock:(~(got by pubs.nog) pax) wave)
+      =/  =rock:chat
+        (wash:chat rock:(~(got by pubs.nog) pax) wave)
       [[wave `rock] (~(put by pubs.nog) pax [wave rock])]
     ::
     ++  crag-chat
       |=  id=@ta
       ^+  nog
       =/  pax  (chan-path id)
-      :-  [[%crag %chat-pub pax `~] fex.nog]
-      (~(put by pubs.nog) pax [*rock:chat-pub `~])
-    ::
-    ++  fend-chat
-      |=  [id=@ta add=? =ship]
-      ^+  nog
-      =/  pax  (chan-path id)
-      =/  pub  (~(got by pubs.nog) pax)
-      =/  crew
-        ?~  crew.meta.pub  ~
-        ?:  add
-          `(~(put in u.crew.meta.pub) src.bowl)
-        `(~(del in u.crew.meta.pub) src.bowl)
-      :-  [[%arvo %fend pax crew] fex.nog]
-      (~(put by pubs.nog) pax pub(crew.meta crew))
+      :-  [[%crag %chat pax] fex.nog]
+      (~(put by pubs.nog) pax [*rock:chat])
     ::
     ++  is-member
       |=  [=ship id=@ta]
       ^-  ?
-      =/  crew  crew:(~(got by pubs.nog) (chan-path id))
-      ?~  crew
-        &
-      (~(has in u.crew) ship)
+      (~(has ju buds.state) id ship)
     --
 |%
 ++  this  .
@@ -125,6 +137,14 @@
 ++  on-init  this
 ++  on-load  |=(old=state-0 this(state old))
 ++  on-rift  |=(=ship this)
+++  on-peek  ::  TODO types?
+  |=  =path
+  ^-  (unit page)
+  ?+    path  ~
+      [[%tas %q] [%p ship=@p] [%tas %chan] [%ta id=@ta] ~]
+    `[%loob (is-member ship id)]
+  ==
+::
 ++  on-poke
   |=  =task
   ^+  this
@@ -135,10 +155,11 @@
     this(nog (crag-chat id))
   ::
       [[%tas %join] ~]
-    this(nog (fend-chat id & src.bowl))
+    this(buds.state (~(put ju buds.state) id src.bowl))
   ::
       [[%tas %leave] ~]
-    this(nog (fend-chat id | src.bowl))
+    =.  nog  (emit %fend +:(chan-path id))  ::  rekey
+    this(buds.state (~(del ju buds.state) id src.bowl))
   ::
       [[%tas %writ] [%tas %add] ~]
     ?>  (is-member src.bowl id)
@@ -158,7 +179,7 @@
   ==
 ::
 ++  on-sign
-  |=  =sign:gall
+  |=  [=wire =sign]
   ^+  this
   ?+    -.sign  this
       ?(%poke-ack %gaze-ack)
