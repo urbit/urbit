@@ -4392,7 +4392,24 @@
     [mos ..^$]
   ::
       %tomb  (tomb-clue:tomb hen clue.req)
-      %trim  [~ ..^$]
+      %trim
+    =:    fad.ruf      *flow
+          dos.rom.ruf
+        %-  ~(run by dos.rom.ruf)
+        |=  =dojo
+        dojo(fod.dom *flue)
+      ::
+          hoy.ruf
+        %-  ~(run by hoy.ruf)
+        |=  =rung
+        %=    rung
+            rus
+          %-  ~(run by rus.rung)
+          |=  =rede
+          rede(fod.dom *flue)
+        ==
+      ==
+    [~ ..^$]
   ::
       %vega
     ::  wake all desks, then send pending notifications
