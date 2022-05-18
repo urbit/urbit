@@ -804,7 +804,8 @@
         ~|(%ames-larval-call-dud (mean tang.u.dud))
       ::
       ?:  &(?=(^ cached-state) ?=(~ queued-events))
-        (molt ~)
+        =^  moves  adult-gate  (call:adult-core duct dud task)
+        (molt moves)
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
@@ -956,7 +957,7 @@
         (state-5-to-6:load:adult-core +.u.cached-state)
       =.  cached-state  ~
       ~>  %slog.1^leaf/"ames: metamorphosis reload"
-      [~ adult-gate]
+      [moves adult-gate]
     --
 ::  adult ames, after metamorphosis from larva
 ::
