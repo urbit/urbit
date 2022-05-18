@@ -29,9 +29,9 @@
 ::  1. the outer loop `commit-loop` threads down into each commit by ancestor
 ::  2. the inner loop `ancestor-loop` threads left-to-right on reverse-ancestors
 ::
-::  +story-read outputs a tang with the least-recent commits at the head 
+::  +story-read outputs a tang with the least-recent commits at the head
 ::  of the list, even though we want most-recent commits to print first.
-::  But because dojo prints tangs in reverse, we don't flop the results. 
+::  But because dojo prints tangs in reverse, we don't flop the results.
 ::::
 ++  story-read
   |=  [[our=ship syd=^desk cas=case] this-commit=yaki:clay tale=story]
@@ -60,8 +60,8 @@
       (msg-from-commit this-commit tale)
     ::
     ::  If there is a mergebase and we are visting it right now:
-    ::    stop here and clear the mergebase. 
-    ::    skip adding the mergebase's msg itself, 
+    ::    stop here and clear the mergebase.
+    ::    skip adding the mergebase's msg itself,
     ::    because it will be added through the other branch.
     ::  Otherwise, record the current message if exists and recur.
     ?:  ?&(?=(^ mergebase.state) =(u.mergebase.state r.this-commit))
@@ -74,19 +74,19 @@
     ::  nowline: relative mainline
     ::  sideline: side-chain, featurebranch
     ::
-    ::  From the context of e, commit c is on its relative mainline, or nowline, 
+    ::  From the context of e, commit c is on its relative mainline, or nowline,
     ::  while commit d is on its sideline.
     ::
     ::  %base  a--b-------------X  :: mainline
     ::  %new      \--c------e--/   :: nowline
-    ::  %new2        \--d--/       :: sideline 
+    ::  %new2        \--d--/       :: sideline
     ::
-    ::  
+    ::
     =/  sideline         i.reverse-ancestors
     =/  mainline         i.t.reverse-ancestors
     ::  XX base-tako ignores beak
     ::
-    =/  mergebases  
+    =/  mergebases
       .^  (list tako:clay)  %cs
           (scot %p our)  syd  (scot cas)
           /base-tako/(scot %uv mainline)/(scot %uv sideline)
@@ -110,7 +110,7 @@
     ::  2 - recur and queue processing on all commits on the sideline
     ::  3 - recur and queue processing on all commits on the mainline
     ::
-    ::  Because mainline messages are cons'd to result last, they are 
+    ::  Because mainline messages are cons'd to result last, they are
     ::  (by definition) towards the less recent side of the flopped list
     ::
     =.  state  [result=(weld msg result.state) mergebase=next-mergebase]  :: 1
@@ -122,8 +122,8 @@
     ::  ~&  "in 3+ ancestor commit"
     =/  sideline    i.reverse-ancestors
     =/  nowline     i.t.reverse-ancestors
-    =/  mergebases  
-      .^  (list tako:clay)  %cs 
+    =/  mergebases
+      .^  (list tako:clay)  %cs
           (scot %p our)  syd  (scot cas)
           /base-tako/(scot %uv nowline)/(scot %uv sideline)
       ==

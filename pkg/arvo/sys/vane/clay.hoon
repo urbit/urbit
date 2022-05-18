@@ -846,7 +846,7 @@
       ?:  =(%hoon p.page)
         :_(nub [%hoon [%atom %t ~] q.page])
       ?:  =(%mime p.page)
-        :_(nub [%mime =>([..zuse ;;(mime q.page)] !>(-))])
+        :_(nub [%mime =>([;;(mime q.page) ..zuse] !>(-))])
       =^  =dais  nub  (build-dais p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
@@ -5242,6 +5242,23 @@
 ::
 ++  whey
   ^-  (list mass)
+  ?:  &  ::  lac
+    =/  domestic
+      %+  turn  (sort ~(tap by dos.rom.ruf) aor)
+      |=  [=desk =dojo]
+      :+  desk  %|
+      :~  mime+&+mim.dom.dojo
+          flue+&+fod.dom.dojo
+          dojo+&+dojo
+      ==
+    :~  :+  %object-store  %|
+        :~  commits+&+hut.ran.ruf
+            pages+&+lat.ran.ruf
+        ==
+        domestic+|+domestic
+        foreign+&+hoy.ruf
+        ford-cache+&+fad.ruf
+    ==
   =/  domestic
     %+  turn  (sort ~(tap by dos.rom.ruf) aor)
     |=  [=desk =dojo]
@@ -5252,7 +5269,10 @@
     ==
   :~  :+  %object-store  %|
       :~  commits+&+hut.ran.ruf
-          pages+&+lat.ran.ruf
+          :+  %pages  %|
+          %+  turn  ~(tap by lat.ran.ruf)
+          |=  [=lobe =page]
+          [(scot %uv lobe) %& page]
       ==
       domestic+|+domestic
       foreign+&+hoy.ruf
@@ -5344,7 +5364,7 @@
       |-  ^-  (set [norm yaki])
       ?~  rooms
         ~
-      (~(uni in $(rooms t.rooms)) (draw-dome dom.dojo.i.rooms))
+      (~(uni in $(rooms t.rooms)) (draw-dome %& dom.dojo.i.rooms))
     =/  rung-yakis
       =/  rungs=(list [=ship =rung])  ~(tap by hoy.ruf)
       |-  ^-  (set [norm yaki])
@@ -5355,11 +5375,11 @@
       |-  ^-  (set [norm yaki])
       ?~  redes
         ~
-      (~(uni in $(redes t.redes)) (draw-dome dom.rede.i.redes))
+      (~(uni in $(redes t.redes)) (draw-dome %| dom.rede.i.redes))
     (~(uni in room-yakis) rung-yakis)
   ::
   ++  draw-dome
-    |=  =dome
+    |=  [domestic=? =dome]
     ^-  (set [norm yaki])
     =/  =aeon  1
     |-  ^-  (set [norm yaki])
@@ -5367,7 +5387,7 @@
       ~
     =/  =tako  (~(got by hit.dome) aeon)
     =/  yakis=(set [norm yaki])
-      ?.  =(let.dome aeon)
+      ?.  &(=(let.dome aeon) domestic)
         ~
       [[*norm (~(got by hut.ran.ruf) tako)] ~ ~]
     %-  ~(uni in yakis)
