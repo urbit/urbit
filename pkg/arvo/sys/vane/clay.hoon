@@ -3234,7 +3234,6 @@
       [u.ruv |]
     =/  done=?  |
     =.  hen  duct.sat
-    =.  busy.sat  ~
     |%
     ++  abet
       ^+  ..foreign-update
