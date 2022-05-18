@@ -984,7 +984,7 @@
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %6 state.old)
         larval-gate
-       ::
+      ::
           [%7 %adult *]  (load:adult-core %7 state.old)
       ::
           [%7 %larva *]
