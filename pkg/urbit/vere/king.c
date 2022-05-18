@@ -1007,6 +1007,76 @@ _king_save_file(c3_c* url_c, FILE* fil_u)
   return ret_i;
 }
 
+/* _king_make_pace(): mkdir -p $pier/.bin/[pace]
+*/
+static c3_i
+_king_make_pace(c3_c* pac_c)
+{
+  c3_c* bin_c;
+  c3_i  ret_i;
+
+  ret_i = asprintf(&bin_c, "%s/.bin", u3_Host.dir_c);
+  c3_assert( ret_i > 0 );
+
+  ret_i = c3_mkdir(bin_c, 0700);
+
+  if ( ret_i && (EEXIST != errno) ) {
+    fprintf(stderr, "vere: mkdir %s failed: %s\n", bin_c, strerror(errno));
+    c3_free(bin_c);
+    return -1;
+  }
+
+  c3_free(bin_c);
+
+  ret_i = asprintf(&bin_c, "%s/.bin/%s/", u3_Host.dir_c, pac_c);
+  c3_assert( ret_i > 0 );
+
+  //  XX asserting wrapper conflicts here (and is bypassed for .urb)
+  //
+  ret_i = mkdir(bin_c, 0700);
+
+  if ( ret_i && (EEXIST != errno) ) {
+    fprintf(stderr, "vere: mkdir %s failed: %s\n", bin_c, strerror(errno));
+    c3_free(bin_c);
+    return -1;
+  }
+
+  c3_free(bin_c);
+  return 0;
+}
+
+/* _king_link_run(): ln [bin_c] $pier/.run
+*/
+static c3_i
+_king_link_run(c3_c* bin_c)
+{
+  c3_c* lin_c;
+  c3_i  ret_i;
+
+  ret_i = asprintf(&lin_c, "%s/.run", u3_Host.dir_c); // XX ./.run.exe?
+  c3_assert( ret_i > 0 );
+
+  ret_i = unlink(lin_c);
+
+  if ( ret_i && (ENOENT != errno) ) {
+    fprintf(stderr, "vere: unlink %s failed: %s\n", lin_c, strerror(errno));
+    c3_free(lin_c);
+    return -1;
+  }
+
+  ret_i = link(bin_c, lin_c);
+
+  if ( ret_i ) {
+    fprintf(stderr, "vere: link %s -> %s failed: %s\n",
+                    lin_c, bin_c, strerror(errno));
+    c3_free(lin_c);
+    return -1;
+  }
+
+  c3_free(lin_c);
+  return 0;
+}
+
 /* _king_get_vere(): get binary for specified arch and version.
 */
 static c3_i
@@ -1017,34 +1087,8 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   FILE* fil_u;
   c3_i  ret_i;
 
-  {
-    ret_i = asprintf(&bin_c, "%s/.bin", u3_Host.dir_c);
-    c3_assert( ret_i > 0 );
-
-    ret_i = c3_mkdir(bin_c, 0700);
-
-    if ( ret_i && (EEXIST != errno) ) {
-      fprintf(stderr, "vere: mkdir %s failed: %s\n", bin_c, strerror(errno));
-      c3_free(bin_c);
-      return -1;
-    }
-
-    c3_free(bin_c);
-
-    ret_i = asprintf(&bin_c, "%s/.bin/%s/", u3_Host.dir_c, pac_c);
-    c3_assert( ret_i > 0 );
-
-    //  XX asserting wrapper conflicts here (and is bypassed for .urb)
-    //
-    ret_i = mkdir(bin_c, 0700);
-
-    if ( ret_i && (EEXIST != errno) ) {
-      fprintf(stderr, "vere: mkdir %s failed: %s\n", bin_c, strerror(errno));
-      c3_free(bin_c);
-      return -1;
-    }
-
-    c3_free(bin_c);
+  if ( _king_make_pace(pac_c) ) {
+    return -1; // XX
   }
 
   //  XX windows .exe
@@ -1099,33 +1143,12 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   //  XX option
   //
   if ( lin_t ) {
-    c3_c* lin_c;
-
-    ret_i = asprintf(&lin_c, "%s/.run", u3_Host.dir_c); // XX ./.run.exe?
-    c3_assert( ret_i > 0 );
-
-    ret_i = unlink(lin_c);
-
-    if ( ret_i && (ENOENT != errno) ) {
-      fprintf(stderr, "vere: unlink %s failed: %s\n", lin_c, strerror(errno));
-      c3_free(lin_c);
+    if ( _king_link_run(bin_c) ) {
+      fprintf(stderr, "vere: link %s/.run failed\n", u3_Host.dir_c);
       c3_free(url_c);
       c3_free(bin_c);
       return -1;
     }
-
-    ret_i = link(bin_c, lin_c);
-
-    if ( ret_i ) {
-      fprintf(stderr, "vere: link %s -> %s failed: %s\n",
-                      lin_c, bin_c, strerror(errno));
-      c3_free(lin_c);
-      c3_free(url_c);
-      c3_free(bin_c);
-      return -1;
-    }
-
-    c3_free(lin_c);
   }
 
   c3_free(url_c);
