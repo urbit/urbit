@@ -1271,8 +1271,12 @@ main(c3_i   argc,
     return 1;
   }
 
+  u3_Host.dem_c = strdup(argv[0]);
+
+  //  XX add argument
+  //
   if ( !u3_Host.wrk_c ) {
-    u3_Host.wrk_c = strdup(argv[0]);
+    u3_Host.wrk_c = strdup(u3_Host.dem_c);
   }
 
   if ( c3y == u3_Host.ops_u.dem ) {

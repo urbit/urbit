@@ -318,6 +318,7 @@
       typedef struct _u3_host {
         c3_w       kno_w;                   //  current executing stage
         c3_c*      dir_c;                   //  pier path (no trailing /)
+        c3_c*      dem_c;                   //  daemon executable path
         c3_c*      wrk_c;                   //  worker executable path
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop

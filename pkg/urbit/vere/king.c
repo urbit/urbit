@@ -1157,6 +1157,47 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   return 0;
 }
 
+/* _king_link_vere(): link current binary into $pier/.bin
+*/
+static c3_i
+_king_link_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
+{
+  c3_c* bin_c;
+  c3_i  ret_i;
+
+  if ( _king_make_pace(pac_c) ) {
+    return -1; // XX
+  }
+
+  //  XX windows .exe
+  //
+  ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s",
+                           u3_Host.dir_c, pac_c, ver_c, arc_c);
+  c3_assert( ret_i > 0 );
+
+  ret_i = link(u3_Host.dem_c, bin_c);
+
+  if ( ret_i ) {
+    fprintf(stderr, "vere: link %s -> %s failed: %s\n",
+                    bin_c, u3_Host.dem_c, strerror(errno));
+    c3_free(bin_c);
+    return -1;
+  }
+
+  //  XX option
+  //
+  if ( lin_t ) {
+    if ( _king_link_run(bin_c) ) {
+      fprintf(stderr, "vere: link %s/.run failed\n", u3_Host.dir_c);
+      c3_free(bin_c);
+      return -1;
+    }
+  }
+
+  c3_free(bin_c);
+  return 0;
+}
+
 /* _king_do_upgrade(): get arch-appropriate binary at [ver_c].
 */
 static void
@@ -1178,6 +1219,32 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
   }
   else {
     u3l_log("vere: upgrade succeeded\r\n");
+    //  XX print restart instructions
+  }
+#endif
+}
+
+/* _king_do_link(): link binary into pier on boot.
+*/
+static void
+_king_do_link(c3_c* pac_c)
+{
+#ifdef U3_OS_ARCH
+#  ifdef U3_OS_mingw
+  c3_c* arc_c = U3_OS_ARCH ".exe"; // XX confirm
+#  else
+  c3_c* arc_c = U3_OS_ARCH;
+#  endif
+
+  //  XX get link option
+  //
+  if ( _king_link_vere(pac_c, URBIT_VERSION, arc_c, 1) ) {
+    u3l_log("vere: link failed\r\n");
+    u3_king_bail();
+    exit(1);
+  }
+  else {
+    u3l_log("vere: link succeeded\r\n");
     //  XX print restart instructions
   }
 #endif
@@ -1219,6 +1286,18 @@ u3_king_done(void)
 
     c3_free(pac_c);
     c3_free(ver_c);
+  }
+
+  if ( c3y == u3_Host.ops_u.nuu ) {
+    c3_c* pac_c;
+
+    //  hack to ensure we only try once
+    //
+    u3_Host.ops_u.nuu = c3n;
+
+    pac_c = _king_get_pace();
+    _king_do_link(pac_c);
+    c3_free(pac_c);
   }
 
   //  XX hack, if pier's are still linked, we're not actually done
