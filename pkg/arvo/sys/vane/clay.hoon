@@ -3184,12 +3184,19 @@
       |=  =nako
       ^-  (set lobe)
       =|  missing=(set lobe)
+      =/  let-tako  (~(got by gar.nako) let.nako)
       =/  yakis  ~(tap in lar.nako)
       |-  ^-  (set lobe)
       =*  yaki-loop  $
       ?~  yakis
         missing
-      =/  =norm  (~(gut by tom.dom) r.i.yakis nor.dom)
+      =/  =norm
+        ::  Always try to fetch the entire last commit, because often we
+        ::  want to merge from it.
+        ::
+        ?:  =(let-tako r.i.yakis)
+          *norm:clay
+        (~(gut by tom.dom) r.i.yakis nor.dom)
       =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
       |-  ^-  (set lobe)
       =*  lobe-loop  $
@@ -3197,7 +3204,7 @@
         yaki-loop(yakis t.yakis)
       =?    missing
           ?&  !(~(has by lat.ran) lobe.i.lobes)
-              !=([~ %|] (~(fit of norm) path.i.lobes))
+              !=([~ %|] +:(~(fit of norm) path.i.lobes))
           ==
         (~(put in missing) lobe.i.lobes)
       lobe-loop(lobes t.lobes)
