@@ -1112,7 +1112,6 @@
         [%coax =ship =path]
         [%fend =path]
         [%hide =path]
-        [%yank =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)

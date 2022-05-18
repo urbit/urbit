@@ -1166,7 +1166,6 @@
     ::
       %coax  (on-coax:fine:event-core +.task)
       %fend  (on-fend:fine:event-core +.task)
-      %yank  (on-yank:fine:event-core +.task)
     ==
   ::
   [moves ames-gate]
