@@ -1,7 +1,7 @@
 |%
 +$  bowl
   $:  $:  our=ship
-          src=ship
+          src=[=ship =desk]
           wer=path  ::  fully qualified path to agent /ship/desk/agent
       ==
       $:  act=@ud

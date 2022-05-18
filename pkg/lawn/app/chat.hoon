@@ -31,7 +31,7 @@
 ::    state: new agent state
 ::
 +$  step
-  $:  fex=(list note)
+  $:  fex=(list move)
       state=state-0
   ==
 +$  poke-note
@@ -56,6 +56,12 @@
   $%  $:  [[%tas %chan] [%ta id=@ta] ~]
           [=wave =rock]:chat
   ==  ==
+::  $scry-response: path-tagged result of +on-peek
+::
++$  scry-response
+  $%  [[[%tas %q] [%p @p] [%tas %chan] [%ta @ta] ~] ?]
+      [[[%tas %x] [%p @p] [%tas %chan] [%ta @ta] ~] rock:chat]
+  ==
 ::
 ++  subs  ~[%chat %group]  ::  marks we subscribe to
 ++  pubs  ~[%chat]         ::  marks we publish
@@ -106,7 +112,7 @@
 --
 ::  gall uses +subs and +pubs to inject a $sub-state and $pub-state
 ::
-|=  [=bowl state=state-0 subs=subs-state pubs=pub-state]
+|=  [=bowl state=state-0 subs=sub-state pubs=pub-state]
 =/  nog  [fex=*(list note) =pubs]
 =>  |%
     ++  emit  |=(m=move nog(fex [m fex.nog]))
@@ -139,43 +145,44 @@
 ++  on-rift  |=(=ship this)
 ++  on-peek  ::  TODO types?
   |=  =path
-  ^-  (unit page)
+  ^-  (unit scry-response)
   ?+    path  ~
       [[%tas %q] [%p ship=@p] [%tas %chan] [%ta id=@ta] ~]
-    `[%loob (is-member ship id)]
+    `[path (is-member ship id)]
   ==
 ::
 ++  on-poke
   |=  =task
   ^+  this
+  =*  her  ship.src.bowl
   =*  id=@ta  id.task
   ?-    |4.task
       [[%tas %create] ~]
-    ?>  =(src.bowl our.bowl)
+    ?>  =(her our.bowl)
     this(nog (crag-chat id))
   ::
       [[%tas %join] ~]
-    this(buds.state (~(put ju buds.state) id src.bowl))
+    this(buds.state (~(put ju buds.state) id her))
   ::
       [[%tas %leave] ~]
     =.  nog  (emit %fend +:(chan-path id))  ::  rekey
-    this(buds.state (~(del ju buds.state) id src.bowl))
+    this(buds.state (~(del ju buds.state) id her))
   ::
       [[%tas %writ] [%tas %add] ~]
-    ?>  (is-member src.bowl id)
-    this(nog (wave-chat id [%chan %add [now ~] src.bowl +.poke]))
+    ?>  (is-member her id)
+    this(nog (wave-chat id [%chan %add [now ~] her +.poke]))
   ::
       [[%tas %writ] [%tas %del] ~]
-    ?>  (is-member src.bowl id)
-    this(nog (wave-chat id [%chan %del src.bowl +.poke]))
+    ?>  (is-member her id)
+    this(nog (wave-chat id [%chan %del her +.poke]))
   ::
       [[%tas %feel] [%tas %add] ~]
-    ?>  (is-member src.bowl id)
-    this(nog (wave-chat id [%chan %add-feel src.bowl +.poke]))
+    ?>  (is-member her id)
+    this(nog (wave-chat id [%chan %add-feel her +.poke]))
   ::
       [[%tas %feel] [%tas %del] ~]
-    ?>  (is-member src.bowl id)
-    this(nog (wave-chat id [%chan %del-feel src.bowl +.poke]))
+    ?>  (is-member her id)
+    this(nog (wave-chat id [%chan %del-feel her +.poke]))
   ==
 ::
 ++  on-sign

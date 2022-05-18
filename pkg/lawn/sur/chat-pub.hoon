@@ -1,7 +1,5 @@
-=>  |%
-    ++  ord  ((on @da post) lte)
-    --
 |%
+++  ord  ((on @da writ) lte)
 +$  writ  [seal memo]
 +$  seal
   $:  =time
@@ -31,7 +29,7 @@
   $:  =chan
       =meta
   ==
-+$  chan  ((mop @da post) lte)
++$  chan  ((mop @da writ) lte)
 +$  meta
   $:  title=@t
       description=@t
@@ -39,7 +37,7 @@
   ==
 ++  wash
   |=  [=rock wav=wave]
-  |-  ^+  rock
+  |^  ^+  rock
   ?-  -.wav
     %chan  rock(chan (wash-chan +.wav))
     %meta  rock(meta (wash-meta +.wav))
