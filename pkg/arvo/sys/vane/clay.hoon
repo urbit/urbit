@@ -442,8 +442,8 @@
 ::  %utilities
 ::
 |%
-++  scry-timeout-time  ~s5
-++  scry-retry-time    ~s30
+++  scry-timeout-time  ~m1
+++  scry-retry-time    ~m30
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
 ++  sort-by-head
