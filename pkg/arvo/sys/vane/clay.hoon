@@ -4920,6 +4920,7 @@
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
+  =*  scry-loop  $
   |^
   =*  ren  car
   =/  why=shop  &/p.bem
@@ -4959,26 +4960,43 @@
     ?+    i.path  ~
         %sweep  ``[%sweep !>(sweep)]
         %rang   ``[%rang !>(ran.ruf)]
-        %domes
-      =/  domes
-        %-  ~(gas by *cone)
-        %+  turn  ~(tap by dos.rom.ruf)
-        |=  [=desk =dojo]
-        [[our desk] [[let hit lab] tom nor]:dom.dojo]
-      =.  domes
-        %-  ~(uni by domes)
-        %-  ~(gas by *cone)
-        ^-  (list [[ship desk] dome:clay (map tako norm) norm])
-        %-  zing
-        ^-  (list (list [[ship desk] dome:clay (map tako norm) norm]))
-        %+  turn  ~(tap by hoy.ruf)
-        |=  [=ship =rung]
-        ^-  (list [[^ship desk] dome:clay (map tako norm) norm])
-        %+  turn  ~(tap by rus.rung)
-        |=  [=desk =rede]
-        [[ship desk] [[let hit lab] tom nor]:dom.rede]
-      ``[%domes !>(`cone`domes)]
+        %tomb   ``[%flag !>((tomb t.path))]
+        %domes  domes
     ==
+  ::
+  ++  domes
+    =/  domes
+      %-  ~(gas by *cone)
+      %+  turn  ~(tap by dos.rom.ruf)
+      |=  [=desk =dojo]
+      [[our desk] [[let hit lab] tom nor]:dom.dojo]
+    =.  domes
+      %-  ~(uni by domes)
+      %-  ~(gas by *cone)
+      ^-  (list [[ship desk] dome:clay (map tako norm) norm])
+      %-  zing
+      ^-  (list (list [[ship desk] dome:clay (map tako norm) norm]))
+      %+  turn  ~(tap by hoy.ruf)
+      |=  [=ship =rung]
+      ^-  (list [[^ship desk] dome:clay (map tako norm) norm])
+      %+  turn  ~(tap by rus.rung)
+      |=  [=desk =rede]
+      [[ship desk] [[let hit lab] tom nor]:dom.rede]
+    ``[%domes !>(`cone`domes)]
+  ::
+  ::  True if file is accessible
+  ::
+  ++  tomb
+    |=  =path
+    ^-  ?
+    =/  bem  (de-beam path)
+    ?~  bem       %|
+    =/  cay  scry-loop(car %y, bem u.bem)
+    ?~  cay       %|
+    ?~  u.cay     %|
+    =+  !<(=arch q.u.u.cay)
+    ?~  fil.arch  %|
+    (~(has by lat.ran.ruf) u.fil.arch)
   ::
   ::  Check for refcount errors
   ::
