@@ -323,11 +323,10 @@
 +$  update-state
   $:  =duct
       =rave
-      scry=(unit @da)                                   ::  if scry, timeout
       have=(map lobe fell)
       need=(list $@(lobe [=tako =path =lobe]))          ::  opt deets for scry
       nako=(qeu (unit nako))
-      busy=_|
+      busy=(unit $@(%ames [kind=@ta =time =path]))      ::  pending request
   ==
 ::
 ::  Domestic ship.
@@ -1512,23 +1511,27 @@
   ::
   ++  send-over-scry
     |=  [kind=@ta =duct =ship index=@ud =desk =mood]
-    ^-  [timeout=@da _..send-over-scry]
+    ^-  [[timeout=@da =path] _..send-over-scry]
     =/  =time  (add now scry-timeout-time)
     =/  =wire  (request-wire kind ship desk index)
     =/  =path
       =,  mood
       [%c care (scot case) desk path]
     ~&  scrying/path^index
-    :-  time
+    :-  [time path]
     %-  emil
     :~  [hen %pass wire %a %keen ship path]
         [hen %pass wire %b %wait time]
     ==
   ::
-  ++  cancel-scry-timeout  ::TODO  make arg order more consistent
-    |=  [kind=@ta =duct =ship index=@ud =desk time=@da]
-    =/  =wire  (request-wire kind ship desk index)
-    (emit duct %pass wire %b %rest time)
+  ++  cancel-scry-timeout
+    |=  inx=@ud
+    ~|  [%strange-timeout-cancel-no-scry-request her syd inx]
+    ?>  ?=(^ ref)
+    =/  sat=update-state  (~(got by bom.u.ref) inx)
+    ?>  ?=([~ ^] busy.sat)
+    =/  =wire  (request-wire kind.u.busy.sat her syd inx)
+    (emit hen %pass wire %b %rest time.u.busy.sat)
   ::
   ++  foreign-capable
     |=  =rave
@@ -1578,12 +1581,12 @@
       ::TODO  can be deduplicated with the below?
       ::
       =*  inx  nix.u.ref
-      =^  time=@da  +>+.$
+      =^  scry  +>+.$
         =<  ?>(?=(^ ref) .)
         (send-over-scry %warp-index hen her inx syd mood.rave)
       %=  +>+.$
         nix.u.ref  +(nix.u.ref)
-        bom.u.ref  (~(put by bom.u.ref) inx [hen rave `time ~ ~ ~ |])
+        bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ `warp-index+scry])
         fod.u.ref  (~(put by fod.u.ref) hen inx)
       ==
     ::
@@ -1596,7 +1599,7 @@
       (send-over-ames hen her inx syd `rave)
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
-      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ ~ |])
+      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ ~])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
@@ -3031,27 +3034,13 @@
       ==
     ::  cancel the request as appropriate
     ::
-    ?~  scry.sat
+    ?.  ?=([~ ^] busy.sat)
       %.  [hen her u.nux [syd ~]]
       send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
-    =/  =path
-      ~|  [%strange-scried-request rave.sat]
-      ?>  ?=(%sing -.rave.sat)
-      =,  mood.rave.sat
-      [(cat 3 %c care) (scot %p her) syd (scot case) path]
     %-  emil
-    ::NOTE  we don't know exactly which kind of request is exstant at
-    ::      this time. or at least it seems very hard to find out.
-    ::      so instead we simply emit the cancellation moves on both
-    ::      possible wires. one will silently no-op, the other will
-    ::      do what we want. this is ugly, but we should refactor the
-    ::      separate flows eventually anyway.
-    =/  x=wire  (request-wire %warp-index her syd u.nux)
-    =/  y=wire  (request-wire %back-index her syd u.nux)
-    :~  [hen %pass x %a %yawn her path]
-        [hen %pass y %a %yawn her path]
-        [hen %pass x %b %rest u.scry.sat]
-        [hen %pass y %b %rest u.scry.sat]
+    =/  =wire  (request-wire kind.u.busy.sat her syd u.nux)
+    :~  [hen %pass wire %a %yawn her path.u.busy.sat]
+        [hen %pass wire %b %rest time.u.busy.sat]
     ==
   ::
   ::  Handles a request.
@@ -3090,20 +3079,17 @@
     ::
     =.  ..retry-with-ames
       =<  ?>(?=(^ ref) .)
-      ~|  [%strange-retry-not-scry her syd inx scry.sat -.rave.sat]
-      ?>  ?=(^ scry.sat)
-      ?>  ?=(%sing -.rave.sat)
+      ~|  [%strange-retry-not-scry her syd inx busy.sat -.rave.sat]
+      ?>  ?=([~ ^] busy.sat)
       =/  =wire  (request-wire kind her syd inx)
-      =/  =path
-        =,  mood.rave.sat
-        [(cat 3 %c care) (scot %p her) syd (scot case) path]
+      =/  =path  path.u.busy.sat
       %-  emil
-      :~  [hen %pass wire %b %rest u.scry.sat]
+      :~  [hen %pass wire %b %rest time.u.busy.sat]
           [hen %pass wire %a %yawn her path]
       ==
     ::  re-send over ames
     ::
-    =.  bom.u.ref  (~(put by bom.u.ref) inx sat(scry ~, busy |))
+    =.  bom.u.ref  (~(put by bom.u.ref) inx sat(busy ~))
     ?:  =(%warp-index kind)
       (send-over-ames hen her inx syd `rave.sat)
     abet:work:(foreign-update inx)
@@ -3125,9 +3111,6 @@
     ?~  ruv
       ~&  %bad-answer
        +>.$
-    =?  ..take-foreign-answer  ?=(^ scry.u.ruv)
-      =<  ?>(?=(^ ref) .)
-      (cancel-scry-timeout %warp-index hen her inx syd u.scry.u.ruv)
     =/  rav=rave  rave.u.ruv
     ?:  ?=(%many -.rav)
       abet:(apex:(foreign-update inx) rut)
@@ -3251,12 +3234,7 @@
       [u.ruv |]
     =/  done=?  |
     =.  hen  duct.sat
-    ::  if the request was done over scry, clear the timeout timer
-    ::
-    =?  ..foreign-update  ?=(^ scry.sat)
-      =<  ?>(?=(^ ref) .)
-      (cancel-scry-timeout %back-index hen her inx syd u.scry.sat)
-    =.  scry.sat  ~
+    =.  busy.sat  ~
     |%
     ++  abet
       ^+  ..foreign-update
@@ -3314,13 +3292,13 @@
       ^+  ..abet
       ?:  lost  ..abet
       =.  ..park  =>((take-fell fell) ?>(?=(^ ref) .))
-      work(busy.sat |)
+      work(busy.sat ~)
     ::
     ::  Fetch next lobe
     ::
     ++  work
       ^+  ..abet
-      ?:  busy.sat
+      ?.  =(~ busy.sat)  ::NOTE  tmi
         ..abet
       |-  ^+  ..abet
       ?~  need.sat
@@ -3354,7 +3332,7 @@
         $(need.sat t.need.sat)
       ::  otherwise, fetch the next blob (aka fell)
       ::
-      =^  time=(unit @da)  ..foreign-update
+      =^  scry=(unit [@ta @da path])  ..foreign-update
         =<  ?>(?=(^ ref) .)
         ::  if we know a revision & path for the blob,
         ::  and :ship's remote scry isn't known to be broken,
@@ -3366,9 +3344,9 @@
             ==  ==
           ::  make the request over remote scry
           ::
-          =/  =mood
-            [%x uv+tako path]:i.need.sat
-          [`- +]:(send-over-scry %back-index hen her inx syd mood)
+          =/  =mood  [%x uv+tako path]:i.need.sat
+          =<  [`[%back-index -] +]
+          (send-over-scry %back-index hen her inx syd mood)
         ::  otherwise, request over ames
         ::
         :-  ~
@@ -3377,7 +3355,7 @@
         ::  TODO: upgrade to %1 when most ships have upgaded
         =/  =fill  [%0 syd lobe]
         (emit hen %pass wire %a %plea her %c path fill)
-      ..abet(busy.sat &, scry.sat time)
+      ..abet(busy.sat ?~(scry `%ames scry))
     ::
     ::  When we get a %w foreign update, store this in our state.
     ::
@@ -4931,9 +4909,10 @@
           ^-  update-state
           %=    update-state-10
               |2
-            :-  `(unit @da)`~
-            ^-  [(map lobe fell) (list $@(lobe [tako path lobe])) (qeu (unit nako)) _|]
+            ^-  [(map lobe fell) (list $@(lobe [tako path lobe])) (qeu (unit nako)) (unit $@(%ames [@ta @da path]))]
             %=    |2.update-state-10
+                busy  ?:(busy.update-state-10 `%ames ~)
+            ::
                 nako
               %-  ~(gas to *(qeu (unit nako)))
               %+  turn  ~(tap to nako.update-state-10)
@@ -5231,6 +5210,8 @@
         =;  res=(unit rand)
           ~&  taking-foreign-answer/=(~ res)
           =/  den  ((de now rof hen ruf) her desk)
+          =?  den  ?=(%tune +<.hin)
+            (cancel-scry-timeout:den index)
           abet:(take-foreign-answer:den index res)
         ?:  ?=(%boon +<.hin)  ;;((unit rand) payload.hin)
         %+  bind  data.hin
@@ -5285,6 +5266,8 @@
         =/  den  ((de now rof hen ruf) her desk)
         ?~  fell
           abet:(retry-with-ames:den %back-index index)
+        =?  den  ?=(%tune +<.hin)
+          (cancel-scry-timeout:den index)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
     ::
