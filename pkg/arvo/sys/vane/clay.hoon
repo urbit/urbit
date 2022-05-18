@@ -3135,7 +3135,7 @@
     =/  peg=(unit page)  (~(get by lat.ran) lobe)
     =/  res
       ?-  ver
-        %0  ?~(peg ~ [%direct lobe u.peg])
+        %0  ?~(peg [%1 ~] [%direct lobe u.peg])
         %1  [%1 peg]
       ==
     (emit hen %give %boon res)
@@ -3206,15 +3206,17 @@
           ?&  !(~(has by lat.ran) lobe.i.lobes)
               !=([~ %|] +:(~(fit of norm) path.i.lobes))
           ==
+        ~&  >  [%missing path.i.lobes lobe.i.lobes (~(fit of norm) path.i.lobes)]
         (~(put in missing) lobe.i.lobes)
       lobe-loop(lobes t.lobes)
     ::
     ::  Receive backfill response
     ::
     ++  take-backfill
-      |=  =fell
+      |=  [lob=(unit lobe) =fell]
       ^+  ..abet
       ?:  lost  ..abet
+      =?  need.sat  &(?=(^ need.sat) =(`i.need.sat lob))  t.need.sat
       =.  ..park  =>((take-fell fell) ?>(?=(^ ref) .))
       work(busy.sat |)
     ::
@@ -3241,11 +3243,12 @@
         =.  ..abet  =>((apply-foreign-update u.next) ?>(?=(~ need.sat) .))
         =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)
         $
-      ::  This is what removes an item from `need`.  This happens every
-      ::  time we take a backfill response, but it could happen more than
-      ::  once if we somehow got this data in the meantime (maybe from
-      ::  another desk updating concurrently, or a previous update on this
-      ::  same desk).
+      ::  This used to be what always removed an item from `need`.  Now,
+      ::  we remove in +take-backfill, but in the meantime we could have
+      ::  received the next data from elsewhere (such as another desk
+      ::  updating).  Additionally, this is needed for backward
+      ::  compatibility with old /backfill wires.
+      ::
       ?:  (~(has by lat.ran) i.need.sat)
         $(need.sat t.need.sat)
       (fetch i.need.sat)
@@ -3256,7 +3259,7 @@
       ::  TODO: upgrade to %1 when most ships have upgaded
       ::
       =/  =fill  [%0 syd lobe]
-      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
+      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)/(scot %uv lobe)
       =/  =path  [%backfill syd (scot %ud inx) ~]
       =.  ..foreign-update
         =<  ?>(?=(^ ref) .)
@@ -5111,7 +5114,7 @@
       [mos ..^$]
     ==
   ::
-  ?:  ?=([%back-index @ @ @ ~] tea)
+  ?:  ?=([%back-index @ @ @ *] tea)
     ?+    +<.hin  ~|  %clay-backfill-index-strange  !!
         %done
       ?~  error.hin
@@ -5132,10 +5135,14 @@
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
+      =/  lob=(unit lobe)
+        ?~  t.t.t.t.tea
+          ~
+        `(slav %uv i.t.t.t.t.tea)
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        abet:abet:(take-backfill:(foreign-update:den index) fell)
+        abet:abet:(take-backfill:(foreign-update:den index) lob fell)
       [mos ..^$]
     ==
   ::
