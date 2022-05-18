@@ -1168,13 +1168,12 @@
     ::  we only support scrying into clay,
     ::  and only if the data is fully public.
     ::
-    :: ?.  =(%c (end 3 (snag 0 path)))  ~
-    :: =/  perm-omen  (need (de-omen %cp (slag 1 path)))
-    :: =+  pem=(rof lyc perm-omen)
-    :: ?>  ?=(^ pem)
-    :: ?>  ?=(^ u.pem)
-    :: =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-    :: ?>  =([%black ~ ~] rul.r.per)
+    ?.  =(%c ?@(vis.nom (end 3 vis.nom) way.vis.nom))  ~
+    =+  pem=(rof lyc nom(vis %cp))
+    ?.  ?=(^ pem)    ~&  %denied-lol  ~
+    ?.  ?=(^ u.pem)  ~&  %denied-lol  ~
+    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+    ?.  =([%black ~ ~] rul.r.per)  ~&  %denied-lol  ~
     =+  res=(rof lyc nom)
     ::TODO  suggests we need to factor differently
     =+  ven=(per-event [now 0v0 rof] *duct ames-state)
