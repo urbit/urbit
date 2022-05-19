@@ -1053,7 +1053,7 @@ _king_link_run(c3_c* bin_c)
   c3_c* lin_c;
   c3_i  ret_i;
 
-  ret_i = asprintf(&lin_c, "%s/.run", u3_Host.dir_c); // XX ./.run.exe?
+  ret_i = asprintf(&lin_c, "%s/%s", u3_Host.dir_c, U3_BIN_ALIAS);
   c3_assert( ret_i > 0 );
 
   ret_i = unlink(lin_c);
@@ -1144,7 +1144,7 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   //
   if ( lin_t ) {
     if ( _king_link_run(bin_c) ) {
-      fprintf(stderr, "vere: link %s/.run failed\n", u3_Host.dir_c);
+      fprintf(stderr, "vere: link %s/%s failed\n", u3_Host.dir_c, U3_BIN_ALIAS);
       c3_free(url_c);
       c3_free(bin_c);
       return -1;
@@ -1188,7 +1188,7 @@ _king_link_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   //
   if ( lin_t ) {
     if ( _king_link_run(bin_c) ) {
-      fprintf(stderr, "vere: link %s/.run failed\n", u3_Host.dir_c);
+      fprintf(stderr, "vere: link %s/%s failed\n", u3_Host.dir_c, U3_BIN_ALIAS);
       c3_free(bin_c);
       return -1;
     }

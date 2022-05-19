@@ -358,7 +358,9 @@ _main_getopt(c3_i argc, c3_c** argv)
 
       //  no args, argv[0] == $pier/.run
       //
-      if ( (4 <= len_w) && (0 == strcmp(argv[0] + (len_w - 4), ".run")) ) {
+      if (  (U3_BIN_ALIAS_LEN <= len_w)
+         && (0 == strcmp(argv[0] + (len_w - U3_BIN_ALIAS_LEN), U3_BIN_ALIAS)) )
+      {
         u3_Host.dir_c = _main_repath(dirname(argv[0]));
       }
       //  no args, invalid command

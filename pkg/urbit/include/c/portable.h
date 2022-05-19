@@ -123,6 +123,16 @@
 #     endif
 #   endif
 
+  /** Binary alias.
+  **/
+#   ifdef U3_OS_mingw
+#     define U3_BIN_ALIAS ".run.exe"
+#   else
+#     define U3_BIN_ALIAS ".run"
+#   endif
+
+#   define U3_BIN_ALIAS_LEN (sizeof(U3_BIN_ALIAS) - 1)
+
   /** Address space layout.
   ***
   ***   NB: 2^29 words == 2GB
