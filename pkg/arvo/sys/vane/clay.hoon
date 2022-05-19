@@ -3176,6 +3176,8 @@
       ?>  ?=(%nako p.r.u.rut)
       =/  nako  ;;(nako q.r.u.rut)
       =/  missing  (missing-lobes nako)
+      ::  must be appended because we delete off front
+      ::
       =.  need.sat  (welp need.sat ~(tap in missing))
       =.  nako.sat  (~(put to nako.sat) ~ nako)
       work
@@ -3206,17 +3208,16 @@
           ?&  !(~(has by lat.ran) lobe.i.lobes)
               !=([~ %|] +:(~(fit of norm) path.i.lobes))
           ==
-        ~&  >  [%missing path.i.lobes lobe.i.lobes (~(fit of norm) path.i.lobes)]
         (~(put in missing) lobe.i.lobes)
       lobe-loop(lobes t.lobes)
     ::
     ::  Receive backfill response
     ::
     ++  take-backfill
-      |=  [lob=(unit lobe) =fell]
+      |=  =fell
       ^+  ..abet
       ?:  lost  ..abet
-      =?  need.sat  &(?=(^ need.sat) =(`i.need.sat lob))  t.need.sat
+      =?  need.sat  ?=(^ need.sat)  t.need.sat
       =.  ..park  =>((take-fell fell) ?>(?=(^ ref) .))
       work(busy.sat |)
     ::
@@ -3259,7 +3260,7 @@
       ::  TODO: upgrade to %1 when most ships have upgaded
       ::
       =/  =fill  [%0 syd lobe]
-      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)/(scot %uv lobe)
+      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
       =/  =path  [%backfill syd (scot %ud inx) ~]
       =.  ..foreign-update
         =<  ?>(?=(^ ref) .)
@@ -5170,14 +5171,10 @@
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
-      =/  lob=(unit lobe)
-        ?~  t.t.t.t.tea
-          ~
-        `(slav %uv i.t.t.t.t.tea)
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        abet:abet:(take-backfill:(foreign-update:den index) lob fell)
+        abet:abet:(take-backfill:(foreign-update:den index) fell)
       [mos ..^$]
     ==
   ::
