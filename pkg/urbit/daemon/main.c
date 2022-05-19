@@ -21,6 +21,7 @@
 #include <libgen.h>
 
 #include "ca-bundle.h"
+#include "whereami.h"
 
 //  serf module state
 //
@@ -1265,6 +1266,13 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
+  if ( argc <= 0 ) {
+    fprintf(stderr, "nice try, fbi\r\n");
+    exit(1);
+  }
+
+  c3_c* bin_c = strdup(argv[0]);
+
   //  Parse options.
   //
   if ( _cw_utils(argc, argv) ) {
@@ -1275,12 +1283,34 @@ main(c3_i   argc,
     return 1;
   }
 
-  u3_Host.dem_c = strdup(argv[0]);
+  {
+    c3_c* pat_c;
+    c3_i  len_i, pat_i;
+
+    if ( 0 < (len_i = wai_getExecutablePath(NULL, 0, &pat_i)) ) {
+      pat_c = c3_malloc( 1 + len_i );
+      wai_getExecutablePath(pat_c, len_i, &pat_i);
+      pat_c[len_i] = 0;
+
+      u3_Host.dem_c = pat_c;
+    }
+    else {
+      fprintf(stderr, "unable to get binary self path\r\n");
+      exit(1);
+
+      //  XX continue?
+      //
+      // u3_Host.dem_c = strdup(bin_c);
+    }
+  }
 
   //  XX add argument
   //
   if ( !u3_Host.wrk_c ) {
-    u3_Host.wrk_c = strdup(u3_Host.dem_c);
+    u3_Host.wrk_c = bin_c;
+  }
+  else {
+    c3_free(bin_c);
   }
 
   if ( c3y == u3_Host.ops_u.dem ) {
