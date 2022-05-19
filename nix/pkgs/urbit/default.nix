@@ -56,7 +56,6 @@ in stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out/bin
     cp ./build/urbit $out/bin/urbit
-    cp ./build/urbit-worker $out/bin/urbit-worker
   '';
 
   dontDisableStatic = enableStatic;

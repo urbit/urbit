@@ -12,7 +12,7 @@
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
 ::  :aqua [%wish ~[~bud ~dev] '(add 2 3)']
-::  :aqua [%peek ~[~bud] /cx/~bud/home/(scot %da now)/app/curl/hoon]
+::  :aqua [%peek ~[~bud] /cx/~bud/base/(scot %da now)/app/curl/hoon]
 ::  :aqua [%dojo ~[~bud ~dev] '|mount %']
 ::  :aqua [%file ~[~bud ~dev] %/sys/vane]
 ::  :aqua [%pause-events ~[~bud ~dev]]

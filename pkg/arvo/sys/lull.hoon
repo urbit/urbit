@@ -1071,6 +1071,7 @@
   ::
   ::    %born: process restart notification
   ::    %init: vane boot
+  ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
   ::    %spew: set verbosity toggles
   ::    %trim: release memory
@@ -1088,6 +1089,7 @@
     ::
         $>(%born vane-task)
         $>(%init vane-task)
+        [%prod ships=(list ship)]
         [%sift ships=(list ship)]
         [%spew veb=(list verb)]
         [%stir arg=@t]
@@ -1726,8 +1728,8 @@
             con=(list [beak germ])                      ::  merges
         ==                                              ::
         [%mont pot=term bem=beam]                       ::  mount to unix
-        [%dirk des=desk]                                ::  mark mount dirty
-        [%ogre pot=$@(desk beam)]                       ::  delete mount point
+        [%dirk pot=term]                                ::  mark mount dirty
+        [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
@@ -1744,7 +1746,7 @@
   +$  aeon  @ud                                         ::  version number
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
-  +$  cable                                             :: lib/sur/mark ref
+  +$  cable                                             ::  lib/sur/mark ref
     $:  face=(unit term)                                ::
         file-path=term                                  ::
     ==                                                  ::
@@ -1769,7 +1771,9 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone  (map [ship desk] dome)                      ::  domes
+  +$  cone                                              ::  domes
+    %+  map  [ship desk]                                ::
+    [dome tom=(map tako norm) nor=norm]                 ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
@@ -1818,6 +1822,7 @@
     ==                                                  ::
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
+  +$  page  ^page                                       ::  export for compat
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe page)                             ::  data

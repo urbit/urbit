@@ -3,55 +3,57 @@
 ::  TODO: recognize when it's going to fail because it's in the head of
 ::        a desk, and maybe offer to |rm
 ::
+=,  clay
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] [target=path ~] dry=_|]
 :-  %helm-pans
 =+  .^(=arch %cy target)
 ?~  fil.arch
   [%d %flog %text "tomb: not a file"]~  ::  should recurse
-=/  =lobe:clay  u.fil.arch
-=+  .^(=rang:clay %cx /(scot %p p.bec)//(scot %da now)/rang)
-=+  .^(=cone:clay %cx /(scot %p p.bec)//(scot %da now)/domes)
-=/  domes=(list [[=ship =desk] =dome:clay])  ~(tap by cone)
+=/  =lobe  u.fil.arch
+=+  .^(=rang %cx /(scot %p p.bec)//(scot %da now)/rang)
+=+  .^(=cone %cx /(scot %p p.bec)//(scot %da now)/domes)
+=/  domes=(list [[=ship =desk] =dome tom=(map tako norm) nor=norm])
+  ~(tap by cone)
 =/  norms
   |^
-  |-  ^-  (set [ship desk tako:clay norm:clay path])
+  |-  ^-  (set [ship desk tako norm path])
   ?~  domes
     ~
   =/  n  1
-  =/  =aeon:clay  1
+  =/  =aeon  1
   %-  ~(uni in $(domes t.domes))
-  |-  ^-  (set [ship desk tako:clay norm:clay path])
+  |-  ^-  (set [ship desk tako norm path])
   ?:  (lth let.dome.i.domes aeon)
     ~
-  =/  =tako:clay  (~(got by hit.dome.i.domes) aeon)
-  =/  paths  (draw-tako ship.i.domes desk.i.domes dome.i.domes tako)
+  =/  =tako  (~(got by hit.dome.i.domes) aeon)
+  =/  paths  (draw-tako ship.i.domes desk.i.domes +.i.domes tako)
   (~(uni in paths) $(aeon +(aeon)))
   ::
   ++  draw-tako
-    |=  [=ship =desk =dome:clay =tako:clay]
-    ^-  (set [^ship ^desk tako:clay norm:clay path])
+    |=  [=ship =desk [dome tom=(map tako norm) nor=norm] =tako]
+    ^-  (set [^ship ^desk ^tako norm path])
     ~+
-    =/  =yaki:clay  (~(got by hut.rang) tako)
+    =/  =yaki  (~(got by hut.rang) tako)
     =/  takos
-      |-  ^-  (set [^ship ^desk tako:clay norm:clay path])
+      |-  ^-  (set [^ship ^desk ^tako norm path])
       ?~  p.yaki
         ~
       (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
-    |-  ^-  (set [^ship ^desk tako:clay norm:clay path])
+    |-  ^-  (set [^ship ^desk ^tako norm path])
     ?~  q.yaki
       takos
     %-  ~(uni in $(q.yaki l.q.yaki))
     %-  ~(uni in $(q.yaki r.q.yaki))
-    ^-  (set [^ship ^desk tako:clay norm:clay path])
+    ^-  (set [^ship ^desk ^tako norm path])
     ?.  =(lobe q.n.q.yaki)
       ~
-    [[ship desk tako (~(gut by tom.dome) tako nor.dome) p.n.q.yaki] ~ ~]
+    [[ship desk tako (~(gut by tom) tako nor) p.n.q.yaki] ~ ~]
   --
 ^-  (list note-arvo)
 %+  welp
   %+  murn  ~(tap in norms)
-  |=  [=ship =desk =tako:clay =norm:clay =path]
+  |=  [=ship =desk =tako =norm =path]
   ?:  ?=([~ %|] (~(fit of norm) path))
     ~
   %-  (slog leaf+"tomb: {<ship desk path `@uv`tako norm path>}" ~)

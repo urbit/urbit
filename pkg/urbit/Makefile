@@ -25,7 +25,7 @@ all_srcs = $(common) $(daemon) $(worker)
 
 test_exes  = $(shell echo $(tests) | sed 's/tests\//.\/build\//g' | sed 's/\.c//g')
 bench_exes = $(shell echo $(bench) | sed 's/bench\//.\/build\//g' | sed 's/\.c//g')
-all_exes   = $(test_exes) $(bench_exes) ./build/urbit ./build/urbit-worker
+all_exes   = $(test_exes) $(bench_exes) ./build/urbit
 
 # -Werror promotes all warnings that are enabled into errors (this is on)
 # -Wall issues all types of errors.  This is off (for now)
@@ -68,12 +68,7 @@ build/%_tests: $(common_objs) tests/%_tests.o
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-build/urbit: $(common_objs) $(daemon_objs)
-	@echo CC -o $@
-	@mkdir -p ./build
-	@$(CC) $^ $(LDFLAGS) -o $@
-
-build/urbit-worker: $(common_objs) $(worker_objs)
+build/urbit: $(common_objs) $(daemon_objs) $(worker_objs)
 	@echo CC -o $@
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@

@@ -677,6 +677,11 @@
           void
           u3a_lop(c3_w lab_w);
 
+        /* u3a_print_time: print microsecond time.
+        */
+          void
+          u3a_print_time(c3_c* str_c, c3_c* cap_c, c3_d mic_d);
+
         /* u3a_print_memory(): print memory amount.
         */
           void
