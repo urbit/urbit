@@ -361,7 +361,9 @@ _main_getopt(c3_i argc, c3_c** argv)
       if (  (U3_BIN_ALIAS_LEN <= len_w)
          && (0 == strcmp(argv[0] + (len_w - U3_BIN_ALIAS_LEN), U3_BIN_ALIAS)) )
       {
-        u3_Host.dir_c = _main_repath(dirname(argv[0]));
+        c3_c* bin_c = strdup(argv[0]);
+        u3_Host.dir_c = _main_repath(dirname(bin_c));
+        c3_free(bin_c);
       }
       //  no args, invalid command
       //
