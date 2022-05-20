@@ -11,6 +11,8 @@
 **  the implementation is relatively inefficient and could
 **  lose a few copies, mallocs, etc.
 */
+#include "vere/newt.h"
+
 #include "all.h"
 #include "vere/vere.h"
 
