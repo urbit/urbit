@@ -363,6 +363,9 @@ _king_get_next(c3_c* pac_c, c3_c** out_c)
   }
   else {
     c3_free(url_c);
+
+    //  XX support channel redirections
+    //
     ret_i = asprintf(&url_c, "%s/%s/last", ver_hos_c, pac_c);
     c3_assert( ret_i > 0 );
 
@@ -376,6 +379,7 @@ _king_get_next(c3_c* pac_c, c3_c** out_c)
     c3_assert( ret_i > 0 );
   }
 
+  c3_free(hun_y);
   c3_free(url_c);
 
   //  XX trim ver_c ?
@@ -1091,7 +1095,7 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
     return -1; // XX
   }
 
-  //  XX windows .exe
+  //  XX windows .exe (currently jammed into [arc_c])
   //
   ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s",
                            u3_Host.dir_c, pac_c, ver_c, arc_c);
@@ -1117,6 +1121,8 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
     return -1; // XX
   }
 
+  //  XX sync unnecessary here?
+  //
   {
     c3_i fid_i = fileno(fil_u);
     ret_i = c3_sync(fid_i);
@@ -1140,7 +1146,7 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
     return -1;
   }
 
-  //  XX option
+  //  XX set via cli option
   //
   if ( lin_t ) {
     if ( _king_link_run(bin_c) ) {
