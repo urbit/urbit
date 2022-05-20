@@ -45,22 +45,26 @@ u3_http_vec_to_atom(h2o_iovec_t* vec_u)
   return u3i_bytes(vec_u->len, (const c3_y*)vec_u->base);
 }
 
-u3_hhed*
+c3_list* const
 u3_http_heds_to_list(u3_noun hed)
 {
   u3_noun  deh   = hed;
-  u3_hhed* hed_u = NULL;
+  c3_list* lis_u = c3_list_init();
+  if ( !lis_u ) {
+    goto end;
+  }
+
   while ( u3_nul != hed ) {
     u3_noun i_hed  = u3h(hed);
-    u3_hhed* nex_u = c3_malloc(sizeof(*nex_u));
-    c3_assert(u3_http_hed_new(u3h(i_hed), u3t(i_hed), nex_u));
-    nex_u->nex_u = hed_u;
-    hed_u        = nex_u;
+    u3_hhed hed_u;
+    c3_assert(u3_http_hed_new(u3h(i_hed), u3t(i_hed), &hed_u));
+    c3_list_pushb(lis_u, &hed_u, sizeof(hed_u));
     hed          = u3t(hed); 
   }
 
+end:
   u3z(deh);
-  return hed_u;
+  return lis_u;
 }
 
 u3_noun
@@ -77,15 +81,18 @@ u3_http_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
 }
 
 void
-u3_http_heds_free(u3_hhed* hed_u)
+u3_http_heds_free(c3_list* const hed_u)
 {
-  while ( hed_u ) {
-    u3_hhed* nex_u = hed_u->nex_u;
-    c3_free(hed_u->nam_c);
-    c3_free(hed_u->val_c);
-    c3_free(hed_u);
-    hed_u = nex_u;
+  if ( !hed_u ) {
+    return;
   }
+
+  c3_lode* nod_u = c3_list_popf(hed_u);
+  while ( nod_u ) {
+    c3_free(nod_u);
+    nod_u = c3_list_popf(hed_u);
+  }
+  c3_free(hed_u);
 }
 
 void

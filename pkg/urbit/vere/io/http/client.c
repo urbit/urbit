@@ -43,7 +43,7 @@
     c3_c*              por_c;           //  port (string)
     c3_c*              met_c;           //  method
     c3_c*              url_c;           //  url
-    u3_hhed*           hed_u;           //  headers
+    c3_list*           hed_u;           //  headers
     u3_hbod*           bod_u;           //  body
     u3_hbod*           rub_u;           //  exit of send queue
     u3_hbod*           bur_u;           //  entry of send queue
@@ -551,17 +551,6 @@ _cttp_creq_fire_str(u3_creq* ceq_u, c3_c* str_c)
   c3_free(str_c);
 }
 
-/* _cttp_creq_fire_heds(): attach output headers.
-*/
-static void
-_cttp_creq_fire_heds(u3_creq* ceq_u, u3_hhed* hed_u)
-{
-  while ( hed_u ) {
-    _cttp_creq_fire_body(ceq_u, _cttp_bod_from_hed(hed_u));
-    hed_u = hed_u->nex_u;
-  }
-}
-
 /* _cttp_creq_fire(): load request data for into buffers.
 */
 static void
@@ -597,7 +586,13 @@ _cttp_creq_fire(u3_creq* ceq_u)
     c3_free(hos_c);
   }
 
-  _cttp_creq_fire_heds(ceq_u, ceq_u->hed_u);
+  // Attach output headers.
+  c3_lode* nod_u = c3_list_peekf(ceq_u->hed_u);
+  while ( nod_u ) {
+    u3_hhed* hdr_u = c3_lode_data(nod_u);
+    _cttp_creq_fire_body(ceq_u, _cttp_bod_from_hed(hdr_u));
+    nod_u = c3_lode_next(nod_u);
+  }
 
   if ( !ceq_u->bod_u ) {
     _cttp_creq_fire_body(ceq_u, _cttp_bod_new(2, "\r\n"));

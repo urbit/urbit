@@ -326,7 +326,7 @@ typedef struct _u3_hgen {
   c3_o            dun;               // done sending
   u3_hbod*        bod_u;             // pending body
   u3_hbod*        nud_u;             // pending free
-  u3_hhed*        hed_u;             // pending free
+  c3_list*        hed_u;             // pending free
   u3_hreq*        req_u;             // originating request
 } u3_hgen;
 
@@ -563,22 +563,25 @@ _http_start_respond(u3_hreq* req_u,
                       (status < 500) ? "missing" :
                       "hosed";
 
-  u3_hhed* hed_u = u3_http_heds_to_list(u3k(headers));
-  u3_hhed* deh_u = hed_u;
-
-  c3_i has_len_i = 0;
-
-  while ( 0 != hed_u ) {
-    if ( 0 == strncmp(hed_u->nam_c, "content-length", 14) ) {
-      has_len_i = 1;
+  c3_list* hed_u     = u3_http_heds_to_list(u3k(headers));
+  c3_t     has_len_t = 0;
+  c3_lode* nod_u     = c3_list_peekf(hed_u);
+  while ( nod_u ) {
+    u3_hhed* hdr_u = c3_lode_data(nod_u);
+    if ( 0 == strncmp(hdr_u->nam_c, "content-length", 14) ) {
+      has_len_t = 1;
     }
     else {
-      h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
-                            hed_u->nam_c, hed_u->nam_w, 0, 0,
-                            hed_u->val_c, hed_u->val_w);
+      h2o_add_header_by_str(&rec_u->pool,
+                            &rec_u->res.headers,
+                            hdr_u->nam_c,
+                            hdr_u->nam_w,
+                            0,
+                            0,
+                            hdr_u->val_c,
+                            hdr_u->val_w);
     }
-
-    hed_u = hed_u->nex_u;
+    nod_u = c3_lode_next(nod_u);
   }
 
   u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
@@ -589,13 +592,13 @@ _http_start_respond(u3_hreq* req_u,
   gen_u->bod_u = ( u3_nul == data ) ?
                  0 : _cttp_bod_from_octs(u3k(u3t(data)));
   gen_u->nud_u = 0;
-  gen_u->hed_u = deh_u;
+  gen_u->hed_u = hed_u;
   gen_u->req_u = req_u;
 
   //  if we don't explicitly set this field, h2o will send with
   //  transfer-encoding: chunked
   //
-  if ( 1 == has_len_i ) {
+  if ( has_len_t ) {
     rec_u->res.content_length = ( 0 == gen_u->bod_u ) ?
                                 0 : gen_u->bod_u->len_w;
   }

@@ -8,6 +8,7 @@
 
 #include "c/portable.h"
 #include "c/types.h"
+#include "c/list.h"
 #include "noun/aliases.h"
 
 //==============================================================================
@@ -15,12 +16,11 @@
 //==============================================================================
 
 //! HTTP header.
-typedef struct _u3_hhed {
-  struct _u3_hhed* nex_u;
-  c3_w             nam_w;
-  c3_c*            nam_c;
-  c3_w             val_w;
-  c3_c*            val_c;
+typedef struct {
+  c3_c* nam_c; //!< header key
+  c3_w  nam_w; //!< length of `nam_c` in bytes
+  c3_c* val_c; //!< header value
+  c3_w  val_w; //!< length of `val_w` in bytes
 } u3_hhed;
 
 //! HTTP body block. Also used for responses.
@@ -58,7 +58,7 @@ u3_http_vec_to_atom(h2o_iovec_t* vec_u);
 //! @param[in]  hed    Source HTTP header noun.
 //!
 //! @return  List of HTTP headers.
-u3_hhed*
+c3_list* const
 u3_http_heds_to_list(u3_noun hed);
 
 //! Convert h2o_header_t to (list (pair @t @t)).
@@ -74,7 +74,7 @@ u3_http_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d);
 //!
 //! @param[in] hed_u  List of HTTP headers to free.
 void
-u3_http_heds_free(u3_hhed* hed_u);
+u3_http_heds_free(c3_list* const hed_u);
 
 //! Free a list of HTTP bodies.
 //!
