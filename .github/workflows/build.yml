@@ -57,6 +57,16 @@ on:
       - 'bin/**'
       - 'nix/**'
       - default.nix
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'upload binaries to gcp'
+        default: false
+        required: false
+        type: boolean
+
+env:
+  DO_UPLOAD: ${{ inputs.upload || (github.ref_name == 'next/vere' && github.ref_type == 'branch') }}
 
 jobs:
   urbit:
@@ -90,6 +100,32 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix-build -A urbit --arg enableStatic true
+
+      - uses: google-github-actions/setup-gcloud@v0.2.0
+        if: ${{ env.DO_UPLOAD == 'true' }}
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.GCS_PROJECT }}
+          export_default_credentials: true
+
+      - name: upload binary to bootstrap.urbit.org
+        if: ${{ env.DO_UPLOAD == 'true' }}
+        # XX how to get the nix-store path from the previous step without "rebuilding" it?
+        run: |
+          result="$(nix-build -A urbit --arg enableStatic true)"
+          version="$(cat ./pkg/urbit/version)"
+          system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
+          system=${system:1:${#system}-2}
+          target="gs://bootstrap.urbit.org/ci/vere/often/${GITHUB_SHA:0:9}/vere-v${version}-${system}"
+
+          gsutil cp -n $result/bin/urbit "$target"
+          exitcode=$?
+
+          test $exitcode -eq 0 &&
+            echo "upload to $target complete." ||
+            echo "upload to $target failed.";
+          exit $exitcode
 
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         run: nix-build -A urbit-tests
