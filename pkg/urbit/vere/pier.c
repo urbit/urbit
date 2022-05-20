@@ -58,8 +58,9 @@ _pier_work_send(u3_work* wok_u)
   {
     //  XX work depth, or full lord send-stack depth?
     //
-    if ( PIER_WORK_BATCH > god_u->dep_w ) {
-      len_w = PIER_WORK_BATCH - god_u->dep_w;
+    size_t msg_i = c3_list_len(god_u->msg_u);
+    if ( PIER_WORK_BATCH > msg_i ) {
+      len_w = PIER_WORK_BATCH - msg_i;
     }
   }
 

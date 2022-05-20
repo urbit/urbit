@@ -61,30 +61,6 @@ _lord_stop_cb(void*       ptr_v,
   }
 }
 
-/* _lord_writ_free(): dispose of pending writ.
-*/
-static void
-_lord_writ_free(u3_writ* wit_u)
-{
-  switch ( wit_u->typ_e ) {
-    default: break;
-
-    case u3_writ_poke: {
-      //  XX confirm
-      //
-      u3_ovum* egg_u = wit_u->wok_u.egg_u;
-      u3_auto_drop(egg_u->car_u, egg_u);
-      u3z(wit_u->wok_u.job);
-    } break;
-
-    case u3_writ_peek: {
-      u3z(wit_u->pek_u->sam);
-    } break;
-  }
-
-  c3_free(wit_u);
-}
-
 /* _lord_bail_noop(): ignore subprocess error on shutdown
 */
 static void
@@ -94,24 +70,31 @@ _lord_bail_noop(void*       ptr_v,
 {
 }
 
-/* _lord_stop(): close and dispose all resources.
-*/
+//! Close and dispose all resources.
+//!
+//! @n (1) Dipose outstanding writs.
 static void
 _lord_stop(u3_lord* god_u)
 {
-  //  dispose outstanding writs
-  //
-  {
-    u3_writ* wit_u = god_u->ext_u;
-    u3_writ* nex_u;
-
-    while ( wit_u ) {
-      nex_u = wit_u->nex_u;
-      _lord_writ_free(wit_u);
-      wit_u = nex_u;
+  { // (1)
+    c3_lode* nod_u = c3_list_popf(god_u->msg_u);
+    while ( nod_u ) {
+      u3_writ* wit_u = c3_lode_data(nod_u);
+      switch ( wit_u->typ_e ) {
+        case u3_writ_poke: { // XX confirm
+          u3_ovum* egg_u = wit_u->wok_u.egg_u;
+          u3_auto_drop(egg_u->car_u, egg_u);
+          u3z(wit_u->wok_u.job);
+        } break;
+        case u3_writ_peek:
+          u3z(wit_u->pek_u->sam);
+          break;
+      }
+      c3_lode* nex_u = c3_lode_next(nod_u);
+      c3_free(nod_u);
+      nod_u = nex_u;
     }
-
-    god_u->ent_u = god_u->ext_u = 0;
+    c3_free(god_u->msg_u);
   }
 
   u3_newt_moat_stop(&god_u->out_u, _lord_stop_cb);
@@ -153,39 +136,36 @@ _lord_writ_str(u3_writ_type typ_e)
   }
 }
 
-/* _lord_writ_need(): require writ type.
-*/
-static u3_writ*
+//! Require writ type.
+static c3_lode*
 _lord_writ_need(u3_lord* god_u, u3_writ_type typ_e)
 {
-  u3_writ* wit_u = god_u->ext_u;
-
-  if ( !wit_u ) {
-    fprintf(stderr, "lord: missing writ, expected %%%s\r\n",
-                    _lord_writ_str(wit_u->typ_e));
-    _lord_bail(god_u);
-    return 0;
+  c3_lode* nod_u = c3_list_popf(god_u->msg_u);
+  if ( !nod_u ) {
+    fprintf(stderr,
+            "lord: missing writ, expected %%%s\r\n",
+            _lord_writ_str(typ_e));
+    goto fail;
   }
 
-  if ( !wit_u->nex_u ) {
-    god_u->ent_u = god_u->ext_u = 0;
-  }
-  else {
-    god_u->ext_u = wit_u->nex_u;
-    wit_u->nex_u = 0;
-  }
-
-  god_u->dep_w--;
-
+  u3_writ* wit_u = c3_lode_data(nod_u);
   if ( typ_e != wit_u->typ_e ) {
-    fprintf(stderr, "lord: unexpected %%%s, expected %%%s\r\n",
-                    _lord_writ_str(typ_e),
-                    _lord_writ_str(wit_u->typ_e));
-    _lord_bail(god_u);
-    return 0;
+    fprintf(stderr,
+            "lord: unexepcted %%%s, expected %%%s\r\n",
+            _lord_writ_str(typ_e),
+            _lord_writ_str(wit_u->typ_e));
+    goto fail;
   }
 
-  return wit_u;
+  goto succeed;
+
+fail:
+  _lord_bail(god_u);
+  return NULL;
+
+succeed:
+  return nod_u;
+
 }
 
 /* _lord_plea_foul():
@@ -212,7 +192,8 @@ _lord_plea_foul(u3_lord* god_u, c3_m mot_m, u3_noun dat)
 static void
 _lord_plea_live(u3_lord* god_u, u3_noun dat)
 {
-  u3_writ* wit_u = _lord_writ_need(god_u, u3_writ_live);
+  c3_lode* nod_u = _lord_writ_need(god_u, u3_writ_live);
+  u3_writ* wit_u = c3_lode_data(nod_u);
 
   if( u3_nul != dat ) {
     return _lord_plea_foul(god_u, c3__live, dat);
@@ -223,7 +204,7 @@ _lord_plea_live(u3_lord* god_u, u3_noun dat)
   // u3l_log("pier: meld complete\n");
   // u3l_log("pier: pack complete\n");
 
-  c3_free(wit_u);
+  c3_free(nod_u);
 }
 
 /* _lord_plea_ripe(): hear serf startup state
@@ -364,9 +345,10 @@ _lord_plea_peek(u3_lord* god_u, u3_noun dat)
 {
   u3_peek* pek_u;
   {
-    u3_writ* wit_u = _lord_writ_need(god_u, u3_writ_peek);
+    c3_lode* nod_u = _lord_writ_need(god_u, u3_writ_peek);
+    u3_writ* wit_u = c3_lode_data(nod_u);
     pek_u = wit_u->pek_u;
-    c3_free(wit_u);
+    c3_free(nod_u);
   }
 
   if ( c3n == u3a_is_cell(dat) ) {
@@ -390,34 +372,33 @@ _lord_plea_peek(u3_lord* god_u, u3_noun dat)
   u3z(dat);
 }
 
-/* _lord_work_spin(): update spinner if more work is in progress.
- */
+//! Update spinner if more work is in progress.
+//!
+//! @n (1) Complete spinner.
+//! @n (2) Restart spinner if more work.
  static void
 _lord_work_spin(u3_lord* god_u)
 {
-  u3_writ* wit_u = god_u->ext_u;
+  c3_lode* nod_u = c3_list_peekf(god_u->msg_u);
+  c3_assert(c3y == god_u->pin_o);
 
-  //  complete spinner
-  //
-  c3_assert( c3y == god_u->pin_o );
+  // (1)
+  u3_writ* wit_u = c3_lode_data(nod_u);
   god_u->cb_u.spun_f(god_u->cb_u.ptr_v);
   god_u->pin_o = c3n;
 
-  //  restart spinner if more work
-  //
-  while ( wit_u ) {
-    if ( u3_writ_poke != wit_u->typ_e ) {
-      wit_u = wit_u->nex_u;
-    }
-    else {
+  // (2)
+  while ( nod_u ) {
+    wit_u = c3_lode_data(nod_u);
+    if ( u3_writ_poke == wit_u->typ_e ) {
       u3_ovum* egg_u = wit_u->wok_u.egg_u;
-
       god_u->cb_u.spin_f(god_u->cb_u.ptr_v,
                          egg_u->pin_u.lab,
                          egg_u->pin_u.del_o);
       god_u->pin_o = c3y;
       break;
     }
+    nod_u = c3_lode_next(nod_u);
   }
 }
 
@@ -455,10 +436,11 @@ _lord_plea_work(u3_lord* god_u, u3_noun dat)
   u3_noun    job;
 
   {
-    u3_writ*  wit_u = _lord_writ_need(god_u, u3_writ_poke);
+    c3_lode* nod_u = _lord_writ_need(god_u, u3_writ_poke);
+    u3_writ* wit_u = c3_lode_data(nod_u);
     egg_u = wit_u->wok_u.egg_u;
     job   = wit_u->wok_u.job;
-    c3_free(wit_u);
+    c3_free(nod_u);
   }
 
   if ( c3n == u3a_is_cell(dat) ) {
@@ -554,26 +536,14 @@ _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
   return c3y;
 }
 
-/* _lord_writ_new(): allocate a new writ.
-*/
-static u3_writ*
+//! Allocate a new writ.
+static inline u3_writ*
 _lord_writ_new(u3_lord* god_u)
 {
-  u3_writ* wit_u = c3_calloc(sizeof(*wit_u));
-
-  if ( !god_u->ent_u ) {
-    c3_assert( !god_u->ext_u );
-    c3_assert( !god_u->dep_w );
-    god_u->dep_w = 1;
-    god_u->ent_u = god_u->ext_u = wit_u;
-  }
-  else {
-    god_u->dep_w++;
-    god_u->ent_u->nex_u = wit_u;
-    god_u->ent_u = wit_u;
-  }
-
-  return wit_u;
+  u3_writ wit_u;
+  memset(&wit_u, 0, sizeof(wit_u));
+  c3_list_pushb(god_u->msg_u, &wit_u, sizeof(wit_u));
+  return c3_lode_data(c3_list_peekb(god_u->msg_u));
 }
 
 /* _lord_writ_make(): cons writ.
@@ -817,16 +787,25 @@ _lord_on_serf_exit(uv_process_t* req_u,
 
   u3_lord* god_u = (void*)req_u;
 
-  if (  !god_u->ext_u
-     || !(u3_writ_exit == god_u->ext_u->typ_e) )
-  {
+  c3_lode* nod_u = c3_list_peekf(god_u->msg_u);
+  if ( !nod_u ) {
+    goto bail;
+  }
+
+  u3_writ* wit_u = c3_lode_data(nod_u);
+  if ( u3_writ_exit != wit_u->typ_e ) {
+    goto bail;
+  }
+
+  goto stop;
+
+bail:
     fprintf(stderr, "pier: work exit: status %" PRId64 ", signal %d\r\n",
                   sas_i, sig_i);
     _lord_bail(god_u);
-  }
-  else {
+
+stop:
     _lord_stop(god_u);
-  }
 }
 
 /* _lord_on_serf_bail(): handle subprocess error.
@@ -858,7 +837,7 @@ u3_lord_info(u3_lord* god_u)
     u3i_list(
       u3_pier_mase("live",  god_u->liv_o),
       u3_pier_mase("event", u3i_chub(god_u->eve_d)),
-      u3_pier_mase("queue", u3i_word(god_u->dep_w)),
+      u3_pier_mase("queue", u3i_word(c3_list_len(god_u->msg_u))),
       u3_newt_moat_info(&god_u->out_u),
       u3_none));
 }
@@ -868,10 +847,10 @@ u3_lord_info(u3_lord* god_u)
 void
 u3_lord_slog(u3_lord* god_u)
 {
-  u3l_log("  lord: live=%s, event=%" PRIu64 ", queue=%u\n",
+  u3l_log("  lord: live=%s, event=%" PRIu64 ", queue=%lu\n",
           ( c3y == god_u->liv_o ) ? "&" : "|",
           god_u->eve_d,
-          god_u->dep_w);
+          c3_list_len(god_u->msg_u));
   u3_newt_moat_slog(&god_u->out_u);
 }
 
@@ -887,6 +866,8 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
   god_u->bin_c = u3_Host.wrk_c; //  XX strcopy
   god_u->pax_c = pax_c;  //  XX strcopy
   god_u->cb_u  = cb_u;
+  god_u->msg_u = c3_list_init();
+  c3_assert(god_u->msg_u);
 
   god_u->key_d[0] = key_d[0];
   god_u->key_d[1] = key_d[1];

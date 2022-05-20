@@ -443,7 +443,6 @@
       /* u3_writ: ipc message from king to serf
       */
         typedef struct _u3_writ {
-          struct _u3_writ* nex_u;               //  next in queue
           u3_writ_type     typ_e;               //  type-tagged
           union {                               //
             struct {                            //  poke:
@@ -488,9 +487,7 @@
           c3_d                 eve_d;           //  last event completed
           u3_lord_cb            cb_u;           //  callbacks
           c3_o                 pin_o;           //  spinning
-          c3_w                 dep_w;           //  queue depth
-          struct _u3_writ*     ent_u;           //  queue entry
-          struct _u3_writ*     ext_u;           //  queue exit
+          c3_list*             msg_u;           //  IPC message queue
         } u3_lord;
 
       /* u3_psat: pier state.
