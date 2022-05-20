@@ -1157,10 +1157,160 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   return 0;
 }
 
-/* _king_link_vere(): link current binary into $pier/.bin
+static c3_i
+_king_copy_raw(c3_i src_i, c3_i dst_i, c3_y* buf_y, size_t pag_i)
+{
+  ssize_t red_i, ryt_i;
+  size_t  len_i;
+  c3_y*   fub_y = buf_y;
+
+  do {
+    if ( 0 > (red_i = read(src_i, buf_y, pag_i)) ) {
+      return -1;
+    }
+
+    len_i = red_i;
+
+    do {
+      if ( 0 > (ryt_i = write(dst_i, buf_y, len_i)) ) {
+        return -1;
+      }
+
+      buf_y += ryt_i;
+      len_i -= ryt_i;
+    }
+    while ( len_i );
+
+    buf_y = fub_y;
+  }
+  while ( red_i );
+
+  return 0;
+}
+
+#if defined(U3_OS_mingw)
+int err_win_to_posix(DWORD winerr);
+#endif
+
+static c3_i
+_king_copy_file(c3_c* src_c, c3_c* dst_c)
+{
+#if defined(U3_OS_mingw)
+  //  XX try FSCTL_DUPLICATE_EXTENTS_TO_FILE
+  //
+  if ( CopyFileA(src_c, dst_c, TRUE) ) {
+    return 0;
+  }
+
+  //  XX fallback on any?
+  //
+  errno = err_win_to_posix(GetLastError());
+  return -1;
+#elif defined(U3_OS_osx)
+  if ( !clonefile(src_c, dst_c, 0) ) {
+    return 0;
+  }
+  //  fallthru to copying bytes on some errors
+  //
+  else if ( (ENOTSUP != errno) && (EXDEV != errno) ) {
+    return -1;
+  }
+#endif
+
+  {
+    c3_i src_i, dst_i, ret_i = 0, err_i = 0;
+
+    if ( -1 == (src_i = open(src_c, O_RDONLY, 0644)) ) {
+      err_i = errno;
+      ret_i = -1;
+      goto done1;
+    }
+
+    if ( -1 == (dst_i = open(dst_c, O_RDWR | O_CREAT, 0755)) ) {
+      err_i = errno;
+      ret_i = -1;
+      goto done2;
+    }
+
+    //  XX try clone_file_range ?
+    //
+#if defined(U3_OS_linux)
+  #if defined(FICLONE)
+    if ( !ioctl(dst_i, FICLONE, src_i) ) {
+      ret_i = 0;
+      goto done3;
+    }
+    //  fallthru to copying bytes on some errors
+    //
+    else if ( (EOPNOTSUPP != errno) && (EXDEV != errno) ) {
+      err_i = errno;
+      ret_i = -1;
+      goto done3;
+    }
+  #endif
+
+    {
+      off_t   off_i = 0;
+      ssize_t sen_i;
+      size_t  len_i;
+      {
+        struct stat sat_u;
+        if ( -1 == fstat(src_i, &sat_u) ) {
+          err_i = errno;
+          ret_i = -1;
+          goto done3;
+        }
+        len_i = sat_u.st_size;
+      }
+
+      do {
+        //  XX fallback on any errors?
+        //
+        if ( 0 > (sen_i = sendfile64(dst_i, src_i, &off_i, len_i)) ) {
+          err_i = errno;
+          ret_i = -1;
+          goto done3;
+        }
+
+        len_i -= off_i;
+      }
+      while ( len_i );
+
+      ret_i = 0;
+      goto done3;
+    }
+#elif defined(U3_OS_osx)
+    if ( !fcopyfile(src_i, dst_i, NULL, COPYFILE_ALL) ) {
+      ret_i = 0;
+      goto done3;
+    }
+
+    //  XX fallback on any errors?
+    //
+#endif
+
+    {
+      size_t pag_i = 1 << 14;;
+      c3_y*  buf_y = c3_malloc(pag_i);
+      ret_i = _king_copy_raw(src_i, dst_i, buf_y, pag_i);
+      err_i = errno;
+      c3_free(buf_y);
+    }
+
+done3:
+    close(dst_i);
+done2:
+    close(src_i);
+done1:
+    errno = err_i;
+    return ret_i;
+  }
+}
+
+/* _king_copy_vere(): copy current binary into $pier/.bin (COW if possible)
 */
 static c3_i
-_king_link_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
+_king_copy_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
 {
   c3_c* bin_c;
   c3_i  ret_i;
@@ -1175,10 +1325,10 @@ _king_link_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
                            u3_Host.dir_c, pac_c, ver_c, arc_c);
   c3_assert( ret_i > 0 );
 
-  ret_i = link(u3_Host.dem_c, bin_c);
+  ret_i = _king_copy_file(u3_Host.dem_c, bin_c);
 
   if ( ret_i ) {
-    fprintf(stderr, "vere: link %s -> %s failed: %s\n",
+    fprintf(stderr, "vere: copy %s -> %s failed: %s\r\n",
                     bin_c, u3_Host.dem_c, strerror(errno));
     c3_free(bin_c);
     return -1;
@@ -1224,10 +1374,10 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
 #endif
 }
 
-/* _king_do_link(): link binary into pier on boot.
+/* _king_do_copy(): copy binary into pier on boot.
 */
 static void
-_king_do_link(c3_c* pac_c)
+_king_do_copy(c3_c* pac_c)
 {
 #ifdef U3_OS_ARCH
 #  ifdef U3_OS_mingw
@@ -1238,13 +1388,13 @@ _king_do_link(c3_c* pac_c)
 
   //  XX get link option
   //
-  if ( _king_link_vere(pac_c, URBIT_VERSION, arc_c, 1) ) {
-    u3l_log("vere: link failed\r\n");
+  if ( _king_copy_vere(pac_c, URBIT_VERSION, arc_c, 1) ) {
+    u3l_log("vere: binary copy failed\r\n");
     u3_king_bail();
     exit(1);
   }
   else {
-    u3l_log("vere: link succeeded\r\n");
+    u3l_log("vere: binary copy succeeded\r\n");
     //  XX print restart instructions
   }
 #endif
@@ -1257,6 +1407,8 @@ u3_king_done(void)
 {
   uv_handle_t* han_u = (uv_handle_t*)&u3K.tim_u;
 
+  //  get next binary
+  //
   if ( c3y == u3_Host.ops_u.nex ) {
     c3_c* pac_c;
     c3_c* ver_c;
@@ -1288,6 +1440,8 @@ u3_king_done(void)
     c3_free(ver_c);
   }
 
+  //  copy binary into pier on boot
+  //
   if ( c3y == u3_Host.ops_u.nuu ) {
     c3_c* pac_c;
 
@@ -1296,7 +1450,7 @@ u3_king_done(void)
     u3_Host.ops_u.nuu = c3n;
 
     pac_c = _king_get_pace();
-    _king_do_link(pac_c);
+    _king_do_copy(pac_c);
     c3_free(pac_c);
   }
 

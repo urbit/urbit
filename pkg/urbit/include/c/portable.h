@@ -35,6 +35,7 @@
 #     include <sys/time.h>
 #     include <sys/resource.h>
 #     include <sys/mman.h>
+#     include <sys/sendfile.h>
 
 #   elif defined(U3_OS_osx)
 #     include <inttypes.h>
@@ -53,6 +54,8 @@
 #     include <sys/resource.h>
 #     include <sys/syslimits.h>
 #     include <sys/mman.h>
+#     include <sys/clonefile.h>
+#     include <copyfile.h>
 
 #   elif defined(U3_OS_bsd)
 #     include <inttypes.h>
