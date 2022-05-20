@@ -368,6 +368,18 @@
     %earl  8
     %pawn  16
   ==
+::  +encode-keys-packet: create key request $packet
+::
+++  encode-keys-packet
+  ~/  %encode-keys-packet
+  |=  [sndr=ship rcvr=ship sndr-life=life]
+  ^-  packet
+  :*  [sndr rcvr]
+      (mod sndr-life 16)
+      `@`1
+      origin=~
+      content=`@`%keys
+  ==
 ::  +encode-open-packet: convert $open-packet attestation to $packet
 ::
 ++  encode-open-packet
@@ -1419,6 +1431,8 @@
     ~/  %on-hear-packet
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
+    %-  %^  trace  odd.veb  sndr.packet
+        |.("received packet")
     ::
     ?:  =(our sndr.packet)
       event-core
@@ -1428,6 +1442,8 @@
     ?.  =(our rcvr.packet)
       on-hear-forward
     ::
+    ?:  =(%keys content.packet)
+      on-hear-keys
     ?:  ?&  ?=(%pawn (clan:title sndr.packet))
             !?=([~ %known *] (~(get by peers.ames-state) sndr.packet))
         ==
@@ -1457,12 +1473,24 @@
     ::
     =/  =blob  (encode-packet packet)
     (send-blob & rcvr.packet blob)
+  ::  +on-hear-keys: handle receipt of attestion request
+  ::
+  ++  on-hear-keys
+    ~/  %on-hear-keys
+    |=  [=lane =packet dud=(unit goof)]
+    =+  %^  trace  msg.veb  sndr.packet
+        |.("requested attestation")
+    ?.  =(%pawn (clan:title our))
+      event-core
+    (send-blob | sndr.packet (attestation-packet sndr.packet 1))
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
     ~/  %on-hear-open
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
+    =+  %^  trace  msg.veb  sndr.packet
+        |.("got attestation")
     ::  assert the comet can't pretend to be a moon or other address
     ::
     ?>  ?=(%pawn (clan:title sndr.packet))
@@ -1481,10 +1509,12 @@
     ::
     =.  event-core
       =/  crypto-suite=@ud  1
+      =/  keys
+        (my [sndr-life.open-packet crypto-suite public-key.open-packet]~)
       =/  =point
         :*  ^=     rift  0
             ^=     life  sndr-life.open-packet
-            ^=     keys  (my [sndr-life.open-packet crypto-suite public-key.open-packet]~)
+            ^=     keys  keys
             ^=  sponsor  `(^sein:title sndr.packet)
         ==
       (on-publ / [%full (my [sndr.packet point]~)])
@@ -1503,9 +1533,10 @@
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  If we don't know them, ask Jael for their keys. On comets, this will
-    ::  also cause us to send a self-attestation to the sender. The packet
-    ::  itself is dropped; we can assume it will be resent.
+    ::  If we don't know them, ask Jael for their keys. If they're a
+    ::  comet, this will also cause us to request a self-attestation
+    ::  from the sender. The packet itself is dropped; we can assume it
+    ::  will be resent.
     ::
     ?.  ?=([~ %known *] sndr-state)
       (enqueue-alien-todo sndr.packet |=(alien-agenda +<))
@@ -1966,19 +1997,14 @@
     (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
   ::  +request-attestation: helper to request attestation from comet
   ::
-  ::    Comets will respond to any unknown peer with a self-attestation,
-  ::    so we either send a sendkeys packet (a dummy shut packet) or, if
-  ::    we're a comet, our own self-attestation, saving a roundtrip.
-  ::
   ::    Also sets a timer to resend the request every 30s.
   ::
   ++  request-attestation
     |=  =ship
     ^+  event-core
-    =/  packet  ?.  =(%pawn (clan:title our))
-                  (sendkeys-packet ship)
-                (attestation-packet ship 1)
-    =.  event-core  (send-blob | ship packet)
+    =+  %^  trace  msg.veb  ship
+        |.("ames: requesting attestion from {<ship>}")
+    =.  event-core  (send-blob | ship (sendkeys-packet ship))
     =/  =wire  /alien/(scot %p ship)
     (emit duct %pass wire %b %wait (add now ~s30))
   ::  +send-blob: fire packet at .ship and maybe sponsors
@@ -2075,14 +2101,7 @@
     ^-  blob
     ?>  ?=(%pawn (clan:title her))
     %-  encode-packet
-    %-  encode-shut-packet
-    :*  ^=    shut-packet  *shut-packet
-        ^=  symmetric-key  *symmetric-key
-        ^=           sndr  our
-        ^=           rcvr  her
-        ^=      sndr-life  0
-        ^=      rcvr-life  0
-    ==
+    (encode-keys-packet our her life.ames-state)
   ::  +get-peer-state: lookup .her state or ~
   ::
   ++  get-peer-state
