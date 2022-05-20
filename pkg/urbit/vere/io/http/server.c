@@ -1,6 +1,9 @@
-/* vere/http.c
-**
-*/
+//! @file http.c
+//! HTTP server.
+
+#include "vere/io/http/server.h"
+#include "vere/io/http/http.h"
+
 #include "all.h"
 #include "vere/vere.h"
 #include <openssl/ssl.h>
@@ -129,14 +132,6 @@ _http_vec_to_meth(h2o_iovec_t vec_u)
          u3_none;
 }
 
-/* _http_vec_to_atom(): convert h2o_iovec_t to atom (cord)
-*/
-static u3_noun
-_http_vec_to_atom(h2o_iovec_t vec_u)
-{
-  return u3i_bytes(vec_u.len, (const c3_y*)vec_u.base);
-}
-
 /* _http_vec_to_octs(): convert h2o_iovec_t to (unit octs)
 */
 static u3_noun
@@ -147,21 +142,9 @@ _http_vec_to_octs(h2o_iovec_t vec_u)
   }
 
   // XX correct size_t -> atom?
-  return u3nt(u3_nul, u3i_chubs(1, (const c3_d*)&vec_u.len),
-                      _http_vec_to_atom(vec_u));
-}
-
-/* _cttp_bods_free(): free body structure.
-*/
-static void
-_cttp_bods_free(u3_hbod* bod_u)
-{
-  while ( bod_u ) {
-    u3_hbod* nex_u = bod_u->nex_u;
-
-    c3_free(bod_u);
-    bod_u = nex_u;
-  }
+  return u3nt(u3_nul,
+              u3i_chubs(1, (const c3_d*)&vec_u.len),
+              u3_http_vec_to_atom(&vec_u));
 }
 
 /* _cttp_bod_from_octs(): translate octet-stream noun into body.
@@ -219,86 +202,6 @@ _cttp_bods_to_vec(u3_hbod* bod_u, c3_w* tot_w)
   *tot_w = len_w;
 
   return vec_u;
-}
-
-/* _http_heds_to_noun(): convert h2o_header_t to (list (pair @t @t))
-*/
-static u3_noun
-_http_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
-{
-  u3_noun hed = u3_nul;
-  c3_d dex_d  = hed_d;
-
-  h2o_header_t deh_u;
-
-  while ( 0 < dex_d ) {
-    deh_u = hed_u[--dex_d];
-    hed = u3nc(u3nc(_http_vec_to_atom(*deh_u.name),
-                    _http_vec_to_atom(deh_u.value)), hed);
-  }
-
-  return hed;
-}
-
-/* _http_heds_free(): free header linked list
-*/
-static void
-_http_heds_free(u3_hhed* hed_u)
-{
-  while ( hed_u ) {
-    u3_hhed* nex_u = hed_u->nex_u;
-
-    c3_free(hed_u->nam_c);
-    c3_free(hed_u->val_c);
-    c3_free(hed_u);
-    hed_u = nex_u;
-  }
-}
-
-/* _http_hed_new(): create u3_hhed from nam/val cords
-*/
-static u3_hhed*
-_http_hed_new(u3_atom nam, u3_atom val)
-{
-  c3_w     nam_w = u3r_met(3, nam);
-  c3_w     val_w = u3r_met(3, val);
-  u3_hhed* hed_u = c3_malloc(sizeof(*hed_u));
-
-  hed_u->nam_c = c3_malloc(1 + nam_w);
-  hed_u->val_c = c3_malloc(1 + val_w);
-  hed_u->nam_c[nam_w] = 0;
-  hed_u->val_c[val_w] = 0;
-  hed_u->nex_u = 0;
-  hed_u->nam_w = nam_w;
-  hed_u->val_w = val_w;
-
-  u3r_bytes(0, nam_w, (c3_y*)hed_u->nam_c, nam);
-  u3r_bytes(0, val_w, (c3_y*)hed_u->val_c, val);
-
-  return hed_u;
-}
-
-/* _http_heds_from_noun(): convert (list (pair @t @t)) to u3_hhed
-*/
-static u3_hhed*
-_http_heds_from_noun(u3_noun hed)
-{
-  u3_noun deh = hed;
-  u3_noun i_hed;
-
-  u3_hhed* hed_u = 0;
-
-  while ( u3_nul != hed ) {
-    i_hed = u3h(hed);
-    u3_hhed* nex_u = _http_hed_new(u3h(i_hed), u3t(i_hed));
-    nex_u->nex_u = hed_u;
-
-    hed_u = nex_u;
-    hed = u3t(hed);
-  }
-
-  u3z(deh);
-  return hed_u;
 }
 
 /* _http_req_find(): find http request in connection by sequence.
@@ -551,11 +454,11 @@ static void
 _http_hgen_dispose(void* ptr_v)
 {
   u3_hgen* gen_u = (u3_hgen*)ptr_v;
-  _http_heds_free(gen_u->hed_u);
+  u3_http_heds_free(gen_u->hed_u);
   gen_u->hed_u = 0;
-  _cttp_bods_free(gen_u->nud_u);
+  u3_http_bods_free(gen_u->nud_u);
   gen_u->nud_u = 0;
-  _cttp_bods_free(gen_u->bod_u);
+  u3_http_bods_free(gen_u->bod_u);
   gen_u->bod_u = 0;
 }
 
@@ -576,7 +479,7 @@ _http_hgen_send(u3_hgen* gen_u)
 
   //  stash [bod_u] to free later
   //
-  _cttp_bods_free(gen_u->nud_u);
+  u3_http_bods_free(gen_u->nud_u);
   gen_u->nud_u = gen_u->bod_u;
   gen_u->bod_u = 0;
 
@@ -660,7 +563,7 @@ _http_start_respond(u3_hreq* req_u,
                       (status < 500) ? "missing" :
                       "hosed";
 
-  u3_hhed* hed_u = _http_heds_from_noun(u3k(headers));
+  u3_hhed* hed_u = u3_http_heds_to_list(u3k(headers));
   u3_hhed* deh_u = hed_u;
 
   c3_i has_len_i = 0;
@@ -775,13 +678,12 @@ _http_rec_to_httq(h2o_req_t* rec_u)
     return u3_none;
   }
 
-  u3_noun url = _http_vec_to_atom(rec_u->path);
-  u3_noun hed = _http_heds_to_noun(rec_u->headers.entries,
-                                   rec_u->headers.size);
+  u3_noun url = u3_http_vec_to_atom(&rec_u->path);
+  u3_noun hed = u3_http_heds_to_noun(rec_u->headers.entries, rec_u->headers.size);
 
   // restore host header
   hed = u3nc(u3nc(u3i_string("host"),
-                  _http_vec_to_atom(rec_u->authority)),
+                  u3_http_vec_to_atom(&rec_u->authority)),
              hed);
 
   u3_noun bod = _http_vec_to_octs(rec_u->entity);
@@ -880,7 +782,7 @@ _http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     //TODO  http2 allows the client to put multiple 'cookie' headers
     ssize_t hin_i = h2o_find_header_by_str(&rec_u->headers, "cookie", 6, -1);
     if ( hin_i != -1 ) {
-      coo = _http_vec_to_atom(rec_u->headers.entries[hin_i].value);
+      coo = u3_http_vec_to_atom(&rec_u->headers.entries[hin_i].value);
     }
   }
 

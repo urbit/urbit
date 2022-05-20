@@ -1,7 +1,11 @@
-/* vere/cttp.c
-**
-*/
+//! @file client.c
+//! HTTP client.
+
+#include "vere/io/http/client.h"
+#include "vere/io/http/http.h"
+
 #include "all.h"
+#include "c/list.h"
 #include "vere/vere.h"
 #include <openssl/ssl.h>
 #include <h2o.h>
@@ -62,28 +66,6 @@
                      ctx_u;             //  h2o client ctx
     void*            tls_u;             //  client SSL_CTX*
   } u3_cttp;
-
-// XX deduplicate with _http_vec_to_atom
-/* _cttp_vec_to_atom(): convert h2o_iovec_t to atom (cord)
-*/
-static u3_noun
-_cttp_vec_to_atom(h2o_iovec_t vec_u)
-{
-  return u3i_bytes(vec_u.len, (const c3_y*)vec_u.base);
-}
-
-/* _cttp_bods_free(): free body structure.
-*/
-static void
-_cttp_bods_free(u3_hbod* bod_u)
-{
-  while ( bod_u ) {
-    u3_hbod* nex_u = bod_u->nex_u;
-
-    c3_free(bod_u);
-    bod_u = nex_u;
-  }
-}
 
 /* _cttp_bod_new(): create a data buffer
 */
@@ -216,70 +198,6 @@ _cttp_bods_to_vec(u3_hbod* bod_u, c3_w* tot_w)
   return vec_u;
 }
 
-// XX deduplicate with _http_heds_free
-/* _cttp_heds_free(): free header linked list
-*/
-static void
-_cttp_heds_free(u3_hhed* hed_u)
-{
-  while ( hed_u ) {
-    u3_hhed* nex_u = hed_u->nex_u;
-
-    c3_free(hed_u->nam_c);
-    c3_free(hed_u->val_c);
-    c3_free(hed_u);
-    hed_u = nex_u;
-  }
-}
-
-// XX deduplicate with _http_hed_new
-/* _cttp_hed_new(): create u3_hhed from nam/val cords
-*/
-static u3_hhed*
-_cttp_hed_new(u3_atom nam, u3_atom val)
-{
-  c3_w     nam_w = u3r_met(3, nam);
-  c3_w     val_w = u3r_met(3, val);
-  u3_hhed* hed_u = c3_malloc(sizeof(*hed_u));
-
-  hed_u->nam_c = c3_malloc(1 + nam_w);
-  hed_u->val_c = c3_malloc(1 + val_w);
-  hed_u->nam_c[nam_w] = 0;
-  hed_u->val_c[val_w] = 0;
-  hed_u->nex_u = 0;
-  hed_u->nam_w = nam_w;
-  hed_u->val_w = val_w;
-
-  u3r_bytes(0, nam_w, (c3_y*)hed_u->nam_c, nam);
-  u3r_bytes(0, val_w, (c3_y*)hed_u->val_c, val);
-
-  return hed_u;
-}
-
-// XX deduplicate with _http_heds_from_noun
-/* _cttp_heds_from_noun(): convert (list (pair @t @t)) to u3_hhed
-*/
-static u3_hhed*
-_cttp_heds_from_noun(u3_noun hed)
-{
-  u3_noun deh = hed;
-  u3_noun i_hed;
-
-  u3_hhed* hed_u = 0;
-
-  while ( u3_nul != hed ) {
-    i_hed = u3h(hed);
-    u3_hhed* nex_u = _cttp_hed_new(u3h(i_hed), u3t(i_hed));
-    nex_u->nex_u = hed_u;
-
-    hed_u = nex_u;
-    hed = u3t(hed);
-  }
-
-  u3z(deh);
-  return hed_u;
-}
-
 // XX deduplicate with _http_heds_to_noun
 /* _cttp_heds_to_noun(): convert h2o_header_t to (list (pair @t @t))
 */
@@ -293,8 +211,9 @@ _cttp_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
 
   while ( 0 < dex_d ) {
     deh_u = hed_u[--dex_d];
-    hed = u3nc(u3nc(_cttp_vec_to_atom(*deh_u.name),
-                    _cttp_vec_to_atom(deh_u.value)), hed);
+    hed = u3nc(u3nc(u3_http_vec_to_atom(deh_u.name),
+                    u3_http_vec_to_atom(&deh_u.value)),
+               hed);
   }
 
   return hed;
@@ -305,7 +224,7 @@ _cttp_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
 static void
 _cttp_cres_free(u3_cres* res_u)
 {
-  _cttp_bods_free(res_u->bod_u);
+  u3_http_bods_free(res_u->bod_u);
   c3_free(res_u);
 }
 
@@ -518,9 +437,9 @@ _cttp_creq_free(u3_creq* ceq_u)
 {
   _cttp_creq_unlink(ceq_u);
 
-  _cttp_heds_free(ceq_u->hed_u);
+  u3_http_heds_free(ceq_u->hed_u);
   // Note: ceq_u->bod_u is covered here
-  _cttp_bods_free(ceq_u->rub_u);
+  u3_http_bods_free(ceq_u->rub_u);
 
   if ( ceq_u->res_u ) {
     _cttp_cres_free(ceq_u->res_u);
@@ -593,7 +512,7 @@ _cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
   ceq_u->met_c = u3r_string(method);
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
 
-  ceq_u->hed_u = _cttp_heds_from_noun(u3k(headers));
+  ceq_u->hed_u = u3_http_heds_to_list(u3k(headers));
 
   if ( u3_nul != body ) {
     ceq_u->bod_u = _cttp_bod_from_octs(u3k(u3t(body)));
@@ -801,7 +720,7 @@ _cttp_creq_on_head(h2o_http1client_t* cli_u, const c3_c* err_c, c3_i ver_i,
   }
 
   _cttp_cres_new(ceq_u, (c3_w)sas_i);
-  ceq_u->res_u->hed = _cttp_heds_to_noun(hed_u, hed_t);
+  ceq_u->res_u->hed = u3_http_heds_to_noun(hed_u, hed_t);
 
   if ( h2o_http1client_error_is_eos == err_c ) {
     _cttp_creq_respond(ceq_u);
