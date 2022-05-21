@@ -35,6 +35,7 @@ name: build
 on:
   push:
     paths:
+      - '.github/workflows/build.yml'
       - 'pkg/arvo/**'
       - 'pkg/docker-image/**'
       - 'pkg/ent/**'
@@ -47,6 +48,7 @@ on:
       - default.nix
   pull_request:
     paths:
+      - '.github/workflows/build.yml'
       - 'pkg/arvo/**'
       - 'pkg/docker-image/**'
       - 'pkg/ent/**'
@@ -67,8 +69,10 @@ on:
 
 env:
   DO_UPLOAD: >
+    ${{
     inputs.upload ||
     (github.ref_name == 'next/vere' && github.ref_type == 'branch')
+    }}
   UPLOAD_BASE: bootstrap.urbit.org/ci/vere/often
 
 jobs:
