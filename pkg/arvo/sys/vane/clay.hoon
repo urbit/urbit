@@ -266,6 +266,7 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
+      bug=[veb=@ mas=@]                                 ::  verbosity
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
@@ -581,6 +582,7 @@
         +$  args
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
+              verb=@
               cache=flow
               flue
           ==
@@ -608,7 +610,7 @@
       %+  gain-leak  vale+path
       |=  nob=state
       =.  nub  nob
-      ::~>  %slog.0^leaf/"ford: read file {(spud path)}"
+      %-  (trace 1 |.("read file {(spud path)}"))
       =/  file
         ~|  %file-not-found^path
         (~(got by files) path)
@@ -632,7 +634,7 @@
       ?:  (~(has in cycle.nub) nave+mak)
         ~|(cycle+nave+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
-      :: ~>  %slog.0^leaf/"ford: make mark {<mak>}"
+      %-  (trace 1 |.("make mark {<mak>}"))
       =^  cor=vase  nub  (build-fit %mar mak)
       =/  gad=vase  (slap cor limb/%grad)
       ?@  q.gad
@@ -709,7 +711,7 @@
       %+  gain-leak  dais+mak
       |=  nob=state
       =.  nub  nob
-      ::~>  %slog.0^leaf/"ford: make dais {<mak>}"
+      %-  (trace 1 |.("make dais {<mak>}"))
       :_  nub  :-  %dais
       ^-  dais
       =>  [nav=nav ..zuse]
@@ -758,7 +760,7 @@
         :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
       ::  try +grow; is there a +grow core with a .b arm?
       ::
-      :: ~>  %slog.0^leaf/"ford: make cast {<a>} -> {<b>}"
+      %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
       =^  old=vase  nub  (build-fit %mar a)
       ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
           ?:  ?=(%| -.ram)  %.n
@@ -826,7 +828,7 @@
       %+  gain-leak  tube+a^b
       |=  nob=state
       =.  nub  nob
-      :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
+      %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
       :_(nub [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))])
     ::
     ++  validate-page
@@ -894,7 +896,7 @@
       %-  soak-vase
       %+  gain-sprig  file+path  |.
       =.  stack.nub  [~ stack.nub]
-      ~>  %slog.0^leaf/"ford: make file {(spud path)}"
+      %-  (trace 1 |.("make file {(spud path)}"))
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
@@ -1152,6 +1154,10 @@
               $(p +.p, pax +.pax)
       ==  ==
     ::
+    ++  trace
+      |=  [pri=@ print=(trap tape)]
+      (^trace verb pri print)
+    ::
     ++  mist-to-pour
       |=  =mist
       ^-  pour
@@ -1202,14 +1208,14 @@
       =/  spilt  (~(has in spill.nub) leak)
       =^  =soak  nub
         ?^  got=(~(get by cache.nub) leak)
-          ::  %-  =/  refs    ?:(spilt 0 1)
-          ::      =/  tape-1  "ford: cache {<pour.leak>}: adding {<refs>}"
-          ::      =/  tape-2  ", giving {<(add refs refs.u.got)>}"
-          ::      (slog leaf+(welp tape-1 tape-2) ~)
+          %-  %+  trace  3  |.
+              =/  refs    ?:(spilt 0 1)
+              %+  welp  "cache {<pour.leak>}: adding {<refs>}, "
+              "giving {<(add refs refs.u.got)>}"
           =?  cache.nub  !spilt
             (~(put by cache.nub) leak [+(refs.u.got) soak.u.got])
           [soak.u.got nub]
-        %-  (slog leaf+"ford: cache {<pour.leak>}: creating" ~)
+        %-  (trace 2 |.("cache {<pour.leak>}: creating"))
         =^  =soak  nub  (next nub)
         =.  cache.nub  (~(put by cache.nub) leak [1 soak])
         ::  If we're creating a cache entry, add refs to our dependencies
@@ -1219,14 +1225,14 @@
         ?~  deps
           [soak nub]
         =/  got  (~(got by cache.nub) i.deps)
-        ::  %-  =/  tape-1  "ford: cache {<pour.leak>} for {<pour.i.deps>}"
-        ::      =/  tape-2  ": bumping to ref {<refs.got>}"
-        ::      (slog leaf+(welp tape-1 tape-2) ~)
+        %-  %+  trace  3  |.
+            %+  welp  "cache {<pour.leak>} for {<pour.i.deps>}"
+            ": bumping to ref {<refs.got>}"
         =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
         $(deps t.deps)
       ?:  spilt
         [soak nub]
-      ::  %-  (slog leaf+"ford: spilt: {<spilt>}" ~)
+      %-  (trace 3 |.("spilt {<mist>}"))
       =:  spill.nub  (~(put in spill.nub) leak)
           sprig.nub  (~(put by sprig.nub) mist leak soak)
         ==
@@ -1234,19 +1240,18 @@
     --
   ::
   ++  lose-leak
-    |=  [fad=flow =leak]
+    |=  [verb=@ fad=flow =leak]
     ^-  flow
     ?~  got=(~(get by fad) leak)
-      %-  (slog leaf+"ford: lose missing leak {<leak>}" ~)
+      %-  (trace verb 0 |.("lose missing leak {<leak>}"))
       fad
     ?:  (lth 1 refs.u.got)
-      =/  tape  "ford: cache {<pour.leak>}: decrementing from {<refs.u.got>}"
-      %-  (slog leaf+tape ~)
+      %-  (trace verb 3 |.("cache {<pour.leak>}: decrementing from {<refs.u.got>}"))
       =.  fad  (~(put by fad) leak u.got(refs (dec refs.u.got)))
       fad
     =+  ?.  =(0 refs.u.got)  ~
-        ((slog leaf+"ford: lose zero leak {<leak>}" ~) ~)
-    %-  (slog leaf+"ford: cache {<pour.leak>}: freeing" ~)
+        ((trace verb 0 |.("lose zero leak {<leak>}")) ~)
+    %-  (trace verb 2 |.("cache {<pour.leak>}: freeing"))
     =.  fad  (~(del by fad) leak)
     =/  leaks  ~(tap in deps.leak)
     |-  ^-  flow
@@ -1256,13 +1261,19 @@
     $(leaks t.leaks)
   ::
   ++  lose-leaks
-    |=  [fad=flow leaks=(set leak)]
+    |=  [verb=@ fad=flow leaks=(set leak)]
     ^-  flow
     =/  leaks  ~(tap in leaks)
     |-
     ?~  leaks
       fad
-    $(fad (lose-leak fad i.leaks), leaks t.leaks)
+    $(fad (lose-leak verb fad i.leaks), leaks t.leaks)
+  ::
+  ++  trace
+    |=  [verb=@ pri=@ print=(trap tape)]
+    ?:  (lth verb pri)
+      same
+    (slog leaf+"ford: {(print)}" ~)
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  section 4cA, filesystem logic
@@ -1465,7 +1476,7 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    [files lat.ran fad ?:(=(yon let.dom) fod.dom [~ ~])]
+    [files lat.ran veb.bug fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
   ++  aeon-flow
@@ -1758,7 +1769,8 @@
     =.  fod.dom
       ?:  updated  [~ ~]
       (promote-ford fod.dom invalid)
-    =.  fad  (lose-leaks:fusion fad (~(dif in spill.old-fod) spill.fod.dom))
+    =.  fad
+      (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -1767,7 +1779,7 @@
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:ford:fusion  [files lat.ran fad fod.dom]
+    =/  =args:ford:fusion  [files lat.ran veb.bug fad fod.dom]
     ::
     =^  change-cages  args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -2060,7 +2072,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran ~ ~ ~]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug ~ ~ ~]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -2894,7 +2906,7 @@
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
     =/  =args:ford:fusion
-      [files lat.ran fad ?:(=(yon let.dom) fod.dom [~ ~])]
+      [files lat.ran veb.bug fad ?:(=(yon let.dom) fod.dom [~ ~])]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -4202,7 +4214,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%11                                       ::  vane version
+    $:  ver=%12                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4392,6 +4404,12 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %stir
+    ?+  arg.req  ~|(%strange-stir !!)
+      [%verb @]  [~ ..^$(veb.bug.ruf +.arg.req)]
+      [%mass @]  [~ ..^$(mas.bug.ruf +.arg.req)]
+    ==
+  ::
       %tomb  (tomb-clue:tomb hen clue.req)
       %trim
     =:    fad.ruf      *flow
@@ -4479,14 +4497,25 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%11 raft-11]
+        $%  [%12 raft-12]
+            [%11 raft-11]
             [%10 raft-10]
             [%9 raft-9]
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-11  raft
+      +$  raft-12  raft
+      +$  raft-11
+        $:  rom=room
+            hoy=(map ship rung)
+            ran=rang
+            fad=flow
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+        ==
       +$  raft-10
         $:  rom=room-10
             hoy=(map ship rung-10)
@@ -4704,7 +4733,8 @@
   =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
   =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
-  ?>  ?=(%11 -.old)
+  =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
+  ?>  ?=(%12 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4768,6 +4798,7 @@
       rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
     ==
   ::  +raft-9-to-10: add .dist-upgraded
+  ::
   ++  raft-9-to-10
     |=  raf=raft-9
     ^-  raft-10
@@ -4914,6 +4945,12 @@
       ^-  (map [=care =path] cach)
       (~(run by caches-10) cach-10-to-cach)
     --
+  ::  +raft-11-to-12: add bug
+  ::
+  ++  raft-11-to-12
+    |=  raf=raft-11
+    ^-  raft-12
+    raf(pud [pud.raf 0 0])
   --
 ::
 ++  scry                                              ::  inspect
@@ -5288,7 +5325,7 @@
 ::
 ++  whey
   ^-  (list mass)
-  ?:  &  ::  lac
+  ?:  (gth mas.bug.ruf 0)
     =/  domestic
       %+  turn  (sort ~(tap by dos.rom.ruf) aor)
       |=  [=desk =dojo]
@@ -5299,7 +5336,10 @@
       ==
     :~  :+  %object-store  %|
         :~  commits+&+hut.ran.ruf
-            pages+&+lat.ran.ruf
+            :+  %pages  %|
+            %+  turn  ~(tap by lat.ran.ruf)
+            |=  [=lobe =page]
+            [(scot %uv lobe) %& page]
         ==
         domestic+|+domestic
         foreign+&+hoy.ruf
@@ -5315,10 +5355,7 @@
     ==
   :~  :+  %object-store  %|
       :~  commits+&+hut.ran.ruf
-          :+  %pages  %|
-          %+  turn  ~(tap by lat.ran.ruf)
-          |=  [=lobe =page]
-          [(scot %uv lobe) %& page]
+          pages+&+lat.ran.ruf
       ==
       domestic+|+domestic
       foreign+&+hoy.ruf
