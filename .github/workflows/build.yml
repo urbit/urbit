@@ -106,7 +106,10 @@ jobs:
           name: ares
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix-build -A urbit --arg enableStatic true
+      - name: build static binary
+        run: >
+          echo "urbit_static=$(nix-build -A urbit --arg enableStatic true)"
+          >> $GITHUB_ENV
 
       - uses: google-github-actions/setup-gcloud@v0.2.0
         if: ${{ env.DO_UPLOAD == 'true' }}
@@ -118,15 +121,13 @@ jobs:
 
       - name: upload binary to bootstrap.urbit.org
         if: ${{ env.DO_UPLOAD == 'true' }}
-        # XX how to get the nix-store path from the previous step without "rebuilding" it?
         run: |
-          result="$(nix-build -A urbit --arg enableStatic true)"
           version="$(cat ./pkg/urbit/version)"
           system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
           system=${system:1:${#system}-2}
           target="gs://${UPLOAD_BASE}/${GITHUB_SHA:0:9}/vere-v${version}-${system}"
 
-          gsutil cp -n $result/bin/urbit "$target"
+          gsutil cp -n "${{ env.urbit_static }}/bin/urbit" "$target"
           exitcode=$?
 
           test $exitcode -eq 0 &&
