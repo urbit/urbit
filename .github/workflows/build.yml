@@ -66,7 +66,10 @@ on:
         type: boolean
 
 env:
-  DO_UPLOAD: ${{ inputs.upload || (github.ref_name == 'next/vere' && github.ref_type == 'branch') }}
+  DO_UPLOAD: >
+    inputs.upload ||
+    (github.ref_name == 'next/vere' && github.ref_type == 'branch')
+  UPLOAD_BASE: bootstrap.urbit.org/ci/vere/often
 
 jobs:
   urbit:
@@ -117,7 +120,7 @@ jobs:
           version="$(cat ./pkg/urbit/version)"
           system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
           system=${system:1:${#system}-2}
-          target="gs://bootstrap.urbit.org/ci/vere/often/${GITHUB_SHA:0:9}/vere-v${version}-${system}"
+          target="gs://${UPLOAD_BASE}/${GITHUB_SHA:0:9}/vere-v${version}-${system}"
 
           gsutil cp -n $result/bin/urbit "$target"
           exitcode=$?
@@ -137,7 +140,9 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: C:\msys64\msys2_shell.cmd -mingw64 -defterm -no-start -here -c ". <(cygpath '{0}')"
+        shell: >
+          C:\msys64\msys2_shell.cmd -mingw64 -defterm -no-start -here -c
+          ". <(cygpath '{0}')"
         working-directory: ./pkg/urbit
 
     steps:
@@ -152,7 +157,10 @@ jobs:
           CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: mingw32-make build/urbit
-      - run: build/urbit -l -d -B ../../bin/solid.pill -F bus && curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}' http://localhost:12321
+      - run: >
+          build/urbit -l -d -B ../../bin/solid.pill -F bus &&
+          curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}'
+          http://localhost:12321
 
       - uses: actions/setup-python@v2
         if: ${{ env.DO_UPLOAD == 'true' }}
@@ -177,7 +185,7 @@ jobs:
         run: |
           version="$(cat ./version)"
           system="x86_64-windows"
-          target="gs://bootstrap.urbit.org/ci/vere/often/${GITHUB_SHA:0:9}/vere-v${version}-${system}.exe"
+          target="gs://${UPLOAD_BASE}/${GITHUB_SHA:0:9}/vere-v${version}-${system}.exe"
 
           gsutil cp -n ./build/urbit.exe "$target"
           exitcode=$?
