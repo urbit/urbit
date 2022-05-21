@@ -405,24 +405,25 @@
   ::  channel is now established; comet also emitted a duplicate
   ::  self-attestation, which we ignore
   ::
-  =^  moves3  comet2  (call comet2 ~[//unix] %hear (snag-packet 1 moves2))
-  =^  moves4  comet2  (take comet2 /bone/(scot %p our-comet)/0/1 ~[//unix] %g %done ~)
-  =^  moves5  comet   (call comet ~[//unix] %hear (snag-packet 0 moves4))
+  =^  moves3  comet2  (call comet2 ~[//unix] %hear (snag-packet 0 moves2))
+  =^  moves4  comet2  (call comet2 ~[//unix] %hear (snag-packet 1 moves2))
+  =^  moves5  comet2  (take comet2 /bone/(scot %p our-comet)/0/1 ~[//unix] %g %done ~)
   =^  moves6  comet2  (take comet2 /bone/(scot %p our-comet)/0/1 ~[//unix] %g %boon [%post 'first1!!'])
-  =^  moves7  comet   (call comet ~[//unix] %hear (snag-packet 0 moves6))
+  =^  moves7  comet   (call comet ~[//unix] %hear (snag-packet 0 moves5))
+  =^  moves8  comet   (call comet ~[//unix] %hear (snag-packet 0 moves6))
   ::
   ;:  weld
     %+  expect-eq
       !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet>} is your neighbor"]
-      !>  (snag 0 `(list move:ames)`moves3)
+      !>  (snag 0 `(list move:ames)`moves4)
   ::
     %+  expect-eq
       !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet2>} is your neighbor"]
-      !>  (snag 0 `(list move:ames)`moves5)
+      !>  (snag 0 `(list move:ames)`moves7)
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon [%post 'first1!!']]
-      !>  (snag 0 `(list move:ames)`moves7)
+      !>  (snag 0 `(list move:ames)`moves8)
   ==
 ::
 ++  test-nack  ^-  tang

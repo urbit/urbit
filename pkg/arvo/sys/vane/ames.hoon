@@ -2002,8 +2002,7 @@
   ++  request-attestation
     |=  =ship
     ^+  event-core
-    =+  %^  trace  msg.veb  ship
-        |.("ames: requesting attestion from {<ship>}")
+    =+  (trace msg.veb ship |.("requesting attestion"))
     =.  event-core  (send-blob | ship (sendkeys-packet ship))
     =/  =wire  /alien/(scot %p ship)
     (emit duct %pass wire %b %wait (add now ~s30))
