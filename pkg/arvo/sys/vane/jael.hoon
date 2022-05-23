@@ -304,7 +304,7 @@
       ::
       =.  +>.$
         %^  poke-watch  hen  %azimuth
-        %+  fall  node.tac
+        :: %+  fall  node.tac
         (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
       =.  +>.$
         ::  get everything from /app/azimuth because jael subscriptions
