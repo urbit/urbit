@@ -1229,7 +1229,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //
   //    $@  ~                                             ::  usage
   //    $%  [%cram dir=@t]                                ::  jam state
-  //        [%grab dir=@t]                                ::  gc
+  //        [?(%grab %mass) dir=@t]                       ::  gc
   //        [%info dir=@t]                                ::  print
   //        [%meld dir=@t]                                ::  deduplicate
   //        [%pack dir=@t]                                ::  defragment
@@ -1249,7 +1249,10 @@ _cw_utils(c3_i argc, c3_c* argv[])
 
     switch ( mot_m ) {
       case c3__cram: _cw_cram(argc, argv); return 1;
+
+      case c3__mass:
       case c3__grab: _cw_grab(argc, argv); return 1;
+
       case c3__info: _cw_info(argc, argv); return 1;
       case c3__meld: _cw_meld(argc, argv); return 1;
       case c3__pack: _cw_pack(argc, argv); return 1;
