@@ -89,6 +89,8 @@ _lord_stop(u3_lord* god_u)
         case u3_writ_peek:
           u3z(wit_u->pek_u->sam);
           break;
+        default:
+          break;
       }
       c3_lode* nex_u = c3_lode_next(nod_u);
       c3_free(nod_u);
