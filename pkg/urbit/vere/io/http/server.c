@@ -114,96 +114,6 @@ _http_close_cb(uv_handle_t* han_u)
   c3_free(han_u);
 }
 
-/* _http_vec_to_meth(): convert h2o_iovec_t to meth
-*/
-static u3_weak
-_http_vec_to_meth(h2o_iovec_t vec_u)
-{
-  return ( 0 == strncmp(vec_u.base, "GET",     vec_u.len) ) ? u3i_string("GET") :
-         ( 0 == strncmp(vec_u.base, "PUT",     vec_u.len) ) ? u3i_string("PUT")  :
-         ( 0 == strncmp(vec_u.base, "POST",    vec_u.len) ) ? u3i_string("POST") :
-         ( 0 == strncmp(vec_u.base, "HEAD",    vec_u.len) ) ? u3i_string("HEAD") :
-         ( 0 == strncmp(vec_u.base, "CONNECT", vec_u.len) ) ? u3i_string("CONNECT") :
-         ( 0 == strncmp(vec_u.base, "DELETE",  vec_u.len) ) ? u3i_string("DELETE") :
-         ( 0 == strncmp(vec_u.base, "OPTIONS", vec_u.len) ) ? u3i_string("OPTIONS") :
-         ( 0 == strncmp(vec_u.base, "TRACE",   vec_u.len) ) ? u3i_string("TRACE") :
-         // TODO ??
-         // ( 0 == strncmp(vec_u.base, "PATCH",   vec_u.len) ) ? c3__patc :
-         u3_none;
-}
-
-/* _http_vec_to_octs(): convert h2o_iovec_t to (unit octs)
-*/
-static u3_noun
-_http_vec_to_octs(h2o_iovec_t vec_u)
-{
-  if ( 0 == vec_u.len ) {
-    return u3_nul;
-  }
-
-  // XX correct size_t -> atom?
-  return u3nt(u3_nul,
-              u3i_chubs(1, (const c3_d*)&vec_u.len),
-              u3_http_vec_to_atom(&vec_u));
-}
-
-/* _cttp_bod_from_octs(): translate octet-stream noun into body.
-*/
-static u3_hbod*
-_cttp_bod_from_octs(u3_noun oct)
-{
-  c3_w len_w;
-
-  if ( !_(u3a_is_cat(u3h(oct))) ) {     //  2GB max
-    u3m_bail(c3__fail); return 0;
-  }
-  len_w = u3h(oct);
-
-  {
-    u3_hbod* bod_u = c3_malloc(1 + len_w + sizeof(*bod_u));
-    bod_u->hun_y[len_w] = 0;
-    bod_u->len_w = len_w;
-    u3r_bytes(0, len_w, bod_u->hun_y, u3t(oct));
-
-    bod_u->nex_u = 0;
-
-    u3z(oct);
-    return bod_u;
-  }
-}
-
-/* _cttp_bods_to_vec(): translate body buffers to array of h2o_iovec_t
-*/
-static h2o_iovec_t*
-_cttp_bods_to_vec(u3_hbod* bod_u, c3_w* tot_w)
-{
-  h2o_iovec_t* vec_u;
-  c3_w len_w;
-
-  {
-    u3_hbod* bid_u = bod_u;
-    len_w = 0;
-
-    while( bid_u ) {
-      len_w++;
-      bid_u = bid_u->nex_u;
-    }
-  }
-
-  vec_u = c3_malloc(sizeof(h2o_iovec_t) * len_w);
-  len_w = 0;
-
-  while( bod_u ) {
-    vec_u[len_w] = h2o_iovec_init(bod_u->hun_y, bod_u->len_w);
-    len_w++;
-    bod_u = bod_u->nex_u;
-  }
-
-  *tot_w = len_w;
-
-  return vec_u;
-}
-
 /* _http_req_find(): find http request in connection by sequence.
 */
 static u3_hreq*
@@ -220,80 +130,6 @@ _http_req_find(u3_hcon* hon_u, c3_w seq_l)
     req_u = req_u->nex_u;
   }
   return 0;
-}
-
-/* _http_req_link(): link http request to connection
-*/
-static void
-_http_req_link(u3_hcon* hon_u, u3_hreq* req_u)
-{
-  req_u->hon_u = hon_u;
-  req_u->seq_l = hon_u->seq_l++;
-  req_u->nex_u = hon_u->req_u;
-
-  if ( 0 != req_u->nex_u ) {
-    req_u->nex_u->pre_u = req_u;
-  }
-  hon_u->req_u = req_u;
-}
-
-/* _http_req_unlink(): remove http request from connection
-*/
-static void
-_http_req_unlink(u3_hreq* req_u)
-{
-  if ( 0 != req_u->pre_u ) {
-    req_u->pre_u->nex_u = req_u->nex_u;
-
-    if ( 0 != req_u->nex_u ) {
-      req_u->nex_u->pre_u = req_u->pre_u;
-    }
-  }
-  else {
-    req_u->hon_u->req_u = req_u->nex_u;
-
-    if ( 0 != req_u->nex_u ) {
-      req_u->nex_u->pre_u = 0;
-    }
-  }
-}
-
-/* _http_seq_link(): store slog stream request in state
-*/
-static void
-_http_seq_link(u3_hcon* hon_u, u3_hreq* req_u)
-{
-  u3_hfig* fig_u = &hon_u->htp_u->htd_u->fig_u;
-  req_u->hon_u = hon_u;
-  req_u->seq_l = hon_u->seq_l++;
-  req_u->nex_u = fig_u->seq_u;
-
-  if ( 0 != req_u->nex_u ) {
-    req_u->nex_u->pre_u = req_u;
-  }
-  fig_u->seq_u = req_u;
-}
-
-/* _http_seq_unlink(): remove slog stream request from state
-*/
-static void
-_http_seq_unlink(u3_hreq* req_u)
-{
-  u3_hfig* fig_u = &req_u->hon_u->htp_u->htd_u->fig_u;
-  if ( 0 != req_u->pre_u ) {
-    req_u->pre_u->nex_u = req_u->nex_u;
-
-    if ( 0 != req_u->nex_u ) {
-      req_u->nex_u->pre_u = req_u->pre_u;
-    }
-  }
-  else {
-    fig_u->seq_u = req_u->nex_u;
-
-    if ( 0 != req_u->nex_u ) {
-      req_u->nex_u->pre_u = 0;
-    }
-  }
 }
 
 /* _http_req_to_duct(): translate srv/con/req to duct
@@ -354,7 +190,22 @@ _http_req_done(void* ptr_v)
 {
   u3_hreq* req_u = (u3_hreq*)ptr_v;
   _http_req_close(req_u);
-  _http_req_unlink(req_u);
+
+  // Remove HTTP request from connection.
+  if ( 0 != req_u->pre_u ) {
+    req_u->pre_u->nex_u = req_u->nex_u;
+
+    if ( 0 != req_u->nex_u ) {
+      req_u->nex_u->pre_u = req_u->pre_u;
+    }
+  }
+  else {
+    req_u->hon_u->req_u = req_u->nex_u;
+
+    if ( 0 != req_u->nex_u ) {
+      req_u->nex_u->pre_u = 0;
+    }
+  }
 }
 
 /* _http_seq_done(): slog stream request finished, deallocation callback
@@ -362,9 +213,26 @@ _http_req_done(void* ptr_v)
 static void
 _http_seq_done(void* ptr_v)
 {
-  u3_hreq* seq_u = (u3_hreq*)ptr_v;
-  _http_req_close(seq_u);
-  _http_seq_unlink(seq_u);
+  u3_hreq* req_u = (u3_hreq*)ptr_v;
+  _http_req_close(req_u);
+  // Remove slog stream request from state.
+  {
+    u3_hfig* fig_u = &req_u->hon_u->htp_u->htd_u->fig_u;
+    if ( 0 != req_u->pre_u ) {
+      req_u->pre_u->nex_u = req_u->nex_u;
+
+      if ( 0 != req_u->nex_u ) {
+        req_u->nex_u->pre_u = req_u->pre_u;
+      }
+    }
+    else {
+      fig_u->seq_u = req_u->nex_u;
+
+      if ( 0 != req_u->nex_u ) {
+        req_u->nex_u->pre_u = 0;
+      }
+    }
+  }
 }
 
 /* _http_req_timer_cb(): request timeout callback
@@ -396,7 +264,15 @@ _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
   req_u->gen_u = 0;
   req_u->pre_u = 0;
 
-  _http_req_link(hon_u, req_u);
+  // Link HTTP request to connection.
+  req_u->hon_u = hon_u;
+  req_u->seq_l = hon_u->seq_l++;
+  req_u->nex_u = hon_u->req_u;
+
+  if ( 0 != req_u->nex_u ) {
+    req_u->nex_u->pre_u = req_u;
+  }
+  hon_u->req_u = req_u;
 
   return req_u;
 }
@@ -414,38 +290,20 @@ _http_seq_new(u3_hcon* hon_u, h2o_req_t* rec_u)
   req_u->gen_u = 0;
   req_u->pre_u = 0;
 
-  _http_seq_link(hon_u, req_u);
+  // Store slog stream request in state.
+  {
+    u3_hfig* fig_u = &hon_u->htp_u->htd_u->fig_u;
+    req_u->hon_u = hon_u;
+    req_u->seq_l = hon_u->seq_l++;
+    req_u->nex_u = fig_u->seq_u;
+
+    if ( 0 != req_u->nex_u ) {
+      req_u->nex_u->pre_u = req_u;
+    }
+    fig_u->seq_u = req_u;
+  }
 
   return req_u;
-}
-
-/* _http_req_dispatch(): dispatch http request to %eyre
-*/
-static void
-_http_req_dispatch(u3_hreq* req_u, u3_noun req)
-{
-  c3_assert(u3_rsat_init == req_u->sat_e);
-  req_u->sat_e = u3_rsat_plan;
-
-  {
-    u3_http* htp_u = req_u->hon_u->htp_u;
-    u3_httd* htd_u = htp_u->htd_u;
-    u3_noun wir    = _http_req_to_duct(req_u);
-    u3_noun cad;
-
-    {
-      u3_noun adr = u3nc(c3__ipv4, u3i_words(1, &req_u->hon_u->ipf_w));
-      //  XX loopback automatically secure too?
-     //
-      u3_noun dat = u3nt(htp_u->sec, adr, req);
-
-      cad = ( c3y == req_u->hon_u->htp_u->lop )
-            ? u3nc(u3i_string("request-local"), dat)
-            : u3nc(u3i_string("request"), dat);
-    }
-
-    u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
-  }
 }
 
 /* _http_hgen_dispose(): dispose response generator and buffers
@@ -471,7 +329,8 @@ _http_hgen_send(u3_hgen* gen_u)
   h2o_req_t* rec_u = req_u->rec_u;
 
   c3_w len_w;
-  h2o_iovec_t* vec_u = _cttp_bods_to_vec(gen_u->bod_u, &len_w);
+  h2o_iovec_t* vec_u;
+  u3_http_bods_to_vec(gen_u->bod_u, &vec_u, &len_w);
 
   //  not ready again until _proceed
   //
@@ -590,7 +449,7 @@ _http_start_respond(u3_hreq* req_u,
   gen_u->red   = c3y;
   gen_u->dun   = complete;
   gen_u->bod_u = ( u3_nul == data ) ?
-                 0 : _cttp_bod_from_octs(u3k(u3t(data)));
+                 0 : u3_http_bod_from_octs(u3k(u3t(data)));
   gen_u->nud_u = 0;
   gen_u->hed_u = hed_u;
   gen_u->req_u = req_u;
@@ -647,7 +506,7 @@ _http_continue_respond(u3_hreq* req_u,
   gen_u->dun = complete;
 
   if ( u3_nul != data ) {
-    u3_hbod* bod_u = _cttp_bod_from_octs(u3k(u3t(data)));
+    u3_hbod* bod_u = u3_http_bod_from_octs(u3k(u3t(data)));
 
     if ( 0 == gen_u->bod_u ) {
       gen_u->bod_u = bod_u;
@@ -675,8 +534,19 @@ _http_continue_respond(u3_hreq* req_u,
 static u3_weak
 _http_rec_to_httq(h2o_req_t* rec_u)
 {
-  u3_noun med = _http_vec_to_meth(rec_u->method);
-
+  // Convert h2o_iovec_t to method.
+  h2o_iovec_t vec_u = rec_u->method;
+  u3_noun med = ( 0 == strncmp(vec_u.base, "GET",     vec_u.len) ) ? u3i_string("GET") :
+                ( 0 == strncmp(vec_u.base, "PUT",     vec_u.len) ) ? u3i_string("PUT")  :
+                ( 0 == strncmp(vec_u.base, "POST",    vec_u.len) ) ? u3i_string("POST") :
+                ( 0 == strncmp(vec_u.base, "HEAD",    vec_u.len) ) ? u3i_string("HEAD") :
+                ( 0 == strncmp(vec_u.base, "CONNECT", vec_u.len) ) ? u3i_string("CONNECT") :
+                ( 0 == strncmp(vec_u.base, "DELETE",  vec_u.len) ) ? u3i_string("DELETE") :
+                ( 0 == strncmp(vec_u.base, "OPTIONS", vec_u.len) ) ? u3i_string("OPTIONS") :
+                ( 0 == strncmp(vec_u.base, "TRACE",   vec_u.len) ) ? u3i_string("TRACE") :
+                // TODO ??
+                // ( 0 == strncmp(vec_u.base, "PATCH",   vec_u.len) ) ? c3__patc :
+                u3_none;
   if ( u3_none == med ) {
     return u3_none;
   }
@@ -689,7 +559,12 @@ _http_rec_to_httq(h2o_req_t* rec_u)
                   u3_http_vec_to_atom(&rec_u->authority)),
              hed);
 
-  u3_noun bod = _http_vec_to_octs(rec_u->entity);
+  // Convert h2o_iovec_t to (unit octs).
+  // XX correct size_t -> atom?
+  u3_noun bod = 0 == vec_u.len ? u3_nul
+                               : u3nt(u3_nul,
+                                      u3i_chubs(1, (const c3_d*)&vec_u.len),
+                                      u3_http_vec_to_atom(&vec_u));
 
   return u3nq(med, url, hed, bod);
 }
@@ -831,7 +706,31 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
   }
   else {
     u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
-    _http_req_dispatch(req_u, req);
+    // Dispatch HTTP request to %eyre.
+    {
+      c3_assert(u3_rsat_init == req_u->sat_e);
+      req_u->sat_e = u3_rsat_plan;
+
+      {
+        u3_http* htp_u = req_u->hon_u->htp_u;
+        u3_httd* htd_u = htp_u->htd_u;
+        u3_noun wir    = _http_req_to_duct(req_u);
+        u3_noun cad;
+
+        {
+          u3_noun adr = u3nc(c3__ipv4, u3i_words(1, &req_u->hon_u->ipf_w));
+          //  XX loopback automatically secure too?
+          //
+          u3_noun dat = u3nt(htp_u->sec, adr, req);
+
+          cad = ( c3y == req_u->hon_u->htp_u->lop )
+            ? u3nc(u3i_string("request-local"), dat)
+            : u3nc(u3i_string("request"), dat);
+        }
+
+        u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
+      }
+    }
   }
 
   return 0;
@@ -853,42 +752,6 @@ _http_conn_find(u3_http *htp_u, c3_w coq_l)
     hon_u = hon_u->nex_u;
   }
   return 0;
-}
-
-/* _http_conn_link(): link http request to connection
-*/
-static void
-_http_conn_link(u3_http* htp_u, u3_hcon* hon_u)
-{
-  hon_u->htp_u = htp_u;
-  hon_u->coq_l = htp_u->coq_l++;
-  hon_u->nex_u = htp_u->hon_u;
-
-  if ( 0 != hon_u->nex_u ) {
-    hon_u->nex_u->pre_u = hon_u;
-  }
-  htp_u->hon_u = hon_u;
-}
-
-/* _http_conn_unlink(): remove http request from connection
-*/
-static void
-_http_conn_unlink(u3_hcon* hon_u)
-{
-  if ( 0 != hon_u->pre_u ) {
-    hon_u->pre_u->nex_u = hon_u->nex_u;
-
-    if ( 0 != hon_u->nex_u ) {
-      hon_u->nex_u->pre_u = hon_u->pre_u;
-    }
-  }
-  else {
-    hon_u->htp_u->hon_u = hon_u->nex_u;
-
-    if ( 0 != hon_u->nex_u ) {
-      hon_u->nex_u->pre_u = 0;
-    }
-  }
 }
 
 /* _http_conn_free(): free http connection on close.
@@ -917,7 +780,23 @@ _http_conn_free(uv_handle_t* han_t)
   }
 #endif
 
-  _http_conn_unlink(hon_u);
+  // Remove HTTP request from connection.
+  {
+    if ( 0 != hon_u->pre_u ) {
+      hon_u->pre_u->nex_u = hon_u->nex_u;
+
+      if ( 0 != hon_u->nex_u ) {
+        hon_u->nex_u->pre_u = hon_u->pre_u;
+      }
+    }
+    else {
+      hon_u->htp_u->hon_u = hon_u->nex_u;
+
+      if ( 0 != hon_u->nex_u ) {
+        hon_u->nex_u->pre_u = 0;
+      }
+    }
+  }
 
 #if 0
   {
@@ -944,28 +823,6 @@ _http_conn_free(uv_handle_t* han_t)
   c3_free(hon_u);
 }
 
-/* _http_conn_new(): create and accept http connection.
-*/
-static u3_hcon*
-_http_conn_new(u3_http* htp_u)
-{
-  u3_hcon* hon_u = c3_malloc(sizeof(*hon_u));
-  hon_u->seq_l = 1;
-  hon_u->ipf_w = 0;
-  hon_u->req_u = 0;
-  hon_u->sok_u = 0;
-  hon_u->con_u = 0;
-  hon_u->pre_u = 0;
-
-  _http_conn_link(htp_u, hon_u);
-
-#if 0
-  u3l_log("http conn neww %d server %d\n", hon_u->coq_l, htp_u->sev_l);
-#endif
-
-  return hon_u;
-}
-
 /* _http_serv_find(): find http server by sequence.
 */
 static u3_http*
@@ -982,107 +839,6 @@ _http_serv_find(u3_httd* htd_u, c3_l sev_l)
     htp_u = htp_u->nex_u;
   }
   return 0;
-}
-
-/* _http_serv_link(): link http server to global state.
-*/
-static void
-_http_serv_link(u3_httd* htd_u, u3_http* htp_u)
-{
-  // XX link elsewhere initially, relink on start?
-
-  if ( 0 != htd_u->htp_u ) {
-    htp_u->sev_l = 1 + htd_u->htp_u->sev_l;
-  }
-  else {
-    htp_u->sev_l = htd_u->sev_l;
-  }
-
-  htp_u->nex_u = htd_u->htp_u;
-  htp_u->htd_u = htd_u;
-  htd_u->htp_u = htp_u;
-}
-
-/* _http_serv_unlink(): remove http server from global state.
-*/
-static void
-_http_serv_unlink(u3_http* htp_u)
-{
-  // XX link elsewhere initially, relink on start?
-#if 0
-  u3l_log("http serv unlink %d\n", htp_u->sev_l);
-#endif
-  u3_http* pre_u = htp_u->htd_u->htp_u;
-
-  if ( pre_u == htp_u ) {
-    pre_u = htp_u->nex_u;
-  }
-  else {
-    //  XX glories of linear search
-    //
-    while ( pre_u ) {
-      if ( pre_u->nex_u == htp_u ) {
-        pre_u->nex_u = htp_u->nex_u;
-      }
-      else pre_u = pre_u->nex_u;
-    }
-  }
-}
-
-/* _http_h2o_context_dispose(): h2o_context_dispose, inlined and cleaned up.
-*/
-static void
-_http_h2o_context_dispose(h2o_context_t* ctx)
-{
-  h2o_globalconf_t *config = ctx->globalconf;
-  size_t i, j;
-
-  for (i = 0; config->hosts[i] != NULL; ++i) {
-    h2o_hostconf_t *hostconf = config->hosts[i];
-    for (j = 0; j != hostconf->paths.size; ++j) {
-      h2o_pathconf_t *pathconf = hostconf->paths.entries + j;
-      h2o_context_dispose_pathconf_context(ctx, pathconf);
-    }
-    h2o_context_dispose_pathconf_context(ctx, &hostconf->fallback_path);
-  }
-
-  c3_free(ctx->_pathconfs_inited.entries);
-  c3_free(ctx->_module_configs);
-
-  h2o_timeout_dispose(ctx->loop, &ctx->zero_timeout);
-  h2o_timeout_dispose(ctx->loop, &ctx->hundred_ms_timeout);
-  h2o_timeout_dispose(ctx->loop, &ctx->handshake_timeout);
-  h2o_timeout_dispose(ctx->loop, &ctx->http1.req_timeout);
-  h2o_timeout_dispose(ctx->loop, &ctx->http2.idle_timeout);
-
-  // NOTE: linked in http2/connection, never unlinked
-  h2o_timeout_unlink(&ctx->http2._graceful_shutdown_timeout);
-
-  h2o_timeout_dispose(ctx->loop, &ctx->http2.graceful_shutdown_timeout);
-  h2o_timeout_dispose(ctx->loop, &ctx->proxy.io_timeout);
-  h2o_timeout_dispose(ctx->loop, &ctx->one_sec_timeout);
-
-  h2o_filecache_destroy(ctx->filecache);
-  ctx->filecache = NULL;
-
-  /* clear storage */
-  for (i = 0; i != ctx->storage.size; ++i) {
-    h2o_context_storage_item_t *item = ctx->storage.entries + i;
-    if (item->dispose != NULL) {
-        item->dispose(item->data);
-    }
-  }
-
-  c3_free(ctx->storage.entries);
-
-  h2o_multithread_unregister_receiver(ctx->queue, &ctx->receivers.hostinfo_getaddr);
-  h2o_multithread_destroy_queue(ctx->queue);
-
-  if (ctx->_timestamp_cache.value != NULL) {
-    h2o_mem_release_shared(ctx->_timestamp_cache.value);
-  }
-
-  // NOTE: explicit uv_run removed
 }
 
 /* _http_serv_really_free(): free http server.
@@ -1107,7 +863,29 @@ _http_serv_really_free(u3_http* htp_u)
     htp_u->h2o_u = 0;
   }
 
-  _http_serv_unlink(htp_u);
+  // Remove HTTP server from global state.
+  {
+    // XX link elsewhere initially, relink on start?
+#if 0
+    u3l_log("http serv unlink %d\n", htp_u->sev_l);
+#endif
+    u3_http* pre_u = htp_u->htd_u->htp_u;
+
+    if ( pre_u == htp_u ) {
+      pre_u = htp_u->nex_u;
+    }
+    else {
+      //  XX glories of linear search
+      //
+      while ( pre_u ) {
+        if ( pre_u->nex_u == htp_u ) {
+          pre_u->nex_u = htp_u->nex_u;
+        }
+        else pre_u = pre_u->nex_u;
+      }
+    }
+  }
+
   c3_free(htp_u);
 }
 
@@ -1140,26 +918,76 @@ _http_serv_free(u3_http* htp_u)
 
   if ( 0 == htp_u->h2o_u ) {
     _http_serv_really_free(htp_u);
+    return;
   }
-  else {
-    u3_h2o_serv* h2o_u = htp_u->h2o_u;
 
-    _http_h2o_context_dispose(&h2o_u->ctx_u);
+  // Dispose of H2O context.
+  {
+    u3_h2o_serv*      h2o_u  = htp_u->h2o_u;
+    h2o_context_t*    ctx    = &h2o_u->ctx_u;
+    h2o_globalconf_t *config = ctx->globalconf;
 
-    // NOTE: free deferred to allow timers to be closed
-    // this is a heavy-handed workaround for the lack of
-    // close callbacks in h2o_timer_t
-    // it's unpredictable how many event-loop turns will
-    // be required to finish closing the underlying uv_timer_t
-    // and we can't free until that's done (or we have UB)
-    // testing reveals 5s to be a long enough deferral
-    uv_timer_t* tim_u = c3_malloc(sizeof(*tim_u));
+    for ( size_t i = 0; config->hosts[i] != NULL; ++i ) {
+      h2o_hostconf_t *hostconf = config->hosts[i];
+      for ( size_t j = 0; j != hostconf->paths.size; ++j ) {
+        h2o_pathconf_t *pathconf = hostconf->paths.entries + j;
+        h2o_context_dispose_pathconf_context(ctx, pathconf);
+      }
+      h2o_context_dispose_pathconf_context(ctx, &hostconf->fallback_path);
+    }
 
-    tim_u->data = htp_u;
+    c3_free(ctx->_pathconfs_inited.entries);
+    c3_free(ctx->_module_configs);
 
-    uv_timer_init(u3L, tim_u);
-    uv_timer_start(tim_u, http_serv_free_cb, 5000, 0);
+    h2o_timeout_dispose(ctx->loop, &ctx->zero_timeout);
+    h2o_timeout_dispose(ctx->loop, &ctx->hundred_ms_timeout);
+    h2o_timeout_dispose(ctx->loop, &ctx->handshake_timeout);
+    h2o_timeout_dispose(ctx->loop, &ctx->http1.req_timeout);
+    h2o_timeout_dispose(ctx->loop, &ctx->http2.idle_timeout);
+
+    // NOTE: linked in http2/connection, never unlinked
+    h2o_timeout_unlink(&ctx->http2._graceful_shutdown_timeout);
+
+    h2o_timeout_dispose(ctx->loop, &ctx->http2.graceful_shutdown_timeout);
+    h2o_timeout_dispose(ctx->loop, &ctx->proxy.io_timeout);
+    h2o_timeout_dispose(ctx->loop, &ctx->one_sec_timeout);
+
+    h2o_filecache_destroy(ctx->filecache);
+    ctx->filecache = NULL;
+
+    /* clear storage */
+    for ( size_t i = 0; i != ctx->storage.size; ++i ) {
+      h2o_context_storage_item_t *item = ctx->storage.entries + i;
+      if (item->dispose != NULL) {
+        item->dispose(item->data);
+      }
+    }
+
+    c3_free(ctx->storage.entries);
+
+    h2o_multithread_unregister_receiver(ctx->queue, &ctx->receivers.hostinfo_getaddr);
+    h2o_multithread_destroy_queue(ctx->queue);
+
+    if (ctx->_timestamp_cache.value != NULL) {
+      h2o_mem_release_shared(ctx->_timestamp_cache.value);
+    }
+
+    // NOTE: explicit uv_run removed
   }
+
+  // NOTE: free deferred to allow timers to be closed
+  // this is a heavy-handed workaround for the lack of
+  // close callbacks in h2o_timer_t
+  // it's unpredictable how many event-loop turns will
+  // be required to finish closing the underlying uv_timer_t
+  // and we can't free until that's done (or we have UB)
+  // testing reveals 5s to be a long enough deferral
+  uv_timer_t* tim_u = c3_malloc(sizeof(*tim_u));
+
+  tim_u->data = htp_u;
+
+  uv_timer_init(u3L, tim_u);
+  uv_timer_start(tim_u, http_serv_free_cb, 5000, 0);
 }
 
 /* _http_serv_close_cb(): http server uv_close callback.
@@ -1226,7 +1054,21 @@ _http_serv_new(u3_httd* htd_u, c3_s por_s, c3_o dis, c3_o sec, c3_o lop)
   htp_u->hon_u = 0;
   htp_u->nex_u = 0;
 
-  _http_serv_link(htd_u, htp_u);
+  // Link HTTP server from global state.
+  {
+    // XX link elsewhere initially, relink on start?
+
+    if ( 0 != htd_u->htp_u ) {
+      htp_u->sev_l = 1 + htd_u->htp_u->sev_l;
+    }
+    else {
+      htp_u->sev_l = htd_u->sev_l;
+    }
+
+    htp_u->nex_u = htd_u->htp_u;
+    htp_u->htd_u = htd_u;
+    htd_u->htp_u = htp_u;
+  }
 
   return htp_u;
 }
@@ -1236,7 +1078,25 @@ _http_serv_new(u3_httd* htd_u, c3_s por_s, c3_o dis, c3_o sec, c3_o lop)
 static void
 _http_serv_accept(u3_http* htp_u)
 {
-  u3_hcon* hon_u = _http_conn_new(htp_u);
+  u3_hcon* hon_u;
+  {
+    hon_u = c3_malloc(sizeof(*hon_u));
+    *hon_u = (u3_hcon){
+      .seq_l = 1,
+      .ipf_w = 0,
+      .req_u = NULL,
+      .sok_u = NULL,
+      .con_u = NULL,
+      .htp_u = htp_u,
+      .coq_l = htp_u->coq_l++,
+      .pre_u = NULL,
+      .nex_u = htp_u->hon_u,
+    };
+    if ( hon_u->nex_u ) {
+      hon_u->nex_u->pre_u = hon_u;
+    }
+    htp_u->hon_u = hon_u;
+  }
 
   uv_tcp_init(u3L, &hon_u->wax_u);
 
