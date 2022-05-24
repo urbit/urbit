@@ -1163,31 +1163,56 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   return 0;
 }
 
+static ssize_t
+_king_read_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
+{
+  ssize_t ret_i;
+
+  do {
+    ret_i = read(fid_i, buf_y, len_i);
+  }
+  while ( (ret_i < 0) && (errno == EINTR) );
+
+  return ret_i;
+}
+
+static c3_i
+_king_write_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
+{
+  ssize_t ret_i;
+
+  while ( len_i ) {
+
+    do {
+      ret_i = write(fid_i, buf_y, len_i);
+    }
+    while ( (ret_i < 0) && (errno == EINTR) );
+
+    if ( ret_i < 0 ) {
+      return -1;
+    }
+    else {
+      len_i -= ret_i;
+      buf_y += ret_i;
+    }
+  }
+
+  return 0;
+}
+
 static c3_i
 _king_copy_raw(c3_i src_i, c3_i dst_i, c3_y* buf_y, size_t pag_i)
 {
-  ssize_t red_i, ryt_i;
-  size_t  len_i;
-  c3_y*   fub_y = buf_y;
+  ssize_t red_i;
 
   do {
-    if ( 0 > (red_i = read(src_i, buf_y, pag_i)) ) {
+    if ( 0 > (red_i = _king_read_raw(src_i, buf_y, pag_i)) ) {
       return -1;
     }
 
-    len_i = red_i;
-
-    do {
-      if ( 0 > (ryt_i = write(dst_i, buf_y, len_i)) ) {
-        return -1;
-      }
-
-      buf_y += ryt_i;
-      len_i -= ryt_i;
+    if ( _king_write_raw(dst_i, buf_y, (size_t)red_i) ) {
+      return -1;
     }
-    while ( len_i );
-
-    buf_y = fub_y;
   }
   while ( red_i );
 
