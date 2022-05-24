@@ -1377,6 +1377,9 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
     u3l_log("vere: upgrade succeeded\r\n");
     //  XX print restart instructions
   }
+#else
+  //  XX support arch argument
+  u3l_log("vere: arch required\r\n");
 #endif
 }
 
