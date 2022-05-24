@@ -1,7 +1,8 @@
 { lib, stdenv, coreutils, pkgconfig                      # build/env
 , cacert, ca-bundle, ivory                               # codegen
-, curlUrbit, ent, gmp, h2o, libsigsegv, libuv, lmdb    # libs
-, murmur3, openssl, softfloat3, urcrypt, zlib            #
+, curlUrbit, ent, gmp, h2o, libsigsegv, libuv, lmdb      # libs
+, murmur3, openssl, openssl-static-osx, softfloat3       #
+, urcrypt, zlib, zlib-static-osx                         #
 , enableStatic           ? stdenv.hostPlatform.isStatic  # opts
 , enableDebug            ? false
 , doCheck                ? true
@@ -40,10 +41,10 @@ in stdenv.mkDerivation {
     libuv
     lmdb
     murmur3
-    openssl
+    (if stdenv.isDarwin && enableStatic then openssl-static-osx else openssl)
     softfloat3
     urcrypt
-    zlib
+    (if stdenv.isDarwin && enableStatic then zlib-static-osx else zlib)
   ];
 
   # Ensure any `/usr/bin/env bash` shebang is patched.
