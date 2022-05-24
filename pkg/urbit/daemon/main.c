@@ -197,6 +197,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "http-port",           required_argument, NULL, c3__http },
     { "https-port",          required_argument, NULL, c3__htls },
     { "no-conn",             no_argument,       NULL, c3__noco },
+    { "no-dock",             no_argument,       NULL, c3__nodo },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
     { "replay-from",         required_argument, NULL, 'r' },
@@ -320,6 +321,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case c3__noco: {
         u3_Host.ops_u.con = c3n;
+        break;
+      }
+      case c3__nodo: {
+        u3_Host.ops_u.doc = c3n;
         break;
       }
       case 'R': {

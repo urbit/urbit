@@ -310,6 +310,7 @@
         c3_c*   puk_c;                      //  -Y, scry result filename
         c3_c*   puf_c;                      //  -Z, scry result format
         c3_o    con;                        //      run conn
+        c3_o    doc;                        //      dock binary in pier
       } u3_opts;
 
     /* u3_host: entire host.

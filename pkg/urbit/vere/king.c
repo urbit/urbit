@@ -1451,7 +1451,9 @@ u3_king_done(void)
 
   //  copy binary into pier on boot
   //
-  if ( c3y == u3_Host.ops_u.nuu ) {
+  if (  (c3y == u3_Host.ops_u.nuu)
+     && (c3y == u3_Host.ops_u.doc) )
+  {
     c3_c* pac_c;
 
     //  hack to ensure we only try once
