@@ -568,25 +568,35 @@ _setup_ssl_curl(void* arg)
 /* _cw_usage(): print utility usage.
 */
 static void
-_cw_usage(c3_c* s)
+_cw_usage(c3_c* bin_c)
 {
-  fprintf(stderr,
-    "\nutilities:\n"
-    "  %s cram <pier>               jam state:\n"
-    "  %s grab <pier>               measure memory usage:\n"
-    "  %s info <pier>               print pier info:\n"
-    "  %s meld <pier>               deduplicate snapshot:\n"
-    "  %s pack <pier>               defragment snapshot:\n"
-    "  %s prep <pier>               prepare for upgrade:\n"
-    "  %s next <pier>               request upgrade:\n"
-    "  %s queu <pier> <at-event>    cue state:\n"
-    "\n  run as a 'serf':\n"
+  c3_c *use_c[] = {
+    "utilities:\n",
+    "  %s cram %.*s              jam state:\n",
+    "  %s grab %.*s              measure memory usage:\n",
+    "  %s info %.*s              print pier info:\n",
+    "  %s meld %.*s              deduplicate snapshot:\n",
+    "  %s pack %.*s              defragment snapshot:\n",
+    "  %s prep %.*s              prepare for upgrade:\n",
+    "  %s next %.*s              request upgrade:\n",
+    "  %s queu %.*s<at-event>    cue state:\n",
+    "\n  run as a 'serf':\n",
     "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
 #ifdef U3_OS_mingw
     " <ctrlc-handle>"
 #endif
     "\n",
-    s, s, s, s, s, s, s, s, s);
+    0
+  };
+
+  c3_c* d = _main_pier_run(bin_c);
+  c3_i  i;
+
+  for ( i=0; use_c[i]; i++ ) {
+    fprintf(stderr, use_c[i], bin_c, d ? 0 : 7, "<pier> ");
+  }
+
+  c3_free(d);
 }
 
 /* u3_ve_usage(): print usage and exit.
@@ -1090,13 +1100,29 @@ _cw_disk_init(c3_c* dir_c)
 static void
 _cw_info(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
 
-  c3_c*    dir_c = argv[2];
-  c3_d     eve_d = u3m_boot(dir_c);
-  u3_disk* log_u = _cw_disk_init(dir_c);
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
 
-  fprintf(stderr, "\r\nurbit: %s at event %" PRIu64 "\r\n", dir_c, eve_d);
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c);
+
+  fprintf(stderr, "\r\nurbit: %s at event %" PRIu64 "\r\n",
+                  u3_Host.dir_c, eve_d);
 
   u3_disk_slog(log_u);
   printf("\n");
@@ -1111,10 +1137,25 @@ _cw_info(c3_i argc, c3_c* argv[])
 static void
 _cw_grab(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
 
-  c3_c* dir_c = argv[2];
-  u3m_boot(dir_c);
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3m_boot(u3_Host.dir_c);
   u3C.wag_w |= u3o_hashless;
   u3_serf_grab();
   u3m_stop();
@@ -1125,16 +1166,31 @@ _cw_grab(c3_i argc, c3_c* argv[])
 static void
 _cw_cram(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
 
-  c3_c*    dir_c = argv[2];
-  c3_d     eve_d = u3m_boot(dir_c);
-  u3_disk* log_u = _cw_disk_init(dir_c); // XX s/b try_aquire lock
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
   c3_o  ret_o;
 
   fprintf(stderr, "urbit: cram: preparing\r\n");
 
-  if ( c3n == (ret_o = u3u_cram(dir_c, eve_d)) ) {
+  if ( c3n == (ret_o = u3u_cram(u3_Host.dir_c, eve_d)) ) {
     fprintf(stderr, "urbit: cram: unable to jam state\r\n");
   }
   else {
@@ -1158,28 +1214,45 @@ _cw_cram(c3_i argc, c3_c* argv[])
 static void
 _cw_queu(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 4 <= argc );
-
-  c3_c* dir_c = argv[2];
-  c3_c* eve_c = argv[3];
+  c3_c* eve_c;
   c3_d  eve_d;
+
+  switch ( argc ) {
+    case 3: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+      eve_c = argv[2];
+    } break;
+
+    case 4: {
+      u3_Host.dir_c = argv[2];
+      eve_c         = argv[3];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
 
   if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
     fprintf(stderr, "urbit: queu: invalid number '%s'\r\n", eve_c);
     exit(1);
   }
   else {
-    u3_disk* log_u = _cw_disk_init(dir_c); // XX s/b try_aquire lock
+    u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
 
     fprintf(stderr, "urbit: queu: preparing\r\n");
 
-    u3m_boot(dir_c);
+    u3m_boot(u3_Host.dir_c);
 
     //  XX can spuriously fail do to corrupt memory-image checkpoint,
     //  need a u3m_half_boot equivalent
     //  workaround is to delete/move the checkpoint in case of corruption
     //
-    if ( c3n == u3u_uncram(dir_c, eve_d) ) {
+    if ( c3n == u3u_uncram(u3_Host.dir_c, eve_d) ) {
       fprintf(stderr, "urbit: queu: failed\r\n");
       exit(1);
     }
@@ -1197,14 +1270,29 @@ _cw_queu(c3_i argc, c3_c* argv[])
 static void
 _cw_meld(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
 
-  c3_c*    dir_c = argv[2];
-  u3_disk* log_u = _cw_disk_init(dir_c); // XX s/b try_aquire lock
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
   c3_w     pre_w;
 
   u3C.wag_w |= u3o_hashless;
-  u3m_boot(dir_c);
+  u3m_boot(u3_Host.dir_c);
 
   pre_w = u3a_open(u3R);
   u3u_meld();
@@ -1247,12 +1335,27 @@ _cw_next(c3_i argc, c3_c* argv[])
 static void
 _cw_pack(c3_i argc, c3_c* argv[])
 {
-  c3_assert( 3 <= argc );
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
 
-  c3_c*    dir_c = argv[2];
-  u3_disk* log_u = _cw_disk_init(dir_c); // XX s/b try_aquire lock
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
 
-  u3m_boot(dir_c);
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
+
+  u3m_boot(u3_Host.dir_c);
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3e_save();
