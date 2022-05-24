@@ -310,7 +310,6 @@
         c3_c*   puk_c;                      //  -Y, scry result filename
         c3_c*   puf_c;                      //  -Z, scry result format
         c3_o    con;                        //      run conn
-        c3_o    nex;                        //      upgrade
       } u3_opts;
 
     /* u3_host: entire host.
@@ -323,10 +322,11 @@
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u3_usig*   sig_u;                   //  signal list
-        #if defined(U3_OS_mingw)
+#if defined(U3_OS_mingw)
         HANDLE     cev_u;                   //  Ctrl-C event handle
-        #endif
+#endif
         u3_utty*   uty_u;                   //  linked terminal list
+        c3_o       nex_o;                   //  upgrade requested
         u3_opts    ops_u;                   //  commandline options
         c3_i       xit_i;                   //  exit code for shutdown
         u3_trac    tra_u;                   //  tracing information

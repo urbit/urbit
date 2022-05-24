@@ -107,13 +107,12 @@ _main_repath(c3_c* pax_c)
   return rel_c;
 }
 
-/* _main_getopt(): extract option map from command line.
+/* _main_init(): initialize globals
 */
-static u3_noun
-_main_getopt(c3_i argc, c3_c** argv)
+static void
+_main_init(void)
 {
-  c3_i ch_i, lid_i;
-  c3_w arg_w;
+  u3_Host.nex_o = c3n;
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.dem = c3n;
@@ -127,7 +126,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.has = c3y;
 
   u3_Host.ops_u.net = c3y;
-  u3_Host.ops_u.nex = c3n;
   u3_Host.ops_u.lit = c3n;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
@@ -140,6 +138,36 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.puf_c = "jam";
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
+}
+
+/* _main_pier_run(): get pier from binary path (argv[0]), if appropriate
+*/
+static c3_c*
+_main_pier_run(c3_c* bin_c)
+{
+  c3_c* dir_c = 0;
+  c3_w  len_w = strlen(bin_c);
+
+  //  no args, argv[0] == $pier/.run
+  //
+  if (  (U3_BIN_ALIAS_LEN <= len_w)
+     && (0 == strcmp(bin_c + (len_w - U3_BIN_ALIAS_LEN), U3_BIN_ALIAS)) )
+  {
+    bin_c = strdup(bin_c); // dirname can modify
+    dir_c = _main_repath(dirname(bin_c));
+    c3_free(bin_c);
+  }
+
+  return dir_c;
+}
+
+/* _main_getopt(): extract option map from command line.
+*/
+static u3_noun
+_main_getopt(c3_i argc, c3_c** argv)
+{
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
 
   static struct option lop_u[] = {
     { "arvo",                required_argument, NULL, 'A' },
@@ -168,7 +196,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "ames-port",           required_argument, NULL, 'p' },
     { "http-port",           required_argument, NULL, c3__http },
     { "https-port",          required_argument, NULL, c3__htls },
-    { "next",                no_argument,       NULL, c3__next },
     { "no-conn",             no_argument,       NULL, c3__noco },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
@@ -291,10 +318,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         } else u3_Host.ops_u.pes_s = arg_w;
         break;
       }
-      case c3__next: {
-        u3_Host.ops_u.nex = c3y;
-        break;
-      }
       case c3__noco: {
         u3_Host.ops_u.con = c3n;
         break;
@@ -354,23 +377,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     if ( u3_Host.ops_u.who_c != 0 ) {
       u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
     }
-    else {
-      c3_w len_w = strlen(argv[0]);
-
-      //  no args, argv[0] == $pier/.run
-      //
-      if (  (U3_BIN_ALIAS_LEN <= len_w)
-         && (0 == strcmp(argv[0] + (len_w - U3_BIN_ALIAS_LEN), U3_BIN_ALIAS)) )
-      {
-        c3_c* bin_c = strdup(argv[0]);
-        u3_Host.dir_c = _main_repath(dirname(bin_c));
-        c3_free(bin_c);
-      }
-      //  no args, invalid command
-      //
-      else {
-        return c3n;
-      }
+    //  no trailing positional arg, argv[0] != $pier/.run, invalid command
+    //
+    else  if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+      return c3n;
     }
   }
   else {
@@ -486,11 +496,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  if ( u3_Host.ops_u.nuu == c3y && u3_Host.ops_u.nex == c3y ) {
-    fprintf(stderr, "upgrades cannot be performed during boot\n");
-    return c3n;
-  }
-
   return c3y;
 }
 
@@ -566,6 +571,7 @@ _cw_usage(c3_c* s)
     "  %s info <pier>               print pier info:\n"
     "  %s meld <pier>               deduplicate snapshot:\n"
     "  %s pack <pier>               defragment snapshot:\n"
+    "  %s next <pier>               request upgrade:\n"
     "  %s queu <pier> <at-event>    cue state:\n"
     "\n  run as a 'serf':\n"
     "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
@@ -573,7 +579,7 @@ _cw_usage(c3_c* s)
     " <ctrlc-handle>"
 #endif
     "\n",
-    s, s, s, s, s, s, s);
+    s, s, s, s, s, s, s, s);
 }
 
 /* u3_ve_usage(): print usage and exit.
@@ -1202,6 +1208,32 @@ _cw_meld(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
+/* _cw_next(); request upgrade
+*/
+static void
+_cw_next(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3_Host.nex_o = c3y;
+}
+
 /* _cw_pack(); compact memory, save, and exit.
 */
 static void
@@ -1232,6 +1264,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //        [?(%grab %mass) dir=@t]                       ::  gc
   //        [%info dir=@t]                                ::  print
   //        [%meld dir=@t]                                ::  deduplicate
+  //        [?(%next %upgrade) dir=@t]                    ::  upgrade
   //        [%pack dir=@t]                                ::  defragment
   //        [%queu dir=@t eve=@ud]                        ::  cue state
   //    ::                                                ::    ipc:
@@ -1241,25 +1274,31 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //    NB: don't print to anything other than stderr;
   //    other streams may be used for ipc.
   //
-  if ( (2 < argc) && 4 == strlen(argv[1]) ) {
-    c3_m mot_m;
-    {
-      c3_c* s = argv[1]; mot_m = c3_s4(s[0], s[1], s[2], s[3]);
+  c3_m mot_m = 0;
+
+  if ( 2 <= argc ) {
+    if ( 4 == strlen(argv[1]) ) {
+      c3_c* s = argv[1];
+      mot_m = c3_s4(s[0], s[1], s[2], s[3]);
     }
-
-    switch ( mot_m ) {
-      case c3__cram: _cw_cram(argc, argv); return 1;
-
-      case c3__mass:
-      case c3__grab: _cw_grab(argc, argv); return 1;
-
-      case c3__info: _cw_info(argc, argv); return 1;
-      case c3__meld: _cw_meld(argc, argv); return 1;
-      case c3__pack: _cw_pack(argc, argv); return 1;
-      case c3__queu: _cw_queu(argc, argv); return 1;
-
-      case c3__serf: _cw_serf_commence(argc, argv); return 1;
+    else if ( 0 == strcmp(argv[1], "upgrade") ) {
+      mot_m = c3__next;
     }
+  }
+
+  switch ( mot_m ) {
+    case c3__cram: _cw_cram(argc, argv); return 1;
+
+    case c3__mass:
+    case c3__grab: _cw_grab(argc, argv); return 1;
+
+    case c3__info: _cw_info(argc, argv); return 1;
+    case c3__meld: _cw_meld(argc, argv); return 1;
+    case c3__next: _cw_next(argc, argv); return 2; // continue on
+    case c3__pack: _cw_pack(argc, argv); return 1;
+    case c3__queu: _cw_queu(argc, argv); return 1;
+
+    case c3__serf: _cw_serf_commence(argc, argv); return 1;
   }
 
   return 0;
@@ -1274,16 +1313,32 @@ main(c3_i   argc,
     exit(1);
   }
 
+  _main_init();
+
   c3_c* bin_c = strdup(argv[0]);
 
-  //  Parse options.
+  //  parse for subcommands
   //
-  if ( _cw_utils(argc, argv) ) {
-    return 0;
-  }
-  else if ( c3n == _main_getopt(argc, argv) ) {
-    u3_ve_usage(argc, argv);
-    return 1;
+  switch ( _cw_utils(argc, argv) ) {
+    default: c3_assert(0);
+
+    //  no matching subcommand, parse arguments
+    //
+    case 0: {
+      if ( c3n == _main_getopt(argc, argv) ) {
+        u3_ve_usage(argc, argv);
+        return 1;
+      }
+    } break;
+
+    //  ran subcommand
+    case 1: {
+      return 0;
+    }
+
+    //  found subcommand, continue
+    //
+    case 2: break;
   }
 
   {

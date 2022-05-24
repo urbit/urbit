@@ -1415,13 +1415,13 @@ u3_king_done(void)
 
   //  get next binary
   //
-  if ( c3y == u3_Host.ops_u.nex ) {
+  if ( c3y == u3_Host.nex_o ) {
     c3_c* pac_c;
     c3_c* ver_c;
 
     //  hack to ensure we only try once
     //
-    u3_Host.ops_u.nex = c3n;
+    u3_Host.nex_o = c3n;
 
     pac_c = _king_get_pace();
 
@@ -1437,13 +1437,13 @@ u3_king_done(void)
       case 0: {
         u3l_log("vere: next (%%%s): %s\n", pac_c, ver_c);
         _king_do_upgrade(pac_c, ver_c);
+        c3_free(ver_c);
       } break;
 
       default: c3_assert(0);
     }
 
     c3_free(pac_c);
-    c3_free(ver_c);
   }
 
   //  copy binary into pier on boot
