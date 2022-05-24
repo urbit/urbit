@@ -1448,6 +1448,9 @@ u3_king_done(void)
 
     c3_free(pac_c);
   }
+  else if ( c3y == u3_Host.pep_o ) {
+    u3l_log("vere: ready for upgrade\n");
+  }
 
   //  copy binary into pier on boot
   //

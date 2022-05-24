@@ -913,6 +913,7 @@
 #   define c3__post   c3_s4('p','o','s','t')
 #   define c3__pray   c3_s4('p','r','a','y')
 #   define c3__prec   c3_s4('p','r','e','c')
+#   define c3__prep   c3_s4('p','r','e','p')
 #   define c3__pret   c3_s4('p','r','e','t')
 #   define c3__prex   c3_s4('p','r','e','x')
 #   define c3__pril   c3_s4('p','r','i','l')

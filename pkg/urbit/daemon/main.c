@@ -113,6 +113,7 @@ static void
 _main_init(void)
 {
   u3_Host.nex_o = c3n;
+  u3_Host.pep_o = c3n;
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.dem = c3n;
@@ -576,6 +577,7 @@ _cw_usage(c3_c* s)
     "  %s info <pier>               print pier info:\n"
     "  %s meld <pier>               deduplicate snapshot:\n"
     "  %s pack <pier>               defragment snapshot:\n"
+    "  %s prep <pier>               prepare for upgrade:\n"
     "  %s next <pier>               request upgrade:\n"
     "  %s queu <pier> <at-event>    cue state:\n"
     "\n  run as a 'serf':\n"
@@ -584,7 +586,7 @@ _cw_usage(c3_c* s)
     " <ctrlc-handle>"
 #endif
     "\n",
-    s, s, s, s, s, s, s, s);
+    s, s, s, s, s, s, s, s, s);
 }
 
 /* u3_ve_usage(): print usage and exit.
@@ -1236,6 +1238,7 @@ _cw_next(c3_i argc, c3_c* argv[])
     } break;
   }
 
+  u3_Host.pep_o = c3y;
   u3_Host.nex_o = c3y;
 }
 
@@ -1257,6 +1260,32 @@ _cw_pack(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
+/* _cw_prep(); prepare for upgrade
+*/
+static void
+_cw_prep(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3_Host.pep_o = c3y;
+}
+
 /* _cw_utils(): "worker" utilities and "serf" entrypoint
 */
 static c3_i
@@ -1271,6 +1300,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //        [%meld dir=@t]                                ::  deduplicate
   //        [?(%next %upgrade) dir=@t]                    ::  upgrade
   //        [%pack dir=@t]                                ::  defragment
+  //        [%prep dir=@t]                                ::  prep upgrade
   //        [%queu dir=@t eve=@ud]                        ::  cue state
   //    ::                                                ::    ipc:
   //        [%serf dir=@t key=@t wag=@t hap=@ud eve=@ud]  ::  compute
@@ -1301,6 +1331,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__meld: _cw_meld(argc, argv); return 1;
     case c3__next: _cw_next(argc, argv); return 2; // continue on
     case c3__pack: _cw_pack(argc, argv); return 1;
+    case c3__prep: _cw_prep(argc, argv); return 2; // continue on
     case c3__queu: _cw_queu(argc, argv); return 1;
 
     case c3__serf: _cw_serf_commence(argc, argv); return 1;

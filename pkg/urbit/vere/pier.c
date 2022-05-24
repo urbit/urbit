@@ -1049,7 +1049,11 @@ _pier_play(u3_play* pay_u)
     else if ( pay_u->eve_d == log_u->dun_d ) {
       u3_lord_save(pir_u->god_u);
 
-      if ( c3y == u3_Host.nex_o ) {
+      //  early exit, preparing for upgrade
+      //
+      //    XX check kelvins?
+      //
+      if ( c3y == u3_Host.pep_o ) {
         u3_pier_exit(pir_u);
       }
       else {
@@ -1436,7 +1440,11 @@ _pier_on_lord_live(void* ptr_v)
       _pier_play_init(pir_u, eve_d);
     }
     else {
-      if ( c3y == u3_Host.nex_o ) {
+      //  early exit, preparing for upgrade
+      //
+      //    XX check kelvins?
+      //
+      if ( c3y == u3_Host.pep_o ) {
         u3_pier_exit(pir_u);
       }
       else {
