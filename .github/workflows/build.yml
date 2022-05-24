@@ -169,6 +169,17 @@ jobs:
           curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}'
           http://localhost:12321
 
+      - name: confirm binary is mostly static
+        run: |
+          if [ -z "$(ldd build/urbit | grep -vi "windows/system32")"]; then
+            echo "it's mostly static"
+            exit 0
+          else
+            echo "dynamic links found:"
+            ldd build/urbit
+            exit 1
+          fi
+
       - uses: actions/setup-python@v2
         if: env.DO_UPLOAD == 'true'
         with:
