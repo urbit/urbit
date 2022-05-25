@@ -3268,7 +3268,9 @@
       ^-  lane:ames
       =/  =peer-state
         (got-peer-state ship)
-      lane:(need route.peer-state)
+      ?~  route.peer-state
+        &+(snag 0 (saxo:title our now ship))
+      lane.u.route.peer-state
     --
   --
 ::  +make-message-pump: constructor for |message-pump
