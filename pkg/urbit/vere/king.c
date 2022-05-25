@@ -1089,7 +1089,7 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   c3_c* bin_c;
   c3_c* url_c;
   FILE* fil_u;
-  c3_i  ret_i;
+  c3_i  fid_i, ret_i;
 
   if ( _king_make_pace(pac_c) ) {
     return -1; // XX
@@ -1101,12 +1101,19 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
                            u3_Host.dir_c, pac_c, ver_c, arc_c);
   c3_assert( ret_i > 0 );
 
-  fil_u = c3_fopen(bin_c, "wb");
-
-  if ( !fil_u ) {
-    u3l_log("unable to open %s: %s\r\n", bin_c, strerror(errno));
-    c3_free(bin_c);
-    return -1;
+  if (   (-1 == (fid_i = open(bin_c, O_WRONLY | O_CREAT | O_EXCL, 0755)))
+     || !(fil_u = fdopen(fid_i, "wb")) )
+  {
+    if ( EEXIST == errno ) {
+      u3l_log("already installed\n");
+      c3_free(bin_c);
+      return 0;
+    }
+    else {
+      u3l_log("unable to open %s: %s\r\n", bin_c, strerror(errno));
+      c3_free(bin_c);
+      return -1;
+    }
   }
 
   ret_i = asprintf(&url_c, "%s/%s/%s/vere-v%s-%s",
@@ -1123,28 +1130,14 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
 
   //  XX sync unnecessary here?
   //
-  {
-    c3_i fid_i = fileno(fil_u);
-    ret_i = c3_sync(fid_i);
-
-    if ( ret_i ) {
-      fprintf(stderr, "vere: sync %s failed: %s\n", bin_c, strerror(errno));
-      c3_free(bin_c);
-      fclose(fil_u);
-      return -1;
-    }
-
-    fclose(fil_u);
-  }
-
-  ret_i = chmod(bin_c, 0755);
-
-  if ( ret_i ) {
-    fprintf(stderr, "vere: chmod %s failed: %s\n", bin_c, strerror(errno));
-    c3_free(url_c);
+  if ( fflush(fil_u) || c3_sync(fid_i) ) {
+    fprintf(stderr, "vere: sync %s failed: %s\n", bin_c, strerror(errno));
     c3_free(bin_c);
+    fclose(fil_u);
     return -1;
   }
+
+  fclose(fil_u);
 
   //  XX set via cli option
   //
