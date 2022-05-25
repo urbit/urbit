@@ -1193,8 +1193,8 @@
   +$  symmetric-key  @uwsymmetrickey
   ::
   +$  hoot           @uxhoot                            ::  request packet
-  +$  purr           @uxpurr                            ::  response packet
-  +$  song           (list purr)                        ::  full response
+  +$  meow           @uxmeow                            ::  response fragment
+  +$  hunk           [lop=@ len=@]                      ::  range specifier
   ::
   :: +|  %kinetics
   ::  $dyad: pair of sender and receiver ships
@@ -1304,9 +1304,9 @@
     ==
   +$  have
     $:  fra=@ud
-        rawr
+        meow
     ==
-  +$  rawr  ::  response packet  ::TODO  meow
+  +$  meow  ::  response packet
     $:  sig=@
         siz=@ud
         byts

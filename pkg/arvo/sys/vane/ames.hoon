@@ -272,15 +272,15 @@
 ::
 ++  decode-response-packet
   |=  =purr
-  =;  =rawr
-    ~?  !=(wid.rawr (met 3 dat.rawr))  [%fine %unexpected-dat-size]
-    rawr
+  =;  =meow
+    ~?  !=(wid.meow (met 3 dat.meow))  [%fine %unexpected-dat-size]
+    meow
   :*  sig=(cut 3 [0 64] purr)
       siz=(cut 3 [64 4] purr)
       wid=(cut 3 [68 2] purr)
       dat=(rsh 3^70 purr)
   ==
-++  response-size  13  ::  1kb 
+++  response-size  13  ::  1kb
 ::
 ++  decode-response-msg
   |=  [total=@ud hav=(list have)]
@@ -1000,7 +1000,7 @@
   ++  ship-state-6-to-7
     |=  old=ship-state-6
     ^-  ship-state
-    ?:  ?=(%alien -.old)  
+    ?:  ?=(%alien -.old)
       old(heeds [heeds.old ~ ~])
     old(heeds [heeds.old *scry-state])
   ::
@@ -1083,6 +1083,7 @@
   ::  /ax/fine/message/[path/...]    song
   ::
   ?.  ?=(%x ren)  ~
+  =>  .(tyl `(pole knot)`tyl)
   ?+    tyl  ~
       [%protocol %version ~]
     ``noun+!>(protocol-version)
@@ -1092,11 +1093,11 @@
     !>  ^-  (map ship ?(%alien %known))
     (~(run by peers.ames-state) head)
   ::
-      [%peers @ *]
-    =/  who  (slaw %p i.t.tyl)
+      [%peers her=@ req=*]
+    =/  who  (slaw %p her)
     ?~  who  [~ ~]
     =/  peer  (~(get by peers.ames-state) u.who)
-    ?+    t.t.tyl  [~ ~]
+    ?+    req  [~ ~]
         ~
       ?~  peer
         [~ ~]
@@ -1134,8 +1135,8 @@
       $(peer next)
     ==
   ::
-      [%bones @ ~]
-    =/  who  (slaw %p i.t.tyl)
+      [%bones her=@ ~]
+    =/  who  (slaw %p her)
     ?~  who  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
@@ -1144,10 +1145,10 @@
       [snd=~(key by snd) rcv=~(key by rcv)]
     ``noun+!>(res)
   ::
-      [%snd-bones @ @ ~]
-    =/  who  (slaw %p i.t.tyl)
+      [%snd-bones her=@ bon=@ ~]
+    =/  who  (slaw %p her)
     ?~  who  [~ ~]
-    =/  ost  (slaw %ud i.t.t.tyl)
+    =/  ost  (slaw %ud bon)
     ?~  ost  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
@@ -1157,13 +1158,12 @@
       u.mps
     ``noun+!>(!>(res))
   ::
-      [%fine %message @ *]
+      [%fine %hunk lop=@t len=@t pax=^]
     ::TODO  separate endpoint for the full message (instead of packet list)
-    ::  t.t.tyl is expected to be a scry path of the shape /vc/desk/rev/etc,
+    ::  .pax is expected to be a scry path of the shape /vc/desk/rev/etc,
     ::  so we need to give it the right shape
     ::
-    =*  path  t.t.tyl
-    ?~  blk=(de-path-soft:balk path)  ~
+    ?~  blk=(de-pax-soft:balk pax)  ~
     =+  nom=(en-roof:balk u.blk)
     ::  we only support scrying into clay,
     ::  and only if the data is fully public.
@@ -1175,14 +1175,14 @@
     =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
     ?.  =([%black ~ ~] rul.r.per)  ~&  %denied-lol  ~
     =+  res=(rof lyc nom)
+    =/  =hunk  [(slav %ud lop) (slav %ud len)]
     ::TODO  suggests we need to factor differently
-    =+  ven=(per-event [now 0v0 rof] *duct ames-state)
+    =/  fin  fine:(per-event [now 0v0 rof] *duct ames-state)
     ?-  res
       ~        ~
-      [~ ~]    ``noun+!>((encode-response:fine:ven path ~))
-      [~ ~ *]  ``noun+!>((encode-response:fine:ven path [p q.q]:u.u.res))
+      [~ ~]    ``noun+!>((encode-hunk:fin pax hunk ~))
+      [~ ~ *]  ``noun+!>((encode-hunk:fin pax hunk [p q.q]:u.u.res))
     ==
-  ==
 --
 ::  |per-event: inner event-handling core
 ::
@@ -2521,7 +2521,7 @@
           ::
           ++  pe-abet
             ^+  event-core
-            =.  peers.ames-state  
+            =.  peers.ames-state
               (~(put by peers.ames-state) ship known/peer)
             event-core
           ++  pe-lane  (get-lane ship)
@@ -2529,12 +2529,9 @@
             |=  [=path =^duct]
             ?:  (~(has by order.scry) path)
               ke-abet:(ke-sub:(ke-abed:keen-core path) duct)
-            =/  keen-id=@ud  seq.scry
-            =.  seq.scry  +(seq.scry)
-            =.  order.scry
-              (~(put by order.scry) path keen-id)
-            =|  =keen-state
-            =.  keens.scry  (put:orm keens.scry keen-id keen-state)
+            =^  keen-id=@ud  seq.scry  [seq.scry +(seq.scry)]
+            =.  order.scry  (~(put by order.scry) path keen-id)
+            =.  keens.scry  (put:orm keens.scry keen-id *keen-state)
             ke-abet:(ke-start:(ke-abed:keen-core path) duct)
           ::
           ++  pe-pine
@@ -2612,7 +2609,7 @@
                     keen=keen-state
                 ==
             ++  ke-core  .
-            ++  ke-abet  
+            ++  ke-abet
               ^+  pe-core
               =/  gone=?
                 =,  keen
@@ -2625,13 +2622,13 @@
               ?:  gone
                 ke-abet-gone
               =.  ke-core  ke-set-wake
-              =.  keens.scry  
+              =.  keens.scry
                 (put:orm keens.scry keen-id keen)
               pe-core
             ::
             ++  ke-show
               =,  keen
-              :*  nex=(lent nex) 
+              :*  nex=(lent nex)
                   hav=(lent hav)
                   num-fragments=num-fragments
                   num-received=num-received
@@ -2648,7 +2645,7 @@
                 (~(del by order.scry) path)
               pe-core
             ::
-            ++  ke-abed 
+            ++  ke-abed
               |=  p=^path
               ~|  no-keen-for-path/p
               =.  keen-id  (~(got by order.scry) p)
@@ -2658,7 +2655,7 @@
               |=  id=@ud
               %-  ke-abed
               ~|  no-path-for-id/id
-              %-  need 
+              %-  need
               ^-  (unit ^path)
               %-  ~(rep by order.scry)
               |=  [[p=^path i=@ud] out=(unit ^path)]
@@ -2679,7 +2676,7 @@
           ::
             ++  ke-on-ack
               =|  marked=(list want)
-              |=  fra=@ud 
+              |=  fra=@ud
               ^-  [? _ke-core]
               =;  [[found=? cor=_ke-core] wan=(pha want)]
                 ?.  found
@@ -2734,18 +2731,18 @@
               $(listeners t.listeners)
             ::
             ++  ke-first-rcv
-              |=  =rawr
+              |=  =meow
               ^+  ke-core
               =-  ke-core(keen -)
               ::
               =/  paz=(list want)
-                %+  turn  (gulf 1 siz.rawr)
+                %+  turn  (gulf 1 siz.meow)
                 |=  fra=@ud
                 ^-  want
                 [fra (ke-encode-req fra) now 0 0]
               ::
               %_  keen
-                num-fragments  siz.rawr
+                num-fragments  siz.meow
                 nex  (tail paz)
               ==
             ::  +ke-continue: send packets according to normal congestion flow
@@ -2801,28 +2798,28 @@
             ++  ke-rcv
               |=  [fra=@ud =purr =lane:ames]
               ^+  ke-core
-              =/  =rawr          (decode-response-packet purr)
+              =/  =meow          (decode-response-packet purr)
               =/  og  ke-core
               =.  pe-core  (pe-update-qos %live last-contact=now)
               ::  handle empty
-              ?:  =(0 siz.rawr)
-                ?>  =(~ dat.rawr)
-                (ke-done sig.rawr ~)
+              ?:  =(0 siz.meow)
+                ?>  =(~ dat.meow)
+                (ke-done sig.meow ~)
               ::  update congestion, or fill details
               ::
               =?  ke-core  =(0 num-fragments.keen)
                 ?>  =(fra 1)
-                (ke-first-rcv rawr)
+                (ke-first-rcv meow)
               ::
-              ~|  failed-signature/fra^`@ux`sig.rawr
+              ~|  failed-signature/fra^`@ux`sig.meow
               ~|  life.peer
-              ?>  (veri-fra:keys ship life.peer ke-full-path fra [dat sig]:rawr)
+              ?>  (veri-fra:keys ship life.peer ke-full-path fra [dat sig]:meow)
               =^  found=?  ke-core
                 (ke-on-ack fra)
               ::
               ?.  found
                 (ke-fast-retransmit:og fra)
-              =/  =have   [fra rawr]
+              =/  =have   [fra meow]
               =.  hav.keen
                 `(list ^have)`[have hav.keen]
               =.  num-received.keen  +(num-received.keen)
@@ -2915,7 +2912,7 @@
           ?>  =(%c van.blk)
           =.  car.blk  %w
           =.  cas.blk  da+now
-          =.  spr.blk  
+          =.  spr.blk
             ?>  ?=(^ spr.blk)
             ^-  path
             ~[i.spr.blk]
@@ -2953,9 +2950,11 @@
             =+  !<(=cass:clay q.u.u.cag)
             (emit duct %give %boon `*`ud.cass)
           ==
+        ::
         ++  on-keen
           |=  [=ship =path]
           ^+  event-core
+          =+  ~:(spit path)  ::  assert length
           =/  peer-core  (pe-abed:fine-peer ship)
           ?^  peer-core  pe-abet:(pe-keen:u.peer-core path duct)
           %+  enqueue-alien-todo  ship
@@ -2969,7 +2968,7 @@
             ~|  [%fine %invalid-namespace-path path]
             (need (de-omen path))
           =/  peer-core  (pe-abed:fine-peer p.bem.omen)
-          ?~  peer-core  
+          ?~  peer-core
             ~|(%no-ship-for-yawn !!)
           pe-abet:(pe-yawn:u.peer-core path)
         ::
@@ -3013,7 +3012,7 @@
           num=@ud
       ==
     ::
-    +$  rawr  ::  response packet  ::TODO  meow
+    +$  meow  ::  response packet
       $:  sig=@
           siz=@ud
           byts
@@ -3024,31 +3023,50 @@
           dat=$@(~ (cask))
       ==
     ++  orm  ((on @ud keen-state) lte)
+    ::  +gum: glue together a list of $byts into one
+    ::TODO: move to hoon.hoon
+    ::
+    ++  gum
+      ~/  %gum
+      |=  biz=(list byts)
+      ^-  byts
+      :-  (roll biz |=([[wid=@ *] acc=@] (add a acc)))
+      (can 3 (turn biz tail))
     ::
     ++  spit
       |=  =path
       ^-  [pat=@t wid=@ud]
       =+  pat=(spat path)
       =+  wid=(met 3 pat)
-      ?>  (lte wid 384)  ::TODO  check when we handle %keen, in addition to here
+      ?>  (lte wid 384)
       [pat wid]
     ::
     ++  request-body
       |=  [=path num=@ud]
-      ::NOTE  path is expected to be a namespace path without the ship
       ^-  byts
       ?>  (lth num (bex 32))
       =+  (spit path)
-      :-  :(add 4 2 wid)
-      %+  can  3
+      %-  gum
       :~  4^num       ::  fragment number
           2^wid       ::  path size
           wid^`@`pat  ::  namespace path
       ==
     ::
+    ++  frag-body
+      |=  [=path mes=@ num=@ud]
+      ^-  @uxmeow
+      =/  tot  (met 13 mes)
+      =/  fra  (cut 13 [num 1] mes)
+      =/  wid  (met 3 fra)
+      %+  can  3
+      :~  64^(sign-fra:keys path num fra)
+          4^tot    ::  number of fragments
+          2^wid    ::  response data fragment size in bytes
+          wid^fra  ::  response data fragment
+      ==
+    ::
     ++  encode-request
       |=  [=ship =path num=@ud]
-      ::NOTE  path is expected to be a namespace path without the ship
       ^-  hoot  ^-  @
       =+  bod=(request-body path num)
       =+  sig=64^(sign:keys dat.bod)
@@ -3058,47 +3076,20 @@
         [our ship]
       [(mod life.ames-state 16) (mod (lyfe:keys ship) 16) ~ syn]
     ::
-    ++  encode-response  ::TODO  unit tests
-      |=  [=path data=$@(~ (cask))]
-      ^-  song
-      ::  prepend request descriptions to each response packet
-      ::
-      =;  pacs=(list @ux)
-        %-  head
-        %^  spin  pacs  1
-        |=  [pac=@ux num=@ud]
-        ^-  [purr _num]
-        :_  +(num)
-        ^-  @ux
-        ::NOTE  we stub out the receiver & origin details,
-        ::      runtime should replace them as appropriate.
-        (encode-packet | [our ~zod] (mod life.ames-state 16) 0b0 ~ pac)
-      ::  prepend a signature and split the data into 1024-byte fragments
-      ::
-      =/  frag=(list @)
+    ++  encode-hunk  ::TODO  unit tests
+      |=  [=path =hunk data=$@(~ (cask))]
+      ^-  (list @uxmeow)
+      =/  mes=@
         =/  sig=@  (full:keys path data)
-        ?~  data  [sig]~
-        %+  rip  response-size  ::NOTE  1024 bytes
-        (cat 9 sig (jam data))  ::TODO  should include life
-      ::  sign & packetize the fragments
+        ?~  data  sig
+        (cat 9 sig (jam data))
       ::
-      %-  head
-      %^  spin  frag  1
-      |=  [dat=@ num=@ud]
-      :_  +(num)
-      ^-  @ux
-      =/  req=byts  (request-body path num)
-      =/  bod=byts
-        =/  wid=@ud  (met 3 dat)
-        :-  :(add 4 2 wid)
-        %+  can  3
-        :~  4^(lent frag)  ::  number of fragments
-            2^wid          ::  response data fragment size in bytes
-            wid^dat        ::  response data fragment
-        ==
-      =/  sig=byts
-        64^(sign-fra:keys path num dat)
-      (can 3 req sig bod ~)
+      =/  top  (min (met 13 mes) (add [lop len]:hunk))
+      =/  num  lop.hunk
+      =|  res=(list @uxmeow)
+      |-  ^+  res
+      ?:  =(num top)  (flop res)
+      $(num +(num), res :_(res (frag-body path mes num)))
     ::
     ++  keys
       |%
