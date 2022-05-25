@@ -1495,6 +1495,10 @@ u3_king_done(void)
     u3_term_log_exit();
     fflush(stdout);
   }
+
+  //  XX remove move
+  //
+  exit(0);
 }
 
 /* u3_king_exit(): shutdown gracefully
