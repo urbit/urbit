@@ -71,11 +71,16 @@ env:
   DO_UPLOAD: >-
     ${{
     inputs.upload ||
+    (github.ref_type == 'tag' && startsWith(github.ref_name, 'urbit-rc-v')) ||
     (github.ref_name == 'next/vere' && github.ref_type == 'branch')
     }}
   UPLOAD_BASE: bootstrap.urbit.org/vere
   # make configureable for (pre-)release builds
-  VERE_PACE: often
+  VERE_PACE: >-
+    ${{
+    (github.ref_type == 'tag' && startsWith(github.ref_name, 'urbit-rc-v')) &&
+    'soon' || 'often'
+    }}
 
 jobs:
   urbit:
@@ -152,9 +157,12 @@ jobs:
       - name: upload binary to bootstrap.urbit.org
         if: env.DO_UPLOAD == 'true'
         run: |
-          # XX use for (pre-)release builds
-          # version="$(cat ./pkg/urbit/version)"
-          version="${GITHUB_SHA:0:9}"
+          if [ "once" -ne "$VERE_PACE" ]; then
+            version="$(cat ./pkg/urbit/version)"
+          else
+            version="${GITHUB_SHA:0:9}"
+          fi
+
           system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
           system=${system:1:${#system}-2}
           target="gs://${UPLOAD_BASE}/${VERE_PACE}/${version}/vere-v${version}-${system}"
@@ -231,9 +239,12 @@ jobs:
           CLOUDSDK_PYTHON: ${{env.pythonLocation}}\python.exe
         shell: bash
         run: |
-          # XX use for (pre-)release builds
-          # version="$(cat ./version)"
-          version="${GITHUB_SHA:0:9}"
+          if [ "once" -ne "$VERE_PACE" ]; then
+            version="$(cat ./pkg/urbit/version)"
+          else
+            version="${GITHUB_SHA:0:9}"
+          fi
+
           system="x86_64-windows"
           target="gs://${UPLOAD_BASE}/${VERE_PACE}/${version}/vere-v${version}-${system}.exe"
 
@@ -263,8 +274,15 @@ jobs:
       - name: update latest deployed version
         if: env.DO_UPLOAD == 'true'
         run: |
+          if [ "once" -ne "$VERE_PACE" ]; then
+            version="$(cat ./pkg/urbit/version)"
+          else
+            version="${GITHUB_SHA:0:9}"
+          fi
+
           target="gs://${UPLOAD_BASE}/${VERE_PACE}/last"
-          echo -n "${GITHUB_SHA:0:9}" > ./last-version
+
+          echo -n $version > ./last-version
           gsutil cp ./last-version "$target"
           exitcode=$?
 
