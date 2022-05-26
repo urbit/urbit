@@ -241,7 +241,7 @@ jobs:
         shell: bash
         run: |
           if [ "once" != "$VERE_PACE" ]; then
-            version="$(cat ./pkg/urbit/version)"
+            version="$(cat ./version)"
           else
             version="${GITHUB_SHA:0:9}"
           fi
