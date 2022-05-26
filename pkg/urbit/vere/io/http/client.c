@@ -101,6 +101,13 @@ _cttp_bod_from_hed(u3_hhed* hed_u)
   return bod_u;
 }
 
+/* _cttp_bods_to_octs: translate body buffer into octet-stream noun.
+*/
+static u3_noun
+_cttp_bods_to_octs(u3_hbod* bod_u)
+{
+}
+
 /* _cttp_cres_fire_body(): attach response body buffer
 */
 static void
@@ -281,6 +288,8 @@ _cttp_creq_free(u3_creq* ceq_u)
   }
 
   c3_free(ceq_u->hot_c);
+  c3_free(ceq_u->ipf_c);
+  c3_free(ceq_u->por_c);
   c3_free(ceq_u->met_c);
   c3_free(ceq_u->url_c);
   c3_free(ceq_u->vec_u);
