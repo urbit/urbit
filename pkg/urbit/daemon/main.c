@@ -147,12 +147,13 @@ static c3_c*
 _main_pier_run(c3_c* bin_c)
 {
   c3_c* dir_c = 0;
-  c3_w  len_w = strlen(bin_c);
+  c3_w  bin_w = strlen(bin_c);
+  c3_w  len_w = strlen(U3_BIN_ALIAS);
 
   //  no args, argv[0] == $pier/.run
   //
-  if (  (U3_BIN_ALIAS_LEN <= len_w)
-     && (0 == strcmp(bin_c + (len_w - U3_BIN_ALIAS_LEN), U3_BIN_ALIAS)) )
+  if (  (len_w <= bin_w)
+     && (0 == strcmp(bin_c + (bin_w - len_w), U3_BIN_ALIAS)) )
   {
     bin_c = strdup(bin_c); // dirname can modify
     dir_c = _main_repath(dirname(bin_c));
