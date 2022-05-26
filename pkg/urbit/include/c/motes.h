@@ -970,7 +970,6 @@
 #   define c3__rsh    c3_s3('r','s','h')
 #   define c3__rulf   c3_s4('r','u','l','f')
 #   define c3__run    c3_s3('r','u','n')
-#   define c3__rush   c3_s4('r','u','s','h')
 #   define c3__safe   c3_s4('s','a','f','e')
 #   define c3__sag    c3_s3('s','a','g')
 #   define c3__sail   c3_s4('s','a','i','l')
