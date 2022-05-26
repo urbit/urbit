@@ -334,11 +334,11 @@ _king_get_pace(void)
   return pat_c;
 }
 
-/* _king_get_next(): get next vere version string, if it exists.
-              return: 0 is success, -1 is no-op (same version), -2 is error
+/* u3_king_next(): get next vere version string, if it exists.
+**         return: 0 is success, -1 is no-op (same version), -2 is error
 */
-static c3_i
-_king_get_next(c3_c* pac_c, c3_c** out_c)
+c3_i
+u3_king_next(c3_c* pac_c, c3_c** out_c)
 {
   c3_c* ver_c;
   c3_c* url_c;
@@ -951,22 +951,6 @@ _king_forall_unlink(void (*pir_f)(u3_pier*))
   }
 }
 
-/* _king_done_cb():
-*/
-static void
-_king_done_cb(uv_handle_t* han_u)
-{
-  if( UV_EBUSY == uv_loop_close(u3L) ) {
-    //  XX uncomment to debug
-    //
-    // fprintf(stderr, "\r\nking: open libuv handles\r\n");
-    // uv_print_all_handles(u3L, stderr);
-    // fprintf(stderr, "\r\nking: force shutdown\r\n");
-
-    uv_stop(u3L);
-  }
-}
-
 /* _king_curl_file(): HTTP GET [url_c], write response body to [fil_u].
 */
 static c3_i
@@ -1074,22 +1058,22 @@ _king_link_run(c3_c* bin_c)
   return 0;
 }
 
-/* _king_get_vere(): get binary for specified arch and version.
+/* u3_king_vere(): download binary as specified.
 */
-static c3_i
-_king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
+c3_i
+u3_king_vere(c3_c* pac_c,  // pace
+             c3_c* ver_c,  // version
+             c3_c* arc_c,  // architecture
+             c3_c* dir_c,  // output directory
+             c3_t  lin_t)  // link to $pier/.run
 {
   c3_c* bin_c;
   c3_c* url_c;
   FILE* fil_u;
   c3_i  fid_i, ret_i;
 
-  if ( _king_make_pace(pac_c) ) {
-    return -1; // XX
-  }
-
-  ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s" U3_BIN_SUFFIX,
-                           u3_Host.dir_c, pac_c, ver_c, arc_c);
+  ret_i = asprintf(&bin_c, "%s/vere-v%s-%s" U3_BIN_SUFFIX,
+                           dir_c, ver_c, arc_c);
   c3_assert( ret_i > 0 );
 
   if (   (-1 == (fid_i = open(bin_c, O_WRONLY | O_CREAT | O_EXCL, 0755)))
@@ -1145,12 +1129,60 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
     }
   }
 
+  u3l_log("vere: saved to %s\n", bin_c);
+
   c3_free(url_c);
   c3_free(bin_c);
 
   return 0;
 }
 
+/* _king_do_upgrade(): get arch-appropriate binary at [ver_c].
+*/
+static void
+_king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
+{
+  c3_c* dir_c;
+  c3_c* arc_c;
+
+#ifdef U3_OS_ARCH
+  arc_c = U3_OS_ARCH;
+#else
+  if ( u3_Host.arc_c ) {
+    arc_c = u3_Host.arc_c;
+  }
+  else {
+    u3l_log("vere: --arch required\r\n");
+    return;
+  }
+#endif
+
+  if ( _king_make_pace(pac_c) ) {
+    u3l_log("vere: unable to make pace (%s) directory in pier\n", pac_c);
+    u3_king_bail();
+    exit(1);
+  }
+
+  {
+    c3_i ret_i = asprintf(&dir_c, "%s/.bin/%s", u3_Host.dir_c, pac_c);
+    c3_assert( ret_i > 0 );
+  }
+
+  //  XX get link option
+  //
+  if ( u3_king_vere(pac_c, ver_c, arc_c, dir_c, 1) ) {
+    u3l_log("vere: upgrade failed\r\n");
+    u3_king_bail();
+    exit(1);
+  }
+
+  c3_free(dir_c);
+  u3l_log("vere: upgrade succeeded\r\n");
+  //  XX print restart instructions
+}
+
+/* _king_read_raw: read (up to) [len_i] from [fid_i] to [buf_y]
+*/
 static ssize_t
 _king_read_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
 {
@@ -1164,6 +1196,8 @@ _king_read_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
   return ret_i;
 }
 
+/* _king_read_raw: write [len_i] from [buf_y] to [fid_i].
+*/
 static c3_i
 _king_write_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
 {
@@ -1365,38 +1399,6 @@ _king_copy_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   return 0;
 }
 
-/* _king_do_upgrade(): get arch-appropriate binary at [ver_c].
-*/
-static void
-_king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
-{
-  c3_c* arc_c;
-
-#ifdef U3_OS_ARCH
-  arc_c = U3_OS_ARCH;
-#else
-  if ( u3_Host.arc_c ) {
-    arc_c = u3_Host.arc_c;
-  }
-  else {
-    u3l_log("vere: arch required\r\n");
-    return;
-  }
-#endif
-
-  //  XX get link option
-  //
-  if ( _king_get_vere(pac_c, ver_c, arc_c, 1) ) {
-    u3l_log("vere: upgrade failed\r\n");
-    u3_king_bail();
-    exit(1);
-  }
-  else {
-    u3l_log("vere: upgrade succeeded\r\n");
-    //  XX print restart instructions
-  }
-}
-
 /* u3_king_dock(): copy binary into pier on boot.
 */
 void
@@ -1421,6 +1423,22 @@ u3_king_dock(c3_c* pac_c)
   }
 }
 
+/* _king_done_cb():
+*/
+static void
+_king_done_cb(uv_handle_t* han_u)
+{
+  if( UV_EBUSY == uv_loop_close(u3L) ) {
+    //  XX uncomment to debug
+    //
+    // fprintf(stderr, "\r\nking: open libuv handles\r\n");
+    // uv_print_all_handles(u3L, stderr);
+    // fprintf(stderr, "\r\nking: force shutdown\r\n");
+
+    uv_stop(u3L);
+  }
+}
+
 /* u3_king_done(): all piers closed. s/b callback
 */
 void
@@ -1440,7 +1458,7 @@ u3_king_done(void)
 
     pac_c = _king_get_pace();
 
-    switch ( _king_get_next(pac_c, &ver_c) ) {
+    switch ( u3_king_next(pac_c, &ver_c) ) {
       case -2: {
         u3l_log("vere: unable to check for next version\n");
       } break;

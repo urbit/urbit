@@ -1439,6 +1439,21 @@
         void
         u3_king_grab(void* ptr_v);
 
+      /* u3_king_next(): get next vere version string, if it exists.
+      **         return: 0 is success, -1 is no-op (same version), -2 is error
+      */
+        c3_i
+        u3_king_next(c3_c* pac_c, c3_c** out_c);
+
+      /* u3_king_vere(): download binary as specified.
+      */
+        c3_i
+        u3_king_vere(c3_c* pac_c,  // pace
+                     c3_c* ver_c,  // version
+                     c3_c* arc_c,  // architecture
+                     c3_c* dir_c,  // output directory
+                     c3_t  lin_t); // link to $pier/.run
+
       /* u3_daemon_init(): platform-specific daemon mode initialization.
       */
         void

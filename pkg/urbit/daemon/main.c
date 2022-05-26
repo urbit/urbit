@@ -607,6 +607,7 @@ _cw_usage(c3_c* bin_c)
     "  %s prep %.*s              prepare for upgrade:\n",
     "  %s next %.*s              request upgrade:\n",
     "  %s queu %.*s<at-event>    cue state:\n",
+    "  %s vere ARGS <output dir>    download binary:\n",
     "\n  run as a 'serf':\n",
     "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
 #ifdef U3_OS_mingw
@@ -1468,6 +1469,119 @@ _cw_prep(c3_i argc, c3_c* argv[])
   u3_Host.pep_o = c3y;
 }
 
+/* _cw_vere(): download vere
+*/
+static void
+_cw_vere(c3_i argc, c3_c* argv[])
+{
+  c3_c* pac_c = "live";
+  c3_c* arc_c = 0;
+  c3_c* ver_c = 0;
+  c3_c* dir_c;
+
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
+
+  static struct option lop_u[] = {
+    { "arch",                required_argument, NULL, 'a' },
+    { "pace",             required_argument, NULL, 'p' },
+    { "version",             required_argument, NULL, 'v' },
+    { NULL, 0, NULL, 0 }
+  };
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "a:p:v:", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 'a': {
+        arc_c = strdup(optarg);
+      } break;
+
+      case 'p': {
+        pac_c = strdup(optarg);
+      } break;
+
+      case 'v': {
+        ver_c = strdup(optarg);
+      } break;
+
+      case '?': {
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "vere"/"fetch-vere"
+  //
+
+  if ( optind + 1 < argc ) {
+    dir_c = argv[optind + 1];
+    optind++;
+  }
+  else {
+    fprintf(stderr, "invalid command, output directory required\r\n");
+    exit(1);
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
+  }
+
+  if ( !arc_c ) {
+#ifdef U3_OS_ARCH
+    arc_c = U3_OS_ARCH;
+#else
+    fprintf(stderr, "unknown architecture, --arch required\r\n");
+    exit(1);
+#endif
+  }
+
+  //  Initialize OpenSSL for client and server
+  //
+  {
+    SSL_library_init();
+    SSL_load_error_strings();
+  }
+
+  //  initialize curl
+  //
+  if ( 0 != curl_global_init(CURL_GLOBAL_DEFAULT) ) {
+    u3l_log("boot: curl initialization failed\r\n");
+    exit(1);
+  }
+
+  _setup_cert_store();
+  u3K.ssl_curl_f = _setup_ssl_curl;
+  u3K.ssl_x509_f = _setup_ssl_x509;
+
+  if ( !ver_c ) {
+    switch ( u3_king_next(pac_c, &ver_c) ) {
+      case -2: {
+        fprintf(stderr, "vere: unable to check for next version\n");
+        exit(1);
+      } break;
+
+      case -1: {
+        fprintf(stderr, "you're already running it!\n");
+        exit(0);
+      } break;
+
+      case 0: {
+        fprintf(stderr, "vere: next (%%%s): %s\n", pac_c, ver_c);
+      } break;
+
+      default: c3_assert(0);
+    }
+  }
+
+
+  if ( u3_king_vere(pac_c, ver_c, arc_c, dir_c, 0) ) {
+    u3l_log("vere: download failed\r\n");
+    exit(1);
+  }
+
+  u3l_log("vere: download succeeded\r\n");
+}
+
 /* _cw_utils(): "worker" utilities and "serf" entrypoint
 */
 static c3_i
@@ -1485,6 +1599,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //        [%pack dir=@t]                                ::  defragment
   //        [%prep dir=@t]                                ::  prep upgrade
   //        [%queu dir=@t eve=@ud]                        ::  cue state
+  //        [?(%vere %fetch-vere) dir=@t]                 ::  download vere
   //    ::                                                ::    ipc:
   //        [%serf dir=@t key=@t wag=@t hap=@ud eve=@ud]  ::  compute
   //    ==
@@ -1502,6 +1617,9 @@ _cw_utils(c3_i argc, c3_c* argv[])
     else if ( 0 == strcmp(argv[1], "upgrade") ) {
       mot_m = c3__next;
     }
+    else if ( 0 == strcmp(argv[1], "fetch-vere") ) {
+      mot_m = c3__vere;
+    }
   }
 
   switch ( mot_m ) {
@@ -1517,6 +1635,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__pack: _cw_pack(argc, argv); return 1;
     case c3__prep: _cw_prep(argc, argv); return 2; // continue on
     case c3__queu: _cw_queu(argc, argv); return 1;
+    case c3__vere: _cw_vere(argc, argv); return 1;
 
     case c3__serf: _cw_serf_commence(argc, argv); return 1;
   }
