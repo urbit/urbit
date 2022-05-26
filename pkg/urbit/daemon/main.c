@@ -990,7 +990,7 @@ _cw_intr_win(c3_c* han_c)
 }
 #endif
 
-/* _cw_serf_commence(); initialize and run serf
+/* _cw_serf_commence(): initialize and run serf
 */
 static void
 _cw_serf_commence(c3_i argc, c3_c* argv[])
@@ -1107,7 +1107,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
-/* _cw_disk_init(); open event log
+/* _cw_disk_init(): open event log
 */
 static u3_disk*
 _cw_disk_init(c3_c* dir_c)
@@ -1151,7 +1151,7 @@ _cw_dock(c3_i argc, c3_c* argv[])
   u3_king_dock(U3_VERE_PACE);
 }
 
-/* _cw_info(); print pier info
+/* _cw_info(): print pier info
 */
 static void
 _cw_info(c3_i argc, c3_c* argv[])
@@ -1188,7 +1188,7 @@ _cw_info(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
-/* _cw_grab(); gc pier.
+/* _cw_grab(): gc pier.
 */
 static void
 _cw_grab(c3_i argc, c3_c* argv[])
@@ -1217,7 +1217,7 @@ _cw_grab(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
-/* _cw_cram(); jam persistent state (rock), and exit.
+/* _cw_cram(): jam persistent state (rock), and exit.
 */
 static void
 _cw_cram(c3_i argc, c3_c* argv[])
@@ -1265,7 +1265,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
-/* _cw_queu(); cue rock, save, and exit.
+/* _cw_queu(): cue rock, save, and exit.
 */
 static void
 _cw_queu(c3_i argc, c3_c* argv[])
@@ -1321,7 +1321,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
   }
 }
 
-/* _cw_uniq(); deduplicate persistent nouns
+/* _cw_uniq(): deduplicate persistent nouns
 */
 static void
 _cw_meld(c3_i argc, c3_c* argv[])
@@ -1410,7 +1410,7 @@ _cw_next(c3_i argc, c3_c* argv[])
   u3_Host.nex_o = c3y;
 }
 
-/* _cw_pack(); compact memory, save, and exit.
+/* _cw_pack(): compact memory, save, and exit.
 */
 static void
 _cw_pack(c3_i argc, c3_c* argv[])
@@ -1443,7 +1443,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
-/* _cw_prep(); prepare for upgrade
+/* _cw_prep(): prepare for upgrade
 */
 static void
 _cw_prep(c3_i argc, c3_c* argv[])
