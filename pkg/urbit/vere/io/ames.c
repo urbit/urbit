@@ -472,10 +472,13 @@ _ames_sift_body(u3_head* hed_u,
                 c3_w     len_w,
                 c3_y*    bod_y)
 {
+  c3_w mod_w, hod_w;
   bod_u->mug_l = u3r_mug_bytes(bod_y, len_w) & 0xfffff;
   bod_u->con_y = c3_calloc(len_w);
   memcpy(bod_u->con_y, bod_y, len_w);
-  return ( bod_u->mug_l == hed_u->mug_l ) ? c3y : c3n;
+  mod_w = bod_u->mug_l & 0xfffff;
+  hod_w = hed_u->mug_l & 0xfffff;
+  return ( mod_w == hod_w ) ? c3y : c3n;
 }
 
 static void
@@ -595,17 +598,24 @@ _fine_etch_response(u3_pact* pac_u)
   pur_w = _fine_purr_size(&pac_u->pur_u);
   pac_u->len_w = 4 + pre_w + pur_w;
   pac_u->hun_y = c3_calloc(pac_u->len_w);
-  cur_w = 0;
 
-  _ames_etch_head(&pac_u->hed_u, pac_u->hun_y + cur_w);
-  cur_w += 4;
+  //  skip the header until we know what the mug should be
+  //
+  cur_w = 4;
 
+  //  write prelude
+  //
   _ames_etch_prel(&pac_u->hed_u, &pac_u->pre_u, pac_u->hun_y + cur_w);
   cur_w += pre_w;
 
+  //  write body
+  //
   _fine_etch_purr(&pac_u->pur_u, pac_u->hun_y + cur_w);
 
-// TODO: fill in mug in header
+  //  calculate mug and write header
+  //
+  pac_u->hed_u.mug_l = u3r_mug_bytes(pac_u->hun_y + 4, pac_u->len_w - 4);
+  _ames_etch_head(&pac_u->hed_u, pac_u->hun_y + cur_w);
 }
 
 /* _lane_scry_path(): format scry path for retrieving a lane
