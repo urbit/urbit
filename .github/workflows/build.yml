@@ -34,6 +34,7 @@ name: build
 
 on:
   push:
+    tags: 'urbit-rc-v*'
     paths:
       - '.github/workflows/build.yml'
       - 'pkg/arvo/**'
