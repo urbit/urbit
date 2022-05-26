@@ -302,7 +302,6 @@ static c3_c*
 _king_get_pace(void)
 {
   struct stat buf_u;
-  c3_y*       hun_y;
   c3_c*       pat_c;
   c3_w red_w, len_w;
   c3_i ret_i, fid_i;
@@ -317,23 +316,18 @@ _king_get_pace(void)
     return strdup("live");
   }
 
+  c3_free(pat_c);
+
   len_w = buf_u.st_size;
-  hun_y = c3_malloc(len_w);
-  red_w = read(fid_i, hun_y, len_w);
+  pat_c = c3_malloc(len_w + 1);
+  red_w = read(fid_i, pat_c, len_w);
+  pat_c[len_w] = 0;
   close(fid_i);
 
   if ( len_w != red_w ) {
     c3_free(pat_c);
-    c3_free(hun_y);
     return strdup("live");
   }
-
-  c3_free(pat_c);
-
-  ret_i = asprintf(&pat_c, "%.*s", len_w, hun_y);
-  c3_assert( ret_i > 0 );
-
-  c3_free(hun_y);
 
   //  XX trim pat_c ?
   //
@@ -341,6 +335,7 @@ _king_get_pace(void)
 }
 
 /* _king_get_next(): get next vere version string, if it exists.
+              return: 0 is success, -1 is no-op (same version), -2 is error
 */
 static c3_i
 _king_get_next(c3_c* pac_c, c3_c** out_c)
