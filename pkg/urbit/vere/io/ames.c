@@ -1,5 +1,5 @@
 /* vere/ames.c
-**
+
 */
 #include "all.h"
 #include "vere/vere.h"
@@ -8,6 +8,7 @@
 #define FINE_PAGE     16384  //  packets per page
 #define FINE_FRAG      1024  //  bytes per fragment packet
 #define FINE_PATH_MAX   384  //  longest allowed scry path
+#define HEAD_SIZE         4  //  header size in bytes
 
 /* u3_fine: fine networking
 */
@@ -118,9 +119,13 @@
     c3_l    mug_l;                      //  checksum
   } u3_body;
 
-#define PACT_AMES 0  //  ames packet
-#define PACT_WAIL 1  //  fine request packet
-#define PACT_PURR 2  //  fine response packet
+/* u3_ptag: packet-type tag
+*/
+  typedef enum _u3_ptag {
+    PACT_AMES = 1,  //  ames packet
+    PACT_WAIL = 2,  //  fine request packet
+    PACT_PURR = 3   //  fine response packet
+  } u3_ptag;
 
 /* u3_pact: ames packet
  *
@@ -133,7 +138,7 @@
     c3_y*            hun_y;             //  packet buffer
     u3_head          hed_u;             //  head of packet
     u3_prel          pre_u;             //  packet prelude
-    c3_y             typ_y;             //  pointer type tag
+    u3_ptag          typ_y;             //  packet type tag
     struct {
       u3_lane        lan_u;             //  destination/origin lane
       c3_y           imp_y;             //  galaxy (optional)
@@ -219,30 +224,36 @@ _ames_panc_free(u3_panc* pan_u)
 static c3_y
 _ames_prel_size(u3_head* hed_u)
 {
-  c3_y hed_y = 4;
   c3_y lif_y = 1;
   c3_y sen_y = 2 << hed_u->sac_y;
   c3_y rec_y = 2 << hed_u->rac_y;
-  c3_y rog_y = ( c3y == hed_u->rel_o )? 6 : 0;
-  return hed_y + lif_y + sen_y + rec_y + rog_y;
+  c3_y rog_y = ( c3y == hed_u->rel_o )? 6 : 0;  //  origin is 6 bytes
+  return lif_y + sen_y + rec_y + rog_y;
 }
 
-static c3_s
+static inline c3_s
 _ames_body_size(u3_body* bod_u)
 {
   return bod_u->con_s;
 }
 
-static c3_s
+static inline c3_s
 _fine_keen_size(u3_keen* ken_u)
 {
-  return 4 + 2 + ken_u->len_s;
+  return (
+    sizeof(ken_u->fra_w) +
+    sizeof(ken_u->len_s) +
+    ken_u->len_s);
 }
 
-static c3_s
+static inline c3_s
 _fine_meow_size(u3_meow* mew_u)
 {
-  return 64 + 4 + 2 + mew_u->siz_s;
+  return (
+    sizeof(mew_u->sig_y) +
+    sizeof(mew_u->num_w) +
+    sizeof(mew_u->siz_s) +
+    mew_u->siz_s);
 }
 
 static c3_s
@@ -253,20 +264,16 @@ _fine_purr_size(u3_purr* pur_u)
   return pur_s + mew_s;
 }
 
-static c3_s
+static inline c3_s
 _ames_sift_short(c3_y buf_y[2])
 {
-  return ((buf_y[0] << 0x0) | (buf_y[1] << 0x8));
+  return (buf_y[1] << 8 | buf_y[0]);
 }
 
-static c3_w
+static inline c3_w
 _ames_sift_word(c3_y buf_y[4])
 {
-  return (
-      (buf_y[0] << 0x0)
-    | (buf_y[1] << 0x8)
-    | (buf_y[2] << 0x10)
-    | (buf_y[3] << 0x18));
+  return (buf_y[3] << 24 | buf_y[2] << 16 | buf_y[1] << 8 | buf_y[0]);
 }
 
 /* _ames_chub_bytes(): c3_y[8] to c3_d
@@ -354,18 +361,26 @@ _ames_sift_prel(u3_head* hed_u,
   c3_y sen_y, rec_y;
   c3_w cur_w = 0;
 
-  pre_u->sic_y = buf_y[cur_w] & 0xf;
-  pre_u->ric_y = buf_y[cur_w] & 0xf0;
+  //  parse life ticks
+  //
+  pre_u->sic_y = buf_y[cur_w]        & 0xf;
+  pre_u->ric_y = (buf_y[cur_w] >> 4) & 0xf;
   cur_w++;
 
+  //  parse sender ship
+  //
   sen_y = 2 << hed_u->sac_y;
   _ames_ship_to_chubs(pre_u->sen_d, sen_y, buf_y + cur_w);
   cur_w += sen_y;
 
+  //  parse receiver ship
+  //
   rec_y = 2 << hed_u->rac_y;
   _ames_ship_to_chubs(pre_u->rec_d, rec_y, buf_y + cur_w);
   cur_w += rec_y;
 
+  //  if packet is relayed, parse 6-byte origin field
+  //
   if ( c3y == hed_u->rel_o ) {
     c3_y rag_y[8] = {0};
     memcpy(rag_y, buf_y + cur_w, 6);
@@ -376,42 +391,38 @@ _ames_sift_prel(u3_head* hed_u,
   }
 }
 
-static c3_o
-_fine_sift_keen(u3_keen* ken_u, c3_w len_y, c3_y* buf_y)
-{
-  ken_u->fra_w = _ames_sift_word(buf_y);
-  ken_u->len_s = _ames_sift_short(buf_y + 4);
-  if ( ken_u->len_s > FINE_PATH_MAX ) {
-    return c3n;
-  }
-
-  ken_u->pat_c = c3_calloc(ken_u->len_s + 1);
-  memcpy(ken_u->pat_c, buf_y + 6, ken_u->len_s);
-  return c3y;
-}
-
-
 /* _fine_sift_wail(): parse request body, returning success
 */
 static c3_o
 _fine_sift_wail(u3_pact* pac_u, c3_w cur_w)
 {
-  c3_w tot_w;
+  c3_w tot_w, exp_w;
   c3_s len_s;
 
-  if ( (cur_w + 64 + 4 + 2) > pac_u->len_w ) {
+  c3_w sig_w = sizeof(pac_u->wal_u.sig_y);
+  c3_w fra_w = sizeof(pac_u->wal_u.ken_u.fra_w);
+  c3_w len_w = sizeof(pac_u->wal_u.ken_u.len_s);
+  exp_w = sig_w + fra_w + len_w;
+
+  if ( cur_w + exp_w > pac_u->len_w ) {
     u3l_log("fine: wail not big enough\n");
     return c3n;
   }
-  memcpy(pac_u->wal_u.sig_y, pac_u->hun_y + cur_w, 64);
-  cur_w += 64;
+  //  parse signature
+  //
+  memcpy(pac_u->wal_u.sig_y, pac_u->hun_y + cur_w, sig_w);
+  cur_w += sig_w;
 
+  //  parse fragment number
+  //
   pac_u->wal_u.ken_u.fra_w = _ames_sift_word(pac_u->hun_y + cur_w);
-  cur_w += 4;
+  cur_w += fra_w;
 
+  //  parse path length field
+  //
   len_s = _ames_sift_short(pac_u->hun_y + cur_w);
   pac_u->wal_u.ken_u.len_s = len_s;
-  cur_w += 2;
+  cur_w += len_w;
 
   if ( len_s > FINE_PATH_MAX ) {
     u3l_log("ames wail len: %u, max %u\n", len_s, FINE_PATH_MAX);
@@ -425,13 +436,15 @@ _fine_sift_wail(u3_pact* pac_u, c3_w cur_w)
     return c3n;
   }
 
+  //  parse request path
+  //
   pac_u->wal_u.ken_u.pat_c = c3_calloc(len_s + 1);
   memcpy(pac_u->wal_u.ken_u.pat_c, pac_u->hun_y + cur_w, len_s);
   pac_u->wal_u.ken_u.pat_c[len_s] = '\0';
   return c3y;
 }
 
-/* _fine_sift_meow(): 
+/* _fine_sift_meow(): parse signed scry response fragment
 */
 static c3_o
 _fine_sift_meow(u3_meow* mew_u, u3_noun mew)
@@ -439,22 +452,36 @@ _fine_sift_meow(u3_meow* mew_u, u3_noun mew)
   c3_o ret_o;
   c3_w len_w = u3r_met(3, mew);
 
-  if ( (len_w < 68) || (len_w > FINE_FRAG + 68) )
+  c3_y sig_w = sizeof(mew_u->sig_y);
+  c3_y num_w = sizeof(mew_u->num_w);
+  c3_y siz_w = sizeof(mew_u->siz_s);
+
+  c3_y mew_w = sig_w + num_w + siz_w;
+
+  if ( (len_w < mew_w) || (len_w > FINE_FRAG + mew_w) )
   {
     ret_o = c3n;
   }
   else {
     c3_w cur_w = 0;
 
-    u3r_bytes(cur_w, 64, mew_u->sig_y, mew);
-    cur_w += 64;
+    //  parse signature
+    //
+    u3r_bytes(cur_w, sig_w, mew_u->sig_y, mew);
+    cur_w += sig_w;
 
-    u3r_bytes(cur_w, 4, (c3_y*)&mew_u->num_w, mew);
-    cur_w += 4;
+    //  parse number of fragments
+    //
+    u3r_bytes(cur_w, num_w, (c3_y*)&mew_u->num_w, mew);
+    cur_w += num_w;
 
-    u3r_bytes(cur_w, 2, (c3_y*)&mew_u->siz_s, mew);
-    cur_w += 2;
+    //  parse data size field
+    //
+    u3r_bytes(cur_w, siz_w, (c3_y*)&mew_u->siz_s, mew);
+    cur_w += siz_w;
 
+    //  parse data payload
+    //
     mew_u->dat_y = c3_calloc(mew_u->siz_s);
     u3r_bytes(cur_w, mew_u->siz_s, mew_u->dat_y, mew);
 
@@ -465,7 +492,7 @@ _fine_sift_meow(u3_meow* mew_u, u3_noun mew)
   return ret_o;
 }
 
-/* _ames_sift_body(): parse packet body.
+/* _ames_sift_body(): parse packet body, returning mug integrity
 */
 static c3_o
 _ames_sift_body(u3_head* hed_u,
@@ -523,17 +550,25 @@ _ames_etch_prel(u3_head* hed_u, u3_prel* pre_u, c3_y* buf_y)
 {
   c3_w cur_w = 0;
 
-  buf_y[0] = (pre_u->sic_y & 0xf) ^ ((pre_u->ric_y & 0xf) << 4);
+  //  write life ticks
+  //
+  buf_y[cur_w] = (pre_u->sic_y & 0xf) ^ ((pre_u->ric_y & 0xf) << 4);
   cur_w++;
 
+  //  write sender ship
+  //
   c3_y sen_y = 2 << hed_u->sac_y;
   _ames_ship_of_chubs(pre_u->sen_d, sen_y, buf_y + cur_w);
   cur_w += sen_y;
 
+  //  write receiver ship
+  //
   c3_y rec_y = 2 << hed_u->rac_y;
   _ames_ship_of_chubs(pre_u->rec_d, rec_y, buf_y + cur_w);
   cur_w += rec_y;
 
+  //  if packet is relayed, write the 6-byte origin field
+  //
   if ( c3y == hed_u->rel_o ) {
     c3_y rag_y[8] = {0};
     _ames_bytes_chub(rag_y, pre_u->rog_d);
@@ -541,34 +576,53 @@ _ames_etch_prel(u3_head* hed_u, u3_prel* pre_u, c3_y* buf_y)
   }
 }
 
+/* _fine_etch_keen(): serialize unsigned scry request
+*/
 static void
 _fine_etch_keen(u3_keen* ken_u, c3_y* buf_y)
 {
   c3_w cur_w = 0;
 
+  //  write fragment number
+  //
   _ames_etch_word(buf_y + cur_w, ken_u->fra_w);
-  cur_w += 4;
+  cur_w += sizeof(ken_u->fra_w);
 
+  //  write path length
+  //
   _ames_etch_short(buf_y + cur_w, ken_u->len_s);
-  cur_w += 2;
+  cur_w += sizeof(ken_u->len_s);
 
+  //  write request path
+  //
   memcpy(buf_y + cur_w, ken_u->pat_c, ken_u->len_s);
 }
 
+/* fine_etch_meow(): serialize signed scry response fragment
+*/
 static void
 _fine_etch_meow(u3_meow* mew_u, c3_y* buf_y)
 {
   c3_w cur_w = 0;
 
-  memcpy(buf_y + cur_w, mew_u->sig_y, 64);
-  cur_w += 64;
+  //  write signature
+  //
+  c3_w sig_w = sizeof(mew_u->sig_y);
+  memcpy(buf_y + cur_w, mew_u->sig_y, sig_w);
+  cur_w += sig_w;
 
+  //  write number of fragments
+  //
   _ames_etch_word(buf_y + cur_w, mew_u->num_w);
-  cur_w += 4;
+  cur_w += sizeof(mew_u->num_w);
 
+  //  write response length field
+  //
   _ames_etch_short(buf_y + cur_w, mew_u->siz_s);
-  cur_w += 2;
+  cur_w += sizeof(mew_u->siz_s);
 
+  //  write response fragment data
+  //
   memcpy(buf_y + cur_w, mew_u->dat_y, mew_u->siz_s);
 }
 
@@ -579,9 +633,12 @@ _fine_etch_purr(u3_purr* pur_u, c3_y* buf_y)
 {
   c3_w cur_w = 0;
 
+  //  write unsigned scry request
+  //
   _fine_etch_keen(&pur_u->ken_u, buf_y + cur_w);
   cur_w += _fine_keen_size(&pur_u->ken_u);
 
+  //  write signed response fragment
   _fine_etch_meow(&pur_u->mew_u, buf_y + cur_w);
 }
 
@@ -594,12 +651,12 @@ _fine_etch_response(u3_pact* pac_u)
 
   pre_w = _ames_prel_size(&pac_u->hed_u);
   pur_w = _fine_purr_size(&pac_u->pur_u);
-  pac_u->len_w = 4 + pre_w + pur_w;
+  pac_u->len_w = HEAD_SIZE + pre_w + pur_w;
   pac_u->hun_y = c3_calloc(pac_u->len_w);
 
   //  skip the header until we know what the mug should be
   //
-  cur_w = 4;
+  cur_w = HEAD_SIZE;
 
   //  write prelude
   //
@@ -612,13 +669,15 @@ _fine_etch_response(u3_pact* pac_u)
 
   //  calculate mug and write header
   //
-  pac_u->hed_u.mug_l = u3r_mug_bytes(pac_u->hun_y + 4, pac_u->len_w - 4);
+  pac_u->hed_u.mug_l = u3r_mug_bytes(pac_u->hun_y + HEAD_SIZE,
+                                     pac_u->len_w - HEAD_SIZE);
   _ames_etch_head(&pac_u->hed_u, pac_u->hun_y + cur_w);
 }
 
 /* _lane_scry_path(): format scry path for retrieving a lane
 */
-static inline u3_noun _lane_scry_path(u3_noun who)
+static inline u3_noun
+_lane_scry_path(u3_noun who)
 {
   return u3nq(u3i_string("peers"),
               u3dc("scot", 'p', who),
@@ -626,7 +685,8 @@ static inline u3_noun _lane_scry_path(u3_noun who)
               u3_nul);
 }
 
-static void _log_prel(u3_prel* pre_u)
+static void
+_log_prel(u3_prel* pre_u)
 {
   u3l_log("-- PRELUDE --\n");
   u3l_log("sender life: %u\n", pre_u->sic_y);
@@ -636,14 +696,14 @@ static void _log_prel(u3_prel* pre_u)
   u3l_log("\n");
 }
 
-static void _log_keen(u3_keen* req_u)
+static void
+_log_keen(u3_keen* req_u)
 {
   u3l_log("--- REQUEST ---\n");
   u3l_log("strlen: %u\n", req_u->len_s);
   u3l_log("path: %s\n", req_u->pat_c);
   u3l_log("frag: %u\n", req_u->fra_w);
   u3l_log("\n");
-  return;
 }
 
 static void
@@ -813,7 +873,7 @@ _ames_serialize_packet(u3_pact* pac_u, c3_o dop_o)
   //  find length of packet with added origin
   c3_w pre_w = _ames_prel_size(&pac_u->hed_u);
   c3_w bod_w = _ames_body_size(&pac_u->bod_u);
-  len_w = 4 + pre_w + bod_w;
+  len_w = HEAD_SIZE + pre_w + bod_w;
 
   //  allocate new packet buffer
   //
@@ -824,7 +884,7 @@ _ames_serialize_packet(u3_pact* pac_u, c3_o dop_o)
     c3_w cur_w = 0;
 
     _ames_etch_head(&pac_u->hed_u, buf_y + cur_w);
-    cur_w += 4;
+    cur_w += HEAD_SIZE;
 
     _ames_etch_prel(&pac_u->hed_u, &pac_u->pre_u, buf_y + cur_w);
     cur_w += pre_w;
@@ -1424,7 +1484,7 @@ _ames_skip(u3_body* bod_u) {
 
 /* _fine_lop(): find beginning of page containing fra_w
 */
-static c3_w
+static inline c3_w
 _fine_lop(c3_w fra_w)
 {
   return fra_w - (fra_w % FINE_PAGE) + 1;
@@ -1478,7 +1538,8 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
 }
 
 //  TODO: check protocol version
-static void _fine_hear_response(u3_pact* pac_u, c3_w cur_w)
+static void
+_fine_hear_response(u3_pact* pac_u, c3_w cur_w)
 {
   u3_noun wir = u3nc(c3__fine, u3_nul);
   u3_noun cad = u3nt(c3__hear,
@@ -1493,7 +1554,8 @@ static void _fine_hear_response(u3_pact* pac_u, c3_w cur_w)
 }
 
 //  TODO: check protocol version
-static void _fine_hear_request(u3_pact* req_u, c3_w cur_w)
+static void
+_fine_hear_request(u3_pact* req_u, c3_w cur_w)
 {
   u3_pact* res_u;
   
@@ -1578,7 +1640,8 @@ static void _fine_hear_request(u3_pact* req_u, c3_w cur_w)
   u3z(pat);
 }
 
-static void _log_head(u3_head* hed_u)
+static void
+_log_head(u3_head* hed_u)
 {
   u3l_log("-- HEAADER --\n");
   u3l_log("is request: %u\n", hed_u->req_o);
@@ -1655,7 +1718,7 @@ _ames_hear(u3_ames* sam_u,
   c3_w cur_w = 0;  //  cursor: how many bytes we've read from hun_y
 
   //  make sure packet is big enough to have a header
-  if (4 > len_w) {
+  if (HEAD_SIZE > len_w) {
     sam_u->sat_u.hed_d++;
     if ( 0 == (sam_u->sat_u.hed_d % 100000) ) {
       u3l_log("ames: %" PRIu64 " dropped, failed to read header\n",
@@ -1676,7 +1739,7 @@ _ames_hear(u3_ames* sam_u,
   //  parse the header
   //
   _ames_sift_head(&pac_u->hed_u, hun_y);
-  cur_w += 4;
+  cur_w += HEAD_SIZE;
 
   pac_u->typ_y = ( c3y == pac_u->hed_u.sim_o ) ? PACT_AMES :
                  ( c3y == pac_u->hed_u.req_o ) ? PACT_WAIL : PACT_PURR;
