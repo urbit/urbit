@@ -571,7 +571,7 @@ _term_it_path(u3_noun pax)
   pas_c[len_w] = '\0';
   {
     u3_noun wiz   = pax;
-    c3_c*   waq_c = (pas_c + strlen(pas_c));
+    c3_c*   waq_c = pas_c;
 
     while ( u3_nul != wiz ) {
       c3_w tis_w = u3r_met(3, u3h(wiz));

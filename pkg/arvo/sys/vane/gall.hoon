@@ -1007,7 +1007,7 @@
       ^+  ap-core
       =.  stats.yak
         :+  +(change.stats.yak)
-          (shaz (mix (add dap change.stats.yak) eny))
+          (shaz (mix (add dap change.stats.yak) eny))  ::  TODO: so bad, use +og
         now
       =.  agent-name  dap
       =.  agent-routes  routes

@@ -102,19 +102,19 @@
         |=  kyz=task
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
-          %flow  +>
-          %harm  +>
-          %hail  (send %hey ~)
-          %text  (from %out (tuba p.kyz))
-          %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
-                 (crud p.kyz q.kyz)
-          %blew  (send %rez p.p.kyz q.p.kyz)
-          %heft  (pass /whey %$ whey/~)
-          %meld  (dump kyz)
-          %pack  (dump kyz)
-          %crop  (dump trim+p.kyz)
-          %verb  (pass /verb %$ kyz)
-        ::
+            %flow  +>
+            %harm  +>
+            %hail  (send %hey ~)
+            %text  (from %out (tuba p.kyz))
+            %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
+                   (crud p.kyz q.kyz)
+            %blew  (send %rez p.p.kyz q.p.kyz)
+            %heft  (pass /whey %$ whey/~)
+            %meld  (dump kyz)
+            %pack  (dump kyz)
+            %crop  (dump trim+p.kyz)
+            %verb  (pass /verb %$ kyz)
+            %noop  +>
             %belt
           %-  send
           ::TMP  forwards compatibility with next-dill

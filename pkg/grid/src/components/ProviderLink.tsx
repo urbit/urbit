@@ -34,7 +34,10 @@ export const ProviderLink = ({
     >
       <Avatar size={size} {...provider} />
       <div className="flex-1 text-black">
-        <p className="font-mono">{provider.nickname || <ShipName name={provider.shipName} />}</p>
+        <div className="flex font-mono space-x-4">
+          <ShipName name={provider.shipName} />
+          <span className="text-gray-500">{provider.nickname}</span>
+        </div>
         {provider.status && size === 'default' && <p className="font-normal">{provider.status}</p>}
       </div>
     </Link>

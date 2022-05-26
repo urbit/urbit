@@ -4,12 +4,11 @@ import React, {
   useCallback,
   useEffect
 } from 'react';
-import { resourceFromPath } from '~/logic/lib/group';
 import { Loading } from '~/views/components/Loading';
 import useGraphState from '~/logic/state/graph';
 import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';
-import { arrToString, Association, deSig, PermVariation } from '@urbit/api';
+import { arrToString, Association, deSig, PermVariation, resourceFromPath } from '@urbit/api';
 import { useParams, Switch, Route } from 'react-router';
 import { useGroupForAssoc } from '~/logic/state/group';
 

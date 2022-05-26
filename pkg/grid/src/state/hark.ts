@@ -19,10 +19,11 @@ import { unstable_batchedUpdates } from 'react-dom';
 import produce from 'immer';
 import _ from 'lodash';
 import api from './api';
-import { useSettingsState } from './settings';
+import { getBrowserSetting, parseBrowserSettings, useSettingsState } from './settings';
 import { BaseState, createState, createSubscription, reduceStateN } from './base';
 import { mockNotifications } from './mock-data';
 import { useMockData } from './util';
+import { useLocalState } from './local';
 
 export interface HarkState {
   seen: Timebox;
@@ -240,7 +241,12 @@ api.subscribe({
   path: '/notes',
   event: (u: any) => {
     if ('add-note' in u) {
-      if (useSettingsState.getState().display.doNotDisturb) {
+      const { browserSettings, display } = useSettingsState.getState();
+      const { browserId } = useLocalState.getState();
+      const settings = parseBrowserSettings(browserSettings.settings);
+      const browserNotifications = getBrowserSetting(settings, browserId)?.browserNotifications;
+
+      if (!browserNotifications || display.doNotDisturb) {
         return;
       }
       const { bin, body } = u['add-note'];

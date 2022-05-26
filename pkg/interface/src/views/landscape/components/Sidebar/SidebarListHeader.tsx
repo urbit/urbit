@@ -10,7 +10,7 @@ import {
 import { FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { roleForShip } from '~/logic/lib/group';
+import { roleForShip } from '@urbit/api';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
@@ -54,7 +54,9 @@ export function SidebarListHeader(props: {
   const feedPath = groupPath ? getFeedPath(associations.groups[groupPath]) : undefined;
 
   const unreadCount = useHarkState(
-    s => s.unreads?.graph?.[feedPath ?? '']?.['/']?.unreads as number ?? 0
+    s => feedPath
+    ? (s.unreads?.[`/graph/${feedPath.slice(6)}` ?? '']?.count as number ?? 0)
+    : 0
   );
 
   return (
