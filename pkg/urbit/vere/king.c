@@ -992,9 +992,11 @@ _king_save_file(c3_c* url_c, FILE* fil_u)
   //  XX retry?
   //
   if ( CURLE_OK != res_i ) {
+    u3l_log("curl: failed %s: %s\n", url_c, curl_easy_strerror(res_i));
     ret_i = -1;
   }
   if ( 300 <= cod_i ) {
+    u3l_log("curl: error %s: HTTP %ld\n", url_c, cod_i);
     ret_i = -2;
   }
 
@@ -1112,8 +1114,9 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   if ( (ret_i = _king_save_file(url_c, fil_u)) ) {
     u3l_log("unable to save %s to %s: %d\r\n", url_c, bin_c, ret_i);
     c3_free(url_c);
-    c3_free(bin_c);
     fclose(fil_u);
+    unlink(bin_c);
+    c3_free(bin_c);
     return -1; // XX
   }
 
@@ -1121,13 +1124,16 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
   //
   if ( fflush(fil_u) || c3_sync(fid_i) ) {
     fprintf(stderr, "vere: sync %s failed: %s\n", bin_c, strerror(errno));
-    c3_free(bin_c);
+    c3_free(url_c);
     fclose(fil_u);
+    unlink(bin_c);
+    c3_free(bin_c);
     return -1;
   }
 
   fclose(fil_u);
 
+  //  XX if link fails wat do?
   //  XX set via cli option
   //
   if ( lin_t ) {
