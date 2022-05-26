@@ -5,8 +5,9 @@
 #include "vere/vere.h"
 #include "ur/serial.h"
 
-#define FINE_FRAG 1024   //  bytes per fragment packet
-#define FINE_PAGE 16384  //  packets per page
+#define FINE_PAGE     16384  //  packets per page
+#define FINE_FRAG      1024  //  bytes per fragment packet
+#define FINE_PATH_MAX   384  //  longest allowed scry path
 
 /* u3_fine: fine networking
 */
@@ -332,7 +333,7 @@ _ames_sift_head(u3_head* hed_u, c3_y buf_y[4])
 {
   c3_w hed_w = _ames_sift_word(buf_y);
 
-  //  first three bits are reserved
+  //  first two bits are reserved
   //
   hed_u->req_o = (hed_w >>  2) & 0x1;
   hed_u->sim_o = (hed_w >>  3) & 0x1;
@@ -353,8 +354,8 @@ _ames_sift_prel(u3_head* hed_u,
   c3_y sen_y, rec_y;
   c3_w cur_w = 0;
 
-  pre_u->sic_y = buf_y[0] & 0xf;
-  pre_u->ric_y = buf_y[0] & 0xf0;
+  pre_u->sic_y = buf_y[cur_w] & 0xf;
+  pre_u->ric_y = buf_y[cur_w] & 0xf0;
   cur_w++;
 
   sen_y = 2 << hed_u->sac_y;
@@ -380,7 +381,7 @@ _fine_sift_keen(u3_keen* ken_u, c3_w len_y, c3_y* buf_y)
 {
   ken_u->fra_w = _ames_sift_word(buf_y);
   ken_u->len_s = _ames_sift_short(buf_y + 4);
-  if ( ken_u->len_s > 384 ) {
+  if ( ken_u->len_s > FINE_PATH_MAX ) {
     return c3n;
   }
 
@@ -412,8 +413,8 @@ _fine_sift_wail(u3_pact* pac_u, c3_w cur_w)
   pac_u->wal_u.ken_u.len_s = len_s;
   cur_w += 2;
 
-  if ( len_s > 384 ) {
-    u3l_log("ames wail len: %u, max %u\n", len_s, 384);
+  if ( len_s > FINE_PATH_MAX ) {
+    u3l_log("ames wail len: %u, max %u\n", len_s, FINE_PATH_MAX);
     return c3n;
   }
 
@@ -476,22 +477,20 @@ _ames_sift_body(u3_head* hed_u,
   bod_u->mug_l = u3r_mug_bytes(bod_y, len_w) & 0xfffff;
   bod_u->con_y = c3_calloc(len_w);
   memcpy(bod_u->con_y, bod_y, len_w);
-  mod_w = bod_u->mug_l & 0xfffff;
-  hod_w = hed_u->mug_l & 0xfffff;
-  return ( mod_w == hod_w ) ? c3y : c3n;
+  return ( bod_u->mug_l == (hed_u->mug_l & 0xfffff) ) ? c3y : c3n;
 }
 
 static void
 _ames_etch_short(c3_y buf_y[2], c3_s sot_s)
 {
-  buf_y[0] = sot_s & 0xff;
+  buf_y[0] = sot_s         & 0xff;
   buf_y[1] = (sot_s >>  8) & 0xff;
 }
 
 static void
 _ames_etch_word(c3_y buf_y[4], c3_w wod_w)
 {
-  buf_y[0] = wod_w & 0xff;
+  buf_y[0] = wod_w         & 0xff;
   buf_y[1] = (wod_w >>  8) & 0xff;
   buf_y[2] = (wod_w >> 16) & 0xff;
   buf_y[3] = (wod_w >> 24) & 0xff;
@@ -535,11 +534,10 @@ _ames_etch_prel(u3_head* hed_u, u3_prel* pre_u, c3_y* buf_y)
   _ames_ship_of_chubs(pre_u->rec_d, rec_y, buf_y + cur_w);
   cur_w += rec_y;
 
-  c3_y  rog_y = ( c3y == hed_u->rel_o ) ? 6 : 0;           //  origin len
-  if ( rog_y ) {
+  if ( c3y == hed_u->rel_o ) {
     c3_y rag_y[8] = {0};
     _ames_bytes_chub(rag_y, pre_u->rog_d);
-    memcpy(buf_y + cur_w, rag_y, rog_y);
+    memcpy(buf_y + cur_w, rag_y, 6);
   }
 }
 
@@ -1736,22 +1734,23 @@ _ames_hear(u3_ames* sam_u,
     //  enter protocol-specific packet handling
     //
     switch ( pac_u->typ_y ) {
-      case PACT_WAIL:
+      case PACT_WAIL: {
         _fine_hear_request(pac_u, cur_w);
-        break;
+      } break;
 
-      case PACT_PURR:
+      case PACT_PURR: {
         _fine_hear_response(pac_u, cur_w);
-        break;
+      } break;
 
-      case PACT_AMES:
+      case PACT_AMES: {
         memcpy(&pac_u->bod_u, &bod_u, sizeof(bod_u));
         _ames_hear_ames(pac_u, cur_w);
-        break;
+      } break;
 
-      default:
+      default: {
         u3l_log("ames_hear: bad packet type %d\n", pac_u->typ_y);
         u3_pier_bail(u3_king_stub());
+      }
     }
   }
 }
