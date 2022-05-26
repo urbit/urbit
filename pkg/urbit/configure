@@ -31,6 +31,7 @@ defmacro () {
 }
 
 defmacro URBIT_VERSION "\"$URBIT_VERSION\""
+defmacro U3_VERE_PACE  "\"${VERE_PACE:-once}\""
 
 opt_debug=
 opt_static=

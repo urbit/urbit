@@ -5,6 +5,7 @@
 , urcrypt, zlib, zlib-static-osx                         #
 , enableStatic           ? stdenv.hostPlatform.isStatic  # opts
 , enableDebug            ? false
+, verePace               ? ""
 , doCheck                ? true
 , enableParallelBuilding ? true
 , dontStrip              ? true }:
@@ -70,6 +71,7 @@ in stdenv.mkDerivation {
   MEMORY_DEBUG = enableDebug;
   CPU_DEBUG = enableDebug;
   EVENT_TIME_DEBUG = false;
+  VERE_PACE = if enableStatic then verePace else "";
 
   # See https://github.com/NixOS/nixpkgs/issues/18995
   hardeningDisable = lib.optionals enableDebug [ "all" ];
