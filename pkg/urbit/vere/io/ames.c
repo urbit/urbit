@@ -1048,7 +1048,6 @@ _fine_put_cache(u3_ames* sam_u, u3_noun pax, c3_w lop_w, u3_noun lis)
 }
 
 /* _ames_ef_send(): send packet to network (v4).
- * TODO: clean up
 */
 static void
 _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
