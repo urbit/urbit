@@ -382,125 +382,133 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 }
 #endif
 
-/* These must match the order in the section marked OPCODE TABLE,
- * and several opcodes "overflow" (from byte to short index) to
- * their successor, so order can matter here. */
-// general purpose
-#define HALT  0
-#define BAIL  1
-#define COPY  2
-#define SWAP  3
-#define TOSS  4
-#define AUTO  5
-#define AULT  6
-#define SNOC  7
-#define SNOL  8
-#define HEAD  9
-#define HELD 10
-#define TAIL 11
-#define TALL 12
-// fragment (keep)
-#define FABK 13
-#define FASK 14
-#define FIBK 15
-#define FISK 16
-// fragment (lose)
-#define FABL 17
-#define FASL 18
-#define FIBL 19
-#define FISL 20
-// literal (keep)
-#define LIT0 21
-#define LIT1 22
-#define LITB 23
-#define LITS 24
-#define LIBK 25
-#define LISK 26
-// literal (lose)
-#define LIL0 27
-#define LIL1 28
-#define LILB 29
-#define LILS 30
-#define LIBL 31
-#define LISL 32
-// nock
-#define NOLK 33
-#define NOCT 34
-#define NOCK 35
-// 3 & 4
-#define DEEP 36
-#define BUMP 37
-// equality
-#define SAM0 38
-#define SAM1 39
-#define SAMB 40
-#define SAMS 41
-#define SANB 42
-#define SANS 43
-#define SAME 44
-#define SALM 45
-#define SAMC 46
-// unconditional skips
-#define SBIP 47
-#define SIPS 48
-#define SWIP 49
-// conditional skips
-#define SBIN 50
-#define SINS 51
-#define SWIN 52
-// nock 9
-#define KICB 53
-#define KICS 54
-#define TICB 55
-#define TICS 56
-// nock 12
-#define WILS 57
-#define WISH 58
-// hint processing
-#define BUSH 59
-#define SUSH 60
-#define DROP 61
-#define HECK 62
-#define SLOG 63
-// fast (keep)
-#define BAST 64
-#define SAST 65
-// fast (lose)
-#define BALT 66
-#define SALT 67
-// memo (keep)
-#define SKIB 68
-#define SKIS 69
-// memo (lose)
-#define SLIB 70
-#define SLIS 71
-#define SAVE 72
-// before formula
-#define HILB 73  //  atomic,    byte
-#define HILS 74  //  atomic,    short
-#define HINB 75  //  arbitrary, byte
-#define HINS 76  //  arbitrary, short
-// after formula
-#define HILK 77  //  atomic,    keep
-#define HILL 78  //  atomic,    lose
-#define HINK 79  //  arbitrary, keep
-#define HINL 80  //  arbitrary, lose
-// nock 10
-#define MUTH 81
-#define KUTH 82
-#define MUTT 83
-#define KUTT 84
-#define MUSM 85
-#define KUSM 86
-#define MUTB 87
-#define MUTS 88
-#define MITB 89
-#define MITS 90
-#define KUTB 91
-#define KUTS 92
-#define KITB 93
-#define KITS 94
-#define LAST 95
+// Several opcodes "overflow" (from byte to short index) to their successor, so
+// order can matter here.
+// Note that we use an X macro (https://en.wikipedia.org/wiki/X_Macro) to unify
+// the opcode's enum name, string representation, and computed goto into a
+// single structure.
+#define OPCODES                                                                \
+  /* general purpose */                                                        \
+  X(HALT, "halt", &&do_halt),  /*  0 */                                        \
+  X(BAIL, "bail", &&do_bail),  /*  1 */                                        \
+  X(COPY, "copy", &&do_copy),  /*  2 */                                        \
+  X(SWAP, "swap", &&do_swap),  /*  3 */                                        \
+  X(TOSS, "toss", &&do_toss),  /*  4 */                                        \
+  X(AUTO, "auto", &&do_auto),  /*  5 */                                        \
+  X(AULT, "ault", &&do_ault),  /*  6 */                                        \
+  X(SNOC, "snoc", &&do_snoc),  /*  7 */                                        \
+  X(SNOL, "snol", &&do_snol),  /*  8 */                                        \
+  X(HEAD, "head", &&do_head),  /*  9 */                                        \
+  X(HELD, "held", &&do_held),  /* 10 */                                        \
+  X(TAIL, "tail", &&do_tail),  /* 11 */                                        \
+  X(TALL, "tall", &&do_tall),  /* 12 */                                        \
+  /* fragment (keep) */                                                        \
+  X(FABK, "fabk", &&do_fabk),  /* 13 */                                        \
+  X(FASK, "fask", &&do_fask),  /* 14 */                                        \
+  X(FIBK, "fibk", &&do_fibk),  /* 15 */                                        \
+  X(FISK, "fisk", &&do_fisk),  /* 16 */                                        \
+  /* fragment (lose) */                                                        \
+  X(FABL, "fabl", &&do_fabl),  /* 17 */                                        \
+  X(FASL, "fasl", &&do_fasl),  /* 18 */                                        \
+  X(FIBL, "fibl", &&do_fibl),  /* 19 */                                        \
+  X(FISL, "fisl", &&do_fisl),  /* 20 */                                        \
+  /* literal (keep) */                                                         \
+  X(LIT0, "lit0", &&do_lit0),  /* 21 */                                        \
+  X(LIT1, "lit1", &&do_lit1),  /* 22 */                                        \
+  X(LITB, "litb", &&do_litb),  /* 23 */                                        \
+  X(LITS, "lits", &&do_lits),  /* 24 */                                        \
+  X(LIBK, "libk", &&do_libk),  /* 25 */                                        \
+  X(LISK, "lisk", &&do_lisk),  /* 26 */                                        \
+  /* literal (lose) */                                                         \
+  X(LIL0, "lil0", &&do_lil0),  /* 27 */                                        \
+  X(LIL1, "lil1", &&do_lil1),  /* 28 */                                        \
+  X(LILB, "lilb", &&do_lilb),  /* 29 */                                        \
+  X(LILS, "lils", &&do_lils),  /* 30 */                                        \
+  X(LIBL, "libl", &&do_libl),  /* 31 */                                        \
+  X(LISL, "lisl", &&do_lisl),  /* 32 */                                        \
+  /* nock */                                                                   \
+  X(NOLK, "nolk", &&do_nolk),  /* 33 */                                        \
+  X(NOCT, "noct", &&do_noct),  /* 34 */                                        \
+  X(NOCK, "nock", &&do_nock),  /* 35 */                                        \
+  /* 3 & 4 */                                                                  \
+  X(DEEP, "deep", &&do_deep),  /* 36 */                                        \
+  X(BUMP, "bump", &&do_bump),  /* 37 */                                        \
+  /* equality */                                                               \
+  X(SAM0, "sam0", &&do_sam0),  /* 38 */                                        \
+  X(SAM1, "sam1", &&do_sam1),  /* 39 */                                        \
+  X(SAMB, "samb", &&do_samb),  /* 40 */                                        \
+  X(SAMS, "sams", &&do_sams),  /* 41 */                                        \
+  X(SANB, "sanb", &&do_sanb),  /* 42 */                                        \
+  X(SANS, "sans", &&do_sans),  /* 43 */                                        \
+  X(SAME, "same", &&do_same),  /* 44 */                                        \
+  X(SALM, "salm", &&do_salm),  /* 45 */                                        \
+  X(SAMC, "samc", &&do_samc),  /* 46 */                                        \
+  /* unconditional skips */                                                    \
+  X(SBIP, "sbip", &&do_sbip),  /* 47 */                                        \
+  X(SIPS, "sips", &&do_sips),  /* 48 */                                        \
+  X(SWIP, "swip", &&do_swip),  /* 49 */                                        \
+  /* conditional skips */                                                      \
+  X(SBIN, "sbin", &&do_sbin),  /* 50 */                                        \
+  X(SINS, "sins", &&do_sins),  /* 51 */                                        \
+  X(SWIN, "swin", &&do_swin),  /* 52 */                                        \
+  /* nock 9 */                                                                 \
+  X(KICB, "kicb", &&do_kicb),  /* 53 */                                        \
+  X(KICS, "kics", &&do_kics),  /* 54 */                                        \
+  X(TICB, "ticb", &&do_ticb),  /* 55 */                                        \
+  X(TICS, "tics", &&do_tics),  /* 56 */                                        \
+  /* nock 12 */                                                                \
+  X(WILS, "wils", &&do_wils),  /* 57 */                                        \
+  X(WISH, "wish", &&do_wish),  /* 58 */                                        \
+  /* hint processing */                                                        \
+  X(BUSH, "bush", &&do_bush),  /* 59 */                                        \
+  X(SUSH, "sush", &&do_sush),  /* 60 */                                        \
+  X(DROP, "drop", &&do_drop),  /* 61 */                                        \
+  X(HECK, "heck", &&do_heck),  /* 62 */                                        \
+  X(SLOG, "slog", &&do_slog),  /* 63 */                                        \
+  /* fast (keep) */                                                            \
+  X(BAST, "bast", &&do_bast),  /* 64 */                                        \
+  X(SAST, "sast", &&do_sast),  /* 65 */                                        \
+  /* fast (lose) */                                                            \
+  X(BALT, "balt", &&do_balt),  /* 66 */                                        \
+  X(SALT, "salt", &&do_salt),  /* 67 */                                        \
+  /* memo (keep) */                                                            \
+  X(SKIB, "skib", &&do_skib),  /* 68 */                                        \
+  X(SKIS, "skis", &&do_skis),  /* 69 */                                        \
+  /* memo (lose) */                                                            \
+  X(SLIB, "slib", &&do_slib),  /* 70 */                                        \
+  X(SLIS, "slis", &&do_slis),  /* 71 */                                        \
+  X(SAVE, "save", &&do_save),  /* 72 */                                        \
+  /* before formula */                                                         \
+  X(HILB, "hilb", &&do_hilb),  /* 73: atomic,    byte  */                      \
+  X(HILS, "hils", &&do_hils),  /* 74: atomic,    short */                      \
+  X(HINB, "hinb", &&do_hinb),  /* 75: arbitrary, byte  */                      \
+  X(HINS, "hins", &&do_hins),  /* 76: arbitrary, short */                      \
+  /* after formula */                                                          \
+  X(HILK, "hilk", &&do_hilk),  /* 77: atomic,    keep */                       \
+  X(HILL, "hill", &&do_hill),  /* 78: atomic,    lose */                       \
+  X(HINK, "hink", &&do_hink),  /* 79: arbitrary, keep */                       \
+  X(HINL, "hinl", &&do_hinl),  /* 80: arbitrary, lose */                       \
+  /* nock 10 */                                                                \
+  X(MUTH, "muth", &&do_muth),  /* 81 */                                        \
+  X(KUTH, "kuth", &&do_kuth),  /* 82 */                                        \
+  X(MUTT, "mutt", &&do_mutt),  /* 83 */                                        \
+  X(KUTT, "kutt", &&do_kutt),  /* 84 */                                        \
+  X(MUSM, "musm", &&do_musm),  /* 85 */                                        \
+  X(KUSM, "kusm", &&do_kusm),  /* 86 */                                        \
+  X(MUTB, "mutb", &&do_mutb),  /* 87 */                                        \
+  X(MUTS, "muts", &&do_muts),  /* 88 */                                        \
+  X(MITB, "mitb", &&do_mitb),  /* 89 */                                        \
+  X(MITS, "mits", &&do_mits),  /* 90 */                                        \
+  X(KUTB, "kutb", &&do_kutb),  /* 91 */                                        \
+  X(KUTS, "kuts", &&do_kuts),  /* 92 */                                        \
+  X(KITB, "kitb", &&do_kitb),  /* 93 */                                        \
+  X(KITS, "kits", &&do_kits),  /* 94 */                                        \
+  X(LAST,   NULL,      NULL),  /* 95 */
+
+// Opcodes. Define X to select the enum name from OPCODES.
+#define X(opcode, name, indirect_jump) opcode
+enum { OPCODES };
+#undef X
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
@@ -949,40 +957,10 @@ static void _n_print_stack(u3p(u3_noun) empty) {
 #endif
 
 #ifdef VERBOSE_BYTECODE
-// match to OPCODE TABLE
-static char* opcode_names[] = {
-  "halt", "bail",
-  "copy", "swap", "toss",
-  "auto", "ault", "snoc", "snol",
-  "head", "held", "tail", "tall",
-  "fabk", "fask", "fibk", "fisk",
-  "fabl", "fasl", "fibl", "fisl",
-  "lit0", "lit1", "litb", "lits",
-  "libk", "lisk",
-  "lil0", "lil1", "lilb", "lils",
-  "libl", "lisl",
-  "nolk", "noct", "nock",
-  "deep", "bump",
-  "sam0", "sam1", "samb", "sams",
-  "sanb", "sans",
-  "same", "salm", "samc",
-  "sbip", "sips", "swip",
-  "sbin", "sins", "swin",
-  "kicb", "kics", "ticb", "tics",
-  "wils", "wish",
-  "bush", "sush",
-  "drop", "heck", "slog",
-  "bast", "sast",
-  "balt", "salt",
-  "skib", "skis", "slib", "slis",
-  "save",
-  "hilb", "hils", "hinb", "hins"
-  "hilk", "hill", "hink", "hinl"
-  "muth", "kuth", "mutt", "kutt",
-  "musm", "kusm",
-  "mutb", "muts", "mitb", "mits",
-  "kutb", "kuts", "kitb", "kits",
-};
+// Define X to select the opcode string representation from OPCODES.
+# define X(opcode, name, indirect_jump) name
+static c3_c* opcode_names[] = { OPCODES };
+# undef X
 #endif
 
 /* _n_apen(): emit the instructions contained in src to dst
@@ -1873,40 +1851,12 @@ typedef struct {
 static u3_noun
 _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 {
-  /* OPCODE TABLE */
-  static void* lab[] = {
-    &&do_halt, &&do_bail,
-    &&do_copy, &&do_swap, &&do_toss,
-    &&do_auto, &&do_ault, &&do_snoc, &&do_snol,
-    &&do_head, &&do_held, &&do_tail, &&do_tall,
-    &&do_fabk, &&do_fask, &&do_fibk, &&do_fisk,
-    &&do_fabl, &&do_fasl, &&do_fibl, &&do_fisl,
-    &&do_lit0, &&do_lit1, &&do_litb, &&do_lits,
-    &&do_libk, &&do_lisk,
-    &&do_lil0, &&do_lil1, &&do_lilb, &&do_lils,
-    &&do_libl, &&do_lisl,
-    &&do_nolk, &&do_noct, &&do_nock,
-    &&do_deep, &&do_bump,
-    &&do_sam0, &&do_sam1, &&do_samb, &&do_sams,
-    &&do_sanb, &&do_sans,
-    &&do_same, &&do_salm, &&do_samc,
-    &&do_sbip, &&do_sips, &&do_swip,
-    &&do_sbin, &&do_sins, &&do_swin,
-    &&do_kicb, &&do_kics, &&do_ticb, &&do_tics,
-    &&do_wils, &&do_wish,
-    &&do_bush, &&do_sush,
-    &&do_drop, &&do_heck, &&do_slog,
-    &&do_bast, &&do_sast,
-    &&do_balt, &&do_salt,
-    &&do_skib, &&do_skis, &&do_slib, &&do_slis,
-    &&do_save,
-    &&do_hilb, &&do_hils, &&do_hinb, &&do_hins,
-    &&do_hilk, &&do_hill, &&do_hink, &&do_hinl,
-    &&do_muth, &&do_kuth, &&do_mutt, &&do_kutt,
-    &&do_musm, &&do_kusm,
-    &&do_mutb, &&do_muts, &&do_mitb, &&do_mits,
-    &&do_kutb, &&do_kuts, &&do_kitb, &&do_kits,
-  };
+
+  // Opcode jump table. Define X to select the opcode computed goto from
+  // OPCODES.
+# define X(opcode, name, indirect_jump) indirect_jump
+  static void* lab[] = { OPCODES };
+# undef X
 
   u3j_site* sit_u;
   u3j_rite* rit_u;
