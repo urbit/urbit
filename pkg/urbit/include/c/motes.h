@@ -328,6 +328,7 @@
 #   define c3__dmal   c3_s4('d','m','a','l')
 #   define c3__do     c3_s2('d','o')
 #   define c3__doc    c3_s3('d','o','c')
+#   define c3__dock   c3_s4('d','o','c','k')
 #   define c3__docs   c3_s4('d','o','c','s')
 #   define c3__dogo   c3_s4('d','o','g','o')
 #   define c3__dojo   c3_s4('d','o','j','o')

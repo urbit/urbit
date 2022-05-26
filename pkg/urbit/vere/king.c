@@ -1397,10 +1397,10 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
   }
 }
 
-/* _king_do_copy(): copy binary into pier on boot.
+/* u3_king_dock(): copy binary into pier on boot.
 */
-static void
-_king_do_copy(c3_c* pac_c)
+void
+u3_king_dock(c3_c* pac_c)
 {
   c3_c* arc_c = "unknown";
 
@@ -1472,7 +1472,7 @@ u3_king_done(void)
     //  hack to ensure we only try once
     //
     u3_Host.ops_u.nuu = c3n;
-    _king_do_copy(U3_VERE_PACE);
+    u3_king_dock(U3_VERE_PACE);
   }
 
   //  XX hack, if pier's are still linked, we're not actually done

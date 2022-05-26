@@ -1414,6 +1414,11 @@
         void
         u3_king_slog(void);
 
+      /* u3_king_dock(): copy binary into pier on boot.
+      */
+        void
+        u3_king_dock(c3_c* pac_c);
+
       /* u3_king_done(): all piers closed
       */
         void

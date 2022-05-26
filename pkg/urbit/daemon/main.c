@@ -38,6 +38,31 @@ static u3_cue_xeno* sil_u;             //  cue handle
 STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ),
               "unsigned char required");
 
+/* _main_self_path(): get binary self-path.
+*/
+static void
+_main_self_path(void)
+{
+  c3_c* pat_c;
+  c3_i  len_i, pat_i;
+
+  if ( 0 < (len_i = wai_getExecutablePath(NULL, 0, &pat_i)) ) {
+    pat_c = c3_malloc( 1 + len_i );
+    wai_getExecutablePath(pat_c, len_i, &pat_i);
+    pat_c[len_i] = 0;
+
+    u3_Host.dem_c = pat_c;
+  }
+  else {
+    fprintf(stderr, "unable to get binary self path\r\n");
+    exit(1);
+
+    //  XX continue?
+    //
+    // u3_Host.dem_c = strdup(bin_c);
+  }
+}
+
 /* _main_readw(): parse a word from a string.
 */
 static u3_noun
@@ -574,6 +599,7 @@ _cw_usage(c3_c* bin_c)
   c3_c *use_c[] = {
     "utilities:\n",
     "  %s cram %.*s              jam state:\n",
+    "  %s dock %.*s              copy binary:\n",
     "  %s grab %.*s              measure memory usage:\n",
     "  %s info %.*s              print pier info:\n",
     "  %s meld %.*s              deduplicate snapshot:\n",
@@ -1096,6 +1122,34 @@ _cw_disk_init(c3_c* dir_c)
   return log_u;
 }
 
+/* _cw_dock(): copy binary into pier
+*/
+static void
+_cw_dock(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  _main_self_path();
+
+  u3_king_dock(U3_VERE_PACE);
+}
+
 /* _cw_info(); print pier info
 */
 static void
@@ -1423,6 +1477,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //
   //    $@  ~                                             ::  usage
   //    $%  [%cram dir=@t]                                ::  jam state
+  //        [%dock dir=@t]                                ::  copy binary
   //        [?(%grab %mass) dir=@t]                       ::  gc
   //        [%info dir=@t]                                ::  print
   //        [%meld dir=@t]                                ::  deduplicate
@@ -1451,6 +1506,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
 
   switch ( mot_m ) {
     case c3__cram: _cw_cram(argc, argv); return 1;
+    case c3__dock: _cw_dock(argc, argv); return 1;
 
     case c3__mass:
     case c3__grab: _cw_grab(argc, argv); return 1;
@@ -1505,26 +1561,7 @@ main(c3_i   argc,
     case 2: break;
   }
 
-  {
-    c3_c* pat_c;
-    c3_i  len_i, pat_i;
-
-    if ( 0 < (len_i = wai_getExecutablePath(NULL, 0, &pat_i)) ) {
-      pat_c = c3_malloc( 1 + len_i );
-      wai_getExecutablePath(pat_c, len_i, &pat_i);
-      pat_c[len_i] = 0;
-
-      u3_Host.dem_c = pat_c;
-    }
-    else {
-      fprintf(stderr, "unable to get binary self path\r\n");
-      exit(1);
-
-      //  XX continue?
-      //
-      // u3_Host.dem_c = strdup(bin_c);
-    }
-  }
+  _main_self_path();
 
   //  XX add argument
   //
