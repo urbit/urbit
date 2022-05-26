@@ -158,7 +158,7 @@ jobs:
       - name: upload binary to bootstrap.urbit.org
         if: env.DO_UPLOAD == 'true'
         run: |
-          if [ "once" -ne "$VERE_PACE" ]; then
+          if [ "once" != "$VERE_PACE" ]; then
             version="$(cat ./pkg/urbit/version)"
           else
             version="${GITHUB_SHA:0:9}"
@@ -240,7 +240,7 @@ jobs:
           CLOUDSDK_PYTHON: ${{env.pythonLocation}}\python.exe
         shell: bash
         run: |
-          if [ "once" -ne "$VERE_PACE" ]; then
+          if [ "once" != "$VERE_PACE" ]; then
             version="$(cat ./pkg/urbit/version)"
           else
             version="${GITHUB_SHA:0:9}"
@@ -275,7 +275,7 @@ jobs:
       - name: update latest deployed version
         if: env.DO_UPLOAD == 'true'
         run: |
-          if [ "once" -ne "$VERE_PACE" ]; then
+          if [ "once" != "$VERE_PACE" ]; then
             version="$(cat ./pkg/urbit/version)"
           else
             version="${GITHUB_SHA:0:9}"
