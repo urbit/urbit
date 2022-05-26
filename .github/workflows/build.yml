@@ -261,7 +261,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [urbit, mingw]
     # XX disabled due to missing storage.objects.delete access
-    if: false
+    # if: false
     steps:
       - uses: google-github-actions/setup-gcloud@v0.2.0
         if: env.DO_UPLOAD == 'true'
