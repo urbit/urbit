@@ -45,6 +45,14 @@ typedef struct _u3_hbod {
 c3_t
 u3_http_hed_new(u3_atom nam, u3_atom val, u3_hhed* const hed_u);
 
+//! Convert h2o_iovec_t to atom (cord).
+//!
+//! @param[in] vec_u  h2o_iovec_t to convert.
+//!
+//! @return  atom
+u3_noun
+u3_http_vec_to_atom(h2o_iovec_t* vec_u);
+
 //! Convert (list (pair @t @t)) to a list of HTTP headers.
 //!
 //! @param[in]  hed    Source HTTP header noun.
@@ -67,31 +75,6 @@ u3_http_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d);
 //! @param[in] hed_u  List of HTTP headers to free.
 void
 u3_http_heds_free(c3_list* const hed_u);
-
-//! Translate octet-stream noun into HTTP body.
-//!
-//! @param[in] oct  Octet-stream noun.
-//!
-//! @return NULL       `oct` is not a direct atom.
-//! @return HTTP body  Otherwise.
-u3_hbod*
-u3_http_bod_from_octs(u3_noun oct);
-
-//! Translate body buffers to array of h2o_iovec_t.
-//!
-//! @param[in]  bod_u  List of HTTP body buffers
-//! @param[out] arr_u  Pointer to array of h2o_iovec_t.
-//! @param[out] arr_w  Pointer to length of `arr_u`.
-void
-u3_http_bods_to_vec(u3_hbod* bod_u, h2o_iovec_t** arr_u, c3_w* arr_w);
-
-//! Convert h2o_iovec_t to atom (cord).
-//!
-//! @param[in] vec_u  h2o_iovec_t to convert.
-//!
-//! @return  atom
-u3_noun
-u3_http_vec_to_atom(h2o_iovec_t* vec_u);
 
 //! Free a list of HTTP bodies.
 //!
