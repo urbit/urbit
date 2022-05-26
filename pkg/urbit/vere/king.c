@@ -1375,10 +1375,13 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
 #ifdef U3_OS_ARCH
   arc_c = U3_OS_ARCH;
 #else
-  //  XX support arch argument
-  //
-  u3l_log("vere: arch required\r\n");
-  return;
+  if ( u3_Host.arc_c ) {
+    arc_c = u3_Host.arc_c;
+  }
+  else {
+    u3l_log("vere: arch required\r\n");
+    return;
+  }
 #endif
 
   //  XX get link option

@@ -1304,27 +1304,51 @@ _cw_meld(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
-/* _cw_next(); request upgrade
+/* _cw_next(): request upgrade
 */
 static void
 _cw_next(c3_i argc, c3_c* argv[])
 {
-  switch ( argc ) {
-    case 2: {
-      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
-        fprintf(stderr, "unable to find pier\r\n");
-        exit (1);
-      }
-    } break;
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
 
-    case 3: {
-      u3_Host.dir_c = argv[2];
-    } break;
+  static struct option lop_u[] = {
+    { "arch",                required_argument, NULL, 'a' },
+    { NULL, 0, NULL, 0 }
+  };
 
-    default: {
-      fprintf(stderr, "invalid command\r\n");
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "a:", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 'a': {
+        u3_Host.arc_c = strdup(optarg);
+      } break;
+
+      case '?': {
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "next"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
       exit(1);
-    } break;
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
   }
 
   u3_Host.pep_o = c3y;

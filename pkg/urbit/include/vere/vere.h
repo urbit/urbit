@@ -328,6 +328,7 @@
 #endif
         u3_utty*   uty_u;                   //  linked terminal list
         c3_o       nex_o;                   //  upgrade requested
+        c3_c*      arc_c;                   //  upgrade to arch
         u3_opts    ops_u;                   //  commandline options
         c3_o       pep_o;                   //  prep for upgrade
         c3_i       xit_i;                   //  exit code for shutdown
