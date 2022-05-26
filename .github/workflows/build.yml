@@ -73,7 +73,9 @@ env:
     inputs.upload ||
     (github.ref_name == 'next/vere' && github.ref_type == 'branch')
     }}
-  UPLOAD_BASE: bootstrap.urbit.org/vere/often
+  UPLOAD_BASE: bootstrap.urbit.org/vere
+  # make configureable for (pre-)release builds
+  VERE_PACE: often
 
 jobs:
   urbit:
@@ -107,9 +109,15 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: build static binary
-        run: >
-          echo "urbit_static=$(nix-build -A urbit --arg enableStatic true)"
-          >> $GITHUB_ENV
+        run: |
+          nix-build -A urbit        \
+            --arg enableStatic true \
+            --argstr verePace ${{ env.VERE_PACE }} > ./result
+          cat ./result
+          echo -n "urbit_static=" >> $GITHUB_ENV
+          cat ./result >> $GITHUB_ENV
+          cat ./result
+
 
       - name: confirm binary is mostly static
         if: matrix.os == 'macos-latest'
@@ -145,12 +153,12 @@ jobs:
       - name: upload binary to bootstrap.urbit.org
         if: env.DO_UPLOAD == 'true'
         run: |
+          # XX use for (pre-)release builds
           # version="$(cat ./pkg/urbit/version)"
           version="${GITHUB_SHA:0:9}"
           system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
           system=${system:1:${#system}-2}
-          # target="gs://${UPLOAD_BASE}/${GITHUB_SHA:0:9}/vere-v${version}-${system}"
-          target="gs://${UPLOAD_BASE}/${version}/vere-v${version}-${system}"
+          target="gs://${UPLOAD_BASE}/${VERE_PACE}/${version}/vere-v${version}-${system}"
 
           gsutil cp -n "${{ env.urbit_static }}/bin/urbit" "$target"
           exitcode=$?
@@ -224,11 +232,11 @@ jobs:
           CLOUDSDK_PYTHON: ${{env.pythonLocation}}\python.exe
         shell: bash
         run: |
+          # XX use for (pre-)release builds
           # version="$(cat ./version)"
           version="${GITHUB_SHA:0:9}"
           system="x86_64-windows"
-          # target="gs://${UPLOAD_BASE}/${GITHUB_SHA:0:9}/vere-v${version}-${system}.exe"
-          target="gs://${UPLOAD_BASE}/${version}/vere-v${version}-${system}.exe"
+          target="gs://${UPLOAD_BASE}/${VERE_PACE}/${version}/vere-v${version}-${system}.exe"
 
           gsutil cp -n ./build/urbit.exe "$target"
           exitcode=$?
@@ -256,7 +264,7 @@ jobs:
       - name: update latest deployed version
         if: env.DO_UPLOAD == 'true'
         run: |
-          target="gs://${UPLOAD_BASE}/last"
+          target="gs://${UPLOAD_BASE}/${VERE_PACE}/last"
           echo -n "${GITHUB_SHA:0:9}" > ./last-version
           gsutil cp ./last-version "$target"
           exitcode=$?
