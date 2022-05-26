@@ -1092,9 +1092,7 @@ _king_get_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
     return -1; // XX
   }
 
-  //  XX windows .exe (currently jammed into [arc_c])
-  //
-  ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s",
+  ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s" U3_BIN_SUFFIX,
                            u3_Host.dir_c, pac_c, ver_c, arc_c);
   c3_assert( ret_i > 0 );
 
@@ -1340,9 +1338,7 @@ _king_copy_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
     return -1; // XX
   }
 
-  //  XX windows .exe
-  //
-  ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s",
+  ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s" U3_BIN_SUFFIX,
                            u3_Host.dir_c, pac_c, ver_c, arc_c);
   c3_assert( ret_i > 0 );
 
@@ -1374,12 +1370,16 @@ _king_copy_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
 static void
 _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
 {
+  c3_c* arc_c;
+
 #ifdef U3_OS_ARCH
-#  ifdef U3_OS_mingw
-  c3_c* arc_c = U3_OS_ARCH ".exe"; // XX confirm
-#  else
-  c3_c* arc_c = U3_OS_ARCH;
-#  endif
+  arc_c = U3_OS_ARCH;
+#else
+  //  XX support arch argument
+  //
+  u3l_log("vere: arch required\r\n");
+  return;
+#endif
 
   //  XX get link option
   //
@@ -1392,10 +1392,6 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
     u3l_log("vere: upgrade succeeded\r\n");
     //  XX print restart instructions
   }
-#else
-  //  XX support arch argument
-  u3l_log("vere: arch required\r\n");
-#endif
 }
 
 /* _king_do_copy(): copy binary into pier on boot.
@@ -1403,12 +1399,11 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
 static void
 _king_do_copy(c3_c* pac_c)
 {
+  c3_c* arc_c = "unknown";
+
 #ifdef U3_OS_ARCH
-#  ifdef U3_OS_mingw
-  c3_c* arc_c = U3_OS_ARCH ".exe"; // XX confirm
-#  else
-  c3_c* arc_c = U3_OS_ARCH;
-#  endif
+  arc_c = U3_OS_ARCH;
+#endif
 
   //  XX get link option
   //
@@ -1421,7 +1416,6 @@ _king_do_copy(c3_c* pac_c)
     u3l_log("vere: binary copy succeeded\r\n");
     //  XX print restart instructions
   }
-#endif
 }
 
 /* u3_king_done(): all piers closed. s/b callback
@@ -1472,15 +1466,10 @@ u3_king_done(void)
   if (  (c3y == u3_Host.ops_u.nuu)
      && (c3y == u3_Host.ops_u.doc) )
   {
-    c3_c* pac_c;
-
     //  hack to ensure we only try once
     //
     u3_Host.ops_u.nuu = c3n;
-
-    pac_c = _king_get_pace();
-    _king_do_copy(pac_c);
-    c3_free(pac_c);
+    _king_do_copy(U3_VERE_PACE);
   }
 
   //  XX hack, if pier's are still linked, we're not actually done
