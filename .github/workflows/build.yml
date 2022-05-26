@@ -112,12 +112,11 @@ jobs:
         run: |
           nix-build -A urbit        \
             --arg enableStatic true \
-            --argstr verePace ${{ env.VERE_PACE }} > ./result
-          cat ./result
+            --argstr verePace ${{ env.VERE_PACE }} > ./urbit-derivation
+          cat ./urbit-derivation
           echo -n "urbit_static=" >> $GITHUB_ENV
-          cat ./result >> $GITHUB_ENV
-          cat ./result
-
+          cat ./urbit-derivation >> $GITHUB_ENV
+          cat ./urbit-derivation
 
       - name: confirm binary is mostly static
         if: matrix.os == 'macos-latest'
