@@ -147,6 +147,23 @@ jobs:
             exit 1
           fi
 
+      - name: get version string
+        run: |
+          if [ "once" != "$VERE_PACE" ]; then
+            version="$(cat ./pkg/urbit/version)"
+          else
+            version="${GITHUB_SHA:0:9}"
+          fi
+
+          echo -n "$version" > ./version-string
+
+      - name: upload version string artifact
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: version-string
+          path: version-string
+
       - uses: google-github-actions/setup-gcloud@v0.2.0
         if: env.DO_UPLOAD == 'true'
         with:
@@ -158,12 +175,7 @@ jobs:
       - name: upload binary to bootstrap.urbit.org
         if: env.DO_UPLOAD == 'true'
         run: |
-          if [ "once" != "$VERE_PACE" ]; then
-            version="$(cat ./pkg/urbit/version)"
-          else
-            version="${GITHUB_SHA:0:9}"
-          fi
-
+          version="$(cat ./version-string)"
           system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
           system=${system:1:${#system}-2}
           target="gs://${UPLOAD_BASE}/${VERE_PACE}/${version}/vere-v${version}-${system}"
@@ -272,19 +284,17 @@ jobs:
           project_id: ${{ secrets.GCS_PROJECT }}
           export_default_credentials: true
 
+      - name: download version-string
+        uses: actions/download-artifact@v3
+        with:
+          name: version-string
+
       - name: update latest deployed version
         if: env.DO_UPLOAD == 'true'
         run: |
-          if [ "once" != "$VERE_PACE" ]; then
-            version="$(cat ./pkg/urbit/version)"
-          else
-            version="${GITHUB_SHA:0:9}"
-          fi
-
           target="gs://${UPLOAD_BASE}/${VERE_PACE}/last"
 
-          echo -n $version > ./last-version
-          gsutil cp ./last-version "$target"
+          gsutil cp ./version-string "$target"
           exitcode=$?
 
           test $exitcode -eq 0 &&
