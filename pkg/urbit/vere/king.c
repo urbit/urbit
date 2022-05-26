@@ -349,11 +349,7 @@ _king_get_next(c3_c* pac_c, c3_c** out_c)
   ret_i = asprintf(&url_c, "%s/%s/%s/next", ver_hos_c, pac_c, URBIT_VERSION);
   c3_assert( ret_i > 0 );
 
-  if ( !_king_curl_bytes(url_c, &len_w, &hun_y) ) {
-    ret_i = asprintf(&ver_c, "%.*s", len_w, hun_y);
-    c3_assert( ret_i > 0 );
-  }
-  else {
+  if ( _king_curl_bytes(url_c, &len_w, &hun_y) ) {
     c3_free(url_c);
 
     //  XX support channel redirections
@@ -366,13 +362,16 @@ _king_get_next(c3_c* pac_c, c3_c** out_c)
       c3_free(url_c);
       return -2;
     }
-
-    ret_i = asprintf(&ver_c, "%.*s", len_w, hun_y);
-    c3_assert( ret_i > 0 );
   }
 
-  c3_free(hun_y);
   c3_free(url_c);
+
+  //  null-terminate
+  //
+  hun_y = c3_realloc(hun_y, 1 + len_w);
+  hun_y[len_w] = 0;
+
+  ver_c = (c3_c*)hun_y;
 
   //  XX trim ver_c ?
   //
