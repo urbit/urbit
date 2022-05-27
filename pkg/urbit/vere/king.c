@@ -1031,6 +1031,52 @@ _king_make_pace(c3_c* pac_c)
   return 0;
 }
 
+static c3_i
+_king_write_raw(c3_i fid_i, c3_y* buf_y, size_t len_i);
+
+/* _king_init_pace(): save pace file if not present
+*/
+static c3_i
+_king_init_pace(c3_c* pac_c)
+{
+  c3_c* bin_c;
+  c3_i  fid_i, ret_i = asprintf(&bin_c, "%s/.bin/pace", u3_Host.dir_c);
+  c3_assert( ret_i > 0 );
+
+  if ( (-1 == (fid_i = open(bin_c, O_WRONLY | O_CREAT | O_EXCL, 0644))) ) {
+    if ( EEXIST == errno ) {
+      c3_free(bin_c);
+      //  XX print something here?
+      //
+      return 0;
+    }
+    else {
+      u3l_log("dock: init pace (%s): open %s\n", pac_c, strerror(errno));
+      c3_free(bin_c);
+      return -1;
+    }
+  }
+
+  if ( _king_write_raw(fid_i, (c3_y*)pac_c, strlen(pac_c)) ) {
+    u3l_log("dock: init pace (%s): write %s\n", pac_c, strerror(errno));
+    close(fid_i);
+    c3_free(bin_c);
+    return -1;
+  }
+  // XX sync first?
+  //
+  else if ( close(fid_i) ) {
+    u3l_log("dock: init pace (%s): close %s\n", pac_c, strerror(errno));
+    c3_free(bin_c);
+    return 1;
+  }
+
+  u3l_log("dock: pace (%s): configured at %s/.bin/pace\r\n",
+          pac_c, u3_Host.dir_c);
+
+  return 0;
+}
+
 /* _king_link_run(): ln [bin_c] $pier/.run
 */
 static c3_i
@@ -1423,6 +1469,9 @@ u3_king_dock(c3_c* pac_c)
     exit(1);
   }
   else {
+    //  NB: failure ignored
+    //
+    _king_init_pace(pac_c);
     u3l_log("vere: binary copy succeeded\r\n");
     //  XX print restart instructions
   }
