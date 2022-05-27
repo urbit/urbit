@@ -1584,7 +1584,7 @@ _fine_hear_request(u3_pact* req_u, c3_w cur_w)
 
   //  look up request in scry cache
   //
-  u3_noun key = u3nc(u3k(pat), u3i_word(res_u->pur_u.ken_u.fra_w));
+  u3_noun key = u3nc(u3k(u3t(pat)), u3i_word(res_u->pur_u.ken_u.fra_w));
   u3_weak cac = u3h_git(res_u->sam_u->fin_s.sac_p, key);
   if ( u3_none == cac ) {
     //  cache miss, scry into arvo for a page of packets
