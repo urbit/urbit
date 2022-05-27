@@ -1384,7 +1384,7 @@
       (decode-packet b)
     ?:  ames
       (on-hear-packet l packet d)
-    ?.  response==(& (cut 0 [2 1] b))
+    ?.  response==(| (cut 0 [2 1] b))
       ~|([%fine %request-events-forbidden] !!)
     (on-hear-response:fine l packet d)
   ::  +on-hear-packet: handle mildly processed packet receipt
