@@ -109,6 +109,10 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =/  paz=(list path)
+  :: promote path to ~[path] if needed
+  ::
+  ?@  +<.q.arg
+    [(tail !<([~ path] arg)) ~]
   (tail !<([~ (list path)] arg))
 =/  bez=(list beam)
   (turn paz |=(p=path ~|([%test-not-beam p] (need (de-beam p)))))
