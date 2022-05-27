@@ -3268,9 +3268,13 @@
       ^-  lane:ames
       =/  =peer-state
         (got-peer-state ship)
-      ?~  route.peer-state
-        &+(snag 0 (saxo:title our now ship))
-      lane.u.route.peer-state
+      ?^  route.peer-state
+        lane.u.route.peer-state
+      :-  %&
+      %-  rear
+      !<  (list ^ship)
+      =<  q  %-  need  %-  need
+      (rof `(sy our ~) %j [our %saxo da+now] /(scot %p ship))
     --
   --
 ::  +make-message-pump: constructor for |message-pump
