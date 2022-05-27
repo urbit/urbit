@@ -3085,12 +3085,8 @@
         ++  on-yawn
           |=  [=ship =path]
           ^+  event-core
-          =/  omen
-            ~|  [%fine %invalid-namespace-path path]
-            (need (de-omen path))
-          =/  peer-core  (pe-abed:fine-peer p.bem.omen)
-          ?~  peer-core
-            ~|(%no-ship-for-yawn !!)
+          =/  peer-core  (pe-abed:fine-peer ship)
+          ?~  peer-core  ~|(%no-ship-for-yawn !!)
           pe-abet:(pe-yawn:u.peer-core path)
         ::
         ++  on-take-wake
@@ -3149,7 +3145,7 @@
     ::    TODO: move to hoon.hoon
     ::
     ++  gum
-      ~/  %gum
+      ::~/  %gum
       |=  biz=(list byts)
       ^-  byts
       :-  (roll biz |=([[wid=@ *] acc=@] (add wid acc)))
@@ -3206,8 +3202,10 @@
         ?~  data  sig
         (cat 9 sig (jam data))
       ::
+      ?>  (lte len.hunk 16.384)
       =/  top  +((min (met 13 mes) (add [lop len]:hunk)))
       =/  num  lop.hunk
+      ?>  (lth num top)
       =|  res=(list @uxmeow)
       |-  ^+  res
       ?:  =(num top)  (flop res)

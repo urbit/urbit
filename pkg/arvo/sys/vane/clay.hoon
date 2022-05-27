@@ -443,7 +443,7 @@
 ::
 |%
 ++  scry-timeout-time  ~m1
-++  scry-retry-time    ~m30
+++  scry-retry-time    ~s0
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
 ++  sort-by-head
@@ -3062,9 +3062,11 @@
       %.  [hen her u.nux [syd ~]]
       send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
     %-  emil
-    =/  =wire  (request-wire kind.u.busy.sat her syd u.nux)
-    :~  [hen %pass wire %a %yawn her path.u.busy.sat]
-        [hen %pass wire %b %rest time.u.busy.sat]
+    =*  bus  u.busy.sat
+    =/  =wire  (request-wire kind.bus her syd u.nux)
+    ~&  %cancel-request-yawn
+    :~  [hen %pass wire %a %yawn her path.bus]
+        [hen %pass wire %b %rest time.bus]
     ==
   ::
   ::  Handles a request.
@@ -3104,12 +3106,12 @@
     =.  ..retry-with-ames
       =<  ?>(?=(^ ref) .)
       ~|  [%strange-retry-not-scry her syd inx busy.sat -.rave.sat]
-      ?>  ?=([~ ^] busy.sat)
+      =/  bus  ?>(?=([~ ^] busy.sat) u.busy.sat)
       =/  =wire  (request-wire kind her syd inx)
-      =/  =path  path.u.busy.sat
       %-  emil
-      :~  [hen %pass wire %b %rest time.u.busy.sat]
-          [hen %pass wire %a %yawn her path]
+    ~&  %retry-with-ames-yawn
+      :~  [hen %pass wire %b %rest time.bus]
+          [hen %pass wire %a %yawn her path.bus]
       ==
     ::  re-send over ames
     ::
