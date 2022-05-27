@@ -1514,8 +1514,7 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   if(pas == u3_none) {
     _ames_pact_free(pac_u);
 
-    u3z(pas);
-//    u3z(nun);
+    u3z(nun);
     return;
   }
 
@@ -1549,8 +1548,7 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
     _ames_pact_free(pac_u);
   }
 
-  u3z(pas);
- // u3z(nun);
+  u3z(nun);
   u3z(fra);
 }
 
