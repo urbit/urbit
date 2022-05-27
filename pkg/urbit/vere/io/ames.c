@@ -253,18 +253,19 @@ _ames_pact_free(u3_pact* pac_u)
 static void
 _ames_panc_free(u3_panc* pan_u)
 {
-  if ( 0 != pan_u->nex_u ) {
-    pan_u->nex_u->pre_u = pan_u->pre_u;
-  }
+  if ( pan_u->for_o ) {
+    if ( 0 != pan_u->nex_u ) {
+      pan_u->nex_u->pre_u = pan_u->pre_u;
+    }
 
-  if ( 0 != pan_u->pre_u ) {
-    pan_u->pre_u->nex_u = pan_u->nex_u;
+    if ( 0 != pan_u->pre_u ) {
+      pan_u->pre_u->nex_u = pan_u->nex_u;
+    }
+    else {
+      c3_assert(pan_u == pan_u->pac_u->sam_u->pan_u);
+      pan_u->pac_u->sam_u->pan_u = pan_u->nex_u;
+    }
   }
-  else {
-    c3_assert(pan_u == pan_u->pac_u->sam_u->pan_u);
-    pan_u->pac_u->sam_u->pan_u = pan_u->nex_u;
-  }
-
   _ames_pact_free(pan_u->pac_u);
   c3_free(pan_u);
 }
@@ -1401,22 +1402,24 @@ _ames_try_send(u3_pact* pac_u, c3_o for_o)
   if ( u3_none != lac ) {
     _ames_send_many(pac_u, lac, for_o);
   }
-  //  store the packet details for later processing
+  //  if forwarding, store the packet details for later processing
   //
   else {
     u3_panc* pan_u = c3_calloc(sizeof(*pan_u));
     pan_u->pac_u = pac_u;
     pan_u->for_o = for_o;
 
-    if ( 0 != sam_u->pan_u ) {
-      pan_u->nex_u = sam_u->pan_u;
-      sam_u->pan_u->pre_u = pan_u;
+    if ( c3y == for_o ) {
+      if ( 0 != sam_u->pan_u ) {
+        pan_u->nex_u = sam_u->pan_u;
+        sam_u->pan_u->pre_u = pan_u;
+      }
+      sam_u->pan_u = pan_u;
+      sam_u->sat_u.foq_d++;
     }
-    sam_u->pan_u = pan_u;
 
     //  there's space in the scry queue; scry the lane out of ames
     //
-    sam_u->sat_u.foq_d++;
     u3_noun pax = _lane_scry_path(u3i_chubs(2, pac_u->pre_u.rec_d));
 
     u3_pier_peek_last(sam_u->pir_u, u3_nul, c3__ax,
