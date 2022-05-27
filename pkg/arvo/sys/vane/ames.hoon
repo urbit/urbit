@@ -311,6 +311,7 @@
   |=  [pac=open-packet =acru:ames]
   ^-  packet
   :*  [sndr rcvr]:pac
+      req=&  sam=&
       (mod sndr-life.pac 16)
       (mod rcvr-life.pac 16)
       origin=~
@@ -370,8 +371,15 @@
   =/  vec  ~[sndr rcvr sndr-life rcvr-life]
   =/  [siv=@uxH len=@ cyf=@ux]
     (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
-  =/  content  :(mix siv (lsh 7 len) (lsh [3 18] cyf))
-  [[sndr rcvr] (mod sndr-life 16) (mod rcvr-life 16) origin=~ content]
+  ::
+  :*  ^=       dyad  [sndr rcvr]
+      ^=        req  ?=(%& -.meat.shut-packet)
+      ^=        sam  &
+      ^=  sndr-tick  (mod sndr-life 16)
+      ^=  sndr-tick  (mod rcvr-life 16)
+      ^=     origin  ~
+      ^=    content  :(mix siv (lsh 7 len) (lsh [3 18] cyf))
+  ==
 ::  +decode-shut-packet: decrypt a $shut-packet from a $packet
 ::
 ++  decode-shut-packet
@@ -1380,11 +1388,10 @@
   ++  on-hear
     |=  [l=lane b=blob d=(unit goof)]
     ^+  event-core
-    =/  [ames=? =packet]
-      (decode-packet b)
-    ?:  ames
+    =/  =packet  (decode-packet b)
+    ?:  sam.packet
       (on-hear-packet l packet d)
-    ?.  response==(| (cut 0 [2 1] b))
+    ?:  req.packet
       ~|([%fine %request-events-forbidden] !!)
     (on-hear-response:fine l packet d)
   ::  +on-hear-packet: handle mildly processed packet receipt
@@ -1429,7 +1436,7 @@
         ~|  ames-lane-size+p.lane  !!
       `p.lane
     ::
-    =/  =blob  (encode-packet & packet)
+    =/  =blob  (encode-packet packet)
     (send-blob & rcvr.packet blob)
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
@@ -2008,7 +2015,7 @@
   ++  attestation-packet
     |=  [her=ship =her=life]
     ^-  blob
-    %+  encode-packet  &
+    %-  encode-packet
     %-  encode-open-packet
     :_  crypto-core.ames-state
     :*  ^=  public-key  pub:ex:crypto-core.ames-state
@@ -2280,7 +2287,7 @@
       ::
       =.  event-core
         %^  send-blob  |  her.channel
-        %+  encode-packet  &
+        %-  encode-packet
         %:  encode-shut-packet
           shut-packet(bone (mix 1 bone.shut-packet))
           symmetric-key.channel
@@ -3070,12 +3077,13 @@
     ++  encode-request
       |=  [=ship =path num=@ud]
       ^-  hoot  ^-  @
-      =+  bod=(request-body path num)
-      =+  sig=64^(sign:keys dat.bod)
-      =+  syn=(can 3 sig bod ~)
-      %^  encode-packet  |  ::  note: request bit is already 0 (yes)
-        [our ship]
-      [(mod life.ames-state 16) (mod (lyfe:keys ship) 16) ~ syn]
+      =/  sic  (mod life.ames-state 16)
+      =/  ric  (mod (lyfe:keys ship) 16)
+      =/  syn
+        =/  bod  (request-body path num)
+        =/  sig  64^(sign:keys dat.bod)
+        (can 3 sig bod ~)
+      (encode-packet [our ship] req=& sam=| sic ric ~ syn)
     ::
     ++  encode-hunk  ::TODO  unit tests
       |=  [=path =hunk data=$@(~ (cask))]
