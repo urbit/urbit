@@ -321,16 +321,21 @@ _king_get_pace(void)
   len_w = buf_u.st_size;
   pat_c = c3_malloc(len_w + 1);
   red_w = read(fid_i, pat_c, len_w);
-  pat_c[len_w] = 0;
   close(fid_i);
 
   if ( len_w != red_w ) {
     c3_free(pat_c);
+    u3l_log("unable to read pace file, "
+            "falling back to default (\"live\")\n");
     return strdup("live");
   }
 
-  //  XX trim pat_c ?
-  //
+  pat_c[len_w] = 0;
+
+  while ( len_w-- && isspace(pat_c[len_w]) ) {
+    pat_c[len_w] = 0;
+  }
+
   return pat_c;
 }
 

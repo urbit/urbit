@@ -21,6 +21,7 @@
 #     ifndef _XOPEN_SOURCE
 #     define _XOPEN_SOURCE 700
 #     endif
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -38,6 +39,7 @@
 #     include <sys/sendfile.h>
 
 #   elif defined(U3_OS_osx)
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -58,6 +60,7 @@
 #     include <copyfile.h>
 
 #   elif defined(U3_OS_bsd)
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -77,6 +80,7 @@
 #     define signal mingw_has_no_usable_signal
 #     define raise  mingw_has_no_usable_raise
 #     define _POSIX
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
