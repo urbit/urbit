@@ -1196,7 +1196,7 @@
   ::
   +$  hoot           @uxhoot                            ::  request packet
   +$  purr           @uxpurr                            ::  response packet
-  +$  song           (list purr)                        ::  full response
+  +$  hunk           [lop=@ len=@]                      ::  range specifier
   ::
   :: +|  %kinetics
   ::  $dyad: pair of sender and receiver ships
@@ -1211,8 +1211,13 @@
   ::    address.  Routes are opaque to Arvo and only have meaning in the
   ::    interpreter. This enforces that Ames is transport-agnostic.
   ::
+  ::    req: is a request
+  ::    sam: is using the ames protocol (not fine or another protocol)
+  ::
   +$  packet
     $:  dyad
+        req=?
+        sam=?
         sndr-tick=@ubC
         rcvr-tick=@ubC
         origin=(unit @uxaddress)
@@ -1306,9 +1311,9 @@
     ==
   +$  have
     $:  fra=@ud
-        rawr
+        meow
     ==
-  +$  rawr  ::  response packet  ::TODO  meow
+  +$  meow  ::  response packet
     $:  sig=@
         siz=@ud
         byts
@@ -1542,16 +1547,16 @@
   ::
   ++  decode-packet
     |=  =blob
-    ^-  [ames=? =packet]
+    ^-  packet
     ~|  %decode-packet-fail
     ::  first 32 (2^5) bits are header; the rest is body
     ::
     =/  header  (end 5 blob)
     =/  body    (rsh 5 blob)
-    ::  read header; first three bits are reserved
+    ::  read header; first two bits are reserved
     ::
-    =/  is-ames  (cut 0 [3 1] header)
-    :-  =(& is-ames)
+    =/  req  =(& (cut 0 [2 1] header))
+    =/  sam  =(& (cut 0 [3 1] header))
     ::
     =/  version  (cut 0 [4 3] header)
     ?.  =(protocol-version version)
@@ -1597,7 +1602,7 @@
     ::  read variable-length .content from the rest of .body
     ::
     =/  content  (cut 3 [off (sub (met 3 body) off)] body)
-    [[sndr rcvr] sndr-tick rcvr-tick origin content]
+    [[sndr rcvr] req sam sndr-tick rcvr-tick origin content]
   ::
   ++  decode-request
     |=  =hoot
@@ -1611,13 +1616,14 @@
     =+  num=(cut 3 [0 4] hoot)
     =+  len=(cut 3 [4 2] hoot)
     =+  pat=(cut 3 [6 len] hoot)
+    ~|  pat=pat
     :-  [(stab pat) num]
     ::  if there is data remaining, it's the response
     (rsh [3 (add 6 len)] hoot)
   ::  +encode-packet: serialize a packet into a bytestream
   ::
   ++  encode-packet
-    |=  [ames=? packet]
+    |=  packet
     ^-  blob
     ::
     =/  sndr-meta  (encode-ship-metadata sndr)
@@ -1636,8 +1642,9 @@
     ::
     =/  header=@
       %+  can  0
-      :~  [3 reserved=0]
-          [1 is-ames=ames]
+      :~  [2 reserved=0]
+          [1 req]
+          [1 sam]
           [3 protocol-version]
           [2 rank.sndr-meta]
           [2 rank.rcvr-meta]
