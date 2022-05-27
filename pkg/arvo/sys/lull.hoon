@@ -1193,7 +1193,7 @@
   +$  symmetric-key  @uwsymmetrickey
   ::
   +$  hoot           @uxhoot                            ::  request packet
-  +$  meow           @uxmeow                            ::  response fragment
+  +$  purr           @uxpurr                            ::  response packet
   +$  hunk           [lop=@ len=@]                      ::  range specifier
   ::
   :: +|  %kinetics

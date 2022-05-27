@@ -1094,10 +1094,10 @@
     (~(run by peers.ames-state) head)
   ::
       [%peers her=@ req=*]
-    =/  who  (slaw %p her)
+    =/  who  (slaw %p her.tyl)
     ?~  who  [~ ~]
     =/  peer  (~(get by peers.ames-state) u.who)
-    ?+    req  [~ ~]
+    ?+    req.tyl  [~ ~]
         ~
       ?~  peer
         [~ ~]
@@ -1136,7 +1136,7 @@
     ==
   ::
       [%bones her=@ ~]
-    =/  who  (slaw %p her)
+    =/  who  (slaw %p her.tyl)
     ?~  who  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
@@ -1146,9 +1146,9 @@
     ``noun+!>(res)
   ::
       [%snd-bones her=@ bon=@ ~]
-    =/  who  (slaw %p her)
+    =/  who  (slaw %p her.tyl)
     ?~  who  [~ ~]
-    =/  ost  (slaw %ud bon)
+    =/  ost  (slaw %ud bon.tyl)
     ?~  ost  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
@@ -1163,7 +1163,7 @@
     ::  .pax is expected to be a scry path of the shape /vc/desk/rev/etc,
     ::  so we need to give it the right shape
     ::
-    ?~  blk=(de-pax-soft:balk pax)  ~
+    ?~  blk=(de-path-soft:balk pax.tyl)  ~
     =+  nom=(en-roof:balk u.blk)
     ::  we only support scrying into clay,
     ::  and only if the data is fully public.
@@ -1175,14 +1175,15 @@
     =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
     ?.  =([%black ~ ~] rul.r.per)  ~&  %denied-lol  ~
     =+  res=(rof lyc nom)
-    =/  =hunk  [(slav %ud lop) (slav %ud len)]
+    =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
     ::TODO  suggests we need to factor differently
     =/  fin  fine:(per-event [now 0v0 rof] *duct ames-state)
     ?-  res
       ~        ~
-      [~ ~]    ``noun+!>((encode-hunk:fin pax hunk ~))
-      [~ ~ *]  ``noun+!>((encode-hunk:fin pax hunk [p q.q]:u.u.res))
+      [~ ~]    ``noun+!>((encode-hunk:fin pax.tyl hunk ~))
+      [~ ~ *]  ``noun+!>((encode-hunk:fin pax.tyl hunk [p q.q]:u.u.res))
     ==
+  ==
 --
 ::  |per-event: inner event-handling core
 ::
@@ -3024,14 +3025,15 @@
       ==
     ++  orm  ((on @ud keen-state) lte)
     ::  +gum: glue together a list of $byts into one
-    ::TODO: move to hoon.hoon
+    ::
+    ::    TODO: move to hoon.hoon
     ::
     ++  gum
       ~/  %gum
       |=  biz=(list byts)
       ^-  byts
-      :-  (roll biz |=([[wid=@ *] acc=@] (add a acc)))
-      (can 3 (turn biz tail))
+      :-  (roll biz |=([[wid=@ *] acc=@] (add wid acc)))
+      (can 3 biz)
     ::
     ++  spit
       |=  =path
@@ -3056,7 +3058,7 @@
       |=  [=path mes=@ num=@ud]
       ^-  @uxmeow
       =/  tot  (met 13 mes)
-      =/  fra  (cut 13 [num 1] mes)
+      =/  fra  (cut 13 [(dec num) 1] mes)
       =/  wid  (met 3 fra)
       %+  can  3
       :~  64^(sign-fra:keys path num fra)
@@ -3071,8 +3073,7 @@
       =+  bod=(request-body path num)
       =+  sig=64^(sign:keys dat.bod)
       =+  syn=(can 3 sig bod ~)
-      %+  con  0b100  ::NOTE  request bit
-      %^  encode-packet  |
+      %^  encode-packet  |  ::  note: request bit is already 0 (yes)
         [our ship]
       [(mod life.ames-state 16) (mod (lyfe:keys ship) 16) ~ syn]
     ::
@@ -3084,7 +3085,7 @@
         ?~  data  sig
         (cat 9 sig (jam data))
       ::
-      =/  top  (min (met 13 mes) (add [lop len]:hunk))
+      =/  top  +((min (met 13 mes) (add [lop len]:hunk)))
       =/  num  lop.hunk
       =|  res=(list @uxmeow)
       |-  ^+  res
@@ -3145,7 +3146,19 @@
       ^-  lane:ames
       =/  =peer-state
         (got-peer-state ship)
-      lane:(need route.peer-state)
+      ?^  route.peer-state
+        lane.u.route.peer-state
+      ?:  ?=(%czar (rank:title ship))
+        [%& ship]
+      !!
+::        :-  %&
+::        ;;  ship
+::        =-  -.q.q.-
+::        %-  need  %-  need
+::        %-  rof
+::            %j
+::            /(scot %p our)/saxo/(scot %da now)/(scot %p who)
+::        ==
     --
   --
 ::  +make-message-pump: constructor for |message-pump
