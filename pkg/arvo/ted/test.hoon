@@ -108,8 +108,13 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
+;<  =bowl:strand  bind:m  get-bowl:strandio
 =/  paz=(list path)
-  :: promote path to ~[path] if needed
+  :: if no args, test everything under /=base=/tests
+  ::
+  ?~  q.arg
+    ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
+  :: else cast path to ~[path] if needed
   ::
   ?@  +<.q.arg
     [(tail !<([~ path] arg)) ~]
