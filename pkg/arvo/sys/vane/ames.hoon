@@ -88,7 +88,7 @@
 ::  protocol-version: current version of the ames wire protocol
 ::
 !:
-=/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
+=/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %1
 =,  ames
 =*  point               point:jael
 =*  public-keys-result  public-keys-result:jael
@@ -283,17 +283,18 @@
       (lsh [3 +((add size.sndr-meta size.rcvr-meta))] content)
     ==
   =/  checksum  (end [0 20] (mug body))
-  =?  body  ?=(^ origin)  (mix u.origin (lsh [3 6] body))
+  =?  body  ?=(^ next)  (mix u.next (lsh [3 6] body))
   ::
   =/  header=@
     %+  can  0
-    :~  [3 reserved=0]
+    :~  [1 reserved=0]
+        [2 packet-type=0]
         [1 is-ames=&]
         [3 protocol-version]
         [2 rank.sndr-meta]
         [2 rank.rcvr-meta]
         [20 checksum]
-        [1 relayed=.?(origin)]
+        [1 relayed=.?(next)]
     ==
   (mix header (lsh 5 body))
 ::  +decode-packet: deserialize packet from bytestream or crash
@@ -307,8 +308,9 @@
   ::
   =/  header  (end 5 blob)
   =/  body    (rsh 5 blob)
-  ::  read header; first three bits are reserved
+  ::  read header; first bit is reserved
   ::
+  =/  type     (cut 0 [1 2] header)
   =/  is-ames  (cut 0 [3 1] header)
   ?.  =(& is-ames)
     ~|  %ames-not-ames  !!
@@ -321,14 +323,14 @@
   =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
   =/  checksum   (cut 0 [11 20] header)
   =/  relayed    (cut 0 [31 1] header)
-  ::  origin, if present, is 6 octets long, at the end of the body
+  ::  next, if present, is 6 octets long, at the end of the body
   ::
-  =^  origin=(unit @)  body
+  =^  next=(unit @)  body
     ?:  =(| relayed)
       [~ body]
     =/  len  (sub (met 3 body) 6)
     [`(end [3 6] body) (rsh [3 6] body)]
-  ::  .checksum does not apply to the origin
+  ::  .checksum does not apply to the next
   ::
   ?.  =(checksum (end [0 20] (mug body)))
     ~|  %ames-checksum  !!
@@ -353,7 +355,7 @@
   ::  read variable-length .content from the rest of .body
   ::
   =/  content  (cut 3 [off (sub (met 3 body) off)] body)
-  [[sndr rcvr] sndr-tick rcvr-tick origin content]
+  [[sndr rcvr] sndr-tick rcvr-tick next content]
 ::  +is-valid-rank: does .ship match its stated .size?
 ::
 ++  is-valid-rank
@@ -377,7 +379,7 @@
   :*  [sndr rcvr]
       (mod sndr-life 16)
       `@`1
-      origin=~
+      next=~
       content=`@`%keys
   ==
 ::  +encode-open-packet: convert $open-packet attestation to $packet
@@ -389,7 +391,7 @@
   :*  [sndr rcvr]:pac
       (mod sndr-life.pac 16)
       (mod rcvr-life.pac 16)
-      origin=~
+      next=~
       content=`@`(sign:as:acru (jam pac))
   ==
 ::  +decode-open-packet: decode comet attestation into an $open-packet
@@ -449,7 +451,7 @@
   =/  [siv=@uxH len=@ cyf=@ux]
     (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
   =/  content  :(mix siv (lsh 7 len) (lsh [3 18] cyf))
-  [[sndr rcvr] (mod sndr-life 16) (mod rcvr-life 16) origin=~ content]
+  [[sndr rcvr] (mod sndr-life 16) (mod rcvr-life 16) next=~ content]
 ::  +decode-shut-packet: decrypt a $shut-packet from a $packet
 ::
 ++  decode-shut-packet
@@ -463,7 +465,7 @@
   =/  siv  (end 7 content.packet)
   =/  len  (end 4 (rsh 7 content.packet))
   =/  cyf  (rsh [3 18] content.packet)
-  ~|  ames-decrypt+[[sndr rcvr origin]:packet len siv]
+  ~|  ames-decrypt+[[sndr rcvr next]:packet len siv]
   =/  vec  ~[sndr.packet rcvr.packet sndr-life rcvr-life]
   ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
@@ -543,7 +545,7 @@
 ::
 ::    Roundtrips losslessly through atom encoding and decoding.
 ::
-::    .origin is ~ unless the packet is being forwarded.  If present,
+::    .next is ~ unless the packet is being forwarded.  If present,
 ::    it's an atom that encodes a route to another ship, such as an IPv4
 ::    address.  Routes are opaque to Arvo and only have meaning in the
 ::    interpreter. This enforces that Ames is transport-agnostic.
@@ -552,7 +554,7 @@
   $:  dyad
       sndr-tick=@ubC
       rcvr-tick=@ubC
-      origin=(unit @uxaddress)
+      next=(unit @uxaddress)
       content=@uxcontent
   ==
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
@@ -606,6 +608,13 @@
       crypto-core=acru:ames
       =bug
   ==
++$  ames-state-6
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      =bug
+  ==
 ::
 +$  ship-state-4  ship-state-5
 +$  ship-state-5
@@ -640,10 +649,26 @@
 ::
 +$  ames-state
   $:  peers=(map ship ship-state)
+      =relay-state
       =unix=duct
       =life
       crypto-core=acru:ames
       =bug
+  ==
+::  $relay-state: state for a relay
+::
+::    pending:  where to route requests
+::    sponsees: lanes for sponsees
+::
++$  relay-state
+  $:  pending=(map request [(pair lane (unit lane)) expiry=@da])
+      sponsees=(map ship lane)
+  ==
+::  $request: pending request
+::
++$  request
+  $%  [%ames sndr=ship rcvr=ship]
+      [%scry rcvr=ship =path]
   ==
 ::  $bug: debug printing configuration
 ::
@@ -913,7 +938,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%6 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%7 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -931,6 +956,13 @@
                   [%adult state=ames-state-5]
               ==  ==
               $:  %6
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-6
+                  ==
+                  [%adult state=ames-state-6]
+              ==  ==
+              $:  %7
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -955,12 +987,19 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%6 %adult *]  (load:adult-core %6 state.old)
+          [%6 %adult *]
+        $(old [%7 %adult (state-6-to-7:load:adult-core state.old)])
       ::
           [%6 %larva *]
+        =/  new-state  (state-6-to-7:load:adult-core state.old)
+        $(old [%7 %larva events.old new-state])
+      ::
+          [%7 %adult *]  (load:adult-core %7 state.old)
+      ::
+          [%7 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %6 state.old)
+        =.  adult-gate     (load:adult-core %7 state.old)
         larval-gate
       ==
     ::  +molt: re-evolve to adult-ames
@@ -970,7 +1009,7 @@
       ^-  (quip move _adult-gate)
       =.  ames-state.adult-gate
         ?>  ?=(^ cached-state)
-        (state-5-to-6:load:adult-core +.u.cached-state)
+        (state-6-to-7:load:adult-core (state-5-to-6:load:adult-core +.u.cached-state))
       =.  cached-state  ~
       ~>  %slog.0^leaf/"ames: metamorphosis reload"
       [moves adult-gate]
@@ -1045,13 +1084,13 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%6 %adult ames-state]
+++  stay  [%7 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
-  =<  |=  old-state=[%6 ^ames-state]
+  =<  |=  old-state=[%7 ^ames-state]
       ^+  ames-gate
-      ?>  ?=(%6 -.old-state)
+      ?>  ?=(%7 -.old-state)
       ames-gate(ames-state +.old-state)
   |%
   ::  +state-4-to-5 called from larval-ames
@@ -1076,7 +1115,7 @@
   ::
   ++  state-5-to-6
     |=  ames-state=ames-state-5
-    ^-  ^^ames-state
+    ^-  ames-state-6
     :_  +.ames-state
     %-  ~(rut by peers.ames-state)
     |=  [=ship ship-state=ship-state-5]
@@ -1097,6 +1136,15 @@
       [symmetric-key life rift public-key sponsor]
     ^-  ^ship-state
     [-.ship-state peer-state]
+  ::  +state-6-to-7 called from larval-ames
+  ::
+  ++  state-6-to-7
+    |=  ames-state=ames-state-6
+    ^-  ^^ames-state
+    :*  -.ames-state
+        =relay-state
+        +.ames-state
+    ==
   --
 ::  +scry: dereference namespace
 ::
@@ -1157,7 +1205,7 @@
     ::
         [%forward-lane ~]
       ::
-      ::  this duplicates the routing hack from +send-blob:event-core
+      ::  this duplicates the routing hack from +send-packet:event-core
       ::  so long as neither the peer nor the peer's sponsoring galaxy is us:
       ::
       ::    - no route to the peer: send to the peer's sponsoring galaxy
@@ -1225,6 +1273,7 @@
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
   ++  emit  |=(=move event-core(moves [move moves]))
+  ++  demit  |=(new=(pair move move) event-core(moves (weld ~[p.new q.new] moves)))
   ++  channel-state  [life crypto-core bug]:ames-state
   ++  trace
     |=  [verb=? =ship print=(trap tape)]
@@ -1434,6 +1483,52 @@
     ^+  event-core
     %-  %^  trace  odd.veb  sndr.packet
         |.("received packet")
+    :: add the ship to our sponsees map if we are the sponsor
+    ::
+    =*  relay-state  relay-state.ames-state
+    =?  sponsees.relay-state
+      ?&
+        =(~ next.packet)
+        =/  val  (~(get by sponsees.relay-state) sndr.packet)
+        =(~ val)
+        |^
+          ?|
+            =(our (sein:title our now sndr.packet))
+            try-next-sponsor
+          ==
+        ++  try-next-sponsor
+          ?:  =(%czar (clan:title our))
+            %.n
+          $(our (sein:title our now sndr.packet))
+        --
+      ==
+      ^+  sponsees.relay-state
+      (~(put by sponsees.relay-state) [sndr.packet lane])
+    :: add the lane to our pending map
+    ::
+    =*  inv-req  [%ames `dyad`[rcvr.packet sndr.packet]]
+    =?  pending.relay-state
+      =/  val  (~(get by pending.relay-state) inv-req)
+      ?~  val  %.y
+        =/  next  q.-.u.val
+        ?~  next
+          %.n
+        =(lane u.next)
+      ^+  pending.relay-state
+      (~(put by pending.relay-state) [inv-req [[lane ~] (add ~s30 now)]])
+    ::  update the pending map 'next' lane if necessary
+    ::
+    =?  pending.relay-state
+      ::
+      =/  val  (~(get by pending.relay-state) inv-req)
+      ?~  val  !!
+      =/  next  q.-.u.val
+      &(=(~ next) !=(~ next.packet))
+      ::
+      ^+  pending.relay-state
+      ?~  next.packet  !!
+      %-  ~(put by pending.relay-state)
+        [inv-req [[lane `[%.n u.next.packet]] expiry=(add ~s30 now)]]
     ::
     ?:  =(our sndr.packet)
       event-core
@@ -1462,18 +1557,8 @@
     ^+  event-core
     %-  %^  trace  for.veb  sndr.packet
         |.("forward: {<sndr.packet>} -> {<rcvr.packet>}")
-    ::  set .origin.packet if it doesn't already have one, re-encode, and send
     ::
-    =?    origin.packet
-        &(?=(~ origin.packet) !=(%czar (clan:title sndr.packet)))
-      ?:  ?=(%& -.lane)
-        ~
-      ?.  (lte (met 3 p.lane) 6)
-        ~|  ames-lane-size+p.lane  !!
-      `p.lane
-    ::
-    =/  =blob  (encode-packet packet)
-    (send-blob & rcvr.packet blob)
+    (send-packet & `lane packet)
   ::  +on-hear-keys: handle receipt of attestion request
   ::
   ++  on-hear-keys
@@ -1483,7 +1568,7 @@
         |.("requested attestation")
     ?.  =(%pawn (clan:title our))
       event-core
-    (send-blob | sndr.packet (attestation-packet sndr.packet 1))
+    (send-packet | ~ (attestation-packet sndr.packet 1))
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
@@ -1519,12 +1604,6 @@
             ^=  sponsor  `(^sein:title sndr.packet)
         ==
       (on-publ / [%full (my [sndr.packet point]~)])
-    ::  manually add the lane to the peer state
-    ::
-    =.  peers.ames-state
-      =/  =peer-state  (gut-peer-state sndr.packet)
-      =.  route.peer-state  `[direct=%.n lane]
-      (~(put by peers.ames-state) sndr.packet %known peer-state)
     ::
     event-core
   ::  +on-hear-shut: handle receipt of encrypted packet
@@ -1552,35 +1631,6 @@
     ~|  %ames-crash-on-packet-from^her.channel
     =/  =shut-packet
       (decode-shut-packet packet [symmetric-key her-life our-life]:channel)
-    ::  non-galaxy: update route with heard lane or forwarded lane
-    ::
-    =?  route.peer-state  !=(%czar (clan:title her.channel))
-      ::  if new packet is direct, use that.  otherwise, if the new new
-      ::  and old lanes are indirect, use the new one.  if the new lane
-      ::  is indirect but the old lane is direct, then if the lanes are
-      ::  identical, don't mark it indirect; if they're not identical,
-      ::  use the new lane and mark it indirect.
-      ::
-      ::  if you mark lane as indirect because you got an indirect
-      ::  packet even though you already had a direct identical lane,
-      ::  then delayed forwarded packets will come later and reset to
-      ::  indirect, so you're unlikely to get a stable direct route
-      ::  (unless the forwarder goes offline for a while).
-      ::
-      ::  conversely, if you don't accept indirect routes with different
-      ::  lanes, then if your lane is stale and they're trying to talk
-      ::  to you, your acks will go to the stale lane, and you'll never
-      ::  time it out unless you reach out to them.  this manifests as
-      ::  needing to |hi or dotpost to get a response when the other
-      ::  ship has changed lanes.
-      ::
-      ?:  ?=(~ origin.packet)
-        `[direct=%.y lane]
-      ?:  ?=([~ %& *] route.peer-state)
-        ?:  =(lane.u.route.peer-state |+u.origin.packet)
-          route.peer-state
-        `[direct=%.n |+u.origin.packet]
-      `[direct=%.n |+u.origin.packet]
     ::  perform peer-specific handling of packet
     ::
     =/  peer-core  (make-peer-core peer-state channel)
@@ -1782,10 +1832,6 @@
       ::
       =?  event-core  ?=(^ text)
         (emit duct %pass /qos %d %flog %text u.text)
-      ::  reinitialize galaxy route if applicable
-      ::
-      =?  route.peer-state  =(%czar (clan:title ship))
-        `[direct=%.y lane=[%& ship]]
       ::
       =.  peers.ames-state
         (~(put by peers.ames-state) ship [%known peer-state])
@@ -1871,7 +1917,7 @@
         ::  if we're a comet, send self-attestation packet first
         ::
         =?  event-core  =(%pawn (clan:title our))
-          (send-blob | ship (attestation-packet ship life.point))
+          (send-packet | ~ (attestation-packet ship life.point))
         ::  save current duct
         ::
         =/  original-duct  duct
@@ -1892,7 +1938,8 @@
         =.  event-core
           %+  roll  ~(tap in packets.todos)
           |=  [=blob core=_event-core]
-          (send-blob:core | ship blob)
+          =/  packet  (decode-packet blob)
+          (send-packet:core | ~ packet)
         ::
         event-core(duct original-duct)
       --
@@ -1932,10 +1979,6 @@
         ?^  sponsor.point
           u.sponsor.point
         (^^sein:title rof our now ship)
-      ::  automatically set galaxy route, since unix handles lookup
-      ::
-      =?  route.peer-state  ?=(%czar (clan:title ship))
-        `[direct=%.y lane=[%& ship]]
       ::
       =.  peers.ames-state
         (~(put by peers.ames-state) ship %known peer-state)
@@ -2004,86 +2047,74 @@
     |=  =ship
     ^+  event-core
     =+  (trace msg.veb ship |.("requesting attestion"))
-    =.  event-core  (send-blob | ship (sendkeys-packet ship))
+    =.  event-core  (send-packet | ~ (sendkeys-packet ship))
     =/  =wire  /alien/(scot %p ship)
     (emit duct %pass wire %b %wait (add now ~s30))
-  ::  +send-blob: fire packet at .ship and maybe sponsors
-  ::
-  ::    Send to .ship and sponsors until we find a direct lane,
-  ::    skipping .our in the sponsorship chain.
+  ::  +send-packet: fire packet at lane and maybe next
   ::
   ::    If we have no PKI data for a recipient, enqueue the packet and
   ::    request the information from Jael if we haven't already.
   ::
-  ++  send-blob
-    ~/  %send-blob
-    |=  [for=? =ship =blob]
+  ++  send-packet
+    |=  [for=? next-lane=(unit lane) =packet]
     ::
-    =/  final-ship  ship
-    %-  (trace rot.veb final-ship |.("send-blob: to {<ship>}"))
-    |-
-    |^  ^+  event-core
-        ::
-        =/  ship-state  (~(get by peers.ames-state) ship)
-        ::
-        ?.  ?=([~ %known *] ship-state)
-          ?:  ?=(%pawn (clan:title ship))
-            (try-next-sponsor (^sein:title ship))
-          %+  enqueue-alien-todo  ship
-          |=  todos=alien-agenda
-          todos(packets (~(put in packets.todos) blob))
-        ::
-        =/  =peer-state  +.u.ship-state
-        ::
-        ::  XX  routing hack to mimic old ames.
-        ::
-        ::    Before removing this, consider: moons when their planet is
-        ::    behind a NAT; a planet receiving initial acknowledgment
-        ::    from a star; a planet talking to another planet under
-        ::    another galaxy.
-        ::
-        ?:  ?|  =(our ship)
-                ?&  !=(final-ship ship)
-                    !=(%czar (clan:title ship))
-                ==
-            ==
-          (try-next-sponsor sponsor.peer-state)
-        ::
-        ?:  =(our ship)
-          ::  if forwarding, don't send to sponsor to avoid loops
-          ::
-          ?:  for
-            event-core
-          (try-next-sponsor sponsor.peer-state)
-        ::
-        ?~  route=route.peer-state
-          %-  (trace rot.veb final-ship |.("no route to:  {<ship>}"))
-          (try-next-sponsor sponsor.peer-state)
-        ::
-        %-  (trace rot.veb final-ship |.("trying route: {<ship>}"))
-        =.  event-core
-          (emit unix-duct.ames-state %give %send lane.u.route blob)
-        ::
-        ?:  direct.u.route
-          event-core
-        (try-next-sponsor sponsor.peer-state)
-    ::
-    ++  try-next-sponsor
-      |=  sponsor=^ship
-      ^+  event-core
+    =/  final-ship  rcvr.packet
+    %-  (trace rot.veb final-ship |.("send-packet: to {<ship>}"))
+    |-  ^+  event-core
+      =*  relay-state  relay-state.ames-state
+      =*  pending   pending.relay-state
+      =*  sponsees  sponsees.relay-state
+      ::  get the lane(s) to fire the packet at
       ::
-      ?:  =(ship sponsor)
-        event-core
-      ^$(ship sponsor)
-    --
+      =/  dest
+        ^-  (pair lane (unit lane))
+        =/  sponsee-lane
+          ^-  (unit lane)
+          (~(get by sponsees) rcvr.packet)
+        ?~  sponsee-lane
+          =/  rel
+            (~(get by pending) [%ames `dyad`[sndr.packet rcvr.packet]])
+          ?~  rel
+            ::  get the galaxy of the final-ship if no sponsors known
+            ::
+            :_  ~
+            ^-  lane
+            |-
+            ?+  (clan:title final-ship)
+              $(final-ship (^sein:title final-ship))
+              %czar  [%.y final-ship]
+            ==
+          -.u.rel
+        [u.sponsee-lane ~]
+      ::  write the next field if forwarding
+      ::
+      =?  next.packet
+        ?&
+          for
+          ?~  next-lane  !!
+          =(%.n -.u.next-lane)
+        ==
+        ?~  next-lane  !!
+        ?-  -.u.next-lane
+          %.y  !!
+          %.n  `p.u.next-lane
+        ==
+      ::
+      =/  blob  (encode-packet packet)
+      ::  send packet to p.dest and maybe q.dest
+      ::
+      =/  mov   `move`[unix-duct.ames-state %give %send p.dest blob]
+      ?~  q.dest
+        (emit mov)
+      =/  nmov  `move`[unix-duct.ames-state %give %send u.q.dest blob]
+      (demit [mov nmov])
   ::  +attestation-packet: generate signed self-attestation for .her
   ::
   ::    Sent by a comet on first contact with a peer.  Not acked.
   ::
   ++  attestation-packet
     |=  [her=ship =her=life]
-    ^-  blob
-    %-  encode-packet
+    ^-  packet
     %-  encode-open-packet
     :_  crypto-core.ames-state
     :*  ^=  public-key  pub:ex:crypto-core.ames-state
@@ -2098,9 +2129,8 @@
   ::
   ++  sendkeys-packet
     |=  her=ship
-    ^-  blob
+    ^-  packet
     ?>  ?=(%pawn (clan:title her))
-    %-  encode-packet
     (encode-keys-packet our her life.ames-state)
   ::  +get-peer-state: lookup .her state or ~
   ::
@@ -2318,23 +2348,6 @@
             (gte now.channel expiry)
           %dead
         qos.peer-state
-      ::  expire direct route
-      ::
-      ::    If the peer is not responding, mark the .lane.route as
-      ::    indirect.  The next packets we emit will be sent to the
-      ::    receiver's sponsorship chain in case the receiver's
-      ::    transport address has changed and this lane is no longer
-      ::    valid.
-      ::
-      ::    If .her is a galaxy, the lane will always remain direct.
-      ::
-      =?    route.peer-state
-          ?&  ?=(%dead -.qos.peer-state)
-              ?=(^ route.peer-state)
-              direct.u.route.peer-state
-              !=(%czar (clan:title her.channel))
-          ==
-        route.peer-state(direct.u %.n)
       ::  resend comet attestation packet if first message times out
       ::
       ::    The attestation packet doesn't get acked, so if we tried to
@@ -2348,7 +2361,7 @@
           ?&  ?=(%pawn (clan:title our))
               =(1 current:(~(got by snd.peer-state) bone))
           ==
-        (send-blob | her.channel (attestation-packet [her her-life]:channel))
+        (send-packet | ~ (attestation-packet [her her-life]:channel))
       ::  maybe resend some timed out packets
       ::
       (run-message-pump bone %wake ~)
@@ -2364,8 +2377,7 @@
       ::    here.
       ::
       =.  event-core
-        %^  send-blob  |  her.channel
-        %-  encode-packet
+        %^  send-packet  |  ~
         %:  encode-shut-packet
           shut-packet(bone (mix 1 bone.shut-packet))
           symmetric-key.channel
