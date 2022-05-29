@@ -270,11 +270,12 @@
 ++  decode-response-packet
   |=  =purr
   =;  =meow
-    ~?  !=(wid.meow (met 3 dat.meow))  [%fine %unexpected-dat-size]
+    ~|  %fine-meow-len^meow
+    ?>  (gte siz.meow (met 3 dat.meow))
     meow
   :*  sig=(cut 3 [0 64] purr)
-      siz=(cut 3 [64 4] purr)
-      wid=(cut 3 [68 2] purr)
+      num=(cut 3 [64 4] purr)
+      siz=(cut 3 [68 2] purr)
       dat=(rsh 3^70 purr)
   ==
 ++  response-size  13  ::  1kb
@@ -282,13 +283,13 @@
 ++  decode-response-msg
   |=  [total=@ud hav=(list have)]
   ^-  roar
-  =/  mess=@
+  =/  mes=@
     %+  rep  response-size
     %+  turn  (flop hav)
     |=  =have
     dat.have
-  :-  sig=(cut 3 [0 64] mess)
-  =+  dat=(rsh 3^64 mess)
+  :-  sig=(end 9 mes)
+  =+  dat=(rsh 9 mes)
   ?~  dat  ~
   ~|  [%fine %response-not-cask]
   ;;((cask) (cue dat))
@@ -2857,13 +2858,13 @@
               =-  ke-core(keen -)
               ::
               =/  paz=(list want)
-                %+  turn  (gulf 1 siz.meow)
+                %+  turn  (gulf 1 num.meow)
                 |=  fra=@ud
                 ^-  want
                 [fra (ke-encode-req fra) now 0 0]
               ::
               %_  keen
-                num-fragments  siz.meow
+                num-fragments  num.meow
                 nex  (tail paz)
               ==
             ::  +ke-continue: send packets according to normal congestion flow
@@ -2923,7 +2924,8 @@
               =/  og  ke-core
               =.  pe-core  (pe-update-qos %live last-contact=now)
               ::  handle empty
-              ?:  =(0 siz.meow)
+              ?:  =(0 num.meow)
+                ~&  %ke-done
                 ?>  =(~ dat.meow)
                 (ke-done sig.meow ~)
               ::  update congestion, or fill details
@@ -3130,9 +3132,10 @@
       ==
     ::
     +$  meow  ::  response packet
-      $:  sig=@
-          siz=@ud
-          byts
+      $:  sig=@ux  ::  signature
+          num=@ud  ::  number of fragments
+          siz=@ud  ::  official size of this fragment
+          dat=@ux  ::  contents
       ==
     ::
     +$  roar  ::  response message
@@ -3171,15 +3174,17 @@
       ==
     ::
     ++  frag-body
-      |=  [=path mes=@ num=@ud]
+      |=  [=path mes=@ num=@ud fin=?]
       ^-  @uxmeow
       =/  tot  (met 13 mes)
       =/  fra  (cut 13 [(dec num) 1] mes)
       =/  wid  (met 3 fra)
+      =/  wod  ?:(fin wid 1.024)
+      =-  ~&  [tot=tot wid=wid num=num fra=!=(0 fra) fin=fin]  -
       %+  can  3
       :~  64^(sign-fra:keys path num fra)
           4^tot    ::  number of fragments
-          2^wid    ::  response data fragment size in bytes
+          2^wod    ::  response data fragment size in bytes
           wid^fra  ::  response data fragment
       ==
     ::
@@ -3203,13 +3208,18 @@
         (cat 9 sig (jam data))
       ::
       ?>  (lte len.hunk 16.384)
-      =/  top  +((min (met 13 mes) (add [lop len]:hunk)))
+      =/  las  (met 13 mes)
+      =/  tip  (dec (add [lop len]:hunk))
+      =/  top  (min las tip)
       =/  num  lop.hunk
-      ?>  (lth num top)
+      ?>  (lte num top)
+      ~&  [path num=num top=top hunk siz=(met 13 mes) ?=(^ data)]
       =|  res=(list @uxmeow)
       |-  ^+  res
-      ?:  =(num top)  (flop res)
-      $(num +(num), res :_(res (frag-body path mes num)))
+      ?:  =(num top)
+        =-  (flop - res)
+        (frag-body path mes num =(top las))
+      $(num +(num), res :_(res (frag-body path mes num |)))
     ::
     ++  keys
       |%
