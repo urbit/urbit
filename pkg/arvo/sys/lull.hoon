@@ -1314,9 +1314,10 @@
         meow
     ==
   +$  meow  ::  response packet
-    $:  sig=@
-        siz=@ud
-        byts
+    $:  sig=@ux  ::  signature
+        num=@ud  ::  number of fragments
+        siz=@ud  ::  official size of this fragment
+        dat=@ux  ::  contents
     ==
   +$  peep  ::  request data
     $:  =path
