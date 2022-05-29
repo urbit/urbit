@@ -1,0 +1,19 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "keccak-tiny",
+    srcs = [
+        "define-macros.h",
+        "keccak-tiny.c",
+    ],
+    hdrs = ["keccak-tiny.h"],
+    copts = [
+        "-Wall",
+        "-Wpedantic",
+        "-std=c11",
+        "-Wextra",
+        "-march=native",
+    ],
+    includes = ["."],
+    visibility = ["//pkg/urcrypt:__subpackages__"],
+)

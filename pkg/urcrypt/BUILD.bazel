@@ -1,0 +1,5 @@
+alias(
+    name = "urcrypt",
+    actual = "//pkg/urcrypt/urcrypt",
+    visibility = ["//visibility:public"],
+)

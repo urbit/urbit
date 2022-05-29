@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Run buildifier on all starlark files
+find . \
+  -type f \
+  \( -name '*.bzl' \
+    -o -name '*.sky' \
+    -o -name BUILD.bazel \
+    -o -name BUILD \
+    -o -name '*.BUILD' \
+    -o -name '*.BUILD.bazel' \
+    -o -name 'BUILD.*.oss' \
+    -o -name WORKSPACE \
+    -o -name WORKSPACE.bazel \
+    -o -name WORKSPACE.oss \
+    -o -name 'WORKSPACE.*.bazel' \
+    -o -name 'WORKSPACE.*.oss' \
+  \) -print | xargs buildifier

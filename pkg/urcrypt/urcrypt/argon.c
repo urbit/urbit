@@ -1,7 +1,7 @@
 #include "urcrypt.h"
 #include "util.h"
 #include <argon2.h>
-#include <blake2.h>
+#include <blake2/blake2.h>
 
 // library convention is to have sizes in size_t, but argon2 wants them
 // in uint32_t, so here's a helper macro for ensuring equivalence.

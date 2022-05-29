@@ -1,0 +1,37 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "urcrypt",
+    srcs = [
+        "aes_cbc.c",
+        "aes_ecb.c",
+        "aes_siv.c",
+        "argon.c",
+        "ed25519.c",
+        "ge_additions.c",
+        "keccak.c",
+        "ripemd.c",
+        "scrypt.c",
+        "secp256k1.c",
+        "sha.c",
+        "util.c",
+        "util.h",
+    ],
+    hdrs = ["urcrypt.h"],
+    copts = [
+        "-Wall",
+        "-g",
+    ],
+    includes = ["."],
+    visibility = ["//pkg/urcrypt:__subpackages__"],
+    deps = [
+        "//pkg/urcrypt/argon2",
+        "//pkg/urcrypt/ed25519",
+        "//pkg/urcrypt/ge-additions",
+        "//pkg/urcrypt/keccak-tiny",
+        "//pkg/urcrypt/scrypt",
+        "@libaes_siv",
+        "@openssl",
+        "@secp256k1",
+    ],
+)

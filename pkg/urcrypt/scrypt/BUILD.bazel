@@ -1,0 +1,28 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "scrypt",
+    srcs = [
+        "crypto-mcf.c",
+        "crypto-scrypt-saltgen.c",
+        "crypto_scrypt-check.c",
+        "crypto_scrypt-hash.c",
+        "crypto_scrypt-hexconvert.c",
+        "crypto_scrypt-hexconvert.h",
+        "crypto_scrypt-nosse.c",
+        "sha256.c",
+        "slowequals.c",
+        "slowequals.h",
+        "sysendian.h",
+    ],
+    hdrs = [
+        "b64.h",
+        "libscrypt.h",
+        "sha256.h",
+    ],
+    includes = ["."],
+    local_defines = [
+        # "_FORTIFY_SOURCE=2"
+    ],
+    visibility = ["//pkg/urcrypt:__subpackages__"],
+)

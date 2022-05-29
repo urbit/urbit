@@ -1,0 +1,12 @@
+diff --git a/autogen.sh b/autogen.sh
+index 65286b9..b006be9 100755
+--- a/autogen.sh
++++ b/autogen.sh
+@@ -1,3 +1,7 @@
+ #!/bin/sh
++
+ set -e
++
++libtoolize
++
+ autoreconf -if --warnings=all

@@ -1,0 +1,13 @@
+diff --git a/rules/platform.bzl b/rules/platform.bzl
+index aabb328..895a2e4 100644
+--- a/rules/platform.bzl
++++ b/rules/platform.bzl
+@@ -1,7 +1,7 @@
+ def _platform_transition_impl(settings, attr):
+     _ignore = settings
+     return {
+-        "//command_line_option:platforms": "@zig_sdk{}".format(attr.platform),
++        "//command_line_option:platforms": attr.platform,
+     }
+ 
+ _platform_transition = transition(

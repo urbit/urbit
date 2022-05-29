@@ -97,7 +97,7 @@
 #     include "compat.h"
 
 #   else
-      #error "port: headers"
+#     error "port: headers"
 #   endif
 
 #   ifndef __has_feature

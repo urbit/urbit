@@ -1,0 +1,9 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "murmur3",
+    srcs = ["murmur3.c"],
+    hdrs = ["murmur3.h"],
+    strip_include_prefix = "",
+    visibility = ["//visibility:public"],
+)

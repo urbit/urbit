@@ -1,0 +1,31 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "ed25519",
+    srcs = [
+        "src/add_scalar.c",
+        "src/fe.c",
+        "src/ge.c",
+        "src/key_exchange.c",
+        "src/keypair.c",
+        "src/precomp_data.h",
+        "src/sc.c",
+        "src/sc.h",
+        "src/seed.c",
+        "src/sha512.c",
+        "src/sha512.h",
+        "src/sign.c",
+        "src/verify.c",
+    ],
+    hdrs = [
+        "src/ed25519.h",
+        "src/fe.h",
+        "src/fixedint.h",
+        "src/ge.h",
+    ],
+    copts = [
+        "-Wno-unused-result",
+    ],
+    includes = ["src"],
+    visibility = ["//pkg/urcrypt:__subpackages__"],
+)

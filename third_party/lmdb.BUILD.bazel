@@ -1,0 +1,28 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "lmdb",
+    srcs = [
+        "mdb.c",
+        "midl.c",
+    ],
+    hdrs = [
+        "lmdb.h",
+        "midl.h",
+    ],
+    includes = ["."],
+    copts = [
+        "-w",
+    ],
+    linkopts = select({
+        "@platforms//os:windows":
+        # InitializeSecurityDescriptor, SetSecurityDescriptorDacl
+        [
+            "-DEFAULTLIB:advapi32.lib",
+        ],
+        "//conditions:default": [
+            "-lpthread",
+        ],
+    }),
+    visibility = ["//visibility:public"],
+)

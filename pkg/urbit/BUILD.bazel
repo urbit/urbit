@@ -1,0 +1,201 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@bazel-zig-cc//rules:platform.bzl", "platform_binary")
+
+genrule(
+    name = "ivory-impl",
+    srcs = ["//bin:ivory.pill"],
+    outs = ["include/ivory_impl.h"],
+    cmd = """
+file=u3_Ivory_pill
+cat $(location //bin:ivory.pill) > $$file
+xxd -i $$file > $@
+""",
+)
+
+genrule(
+    name = "ca-bundle",
+    srcs = ["//third_party:openssl.ca-bundle.crt"],
+    outs = ["include/ca-bundle.h"],
+    cmd = """
+file=include_ca_bundle_crt
+cat $(location //third_party:openssl.ca-bundle.crt) > $$file
+xxd -i $$file > $@
+""",
+)
+
+genrule(
+    name = "config",
+    outs = ["include/config.h"],
+    cmd = """
+cat <<EOF >$@
+#pragma once
+EOF
+""",
+)
+
+filegroup(
+    name = "includes",
+    srcs = [":include/config.h"] + glob(["include/**/*.h"]),
+)
+
+COMMON_COPTS = [
+    "-funsigned-char",
+    "-ffast-math",
+    "-fcommon",
+    "-std=gnu99",
+]
+
+# XXX: Use select() here as appropriate rather than config.h.
+LOCAL_DEFINES = [
+    "URBIT_VERSION='\"1.9-rc5\"'",
+    "U3_OS_ENDIAN_little=1",
+    "U3_OS_linux=1",
+    "U3_OS_PROF=1",
+    "U3_VERE_PACE='\"often\"'",
+]
+
+# FIXME: subsume the compat/<platform> patches into select() deps based on @platform//.
+cc_library(
+    name = "posix-compat",
+    srcs = [
+        "compat/posix/daemon.c",
+        "compat/posix/ptty.c",
+        ":includes",
+    ],
+    hdrs = ["compat/posix/rsignal.h"],
+    copts = COMMON_COPTS,
+    includes = ["include"],
+    local_defines = LOCAL_DEFINES,
+    strip_include_prefix = "compat/posix",
+    deps = [
+        "@gmp",
+        "@libuv",
+        "@openssl",
+    ],
+)
+
+cc_library(
+    name = "jets",
+    srcs = [":includes"] + glob(["jets/**/*.c"]),
+    copts = COMMON_COPTS,
+    includes = ["include"],
+    local_defines = LOCAL_DEFINES,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/ent",
+        "//pkg/urcrypt",
+        "@gmp",
+        "@murmur3",
+        "@openssl",
+        "@softfloat3",
+    ],
+)
+
+cc_library(
+    name = "noun",
+    srcs = [":includes"] + glob(["noun/**/*.c"]),
+    copts = COMMON_COPTS,
+    includes = ["include"],
+    local_defines = LOCAL_DEFINES,
+    visibility = ["//visibility:public"],
+    deps = [
+        "@gmp",
+        "@openssl",
+        "//pkg/urcrypt",
+        "@libuv",
+        "@murmur3",
+        "@libsigsegv",
+    ] + select({
+        "//conditions:default": [":posix-compat"],
+    }),
+)
+
+cc_library(
+    name = "ur",
+    srcs = [":includes"] + glob(["ur/**/*.c"]),
+    copts = COMMON_COPTS,
+    includes = ["include"],
+    local_defines = LOCAL_DEFINES,
+    visibility = ["//visibility:public"],
+    deps = ["@murmur3"],
+)
+
+cc_library(
+    name = "vere",
+    srcs = [
+        ":includes",
+        ":ivory-impl",
+    ] + glob(["vere/**/*.c"]),
+    copts = COMMON_COPTS,
+    defines = LOCAL_DEFINES,
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/ent",
+        "@curl",
+        "@gmp",
+        "@h2o",
+        "@libuv",
+        "@lmdb",
+        "@openssl",
+        ":ur",
+        ":noun",
+        ":jets"
+    ],
+)
+
+cc_library(
+    name = "worker",
+    srcs = [
+        "worker/serf.c",
+        ":includes",
+    ],
+    copts = COMMON_COPTS,
+    includes = ["include"],
+    local_defines = LOCAL_DEFINES,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vere",
+    ],
+)
+
+cc_library(
+    name = "daemon",
+    srcs = [
+        "daemon/main.c",
+        "daemon/whereami.c",
+        "daemon/whereami.h",
+        ":ca-bundle",
+        ":includes",
+    ],
+    copts = COMMON_COPTS,
+    includes = [
+        "daemon",
+        "include",
+    ],
+    local_defines = LOCAL_DEFINES,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":posix-compat",
+        ":vere",
+        ":worker",
+        "@libsigsegv",
+    ],
+)
+
+cc_binary(
+    name = "urbit",
+    deps = [":daemon"],
+)
+
+platform_binary(
+    name = "linux-amd64",
+    src = ":urbit",
+    platform = "@zig_sdk//libc_aware/platform:linux_amd64_gnu.2.34"
+)
+
+# platform_binary(
+#     name = "linux-arm64",
+#     src = ":urbit",
+#     platform = "@zig_sdk//libc_aware/platform:linux_arm64_gnu.2.34"
+# )

@@ -1,0 +1,17 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "make")
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+make(
+    name = "softfloat3",
+    lib_name = "softfloat",
+    lib_source = ":srcs",
+    includes = ["source/include"],
+    args = ["-C"] + select({
+        "//conditions:default": ["build/Linux-x86_64-GCC"],
+    }),
+    visibility = ["//visibility:public"],
+)

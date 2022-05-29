@@ -49,7 +49,6 @@ dist-newstyle
 *.pdf
 
 # Build/Release Artifacts
-build/
 cross/
 release/
 dist/
@@ -83,4 +82,11 @@ pkg/interface/link-webext/web-ext-artifacts
 # Logs
 *.log
 
+# Vercel
 .vercel
+
+# Direnv
+/.direnv
+
+# Bazel
+/bazel-*

@@ -1,0 +1,24 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+genrule(
+    name = "config",
+    outs = ["config.h"],
+    cmd = "touch $@",
+)
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+cc_library(
+    visibility = ["//visibility:public"],
+    name = "libaes_siv",
+    srcs = [
+        "aes_siv.c",
+        ":config.h",
+    ],
+    hdrs = ["aes_siv.h"],
+    deps = ["@openssl"],
+    strip_include_prefix = "",
+)

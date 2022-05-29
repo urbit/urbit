@@ -1,0 +1,19 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "ent",
+    srcs = ["ent.c"],
+    hdrs = ["ent.h"],
+    copts = [
+        # "-Wall",
+        # "-Werror",
+        # "-pedantic",
+        # "-std=gnu99"
+    ],
+    includes = ["."],
+    # FIXME: use select() here.
+    local_defines = [
+        "ENT_GETENTROPY_SYSRANDOM",
+    ],
+    visibility = ["//visibility:public"],
+)

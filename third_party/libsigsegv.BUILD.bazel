@@ -1,0 +1,27 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+configure_make(
+    name = "libsigsegv",
+    visibility = ["//visibility:public"],
+    autoconf = True,
+    autoreconf = True,
+    configure_in_place = True,
+    lib_source = ":srcs",
+    copts = ["--host"]
+)
+
+# cc_library(
+#     name = "libsigsegv",
+#     srcs = [
+
+#     ],
+#     hdrs = [],
+#     includes = [],
+
+# )
