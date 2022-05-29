@@ -1452,7 +1452,7 @@ _ames_skip(u3_prel* pre_u)
 static inline c3_w
 _fine_lop(c3_w fra_w)
 {
-  return fra_w - (fra_w % FINE_PAGE) + 1;
+  return 1 + (((fra_w - 1) / FINE_PAGE) * FINE_PAGE);
 }
 
 /* _fine_pack_scry_cb(): receive packets for datum out of fine
