@@ -248,6 +248,39 @@
   ?~  bone=`(unit @ud)`(slaw %ud i.t.t.wire)
     ~
   `[u.ship u.bone]
+::  +make-pending-timer-wire
+::
+++  make-pending-timer-wire
+  |=  dyad
+  ^-  wire
+  /pending/(scot %p sndr)/(scot %p rcvr)
+::  +parse-pending-timer-wire
+::
+++  parse-pending-timer-wire
+  |=  =wire
+  ^-  dyad
+  ::
+  ~|  %ames-wire-timer^wire
+  ?.  ?=([%pending @ @ ~] wire)  !!
+  ?~  sndr=`(unit @p)`(slaw %p i.t.wire)  !!
+  ?~  rcvr=`(unit @p)`(slaw %p i.t.t.wire)  !!
+  [u.sndr u.rcvr]
+::  +make-sponsee-timer-wire
+::
+++  make-sponsee-timer-wire
+  |=  her=ship
+  ^-  wire
+  /sponsee/(scot %p her)
+::  +parse-sponsee-timer-wire
+::
+++  parse-sponsee-timer-wire
+  |=  =wire
+  ^-  ship
+  ::
+  ~|  %ames-wire-timer^wire
+  ?.  ?=([%sponsee @ ~] wire)  !!
+  ?~  sponsee=`(unit @p)`(slaw %p i.t.wire)  !!
+  u.sponsee
 ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
 ::
 ::    Assumes keys have a tag on them like the result of the |ex:crub core.
@@ -662,7 +695,7 @@
 ::
 +$  relay-state
   $:  pending=(map request [(pair lane (unit lane)) expiry=@da])
-      sponsees=(map ship lane)
+      sponsees=(map ship [lane expiry=@da])
   ==
 ::  $request: pending request
 ::
@@ -1491,19 +1524,17 @@
         =(~ next.packet)
         =/  val  (~(get by sponsees.relay-state) sndr.packet)
         =(~ val)
-        |^
-          ?|
-            =(our (sein:title our now sndr.packet))
-            try-next-sponsor
-          ==
-        ++  try-next-sponsor
-          ?:  =(%czar (clan:title our))
-            %.n
-          $(our (sein:title our now sndr.packet))
-        --
+        =(our (sein:title our now sndr.packet))
       ==
+      ::  send 30s expiration timer to behn
+      ::
+      =/  duct  ~[/ames]
+      =/  wire  (make-sponsee-timer-wire sndr.packet)
+      =.  event-core
+        (emit duct %pass wire %b %wait (add ~s30 now))
+      ::
       ^+  sponsees.relay-state
-      (~(put by sponsees.relay-state) [sndr.packet lane])
+      (~(put by sponsees.relay-state) [sndr.packet [lane (add ~s30 now)]])
     :: add the lane to our pending map
     ::
     =*  inv-req  [%ames `dyad`[rcvr.packet sndr.packet]]
@@ -1514,6 +1545,13 @@
         ?~  next
           %.n
         =(lane u.next)
+      ::  send 30s expiration timer to behn
+      ::
+      =/  duct  ~[/ames]
+      =/  wire  (make-pending-timer-wire [rcvr.packet sndr.packet])
+      =.  event-core
+        (emit duct %pass wire %b %wait (add ~s30 now))
+      ::
       ^+  pending.relay-state
       (~(put by pending.relay-state) [inv-req [[lane ~] (add ~s30 now)]])
     ::  update the pending map 'next' lane if necessary
@@ -1695,6 +1733,26 @@
   ++  on-take-wake
     |=  [=wire error=(unit tang)]
     ^+  event-core
+    ::
+    ?:  ?=([%pending @ @ ~] wire)
+      =/  res  (parse-pending-timer-wire wire)
+      =*  pending  pending.relay-state.ames-state
+      =/  pen  (~(get by pending) [%ames res])
+      ?~  pen  event-core
+      ?:  (gth expiry.u.pen now)
+        event-core
+      =.  pending  (~(del by pending) res)
+      event-core
+    ::
+    ?:  ?=([%sponsee @ ~] wire)
+      =/  res  (parse-sponsee-timer-wire wire)
+      =*  sponsees  sponsees.relay-state.ames-state
+      =/  spon  (~(get by sponsees) res)
+      ?~  spon  event-core
+      ?:  (gth expiry.u.spon now)
+        event-core
+      =.  sponsees  (~(del by sponsees) res)
+      event-core
     ::
     ?:  ?=([%alien @ ~] wire)
       ::  if we haven't received an attestation, ask again
@@ -2070,7 +2128,7 @@
         ^-  (pair lane (unit lane))
         =/  sponsee-lane
           ^-  (unit lane)
-          (~(get by sponsees) rcvr.packet)
+          -:(~(get by sponsees) rcvr.packet)
         ?~  sponsee-lane
           =/  rel
             (~(get by pending) [%ames `dyad`[sndr.packet rcvr.packet]])
