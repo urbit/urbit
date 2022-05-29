@@ -262,9 +262,8 @@
   ::
   ~|  %ames-wire-timer^wire
   ?.  ?=([%pending @ @ ~] wire)  !!
-  ?~  sndr=`(unit @p)`(slaw %p i.t.wire)  !!
-  ?~  rcvr=`(unit @p)`(slaw %p i.t.t.wire)  !!
-  [u.sndr u.rcvr]
+  :-  `@p`(slav %p i.t.wire)
+  `@p`(slav %p i.t.t.wire)
 ::  +make-sponsee-timer-wire
 ::
 ++  make-sponsee-timer-wire
@@ -1519,54 +1518,55 @@
     :: add the ship to our sponsees map if we are the sponsor
     ::
     =*  relay-state  relay-state.ames-state
-    =?  sponsees.relay-state
-      ?&
-        =(~ next.packet)
-        =/  val  (~(get by sponsees.relay-state) sndr.packet)
-        =(~ val)
-        =(our (sein:title our now sndr.packet))
+    =*  spons
+      ?&  =(~ next.packet)
+          =/  val  (~(get by sponsees.relay-state) sndr.packet)
+          =(~ val)
+          =(our (sein:title our now sndr.packet))
       ==
-      ::  send 30s expiration timer to behn
-      ::
+    =?  sponsees.relay-state
+      spons
+      (~(put by sponsees.relay-state) [sndr.packet [lane (add ~s30 now)]])
+    ::  send 30s expiration timer to behn
+    ::
+    =?  event-core
+      spons
       =/  duct  ~[/ames]
       =/  wire  (make-sponsee-timer-wire sndr.packet)
-      =.  event-core
-        (emit duct %pass wire %b %wait (add ~s30 now))
-      ::
-      ^+  sponsees.relay-state
-      (~(put by sponsees.relay-state) [sndr.packet [lane (add ~s30 now)]])
+      (emit duct %pass wire %b %wait (add ~s30 now))
     :: add the lane to our pending map
     ::
     =*  inv-req  [%ames `dyad`[rcvr.packet sndr.packet]]
-    =?  pending.relay-state
+    =*  pend
       =/  val  (~(get by pending.relay-state) inv-req)
       ?~  val  %.y
-        =/  next  q.-.u.val
-        ?~  next
-          %.n
-        =(lane u.next)
-      ::  send 30s expiration timer to behn
-      ::
-      =/  duct  ~[/ames]
-      =/  wire  (make-pending-timer-wire [rcvr.packet sndr.packet])
-      =.  event-core
-        (emit duct %pass wire %b %wait (add ~s30 now))
-      ::
+      =/  next  q.-.u.val
+      ?~  next
+        %.n
+      =(lane u.next)
+    =?  pending.relay-state
+      pend
       ^+  pending.relay-state
       (~(put by pending.relay-state) [inv-req [[lane ~] (add ~s30 now)]])
+    ::  send 30s expiration timer to behn
+    ::
+    =?  event-core
+      pend
+      =/  duct  ~[/ames]
+      =/  wire  (make-pending-timer-wire [rcvr.packet sndr.packet])
+      (emit duct %pass wire %b %wait (add ~s30 now))
     ::  update the pending map 'next' lane if necessary
     ::
     =?  pending.relay-state
       ::
-      =/  val  (~(get by pending.relay-state) inv-req)
-      ?~  val  !!
-      =/  next  q.-.u.val
+      =/  val  (~(got by pending.relay-state) inv-req)
+      =/  next  q.-.val
       &(=(~ next) !=(~ next.packet))
       ::
       ^+  pending.relay-state
       ?~  next.packet  !!
       %-  ~(put by pending.relay-state)
-        [inv-req [[lane `[%.n u.next.packet]] expiry=(add ~s30 now)]]
+      [inv-req [[lane `[%.n u.next.packet]] expiry=(add ~s30 now)]]
     ::
     ?:  =(our sndr.packet)
       event-core
@@ -2128,7 +2128,9 @@
         ^-  (pair lane (unit lane))
         =/  sponsee-lane
           ^-  (unit lane)
-          -:(~(get by sponsees) rcvr.packet)
+          =/  res  (~(get by sponsees) rcvr.packet)
+          ?~  res  ~
+          `-.u.res
         ?~  sponsee-lane
           =/  rel
             (~(get by pending) [%ames `dyad`[sndr.packet rcvr.packet]])
