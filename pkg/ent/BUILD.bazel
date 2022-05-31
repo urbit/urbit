@@ -9,7 +9,6 @@ filegroup(
 
 configure_make(
     name = "ent",
-    srcs =
     visibility = ["//visibility:public"],
     configure_in_place = True,
     lib_source = ":srcs",
