@@ -34,9 +34,6 @@ build --verbose_failures
 build --worker_sandboxing
 build --compilation_mode=opt
 
-build --incompatible_enable_cc_toolchain_resolution
-build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
-
 build:zig-cc --incompatible_enable_cc_toolchain_resolution
 build:zig-cc --extra_toolchains @zig_sdk//toolchain:linux_arm64_gnu.2.28
 build:zig-cc --extra_toolchains @zig_sdk//toolchain:x86_64-linux-gnu.2.28
@@ -47,7 +44,7 @@ build:zig-cc --host_copt=-fno-sanitize=undefined
 
 # Use Zig C/C++ compiler (cross-compile to Linux/aarch64).
 build:zig-cc-linux-aarch64 --config=zig-cc
-build:zig-cc-linux-aarch64 --platforms @zig_sdk//platforms:linux_arm64_gnu.2.28
+build:zig-cc-linux-aarch64 --platforms @zig_sdk//platform:linux_aarch64
 build:zig-cc-linux-aarch64 --run_under=qemu-aarch64-static
 build:zig-cc-linux-aarch64 --test_env=QEMU_LD_PREFIX=/usr/aarch64-linux-gnu/
 
