@@ -469,14 +469,14 @@ static void
 _pier_on_scry_done(void* ptr_v, u3_noun nun)
 {
   u3_pier* pir_u = ptr_v;
-  u3_weak res = u3r_at(7, nun);
+  u3_weak    res = u3r_at(7, nun);
 
   if (u3_none == res) {
     u3l_log("pier: scry failed\n");
   }
   else {
-    u3_weak out,    pad;
-    c3_c   *ext_c, *pac_c;
+    u3_weak out;
+    c3_c *ext_c, *pac_c;
 
     u3l_log("pier: scry succeeded\n");
 
@@ -506,30 +506,13 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
       u3z(puf);
     }
 
-    //  try to build export target path
-    //
-    {
-      u3_noun pro = u3m_soft(0, _pier_stab, u3i_string(pac_c));
-      if ( 0 == u3h(pro) ) {
-        c3_w len_w = u3kb_lent(u3k(u3t(pro)));
-        pad = u3nt(c3_s4('.', 'u', 'r', 'b'),
-                   c3_s3('p', 'u', 't'),
-                   u3qb_scag(len_w - 1, u3t(pro)));
-      }
-      else {
-        u3l_log("pier: invalid export path %s\n", pac_c);
-        pad = u3_none;
-      }
-      u3z(pro);
-    }
-
     //  if serialization and export path succeeded, write to disk
     //
-    if ( (u3_none != out) && (u3_none != pad) ) {
+    if ( u3_none != out ) {
       c3_c fil_c[256];
       snprintf(fil_c, 256, "%s.%s", pac_c + 1, ext_c);
 
-      u3_unix_save(fil_c, pad);
+      u3_unix_save(fil_c, out);
       u3l_log("pier: scry result in %s/.urb/put/%s\n", u3_Host.dir_c, fil_c);
     }
   }
