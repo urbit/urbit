@@ -28,7 +28,7 @@ cc_library(
     includes = ["."],
     # FIXME: use select() here.
     local_defines = [
-        "ENT_GETENTROPY_UNISTD",
+        "ENT_DEV_URANDOM",
     ],
     visibility = ["//visibility:public"],
 )
