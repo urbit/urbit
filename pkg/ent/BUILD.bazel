@@ -1,19 +1,35 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+# load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 
-cc_library(
-    name = "ent",
-    srcs = ["ent.c"],
-    hdrs = ["ent.h"],
-    copts = [
-        # "-Wall",
-        # "-Werror",
-        # "-pedantic",
-        # "-std=gnu99"
-    ],
-    includes = ["."],
-    # FIXME: use select() here.
-    local_defines = [
-        "ENT_GETENTROPY_SYSRANDOM",
-    ],
-    visibility = ["//visibility:public"],
+filegroup(
+    name = "srcs",
+    srcs = ["configure", "Makefile", "ent.h", "ent.c"],
+
 )
+
+configure_make(
+    name = "ent",
+    srcs =
+    visibility = ["//visibility:public"],
+    configure_in_place = True,
+    lib_source = ":srcs",
+    lib_name = "libent",
+)
+
+# cc_library(
+#     name = "ent",
+#     srcs = ["ent.c"],
+#     hdrs = ["ent.h"],
+#     copts = [
+#         # "-Wall",
+#         # "-Werror",
+#         # "-pedantic",
+#         # "-std=gnu99"
+#     ],
+#     includes = ["."],
+#     # FIXME: use select() here.
+#     local_defines = [
+#         "ENT_GETENTROPY_SYSRANDOM",
+#     ],
+#     visibility = ["//visibility:public"],
+# )
