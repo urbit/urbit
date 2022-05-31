@@ -1,12 +1,12 @@
 # See: https://docs.bazel.build/versions/master/user-manual.html#bazelrc.
 
-# # Darwin fix - taken from https://github.com/digital-asset/daml/pull/8697.
-# startup --host_jvm_args=-Xmx2g --host_jvm_args=-Djdk.tls.client.protocols=TLSv1.2
+# https://docs.bazel.build/versions/master/skylark/performance.html#memory-profiling
+startup --host_jvm_args=-Xmx2g
 
-# # Ignore debug traces, such as when the bazel version differs from what rules expect.
-# common --ui_event_filters=-DEBUG
+# Ignore debug traces, such as when the bazel version differs from what rules expect.
+common --ui_event_filters=-DEBUG
 
-# # # build --incompatible_disallow_empty_glob
+# # build --incompatible_disallow_empty_glob
 # build --verbose_failures
 
 # # Allow newly registered toolchains to be resolved (ie. zig cc)
