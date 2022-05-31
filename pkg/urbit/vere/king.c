@@ -238,7 +238,7 @@ _king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
 **  XX deduplicate with dawn.c
 */
 static c3_i
-_king_curl_bytes(c3_c* url_c, c3_w* len_w, c3_y** hun_y)
+_king_curl_bytes(c3_c* url_c, c3_w* len_w, c3_y** hun_y, c3_t veb_t)
 {
   c3_i     ret_i = 0;
   CURL    *cul_u;
@@ -262,11 +262,15 @@ _king_curl_bytes(c3_c* url_c, c3_w* len_w, c3_y** hun_y)
   //  XX retry?
   //
   if ( CURLE_OK != res_i ) {
-    u3l_log("curl: failed %s: %s\n", url_c, curl_easy_strerror(res_i));
+    if ( veb_t ) {
+      u3l_log("curl: failed %s: %s\n", url_c, curl_easy_strerror(res_i));
+    }
     ret_i = -1;
   }
   if ( 300 <= cod_i ) {
-    u3l_log("curl: error %s: HTTP %ld\n", url_c, cod_i);
+    if ( veb_t ) {
+      u3l_log("curl: error %s: HTTP %ld\n", url_c, cod_i);
+    }
     ret_i = -2;
   }
 
@@ -287,7 +291,7 @@ _king_get_atom(c3_c* url_c)
   c3_y* hun_y;
   u3_noun pro;
 
-  if ( _king_curl_bytes(url_c, &len_w, &hun_y) ) {
+  if ( _king_curl_bytes(url_c, &len_w, &hun_y, 1) ) {
     u3_king_bail();
     exit(1);
   }
@@ -355,15 +359,18 @@ u3_king_next(c3_c* pac_c, c3_c** out_c)
   ret_i = asprintf(&url_c, "%s/%s/%s/next", ver_hos_c, pac_c, URBIT_VERSION);
   c3_assert( ret_i > 0 );
 
-  if ( _king_curl_bytes(url_c, &len_w, &hun_y) ) {
+  //  skip printfs on failed requests (/next is usually not present)
+  //
+  if ( _king_curl_bytes(url_c, &len_w, &hun_y, 0) ) {
     c3_free(url_c);
 
-    //  XX support channel redirections
-    //
     ret_i = asprintf(&url_c, "%s/%s/last", ver_hos_c, pac_c);
     c3_assert( ret_i > 0 );
 
-    if ( _king_curl_bytes(url_c, &len_w, &hun_y) )
+    //  enable printfs on failed requests (/last must be present)
+    //  XX support channel redirections
+    //
+    if ( _king_curl_bytes(url_c, &len_w, &hun_y, 1) )
     {
       c3_free(url_c);
       return -2;
@@ -1032,6 +1039,52 @@ _king_make_pace(c3_c* pac_c)
   return 0;
 }
 
+static c3_i
+_king_write_raw(c3_i fid_i, c3_y* buf_y, size_t len_i);
+
+/* _king_init_pace(): save pace file if not present
+*/
+static c3_i
+_king_init_pace(c3_c* pac_c)
+{
+  c3_c* bin_c;
+  c3_i  fid_i, ret_i = asprintf(&bin_c, "%s/.bin/pace", u3_Host.dir_c);
+  c3_assert( ret_i > 0 );
+
+  if ( (-1 == (fid_i = open(bin_c, O_WRONLY | O_CREAT | O_EXCL, 0644))) ) {
+    if ( EEXIST == errno ) {
+      c3_free(bin_c);
+      //  XX print something here?
+      //
+      return 0;
+    }
+    else {
+      u3l_log("dock: init pace (%s): open %s\n", pac_c, strerror(errno));
+      c3_free(bin_c);
+      return -1;
+    }
+  }
+
+  if ( _king_write_raw(fid_i, (c3_y*)pac_c, strlen(pac_c)) ) {
+    u3l_log("dock: init pace (%s): write %s\n", pac_c, strerror(errno));
+    close(fid_i);
+    c3_free(bin_c);
+    return -1;
+  }
+  // XX sync first?
+  //
+  else if ( close(fid_i) ) {
+    u3l_log("dock: init pace (%s): close %s\n", pac_c, strerror(errno));
+    c3_free(bin_c);
+    return 1;
+  }
+
+  u3l_log("dock: pace (%s): configured at %s/.bin/pace\r\n",
+          pac_c, u3_Host.dir_c);
+
+  return 0;
+}
+
 /* _king_link_run(): ln [bin_c] $pier/.run
 */
 static c3_i
@@ -1424,6 +1477,9 @@ u3_king_dock(c3_c* pac_c)
     exit(1);
   }
   else {
+    //  NB: failure ignored
+    //
+    _king_init_pace(pac_c);
     u3l_log("vere: binary copy succeeded\r\n");
     //  XX print restart instructions
   }
