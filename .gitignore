@@ -49,6 +49,7 @@ dist-newstyle
 *.pdf
 
 # Build/Release Artifacts
+build/
 cross/
 release/
 dist/

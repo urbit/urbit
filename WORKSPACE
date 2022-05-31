@@ -1,6 +1,6 @@
 workspace(name = "urbit")
 
-load("//build:repo.bzl", "versioned_http_archive")
+load("//bazel:repo.bzl", "versioned_http_archive")
 
 #
 # Rules Repositories
@@ -53,24 +53,7 @@ load("@bazel-zig-cc//toolchain:defs.bzl", zig_toolchains = "toolchains")
 
 zig_toolchains()
 
-register_toolchains(
-    # # if no `--platform` is specified, these toolchains will be used for
-    # # (linux,darwin)x(amd64,arm64)
-    # "@zig_sdk//toolchain:linux_amd64_gnu.2.34",
-    # "@zig_sdk//toolchain:linux_arm64_gnu.2.34",
-    # "@zig_sdk//toolchain:darwin_amd64",
-    # "@zig_sdk//toolchain:darwin_arm64",
-
-    # amd64 toolchains for libc-aware platforms:
-    # "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.28",
-    # "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.30",
-    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.32",
-    "@zig_sdk//libc_aware/toolchain:linux_amd64_musl",
-
-    # arm64 toolchains for libc-aware platforms:
-    "@zig_sdk//libc_aware/toolchain:linux_arm64_gnu.2.32",
-    "@zig_sdk//libc_aware/toolchain:linux_arm64_musl",
-)
+# register_toolchains()
 
 #
 # Third Party Dependencies
