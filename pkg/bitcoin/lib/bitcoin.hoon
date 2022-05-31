@@ -111,7 +111,8 @@
     ++  is-base58
       |=  at=tape
       ^-  ?
-      ?|  =("m" (scag 1 at))
+      ?|  =("n" (scag 1 at))
+          =("m" (scag 1 at))
           =("1" (scag 1 at))
           =("3" (scag 1 at))
           =("2" (scag 1 at))

@@ -935,6 +935,21 @@
           network.p.upd
         blockhash.p.upd
       blockfilter.p.upd
+    ::
+        %histogram
+      `state
+    ::
+        %block-headers
+      `state
+    ::
+        %tx-from-pos
+      `state
+    ::
+        %fee
+      `state
+    ::
+        %psbt
+      `state
     ==
     ::
     ::  Scan Logic
