@@ -12,7 +12,6 @@ configure_make(
     visibility = ["//visibility:public"],
     configure_in_place = True,
     lib_source = ":srcs",
-    lib_name = "libent",
 )
 
 # cc_library(
