@@ -5,7 +5,7 @@ cmake(
     name = "h2o",
     lib_source = ":srcs",
     visibility = ["//visibility:public"],
-    deps = ["@openssl", "@uv", "@zlib", "@wslay"],
+    deps = ["@openssl", "@libuv", "@zlib"],
     generate_args = select({
         "@platforms//os:windows": ["-GNinja"],
         "//conditions:default": ["-Wno-dev"],
