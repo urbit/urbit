@@ -288,8 +288,10 @@
     %+  turn  (flop hav)
     |=  =have
     dat.have
-  :-  sig=(end 9 mes)
+  =+  sig=(end 9 mes)
+  :-  sig
   =+  dat=(rsh 9 mes)
+  ~&  [sig=`@q`(mug sig) dat=`@q`(mug dat)]
   ?~  dat  ~
   ~|  [%fine %response-not-cask]
   ;;((cask) (cue dat))
@@ -1119,7 +1121,7 @@
   ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
-  ::  /ax/fine/message/[path/...]    song
+  ::  /ax/fine/hunk/[path/...]       (list @ux) scry response fragments
   ::
   ?.  ?=(%x ren)  ~
   =>  .(tyl `(pole knot)`tyl)
@@ -2650,7 +2652,9 @@
           ++  pe-keen
             |=  [=path =^duct]
             ?:  (~(has by order.scry) path)
+              ~&  %pe-keen-already
               ke-abet:(ke-sub:(ke-abed:keen-core path) duct)
+            ~&  %pe-keen-new
             =^  keen-id=@ud  seq.scry  [seq.scry +(seq.scry)]
             =.  order.scry  (~(put by order.scry) path keen-id)
             =.  keens.scry  (put:orm keens.scry keen-id *keen-state)
@@ -2701,6 +2705,7 @@
           ::
           ++  pe-hear
             |=  [=lane =packet]
+            ~&  %pe-hear
             ?>  =(sndr-tick.packet (mod life.peer 16))
             ::
             =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
@@ -2799,10 +2804,13 @@
             ++  ke-on-ack
               =|  marked=(list want)
               |=  fra=@ud
+              ~&  %ke-on-ack
               ^-  [? _ke-core]
               =;  [[found=? cor=_ke-core] wan=(pha want)]
                 ?.  found
+                  ~&  %not-found
                   [found ke-core]
+                  ~&  %found
                 [found cor(wan.keen wan)]
               %^  (dip-left:ke-deq ,[found=? cor=_ke-core])  wan.keen
                 [| ke-core]
@@ -2875,12 +2883,14 @@
               =/  max  num-slots:ke-gauge
               |-  ^+  ke-core
               ?:  |(=(~ nex.keen) =(inx max))
+              ~&  [%ke-continue-done inx]
                 ke-core
               =^  =want  nex.keen  nex.keen
               =.  last-sent.want  now
               =.  tries.want  +(tries.want)
               =.  wan.keen  (snoc:ke-deq wan.keen want)
               =.  metrics.keen  (on-sent:ke-gauge 1)
+              ~&  [%ke-continue fra.want]
               =.  ke-core  (ke-emit hoot.want)
               $(inx +(inx))
             ::
@@ -2920,6 +2930,7 @@
             ++  ke-rcv
               |=  [fra=@ud =purr =lane:ames]
               ^+  ke-core
+              ~&  [%ke-rcv fra]
               =/  =meow          (decode-response-packet purr)
               =/  og  ke-core
               =.  pe-core  (pe-update-qos %live last-contact=now)
@@ -2934,19 +2945,23 @@
                 ?>  =(fra 1)
                 (ke-first-rcv meow)
               ::
-              ~|  failed-signature/fra^`@ux`sig.meow
-              ~|  life.peer
-              ?>  (veri-fra:keys ship life.peer ke-full-path fra [dat sig]:meow)
+              ?.  %-  veri-fra:keys
+                  [ship life.peer ke-full-path fra [dat sig]:meow]
+                ~|  failed-signature/fra^`@ux`sig.meow
+                ~|  life.peer
+                !!
               =^  found=?  ke-core
                 (ke-on-ack fra)
               ::
               ?.  found
+                ~&  %ke-fast-retransmit
                 (ke-fast-retransmit:og fra)
               =/  =have   [fra meow]
               =.  hav.keen
                 `(list ^have)`[have hav.keen]
               =.  num-received.keen  +(num-received.keen)
               ?:  =(num-fragments num-received):keen
+                ~&  %ke-done
                 (ke-done [sig dat]:ke-decode-full)
               ke-continue
             ::
@@ -3024,6 +3039,7 @@
                   last-sent.u.want  now
                 ==
               =.  wan.keen  (cons:ke-deq wan.keen u.want)
+              ~&  [%ke-take-wake-resend fra.u.want]
               (ke-resend [fra hoot]:u.want)
             --
           --
@@ -3076,10 +3092,12 @@
         ::
         ++  on-keen
           |=  [=ship =path]
+          ~&  %on-keen
           ^+  event-core
           =+  ~:(spit path)  ::  assert length
           =/  peer-core  (pe-abed:fine-peer ship)
           ?^  peer-core  pe-abet:(pe-keen:u.peer-core path duct)
+          ~&  %on-keen-alien
           %+  enqueue-alien-todo  ship
           |=  todos=alien-agenda
           todos(keens (~(put ju keens.todos) path duct))
@@ -3117,6 +3135,7 @@
           ::      so we should only get responses from ships we know.
           ::      below we assume sndr.packet is a known peer.
           =*  from  sndr.packet
+            ~&  %on-hear-response
           =/  peer-core  (need (pe-abed:fine-peer from))
           pe-abet:(pe-hear:peer-core lane packet)
         --
@@ -3173,19 +3192,34 @@
           wid^`@`pat  ::  namespace path
       ==
     ::
-    ++  frag-body
-      |=  [=path mes=@ num=@ud fin=?]
-      ^-  @uxmeow
+    ++  make-meow
+      |=  [=path mes=@ num=@ud]
+      ^-  meow
+      =;  meow
+        ~&  :*  %made-meow
+                sig=`@q`(mug sig.meow)
+                num=num.meow
+                siz=siz.meow
+                dat=`@q`(mug dat.meow)
+            ==
+        meow
       =/  tot  (met 13 mes)
-      =/  fra  (cut 13 [(dec num) 1] mes)
-      =/  wid  (met 3 fra)
-      =/  wod  ?:(fin wid 1.024)
-      =-  ~&  [tot=tot wid=wid num=num fra=!=(0 fra) fin=fin]  -
+      =/  dat  (cut 13 [(dec num) 1] mes)
+      =/  wid  (met 3 dat)
+      :*  sig=(sign-fra:keys path num dat)      ::  fragment signature
+          num=tot                               ::  number of fragments
+          siz=?:(=(num tot) (met 3 dat) 1.024)  ::  fragment byte width
+          dat=dat                               ::  response data fragment
+      ==
+    ::
+    ++  encode-meow
+      |=  =meow
+      ^-  @uxmeow
       %+  can  3
-      :~  64^(sign-fra:keys path num fra)
-          4^tot    ::  number of fragments
-          2^wod    ::  response data fragment size in bytes
-          wid^fra  ::  response data fragment
+      :~  64^sig.meow
+          4^num.meow
+          2^siz.meow
+          (met 3 dat.meow)^dat.meow
       ==
     ::
     ++  encode-request
@@ -3199,15 +3233,17 @@
         (can 3 sig bod ~)
       (encode-packet [our ship] req=& sam=| sic ric ~ syn)
     ::
-    ++  encode-hunk  ::TODO  unit tests
+    ++  encode-hunk
       |=  [=path =hunk data=$@(~ (cask))]
       ^-  (list @uxmeow)
+      ~&  [hunk=hunk len=(met 3 (jam data))]
       =/  mes=@
+        =-  ~&  [sig=`@q`(mug sig) dat=`@q`(mug (jam data))]  -
         =/  sig=@  (full:keys path data)
         ?~  data  sig
-        (cat 9 sig (jam data))
+        (mix sig (lsh 9 (jam data)))
+        ::(cat 9 sig (jam data))
       ::
-      ?>  (lte len.hunk 16.384)
       =/  las  (met 13 mes)
       =/  tip  (dec (add [lop len]:hunk))
       =/  top  (min las tip)
@@ -3218,25 +3254,38 @@
       |-  ^+  res
       ?:  =(num top)
         =-  (flop - res)
-        (frag-body path mes num =(top las))
-      $(num +(num), res :_(res (frag-body path mes num |)))
+        (encode-meow (make-meow path mes num))
+      $(num +(num), res :_(res (encode-meow (make-meow path mes num))))
     ::
     ++  keys
       |%
       ++  mess
-        |=([@p life path $@(~ (cask))] (jam +<))
+        |=  [=ship life=@ud =path dat=$@(~ (cask))]
+        ::~&  :*  %mess
+        ::        ship  life  path
+        ::        ^=  dat
+        ::        ?~  dat  ~
+        ::        ?:  =(%hoon -.dat)
+        ::          [%hoon ;;(@t +.dat)]
+        ::        [%noun `@q`(mug dat)]
+        ::    ==
+        (jam +<)
       ::
       ++  full
         |=  [=path data=$@(~ (cask))]
         (sign (mess our life.ames-state path data))
       ::
+      ++  frag
+        |=  [=path fra=@ud dat=@ux]
+        (jam +<)
+      ::
       ++  sign-fra
-        |=  [=path fra=@ dat=@ux]
-        (sign (jam path fra dat))
+        |=  [=path fra=@ud dat=@ux]
+        (sign (frag path fra dat))
       ::
       ++  veri-fra
-        |=  [who=ship lyf=life =path fra=@ dat=@ux sig=@]
-        (veri who lyf sig (jam path fra dat))
+        |=  [who=ship lyf=life =path fra=@ud dat=@ux sig=@]
+        (veri who lyf sig (frag path fra dat))
       ::
       ++  sign
         sigh:as:crypto-core.ames-state
@@ -3917,7 +3966,7 @@
   ++  clamp-rto
     |=  rto=@dr
     ^+  rto
-    (min ~m2 (max ^~((div ~s1 5)) rto))
+    (min ~s5 (max ^~((div ~s1 5)) rto))
   ::  +in-slow-start: %.y iff we're in "slow-start" mode
   ::
   ++  in-slow-start

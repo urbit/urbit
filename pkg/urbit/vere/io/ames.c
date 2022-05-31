@@ -5,7 +5,7 @@
 #include "vere/vere.h"
 #include "ur/serial.h"
 
-#define FINE_PAGE     16384  //  packets per page
+#define FINE_PAGE         8  //  packets per page TODO: 16384
 #define FINE_FRAG      1024  //  bytes per fragment packet
 #define FINE_PATH_MAX   384  //  longest allowed scry path
 #define HEAD_SIZE         4  //  header size in bytes
@@ -1682,7 +1682,6 @@ _ames_hear_ames(u3_pact* pac_u, c3_w cur_w)
     }
 
     _ames_pact_free(pac_u);
-    return;
   }
 
   //  otherwise, inject the packet as an event
@@ -1788,8 +1787,9 @@ _ames_hear(u3_ames* sam_u,
 
 
   //  check contents match mug in header
-  //
+ //
   if ( c3n == _ames_check_mug(pac_u) ) {
+        _log_head(&pac_u->hed_u);
       sam_u->sat_u.mut_d++;
       //  TODO: reinstate filter after debugging is over
       //  if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
