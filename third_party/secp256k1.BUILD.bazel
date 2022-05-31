@@ -129,7 +129,7 @@ cat <<EOF >$@
 
 /* Define this symbol if an external (non-inline) assembly implementation is
    used */
-/* #undef USE_EXTERNAL_ASM */
+#undef USE_EXTERNAL_ASM
 
 /* Define this symbol if an external implementation of the default callbacks
    is used */
