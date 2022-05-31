@@ -1,31 +1,41 @@
 # See: https://docs.bazel.build/versions/master/user-manual.html#bazelrc.
 
-# Darwin fix - taken from https://github.com/digital-asset/daml/pull/8697.
-startup --host_jvm_args=-Xmx2g --host_jvm_args=-Djdk.tls.client.protocols=TLSv1.2
+# # Darwin fix - taken from https://github.com/digital-asset/daml/pull/8697.
+# startup --host_jvm_args=-Xmx2g --host_jvm_args=-Djdk.tls.client.protocols=TLSv1.2
 
-# Ignore debug traces, such as when the bazel version differs from what rules expect.
-common --ui_event_filters=-DEBUG
+# # Ignore debug traces, such as when the bazel version differs from what rules expect.
+# common --ui_event_filters=-DEBUG
 
-# # build --incompatible_disallow_empty_glob
+# # # build --incompatible_disallow_empty_glob
+# build --verbose_failures
+
+# # Allow newly registered toolchains to be resolved (ie. zig cc)
+# build --incompatible_enable_cc_toolchain_resolution
+
+# # # Prevent bazel from detecting the default non-hermetic toolchain.
+# # build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+
+# build:linux_amd64 --platforms @zig_sdk//platform:linux_amd64
+# build:linux_amd64 --extra_toolchains @zig_sdk//toolchain:linux_amd64_musl
+
+# build:linux_arm64 --platforms @zig_sdk//platform:linux_arm64
+# build:linux_arm64 --extra_toolchains @zig_sdk//toolchain:linux_arm64_musl
+
+# build:darwin_amd64 --platforms @zig_sdk//platform:linux_amd64
+# build:darwin_amd64 --extra_toolchains @zig_sdk//toolchain:linux_amd64
+
+# build:darwin_arm64 --platforms @zig_sdk//platform:linux_arm64
+# build:darwin_arm64 --extra_toolchains @zig_sdk//toolchain:linux_arm64
+
+test --sandbox_default_allow_network=false
+test --test_output=errors
+
 build --verbose_failures
+build --worker_sandboxing
+build --compilation_mode=opt
 
-# Allow newly registered toolchains to be resolved (ie. zig cc)
 build --incompatible_enable_cc_toolchain_resolution
-
-# # Prevent bazel from detecting the default non-hermetic toolchain.
-# build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
-
-build:linux_amd64 --platforms @zig_sdk//platform:linux_amd64
-build:linux_amd64 --extra_toolchains @zig_sdk//toolchain:linux_amd64_musl
-
-build:linux_arm64 --platforms @zig_sdk//platform:linux_arm64
-build:linux_arm64 --extra_toolchains @zig_sdk//toolchain:linux_arm64_musl
-
-build:darwin_amd64 --platforms @zig_sdk//platform:linux_amd64
-build:darwin_amd64 --extra_toolchains @zig_sdk//toolchain:linux_amd64
-
-build:darwin_arm64 --platforms @zig_sdk//platform:linux_arm64
-build:darwin_arm64 --extra_toolchains @zig_sdk//toolchain:linux_arm64
+build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 
 # Any personal configuration settings should go in a gitignored .bazelrc.local
 try-import %workspace%/.bazelrc.local

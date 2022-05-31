@@ -209,7 +209,7 @@ cc_library(
     local_defines = [
         "H2O_HTTP1",
         "H2O_HTTP2",
-        "H2O_USE_PIOCOTLS",
+        # "H2O_USE_PIOCOTLS",
         "H2O_USE_LIBUV",
     ],
     hdrs = ["include/h2o.h"],
