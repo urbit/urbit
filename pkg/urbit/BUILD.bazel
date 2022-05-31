@@ -194,7 +194,7 @@ cc_binary(
         platform_binary(
             name = "urbit-{}".format(name),
             src = ":urbit",
-            platform = platform,
+            platform = "@zig_sdk{}".format(platform),
         )
     )
     for name, platform, want in [
