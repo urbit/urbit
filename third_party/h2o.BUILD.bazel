@@ -1,296 +1,302 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
-load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+# load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 
-cmake(
-    name = "h2o",
-    lib_source = ":srcs",
-    visibility = ["//visibility:public"],
-    deps = ["@openssl", "@libuv", "@zlib"],
-    generate_args = select({
-        "@platforms//os:windows": ["-GNinja"],
-        "//conditions:default": ["-Wno-dev"],
-    }),
-    cache_entries = {
-        "CMAKE_PREFIX_PATH": "$$EXT_BUILD_DEPS$$/libuv;$$EXT_BUILD_DEPS$$/libwslay;${CMAKE_PREFIX_PATH:-}",
-        "OPENSSL_ROOT_DIR": "$$EXT_BUILD_DEPS$$/openssl",
-    }
-)
-
+# cmake(
+#     name = "h2o",
+#     lib_source = ":srcs",
+#     visibility = ["//visibility:public"],
+#     deps = ["@openssl", "@uv", "@zlib", "@wslay"],
+#     generate_args = select({
+#         "@platforms//os:windows": ["-GNinja"],
+#         "//conditions:default": ["-Wno-dev"],
+#     }),
+#     cache_entries = {
+#         "CMAKE_PREFIX_PATH": "$$EXT_BUILD_DEPS$$/libuv;$$EXT_BUILD_DEPS$$/libwslay;${CMAKE_PREFIX_PATH:-}",
+#         "OPENSSL_ROOT_DIR": "$$EXT_BUILD_DEPS$$/openssl",
+#     }
+# )
 
 filegroup(
     name = "srcs",
     srcs = glob(["**"]),
 )
 
-# filegroup(
-#     name = "cifra-hdrs",
-#     srcs = [
-#         "deps/picotls/deps/cifra/src/aes.h",
-#         "deps/picotls/deps/cifra/src/chash.h",
-#         "deps/picotls/deps/cifra/src/bitops.h",
-#         "deps/picotls/deps/cifra/src/curve25519.h",
-#         "deps/picotls/deps/cifra/src/drbg.h",
-#         "deps/picotls/deps/cifra/src/hmac.h",
-#         "deps/picotls/deps/cifra/src/gf128.h",
-#         "deps/picotls/deps/cifra/src/tassert.h",
-#         "deps/picotls/deps/cifra/src/modes.h",
-#         "deps/picotls/deps/cifra/src/poly1305.h",
-#         "deps/picotls/deps/cifra/src/sha1.h",
-#         "deps/picotls/deps/cifra/src/sha2.h",
-#         "deps/picotls/deps/cifra/src/sha3.h",
-#         "deps/picotls/deps/cifra/src/prp.h",
-#         "deps/picotls/deps/cifra/src/salsa20.h",
-#         "deps/picotls/deps/cifra/src/cf_config.h",
-#         "deps/picotls/deps/cifra/src/blockwise.h",
-#         "deps/picotls/deps/cifra/src/ext/handy.h",
-#     ],
-# )
+filegroup(
+    name = "cifra-hdrs",
+    srcs = [
+        "deps/picotls/deps/cifra/src/aes.h",
+        "deps/picotls/deps/cifra/src/chash.h",
+        "deps/picotls/deps/cifra/src/bitops.h",
+        "deps/picotls/deps/cifra/src/curve25519.h",
+        "deps/picotls/deps/cifra/src/drbg.h",
+        "deps/picotls/deps/cifra/src/hmac.h",
+        "deps/picotls/deps/cifra/src/gf128.h",
+        "deps/picotls/deps/cifra/src/tassert.h",
+        "deps/picotls/deps/cifra/src/modes.h",
+        "deps/picotls/deps/cifra/src/poly1305.h",
+        "deps/picotls/deps/cifra/src/sha1.h",
+        "deps/picotls/deps/cifra/src/sha2.h",
+        "deps/picotls/deps/cifra/src/sha3.h",
+        "deps/picotls/deps/cifra/src/prp.h",
+        "deps/picotls/deps/cifra/src/salsa20.h",
+        "deps/picotls/deps/cifra/src/cf_config.h",
+        "deps/picotls/deps/cifra/src/blockwise.h",
+        "deps/picotls/deps/cifra/src/ext/handy.h",
+    ],
+)
 
-# cc_library(
-#     name = "cifra",
-#     hdrs = [":cifra-hdrs"],
-#     srcs = [
-#         ":cifra-hdrs",
-#         "deps/picotls/deps/cifra/src/aes.c",
-#         "deps/picotls/deps/cifra/src/blockwise.c",
-#         "deps/picotls/deps/cifra/src/chacha20.c",
-#         "deps/picotls/deps/cifra/src/chash.c",
-#         # "deps/picotls/deps/cifra/src/curve25519.c",
-#         "deps/picotls/deps/cifra/src/curve25519.tweetnacl.c",
-#         "deps/picotls/deps/cifra/src/drbg.c",
-#         "deps/picotls/deps/cifra/src/hmac.c",
-#         "deps/picotls/deps/cifra/src/gcm.c",
-#         "deps/picotls/deps/cifra/src/gf128.c",
-#         "deps/picotls/deps/cifra/src/modes.c",
-#         "deps/picotls/deps/cifra/src/poly1305.c",
-#         "deps/picotls/deps/cifra/src/sha256.c",
-#         "deps/picotls/deps/cifra/src/sha512.c",
-#     ],
-#     includes = [
-#         "deps/picotls/deps/cifra/src/ext",
-#         "deps/picotls/deps/cifra/src",
-#     ],
-# )
+cc_library(
+    name = "cifra",
+    hdrs = [":cifra-hdrs"],
+    srcs = [
+        ":cifra-hdrs",
+        "deps/picotls/deps/cifra/src/aes.c",
+        "deps/picotls/deps/cifra/src/blockwise.c",
+        "deps/picotls/deps/cifra/src/chacha20.c",
+        "deps/picotls/deps/cifra/src/chash.c",
+        # "deps/picotls/deps/cifra/src/curve25519.c",
+        "deps/picotls/deps/cifra/src/curve25519.tweetnacl.c",
+        "deps/picotls/deps/cifra/src/drbg.c",
+        "deps/picotls/deps/cifra/src/hmac.c",
+        "deps/picotls/deps/cifra/src/gcm.c",
+        "deps/picotls/deps/cifra/src/gf128.c",
+        "deps/picotls/deps/cifra/src/modes.c",
+        "deps/picotls/deps/cifra/src/poly1305.c",
+        "deps/picotls/deps/cifra/src/sha256.c",
+        "deps/picotls/deps/cifra/src/sha512.c",
+    ],
+    includes = [
+        "deps/picotls/deps/cifra/src/ext",
+        "deps/picotls/deps/cifra/src",
+    ],
+)
 
-# cc_library(
-#     name = "micro-ecc",
-#     hdrs = ["deps/picotls/deps/micro-ecc/uECC.h"],
-#     includes = ["deps/picotls/deps/micro-ecc"],
-#     srcs = [
-#         "deps/picotls/deps/micro-ecc/uECC.c",
-#         "deps/picotls/deps/micro-ecc/uECC_vli.h",
-#         "deps/picotls/deps/micro-ecc/types.h",
-#         "deps/picotls/deps/micro-ecc/platform-specific.inc",
-#         "deps/picotls/deps/micro-ecc/curve-specific.inc",
-#     ],
-# )
+cc_library(
+    name = "micro-ecc",
+    hdrs = ["deps/picotls/deps/micro-ecc/uECC.h"],
+    includes = ["deps/picotls/deps/micro-ecc"],
+    srcs = [
+        "deps/picotls/deps/micro-ecc/uECC.c",
+        "deps/picotls/deps/micro-ecc/uECC_vli.h",
+        "deps/picotls/deps/micro-ecc/types.h",
+        "deps/picotls/deps/micro-ecc/platform-specific.inc",
+        "deps/picotls/deps/micro-ecc/curve-specific.inc",
+    ],
+)
 
-# cc_library(
-#     name = "picotls",
-#     hdrs = ["deps/picotls/include/picotls.h"],
-#     srcs = [
-#         "deps/picotls/include/picotls/asn1.h",
-#         "deps/picotls/include/picotls/minicrypto.h",
-#         "deps/picotls/include/picotls/openssl.h",
-#         "deps/picotls/include/picotls/pembase64.h",
-#         "deps/picotls/lib/picotls.c",
-#         "deps/picotls/lib/cifra.c",
-#         "deps/picotls/lib/uecc.c",
-#         "deps/picotls/lib/openssl.c",
-#     ],
-#     includes = ["deps/picotls/include"],
-#     deps = [":micro-ecc", ":cifra", "@openssl"],
-# )
+cc_library(
+    name = "picotls",
+    hdrs = ["deps/picotls/include/picotls.h"],
+    srcs = [
+        "deps/picotls/include/picotls/asn1.h",
+        "deps/picotls/include/picotls/minicrypto.h",
+        "deps/picotls/include/picotls/openssl.h",
+        "deps/picotls/include/picotls/pembase64.h",
+        "deps/picotls/lib/picotls.c",
+        "deps/picotls/lib/cifra.c",
+        "deps/picotls/lib/uecc.c",
+        "deps/picotls/lib/openssl.c",
+    ],
+    includes = ["deps/picotls/include"],
+    deps = [":micro-ecc", ":cifra", "@openssl"],
+)
 
-# cc_library(
-#     name = "picohttpparser",
-#     hdrs = ["deps/picohttpparser/picohttpparser.h"],
-#     srcs = [
-#         "deps/picohttpparser/picohttpparser.h",
-#         "deps/picohttpparser/picohttpparser.c",
-#     ],
-#     includes = ["deps/picohttpparser"],
-# )
+cc_library(
+    name = "picohttpparser",
+    hdrs = ["deps/picohttpparser/picohttpparser.h"],
+    srcs = [
+        "deps/picohttpparser/picohttpparser.h",
+        "deps/picohttpparser/picohttpparser.c",
+    ],
+    includes = ["deps/picohttpparser"],
+)
 
-# cc_library(
-#     name = "libyrmcds",
-#     srcs = [
-#         "deps/libyrmcds/yrmcds.h",
-#         "deps/libyrmcds/yrmcds_portability.h",
-#         "deps/libyrmcds/yrmcds_text.h",
-#         "deps/libyrmcds/close.c",
-#         "deps/libyrmcds/connect.c",
-#         "deps/libyrmcds/recv.c",
-#         "deps/libyrmcds/send.c",
-#         "deps/libyrmcds/send_text.c",
-#         "deps/libyrmcds/socket.c",
-#         "deps/libyrmcds/strerror.c",
-#         "deps/libyrmcds/text_mode.c",
-#     ],
-#     hdrs = [
-#         "deps/libyrmcds/yrmcds.h",
-#     ],
-#     includes = ["deps/libyrmcds"],
-# )
+cc_library(
+    name = "libyrmcds",
+    srcs = [
+        "deps/libyrmcds/yrmcds.h",
+        "deps/libyrmcds/yrmcds_portability.h",
+        "deps/libyrmcds/yrmcds_text.h",
+        "deps/libyrmcds/close.c",
+        "deps/libyrmcds/connect.c",
+        "deps/libyrmcds/recv.c",
+        "deps/libyrmcds/send.c",
+        "deps/libyrmcds/send_text.c",
+        "deps/libyrmcds/socket.c",
+        "deps/libyrmcds/strerror.c",
+        "deps/libyrmcds/text_mode.c",
+    ],
+    hdrs = [
+        "deps/libyrmcds/yrmcds.h",
+    ],
+    includes = ["deps/libyrmcds"],
+)
 
-# cc_library(
-#     name = "libgkc",
-#     hdrs = ["deps/libgkc/gkc.h"],
-#     srcs = [
-#         "deps/libgkc/gkc.c",
-#         "deps/libgkc/gkc.h",
-#     ],
-#     includes = ["deps/libgkc"],
-# )
+cc_library(
+    name = "libgkc",
+    hdrs = ["deps/libgkc/gkc.h"],
+    srcs = [
+        "deps/libgkc/gkc.c",
+        "deps/libgkc/gkc.h",
+    ],
+    includes = ["deps/libgkc"],
+)
 
-# cc_library(
-#     name = "cloexec",
-#     hdrs = ["deps/cloexec/cloexec.h"],
-#     srcs = [
-#         "deps/cloexec/cloexec.c",
-#         "deps/cloexec/cloexec.h",
-#     ],
-#     includes = ["deps/cloexec"],
-# )
+cc_library(
+    name = "cloexec",
+    hdrs = ["deps/cloexec/cloexec.h"],
+    srcs = [
+        "deps/cloexec/cloexec.c",
+        "deps/cloexec/cloexec.h",
+    ],
+    includes = ["deps/cloexec"],
+)
 
-# cc_library(
-#     name = "klib",
-#     hdrs = [
-#         "deps/klib/khash.h",
-#     ],
-#     includes = ["deps/klib"],
-# )
+cc_library(
+    name = "klib",
+    hdrs = [
+        "deps/klib/khash.h",
+    ],
+    includes = ["deps/klib"],
+)
 
-# cc_library(
-#     name = "yaml",
-#     hdrs = ["deps/yaml/include/yaml.h"],
-#     srcs = [
-#         "deps/yaml/src/api.c",
-#         "deps/yaml/src/dumper.c",
-#         "deps/yaml/src/emitter.c",
-#         "deps/yaml/src/loader.c",
-#         "deps/yaml/src/parser.c",
-#         "deps/yaml/src/reader.c",
-#         "deps/yaml/src/scanner.c",
-#         "deps/yaml/src/writer.c",
-#         "deps/yaml/src/yaml_private.h",
-#     ],
-#     includes = ["deps/yaml/include"],
-# )
+cc_library(
+    name = "yaml",
+    hdrs = ["deps/yaml/include/yaml.h"],
+    srcs = [
+        "deps/yaml/src/api.c",
+        "deps/yaml/src/dumper.c",
+        "deps/yaml/src/emitter.c",
+        "deps/yaml/src/loader.c",
+        "deps/yaml/src/parser.c",
+        "deps/yaml/src/reader.c",
+        "deps/yaml/src/scanner.c",
+        "deps/yaml/src/writer.c",
+        "deps/yaml/src/yaml_private.h",
+    ],
+    includes = ["deps/yaml/include"],
+)
 
-# cc_library(
-#     name = "yoml",
-#     hdrs = [
-#         "deps/yoml/yoml.h",
-#         "deps/yoml/yoml-parser.h",
-#     ],
-#     includes = ["deps/yoml"],
-# )
+cc_library(
+    name = "yoml",
+    hdrs = [
+        "deps/yoml/yoml.h",
+        "deps/yoml/yoml-parser.h",
+    ],
+    includes = ["deps/yoml"],
+)
 
-# cc_library(
-#     name = "golombset",
-#     hdrs = [
-#         "deps/golombset/golombset.h",
-#     ],
-#     includes = ["deps/golombset"],
-# )
+cc_library(
+    name = "golombset",
+    hdrs = [
+        "deps/golombset/golombset.h",
+    ],
+    includes = ["deps/golombset"],
+)
 
-# cc_library(
-#     name = "ssl-conservatory",
-#     hdrs = ["deps/ssl-conservatory/openssl/openssl_hostname_validation.h"],
-#     srcs = ["deps/ssl-conservatory/openssl/openssl_hostname_validation.c"],
-#     includes = ["deps/ssl-conservatory/openssl"],
-#     deps = ["@openssl"],
-# )
+cc_library(
+    name = "ssl-conservatory",
+    hdrs = ["deps/ssl-conservatory/openssl/openssl_hostname_validation.h"],
+    srcs = ["deps/ssl-conservatory/openssl/openssl_hostname_validation.c"],
+    includes = ["deps/ssl-conservatory/openssl"],
+    deps = ["@openssl"],
+)
 
-# cc_library(
-#     deps = [":ssl-conservatory", ":golombset", ":klib", ":yaml", ":yoml", ":cloexec", ":libgkc", ":picotls", ":picohttpparser", ":libyrmcds", "@openssl", "@libuv", "@zlib"],
-#     name = "h2o",
-#     local_defines = [
-#         "H2O_HTTP1",
-#         "H2O_HTTP2",
-#         # "H2O_USE_PIOCOTLS",
-#         "H2O_USE_LIBUV",
-#     ],
-#     hdrs = ["include/h2o.h"],
-#     includes = ["include"],
-#     srcs =
-#         glob(["include/**/*.h"]) + [
-#             "lib/common/cache.c",
-#             "lib/common/file.c",
-#             "lib/common/filecache.c",
-#             "lib/common/hostinfo.c",
-#             "lib/common/http1client.c",
-#             "lib/common/memcached.c",
-#             "lib/common/memory.c",
-#             "lib/common/multithread.c",
-#             "lib/common/serverutil.c",
-#             "lib/common/socket.c",
-#             "lib/common/socket/uv-binding.c.h",
-#             "lib/common/socketpool.c",
-#             "lib/common/string.c",
-#             "lib/common/time.c",
-#             "lib/common/timeout.c",
-#             "lib/common/url.c",
-#             "lib/core/config.c",
-#             "lib/core/configurator.c",
-#             "lib/core/context.c",
-#             "lib/core/headers.c",
-#             "lib/core/logconf.c",
-#             "lib/core/proxy.c",
-#             "lib/core/request.c",
-#             "lib/core/token.c",
-#             "lib/core/token_table.h",
-#             "lib/core/util.c",
-#             "lib/handler/access_log.c",
-#             "lib/handler/chunked.c",
-#             "lib/handler/compress.c",
-#             "lib/handler/compress/gzip.c",
-#             "lib/handler/errordoc.c",
-#             "lib/handler/expires.c",
-#             "lib/handler/fastcgi.c",
-#             "lib/handler/file.c",
-#             "lib/handler/file/templates.c.h",
-#             "lib/handler/file/_templates.c.h",
-#             "lib/handler/headers.c",
-#             "lib/handler/mimemap.c",
-#             "lib/handler/mimemap/defaults.c.h",
-#             "lib/handler/proxy.c",
-#             "lib/handler/redirect.c",
-#             "lib/handler/reproxy.c",
-#             "lib/handler/throttle_resp.c",
-#             "lib/handler/status.c",
-#             "lib/handler/headers_util.c",
-#             "lib/handler/status/events.c",
-#             "lib/handler/status/requests.c",
-#             "lib/handler/http2_debug_state.c",
-#             "lib/handler/status/durations.c",
-#             "lib/handler/configurator/access_log.c",
-#             "lib/handler/configurator/compress.c",
-#             "lib/handler/configurator/errordoc.c",
-#             "lib/handler/configurator/expires.c",
-#             "lib/handler/configurator/fastcgi.c",
-#             "lib/handler/configurator/file.c",
-#             "lib/handler/configurator/headers.c",
-#             "lib/handler/configurator/proxy.c",
-#             "lib/handler/configurator/redirect.c",
-#             "lib/handler/configurator/reproxy.c",
-#             "lib/handler/configurator/throttle_resp.c",
-#             "lib/handler/configurator/status.c",
-#             "lib/handler/configurator/http2_debug_state.c",
-#             "lib/handler/configurator/headers_util.c",
-#             "lib/http1.c",
-#             "lib/tunnel.c",
-#             "lib/http2/cache_digests.c",
-#             "lib/http2/casper.c",
-#             "lib/http2/connection.c",
-#             "lib/http2/frame.c",
-#             "lib/http2/hpack.c",
-#             "lib/http2/hpack_huffman_table.h",
-#             "lib/http2/hpack_static_table.h",
-#             "lib/http2/scheduler.c",
-#             "lib/http2/stream.c",
-#             "lib/http2/http2_debug_state.c",
-#         ],
-#     visibility = ["//visibility:public"],
-# )
+cc_library(
+    deps = [":ssl-conservatory", ":golombset", ":klib", ":yaml", ":yoml", ":cloexec", ":libgkc", ":picotls", ":picohttpparser", ":libyrmcds", "@openssl", "@libuv", "@zlib"],
+    name = "h2o",
+    local_defines = [
+        "H2O_HTTP1",
+        "H2O_HTTP2",
+        "H2O_USE_PIOCOTLS",
+        "H2O_USE_LIBUV",
+    ] + select({
+        "@platforms//:os:linux": ["_GNU_SOURCE"]
+        "//conditions:default": []
+    }),
+    copts = select({
+        "@platforms//os:macos": [],
+        "//conditions:default": ["-pthread"],
+    }),
+    hdrs = ["include/h2o.h"],
+    includes = ["include"],
+    srcs =
+        glob(["include/**/*.h"]) + [
+            "lib/common/cache.c",
+            "lib/common/file.c",
+            "lib/common/filecache.c",
+            "lib/common/hostinfo.c",
+            "lib/common/http1client.c",
+            "lib/common/memcached.c",
+            "lib/common/memory.c",
+            "lib/common/multithread.c",
+            "lib/common/serverutil.c",
+            "lib/common/socket.c",
+            "lib/common/socket/uv-binding.c.h",
+            "lib/common/socketpool.c",
+            "lib/common/string.c",
+            "lib/common/time.c",
+            "lib/common/timeout.c",
+            "lib/common/url.c",
+            "lib/core/config.c",
+            "lib/core/configurator.c",
+            "lib/core/context.c",
+            "lib/core/headers.c",
+            "lib/core/logconf.c",
+            "lib/core/proxy.c",
+            "lib/core/request.c",
+            "lib/core/token.c",
+            "lib/core/token_table.h",
+            "lib/core/util.c",
+            "lib/handler/access_log.c",
+            "lib/handler/chunked.c",
+            "lib/handler/compress.c",
+            "lib/handler/compress/gzip.c",
+            "lib/handler/errordoc.c",
+            "lib/handler/expires.c",
+            "lib/handler/fastcgi.c",
+            "lib/handler/file.c",
+            "lib/handler/file/templates.c.h",
+            "lib/handler/file/_templates.c.h",
+            "lib/handler/headers.c",
+            "lib/handler/mimemap.c",
+            "lib/handler/mimemap/defaults.c.h",
+            "lib/handler/proxy.c",
+            "lib/handler/redirect.c",
+            "lib/handler/reproxy.c",
+            "lib/handler/throttle_resp.c",
+            "lib/handler/status.c",
+            "lib/handler/headers_util.c",
+            "lib/handler/status/events.c",
+            "lib/handler/status/requests.c",
+            "lib/handler/http2_debug_state.c",
+            "lib/handler/status/durations.c",
+            "lib/handler/configurator/access_log.c",
+            "lib/handler/configurator/compress.c",
+            "lib/handler/configurator/errordoc.c",
+            "lib/handler/configurator/expires.c",
+            "lib/handler/configurator/fastcgi.c",
+            "lib/handler/configurator/file.c",
+            "lib/handler/configurator/headers.c",
+            "lib/handler/configurator/proxy.c",
+            "lib/handler/configurator/redirect.c",
+            "lib/handler/configurator/reproxy.c",
+            "lib/handler/configurator/throttle_resp.c",
+            "lib/handler/configurator/status.c",
+            "lib/handler/configurator/http2_debug_state.c",
+            "lib/handler/configurator/headers_util.c",
+            "lib/http1.c",
+            "lib/tunnel.c",
+            "lib/http2/cache_digests.c",
+            "lib/http2/casper.c",
+            "lib/http2/connection.c",
+            "lib/http2/frame.c",
+            "lib/http2/hpack.c",
+            "lib/http2/hpack_huffman_table.h",
+            "lib/http2/hpack_static_table.h",
+            "lib/http2/scheduler.c",
+            "lib/http2/stream.c",
+            "lib/http2/http2_debug_state.c",
+        ],
+    visibility = ["//visibility:public"],
+)
