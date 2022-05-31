@@ -1,34 +1,40 @@
-# load("@rules_cc//cc:defs.bzl", "cc_library")
-load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
+load("@rules_cc//cc:defs.bzl", "cc_library")
+# load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 
-filegroup(
-    name = "srcs",
-    srcs = ["configure", "Makefile", "ent.h", "ent.c"],
+# filegroup(
+#     name = "srcs",
+#     srcs = ["configure", "Makefile", "ent.h", "ent.c"],
 
-)
-
-configure_make(
-    name = "ent",
-    visibility = ["//visibility:public"],
-    configure_in_place = True,
-    lib_source = ":srcs",
-    out_lib_dir = "out/lib",
-)
-
-# cc_library(
-#     name = "ent",
-#     srcs = ["ent.c"],
-#     hdrs = ["ent.h"],
-#     copts = [
-#         # "-Wall",
-#         # "-Werror",
-#         # "-pedantic",
-#         # "-std=gnu99"
-#     ],
-#     includes = ["."],
-#     # FIXME: use select() here.
-#     local_defines = [
-#         "ENT_GETENTROPY_SYSRANDOM",
-#     ],
-#     visibility = ["//visibility:public"],
 # )
+
+# configure_make(
+#     name = "ent",
+#     visibility = ["//visibility:public"],
+#     configure_in_place = True,
+#     lib_source = ":srcs",
+#     configure_prefix = "",
+# )
+
+cc_library(
+    name = "ent",
+    srcs = ["ent.c"],
+    hdrs = ["ent.h"],
+    copts = [
+        # "-Wall",
+        # "-Werror",
+        # "-pedantic",
+        # "-std=gnu99"
+    ],
+    includes = ["."],
+    # FIXME: use select() here.
+    local_defines = [
+        "ENT_GETENTROPY_UNISTD",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# ENT_GETENTROPY_UNISTD \
+# ENT_GETENTROPY_SYSRANDOM \
+# ENT_GETRANDOM_SYSCALL \
+# ENT_GETENTROPY_BCRYPTGENRANDOM \
+# ENT_DEV_URANDOM
