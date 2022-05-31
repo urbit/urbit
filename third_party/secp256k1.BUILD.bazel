@@ -1,3 +1,4 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 
 filegroup(
@@ -16,5 +17,17 @@ configure_make(
         "--enable-module-extrakeys",
         "--enable-module-recovery",
         "--enable-module-schnorrsig",
+        "--host"
     ],
 )
+
+# cc_library(
+#   name = "secp256k1",
+#   srcs = glob(["src/*.c"]),
+#   hdrs = glob([
+#     "include/*.h",
+#     "src/*.h",
+#   ]),
+#   includes = ["include"],
+#   visibility = ["//visibility:public"],
+# )

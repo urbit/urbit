@@ -6,11 +6,6 @@ genrule(
     cmd = "touch $@",
 )
 
-filegroup(
-    name = "srcs",
-    srcs = glob(["**"]),
-)
-
 cc_library(
     visibility = ["//visibility:public"],
     name = "libaes_siv",
