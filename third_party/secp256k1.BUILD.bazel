@@ -147,6 +147,7 @@ cat <<EOF >$@
 #define VERSION "0.1.0-pre"
 
 #endif /*LIBSECP256K1_CONFIG_H*/
+EOF
 """
 )
 
