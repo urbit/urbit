@@ -2,7 +2,6 @@ name: build
 
 on:
   push:
-    tags: 'urbit-rc-v*'
     paths:
       - '.github/workflows/build.yml'
       - '.github/workflows/vere.yml'
