@@ -17,13 +17,13 @@ cc_library(
         "src/thread.h",
     ],
     hdrs = ["include/argon2.h"],
-    copts = [
-        "-Wno-unused-value",
-        "-Wno-unused-function",
-    ],
-    defines = [
-        "ARGON2_NO_THREADS",
-    ],
+    # copts = [
+    #     "-Wno-unused-value",
+    #     "-Wno-unused-function",
+    # ],
+    # defines = [
+    #     "ARGON2_NO_THREADS",
+    # ],
     includes = [
         "include",
         "src",
