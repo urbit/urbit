@@ -51,47 +51,22 @@ rules_foreign_cc_dependencies(
 
 load("@bazel-zig-cc//toolchain:defs.bzl", zig_toolchains = "toolchains")
 
-# zig_toolchains(
-#     host_platform_sha256 = {
-#         "linux-x86_64": "7b0dff0e5eaa83bb913a4982f826fbc5fbd4d4040beaca407f7b26ec986e244f",
-#         "linux-aarch64": "5d99a39cded1870a3fa95d4de4ce68ac2610cca440336cfd252ffdddc2b90e66",
-#         "macos-x86_64": "2d94984972d67292b55c1eb1c00de46580e9916575d083003546e9a01166754c",
-#         "macos-aarch64": "8c473082b4f0f819f1da05de2dbd0c1e891dff7d85d2c12b6ee876887d438287",
-#         "windows-x86_64": "443da53387d6ae8ba6bac4b3b90e9fef4ecbe545e1c5fa3a89485c36f5c0e3a2",
-#         "windows-i386": "74a640ed459914b96bcc572183a8db687bed0af08c30d2ea2f8eba03ae930f69",
-#         "windows-aarch64": "621bf95f54dc3ff71466c5faae67479419951d7489e40e87fd26d195825fb842",
-#         "freebsd-x86_64": "4e06009bd3ede34b72757eec1b5b291b30aa0d5046dadd16ecb6b34a02411254",
-#     },
-#     url_formats = ["https://ziglang.org/builds/zig-{host_platform}-{version}.tar.xz"],
-#     version = "0.10.0-dev.2431+0e6285c8f",
-# )
-
-
 zig_toolchains()
 
 register_toolchains(
     # if no `--platform` is specified, these toolchains will be used for
     # (linux,darwin)x(amd64,arm64)
-    "@zig_sdk//toolchain:linux_amd64_gnu.2.19",
-    "@zig_sdk//toolchain:linux_arm64_gnu.2.28",
+    "@zig_sdk//toolchain:linux_amd64_gnu.2.34",
+    "@zig_sdk//toolchain:linux_arm64_gnu.2.34",
     "@zig_sdk//toolchain:darwin_amd64",
     "@zig_sdk//toolchain:darwin_arm64",
     # amd64 toolchains for libc-aware platforms:
-    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.19",
-    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.28",
-    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.31",
+    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.34",
     "@zig_sdk//libc_aware/toolchain:linux_amd64_musl",
     # arm64 toolchains for libc-aware platforms:
-    "@zig_sdk//libc_aware/toolchain:linux_arm64_gnu.2.28",
+    "@zig_sdk//libc_aware/toolchain:linux_arm64_gnu.2.34",
     "@zig_sdk//libc_aware/toolchain:linux_arm64_musl",
 )
-
-# register_toolchains(
-#     "@zig_sdk//toolchain:linux_amd64_musl",
-#     "@zig_sdk//toolchain:linux_arm64_musl",
-#     "@zig_sdk//toolchain:darwin_amd64",
-#     "@zig_sdk//toolchain:darwin_arm64",
-# )
 
 #
 # Third Party Dependencies
