@@ -9,11 +9,11 @@ filegroup(
 configure_make(
     name = "libsigsegv",
     visibility = ["//visibility:public"],
-    # autoconf = True,
-    # autoreconf = True,
+    autoconf = True,
+    autoreconf = True,
     configure_in_place = True,
     lib_source = ":srcs",
-    copts = ["--host"]
+    # copts = ["--host"]
 )
 
 # cc_library(
