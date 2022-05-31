@@ -125,11 +125,11 @@ cat <<EOF >$@
 #define STDC_HEADERS 1
 
 /* Define this symbol to enable x86_64 assembly optimizations */
-#undef USE_ASM_X86_64
+#define USE_ASM_X86_64 1
 
 /* Define this symbol if an external (non-inline) assembly implementation is
    used */
-#undef USE_EXTERNAL_ASM
+/* #undef USE_EXTERNAL_ASM */
 
 /* Define this symbol if an external implementation of the default callbacks
    is used */
