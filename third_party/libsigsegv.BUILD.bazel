@@ -10,7 +10,7 @@ configure_make(
     name = "libsigsegv",
     visibility = ["//visibility:public"],
     autoconf = True,
-    autoreconf = True,
+    # autoreconf = True,
     configure_in_place = True,
     lib_source = ":srcs",
     copts = ["--host"]

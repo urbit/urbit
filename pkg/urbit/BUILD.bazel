@@ -188,11 +188,11 @@ cc_binary(
     deps = [":daemon"],
 )
 
-platform_binary(
-    name = "linux-amd64",
-    src = ":urbit",
-    platform = "@zig_sdk//libc_aware/platform:linux_amd64_gnu.2.34"
-)
+# platform_binary(
+#     name = "linux-amd64",
+#     src = ":urbit",
+#     platform = "@zig_sdk//libc_aware/platform:linux_amd64_gnu.2.34"
+# )
 
 # platform_binary(
 #     name = "linux-arm64",
