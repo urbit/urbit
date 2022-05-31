@@ -855,7 +855,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
 
     u3l_log("ames: forwarding for %s to %s from %d.%d.%d.%d:%d\n",
             sen_c, rec_c,
-            pip_y[0], pip_y[1], pip_y[2], pip_y[3],
+            pip_y[3], pip_y[2], pip_y[1], pip_y[0],
             pac_u->ore_u.por_s);
 
     c3_free(sen_c); c3_free(rec_c);
