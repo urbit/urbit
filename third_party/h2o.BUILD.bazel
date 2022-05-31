@@ -211,7 +211,7 @@ cc_library(
         "H2O_USE_PIOCOTLS",
         "H2O_USE_LIBUV",
     ] + select({
-        "@platforms//:os:linux": ["_GNU_SOURCE"],
+        "@platforms//os:linux": ["_GNU_SOURCE"],
         "//conditions:default": []
     }),
     copts = select({
