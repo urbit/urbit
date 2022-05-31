@@ -2,7 +2,6 @@
 **
 ** the main loop of the daemon process
 */
-#include <ctype.h>
 #include "all.h"
 #include "ur/ur.h"
 #include "vere/ivory.h"
