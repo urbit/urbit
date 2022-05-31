@@ -12,12 +12,40 @@ filegroup(
     ),
 )
 
-CONFIGURE_OPTIONS = [
+config_setting(
+    name = "linux_x86_64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+config_setting(
+    name = "linux_aarch64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+config_setting(
+    name = "macos_aarch64",
+    constraint_values = [
+        "@platforms//os:macos",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+CONFIGURE_OPTIONS =  [
     "no-comp",
     "no-idea",
     "no-weak-ssl-ciphers",
     "no-shared",
-]
+] + select({
+    ":linux_x86_64": ["linux-x86_64"],
+    ":linux_aarch64": ["linux-aarch64"],
+    # "//conditions:default": "" # _DL_ENDIAN, etc.
+ })
 
 LIB_NAME = "openssl"
 

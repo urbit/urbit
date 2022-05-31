@@ -88,10 +88,10 @@ versioned_http_archive(
 versioned_http_archive(
     name = "openssl",
     build_file = "//third_party:openssl.BUILD.bazel",
-    sha256 = "6b2d2440ced8c802aaa61475919f0870ec556694c466ebea460e35ea2b14839e",
-    strip_prefix = "openssl-OpenSSL_{version}",
-    url = "https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_{version}.tar.gz",
-    version = "1_1_1n",
+    sha256 = "ee0078adcef1de5f003c62c80cc96527721609c6f3bb42b7795df31f8b558c0b",
+    strip_prefix = "openssl-{version}",
+    url = "https://www.openssl.org/source/openssl-{version}.tar.gz",
+    version = "3.0.3",
 )
 
 versioned_http_archive(
