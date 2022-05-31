@@ -17,10 +17,10 @@ cmake(
 )
 
 
-# filegroup(
-#     name = "srcs",
-#     srcs = glob(["**"]),
-# )
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
 
 # filegroup(
 #     name = "cifra-hdrs",
