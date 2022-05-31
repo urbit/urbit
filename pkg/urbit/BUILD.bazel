@@ -131,6 +131,9 @@ cc_library(
     includes = ["include"],
     visibility = ["//visibility:public"],
     deps = [
+        ":jets",
+        ":noun",
+        ":ur",
         "//pkg/ent",
         "@curl",
         "@gmp",
@@ -138,9 +141,6 @@ cc_library(
         "@libuv",
         "@lmdb",
         "@openssl",
-        ":ur",
-        ":noun",
-        ":jets"
     ],
 )
 
@@ -188,19 +188,16 @@ cc_binary(
     deps = [":daemon"],
 )
 
-# Taken from bazel-zig-cc tests.
 [
-    (
-        platform_binary(
-            name = name,
-            src = ":urbit",
-            platform = platform,
-        )
+    platform_binary(
+        name = name,
+        src = ":urbit",
+        platform = platform,
     )
-    for name, platform, want in [
-        ("linux_amd64_musl", "//libc_aware/platform:linux_amd64_musl", "non-glibc"),
-        ("linux_amd64_gnu.2.31", "//libc_aware/platform:linux_amd64_gnu.2.34", "glibc_2.34"),
-        ("linux_amd64", "//platform:linux_amd64", "glibc_2.34"),
-        ("linux_arm64", "//platform:linux_arm64", "glibc_2.34"),
+    for name, platform in [
+        ("linux_amd64_musl", "//libc_aware/platform:linux_amd64_musl"),
+        ("linux_amd64_gnu", "//libc_aware/platform:linux_amd64_gnu.2.32"),
+        ("linux_arm64_musl", "//libc_aware/platform:linux_arm64_musl"),
+        ("linux_arm64_gnu", "//libc_aware/platform:linux_arm64_gnu.2.32"),
     ]
 ]
