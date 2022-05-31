@@ -23,6 +23,14 @@ versioned_http_archive(
 )
 
 versioned_http_archive(
+    name = "rules_python",
+    sha256 = "",
+    strip_prefix = "rules_python-{version}",
+    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/{version}.tar.gz",
+    version = "0.8.1",
+)
+
+versioned_http_archive(
     name = "bazel-zig-cc",
     sha256 = "8f198ee98fa122d299b008db281329b80147d04fcdab03a55c31007b5edc8fde",
     strip_prefix = "bazel-zig-cc-{version}",
@@ -70,7 +78,7 @@ versioned_http_archive(
 
 # versioned_http_archive(
 #     name = "boringssl",
-#     sha256 = "f75944ae5068fb9ce264bf1a5d6f35bd212cd7b47c0b908f6d17ea10b0530409",
+#     sha256 = "03dd3080cb977989f76fde45b84f08ee7b5dfcf1c4d2c43b4560c6839ace19dc",
 #     strip_prefix = "boringssl-{version}",
 #     url = "https://github.com/google/boringssl/archive/{version}.tar.gz",
 #     # Taken from the master-with-bazel branch, which has an existing BUILD file.

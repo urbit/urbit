@@ -31,8 +31,6 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 #     visibility = ["//pkg/urcrypt:__subpackages__"],
 # )
 
-
-
 cc_library(
     name = "argon2",
     srcs = [
@@ -48,8 +46,15 @@ cc_library(
         "src/blake2/*.h",
         "src/blake2/*.c",
     ]),
-    hdrs = ["include/argon2.h"],
-    include_prefix = "",
-    strip_include_prefix = "include",
-     visibility = ["//pkg/urcrypt:__subpackages__"],
+    hdrs = [
+        "include/argon2.h",
+        "src/blake2/blake2.h",
+    ],
+    # include_prefix = "",
+    includes = [
+        "include",
+        "src",
+    ],
+    # strip_include_prefix = "include",
+    visibility = ["//pkg/urcrypt:__subpackages__"],
 )

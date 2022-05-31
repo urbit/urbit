@@ -203,7 +203,21 @@ cc_library(
 )
 
 cc_library(
-    deps = [":ssl-conservatory", ":golombset", ":klib", ":yaml", ":yoml", ":cloexec", ":libgkc", ":picotls", ":picohttpparser", ":libyrmcds", "@openssl", "@libuv", "@zlib"],
+    deps = [
+        ":ssl-conservatory",
+        ":golombset",
+        ":klib",
+        ":yaml",
+        ":yoml",
+        ":cloexec",
+        ":libgkc",
+        ":picotls",
+        ":picohttpparser",
+        ":libyrmcds",
+        "@openssl",
+        "@libuv",
+        "@zlib",
+    ],
     name = "h2o",
     local_defines = [
         "H2O_HTTP1",
@@ -212,7 +226,7 @@ cc_library(
         "H2O_USE_LIBUV",
     ] + select({
         "@platforms//os:linux": ["_GNU_SOURCE"],
-        "//conditions:default": []
+        "//conditions:default": [],
     }),
     copts = select({
         "@platforms//os:macos": [],
