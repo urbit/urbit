@@ -20,16 +20,8 @@ configure_make(
     name = "gmp",
     lib_name = "libgmp",
     configure_options = [
-        "--enable-cxx",
+        "--disable-cxx",
     ],
-    env = {
-        # See: https://github.com/bazelbuild/rules_foreign_cc/issues/296
-        "CXX": "g++",
-        "CXXFLAGS": "-lstdc++",
-    },
     lib_source = ":srcs",
-    out_static_libs = [
-        "libgmp.a",
-        "libgmpxx.a",
-    ],
+    out_static_libs = ["libgmp.a"],
 )
