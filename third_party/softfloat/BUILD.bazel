@@ -52,7 +52,6 @@ PLATFORM_SOURCES = select({
         "source/ARM-VFPv2/extF80M_isSignalingNaN.c",
         "source/ARM-VFPv2/f128M_isSignalingNaN.c",
         "source/ARM-VFPv2/softfloat_raiseFlags.c",
-        "source/ARM-VFPv2/specialize.h",
         "source/ARM-VFPv2/s_commonNaNToExtF80M.c",
         "source/ARM-VFPv2/s_commonNaNToExtF80UI.c",
         "source/ARM-VFPv2/s_commonNaNToF16UI.c",
