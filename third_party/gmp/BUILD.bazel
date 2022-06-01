@@ -5,13 +5,30 @@ filegroup(
     srcs = glob(["**"]),
 )
 
+# configure_make(
+#     name = "gmp",
+#     configure_in_place = True,
+#     lib_source = ":srcs",
+#     out_static_libs = select({
+#         "@//:windows-x86_64": ["libgmp.lib"],
+#         "//conditions:default": ["libgmp.a"],
+#     }),
+#     visibility = ["//visibility:public"],
+# )
+
 configure_make(
     name = "gmp",
-    configure_in_place = True,
+    lib_name = "libgmp",
+    configure_options = [
+        "--enable-cxx",
+    ],
+    env = {
+        # See: https://github.com/bazelbuild/rules_foreign_cc/issues/296
+        "CXX": "g++",
+    },
     lib_source = ":srcs",
-    out_static_libs = select({
-        "@//:windows-x86_64": ["libgmp.lib"],
-        "//conditions:default": ["libgmp.a"],
-    }),
-    visibility = ["//visibility:public"],
+    out_static_libs = [
+        "libgmp.a",
+        "libgmpxx.a",
+    ],
 )
