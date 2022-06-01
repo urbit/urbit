@@ -41,11 +41,11 @@ CONFIGURE_OPTIONS =  [
     "no-idea",
     "no-weak-ssl-ciphers",
     "no-shared",
-] + select({
-    ":linux_x86_64": ["linux-x86_64"],
-    ":linux_aarch64": ["linux-aarch64"],
-    "//conditions:default": [] # _DL_ENDIAN, etc.
- })
+] # + select({
+ #    ":linux_x86_64": ["linux-x86_64"],
+ #    ":linux_aarch64": ["linux-aarch64"],
+ #    "//conditions:default": [] # _DL_ENDIAN, etc.
+ # })
 
 LIB_NAME = "openssl"
 
@@ -120,11 +120,4 @@ configure_make(
         "libcrypto.a",
     ],
     targets = MAKE_TARGETS,
-)
-
-filegroup(
-    name = "gen_dir",
-    srcs = [":openssl"],
-    output_group = "gen_dir",
-    visibility = ["//visibility:public"],
 )
