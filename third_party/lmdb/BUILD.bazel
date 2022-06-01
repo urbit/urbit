@@ -10,10 +10,10 @@ cc_library(
         "lmdb.h",
         "midl.h",
     ],
-    includes = ["."],
     copts = [
         "-w",
     ],
+    includes = ["."],
     linkopts = select({
         "@platforms//os:windows":
         # InitializeSecurityDescriptor, SetSecurityDescriptorDacl

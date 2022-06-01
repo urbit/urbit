@@ -1,0 +1,32 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+cmake(
+    name = "uv",
+    lib_name = "libuv",
+    cache_entries = {
+        "CMAKE_INSTALL_LIBDIR": "lib",
+        "CMAKE_C_COMPILER_FORCED": "on",
+        "CMAKE_CXX_COMPILER_FORCED": "on",
+        # "LIBUV_VERSION": "1.44.1"
+    },
+    env = select({
+        "@//:macos": {"AR": ""},
+        "//conditions:default": {},
+    }),
+    lib_source = ":srcs",
+    out_static_libs = select({
+        "@//:windows": ["libuv.lib"],
+        "//conditions:default": ["libuv.a"],
+    }),
+    postfix_script = select({
+        "@//:windows": "",
+        "//conditions:default": "cp $INSTALLDIR/lib/libuv{_a,}.a"
+        # && mv $INSTALLDIR/lib/cmake/libuv/{libuvConfig,libuv-config}.cmake && echo 'set(LIBUV_FOUND TRUE)' >> $INSTALLDIR/lib/cmake/libuv/libuv-config.cmake",
+    }),
+    visibility = ["//visibility:public"],
+)

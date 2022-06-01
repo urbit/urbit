@@ -1,0 +1,23 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+cmake(
+    name = "aes_siv",
+    cache_entries = {
+        "CMAKE_CXX_COMPILER_FORCED": "on",
+        "CMAKE_C_COMPILER_FORCED": "on",
+        "BUILD_SHARED_LIBS": "off",
+        "OPENSSL_ROOT_DIR": "$EXT_BUILD_DEPS/openssl",
+    },
+    lib_source = ":srcs",
+    out_static_libs = select({
+        "@//:windows-x86_64": ["libaes_siv.lib"],
+        "//conditions:default": ["libaes_siv.a"],
+    }),
+    visibility = ["//visibility:public"],
+    deps = ["@openssl"],
+)

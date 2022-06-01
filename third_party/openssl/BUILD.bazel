@@ -1,0 +1,39 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
+
+# Lifted from https://github.com/qzmfranklin/openssl/tree/bazel.
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+configure_make(
+    name = "openssl",
+    configure_command = "config",
+    configure_in_place = True,
+    configure_options =
+        [
+            "no-comp",
+            "no-idea",
+            "no-weak-ssl-ciphers",
+            "no-shared",
+            "--libdir=lib",
+        ] + select({
+            "@//:linux-aarch64": ["linux-aarch64"],
+            "//conditions:default": [],  # _DL_ENDIAN, etc.
+        }),
+    env = select({
+        "@//:macos": {"AR": ""},
+        "//conditions:default": {},
+    }),
+    lib_source = ":srcs",
+    out_static_libs = [
+        "libssl.a",
+        "libcrypto.a",
+    ],
+    targets = [
+        "build_libs",
+        "install_dev",
+    ],
+    visibility = ["//visibility:public"],
+)

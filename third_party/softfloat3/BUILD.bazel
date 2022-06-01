@@ -7,11 +7,11 @@ filegroup(
 
 make(
     name = "softfloat3",
-    lib_name = "softfloat",
-    lib_source = ":srcs",
-    includes = ["source/include"],
     args = ["-C"] + select({
         "//conditions:default": ["build/Linux-x86_64-GCC"],
     }),
+    includes = ["source/include"],
+    lib_name = "softfloat",
+    lib_source = ":srcs",
     visibility = ["//visibility:public"],
 )

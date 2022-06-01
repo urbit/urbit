@@ -1,0 +1,36 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+cmake(
+    name = "h2o",
+    cache_entries = {
+        "CMAKE_INSTALL_LIBDIR": "lib",
+        "CMAKE_C_COMPILER_FORCED": "on",
+        "CMAKE_CXX_COMPILER_FORCED": "on",
+
+        # FIXME: cmake things
+        "ZLIB_LIBRARY": "$EXT_BUILD_DEPS/zlib/lib/libz.a",
+        "ZLIB_INCLUDE_DIR": "$EXT_BUILD_DEPS/zlib/include",
+
+        # FIXME: cmake things
+        "LIBUV_VERSION": "1.44.1",
+        "LIBUV_LIBRARIES": "$EXT_BUILD_DEPS/libuv/lib/libuv.a",
+        "LIBUV_INCLUDE_DIR": "$EXT_BUILD_DEPS/libuv/include",
+
+        "OPENSSL_ROOT_DIR": "$EXT_BUILD_DEPS/openssl",
+        "CMAKE_PREFIX_PATH": "$EXT_BUILD_DEPS/zlib:$EXT_BUILD_DEPS/libuv:${CMAKE_PREFIX_PATH:-}",
+    },
+    lib_name = "libh2o",
+    lib_source = ":srcs",
+    targets = ["libh2o", "install"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@openssl",
+        "@uv",
+        "@zlib",
+    ],
+)

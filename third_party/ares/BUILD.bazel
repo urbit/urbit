@@ -1,0 +1,32 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+cmake(
+    name = "ares",
+    cache_entries = {
+        "CARES_BUILD_TOOLS": "no",
+        "CARES_SHARED": "no",
+        "CARES_STATIC": "on",
+        "CMAKE_CXX_COMPILER_FORCED": "on",
+        "CMAKE_INSTALL_LIBDIR": "lib",
+    },
+    defines = ["CARES_STATICLIB"],
+    lib_source = ":srcs",
+    linkopts = select({
+        "@//:macos": ["-lresolv"],
+        "//conditions:default": [],
+    }),
+    out_static_libs = select({
+        "@//:windows-x86_64": ["cares.lib"],
+        "//conditions:default": ["libcares.a"],
+    }),
+    postfix_script = select({
+        "@//:windows-x86_64": "cp -L $EXT_BUILD_ROOT/external/ares/src/lib/ares_nameser.h $INSTALLDIR/include/ares_nameser.h && cp -L $EXT_BUILD_ROOT/external/ares/include/ares_dns.h $INSTALLDIR/include/ares_dns.h",
+        "//conditions:default": "rm -f $INSTALLDIR/include/ares_dns.h && cp -L $EXT_BUILD_ROOT/external/ares/include/ares_dns.h $INSTALLDIR/include/ares_dns.h",
+    }),
+    visibility = ["//visibility:public"],
+)

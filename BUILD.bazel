@@ -1,0 +1,84 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+config_setting(
+    name = "linux",
+    constraint_values = [
+        "@platforms//os:linux",
+    ],
+)
+
+config_setting(
+    name = "linux-x86_64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+config_setting(
+    name = "linux-aarch64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+config_setting(
+    name = "macos",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+)
+
+config_setting(
+    name = "macos-x86_64",
+    constraint_values = [
+        "@platforms//os:macos",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+config_setting(
+    name = "macos-aarch64",
+    constraint_values = [
+        "@platforms//os:macos",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@platforms//os:windows",
+    ],
+)
+
+config_setting(
+    name = "windows-x86_64",
+    constraint_values = [
+        "@platforms//os:windows",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+#
+# Testing
+#
+
+cc_library(
+    name = "deps",
+    deps = [
+        "@aes_siv",
+        "@curl",
+        "@gmp",
+        "@h2o",
+        "@lmdb",
+        "@murmur3",
+        "@openssl",
+        "@secp256k1",
+        "@sigsegv",
+        "@softfloat3",
+        "@uv",
+        "@zlib",
+    ],
+)

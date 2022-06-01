@@ -7,8 +7,8 @@ filegroup(
 
 configure_make(
     name = "gmp",
-    lib_name = "libgmp",
     configure_in_place = True,
+    lib_name = "libgmp",
     lib_source = ":srcs",
     visibility = ["//visibility:public"],
 )

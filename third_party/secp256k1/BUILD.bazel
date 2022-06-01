@@ -1,0 +1,21 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+configure_make(
+    name = "secp256k1",
+    visibility = ["//visibility:public"],
+    autogen = True,
+    autoconf = True,
+    configure_in_place = True,
+    lib_source = ":srcs",
+    lib_name = "libsecp256k1",
+    configure_options = [
+        "--enable-module-extrakeys",
+        "--enable-module-recovery",
+        "--enable-module-schnorrsig",
+    ],
+)
