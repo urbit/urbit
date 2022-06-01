@@ -13,7 +13,7 @@ make(
     includes = ["source/include"],
     lib_source = ":srcs",
     out_static_libs = select({
-        "//conditions:default": ["softfloat3.a"],
+        "//conditions:default": ["libsoftfloat3.a"],
     }),
     visibility = ["//visibility:public"],
 )
