@@ -8,7 +8,8 @@ filegroup(
 make(
     name = "softfloat",
     args = ["-C"] + select({
-        "//conditions:default": ["build/Linux-x86_64-GCC"],
+        "@//:linux-aarch64": ["build/Linux-ARM-VFPv2-GCC"],
+        "@//:linux-x86_64": ["build/Linux-x86_64-GCC"],
     }),
     includes = ["source/include"],
     lib_source = ":srcs",
