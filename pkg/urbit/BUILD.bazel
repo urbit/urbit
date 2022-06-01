@@ -87,7 +87,7 @@ cc_library(
         "@gmp",
         "@murmur3",
         "@openssl",
-        "@softfloat3",
+        "@softfloat",
     ],
 )
 
