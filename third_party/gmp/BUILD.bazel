@@ -18,11 +18,11 @@ filegroup(
 
 configure_make(
     name = "gmp",
-    lib_name = "libgmp",
     configure_options = [
         "--disable-cxx",
     ],
+    lib_name = "libgmp",
     lib_source = ":srcs",
     out_static_libs = ["libgmp.a"],
-     visibility = ["//visibility:public"],
+    visibility = ["//visibility:public"],
 )
