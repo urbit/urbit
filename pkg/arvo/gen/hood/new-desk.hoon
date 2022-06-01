@@ -10,8 +10,6 @@
   ~|  [%already-exists desk]
   !!
 ::
-=+  .^(=dome:clay %cv (en-beam bek /))
-::
 :-  %helm-pass
 %^  new-desk:cloy  desk
   ~
@@ -29,8 +27,13 @@
   |=  =path
   :-  path
   ^-  page:clay
-  =;  =cage  [p q.q]:cage
+  :-  (rear path)
   ~|  [%missing-source-file from path]
-  (need (~(get an:cloy ank.dome) path))
+  .^  *
+    %cx
+    (scot %p p.bek)
+    from
+    (scot %da now)
+    path
+  ==
 --
-
