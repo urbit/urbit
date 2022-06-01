@@ -11,6 +11,32 @@ build --verbose_failures
 
 # build --compilation_mode=opt
 
+
+# build --incompatible_disallow_empty_glob
+build --verbose_failures
+
+# Allow newly registered toolchains to be resolved (ie. zig cc)
+# build --incompatible_enable_cc_toolchain_resolution
+
+# # Prevent bazel from detecting the default non-hermetic toolchain.
+# build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+
+build:linux_amd64 --incompatible_enable_cc_toolchain_resolution
+build:linux_amd64 --platforms @zig_sdk//platform:linux_amd64
+build:linux_amd64 --extra_toolchains @zig_sdk//toolchain:linux_amd64_musl
+
+build:linux_arm64 --incompatible_enable_cc_toolchain_resolution
+build:linux_arm64 --platforms @zig_sdk//platform:linux_arm64
+build:linux_arm64 --extra_toolchains @zig_sdk//toolchain:linux_arm64_musl
+
+build:darwin_amd64 --incompatible_enable_cc_toolchain_resolution
+build:darwin_amd64 --platforms @zig_sdk//platform:linux_amd64
+build:darwin_amd64 --extra_toolchains @zig_sdk//toolchain:linux_amd64
+
+build:darwin_ard64 --incompatible_enable_cc_toolchain_resolution
+build:darwin_arm64 --platforms @zig_sdk//platform:linux_arm64
+build:darwin_arm64 --extra_toolchains @zig_sdk//toolchain:linux_arm64
+
 # Allow newly registered toolchains to be resolved (ie. zig cc)
 build:zig-cc --incompatible_enable_cc_toolchain_resolution
 build:zig-cc --extra_toolchains @zig_sdk//toolchain:linux_arm64_gnu.2.28
