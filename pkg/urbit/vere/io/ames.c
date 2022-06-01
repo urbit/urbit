@@ -5,7 +5,7 @@
 #include "vere/vere.h"
 #include "ur/serial.h"
 
-#define FINE_PAGE         8  //  packets per page TODO: 16384
+#define FINE_PAGE     16384  //  packets per page TODO
 #define FINE_FRAG      1024  //  bytes per fragment packet
 #define FINE_PATH_MAX   384  //  longest allowed scry path
 #define HEAD_SIZE         4  //  header size in bytes
@@ -203,6 +203,36 @@ _log_keen(u3_keen* req_u)
   u3l_log("path: %s\n", req_u->pat_c);
   u3l_log("frag: %u\n", req_u->fra_w);
   u3l_log("\n");
+}
+
+static c3_c*
+_show_mug_buf(c3_y* buf_y, c3_w len_w)
+{
+  u3_noun mug = u3r_mug_bytes(buf_y, len_w);
+  u3_noun cot = u3dc("scot", 'q', mug);
+  return u3r_string(cot);
+}
+
+static void
+_log_meow(u3_meow* mew_u)
+{
+  c3_c* sig_c = _show_mug_buf(mew_u->sig_y, sizeof(mew_u->sig_y));
+  c3_c* dat_c = _show_mug_buf(mew_u->dat_y, mew_u->act_s);
+
+  u3l_log("  sig=%s\n"
+          "  num=%u\n"
+          "  siz=%u\n"
+          "  act=%u\n"
+          "  dat=%s\n",
+    sig_c,
+    mew_u->num_w,
+    mew_u->siz_s,
+    mew_u->act_s,
+    dat_c
+  );
+
+  c3_free(sig_c);
+  c3_free(dat_c);
 }
 
 static void
@@ -1616,8 +1646,8 @@ _fine_hear_request(u3_pact* req_u, c3_w cur_w)
   u3_noun key = u3nc(u3k(u3t(pat)), u3i_word(res_u->pur_u.ken_u.fra_w));
   u3_weak cac = u3h_git(res_u->sam_u->fin_s.sac_p, key);
   if ( u3_none == cac ) {
-  u3l_log("fine: miss %u %s\n", res_u->pur_u.ken_u.fra_w,
-                                res_u->pur_u.ken_u.pat_c);
+    //u3l_log("fine: miss %u %s\n", res_u->pur_u.ken_u.fra_w,
+    //                              res_u->pur_u.ken_u.pat_c);
     //  cache miss, scry into arvo for a page of packets
     //
     c3_w lop_w = _fine_lop(res_u->pur_u.ken_u.fra_w);
@@ -1635,8 +1665,8 @@ _fine_hear_request(u3_pact* req_u, c3_w cur_w)
   //  cache hit, fill in response meow and send
   //
   else if ( c3y == _fine_sift_meow(&res_u->pur_u.mew_u, u3k(cac)) ) {
-    u3l_log("fine: hit  %u %s\n", res_u->pur_u.ken_u.fra_w,
-                                  res_u->pur_u.ken_u.pat_c);
+    //u3l_log("fine: hit  %u %s\n", res_u->pur_u.ken_u.fra_w,
+    //                              res_u->pur_u.ken_u.pat_c);
     _fine_etch_response(res_u);
     _ames_try_send(res_u, c3n);
   }

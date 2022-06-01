@@ -291,7 +291,6 @@
   =+  sig=(end 9 mes)
   :-  sig
   =+  dat=(rsh 9 mes)
-  ~&  [sig=`@q`(mug sig) dat=`@q`(mug dat)]
   ?~  dat  ~
   ~|  [%fine %response-not-cask]
   ;;((cask) (cue dat))
@@ -2652,9 +2651,7 @@
           ++  pe-keen
             |=  [=path =^duct]
             ?:  (~(has by order.scry) path)
-              ~&  %pe-keen-already
               ke-abet:(ke-sub:(ke-abed:keen-core path) duct)
-            ~&  %pe-keen-new
             =^  keen-id=@ud  seq.scry  [seq.scry +(seq.scry)]
             =.  order.scry  (~(put by order.scry) path keen-id)
             =.  keens.scry  (put:orm keens.scry keen-id *keen-state)
@@ -2705,7 +2702,6 @@
           ::
           ++  pe-hear
             |=  [=lane =packet]
-            ~&  %pe-hear
             ?>  =(sndr-tick.packet (mod life.peer 16))
             ::
             =/  [=peep =purr]  (decode-request-info `@ux`content.packet)
@@ -2804,13 +2800,10 @@
             ++  ke-on-ack
               =|  marked=(list want)
               |=  fra=@ud
-              ~&  %ke-on-ack
               ^-  [? _ke-core]
               =;  [[found=? cor=_ke-core] wan=(pha want)]
                 ?.  found
-                  ~&  %not-found
                   [found ke-core]
-                  ~&  %found
                 [found cor(wan.keen wan)]
               %^  (dip-left:ke-deq ,[found=? cor=_ke-core])  wan.keen
                 [| ke-core]
@@ -2834,7 +2827,7 @@
             ::
             ++  ke-start
               |=  =^duct
-              ~&  start/now
+              ~>  %slog.0^leaf/"fine: keen {(spud ke-full-path)}"
               =.  ke-core  (ke-sub duct)
               ?>  =(num-fragments.keen 0)
               =/  fra=@  1
@@ -2849,7 +2842,7 @@
             ++  ke-done
               |=  [sig=@ data=$@(~ (cask))]
               ?>  (meri:keys ship life.peer ke-full-path sig data)
-              ~&  got-response/path
+              ~>  %slog.0^leaf/"fine: done {(spud ke-full-path)}"
               =/  listeners  ~(tap in listeners.keen)
               =/  dat=(unit (cask))
                ?~(data ~ `data)
@@ -2883,14 +2876,12 @@
               =/  max  num-slots:ke-gauge
               |-  ^+  ke-core
               ?:  |(=(~ nex.keen) =(inx max))
-              ~&  [%ke-continue-done inx]
                 ke-core
               =^  =want  nex.keen  nex.keen
               =.  last-sent.want  now
               =.  tries.want  +(tries.want)
               =.  wan.keen  (snoc:ke-deq wan.keen want)
               =.  metrics.keen  (on-sent:ke-gauge 1)
-              ~&  [%ke-continue fra.want]
               =.  ke-core  (ke-emit hoot.want)
               $(inx +(inx))
             ::
@@ -2930,13 +2921,11 @@
             ++  ke-rcv
               |=  [fra=@ud =purr =lane:ames]
               ^+  ke-core
-              ~&  [%ke-rcv fra]
               =/  =meow          (decode-response-packet purr)
               =/  og  ke-core
               =.  pe-core  (pe-update-qos %live last-contact=now)
               ::  handle empty
               ?:  =(0 num.meow)
-                ~&  %ke-done
                 ?>  =(~ dat.meow)
                 (ke-done sig.meow ~)
               ::  update congestion, or fill details
@@ -2954,14 +2943,12 @@
                 (ke-on-ack fra)
               ::
               ?.  found
-                ~&  %ke-fast-retransmit
                 (ke-fast-retransmit:og fra)
               =/  =have   [fra meow]
               =.  hav.keen
                 `(list ^have)`[have hav.keen]
               =.  num-received.keen  +(num-received.keen)
               ?:  =(num-fragments num-received):keen
-                ~&  %ke-done
                 (ke-done [sig dat]:ke-decode-full)
               ke-continue
             ::
@@ -3039,7 +3026,6 @@
                   last-sent.u.want  now
                 ==
               =.  wan.keen  (cons:ke-deq wan.keen u.want)
-              ~&  [%ke-take-wake-resend fra.u.want]
               (ke-resend [fra hoot]:u.want)
             --
           --
@@ -3092,12 +3078,10 @@
         ::
         ++  on-keen
           |=  [=ship =path]
-          ~&  %on-keen
           ^+  event-core
           =+  ~:(spit path)  ::  assert length
           =/  peer-core  (pe-abed:fine-peer ship)
           ?^  peer-core  pe-abet:(pe-keen:u.peer-core path duct)
-          ~&  %on-keen-alien
           %+  enqueue-alien-todo  ship
           |=  todos=alien-agenda
           todos(keens (~(put ju keens.todos) path duct))
@@ -3135,7 +3119,6 @@
           ::      so we should only get responses from ships we know.
           ::      below we assume sndr.packet is a known peer.
           =*  from  sndr.packet
-            ~&  %on-hear-response
           =/  peer-core  (need (pe-abed:fine-peer from))
           pe-abet:(pe-hear:peer-core lane packet)
         --
@@ -3191,18 +3174,19 @@
           2^wid       ::  path size
           wid^`@`pat  ::  namespace path
       ==
+    ::  +show-meow: prepare $meow for printing
+    ::
+    ++  show-meow
+      |=  =meow
+      :*  sig=`@q`(mug sig.meow)
+          num=num.meow
+          siz=siz.meow
+          dat=`@q`(mug dat.meow)
+      ==
     ::
     ++  make-meow
       |=  [=path mes=@ num=@ud]
       ^-  meow
-      =;  meow
-        ~&  :*  %made-meow
-                sig=`@q`(mug sig.meow)
-                num=num.meow
-                siz=siz.meow
-                dat=`@q`(mug dat.meow)
-            ==
-        meow
       =/  tot  (met 13 mes)
       =/  dat  (cut 13 [(dec num) 1] mes)
       =/  wid  (met 3 dat)
@@ -3236,9 +3220,7 @@
     ++  encode-hunk
       |=  [=path =hunk data=$@(~ (cask))]
       ^-  (list @uxmeow)
-      ~&  [hunk=hunk len=(met 3 (jam data))]
       =/  mes=@
-        =-  ~&  [sig=`@q`(mug sig) dat=`@q`(mug (jam data))]  -
         =/  sig=@  (full:keys path data)
         ?~  data  sig
         (mix sig (lsh 9 (jam data)))
@@ -3249,7 +3231,6 @@
       =/  top  (min las tip)
       =/  num  lop.hunk
       ?>  (lte num top)
-      ~&  [path num=num top=top hunk siz=(met 13 mes) ?=(^ data)]
       =|  res=(list @uxmeow)
       |-  ^+  res
       ?:  =(num top)
@@ -3261,14 +3242,6 @@
       |%
       ++  mess
         |=  [=ship life=@ud =path dat=$@(~ (cask))]
-        ::~&  :*  %mess
-        ::        ship  life  path
-        ::        ^=  dat
-        ::        ?~  dat  ~
-        ::        ?:  =(%hoon -.dat)
-        ::          [%hoon ;;(@t +.dat)]
-        ::        [%noun `@q`(mug dat)]
-        ::    ==
         (jam +<)
       ::
       ++  full
