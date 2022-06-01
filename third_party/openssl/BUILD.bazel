@@ -1,6 +1,9 @@
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 
+exports_files(["ca-bundle.crt"])
+
 # Lifted from https://github.com/qzmfranklin/openssl/tree/bazel.
+#
 
 filegroup(
     name = "srcs",
