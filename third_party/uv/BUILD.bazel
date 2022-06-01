@@ -7,7 +7,6 @@ filegroup(
 
 cmake(
     name = "uv",
-    lib_name = "libuv",
     cache_entries = {
         "CMAKE_INSTALL_LIBDIR": "lib",
         "CMAKE_C_COMPILER_FORCED": "on",
@@ -25,7 +24,7 @@ cmake(
     }),
     postfix_script = select({
         "@//:windows": "",
-        "//conditions:default": "cp $INSTALLDIR/lib/libuv{_a,}.a"
+        "//conditions:default": "cp $INSTALLDIR/lib/libuv{_a,}.a",
         # && mv $INSTALLDIR/lib/cmake/libuv/{libuvConfig,libuv-config}.cmake && echo 'set(LIBUV_FOUND TRUE)' >> $INSTALLDIR/lib/cmake/libuv/libuv-config.cmake",
     }),
     visibility = ["//visibility:public"],

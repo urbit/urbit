@@ -7,15 +7,16 @@ filegroup(
 
 configure_make(
     name = "secp256k1",
-    visibility = ["//visibility:public"],
-    autogen = True,
     autoconf = True,
+    autogen = True,
     configure_in_place = True,
-    lib_source = ":srcs",
-    lib_name = "libsecp256k1",
     configure_options = [
         "--enable-module-extrakeys",
         "--enable-module-recovery",
         "--enable-module-schnorrsig",
     ],
+    lib_source = ":srcs",
+    visibility = ["//visibility:public"],
+    out_static_libs = ["libsecp256k1.a"],
+
 )

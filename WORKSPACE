@@ -161,14 +161,14 @@ versioned_http_archive(
     name = "h2o",
     build_file = "//third_party/h2o:BUILD.bazel",
     patch_args = ["-p1"],
-         patches = [
+    patches = [
         "//third_party/h2o:configure-file-version.patch",
-        "//third_party/h2o:remove-build-files.patch",
+        # "//third_party/h2o:remove-build-files.patch",
     ],
-    sha256 = "e3f745a645fa7a4bf6629914b967e24e1522f65ea17c07d9d16d8d2223fc03c5",
+    sha256 = "f8cbc1b530d85ff098f6efc2c3fdbc5e29baffb30614caac59d5c710f7bda201",
     strip_prefix = "h2o-{version}",
     url = "https://github.com/h2o/h2o/archive/refs/tags/v{version}.tar.gz",
-    version = "2.3.0-beta2",
+    version = "2.2.6",
 )
 
 versioned_http_archive(

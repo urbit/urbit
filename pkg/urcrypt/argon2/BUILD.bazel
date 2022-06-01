@@ -19,12 +19,12 @@ cc_library(
         "include/argon2.h",
         "src/blake2/blake2.h",
     ],
+    defines = [
+        "ARGON2_NO_THREADS",
+    ],
     includes = [
         "include",
         "src",
-    ],
-    defines = [
-        "ARGON2_NO_THREADS",
     ],
     visibility = ["//pkg/urcrypt:__subpackages__"],
 )

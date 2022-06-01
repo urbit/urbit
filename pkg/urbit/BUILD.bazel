@@ -69,8 +69,8 @@ cc_library(
     strip_include_prefix = "compat/posix",
     deps = [
         "@gmp",
-        "@uv",
         "@openssl",
+        "@uv",
     ],
 )
 
@@ -138,9 +138,9 @@ cc_library(
         "@curl",
         "@gmp",
         "@h2o",
-        "@uv",
         "@lmdb",
         "@openssl",
+        "@uv",
     ],
 )
 
@@ -179,8 +179,8 @@ cc_library(
         ":posix-compat",
         ":vere",
         ":worker",
-        "@sigsegv",
         "@openssl",
+        "@sigsegv",
     ],
 )
 

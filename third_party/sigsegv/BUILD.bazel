@@ -7,10 +7,10 @@ filegroup(
 
 configure_make(
     name = "sigsegv",
-    lib_name = "libsigsegv",
-    visibility = ["//visibility:public"],
     autoconf = True,
     autoreconf = True,
     configure_in_place = True,
+    lib_name = "libsigsegv",
     lib_source = ":srcs",
+    visibility = ["//visibility:public"],
 )

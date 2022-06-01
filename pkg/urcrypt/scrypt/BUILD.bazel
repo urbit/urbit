@@ -22,7 +22,7 @@ cc_library(
     ],
     includes = ["."],
     # local_defines = [
-        # "_FORTIFY_SOURCE=2"
+    # "_FORTIFY_SOURCE=2"
     # ],
     visibility = ["//pkg/urcrypt:__subpackages__"],
 )
