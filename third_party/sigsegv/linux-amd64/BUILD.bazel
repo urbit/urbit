@@ -1,0 +1,14 @@
+# exports_files(["config.h", "sigsegv.h"])
+
+filegroup(
+  name = "linux-amd64",
+   srcs = glob(["*.h"]),
+  visibility = ["//visibility:public"]
+)
+
+# cc_library(
+#   name = "linux-amd64",
+#   hdrs = glob(["*.h"]),
+#   include_prefix = ".",
+#   visibility = ["//visibility:public"]
+# )
