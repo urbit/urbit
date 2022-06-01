@@ -1,0 +1,12 @@
+diff --git a/build/Linux-x86_64-GCC/Makefile b/build/Linux-x86_64-GCC/Makefile
+index 2ee5dad..423052f 100644
+--- a/build/Linux-x86_64-GCC/Makefile
++++ b/build/Linux-x86_64-GCC/Makefile
+@@ -388,3 +388,7 @@ softfloat$(LIB): $(OBJS_ALL)
+ clean:
+ 	$(DELETE) $(OBJS_ALL) softfloat$(LIB)
+ 
++.PHONY: install
++install: softfloat$(LIB)
++	mkdir -p $(PREFIX)/include && cp $(SOURCE_DIR)/include/softfloat.h $(SOURCE_DIR)/include/softfloat_types.h $(PREFIX)/include/
++	mkdir -p $(PREFIX)/lib && cp softfloat$(LIB) $(PREFIX)/lib/
