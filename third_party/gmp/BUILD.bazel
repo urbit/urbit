@@ -20,7 +20,10 @@ configure_make(
     name = "gmp",
     configure_options = [
         "--disable-cxx",
-    ],
+    ] + select({
+        "@//:linux-aarch64": ["--host=aarch64"],
+        "//conditions:default": [],
+    }),
     lib_name = "libgmp",
     lib_source = ":srcs",
     out_static_libs = ["libgmp.a"],
