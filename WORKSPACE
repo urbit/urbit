@@ -32,10 +32,8 @@ versioned_http_archive(
 
 versioned_http_archive(
     name = "bazel-zig-cc",
-    sha256 = "8f198ee98fa122d299b008db281329b80147d04fcdab03a55c31007b5edc8fdf",
+    sha256 = "cd2629843fe4ba20cf29e1d73cc02559afba640f884e519b6a194a35627cbbf3",
     strip_prefix = "bazel-zig-cc-{version}",
-    # patch_args = ["-p1"],
-    # patches = ["//third_party:bazel-zig-cc.patch"],
     url = "https://git.sr.ht/~motiejus/bazel-zig-cc/archive/{version}.tar.gz",
     version = "v0.7.3",
 )
