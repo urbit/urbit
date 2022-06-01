@@ -1,15 +1,26 @@
 ::  |new-desk: creates a minimal desk
 ::
-:-  %say
+/+  *generators
+::
+:-  %ask
 |=  $:  [now=@da eny=@uvJ bek=beak]
         [=desk ~]
-        from=$~(%base desk)
+        [from=$~(%base desk) hard=_|]
     ==
 ::
-?:  (~(has in .^((set ^desk) %cd (en-beam bek(q from) /))) desk)
-  ~|  [%already-exists desk]
-  !!
+=;  make-new-desk
+  ?.  ?&  !hard
+          (~(has in .^((set ^desk) %cd (en-beam bek(q %$) /))) desk)
+      ==
+    (make-new-desk)
+  %+  print    (rap 3 'the desk %' desk ' already exists. overwrite it?' ~)
+  %+  prompt   [%& %prompt "overwrite? (y/N) "]
+  |=  in=tape
+  ?.  |(=("y" in) =("Y" in) =("yes" in))
+    no-product
+  (make-new-desk)
 ::
+|.  %-  produce
 :-  %helm-pass
 %^  new-desk:cloy  desk
   ~
