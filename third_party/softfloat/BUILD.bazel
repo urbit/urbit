@@ -95,12 +95,17 @@ PLATFORM_SOURCES = select({
         "source/8086-SSE/f128M_isSignalingNaN.c",
         "source/8086-SSE/s_f128UIToCommonNaN.c",
         "source/8086-SSE/s_commonNaNToF128UI.c",
-        "source/8086-SSE/s_propagateNaNF128UI.c"
-        ] + [
+        "source/8086-SSE/s_propagateNaNF128UI.c",
+    ] + [
         "source/s_shiftRightJam128.c",
-    "source/s_shiftRightJam128Extra.c",
-    "source/s_shortShiftRightJam128.c",
-    "source/s_shortShiftRightJam128Extra.c",
+        "source/s_shiftRightJam128Extra.c",
+        "source/s_shortShiftRightJam128.c",
+        "source/s_shortShiftRightJam128Extra.c",
+        "source/s_shortShiftLeft128.c",
+        "source/s_shortShiftRight128.c",
+        "source/s_addMagsF128.c",
+        "source/s_subMagsF128.c",
+        "source/s_normSubnormalF128Sig.c",
     ],
 })
 
@@ -112,8 +117,6 @@ COMMON_SOURCES = [
     "source/s_eq128.c",
     "source/s_le128.c",
     "source/s_lt128.c",
-    "source/s_shortShiftLeft128.c",
-    "source/s_shortShiftRight128.c",
     "source/s_shortShiftRightJam64.c",
     "source/s_shortShiftRightJam64Extra.c",
     "source/s_shiftRightJam32.c",
@@ -163,11 +166,8 @@ COMMON_SOURCES = [
     "source/s_normRoundPackToExtF80.c",
     "source/s_addMagsExtF80.c",
     "source/s_subMagsExtF80.c",
-    "source/s_normSubnormalF128Sig.c",
     "source/s_roundPackToF128.c",
     "source/s_normRoundPackToF128.c",
-    "source/s_addMagsF128.c",
-    "source/s_subMagsF128.c",
     "source/s_mulAddF128.c",
     "source/softfloat_state.c",
     "source/ui32_to_f16.c",
