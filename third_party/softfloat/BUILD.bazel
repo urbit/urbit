@@ -31,6 +31,7 @@ PLATFORM_DEFINES = select({
         "SOFTFLOAT_FAST_INT64",
         "SOFTFLOAT_FAST_DIV32TO16",
         "SOFTFLOAT_FAST_DIV64TO32",
+        "SOFTFLOAT_INTRINSIC_INT128",
     ],
 })
 
@@ -94,7 +95,12 @@ PLATFORM_SOURCES = select({
         "source/8086-SSE/f128M_isSignalingNaN.c",
         "source/8086-SSE/s_f128UIToCommonNaN.c",
         "source/8086-SSE/s_commonNaNToF128UI.c",
-        "source/8086-SSE/s_propagateNaNF128UI.c",
+        "source/8086-SSE/s_propagateNaNF128UI.c"
+        ] + [
+        "source/s_shiftRightJam128.c",
+    "source/s_shiftRightJam128Extra.c",
+    "source/s_shortShiftRightJam128.c",
+    "source/s_shortShiftRightJam128Extra.c",
     ],
 })
 
@@ -110,13 +116,9 @@ COMMON_SOURCES = [
     "source/s_shortShiftRight128.c",
     "source/s_shortShiftRightJam64.c",
     "source/s_shortShiftRightJam64Extra.c",
-    "source/s_shortShiftRightJam128.c",
-    "source/s_shortShiftRightJam128Extra.c",
     "source/s_shiftRightJam32.c",
     "source/s_shiftRightJam64.c",
     "source/s_shiftRightJam64Extra.c",
-    "source/s_shiftRightJam128.c",
-    "source/s_shiftRightJam128Extra.c",
     "source/s_shiftRightJam256M.c",
     "source/s_countLeadingZeros8.c",
     "source/s_countLeadingZeros16.c",
