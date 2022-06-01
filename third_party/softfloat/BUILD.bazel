@@ -582,7 +582,7 @@ cc_library(
         "source/include/opts-GCC.h",
         "source/include/primitiveTypes.h",
         "source/include/primitives.h",
-    ] + COMMON_SOURCES + PLATFORM_SOURCES,
+    ] + PLATFORM_SOURCES,
     hdrs = [
         "source/include/softfloat.h",
         "source/include/softfloat_types.h",
