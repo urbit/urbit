@@ -55,9 +55,12 @@ cc_library(
         "src/**/*.h",
         "src/**/*.c",
     ]),
-    copts = [
-        "-DECMULT_WINDOW_SIZE=2",
-        "-DECMULT_GEN_PREC_BITS=4",
+    local_defines = [
+        "ECMULT_WINDOW_SIZE=2",
+        "ECMULT_GEN_PREC_BITS=4",
+        "ENABLE_MODULE_EXTRAKEYS",
+        "ENABLE_MODULE_RECOVERY",
+        "ENABLE_MODULE_SCHNORRSIG",
     ],
     includes = [
         "include",
