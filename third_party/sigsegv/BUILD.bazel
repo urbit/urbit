@@ -11,16 +11,16 @@ configure_make(
     autoconf = True,
     autoreconf = True,
     configure_in_place = True,
+    configure_options = select({
+        "@//:linux-aarch64": ["--host=aarch64"],
+        "//conditions:default": [],
+    }),
     lib_source = ":srcs",
     out_static_libs = select({
         "@//:windows-x86_64": ["libsigsegv.lib"],
         "//conditions:default": ["libsigsegv.a"],
     }),
     visibility = ["//visibility:public"],
-    configure_options = select({
-        "@//:linux-aarch64": ["--host=aarch64"],
-        "//conditions:default": [],
-    }),
 )
 
 # genrule(

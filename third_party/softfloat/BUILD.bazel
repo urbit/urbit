@@ -1,3 +1,4 @@
+# load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "make")
 
 filegroup(
@@ -18,3 +19,35 @@ make(
     }),
     visibility = ["//visibility:public"],
 )
+
+# cc_library(
+#     name = "softfloat",
+#     srcs = glob(["source/include/*.h", "source/*.c"]) + select({
+#         "@//:linux-aarch64": glob([
+#             "build/ARM-VFPv2/platform.h",
+#             "source/ARM-VFPv2/*",
+#         ]),
+#         "@//:linux-x86_64": glob([
+#             "build/Linux-x86_64-GCC/platform.h",
+#             "source/8086/*",
+#         ]),
+#     }),
+#     hdrs = [
+#         "source/include/softfloat.h",
+#         "source/include/softfloat_types.h",
+#     ],
+#     includes = ["source/include"] + select({
+#         "@//:linux-aarch64": [
+#             "build/ARM-VFPv2",
+#             "source/ARM-VFPv2",
+#         ],
+#         "@//:linux-x86_64": [
+#             "build/Linux-x86_64-GCC",
+#             "source/8086",
+#         ],
+#     }),
+#     local_defines = [
+#         "SOFTFLOAT_ROUND_ODD",
+#         "INLINE_LEVEL=5",
+#     ],
+# )

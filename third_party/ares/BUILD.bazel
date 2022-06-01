@@ -25,8 +25,8 @@ cmake(
         "//conditions:default": ["libcares.a"],
     }),
     postfix_script = select({
-        "@//:windows-x86_64": "cp -L $EXT_BUILD_ROOT/external/ares/src/lib/ares_nameser.h $INSTALLDIR/include/ares_nameser.h && cp -L $EXT_BUILD_ROOT/external/ares/include/ares_dns.h $INSTALLDIR/include/ares_dns.h",
-        "//conditions:default": "rm -f $INSTALLDIR/include/ares_dns.h && cp -L $EXT_BUILD_ROOT/external/ares/include/ares_dns.h $INSTALLDIR/include/ares_dns.h",
+        "@//:windows-x86_64": "cp -L $EXT_BUILD_ROOT/external/ares/src/lib/ares_nameser.h $INSTALLDIR/include/ares_nameser.h && cp -L $EXT_BUILD_ROOT/external/ares/include/ares_dns.h $INSTALLDIR/include/",
+        "//conditions:default": "rm -f $INSTALLDIR/include/ares_dns.h && cp -L $EXT_BUILD_ROOT/external/ares/include/ares_dns.h $INSTALLDIR/include/",
     }),
     visibility = ["//visibility:public"],
 )
