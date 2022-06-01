@@ -24,4 +24,5 @@ configure_make(
     ],
     lib_source = ":srcs",
     out_static_libs = ["libgmp.a"],
+     visibility = ["//visibility:public"],
 )
