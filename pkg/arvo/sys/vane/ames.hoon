@@ -1158,9 +1158,11 @@
         [%forward-lane ~]
       ::
       ::  this duplicates the routing hack from +send-blob:event-core
-      ::  so long as neither the peer nor the peer's sponsoring galaxy is us:
+      ::  so long as neither the peer nor the peer's sponsoring galaxy is us,
+      ::  and the peer has been reached recently:
       ::
-      ::    - no route to the peer: send to the peer's sponsoring galaxy
+      ::    - no route to the peer, or peer has not been contacted recently:
+      ::      send to the peer's sponsoring galaxy
       ::    - direct route to the peer: use that
       ::    - indirect route to the peer: send to both that route and the
       ::      the peer's sponsoring galaxy
@@ -1172,6 +1174,8 @@
           ==
         ~
       =;  zar=(trap (list lane))
+        ?:  (lth last-contact.qos.u.peer (sub now ~h1))
+          $:zar
         ?~  route.u.peer  $:zar
         =*  rot  u.route.u.peer
         ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
