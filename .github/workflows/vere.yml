@@ -35,12 +35,12 @@ on:
         options:
         - often
         - soon
-        # XX live?
+        - live
 
 env:
   UPLOAD_BASE: bootstrap.urbit.org/vere
   VERE_PACE: ${{ inputs.pace }}
-  VERSION_TYPE: ${{ inputs.pace == 'soon' && 'real' || 'hash' }}
+  VERSION_TYPE: ${{ (inputs.pace == 'soon' || inputs.pace == 'live') && 'real' || 'hash' }}
 
 jobs:
   urbit:
