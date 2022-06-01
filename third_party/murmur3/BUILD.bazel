@@ -4,6 +4,6 @@ cc_library(
     name = "murmur3",
     srcs = ["murmur3.c"],
     hdrs = ["murmur3.h"],
-    strip_include_prefix = "",
+    includes = ["."],
     visibility = ["//visibility:public"],
 )

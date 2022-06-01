@@ -11,7 +11,9 @@ make(
         "//conditions:default": ["build/Linux-x86_64-GCC"],
     }),
     includes = ["source/include"],
-    lib_name = "softfloat",
     lib_source = ":srcs",
+    out_static_libs = select({
+        "//conditions:default": ["softfloat3.a"],
+    }),
     visibility = ["//visibility:public"],
 )

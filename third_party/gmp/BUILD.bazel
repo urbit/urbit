@@ -8,7 +8,10 @@ filegroup(
 configure_make(
     name = "gmp",
     configure_in_place = True,
-    lib_name = "libgmp",
     lib_source = ":srcs",
+    out_static_libs = select({
+        "@//:windows-x86_64": ["libgmp.lib"],
+        "//conditions:default": ["libgmp.a"],
+    }),
     visibility = ["//visibility:public"],
 )

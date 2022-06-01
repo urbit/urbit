@@ -10,7 +10,10 @@ configure_make(
     autoconf = True,
     autoreconf = True,
     configure_in_place = True,
-    lib_name = "libsigsegv",
     lib_source = ":srcs",
+    out_static_libs = select({
+        "@//:windows-x86_64": ["libsigsegv.lib"],
+        "//conditions:default": ["libsigsegv.a"],
+    }),
     visibility = ["//visibility:public"],
 )

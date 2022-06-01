@@ -230,9 +230,6 @@ cc_library(
 
 cc_library(
     name = "h2o",
-    textual_hdrs = [
-        "deps/ssl-conservatory/openssl/openssl_hostname_validation.c"
-        ],
     srcs = glob(
         include = [
             "include/**/*.h",
@@ -265,6 +262,9 @@ cc_library(
         "@platforms//os:linux": ["_GNU_SOURCE"],
         "//conditions:default": [],
     }),
+    textual_hdrs = [
+        "deps/ssl-conservatory/openssl/openssl_hostname_validation.c",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         ":cloexec",

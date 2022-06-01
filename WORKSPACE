@@ -94,7 +94,10 @@ versioned_http_archive(
     name = "secp256k1",
     build_file = "//third_party/secp256k1:BUILD.bazel",
     patch_args = ["-p1"],
-    patches = ["//third_party/secp256k1:autogen-libtoolize.patch"],
+    patches = [
+        "//third_party/secp256k1:autogen-libtoolize.patch",
+        "//third_party/secp256k1:p1.patch",
+    ],
     sha256 = "e5f49f896cff608d3f415bbdd0ed7483ab9f721e50be40fb149de48a41169f0f",
     strip_prefix = "secp256k1-{version}",
     url = "https://github.com/bitcoin-core/secp256k1/archive/{version}.tar.gz",
