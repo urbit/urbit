@@ -123,10 +123,10 @@ versioned_http_archive(
 )
 
 versioned_http_archive(
-    name = "softfloat3",
-    build_file = "//third_party/softfloat3:BUILD.bazel",
+    name = "softfloat",
+    build_file = "//third_party/softfloat:BUILD.bazel",
     patch_args = ["-p1"],
-    patches = ["//third_party/softfloat3:make-install.patch"],
+    patches = ["//third_party/softfloat:make-install.patch"],
     sha256 = "f75944ae5068fb9ce264bf1a5d6f35bd212cd7b47c0b908f6d17ea10b0530400",
     strip_prefix = "berkeley-softfloat-3-{version}",
     url = "https://github.com/urbit/berkeley-softfloat-3/archive/{version}.tar.gz",
