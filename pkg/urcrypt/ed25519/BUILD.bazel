@@ -23,9 +23,6 @@ cc_library(
         "src/fixedint.h",
         "src/ge.h",
     ],
-    copts = [
-        "-Wno-unused-result",
-    ],
     includes = ["src"],
     visibility = ["//pkg/urcrypt:__subpackages__"],
 )

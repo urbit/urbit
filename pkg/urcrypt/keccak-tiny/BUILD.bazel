@@ -7,13 +7,6 @@ cc_library(
         "keccak-tiny.c",
     ],
     hdrs = ["keccak-tiny.h"],
-    copts = [
-        "-Wall",
-        "-Wpedantic",
-        "-std=c11",
-        "-Wextra",
-        # "-march=native",
-    ],
     includes = ["."],
     visibility = ["//pkg/urcrypt:__subpackages__"],
 )

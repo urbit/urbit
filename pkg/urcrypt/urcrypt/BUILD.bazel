@@ -18,10 +18,6 @@ cc_library(
         "util.h",
     ],
     hdrs = ["urcrypt.h"],
-    copts = [
-        "-Wall",
-        "-g",
-    ],
     includes = ["."],
     visibility = ["//pkg/urcrypt:__subpackages__"],
     deps = [
@@ -30,7 +26,7 @@ cc_library(
         "//pkg/urcrypt/ge-additions",
         "//pkg/urcrypt/keccak-tiny",
         "//pkg/urcrypt/scrypt",
-        "@libaes_siv",
+        "@aes_siv",
         "@openssl",
         "@secp256k1",
     ],

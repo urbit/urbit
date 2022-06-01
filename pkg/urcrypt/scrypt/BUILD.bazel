@@ -21,8 +21,8 @@ cc_library(
         "sha256.h",
     ],
     includes = ["."],
-    local_defines = [
+    # local_defines = [
         # "_FORTIFY_SOURCE=2"
-    ],
+    # ],
     visibility = ["//pkg/urcrypt:__subpackages__"],
 )

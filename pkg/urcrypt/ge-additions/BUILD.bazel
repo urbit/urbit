@@ -4,11 +4,6 @@ cc_library(
     name = "ge-additions",
     srcs = ["ge-additions.c"],
     hdrs = ["ge-additions.h"],
-    copts = [
-        "-Werror",
-        "-pedantic",
-        "-std=gnu99",
-    ],
     includes = ["."],
     visibility = ["//pkg/urcrypt:__subpackages__"],
     deps = ["//pkg/urcrypt/ed25519"],

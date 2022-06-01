@@ -1,32 +1,11 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
-# load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
-
-# filegroup(
-#     name = "srcs",
-#     srcs = ["configure", "Makefile", "ent.h", "ent.c"],
-
-# )
-
-# configure_make(
-#     name = "ent",
-#     visibility = ["//visibility:public"],
-#     configure_in_place = True,
-#     lib_source = ":srcs",
-#     configure_prefix = "",
-# )
 
 cc_library(
     name = "ent",
     srcs = ["ent.c"],
     hdrs = ["ent.h"],
-    copts = [
-        # "-Wall",
-        # "-Werror",
-        # "-pedantic",
-        # "-std=gnu99"
-    ],
     includes = ["."],
-    # FIXME: use select() here.
+    # FIXME: use configure or select() here.
     local_defines = [
         "ENT_DEV_URANDOM",
     ],

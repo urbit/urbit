@@ -1,36 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
-# cc_library(
-#     name = "argon2",
-#     srcs = [
-#         "src/argon2.c",
-#         "src/blake2/blake2.h",
-#         "src/blake2/blake2-impl.h",
-#         "src/blake2/blake2b.c",
-#         "src/blake2/blamka-round-opt.h",
-#         "src/core.c",
-#         "src/core.h",
-#         "src/encoding.c",
-#         "src/encoding.h",
-#         "src/opt.c",
-#         "src/thread.c",
-#         "src/thread.h",
-#     ],
-#     hdrs = ["include/argon2.h"],
-#     # copts = [
-#     #     "-Wno-unused-value",
-#     #     "-Wno-unused-function",
-#     # ],
-#     # defines = [
-#     #     "ARGON2_NO_THREADS",
-#     # ],
-#     includes = [
-#         "include",
-#         "src",
-#     ],
-#     visibility = ["//pkg/urcrypt:__subpackages__"],
-# )
-
 cc_library(
     name = "argon2",
     srcs = [
@@ -50,11 +19,12 @@ cc_library(
         "include/argon2.h",
         "src/blake2/blake2.h",
     ],
-    # include_prefix = "",
     includes = [
         "include",
         "src",
     ],
-    # strip_include_prefix = "include",
+    defines = [
+        "ARGON2_NO_THREADS",
+    ],
     visibility = ["//pkg/urcrypt:__subpackages__"],
 )

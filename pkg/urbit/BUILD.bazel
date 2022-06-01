@@ -69,7 +69,7 @@ cc_library(
     strip_include_prefix = "compat/posix",
     deps = [
         "@gmp",
-        "@libuv",
+        "@uv",
         "@openssl",
     ],
 )
@@ -99,12 +99,12 @@ cc_library(
     local_defines = LOCAL_DEFINES,
     visibility = ["//visibility:public"],
     deps = [
+        "//pkg/urcrypt",
         "@gmp",
         "@openssl",
-        "//pkg/urcrypt",
-        "@libuv",
+        "@uv",
         "@murmur3",
-        "@libsigsegv",
+        "@sigsegv",
     ] + select({
         "//conditions:default": [":posix-compat"],
     }),
@@ -138,7 +138,7 @@ cc_library(
         "@curl",
         "@gmp",
         "@h2o",
-        "@libuv",
+        "@uv",
         "@lmdb",
         "@openssl",
     ],
@@ -179,7 +179,7 @@ cc_library(
         ":posix-compat",
         ":vere",
         ":worker",
-        "@libsigsegv",
+        "@sigsegv",
         "@openssl",
     ],
 )
