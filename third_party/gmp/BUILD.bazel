@@ -25,6 +25,7 @@ configure_make(
     env = {
         # See: https://github.com/bazelbuild/rules_foreign_cc/issues/296
         "CXX": "g++",
+        "CXXFLAGS": "-lstdc++",
     },
     lib_source = ":srcs",
     out_static_libs = [
