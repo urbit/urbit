@@ -2059,6 +2059,10 @@
           ?:  for
             event-core
           (try-next-sponsor sponsor.peer-state)
+        ::  if forwarding, route must not be stale
+        ::
+        ?:  &(for (lth last-contact.qos.peer-state (add now ~h1)))
+          (try-next-sponsor sponsor.peer-state)
         ::
         ?~  route=route.peer-state
           %-  (trace rot.veb final-ship |.("no route to:  {<ship>}"))
