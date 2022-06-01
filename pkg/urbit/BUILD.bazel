@@ -7,7 +7,7 @@ genrule(
     outs = ["include/ivory_impl.h"],
     cmd = """
 file=u3_Ivory_pill
-cat $(location //bin:ivory.pill) > $$file
+cat $< > $$file
 xxd -i $$file > $@
 """,
 )
@@ -18,7 +18,7 @@ genrule(
     outs = ["include/ca-bundle.h"],
     cmd = """
 file=include_ca_bundle_crt
-cat $(location //third_party:openssl.ca-bundle.crt) > $$file
+cat $< > $$file
 xxd -i $$file > $@
 """,
 )
