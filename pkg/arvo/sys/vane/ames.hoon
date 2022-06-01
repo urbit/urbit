@@ -319,9 +319,8 @@
   ::
   =/  header=@
     %+  can  0
-    :~  [1 reserved=0]
+    :~  [2 reserved=0]
         [2 packet-type=0]
-        [1 is-ames=&]
         [3 protocol-version]
         [2 rank.sndr-meta]
         [2 rank.rcvr-meta]
@@ -342,9 +341,8 @@
   =/  body    (rsh 5 blob)
   ::  read header; first bit is reserved
   ::
-  =/  type     (cut 0 [1 2] header)
-  =/  is-ames  (cut 0 [3 1] header)
-  ?.  =(& is-ames)
+  =/  type     (cut 0 [2 2] header)
+  ?.  =(| type)
     ~|  %ames-not-ames  !!
   ::
   =/  version  (cut 0 [4 3] header)
@@ -1557,11 +1555,11 @@
       (emit duct %pass wire %b %wait (add ~s30 now))
     ::  update the pending map 'next' lane if necessary
     ::
-    =?  pending.relay-state
-      ::
-      =/  val  (~(got by pending.relay-state) inv-req)
-      =/  next  q.-.val
-      &(=(~ next) !=(~ next.packet))
+    =?    pending.relay-state
+        ::
+        =/  val  (~(got by pending.relay-state) inv-req)
+        =/  next  q.-.val
+        &(=(~ next) !=(~ next.packet))
       ::
       ^+  pending.relay-state
       ?~  next.packet  !!
@@ -2126,15 +2124,21 @@
       ::
       =/  dest
         ^-  (pair lane (unit lane))
-        =/  sponsee-lane
-          ^-  (unit lane)
-          =/  res  (~(get by sponsees) rcvr.packet)
-          ?~  res  ~
-          `-.u.res
-        ?~  sponsee-lane
-          =/  rel
-            (~(get by pending) [%ames `dyad`[sndr.packet rcvr.packet]])
-          ?~  rel
+        =/  rel
+          (~(get by pending) [%ames `dyad`[sndr.packet rcvr.packet]])
+        ?~  rel
+          =/  sponsee-lane
+            |^
+            ^-  (unit lane)
+            =/  res  (~(get by sponsees) rcvr.packet)
+            ?~  res  try-next-sponsor
+            `-.u.res
+            ++  try-next-sponsor
+              =/  next-sponsor  (^sein:title rcvr.packet)
+              ?:  =(%czar (clan:title next-sponsor))  ~
+              $(rcvr.packet next-sponsor)
+            --
+          ?~  sponsee-lane
             ::  get the galaxy of the final-ship if no sponsors known
             ::
             :_  ~
@@ -2144,8 +2148,8 @@
               $(final-ship (^sein:title final-ship))
               %czar  [%.y final-ship]
             ==
-          -.u.rel
-        [u.sponsee-lane ~]
+          [u.sponsee-lane ~]
+        -.u.rel
       ::  write the next field if forwarding
       ::
       =?  next.packet
