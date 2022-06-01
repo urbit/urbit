@@ -14,7 +14,7 @@ xxd -i $$file > $@
 
 genrule(
     name = "ca-bundle",
-    srcs = ["//third_party:openssl.ca-bundle.crt"],
+    srcs = ["//third_party/openssl:ca-bundle.crt"],
     outs = ["include/ca-bundle.h"],
     cmd = """
 file=include_ca_bundle_crt

@@ -32,12 +32,12 @@ versioned_http_archive(
 
 versioned_http_archive(
     name = "bazel-zig-cc",
-    sha256 = "8f198ee98fa122d299b008db281329b80147d04fcdab03a55c31007b5edc8fde",
+    sha256 = "8f198ee98fa122d299b008db281329b80147d04fcdab03a55c31007b5edc8fdf",
     strip_prefix = "bazel-zig-cc-{version}",
     # patch_args = ["-p1"],
     # patches = ["//third_party:bazel-zig-cc.patch"],
     url = "https://git.sr.ht/~motiejus/bazel-zig-cc/archive/{version}.tar.gz",
-    version = "v0.7.2",
+    version = "v0.7.3",
 )
 
 #
@@ -61,8 +61,6 @@ load("@bazel-zig-cc//toolchain:defs.bzl", zig_toolchains = "toolchains")
 
 zig_toolchains()
 
-# register_toolchains()
-
 #
 # Third Party Dependencies
 #
@@ -75,15 +73,6 @@ versioned_http_archive(
     url = "https://zlib.net/zlib-{version}.tar.gz",
     version = "1.2.12",
 )
-
-# versioned_http_archive(
-#     name = "boringssl",
-#     sha256 = "03dd3080cb977989f76fde45b84f08ee7b5dfcf1c4d2c43b4560c6839ace19dc",
-#     strip_prefix = "boringssl-{version}",
-#     url = "https://github.com/google/boringssl/archive/{version}.tar.gz",
-#     # Taken from the master-with-bazel branch, which has an existing BUILD file.
-#     version = "8f90ba425bdcd6a90b88baabfe58b1997f1893f3",
-# )
 
 versioned_http_archive(
     name = "openssl",
