@@ -19,30 +19,32 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 #     visibility = ["//visibility:public"],
 # )
 
-# filegroup(
-#     name = "hdrs",
-#     srcs = [
-#         "@//third_party/sigsegv/linux-amd64:config.h",
-#         "@//third_party/sigsegv/linux-amd64:sigsegv.h",
-#     ],
-# )
-
-# cc_library(
-#   name = "linux-amd64",
-#   hdrs = glob(["*.h"]),
-#   include_prefix = ".",
-#   visibility = ["//visibility:public"]
-# )
+genrule(
+    name = "hdrs-x86_64",
+    srcs = ["@//third_party/sigsegv/linux-x86_64"],
+    outs = [
+        "linux-x86_64/config.h",
+        "linux-x86_64/sigsegv.h",
+    ],
+    cmd = """
+for f in $(locations @//third_party/sigsegv/linux-x86_64); do
+  cp $$f $(RULEDIR)/linux-x86_64/$$(basename $$f)
+done
+""",
+)
 
 genrule(
-    name = "hdrs-linux-amd64",
-    srcs = ["@//third_party/sigsegv/linux-amd64"],
-    outs = ["src/config.h", "src/sigsegv.h"],
+    name = "hdrs-aarch64",
+    srcs = ["@//third_party/sigsegv/linux-aarch64"],
+    outs = [
+        "linux-aarch64/config.h",
+        "linux-aarch64/sigsegv.h",
+    ],
     cmd = """
-for f in $(locations @//third_party/sigsegv/linux-amd64); do
-  cp $$f $(RULEDIR)/src/$$(basename $$f)
+for f in $(locations @//third_party/sigsegv/linux-aarch64); do
+  cp $$f $(RULEDIR)/linux-aarch64/$$(basename $$f)
 done
-"""
+""",
 )
 
 cc_library(
@@ -54,17 +56,33 @@ cc_library(
         "src/dispatcher.c",
         "src/version.c",
     ],
+    hdrs = select({
+        "@//:linux-x86_64": [":hdrs-x86_64"],
+        "@//:linux-aarch64": [":hdrs-aarch64"],
+    }),
+    includes = ["src"] + select({
+        "@//:linux-x86_64": ["linux-x86_64"],
+        "@//:linux-aarch64": ["linux-aarch64"],
+    }),
     textual_hdrs = [
-        # linux-amd64
         "src/leave-nop.c",
         "src/handler-unix.c",
-        "src/stackvma-linux.c",
-        "src/stackvma-simple.c",
-        "src/stackvma-rofile.c",
-        "src/stackvma-mincore.c",
-        "src/stackvma-vma-iter.c",
-    ],
-    hdrs = [":hdrs-linux-amd64"],
-    includes = ["src"],
-   visibility = ["//visibility:public"]
+    ] + select({
+        "@//:linux-x86_64": [
+            "src/stackvma-linux.c",
+            "src/stackvma-simple.c",
+            "src/stackvma-rofile.c",
+            "src/stackvma-mincore.c",
+            "src/stackvma-vma-iter.c",
+        ],
+        "@//:linux-aarch64": [
+            "src/fault-linux-arm.h",
+            "src/stackvma-linux.c",
+            "src/stackvma-simple.c",
+            "src/stackvma-rofile.c",
+            "src/stackvma-mincore.c",
+            "src/stackvma-vma-iter.c",
+        ],
+    }),
+    visibility = ["//visibility:public"],
 )
