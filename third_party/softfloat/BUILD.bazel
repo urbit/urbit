@@ -1,26 +1,26 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
-# load("@urbit//third_party/softfloat:linux-x86_64.bzl", "linux-x86_64")
-# load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux-aarch64")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "make")
+load("@urbit//third_party/softfloat:linux-x86_64.bzl", "linux-x86_64")
+load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux-aarch64")
 
-filegroup(
-    name = "srcs",
-    srcs = glob(["**"]),
-)
+# filegroup(
+#     name = "srcs",
+#     srcs = glob(["**"]),
+# )
 
-make(
-    name = "softfloat",
-    args = ["-C"] + select({
-        "@urbit//:linux-x86_64": ["build/Linux-x86_64-GCC"],
-        "@urbit//:linux-aarch64": ["build/Linux-ARM-VFPv2-GCC"],
-    }),
-    includes = ["source/include"],
-    lib_source = ":srcs",
-    out_static_libs = select({
-        "//conditions:default": ["softfloat.a"],
-    }),
-    visibility = ["//visibility:public"],
-)
+# make(
+#     name = "softfloat",
+#     args = ["-C"] + select({
+#         "@urbit//:linux-x86_64": ["build/Linux-x86_64-GCC"],
+#         "@urbit//:linux-aarch64": ["build/Linux-ARM-VFPv2-GCC"],
+#     }),
+#     includes = ["source/include"],
+#     lib_source = ":srcs",
+#     out_static_libs = select({
+#         "//conditions:default": ["softfloat.a"],
+#     }),
+#     visibility = ["//visibility:public"],
+# )
 
 # filegroup(
 #     name = "srcs",
@@ -41,37 +41,37 @@ make(
 #     visibility = ["//visibility:public"],
 # )
 
-# DEFINES = select({
-#     "@urbit//:linux_x86_64": linux_x86_64.defines,
-#     # "@urbit//:linux_aarch64": linux_aarch64["defines"]
-# })
+DEFINES = select({
+    "@urbit//:linux-x86_64": linux_x86_64.defines,
+    "@urbit//:linux-aarch64": linux_aarch64.defines
+})
 
-# INCLUDES = select({
-#     "@urbit//:linux_x86_64": linux_x86_64.includes,
-#     # "@urbit//:linux_aarch64": linux_x86_64["includes"]
-# })
+INCLUDES = select({
+    "@urbit//:linux-x86_64": linux_x86_64.includes,
+    "@urbit//:linux-aarch64": linux_x86_64.includes
+})
 
-# SRCS = select({
-#     "@urbit//:linux_x86_64": linux_x86_64.srcs,
-#     # "@urbit//:linux_aarch64": linux_x86_64["srcs"]
-# })
+SRCS = select({
+    "@urbit//:linux-x86_64": linux_x86_64.srcs,
+    "@urbit//:linux-aarch64": linux_x86_64.srcs
+})
 
-# cc_library(
-#     name = "softfloat",
-#     srcs = [
-#         "source/include/internals.h",
-#         "source/include/opts-GCC.h",
-#         "source/include/primitiveTypes.h",
-#         "source/include/primitives.h",
-#     ] + SRCS,
-#     hdrs = [
-#         "source/include/softfloat.h",
-#         "source/include/softfloat_types.h",
-#     ],
-#     includes = ["source/include"] + INCLUDES,
-#     local_defines = DEFINES,
-#     visibility = ["//visibility:public"],
-# )
+cc_library(
+    name = "softfloat",
+    srcs = [
+        "source/include/internals.h",
+        "source/include/opts-GCC.h",
+        "source/include/primitiveTypes.h",
+        "source/include/primitives.h",
+    ] + SRCS,
+    hdrs = [
+        "source/include/softfloat.h",
+        "source/include/softfloat_types.h",
+    ],
+    includes = ["source/include"] + INCLUDES,
+    local_defines = DEFINES,
+    visibility = ["//visibility:public"],
+)
 
 # cc_library(
 #     name = "softfloat",
