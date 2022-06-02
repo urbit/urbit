@@ -107,12 +107,15 @@
 ::
 +$  state-4  [%4 base-state-3]
 ::
++$  state-5  [%5 base-state-3]
+::
 +$  versioned-state 
   $%  state-0
       state-1
       state-2
       state-3
       state-4
+      state-5
   ==
 ::  +diplomatic: only renegotiate if versions changed
 ::    
@@ -214,7 +217,7 @@
 ++  agent
   |*  =config
   |=  =(pull-hook config)
-  =|  state-4
+  =|  state-5
   =*  state  -
   ^-  agent:gall
   =<
@@ -239,8 +242,8 @@
         !<(versioned-state old-vase)
       =|  cards=(list card:agent:gall)
       |^ 
-      ?-  -.old
-          %4
+      ?-    -.old
+          %5
         =^  og-cards   pull-hook
           (on-load:og inner-state.old)
         =.  state  old
@@ -252,7 +255,18 @@
             ~
           (poke-self:pass kick+!>(%.n))^~
         :_  this
-        :(weld cards og-cards kick)
+        :(weld (flop cards) og-cards kick)
+      ::
+          %4
+        %=    $
+            -.old  %5
+        ::
+            cards
+          :_  cards
+          =/  delay=@dr   (mul ~m1 (~(rad og:..zuse eny.bowl) 180))
+          ~&  delay/delay
+          (~(wait pass (make-wire /delay)) (add now.bowl delay))
+        ==
        ::
           %3  $(old [%4 0 0 +.old])
           %2  $(old (state-to-3 old))
@@ -365,9 +379,14 @@
     ++  on-arvo
       |=  [=wire =sign-arvo]
       ^-  [(list card:agent:gall) agent:gall]
-      =^  cards  pull-hook
-        (on-arvo:og wire sign-arvo)
-      [cards this]
+      ?.  ?=([%helper %pull-hook @ *] wire)
+        =^  cards  pull-hook
+          (on-arvo:og wire sign-arvo)
+        [cards this]
+      ?>  ?=([%delay ~] t.t.wire)
+      ~&  'finished delay'
+      :_  this
+      (poke-self:pass kick+!>(%.n))^~
     ::
     ++  on-fail
       |=  [=term =tang]
