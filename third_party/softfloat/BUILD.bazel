@@ -1,7 +1,7 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "make")
-load("@urbit//third_party/softfloat:linux-x86_64.bzl", "linux-x86_64")
-load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux-aarch64")
+load("@urbit//third_party/softfloat:linux-x86_64.bzl", "linux_x86_64")
+load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux_aarch64")
 
 # filegroup(
 #     name = "srcs",
