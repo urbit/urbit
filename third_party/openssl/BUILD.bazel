@@ -3,7 +3,6 @@ load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 exports_files(["ca-bundle.crt"])
 
 # Lifted from https://github.com/qzmfranklin/openssl/tree/bazel.
-#
 
 filegroup(
     name = "srcs",
@@ -12,6 +11,9 @@ filegroup(
 
 configure_make(
     name = "openssl",
+    args = [
+        "--jobs=`nproc`",
+    ],
     configure_command = "config",
     configure_in_place = True,
     configure_options =
@@ -22,11 +24,11 @@ configure_make(
             "no-shared",
             "--libdir=lib",
         ] + select({
-            "@//:linux-aarch64": ["linux-aarch64"],
+            "@urbit//:linux-aarch64": ["linux-aarch64"],
             "//conditions:default": [],  # _DL_ENDIAN, etc.
         }),
     env = select({
-        "@//:macos": {"AR": ""},
+        "@urbit//:macos": {"AR": ""},
         "//conditions:default": {},
     }),
     lib_source = ":srcs",

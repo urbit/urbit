@@ -5,23 +5,15 @@ filegroup(
     srcs = glob(["**"]),
 )
 
-# configure_make(
-#     name = "gmp",
-#     configure_in_place = True,
-#     lib_source = ":srcs",
-#     out_static_libs = select({
-#         "@//:windows-x86_64": ["libgmp.lib"],
-#         "//conditions:default": ["libgmp.a"],
-#     }),
-#     visibility = ["//visibility:public"],
-# )
-
 configure_make(
     name = "gmp",
+    args = [
+        "--jobs=`nproc`",
+    ],
     configure_options = [
         "--disable-cxx",
     ] + select({
-        "@//:linux-aarch64": ["--host=aarch64"],
+        "@urbit//:linux-aarch64": ["--host=aarch64"],
         "//conditions:default": [],
     }),
     lib_name = "libgmp",

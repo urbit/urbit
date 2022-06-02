@@ -1,4 +1,3 @@
-# load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 
 filegroup(
@@ -8,85 +7,18 @@ filegroup(
 
 configure_make(
     name = "sigsegv",
+    args = ["--jobs=`nproc`"],
     autoconf = True,
     autoreconf = True,
     configure_in_place = True,
     configure_options = select({
-        "@//:linux-aarch64": ["--host=aarch64"],
+        "@urbit//:linux-aarch64": ["--target=aarch64"],
         "//conditions:default": [],
     }),
     lib_source = ":srcs",
     out_static_libs = select({
-        "@//:windows-x86_64": ["libsigsegv.lib"],
+        "@urbit//:windows-x86_64": ["libsigsegv.lib"],
         "//conditions:default": ["libsigsegv.a"],
     }),
     visibility = ["//visibility:public"],
 )
-
-# genrule(
-#     name = "hdrs-x86_64",
-#     srcs = ["@//third_party/sigsegv/linux-x86_64"],
-#     outs = [
-#         "linux-x86_64/config.h",
-#         "linux-x86_64/sigsegv.h",
-#     ],
-#     cmd = """
-# for f in $(locations @//third_party/sigsegv/linux-x86_64); do
-#   cp $$f $(RULEDIR)/linux-x86_64/$$(basename $$f)
-# done
-# """,
-# )
-
-# genrule(
-#     name = "hdrs-aarch64",
-#     srcs = ["@//third_party/sigsegv/linux-aarch64"],
-#     outs = [
-#         "linux-aarch64/config.h",
-#         "linux-aarch64/sigsegv.h",
-#     ],
-#     cmd = """
-# for f in $(locations @//third_party/sigsegv/linux-aarch64); do
-#   cp $$f $(RULEDIR)/linux-aarch64/$$(basename $$f)
-# done
-# """,
-# )
-
-# cc_library(
-#     name = "sigsegv",
-#     srcs = glob(["src/**/*.h"]) + [
-#         "src/handler.c",
-#         "src/stackvma.c",
-#         "src/leave.c",
-#         "src/dispatcher.c",
-#         "src/version.c",
-#     ],
-#     hdrs = select({
-#         "@//:linux-x86_64": [":hdrs-x86_64"],
-#         "@//:linux-aarch64": [":hdrs-aarch64"],
-#     }),
-#     includes = ["src"] + select({
-#         "@//:linux-x86_64": ["linux-x86_64"],
-#         "@//:linux-aarch64": ["linux-aarch64"],
-#     }),
-#     textual_hdrs = [
-#         "src/leave-nop.c",
-#         "src/handler-unix.c",
-#     ] + select({
-#         "@//:linux-x86_64": [
-#             "src/stackvma-linux.c",
-#             "src/stackvma-simple.c",
-#             "src/stackvma-rofile.c",
-#             "src/stackvma-mincore.c",
-#             "src/stackvma-vma-iter.c",
-#         ],
-#         "@//:linux-aarch64": [
-#             "src/fault-linux-arm.h",
-#             "src/stackvma-linux.c",
-#             "src/stackvma-simple.c",
-#             "src/stackvma-rofile.c",
-#             "src/stackvma-mincore.c",
-#             "src/stackvma-vma-iter.c",
-#         ],
-#     }),
-#     visibility = ["//visibility:public"],
-# )

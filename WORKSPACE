@@ -94,10 +94,7 @@ versioned_http_archive(
     name = "secp256k1",
     build_file = "//third_party/secp256k1:BUILD.bazel",
     patch_args = ["-p1"],
-    patches = [
-        "//third_party/secp256k1:autogen-libtoolize.patch",
-        "//third_party/secp256k1:p1.patch",
-    ],
+    patches = ["//third_party/secp256k1:ecmult-gen.patch"],
     sha256 = "e5f49f896cff608d3f415bbdd0ed7483ab9f721e50be40fb149de48a41169f0f",
     strip_prefix = "secp256k1-{version}",
     url = "https://github.com/bitcoin-core/secp256k1/archive/{version}.tar.gz",
@@ -164,32 +161,11 @@ versioned_http_archive(
     name = "h2o",
     build_file = "//third_party/h2o:BUILD.bazel",
     patch_args = ["-p1"],
-    patches = [
-        "//third_party/h2o:configure-file-version.patch",
-        # "//third_party/h2o:remove-build-files.patch",
-    ],
+    patches = ["//third_party/h2o:configure-file-version.patch"],
     sha256 = "f8cbc1b530d85ff098f6efc2c3fdbc5e29baffb30614caac59d5c710f7bda201",
     strip_prefix = "h2o-{version}",
     url = "https://github.com/h2o/h2o/archive/refs/tags/v{version}.tar.gz",
     version = "2.2.6",
-)
-
-versioned_http_archive(
-    name = "nghttp2",
-    build_file = "//third_party/nghttp2:BUILD.bazel",
-    sha256 = "db98735b30f1586edf3212ada57f85feaceff483a1c0f1c1c8285abcf37e3444",
-    strip_prefix = "nghttp2-{version}",
-    url = "https://github.com/nghttp2/nghttp2/archive/refs/tags/v{version}.tar.gz",
-    version = "1.47.0",
-)
-
-versioned_http_archive(
-    name = "ares",
-    build_file = "//third_party/ares:BUILD.bazel",
-    sha256 = "414872549eec4e221b576693fdc9c9bce44ff794d0f1f06f2515b56a7f6ec9c9",
-    strip_prefix = "c-ares-cares-{version}",
-    url = "https://github.com/c-ares/c-ares/archive/refs/tags/cares-{version}.tar.gz",
-    version = "1_18_1",
 )
 
 versioned_http_archive(

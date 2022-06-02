@@ -1,43 +1,42 @@
-load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
-filegroup(
-    name = "srcs",
-    srcs = glob(["**"]),
-)
-
-cmake(
+cc_library(
     name = "zlib",
-    cache_entries = {
-        "CMAKE_CXX_COMPILER_FORCED": "on",
-        "CMAKE_C_COMPILER_FORCED": "on",
-        "SKIP_BUILD_EXAMPLES": "on",
-        "BUILD_SHARED_LIBS": "off",
-
-        # The following entries are for zlib-ng. Since zlib and zlib-ng are compatible source
-        # codes and CMake ignores unknown cache entries, it is fine to combine it into one
-        # dictionary.
-        #
-        # Reference: https://github.com/zlib-ng/zlib-ng#build-options.
-        "ZLIB_COMPAT": "on",
-        "ZLIB_ENABLE_TESTS": "off",
-
-        # Warning: Turning WITH_OPTIM to "on" doesn't pass ZlibCompressorImplTest.CallingChecksum.
-        "WITH_OPTIM": "on",
-        # However turning off SSE4 fixes it.
-        "WITH_SSE4": "off",
-
-        # Warning: Turning WITH_NEW_STRATEGIES to "on" doesn't pass gzip compressor fuzz test.
-        # Turning this off means falling into NO_QUICK_STRATEGY route.
-        "WITH_NEW_STRATEGIES": "off",
-
-        # Only allow aligned address.
-        # Reference: https://github.com/zlib-ng/zlib-ng#advanced-build-options.
-        "UNALIGNED_OK": "off",
-    },
-    lib_source = ":srcs",
-    out_static_libs = select({
-        "@//:windows-x86_64": ["zlib.lib"],
-        "//conditions:default": ["libz.a"],
+    srcs = [
+        "adler32.c",
+        "compress.c",
+        "crc32.c",
+        "crc32.h",
+        "deflate.c",
+        "deflate.h",
+        "gzclose.c",
+        "gzguts.h",
+        "gzlib.c",
+        "gzread.c",
+        "gzwrite.c",
+        "infback.c",
+        "inffast.c",
+        "inffast.h",
+        "inffixed.h",
+        "inflate.c",
+        "inflate.h",
+        "inftrees.c",
+        "inftrees.h",
+        "trees.c",
+        "trees.h",
+        "uncompr.c",
+        "zconf.h",
+        "zutil.c",
+        "zutil.h",
+    ],
+    hdrs = ["zlib.h"],
+    copts = select({
+        "@urbit//:windows": [],
+        "//conditions:default": [
+            "-Wno-shift-negative-value",
+            "-DZ_HAVE_UNISTD_H",
+        ],
     }),
+    includes = ["."],
     visibility = ["//visibility:public"],
 )

@@ -15,9 +15,8 @@ cc_library(
     ],
     includes = ["."],
     linkopts = select({
-        "@platforms//os:windows":
-        # InitializeSecurityDescriptor, SetSecurityDescriptorDacl
-        [
+        "@urbit//:windows": [
+            # InitializeSecurityDescriptor, SetSecurityDescriptorDacl
             "-DEFAULTLIB:advapi32.lib",
         ],
         "//conditions:default": [

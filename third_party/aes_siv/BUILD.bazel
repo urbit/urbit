@@ -1,23 +1,19 @@
-load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
-filegroup(
-    name = "srcs",
-    srcs = glob(["**"]),
+genrule(
+    name = "config",
+    outs = ["config.h"],
+    cmd = "touch $@",
 )
 
-cmake(
+cc_library(
     name = "aes_siv",
-    cache_entries = {
-        "CMAKE_CXX_COMPILER_FORCED": "on",
-        "CMAKE_C_COMPILER_FORCED": "on",
-        "BUILD_SHARED_LIBS": "off",
-        "OPENSSL_ROOT_DIR": "$EXT_BUILD_DEPS/openssl",
-    },
-    lib_source = ":srcs",
-    out_static_libs = select({
-        "@//:windows-x86_64": ["libaes_siv.lib"],
-        "//conditions:default": ["libaes_siv.a"],
-    }),
+    srcs = [
+        "aes_siv.c",
+        ":config.h",
+    ],
+    hdrs = ["aes_siv.h"],
+    includes = ["."],
     visibility = ["//visibility:public"],
     deps = ["@openssl"],
 )

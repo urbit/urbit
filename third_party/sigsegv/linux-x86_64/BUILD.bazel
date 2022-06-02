@@ -1,5 +1,0 @@
-filegroup(
-    name = "linux-x86_64",
-    srcs = glob(["*.h"]),
-    visibility = ["//visibility:public"],
-)

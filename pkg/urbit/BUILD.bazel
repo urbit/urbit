@@ -186,7 +186,10 @@ cc_library(
 
 cc_binary(
     name = "urbit",
-    deps = [":daemon"],
+    deps = [
+        ":daemon",
+        "@softfloat",
+    ],
 )
 
 [

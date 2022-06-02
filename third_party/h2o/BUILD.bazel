@@ -26,7 +26,7 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 #     },
 #     lib_source = ":srcs",
 #     out_static_libs = select({
-#         "@//:windows-x86_64": ["libh2o.lib"],
+#         "@urbit//:windows-x86_64": ["libh2o.lib"],
 #         "//conditions:default": ["libh2o.a"],
 #     }),
 #     # targets = ["libh2o", "install"],

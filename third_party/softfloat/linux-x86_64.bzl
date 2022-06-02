@@ -1,11 +1,10 @@
-linux_x86_64 = dict(
+linux_x86_64 = struct(
     defines = [
         "SOFTFLOAT_ROUND_ODD",
         "INLINE_LEVEL=5",
         "SOFTFLOAT_FAST_INT64",
         "SOFTFLOAT_FAST_DIV32TO16",
         "SOFTFLOAT_FAST_DIV64TO32",
-        "SOFTFLOAT_INTRINSIC_INT128",
     ],
     includes = [
         "build/Linux-x86_64-GCC",
