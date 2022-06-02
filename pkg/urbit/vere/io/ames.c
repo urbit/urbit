@@ -188,9 +188,8 @@ _ames_panc_free(u3_panc* pac_u)
   if ( 0 != pac_u->pre_u ) {
     pac_u->pre_u->nex_u = pac_u->nex_u;
   }
-  else {
-    c3_assert(pac_u == pac_u->sam_u->pac_u);
-    pac_u->sam_u->pac_u = pac_u->nex_u;
+  else if ( pan_u == pan_u->pac_u->sam_u->pan_u ) {
+    pan_u->pac_u->sam_u->pan_u = pan_u->nex_u;
   }
 
   c3_free(pac_u->ptr_v);
