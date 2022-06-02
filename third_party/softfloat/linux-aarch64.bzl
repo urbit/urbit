@@ -1,4 +1,4 @@
-linux_aarch64 = dict(
+linux_aarch64 = struct(
     defines = [
         "SOFTFLOAT_ROUND_ODD",
         "INLINE_LEVEL=5",
