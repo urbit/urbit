@@ -1,53 +1,53 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "make")
-# load("@urbit//third_party/softfloat:linux-x86_64.bzl", "linux_x86_64")
-# load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux_aarch64")
+load("@urbit//third_party/softfloat:linux-x86_64.bzl", "linux_x86_64")
+load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux_aarch64")
 
-filegroup(
-    name = "srcs",
-    srcs = glob(["**"]),
-)
-
-make(
-    name = "softfloat",
-    args = ["-C"] + select({
-        "@urbit//:linux-x86_64": ["build/Linux-x86_64-GCC"],
-        "@urbit//:linux-aarch64": ["build/Linux-ARM-VFPv2-GCC"],
-    }),
-    includes = ["source/include"],
-    lib_source = ":srcs",
-    out_static_libs = select({
-        "//conditions:default": ["softfloat.a"],
-    }),
-    visibility = ["//visibility:public"],
-)
-
-# [
-#     cc_library(
-#         name = "softfloat-{}".format(name),
-#         srcs = [
-#             "source/include/internals.h",
-#             "source/include/primitiveTypes.h",
-#             "source/include/primitives.h",
-#         ] + platform.srcs,
-#         hdrs = [
-#             "source/include/softfloat.h",
-#             "source/include/softfloat_types.h",
-#         ],
-#         includes = ["source/include"] + platform.includes,
-#         local_defines = platform.defines,
-#     )
-#     for (name, platform) in [
-#         ("linux-x86_64", linux_x86_64),
-#         ("linux-aarch64", linux_aarch64),
-#     ]
-# ]
-
-# alias(
-#     name = "softfloat",
-#     actual = select({
-#         "@urbit//:linux-x86_64": ":softfloat-linux-x86_64",
-#         "@urbit//:linux-aarch64": ":softfloat-linux-aarch64",
-#     }),
-#         visibility = ["//visibility:public"],
+# filegroup(
+#     name = "srcs",
+#     srcs = glob(["**"]),
 # )
+
+# make(
+#     name = "softfloat",
+#     args = ["-C"] + select({
+#         "@urbit//:linux-x86_64": ["build/Linux-x86_64-GCC"],
+#         "@urbit//:linux-aarch64": ["build/Linux-ARM-VFPv2-GCC"],
+#     }),
+#     includes = ["source/include"],
+#     lib_source = ":srcs",
+#     out_static_libs = select({
+#         "//conditions:default": ["softfloat.a"],
+#     }),
+#     visibility = ["//visibility:public"],
+# )
+
+[
+    cc_library(
+        name = "softfloat-{}".format(name),
+        srcs = [
+            "source/include/internals.h",
+            "source/include/primitiveTypes.h",
+            "source/include/primitives.h",
+        ] + platform.srcs,
+        hdrs = [
+            "source/include/softfloat.h",
+            "source/include/softfloat_types.h",
+        ],
+        includes = ["source/include"] + platform.includes,
+        local_defines = platform.defines,
+    )
+    for (name, platform) in [
+        ("linux-x86_64", linux_x86_64),
+        ("linux-aarch64", linux_aarch64),
+    ]
+]
+
+alias(
+    name = "softfloat",
+    actual = select({
+        "@urbit//:linux-x86_64": ":softfloat-linux-x86_64",
+        "@urbit//:linux-aarch64": ":softfloat-linux-aarch64",
+    }),
+        visibility = ["//visibility:public"],
+)
