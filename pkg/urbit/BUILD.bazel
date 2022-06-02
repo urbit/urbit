@@ -84,10 +84,10 @@ cc_library(
     deps = [
         "//pkg/ent",
         "//pkg/urcrypt",
+        "@softfloat",
         "@gmp",
         "@murmur3",
         "@openssl",
-        "@softfloat",
     ],
 )
 
@@ -186,22 +186,19 @@ cc_library(
 
 cc_binary(
     name = "urbit",
-    deps = [
-        ":daemon",
-        "@softfloat",
-    ],
+    deps = [":daemon"],
 )
 
-[
-    platform_binary(
-        name = name,
-        src = ":urbit",
-        platform = platform,
-    )
-    for name, platform in [
-        ("linux_amd64_musl", "//libc_aware/platform:linux_amd64_musl"),
-        ("linux_amd64_gnu", "//libc_aware/platform:linux_amd64_gnu.2.32"),
-        ("linux_arm64_musl", "//libc_aware/platform:linux_arm64_musl"),
-        ("linux_arm64_gnu", "//libc_aware/platform:linux_arm64_gnu.2.32"),
-    ]
-]
+# [
+#     platform_binary(
+#         name = name,
+#         src = ":urbit",
+#         platform = platform,
+#     )
+#     for name, platform in [
+#         ("linux_amd64_musl", "//libc_aware/platform:linux_amd64_musl"),
+#         ("linux_amd64_gnu", "//libc_aware/platform:linux_amd64_gnu.2.32"),
+#         ("linux_arm64_musl", "//libc_aware/platform:linux_arm64_musl"),
+#         ("linux_arm64_gnu", "//libc_aware/platform:linux_arm64_gnu.2.32"),
+#     ]
+# ]
