@@ -1,6 +1,6 @@
-/* i/n/serial.h
-**
-*/
+#ifndef U3_SERIAL_H
+#define U3_SERIAL_H
+
     /*  opaque handles
     */
       /* u3_cue_xeno: handle for cue-ing with an off-loom dictionary.
@@ -75,3 +75,5 @@
       */
         u3_weak
         u3s_sift_ud(u3_atom a);
+
+#endif /* ifndef U3_SERIAL_H */

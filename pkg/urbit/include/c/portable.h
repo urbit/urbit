@@ -1,7 +1,5 @@
-/* include/c/portable.h
-**
-** This file is in the public domain.
-*/
+#ifndef C3_PORTABLE_H
+#define C3_PORTABLE_H
 
 #include "config.h"
 
@@ -23,6 +21,7 @@
 #     ifndef _XOPEN_SOURCE
 #     define _XOPEN_SOURCE 700
 #     endif
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -37,8 +36,10 @@
 #     include <sys/time.h>
 #     include <sys/resource.h>
 #     include <sys/mman.h>
+#     include <sys/sendfile.h>
 
 #   elif defined(U3_OS_osx)
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -55,8 +56,11 @@
 #     include <sys/resource.h>
 #     include <sys/syslimits.h>
 #     include <sys/mman.h>
+#     include <sys/clonefile.h>
+#     include <copyfile.h>
 
 #   elif defined(U3_OS_bsd)
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -76,6 +80,7 @@
 #     define signal mingw_has_no_usable_signal
 #     define raise  mingw_has_no_usable_raise
 #     define _POSIX
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -102,6 +107,42 @@
 #   if __has_feature(address_sanitizer) || defined(__SANITIZE_ADDRESS__)
 #     define ASAN_ENABLED
 #   endif
+
+  /** Platform string.
+  **/
+#   if defined(U3_OS_linux)
+#     ifdef __LP64__
+#       ifdef U3_CPU_aarch64
+//  XX not yet
+//#         define U3_OS_ARCH "aarch64-linux"
+#       else
+#         define U3_OS_ARCH "x86_64-linux"
+#       endif
+#     endif
+#   elif defined(U3_OS_mingw)
+#     define U3_OS_ARCH "x86_64-windows"
+#   elif defined(U3_OS_osx)
+#     ifdef __LP64__
+#       ifdef U3_CPU_aarch64
+//  XX not yet
+//#         define U3_OS_ARCH "aarch64-darwin"
+#       else
+#         define U3_OS_ARCH "x86_64-darwin"
+#       endif
+#     endif
+#   endif
+
+  /** Binary alias.
+  **/
+#   ifdef U3_OS_mingw
+#     define U3_BIN_SUFFIX ".exe"
+#   else
+#     define U3_BIN_SUFFIX ""
+#   endif
+
+
+
+#   define U3_BIN_ALIAS ".run" U3_BIN_SUFFIX
 
   /** Address space layout.
   ***
@@ -242,3 +283,5 @@
 #     define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
 #     define STATIC_ASSERT(e,m) \
         ;enum { ASSERT_CONCAT(assert_line_, __LINE__) = 1/(int)(!!(e)) }
+
+#endif /* ifndef C3_PORTABLE_H */
