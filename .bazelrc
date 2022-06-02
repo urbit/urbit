@@ -23,19 +23,19 @@ build --verbose_failures
 
 build:linux-x86_64 --incompatible_enable_cc_toolchain_resolution
 build:linux-x86_64 --platforms @zig_sdk//platform:linux_x86_64
-build:linux-x86_64 --extra_toolchains @zig_sdk//toolchain:linux_x86_64_musl
+build:linux-x86_64 --extra_toolchains @zig_sdk//toolchain:x86_64-linux-musl
 
 build:linux-aarch64 --incompatible_enable_cc_toolchain_resolution
 build:linux-aarch64 --platforms @zig_sdk//platform:linux_aarch64
-build:linux-aarch64 --extra_toolchains @zig_sdk//toolchain:linux_aarch64_musl
+build:linux-aarch64 --extra_toolchains @zig_sdk//toolchain:aarch64-linux-musl
 
 build:macos-x86_64 --incompatible_enable_cc_toolchain_resolution
 build:macos-x86_64 --platforms @zig_sdk//platform:macos_x86_64
-build:macos-x86_64 --extra_toolchains @zig_sdk//toolchain:macos_x86_64
+build:macos-x86_64 --extra_toolchains @zig_sdk//toolchain:x86_64-macos-gnu
 
 build:macos-aarch64 --incompatible_enable_cc_toolchain_resolution
 build:macos-aarch64 --platforms @zig_sdk//platform:macos_aarch64
-build:macos-aarch64 --extra_toolchains @zig_sdk//toolchain:macos_aarch64
+build:macos-aarch64 --extra_toolchains @zig_sdk//toolchain:aarch64-macos-gnu
 
 # # Allow newly registered toolchains to be resolved (ie. zig cc)
 # build:zig-cc --incompatible_enable_cc_toolchain_resolution
