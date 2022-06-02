@@ -41,37 +41,66 @@ load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux_aarch64")
 #     visibility = ["//visibility:public"],
 # )
 
-DEFINES = select({
-    "@urbit//:linux-x86_64": linux_x86_64.defines,
-    "@urbit//:linux-aarch64": linux_aarch64.defines
-})
+[
+    cc_library(
+        name = "softfloat-{}".format(name),
+        srcs = [
+            "source/include/internals.h",
+            "source/include/primitiveTypes.h",
+            "source/include/primitives.h",
+        ] + platform.srcs,
+        hdrs = [
+            "source/include/softfloat.h",
+            "source/include/softfloat_types.h",
+        ],
+        includes = ["source/include"] + platform.includes,
+        local_defines = platform.defines,
+    )
+    for (name, platform) in [
+        ("linux-x86_64", linux_x86_64),
+        ("linux-aarch64", linux_aarch64),
+    ]
+]
 
-INCLUDES = select({
-    "@urbit//:linux-x86_64": linux_x86_64.includes,
-    "@urbit//:linux-aarch64": linux_aarch64.includes
-})
-
-SRCS = select({
-    "@urbit//:linux-x86_64": linux_x86_64.srcs,
-    "@urbit//:linux-aarch64": linux_aarch64.srcs
-})
-
-cc_library(
+alias(
     name = "softfloat",
-    srcs = [
-        "source/include/internals.h",
-        "source/include/primitiveTypes.h",
-        "source/include/primitives.h",
-    ] + SRCS,
-    hdrs = [
-        "source/include/softfloat.h",
-        "source/include/softfloat_types.h",
-    ],
-    includes = ["source/include"] + INCLUDES,
-    local_defines = DEFINES,
-    visibility = ["//visibility:public"],
+    actual = select({
+        "@urbit//:linux-x86_64": ":softfloat-linux-x86_64",
+        "@urbit//:linux-aarch64": ":softfloat-linux-aarch64",
+    }),
+        visibility = ["//visibility:public"],
 )
 
+# DEFINES = select({
+#     "@urbit//:linux-x86_64": linux_x86_64.defines,
+#     "@urbit//:linux-aarch64": linux_aarch64.defines
+# })
+
+# INCLUDES = select({
+#     "@urbit//:linux-x86_64": linux_x86_64.includes,
+#     "@urbit//:linux-aarch64": linux_aarch64.includes
+# })
+
+# SRCS = select({
+#     "@urbit//:linux-x86_64": linux_x86_64.srcs,
+#     "@urbit//:linux-aarch64": linux_aarch64.srcs
+# })
+
+# cc_library(
+#     name = "softfloat",
+#     srcs = [
+#         "source/include/internals.h",
+#         "source/include/primitivetypes.h",
+#         "source/include/primitives.h",
+#     ] + srcs,
+#     hdrs = [
+#         "source/include/softfloat.h",
+#         "source/include/softfloat_types.h",
+#     ],
+#     includes = ["source/include"] + includes,
+#     local_defines = defines,
+#     visibility = ["//visibility:public"],
+# )
 # cc_library(
 #     name = "softfloat",
 #     linkstatic = True,
