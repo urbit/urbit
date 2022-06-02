@@ -1,6 +1,7 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
-load("@urbit//third_party/softfloat:linux_x86_64.bzl", "linux_x86_64")
-load("@urbit//third_party/softfloat:linux_aarch64.bzl", "linux_aarch64")
+
+# load("@urbit//third_party/softfloat:linux_x86_64.bzl", "linux_x86_64")
+# load("@urbit//third_party/softfloat:linux_aarch64.bzl", "linux_aarch64")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "make")
 
 filegroup(
@@ -30,7 +31,7 @@ make(
 # make(
 #     name = "softfloat",
 #     args = ["-C"] + select({
-#         "@urbit//:linux-aarch64": ["build/Linux-ARM-VFPv2-GCC"],
+#         "@urbit//:linux_aarch64": ["build/Linux-ARM-VFPv2-GCC"],
 #         "@urbit//:linux_x86_64": ["build/Linux-x86_64-GCC"],
 #     }),
 #     includes = ["source/include"],
@@ -43,17 +44,17 @@ make(
 
 # DEFINES = select({
 #     "@urbit//:linux_x86_64": linux_x86_64.defines,
-#     # "@urbit//:linux-aarch64": linux_aarch64["defines"]
+#     # "@urbit//:linux_aarch64": linux_aarch64["defines"]
 # })
 
 # INCLUDES = select({
 #     "@urbit//:linux_x86_64": linux_x86_64.includes,
-#     # "@urbit//:linux-aarch64": linux_x86_64["includes"]
+#     # "@urbit//:linux_aarch64": linux_x86_64["includes"]
 # })
 
 # SRCS = select({
 #     "@urbit//:linux_x86_64": linux_x86_64.srcs,
-#     # "@urbit//:linux-aarch64": linux_x86_64["srcs"]
+#     # "@urbit//:linux_aarch64": linux_x86_64["srcs"]
 # })
 
 # cc_library(

@@ -13,7 +13,7 @@ configure_make(
     configure_options = [
         "--disable-cxx",
     ] + select({
-        "@urbit//:linux-aarch64": ["--host=aarch64"],
+        "@urbit//:linux_aarch64": ["--host=aarch64"],
         "//conditions:default": [],
     }),
     lib_name = "libgmp",

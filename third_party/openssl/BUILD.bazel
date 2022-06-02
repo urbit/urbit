@@ -24,7 +24,7 @@ configure_make(
             "no-shared",
             "--libdir=lib",
         ] + select({
-            "@urbit//:linux-aarch64": ["linux-aarch64"],
+            "@urbit//:linux_aarch64": ["linux_aarch64"],
             "//conditions:default": [],  # _DL_ENDIAN, etc.
         }),
     env = select({

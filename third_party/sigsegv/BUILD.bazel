@@ -12,12 +12,12 @@ configure_make(
     autoreconf = True,
     configure_in_place = True,
     configure_options = select({
-        "@urbit//:linux-aarch64": ["--target=aarch64"],
+        "@urbit//:linux_aarch64": ["--target=aarch64"],
         "//conditions:default": [],
     }),
     lib_source = ":srcs",
     out_static_libs = select({
-        "@urbit//:windows-x86_64": ["libsigsegv.lib"],
+        "@urbit//:windows_x86_64": ["libsigsegv.lib"],
         "//conditions:default": ["libsigsegv.a"],
     }),
     visibility = ["//visibility:public"],
