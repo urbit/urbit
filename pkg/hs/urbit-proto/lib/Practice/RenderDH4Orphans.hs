@@ -39,7 +39,7 @@ instance Rolling Pelt where
 instance Rolling Fish where
   roll = roll . pond
 
-instance Rolling (Set Fish) where
+instance (Ord a, Rolling a) => Rolling (Set a) where
   roll fs = Huge $ Stem "" "" []
     (setToList fs <&> \f -> (">>", tank $ roll f, Leaf ""))
 
@@ -64,6 +64,13 @@ instance Var a => Rolling (Cube a) where
       )
     ]
 
+instance Var a => Rolling (Lace a) where
+  roll Lace{seg, reg, gil} = Huge $ Stem "Lace" "" []
+    [ ("seg ", tank $ roll seg, Leaf "")
+    , ("reg ", tank $ roll reg, Leaf "")
+    , ("gil ", tank $ roll gil, Leaf "")
+    ]
+
 instance Rolling [Act] where
   roll as = Huge $ Rose "trace:" "" $ map (tank . roll) $ reverse as
 
@@ -74,7 +81,8 @@ rollDash lvl = roll . \case
   DashCellLeft tr -> Clhp Wild (baseToHoon lvl tr)
   DashRailLeft jr -> Bccl Wild [shut $ rest $ luft lvl jr]
   DashCellRight tl -> Clhp (baseToHoon lvl tl) Wild
-
+  DashCoreBattery t p -> Bcbr (baseToHoon lvl p) (mapFromList [(t, Wild)])
+  DashCorePayload b -> Bcbr Wild $ fmap (shut . rest . luft lvl) b
 rollDashes lvl ds =
   Huge $ Stem "" "" [] (ds <&> \d -> ("**", tank $ rollDash lvl d, Leaf ""))
 
@@ -156,12 +164,21 @@ instance Rolling Act where
 
 instance Rolling Fail where
   roll = \case
+    FairFore s o -> Huge $ Stem "fair-fore:" "" []
+      [ ("semi", tank $ roll s, Leaf "")
+      , ("fore", Leaf $ tshow o, Leaf "")
+      ]
     PareFree r b -> Huge $ Stem "pare-free:" "" []
       [ ("rump", Leaf $ tshow r, Leaf "")
       , ("base", tank $ roll b, Leaf "")
       ]
+    SealCore t -> leaf $ "seal-core: " <> t
     FindFail f t -> Huge $ Stem ("find." <> printLimb f) "" []
       [ ("type", tank $ roll t, Leaf "")
+      ]
+    FarmCore as bs -> Huge $ Stem "farm-core:" "" []
+      [ ("arms", Leaf $ tshow as, Leaf "")
+      , ("arms", Leaf $ tshow bs, Leaf "")
       ]
     FitsFail f t u -> Huge $ Stem (tshow f <> "-fail:") "" []
       [ ("have", tank $ roll t, Leaf "")

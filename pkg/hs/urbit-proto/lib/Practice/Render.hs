@@ -403,4 +403,7 @@ instance Rolling Hoon where
     Hxgl h j -> fixed "#<" "#<(" ")" (map roll $ [h,j])
     Hxgr h hs -> fixed "#>" "#>(" ")" (map roll $ h:hs)
    where
-    arms ms = mapToList ms <&> \(arm, typ) -> ("++", Leaf arm, tank $ roll typ)
+    arms ms = mapToList ms <&> \(arm, typ) -> ("++", nom arm, tank $ roll typ)
+    nom = Leaf . \case
+      "" -> "%"
+      ar -> ar

@@ -8,6 +8,7 @@ import Practice.DependentHoon4 hiding (typ, cod)
 import Practice.Hoon2DependentHoon4
 import Practice.HoonCommon
 import Practice.HoonSyntax
+import Practice.Nock
 import Practice.Render
 import Practice.RenderDH4Orphans()
 
@@ -28,8 +29,9 @@ data Result extra a
     , sof :: Soft
     , cod :: Code Void
     , typ :: Type a
-    , ken :: Semi a
     , fis :: Set Fish
+    , ken :: Semi a
+    , nok :: Nock
     , mor :: extra
     }
   | ResOpen
@@ -66,6 +68,7 @@ ride filename con txt =
             Left ert -> ResOpen{..}
             Right (cod, typ, fis) ->
               let ken = evil con cod
+                  nok = mint cod
               in ResType{..}
 
 -- | Perform all passes of the compiler on the given text, tracing execution.
@@ -83,4 +86,5 @@ road filename con txt =
               in ResOpen{..}
             (mor, Right (cod, typ, fis)) ->
               let ken = evil con cod
+                  nok = mint cod
               in ResType{..}

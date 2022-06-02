@@ -21,10 +21,12 @@ instance Rolling Pelt
 
 instance Rolling Fish
 
-instance Rolling (Set Fish)
+instance (Ord a, Rolling a) => Rolling (Set a)
 
 instance Rolling [Fish]
 
 instance Var a => Rolling (Cube a)
+
+instance Var a => Rolling (Lace a)
 
 instance Rolling Fail

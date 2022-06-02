@@ -6,7 +6,7 @@
       ==
   [%foo 1 2]
 ?-  +2
-  [%foo _]   [a b 1 2]
+  [%foo _]    [a b 1 2]
   [%foo x]    [a b a.x b.x]
   [%foo i j]  [a b i j]
   [%bar _]    [x 1 2 3]

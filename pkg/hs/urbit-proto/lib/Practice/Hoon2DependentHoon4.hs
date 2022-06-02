@@ -24,7 +24,7 @@ open = \case
   Bass HC.Vod -> pure $ Vod
   Bass (HC.Aur au) -> pure $ Aur au Bowl
   Bass HC.Typ -> pure $ Typ
-  Bcbr{} -> Left "unsupported $|"
+  Bcbr t ts -> Cor <$> open t <*> traverse open ts
   Bccb h -> Left "unsupported _"
   Bccl s [] -> open s
   Bccl s (s':ss) -> Ral <$> open s <*> open (Bccl s' ss)
@@ -41,7 +41,7 @@ open = \case
   Bcpt{} -> Left "unsupported $@"
   Bcwt{} -> Left "unsupported $?"
   --
-  Brcn{} -> Left "unsupported |%"
+  Brcn hs -> Cru <$> traverse open hs
   Brts t h -> Lam <$> open t <*> open h
   --
   Clcb h j -> Cel <$> open j <*> open h
@@ -158,6 +158,7 @@ shut = \case
     h -> Clhp (shut c) h
   Lam c d -> Brts (shut c) (shut d)
   Fac p c -> Ktts (flap p) (shut c)
+  Cru cs -> Brcn (fmap shut cs)
   --Core b p -> Tsgr (shut p) (Brcn $ fmap (shut (unname e p) . fromScope) b)
   --
   Plu c -> Dtls (shut c)
@@ -180,6 +181,7 @@ shut = \case
     Bccl s ss -> Bccl (shut c) (s:ss)
     s -> Bccl (shut c) [s]
   Gat c d -> Bchp (shut c) (shut d)
+  Cor c ds -> Bcbr (shut c) (fmap shut ds)
   --Fok t ss -> Bcgr (shut t) (map flap ss)
   Sin c t -> Bcts (shut c) (shut t)
   Fus c p -> Bcgr (shut c) (flap p)
@@ -214,6 +216,7 @@ lock :: Var a => Semi a -> Hoon
 lock = \case
   Rump' r -> Wung [Ally $ tshow r]
   Fore' x -> Wung [Ally $ tshow $ Old @Text x]
+  Hold' x c -> Hxgl (shut . rest $ c) (lock x)
   --
   Atom' a -> Adam Sand a (heuAura a)
   Cell' x y -> case lock y of
@@ -223,6 +226,7 @@ lock = \case
     Cltr hs -> Cltr (lock x : hs)
     h -> Clhp (lock x) h
   Lamb' (Jamb c x) -> Tsgr (lock x) $ Brts Wild (shut . rest $ c)
+  Crux' as x -> Tsgr (lock x) $ Brcn (fmap (shut . rest) as)
   --
   Plus' x -> Dtls (lock x)
   Slam' x y ->  case lock y of
@@ -235,6 +239,8 @@ lock = \case
   Test' x y z -> Wtcl (lock x) (lock y) (lock z)
   Fish' f x -> Wtts (flap $ pond f) (lock x)
   Look' x (Leg a) -> Tsgl (Wung [Axis a]) (lock x)
+  Look' x (Arm 1 ar _) -> Tsgl (Wung [Ally ar]) (lock x)
+  Look' x (Arm a ar _) -> Tsgl (Wung [Ally ar, Axis a]) (lock x)
   --
   Aura' au Bowl -> Bass (HC.Aur au)
   Aura' "n" (Fork as) | as == setFromList [0] -> Bass HC.Nul
@@ -245,6 +251,9 @@ lock = \case
     h -> [h]
   Gate' t (Jamb c s) ->
     Tsgr (lock s) $ Bchp (lock t) (shut . rest $ fmap hack c)
+  -- XX wrong, fix jamb representation in Cores.
+  Core' js t -> Bcbr (lock t) $ js <&> \Jamb{clo, cod} ->
+    Tsgr (lock clo) $ shut (rest cod)
 --  Fork' fs t -> Bcgr (lock t) (map (flap . pond) $ setToList fs)
   Sing' x y -> Bcts (lock x) (lock y)
   Fuse' x f -> Bcgr (lock x) (flap $ pond f)
