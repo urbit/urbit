@@ -10,6 +10,7 @@ linux_aarch64 = struct(
     srcs = [
         # platform
         "build/Linux-ARM-VFPv2-GCC/platform.h",
+        "source/include/opts-GCC.h",
 
         # objs_primitives
         "source/s_compare96M.c",

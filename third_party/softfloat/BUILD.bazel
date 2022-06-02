@@ -48,19 +48,18 @@ DEFINES = select({
 
 INCLUDES = select({
     "@urbit//:linux-x86_64": linux_x86_64.includes,
-    "@urbit//:linux-aarch64": linux_x86_64.includes
+    "@urbit//:linux-aarch64": linux_aarch64.includes
 })
 
 SRCS = select({
     "@urbit//:linux-x86_64": linux_x86_64.srcs,
-    "@urbit//:linux-aarch64": linux_x86_64.srcs
+    "@urbit//:linux-aarch64": linux_aarch64.srcs
 })
 
 cc_library(
     name = "softfloat",
     srcs = [
         "source/include/internals.h",
-        "source/include/opts-GCC.h",
         "source/include/primitiveTypes.h",
         "source/include/primitives.h",
     ] + SRCS,

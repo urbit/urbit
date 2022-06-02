@@ -13,6 +13,7 @@ linux_x86_64 = struct(
     srcs = [
         # platform
         "build/Linux-x86_64-GCC/platform.h",
+        "source/include/opts-GCC.h",
 
         # objs_primitives
         "source/s_eq128.c",
