@@ -900,7 +900,7 @@
     ?:  =(~ prov)  `state
     ?.  =(host:(need prov) src.bowl)  `state
     ?.  ?=(%.y -.upd)  `state
-    ?-  -.p.upd
+    ?+  -.p.upd  `state
         %address-info
       ::  located in the helper in Scan Logic to keep all of that unified
       ::
@@ -935,21 +935,6 @@
           network.p.upd
         blockhash.p.upd
       blockfilter.p.upd
-    ::
-        %histogram
-      `state
-    ::
-        %block-headers
-      `state
-    ::
-        %tx-from-pos
-      `state
-    ::
-        %fee
-      `state
-    ::
-        %psbt
-      `state
     ==
     ::
     ::  Scan Logic
