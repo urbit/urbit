@@ -7,8 +7,8 @@
 ;<  ~        bind:m  start-simple
 ;<  ~        bind:m  (init-ship ~bud &)
 ;<  ~        bind:m  (init-ship ~marbud &)
-;<  file=@t  bind:m  (touch-file ~bud %home %foo)
-;<  ~        bind:m  (dojo ~bud "|merge %kids our %home")
-;<  ~        bind:m  (check-file-touched ~marbud %home file)
+;<  file=@t  bind:m  (touch-file ~bud %base %foo)
+;<  ~        bind:m  (dojo ~bud "|merge %kids our %base")
+;<  ~        bind:m  (check-file-touched ~marbud %base file)
 ;<  ~        bind:m  end
 (pure:m *vase)

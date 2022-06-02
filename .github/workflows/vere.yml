@@ -1,0 +1,263 @@
+
+name: vere
+
+on:
+  workflow_call:
+    inputs:
+      upload:
+        description: 'upload binaries to gcp'
+        type: boolean
+        default: false
+        required: false
+      pace:
+        description: 'release pace'
+        type: string
+        default: 'often'
+        required: false
+    secrets:
+      CACHIX_AUTH_TOKEN:
+        required: true
+      GCS_SERVICE_ACCOUNT_KEY:
+        required: true
+      GCS_PROJECT:
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'upload binaries to gcp'
+        type: boolean
+        default: false
+        required: false
+      pace:
+        description: 'release pace'
+        type: choice
+        options:
+        - often
+        - soon
+        - live
+
+env:
+  UPLOAD_BASE: bootstrap.urbit.org/vere
+  VERE_PACE: ${{ inputs.pace }}
+  VERSION_TYPE: ${{ (inputs.pace == 'soon' || inputs.pace == 'live') && 'real' || 'hash' }}
+
+jobs:
+  urbit:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest }
+          - { os: macos-latest }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # We only want the extra nix config on linux, where it is necessary
+      # for the docker build. We don't want in on Mac, where it isn't but
+      # it breaks the nix install. The two `if` clauses should be mutually
+      # exclusive
+      - uses: cachix/install-nix-action@v16
+        with:
+          extra_nix_config: |
+            system-features = nixos-test benchmark big-parallel kvm
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - uses: cachix/install-nix-action@v16
+        if: ${{ matrix.os != 'ubuntu-latest' }}
+
+      - uses: cachix/cachix-action@v10
+        with:
+          name: ares
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: build static binary
+        run: |
+          nix-build -A urbit        \
+            --arg enableStatic true \
+            --argstr verePace ${{ env.VERE_PACE }} > ./urbit-derivation
+          cat ./urbit-derivation
+          echo -n "urbit_static=" >> $GITHUB_ENV
+          cat ./urbit-derivation >> $GITHUB_ENV
+          cat ./urbit-derivation
+
+      - name: confirm binary is mostly static
+        if: matrix.os == 'macos-latest'
+        run: |
+          bin="${{ env.urbit_static }}/bin/urbit"
+
+          if [ ! -f "$bin" ]; then
+            echo "no binary at $bin"
+            exit 1;
+          fi
+
+          libs="$(otool -L "${{ env.urbit_static }}/bin/urbit" | tail -n +2)"
+
+          #  XX CoreFoundation?
+          if [ -z "$(echo "$libs" | grep -v libSystem)" ]; then
+            echo "it's mostly static"
+            echo "$libs"
+            exit 0
+          else
+            echo "dynamic links found:"
+            echo "$libs"
+            exit 1
+          fi
+
+      - name: get version string
+        run: |
+          if [ "real" == "$VERSION_TYPE" ]; then
+            version="$(cat ./pkg/urbit/version)"
+          else
+            version="${GITHUB_SHA:0:9}"
+          fi
+
+          echo -n "$version" > ./version-string
+
+      - name: upload version string artifact
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: version-string
+          path: version-string
+
+      - uses: google-github-actions/setup-gcloud@v0.2.0
+        if: inputs.upload
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.GCS_PROJECT }}
+          export_default_credentials: true
+
+      - name: upload binary to bootstrap.urbit.org
+        if: inputs.upload
+        run: |
+          version="$(cat ./version-string)"
+          system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
+          system=${system:1:${#system}-2}
+          target="gs://${UPLOAD_BASE}/${VERE_PACE}/${version}/vere-v${version}-${system}"
+
+          gsutil cp -n "${{ env.urbit_static }}/bin/urbit" "$target"
+          exitcode=$?
+
+          test $exitcode -eq 0 &&
+            echo "upload to $target complete." ||
+            echo "upload to $target failed.";
+          exit $exitcode
+
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: nix-build -A urbit-tests
+
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: nix-build -A docker-image
+
+  mingw:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: >
+          C:\msys64\msys2_shell.cmd -mingw64 -defterm -no-start -here -c
+          ". <(cygpath '{0}')"
+        working-directory: ./pkg/urbit
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      # echo suppresses pacman prompt
+      - run: echo|./configure
+        env:
+          CACHIX_CACHE: ares
+          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: mingw32-make build/urbit
+      - run: >
+          build/urbit -l -d -B ../../bin/solid.pill -F bus &&
+          curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}'
+          http://localhost:12321
+
+      - name: confirm binary is mostly static
+        run: |
+          if [ -z "$(ldd build/urbit | grep -vi "windows/system32")"]; then
+            echo "it's mostly static"
+            exit 0
+          else
+            echo "dynamic links found:"
+            ldd build/urbit
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v2
+        if: inputs.upload
+        with:
+          python-version: 3.7
+
+      - uses: google-github-actions/setup-gcloud@v0.6.0
+        if: inputs.upload
+        env:
+          # see https://github.com/google-github-actions/setup-gcloud/issues/100
+          CLOUDSDK_PYTHON: ${{env.pythonLocation}}\python.exe
+        with:
+          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.GCS_PROJECT }}
+          export_default_credentials: true
+
+      - name: upload binary to bootstrap.urbit.org
+        if: inputs.upload
+        env:
+          CLOUDSDK_PYTHON: ${{env.pythonLocation}}\python.exe
+        shell: bash
+        run: |
+          if [ "real" == "$VERSION_TYPE" ]; then
+            version="$(cat ./version)"
+          else
+            version="${GITHUB_SHA:0:9}"
+          fi
+
+          system="x86_64-windows"
+          target="gs://${UPLOAD_BASE}/${VERE_PACE}/${version}/vere-v${version}-${system}.exe"
+
+          gsutil cp -n ./build/urbit.exe "$target"
+          exitcode=$?
+
+          test $exitcode -eq 0 &&
+            echo "upload to $target complete." ||
+            echo "upload to $target failed.";
+          exit $exitcode
+
+
+  after:
+    runs-on: ubuntu-latest
+    needs: [urbit, mingw]
+    # XX disabled due to missing storage.objects.delete access
+    if: false
+    # if: inputs.upload
+    steps:
+      - uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.GCS_PROJECT }}
+          export_default_credentials: true
+
+      - name: download version-string
+        uses: actions/download-artifact@v3
+        with:
+          name: version-string
+
+      - name: update latest deployed version
+        run: |
+          target="gs://${UPLOAD_BASE}/${VERE_PACE}/last"
+
+          # *not* -n, as we want to overwrite the latest version-string
+          #
+          gsutil cp ./version-string "$target"
+          exitcode=$?
+
+          test $exitcode -eq 0 &&
+            echo "upload to $target complete." ||
+            echo "upload to $target failed.";
+          exit $exitcode

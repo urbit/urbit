@@ -43,10 +43,10 @@
             "prepare": "./autogen.sh && ./configure --disable-shared --enable-benchmark=no --enable-exhaustive-tests=no --enable-experimental --enable-module-ecdh --enable-module-recovery --enable-module-schnorrsig --enable-tests=yes CFLAGS=-DSECP256K1_API="
         },
         "repo": "secp256k1",
-        "rev": "7973576f6e3ab27d036a09397152b124d747f4ae",
-        "sha256": "0vjk55dv0mkph4k6bqgkykmxn05ngzvhc4rzjnvn33xzi8dzlvah",
+        "rev": "5dcc6f8dbdb1850570919fc9942d22f728dbc0af",
+        "sha256": "x9qG2S6tBSRseWaFIN9N2fRpY1vkv8idT3d3rfJnmaU",
         "type": "tarball",
-        "url": "https://github.com/bitcoin-core/secp256k1/archive/7973576f6e3ab27d036a09397152b124d747f4ae.tar.gz",
+        "url": "https://github.com/bitcoin-core/secp256k1/archive/5dcc6f8dbdb1850570919fc9942d22f728dbc0af.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "uv": {

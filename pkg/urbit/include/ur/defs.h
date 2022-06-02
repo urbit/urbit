@@ -81,4 +81,4 @@ ur_met0_bytes_unsafe(uint64_t len, uint8_t *byt)
 #define ur_met3_32(a)  ur_bloq_up3(ur_met0_32(a))
 #define ur_met3_64(a)  ur_bloq_up3(ur_met0_64(a))
 
-#endif
+#endif /* ifndef UR_DEFS_H */

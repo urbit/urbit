@@ -2,7 +2,6 @@ resolver: lts-16.15
 
 packages:
   - natpmp-static
-  - proto
   - racquire
   - terminal-progress-bar
   - urbit-atom

@@ -670,10 +670,6 @@
   ;:  weld
     ::  +uno:by arm test
     ::
-    ::  Checks with empty map (a or b)
-    ::
-    %-  expect-fail
-      |.  ((~(uno by m-nul) m-des) union-gate)
     %+  expect-eq
       !>  m-des
       !>  ((~(uno by m-des) m-nul) union-gate)

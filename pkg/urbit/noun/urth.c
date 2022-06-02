@@ -509,7 +509,7 @@ _cu_rock_path_make(c3_c* dir_c, c3_d eve_d, c3_c** out_c)
       return c3n;
     }
 
-    if (  mkdir(nam_c, 0700)
+    if (  c3_mkdir(nam_c, 0700)
        && (EEXIST != errno) )
     {
       fprintf(stderr, "rock: directory create failed (%s, %" PRIu64 "): %s\r\n",
@@ -552,8 +552,8 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
       return c3n;
     }
 
-    if ( -1 == (fid_i = open(nam_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
-      fprintf(stderr, "rock: open failed (%s, %" PRIu64 "): %s\r\n",
+    if ( -1 == (fid_i = c3_open(nam_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
+      fprintf(stderr, "rock: c3_open failed (%s, %" PRIu64 "): %s\r\n",
                       dir_c, eve_d, strerror(errno));
       c3_free(nam_c);
       return c3n;
@@ -691,8 +691,8 @@ u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
 
   //  open file
   //
-  if ( -1 == (fid_i = open(pat_c, O_RDONLY, 0644)) ) {
-    fprintf(stderr, "%s: open failed (%s): %s\r\n",
+  if ( -1 == (fid_i = c3_open(pat_c, O_RDONLY, 0644)) ) {
+    fprintf(stderr, "%s: c3_open failed (%s): %s\r\n",
                     cap_c, pat_c, strerror(errno));
     return c3n;
   }
@@ -744,8 +744,8 @@ u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
 
   //  open file
   //
-  if ( -1 == (fid_i = open(pat_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
-    fprintf(stderr, "%s: open failed (%s): %s\r\n",
+  if ( -1 == (fid_i = c3_open(pat_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
+    fprintf(stderr, "%s: c3_open failed (%s): %s\r\n",
                     cap_c, pat_c, strerror(errno));
     return c3n;
   }
@@ -895,7 +895,7 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
 
   //  leave rocks on disk
   //
-  // if ( 0 != unlink(nam_c) ) {
+  // if ( 0 != c3_unlink(nam_c) ) {
   //   fprintf(stderr, "uncram: failed to delete rock (%s, %" PRIu64 "): %s\r\n",
   //                   dir_c, eve_d, strerror(errno));
   //   c3_free(nam_c);

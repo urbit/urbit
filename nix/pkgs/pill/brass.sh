@@ -15,9 +15,26 @@ cleanup () {
 
 trap cleanup EXIT
 
-header "running herb +brass"
+header "running +brass"
 
-herb ./pier -P brass.pill -d '+brass'
-herb ./pier -p hood -d '+hood/exit'
+port=$(cat ./pier/.http.ports | grep loopback | tr -s ' ' '\n' | head -n 1)
+
+lensa() {
+  # -f elided, this can hit server-side timeouts
+  curl -s                                                              \
+    --data "{\"source\":{\"dojo\":\"$2\"},\"sink\":{\"app\":\"$1\"}}"  \
+    "http://localhost:$port" | xargs printf %s | sed 's/\\n/\n/g'
+}
+
+lensf() {
+  # -f elided, this can hit server-side timeouts
+  d=$(echo $1 | sed 's/\./\//g')
+  curl -sJO                                                                   \
+    --data "{\"source\":{\"dojo\":\"$2\"},\"sink\":{\"output-pill\":\"$d\"}}" \
+    "http://localhost:$port"
+}
+
+lensf brass.pill '+brass'
+lensa hood '+hood/exit'
 
 stopNest
