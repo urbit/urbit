@@ -158,8 +158,8 @@ instance Serialize Packet where
     putByteString body
     
     where
-      putShipGetRank s@(Ship (LargeKey p q)) = case () of
-        _ | s < 2 ^ 16 -> (0, putWord16le $ fromIntegral s)    -- lord
-          | s < 2 ^ 32 -> (1, putWord32le $ fromIntegral s)    -- planet
-          | s < 2 ^ 64 -> (2, putWord64le $ fromIntegral s)    -- moon
-          | otherwise  -> (3, putWord64le p >> putWord64le q)  -- comet
+      putShipGetRank (Ship (LargeKey p q)) = case q of
+        0 | p < 2 ^ 16 -> (0, putWord16le $ fromIntegral p)    -- lord
+          | p < 2 ^ 32 -> (1, putWord32le $ fromIntegral p)    -- planet
+          | otherwise  -> (2, putWord64le $ fromIntegral p)    -- moon
+        _              -> (3, putWord64le p >> putWord64le q)  -- comet

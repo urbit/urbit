@@ -679,7 +679,9 @@
       [%face ^]  a(q $(a q.a))
       [%cell ^]  a(p $(a p.a), q $(a q.a))
       [%fork *]  a(p (silt (turn ~(tap in p.a) |=(b=type ^$(a b)))))
-      [%hint *]  !!
+      [%hint *]  ?.  ?=(%know -.q.p.a)  $(a q.a)
+                 ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
+                 [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
       [%core ^]  `wain`/core
       [%hold *]  a(p $(a p.a))
     ==

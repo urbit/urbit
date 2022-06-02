@@ -163,7 +163,6 @@
     ==
   ::
   =?  old-state  ?=(%5 -.old-state)
-    %-  (slog leaf+"upgrading eth-watcher from %5" ~)
     ^-  app-state
     %=    old-state
         -  %6
@@ -175,7 +174,7 @@
           -
         ^-  config
         =,  -.dog
-        [url eager refresh-rate refresh-rate from ~ contracts batchers topics]
+        [url eager refresh-rate timeout-time from ~ contracts batchers topics]
       ::
           running
         ?~  running.dog  ~
@@ -367,6 +366,17 @@
       =/  dog=watchdog
         ?:  restart  *watchdog
         (~(got by dogs.state) path.poke)
+      =+  pending=(sort ~(tap in ~(key by pending-logs.dog)) lth)
+      =?  pending-logs.dog
+          ?:  restart  |
+          ?~  pending  |
+          (gte i.pending from.config.poke)
+        ?>  ?=(^ pending)
+        ::  if there are pending logs newer than what we poke with,
+        ::  we need to clear those too avoid processing duplicates
+        ::
+        ~&  %dropping-unreleased-logs^[from+i.pending n+(lent pending)]
+        ~
       %_  dog
         -       config.poke
         number  from.config.poke

@@ -1,7 +1,6 @@
-/* i/n/e.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_EVENTS_H
+#define U3_EVENTS_H
+
   /** Data structures.
   **/
     /* u3e_line: control line.
@@ -75,11 +74,6 @@
       c3_o
       u3e_live(c3_o nuu_o, c3_c* dir_c);
 
-    /* u3e_dirty(): count dirty pages.
-    */
-      c3_w
-      u3e_dirty(void);
-
     /* u3e_yolo(): disable dirty page tracking, read/write whole loom.
     */
       c3_o
@@ -89,3 +83,5 @@
     */
       void
       u3e_foul(void);
+
+#endif /* ifndef U3_EVENTS_H */

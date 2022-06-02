@@ -139,10 +139,10 @@
       %^  cat  3
         'khan-fyrd--'
       (scot %uv (sham (mix tic eny)))
-    =.  tic     +(tic)
-    =*  fyd     p.task
-    =/  =beak   (get-beak bear.fyd now)
-    =/  args    [~ `tid beak name.fyd q.args.fyd]
+    =.  tic         +(tic)
+    =*  fyd         p.task
+    =/  =beak       (get-beak bear.fyd now)
+    =/  args        [~ `tid beak name.fyd q.args.fyd]
     :_  khan-gate
     %+  turn
       :~  (watch-spider /thread-result/[tid])
@@ -151,11 +151,10 @@
     |=(=note ^-(move [hen %pass //g note]))
   ::
       %fyrd
-    =*  fyd     p.task
-    =/  =beak   (get-beak bear.fyd now)
-    =/  =wire   (make-wire beak p.args.fyd)
-    =/  =dais:clay
-      (get-dais beak p.q.args.fyd rof)
+    =*  fyd         p.task
+    =/  =beak       (get-beak bear.fyd now)
+    =/  =wire       (make-wire beak p.args.fyd)
+    =/  =dais:clay  (get-dais beak p.q.args.fyd rof)
     =/  =vase
       (slap (vale.dais q.q.args.fyd) !,(*hoon [~ u=.]))
     =-  [[hen %pass wire -]~ khan-gate]
@@ -205,18 +204,14 @@
     ==
   ::
       %khan
-    ?.  ?=(%arow +<.hin)  ~
-    ?~  tea  ~
-    ?.  ?=(%fyrd -.tea)  ~
+    ?.  ?=(%arow +<.hin)    ~
+    ?.  ?=([%fyrd *] tea)   ~
     =*  row  p.hin
     ?.  ?=(%& -.row)
       [hen %give %avow row]~
-    =/  [=beak =mark]
-      (read-wire tea)
-    =/  =tube:clay
-      (get-tube beak p.p.row mark rof)
-    =/  =vase
-      (tube q.p.row)
+    =/  [=beak =mark]   (read-wire tea)
+    =/  =tube:clay      (get-tube beak p.p.row mark rof)
+    =/  =vase           (tube q.p.row)
     [hen %give %avow %& mark q.vase]~
   ==
 --

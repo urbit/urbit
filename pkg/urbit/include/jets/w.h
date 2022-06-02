@@ -1,7 +1,6 @@
-/* include/f/qjet.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_JETS_W_H
+#define U3_JETS_W_H
+
   /** Tier 1.
   **/
     u3_noun u3wa_add(u3_noun);
@@ -249,6 +248,9 @@
     u3_noun u3we_sign(u3_noun);
     u3_noun u3we_reco(u3_noun);
 
+    u3_noun u3we_sosi(u3_noun);
+    u3_noun u3we_sove(u3_noun);
+
     u3_noun u3we_en_base16(u3_noun);
     u3_noun u3we_de_base16(u3_noun);
 
@@ -360,3 +362,5 @@
     u3_noun u3wfu_play(u3_noun);
     u3_noun u3wfu_repo(u3_noun);
     u3_noun u3wfu_rest(u3_noun);
+
+#endif /* ifndef U3_JETS_W_H */
