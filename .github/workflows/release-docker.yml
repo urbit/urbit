@@ -3,7 +3,7 @@ name: release-docker
 on:
   release: null
   push:
-    tags: ['urbit-v*']
+    tags: 'urbit-v[0-9]+.[0-9]+'
 
 jobs:
   upload:

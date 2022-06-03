@@ -1,7 +1,6 @@
-/* i/n/r.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_RETRIEVE_H
+#define U3_RETRIEVE_H
+
     /** u3r_*: read without ever crashing.
     **/
 #if 1
@@ -462,3 +461,5 @@
       */
         c3_y*
         u3r_tape(u3_noun a);
+
+#endif /* ifndef U3_RETRIEVE_H */

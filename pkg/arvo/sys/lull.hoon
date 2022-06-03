@@ -3,7 +3,7 @@
 ::
 =>  ..part
 |%
-++  lull  %330
+++  lull  %329
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -59,7 +59,7 @@
           [r=@uxD g=@uxD b=@uxD]                        ::  24bit true color
 +$  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::::
-::::                      ++ethereum-types                ::  eth surs for jael
+::::                    ++ethereum-types                  ::  eth surs for jael
   ::                                                    ::::
 ++  ethereum-types
   |%
@@ -73,7 +73,7 @@
   ++  events  (set event-id)
   --
 ::                                                      ::::
-::::                      ++azimuth-types                 ::  az surs for jael
+::::                    ++azimuth-types                   ::  az surs for jael
   ::                                                    ::::
 ++  azimuth-types
   =,  ethereum-types
@@ -153,7 +153,7 @@
       [%plea =ship =plea:ames]
   ==
 ::                                                      ::::
-::::                      ++http                        ::
+::::                    ++http                          ::
   ::                                                    ::::
 ::  http: shared representations of http concepts
 ::
@@ -340,7 +340,7 @@
     ==
   --
 ::                                                      ::::
-::::                      ++ames                          ::  (1a) network
+::::                    ++ames                            ::  (1a) network
   ::                                                    ::::
 ++  ames  ^?
   |%
@@ -357,6 +357,7 @@
   ::
   ::    %born: process restart notification
   ::    %init: vane boot
+  ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
   ::    %spew: set verbosity toggles
   ::    %trim: release memory
@@ -370,6 +371,7 @@
     ::
         $>(%born vane-task)
         $>(%init vane-task)
+        [%prod ships=(list ship)]
         [%sift ships=(list ship)]
         [%spew veb=(list verb)]
         [%stir arg=@t]
@@ -513,6 +515,7 @@
   +$  peer-state
     $:  $:  =symmetric-key
             =life
+            =rift
             =public-key
             sponsor=ship
         ==
@@ -766,53 +769,58 @@
             des=desk                                    ::  target desk
             bas=beak                                    ::  base desk
             con=(list [beak germ])                      ::  merges
-        ==
+        ==                                              ::
         [%mont pot=term bem=beam]                       ::  mount to unix
-        [%dirk des=desk]                                ::  mark mount dirty
-        [%ogre pot=$@(desk beam)]                       ::  delete mount point
+        [%dirk pot=term]                                ::  mark mount dirty
+        [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%stir arg=*]                                   ::  debug
+        [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::
-  ::
+  ::                                                    ::
   ::::                                                  ::  (1c2)
-    ::
+    ::                                                  ::
   +$  aeon  @ud                                         ::  version number
-  +$  ankh                                              ::  fs node (new)
-    $~  [~ ~]
-    $:  fil=(unit [p=lobe q=cage])                      ::  file
-        dir=(map @ta ankh)                              ::  folders
-    ==                                                  ::
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
-  +$  blob                                              ::  fs blob
-    $%  [%delta p=lobe q=[p=mark q=lobe] r=page]        ::  delta on q
-        [%direct p=lobe q=page]                         ::  immediate
+  +$  cable                                             ::  lib/sur/mark ref
+    $:  face=(unit term)                                ::
+        file-path=term                                  ::
     ==                                                  ::
-  ::  +cable: a reference to something on the filesystem
-  ::    face: the face to wrap around the imported file
-  ::    file-path: location in clay
-  +$  cable
-    $:  face=(unit term)
-        file-path=term
-    ==
-  +$  care  ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
+  +$  care                                              ::  clay submode
+    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
   +$  case                                              ::  ship desk case spur
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label
         [%ud p=@ud]                                     ::  number
     ==                                                  ::
+  +$  cash                                              ::  case or tako
+    $%  [%tako p=tako]                                  ::
+        case                                            ::
+    ==                                                  ::
   +$  cass  [ud=@ud da=@da]                             ::  cases for revision
+  +$  clue                                              ::  murder weapon
+    $%  [%lobe =lobe]                                   ::  specific lobe
+        [%all ~]                                        ::  all safe targets
+        [%pick ~]                                       ::  collect garbage
+        [%norm =ship =desk =norm]                       ::  set default norm
+        [%worn =ship =desk =tako =norm]                 ::  set commit norm
+        [%seek =ship =desk =cash]                       ::  fetch source blobs
+    ==                                                  ::
+  +$  cone                                              ::  domes
+    %+  map  [ship desk]                                ::
+    [dome tom=(map tako norm) nor=norm]                 ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
-    $:  ank=ankh                                        ::  state
-        let=@ud                                         ::  top id
+    $:  let=@ud                                         ::  top id
         hit=(map @ud tako)                              ::  changes by id
         lab=(map @tas @ud)                              ::  labels
     ==                                                  ::
@@ -830,8 +838,7 @@
         %meet-that                                      ::  hers if conflict
     ==                                                  ::
   +$  lobe  @uvI                                        ::  blob ref
-  +$  maki  [p=@ta q=@ta r=@ta s=path]                  ::
-  +$  miso                                              ::  ankh delta
+  +$  miso                                              ::  file delta
     $%  [%del ~]                                        ::  delete
         [%ins p=cage]                                   ::  insert
         [%dif p=cage]                                   ::  mutate from diff
@@ -856,12 +863,12 @@
     $%  [%& p=suba]                                     ::  delta
         [%| p=@tas]                                     ::  label
     ==                                                  ::
+  +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
-  +$  page  (cask *)                                    ::  untyped cage
-  +$  plop  blob                                        ::  unvalidated blob
+  +$  page  ^page                                       ::  export for compat
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
-        lat=(map lobe blob)                             ::  data
+        lat=(map lobe page)                             ::  data
     ==                                                  ::
   +$  rant                                              ::  response to request
     $:  p=[p=care q=case r=desk]                        ::  clade release book
@@ -880,9 +887,9 @@
     ==                                                  ::
   +$  regs  (map path rule)                             ::  rules for paths
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
-  +$  riff-any
-    $%  [%1 =riff]
-    ==
+  +$  riff-any                                          ::
+    $%  [%1 =riff]                                      ::
+    ==                                                  ::
   +$  rite                                              ::  new permissions
     $%  [%r red=(unit rule)]                            ::  for read
         [%w wit=(unit rule)]                            ::  for write
@@ -894,7 +901,7 @@
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
-  +$  tako  @                                           ::  yaki ref
+  +$  tako  @uvI                                        ::  yaki ref
   +$  toro  [p=@ta q=nori]                              ::  general change
   ++  unce                                              ::  change part
     |*  a=mold                                          ::
@@ -2092,6 +2099,32 @@
     +$  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+::                                                      ::::
+::::                    ++khan                            ::  (1i) threads
+  ::                                                    ::::
+++  khan  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%arow p=(avow cage)]                           ::  in-arvo result
+        [%avow p=(avow page)]                           ::  external result
+    ==                                                  ::
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%done ~]                                       ::  socket closed
+        ::  XX  mark ignored
+        ::
+        [%fard p=(fyrd cage)]                           ::  in-arvo thread
+        [%fyrd p=(fyrd cast)]                           ::  external thread
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+    ==                                                  ::
+  ::                                                    ::
+  ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
+  +$  bear  $@(desk beak)                               ::  partial $beak
+  +$  cast  (pair mark page)                            ::  output mark + input
+  ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  thread run request
+  --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2103,6 +2136,7 @@
       gift:gall
       gift:iris
       gift:jael
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2113,6 +2147,7 @@
       task:gall
       task:iris
       task:jael
+      task:khan
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2124,6 +2159,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%k task:khan]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -2145,6 +2181,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
+      [%khan gift:khan]
   ==
 ::  $unix-task: input from unix
 ::

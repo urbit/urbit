@@ -1,5 +1,5 @@
-/* include/vere/db/lmdb-impl.h
-*/
+#ifndef U3_VERE_DB_LMDB_H
+#define U3_VERE_DB_LMDB_H
 
 #include <lmdb.h>
 
@@ -60,3 +60,5 @@
                         const c3_c* key_c,
                         size_t      val_i,
                         void*       val_p);
+
+#endif /* ifndef U3_VERE_DB_LMDB_H */

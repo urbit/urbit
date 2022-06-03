@@ -14,7 +14,7 @@
   |=  [our=ship her=ship uf=unix-effect azi=az-state]
   ^-  (unit card:agent:gall)
   =,  enjs:format
-  =/  ask  (extract-request uf 'http://localhost:8545/')
+  =/  ask  (extract-request uf 'http://fake.aqua.domain/')
   ?~  ask
     ~
   ?~  body.request.u.ask

@@ -85,7 +85,13 @@
 +$  hist-tx  [p=time q=roll-tx]
 +$  roll-tx  [=ship =status hash=keccak type=l2-tx]
 +$  pend-tx  [force=? =address:naive =time =raw-tx:naive]
-+$  send-tx  [next-gas-price=@ud sent=? txs=(list raw-tx:naive)]
++$  send-tx
+  $:  next-gas-price=@ud
+      sent=?
+      ::  TODO: make txs as (list pend-tx)?
+      ::
+      txs=(list [=address:naive force=? =raw-tx:naive])
+  ==
 +$  part-tx
   $%  [%raw raw=octs]
       [%don =tx:naive]
