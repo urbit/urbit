@@ -2653,10 +2653,10 @@
             =.  peers.ames-state
               (~(put by peers.ames-state) ship known/peer)
             event-core
-          ++  pe-lane  (get-lane ship)
           ++  pe-keen
             |=  [=path =^duct]
             ?:  (~(has by order.scry) path)
+              ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
               ke-abet:(ke-sub:(ke-abed:keen-core path) duct)
             =^  keen-id=@ud  seq.scry  [seq.scry +(seq.scry)]
             =.  order.scry  (~(put by order.scry) path keen-id)
@@ -2827,8 +2827,7 @@
                 [`want %.n found ke-core]
               =.  tries.want  +(tries.want)
               =.  last-sent.want  now
-              =.  ke-core
-                (ke-resend [fra hoot]:want)
+              =.  ke-core  (ke-send hoot.want)
               [`want %.n found ke-core]
             ::
             ++  ke-start
@@ -2841,9 +2840,7 @@
               =/  =want  [fra req now 1 0]
               =.  wan.keen  (cons:ke-deq *(pha ^want) want)
               =.  metrics.keen  (on-sent:ke-gauge 1)
-              =-  ke-core(event-core -)
-              %-  emit
-              [unix-duct.ames-state %give %send pe-lane `@ux`req]
+              (ke-send req)
             ::
             ++  ke-done
               |=  [sig=@ data=$@(~ (cask))]
@@ -2888,30 +2885,21 @@
               =.  tries.want  +(tries.want)
               =.  wan.keen  (snoc:ke-deq wan.keen want)
               =.  metrics.keen  (on-sent:ke-gauge 1)
-              =.  ke-core  (ke-emit hoot.want)
+              =.  ke-core  (ke-send hoot.want)
               $(inx +(inx))
-            ::
-            ++  ke-resend
-              |=  [fra=@ud =hoot]
-              (ke-emit hoot)
             ::
             ++  ke-sub
               |=  =^duct
-              =.  listeners.keen  (~(put in listeners.keen) duct)
-              ke-core
+              ke-core(listeners.keen (~(put in listeners.keen) duct))
             ::  scry is autocancelled in +ke-abet if no more listeners
             ::
             ++  ke-unsub
               |=  =^duct
-              =.  listeners.keen  (~(del in listeners.keen) duct)
-              ke-core
+              ke-core(listeners.keen (~(del in listeners.keen) duct))
             ::
-            ++  ke-emit
+            ++  ke-send
               |=  =hoot
-              ^+  ke-core
-              =-  ke-core(event-core -)
-              %-  emit
-              [unix-duct.ames-state %give %send pe-lane `@ux`hoot]
+              ke-core(event-core (send-blob for=| ship `@ux`hoot))
             ::
             ++  ke-decode-full
               =,  keen
@@ -2971,8 +2959,7 @@
               ?:  (gth (next-expiry:ke-gauge:cor +>.want) now)
                 [`want & cor]
               =.  last-sent.want  now
-              =.  cor
-                (ke-emit:cor hoot.want)
+              =.  cor  (ke-send:cor hoot.want)
               [`want | cor]
             ::
             ++  ke-gauge
@@ -3032,7 +3019,7 @@
                   last-sent.u.want  now
                 ==
               =.  wan.keen  (cons:ke-deq wan.keen u.want)
-              (ke-resend [fra hoot]:u.want)
+              (ke-send hoot.u.want)
             --
           --
         ::
@@ -3252,7 +3239,10 @@
       ::
       ++  full
         |=  [=path data=$@(~ (cask))]
-        (sign (mess our life.ames-state path data))
+        =/  buf  (mess our life.ames-state path data)
+        =/  nam  (crip "sign-full {<(met 3 buf)>}")
+        ~>  %bout.[1 nam]
+        (sign buf)
       ::
       ++  frag
         |=  [=path fra=@ud dat=@ux]
@@ -3260,6 +3250,7 @@
       ::
       ++  sign-fra
         |=  [=path fra=@ud dat=@ux]
+        ~>  %bout.[1 %sign-fra]
         (sign (frag path fra dat))
       ::
       ++  veri-fra
@@ -3296,20 +3287,6 @@
         |=  [who=ship lyf=life pax=path sig=@ dat=$@(~ (cask))]
         (veri who lyf sig (mess who lyf pax dat))
       --
-    ::  TODO: should not crash,
-    ::    improve routing?
-    ++  get-lane
-      |=  =ship
-      ^-  lane:ames
-      =/  =peer-state
-        (got-peer-state ship)
-      ?^  route.peer-state
-        lane.u.route.peer-state
-      :-  %&
-      %-  rear
-      !<  (list ^ship)
-      =<  q  %-  need  %-  need
-      (rof `(sy our ~) %j [our %saxo da+now] /(scot %p ship))
     --
   --
 ::  +make-message-pump: constructor for |message-pump
