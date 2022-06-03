@@ -948,6 +948,21 @@
   %-  prefix-hex
   (render-hex-bytes 20 `@`a)
 ::
+++  address-to-checksum
+  |=  a=address
+  ^-  tape
+  =/  hexed  (render-hex-bytes 20 `@`a)
+  =/  hash  (keccak-256:keccak:crypto (as-octs:mimes:html (crip hexed)))
+  =|  ret=tape
+  =/  pos  63
+  |-
+  ?~  hexed  (prefix-hex (flop ret))
+  =/  char  i.hexed
+  ?:  (lth char 58)  $(pos (dec pos), ret [char ret], hexed t.hexed)
+  =/  nib  (cut 2 [pos 1] hash)
+  ?:  (lth 7 nib)  $(pos (dec pos), ret [(sub char 32) ret], hexed t.hexed)
+  $(pos (dec pos), ret [char ret], hexed t.hexed)
+::
 ++  transaction-to-hex
   |=  h=@
   ^-  tape
@@ -978,5 +993,8 @@
 ::
 ++  hex-to-num
   |=  a=@t
-  (rash (rsh [3 2] a) hex)
+  ~|  %non-hex-cord
+  ?>  =((end [3 2] a) '0x')
+  =<  ?<(=(0 p) q)  %-  need
+  (de:base16:mimes:html (rsh [3 2] a))
 --

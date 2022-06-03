@@ -549,14 +549,13 @@ _term_it_show_more(u3_utty* uty_u)
 /* _term_it_path(): path for console file.
 */
 static c3_c*
-_term_it_path(c3_o fyl, u3_noun pax)
+_term_it_path(u3_noun pax)
 {
-  c3_w len_w;
+  c3_w len_w = 0;
   c3_c *pas_c;
 
   //  measure
   //
-  len_w = strlen(u3_Host.dir_c);
   {
     u3_noun wiz = pax;
 
@@ -569,16 +568,15 @@ _term_it_path(c3_o fyl, u3_noun pax)
   //  cut
   //
   pas_c = c3_malloc(len_w + 1);
-  strncpy(pas_c, u3_Host.dir_c, len_w);
   pas_c[len_w] = '\0';
   {
     u3_noun wiz   = pax;
-    c3_c*   waq_c = (pas_c + strlen(pas_c));
+    c3_c*   waq_c = pas_c;
 
     while ( u3_nul != wiz ) {
       c3_w tis_w = u3r_met(3, u3h(wiz));
 
-      if ( (c3y == fyl) && (u3_nul == u3t(wiz)) ) {
+      if ( (u3_nul == u3t(wiz)) ) {
         *waq_c++ = '.';
       } else *waq_c++ = '/';
 
@@ -598,27 +596,10 @@ _term_it_path(c3_o fyl, u3_noun pax)
 static void
 _term_it_save(u3_noun pax, u3_noun pad)
 {
-  c3_c* pax_c;
-  c3_c* bas_c = 0;
-  c3_w  xap_w = u3kb_lent(u3k(pax));
-  u3_noun xap = u3_nul;
-  u3_noun urb = c3_s4('.','u','r','b');
-  u3_noun put = c3_s3('p','u','t');
+  c3_c* pax_c = _term_it_path(pax);
 
-  // directory base and relative path
-  if ( 2 < xap_w ) {
-    u3_noun bas = u3nt(urb, put, u3_nul);
-    bas_c = _term_it_path(c3n, bas);
-    xap = u3qb_scag(xap_w - 2, pax);
-  }
-
-  pax = u3nt(urb, put, pax);
-  pax_c = _term_it_path(c3y, pax);
-
-  u3_walk_save(pax_c, 0, pad, bas_c, xap);
-
+  u3_unix_save(pax_c, pad);
   c3_free(pax_c);
-  c3_free(bas_c);
 }
 
 /* _term_ovum_plan(): plan term ovums, configuring spinner.

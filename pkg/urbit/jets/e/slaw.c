@@ -31,20 +31,17 @@ u3_noun get_syllable(c3_c** cur_ptr, c3_c* one, c3_c* two, c3_c* three) {
   }
 }
 
-static
-u3_noun combine(u3_noun p, u3_noun q)
+static u3_noun
+combine(u3_noun p, u3_noun q)
 {
-  if (_(u3a_is_atom(p))) {
+  if ( (c3y == u3a_is_atom(p)) || (c3y == u3a_is_atom(q)) ) {
     return 0;
   }
 
-  if (_(u3a_is_atom(q))) {
-    return 0;
-  }
-
-  u3_noun ret = u3nc(0, u3qa_add(u3t(p), u3qa_mul(256, u3t(q))));
-  u3z(p);
-  u3z(q);
+  u3_noun lef = u3qa_mul(256, u3t(q));
+  u3_noun ret = u3nc(0, u3qa_add(u3t(p), lef));
+  u3z(lef);
+  u3z(p); u3z(q);
 
   return ret;
 }
