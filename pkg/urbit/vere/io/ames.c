@@ -300,7 +300,7 @@ _ames_pact_free(u3_pact* pac_u)
 static void
 _ames_panc_free(u3_panc* pan_u)
 {
-  if ( pan_u->for_o ) {
+  if ( c3y == pan_u->for_o ) {
     if ( 0 != pan_u->nex_u ) {
       pan_u->nex_u->pre_u = pan_u->pre_u;
     }
@@ -315,6 +315,13 @@ _ames_panc_free(u3_panc* pan_u)
   }
   _ames_pact_free(pan_u->pac_u);
   c3_free(pan_u);
+}
+
+static inline u3_ptag
+_ames_pact_typ(u3_head* hed_u)
+{
+  return (( c3y == hed_u->sim_o ) ? PACT_AMES :
+          ( c3y == hed_u->req_o ) ? PACT_WAIL : PACT_PURR);
 }
 
 static inline c3_y
@@ -1167,9 +1174,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
 
   _ames_sift_head(&pac_u->hed_u, pac_u->hun_y);
-  pac_u->typ_y =
-    ( pac_u->hed_u.sim_o == c3y ) ? PACT_AMES :
-    ( pac_u->hed_u.req_o == c3y ) ? PACT_WAIL : PACT_PURR;
+  pac_u->typ_y = _ames_pact_typ(&pac_u->hed_u);
 
   u3_noun tag, val;
   u3x_cell(lan, &tag, &val);
@@ -1451,13 +1456,17 @@ _ames_try_send(u3_pact* pac_u, c3_o for_o)
   }
   //  if we don't know the lane, and the lane scry queue is full,
   //  just drop the packet
+  //TODO cap queue for lane lookups for scry responses, not just forwards
   //
   //TODO  drop oldest item in forward queue in favor of this one.
   //      ames.c doesn't/shouldn't know about the shape of scry events,
   //      so can't pluck these out of the event queue like it does in
   //      _ames_cap_queue. as such, blocked on u3_lord_peek_cancel or w/e.
   //
-  if ( (u3_none == lac) && (1000 < sam_u->sat_u.foq_d) ) {
+  if ( (c3y == for_o)
+       && (u3_none == lac)
+       && (1000 < sam_u->sat_u.foq_d) )
+  {
     sam_u->sat_u.fod_d++;
     if ( 0 == (sam_u->sat_u.fod_d % 10000) ) {
       u3l_log("ames: dropped %" PRIu64 " forwards total\n",
@@ -1473,13 +1482,15 @@ _ames_try_send(u3_pact* pac_u, c3_o for_o)
   if ( u3_none != lac ) {
     _ames_send_many(pac_u, lac, for_o);
   }
-  //  if forwarding, store the packet details for later processing
+  //  store the packet to be sent later when the lane scry completes
   //
   else {
     u3_panc* pan_u = c3_calloc(sizeof(*pan_u));
     pan_u->pac_u = pac_u;
     pan_u->for_o = for_o;
 
+    //  if forwarding, enqueue
+    //
     if ( c3y == for_o ) {
       if ( 0 != sam_u->pan_u ) {
         pan_u->nex_u = sam_u->pan_u;
@@ -1489,7 +1500,7 @@ _ames_try_send(u3_pact* pac_u, c3_o for_o)
       sam_u->sat_u.foq_d++;
     }
 
-    //  there's space in the scry queue; scry the lane out of ames
+    //  scry the lane out of ames
     //
     u3_noun pax = _lane_scry_path(u3i_chubs(2, pac_u->pre_u.rec_d));
 
@@ -1868,12 +1879,10 @@ _ames_hear(u3_ames* sam_u,
   _ames_sift_head(&pac_u->hed_u, pac_u->hun_y);
   cur_w += HEAD_SIZE;
 
-  pac_u->typ_y = ( c3y == pac_u->hed_u.sim_o ) ? PACT_AMES :
-                 ( c3y == pac_u->hed_u.req_o ) ? PACT_WAIL : PACT_PURR;
-
+  pac_u->typ_y = _ames_pact_typ(&pac_u->hed_u);
 
   //  check contents match mug in header
- //
+  //
   if ( c3n == _ames_check_mug(pac_u) ) {
     _log_head(&pac_u->hed_u);
     sam_u->sat_u.mut_d++;
@@ -1907,7 +1916,7 @@ _ames_hear(u3_ames* sam_u,
   //  and we are not the recipient,
   //  we might want to forward statelessly
   //
-  if (  0 && (c3y == sam_u->fig_u.see_o)
+  if ( (c3y == sam_u->fig_u.see_o)
      && (  (pac_u->pre_u.rec_d[0] != sam_u->pir_u->who_d[0])
         || (pac_u->pre_u.rec_d[1] != sam_u->pir_u->who_d[1]) ) )
   {

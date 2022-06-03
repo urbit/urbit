@@ -1155,10 +1155,13 @@
       ::
       :^  ~  ~  %noun
       !>  ^-  (list lane)
-      ?.  ?&  ?=([~ %known *] peer)
-              !=(our u.who)
-          ==
+      ?:  =(our u.who)
         ~
+      ?.  ?=([~ %known *] peer)
+        =/  sax  (rof ~ %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+        ?.  ?=([~ ~ *] sax)
+          ~
+        [%& (rear !<((list ship) q.u.u.sax))]~
       =;  zar=(trap (list lane))
         ?~  route.u.peer  $:zar
         =*  rot  u.route.u.peer
