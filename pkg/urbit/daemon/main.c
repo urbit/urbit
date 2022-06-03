@@ -251,7 +251,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'Y': {
-        u3_Host.ops_u.puk_c = _main_repath(optarg);
+        u3_Host.ops_u.puk_c = strdup(optarg);
         break;
       }
       case 'Z': {
