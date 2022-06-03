@@ -15,7 +15,7 @@
     "@tlon/indigo-dark": "^1.0.6",
     "@tlon/indigo-light": "^1.0.7",
     "@tlon/indigo-react": "github:urbit/indigo-react",
-    "@tlon/sigil-js": "^1.4.3",
+    "@tlon/sigil-js": "^1.4.5",
     "@urbit/api": "^2.1.1",
     "@urbit/http-api": "^2.1.0",
     "any-ascii": "^0.1.7",
