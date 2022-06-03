@@ -1,0 +1,18 @@
+diff --git a/node_modules/react-codemirror2/package.json b/node_modules/react-codemirror2/package.json
+index 52fb318..e482f15 100644
+--- a/node_modules/react-codemirror2/package.json
++++ b/node_modules/react-codemirror2/package.json
+@@ -50,10 +50,11 @@
+     "editor",
+     "syntax",
+     "ide",
+-    "code"
++    "code",
++    "bump"
+   ],
+   "peerDependencies": {
+-    "react": ">=15.5 <=16.x",
++    "react": ">=15.5 <=17.x",
+     "codemirror": "5.x"
+   },
+   "devDependencies": {

@@ -104,6 +104,7 @@
     "lint-staged": "^11.0.0",
     "loki": "^0.28.1",
     "moment-locales-webpack-plugin": "^1.2.0",
+    "patch-package": "^6.4.7",
     "react-refresh": "^0.11.0",
     "sass": "^1.32.5",
     "sass-loader": "^8.0.2",
@@ -128,7 +129,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "chromatic --exit-zero-on-changes",
-    "hook-lint": "eslint --cache --fix"
+    "hook-lint": "eslint --cache --fix",
+    "postinstall": "patch-package"
   },
   "author": "",
   "license": "MIT",
