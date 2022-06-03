@@ -1996,12 +1996,23 @@
 +$  knot  @ta                                           ::  ASCII text
 +$  noun  *                                             ::  any noun
 +$  path  (list knot)                                   ::  like unix path
++$  pith  (list iota)                                   ::  typed urbit path
 +$  stud                                                ::  standard name
           $@  mark=@tas                                 ::  auth=urbit
           $:  auth=@tas                                 ::  standards authority
               type=path                                 ::  standard label
           ==                                            ::
 +$  tang  (list tank)                                   ::  bottom-first error
+::                                                      ::
++$  iota                                                ::  typed path segment
+  $~  [%n ~]
+  $%  [%ub @ub]  [%uc @uc]  [%ud @ud]  [%ui @ui]
+      [%ux @ux]  [%uv @uv]  [%uw @uw]  [%da @da]
+      [%dr @dr]  [%f ?]     [%if @if]  [%is @is]
+      [%n ~]     [%t @t]    [%ta @ta]  [%tas @tas]
+      [%p @p]    [%q @q]    [%rd @rd]  [%rh @rh]
+      [%rq @rq]  [%rs @rs]  [%s @s]
+  ==
 ::
 ::  $tank: formatted print tree
 ::
@@ -5969,6 +5980,22 @@
     ?.  =(~ (rear p))  `p
     ~
   ;~(pfix fas (most fas urs:ab))
+::
+++  stip                                                ::  typed path parser
+  =-  ;~(pfix fas (more fas -))
+  |^  %-  stew
+      ^.  stet  ^.  limo
+      :~  :-  'a'^'z'  (slot (stag %tas sym))
+          :-  '$'      (cold [%tas %$] buc)
+          :-  '0'^'9'  (slot bisk:so)
+          :-  '-'      (slot tash:so)
+          :-  '.'      zust:so
+          :-  '~'      (slot ;~(pfix sig ;~(pose crub:so (easy [%n ~]))))
+          :-  '\''     (stag %t qut)
+      ==
+  ::
+  ++  slot  |*(r=rule (sear (soft iota) r))
+  --
 ::
 ::::  4n: virtualization
   ::
@@ -11719,6 +11746,44 @@
       (stag %clsg poor)
     ==
   ::
+  ++  reed
+    ;~  pfix  fas
+      (stag %clsg (more fas stem))
+    ==
+  ::
+  ++  stem  !:
+    %+  knee  *hoon  |.  ~+
+    %+  cook
+      |=  iota=$%([%hoon =hoon] iota)
+      ?:  ?=(%hoon -.iota)  hoon.iota
+      [%clhp [%rock %tas -.iota] [%sand iota]]
+    |^  %-  stew
+      ^.  stet  ^.  limo
+      :~  :-  'a'^'z'  ;~  pose
+                         (spit (stag %cncl (ifix [pal par] (most ace wide))))
+                         (spit (ifix [sel ser] wide))
+                         (slot (stag %tas sym))
+                       ==
+          :-  '$'      (cold [%tas %$] buc)
+          :-  '0'^'9'  (slot bisk:so)
+          :-  '-'      (slot tash:so)
+          :-  '.'      zust:so
+          :-  '~'      (slot ;~(pfix sig ;~(pose crub:so (easy [%n ~]))))
+          :-  '\''     (stag %t qut)
+          :-  '['      (slip (ifix [sel ser] wide))
+          :-  '('      (slip (stag %cncl (ifix [pal par] (most ace wide))))
+      ==
+    ::
+    ++  slip  |*(r=rule (stag %hoon r))
+    ++  slot  |*(r=rule (sear (soft iota) r))
+    ++  spit
+      |*  r=rule
+      %+  stag  %hoon
+      %+  cook
+        |*([a=term b=*] `hoon`[%clhp [%rock %tas a] b])
+      ;~((glue lus) sym r)
+    --
+  ::
   ++  rupl
     %+  cook
       |=  [a=? b=(list hoon) c=?]
@@ -12794,6 +12859,7 @@
     :~
       :-  ','
         ;~  pose
+          ;~(pfix com reed)  ::NOTE  shadows /wing syntax, maybe re/move
           (stag %ktcl ;~(pfix com wyde))
           (stag %wing rope)
         ==
