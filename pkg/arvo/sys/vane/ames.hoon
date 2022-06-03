@@ -1161,7 +1161,7 @@
         =/  sax  (rof ~ %j `beam`[[our %saxo %da now] /(scot %p u.who)])
         ?.  ?=([~ ~ *] sax)
           ~
-        =/  gal  (rear !<((list ship) q.u.u.sax))
+        =/  gal  (rear ;;((list ship) q.q.u.u.sax))
         ?:  =(our gal)
           ~
         [%& gal]~
