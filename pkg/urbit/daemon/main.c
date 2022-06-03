@@ -681,6 +681,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-Y, --scry-into FILE          Optional name of file (for -X)\n",
     "-Z, --scry-format FORMAT      Optional file format ('jam', or aura, for -X)\n",
     "    --no-conn                 Do not run control plane\n",
+    "    --no-dock                 Skip binary \"docking\" on boot\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
