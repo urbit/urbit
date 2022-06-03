@@ -853,6 +853,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
     c3_c* rec_c = u3r_string(rec);
     c3_y* pip_y = (c3_y*)&pac_u->ore_u.pip_w;
 
+    //NOTE  ip byte order assumes little-endian
     u3l_log("ames: forwarding for %s to %s from %d.%d.%d.%d:%d\n",
             sen_c, rec_c,
             pip_y[3], pip_y[2], pip_y[1], pip_y[0],
