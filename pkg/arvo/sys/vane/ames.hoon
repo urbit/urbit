@@ -528,6 +528,7 @@
           crypto-core=acru:ames
           =bug
       ==
+      ping=?  ::  is this a sponsor pinging channel?
       ::  her data, specific to this dyad
       ::
       $:  =symmetric-key
@@ -1245,7 +1246,8 @@
     ?>  ?=([@ her=ship *] u.parsed)
     =*  her          her.u.parsed
     =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now channel-state -.peer-state]
+    =/  ping  ?=([[%gall %use %ping *] *] duct)
+    =/  =channel     [[our her] now channel-state ping -.peer-state]
     =/  peer-core    (make-peer-core peer-state channel)
     |^
     ?:  ?&  ?=([%new *] u.parsed)
@@ -1335,7 +1337,7 @@
       ^+  event-core
       =/  par  (get-peer-state her)
       ?~  par  event-core
-      =/  =channel  [[our her] now channel-state -.u.par]
+      =/  =channel  [[our her] now channel-state ping=| -.u.par]
       =/  peer-core  (make-peer-core u.par channel)
       =/  bones  ~(tap in ~(key by snd.u.par))
       |-  ^+  event-core
@@ -1405,7 +1407,7 @@
       todos(heeds (~(put in heeds.todos) duct))
     ::
     =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now channel-state -.peer-state]
+    =/  =channel     [[our ship] now channel-state | -.peer-state]
     abet:on-heed:(make-peer-core peer-state channel)
   ::  +on-jilt: handle request to stop tracking .ship's responsiveness
   ::
@@ -1419,7 +1421,7 @@
       todos(heeds (~(del in heeds.todos) duct))
     ::
     =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now channel-state -.peer-state]
+    =/  =channel     [[our ship] now channel-state | -.peer-state]
     abet:on-jilt:(make-peer-core peer-state channel)
   ::  +on-hear: handle raw packet receipt
   ::
@@ -1548,7 +1550,8 @@
     ::    and their public key using elliptic curve Diffie-Hellman.
     ::
     =/  =peer-state   +.u.sndr-state
-    =/  =channel      [[our sndr.packet] now channel-state -.peer-state]
+    =/  ping  ?=([[%gall %use %ping *] *] duct)
+    =/  =channel      [[our sndr.packet] now channel-state ping -.peer-state]
     ~|  %ames-crash-on-packet-from^her.channel
     =/  =shut-packet
       (decode-shut-packet packet [symmetric-key her-life our-life]:channel)
@@ -1597,7 +1600,8 @@
     ?>  ?=([@ her=ship *] u.parsed)
     =*  her          her.u.parsed
     =/  =peer-state  (got-peer-state her)
-    =/  =channel     [[our her] now channel-state -.peer-state]
+    =/  ping  ?=([[%gall %use %ping *] *] duct)
+    =/  =channel     [[our her] now channel-state ping -.peer-state]
     =/  peer-core    (make-peer-core peer-state channel)
     ::
     ?:  ?&  ?=([%new *] u.parsed)
@@ -1628,9 +1632,11 @@
       %+  enqueue-alien-todo  ship
       |=  todos=alien-agenda
       todos(messages [[duct plea] messages.todos])
+    ::  nasty hack to check if this is a ping to our sponsor
     ::
+    =/  ping  ?=([[%gall %use %ping *] *] duct)
     =/  =peer-state  +.u.ship-state
-    =/  =channel     [[our ship] now channel-state -.peer-state]
+    =/  =channel     [[our ship] now channel-state ping -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
     %-  %^  trace  msg.veb  ship
@@ -1670,7 +1676,8 @@
       %-  (slog leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~)
       event-core
     ::
-    =/  =channel  [[our her.u.res] now channel-state -.u.state]
+    =/  ping  ?=([[%gall %use %ping *] *] duct)
+    =/  =channel  [[our her.u.res] now channel-state ping -.u.state]
     ::
     abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
   ::  +on-init: first boot; subscribe to our info from jael
@@ -2390,8 +2397,7 @@
       =/  =message-pump-state
         (~(gut by snd.peer-state) bone *message-pump-state)
       ::
-      =/  ping=?  (lth bone 4)
-      =/  message-pump    (make-message-pump message-pump-state channel ping)
+      =/  message-pump    (make-message-pump message-pump-state channel)
       =^  pump-gifts      message-pump-state  (work:message-pump task)
       =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
       ::  process effects from |message-pump
@@ -2593,7 +2599,7 @@
 ::  +make-message-pump: constructor for |message-pump
 ::
 ++  make-message-pump
-  |=  [state=message-pump-state =channel ping=?]
+  |=  [state=message-pump-state =channel]
   =*  veb  veb.bug.channel
   =|  gifts=(list message-pump-gift)
   ::
@@ -2813,7 +2819,7 @@
 ::  +make-packet-pump: construct |packet-pump core
 ::
 ++  make-packet-pump
-  |=  [state=packet-pump-state =channel ping=?]
+  |=  [state=packet-pump-state =channel]
   =*  veb  veb.bug.channel
   =|  gifts=(list packet-pump-gift)
   |%
@@ -2831,8 +2837,7 @@
   ::  +gauge: inflate a |pump-gauge to track congestion control
   ::
   ++  gauge
-    %-  make-pump-gauge
-    [now.channel metrics.state her.channel bug.channel ping]
+    (make-pump-gauge now.channel metrics.state [her bug ping]:channel)
   ::  +work: handle $packet-pump-task request
   ::
   ++  work
