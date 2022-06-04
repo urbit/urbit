@@ -214,7 +214,7 @@ flap = \case
 -- and should not be used in user-facing diagnostics.
 lock :: Var a => Semi a -> Hoon
 lock = \case
-  Rump' r -> Wung [Ally $ tshow r]
+  Spot' a -> Wung [Ally $ tshow a]
   Fore' x -> Wung [Ally $ tshow $ Old @Text x]
   Hold' x c -> Hxgl (shut . rest $ c) (lock x)
   --
@@ -228,6 +228,8 @@ lock = \case
   Lamb' (Jamb c x) -> Tsgr (lock x) $ Brts Wild (shut . rest $ c)
   Crux' as x -> Tsgr (lock x) $ Brcn (fmap (shut . rest) as)
   --
+  Pull' ar _ (Spot' a) -> Wung [Ally ar, Ally $ tshow a]
+  Pull' ar _ x -> Tsgl (Wung [Ally ar]) (lock x)
   Plus' x -> Dtls (lock x)
   Slam' x y ->  case lock y of
     Clhp h j -> Cnls (lock x) h j
@@ -238,9 +240,7 @@ lock = \case
   Equl' x y -> Dtts (lock x) (lock y)
   Test' x y z -> Wtcl (lock x) (lock y) (lock z)
   Fish' f x -> Wtts (flap $ pond f) (lock x)
-  Look' x (Leg a) -> Tsgl (Wung [Axis a]) (lock x)
-  Look' x (Arm 1 ar _) -> Tsgl (Wung [Ally ar]) (lock x)
-  Look' x (Arm a ar _) -> Tsgl (Wung [Ally ar, Axis a]) (lock x)
+  Look' x a -> Tsgl (Wung [Axis a]) (lock x)
   --
   Aura' au Bowl -> Bass (HC.Aur au)
   Aura' "n" (Fork as) | as == setFromList [0] -> Bass HC.Nul

@@ -33,6 +33,7 @@ data Soft
   | Tes Soft Soft Soft        --  ?:  h  j  k                     boolean branch
   | Rhe Soft Soft             --  ??  h  j                     rhetorical branch
   | Fis Pelt Soft             --  ?=(s h)                           pattern test
+  | Edi Wing [(Wing, Soft)]   --  h(a.b j, +6 k)
   --
   | Aur Aura Tool             --  @ud,  ?(%foo, %bar)                atomic type
   | Ral Soft Soft             --  {t u}                               sigma type
@@ -65,7 +66,7 @@ data Pelt
 -- TODO "Duet" for $@
 
 data Code a
-  = Stub Stub
+  = Spot Axis
   | Fore a
   --
   | Atom Atom
@@ -73,11 +74,13 @@ data Code a
   | Lamb (Code a)
   | Crux (Map Term (Code a))
   --
+  | Pull Text (Set Text) (Code a)
   | Plus (Code a)
   | Slam (Code a) (Code a)
   | Equl (Code a) (Code a)
   | Test (Code a) (Code a) (Code a)
   | Fish Fish (Code a)
+  | Edit (Code a) Axis (Code a)
   --
   | Aura Aura Tool
   | Rail (Code a) (Code a)
@@ -157,12 +160,11 @@ type Loc = (Level, Axis)
 -- | Frozen wing.
 data Rump
   = Leg' Loc
-  | Arm' Loc Term (Set Term)
 
 instance Show Rump where
   show = \case
     Leg' (l, a) -> "+" <> show l <> "_" <> show a
-    Arm' (l, a) ar _ -> unpack ar <> ".+" <> show l <> "_" <> show a
+--  Arm' (l, a) ar _ -> unpack ar <> ".+" <> show l <> "_" <> show a
 
 data Hop b a
   = New b  -- ^ reference to current subject
@@ -189,15 +191,15 @@ instance Eq Rump where
   Leg' la == Leg' lb = comp la lb == EQ
   -- XX: correct? Reasoning: It is never valid for two Arm's to the same axis
   -- to have different shape.
-  Arm' la ar _ == Arm' lb br _ = comp la lb == EQ && ar == br
-  Leg'{} == Arm'{} = False
-  Arm'{} == Leg'{} = False
+--  Arm' la ar _ == Arm' lb br _ = comp la lb == EQ && ar == br
+--  Leg'{} == Arm'{} = False
+--  Arm'{} == Leg'{} = False
 
 instance Ord Rump where
   compare (Leg' la) (Leg' lb) = comp la lb
-  compare (Arm' la ar _) (Arm' lb br _) = compare (ar, Leg' la) (br, Leg' lb)
-  compare Arm'{} Leg'{} = LT
-  compare Leg'{} Arm'{} = GT
+--  compare (Arm' la ar _) (Arm' lb br _) = compare (ar, Leg' la) (br, Leg' lb)
+--  compare Arm'{} Leg'{} = LT
+--  compare Leg'{} Arm'{} = GT
 
 -- | Alternative name useful for pedagogical purposes.
 type Type = Semi
@@ -211,7 +213,7 @@ deriving instance Ord  a => Ord  (Jamb a)
 deriving instance Show a => Show (Jamb a)
 
 data Semi a
-  = Rump' Rump
+  = Spot' Rump
   | Fore' a
   -- | Evaluation hold. Hold' sub cod has the semantics of (eval sub cod),
   -- except in fits where the Amber rule is applied.
@@ -223,12 +225,14 @@ data Semi a
   | Crux' (Map Term (Code a)) (Semi a)
 -- | Crux' or Bulk'
   --
+  | Pull' Text (Set Text) (Semi a)
   | Plus' (Semi a)
   | Slam' (Semi a) (Semi a)
   | Equl' (Semi a) (Semi a)
   | Test' (Semi a) (Semi a) (Semi a)
   | Fish' Fish (Semi a)
-  | Look' (Semi a) Stub
+  | Look' (Semi a) Axis
+--  | Edit' (Semi a) Axis (Semi a)
   --
   | Aura' Aura Tool
   | Rail' (Semi a) (Jamb a)
@@ -330,11 +334,11 @@ instance Rise (Level, Axis) where
 
 instance Peg Rump where
   Leg' la / b = Leg' (la / b)
-  Arm' la ar ars / b = Arm' (la / b) ar ars
+--  Arm' la ar ars / b = Arm' (la / b) ar ars
 
 instance Rise Rump where
   rise (Leg' la) = Leg' (rise la)
-  rise (Arm' la ar ars) = Arm' (rise la) ar ars
+--  rise (Arm' la ar ars) = Arm' (rise la) ar ars
 
 instance (Peg a, Peg b) => Peg (Hop b a) where
   Old x / a = Old $ x / a
@@ -347,15 +351,15 @@ instance (Rise a, Rise b) => Rise (Hop b a) where
 instance (Peg a) => Peg (Semi a) where
   s / a = case (cut a, s) of
     (Nothing,     s)                   -> s
-    (_,           Hold' s c)           -> Hold' s $ With c (Stub $ Leg a)
-    (_,           Rump' r)             -> Rump' $ r / a
+    (_,           Hold' s c)           -> Hold' s $ With c (Spot a)
+    (_,           Spot' r)             -> Spot' $ r / a
     (_,           Fore' x)             -> Fore' $ x / a
     (_,           Look' c st)          -> Look' c $ st / a
 --  (_,           Face' _ c)           -> walk a c  -- Faces only on types now
     (Just (L, a), Cell' s _)           -> s / a
     (Just (R, a), Cell' _ s)           -> s / a
     (Just (R, a), Crux' _ p)           -> p / a
-    (Just _,      _)                   -> Look' s (Leg a)
+    (Just _,      _)                   -> Look' s a
 
 -- instance Functor f => SetFunctor f where
 --   fmap = smap
@@ -370,8 +374,7 @@ type Var a = (Eq a, Ord a, Show a, Peg a)
 -- this point.
 mint :: Code Void -> Nock
 mint = \case
-  Stub (Leg a) -> N0 a
-  Stub (Arm a ar as) -> N9 a (N0 $ loot ar as)
+  Spot a -> N0 a
   Fore _ -> error "mint: impossible Fore" -- XX why does ghc complain?
   --
   Atom a -> N1 (A a)
@@ -381,11 +384,13 @@ mint = \case
   Lamb c  -> NC (mint c)  $ NC (N1 $ A 0) (N0 1)
   Crux cs -> NC (mine cs) $ NC (N1 $ A 0) (N0 1)
   --
+  Pull a as c -> N9 (loot a as) (mint c)
   Plus c -> N4 (mint c)
   Slam c d -> N9 2 $ N10 6 (mint d) $ mint c  -- XX check
   Equl c d -> N5 (mint c) (mint d)
   Test c d e -> N6 (mint c) (mint d) (mint e)
   Fish _ _ -> A 876  -- FIXME
+  Edit bas a mod -> N10 a (mint mod) $ mint bas
   --
   -- Generate code to compute runtime type representations.
   Aura au Bowl -> N1 (C AURA $ C (A $ utf8Atom au) (A 0))
@@ -465,13 +470,14 @@ skim ken = \case
   Sole a -> Atom' a
   Char f g -> Cell' (skim (ken / 2) f) (skim (ken / 3) g)
 
--- | A common choice for the fallback value in read, a rump at the given loc.
+--- | A common choice for the fallback value in read, a Spot at the given loc.
 rump :: Var a => (Level, Axis) -> Semi a
-rump = Rump' . Leg'
+rump = Spot' . Leg'
 
 jamb :: Var a => Jamb a -> Semi a -> Semi a
 jamb Jamb{..} arg = eval (Cell' arg clo) cod
 
+{-
 -- | Axially project a value; i.e. implement Nock 0 or 9.
 look :: forall a. Var a => Stub -> Semi a -> Semi a
 look st b = home $ b / a
@@ -486,13 +492,15 @@ look st b = home $ b / a
     Arm _ ar ars -> case b of
       Crux' cs _ | Just c <- lookup ar cs -> Hold' b c
       stuck -> Look' stuck (Arm 1 ar ars)
+-}
 
 -- | Change the part of a value found at the given axis.
-edit :: Var a => Axis -> (Semi a -> Semi a) -> Semi a -> Semi a
-edit a fun ken = case (cut a, ken) of
-  (Nothing, s) -> fun s
-  (Just (L, a), _) -> Cell' (edit a fun $ ken / 2) (ken / 3)
-  (Just (R, a), _) -> Cell' (ken / 2) (edit a fun $ ken / 3)
+edit :: Var a => Semi a -> Axis -> Semi a -> Semi a
+edit bas a mod = case (cut a, bas) of
+  (Nothing, s) -> mod
+  (Just (R, a), Crux' bat pay) -> Crux' bat (edit pay a mod)
+  (Just (L, a), _) -> Cell' (edit (bas / 2) a mod) (bas / 3)
+  (Just (R, a), _) -> Cell' (bas / 2) (edit (bas / 3) a mod)
 
 hook :: Fish -> Semi a -> Maybe Bool
 hook h b = case (h, b) of
@@ -561,7 +569,7 @@ fuse typ fis = case (typ, fis) of
 
 eval :: Var a => Semi a -> Code a -> Semi a
 eval sub = \case
-  Stub s -> look s sub
+  Spot s -> sub / s
   Fore x -> Fore' x
   --
   Atom a -> Atom' a
@@ -571,11 +579,14 @@ eval sub = \case
   Lamb a -> Lamb' (Jamb a sub)
   Crux as -> Crux' as sub
   --
+  Pull a ar c -> pull a ar (eval sub c)
+
   Plus c -> plus (eval sub c)
   Slam c d -> slam (eval sub c) (eval sub d)
   Equl c d -> equl (eval sub c) (eval sub d)
   Test c d e -> test (eval sub c) (eval sub d) (eval sub e)  -- Laziness!
   Fish f c -> fisk f (eval sub c)
+  Edit c a d -> edit (eval sub c) a (eval sub d)
   --
   Aura au to -> Aura' au to
   Rail c d -> rail' (eval sub c) (Jamb d sub)
@@ -589,6 +600,12 @@ eval sub = \case
   Type -> Type'
   With c d -> eval (eval sub c) d
   Push c d -> eval (Cell' (eval sub c) sub) d
+
+-- | Implement the Pull eliminator.
+pull :: Text -> Set Text -> Semi a -> Semi a
+pull ar ax b = case b of
+  Crux' cs _ | Just c <- lookup ar cs -> Hold' b c
+  x -> Pull' ar ax x
 
 -- | Implement the Plus eliminator.
 plus :: Semi a -> Semi a
@@ -637,16 +654,17 @@ fisk h b = case hook h b of
 -- hold, will later be evaluated against the *wrong* subject.
 held :: Var a => Semi a -> Maybe (Semi a)
 held = \case
-  Hold' s c   -> Just (eval s c)
-  Plus' s     -> plus <$> held s
-  Slam' s t   -> slam <$> held s <*> pure t
-  Equl' s t   -> equl <$> held s <*> pure t  -- advance one step at a time
-             <|> equl <$> pure s <*> held t
-  Test' s t u -> test <$> held s <*> pure t <*> pure u
-  Fish' f s   -> fisk f <$> held s
-  Look' s st  -> look st <$> held s
+  Hold' s c     -> Just (eval s c)
+  Pull' ar ax s -> pull ar ax <$> held s
+  Plus' s       -> plus <$> held s
+  Slam' s t     -> slam <$> held s <*> pure t
+  Equl' s t     -> equl <$> held s <*> pure t  -- advance one step at a time
+               <|> equl <$> pure s <*> held t
+  Test' s t u   -> test <$> held s <*> pure t <*> pure u
+  Fish' f s     -> fisk f <$> held s
+  Look' s a     -> (/ a) <$> held s
   --
-  Fuse' s f   -> fuse <$> held s <*> pure f
+  Fuse' s f     -> fuse <$> held s <*> pure f
   --
   _ -> Nothing
 
@@ -654,11 +672,9 @@ loft :: Var a => Level -> Semi a -> Code a
 loft lvl = \case
   -- XX we should have some printout here if lvl < l, which is a serious
   -- invariant violation that should be more legible
-  Rump' r -> Stub case r of
-    Leg' (l, a) -> Leg (ax l a)
-    Arm' (l, a) ar ars -> Arm (ax l a) ar ars
+  Spot' (Leg' (l, a)) -> Spot ax
    where
-    ax l a = if lvl < l then 9001 else peg (2 ^ (lvl + 1 - l) - 1) a
+    ax = if lvl < l then 9001 else peg (2 ^ (lvl + 1 - l) - 1) a
   Fore' x -> Fore x
   -- XX no longer a split morphism. Consider Hold' Term Crux
   Hold' s c -> With (loft lvl s) c
@@ -670,12 +686,13 @@ loft lvl = \case
   -- for cruxen.
   Crux' ars pay -> With (loft lvl pay) (Crux ars)
   --
+  Pull' x xr a -> Pull x xr (loft lvl a)
   Plus' a -> Plus (loft lvl a)
   Slam' a b -> Slam (loft lvl a) (loft lvl b)
   Equl' a b -> Equl (loft lvl a) (loft lvl b)
   Test' a b c -> Test (loft lvl a) (loft lvl b) (loft lvl c)
   Fish' h a -> Fish h (loft lvl a)
-  Look' a s -> With (loft lvl a) $ Stub s
+  Look' a s -> With (loft lvl a) $ Spot s
   --
   Aura' au to -> Aura au to
   Rail' l j -> Rail (loft lvl l) (luft lvl j)
@@ -999,7 +1016,7 @@ shew Con{lvl, sut} ken typ = Con
 -- | Grow the type because we have passed under a tisgar
 grow :: forall a. Var a => Type a -> Type (Hop Rump a)
 grow = \case
-  Rump' r -> Fore' (New r)
+  Spot' r -> Fore' (New r)
   Fore' x -> Fore' (Old x)
   Hold' s c -> Hold' (grow s) (crow c)
   --
@@ -1008,6 +1025,7 @@ grow = \case
   Lamb' j -> Lamb' (jrow j)
   Crux' cs s -> Crux' (fmap crow cs) (grow s)
   --
+  Pull' ar ars x -> Pull' ar ars (grow x)
   Plus' x -> Plus' (grow x)
   Slam' x y -> Slam' (grow x) (grow y)
   Equl' x y -> Equl' (grow x) (grow y)
@@ -1034,7 +1052,7 @@ grow = \case
   crow = \case
     -- lookups into the closure are NOT changed; this is okay because the stuck
     -- seminoun references in the value in the clousre ARE.
-    Stub st -> Stub st
+    Spot a -> Spot a
     Fore x -> Fore (Old x)
     --
     Atom a -> Atom a
@@ -1042,11 +1060,13 @@ grow = \case
     Lamb c -> Lamb (crow c)
     Crux cs -> Crux (fmap crow cs)
     --
+    Pull ar ars c -> Pull ar ars (crow c)
     Plus c -> Plus (crow c)
     Slam c d -> Slam (crow c) (crow d)
     Equl x y -> Equl (crow x) (crow y)
     Test x y z -> Test (crow x) (crow y) (crow z)
     Fish f x -> Fish f (crow x)
+    Edit c a d -> Edit (crow c) a (crow d)
     --
     Aura au to -> Aura au to
     Rail c d -> Rail (crow c) (crow d)
@@ -1068,8 +1088,8 @@ pare :: forall m a. (MonadCheck m, Var a) => Semi (Hop Rump a) -> m (Semi a)
 pare bas = go bas
  where
   go = \case
-    Rump' r -> bail (PareFree r bas)
-    Fore' (New r) -> pure $ Rump' r
+    Spot' l -> bail (PareFree l bas)
+    Fore' (New l) -> pure $ Spot' l
     Fore' (Old x) -> pure $ Fore' x
     Hold' s c -> Hold' <$> go s <*> care c
     --
@@ -1078,6 +1098,7 @@ pare bas = go bas
     Lamb' j -> Lamb' <$> jare j
     Crux' cs s -> Crux' <$>traverse care cs <*> go s
     --
+    Pull' ar ars x -> Pull' ar ars <$> go x
     Plus' x -> Plus' <$> go x
     Slam' x y -> Slam' <$> go x <*> go y
     Equl' x y -> Equl' <$> go x <*> go y
@@ -1102,8 +1123,8 @@ pare bas = go bas
   care :: Code (Hop Rump a) -> m (Code a)
   care = \case
     -- This stays put because it's actually an axis into the stored closure.
-    Stub st -> pure $ Stub st
-    Fore (New r) -> bail (PareFree r bas)
+    Spot a -> pure $ Spot a
+    Fore (New l) -> bail (PareFree l bas)
     Fore (Old x) -> pure $ Fore x
     --
     Atom a -> pure $ Atom a
@@ -1111,11 +1132,13 @@ pare bas = go bas
     Lamb c -> Lamb <$> care c
     Crux cs -> Crux <$> traverse care cs
     --
+    Pull ar ars c -> Pull ar ars <$> care c
     Plus c -> Plus <$> care c
     Slam c d -> Slam <$> care c <*> care d
     Equl c d -> Equl <$> care c <*> care d
     Test c d e -> Test <$> care c <*> care d <*> care e
     Fish f c -> Fish f <$> care c
+    Edit c a d -> Edit <$> care c <*> pure a <*> care d
     --
     Aura au to -> pure $ Aura au to
     Rail c d -> Rail <$> care c <*> care d
@@ -1270,11 +1293,11 @@ fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit t u) case (t, u) of
     FitCast -> pure ace
   (_, Void') -> fitsFail
 
-  (Rump' r, Rump' s)
-    | r == s    -> pure ace
-    | otherwise -> fitsFail
-  (Rump'{}, _) -> fitsFail
-  (_, Rump'{}) -> fitsFail
+  (Spot' a, Spot' b)
+    | a == b -> pure ace
+    | otherwise      -> fitsFail
+  (Spot'{}, _) -> fitsFail
+  (_, Spot'{}) -> fitsFail
 
   (Fore' r, Fore' s)
     | r == s    -> pure ace
@@ -1295,7 +1318,7 @@ fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit t u) case (t, u) of
   --   - Track level as an argument to fits, as Kovacs does, incrementing under
   --     binders. We can then use (lvl + 1, 2) as the new Rump. Downside: not
   --     clear how to get this value when comparing two RTTIs at runtime.
-  --     Although, in fact, rtts wil NEVER have rumps, so...
+  --     Although, in fact, rtts wil NEVER have Spot's, so...
   --   - Possibly, store a level in each saved, closed over, subject, taking the
   --     larger of the two. Think hard about whether this actually works.
   --   - Take two cons instead of two types, tracking lvl separately for each.
@@ -1339,6 +1362,12 @@ fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit t u) case (t, u) of
   -- XX is there an analogy to the Lamb' Slam' above?
   (Crux'{}, _) -> fitsFail
   (_, Crux'{}) -> fitsFail
+
+  (Pull' ar _ t, Pull' br _ u)
+    | ar == br  -> fest fit lvl t u ace
+    | otherwise -> fitsFail
+  (Pull'{}, _) -> fitsFail
+  (_, Pull'{}) -> fitsFail
 
   (Plus' v, Plus' w) -> fest FitSame lvl v w ace
   (Plus'{}, _) -> fitsFail
@@ -2150,7 +2179,7 @@ chip con@Con{lvl, sut} sof = case sof of
         tru <- seal lin { lyt = face' [Link $ clop $ derm p] $ fuse lyt fis }
         -- fal <- seal in { lyt = crop lyt fis }
         fal <- pure con
-        pure (Fish fis $ Stub sud, tru, fal, singleton $ gill axe fis)
+        pure (Fish fis $ Spot axe, tru, fal, singleton $ gill axe fis)
 
       Arm{} -> fall
 
@@ -2329,7 +2358,10 @@ play :: forall a m. (MonadCheck m, Var a)
 play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
   Wng w -> do
     (st, lin) <- find (lvl, 1) sut w
-    pure (Stub st, long lin, singleton Tuna)
+    let cod = case st of
+          Leg a -> Spot a
+          Arm a ar ax -> Pull ar ax (Spot a)
+    pure (cod, long lin, singleton Tuna)
 
   Atm a Rock au ->
     pure (Atom a, Aura' au (Fork $ singleton a), singleton Tuna)
@@ -2436,6 +2468,8 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     (x, _, ms) <- play con c
     pure (Fish (fish p) x, Flag', ms)
 
+  Edi w wss -> undefined
+
   {-Run sv st fom pt -> do
     st' <- work con FitNest st Type'
     sv' <- work con FitNest sv (evil ken st')
@@ -2516,8 +2550,7 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
 -- names.
 rest :: forall a m. Var a => Code a -> Soft
 rest = \case
-  Stub (Leg a) -> Wng [Axis a]
-  Stub (Arm a ar _) -> Wng [Ally ar, Axis a]
+  Spot a -> Wng [Axis a]
   Fore x -> Wng [Ally $ tshow @(Hop () a) $ Old x]  -- hack for printing
   --
   Atom a -> Atm a Sand (heuAura a)
@@ -2527,11 +2560,15 @@ rest = \case
   Lamb c -> Lam Non (rest c)
   Crux cs -> Cru (fmap rest cs)
   --
+  Pull ar _ (Spot a) -> Wng [Ally ar, Axis a]
+  Pull ar _ c -> Wit (rest c) $ Wng [Ally ar]
   Plus c -> Plu (rest c)
   Slam c d -> Sla (rest c) (rest d)
   Equl c d -> Equ (rest c) (rest d)
   Test c d e -> Tes (rest c) (rest d) (rest e)
   Fish h c -> Fis (pond h) (rest c)
+  --Edit c a d -> case c of
+    --Edi (rest c) [([Axis a], rest d)]
   --
   Aura au to -> Aur au to
   Rail c d -> Ral (rest c) (rest d)
