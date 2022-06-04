@@ -1202,7 +1202,7 @@
   ::  $dyad: pair of sender and receiver ships
   ::
   +$  dyad  [sndr=ship rcvr=ship]
-  ::  $packet: noun representation of an ames datagram packet
+  ::  $shot: noun representation of an ames datagram packet
   ::
   ::    Roundtrips losslessly through atom encoding and decoding.
   ::
@@ -1214,7 +1214,7 @@
   ::    req: is a request
   ::    sam: is using the ames protocol (not fine or another protocol)
   ::
-  +$  packet
+  +$  shot
     $:  dyad
         req=?
         sam=?
@@ -1323,9 +1323,13 @@
     $:  =path
         num=@ud
     ==
-  +$  twit  ::  signed request
+  +$  keen  ::  signed request
     $:  signature=@
         peep
+    ==
+  +$  roar  ::  response message
+    $:  sig=@
+        dat=$@(~ (cask))
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
@@ -1515,14 +1519,14 @@
   +$  rank  ?(%0b0 %0b1 %0b10 %0b11)
   ::
   ::  +|  %coding
-  ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
+  ::  +sift-ship-size: decode a 2-bit ship type specifier into a byte width
   ::
   ::    Type 0: galaxy or star -- 2 bytes
   ::    Type 1: planet         -- 4 bytes
   ::    Type 2: moon           -- 8 bytes
   ::    Type 3: comet          -- 16 bytes
   ::
-  ++  decode-ship-size
+  ++  sift-ship-size
     |=  rank=@ubC
     ^-  @
     ::
@@ -1544,12 +1548,12 @@
     ?:  (lte wid 4)   4
     ?:  (lte wid 8)   8
     ?>  (lte wid 16)  16
-  ::  +decode-packet: deserialize packet from bytestream or crash
+  ::  +sift-shot: deserialize packet from bytestream or crash
   ::
-  ++  decode-packet
+  ++  sift-shot
     |=  =blob
-    ^-  packet
-    ~|  %decode-packet-fail
+    ^-  shot
+    ~|  %sift-shot-fail
     ::  first 32 (2^5) bits are header; the rest is body
     ::
     =/  header  (end 5 blob)
@@ -1564,8 +1568,8 @@
       ~&  [%ames-protocol-version protocol-version version]
       ~|  ames-protocol-version+version  !!
     ::
-    =/  sndr-size  (decode-ship-size (cut 0 [7 2] header))
-    =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
+    =/  sndr-size  (sift-ship-size (cut 0 [7 2] header))
+    =/  rcvr-size  (sift-ship-size (cut 0 [9 2] header))
     =/  checksum   (cut 0 [11 20] header)
     =/  relayed    (cut 0 [31 1] header)
     ::  origin, if present, is 6 octets long, at the end of the body
@@ -1605,30 +1609,46 @@
     =/  content  (cut 3 [off (sub (met 3 body) off)] body)
     [[sndr rcvr] req sam sndr-tick rcvr-tick origin content]
   ::
-  ++  decode-request
+  ++  sift-keen
     |=  =hoot
-    ^-  twit
-    :-  sig=(cut 3 [0 64] hoot)
-    -:(decode-request-info (rsh 3^64 hoot))
+    ^-  keen
+    :-  sig=(end 9 hoot)
+    +:(sift-peep (rsh 9 hoot))
   ::
-  ++  decode-request-info
+  ++  sift-purr
     |=  =hoot
-    ^-  [=peep =purr]
+    ^-  [=peep =meow]
+    =+  [wid peep]=(sift-peep hoot)
+    [peep (sift-meow (rsh [3 wid] hoot))]
+  ::
+  ++  sift-peep
+    |=  =hoot
+    ^-  [wid=@ =peep]
     =+  num=(cut 3 [0 4] hoot)
     =+  len=(cut 3 [4 2] hoot)
     =+  pat=(cut 3 [6 len] hoot)
     ~|  pat=pat
-    :-  [(stab pat) num]
-    ::  if there is data remaining, it's the response
-    (rsh [3 (add 6 len)] hoot)
-  ::  +encode-packet: serialize a packet into a bytestream
+    [(add 6 len) [(stab pat) num]]
   ::
-  ++  encode-packet
-    |=  packet
+  ++  sift-meow
+    |=  =purr
+    =;  =meow
+      ~|  %fine-meow-len^meow
+      ?>  (gte siz.meow (met 3 dat.meow))
+      meow
+    :*  sig=(cut 3 [0 64] purr)
+        num=(cut 3 [64 4] purr)
+        siz=(cut 3 [68 2] purr)
+        dat=(rsh 3^70 purr)
+    ==
+  ::  +etch-shot: serialize a packet into a bytestream
+  ::
+  ++  etch-shot
+    |=  shot
     ^-  blob
     ::
-    =/  sndr-meta  (encode-ship-metadata sndr)
-    =/  rcvr-meta  (encode-ship-metadata rcvr)
+    =/  sndr-meta  (ship-meta sndr)
+    =/  rcvr-meta  (ship-meta rcvr)
     ::
     =/  body=@
       ;:  mix
@@ -1654,14 +1674,14 @@
       ==
     (mix header (lsh 5 body))
   ::
-  ::  +encode-ship-metadata: produce size (in bytes) and address rank for .ship
+  ::  +ship-meta: produce size (in bytes) and address rank for .ship
   ::
   ::    0: galaxy or star
   ::    1: planet
   ::    2: moon
   ::    3: comet
   ::
-  ++  encode-ship-metadata
+  ++  ship-meta
     |=  =ship
     ^-  [size=@ =rank]
     ::
