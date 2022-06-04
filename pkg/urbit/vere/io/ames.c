@@ -5,7 +5,7 @@
 #include "vere/vere.h"
 #include "ur/serial.h"
 
-#define FINE_PAGE     16384  //  packets per page TODO
+#define FINE_PAGE       512  //  packets per page
 #define FINE_FRAG      1024  //  bytes per fragment packet
 #define FINE_PATH_MAX   384  //  longest allowed scry path
 #define FINE_SCRY_MAX    10  //  maximum allowed pending scry requests
