@@ -2390,7 +2390,8 @@
       =/  =message-pump-state
         (~(gut by snd.peer-state) bone *message-pump-state)
       ::
-      =/  message-pump    (make-message-pump message-pump-state channel)
+      =/  ping=?  (lth bone 4)
+      =/  message-pump    (make-message-pump message-pump-state channel ping)
       =^  pump-gifts      message-pump-state  (work:message-pump task)
       =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
       ::  process effects from |message-pump
@@ -2592,14 +2593,14 @@
 ::  +make-message-pump: constructor for |message-pump
 ::
 ++  make-message-pump
-  |=  [state=message-pump-state =channel]
+  |=  [state=message-pump-state =channel ping=?]
   =*  veb  veb.bug.channel
   =|  gifts=(list message-pump-gift)
   ::
   |%
   ++  message-pump  .
   ++  give  |=(gift=message-pump-gift message-pump(gifts [gift gifts]))
-  ++  packet-pump  (make-packet-pump packet-pump-state.state channel)
+  ++  packet-pump  (make-packet-pump packet-pump-state.state channel ping)
   ++  trace
     |=  [verb=? print=(trap tape)]
     ^+  same
@@ -2812,7 +2813,7 @@
 ::  +make-packet-pump: construct |packet-pump core
 ::
 ++  make-packet-pump
-  |=  [state=packet-pump-state =channel]
+  |=  [state=packet-pump-state =channel ping=?]
   =*  veb  veb.bug.channel
   =|  gifts=(list packet-pump-gift)
   |%
@@ -2829,7 +2830,9 @@
     lte-packets
   ::  +gauge: inflate a |pump-gauge to track congestion control
   ::
-  ++  gauge  (make-pump-gauge now.channel metrics.state [her bug]:channel)
+  ++  gauge
+    %-  make-pump-gauge
+    [now.channel metrics.state her.channel bug.channel ping]
   ::  +work: handle $packet-pump-task request
   ::
   ++  work
@@ -3029,7 +3032,8 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? _acc]
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics.acc [her bug]:channel)
+    =/  gauge
+      (make-pump-gauge now.channel metrics.acc her.channel bug.channel ping)
     ::  is this the acked packet?
     ::
     ?:  =(key [message-num fragment-num])
@@ -3076,7 +3080,8 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics [her bug]:channel)
+    =/  gauge
+      (make-pump-gauge now.channel metrics her.channel bug.channel ping)
     ::  if we get an out-of-order ack for a message, skip until it
     ::
     ?:  (lth message-num.key message-num)
@@ -3124,7 +3129,7 @@
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
-  |=  [now=@da pump-metrics =ship =bug]
+  |=  [now=@da pump-metrics =ship =bug ping=?]
   =*  veb  veb.bug
   =*  metrics  +<+<
   |%
@@ -3220,7 +3225,8 @@
   ++  clamp-rto
     |=  rto=@dr
     ^+  rto
-    (min ~m2 (max ^~((div ~s1 5)) rto))
+    =/  top  ?:(ping ~s25 ~m2)
+    (min top (max ^~((div ~s1 5)) rto))
   ::  +in-slow-start: %.y iff we're in "slow-start" mode
   ::
   ++  in-slow-start

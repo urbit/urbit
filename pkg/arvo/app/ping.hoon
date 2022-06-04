@@ -42,10 +42,10 @@
         %-  (slog leaf+"ping: strange state {<ship s>}" ~)
         `state
       ::  NAT timeouts are often pretty short for UDP entries.  5
-      ::  minutes is a common value.  We use 30 seconds, which is fairly
+      ::  minutes is a common value.  We use 25 seconds, which is fairly
       ::  aggressive, but should be safe.
       ::
-      =/  until  (add ~s30 now)
+      =/  until  (add ~s25 now)
       =.  ships.state
         (~(put by ships.state) ship u.s(ship-state [%waiting until]))
       :_  state
