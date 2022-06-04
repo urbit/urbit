@@ -2182,7 +2182,7 @@
         ?:  =(0 (end 0 bone))
           ~
         `u=message-pump-state
-      ::  clogged: are five or more response messages unsent to this peer?
+      ::  clogged: are outgoing messages to this peer using too much memory?
       ::
       =/  clogged=?
         =|  acc=@ud
@@ -2192,14 +2192,15 @@
         =.  acc
           %+  add  acc
           %+  add
-            ::  in-flight messages
-            ::
-            (sub [next current]:i.pumps)
-          ::  queued messages
-          ::
-          ~(wyt in unsent-messages.i.pumps)
+            =-  (roll - add)
+            (turn ~(tap to unsent-messages.i.pumps) |=(b=@ (met 3 b)))
+          ?~  unsent-fragments.i.pumps
+            0
+          (met 3 fragment.i.unsent-fragments.i.pumps)
+        ::  100.000 chosen so roughly 10.000 peers could be
+        ::  clogged without killing the loom
         ::
-        ?:  (gte acc 5)
+        ?:  (gte acc 100.000)
           %.y
         $(pumps t.pumps)
       ::  if clogged, notify client vanek
