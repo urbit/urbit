@@ -2192,8 +2192,9 @@
         =.  acc
           %+  add  acc
           %+  add
-            =-  (roll - add)
-            (turn ~(tap to unsent-messages.i.pumps) |=(b=@ (met 3 b)))
+            %+  roll  ~(tap to unsent-messages.i.pumps)
+            |=  [a=@ b=@ud]
+            (add b (met 3 a))
           ?~  unsent-fragments.i.pumps
             0
           (met 3 fragment.i.unsent-fragments.i.pumps)
