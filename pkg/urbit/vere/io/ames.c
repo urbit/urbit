@@ -5,10 +5,15 @@
 #include "vere/vere.h"
 #include "ur/serial.h"
 
-#define FINE_PAGE     16384  //  packets per page
+#define FINE_PAGE       512  //  packets per page
 #define FINE_FRAG      1024  //  bytes per fragment packet
 #define FINE_PATH_MAX   384  //  longest allowed scry path
 #define HEAD_SIZE         4  //  header size in bytes
+
+//  a hack to work around the inability to delete from a hashtable
+//
+#define FINE_PEND         1  //  scry cache sentinel value: "pending"
+#define FINE_DEAD         2  //  scry cache sentinel value: "dead"
 
 /* u3_fine: fine networking
 */
@@ -96,11 +101,15 @@
   } u3_wail;
 
 /* u3_meow: response portion of purr packet
+ *
+ *   siz_s: number of bytes to stitch into a message
+ *   act_s: number of bytes in the actual packet
 */
   typedef struct _u3_meow {
     c3_y    sig_y[64];                  //  host signature
     c3_w    num_w;                      //  number of fragments
-    c3_s    siz_s;                      //  datum size
+    c3_s    siz_s;                      //  datum size (official)
+    c3_w    act_s;                      //  datum size (actual)
     c3_y*   dat_y;                      //  datum (0 if null response)
   } u3_meow;
 
@@ -160,17 +169,23 @@
     c3_o             for_o;             //  are we forwarding this?
   } u3_panc;
 
+#define _str_o(lob_o) ( ( c3y == lob_o ) ? "yes" : "no" )
+#define _str_typ(typ_y) (           \
+    ( PACT_AMES == typ_y ) ? "ames" \
+  : ( PACT_WAIL == typ_y ) ? "wail" \
+  : ( PACT_PURR == typ_y ) ? "purr" : "????")
+
 static void
 _log_head(u3_head* hed_u)
 {
   u3l_log("-- HEADER --\n");
-  u3l_log("is request: %s\n", (c3y == hed_u->req_o)? "yes" : "no");
-  u3l_log("is ames: %s\n", (c3y == hed_u->sim_o)? "yes" : "no");
+  u3l_log("is request: %s\n", _str_o(hed_u->req_o));
+  u3l_log("is ames: %s\n", _str_o(hed_u->sim_o));
   u3l_log("mug: 0x%05x\n", (hed_u->mug_l &0xfffff));
   u3l_log("protocol version: %u\n", hed_u->ver_y);
   u3l_log("sender class: %u\n", hed_u->sac_y);
   u3l_log("recevr class: %u\n", hed_u->rac_y);
-  u3l_log("is relayed: %s\n", (c3y == hed_u->rel_o)? "yes" : "no");
+  u3l_log("is relayed: %s\n", _str_o(hed_u->rel_o));
   u3l_log("\n");
 }
 
@@ -193,6 +208,36 @@ _log_keen(u3_keen* req_u)
   u3l_log("path: %s\n", req_u->pat_c);
   u3l_log("frag: %u\n", req_u->fra_w);
   u3l_log("\n");
+}
+
+static c3_c*
+_show_mug_buf(c3_y* buf_y, c3_w len_w)
+{
+  u3_noun mug = u3r_mug_bytes(buf_y, len_w);
+  u3_noun cot = u3dc("scot", 'q', mug);
+  return u3r_string(cot);
+}
+
+static void
+_log_meow(u3_meow* mew_u)
+{
+  c3_c* sig_c = _show_mug_buf(mew_u->sig_y, sizeof(mew_u->sig_y));
+  c3_c* dat_c = _show_mug_buf(mew_u->dat_y, mew_u->act_s);
+
+  u3l_log("  sig=%s\n"
+          "  num=%u\n"
+          "  siz=%u\n"
+          "  act=%u\n"
+          "  dat=%s\n",
+    sig_c,
+    mew_u->num_w,
+    mew_u->siz_s,
+    mew_u->act_s,
+    dat_c
+  );
+
+  c3_free(sig_c);
+  c3_free(dat_c);
 }
 
 static void
@@ -239,7 +284,8 @@ _ames_pact_free(u3_pact* pac_u)
       break;
 
     default:
-      u3l_log("ames_pact_free: bad packet type %d\n", pac_u->typ_y);
+      u3l_log("ames_pact_free: bad packet type %s\n",
+              _str_typ(pac_u->typ_y));
       u3_pier_bail(u3_king_stub());
   }
 
@@ -253,7 +299,7 @@ _ames_pact_free(u3_pact* pac_u)
 static void
 _ames_panc_free(u3_panc* pan_u)
 {
-  if ( pan_u->for_o ) {
+  if ( c3y == pan_u->for_o ) {
     if ( 0 != pan_u->nex_u ) {
       pan_u->nex_u->pre_u = pan_u->pre_u;
     }
@@ -268,6 +314,13 @@ _ames_panc_free(u3_panc* pan_u)
   }
   _ames_pact_free(pan_u->pac_u);
   c3_free(pan_u);
+}
+
+static inline u3_ptag
+_ames_pact_typ(u3_head* hed_u)
+{
+  return (( c3y == hed_u->sim_o ) ? PACT_AMES :
+          ( c3y == hed_u->req_o ) ? PACT_WAIL : PACT_PURR);
 }
 
 static inline c3_y
@@ -308,7 +361,7 @@ _fine_meow_size(u3_meow* mew_u)
     sizeof(mew_u->sig_y) +
     sizeof(mew_u->num_w) +
     sizeof(mew_u->siz_s) +
-    mew_u->siz_s);
+    mew_u->act_s);
 }
 
 static c3_s
@@ -317,6 +370,21 @@ _fine_purr_size(u3_purr* pur_u)
   c3_s pur_s = _fine_keen_size(&pur_u->ken_u);
   c3_s mew_s = _fine_meow_size(&pur_u->mew_u);
   return pur_s + mew_s;
+}
+
+static c3_o
+_ames_check_mug(u3_pact* pac_u)
+{
+  c3_w rog_w = HEAD_SIZE + _ames_origin_size(&pac_u->hed_u);
+  c3_l mug_l = u3r_mug_bytes(pac_u->hun_y + rog_w,
+                             pac_u->len_w - rog_w);
+  //  u3l_log("len_w: %u, rog_w: %u, bod_l 0x%05x, hed_l 0x%05x\n",
+  //          pac_u->len_w, rog_w,
+  //          (mug_l & 0xfffff),
+  //          (pac_u->hed_u.mug_l & 0xfffff));
+  return (
+    ((mug_l & 0xfffff) == (pac_u->hed_u.mug_l & 0xfffff))
+    ? c3y : c3n);
 }
 
 static inline c3_s
@@ -539,8 +607,9 @@ _fine_sift_meow(u3_meow* mew_u, u3_noun mew)
 
     //  parse data payload
     //
-    mew_u->dat_y = c3_calloc(mew_u->siz_s);
-    u3r_bytes(cur_w, mew_u->siz_s, mew_u->dat_y, mew);
+    mew_u->act_s = len_w - cur_w;
+    mew_u->dat_y = c3_calloc(mew_u->act_s);
+    u3r_bytes(cur_w, mew_u->act_s, mew_u->dat_y, mew);
 
     ret_o = c3y;
   }
@@ -585,6 +654,14 @@ _ames_etch_head(u3_head* hed_u, c3_y buf_y[4])
   _ames_etch_word(buf_y, hed_w);
 }
 
+static void
+_ames_etch_origin(c3_d rog_d, c3_y* buf_y)
+{
+  c3_y rag_y[8] = {0};
+  _ames_bytes_chub(rag_y, rog_d);
+  memcpy(buf_y, rag_y, 6);
+}
+
 /* _ames_etch_prel(): serialize packet prelude
 */
 static void
@@ -595,9 +672,7 @@ _ames_etch_prel(u3_head* hed_u, u3_prel* pre_u, c3_y* buf_y)
   //  if packet is relayed, write the 6-byte origin field
   //
   if ( c3y == hed_u->rel_o ) {
-    c3_y rag_y[8] = {0};
-    _ames_bytes_chub(rag_y, pre_u->rog_d);
-    memcpy(buf_y + cur_w, rag_y, 6);
+    _ames_etch_origin(pre_u->rog_d, buf_y + cur_w);
     cur_w += 6;
   }
 
@@ -666,7 +741,7 @@ _fine_etch_meow(u3_meow* mew_u, c3_y* buf_y)
 
   //  write response fragment data
   //
-  memcpy(buf_y + cur_w, mew_u->dat_y, mew_u->siz_s);
+  memcpy(buf_y + cur_w, mew_u->dat_y, mew_u->act_s);
 }
 
 /* _fine_etch_purr(): serialise response packet
@@ -716,6 +791,8 @@ _fine_etch_response(u3_pact* pac_u)
   pac_u->hed_u.mug_l = u3r_mug_bytes(pac_u->hun_y + rog_w,
                                      pac_u->len_w - rog_w);
   _ames_etch_head(&pac_u->hed_u, pac_u->hun_y);
+
+  c3_assert( c3y == _ames_check_mug(pac_u) );
 }
 
 /* _lane_scry_path(): format scry path for retrieving a lane
@@ -762,7 +839,7 @@ _ames_send(u3_pact* pac_u)
     || !pac_u->len_w
     || !pac_u->rut_u.lan_u.por_s )
   {
-    u3l_log("_ames_send null\n");
+    u3l_log("ames: _ames_send null\n");
     _ames_pact_free(pac_u);
   }
   else {
@@ -772,6 +849,9 @@ _ames_send(u3_pact* pac_u)
     add_u.sin_family = AF_INET;
     add_u.sin_addr.s_addr = htonl(pac_u->rut_u.lan_u.pip_w);
     add_u.sin_port = htons(pac_u->rut_u.lan_u.por_s);
+
+    //u3l_log("_ames_send %s %u\n", _str_typ(pac_u->typ_y),
+    //                              pac_u->rut_u.lan_u.por_s);
 
     {
       uv_buf_t buf_u = uv_buf_init((c3_c*)pac_u->hun_y, pac_u->len_w);
@@ -1066,14 +1146,20 @@ _ames_czar(u3_pact* pac_u)
 static void
 _fine_put_cache(u3_ames* sam_u, u3_noun pax, c3_w lop_w, u3_noun lis)
 {
-  c3_w cur_w = lop_w;
-  while ( lis != u3_nul ) {
-    u3_noun key = u3nc(u3k(pax), u3i_word(cur_w));
-    u3h_put(sam_u->fin_s.sac_p, key, u3k(u3h(lis)));
+  if ( (FINE_PEND == lis) || (FINE_DEAD == lis) ) {
+    u3_noun key = u3nc(u3k(pax), u3i_word(lop_w));
+    u3h_put(sam_u->fin_s.sac_p, key, lis);
+  }
+  else {
+    c3_w cur_w = lop_w;
+    while ( lis != u3_nul ) {
+      u3_noun key = u3nc(u3k(pax), u3i_word(cur_w));
+      u3h_put(sam_u->fin_s.sac_p, key, u3k(u3h(lis)));
 
-    lis = u3t(lis);
-    cur_w++;
-    u3z(key);
+      lis = u3t(lis);
+      cur_w++;
+      u3z(key);
+    }
   }
 }
 
@@ -1096,9 +1182,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
 
   _ames_sift_head(&pac_u->hed_u, pac_u->hun_y);
-  pac_u->typ_y =
-    ( pac_u->hed_u.sim_o == c3y ) ? PACT_AMES :
-    ( pac_u->hed_u.req_o == c3y ) ? PACT_WAIL : PACT_PURR;
+  pac_u->typ_y = _ames_pact_typ(&pac_u->hed_u);
 
   u3_noun tag, val;
   u3x_cell(lan, &tag, &val);
@@ -1110,6 +1194,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     c3_assert( c3y == u3a_is_cat(val) );
     c3_assert( val < 256 );
 
+    //u3l_log("_ames_ef_send imp %s %u\n", _str_typ(pac_u->typ_y), val);
     pac_u->rut_u.imp_y = val;
     _ames_czar(pac_u);
   }
@@ -1117,6 +1202,9 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
   //
   else {
     u3_lane lan_u = u3_ames_decode_lane(u3k(val));
+    ////u3l_log("_ames_ef_send low %s %u\n", _str_typ(pac_u->typ_y),
+    //                                       lan_u.por_s);
+
     //  convert incoming localhost to outgoing localhost
     //
     lan_u.pip_w = ( 0 == lan_u.pip_w )? 0x7f000001 : lan_u.pip_w;
@@ -1380,13 +1468,17 @@ _ames_try_send(u3_pact* pac_u, c3_o for_o)
   }
   //  if we don't know the lane, and the lane scry queue is full,
   //  just drop the packet
+  //TODO cap queue for lane lookups for scry responses, not just forwards
   //
   //TODO  drop oldest item in forward queue in favor of this one.
   //      ames.c doesn't/shouldn't know about the shape of scry events,
   //      so can't pluck these out of the event queue like it does in
   //      _ames_cap_queue. as such, blocked on u3_lord_peek_cancel or w/e.
   //
-  if ( (u3_none == lac) && (1000 < sam_u->sat_u.foq_d) ) {
+  if ( (c3y == for_o)
+       && (u3_none == lac)
+       && (1000 < sam_u->sat_u.foq_d) )
+  {
     sam_u->sat_u.fod_d++;
     if ( 0 == (sam_u->sat_u.fod_d % 10000) ) {
       u3l_log("ames: dropped %" PRIu64 " forwards total\n",
@@ -1402,13 +1494,15 @@ _ames_try_send(u3_pact* pac_u, c3_o for_o)
   if ( u3_none != lac ) {
     _ames_send_many(pac_u, lac, for_o);
   }
-  //  if forwarding, store the packet details for later processing
+  //  store the packet to be sent later when the lane scry completes
   //
   else {
     u3_panc* pan_u = c3_calloc(sizeof(*pan_u));
     pan_u->pac_u = pac_u;
     pan_u->for_o = for_o;
 
+    //  if forwarding, enqueue
+    //
     if ( c3y == for_o ) {
       if ( 0 != sam_u->pan_u ) {
         pan_u->nex_u = sam_u->pan_u;
@@ -1418,7 +1512,7 @@ _ames_try_send(u3_pact* pac_u, c3_o for_o)
       sam_u->sat_u.foq_d++;
     }
 
-    //  there's space in the scry queue; scry the lane out of ames
+    //  scry the lane out of ames
     //
     u3_noun pax = _lane_scry_path(u3i_chubs(2, pac_u->pre_u.rec_d));
 
@@ -1452,7 +1546,35 @@ _ames_skip(u3_prel* pre_u)
 static inline c3_w
 _fine_lop(c3_w fra_w)
 {
-  return fra_w - (fra_w % FINE_PAGE) + 1;
+  return 1 + (((fra_w - 1) / FINE_PAGE) * FINE_PAGE);
+}
+
+static u3_weak
+_fine_scry_path(u3_pact* pac_u, c3_o lop_o)
+{
+  u3_keen* ken_u = (
+    ( PACT_WAIL == pac_u->typ_y )
+    ? &pac_u->wal_u.ken_u
+    : &pac_u->pur_u.ken_u);
+
+  u3_noun pat;
+  {
+    u3_noun pux = u3i_string(ken_u->pat_c);
+    u3_noun ful = u3dc("rush", pux, u3v_wish("stap"));
+    if ( u3_nul == ful ) {
+      u3z(ful);
+      return u3_none;
+    }
+    pat = u3k(u3t(ful));
+    u3z(ful);
+  }
+
+  c3_w fra_w = ken_u->fra_w;
+  if ( c3y == lop_o ) {
+    fra_w = _fine_lop(fra_w);
+  }
+
+  return u3nc(pat, u3i_word(fra_w));
 }
 
 /* _fine_pack_scry_cb(): receive packets for datum out of fine
@@ -1464,16 +1586,20 @@ static void _fine_pack_scry_cb(void* vod_p, u3_noun nun)
   u3_ames* sam_u = pac_u->sam_u;
   u3_keen* ken_u = &pac_u->pur_u.ken_u;
 
+  u3_noun pax = u3do("stab", u3i_string(ken_u->pat_c));
+  c3_w lop_w = _fine_lop(ken_u->fra_w);
+
+  //  if not [~ ~ fragments], mark as dead
+  //
   u3_weak pas = u3r_at(7, nun);
-  if(pas == u3_none) {
+  if( pas == u3_none ) {
+    _fine_put_cache(sam_u, pax, lop_w, FINE_DEAD);
     _ames_pact_free(pac_u);
 
     u3z(nun);
     return;
   }
 
-  u3_noun pax = u3do("stab", u3i_string(ken_u->pat_c));
-  c3_w lop_w = _fine_lop(ken_u->fra_w);
   _fine_put_cache(sam_u, pax, lop_w, pas);
 
   // find requested fragment
@@ -1511,6 +1637,7 @@ static void
 _fine_hear_request(u3_pact* req_u, c3_w cur_w)
 {
   u3_pact* res_u;
+  u3_weak key;
 
   if ( c3n == _fine_sift_wail(req_u, cur_w) ) {
     u3l_log("_fine_hear_request bad wail\n");
@@ -1518,12 +1645,9 @@ _fine_hear_request(u3_pact* req_u, c3_w cur_w)
     return;
   }
 
-  u3_noun pux = u3i_string(req_u->wal_u.ken_u.pat_c);
-  u3_noun pat = u3dc("rush", pux, u3v_wish("stap"));
-  if ( u3_nul == pat ) {
-    u3l_log("fine: bad request\n");
+  if ( c3n == _fine_sift_wail(req_u, cur_w) ) {
+    u3l_log("fine: _fine_hear_request bad wail\n");
     _ames_pact_free(req_u);
-    u3z(pat);
     return;
   }
 
@@ -1569,6 +1693,15 @@ _fine_hear_request(u3_pact* req_u, c3_w cur_w)
       res_u->pur_u.ken_u.pat_c = c3_calloc(len_s + 1);
       memcpy(res_u->pur_u.ken_u.pat_c, req_u->wal_u.ken_u.pat_c, len_s);
     }
+
+    //  make scry cache key
+    //
+    key = _fine_scry_path(req_u, c3n);
+    if ( u3_none == key ) {
+      u3l_log("fine: bad request\n");
+      _ames_pact_free(req_u);
+      return;
+    }
     //  free incoming request
     //
     _ames_pact_free(req_u);
@@ -1584,35 +1717,50 @@ _fine_hear_request(u3_pact* req_u, c3_w cur_w)
 
   //  look up request in scry cache
   //
-  u3_noun key = u3nc(u3k(pat), u3i_word(res_u->pur_u.ken_u.fra_w));
   u3_weak cac = u3h_git(res_u->sam_u->fin_s.sac_p, key);
-  if ( u3_none == cac ) {
-    //  cache miss, scry into arvo for a page of packets
-    //
+  //  already pending; drop
+  //
+  if ( FINE_PEND == cac ) {
+    u3l_log("fine: pend %u %s\n", res_u->pur_u.ken_u.fra_w,
+                                  res_u->pur_u.ken_u.pat_c);
+    _ames_pact_free(res_u);
+  }
+  //  cache miss or a previous scry blocked; try again
+  //
+  else if ( (u3_none == cac) || (FINE_DEAD == cac) ) {
+    u3l_log("fine: miss %u %s\n", res_u->pur_u.ken_u.fra_w,
+                                  res_u->pur_u.ken_u.pat_c);
     c3_w lop_w = _fine_lop(res_u->pur_u.ken_u.fra_w);
     u3_noun pax =
       u3nc(c3__fine,
       u3nq(c3__hunk,
            u3dc("scot", c3__ud, lop_w),
            u3dc("scot", c3__ud, FINE_PAGE),
-           u3k(u3t(pat))));
+           u3k(u3h(key))));
 
+    //  mark as pending in the scry cache
+    //
+    _fine_put_cache(res_u->sam_u, u3k(u3h(key)), lop_w, FINE_PEND);
+
+    //  scry into arvo for a page of packets
+    //
     u3_pier_peek_last(res_u->sam_u->car_u.pir_u, u3_nul, c3__ax, u3_nul,
                       pax, res_u, _fine_pack_scry_cb);
-
   }
   //  cache hit, fill in response meow and send
   //
   else if ( c3y == _fine_sift_meow(&res_u->pur_u.mew_u, u3k(cac)) ) {
+    u3l_log("fine: hit  %u %s\n", res_u->pur_u.ken_u.fra_w,
+                                  res_u->pur_u.ken_u.pat_c);
     _fine_etch_response(res_u);
     _ames_try_send(res_u, c3n);
   }
   else {
-    u3l_log("_fine_hear_request meow bad\n");
+    u3l_log("fine: _fine_hear_request meow bad\n");
+    _ames_pact_free(res_u);
   }
 
   u3z(key);
-  u3z(pat);
 }
 
 //  TODO: check protocol version
@@ -1649,7 +1797,6 @@ _ames_hear_ames(u3_pact* pac_u, c3_w cur_w)
     }
 
     _ames_pact_free(pac_u);
-    return;
   }
 
   //  otherwise, inject the packet as an event
@@ -1670,17 +1817,6 @@ _ames_hear_ames(u3_pact* pac_u, c3_w cur_w)
   }
 }
 
-static c3_o
-_ames_check_mug(u3_pact* pac_u)
-{
-  c3_w rog_w = HEAD_SIZE + _ames_origin_size(&pac_u->hed_u);
-  c3_l mug_l = u3r_mug_bytes(pac_u->hun_y + rog_w,
-                             pac_u->len_w - rog_w);
-  return (
-    ((mug_l & 0xfffff) == (pac_u->hed_u.mug_l & 0xfffff))
-    ? c3y : c3n);
-}
-
 static void
 _ames_try_forward(u3_pact* pac_u)
 {
@@ -1691,7 +1827,7 @@ _ames_try_forward(u3_pact* pac_u)
           && ( 0  == pac_u->pre_u.sen_d[1] ) ) )
   {
     c3_y* old_y;
-    c3_w  old_w;
+    c3_w  old_w, cur_w;
 
     pac_u->hed_u.rel_o = c3y;
     pac_u->pre_u.rog_d = u3_ames_lane_to_chub(pac_u->rut_u.lan_u);
@@ -1702,8 +1838,15 @@ _ames_try_forward(u3_pact* pac_u)
     pac_u->len_w += 6;
     pac_u->hun_y = c3_calloc(pac_u->len_w);
 
+    cur_w = 0;
+
     _ames_etch_head(&pac_u->hed_u, pac_u->hun_y);
-    memcpy(pac_u->hun_y + HEAD_SIZE + 6,
+    cur_w += HEAD_SIZE;
+
+    _ames_etch_origin(pac_u->pre_u.rog_d, pac_u->hun_y + cur_w);
+    cur_w += 6;
+
+    memcpy(pac_u->hun_y + cur_w,
            old_y + HEAD_SIZE,
            old_w - HEAD_SIZE);
 
@@ -1758,21 +1901,22 @@ _ames_hear(u3_ames* sam_u,
 
   //  parse the header
   //
-  _ames_sift_head(&pac_u->hed_u, hun_y);
+  _ames_sift_head(&pac_u->hed_u, pac_u->hun_y);
   cur_w += HEAD_SIZE;
 
-  pac_u->typ_y = ( c3y == pac_u->hed_u.sim_o ) ? PACT_AMES :
-                 ( c3y == pac_u->hed_u.req_o ) ? PACT_WAIL : PACT_PURR;
-
+  pac_u->typ_y = _ames_pact_typ(&pac_u->hed_u);
 
   //  check contents match mug in header
   //
   if ( c3n == _ames_check_mug(pac_u) ) {
-      sam_u->sat_u.mut_d++;
-      if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
-        u3l_log("ames: %" PRIu64 " dropped for invalid mug\n",
-                sam_u->sat_u.mut_d);
-      }
+    _log_head(&pac_u->hed_u);
+    sam_u->sat_u.mut_d++;
+    //  TODO: reinstate filter after debugging is over
+    //  if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
+    if ( 1 ) {
+      u3l_log("ames: %" PRIu64 " dropped for invalid mug\n",
+              sam_u->sat_u.mut_d);
+    }
     _ames_pact_free(pac_u);
     return;
   }
@@ -1797,7 +1941,7 @@ _ames_hear(u3_ames* sam_u,
   //  and we are not the recipient,
   //  we might want to forward statelessly
   //
-  if (  0 && (c3y == sam_u->fig_u.see_o)
+  if ( (c3y == sam_u->fig_u.see_o)
      && (  (pac_u->pre_u.rec_d[0] != sam_u->pir_u->who_d[0])
         || (pac_u->pre_u.rec_d[1] != sam_u->pir_u->who_d[1]) ) )
   {

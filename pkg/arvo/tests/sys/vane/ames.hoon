@@ -1,6 +1,7 @@
 /+  *test
 /=  ames  /sys/vane/ames
 /=  jael  /sys/vane/jael
+/*  dojo  %hoon  /app/dojo/hoon
 ::  construct some test fixtures
 ::
 =/  nec     ^$:((ames ~nec))
@@ -183,6 +184,16 @@
   %+  snag  index
   (skim moves is-move-send)
 ::
+++  n-frags
+  |=  n=@
+  ^-  @ux
+  ::  6 chosen randomly to get some trailing zeros
+  ::
+  %+  rsh  10
+  %+  rep  13
+  %+  turn  (gulf 1 n)
+  |=(x=@ (fil 3 1.024 (dis 0xff x)))
+::
 ++  scry
   |=  [vane=_nec car=term bem=beam]
   =/  =roof
@@ -198,7 +209,12 @@
       ``noun+!>([black black])
     ::
         %cz
-      ``noun+!>(`@ux`(fil 5 32 0xdead.beef))
+      ?+  -.r.bem  !!
+        %ud  ``noun+!>((n-frags p.r.bem))
+      ==
+    ::
+        %cx
+      ``hoon+!>(dojo)
     ==
   =/  vane-core  (vane(rof roof))
   (scry:vane-core ~ car bem)
@@ -226,34 +242,36 @@
   ::
   =/  =packet:ames
     :*  [sndr=~nec rcvr=~bud]
+        req=&  sam=&
         sndr-tick=0b10
         rcvr-tick=0b11
         origin=~
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:ames & packet)
+  =/  encoded  (encode-packet:ames packet)
   =/  decoded  (decode-packet:ames encoded)
   ::
   %+  expect-eq
-    !>  [& packet]
+    !>  packet
     !>  decoded
 ::
 ++  test-origin-encoding  ^-  tang
   ::
   =/  =packet:ames
     :*  [sndr=~nec rcvr=~bud]
+        req=&  sam=&
         sndr-tick=0b10
         rcvr-tick=0b11
         origin=`0xbeef.cafe.beef
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:ames & packet)
+  =/  encoded  (encode-packet:ames packet)
   =/  decoded  (decode-packet:ames encoded)
   ::
   %+  expect-eq
-    !>  [& packet]
+    !>  packet
     !>  decoded
 ::
 ++  test-shut-packet-encoding  ^-  tang
@@ -305,7 +323,7 @@
       rcvr-life=3
     ==
   ::
-  =/  =blob:ames   (encode-packet:ames & packet)
+  =/  =blob:ames   (encode-packet:ames packet)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   =^  moves2  bud
     =/  =point:ames
@@ -478,55 +496,79 @@
     ?.  ?=(%give -.card.move)    ~
     ?.  ?=(%send -.p.card.move)  ~
     `;;(@uxhoot blob.p.card.move)
-  =/  [is-ames=? =packet:ames]  (decode-packet:ames `@ux`req)
-  ?>  ?=(%| is-ames)
+  =/  =packet:ames  (decode-packet:ames `@ux`req)
+  ?<  sam.packet
+  ?>  req.packet
   =/  twit
    (decode-request:ames `@ux`content.packet)
   ~&  twit
   (expect-eq !>(1) !>(1))
 ::
+++  test-fine-hunk
+  ^-  tang
+  %-  zing
+  %+  turn  (gulf 1 10)
+  |=  siz=@
+  =/  want=path  /~bud/0/1/c/z/(scot %ud siz)/kids/sys
+  ::
+  =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
+  =/  [=mark =vase]  (need (need (scry bud %x beam)))
+  =+  !<(song=(list @uxmeow) vase)
+  %+  expect-eq
+    !>(siz)
+    !>((lent song))
+::
 ++  test-fine-response
   ^-  tang
-  =/  datum=@ux  (fil 5 32 0xdead.beef)
-  =/  want=path  /~bud/0/1/c/z/1/kids/sys
-  =.  rof.bud
-    |=(* ``noun+!>(datum))
-  =/  =beam  [[~bud %$ da+now:bud] (welp /fine/message want)]
+  ::%-  zing
+  ::%+  turn  (gulf 1 50)
+  ::|=  siz=@
+  ::=/  want=path  /~bud/0/1/c/z/(scot %ud siz)/kids/sys
+  =/  want=path  /~bud/0/1/c/x/1/kids/app/dojo/hoon
+  =/  dit  (jam %hoon dojo)
+  =/  exp  (cat 9 (fil 3 64 0xff) dit)
+  =/  siz=@ud  (met 13 exp)
+  ^-  tang
+  ::
+  =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
   =/  [=mark =vase]  (need (need (scry bud %x beam)))
-  =+  !<(=song:ames vase)
-  =/   partial=(list have:ames)
-    %-  head
-    %^  spin  song  1
-    |=  [blob=@ux num=@ud]
+  =+  !<(song=(list @uxmeow) vase)
+  =/   paz=(list have:ames)
+    %+  spun  song
+    |=  [blob=@ux num=_1]
     ^-  [have:ames _num]
     :_  +(num)
-    =/  [is-ames=? =packet:ames]  (decode-packet:ames `@ux`blob)
-    ?>  ?=(%| is-ames)
-    =/  [=peep:ames =purr:ames]  (decode-request-info:ames `@ux`content.packet)
-    =/  rawr  (decode-response-packet:ames `@ux`purr)
-    ~&  rawr-sig/`@ux`sig.rawr
-    ~&  rawr-siz/`@ux`siz.rawr
-    ~&  rawr-wid/`@ux`wid.rawr
-    ~&  rawr-dat/`@ux`dat.rawr
-    [num rawr]
+    =/  =meow:ames  (decode-response-packet:ames blob)
+    [num meow]
   ::
-  =/  num-frag=@ud  (lent partial)
+  =/  num-frag=@ud  (lent paz)
+  ~&  num-frag=num-frag
   =/   =roar:ames
-    (decode-response-msg:ames num-frag (flop partial))
+    (decode-response-msg:ames num-frag (flop paz))
   %+  welp
     =/  dat
       ?>  ?=(^ dat.roar)
       ;;(@ux q.dat.roar)
-    (expect-eq !>(dat) !>(datum))
+    (expect-eq !>(`@`dat) !>(`@`dojo))
   =/  event-core
     ~!  nec
     =/   foo  [*@da *@ rof.nec]
     (per-event:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
-  %-  zing
-  %+  turn  partial
-  |=  [fra=@ud sig=@ siz=@ud byts]
-  %+  expect-eq  !>(%.y)
-  !>((veri-fra:keys:fine:event-core ~bud life.ames-state.bud want fra dat sig))
+  %+  welp
+    ^-  tang
+    %-  zing
+    %+  turn  paz
+    |=  [fra=@ud sig=@ siz=@ud byts]
+    %+  expect-eq  !>(%.y)
+    !>
+    %-  veri-fra:keys:fine:event-core
+    [~bud life.ames-state.bud want fra dat sig]
+  ~&  %verifying-sig
+  %+  expect-eq
+    !>(&)
+    !>
+    %-  meri:keys:fine:event-core
+    [~bud life.ames-state.bud want roar]
 ::
 ++  test-old-ames-wire  ^-  tang
   =^  moves0  bud  (call bud ~[/g/hood] %spew [%odd]~)

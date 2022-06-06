@@ -443,7 +443,7 @@
 ::
 |%
 ++  scry-timeout-time  ~m1
-++  scry-retry-time    ~m30
+++  scry-retry-time    ~s0
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
 ++  sort-by-head
@@ -899,7 +899,7 @@
       %-  soak-vase
       %+  gain-sprig  file+path  |.
       =.  stack.nub  [~ stack.nub]
-      ~>  %slog.0^leaf/"ford: make file {(spud path)}"
+      :: ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
@@ -1214,7 +1214,7 @@
           =?  cache.nub  !spilt
             (~(put by cache.nub) leak [+(refs.u.got) soak.u.got])
           [soak.u.got nub]
-        %-  (slog leaf+"ford: cache {<pour.leak>}: creating" ~)
+        :: %-  (slog leaf+"ford: cache {<pour.leak>}: creating" ~)
         =^  =soak  nub  (next nub)
         =.  cache.nub  (~(put by cache.nub) leak [1 soak])
         ::  If we're creating a cache entry, add refs to our dependencies
@@ -1242,16 +1242,16 @@
     |=  [fad=flow =leak]
     ^-  flow
     ?~  got=(~(get by fad) leak)
-      %-  (slog leaf+"ford: lose missing leak {<leak>}" ~)
+      :: %-  (slog leaf+"ford: lose missing leak {<leak>}" ~)
       fad
     ?:  (lth 1 refs.u.got)
-      =/  tape  "ford: cache {<pour.leak>}: decrementing from {<refs.u.got>}"
-      %-  (slog leaf+tape ~)
+      :: =/  tape  "ford: cache {<pour.leak>}: decrementing from {<refs.u.got>}"
+      :: %-  (slog leaf+tape ~)
       =.  fad  (~(put by fad) leak u.got(refs (dec refs.u.got)))
       fad
     =+  ?.  =(0 refs.u.got)  ~
-        ((slog leaf+"ford: lose zero leak {<leak>}" ~) ~)
-    %-  (slog leaf+"ford: cache {<pour.leak>}: freeing" ~)
+        ~  :: ((slog leaf+"ford: lose zero leak {<leak>}" ~) ~)
+    :: %-  (slog leaf+"ford: cache {<pour.leak>}: freeing" ~)
     =.  fad  (~(del by fad) leak)
     =/  leaks  ~(tap in deps.leak)
     |-  ^-  flow
@@ -3062,9 +3062,11 @@
       %.  [hen her u.nux [syd ~]]
       send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
     %-  emil
-    =/  =wire  (request-wire kind.u.busy.sat her syd u.nux)
-    :~  [hen %pass wire %a %yawn her path.u.busy.sat]
-        [hen %pass wire %b %rest time.u.busy.sat]
+    =*  bus  u.busy.sat
+    =/  =wire  (request-wire kind.bus her syd u.nux)
+    ~&  %cancel-request-yawn
+    :~  [hen %pass wire %a %yawn her path.bus]
+        [hen %pass wire %b %rest time.bus]
     ==
   ::
   ::  Handles a request.
@@ -3104,12 +3106,12 @@
     =.  ..retry-with-ames
       =<  ?>(?=(^ ref) .)
       ~|  [%strange-retry-not-scry her syd inx busy.sat -.rave.sat]
-      ?>  ?=([~ ^] busy.sat)
+      =/  bus  ?>(?=([~ ^] busy.sat) u.busy.sat)
       =/  =wire  (request-wire kind her syd inx)
-      =/  =path  path.u.busy.sat
       %-  emil
-      :~  [hen %pass wire %b %rest time.u.busy.sat]
-          [hen %pass wire %a %yawn her path]
+    ~&  %retry-with-ames-yawn
+      :~  [hen %pass wire %b %rest time.bus]
+          [hen %pass wire %a %yawn her path.bus]
       ==
     ::  re-send over ames
     ::

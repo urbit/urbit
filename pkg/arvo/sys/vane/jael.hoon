@@ -304,8 +304,8 @@
       ::
       =.  +>.$
         %^  poke-watch  hen  %azimuth
-        %+  fall  node.tac
-        (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+        :: %+  fall  node.tac
+        (need (de-purl:html 'https://ropsten.infura.io/v3/2599df54929b47099bda360958d75aaf'))
       =.  +>.$
         ::  get everything from /app/azimuth because jael subscriptions
         ::  seem to be flaky for now
