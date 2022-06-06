@@ -2780,7 +2780,7 @@
             ++  ke-etch-keen
               |=  frag=@ud
               (etch-keen ship ke-full-path frag)
-          ::
+            ::
             ++  ke-on-ack
               =|  marked=(list want)
               |=  fra=@ud
@@ -2910,10 +2910,10 @@
               ?.  =(`ship (slaw %p i.full-path))
                 ~|  fine-path-bunk-ship+[full-path ship]
                 !!
-              ?.  =(`life.peer (slaw %ud i.t.full-path))
+              ?.  =(`life.peer (slaw %ud i.t.t.full-path))
                 ~|  fine-path-bunk-life+[full-path life.peer]
                 !!
-              ?.  =(`rift.peer (slaw %ud i.t.t.full-path))
+              ?.  =(`rift.peer (slaw %ud i.t.full-path))
                 ~|  fine-path-bunk-rift+[full-path rift.peer]
                 !!
               ?.  %-  veri-fra:keys
