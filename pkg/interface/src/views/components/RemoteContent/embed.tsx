@@ -44,13 +44,14 @@ function onStopProp<T extends HTMLElement>(e: MouseEvent<T>) {
 
 type ImageProps = PropFunc<typeof BaseImage> & {
   objectFit?: string;
+  stretch?: boolean;
 };
 
 const Image = styled.img(system({ objectFit: true }), ...allSystemStyle);
 export function RemoteContentImageEmbed(
   props: ImageProps & RemoteContentEmbedProps
 ) {
-  const { url, ...rest } = props;
+  const { url, stretch, ...rest } = props;
   const [noCors, setNoCors] = useState(false);
   const { hovering, bind } = useHovering();
   // maybe images aren't set up for CORS embeds
@@ -59,7 +60,13 @@ export function RemoteContentImageEmbed(
   }, []);
 
   return (
-    <Box height="100%" width="100%" position="relative" {...bind} {...rest}>
+    <Box
+      height={stretch ? "100%" : "192px"}
+      width={stretch ? "100%" : "192px"}
+      position="relative"
+      {...bind}
+      {...rest}
+    >
       <BaseAnchor
         position="absolute"
         top={2}
@@ -84,9 +91,10 @@ export function RemoteContentImageEmbed(
         referrerPolicy="no-referrer"
         flexShrink={0}
         src={url}
-        height="100%"
+        height={stretch ? "100%" : "192px"}
+        maxWidth={stretch ? "100%" : "192px"}
         width="100%"
-        objectFit="contain"
+        objectFit="cover"
         borderRadius={2}
         onError={onError}
         {...props}

@@ -34,8 +34,8 @@ export function GroupPersonalSettings(props: {
       >
         <StatelessAsyncToggle selected={watching} onClick={onClick} />
         <Col>
-          <Label>Notify me on group activity</Label>
-          <Label mt={2} gray>Send me notifications when this group changes</Label>
+          <Label>Notify me on participant activity</Label>
+          <Label mt={2} gray>When a user joins or leaves this group, send me a notification</Label>
         </Col>
       </BaseLabel>
     </Col>

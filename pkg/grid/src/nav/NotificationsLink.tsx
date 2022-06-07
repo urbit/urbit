@@ -6,20 +6,26 @@ import { Bullet } from '../components/icons/Bullet';
 import { Cross } from '../components/icons/Cross';
 import { useHarkStore } from '../state/hark';
 import { useLeapStore } from './Nav';
+import { SettingsState, useSettingsState } from '../state/settings';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed' | 'open';
 
-function getNotificationsState(isOpen: boolean, box: Timebox): NotificationsState {
+function getNotificationsState(isOpen: boolean, box: Timebox, dnd: boolean): NotificationsState {
   const notifications = Object.values(box);
+  if (isOpen) {
+    return 'open';
+  }
+
+  if (dnd) {
+    return 'empty';
+  }
+
   if (
     notifications.filter(
       ({ bin }) => bin.place.desk === window.desk && ['/lag', 'blocked'].includes(bin.place.path)
     ).length > 0
   ) {
     return 'attention-needed';
-  }
-  if (isOpen) {
-    return 'open';
   }
 
   // TODO: when real structure, this should be actually be unread not just existence
@@ -36,13 +42,16 @@ type NotificationsLinkProps = Omit<LinkProps<HTMLAnchorElement>, 'to'> & {
   shouldDim: boolean;
 };
 
+const selDnd = (s: SettingsState) => s.display.doNotDisturb;
+
 export const NotificationsLink = ({
   navOpen,
   notificationsOpen,
   shouldDim
 }: NotificationsLinkProps) => {
   const unseen = useHarkStore((s) => s.unseen);
-  const state = getNotificationsState(notificationsOpen, unseen);
+  const dnd = useSettingsState(selDnd);
+  const state = getNotificationsState(notificationsOpen, unseen, dnd);
   const select = useLeapStore((s) => s.select);
   const clearSelection = useCallback(() => select(null), [select]);
 

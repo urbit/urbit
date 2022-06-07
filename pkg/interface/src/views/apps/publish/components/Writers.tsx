@@ -1,8 +1,7 @@
 import { Box, Text } from '@tlon/indigo-react';
-import { addTag, Association, Group } from '@urbit/api';
+import { addTag, Association, Group, resourceFromPath } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import React, { ReactElement } from 'react';
-import { resourceFromPath } from '~/logic/lib/group';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ShipSearch } from '~/views/components/ShipSearch';
 import airlock from '~/logic/api';

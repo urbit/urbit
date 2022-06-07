@@ -264,8 +264,8 @@
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
-++  lead  |*(* |*(* [+>+< +<]))                          ::  put head
-++  late  |*(* |*(* [+< +>+<]))                          ::  put tail
+++  lead  |*(* |*(* [+>+< +<]))                         ::  put head
+++  late  |*(* |*(* [+< +>+<]))                         ::  put tail
 ::
 ::  #  %containers
 ::
@@ -1453,7 +1453,6 @@
 ++  by                                                  ::  map engine
   ~/  %by
   =|  a=(tree (pair))  ::  (map)
-  =*  node  ?>(?=(^ a) n.a)
   |@
   ++  all                                               ::  logical AND
     ~/  %all
@@ -1717,14 +1716,14 @@
     =+  b=a
     |@
     ++  $
-      |=  meg=$-([_p:node _q:node _q:node] _q:node)
+      |*  meg=$-([* * *] *)
       |-  ^+  a
       ?~  b
         a
       ?~  a
         b
       ?:  =(p.n.b p.n.a)
-        :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
+        :+  [p.n.a `_?>(?=(^ a) q.n.a)`(meg p.n.a q.n.a q.n.b)]
           $(b l.b, a l.a)
         $(b r.b, a r.a)
       ?:  (mor p.n.a p.n.b)
@@ -2205,7 +2204,7 @@
 ++  si                                                  ::  signed integer
   ^?
   |%
-  ++  abs  |=(a=@s (add (end 0 a) (rsh 0 a)))         ::  absolute value
+  ++  abs  |=(a=@s (add (end 0 a) (rsh 0 a)))           ::  absolute value
   ++  dif  |=  [a=@s b=@s]                              ::  subtraction
            (sum a (new !(syn b) (abs b)))
   ++  dul  |=  [a=@s b=@]                               ::  modulus
@@ -7865,7 +7864,12 @@
     ::
     :+  %brcl
       [%ktsg spore]
-    ~(relative analyze:(descend 7) 6)
+    :+  %tsls
+      ~(relative analyze:(descend 7) 6)
+    ::  trigger unifying equality
+    ::
+    :+  %tsls  [%dtts $/14 $/2]
+    $/6
   ::
   ++  analyze
     ::  normalize a fragment of the subject
@@ -8624,15 +8628,7 @@
       ==
     ::
         [%mcfs *]  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
-        [%mcgl *]
-      :^    %cnls
-          :+  %cnhp
-            q.gen
-          [%ktcl p.gen]
-        r.gen
-      :+  %brts
-        p.gen
-      s.gen
+        [%mcgl *]  [%cnls [%cnhp q ktcl+p] r [%brts p [%tsgr $+3 s]]]:gen
     ::
         [%mcsg *]                                       ::                  ;~
       |-  ^-  hoon
@@ -11053,7 +11049,7 @@
           [%name *]
         :_  gid
         ?@  p.q.ham  (cat 3 '#' mark.p.q.ham)
-        (rap 3 '#' auth.p.q.ham (spat type.p.q.ham) ~)
+        (rap 3 '#' auth.p.q.ham '+' (spat type.p.q.ham) ~)
       ==
     --
   ::

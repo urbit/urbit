@@ -8,7 +8,6 @@ import { useFileUpload } from '~/logic/lib/useFileUpload';
 import { createStorageKey, storageVersion, clearStorageMigration } from '~/logic/lib/util';
 import { useOurContact } from '~/logic/state/contact';
 import { useGraphTimesent } from '~/logic/state/graph';
-import ShareProfile from '~/views/apps/chat/components/ShareProfile';
 import { Loading } from '~/views/components/Loading';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import ChatInput from './ChatInput';
@@ -114,8 +113,18 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
   const { restore, setMessage } = useChatStore(s => ({ setMessage: s.setMessage, restore: s.restore }));
+  const [uploadError, setUploadError] = useState<string>('');
+
+  const handleUploadError = useCallback((err: Error) => {
+    setUploadError(err.message);
+  }, []);
+
   const { canUpload, drag } = useFileUpload({
-    onSuccess: url => onSubmit([{ url }])
+    onSuccess: (url) => {
+      onSubmit([{ url }]);
+      setUploadError('');
+    },
+    onError: handleUploadError
   });
 
   useEffect(() => {
@@ -145,11 +154,6 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   return (
     // @ts-ignore bind typings
     <Col {...drag.bind} height="100%" overflow="hidden" position="relative">
-      <ShareProfile
-        our={ourContact}
-        recipients={showBanner ? promptShare : []}
-        onShare={() => setShowBanner(false)}
-      />
       {canUpload && drag.dragging && <SubmitDragger />}
       <ChatWindow
         key={id}
@@ -171,6 +175,9 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
           onSubmit={onSubmit}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           placeholder="Message..."
+          uploadError={uploadError}
+          setUploadError={setUploadError}
+          handleUploadError={handleUploadError}
         />
       )}
     </Col>

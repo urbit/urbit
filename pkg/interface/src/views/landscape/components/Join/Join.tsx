@@ -6,7 +6,7 @@ import {
   Button,
   ManagedTextInputField,
   ManagedCheckboxField,
-  ContinuousProgressBar,
+  ContinuousProgressBar
 } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -14,12 +14,11 @@ import { useHistory, useLocation } from 'react-router-dom';
 import useGroupState from '~/logic/state/group';
 import { useInviteForResource } from '~/logic/state/invite';
 import useMetadataState, { usePreview } from '~/logic/state/metadata';
-import { decline, Invite } from '@urbit/api';
-import { join, JoinRequest } from '@urbit/api/groups';
+import { joinError, joinLoad, JoinProgress, join, JoinRequest, decline, Invite } from '@urbit/api';
 import airlock from '~/logic/api';
-import { joinError, joinLoad, JoinProgress } from '@urbit/api';
 import { useQuery } from '~/logic/lib/useQuery';
-import { JoinKind, JoinDesc, JoinSkeleton } from './Skeleton';
+import { JoinDesc, JoinKind, JoinSkeleton } from './Skeleton';
+import { preSig } from '~/logic/lib/util';
 
 interface InviteWithUid extends Invite {
   uid: string;
@@ -32,7 +31,7 @@ interface FormSchema {
 
 const initialValues = {
   autojoin: false,
-  shareContact: false,
+  shareContact: false
 };
 
 function JoinForm(props: {
@@ -159,7 +158,7 @@ function JoinError(props: {
   const explanation =
     request.progress === 'no-perms'
       ? 'You do not have the correct permissions'
-    : 'An unexpected error occurred';
+      : 'An unexpected error occurred';
 
   const onRetry = () => {
     useGroupState.getState().abortJoin(desc.group);
@@ -173,7 +172,6 @@ function JoinError(props: {
     useGroupState.getState().abortJoin(desc.group);
     dismiss();
   };
-  
 
   return (
     <JoinSkeleton modal={modal} title={title} desc={desc}>
@@ -272,7 +270,7 @@ export function JoinPrompt(props: JoinPromptProps) {
   };
 
   const onSubmit = async ({ link }: PromptFormSchema) => {
-    const path = `/ship/${link}`;
+    const path = `/ship/${preSig(link)}`;
     history.push({
       search: appendQuery({ 'join-path': path })
     });
