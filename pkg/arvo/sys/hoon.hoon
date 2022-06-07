@@ -8227,22 +8227,11 @@
         wrap-boy
         ::
         ::  bar runes
-          $?  [%brbc *]  [%brcb *]  [%brcl *]  [%brdt *]  [%brkt *]
-              [%brhp *]  [%brsg *]  [%brtr *]  [%brts *]  [%brwt *]  ==
+          $?  [%brcn *]  [%brpt *]  [%brbc *]  [%brcb *]  [%brcl *]  [%brdt *]
+              [%brkt *]  [%brhp *]  [%brsg *]  [%brtr *]  [%brts *]  [%brwt *]
+          ==
         :: TODO: handle recursion
-        ?~  boy.wit
-          gen
-        [%note help+`u.boy.wit gen]
-        ::
-          [%brcn *]
-        ?~  boy.wit
-          [%brcn lab.wit q.gen]
-        [%note help+`u.boy.wit [%brcn lab.wit q.gen]]
-        ::
-          [%brpt *]
-        ?~  boy.wit
-          [%brcn lab.wit q.gen]
-        [%note help+`u.boy.wit [%brpt lab.wit q.gen]]
+        wrap-boy
         ::
         :: tis runes
           [%tsfs *]
@@ -13102,8 +13091,8 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  ['_' (rune cab %brcb exqr)]
-                  ['%' (runo cen %brcn ~ expe)]
-                  ['@' (runo pat %brpt ~ expe)]
+                  ['%' (runn cen %brcn expe)]
+                  ['@' (runn pat %brpt expe)]
                   [':' (rune col %brcl expb)]
                   ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
@@ -13439,11 +13428,15 @@
             ;~(pfix dif (stag tuq (toad har)))
       --
     ::
-    ++  runo                                            ::  rune plus
-      =+  [dif=*rule hil=** tuq=** har=expa]
+    ++  runn                                            ::  build named rune
+      =+  [dif=*rule tuq=** har=expa]
       |@  ++  $
-            ;~(pfix dif (stag hil (stag tuq (toad har))))
+            ;~  pfix
+              dif
+              (stag tuq ;~(plug (punt ;~(pfix gap cen sym)) (toad har)))
+            ==
       --
+    ::
     ++  runq                                            ::  wide or tall if tol
       |*  [wid=rule tal=rule]                           ::  else wide
       ?.  tol
