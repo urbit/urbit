@@ -4,12 +4,10 @@
 ::
 =>  =>
     ::  This core is for testing core and chapter docs.
-    :>  #  %core-test
-    :>
     :>    core-summary
     :>
     :>  core-description
-    |%
+    |%  %core-test
     :>    chapter-summary
     :>
     :>  chapter-description
@@ -17,10 +15,8 @@
     ++  empty  ~
     --
   ::
-  :>  #  %test-arms
-  :>
   :>    arms used for testing arm documentation
-  |%
+  |%  %test-arms
   +|  %types
   +$  arm-dox  [tape what what what]
   +$  core-dox  [tape what]
@@ -187,10 +183,8 @@
   ::
   --
 ::
-:>  #  %dprint-tests
-:>
 :>    contains the actual tests to be run by -test
-|%
+|%  %dprint-tests
 ++  test-no-doc
   %+  expect-eq
     !>  (get-arm-dox ~[%no-doc])

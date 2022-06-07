@@ -1,5 +1,5 @@
 ::  A library for printing doccords
-=/  debug  &
+=/  debug  |
 =>
   |%
   :>    an overview of all named things in the type.
@@ -54,8 +54,7 @@
     ==
   ::
   --
-:>  #  %dprint
-|%
+|%  %dprint
 :>    contains arms used for looking for docs inside of a type
 :>
 :>  the entrypoint for finding docs within a type is +find-item-in-type.
