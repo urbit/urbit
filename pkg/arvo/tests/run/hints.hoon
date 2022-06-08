@@ -1,31 +1,40 @@
 ::  Test that these hints do not crash the runtime
-::    there is no need to include the hints for dynamic %bout
+::    there is no need to include a test for dynamic %bout
 ::    since all hoon tests exersize dynamic %bout
 |%
-::  these test that the hilt trace hints
+::  test that these trace hints
 ::  are safe to run or ignore
-++  test-hela-hilt
+++  test-09-hilt-hela
   ~>  %hela
   ~
-++  test-nara-hilt
+++  test-08-hint-hela
+  ~>  %hela.[1 leaf+"test-08-hint-hela ~"]
+  ~
+++  test-07-hilt-nara
   ~>  %nara
   ~
-::  test that the hilt memory-report hint
-::  is safe to run or ignore
-++  test-meme-hilt
+++  test-06-hint-nara
+  ~>  %nara.[1 leaf+"test-06-hint-nara ~"]
+  ~
+::  test that these memory-report hints
+::  are safe to run or ignore
+++  test-05-hilt-meme
   ~>  %meme
   ~
-::  these test that the hint trace hints
+++  test-04-hint-meme
+  ~>  %meme.[1 leaf+"test-04-hint-meme ~"]
+  ~
+::  test that theses bytecode-report hints
 ::  are safe to run or ignore
-++  test-hela-hint
-  ~>  %hela.[1 leaf+"test-hela-trace-hint"]
+++  test-03-hilt-xray
+  ~>  %xray
   ~
-++  test-nara-hint
-  ~>  %nara.[1 leaf+"test-nara-trace-hint"]
+++  test-02-hint-xray
+  ~>  %xray.[1 leaf+"test-02-hint-xray ~"]
   ~
-::  test that the hilt memory-report hint
+::  test that the hilt bout hint
 ::  is safe to run or ignore
-++  test-meme-hint
-  ~>  %meme.[1 leaf+"test-meme-hint"]
+++  test-01-hilt-bout
+  ~>  %bout
   ~
 --

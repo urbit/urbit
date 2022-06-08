@@ -993,10 +993,10 @@ u3t_slog_meme(c3_l pri_l)
   _slog_blank(pri_l);
 
   // warn if any sanity checks have failed
-  if (full_p != (100.0 - imut_p))
-    u3t_slog_cap(3, u3i_string("error"), u3i_string("road != (loom - immutable)"));
-  if (100.0 < (imut_heap_p + heap_p + free_p + open_p + stak_p + imut_stak_p))
+  if (100.01 < (imut_heap_p + heap_p + free_p + open_p + stak_p + imut_stak_p))
     u3t_slog_cap(3, u3i_string("error"), u3i_string("loom sums over 100%"));
+  if ( 99.99 > (imut_heap_p + heap_p + free_p + open_p + stak_p + imut_stak_p))
+    u3t_slog_cap(3, u3i_string("error"), u3i_string("loom sums under 100%"));
 
   struct _report_bar bar = _report_bargraph(
     imut_heap_p,

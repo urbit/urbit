@@ -166,12 +166,6 @@
       void
       u3t_slog_xray(c3_l pri_l, u3_noun inf);
 
-    /* u3t_slog_xray_raw(): this is for me to hack on
-    ** it must be replace with u3t_xray() before release.
-    */
-      void
-      u3t_slog_xray_raw(c3_l pri_l, u3_noun fol, c3_w ip_w);
-
     /* u3t_slog_memory():
     */
       void
