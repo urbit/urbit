@@ -403,7 +403,7 @@
     ?~  carm  ~?  >  debug  %empty-carm  ~
     ~?  >  debug  %found-default-arm
     ::~?  >>>  debug  u.carm
-    =+  carm-type=(~(play ut p.sut) u.carm)
+    =+  carm-type=(~(play ut sut) u.carm)
     (what-from-hint carm-type)
   --
 ::
