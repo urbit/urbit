@@ -98,15 +98,14 @@
       ?~  arm
         ::  the current topic is not an arm in the core, recurse into sut
         ?:(rec $(sut p.sut) ~)
-        ::$(sut p.sut)
       :: else, return the arm as docs
-      =+  [adoc pdoc cdoc]=(all-arm-docs u.arm p.sut (trip i.topics))
+      =+  [adoc pdoc cdoc]=(all-arm-docs u.arm sut (trip i.topics))
       `[%arm (trip i.topics) adoc pdoc cdoc u.arm p.sut]
     ::  the core name matches. check to see if there are any topics left
     ?~  t.topics
       ::  we matched the core name and have no further topics. return the core
       =*  compiled-against  (signify p.sut)
-      `[%core (trip i.topics) *what p.sut q.sut compiled-against]
+      `[%core (trip i.topics) *what sut q.sut compiled-against]
     ::  we matched the core name, but there are still topics left
     ::  check to see if one the chapters matches the next topic
     =+  chapters=~(key by q.r.q.sut)
@@ -156,7 +155,6 @@
    ::  this should only be doing something for cores right now. you run into an
    ::  arm's name before you run into its docs
    ::
-   ::?:  (shallow-match i.topics q.sut)
    =/  shallow-match=(unit item)  $(sut q.sut, rec %.n)
    ?~  shallow-match
      ::  hint isn't wrapping a match, so step through it
@@ -192,8 +190,8 @@
     =/  name=(unit term)  p.p.q.sut  :: should check if core is built with an arm and use that name?
     =*  compiled-against  $(sut p.sut)
     ?~  name
-      `[%core ~ *what p.sut q.sut compiled-against]
-    `[%core (trip u.name) *what p.sut q.sut compiled-against]
+      `[%core ~ *what sut q.sut compiled-against]
+    `[%core (trip u.name) *what sut q.sut compiled-against]
   ::
       [%face *]
     ?.  ?=(term p.sut)
