@@ -316,12 +316,25 @@
   ?~  doc-one
     ~?  >  debug  %doc-one-empty
     ~  ::  no need to look for a second doc if there is no first one
+  ?:  =(~ links.u.doc-one)
+      :: doc-one is a product-doc
+      [~ [~ `crib.u.doc-one]]
+  ?:  !=([%funk name] -.links.u.doc-one)
+    :: link on doc-one doesnt match arm name, so that means its calling a
+    :: different arm and trying to use its docs. don't let it
+    ~
   ::  technically doc-two doesn't need to be a help, i could just grab the what
   ::  directly since we aren't testing it to see if its an arm-doc, but it makes
   ::  the code more confusing to use a different structure.
+  ~?  >  debug  :-  %doc-one  doc-one
   =/  doc-two=(unit help)
-    ?>  ?=([%hint *] sut)
-    (help-from-hint q.sut)
+    ?+    sut  ~
+        [%hint *]
+      (help-from-hint p.p.sut)
+        [%hold *]
+      ~?  >  debug  %doc-two-hold
+      ~
+    ==
   ?~  doc-two
     ~?  >  debug  %doc-two-empty
     ?~  links.u.doc-one
@@ -333,7 +346,7 @@
       ~?  >  debug  %link-match
       [~ [`crib.u.doc-one ~]]
     ~?  >  debug  %link-doesnt-match-arm
-    :: this shouldn't happen at this point in time
+    ::  this can happen if +bar calls +foo which has doccords
     [~ [`crib.u.doc-one ~]]
   ::  doc-two is non-empty. make sure that doc-one is an arm-doc
   ?~  links.u.doc-one
