@@ -187,197 +187,197 @@
 |%  %dprint-tests
 ++  test-no-doc
   %+  expect-eq
-    !>  (get-arm-dox ~[%no-doc])
-  ::
     !>  ^-  arm-dox
     ["no-doc" *what *what *what]
+  ::
+    !>  (get-arm-dox ~[%no-doc])
 ::
 ++  test-adoc
   ;:  weld
     %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pre])
-    ::
       !>  ^-  arm-dox
       ["arm-adoc-pre" `['arm-doc' ~] *what *what]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-post])
+      !>  (get-arm-dox ~[%arm-adoc-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-adoc-post" `['arm-doc' ~] *what *what]
+    ::
+      !>  (get-arm-dox ~[%arm-adoc-post])
   ==
 ::
 ++  test-pdoc
   ;:  weld
     %+  expect-eq
-      !>  (get-arm-dox ~[%arm-pdoc-pre])
-    ::
       !>  ^-  arm-dox
       ["arm-pdoc-pre" *what `['product-doc' ~] *what]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-pdoc-post])
+      !>  (get-arm-dox ~[%arm-pdoc-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-pdoc-post" *what `['product-doc' ~] *what]
+    ::
+      !>  (get-arm-dox ~[%arm-pdoc-post])
   ==
 ::
 ++  test-cdoc
   ;:  weld
     %+  expect-eq
-      !>  (get-arm-dox ~[%arm-cdoc-pre])
-    ::
       !>  ^-  arm-dox
       ["arm-cdoc-pre" *what *what `['core-doc' ~]]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-cdoc-post])
+      !>  (get-arm-dox ~[%arm-cdoc-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-cdoc-post" *what *what `['core-doc' ~]]
+    ::
+      !>  (get-arm-dox ~[%arm-cdoc-post])
   ==
 ::
 ++  test-adoc-pdoc
   ;:  weld
     %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-pre-pre])
-    ::
       !>  ^-  arm-dox
       ["arm-adoc-pdoc-pre-pre" `['arm-doc' ~] `['product-doc' ~] *what]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-post-pre])
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-pre-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-adoc-pdoc-post-pre" `['arm-doc' ~] `['product-doc' ~] *what]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-post-post])
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-post-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-adoc-pdoc-post-post" `['arm-doc' ~] `['product-doc' ~] *what]
+    ::
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-post-post])
   ==
 ::
 ++  test-adoc-cdoc
   ;:  weld
     %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-cdoc-pre-pre])
-    ::
       !>  ^-  arm-dox
       ["arm-adoc-cdoc-pre-pre" `['arm-doc' ~] *what `['core-doc' ~]]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-cdoc-post-pre])
+      !>  (get-arm-dox ~[%arm-adoc-cdoc-pre-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-adoc-cdoc-post-pre" `['arm-doc' ~] *what `['core-doc' ~]]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-cdoc-post-post])
+      !>  (get-arm-dox ~[%arm-adoc-cdoc-post-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-adoc-cdoc-post-post" `['arm-doc' ~] *what `['core-doc' ~]]
+    ::
+      !>  (get-arm-dox ~[%arm-adoc-cdoc-post-post])
   ==
 ::
 ++  test-pdoc-cdoc
   ;:  weld
     %+  expect-eq
-      !>  (get-arm-dox ~[%arm-pdoc-cdoc-pre-pre])
-    ::
       !>  ^-  arm-dox
       ["arm-pdoc-cdoc-pre-pre" *what `['product-doc' ~] `['core-doc' ~]]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-pdoc-cdoc-post-pre])
+      !>  (get-arm-dox ~[%arm-pdoc-cdoc-pre-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-pdoc-cdoc-post-pre" *what `['product-doc' ~] `['core-doc' ~]]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-pdoc-cdoc-post-post])
+      !>  (get-arm-dox ~[%arm-pdoc-cdoc-post-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       ["arm-pdoc-cdoc-post-post" *what `['product-doc' ~] `['core-doc' ~]]
+    ::
+      !>  (get-arm-dox ~[%arm-pdoc-cdoc-post-post])
   ==
 ::
 ++  test-adoc-pdoc-cdoc
   ;:  weld
     %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-pre-pre-pre])
-    ::
       !>  ^-  arm-dox
       :^    "arm-adoc-pdoc-cdoc-pre-pre-pre"
           `['arm-doc' ~]
         `['product-doc' ~]
       `['core-doc' ~]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-post-pre-pre])
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-pre-pre-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       :^    "arm-adoc-pdoc-cdoc-post-pre-pre"
           `['arm-doc' ~]
         `['product-doc' ~]
       `['core-doc' ~]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-pre-post-pre])
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-post-pre-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       :^    "arm-adoc-pdoc-cdoc-pre-post-pre"
           `['arm-doc' ~]
         `['product-doc' ~]
       `['core-doc' ~]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-pre-pre-post])
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-pre-post-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       :^    "arm-adoc-pdoc-cdoc-pre-pre-post"
           `['arm-doc' ~]
         `['product-doc' ~]
       `['core-doc' ~]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-post-post-pre])
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-pre-pre-post])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       :^    "arm-adoc-pdoc-cdoc-post-post-pre"
           `['arm-doc' ~]
         `['product-doc' ~]
       `['core-doc' ~]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-post-pre-post])
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-post-post-pre])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       :^    "arm-adoc-pdoc-cdoc-post-pre-post"
           `['arm-doc' ~]
         `['product-doc' ~]
       `['core-doc' ~]
     ::
-    %+  expect-eq
-      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-pre-post-post])
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-post-pre-post])
     ::
+    %+  expect-eq
       !>  ^-  arm-dox
       :^    "arm-adoc-pdoc-cdoc-pre-post-post"
           `['arm-doc' ~]
         `['product-doc' ~]
       `['core-doc' ~]
+    ::
+      !>  (get-arm-dox ~[%arm-adoc-pdoc-cdoc-pre-post-post])
   ==
 ::
 ++  test-core
   %+  expect-eq
-    !>  (get-core-dox ~[%core-test])
-  ::
     !>  ^-  core-dox
     ["core-test" `['core-summary' ~[~[[%.y 'core-description']]]]]
+  ::
+    !>  (get-core-dox ~[%core-test])
 ::
 ++  test-chapter
   %+  expect-eq
-    !>  (get-chapter-dox ~[%core-test %chapter-test])
-  ::
     !>  ^-  chapter-dox
     ["chapter-test" `['chapter-summary' ~[~[[%.y 'chapter-description']]]]]
+  ::
+    !>  (get-chapter-dox ~[%core-test %chapter-test])
 ::
 --
