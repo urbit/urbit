@@ -49,7 +49,6 @@
             docs=what
             sut=type
             con=coil
-            chapter-id=term
         ==
     ==
   ::
@@ -102,7 +101,7 @@
     ?~  tom
       (make-arm i.t.topics sut ~)
     ?~  t.t.topics
-      `[%chapter (trip i.t.topics) p.u.tom sut q.sut i.t.topics]
+      `[%chapter (trip i.t.topics) p.u.tom sut q.sut]
     (make-arm i.t.t.topics sut tom)
   ::
       [%face *]
@@ -377,10 +376,10 @@
 ::
 :>    returns an overview of the arms in a specific chapter
 ++  arms-in-chapter
-  |=  [sut=type con=coil chapter-id=term]
+  |=  [sut=type con=coil name=tape]
   ^-  overview
-  =/  chapter-tome  (~(got by q.r.con) chapter-id)
-  (sort-overview (arms-as-overview q.chapter-tome sut))
+  =/  tom=tome  (~(got by q.r.con) (crip name))
+  (sort-overview (arms-as-overview q.tom sut))
 ::
 :>    sort items in an overview in alphabetical order
 ++  sort-overview
@@ -480,17 +479,13 @@
   ==
 ::
 ++  print-chapter
-  |=  [name=tape doc=what sut=type con=coil chapter-id=term]
+  |=  [name=tape doc=what sut=type con=coil]
   ^-  tang
   ~?  >  debug  %print-chapter
   ;:  weld
     (print-header name doc)
   ::
-    ::?~  doc
-    ::  ~
-    ::(print-sections q.u.doc)
-  ::
-    =+  arms=(arms-in-chapter sut con chapter-id)
+    =+  arms=(arms-in-chapter sut con name)
     ?~  arms
       ~
     (print-overview [%header `['arms:' ~] arms]~)
