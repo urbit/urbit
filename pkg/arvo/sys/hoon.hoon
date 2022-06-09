@@ -13270,15 +13270,10 @@
       %+  knee  [p=*term q=*hoon]  |.  ~+
       %+  cook
         |=  [a=whit b=term c=whit d=hoon]
-        ?~  boy.a  :: no arm docs
-          ?~  boy.c  :: no product docs
-            [b d]
-          ::  product docs, no arm docs
-          [b [%note help+`[u.boy.c] d]]
-        ?~  boy.c  :: arm docs, no product docs
-          [b [%note help+[[%funk b]~ u.boy.a] d]]
-        :: arm docs and product docs
-        [b [%note help+[[%funk b]~ u.boy.a] [%note help+`[u.boy.c] d]]]
+        =/  e=whit  (glom a c)
+        ?~  boy.e  ::  no arm docs
+          [b d]
+        [b [%note help+[[%funk b]~ u.boy.e] d]]
       ;~  pose
         ;~  plug
           apex:docs
