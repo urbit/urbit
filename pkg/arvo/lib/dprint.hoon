@@ -327,7 +327,7 @@
   =/  doc-two=(unit help)
     ?+    sut  ~
         [%hint *]
-      (help-from-hint p.p.sut)
+      (help-from-hint q.sut)
         [%hold *]
       ~?  >  debug  %doc-two-hold
       ~
