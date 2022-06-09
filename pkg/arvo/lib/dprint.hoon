@@ -127,26 +127,13 @@
      [%hint *]
    ::  If we found a help hint, it is wrapping a type for which we might want to
    ::  produce an item, so we should peek inside of it to see what type it is
-   ::  and grab the docs from +signify
-   ::
-   ::  check to see if type inside the hint is a match
-   ::  TODO: should i be trying to match both types in the hint?
-   ::  TODO: actually hints can be nested, if e.g. an arm has a product with a hint, whose
-   ::  product also has a hint. so this won't actually work for nested hints as written
-   ::
-   ::  this should only be doing something for cores right now. you run into an
-   ::  arm's name before you run into its docs
+   ::  and grab the docs from the hint if so
    ::
    =/  shallow-match=(unit item)  $(sut q.sut, rec %.n)
    ?~  shallow-match
      ::  hint isn't wrapping a match, so step through it
      $(sut q.sut, rec %.y)
-   ::  hint was wrapping a match, so signify the type and emblazon it
-  :: =/  wat=what  (unwrap-hint sut)
    `(emblazon u.shallow-match (unwrap-hint sut))
-   ::=/  uitm=(unit item)  (signify q.sut)
-   ::?~  uitm
-   ::  ~
   ::
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
   ::
@@ -204,7 +191,8 @@
       [%hint *]
     =*  rest-type  $(sut q.sut)
     ::  check to see if it is a help hint
-    ?>  ?=(%help -.q.p.sut)
+    ?.  ?=(%help -.q.p.sut)
+      ~
     `[%view [%header `crib.p.q.p.sut (item-as-overview rest-type)]~]
     ::
       [%hold *]  $(sut (~(play ut p.sut) q.sut))
@@ -216,7 +204,6 @@
 ++  unwrap-hint
   |=  sut=type
   ^-  what
-  ::  should I care what the type in the (pair type note) is?
   ?.  ?=([%hint *] sut)
     ~?  >  debug  %not-hint-type
     ~
@@ -249,44 +236,14 @@
     $(tomes t.tomes)
   `u.gen
 ::
-:>    gets the documentation inside of a hint, or a hold that plays to a hint
-++  what-from-hint
-  |=  sut=type
-  ^-  what
-  ?-    sut
-   ::   ~?  >  debug  %what-from-hint-miss  ~
-      %noun  ~?  >>  debug  %what-from-hint-noun-miss  ~
-      %void  ~?  >>  debug  %what-from-hint-void-miss  ~
-  ::
-      [%core *]
-    ~?  >>  debug  %what-from-hint-core-miss  ~
-  ::
-      [%cell *]
-    ~?  >>  debug  %what-from-hint-cell-miss  ~
-  ::
-      [%face *]
-    ~?  >>  debug  %what-from-hint-face-miss  ~
-  ::
-      [%fork *]
-    ~?  >>  debug  %what-from-hint-fork-miss  ~
-  ::
-      [%atom *]
-    ~?  >>  debug  %what-from-hint-atom-miss  ~
-  ::
-      [%hold *]
-    ~?  >>  debug  %what-from-hint-hold  $(sut (~(play ut p.sut) q.sut))
-  ::
-      [%hint *]
-    ~?  >>  debug  :-  %what-from-hint-hint  -.q.p.sut
-    ?:  ?=(%help -.q.p.sut)  `crib.p.q.p.sut  ~
-  ==
 :>    gets the $help from a %help %hint type and returns it as a unit
 ++  help-from-hint
   |=  sut=type
   ^-  (unit help)
   ?+    sut  ~
       [%hold *]
-    ~?  >>  debug  %help-from-hold  $(sut (~(play ut p.sut) q.sut))
+    ~?  >>  debug  %help-from-hold
+    $(sut (~(play ut p.sut) q.sut))
   ::
       [%hint *]
     ~?  >>  debug  %help-from-hint
@@ -320,35 +277,22 @@
     :: link on doc-one doesnt match arm name, so that means its calling a
     :: different arm and trying to use its docs. don't let it
     ~
-  ::  technically doc-two doesn't need to be a help, i could just grab the what
-  ::  directly since we aren't testing it to see if its an arm-doc, but it makes
-  ::  the code more confusing to use a different structure.
   ~?  >  debug  :-  %doc-one  doc-one
   =/  doc-two=(unit help)
-    ?+    sut  ~
-        [%hint *]
-      (help-from-hint q.sut)
-        [%hold *]
-      ~?  >  debug  %doc-two-hold
+    ?.  ?=([%hint *] sut)
       ~
-    ==
+    (help-from-hint q.sut)
   ?~  doc-two
     ~?  >  debug  %doc-two-empty
-    ?~  links.u.doc-one
-      :: if links are empty, doc-one is a product-doc
-      ~?  >  debug  %link-empty
-      [~ [~ `crib.u.doc-one]]
-    ?:  =([%funk name] i.links.u.doc-one)
-      :: if links are non-empty, check that the link is for the arm
+    :: if links are non-empty, check that the link is for the arm
+    ?:  =([%funk name] -.links.u.doc-one)
       ~?  >  debug  %link-match
       [~ [`crib.u.doc-one ~]]
     ~?  >  debug  %link-doesnt-match-arm
     ::  this can happen if +bar calls +foo which has doccords
     [~ [`crib.u.doc-one ~]]
-  ::  doc-two is non-empty. make sure that doc-one is an arm-doc
-  ?~  links.u.doc-one
-    ~?  >  debug  %doc-one-empty-link
-    [~ [`crib.u.doc-one `crib.u.doc-two]]
+  ::  doc-two is non-empty. make sure that doc-one is an arm-doc for this arm
+  ?>  =([%funk name] -.links.u.doc-one)
   [~ [`crib.u.doc-one `crib.u.doc-two]]
 ::
 :>    grabs the docs for an arm.
@@ -399,9 +343,11 @@
     =+  carm=(find-arm-in-coil %$ q.sut)
     ?~  carm  ~?  >  debug  %empty-carm  ~
     ~?  >  debug  %found-default-arm
-    ::~?  >>>  debug  u.carm
     =+  carm-type=(~(play ut sut) u.carm)
-    (what-from-hint carm-type)
+    =/  hel=(unit help)  (help-from-hint carm-type)
+    ?~  hel
+      ~
+    `what``crib.u.hel
   --
 ::
 :>    returns an overview for a cores arms and chapters
