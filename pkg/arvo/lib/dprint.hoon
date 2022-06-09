@@ -1,4 +1,4 @@
-::  A library for printing doccords
+:>    a library for printing doccords
 =/  debug  |
 =>
   |%  %dprint-types
