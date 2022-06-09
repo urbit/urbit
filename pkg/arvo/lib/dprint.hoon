@@ -1,7 +1,7 @@
 ::  A library for printing doccords
 =/  debug  |
 =>
-  |%
+  |%  %dprint-types
   :>    an overview of all named things in the type.
   :>
   :>  each element in the overview list is either a documentation for a sublist
