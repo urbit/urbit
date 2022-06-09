@@ -737,7 +737,8 @@
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-edit-busy
         =^  lic  say  (~(transmit sole say) dat)
-        (dy-diff %mor [%det lic] [%bel ~] ~)
+        =/  tip=@t  'dojo: busy (press backspace to abort)'
+        (dy-diff %mor [%det lic] [%bel ~] [%tan [tip ~]] ~)
       =>  .(per `dat)
       =/  res  (mule |.((slam u.pro !>((tufa buf.say)))))
       ?:  ?=(%| -.res)
