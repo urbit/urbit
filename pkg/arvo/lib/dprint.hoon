@@ -86,36 +86,24 @@
     lhs
   ::
       [%core *]
-    ::  cores don't have any doc structure inside of them. i probably need to
-    ::  check that they're wrapped with a %hint type. so this just looks for
-    ::  docs on the arms.
-    ::
+    ::  checks for a core name match, then tries to find a chapter, arm, or
+    ::  arm in a chapter depending on how many topics remain. will still work
+    ::  if core is unnamed
     =+  core-name=p.p.q.sut
     ?:  !=(`i.topics core-name)
-      ::  the current topic isn't the top level core name
-      ::  else, look for an arm matching the name
-      =+  arm=(find-arm-in-coil i.topics q.sut)
+      =+  arm=(make-arm i.topics sut ~)
       ?~  arm
-        ::  the current topic is not an arm in the core, recurse into sut
         ?:(rec $(sut p.sut) ~)
-      :: else, return the arm as docs
-      =+  [adoc pdoc cdoc]=(all-arm-docs u.arm sut (trip i.topics))
-      `[%arm (trip i.topics) adoc pdoc cdoc u.arm p.sut]
-    ::  the core name matches. check to see if there are any topics left
+      arm
     ?~  t.topics
-      ::  we matched the core name and have no further topics. return the core
       =*  compiled-against  (signify p.sut)
       `[%core (trip i.topics) *what sut q.sut compiled-against]
-    ::  we matched the core name, but there are still topics left
-    ::  check to see if one the chapters matches the next topic
-    =+  chapters=~(key by q.r.q.sut)
-    ?.  (~(has in chapters) i.t.topics)
-      ::  the core name matched, but nothing inside of it did. return null
-      ~
-    ::  if there is a chapter with a name matching the topic, return chapter
-    ::  as a (unit item)
-    =/  docs=what  p:(~(got by q.r.q.sut) i.t.topics)
-    `[%chapter (trip i.t.topics) docs sut q.sut i.t.topics]
+    =/  tom=(unit tome)  (~(get by q.r.q.sut) i.t.topics)
+    ?~  tom
+      (make-arm i.t.topics sut ~)
+    ?~  t.t.topics
+      `[%chapter (trip i.t.topics) p.u.tom sut q.sut i.t.topics]
+    (make-arm i.t.t.topics sut tom)
   ::
       [%face *]
     ?.  ?=(term p.sut)
@@ -169,6 +157,20 @@
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
   ::
   ==
+  ++  make-arm
+    |=  [name=term sut=type tom=(unit tome)]
+    ^-  (unit item)
+    ?>  ?=([%core *] sut)
+    =+  arm=(find-arm-in-coil name q.sut)
+    ?~  arm
+      ~
+    =+  [adoc pdoc cdoc]=(all-arm-docs u.arm sut (trip name))
+    ?~  tom
+      `[%arm (trip name) adoc pdoc cdoc u.arm p.sut]
+    ?.  (~(has by q.u.tom) name)
+      ~
+    `[%arm (trip name) adoc pdoc cdoc u.arm p.sut]
+  --
 ::
 :>    changes a type into a item
 :>
