@@ -68,6 +68,7 @@
 ++  find-item-in-type
   ::  TODO make this work with a list of topics
   |=  [topics=(list term) sut=type rec=?]
+  |^
   ^-  (unit item)
   ~?  >  debug  topics
   ?~  topics
