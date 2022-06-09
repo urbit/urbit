@@ -97,8 +97,7 @@
         ?:(rec $(sut p.sut) ~)
       arm
     ?~  t.topics
-      =*  compiled-against  (signify p.sut)
-      `[%core (trip i.topics) *what sut q.sut compiled-against]
+      (signify sut)
     =/  tom=(unit tome)  (~(get by q.r.q.sut) i.t.topics)
     ?~  tom
       (make-arm i.t.topics sut ~)
@@ -108,17 +107,11 @@
   ::
       [%face *]
     ?.  ?=(term p.sut)
-      ::  TODO: handle tune case
-      ~
+      ~  ::  TODO: handle tune case
     ?.  =(i.topics p.sut)
-      ::  this face has a name, but not the one we're looking for
       ~
     ?~  t.topics
-      ::  we found a match, and there are no further topics
-      ::  this might have been wrapped with a hint type, that case will handle
-      ::  docs for this face
-      `[%face (trip p.sut) *what (signify q.sut)]
-    ::  the first topic matched the face, but there are more left.
+      (signify sut)
     ?:(rec $(topics t.topics, sut q.sut) ~)
   ::
       [%fork *]
@@ -158,6 +151,7 @@
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
   ::
   ==
+  ::
   ++  make-arm
     |=  [name=term sut=type tom=(unit tome)]
     ^-  (unit item)
@@ -173,7 +167,7 @@
     `[%arm (trip name) adoc pdoc cdoc u.arm p.sut]
   --
 ::
-:>    changes a type into a item
+:>    changes a type into a item without docs
 :>
 :>  this does not actually assign the docs, since they usually come from a hint
 :>  wrapping the type.
@@ -181,7 +175,7 @@
   |=  sut=type
   ^-  (unit item)
   ?-    sut
-  ::
+    ::
       [%atom *]  ~
     ::
       [%cell *]
