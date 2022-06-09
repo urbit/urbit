@@ -342,8 +342,8 @@
   ::  read header; first bit is reserved
   ::
   =/  type     (cut 0 [2 2] header)
-  ?.  =(| type)
-    ~|  %ames-not-ames  !!
+  ::  ?.  =(| type)
+  ::    ~|  %ames-not-ames  !!
   ::
   =/  version  (cut 0 [4 3] header)
   ?.  =(protocol-version version)
@@ -691,14 +691,8 @@
 ::    sponsees: lanes for sponsees
 ::
 +$  relay-state
-  $:  pending=(map request [(pair lane (unit lane)) expiry=@da])
+  $:  pending=(map ship [(pair lane (unit lane)) expiry=@da])
       sponsees=(map ship [lane expiry=@da])
-  ==
-::  $request: pending request
-::
-+$  request
-  $%  [%ames sndr=ship rcvr=ship]
-      [%scry rcvr=ship =path]
   ==
 ::  $bug: debug printing configuration
 ::
@@ -1520,7 +1514,7 @@
       ?&  =(~ next.packet)
           =/  val  (~(get by sponsees.relay-state) sndr.packet)
           =(~ val)
-          =(our (sein:title our now sndr.packet))
+          =(our (^sein:title sndr.packet))
       ==
     =?  sponsees.relay-state
       spons
@@ -1534,9 +1528,8 @@
       (emit duct %pass wire %b %wait (add ~s30 now))
     :: add the lane to our pending map
     ::
-    =*  inv-req  [%ames `dyad`[rcvr.packet sndr.packet]]
     =*  pend
-      =/  val  (~(get by pending.relay-state) inv-req)
+      =/  val  (~(get by pending.relay-state) sndr.packet)
       ?~  val  %.y
       =/  next  q.-.u.val
       ?~  next
@@ -1545,7 +1538,7 @@
     =?  pending.relay-state
       pend
       ^+  pending.relay-state
-      (~(put by pending.relay-state) [inv-req [[lane ~] (add ~s30 now)]])
+      (~(put by pending.relay-state) [sndr.packet [[lane ~] (add ~s30 now)]])
     ::  send 30s expiration timer to behn
     ::
     =?  event-core
@@ -1557,14 +1550,14 @@
     ::
     =?    pending.relay-state
         ::
-        =/  val  (~(got by pending.relay-state) inv-req)
+        =/  val  (~(got by pending.relay-state) sndr.packet)
         =/  next  q.-.val
         &(=(~ next) !=(~ next.packet))
       ::
       ^+  pending.relay-state
       ?~  next.packet  !!
       %-  ~(put by pending.relay-state)
-      [inv-req [[lane `[%.n u.next.packet]] expiry=(add ~s30 now)]]
+      [sndr.packet [[lane `[%.n u.next.packet]] expiry=(add ~s30 now)]]
     ::
     ?:  =(our sndr.packet)
       event-core
@@ -1735,7 +1728,7 @@
     ?:  ?=([%pending @ @ ~] wire)
       =/  res  (parse-pending-timer-wire wire)
       =*  pending  pending.relay-state.ames-state
-      =/  pen  (~(get by pending) [%ames res])
+      =/  pen  (~(get by pending) rcvr.res)
       ?~  pen  event-core
       ?:  (gth expiry.u.pen now)
         event-core
@@ -2125,7 +2118,7 @@
       =/  dest
         ^-  (pair lane (unit lane))
         =/  rel
-          (~(get by pending) [%ames `dyad`[sndr.packet rcvr.packet]])
+          (~(get by pending) rcvr.packet)
         ?~  rel
           =/  sponsee-lane
             |^
