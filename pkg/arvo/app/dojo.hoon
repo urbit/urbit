@@ -532,10 +532,11 @@
       ?:  ?=([%show %3] -.mad)
         (dy-rash %tan (dy-show-source q.mad) ~)
       ?:  ?=(%brev -.mad)
+        ?:  ?=(?(%eny %now %our) p.mad)
+          (dy-rash %tan (cat 3 p.mad ' is immutable') ~)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  .
-          $?(%eny %now %our)  !!
           %lib  .(lib ~)
           %sur  .(sur ~)
           %dir  .(dir [[our.hid %base ud+0] /])
@@ -543,13 +544,12 @@
       =+  cay=(~(got by rez) p.q.mad)
       ?-    -.p.mad
           %verb
+        ?:  ?=(?(%eny %now %our) p.p.mad)
+          (dy-rash %tan (cat 3 p.p.mad ' is immutable') ~)
         =.  var  (~(put by var) p.p.mad cay)
         ~|  bad-set+[p.p.mad p.q.cay]
         =<  dy-amok
         ?+  p.p.mad  .
-            %eny  ~|(%entropy-is-eternal !!)
-            %now  ~|(%time-is-immutable !!)
-            %our  ~|(%self-is-immutable !!)
             %lib
           %_    .
               lib
