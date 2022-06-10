@@ -568,6 +568,9 @@
                       ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
                       ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
                       pax
+                  ?:  =(~ .^((list path) %ct pax))
+                    =-  +>(..dy (he-diff %tan - ~))
+                    rose+[" " `~]^~[leaf+"dir does not exist:" (smyt pax)]
                   =.  dir  (need (de-beam pax))
                   =-  +>(..dy (he-diff %tan - ~))
                   rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
