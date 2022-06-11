@@ -885,8 +885,11 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     //
     {
       const size_t siz_i =
-      #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
+      #if defined(U3_OS_mingw)
         0xf00000000;
+      // 500 GiB is as large as musl on aarch64 wants to allow
+      #elif (defined(U3_CPU_aarch64) && defined(U3_OS_linux))
+        0x7d00000000;
       #else
         0x10000000000;
       #endif
