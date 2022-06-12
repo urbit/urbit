@@ -32,7 +32,7 @@ versioned_http_archive(
 
 versioned_http_archive(
     name = "bazel-zig-cc",
-    sha256 = "",
+    sha256 = "defdb86f90dbaa1101b3b6cd74ed9a1e38353db4d33560878f3307c1f32838d8",
     strip_prefix = "bazel-zig-cc-{version}",
     url = "https://git.sr.ht/~motiejus/bazel-zig-cc/archive/{version}.tar.gz",
     version = "v0.8.0",

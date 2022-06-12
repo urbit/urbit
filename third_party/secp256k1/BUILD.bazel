@@ -3,6 +3,7 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 cc_library(
     name = "secp256k1",
     srcs = glob(
+        allow_empty = False,
         include = [
             "src/**/*.c",
         ],
@@ -26,7 +27,9 @@ cc_library(
         "include/**/*.h",
         "src/**/*.h",
         "src/**/*.c",
-    ]),
+    ],
+allow_empty = False,
+                ),
     includes = [
         "include",
         "src",

@@ -14,7 +14,7 @@ cc_library(
     ] + glob([
         "src/blake2/*.h",
         "src/blake2/*.c",
-    ]),
+    ], allow_empty = False),
     hdrs = [
         "include/argon2.h",
         "src/blake2/blake2.h",

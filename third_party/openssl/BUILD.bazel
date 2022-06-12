@@ -6,7 +6,7 @@ exports_files(["ca-bundle.crt"])
 
 filegroup(
     name = "srcs",
-    srcs = glob(["**"]),
+    srcs = glob(["**"], allow_empty = False,),
 )
 
 configure_make(

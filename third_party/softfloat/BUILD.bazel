@@ -5,7 +5,7 @@ load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux_aarch64")
 
 filegroup(
     name = "srcs",
-    srcs = glob(["**"]),
+    srcs = glob(["**"], allow_empty = False),
 )
 
 make(

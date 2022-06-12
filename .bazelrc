@@ -3,22 +3,26 @@
 # https://docs.bazel.build/versions/master/skylark/performance.html#memory-profiling
 startup --host_jvm_args=-Xmx3g
 
-build --incompatible_disallow_empty_glob
+# Disabled due to an issue with bazel-zig-cc that should be filed upstream.
+# Instead, glob(allow_empty = False,) needs to be sprinkled everywhere.
+# build --incompatible_disallow_empty_glob
 build --verbose_failures
-build --java_runtime_version=remotejdk_11
-build --tool_java_runtime_version=remotejdk_11
 
 # Allow new toolchains to be registered.
-build --incompatible_strict_action_env
+build --incompatible_enable_cc_toolchain_resolution
 
 # Ensure we use only hermetic toolchains and not what is discovered on PATH.
-build --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+# build --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 
-# # Pass PATH, CC, CXX and LLVM_CONFIG variables from the environment.
-# build --action_env=CC --host_action_env=CC
-# build --action_env=CXX --host_action_env=CXX
-# build --action_env=LLVM_CONFIG --host_action_env=LLVM_CONFIG
-# build --action_env=PATH --host_action_env=PATH
+# Prevent host ENV from being exposed to bazel, aside from what is explicitly
+# allowed via --action_env=...
+build --incompatible_strict_action_env
+
+# Pass PATH, CC, CXX and LLVM_CONFIG variables from the environment.
+build --action_env=CC --host_action_env=CC
+build --action_env=CXX --host_action_env=CXX
+build --action_env=LLVM_CONFIG --host_action_env=LLVM_CONFIG
+build --action_env=PATH --host_action_env=PATH
 
 # Enable position independent code (this is the default on macOS and Windows)
 # Workaround for https://github.com/bazelbuild/rules_foreign_cc/issues/421
