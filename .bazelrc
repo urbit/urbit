@@ -10,18 +10,19 @@ build --verbose_failures
 
 # Prevent host ENV from being exposed to bazel, aside from what is explicitly
 # allowed via --action_env=...
-build --incompatible_strict_action_env
+build:hermetic --incompatible_strict_action_env
 
 # Pass PATH, CC, CXX and LLVM_CONFIG variables from the environment.
-build --action_env=CC --host_action_env=CC
-build --action_env=CXX --host_action_env=CXX
-build --action_env=LLVM_CONFIG --host_action_env=LLVM_CONFIG
-build --action_env=PATH --host_action_env=PATH
+build:hermetic --action_env=CC --host_action_env=CC
+build:hermetic --action_env=CXX --host_action_env=CXX
+build:hermetic --action_env=LLVM_CONFIG --host_action_env=LLVM_CONFIG
+build:hermetic --action_env=PATH --host_action_env=PATH
 
 # Ensure we use only hermetic toolchains and not what is discovered on PATH.
 # build --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 
 # Setup zig-cc toolchains
+build:zig-cc --config=hermetic
 build:zig-cc --incompatible_enable_cc_toolchain_resolution
 build:zig-cc --extra_toolchains @zig_sdk//toolchain:x86_64-linux-musl
 build:zig-cc --extra_toolchains @zig_sdk//toolchain:aarch64-linux-musl
