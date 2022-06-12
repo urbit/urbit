@@ -16,7 +16,12 @@ configure_make(
     configure_in_place = True,
     configure_options = select({
         "@urbit//:linux-aarch64": ["--host=aarch64"],  # Why --host, not --target?
-        "//conditions:default": [],
+         "@urbit//:macos": ["ARFLAGS=r"],
+         "//conditions:default": [],
+        }),
+    env = select({
+        "@urbit//:macos": {"AR": ""},
+        "//conditions:default": {},
     }),
     lib_source = ":srcs",
     out_static_libs = select({
