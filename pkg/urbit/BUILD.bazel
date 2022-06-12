@@ -35,7 +35,10 @@ EOF
 
 filegroup(
     name = "includes",
-    srcs = [":include/config.h"] + glob(["include/**/*.h"], allow_empty = False,),
+    srcs = [":include/config.h"] + glob(
+        ["include/**/*.h"],
+        allow_empty = False,
+    ),
 )
 
 COMMON_COPTS = [
@@ -76,7 +79,10 @@ cc_library(
 
 cc_library(
     name = "jets",
-    srcs = [":includes"] + glob(["jets/**/*.c"], allow_empty = False),
+    srcs = [":includes"] + glob(
+        ["jets/**/*.c"],
+        allow_empty = False,
+    ),
     copts = COMMON_COPTS,
     includes = ["include"],
     local_defines = LOCAL_DEFINES,
@@ -93,7 +99,10 @@ cc_library(
 
 cc_library(
     name = "noun",
-    srcs = [":includes"] + glob(["noun/**/*.c"], allow_empty = False),
+    srcs = [":includes"] + glob(
+        ["noun/**/*.c"],
+        allow_empty = False,
+    ),
     copts = COMMON_COPTS,
     includes = ["include"],
     local_defines = LOCAL_DEFINES,
@@ -112,7 +121,10 @@ cc_library(
 
 cc_library(
     name = "ur",
-    srcs = [":includes"] + glob(["ur/**/*.c"], allow_empty = False),
+    srcs = [":includes"] + glob(
+        ["ur/**/*.c"],
+        allow_empty = False,
+    ),
     copts = COMMON_COPTS,
     includes = ["include"],
     local_defines = LOCAL_DEFINES,
@@ -125,7 +137,10 @@ cc_library(
     srcs = [
         ":includes",
         ":ivory-impl",
-    ] + glob(["vere/**/*.c"], allow_empty = False),
+    ] + glob(
+        ["vere/**/*.c"],
+        allow_empty = False,
+    ),
     copts = COMMON_COPTS,
     defines = LOCAL_DEFINES,
     includes = ["include"],

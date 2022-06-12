@@ -5,7 +5,10 @@ load("@urbit//third_party/softfloat:linux-aarch64.bzl", "linux_aarch64")
 
 filegroup(
     name = "srcs",
-    srcs = glob(["**"], allow_empty = False),
+    srcs = glob(
+        ["**"],
+        allow_empty = False,
+    ),
 )
 
 make(
@@ -50,5 +53,5 @@ alias(
         "@urbit//:linux-x86_64": ":softfloat-make",
         "@urbit//:linux-aarch64": ":softfloat-linux-aarch64",
     }),
-        visibility = ["//visibility:public"],
+    visibility = ["//visibility:public"],
 )

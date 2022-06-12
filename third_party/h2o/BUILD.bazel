@@ -40,7 +40,10 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 
 filegroup(
     name = "srcs",
-    srcs = glob(["**"], allow_empty = False),
+    srcs = glob(
+        ["**"],
+        allow_empty = False,
+    ),
 )
 
 filegroup(
@@ -230,12 +233,13 @@ cc_library(
 
 cc_library(
     name = "h2o",
-    srcs = glob(allow_empty = False,
+    srcs = glob(
         include = [
             "include/**/*.h",
             "lib/**/*.h",
             "lib/**/*.c",
         ],
+        allow_empty = False,
         exclude = [
             "lib/websocket.c",
             "lib/handler/compress/brotli.c",

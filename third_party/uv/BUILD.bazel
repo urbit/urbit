@@ -2,12 +2,14 @@ load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 
 filegroup(
     name = "srcs",
-    srcs = glob(["**"], allow_empty = False),
+    srcs = glob(
+        ["**"],
+        allow_empty = False,
+    ),
 )
 
 cmake(
     name = "uv",
-    visibility = ["//visibility:public"],
     cache_entries = {
         "CMAKE_BUILD_TYPE": "Release",
         "BUILD_SHARED_LIBS": "OFF",
@@ -22,4 +24,5 @@ cmake(
         ],
         "//conditions:default": ["libuv_a.a"],
     }),
+    visibility = ["//visibility:public"],
 )

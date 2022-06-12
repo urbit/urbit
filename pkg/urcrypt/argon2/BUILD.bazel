@@ -11,10 +11,13 @@ cc_library(
         "src/core.h",
         "src/encoding.h",
         "src/thread.h",
-    ] + glob([
-        "src/blake2/*.h",
-        "src/blake2/*.c",
-    ], allow_empty = False),
+    ] + glob(
+        [
+            "src/blake2/*.h",
+            "src/blake2/*.c",
+        ],
+        allow_empty = False,
+    ),
     hdrs = [
         "include/argon2.h",
         "src/blake2/blake2.h",

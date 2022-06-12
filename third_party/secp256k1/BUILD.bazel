@@ -3,10 +3,10 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 cc_library(
     name = "secp256k1",
     srcs = glob(
-        allow_empty = False,
         include = [
             "src/**/*.c",
         ],
+        allow_empty = False,
         exclude = [
             "src/bench.c",
             "src/bench_ecdh.c",
@@ -23,13 +23,14 @@ cc_library(
             "src/valgrind_ctime_test.c",
         ],
     ),
-    hdrs = glob([
-        "include/**/*.h",
-        "src/**/*.h",
-        "src/**/*.c",
-    ],
-                allow_empty = False,
-                ),
+    hdrs = glob(
+        [
+            "include/**/*.h",
+            "src/**/*.h",
+            "src/**/*.c",
+        ],
+        allow_empty = False,
+    ),
     includes = [
         "include",
         "src",
