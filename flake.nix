@@ -26,7 +26,6 @@
             autogen
             automake
             libtool
-            gmp
           ];
         };
       });

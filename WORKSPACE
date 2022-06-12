@@ -32,10 +32,10 @@ versioned_http_archive(
 
 versioned_http_archive(
     name = "bazel-zig-cc",
-    sha256 = "cd2629843fe4ba20cf29e1d73cc02559afba640f884e519b6a194a35627cbbf3",
+    sha256 = "",
     strip_prefix = "bazel-zig-cc-{version}",
     url = "https://git.sr.ht/~motiejus/bazel-zig-cc/archive/{version}.tar.gz",
-    version = "v0.7.3",
+    version = "v0.8.0",
 )
 
 #
@@ -89,6 +89,14 @@ versioned_http_archive(
     url = "https://gmplib.org/download/gmp/gmp-{version}.tar.xz",
     version = "6.2.1",
 )
+
+# versioned_http_archive(
+#     name = "gmp",
+#     sha256 = "677d6857060147ccd008bd7440ce730047f89865985f8e47c6e2dc84859c49f5",
+#     strip_prefix = "bazelify-gmp-{version}",
+#     url = "https://github.com/robin-thomas/bazelify-gmp/archive/{version}.tar.gz",
+#     version = "bb4881b35e6864c90493980d035e1d984cafd093",
+# )
 
 versioned_http_archive(
     name = "secp256k1",
