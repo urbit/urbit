@@ -141,10 +141,10 @@ versioned_http_archive(
 versioned_http_archive(
     name = "uv",
     build_file = "//third_party/uv:BUILD.bazel",
-    sha256 = "e91614e6dc2dd0bfdd140ceace49438882206b7a6fb00b8750914e67a9ed6d6b",
+    sha256 = "1cd5191e96bc9b813e938aaa0514b23f4dc7ebad08353d73cbc702ba09136f39",
     strip_prefix = "libuv-{version}",
-    url = "https://github.com/libuv/libuv/archive/refs/tags/v{version}.tar.gz",
-    version = "1.44.1",
+    url = "https://github.com/libuv/libuv/archive/{version}.tar.gz",
+    version = "8bcd689c048af5aab26842ac5ff903fa3192d57c",
 )
 
 versioned_http_archive(
