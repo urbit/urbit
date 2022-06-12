@@ -398,7 +398,7 @@ cc_library(
     ] + select({
         "@urbit//:windows": [],
         "//conditions:default": [
-            "@openssl//:ssl",
+            "@openssl",
         ],
     }),
 )
