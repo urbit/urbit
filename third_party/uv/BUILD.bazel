@@ -24,5 +24,14 @@ cmake(
         ],
         "//conditions:default": ["libuv_a.a"],
     }),
+    linkopts = select({
+        "@urbit//:macos": [
+            "-Wl,-framework",
+            "-Wl,CoreFoundation",
+            "-Wl,-framework",
+            "-Wl,CoreServices",
+        ],
+        "//conditions:default": [],
+    }),
     visibility = ["//visibility:public"],
 )
