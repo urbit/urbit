@@ -155,6 +155,7 @@
         struct {                            //  escape code control
           c3_o    ape;                      //  escape received
           c3_o    bra;                      //  bracket or O received
+          c3_y    seq;                      //  vt sequence
         } esc;
 
         struct {
