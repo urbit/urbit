@@ -26,8 +26,8 @@ cmake(
     }),
     linkopts = select({
         "@urbit//:macos": [
-            "-Wl,-framework",
-            "-Wl,CoreFoundation",
+            # "-Wl,-framework",
+            # "-Wl,CoreFoundation",
             "-Wl,-framework",
             "-Wl,CoreServices",
         ],
