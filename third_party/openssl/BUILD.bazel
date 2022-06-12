@@ -25,6 +25,7 @@ configure_make(
             "--libdir=lib",
         ] + select({
             "@urbit//:linux-aarch64": ["linux-aarch64"],
+            "@urbit//:macos": ["ARFLAGS=r"],
             "//conditions:default": [],  # _DL_ENDIAN, etc.
         }),
     env = select({
