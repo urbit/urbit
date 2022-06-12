@@ -28,7 +28,7 @@ cc_library(
         "src/**/*.h",
         "src/**/*.c",
     ],
-allow_empty = False,
+                allow_empty = False,
                 ),
     includes = [
         "include",

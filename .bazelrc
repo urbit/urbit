@@ -8,12 +8,6 @@ startup --host_jvm_args=-Xmx3g
 # build --incompatible_disallow_empty_glob
 build --verbose_failures
 
-# Allow new toolchains to be registered.
-build --incompatible_enable_cc_toolchain_resolution
-
-# Ensure we use only hermetic toolchains and not what is discovered on PATH.
-# build --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
-
 # Prevent host ENV from being exposed to bazel, aside from what is explicitly
 # allowed via --action_env=...
 build --incompatible_strict_action_env
@@ -24,22 +18,29 @@ build --action_env=CXX --host_action_env=CXX
 build --action_env=LLVM_CONFIG --host_action_env=LLVM_CONFIG
 build --action_env=PATH --host_action_env=PATH
 
+# Allow new toolchains to be registered.
+build --incompatible_enable_cc_toolchain_resolution
+
+# Ensure we use only hermetic toolchains and not what is discovered on PATH.
+# build --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+
+build --extra_toolchains @zig_sdk//toolchain:x86_64-linux-musl
+build --extra_toolchains @zig_sdk//toolchain:aarch64-linux-musl
+build --extra_toolchains @zig_sdk//toolchain:x86_64-macos-gnu
+build --extra_toolchains @zig_sdk//toolchain:aarch64-macos-gnu
+
 # Enable position independent code (this is the default on macOS and Windows)
 # Workaround for https://github.com/bazelbuild/rules_foreign_cc/issues/421
 build:linux --copt=-fPIC
 
 build:linux-x86_64 --config=linux
-build:linux-x86_64 --extra_toolchains @zig_sdk//toolchain:x86_64-linux-musl
 build:linux-x86_64 --platforms @zig_sdk//platform:linux_x86_64
 
 build:linux-aarch64 --config=linux
-build:linux-aarch64 --extra_toolchains @zig_sdk//toolchain:aarch64-linux-musl
 build:linux-aarch64 --platforms @zig_sdk//platform:linux_aarch64
 
-build:macos-x86_64 --extra_toolchains @zig_sdk//toolchain:x86_64-macos-gnu
 build:macos-x86_64 --platforms @zig_sdk//platform:macos_x86_64
 
-build:macos-aarch64 --extra_toolchains @zig_sdk//toolchain:aarch64-macos-gnu
 build:macos-aarch64 --platforms @zig_sdk//platform:macos_aarch64
 
 # Any personal configuration settings should go in a gitignored .bazelrc.local

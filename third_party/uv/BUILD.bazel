@@ -7,26 +7,19 @@ filegroup(
 
 cmake(
     name = "uv",
-    build_args = ["--parallel=`nproc`"],
+    visibility = ["//visibility:public"],
     cache_entries = {
-        "CMAKE_INSTALL_LIBDIR": "lib",
-        "CMAKE_C_COMPILER_FORCED": "on",
-        "CMAKE_CXX_COMPILER_FORCED": "on",
-        # "LIBUV_VERSION": "1.44.1"
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_SHARED_LIBS": "OFF",
+        "LIBUV_BUILD_TESTS": "OFF",
+        "LIBUV_BUILD_BENCH": "OFF",
     },
-    env = select({
-        "@urbit//:macos": {"AR": ""},
-        "//conditions:default": {},
-    }),
     lib_source = ":srcs",
     out_static_libs = select({
-        "@urbit//:windows": ["libuv.lib"],
-        "//conditions:default": ["libuv.a"],
+        "@bazel_tools//src/conditions:windows": [
+            "Release/uv.lib",
+            "Release/uv_a.lib",
+        ],
+        "//conditions:default": ["libuv_a.a"],
     }),
-    postfix_script = select({
-        "@urbit//:windows": "",
-        "//conditions:default": "cp $INSTALLDIR/lib/libuv{_a,}.a",
-        # && mv $INSTALLDIR/lib/cmake/libuv/{libuvConfig,libuv-config}.cmake && echo 'set(LIBUV_FOUND TRUE)' >> $INSTALLDIR/lib/cmake/libuv/libuv-config.cmake",
-    }),
-    visibility = ["//visibility:public"],
 )
