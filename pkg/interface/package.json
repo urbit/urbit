@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "engines": {
-    "node": "16.14.0"
+    "node": "14.19.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
@@ -14,7 +14,7 @@
     "@react-spring/web": "^9.1.1",
     "@tlon/indigo-dark": "^1.0.6",
     "@tlon/indigo-light": "^1.0.7",
-    "@tlon/indigo-react": "github:urbit/indigo-react",
+    "@tlon/indigo-react": "^1.2.27",
     "@tlon/sigil-js": "^1.4.5",
     "@urbit/api": "^2.1.1",
     "@urbit/http-api": "^2.1.0",
@@ -33,15 +33,15 @@
     "mousetrap": "^1.6.5",
     "mousetrap-global-bind": "^1.1.0",
     "normalize-wheel": "1.0.1",
-    "oembed-parser": "^1.4.5",
+    "oembed-parser": "^3.0.4",
     "prop-types": "^15.7.2",
     "querystring": "^0.2.0",
     "react": "^17.0.2",
-    "react-codemirror2": "^6.0.1",
+    "react-codemirror2": "git@github.com:scniro/react-codemirror2",
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
-    "react-markdown": "^4.3.1",
-    "react-oembed-container": "^1.0.0",
+    "react-markdown": "^8.0.3",
+    "react-oembed-container": "^1.0.1",
     "react-router-dom": "^5.2.0",
     "react-use-gesture": "^9.1.3",
     "react-virtuoso": "^0.20.3",
