@@ -147,13 +147,14 @@ const contentToMdAst = (tall: boolean) => (
     ];
   } else if ('url' in content) {
     return [
-      'block',
+      'inline',
       {
         type: 'root',
         children: [
           {
-            type: 'graph-url',
-            url: content.url
+            type: 'link',
+            url: content.url,
+            children: [{ type: 'text', value: content.url }]
           }
         ]
       }
@@ -186,8 +187,20 @@ function stitchInline(a: any, b: any) {
   if (!a?.children) {
     throw new Error('Bad stitchInline call: missing root');
   }
+
   const lastParaIdx = a.children.length - 1;
   const last = a.children[lastParaIdx];
+
+  // wrap bare link in list-item inside a p node
+  // for better typography consistency
+  if (last?.type === 'listItem') {
+    if (last?.children.length === 0) {
+      last.children.push({
+        type: 'paragraph',
+        children: []
+      });
+    }
+  }
   if (last?.children) {
     const ros = {
       ...a,
@@ -217,7 +230,7 @@ function getChildren<T extends unknown>(node: T): AstContent[] {
 }
 
 export function asParent<T extends BlockContent>(node: T): Parent | undefined {
-  return ['paragraph', 'heading', 'list', 'listItem', 'table'].includes(
+    return ['paragraph', 'heading', 'list', 'listItem', 'table', 'blockquote'].includes(
     node.type
   )
     ? (node as Parent)
@@ -241,6 +254,7 @@ function stitchMerge(a: Root, b: Root) {
       children: [...aChildren.slice(0, -1), mergedPara, ...bChildren.slice(1)]
     };
   }
+
   return { ...a, children: [...aChildren, ...bChildren] };
 }
 
@@ -256,10 +270,10 @@ function stitchInlineAfterBlock(a: Root, b: GraphMentionNode[]) {
 }
 
 function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
-  return _.reduce(
+  const t = _.reduce(
     asts,
     ([prevMode, ast], [mode, val]): [StitchMode, GraphAstNode] => {
-      if (prevMode === 'block') {
+      if (prevMode === 'block' || prevMode === 'inline') {
         if (mode === 'inline') {
           return [mode, stitchInlineAfterBlock(ast, val?.children ?? [])];
         }
@@ -283,6 +297,56 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
     },
     ['block', { type: 'root', children: [] }] as [StitchMode, GraphAstNode]
   );
+
+  t[1].children.map((c, idx) => {
+    if (c.type === 'blockquote' && t[1].children[idx +1] !== undefined && t[1].children[idx +1].type === 'paragraph') {
+        const next = idx !== t[1].children.length -1
+            ? t[1].children.splice(idx +1, 1)
+            : [];
+
+        if (next.length > 0) {
+            t[1].children[idx].children.push(next[0]);
+        }
+    }
+
+    const links = [];
+    function addRichEmbedURL(nodes) {
+      if (nodes?.children) {
+        nodes.children.filter((k) => {
+          if (k.type === 'link') {
+            links.push({
+              type: 'root',
+              children: [
+                {
+                  type: 'graph-url',
+                  url: k.url
+                }
+              ]
+            });
+          } else if (k?.children) {
+            k.children.filter((o) => {
+              if (o.type === 'link') {
+                links.push({
+                  type: 'root',
+                  children: [
+                    {
+                      type: 'graph-url',
+                      url: o.url
+                    }
+                  ]
+                });
+              }
+            });
+          }
+        });
+
+        nodes.children.push(...links);
+      }
+    }
+    addRichEmbedURL(c);
+  });
+
+  return t;
 }
 const header = ({ children, depth, ...rest }) => {
   const level = depth;
@@ -408,7 +472,7 @@ const renderers = {
     );
   },
   list: ({ depth, ordered, children }) => {
-    return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
+    return ordered ? <Ol fontSize="1">{children}</Ol> : <Ul fontSize="1">{children}</Ul>;
   },
   'graph-mention': (obj) => {
     return <Mention ship={obj.ship} emphasis={obj.emphasis} />;
@@ -419,9 +483,7 @@ const renderers = {
     </Box>
   ),
   'graph-url': ({ url, tall }) => (
-    <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent key={url} url={url} tall={tall} />
-    </Box>
+     <RemoteContent key={url} url={url} tall={tall} />
   ),
   'graph-reference': ({ reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
