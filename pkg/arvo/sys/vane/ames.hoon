@@ -637,6 +637,7 @@
 ::    life:        our $life; how many times we've rekeyed
 ::    crypto-core: interface for encryption and signing
 ::    bug:         debug printing configuration
+::    next-wake:   global dead flow timer
 ::
 +$  ames-state
   $:  peers=(map ship ship-state)
@@ -644,6 +645,7 @@
       =life
       crypto-core=acru:ames
       =bug
+      next-wake=@da
   ==
 ::  $bug: debug printing configuration
 ::
@@ -1646,7 +1648,22 @@
     |=  [=wire error=(unit tang)]
     ^+  event-core
     ::
-    ?:  ?=([%alien @ ~] wire)
+    ?+    wire  ~&(ames-unknown-wire+wire event-core)
+        [%dead ~]
+      ?^  error
+        %-  (slog %ames-dead-timer u.error)
+        set-dead-timer
+      =.  event-core  set-dead-timer
+      =/  foz  ~(tap by peers.ames-state)
+      |-  ^+  event-core
+      ?~  foz  event-core
+      =/  peer-state  q.i.foz
+      ?.  ?=(%dead -.qos.peer-state)
+        $(foz t.foz)
+      =/  =channel  [[our p.i.foz] now channel-state -.peer-state]
+      abet:(on-wake:(make-peer-core u.state.channel) bone.u.res ~)
+    ::
+        [%alien @ ~]
       ::  if we haven't received an attestation, ask again
       ::
       ?^  error
@@ -1660,27 +1677,37 @@
         event-core
       (request-attestation u.ship)
     ::
-    =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
-    ?~  res
-      %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
-      event-core
-    ::
-    =/  state=(unit peer-state)  (get-peer-state her.u.res)
-    ?~  state
-      %-  (slog leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~)
-      event-core
-    ::
-    =/  =channel  [[our her.u.res] now channel-state -.u.state]
-    ::
-    abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
+        [%pump *]
+      ::
+      =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
+      ?~  res
+        %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
+        event-core
+      ::
+      =/  state=(unit peer-state)  (get-peer-state her.u.res)
+      ?~  state
+        %.  event-core
+        =-  (slog leaf/- ~)
+        "ames: ignoring timer for strange ship: {<her.u.res>}"
+      ::
+      =/  =channel  [[our her.u.res] now channel-state -.u.state]
+      ::
+      abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
+    ==
   ::  +on-init: first boot; subscribe to our info from jael
   ::
   ++  on-init
     ^+  event-core
     ::
-    =~  (emit duct %pass /turf %j %turf ~)
+    =~  set-dead-timer
+        (emit duct %pass /turf %j %turf ~)
         (emit duct %pass /private-keys %j %private-keys ~)
     ==
+  ::
+  ++  set-dead-timer
+    ^+  event-core
+    =.  next-wake.ames-state  (add now ~m2)
+    (emit duct %pass /dead %behn %rest next-wake.ames-state)
   ::  +on-priv: set our private key to jael's response
   ::
   ++  on-priv
@@ -2300,20 +2327,20 @@
         ::
         ?~  message-pump-state=(~(get by snd.peer-state) bone)
           peer-core
-        ?~  next-wake.packet-pump-state.u.message-pump-state
+        ?~  next-wake=next-wake.packet-pump-state.u.message-pump-state
           peer-core
         ::  If we crashed because we woke up too early, assume another
         ::  timer is already set.
         ::
-        ?:  (lth now.channel u.next-wake.packet-pump-state.u.message-pump-state)
+        ?:  (lth now.channel u.next-wake)
           peer-core
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
-        (emit duct %pass wire %b %wait (add now.channel ~s30))
+        (emit duct %pass wire %b %wait (add now.channel ~m2))
       ::  update and print connection state
       ::
       =.  peer-core  %-  update-qos
-        =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+        =/  expiry=@da  (add ~m2 last-contact.qos.peer-state)
         =?    -.qos.peer-state
             (gte now.channel expiry)
           %dead
@@ -3220,7 +3247,7 @@
   ++  clamp-rto
     |=  rto=@dr
     ^+  rto
-    (min ~m2 (max ^~((div ~s1 5)) rto))
+    (min ~s25 (max ^~((div ~s1 5)) rto))
   ::  +in-slow-start: %.y iff we're in "slow-start" mode
   ::
   ++  in-slow-start

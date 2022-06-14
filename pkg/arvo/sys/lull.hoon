@@ -519,7 +519,7 @@
             =public-key
             sponsor=ship
         ==
-        route=(unit [direct=? =lane])
+        route=(unit [live=? direct=? =lane])
         =qos
         =ossuary
         snd=(map bone message-pump-state)
