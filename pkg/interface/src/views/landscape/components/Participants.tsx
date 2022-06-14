@@ -352,7 +352,7 @@ function Participant(props: {
                 </Link>
               </Action>
               <Action bg="transparent">
-                <Link to={`/~landscape/dm/${contact.patp}`}>
+                <Link to={`/~landscape/messages/dm/~${contact.patp}`}>
                   <Text color="green">Send Message</Text>
                 </Link>
               </Action>
