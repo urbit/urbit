@@ -243,4 +243,9 @@ int urcrypt_keccak_384(const uint8_t *message,
 int urcrypt_keccak_512(const uint8_t *message,
                        size_t length,
                        uint8_t out[64]);
+int urcrypt_pedersen(uint8_t *a,
+                     size_t a_len,
+                     uint8_t *b,
+                     size_t b_len,
+                     uint8_t out[32]);
 #endif

@@ -88,6 +88,11 @@ AC_CHECK_LIB([aes_siv], [AES_SIV_CTX_new],
              [AC_MSG_ERROR([libaes_siv is required.])],
              [-lcrypto])
 
+AC_CHECK_LIB([ec], [ec_get_curve_params_by_name],
+             [AC_SUBST([LIBEC_LIBS], "-lec")],
+             [AC_MSG_ERROR([libec is required.])],
+             [-larith])
+
 # Checks for header files.
 AC_CHECK_HEADERS([limits.h stddef.h stdint.h stdlib.h string.h])
 

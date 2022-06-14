@@ -31,6 +31,8 @@ in {
 
   secp256k1 = enableStatic prev.secp256k1;
 
+  libecc = enableStatic prev.libecc;
+
   lmdb = prev.lmdb.overrideAttrs (old:
     configureFlags old // {
       postPatch = ''

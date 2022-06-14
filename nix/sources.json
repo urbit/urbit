@@ -45,6 +45,18 @@
         "url": "https://github.com/dfoxfranke/libaes_siv/archive/9681279cfaa6e6399bb7ca3afbbc27fc2e19df4b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "libecc": {
+        "branch": "master",
+        "description": "Library for elliptic curves cryptography",
+        "homepage": "",
+        "owner": "ANSSI-FR",
+        "repo": "libecc",
+        "rev": "7d97891ceca383e298c48b2f802894db9ba03675",
+        "sha256": "0vi7xn2zsr45qvmdr5rs26bxw1sng6xz5labgq1kjpckxz1cw1wq",
+        "type": "tarball",
+        "url": "https://github.com/ANSSI-FR/libecc/archive/7d97891ceca383e298c48b2f802894db9ba03675.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "murmur3": {
         "branch": "master",
         "description": null,

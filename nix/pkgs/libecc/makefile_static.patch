@@ -1,0 +1,12 @@
+diff --git a/Makefile b/Makefile
+index 5e827a0..820771f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -42,6 +42,7 @@ CFG_DEPS = $(wildcard src/*.h)
+ EXT_DEPS_SRC = $(wildcard src/external_deps/*.c)
+ EXT_DEPS_OBJECTS = $(patsubst %.c, %.o, $(EXT_DEPS_SRC))
+ EXT_DEPS_DEPS = $(patsubst %.c, %.d, $(EXT_DEPS_SRC))
++RAND_OBJECTS = src/external_deps/rand.o
+ 
+ src/external_deps/%.d: src/external_deps/%.c
+ 	$(CC) $(LIB_CFLAGS) -MM $< -MF $@

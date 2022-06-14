@@ -435,12 +435,26 @@ static u3j_core _140_hex_secp_secp256k1_d[] =
     {}
   };
 
+static c3_c* _140_hex_secp_pedersen_phash_ha[] = { 0 };
+static u3j_harm _140_hex_secp_pedersen_phash_a[] = {{".2", u3we_phash, c3y}, {}};
+
+static u3j_core _140_hex_secp_pedersen_d[] =
+  { { "phash", 7, _140_hex_secp_pedersen_phash_a, 0, _140_hex_secp_pedersen_phash_ha },
+    {}
+  };
+
+static c3_c* _140_hex_secp_pedersen_ha[] = {
+  "9c8ab95e09aca3d039d61bda4def557881d0444d34547c12d289d92b33c7140d",
+  0
+};
+
 static c3_c* _140_hex_secp_ha[] = {
-  "9f5c23f0e7923b6cf1603388ba52401b6e43881be3560b3acfaab20b25071792",
+  "ab61eddaca2ecbb41a3359360dd6f6f0ac80beb73e5ff6967b437e492ce22ed5",
   0
 };
 static u3j_core _140_hex_secp_d[] =
   { { "secp256k1", 3, 0, _140_hex_secp_secp256k1_d, _140_hex_secp_secp256k1_ha },
+    { "pedersen", 3, 0, _140_hex_secp_pedersen_d, _140_hex_secp_pedersen_ha },
     {}
   };
 

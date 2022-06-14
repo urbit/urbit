@@ -83,6 +83,8 @@ let
 
     murmur3 = callPackage ./nix/pkgs/murmur3 { };
 
+    libecc = callPackage ./nix/pkgs/libecc { };
+
     softfloat3 = callPackage ./nix/pkgs/softfloat3 { };
 
     herb = callPackage ./nix/pkgs/herb { inherit (pkgsCross) python; };

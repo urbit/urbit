@@ -20,6 +20,11 @@ in prev.lib.optionalAttrs isMusl {
       ++ [ prev.buildPackages.stdenv.cc ];
   });
 
+  libecc = prev.libecc.overrideAttrs (attrs: {
+    nativeBuildInputs = (attrs.nativeBuildInputs or [ ])
+      ++ [ prev.buildPackages.stdenv.cc ];
+  });
+
   rhash = overrideStdenv prev.rhash;
 
   numactl = overrideStdenv prev.numactl;
