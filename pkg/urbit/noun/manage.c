@@ -1702,6 +1702,8 @@ _cm_signals(void)
 
 extern void u3je_secp_init(void);
 extern void u3je_secp_stop(void);
+extern void u3je_pedersen_init(void);
+extern void u3je_pedersen_stop(void);
 
 static void
 _cm_crypto()
@@ -1715,6 +1717,7 @@ _cm_crypto()
   }
 
   u3je_secp_init();
+  u3je_pedersen_init();
 }
 
 /* u3m_init(): start the environment.
@@ -1768,6 +1771,7 @@ void
 u3m_stop()
 {
   u3je_secp_stop();
+  u3je_pedersen_stop();
 }
 
 /* u3m_boot(): start the u3 system. return next event, starting from 1.

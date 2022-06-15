@@ -2228,22 +2228,32 @@
           =/  rips
           %^  spin  (tear [3 32] n)  [0 0]
           |=  [x=@ i=@ud ext=@]
-          ?:  =((end [0 1] i) 1)
-            [x (add i 1) ext]
-          :+  (mod x (bex 252))
-          (add i 1)
-          (div x (bex 252))
+          ?:  (lth (met 3 x) 32)
+             [x (add i 1) ext]
+          :+  (zero-nib x)
+              (add i 1)
+              (cat 3 ext (first-nib x))
           =/  r
             ?:  =(+>:rips 0)  p.rips
             (into p.rips (lent p.rips) +>:rips)
           =/  hed  (snag 0 r)
           =/  tal  (slag 1 r)
           q:(spin tal hed do-hash)
+        ::
+        ++  first-nib
+          |=  n=@
+          (end 2 (rev 2 (met 2 n) n))
+        ::
+        ++  zero-nib
+          |=  n=@
+          (rev 2 (dec (met 2 n)) (rsh [2 1] (rev 2 (met 2 n) n)))
+        ::
         ++  tear
           |=  [s=[@ @] n=@]
           ^-  (list @)
           ?:  =(n 0)  ~[0]
             (rip s n)
+        ::
         ++  do-hash
           |=  [b=@ a=@]
           ^-  [@ @]
