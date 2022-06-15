@@ -150,7 +150,7 @@ const contentToMdAst =
         }
       ];
     } else if ('url' in content) {
-      const images = ['.jpg', '.jpeg', '.png', '.gif'];
+      const images = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
       return [
         'inline',
         {
