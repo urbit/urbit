@@ -300,6 +300,45 @@ _pier_on_lord_work_spun(void* ptr_v)
   u3_term_stop_spinner();
 }
 
+static void
+_pier_scry_behn_cb(void* ptr_v, u3_noun nun)
+{
+  u3_pier* pir_u = ptr_v;
+  u3_weak    dat = u3r_at(7, nun);
+
+  switch ( dat ) {
+    case u3_nul: {
+      u3l_log("behn: no timer scheduled\n");
+    } break;
+
+    case u3_none: {
+      u3m_p("nun", nun);
+      u3l_log("behn: invalid response\n");
+    } break;
+
+    default: {
+      u3_noun hed, tel;
+
+      if (  (c3n == u3r_cell(dat, &hed, &tel))
+         || (u3_nul != hed)
+         || (c3n == u3ud(tel)) )
+      {
+        u3m_p("nun", nun);
+        u3l_log("behn: invalid response\n");
+      }
+      else {
+        u3_noun out = u3dc("scot", c3__da, u3k(tel));
+        c3_c* out_c = u3r_string(out);
+        u3l_log("behn: next timer: %s\n", out_c);
+        c3_free(out_c);
+        u3z(out);
+      }
+    } break;
+  }
+
+  u3z(nun);
+}
+
 /* _pier_on_lord_work_done(): event completion from worker.
 */
 static void
@@ -325,6 +364,12 @@ _pier_on_lord_work_done(void*    ptr_v,
 
   _pier_gift_plan(pir_u->wok_u, gif_u);
   _pier_work(pir_u->wok_u);
+
+  if ( !(pir_u->log_u->sen_d % 100) ) {
+    u3_pier_peek_last(pir_u, u3_nul, c3_s2('b', 'x'), u3_blip,
+                      u3nt(u3i_string("timers"), c3__next, u3_nul),
+                      pir_u, _pier_scry_behn_cb);
+  }
 }
 
 /* _pier_on_lord_work_bail(): event failure from worker.

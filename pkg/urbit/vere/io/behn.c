@@ -56,6 +56,22 @@ _behn_wake_bail(u3_ovum* egg_u, u3_noun lud)
   }
 }
 
+static void
+_behn_wake_news(u3_ovum* egg_u, u3_ovum_news new_e)
+{
+  switch ( new_e ) {
+    case u3_ovum_drop: {
+      u3l_log("behn: %%wake dropped\n");
+    } break;
+    case u3_ovum_work: {
+      u3l_log("behn: %%wake sent to mars\n");
+    } break;
+    case u3_ovum_done: {
+      u3l_log("behn: %%wake done\n");
+    } break;
+  }
+}
+
 /* _behn_time_cb(): timer callback.
 */
 static void
@@ -85,7 +101,8 @@ _behn_time_cb(uv_timer_t* tim_u)
 
     u3_auto_peer(
       u3_auto_plan(&teh_u->car_u, u3_ovum_init(0, c3__b, wir, cad)),
-      0, 0, _behn_wake_bail);
+      0, _behn_wake_news, _behn_wake_bail);
+    u3l_log("behn: %%wake queue\n");
   }
 }
 
@@ -96,11 +113,13 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
 {
   if ( c3n == teh_u->car_u.liv_o ) {
     teh_u->car_u.liv_o = c3y;
+    u3l_log("behn: live\n");
   }
 
   if ( c3y == teh_u->alm_o ) {
     uv_timer_stop(&teh_u->tim_u);
     teh_u->alm_o = c3n;
+    u3l_log("behn: timer stop\n");
   }
 
   if ( (u3_nul != wen) &&
@@ -115,6 +134,7 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
 
     teh_u->alm_o = c3y;
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
+    u3l_log("behn: timer start %" PRIu64 " ms\n", gap_d);
   }
 
   u3z(wen);
