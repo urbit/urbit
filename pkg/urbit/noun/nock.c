@@ -882,36 +882,58 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case LIBK: case LIBL:
         case BUSH: case SANB:
         case KITB: case MITB:
-        case HILB: case HINB:
-          /* TODO:
-          ** check tail of op for being xray
-          ** if so call a rendering and cons to tail of op
-          ** like sip list in melt?
-          ** take interpret buffy upto nef_w
-          */
+        case HILB:
+          _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
+          pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
+          break;
+        case HINB:
+          if ( c3__xray != u3k(u3t(op)) ) {
+            u3t_slog_cap(1, u3i_string("HINB"), u3i_string("something else"));
+            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
+            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
+          }
+          else {
+            // all my xray hinb only magic goes here
+            u3t_slog_cap(1, u3i_string("HINB"), u3i_string("xray - go for it!"));
+            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
+            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
+          }
+          break;
+        case HINS:
+          if ( c3__xray != u3k(u3t(op)) ) {
+            u3t_slog_cap(1, u3i_string("HINS"), u3i_string("something else"));
+            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
+            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
+          }
+          else {
+            // all my xray hinb only magic goes here
+            u3t_slog_cap(1, u3i_string("HINS"), u3i_string("xray - go for it!"));
+            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
+            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
+          }
+          break;
+          /*
+          // print which hint we are compiling
+          if ( c3__xray == u3k(u3t(op)) )
+            u3t_slog_cap(1, u3i_string("compiling"), u3i_string("xray"));
 
-          // check tail of op for being xray
-          /*if ( c3__xray == u3k(u3t(op)) ) {
+          if ( c3__xray == u3k(u3t(op)) ) {
+            u3_noun op_string = u3i_string("xray");
+            switch ( cod ) {
+              default: break;
+              case HINB: u3t_slog_cap(1, u3i_string("HINB"), op_string); break;
+            }
+            // check tail of op for being xray
+            // if so call a rendering and cons to tail of op
+            // like sip list in melt?
+            // take interpret buffy upto nef_w
+
             // TODO: render everything called until this point
             //       ie take whatever the analog of fol is, and run it through
             //       something like _slog_bytecode without sloging it, to convert
             //       it to a u3i_string, then store that to the tail of op
             // TODO: cons the rendered data to tail of op
             // TODO: slog out info on what is compiling right now
-            u3_noun op_string = u3i_string("xray");
-            switch ( cod ) {
-              default: break;
-              case FIBK: u3t_slog_cap(1, u3i_string("FIBK"), op_string); break;
-              case FIBL: u3t_slog_cap(1, u3i_string("FIBL"), op_string); break;
-              case LIBK: u3t_slog_cap(1, u3i_string("LIBK"), op_string); break;
-              case LIBL: u3t_slog_cap(1, u3i_string("LIBL"), op_string); break;
-              case BUSH: u3t_slog_cap(1, u3i_string("BUSH"), op_string); break;
-              case SANB: u3t_slog_cap(1, u3i_string("SANB"), op_string); break;
-              case KITB: u3t_slog_cap(1, u3i_string("KITB"), op_string); break;
-              case MITB: u3t_slog_cap(1, u3i_string("MITB"), op_string); break;
-              case HILB: u3t_slog_cap(1, u3i_string("HILB"), op_string); break;
-              case HINB: u3t_slog_cap(1, u3i_string("HINB"), op_string); break;
-            }
 
             _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
             pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
@@ -1052,6 +1074,8 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       ** place nef_w into HILB trel
       */
       case c3__xray:
+        u3t_slog_cap(1, u3i_string("called"), u3i_string("_n_bint atomic xray"));
+        u3t_slog_cap(1, u3i_string("done"), u3i_string("  _n_bint atomic xray"));
       case c3__meme:
       case c3__nara:
       case c3__hela:
@@ -1090,10 +1114,33 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
           /* TODO:
-          ** for case xray pack more info into HILB
+          ** for case xray pack more info into HINB
           ** place nef_w into HINB trel
           */
-          case c3__xray:
+          case c3__xray: {
+            u3t_slog_cap(2, u3i_string("called"), u3i_string("_n_bint dynamic xray"));
+            u3_noun fen = u3_nul;
+            c3_w  nef_w = _n_comp(&fen, nef, los_o, c3n);
+            // add appropriate hind opcode
+            ++nef_w; _n_emit(&fen, ( c3y == los_o ) ? HINL : HINK);
+            // skip over the cleanup opcode
+            ++nef_w; _n_emit(&fen, u3nc(SBIP, 1));
+
+            // NOTE: the code to change is probably within the next two commands
+            // 01. push clue
+            tot_w += _n_comp(ops, hod, c3n, c3n);
+
+            //  02. call hint_fore
+            //      HINB overflows to HINS - NOTE: does this also become hin?
+            ++tot_w; _n_emit(ops, u3nc(HINB, u3nc(u3k(zep), u3k(nef))));
+
+            // if fore return c3n, skip fen
+            ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
+            tot_w += nef_w; _n_apen(ops, fen);
+            // post-skip cleanup opcode
+            ++tot_w; _n_emit(ops, ( c3y == los_o ) ? TOSS : SWAP);
+            u3t_slog_cap(2, u3i_string("done"), u3i_string("  _n_bint dynamic xray"));
+          } break;
           case c3__meme:
           case c3__nara:
           case c3__hela:
@@ -1719,6 +1766,7 @@ _n_find(u3_noun pre, u3_noun fol)
 u3p(u3n_prog)
 u3n_find(u3_noun key, u3_noun fol)
 {
+  //u3t_slog_cap(1, u3i_string("called"), u3i_string("u3n_find"));
   u3p(u3n_prog) pog_p;
   u3t_on(noc_o);
   pog_p = u3of(u3n_prog, _n_find(key, fol));
@@ -1779,6 +1827,7 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
   // set go to an invalid value, so we can break imeadately if needed
   unsigned int go = 5;
   while ( pog[ip_w] ) {
+    // TODO: a nontrival internal part of nock.c -- is it okay to make public?
     go = _n_arg(pog[ip_w]);
     // no need to stay here if we cant print it
     if (!_is_valid_op(go)) break;
@@ -1787,6 +1836,7 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
     if (_is_pair_op(go)) {
       // add the len of the number
       s_ln += _intlen(
+        // TODO: these are both pretty simple, but would have to be made public too
         go == 4 ? _n_rewo(pog, &ip_w):
         go == 2 ? _n_resh(pog, &ip_w):
         pog[ip_w++]);
@@ -1991,6 +2041,15 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
         u3t_slog_cap(pri_l, u3i_string("bytecode of"), u3k(tan));
         _xray(pri_l, fol);
       }
+      /*
+      // fud is the compiled bytecode stream for everything we've wrapped
+      u3_noun pri, tan, fud;
+      if ( c3y == u3r_trel(*clu, &pri, &tan, &fud) ) {
+        c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
+        u3t_slog_cap(pri_l, u3i_string("bytecode of"), u3k(tan));
+        _slog_bytecode(pri_l, fud->byc_u.ops_y, fud->byc_u.len_w-1);
+      }
+      */
       u3z(*clu);
       *clu = u3_nul;
     } break;
@@ -2077,7 +2136,6 @@ typedef struct {
 static u3_noun
 _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 {
-
   // Opcode jump table. Define X to select the opcode computed goto from
   // OPCODES.
 # define X(opcode, name, indirect_jump) indirect_jump
@@ -2308,6 +2366,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       fam->pog_u = pog_u;
       _n_push(mov, off, x);
     nock_out:
+      //u3t_slog_cap(1, u3i_string("called"), u3i_string("_n_burn _n_find"));
       pog_u = _n_find(u3_nul, o);
       pog   = pog_u->byc_u.ops_y;
       ip_w  = 0;
@@ -2836,6 +2895,7 @@ _n_burn_out(u3_noun bus, u3n_prog* pog_u)
 u3_noun
 u3n_burn(u3p(u3n_prog) pog_p, u3_noun bus)
 {
+  //u3t_slog_cap(1, u3i_string("called"), u3i_string("u3n_burn"));
   u3_noun pro;
   u3t_on(noc_o);
   pro = _n_burn_out(bus, u3to(u3n_prog, pog_p));
@@ -2848,6 +2908,7 @@ u3n_burn(u3p(u3n_prog) pog_p, u3_noun bus)
 static u3_noun
 _n_burn_on(u3_noun bus, u3_noun fol)
 {
+  //u3t_slog_cap(1, u3i_string("called"), u3i_string("_n_burn_on"));
   u3n_prog* pog_u = _n_find(u3_nul, fol);
 
   u3z(fol);
@@ -2859,6 +2920,7 @@ _n_burn_on(u3_noun bus, u3_noun fol)
 u3_noun
 u3n_nock_on(u3_noun bus, u3_noun fol)
 {
+  //u3t_slog_cap(1, u3i_string("called"), u3i_string("u3n_nock_on"));
   u3_noun pro;
 
   u3t_on(noc_o);
