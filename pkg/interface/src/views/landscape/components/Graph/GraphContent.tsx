@@ -34,26 +34,30 @@ interface GraphMentionNode {
   ship: string;
 }
 
-const addEmphasisToMention = (contents: Content[], content: Content, index: number) => {
+const addEmphasisToMention = (
+  contents: Content[],
+  content: Content,
+  index: number
+) => {
   const prevContent = contents[index - 1];
   const nextContent = contents[index + 1];
 
   if (
     'text' in content &&
-    (content.text.trim() === '**' || content.text.trim() === '*' )
-  )  {
+    (content.text.trim() === '**' || content.text.trim() === '*')
+  ) {
     return {
       text: ''
     };
   }
-  if(
+  if (
     'text' in content &&
     content.text.endsWith('*') &&
     !content.text.startsWith('*') &&
     nextContent !== undefined &&
     'mention' in nextContent
   ) {
-    if (content.text.charAt((content.text.length - 2)) === '*') {
+    if (content.text.charAt(content.text.length - 2) === '*') {
       return { text: content.text.slice(0, content.text.length - 2) };
     }
     return { text: content.text.slice(0, content.text.length - 1) };
@@ -116,72 +120,80 @@ const codeToMdAst = (content: CodeContent) => {
   };
 };
 
-const contentToMdAst = (tall: boolean) => (
-  content: Content
-): [StitchMode, any] => {
-  if ('text' in content) {
-    if (content.text.toString().trim().length === 0) {
+const contentToMdAst =
+  (tall: boolean) =>
+  (content: Content): [StitchMode, any] => {
+    if ('text' in content) {
+      if (content.text.toString().trim().length === 0) {
+        return [
+          'merge',
+          { type: 'root', children: [{ type: 'paragraph', children: [] }] }
+        ];
+      }
       return [
         'merge',
-        { type: 'root', children: [{ type: 'paragraph', children: [] }] }
+        tall ? parseTall(content.text) : parseWide(content.text)
+      ] as [StitchMode, any];
+    } else if ('code' in content) {
+      return ['block', codeToMdAst(content)];
+    } else if ('reference' in content) {
+      return [
+        'block',
+        {
+          type: 'root',
+          children: [
+            {
+              type: 'graph-reference',
+              reference: content.reference
+            }
+          ]
+        }
+      ];
+    } else if ('url' in content) {
+      const images = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+      return [
+        'inline',
+        {
+          type: 'root',
+          children: [
+            {
+              type: 'link',
+              url: content.url,
+              children: [
+                {
+                  type: 'text',
+                  value: !images.some(i => content.url.includes(i))
+                    ? content.url
+                    : ''
+                }
+              ]
+            }
+          ]
+        }
+      ];
+    } else if ('mention' in content) {
+      return [
+        'inline',
+        {
+          type: 'root',
+          children: [
+            {
+              type: 'graph-mention',
+              ship: content.mention,
+              emphasis: content.emphasis
+            }
+          ]
+        }
       ];
     }
     return [
-      'merge',
-      tall ? parseTall(content.text) : parseWide(content.text)
-    ] as [StitchMode, any];
-  } else if ('code' in content) {
-    return ['block', codeToMdAst(content)];
-  } else if ('reference' in content) {
-    return [
-      'block',
-      {
-        type: 'root',
-        children: [
-          {
-            type: 'graph-reference',
-            reference: content.reference
-          }
-        ]
-      }
-    ];
-  } else if ('url' in content) {
-    return [
       'inline',
       {
         type: 'root',
-        children: [
-          {
-            type: 'link',
-            url: content.url,
-            children: [{ type: 'text', value: content.url }]
-          }
-        ]
+        children: []
       }
     ];
-  } else if ('mention' in content) {
-    return [
-      'inline',
-      {
-        type: 'root',
-        children: [
-          {
-            type: 'graph-mention',
-            ship: content.mention,
-            emphasis: content.emphasis
-          }
-        ]
-      }
-    ];
-  }
-  return [
-    'inline',
-    {
-      type: 'root',
-      children: []
-    }
-  ];
-};
+  };
 
 function stitchInline(a: any, b: any) {
   if (!a?.children) {
@@ -230,9 +242,14 @@ function getChildren<T extends unknown>(node: T): AstContent[] {
 }
 
 export function asParent<T extends BlockContent>(node: T): Parent | undefined {
-    return ['paragraph', 'heading', 'list', 'listItem', 'table', 'blockquote'].includes(
-    node.type
-  )
+  return [
+    'paragraph',
+    'heading',
+    'list',
+    'listItem',
+    'table',
+    'blockquote'
+  ].includes(node.type)
     ? (node as Parent)
     : undefined;
 }
@@ -299,20 +316,25 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
   );
 
   t[1].children.map((c, idx) => {
-    if (c.type === 'blockquote' && t[1].children[idx +1] !== undefined && t[1].children[idx +1].type === 'paragraph') {
-        const next = idx !== t[1].children.length -1
-            ? t[1].children.splice(idx +1, 1)
-            : [];
+    if (
+      c.type === 'blockquote' &&
+      t[1].children[idx + 1] !== undefined &&
+      t[1].children[idx + 1].type === 'paragraph'
+    ) {
+      const next =
+        idx !== t[1].children.length - 1
+          ? t[1].children.splice(idx + 1, 1)
+          : [];
 
-        if (next.length > 0) {
-            t[1].children[idx].children.push(next[0]);
-        }
+      if (next.length > 0) {
+        t[1].children[idx].children.push(next[0]);
+      }
     }
 
     const links = [];
     function addRichEmbedURL(nodes) {
       if (nodes?.children) {
-        nodes.children.filter((k) => {
+        nodes.children.filter(k => {
           if (k.type === 'link') {
             links.push({
               type: 'root',
@@ -324,7 +346,7 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
               ]
             });
           } else if (k?.children) {
-            k.children.filter((o) => {
+            k.children.filter(o => {
               if (o.type === 'link') {
                 links.push({
                   type: 'root',
@@ -456,7 +478,7 @@ const renderers = {
     );
     return tall ? <Box mb={2}>{inner}</Box> : inner;
   },
-  link: (props) => {
+  link: props => {
     return (
       <Anchor
         display="inline"
@@ -472,9 +494,13 @@ const renderers = {
     );
   },
   list: ({ depth, ordered, children }) => {
-    return ordered ? <Ol fontSize="1">{children}</Ol> : <Ul fontSize="1">{children}</Ul>;
+    return ordered ? (
+      <Ol fontSize="1">{children}</Ol>
+    ) : (
+      <Ul fontSize="1">{children}</Ul>
+    );
   },
-  'graph-mention': (obj) => {
+  'graph-mention': obj => {
     return <Mention ship={obj.ship} emphasis={obj.emphasis} />;
   },
   image: ({ url, tall }) => (
@@ -483,17 +509,13 @@ const renderers = {
     </Box>
   ),
   'graph-url': ({ url, tall }) => (
-     <RemoteContent key={url} url={url} tall={tall} />
+    <RemoteContent key={url} url={url} tall={tall} />
   ),
   'graph-reference': ({ reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
       <Box my={2} flexShrink={0}>
-        <PermalinkEmbed
-          link={link}
-          transcluded={transcluded}
-          showOurContact
-        />
+        <PermalinkEmbed link={link} transcluded={transcluded} showOurContact />
       </Box>
     );
   },
@@ -561,19 +583,13 @@ export type GraphContentProps = PropFunc<typeof Box> & {
   showOurContact: boolean;
 };
 
-export const GraphContent = React.memo((
-  props: GraphContentProps
-) => {
-  const {
-    contents,
-    tall = false,
-    transcluded = 0,
-    ...rest
-  } = props;
+export const GraphContent = React.memo((props: GraphContentProps) => {
+  const { contents, tall = false, transcluded = 0, ...rest } = props;
   const [, ast] = stitchAsts(
     contents
-    .map((content, index) => addEmphasisToMention(contents, content, index))
-    .map(contentToMdAst(tall)));
+      .map((content, index) => addEmphasisToMention(contents, content, index))
+      .map(contentToMdAst(tall))
+  );
   return (
     <Box {...rest}>
       <Graphdown transcluded={transcluded} ast={ast} tall={tall} />
