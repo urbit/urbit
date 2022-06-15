@@ -2182,29 +2182,44 @@
         ?:  =(0 (end 0 bone))
           ~
         `u=message-pump-state
-      ::  clogged: are outgoing messages to this peer using too much memory?
       ::
       =/  clogged=?
-        =|  acc=@ud
-        |-  ^-  ?
-        ?~  pumps
-          %.n
-        =.  acc
-          %+  add  acc
-          %+  add
-            %+  roll  ~(tap to unsent-messages.i.pumps)
-            |=  [a=@ b=@ud]
-            (add b (met 3 a))
-          ?~  unsent-fragments.i.pumps
-            0
-          (met 3 fragment.i.unsent-fragments.i.pumps)
-        ::  100.000 chosen so roughly 10.000 peers could be
-        ::  clogged without killing the loom
+        |^  &(nuf-messages nuf-memory)
         ::
-        ?:  (gte acc 100.000)
-          %.y
-        $(pumps t.pumps)
-      ::  if clogged, notify client vanek
+        ++  nuf-messages
+          =|  num=@ud
+          |-  ^-  ?
+          ?~  pumps  |
+          =.  num
+            ;:  add  num
+              (sub [next current]:i.pumps)
+              ~(wyt in unsent-messages.i.pumps)
+            ==
+          ?:  (gte num 5)
+            &
+          $(pumps t.pumps)
+        ::
+        ++  nuf-memory
+          =|  mem=@ud
+          |-  ^-  ?
+          ?~  pumps  |
+          =.  mem
+            ;:  add  mem
+              %+  roll  ~(tap to unsent-messages.i.pumps)
+              |=([a=@ b=@ud] (add b (met 3 a)))
+            ::
+              ?~  unsent-fragments.i.pumps
+                0
+              (met 3 fragment.i.unsent-fragments.i.pumps)
+            ==
+          ::  100.000 chosen so roughly 10.000 peers could be
+          ::  clogged without killing the loom
+          ::
+          ?:  (gte mem 100.000)
+            &
+          $(pumps t.pumps)
+        --
+      ::  if clogged, notify client vane
       ::
       ?.  clogged
         peer-core
