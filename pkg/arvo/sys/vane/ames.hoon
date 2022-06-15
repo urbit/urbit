@@ -2185,6 +2185,7 @@
       ::
       =/  clogged=?
         |^  &(nuf-messages nuf-memory)
+        ::  +nuf-messages: are there enough messages to mark as clogged?
         ::
         ++  nuf-messages
           =|  num=@ud
@@ -2198,6 +2199,7 @@
           ?:  (gte num 5)
             &
           $(pumps t.pumps)
+        ::  +nuf-memory: is enough memory used to mark as clogged?
         ::
         ++  nuf-memory
           =|  mem=@ud
@@ -2212,9 +2214,6 @@
                 0
               (met 3 fragment.i.unsent-fragments.i.pumps)
             ==
-          ::  100.000 chosen so roughly 10.000 peers could be
-          ::  clogged without killing the loom
-          ::
           ?:  (gte mem 100.000)
             &
           $(pumps t.pumps)
