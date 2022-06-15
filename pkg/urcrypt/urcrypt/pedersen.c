@@ -38,7 +38,7 @@ get_curve_params(ec_params *curve_params) {
   len += 1;
   const ec_str_params *curve_string_params;
   ret = ec_get_curve_params_by_name(curve_name, (u8)len, &curve_string_params);
-  if (curve_string_params == NULL || ret != 0) {
+  if ( curve_string_params == NULL || 0 != ret ) {
     return -1;
   }
   ret = import_params(curve_params, curve_string_params);
@@ -122,22 +122,22 @@ get_constant_points(ec_params *curve_params, constant_points* cp) {
   };
 
   ret = prj_pt_import_from_aff_buf(&(cp->p0), p0_buf, 64, crv);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
   ret = prj_pt_import_from_aff_buf(&(cp->p1), p1_buf, 64, crv);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
   ret = prj_pt_import_from_aff_buf(&(cp->p2), p2_buf, 64, crv);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
   ret = prj_pt_import_from_aff_buf(&(cp->p3), p3_buf, 64, crv);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
@@ -154,99 +154,101 @@ do_hash(urcrypt_pedersen_context *cxt, uint8_t *a, size_t a_len, uint8_t *b, siz
   urcrypt__reverse(b_len, b);
 
   nn alow, ahig, blow, bhig;
-  if (a_len == 32) {
+  if ( 32 == a_len ) {
     ret = nn_init_from_buf(&alow, a+1, 31);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
     ret = nn_init_from_buf(&ahig, a, 1);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
-  } else {
+  }
+  else {
     ret = nn_init(&ahig, 1);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
     ret = nn_zero(&ahig);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
 
     ret = nn_init_from_buf(&alow, a, a_len);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
   }
 
-  if (b_len == 32) {
+  if ( 32 == b_len ) {
     ret = nn_init_from_buf(&blow, b+1, 31);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
     *b = *b & 0x0f;
     ret = nn_init_from_buf(&bhig, b, 1);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
-  } else {
+  }
+  else {
     ret = nn_init(&bhig, 1);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
     ret = nn_zero(&bhig);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
 
     ret = nn_init_from_buf(&blow, b, b_len);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
   }
 
   prj_pt p1_alow, p2_ahig, p3_blow, p4_bhig;
   ret = prj_pt_mul(&p1_alow, &alow, &(cxt->cp->p1));
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
   ret = prj_pt_mul(&p2_ahig, &ahig, &(cxt->cp->p2));
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
   ret = prj_pt_mul(&p3_blow, &blow, &(cxt->cp->p3));
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
   ret = prj_pt_mul(&p4_bhig, &bhig, &(cxt->cp->p4));
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
   prj_pt sum;
   ret = prj_pt_add(&sum, &(cxt->cp->p0), &p1_alow);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
   ret = prj_pt_add(&sum, &sum, &p2_ahig);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
   ret = prj_pt_add(&sum, &sum, &p3_blow);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
   ret = prj_pt_add(&sum, &sum, &p4_bhig);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
   prj_pt aff;
   ret = prj_pt_unique(&aff, &sum);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return ret;
   }
 
@@ -260,22 +262,23 @@ do_fold_hash(urcrypt_pedersen_context *cxt, uint8_t *dat_x, size_t len_x, uint8_
   int ret = 0;
   int pos = 0, ext_pos = 0, ext_len = (len_x / 32);
   uint8_t *hed = NULL, *acc = NULL, *ext = NULL;
-  while (pos < len_x) {
+  while ( pos < len_x ) {
     hed = (dat_x + pos);
     if ( (len_x - pos) >= 32 && (hed[31] & 0xf0) != 0) {
-        if (ext == NULL) {
+        if ( ext == NULL ) {
           ext = calloc(1, ext_len);
         }
         ext[ext_pos] = (hed[31] & 0xf0) >> 4;
         ext_pos++;
         hed[31] = hed[31] & 0x0f;
       }
-    if (pos == 0) {
+    if ( 0 == pos) {
       acc = hed;
-    } else {
+    }
+    else {
       ret = do_hash(cxt, acc, 32, hed, MIN(len_x - pos, 32), out);
-      if (ret != 0) {
-        if (ext != NULL) {
+      if ( ret != 0 ) {
+        if ( ext != NULL ) {
           free(ext);
         }
         return ret;
@@ -284,7 +287,7 @@ do_fold_hash(urcrypt_pedersen_context *cxt, uint8_t *dat_x, size_t len_x, uint8_
     }
     pos += 32;
   }
-  if (ext != NULL) {
+  if ( ext != NULL ) {
     ret = do_hash(cxt, acc, 32, ext, ext_len, out);
     free(ext);
   }
@@ -297,35 +300,35 @@ urcrypt_pedersen(urcrypt_pedersen_context *cxt, uint8_t *a, size_t a_len, uint8_
   int ret = 0;
   uint8_t a_vat[32], b_vat[32], *a_dat, *b_dat;
   size_t a_ven, b_ven;
-  if ( (a_len < 32) ||
-       ((a_len == 32) && ((a[31] & 0xf0) == 0)) )
-    {
+  if ( ( a_len < 32 ) ||
+       ((32 == a_len) && ((a[31] & 0xf0) == 0)) )
+  {
       // a <= 252 bits so use directly
       a_ven = a_len;
       a_dat = a;
-    }
+  }
   else {
     // a > 252 bits so break up into chunks and fold hash across
     a_ven = 32;
     ret = do_fold_hash(cxt, a, a_len, a_vat);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
     a_dat = a_vat;
   }
 
   if ( (b_len < 32) ||
-       ((b_len == 32) && ((b[31] & 0xf0) == 0)) )
-    {
+       ((32 == b_len) && ((b[31] & 0xf0) == 0)) )
+  {
       // b <= 252 bits
       b_ven = b_len;
       b_dat = b;
-    }
+  }
   else {
     // b > 252 bits so break up into chunks and fold hash across
     b_ven = 32;
     ret = do_fold_hash(cxt, b, b_len, b_vat);
-    if (ret != 0) {
+    if ( 0 != ret ) {
       return ret;
     }
     b_dat = b_vat;
@@ -341,7 +344,7 @@ urcrypt_pedersen_init(urcrypt_pedersen_context *context)
   context->cp = malloc(sizeof(constant_points));
   context->curve_params = malloc(sizeof(ec_params));
   ret = get_curve_params(context->curve_params);
-  if (ret != 0) {
+  if ( 0 != ret ) {
     return -1;
   }
   return get_constant_points(context->curve_params, context->cp);

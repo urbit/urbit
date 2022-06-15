@@ -33,16 +33,18 @@ _cqe_phash(u3_atom a, u3_atom b)
   c3_y *a_buf_y, *b_buf_y, out_y[32];
   c3_w a_len_w, b_len_w, met_w, ret = u3_none;
 
-  if (a == u3_nul) {
+  if ( u3_nul == a ) {
     met_w = a_len_w = 1;
-  } else {
+  }
+  else {
     met_w = a_len_w = u3r_met(3, a);
   }
   a_buf_y = u3r_bytes_alloc(0, met_w, a);
 
-  if (b == u3_nul) {
+  if ( u3_nul == b ) {
     met_w = b_len_w = 1;
-  } else {
+  }
+  else {
     met_w = b_len_w = u3r_met(3, b);
   }
   b_buf_y = u3r_bytes_alloc(0, met_w, b);
