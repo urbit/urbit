@@ -941,8 +941,8 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
             // NOTE: buf_y is pog_u->byc_u.ops_y ie it is arg #1 for render bytecode
             // NOTE: ___ is arg #2 for render_bytecode (aka c3_w her_w)
             // i_W
-            _slog_bytecode(1, buf_y, 0);
-            _slog_bytecode(1, pog_u->byc_u.ops_y, 0);
+            _slog_bytecode(1, buf_y);
+            _slog_bytecode(1, pog_u->byc_u.ops_y);
           }
           else {
             _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
@@ -1816,7 +1816,7 @@ int _is_pair_op(int go) {
 }
 
 void
-_slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
+_slog_bytecode(c3_l pri_l, c3_y* pog) {
   c3_w ip_w = 0;
   // NOTE: if we change the main loop, we should c/p
   //       it back up here to replace this loop,
@@ -1834,6 +1834,12 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
     ip_w++;    // move ip_w for reading a opcode name
     s_ln += 4; // opcode name, which is always 4 char long
     if (_is_pair_op(go)) {
+      if ( 0 ) {
+        // TODO: take the length of the looked up thing
+        // check the bytecode,
+        // if its an indexing bytecode, we need to look it up
+        // num = pog_u->lit_u.non[num]
+      }
       // add the len of the number
       s_ln += _intlen(
         // TODO: these are both pretty simple, but would have to be made public too
@@ -1843,7 +1849,6 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
       s_ln+= 3; // "[", the space between the opcode and number, "]"
     }
     s_ln++; // add trailing space before next word in string
-    if (ip_w == her_w) s_ln +=3; // add "[*]" before next word
   }
   s_ln += 5; //add "halt}" to end of the bytecode
 
@@ -1869,10 +1874,17 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
       // add the space
       strcat(str_c, " ");
       // get the number
-      int num =
+      c3_w num =
         go == 4 ? _n_rewo(pog, &ip_w):
         go == 2 ? _n_resh(pog, &ip_w):
         pog[ip_w++];
+
+      if ( 0 ) {
+        // check the bytecode,
+        // if its an indexing bytecode, we need to look it up
+        num = pog_u->lit_u.non[num]
+      }
+
       if (num == 0) {
         // handle a litteral zero
         strcat(str_c, "0");
@@ -1893,7 +1905,6 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, c3_w her_w) {
       strcat(str_c, "]");
     }
     strcat(str_c, " ");
-    if (ip_w == her_w) strcat(str_c, "[*]");
   }
   strcat(str_c, "halt}");
   u3t_slog_cap(pri_l, u3i_string("bytecode"), u3i_string(str_c));
@@ -1904,7 +1915,13 @@ void
 _xray(c3_l pri_l, u3_noun fol) {
   u3n_prog* pog_u = _n_bite(fol);
   c3_y* pog = pog_u->byc_u.ops_y;
-  _slog_bytecode(pri_l, pog, pog_u->byc_u.len_w-1);
+  _slog_bytecode(pri_l, pog);
+  u3m_p("fol", fol);
+  fprintf(stderr, "\r\nhex:\r\n");
+  for (int i=0; i < pog_u->byc_u.len_w; i++) {
+    fprintf(stderr, "%02x ", pog_u->byc_u.ops_y[i]);
+  }
+  fprintf(stderr, "\r\n");
   _n_prog_free_willy(pog_u);
 }
 // ---------------END DANEs EDIT -----
@@ -2047,7 +2064,7 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
       if ( c3y == u3r_trel(*clu, &pri, &tan, &fud) ) {
         c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
         u3t_slog_cap(pri_l, u3i_string("bytecode of"), u3k(tan));
-        _slog_bytecode(pri_l, fud->byc_u.ops_y, fud->byc_u.len_w-1);
+        _slog_bytecode(pri_l, fud);
       }
       */
       u3z(*clu);
