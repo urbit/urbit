@@ -29,6 +29,26 @@
       contacts=(set ship)
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
+      berms=(map path berm)
+  ==
++$  berm
+  $:  =mark
+      let=@ud
+      rock=vase
+      waves=((mop @ud wave) lte)
+      snaps=((mop @ud snap) lte)
+      =norm
+  ==
++$  wave
+  $:  =cage
+      date=@da
+  ==
++$  snap
+  $:  =vase
+      
+  ==
++$  norm
+  $:  
   ==
 ::  $watches: subscribers and publications
 ::
