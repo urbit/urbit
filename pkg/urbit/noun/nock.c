@@ -1882,7 +1882,7 @@ _slog_bytecode(c3_l pri_l, c3_y* pog) {
       if ( 0 ) {
         // check the bytecode,
         // if its an indexing bytecode, we need to look it up
-        num = pog_u->lit_u.non[num]
+        //num = pog_u->lit_u.non[num];
       }
 
       if (num == 0) {
