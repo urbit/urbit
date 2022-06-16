@@ -271,7 +271,7 @@
   =/  =task  ((harden task) wrapped-task)
   =/  event-core  (per-event [now hen] state)
   ::
-  =/  old-nex  next-wake
+  =/  old-nex  ?:(?=(?(%born %wake) -.task) ~ next-wake)
   ::
   =^  moves  state
     ::
