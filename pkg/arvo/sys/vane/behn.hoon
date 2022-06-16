@@ -120,6 +120,7 @@
   ++  wake
     |=  error=(unit tang)
     ^+  [moves state]
+    =.  next-wake.state  ~
     ::  no-op on spurious but innocuous unix wakeups
     ::
     ?:  =(~ timers.state)
@@ -135,7 +136,7 @@
     ::
     =/  [=timer later-timers=_timers.state]  pop-timer
     ?:  (gth date.timer now)
-      set-unix-wake(next-wake.state ~)
+      set-unix-wake
     ::  pop first timer, tell vane it has elapsed, and adjust next unix wakeup
     ::
     =<  set-unix-wake
