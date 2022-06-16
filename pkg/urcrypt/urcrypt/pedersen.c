@@ -21,6 +21,8 @@ typedef struct {
 struct urcrypt_pedersen_context_struct {
   constant_points *cp;
   ec_params *curve_params;
+  prj_pt prj_pt_zero;
+  nn nn_zero;
 };
 
 size_t
@@ -143,6 +145,36 @@ get_constant_points(ec_params *curve_params, constant_points* cp) {
   return ret;
 }
 
+bool buf_is_zero(uint8_t *a, size_t a_len)
+{
+  return (1 == a_len) && (0 == a[0]);
+}
+
+int prj_pt_mul_fast(urcrypt_pedersen_context *cxt, prj_pt **out_ptr, prj_pt *out, nn *m, prj_pt *in)
+{
+  if ( m == &cxt->nn_zero ) {
+    *out_ptr = &cxt->prj_pt_zero;
+    return 0;
+  }
+  else {
+    *out_ptr = out;
+    return prj_pt_mul(out, m, in);
+  }
+
+}
+
+int prj_pt_add_fast(urcrypt_pedersen_context *cxt, prj_pt **out_ptr, prj_pt *out, prj_pt *in1, prj_pt *in2)
+{
+  if ( in1 == &cxt->prj_pt_zero ) {
+    *out_ptr = in2;
+    return 0;
+  }
+  else {
+    *out_ptr = out;
+    return prj_pt_add(out, in1, in2);
+  }
+}
+
 int
 do_hash(urcrypt_pedersen_context *cxt, uint8_t *a, size_t a_len, uint8_t *b, size_t b_len, uint8_t out[32])
 {
@@ -152,6 +184,7 @@ do_hash(urcrypt_pedersen_context *cxt, uint8_t *a, size_t a_len, uint8_t *b, siz
   urcrypt__reverse(b_len, b);
 
   nn alow, ahig, blow, bhig;
+  nn *alow_ptr, *ahig_ptr, *blow_ptr, *bhig_ptr;
   if ( 32 == a_len ) {
     ret = nn_init_from_buf(&alow, a+1, 31);
     if ( 0 != ret ) {
@@ -161,21 +194,21 @@ do_hash(urcrypt_pedersen_context *cxt, uint8_t *a, size_t a_len, uint8_t *b, siz
     if ( 0 != ret ) {
       return ret;
     }
+    alow_ptr = &alow;
+    ahig_ptr = &ahig;
+  }
+  else if ( buf_is_zero(a, a_len) ) {
+    ahig_ptr = &cxt->nn_zero;
+    alow_ptr = &cxt->nn_zero;
   }
   else {
-    ret = nn_init(&ahig, 1);
-    if ( 0 != ret ) {
-      return ret;
-    }
-    ret = nn_zero(&ahig);
-    if ( 0 != ret ) {
-      return ret;
-    }
+    ahig_ptr = &cxt->nn_zero;
 
     ret = nn_init_from_buf(&alow, a, a_len);
     if ( 0 != ret ) {
       return ret;
     }
+    alow_ptr = &alow;
   }
 
   if ( 32 == b_len ) {
@@ -183,69 +216,69 @@ do_hash(urcrypt_pedersen_context *cxt, uint8_t *a, size_t a_len, uint8_t *b, siz
     if ( 0 != ret ) {
       return ret;
     }
-    *b = *b & 0x0f;
     ret = nn_init_from_buf(&bhig, b, 1);
     if ( 0 != ret ) {
       return ret;
     }
+    bhig_ptr = &bhig;
+    blow_ptr = &blow;
+  }
+  else if ( buf_is_zero(b, b_len) ) {
+    bhig_ptr = &cxt->nn_zero;
+    blow_ptr = &cxt->nn_zero;
   }
   else {
-    ret = nn_init(&bhig, 1);
-    if ( 0 != ret ) {
-      return ret;
-    }
-    ret = nn_zero(&bhig);
-    if ( 0 != ret ) {
-      return ret;
-    }
+    bhig_ptr = &cxt->nn_zero;
 
     ret = nn_init_from_buf(&blow, b, b_len);
     if ( 0 != ret ) {
       return ret;
     }
+    blow_ptr = &blow;
   }
 
   prj_pt p1_alow, p2_ahig, p3_blow, p4_bhig;
-  ret = prj_pt_mul(&p1_alow, &alow, &(cxt->cp->p1));
+  prj_pt *p1_alow_ptr, *p2_ahig_ptr, *p3_blow_ptr, *p4_bhig_ptr;
+  ret = prj_pt_mul_fast(cxt, &p1_alow_ptr, &p1_alow, alow_ptr, &(cxt->cp->p1));
   if ( 0 != ret ) {
     return ret;
   }
 
-  ret = prj_pt_mul(&p2_ahig, &ahig, &(cxt->cp->p2));
+  ret = prj_pt_mul_fast(cxt, &p2_ahig_ptr, &p2_ahig, ahig_ptr, &(cxt->cp->p2));
   if ( 0 != ret ) {
     return ret;
   }
 
-  ret = prj_pt_mul(&p3_blow, &blow, &(cxt->cp->p3));
+  ret = prj_pt_mul_fast(cxt, &p3_blow_ptr, &p3_blow, blow_ptr, &(cxt->cp->p3));
   if ( 0 != ret ) {
     return ret;
   }
 
-  ret = prj_pt_mul(&p4_bhig, &bhig, &(cxt->cp->p4));
+  ret = prj_pt_mul_fast(cxt, &p4_bhig_ptr, &p4_bhig, bhig_ptr, &(cxt->cp->p4));
   if ( 0 != ret ) {
     return ret;
   }
 
-  prj_pt sum;
-  ret = prj_pt_add(&sum, &(cxt->cp->p0), &p1_alow);
+  prj_pt sum, *sum_ptr;
+  ret = prj_pt_add_fast(cxt, &sum_ptr, &sum, p1_alow_ptr, &(cxt->cp->p0));
   if ( 0 != ret ) {
     return ret;
   }
-  ret = prj_pt_add(&sum, &sum, &p2_ahig);
+  ret = prj_pt_add_fast(cxt, &sum_ptr, &sum, p2_ahig_ptr, sum_ptr);
   if ( 0 != ret ) {
     return ret;
   }
-  ret = prj_pt_add(&sum, &sum, &p3_blow);
+  ret = prj_pt_add_fast(cxt, &sum_ptr, &sum, p3_blow_ptr, sum_ptr);
   if ( 0 != ret ) {
     return ret;
   }
-  ret = prj_pt_add(&sum, &sum, &p4_bhig);
+  ret = prj_pt_add_fast(cxt, &sum_ptr, &sum, p4_bhig_ptr, sum_ptr);
   if ( 0 != ret ) {
     return ret;
   }
 
   prj_pt aff;
-  ret = prj_pt_unique(&aff, &sum);
+  ret = prj_pt_unique(&aff, sum_ptr);
   if ( 0 != ret ) {
     return ret;
   }
@@ -280,8 +313,9 @@ do_fold_hash(urcrypt_pedersen_context *cxt, uint8_t *dat_x, size_t len_x, uint8_
     }
     pos += 32;
   }
+  ret = do_hash(cxt, acc, 32, ext, ext_len, out);
   free(ext);
-  return do_hash(cxt, acc, 32, ext, ext_len, out);
+  return ret;
 }
 
 int
@@ -335,9 +369,28 @@ urcrypt_pedersen_init(urcrypt_pedersen_context *context)
   context->curve_params = malloc(sizeof(ec_params));
   ret = get_curve_params(context->curve_params);
   if ( 0 != ret ) {
-    return -1;
+    return ret;
   }
-  return get_constant_points(context->curve_params, context->cp);
+  ret = get_constant_points(context->curve_params, context->cp);
+  if ( 0 != ret ) {
+    return ret;
+  }
+  ret = nn_init(&context->nn_zero, 0);
+  if ( 0 != ret ) {
+    return ret;
+  }
+  ret = nn_zero(&context->nn_zero);
+  if ( 0 != ret ) {
+    return ret;
+  }
+  ret = prj_pt_init(&context->prj_pt_zero, &context->curve_params->ec_curve);
+  if ( 0 != ret ) {
+    return ret;
+  }
+  ret = prj_pt_zero(&context->prj_pt_zero);
+  if ( 0 != ret ) {
+    return ret;
+  }
 }
 
 void
