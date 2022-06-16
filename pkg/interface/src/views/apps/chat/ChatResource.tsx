@@ -41,18 +41,28 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const canWrite = group ? isWriter(group, resource, window.ship) : false;
   const [
     getNewest,
+    getNode,
     getOlderSiblings,
     getYoungerSiblings,
     addPost
   ] = useGraphState(
-    s => [s.getNewest, s.getOlderSiblings, s.getYoungerSiblings, s.addPost],
+    s => [s.getNewest, s.getNode, s.getOlderSiblings, s.getYoungerSiblings, s.addPost],
     shallow
   );
 
   useEffect(() => {
-    const count = Math.min(400, 100 + unreadCount);
+    const scrollTo = new URLSearchParams(location.search).get('msg');
+    const count = scrollTo ? 50 : Math.min(400, 100 + unreadCount);
     const { ship, name } = resourceFromPath(resource);
-    getNewest(ship, name, count);
+
+    if (scrollTo) {
+      getNode(ship, name, `/${scrollTo}`);
+      getYoungerSiblings(ship, name, count, `/${scrollTo}`);
+      getOlderSiblings(ship, name, count, `/${scrollTo}`);
+    } else {
+      getNewest(ship, name, count);
+    }
+
     setToShare(undefined);
     (async function () {
       if (group.hidden) {
