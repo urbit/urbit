@@ -1718,7 +1718,6 @@
         ::
         ?-    public-keys-result
             [%diff @ %rift *]
-          :: event-core
           (on-publ-rift [who to.diff]:public-keys-result)
         ::
             [%diff @ %keys *]
@@ -1926,6 +1925,7 @@
       ::
       =.  qos.peer-state            [%unborn now]
       =.  life.peer-state           life.point
+      =.  rift.peer-state           rift.point
       =.  public-key.peer-state     public-key
       =.  symmetric-key.peer-state  symmetric-key
       =.  sponsor.peer-state
