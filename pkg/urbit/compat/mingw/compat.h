@@ -3,6 +3,7 @@
 
 #define mkdir(A, B) mkdir(A)
 
+int link(const char *path1, const char *path2);
 char *realpath(const char *path, char *resolved_path);
 int fdatasync(int fd);
 int utimes(const char *path, const struct timeval times[2]);
