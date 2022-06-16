@@ -32,7 +32,6 @@ urcrypt_pedersen_context_size()
 int
 get_curve_params(ec_params *curve_params) {
   int ret;
-  printf("getting curve params\r\n");
   u8 curve_name[MAX_CURVE_NAME_LEN] = "USER_DEFINED_STARK";
   u32 len = strnlen((const char *)curve_name, MAX_CURVE_NAME_LEN);
   len += 1;
@@ -47,7 +46,6 @@ get_curve_params(ec_params *curve_params) {
 
 int
 get_constant_points(ec_params *curve_params, constant_points* cp) {
-  printf("getting constant points\r\n");
   int ret = 0;
   ec_shortw_crv_src_t crv = &(curve_params->ec_curve);
 
