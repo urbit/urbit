@@ -168,9 +168,6 @@
     ::
     ?~  unix-duct.state
       event-core
-    ::  make sure we don't try to wake up in the past
-    ::
-    =?  date-unit  ?=(^ date-unit)  `(max now u.date-unit)
     ::
     %_  event-core
       next-wake.state  date-unit
@@ -192,10 +189,10 @@
       ?~  next-wake
         event-core
       (emit-doze ~)
-    ::  if :next-wake is in the past or not soon enough, reset it
+    ::  if :next-wake not soon enough, reset it
     ::
     ?^  next-wake
-      ?:  &((gte date.u.first u.next-wake) (lte now u.next-wake))
+      ?:  (gte date.u.first u.next-wake)
         event-core
       (emit-doze `date.u.first)
     ::  there was no unix wakeup timer; set one
