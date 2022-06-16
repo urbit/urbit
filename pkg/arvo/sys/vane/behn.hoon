@@ -271,6 +271,8 @@
   =/  =task  ((harden task) wrapped-task)
   =/  event-core  (per-event [now hen] state)
   ::
+  =/  old-nex  next-wake
+  ::
   =^  moves  state
     ::
     ::  handle error notifications
@@ -288,6 +290,18 @@
       %wait  (wait:event-core date=p.task)
       %wake  (wake:event-core error=~)
     ==
+  ::
+  =/  hed=(unit [key=@da val=(qeu duct)])  (pry:timer-map timers)
+  =/  dif=[old=(unit @da) hed=(unit @da)]  [old-nex ?~(hed ~ `key.u.hed)]
+  =/  act=$%([%noop ~] [%cancel ~] [%set p=@da])
+    ?+  dif  ~!(dif ~|(dif !!))
+      [~ ~]  [%noop ~]
+      [^ ~]  [%cancel ~]
+      [~ ^]  [%set u.hed.dif]
+      [^ ^]  ?:(=(u.old.dif u.hed.dif) [%noop ~] [%set u.hed.dif])
+    ==
+  ~&  [act=act (skim moves |=(move ?=([%give %doze *] q)))]
+  ::
   [moves behn-gate]
 ::  +load: migrate an old state to a new behn version
 ::
