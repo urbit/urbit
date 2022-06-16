@@ -965,8 +965,6 @@
   ::  +mo-trak: update source tracking list
   ::
   ++  mo-trak
-    |.
-    ^+  mo-core
     (mo-subscribe-to-agent-builds now)
   ::  +ap: agent engine
   ::
@@ -1732,7 +1730,7 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
-      %trak  mo-abet:(mo-trak:mo-core)
+      %trak  mo-abet:mo-trak:mo-core
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==
