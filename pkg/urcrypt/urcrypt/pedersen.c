@@ -259,7 +259,7 @@ static int
 do_fold_hash(urcrypt_pedersen_context *cxt, uint8_t *dat_x, size_t len_x, uint8_t *out) {
   int ret = 0;
   int pos = 0, ext_pos = 0, ext_len = (len_x / 32);
-  uint8_t *hed = NULL, *acc = NULL, ext[ext_len];
+  uint8_t *hed = NULL, *acc = NULL, *ext = malloc(ext_len);
   while ( pos < len_x ) {
     hed = (dat_x + pos);
     if ( (len_x - pos) >= 32 ) {
@@ -273,12 +273,14 @@ do_fold_hash(urcrypt_pedersen_context *cxt, uint8_t *dat_x, size_t len_x, uint8_
     else {
       ret = do_hash(cxt, acc, 32, hed, MIN(len_x - pos, 32), out);
       if ( 0 != ret ) {
+        free(ext);
         return ret;
       }
       acc = out;
     }
     pos += 32;
   }
+  free(ext);
   return do_hash(cxt, acc, 32, ext, ext_len, out);
 }
 
