@@ -2225,18 +2225,17 @@
         +:(do-hash y x)
         ++  has
           |=  n=@
-          ?:  (lte (met 3 n) 32)  n
+          ?:  (lte (met 2 n) 63)  n
           =/  rips
-          %^  spin  (tear [3 32] n)  [0 0]
-          |=  [x=@ i=@ud ext=@]
+          %^  spin  (tear [3 32] n)  0
+          |=  [x=@ ext=@]
           ?:  (lth (met 3 x) 32)
-             [x (add i 1) ext]
-          :+  (zero-nib x)
-              (add i 1)
+             [x ext]
+          :-  (zero-nib x)
               (cat 3 ext (first-nib x))
           =/  r
-            ?:  =(+>:rips 0)  p.rips
-            (into p.rips (lent p.rips) +>:rips)
+            ?:  =(q:rips 0)  p.rips
+            (into p.rips (lent p.rips) q:rips)
           =/  hed  (snag 0 r)
           =/  tal  (slag 1 r)
           q:(spin tal hed do-hash)
