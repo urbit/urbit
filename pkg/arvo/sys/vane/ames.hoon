@@ -368,6 +368,18 @@
     %earl  8
     %pawn  16
   ==
+::  +encode-keys-packet: create key request $packet
+::
+++  encode-keys-packet
+  ~/  %encode-keys-packet
+  |=  [sndr=ship rcvr=ship sndr-life=life]
+  ^-  packet
+  :*  [sndr rcvr]
+      (mod sndr-life 16)
+      `@`1
+      origin=~
+      content=`@`%keys
+  ==
 ::  +encode-open-packet: convert $open-packet attestation to $packet
 ::
 ++  encode-open-packet
@@ -734,12 +746,14 @@
 ::    %memo: packetize and send application-level message
 ::    %hear: handle receipt of ack on fragment or message
 ::    %near: handle receipt of naxplanation
+::    $prod: reset congestion control
 ::    %wake: handle timer firing
 ::
 +$  message-pump-task
   $%  [%memo =message-blob]
       [%hear =message-num =ack-meat]
       [%near =naxplanation]
+      [%prod ~]
       [%wake ~]
   ==
 ::  $message-pump-gift: effect from |message-pump
@@ -763,12 +777,14 @@
 ::    %done: deal with message acknowledgment
 ::    %halt: finish event, possibly updating timer
 ::    %wake: handle timer firing
+::    %prod: reset congestion control
 ::
 +$  packet-pump-task
   $%  [%hear =message-num =fragment-num]
       [%done =message-num lag=@dr]
       [%halt ~]
       [%wake current=message-num]
+      [%prod ~]
   ==
 ::  $packet-pump-gift: effect from |packet-pump
 ::
@@ -970,18 +986,18 @@
       ::
           [%5 %adult *]
         =.  cached-state  `[%5 state.old]
-        ~>  %slog.1^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva reload"
         larval-gate
       ::
           [%5 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
         larval-gate
       ::
           [%6 %adult *]  (load:adult-core %6 state.old)
       ::
           [%6 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %6 state.old)
         larval-gate
@@ -1005,7 +1021,7 @@
         ?>  ?=(^ cached-state)
         (state-5-to-6:load:adult-core +.u.cached-state)
       =.  cached-state  ~
-      ~>  %slog.1^leaf/"ames: metamorphosis reload"
+      ~>  %slog.0^leaf/"ames: metamorphosis reload"
       [moves adult-gate]
     --
 ::  adult ames, after metamorphosis from larva
@@ -1041,6 +1057,7 @@
       %heed  (on-heed:event-core ship.task)
       %init  on-init:event-core
       %jilt  (on-jilt:event-core ship.task)
+      %prod  (on-prod:event-core ships.task)
       %sift  (on-sift:event-core ships.task)
       %spew  (on-spew:event-core veb.task)
       %stir  (on-stir:event-core arg.task)
@@ -1371,6 +1388,29 @@
         %rot  acc(rot %.y)
       ==
     event-core
+  ::  +on-prod: re-send a packet per flow to each of .ships
+  ::
+  ++  on-prod
+    |=  ships=(list ship)
+    ^+  event-core
+    =?  ships  =(~ ships)  ~(tap in ~(key by peers.ames-state))
+    |^  ^+  event-core
+    ?~  ships  event-core
+    $(ships t.ships, event-core (prod-peer i.ships))
+    ::
+    ++  prod-peer
+      |=  her=ship
+      ^+  event-core
+      =/  par  (get-peer-state her)
+      ?~  par  event-core
+      =/  =channel  [[our her] now channel-state -.u.par]
+      =/  peer-core  (make-peer-core u.par channel)
+      =/  bones  ~(tap in ~(key by snd.u.par))
+      |-  ^+  event-core
+      ?~  bones  abet:peer-core
+      =.  peer-core  (run-message-pump:peer-core i.bones %prod ~)
+      $(bones t.bones)
+    --
   ::  +on-stir: start timers for any flow that lack them
   ::
   ::    .arg is unused, meant to ease future debug commands
@@ -1460,6 +1500,8 @@
     ~/  %on-hear-packet
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
+    %-  %^  trace  odd.veb  sndr.packet
+        |.("received packet")
     ::
     ?:  =(our sndr.packet)
       event-core
@@ -1469,6 +1511,8 @@
     ?.  =(our rcvr.packet)
       on-hear-forward
     ::
+    ?:  =(%keys content.packet)
+      on-hear-keys
     ?:  ?&  ?=(%pawn (clan:title sndr.packet))
             !?=([~ %known *] (~(get by peers.ames-state) sndr.packet))
         ==
@@ -1498,12 +1542,24 @@
     ::
     =/  =blob  (encode-packet packet)
     (send-blob & rcvr.packet blob)
+  ::  +on-hear-keys: handle receipt of attestion request
+  ::
+  ++  on-hear-keys
+    ~/  %on-hear-keys
+    |=  [=lane =packet dud=(unit goof)]
+    =+  %^  trace  msg.veb  sndr.packet
+        |.("requested attestation")
+    ?.  =(%pawn (clan:title our))
+      event-core
+    (send-blob | sndr.packet (attestation-packet sndr.packet 1))
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
     ~/  %on-hear-open
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
+    =+  %^  trace  msg.veb  sndr.packet
+        |.("got attestation")
     ::  assert the comet can't pretend to be a moon or other address
     ::
     ?>  ?=(%pawn (clan:title sndr.packet))
@@ -1514,25 +1570,29 @@
       event-core
     ::
     =/  =open-packet  (decode-open-packet packet our life.ames-state)
-    ::  store comet as peer in our state
+    ::  add comet as an %alien if we haven't already
+    ::
+    =?  peers.ames-state  ?=(~ ship-state)
+      (~(put by peers.ames-state) sndr.packet %alien *alien-agenda)
+    ::  upgrade comet to %known via on-publ-full
+    ::
+    =.  event-core
+      =/  crypto-suite=@ud  1
+      =/  keys
+        (my [sndr-life.open-packet crypto-suite public-key.open-packet]~)
+      =/  =point
+        :*  ^=     rift  0
+            ^=     life  sndr-life.open-packet
+            ^=     keys  keys
+            ^=  sponsor  `(^sein:title sndr.packet)
+        ==
+      (on-publ / [%full (my [sndr.packet point]~)])
+    ::  manually add the lane to the peer state
     ::
     =.  peers.ames-state
-      %+  ~(put by peers.ames-state)  sndr.packet
-      ^-  ^ship-state
-      :-  %known
-      =|  =peer-state
-      =/  our-private-key  sec:ex:crypto-core.ames-state
-      =/  =symmetric-key
-        (derive-symmetric-key public-key.open-packet our-private-key)
-      ::
-      %_  peer-state
-        qos            [%unborn now]
-        symmetric-key  symmetric-key
-        life           sndr-life.open-packet
-        public-key     public-key.open-packet
-        sponsor        (^sein:title sndr.packet)
-        route          `[direct=%.n lane]
-      ==
+      =/  =peer-state  (gut-peer-state sndr.packet)
+      =.  route.peer-state  `[direct=%.n lane]
+      (~(put by peers.ames-state) sndr.packet %known peer-state)
     ::
     event-core
   ::  +on-hear-shut: handle receipt of encrypted packet
@@ -1542,7 +1602,10 @@
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  if we don't know them, ask jael for their keys and enqueue
+    ::  If we don't know them, ask Jael for their keys. If they're a
+    ::  comet, this will also cause us to request a self-attestation
+    ::  from the sender. The packet itself is dropped; we can assume it
+    ::  will be resent.
     ::
     ?.  ?=([~ %known *] sndr-state)
       (enqueue-alien-todo sndr.packet |=(alien-agenda +<))
@@ -1674,6 +1737,20 @@
   ++  on-take-wake
     |=  [=wire error=(unit tang)]
     ^+  event-core
+    ::
+    ?:  ?=([%alien @ ~] wire)
+      ::  if we haven't received an attestation, ask again
+      ::
+      ?^  error
+        %-  (slog leaf+"ames: attestation timer failed: {<u.error>}" ~)
+        event-core
+      ?~  ship=`(unit @p)`(slaw %p i.t.wire)
+        %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
+        event-core
+      =/  ship-state  (~(get by peers.ames-state) u.ship)
+      ?:  ?=([~ %known *] ship-state)
+        event-core
+      (request-attestation u.ship)
     ::
     =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
     ?~  res
@@ -1984,7 +2061,7 @@
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
   ::    Also requests key and life from Jael on first request.
-  ::    On a comet, enqueues self-attestation packet on first request.
+  ::    If talking to a comet, requests attestation packet.
   ::
   ++  enqueue-alien-todo
     |=  [=ship mutate=$-(alien-agenda alien-agenda)]
@@ -2001,14 +2078,26 @@
     ::
     =.  todos             (mutate todos)
     =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
-    ::  ask jael for .sndr life and keys on first contact
-    ::
     ?:  already-pending
       event-core
+    ::
+    ?:  =(%pawn (clan:title ship))
+      (request-attestation ship)
     ::  NB: we specifically look for this wire in +public-keys-give in
     ::  Jael.  if you change it here, you must change it there.
     ::
     (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
+  ::  +request-attestation: helper to request attestation from comet
+  ::
+  ::    Also sets a timer to resend the request every 30s.
+  ::
+  ++  request-attestation
+    |=  =ship
+    ^+  event-core
+    =+  (trace msg.veb ship |.("requesting attestion"))
+    =.  event-core  (send-blob | ship (sendkeys-packet ship))
+    =/  =wire  /alien/(scot %p ship)
+    (emit duct %pass wire %b %wait (add now ~s30))
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane,
@@ -2029,6 +2118,8 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ::
         ?.  ?=([~ %known *] ship-state)
+          ?:  ?=(%pawn (clan:title ship))
+            (try-next-sponsor (^sein:title ship))
           %+  enqueue-alien-todo  ship
           |=  todos=alien-agenda
           todos(packets (~(put in packets.todos) blob))
@@ -2092,6 +2183,16 @@
         ^=        rcvr  her
         ^=   rcvr-life  her-life
     ==
+  ::  +sendkeys-packet: generate a request for a self-attestation.
+  ::
+  ::    Sent by non-comets to comets.  Not acked.
+  ::
+  ++  sendkeys-packet
+    |=  her=ship
+    ^-  blob
+    ?>  ?=(%pawn (clan:title her))
+    %-  encode-packet
+    (encode-keys-packet our her life.ames-state)
   ::  +get-peer-state: lookup .her state or ~
   ::
   ++  get-peer-state
@@ -2696,6 +2797,7 @@
     ^+  message-pump
     ::
     ?-  -.task
+      %prod  (run-packet-pump %prod ~)
       %memo  (on-memo message-blob.task)
       %wake  (run-packet-pump %wake current.state)
       %hear
@@ -2931,8 +3033,29 @@
       %hear  (on-hear [message-num fragment-num]:task)
       %done  (on-done message-num.task)
       %wake  (on-wake current.task)
+      %prod  on-prod
       %halt  set-wake
     ==
+  ::  +on-prod: reset congestion control, re-send packets
+  ::
+  ++  on-prod
+    ^+  packet-pump
+    ?:  =(~ next-wake.state)
+      packet-pump
+    ::
+    =.  metrics.state  %*(. *pump-metrics counter counter.metrics.state)
+    =.  live.state
+      %+  run:packet-queue  live.state
+      |=(p=live-packet-val p(- *packet-state))
+    ::
+    =/  sot  (max 1 num-slots:gauge)
+    =/  liv  live.state
+    |-  ^+  packet-pump
+    ?:  =(0 sot)  packet-pump
+    ?:  =(~ liv)  packet-pump
+    =^  hed  liv  (pop:packet-queue liv)
+    =.  packet-pump  (give %send (to-static-fragment hed))
+    $(sot (dec sot))
   ::  +on-wake: handle packet timeout
   ::
   ++  on-wake
@@ -2941,7 +3064,6 @@
     ::  assert temporal coherence
     ::
     ?<  =(~ next-wake.state)
-    ?>  (gte now.channel (need next-wake.state))
     =.  next-wake.state  ~
     ::  tell congestion control a packet timed out
     ::

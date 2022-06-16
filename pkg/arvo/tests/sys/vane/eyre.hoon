@@ -663,7 +663,7 @@
       eyre-gate
       now=~1111.1.2
       scry=scry-provides-code
-      call-args=[duct=~[/gen1] ~ [%serve [~ /] [%home /gen/handler/hoon ~]]]
+      call-args=[duct=~[/gen1] ~ [%serve [~ /] [%base /gen/handler/hoon ~]]]
       expected-moves=[duct=~[/gen1] %give %bound %.y [~ /]]~
     ==
   ::  outside requests a path that app1 has bound to

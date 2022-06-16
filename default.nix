@@ -40,7 +40,9 @@
 , crossOverlays ? [ ]
   # Whether to use pkgs.pkgsStatic.* to obtain statically linked package
   # dependencies - ie. when building fully-static libraries or executables.
-, enableStatic ? false }:
+, enableStatic ? false
+  # release channel (when static)
+, verePace ? "" }:
 
 let
 
@@ -95,7 +97,7 @@ let
 
     marsSources = callPackage ./nix/pkgs/marsSources { };
 
-    urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
+    urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic verePace; };
 
     urcrypt = callPackage ./nix/pkgs/urcrypt { inherit enableStatic; };
 
@@ -109,7 +111,6 @@ let
 
     urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = libLocal.testFakeShip {
-      inherit herb;
       inherit arvo;
 
       urbit = urbit-debug;
@@ -127,7 +128,6 @@ let
 
       contents = {
         "${name}/urbit" = "${urbit}/bin/urbit";
-        "${name}/urbit-worker" = "${urbit}/bin/urbit-worker";
       };
     };
 

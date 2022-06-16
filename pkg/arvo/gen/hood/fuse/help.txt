@@ -1,6 +1,6 @@
 Usage:
 
-  |fuse %dest /=kids= mate//~nel/home= meet//~zod/kids/track
+  |fuse %dest /=kids= mate//~nel/base= meet//~zod/kids/track
   |fuse %old-desk /=kids= only-that//~nus/test=, =overwrite &
   |fuse %desk-to-cancel-fuse-into %cancel
 

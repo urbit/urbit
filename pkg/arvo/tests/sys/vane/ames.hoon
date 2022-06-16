@@ -3,9 +3,14 @@
 /=  jael  /sys/vane/jael
 ::  construct some test fixtures
 ::
-=/  nec    (ames ~nec)
-=/  bud    (ames ~bud)
-=/  comet  (ames ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
+=/  nec     (ames ~nec)
+=/  bud     (ames ~bud)
+=/  marbud  (ames ~marbud)
+::
+=/  our-comet   ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
+=/  our-comet2  ~togdut-rosled-fadlev-siddys--botmun-wictev-sapfus-marbud
+=/  comet   (ames our-comet)
+=/  comet2  (ames our-comet2)
 ::
 =.  now.nec        ~1111.1.1
 =.  eny.nec        0xdead.beef
@@ -23,8 +28,17 @@
 =/  bud-pub  pub:ex:crypto-core.ames-state.bud
 =/  bud-sec  sec:ex:crypto-core.ames-state.bud
 ::
+=.  now.marbud        ~1111.1.1
+=.  eny.marbud        0xbeef.beef
+=.  life.ames-state.marbud  4
+=.  rof.marbud  |=(* ``[%noun !>(*(list turf))])
+=.  crypto-core.ames-state.marbud  (pit:nu:crub:crypto 512 (shaz 'marbud'))
+=/  marbud-pub  pub:ex:crypto-core.ames-state.marbud
+=/  marbud-sec  sec:ex:crypto-core.ames-state.marbud
+::
 =.  now.comet        ~1111.1.1
 =.  eny.comet        0xbeef.cafe
+=.  life.ames-state.comet  1
 =.  rof.comet  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.comet
   %-  nol:nu:crub:crypto
@@ -32,10 +46,23 @@
   3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
 =/  comet-pub  pub:ex:crypto-core.ames-state.comet
 =/  comet-sec  sec:ex:crypto-core.ames-state.comet
-
+::
+=.  now.comet2        ~1111.1.1
+=.  eny.comet2        0xcafe.cafe
+=.  life.ames-state.comet2  1
+=.  rof.comet2  |=(* ``[%noun !>(*(list turf))])
+=.  crypto-core.ames-state.comet2  (pit:nu:crub:crypto 512 0v1eb4)
+=/  comet2-pub  pub:ex:crypto-core.ames-state.comet2
+=/  comet2-sec  sec:ex:crypto-core.ames-state.comet2
+::
 =/  nec-sym  (derive-symmetric-key:ames bud-pub nec-sec)
 =/  bud-sym  (derive-symmetric-key:ames nec-pub bud-sec)
 ?>  =(nec-sym bud-sym)
+=/  nec-marbud-sym  (derive-symmetric-key:ames marbud-pub nec-sec)
+::
+=/  marbud-sym  (derive-symmetric-key:ames marbud-pub comet-sec)
+=/  marbud2-sym  (derive-symmetric-key:ames marbud-pub comet2-sec)
+=/  bud-marbud-sym  (derive-symmetric-key:ames bud-pub marbud-sec)
 ::
 =/  comet-sym  (derive-symmetric-key:ames bud-pub comet-sec)
 ::
@@ -52,6 +79,19 @@
   =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
   [%known peer-state]
 ::
+=.  peers.ames-state.nec
+  %+  ~(put by peers.ames-state.nec)  ~marbud
+  =|  =peer-state:ames
+  =.  -.peer-state
+    :*  symmetric-key=nec-marbud-sym
+        life=5
+        rift=0
+        public-key=marbud-pub
+        sponsor=~bud
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  [%known peer-state]
+::
 =.  peers.ames-state.bud
   %+  ~(put by peers.ames-state.bud)  ~nec
   =|  =peer-state:ames
@@ -64,12 +104,63 @@
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
   [%known peer-state]
+::
+=.  peers.ames-state.comet
+  %+  ~(put by peers.ames-state.comet)  ~marbud
+  =|  =peer-state:ames
+  =.  -.peer-state
+    :*  symmetric-key=marbud-sym
+        life=5
+        rift=0
+        public-key=marbud-pub
+        sponsor=~bud
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  [%known peer-state]
+=.  peers.ames-state.comet
+  %+  ~(put by peers.ames-state.comet)  ~bud
+  =|  =peer-state:ames
+  =.  -.peer-state
+    :*  symmetric-key=bud-marbud-sym
+        life=3
+        rift=0
+        public-key=bud-pub
+        sponsor=~bud
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  [%known peer-state]
+=.  peers.ames-state.comet2
+  %+  ~(put by peers.ames-state.comet2)  ~marbud
+  =|  =peer-state:ames
+  =.  -.peer-state
+    :*  symmetric-key=marbud2-sym
+        life=5
+        rift=0
+        public-key=marbud-pub
+        sponsor=~bud
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  [%known peer-state]
+=.  peers.ames-state.comet2
+  %+  ~(put by peers.ames-state.comet2)  ~bud
+  =|  =peer-state:ames
+  =.  -.peer-state
+    :*  symmetric-key=bud-marbud-sym
+        life=3
+        rift=0
+        public-key=bud-pub
+        sponsor=~bud
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  [%known peer-state]
 ::  metamorphose
 ::
 =>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
 =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
+=>  .(comet +:(call:(comet) ~[//unix] ~ %born ~))
+=>  .(comet2 +:(call:(comet2) ~[//unix] ~ %born ~))
 ::  helper core
-::
+::
 =>
 |%
 ++  move-to-packet
@@ -225,57 +316,6 @@
       !>  (sy ,.moves3)
   ==
 ::
-++  test-comet-encounter  ^-  tang
-  ::
-  =/  lane-foo=lane:ames  [%| `@ux``@`%lane-foo]
-  ::
-  =/  =open-packet:ames
-    :*  public-key=`@`comet-pub
-        sndr=our.comet
-        sndr-life=1
-        rcvr=~bud
-        rcvr-life=3
-    ==
-  =/  packet
-    ~!  ames
-    (encode-open-packet:ames open-packet crypto-core.ames-state.comet)
-  =/  blob  (encode-packet:ames packet)
-  ::
-  =^  moves0  bud  (call bud ~[//unix] %hear lane-foo blob)
-  ::
-  =/  =plea:ames  [%g /talk [%first %post]]
-  =/  =shut-packet:ames
-    :*  bone=1
-        message-num=1
-        [%& num-fragments=1 fragment-num=0 (jam plea)]
-    ==
-  =/  =packet:ames
-    %:  encode-shut-packet:ames
-      shut-packet
-      comet-sym
-      our.comet
-      ~bud
-      sndr-life=1
-      rcvr-life=3
-    ==
-  =/  blob  (encode-packet:ames packet)
-  =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
-  ::
-  ;:  weld
-    %+  expect-eq
-      !>  ~
-      !>  moves0
-  ::
-    %+  expect-eq
-      !>  :~  :*  ~[//unix]  %pass  /qos  %d  %flog  %text
-                  "; {<our.comet>} is your neighbor"
-              ==
-              :*  ~[//unix]  %pass  /bone/(scot %p our.comet)/0/1
-                  %g  %plea  our.comet  plea
-          ==  ==
-      !>  moves1
-  ==
-::
 ++  test-message-flow  ^-  tang
   ::  ~nec -> %plea -> ~bud
   ::
@@ -312,6 +352,78 @@
     %+  expect-eq
       !>  [~[/g/talk] %give %boon [%post 'first1']]
       !>  (snag 0 `(list move:ames)`moves6)
+  ==
+::
+++  test-comet-message-flow  ^-  tang
+  ::  same as test-message-flow, but ~nec will send a sendkeys packet to request
+  ::  comet's self-attestation directly
+  ::
+  =^  moves0  nec    (call nec ~[/g/talk] %plea our-comet %g /talk [%get %post])
+  =^  moves1  comet  (call comet ~[//unix] %hear (snag-packet 0 moves0))
+  =^  moves2  comet
+    =/  =point:ames
+      :*  rift=1
+          life=2
+          keys=[[life=2 [crypto-suite=1 `@`nec-pub]] ~ ~]
+          sponsor=`~nec
+      ==
+    %-  take
+    :^  comet  /public-keys  ~[//unix]
+    ^-  sign:ames
+    [%jael %public-keys %full [n=[~nec point] ~ ~]]
+  ::  give comet's self-attestation to ~nec; at this point, we have established
+  ::  a channel, and can proceed as usual
+  ::
+  =^  moves3  nec    (call nec ~[//unix] %hear (snag-packet 0 moves2))
+  =^  moves4  comet  (call comet ~[//unix] %hear (snag-packet 0 moves3))
+  =^  moves5  comet  (take comet /bone/~nec/0/1 ~[//unix] %g %done ~)
+  =^  moves6  nec    (call nec ~[//unix] %hear (snag-packet 0 moves5))
+  =^  moves7  comet  (take comet /bone/~nec/0/1 ~[//unix] %g %boon [%post 'first1!!'])
+  =^  moves8  nec    (call nec ~[//unix] %hear (snag-packet 0 moves7))
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [~[//unix] %pass /qos %d %flog %text "; ~nec is your neighbor"]
+      !>  (snag 0 `(list move:ames)`moves4)
+  ::
+    %+  expect-eq
+      !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet>} is your neighbor"]
+      !>  (snag 0 `(list move:ames)`moves6)
+  ::
+    %+  expect-eq
+      !>  [~[/g/talk] %give %boon [%post 'first1!!']]
+      !>  (snag 0 `(list move:ames)`moves8)
+  ==
+::
+++  test-comet-comet-message-flow  ^-  tang
+  ::  same as test-message-flow, but the comets need to exchange
+  ::  self-attestations to establish a channel
+  ::
+  =^  moves0  comet   (call comet ~[/g/talk] %plea our-comet2 %g /talk [%get %post])
+  =^  moves1  comet2  (call comet2 ~[//unix] %hear (snag-packet 0 moves0))
+  =^  moves2  comet   (call comet ~[//unix] %hear (snag-packet 0 moves1))
+  ::  channel is now established; comet also emitted a duplicate
+  ::  self-attestation, which we ignore
+  ::
+  =^  moves3  comet2  (call comet2 ~[//unix] %hear (snag-packet 0 moves2))
+  =^  moves4  comet2  (call comet2 ~[//unix] %hear (snag-packet 1 moves2))
+  =^  moves5  comet2  (take comet2 /bone/(scot %p our-comet)/0/1 ~[//unix] %g %done ~)
+  =^  moves6  comet2  (take comet2 /bone/(scot %p our-comet)/0/1 ~[//unix] %g %boon [%post 'first1!!'])
+  =^  moves7  comet   (call comet ~[//unix] %hear (snag-packet 0 moves5))
+  =^  moves8  comet   (call comet ~[//unix] %hear (snag-packet 0 moves6))
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet>} is your neighbor"]
+      !>  (snag 0 `(list move:ames)`moves4)
+  ::
+    %+  expect-eq
+      !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet2>} is your neighbor"]
+      !>  (snag 0 `(list move:ames)`moves7)
+  ::
+    %+  expect-eq
+      !>  [~[/g/talk] %give %boon [%post 'first1!!']]
+      !>  (snag 0 `(list move:ames)`moves8)
   ==
 ::
 ++  test-nack  ^-  tang

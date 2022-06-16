@@ -109,6 +109,26 @@
     this
   (emit %pass / %arvo %j %moon u.sed)
 ::
+++  poke-moon-breach
+  |=  =ship
+  ?>  ?|  =(our src):bowl
+          =(src.bowl ship)
+      ==
+  abet:(emit %pass /helm/moon-breach/(scot %p ship) %arvo %b %wait now.bowl)
+::
+++  take-wake-moon-breach
+  |=  [way=wire error=(unit tang)]
+  ?^  error
+    %-  (slog %take-wake-moon-breach-fail u.error)
+    abet
+  ?>  ?=([@ ~] way)
+  =/  =ship  (slav %p i.way)
+  ?>  =(%earl (clan:title ship))
+  ?>  =(our.bowl (sein:title our.bowl now.bowl ship))
+  =/  =rift
+    +(.^(rift j+/(scot %p our.bowl)/rift/(scot %da now.bowl)/(scot %p ship)))
+  abet:(emit %pass / %arvo %j %moon ship *id:block:jael %rift rift %.n)
+::
 ++  poke-code
   |=  act=?(~ %reset)
   =<  abet
@@ -137,6 +157,12 @@
 ++  poke-pack
   |=  ~  =<  abet
   (emit %pass /pack %arvo %d %flog %pack ~)
+::
+++  poke-pans
+  |=  pans=(list note-arvo)
+  ?~  pans  abet
+  =.  this  (emit %pass /helm/pans %arvo i.pans)
+  $(pans t.pans)
 ::
 ++  poke-pass
   |=  =note-arvo  =<  abet
@@ -171,6 +197,10 @@
     ~&  %poke-hi-fail
     !!
   abet:(flog %text "< {<src.bowl>}: {(trip mes)}")
+::
+++  poke-ames-prod
+  |=  ships=(list ship)
+  abet:(emit %pass /helm/prod %arvo %a %prod ships)
 ::
 ++  poke-atom
   |=  ato=@
@@ -233,9 +263,11 @@
 ++  poke
   |=  [=mark =vase]
   ?>  ?|  ?=(%helm-hi mark)
+          ?=(%helm-moon-breach mark)
           =(our src):bowl
       ==
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
+    %helm-ames-prod        =;(f (f !<(_+<.f vase)) poke-ames-prod)
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
@@ -249,9 +281,11 @@
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
+    %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
     %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)
     %helm-moon             =;(f (f !<(_+<.f vase)) poke-moon)
+    %helm-moon-breach      =;(f (f !<(_+<.f vase)) poke-moon-breach)
     %helm-pack             =;(f (f !<(_+<.f vase)) poke-pack)
     %helm-pass             =;(f (f !<(_+<.f vase)) poke-pass)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
@@ -276,10 +310,12 @@
 ++  take-arvo
   |=  [=wire =sign-arvo]
   ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
-    [%automass *]  %+  take-wake-automass  t.wire
-                   ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
-    [%serv *]      %+  take-bound  t.wire
-                   ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
-    [%pass *]      abet
+    [%automass *]     %+  take-wake-automass  t.wire
+                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+    [%serv *]         %+  take-bound  t.wire
+                      ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
+    [%moon-breach *]  %+  take-wake-moon-breach  t.wire
+                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+    [%pass *]         abet
   ==
 --
