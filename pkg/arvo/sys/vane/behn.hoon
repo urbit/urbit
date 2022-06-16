@@ -291,8 +291,9 @@
       %wake  (wake:event-core error=~)
     ==
   ::
-  =/  hed=(unit [key=@da val=(qeu duct)])  (pry:timer-map timers)
-  =/  dif=[old=(unit @da) hed=(unit @da)]  [old-nex ?~(hed ~ `key.u.hed)]
+  =/  dif=[old=(unit @da) hed=(unit @da)]
+    =/  hed=(unit [key=@da *])  (pry:timer-map timers)
+    [old-nex ?~(hed ~ `key.u.hed)]
   =/  act=$%([%noop ~] [%cancel ~] [%set p=@da])
     ?+  dif  ~!(dif ~|(dif !!))
       [~ ~]  [%noop ~]
@@ -300,7 +301,25 @@
       [~ ^]  [%set u.hed.dif]
       [^ ^]  ?:(=(u.old.dif u.hed.dif) [%noop ~] [%set u.hed.dif])
     ==
-  ~&  [act=act (skim moves |=(move ?=([%give %doze *] q)))]
+  =/  res=(unit $%([%dif act=_act mov=(unit $>(%doze gift))] [%weird ~]))
+    =/  doz  (murn moves |=(move ?.(?=([%give %doze *] q) ~ `gift.q)))
+    ?.  ?=($@(~ [^ ~]) doz)
+      `[%weird ~]
+    ?-  -.act
+      %noop    ?~(doz ~ `[%dif act `i.doz])
+    ::
+      %cancel  ?~  doz  `[%dif act ~]
+               ?~  p.i.doz  ~
+               `[%dif act `i.doz]
+    ::
+      %set     ?~  doz  `[%dif act ~]
+               ?.  ?|  ?=(~ p.i.doz)
+                       !=(p.act u.p.i.doz)
+                   ==
+                  ~
+               `[%dif act `i.doz]
+    ==
+  ~?  ?=(^ res)  [tag=-.task res=u.res]
   ::
   [moves behn-gate]
 ::  +load: migrate an old state to a new behn version
