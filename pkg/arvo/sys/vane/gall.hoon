@@ -567,7 +567,7 @@
     ?:  ?=(%| -.res)
       (mean leaf+["gall: bad agent {<dap>}"] p.res)
     =.  mo-core  (mo-receive-core dap beak p.res)
-    (mo-subscribe-to-agent-builds now)
+    (mo-pass wire %g %trak ~)
   ::  +mo-handle-sys-lyv: handle notice that agents have been rebuilt
   ::
   ++  mo-handle-sys-lyv
@@ -962,6 +962,12 @@
       %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
       %x  (mo-give %unto %kick ~)
     ==
+  ::  +mo-trak: update source tracking list
+  ::
+  ++  mo-trak
+    |.
+    ^+  mo-core
+    (mo-subscribe-to-agent-builds now)
   ::  +ap: agent engine
   ::
   ::    An inner, agent-level core.  The sample refers to the agent we're
@@ -1726,6 +1732,7 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
+      %trak  mo-abet:(mo-trak:mo-core)
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==

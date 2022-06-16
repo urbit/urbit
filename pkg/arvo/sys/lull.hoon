@@ -1648,6 +1648,7 @@
     $~  [%vega ~]                                       ::
     $%  [%deal p=sock q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
+        [%trak ~]                                       ::  update source tracking
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%nuke =dude]                                   ::  delete agent
