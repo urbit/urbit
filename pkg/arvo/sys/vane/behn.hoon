@@ -192,7 +192,7 @@
     ::  if :next-wake not soon enough, reset it
     ::
     ?^  next-wake
-      ?:  (gte date.u.first u.next-wake)
+      ?:  =(date.u.first u.next-wake)
         event-core
       (emit-doze `date.u.first)
     ::  there was no unix wakeup timer; set one
