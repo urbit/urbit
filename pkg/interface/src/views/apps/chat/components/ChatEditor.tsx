@@ -5,7 +5,7 @@ import 'codemirror/addon/hint/show-hint';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
 import React, { useRef, ClipboardEvent, useEffect, useImperativeHandle } from 'react';
-import { Controlled as CodeEditor } from 'react-codemirror2';
+import { Controlled as CodeEditor } from 'react-codemirror2-react-17';
 import styled from 'styled-components';
 import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
 import useSettingsState from '~/logic/state/settings';
