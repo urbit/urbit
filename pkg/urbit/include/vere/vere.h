@@ -156,6 +156,7 @@
           c3_o    mou;                      //  M (for mouse event) received
           c3_y    ton_y;                    //  mouse button
           c3_y    col_y;                    //  column coordinate
+          c3_y    seq_y;                    //  vt sequence
         } esc;
 
         struct {                            //  input buffering

@@ -668,19 +668,39 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
   //
   if ( c3y == tat_u->esc.ape ) {
     if ( c3y == tat_u->esc.bra ) {
-      switch ( cay_y ) {
-        default: {
-          _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
-          break;
-        }
-        case 'A': _term_io_spit(uty_u, u3nc(c3__aro, 'u')); break;
-        case 'B': _term_io_spit(uty_u, u3nc(c3__aro, 'd')); break;
-        case 'C': _term_io_spit(uty_u, u3nc(c3__aro, 'r')); break;
-        case 'D': _term_io_spit(uty_u, u3nc(c3__aro, 'l')); break;
+      //  vt sequence
       //
-        case 'M': tat_u->esc.mou = c3y; break;
+      if ( cay_y == '~' ) {
+        switch ( tat_u->esc.seq_y ) {
+          default: {
+            _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
+            break;
+          }
+          case '3': _term_io_spit(uty_u, u3nc(c3__del, u3_nul)); break;
+        }
+        tat_u->esc.ape = tat_u->esc.bra = c3n;
+        tat_u->esc.seq_y = 0;
       }
-      tat_u->esc.ape = tat_u->esc.bra = c3n;
+      else if ( cay_y <= '9' ) {
+        tat_u->esc.seq_y = cay_y;
+      }
+      //  xterm sequence
+      //
+      else {
+        switch ( cay_y ) {
+          default: {
+            _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
+            break;
+          }
+          case 'A': _term_io_spit(uty_u, u3nc(c3__aro, 'u')); break;
+          case 'B': _term_io_spit(uty_u, u3nc(c3__aro, 'd')); break;
+          case 'C': _term_io_spit(uty_u, u3nc(c3__aro, 'r')); break;
+          case 'D': _term_io_spit(uty_u, u3nc(c3__aro, 'l')); break;
+        //
+          case 'M': tat_u->esc.mou = c3y; break;
+        }
+        tat_u->esc.ape = tat_u->esc.bra = c3n;
+      }
     }
     else {
       if ( (cay_y >= 'a') && (cay_y <= 'z') ) {
