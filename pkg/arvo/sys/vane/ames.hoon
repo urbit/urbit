@@ -2104,6 +2104,16 @@
     |=  [next-lane=(unit lane) =packet]
     ::
     =/  final-ship  rcvr.packet
+    ::
+    ::
+    =/  ship-state  (~(get by peers.ames-state) final-ship)
+    ::
+    ?.  ?=([~ %known *] ship-state)
+      %+  enqueue-alien-todo  final-ship
+      |=  todos=alien-agenda
+      todos(packets (~(put in packets.todos) (encode-packet packet)))
+    ::
+    ::
     %-  (trace rot.veb final-ship |.("send-packet: to {<final-ship>}"))
     |-  ^+  event-core
       =*  relay-state  relay-state.ames-state
@@ -2143,6 +2153,7 @@
       ::
       =?  next.packet
         ?&
+          !=(~ next-lane)
           ?~  next-lane  !!
           =(%.n -.u.next-lane)
         ==
