@@ -251,19 +251,17 @@
 ::  +make-pending-timer-wire
 ::
 ++  make-pending-timer-wire
-  |=  dyad
+  |=  =ship
   ^-  wire
-  /pending/(scot %p sndr)/(scot %p rcvr)
+  /pending/(scot %p ship)
 ::  +parse-pending-timer-wire
 ::
 ++  parse-pending-timer-wire
-  |=  =wire
-  ^-  dyad
+  |=  wire=[%pending @ ~]
+  ^-  ship
   ::
   ~|  %ames-wire-timer^wire
-  ?.  ?=([%pending @ @ ~] wire)  !!
-  :-  `@p`(slav %p i.t.wire)
-  `@p`(slav %p i.t.t.wire)
+  (slav %p +<:wire)
 ::  +make-sponsee-timer-wire
 ::
 ++  make-sponsee-timer-wire
@@ -273,13 +271,11 @@
 ::  +parse-sponsee-timer-wire
 ::
 ++  parse-sponsee-timer-wire
-  |=  =wire
+  |=  wire=[%sponsee @ ~]
   ^-  ship
   ::
   ~|  %ames-wire-timer^wire
-  ?.  ?=([%sponsee @ ~] wire)  !!
-  ?~  sponsee=`(unit @p)`(slaw %p i.t.wire)  !!
-  u.sponsee
+  (slav %p +<:wire)
 ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
 ::
 ::    Assumes keys have a tag on them like the result of the |ex:crub core.
@@ -342,8 +338,8 @@
   ::  read header; first bit is reserved
   ::
   =/  type     (cut 0 [2 2] header)
-  ::  ?.  =(| type)
-  ::    ~|  %ames-not-ames  !!
+  ?.  =(0 type)
+    ~|  %ames-not-ames  !!
   ::
   =/  version  (cut 0 [4 3] header)
   ?.  =(protocol-version version)
@@ -1521,11 +1517,11 @@
       (~(put by sponsees.relay-state) [sndr.packet [lane (add ~s30 now)]])
     ::  send 30s expiration timer to behn
     ::
-    =?  event-core
-      spons
-      =/  duct  ~[/ames]
-      =/  wire  (make-sponsee-timer-wire sndr.packet)
-      (emit duct %pass wire %b %wait (add ~s30 now))
+::    =?  event-core
+::      spons
+::      =/  duct  ~[/ames]
+::      =/  wire  (make-sponsee-timer-wire sndr.packet)
+::      (emit duct %pass wire %b %wait (add ~s30 now))
     :: add the lane to our pending map
     ::
     =*  pend
@@ -1541,12 +1537,12 @@
       (~(put by pending.relay-state) [sndr.packet [[lane ~] (add ~s30 now)]])
     ::  send 30s expiration timer to behn
     ::
-    =?  event-core
-      pend
-      =/  duct  ~[/ames]
-      =/  wire  (make-pending-timer-wire [rcvr.packet sndr.packet])
-      (emit duct %pass wire %b %wait (add ~s30 now))
-    ::  update the pending map 'next' lane if necessary
+::    =?  event-core
+::      pend
+::      =/  duct  ~[/ames]
+::      =/  wire  (make-pending-timer-wire [rcvr.packet sndr.packet])
+::      (emit duct %pass wire %b %wait (add ~s30 now))
+::    ::  update the pending map 'next' lane if necessary
     ::
     =?    pending.relay-state
         ::
@@ -1587,7 +1583,7 @@
     %-  %^  trace  for.veb  sndr.packet
         |.("forward: {<sndr.packet>} -> {<rcvr.packet>}")
     ::
-    (send-packet & `lane packet)
+    (send-packet `lane packet)
   ::  +on-hear-keys: handle receipt of attestion request
   ::
   ++  on-hear-keys
@@ -1597,7 +1593,7 @@
         |.("requested attestation")
     ?.  =(%pawn (clan:title our))
       event-core
-    (send-packet | ~ (attestation-packet sndr.packet 1))
+    (send-packet ~ (attestation-packet sndr.packet 1))
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
@@ -1725,10 +1721,10 @@
     |=  [=wire error=(unit tang)]
     ^+  event-core
     ::
-    ?:  ?=([%pending @ @ ~] wire)
+    ?:  ?=([%pending @ ~] wire)
       =/  res  (parse-pending-timer-wire wire)
       =*  pending  pending.relay-state.ames-state
-      =/  pen  (~(get by pending) rcvr.res)
+      =/  pen  (~(get by pending) res)
       ?~  pen  event-core
       ?:  (gth expiry.u.pen now)
         event-core
@@ -1966,7 +1962,7 @@
         ::  if we're a comet, send self-attestation packet first
         ::
         =?  event-core  =(%pawn (clan:title our))
-          (send-packet | ~ (attestation-packet ship life.point))
+          (send-packet ~ (attestation-packet ship life.point))
         ::  save current duct
         ::
         =/  original-duct  duct
@@ -1988,7 +1984,7 @@
           %+  roll  ~(tap in packets.todos)
           |=  [=blob core=_event-core]
           =/  packet  (decode-packet blob)
-          (send-packet:core | ~ packet)
+          (send-packet:core ~ packet)
         ::
         event-core(duct original-duct)
       --
@@ -2096,7 +2092,7 @@
     |=  =ship
     ^+  event-core
     =+  (trace msg.veb ship |.("requesting attestion"))
-    =.  event-core  (send-packet | ~ (sendkeys-packet ship))
+    =.  event-core  (send-packet ~ (sendkeys-packet ship))
     =/  =wire  /alien/(scot %p ship)
     (emit duct %pass wire %b %wait (add now ~s30))
   ::  +send-packet: fire packet at lane and maybe next
@@ -2105,7 +2101,7 @@
   ::    request the information from Jael if we haven't already.
   ::
   ++  send-packet
-    |=  [for=? next-lane=(unit lane) =packet]
+    |=  [next-lane=(unit lane) =packet]
     ::
     =/  final-ship  rcvr.packet
     %-  (trace rot.veb final-ship |.("send-packet: to {<ship>}"))
@@ -2147,7 +2143,6 @@
       ::
       =?  next.packet
         ?&
-          for
           ?~  next-lane  !!
           =(%.n -.u.next-lane)
         ==
@@ -2418,7 +2413,7 @@
           ?&  ?=(%pawn (clan:title our))
               =(1 current:(~(got by snd.peer-state) bone))
           ==
-        (send-packet | ~ (attestation-packet [her her-life]:channel))
+        (send-packet ~ (attestation-packet [her her-life]:channel))
       ::  maybe resend some timed out packets
       ::
       (run-message-pump bone %wake ~)
@@ -2434,7 +2429,7 @@
       ::    here.
       ::
       =.  event-core
-        %^  send-packet  |  ~
+        %+  send-packet  ~
         %:  encode-shut-packet
           shut-packet(bone (mix 1 bone.shut-packet))
           symmetric-key.channel
