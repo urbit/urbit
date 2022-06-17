@@ -1080,9 +1080,7 @@
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
         [%del ~]                                        ::  true delete
-        [%end ~]                                        ::  end
         [%hit x=@ud y=@ud]                              ::  mouse click
-        [%home ~]                                       ::  home
         [%ret ~]                                        ::  return
     ==                                                  ::
   +$  blit                                              ::  client output

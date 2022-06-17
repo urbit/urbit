@@ -676,9 +676,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
             _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
             break;
           }
-          case '1': _term_io_spit(uty_u, u3nc(c3__home, u3_nul)); break;
           case '3': _term_io_spit(uty_u, u3nc(c3__del, u3_nul)); break;
-          case '4': _term_io_spit(uty_u, u3nc(c3__end, u3_nul)); break;
         }
         tat_u->esc.ape = tat_u->esc.bra = c3n;
         tat_u->esc.seq_y = 0;
