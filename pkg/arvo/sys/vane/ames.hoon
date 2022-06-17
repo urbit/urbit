@@ -2104,7 +2104,7 @@
     |=  [next-lane=(unit lane) =packet]
     ::
     =/  final-ship  rcvr.packet
-    %-  (trace rot.veb final-ship |.("send-packet: to {<ship>}"))
+    %-  (trace rot.veb final-ship |.("send-packet: to {<final-ship>}"))
     |-  ^+  event-core
       =*  relay-state  relay-state.ames-state
       =*  pending   pending.relay-state
