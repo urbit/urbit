@@ -594,13 +594,15 @@
     ?<  ?=([?(%cru %hey %rez %yow) *] bet)            ::  target-specific
     =.  blt  [q.blt `bet]                             ::  remember belt
     ?-  bet
-      @         (ta-txt bet ~)
-      [%aro *]  (ta-aro p.bet)
-      [%bac *]  ta-bac
-      [%del *]  ta-del
-      [%hit *]  (ta-hit +.bet)
-      [%ret *]  ta-ret
-      [%txt *]  (ta-txt p.bet)
+      @          (ta-txt bet ~)
+      [%aro *]   (ta-aro p.bet)
+      [%bac *]   ta-bac
+      [%del *]   ta-del
+      [%end *]   ta-end
+      [%hit *]   (ta-hit +.bet)
+      [%home *]  ta-home
+      [%ret *]   ta-ret
+      [%txt *]   (ta-txt p.bet)
     ::
         [%mod *]
       ?+  mod.bet  $(bet key.bet)
@@ -684,6 +686,10 @@
       ta-bel
     (ta-hom %del pos.inp)
   ::
+  ++  ta-end                                          ::  hear end
+    ^+  .
+    .(pos.inp (lent buf.say.inp))
+  ::
   ++  ta-hit                                          ::  hear click
     |=  [x=@ud y=@ud]
     ^+  +>
@@ -691,6 +697,10 @@
       (lent-char:klr (make:klr cad.pom))
     =?  x  (lth x pol)  pol
     +>.$(pos.inp (min (sub x pol) (lent buf.say.inp)))
+  ::
+  ++  ta-home                                         ::  hear home
+    ^+  .
+    .(pos.inp 0)
   ::
   ++  ta-erl                                          ::  hear local error
     |=  pos=@ud
