@@ -96,7 +96,7 @@
       %wake  (wake(next-wake.state ~) error)
     ==
   ::
-  ::  +take-drip:  XX
+  ::  +take-drip: the future is now, %give the deferred move
   ::
   ++  take-drip
     |=  [num=@ud error=(unit tang)]
@@ -115,7 +115,7 @@
   ::
   +|  %tasks
   ::
-  ::  +drip:  XX
+  ::  +drip: enqueue a future gift (as a vase), %pass ourselves a %wait
   ::
   ++  drip
     |=  vax=vase
@@ -126,7 +126,7 @@
       count.drips.state  +(count.drips.state)
     ==
   ::
-  ::  +wake: unix says wake up; process the elapsed timer and set :next-wake
+  ::  +wake: unix says wake up; process the elapsed timer (or forward error)
   ::
   ++  wake
     |=  error=(unit tang)
@@ -143,6 +143,9 @@
       this
     ::  pop the first timer and notify client vane,
     ::  forwarding error if present
+    ::
+    ::    XX %wake errors should be signaled out-of-band
+    ::    [duct.timer %hurl goof %give %wake ~]
     ::
     (emit(timers.state later-timers) [duct.timer %give %wake error])
   ::
