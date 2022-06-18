@@ -53,7 +53,7 @@
   =^  b  behn-gate  (call `%b wen b-arg b-out)
   ::
   =/  c-arg  [~[/vere] [%wake ~]]
-  =/  c-out=(list move)  [~[/foo] [%give [%wake ~]]]~   :: XX spurious %doze
+  =/  c-out=(list move)  [~[/foo] [%give [%wake ~]]]~
   =^  c  behn-gate  (call `%c +(wen) c-arg c-out)
   ::
   :(weld a b c)
@@ -123,7 +123,7 @@
   ::
   =/  e-arg  [~[/vere] [%wake ~]]
   =/  e-out=(list move)
-    :~  [~[/vere] [%give [%doze `(add 2 wen)]]]         :: XX bug
+    :~  [~[/vere] [%give [%doze `(add 2 wen)]]]
         [~[/foo] [%give [%wake ~]]]
     ==
   =^  e  behn-gate  (call `%e +(wen) e-arg e-out)
@@ -181,7 +181,7 @@
   ::
   =/  e-arg  [~[/vere] [%wake ~]]
   =/  e-out=(list move)
-    :~  [~[/vere] [%give [%doze `(add 2 wen)]]]         :: XX spuriously skewed
+    :~  [~[/vere] [%give [%doze `(add 2 wen)]]]
         [~[/foo] [%give [%wake ~]]]
     ==
   =^  e  behn-gate  (call `%e (add 3 wen) e-arg e-out)
@@ -206,10 +206,10 @@
   ::
   =/  d-arg  [~[/foo] [%rest (add 2 wen)]]
   =/  d-out=(list move)  [~[/vere] [%give [%doze `(add 3 wen)]]]~
-  =^  d  behn-gate  (call `%d wen d-arg d-out)          ::  XX assumes .= in +set-unix-wake
+  =^  d  behn-gate  (call `%d wen d-arg d-out)
   ::
   =/  e-arg  [~[/vere] [%wake ~]]
-  =/  e-out=(list move)  [~[/foo] [%give [%wake ~]]]~   :: XX spurious %doze
+  =/  e-out=(list move)  [~[/foo] [%give [%wake ~]]]~
   =^  e  behn-gate  (call `%e (add 4 wen) e-arg e-out)
   ::
   :(weld a b c d e)
