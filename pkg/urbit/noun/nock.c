@@ -520,6 +520,8 @@ enum { OPCODES };
 static inline c3_y
 _n_arg(c3_y cod_y)
 {
+  // TODO: I think these lists are incomplete
+  //       they should include all the hint ops too
   switch ( cod_y ) {
     case FABK: case FABL: case FIBL: case FIBK:
     case LILB: case LITB: case LIBL: case LIBK:
@@ -527,6 +529,7 @@ _n_arg(c3_y cod_y)
     case SLIB: case SKIB: case KICB: case TICB:
     case BUSH: case BAST: case BALT:
     case MUTB: case KUTB: case MITB: case KITB:
+    case HILB: case HINB: // to fix my TODO
       return sizeof(c3_y);
 
     case FASK: case FASL: case FISL: case FISK:
@@ -535,6 +538,7 @@ _n_arg(c3_y cod_y)
     case SLIS: case SKIS: case KICS: case TICS:
     case SUSH: case SAST: case SALT:
     case MUTS: case KUTS: case MITS: case KITS:
+    case HILS: case HINS: // to fix my TODO
       return sizeof(c3_s);
 
     case SWIP: case SWIN:
@@ -882,22 +886,9 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case LIBK: case LIBL:
         case BUSH: case SANB:
         case KITB: case MITB:
-        case HILB:
+        case HILB: case HINB:
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
-          break;
-        case HINB:
-          if ( c3__xray != u3k(u3t(op)) ) {
-            u3t_slog_cap(1, u3i_string("HINB"), u3i_string("something else"));
-            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
-            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
-          }
-          else {
-            // all my xray hinb only magic goes here
-            u3t_slog_cap(1, u3i_string("HINB"), u3i_string("xray - go for it!"));
-            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
-            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
-          }
           break;
         case HINS:
           if ( c3__xray != u3k(u3t(op)) ) {
@@ -930,7 +921,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
 
             // TODO: render everything called until this point
             //       ie take whatever the analog of fol is, and run it through
-            //       something like _slog_bytecode without sloging it, to convert
+            //       something like slog_bytecode without sloging it, to convert
             //       it to a u3i_string, then store that to the tail of op
             // TODO: cons the rendered data to tail of op
             // TODO: slog out info on what is compiling right now
@@ -941,8 +932,8 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
             // NOTE: buf_y is pog_u->byc_u.ops_y ie it is arg #1 for render bytecode
             // NOTE: ___ is arg #2 for render_bytecode (aka c3_w her_w)
             // i_W
-            _slog_bytecode(1, buf_y);
-            _slog_bytecode(1, pog_u->byc_u.ops_y);
+            slog_bytecode(1, buf_y);
+            slog_bytecode(1, pog_u->byc_u.ops_y);
           }
           else {
             _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
@@ -1074,8 +1065,8 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       ** place nef_w into HILB trel
       */
       case c3__xray:
-        u3t_slog_cap(1, u3i_string("called"), u3i_string("_n_bint atomic xray"));
-        u3t_slog_cap(1, u3i_string("done"), u3i_string("  _n_bint atomic xray"));
+        //u3t_slog_cap(1, u3i_string("called"), u3i_string("_n_bint atomic xray"));
+        //u3t_slog_cap(1, u3i_string("done"), u3i_string("  _n_bint atomic xray"));
       case c3__meme:
       case c3__nara:
       case c3__hela:
@@ -1117,30 +1108,9 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
           ** for case xray pack more info into HINB
           ** place nef_w into HINB trel
           */
-          case c3__xray: {
-            u3t_slog_cap(2, u3i_string("called"), u3i_string("_n_bint dynamic xray"));
-            u3_noun fen = u3_nul;
-            c3_w  nef_w = _n_comp(&fen, nef, los_o, c3n);
-            // add appropriate hind opcode
-            ++nef_w; _n_emit(&fen, ( c3y == los_o ) ? HINL : HINK);
-            // skip over the cleanup opcode
-            ++nef_w; _n_emit(&fen, u3nc(SBIP, 1));
-
-            // NOTE: the code to change is probably within the next two commands
-            // 01. push clue
-            tot_w += _n_comp(ops, hod, c3n, c3n);
-
-            //  02. call hint_fore
-            //      HINB overflows to HINS - NOTE: does this also become hin?
-            ++tot_w; _n_emit(ops, u3nc(HINB, u3nc(u3k(zep), u3k(nef))));
-
-            // if fore return c3n, skip fen
-            ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
-            tot_w += nef_w; _n_apen(ops, fen);
-            // post-skip cleanup opcode
-            ++tot_w; _n_emit(ops, ( c3y == los_o ) ? TOSS : SWAP);
-            u3t_slog_cap(2, u3i_string("done"), u3i_string("  _n_bint dynamic xray"));
-          } break;
+          case c3__xray:
+            //u3t_slog_cap(2, u3i_string("called"), u3i_string("_n_bint dynamic xray"));
+            //u3t_slog_cap(2, u3i_string("done"), u3i_string("  _n_bint dynamic xray"));
           case c3__meme:
           case c3__nara:
           case c3__hela:
@@ -1808,15 +1778,36 @@ _intlen (int value)
   return x;
 }
 
-int _is_valid_op(int go) {
+int
+_is_valid_op(int go)
+{
   return (go == 0 || go == 1 || go == 2 | go == 4);
 }
-int _is_pair_op(int go) {
+int
+_is_pair_op(int go)
+{
   return (go == 1 || go == 2 | go == 4);
 }
 
+int
+_is_indexing_bc(int go)
+{
+  if (go == 15 || go == 16 || go == 19 || go == 20 )
+    return 1;
+  if (go == 25 || go == 26 || go == 31 || go == 32 )
+    return 1;
+  if (go == 42 || go == 43 || go == 59 || go == 60 )
+    return 1;
+  if (go == 73 || go == 74 || go == 75 || go == 76 )
+    return 1;
+  if (go == 89 || go == 90 || go == 93 || go == 94 )
+    return 1;
+  return 0;
+}
+
 void
-_slog_bytecode(c3_l pri_l, c3_y* pog) {
+_slog_bytecode(c3_l pri_l, c3_y* pog, u3n_prog* pog_u) {
+  c3_w len_w = pog_u->byc_u.len_w;
   c3_w ip_w = 0;
   // NOTE: if we change the main loop, we should c/p
   //       it back up here to replace this loop,
@@ -1826,64 +1817,85 @@ _slog_bytecode(c3_l pri_l, c3_y* pog) {
   unsigned int s_ln = 1; // opening "{"
   // set go to an invalid value, so we can break imeadately if needed
   unsigned int go = 5;
-  while ( pog[ip_w] ) {
-    // TODO: a nontrival internal part of nock.c -- is it okay to make public?
+  unsigned int op_num = 0;
+  unsigned int is_idx_op = 0;
+  while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
     // no need to stay here if we cant print it
     if (!_is_valid_op(go)) break;
-    ip_w++;    // move ip_w for reading a opcode name
+    // move ip_w for reading a opcode name
+    op_num = pog[ip_w++];
+    is_idx_op = _is_indexing_bc(op_num);
     s_ln += 4; // opcode name, which is always 4 char long
     if (_is_pair_op(go)) {
-      if ( 0 ) {
+      if ( is_idx_op ) {
         // TODO: take the length of the looked up thing
         // check the bytecode,
         // if its an indexing bytecode, we need to look it up
-        // num = pog_u->lit_u.non[num]
-      }
-      // add the len of the number
-      s_ln += _intlen(
-        // TODO: these are both pretty simple, but would have to be made public too
-        go == 4 ? _n_rewo(pog, &ip_w):
-        go == 2 ? _n_resh(pog, &ip_w):
-        pog[ip_w++]);
-      s_ln+= 3; // "[", the space between the opcode and number, "]"
+        //s_ln += 2+_intlen(pog_u->lit_u.non[pog[ip_w++]]);
+        s_ln += 2; // 'i:'
+      } //else {
+        // add the len of the number
+        s_ln += _intlen(
+          go == 4 ? _n_rewo(pog, &ip_w):
+          go == 2 ? _n_resh(pog, &ip_w):
+          pog[ip_w++]
+        );
+      //}
+      s_ln += 3; // "[", the space between the opcode and number, "]"
     }
-    s_ln++; // add trailing space before next word in string
+    s_ln++; // add trailing space before next word in string, or } at end
   }
-  s_ln += 5; //add "halt}" to end of the bytecode
 
   // reset ip_w so we can loop again
   ip_w = 0;
   c3_c str_c[s_ln];
   str_c[0] = 0;
-  strcat(str_c, "{");
   go = 5;
-  while ( pog[ip_w] ) {
+  c3_w num = 0;
+  while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
     // no need to stay here if we cant print it
     if (!_is_valid_op(go)) break;
+
+    strcat(str_c, " ");
+
+    op_num = pog[ip_w++];
+    is_idx_op = _is_indexing_bc(op_num);
 
     // add open brace if the opcode pairs with a number
     if (_is_pair_op(go)) strcat(str_c, "[");
 
     // add the opcode name
-    strncat(str_c, opcode_names[pog[ip_w++]], 4);
+    strncat(str_c, opcode_names[op_num], 4);
 
     // finish the pair
     if (_is_pair_op(go)) {
       // add the space
       strcat(str_c, " ");
-      // get the number
-      c3_w num =
-        go == 4 ? _n_rewo(pog, &ip_w):
-        go == 2 ? _n_resh(pog, &ip_w):
-        pog[ip_w++];
 
-      if ( 0 ) {
+      // get the number
+      if ( is_idx_op ) {
         // check the bytecode,
         // if its an indexing bytecode, we need to look it up
-        //num = pog_u->lit_u.non[num];
-      }
+        strcat(str_c, "i:");
+        /*
+        // sacrifical col until I figure out
+        // why _intlen & serializing of lit_u is off by one
+        strcat(str_c, "::");
+        // TODO: this can be ANY NOUN
+        // so we need to serialize it if its an atom
+        // and we need to 'recurse' if its a cell tree
+        num = pog_u->lit_u.non[pog[ip_w++]];
+        u3m_p("idx", num);
+        // TODO: short term fix: is_atom? if so render that number, else render index notation
+        */
+      } //else {
+        num =
+          go == 4 ? _n_rewo(pog, &ip_w):
+          go == 2 ? _n_resh(pog, &ip_w):
+          pog[ip_w++];
+      //}
 
       if (num == 0) {
         // handle a litteral zero
@@ -1904,9 +1916,9 @@ _slog_bytecode(c3_l pri_l, c3_y* pog) {
       // add the closing brace
       strcat(str_c, "]");
     }
-    strcat(str_c, " ");
   }
-  strcat(str_c, "halt}");
+  str_c[0] = '{';
+  strcat(str_c, "}");
   u3t_slog_cap(pri_l, u3i_string("bytecode"), u3i_string(str_c));
 }
 
@@ -1915,9 +1927,9 @@ void
 _xray(c3_l pri_l, u3_noun fol) {
   u3n_prog* pog_u = _n_bite(fol);
   c3_y* pog = pog_u->byc_u.ops_y;
-  _slog_bytecode(pri_l, pog);
+  _slog_bytecode(pri_l, pog, pog_u);
   u3m_p("fol", fol);
-  fprintf(stderr, "\r\nhex:\r\n");
+  fprintf(stderr, "\r\nhex: ");
   for (int i=0; i < pog_u->byc_u.len_w; i++) {
     fprintf(stderr, "%02x ", pog_u->byc_u.ops_y[i]);
   }
@@ -2058,15 +2070,6 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
         u3t_slog_cap(pri_l, u3i_string("bytecode of"), u3k(tan));
         _xray(pri_l, fol);
       }
-      /*
-      // fud is the compiled bytecode stream for everything we've wrapped
-      u3_noun pri, tan, fud;
-      if ( c3y == u3r_trel(*clu, &pri, &tan, &fud) ) {
-        c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
-        u3t_slog_cap(pri_l, u3i_string("bytecode of"), u3k(tan));
-        _slog_bytecode(pri_l, fud);
-      }
-      */
       u3z(*clu);
       *clu = u3_nul;
     } break;
