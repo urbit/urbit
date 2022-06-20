@@ -299,7 +299,8 @@ instance Rolling Hoon where
     Adam Sand a au -> leaf $ showSand a au
     --
     Bass b -> roll b
-    Bcbr s ms -> Huge $ Stem "$|" "--" [tank $ roll s] (arms ms)
+    Bcbr s t ms ->
+      Huge $ Stem "$|" "--" [tank $ roll s, tank $ roll t] (arms ms)
     Bccb h -> going (\(_, s) -> (Long, "_" <> s)) (Palm "$_" . singleton)
             $ roll h
     Bccl s ss -> running "$:" "==" "{" "}" (map roll $ s:ss)

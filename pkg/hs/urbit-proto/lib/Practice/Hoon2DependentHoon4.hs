@@ -24,7 +24,7 @@ open = \case
   Bass HC.Vod -> pure $ Vod
   Bass (HC.Aur au) -> pure $ Aur au Bowl
   Bass HC.Typ -> pure $ Typ
-  Bcbr t ts -> Cor <$> open t <*> traverse open ts
+  Bcbr t u vs -> Cor <$> open t <*> open u <*> traverse open vs
   Bccb h -> Left "unsupported _"
   Bccl s [] -> open s
   Bccl s (s':ss) -> Ral <$> open s <*> open (Bccl s' ss)
@@ -182,7 +182,7 @@ shut = \case
     Bccl s ss -> Bccl (shut c) (s:ss)
     s -> Bccl (shut c) [s]
   Gat c d -> Bchp (shut c) (shut d)
-  Cor c ds -> Bcbr (shut c) (fmap shut ds)
+  Cor c d es -> Bcbr (shut c) (shut d) (fmap shut es)
   --Fok t ss -> Bcgr (shut t) (map flap ss)
   Sin c t -> Bcts (shut c) (shut t)
   Fus c p -> Bcgr (shut c) (flap p)
@@ -252,8 +252,8 @@ lock = \case
     h -> [h]
   Gate' t (Jamb c s) ->
     Tsgr (lock s) $ Bchp (lock t) (shut . rest $ fmap hack c)
-  -- FIXME user syntax for cores
-  Core' _ (s, js) t -> Tsgr (lock s) $ Bcbr (lock t) (fmap (shut . rest) js)
+  Core' t (s, js) u ->
+    Tsgr (lock s) $ Bcbr (lock u) (lock t) (fmap (shut . rest) js)
 --  Fork' fs t -> Bcgr (lock t) (map (flap . pond) $ setToList fs)
   Sing' x y -> Bcts (lock x) (lock y)
   Fuse' x f -> Bcgr (lock x) (flap $ pond f)

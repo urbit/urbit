@@ -40,5 +40,6 @@ Cltr
          [ ( "bar" , Adam Sand 2 "ud" ) , ( "foo" , Adam Sand 1 "ud" ) ])
   , Bcbr
       (Bass Cel)
+      (Bass (Aur ""))
       (fromList [ ( "bar" , Bass Non ) , ( "foo" , Bass (Aur "") ) ])
   ]

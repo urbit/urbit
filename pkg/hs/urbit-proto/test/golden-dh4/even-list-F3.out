@@ -85,6 +85,7 @@ ERROR
                       ==
                     --
                 $|  0|*
+                  0|*
                 ++  even-list  $
                 ++  list  $
                 --
@@ -110,6 +111,7 @@ ERROR
                       ==
                     --
                 $|  0|*
+                  0|*
                 ++  even-list  $
                 ++  list  $
                 --

@@ -81,7 +81,7 @@ rollDash lvl = roll . \case
   DashCellLeft tr -> Clhp Wild (baseToHoon lvl tr)
   DashRailLeft jr -> Bccl Wild [shut $ rest $ luft lvl jr]
   DashCellRight tl -> Clhp (baseToHoon lvl tl) Wild
-  DashCorePayload fom (s, js) -> Bcbr (baseToHoon lvl fom)
+  DashCorePayload fom (s, js) -> Bcbr Wild (baseToHoon lvl fom)
                                $ fmap (shut . rest . luft lvl . (`Jamb` s)) js
 rollDashes lvl ds =
   Huge $ Stem "" "" [] (ds <&> \d -> ("**", tank $ rollDash lvl d, Leaf ""))

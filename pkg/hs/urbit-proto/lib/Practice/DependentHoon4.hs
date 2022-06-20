@@ -20,32 +20,32 @@ import {-# SOURCE #-} Practice.RenderDH4Orphans ()
 import Urbit.Atom (utf8Atom)
 
 data Soft
-  = Wng Wing [(Wing, Soft)]   --  a.b(c.d h, +6 j)       subject lookup and edit
-  | Atm Atom Grit Aura        --  1, %foo                           atomic value
-  | Cel Soft Soft             --  [h j], [t u]         cell value, type (nondep)
-  | Fac Pelt Soft             --  s=h                   face(s) applied to value
-  | Lam Soft Soft             --  |=  t  h                        function value
-  | Cru (Map Term Soft)       --  |%  ++  foo  h  ++  bar  j  ==      core value
+  = Wng Wing [(Wing, Soft)]        --  a.b(c.d h, +6 j)  subject lookup and edit
+  | Atm Atom Grit Aura             --  1, %foo                      atomic value
+  | Cel Soft Soft                  --  [h j], [t u]    cell value, type (nondep)
+  | Fac Pelt Soft                  --  s=h              face(s) applied to value
+  | Lam Soft Soft                  --  |=  t  h                   function value
+  | Cru (Map Term Soft)            --  |%  ++  foo  h  --             core value
   --
-  | Plu Soft                  --  +(h)                          atomic increment
-  | Sla Soft Soft             --  (h j)                            function call
-  | Equ Soft Soft             --  =(h j)                           equality test
-  | Tes Soft Soft Soft        --  ?:  h  j  k                     boolean branch
-  | Rhe Soft Soft             --  ??  h  j                     rhetorical branch
-  | Fis Pelt Soft             --  ?=(s h)                           pattern test
---  | Edi Wing [(Wing, Soft)]   --  h(a.b j, +6 k)
+  | Plu Soft                       --  +(h)                     atomic increment
+  | Sla Soft Soft                  --  (h j)                       function call
+  | Equ Soft Soft                  --  =(h j)                      equality test
+  | Tes Soft Soft Soft             --  ?:  h  j  k                boolean branch
+  | Rhe Soft Soft                  --  ??  h  j                rhetorical branch
+  | Fis Pelt Soft                  --  ?=(s h)                      pattern test
+--  | Edi Wing [(Wing, Soft)]      --  h(a.b j, +6 k)
   --
-  | Aur Aura Tool             --  @ud,  ?(%foo, %bar)                atomic type
-  | Ral Soft Soft             --  {t u}                               sigma type
-  | Gat Soft Soft             --  $-(t u)                           pi/gate type
-  | Cor Soft (Map Term Soft)  --  $|  t  ++  foo u  ++  bar v  ==      core type
+  | Aur Aura Tool                  --  @ud,  ?(%foo, %bar)           atomic type
+  | Ral Soft Soft                  --  {t u}                          sigma type
+  | Gat Soft Soft                  --  $-(t u)                      pi/gate type
+  | Cor Soft Soft (Map Term Soft)  --  $|  t  u  ++  foo v  --         core type
 -- | God
 -- | Led
-  | Sin Soft Soft             --  1|@,  $=  1  @                  singleton type
-  | Fus Soft Pelt             --  $>  t  p, t?(p)                      fuse type
-  | Non                       --  *                                top/noun type
-  | Vod                       --  !                             bottom/void type
-  | Typ                       --  $                                 type of type
+  | Sin Soft Soft                  --  1|@,  $=  1  @             singleton type
+  | Fus Soft Pelt                  --  $>  t  p, t?(p)                 fuse type
+  | Non                            --  *                           top/noun type
+  | Vod                            --  !                        bottom/void type
+  | Typ                            --  $                            type of type
   --
   | Wit Soft Soft
   | Pus Soft Soft
@@ -1954,8 +1954,8 @@ toil con loc pet typ = act (ActToil con loc pet typ)
     toil con loc p t
 -}
 
--- Exhaustiveness checking -----------------------------------------------------
 
+-- Exhaustiveness checking -----------------------------------------------------
 
 -- | Spot test: Nothing means Char, Just n means Sole n. In decomposing fishes
 -- for exaustiveness checking, we are often concerned with the "root claw" (or
@@ -2232,7 +2232,6 @@ chip con@Con{lvl, sut} sof = case sof of
     (x, ns) <- work con FitNest sof Flag'
     pure (x, con, con, ns)
 
--- jamb jam $ read (rump (lev, loc / 3)) pay
 -- | Perform type checking for centis.
 fend :: forall a m. (MonadCheck m, Var a)
      => Con a -> Wing -> [(Wing, Soft)] -> m (Code Void, Type a, Set Fish)
@@ -2248,6 +2247,7 @@ fend con@Con{lvl, sut} w whs = do
       Core' fom (clo, lookup arm -> Just cod) act -> do
         -- late binding check: actual must nest under formal
         fits FitNest lvl act fom
+        -- compute return type given actual argument value seminoun
         let ret = jamb Jamb{cod, clo} $ read (rump (lvl, loc lin / 3)) act
         pure (Pull arm arms c, ret, ms)
       t -> bail (BailNote $
@@ -2270,8 +2270,8 @@ fend con@Con{lvl, sut} w whs = do
 
 -- | Given subject type and knowledge, verify that code has result type.
 -- Since the expected result type is known in this mode, we can lighten the
--- user's annotation burden, e.g. on |= argument. Read about "bidirectional type
--- checking" to learn more.
+-- user's annotation burden. Read about "bidirectional type checking" to
+-- learn more.
 work :: forall a m. (MonadCheck m, Var a)
      => Con a -> Fit -> Soft -> Type a -> m (Code Void, Set Fish)
 work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
@@ -2375,6 +2375,11 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
     Equ{} -> playFits
     Fis{} -> playFits  -- not inside Tes
 
+    -- This is the big whammy of work right now. The play implementation calls
+    -- join (compute type union), which is not yet implemented. So you need to
+    -- annotate the return types of your switches, but because of the way that
+    -- work propagagtes goal types inwards, this annotation can be far away and
+    -- is likely already present.
     Tes c d e -> do
       (x, tru, fal, fis) <- chip con c
       (y, met) <- work tru fit d gol
@@ -2384,6 +2389,7 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
     -- "rhetorical" tests are required to evaluate to true at compile time.
     -- this will be a rigorous exercise of the crop/fuse system and will be
     -- our mechanism of exhaustiveness checking.
+    -- XX update this comment in light of the new exhaustiveness checker
     Rhe c d -> do
       (x, tru, _, fis) <- chip con c
       (y, met) <- work tru fit d gol
@@ -2569,13 +2575,13 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     tire (lvl + 1, 2) (slip L ns) (evil con x)
     pure (Gate x y, Type', swam ms (slip R ns))
 
-  Cor pay bat -> do
-    (x, ms) <- work con FitNest pay Type'
+  Cor act fom bat -> do
+    (x, ms) <- work con FitNest act Type'
+    (y, ns) <- work con FitNest fom Type'
     ress <- for bat \arm -> work con FitNest arm Type'
     let xs  = fmap fst ress
     let mss = fmap snd ress
-    -- FIXME
-    pure (Core x xs x, Type', foldl' swam ms mss)
+    pure (Core y xs x, Type', foldl' swam (swam ms ns) mss)
 
   Sin sof typ -> do
     (y, ns) <- work con FitNest typ Type'
@@ -2650,8 +2656,7 @@ rest = \case
   Aura au to -> Aur au to
   Rail c d -> Ral (rest c) (rest d)
   Gate c d -> Gat (rest c) (rest d)
-  -- FIXME surface syntax for core types
-  Core _ c d -> Cor (rest d) (fmap rest c)
+  Core c d e -> Cor (rest e) (rest c) (fmap rest d)
   Sing s t -> Sin (rest s) (rest t)
   Face (Mask m) c -> Fac (Peer m) (rest c)
   Face (Link ls) c -> Fac Punt (rest c)  -- FIXME ?

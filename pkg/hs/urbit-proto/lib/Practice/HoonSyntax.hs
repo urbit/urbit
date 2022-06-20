@@ -19,7 +19,13 @@ data Hoon
   | Adam Grit Atom Aura
   --
   | Bass Bass
-  | Bcbr Spec (Map Term Spec)  -- ^ gold core type  XX overlap ?(%|)
+  | Bcbr  -- ^ gold core type  XX overlap ?(%|)
+    -- | Actual paylaod type
+    Spec
+    -- | Formal paylaod type
+    Spec
+    -- | Arm types
+    (Map Term Spec)
   | Bccb Hoon  -- ^ type of expression
   | Bccl Spec [Spec]  -- ^ rail / dependent cell type
   | Bccn [(Atom, Aura, Spec)]  -- ^ tagged union
@@ -170,7 +176,7 @@ spec = hoon
 -- | Regular forms.
 rune :: Parser Hoon
 rune = choice
-  [ hop1 "$|" Bcbr spec term spec
+  [ hop2 "$|" Bcbr spec spec term spec
   , r1   "$_" Bccb hoon
   , run1 "$:" Bccl hoon hoon
   , run  "$%" id spec >>= bccn
@@ -515,14 +521,14 @@ hop x f p q = ask >>= \case
       gap
       pure (a, b)
     when (length (Set.fromList (map fst abs)) /= length abs) $
-      fail "duplicate arm name in hopping body"
+      fail $ "hop: duplicate arm name in hopping body of " <> unpack x
     pure (f $ mapFromList abs)
   Wide -> empty
 
 hop1 :: Ord b
      => Text
      -> (a -> Map b c -> r)
-     -> Parser a -> Parser b -> Parser c-> Parser r
+     -> Parser a -> Parser b -> Parser c -> Parser r
 hop1 x f p q r = ask >>= \case
   Tall -> do
     try (string x >> gap)
@@ -537,6 +543,30 @@ hop1 x f p q r = ask >>= \case
       gap
       pure (b, c)
     when (length (Set.fromList (map fst bcs)) /= length bcs) $
-      fail "duplicate arm name in hopping body"
+      fail $ "hop1: duplicate arm name in hopping body of " <> unpack x
     pure (f a $ mapFromList bcs)
+  Wide -> empty
+
+hop2 :: Ord c
+     => Text
+     -> (a -> b -> Map c d -> r)
+     -> Parser a -> Parser b -> Parser c -> Parser d -> Parser r
+hop2 x f p q r s = ask >>= \case
+  Tall -> do
+    try (string x >> gap)
+    a <- p
+    gap
+    b <- q
+    gap
+    cds <- flip manyTill (string "--") do
+      string "++"
+      gap
+      c <- r
+      gap
+      d <- s
+      gap
+      pure (c, d)
+    when (length (Set.fromList (map fst cds)) /= length cds) $
+      fail $ "hop2: duplicate arm name in hopping body of " <> unpack x
+    pure (f a b $ mapFromList cds)
   Wide -> empty
