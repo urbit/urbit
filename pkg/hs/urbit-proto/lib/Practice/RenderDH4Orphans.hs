@@ -81,8 +81,8 @@ rollDash lvl = roll . \case
   DashCellLeft tr -> Clhp Wild (baseToHoon lvl tr)
   DashRailLeft jr -> Bccl Wild [shut $ rest $ luft lvl jr]
   DashCellRight tl -> Clhp (baseToHoon lvl tl) Wild
-  DashCoreBattery t p -> Bcbr (baseToHoon lvl p) (mapFromList [(t, Wild)])
-  DashCorePayload b -> Bcbr Wild $ fmap (shut . rest . luft lvl) b
+  DashCorePayload fom (s, js) -> Bcbr (baseToHoon lvl fom)
+                               $ fmap (shut . rest . luft lvl . (`Jamb` s)) js
 rollDashes lvl ds =
   Huge $ Stem "" "" [] (ds <&> \d -> ("**", tank $ rollDash lvl d, Leaf ""))
 
@@ -191,6 +191,10 @@ instance Rolling Fail where
     TireFish a f -> Huge $ Stem "tire-fish:" "" []
       [ ("axis", tank $ roll a, Leaf "")
       , ("miss", tank $ roll f, Leaf "")
+      ]
+    EditPull w t -> Huge $ Stem "edit-pull:" "" []
+      [ ("wing", Leaf $ tshow w, Leaf "")
+      , ("type", tank $ roll t,  Leaf "")
       ]
     NeedGate t -> Huge $ Palm "need-gate:" [tank $ roll t]
     WorkMiss s b -> Huge $ Stem "work-miss:" "" []

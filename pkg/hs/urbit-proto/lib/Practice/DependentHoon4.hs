@@ -20,7 +20,7 @@ import {-# SOURCE #-} Practice.RenderDH4Orphans ()
 import Urbit.Atom (utf8Atom)
 
 data Soft
-  = Wng Wing                  --  a.b                             subject lookup
+  = Wng Wing [(Wing, Soft)]   --  a.b(c.d h, +6 j)       subject lookup and edit
   | Atm Atom Grit Aura        --  1, %foo                           atomic value
   | Cel Soft Soft             --  [h j], [t u]         cell value, type (nondep)
   | Fac Pelt Soft             --  s=h                   face(s) applied to value
@@ -33,7 +33,7 @@ data Soft
   | Tes Soft Soft Soft        --  ?:  h  j  k                     boolean branch
   | Rhe Soft Soft             --  ??  h  j                     rhetorical branch
   | Fis Pelt Soft             --  ?=(s h)                           pattern test
-  | Edi Wing [(Wing, Soft)]   --  h(a.b j, +6 k)
+--  | Edi Wing [(Wing, Soft)]   --  h(a.b j, +6 k)
   --
   | Aur Aura Tool             --  @ud,  ?(%foo, %bar)                atomic type
   | Ral Soft Soft             --  {t u}                               sigma type
@@ -74,7 +74,7 @@ data Code a
   | Lamb (Code a)
   | Crux (Map Term (Code a))
   --
-  | Pull Text (Set Text) (Code a)
+  | Pull Term (Set Term) (Code a)
   | Plus (Code a)
   | Slam (Code a) (Code a)
   | Equl (Code a) (Code a)
@@ -85,7 +85,7 @@ data Code a
   | Aura Aura Tool
   | Rail (Code a) (Code a)
   | Gate (Code a) (Code a)
-  | Core (Map Term (Code a)) (Code a)
+  | Core (Code a) (Map Term (Code a)) (Code a)  -- FIXME user syntax fom/act
   | Sing (Code a) (Code a)
   | Face Face (Code a)
   | Fuse (Code a) Fish
@@ -237,8 +237,13 @@ data Semi a
   | Aura' Aura Tool
   | Rail' (Semi a) (Jamb a)
   | Gate' (Semi a) (Jamb a)
-  -- XX a little wonky since each Jamb should have the same clo
-  | Core' (Map Term (Jamb a)) (Semi a)
+  | Core'
+    -- | formal payload type (to be thought of as part of the battery type)
+    (Semi a)
+    -- | map of Jambs to calculate arm types, with shared closure
+    (Semi a, Map Term (Code a))
+    -- | actual payload type
+    (Semi a)
   | Sing' {- | val -} (Semi a) {- | type -} (Semi a)
   | Face' Face (Semi a)
   | Fuse' (Semi a) Fish
@@ -272,9 +277,9 @@ gate' :: Type a -> Jamb a -> Type a
 gate' Void' _ = Void'
 gate' t     j = Gate' t j
 
-core' :: (Map Term (Jamb a)) -> Type a -> Type a
-core' _  Void' = Void'
-core' js     t = Core' js t
+core' :: Type a -> (Semi a, Map Term (Code a)) -> Type a -> Type a
+core' _ _  Void' = Void'
+core' t js     u = Core' t js u
 
 sing' :: Semi a -> Type a -> Type a
 sing' _ Void' = Void'
@@ -389,7 +394,8 @@ mint = \case
   Slam c d -> N9 2 $ N10 6 (mint d) $ mint c  -- XX check
   Equl c d -> N5 (mint c) (mint d)
   Test c d e -> N6 (mint c) (mint d) (mint e)
-  Fish _ _ -> A 876  -- FIXME
+  Fish f (Spot a) -> lure a f
+  Fish f c -> N7 (mint c) (lure 1 f)
   Edit bas a mod -> N10 a (mint mod) $ mint bas
   --
   -- Generate code to compute runtime type representations.
@@ -433,9 +439,19 @@ mine bat = foldr step (A 0) $ mapToList bat
  where
   step (_, cod) bod = C (mint cod) bod
 
--- | Compile pattern tests.
-lure :: Fish -> Nock
-lure _ = A 876  -- TODO
+-- | Compile pattern tests. FIXME add .? for $@
+lure :: Axis -> Fish -> Nock
+lure ax = \case
+  Tuna -> N1 $ A 0
+  Sole a -> N5 (N0 ax) (N1 $ A a)
+  Char f g -> case (lure (ax / 2) f, lure (ax / 3) g) of
+    (N1 (A 0), n) -> n
+    (n, N1 (A 0)) -> n
+    (n,        m) -> flan n m
+
+-- | Implement logical and. Old Hoon does some extra stuff for some reason.
+flan :: Nock -> Nock -> Nock
+flan bos nif = N6 bos nif (N1 $ A 1)
 
 -- | Represent fish in runtime type representation.
 land :: Fish -> Noun
@@ -458,6 +474,7 @@ read nul = \case
   Test' b t f -> Test' b (read nul t) (read nul f)   -- XX correct?
   Cell' t u -> Cell' (read (nul / 2) t) (read (nul / 3) u)
   Rail' t j -> Cell' lef rit
+  -- XX Core'?
    where
     lef = read (nul / 2) t
     rit = read (nul / 3) $ jamb j lef
@@ -538,7 +555,7 @@ fuse typ fis = case (typ, fis) of
                                                               }
   (Rail' _ _,             Sole{})    -> Void'
   (Gate' _ _,             _)         -> fuse (Cell' Noun' Noun') fis
-  (Core' _ _,             _)         -> fuse (Cell' Noun' Noun') fis
+  (Core' _ _ act,         _)         -> fuse (Cell' Noun' act) fis
   -- XX think about Joe vs non-Joe below.
   -- Joe wants =/ to behave like |= as far as exhaustiveness/fuse go. E.g.
   -- he wants to be able to do ?-(1 1 ~, 2 ~, 3 ~). I think he also feels
@@ -591,7 +608,7 @@ eval sub = \case
   Aura au to -> Aura' au to
   Rail c d -> rail' (eval sub c) (Jamb d sub)
   Gate c d -> gate' (eval sub c) (Jamb d sub)
-  Core cs d -> core' (fmap (`Jamb` sub) cs) (eval sub d)
+  Core c ds e -> core' (eval sub c) (sub, ds) (eval sub e)
   Sing c d -> sing' (eval sub c) (eval sub d)
   Face f c -> face' [f] (eval sub c)
   Fuse c f -> fuse (eval sub c) f
@@ -697,7 +714,8 @@ loft lvl = \case
   Aura' au to -> Aura au to
   Rail' l j -> Rail (loft lvl l) (luft lvl j)
   Gate' a j -> Gate (loft lvl a) (luft lvl j)
-  Core' j s -> Core (fmap (luft lvl) j) (loft lvl s)
+  Core' a (s, as) b ->
+    Core (loft lvl a) (fmap (luft lvl . (`Jamb` s)) as) (loft lvl b)
   Sing' a b -> Sing (loft lvl a) (loft lvl b)
   Face' f t -> Face f (loft lvl t)
   Fuse' t h -> Fuse (loft lvl t) h
@@ -896,6 +914,8 @@ data Fail
   | forall a. Var a => ToilFish Pelt (Type a)
   -- | Here is a case you failed to consider in your pattern matching.
   |                    TireFish Axis Fish
+  -- | You are trying to edit the return value of an arm pull
+  | forall a. Var a => EditPull Wing (Type a)
   -- | You are trying to slam something which is not a gate.
   | forall a. Var a => NeedGate (Type a)
   -- | A rhetorical question had a non-rhetorical answer.
@@ -1036,7 +1056,7 @@ grow = \case
   Aura' au to -> Aura' au to
   Rail' x j -> Rail' (grow x) (jrow j)
   Gate' x j -> Gate' (grow x) (jrow j)
-  Core' j s -> Core' (fmap jrow j) (grow s)
+  Core' x (s, j) y -> Core' (grow x) (grow s, fmap crow j) (grow y)
   Sing' x y -> Sing' (grow x) (grow y)
   Face' f x -> Face' f (grow x)
   Fuse' x f -> Fuse' (grow x) f
@@ -1071,7 +1091,7 @@ grow = \case
     Aura au to -> Aura au to
     Rail c d -> Rail (crow c) (crow d)
     Gate c d -> Gate (crow c) (crow d)
-    Core c s -> Core (fmap crow c) (crow s)
+    Core c ds e -> Core (crow c) (fmap crow ds) (crow e)
     Sing c d -> Sing (crow c) (crow d)
     Face f c -> Face f (crow c)
     Fuse c f -> Fuse (crow c) f
@@ -1109,7 +1129,8 @@ pare bas = go bas
     Aura' au to -> pure $ Aura' au to
     Rail' x j -> Rail' <$> go x <*> jare j
     Gate' x j -> Gate' <$> go x <*> jare j
-    Core' j s -> Core' <$> traverse jare j <*> go s
+    Core' x (s, j) y ->
+      Core' <$> go x <*> ((,) <$> go s <*> traverse care j) <*> go y
     Sing' x y -> Sing' <$> go x <*> go y
     Face' f x -> Face' f <$> go x
     Fuse' x f -> Fuse' <$> go x <*> pure f
@@ -1143,7 +1164,7 @@ pare bas = go bas
     Aura au to -> pure $ Aura au to
     Rail c d -> Rail <$> care c <*> care d
     Gate c d -> Gate <$> care c <*> care d
-    Core c d -> Core <$> traverse care c <*> care d
+    Core c ds e -> Core <$> care c <*> traverse care ds <*> care e
     Sing c d -> Sing <$> care c <*> care d
     Face f c -> Face f <$> care c
     Fuse c f -> Fuse <$> care c <*> pure f
@@ -1464,14 +1485,19 @@ fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit t u) case (t, u) of
     fest fit lvl u Type' ace
 
   (Gate' v j, Gate' w k) -> do
-    ace <- fest fit lvl v w ace
+    ace <- fest fit lvl w v ace
     -- XX should this be read new w, read new w, per Cardelli?
     fest fit (lvl + 1) (jamb j $ read new v) (jamb k $ read new w) ace
    where
     new = rump (lvl + 1, 2)
 
-  (Core' as t, Core' bs u) -> do
-    ace <- fest fit lvl t u ace
+  (Core' u (clo, arms) v, Core' u' (clo', arms') v') -> do
+    -- actual types are covariant
+    ace <- fest fit lvl v v' ace
+    -- formal types are contravariant
+    ace <- fest fit lvl u' u ace
+    let as = fmap (`Jamb` clo)  arms
+    let bs = fmap (`Jamb` clo') arms'
     let x = read new t
     let y = read new u
     farm as bs ace \_ a b ace ->
@@ -1528,10 +1554,8 @@ data Dash a
   | DashRailLeft (Jamb a)
   -- ^ We have passed into the right of any cell, and record the left
   | DashCellRight (Type a)
-  -- ^ We have passed into the battery of a core, and record the arm and payload
-  | DashCoreBattery Term (Type a)
   -- ^ We have passed into the payload of a core, and record the battery
-  | DashCorePayload (Map Term (Jamb a))
+  | DashCorePayload (Type a) (Semi a, Map Term (Code a))
 
 deriving instance (Show a) => Show (Line a)
 deriving instance (Show a) => Show (Dash a)
@@ -1541,58 +1565,74 @@ deriving instance (Show a) => Show (Dash a)
 -- To understand how this works, consider the type `[a=@ *]?([%foo _])`. The
 -- result of finding `a` should be `@?(%foo)`, not `@`; that is, the fork should
 -- propagate inwards. We accomplish this propagation via the luf field of Line.
+--
+-- XX remove
 long :: Line a -> Type a
 long Line{lyt} = lyt
 
 -- XX inefficient
 -- Given a refined subject type, rerun it against its seminoun to advance it
 -- further.
-retcon :: Var a => Con a -> Con a
-retcon Con{lvl, sut} = Con lvl $ eval (read (rump (lvl, 1)) sut) $ loft lvl sut
+retcon :: Var a => Line a -> Con a
+retcon Line{lev, lyt} = Con lev $ eval (read (rump (lev, 1)) lyt) $ loft lev lyt
+
+-- | Kind of change to the subject to be rolled up.
+data Seal
+  = SealFine  -- ^ Refine a part of the subject to a subtype
+  | SealEdit  -- ^ Edit a part of the subject to an arbitrary type
 
 -- | When the found type (lyt) has been refined, zip the zipper back up to get
 -- the fullsize refined subject type.
-seal :: (MonadCheck m, Var a) => Line a -> m (Con a)
-seal lin@Line{lev, loc, lyt, las} = act (ActSeal lin) case las of
-  [] -> pure $ retcon (Con lev lyt)
-  DashFace f : las -> seal Line
+--
+-- FIXME rename to `draw`, fix comment
+seal :: Var a => Seal -> Line a -> Line a
+seal mod lin@Line{lev, loc, lyt, las} = case las of
+  [] -> lin
+  DashFace f : las -> seal mod Line
     { lev
     , loc
     , lyt = Face' f lyt
     , las
     }
-  DashSing s : las -> seal Line
+  DashSing s : las -> seal mod Line
     { lev
     , loc
     , lyt = Sing' s lyt
     , las
     }
-  DashCellLeft tr : las -> seal Line
+  DashCellLeft tr : las -> seal mod Line
     { lev
     , loc = rise loc
     , lyt = Cell' lyt tr
     , las
     }
-  DashRailLeft jr : las -> seal Line
-    { lev
-    , loc = rise loc
-    , lyt = Cell' lyt (jamb jr $ read (rump (lev, rise loc / 2)) lyt)
-    , las
-    }
-  DashCellRight tl : las -> seal Line
+  DashRailLeft jr : las -> case mod of
+    SealFine -> seal mod Line
+      { lev
+      , loc = rise loc
+      , lyt = Rail' lyt jr  -- XX is this correct? prev did as SealEdit
+      , las
+      }
+    SealEdit -> seal mod Line
+      { lev
+      , loc = rise loc
+      , lyt = Cell' lyt (jamb jr $ read (rump (lev, rise loc / 2)) lyt)
+      , las
+      }
+  DashCellRight tl : las -> seal mod Line
     { lev
     , loc = rise loc
     , lyt = Cell' tl lyt
     , las
     }
-  DashCoreBattery arm _ : las -> bail (SealCore arm)
-  DashCorePayload bat : las -> seal Line
+  DashCorePayload fom bat : las -> seal mod Line
     { lev
     , loc = rise loc
-    , lyt = Core' bat lyt
+    , lyt = Core' fom bat lyt
     , las
     }
 
+-- XX think more carefully about return value design
 find :: forall a m. (MonadCheck m, Var a)
      => (Level, Axis) -> Type a -> Wing -> m (Stub, Line a)
 find (lev, loc) typ win = act (ActFind (lev, loc) typ win) $
@@ -1604,20 +1644,20 @@ find (lev, loc) typ win = act (ActFind (lev, loc) typ win) $
     }
     win
 
+fond :: forall a m. (MonadCheck m, Var a)
+     => Line a -> Wing -> m (Stub, Line a)
+fond lin = \case
+  [] -> pure (Leg 1, lin)
+  l:ls -> fond lin ls >>= \case
+    -- arm1.arm2: as in 140, go back up to root of core.
+    (rest, lin) -> do
+      (st, con) <- limb lin l
+      pure (pole a st, con)
+     where
+      a = case rest of
+        Leg a -> a
+        Arm a _ _ -> a
  where
-  fond :: Line a -> Wing -> m (Stub, Line a)
-  fond lin = \case
-    [] -> pure (Leg 1, lin)
-    l:ls -> fond lin ls >>= \case
-      -- arm1.arm2: as in 140, go back up to root of core.
-      (rest, lin) -> do
-        (st, con) <- limb lin l
-        pure (pole a st, con)
-       where
-        a = case rest of
-          Leg a -> a
-          Arm a _ _ -> a
-
   limb :: Line a -> Limb -> m (Stub, Line a)
   limb lin = \case
     Ares   -> pure (Leg 1, ares lin)
@@ -1717,19 +1757,19 @@ axis a lin@Line{lev, loc, lyt, las} = case (cut a, lyt) of
     , las = DashCellRight tl : las
     }
 
-  (Just (L, a), Core' bat pay) -> axis a Line
+  (Just (L, a), Core' _ _ act) -> axis a Line
     { lev
     , loc = loc / 2
     , lyt = Noun'
     -- This way, if the user edits, she'll get a cell back rather than a core.
-    , las = DashCellLeft pay : las
+    , las = DashCellLeft act : las
     }
 
-  (Just (R, a), Core' bat pay) -> axis a Line
+  (Just (R, a), Core' fom bat pay) -> axis a Line
     { lev
     , loc = loc / 3
     , lyt = pay
-    , las = DashCorePayload bat : las
+    , las = DashCorePayload fom bat : las
     }
 
   -- XX an old note reads: "arguably for Liskov, should be Noun :("; rethink
@@ -1798,27 +1838,27 @@ ally f lin@Line{lyt} =
           }
       ]
 
-    Core' bat pay -> asum
+    Core' fom (clo, bat) act -> asum
       [ lookup f bat <&> \jam -> pure $ (Arm 1 f (keysSet bat),) $ Line
           { lev
           , loc  -- NOT loc / 2
-          , lyt = jamb jam $ read (rump (lev, loc / 3)) pay
-          , las = DashCoreBattery f pay : las
+          , lyt  -- type of the whole core
+          , las
           }
       , fmap (first (pole 3)) <$> lope Line
           { lev
           , loc = loc / 3
-          , lyt = pay
-          , las = DashCorePayload bat : las
+          , lyt = act
+          , las = DashCorePayload fom (clo, bat) : las
           }
       ]
 
     _ | Just t <- held lyt -> lope Line
-      { lev
-      , loc
-      , lyt = t
-      , las  -- XX should we add a trace frame?
-      }
+        { lev
+        , loc
+        , lyt = t
+        , las  -- XX should we add a trace frame?
+        }
 
     _ -> Nothing
 
@@ -2170,13 +2210,15 @@ tire (lvv, axe) fis typ = act (ActTire lvv fis typ) $
 chip :: (MonadCheck m, Var a)
      => Con a -> Soft -> m (Code Void, Con a, Con a, Set Fish)
 chip con@Con{lvl, sut} sof = case sof of
-  Fis p (Wng w) -> do
+  Fis p (Wng w []) -> do
     -- strip faces, etc
     (sud, lin@Line{lyt}) <- find (lvl, 1) sut w
     case sud of
       Leg axe -> do
         let fis = fish p
-        tru <- seal lin { lyt = face' [Link $ clop $ derm p] $ fuse lyt fis }
+        let tru = retcon
+                $ seal SealFine lin { lyt = face' [Link $ clop $ derm p]
+                                          $ fuse lyt fis }
         -- fal <- seal in { lyt = crop lyt fis }
         fal <- pure con
         pure (Fish fis $ Spot axe, tru, fal, singleton $ gill axe fis)
@@ -2189,6 +2231,42 @@ chip con@Con{lvl, sut} sof = case sof of
   fall = do
     (x, ns) <- work con FitNest sof Flag'
     pure (x, con, con, ns)
+
+-- jamb jam $ read (rump (lev, loc / 3)) pay
+-- | Perform type checking for centis.
+fend :: forall a m. (MonadCheck m, Var a)
+     => Con a -> Wing -> [(Wing, Soft)] -> m (Code Void, Type a, Set Fish)
+fend con@Con{lvl, sut} w whs = do
+  (st, lin) <- find (lvl, 1) sut w
+  (c, lin, ms) <- foldlM
+    loop
+    (Spot (loc lin), lin {las = []}, singleton Tuna)
+    whs
+  case st of
+    Leg _ -> pure (c, lyt lin, ms)
+    Arm _ arm arms -> case lyt lin of
+      Core' fom (clo, lookup arm -> Just cod) act -> do
+        -- late binding check: actual must nest under formal
+        fits FitNest lvl act fom
+        let ret = jamb Jamb{cod, clo} $ read (rump (lvl, loc lin / 3)) act
+        pure (Pull arm arms c, ret, ms)
+      t -> bail (BailNote $
+        "fend: invariant violation: expected core with arm " <> arm <>
+        " but got " <> tshow t)
+ where
+  loop :: (Code Void, Line a, Set Fish)
+       -> (Wing, Soft)
+       -> m (Code Void, Line a, Set Fish)
+  loop (c, lin, ms) (win, sof) = do
+    (st, lin) <- fond lin win
+    (rhs, typ, ns) <- play con sof
+    case st of
+      Arm{} -> bail (EditPull win (lyt lin))
+      Leg ax -> pure
+        ( Edit c ax rhs
+        , seal SealEdit lin
+        , swam ms ns
+        )
 
 -- | Given subject type and knowledge, verify that code has result type.
 -- Since the expected result type is known in this mode, we can lighten the
@@ -2266,13 +2344,16 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
         (x, ms) <- work con fit cod gol
         fits FitSame lvl s (evil con x)
         pure (x, ms)
-      Core' bat pay -> do
-        -- yeahhhhhh...
-        fits fit lvl pay sut
+      Core' fom (clo, bat) act -> do
+        fits fit lvl sut act
         let ken = read sut (rump (lvl, 1))
         let sut = gol
         xs <- farm arms bat mempty \nom arm armT xs -> do
-          (x, ms) <- work Con{sut, lvl = lvl + 1} fit arm (jamb armT ken)
+          (x, ms) <- work
+            Con{sut, lvl = lvl + 1}
+            fit
+            arm
+            (jamb (Jamb armT clo) ken)
           tire (lvl + 1, 1) ms sut
           pure (insertMap nom x xs)
         pure (Crux xs, singleton Tuna)
@@ -2356,12 +2437,7 @@ needGate con = \case
 play :: forall a m. (MonadCheck m, Var a)
      => Con a -> Soft -> m (Code Void, Type a, Set Fish)
 play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
-  Wng w -> do
-    (st, lin) <- find (lvl, 1) sut w
-    let cod = case st of
-          Leg a -> Spot a
-          Arm a ar ax -> Pull ar ax (Spot a)
-    pure (cod, long lin, singleton Tuna)
+  Wng w eds -> fend con w eds
 
   Atm a Rock au ->
     pure (Atom a, Aura' au (Fork $ singleton a), singleton Tuna)
@@ -2388,20 +2464,22 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     pure (Lamb x, Gate' argT (Jamb resC ken), singleton Tuna)
 
   Cru arms -> do
-    let enjamb c = Jamb (fmap absurd c) (read (rump (lvl, 1)) sut)
+    -- let enjamb c = Jamb (fmap absurd c) (read (rump (lvl, 1)) sut)
     -- TODO relax this requirement
-    tys :: Map Term (Jamb a) <- for arms \case
-      Net{typ} -> enjamb . fst <$> work (hide con Void') FitNest typ Type'
-      Cat{typ} -> enjamb . fst <$> work (hide con Void') FitNest typ Type'
+    tys :: Map Term (Code a) <- for arms \case
+      Net{typ} -> fmap absurd . fst <$> work (hide con Void') FitNest typ Type'
+      Cat{typ} -> fmap absurd . fst <$> work (hide con Void') FitNest typ Type'
       _ -> bail (BailNote "must annotate every arm with type for now")
-    ress <- traverse (play con { sut = Core' tys sut, lvl = lvl + 1}) arms
-    for_ ress (\(_, _, ns) -> tire (lvl + 1, 1) ns $ Core' tys sut)
+    let cor = Core' sut (read (rump (lvl, 1)) sut, tys) sut
+    ress <- traverse (play con { sut = cor, lvl = lvl + 1}) arms
+    for_ ress (\(_, _, ns) -> tire (lvl + 1, 1) ns cor)
     let crux = Crux (ress <&> \(x, _, _) -> x)
     let crux' = evil con crux
     pure
       ( crux
       -- XX ideally, the singleton would sit only on the battery
-      , Sing' crux' $ Core' tys sut  -- (Core' sut <$> for ress (\(_, t, _) -> loft t)
+      , Sing' crux' cor
+      -- (Core' sut <$> for ress (\(_, t, _) -> loft t)
       , singleton Tuna
       )
 
@@ -2468,8 +2546,6 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     (x, _, ms) <- play con c
     pure (Fish (fish p) x, Flag', ms)
 
-  Edi w wss -> undefined
-
   {-Run sv st fom pt -> do
     st' <- work con FitNest st Type'
     sv' <- work con FitNest sv (evil ken st')
@@ -2498,7 +2574,8 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     ress <- for bat \arm -> work con FitNest arm Type'
     let xs  = fmap fst ress
     let mss = fmap snd ress
-    pure (Core xs x, Type', foldl' swam ms mss)
+    -- FIXME
+    pure (Core x xs x, Type', foldl' swam ms mss)
 
   Sin sof typ -> do
     (y, ns) <- work con FitNest typ Type'
@@ -2550,8 +2627,8 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
 -- names.
 rest :: forall a m. Var a => Code a -> Soft
 rest = \case
-  Spot a -> Wng [Axis a]
-  Fore x -> Wng [Ally $ tshow @(Hop () a) $ Old x]  -- hack for printing
+  Spot a -> Wng [Axis a] []
+  Fore x -> Wng [Ally $ tshow @(Hop () a) $ Old x] []  -- hack for printing
   --
   Atom a -> Atm a Sand (heuAura a)
   Cell c d -> Cel (rest c) (rest d)
@@ -2560,20 +2637,21 @@ rest = \case
   Lamb c -> Lam Non (rest c)
   Crux cs -> Cru (fmap rest cs)
   --
-  Pull ar _ (Spot a) -> Wng [Ally ar, Axis a]
-  Pull ar _ c -> Wit (rest c) $ Wng [Ally ar]
+  Pull ar _ (Spot a) -> Wng [Ally ar, Axis a] []
+  Pull ar _ c -> Wit (rest c) $ Wng [Ally ar] []
   Plus c -> Plu (rest c)
   Slam c d -> Sla (rest c) (rest d)
   Equl c d -> Equ (rest c) (rest d)
   Test c d e -> Tes (rest c) (rest d) (rest e)
   Fish h c -> Fis (pond h) (rest c)
-  --Edit c a d -> case c of
-    --Edi (rest c) [([Axis a], rest d)]
-  --
+  Edit c a d -> case rest c of
+    Wng w eds -> Wng w (eds ++ [([Axis a], rest d)])
+    x -> Wit x (Wng [] [([Axis a], rest d)])
   Aura au to -> Aur au to
   Rail c d -> Ral (rest c) (rest d)
   Gate c d -> Gat (rest c) (rest d)
-  Core c d -> Cor (rest d) (fmap rest c)
+  -- FIXME surface syntax for core types
+  Core _ c d -> Cor (rest d) (fmap rest c)
   Sing s t -> Sin (rest s) (rest t)
   Face (Mask m) c -> Fac (Peer m) (rest c)
   Face (Link ls) c -> Fac Punt (rest c)  -- FIXME ?

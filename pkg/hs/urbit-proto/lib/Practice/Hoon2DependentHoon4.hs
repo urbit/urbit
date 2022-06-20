@@ -11,7 +11,7 @@ type Desugar = Either Text
 
 open :: Hoon -> Desugar Soft
 open = \case
-  Wung w -> pure $ Wng w
+  Wung w -> pure $ Wng w []
   Wild -> Left "open-skin: unexpected '_' in non-skin position"
   Adam g a au -> pure $ Atm a g au
   --
@@ -65,7 +65,7 @@ open = \case
                                  <*> (Sla <$> open k
                                            <*> open l))
   Cnls h j k -> Sla <$> open h <*> (Sla <$> open j <*> open k)
-  Cnts{} -> Left "unsupported %="
+  Cnts w whs -> Wng w <$> traverse (\(w, h) -> (w,) <$> open h) whs
   --
   Dtkt{} -> Left "unsupported .^"
   Dtls h -> Plu <$> open h
@@ -147,7 +147,8 @@ flay = \case
 
 shut :: Soft -> Hoon
 shut = \case
-  Wng w -> Wung w
+  Wng w [] -> Wung w
+  Wng w wss -> Cnts w $ map (\(w, s) -> (w, shut s)) wss
   --
   Atm a g au -> Adam g a au
   Cel c d -> case shut d of
@@ -251,9 +252,8 @@ lock = \case
     h -> [h]
   Gate' t (Jamb c s) ->
     Tsgr (lock s) $ Bchp (lock t) (shut . rest $ fmap hack c)
-  -- XX wrong, fix jamb representation in Cores.
-  Core' js t -> Bcbr (lock t) $ js <&> \Jamb{clo, cod} ->
-    Tsgr (lock clo) $ shut (rest cod)
+  -- FIXME user syntax for cores
+  Core' _ (s, js) t -> Tsgr (lock s) $ Bcbr (lock t) (fmap (shut . rest) js)
 --  Fork' fs t -> Bcgr (lock t) (map (flap . pond) $ setToList fs)
   Sing' x y -> Bcts (lock x) (lock y)
   Fuse' x f -> Bcgr (lock x) (flap $ pond f)
