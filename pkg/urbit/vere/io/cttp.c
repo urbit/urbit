@@ -13,7 +13,6 @@ typedef struct {
     uv_process_t proc_u;     //!< process handle
     uv_pipe_t    stdin_u;    //!< stdin stream to IO process
     uv_pipe_t    stdout_u;   //!< stdout stream to IO process
-    uv_pipe_t    stderr_u;   //!< stderr stream to IO process
   } child_u;                 //!< IO process
 } _client;
 
@@ -109,8 +108,7 @@ u3_cttp_io_init(u3_pier* pir_u)
     };
 
     uv_pipe_init(u3L, &client_u->child_u.stdin_u, 0);
-    uv_pipe_init(u3L, &client_u->child_u.stdout_u, 0);
-    uv_pipe_init(u3L, &client_u->child_u.stderr_u, 0);
+    //uv_pipe_init(u3L, &client_u->child_u.stdout_u, 0);
     uv_stdio_container_t stdio_u[] = {
       {
         // stdin pipe
@@ -119,13 +117,15 @@ u3_cttp_io_init(u3_pier* pir_u)
       },
       {
         // stdout pipe
-        .flags       = UV_CREATE_PIPE | UV_WRITABLE_PIPE,
-        .data.stream = (uv_stream_t*)&client_u->child_u.stdout_u,
+        //.flags       = UV_CREATE_PIPE | UV_WRITABLE_PIPE,
+        //.data.stream = (uv_stream_t*)&client_u->child_u.stdout_u,
+        .flags       = UV_INHERIT_FD,
+        .data.fd     = STDOUT_FILENO,
       },
       {
         // stderr pipe
-        .flags       = UV_CREATE_PIPE | UV_WRITABLE_PIPE,
-        .data.stream = (uv_stream_t*)&client_u->child_u.stderr_u,
+        .flags       = UV_INHERIT_FD,
+        .data.fd     = STDERR_FILENO,
       },
     };
 
