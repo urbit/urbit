@@ -33,6 +33,9 @@ static void
 _driver_talk(u3_auto* driver_u);
 
 static void
+_write_cb(uv_write_t* req_u, c3_i status_i);
+
+static void
 _child_exit_cb(uv_process_t* child_u, c3_ds status_d, c3_i term_sig_i)
 {}
 
@@ -53,7 +56,21 @@ _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
     goto end;
   }
 
-  // TODO: send request over IPC
+  _client* client_u = (_client*)driver_u;
+
+  static c3_c msg_c[] = "hello";
+  static c3_w msg_len_w = sizeof(msg_c);
+  uv_buf_t req_bufs_u[] = {
+    { .base = (c3_c*)&msg_len_w, .len = sizeof(msg_len_w), },
+    { .base = msg_c, .len = sizeof(msg_c), },
+  };
+
+  uv_write_t* req_u = c3_malloc(sizeof(*req_u));
+  uv_write(req_u,
+           (uv_stream_t*)&client_u->child_u.stdin_u,
+           req_bufs_u,
+           sizeof(req_bufs_u) / sizeof(*req_bufs_u),
+           _write_cb);
 
 end:
   u3z(wire);
@@ -73,6 +90,12 @@ _driver_talk(u3_auto* driver_u)
   u3_noun card = u3nc(c3__born, u3_nul);
 
   u3_auto_plan(driver_u, u3_ovum_init(0, c3__i, wire, card));
+}
+
+static void
+_write_cb(uv_write_t* req_u, c3_i status_i)
+{
+  c3_free(req_u);
 }
 
 //==============================================================================
