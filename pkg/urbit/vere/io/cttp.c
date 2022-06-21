@@ -44,7 +44,22 @@ _driver_exit(u3_auto* driver_u)
 static c3_o
 _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
 {
-  return c3n;
+  c3_o ret_o = c3n;
+
+  u3_noun tag, data, wire_head;
+  if ( (c3n == u3r_cell(wire, &wire_head, NULL))
+       || (c3n == u3r_cell(card, &tag, &data))
+       || (c3n == u3r_sing_c("http-client", wire_head)) )
+  {
+    goto end;
+  }
+
+  // TODO: send request over IPC
+
+end:
+  u3z(wire);
+  u3z(card);
+  return ret_o;
 }
 
 //! Notify that the HTTP client driver is live.
