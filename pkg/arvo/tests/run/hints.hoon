@@ -36,14 +36,14 @@
 ::++  test-04-hint-xray-add
 ::  ~>  %xray.[1 leaf+"(add 1 2)"]
 ::  (add 1 2)
-++  test-03-hint-xray-meme
-  ~>  %xray.[1 leaf+"(meme)"]
-  ~>  %meme
-  ~
-++  test-02-hint-xray-combo
-  ^-  @ud
-  ~>  %xray
-  ~>(%meme (mul 1 2))
+::++  test-03-hint-xray-meme
+::  ~>  %xray.[1 leaf+"(meme)"]
+::  ~>  %meme
+::  ~
+::++  test-02-hint-xray-combo
+::  ^-  @ud
+::  ~>  %xray
+::  ~>(%meme (mul 1 2))
 ::::  test that the hilt bout hint
 ::::  is safe to run or ignore
 ++  test-01-hilt-bout
