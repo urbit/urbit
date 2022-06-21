@@ -47,9 +47,19 @@ _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
   return c3n;
 }
 
+//! Notify that the HTTP client driver is live.
 static void
 _driver_talk(u3_auto* driver_u)
-{}
+{
+  _client* client_u = (_client*)driver_u;
+
+  u3_noun wire = u3nt(u3i_string("http-client"),
+                      u3dc("scot", c3__uv, client_u->inst_num_l),
+                      u3_nul);
+  u3_noun card = u3nc(c3__born, u3_nul);
+
+  u3_auto_plan(driver_u, u3_ovum_init(0, c3__i, wire, card));
+}
 
 //==============================================================================
 // Functions
@@ -129,5 +139,5 @@ u3_cttp_io_init(u3_pier* pir_u)
     }
   }
 
-  return (u3_auto*)&client_u->driver_u;
+  return (u3_auto*)client_u;
 }
