@@ -89,11 +89,9 @@ u3_cttp_io_init(u3_pier* pir_u)
   {
     // TODO: integrate the Rust binary.
     c3_c* args_c[] = {
-      "cargo",
-      "run",
+      "/home/tlon/code/io/target/debug/io",
       NULL,
     };
-    static c3_c cwd_c[] = "/home/peter/code/io";
 
     uv_pipe_init(u3L, &client_u->child_u.stdin_u, 0);
     uv_pipe_init(u3L, &client_u->child_u.stdout_u, 0);
@@ -120,7 +118,6 @@ u3_cttp_io_init(u3_pier* pir_u)
       .exit_cb     = _child_exit_cb,
       .file        = args_c[0],
       .args        = args_c,
-      .cwd         = cwd_c,
       // If any fds are inherited, libuv ignores UV_PROCESS_WINDOWS_HIDE*.
       .flags       = UV_PROCESS_WINDOWS_HIDE,
       .stdio_count = sizeof(stdio_u) / sizeof(*stdio_u),
