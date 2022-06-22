@@ -16,6 +16,22 @@ typedef struct {
   } child_u;                 //!< IO process
 } _client;
 
+typedef struct {
+  c3_d  len_d;        //!< combined length of type and jammed request
+  c3_y  type_y;       //!< type of IO request (0 = HTTP client)
+  c3_y* jammed_req_y; //!< jammed request
+} _io_req;
+
+//==============================================================================
+// Constants
+//==============================================================================
+
+//! Request types for IPC pipe. Belongs in header file shared by all IO drivers
+//! long term.
+enum {
+  IO_REQ_HTTP_CLIENT = 0,
+};
+
 //==============================================================================
 // Static functions
 //==============================================================================
@@ -46,30 +62,45 @@ _driver_exit(u3_auto* driver_u)
   c3_free(client_u);
 }
 
+// card is [tag data].
 static c3_o
 _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
 {
-  c3_o ret_o = c3n;
+  c3_o suc_o = c3n;
 
   u3_noun tag, data, wire_head;
   if ( (c3n == u3r_cell(wire, &wire_head, NULL))
-       || (c3n == u3r_cell(card, &tag, &data))
        || (c3n == u3r_sing_c("http-client", wire_head)) )
   {
     goto end;
   }
 
   _client* client_u = (_client*)driver_u;
+  _io_req* io_req_u = c3_malloc(sizeof(*io_req_u));
+  u3s_jam_xeno(card, &io_req_u->len_d, &io_req_u->jammed_req_y);
+  io_req_u->type_y = IO_REQ_HTTP_CLIENT;
+  io_req_u->len_d += sizeof(io_req_u->type_y);
 
-  static c3_c msg_c[] = "hello";
-  static c3_w msg_len_w = sizeof(msg_c);
   uv_buf_t req_bufs_u[] = {
-    { .base = (c3_c*)&msg_len_w, .len = sizeof(msg_len_w), },
-    { .base = msg_c, .len = sizeof(msg_c), },
+    {
+      // Request length.
+      .base = (c3_c*)&io_req_u->len_d,
+      .len = sizeof(io_req_u->len_d),
+    },
+    {
+      // Request type.
+      .base = (c3_c*)&io_req_u->type_y,
+      .len = sizeof(io_req_u->type_y),
+    },
+    {
+      // Jammed request.
+      .base = (c3_c*)io_req_u->jammed_req_y,
+      .len = io_req_u->len_d - sizeof(io_req_u->type_y),
+    },
   };
 
-  uv_write_t* req_u = c3_malloc(sizeof(*req_u));
-  uv_write(req_u,
+  uv_write_t* write_req_u = c3_malloc(sizeof(*write_req_u));
+  uv_write(write_req_u,
            (uv_stream_t*)&client_u->child_u.stdin_u,
            req_bufs_u,
            sizeof(req_bufs_u) / sizeof(*req_bufs_u),
@@ -78,7 +109,7 @@ _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
 end:
   u3z(wire);
   u3z(card);
-  return ret_o;
+  return suc_o;
 }
 
 //! Notify that the HTTP client driver is live.
@@ -96,9 +127,9 @@ _driver_talk(u3_auto* driver_u)
 }
 
 static void
-_write_cb(uv_write_t* req_u, c3_i status_i)
+_write_cb(uv_write_t* write_req_u, c3_i status_i)
 {
-  c3_free(req_u);
+  c3_free(write_req_u);
 }
 
 //==============================================================================
