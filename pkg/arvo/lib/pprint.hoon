@@ -632,6 +632,7 @@
                  [%atom *]  (cat 3 '@' p.p.spec)
                ==
         %dbug  $(spec q.spec)
+        %dict  $(spec q.spec)
         %leaf  =+((scot p.spec q.spec) ?:(=('~' -) - (cat 3 '%' -)))
         %like  tree/[[`[':' ~] ~] (turn `(list wing)`+.spec wing-to-plum)]
         %loop  (cat 3 '$' p.spec)
