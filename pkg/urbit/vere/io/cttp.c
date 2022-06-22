@@ -41,7 +41,10 @@ _child_exit_cb(uv_process_t* child_u, c3_ds status_d, c3_i term_sig_i)
 
 static void
 _driver_exit(u3_auto* driver_u)
-{}
+{
+  _client* client_u = (_client*)driver_u;
+  c3_free(client_u);
+}
 
 static c3_o
 _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
