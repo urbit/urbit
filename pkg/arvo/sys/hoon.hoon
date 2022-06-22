@@ -9713,14 +9713,13 @@
     ?:  ?=([%wtts *] gen)
       (cool how q.gen (play ~(example ax p.gen)))
     ?:  ?=([%wthx *] gen)
-      =+  (play %wing q.gen)
-      ~>  %slog.[0 [%leaf "chipping"]]
-      ?:  how
-        =-  ~>  %slog.[0 (dunk(sut +<) 'chip: gain: ref')]
-            ~>  %slog.[0 (dunk(sut -) 'chip: gain: gain')]
-            -
-        ~(gain ar - p.gen)
-      ~(lose ar - p.gen)
+      =+  fid=(find %both q.gen)
+      ?-  -.fid
+        %|  sut
+        %&  =<  q
+            %+  take  p.p.fid
+            |=(a=type ?:(how ~(gain ar a p.gen) ~(lose ar a p.gen)))
+      ==
     ?:  ?&(how ?=([%wtpm *] gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=([%wtbr *] gen))
