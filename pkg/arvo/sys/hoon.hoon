@@ -6338,6 +6338,7 @@
           $~  [%base %null]                             ::
           $%  [%base p=base]                            ::  base type
               [%dbug p=spot q=spec]                     ::  set debug
+              [%dict p=help q=spec]                     ::  formal comment
               [%leaf p=term q=@]                        ::  constant atom
               [%like p=wing q=(list wing)]              ::  reference
               [%loop p=term]                            ::  hygienic reference
@@ -7557,6 +7558,7 @@
     ?-  -.mod
       %base  ?.(?=([%atom *] p.mod) ~ ?:(=(%$ p.p.mod) `%atom `p.p.mod))
       %dbug  $(mod q.mod)
+      %dict  $(mod q.mod)
       %leaf  `p.mod
       %loop  `p.mod
       %like  ?~(p.mod ~ ?^(i.p.mod ?:(?=(%& -.i.p.mod) ~ q.i.p.mod) `i.p.mod))
@@ -7754,6 +7756,7 @@
                         (~(put by ^+(cox (~(uni by cox) q.mod))) %$ p.mod)
                  ==
       [%dbug *]  [%dbug p.mod $(mod q.mod)]
+      [%dict *]  $(mod q.mod)
       [%leaf *]  [%rock p.mod q.mod]
       [%loop *]  ~|([%loop p.mod] $(mod (~(got by cox) p.mod)))
       [%like *]  $(mod bcmc/(unreel p.mod q.mod))
@@ -7812,6 +7815,7 @@
     ::
       [%base *]  (decorate (basal p.mod))
       [%dbug *]  example(mod q.mod, bug [p.mod bug])
+      [%dict *]  example(mod q.mod, nut `help/p.mod)
       [%leaf *]  (decorate [%rock p.mod q.mod])
       [%like *]  example(mod bcmc/(unreel p.mod q.mod))
       [%loop *]  [%limb p.mod]
@@ -8001,6 +8005,11 @@
       ::
           [%dbug *]
         relative(mod q.mod, bug [p.mod bug])
+      ::
+      ::  formal comment
+      ::
+          [%dict *]
+        relative(mod q.mod, nut `help/p.mod)
       ::
       ::  constant
       ::
