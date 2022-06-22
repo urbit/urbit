@@ -13722,10 +13722,8 @@
   ++  wrap
     |*  fel=rule
     %+  cook
-      |=  [a=whit b=hoon c=whit]
-      ^-  hoon
-      ~(apply-whit ~(docs-engine ap b) (glom a c))
-    ::
+      |*  [a=whit b=* c=whit]
+      [(glom a c) b]
     ;~  plug
       apex:docs
       fel
@@ -13734,10 +13732,22 @@
   ::
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.(~+((wart (wrap ;~(pose expression:(norm &) long lute apex:(sail &))))))
+    |.  ~+
+    %-  wart
+    %+  cook
+      |=  [a=whit b=hoon]
+      ?~  boy.a  b
+      [%note help+`u.boy.a b]
+    (wrap ;~(pose expression:(norm &) long lute apex:(sail &)))
   ++  till                                              ::  mold tall form
     %+  knee  *spec
-    |.(~+((wert ;~(pose structure:(norm &) scad))))
+    |.  ~+
+    %-  wert
+    %+  cook
+      |=  [a=whit b=spec]
+      ?~  boy.a  b
+      [%dict `u.boy.a b]
+    (wrap ;~(pose structure:(norm &) scad))
   ++  wede                                              ::  wide bulb
     ::  XX: lus deprecated
     ::
