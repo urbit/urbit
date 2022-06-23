@@ -30,8 +30,13 @@ on:
       - 'nix/**'
       - 'default.nix'
 
+permissions:
+  contents: read
+
 jobs:
   call-vere:
+    permissions:
+      contents: none
     uses: ./.github/workflows/vere.yml
     with:
       pace: 'often'

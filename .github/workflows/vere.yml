@@ -230,6 +230,8 @@ jobs:
 
 
   after:
+    permissions:
+      contents: none
     runs-on: ubuntu-latest
     needs: [urbit, mingw]
     # XX disabled due to missing storage.objects.delete access
