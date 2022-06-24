@@ -13716,10 +13716,8 @@
       wyde
     ==
   ::
-  ::  +wrap is for tagging arbitrary hoons. This is where most of the doccords
-  ::  logic lives - the modifications to +boog and +wisp are for tagging arms
-  ::  and chapter labels, while +wrap handles hoons inside of arms and cores.
-  ++  wrap
+  ::  +sign: gloms prefix and postfix docs for an expression or structure
+  ++  sign
     |*  fel=rule
     %+  cook
       |*  [a=whit b=* c=whit]
@@ -13730,24 +13728,30 @@
       apse:docs
     ==
   ::
-  ++  tall                                              ::  full tall form
-    %+  knee  *hoon
-    |.  ~+
-    %-  wart
+  ++  clad                                              ::  docs into %note
+    |*  fel=rule
     %+  cook
       |=  [a=whit b=hoon]
       ?~  boy.a  b
       [%note help+`u.boy.a b]
-    (wrap ;~(pose expression:(norm &) long lute apex:(sail &)))
-  ++  till                                              ::  mold tall form
-    %+  knee  *spec
-    |.  ~+
-    %-  wert
+    fel
+  ::
+  ++  coat                                              ::  docs into %dict
+    |*  fel=rule
     %+  cook
       |=  [a=whit b=spec]
       ?~  boy.a  b
       [%dict `u.boy.a b]
-    (wrap ;~(pose structure:(norm &) scad))
+    fel
+  ::
+  ++  tall                                              ::  full tall form
+    %+  knee  *hoon
+    |.  ~+
+    (wart (clad (sign ;~(pose expression:(norm &) long lute apex:(sail &)))))
+  ++  till                                              ::  mold tall form
+    %+  knee  *spec
+    |.  ~+
+    (wert (coat (sign ;~(pose structure:(norm &) scad))))
   ++  wede                                              ::  wide bulb
     ::  XX: lus deprecated
     ::
