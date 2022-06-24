@@ -704,11 +704,16 @@
       [%face ^]  a(q $(a q.a))
       [%cell ^]  a(p $(a p.a), q $(a q.a))
       [%fork *]  a(p (silt (turn ~(tap in p.a) |=(b=type ^$(a b)))))
-      [%hint *]  ?.  ?=(%know -.q.p.a)  $(a q.a)
-                 ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
-                 [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
+      [%hint *]  ?+    -.q.p.a  $(a q.a)
+                     %know
+                   ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
+                   [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
+                 ::
+                     %help
+                   [summary.crib.p.q.p.a]~
+                 ==
       [%core ^]  `wain`/core
-      [%hold *]  a(p $(a p.a))
+      [%hold *]  $(a (~(play ut p.a) q.a))
     ==
   ::
   ::  XX needs filter
