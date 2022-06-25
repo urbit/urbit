@@ -1744,7 +1744,6 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
-//-------------------DANE------
 /* _n_prog_free(): free memory retained by program
 */
 static void
@@ -1766,9 +1765,11 @@ _n_prog_free_willy(u3n_prog* pog_u)
   u3a_free(pog_u);
 }
 
-
+/* _intlen(): find the number of characters the given int
+ *            would take to print.
+ */
 int
-_intlen (int value)
+_intlen(int value)
 {
   int x=!value;
   while(value){
@@ -1778,34 +1779,57 @@ _intlen (int value)
   return x;
 }
 
+/* _invalid_op(): return true if 'go' is not in 0-2,4
+ *                which means that _slog_bytecode doesn't
+ *                know how to handle it.
+ */
 int
-_is_valid_op(int go)
+_invalid_op(int go)
 {
-  return (go == 0 || go == 1 || go == 2 | go == 4);
+  return !(go == 0 || go == 1 || go == 2 | go == 4);
 }
+
+/*  _is_pair(): return true if go > 0
+ *              which means the opcode paired with an argument
+ */
 int
-_is_pair_op(int go)
+_is_pair(int go)
 {
   return (go == 1 || go == 2 | go == 4);
 }
 
+/* _is_indexed(): return true if the opcode is
+ *                in the set of opcodes known to
+ *                use pog_u->lit_u.non
+ */
 int
-_is_indexing_bc(int go)
+_is_indexed(int op)
 {
-  if (go == 15 || go == 16 || go == 19 || go == 20 )
+  if (op == 15 || op == 16 || op == 19 || op == 20 )
     return 1;
-  if (go == 25 || go == 26 || go == 31 || go == 32 )
+  if (op == 25 || op == 26 || op == 31 || op == 32 )
     return 1;
-  if (go == 42 || go == 43 || go == 59 || go == 60 )
+  if (op == 42 || op == 43 || op == 59 || op == 60 )
     return 1;
-  if (go == 73 || go == 74 || go == 75 || go == 76 )
+  if (op == 73 || op == 74 || op == 75 || op == 76 )
     return 1;
-  if (go == 89 || go == 90 || go == 93 || go == 94 )
+  if (op == 89 || op == 90 || op == 93 || op == 94 )
     return 1;
   return 0;
 }
 
-// last known to work
+/* _num_from_pog(): returns an unsigned int of variable size
+ *                  with a side effect of correctly incrementing ip_w
+ *                  defined as a macro to avoid further pointer manipulations
+ */
+#define _num_from_pog(go, pog, ip_w) (\
+  go == 4 ? _n_rewo(pog, &ip_w):      \
+  go == 2 ? _n_resh(pog, &ip_w):      \
+  pog[ip_w++])
+
+/* _slog_bytecode():
+ *
+ */
 void
 _slog_bytecode(c3_l pri_l, c3_y* pog, u3n_prog* pog_u) {
   c3_w len_w = pog_u->byc_u.len_w;
@@ -1816,18 +1840,16 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, u3n_prog* pog_u) {
   // lets count the chars in this string
   while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
-    if (!_is_valid_op(go)) break;        // give up if we dont know how to print it
-    op_num = pog[ip_w++];                // move ip_w for reading a opcode name
-    is_idx_op = _is_indexing_bc(op_num); // is this an indexed bytecode argument
-    s_ln += 5;                           // a leading space, and opcode name
-    if (_is_pair_op(go)) {               // if pair: "[byt arg]"" else "byt"
-      s_ln += 3;                         // "[", space between opcode & arg, "]"
-      if ( is_idx_op ) s_ln += 2;        // 'i:'
-      num =                              // the bytecode argument
-        go == 4 ? _n_rewo(pog, &ip_w):   //
-        go == 2 ? _n_resh(pog, &ip_w):   //
-        pog[ip_w++];                     //
-      s_ln += _intlen(num);              // length of the bytecode argument
+    if (_invalid_op(go)) break;      // give up if we dont know how to print it
+    op_num = pog[ip_w++];            // move ip_w for reading a opcode name
+    is_idx_op = _is_indexed(op_num); // is this an indexed bytecode argument
+    s_ln += 5;                       // a leading space, and opcode name
+    if (_is_pair(go)) {              // if pair: "[bytecode arg]" else "bytecode"
+      s_ln += 3;                     // "[", space between opcode & arg, "]"
+      if ( is_idx_op ) s_ln += 2;    // 'i:'
+      s_ln += _intlen(               // length of the bytecode argument
+        _num_from_pog(go, pog, ip_w)
+      );
     }
   }
   // reset so we can loop again
@@ -1838,32 +1860,29 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, u3n_prog* pog_u) {
   // lets print this string
   while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
-    if (!_is_valid_op(go)) break;              // give up if we dont know how to print it
-    op_num = pog[ip_w++];                      // move ip_w for reading a opcode name
-    is_idx_op = _is_indexing_bc(op_num);       // is this an indexed bytecode argument
-    strcat(str_c, " ");                        // leading space
-    if (_is_pair_op(go)) strcat(str_c, "[");   // add "[" if the opcode pairs
-    strncat(str_c, opcode_names[op_num], 4);   // add the opcode name
-    if (_is_pair_op(go)) {                     // finish the pair
-      strcat(str_c, " ");                      // add the space between byt and arg
-      if ( is_idx_op ) strcat(str_c, "i:");    // indexed args are labeled as "index of arg"
-      num =                                    // the bytecode argument
-        go == 4 ? _n_rewo(pog, &ip_w):         //
-        go == 2 ? _n_resh(pog, &ip_w):         //
-        pog[ip_w++];                           //
-      if (num == 0) {                          //
-        strcat(str_c, "0");                    // handle a litteral zero
-      }                                        //
-      else {                                   //
-        for (int x = _intlen(num); x > 0; x--) // prefill the buffer
-          strcat(str_c, "_");                  //
-        int f = strlen(str_c)-1;               // get the index of the last prefill
-        while (num > 0) {                      // stringify number in LSB order
-          str_c[f--] = (num%10)+'0';           // .. stringify the tail of num into tail of buf
-          num /= 10;                           // .. turncate num by one digit
-        }                                      //
-      }                                        //
-      strcat(str_c, "]");                      // add the closing brace
+    if (_invalid_op(go)) break;              // give up if we dont know how to print it
+    op_num = pog[ip_w++];                    // move ip_w for reading a opcode name
+    is_idx_op = _is_indexed(op_num);         // is this an indexed bytecode argument
+    strcat(str_c, " ");                      // leading space
+    if (_is_pair(go)) strcat(str_c, "[");    // add "[" if the opcode pairs
+    strncat(str_c, opcode_names[op_num], 4); // add the opcode name
+    if (_is_pair(go)) {                      // finish the pair
+      strcat(str_c, " ");                    // add the space between byt and arg
+      if ( is_idx_op ) strcat(str_c, "i:");  // indexed args are labeled as "index of arg"
+      num = _num_from_pog(go, pog, ip_w);    // the bytecode argument
+      if (num == 0) {                        //
+        strcat(str_c, "0");                  // handle a litteral zero
+      }                                      //
+      else {                                 //
+        for (int x = _intlen(num); x>0; x--) // prefill the buffer
+          strcat(str_c, "_");                //
+        int f = strlen(str_c)-1;             // get the index of the last prefill
+        while (num > 0) {                    // stringify number in LSB order
+          str_c[f--] = (num%10)+'0';         // .. stringify the tail of num into tail of buf
+          num /= 10;                         // .. turncate num by one digit
+        }                                    //
+      }                                      //
+      strcat(str_c, "]");                    // add the closing brace
     }
   }
   // replace the first leading space and append the last char to the string
@@ -1877,15 +1896,14 @@ _xray(c3_l pri_l, u3_noun fol) {
   u3n_prog* pog_u = _n_bite(fol);
   c3_y* pog = pog_u->byc_u.ops_y;
   _slog_bytecode(pri_l, pog, pog_u);
-  u3m_p("fol", fol);
-  fprintf(stderr, "\r\nhex: ");
-  for (int i=0; i < pog_u->byc_u.len_w; i++) {
-    fprintf(stderr, "%02x ", pog_u->byc_u.ops_y[i]);
-  }
-  fprintf(stderr, "\r\n");
+  //u3m_p("fol", fol);
+  //fprintf(stderr, "\r\nhex: ");
+  //for (int i=0; i < pog_u->byc_u.len_w; i++) {
+  //  fprintf(stderr, "%02x ", pog_u->byc_u.ops_y[i]);
+  //}
+  //fprintf(stderr, "\r\n");
   _n_prog_free_willy(pog_u);
 }
-// ---------------END DANEs EDIT -----
 
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
 **            hin: [hint-atom, formula]. TRANSFER
