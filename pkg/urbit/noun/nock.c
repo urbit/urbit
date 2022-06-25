@@ -1805,123 +1805,72 @@ _is_indexing_bc(int go)
   return 0;
 }
 
+// last known to work
 void
 _slog_bytecode(c3_l pri_l, c3_y* pog, u3n_prog* pog_u) {
   c3_w len_w = pog_u->byc_u.len_w;
-  c3_w ip_w = 0;
-  // NOTE: if we change the main loop, we should c/p
-  //       it back up here to replace this loop,
-  //       then replace all string ops with increments
-  //       thats how I did it in the first place.
-  // lets count the chars in this string
-  unsigned int s_ln = 1; // opening "{"
+  c3_w ip_w=0, num=0, op_num=0, is_idx_op=0;
+  c3_w s_ln = 1; // opening "{"
   // set go to an invalid value, so we can break imeadately if needed
-  unsigned int go = 5;
-  unsigned int op_num = 0;
-  unsigned int is_idx_op = 0;
+  c3_w go = 5;
+  // lets count the chars in this string
   while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
-    // no need to stay here if we cant print it
-    if (!_is_valid_op(go)) break;
-    // move ip_w for reading a opcode name
-    op_num = pog[ip_w++];
-    is_idx_op = _is_indexing_bc(op_num);
-    s_ln += 4; // opcode name, which is always 4 char long
-    if (_is_pair_op(go)) {
-      if ( is_idx_op ) {
-        // TODO: take the length of the looked up thing
-        // check the bytecode,
-        // if its an indexing bytecode, we need to look it up
-        //s_ln += 2+_intlen(pog_u->lit_u.non[pog[ip_w++]]);
-        s_ln += 2; // 'i:'
-      } //else {
-        // add the len of the number
-        s_ln += _intlen(
-          go == 4 ? _n_rewo(pog, &ip_w):
-          go == 2 ? _n_resh(pog, &ip_w):
-          pog[ip_w++]
-        );
-      //}
-      s_ln += 3; // "[", the space between the opcode and number, "]"
+    if (!_is_valid_op(go)) break;        // give up if we dont know how to print it
+    op_num = pog[ip_w++];                // move ip_w for reading a opcode name
+    is_idx_op = _is_indexing_bc(op_num); // is this an indexed bytecode argument
+    s_ln += 5;                           // a leading space, and opcode name
+    if (_is_pair_op(go)) {               // if pair: "[byt arg]"" else "byt"
+      s_ln += 3;                         // "[", space between opcode & arg, "]"
+      if ( is_idx_op ) s_ln += 2;        // 'i:'
+      num =                              // the bytecode argument
+        go == 4 ? _n_rewo(pog, &ip_w):   //
+        go == 2 ? _n_resh(pog, &ip_w):   //
+        pog[ip_w++];                     //
+      s_ln += _intlen(num);              // length of the bytecode argument
     }
-    s_ln++; // add trailing space before next word in string, or } at end
   }
-
-  // reset ip_w so we can loop again
-  ip_w = 0;
+  // reset so we can loop again
+  ip_w=0, num=0, op_num=0, is_idx_op=0, go=5;
+  // init our string, and give it a trailing null
   c3_c str_c[s_ln];
   str_c[0] = 0;
-  go = 5;
-  c3_w num = 0;
+  // lets print this string
   while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
-    // no need to stay here if we cant print it
-    if (!_is_valid_op(go)) break;
-
-    strcat(str_c, " ");
-
-    op_num = pog[ip_w++];
-    is_idx_op = _is_indexing_bc(op_num);
-
-    // add open brace if the opcode pairs with a number
-    if (_is_pair_op(go)) strcat(str_c, "[");
-
-    // add the opcode name
-    strncat(str_c, opcode_names[op_num], 4);
-
-    // finish the pair
-    if (_is_pair_op(go)) {
-      // add the space
-      strcat(str_c, " ");
-
-      // get the number
-      if ( is_idx_op ) {
-        // check the bytecode,
-        // if its an indexing bytecode, we need to look it up
-        strcat(str_c, "i:");
-        /*
-        // sacrifical col until I figure out
-        // why _intlen & serializing of lit_u is off by one
-        strcat(str_c, "::");
-        // TODO: this can be ANY NOUN
-        // so we need to serialize it if its an atom
-        // and we need to 'recurse' if its a cell tree
-        num = pog_u->lit_u.non[pog[ip_w++]];
-        u3m_p("idx", num);
-        // TODO: short term fix: is_atom? if so render that number, else render index notation
-        */
-      } //else {
-        num =
-          go == 4 ? _n_rewo(pog, &ip_w):
-          go == 2 ? _n_resh(pog, &ip_w):
-          pog[ip_w++];
-      //}
-
-      if (num == 0) {
-        // handle a litteral zero
-        strcat(str_c, "0");
-      }
-      else {
-        // add underscores to the buffer for the number
-        for (int x = _intlen(num); x > 0; x--) strcat(str_c, "_");
-        // get the index of the last underscore we added
-        int f = strlen(str_c)-1;
-        // add num to the string by decrementing into str_c,
-        // stuffing the tail of num into each slot
-        while (num > 0) {
-          str_c[f--] = (num%10)+'0';
-          num /= 10;
-        }
-      }
-      // add the closing brace
-      strcat(str_c, "]");
+    if (!_is_valid_op(go)) break;              // give up if we dont know how to print it
+    op_num = pog[ip_w++];                      // move ip_w for reading a opcode name
+    is_idx_op = _is_indexing_bc(op_num);       // is this an indexed bytecode argument
+    strcat(str_c, " ");                        // leading space
+    if (_is_pair_op(go)) strcat(str_c, "[");   // add "[" if the opcode pairs
+    strncat(str_c, opcode_names[op_num], 4);   // add the opcode name
+    if (_is_pair_op(go)) {                     // finish the pair
+      strcat(str_c, " ");                      // add the space between byt and arg
+      if ( is_idx_op ) strcat(str_c, "i:");    // indexed args are labeled as "index of arg"
+      num =                                    // the bytecode argument
+        go == 4 ? _n_rewo(pog, &ip_w):         //
+        go == 2 ? _n_resh(pog, &ip_w):         //
+        pog[ip_w++];                           //
+      if (num == 0) {                          //
+        strcat(str_c, "0");                    // handle a litteral zero
+      }                                        //
+      else {                                   //
+        for (int x = _intlen(num); x > 0; x--) // prefill the buffer
+          strcat(str_c, "_");                  //
+        int f = strlen(str_c)-1;               // get the index of the last prefill
+        while (num > 0) {                      // stringify number in LSB order
+          str_c[f--] = (num%10)+'0';           // .. stringify the tail of num into tail of buf
+          num /= 10;                           // .. turncate num by one digit
+        }                                      //
+      }                                        //
+      strcat(str_c, "]");                      // add the closing brace
     }
   }
+  // replace the first leading space and append the last char to the string
   str_c[0] = '{';
   strcat(str_c, "}");
   u3t_slog_cap(pri_l, u3i_string("bytecode"), u3i_string(str_c));
 }
-
 
 void
 _xray(c3_l pri_l, u3_noun fol) {
