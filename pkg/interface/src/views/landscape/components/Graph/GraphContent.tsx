@@ -316,21 +316,6 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
   );
 
   t[1].children.map((c, idx) => {
-    if (
-      c.type === 'blockquote' &&
-      t[1].children[idx + 1] !== undefined &&
-      t[1].children[idx + 1].type === 'paragraph'
-    ) {
-      const next =
-        idx !== t[1].children.length - 1
-          ? t[1].children.splice(idx + 1, 1)
-          : [];
-
-      if (next.length > 0) {
-        t[1].children[idx].children.push(next[0]);
-      }
-    }
-
     const links = [];
     function addRichEmbedURL(nodes) {
       if (nodes?.children) {
