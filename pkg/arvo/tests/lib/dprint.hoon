@@ -52,7 +52,7 @@
   +|  %docs-for-arms
   ++  no-doc  ~
   ::
-  :>  arm-doc
+  :>  +arm-adoc-pre: arm-doc
   ++  arm-adoc-pre  ~
   ::
   ++  arm-adoc-post  :<  arm-doc
@@ -66,7 +66,7 @@
   ::
   ++  arm-cdoc-pre
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
@@ -76,7 +76,7 @@
       ~
     --
   ::
-  :>  arm-doc
+  :>  +arm-adoc-pdoc-pre-pre: arm-doc
   ++  arm-adoc-pdoc-pre-pre
     :>  product-doc
     'foo'
@@ -88,16 +88,16 @@
   ++  arm-adoc-pdoc-post-post  :<  arm-doc
     'foo'  :<  product-doc
   ::
-  :>  arm-doc
+  :>  +arm-adoc-cdoc-pre-pre: arm-doc
   ++  arm-adoc-cdoc-pre-pre
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
   ++  arm-adoc-cdoc-post-pre  :<  arm-doc
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
@@ -110,12 +110,12 @@
   ++  arm-pdoc-cdoc-pre-pre
     :>  product-doc
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --
   ++  arm-pdoc-cdoc-post-pre
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --  :<  product-doc
   ::
@@ -125,29 +125,29 @@
       ~
     --  :<  product-doc
   ::
-  :>  arm-doc
+  :>  +arm-adoc-pdoc-cdoc-pre-pre-pre: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-pre-pre
     :>  product-doc
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
   ++  arm-adoc-pdoc-cdoc-post-pre-pre  :<  arm-doc
     :>  product-doc
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
-  :>  arm-doc
+  :>  +arm-adoc-pdoc-cdoc-pre-post-pre: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-post-pre
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --  :<  product-doc
   ::
-  :>  arm-doc
+  :>  +arm-adoc-pdoc-cdoc-pre-pre-post: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-pre-post
     :>  product-doc
     |%
@@ -157,7 +157,7 @@
   ::
   ++  arm-adoc-pdoc-cdoc-post-post-pre  :<  arm-doc
     |%
-    :>  core-doc
+    :>    core-doc
     ++  $  ~
     --  :<  product-doc
   ::
@@ -168,7 +168,7 @@
       ~
     --
   ::
-  :>  arm-doc
+  :>  +arm-adoc-pdoc-cdoc-pre-post-post: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-post-post
     |%
     ++  $  :<  core-doc
