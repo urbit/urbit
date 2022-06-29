@@ -91,7 +91,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
 
   const initialValues = {
     writePerms,
-    writers: writers
+    writers: [...writers]
       .filter(x => x !== hostShip),
     readerComments: association.metadata.vip === 'reader-comments'
   };
@@ -104,7 +104,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
       resource: association.resource,
       tag: 'writers'
     };
-    const allWriters = writers.map(w => `~${w}`);
+    const allWriters = [...writers].map(w => `~${w}`);
     if (values.readerComments !== readerComments) {
       await airlock.poke(metadataEdit(association, {
         vip: values.readerComments ? 'reader-comments' : ''
