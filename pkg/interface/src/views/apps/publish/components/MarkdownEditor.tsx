@@ -96,7 +96,7 @@ export function MarkdownEditor(
       p={1}
       border={1}
       borderColor="lightGray"
-      backgroundColor={disabled ? '#eee' : '#fff'}
+      backgroundColor={disabled ? 'lightGray' : 'white'}
       borderRadius={2}
       height={['calc(100% - 22vh)', '100%']}
       {...boxProps}
