@@ -3,6 +3,7 @@ module Practice.DependentHoon4 where
 import ClassyPrelude hiding ((/), even, find, head, join, read, tail, catch)
 import Prelude (head, tail)
 
+import Control.Arrow (left)
 import Control.Exception (ArithException, catch)
 import Control.Monad.Except hiding (join)
 import Control.Monad.Reader hiding (join)
@@ -872,6 +873,10 @@ class (Monad m, MonadIO m, Alternative m) => MonadCheck m where
   -- modes.
   note :: (Show a, Rolling a) => Text -> a -> m ()
 
+  -- | Get the success or failure of a given nested check, allowing for
+  -- recovery / fallback.
+  ogle :: m a -> m (Either Fail a)
+
 -- | Fail with no message.
 bailFail :: MonadCheck m => m a
 bailFail = bail BailFail
@@ -960,6 +965,8 @@ instance MonadCheck (ExceptT ([Act], Fail) (ReaderT [Act] IO)) where
       Left (acts, err) -> Left (acts, f err)
       Right x -> Right x
   note _ _ = pure ()
+  ogle chk = ExceptT $ ReaderT \r ->
+    runReaderT (Right . left snd <$> runExceptT chk) r
 
 data ActTree
   = ActTree Act [ActTree]  -- ^ most recent act at front
@@ -998,6 +1005,7 @@ instance MonadCheck (ExceptT Fail (StateT [ActTree] IO)) where
   bail = throwError
   bailSwap f m = catchError m (\e -> throwError (f e))
   note t n = modify' \(outer:rest) -> insertTree (ActNote t n) outer : rest
+  ogle chk = ExceptT $ StateT \s -> runStateT (Right <$> runExceptT chk) s
 
 traceToStack :: ActTree -> [Act]
 traceToStack = reverse . go
@@ -1408,10 +1416,15 @@ fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit t u) case (t, u) of
   (Equl'{}, _) -> fitsFail
   (_, Equl'{}) -> fitsFail
 
-  (Test' u v w, Test' u' v' w') -> do
-    ace <- fest FitSame lvl u u' ace
-    ace <- fest fit lvl v v' ace
-    fest fit lvl w w' ace
+  (Test' u v w, Test' u' v' w') -> ogle (fest FitSame lvl u u' ace) >>= \case
+    Right ace -> do
+     ace <- fest fit lvl v v' ace
+     fest fit lvl w w' ace
+    Left _ -> do
+      ace <- fest fit lvl v v' ace
+      ace <- fest fit lvl v w' ace
+      ace <- fest fit lvl w v' ace
+      fest fit lvl w w' ace
   (Test' _ v w, u) -> do
     ace <- fest fit lvl v u ace
     fest fit lvl w u ace
@@ -2264,7 +2277,7 @@ fend con@Con{lvl, sut} w whs = do
       Arm{} -> bail (EditPull win (lyt lin))
       Leg ax -> pure
         ( Edit c ax rhs
-        , seal SealEdit lin
+        , seal SealEdit lin { lyt = typ }
         , swam ms ns
         )
 

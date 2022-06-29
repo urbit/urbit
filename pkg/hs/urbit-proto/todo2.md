@@ -22,10 +22,12 @@
     ```
 - `$@` Both
   - `|=  a=$(*)  $@  a  ^`
-- `%=`
-  - eta-beta
-  - gold cores
+* `%=`
+  - eta-beta (XX what is the problem here again?)
+  * gold cores
 - solve the abstract core ("variance") problem
+  * think up solution
+  - code up solution
 - fix extra face on type `=/`, e.g. in nest-face.hoon
 - make printing suck less
   - loft throughout
@@ -36,6 +38,7 @@
   - figure out indentation issues in long hop prefix, maybe also palms
   - refactor that awful printing library
 - figure out why exhaustiveness checking is slow
+- figure out why `comp.hoon` is slow ugh
 - fix linearity in retcon
 - investigate typed delimited continuation scry
 - investigate type-safe code ingestion

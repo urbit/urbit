@@ -118,6 +118,7 @@ library
     , mmorph
     , mtl
     , multimap
+    , optparse-applicative
     , para
     , parser-combinators
     , pretty-show
@@ -187,6 +188,7 @@ executable proto
     , mmorph
     , mtl
     , multimap
+    , optparse-applicative
     , para
     , parser-combinators
     , pretty-show
@@ -268,6 +270,7 @@ test-suite proto-test
     , mmorph
     , mtl
     , multimap
+    , optparse-applicative
     , para
     , parser-combinators
     , pretty-show

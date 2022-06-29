@@ -16,6 +16,7 @@ dependencies:
   - mmorph
   - mtl
   - multimap
+  - optparse-applicative
   - para
   - parser-combinators
   - pretty-show
