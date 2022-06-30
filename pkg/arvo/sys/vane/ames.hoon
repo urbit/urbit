@@ -2697,12 +2697,8 @@
         ::
         =.  peer-core  (run-message-pump target-bone %near naxplanation)
         ::
-        ?.  ?&  (~(has in closing.peer-state) target-bone)
-                (~(has by by-bone.ossuary.peer-state) target-bone)
-            ==
-          %.  peer-core
-          %+  trace  odd.veb
-          |.("weird %cork on bone={<target-bone>}")
+        ?.  (~(has in closing.peer-state) target-bone)
+          peer-core
         =/  =message-pump-state
           (~(gut by snd.peer-state) target-bone *message-pump-state)
         =/  message-pump
