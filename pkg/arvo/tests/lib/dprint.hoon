@@ -26,7 +26,7 @@
   ++  get-item
     |=  a=(list term)
     ^-  item
-    +:(find-item-in-type a -:!>(.) %.y)
+    +:(find-item-in-type a -:!>(.))
   ::
   ++  get-arm-dox
     |=  a=(list term)
