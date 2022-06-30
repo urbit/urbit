@@ -186,7 +186,7 @@
             %+  cook
               |=  a=(list term)
               [[%help a] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
-            (most col sym)
+            (most fas sym)
           ==
           (easy [[%help ~[%$]] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
         ==
