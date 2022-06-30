@@ -235,9 +235,9 @@ export class Urbit {
             console.log('Received SSE: ', event);
           }
           if (!event.id) return;
-          this.lastEventId = parseInt(event.id, 10);
-          if (this.lastEventId - this.lastAcknowledgedEventId > 20) {
-            this.ack(this.lastEventId);
+          const eventId = parseInt(event.id, 10);
+          if (eventId - this.lastAcknowledgedEventId > 20) {
+            this.ack(eventId);
           }
 
           if (event.data && JSON.parse(event.data)) {
@@ -312,7 +312,7 @@ export class Urbit {
    *
    */
   reset() {
-    if(this.verbose) {
+    if (this.verbose) {
       console.log('resetting');
     }
     this.delete();
