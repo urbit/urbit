@@ -953,7 +953,6 @@
     ++  molt
       |=  moves=(list move)
       ^-  (quip move _adult-gate)
-      ~&  [%hmm now]
       =.  ames-state.adult-gate
         ?>  ?=(^ cached-state)
         =?  u.cached-state  ?=(%5 -.u.cached-state)
@@ -1051,7 +1050,6 @@
     |=  old=ames-state-6
     ^-  ^ames-state
     =+  !<  =rift
-        ~&  :-  %uhh  `beam`[[our %rift %da now] /(scot %p our)]
         q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
     :*  peers=(~(run by peers.old) ship-state-6-to-7)
         unix-duct.old
