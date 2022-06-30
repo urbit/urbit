@@ -2576,7 +2576,7 @@
         (~(gut by rcv.peer-state) bone *message-sink-state)
       ::
       =/  message-sink    (make-message-sink message-sink-state channel)
-      =^  sink-gifts      message-sink-state  (work:message-sink task)
+      =^  sink-gifts      message-sink-state  (work:message-sink bone task)
       =.  rcv.peer-state  (~(put by rcv.peer-state) bone message-sink-state)
       ::  process effects from |message-sink
       ::
@@ -3467,7 +3467,7 @@
   ::  +work: handle a $message-sink-task
   ::
   ++  work
-    |=  task=message-sink-task
+    |=  [=bone task=message-sink-task]
     ^+  [gifts state]
     ::
     =-  [(flop gifts) state]
@@ -3475,12 +3475,12 @@
     ?-  -.task
       %done  (on-done ok.task cork.task)
       %drop  (on-drop message-num.task)
-      %hear  (on-hear [lane shut-packet ok]:task)
+      %hear  (on-hear bone [lane shut-packet ok]:task)
     ==
   ::  +on-hear: receive message fragment, possibly completing message
   ::
   ++  on-hear
-    |=  [=lane =shut-packet ok=?]
+    |=  [=bone =lane =shut-packet ok=?]
     ^+  message-sink
     ::  we know this is a fragment, not an ack; expose into namespace
     ::
@@ -3523,7 +3523,7 @@
         %-  %+  trace  rcv.veb
             |.  ^-  tape
             =/  data
-              :*  her.channel  seq=seq
+              :*  her.channel  seq=seq  bone=bone
                   fragment-num=fragment-num  num-fragments=num-fragments
                   la=last-acked.state  lh=last-heard.state
               ==
