@@ -864,7 +864,7 @@ u3r_p(u3_noun  a,
   if ( (c3y == u3r_cell(a, &feg, &nux)) &&
        (c3y == u3r_sing(feg, b)) )
   {
-    *c = nux;
+    if ( c ) *c = nux;
     return c3y;
   }
   else return c3n;
