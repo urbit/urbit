@@ -1290,20 +1290,32 @@ u3m_soft(c3_w    mil_w,
     return why;
   }
   else {
-    //  don't use .^ at the top level!
-    //
-    c3_assert(1 != u3h(why));
+    u3_noun tax, cod, pro;
+
+    switch ( u3h(why) ) {
+      case 2: {
+        cod = c3__exit;
+        tax = u3t(why);
+      } break;
+
+      case 3: {
+        cod = u3h(u3t(why));
+        tax = u3t(u3t(why));
+      } break;
+
+      //  don't use .^ at the top level!
+      //
+      default: {
+        u3m_p("invalid mot", u3h(why));
+        c3_assert(0);
+      }
+    }
 
     //  don't call +mook if we have no kernel
     //
     //    This is required to soft the boot sequence.
-    //    XX produce specific error motes instead of %2?
     //
     if ( 0 == u3A->roc ) {
-      u3_noun tax = u3t(why);
-
-      u3m_p("tone", u3h(why));
-
       while ( u3_nul != tax ) {
         u3_noun dat, mot, val;
         u3x_cell(tax, &dat, &tax);
@@ -1323,31 +1335,16 @@ u3m_soft(c3_w    mil_w,
         }
       }
 
-      u3z(why);
-      return u3nc(c3__fail, u3_nul);
+      pro = u3nc(u3k(cod), u3_nul);
     }
     else {
-      u3_noun tax, cod, pro, mok;
-
-      if ( 2 == u3h(why) ) {
-        cod = c3__exit;
-        tax = u3k(u3t(why));
-      }
-      else {
-        c3_assert(3 == u3h(why));
-
-        cod = u3k(u3h(u3t(why)));
-        tax = u3k(u3t(u3t(why)));
-      }
-
-      mok = u3dc("mook", 2, tax);
-      pro = u3nc(cod, u3k(u3t(mok)));
-
+      u3_noun mok = u3dc("mook", 2, u3k(tax));
+      pro = u3nc(u3k(cod), u3k(u3t(mok)));
       u3z(mok);
-      u3z(why);
-
-      return pro;
     }
+
+    u3z(why);
+    return pro;
   }
 }
 
