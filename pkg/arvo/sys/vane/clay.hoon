@@ -4624,7 +4624,7 @@
   =>  |%
       +$  raft-any
         $%  [%13 raft-13]
-            [%12 *] ::raft-12]  ::TODO  see below
+            [%12 raft-12]
             [%11 raft-11]
             [%10 raft-10]
             [%9 raft-9]
@@ -4635,7 +4635,7 @@
       +$  raft-13  raft
       +$  raft-12
         $:  rom=room
-            hoy=(map ship rung)
+            hoy=(map ship rung-12)
             ran=rang
             fad=flow
             mon=(map term beam)
@@ -4644,9 +4644,34 @@
             pud=(unit [=desk =yoki])
             bug=[veb=@ mas=@]
         ==
+      +$  rung-12
+        $:  rus=(map desk rede-12)
+        ==
+      +$  rede-12
+        $:  lim=@da
+            ref=(unit rind-12)
+            qyx=cult
+            dom=dome
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  rind-12
+        $:  nix=@ud
+            bom=(map @ud update-state-12)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-12
+          $:  =duct
+              =rave
+              need=(list lobe)
+              nako=(qeu (unit nako))
+              busy=_|
+          ==
       +$  raft-11
         $:  rom=room
-            hoy=(map ship rung)
+            hoy=(map ship rung-12)
             ran=rang
             fad=flow
             mon=(map term beam)
@@ -4872,9 +4897,7 @@
   =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
-  ::TODO  ;; because $case changed, but that shouldn't matter?
-  ::      figure out a better way to do this.
-  =?  old  ?=(%12 -.old)  13+(raft-12-to-13 ;;(raft-12 +.old))
+  =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
   ?>  ?=(%13 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
@@ -4986,7 +5009,7 @@
       |=  =rung-10
       %-  ~(run by rus.rung-10)
       |=  =rede-10
-      ^-  rede
+      ^-  rede-12
       %=    rede-10
           fiz     *melt
           qyx     (cult-10-to-cult qyx.rede-10)
@@ -5007,13 +5030,11 @@
             bom.u
           %-  ~(run by bom.u.ref.rede-10)
           |=  =update-state-10
-          ^-  update-state
+          ^-  update-state-12
           %=    update-state-10
               |2
-            ^-  [(map lobe fell) (list $@(lobe [tako path lobe])) (qeu (unit nako)) (unit $@(%ames [@ta @da path]))]
-            %=    |2.update-state-10
-                busy  ?:(busy.update-state-10 `%ames ~)
-            ::
+            ^-  [(list lobe) (qeu (unit nako)) _|]
+            %=    |3.update-state-10
                 nako
               %-  ~(gas to *(qeu (unit nako)))
               %+  turn  ~(tap to nako.update-state-10)
@@ -5100,7 +5121,29 @@
   ++  raft-12-to-13
     |=  raf=raft-12
     ^-  raft-13
-    raf(bug [~ bug.raf])
+    %=    raf
+      bug  [~ bug.raf]
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-12
+      %-  ~(run by rus.rung-12)
+      |=  =rede-12
+      ^-  rede
+      %=    rede-12
+          ref
+        ?~  ref.rede-12
+          ~
+        %=    ref.rede-12
+            bom.u
+          %-  ~(run by bom.u.ref.rede-12)
+          |=  update-state-12
+          ^-  update-state
+          =/  busy  ?:(busy `%ames ~)
+          [duct rave ~ need nako busy]
+        ==
+      ==
+    ==
   --
 ::
 ++  scry                                              ::  inspect
