@@ -6947,10 +6947,12 @@
       fis=_(new:fis:lru 100)                            ::  +fish cache
       cro=_(new:cro:lru 2.450)                          ::  +crop cache
       fus=_(new:fus:lru 2.450)                          ::  +fuse cache
+      bra=_(new:bra:lru 5.000)                          ::  +bran cache
       nen=(map (trel ? type type) ?)                    ::  inner +nest cache
       con=(map (trel ? type type) type)                 ::  inner +crop cache
       fun=(map (trel ? type type) type)                 ::  inner +fuse cache
       fin=(map (trel ? type axis) nock)                 ::  inner +fish cache
+      ban=(map type seminoun)                           ::  inner +bran cache
   ==                                                    ::
 ::
 ++  lru                                                 ::  compiler cache
@@ -6961,6 +6963,7 @@
       fis=(lu (trel ? type axis) nock)
       cro=(lu (trel ? type type) type)
       fus=(lu (trel ? type type) type)
+      bra=(lu type seminoun)
   ==
 ::
 +$  pony                                                ::  raw match
@@ -10235,9 +10238,20 @@
     ==
   ::
   ++  caching-bran
-    ~+
+    =/  cached  (get:bra:lru bra.grub sut)
+    ?^  cached
+      [p.u.cached grub(bra q.u.cached)]
     =|  gil=(set type)
-    |-  ~+  ^-  [seminoun:musk _grub]
+    =;  [branned=seminoun:musk =_grub]
+      :_  grub(bra (put:bra:lru bra.grub sut branned), ban ~)
+      branned
+    |-  ^-  [seminoun:musk _grub]
+    =/  cached  (~(get by ban.grub) sut)
+    ?^  cached
+      [u.cached grub]
+    =;  [branned=seminoun:musk =_grub]
+      :_  grub(ban (~(put by ban.grub) sut branned))
+      branned
     ?-    sut
         %noun
       :_  grub
