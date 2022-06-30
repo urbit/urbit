@@ -1,7 +1,7 @@
 /-  *sole
 ::>    a library for printing doccords
 ::
-=/  debug  &
+=/  debug  |
 =>
   :>    types used by doccords
   |%  %dprint-types
@@ -487,6 +487,7 @@
     (print-overview [%header `['compiled against: ' ~] compiled]~ styles)
   ==
 ::
+:>  +print-chapter: renders documentation for a single chapter
 ++  print-chapter
   |=  [name=tape doc=what sut=type con=coil]
   ^-  (list sole-effect)
@@ -547,9 +548,9 @@
     ==  ==
   ==
 ::
-::  +print-overview: prints summaries of several items
-::  the (list styl) provides styles for each generation of child
-::  items
+:>  +print-overview: prints summaries of several items
+:>  the (list styl) provides styles for each generation of child
+:>  items
 ++  print-overview
   |=  [=overview styles=(pair styl styl)]
   ~?  >>  debug  %print-overview
@@ -614,6 +615,7 @@
     [%leaf (trip q.pica)]
   [%leaf "    {(trip q.pica)}"]
 ::
+:>  +styled: makes $sole-effects out of $styls and $cords
 ++  styled
   |=  [in=(list (pair styl cord))]
   ^-  (list sole-effect)
