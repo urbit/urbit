@@ -1,6 +1,6 @@
 /-  *sole
 :>    a library for printing doccords
-=/  debug  |
+=/  debug  &
 =>
   |%  %dprint-types
   :>  $overview: an overview of all named things in the type.
@@ -448,10 +448,9 @@
 ++  print-item
   |=  =item
   ~?  >>  debug  %print-item
-  ::^-  tang
-  ^-  sole-effect
+  ^-  (list sole-effect)
   ?-  item
-    [%view *]     (print-overview items.item)
+    [%view *]     (print-overview items.item *(pair styl styl))
     [%core *]     (print-core +.item)
     [%arm *]      (print-arm +.item)
     [%chapter *]  (print-chapter +.item)
@@ -461,105 +460,88 @@
 :>  +print-core: renders documentation for a full core
 ++  print-core
   |=  [name=tape docs=what sut=type con=coil uit=(unit item)]
-::  ^-  tang
-  ^-  sole-effect
+  ^-  (list sole-effect)
   =+  [arms chapters]=(arm-and-chapter-overviews sut con name)
-  :-  %mor
+  =/  styles=(pair styl styl)  [[`%br ~ `%b] [`%br ~ `%m]]
   ;:  weld
-    [(print-header name docs)]~
+    (print-header name docs)
   ::
     ?~  arms
       ~
-    [(print-overview [%header `['arms:' ~] arms]~)]~
+    (print-overview [%header `['arms:' ~] arms]~ styles)
   ::
     ?~  chapters
       ~
-    [(print-overview [%header `['chapters:' ~] chapters]~)]~
+    (print-overview [%header `['chapters:' ~] chapters]~ styles)
   ::
     =+  compiled=(item-as-overview uit)
     ?~  compiled
       ~
-    [(print-overview [%header `['compiled against: ' ~] compiled]~)]~
+    (print-overview [%header `['compiled against: ' ~] compiled]~ styles)
   ==
 ::
 ++  print-chapter
   |=  [name=tape doc=what sut=type con=coil]
-  ::^-  tang
-  ^-  sole-effect
+  ^-  (list sole-effect)
   ~?  >  debug  %print-chapter
-  :-  %mor
+  =/  styles=(pair styl styl)  [[`%br ~ `%b] [`%br ~ `%m]]
   ;:  weld
-    [(print-header name doc)]~
+    (print-header name doc)
   ::
     =+  arms=(arms-in-chapter sut con name)
     ?~  arms
       ~
-    [(print-overview [%header `['arms:' ~] arms]~)]~
+    (print-overview [%header `['arms:' ~] arms]~ styles)
   ==
 ::
 :>  +print-arm: renders documentation for a single arm in a core
 ++  print-arm
   |=  [name=tape adoc=what pdoc=what cdoc=what gen=hoon sut=type]
-  ::^-  tang
-  ^-  sole-effect
+  ^-  (list sole-effect)
   ~?  >>  debug  %print-arm
-  :-  %mor
   ;:  weld
-    [(print-header name adoc)]~
-::    `tang`[[%leaf ""] [%leaf "product:"] ~]
-::    [%tan [[%leaf ""] [%leaf "product:"] ~]]
-    [%klr [[`%br ~ `%g] ['product:']~]~]~
-    [(print-header "" pdoc)]~
-    ::`tang`[[%leaf ""] [%leaf "default arm in core:"] ~]
-    ::[%tan [[%leaf ""] [%leaf "default arm in core:"] ~]]
-    [%klr [[`%br ~ `%g] ['default arm in core:']~]~]~
-    [(print-header "" cdoc)]~
+    (print-header name adoc)
+    (styled [[`%br ~ `%b] 'product:']~)
+    (print-header "" pdoc)
+    (styled [[`%br ~ `%b] 'default arm in core:']~)
+    (print-header "" cdoc)
   ==
 ::
 :>  +print-face: renders documentation for a face
 ++  print-face
   |=  [name=tape doc=what children=(unit item)]
-  ::^-  tang
-  ^-  sole-effect
+  ^-  (list sole-effect)
   ~?  >>  debug  %print-face
-  :-  %mor
-  %+  weld
-    [(print-header name doc)]~
+  ;:  weld
+    (print-header name doc)
     ?~  children
       ~
-    [(print-item u.children)]~
+    (print-item u.children)
+  ==
 ::
 :>  +print-header: prints name and docs only
 ++  print-header
   |=  [name=tape doc=what]
-  ^-  sole-effect
+  ^-  (list sole-effect)
   ~?  >>  debug  %print-header
-  ?~  name
+  ;:  weld
+    (styled [[`%br ~ `%g] (crip name)]~)
     ?~  doc
-      [%klr [[`%br ~ `%g] ['(undocumented)']~]~]
-::      [%leaf "(undocumented)"]~
-    :-  %mor
-    %+  weld
-      ::`tang`[%leaf "{(trip p.u.doc)}"]~
-      [%tan [%leaf "{(trip p.u.doc)}"]~]~
-      [%tan (print-sections q.u.doc)]~
-  ?~  doc
-    [%klr [[`%br ~ `%g] [(crip name)]~]~]
-::    [%leaf name]~
-  :-  %mor
-  %+  weld
-    `(list sole-effect)`[%klr [[`%br ~ `%g] [(crip "{name}: {(trip p.u.doc)}")]~]~]~
-::    `tang`[%leaf "{name}: {(trip p.u.doc)}"]~
-  `(list sole-effect)`[%tan (print-sections q.u.doc)]~
+      (styled [[`%br ~ `%r] '(undocumented)']~)
+    :~  :-  %tan
+        ;:  weld
+          [%leaf "{(trip p.u.doc)}"]~
+          (print-sections q.u.doc)
+    ==  ==
+  ==
 ::
+::  +print-overview: prints summaries of several items
+::  the (list styl) provides styles for each generation of child
+::  items
 ++  print-overview
-  |=  =overview
-  ::^-  tang
-  ^-  sole-effect
+  |=  [=overview styles=(pair styl styl)]
   ~?  >>  debug  %print-overview
-  ::=|  out=tang
   =|  out=(list sole-effect)
-  :-  %mor
   |-  ^-  (list sole-effect)
   ?~  overview  out
   =/  oitem  i.overview
@@ -570,12 +552,9 @@
       out  ;:  weld
              out
              ?~  doc.oitem  ~
-             ::`tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
-             `(list sole-effect)`[%tan [[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]]~
-             ::?~  doc.oitem  ~
-             ::(print-sections q.u.doc.oitem)
-             [^$(overview children.oitem)]~
-           ==
+             (styled [p.styles (crip "{(trip p.u.doc.oitem)}")]~)
+             ^$(overview children.oitem)
+          ==
     ==
   ::
       [%item *]
@@ -583,13 +562,14 @@
       overview  t.overview
       out  ;:  weld
              out
-             ::`tang`[[%leaf ""] [%leaf name.oitem] ~]
-             `(list sole-effect)`[%tan [[%leaf ""] [%leaf name.oitem] ~]]~
-             ?~  doc.oitem  ~
-             ::`tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
-             `(list sole-effect)`[%tan [[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]]~
-             ::?~  doc.oitem  ~
-             ::(print-sections q.u.doc.oitem)
+             (styled [q.styles (crip name.oitem)]~)
+             ?~  doc.oitem
+               %-  styled
+               :~  [[`%br ~ `%r] '(undocumented)']
+                   [[~ ~ ~] '']
+               ==
+             ^-  (list sole-effect)
+             [%tan [[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]]~
            ==
     ==
   ==
@@ -621,4 +601,16 @@
   ?:  p.pica
     [%leaf (trip q.pica)]
   [%leaf "    {(trip q.pica)}"]
+::
+++  styled
+  |=  [in=(list (pair styl cord))]
+  ^-  (list sole-effect)
+  =|  out=(list sole-effect)
+  |-
+  ?~  in  out
+  =/  eff=styx  [p.i.in [q.i.in]~]~
+  %=  $
+    in   t.in
+    out  (snoc out [%klr eff])
+  ==
 --
