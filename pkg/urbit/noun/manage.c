@@ -361,7 +361,9 @@ _cm_signal_deep(c3_w mil_w)
   // go utterly haywire.
   //
   if ( 0 == u3H->rod_u.bug.mer ) {
-    u3H->rod_u.bug.mer = u3i_string("emergency buffer");
+    u3H->rod_u.bug.mer = u3i_string(
+      "emergency buffer with sufficient space to cons the trace and bail"
+    );
   }
 
   if ( mil_w ) {
@@ -731,6 +733,11 @@ u3m_bail(u3_noun how)
     u3m_signal(how);
   }
 
+  //  release the emergency buffer, ensuring space for cells
+  //
+  u3z(u3R->bug.mer);
+  u3R->bug.mer = 0;
+
   /* Reconstruct a correct error ball.
   */
   if ( _(u3ud(how)) ) {
@@ -900,6 +907,10 @@ u3m_hate(c3_w pad_w)
 
   u3R->ear_p = u3R->cap_p;
   u3m_leap(pad_w);
+
+  u3R->bug.mer = u3i_string(
+    "emergency buffer with sufficient space to cons the trace and bail"
+  );
 }
 
 /* u3m_love(): return product from leap.
