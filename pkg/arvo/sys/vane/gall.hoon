@@ -221,7 +221,7 @@
           =^  tan  ap-core  (ap-install:ap-core `p.old-state.egg.i.apps)
           ?^  tan
              (mean u.tan)
-          =?  ap-core  =(%8 -.spore)
+          =?  ap-core  (lth -.spore %9)
             ~>  %slog.[0 leaf+"gall: running +ap-kill-down"]
             =/  boats=(list [=wire =dock])
               ~(tap in ~(key by boat.egg.i.apps))
