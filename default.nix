@@ -40,7 +40,9 @@
 , crossOverlays ? [ ]
   # Whether to use pkgs.pkgsStatic.* to obtain statically linked package
   # dependencies - ie. when building fully-static libraries or executables.
-, enableStatic ? false }:
+, enableStatic ? false
+  # release channel (when static)
+, verePace ? "" }:
 
 let
 
@@ -95,7 +97,7 @@ let
 
     marsSources = callPackage ./nix/pkgs/marsSources { };
 
-    urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
+    urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic verePace; };
 
     urcrypt = callPackage ./nix/pkgs/urcrypt { inherit enableStatic; };
 

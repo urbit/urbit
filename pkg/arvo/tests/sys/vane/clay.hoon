@@ -99,6 +99,7 @@
     %:  ford:fusion
       files=(my [/lib/self/hoon &+hoon+source]~)
       file-store=~
+      0
       *flow:fusion
       *flue:fusion
     ==
@@ -113,6 +114,7 @@
     %:  ford:fusion
       files=(my [/mar/mime/hoon &+hoon+mar-mime]~)
       file-store=~
+      0
       *flow:fusion
       *flue:fusion
     ==
@@ -139,6 +141,7 @@
           [/mar/txt-diff/hoon &+hoon+mar-txt-diff]
       ==
       file-store=~
+      0
       *flow:fusion
       *flue:fusion
     ==
@@ -168,6 +171,7 @@
     %:  ford:fusion
       files
       file-store=~
+      0
       *flow:fusion
       *flue:fusion
     ==
@@ -186,6 +190,7 @@
     %:  ford:fusion
       files
       file-store=~
+      0
       *flow:fusion
       *flue:fusion
     ==
@@ -205,6 +210,7 @@
     %:  ford:fusion
       files
       file-store=~
+      0
       *flow:fusion
       *flue:fusion
     ==
@@ -218,6 +224,7 @@
     %:  ford:fusion
       files=(my [/gen/hello/hoon &+hoon+gen-hello]~)
       file-store=~
+      0
       *flow:fusion
       *flue:fusion
     ==
@@ -243,6 +250,7 @@
           [/sur/spider/hoon &+hoon+sur-spider]
       ==
       file-store=~
+      0
       *flow:fusion
       *flue:fusion
     ==

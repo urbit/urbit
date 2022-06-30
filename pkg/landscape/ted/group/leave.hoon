@@ -38,4 +38,6 @@
   (raw-poke-our %contact-pull-hook pull-hook-act)
 ;<  ~  bind:m
   (raw-poke-our %group-store remove)
+;<  ~  bind:m
+  (raw-poke-our %group-view group-view-action+!>([%done rid]))
 (pure:m !>(~))

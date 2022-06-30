@@ -16,11 +16,18 @@ let
 in {
   gmp = enableStatic prev.gmp;
 
-  curlUrbit = enableStatic prev.curlUrbit;
+  curlUrbit = enableStatic (prev.curlUrbit.override { openssl = final.openssl-static-osx; zlib = final.zlib-static-osx; });
 
   libuv = enableStatic prev.libuv;
 
   libffi = enableStatic prev.libffi;
+
+  openssl-static-osx = prev.openssl.override {
+    static   = true;
+    withPerl = false;
+  };
+
+  zlib-static-osx = if final.stdenv.isDarwin then prev.zlib.static else prev.zlib;
 
   secp256k1 = enableStatic prev.secp256k1;
 

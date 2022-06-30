@@ -1,14 +1,14 @@
-name: release
+name: pre-release
 
 on:
   release: null
   push:
-    tags: 'urbit-v[0-9]+.[0-9]+'
+    tags: 'urbit-v[0-9]+.[0-9]+-rc[0-9]+'
 
 jobs:
   call-vere:
     uses: ./.github/workflows/vere.yml
     with:
-      pace: 'live'
+      pace: 'soon'
       upload: true
     secrets: inherit
