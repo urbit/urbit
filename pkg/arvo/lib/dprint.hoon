@@ -1,3 +1,4 @@
+/-  *sole
 :>    a library for printing doccords
 =/  debug  |
 =>
@@ -447,7 +448,8 @@
 ++  print-item
   |=  =item
   ~?  >>  debug  %print-item
-  ^-  tang
+  ::^-  tang
+  ^-  sole-effect
   ?-  item
     [%view *]     (print-overview items.item)
     [%core *]     (print-core +.item)
@@ -459,85 +461,106 @@
 :>  +print-core: renders documentation for a full core
 ++  print-core
   |=  [name=tape docs=what sut=type con=coil uit=(unit item)]
-  ^-  tang
+::  ^-  tang
+  ^-  sole-effect
   =+  [arms chapters]=(arm-and-chapter-overviews sut con name)
+  :-  %mor
   ;:  weld
-    (print-header name docs)
+    [(print-header name docs)]~
   ::
     ?~  arms
       ~
-    (print-overview [%header `['arms:' ~] arms]~)
+    [(print-overview [%header `['arms:' ~] arms]~)]~
   ::
     ?~  chapters
       ~
-    (print-overview [%header `['chapters:' ~] chapters]~)
+    [(print-overview [%header `['chapters:' ~] chapters]~)]~
   ::
     =+  compiled=(item-as-overview uit)
     ?~  compiled
       ~
-    (print-overview [%header `['compiled against: ' ~] compiled]~)
+    [(print-overview [%header `['compiled against: ' ~] compiled]~)]~
   ==
 ::
 ++  print-chapter
   |=  [name=tape doc=what sut=type con=coil]
-  ^-  tang
+  ::^-  tang
+  ^-  sole-effect
   ~?  >  debug  %print-chapter
+  :-  %mor
   ;:  weld
-    (print-header name doc)
+    [(print-header name doc)]~
   ::
     =+  arms=(arms-in-chapter sut con name)
     ?~  arms
       ~
-    (print-overview [%header `['arms:' ~] arms]~)
+    [(print-overview [%header `['arms:' ~] arms]~)]~
   ==
 ::
 :>  +print-arm: renders documentation for a single arm in a core
 ++  print-arm
   |=  [name=tape adoc=what pdoc=what cdoc=what gen=hoon sut=type]
-  ^-  tang
+  ::^-  tang
+  ^-  sole-effect
   ~?  >>  debug  %print-arm
+  :-  %mor
   ;:  weld
-    (print-header name adoc)
-    `tang`[[%leaf ""] [%leaf "product:"] ~]
-    (print-header "" pdoc)
-    `tang`[[%leaf ""] [%leaf "default arm in core:"] ~]
-    (print-header "" cdoc)
+    [(print-header name adoc)]~
+::    `tang`[[%leaf ""] [%leaf "product:"] ~]
+::    [%tan [[%leaf ""] [%leaf "product:"] ~]]
+    [%klr [[`%br ~ `%g] ['product:']~]~]~
+    [(print-header "" pdoc)]~
+    ::`tang`[[%leaf ""] [%leaf "default arm in core:"] ~]
+    ::[%tan [[%leaf ""] [%leaf "default arm in core:"] ~]]
+    [%klr [[`%br ~ `%g] ['default arm in core:']~]~]~
+    [(print-header "" cdoc)]~
   ==
 ::
 :>  +print-face: renders documentation for a face
 ++  print-face
   |=  [name=tape doc=what children=(unit item)]
-  ^-  tang
+  ::^-  tang
+  ^-  sole-effect
   ~?  >>  debug  %print-face
+  :-  %mor
   %+  weld
-    (print-header name doc)
+    [(print-header name doc)]~
     ?~  children
       ~
-    (print-item u.children)
+    [(print-item u.children)]~
 ::
 :>  +print-header: prints name and docs only
 ++  print-header
   |=  [name=tape doc=what]
-  ^-  tang
+  ^-  sole-effect
   ~?  >>  debug  %print-header
   ?~  name
     ?~  doc
-      [%leaf "(undocumented)"]~
+      [%klr [[`%br ~ `%g] ['(undocumented)']~]~]
+::      [%leaf "(undocumented)"]~
+    :-  %mor
     %+  weld
-     `tang`[%leaf "{(trip p.u.doc)}"]~
-     (print-sections q.u.doc)
+      ::`tang`[%leaf "{(trip p.u.doc)}"]~
+      [%tan [%leaf "{(trip p.u.doc)}"]~]~
+      [%tan (print-sections q.u.doc)]~
   ?~  doc
-    [%leaf name]~
+    [%klr [[`%br ~ `%g] [(crip name)]~]~]
+::    [%leaf name]~
+  :-  %mor
   %+  weld
-    `tang`[%leaf "{name}: {(trip p.u.doc)}"]~
-    (print-sections q.u.doc)
+    `(list sole-effect)`[%klr [[`%br ~ `%g] [(crip "{name}: {(trip p.u.doc)}")]~]~]~
+::    `tang`[%leaf "{name}: {(trip p.u.doc)}"]~
+  `(list sole-effect)`[%tan (print-sections q.u.doc)]~
 ::
 ++  print-overview
   |=  =overview
-  ^-  tang
+  ::^-  tang
+  ^-  sole-effect
   ~?  >>  debug  %print-overview
-  =|  out=tang
-  |-
+  ::=|  out=tang
+  =|  out=(list sole-effect)
+  :-  %mor
+  |-  ^-  (list sole-effect)
   ?~  overview  out
   =/  oitem  i.overview
   ?-    oitem
@@ -547,10 +570,11 @@
       out  ;:  weld
              out
              ?~  doc.oitem  ~
-             `tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
+             ::`tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
+             `(list sole-effect)`[%tan [[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]]~
              ::?~  doc.oitem  ~
              ::(print-sections q.u.doc.oitem)
-             ^$(overview children.oitem)
+             [^$(overview children.oitem)]~
            ==
     ==
   ::
@@ -559,9 +583,11 @@
       overview  t.overview
       out  ;:  weld
              out
-             `tang`[[%leaf ""] [%leaf name.oitem] ~]
+             ::`tang`[[%leaf ""] [%leaf name.oitem] ~]
+             `(list sole-effect)`[%tan [[%leaf ""] [%leaf name.oitem] ~]]~
              ?~  doc.oitem  ~
-             `tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
+             ::`tang`[[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]
+             `(list sole-effect)`[%tan [[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]]~
              ::?~  doc.oitem  ~
              ::(print-sections q.u.doc.oitem)
            ==

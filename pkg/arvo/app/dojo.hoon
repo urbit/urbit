@@ -682,11 +682,12 @@
     ::
     ++  dy-inspect
       |=  [topics=(list term) sut=type]
-      %+  dy-rash  %tan
+      %+  dy-rash  %mor
       =+  to-display=(find-item-in-type:dprint (flop topics) sut %.y)
       ?~  to-display
-        [%leaf "Could not find help"]~
-      (flop (print-item:dprint u.to-display))
+        [%tan [%leaf "Could not find help"]~]~
+      ::(flop (print-item:dprint u.to-display))
+      [(print-item:dprint u.to-display)]~
     ::
   ++  dy-show-type-noun
     |=  a=type  ^-  tank
