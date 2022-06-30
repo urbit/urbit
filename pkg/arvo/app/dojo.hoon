@@ -683,10 +683,9 @@
     ++  dy-inspect
       |=  [topics=(list term) sut=type]
       %+  dy-rash  %mor
-      =+  to-display=(find-item-in-type:dprint (flop topics) sut %.y)
+      =+  to-display=(find-item-in-type:dprint (flop topics) sut)
       ?~  to-display
         [%tan [%leaf "Could not find help"]~]~
-      ::(flop (print-item:dprint u.to-display))
       [(print-item:dprint u.to-display)]
     ::
   ++  dy-show-type-noun

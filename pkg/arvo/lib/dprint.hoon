@@ -69,8 +69,8 @@
 :>  +signify to describe that part of the type. recursion is turned off (for some
 :>  cases) when a hint type is found, in case it is wrapping a match.
 ++  find-item-in-type
-  ::  TODO make this work with a list of topics
-  |=  [topics=(list term) sut=type rec=?]
+  |=  [topics=(list term) sut=type]
+  =/  rec=?  %.y
   |^
   ^-  (unit item)
   ~?  >  debug  topics
@@ -136,7 +136,7 @@
    =/  shallow-match=(unit item)  $(sut q.sut, rec %.n)
    ?~  shallow-match
      ::  hint isn't wrapping a match, so step through it
-     $(sut q.sut, rec %.y)
+     ^$(sut q.sut)
    `(emblazon u.shallow-match (unwrap-hint sut))
   ::
      [%hold *]  $(sut (~(play ut p.sut) q.sut))
