@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <sys/utime.h>
 #include <windows.h>
+#include "compat.h"
 
 // set default CRT file mode to binary
 // note that mingw binmode.o does nothing
