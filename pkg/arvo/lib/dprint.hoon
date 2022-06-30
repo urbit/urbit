@@ -1,7 +1,9 @@
 /-  *sole
-:>    a library for printing doccords
+::>    a library for printing doccords
+::
 =/  debug  &
 =>
+  :>    types used by doccords
   |%  %dprint-types
   :>  $overview: an overview of all named things in the type.
   :>
@@ -54,6 +56,7 @@
     ==
   ::
   --
+:>    core containing doccords search and printing utilities
 |%  %dprint
 :>    contains arms used for looking for docs inside of a type
 :>
@@ -73,6 +76,7 @@
   ~?  >  debug  topics
   ?~  topics
       ::  we have no more search paths, return an overview of what remains
+      ::
       (signify sut)
   ?-  sut
       %noun      ~
@@ -189,6 +193,7 @@
     (roll items join-items)
     ::
       [%hint *]
+    ~?  >>  debug  %hint-signify
     =*  rest-type  $(sut q.sut)
     ::  check to see if it is a help hint
     ?.  ?=(%help -.q.p.sut)
@@ -313,7 +318,6 @@
   ^-  [what what what]
   =+  hoon-type=(~(play ut sut) gen)
   =+  arm-prod=(arm-product-docs hoon-type `@tas`(crip name))
-  ::~?  >>  debug  :-  %arm-prod  arm-prod
   |^
   :: check arm-prod to determine how many layers to look into the type
   :: for core docs
@@ -372,7 +376,7 @@
   =.  chapter-docs
     %+  weld  chapter-docs
     ^-  overview
-    [%item :(weld (trip -.current) ":" core-name) p.q.current]~
+    [%item :(weld "<" core-name "|" (trip -.current)) p.q.current]~
   $(tomes t.tomes)
 ::
 :>  +arms-in-chapter: returns an overview of the arms in a specific chapter
@@ -405,34 +409,36 @@
   %+  turn  ~(tap by a)
   |=  ar=(pair term hoon)
   =+  [adoc pdoc cdoc]=(all-arm-docs q.ar sut (trip p.ar))
-  [%item (weld "++" (trip p.ar)) adoc]
+  [%item (weld "+" (trip p.ar)) adoc]
 ::
 :>  +item-as-overview: changes an item into an overview
 ++  item-as-overview
   |=  uit=(unit item)
+  ~?  >>  debug  %item-as-overview
   ^-  overview
   ?~  uit  ~
   =+  itm=(need uit)
   ?-  itm
+  ::
   ::
       [%view *]  items.itm
   ::
       [%core *]
     ?~  name.itm
       (item-as-overview children.itm)
-    :-  [%item name.itm docs.itm]
+    :-  [%item (weld "<" name.itm) docs.itm]
     (item-as-overview children.itm)
   ::
       [%arm *]
-    [%item name.itm adoc.itm]~
+    [%item (weld "+" name.itm) adoc.itm]~
   ::
       [%chapter *]
-    [%item name.itm docs.itm]~
+    [%item (weld "|" name.itm) docs.itm]~
   ::
       [%face *]
     ?~  name.itm
       ~
-    [%item name.itm docs.itm]~
+    [%item (weld "." name.itm) docs.itm]~
   ==
 ::
 :>  +join-items: combines two (unit items) together
@@ -443,6 +449,7 @@
   ?~  rhs  lhs
   `[%view (weld (item-as-overview lhs) (item-as-overview rhs))]
 ::
+:>    contains arms using for printing doccords items
 +|  %printing
 :>  +print-item: prints a doccords item
 ++  print-item
@@ -464,7 +471,7 @@
   =+  [arms chapters]=(arm-and-chapter-overviews sut con name)
   =/  styles=(pair styl styl)  [[`%br ~ `%b] [`%br ~ `%m]]
   ;:  weld
-    (print-header name docs)
+    (print-header (weld "<" name) docs)
   ::
     ?~  arms
       ~
@@ -486,7 +493,7 @@
   ~?  >  debug  %print-chapter
   =/  styles=(pair styl styl)  [[`%br ~ `%b] [`%br ~ `%m]]
   ;:  weld
-    (print-header name doc)
+    (print-header (weld "|" name) doc)
   ::
     =+  arms=(arms-in-chapter sut con name)
     ?~  arms
@@ -500,9 +507,11 @@
   ^-  (list sole-effect)
   ~?  >>  debug  %print-arm
   ;:  weld
-    (print-header name adoc)
+    (print-header (weld "+" name) adoc)
+    [%txt ""]~
     (styled [[`%br ~ `%b] 'product:']~)
     (print-header "" pdoc)
+    [%txt ""]~
     (styled [[`%br ~ `%b] 'default arm in core:']~)
     (print-header "" cdoc)
   ==
@@ -513,9 +522,11 @@
   ^-  (list sole-effect)
   ~?  >>  debug  %print-face
   ;:  weld
-    (print-header name doc)
+    (print-header (weld "." name) doc)
+    [%txt ""]~
     ?~  children
       ~
+    ~&  u.children
     (print-item u.children)
   ==
 ::
@@ -529,6 +540,7 @@
     ?~  doc
       (styled [[`%br ~ `%r] '(undocumented)']~)
     :~  :-  %tan
+        %-  flop
         ;:  weld
           [%leaf "{(trip p.u.doc)}"]~
           (print-sections q.u.doc)
