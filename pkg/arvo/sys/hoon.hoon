@@ -8895,7 +8895,9 @@
         |-  ^-  type
         ?-    ref
             %void      %void
-            %noun      [%cell %noun %noun]
+            %noun      =+  ^$(skin skin.skin)
+                       ?:  =(%void -)  %void
+                       (cell - ^$(skin ^skin.skin))
             [%atom *]  %void
             [%cell *]  =+  ^$(skin skin.skin, ref p.ref)
                        ?:  =(%void -)  %void
