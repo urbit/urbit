@@ -524,6 +524,7 @@
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
           'heeds'^(set-array heeds from-duct)
+          'keens'^(set-array ~(key by keens) path)
       ==
     ::
     ::  json for known peer is structured to closely match the peer-state type.
@@ -705,7 +706,7 @@
                   'fragment-num'^(numb fragment-num)
                   'num-fragments'^(numb num-fragments)
                   'last-sent'^(time last-sent)
-                  'retries'^(numb retries)
+                  'tries'^(numb tries)
                   'skips'^(numb skips)
               ==
             ::

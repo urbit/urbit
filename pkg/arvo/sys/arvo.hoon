@@ -39,10 +39,12 @@
   $%  ::  %da:  date
       ::  %tas: label
       ::  %ud:  sequence
+      ::  %uv:  hash
       ::
       [%da p=@da]
       [%tas p=@tas]
       [%ud p=@ud]
+      [%uv p=@uv]
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
@@ -313,6 +315,7 @@
   ^-  (unit case)
   ?^  num=(slaw %ud knot)  `[%ud u.num]
   ?^  wen=(slaw %da knot)  `[%da u.wen]
+  ?^  hax=(slaw %uv knot)  `[%uv u.hax]
   ?~  lab=(slaw %tas knot)  ~
   `[%tas u.lab]
 ::
@@ -1719,7 +1722,6 @@
     %c  %clay
     %d  %dill
     %e  %eyre
-    %f  %ford
     %g  %gall
     %i  %iris
     %j  %jael

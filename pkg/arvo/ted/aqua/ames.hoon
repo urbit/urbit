@@ -21,10 +21,16 @@
   [%event who [/a/newt/0v1n.2m9vh %born ~]]~
 ::
 ++  handle-send
-  |=  [our=ship now=@da sndr=@p way=wire %send lan=lane:ames pac=@]
+  =,  ames
+  |=  [our=ship now=@da sndr=@p way=wire %send lan=lane pac=@]
   ^-  (list card:agent:gall)
   =/  rcvr=ship  (lane-to-ship lan)
   =/  hear-lane  (ship-to-lane sndr)
+  =/  [ames=? =packet]  (decode-packet pac)
+  ?:  &(!ames !resp==(& (cut 0 [2 1] pac)))
+    =/  [=peep =purr]  (decode-request-info `@ux`(rsh 3^64 content.packet))
+    %+  emit-aqua-events  our
+    [%read [rcvr path.peep] [hear-lane num.peep]]~
   %+  emit-aqua-events  our
   [%event rcvr /a/newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  +lane-to-ship: decode a ship from an aqua lane

@@ -180,9 +180,8 @@
           =rein
       ==
   ^-  [jolt=(list dude) idle=(list dude)]
-  =/  all=(list dude)  (read-bill local)
-  =/  want  (get-apps-want local all rein)
   =/  have  (get-apps-live local)
+  =/  want  (get-apps-want local have rein)
   [want (skip have ~(has in (sy want)))]
 ::
 ++  get-remote-diff

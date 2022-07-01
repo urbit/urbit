@@ -180,6 +180,21 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
+++  take-tune
+  |=  =wire
+  =/  m  (strand ,~)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %agent * %poke-ack *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    ?~  p.sign.u.in.tin
+      `[%done ~]
+    `[%fail %poke-fail u.p.sign.u.in.tin]
+  ==
+
 ::
 ++  take-poke-ack
   |=  =wire
@@ -314,6 +329,16 @@
   ^-  form:m
   ;<  ~  bind:m  (send-wait until)
   (take-wake `until)
+::
+++  keen
+  |=  [=ship =path]
+  =/  m  (strand ,(unit (cask)))
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /keen %arvo %a %keen ship path]
+  ;<  ~  bind:m  (send-raw-card card)
+  ;<  [wire sign=sign-arvo]  bind:m  take-sign-arvo
+  ?>  ?=(%tune +<.sign)
+  (pure:m data.sign)
 ::
 ++  sleep
   |=  for=@dr

@@ -1,16 +1,17 @@
 /+  *test
 /=  ames  /sys/vane/ames
 /=  jael  /sys/vane/jael
+/*  dojo  %hoon  /app/dojo/hoon
 ::  construct some test fixtures
 ::
-=/  nec     (ames ~nec)
-=/  bud     (ames ~bud)
-=/  marbud  (ames ~marbud)
+=/  nec     ^$:((ames ~nec))
+=/  bud     ^$:((ames ~bud))
+=/  marbud  ^$:((ames ~marbud))
 ::
 =/  our-comet   ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
 =/  our-comet2  ~togdut-rosled-fadlev-siddys--botmun-wictev-sapfus-marbud
-=/  comet   (ames our-comet)
-=/  comet2  (ames our-comet2)
+=/  comet   ^$:((ames our-comet))
+=/  comet2  ^$:((ames our-comet2))
 ::
 =.  now.nec        ~1111.1.1
 =.  eny.nec        0xdead.beef
@@ -183,6 +184,41 @@
   %+  snag  index
   (skim moves is-move-send)
 ::
+++  n-frags
+  |=  n=@
+  ^-  @ux
+  ::  6 chosen randomly to get some trailing zeros
+  ::
+  %+  rsh  10
+  %+  rep  13
+  %+  turn  (gulf 1 n)
+  |=(x=@ (fil 3 1.024 (dis 0xff x)))
+::
+++  scry
+  |=  [vane=_nec car=term bem=beam]
+  =/  =roof
+    ::  custom scry handler for +test-fine-response.
+    ::  could be refined further...
+    ::
+    |=  [lyc=gang vis=view bem=beam]
+    ^-  (unit (unit cage))
+    ?+  vis  ~
+        %cp
+      =/  black=dict:clay
+        %*(. *dict:clay mod.rul %black)
+      ``noun+!>([black black])
+    ::
+        %cz
+      ?+  -.r.bem  !!
+        %ud  ``noun+!>((n-frags p.r.bem))
+      ==
+    ::
+        %cx
+      ``hoon+!>(dojo)
+    ==
+  =/  vane-core  (vane(rof roof))
+  (scry:vane-core ~ car bem)
+::
 ++  call
   |=  [vane=_nec =duct =task:ames]
   ^-  [moves=(list move:ames) _nec]
@@ -206,6 +242,7 @@
   ::
   =/  =packet:ames
     :*  [sndr=~nec rcvr=~bud]
+        req=&  sam=&
         sndr-tick=0b10
         rcvr-tick=0b11
         origin=~
@@ -223,6 +260,7 @@
   ::
   =/  =packet:ames
     :*  [sndr=~nec rcvr=~bud]
+        req=&  sam=&
         sndr-tick=0b10
         rcvr-tick=0b11
         origin=`0xbeef.cafe.beef
@@ -446,6 +484,92 @@
   %+  expect-eq
     !>  [~[/g/talk] %give %done `error]
     !>  (snag 1 `(list move:ames)`moves5)
+::
+++  test-fine-request
+  ^-  tang
+  =/  want=path  /c/z/1/kids/sys
+  =^  moves1  nec  (call nec ~[/g/talk] %keen ~bud want)
+  =/  req=hoot:ames
+    %+  snag  0
+    %+  murn  ;;((list move:ames) moves1)
+    |=  =move:ames
+    ^-  (unit hoot:ames)
+    ?.  ?=(%give -.card.move)    ~
+    ?.  ?=(%send -.p.card.move)  ~
+    `;;(@uxhoot blob.p.card.move)
+  =/  =packet:ames  (decode-packet:ames `@ux`req)
+  ?<  sam.packet
+  ?>  req.packet
+  =/  twit
+   (decode-request:ames `@ux`content.packet)
+  ~&  twit
+  (expect-eq !>(1) !>(1))
+::
+++  test-fine-hunk
+  ^-  tang
+  %-  zing
+  %+  turn  (gulf 1 10)
+  |=  siz=@
+  =/  want=path  /~bud/0/1/c/z/(scot %ud siz)/kids/sys
+  ::
+  =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
+  =/  [=mark =vase]  (need (need (scry bud %x beam)))
+  =+  !<(song=(list @uxmeow) vase)
+  %+  expect-eq
+    !>(siz)
+    !>((lent song))
+::
+++  test-fine-response
+  ^-  tang
+  ::%-  zing
+  ::%+  turn  (gulf 1 50)
+  ::|=  siz=@
+  ::=/  want=path  /~bud/0/1/c/z/(scot %ud siz)/kids/sys
+  =/  want=path  /~bud/0/1/c/x/1/kids/app/dojo/hoon
+  =/  dit  (jam %hoon dojo)
+  =/  exp  (cat 9 (fil 3 64 0xff) dit)
+  =/  siz=@ud  (met 13 exp)
+  ^-  tang
+  ::
+  =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
+  =/  [=mark =vase]  (need (need (scry bud %x beam)))
+  =+  !<(song=(list @uxmeow) vase)
+  =/   paz=(list have:ames)
+    %+  spun  song
+    |=  [blob=@ux num=_1]
+    ^-  [have:ames _num]
+    :_  +(num)
+    =/  =meow:ames  (decode-response-packet:ames blob)
+    [num meow]
+  ::
+  =/  num-frag=@ud  (lent paz)
+  ~&  num-frag=num-frag
+  =/   =roar:ames
+    (decode-response-msg:ames num-frag (flop paz))
+  %+  welp
+    =/  dat
+      ?>  ?=(^ dat.roar)
+      ;;(@ux q.dat.roar)
+    (expect-eq !>(`@`dat) !>(`@`dojo))
+  =/  event-core
+    ~!  nec
+    =/   foo  [*@da *@ rof.nec]
+    (per-event:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
+  %+  welp
+    ^-  tang
+    %-  zing
+    %+  turn  paz
+    |=  [fra=@ud sig=@ siz=@ud byts]
+    %+  expect-eq  !>(%.y)
+    !>
+    %-  veri-fra:keys:fine:event-core
+    [~bud life.ames-state.bud want fra dat sig]
+  ~&  %verifying-sig
+  %+  expect-eq
+    !>(&)
+    !>
+    %-  meri:keys:fine:event-core
+    [~bud life.ames-state.bud want roar]
 ::
 ++  test-old-ames-wire  ^-  tang
   =^  moves0  bud  (call bud ~[/g/hood] %spew [%odd]~)
