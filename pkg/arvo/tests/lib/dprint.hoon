@@ -18,8 +18,8 @@
   :>    arms used for testing doccords
   |%  %test-arms
   +|  %types
-  +$  arm-dox  [tape what what what]
-  +$  core-dox  [tape what]
+  +$  arm-dox      [tape what what what]
+  +$  core-dox     [tape what]
   +$  chapter-dox  [tape what]
   ::
   +|  %helper-functions
@@ -50,8 +50,7 @@
     [name docs]:itm
   ::
   ++  arm-check
-    |=  [arms=(list term) dox=(trel ? ? ?)]
-    =+  [adoc pdoc cdoc]=[`['arm-doc' ~] `['product-doc' ~] `['core-doc' ~]]
+    |=  [arms=(list term) wat=(trel ? ? ?) docs=(trel what what what)]
     ^-  tang
     =|  res=tang
     |-
@@ -63,26 +62,30 @@
             %+  expect-eq
               !>  ^-  arm-dox
               :*  (trip i.arms)
-                ?:(p.dox adoc *what)
-                ?:(q.dox pdoc *what)
-                ?:(r.dox cdoc *what)
+                ?:(p.wat p.docs *what)
+                ?:(q.wat q.docs *what)
+                ?:(r.wat r.docs *what)
               ==
             ::
               !>  (get-arm-dox ~[i.arms])
     ==
   ::
   ++  run-arm-tests
-    |=  [dox=(trel ? ? ?)]
+    |=  [wat=(trel ? ? ?)]
     ^-  tang
-    =/  num  (sub 3 :(add p.dox q.dox r.dox))
+    =/  num  (sub 3 :(add p.wat q.wat r.wat))
     =/  prefix=term
       ;:  (cury cat 3)
         %arm-
-        ?:(p.dox %adoc- ~)
-        ?:(q.dox %pdoc- ~)
-        ?:(r.dox %cdoc- ~)
+        ?:(p.wat %adoc- ~)
+        ?:(q.wat %pdoc- ~)
+        ?:(r.wat %cdoc- ~)
       ==
-    =/  posts=(list term)
+    =/  arms=(list term)
+        %-  turn
+        :_  |=  [postfix=term]
+            `term`(cat 3 prefix postfix)
+        ^-  (list term)
         ?+  num  ~
           %1  ~[%pre %post]
           %2  ~[%pre-pre %post-pre %post-post]
@@ -93,29 +96,24 @@
                   %pre-post-post
                   %post-pre-post
                   %post-post-pre
-              ==
-        ==
-    %+  arm-check
-      %+  turn  posts
-      |=  [postfix=term]
-      `term`(cat 3 prefix postfix)
-    dox
+               ==
+         ==
+    %^    arm-check
+        arms
+      wat
+    [`['arm-doc' ~] `['product-doc' ~] `['core-doc' ~]]
   ::
   +|  %batch-comments
-  :>  +foo: a foo
-  :>  +bar: a bar
+  :>  +b-foo: a foo
+  :>  +b-bar: a bar
   :>  a very bar foo
-  :>  $baz: a baz
-  :>  $boz: a boz
+  :>  $b-baz: a baz
+  :>  $b-boz: a boz
   :>  a very boz baz
-  :>  +foobar: a foobar
-  :>  $bazboz: a bazbor
-  ++  foo  ~
-  ++  bar  ~
-  +$  baz  *
-  +$  boz  *
-  ++  foobar  [~ ~]
-  +$  bazboz  [* *]
+  ++  b-foo  ~
+  ++  b-bar  ~
+  +$  b-baz  *
+  +$  b-boz  *
   ::
   +|  %docs-for-arms
   ++  no-doc  ~
@@ -134,7 +132,7 @@
   ::
   ++  arm-cdoc-pre
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --
   ::
@@ -159,13 +157,13 @@
   :>  +arm-adoc-cdoc-pre-pre: arm-doc
   ++  arm-adoc-cdoc-pre-pre
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --
   ::
   ++  arm-adoc-cdoc-post-pre  :<  arm-doc
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --
   ::
@@ -178,12 +176,12 @@
   ++  arm-pdoc-cdoc-pre-pre
     :>  product-doc
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --
   ++  arm-pdoc-cdoc-post-pre
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --  :<  product-doc
   ::
@@ -197,21 +195,21 @@
   ++  arm-adoc-pdoc-cdoc-pre-pre-pre
     :>  product-doc
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --
   ::
   ++  arm-adoc-pdoc-cdoc-post-pre-pre  :<  arm-doc
     :>  product-doc
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --
   ::
   :>  +arm-adoc-pdoc-cdoc-pre-post-pre: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-post-pre
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --  :<  product-doc
   ::
@@ -225,7 +223,7 @@
   ::
   ++  arm-adoc-pdoc-cdoc-post-post-pre  :<  arm-doc
     |%
-    :>    core-doc
+    :>    : core-doc
     ++  $  ~
     --  :<  product-doc
   ::
@@ -253,10 +251,35 @@
 ::
 :>    contains the actual tests to be run by -test
 |%  %dprint-tests
-::  +|  %batch-tests
-::  ++  test-b-foo
-::    %+  expect-eq
-::      !>
++|  %batch-tests
+  ++  test-b-foo
+    %+  expect-eq
+      !>  ^-  arm-dox
+      ["b-foo" `['a foo' ~] *what *what]
+    ::
+      !>  (get-arm-dox ~[%b-foo])
+  ::
+  ++  test-b-bar
+    %+  expect-eq
+      !>  ^-  arm-dox
+      ["b-bar" `['a bar' ~[~[[& 'a very bar foo']]]] *what *what]
+    ::
+      !>  (get-arm-dox ~[%b-bar])
+  ::
+  ++  test-b-baz
+    %+  expect-eq
+      !>  ^-  arm-dox
+      ["b-baz" `['a baz' ~] *what *what]
+    ::
+      !>  (get-arm-dox ~[%b-baz])
+  ::
+  ++  test-b-boz
+    %+  expect-eq
+      !>  ^-  arm-dox
+      ["b-boz" `['a boz' ~[~[[& 'a very boz baz']]]] *what *what]
+    ::
+      !>  (get-arm-dox ~[%b-boz])
+  ::
 +|  %arm-tests
   ::
 ++  test-no-doc
