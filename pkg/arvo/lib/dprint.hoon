@@ -527,7 +527,6 @@
     [%txt ""]~
     ?~  children
       ~
-    ~&  u.children
     (print-item u.children)
   ==
 ::
