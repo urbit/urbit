@@ -2576,7 +2576,8 @@
         (~(gut by rcv.peer-state) bone *message-sink-state)
       ::
       =/  message-sink    (make-message-sink message-sink-state channel)
-      =^  sink-gifts      message-sink-state  (work:message-sink bone task)
+      =/  closing=?       (~(has in closing.peer-state) bone)
+      =^  sink-gifts      message-sink-state  (work:message-sink closing task)
       =.  rcv.peer-state  (~(put by rcv.peer-state) bone message-sink-state)
       ::  process effects from |message-sink
       ::
@@ -3467,7 +3468,7 @@
   ::  +work: handle a $message-sink-task
   ::
   ++  work
-    |=  [=bone task=message-sink-task]
+    |=  [closing=? task=message-sink-task]
     ^+  [gifts state]
     ::
     =-  [(flop gifts) state]
@@ -3475,12 +3476,12 @@
     ?-  -.task
       %done  (on-done ok.task cork.task)
       %drop  (on-drop message-num.task)
-      %hear  (on-hear bone [lane shut-packet ok]:task)
+      %hear  (on-hear closing [lane shut-packet ok]:task)
     ==
   ::  +on-hear: receive message fragment, possibly completing message
   ::
   ++  on-hear
-    |=  [=bone =lane =shut-packet ok=?]
+    |=  [closing=? =lane =shut-packet ok=?]
     ^+  message-sink
     ::  we know this is a fragment, not an ack; expose into namespace
     ::
@@ -3517,8 +3518,9 @@
     ::    doesn't happen for boons.
     ::
     ?:  (lte seq last-heard.state)
-      ?:  is-last-fragment
-        ::  drop last packet since we don't know whether to ack or nack
+      ?:  &(is-last-fragment !closing)
+        ::  if not from a closing bone, drop last packet,
+        ::  since we don't know whether to ack or nack
         ::
         %-  %+  trace  rcv.veb
             |.  ^-  tape
@@ -3533,7 +3535,9 @@
       ::
       %-  %+  trace  rcv.veb  |.
           =/  data
-            [seq=seq fragment-num=fragment-num num-fragments=num-fragments]
+            :*  seq=seq  fragment-num=fragment-num
+                num-fragments=num-fragments  closing=closing
+            ==
           "send ack-1 {<data>}"
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
