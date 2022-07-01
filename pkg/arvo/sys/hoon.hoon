@@ -8220,40 +8220,6 @@
     ==
   |_  gen=hoon
   ::
-  ::  This door takes in a whit and annotates gen as appropriate
-  ++  docs-engine
-    |_  wit=whit
-    ::
-    ++  apply-whit
-      ^-  hoon
-      ?:  =([~ ~ ~ ~] wit)
-        gen
-      |^
-      ?+    gen  gen
-        ::  non-recursive hoons
-        ::  %knit can contain hoons, but since its supposed to be printed as a
-        ::  string, I think I can ignore the recursion?
-          $?  [%rock *]  [%sand *]  [%wing *]  [%knit *]  [%bust *]  ==
-        wrap-boy
-        ::
-        ::  bar runes
-          $?  [%brcn *]  [%brpt *]  [%brbc *]  [%brcb *]  [%brcl *]  [%brdt *]
-              [%brkt *]  [%brhp *]  [%brsg *]  [%brtr *]  [%brts *]  [%brwt *]
-          ==
-        :: TODO: handle recursion
-        wrap-boy
-        ::
-        :: tis runes
-          [%tsfs *]
-        wrap-boy
-      ==
-      ::
-      ++  wrap-boy
-        ?~  boy.wit  gen
-        [%note help+`u.boy.wit gen]
-      --
-    --
-  ::
   ++  grip
     |=  =skin
     =|  rel=wing
