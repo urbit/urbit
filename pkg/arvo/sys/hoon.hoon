@@ -13115,6 +13115,37 @@
                 (rune col %cncl exqz)
             ==
           ==
+        :-  '#'
+          ;~  pfix  hax  fas
+            %+  stag  %bccl
+            %+  cook
+              |=  [[i=spec t=(list spec)] e=spec]
+              [i (snoc t e)]
+            ;~  plug
+              %+  most  ;~(less ;~(plug fas tar) fas)
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  :-  ['a' 'z']
+                  ;~  pose
+                    ::  /name=@aura
+                    ::
+                    %+  stag  %bcts
+                    ;~  plug  sym
+                    ;~  pfix  tis  pat
+                      (stag %base (stag %atom mota))
+                    ==  ==
+                    ::  /constant
+                    ::
+                    (stag %leaf (stag %tas sym))
+                  ==
+              ==
+            ::
+              ;~  pose
+                (cold [%base %noun] ;~(plug fas tar))
+                (easy %base %null)
+              ==
+            ==
+          ==
       ==
     ++  expression
       %-  stew
