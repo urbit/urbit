@@ -8832,8 +8832,8 @@
             [%1 &]
           [%3 %0 axis]
         %+  flan
-          $(ref (peek(sut ref) %free 2), skin skin.skin)
-        $(ref (peek(sut ref) %free 3), skin ^skin.skin)
+          $(ref (peek(sut ref) %free 2), axis (peg axis 2), skin skin.skin)
+        $(ref (peek(sut ref) %free 3), axis (peg axis 3), skin ^skin.skin)
       ::
           %leaf
         ?:  (~(nest ut [%atom %$ `atom.skin]) | ref)
@@ -8848,7 +8848,7 @@
                  ~|  %oops-guess-you-needed-feel-after-all
                  =+  fid=(find %read wing.skin)
                  ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
-                 [%7 [%0 (tend p.p.fid)] $(skin skin.skin, sut p.q.p.fid)]
+                 $(sut p.q.p.fid, axis (peg axis (tend p.p.fid)), skin skin.skin)
           %spec  q:(~(mint ut ref) %noun [%fits ~(example ax spec.skin) [&+1 ~]])
           %wash  [%1 1]  ::TODO  shouldn't this always _match_?
       ==
