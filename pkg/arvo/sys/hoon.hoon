@@ -8802,7 +8802,7 @@
     ++  fish
       |=  =axis
       ^-  nock
-      ?@  skin  [%1 &]
+      ?@  skin  $(skin spec+[[%like [skin]~ ~] [%base %noun]])
       ?-    -.skin
       ::
           %base
@@ -8857,7 +8857,7 @@
     ::
     ++  gain
       |-  ^-  type
-      ?@  skin  [%face skin ref]
+      ?@  skin  $(skin spec+[[%like [skin]~ ~] [%base %noun]])
       ?-    -.skin
       ::
           %base
@@ -8951,7 +8951,7 @@
     ::
     ++  lose
       |-  ^-  type
-      ?@  skin  [%face skin ref]
+      ?@  skin  $(skin spec+[[%like [skin]~ ~] [%base %noun]])
       ?-    -.skin
       ::
           %base
