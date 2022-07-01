@@ -8846,9 +8846,14 @@
           %dbug  $(skin skin.skin)
           %help  $(skin skin.skin)
           %name  $(skin skin.skin)
-          %over  $(skin skin.skin)
-          %spec  $(skin skin.skin)
-          %wash  [%1 1]
+          %over  ::TODO  (find -> tend should just be a function)
+                 ::NOTE  might need to guard with +feel, crashing is too strict
+                 ~|  %oops-guess-you-needed-feel-after-all
+                 =+  fid=(find %read wing.skin)
+                 ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
+                 [%7 [%0 (tend p.p.fid)] $(skin skin.skin, sut p.q.p.fid)]
+          %spec  q:(~(mint ut ref) %noun [%fits ~(example ax spec.skin) [&+1 ~]])
+          %wash  [%1 1]  ::TODO  shouldn't this always _match_?
       ==
     ::
     ::  -gain: make a $type by restricting .ref to .skin
@@ -9019,8 +9024,12 @@
           %dbug  $(skin skin.skin)
           %help  $(skin skin.skin)
           %name  $(skin skin.skin)
-          %over  $(skin skin.skin)
-          %spec  $(skin skin.skin)
+          %over  ::TODO  if we guard in +fish (+feel), we have to guard again here
+                 $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
+          %spec  =/  yon  $(skin skin.skin)
+                 =/  hit  (~(play ut sut) ~(example ax spec.skin))
+                 ?<  (~(nest ut hit) | yon)
+                 (~(crop ut yon) hit)
           %wash  ref
       ==
     --
