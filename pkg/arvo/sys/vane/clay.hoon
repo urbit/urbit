@@ -4632,12 +4632,58 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-13  raft
+      ::  We redefine the latest raft with * for the the ford caches.
+      ::  +clear-cache upgrades to +raft
+      ::
+      +$  raft-13
+        $:  rom=room-13
+            hoy=(map ship rung-13)
+            ran=rang
+            fad=*
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      +$  room-13
+        $:  hun=duct
+            dos=(map desk dojo-13)
+        ==
+      +$  dojo-13
+        $:  qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dome-13
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=*
+        ==
+      +$  rung-13
+        $:  rus=(map desk rede-13)
+        ==
+      +$  rede-13
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
       +$  raft-12
         $:  rom=room
             hoy=(map ship rung-12)
             ran=rang
-            fad=flow
+            fad=*
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4673,7 +4719,7 @@
         $:  rom=room
             hoy=(map ship rung-12)
             ran=rang
-            fad=flow
+            fad=*
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -4860,7 +4906,7 @@
             hez=(unit duct)
             cez=(map @ta crew)
             pud=(unit [=desk =yoki])
-        ==                                              ::
+        ==
       +$  room-6  [hun=duct dos=(map desk dojo-6)]
       +$  dojo-6
         $:  qyx=cult-10
@@ -4891,15 +4937,39 @@
       --
   |=  old=raft-any
   |^
-  =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
-  =?  old  ?=(%7 -.old)  8+(raft-7-to-8 +.old)
-  =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
-  =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
+  =?  old  ?=(%6 -.old)   7+(raft-6-to-7 +.old)
+  =?  old  ?=(%7 -.old)   8+(raft-7-to-8 +.old)
+  =?  old  ?=(%8 -.old)   9+(raft-8-to-9 +.old)
+  =?  old  ?=(%9 -.old)   10+(raft-9-to-10 +.old)
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
   ?>  ?=(%13 -.old)
-  ..^^$(ruf +.old)
+  ..^^$(ruf (clear-cache +.old))
+  ::
+  ::  We clear the ford cache so we don't have to know how to upgrade
+  ::  the types, which are complicated and eg contravariant in +hoon.
+  ::  Also, many of the results would be different if zuse is different.
+  ::
+  ++  clear-cache
+    |=  raf=raft-13
+    ^-  raft
+    %=    raf
+        fad  *flow
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  doj=dojo-13
+      ^-  dojo
+      doj(fod.dom *flue)
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-13
+      %-  ~(run by rus.rung-13)
+      |=  =rede-13
+      ^-  rede
+      rede-13(dom dom.rede-13(fod *flue))
+    ==
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
   ++  raft-6-to-7
@@ -5292,31 +5362,7 @@
     `u=[need have leak]
   --
 ::
-::  We clear the ford cache by replacing it with its bunt as a literal.
-::  This nests within +flow without reference to +type, +hoon, or
-::  anything else in the sample of cache objects.  Otherwise we would be
-::  contravariant in the those types, which makes them harder to change.
-::
-++  stay
-  :-  ver
-  %=    ruf
-      fad  ~
-      dos.rom
-    %-  ~(run by dos.rom.ruf)
-    |=  =dojo
-    dojo(fod.dom `flue`[~ ~])
-  ::
-      hoy
-    %-  ~(run by hoy.ruf)
-    |=  =rung
-    %=    rung
-        rus
-      %-  ~(run by rus.rung)
-      |=  =rede
-      rede(fod.dom `flue`[~ ~])
-    ==
-  ==
-::
+++  stay  [ver ruf]
 ++  take                                              ::  accept response
   ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
