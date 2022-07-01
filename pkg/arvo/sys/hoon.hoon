@@ -8957,7 +8957,7 @@
           %base
         ?-    base.skin
             %cell      $(skin [%cell [%base %noun] [%base %noun]])
-            %flag      $(skin [%base %atom %f])
+            %flag      $(ref $(skin [%leaf %f &]), skin [%leaf %f |])
             %null      $(skin [%leaf %n ~])
             %void      ref
             %noun      %void
