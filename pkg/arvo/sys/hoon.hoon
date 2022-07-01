@@ -8337,9 +8337,6 @@
         [%limb @]
       `p.gen
     ::
-      ::  [%rock *]
-      ::  [%spec %leaf q.gen q.gen]
-    ::
         [%note [%help *] *]
       (bind $(gen q.gen) |=(=skin [%help p.p.gen skin]))
     ::
