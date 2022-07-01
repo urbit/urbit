@@ -8849,7 +8849,9 @@
                  =+  fid=(find %read wing.skin)
                  ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
                  $(sut p.q.p.fid, axis (peg axis (tend p.p.fid)), skin skin.skin)
-          %spec  q:(~(mint ut ref) %noun [%fits ~(example ax spec.skin) [&+1 ~]])
+          %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
+                 ?>  (~(nest ut hit) & ref)
+                 $(skin skin.skin)
           %wash  [%1 1]  ::TODO  shouldn't this always _match_?
       ==
     ::
@@ -8936,10 +8938,9 @@
           %help  (hint [sut %help help.skin] $(skin skin.skin))
           %name  (face term.skin $(skin skin.skin))
           %over  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
-          %spec  =/  yon  $(skin skin.skin)
-                 =/  hit  (~(play ut sut) ~(example ax spec.skin))
-                 ?>  (~(nest ut hit) & yon)
-                 hit
+          %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
+                 ?>  (~(nest ut hit) & $(skin skin.skin))
+                 (~(fuse ut ref) hit)
           %wash  =-  $(ref (~(play ut ref) -))
                  :-  %wing
                  |-  ^-  wing
@@ -9025,10 +9026,9 @@
           %name  $(skin skin.skin)
           %over  ::TODO  if we guard in +fish (+feel), we have to guard again here
                  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
-          %spec  =/  yon  $(skin skin.skin)
-                 =/  hit  (~(play ut sut) ~(example ax spec.skin))
-                 ?<  (~(nest ut hit) | yon)
-                 (~(crop ut yon) hit)
+          %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
+                 ?>  (~(nest ut hit) & $(skin skin.skin))
+                 (~(crop ut ref) hit)
           %wash  ref
       ==
     --
