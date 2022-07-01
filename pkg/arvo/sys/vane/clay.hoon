@@ -4632,6 +4632,9 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
+      ::  We redefine the latest raft with * for the the ford caches.
+      ::  +clear-cache upgrades to +raft
+      ::
       +$  raft-13
         $:  rom=room-13
             hoy=(map ship rung-13)
@@ -4903,7 +4906,7 @@
             hez=(unit duct)
             cez=(map @ta crew)
             pud=(unit [=desk =yoki])
-        ==                                              ::
+        ==
       +$  room-6  [hun=duct dos=(map desk dojo-6)]
       +$  dojo-6
         $:  qyx=cult-10
