@@ -7181,7 +7181,10 @@
 ::
 ::::  5a: compiler utilities
   ::
-++  bool  `type`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
+++  bool                                                ::  make loobean
+  ^~  ^-  type
+  (fork [%atom %f `%.y] [%atom %f `%.n] ~)
+::
 ++  cell                                                ::  make %cell type
   ~/  %cell
   |=  [hed=type tal=type]
