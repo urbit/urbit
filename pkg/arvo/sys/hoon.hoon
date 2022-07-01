@@ -8883,7 +8883,7 @@
                        q.ref
             [%cell *]  %void
             [%core *]  %void
-            [%face *]  (face p.ref $(ref q.ref))
+            [%face *]  $(ref q.ref)
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
             [%hold *]  ?:  (~(has in gil) ref)  %void
@@ -8906,7 +8906,7 @@
                        ?.  =(%noun ^skin.skin)
                          (cell - ^$(skin ^skin.skin, ref %noun))
                        [%core - q.ref]
-            [%face *]  (face p.ref $(ref q.ref))
+            [%face *]  $(ref q.ref)
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
             [%hold *]  ?:  (~(has in gil) ref)  %void
@@ -8928,7 +8928,7 @@
                      `atom.skin
           [%cell *]  %void
           [%core *]  %void
-          [%face *]  (face p.ref $(ref q.ref))
+          [%face *]  $(ref q.ref)
           [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
           [%hint *]  (hint p.ref $(ref q.ref))
           [%hold *]  ?:  (~(has in gil) ref)  %void
@@ -8996,7 +8996,7 @@
                        ?.  =(%noun ^skin.skin)
                          (cell - ^$(skin ^skin.skin, ref %noun))
                        [%core - q.ref]
-            [%face *]  (face p.ref $(ref q.ref))
+            [%face *]  $(ref q.ref)
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
             [%hold *]  ?:  (~(has in gil) ref)  %void
