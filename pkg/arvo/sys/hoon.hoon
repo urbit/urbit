@@ -11652,15 +11652,15 @@
       %-  stew
       ^.  stet  ^.  limo
       :~  :-  '|'
-          (stag %chat (ifix [bar cola] sym))
+          ;~(pfix bar (stag %chat sym))
           :-  '.'
-          (stag %frag (ifix [dot cola] sym))
+          ;~(pfix dot (stag %frag sym))
           :-  '+'
-          (stag %funk (ifix [lus cola] sym))
+          ;~(pfix lus (stag %funk sym))
           :-  '$'
-          (stag %grog (ifix [buc cola] sym))
+          ;~(pfix buc (stag %grog sym))
           :-  ' '
-          (stag %funk ;~(pfix step (easy *term)))
+          ;~(pfix step (stag %funk (easy %$)))
       ==
     ++  shot
       ;~(plug ;~(sfix line (just `@`10) (punt gap)) (rant ;~(less tine text)))
@@ -11670,14 +11670,13 @@
     ++  code  ;~(pfix step step (cook crip (star prn))) ::  code line
     ++  noel  ;~(plug (punt ;~(pfix step hax)) null)    ::  header padding
     ++  null  (cold ~ (star ace))                       ::  blank line
-    ++  cola  ;~(plug col ace)
     ++  fine                                            ::  definition line
-      ;~  (glue cola)
+      ;~  (glue ;~(plug col ace))
         sym
         (cook crip (star prn))
       ==
     ++  tine
-      ;~  (glue cola)
+      ;~  (glue ;~(plug col ace))
         dibs
         (cook crip (star prn))
       ==
@@ -11686,7 +11685,7 @@
     ::  +into: :: and indent to end of line, consuming following space.
     ::  +indo: :: to end of line, consuming following space.
     ::  +exit: :: to end of line, not consuming following space.
-    ::  +ingo: :: then consume
+    ::  +ingo: :: then consume, followed by col ace
     ::
     ++  step  ;~(plug ace ace)
     ++  into  |*(bod=rule (indo ;~(pfix step bod)))
@@ -11695,7 +11694,7 @@
       (ifix [;~(plug col gar) ;~(plug (just `@`10) (punt gap))] bod)
     ++  ingo
       |*  bod=rule
-      ;~(pfix ;~(plug col gar step) bod)
+      (ifix [;~(plug col gar step) ;~(plug col ace)] bod)
     ::
     ++  exit
       |*  bod=rule
