@@ -174,8 +174,8 @@
     ::
       ;~  pfix  fas
         ;~  pose
-          (parse-variable (cold %sur hep) ;~(pfix gap parse-cables))
-          (parse-variable (cold %lib lus) ;~(pfix gap parse-cables))
+          (parse-variable (cold %sur hep) ;~(pfix gap (parse-ford %sur)))
+          (parse-variable (cold %lib lus) ;~(pfix gap (parse-ford %lib)))
         ==
       ==
     ::
@@ -193,23 +193,22 @@
       (stag %show (cook $?(%1 %2 %3 %4 %5) (cook lent (stun [1 5] wut))))
     ==
   ::
-  ++  parse-cables
-    %+  cook
-      |=  cables=(list cable:clay)
-      :+  0  %ex
-      ^-  hoon
-      ::
-      :-  %clsg
-      %+  turn  cables
-      |=  cable=cable:clay
-      ^-  hoon
-      ::
-      :+  %clhp
-        ?~  face.cable
-          [%rock %n ~]
-        [%clhp [%rock %n ~] [%sand %tas u.face.cable]]
-      [%sand %tas file-path.cable]
-    (most ;~(plug com gaw) parse-cable)
+  ++  parse-ford
+    |=  base-path=@ta
+    %-  cook  :_  (most ;~(plug com gaw) parse-cable)
+    |=  cables=(list cable:clay)
+    :+  0  %tu
+    ::
+    %+  turn  cables
+    |=  cable=cable:clay
+    ^-  dojo-source
+    ::  TODO: The following *does* properly add faces to imported cores,
+    ::  but discards all their type information, making them hard to
+    ::  work with
+    ::
+    ::  =+  add-face=?~(face.cable "|=(n=* n)" ;:(weld "|=(n=* ^=(" (trip u.face.cable) " n))"))
+    ::  :^  0  %do  (scan add-face parse-hoon)
+    :+  0  %dv  [-.dir `path`[base-path file-path.cable ~]]
   ::
   ++  parse-cable
     %+  cook  |=(a=cable:clay a)
@@ -537,8 +536,8 @@
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  .
-          %lib  .(lib ~)
-          %sur  .(sur ~)
+          ::  %lib  .(lib ~)
+          ::  %sur  .(sur ~)
           %dir  .(dir [[our.hid %base ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
@@ -550,17 +549,17 @@
         ~|  bad-set+[p.p.mad p.q.cay]
         =<  dy-amok
         ?+  p.p.mad  .
-            %lib
-          %_    .
-              lib
-            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-          ==
-        ::
-            %sur
-          %_    .
-              sur
-            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-          ==
+        ::      %lib
+        ::    %_    .
+        ::        lib
+        ::      ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
+        ::    ==
+        ::  ::
+        ::      %sur
+        ::    %_    .
+        ::        sur
+        ::      ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
+        ::    ==
         ::
             %dir  =+  ^=  pax  ^-  path
                       =+  pax=((dy-cast path !>(*path)) q.cay)
