@@ -202,12 +202,8 @@
     %+  turn  cables
     |=  cable=cable:clay
     ^-  dojo-source
-    ::  TODO: The following *does* properly add faces to imported cores,
-    ::  but discards all their type information, making them hard to
-    ::  work with
-    ::
-    ::  =+  add-face=?~(face.cable "|=(n=* n)" ;:(weld "|=(n=* ^=(" (trip u.face.cable) " n))"))
-    ::  :^  0  %do  (scan add-face parse-hoon)
+    =+  add-face=?~(face.cable "|*(n=* n)" ;:(weld "|*(n=* ^=(" (trip u.face.cable) " n))"))
+    :^  0  %do  (scan add-face parse-hoon)
     :+  0  %dv  [-.dir `path`[base-path file-path.cable ~]]
   ::
   ++  parse-cable
