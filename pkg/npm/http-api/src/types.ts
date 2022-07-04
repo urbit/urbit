@@ -4,6 +4,7 @@
  * `"/updates"`
  */
 export type Path = string;
+export type NounPath = [string];
 
 /**
  * @p including leading sig, rendered as a string
@@ -67,14 +68,13 @@ export interface Poke<Action> {
    */
   app: GallAgent;
   /**
-   * Mark of the cage to be poked
-   *
+   * Mark of the noun to poke with
    */
   mark: Mark;
   /**
-   * Vase of the cage of to be poked, as JSON
+   * Noun to poke with
    */
-  json: Action;
+  noun: any;  //TODO  revisit
 }
 
 /**
@@ -144,15 +144,16 @@ export interface SubscriptionInterface {
   /**
    * Handle negative %watch-ack
    */
+  //TODO  id here is a string, but is number in most other places...
   err?(error: any, id: string): void;
   /**
    * Handle %fact
    */
-  event?(data: any): void;
+  event?(mark: string, data: any): void;
   /**
    * Handle %kick
    */
-  quit?(data: any): void;
+  quit?(): void;
 }
 
 export type OnceSubscriptionErr = 'quit' | 'nack' | 'timeout';
@@ -167,9 +168,9 @@ export interface SubscriptionRequestInterface extends SubscriptionInterface {
   /**
    * The path to which to subscribe
    * @example
-   * `"/keys"`
+   * `['keys', 0]`
    */
-  path: Path;
+  path: NounPath;
 }
 
 export interface headers {

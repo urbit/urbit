@@ -1,0 +1,42 @@
+* a noun is an atom or a cell. DONE
+* mugs. DONE
+* unifying equals. DONE
+* dorky embedded DSL for nouns. DONE
+* some kind of real hashmap (needed for memoization at least). DONE
+* nock->js compiler (THE REALLY INTERESTING PART). DONE (at least, v1)
+* decrement. DONE
+* port random-noun tests to tape-check. DONE
+* jam/cue for pill reading (makes testing easier). DONE
+* add. DONE
+* jets (basic binding). DONE
+* ackerman. DONE
+* atom-gates.pill
+* ALL jets (ref: jaque)
+* boot ivory pill
+^--- call urbit library functions from js! great success!
+* boot fakezod (brass pill) to dojo
+* prevalence (on-disk in node, IndexedDB in brower)
+* expose basic vere-slave interface as a library
+  i.e. send me pokes, i handle all persistence and send you io 
+^--- candidate vere backend
+     urbit in the browser
+* urbit over webrtc?
+
+At this point, we have a working vere backend, as well as a full
+"urbit in the browser".  Performance is unlikely to be as good as jaque,
+but will likely be quite accepatable (especially for in-browser things).
+
+At the very least, using an ivory pill to compile and run hoon from the
+browser will ease client-side programming tasks.
+
+--- future implementation ideas
+
+it would be feasible to add profiling code to the compiled javascript,
+specifically in callsites (9), so that the 9 would run say 100 times and
+then recompile itself with a check and a direct call to the most called
+battery. this would also enable loop finding in tail position where the
+most called battery is the one being compiled. (important here not to
+use the 2 compiler cache, but to have a generated call site per battery)
+
+it would be cool to profile that single optimization, all other things 
+being equal. it should be the most important one.
