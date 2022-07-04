@@ -13,7 +13,7 @@ import useTermState from './state';
 import React from 'react';
 import { Box, Col } from '@tlon/indigo-react';
 import { makeTheme } from './lib/theme';
-import { showBlit, csi, hasBell } from './lib/blit';
+import { showBlit, csi, hasBell, getBlit } from './lib/blit';
 import { DEFAULT_SESSION, RESIZE_DEBOUNCE_MS, RESIZE_THRESHOLD_PX } from './constants';
 import { retry } from './lib/retry';
 
@@ -181,8 +181,13 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     //
     const initSubscription = async () => {
       const subscriptionId = await api.subscribe({
-        app: 'herm', path: '/session/' + name + '/view',
-        event: (e) => {
+        app: 'herm', path: ['session', name, 'view', 0],
+        event: (m, n) => {
+          if (m !== 'blit') {
+            console.log('unexpected mark', m, n.toString());
+            return;
+          }
+          const e = getBlit(n);
           showBlit(ses.term, e);
           //NOTE  getting selected from state because selected prop is stale
           if (hasBell(e) && (useTermState.getState().selected !== name)) {

@@ -9,6 +9,7 @@
     "@reach/menu-button": "^0.10.5",
     "@tlon/indigo-react": "^1.2.23",
     "@urbit/api": "^1.1.1",
+     "@urbit/aura": "^0.4.0",
     "@urbit/http-api": "^1.2.1",
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",

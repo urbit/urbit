@@ -1,7 +1,57 @@
 import { Terminal } from 'xterm';
 import { saveAs } from 'file-saver';
-import { Blit, Stub, Stye } from '@urbit/api/term';
+import { Blit, Stub, Stye, Tint } from '@urbit/api/term';
 import { stye } from '../lib/stye';
+
+import { enjs } from '@urbit/http-api';
+
+const getTint = (noun): Tint => {
+  return enjs.bucwut([
+    enjs.nill,
+    enjs.cord,
+    enjs.pairs([
+      { nom: 'r', get: enjs.numb },
+      { nom: 'g', get: enjs.numb },
+      { nom: 'b', get: enjs.numb }
+    ])
+  ])(noun);
+};
+
+const getStye = (noun): Stye => {
+  return enjs.pairs([
+    { nom: 'deco', get: enjs.tree(enjs.bucwut([enjs.nill, enjs.cord])) },
+    { nom: 'back', get: getTint },
+    { nom: 'fore', get: getTint }
+  ])(noun);
+};
+
+const getText = (noun): string => {
+  const utf32 = enjs.numb(noun);
+  return String.fromCharCode(utf32);
+};
+
+const getStub = (noun): Stub => {
+  return enjs.pair('stye', getStye, 'text', enjs.array(getText))(noun);
+};
+
+export const getBlit = (noun): Blit => {
+  return enjs.frond([
+    { tag: 'bel', get: () => true },
+    { tag: 'clr', get: () => true },
+    { tag: 'hop', get: enjs.bucwut([
+      enjs.numb,
+      enjs.pair('x', enjs.numb, 'y', enjs.numb)
+    ]) },
+    { tag: 'klr', get: enjs.array(getStub) },
+    { tag: 'mor', get: enjs.array(getBlit) },
+    { tag: 'nel', get: () => true },
+    { tag: 'put', get: enjs.array(getText) },
+    { tag: 'sag', get: enjs.pair('path', enjs.cord, 'file', enjs.cord) },
+    { tag: 'sav', get: enjs.pair('path', enjs.cord, 'file', enjs.cord) },
+    { tag: 'url', get: enjs.cord },
+    { tag: 'wyp', get: () => true }
+  ])(noun);
+};
 
 export const csi = (cmd: string, ...args: number[]) => {
   return '\x1b[' + args.join(';') + cmd;
