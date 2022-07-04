@@ -1292,7 +1292,8 @@
   ::    events since then.
   ::
   +$  channel
-    $:  ::  channel-state: expiration time or the duct currently listening
+    $:  mode=?(%json %jam)
+        ::  channel-state: expiration time or the duct currently listening
         ::
         ::    For each channel, there is at most one open EventSource
         ::    connection. A 400 is issues on duplicate attempts to connect to the
