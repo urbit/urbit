@@ -44,6 +44,7 @@
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
++$  bill  (list dude)
 ::  $rein: diff from desk manifest
 ::
 ::    .liv: suspended? if suspended, no agents should run
@@ -57,6 +58,78 @@
   ==
 ::
 +$  vat  [=desk hash=@uv =cass =arak]
+::  +goad: emit %jolt moves for all desks, applying $rein's
+::
+++  goad
+  |=  [our=ship now=@da]
+  |=  state=(map desk rein)
+  ^-  (list card:agent:gall)
+  ::
+  =/  sat=(list [=desk =bill])
+    %+  turn  ~(tap by state)
+    |=  [=desk =rein]
+    =/  =bill  (read-bill our desk now)
+    [desk (override bill rein)]
+  ::
+  =.  sat  (apply-precedence sat)
+  (sat-to-cards sat)  ::  possibly inline
+::
+++  override
+  |=  [duz=bill =rein]
+  ^-  bill
+  ?.  liv.rein  ~
+  =.  duz  (skip duz ~(has in sub.rein))
+  =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
+  duz
+::  +apply-precedence: resolve conflicts between $bill's
+::
+::    %base takes precedence over other desks.
+::    Other desks have alphabetical precedence ('a' over 'b').
+::    Within each desk, the $bill order is respected.
+::
+++  apply-precedence
+  |=  sat=(list [=desk =bill])
+  ^+  sat
+  ::  sort desks in alphabetical order with %base first
+  ::
+  =.  sat  (sort sat sort-desks)
+  ::  for each desk
+  ::
+  =|  done=(set dude)
+  |-  ^+  sat
+  ?~  sat
+    ~
+  :_  ^$(sat t.sat)
+  ::  for each agent
+  ::
+  :-  desk.i.sat
+  =/  bil  bill.i.sat
+  |-  ^-  bill
+  ?~  bil
+    ~
+  ::
+  ?:  (~(has in done) i.bil)
+    $(bil t.bil)
+  =.  done  (~(put in done) i.bil)
+  [i.bil $(bil t.bil)]
+::
+++  sort-desks
+  |=  [a=[=desk *] b=[=desk *]]
+  ^-  ?
+  ?:  =(%base desk.a)  &
+  ?:  =(%base desk.b)  |
+  (aor desk.a desk.b)
+::  TODO: change gall to desk-based %jolt
+::
+++  sat-to-cards
+  |=  sat=(list [=desk =bill])
+  ^-  (list card:agent:gall)
+  %-  zing
+  %+  turn  sat
+  |=  [=desk =bill]
+  %+  turn  bill
+  |=  =dude
+  [%pass /kiln/vats/jolt %arvo %g %jolt desk dude]
 ::  +report-vats: report on all desk installations
 ::
 ++  report-vats
