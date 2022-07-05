@@ -10321,6 +10321,73 @@
       [%hold *]  [%hold burp(sut p.sut) q.sut]
     ==
   ::
+  ++  caching-burp
+    ::  expel undigested seminouns
+    ::
+    =|  cac=(map type type)
+    =<  -
+    |-  ^-  [type _cac]
+    =/  cached  (~(get by cac) sut)
+    ?^  cached
+      [u.cached cac]
+    =;  [burped=type =_cac]
+      :_  (~(put by cac) sut burped)
+      burped
+    =;  [burped=type =_cac]
+      =/  res=type
+        ?.  =(sut burped)
+          burped
+        sut
+      :_  (~(put by cac) sut res)
+      res
+    ?+  sut      [sut cac]
+        [%cell *]
+      =^  lef  cac  $(sut p.sut)
+      =^  rig  cac  $(sut q.sut)
+      :_  cac
+      [%cell lef rig]
+    ::
+        [%core *]
+      =^  hed  cac  $(sut p.sut)
+      =^  mid  cac  $(sut q.q.sut)
+      :_  cac
+      :+  %core
+        hed
+      :*  p.q.sut
+          mid
+          :_  q.r.q.sut
+          ?:  ?=([[%full ~] *] p.r.q.sut)
+            p.r.q.sut
+          [[%full ~ ~ ~] ~]
+       ==
+    ::
+        [%face *]
+      =^  rig  cac  $(sut q.sut)
+      :_  cac
+      [%face p.sut rig]
+    ::
+        [%fork *]
+      =/  yed  ~(tap in p.sut)
+      =|  wiz=(list type)
+      |-  ^-  [type _cac]
+      ?~  yed
+        :_  cac
+        (fork wiz)
+      =^  val  cac  ^$(sut i.yed)
+      $(yed t.yed, wiz [val wiz])
+    ::
+        [%hint *]
+      =^  lef  cac  $(sut p.p.sut)
+      =^  rig  cac  $(sut q.sut)
+      :_  cac
+      (hint [lef q.p.sut] rig)
+    ::
+        [%hold *]
+      =^  lef  cac  $(sut p.sut)
+      :_  cac
+      [%hold lef q.sut]
+    ==
+  ::
   ++  busk
     ~/  %busk
     |=  gen=hoon
@@ -11710,8 +11777,6 @@
     ::
     |=  [hud=poly gol=type gen=hoon]
     ^-  [nock _grub]
-    ~+
-    =+  %hemp-141
     ?-    hud
         %dry
       =^  val  grub  (caching-mint gol gen)
@@ -11738,9 +11803,7 @@
     ::  produce lazy core generator for static execution
     ::
     |=  [nym=(unit term) hud=poly dom=(map term tome)]
-    ~+
     ^-  [seminoun _grub]
-    =+  %hemp-141
     ::  tal: map from battery axis to foot
     ::
     =;  tal=(map @ud hoon)
@@ -12637,7 +12700,7 @@
       =^  rig  grub  $(gol %noun, gen p.gen)
       =^  lef  grub  (caching-nice (cell p.rig p.vos))
       :_  grub
-      [lef (cons [%1 burp(sut p.vos)] q.vos)]
+      [lef (cons [%1 caching-burp(sut p.vos)] q.vos)]
     ::
         [%zpgl *]
       =^  wor  grub  (caching-play [%kttr p.gen])
