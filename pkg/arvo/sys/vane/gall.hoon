@@ -227,11 +227,11 @@
         $(apps t.apps, mo-core ap-abet:ap-core)
       ::  kill subscriptions when upgrading to gall request queue fix
       ::
-      =.  mo-core
+      =?  mo-core  (lth -.spore %9)
         |-  ^+  mo-core
         ?~  apps  mo-core
         =/  ap-core  (ap-abut:ap:mo-core i.apps)
-        =?  ap-core  (lth -.spore %9)
+        =.  ap-core
           ~>  %slog.[0 leaf+"gall: running +ap-kill-down"]
           =/  boats=(list [=wire =dock])
             ~(tap in ~(key by boat.egg.i.apps))
