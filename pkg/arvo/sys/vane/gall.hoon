@@ -230,6 +230,7 @@
       =.  mo-core
         |-  ^+  mo-core
         ?~  apps  mo-core
+        =/  ap-core  (ap-abut:ap:mo-core i.apps)
         =?  ap-core  (lth -.spore %9)
           ~>  %slog.[0 leaf+"gall: running +ap-kill-down"]
           =/  boats=(list [=wire =dock])
