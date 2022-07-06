@@ -1340,25 +1340,9 @@
   ::  NB: ruf=raft crashes in the compiler
   ::
   =*  ruf  |3.+6.^$
-  ::
-  =/  [mow=(list move) hun=(unit duct) rede]
-      ?.  =(our her)
-        ::  no duct, foreign +rede or default
-        ::
-        :+  ?:  (~(has by hoy.ruf) her)
-              ~
-            [hun.rom.ruf %pass /sinks %j %public-keys (silt her ~)]~
-          ~
-        =/  rus  rus:(~(gut by hoy.ruf) her *rung)
-        %+  ~(gut by rus)  syd
-        [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~ fiz=*melt]
-      ::  administrative duct, domestic +rede
-      ::
-      :+  ~  `hun.rom.ruf
-      =/  jod  (~(gut by dos.rom.ruf) syd *dojo)
-      [lim=now ref=~ [qyx dom per pew fiz]:jod]
-  ::
+  =|  [mow=(list move) hun=(unit duct) rede]
   =*  red=rede  ->+
+  =<  apex
   |%
   ++  abet                                              ::  resolve
     ^-  [(list move) raft]
@@ -1375,6 +1359,30 @@
       hun.rom  (need hun)
       dos.rom  (~(put by dos.rom.ruf) syd [qyx dom per pew fiz]:red)
     ==
+  ::
+  ++  apex
+    ^+  ..park
+    ?.  =(our her)
+      ::  no duct, foreign +rede or default
+      ::
+      =.  mow
+        ?:  (~(has by hoy.ruf) her)
+          ~
+        [hun.rom.ruf %pass /sinks %j %public-keys (silt her ~)]~
+      =.  hun  ~
+      =.  |2.+6.park
+        =/  rus  rus:(~(gut by hoy.ruf) her *rung)
+        %+  ~(gut by rus)  syd
+        [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~ fiz=*melt]
+      ..park
+    ::  administrative duct, domestic +rede
+    ::
+    =.  mow  ~
+    =.  hun  `hun.rom.ruf
+    =.  |2.+6.park
+      =/  jod  (~(gut by dos.rom.ruf) syd *dojo)
+      [lim=now ref=*(unit rind) [qyx dom per pew fiz]:jod]
+    ..park
   ::
   ::  Handle `%sing` requests
   ::
@@ -1839,14 +1847,18 @@
     =.  mim.dom  mim.res
     =.  args     args.res
     ::
-    =^  rags  ..park
-      ?:  =(%base syd)  (jolt args)
-      [args ..park]
-    =.  args  rags
     =.  fod.dom  [spill sprig]:args
     =.  fad      cache.args
     =.  ..park   (emil (print q.old-yaki data))
-    ::=?  ..park  liv.dom  goad:(lu now rof hen ruf) ::  TODO enable
+    ::  tell gall which agents to run
+    ::
+    =?  ..park  liv.dom
+      =^  moves-1  ruf  abet
+      =^  moves-2  ruf  abet:goad:(lu now rof hen ruf)
+      =.  ..park  apex
+      (emil (weld moves-1 moves-2))
+    ::  notify unix and subscribers
+    ::
     wake:?:(mem (ergo 0 mum.res) ..park)
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
@@ -1860,35 +1872,6 @@
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
     ::
-    ++  jolt
-      |=  =ford=args:ford:fusion
-      ^-  [args:ford:fusion _..park]
-      ::  read desk.bill
-      ::
-      =/  f  (ford:fusion ford-args)
-      =^  bill-cage=cage  nub.f  (read-file:f /desk/bill)
-      =/  bill  !<((list dude:gall) q.bill-cage)
-      ::  build-file for each dude
-      ::
-      =^  agents=load:gall  nub.f
-        =|  agents=load:gall
-        |-  ^-  [(list [dude:gall beak agent:gall]) _nub.f]
-        ?~  bill
-          [agents nub.f]
-        =^  =vase  nub.f  (build-file:f /app/[i.bill]/hoon)
-        =/  agent  ~|  [%building-app i.bill]  !<(agent:gall vase)
-        =^  agents  nub.f  $(bill t.bill)
-        [[[i.bill [our syd ud+let.dom] agent] agents] nub.f]
-      ::  save ford cache
-      ::
-      =/  [~ fud=flow fod=flue]  (wrap:fusion ~ nub.f)
-      =.  cache.ford-args  fud
-      =.  spill.ford-args  spill.fod
-      =.  sprig.ford-args  sprig.fod
-      ::  load agents into gall
-      ::
-      :-  ford-args
-      (emit hen %pass /lu/load/[syd] %g %load agents)
     ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
     ::
     ++  get-kelvin
