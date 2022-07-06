@@ -13132,15 +13132,23 @@
                   ;~  pose
                     ::  /name=@aura
                     ::
-                    %+  stag  %bcts
-                    ;~  plug  sym
-                    ;~  pfix  tis  pat
-                      (stag %base (stag %atom mota))
-                    ==  ==
+                    %+  cook
+                      |=  [=term =aura]
+                      ^-  spec
+                      :+  %bccl
+                        [%leaf %tas aura]
+                      [%bcts term [%base %atom aura]]~
+                    ;~(plug sym ;~(pfix tis pat mota))
+                  ::
                     ::  /constant
                     ::
-                    (stag %leaf (stag %tas sym))
+                    (stag %leaf (stag %tas ;~(pose sym (cold %$ buc))))
                   ==
+                ::
+                  ::  /~
+                  ::
+                  :-  '~'
+                  (cold [%bccl [%leaf %tas %n] [%base %null] ~] sig)
               ==
             ::
               ;~  pose
