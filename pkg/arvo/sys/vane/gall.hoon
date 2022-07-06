@@ -1,5 +1,4 @@
-!:
-::  ::  %gall, agent execution
+::  %gall, agent execution
 !?  163
 ::
 ::::
@@ -530,7 +529,7 @@
     |=  [=wire =sign-arvo]
     ^+  mo-core
     ::
-    ?+  -.wire  !!
+    ?+  -.wire  (mean 'gall: bad sys wire' >wire< ~)
       %lyv  (mo-handle-sys-lyv wire sign-arvo)
       %era  (mo-handle-sys-era wire sign-arvo)
       %cor  (mo-handle-sys-cor wire sign-arvo)
@@ -664,7 +663,7 @@
     =/  =ship           (slav %p i.t.wire)
     =/  foreign-agent   i.t.t.wire
     ::
-    ?+    sign-arvo  !!
+    ?+    sign-arvo  (mean 'gall: strange sign' >[- +<]:sign-arvo< ~)
         [%ames %done *]
       =^  remote-request  outstanding.state
         ?~  t.t.t.wire
@@ -703,7 +702,7 @@
       ?^  t.t.t.wire
         ::  kill subscriptions which use the old wire format
         ::
-        !!
+        ~_('gall: killing old style subscription' !!)
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
       (mo-handle-ames-response ames-response)
     ::
@@ -1072,7 +1071,7 @@
       ^-  (list move)
       ::
       ?-    -.card
-          %slip  !!
+          %slip  ~_('gall: non-slip' !!)
       ::
           %give
         =/  =gift:agent  p.card
@@ -1238,8 +1237,8 @@
         %watch-as  (ap-subscribe-as +.deal)
         %poke      (ap-poke +.deal)
         %watch     (ap-subscribe +.deal)
-        %raw-poke  !!
-        %poke-as   !!
+        %raw-poke  ~_('gall: %raw-poke unapplicable' !!)
+        %poke-as   ~_('gall: %poke-as unapplicable' !!)
         %leave     ap-load-delete
       ==
     ::  +ap-peek: peek.
@@ -1338,7 +1337,7 @@
         (ap-install(agent.yoke &+agent) `old-state)
       ?~  error
         ap-core
-      (mean >%load-failed< u.error)
+      (mean 'gall: load failed' (flop u.error))
     ::  +ap-subscribe-as: apply %watch-as.
     ::
     ++  ap-subscribe-as
@@ -1731,7 +1730,7 @@
   ==
 ::  +load: recreate vane; note, only valid if called from pupa
 ::
-++  load  !!
+++  load  ~_('gall: adult load' !!)
 ::  +scry: standard scry
 ::
 ++  scry
