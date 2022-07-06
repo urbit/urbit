@@ -689,18 +689,14 @@ u3_disk_exit(u3_disk* log_u)
     }
   }
 
-  //  cancel write thread
+  //  try to cancel write thread
+  //  shortcircuit cleanup if we cannot
   //
-  //    XX can deadlock when called from signal handler
-  //    XX revise SIGTSTP handling
-  //
-  if ( c3y == log_u->ted_o ) {
-    c3_i sas_i;
-
-    do {
-      sas_i = uv_cancel(&log_u->req_u);
-    }
-    while ( UV_EBUSY == sas_i );
+  if (  (c3y == log_u->ted_o)
+     && uv_cancel(&log_u->req_u) )
+  {
+    // u3l_log("disk: unable to cleanup\r\n");
+    return;
   }
 
   //  close database
