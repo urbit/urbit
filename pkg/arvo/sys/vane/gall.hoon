@@ -547,12 +547,17 @@
     =.  outstanding.state
       =/  stand
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
-      %+  ~(put by outstanding.state)  [wire hen]
-      (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave %cork]))
-    =.  mo-core  (mo-pass wire note-arvo)
-    ?.  ?=(%leave -.deal)
-      mo-core
-    (mo-pass wire [%a [%cork ship]])
+      (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
+    (mo-pass wire note-arvo)
+    ::  TODO remove preceding two lines and uncomment the
+    ::  next ones to release subscriber-side %cork handling
+    ::
+    ::   %+  ~(put by outstanding.state)  [wire hen]
+    ::   (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave %cork]))
+    :: =.  mo-core  (mo-pass wire note-arvo)
+    :: ?.  ?=(%leave -.deal)
+    ::   mo-core
+    :: (mo-pass wire [%a [%cork ship]])
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
   ++  mo-track-ship
@@ -1849,7 +1854,8 @@
         ::  if nonce = 0, this was a pre-nonce subscription so later
         ::  subscriptions need to start subscribing on the next nonce
         ::
-        =?  sub-nonce.yoke  =(nonce 0)  +(sub-nonce.yoke)
+        ::  TODO: uncomment when releasing subscriber %cork handling
+        :: =?  sub-nonce.yoke  =(nonce 0)  +(sub-nonce.yoke)
         $(moves t.moves, new-moves [move new-moves])
       ?.  ?=([* %pass * %g %deal * * ?(%watch %watch-as) *] move)
         $(moves t.moves, new-moves [move new-moves])
@@ -1873,7 +1879,8 @@
       %_    $
           moves            t.moves
           new-moves       [move new-moves]
-          sub-nonce.yoke  +(sub-nonce.yoke)
+          ::  TODO: uncomment when releasing subscriber %cork handling
+          :: sub-nonce.yoke  +(sub-nonce.yoke)
       ::
           boat.yoke
         %+  ~(put by boat.yoke)  [sub-wire dock]
