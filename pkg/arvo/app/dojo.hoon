@@ -185,7 +185,7 @@
           ;~  pfix  ace
             %+  cook
               |=  a=(list term)
-              [[%help a] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
+              [[%help (flop a)] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
             (most fas sym)
           ==
           (easy [[%help ~[%$]] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
