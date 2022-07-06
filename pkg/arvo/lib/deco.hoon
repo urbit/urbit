@@ -65,7 +65,7 @@
 :>  at present, doccords does not support lexical locations in full.
 :>  only single-element locations of the form `$foo` and `+foo` are supported,
 :>  and must be written above an arm in the core to which they are to be
-:>  attached. you may still write doccords for these locations, and they
+:>  attached. you may still write doccords for other locations, and they
 :>  will be parsed, but are thrown away before they make it to the compiler.
 :>
 :>  a postfix formal comment will either attach to hoon or spec on the
