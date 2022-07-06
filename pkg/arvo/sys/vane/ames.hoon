@@ -607,6 +607,7 @@
 ::    life:        our $life; how many times we've rekeyed
 ::    crypto-core: interface for encryption and signing
 ::    bug:         debug printing configuration
+::    corks:       wires for cork flows pending publisher update
 ::
 +$  ames-state
   $:  peers=(map ship ship-state)
@@ -614,6 +615,7 @@
       =life
       crypto-core=acru:ames
       =bug
+      corks=(set wire)
   ==
 ::
 +$  ames-state-4  ames-state-5
@@ -673,6 +675,14 @@
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
+  ==
+::
++$  ames-state-7
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      =bug
   ==
 ::  $bug: debug printing configuration
 ::
@@ -827,7 +837,7 @@
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
-    =|  cached-state=(unit [%5 ames-state-5])
+    =|  cached-state=(unit $%([%5 ames-state-5] [%6 ames-state-6] [%7 ames-state-7]))
     ::
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
@@ -853,6 +863,9 @@
       ::
       ?:  &(?=(^ cached-state) ?=(~ queued-events))
         =^  moves  adult-gate  (call:adult-core duct dud task)
+        =?  moves  ?=(%7 +<.cached-state)
+          ~>  %slog.0^leaf/"ames: init daily recork timer"
+          :_(moves [duct %pass /recork %b %wait `@da`(add now ~d1)])
         (molt moves)
       ::  %born: set .unix-duct and start draining .queued-events
       ::
@@ -945,7 +958,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%7 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%8 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -972,6 +985,13 @@
               $:  %7
               $%  $:  %larva
                       events=(qeu queued-event)
+                      state=ames-state-7
+                  ==
+                  [%adult state=ames-state-7]
+              ==  ==
+              $:  %8
+              $%  $:  %larva
+                      events=(qeu queued-event)
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
@@ -994,20 +1014,32 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%6 %adult *]  (load:adult-core %6 state.old)
+          [%6 %adult *]
+        =.  cached-state  `[%6 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%6 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %6 state.old)
         larval-gate
       ::
-          [%7 %adult *]  (load:adult-core %7 state.old)
+          [%7 %adult *]
+        =.  cached-state  `[%7 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%7 %larva *]
+        ~>  %slog.0^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        larval-gate
+      ::
+          [%8 %adult *]  (load:adult-core %8 state.old)
+      ::
+          [%8 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %7 state.old)
+        =.  adult-gate     (load:adult-core %8 state.old)
         larval-gate
        ::
       ==
@@ -1016,10 +1048,13 @@
     ++  molt
       |=  moves=(list move)
       ^-  (quip move _adult-gate)
+      =?  cached-state  &(?=(^ cached-state) ?=(%5 +<.cached-state))
+        `%6^(state-5-to-6:load:adult-core +.u.cached-state)
+      =?  cached-state  &(?=(^ cached-state) ?=(%6 +<.cached-state))
+        `%7^(state-6-to-7:load:adult-core +.u.cached-state)
       =.  ames-state.adult-gate
-        %-  state-6-to-7:load:adult-core
-        ?>  ?=(^ cached-state)
-        (state-5-to-6:load:adult-core +.u.cached-state)
+        ?>  &(?=(^ cached-state) ?=(%7 +<.cached-state))
+        (state-7-to-8:load:adult-core +.u.cached-state)
       =.  cached-state  ~
       ~>  %slog.0^leaf/"ames: metamorphosis reload"
       [moves adult-gate]
@@ -1095,17 +1130,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%7 %adult ames-state]
+++  stay  [%8 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%6 ames-state-6]
-              [%7 ^ames-state]
+          $%  [%8 ^ames-state]
           ==
       ^+  ames-gate
-      =?  old-state  ?=(%6 -.old-state)  %7^(state-6-to-7 +.old-state)
-      ?>  ?=(%7 -.old-state)
+      ?>  ?=(%8 -.old-state)
       ames-gate(ames-state +.old-state)
   ::
   |%
@@ -1150,10 +1183,11 @@
     :_  +.peer-state
     =,  -.peer-state
     [symmetric-key life rift public-key sponsor]
+  ::  +state-6-to-7 called from larval-ames
   ::
   ++  state-6-to-7
     |=  ames-state=ames-state-6
-    ^-  ^^ames-state
+    ^-  ames-state-7
     :_  +.ames-state
     %-  ~(run by peers.ames-state)
     |=  ship-state=ship-state-6
@@ -1164,6 +1198,18 @@
     ^-  peer-state
     :-  +<.ship-state
     [route qos ossuary snd rcv nax heeds ~ ~]:ship-state
+  ::  +state-7-to-8 called from larval-ames
+  ::
+  ++  state-7-to-8
+    |=  ames-state=ames-state-7
+    ^-  ^^ames-state
+    :*  peers.ames-state
+        unix-duct.ames-state
+        life.ames-state
+        crypto-core.ames-state
+        bug.ames-state
+        *(set wire)
+    ==
   --
 ::  +scry: dereference namespace
 ::
@@ -1752,19 +1798,32 @@
         event-core
       (request-attestation u.ship)
     ::
-    =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
-    ?~  res
-      %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
-      event-core
+    |^
+    ?.  ?=([%recork ~] wire)  (handle-single-wire wire)
+    =/  wires=(list ^wire)  ~(tap in corks.ames-state)
+    |-  ^+  event-core
+    ?^  wires
+      $(wires t.wires, event-core (handle-single-wire i.wires))
+    (emit duct %pass /recork %b %wait `@da`(add now ~d1))
     ::
-    =/  state=(unit peer-state)  (get-peer-state her.u.res)
-    ?~  state
-      %.  event-core
-      (slog leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~)
-    ::
-    =/  =channel  [[our her.u.res] now channel-state -.u.state]
-    ::
-    abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
+    ++  handle-single-wire
+      |=  =^wire
+      ^+  event-core
+      =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
+      ?~  res
+        %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
+        event-core
+      ::
+      =/  state=(unit peer-state)  (get-peer-state her.u.res)
+      ?~  state
+        %.  event-core
+        %-  slog
+        [leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~]
+      ::
+      =/  =channel  [[our her.u.res] now channel-state -.u.state]
+      ::
+      abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
+    --
   ::  +on-init: first boot; subscribe to our info from jael
   ::
   ++  on-init
@@ -2718,7 +2777,8 @@
         %-  %+  trace  msg.veb
             |.("old publisher, resend %cork on bone={<target-bone>} in ~d1")
         =/  =wire  (make-pump-timer-wire her.channel target-bone)
-        (emit [/ames-recork]~ %pass wire %b %wait `@da`(add now ~d1))
+        =.  corks.ames-state  (~(put in corks.ames-state) wire)
+        peer-core
       ::  +on-sink-plea: handle request message received by |message-sink
       ::
       ++  on-sink-plea
