@@ -85,8 +85,8 @@
 ::  > =deco -build-file %/lib/deco/hoon
 ::  > # deco
 ::  > # deco/arch
-::  > # deco/arch/model
-::  > # deco/arch/model/goof
+::  > # deco/arch/molds
+::  > # deco/arch/molds/goof
 ::
 ::  > ?? *goof:deco
 ::
@@ -97,18 +97,18 @@
     :>  but compile-time evaluation doesnt work in the current
     :>  core; we often want to statically evaluate structures.
     :>
-    :>  there are three kinds of structures: models (normalizing
-    :>  functions), patterns (functions that build models), and
+    :>  there are three kinds of structures: moldss (normalizing
+    :>  functions), mold builders (functions that build molds), and
     :>  constants (static data).
     :>
     :>  most code will not need its own patterns.  but put them
     :>  in a separate chapter (separated by {+|}).
     |%  %arch
-    :>    models (molds) are functions that normalize nouns.
+    :>    molds are functions that normalize nouns.
     :>
     :>  arms producing molds are introduced with {+$}.  the
     :>  compiler will copy the arm decoration onto its product
-    +|  %model
+    +|  %molds
     :>  $jam: some delicious jam
     :>  $jelly: different from jam?
     +$  spot  [p=@ q=@]                                 :<  a coordinate
@@ -126,12 +126,12 @@
       ==
     +$  jam  @tas
     +$  jelly  @tas
-    :>    patterns are functions that build models.
+    :>    mold builders are functions that build molds from other molds
     :>
     :>  other languages might call these "type constructors"
     :>  or "higher-kinded types".
-    +|  %pattern
-    ++  binary-tree                                     :<  tree pattern mold
+    +|  %mold-builders
+    ++  binary-tree                                     :<  tree mold builder
       |*  a=$-(* *)
       $@(~ [n=a l=(binary-tree a) r=(binary-tree a)])
     ::
