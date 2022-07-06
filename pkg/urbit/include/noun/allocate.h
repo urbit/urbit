@@ -25,7 +25,7 @@
 
     /* u3a_bytes: number of bytes in memory.
     */
-#     define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
+#     define u3a_bytes  (sizeof(c3_w) * u3a_words)
 
     /* u3a_cells: number of representable cells.
     */

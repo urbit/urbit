@@ -76,6 +76,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+// Base loom offset of the guard page.
+static u3p(c3_w) gar_pag_p;
+
 //! Urbit page size in 4-byte words.
 static const size_t pag_wiz_i = 1 << u3a_page;
 
@@ -183,57 +186,61 @@ _ce_mapfree(void* map_v)
 }
 #endif
 
+//! Place a guard page at the (approximate) middle of the free space between
+//! the heap and stack of the current road, bailing if memory has been
+//! exhausted.
+static void
+_ce_center_guard_page(void)
+{
+  u3p(c3_w) bot_p, top_p;
+  if ( !u3R ) {
+    top_p = u3a_outa(u3_Loom + u3a_words);
+    bot_p = u3a_outa(u3_Loom);
+  }
+  else if ( c3y == u3a_is_north(u3R) ) {
+    top_p = c3_rod(u3R->cap_p, pag_wiz_i);
+    bot_p = c3_rop(u3R->hat_p, pag_wiz_i);
+  }
+  else {
+    top_p = c3_rod(u3R->hat_p, pag_wiz_i);
+    bot_p = c3_rop(u3R->cap_p, pag_wiz_i);
+  }
+
+  if ( top_p < bot_p + pag_wiz_i ) {
+    fprintf(stderr,
+            "loom: not enough memory to recenter the guard page\r\n");
+    goto fail;
+  }
+  const u3p(c3_w) old_gar_p = gar_pag_p;
+  const c3_w      mid_p     = (top_p - bot_p) / 2;
+  gar_pag_p                 = bot_p + c3_rod(mid_p, pag_wiz_i);
+  if ( old_gar_p == gar_pag_p ) {
+    fprintf(stderr,
+            "loom: can't move the guard page to the same location"
+            " (base address %p)\r\n",
+            u3a_into(gar_pag_p));
+    goto fail;
+  }
+
+  if ( -1 == mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+    fprintf(stderr,
+            "loom: failed to protect the guard page "
+            "(base address %p)\r\n",
+            u3a_into(gar_pag_p));
+    goto fail;
+  }
+
+  return;
+
+fail:
+  u3m_signal(c3__meme);
+}
+
 /* u3e_fault(): handle a memory event with libsigsegv protocol.
 */
 c3_i
 u3e_fault(void* adr_v, c3_i ser_i)
 {
-  //! Place a guard page at the (approximate) middle of the free space between
-  //! the heap and stack of the current road.
-  //!
-  //! @param[in] failure_action  Action to perform on failure.
-#define center_guard_page(failure_action)                                      \
-  do {                                                                         \
-    u3p(c3_w) bottom_page, top_page;                                           \
-    if ( c3y == u3a_is_north(u3R) ) {                                          \
-      top_page    = c3_rod(u3R->cap_p, pag_wiz_i);                             \
-      bottom_page = c3_rop(u3R->hat_p, pag_wiz_i);                             \
-    }                                                                          \
-    else {                                                                     \
-      top_page    = c3_rod(u3R->hat_p, pag_wiz_i);                             \
-      bottom_page = c3_rop(u3R->cap_p, pag_wiz_i);                             \
-    }                                                                          \
-    if ( top_page < bottom_page + pag_wiz_i ) {                                \
-      fprintf(stderr,                                                          \
-              "loom: not enough memory to recenter the guard page\r\n");       \
-      failure_action;                                                          \
-    } else {                                                                   \
-      const u3p(c3_w) previous_guard_page = gar_pag_p;                         \
-      const c3_w midpoint = (top_page - bottom_page) / 2;                      \
-      gar_pag_p = bottom_page + c3_rod(midpoint, pag_wiz_i);                   \
-      if ( previous_guard_page == gar_pag_p ) {                                \
-        fprintf(stderr,                                                        \
-                "loom: can't move the guard page to the same location"         \
-                " (base address %p)\r\n",                                      \
-                u3a_into(gar_pag_p));                                          \
-        failure_action;                                                        \
-      }                                                                        \
-      else if ( -1 == mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {  \
-        fprintf(stderr,                                                        \
-                "loom: failed to protect the guard page "                      \
-                "(base address %p)\r\n",                                       \
-                u3a_into(gar_pag_p));                                          \
-        failure_action;                                                        \
-      }                                                                        \
-    }                                                                          \
-  } while ( 0 )
-
-  // Base loom offset of the guard page.
-  static u3p(c3_w) gar_pag_p;
-  if ( 0 == gar_pag_p ) {
-    center_guard_page(goto fail);
-  }
-
   //  Let the stack overflow handler run.
   if ( 0 == ser_i ) {
     return 0;
@@ -248,6 +255,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
     fprintf(stderr, "address %p out of loom!\r\n", adr_w);
     fprintf(stderr, "loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3a_words);
     c3_assert(0);
+    return 0;
   }
 
   u3p(c3_w) adr_p  = u3a_outa(adr_w);
@@ -257,11 +265,12 @@ u3e_fault(void* adr_v, c3_i ser_i)
 
   // The fault happened in the guard page.
   if ( gar_pag_p <= adr_p && adr_p < gar_pag_p + pag_wiz_i ) {
-    center_guard_page(goto fail);
+    _ce_center_guard_page();
   }
   else if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
     fprintf(stderr, "strange page: %d, at %p, off %x\r\n", pag_w, adr_w, adr_p);
     c3_assert(0);
+    return 0;
   }
 
   u3P.dit_w[blk_w] |= (1 << bit_w);
@@ -275,10 +284,6 @@ u3e_fault(void* adr_v, c3_i ser_i)
   }
 
   return 1;
-
-fail:
-  u3m_signal(c3__meme);
-#undef center_guard_page
 }
 
 /* _ce_image_open(): open or create image.
@@ -1056,6 +1061,9 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       }
     }
   }
+
+  _ce_center_guard_page();
+
   return nuu_o;
 }
 
