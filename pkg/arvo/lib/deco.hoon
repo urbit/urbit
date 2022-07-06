@@ -109,6 +109,8 @@
     :>  arms producing molds are introduced with {+$}.  the
     :>  compiler will copy the arm decoration onto its product
     +|  %model
+    :>  $jam: some delicious jam
+    :>  $jelly: different from jam?
     +$  spot  [p=@ q=@]                                 :<  a coordinate
     +$  tops                                            :<  mold for coordinate
       [p=@ q=@]                                         :<  another coordinate
@@ -122,6 +124,8 @@
           [%pear p=@ q=@]                               :<  good for cider
           [%acai p=@]                                   :<  aztec superfood
       ==
+    +$  jam  @tas
+    +$  jelly  @tas
     :>    patterns are functions that build models.
     :>
     :>  other languages might call these "type constructors"
@@ -139,6 +143,8 @@
 :>    engines for our imaginary hello, world app.
 :>
 |%  %work
+:>  +default-jam: bunts $jam
+:>  +default-juice: bunts $juice
 ++  say-hello                                           :<  say hi to someone
   :>    friendly welcome message
   :>
@@ -175,4 +181,7 @@
 ++  say-minimum                                         :<  minimal decoration
   |=  txt=term
   "nothing to say to {(rip 3 txt)}"
+::
+++  default-jam  *jam
+++  default-juice  *juice
 --
