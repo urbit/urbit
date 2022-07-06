@@ -2006,10 +2006,11 @@
 ::                                                      ::
 +$  iota                                                ::  typed path segment
   $~  [%n ~]
+  $@  @tas
   $%  [%ub @ub]  [%uc @uc]  [%ud @ud]  [%ui @ui]
       [%ux @ux]  [%uv @uv]  [%uw @uw]  [%da @da]
       [%dr @dr]  [%f ?]     [%if @if]  [%is @is]
-      [%n ~]     [%t @t]    [%ta @ta]  [%tas @tas]
+      [%n ~]     [%t @t]    [%ta @ta]  ::  @tas
       [%p @p]    [%q @q]    [%rd @rd]  [%rh @rh]
       [%rq @rq]  [%rs @rs]  [%s @s]
   ==
@@ -11755,6 +11756,7 @@
     %+  knee  *hoon  |.  ~+
     %+  cook
       |=  iota=$%([%hoon =hoon] iota)
+      ?@  iota  [%rock %tas iota]
       ?:  ?=(%hoon -.iota)  hoon.iota
       [%clhp [%rock %tas -.iota] [%sand iota]]
     |^  %-  stew
@@ -11762,9 +11764,9 @@
       :~  :-  'a'^'z'  ;~  pose
                          (spit (stag %cncl (ifix [pal par] (most ace wide))))
                          (spit (ifix [sel ser] wide))
-                         (slot (stag %tas sym))
+                         (slot sym)
                        ==
-          :-  '$'      (cold [%tas %$] buc)
+          :-  '$'      (cold %$ buc)
           :-  '0'^'9'  (slot bisk:so)
           :-  '-'      (slot tash:so)
           :-  '.'      zust:so
@@ -12859,7 +12861,6 @@
     :~
       :-  ','
         ;~  pose
-          ;~(pfix com reed)  ::NOTE  shadows /wing syntax, maybe re/move
           (stag %ktcl ;~(pfix com wyde))
           (stag %wing rope)
         ==
@@ -13035,6 +13036,8 @@
         (ifix [gal gar] (stag %tell (most ace wide)))
       :-  '>'
         (ifix [gar gal] (stag %yell (most ace wide)))
+      :-  '#'
+        ;~(pfix hax reed)
     ==
   ++  soil
     ;~  pose
