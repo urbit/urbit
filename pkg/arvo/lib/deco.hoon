@@ -70,12 +70,14 @@
 :>
 :>  a postfix formal comment will either attach to hoon or spec on the
 :>  current line, or the arm name if there is no hoon or spec on the
-:>  line
+:>  line. the convention for +$ arms is that the comment attached to the
+:>  arm is about the mold itself, while the comment attached to the spec
+:>  is about the output type of the mold.
 :>
 :>  |% and |@ cores can be given @tas names with e.g. `|%  %foo`. for
 :>  now, the only purpose of this is to make cores not built by arms
-:>  legible to doccords. in order to name any other core type, you will
-:>  need to desugar it for now.
+:>  more legible to doccords users. in order to name any other core type,
+:>  you will need to desugar it by hand for the time being.
 :>
 :>  to inspect doccords in this file from dojo, try the following:
 :>
@@ -98,7 +100,7 @@
     :>  functions), mold builders (functions that build molds), and
     :>  constants (static data).
     :>
-    :>  most code will not need its own patterns.  but put them
+    :>  most code will not need its own mold builders.  but put them
     :>  in a separate chapter (separated by {+|}).
     |%  %arch
     :>    molds are functions that normalize nouns.
