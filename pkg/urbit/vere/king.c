@@ -1566,7 +1566,7 @@ u3_king_done(void)
 
   //  XX remove move
   //
-  exit(0);
+  exit(u3_Host.xit_i);
 }
 
 /* u3_king_exit(): shutdown gracefully
@@ -1582,10 +1582,11 @@ u3_king_exit(void)
 void
 u3_king_bail(void)
 {
+  u3_Host.xit_i = 1;
   _king_forall_unlink(u3_pier_bail);
   _king_loop_exit();
   u3_king_done();
-  exit(1);
+  exit(u3_Host.xit_i);
 }
 
 /* u3_king_grab(): gc the daemon
