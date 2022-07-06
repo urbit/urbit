@@ -318,6 +318,19 @@
       haw=(map mood (unit cage))                        ::  simple cache
   ==                                                    ::
 ::
++$  bill  (list dude:gall)
+::  diff from desk.bill
+::
+::  -- `.liv`: suspended? if suspended, no agents should run
+::  -- `.add`: agents not in manifest that should be running
+::  -- `.sub`: agents in manifest that should not be running
+::
++$  rein
+  $:  liv=_&
+      add=(set dude:gall)
+      sub=(set dude:gall)
+  ==
+::
 ::  Active downloads
 ::
 +$  update-state
@@ -1853,8 +1866,8 @@
       =/  bill  !<((list dude:gall) q.bill-cage)
       ::  build-file for each dude
       ::
-      =^  agents=(list [dude:gall beak agent:gall])  nub.f
-        =|  agents=(list [dude:gall beak agent:gall])
+      =^  agents=load:gall  nub.f
+        =|  agents=load:gall
         |-  ^-  [(list [dude:gall beak agent:gall]) _nub.f]
         ?~  bill
           [agents nub.f]
@@ -1871,7 +1884,7 @@
       ::  load agents into gall
       ::
       :-  ford-args
-      (emit hen %pass /jolt/[syd] %g %load agents)
+      (emit hen %pass /lu/load/[syd] %g %load agents)
     ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
     ::
     ++  get-kelvin
@@ -4234,6 +4247,129 @@
       --
     --
   --
+::  userspace agent management
+::
+++  lu
+  |=  [now=@da rof=roof hen=duct raft]
+  =*  ruf  |3.+<.$
+  =|  mow=(list move)
+  |%
+  ++  abet
+    ^-  [(list move) raft]
+    [(flop mow) ruf]
+  ::
+  ++  emit
+    |=  mof=move
+    %_(+> mow [mof mow])
+  ::
+  ++  emil
+    |=  mof=(list move)
+    %_(+> mow (weld (flop mof) mow))
+  ::  Init ford
+  ::
+  ++  ford
+    |=  [her=ship syd=desk yon=(unit aeon)]
+    =/  den  ((de now rof hen ruf) her syd)
+    (aeon-ford:den ?~(yon let.dom:den u.yon))
+  ::  Save ford cache
+  ::
+  ++  wrap
+    |*  [her=ship syd=desk yon=(unit aeon) res=* =state:ford:fusion]
+    =^  moves  ruf
+      =/  den  ((de now rof hen ruf) her syd)
+      abet:+:(aeon-flow:den ?~(yon let.dom:den u.yon) res cache.state &2.state)
+    [res (emil moves)]
+  ::  +goad: emit %jolt moves for all desks, applying $rein's
+  ::
+  ++  goad
+    ^+  ..abet
+    =^  sat=(list [=desk =bill])  ..abet
+      =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+      |-  ^-  [(list [desk bill]) _..abet]
+      ?~  desks
+        [~ ..abet]
+      =/  den  ((de now rof hen ruf) our i.desks)
+      =^  res  den  (aver:den ~ %x da+now /desk/bill)
+      =.  ruf  +:abet:den
+      ?.  ?=([~ ~ *] res)
+        $(desks t.desks)
+      =/  bill  ~|  [%building-bill i.desks]  !<(bill q.u.u.res)
+      =^  sats  ..abet  $(desks t.desks)
+      [[[i.desks bill] sats] ..abet]
+    ::
+    =.  sat  (apply-precedence sat)
+    =^  agents  ..abet  (build-agents sat)
+    (emit hen %pass /lu/load %g %load agents)
+  ::
+  ::  XX unused, should add rein to state
+  ::
+  ++  override
+    |=  [duz=bill =rein]
+    ^-  bill
+    ?.  liv.rein  ~
+    =.  duz  (skip duz ~(has in sub.rein))
+    =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
+    duz
+  ::  +apply-precedence: resolve conflicts between $bill's
+  ::
+  ::    %base takes precedence over other desks.
+  ::    Other desks have alphabetical precedence ('a' over 'b').
+  ::    Within each desk, the $bill order is respected.
+  ::
+  ++  apply-precedence
+    |=  sat=(list [=desk =bill])
+    ^+  sat
+    ::  sort desks in alphabetical order with %base first
+    ::
+    =.  sat  (sort sat sort-desks)
+    ::  for each desk
+    ::
+    =|  done=(set dude:gall)
+    |-  ^+  sat
+    ?~  sat
+      ~
+    :_  ^$(sat t.sat)
+    ::  for each agent
+    ::
+    :-  desk.i.sat
+    =/  bil  bill.i.sat
+    |-  ^-  bill
+    ?~  bil
+      ~
+    ::
+    ?:  (~(has in done) i.bil)
+      $(bil t.bil)
+    =.  done  (~(put in done) i.bil)
+    [i.bil $(bil t.bil)]
+  ::
+  ++  sort-desks
+    |=  [a=[=desk *] b=[=desk *]]
+    ^-  ?
+    ?:  =(%base desk.a)  &
+    ?:  =(%base desk.b)  |
+    (aor desk.a desk.b)
+  ::  build-file for each dude
+  ::
+  ++  build-agents
+    |=  sat=(list [=desk =bill])
+    ^-  [load:gall _..abet]
+    =|  lad=load:gall
+    |-  ^-  [load:gall _..abet]
+    ?~  sat
+      [lad ..abet]
+    =/  f  (ford our desk.i.sat ~)
+    =^  new=load:gall  ..abet
+      %-  wrap  :^  our  desk.i.sat  ~
+      |-  ^-  [load:gall state:ford:fusion]
+      ?~  bill.i.sat
+        [~ nub.f]
+      =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
+      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
+      =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
+      [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
+    =.  lad  (weld new lad)
+    $(sat t.sat)
+  --
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4cA, filesystem vane
@@ -4440,9 +4576,12 @@
     [mos ..^$]
   ::
       %stir
-    ?+  arg.req  ~|(%strange-stir !!)
-      [%verb @]  [~ ..^$(veb.bug.ruf +.arg.req)]
-      [%mass @]  [~ ..^$(mas.bug.ruf +.arg.req)]
+    ?+    arg.req  ~|(%strange-stir !!)
+        [%verb @]  [~ ..^$(veb.bug.ruf +.arg.req)]
+        [%mass @]  [~ ..^$(mas.bug.ruf +.arg.req)]
+        [%goad ~]
+      =^  mos  ruf  abet:goad:(lu now rof hen ruf)
+      [mos ..^$]
     ==
   ::
       %tomb  (tomb-clue:tomb hen clue.req)
@@ -5156,7 +5295,7 @@
   ^+  [*(list move) ..^$]
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
-  ?:  ?=([%jolt *] tea)
+  ?:  ?=([%lu %load *] tea)
     ?:  ?=(%onto +<.hin)
       [~ ..^$]
     ?>  ?=(%unto +<.hin)

@@ -1650,7 +1650,7 @@
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
-        [%load agents=(list [=dude =beak =agent])]      ::  load agent
+        [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
@@ -1676,6 +1676,7 @@
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
+  +$  load  (list [=dude =beak =agent])                 ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct

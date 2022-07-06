@@ -585,11 +585,14 @@
     mo-core(yokes.state (~(del by yokes.state) dap))
   ::  +mo-load: install agents
   ::
+  ::  XX shoud idle any agents not listed
+  ::
   ++  mo-load
     |=  agents=(list [=dude =beak =agent])
     ^+  mo-core
     ?~  agents
       ..mo-core
+    ~&  [%loading dude.i.agents q.beak.i.agents]
     =.  mo-core  (mo-receive-core i.agents)
     $(agents t.agents)
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
