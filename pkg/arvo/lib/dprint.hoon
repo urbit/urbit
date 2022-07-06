@@ -262,7 +262,7 @@
 :>  this arm should be handed the compiled type of the hoon of an arm, as well
 :>  as the name of that arm. it checks for up to 2 nested hints on the outermost
 :>  layer of the type. if you have 2, it is presumed to be arm-doc followed by
-:>  product-doc. if you only have one, we check links in the $help of the hint
+:>  product-doc. if you only have one, we check .cuff in the $help of the hint
 :>  to determine whether it is an arm doc or product doc.
 :>
 :>  this returns ~ if there are no docs. if there are docs, the first one is the
@@ -276,10 +276,10 @@
   ?~  doc-one
     ~?  >  debug  %doc-one-empty
     ~  ::  no need to look for a second doc if there is no first one
-  ?:  =(~ links.u.doc-one)
+  ?:  =(~ cuff.u.doc-one)
       :: doc-one is a product-doc
       [~ [~ `crib.u.doc-one]]
-  ?:  !=(name ->.links.u.doc-one)
+  ?:  !=(name ->.cuff.u.doc-one)
     :: link on doc-one doesnt match arm name, so that means its calling a
     :: different arm and trying to use its docs. don't let it
     ~
@@ -290,15 +290,15 @@
     (help-from-hint q.sut)
   ?~  doc-two
     ~?  >  debug  %doc-two-empty
-    :: if links are non-empty, check that the link is for the arm
-    ?:  =(name ->.links.u.doc-one)
+    :: if .cuff is non-empty, check that the link is for the arm
+    ?:  =(name ->.cuff.u.doc-one)
       ~?  >  debug  %link-match
       [~ [`crib.u.doc-one ~]]
     ~?  >  debug  %link-doesnt-match-arm
     ::  this can happen if +bar calls +foo which has doccords
     [~ [`crib.u.doc-one ~]]
   ::  doc-two is non-empty. make sure that doc-one is an arm-doc for this arm
-  ?>  =(name ->.links.u.doc-one)
+  ?>  =(name ->.cuff.u.doc-one)
   [~ [`crib.u.doc-one `crib.u.doc-two]]
 ::
 :>    +all-arm-docs: grabs the docs for an arm.
