@@ -124,6 +124,8 @@
       nor=norm                                          ::  default policy
       mim=(map path mime)                               ::  mime cache
       fod=flue                                          ::  ford cache
+      liv=?                                             ::  running agents
+      ren=(map dude ?)                                  ::  force agents on/off
   ==                                                    ::
 ::
 ::  Commit state.
@@ -1749,7 +1751,8 @@
         |=  [=path tum=(each page lobe)]
         ?:  |(?=(%& -.tum) (~(has by lat.ran) p.tum))
           &
-        (mean leaf/"clay: commit failed, file tombstoned: {<path>} {<`@uv`p.tum>}" ~)
+        =-  (mean leaf/- ~)
+        "clay: commit failed, file tombstoned: {<path>} {<`@uv`p.tum>}"
       !!
     ::  find desk kelvin
     ::
@@ -1843,6 +1846,7 @@
     =.  fod.dom  [spill sprig]:args
     =.  fad      cache.args
     =.  ..park   (emil (print q.old-yaki data))
+    ::=?  ..park  liv.dom  goad:(lu now rof hen ruf) ::  TODO enable
     wake:?:(mem (ergo 0 mum.res) ..park)
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
@@ -4385,7 +4389,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%12                                       ::  vane version
+    $:  ver=%13                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4671,7 +4675,8 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%12 raft-12]
+        $%  [%13 raft-13]
+            [%12 raft-12]
             [%11 raft-11]
             [%10 raft-10]
             [%9 raft-9]
@@ -4679,16 +4684,59 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-12  raft
-      +$  raft-11
-        $:  rom=room
-            hoy=(map ship rung)
+      +$  raft-13  raft
+      +$  raft-12
+        $:  rom=room-11
+            hoy=(map ship rung-11)
             ran=rang
             fad=flow
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
             pud=(unit [=desk =yoki])
+            bug=[veb=@ mas=@]
+        ==
+      +$  raft-11
+        $:  rom=room-11
+            hoy=(map ship rung-11)
+            ran=rang
+            fad=flow
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+        ==
+      +$  room-11
+        $:  hun=duct
+            dos=(map desk dojo-11)
+        ==
+      +$  dojo-11
+        $:  qyx=cult
+            dom=dome-11
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dome-11
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=flue
+        ==
+      +$  rung-11
+        $:  rus=(map desk rede-11)
+        ==
+      +$  rede-11
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-11
+            per=regs
+            pew=regs
+            fiz=melt
         ==
       +$  raft-10
         $:  rom=room-10
@@ -5125,6 +5173,39 @@
     |=  raf=raft-11
     ^-  raft-12
     raf(pud [pud.raf 0 0])
+  ::  +raft-12-to-13: add .liv and .ren to $dome's
+  ::
+  ++  raft-12-to-13
+    |=  raf=raft-12
+    |^  ^-  raft-13
+    ::  turn on %base desk  ::  TODO handle other desks somehow
+    ::
+    =;  rof
+      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv &)))
+    %=  raf
+      dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
+      hoy  (~(run by hoy.raf) rung-11-to-13)
+    ==
+    ++  dojo-11-to-13
+      |=  doj=dojo-11
+      ^-  dojo
+      doj(dom (dome-11-to-13 dom.doj))
+    ::
+    ++  rung-11-to-13
+      |=  rug=rung-11
+      ^-  rung
+      rug(rus (~(run by rus.rug) rede-11-to-13))
+    ::
+    ++  rede-11-to-13
+      |=  red=rede-11
+      ^-  rede
+      red(dom (dome-11-to-13 dom.red))
+    ::
+    ++  dome-11-to-13
+      |=  dom=dome-11
+      ^-  dome
+      dom(fod [fod liv=| ren=~])
+    --
   --
 ::
 ++  scry                                              ::  inspect
