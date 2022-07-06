@@ -4,7 +4,7 @@ export interface Suspender<T> {
   read: () => T;
 }
 
-export function suspend<T>(awaiting: Promise<T>): Suspender<T> {
+export function suspend<T>(awaiting: Promise<T>, defaultValue?: any): Suspender<T> {
   let state: SuspendState = 'pending';
   let result: T | null = null;
 
@@ -22,8 +22,10 @@ export function suspend<T>(awaiting: Promise<T>): Suspender<T> {
     read: () => {
       if (state === 'result') {
         return result!;
-      } else if (state === 'error') {
+      } else if (state === 'error' && typeof defaultValue === 'undefined') {
         throw result;
+      } else if (state === 'error' && typeof defaultValue !== 'undefined') {
+        return defaultValue;
       } else {
         throw promise;
       }
