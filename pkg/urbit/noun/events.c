@@ -29,6 +29,11 @@
 //!     handled outside this module).
 //!   - faults are handled by dirtying the page and switching protections to
 //!     read/write.
+//!   - a guard page is initially placed in the approximate middle of the free
+//!     space between the heap and stack at the time of the first page fault.
+//!     when a fault is detected in the guard page, the guard page is recentered
+//!     in the free space of the current road. if the guard page cannot be
+//!     recentered, then memory exhaustion has occurred.
 //!
 //! ### updates (u3e_save())
 //!
@@ -70,6 +75,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+
+//! Urbit page size in 4-byte words.
+static const size_t pag_wiz_i = 1 << u3a_page;
+
+//! Urbit page size in bytes.
+static const size_t pag_siz_i = sizeof(c3_w) * pag_wiz_i;
 
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
@@ -177,6 +188,52 @@ _ce_mapfree(void* map_v)
 c3_i
 u3e_fault(void* adr_v, c3_i ser_i)
 {
+  //! Place a guard page at the (approximate) middle of the free space between
+  //! the heap and stack of the current road.
+  //!
+  //! @param[in] failure_action  Action to perform on failure.
+#define center_guard_page(failure_action)                                      \
+  do {                                                                         \
+    u3p(c3_w) bottom_page, top_page;                                           \
+    if ( c3y == u3a_is_north(u3R) ) {                                          \
+      top_page    = c3_rod(u3R->cap_p, pag_wiz_i);                             \
+      bottom_page = c3_rop(u3R->hat_p, pag_wiz_i);                             \
+    }                                                                          \
+    else {                                                                     \
+      top_page    = c3_rod(u3R->hat_p, pag_wiz_i);                             \
+      bottom_page = c3_rop(u3R->cap_p, pag_wiz_i);                             \
+    }                                                                          \
+    if ( top_page < bottom_page + pag_wiz_i ) {                                \
+      fprintf(stderr,                                                          \
+              "loom: not enough memory to recenter the guard page\r\n");       \
+      failure_action;                                                          \
+    } else {                                                                   \
+      const u3p(c3_w) previous_guard_page = gar_pag_p;                         \
+      const c3_w midpoint = (top_page - bottom_page) / 2;                      \
+      gar_pag_p = bottom_page + c3_rod(midpoint, pag_wiz_i);                   \
+      if ( previous_guard_page == gar_pag_p ) {                                \
+        fprintf(stderr,                                                        \
+                "loom: can't move the guard page to the same location"         \
+                " (base address %p)\r\n",                                      \
+                u3a_into(gar_pag_p));                                          \
+        failure_action;                                                        \
+      }                                                                        \
+      else if ( -1 == mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {  \
+        fprintf(stderr,                                                        \
+                "loom: failed to protect the guard page "                      \
+                "(base address %p)\r\n",                                       \
+                u3a_into(gar_pag_p));                                          \
+        failure_action;                                                        \
+      }                                                                        \
+    }                                                                          \
+  } while ( 0 )
+
+  // Base loom offset of the guard page.
+  static u3p(c3_w) gar_pag_p;
+  if ( 0 == gar_pag_p ) {
+    center_guard_page(goto fail);
+  }
+
   //  Let the stack overflow handler run.
   if ( 0 == ser_i ) {
     return 0;
@@ -191,43 +248,37 @@ u3e_fault(void* adr_v, c3_i ser_i)
     fprintf(stderr, "address %p out of loom!\r\n", adr_w);
     fprintf(stderr, "loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3a_words);
     c3_assert(0);
-    return 0;
   }
-  else {
-    c3_w off_w = u3a_outa(adr_w);
-    c3_w pag_w = off_w >> u3a_page;
-    c3_w blk_w = (pag_w >> 5);
-    c3_w bit_w = (pag_w & 31);
 
-#if 0
-    if ( pag_w == 131041 ) {
-      u3l_log("dirty page %d (at %p); unprotecting %p to %p\r\n",
-              pag_w,
-              adr_v,
-              (u3_Loom + (pag_w << u3a_page)),
-              (u3_Loom + (pag_w << u3a_page) + (1 << u3a_page)));
-    }
-#endif
+  u3p(c3_w) adr_p  = u3a_outa(adr_w);
+  c3_w      pag_w  = adr_p >> u3a_page;
+  c3_w      blk_w  = (pag_w >> 5);
+  c3_w      bit_w  = (pag_w & 31);
 
-    if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
-      fprintf(stderr, "strange page: %d, at %p, off %x\r\n",
-              pag_w, adr_w, off_w);
-      c3_assert(0);
-      return 0;
-    }
-
-    u3P.dit_w[blk_w] |= (1 << bit_w);
-
-    if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
-                        (1 << (u3a_page + 2)),
-                        (PROT_READ | PROT_WRITE)) )
-    {
-      fprintf(stderr, "loom: fault mprotect: %s\r\n", strerror(errno));
-      c3_assert(0);
-      return 0;
-    }
+  // The fault happened in the guard page.
+  if ( gar_pag_p <= adr_p && adr_p < gar_pag_p + pag_wiz_i ) {
+    center_guard_page(goto fail);
   }
+  else if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+    fprintf(stderr, "strange page: %d, at %p, off %x\r\n", pag_w, adr_w, adr_p);
+    c3_assert(0);
+  }
+
+  u3P.dit_w[blk_w] |= (1 << bit_w);
+
+  if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
+                      (1 << (u3a_page + 2)),
+                      (PROT_READ | PROT_WRITE)) )
+  {
+    fprintf(stderr, "loom: fault mprotect: %s\r\n", strerror(errno));
+    c3_assert(0);
+  }
+
   return 1;
+
+fail:
+  u3m_bail(c3__meme);
+#undef center_guard_page
 }
 
 /* _ce_image_open(): open or create image.
