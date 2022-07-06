@@ -13145,6 +13145,17 @@
                     (stag %leaf (stag %tas ;~(pose sym (cold %$ buc))))
                   ==
                 ::
+                  ::  /@aura
+                  ::
+                  :-  '@'
+                  %+  cook
+                    |=  =aura
+                    ^-  spec
+                    :+  %bccl
+                      [%leaf %tas aura]
+                    [%base %atom aura]~
+                  ;~(pfix pat mota)
+                ::
                   ::  /~
                   ::
                   :-  '~'
