@@ -2713,12 +2713,12 @@
         =.  snd.peer-state
           (~(put by snd.peer-state) target-bone message-pump-state)
         ::  if we get a naxplanation for a %cork, the publisher is behind
-        ::  receiving the OTA, so we set up a timer to retry in one hour.
+        ::  receiving the OTA, so we set up a timer to retry in one day.
         ::
         %-  %+  trace  msg.veb
-            |.("old publisher, resend %cork on bone={<target-bone>} in ~h1")
+            |.("old publisher, resend %cork on bone={<target-bone>} in ~d1")
         =/  =wire  (make-pump-timer-wire her.channel target-bone)
-        (emit [/ames-recork]~ %pass wire %b %wait `@da`(add now ~h1))
+        (emit [/ames-recork]~ %pass wire %b %wait `@da`(add now ~d1))
       ::  +on-sink-plea: handle request message received by |message-sink
       ::
       ++  on-sink-plea
