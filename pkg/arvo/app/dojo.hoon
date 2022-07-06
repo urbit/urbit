@@ -174,8 +174,10 @@
     ::
       ;~  pfix  fas
         ;~  pose
-          (parse-variable (cold %sur hep) ;~(pfix gap (parse-ford %sur)))
-          (parse-variable (cold %lib lus) ;~(pfix gap (parse-ford %lib)))
+          (parse-variable (cold %sur hep) ;~(pfix gap (parse-cables %sur)))
+          (parse-variable (cold %lib lus) ;~(pfix gap (parse-cables %lib)))
+          ;~(pfix tis gap (parse-variable sym ;~(pfix gap parse-path)))
+          ;~(pfix cen gap (parse-variable sym ;~(pfix gap parse-mark)))
         ==
       ==
     ::
@@ -193,7 +195,7 @@
       (stag %show (cook $?(%1 %2 %3 %4 %5) (cook lent (stun [1 5] wut))))
     ==
   ::
-  ++  parse-ford
+  ++  parse-cables
     |=  base-path=@ta
     %-  cook  :_  (most ;~(plug com gaw) parse-cable)
     |=  cables=(list cable:clay)
@@ -213,6 +215,16 @@
       (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
       (cook |=(a=term [`a a]) sym)
     ==
+  ::
+  ++  parse-mark
+    %-  cook  :_  ;~(pfix cen sym)
+    |=  mark=@tas
+    [0 %dv -.dir `path`[~.mar mark ~]]
+  ::
+  ++  parse-path
+    %+  cook  |=(=path [0 %dv -.dir path])
+    ;~(pfix fas (more fas sym))
+  ::
   ++  parse-source  (stag 0 parse-build)
   ++  parse-build
       %+  knee  *dojo-build  |.  ~+
