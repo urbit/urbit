@@ -6307,9 +6307,13 @@
 +$  link                                                ::  lexical segment
           $%  [%chat p=term]                            ::  |chapter
               [%cone p=aura q=atom]                     ::  %constant
-              [%frag p=term]                            ::  .leg
+              [%frag p=term]                            ::  .face
               [%funk p=term]                            ::  +arm
-              [%grog p=term]                            ::  $mold
+              [%plan p=term]                            ::  $spec
+              [%core p=term]                            ::  ^core
+              [%door p=term]                            ::  _door
+              [%gate p=term]                            ::  =gate
+              [%path p=term]                            ::  /path
           ==                                            ::
 +$  crib  [summary=cord details=(list sect)]            ::
 +$  help  [links=(list link) =crib]                     ::  documentation
@@ -6601,12 +6605,10 @@
 +$  vair  ?(%gold %iron %lead %zinc)                    ::  in/contra/bi/co
 +$  vein  (list (unit axis))                            ::  search trace
 +$  sect  (list pica)                                   ::  paragraph
-+$  whit                                                ::
-          $:  lab=(unit link)                           ::  label
-              boy=(unit (pair cord (list sect)))        ::  body
-              def=(map term (pair cord (list sect)))    ::  definitions
-              use=(set term)                            ::  defs used
-          ==                                            ::
++$  whit
+  $:  bat=(map (list link) (pair cord (list sect)))     ::  batch comments
+      use=(set (list link))                             ::  defs used
+  ==                                                    ::
 +$  what  (unit (pair cord (list sect)))                ::  help slogan/section
 +$  wing  (list limb)                                   ::  search path
 ::
@@ -11543,78 +11545,106 @@
   ++  glom
     |=  [wit=whit taw=whit]
     ^-  whit
-    :*  ?~(lab.wit lab.taw lab.wit)
-        ?~(boy.wit boy.taw boy.wit)
-        (~(uni by def.wit) def.taw)
+    :*  (~(uni by bat.wit) bat.taw)
         (~(uni in use.wit) use.taw)
     ==
+  ::
   ++  docs
     |%
-    ::
-    ::  +apex: above hoon
+    ::  +apex: prefix comment. may contain batch comments
     ++  apex
-      %+  cook
-        |=  $:  a=(unit (pair cord (list sect)))
-                b=(map term (pair cord (list sect)))
-                c=(set term)
-            ==
-        [*(unit link) a b c]
+      %+  knee  *whit  |.  ~+
       ;~  plug
-        =/  ron  (punt (indo null))
-        (ifix [ron ron] (punt body))                    ::  body
-        ::
-        (cook malt (star fill))                         ::  definitions
-        ::
-        (easy ~)                                        ::  defs used (none)
+        (cook malt (star lore))
+      ::
+        (easy ~)
       ==
     ::
-    ::  +vext: parser for batch comments inside of cores
-    ++  vext
-      %-  star
-      ;~  less
-        ::  find a better fail condition than this
-        ;~(plug gap lus lus)
-        ;~(plug gap lus buc)
-        ;~(plug gap lus tar)
-        ;~  plug
-          (ingo (punt dibs))                              ::  link
-          ::
-          =/  ron  (punt (indo null))
-          (ifix [ron ron] (punt shot))                    ::  body
-          ::
-          (cook malt (star fill))                         ::  definitions
-          ::
-          (easy ~)                                        ::  defs used (none)
-        ==
-      ==
-    ::
-    ::  +apse: backward line
+    ::  +apse: postfix comment
     ++  apse
       ;~  pose
-        %+  cook  |=([a=term b=cord] %*(. *whit def (my [a b ~] ~)))
-        (exit fine)
-      ::
-        %+  cook  |=(a=cord %*(. *whit boy `[a ~]))
+        %+  cook  |=(a=cord %*(. *whit bat (my `[a ~] ~)))
         (exit line)
       ::
         (easy *whit)
       ==
     ::
-    ++  body
-      ;~  pose
-        ;~  plug                                        :: can duplicate ::
-          (into ;~(pfix (punt ;~(plug null col gar step)) line))
-          (easy ~)
+    ++  lore
+      %+  cook
+        |=  [[a=(list link) b=cord] c=(list sect) d=(unit ~)]
+        [a b c]
+      ;~(pose smol larg)
+    ::
+    ::    +smol: doccords parser, consumes two aces and a nonempty (list link)
+    ::
+    ::  only for one-liner comments to be attached to the given link
+    ++  smol
+      ;~  plug  :: 2 spaces, link, one-liner, newline
+        ;~  sfix
+          ;~  plug
+            (inso dibs)  :: 2 spaces, then link => one-liner
+            (cook crip (star prn))
+          ==
+        ;~(plug (just `@`10) (punt gap))
         ==
-        ;~  plug
-          (into ;~(pfix step line))
-          (rant text)
-        ==
+        (easy ~)
+        (punt (indo null))
       ==
     ::
-    ::  +dibs: parses a $link at the start of a formal comment
+    ::    +larg: annotates for four aces, optional link
+    ::
+    ::  four aces without a link means this is a short or long comment to be attached
+    ::  to the following $hoon or $spec. a (list link) means this is a potentially
+    ::  long form batch comment
+    ++  larg
+      ;~  plug
+        ;~  sfix
+          ;~  plug
+            deep
+            (cook crip (star prn))
+          ==
+          ;~(plug (just `@`10) (punt gap))
+        ==
+        (rant text)
+        (punt (indo null))
+      ==
+    ::
+    ++  deep
+      ;~  pose
+        (inlo dibs)
+        (cold *(list link) ;~(plug col gar step step))
+      ==
+    ::
+    ++  rant
+      |*  sec=rule
+      %-  star
+      ;~  pfix
+        (indo null)
+        (plus (into sec))
+      ==
+    ::
+    ++  null  (cold ~ (star ace))
+    ++  text  (pick line code)
+    ++  line  ;~(less ace (cook crip (star prn)))
+    ++  code  ;~(pfix step step (cook crip (star prn)))
+    ++  step  ;~(plug ace ace)
+    ::
+    ++  inlo  |*(bod=rule (ifix [;~(plug col gar step step) ;~(plug col ace)] bod))
+    ++  inso  |*(bod=rule (ifix [;~(plug col gar step) ;~(plug col ace)] bod)) :: short comment
+    ++  into  |*(bod=rule (indo ;~(pfix step bod)))
+    ++  indo
+      |*  bod=rule
+      (ifix [;~(plug col gar) ;~(plug (just `@`10) (punt gap))] bod)
+    ::
+    ++  exit
+      |*  bod=rule
+      ;~(pfix (star ace) col gal step bod)
+    ::
     ++  dibs
-      %+  cook  |=([a=term b=term] ;;(link [a b]))
+      (star en-link)
+    ++  en-link
+      |=  a=nail  %.  a
+      %+  knee  *link  |.  ~+
       %-  stew
       ^.  stet  ^.  limo
       :~  :-  '|'
@@ -11624,64 +11654,17 @@
           :-  '+'
           ;~(pfix lus (stag %funk sym))
           :-  '$'
-          ;~(pfix buc (stag %grog sym))
-          :-  ' '
-          ;~(pfix step (stag %funk (easy %$)))
-      ==
-    ++  shot
-      ;~(plug ;~(sfix line (just `@`10) (punt gap)) (rant ;~(less tine text)))
-    ::
-    ++  text  (pick line code)                          ::  text line
-    ++  line  ;~(less ace (cook crip (star prn)))       ::  prose line
-    ++  code  ;~(pfix step step (cook crip (star prn))) ::  code line
-    ++  noel  ;~(plug (punt ;~(pfix step hax)) null)    ::  header padding
-    ++  null  (cold ~ (star ace))                       ::  blank line
-    ++  fine                                            ::  definition line
-      ;~  (glue ;~(plug col ace))
-        sym
-        (cook crip (star prn))
-      ==
-    ++  tine
-      ;~  (glue ;~(plug col ace))
-        dibs
-        (cook crip (star prn))
-      ==
-    ::
-    ::  +step: indent
-    ::  +into: :: and indent to end of line, consuming following space.
-    ::  +indo: :: to end of line, consuming following space.
-    ::  +exit: :: to end of line, not consuming following space.
-    ::  +ingo: :: then consume, followed by col ace
-    ::
-    ++  step  ;~(plug ace ace)
-    ++  into  |*(bod=rule (indo ;~(pfix step bod)))
-    ++  indo
-      |*  bod=rule
-      (ifix [;~(plug col gar) ;~(plug (just `@`10) (punt gap))] bod)
-    ++  ingo
-      |*  bod=rule
-      (ifix [;~(plug col gar step) ;~(plug col ace)] bod)
-    ::
-    ++  exit
-      |*  bod=rule
-      ;~(pfix (star ace) col gal step bod)
-    ::
-    ::  +fill: full definition
-    ++  fill
-      %+  cook  |=([[a=term b=cord] c=(list sect) (unit ~)] [a b c])
-      ;~  plug
-        (into fine)
-        (rant ;~(pfix step text))
-        (punt (indo null))
-      ==
-    ::
-    ::  +rant: series of sections.
-    ++  rant
-      |*  sec=rule
-      %-  star
-      ;~  pfix
-        (punt (indo null))  :: why did i need to add a punt here?
-        (plus (into sec))
+          ;~(pfix buc (stag %plan sym))
+          :-  '%'
+          ;~(pfix cen (stag %cone bisk:so))
+          :-  '^'
+          ;~(pfix ket (stag %core sym))
+          :-  '_'
+          ;~(pfix cab (stag %door sym))
+          :-  '='
+          ;~(pfix tis (stag %gate sym))
+          :-  '/'
+          ;~(pfix fas (stag %path sym))
       ==
     --
   ::
@@ -13279,25 +13262,25 @@
     ++  boog  !:                                        ::  core arms
       %+  knee  [p=*term q=*hoon]  |.  ~+
       %+  cook
-        |=  [a=(list whit) b=term d=hoon]
+        |=  [a=whit b=term d=hoon]
+        =+  docs=~(tap by bat.a)
         |-
-        ?~  a  [b d]
-        ?~  lab.i.a  $(a t.a)
-        ?~  boy.i.a  $(a t.a)
+        ?~  docs  [b d]
         %=  $
-          a  t.a
-          d  [%note help+[[u.lab.i.a]~ u.boy.i.a] d]
+          docs  t.docs
+          d     [%note help+i.docs d]
         ==
       ;~  pose
         %+  cook
-          |=  [a=(list whit) b=term c=whit d=hoon]
-          ?:  =([~ ~ ~ ~] c)
-            [a b d]
-          ?~  boy.c
-            [a b d]
-          [a b [%note help+[[funk+b]~ u.boy.c] d]]
+          |=  [a=whit b=term c=whit d=hoon]
+          =+  e=(glom a c)
+          =+  doc=(~(get by bat.e) ~)
+          ?~  doc
+            [e b d]
+          =.  bat.e  (~(del by bat.e) ~)
+          [e b [%note help+[[funk+b]~ u.doc] d]]
         ;~  plug
-          vext:docs
+          apex:docs
           ;~  pfix  (jest '++')
             ;~  plug
               ;~(pfix gap ;~(pose (cold %$ buc) sym))
@@ -13308,14 +13291,15 @@
         ==
       ::
         %+  cook
-          |=  [a=(list whit) b=term c=whit d=spec]
-          ?:  =([~ ~ ~ ~] c)
-            [a b [%ktcl [%name b d]]]
-          ?~  boy.c
-            [a b [%ktcl [%name b d]]]
-          [a b [%note help+[[grog+b]~ u.boy.c] [%ktcl [%name b d]]]]
+          |=  [a=whit b=term c=whit d=spec]
+          =+  e=(glom a c)
+          =+  doc=(~(get by bat.e) ~)
+          ?~  doc
+            [e b [%ktcl [%name b d]]]
+          =.  bat.e  (~(del by bat.e) ~)
+          [e b [%note help+[[plan+b]~ u.doc] [%ktcl [%name b d]]]]
         ;~  plug
-          vext:docs
+          apex:docs
           ;~  pfix  (jest '+$')
             ;~  plug
               ;~(pfix gap sym)
@@ -13327,7 +13311,7 @@
       ::
         %+  cook
           |=  [b=term d=hoon]
-          [*(list whit) b d]
+          [*whit b d]
         ;~  plug
           %+  cook
             |=  [b=term c=(list term) e=spec]
@@ -13376,6 +13360,7 @@
       %+  cook
         |=  a=(list (pair term hoon))
         ::  check hoons for notes and move them to the correct arm
+        ::
         %-  glow
         |-  ^-  (map term hoon)
         ?~  a  ~
@@ -13392,6 +13377,7 @@
       |=  dab=(map term hoon)
       ^-  (map term hoon)
       ::  strips each hoon of wrapped help notes and puts them in a list
+      ::
       =/  [duds=(list help) nude=(map term hoon)]
         %+  ~(rib by dab)  *(list help)
         |=  [[a=term gen=hoon] duds=(list help)]
@@ -13408,21 +13394,25 @@
       |-
       ?~  duds  nude
       ::  if there is no link, its not part of a batch comment
+      ::
       ?~  links.i.duds
         $(duds t.duds)
-      =/  nom=term
-        ?-    i.links.i.duds
-            [%cone *]
-          q.i.links.i.duds
+      ::  we don't look past the first link for the initial release of doccords
+      ::
+      =/  nom=(unit term)
+        ?+    i.links.i.duds  ~
+        ::  we only support ++ and +$ batch comments in this release
         ::
-            ?([%chat *] [%frag *] [%funk *] [%grog *])
-          p.i.links.i.duds
+            ?([%funk *] [%plan *])
+          `p.i.links.i.duds
         ==
       %=  $
         duds  t.duds
-        nude  ?.  (~(has by nude) nom)
-                ~&(nom+'unmatched link' nude)
-              (~(jab by nude) nom |=(a=hoon [%note help+i.duds a]))
+        nude  ?~  nom  nude
+              ?.  (~(has by nude) u.nom)
+                ~>  %slog.[0 leaf+"glow: unmatched link"]
+                nude
+              (~(jab by nude) u.nom |=(a=hoon [%note help+i.duds a]))
       ==
     ::
     ++  whip                                            ::  chapter declare
@@ -13458,7 +13448,10 @@
         :_  (~(uni by q.mor) q.wap.i.a)
         %+  ~(put by p.mor)
           p.wap.i.a
-        :-  boy.wit.i.a                       :: body of the whit set as the what
+        :-  %-  ~(get by bat.wit.i.a)
+            ?:  (~(has by bat.wit.i.a) [%chat p.wap.i.a]~)
+              [%chat p.wap.i.a]~
+            ~
         ?.  (~(has by p.mor) p.wap.i.a)
           q.wap.i.a
         [[%$ [%eror (weld "duplicate chapter: |" (trip p.wap.i.a))]] ~ ~]
@@ -13788,16 +13781,26 @@
     |*  fel=rule
     %+  cook
       |=  [a=whit b=hoon]
-      ?~  boy.a  b
-      [%note help+`u.boy.a b]
+      =+  docs=~(tap by bat.a)
+      |-
+      ?~  docs  b
+      %=  $
+        docs  t.docs
+        b     [%note help+[i.docs] b]
+      ==
     fel
   ::
   ++  coat                                              ::  docs into %dict
     |*  fel=rule
     %+  cook
       |=  [a=whit b=spec]
-      ?~  boy.a  b
-      [%dict `u.boy.a b]
+      =+  docs=~(tap by bat.a)
+      |-
+      ?~  docs  b
+      %=  $
+        docs  t.docs
+        b     [%dict i.docs b]
+      ==
     fel
   ::
   ++  tall                                              ::  full tall form
