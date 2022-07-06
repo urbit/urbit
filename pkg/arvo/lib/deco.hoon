@@ -161,7 +161,7 @@
 :>        %hello
 :>      %world
 :>
-++  say-goodbye                                         :<  say bye to someone
+++  say-goodbye
   :>    describe product of function
   :>
   |=  :>  .txt: departing friend
