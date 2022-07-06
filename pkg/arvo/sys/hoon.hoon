@@ -6315,8 +6315,9 @@
               [%gate p=term]                            ::  =gate
               [%path p=term]                            ::  /path
           ==                                            ::
++$  cuff  (list link)                                   ::  parsed lex segments
 +$  crib  [summary=cord details=(list sect)]            ::
-+$  help  [links=(list link) =crib]                     ::  documentation
++$  help  [=cuff =crib]                                 ::  documentation
 +$  limb  $@  term                                      ::  wing element
           $%  [%& p=axis]                               ::  by geometry
               [%| p=@ud q=(unit term)]                  ::  by name
@@ -6605,9 +6606,9 @@
 +$  vair  ?(%gold %iron %lead %zinc)                    ::  in/contra/bi/co
 +$  vein  (list (unit axis))                            ::  search trace
 +$  sect  (list pica)                                   ::  paragraph
-+$  whit
-  $:  bat=(map (list link) (pair cord (list sect)))     ::  batch comments
-      use=(set (list link))                             ::  defs used
++$  whit                                                ::  doccords parse
+  $:  bat=(map cuff (pair cord (list sect)))            ::  batch comments
+      use=(set cuff)                                    ::  defs used
   ==                                                    ::
 +$  what  (unit (pair cord (list sect)))                ::  help slogan/section
 +$  wing  (list limb)                                   ::  search path
@@ -11571,11 +11572,11 @@
     ::
     ++  lore
       %+  cook
-        |=  [[a=(list link) b=cord] c=(list sect) d=(unit ~)]
+        |=  [[a=cuff b=cord] c=(list sect) d=(unit ~)]
         [a b c]
       ;~(pose smol larg)
     ::
-    ::    +smol: doccords parser, consumes two aces and a nonempty (list link)
+    ::    +smol: doccords parser, consumes two aces and a nonempty $cuff
     ::
     ::  only for one-liner comments to be attached to the given link
     ++  smol
@@ -11594,7 +11595,7 @@
     ::    +larg: annotates for four aces, optional link
     ::
     ::  four aces without a link means this is a short or long comment to be attached
-    ::  to the following $hoon or $spec. a (list link) means this is a potentially
+    ::  to the following $hoon or $spec. a nonempty cuff means this is a potentially
     ::  long form batch comment
     ++  larg
       ;~  plug
@@ -11612,7 +11613,7 @@
     ++  deep
       ;~  pose
         (inlo dibs)
-        (cold *(list link) ;~(plug col gar step step))
+        (cold *cuff ;~(plug col gar step step))
       ==
     ::
     ++  rant
@@ -13395,16 +13396,16 @@
       ?~  duds  nude
       ::  if there is no link, its not part of a batch comment
       ::
-      ?~  links.i.duds
+      ?~  cuff.i.duds
         $(duds t.duds)
       ::  we don't look past the first link for the initial release of doccords
       ::
       =/  nom=(unit term)
-        ?+    i.links.i.duds  ~
+        ?+    i.cuff.i.duds  ~
         ::  we only support ++ and +$ batch comments in this release
         ::
             ?([%funk *] [%plan *])
-          `p.i.links.i.duds
+          `p.i.cuff.i.duds
         ==
       %=  $
         duds  t.duds
