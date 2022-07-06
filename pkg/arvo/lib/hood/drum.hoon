@@ -77,8 +77,7 @@
 ::
 ++  de-gill                                           ::  gill from wire
   |=  way=wire  ^-  gill:gall
-  ~|  way
-  ?>(?=([@ @ *] way) [(slav %p i.way) i.t.way])
+  ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
 --
 ::  TODO: remove .ost
 ::

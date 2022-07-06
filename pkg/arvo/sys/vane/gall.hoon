@@ -203,7 +203,7 @@
       =/  adult  adult-core
       =.  state.adult
         [%9 system-duct outstanding contacts yokes=~ blocked bug]:spore
-      =/  mo-core  (mo-abed:mo:adult system-duct.state.adult)
+      =/  mo-core  (mo-abed:mo:adult duct)
       =.  mo-core
         =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
         |-  ^+  mo-core
@@ -220,13 +220,8 @@
         =?  ap-core  ?=(%& -.old-state.egg.i.apps)
           =^  tan  ap-core  (ap-install:ap-core `p.old-state.egg.i.apps)
           ?^  tan
-             (mean u.tan)
-          =/  boats=(list [=wire =dock])
-            ~(tap in ~(key by boat.egg.i.apps))
-          |-  ^+  ap-core
-          ?~  boats  ap-core
-          =/   [=wire =dock]  i.boats
-          $(boats t.boats, ap-core (ap-kill-down:ap-core wire dock))
+            (mean u.tan)
+          ap-core
         $(apps t.apps, mo-core ap-abet:ap-core)
       =.  mo-core  (mo-subscribe-to-agent-builds:mo-core now)
       =^  moves  adult-gate  mo-abet:mo-core
@@ -1549,33 +1544,33 @@
         %-  ap-move  :_  ~
         :^  hen  %pass  /nowhere
         [%c %warp our q.beak.yoke ~ %sing %b case /[mark.unto]]
-        |^  ^+  ap-core
-        ::  %poke-ack has no nonce; ingest directly
-        ::
-        ?:  ?=(%poke-ack -.sign)
-          ingest-and-check-error
-        ::  if .agent-wire matches, it's an old pre-nonce subscription
-        ::
-        ?:  (~(has by boat.yoke) sub-key)
-          run-sign
-        ::  if an app happened to use a null wire, no-op
-        ::
-        ?:  =(~ agent-wire)
-          on-missing
-        =/  has-nonce=(unit @ud)  (slaw %ud (head agent-wire))
-        ?:  &(?=(~ has-nonce) ?=(%kick -.sign))
-          on-weird-kick
-        ::  pop nonce off .agent-wire and match against stored subscription
-        ::
-        ?>  ?=(^ has-nonce)
-        =:  nonce       u.has-nonce
-            agent-wire  (tail agent-wire)
-          ==
-        ?~  got=(~(get by boar.yoke) sub-key)
-          on-missing
-        ?:  =(nonce.u.got nonce)
-          run-sign
-        (on-bad-nonce nonce.u.got)
+      |^  ^+  ap-core
+          ::  %poke-ack has no nonce; ingest directly
+          ::
+          ?:  ?=(%poke-ack -.sign)
+            ingest-and-check-error
+          ::  if .agent-wire matches, it's an old pre-nonce subscription
+          ::
+          ?:  (~(has by boat.yoke) sub-key)
+            run-sign
+          ::  if an app happened to use a null wire, no-op
+          ::
+          ?:  =(~ agent-wire)
+            on-missing
+          =/  has-nonce=(unit @ud)  (slaw %ud (head agent-wire))
+          ?:  &(?=(~ has-nonce) ?=(%kick -.sign))
+            on-weird-kick
+          ::  pop nonce off .agent-wire and match against stored subscription
+          ::
+          ?>  ?=(^ has-nonce)
+          =:  nonce       u.has-nonce
+              agent-wire  (tail agent-wire)
+            ==
+          ?~  got=(~(get by boar.yoke) sub-key)
+            on-missing
+          ?:  =(nonce.u.got nonce)
+            run-sign
+          (on-bad-nonce nonce.u.got)
       ::
       ++  sub-key  [agent-wire dock]
       ++  ingest   (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
@@ -1638,7 +1633,7 @@
         %-  slog  :~
           =/  nonces  [expected=stored-nonce got=nonce]
           =/  ok  |(?=(?(%fact %kick) -.sign) =(~ p.sign))
-          leaf+"{<agent-name>}: stale {<-.sign>} {<nonces>} ok={<ok>}"
+          leaf+"{<agent-name>}: stale %watch-ack {<nonces>} ok={<ok>}"
         ::
           leaf+"{<dock>}: {<agent-wire>}"
           >wire=wire<
