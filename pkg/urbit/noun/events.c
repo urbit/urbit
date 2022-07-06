@@ -277,7 +277,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
   return 1;
 
 fail:
-  u3m_bail(c3__meme);
+  u3m_signal(c3__meme);
 #undef center_guard_page
 }
 
