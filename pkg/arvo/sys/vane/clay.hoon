@@ -125,7 +125,7 @@
       mim=(map path mime)                               ::  mime cache
       fod=flue                                          ::  ford cache
       liv=?                                             ::  running agents
-      ren=(map dude ?)                                  ::  force agents on/off
+      ren=(map dude:gall ?)                             ::  force agents on/off
   ==                                                    ::
 ::
 ::  Commit state.
@@ -4956,7 +4956,8 @@
   =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
-  ?>  ?=(%12 -.old)
+  =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
+  ?>  ?=(%13 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -5047,7 +5048,7 @@
         dos.rom
       %-  ~(run by dos.rom.raf)
       |=  =dojo-10
-      ^-  dojo
+      ^-  dojo-11
       %=    dojo-10
           fiz  *melt
           qyx  (cult-10-to-cult qyx.dojo-10)
@@ -5068,7 +5069,7 @@
       |=  =rung-10
       %-  ~(run by rus.rung-10)
       |=  =rede-10
-      ^-  rede
+      ^-  rede-11
       %=    rede-10
           fiz     *melt
           qyx     (cult-10-to-cult qyx.rede-10)
@@ -5181,7 +5182,7 @@
     ::  turn on %base desk  ::  TODO handle other desks somehow
     ::
     =;  rof
-      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv &)))
+      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom &))))
     %=  raf
       dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
       hoy  (~(run by hoy.raf) rung-11-to-13)
@@ -5204,7 +5205,7 @@
     ++  dome-11-to-13
       |=  dom=dome-11
       ^-  dome
-      dom(fod [fod liv=| ren=~])
+      dom(fod [fod.dom liv=| ren=~])
     --
   --
 ::
