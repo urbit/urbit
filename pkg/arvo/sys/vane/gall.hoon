@@ -585,16 +585,23 @@
     mo-core(yokes.state (~(del by yokes.state) dap))
   ::  +mo-load: install agents
   ::
-  ::  XX shoud idle any agents not listed
-  ::
   ++  mo-load
     |=  agents=(list [=dude =beak =agent])
-    ^+  mo-core
-    ?~  agents
-      ..mo-core
-    ~&  [%loading dude.i.agents q.beak.i.agents]
-    =.  mo-core  (mo-receive-core i.agents)
-    $(agents t.agents)
+    =.  mo-core
+      |-  ^+  mo-core
+      ?~  agents  mo-core
+      =/  [=dude =desk]  [dude q.beak]:i.agents
+      ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
+      $(agents t.agents, mo-core (mo-receive-core i.agents))
+    ::
+    =/  kil
+      =/  old  ~(key by yokes.state)
+      =/  new  (silt (turn agents head))
+      ~(tap in (~(dif in old) new))
+    |-  ^+  mo-core
+    ?~  kil  mo-core
+    ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
+    $(kil t.kil, mo-core (mo-idle i.kil))
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
