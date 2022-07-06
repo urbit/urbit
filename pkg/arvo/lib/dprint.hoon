@@ -5,7 +5,7 @@
 =>
   :>    types used by doccords
   |%  %dprint-types
-  :>  $overview: an overview of all named things in the type.
+  :>    $overview: an overview of all named things in the type.
   :>
   :>  each element in the overview list is either a documentation for a sublist
   :>  or an association betwen a term and documentation for it
@@ -62,7 +62,7 @@
 :>
 :>  the entrypoint for finding docs within a type is +find-item-in-type.
 +|  %searching
-:>  +find-item-in-type: returns the item to print while searching through topic
+:>    +find-item-in-type: returns the item to print while searching through topic
 :>
 :>  this gate is optionally called recursively to find the path (topic) in the
 :>  type (sut). once it finds the correct part of the type, it switches to
@@ -158,7 +158,7 @@
     `[%arm (trip name) adoc pdoc cdoc u.arm p.sut]
   --
 ::
-:>  +signify: changes a type into a item without docs
+:>    +signify: changes a type into a item without docs
 :>
 :>  this does not actually assign the docs, since they usually come from a hint
 :>  wrapping the type.
@@ -214,7 +214,7 @@
     ~
   ?>(?=(%help -.q.p.sut) `crib.p.q.p.sut)
 ::
-:>  +emblazon: inserts docs into an item
+:>    +emblazon: inserts docs into an item
 :>
 :>  when matching for a core or a face type, the docs for that type will be in
 :>  a hint that wraps it. thus we end up producing an item for that type, then
@@ -241,7 +241,7 @@
     $(tomes t.tomes)
   `u.gen
 ::
-:>  +help-from-hint: gets the $help from a %help %hint type and returns it as a unit
+:>  +help-from-hint: gets the help from a %help $hint and returns it as a unit
 ++  help-from-hint
   |=  sut=type
   ^-  (unit help)
@@ -257,7 +257,7 @@
     `p.q.p.sut
   ==
 ::
-:>  +arm-product-docs: returns 0, 1, or 2 whats for an arm
+:>    +arm-product-docs: returns 0, 1, or 2 whats for an arm
 :>
 :>  this arm should be handed the compiled type of the hoon of an arm, as well
 :>  as the name of that arm. it checks for up to 2 nested hints on the outermost
@@ -267,6 +267,7 @@
 :>
 :>  this returns ~ if there are no docs. if there are docs, the first one is the
 :>  arm-doc, and the second one is the product-doc.
+:>
 ++  arm-product-docs
   |=  [sut=type name=term]
   ^-  (unit [what what])
@@ -300,7 +301,7 @@
   ?>  =(name ->.links.u.doc-one)
   [~ [`crib.u.doc-one `crib.u.doc-two]]
 ::
-:>  +all-arm-docs: grabs the docs for an arm.
+:>    +all-arm-docs: grabs the docs for an arm.
 :>
 :>  there are three possible places with relevant docs for an arm:
 :>  docs for the arm itself, docs for the product of the arm, and
@@ -312,6 +313,7 @@
 :>  this will be the first of the arm-doc or product-doc on the default
 :>  arm. maybe this should be recursive and/or give both but its a decision
 :>  ill leave for later
+:>
 ++  all-arm-docs
   |=  [gen=hoon sut=type name=tape]
   ~?  >  debug  %all-arm-docs
@@ -335,9 +337,10 @@
         ?>  ?=([%hint *] q.hoon-type)
         (extract q.q.hoon-type)
   ==
-  :>  +extract: grabs the first doc for the default arm of a core
+  :>    +extract: grabs the first doc for the default arm of a core
   :>
   :>  this could end up being an arm doc or a product doc.
+  :>
   ++  extract
     |=  sut=type
     ^-  what
@@ -354,10 +357,11 @@
     `what``crib.u.hel
   --
 ::
-:>  +arm-and-chapter-overviews: returns an overview for a cores arms and chapters
+:>    +arm-and-chapter-overviews: returns an overview of a cores contents
 :>
 :>  returns an overview for arms which are part of unnamed chapters, and
 :>  an overview of the named chapters
+:>
 ++  arm-and-chapter-overviews
   |=  [sut=type con=coil core-name=tape]
   ^-  [overview overview]
@@ -376,7 +380,7 @@
   =.  chapter-docs
     %+  weld  chapter-docs
     ^-  overview
-    [%item :(weld "<" core-name "|" (trip -.current)) p.q.current]~
+    [%item :(weld "^" core-name "|" (trip -.current)) p.q.current]~
   $(tomes t.tomes)
 ::
 :>  +arms-in-chapter: returns an overview of the arms in a specific chapter
@@ -426,7 +430,7 @@
       [%core *]
     ?~  name.itm
       (item-as-overview children.itm)
-    :-  [%item (weld "<" name.itm) docs.itm]
+    :-  [%item (weld "^" name.itm) docs.itm]
     (item-as-overview children.itm)
   ::
       [%arm *]
@@ -471,7 +475,7 @@
   =+  [arms chapters]=(arm-and-chapter-overviews sut con name)
   =/  styles=(pair styl styl)  [[`%br ~ `%b] [`%br ~ `%m]]
   ;:  weld
-    (print-header (weld "<" name) docs)
+    (print-header (weld "^" name) docs)
   ::
     ?~  arms
       ~
@@ -547,7 +551,8 @@
     ==  ==
   ==
 ::
-:>  +print-overview: prints summaries of several items
+:>    +print-overview: prints summaries of several items
+:>
 :>  the (list styl) provides styles for each generation of child
 :>  items
 ++  print-overview
@@ -586,7 +591,7 @@
     ==
   ==
 ::
-:>  +print-sections: renders a list of sections as tang
+:>    +print-sections: renders a list of sections as tang
 :>
 :>  prints the longform documentation
 ++  print-sections

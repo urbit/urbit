@@ -105,11 +105,15 @@
   ::
   +|  %batch-comments
   :>  +b-foo: a foo
-  :>  +b-bar: a bar
-  :>  a very bar foo
   :>  $b-baz: a baz
-  :>  $b-boz: a boz
+  :>    +b-bar: a bar
+  :>
+  :>  a very bar foo
+  :>
+  :>    $b-boz: a boz
+  :>
   :>  a very boz baz
+  :>
   ++  b-foo  ~
   ++  b-bar  ~
   +$  b-baz  *
@@ -125,14 +129,14 @@
     ~
   ::
   ++  arm-pdoc-pre
-    :>  product-doc
+    :>    product-doc
     'foo'
   ++  arm-pdoc-post
     'foo'  :<  product-doc
   ::
   ++  arm-cdoc-pre
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
@@ -144,11 +148,11 @@
   ::
   :>  +arm-adoc-pdoc-pre-pre: arm-doc
   ++  arm-adoc-pdoc-pre-pre
-    :>  product-doc
+    :>    product-doc
     'foo'
   ::
   ++  arm-adoc-pdoc-post-pre  :<  arm-doc
-    :>  product-doc
+    :>    product-doc
     'foo'
   ::
   ++  arm-adoc-pdoc-post-post  :<  arm-doc
@@ -157,13 +161,13 @@
   :>  +arm-adoc-cdoc-pre-pre: arm-doc
   ++  arm-adoc-cdoc-pre-pre
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
   ++  arm-adoc-cdoc-post-pre  :<  arm-doc
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
@@ -174,14 +178,14 @@
     --
   ::
   ++  arm-pdoc-cdoc-pre-pre
-    :>  product-doc
+    :>    product-doc
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --
   ++  arm-pdoc-cdoc-post-pre
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --  :<  product-doc
   ::
@@ -193,29 +197,29 @@
   ::
   :>  +arm-adoc-pdoc-cdoc-pre-pre-pre: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-pre-pre
-    :>  product-doc
+    :>    product-doc
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
   ++  arm-adoc-pdoc-cdoc-post-pre-pre  :<  arm-doc
-    :>  product-doc
+    :>    product-doc
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --
   ::
   :>  +arm-adoc-pdoc-cdoc-pre-post-pre: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-post-pre
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --  :<  product-doc
   ::
   :>  +arm-adoc-pdoc-cdoc-pre-pre-post: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-pre-post
-    :>  product-doc
+    :>    product-doc
     |%
     ++  $  :<  core-doc
       ~
@@ -223,12 +227,12 @@
   ::
   ++  arm-adoc-pdoc-cdoc-post-post-pre  :<  arm-doc
     |%
-    :>    : core-doc
+    :>    core-doc
     ++  $  ~
     --  :<  product-doc
   ::
   ++  arm-adoc-pdoc-cdoc-post-pre-post  :<  arm-doc
-    :>  product-doc
+    :>    product-doc
     |%
     ++  $  :<  core-doc
       ~
