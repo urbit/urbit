@@ -7,9 +7,6 @@
 :>  any line longer than 60 characters is probably too long.
 :>  uppercase or non-ascii letters are strongly discouraged.
 :>
-:>  informal comments (lines with {:>}) should be used only for
-:>  meta-discussion *about* the code.
-:>
 :>  whenever possible, use formal decorations. {:>} decorates
 :>  the next expression; {:<} decorates the previous one.
 :>
