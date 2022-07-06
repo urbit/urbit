@@ -399,6 +399,7 @@
       $:  %g                                            ::  to %gall
           $>  $?  %deal
                   %jolt
+                  %load
               ==
           task:gall
       ==                                                ::
@@ -1822,6 +1823,10 @@
     =.  mim.dom  mim.res
     =.  args     args.res
     ::
+    =^  rags  ..park
+      ?:  =(%base syd)  (jolt args)
+      [args ..park]
+    =.  args  rags
     =.  fod.dom  [spill sprig]:args
     =.  fad      cache.args
     =.  ..park   (emil (print q.old-yaki data))
@@ -1837,6 +1842,36 @@
         |
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
+    ::
+    ++  jolt
+      |=  =ford=args:ford:fusion
+      ^-  [args:ford:fusion _..park]
+      ::  read desk.bill
+      ::
+      =/  f  (ford:fusion ford-args)
+      =^  bill-cage=cage  nub.f  (read-file:f /desk/bill)
+      =/  bill  !<((list dude:gall) q.bill-cage)
+      ::  build-file for each dude
+      ::
+      =^  agents=(list [dude:gall beak agent:gall])  nub.f
+        =|  agents=(list [dude:gall beak agent:gall])
+        |-  ^-  [(list [dude:gall beak agent:gall]) _nub.f]
+        ?~  bill
+          [agents nub.f]
+        =^  =vase  nub.f  (build-file:f /app/[i.bill]/hoon)
+        =/  agent  ~|  [%building-app i.bill]  !<(agent:gall vase)
+        =^  agents  nub.f  $(bill t.bill)
+        [[[i.bill [our syd ud+let.dom] agent] agents] nub.f]
+      ::  save ford cache
+      ::
+      =/  [~ fud=flow fod=flue]  (wrap:fusion ~ nub.f)
+      =.  cache.ford-args  fud
+      =.  spill.ford-args  spill.fod
+      =.  sprig.ford-args  sprig.fod
+      ::  load agents into gall
+      ::
+      :-  ford-args
+      (emit hen %pass /jolt/[syd] %g %load agents)
     ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
     ::
     ++  get-kelvin
@@ -5121,14 +5156,14 @@
   ^+  [*(list move) ..^$]
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
-  ?:  ?=([%dist *] tea)
+  ?:  ?=([%jolt *] tea)
     ?:  ?=(%onto +<.hin)
       [~ ..^$]
     ?>  ?=(%unto +<.hin)
     ?>  ?=(%poke-ack -.p.hin)
     ?~  p.p.hin
       [~ ..^$]
-    =+  ((slog 'clay: dist migration failed' u.p.p.hin) ~)
+    =+  ((slog 'clay: reloading agents failed' u.p.p.hin) ~)
     !!
   ::
   ?:  ?=([%merge @ @ @ @ ~] tea)

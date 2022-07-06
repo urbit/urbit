@@ -1650,6 +1650,7 @@
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
+        [%load agents=(list [=dude =beak =agent])]      ::  load agent
         [%nuke =dude]                                   ::  delete agent
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
