@@ -1859,6 +1859,11 @@
         $(moves t.moves, new-moves [move new-moves])
       ?.  ?=([* %pass * %g %deal * * ?(%watch %watch-as) *] move)
         $(moves t.moves, new-moves [move new-moves])
+      ::  TODO: uncomment when releasing subscriber %cork handling
+      ::        this makes all post-nonce subs look like pre-nonce ones to
+      ::        avoid creating one extra new flow for every resubscription
+      ::
+      =.  sub-nonce.yoke  0
       =/  =wire  p.move.move
       ?>  ?=([%use @ @ %out @ @ *] wire)
       =/  sys-wire=^wire  (scag 6 `^wire`wire)
@@ -1875,7 +1880,10 @@
         $(moves t.moves)
       ::
       =.  p.move.move
-        (weld sys-wire [(scot %ud sub-nonce.yoke) sub-wire])
+        ::  TODO: uncomment when releasing subscriber %cork handling
+        ::  and remove next line
+        :: (weld sys-wire [(scot %ud sub-nonce.yoke) sub-wire])
+        (weld sys-wire sub-wire)
       %_    $
           moves            t.moves
           new-moves       [move new-moves]
