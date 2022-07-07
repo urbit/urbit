@@ -4342,19 +4342,20 @@
     |-  ^+  sat
     ?~  sat
       ~
-    :_  ^$(sat t.sat)
     ::  for each agent
     ::
-    :-  desk.i.sat
     =/  bil  bill.i.sat
-    |-  ^-  bill
-    ?~  bil
-      ~
-    ::
-    ?:  (~(has in done) i.bil)
-      $(bil t.bil)
-    =.  done  (~(put in done) i.bil)
-    [i.bil $(bil t.bil)]
+    =^  this  done
+      |-  ^-  [bill (set dude:gall)]
+      ?~  bil
+        [~ done]
+      ::
+      ?:  (~(has in done) i.bil)
+        $(bil t.bil)
+      =.  done  (~(put in done) i.bil)
+      =^  next  done  $(bil t.bil)
+      [[i.bil next] done]
+    [[desk.i.sat this] $(sat t.sat)]
   ::
   ++  sort-desks
     |=  [a=[=desk *] b=[=desk *]]
@@ -4381,7 +4382,7 @@
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
-    =.  lad  (weld new lad)
+    =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark
   ::
@@ -4653,10 +4654,11 @@
       [mos ..^$]
     ::
         [%rise =desk =dude:gall on=(unit ?)]
-      =^  mos  ruf
+      =^  m1  ruf
         =/  den  ((de now rof hen ruf) our desk.arg.req)
         abet:(rise:den dude.arg.req on.arg.req)
-      [mos ..^$]
+      =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+      [(weld m1 m2) ..^$]
     ==
   ::
       %tomb  (tomb-clue:tomb hen clue.req)

@@ -47,6 +47,7 @@
 ::    control-duct: TODO document
 ::    stats: TODO document
 ::    watches: incoming and outgoing subscription state
+::    code: most recently loaded code
 ::    agent: agent core
 ::    beak: compilation source
 ::    marks: mark conversion requests
@@ -56,6 +57,7 @@
       nonce=@t
       =stats
       =watches
+      code=*
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
@@ -128,6 +130,7 @@
       nonce=@t
       =stats
       =watches
+      code=~
       old-state=[%| vase]
       =beak
       marks=(map duct mark)
@@ -199,8 +202,11 @@
     ~>  %slog.[0 leaf+"gall: {tex} {<dap>}"]
     ::
     ?^  yak
+      ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
+        mo-core
+      ::
       =.  yokes.state
-        (~(put by yokes.state) dap u.yak(beak bek))
+        (~(put by yokes.state) dap u.yak(beak bek, code agent))
       =/  ap-core  (ap-abed:ap dap `our)
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
@@ -211,6 +217,7 @@
       %*  .  *yoke
         control-duct  hen
         beak          bek
+        code          agent
         agent         &+agent
         nonce         (scot %uw (end 5 (shas %yoke-nonce eny)))
       ==
@@ -1537,6 +1544,7 @@
   ::
   ::  removed live
   ::  changed old-state from (each vase vase) to [%| vase]
+  ::  added code
   ::
   ++  spore-8-to-9
     |=  old=spore-8
@@ -1546,7 +1554,8 @@
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-8]
-      e(|2 |3.e(old-state [%| p.old-state.e]))
+      ^-  egg
+      e(|2 |3.e(|2 `|5.e(old-state [%| p.old-state.e])))
     ==
   --
 ::  +scry: standard scry
@@ -1635,6 +1644,7 @@
   |=  =yoke
   ^-  egg
   %=    yoke
+      code   ~
       agent
     :-  %|
     ?:  ?=(%| -.agent.yoke)
