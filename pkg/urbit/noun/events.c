@@ -190,7 +190,7 @@ _ce_mapfree(void* map_v)
 //! Place a guard page at the (approximate) middle of the free space between
 //! the heap and stack of the current road, bailing if memory has been
 //! exhausted.
-static void
+static c3_i
 _ce_center_guard_page(void)
 {
   u3p(c3_w) bot_p, top_p;
@@ -210,7 +210,7 @@ _ce_center_guard_page(void)
   if ( top_p < bot_p + pag_wiz_i ) {
     fprintf(stderr,
             "loom: not enough memory to recenter the guard page\r\n");
-    goto fail;
+    goto bail;
   }
   const u3p(c3_w) old_gar_p = gar_pag_p;
   const c3_w      mid_p     = (top_p - bot_p) / 2;
@@ -220,7 +220,7 @@ _ce_center_guard_page(void)
             "loom: can't move the guard page to the same location"
             " (base address %p)\r\n",
             u3a_into(gar_pag_p));
-    goto fail;
+    goto bail;
   }
 
   if ( -1 == mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
@@ -228,15 +228,15 @@ _ce_center_guard_page(void)
             "loom: failed to protect the guard page "
             "(base address %p)\r\n",
             u3a_into(gar_pag_p));
-    //  XX this should probably return 0 through the libsigsegv protocol
-    //  -- we couldn't handle the fault
-    c3_assert(0);
+    goto fail;
   }
 
-  return;
+  return 1;
 
-fail:
+bail:
   u3m_signal(c3__meme);
+fail:
+  return 0;
 }
 #endif /* ifdef U3_GUARD_PAGE */
 
@@ -270,7 +270,9 @@ u3e_fault(void* adr_v, c3_i ser_i)
 #ifdef U3_GUARD_PAGE
   // The fault happened in the guard page.
   if ( gar_pag_p <= adr_p && adr_p < gar_pag_p + pag_wiz_i ) {
-    _ce_center_guard_page();
+    if ( 0 == _ce_center_guard_page() ) {
+      return 0;
+    }
   }
   else
 #endif /* ifdef U3_GUARD_PAGE */
