@@ -719,8 +719,9 @@ u3a_cellblock(c3_w num_w)
       return c3n;
     }
     else {
-      u3_post hat_p = u3R->hat_p;
       u3_post cel_p = u3R->all.cel_p;
+      u3_post hat_p = u3R->hat_p;
+      u3R->hat_p   += (num_w * u3a_minimum);
 
       for ( i_w = 0; i_w < num_w; i_w++) {
         u3_post  all_p = hat_p;
@@ -744,7 +745,7 @@ u3a_cellblock(c3_w num_w)
         u3to(u3a_fbox, fre_p)->nex_p = cel_p;
         cel_p = fre_p;
       }
-      u3R->hat_p = hat_p;
+
       u3R->all.cel_p = cel_p;
     }
   }
@@ -753,8 +754,9 @@ u3a_cellblock(c3_w num_w)
       return c3n;
     }
     else {
-      u3_post hat_p = u3R->hat_p;
       u3_post cel_p = u3R->all.cel_p;
+      u3_post hat_p = u3R->hat_p;
+      u3R->hat_p   -= (num_w * u3a_minimum);
 
       for ( i_w = 0; i_w < num_w; i_w++ ) {
         u3_post  all_p = (hat_p -= u3a_minimum);
@@ -776,7 +778,7 @@ u3a_cellblock(c3_w num_w)
         u3to(u3a_fbox, fre_p)->nex_p = cel_p;
         cel_p = fre_p;
       }
-      u3R->hat_p = hat_p;
+
       u3R->all.cel_p = cel_p;
     }
   }
