@@ -990,6 +990,17 @@ _cw_intr_win(c3_c* han_c)
 }
 #endif
 
+static u3_noun
+virt_nock(u3_noun cons)
+{
+  u3_noun bus = u3h(cons);
+  u3_noun fol = u3t(cons);
+  
+  u3_noun res = u3n_nock_on(bus, fol);
+
+  return res;
+}
+
 /* _cw_eval_commence(): initialize and run the hoon evaluator
 */
 static void
@@ -1004,8 +1015,31 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
     exit(1);
   }
   c3_c*      evl_c = argv[2];
-  printf("%s \n", evl_c);
+
+  u3m_boot_lite();
+  u3_noun bus = u3i_word(55);
+  u3_noun fol = u3i_trel(u3i_word(4),
+                         u3i_word(0),
+                         u3i_word(1));
+
+  u3_noun cons = u3nc(bus, fol);
+
+  u3_noun res = u3m_soft(0, virt_nock, u3k(cons));
+
+  if(0 == u3h(res)){
+     u3m_p("", cons);
+     u3m_p("", u3t(res));
+     u3m_grab(res, cons,  u3_none);
+  }else{
+     printf("error\n");
+  }
+  u3z(res);
+  u3z(cons);
+  printf("finishing");
 }
+
+
+
 /* _cw_serf_commence(): initialize and run serf
 */
 static void
