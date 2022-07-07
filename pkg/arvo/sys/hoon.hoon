@@ -11756,7 +11756,7 @@
       (stag %clsg (more fas stem))
     ==
   ::
-  ++  stem  !:
+  ++  stem
     %+  knee  *hoon  |.  ~+
     %+  cook
       |=  iota=$%([%hoon =hoon] iota)
@@ -11773,7 +11773,7 @@
           :-  '$'      (cold %$ buc)
           :-  '0'^'9'  (slot bisk:so)
           :-  '-'      (slot tash:so)
-          :-  '.'      zust:so
+          :-  '.'      ;~(pfix dot zust:so)
           :-  '~'      (slot ;~(pfix sig ;~(pose crub:so (easy [%n ~]))))
           :-  '\''     (stag %t qut)
           :-  '['      (slip (ifix [sel ser] wide))
@@ -13141,7 +13141,12 @@
                       ^-  spec
                       :+  %bccl
                         [%leaf %tas aura]
-                      [%bcts term [%base %atom aura]]~
+                      :_  ~
+                      :+  %bcts  term
+                      ?+  aura  [%base %atom aura]
+                        %f  [%base %flag]
+                        %n  [%base %null]
+                      ==
                     ;~(plug sym ;~(pfix tis pat mota))
                   ::
                     ::  /constant
@@ -13160,12 +13165,19 @@
                     [%base %atom aura]~
                   ;~(pfix pat mota)
                 ::
+                  ::  /?
+                  ::
+                  :-  '?'
+                  (cold [%bccl [%leaf %tas %f] [%base %flag] ~] wut)
+                ::
                   ::  /~
                   ::
                   :-  '~'
                   (cold [%bccl [%leaf %tas %n] [%base %null] ~] sig)
               ==
             ::
+              ::  open-ended or fixed-length
+              ::
               ;~  pose
                 (cold [%base %noun] ;~(plug fas tar))
                 (easy %base %null)
