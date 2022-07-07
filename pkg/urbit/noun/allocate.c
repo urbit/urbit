@@ -715,7 +715,7 @@ u3a_cellblock(c3_w num_w)
   c3_w          i_w;
 
   if ( c3y == u3a_is_north(u3R) ) {
-    if ( u3R->cap_p <= (u3R->hat_p + (num_w * u3a_minimum)) ) {
+    if ( u3R->cap_p <= (u3R->hat_p + (num_w * u3a_minimum) + (1 << u3a_page)) ) {
       return c3n;
     }
     else {
@@ -750,7 +750,7 @@ u3a_cellblock(c3_w num_w)
     }
   }
   else {
-    if ( (u3R->cap_p + (num_w * u3a_minimum)) >= u3R->hat_p ) {
+    if ( (u3R->cap_p + (num_w * u3a_minimum) + (1 << u3a_page)) >= u3R->hat_p ) {
       return c3n;
     }
     else {
