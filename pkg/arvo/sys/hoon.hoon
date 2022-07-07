@@ -8850,7 +8850,7 @@
           %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
                  ?>  (~(nest ut hit) & ref)
                  $(skin skin.skin)
-          %wash  [%1 1]  ::TODO  shouldn't this always _match_?
+          %wash  [%1 &]
       ==
     ::
     ::  -gain: make a $type by restricting .ref to .skin
