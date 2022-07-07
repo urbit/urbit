@@ -990,6 +990,22 @@ _cw_intr_win(c3_c* han_c)
 }
 #endif
 
+/* _cw_eval_commence(): initialize and run the hoon evaluator
+*/
+static void
+_cw_eval_commence(c3_i argc, c3_c* argv[])
+{
+#ifdef U3_OS_mingw
+  if ( 4 > argc ) {
+#else
+  if ( 3 > argc ) {
+#endif
+    fprintf(stderr, "eval: no hoon to eval\n");
+    exit(1);
+  }
+  c3_c*      evl_c = argv[2];
+  printf("%s \n", evl_c);
+}
 /* _cw_serf_commence(): initialize and run serf
 */
 static void
@@ -1638,6 +1654,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__vere: _cw_vere(argc, argv); return 1;
 
     case c3__serf: _cw_serf_commence(argc, argv); return 1;
+    case c3__eval: _cw_eval_commence(argc, argv); return 1;
   }
 
   return 0;
