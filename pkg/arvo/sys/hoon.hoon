@@ -8843,12 +8843,10 @@
           %dbug  $(skin skin.skin)
           %help  $(skin skin.skin)
           %name  $(skin skin.skin)
-          %over  ::TODO  (find -> tend should just be a function)
-                 ::NOTE  might need to guard with +feel, crashing is too strict
-                 ~|  %oops-guess-you-needed-feel-after-all
-                 =+  fid=(find %read wing.skin)
-                 ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
-                 $(sut p.q.p.fid, axis (peg axis (tend p.p.fid)), skin skin.skin)
+          %over  ::NOTE  might need to guard with +feel, crashing is too strict
+                 =+  ~|  %oops-guess-you-needed-feel-after-all
+                     fid=(fend %read wing.skin)
+                 $(sut p.fid, axis (peg axis q.fid), skin skin.skin)
           %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
                  ?>  (~(nest ut hit) & ref)
                  $(skin skin.skin)
@@ -9508,6 +9506,14 @@
         ==    ==
     (fond way hyp)
   ::
+  ++  fend
+    |=  [way=vial hyp=wing]
+    ^-  (pair type axis)
+    =+  fid=(find way hyp)
+    ~>  %mean.'fend-fragment'
+    ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
+    [p.q.p.fid (tend p.p.fid)]
+  ::
   ++  fund
     ~/  %fund
     |=  [way=vial gen=hoon]
@@ -10018,10 +10024,8 @@
     ::
         [%wthx *]
       :-  (nice bool)
-      =+  fid=(find %read [[%& 1] q.gen])
-      ~>  %mean.'mint-fragment'
-      ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
-      (~(fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))
+      =+  fid=(fend %read [[%& 1] q.gen])
+      (~(fish ar `type`p.fid `skin`p.gen) q.fid)
     ::
         [%fits *]
       :-  (nice bool)
@@ -10208,12 +10212,8 @@
     ::
         [%wthx *]
       ~>  %mean.'mull-bonk-x'
-      =+  :-  =+  (find %read [[%& 1] q.gen])
-              ?>  &(?=(%& -.-) ?=(%& -.q.p.-))
-              new=[type=p.q.p.- axis=(tend p.p.-)]
-          =+  (find(sut dox) %read [%& 1] q.gen)
-          ?>  &(?=(%& -.-) ?=(%& -.q.p.-))
-          old=[type=p.q.p.- axis=(tend p.p.-)]
+      =+  :-  new=[type=p axis=q]:(fend %read [[%& 1] q.gen])
+          old=[type=p axis=q]:(fend(sut dox) %read [[%& 1] q.gen])
       ?>  =(axis.old axis.new)
       ?>  (nest(sut type.old) & type.new)
       (beth bool)
