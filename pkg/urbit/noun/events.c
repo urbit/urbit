@@ -227,7 +227,9 @@ _ce_center_guard_page(void)
             "loom: failed to protect the guard page "
             "(base address %p)\r\n",
             u3a_into(gar_pag_p));
-    goto fail;
+    //  XX this should probably return 0 through the libsigsegv protocol
+    //  -- we couldn't handle the fault
+    c3_assert(0);
   }
 
   return;
