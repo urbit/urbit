@@ -4286,6 +4286,7 @@
     ::
     =.  sat  (apply-precedence sat)
     =^  agents  ..abet  (build-agents sat)
+    =.  ..abet  (build-marks (turn sat head))
     (emit hen %pass /lu/load %g %load agents)
   ::
   ::  XX unused, should add rein to state
@@ -4356,6 +4357,54 @@
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
     =.  lad  (weld new lad)
     $(sat t.sat)
+  ::  build-dais for each mark
+  ::
+  ++  build-marks
+    |=  desks=(list desk)
+    ^+  ..abet
+    ?~  desks
+      ..abet
+    =/  f  (ford our i.desks ~)
+    =^  null  ..abet
+      %-  wrap  :^  our  i.desks  ~
+      =^  marks=(list mark)  nub.f
+        =/  pax=path  /
+        |-  ^-  [(list mark) _nub.f]
+        =/  den  ((de now rof hen ruf) our i.desks)
+        =^  res  den  (aver:den ~ %y da+now mar+pax)
+        ?.  ?=([~ ~ *] res)
+          [~ nub.f]
+        =/  arch  ~|  [%building-arch i.desks]  !<(arch q.u.u.res)
+        =/  m1=(list mark)
+          ?.  ?&  ?=(^ fil.arch)
+                  ?=(^ pax)
+                  =(/hoon (slag (dec (lent pax)) `path`pax))
+              ==
+            ~
+          :_  ~
+          ?~  t.pax
+            ''
+          |-  ^-  mark
+          ?~  t.t.pax
+            i.pax
+          :((cury cat 3) i.pax '-' $(pax t.pax))
+        ::
+        =^  m2  nub.f
+          |-  ^-  [(list mark) _nub.f]
+          ?~  dir.arch
+            [~ nub.f]
+          =^  n1  nub.f  ^$(pax (weld pax /[p.n.dir.arch]))
+          =^  n2  nub.f  $(dir.arch l.dir.arch)
+          =^  n3  nub.f  $(dir.arch r.dir.arch)
+          [:(weld n1 n2 n3) nub.f]
+        [(weld m1 m2) nub.f]
+      ::
+      |-  ^-  [~ state:ford:fusion]
+      ?~  marks
+        [~ nub.f]
+      =^  =dais  nub.f  (build-dais:f i.marks)
+      $(marks t.marks)
+    $(desks t.desks)
   --
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
