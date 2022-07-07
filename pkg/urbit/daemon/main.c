@@ -4,6 +4,8 @@
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
+#include "vere/ivory.h"
+#include "ur/ur.h"
 #include "rsignal.h"
 #include <vere/serf.h>
 #include "vere/vere.h"
@@ -1017,7 +1019,29 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
   c3_c*      evl_c = argv[2];
 
   u3m_boot_lite();
-  u3_noun bus = u3i_word(55);
+  c3_d          len_d = u3_Ivory_pill_len;
+  c3_y*         byt_y = u3_Ivory_pill;
+  u3_cue_xeno*  sil_u;
+  u3_weak       pil;
+
+  u3C.wag_w |= u3o_hashless;
+  u3m_boot_lite();
+  sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
+  if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
+    printf("*** fail _setup 1\n");
+    exit(1);
+  }
+  u3s_cue_xeno_done(sil_u);
+  if ( c3n == u3v_boot_lite(pil) ) {
+    printf("*** fail _setup 2\n");
+    exit(1);
+  }
+
+  printf("executing hoon\n");
+  u3_noun res = u3v_wish(evl_c);
+  u3m_p("Hoon Output",res);
+
+  /*u3_noun bus = u3i_word(55);
   u3_noun fol = u3i_trel(u3i_word(4),
                          u3i_word(0),
                          u3i_word(1));
@@ -1034,7 +1058,7 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
      printf("error\n");
   }
   u3z(res);
-  u3z(cons);
+  u3z(cons);*/
   printf("finishing");
 }
 
