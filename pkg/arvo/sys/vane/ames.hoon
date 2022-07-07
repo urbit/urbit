@@ -2588,6 +2588,8 @@
       ::
       ++  on-pump-cork
         ^+  peer-core
+        =/  =wire  (make-pump-timer-wire her.channel bone)
+        =.  corks.ames-state  (~(del in corks.ames-state) wire)
         =.  peer-state
           =,  peer-state
           %_  peer-state
