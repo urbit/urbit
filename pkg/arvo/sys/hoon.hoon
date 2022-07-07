@@ -2008,11 +2008,15 @@
   $~  [%n ~]
   $@  @tas
   $%  [%ub @ub]  [%uc @uc]  [%ud @ud]  [%ui @ui]
-      [%ux @ux]  [%uv @uv]  [%uw @uw]  [%da @da]
-      [%dr @dr]  [%f ?]     [%if @if]  [%is @is]
-      [%n ~]     [%t @t]    [%ta @ta]  ::  @tas
-      [%p @p]    [%q @q]    [%rd @rd]  [%rh @rh]
-      [%rq @rq]  [%rs @rs]  [%s @s]
+      [%ux @ux]  [%uv @uv]  [%uw @uw]
+      [%sb @sb]  [%sc @sc]  [%sd @sd]  [%si @si]
+      [%sx @sx]  [%sv @sv]  [%sw @sw]
+      [%da @da]  [%dr @dr]
+      [%f ?]     [%n ~]
+      [%if @if]  [%is @is]
+      [%t @t]    [%ta @ta]  ::  @tas
+      [%p @p]    [%q @q]
+      [%rs @rs]  [%rd @rd]  [%rh @rh]  [%rq @rq]
   ==
 ::
 ::  $tank: formatted print tree
