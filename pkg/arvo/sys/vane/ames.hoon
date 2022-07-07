@@ -863,10 +863,9 @@
       ::
       ?:  &(?=(^ cached-state) ?=(~ queued-events))
         =^  moves  adult-gate  (call:adult-core duct dud task)
-        =?  moves  ?=(%7 +<.cached-state)
-          ~>  %slog.0^leaf/"ames: init daily recork timer"
-          :_(moves [duct %pass /recork %b %wait `@da`(add now ~d1)])
-        (molt moves)
+        %-  molt
+        ~>  %slog.0^leaf/"ames: init daily recork timer"
+        :_(moves [duct %pass /recork %b %wait `@da`(add now ~d1)])
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
@@ -948,9 +947,12 @@
       ::  .queued-events has been cleared; metamorphose
       ::
       ?~  queued-events
-        ?:  ?=(^ cached-state)  (molt moves)
-        ~>  %slog.0^leaf/"ames: metamorphosis"
-        [moves adult-gate]
+        ?.  ?=(^ cached-state)
+          ~>  %slog.0^leaf/"ames: metamorphosis"
+          [moves adult-gate]
+        %-  molt
+        ~>  %slog.0^leaf/"ames: init daily recork timer"
+        :_(moves [duct %pass /recork %b %wait `@da`(add now ~d1)])
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
