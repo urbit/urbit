@@ -1804,6 +1804,10 @@ u3m_boot(c3_c* dir_c)
   */
   u3m_pave(nuu_o);
 
+  /* Place the guard page.
+  */
+  u3e_init();
+
   /* Initialize the jet system.
   */
   {

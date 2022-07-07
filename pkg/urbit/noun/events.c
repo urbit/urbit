@@ -1062,8 +1062,6 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
     }
   }
 
-  _ce_center_guard_page();
-
   return nuu_o;
 }
 
@@ -1087,4 +1085,10 @@ void
 u3e_foul(void)
 {
   memset((void*)u3P.dit_w, 0xff, sizeof(u3P.dit_w));
+}
+
+void
+u3e_init(void)
+{
+  _ce_center_guard_page();
 }
