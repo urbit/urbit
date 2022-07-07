@@ -3015,6 +3015,22 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
+  ++  rein
+    |=  [liv=? ren=(map dude:gall ?)]
+    ^+  ..park
+    =?  liv  =(%base syd)  &
+    ..park(liv.dom liv, ren.dom ren)
+  ::
+  ++  rise
+    |=  [=dude:gall on=(unit ?)]
+    ?<  =(%base syd)
+    %_    ..park
+        ren.dom
+      ?~  on
+        (~(del by ren.dom) dude)
+      (~(put by ren.dom) dude u.on)
+    ==
+  ::
   ::  Cancel a request.
   ::
   ::  For local requests, we just remove it from `qyx`.  For foreign requests,
@@ -4621,12 +4637,25 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %rein
+    =^  m1  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(rein:den liv.req ren.req)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld m1 m2) ..^$]
+  ::
       %stir
     ?+    arg.req  ~|(%strange-stir !!)
         [%verb @]  [~ ..^$(veb.bug.ruf +.arg.req)]
         [%mass @]  [~ ..^$(mas.bug.ruf +.arg.req)]
         [%goad ~]
       =^  mos  ruf  abet:goad:(lu now rof hen ruf)
+      [mos ..^$]
+    ::
+        [%rise =desk =dude:gall on=(unit ?)]
+      =^  mos  ruf
+        =/  den  ((de now rof hen ruf) our desk.arg.req)
+        abet:(rise:den dude.arg.req on.arg.req)
       [mos ..^$]
     ==
   ::
@@ -5306,19 +5335,19 @@
       %-  ~(gas by *cone)
       %+  turn  ~(tap by dos.rom.ruf)
       |=  [=desk =dojo]
-      [[our desk] [[let hit lab] tom nor]:dom.dojo]
+      [[our desk] [[let hit lab] tom nor liv ren]:dom.dojo]
     =.  domes
       %-  ~(uni by domes)
       %-  ~(gas by *cone)
-      ^-  (list [[ship desk] dome:clay (map tako norm) norm])
+      ^-  (list [[ship desk] foam])
       %-  zing
-      ^-  (list (list [[ship desk] dome:clay (map tako norm) norm]))
+      ^-  (list (list [[ship desk] foam]))
       %+  turn  ~(tap by hoy.ruf)
       |=  [=ship =rung]
-      ^-  (list [[^ship desk] dome:clay (map tako norm) norm])
+      ^-  (list [[^ship desk] foam])
       %+  turn  ~(tap by rus.rung)
       |=  [=desk =rede]
-      [[ship desk] [[let hit lab] tom nor]:dom.rede]
+      [[ship desk] [[let hit lab] tom nor liv ren]:dom.rede]
     ``[%domes !>(`cone`domes)]
   ::
   ::  True if file is accessible
