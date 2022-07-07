@@ -398,28 +398,26 @@
           {
             u3R->cap_p += pil_u->mov_ws;
 
-            //  XX define symbol to control guard page
-            //
-#if 0
+#ifndef U3_GUARD_PAGE
             //  !off means we're on a north road
             //
             if ( !pil_u->off_ws ) {
               if( !(u3R->cap_p > u3R->hat_p) ) {
                 u3m_bail(c3__meme);
               }
-  #ifdef U3_MEMORY_DEBUG
+# ifdef U3_MEMORY_DEBUG
               c3_assert( pil_u->top_p >= u3R->cap_p );
-  #endif
+# endif
             }
             else {
               if( !(u3R->cap_p < u3R->hat_p) ) {
                 u3m_bail(c3__meme);
               }
-  #ifdef U3_MEMORY_DEBUG
+# ifdef U3_MEMORY_DEBUG
               c3_assert( pil_u->top_p <= u3R->cap_p );
-  #endif
+# endif
             }
-#endif
+#endif /* ifndef U3_GUARD_PAGE */
 
 #ifdef U3_MEMORY_DEBUG
             c3_assert( pil_u->rod_u == u3R );

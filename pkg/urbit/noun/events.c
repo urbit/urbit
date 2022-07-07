@@ -186,6 +186,7 @@ _ce_mapfree(void* map_v)
 }
 #endif
 
+#ifdef U3_GUARD_PAGE
 //! Place a guard page at the (approximate) middle of the free space between
 //! the heap and stack of the current road, bailing if memory has been
 //! exhausted.
@@ -237,6 +238,7 @@ _ce_center_guard_page(void)
 fail:
   u3m_signal(c3__meme);
 }
+#endif /* ifdef U3_GUARD_PAGE */
 
 /* u3e_fault(): handle a memory event with libsigsegv protocol.
 */
@@ -265,11 +267,14 @@ u3e_fault(void* adr_v, c3_i ser_i)
   c3_w      blk_w  = (pag_w >> 5);
   c3_w      bit_w  = (pag_w & 31);
 
+#ifdef U3_GUARD_PAGE
   // The fault happened in the guard page.
   if ( gar_pag_p <= adr_p && adr_p < gar_pag_p + pag_wiz_i ) {
     _ce_center_guard_page();
   }
-  else if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+  else
+#endif /* ifdef U3_GUARD_PAGE */
+  if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
     fprintf(stderr, "strange page: %d, at %p, off %x\r\n", pag_w, adr_w, adr_p);
     c3_assert(0);
     return 0;
@@ -1093,5 +1098,7 @@ u3e_foul(void)
 void
 u3e_init(void)
 {
+#ifdef U3_GUARD_PAGE
   _ce_center_guard_page();
+#endif
 }
