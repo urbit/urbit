@@ -367,6 +367,9 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     c3_path_push(poc_u->pax_u, ver_nam_c);
     c3_w ver_w = htonl(epo_ver_w); // (3)
     if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
+      fprintf(stderr,
+               "epoc: failed to write version number to %s\r\n",
+               c3_path_str(poc_u->pax_u));
       goto free_epoc;
     }
     c3_path_pop(poc_u->pax_u);
@@ -382,6 +385,9 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     c3_path_push(poc_u->pax_u, lif_nam_c);
     lif_w = htonl(lif_w); // (6)
     if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
+      fprintf(stderr,
+              "epoc: failed to write lifecycle length to %s\r\n",
+              c3_path_str(poc_u->pax_u));
       goto free_epoc;
     }
     c3_path_pop(poc_u->pax_u);
