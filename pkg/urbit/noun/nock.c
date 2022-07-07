@@ -1839,23 +1839,6 @@ _n_kale(u3_noun a)
   return a;
 }
 
-/* _n_sane(): check for stack overflow
-*/
-static inline void
-_n_sane(c3_ys off_ys)
-{
-  if ( !off_ys ) {
-    if( !(u3R->cap_p > u3R->hat_p) ) {
-      u3m_bail(c3__meme);
-    }
-  }
-  else {
-    if( !(u3R->cap_p < u3R->hat_p) ) {
-      u3m_bail(c3__meme);
-    }
-  }
-}
-
 typedef struct {
   u3n_prog* pog_u;
   c3_w     ip_w;
@@ -2096,7 +2079,6 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       x          = _n_pep(mov, off);
       fam        = u3to(burnframe, u3R->cap_p) + off + mov;
       u3R->cap_p = u3of(burnframe, fam - off);
-      _n_sane(off);
       fam->ip_w  = ip_w;
       fam->pog_u = pog_u;
       _n_push(mov, off, x);
@@ -2259,7 +2241,6 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 
         fam         = u3to(burnframe, u3R->cap_p) + off + mov;
         u3R->cap_p  = u3of(burnframe, fam - off);
-        _n_sane(off);
         fam->ip_w   = ip_w;
         fam->pog_u  = pog_u;
 
