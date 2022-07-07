@@ -281,6 +281,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
   {
     fprintf(stderr, "loom: fault mprotect: %s\r\n", strerror(errno));
     c3_assert(0);
+    return 0;
   }
 
   return 1;
