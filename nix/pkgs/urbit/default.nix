@@ -68,6 +68,7 @@ in stdenv.mkDerivation {
 
   CFLAGS = oFlags ++ lib.optionals (!enableDebug) [ "-Werror" ];
 
+  GUARD_PAGE = true;
   MEMORY_DEBUG = enableDebug;
   CPU_DEBUG = enableDebug;
   EVENT_TIME_DEBUG = false;

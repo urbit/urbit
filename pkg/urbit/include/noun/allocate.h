@@ -397,36 +397,33 @@
           u3a_push(const u3a_pile* pil_u)
           {
             u3R->cap_p += pil_u->mov_ws;
-            return u3a_peek(pil_u);
-          }
 
-        /* u3a_pile_sane(): bail on invalid road stack state.
-        */
-          inline void
-          u3a_pile_sane(const u3a_pile* pil_u)
-          {
+#ifndef U3_GUARD_PAGE
             //  !off means we're on a north road
             //
             if ( !pil_u->off_ws ) {
               if( !(u3R->cap_p > u3R->hat_p) ) {
                 u3m_bail(c3__meme);
               }
-#ifdef U3_MEMORY_DEBUG
+# ifdef U3_MEMORY_DEBUG
               c3_assert( pil_u->top_p >= u3R->cap_p );
-#endif
+# endif
             }
             else {
               if( !(u3R->cap_p < u3R->hat_p) ) {
                 u3m_bail(c3__meme);
               }
-#ifdef U3_MEMORY_DEBUG
+# ifdef U3_MEMORY_DEBUG
               c3_assert( pil_u->top_p <= u3R->cap_p );
-#endif
+# endif
             }
+#endif /* ifndef U3_GUARD_PAGE */
 
 #ifdef U3_MEMORY_DEBUG
             c3_assert( pil_u->rod_u == u3R );
 #endif
+
+            return u3a_peek(pil_u);
           }
 
         /* u3a_pile_done(): assert valid upon completion.
@@ -707,14 +704,6 @@
                         void*      ptr_v,
                         void     (*pat_f)(u3_atom, void*),
                         c3_o     (*cel_f)(u3_noun, void*));
-
-        /* u3a_walk_fore_unsafe(): u3a_walk_fore(), without overflow checks
-        */
-          void
-          u3a_walk_fore_unsafe(u3_noun    a,
-                               void*      ptr_v,
-                               void     (*pat_f)(u3_atom, void*),
-                               c3_o     (*cel_f)(u3_noun, void*));
 
         /* u3a_string(): `a` as an on-loom c-string.
         */
