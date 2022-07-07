@@ -4282,21 +4282,31 @@
         $(desks t.desks)
       =/  bill  ~|  [%building-bill i.desks]  !<(bill q.u.u.res)
       =^  sats  ..abet  $(desks t.desks)
-      [[[i.desks bill] sats] ..abet]
+      [[[i.desks (override bill [liv ren]:dom:den)] sats] ..abet]
     ::
     =.  sat  (apply-precedence sat)
     =^  agents  ..abet  (build-agents sat)
     =.  ..abet  (build-marks (turn sat head))
     (emit hen %pass /lu/load %g %load agents)
-  ::
-  ::  XX unused, should add rein to state
+  ::  +override: apply rein to bill
   ::
   ++  override
-    |=  [duz=bill =rein]
+    |=  [duz=bill liv=? ren=(map dude:gall ?)]
     ^-  bill
-    ?.  liv.rein  ~
-    =.  duz  (skip duz ~(has in sub.rein))
-    =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
+    ?.  liv  ~
+    =.  duz
+      %+  skip  duz
+      |=  =dude:gall
+      =(`| (~(get by ren) dude))
+    ::
+    =/  dus  (sy duz)
+    =.  duz
+      %+  weld  duz
+      %+  murn  ~(tap by ren)
+      |=  [=dude:gall on=?]
+      ?:  &(=(`& on) !(~(has in dus) dude))
+        `u=dude
+      ~
     duz
   ::  +apply-precedence: resolve conflicts between $bill's
   ::
@@ -5212,6 +5222,7 @@
     |=  raf=raft-12
     |^  ^-  raft-13
     ::  turn on %base desk  ::  TODO handle other desks somehow
+    ::                      ::  maybe have kiln send one-time list of desks
     ::
     =;  rof
       rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom &))))
