@@ -1018,7 +1018,6 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
   }
   c3_c*      evl_c = argv[2];
 
-  u3m_boot_lite();
   c3_d          len_d = u3_Ivory_pill_len;
   c3_y*         byt_y = u3_Ivory_pill;
   u3_cue_xeno*  sil_u;
