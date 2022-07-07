@@ -13,8 +13,6 @@ void*
 u3a_pop(const u3a_pile* pil_u);
 void*
 u3a_push(const u3a_pile* pil_u);
-void
-u3a_pile_sane(const u3a_pile* pil_u);
 c3_o
 u3a_pile_done(const u3a_pile* pil_u);
 
@@ -1176,7 +1174,6 @@ _ca_take_next_north(u3a_pile* pil_u, u3_noun veb)
       else {
         u3a_cell* old_u = (u3a_cell*)veb_u;
         _ca_take* fam_u = u3a_push(pil_u);
-        u3a_pile_sane(pil_u);
 
         fam_u->hed = u3_none;
         fam_u->old = veb;
@@ -1232,7 +1229,6 @@ _ca_take_next_south(u3a_pile* pil_u, u3_noun veb)
       else {
         u3a_cell* old_u = (u3a_cell*)veb_u;
         _ca_take* fam_u = u3a_push(pil_u);
-        u3a_pile_sane(pil_u);
 
         fam_u->hed = u3_none;
         fam_u->old = veb;
@@ -2655,50 +2651,6 @@ u3a_walk_fore(u3_noun    a,
     //
     else {
       *top = u3t(a);
-      top  = u3a_push(&pil_u);
-      u3a_pile_sane(&pil_u);
-      *top = u3h(a);
-    }
-
-    a = *top;
-  }
-}
-
-/* u3a_walk_fore_unsafe(): u3a_walk_fore(), without overflow checks
-*/
-void
-u3a_walk_fore_unsafe(u3_noun    a,
-                     void*      ptr_v,
-                     void     (*pat_f)(u3_atom, void*),
-                     c3_o     (*cel_f)(u3_noun, void*))
-{
-  u3_noun*   top;
-  u3a_pile pil_u;
-
-  //  initialize stack control; push argument
-  //
-  u3a_pile_prep(&pil_u, sizeof(u3_noun));
-  top  = u3a_push(&pil_u);
-  *top = a;
-
-  while ( c3n == u3a_pile_done(&pil_u) ) {
-    //  visit an atom, then pop the stack
-    //
-    if ( c3y == u3a_is_atom(a) ) {
-      pat_f(a, ptr_v);
-      top = u3a_pop(&pil_u);
-    }
-    //  vist a cell, if c3n, pop the stack
-    //
-    else if ( c3n == cel_f(a, ptr_v) ) {
-      top = u3a_pop(&pil_u);
-    }
-    //  otherwise, push the tail and continue into the head
-    //
-    else {
-      *top = u3t(a);
-      //  NB: overflow check elided here
-      //
       top  = u3a_push(&pil_u);
       *top = u3h(a);
     }

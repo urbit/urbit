@@ -1444,7 +1444,8 @@ _n_push(c3_ys mov, c3_ys off, u3_noun a)
 {
   u3R->cap_p += mov;
 
-  //  XX stack sanity-check disabled for performance
+  //  XX define symbol to control guard page
+  //  or switch to u3a_push()
   //
 #if 0
   if ( 0 == off ) {

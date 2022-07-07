@@ -1732,10 +1732,6 @@ _cr_mug_next(u3a_pile* pil_u, u3_noun veb)
         u3a_cell* cel_u = (u3a_cell*)veb_u;
         _cr_mugf* fam_u = u3a_push(pil_u);
 
-        //  check for overflow
-        //
-        u3a_pile_sane(pil_u);
-
         fam_u->mug_l = 0;
         fam_u->cel   = veb;
 
