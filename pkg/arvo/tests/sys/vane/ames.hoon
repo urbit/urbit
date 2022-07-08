@@ -240,7 +240,7 @@
 |%
 ++  test-packet-encoding  ^-  tang
   ::
-  =/  =packet:ames
+  =/  =shot:ames
     :*  [sndr=~nec rcvr=~bud]
         req=&  sam=&
         sndr-tick=0b10
@@ -249,16 +249,16 @@
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:ames packet)
-  =/  decoded  (decode-packet:ames encoded)
+  =/  encoded  (etch-shot:ames shot)
+  =/  decoded  (sift-shot:ames encoded)
   ::
   %+  expect-eq
-    !>  packet
+    !>  shot
     !>  decoded
 ::
 ++  test-origin-encoding  ^-  tang
   ::
-  =/  =packet:ames
+  =/  =shot:ames
     :*  [sndr=~nec rcvr=~bud]
         req=&  sam=&
         sndr-tick=0b10
@@ -267,11 +267,11 @@
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:ames packet)
-  =/  decoded  (decode-packet:ames encoded)
+  =/  encoded  (etch-shot:ames shot)
+  =/  decoded  (sift-shot:ames encoded)
   ::
   %+  expect-eq
-    !>  packet
+    !>  shot
     !>  decoded
 ::
 ++  test-shut-packet-encoding  ^-  tang
@@ -280,10 +280,10 @@
     :+  bone=17  message-num=18
     [%& num-fragments=1 fragment-num=1 fragment=`@`0xdead.beef]
   ::
-  =/  =packet:ames
-    (encode-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 17)
+  =/  =shot:ames
+    (etch-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 17)
   ::
-  =/  decoded  (decode-shut-packet:ames packet nec-sym 3 17)
+  =/  decoded  (sift-shut-packet:ames shot nec-sym 3 17)
   ::
   %+  expect-eq
     !>  shut-packet
@@ -295,11 +295,11 @@
     :+  bone=17  message-num=18
     [%& num-fragments=1 fragment-num=1 fragment=`@`0xdead.beef]
   ::
-  =/  =packet:ames
-    (encode-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 1)
+  =/  =shot:ames
+    (etch-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 1)
   ::
   %-  expect-fail
-  |.((decode-shut-packet:ames packet nec-sym 3 17))
+  |.((sift-shut-packet:ames shot nec-sym 3 17))
 ::
 ++  test-alien-encounter  ^-  tang
   ::
@@ -313,8 +313,8 @@
         [%& num-fragments=1 fragment-num=0 (jam plea)]
     ==
   ::
-  =/  =packet:ames
-    %:  encode-shut-packet:ames
+  =/  =shot:ames
+    %:  etch-shut-packet:ames
       shut-packet
       nec-sym
       ~bus
@@ -323,7 +323,7 @@
       rcvr-life=3
     ==
   ::
-  =/  =blob:ames   (encode-packet:ames packet)
+  =/  =blob:ames   (etch-shot:ames shot)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   =^  moves2  bud
     =/  =point:ames
@@ -497,12 +497,12 @@
     ?.  ?=(%give -.card.move)    ~
     ?.  ?=(%send -.p.card.move)  ~
     `;;(@uxhoot blob.p.card.move)
-  =/  =packet:ames  (decode-packet:ames `@ux`req)
-  ?<  sam.packet
-  ?>  req.packet
-  =/  twit
-   (decode-request:ames `@ux`content.packet)
-  ~&  twit
+  =/  =shot:ames  (sift-shot:ames `@ux`req)
+  ?<  sam.shot
+  ?>  req.shot
+  =/  =keen:ames
+   (sift-keen:ames `@ux`content.shot)
+  ~&  keen
   (expect-eq !>(1) !>(1))
 ::
 ++  test-fine-hunk
@@ -539,13 +539,12 @@
     |=  [blob=@ux num=_1]
     ^-  [have:ames _num]
     :_  +(num)
-    =/  =meow:ames  (decode-response-packet:ames blob)
+    =/  =meow:ames  (sift-meow:ames blob)
     [num meow]
   ::
   =/  num-frag=@ud  (lent paz)
   ~&  num-frag=num-frag
-  =/   =roar:ames
-    (decode-response-msg:ames num-frag (flop paz))
+  =/   =roar:ames  (sift-roar:ames num-frag (flop paz))
   %+  welp
     =/  dat
       ?>  ?=(^ dat.roar)
