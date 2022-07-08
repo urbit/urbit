@@ -11810,6 +11810,7 @@
       ::  produce lazy battery
       ::
       =/  =stencil
+        =>  .(grub *^grub)
         :+  %lazy  1
         |=  axe=@ud
         ^-  (unit noun)
