@@ -174,6 +174,20 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
 
     //  set up event handlers
     //
+    term.attachCustomKeyEventHandler((e: KeyboardEvent) => {
+      //NOTE  ctrl+shift keypresses never make it into term.onData somehow,
+      //      so we handle them specially ourselves.
+      //      we may be able to remove this once xterm.js fixes #3382 & co.
+      if (e.shiftKey
+       && e.ctrlKey
+       && e.type === 'keydown'
+       && e.key.length === 1
+      ) {
+        api.poke(pokeBelt(name, { mod: { mod: 'ctl', key: e.key } }));
+        return false;
+      }
+      return true;
+    });
     term.onData(e => onInput(name, ses, e));
     term.onBinary(e => onInput(name, ses, e));
 
