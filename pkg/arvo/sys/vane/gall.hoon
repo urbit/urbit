@@ -1549,7 +1549,7 @@
         %-  ap-move  :_  ~
         :^  hen  %pass  /nowhere
         [%c %warp our q.beak.yoke ~ %sing %b case /[mark.unto]]
-      |^  ^+  ap-core
+        |^  ^+  ap-core
           ::  %poke-ack has no nonce; ingest directly
           ::
           ?:  ?=(%poke-ack -.sign)
@@ -1562,7 +1562,12 @@
           ::
           ?:  =(~ agent-wire)
             on-missing
-          =/  has-nonce=(unit @ud)  (slaw %ud (head agent-wire))
+          =/  has-nonce=(unit @ud)
+            ::  TODO: uncomment when releasing subscriber %cork handling
+            ::  and remove next line
+            ::
+            ::(slaw %ud (head agent-wire))
+            `0
           ?:  &(?=(~ has-nonce) ?=(%kick -.sign))
             on-weird-kick
           ::  pop nonce off .agent-wire and match against stored subscription
