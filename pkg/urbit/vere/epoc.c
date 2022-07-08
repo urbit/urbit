@@ -357,6 +357,8 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
   poc_u->las_d = fir_d - 1;
   c3_assert(poc_u->las_d < poc_u->fir_d); // (1)
   poc_u->pax_u = _epoc_path(par_u, poc_u->fir_d);
+
+  c3_assert(0 != access(c3_path_str(poc_u->pax_u), F_OK));
   mkdir(c3_path_str(poc_u->pax_u), 0700);
 
   if ( !(poc_u->env_u = _lmdb_init(poc_u->pax_u)) ) {
