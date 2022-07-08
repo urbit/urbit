@@ -2196,6 +2196,8 @@
     ::
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
+    =/  event-args  [[eny duct now rof] server-state.ax]
+    =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-id  i.inactive
     ?~  inactive
       [(zing (flop moves)) http-server-gate]
