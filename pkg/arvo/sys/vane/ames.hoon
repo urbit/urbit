@@ -2603,6 +2603,12 @@
           :: resetting timer for boons
           ::
           (emit [/ames]~ %pass wire %b %rest next-wake)
+        =/  nax-bone=^bone  (mix 0b10 bone)
+        =.  snd.peer-state
+          ::  unconditionally delete possible nack flows that could
+          ::  have been sent if receiving a cork before upgrade
+          ::
+          (~(del by snd.peer-state) nax-bone)
         =.  peer-state
           =,  peer-state
           %_  peer-state
