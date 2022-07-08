@@ -10242,14 +10242,14 @@
     ?^  cached
       [p.u.cached grub(bra q.u.cached)]
     =|  gil=(set type)
-    =;  [branned=seminoun:musk =_grub]
+    =;  [branned=seminoun =_grub]
       :_  grub(bra (put:bra:lru bra.grub sut branned), ban ~)
       branned
-    |-  ^-  [seminoun:musk _grub]
+    |-  ^-  [seminoun _grub]
     =/  cached  (~(get by ban.grub) sut)
     ?^  cached
       [u.cached grub]
-    =;  [branned=seminoun:musk =_grub]
+    =;  [branned=seminoun =_grub]
       :_  grub(ban (~(put by ban.grub) sut branned))
       branned
     ?-    sut
