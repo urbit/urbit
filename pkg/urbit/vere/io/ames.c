@@ -835,7 +835,6 @@ _ames_send(u3_pact* pac_u)
 
   if ( !pac_u->hun_y
     || !sam_u
-    || !&sam_u->wax_u
     || !pac_u->len_w
     || !pac_u->rut_u.lan_u.por_s )
   {
