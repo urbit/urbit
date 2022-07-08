@@ -5987,20 +5987,37 @@
   ;~(pfix fas (most fas urs:ab))
 ::
 ++  stip                                                ::  typed path parser
-  =-  ;~(pfix fas (more fas -))
-  |^  %-  stew
-      ^.  stet  ^.  limo
-      :~  :-  'a'^'z'  (slot (stag %tas sym))
-          :-  '$'      (cold [%tas %$] buc)
-          :-  '0'^'9'  (slot bisk:so)
-          :-  '-'      (slot tash:so)
-          :-  '.'      zust:so
-          :-  '~'      (slot ;~(pfix sig ;~(pose crub:so (easy [%n ~]))))
-          :-  '\''     (stag %t qut)
-      ==
+  =<  swot
+  |%
+  ++  swot  |=(n=nail (;~(pfix fas (more fas spot)) n))
   ::
-  ++  slot  |*(r=rule (sear (soft iota) r))
+  ++  spot
+    %+  sear  (soft iota)
+    %-  stew
+    ^.  stet  ^.  limo
+    :~  :-  'a'^'z'  (stag %tas sym)
+        :-  '$'      (cold [%tas %$] buc)
+        :-  '0'^'9'  bisk:so
+        :-  '-'      tash:so
+        :-  '.'      zust:so
+        :-  '~'      ;~(pfix sig ;~(pose crub:so (easy [%n ~])))
+        :-  '\''     (stag %t qut)
+    ==
   --
+::
+++  pout
+  |=  =pith
+  ^-  path
+  %+  turn  pith
+  |=  i=iota
+  ?@(i i (scot i))
+::
+++  pave
+  |=  =path
+  ^-  pith
+  %+  turn  path
+  |=  i=@ta
+  (fall (rush i spot:stip) [%ta i])
 ::
 ::::  4n: virtualization
   ::
