@@ -693,7 +693,7 @@ u3_disk_exit(u3_disk* log_u)
   //  shortcircuit cleanup if we cannot
   //
   if (  (c3y == log_u->ted_o)
-     && uv_cancel(&log_u->req_u) )
+     && (0 > uv_cancel(&log_u->req_u)) )
   {
     // u3l_log("disk: unable to cleanup\r\n");
     return;
