@@ -1249,6 +1249,7 @@
   ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
+  ::  /ax/corks                      (list wire)
   ::
   ?.  ?=(%x ren)  ~
   ?+    tyl  ~
@@ -1324,6 +1325,9 @@
     =/  res
       u.mps
     ``noun+!>(!>(res))
+  ::
+      [%corks ~]
+    ``noun+!>(~(tap in corks.ames-state))
   ==
 --
 ::  |per-event: inner event-handling core
@@ -2502,6 +2506,12 @@
               =(1 current:(~(got by snd.peer-state) bone))
           ==
         (send-blob | her.channel (attestation-packet [her her-life]:channel))
+      ?:  (~(has in corked.peer-state) bone)
+        ::  if the bone was corked the flow doesn't exist anymore
+        ::  TODO: clean up corked bones in the peer state when it's _safe_?
+        ::        (e.g. if this bone is N blocks behind the next one)
+        ::
+        peer-core
       ::  maybe resend some timed out packets
       ::
       (run-message-pump bone %wake ~)
@@ -2555,7 +2565,7 @@
           =.  peer-core
             ?-  -.gift
               %done  (on-pump-done [message-num error]:gift)
-              %cork  on-pump-cork
+              %cork  (on-pump-cork current.message-pump-state)
               %send  (on-pump-send static-fragment.gift)
               %wait  (on-pump-wait date.gift)
               %rest  (on-pump-rest date.gift)
@@ -2589,9 +2599,18 @@
       ::  +on-pump-cork: kill flow on cork sender side
       ::
       ++  on-pump-cork
+        |=  =message-num
         ^+  peer-core
+        ::  clear all packets from this message from the packet pump
+        ::
+        =.  message-pump  (run-packet-pump:message-pump %done message-num *@dr)
         =/  =wire  (make-pump-timer-wire her.channel bone)
         =.  corks.ames-state  (~(del in corks.ames-state) wire)
+        =/  nack-bone=^bone  (mix 0b10 bone)
+        =?  rcv.peer-state  (~(has by rcv.peer-state) nack-bone)
+          ::  if the publisher was behind we remove nacks received on that bone
+          ::
+          (~(del by rcv.peer-state) nack-bone)
         =.  peer-state
           =,  peer-state
           %_  peer-state
@@ -2666,6 +2685,12 @@
           :: resetting timer for boons
           ::
           (emit [/ames]~ %pass wire %b %rest next-wake)
+        =/  nax-bone=^bone  (mix 0b10 bone)
+        =.  snd.peer-state
+          ::  unconditionally delete possible naxplanations flows that
+          ::  could have been sent if receivig a cork before upgrade
+          ::
+          (~(del by snd.peer-state) nax-bone)
         =.  peer-state
           =,  peer-state
           %_  peer-state
