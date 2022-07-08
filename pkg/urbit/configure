@@ -64,6 +64,7 @@ do
   shift
 done
 
+[ -z "${NO_GUARD_PAGE-}" ]    && defmacro U3_GUARD_PAGE 1
 [ -n "${MEMORY_DEBUG-}" ]     && defmacro U3_MEMORY_DEBUG 1
 [ -n "${MEMORY_LOG-}" ]       && defmacro U3_MEMORY_LOG 1
 [ -n "${CPU_DEBUG-}" ]        && defmacro U3_CPU_DEBUG 1
