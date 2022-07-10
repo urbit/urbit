@@ -1,9 +1,0 @@
-PARSED
-
-$.  @
-++  foo  1
---
-
-ERROR
-
-unsupported $.

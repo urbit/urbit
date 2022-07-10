@@ -29,7 +29,7 @@ data Result extra a
     , sof :: Soft
     , cod :: Code Void
     , typ :: Type a
-    , fis :: Set Fish
+    , fis :: Set Fish  -- XX should this not be checked at top level?
     , ken :: Semi a
     , nok :: Nock
     , mor :: extra

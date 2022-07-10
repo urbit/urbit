@@ -241,7 +241,10 @@ data Semi a
   | Core'
     -- | formal payload type (to be thought of as part of the battery type)
     (Semi a)
-    -- | map of Jambs to calculate arm types, with shared closure
+    -- | map of Jambs to calculate arm types, with shared closure.
+    -- The rule is that you must cons a semi for the *whole* context value onto
+    -- the closure. This may often in practice mean that the same value is
+    -- doubled.
     (Semi a, Map Term (Code a))
     -- | actual payload type
     (Semi a)
@@ -634,7 +637,10 @@ plus = \case
 -- | Implement the Slam eliminator.
 slam :: Var a => Semi a -> Semi a -> Semi a
 slam x y = case x of
-  Lamb' j -> jamb j $ y
+  Lamb' (Jamb{clo, cod}) ->
+    slam (Crux' (mapFromList [("", cod)]) (Cell' (Atom' 0) clo)) y
+  -- I like the reporting better below than using hold.
+  Crux' cs pay | Just c <- lookup "" cs -> eval (edit x 6 y) c
   x -> Slam' x y
 
 -- | Implement the Equl eliminator.
@@ -699,7 +705,7 @@ loft lvl = \case
   --
   Atom' a -> Atom a
   Cell' a b -> Cell (loft lvl a) (loft lvl b)
-  Lamb' j -> Lamb $ luft lvl j
+  Lamb' j -> Lamb $ laft lvl j
   -- cf the discussion on luft below. Otoh, I think we do want contexts printed
   -- for cruxen.
   Crux' ars pay -> With (loft lvl pay) (Crux ars)
@@ -739,6 +745,9 @@ loft lvl = \case
 -- encoding, because it purports to edit the closure.) But many other encodings
 -- would sidestep the need to loft on the semantic path entirely.
 luft l j = loft (l + 1) $ jamb j $ rump (l + 1, 2)
+
+-- And this one is for lambdas, which are secretly cores, ugh.
+laft l j = loft (l + 2) $ jamb j $ rump (l + 2, 6)
 
 -- | Given a Code coming straight out of the compiler, read the subject type
 -- and evaluate against the resulting seminoun.
@@ -858,7 +867,7 @@ fear = undefined
 
 -- The type checking monad -----------------------------------------------------
 
-class (Monad m, MonadIO m, Alternative m) => MonadCheck m where
+class (Monad m, MonadFail m, MonadIO m, Alternative m) => MonadCheck m where
   -- | Push an error reporting stack frame.
   act :: (Show a, Rolling a) => Act -> m a -> m a
 
@@ -881,12 +890,16 @@ class (Monad m, MonadIO m, Alternative m) => MonadCheck m where
 bailFail :: MonadCheck m => m a
 bailFail = bail BailFail
 
+{-
+instance MonadCheck m => MonadFail m where
+  fail = bail . BailNote . pack -}
+
 -- | Error reporting context, analogous to stack trace item. As the compiler
 -- recurses deeper into its operations, it pushes these descriptions to a stack
 -- so they can serve as breadcrumbs in error messages.
 data Act
   =                    ActRoot
-  | forall a. Var a => ActFits Fit (Type a) (Type a)
+  | forall a. Var a => ActFits Fit Level (Type a) (Type a)
   | forall a. Var a => ActSeal (Line a)
   | forall a. Var a => ActFind (Level, Axis) (Type a) Wing
   | forall a. Var a => ActFuse (Level, Axis) (Type a) Fish
@@ -896,6 +909,7 @@ data Act
   | forall a. Var a => ActTear Claw (Cube a)
   | forall a. Var a => ActTyre (Cube a)
   | forall a. Var a => ActTire Level (Set Fish) (Type a)
+  | forall a. Var a => ActScan (Con a) Soft
   | forall a. Var a => ActWork (Con a) Fit Soft (Type a)
   | forall a. Var a => ActPlay (Con a) Soft
   |                    ActDone
@@ -912,7 +926,7 @@ data Fail
   -- | Two cores or core types have differing arm sets.
   |                    FarmCore (Set Text) (Set Text)
   -- | The two types do not {nest, cast, equal each other}.
-  | forall a. Var a => FitsFail Fit (Type a) (Type a)
+  | forall a. Var a => FitsFail Fit Level (Type a) (Type a)
   -- | Your fish is not compatible with any fish in the fork
   -- ClamFork (Fish) (Set Fish)
   -- | Your pelt performs a test, which is not permitted in this context.
@@ -921,6 +935,8 @@ data Fail
   |                    TireFish Axis Fish
   -- | You are trying to edit the return value of an arm pull
   | forall a. Var a => EditPull Wing (Type a)
+  -- | You need to put an explicit type annotation on this subexpression.
+  |                    ScanMurk Soft
   -- | You are trying to slam something which is not a gate.
   | forall a. Var a => NeedGate (Type a)
   -- | A rhetorical question had a non-rhetorical answer.
@@ -1264,7 +1280,8 @@ farm a b state act = do
 
 fest :: forall a m. (MonadCheck m, Var a)
      => Fit -> Level -> Type a -> Type a -> Lace a -> m (Lace a)
-fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit t u) case (t, u) of
+fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit lvl t u)
+                                           case (t, u) of
   _ | (t, u) `elem` gil -> pure ace
 --  | t      `elem` seg -> fitsFail
 --  | u      `elem` reg -> pure ace  --  ?!?!
@@ -1535,7 +1552,7 @@ fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit t u) case (t, u) of
 
  where
   fitsFail :: m b
-  fitsFail = bail (FitsFail fit t u)
+  fitsFail = bail (FitsFail fit lvl t u)
 
 
 -- Find ------------------------------------------------------------------------
@@ -2281,6 +2298,54 @@ fend con@Con{lvl, sut} w whs = do
         , swam ms ns
         )
 
+-- | Given an "explicitly typed" expression, produce its type.
+scan :: forall a m. (MonadCheck m, Var a)
+     => Con a -> Soft -> m (Type a)
+scan con@Con{lvl, sut} cod = act (ActScan con cod) case cod of
+  Wng{} -> scanMurk
+
+  Atm _ Sand au -> pure $ Aura' au Bowl
+  Atm _ Rock _  -> scanMurk
+
+  Cel c d -> Cell' <$> scan con c <*> scan con d
+
+  Lam a c -> undefined {- do
+    a <- work con FitNest a Type'
+    let t = evil con a
+    let ken = read (rump (
+    Gate' t . (`Jamb`loft (lvl + 1) <$> scan (hide con t) c -}
+
+  Cru _ -> undefined
+
+  Fac p c -> face' (derm p) <$> scan con c
+
+  Plu{} -> scanMurk
+  Sla{} -> scanMurk
+  Equ{} -> scanMurk
+  Tes{} -> scanMurk
+  Rhe{} -> scanMurk
+  Fis{} -> scanMurk
+
+  Aur{} -> pure Type'
+  Ral{} -> pure Type'
+  Gat{} -> pure Type'
+  Cor{} -> pure Type'
+  Sin{} -> pure Type'
+  Fus{} -> pure Type'
+  Non{} -> pure Type'
+  Vod{} -> pure Type'
+  Typ{} -> pure Type'
+
+  -- XX can these be relaxed?
+  Wit{} -> scanMurk
+  Pus{} -> scanMurk
+
+  Net{typ} -> evil con . fst <$> work con FitNest typ Type'
+  Cat{typ} -> evil con . fst <$> work con FitNest typ Type'
+
+ where
+  scanMurk = bail (ScanMurk cod)
+
 -- | Given subject type and knowledge, verify that code has result type.
 -- Since the expected result type is known in this mode, we can lighten the
 -- user's annotation burden. Read about "bidirectional type checking" to
@@ -2324,7 +2389,24 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
         (x, ms) <- work con fit cod gol
         fits FitSame lvl s (evil con x)
         pure (x, ms)
-      Gate' paramT resJ -> do
+      Gate' golArgT (Jamb resCod resClo) -> do
+        (argC, ms) <- work con FitNest a Type'
+        let argT = evil con argC
+        fits FitNest lvl golArgT argT
+        let fom = Cell' argT sut
+        -- This is hard to get right. :/ It will clean up when Gate' becomes
+        -- epiphenominal.
+        let ken = Cell' (read (rump (lvl + 1, 2)) argT) resClo
+        -- resJ's cod expects a subject of shape [arg sut] but the resC we must
+        -- put in the core type needs to be run against the awful [[arg sut] arg
+        -- sut]. My sincere apologies.
+        let resC = With (Cell (Spot 1) (Spot 1)) resCod
+        let cod = Cru (mapFromList [("", c)])
+        let gol = Core' fom (ken, mapFromList [("", resC)]) fom
+        (Crux (lookup "" -> Just x), ms) <-
+          work Con{lvl = lvl + 1, sut = fom} fit cod gol
+        pure (Lamb x, ms)
+        {-
         -- FIXME switch this to type not skin
         (argC, ms) <- work con FitNest a Type'
         let argT = evil con argC
@@ -2347,6 +2429,7 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
         -- example seems not to be.
         tire (lvl + 1, 1) ns (Cell' argT sut)
         pure (Lamb x, singleton Tuna)
+        -}
       _ -> playFits
 
     Cru arms -> case gol of
@@ -2471,15 +2554,19 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
   Lam a c -> do
     (argC, ms) <- work con FitNest a Type'
     let argT = evil con argC
-    -- TODO replace with gold core
-    (x, resT, ns) <- play (hide con argT) c
-    let ken = read (rump (lvl, 1)) sut
-    let resC = loft (lvl + 1) resT
+    ( Crux (lookup "" -> Just x)
+     , Sing' _ (Core' _ (Cell' _ ken, lookup "" -> Just resC') _)
+     , ns
+     ) <-
+      play (hide con argT) (Cru $ mapFromList [("", c)])
+    -- The problem with the original resC' is that it expects a value for the
+    -- whole actual subject to be pushed, rather than just the +2. This
+    -- misalignment will go away when gate types become epiphenominal, sorry.
+    let resC = loft (lvl + 1) $ eval (Cell' ken ken) resC'
     -- You could actually be doing case analysis to determine arg type,
     -- and that needs to be total.
     tire (lvl, 1) ms sut
-    -- We must be total in our case analysis of both the arg *and* the closure.
-    tire (lvl + 1, 1) ns (Cell' argT sut)
+    -- Meanwhile we already do tire in the Cru case below for the body.
     pure (Lamb x, Gate' argT (Jamb resC ken), singleton Tuna)
 
   Cru arms -> do

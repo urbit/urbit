@@ -31,19 +31,34 @@ ERROR
           sut   [a=@ 0|*]
           ----
           mode  nest
+          code  |%
+                ++  %  a
+                --
+
+          type  $|  [a=@ 0|*]
+                  [a=@ 0|*]
+                ++  %  {@ @}
+                --
+
+
+          work:
+          lvl   2
+          sut   $|  [a=@ 0|*]
+                  [a=@ 0|*]
+                ++  %  {@ @}
+                --
+
+          ----
+          mode  nest
           code  a
           type  {@ @}
 
           nest:
           have  @
-          need  =>  [+1_2 0]
-                {@ @}
-
+          need  {@ @}
 
 
   nest-fail:
   have  @
-  need  =>  [+1_2 0]
-        {@ @}
-
+  need  {@ @}
 

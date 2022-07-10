@@ -106,9 +106,9 @@ instance Rolling ActTree where
 instance Rolling Act where
   roll = \case
     ActRoot -> leaf "root"
-    ActFits f t u -> Huge $ Stem (tshow f <> ":") "" []
-      [ ("have", tank $ roll t, Leaf "")
-      , ("need", tank $ roll u, Leaf "")
+    ActFits f lvl t u -> Huge $ Stem (tshow f <> ":") "" []
+      [ ("have", tank $ roll $ loft lvl t, Leaf "")
+      , ("need", tank $ roll $ loft lvl u, Leaf "")
       ]
     ActSeal Line{lev, loc, lyt, las} -> Huge $ Stem "seal:" "" []
       [ ("loc ", Leaf $ tshow loc, Leaf "")
@@ -180,9 +180,9 @@ instance Rolling Fail where
       [ ("arms", Leaf $ tshow as, Leaf "")
       , ("arms", Leaf $ tshow bs, Leaf "")
       ]
-    FitsFail f t u -> Huge $ Stem (tshow f <> "-fail:") "" []
-      [ ("have", tank $ roll t, Leaf "")
-      , ("need", tank $ roll u, Leaf "")
+    FitsFail f lvl t u -> Huge $ Stem (tshow f <> "-fail:") "" []
+      [ ("have", tank $ roll $ loft lvl t, Leaf "")
+      , ("need", tank $ roll $ loft lvl u, Leaf "")
       ]
     ToilFish p t -> Huge $ Stem "toil-fish:" "" []
       [ ("skin", tank $ roll p, Leaf "")

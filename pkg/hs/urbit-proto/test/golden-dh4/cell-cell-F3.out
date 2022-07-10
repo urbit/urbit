@@ -28,14 +28,10 @@ ERROR
 
           nest:
           have  $
-          need  =>  0
-                {@ @}
-
+          need  {@ @}
 
 
   nest-fail:
   have  $
-  need  =>  0
-        {@ @}
-
+  need  {@ @}
 
