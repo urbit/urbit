@@ -1651,6 +1651,7 @@
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%nuke =dude]                                   ::  delete agent
+        [%perm =dude per=(pair perm-arvo ?)]
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -1672,9 +1673,14 @@
                   eny=@uvJ                              ::  entropy
                   now=@da                               ::  current time
                   byk=beak                              ::  load source
+              ==
+              $:  per=(set perm-arvo)
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
+  +$  perm-arvo
+    $%  [%gall ?(%perm)]
+    ==
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct

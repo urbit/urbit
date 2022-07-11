@@ -15,6 +15,7 @@
 ::  $state-8: overall gall state, versioned
 ::
 +$  state-8  [%8 state]
++$  state-9  [%9 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -116,7 +117,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %8
+  $:  %9
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -164,7 +165,8 @@
           [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
-        [%8 system-duct outstanding contacts yokes=~ blocked]:spore
+        [%9 system-duct outstanding contacts yokes=~ blocked]:spore
+        ::  [%8 system-duct outstanding contacts yokes=~ blocked]:spore
       =/  mo-core  (mo-abed:mo:adult duct)
       =.  mo-core
         =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
@@ -225,7 +227,9 @@
       |^  |=  old=spore-any
           =?  old  ?=(%7 -.old)
             (spore-7-to-8 old)
-          ?>  ?=(%8 -.old)
+          =?  old  ?=(%8 -.old)
+            (spore-8-to-9 old)
+          ?>  ?=(%9 -.old)
           =.  spore  old
           ?.  =(~ eggs.spore)
             pupal-gate
@@ -234,7 +238,7 @@
             state  spore(eggs *(map term yoke))
           ==
       ::
-      +$  spore-any  $%(^spore spore-7)
+      +$  spore-any  $%(^spore spore-7 spore-8)
       +$  spore-7
         $:  %7
             wipe-eyre-subs=_|  ::NOTE  band-aid for #3196
@@ -244,10 +248,18 @@
             eggs=(map term egg)
             blocked=(map term (qeu blocked-move))
         ==
+      +$  spore-8
+        $:  %8
+            system-duct=duct
+            outstanding=(map [wire duct] (qeu remote-request))
+            contacts=(set ship)
+            eggs=(map term egg)
+            blocked=(map term (qeu blocked-move))
+        ==
       ::
       ++  spore-7-to-8
         |=  old=spore-7
-        ^-  ^spore
+        ^-  spore-8
         :-  %8
         =.  eggs.old
           %-  ~(urn by eggs.old)
@@ -255,11 +267,16 @@
           ::NOTE  kiln will kick off appropriate app revival
           e(old-state [%| p.old-state.e])
         +>.old
+      ::
+      ++  spore-8-to-9
+        |=  old=spore-8
+        ^-  ^spore
+        [%9 +.old]
       --
     --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-8
+=|  state=state-9
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 =<  ~%  %gall-wrap  ..mo  ~
@@ -1323,6 +1340,8 @@
               eny=eny.stats.yoke                      ::  nonce
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
+          ==
+          :*  per=~
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::
@@ -1728,6 +1747,7 @@
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
+      %perm  [~ gall-payload]
   ==
 ::  +load: recreate vane; note, only valid if called from pupa
 ::
