@@ -2460,6 +2460,8 @@
       ^-  (qual (unit (pair @ v)) _k @ _buc)
       ?:  =(k l)
         :-  `[q v.buc]
+        ?~  t.buc
+          [k p buc]
         (sink:qor t.buc k p v.buc)
       =/  val  (get:qor t.buc k)
       ?~  val  [~ k q buc]

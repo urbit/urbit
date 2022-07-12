@@ -7,8 +7,14 @@ _stir(u3_noun k, u3_atom p, u3_noun l, u3_atom q, u3_noun buc)
   u3x_cell(buc, &vb, &tb);
 
   if (c3y == u3r_sing(k, l)) {
-    return u3nc(u3nt(u3_nul, u3k(q), u3k(vb)),
-             u3qdu_qor_sink(tb, k, p, vb));
+    if (u3_nul == tb) {
+      return u3nc(u3nt(u3_nul, u3k(q), u3k(vb)),
+               u3nt(u3k(k), u3k(p), u3k(buc)));
+    }
+    else {
+      return u3nc(u3nt(u3_nul, u3k(q), u3k(vb)),
+               u3qdu_qor_sink(tb, k, p, vb));
+    }
   }
   else {
     u3_noun val = u3qdu_qor_get(tb, k);
