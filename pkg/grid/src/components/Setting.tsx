@@ -25,7 +25,7 @@ export const Setting: FC<SettingsProps> = ({
 
   return (
     <section className={classNames('inner-section', className)}>
-      <h3 id={id} className="flex items-center h4 mb-2">
+      <h3 id={id} className="flex items-center h4 mb-8">
         {name} {status === 'loading' && <Spinner className="ml-2" />}
       </h3>
       <div className="flex space-x-2">

@@ -230,7 +230,7 @@ export const Leap = React.forwardRef(
       <div className="relative z-50 w-full">
         <form
           className={classNames(
-            'flex items-center h-full w-full px-2 rounded-full bg-white default-ring focus-within:ring-2',
+            'flex items-center h-11 w-full px-2 rounded-lg bg-white default-ring focus-within:ring-2',
             shouldDim && 'opacity-60',
             !navOpen ? 'bg-gray-50' : '',
             menu === 'upgrading' ? 'bg-orange-500' : '',

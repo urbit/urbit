@@ -45,7 +45,6 @@ export function InterfacePrefs() {
 
   return (
     <>
-      <h2 className="h3 mb-7">Interface Settings</h2>
       <div className="space-y-3">
         <Setting
           on={protocolHandling}

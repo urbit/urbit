@@ -17,6 +17,7 @@ import { Interface } from '../components/icons/Interface';
 import { Notifications } from '../components/icons/Notifications';
 import { Lock } from '../components/icons/Lock';
 import { getAppName } from '../state/util';
+import { Help } from './Help';
 
 interface SystemPreferencesSectionProps {
   url: string;
@@ -33,7 +34,7 @@ function SystemPreferencesSection({
       <Link
         to={url}
         className={classNames(
-          'flex items-center px-2 py-2 hover:text-black hover:bg-gray-50 rounded-xl',
+          'flex items-center px-2 py-2 hover:text-black hover:bg-gray-50 rounded-lg',
           active && 'text-black bg-gray-50'
         )}
       >
@@ -79,11 +80,33 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
       FallbackComponent={ErrorAlert}
       onReset={() => history.push('/leap/system-preferences')}
     >
-      <div className="h-full overflow-y-auto sm:flex">
+      <div className="h-full overflow-y-auto sm:flex bg-gray-50">
         <Route exact={isMobile} path={match.url}>
-          <aside className="self-start flex-none w-full py-4 font-semibold text-black border-r-2 sm:w-auto min-w-60 sm:py-8 sm:text-gray-600 border-gray-50">
-            <nav className="px-2 sm:px-6">
-              <h2 className="px-2 mb-4 sm:hidden h3">System Preferences</h2>
+          <aside className="self-start flex-none w-full py-4 font-semibold text-black border-r-2 sm:w-auto min-w-60 sm:py-8 sm:text-gray-600 border-gray-50 bg-white">
+            <nav className="px-2 sm:px-6 flex flex-col">
+              {/* TODO: Replace this h3 with the search box. */}
+              <h2 className="px-2 mb-4 h3">System Preferences</h2>
+              <span className="text-gray-400 font-semibold pt-1 pl-2 pb-3 text-xs">Landscape</span>
+              <ul className="space-y-1">
+                <SystemPreferencesSection
+                  url={subUrl('system-updates')}
+                  active={matchSub('system-updates')}
+                >
+                  <System className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
+                  About System
+                </SystemPreferencesSection>
+                <SystemPreferencesSection url={subUrl('help')} active={matchSub('help')}>
+                  <Lock className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
+                  Help and Support
+                </SystemPreferencesSection>
+                <SystemPreferencesSection url={subUrl('security')} active={matchSub('security')}>
+                  <Lock className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
+                  Log Out...
+                </SystemPreferencesSection>
+              </ul>
+            </nav>
+            <nav className="px-2 sm:px-6 flex flex-col">
+              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-xs">Settings</span>
               <ul className="space-y-1">
                 <SystemPreferencesSection
                   url={subUrl('notifications')}
@@ -92,25 +115,16 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
                   <Notifications className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
                   Notifications
                 </SystemPreferencesSection>
-                <SystemPreferencesSection
-                  url={subUrl('system-updates')}
-                  active={matchSub('system-updates')}
-                >
-                  <System className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
-                  System Updates
-                </SystemPreferencesSection>
                 <SystemPreferencesSection url={subUrl('interface')} active={matchSub('interface')}>
                   <Interface className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
                   Interface Settings
                 </SystemPreferencesSection>
-                <SystemPreferencesSection url={subUrl('security')} active={matchSub('security')}>
-                  <Lock className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
-                  Security
-                </SystemPreferencesSection>
               </ul>
             </nav>
-            <hr className="my-4 border-t-2 border-gray-50" />
-            <nav className="px-2 sm:px-6">
+            <nav className="px-2 sm:px-6 flex flex-col">
+              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-xs">
+                Installed App Settings
+              </span>
               <ul className="space-y-1">
                 {filteredCharges.map((charge) => (
                   <SystemPreferencesSection
@@ -127,10 +141,11 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
           </aside>
         </Route>
         <Route path={settingsPath}>
-          <section className="flex-1 flex flex-col min-h-[60vh] p-4 sm:p-8 text-black">
+          <section className="flex-1 flex flex-col min-h-[60vh] p-4 sm:p-8 text-black bg-gray-50">
             <Switch>
               <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
               <Route path={`${match.url}/system-updates`} component={SystemUpdatePrefs} />
+              <Route path={`${match.url}/help`} component={Help} />
               <Route path={`${match.url}/interface`} component={InterfacePrefs} />
               <Route path={`${match.url}/security`} component={SecurityPrefs} />
               <Route
