@@ -252,6 +252,16 @@
   =<  abet
   (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
 ::
+++  poke-gall-free
+  |=  [=dude:gall ses=(set perm:gall)]
+  =<  abet
+  (emit %pass /helm/gall/free %arvo %g %free dude ses)
+::
+++  poke-gall-lock
+  |=  [=dude:gall ses=(set perm:gall)]
+  =<  abet
+  (emit %pass /helm/gall/lock %arvo %g %lock dude ses)
+::
 ++  poke
   |=  [=mark =vase]
   ?>  ?|  ?=(%helm-hi mark)
@@ -269,6 +279,8 @@
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
     %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
     %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
+    %helm-gall-free        =;(f (f !<(_+<.f vase)) poke-gall-free)
+    %helm-gall-lock        =;(f (f !<(_+<.f vase)) poke-gall-lock)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)

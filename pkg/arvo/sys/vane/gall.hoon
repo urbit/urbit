@@ -838,6 +838,30 @@
     ~>  %slog.0^leaf/"gall: nuking {<dap>}"
     =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
     mo-core(yokes.state (~(del by yokes.state) dap))
+  ::  +mo-free: expand permissions to an agent
+  ::
+  ++  mo-free
+    |=  [=dude pes=(set perm)]
+    ^+  mo-core
+    =.  yokes.state
+      ~|  %todo-reconsider-behavior-for-unstarted-agents
+      %+  ~(jab by yokes.state)  dude
+      |=  y=yoke
+      y(perms (~(uni in perms.y) pes))
+    ::TODO  maybe notify about permission change
+    mo-core
+  ::  +mo-lock: restrict permissions of an agent
+  ::
+  ++  mo-lock
+    |=  [=dude pes=(set perm)]
+    ^+  mo-core
+    =.  yokes.state
+      ~|  %todo-reconsider-behavior-for-unstarted-agents
+      %+  ~(jab by yokes.state)  dude
+      |=  y=yoke
+      y(perms (~(dif in perms.y) pes))
+    ::TODO  maybe notify about permission change
+    mo-core
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
@@ -1325,8 +1349,8 @@
               eny=eny.stats.yoke                      ::  nonce
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
-          ==
-          :*  per=perms.yoke
+          ==                                          ::
+          :*  per=perms.yoke                          ::  permissions
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::
@@ -1625,8 +1649,12 @@
         `ap-core
       ::
       =.  agent.yoke  &++.p.result
-      ::TODO  pass moves through perm check before we proceed with this
-      ::TODO  but always allow if agent is from base desk
+      =/  [gud=(list card:agent) bad=(list card:agent)]
+        ?:  =(%base q.beak.yoke)  [-.p.result ~]
+        %+  skid  -.p.result
+        |=  =card:agent
+        (cred our card perms.yoke)
+      ~?  !=(~ bad)  [%would-drop agent-name (turn bad head)]
       =/  moves  (zing (turn -.p.result ap-from-internal))
       =.  inbound.watches.yoke
         (ap-handle-kicks moves)
@@ -1732,6 +1760,8 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
+      %free  mo-abet:(mo-free:mo-core +.task)
+      %lock  mo-abet:(mo-lock:mo-core +.task)
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==

@@ -1651,6 +1651,8 @@
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%nuke =dude]                                   ::  delete agent
+        [%free =dude pes=(set perm)]                    ::  allow
+        [%lock =dude pes=(set perm)]                    ::  disallow
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -1672,6 +1674,8 @@
                   eny=@uvJ                              ::  entropy
                   now=@da                               ::  current time
                   byk=beak                              ::  load source
+              ==
+              $:  per=(set perm)
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
