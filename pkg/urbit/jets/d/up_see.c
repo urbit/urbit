@@ -56,7 +56,7 @@ u3qdu_see(u3_noun a, u3_noun k, u3_noun p)
       u3_atom mk  = u3r_mug(k);
       u3_atom mka = u3r_mug(ka);
 
-      if (c3n == u3r_sing(mk, mka)) {
+      if (mk != mka) {
         return u3nc(u3_nul, u3k(a));
       }
       else {
@@ -85,7 +85,7 @@ u3qdu_see(u3_noun a, u3_noun k, u3_noun p)
       u3_atom mk  = u3r_mug(k);
       u3_atom mka = u3r_mug(ka);
 
-      if (c3y == u3r_sing(mk, mka)) {
+      if (mk == mka) {
         u3_noun mud = _stir(k, p, ka, pa, va);
         u3_noun pm, qm, rm, sm;
         u3x_qual(mud, &pm, &qm, &rm, &sm);
