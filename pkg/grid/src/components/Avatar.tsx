@@ -6,9 +6,9 @@ import { darken, lighten, parseToHsla } from 'color2k';
 import { useCurrentTheme } from '../state/local';
 import { normalizeUrbitColor } from '../state/util';
 
-export type AvatarSizes = 'xs' | 'small' | 'default';
+export type AvatarSizes = 'xs' | 'small' | 'nav' | 'default';
 
-interface AvatarProps extends Contact {
+interface AvatarProps {
   shipName: string;
   size: AvatarSizes;
   className?: string;
@@ -22,6 +22,7 @@ interface AvatarMeta {
 const sizeMap: Record<AvatarSizes, AvatarMeta> = {
   xs: { classes: 'w-6 h-6 rounded', size: 12 },
   small: { classes: 'w-8 h-8 rounded-lg', size: 16 },
+  nav: { classes: 'w-9 h-9 rounded-lg', size: 18 },
   default: { classes: 'w-12 h-12 rounded-lg', size: 24 }
 };
 
@@ -94,6 +95,7 @@ export const Avatar = ({ size, className, ...ship }: AvatarProps) => {
         classes,
         size === 'xs' && 'p-1.5',
         size === 'small' && 'p-2',
+        size === 'nav' && 'p-[9px]',
         size === 'default' && 'p-3',
         className
       )}

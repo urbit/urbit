@@ -3,8 +3,9 @@ import * as Portal from '@radix-ui/react-portal';
 import classNames from 'classnames';
 import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import create from 'zustand';
+import { Avatar } from '../components/Avatar';
 import { Dialog } from '../components/Dialog';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { Help } from './Help';
@@ -64,13 +65,12 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const dialogNavRef = useRef<HTMLDivElement>(null);
-  const systemMenuOpen = useRouteMatch('/system-menu');
+  const systemMenuOpen = useRouteMatch('/leap/system-preferences');
   const [dialogContentOpen, setDialogContentOpen] = useState(false);
   const select = useLeapStore((state) => state.select);
 
   const menuState = menu || 'closed';
   const isOpen = menuState !== 'upgrading' && menuState !== 'closed';
-  const eitherOpen = isOpen || systemMenuOpen;
 
   useEffect(() => {
     if (!isOpen) {
@@ -113,14 +113,11 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       {/* Using portal so that we can retain the same nav items both in the dialog and in the base header */}
       <Portal.Root
         containerRef={dialogContentOpen ? dialogNavRef : navRef}
-        className="flex justify-center w-full space-x-2"
+        className="flex items-center justify-center w-full space-x-2"
       >
-        <SystemMenu
-          open={!!systemMenuOpen}
-          subMenuOpen={menu === 'system-preferences' || menu === 'help-and-support'}
-          shouldDim={isOpen && menu !== 'system-preferences' && menu !== 'help-and-support'}
-          className={classNames('relative z-50 flex-none', eitherOpen ? 'bg-white' : 'bg-gray-50')}
-        />
+        <Link to="/leap/system-preferences">
+          <Avatar shipName={window.ship} size="nav" />
+        </Link>
         <NotificationsLink
           navOpen={isOpen}
           notificationsOpen={menu === 'notifications'}
@@ -162,7 +159,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           />
           <div
             id="leap-items"
-            className="grid grid-rows-[fit-content(calc(100vh-6.25rem))] mt-4 sm:mt-0 bg-white rounded-3xl overflow-hidden default-ring focus-visible:ring-2"
+            className="grid grid-rows-[fit-content(calc(100vh-6.25rem))] mt-4 sm:mt-0 bg-white rounded-xl overflow-hidden default-ring focus-visible:ring-2"
             tabIndex={0}
             role="listbox"
           >

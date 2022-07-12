@@ -43,7 +43,6 @@ export const SystemUpdatePrefs = () => {
 
   return (
     <>
-      <h2 className="h3 mb-7">System Updates</h2>
       <div className="space-y-3">
         <Setting on={!!otasEnabled} toggle={toggleBase} name="Enable Automatic Urbit OTAs">
           <p>Automatically download and apply system updates to keep your Urbit up to date.</p>

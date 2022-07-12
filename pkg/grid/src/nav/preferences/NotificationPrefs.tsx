@@ -52,7 +52,6 @@ export const NotificationPrefs = () => {
 
   return (
     <>
-      <h2 className="h3 mb-7">Notifications</h2>
       <div className="space-y-3">
         <Setting on={doNotDisturb} toggle={toggleDnd} name="Do Not Disturb">
           <p>

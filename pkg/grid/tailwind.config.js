@@ -53,7 +53,7 @@ const base = new Theme().addColors({
   white: '#FFFFFF',
   black: '#000000',
   gray: {
-    50: '#F2F2F2',
+    50: '#F5F5F5',
     100: '#E5E5E5',
     200: '#CCCCCC',
     300: '#B3B3B3',
