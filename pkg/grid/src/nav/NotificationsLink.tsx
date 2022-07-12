@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import React, { useCallback } from 'react';
 import { Timebox } from '@urbit/api';
 import { Link, LinkProps } from 'react-router-dom';
-import { Bullet } from '../components/icons/Bullet';
 import { Cross } from '../components/icons/Cross';
 import { useHarkStore } from '../state/hark';
 import { useLeapStore } from './Nav';
 import { SettingsState, useSettingsState } from '../state/settings';
+import BellIcon from '../components/icons/BellIcon';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed' | 'open';
 
@@ -70,7 +70,7 @@ export const NotificationsLink = ({
       )}
       onClick={clearSelection}
     >
-      {state === 'empty' && <Bullet className="w-6 h-6" />}
+      {state === 'empty' && <BellIcon className="w-6 h-6" />}
       {state === 'unread' && Object.keys(unseen).length}
       {state === 'attention-needed' && (
         <span className="h2">

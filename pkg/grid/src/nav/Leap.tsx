@@ -10,10 +10,11 @@ import React, {
   useRef,
   useEffect
 } from 'react';
-import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { Cross } from '../components/icons/Cross';
 import { useDebounce } from '../logic/useDebounce';
 import { useErrorHandler } from '../logic/useErrorHandler';
+import { useMedia } from '../logic/useMedia';
 import { MenuState, useLeapStore } from './Nav';
 
 function normalizePathEnding(path: string) {
@@ -36,7 +37,7 @@ type LeapProps = {
   menu: MenuState;
   dropdown: string;
   navOpen: boolean;
-  shouldDim: boolean;
+  systemMenuOpen: boolean;
 } & HTMLAttributes<HTMLDivElement>;
 
 function normalizeMatchString(match: string, keepAltChars: boolean): string {
@@ -50,12 +51,15 @@ function normalizeMatchString(match: string, keepAltChars: boolean): string {
 }
 
 export const Leap = React.forwardRef(
-  ({ menu, dropdown, navOpen, shouldDim, className }: LeapProps, ref) => {
+  ({ menu, dropdown, navOpen, systemMenuOpen, className }: LeapProps, ref) => {
     const { push } = useHistory();
-    const match = useRouteMatch<{ menu?: MenuState; query?: string; desk?: string }>(
+    const location = useLocation();
+    const isMobile = useMedia('(max-width: 639px)');
+    const deskMatch = useRouteMatch<{ menu?: MenuState; query?: string; desk?: string }>(
       `/leap/${menu}/:query?/(apps)?/:desk?`
     );
-    const appsMatch = useRouteMatch(`/leap/${menu}/${match?.params.query}/apps`);
+    const systemPrefMatch = useRouteMatch<{ submenu: string }>(`/leap/system-preferences/:submenu`);
+    const appsMatch = useRouteMatch(`/leap/${menu}/${deskMatch?.params.query}/apps`);
     const inputRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => inputRef.current);
     const { rawInput, selectedMatch, matches, selection, select } = useLeapStore();
@@ -122,7 +126,7 @@ export const Leap = React.forwardRef(
 
     const debouncedSearch = useDebounce(
       (input: string) => {
-        if (!match || appsMatch) {
+        if (!deskMatch || appsMatch) {
           return;
         }
 
@@ -133,7 +137,46 @@ export const Leap = React.forwardRef(
       { leading: true }
     );
 
-    const handleSearch = useCallback(debouncedSearch, [match]);
+    const handleSearch = useCallback(debouncedSearch, [deskMatch]);
+
+    const matchSystemPrefs = useCallback(
+      (target: string) => {
+        if (isMobile) {
+          return false;
+        }
+
+        if (!systemPrefMatch && target === 'system-updates') {
+          return true;
+        }
+
+        return systemPrefMatch?.params.submenu === target;
+      },
+      [location, systemPrefMatch]
+    );
+
+    const getPlaceholder = () => {
+      if (systemMenuOpen) {
+        switch (true) {
+          case matchSystemPrefs('system-updates'):
+            return 'My Urbit: About';
+          case matchSystemPrefs('help'):
+            return 'My Urbit: Help';
+          case matchSystemPrefs('security'):
+            return 'My Urbit: Security';
+          case matchSystemPrefs('notifications'):
+            return 'My Urbit: Notifications';
+          case matchSystemPrefs('privacy'):
+            return 'My Urbit: Attention & Privacy';
+          case matchSystemPrefs('appearance'):
+            return 'My Urbit: Apperance';
+          case matchSystemPrefs('shortcuts'):
+            return 'My Urbit: Shortcuts';
+          default:
+            return 'Settings';
+        }
+      }
+      return 'Search';
+    };
 
     const onChange = useCallback(
       handleError((e: ChangeEvent<HTMLInputElement>) => {
@@ -184,7 +227,7 @@ export const Leap = React.forwardRef(
         push(currentMatch.url);
         useLeapStore.setState({ rawInput: '' });
       }),
-      [match, selectedMatch]
+      [deskMatch, selectedMatch]
     );
 
     const onKeyDown = useCallback(
@@ -194,8 +237,8 @@ export const Leap = React.forwardRef(
 
         if (deletion && !rawInput && selection) {
           e.preventDefault();
-          select(null, appsMatch && !appsMatch.isExact ? undefined : match?.params.query);
-          const pathBack = createPreviousPath(match?.url || '');
+          select(null, appsMatch && !appsMatch.isExact ? undefined : deskMatch?.params.query);
+          const pathBack = createPreviousPath(deskMatch?.url || '');
           push(pathBack);
         }
 
@@ -223,15 +266,14 @@ export const Leap = React.forwardRef(
           });
         }
       }),
-      [selection, rawInput, match, matches, selectedMatch]
+      [selection, rawInput, deskMatch, matches, selectedMatch]
     );
 
     return (
       <div className="relative z-50 w-full">
         <form
           className={classNames(
-            'flex items-center h-11 w-full px-2 rounded-lg bg-white default-ring focus-within:ring-2',
-            shouldDim && 'opacity-60',
+            'flex items-center h-9 w-full px-2 rounded-lg bg-white default-ring focus-within:ring-2',
             !navOpen ? 'bg-gray-50' : '',
             menu === 'upgrading' ? 'bg-orange-500' : '',
             className
@@ -254,8 +296,10 @@ export const Leap = React.forwardRef(
               id="leap"
               type="text"
               ref={inputRef}
-              placeholder={selection ? '' : 'Search'}
-              className="flex-1 w-full h-full px-2 text-base bg-transparent rounded-full outline-none h4"
+              placeholder={selection ? '' : getPlaceholder()}
+              // TODO: style placeholder text with 100% opacity.
+              // Not immediately clear how to do this within tailwind.
+              className="flex-1 w-full h-full px-2 text-sm bg-transparent text-gray-800 outline-none"
               value={rawInput}
               onClick={toggleSearch}
               onFocus={onFocus}
@@ -271,10 +315,10 @@ export const Leap = React.forwardRef(
         {menu === 'search' && (
           <Link
             to="/"
-            className="absolute flex-none w-8 h-8 text-gray-400 top-1/2 right-2 circle-button bg-gray-50 default-ring -translate-y-1/2"
+            className="absolute flex-none w-8 h-8 text-gray-600 top-1/2 right-2 circle-button default-ring -translate-y-1/2"
             onClick={() => select(null)}
           >
-            <Cross className="w-3 h-3 fill-current" />
+            <Cross className="w-3 h-3" />
             <span className="sr-only">Close</span>
           </Link>
         )}

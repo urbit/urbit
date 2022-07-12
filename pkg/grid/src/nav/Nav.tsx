@@ -13,7 +13,6 @@ import { Leap } from './Leap';
 import { Notifications } from './Notifications';
 import { NotificationsLink } from './NotificationsLink';
 import { Search } from './Search';
-import { SystemMenu } from './SystemMenu';
 import { SystemPreferences } from './SystemPreferences';
 
 export interface MatchItem {
@@ -128,7 +127,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           menu={menuState}
           dropdown="leap-items"
           navOpen={isOpen}
-          shouldDim={(isOpen && menu !== 'search') || !!systemMenuOpen}
+          systemMenuOpen={!!systemMenuOpen}
         />
       </Portal.Root>
       <div
