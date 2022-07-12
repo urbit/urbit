@@ -1,5 +1,5 @@
 .circle-button {
-  @apply inline-flex items-center justify-center h-9 w-9 font-semibold rounded-lg;
+  @apply inline-flex items-center justify-center p-1.5 h-9 w-9 font-semibold rounded-lg;
 }
 
 .button {

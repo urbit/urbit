@@ -12,12 +12,16 @@ import { DocketImage } from '../components/DocketImage';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { useMedia } from '../logic/useMedia';
 import { LeftArrow } from '../components/icons/LeftArrow';
-import { System } from '../components/icons/System';
 import { Interface } from '../components/icons/Interface';
-import { Notifications } from '../components/icons/Notifications';
-import { Lock } from '../components/icons/Lock';
 import { getAppName } from '../state/util';
 import { Help } from './Help';
+import TlonIcon from '../components/icons/TlonIcon';
+import HelpIcon from '../components/icons/HelpIcon';
+import LogoutIcon from '../components/icons/LogoutIcon';
+import BellIcon from '../components/icons/BellIcon';
+import BurstIcon from '../components/icons/BurstIcon';
+import PencilIcon from '../components/icons/PencilIcon';
+import ForwardSlashIcon from '../components/icons/ForwardSlashIcon';
 
 interface SystemPreferencesSectionProps {
   url: string;
@@ -60,7 +64,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
         return false;
       }
 
-      if (!subMatch && target === 'notifications') {
+      if (!subMatch && target === 'system-updates') {
         return true;
       }
 
@@ -92,15 +96,15 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
                   url={subUrl('system-updates')}
                   active={matchSub('system-updates')}
                 >
-                  <System className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
+                  <TlonIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
                   About System
                 </SystemPreferencesSection>
                 <SystemPreferencesSection url={subUrl('help')} active={matchSub('help')}>
-                  <Lock className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
+                  <HelpIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
                   Help and Support
                 </SystemPreferencesSection>
                 <SystemPreferencesSection url={subUrl('security')} active={matchSub('security')}>
-                  <Lock className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
+                  <LogoutIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
                   Log Out...
                 </SystemPreferencesSection>
               </ul>
@@ -112,8 +116,23 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
                   url={subUrl('notifications')}
                   active={matchSub('notifications')}
                 >
-                  <Notifications className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
+                  <BellIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
                   Notifications
+                </SystemPreferencesSection>
+                <SystemPreferencesSection url={subUrl('privacy')} active={matchSub('privacy')}>
+                  <BurstIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
+                  Attention & Privacy
+                </SystemPreferencesSection>
+                <SystemPreferencesSection
+                  url={subUrl('appearance')}
+                  active={matchSub('appearance')}
+                >
+                  <PencilIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
+                  Appearance
+                </SystemPreferencesSection>
+                <SystemPreferencesSection url={subUrl('shortcuts')} active={matchSub('shortcuts')}>
+                  <ForwardSlashIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
+                  Shortcuts
                 </SystemPreferencesSection>
                 <SystemPreferencesSection url={subUrl('interface')} active={matchSub('interface')}>
                   <Interface className="w-8 h-8 mr-3 bg-gray-100 rounded-md" />
@@ -144,13 +163,13 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
           <section className="flex-1 flex flex-col min-h-[60vh] p-4 sm:p-8 text-gray-800 bg-gray-50">
             <Switch>
               <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
-              <Route path={`${match.url}/system-updates`} component={SystemUpdatePrefs} />
               <Route path={`${match.url}/help`} component={Help} />
               <Route path={`${match.url}/interface`} component={InterfacePrefs} />
               <Route path={`${match.url}/security`} component={SecurityPrefs} />
+              <Route path={`${match.url}/notifications`} component={NotificationPrefs} />
               <Route
-                path={[`${match.url}/notifications`, match.url]}
-                component={NotificationPrefs}
+                path={[`${match.url}/system-updates`, match.url]}
+                component={SystemUpdatePrefs}
               />
             </Switch>
             <Link
