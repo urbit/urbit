@@ -56,7 +56,7 @@
       sub=(set dude)
   ==
 ::
-+$  vat  [=desk hash=@uv =cass =arak]
++$  vat  [=desk hash=@uv =cass =rail]
 ::  +report-vats: report on all desk installations
 ::
 ++  report-vats
@@ -81,27 +81,25 @@
   =+  .^(=weft %cx kel-path)
   :+  %rose  ["" "{<desk>}" "::"]
   ^-  tang
-  =/  meb  (mergebase-hashes our desk now arak)
-  =/  poz
-    ?~  rail.arak  "local"
-    ?:(paused.u.rail.arak "paused" "tracking")
-  =/  sat  ?:(liv.rein.arak "running" "suspended")
-  =/  pen
-    ?~  rail.arak  "~"
-    <(turn next.u.rail.arak |=([@ lal=@tas num=@] [lal num]))>
+  =/  meb  (mergebase-hashes our desk now rail)
+  =/  poz  ?:(paused.rail "paused" "tracking")
+  =/  sat  &  ::  TODO scry from clay or gall
+  =/  fon  |  ::  TODO scry from clay
+  =/  fof  |  ::  TODO scry from clay
+  =/  pen  <(turn next.rail |=([@ lal=@tas num=@] [lal num]))>
   :~  leaf/"/sys/kelvin:      {<[lal num]:weft>}"
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:         {<hash>}"
       ::
       leaf/"app status:       {sat}"
-      leaf/"force on:         {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
-      leaf/"force off:        {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
+      leaf/"force on:         {fon}"
+      leaf/"force off:        {fof}"
       ::
-      leaf/"publishing ship:  {?~(rail.arak <~> <publisher.u.rail.arak>)}"
+      leaf/"publishing ship:  {<publisher.rail>)}"
       leaf/"updates:          {poz}"
-      leaf/"source ship:      {?~(rail.arak <~> <ship.u.rail.arak>)}"
-      leaf/"source desk:      {?~(rail.arak <~> <desk.u.rail.arak>)}"
-      leaf/"source aeon:      {?~(rail.arak <~> <aeon.u.rail.arak>)}"
+      leaf/"source ship:      {<ship.rail>)}"
+      leaf/"source desk:      {<desk.rail>)}"
+      leaf/"source aeon:      {<aeon.rail>)}"
       leaf/"pending updates:  {pen}"
   ==
 ::  +report-kids: non-vat cz hash report for kids desk
@@ -210,25 +208,15 @@
   ^-  (list [=dude live=?])
   %~  tap  in
   .^((set [=dude live=?]) ge+/(scot %p our)/[desk]/(scot %da now))
-::  +get-apps-want: find which apps should be running on a desk
-::
-++  get-apps-want
-  |=  [local=[our=ship =desk now=@da] duz=(list dude) =rein]
-  ^-  (list dude)
-  ?.  liv.rein  ~
-  ?.  |(=(`zuse+zuse (read-kelvin-local local)) =(%base desk.local))  ~
-  =.  duz  (skip duz ~(has in sub.rein))
-  =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
-  duz
 ::
 ++  mergebase-hashes
-  |=  [our=@p =desk now=@da =arak]
+  |=  [our=@p =desk now=@da =rail]
   ?~  rail.arak
     ~
-  =/  her  (scot %p ship.u.rail.arak)
+  =/  her  (scot %p ship.rail)
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.u.rail.arak])
+  %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.rail])
   |=(=tako .^(@uv %cs ~[ego desk wen %hash (scot %uv tako)]))
 ::
 ++  enjs
@@ -260,7 +248,7 @@
     :~  desk+s+desk.v
         hash+s+(scot %uv hash.v)
         cass+(cass cass.v)
-        arak+(arak arak.v)
+        rail+(rail rail.v)
     ==
   ::
   ++  weft
@@ -275,20 +263,6 @@
     %-  pairs
     :~  aeon+(numb aeon.r)
         weft+(weft weft.r)
-    ==
-  ::
-  ++  rein
-    |=  r=^rein
-    %-  pairs
-    :~  add+a+(turn ~(tap in add.r) (lead %s))
-        sub+a+(turn ~(tap in sub.r) (lead %s))
-    ==
-  ::
-  ++  arak
-    |=  a=^arak
-    %-  pairs
-    :~  rail+?~(rail.a ~ (rail u.rail.a))
-        rein+(rein rein.a)
     ==
   ::
   ++  rail
