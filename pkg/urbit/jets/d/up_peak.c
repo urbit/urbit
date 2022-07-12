@@ -6,25 +6,20 @@ u3qdu_peak(u3_noun k, u3_noun l)
   u3_atom h = u3r_mug(k);
   u3_atom i = u3r_mug(l);
 
-  u3_atom a = u3qc_mix(h, i);
+  c3_w a = h ^ i;
 
-  u3z(h);
-  u3z(i);
-
-  // XX worth investigating performance of this at some point
+  // see
   //
   // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 
-  u3_atom u = u3qc_xeb(a);
-  u3_atom v = u3qc_bex(u);
+  a |= a >> 1;
+  a |= a >> 2;
+  a |= a >> 4;
+  a |= a >> 8;
+  a |= a >> 16;
+  a ^= a >> 1;
 
-  u3_atom pro = u3qc_rsh(0, 1, v);
-
-  u3z(a);
-  u3z(u);
-  u3z(v);
-
-  return pro;
+  return a;
 }
 
 u3_noun

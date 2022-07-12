@@ -1950,7 +1950,7 @@
     ^-  ?
     =(0 (dis (mug k) m))
   ::
-  ++  peak                                              ::  max differing bit
+  ++  peak                                              ::  max unlike mug bit
     ~/  %peak
     |=  [k=k l=k]
     ^-  @
