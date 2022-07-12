@@ -8,7 +8,6 @@ export const SecurityPrefs = () => {
 
   return (
     <>
-      <h2 className="h3 mb-7">Security</h2>
       <div className="space-y-3">
         <section className={classNames('inner-section')}>
           <h3 className="flex items-center mb-2 h4">Logout</h3>

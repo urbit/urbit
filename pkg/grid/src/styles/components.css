@@ -23,7 +23,7 @@
 }
 
 .inner-section {
-  @apply p-3 bg-gray-50 rounded-xl;
+  @apply p-8 bg-white rounded-xl;
 }
 
 .input {
