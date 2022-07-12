@@ -135,7 +135,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         ref={navRef}
         className={classNames(
           'w-full max-w-[712px] mx-auto my-6 text-gray-400 font-semibold',
-          dialogContentOpen && 'h-12'
+          dialogContentOpen && 'h-9'
         )}
         role="combobox"
         aria-controls="leap-items"

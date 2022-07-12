@@ -79,7 +79,7 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
           <div className="flex self-center justify-center note-grid-actions sm:hidden hover-none:flex pointer-coarse:flex group-hover:flex">
             <Button
               onClick={archiveNoFollow}
-              className="px-2 py-1 text-xs leading-none sm:px-4 sm:py-2 sm:text-base sm:leading-normal"
+              className="px-2 py-1 text-sm leading-none sm:px-4 sm:py-2 sm:text-base sm:leading-normal"
             >
               Archive
             </Button>

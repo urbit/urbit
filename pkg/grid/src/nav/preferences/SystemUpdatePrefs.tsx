@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 import { Button } from '../../components/Button';
 import { Setting } from '../../components/Setting';
-import { ShipName } from '../../components/ShipName';
 import { Spinner } from '../../components/Spinner';
 import { useAsyncCall } from '../../logic/useAsyncCall';
 import useKilnState, { useVat } from '../../state/kiln';
@@ -43,44 +42,40 @@ export const SystemUpdatePrefs = () => {
 
   return (
     <>
-      <div className="space-y-3">
-        <Setting on={!!otasEnabled} toggle={toggleBase} name="Enable Automatic Urbit OTAs">
-          <p>Automatically download and apply system updates to keep your Urbit up to date.</p>
-          {otaSource && (
-            <p>
-              OTA Source: <ShipName name={otaSource} className="font-semibold font-mono" />
-            </p>
-          )}
-        </Setting>
-        <form className="inner-section relative" onSubmit={onSubmit}>
-          <label htmlFor="ota-source" className="h4 mb-3">
-            Switch OTA Source
+      <div className="inner-section space-y-8 relative mb-4">
+        <h2 className="h4">About System</h2>
+      </div>
+      <div className="inner-section space-y-8 relative">
+        <h2 className="h4">Update Preferences</h2>
+        <form onSubmit={onSubmit}>
+          <label htmlFor="ota-source" className="block font-semibold mb-1.5">
+            System Update Provider
           </label>
-          <p className="mb-2">
-            Enter a valid urbit name into this form to change who you receive OTA updates from. Be
-            sure to select a reliable urbit!
-          </p>
-          <div className="relative">
+          <div className="flex items-center space-x-2">
             <input
               id="ota-source"
               type="text"
               value={source}
               onChange={handleSourceChange}
-              className="input font-semibold default-ring"
+              className="input bg-gray-50 font-semibold default-ring"
             />
-            {sourceDirty && (
-              <Button type="submit" className="absolute top-1 right-1 py-1 px-3 text-sm">
-                {sourceStatus !== 'loading' && 'Save'}
-                {sourceStatus === 'loading' && (
-                  <>
-                    <span className="sr-only">Saving...</span>
-                    <Spinner className="w-5 h-5" />
-                  </>
-                )}
-              </Button>
-            )}
+            <Button type="submit" disabled={!sourceDirty}>
+              {sourceStatus !== 'loading' && 'Update'}
+              {sourceStatus === 'loading' && (
+                <>
+                  <span className="sr-only">Saving...</span>
+                  <Spinner className="w-5 h-5" />
+                </>
+              )}
+            </Button>
           </div>
         </form>
+        <Setting on={!!otasEnabled} toggle={toggleBase} name="Automatically Update My Urbit">
+          <p className="text-gray-600 leading-5">
+            Ensure that system updates are downloaded and applied as soon as my update provider has
+            an update readied
+          </p>
+        </Setting>
       </div>
     </>
   );

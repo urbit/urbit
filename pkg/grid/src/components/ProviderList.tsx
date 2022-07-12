@@ -11,6 +11,7 @@ export type ProviderListProps = {
   matchAgainst?: MatchItem;
   onClick?: (e: MouseEvent<HTMLAnchorElement>, p: Provider) => void;
   listClass?: string;
+  adjustBG?: boolean;
 } & Omit<ProviderLinkProps, 'provider' | 'onClick'>;
 
 export function providerMatches(target: Provider, match?: MatchItem): boolean {

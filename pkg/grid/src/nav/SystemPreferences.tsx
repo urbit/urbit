@@ -86,7 +86,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
             <nav className="px-2 sm:px-6 flex flex-col">
               {/* TODO: Replace this h3 with the search box. */}
               <h2 className="px-2 mb-4 h3">System Preferences</h2>
-              <span className="text-gray-400 font-semibold pt-1 pl-2 pb-3 text-xs">Landscape</span>
+              <span className="text-gray-400 font-semibold pt-1 pl-2 pb-3 text-sm">Landscape</span>
               <ul className="space-y-1">
                 <SystemPreferencesSection
                   url={subUrl('system-updates')}
@@ -106,7 +106,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
               </ul>
             </nav>
             <nav className="px-2 sm:px-6 flex flex-col">
-              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-xs">Settings</span>
+              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-sm">Settings</span>
               <ul className="space-y-1">
                 <SystemPreferencesSection
                   url={subUrl('notifications')}
@@ -122,7 +122,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
               </ul>
             </nav>
             <nav className="px-2 sm:px-6 flex flex-col">
-              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-xs">
+              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-sm">
                 Installed App Settings
               </span>
               <ul className="space-y-1">
@@ -141,7 +141,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
           </aside>
         </Route>
         <Route path={settingsPath}>
-          <section className="flex-1 flex flex-col min-h-[60vh] p-4 sm:p-8 text-black bg-gray-50">
+          <section className="flex-1 flex flex-col min-h-[60vh] p-4 sm:p-8 text-gray-800 bg-gray-50">
             <Switch>
               <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
               <Route path={`${match.url}/system-updates`} component={SystemUpdatePrefs} />

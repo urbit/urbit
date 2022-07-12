@@ -1,5 +1,5 @@
 .circle-button {
-  @apply inline-flex items-center justify-center h-12 w-12 font-semibold rounded-full;
+  @apply inline-flex items-center justify-center h-9 w-9 font-semibold rounded-lg;
 }
 
 .button {
@@ -27,7 +27,7 @@
 }
 
 .input {
-  @apply px-4 py-2 w-full text-base sm:text-sm bg-white rounded-xl;
+  @apply px-2 py-1.5 w-full text-base leading-5 bg-white rounded-lg;
 }
 
 .notification {

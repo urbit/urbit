@@ -24,10 +24,7 @@ export const Setting: FC<SettingsProps> = ({
   const id = slugify(name);
 
   return (
-    <section className={classNames('inner-section', className)}>
-      <h3 id={id} className="flex items-center h4 mb-8">
-        {name} {status === 'loading' && <Spinner className="ml-2" />}
-      </h3>
+    <section className={className}>
       <div className="flex space-x-2">
         <Toggle
           aria-labelledby={id}
@@ -37,7 +34,12 @@ export const Setting: FC<SettingsProps> = ({
           disabled={disabled}
           loading={status === 'loading'}
         />
-        <div className="flex-1 flex flex-col justify-center space-y-6">{children}</div>
+        <div className="flex-1 flex flex-col justify-center">
+          <h3 id={id} className="flex items-center font-semibold leading-6">
+            {name} {status === 'loading' && <Spinner className="ml-2" />}
+          </h3>
+          {children}
+        </div>
       </div>
     </section>
   );

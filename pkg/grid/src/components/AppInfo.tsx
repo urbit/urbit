@@ -114,7 +114,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
                 containerClass="w-full max-w-md"
               >
                 <h2 className="h4">Install &ldquo;{getAppName(docket)}&rdquo;</h2>
-                <p className="text-base tracking-tight pr-6">
+                <p className="tracking-tight pr-6">
                   This application will be able to view and interact with the contents of your
                   Urbit. Only install if you trust the developer.
                 </p>

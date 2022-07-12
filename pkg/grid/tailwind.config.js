@@ -189,6 +189,15 @@ module.exports = {
   purge: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
+    fontSize: {
+      xs: ['.625rem', '1rem'],
+      sm: ['.75rem', '1rem'],
+      base: ['.875rem', '1rem'],
+      lg: ['1rem', '1.5rem'],
+      xl: ['1.25rem', '2rem'],
+      '2xl': ['1.5rem', '2rem'],
+      '3xl': ['2rem', '3rem']
+    },
     extend: {
       minWidth: (theme) => theme('spacing')
     }

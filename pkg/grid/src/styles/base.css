@@ -34,9 +34,9 @@ body::-webkit-scrollbar-track {
 }
 
 .h4 {
-  @apply text-sm sm:text-base font-semibold leading-normal tracking-tight;
+  @apply text-base sm:text-lg font-bold leading-normal tracking-tight;
 }
 
 .default-ring {
-  @apply focus-visible:ring-2 ring-blue-400 ring-opacity-80 focus-visible:outline-none;
+  @apply focus-visible:ring-2 ring-blue-400 ring-opacity-80 focus-visible:outline-none focus:outline-none;
 }

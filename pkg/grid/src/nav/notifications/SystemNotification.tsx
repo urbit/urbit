@@ -12,7 +12,7 @@ import useKilnState, { useVat } from '../../state/kiln';
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
 import { Vat } from '@urbit/api';
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 export const RuntimeLagNotification = () => (
   <section
@@ -94,7 +94,7 @@ export const BaseBlockedNotification = () => {
           <DialogTrigger as={NotificationButton}>Dismiss</DialogTrigger>
           <DialogContent
             showClose={false}
-            className="space-y-6 text-base tracking-tight"
+            className="space-y-6 tracking-tight"
             containerClass="w-full max-w-md"
           >
             <h2 className="h4">Skip System Update</h2>
@@ -125,7 +125,7 @@ export const BaseBlockedNotification = () => {
           <DialogContent
             showClose={false}
             onOpenAutoFocus={disableDefault}
-            className="space-y-6 text-base tracking-tight"
+            className="space-y-6 tracking-tight"
             containerClass="w-full max-w-md"
           >
             <h2 className="h4">Archive ({count}) Apps and Apply System Update</h2>
@@ -133,12 +133,7 @@ export const BaseBlockedNotification = () => {
               The following apps will be archived until their developer provides a compatible update
               to your system.
             </p>
-            <AppList
-              apps={blockedCharges}
-              labelledBy="blocked-apps"
-              size="xs"
-              className="text-sm"
-            />
+            <AppList apps={blockedCharges} labelledBy="blocked-apps" size="xs" />
             <div className="flex space-x-6">
               <DialogClose as={Button} variant="secondary">
                 Cancel
