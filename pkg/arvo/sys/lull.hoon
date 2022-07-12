@@ -1800,7 +1800,7 @@
         $?  %trace  ::  %crud
             %draw  ::  %flog %flow %view  ::TODO  is this right?
         ==  ==
-        ::
+      ::
         $:  %eyre
         $?  %serve-web  ::  %rule %connect %disconnect
             %cors  ::  %approve-origin %reject-origin
@@ -1867,8 +1867,9 @@
         %werp                 (~(has in pers) [%clay %query-peers])
       ::
           %warp
+        |
         ::TODO  either %build or %query-local depending on care
-        warp with a ford build request $care
+        ::warp with a ford build request $care
       ==
     ::
         %d
@@ -1880,20 +1881,20 @@
     ::
         %e
       ::TODO  probably make %rule separate
-      ?+  +<-.note  |
+      ?+  +>-.note  |
         ?(%rule %connect %disconnect)  (~(has in pers) [%eyre %serve-web])
         ?(%approve-origin %reject-origin)  (~(has in pers) [%eyre %cors])
       ==
     ::
         %g
-      ?+  +<-.note  |
+      ?+  +>-.note  |
         ?(%jolt %idle)  (~(has in pers) [%gall %toggle])
         %nuke           (~(has in pers) [%gall %nuke])
         ::TODO  permission tasks
       ==
     ::
         %i
-      ?+  +<-.note  |
+      ?+  +>-.note  |
         ?(%request %cancel-request)  (~(has in pers) [%iris %request-web])
       ==
     ::
