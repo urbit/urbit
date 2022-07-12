@@ -6942,14 +6942,14 @@
 +$  garb  (trel (unit term) poly vair)                  ::  core
 ::
 +$  grub                                                ::  compiler state
-  $:  nes=_(new:nes:lru 17.500)                         ::  +nest cache
-      res=_(new:res:lru 17.500)                         ::  +rest cache
+  $:  nes=(map (trel ? type type) ?)                    ::  +nest cache
+      res=(map (trel ? type hoon) type)                 ::  +rest cache
       mit=_(new:mit:lru 5.000)                          ::  +mint cache
       mul=_(new:mul:lru 5.000)                          ::  +mull cache
-      fis=_(new:fis:lru 100)                            ::  +fish cache
-      cro=_(new:cro:lru 2.450)                          ::  +crop cache
-      fus=_(new:fus:lru 2.450)                          ::  +fuse cache
-      bra=_(new:bra:lru 5.000)                          ::  +bran cache
+      fis=_(new:fis:lru 150)                            ::  +fish cache
+      cro=_(new:cro:lru 2.350)                          ::  +crop cache
+      fus=_(new:fus:lru 2.350)                          ::  +fuse cache
+      bra=_(new:bra:lru 150)                            ::  +bran cache
       nen=(map (trel ? type type) ?)                    ::  inner +nest cache
       con=(map (trel ? type type) type)                 ::  inner +crop cache
       fun=(map (trel ? type type) type)                 ::  inner +fuse cache
@@ -6957,10 +6957,8 @@
       ban=(map type seminoun)                           ::  inner +bran cache
   ==                                                    ::
 ::
-++  lru                                                 ::  compiler cache
-  :*  nes=(lu (trel ? type type) ?)
-      res=(lu (trel ? type hoon) type)
-      mit=(lu (qual ? type type hoon) (pair type nock))
+++  lru                                                 ::  lru caches
+  :*  mit=(lu (qual ? type type hoon) (pair type nock))
       mul=(lu (pair ? (qual type type type hoon)) (pair type type))
       fis=(lu (trel ? type axis) nock)
       cro=(lu (trel ? type type) type)
@@ -13570,12 +13568,12 @@
   ++  caching-nest
     ~/  %caching-nest
     |=  [tel=? ref=type]
-    =/  cached  (get:nes:lru nes.grub [vet sut ref])
+    =/  cached  (~(get by nes.grub) [vet sut ref])
     ?^  cached
-      [p.u.cached grub(nes q.u.cached)]
+      [u.cached grub]
     =;  [nests=? =_grub]
       :_  %_  grub
-            nes  (put:nes:lru nes.grub [vet sut ref] nests)
+            nes  (~(put by nes.grub) [vet sut ref] nests)
             nen  ~
           ==
       nests
@@ -14768,11 +14766,11 @@
     ~/  %caching-rest
     |=  leg=(pair type hoon)
     ^-  [type _grub]
-    =/  cached  (get:res:lru res.grub [vet leg])
+    =/  cached  (~(get by res.grub) [vet leg])
     ?^  cached
-      [p.u.cached grub(res q.u.cached)]
+      [u.cached grub]
     =;  [rested=type =_grub]
-      :_  grub(res (put:res:lru res.grub [vet leg] rested))
+      :_  grub(res (~(put by res.grub) [vet leg] rested))
       rested
     ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
