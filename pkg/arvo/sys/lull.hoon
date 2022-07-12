@@ -1705,7 +1705,7 @@
     +$  card  (wind note gift)
     +$  note
       $%  [%agent [=ship name=term] =task]
-          [%arvo note-arvo]
+          [%arvo note-arvo]  ::TODO  userspace-note
           [%pyre =tang]
       ==
     +$  task
@@ -1769,6 +1769,143 @@
         *(quip card _^|(..on-init))
       --
     --
+  ::
+  +$  perm  $%(perm-arvo perm-gall)
+  ::
+  +$  perm-gall
+    ::TODO  re-evaluate. may want agent names in here
+    $%  [%call-local ~]  ::  poke/subscribe locally
+        [%call-peers ~]  ::  poke/subscribe remotely
+    ==
+  ::
+  +$  perm-arvo  ::TODO  more narrow
+    $%  $:  %ames
+        $?  %debug  ::  %sift %spew
+        ==  ==
+      ::
+        $:  %behn
+        $?  %timer  ::  %wait %rest
+        ==  ==
+      ::
+        $:  %clay
+        $?  %mount  ::  %mont %ogre %dirk
+            %write  ::  %info %merg %fuse
+            %permissions  ::  %cred %perm
+            %query-local  ::  %warp
+            %query-peers  ::  %werp
+            %build  ::  %warp with a ford build request $care
+        ==  ==
+      ::
+        $:  %dill
+        $?  %trace  ::  %crud
+            %draw  ::  %flog %flow %view  ::TODO  is this right?
+        ==  ==
+        ::
+        $:  %eyre
+        $?  %serve-web  ::  %rule %connect %disconnect
+            %cors  ::  %approve-origin %reject-origin
+        ==  ==
+      ::
+        $:  %gall
+        $?  %toggle  ::  %jolt %idle
+            %nuke  ::  %nuke
+            %perm  ::  ::TODO  permission tasks
+        ==  ==
+      ::
+        $:  %iris
+        $?  %request-web  ::  %request %cancel-request
+        ==  ==
+      ::
+        ::NOTE  %public-keys is always allowed, since it's public
+        $:  %jael
+        $?  %snag
+            %moon
+            %ruin
+            %listen
+            %step
+            %rekey
+            %private-keys
+        ==  ==
+      ::
+        ::TODO  %khan
+    ==
+  ::
+  ++  cred  !:
+    |=  [=ship =card:agent pers=(set perm)]
+    ^-  ?
+    ?:  ?=(%give -.card)
+      &
+    =/  =note:agent
+      ?-  -.card
+        %pass  q.card
+        %slip  p.card
+      ==
+    ?:  ?=(%pyre -.note)
+      &
+    ?:  ?=(%agent -.note)
+      %-  ~(has in pers)
+      ?:  =(ship ship.note)
+        [%call-local ~]
+      [%call-peers ~]
+    ::  ?=(%arvo -.note)
+    ?-  +<.note
+        %a
+      ?+  +>-.note  |
+        ?(%sift %spew)  (~(has in pers) [%ames %debug])
+      ==
+    ::
+        %b
+      ?+  +>-.note  |
+        ?(%wait %rest)  (~(has in pers) [%behn %timer])
+      ==
+    ::
+        %c
+      ?+  +>-.note  |
+        ?(%mont %ogre %dirk)  (~(has in pers) [%clay %mount])
+        ?(%info %merg %fuse)  (~(has in pers) [%clay %write])
+        ?(%cred %perm)        (~(has in pers) [%clay %permissions])
+        %werp                 (~(has in pers) [%clay %query-peers])
+      ::
+          %warp
+        ::TODO  either %build or %query-local depending on care
+        warp with a ford build request $care
+      ==
+    ::
+        %d
+      ::TODO  revisit wrt nu-term
+      ?+  +>-.note  |
+        %crud                 (~(has in pers) [%dill %trace])
+        ?(%flog %flow %view)  (~(has in pers) [%dill %draw])
+      ==
+    ::
+        %e
+      ::TODO  probably make %rule separate
+      ?+  +<-.note  |
+        ?(%rule %connect %disconnect)  (~(has in pers) [%eyre %serve-web])
+        ?(%approve-origin %reject-origin)  (~(has in pers) [%eyre %cors])
+      ==
+    ::
+        %g
+      ?+  +<-.note  |
+        ?(%jolt %idle)  (~(has in pers) [%gall %toggle])
+        %nuke           (~(has in pers) [%gall %nuke])
+        ::TODO  permission tasks
+      ==
+    ::
+        %i
+      ?+  +<-.note  |
+        ?(%request %cancel-request)  (~(has in pers) [%iris %request-web])
+      ==
+    ::
+        %j
+      |  ::TODO
+    ::
+        %k
+      |  ::TODO
+    ::
+      %$    |
+      @tas  |
+    ==
   --  ::gall
 ::  %iris http-client interface
 ::

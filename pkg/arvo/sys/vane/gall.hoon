@@ -58,6 +58,7 @@
       live=?  ::TODO  remove, replaced by -.agent
       =stats
       =watches
+      ::TODO  perms=(set perm)  ::  or in $state as (jug term perms) ?
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
@@ -1621,6 +1622,8 @@
         `ap-core
       ::
       =.  agent.yoke  &++.p.result
+      ::TODO  pass moves through perm check before we proceed with this
+      ::TODO  but always allow if agent is from base desk
       =/  moves  (zing (turn -.p.result ap-from-internal))
       =.  inbound.watches.yoke
         (ap-handle-kicks moves)
