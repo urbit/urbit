@@ -34,7 +34,7 @@ export const ProviderLink = ({
       )}
       {...props}
     >
-      <Avatar size={size} {...provider} adjustBG={adjustBG} />
+      <Avatar size={size} shipName={provider.shipName} adjustBG={adjustBG} />
       <div className="flex-1 text-black">
         <div className="flex font-mono space-x-4">
           <ShipName name={provider.shipName} />

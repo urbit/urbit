@@ -117,11 +117,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         <Link to="/leap/system-preferences">
           <Avatar shipName={window.ship} size="nav" />
         </Link>
-        <NotificationsLink
-          navOpen={isOpen}
-          notificationsOpen={menu === 'notifications'}
-          shouldDim={(isOpen && menu !== 'notifications') || !!systemMenuOpen}
-        />
+        <NotificationsLink navOpen={isOpen} notificationsOpen={menu === 'notifications'} />
         <Leap
           ref={inputRef}
           menu={menuState}
