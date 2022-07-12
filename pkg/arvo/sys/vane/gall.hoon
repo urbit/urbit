@@ -58,7 +58,7 @@
       live=?  ::TODO  remove, replaced by -.agent
       =stats
       =watches
-      ::TODO  perms=(set perm)  ::  or in $state as (jug term perms) ?
+      perms=(set perm)  ::  or in $state as (jug term perms) ?
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
@@ -132,6 +132,7 @@
       live=?
       =stats
       =watches
+      perms=(set perm)
       old-state=(each vase vase)
       =beak
       marks=(map duct mark)
@@ -1324,6 +1325,8 @@
               eny=eny.stats.yoke                      ::  nonce
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
+          ==
+          :*  per=perms.yoke
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::
