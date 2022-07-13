@@ -1783,6 +1783,11 @@
     =/  =plea  [%$ /flow [%cork ~]]
     ::
     =.  closing.peer-state  (~(put in closing.peer-state) bone)
+    %-  %^  trace  msg.veb  ship
+        |.  ^-  tape
+        =/  sndr  [our our-life.channel]
+        =/  rcvr  [ship her-life.channel]
+        "cork plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
