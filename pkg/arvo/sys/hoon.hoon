@@ -9408,16 +9408,19 @@
   =+  sut=`type`%noun
   |%
   ++  mint
+    ~/  %mint
     |=  [gol=type gen=hoon]
     ^-  (pair type nock)
     -:(~(mint uc sut *grub) gol gen)
   ::
   ++  nest
+    ~/  %nest
     |=  [tel=? ref=type]
     ^-  ?
     -:(~(nest uc sut *grub) tel ref)
   ::
   ++  play
+    ~/  %play
     |=  gen=hoon
     ^-  type
     -:(~(play uc sut *grub) gen)
@@ -15840,7 +15843,7 @@
   =/  gen  (ream txt)
   ~>  %slog.[0 leaf/"ride: compiling"]
   ~<  %slog.[0 leaf/"ride: compiled"]
-  -:(~(mint ut typ) %noun gen)
+  (~(mint ut typ) %noun gen)
 ::
 ::::  5e: molds and mold builders
   ::
