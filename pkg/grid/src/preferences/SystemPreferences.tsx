@@ -22,6 +22,8 @@ import BellIcon from '../components/icons/BellIcon';
 import BurstIcon from '../components/icons/BurstIcon';
 import PencilIcon from '../components/icons/PencilIcon';
 import ForwardSlashIcon from '../components/icons/ForwardSlashIcon';
+import { useSystemUpdate } from '../logic/useSystemUpdate';
+import { Bullet } from '../components/icons/Bullet';
 
 interface SystemPreferencesSectionProps {
   url: string;
@@ -53,6 +55,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
   const subMatch = useRouteMatch<{ submenu: string; desk?: string }>(
     `${match.url}/:submenu/:desk?`
   );
+  const { systemBlocked } = useSystemUpdate();
   const charges = useCharges();
   const filteredCharges = Object.values(charges).filter((charge) => charge.desk !== window.desk);
   const isMobile = useMedia('(max-width: 639px)');
@@ -98,6 +101,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
                 >
                   <TlonIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
                   About System
+                  {systemBlocked && <Bullet className="h-5 w-5 ml-auto text-orange-500" />}
                 </SystemPreferencesSection>
                 <SystemPreferencesSection url={subUrl('help')} active={matchSub('help')}>
                   <HelpIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />

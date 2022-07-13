@@ -14,6 +14,8 @@ import { Notifications } from './Notifications';
 import { NotificationsLink } from './NotificationsLink';
 import { Search } from './Search';
 import { SystemPreferences } from '../preferences/SystemPreferences';
+import { useSystemUpdate } from '../logic/useSystemUpdate';
+import { Bullet } from '../components/icons/Bullet';
 
 export interface MatchItem {
   url: string;
@@ -65,6 +67,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
   const navRef = useRef<HTMLDivElement>(null);
   const dialogNavRef = useRef<HTMLDivElement>(null);
   const systemMenuOpen = useRouteMatch('/leap/system-preferences');
+  const { systemBlocked } = useSystemUpdate();
   const [dialogContentOpen, setDialogContentOpen] = useState(false);
   const select = useLeapStore((state) => state.select);
 
@@ -114,8 +117,14 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         containerRef={dialogContentOpen ? dialogNavRef : navRef}
         className="flex items-center justify-center w-full space-x-2"
       >
-        <Link to="/leap/system-preferences">
+        <Link to="/leap/system-preferences" className="relative">
           <Avatar shipName={window.ship} size="nav" />
+          {systemBlocked && (
+            <Bullet
+              className="absolute -top-2 -right-2 h-5 w-5 ml-auto text-orange-500"
+              aria-label="System Needs Attention"
+            />
+          )}
         </Link>
         <NotificationsLink navOpen={isOpen} notificationsOpen={menu === 'notifications'} />
         <Leap
