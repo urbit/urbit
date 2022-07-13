@@ -13,7 +13,7 @@ import { Leap } from './Leap';
 import { Notifications } from './Notifications';
 import { NotificationsLink } from './NotificationsLink';
 import { Search } from './Search';
-import { SystemPreferences } from './SystemPreferences';
+import { SystemPreferences } from '../preferences/SystemPreferences';
 
 export interface MatchItem {
   url: string;

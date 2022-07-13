@@ -36,7 +36,7 @@ export const Setting: FC<SettingsProps> = ({
         />
         <div className="flex-1 flex flex-col justify-center">
           <h3 id={id} className="flex items-center font-semibold leading-6">
-            {name} {status === 'loading' && <Spinner className="ml-2" />}
+            {name} {status === 'loading' && <Spinner className="h-4 w-4 ml-2" />}
           </h3>
           {children}
         </div>

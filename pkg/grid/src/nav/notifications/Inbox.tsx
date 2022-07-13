@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { HarkLid, Notification } from '@urbit/api';
 import { BasicNotification } from './BasicNotification';
-import { BaseBlockedNotification, RuntimeLagNotification } from './SystemNotification';
 import { useNotifications } from '../../state/notifications';
 import { useHarkStore } from '../../state/hark';
 import { OnboardingNotification } from './OnboardingNotification';
@@ -9,12 +8,6 @@ import { OnboardingNotification } from './OnboardingNotification';
 function renderNotification(notification: Notification, key: string, lid: HarkLid) {
   // Special casing
   if (notification.bin.place.desk === window.desk) {
-    if (notification.bin.place.path === '/lag') {
-      return <RuntimeLagNotification key={key} />;
-    }
-    if (notification.bin.path === '/blocked' && notification.bin.place.path === '/desk/base') {
-      return <BaseBlockedNotification key={key} />;
-    }
     if (notification.bin.place.path === '/onboard') {
       return <OnboardingNotification key={key} lid={lid} />;
     }

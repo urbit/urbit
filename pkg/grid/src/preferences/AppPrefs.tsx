@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { Setting } from '../../components/Setting';
-import { ShipName } from '../../components/ShipName';
-import { useCharge } from '../../state/docket';
-import useKilnState, { useVat } from '../../state/kiln';
-import { getAppName } from '../../state/util';
+import { Setting } from '../components/Setting';
+import { ShipName } from '../components/ShipName';
+import { useCharge } from '../state/docket';
+import useKilnState, { useVat } from '../state/kiln';
+import { getAppName } from '../state/util';
 
 export const AppPrefs = ({ match }: RouteComponentProps<{ desk: string }>) => {
   const { desk } = match.params;
