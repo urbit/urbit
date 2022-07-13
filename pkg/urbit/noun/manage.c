@@ -1348,6 +1348,11 @@ u3m_soft(c3_w    mil_w,
 
       pro = u3nc(u3k(cod), u3_nul);
     }
+    //  %evil leaves no trace
+    //
+    else if ( c3__evil == cod ) {
+      pro = u3nc(u3k(cod), u3_nul);
+    }
     else {
       u3_noun mok = u3dc("mook", 2, u3k(tax));
       pro = u3nc(u3k(cod), u3k(u3t(mok)));
