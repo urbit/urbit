@@ -363,9 +363,6 @@ u3wea_sivc_de(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    //  XX punt logging here is way too loud here
-    //  ideally this would never punt on deterministic decryption failure
-    //
-    return _cqea_sivc_de(key, ads, iv, len, txt);
+    return u3l_punt("sivc-de", _cqea_sivc_de(key, ads, iv, len, txt));
   }
 }
