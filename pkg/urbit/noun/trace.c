@@ -718,28 +718,6 @@ _meme_percent(unsigned int small, unsigned int large)
   return _roundf(percent_raw_f);
 }
 
-/*
-void
-_slog_free_discrepancy( )
-{
-  c3_w fre_w = u3a_idle(u3R);
-  if ( fre_w != u3R->all.fre_w ) {
-    char* s;
-    int result = asprintf(&s,
-      "%x\n\t\t\tfre_w: %x\n\t\t    all.fre_w: %x\n\t\t\t diff: %x",
-      u3R->par_p,
-      fre_w,
-      u3R->all.fre_w,
-      (u3R->all.fre_w - fre_w)
-    );
-    if (0 <= result) {
-      u3t_slog_cap(2, u3i_string("  free discrepancy at par_p"), u3i_string(s));
-      free(s);
-    }
-  }
-}
-*/
-
 void _slog_road_depth(c3_l pri_l, u3_road* r, int i) {
   if (r == &(u3H->rod_u)) {
     // slog the info
@@ -949,8 +927,6 @@ u3t_slog_meme(c3_l pri_l)
         stak_p = _meme_percent(temp, top);
   float full_p = heap_p + free_p + open_p + stak_p;
 
-  // TODO: replace all calls of free() with calls of u3a_free() or its alias.
-
   c3_w imut_heap = _all_heap_size(u3R) - heap;
   c3_w imut_stak = imut - imut_heap;
   float imut_heap_p = _meme_percent(imut_heap, top),
@@ -973,7 +949,7 @@ u3t_slog_meme(c3_l pri_l)
   ** we can report more facts:
   **  max_w: max allocated on the current road (not global, not including child roads)
   **  cel_d: max cells allocated in current road (inc closed kids, but not parents)
-  **  nox_d: nock steps performed in current road, less caching
+  **  nox_d: nock steps performed in current road
   */
   c3_w max = (u3R->all.max_w*4)+imut;
   float max_p = _meme_percent(max, top);
@@ -994,9 +970,9 @@ u3t_slog_meme(c3_l pri_l)
 
   // warn if any sanity checks have failed
   if (100.01 < (imut_heap_p + heap_p + free_p + open_p + stak_p + imut_stak_p))
-    u3t_slog_cap(3, u3i_string("error"), u3i_string("loom sums over 100%"));
+    u3t_slog_cap(3, u3i_string("error"), u3i_string("loom sums over 100.01%"));
   if ( 99.99 > (imut_heap_p + heap_p + free_p + open_p + stak_p + imut_stak_p))
-    u3t_slog_cap(3, u3i_string("error"), u3i_string("loom sums under 100%"));
+    u3t_slog_cap(3, u3i_string("error"), u3i_string("loom sums under 99.99%"));
 
   struct _report_bar bar = _report_bargraph(
     imut_heap_p,
@@ -1014,8 +990,6 @@ u3t_slog_meme(c3_l pri_l)
   c3_w inc_max = (max_p > imut_heap_p+1.0) ? (c3_w) max_p+0.5 : (c3_w) imut_heap_p+1.5;
   if (max_p > 0.0) bar.s[inc_max] = '|';
 #endif
-  // TODO: not sure we really need _slog_free_discrepancy()
-  //_slog_free_discrepancy();
   u3t_slog_cap(pri_l, u3i_string("Loom"), u3i_string(bar.s));
 }
 
