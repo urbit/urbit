@@ -9404,62 +9404,33 @@
 ::::  5c: compiler backend and prettyprinter
   ::
 ++  ut
-  ~%    %ut
-      +>+
-    ==
-      %ar     ar
-      %fan    fan
-      %rib    rib
-      %vet    vet
-      %blow   blow
-      %burp   burp
-      %busk   busk
-      %buss   buss
-      %crop   crop
-      %duck   duck
-      %dune   dune
-      %dunk   dunk
-      %epla   epla
-      %emin   emin
-      %emul   emul
-      %feel   feel
-      %felt   felt
-      %fine   fine
-      %fire   fire
-      %fish   fish
-      %fond   fond
-      %fund   fund
-      %funk   funk
-      %fuse   fuse
-      %gain   gain
-      %lose   lose
-      %mile   mile
-      %mine   mine
-      %mint   mint
-      %moot   moot
-      %mull   mull
-      %nest   nest
-      %peel   peel
-      %play   play
-      %peek   peek
-      %repo   repo
-      %rest   rest
-      %sink   sink
-      %tack   tack
-      %toss   toss
-      %wrap   wrap
-    ==
+  ~/  %ut
+  =+  sut=`type`%noun
+  |%
+  ++  mint
+    |=  [gol=type gen=hoon]
+    ^-  (pair type nock)
+    -:(~(mint uc sut *grub) gol gen)
+  ::
+  ++  nest
+    |=  [tel=? ref=type]
+    ^-  ?
+    -:(~(nest uc sut *grub) tel ref)
+  ::
+  ++  play
+    |=  gen=hoon
+    ^-  type
+    -:(~(play uc sut *grub) gen)
+  --
+::
+++  uc
+  ~%  %uc  +>+  ~
   =+  :*  fan=*(set [type hoon])
           rib=*(set [type type hoon])
           vet=`?`&
-          grub=*grub
       ==
-  =+  sut=`type`%noun
+  =+  [sut=`type`%noun grub=*grub]
   |%
-  ++  clip
-    |=  ref=type
-    ?>  ?|(!vet (nest(sut ref) & sut))
-    ref
   ::
   ::  +ar: texture engine
   ::
@@ -15421,7 +15392,7 @@
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
     ^-  [p=[p=(map type @) q=(map @ wine)] q=wine]
-    ?:  (~(meet ut sut) -:!>(*type))
+    ?:  -:(~(meet uc sut *grub) -:!>(*type))
       [dex %type]
     ?-    sut
         %noun      [dex sut]
@@ -15484,7 +15455,8 @@
       ?:  (~(has in gil) sut)
         =+  dyr=+(~(wyt by p.dex))
         [[(~(put by p.dex) sut dyr) q.dex] [%stop dyr]]
-      =+  rom=$(gil (~(put in gil) sut), sut ~(repo ut sut))
+      =/  val  ~(repo uc sut *grub)
+      =+  rom=$(gil (~(put in gil) sut), sut -.val)
       =+  rey=(~(get by p.p.rom) sut)
       ?~  rey
         rom
@@ -15521,7 +15493,8 @@
 ++  skol
   |=  typ=type
   ^-  tank
-  ~(duck ut typ)
+  =/  val  ~(duck uc typ *grub)
+  -.val
 ::
 ++  slam                                                ::  slam a gate
   |=  [gat=vase sam=vase]  ^-  vase
@@ -15542,7 +15515,8 @@
 ++  slab                                                ::  test if contains
   |=  [way=?(%read %rite %both) cog=@tas typ=type]
   ?=  [%& *]
-  (~(fond ut typ) way ~[cog])
+  =/  val  (~(fond uc typ *grub) way ~[cog])
+  -.val
 ::
 ++  slap
   |=  [vax=vase gen=hoon]  ^-  vase                     ::  untyped vase .*
@@ -15576,7 +15550,7 @@
       ?.  ?=(^ q.vax)  |
       $(axe (mas axe), q.vax .*(q.vax [0 (cap axe)]))
     ~
-  `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
+  `[-:(~(peek uc p.vax *grub) %free axe) .*(q.vax [0 axe])]
 ::
 ++  slim                                                ::  identical to seer?
   |=  old=vise  ^-  vase
@@ -15584,15 +15558,17 @@
 ::
 ++  slit                                                ::  type of slam
   |=  [gat=type sam=type]
-  ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
-  (~(play ut [%cell gat sam]) [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
+  =/  [pek=type =grub]  (~(peek uc gat *grub) %free 6)
+  =^  nests  grub  (~(nest uc pek grub) & sam)
+  ?>  nests
+  -:(~(play uc [%cell gat sam] grub) [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
 ::
 ++  slob                                                ::  superficial arm
   |=  [cog=@tas typ=type]
   ^-  ?
   ?+  typ  |
-      [%hold *]  $(typ ~(repo ut typ))
-      [%hint *]  $(typ ~(repo ut typ))
+      [%hold *]  =/  val  ~(repo uc typ *grub)  $(typ -.val)
+      [%hint *]  =/  val  ~(repo uc typ *grub)  $(typ -.val)
       [%core *]
     |-  ^-  ?
     ?~  q.r.q.typ  |
@@ -15606,8 +15582,8 @@
   |=  typ=type
   ^-  (list term)
   ?+    typ  ~
-      [%hold *]  $(typ ~(repo ut typ))
-      [%hint *]  $(typ ~(repo ut typ))
+      [%hold *]  =/  val  ~(repo uc typ *grub)  $(typ -.val)
+      [%hint *]  =/  val  ~(repo uc typ *grub)  $(typ -.val)
       [%core *]
     %-  zing
     %+  turn  ~(tap by q.r.q.typ)
@@ -15624,7 +15600,7 @@
 ::
 ++  slot                                                ::  got axis in vase
   |=  [axe=@ vax=vase]  ^-  vase
-  [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
+  [-:(~(peek uc p.vax *grub) %free axe) .*(q.vax [0 axe])]
 ::
 ++  slym                                                ::  slam w+o sample-type
   |=  [gat=vase sam=*]  ^-  vase
@@ -15634,12 +15610,12 @@
   |=  vax=vase
   ^-  vase
   :_  q.vax
-  ?@  q.vax  (~(fuse ut p.vax) [%atom %$ ~])
+  ?@  q.vax  -:(~(fuse uc p.vax *grub) [%atom %$ ~])
   ?@  -.q.vax
     ^=  typ
     %-  ~(play ut p.vax)
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
-  (~(fuse ut p.vax) [%cell %noun %noun])
+  -:(~(fuse uc p.vax *grub) [%cell %noun %noun])
 ::  +swat: deferred +slap
 ::
 ++  swat
