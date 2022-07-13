@@ -177,6 +177,7 @@
 ::  pupal gall core, on upgrade
 ::
 =<  =*  adult-gate  .
+    =|  spore-tag=@tas
     =|  =spore
     |=  [now=@da eny=@uvJ rof=roof]
     =*  pupal-gate  .
@@ -227,17 +228,17 @@
         $(apps t.apps, mo-core ap-abet:ap-core)
       ::  kill subscriptions when upgrading to gall request queue fix
       ::
-      =.  mo-core
+      =?  mo-core  (lth spore-tag %9)
         |-  ^+  mo-core
         ?~  apps  mo-core
+        ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap.i.apps>}"]
         =/  ap-core  (ap-abut:ap:mo-core i.apps)
-        =?  ap-core  (lth -.spore %9)
-          ~>  %slog.[0 leaf+"gall: running +ap-kill-down"]
+        =.  ap-core
           =/  boats=(list [=wire =dock])
             ~(tap in ~(key by boat.egg.i.apps))
           |-  ^+  ap-core
           ?~  boats  ap-core
-          =/   [=wire =dock]  i.boats
+          =/  [=wire =dock]  i.boats
           $(boats t.boats, ap-core (ap-kill-down:ap-core wire dock))
         $(apps t.apps, mo-core ap-abet:ap-core)
       =.  mo-core  (mo-subscribe-to-agent-builds:mo-core now)
@@ -278,6 +279,7 @@
     ::
     ++  load
       |^  |=  old=spore-any
+          =.  spore-tag  `@tas`-.old
           =?  old  ?=(%7 -.old)  (spore-7-to-8 old)
           =?  old  ?=(%8 -.old)  (spore-8-to-9 old)
           ?>  ?=(%9 -.old)
