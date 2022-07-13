@@ -1794,44 +1794,46 @@
         $:  %clay
         $?  %mount  ::  %mont %ogre %dirk
             %write  ::  %info %merg %fuse
-            %permissions  ::  %cred %perm
-            %query-local  ::  %warp
-            %query-peers  ::  %werp
+            %perms  ::  %cred %crew %perm
+            %local  ::  %warp
+            %peers  ::  %werp
             %build  ::  %warp with a ford build request $care
         ==  ==
       ::
-        $:  %dill
-        $?  %trace  ::  %crud
-            %draw  ::  %flog %flow %view  ::TODO  is this right?
+        $:  %dill  ::TODO  revisit wrt nu-tem  ::REVIEW  %belt separate?
+        $?  %terms  ::  %belt %blew %flee %flow %hail %view
+            %print  ::  %crud %talk %text
+            %extra  ::  %flog
         ==  ==
       ::
         $:  %eyre
-        $?  %serve-web  ::  %rule %connect %disconnect
-            %cors  ::  %approve-origin %reject-origin
+        $?  %serve  ::  %connect %disconnect
+            %certs  ::  %rule
+            %perms  ::  %approve-origin %reject-origin
         ==  ==
       ::
         $:  %gall
-        $?  %toggle  ::  %jolt %idle
-            %nuke  ::  %nuke
-            %perm  ::  ::TODO  permission tasks
+        $?  %agent  ::  %jolt %idle
+            %clear  ::  %nuke
+            %perms  ::  %free %lock
         ==  ==
       ::
         $:  %iris
-        $?  %request-web  ::  %request %cancel-request
+        $?  %fetch  ::  %request %cancel-request
         ==  ==
       ::
-        ::NOTE  %public-keys is always allowed, since it's public
         $:  %jael
-        $?  %snag
-            %moon
-            %ruin
-            %listen
-            %step
-            %rekey
-            %private-keys
+        $?  %moons  ::  %moon
+            %prick  ::  %private-keys %resend %rekey  ::REVIEW %rekey separate?
+            %login  ::  %step
+            %break  ::  %meet %ruin
+            ::NOTE  always allowed, public data:
+            ::  %pucks  ::  %public-keys %nuke %turf
         ==  ==
       ::
-        ::TODO  %khan
+        $:  %khan
+        $?  %tread  ::  %fard
+        ==  ==
     ==
   ::
   ++  cred  !:
@@ -1867,11 +1869,11 @@
       ?+  +>-.note  |
         ?(%mont %ogre %dirk)  (~(has in pers) [%clay %mount])
         ?(%info %merg %fuse)  (~(has in pers) [%clay %write])
-        ?(%cred %perm)        (~(has in pers) [%clay %permissions])
-        %werp                 (~(has in pers) [%clay %query-peers])
+        ?(%cred %cred %perm)  (~(has in pers) [%clay %perms])
+        %werp                 (~(has in pers) [%clay %peers])
       ::
           %warp
-        |
+        (~(has in pers) [%clay %local])
         ::TODO  either %build or %query-local depending on care
         ::warp with a ford build request $care
       ==
@@ -1879,34 +1881,45 @@
         %d
       ::TODO  revisit wrt nu-term
       ?+  +>-.note  |
-        %crud                 (~(has in pers) [%dill %trace])
-        ?(%flog %flow %view)  (~(has in pers) [%dill %draw])
+          ?(%belt %blew %flee %flow %hail %view)
+        (~(has in pers) [%dill %terms])
+      ::
+        ?(%crud %talk %text)  (~(has in pers) [%dill %print])
+        %flog                 (~(has in pers) [%dill %extra])
       ==
     ::
         %e
-      ::TODO  probably make %rule separate
       ?+  +>-.note  |
-        ?(%rule %connect %disconnect)  (~(has in pers) [%eyre %serve-web])
-        ?(%approve-origin %reject-origin)  (~(has in pers) [%eyre %cors])
+        ?(%connect %disconnect)            (~(has in pers) [%eyre %serve])
+        %rule                              (~(has in pers) [%eyre %certs])
+        ?(%approve-origin %reject-origin)  (~(has in pers) [%eyre %perms])
       ==
     ::
         %g
       ?+  +>-.note  |
-        ?(%jolt %idle)  (~(has in pers) [%gall %toggle])
-        %nuke           (~(has in pers) [%gall %nuke])
-        ::TODO  permission tasks
+        ?(%jolt %idle)  (~(has in pers) [%gall %agent])
+        %nuke           (~(has in pers) [%gall %clear])
+        ?(%free %lock)  (~(has in pers) [%gall %perms])
       ==
     ::
         %i
       ?+  +>-.note  |
-        ?(%request %cancel-request)  (~(has in pers) [%iris %request-web])
+        ?(%request %cancel-request)  (~(has in pers) [%iris %fetch])
       ==
     ::
         %j
-      |  ::TODO
+      ?+  +>-.note  |
+        %moon                            (~(has in pers) [%jael %moons])
+        ?(%private-keys %resend %rekey)  (~(has in pers) [%jael %prick])
+        %step                            (~(has in pers) [%jael %login])
+        ?(%meet %ruin)                   (~(has in pers) [%jael %break])
+        ?(%public-keys %nuke %turf)      &
+      ==
     ::
         %k
-      |  ::TODO
+      ?+  +>-.note  |
+        %fard  (~(has in pers) [%khan %tread])
+      ==
     ::
       %$    |
       @tas  |
