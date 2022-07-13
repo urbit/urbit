@@ -6,6 +6,7 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../compone
 import { FullTlon16Icon } from '../../components/icons/FullTlon16Icon';
 import { useSystemUpdate } from '../../logic/useSystemUpdate';
 import { useCharge } from '../../state/docket';
+import { useVat } from '../../state/kiln';
 import { disableDefault, pluralize } from '../../state/util';
 import { UpdatePreferences } from './UpdatePreferences';
 
@@ -15,7 +16,8 @@ function getHash(vat: Vat): string {
 }
 
 export const AboutSystem = () => {
-  const baseCharge = useCharge('base');
+  const garden = useVat('garden');
+  const gardenCharge = useCharge('garden');
   const { base, update, systemBlocked, blockedCharges, blockedCount, freezeApps } =
     useSystemUpdate();
   const hash = base && getHash(base);
@@ -41,7 +43,7 @@ export const AboutSystem = () => {
           </div>
           <div>
             <p>
-              Version {baseCharge?.version} ({hash})
+              Version {gardenCharge?.version} ({hash})
             </p>
             {systemBlocked && (
               <p>
