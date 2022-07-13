@@ -5,6 +5,7 @@ import { deSig, Contact } from '@urbit/api';
 import { darken, lighten, parseToHsla } from 'color2k';
 import { useCurrentTheme } from '../state/local';
 import { normalizeUrbitColor } from '../state/util';
+import { useContact } from '../state/contact';
 
 export type AvatarSizes = 'xs' | 'small' | 'nav' | 'default';
 
@@ -12,6 +13,7 @@ interface AvatarProps {
   shipName: string;
   size: AvatarSizes;
   className?: string;
+  adjustBG?: boolean;
 }
 
 interface AvatarMeta {
@@ -64,11 +66,14 @@ function themeAdjustColor(color: string, theme: 'light' | 'dark'): string {
   return color;
 }
 
-export const Avatar = ({ size, className, ...ship }: AvatarProps) => {
+export const Avatar = ({ shipName, size, className, adjustBG = true }: AvatarProps) => {
   const currentTheme = useCurrentTheme();
-  const { shipName, color, avatar } = { ...emptyContact, ...ship };
+  const contact = useContact(shipName);
+  const { color, avatar } = { ...emptyContact, ...contact };
   const { classes, size: sigilSize } = sizeMap[size];
-  const adjustedColor = themeAdjustColor(normalizeUrbitColor(color), currentTheme);
+  const adjustedColor = adjustBG
+    ? themeAdjustColor(normalizeUrbitColor(color), currentTheme)
+    : color;
   const foregroundColor = foregroundFromBackground(adjustedColor);
   const sigilElement = useMemo(() => {
     if (shipName.match(/[_^]/) || shipName.length > 14) {

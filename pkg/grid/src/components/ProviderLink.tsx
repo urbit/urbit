@@ -10,6 +10,7 @@ export type ProviderLinkProps = Omit<LinkProps, 'to'> & {
   size?: AvatarSizes;
   selected?: boolean;
   to?: (p: Provider) => LinkProps['to'];
+  adjustBG?: boolean;
 };
 
 export const ProviderLink = ({
@@ -18,6 +19,7 @@ export const ProviderLink = ({
   selected = false,
   size = 'default',
   className,
+  adjustBG,
   ...props
 }: ProviderLinkProps) => {
   const small = size === 'small' || size === 'xs';
@@ -32,7 +34,7 @@ export const ProviderLink = ({
       )}
       {...props}
     >
-      <Avatar size={size} {...provider} />
+      <Avatar size={size} shipName={provider.shipName} adjustBG={adjustBG} />
       <div className="flex-1 text-black">
         <div className="flex font-mono space-x-4">
           <ShipName name={provider.shipName} />

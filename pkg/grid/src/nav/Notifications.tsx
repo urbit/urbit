@@ -37,14 +37,14 @@ export const Notifications = ({ history }: RouteComponentProps) => {
           <NavLink
             exact
             activeClassName="text-black"
-            className="flex-none text-base font-semibold px-4"
+            className="flex-none font-semibold px-4"
             to="/leap/notifications"
           >
             New
           </NavLink>
           <NavLink
             activeClassName="text-black"
-            className="flex-none text-base font-semibold px-4"
+            className="flex-none font-semibold px-4"
             to="/leap/notifications/archive"
           >
             Archive

@@ -1,16 +1,16 @@
 import { setMentions } from '@urbit/api';
 import React from 'react';
-import { Setting } from '../../components/Setting';
-import { pokeOptimisticallyN } from '../../state/base';
-import { HarkState, reduceGraph, useHarkStore } from '../../state/hark';
-import { useBrowserId } from '../../state/local';
+import { Setting } from '../components/Setting';
+import { pokeOptimisticallyN } from '../state/base';
+import { HarkState, reduceGraph, useHarkStore } from '../state/hark';
+import { useBrowserId } from '../state/local';
 import {
   useSettingsState,
   useBrowserNotifications,
   useBrowserSettings,
   SettingsState,
   setBrowserSetting
-} from '../../state/settings';
+} from '../state/settings';
 
 const selDnd = (s: SettingsState) => s.display.doNotDisturb;
 async function toggleDnd() {

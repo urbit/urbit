@@ -299,7 +299,7 @@ export const Leap = React.forwardRef(
               placeholder={selection ? '' : getPlaceholder()}
               // TODO: style placeholder text with 100% opacity.
               // Not immediately clear how to do this within tailwind.
-              className="flex-1 w-full h-full px-2 text-sm bg-transparent text-gray-800 outline-none"
+              className="flex-1 w-full h-full px-2 text-base bg-transparent text-gray-800 outline-none"
               value={rawInput}
               onClick={toggleSearch}
               onFocus={onFocus}

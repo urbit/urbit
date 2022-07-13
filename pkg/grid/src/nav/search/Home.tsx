@@ -148,6 +148,7 @@ export const Home = () => {
                 Try out app discovery by visiting <ShipName name={defaultAlly.shipName} /> below.
               </p>
               <ProviderLink
+                adjustBG={false}
                 provider={defaultAlly}
                 size="small"
                 onClick={() => addRecentDev(defaultAlly.shipName)}

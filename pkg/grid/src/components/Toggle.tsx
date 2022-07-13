@@ -21,7 +21,7 @@ export const Toggle = React.forwardRef(
     const isControlled = !!onPressedChange;
     const proxyPressed = isControlled ? pressed : on;
     const proxyOnPressedChange = isControlled ? onPressedChange : setOn;
-    const knobPosition = proxyPressed ? 18 : 2;
+    const knobPosition = proxyPressed ? 16 : 8;
 
     return (
       <RadixToggle.Root
@@ -32,26 +32,27 @@ export const Toggle = React.forwardRef(
         ref={ref}
       >
         <svg
-          className={classNames('w-12 h-8', toggleClass)}
-          viewBox="0 0 48 32"
+          className={classNames('w-6 h-6', toggleClass)}
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
         >
-          <path
+          <rect
             className={classNames(
               'fill-current',
               disabled && proxyPressed && 'text-gray-700',
               !proxyPressed && 'text-gray-200'
             )}
-            d="M0 16C0 7.16344 7.16344 0 16 0H32C40.8366 0 48 7.16344 48 16C48 24.8366 40.8366 32 32 32H16C7.16344 32 0 24.8366 0 16Z"
+            y="4"
+            width="24"
+            height="16"
+            rx="8"
           />
-          <rect
+          <circle
             className={classNames('fill-current text-white', disabled && 'opacity-60')}
-            x={knobPosition}
-            y="2"
-            width="28"
-            height="28"
-            rx="14"
+            cx={knobPosition}
+            cy="12"
+            r="6"
           />
         </svg>
       </RadixToggle.Root>

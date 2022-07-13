@@ -1,12 +1,12 @@
 import React from 'react';
-import { Setting } from '../../components/Setting';
+import { Setting } from '../components/Setting';
 import {
   setBrowserSetting,
   useBrowserSettings,
   useProtocolHandling,
   useSettingsState
-} from '../../state/settings';
-import { useBrowserId } from '../../state/local';
+} from '../state/settings';
+import { useBrowserId } from '../state/local';
 
 export function InterfacePrefs() {
   const settings = useBrowserSettings();

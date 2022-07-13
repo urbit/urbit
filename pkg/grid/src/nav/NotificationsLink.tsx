@@ -39,16 +39,11 @@ function getNotificationsState(isOpen: boolean, box: Timebox, dnd: boolean): Not
 type NotificationsLinkProps = Omit<LinkProps<HTMLAnchorElement>, 'to'> & {
   navOpen: boolean;
   notificationsOpen: boolean;
-  shouldDim: boolean;
 };
 
 const selDnd = (s: SettingsState) => s.display.doNotDisturb;
 
-export const NotificationsLink = ({
-  navOpen,
-  notificationsOpen,
-  shouldDim
-}: NotificationsLinkProps) => {
+export const NotificationsLink = ({ navOpen, notificationsOpen }: NotificationsLinkProps) => {
   const unseen = useHarkStore((s) => s.unseen);
   const dnd = useSettingsState(selDnd);
   const state = getNotificationsState(notificationsOpen, unseen, dnd);
@@ -61,7 +56,6 @@ export const NotificationsLink = ({
       className={classNames(
         'relative z-50 flex-none circle-button h4 default-ring',
         navOpen && 'text-opacity-60',
-        shouldDim && 'opacity-60',
         state === 'open' && 'text-gray-400 bg-white',
         state === 'empty' && !navOpen && 'text-gray-400 bg-gray-50',
         state === 'empty' && navOpen && 'text-gray-400 bg-white',

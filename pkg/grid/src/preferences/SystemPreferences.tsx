@@ -2,19 +2,19 @@ import React, { PropsWithChildren, useCallback } from 'react';
 import { Link, Route, RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import classNames from 'classnames';
-import { NotificationPrefs } from './preferences/NotificationPrefs';
-import { SystemUpdatePrefs } from './preferences/SystemUpdatePrefs';
-import { InterfacePrefs } from './preferences/InterfacePrefs';
-import { SecurityPrefs } from './preferences/SecurityPrefs';
+import { NotificationPrefs } from './NotificationPrefs';
+import { AboutSystem } from './about-system/AboutSystem';
+import { InterfacePrefs } from './InterfacePrefs';
+import { SecurityPrefs } from './SecurityPrefs';
 import { useCharges } from '../state/docket';
-import { AppPrefs } from './preferences/AppPrefs';
+import { AppPrefs } from './AppPrefs';
 import { DocketImage } from '../components/DocketImage';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { useMedia } from '../logic/useMedia';
 import { LeftArrow } from '../components/icons/LeftArrow';
 import { Interface } from '../components/icons/Interface';
 import { getAppName } from '../state/util';
-import { Help } from './Help';
+import { Help } from '../nav/Help';
 import TlonIcon from '../components/icons/TlonIcon';
 import HelpIcon from '../components/icons/HelpIcon';
 import LogoutIcon from '../components/icons/LogoutIcon';
@@ -22,6 +22,8 @@ import BellIcon from '../components/icons/BellIcon';
 import BurstIcon from '../components/icons/BurstIcon';
 import PencilIcon from '../components/icons/PencilIcon';
 import ForwardSlashIcon from '../components/icons/ForwardSlashIcon';
+import { useSystemUpdate } from '../logic/useSystemUpdate';
+import { Bullet } from '../components/icons/Bullet';
 
 interface SystemPreferencesSectionProps {
   url: string;
@@ -53,6 +55,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
   const subMatch = useRouteMatch<{ submenu: string; desk?: string }>(
     `${match.url}/:submenu/:desk?`
   );
+  const { systemBlocked } = useSystemUpdate();
   const charges = useCharges();
   const filteredCharges = Object.values(charges).filter((charge) => charge.desk !== window.desk);
   const isMobile = useMedia('(max-width: 639px)');
@@ -90,7 +93,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
             <nav className="px-2 sm:px-6 flex flex-col">
               {/* TODO: Replace this h3 with the search box. */}
               <h2 className="px-2 mb-4 h3">System Preferences</h2>
-              <span className="text-gray-400 font-semibold pt-1 pl-2 pb-3 text-xs">Landscape</span>
+              <span className="text-gray-400 font-semibold pt-1 pl-2 pb-3 text-sm">Landscape</span>
               <ul className="space-y-1">
                 <SystemPreferencesSection
                   url={subUrl('system-updates')}
@@ -98,6 +101,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
                 >
                   <TlonIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
                   About System
+                  {systemBlocked && <Bullet className="h-5 w-5 ml-auto text-orange-500" />}
                 </SystemPreferencesSection>
                 <SystemPreferencesSection url={subUrl('help')} active={matchSub('help')}>
                   <HelpIcon className="w-6 h-6 mr-3 rounded-md text-gray-600" />
@@ -110,7 +114,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
               </ul>
             </nav>
             <nav className="px-2 sm:px-6 flex flex-col">
-              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-xs">Settings</span>
+              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-sm">Settings</span>
               <ul className="space-y-1">
                 <SystemPreferencesSection
                   url={subUrl('notifications')}
@@ -141,7 +145,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
               </ul>
             </nav>
             <nav className="px-2 sm:px-6 flex flex-col">
-              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-xs">
+              <span className="text-gray-400 font-semibold pt-5 pl-2 pb-3 text-sm">
                 Installed App Settings
               </span>
               <ul className="space-y-1">
@@ -160,17 +164,14 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
           </aside>
         </Route>
         <Route path={settingsPath}>
-          <section className="flex-1 flex flex-col min-h-[60vh] p-4 sm:p-8 text-black bg-gray-50">
+          <section className="flex-1 flex flex-col min-h-[60vh] p-4 sm:p-8 text-gray-800 bg-gray-50">
             <Switch>
               <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
               <Route path={`${match.url}/help`} component={Help} />
               <Route path={`${match.url}/interface`} component={InterfacePrefs} />
               <Route path={`${match.url}/security`} component={SecurityPrefs} />
               <Route path={`${match.url}/notifications`} component={NotificationPrefs} />
-              <Route
-                path={[`${match.url}/system-updates`, match.url]}
-                component={SystemUpdatePrefs}
-              />
+              <Route path={[`${match.url}/system-updates`, match.url]} component={AboutSystem} />
             </Switch>
             <Link
               to={match.url}

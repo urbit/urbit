@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { Button } from '../../components/Button';
-import { Checkbox } from '../../components/Checkbox';
+import { Button } from '../components/Button';
+import { Checkbox } from '../components/Checkbox';
 
 export const SecurityPrefs = () => {
   const [allSessions, setAllSessions] = useState(false);

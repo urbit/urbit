@@ -59,6 +59,14 @@ export function getDarkColor(color: string): string {
   return hsla(hslaColor[0], hslaColor[1], 1 - hslaColor[2], 1);
 }
 
+export function pluralize(word: string, count: number): string {
+  if (count === 1) {
+    return word;
+  }
+
+  return `${word}s`;
+}
+
 export function createStorageKey(name: string): string {
   return `~${window.ship}/${window.desk}/${name}`;
 }
