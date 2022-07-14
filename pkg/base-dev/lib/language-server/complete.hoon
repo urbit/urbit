@@ -46,7 +46,7 @@
     |=  [name=term =hoon]
     ^-  (pair term type)
     ~|  term=term
-    [name ~(play ~(et ut ty) ~[name] ~)]
+    [name (~(epla ut ty) ~[name] ~)]
   ::
       [%face *]
     ?^  p.ty
