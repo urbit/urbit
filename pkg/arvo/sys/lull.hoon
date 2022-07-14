@@ -1777,9 +1777,8 @@
   +$  perm  $%(perm-arvo perm-gall)
   ::
   +$  perm-gall
-    ::TODO  re-evaluate. may want agent names in here
-    $%  [%call-local ~]  ::  poke/subscribe locally
-        [%call-peers ~]  ::  poke/subscribe remotely
+    $%  [%local dude=(unit dude:gall)]  ::  poke/subscribe locally
+        [%peers ~]                      ::  poke/subscribe remotely
     ==
   ::
   +$  perm-arvo  ::TODO  more narrow
@@ -1792,12 +1791,12 @@
         ==  ==
       ::
         $:  %clay
-        $?  %mount  ::  %mont %ogre %dirk
-            %write  ::  %info %merg %fuse
-            %perms  ::  %cred %crew %perm
-            %local  ::  %warp
-            %peers  ::  %werp
-            %build  ::  %warp with a ford build request $care
+        $%  [%mount ~]                 ::  %mont %ogre %dirk
+            [%perms ~]                 ::  %cred %crew %perm
+            [%write desk=(unit desk)]  ::  %info %merg %fuse
+            [%local desk=(unit desk)]  ::  %warp
+            [%build desk=(unit desk)]  ::  %warp with ford build $care
+            [%peers ~]                 ::  %werp
         ==  ==
       ::
         $:  %dill  ::TODO  revisit wrt nu-tem  ::REVIEW  %belt separate?
@@ -1813,9 +1812,10 @@
         ==  ==
       ::
         $:  %gall
-        $?  %agent  ::  %jolt %idle
-            %clear  ::  %nuke
-            %perms  ::  %free %lock
+        ::TODO  %jolt can vary desk, and suspending is weird
+        $%  [%agent dude=(unit dude:gall)]  ::  %jolt %idle
+            [%clear dude=(unit dude:gall)]  ::  %nuke
+            [%perms dude=(unit dude:gall)]  ::  %free %lock
         ==  ==
       ::
         $:  %iris
@@ -1839,6 +1839,39 @@
   ++  cred  !:
     |=  [=ship =card:agent pers=(set perm)]
     ^-  ?
+    =;  must=$@(? perm)
+      ?@  must  must
+      ?+  must  (~(has in pers) must)
+          [%local *]
+        =/  =dude  (need dude.must)
+        %+  lien  ~(tap in pers)
+        |=  p=perm
+        ?&  ?=([%local *] p)
+            =(dude (fall dude.p dude))
+        ==
+      ::
+          [%clay ?(%write %local %build) *]
+        =/  =desk  (need desk.must)
+        :: =/  =spur  (need spur.must)
+        %+  lien  ~(tap in pers)
+        |=  p=perm
+        ?&  ?=([%clay *] p)
+            =(+<.must +<.p)
+            ?>  ?=(?(%write %local %build) +<.p)
+            =(desk (fall desk.p desk))
+            :: |(=(/ spur.p) =(`0 (find spur.p spur)))
+        ==
+      ::
+          [%gall ?(%agent %clear %perms) *]
+        =/  =dude  (need dude.must)
+        %+  lien  ~(tap in pers)
+        |=  p=perm
+        ?&  ?=([%gall *] p)
+            =(+<.must +<.p)
+            =(dude (fall dude.p dude))
+        ==
+      ==
+    ::
     ?:  ?=(%give -.card)
       &
     =/  =note:agent
@@ -1849,76 +1882,80 @@
     ?:  ?=(%pyre -.note)
       &
     ?:  ?=(%agent -.note)
-      %-  ~(has in pers)
-      ?:  =(ship ship.note)
-        [%call-local ~]
-      [%call-peers ~]
-    ::  ?=(%arvo -.note)
+      ?.  =(ship ship.note)
+        [%peers ~]
+      [%local `name.note]
+    ::
     ?-  +<.note
         %a
       ?+  +>-.note  |
-        ?(%sift %spew)  (~(has in pers) [%ames %debug])
+        ?(%sift %spew)  [%ames %debug]
       ==
     ::
         %b
       ?+  +>-.note  |
-        ?(%wait %rest)  (~(has in pers) [%behn %timer])
+        ?(%wait %rest)  [%behn %timer]
       ==
     ::
         %c
       ?+  +>-.note  |
-        ?(%mont %ogre %dirk)  (~(has in pers) [%clay %mount])
-        ?(%info %merg %fuse)  (~(has in pers) [%clay %write])
-        ?(%cred %cred %perm)  (~(has in pers) [%clay %perms])
-        %werp                 (~(has in pers) [%clay %peers])
+        ?(%mont %ogre %dirk)  [%clay %mount ~]
+        ?(%cred %cred %perm)  [%clay %perms ~]
+        ?(%info %merg %fuse)  [%clay %write `des.note]
+        %werp                 [%clay %peers ~]
       ::
           %warp
-        (~(has in pers) [%clay %local])
-        ::TODO  either %build or %query-local depending on care
-        ::warp with a ford build request $care
+        ?.  =(ship wer.note)  [%clay %peers ~]
+        ?~  q.rif.note  &  ::  can always cancel request
+        ::TODO  also account for the %mult case, may need multiple perms?
+        ?:  ?&  ?=(?(%sing %next) -.u.q.rif.note)
+                ?=(?(%a %b %c) care.mood.u.q.rif.note)
+            ==
+          [%clay %build `p.rif.note]
+        [%clay %local `p.rif.note]
       ==
     ::
         %d
       ::TODO  revisit wrt nu-term
       ?+  +>-.note  |
           ?(%belt %blew %flee %flow %hail %view)
-        (~(has in pers) [%dill %terms])
+        [%dill %terms]
       ::
-        ?(%crud %talk %text)  (~(has in pers) [%dill %print])
-        %flog                 (~(has in pers) [%dill %extra])
+        ?(%crud %talk %text)  [%dill %print]
+        %flog                 [%dill %extra]
       ==
     ::
         %e
       ?+  +>-.note  |
-        ?(%connect %disconnect)            (~(has in pers) [%eyre %serve])
-        %rule                              (~(has in pers) [%eyre %certs])
-        ?(%approve-origin %reject-origin)  (~(has in pers) [%eyre %perms])
+        ?(%connect %disconnect)            [%eyre %serve]
+        %rule                              [%eyre %certs]
+        ?(%approve-origin %reject-origin)  [%eyre %perms]
       ==
     ::
         %g
       ?+  +>-.note  |
-        ?(%jolt %idle)  (~(has in pers) [%gall %agent])
-        %nuke           (~(has in pers) [%gall %clear])
-        ?(%free %lock)  (~(has in pers) [%gall %perms])
+        ?(%jolt %idle)  [%gall %agent `?:(?=(%jolt +>-.note) dude.note dude.note)]
+        %nuke           [%gall %clear `dude.note]
+        ?(%free %lock)  [%gall %perms `dude.note]
       ==
     ::
         %i
       ?+  +>-.note  |
-        ?(%request %cancel-request)  (~(has in pers) [%iris %fetch])
+        ?(%request %cancel-request)  [%iris %fetch]
       ==
     ::
         %j
       ?+  +>-.note  |
-        %moon                            (~(has in pers) [%jael %moons])
-        ?(%private-keys %resend %rekey)  (~(has in pers) [%jael %prick])
-        %step                            (~(has in pers) [%jael %login])
-        ?(%meet %ruin)                   (~(has in pers) [%jael %break])
+        %moon                            [%jael %moons]
+        ?(%private-keys %resend %rekey)  [%jael %prick]
+        %step                            [%jael %login]
+        ?(%meet %ruin)                   [%jael %break]
         ?(%public-keys %nuke %turf)      &
       ==
     ::
         %k
       ?+  +>-.note  |
-        %fard  (~(has in pers) [%khan %tread])
+        %fard  [%khan %tread]
       ==
     ::
       %$    |
