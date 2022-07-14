@@ -169,7 +169,6 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
               <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
               <Route path={`${match.url}/help`} component={Help} />
               <Route path={`${match.url}/interface`} component={InterfacePrefs} />
-              <Route path={`${match.url}/security`} component={SecurityPrefs} />
               <Route path={`${match.url}/notifications`} component={NotificationPrefs} />
               <Route path={[`${match.url}/system-updates`, match.url]} component={AboutSystem} />
             </Switch>
@@ -181,6 +180,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
             </Link>
           </section>
         </Route>
+        <Route path={`${match.url}/security`} component={SecurityPrefs} />
       </div>
     </ErrorBoundary>
   );
