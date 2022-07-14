@@ -9424,6 +9424,68 @@
     |=  gen=hoon
     ^-  type
     -:(~(play uc sut *grub) gen)
+  ::
+  ++  fuse
+    ~/  %fuse
+    |=  ref=type
+    ^-  type
+    -:(~(fuse uc sut *grub) ref)
+  ::
+  ++  crop
+    ~/  %crop
+    |=  ref=type
+    ^-  type
+    -:(~(crop uc sut *grub) ref)
+  ::
+  ++  gain
+    ~/  %gain
+    |=  gen=hoon
+    ^-  type
+    -:(~(gain uc sut *grub) gen)
+  ::
+  ++  lose
+    ~/  %lose
+    |=  gen=hoon
+    ^-  type
+    -:(~(lose uc sut *grub) gen)
+  ::
+  ++  meet
+    ~/  %meet
+    |=  ref=type
+    ^-  ?
+    -:(~(meet uc sut *grub) ref)
+  ::
+  ++  mite
+    ~/  %mite
+    |=  ref=type
+    ^-  ?
+    -:(~(mite uc sut *grub) ref)
+  ::
+  ++  epla
+    ~/  %epla
+    |=  [hyp=wing rig=(list (pair wing hoon))]
+    ^-  type
+    -:(~(epla uc sut *grub) hyp rig)
+  ::
+  ++  emin
+    ~/  %emin
+    |=  [gol=type hyp=wing rig=(list (pair wing hoon))]
+    ^-  (pair type nock)
+    -:(~(emin uc sut *grub) gol hyp rig)
+  ::
+  ++  emul
+    ~/  %emul
+    |=  [gol=type dox=type hyp=wing rig=(list (pair wing hoon))]
+    ^-  (pair type type)
+    -:(~(emul uc sut *grub) gol dox hyp rig)
+  ::
+  ++  repo
+    ^-  type
+    =/  res  ~(repo uc sut *grub)
+    -.res
+  ::
+  ++  busk  busk:uc
+  ++  dunk  dunk:uc
   --
 ::
 ++  uc
