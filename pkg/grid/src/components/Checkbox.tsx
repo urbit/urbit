@@ -17,9 +17,12 @@ export const Checkbox: React.FC<RadixCheckbox.CheckboxProps> = ({
   const proxyOnCheckedChange = isControlled ? onCheckedChange : setOn;
 
   return (
-    <div className="flex content-center space-x-2">
+    <div className="flex content-center items-center space-x-2">
       <RadixCheckbox.Root
-        className={classNames('default-ring rounded-lg bg-white h-7 w-7', className)}
+        className={classNames(
+          'default-ring border-gray-200 border-2 rounded-sm bg-white h-4 w-4',
+          className
+        )}
         checked={proxyChecked}
         onCheckedChange={proxyOnCheckedChange}
         disabled={disabled}
@@ -29,7 +32,9 @@ export const Checkbox: React.FC<RadixCheckbox.CheckboxProps> = ({
           <CheckIcon className="text-black" />
         </RadixCheckbox.Indicator>
       </RadixCheckbox.Root>
-      <label htmlFor="checkbox">{children}</label>
+      <label htmlFor="checkbox" className="font-semibold">
+        {children}
+      </label>
     </div>
   );
 };
