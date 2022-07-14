@@ -110,6 +110,31 @@ _cv_nock_wish(u3_noun txt)
 /* u3v_wish(): text expression with cache.
 */
 u3_noun
+u3v_wish_n(u3_noun txt)
+{
+  u3t_event_trace("u3v_wish", 'b');
+  u3_weak exp = u3kdb_get(u3k(u3A->yot), u3k(txt));
+
+  if ( u3_none == exp ) {
+    exp = _cv_nock_wish(u3k(txt));
+
+    //  It's probably not a good idea to use u3v_wish()
+    //  outside the top level... (as the result is uncached)
+    //
+    if ( u3R == &u3H->rod_u ) {
+      u3A->yot = u3kdb_put(u3A->yot, u3k(txt), u3k(exp));
+    }
+  }
+
+  u3t_event_trace("u3v_wish", 'e');
+
+  u3z(txt);
+  return exp;
+}
+
+/* u3v_wish(): text expression with cache.
+*/
+u3_noun
 u3v_wish(const c3_c* str_c)
 {
   u3t_event_trace("u3v_wish", 'b');

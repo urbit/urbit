@@ -1037,28 +1037,28 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
   }
 
   printf("executing hoon\n");
-  u3_noun res = u3v_wish(evl_c);
-  u3m_p("Hoon Output",res);
+  c3_c* inp_c;
+  c3_i  ret_i = asprintf(&inp_c, "%%-  sell  !>  \n%s", evl_c);
+  c3_assert( ret_i > 0 );
 
-  /*u3_noun bus = u3i_word(55);
-  u3_noun fol = u3i_trel(u3i_word(4),
-                         u3i_word(0),
-                         u3i_word(1));
 
-  u3_noun cons = u3nc(bus, fol);
 
-  u3_noun res = u3m_soft(0, virt_nock, u3k(cons));
+  u3_noun res = u3m_soft(0, u3v_wish_n, u3i_string(inp_c));
+
 
   if(0 == u3h(res)){
-     u3m_p("", cons);
-     u3m_p("", u3t(res));
-     u3m_grab(res, cons,  u3_none);
+     u3_pier_tank(0,0,u3k(u3t(res)));
+
+     //u3m_p("", cons);
+     //u3m_p("", u3t(res));
+     //u3m_grab(res, cons,  u3_none);
   }else{
-     printf("error\n");
+     u3_pier_punt_goof("error", u3k(res));
   }
   u3z(res);
-  u3z(cons);*/
-  printf("finishing");
+  free(inp_c);
+
+  printf("finishing\n");
 }
 
 
