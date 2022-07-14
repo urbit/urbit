@@ -10217,7 +10217,9 @@
         ==
       ::
           [%core *]
-        ?:(?=(?([%atom *] [%cell *]) [ref grub]) [sut grub] sint)
+        ?:  ?=(?([%atom *] [%cell *]) ref)
+          [sut grub]
+        sint
       ::
           [%face *]
         =^  val  grub  dext(sut q.sut)
