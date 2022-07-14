@@ -6,13 +6,13 @@ import { Toggle } from '../components/Toggle';
 // import { pokeOptimisticallyN } from '../state/base';
 import { ChargeWithDesk, useCharges } from '../state/docket';
 // import { HarkState, reduceGraph, useHarkStore } from '../state/hark';
-// import { useBrowserId } from '../state/local';
+import { useBrowserId } from '../state/local';
 import {
   useSettingsState,
-  // useBrowserNotifications,
-  // useBrowserSettings,
-  SettingsState
-  // setBrowserSetting
+  useBrowserNotifications,
+  useBrowserSettings,
+  SettingsState,
+  setBrowserSetting
 } from '../state/settings';
 import { getAppName } from '../state/util';
 
@@ -63,29 +63,28 @@ export const NotificationPrefs = () => {
   const doNotDisturb = useSettingsState(selDnd);
   const charges = useCharges();
   const filteredCharges = Object.values(charges).filter((charge) => charge.desk !== window.desk);
-  // TODO: Find out where browser notification settings should live.
   // const mentions = useHarkStore(selMentions);
-  // const settings = useBrowserSettings();
-  // const browserId = useBrowserId();
-  // const browserNotifications = useBrowserNotifications(browserId);
-  // const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
-  // const notificationsAllowed = secure && 'Notification' in window;
+  const settings = useBrowserSettings();
+  const browserId = useBrowserId();
+  const browserNotifications = useBrowserNotifications(browserId);
+  const secure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+  const notificationsAllowed = secure && 'Notification' in window;
 
-  // const setBrowserNotifications = (setting: boolean) => {
-  // const newSettings = setBrowserSetting(settings, { browserNotifications: setting }, browserId);
-  // useSettingsState
-  // .getState()
-  // .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
-  // };
+  const setBrowserNotifications = (setting: boolean) => {
+    const newSettings = setBrowserSetting(settings, { browserNotifications: setting }, browserId);
+    useSettingsState
+      .getState()
+      .putEntry('browserSettings', 'settings', JSON.stringify(newSettings));
+  };
 
-  // const toggleNotifications = async () => {
-  // if (!browserNotifications) {
-  // Notification.requestPermission();
-  // setBrowserNotifications(true);
-  // } else {
-  // setBrowserNotifications(false);
-  // }
-  // };
+  const toggleNotifications = async () => {
+    if (!browserNotifications) {
+      Notification.requestPermission();
+      setBrowserNotifications(true);
+    } else {
+      setBrowserNotifications(false);
+    }
+  };
 
   return (
     <>
@@ -101,6 +100,16 @@ export const NotificationPrefs = () => {
             <p className="text-gray-600 leading-5 pt-3">
               Apps will continue to aggregate and post notifications to Landscape’s notification
               feed, but new app activity will not be visually signaled.
+            </p>
+          </Setting>
+          <Setting
+            on={browserNotifications}
+            toggle={toggleNotifications}
+            disabled={!notificationsAllowed}
+            name="Enable OS Notifications"
+          >
+            <p className="text-gray-600 leading-5 pt-1">
+              Turn on to receive notifications from your host operating system.
             </p>
           </Setting>
         </div>
