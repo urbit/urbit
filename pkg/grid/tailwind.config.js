@@ -109,7 +109,8 @@ const base = new Theme().addColors({
     100: '#FFF9E6',
     200: '#FFEEB3',
     300: '#FFDD66',
-    400: '#FFC700'
+    400: '#FFC700',
+    500: '#ECCB27'
   }
 });
 variablizeTheme(config.theme, base);
