@@ -1008,16 +1008,22 @@ virt_nock(u3_noun cons)
 static void
 _cw_eval_commence(c3_i argc, c3_c* argv[])
 {
-#ifdef U3_OS_mingw
-  if ( 4 > argc ) {
-#else
-  if ( 3 > argc ) {
-#endif
-    fprintf(stderr, "eval: no hoon to eval\n");
-    exit(1);
-  }
-  c3_c*      evl_c = argv[2];
+  //Read from stdin until an EOF is recieved
+  c3_c* line = NULL;
+  size_t len = 0;
+  ssize_t nread;
+  c3_c* evl_c = "%-  sell  !>  ";
 
+  while((nread = getline(&line, &len, stdin)) != -1)
+  {
+     len = asprintf(&evl_c, "%s\n%s", evl_c, line);
+  }
+
+  free(line);
+
+  //printf("%s", evl_c);
+
+  //Initialize the Loom and load the Ivory Pill
   c3_d          len_d = u3_Ivory_pill_len;
   c3_y*         byt_y = u3_Ivory_pill;
   u3_cue_xeno*  sil_u;
@@ -1036,29 +1042,20 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
     exit(1);
   }
 
-  printf("executing hoon\n");
-  c3_c* inp_c;
-  c3_i  ret_i = asprintf(&inp_c, "%%-  sell  !>  \n%s", evl_c);
-  c3_assert( ret_i > 0 );
+  printf("Executing hoon:\n");
 
+  //Run the input through a virtualization (u3v_wish_n) and get the ouput
+  u3_noun res = u3m_soft(0, u3v_wish_n, u3i_string(evl_c));
 
-
-  u3_noun res = u3m_soft(0, u3v_wish_n, u3i_string(inp_c));
-
-
-  if(0 == u3h(res)){
+  
+  if(0 == u3h(res)){//Succuessful execution print the output
      u3_pier_tank(0,0,u3k(u3t(res)));
-
-     //u3m_p("", cons);
-     //u3m_p("", u3t(res));
-     //u3m_grab(res, cons,  u3_none);
   }else{
-     u3_pier_punt_goof("error", u3k(res));
+     u3_pier_punt_goof("error", u3k(res)); //print stack trace error
   }
   u3z(res);
-  free(inp_c);
 
-  printf("finishing\n");
+  //printf("finishing\n");
 }
 
 
