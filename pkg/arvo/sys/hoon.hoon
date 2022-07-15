@@ -9479,6 +9479,18 @@
     ^-  (pair type type)
     -:(~(emul uc sut *grub) gol dox hyp rig)
   ::
+  ++  find
+    ~/  %find
+    |=  [way=vial hyp=wing]
+    ^-  port
+    -:(~(find uc sut *grub) way hyp)
+  ::
+  ++  fond
+    ~/  %fond
+    |=  [way=vial hyp=wing]
+    ^-  pony
+    -:(~(fond uc sut *grub) way hyp)
+  ::
   ++  repo
     ^-  type
     =/  res  ~(repo uc sut *grub)
