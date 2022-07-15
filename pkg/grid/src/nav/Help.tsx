@@ -59,7 +59,7 @@ const GroupLink = ({ group }: { group: Group }) => (
       )}
       <div className="flex flex-col">
         <span className="font-semibold">{group.title}</span>
-        <span className="text-sm text-gray-400">{group.memberCount} Members</span>
+        <span className="text-sm text-gray-400 font-semibold">{group.memberCount} Members</span>
       </div>
     </div>
     <Button variant="alt-primary" as="a" href={group.link} target="_blank">
@@ -102,7 +102,7 @@ const Wayfinding = ({ tlonCustomer }: { tlonCustomer: boolean }) => (
 );
 
 export const Help = () => {
-  const tlonCustomer = !!window.URL.toString().match('tlon.network');
+  const tlonCustomer = !!window.URL.toString().indexOf('tlon.network');
   return (
     <div className="flex flex-col space-y-4">
       {tlonCustomer ? (
@@ -110,9 +110,10 @@ export const Help = () => {
           <span className="text-lg font-bold">Tlon Customer Support</span>
           <p>
             As a customer of Tlon, you’re able to receive 24/7 support from the{' '}
-            <span className="font-bold">Tlon Support Forum</span>, or you can email us at
+            <span className="font-bold">Tlon Support Forum</span>, or you can email us at{' '}
             <a href="mailto:support@tlon.io">support@tlon.io</a>.
           </p>
+          <GroupLink group={groups.tlonSupport} />
         </div>
       ) : null}
       <Wayfinding tlonCustomer={tlonCustomer} />
