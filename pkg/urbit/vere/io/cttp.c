@@ -106,6 +106,9 @@ _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
     goto end;
   }
 
+  u3m_p("request wire", wire);
+  u3m_p("request card", card);
+
   _client* client_u = (_client*)driver_u;
   _io_req* io_req_u = c3_malloc(sizeof(*io_req_u));
   u3s_jam_xeno(card, &io_req_u->len_d, &io_req_u->jammed_req_y);
@@ -237,6 +240,8 @@ _read_cb(uv_stream_t* stream_u, ssize_t bytes_read_i, const uv_buf_t* buf_u)
                                  u3nc(status, headers),
                                  body,
                                  c3y));
+        u3m_p("response wire", wire);
+        u3m_p("response card", card);
         u3_auto_plan(&client_u->driver_u, u3_ovum_init(0, c3__i, wire, card));
       }
 
