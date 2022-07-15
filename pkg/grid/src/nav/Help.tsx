@@ -44,7 +44,7 @@ const groups: Record<string, Group> = {
 
 const GroupLink = ({ group }: { group: Group }) => (
   <div className="flex justify-between items-center py-2">
-    <div className="flex space-x-2">
+    <div className="flex space-x-2 items-center">
       {group.icon === '' ? (
         <div className={cn('w-8 h-8 rounded', group.color)} />
       ) : (
