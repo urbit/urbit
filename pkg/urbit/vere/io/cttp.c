@@ -223,31 +223,20 @@ _read_cb(uv_stream_t* stream_u, ssize_t bytes_read_i, const uv_buf_t* buf_u)
     if ( idx_d == sizeof(resp_u->len_d) + resp_u->len_d ) {
       u3_weak resp = u3s_cue_xeno(resp_u->len_d, resp_u->resp_y);
       u3_noun req_num, status, headers, body;
-      if ( u3_none == resp ) {
-        fprintf(stderr, "debug(c): resp is none\r\n");
-      }
-      else if ( c3n == u3r_trel(resp, &req_num, &status, &body) ) {
-        fprintf(stderr, "debug(c): u3r_qual() failed\r\n");
-      }
-      else if ( c3n == u3a_is_cat(req_num) ) {
-        fprintf(stderr, "debug(c): req_num is not a direct atom\r\n");
-      }
-      else if ( c3n == u3a_is_cat(status) ) {
-        fprintf(stderr, "debug(c): status is not a direct atom\r\n");
-      }
-      else {
+      if ( u3_none != resp
+           && c3y == u3r_qual(resp, &req_num, &status, &headers, &body)
+           && c3y == u3a_is_cat(req_num)
+           && c3y == u3a_is_cat(status) )
+      {
         u3_noun wire = u3nt(u3i_string("http-client"),
                             u3dc("scot", c3__uv, client_u->inst_num_l),
                             u3_nul);
-        // TODO: figure out why headers cause problems.
-        headers = u3_nul;
         u3_noun card = u3nt(u3i_string("receive"),
                             req_num,
                             u3nq(u3i_string("start"),
                                  u3nc(status, headers),
                                  body,
                                  c3y));
-        fprintf(stderr, "debug(c): req_num=%u\r\n", req_num);
         u3_auto_plan(&client_u->driver_u, u3_ovum_init(0, c3__i, wire, card));
       }
 
