@@ -770,6 +770,7 @@
 ::
 ::    %done: report message acknowledgment
 ::    %cork: kill flow
+::    %kroc: recork this bone
 ::    %send: emit message fragment
 ::    %wait: set a new timer at .date
 ::    %rest: cancel timer at .date
@@ -777,6 +778,7 @@
 +$  message-pump-gift
   $%  [%done =message-num error=(unit error)]
       [%cork ~]
+      [%kroc =bone]
       [%send =static-fragment]
       [%wait date=@da]
       [%rest date=@da]
@@ -1199,7 +1201,7 @@
     :-  %known
     ^-  peer-state
     :-  +<.ship-state
-    [route qos ossuary snd rcv nax heeds ~ ~]:ship-state
+    [route qos ossuary snd rcv nax heeds ~ ~ ~]:ship-state
   ::  +state-7-to-8 called from larval-ames
   ::
   ++  state-7-to-8
@@ -2558,8 +2560,8 @@
       =/  =message-pump-state
         (~(gut by snd.peer-state) bone *message-pump-state)
       ::
-      =/  closing=?       (~(has in closing.peer-state) bone)
-      =/  message-pump    (make-message-pump message-pump-state channel closing)
+      =/  close=?  (~(has in closing.peer-state) bone)
+      =+  message-pump=(make-message-pump message-pump-state channel close bone)
       =^  pump-gifts      message-pump-state  (work:message-pump task)
       =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
       ::  process effects from |message-pump
@@ -2571,6 +2573,7 @@
             ?-  -.gift
               %done  (on-pump-done [message-num error]:gift)
               %cork  (on-pump-cork current.message-pump-state)
+              %kroc  (on-pump-kroc bone:gift)
               %send  (on-pump-send static-fragment.gift)
               %wait  (on-pump-wait date.gift)
               %rest  (on-pump-rest date.gift)
@@ -2593,7 +2596,7 @@
           =/  target-bone=^bone  (mix 0b10 bone)
           ::
           (run-message-sink target-bone %drop message-num)
-        ?:  &(closing ?=(%near -.task))
+        ?:  &(close ?=(%near -.task))
           ::  if the bone belongs to a closing flow and we got a naxplanation,
           ::  don't relay the ack to the client vane, and wait for the next try
           ::
@@ -2626,6 +2629,13 @@
             by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
             by-bone.ossuary  (~(del by by-bone.ossuary) bone)
           ==
+        peer-core
+      ::  +on-pump-krock: if we get a nack for a cork, add it to the recork set
+      ::
+      ++  on-pump-kroc
+        |=  =^bone
+        ^+  peer-core
+        =.  krocs.peer-state  (~(put in krocs.peer-state) bone)
         peer-core
       ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
@@ -2703,6 +2713,7 @@
             snd      (~(del by snd) bone)
             corked   (~(put in corked) bone)
             closing  (~(del in closing) bone)
+            krocs    (~(del in krocs) bone)
           ==
         peer-core
       ::  +on-sink-send: emit ack packet as requested by |message-sink
@@ -2791,12 +2802,12 @@
         ::
         =.  peer-core  (run-message-pump target-bone %near naxplanation)
         ::
-        ?.  (~(has in closing.peer-state) target-bone)
+        ?.  (~(has in krocs.peer-state) target-bone)
           peer-core
         =/  =message-pump-state
           (~(gut by snd.peer-state) target-bone *message-pump-state)
         =/  message-pump
-          (make-message-pump message-pump-state channel %.y)
+          (make-message-pump message-pump-state channel %.y target-bone)
         ::  we don't process the gifts here and instead wait for
         ::  the timer to handle the %cork plea added to the pump
         ::
@@ -2867,7 +2878,7 @@
 ::  +make-message-pump: constructor for |message-pump
 ::
 ++  make-message-pump
-  |=  [state=message-pump-state =channel closing=?]
+  |=  [state=message-pump-state =channel closing=? =bone]
   =*  veb  veb.bug.channel
   =|  gifts=(list message-pump-gift)
   ::
@@ -2915,12 +2926,19 @@
             ::
             ?&  closing
                 ?=(^ top-live)
+                =(0 ~(wyt in unsent-messages.state))
                 =(1 ~(wyt by live.packet-pump-state.state))
                 =(message-num:task message-num.key.u.top-live)
             ==
           =*  ack  p.ack-meat.task
-          %-  on-done
-          [[message-num:task ?:(ok.ack [%ok ~] [%nack ~])] cork]
+          =?  message-pump  &(cork !ok.ack)  (give [%kroc bone])
+          =.  message-pump
+            %-  on-done
+            [[message-num:task ?:(ok.ack [%ok ~] [%nack ~])] cork]
+          ?.  &(!ok.ack cork)  message-pump
+          %.  message-pump
+          %+  trace  odd.veb
+          |.("got nack for %cork {<bone=bone message-num=message-num:task>}")
         ==
       %near  (on-done [[message-num %naxplanation error]:naxplanation.task %&])
     ==
@@ -2958,6 +2976,7 @@
     ^+  message-pump
     ::  unsent messages from the future should never get acked
     ::
+    ~|  [message-num next.state]
     ?>  (lth message-num next.state)
     ::  ignore duplicate message acks
     ::

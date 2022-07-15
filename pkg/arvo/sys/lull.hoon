@@ -513,6 +513,9 @@
   ::         entry and emit a nack to the local vane that asked us to send
   ::         the message.
   ::    heeds: listeners for %clog notifications
+  ::    closing: bones closed on the sender side
+  ::    corked:  bones closed on both sender and receiver
+  ::    krocs:   bones that need to be sent again to the publisher
   ::
   +$  peer-state
     $:  $:  =symmetric-key
@@ -530,6 +533,7 @@
         heeds=(set duct)
         closing=(set bone)
         corked=(set bone)
+        krocs=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
