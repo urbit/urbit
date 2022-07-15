@@ -273,7 +273,7 @@ export class Urbit {
             ) {
               const funcs = this.outstandingSubscriptions.get(data.id);
               try {
-                funcs.event(data.json);
+                funcs.event(data.json, data.mark ?? 'json');
               } catch (e) {
                 console.error('Failed to call subscription event callback', e);
               }
