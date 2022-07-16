@@ -45,6 +45,7 @@ export const Tab = ( { session, name }: TabProps ) => {
       <a className='session-name'>
         {session?.hasBell ? '🔔 ' : ''}
         {name === DEFAULT_SESSION ? 'default' : name}
+        {session && session.pending > 0 ? ' o' : ''}
         {' '}
       </a>
       {name === DEFAULT_SESSION ? null : <a className="delete-session" onClick={onDelete}>x</a>}
