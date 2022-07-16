@@ -6958,8 +6958,8 @@
   ==                                                    ::
 ::
 ++  lru                                                 ::  lru caches
-  :*  mit=(lu (qual ? type type hoon) (pair type nock))
-      mul=(lu (pair ? (qual type type type hoon)) (pair type type))
+  :*  mit=(lu (trel ? type hoon) (pair type nock))
+      mul=(lu (pair ? (trel type type hoon)) (pair type type))
       fis=(lu (trel ? type axis) nock)
       cro=(lu (trel ? type type) type)
       fus=(lu (trel ? type type) type)
@@ -11336,11 +11336,11 @@
     ~/  %mint
     |=  [gol=type gen=hoon]
     ^-  [(pair type nock) _grub]
-    =/  cached  (get:mit:lru mit.grub [vet sut gol gen])
+    =/  cached  (get:mit:lru mit.grub [vet sut gen])
     ?^  cached
       [p.u.cached grub(mit q.u.cached)]
     =;  [minted=(pair type nock) =_grub]
-      :_  grub(mit (put:mit:lru mit.grub [vet sut gol gen] minted))
+      :_  grub(mit (put:mit:lru mit.grub [vet sut gen] minted))
       minted
     |^  ^-  [(pair type nock) _grub]
     ?:  ?&(=(%void sut) !?=([%dbug *] gen))
@@ -11669,12 +11669,13 @@
     ~/  %mull
     |=  [gol=type dox=type gen=hoon]
     ^-  [[p=type q=type] _grub]
-    =/  cached  (get:mul:lru mul.grub [vet sut gol dox gen])
+    =/  cached  (get:mul:lru mul.grub [vet sut dox gen])
     ?^  cached
       [p.u.cached grub(mul q.u.cached)]
     =;  [mulled=(pair type type) =_grub]
-      :_  grub(mul (put:mul:lru mul.grub [vet sut gol dox gen] mulled))
+      :_  grub(mul (put:mul:lru mul.grub [vet sut dox gen] mulled))
       mulled
+    ~_  (show [%c %mull] %l %null ~)
     |^  ^-  [[p=type q=type] _grub]
     ?:  =(%void sut)
       ~>(%mean.'mull-none' !!)
@@ -11856,7 +11857,7 @@
       (beth bool)
     ::
         [%dbug *]
-      ~_  (show %o p.gen)
+      ~_  (show [%c %mull] %o p.gen)
       $(gen q.gen)
     ::
         [%zpcm *]
