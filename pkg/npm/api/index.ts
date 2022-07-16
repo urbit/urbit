@@ -22,3 +22,5 @@ export * as hood from './hood';
 export * from './hood';
 export * as docket from './docket';
 export * from './docket';
+export * as term from './term';
+export * from './term';
