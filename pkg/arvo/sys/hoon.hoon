@@ -6950,7 +6950,6 @@
       cro=_(new:cro:lru 2.350)                          ::  +crop cache
       fus=_(new:fus:lru 2.350)                          ::  +fuse cache
       bra=_(new:bra:lru 150)                            ::  +bran cache
-      nen=(map (trel ? type type) ?)                    ::  inner +nest cache
       con=(map (trel ? type type) type)                 ::  inner +crop cache
       fun=(map (trel ? type type) type)                 ::  inner +fuse cache
       fin=(map (trel ? type axis) nock)                 ::  inner +fish cache
@@ -12034,10 +12033,10 @@
     =/  cached  (~(get by nes.grub) [vet sut ref])
     ?^  cached
       [u.cached grub]
-    =;  [nests=? =_grub]
+    =;  [nests=(unit (set (pair type type))) =_grub]
+      =/  nests  ?=(^ nests)
       :_  %_  grub
             nes  (~(put by nes.grub) [vet sut ref] nests)
-            nen  ~
           ==
       nests
     =|  $:  seg=(set type)                              ::  degenerate sut
@@ -12048,12 +12047,12 @@
     |%
     ++  deem
       |=  [mel=vair ram=vair]
-      ^-  [? _grub]
+      ^-  [(unit _gil) _grub]
       ?.  |(=(mel ram) =(%lead mel) =(%gold ram))
-        [| grub]
+        [~ grub]
       ?-  mel
           %lead
-        [& grub]
+        [`gil grub]
       ::
           %gold
         meet
@@ -12073,33 +12072,47 @@
       |=  $:  dom=(map term tome)
               vim=(map term tome)
           ==
-      ^-  [? _grub]
-      ?:  ?=(~ dom)  :_  grub  =(vim ~)
-      ?:  ?=(~ vim)  [| grub]
+      ^-  [(unit _gil) _grub]
+      ?:  ?=(~ dom)
+        :_  grub
+        ?:  =(vim ~)
+          `gil
+        ~
+      ::
+      ?:  ?=(~ vim)  [~ grub]
       ::
       ?.  =(p.n.dom p.n.vim)
-        [| grub]
+        [~ grub]
       ::
       =^  lef  grub  $(dom l.dom, vim l.vim)
-      ?.  lef  [| grub]
+      ?~  lef  [~ grub]
+      =.  gil  (~(uni in gil) u.lef)
       ::
       =^  rig  grub  $(dom r.dom, vim r.vim)
-      ?.  rig  [| grub]
+      ?~  rig  [~ grub]
+      =.  gil  (~(uni in gil) u.rig)
       ::
       =/  dab  [q.q.n.dom]
       =/  hem  [q.q.n.vim]
       ::
-      |-  ^-  [? _grub]
-      ?:  ?=(~ dab)  :_  grub  =(hem ~)
-      ?:  ?=(~ hem)  :_  grub  |
+      |-  ^-  [(unit _gil) _grub]
+      ?:  ?=(~ dab)
+        :_  grub
+        ?:  =(hem ~)
+          `gil
+        ~
       ::
-      ?.  =(p.n.dab p.n.hem)  [| grub]
+      ?:  ?=(~ hem)  [~ grub]
+      ::
+      ?.  =(p.n.dab p.n.hem)  [~ grub]
       ::
       =^  lef  grub  $(dab l.dab, hem l.hem)
-      ?.  lef  [| grub]
+      ?~  lef  [~ grub]
+      =.  gil  (~(uni in gil) u.lef)
       ::
       =^  rig  grub  $(dab r.dab, hem r.hem)
-      ?.  rig  [| grub]
+      ?~  rig  [~ grub]
+      =.  gil  (~(uni in gil) u.rig)
       ::
       =^  played-dab  grub  (play q.n.dab)
       =^  played-hem  grub  (play(sut ref) q.n.hem)
@@ -12107,47 +12120,40 @@
       dext(sut played-dab, ref played-hem)
     ::
     ++  dext
-      =/  cached  (~(get by nen.grub) [vet sut ref])
-      ?^  cached
-        [u.cached grub]
-      =;  [nests=? =_grub]
-        =?  nen.grub
-            ?|  &(nests =(~ reg))
-                &(!nests =(~ seg))
-            ==
-          (~(put by nen.grub) [vet sut ref] nests)
+      |-  ^-  [(unit _gil) _grub]
+      =;  [checked=(unit _gil) =_grub]
         :_  grub
-        nests
-      |-
-      ^-  [? _grub]
-      =;  [checked=? =_grub]
-        :_  grub
-        ?:  checked  &
-        ?.  tel  |
+        ?^  checked  checked
+        ?.  tel  ~
         ~_  (dunk %need)
         ~_  (dunk(sut ref) %have)
         ~>  %mean.'nest-fail'
         !!
-      ?:  =(sut ref)  [& grub]
+      ?:  =(sut ref)  [`gil grub]
+      ?:  (~(has in gil) [sut ref])
+        [`gil grub]
       ?-    sut
           %void
         sint
       ::
           %noun
-        [& grub]
+        [`gil grub]
       ::
           [%atom *]
         ?.  ?=([%atom *] ref)  sint
         :_  grub
-        ?&  (fitz p.sut p.ref)
-            |(?=(~ q.sut) =(q.sut q.ref))
-        ==
+        ?:  ?&  (fitz p.sut p.ref)
+                |(?=(~ q.sut) =(q.sut q.ref))
+            ==
+          `gil
+        ~
       ::
           [%cell *]
         ?.  ?=([%cell *] ref)  sint
         =^  lef  grub  dext(sut p.sut, ref p.ref, seg ~, reg ~)
-        ?.  lef
-          [| grub]
+        ?~  lef
+          [~ grub]
+        =.  gil  (~(uni in gil) u.lef)
         dext(sut q.sut, ref q.ref, seg ~, reg ~)
       ::
           [%core *]
@@ -12156,26 +12162,30 @@
         ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
         ::
         ?.  =(q.p.q.sut q.p.q.ref)  ::  same wet/dry
-          [| grub]
+          [~ grub]
         ::
         =^  met  grub  meet(sut q.q.sut, ref p.sut)
-        ?.  met
-          [| grub]
+        ?~  met
+          [~ grub]
         ::
         =^  dex  grub  dext(sut q.q.ref, ref p.ref)
-        ?.  dex
-          [| grub]
+        ?~  dex
+          [~ grub]
+        =.  gil  (~(uni in gil) u.dex)
         ::
         =^  dem  grub  (deem(sut q.q.sut, ref q.q.ref) r.p.q.sut r.p.q.ref)
-        ?.  dem
-          [| grub]
+        ?~  dem
+          [~ grub]
+        =.  gil  (~(uni in gil) u.dem)
         ::
         ?:  =(%wet q.p.q.sut)
           :_  grub
-          =(q.r.q.sut q.r.q.ref)
+          ?:  =(q.r.q.sut q.r.q.ref)
+            `gil
+          ~
         ::
         ?:  (~(has in gil) [sut ref])
-          [& grub]
+          [`gil grub]
         ::
         %.  [q.r.q.sut q.r.q.ref]
         %=  deep
@@ -12192,9 +12202,9 @@
         =/  yed  ~(tap in p.sut)
         |-
         ?~  yed
-          [| grub]
+          [~ grub]
         =^  nests  grub  dext(tel |, sut i.yed)
-        ?:  nests
+        ?^  nests
           [nests grub]
         $(yed t.yed)
       ::
@@ -12203,9 +12213,9 @@
       ::
           [%hold *]
         ?:  (~(has in seg) sut)
-          [| grub]
+          [~ grub]
         ?:  (~(has in gil) [sut ref])
-          [& grub]
+          [`gil grub]
         =^  val  grub  repo
         %=  dext
           sut   val
@@ -12216,24 +12226,25 @@
     ::
     ++  meet
       =^  lef  grub  dext
-      ?.  lef
-        [| grub]
+      ?~  lef
+        [~ grub]
+      =.  gil  (~(uni in gil) u.lef)
       dext(sut ref, ref sut)
     ::
     ++  sint
-      ^-  [? _grub]
+      ^-  [(unit _gil) _grub]
       ?-    ref
           %noun
-        [| grub]
+        [~ grub]
       ::
           %void
-        [& grub]
+        [`gil grub]
       ::
           [%atom *]
-        [| grub]
+        [~ grub]
       ::
           [%cell *]
-        [| grub]
+        [~ grub]
       ::
           [%core *]
         =^  rig  grub  repo(sut ref)
@@ -12244,20 +12255,21 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.ref)
-        |-  ^-  [? _grub]
+        |-  ^-  [(unit _gil) _grub]
         ?~  yed
-          [& grub]
+          [`gil grub]
         =^  bol  grub  dext(ref i.yed)
-        ?.  bol
-          [| grub]
+        ?~  bol
+          [~ grub]
+        =.  gil  (~(uni in gil) u.bol)
         $(yed t.yed)
       ::
           [%hint *]
         dext(ref q.ref)
       ::
           [%hold *]
-        ?:  (~(has in reg) ref)  [& grub]
-        ?:  (~(has in gil) [sut ref])  [& grub]
+        ?:  (~(has in reg) ref)  [`gil grub]
+        ?:  (~(has in gil) [sut ref])  [`gil grub]
         =^  val  grub  repo(sut ref)
         %=  dext
           ref   val
