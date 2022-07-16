@@ -13353,26 +13353,30 @@
     ^-  cape
     =+  gil=*(set type)
     =+  dex=[p=*(map type @) q=*(map @ wine)]
+    =|  =grub
     =<  [q.p q]
-    |-  ^-  [p=[p=(map type @) q=(map @ wine)] q=wine]
-    =-  [p.tez (doge q.p.tez q.tez)]
+    |-  ^-  [[p=[p=(map type @) q=(map @ wine)] q=wine] _grub]
+    =-  [[p.tez (doge q.p.tez q.tez)] +.tez]
     ^=  tez
-    ^-  [p=[p=(map type @) q=(map @ wine)] q=wine]
-    ?:  -:(~(meet uc sut *grub) -:!>(*type))
-      [dex %type]
+    ^-  [[p=[p=(map type @) q=(map @ wine)] q=wine] _grub]
+    =^  met  grub  (~(meet uc sut grub) -:!>(*type))
+    ?:  met
+      [[dex %type] grub]
     ?-    sut
-        %noun      [dex sut]
-        %void      [dex sut]
-        [%atom *]  [dex ?~(q.sut [%mato p.sut] [%pear p.sut u.q.sut])]
+        %noun      [[dex sut] grub]
+        %void      [[dex sut] grub]
+        [%atom *]  [[dex ?~(q.sut [%mato p.sut] [%pear p.sut u.q.sut])] grub]
         [%cell *]
-      =+  hin=$(sut p.sut)
-      =+  yon=$(dex p.hin, sut q.sut)
+      =^  hin  grub  $(sut p.sut)
+      =^  yon  grub  $(dex p.hin, sut q.sut)
+      :_  grub
       :-  p.yon
       :-  %plot
       ?:(?=([%plot *] q.yon) [q.hin p.q.yon] [q.hin q.yon ~])
     ::
         [%core *]
-      =+  yad=$(sut p.sut)
+      =^  yad  grub  $(sut p.sut)
+      :_  grub
       :-  p.yad
       =+  ^=  doy  ^-  [p=(list @ta) q=wine]
           ?:  ?=([%core *] q.yad)
@@ -13396,34 +13400,37 @@
       ==
     ::
         [%hint *]
-      =+  yad=$(sut q.sut)
+      =^  yad  grub  $(sut q.sut)
+      :_  grub
       ?.  ?=(%know -.q.p.sut)  yad
       [p.yad [%name p.q.p.sut q.yad]]
     ::
         [%face *]
-      =+  yad=$(sut q.sut)
+      =^  yad  grub  $(sut q.sut)
+      :_  grub
       ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         [%fork *]
       =+  yed=(sort ~(tap in p.sut) aor)
-      =-  [p [%bcwt q]]
-      |-  ^-  [p=[p=(map type @) q=(map @ wine)] q=(list wine)]
+      =-  [[p [%bcwt q]] grun]
+      |-  ^-  [[p=[p=(map type @) q=(map @ wine)] q=(list wine)] grun=_grub]
       ?~  yed
-        [dex ~]
-      =+  mor=$(yed t.yed)
-      =+  dis=^$(dex p.mor, sut i.yed)
-      [p.dis q.dis q.mor]
+        [[dex ~] grub]
+      =^  mor  grub  $(yed t.yed)
+      =^  dis  grub  ^$(dex p.mor, sut i.yed)
+      [[p.dis q.dis q.mor] grub]
     ::
         [%hold *]
       =+  hey=(~(get by p.dex) sut)
       ?^  hey
-        [dex [%stop u.hey]]
+        [[dex [%stop u.hey]] grub]
       ?:  (~(has in gil) sut)
         =+  dyr=+(~(wyt by p.dex))
-        [[(~(put by p.dex) sut dyr) q.dex] [%stop dyr]]
-      =/  val  ~(repo uc sut *grub)
-      =+  rom=$(gil (~(put in gil) sut), sut -.val)
+        [[[(~(put by p.dex) sut dyr) q.dex] [%stop dyr]] grub]
+      =^  val  grub  ~(repo uc sut grub)
+      =^  rom  grub  $(gil (~(put in gil) sut), sut val)
       =+  rey=(~(get by p.p.rom) sut)
+      :_  grub
       ?~  rey
         rom
       [[p.p.rom (~(put by q.p.rom) u.rey q.rom)] [%stop u.rey]]
@@ -13495,6 +13502,7 @@
   ?~(a same ~>(%slog.[pri i.a] $(a t.a)))               ::  ((slog ~[>%a<]) 1)
 ::                                                      ::
 ++  mean                                                ::  crash with trace
+  !.
   |=  a=tang
   ^+  !!
   ?~  a  !!
