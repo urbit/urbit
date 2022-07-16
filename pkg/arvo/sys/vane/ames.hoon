@@ -2626,6 +2626,7 @@
             rcv              (~(del by rcv) bone)
             corked           (~(put in corked) bone)
             closing          (~(del in closing) bone)
+            krocs            (~(del in krocs) bone)
             by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
             by-bone.ossuary  (~(del by by-bone.ossuary) bone)
           ==
@@ -2927,6 +2928,7 @@
             ?&  closing
                 ?=(^ top-live)
                 =(0 ~(wyt in unsent-messages.state))
+                =(0 (lent unsent-fragments.state))
                 =(1 ~(wyt by live.packet-pump-state.state))
                 =(message-num:task message-num.key.u.top-live)
             ==
