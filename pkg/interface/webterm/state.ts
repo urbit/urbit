@@ -7,6 +7,7 @@ export type Session = {
   term: Terminal,
   fit: FitAddon,
   hasBell: boolean,
+  pending: number,
   subscriptionId: number | null,
 } | null;
 export type Sessions = { [id: string]: Session; }

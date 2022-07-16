@@ -128,7 +128,14 @@ const readInput = (term: Terminal, e: string): Belt[] => {
 const onResize = async (name: string, session: Session) => {
   if (session) {
     session.fit.fit();
-    api.poke(pokeTask(name, { blew: { w: session.term.cols, h: session.term.rows } }));
+    useTermState.getState().set((state) => {
+      state.sessions[name].pending++;
+    });
+    api.poke(pokeTask(name, { blew: { w: session.term.cols, h: session.term.rows } })).then(() => {
+      useTermState.getState().set((state) => {
+        state.sessions[name].pending--;
+      });
+    });
   }
 };
 
@@ -139,7 +146,14 @@ const onInput = (name: string, session: Session, e: string) => {
   const term = session.term;
   const belts = readInput(term, e);
   belts.map((b) => {
-    api.poke(pokeBelt(name, b));
+    useTermState.getState().set((state) => {
+      state.sessions[name].pending++;
+    });
+    api.poke(pokeBelt(name, b)).then(() => {
+      useTermState.getState().set((state) => {
+        state.sessions[name].pending--;
+      });
+    });
   });
 };
 
@@ -170,7 +184,13 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
     //
     term.write(csi('?9h'));
 
-    const ses: Session = { term, fit, hasBell: false, subscriptionId: null };
+    const ses: Session = {
+      term,
+      fit,
+      hasBell: false,
+      pending: 0,
+      subscriptionId: null
+    };
 
     //  set up event handlers
     //
