@@ -41,13 +41,6 @@ export const Tab = ( { session, name }: TabProps ) => {
     });
   }, [session]);
 
-  // TODO: sometimes the pending is not decremented?
-  useEffect(() => {
-    if(session) {
-      console.log(`${session.subscriptionId}: ${session.pending} pending`);
-    }
-  }, [session]);
-
   return (
     <div className={'tab ' + (isSelected ? 'selected' : '')} onClick={onClick}>
       <a className='session-name'>

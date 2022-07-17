@@ -2,13 +2,9 @@ import useIsMounted from './lib/useIsMounted';
 import React from 'react';
 import { useEffect, useState } from 'react';
 
-// TODO: Tune these values
 const DELAY_MS = 1000;
-const FRAME_MS = 200;
-// Some alternative ASCII spinners:
-// https://stackoverflow.com/questions/2685435/cooler-ascii-spinners
-// const CHARS = '⣾⣽⣻⢿⡿⣟⣯⣷';
-const CHARS = '◴◷◶◵';
+const FRAME_MS = 250;
+const CHARS = '|/-\\';
 
 const Spinner = () => {
   const [index, setIndex] = useState(0);
