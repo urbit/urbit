@@ -145,7 +145,7 @@ const onInput = (name: string, session: Session, e: string) => {
   }
   const term = session.term;
   const belts = readInput(term, e);
-  belts.map((b) => {
+  belts.forEach((b) => {
     useTermState.getState().set((state) => {
       state.sessions[name].pending++;
     });

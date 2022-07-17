@@ -1,8 +1,9 @@
 import { DEFAULT_SESSION } from './constants';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import useTermState, { Session } from './state';
 import api from './api';
 import { pokeTask } from '@urbit/api/term';
+import { DelayedSpinner as Spinner } from './Spinner';
 
 interface TabProps {
   session: Session;
@@ -40,12 +41,19 @@ export const Tab = ( { session, name }: TabProps ) => {
     });
   }, [session]);
 
+  // TODO: sometimes the pending is not decremented?
+  useEffect(() => {
+    if(session) {
+      console.log(`${session.subscriptionId}: ${session.pending} pending`);
+    }
+  }, [session]);
+
   return (
     <div className={'tab ' + (isSelected ? 'selected' : '')} onClick={onClick}>
       <a className='session-name'>
         {session?.hasBell ? '🔔 ' : ''}
         {name === DEFAULT_SESSION ? 'default' : name}
-        {session && session.pending > 0 ? ' o' : ''}
+        {session && session.pending > 0 ? <Spinner /> : null}
         {' '}
       </a>
       {name === DEFAULT_SESSION ? null : <a className="delete-session" onClick={onDelete}>x</a>}
