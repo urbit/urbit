@@ -13085,8 +13085,8 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  ['_' (rune cab %brcb exqr)]
-                  ['%' (runn cen %brcn expe)]
-                  ['@' (runn pat %brpt expe)]
+                  ['%' (runo cen %brcn blab expe)]
+                  ['@' (runo pat %brpt blab expe)]
                   [':' (rune col %brcl expb)]
                   ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
@@ -13482,13 +13482,10 @@
             ;~(pfix dif (stag tuq (toad har)))
       --
     ::
-    ++  runn                                            ::  build named rune
-      =+  [dif=*rule tuq=** har=expa]
+    ++  runo                                            ::  build rune w option
+      =+  [dif=*rule tuq=** hil=*rule har=expa]
       |@  ++  $
-            ;~  pfix
-              dif
-              (stag tuq ;~(plug (punt ;~(pfix gap cen sym)) (toad har)))
-            ==
+            ;~(pfix dif (stag tuq ;~(plug (punt ;~(pfix gap hil)) (toad har))))
       --
     ::
     ++  runq                                            ::  wide or tall if tol
@@ -13652,8 +13649,9 @@
           ==
           loaf
         ==
+    ++  blab  ;~(pfix cen sym)                          ::  term
     ++  bont  ;~  (bend)                                ::  term, optional hoon
-                ;~(pfix cen sym)
+                blab
                 ;~(pfix dot ;~(pose wide ;~(pfix muck loaf)))
               ==
     ++  bony  (cook |=(a=(list) (lent a)) (plus tis))   ::  base 1 =en count
@@ -13662,7 +13660,7 @@
         (cold ~ sig)
         %+  ifix
           ?:(tol [;~(plug duz gap) ;~(plug gap duz)] [pal par])
-        (more mash ;~(gunk ;~(pfix cen sym) loaf))
+        (more mash ;~(gunk blab loaf))
       ==
     --
   ::
