@@ -177,7 +177,7 @@
 ::  pupal gall core, on upgrade
 ::
 =<  =*  adult-gate  .
-    =|  spore-tag=@tas
+    =|  spore-tag=@ud
     =|  =spore
     |=  [now=@da eny=@uvJ rof=roof]
     =*  pupal-gate  .
@@ -282,7 +282,7 @@
     ::
     ++  load
       |^  |=  old=spore-any
-          =.  spore-tag  `@tas`-.old
+          =.  spore-tag  `@ud`-.old
           =?  old  ?=(%7 -.old)  (spore-7-to-8 old)
           =?  old  ?=(%8 -.old)  (spore-8-to-9 old)
           ?>  ?=(%9 -.old)
