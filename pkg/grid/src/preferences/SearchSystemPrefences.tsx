@@ -1,6 +1,7 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import fuzzy from 'fuzzy';
+import classNames from 'classnames';
 import MagnifyingGlassIcon from '../components/icons/MagnifyingGlassIcon';
 import BellIcon from '../components/icons/BellIcon';
 import { Interface } from '../components/icons/Interface';
@@ -59,14 +60,41 @@ interface SearchSystemPrefencesProps {
 }
 
 export default function SearchSystemPreferences({ subUrl }: SearchSystemPrefencesProps) {
+  const { push } = useHistory();
   const [searchInput, setSearchInput] = useState('');
   const [matchingNavOptions, setMatchingNavOptions] = useState<string[]>([]);
+  const [highlightNavOption, setHighlightNavOption] = useState<number>();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target as HTMLInputElement;
     const value = input.value.trim();
 
     setSearchInput(value);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const { key } = e;
+    if (key === 'ArrowDown' && searchInput !== '' && matchingNavOptions.length > 0) {
+      if (highlightNavOption === undefined) {
+        setHighlightNavOption(0);
+      } else {
+        setHighlightNavOption((prevState) => prevState! + 1);
+      }
+    }
+
+    if (
+      key === 'ArrowUp' &&
+      searchInput !== '' &&
+      matchingNavOptions.length > 0 &&
+      highlightNavOption !== undefined &&
+      highlightNavOption !== 0
+    ) {
+      setHighlightNavOption((prevState) => prevState! - 1);
+    }
+
+    if (key === 'Enter' && searchInput !== '' && highlightNavOption !== undefined) {
+      push(subUrl(navOptions[highlightNavOption].route));
+    }
   };
 
   useEffect(() => {
@@ -87,17 +115,23 @@ export default function SearchSystemPreferences({ subUrl }: SearchSystemPrefence
           placeholder="Search Preferences"
           value={searchInput}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
         />
       </label>
       <div className="relative">
         {matchingNavOptions.length > 0 && searchInput !== '' ? (
           <div className="absolute -top-3 flex flex-col bg-white space-y-2 rounded-2xl shadow-md w-full py-3">
-            {matchingNavOptions.map((opt) => {
+            {matchingNavOptions.map((opt, index) => {
               const matchingNavOption = navOptions.find((navOpt) => navOpt.title === opt);
               if (matchingNavOption !== undefined) {
                 return (
                   <Link
-                    className="flex px-2 py-3 items-center space-x-2 hover:text-black hover:bg-gray-50"
+                    className={classNames(
+                      'flex px-2 py-3 items-center space-x-2 hover:text-black hover:bg-gray-50',
+                      {
+                        'bg-gray-50': highlightNavOption === index
+                      }
+                    )}
                     to={subUrl(matchingNavOption.route)}
                   >
                     {matchingNavOption.icon}
