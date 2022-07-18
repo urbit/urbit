@@ -7,9 +7,9 @@
 //==============================================================================
 
 typedef struct {
-  c3_d  len_d;        //!< combined length of type and jammed request
-  c3_y  type_y;       //!< type of IO request (0 = HTTP client)
-  c3_y* jammed_req_y; //!< jammed request
+  c3_d  len_d;  //!< length of jammed request
+  c3_y  type_y; //!< type of IO request (0 = HTTP client)
+  c3_y* jam_y;  //!< jammed request
 } _io_req;
 
 typedef struct {
@@ -106,18 +106,15 @@ _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
     goto end;
   }
 
-  u3m_p("request wire", wire);
-  u3m_p("request card", card);
-
   _client* client_u = (_client*)driver_u;
   _io_req* io_req_u = c3_malloc(sizeof(*io_req_u));
-  u3s_jam_xeno(card, &io_req_u->len_d, &io_req_u->jammed_req_y);
+  u3s_jam_xeno(card, &io_req_u->len_d, &io_req_u->jam_y);
   io_req_u->type_y = IO_REQ_HTTP_CLIENT;
-  io_req_u->len_d += sizeof(io_req_u->type_y);
+  //io_req_u->len_d += sizeof(io_req_u->type_y);
 
   uv_buf_t req_bufs_u[] = {
     {
-      // Request length.
+      // Jammed request length.
       .base = (c3_c*)&io_req_u->len_d,
       .len  = sizeof(io_req_u->len_d),
     },
@@ -128,17 +125,20 @@ _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
     },
     {
       // Jammed request.
-      .base = (c3_c*)io_req_u->jammed_req_y,
-      .len  = io_req_u->len_d - sizeof(io_req_u->type_y),
+      .base = (c3_c*)io_req_u->jam_y,
+      .len  = io_req_u->len_d,
     },
   };
 
   uv_write_t* write_req_u = c3_malloc(sizeof(*write_req_u));
-  uv_write(write_req_u,
-           (uv_stream_t*)&client_u->child_u.stdin_u,
-           req_bufs_u,
-           sizeof(req_bufs_u) / sizeof(*req_bufs_u),
-           _write_cb);
+  try_uv(uv_write(write_req_u,
+                 (uv_stream_t*)&client_u->child_u.stdin_u,
+                 req_bufs_u,
+                 sizeof(req_bufs_u) / sizeof(*req_bufs_u),
+                 _write_cb),
+         goto end,
+         "failed to write %%http-client request to pipe");
+
 
   suc_o = c3y;
 
@@ -206,7 +206,7 @@ _read_cb(uv_stream_t* stream_u, ssize_t bytes_read_i, const uv_buf_t* buf_u)
     idx_d        += len_bytes_i;
     bytes_y      += len_bytes_i;
     bytes_read_i -= len_bytes_i;
-    // Read the entire length, allocate space for the response.
+    // Allocate space for the response now that the entire length has been read.
     if ( idx_d == sizeof(resp_u->len_d) ) {
       resp_u = c3_realloc(resp_u, sizeof(*resp_u) + resp_u->len_d);
     }
@@ -222,7 +222,8 @@ _read_cb(uv_stream_t* stream_u, ssize_t bytes_read_i, const uv_buf_t* buf_u)
     bytes_y      += resp_bytes_i;
     bytes_read_i -= resp_bytes_i;
 
-    // Read a complete response.
+    // Enqueue an ovum (potential event) now that an entire response has been
+    // read.
     if ( idx_d == sizeof(resp_u->len_d) + resp_u->len_d ) {
       u3_weak resp = u3s_cue_xeno(resp_u->len_d, resp_u->resp_y);
       u3_noun req_num, status, headers, body;
@@ -240,8 +241,8 @@ _read_cb(uv_stream_t* stream_u, ssize_t bytes_read_i, const uv_buf_t* buf_u)
                                  u3nc(status, headers),
                                  body,
                                  c3y));
-        u3m_p("response wire", wire);
-        u3m_p("response card", card);
+        u3m_p("wire", wire);
+        u3m_p("card", card);
         u3_auto_plan(&client_u->driver_u, u3_ovum_init(0, c3__i, wire, card));
       }
 
@@ -300,7 +301,7 @@ u3_cttp_io_init(u3_pier* pir_u)
   {
     // TODO: integrate the Rust binary.
     c3_c* args_c[] = {
-      "/home/tlon/code/io/target/debug/io",
+      "/home/tlon/code/io/target/release/io",
       NULL,
     };
 
@@ -342,9 +343,13 @@ u3_cttp_io_init(u3_pier* pir_u)
     try_uv(uv_spawn(u3L, &client_u->child_u.proc_u, &opt_u),
            goto fail,
            "failed to spawn %s",
-           args_c[0]);
+           opt_u.file);
 
-    uv_read_start((uv_stream_t*)&stdout_u->pipe_u, _read_alloc_cb, _read_cb);
+    try_uv(uv_read_start((uv_stream_t*)&stdout_u->pipe_u,
+                         _read_alloc_cb,
+                         _read_cb),
+           goto fail,
+           "failed to start reading %%http-client responses");
   }
 
   goto succeed;
