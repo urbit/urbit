@@ -97,6 +97,10 @@ export default function SearchSystemPreferences({ subUrl }: SearchSystemPrefence
     }
   };
 
+  const handleBlur = () => {
+    setSearchInput('');
+  };
+
   useEffect(() => {
     const results = fuzzy.filter(searchInput, navOptions, { extract: (obj) => obj.title });
     const matches = results.map((el) => el.string);
@@ -116,6 +120,7 @@ export default function SearchSystemPreferences({ subUrl }: SearchSystemPrefence
           value={searchInput}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
         />
       </label>
       <div className="relative">
