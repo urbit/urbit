@@ -2505,6 +2505,16 @@
       ++  on-pump-done
         |=  [=message-num error=(unit error)]
         ^+  peer-core
+        ?:  ?&  =(1 (end 0 bone))
+                =(1 (end 0 (rsh 0 bone)))
+                (~(has in corked.peer-state) (mix 0b10 bone))
+            ==
+          %-  %+  trace  msg.veb
+              =/  dat  [her.channel bone=bone message-num=message-num -.task]
+              |.("remove naxplanation flow {<dat>}")
+          =.  snd.peer-state
+            (~(del by snd.peer-state) bone)
+          peer-core
         ::  if odd bone, ack is on "subscription update" message; no-op
         ::
         ?:  =(1 (end 0 bone))
@@ -2604,11 +2614,6 @@
           ::
           (emit [/ames]~ %pass wire %b %rest next-wake)
         =/  nax-bone=^bone  (mix 0b10 bone)
-        =.  snd.peer-state
-          ::  unconditionally delete possible nack flows that could
-          ::  have been sent if receiving a cork before upgrade
-          ::
-          (~(del by snd.peer-state) nax-bone)
         =.  peer-state
           =,  peer-state
           %_  peer-state
