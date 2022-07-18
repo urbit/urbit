@@ -1651,8 +1651,8 @@
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%nuke =dude]                                   ::  delete agent
-        [%free =dude pes=(set perm)]                    ::  allow
-        [%lock =dude pes=(set perm)]                    ::  disallow
+        [%free =desk pes=(set perm)]                    ::  allow
+        [%lock =desk pes=(set perm)]                    ::  disallow
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -1776,7 +1776,7 @@
   ::
   +$  perm  $%(perm-arvo perm-gall)
   ::
-  +$  perm-gall
+  +$  perm-gall  ::TODO  by desk?
     $%  [%local dude=(unit dude:gall)]  ::  poke/subscribe locally
         [%peers ~]                      ::  poke/subscribe remotely
     ==
@@ -1813,9 +1813,10 @@
       ::
         $:  %gall
         ::TODO  %jolt can vary desk, and suspending is weird
-        $%  [%agent dude=(unit dude:gall)]  ::  %jolt %idle
-            [%clear dude=(unit dude:gall)]  ::  %nuke
-            [%perms dude=(unit dude:gall)]  ::  %free %lock
+        ::TODO  consider making base special
+        $%  [%agent desk=(unit desk)]  ::  %jolt %idle
+            [%clear desk=(unit desk)]  ::  %nuke
+            [%perms desk=(unit desk)]  ::  %free %lock
         ==  ==
       ::
         $:  %iris
@@ -1863,12 +1864,12 @@
         ==
       ::
           [%gall ?(%agent %clear %perms) *]
-        =/  =dude  (need dude.must)
+        =/  =dude  (need desk.must)
         %+  lien  ~(tap in pers)
         |=  p=perm
         ?&  ?=([%gall *] p)
             =(+<.must +<.p)
-            =(dude (fall dude.p dude))
+            =(dude (fall desk.p dude))
         ==
       ==
     ::
@@ -1933,11 +1934,14 @@
       ==
     ::
         %g
-      ?+  +>-.note  |
-        ?(%jolt %idle)  [%gall %agent `?:(?=(%jolt +>-.note) dude.note dude.note)]
-        %nuke           [%gall %clear `dude.note]
-        ?(%free %lock)  [%gall %perms `dude.note]
-      ==
+      ::TODO  requires scry to look up where target is running...
+      ::      what if not running?
+      |
+      :: ?+  +>-.note  |
+      ::   ?(%jolt %idle)  [%gall %agent `?:(?=(%jolt +>-.note) dude.note dude.note)]
+      ::   %nuke           [%gall %clear `dude.note]
+      ::   ?(%free %lock)  [%gall %perms `desk.note]
+      :: ==
     ::
         %i
       ?+  +>-.note  |

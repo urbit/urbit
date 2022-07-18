@@ -29,6 +29,8 @@
       contacts=(set ship)
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
+      perms=(jug desk perm)
+      wants=(map desk (map perm new=?))
   ==
 ::  $watches: subscribers and publications
 ::
@@ -58,7 +60,6 @@
       live=?  ::TODO  remove, replaced by -.agent
       =stats
       =watches
-      perms=(set perm)  ::  or in $state as (jug term perms) ?
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
@@ -123,6 +124,8 @@
       contacts=(set ship)
       eggs=(map term egg)
       blocked=(map term (qeu blocked-move))
+      perms=(jug desk perm)
+      wants=(map desk (map perm new=?))
   ==
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
 ::
@@ -132,7 +135,6 @@
       live=?
       =stats
       =watches
-      perms=(set perm)
       old-state=(each vase vase)
       =beak
       marks=(map duct mark)
@@ -166,7 +168,7 @@
           [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
-        [%8 system-duct outstanding contacts yokes=~ blocked]:spore
+        [%8 system-duct outstanding contacts yokes=~ blocked perms wants]:spore
       =/  mo-core  (mo-abed:mo:adult duct)
       =.  mo-core
         =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
@@ -256,7 +258,7 @@
           |=  [a=term e=egg]
           ::NOTE  kiln will kick off appropriate app revival
           e(old-state [%| p.old-state.e])
-        +>.old
+        +>.old(blocked [blocked.old ~ ~])  ::TODO  actually 8->9
       --
     --
 ::  adult gall vane interface, for type compatibility with pupa
@@ -841,27 +843,37 @@
   ::  +mo-free: expand permissions to an agent
   ::
   ++  mo-free
-    |=  [=dude pes=(set perm)]
+    |=  [=desk pes=(set perm)]
     ^+  mo-core
-    =.  yokes.state
-      ~|  %todo-reconsider-behavior-for-unstarted-agents
-      %+  ~(jab by yokes.state)  dude
-      |=  y=yoke
-      y(perms (~(uni in perms.y) pes))
-    ::TODO  maybe notify about permission change
-    mo-core
+    =/  pez=(list perm)   ~(tap in pes)
+    =/  wan=(map perm ?)  (~(gut by wants.state) desk *(map perm ?))
+    =|  new=(set perm)
+    |-
+    ?~  pez
+      ::TODO  notify about permission change
+      mo-core
+    ?:  (~(has ju perms.state) desk i.pez)
+      $(pez t.pez)
+    =.  perms.state  (~(put ju perms.state) desk i.pez)
+    =.  wan          (~(del by wan) i.pez)
+    =.  new          (~(put in new) i.pez)
+    $(pez t.pez)
   ::  +mo-lock: restrict permissions of an agent
   ::
   ++  mo-lock
-    |=  [=dude pes=(set perm)]
+    |=  [=desk pes=(set perm)]
     ^+  mo-core
-    =.  yokes.state
-      ~|  %todo-reconsider-behavior-for-unstarted-agents
-      %+  ~(jab by yokes.state)  dude
-      |=  y=yoke
-      y(perms (~(dif in perms.y) pes))
-    ::TODO  maybe notify about permission change
-    mo-core
+    =/  pez=(list perm)  ~(tap in pes)
+    =|  bye=(set perm)
+    |-
+    ?~  pez
+      ::TODO  notify about permission change
+      mo-core
+    ?.  (~(has ju perms.state) desk i.pez)
+      $(pez t.pez)
+    =.  perms.state  (~(del ju perms.state) desk i.pez)
+    =.  bye          (~(put in bye) i.pez)
+    $(pez t.pez)
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
@@ -1350,7 +1362,7 @@
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
           ==                                          ::
-          :*  per=perms.yoke                          ::  permissions
+          :*  per=(~(get ju perms.state) q.beak.yoke) ::  permissions
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::
@@ -1653,7 +1665,7 @@
         ?:  =(%base q.beak.yoke)  [-.p.result ~]
         %+  skid  -.p.result
         |=  =card:agent
-        (cred our card perms.yoke)
+        (cred our card (~(get ju perms.state) q.beak.yoke))
       ~?  !=(~ bad)  [%would-drop agent-name (turn bad head)]
       =/  moves  (zing (turn -.p.result ap-from-internal))
       =.  inbound.watches.yoke
