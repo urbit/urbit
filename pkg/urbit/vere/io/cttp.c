@@ -196,15 +196,15 @@ _read_cb(uv_stream_t* stream_u, ssize_t bytes_read_i, const uv_buf_t* buf_u)
     goto free_buf;
   }
 
-  c3_y* bytes_y = buf_u->base;
+  c3_c* bytes_c = buf_u->base;
 
   // Make sure the length is read in first.
   if ( idx_d < sizeof(resp_u->len_d) ) {
     ssize_t len_bytes_i = c3_min(bytes_read_i,
                                  sizeof(resp_u->len_d) - idx_d);
-    memcpy((c3_y*)resp_u + idx_d, bytes_y, len_bytes_i);
+    memcpy((c3_c*)resp_u + idx_d, bytes_c, len_bytes_i);
     idx_d        += len_bytes_i;
-    bytes_y      += len_bytes_i;
+    bytes_c      += len_bytes_i;
     bytes_read_i -= len_bytes_i;
     // Allocate space for the response now that the entire length has been read.
     if ( idx_d == sizeof(resp_u->len_d) ) {
@@ -217,9 +217,9 @@ _read_cb(uv_stream_t* stream_u, ssize_t bytes_read_i, const uv_buf_t* buf_u)
     c3_d    bytes_needed_d = resp_u->len_d - (idx_d - sizeof(resp_u->len_d));
     ssize_t resp_bytes_i   = c3_min(bytes_read_i,
                                     bytes_needed_d);
-    memcpy((c3_y*)resp_u + idx_d, bytes_y, resp_bytes_i);
+    memcpy((c3_c*)resp_u + idx_d, bytes_c, resp_bytes_i);
     idx_d        += resp_bytes_i;
-    bytes_y      += resp_bytes_i;
+    bytes_c      += resp_bytes_i;
     bytes_read_i -= resp_bytes_i;
 
     // Enqueue an ovum (potential event) now that an entire response has been
@@ -253,7 +253,7 @@ _read_cb(uv_stream_t* stream_u, ssize_t bytes_read_i, const uv_buf_t* buf_u)
 
       // The remaining bytes to read belong to the next response.
       if ( bytes_read_i > 0 ) {
-        memmove(buf_u->base, bytes_y, bytes_read_i);
+        memmove(buf_u->base, bytes_c, bytes_read_i);
         _read_cb(stream_u, bytes_read_i, buf_u);
         // Return to avoid double free of buf_u.
         return;
