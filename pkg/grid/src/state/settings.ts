@@ -123,6 +123,11 @@ export function useTheme() {
   return useSettingsState(selTheme);
 }
 
+const selDnd = (s: SettingsState) => s.display.doNotDisturb;
+export function useDnd() {
+  return useSettingsState(selDnd);
+}
+
 export function parseBrowserSettings(settings: Stringified<BrowserSetting[]>): BrowserSetting[] {
   return settings !== '' ? JSON.parse<BrowserSetting[]>(settings) : [];
 }

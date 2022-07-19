@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import * as RadioGroup from '@radix-ui/react-radio-group';
+import { useDnd, useSettingsState, useTheme } from '../state/settings';
 
-type prefType = 'system' | 'dark' | 'light';
+type prefType = 'auto' | 'dark' | 'light';
 
 interface RadioOptionProps {
   value: string;
@@ -10,8 +11,13 @@ interface RadioOptionProps {
   selected: boolean;
 }
 
-const apperanceOptions = [
-  { value: 'system', label: 'System Theme' },
+interface ApperanceOption {
+  value: prefType;
+  label: string;
+}
+
+const apperanceOptions: ApperanceOption[] = [
+  { value: 'auto', label: 'System Theme' },
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' }
 ];
@@ -34,7 +40,19 @@ const RadioOption = ({ value, label, selected }: RadioOptionProps) => (
 );
 
 export const AppearancePrefs = () => {
-  const [pref, setPref] = useState<prefType>('system');
+  const [pref, setPref] = useState<prefType>('auto');
+  const theme = useTheme();
+  const doNotDisturb = useDnd();
+
+  useEffect(() => {
+    if (theme) {
+      setPref(theme);
+    }
+  }, []);
+
+  useEffect(() => {
+    useSettingsState.setState({ display: { doNotDisturb, theme: pref } });
+  }, [pref]);
 
   const handleChange = (value: string) => {
     setPref(value as prefType);
