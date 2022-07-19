@@ -5327,6 +5327,11 @@
            (star prn)
            (just `@`10)
          ==
+++  vil  %+  cold   ~                                   ::  comments
+         ;~  plug  col  col
+           (star ace)
+           (just `@`10)
+         ==
 ::
 ::::  4j: parsing (bases and base digits)
   ::
@@ -7203,6 +7208,7 @@
   |=  [p=(pair type note) q=type]
   ^-  type
   ?:  =(%void q)  %void
+  ?:  =(%noun q)  %noun
   [%hint p q]
 ::
 ++  face                                                ::  make %face type
@@ -8422,10 +8428,15 @@
         [%tell *]  [%cncl [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         [%wing *]  [%cnts p.gen ~]
         [%yell *]  [%cncl [%limb %cain] [%zpgr [%cltr p.gen]] ~]
-        ::[%note *]  q.gen
+        [%note *]  q.gen
     ::
         [%brbc *]  =-  ?~  -  !!
-                       [%brtr [%bccl -] [%ktcl body.gen]]
+                       :+  %brtr
+                         [%bccl -]
+                       |-
+                       ?.  ?=([%dict *] body.gen)
+                         [%ktcl body.gen]
+                       [%note help+[p.body.gen] $(body.gen q.body.gen)]
                    %+  turn  `(list term)`sample.gen
                    |=  =term
                    ^-  spec
@@ -11549,100 +11560,117 @@
     :*  (~(uni by bat.wit) bat.taw)
         (~(uni in use.wit) use.taw)
     ==
-  ::
   ++  docs
     |%
-    ::  +apex: prefix comment. may contain batch comments
+    ::  +apex: prefix comment. may contain batch comments.
+    ::
+    ::    when a prefix doccord is parsed, it is possible that there is no +gap
+    ::    afterward to be consumed, so we add an additional newline and set back
+    ::    the line of the n
     ++  apex
       %+  knee  *whit  |.  ~+
       ;~  plug
-        (cook malt (star lore))
+        |=  tub=nail
+        =/  vex
+          %.  tub
+          %-  star  %-  myth
+          ;~(pfix (punt leap) (star ace) col col ;~(pose larg smol))
+        ?~  q.vex  vex
+        :-  p=p.vex
+        %-  some
+        ?~  p.u.q.vex
+          [p=~ q=q.u.q.vex]
+        :-  p=(malt p.u.q.vex)
+        q=`nail`[[(dec p.p.q.u.q.vex) q.p.q.u.q.vex] ['\0a' q.q.u.q.vex]]
       ::
         (easy ~)
       ==
     ::
-    ::  +apse: postfix comment
+    ::  +apse: postfix comment.
     ++  apse
+      %+  knee  *help  |.  ~+
       ;~  pose
-        %+  cook  |=(a=cord %*(. *whit bat (my `[a ~] ~)))
+        %+  cook  |=(a=cord %*(. *help summary.crib a))
+        ::TODO: if there is a $link then interpret it as the start
+        ::of a prefix comment instead of postfix
+        ::;~(less (exit ;~(plug (plus en-link) col ace)) (exit line))
         (exit line)
       ::
-        (easy *whit)
+        (easy *help)
       ==
     ::
-    ++  lore
-      %+  cook
-        |=  [[a=cuff b=cord] c=(list sect) d=(unit ~)]
-        [a b c]
-      ;~(pose smol larg)
-    ::
-    ::    +smol: doccords parser, consumes two aces and a nonempty $cuff
-    ::
-    ::  only for one-liner comments to be attached to the given link
-    ++  smol
-      ;~  plug  :: 2 spaces, link, one-liner, newline
-        ;~  sfix
-          ;~  plug
-            (inso dibs)  :: 2 spaces, then link => one-liner
-            (cook crip (star prn))
-          ==
-        ;~(plug (just `@`10) (punt gap))
-        ==
-        (easy ~)
-        (punt (indo null))
-      ==
-    ::
-    ::    +larg: annotates for four aces, optional link
-    ::
-    ::  four aces without a link means this is a short or long comment to be attached
-    ::  to the following $hoon or $spec. a nonempty cuff means this is a potentially
-    ::  long form batch comment
-    ++  larg
+    ++  leap                                            ::  whitespace less docs
+      %+  cold  ~
+      %-  plus
       ;~  plug
-        ;~  sfix
-          ;~  plug
-            deep
-            (cook crip (star prn))
+        (star ace)
+        ;~  pose
+          ;~(plug (just '\0a') (star ace))
+          ;~  plug  col  col
+            ;~(less ;~(pose larg smol) ;~(plug (star prn) (just '\0a')))
           ==
-          ;~(plug (just `@`10) (punt gap))
         ==
-        (rant text)
-        (punt (indo null))
       ==
     ::
-    ++  deep
-      ;~  pose
-        (inlo dibs)
-        (cold *cuff ;~(plug col gar step step))
+    ::  +smol: 2 aces then summary, 4 aces then paragraphs.
+    ++  smol
+      ;~  pfix
+        step
+        ;~  plug
+          ;~  plug
+            (plus en-link)
+            ;~(sfix ;~(pfix col ace (cook crip (star prn))) (just '\0a'))
+          ==
+          ;~(pfix null (rant ;~(pfix step step text)))
+        ==
       ==
+    ::
+    ::  +larg: 4 aces then summary, 2 aces then paragraphs.
+    ++  larg
+      ;~  pfix
+        step  step
+        ;~  plug
+          ;~  sfix
+            ;~  plug
+              ;~  pose
+                ;~(sfix (plus en-link) col ace)
+                ;~(less ace (easy *cuff))
+              ==
+              (cook crip (star prn))
+            ==
+            (just '\0a')
+          ==
+          ;~(pfix null (rant ;~(pfix step teyt)))
+        ==
+      ==
+    ::
+    ++  myth
+      |*  bod=rule
+      (cook |=([[a=cuff b=cord] c=(list sect)] [a b c]) bod)
     ::
     ++  rant
       |*  sec=rule
       %-  star
       ;~  pfix
-        (indo null)
+        (into null)
         (plus (into sec))
       ==
     ::
     ++  null  (cold ~ (star ace))
     ++  text  (pick line code)
+    ++  teyt  (pick line ;~(pfix step code))
     ++  line  ;~(less ace (cook crip (star prn)))
-    ++  code  ;~(pfix step step (cook crip (star prn)))
+    ++  code  ;~(pfix step ;~(less ace (cook crip (star prn))))
     ++  step  ;~(plug ace ace)
     ::
-    ++  inlo  |*(bod=rule (ifix [;~(plug col gar step step) ;~(plug col ace)] bod))
-    ++  inso  |*(bod=rule (ifix [;~(plug col gar step) ;~(plug col ace)] bod)) :: short comment
-    ++  into  |*(bod=rule (indo ;~(pfix step bod)))
-    ++  indo
+    ++  into
       |*  bod=rule
-      (ifix [;~(plug col gar) ;~(plug (just `@`10) (punt gap))] bod)
+      (ifix [;~(plug col col) ;~(plug (just '\0a') (star ace))] bod)
     ::
     ++  exit
       |*  bod=rule
-      ;~(pfix (star ace) col gal step bod)
+      ;~(pfix (star ace) col col step bod)
     ::
-    ++  dibs
-      (star en-link)
     ++  en-link
       |=  a=nail  %.  a
       %+  knee  *link  |.  ~+
@@ -11668,6 +11696,35 @@
           ;~(pfix fas (stag %path sym))
       ==
     --
+  ::
+  ++  clad                                              ::  hoon doccords
+    |*  fel=rule
+    %+  cook
+      |=  [a=whit b=hoon c=help]
+      =?  b  !=(*help c)
+        [%note help+c b]
+      =+  docs=~(tap by bat.a)
+      |-
+      ?~  docs  b
+      $(docs t.docs, b [%note help+[i.docs] b])
+    (seam fel)
+  ++  coat                                              ::  spec doccords
+    |*  fel=rule
+    %+  cook
+      |=  [a=whit b=spec c=help]
+      =?  b  !=(*help c)
+        [%dict c b]
+      =+  docs=~(tap by bat.a)
+      |-
+      ?~  docs  b
+      $(docs t.docs, b [%dict i.docs b])
+    (seam fel)
+  ++  scye                                              ::  prefix doccords only
+    |*  fel=rule
+    ;~(pose ;~(plug apex:docs ;~(pfix gap fel)) ;~(plug (easy *whit) fel))
+  ++  seam                                              ::  postfix doccords too
+    |*  fel=rule
+    (scye ;~(plug fel apse:docs))
   ::
   ++  plex                                              ::  reparse static path
     |=  gen=hoon  ^-  (unit path)
@@ -13090,7 +13147,7 @@
                   [':' (rune col %brcl expb)]
                   ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
-                  ['^' (rune ket %brkt expx)]
+                  ['^' (rune ket %brkt expr)]
                   ['~' (rune sig %brsg exqc)]
                   ['*' (rune tar %brtr exqc)]
                   ['=' (rune tis %brts exqc)]
@@ -13198,7 +13255,7 @@
               ^.  stet  ^.  limo
               :~  [':' (rune col %mccl expi)]
                   ['/' (rune fas %mcfs expa)]
-                  ['<' (rune gal %mcgl exp1)]
+                  ['<' (rune gal %mcgl expz)]
                   ['~' (rune sig %mcsg expi)]
                   [';' (rune mic %mcmc exqc)]
               ==
@@ -13247,98 +13304,82 @@
             ;~  pfix  zap
               %-  stew
               ^.  stet  ^.  limo
-              :~  [':' ;~(pfix col (toad expz))]
+              :~  [':' ;~(pfix col (toad expy))]
                   ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
                   [',' (rune com %zpcm expb)]
                   [';' (rune mic %zpmc expb)]
                   ['>' (rune gar %zpgr expa)]
                   ['<' (rune gal %zpgl exqc)]
-                  ['@' (rune pat %zppt expy)]
+                  ['@' (rune pat %zppt expx)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
               ==
             ==
       ==
     ::
-    ++  boog  !:                                        ::  core arms
-      %+  knee  [p=*term q=*hoon]  |.  ~+
+    ++  boog  !:
+      %+  knee  [p=*whit q=*term r=*help s=*hoon]
+      |.(~+((scye ;~(pose bola boba bota))))
+    ++  bola                                           ::  ++  arms
+      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
       %+  cook
-        |=  [a=whit b=term d=hoon]
-        =+  docs=~(tap by bat.a)
-        |-
-        ?~  docs  [b d]
-        %=  $
-          docs  t.docs
-          d     [%note help+i.docs d]
-        ==
-      ;~  pose
-        %+  cook
-          |=  [a=whit b=term c=whit d=hoon]
-          =+  e=(glom a c)
-          =+  doc=(~(get by bat.e) ~)
-          ?~  doc
-            [e b d]
-          =.  bat.e  (~(del by bat.e) ~)
-          [e b [%note help+[[funk+b]~ u.doc] d]]
+        |=  [q=term r=help s=hoon]
+        ?:  =(r *help)
+          [q r s]
+        [q %*(. r cuff [%funk q]~) s]
+      ;~  pfix  (jest '++')
         ;~  plug
-          apex:docs
-          ;~  pfix  (jest '++')
-            ;~  plug
-              ;~(pfix gap ;~(pose (cold %$ buc) sym))
-              apse:docs
-              ;~(pfix gap loaf)
-            ==
-          ==
+          ;~(pfix gap ;~(pose (cold %$ buc) sym))
+          apse:docs
+          ;~(pfix jump loaf)
         ==
-      ::
-        %+  cook
-          |=  [a=whit b=term c=whit d=spec]
-          =+  e=(glom a c)
-          =+  doc=(~(get by bat.e) ~)
-          ?~  doc
-            [e b [%ktcl [%name b d]]]
-          =.  bat.e  (~(del by bat.e) ~)
-          [e b [%note help+[[plan+b]~ u.doc] [%ktcl [%name b d]]]]
+      ==
+    ++  boba                                           ::  +$  arms
+      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
+      %+  cook
+        |=  [q=term r=help s=spec]
+        ?:  =(r *help)
+          [q [r [%ktcl %name q s]]]
+        [q %*(. r cuff [%plan q]~) [%ktcl %name q s]]
+      ;~  pfix  (jest '+$')
         ;~  plug
-          apex:docs
-          ;~  pfix  (jest '+$')
-            ;~  plug
-              ;~(pfix gap sym)
-              apse:docs
-              ;~(pfix gap loan)
-            ==
-          ==
+          ;~(pfix gap sym)
+          apse:docs
+          ;~(pfix jump loan)
         ==
-      ::
+      ==
+    ::TODO: deprecated, remove at next kelvin bump
+    ++  bota                                           ::  +*  arms
+      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
+      %+  cook
+        |=  [b=term d=hoon]
+        [b *help d]
+      ;~  plug
         %+  cook
-          |=  [b=term d=hoon]
-          [*whit b d]
-        ;~  plug
-          %+  cook
-            |=  [b=term c=(list term) e=spec]
-            ^-  [term hoon]
-            :-  b
-            :+  %brtr
-              :-  %bccl
-              =-  ?>(?=(^ -) -)
-              ::  for each .term in .c, produce $=(term $~(* $-(* *)))
-              ::  ie {term}=mold
-              ::
-              %+  turn  c
-              |=  =term
-              ^-  spec
-              =/  tar  [%base %noun]
-              [%bcts term [%bcsg tar [%bchp tar tar]]]
-            [%ktcl [%made [b c] e]]
-          ;~  pfix  (jest '+*')
-            ;~  plug
-              ;~(pfix gap sym)
-              ;~(pfix gap (ifix [sel ser] (most ace sym)))
-              ;~(pfix gap loan)
-            ==
+          |=  [b=term c=(list term) e=spec]
+          ^-  [term hoon]
+          :-  b
+          :+  %brtr
+            :-  %bccl
+            =-  ?>(?=(^ -) -)
+            ::  for each .term in .c, produce $=(term $~(* $-(* *)))
+            ::  ie {term}=mold
+            ::
+            %+  turn  c
+            |=  =term
+            ^-  spec
+            =/  tar  [%base %noun]
+            [%bcts term [%bcsg tar [%bchp tar tar]]]
+          [%ktcl [%made [b c] e]]
+        ;~  pfix  (jest '+*')
+          ;~  plug
+            ;~(pfix gap sym)
+            ;~(pfix gap (ifix [sel ser] (most ace sym)))
+            ;~(pfix gap loan)
           ==
         ==
       ==
+   ::
    ::  parses a or [a b c] or a  b  c  ==
    ++  lynx
       =/  wid  (ifix [sel ser] (most ace sym))
@@ -13359,50 +13400,56 @@
     ::
     ++  whap  !:                                        ::  chapter
       %+  cook
-        |=  a=(list (pair term hoon))
-        ::  check hoons for notes and move them to the correct arm
+        |=  a=(list (qual whit term help hoon))
+        ::  separate $helps into their own list to be passed to +glow
+        =/  [duds=(list help) nude=(list (pair term hoon))]
+          %+  roll  a
+          |=  $:  $=  bog
+                  (qual whit term help hoon)
+                ::
+                  $=  gob
+                  [duds=(list help) nude=(list (pair term hoon))]
+              ==
+          =/  [unt=(list help) tag=(list help)]
+            %+  skid  ~(tap by bat.p.bog)  |=(=help =(~ cuff.help))
+          :-  ?:  =(*help r.bog)
+                (weld tag duds.gob)
+              [r.bog (weld tag duds.gob)]
+          ::TODO should i just throw out untagged arm-docs?
+          ?~  unt  [[q.bog s.bog] nude.gob]
+          :-  :-  q.bog
+              [%note help+[i.unt] s.bog]
+          nude.gob
         ::
-        %-  glow
+        %+  glow  duds
         |-  ^-  (map term hoon)
-        ?~  a  ~
-        =+  $(a t.a)
+        ?~  nude  ~
+        =+  $(nude t.nude)
         %+  ~(put by -)
-          p.i.a
-        ?:  (~(has by -) p.i.a)
-          [%eror (weld "duplicate arm: +" (trip p.i.a))]
-        q.i.a
-      (most muck boog)
+          p.i.nude
+        ?:  (~(has by -) p.i.nude)
+          [%eror (weld "duplicate arm: +" (trip p.i.nude))]
+        q.i.nude
+      ::
+      (most mush boog)
     ::
     ::  +glow: moves batch comments to the correct arm
     ++  glow
-      |=  dab=(map term hoon)
+      |=  [duds=(list help) nude=(map term hoon)]
       ^-  (map term hoon)
-      ::  strips each hoon of wrapped help notes and puts them in a list
-      ::
-      =/  [duds=(list help) nude=(map term hoon)]
-        %+  ~(rib by dab)  *(list help)
-        |=  [[a=term gen=hoon] duds=(list help)]
-        ^-  [(list help) [term hoon]]
-        |-
-        ?.  ?=([%note *] gen)
-          [duds [a gen]]
-        ?.  ?=([%help *] p.gen)
-          [duds [a gen]]
-        %=  $
-          gen   q.gen
-          duds  (snoc duds p.p.gen)
-        ==
       |-
       ?~  duds  nude
       ::  if there is no link, its not part of a batch comment
-      ::
       ?~  cuff.i.duds
+        ::  this shouldn't happen yet until we look for cuffs of length >1
+        ::  but we need to prove that cuff is nonempty anyways
         $(duds t.duds)
-      ::  we don't look past the first link for the initial release of doccords
       ::
+      ::TODO: look past the first link. this probably requires
+      ::a major rethink on how batch comments work
       =/  nom=(unit term)
         ?+    i.cuff.i.duds  ~
-        ::  we only support ++ and +$ batch comments in this release
+        ::  we only support ++ and +$ batch comments right now
         ::
             ?([%funk *] [%plan *])
           `p.i.cuff.i.duds
@@ -13411,16 +13458,22 @@
         duds  t.duds
         nude  ?~  nom  nude
               ?.  (~(has by nude) u.nom)
-                ~>  %slog.[0 leaf+"glow: unmatched link"]
+                ::  ~>  %slog.[0 leaf+"glow: unmatched link"]
                 nude
               (~(jab by nude) u.nom |=(a=hoon [%note help+i.duds a]))
       ==
     ::
     ++  whip                                            ::  chapter declare
-      ;~  plug
-        (ifix [cen gap] sym)
-        whap
-      ==
+      ::TODO: handle arm batch comments written above chapter declaration
+      %+  cook
+        |=  [[a=whit b=term c=help] d=(map term hoon)]
+        ^-  [whit (pair term (map term hoon))]
+        ?.  =(*whit a)
+          [a b d]
+        ?:  =(*help c)
+          [*whit b d]
+        [%*(. *whit bat (malt [[%chat b]~ crib.c]~)) b d]
+      ;~(plug (seam ;~(pfix (jest '+|') gap cen sym)) whap)
     ::
     ++  wasp                                            ::  $brcb aliases
       ;~  pose
@@ -13461,7 +13514,7 @@
         dun
         ;~  sfix
           ;~  pose
-            (most muck ;~(plug apex:docs ;~(pfix (jest '+|') ;~(pfix gap whip))))
+            (most mush whip)
             ;~(plug (stag *whit (stag %$ whap)) (easy ~))
           ==
           gap
@@ -13469,23 +13522,21 @@
         ==
       ==
     ::
-    ++  toad                                            ::  untrap parser exp
-      =+  har=expa
-      |@  ++  $
-            =+  dur=(ifix [pal par] $:har(tol |))
-            ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
-      --
+    ++  toad                                            ::  untrap parser expr
+      |*  har=_expa
+      =+  dur=(ifix [pal par] $:har(tol |))
+      ?.  tol
+        dur
+      ;~(pose ;~(pfix jump $:har(tol &)) ;~(pfix gap $:har(tol &)) dur)
     ::
     ++  rune                                            ::  build rune
-      =+  [dif=*rule tuq=** har=expa]
-      |@  ++  $
-            ;~(pfix dif (stag tuq (toad har)))
-      --
+      |*  [dif=rule tuq=* har=_expa]
+      ;~(pfix dif (stag tuq (toad har)))
     ::
     ++  runo                                            ::  build rune w option
       =+  [dif=*rule tuq=** hil=*rule har=expa]
       |@  ++  $
-            ;~(pfix dif (stag tuq ;~(plug (punt ;~(pfix gap hil)) (toad har))))
+        ;~(pfix dif (stag tuq ;~(plug (punt ;~(pfix gap hil)) (toad har))))
       --
     ::
     ++  runq                                            ::  wide or tall if tol
@@ -13494,20 +13545,24 @@
         wid
       ;~(pose wid tal)
     ::
-    ++  glop  ~+((glue mash))                           ::  separated by space
-    ++  gunk  ~+((glue muck))                           ::  separated list
     ++  butt  |*  zor=rule                              ::  closing == if tall
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
     ++  ulva  |*  zor=rule                              ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
-    ++  hank  (most muck loaf)                          ::  gapped hoons
-    ++  hunk  (most muck loan)                          ::  gapped specs
+    ++  glop  ~+((glue mash))                           ::  separated by space
+    ++  gunk  ~+((glue muck))                           ::  separated list
+    ++  goop  ~+((glue mush))                           ::  separator list & docs
+    ++  hank  (most mush loaf)                          ::  gapped hoons
+    ++  hunk  (most mush loan)                          ::  gapped specs
+    ++  jump  ;~(pose leap:docs gap)                    ::  gap before docs
+    ++  loaf  ?.(tol wide tall)                         ::  hoon
+    ++  loan  ?.(tol wyde till)                         ::  spec
     ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
-    ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
-    ++  loan  ?:(tol till wyde)                         ::  tall/wide spec
     ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
+    ++  muss  ?:(tol jump ;~(plug com ace))             ::  list w/ doccords
     ++  muck  ?:(tol gap ace)                           ::  general separator
+    ++  mush  ?:(tol jump ace)                          ::  separator w/ docs
     ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or hoon
               =+  ^=  gub
                   |=  [a=term b=$%([%& p=wing] [%| p=hoon])]
@@ -13539,24 +13594,23 @@
               ::
                 (stag %| (stag ~ tall))
               ==
-    ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [hoon hoon]
-    ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [spec hoon]
-    ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing hoon]
-    ::
-    ::    hoon contents
+    ++  rack  (most muss ;~(goop loaf loaf))            ::  list [hoon hoon]
+    ++  ruck  (most muss ;~(goop loan loaf))            ::  list [spec hoon]
+    ++  rick  (most mash ;~(goop rope loaf))            ::  list [wing hoon]
+    ::  hoon contents
     ::
     ++  expa  |.(loaf)                                  ::  one hoon
-    ++  expb  |.(;~(gunk loaf loaf))                    ::  two hoons
-    ++  expc  |.(;~(gunk loaf loaf loaf))               ::  three hoons
-    ++  expd  |.(;~(gunk loaf loaf loaf loaf))          ::  four hoons
+    ++  expb  |.(;~(goop loaf loaf))                    ::  two hoons
+    ++  expc  |.(;~(goop loaf loaf loaf))               ::  three hoons
+    ++  expd  |.(;~(goop loaf loaf loaf loaf))          ::  four hoons
     ++  expe  |.(wisp)                                  ::  core tail
-    ++  expf  |.(;~(gunk ;~(pfix cen sym) loaf))        ::  %term and hoon
-    ++  expg  |.(;~(gunk lomp loaf loaf))               ::  term/spec, two hoons
-    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [spec hoon]s
-    ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
-    ++  expj  |.(;~(gunk lore loaf))                    ::  skin and hoon
-    ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
-    ++  expl  |.(;~(gunk sym loaf loaf))                ::  term, two hoons
+    ++  expf  |.(;~(goop ;~(pfix cen sym) loaf))        ::  %term and hoon
+    ++  expg  |.(;~(goop lomp loaf loaf))               ::  term/spec, two hoons
+    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [wing hoon]s
+    ++  expi  |.((butt ;~(goop loaf hank)))             ::  one or more hoons
+    ++  expj  |.(;~(goop lore loaf))                    ::  skin and hoon
+   :: ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))::  list of two hoons
+   :: ++  expl  |.(;~(gunk sym loaf loaf))              ::  term, two hoons
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [spec hoon]s
     ++  expn  |.  ;~  gunk  rope  loaf                  ::  wing, hoon,
                     ;~(plug loaf (easy ~))              ::  list of one hoon
@@ -13568,28 +13622,27 @@
     ++  exps  |.((butt hank))                           ::  closed gapped hoons
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
     ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, hoon, hoons
-    ++  expv  |.((butt rick))                           ::  just changes
+   :: ++  expv  |.((butt rick))                         ::  just changes
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
-    ++  expx  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
-    ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
-    ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
-    ++  exp1  |.(;~(gunk loan loaf loaf loaf))          ::  spec and three hoons
-    ::    spec contents
+    ++  expx  |.(;~(goop ropa loaf loaf))               ::  wings and two hoons
+    ++  expy  |.(loaf(bug &))                           ::  hoon with tracing
+    ++  expz  |.(;~(goop loan loaf loaf loaf))          ::  spec and three hoons
+    ::  spec contents
     ::
-    ++  exqa  |.(loan)                                  ::  one hoon
-    ++  exqb  |.(;~(gunk loan loan))                    ::  two specs
-    ++  exqc  |.(;~(gunk loan loaf))                    ::  spec then hoon
-    ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then spec
-    ++  exqe  |.(;~(gunk lynx loan))                    ::  list of names then spec
+    ++  exqa  |.(loan)                                  ::  one spec
+    ++  exqb  |.(;~(goop loan loan))                    ::  two specs
+    ++  exqc  |.(;~(goop loan loaf))                    ::  spec then hoon
+    ++  exqd  |.(;~(goop loaf loan))                    ::  hoon then spec
+    ++  exqe  |.(;~(goop lynx loan))                    ::  list of names then spec
     ++  exqs  |.((butt hunk))                           ::  closed gapped specs
-    ++  exqg  |.(;~(gunk sym loan))                     ::  term and spec
-    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one spec
-    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  spec/aliases?/tail
+    ++  exqg  |.(;~(goop sym loan))                     ::  term and spec
+    ::++  exqk  |.(;~(goop loaf ;~(plug loan (easy ~))))::  hoon with one spec
     ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed hoons
-    ++  exqw  |.(;~(gunk loaf loan))                    ::  hoon and spec
-    ++  exqx  |.(;~(gunk loaf loan loan))               ::  hoon, two specs
-    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  hoon, three specs
-    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  hoon, n specs
+    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  spec/aliases?/tail
+    ::++  exqw  |.(;~(goop loaf loan))                  ::  hoon and spec
+    ++  exqx  |.(;~(goop loaf loan loan))               ::  hoon, two specs
+    ++  exqy  |.(;~(goop loaf loan loan loan))          ::  hoon, three specs
+    ++  exqz  |.(;~(goop loaf (butt hunk)))             ::  hoon, n specs
     ::
     ::    tiki expansion for %wt runes
     ::
@@ -13764,52 +13817,12 @@
       wyde
     ==
   ::
-  ::  +sign: gloms prefix and postfix docs for an expression or structure
-  ++  sign
-    |*  fel=rule
-    %+  cook
-      |*  [a=whit b=* c=whit]
-      [(glom a c) b]
-    ;~  plug
-      apex:docs
-      fel
-      apse:docs
-    ==
-  ::
-  ++  clad                                              ::  docs into %note
-    |*  fel=rule
-    %+  cook
-      |=  [a=whit b=hoon]
-      =+  docs=~(tap by bat.a)
-      |-
-      ?~  docs  b
-      %=  $
-        docs  t.docs
-        b     [%note help+[i.docs] b]
-      ==
-    fel
-  ::
-  ++  coat                                              ::  docs into %dict
-    |*  fel=rule
-    %+  cook
-      |=  [a=whit b=spec]
-      =+  docs=~(tap by bat.a)
-      |-
-      ?~  docs  b
-      %=  $
-        docs  t.docs
-        b     [%dict i.docs b]
-      ==
-    fel
-  ::
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.  ~+
-    (wart (clad (sign ;~(pose expression:(norm &) long lute apex:(sail &)))))
+    |.(~+((wart (clad ;~(pose expression:(norm &) long lute apex:(sail &))))))
   ++  till                                              ::  mold tall form
     %+  knee  *spec
-    |.  ~+
-    (wert (coat (sign ;~(pose structure:(norm &) scad))))
+    |.(~+((wert (coat ;~(pose structure:(norm &) scad)))))
   ++  wede                                              ::  wide bulb
     ::  XX: lus deprecated
     ::

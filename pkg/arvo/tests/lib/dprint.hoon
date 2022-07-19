@@ -4,18 +4,18 @@
 ::
 =>  =>
     ::  This core is for testing core and chapter docs.
-    :>    core-summary
-    :>
-    :>  core-description
+    ::    core-summary
+    ::
+    ::  core-description
     |%  %core-test
-    :>    chapter-summary
-    :>
-    :>  chapter-description
+    ::    chapter-summary
+    ::
+    ::  chapter-description
     +|  %chapter-test
     ++  empty  ~
     --
   ::
-  :>    arms used for testing doccords
+  ::    arms used for testing doccords
   |%  %test-arms
   +|  %types
   +$  arm-dox      [tape what what what]
@@ -104,16 +104,16 @@
     [`['arm-doc' ~] `['product-doc' ~] `['core-doc' ~]]
   ::
   +|  %batch-comments
-  :>  +b-foo: a foo
-  :>  $b-baz: a baz
-  :>    +b-bar: a bar
-  :>
-  :>  a very bar foo
-  :>
-  :>    $b-boz: a boz
-  :>
-  :>  a very boz baz
-  :>
+  ::  +b-foo: a foo
+  ::  $b-baz: a baz
+  ::    +b-bar: a bar
+  ::
+  ::  a very bar foo
+  ::
+  ::    $b-boz: a boz
+  ::
+  ::  a very boz baz
+  ::
   ++  b-foo  ~
   ++  b-bar  ~
   +$  b-baz  *
@@ -122,138 +122,138 @@
   +|  %docs-for-arms
   ++  no-doc  ~
   ::
-  :>  +arm-adoc-pre: arm-doc
+  ::  +arm-adoc-pre: arm-doc
   ++  arm-adoc-pre  ~
   ::
-  ++  arm-adoc-post  :<  arm-doc
+  ++  arm-adoc-post  ::  arm-doc
     ~
   ::
   ++  arm-pdoc-pre
-    :>    product-doc
+    ::    product-doc
     'foo'
   ++  arm-pdoc-post
-    'foo'  :<  product-doc
+    'foo'  ::  product-doc
   ::
   ++  arm-cdoc-pre
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
     --
   ::
   ++  arm-cdoc-post
     |%
-    ++  $  :<  core-doc
+    ++  $  ::  core-doc
       ~
     --
   ::
-  :>  +arm-adoc-pdoc-pre-pre: arm-doc
+  ::  +arm-adoc-pdoc-pre-pre: arm-doc
   ++  arm-adoc-pdoc-pre-pre
-    :>    product-doc
+    ::    product-doc
     'foo'
   ::
-  ++  arm-adoc-pdoc-post-pre  :<  arm-doc
-    :>    product-doc
+  ++  arm-adoc-pdoc-post-pre  ::  arm-doc
+    ::    product-doc
     'foo'
   ::
-  ++  arm-adoc-pdoc-post-post  :<  arm-doc
-    'foo'  :<  product-doc
+  ++  arm-adoc-pdoc-post-post  ::  arm-doc
+    'foo'  ::  product-doc
   ::
-  :>  +arm-adoc-cdoc-pre-pre: arm-doc
+  ::  +arm-adoc-cdoc-pre-pre: arm-doc
   ++  arm-adoc-cdoc-pre-pre
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
     --
   ::
-  ++  arm-adoc-cdoc-post-pre  :<  arm-doc
+  ++  arm-adoc-cdoc-post-pre  ::  arm-doc
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
     --
   ::
-  ++  arm-adoc-cdoc-post-post  :<  arm-doc
+  ++  arm-adoc-cdoc-post-post  ::  arm-doc
     |%
-    ++  $  :<  core-doc
+    ++  $  ::  core-doc
       ~
     --
   ::
   ++  arm-pdoc-cdoc-pre-pre
-    :>    product-doc
+    ::    product-doc
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
     --
   ++  arm-pdoc-cdoc-post-pre
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
-    --  :<  product-doc
+    --  ::  product-doc
   ::
   ++  arm-pdoc-cdoc-post-post
     |%
-    ++  $  :<  core-doc
+    ++  $  ::  core-doc
       ~
-    --  :<  product-doc
+    --  ::  product-doc
   ::
-  :>  +arm-adoc-pdoc-cdoc-pre-pre-pre: arm-doc
+  ::  +arm-adoc-pdoc-cdoc-pre-pre-pre: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-pre-pre
-    :>    product-doc
+    ::    product-doc
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
     --
   ::
-  ++  arm-adoc-pdoc-cdoc-post-pre-pre  :<  arm-doc
-    :>    product-doc
+  ++  arm-adoc-pdoc-cdoc-post-pre-pre  ::  arm-doc
+    ::    product-doc
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
     --
   ::
-  :>  +arm-adoc-pdoc-cdoc-pre-post-pre: arm-doc
+  ::  +arm-adoc-pdoc-cdoc-pre-post-pre: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-post-pre
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
-    --  :<  product-doc
+    --  ::  product-doc
   ::
-  :>  +arm-adoc-pdoc-cdoc-pre-pre-post: arm-doc
+  ::  +arm-adoc-pdoc-cdoc-pre-pre-post: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-pre-post
-    :>    product-doc
+    ::    product-doc
     |%
-    ++  $  :<  core-doc
+    ++  $  ::  core-doc
       ~
     --
   ::
-  ++  arm-adoc-pdoc-cdoc-post-post-pre  :<  arm-doc
+  ++  arm-adoc-pdoc-cdoc-post-post-pre  ::  arm-doc
     |%
-    :>    core-doc
+    ::    core-doc
     ++  $  ~
-    --  :<  product-doc
+    --  ::  product-doc
   ::
-  ++  arm-adoc-pdoc-cdoc-post-pre-post  :<  arm-doc
-    :>    product-doc
+  ++  arm-adoc-pdoc-cdoc-post-pre-post  ::  arm-doc
+    ::    product-doc
     |%
-    ++  $  :<  core-doc
+    ++  $  ::  core-doc
       ~
     --
   ::
-  :>  +arm-adoc-pdoc-cdoc-pre-post-post: arm-doc
+  ::  +arm-adoc-pdoc-cdoc-pre-post-post: arm-doc
   ++  arm-adoc-pdoc-cdoc-pre-post-post
     |%
-    ++  $  :<  core-doc
+    ++  $  ::  core-doc
       ~
-    --  :<  product-doc
+    --  ::  product-doc
   ::
-  ++  arm-adoc-pdoc-cdoc-post-post-post  :<  arm-doc
+  ++  arm-adoc-pdoc-cdoc-post-post-post  ::  arm-doc
     |%
-    ++  $  :<  core-doc
+    ++  $  ::  core-doc
       ~
-    --  :<  product-doc
+    --  ::  product-doc
   ::
   --
 ::
-:>    contains the actual tests to be run by -test
+::    contains the actual tests to be run by -test
 |%  %dprint-tests
 +|  %batch-tests
   ++  test-b-foo
