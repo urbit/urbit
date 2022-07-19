@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import * as RadioGroup from '@radix-ui/react-radio-group';
-import { useDnd, useSettingsState, useTheme } from '../state/settings';
+import { useSettingsState, useTheme } from '../state/settings';
 
 type prefType = 'auto' | 'dark' | 'light';
 
@@ -40,18 +40,13 @@ const RadioOption = ({ value, label, selected }: RadioOptionProps) => (
 );
 
 export const AppearancePrefs = () => {
-  const [pref, setPref] = useState<prefType>('auto');
   const theme = useTheme();
-  const doNotDisturb = useDnd();
+  const [pref, setPref] = useState<prefType>(theme || 'auto');
 
   useEffect(() => {
-    if (theme) {
-      setPref(theme);
-    }
-  }, []);
-
-  useEffect(() => {
-    useSettingsState.setState({ display: { doNotDisturb, theme: pref } });
+    useSettingsState.getState().set((draft) => {
+      draft.display.theme = pref;
+    });
   }, [pref]);
 
   const handleChange = (value: string) => {
@@ -67,7 +62,12 @@ export const AppearancePrefs = () => {
         onValueChange={handleChange}
       >
         {apperanceOptions.map((option) => (
-          <RadioOption value={option.value} label={option.label} selected={pref === option.value} />
+          <RadioOption
+            key={`radio-option-${option.value}`}
+            value={option.value}
+            label={option.label}
+            selected={pref === option.value}
+          />
         ))}
       </RadioGroup.Root>
     </div>
