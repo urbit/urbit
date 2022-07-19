@@ -24,6 +24,7 @@ import PencilIcon from '../components/icons/PencilIcon';
 import ForwardSlashIcon from '../components/icons/ForwardSlashIcon';
 import { useSystemUpdate } from '../logic/useSystemUpdate';
 import { Bullet } from '../components/icons/Bullet';
+import SearchSystemPreferences from './SearchSystemPrefences';
 
 interface SystemPreferencesSectionProps {
   url: string;
@@ -91,8 +92,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
         <Route exact={isMobile} path={match.url}>
           <aside className="self-start flex-none w-full py-4 font-semibold text-black border-r-2 sm:w-auto min-w-60 sm:py-8 sm:text-gray-600 border-gray-50 bg-white">
             <nav className="px-2 sm:px-6 flex flex-col">
-              {/* TODO: Replace this h3 with the search box. */}
-              <h2 className="px-2 mb-4 h3">System Preferences</h2>
+              <SearchSystemPreferences subUrl={subUrl} />
               <span className="text-gray-400 font-semibold pt-1 pl-2 pb-3 text-sm">Landscape</span>
               <ul className="space-y-1">
                 <SystemPreferencesSection
