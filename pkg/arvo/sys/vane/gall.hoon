@@ -31,6 +31,7 @@
       blocked=(map term (qeu blocked-move))
       perms=(jug desk perm)
       wants=(map desk (map perm new=?))
+      wards=(set duct)
   ==
 ::  $watches: subscribers and publications
 ::
@@ -126,6 +127,7 @@
       blocked=(map term (qeu blocked-move))
       perms=(jug desk perm)
       wants=(map desk (map perm new=?))
+      wards=(set duct)
   ==
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
 ::
@@ -168,7 +170,7 @@
           [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
-        [%8 system-duct outstanding contacts yokes=~ blocked perms wants]:spore
+        [%8 system-duct outstanding contacts yokes=~ blocked perms wants wards]:spore
       =/  mo-core  (mo-abed:mo:adult duct)
       =.  mo-core
         =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
@@ -258,7 +260,7 @@
           |=  [a=term e=egg]
           ::NOTE  kiln will kick off appropriate app revival
           e(old-state [%| p.old-state.e])
-        +>.old(blocked [blocked.old ~ ~])  ::TODO  actually 8->9
+        +>.old(blocked [blocked.old ~ ~ ~])  ::TODO  actually 8->9
       --
     --
 ::  adult gall vane interface, for type compatibility with pupa
@@ -850,8 +852,7 @@
     =|  new=(set perm)
     |-
     ?~  pez
-      ::TODO  notify about permission change
-      mo-core
+      (mo-perm %free desk new)
     ?:  (~(has ju perms.state) desk i.pez)
       $(pez t.pez)
     =.  perms.state  (~(put ju perms.state) desk i.pez)
@@ -867,13 +868,41 @@
     =|  bye=(set perm)
     |-
     ?~  pez
-      ::TODO  notify about permission change
-      mo-core
+      (mo-perm %lock desk bye)
     ?.  (~(has ju perms.state) desk i.pez)
       $(pez t.pez)
     =.  perms.state  (~(del ju perms.state) desk i.pez)
     =.  bye          (~(put in bye) i.pez)
     $(pez t.pez)
+  ::  +mo-perm: notify interested parties about permission change
+  ::
+  ++  mo-perm
+    |=  dif=$~([%free %$ ~] $>(?(%free %lock) task))
+    ^+  mo-core
+    =/  dux=(list duct)
+      ~(tap in wards.state)
+    |-
+    ?^  dux
+      =.  mo-core  (mo-give(hen i.dux) %perm dif)
+      $(dux t.dux)
+    ::
+    =/  aps=(list dude)
+      =-  (sort - aor)
+      %+  murn  ~(tap by yokes.state)
+      |=  [=dude yoke]
+      ?:(=(desk.dif q.beak) (some dude) ~)
+    |-
+    ?~  aps  mo-core
+    =.  mo-core  ap-abet:(ap-perm:(ap-abed:ap i.aps `our) dif)
+    $(aps t.aps)
+  ::  +mo-ward: add permission notification subsciber
+  ::
+  ++  mo-ward
+    mo-core(wards.state (~(put in wards.state) hen))
+  ::  +mo-wink: remove permission notification subscriber
+  ::
+  ++  mo-wink
+    mo-core(wards.state (~(del in wards.state) hen))
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
@@ -1091,6 +1120,12 @@
         [%pass wire %agent [ship term] %leave ~]
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
+    ::
+    ++  ap-perm
+      |=  dif=$>(?(%free %lock) task)
+      ^+  ap-core
+      ::TODO  fake wire...
+      (ap-generic-take /~ %gall %perm dif)
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -1774,6 +1809,8 @@
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %free  mo-abet:(mo-free:mo-core +.task)
       %lock  mo-abet:(mo-lock:mo-core +.task)
+      %ward  mo-abet:mo-ward:mo-core
+      %wink  mo-abet:mo-wink:mo-core
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==

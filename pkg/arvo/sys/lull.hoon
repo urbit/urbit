@@ -1643,6 +1643,7 @@
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%onto p=(each suss tang)]                      ::  about agent
         [%unto p=unto]                                  ::
+        [%perm $~([%free %$ ~] $>(?(%free %lock) task))]::  perms changed
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
@@ -1653,6 +1654,8 @@
         [%nuke =dude]                                   ::  delete agent
         [%free =desk pes=(set perm)]                    ::  allow
         [%lock =desk pes=(set perm)]                    ::  disallow
+        [%ward ~]                                       ::  watch %perm diffs
+        [%wink ~]                                       ::  stop watching
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
