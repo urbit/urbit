@@ -6,6 +6,7 @@ import { NotificationPrefs } from './NotificationPrefs';
 import { AboutSystem } from './about-system/AboutSystem';
 import { InterfacePrefs } from './InterfacePrefs';
 import { SecurityPrefs } from './SecurityPrefs';
+import { AppearancePrefs } from './ApperancePrefs';
 import { useCharges } from '../state/docket';
 import { AppPrefs } from './AppPrefs';
 import { DocketImage } from '../components/DocketImage';
@@ -169,6 +170,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
               <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
               <Route path={`${match.url}/help`} component={Help} />
               <Route path={`${match.url}/interface`} component={InterfacePrefs} />
+              <Route path={`${match.url}/appearance`} component={AppearancePrefs} />
               <Route path={`${match.url}/notifications`} component={NotificationPrefs} />
               <Route path={[`${match.url}/system-updates`, match.url]} component={AboutSystem} />
             </Switch>
