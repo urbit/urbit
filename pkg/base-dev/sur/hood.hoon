@@ -57,6 +57,8 @@
   ==
 ::
 +$  vat  [=desk hash=@uv =cass =arak]
+::
++$  seal  [must=(list perm:gall) may=(list perm:gall)]
 ::  +report-vats: report on all desk installations
 ::
 ++  report-vats
@@ -142,11 +144,11 @@
   ?.  .^(? cu/pax)
     ~
   [~ .^(weft cx/pax)]
-::  +read-bill-foreign: read /desk/bill from a foreign desk
+::  +read-foreign: read file from a foreign desk
 ::
-++  read-bill-foreign
-  |=  [=ship =desk =aeon]
-  ^-  (list dude)
+++  read-foreign
+  |*  [=ship =desk =aeon =path =mold easy=*]
+  ^-  mold
   ~|  +<
   =/  her  (scot %p ship)
   =/  syd  (scot %tas desk)
@@ -156,11 +158,17 @@
   =/  tak  ~|  aeons=~(key by hit.dom)
            (scot %uv (~(got by hit.dom) aeon))
   =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
-  =/  fil  (~(get by q.yak) /desk/bill)
-  ?~  fil  ~
+  =/  fil  (~(get by q.yak) path)
+  ?~  fil  easy
   =/  lob  (scot %uv u.fil)
   =/  peg  .^(page cs/~[her syd yon %blob lob])
-  ;;((list dude) q.peg)
+  ;;(mold q.peg)
+::  +read-bill-foreign: read /desk/bill from a foreign desk
+::
+++  read-bill-foreign
+  |=  [=ship =desk =aeon]
+  ^-  (list dude)
+  (read-foreign ship desk aeon /desk/bill (list dude) ~)
 ::  +read-bill: read contents of /desk/bill manifest
 ::
 ++  read-bill
@@ -169,6 +177,20 @@
   ?.  .^(? cu/pax)
     *(list dude)
   .^((list dude) cx/pax)
+::  +read-seal-foreign: read /desk/seal from a foreign desk
+::
+++  read-seal-foreign
+  |=  [=ship =desk =aeon]
+  ^-  seal
+  (read-foreign ship desk aeon /desk/seal seal *seal)
+::  +read-seal: read contents of /desk/seal manifest
+::
+++  read-seal
+  |=  [our=ship =desk now=@da]
+  =/  pax  (en-beam [our desk da+now] /desk/seal)
+  ?.  .^(? cu/pax)
+    *seal
+  .^(seal cx/pax)
 ::  +adjust-dudes: which agents should be started and stopped
 ::
 ::    Will ask Gall to start agents that it's already running
