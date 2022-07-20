@@ -195,7 +195,9 @@ _cmp_epocs(const void* lef_v, const void* rih_v)
 {
   const c3_c* lef_c = *(const c3_c(*)[dname_size])lef_v;
   const c3_c* rih_c = *(const c3_c(*)[dname_size])rih_v;
-  return strcmp(lef_c, rih_c);
+  const ssize_t len_i = (ssize_t)strlen(lef_c);
+  const ssize_t ren_i = (ssize_t)strlen(rih_c);
+  return len_i == ren_i ? strcmp(lef_c, rih_c) : len_i - ren_i;
 }
 
 static c3_t
@@ -230,8 +232,7 @@ _is_epoc_dir(const c3_c* const nam_c)
 static inline c3_t
 _epoc_is_full(const u3_epoc* const poc_u)
 {
-  return !u3_epoc_is_empty(poc_u)
-         && 0 == u3_epoc_last_commit(poc_u) % epo_len_i;
+  return epo_len_i == u3_epoc_len(poc_u);
 }
 
 //! @n (1) Push the newly created epoch from migration onto the epoch list.
