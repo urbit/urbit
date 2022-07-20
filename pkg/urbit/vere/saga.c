@@ -431,6 +431,9 @@ succeed:
 
 //! @n (1) Attempt to migrate old non-epoch-based event log.
 //! @n (2) Read metadata from filesystem.
+//! @n (3) If the most recent epoch is empty, it's possible that the second most
+//!        recent epoch is still not full, which would be a problem. To avoid
+//!        this, remove the empty epoch; it'll be recreated later.
 u3_saga*
 u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
 {
@@ -481,7 +484,13 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     u3_epoc* poc_u;
     c3_w*    lif_w = 0 == idx_i ? &met_u->lif_w : NULL;
     try_epoc(poc_u = u3_epoc_open(log_u->pax_u, lif_w), goto free_dir_entries);
-    c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
+    if ( ent_i - 1 == idx_i && u3_epoc_is_empty(poc_u) ) { // (3)
+      unlink(c3_path_str(u3_epoc_path(poc_u)));
+      u3_epoc_close(poc_u);
+    }
+    else {
+      c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
+    }
     c3_free(poc_u);
     c3_path_pop(log_u->pax_u);
   }
@@ -736,14 +745,7 @@ u3_saga_close(u3_saga* const log_u)
   }
 
   { // (2)
-    c3_list*             epo_u = log_u->epo_u.lis_u;
-    const u3_epoc* const cur_u = log_u->epo_u.cur_u;
-    const u3_epoc* const las_u = c3_lode_data(c3_list_peekb(epo_u));
-    if ( las_u != cur_u ) {
-      fprintf(stderr, "saga: removing unused new epoch\r\n");
-      unlink(c3_path_str(u3_epoc_path(las_u)));
-    }
-
+    c3_list* epo_u = log_u->epo_u.lis_u;
     if ( epo_u ) {
       c3_lode* nod_u;
       while ( (nod_u = c3_list_popf(epo_u)) ) {
