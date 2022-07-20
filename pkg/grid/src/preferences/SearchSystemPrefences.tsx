@@ -93,7 +93,10 @@ export default function SearchSystemPreferences({ subUrl }: SearchSystemPrefence
     }
 
     if (key === 'Enter' && searchInput !== '' && highlightNavOption !== undefined) {
-      push(subUrl(navOptions[highlightNavOption].route));
+      const matchingRoute = navOptions.find(
+        (option) => option.title === matchingNavOptions[highlightNavOption]
+      )!.route;
+      push(subUrl(matchingRoute));
     }
   };
 
