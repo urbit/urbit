@@ -735,7 +735,14 @@ u3_saga_close(u3_saga* const log_u)
   }
 
   { // (2)
-    c3_list* epo_u = log_u->epo_u.lis_u;
+    c3_list*             epo_u = log_u->epo_u.lis_u;
+    const u3_epoc* const cur_u = log_u->epo_u.cur_u;
+    const u3_epoc* const las_u = c3_lode_data(c3_list_peekb(epo_u));
+    if ( las_u != cur_u ) {
+      fprintf(stderr, "saga: removing unused new epoch\r\n");
+      unlink(c3_path_str(u3_epoc_path(las_u)));
+    }
+
     if ( epo_u ) {
       c3_lode* nod_u;
       while ( (nod_u = c3_list_popf(epo_u)) ) {
