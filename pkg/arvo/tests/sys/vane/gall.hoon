@@ -64,6 +64,22 @@
   ::
   -.res
 ::
+++  test-free-dummy-agent
+  ^-  tang
+  ::
+  =/  dap=term  %bunt
+  =/  =duct  ~[/perm]
+  =/  per  (~(gas in *(set perm:gall)) [%ames %debug]~)
+  =/  =task:gall  [%free %bunt per]
+  ::
+  =^  moves  dep-gall  (make-dummy-agent dep-gall)
+  =^  moves  dep-gall  (call dep-gall duct task)
+  =/  =bowl:gall  (scry-dummy-agent-bowl dep-gall)
+  ::
+  %+  expect-eq
+    !>  per
+  ::
+    !>  per.bowl
 ::
 +|  %utilities
 ::
