@@ -244,4 +244,14 @@ u3_epoc_info(const u3_epoc* const poc_u);
 void
 u3_epoc_close(u3_epoc* const poc_u);
 
+//! Delete an epoch from the filesystem. u3_epoc_close() should be called before
+//! calling this function to dispose of an epoch's resources.
+//!
+//! @param[in] pax_u  Root directory of epoch.
+//!
+//! @return 0  Epoch at `pax_u` could not be deleted.
+//! @return 1  Otherwise.
+c3_t
+u3_epoc_delete(c3_path* pax_u);
+
 #endif /* ifndef U3_VERE_EPOC_H */

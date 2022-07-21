@@ -98,6 +98,15 @@ _cmp_epocs(const void* lef_v, const void* rih_v);
 static c3_t
 _create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u);
 
+//! Delete the most recent epoch from the filesystem assuming that it's empty.
+//!
+//! @param[in] poc_u  Most recent epoch to delete.
+//!
+//! @return 1  `poc_u` was successfully deleted.
+//! @return 0  Otherwise.
+static c3_t
+_delete_empty_epoc(const u3_epoc* const poc_u);
+
 //! Determine if an epoch is full (i.e. has reached the maximum epoch length).
 //!
 //! @param[in] poc_u  Epoch handle.
@@ -219,6 +228,44 @@ _create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u)
 
 pop_path:
   c3_path_pop(log_u->pax_u);
+end:
+  return suc_t;
+}
+
+//! @n (1) Deleting the incremental snapshot will unfortunately force replay on
+//!        the subsequent boot, but we have no choice if we wish to correctly
+//!        handle the edge case where the ship crashes immediately after
+//!        creating a new epoch. In this case, the incremental snapshot will
+//!        capture Arvo after an event has been applied but *before that event
+//!        has been committed*, leading to weird behavior (likely a hang) on the
+//!        subsequent boot.
+static c3_t
+_delete_empty_epoc(const u3_epoc* const poc_u)
+{
+  c3_t suc_t = 0;
+
+  if ( !poc_u ) {
+    fprintf(stderr, "saga: empty epoch to delete is unexpectedly null\r\n");
+    goto end;
+  }
+
+  if ( !u3_epoc_is_empty(poc_u) ) {
+    fprintf(stderr, "saga: epoch to delete is unexpectedly not empty\r\n");
+    goto close_epoc;
+  }
+
+  if ( !u3_epoc_delete(u3_epoc_path(poc_u)) ) {
+    fprintf(stderr,
+            "saga: failed to delete empty epoch %s\r\n",
+            c3_path_str(u3_epoc_path(poc_u)));
+    goto close_epoc;
+  }
+
+  //u3e_delete(); // (1)
+
+  suc_t = 1;
+close_epoc:
+  u3_epoc_close(poc_u);
 end:
   return suc_t;
 }
@@ -431,9 +478,7 @@ succeed:
 
 //! @n (1) Attempt to migrate old non-epoch-based event log.
 //! @n (2) Read metadata from filesystem.
-//! @n (3) If the most recent epoch is empty, it's possible that the second most
-//!        recent epoch is still not full, which would be a problem. To avoid
-//!        this, remove the empty epoch; it'll be recreated later.
+//! @n (3) TODO
 u3_saga*
 u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
 {
@@ -448,6 +493,9 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     c3_path_pop(log_u->pax_u);
     if ( 0 == ret_i ) {
       if ( !_migrate(log_u, met_u) ) {
+        fprintf(stderr,
+                "saga: failed to create first "
+                "epoch from existing event log\r\n");
         goto free_event_log;
       }
       goto succeed;
@@ -460,6 +508,7 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     c3_path_push(log_u->pax_u, fak_nam_c);
     dat_v = &met_u->fak_o;
     if ( !c3_bile_read_existing(log_u->pax_u, dat_v, sizeof(met_u->fak_o)) ) {
+      fprintf(stderr, "saga: failed to read %s\r\n", c3_path_str(log_u->pax_u));
       goto free_event_log;
     }
     c3_path_pop(log_u->pax_u);
@@ -467,6 +516,7 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     c3_path_push(log_u->pax_u, who_nam_c);
     dat_v = met_u->who_d;
     if ( !c3_bile_read_existing(log_u->pax_u, dat_v, sizeof(met_u->who_d)) ) {
+      fprintf(stderr, "saga: failed to read %s\r\n", c3_path_str(log_u->pax_u));
       goto free_event_log;
     }
     c3_path_pop(log_u->pax_u);
@@ -479,23 +529,32 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
   }
 
   try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_dir_entries);
+  u3_epoc *poc_u, *pre_u;
+  c3_w* lif_w = &met_u->lif_w;
   for ( size_t idx_i = 0; idx_i < ent_i; idx_i++ ) {
     c3_path_push(log_u->pax_u, ent_c[idx_i]);
-    u3_epoc* poc_u;
-    c3_w*    lif_w = 0 == idx_i ? &met_u->lif_w : NULL;
     try_epoc(poc_u = u3_epoc_open(log_u->pax_u, lif_w), goto free_dir_entries);
-    if ( ent_i - 1 == idx_i && u3_epoc_is_empty(poc_u) ) { // (3)
-      unlink(c3_path_str(u3_epoc_path(poc_u)));
-      u3_epoc_close(poc_u);
+    c3_path_pop(log_u->pax_u);
+
+    pre_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
+    if ( ent_i - 1 == idx_i && pre_u && !_epoc_is_full(pre_u) ) { // (3)
+      if ( !_delete_empty_epoc(poc_u) ) {
+        c3_free(poc_u);
+        goto free_dir_entries;
+      }
     }
     else {
       c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     }
     c3_free(poc_u);
-    c3_path_pop(log_u->pax_u);
+    if ( lif_w ) {
+      lif_w = NULL;
+    }
   }
-  log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
-  log_u->eve_d       = u3_epoc_last_commit(log_u->epo_u.cur_u);
+
+  poc_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
+  log_u->epo_u.cur_u = u3_epoc_is_empty(poc_u) ? pre_u : poc_u;
+  log_u->eve_d = u3_epoc_last_commit(log_u->epo_u.cur_u);
 
   try_list(log_u->eve_u.lis_u = c3_list_init(), goto free_dir_entries);
 
@@ -569,13 +628,17 @@ u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
     goto succeed;
   }
 
-  c3_list* epo_u = log_u->epo_u.lis_u;
-  u3_epoc* poc_u = log_u->epo_u.cur_u;
-  if ( 0 == log_u->eve_d % epo_len_i ) { // (2)
-    u3_epoc* new_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
-    c3_assert(new_u);
-    c3_list_pushb(epo_u, new_u, epo_siz_i);
-    c3_free(new_u);
+  u3_epoc* poc_u;
+  {
+    c3_list* epo_u = log_u->epo_u.lis_u;
+    poc_u          = log_u->epo_u.cur_u;
+    if ( 0 == log_u->eve_d % epo_len_i ) { // (2)
+      u3_epoc* new_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
+      c3_assert(new_u);
+      c3_list_pushb(epo_u, new_u, epo_siz_i);
+      c3_free(new_u);
+      //exit(9);
+    }
   }
 
   switch ( log_u->mod_e ) {

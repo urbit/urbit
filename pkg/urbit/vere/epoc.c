@@ -143,6 +143,15 @@ mdb_get_filesize(mdb_filehandle_t han_u)
 // Static functions
 //==============================================================================
 
+//! Parse the first event number of an epoch out of its path.
+//!
+//! @param[in] pax_u  Path housing epoch.
+//!
+//! @return 0  Parsing failed.
+//! @return    First event number of epoch.
+static c3_d
+_epoc_first_evt_from_path(const c3_path* const pax_u);
+
 //! Determine if an epoch is the first epoch.
 //!
 //! @param[in] pax_u  Path housing epoch.
@@ -168,7 +177,8 @@ _epoc_path(const c3_path* const par_u, const c3_d fir_d);
 //! @param[out] las_d  Will be filled with last event number.
 //!
 //! @return 1  `fir_d` and `las_d` were populated with the first and last event
-//!            numbers.
+//!            numbers or `epo_min_d` and `0`, respectively, if the LMDB
+//!            instance has no events committed yet.
 //! @return 0  Otherwise.
 static c3_t
 _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d);
@@ -199,6 +209,28 @@ _lmdb_init(const c3_path* const pax_u);
 static c3_t
 _move_file(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c);
 
+static c3_d
+_epoc_first_evt_from_path(const c3_path* const pax_u)
+{
+  const c3_c* pax_c = c3_path_str(pax_u);
+  const c3_c* cur_c = pax_c + strlen(pax_c);
+  while ( 0 != strncmp(cur_c, epo_pre_c, sizeof(epo_pre_c) - 1) ) {
+    if ( cur_c == pax_c ) {
+      goto fail;
+    }
+    cur_c--;
+  }
+
+  c3_c* end_c;
+  c3_d fir_d = strtoull(cur_c + sizeof(epo_pre_c) - 1, &end_c, 10);
+  if ( '\0' == *end_c && 0 != fir_d ) {
+    return fir_d;
+  }
+
+fail:
+  return 0;
+}
+
 static inline c3_t
 _epoc_is_first(const c3_path* const pax_u)
 {
@@ -218,6 +250,8 @@ _epoc_path(const c3_path* const par_u, const c3_d fir_d)
   return c3_path_fv(2, c3_path_str(par_u), dir_c);
 }
 
+//! @n (1) If the events database can't be opened, then it must not exist, which
+//!        means that the epoch to which this LMDB environment belongs is empty.
 static c3_t
 _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d)
 {
@@ -233,17 +267,17 @@ _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d)
            "failed to create read transaction");
 
   MDB_dbi dbi_u;
-  try_lmdb(mdb_dbi_open(txn_u, dab_nam_c, MDB_CREATE | MDB_INTEGERKEY, &dbi_u),
-           goto abort_txn,
-           "failed to open %s database",
-           dab_nam_c);
+  if ( 0 != mdb_dbi_open(txn_u, dab_nam_c, MDB_INTEGERKEY, &dbi_u) ) { // (1)
+    *fir_d = epo_min_d;
+    *las_d = 0;
+    suc_t = 1;
+    goto abort_txn;
+  }
 
   MDB_cursor* cur_u;
   try_lmdb(mdb_cursor_open(txn_u, dbi_u, &cur_u),
            goto abort_txn,
            "failed to open cursor");
-
-  // TODO(peter): handle empty epoch
 
   MDB_val key_u, val_u;
   try_lmdb(mdb_cursor_get(cur_u, &key_u, &val_u, MDB_FIRST),
@@ -450,7 +484,15 @@ u3_epoc_migrate(c3_path* const       src_u,
     goto rename_lock_mdb;
   }
 
+  if ( u3_epoc_is_empty(poc_u) ) {
+    fprintf(stderr,
+            "epoc: old event log at %s is unexpectedly empty\r\n",
+            c3_path_str(poc_u->pax_u));
+    goto rename_lock_mdb;
+  }
+
   if ( cur_d != poc_u->las_d ) { // (3)
+    // TODO(peter): update version number.
     fprintf(stderr,
             "IMPORTANT: cannot migrate the existing event log format to the\r\n"
             "           new epoch-based event log format because the\r\n"
@@ -567,7 +609,7 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
     c3_assert(epo_ver_w == ver_w); // (2)
   }
 
-  if ( _epoc_is_first(pax_u) ) { // (3)
+  if ( _epoc_is_first(poc_u->pax_u) ) { // (3)
     c3_path_push(poc_u->pax_u, lif_nam_c);
     if ( !c3_bile_read_existing(poc_u->pax_u, lif_w, sizeof(*lif_w)) ) {
       goto free_epoc;
@@ -584,6 +626,18 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
   if ( !_lmdb_gulf(poc_u->env_u, &poc_u->fir_d, &poc_u->las_d) ) {
     goto free_epoc;
   }
+
+  if ( u3_epoc_is_empty(poc_u) ) {
+    if ( 0 == (poc_u->fir_d = _epoc_first_evt_from_path(poc_u->pax_u)) ) {
+      fprintf(stderr,
+              "epoc: failed to parse first event number from empty"
+              " epoch %s\r\n",
+              c3_path_str(poc_u->pax_u));
+      goto free_epoc;
+    }
+    poc_u->las_d = poc_u->fir_d - 1;
+  }
+
   goto succeed;
 
 free_epoc:
@@ -856,6 +910,52 @@ u3_epoc_close(u3_epoc* const poc_u)
   if ( poc_u->pax_u ) {
     c3_path_free(poc_u->pax_u);
   }
+}
+
+//! @n (1) Remove the epoch directory now that the epoch's files have been
+//!        removed.
+c3_t
+u3_epoc_delete(c3_path* pax_u)
+{
+  DIR* dir_u;
+  if ( !pax_u || !(dir_u = opendir(c3_path_str(pax_u))) ) {
+    goto fail;
+  }
+
+  errno = 0;
+
+  struct dirent* ent_u;
+  while ( (ent_u = readdir(dir_u)) ) {
+    c3_c* nam_c = ent_u->d_name;
+    if ( 0 == strcmp(nam_c, ".") || 0 == strcmp(nam_c, "..") ) {
+      continue;
+    }
+    c3_path_push(pax_u, nam_c);
+    if ( 0 != remove(c3_path_str(pax_u)) ) {
+      fprintf(stderr, "epoc: failed to delete %s\r\n", c3_path_str(pax_u));
+      c3_path_pop(pax_u);
+      goto fail;
+    }
+    fprintf(stderr, "peter: deleted %s\r\n", c3_path_str(pax_u));
+    c3_path_pop(pax_u);
+  }
+
+  if ( 0 != errno ) {
+    goto fail;
+  }
+
+  if ( 0 != remove(c3_path_str(pax_u)) ) { // (1)
+    fprintf(stderr, "epoc: failed to delete %s\r\n", c3_path_str(pax_u));
+    goto fail;
+  }
+
+  goto succeed;
+
+fail:
+  return 0;
+
+succeed:
+  return 1;
 }
 
 #undef try_lmdb
