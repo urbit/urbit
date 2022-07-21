@@ -81,6 +81,26 @@
   ::
     !>  per.bowl
 ::
+++  test-lock-dummy-agent
+  ^-  tang
+  ::
+  =/  dap=term  %bunt
+  =/  =duct  ~[/perm]
+  =/  per  (~(gas in *(set perm:gall)) ~[[%ames %debug] [%behn %timer]])
+  =/  ner  (~(del in per) ~[%ames %debug])
+  =/  task-1=task:gall  [%free %bunt per]
+  =/  task-2=task:gall  [%lock %bunt ner]
+  ::
+  =^  moves  dep-gall  (make-dummy-agent dep-gall)
+  =^  moves  dep-gall  (call dep-gall duct task-1)
+  =^  moves  dep-gall  (call dep-gall duct task-2)
+  =/  =bowl:gall  (scry-dummy-agent-bowl dep-gall)
+  ::
+  %+  expect-eq
+    !>  (~(dif in per) ner)
+  ::
+    !>  per.bowl
+::
 +|  %utilities
 ::
 ++  call
