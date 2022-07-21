@@ -11,11 +11,11 @@ interface Shortcut {
 const shortcuts: Shortcut[] = [
   {
     action: 'Up in List',
-    keybinding: 'Opt + X'
+    keybinding: 'Alt + X'
   },
-  { action: 'Down in List', keybinding: 'Opt + X' },
-  { action: 'Next Page', keybinding: 'Opt + X' },
-  { action: 'Previous Page', keybinding: 'Opt + X' },
+  { action: 'Down in List', keybinding: 'Alt + X' },
+  { action: 'Next Page', keybinding: 'Alt + X' },
+  { action: 'Previous Page', keybinding: 'Alt + X' },
   { action: 'Context-Aware Search', keybinding: 'Ctrl + /' }
 ];
 
@@ -69,6 +69,8 @@ const SearchKeyboardShortcuts = ({
 export const ShortcutPrefs = () => {
   const [searchInput, setSearchInput] = useState('');
   const [matchingShortcuts, setMatchingShortcuts] = useState<string[]>([]);
+  const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl';
+  const altKey = window.navigator.platform.includes('Mac') ? '⌥' : 'Alt';
 
   return (
     <div className="inner-section space-y-8">
@@ -82,6 +84,14 @@ export const ShortcutPrefs = () => {
         <span className="px-3 py-2 text-gray-400 text-sm font-semibold">Action</span>
         <span className="px-3 py-2 text-gray-400 text-sm font-semibold">Keybinding</span>
         {shortcuts
+          .map((shortcut) => ({
+            action: shortcut.action,
+            keybinding: shortcut.keybinding.replace('Ctrl', metaKey)
+          }))
+          .map((shortcut) => ({
+            action: shortcut.action,
+            keybinding: shortcut.keybinding.replace('Alt', altKey)
+          }))
           .filter((shortcut) =>
             matchingShortcuts.length > 0
               ? matchingShortcuts.find((sc) => shortcut.action === sc)
@@ -90,14 +100,14 @@ export const ShortcutPrefs = () => {
           .map((shortcut, index) => (
             <React.Fragment key={`${shortcut.action}-${index}`}>
               <span
-                className={classNames('text-gray-800 font-semibold p-3', {
+                className={classNames('text-gray-800 font-semibold p-3 rounded-lg', {
                   'bg-white': index % 2 === 0
                 })}
               >
                 {shortcut.action}
               </span>
               <span
-                className={classNames('text-gray-800 font-semibold p-3', {
+                className={classNames('text-gray-800 font-semibold p-3 rounded-lg', {
                   'bg-white': index % 2 === 0
                 })}
               >
