@@ -19,41 +19,22 @@ const shortcuts: Shortcut[] = [
   { action: 'Context-Aware Search', keybinding: 'Ctrl + /' }
 ];
 
-const SearchKeyboardShortcuts = () => {
-  const [searchInput, setSearchInput] = useState('');
-  const [matchingShortcuts, setMatchingShortcuts] = useState<string[]>([]);
-  const [highlightShortcut, setHighlightShortcut] = useState<number>();
+interface SearchKeyboardShortcutsProps {
+  searchInput: string;
+  setSearchInput: (input: string) => void;
+  setMatchingShortcuts: (newMatchingShortcuts: string[]) => void;
+}
 
+const SearchKeyboardShortcuts = ({
+  searchInput,
+  setSearchInput,
+  setMatchingShortcuts
+}: SearchKeyboardShortcutsProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target as HTMLInputElement;
-    const value = input.value.trim();
+    const { value } = input;
 
     setSearchInput(value);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    const { key } = e;
-    if (key === 'ArrowDown' && searchInput !== '' && matchingShortcuts.length > 0) {
-      if (highlightShortcut === undefined) {
-        setHighlightShortcut(0);
-      } else {
-        setHighlightShortcut((prevState) => prevState! + 1);
-      }
-    }
-
-    if (
-      key === 'ArrowUp' &&
-      searchInput !== '' &&
-      matchingShortcuts.length > 0 &&
-      highlightShortcut !== undefined &&
-      highlightShortcut !== 0
-    ) {
-      setHighlightShortcut((prevState) => prevState! - 1);
-    }
-
-    if (key === 'Enter' && searchInput !== '' && highlightShortcut !== undefined) {
-      // push(subUrl(navOptions[highlightShortcut].route));
-    }
   };
 
   const handleBlur = () => {
@@ -78,66 +59,52 @@ const SearchKeyboardShortcuts = () => {
           placeholder="Search Actions"
           value={searchInput}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
           onBlur={handleBlur}
         />
       </label>
-      <div className="relative">
-        {matchingShortcuts.length > 0 && searchInput !== '' ? (
-          <div className="absolute -top-12 flex flex-col bg-white space-y-2 rounded-2xl shadow-md w-full py-3">
-            {matchingShortcuts.map((opt, index) => {
-              const matchingShortcut = shortcuts.find((shortcut) => shortcut.action === opt);
-              if (matchingShortcut !== undefined) {
-                return (
-                  <div
-                    key={`${opt}-${index}`}
-                    className={classNames(
-                      'flex px-2 py-3 items-center space-x-2 hover:text-black hover:bg-gray-50',
-                      {
-                        'bg-gray-50': highlightShortcut === index
-                      }
-                    )}
-                    // to={subUrl(matchingNavOption.route)}
-                  >
-                    <span className="text-gray-900">{matchingShortcut?.action}</span>
-                  </div>
-                );
-              }
-              return null;
-            })}
-          </div>
-        ) : null}
-      </div>
     </>
   );
 };
 
 export const ShortcutPrefs = () => {
+  const [searchInput, setSearchInput] = useState('');
+  const [matchingShortcuts, setMatchingShortcuts] = useState<string[]>([]);
+
   return (
     <div className="inner-section space-y-8">
       <h2 className="h4">Keyboard Shortcuts</h2>
-      <SearchKeyboardShortcuts />
+      <SearchKeyboardShortcuts
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
+        setMatchingShortcuts={setMatchingShortcuts}
+      />
       <div className="grid grid-cols-2 rounded-lg border-2 border-gray-50 bg-gray-50 gap-y-2">
         <span className="px-3 py-2 text-gray-400 text-sm font-semibold">Action</span>
         <span className="px-3 py-2 text-gray-400 text-sm font-semibold">Keybinding</span>
-        {shortcuts.map((shortcut, index) => (
-          <React.Fragment key={`${shortcut.action}-${index}`}>
-            <span
-              className={classNames('text-gray-800 font-semibold p-3', {
-                'bg-white': index % 2 === 0
-              })}
-            >
-              {shortcut.action}
-            </span>
-            <span
-              className={classNames('text-gray-800 font-semibold p-3', {
-                'bg-white': index % 2 === 0
-              })}
-            >
-              {shortcut.keybinding}
-            </span>
-          </React.Fragment>
-        ))}
+        {shortcuts
+          .filter((shortcut) =>
+            matchingShortcuts.length > 0
+              ? matchingShortcuts.find((sc) => shortcut.action === sc)
+              : true
+          )
+          .map((shortcut, index) => (
+            <React.Fragment key={`${shortcut.action}-${index}`}>
+              <span
+                className={classNames('text-gray-800 font-semibold p-3', {
+                  'bg-white': index % 2 === 0
+                })}
+              >
+                {shortcut.action}
+              </span>
+              <span
+                className={classNames('text-gray-800 font-semibold p-3', {
+                  'bg-white': index % 2 === 0
+                })}
+              >
+                {shortcut.keybinding}
+              </span>
+            </React.Fragment>
+          ))}
       </div>
     </div>
   );
