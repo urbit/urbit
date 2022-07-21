@@ -86,11 +86,7 @@ export const ShortcutPrefs = () => {
         {shortcuts
           .map((shortcut) => ({
             action: shortcut.action,
-            keybinding: shortcut.keybinding.replace('Ctrl', metaKey)
-          }))
-          .map((shortcut) => ({
-            action: shortcut.action,
-            keybinding: shortcut.keybinding.replace('Alt', altKey)
+            keybinding: shortcut.keybinding.replace('Ctrl', metaKey).replace('Alt', altKey)
           }))
           .filter((shortcut) =>
             matchingShortcuts.length > 0
