@@ -1,6 +1,6 @@
 //! @file saga.h
 //!
-//! Event log.
+//! Epoch-based event log.
 //!
 //! @warning Do *not* call into this module unless *all* noun references are
 //!          roots. If not all noun references are roots, memory leaks will
@@ -120,6 +120,16 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u);
 c3_d
 u3_saga_last_commit(const u3_saga* const log_u);
 
+//! Determine if a new epoch should be created. Does NOT create a new epoch. To
+//! do so, call u3_saga_rollover().
+//!
+//! @param[in] log_u  Event log handle. Must not be NULL.
+//!
+//! @return 1  A new epoch should be created for `log_u`.
+//! @return 0  Otherwise.
+c3_t
+u3_saga_needs_rollover(const u3_saga* const log_u);
+
 //! Determine if the bootstrap sequence is needed to replay an event log.
 //!
 //! @param[in] log_u  Event log handle. Must not be NULL.
@@ -149,6 +159,16 @@ u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u);
 //! @return 0  Otherwise.
 c3_t
 u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i);
+
+//! Roll an event log over to a new epoch. Future calls to u3_saga_commit()
+//! will commit to this new epoch.
+//!
+//! @param[in] log_u  Event log handle.
+//!
+//! @return 1  New epoch was successfully created.
+//! @return 0  Otherwise.
+c3_t
+u3_saga_rollover(u3_saga* const log_u);
 
 //! Replay part or all of an event log.
 //!

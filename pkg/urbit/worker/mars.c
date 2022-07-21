@@ -603,6 +603,11 @@ top:
      && (u3_saga_last_commit(mar_u->log_u) == mar_u->dun_d) )
   {
     if ( u3_mars_save_e == mar_u->sat_e ) {
+      if ( u3_saga_needs_rollover(mar_u->log_u)
+          && !u3_saga_rollover(mar_u->log_u) )
+      {
+        fprintf(stderr, "mars: failed to rollover to new epoch\r\n");
+      }
       u3e_save();
       mar_u->sav_u.eve_d = mar_u->dun_d;
       _mars_gift(mar_u,

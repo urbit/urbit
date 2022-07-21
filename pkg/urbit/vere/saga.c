@@ -63,7 +63,7 @@ static const c3_c who_nam_c[] = "who.bin";
 
 const c3_w elo_ver_w = 1;
 
-//! Max number of events per epoch.
+//! Minimum number of events per epoch.
 static const size_t epo_len_i = 100;
 
 //! Size of the `d_name` field of `struct dirent`.
@@ -97,24 +97,6 @@ _cmp_epocs(const void* lef_v, const void* rih_v);
 //! @return 0  Otherwise.
 static c3_t
 _create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u);
-
-//! Delete the most recent epoch from the filesystem assuming that it's empty.
-//!
-//! @param[in] poc_u  Most recent epoch to delete.
-//!
-//! @return 1  `poc_u` was successfully deleted.
-//! @return 0  Otherwise.
-static c3_t
-_delete_empty_epoc(const u3_epoc* const poc_u);
-
-//! Determine if an epoch is full (i.e. has reached the maximum epoch length).
-//!
-//! @param[in] poc_u  Epoch handle.
-//!
-//! @return 1  Epoch is full.
-//! @return 0  Otherwise.
-static inline c3_t
-_epoc_is_full(const u3_epoc* const poc_u);
 
 //! Search an event log's list of epochs for the epoch that contains the given
 //! event ID. Runs in O(n) where n is the length of the list of epochs.
@@ -163,24 +145,6 @@ _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[dname_size], size_t* ent
 //! @param[in] log_u  Event log handle.
 static inline void
 _remove_committed_events(u3_saga* const log_u);
-
-//! Get the number of events that can be committed to an epoch.
-//!
-//! @param[in] poc_u  Epoch to commit to.
-//! @param[in] eve_u  List of events pending commit.
-//!
-//! @return  Number of events that can be committed to `poc_u`.
-static inline size_t
-_request_len(const u3_epoc* const poc_u, const c3_list* const eve_u);
-
-//! Update an event log's current epoch to the most recent epoch, implying that
-//! the previous epoch just became full.
-//!
-//! @param[in,out] log_u  Event log handle. Current epoch is updated.
-//!
-//! @return  Epoch handle of new current epoch.
-static inline u3_epoc*
-_rollover(u3_saga* const log_u);
 
 //! Invoke user callback after batch async commit.
 //!
@@ -232,60 +196,14 @@ end:
   return suc_t;
 }
 
-//! @n (1) Deleting the incremental snapshot will unfortunately force replay on
-//!        the subsequent boot, but we have no choice if we wish to correctly
-//!        handle the edge case where the ship crashes immediately after
-//!        creating a new epoch. In this case, the incremental snapshot will
-//!        capture Arvo after an event has been applied but *before that event
-//!        has been committed*, leading to weird behavior (likely a hang) on the
-//!        subsequent boot.
-static c3_t
-_delete_empty_epoc(const u3_epoc* const poc_u)
-{
-  c3_t suc_t = 0;
-
-  if ( !poc_u ) {
-    fprintf(stderr, "saga: empty epoch to delete is unexpectedly null\r\n");
-    goto end;
-  }
-
-  if ( !u3_epoc_is_empty(poc_u) ) {
-    fprintf(stderr, "saga: epoch to delete is unexpectedly not empty\r\n");
-    goto close_epoc;
-  }
-
-  if ( !u3_epoc_delete(u3_epoc_path(poc_u)) ) {
-    fprintf(stderr,
-            "saga: failed to delete empty epoch %s\r\n",
-            c3_path_str(u3_epoc_path(poc_u)));
-    goto close_epoc;
-  }
-
-  //u3e_delete(); // (1)
-
-  suc_t = 1;
-close_epoc:
-  u3_epoc_close(poc_u);
-end:
-  return suc_t;
-}
-
 static inline c3_t
 _is_epoc_dir(const c3_c* const nam_c)
 {
   return 0 == strncmp(nam_c, epo_pre_c, strlen(epo_pre_c));
 }
 
-static inline c3_t
-_epoc_is_full(const u3_epoc* const poc_u)
-{
-  return epo_len_i == u3_epoc_len(poc_u);
-}
-
 //! @n (1) Push the newly created epoch from migration onto the epoch list.
-//! @n (2) Immediately rollover to a new epoch so that we're not attempting to
-//!        commit to the first epoch, which is almost certainly larger than the
-//!        configured max epoch length.
+//! @n (2) Immediately rollover to a new epoch.
 static c3_t
 _migrate(u3_saga* const log_u, u3_meta* const met_u)
 {
@@ -309,11 +227,9 @@ _migrate(u3_saga* const log_u, u3_meta* const met_u)
     c3_free(poc_u);
   }
 
-  { // (2)
-    poc_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
-    c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
-    c3_free(poc_u);
-    log_u->epo_u.cur_u = _rollover(log_u);
+  if ( !u3_saga_rollover(log_u) ) {
+    fprintf(stderr, "saga: failed to rollover to new epoch after migrating\r\n");
+    goto fail;
   }
 
   try_list(log_u->eve_u.lis_u = c3_list_init(), goto fail);
@@ -372,21 +288,6 @@ _remove_committed_events(u3_saga* const log_u)
   for ( size_t idx_i = 0; idx_i < len_i; idx_i++ ) {
     c3_free(c3_list_popf(eve_u));
   }
-}
-
-static inline size_t
-_request_len(const u3_epoc* const poc_u, const c3_list* const eve_u)
-{
-  size_t len_i = u3_epoc_len(poc_u);
-  c3_assert(len_i <= epo_len_i);
-  size_t rem_i = epo_len_i - len_i;
-  return c3_min(rem_i, c3_list_len(eve_u));
-}
-
-static inline u3_epoc*
-_rollover(u3_saga* const log_u)
-{
-  return log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
 }
 
 //! @n (1) Attempt to commit events that were enqueued after the commit began.
@@ -535,26 +436,15 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     c3_path_push(log_u->pax_u, ent_c[idx_i]);
     try_epoc(poc_u = u3_epoc_open(log_u->pax_u, lif_w), goto free_dir_entries);
     c3_path_pop(log_u->pax_u);
-
-    pre_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
-    if ( ent_i - 1 == idx_i && pre_u && !_epoc_is_full(pre_u) ) { // (3)
-      if ( !_delete_empty_epoc(poc_u) ) {
-        c3_free(poc_u);
-        goto free_dir_entries;
-      }
-    }
-    else {
-      c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
-    }
+    c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
     if ( lif_w ) {
       lif_w = NULL;
     }
   }
 
-  poc_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
-  log_u->epo_u.cur_u = u3_epoc_is_empty(poc_u) ? pre_u : poc_u;
-  log_u->eve_d = u3_epoc_last_commit(log_u->epo_u.cur_u);
+  log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
+  log_u->eve_d       = u3_epoc_last_commit(log_u->epo_u.cur_u);
 
   try_list(log_u->eve_u.lis_u = c3_list_init(), goto free_dir_entries);
 
@@ -576,6 +466,12 @@ c3_d
 u3_saga_last_commit(const u3_saga* const log_u)
 {
   return u3_epoc_last_commit(log_u->epo_u.cur_u);
+}
+
+c3_t
+u3_saga_needs_rollover(const u3_saga* const log_u)
+{
+  return u3_epoc_len(log_u->epo_u.cur_u) >= epo_len_i;
 }
 
 //! @n (1) Bootstrap is needed if the only epoch present is the first epoch.
@@ -611,11 +507,6 @@ u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u)
 }
 
 //! @n (1) A NULL event can be passed to invoke another commit batch.
-//! @n (2) Timing of rollover is key: a new epoch must be created when the last
-//!        event to be committed to the current epoch is enqueued for commit to
-//!        ensure that the snapshot captures the state of the system at the end
-//!        of the current epoch, but the new epoch cannot be switched to until
-//!        that enqueued event is actually committed.
 c3_t
 u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
 {
@@ -628,28 +519,12 @@ u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
     goto succeed;
   }
 
-  u3_epoc* poc_u;
-  {
-    c3_list* epo_u = log_u->epo_u.lis_u;
-    poc_u          = log_u->epo_u.cur_u;
-    if ( 0 == log_u->eve_d % epo_len_i ) { // (2)
-      u3_epoc* new_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
-      c3_assert(new_u);
-      c3_list_pushb(epo_u, new_u, epo_siz_i);
-      c3_free(new_u);
-      //exit(9);
-    }
-  }
-
   switch ( log_u->mod_e ) {
     case u3_saga_sync:
-      if ( _epoc_is_full(poc_u) ) {
-        poc_u = _rollover(log_u);
-      }
-      log_u->eve_u.req_i = _request_len(poc_u, eve_u);
+      log_u->eve_u.req_i = c3_list_len(eve_u);
       c3_lode* nod_u     = c3_list_peekf(eve_u);
       log_u->act_t       = 1;
-      if ( !u3_epoc_commit(poc_u, nod_u, log_u->eve_u.req_i) ) {
+      if ( !u3_epoc_commit(log_u->epo_u.cur_u, nod_u, log_u->eve_u.req_i) ) {
         goto fail;
       }
       _remove_committed_events(log_u);
@@ -657,10 +532,7 @@ u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
       goto succeed;
     case u3_saga_async:
       if ( !log_u->act_t ) {
-        if ( _epoc_is_full(poc_u) ) {
-          poc_u = _rollover(log_u);
-        }
-        log_u->eve_u.req_i = _request_len(poc_u, eve_u);
+        log_u->eve_u.req_i = c3_list_len(eve_u);
         log_u->act_t       = 1;
         uv_queue_work(log_u->asy_u.lup_u,
                       &log_u->asy_u.req_u,
@@ -669,6 +541,30 @@ u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
       }
       goto succeed;
   }
+
+fail:
+  return 0;
+
+succeed:
+  return 1;
+}
+
+c3_t
+u3_saga_rollover(u3_saga* const log_u)
+{
+  if ( !log_u ) {
+    goto fail;
+  }
+  u3_epoc* const poc_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
+  if ( !poc_u ) {
+    goto fail;
+  }
+
+  c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
+  c3_free(poc_u);
+  log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
+
+  goto succeed;
 
 fail:
   return 0;
