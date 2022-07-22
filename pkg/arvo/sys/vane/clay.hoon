@@ -4996,7 +4996,7 @@
     ?~  path
       ~
     ?+    i.path  ~
-        %sweep  ``[%sweep !>(sweep)]
+        %sweep  ``[%sweep !>(sweep:even)]
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
         %flow   ``[%flow !>(fad.ruf)]
@@ -5036,59 +5036,6 @@
     =+  !<(=arch q.u.u.cay)
     ?~  fil.arch  %|
     (~(has by lat.ran.ruf) u.fil.arch)
-  ::
-  ::  Check for refcount errors
-  ::
-  ++  sweep
-    ^-  (list [need=@ud have=@ud leak])
-    =/  marked=(map leak [need=@ud have=@ud])
-      (~(run by fad.ruf) |=([refs=@ud *] [0 refs]))
-    =.  marked
-      =/  items=(list [=leak *])  ~(tap by fad.ruf)
-      |-  ^+  marked
-      ?~  items
-        marked
-      =/  deps  ~(tap in deps.leak.i.items)
-      |-  ^+  marked
-      ?~  deps
-        ^$(items t.items)
-      =.  marked
-        %+  ~(put by marked)  i.deps
-        =/  gut  (~(gut by marked) i.deps [0 0])
-        [+(-.gut) +.gut]
-      $(deps t.deps)
-    ::
-    =/  spills=(list (set leak))
-      %+  welp
-        %+  turn  ~(tap by dos.rom.ruf)
-        |=  [* =dojo]
-        spill.fod.dom.dojo
-      %-  zing
-      %+  turn  ~(tap by hoy.ruf)
-      |=  [* =rung]
-      %+  turn  ~(tap by rus.rung)
-      |=  [* =rede]
-      spill.fod.dom.rede
-    ::
-    =.  marked
-      |-
-      ?~  spills
-        marked
-      =/  leaks  ~(tap in i.spills)
-      |-
-      ?~  leaks
-        ^$(spills t.spills)
-      =.  marked
-        %+  ~(put by marked)  i.leaks
-        =/  gut  (~(gut by marked) i.leaks [0 0])
-        [+(-.gut) +.gut]
-      $(leaks t.leaks)
-    ::
-    %+  murn  ~(tap by marked)
-    |=  [=leak need=@ud have=@ud]
-    ?:  =(need have)
-      ~
-    `u=[need have leak]
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.
@@ -5529,5 +5476,61 @@
       =.  ..pick-raft  $(q.yaki l.q.yaki)
       $(q.yaki r.q.yaki)
     --
+  --
+::
+++  even
+  |%
+  ::  Check for refcount errors
+  ::
+  ++  sweep
+    ^-  (list [need=@ud have=@ud leak])
+    =/  marked=(map leak [need=@ud have=@ud])
+      (~(run by fad.ruf) |=([refs=@ud *] [0 refs]))
+    =.  marked
+      =/  items=(list [=leak *])  ~(tap by fad.ruf)
+      |-  ^+  marked
+      ?~  items
+        marked
+      =/  deps  ~(tap in deps.leak.i.items)
+      |-  ^+  marked
+      ?~  deps
+        ^$(items t.items)
+      =.  marked
+        %+  ~(put by marked)  i.deps
+        =/  gut  (~(gut by marked) i.deps [0 0])
+        [+(-.gut) +.gut]
+      $(deps t.deps)
+    ::
+    =/  spills=(list (set leak))
+      %+  welp
+        %+  turn  ~(tap by dos.rom.ruf)
+        |=  [* =dojo]
+        spill.fod.dom.dojo
+      %-  zing
+      %+  turn  ~(tap by hoy.ruf)
+      |=  [* =rung]
+      %+  turn  ~(tap by rus.rung)
+      |=  [* =rede]
+      spill.fod.dom.rede
+    ::
+    =.  marked
+      |-
+      ?~  spills
+        marked
+      =/  leaks  ~(tap in i.spills)
+      |-
+      ?~  leaks
+        ^$(spills t.spills)
+      =.  marked
+        %+  ~(put by marked)  i.leaks
+        =/  gut  (~(gut by marked) i.leaks [0 0])
+        [+(-.gut) +.gut]
+      $(leaks t.leaks)
+    ::
+    %+  murn  ~(tap by marked)
+    |=  [=leak need=@ud have=@ud]
+    ?:  =(need have)
+      ~
+    `u=[need have leak]
   --
 --
