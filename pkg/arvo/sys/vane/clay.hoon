@@ -5480,6 +5480,21 @@
 ::
 ++  even
   |%
+  ::  Prune extra refcounts
+  ::
+  ++  prune
+    ^-  flow
+    =/  sep=(list [need=@ud have=@ud leak])
+      sweep
+    |-  ^-  flow
+    ?~  sep
+      fad.ruf
+    =/  lec=leak  +>.i.sep
+    ?>  (gte have.i.sep need.i.sep)
+    %_  $
+      sep      t.sep
+      fad.ruf  (~(jab by fad.ruf) lec |=([@ud =soak] [need.i.sep soak]))
+    ==
   ::  Check for refcount errors
   ::
   ++  sweep
