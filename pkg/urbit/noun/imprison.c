@@ -723,7 +723,7 @@ _edit_or_mutate(u3_noun big, u3_noun axe, u3_noun som)
 **   `axe` is RETAINED.
 */
 u3_noun
-u3i_edit(u3_noun big, u3_noun axe, u3_noun som)
+u3i_edit_old(u3_noun big, u3_noun axe, u3_noun som)
 {
   switch ( axe ) {
     case 0:
@@ -733,6 +733,58 @@ u3i_edit(u3_noun big, u3_noun axe, u3_noun som)
       return som;
     default:
       return _edit_or_mutate(big, axe, som);
+  }
+}
+
+/* u3i_edit_new():
+**
+**   Mutate `big` at axis `axe` with new value `som`.
+**   `axe` is RETAINED.
+*/
+u3_noun
+u3i_edit(u3_noun big, u3_noun axe, u3_noun som)
+{
+  switch ( axe ) {
+    case 0: return u3m_bail(c3__exit);
+    case 1: u3z(big); return som;
+  }
+
+  {
+    u3_noun  pro;
+    u3_noun* out = &pro;
+    c3_w   dep_w = u3r_met(0, u3x_atom(axe)) - 2;
+
+    do {
+      u3a_cell*  big_u = u3a_to_ptr(big);
+      const c3_y bit_y = u3r_bit(dep_w, axe);
+
+      if ( c3n == u3a_is_cell(big) ) {
+        return u3m_bail(c3__exit);
+      }
+      else if ( c3y == u3a_is_mutable(u3R, big) ) {
+        *out         = big;
+        out          = (u3_noun*)&(big_u->hed) + bit_y;
+        big          = *out;
+        big_u->mug_w = 0;
+      }
+      else {
+        u3_noun* new[2];
+
+        u3k(big_u->hed); u3k(big_u->tel);
+        u3z(big);
+
+        *out              = u3i_defcons(&new[0], &new[1]);
+        out               = new[bit_y];
+        big               = *((u3_noun*)&(big_u->hed) + bit_y);
+        *(new[1 - bit_y]) = *((u3_noun*)&(big_u->tel) - bit_y);
+      }
+    }
+    while ( dep_w-- );
+
+    u3z(big);
+    *out = som;
+
+    return pro;
   }
 }
 
