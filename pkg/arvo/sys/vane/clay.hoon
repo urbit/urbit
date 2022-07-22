@@ -4999,6 +4999,7 @@
         %sweep  ``[%sweep !>(sweep)]
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
+        %flow   ``[%flow !>(fad.ruf)]
         %domes  domes
     ==
   ::
