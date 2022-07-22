@@ -84,7 +84,13 @@ _write_cb(uv_write_t* req_u, c3_i status_i);
 
 static void
 _child_exit_cb(uv_process_t* child_u, c3_ds status_d, c3_i term_sig_i)
-{}
+{
+  if ( 0 != status_d ) {
+    fprintf(stderr,
+            "cttp: child process exited with code %" PRIi64 "\r\n",
+            status_d);
+  }
+}
 
 static void
 _driver_exit(u3_auto* driver_u)
