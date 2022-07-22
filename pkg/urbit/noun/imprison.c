@@ -753,10 +753,13 @@ u3i_edit(u3_noun big, u3_noun axe, u3_noun som)
     u3_noun  pro;
     u3_noun* out = &pro;
     c3_w   dep_w = u3r_met(0, u3x_atom(axe)) - 2;
+    c3_w*  axe_w = (c3y == u3a_is_cat(axe))
+                 ? &axe
+                 : ((u3a_atom*)u3a_to_ptr(axe))->buf_w;
 
     do {
       u3a_cell*  big_u = u3a_to_ptr(big);
-      const c3_y bit_y = u3r_bit(dep_w, axe);
+      const c3_y bit_y = 1 & (axe_w[dep_w >> 5] >> (dep_w & 31));
 
       if ( c3n == u3a_is_cell(big) ) {
         return u3m_bail(c3__exit);
