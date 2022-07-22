@@ -4404,6 +4404,10 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %reap
+    =.  fad.ruf  prune:even
+    [~ ..^$]
+  ::
       %stir
     ?+  arg.req  ~|(%strange-stir !!)
       [%verb @]  [~ ..^$(veb.bug.ruf +.arg.req)]
