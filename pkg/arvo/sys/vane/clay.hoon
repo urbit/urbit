@@ -157,19 +157,6 @@
       [%1 peg=(unit page)]
   ==
 ::
-::  Global ford cache
-::
-::    Refcount includes references from other items in the cache, and
-::    from spills in each desk
-::
-::    This is optimized for minimizing the number of rebuilds, and given
-::    that, minimizing the amount of memory used.  It is relatively slow
-::    to lookup, because generating a cache key can be fairly slow (for
-::    files, it requires parsing; for tubes, it even requires building
-::    the marks).
-::
-+$  flow  (map leak [refs=@ud =soak])
-::
 ::  Per-desk ford cache
 ::
 ::    Spill is the set of "roots" we have into the global ford cache.
@@ -192,41 +179,6 @@
       [%tube =mars]
       [%vale =path]
       [%arch =path]
-  ==
-::
-::  Ford build with content.
-::
-+$  pour
-  $%  [%file =path]
-      [%nave =mark]
-      [%dais =mark]
-      [%cast =mars]
-      [%tube =mars]
-      ::  leafs
-      ::
-      [%vale =path =lobe]
-      [%arch =path =(map path lobe)]
-  ==
-::
-::  Ford result.
-::
-+$  soak
-  $%  [%cage =cage]
-      [%vase =vase]
-      [%arch dir=(map @ta vase)]
-      [%dais =dais]
-      [%tube =tube]
-  ==
-::
-::  Ford cache key
-::
-::    This includes all build inputs, including transitive dependencies,
-::    recursively.
-::
-+$  leak
-  $~  [*pour ~]
-  $:  =pour
-      deps=(set leak)
   ==
 ::
 ::  New desk data.
