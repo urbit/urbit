@@ -4235,6 +4235,12 @@
     ~&  %clay-idle
     [~ ..^$]
   ::
+      %feed
+    =.  fad.ruf  %-  (~(uno by fad.ruf) fad.req)
+                 |=  [leak [lrefs=@ soak] [rrefs=@ soc=soak]]
+                 [(add lrefs rrefs) soc]
+    [~ ..^$]
+  ::
       %info
     ?:  ?=(%| -.dit.req)
       =/  bel=@tas         p.dit.req
