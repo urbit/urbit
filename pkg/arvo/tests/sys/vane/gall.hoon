@@ -1,5 +1,3 @@
-/-  spider
-::
 /+  dbug, default-agent, strandio, *test
 /=  gall-raw  /sys/vane/gall
 ::
@@ -9,11 +7,69 @@
 =.  eny.dep-gall-pupal        `@uvJ`0xdead.beef
 =.  rof.dep-gall-pupal        |=(* ``[%noun !>(*(list turf))])
 ::
+=/  test-desk=desk  %lab
+::
 ::  metamorphose
 =/  dep-gall  +:(call:(dep-gall-pupal) ~[/init] ~ %init ~)
 ::
 =>  |%
+    +|  %gall-structures
     +$  move  [=duct move=(wind note-arvo gift-arvo)]
+    ::
+    +|  %test-dummy-structures
+    +$  card  card:agent:gall
+    +$  poke
+      $%  [%run-test p=$-(* ?)]
+      ==
+    ::
+    ::    makes a dummy-agent which is basically a default-agent with bowl scry
+    ++  test-dummy
+      %-  agent:dbug
+      ^-  agent:gall
+      |_  =bowl:gall
+      +*  this  .
+          def  ~(. (default-agent this %.n) bowl)
+      ::
+      ++  on-init   on-init:def
+      ++  on-save   on-save:def
+      ++  on-load   on-load:def
+      ++  on-poke
+        |=  [=mark =vase]
+        ~&  'on-poke'
+        ^-  (quip card _this)
+        ?.  ?=(%noun mark)
+          ~&  'no'
+          `this
+        =/  action  !<(poke vase)
+        ~&  action
+        ?-  action
+          [%run-test *]
+            ~&  'bweh'
+            ~&  (p.action bowl)
+            `this
+        ==
+      ++  on-watch  on-watch:def
+      ++  on-leave  on-leave:def
+      ++  on-peek
+       |=  =path
+       ^-  (unit (unit cage))
+       ?.  =(path [%x %bowl ~])
+         (on-peek:def path)
+       ``noun+!>(bowl)
+      ++  on-agent  on-agent:def
+      ++  on-arvo
+        |=  [=wire =sign-arvo]
+        ^-  (quip card _this)
+        ?+    wire  (on-arvo:def wire sign-arvo)
+            [%~.~ ~]
+          ?+    sign-arvo  (on-arvo:def wire sign-arvo)
+              [%gall %perm *]
+            ~&  >>  ['permissions change' +>.sign-arvo]
+            `this
+          ==
+        ==
+      ++  on-fail   on-fail:def
+      --
     --
 ::
 |%
@@ -64,37 +120,57 @@
   ::
   -.res
 ::
-++  test-free-dummy-agent
+++  test-dummy-empty-bowl
   ^-  tang
   ::
-  =/  dap=term  %bunt
+  =/  =duct  ~[/init]
+  =/  gat
+    |=  =bowl:gall
+    =(~ per.bowl)
+  ::
+  =/  =task:agent:gall
+    :-  %poke
+    :-  %noun
+    !>  [%run-test gat]
+  ::
+  =^  moves  dep-gall  (make-test-dummy dep-gall)
+  =^  moves  dep-gall  (task-test-dummy dep-gall task)
+  *tang
+  ::
+::
+++  test-free-test-dummy
+  :: it seems that the perms make it into the state
+  :: of gall - in perms=(map desk (set perm)). but its not
+  :: ending up in the bowl for some reason
+  ^-  tang
+  ::
   =/  =duct  ~[/perm]
   =/  per  (~(gas in *(set perm:gall)) [%ames %debug]~)
-  =/  =task:gall  [%free %bunt per]
+  =/  =task:gall  [%free test-desk per]
   ::
-  =^  moves  dep-gall  (make-dummy-agent dep-gall)
-  =^  moves  dep-gall  (call dep-gall duct task)
-  =/  =bowl:gall  (scry-dummy-agent-bowl dep-gall)
+  =^  moves  dep-gall  (make-test-dummy dep-gall)
+  =^  moves  dep-gall   (call dep-gall duct task)
+  =/  =bowl:gall  (scry-test-dummy-bowl dep-gall)
   ::
   %+  expect-eq
     !>  per
   ::
     !>  per.bowl
 ::
-++  test-lock-dummy-agent
+++  test-lock-test-dummy
   ^-  tang
   ::
-  =/  dap=term  %bunt
   =/  =duct  ~[/perm]
-  =/  per  (~(gas in *(set perm:gall)) ~[[%ames %debug] [%behn %timer]])
-  =/  ner  (~(del in per) ~[%ames %debug])
-  =/  task-1=task:gall  [%free %bunt per]
-  =/  task-2=task:gall  [%lock %bunt ner]
+  =/  per  %-    ~(gas in *(set perm:gall))
+           ~[[%ames %debug] [%behn %timer]]
+  =/  ner   (~(del in per) [%behn %timer])
+  =/  task-1=task:gall    [%free test-desk per]
+  =/  task-2=task:gall    [%lock test-desk ner]
   ::
-  =^  moves  dep-gall  (make-dummy-agent dep-gall)
+  =^  moves  dep-gall  (make-test-dummy dep-gall)
   =^  moves  dep-gall  (call dep-gall duct task-1)
   =^  moves  dep-gall  (call dep-gall duct task-2)
-  =/  =bowl:gall  (scry-dummy-agent-bowl dep-gall)
+  =/  =bowl:gall  (scry-test-dummy-bowl dep-gall)
   ::
   %+  expect-eq
     !>  (~(dif in per) ner)
@@ -124,43 +200,44 @@
   ::
   (take:vane-core wire duct ~ sign-arvo)
 ::
-::  +make-dummy-agent: creates a bunted agent called %bunt in dep-gall
-++  make-dummy-agent
+::  +make-test-dummy: creates a +test-dummy called %buster in dep-gall
+++  make-test-dummy
   |=  [vane=_dep-gall]
   ^-  [moves=(list move) _dep-gall]
   ::
-  =/  =wire  /sys/cor/bunt/~dep/test/foo
+  ::=/  =wire  /sys/cor/buster/~dep/(scot %ta test-desk)/foo
+  =/  =wire  /sys/cor/buster/~dep/[test-desk]/foo
   =/  =duct  ~[/perm]
-  =/  =desk  %test
   =/  =sign-arvo
     =;  =gift:clay
       [%clay gift]
     :-  %writ
     %-  some
-    :+  [*care:clay *case:clay desk]
+    :+  [*care:clay *case:clay test-desk]
       *path
-    [%vase !>(!>((agent:dbug *agent:gall)))]
+::    [%vase !>(!>((agent:dbug *agent:gall)))]
+    [%vase !>(!>(test-dummy))]
   ::
   =^  moves  dep-gall  (take dep-gall wire duct sign-arvo)
   [moves dep-gall]
 ::
-++  poke-dummy-agent
-  |=  [vane=_dep-gall poke=task:agent:gall]
+++  task-test-dummy
+  |=  [vane=_dep-gall taz=task:agent:gall]
   ^-  [moves=(list move) _dep-gall]
   ::
   =;  =task:gall  (call vane ~[/perm] task)
   =/  =sock  [~dep ~dep]
-  =/  =term  %bunt
-  [%deal sock term poke]
+  =/  =term  %buster
+  [%deal sock term taz]
 ::
-++  scry-dummy-agent-bowl
+++  scry-test-dummy-bowl
   |=  vane=_dep-gall
   ^-  bowl:gall
   ::
   =;  res  !<(bowl:gall q:(need (need res)))
   %-  scry
   :+  vane  %x
-  [[p=~dep q=%bunt r=[%da now.dep-gall]] s=/dbug/bowl/noun]
+  [[p=~dep q=%buster r=[%da now.dep-gall]] s=/bowl/noun]
 ::
 ::  +gall-call: have %gall run a +task and assert it produces expected-moves
 ::
