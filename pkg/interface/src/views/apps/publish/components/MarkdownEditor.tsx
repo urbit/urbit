@@ -6,7 +6,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
 import { useFormikContext } from 'formik';
 import React, { useCallback, useRef } from 'react';
-import { UnControlled as CodeEditor } from 'react-codemirror2';
+import { UnControlled as CodeEditor } from 'react-codemirror2-react-17';
 import { Prompt } from 'react-router-dom';
 import { useFileUpload } from '~/logic/lib/useFileUpload';
 import { IuseStorage } from '~/logic/lib/useStorage';
@@ -96,7 +96,7 @@ export function MarkdownEditor(
       p={1}
       border={1}
       borderColor="lightGray"
-      backgroundColor={disabled ? '#eee' : '#fff'}
+      backgroundColor={disabled ? 'lightGray' : 'white'}
       borderRadius={2}
       height={['calc(100% - 22vh)', '100%']}
       {...boxProps}
