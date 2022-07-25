@@ -2,14 +2,19 @@
 ::
 ::    produces hex string result, for use with +decode-results:rpc:ethereum
 ::
-/+  ethereum, ethio, strandio
+/-  ethdata=eth-provider
+/+  ethereum, strandio, eth-provider
 =,  ethereum-types
 =,  jael
 ::
 |=  args=vase
 =/  m  (strand:strandio ,vase)
+=+  !<([url=@t read-request=proto-read-request:rpc:ethereum] args)
+
 ^-  form:m
-;<  res=@t  bind:m
-  %-  read-contract:ethio
-  !<([@t proto-read-request:rpc:ethereum] args)
+;<  res2=ethout:ethdata  bind:m
+  (eth-provider [%read-contract read-request])
+?>  ?=(%read-contract -.res2)
+=/  res  +.res2
+
 (pure:m !>(res))
