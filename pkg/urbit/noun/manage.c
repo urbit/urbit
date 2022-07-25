@@ -1136,17 +1136,11 @@ u3m_soft_run(u3_noun gul,
     u3t_off(coy_o);
     pro = fun_f(aga, agb);
 
-    /*
 #ifdef U3_CPU_DEBUG
-    // TODO: maybe this should just go away since the %meme hint reports this better
     if ( u3R->all.max_w > 1000000 ) {
-      // the old interupting way
       u3a_print_memory(stderr, "execute: run", u3R->all.max_w);
-      // the new well behaved way
-      u3t_slog_memory(2, "execute: run", 0.0, u3R->all.max_w*4);
     }
 #endif
-    */
 
     /* Today you can't run -g without memory debug, but you should be
      * able to.
@@ -1932,3 +1926,4 @@ u3m_pack(void)
 
   return (u3a_open(u3R) - pre_w);
 }
+

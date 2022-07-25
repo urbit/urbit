@@ -154,31 +154,8 @@
       void
       u3t_slog_hela(c3_l pri_l);
 
-    /* u3t_meme(): report memory stats at call time
-    */
-      void
-      u3t_slog_meme(c3_l pri_l);
-
-    /* u3t_xray(): collect the bytecode data
-    ** for the expression wrapped in the 'calling' hint
-    ** and print it to the terminal
-    */
-      void
-      u3t_slog_xray(c3_l pri_l, u3_noun inf);
-
-    /* u3t_slog_memory():
-    */
-      void
-      u3t_slog_memory(c3_l pri_l, c3_c* cap_c, float percent, c3_w wor_w);
-
-    /* u3t_slog_steps():
-    */
-      void
-      u3t_slog_steps(c3_l pri_l, c3_c* cap_c, c3_d sep_d);
-
-
-  /* Globals.
-  */
+  /** Globals.
+  **/
     /* u3_Trace / u3C: global memory control.
     */
       c3_global u3t_trace u3t_Trace;
@@ -186,3 +163,4 @@
 
 
 #endif /* ifndef U3_TRACE_H */
+

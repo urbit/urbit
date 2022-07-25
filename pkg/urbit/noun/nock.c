@@ -887,58 +887,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case BUSH: case SANB:
         case KITB: case MITB:
         case HILB: case HINB:
-          _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
-          pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
-          break;
-        case HINS:
-          if ( c3__xray != u3k(u3t(op)) ) {
-            u3t_slog_cap(1, u3i_string("HINS"), u3i_string("something else"));
-            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
-            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
-          }
-          else {
-            // all my xray hinb only magic goes here
-            u3t_slog_cap(1, u3i_string("HINS"), u3i_string("xray - go for it!"));
-            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
-            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
-          }
-          break;
-          /*
-          // print which hint we are compiling
-          if ( c3__xray == u3k(u3t(op)) )
-            u3t_slog_cap(1, u3i_string("compiling"), u3i_string("xray"));
-
-          if ( c3__xray == u3k(u3t(op)) ) {
-            u3_noun op_string = u3i_string("xray");
-            switch ( cod ) {
-              default: break;
-              case HINB: u3t_slog_cap(1, u3i_string("HINB"), op_string); break;
-            }
-            // check tail of op for being xray
-            // if so call a rendering and cons to tail of op
-            // like sip list in melt?
-            // take interpret buffy upto nef_w
-
-            // TODO: render everything called until this point
-            //       ie take whatever the analog of fol is, and run it through
-            //       something like slog_bytecode without sloging it, to convert
-            //       it to a u3i_string, then store that to the tail of op
-            // TODO: cons the rendered data to tail of op
-            // TODO: slog out info on what is compiling right now
-
-            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
-            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
-
-            // NOTE: buf_y is pog_u->byc_u.ops_y ie it is arg #1 for render bytecode
-            // NOTE: ___ is arg #2 for render_bytecode (aka c3_w her_w)
-            // i_W
-            slog_bytecode(1, buf_y);
-            slog_bytecode(1, pog_u->byc_u.ops_y);
-          }
-          else {
-            _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
-            pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
-          }*/
+        case HINS: case HILS:
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
           break;
@@ -1018,12 +967,10 @@ static void _n_print_stack(u3p(u3_noun) empty) {
 }
 #endif
 
-//#ifdef VERBOSE_BYTECODE
 // Define X to select the opcode string representation from OPCODES.
 # define X(opcode, name, indirect_jump) name
 static c3_c* opcode_names[] = { OPCODES };
 # undef X
-//#endif
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -1060,14 +1007,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       default: {
         return _n_comp(ops, nef, los_o, tel_o);
       }
-      /* TODO:
-      ** for case xray pack more info into HILB
-      ** place nef_w into HILB trel
-      */
       case c3__xray:
-        //u3t_slog_cap(1, u3i_string("called"), u3i_string("_n_bint atomic xray"));
-        //u3t_slog_cap(1, u3i_string("done"), u3i_string("  _n_bint atomic xray"));
-      case c3__meme:
       case c3__nara:
       case c3__hela:
       case c3__bout: {
@@ -1079,7 +1019,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         ++nef_w; _n_emit(&fen, u3nc(SBIP, 1));
 
         //  call hilt_fore
-        //  HILB overflows to HILS - NOTE: this becomes hin
+        //  HILB overflows to HILS
         ++tot_w; _n_emit(ops, u3nc(HILB, u3nc(u3k(hif), u3k(nef))));
         // if fore return c3n, skip fen
         ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
@@ -1104,14 +1044,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             ++tot_w; _n_emit(ops, TOSS);
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
-          /* TODO:
-          ** for case xray pack more info into HINB
-          ** place nef_w into HINB trel
-          */
           case c3__xray:
-            //u3t_slog_cap(2, u3i_string("called"), u3i_string("_n_bint dynamic xray"));
-            //u3t_slog_cap(2, u3i_string("done"), u3i_string("  _n_bint dynamic xray"));
-          case c3__meme:
           case c3__nara:
           case c3__hela:
           case c3__bout: {
@@ -1125,7 +1058,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             // push clue
             tot_w += _n_comp(ops, hod, c3n, c3n);
             //  call hint_fore
-            //  HINB overflows to HINS - NOTE: does this also becom hin?
+            //  HINB overflows to HINS
             ++tot_w; _n_emit(ops, u3nc(HINB, u3nc(u3k(zep), u3k(nef))));
             // if fore return c3n, skip fen
             ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w));
@@ -1736,7 +1669,6 @@ _n_find(u3_noun pre, u3_noun fol)
 u3p(u3n_prog)
 u3n_find(u3_noun key, u3_noun fol)
 {
-  //u3t_slog_cap(1, u3i_string("called"), u3i_string("u3n_find"));
   u3p(u3n_prog) pog_p;
   u3t_on(noc_o);
   pog_p = u3of(u3n_prog, _n_find(key, fol));
@@ -1896,12 +1828,6 @@ _xray(c3_l pri_l, u3_noun fol) {
   u3n_prog* pog_u = _n_bite(fol);
   c3_y* pog = pog_u->byc_u.ops_y;
   _slog_bytecode(pri_l, pog, pog_u);
-  //u3m_p("fol", fol);
-  //fprintf(stderr, "\r\nhex: ");
-  //for (int i=0; i < pog_u->byc_u.len_w; i++) {
-  //  fprintf(stderr, "%02x ", pog_u->byc_u.ops_y[i]);
-  //}
-  //fprintf(stderr, "\r\n");
   _n_prog_free_willy(pog_u);
 }
 
@@ -1932,11 +1858,6 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 
     case c3__hela : {
       u3t_slog_hela(0);
-      *out = u3_nul;
-    } break;
-
-    case c3__meme : {
-      u3t_slog_meme(0);
       *out = u3_nul;
     } break;
 
@@ -2014,17 +1935,6 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
         c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
         u3t_slog_cap(pri_l, u3i_string("trace of"), u3k(tan));
         u3t_slog_hela(pri_l);
-      }
-      u3z(*clu);
-      *clu = u3_nul;
-    } break;
-
-    case c3__meme : {
-      u3_noun pri, tan;
-      if ( c3y == u3r_cell(*clu, &pri, &tan) ) {
-        c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
-        u3t_slog_cap(pri_l, u3i_string("memeory profile at"), u3k(tan));
-        u3t_slog_meme(pri_l);
       }
       u3z(*clu);
       *clu = u3_nul;
@@ -2123,6 +2033,7 @@ typedef struct {
 static u3_noun
 _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 {
+
   // Opcode jump table. Define X to select the opcode computed goto from
   // OPCODES.
 # define X(opcode, name, indirect_jump) indirect_jump
@@ -2353,7 +2264,6 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       fam->pog_u = pog_u;
       _n_push(mov, off, x);
     nock_out:
-      //u3t_slog_cap(1, u3i_string("called"), u3i_string("_n_burn _n_find"));
       pog_u = _n_find(u3_nul, o);
       pog   = pog_u->byc_u.ops_y;
       ip_w  = 0;
@@ -2882,7 +2792,6 @@ _n_burn_out(u3_noun bus, u3n_prog* pog_u)
 u3_noun
 u3n_burn(u3p(u3n_prog) pog_p, u3_noun bus)
 {
-  //u3t_slog_cap(1, u3i_string("called"), u3i_string("u3n_burn"));
   u3_noun pro;
   u3t_on(noc_o);
   pro = _n_burn_out(bus, u3to(u3n_prog, pog_p));
@@ -2895,7 +2804,6 @@ u3n_burn(u3p(u3n_prog) pog_p, u3_noun bus)
 static u3_noun
 _n_burn_on(u3_noun bus, u3_noun fol)
 {
-  //u3t_slog_cap(1, u3i_string("called"), u3i_string("_n_burn_on"));
   u3n_prog* pog_u = _n_find(u3_nul, fol);
 
   u3z(fol);
@@ -2907,7 +2815,6 @@ _n_burn_on(u3_noun bus, u3_noun fol)
 u3_noun
 u3n_nock_on(u3_noun bus, u3_noun fol)
 {
-  //u3t_slog_cap(1, u3i_string("called"), u3i_string("u3n_nock_on"));
   u3_noun pro;
 
   u3t_on(noc_o);

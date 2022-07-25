@@ -4,37 +4,30 @@
 |%
 ::  test that these trace hints
 ::  are safe to run or ignore
-++  test-09-hilt-hela
+++  test-hilt-hela
   ~>  %hela
   ~
-++  test-08-hint-hela
-  ~>  %hela.[1 leaf+"test-08-hint-hela ~"]
+++  test-hint-hela
+  ~>  %hela.[1 leaf+"test-hint-hela ~"]
   ~
-++  test-07-hilt-nara
+++  test-hilt-nara
   ~>  %nara
   ~
-++  test-06-hint-nara
-  ~>  %nara.[1 leaf+"test-06-hint-nara ~"]
-  ~
-::  test that these memory-report hints
-::  are safe to run or ignore
-++  test-05-hilt-meme
-  ~>  %meme
-  ~
-++  test-04-hint-meme
-  ~>  %meme.[1 leaf+"test-04-hint-meme ~"]
+++  test-hint-nara
+  ~>  %nara.[1 leaf+"test-hint-nara ~"]
   ~
 ::  test that theses bytecode-report hints
 ::  are safe to run or ignore
-++  test-03-hilt-xray
+++  test-hilt-xray
   ~>  %xray
   ~
-++  test-02-hint-xray
-  ~>  %xray.[1 leaf+"test-02-hint-xray ~"]
+++  test-hint-xray
+  ~>  %xray.[1 leaf+"test-hint-xray ~"]
   ~
 ::  test that the hilt bout hint
 ::  is safe to run or ignore
-++  test-01-hilt-bout
+++  test-hilt-bout
   ~>  %bout
   ~
 --
+
