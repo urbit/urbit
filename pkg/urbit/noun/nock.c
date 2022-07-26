@@ -509,6 +509,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
   X(KITB, "kitb", &&do_kitb),  /* 93: c3_b */                                  \
   X(KITS, "kits", &&do_kits),  /* 94: c3_s, seems unused in codebase */        \
   X(LAST,   NULL,      NULL),  /* 95 */
+
 // Opcodes. Define X to select the enum name from OPCODES.
 #define X(opcode, name, indirect_jump) opcode
 enum { OPCODES };
@@ -1677,23 +1678,19 @@ u3n_find(u3_noun key, u3_noun fol)
 }
 
 /* _n_prog_free(): free memory retained by program
-*/
+ */
 static void
 _n_prog_free_willy(u3n_prog* pog_u)
 {
   c3_w i_w;
-  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
+  for (i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w)
     u3z(pog_u->lit_u.non[i_w]);
-  }
-  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
+  for (i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w)
     u3z(pog_u->mem_u.sot_u[i_w].key);
-  }
-  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
+  for (i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w)
     u3j_site_lose(&(pog_u->cal_u.sit_u[i_w]));
-  }
-  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
+  for (i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w)
     u3j_rite_lose(&(pog_u->reg_u.rit_u[i_w]));
-  }
   u3a_free(pog_u);
 }
 
@@ -3169,4 +3166,3 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 
   return u3n_nock_et(gul, bus, fol);
 }
-
