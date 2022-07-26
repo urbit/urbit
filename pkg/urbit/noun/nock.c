@@ -1712,17 +1712,17 @@ _intlen(int value)
  *                which means that _slog_bytecode doesn't
  *                know how to handle it.
  */
-int
-_invalid_op(int go)
+c3_b
+_invalid_op(c3_y go)
 {
   return !(go == 0 || go == 1 || go == 2 | go == 4);
 }
 
 /*  _is_pair(): return true if go > 0
- *              which means the opcode paired with an argument
+ *              which means the opcode is paired with an argument
  */
-int
-_is_pair(int go)
+c3_b
+_is_pair(c3_y go)
 {
   return (go == 1 || go == 2 | go == 4);
 }
@@ -1731,8 +1731,8 @@ _is_pair(int go)
  *                in the set of opcodes known to
  *                use pog_u->lit_u.non
  */
-int
-_is_indexed(int op)
+c3_b
+_is_indexed(c3_w op)
 {
   if (op == 15 || op == 16 || op == 19 || op == 20 )
     return 1;
@@ -1760,7 +1760,8 @@ _is_indexed(int op)
  *
  */
 void
-_slog_bytecode(c3_l pri_l, c3_y* pog, u3n_prog* pog_u) {
+_slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
+  c3_y* pog = pog_u->byc_u.ops_y;
   c3_w len_w = pog_u->byc_u.len_w;
   c3_w ip_w=0, num=0, op_num=0, is_idx_op=0;
   c3_w s_ln = 1; // opening "{"
@@ -1803,9 +1804,10 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, u3n_prog* pog_u) {
         strcat(str_c, "0");                  // handle a litteral zero
       }                                      //
       else {                                 //
-        for (int x = _intlen(num); x>0; x--) // prefill the buffer
+        unsigned int x = 0;                  //
+        for (x = _intlen(num); x>0; x--)     // prefill the buffer
           strcat(str_c, "_");                //
-        int f = strlen(str_c)-1;             // get the index of the last prefill
+        unsigned int f = strlen(str_c)-1;    // get the index of the last prefill
         while (num > 0) {                    // stringify number in LSB order
           str_c[f--] = (num%10)+'0';         // .. stringify the tail of num into tail of buf
           num /= 10;                         // .. turncate num by one digit
@@ -1823,8 +1825,7 @@ _slog_bytecode(c3_l pri_l, c3_y* pog, u3n_prog* pog_u) {
 void
 _xray(c3_l pri_l, u3_noun fol) {
   u3n_prog* pog_u = _n_bite(fol);
-  c3_y* pog = pog_u->byc_u.ops_y;
-  _slog_bytecode(pri_l, pog, pog_u);
+  _slog_bytecode(pri_l, pog_u);
   _n_prog_free_willy(pog_u);
 }
 
