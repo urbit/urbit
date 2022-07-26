@@ -1122,7 +1122,7 @@
       ap-core
     ::
     ++  ap-perm
-      |=  dif=$>(?(%free %lock) task)
+      |=  dif=$~([%free %$ ~] $>(?(%free %lock) task))
       ^+  ap-core
       ::TODO  fake wire...
       (ap-generic-take /~ %gall %perm dif)
