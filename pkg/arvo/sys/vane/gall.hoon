@@ -1642,7 +1642,7 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof ~))
+      =/  res  (mock [run %9 2 %0 1] (ap-look rof ~))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -1653,12 +1653,24 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof ~))
+      =/  res  (mock [run %9 2 %0 1] (ap-look rof ~))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
+    ::  +ap-look: namespace lookup with permission check
+    ::
+    ++  ap-look
+      |=  [rof=roof lyc=gang]
+      =;  rov=roof
+        (look rov lyc)
+      ?:  =(%base q.beak.yoke)  rof
+      |=  [lyc=gang vis=view bem=beam]
+      ^-  (unit (unit (cask vase)))
+      ?.  (rite our [vis bem] (~(get ju perms.state) q.beak.yoke))
+        ~
+      (rof lyc vis bem)
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the

@@ -1841,6 +1841,27 @@
         ==  ==
     ==
   ::
+  ++  rite  !:
+    |=  [our=ship [=view =beam] pers=(set perm)]
+    ^-  ?
+    ?.  =(our p.beam)  |
+    =/  vane=term
+      ?^  view  way.view
+      ?.  =(2 (met 3 view))
+        view
+      (end 3 view)
+    %+  lien  ~(tap in pers)
+    |=  p=perm
+    ?.  ?=(%reads -.p)  |
+    ?&  =(vane.p vane)
+        =(q.beam (fall desk.p q.beam))
+      ::
+        |-
+        ?~  spur.p  &
+        ?~  s.beam  |
+        &(=(i.spur.p i.s.beam) $(spur.p t.spur.p, s.beam t.s.beam))
+    ==
+  ::
   ++  cred  !:
     |=  [our=ship =card:agent pers=(set perm)]
     ^-  ?
