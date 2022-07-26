@@ -22,7 +22,7 @@
       $%  [%run-test p=$-(* ?)]
       ==
     ::
-    ::    makes a dummy-agent which is basically a default-agent with bowl scry
+    ::    makes a test-dummy which is basically a default-agent with bowl scry
     ++  test-dummy
       %-  agent:dbug
       ^-  agent:gall
@@ -38,13 +38,11 @@
         ~&  'on-poke'
         ^-  (quip card _this)
         ?.  ?=(%noun mark)
-          ~&  'no'
           `this
         =/  action  !<(poke vase)
         ~&  action
         ?-  action
           [%run-test *]
-            ~&  'bweh'
             ~&  (p.action bowl)
             `this
         ==
@@ -61,8 +59,10 @@
         |=  [=wire =sign-arvo]
         ^-  (quip card _this)
         ?+    wire  (on-arvo:def wire sign-arvo)
+        ::
             [%~.~ ~]
           ?+    sign-arvo  (on-arvo:def wire sign-arvo)
+          ::
               [%gall %perm *]
             ~&  >>  ['permissions change' +>.sign-arvo]
             `this
@@ -133,7 +133,7 @@
     :-  %noun
     !>  [%run-test gat]
   ::
-  =^  moves  dep-gall  (make-test-dummy dep-gall)
+  =^  moves  dep-gall  (make-test-dummy dep-gall test-desk %buster)
   =^  moves  dep-gall  (task-test-dummy dep-gall task)
   *tang
   ::
@@ -148,7 +148,7 @@
   =/  per  (~(gas in *(set perm:gall)) [%ames %debug]~)
   =/  =task:gall  [%free test-desk per]
   ::
-  =^  moves  dep-gall  (make-test-dummy dep-gall)
+  =^  moves  dep-gall  (make-test-dummy dep-gall test-desk %buster)
   =^  moves  dep-gall   (call dep-gall duct task)
   =/  =bowl:gall  (scry-test-dummy-bowl dep-gall)
   ::
@@ -167,7 +167,7 @@
   =/  task-1=task:gall    [%free test-desk per]
   =/  task-2=task:gall    [%lock test-desk ner]
   ::
-  =^  moves  dep-gall  (make-test-dummy dep-gall)
+  =^  moves  dep-gall  (make-test-dummy dep-gall test-desk %buster)
   =^  moves  dep-gall  (call dep-gall duct task-1)
   =^  moves  dep-gall  (call dep-gall duct task-2)
   =/  =bowl:gall  (scry-test-dummy-bowl dep-gall)
@@ -200,22 +200,19 @@
   ::
   (take:vane-core wire duct ~ sign-arvo)
 ::
-::  +make-test-dummy: creates a +test-dummy called %buster in dep-gall
+::  +make-test-dummy: creates a +test-dummy named .dude in .desk
 ++  make-test-dummy
-  |=  [vane=_dep-gall]
+  |=  [vane=_dep-gall =desk =dude:gall]
   ^-  [moves=(list move) _dep-gall]
-  ::
-  ::=/  =wire  /sys/cor/buster/~dep/(scot %ta test-desk)/foo
-  =/  =wire  /sys/cor/buster/~dep/[test-desk]/foo
+  =/  =wire  /sys/cor/[dude]/~dep/[desk]/foo
   =/  =duct  ~[/perm]
   =/  =sign-arvo
     =;  =gift:clay
       [%clay gift]
     :-  %writ
     %-  some
-    :+  [*care:clay *case:clay test-desk]
+    :+  [*care:clay *case:clay desk]
       *path
-::    [%vase !>(!>((agent:dbug *agent:gall)))]
     [%vase !>(!>(test-dummy))]
   ::
   =^  moves  dep-gall  (take dep-gall wire duct sign-arvo)
