@@ -1780,8 +1780,9 @@
   +$  perm  $%(perm-arvo perm-gall)
   ::
   +$  perm-gall  ::TODO  by desk?
-    $%  [%local dude=(unit dude:gall)]  ::  poke/subscribe locally
-        [%peers ~]                      ::  poke/subscribe remotely
+    $%  [%write dude=$?(%peers (unit dude:gall))]  ::  poke
+        [%watch dude=$?(%peers (unit dude:gall))]  ::  subscribe
+        [%reads vane=term desk=(unit desk) =spur]  ::  scry
     ==
   ::
   +$  perm-arvo  ::TODO  more narrow
@@ -1841,17 +1842,21 @@
     ==
   ::
   ++  cred  !:
-    |=  [=ship =card:agent pers=(set perm)]
+    |=  [our=ship =card:agent pers=(set perm)]
     ^-  ?
     =;  must=$@(? perm)
       ?@  must  must
       ?+  must  (~(has in pers) must)
-          [%local *]
-        =/  =dude  (need dude.must)
+          [?(%write %watch) *]
         %+  lien  ~(tap in pers)
         |=  p=perm
-        ?&  ?=([%local *] p)
-            =(dude (fall dude.p dude))
+        ?&  ?=(?(%write %watch) -.p)
+            =(-.must -.p)
+            ?-  dude.p
+              %peers  =(%peers dude.must)
+              ^       =(dude.must dude.p)
+              ~       ?=(^ dude.must)
+            ==
         ==
       ::
           [%clay ?(%write %local %build) *]
@@ -1886,9 +1891,13 @@
     ?:  ?=(%pyre -.note)
       &
     ?:  ?=(%agent -.note)
-      ?.  =(ship ship.note)
-        [%peers ~]
-      [%local `name.note]
+      =*  target
+        ?:(=(our ship.note) `name.note %peers)
+      ?-  -.task.note
+        ?(%watch %watch-as)  [%watch target]
+        ?(%poke %poke-as)    [%write target]
+        %leave               &
+      ==
     ::
     ?-  +<.note
         %a
@@ -1909,7 +1918,7 @@
         %werp                 [%clay %peers ~]
       ::
           %warp
-        ?.  =(ship wer.note)  [%clay %peers ~]
+        ?.  =(our wer.note)  [%clay %peers ~]
         ?~  q.rif.note  &  ::  can always cancel request
         ::TODO  also account for the %mult case, may need multiple perms?
         ?:  ?&  ?=(?(%sing %next) -.u.q.rif.note)
