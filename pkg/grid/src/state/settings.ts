@@ -23,6 +23,13 @@ interface BrowserSetting {
 }
 
 interface BaseSettingsState {
+  calmEngine: {
+    disableAppTileUnreads: boolean;
+    disableAvatars: boolean;
+    disableNicknames: boolean;
+    disableSpellcheck: boolean;
+    disableRemoteContent: boolean;
+  };
   display: {
     theme: 'light' | 'dark' | 'auto';
     doNotDisturb: boolean;
@@ -81,6 +88,13 @@ export const reduceUpdate = [putBucket, delBucket, putEntry, delEntry];
 export const useSettingsState = createState<BaseSettingsState>(
   'Settings',
   (set, get) => ({
+    calmEngine: {
+      disableAppTileUnreads: false,
+      disableAvatars: false,
+      disableNicknames: false,
+      disableSpellcheck: false,
+      disableRemoteContent: false
+    },
     display: {
       theme: 'auto',
       doNotDisturb: true
