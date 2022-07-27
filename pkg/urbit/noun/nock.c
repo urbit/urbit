@@ -514,15 +514,12 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define X(opcode, name, indirect_jump) opcode
 enum { OPCODES };
 #undef X
-/* TODO: opcodes for nock 7 & 8 seem to be missing */
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
 static inline c3_y
 _n_arg(c3_y cod_y)
 {
-  // TODO: I think these lists are incomplete
-  //       they should include all the hint ops too
   switch ( cod_y ) {
     case FABK: case FABL: case FIBL: case FIBK:
     case LILB: case LITB: case LIBL: case LIBK:
@@ -530,7 +527,7 @@ _n_arg(c3_y cod_y)
     case SLIB: case SKIB: case KICB: case TICB:
     case BUSH: case BAST: case BALT:
     case MUTB: case KUTB: case MITB: case KITB:
-    case HILB: case HINB: // to fix my TODO
+    case HILB: case HINB:
       return sizeof(c3_y);
 
     case FASK: case FASL: case FISL: case FISK:
@@ -539,7 +536,7 @@ _n_arg(c3_y cod_y)
     case SLIS: case SKIS: case KICS: case TICS:
     case SUSH: case SAST: case SALT:
     case MUTS: case KUTS: case MITS: case KITS:
-    case HILS: case HINS: // to fix my TODO
+    case HILS: case HINS:
       return sizeof(c3_s);
 
     case SWIP: case SWIN:
@@ -789,7 +786,6 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
     if ( c3y == u3ud(op) ) {
       switch ( op ) {
         default:
-          // just reuse op
           buf_y[i_w] = (c3_y) op;
           break;
 
@@ -888,7 +884,6 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case BUSH: case SANB:
         case KITB: case MITB:
         case HILB: case HINB:
-        case HINS: case HILS:
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
           break;
@@ -1204,11 +1199,11 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   u3_noun cod, arg, hed, tel;
   u3x_cell(fol, &cod, &arg);
   if ( c3y == u3du(cod) ) {
-    tot_w += _n_comp(ops, cod, c3n, c3n);                 // [hed bus       ..] // compute head: don't lose, not in tail
-    ++tot_w; _n_emit(ops, SWAP);                          // [bus hed       ..]
-    tot_w += _n_comp(ops, arg, c3n, c3n);                 // [tel bus hed   ..] // compute tail: don't lose, not in tail
-    ++tot_w; _n_emit(ops, (c3y == los_o ) ? AULT : AUTO); // [[hed tel]     ..]
-  }                                                       // [[hed tel] bus ..]
+    tot_w += _n_comp(ops, cod, c3n, c3n);
+    ++tot_w; _n_emit(ops, SWAP);
+    tot_w += _n_comp(ops, arg, c3n, c3n);
+    ++tot_w; _n_emit(ops, (c3y == los_o ) ? AULT : AUTO);
+  }
   else switch ( cod ) {
     case 0:
       if ( c3n == u3ud(arg) ) {
@@ -1242,12 +1237,12 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
     case 1:
       switch ( arg ) {
         case 0:
-          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0); // an actual value of 0
+          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
           break;
         case 1:
-          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1); // an actual value of 1
+          ++tot_w; _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
           break;
-        default: // these are all indexes
+        default:
           op_y = (c3y == los_o)
                ? (arg <= 0xFF ? LILB : arg <= 0xFFFF ? LILS : LIBL)  // overflows to LISL
                : (arg <= 0xFF ? LITB : arg <= 0xFFFF ? LITS : LIBK); // overflows to LISK
@@ -1683,29 +1678,33 @@ static void
 _n_prog_free(u3n_prog* pog_u)
 {
   c3_w i_w;
-  for (i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w)
+  for (i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w) {
     u3z(pog_u->lit_u.non[i_w]);
-  for (i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w)
+  }
+  for (i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w) {
     u3z(pog_u->mem_u.sot_u[i_w].key);
-  for (i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w)
+  }
+  for (i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w) {
     u3j_site_lose(&(pog_u->cal_u.sit_u[i_w]));
-  for (i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w)
+  }
+  for (i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w) {
     u3j_rite_lose(&(pog_u->reg_u.rit_u[i_w]));
+  }
   u3a_free(pog_u);
 }
 
 /* _intlen(): find the number of characters the given int
  *            would take to print.
  */
-unsigned int
-_intlen(unsigned int num)
+c3_w
+_intlen(c3_w num_w)
 {
-  unsigned int len=0;
-  while(num){
-    num/=10;
-    len++;
+  c3_w len_w=0;
+  while(num_w){
+    num_w/=10;
+    len_w++;
   }
-  return len;
+  return len_w;
 }
 
 /* _invalid_op(): return true if 'go' is not in 0-2,4
@@ -1734,17 +1733,23 @@ _is_pair(c3_y go)
 c3_b
 _is_indexed(c3_w op)
 {
-  if (op == 15 || op == 16 || op == 19 || op == 20 )
+  // NOTE: this logic is copied from ___
+  // and must be changed here if that changes.
+  switch (op) {
+  case FIBK: case FIBK+1:
+  case FIBL: case FIBL+1:
+  case LIBK: case LIBK+1:
+  case LIBL: case LIBL+1:
+  case BUSH: case BUSH+1:
+  case SANB: case SANB+1:
+  case KITB: case KITB+1:
+  case MITB: case MITB+1:
+  case HILB: case HILB+1:
+  case HINB: case HINB+1:
     return 1;
-  if (op == 25 || op == 26 || op == 31 || op == 32 )
-    return 1;
-  if (op == 42 || op == 43 || op == 59 || op == 60 )
-    return 1;
-  if (op == 73 || op == 74 || op == 75 || op == 76 )
-    return 1;
-  if (op == 89 || op == 90 || op == 93 || op == 94 )
-    return 1;
-  return 0;
+  default:
+    return 0;
+  }
 }
 
 /* _num_from_pog(): returns an unsigned int of variable size
@@ -1806,10 +1811,11 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
         strcat(str_c, "0");                  // handle a litteral zero
       }                                      //
       else {                                 //
-        unsigned int x = 0;                  //
-        for (x = _intlen(num); x>0; x--)     // prefill the buffer
-          strcat(str_c, "_");                //
-        unsigned int f = strlen(str_c)-1;    // get the index of the last prefill
+        c3_w x = 0;                          //
+        for (x = _intlen(num); x>0; x--) {   //
+          strcat(str_c, "_");                // prefill the buffer
+        }                                    //
+        c3_w f = strlen(str_c)-1;            // get the index of the last prefill
         while (num > 0) {                    // stringify number in LSB order
           str_c[f--] = (num%10)+'0';         // .. stringify the tail of num into tail of buf
           num /= 10;                         // .. turncate num by one digit
