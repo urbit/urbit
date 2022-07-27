@@ -1677,10 +1677,10 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
-/* _n_prog_free(): free memory retained by program
+/* _n_prog_free(): free memory retained by program pog_u
  */
 static void
-_n_prog_free_willy(u3n_prog* pog_u)
+_n_prog_free(u3n_prog* pog_u)
 {
   c3_w i_w;
   for (i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w)
@@ -1697,15 +1697,15 @@ _n_prog_free_willy(u3n_prog* pog_u)
 /* _intlen(): find the number of characters the given int
  *            would take to print.
  */
-int
-_intlen(int value)
+unsigned int
+_intlen(unsigned int num)
 {
-  int x=!value;
-  while(value){
-    value/=10;
-    x++;
+  unsigned int len=0;
+  while(num){
+    num/=10;
+    len++;
   }
-  return x;
+  return len;
 }
 
 /* _invalid_op(): return true if 'go' is not in 0-2,4
@@ -1756,15 +1756,17 @@ _is_indexed(c3_w op)
   go == 2 ? _n_resh(pog, &ip_w):      \
   pog[ip_w++])
 
-/* _slog_bytecode():
- *
+/* _slog_bytecode(): given a text render style priority hint pri_l (int 0-3),
+ *                   and a u3n_prog bytecode program, compute the number of
+ *                   chars needed to render the bytecode program to a string,
+ *                   render it to a string, and slog that string to dill.
  */
 void
 _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   c3_y* pog = pog_u->byc_u.ops_y;
   c3_w len_w = pog_u->byc_u.len_w;
   c3_w ip_w=0, num=0, op_num=0, is_idx_op=0;
-  c3_w s_ln = 1; // opening "{"
+  c3_w len_c = 1; // opening "{"
   // set go to an invalid value, so we can break imeadately if needed
   c3_w go = 5;
   // lets count the chars in this string
@@ -1773,11 +1775,11 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
     if (_invalid_op(go)) break;      // give up if we dont know how to print it
     op_num = pog[ip_w++];            // move ip_w for reading a opcode name
     is_idx_op = _is_indexed(op_num); // is this an indexed bytecode argument
-    s_ln += 5;                       // a leading space, and opcode name
+    len_c += 5;                      // a leading space, and opcode name
     if (_is_pair(go)) {              // if pair: "[bytecode arg]" else "bytecode"
-      s_ln += 3;                     // "[", space between opcode & arg, "]"
-      if ( is_idx_op ) s_ln += 2;    // 'i:'
-      s_ln += _intlen(               // length of the bytecode argument
+      len_c += 3;                    // "[", space between opcode & arg, "]"
+      if ( is_idx_op ) len_c += 2;   // 'i:'
+      len_c += _intlen(              // length of the bytecode argument
         _num_from_pog(go, pog, ip_w)
       );
     }
@@ -1785,7 +1787,7 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   // reset so we can loop again
   ip_w=0, num=0, op_num=0, is_idx_op=0, go=5;
   // init our string, and give it a trailing null
-  c3_c str_c[s_ln];
+  c3_c str_c[len_c];
   str_c[0] = 0;
   // lets print this string
   while ( ip_w < len_w ) {
@@ -1822,11 +1824,16 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   u3t_slog_cap(pri_l, u3i_string("bytecode"), u3i_string(str_c));
 }
 
+/* _xray(): given a text render style priority hint pri_l (int 0-3),
+ *          and a noun fol to complie into a u3n_prog bytecode program,
+ *          slog the program as a string of bytecodes,
+ *          and free the temp program afterwards.
+ */
 void
 _xray(c3_l pri_l, u3_noun fol) {
   u3n_prog* pog_u = _n_bite(fol);
   _slog_bytecode(pri_l, pog_u);
-  _n_prog_free_willy(pog_u);
+  _n_prog_free(pog_u);
 }
 
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
@@ -2824,32 +2831,6 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
   u3t_off(noc_o);
 
   return pro;
-}
-
-/* _n_prog_free(): free memory retained by program
-*/
-static void
-_n_prog_free(u3n_prog* pog_u)
-{
-  c3_w i_w;
-
-  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
-    u3z(pog_u->lit_u.non[i_w]);
-  }
-
-  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
-    u3z(pog_u->mem_u.sot_u[i_w].key);
-  }
-
-  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    u3j_site_lose(&(pog_u->cal_u.sit_u[i_w]));
-  }
-
-  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
-    u3j_rite_lose(&(pog_u->reg_u.rit_u[i_w]));
-  }
-
-  u3a_free(pog_u);
 }
 
 /* _cn_take_prog_dat(): take references from junior u3n_prog.
