@@ -252,6 +252,11 @@
   =<  abet
   (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
 ::
+++  poke-doff
+  |=  ~
+  =<  abet
+  (emit %pass /helm/doff %arvo %g %doff ~)
+::
 ++  poke
   |=  [=mark =vase]
   ?>  ?|  ?=(%helm-hi mark)
@@ -269,6 +274,7 @@
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
     %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
     %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
+    %helm-doff             =;(f (f !<(_+<.f vase)) poke-doff)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
