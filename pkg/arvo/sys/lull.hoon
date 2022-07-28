@@ -351,6 +351,7 @@
   ::    %hear: packet from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
+  ::    %cork: request to delete message flow
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -367,6 +368,7 @@
     $%  [%hear =lane =blob]
         [%heed =ship]
         [%jilt =ship]
+        [%cork =ship]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
@@ -511,6 +513,9 @@
   ::         entry and emit a nack to the local vane that asked us to send
   ::         the message.
   ::    heeds: listeners for %clog notifications
+  ::    closing: bones closed on the sender side
+  ::    corked:  bones closed on both sender and receiver
+  ::    krocs:   bones that need to be sent again to the publisher
   ::
   +$  peer-state
     $:  $:  =symmetric-key
@@ -526,6 +531,9 @@
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
         heeds=(set duct)
+        closing=(set bone)
+        corked=(set bone)
+        krocs=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
@@ -1655,11 +1663,12 @@
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         $>(%plea vane-task)                             ::  network request
+        [%spew veb=(list verb)]                         ::  set verbosity
+        [%sift dudes=(list dude)]                       ::  per agent
     ==                                                  ::
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
-  +$  boat                                              ::  outgoing subs
-    %+  map  [=wire =ship =term]                        ::
-    [acked=? =path]                                     ::
+  +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
+  +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
@@ -1695,6 +1704,9 @@
     $%  [%raw-fact =mark =noun]
         sign:agent
     ==
+  ::  TODO: add more flags?
+  ::
+  +$  verb  ?(%odd)
   ::
   ::  +agent: app core
   ::
