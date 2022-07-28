@@ -324,7 +324,7 @@
     =/  apps  ~(tap by yokes.state)
     |-  ^+  mo-core
     ?~  apps  mo-core
-    =/  [dap yok]=[p q]:i.apps
+    =+  [dap yok]=[p q]:i.apps
     =/  ap-core  (ap-yoke:ap:mo-core dap [~ our] yok)
     =.  ap-core
       =/  subs  ~(tap in ~(key by outbound.watches.yok))
@@ -1742,7 +1742,7 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
-      %doff  mo-abet:mo-doff
+      %doff  mo-abet:mo-doff:mo-core
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==
