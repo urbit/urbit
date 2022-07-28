@@ -317,6 +317,22 @@
     =/  =case  [%da now]
     =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]/(scot case)
     (mo-pass wire %c %warp ship desk ~ %sing %a case /app/[dap]/hoon)
+  ::  +mo-doff: kill all outgoing subscriptions
+  ::
+  ++  mo-doff
+    ^+  mo-core
+    =/  apps  ~(tap by yokes.state)
+    |-  ^+  mo-core
+    ?~  apps  mo-core
+    =/  [dap yok]=[p q]:i.apps
+    =/  ap-core  (ap-yoke:ap:mo-core dap [~ our] yok)
+    =.  ap-core
+      =/  subs  ~(tap in ~(key by outbound.watches.yok))
+      |-  ^+  ap-core
+      ?~  subs  ap-core
+      ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap>} {<i.subs>}"]
+      $(subs t.subs, ap-core (ap-kill-down:ap-core i.subs))
+    $(apps t.apps, mo-core ap-abet:ap-core)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1726,6 +1742,7 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
+      %doff  mo-abet:mo-doff
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==
