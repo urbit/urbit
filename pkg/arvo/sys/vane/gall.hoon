@@ -439,7 +439,7 @@
     =+  [dap yok]=[p q]:i.apps
     =/  ap-core  (ap-yoke:ap:mo-core dap [~ our] yok)
     =.  ap-core
-      =/  subs  ~(tap in ~(key by outbound.watches.yok))
+      =/  subs  ~(tap in ~(key by boat.yok))
       |-  ^+  ap-core
       ?~  subs  ap-core
       ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap>} {<i.subs>}"]
