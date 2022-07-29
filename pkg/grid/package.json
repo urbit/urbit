@@ -25,6 +25,7 @@
     "@radix-ui/react-radio-group": "^0.1.5",
     "@radix-ui/react-toggle": "^0.0.10",
     "@tlon/sigil-js": "^1.4.4",
+    "@tloncorp/mock-http-api": "^1.2.0",
     "@types/lodash": "^4.14.172",
     "@urbit/api": "^2.1.1",
     "@urbit/http-api": "^2.1.0",
@@ -92,5 +93,8 @@
       "prettier --write"
     ],
     "*.+{json,css,md}": "prettier --write"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }

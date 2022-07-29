@@ -1,5 +1,4 @@
 import create, { SetState } from 'zustand';
-import produce from 'immer';
 import { useCallback, useEffect, useState } from 'react';
 import { omit, pick } from 'lodash';
 import {
@@ -13,7 +12,6 @@ import {
   Treaty,
   Docket,
   Treaties,
-  chadIsRunning,
   AllyUpdateIni,
   AllyUpdateNew,
   TreatyUpdateIni,
@@ -25,8 +23,7 @@ import {
   allyShip
 } from '@urbit/api';
 import api from './api';
-import { mockAllies, mockCharges, mockTreaties } from './mock-data';
-import { fakeRequest, normalizeUrbitColor, useMockData } from './util';
+import { normalizeUrbitColor } from './util';
 import { Status } from '../logic/useAsyncCall';
 
 export interface ChargeWithDesk extends Charge {
@@ -60,15 +57,13 @@ interface DocketState {
 }
 
 const useDocketState = create<DocketState>((set, get) => ({
-  defaultAlly: useMockData ? '~zod' : null,
+  defaultAlly: null,
   fetchDefaultAlly: async () => {
     const defaultAlly = await api.scry<string>(scryDefaultAlly);
     set({ defaultAlly });
   },
   fetchCharges: async () => {
-    const charg = useMockData
-      ? await fakeRequest(mockCharges)
-      : (await api.scry<ChargeUpdateInitial>(scryCharges)).initial;
+    const charg = (await api.scry<ChargeUpdateInitial>(scryCharges)).initial;
 
     const charges = Object.entries(charg).reduce((obj: ChargesWithDesks, [key, value]) => {
       // eslint-disable-next-line no-param-reassign
@@ -79,24 +74,18 @@ const useDocketState = create<DocketState>((set, get) => ({
     set({ charges });
   },
   fetchAllies: async () => {
-    const allies = useMockData ? mockAllies : (await api.scry<AllyUpdateIni>(scryAllies)).ini;
+    const allies = (await api.scry<AllyUpdateIni>(scryAllies)).ini;
     set({ allies });
     return allies;
   },
   fetchAllyTreaties: async (ally: string) => {
-    let treaties = useMockData
-      ? mockTreaties
-      : (await api.scry<TreatyUpdateIni>(scryAllyTreaties(ally))).ini;
+    let treaties = (await api.scry<TreatyUpdateIni>(scryAllyTreaties(ally))).ini;
     treaties = normalizeDockets(treaties);
     set((s) => ({ treaties: { ...s.treaties, ...treaties } }));
     return treaties;
   },
   requestTreaty: async (ship: string, desk: string) => {
     const { treaties } = get();
-    if (useMockData) {
-      set({ treaties: await fakeRequest(treaties) });
-      return treaties[desk];
-    }
 
     const key = `${ship}/${desk}`;
     if (key in treaties) {
@@ -116,18 +105,11 @@ const useDocketState = create<DocketState>((set, get) => ({
       throw new Error('Bad install');
     }
     set((state) => addCharge(state, desk, { ...treaty, chad: { install: null } }));
-    if (useMockData) {
-      await new Promise<void>((res) => setTimeout(() => res(), 10000));
-      set((state) => addCharge(state, desk, { ...treaty, chad: { glob: null } }));
-    }
 
     return api.poke(docketInstall(ship, desk));
   },
   uninstallDocket: async (desk: string) => {
     set((state) => delCharge(state, desk));
-    if (useMockData) {
-      return;
-    }
     await api.poke({
       app: 'docket',
       mark: 'docket-uninstall',
@@ -135,14 +117,6 @@ const useDocketState = create<DocketState>((set, get) => ({
     });
   },
   toggleDocket: async (desk: string) => {
-    if (useMockData) {
-      set(
-        produce((draft) => {
-          const charge = draft.charges[desk];
-          charge.chad = chadIsRunning(charge.chad) ? { suspend: null } : { glob: null };
-        })
-      );
-    }
     const { charges } = get();
     const charge = charges[desk];
     if (!charge) {
@@ -155,9 +129,9 @@ const useDocketState = create<DocketState>((set, get) => ({
       await api.poke(kilnSuspend(desk));
     }
   },
-  treaties: useMockData ? normalizeDockets(mockTreaties) : {},
+  treaties: {},
   charges: {},
-  allies: useMockData ? mockAllies : {},
+  allies: {},
   addAlly: async (ship) => {
     set((draft) => {
       draft.allies[ship] = [];
@@ -356,9 +330,5 @@ export const landscapeTreatyHost = import.meta.env.LANDSCAPE_HOST as string;
 
 // xx useful for debugging
 window.docket = useDocketState.getState;
-
-if (useMockData) {
-  window.desk = 'garden';
-}
 
 export default useDocketState;

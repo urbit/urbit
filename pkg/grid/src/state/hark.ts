@@ -21,8 +21,6 @@ import _ from 'lodash';
 import api from './api';
 import { getBrowserSetting, parseBrowserSettings, useSettingsState } from './settings';
 import { BaseState, createState, createSubscription, reduceStateN } from './base';
-import { mockNotifications } from './mock-data';
-import { useMockData } from './util';
 import { useLocalState } from './local';
 
 export interface HarkState {
@@ -68,7 +66,7 @@ export const useHarkStore = createState<HarkState>(
   'Hark',
   (set, get) => ({
     seen: {},
-    unseen: useMockData ? mockNotifications : {},
+    unseen: {},
     archive: new BigIntOrderedMap<Timebox>(),
     webNotes: {},
     notificationsGraphConfig: {
@@ -94,9 +92,6 @@ export const useHarkStore = createState<HarkState>(
         const binId = harkBinToId(bin);
         delete draft[seen][binId];
       });
-      if (useMockData) {
-        return;
-      }
       await api.poke(archive(bin, lid));
     },
     opened: async () => {

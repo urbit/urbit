@@ -2,16 +2,6 @@ import { Docket, DocketHref, Treaty } from '@urbit/api';
 import { hsla, parseToHsla } from 'color2k';
 import _ from 'lodash';
 
-export const useMockData = import.meta.env.MODE === 'mock';
-
-export async function fakeRequest<T>(data: T, time = 300): Promise<T> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data);
-    }, time);
-  });
-}
-
 export function getAppHref(href: DocketHref) {
   return 'site' in href ? href.site : `/apps/${href.glob.base}/`;
 }

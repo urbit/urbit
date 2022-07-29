@@ -3,8 +3,6 @@ import { Contact, ContactEditFieldPrim, ContactUpdate, deSig, Patp, Rolodex } fr
 import { useCallback } from 'react';
 import _ from 'lodash';
 import { BaseState, createState, createSubscription, reduceStateN } from './base';
-import { useMockData } from './util';
-import { mockContacts } from './mock-data';
 
 export interface BaseContactState {
   contacts: Rolodex;
@@ -116,10 +114,6 @@ const useContactState = createState<BaseContactState>(
       })
   ]
 );
-
-if (useMockData) {
-  useContactState.setState({ contacts: mockContacts });
-}
 
 export function useContact(ship: string) {
   return useContactState(
