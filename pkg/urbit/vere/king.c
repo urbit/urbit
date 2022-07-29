@@ -577,6 +577,10 @@ _boothack_doom(void)
 
     if ( u3_nul == whu ) {
       u3l_log("boot: malformed -F ship %s\r\n", u3_Host.ops_u.fak_c);
+      
+      u3_term_log_exit();
+      fflush(stdout);
+
       exit(1);
     }
 
