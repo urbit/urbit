@@ -578,7 +578,6 @@ _boothack_doom(void)
     if ( u3_nul == whu ) {
       u3l_log("boot: malformed -F ship %s\r\n", u3_Host.ops_u.fak_c);
       u3_king_bail();
-      exit(1);
     }
 
     bot = u3nc(c3__fake, u3k(u3t(whu)));
