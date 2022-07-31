@@ -2347,5 +2347,5 @@
 ::
 ++  cookie-string
   %^  cat  3  cookie-value
-  '; Path=/; Max-Age=604800'
+  '; Path=/; Max-Age=604800; HttpOnly'
 --
