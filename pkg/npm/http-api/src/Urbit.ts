@@ -158,6 +158,23 @@ export class Urbit {
   }
 
   /**
+   * Gets the name of the ship accessible at this.url and stores it to this.ship
+   *
+   */
+  async getShipName(): Promise<void> {
+    if (this.ship) {
+      return Promise.resolve();
+    }
+
+    const nameResp = await fetch(`${this.url}/~/name`, {
+      method: 'get',
+      credentials: 'include',
+    });
+    const name = await nameResp.text();
+    this.ship = name.substring(1);
+  }
+
+  /**
    * Connects to the Urbit ship. Nothing can be done until this is called.
    * That's why we roll it into this.authenticate
    */
@@ -174,17 +191,22 @@ export class Urbit {
       method: 'post',
       body: `password=${this.code}`,
       credentials: 'include',
-    }).then((response) => {
+    }).then(async response => {
       if (this.verbose) {
         console.log('Received authentication response', response);
       }
-      const cookie = response.headers.get('set-cookie');
-      if (!this.ship) {
-        this.ship = new RegExp(/urbauth-~([\w-]+)/).exec(cookie)[1];
+
+      if (response.status !== 204) {
+        throw new Error('Login failed with status ' + response.status);
       }
+
       if (!isBrowser) {
+        const cookie = response.headers.get('set-cookie');
         this.cookie = cookie;
       }
+
+      this.getShipName();
+
     });
   }
 
