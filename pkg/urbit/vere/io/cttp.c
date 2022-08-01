@@ -1,6 +1,7 @@
 //! @file cttp.c
 
 #include "vere/vere.h"
+#include "vere/io.h"
 
 //==============================================================================
 // Types
@@ -33,16 +34,6 @@ typedef struct client {
     _stream      stdout_u;   //!< stdout stream to IO process
   } child_u;                 //!< IO process
 } _client;
-
-//==============================================================================
-// Constants
-//==============================================================================
-
-//! Request types for IPC pipe. Belongs in header file shared by all IO drivers
-//! long term.
-enum {
-  IO_REQ_HTTP_CLIENT = 0,
-};
 
 //==============================================================================
 // Macros
@@ -115,7 +106,7 @@ _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
   _client* client_u = (_client*)driver_u;
   _io_req* io_req_u = c3_malloc(sizeof(*io_req_u));
   u3s_jam_xeno(card, &io_req_u->len_d, &io_req_u->jam_y);
-  io_req_u->type_y = IO_REQ_HTTP_CLIENT;
+  io_req_u->type_y = IO_HTTP_CLIENT;
   //io_req_u->len_d += sizeof(io_req_u->type_y);
 
   uv_buf_t req_bufs_u[] = {
