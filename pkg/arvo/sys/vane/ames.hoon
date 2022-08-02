@@ -2915,7 +2915,7 @@
     =.  message-pump  feed-packets
     ::  don't set new pump timer if triggered by a recork timer
     ::
-    =?  message-pump  =([%wake recork=&] task)
+    =?  message-pump  !=([%wake recork=&] task)
       (run-packet-pump %halt ~)
     ::
     =.  message-pump  assert
