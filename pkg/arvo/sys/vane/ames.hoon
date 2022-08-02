@@ -1812,15 +1812,15 @@
       (request-attestation u.ship)
     ::
     |^
-    ?.  ?=([%recork ~] wire)  (handle-single-wire wire)
+    ?.  ?=([%recork ~] wire)  (handle-single-wire wire recork=|)
     =/  wires=(list ^wire)  ~(tap in corks.ames-state)
     |-  ^+  event-core
     ?^  wires
-      $(wires t.wires, event-core (handle-single-wire i.wires))
+      $(wires t.wires, event-core (handle-single-wire i.wires recork=&))
     (emit duct %pass /recork %b %wait `@da`(add now ~d1))
     ::
     ++  handle-single-wire
-      |=  =^wire
+      |=  [=^wire recork=?]
       ^+  event-core
       =/  res=(unit [her=ship =bone])  (parse-pump-timer-wire wire)
       ?~  res
@@ -1837,7 +1837,7 @@
       ::
       =<  abet
       %-  on-wake:(make-peer-core u.state channel)
-      [recork=& bone.u.res error]
+      [recork bone.u.res error]
     --
   ::  +on-init: first boot; subscribe to our info from jael
   ::
