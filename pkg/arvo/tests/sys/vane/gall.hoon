@@ -293,10 +293,34 @@
       !>  moves-wink
   ==
 ::
+::  +test-non-base-perms: make sure moves get dropped if an agent doesnt have
+::  permission
+  ++  test-non-base-perms
+    ^-  tang
+    ::  TODO: currently fails, but %would-drop printf does appear. does the
+    ::  move get dropped later when we try to pass it along?
+    ::
+    =/  =duct  ~[/perm]
+    ::
+    =/  task-1=task:ames  [%sift *(list ship)]
+    ::
+    =/  poke-1=task:agent:gall
+      [%poke %noun !>(`poke`[%ames-test task-1])]
+    ::
+    =/  expected-moves=(list move)
+      [duct %give %unto %poke-ack ~]~
+    ::
+    =^  moves  dep-gall
+      (inject-agent dep-gall test-dummy test-desk %buster duct)
+    =^  moves  dep-gall
+      (task-test-dummy dep-gall poke-1)
+    ::
+    %+  expect-eq
+      !>  expected-moves
+    ::
+      !>  moves
+::
 ::  +test-base-perms: %base agents should have all permissions by default
-::  TODO: if the desk is not %base, gall does emit a %would-drop printf but
-::  the move still shows up. do i need to try to pass it along in order for
-::  it to be dropped?
   ++  test-base-perms
     ^-  tang
     ::
