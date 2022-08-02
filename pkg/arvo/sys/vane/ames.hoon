@@ -764,7 +764,7 @@
       [%hear =message-num =ack-meat]
       [%near =naxplanation]
       [%prod ~]
-      [%wake ~]
+      [%wake recork=?]
   ==
 ::  $message-pump-gift: effect from |message-pump
 ::
@@ -795,7 +795,7 @@
   $%  [%hear =message-num =fragment-num]
       [%done =message-num lag=@dr]
       [%halt ~]
-      [%wake current=message-num]
+      [%wake recork=? current=message-num]
       [%prod ~]
   ==
 ::  $packet-pump-gift: effect from |packet-pump
@@ -1835,7 +1835,9 @@
       ::
       =/  =channel  [[our her.u.res] now channel-state -.u.state]
       ::
-      abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
+      =<  abet
+      %-  on-wake:(make-peer-core u.state channel)
+      [recork=& bone.u.res error]
     --
   ::  +on-init: first boot; subscribe to our info from jael
   ::
@@ -2451,8 +2453,15 @@
     ::  +on-wake: handle timer expiration
     ::
     ++  on-wake
-      |=  [=bone error=(unit tang)]
+      |=  [recork=? =bone error=(unit tang)]
       ^+  peer-core
+      ::  ignore spurious pump timers for %cork's
+      ::
+      ::    This is here to fix canaries that had spurious pump timers.
+      ::
+      ?:  &(!recork (~(has in closing.peer-state) bone))
+        ~>  %slog.0^leaf/"ames: dropping pump wake while recorking {<bone>}"
+        peer-core
       ::  if we previously errored out, print and reset timer for later
       ::
       ::    This really shouldn't happen, but if it does, make sure we
@@ -2521,7 +2530,7 @@
         peer-core
       ::  maybe resend some timed out packets
       ::
-      (run-message-pump bone %wake ~)
+      (run-message-pump bone %wake recork)
     ::  +send-shut-packet: fire encrypted packet at rcvr and maybe sponsors
     ::
     ++  send-shut-packet
@@ -2902,12 +2911,15 @@
     |=  task=message-pump-task
     ^+  [gifts state]
     ::
-    =~  (dispatch-task task)
-        feed-packets
-        (run-packet-pump %halt ~)
-        assert
-        [(flop gifts) state]
-    ==
+    =.  message-pump  (dispatch-task task)
+    =.  message-pump  feed-packets
+    ::  don't set new pump timer if triggered by a recork timer
+    ::
+    =?  message-pump  =([%wake recork=&] task)
+      (run-packet-pump %halt ~)
+    ::
+    =.  message-pump  assert
+    [(flop gifts) state]
   ::  +dispatch-task: perform task-specific processing
   ::
   ++  dispatch-task
@@ -2917,7 +2929,7 @@
     ?-  -.task
       %prod  (run-packet-pump %prod ~)
       %memo  (on-memo message-blob.task)
-      %wake  (run-packet-pump %wake current.state)
+      %wake  (run-packet-pump %wake recork.task current.state)
       %hear
         ?-    -.ack-meat.task
             %&
@@ -3159,7 +3171,7 @@
     ?-  -.task
       %hear  (on-hear [message-num fragment-num]:task)
       %done  (on-done message-num.task)
-      %wake  (on-wake current.task)
+      %wake  (on-wake recork.task current.task)
       %prod  on-prod
       %halt  set-wake
     ==
@@ -3186,7 +3198,7 @@
   ::  +on-wake: handle packet timeout
   ::
   ++  on-wake
-    |=  current=message-num
+    |=  [recork=? current=message-num]
     ^+  packet-pump
     ::  assert temporal coherence
     ::
