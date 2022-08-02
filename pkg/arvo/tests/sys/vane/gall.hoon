@@ -73,8 +73,8 @@
           ?+    sign-arvo  (on-arvo:def wire sign-arvo)
           ::
               [%gall %perm *]
-            ~&  >>  ['permissions change' +>.sign-arvo]
-            `this
+            :_  this
+            [%give %fact ~ %noun !>(+>.sign-arvo)]~
           ==
         ==
       ++  on-fail   on-fail:def
@@ -219,6 +219,36 @@
     !>  expected-moves
   ::
     !>  moves
+::
+::  +test-agent-perm-notification: agents are notified when the
+::  permissions in their desk changes in +on-arvo
+++  test-agent-perm-notification
+::  TODO: what is the right way to make sure the agent got the
+::  notification? im having trouble getting the expected move to
+::  match
+  ^-  tang
+  ::
+  =/  =duct  ~[/perm]
+  =/  per=(set perm:gall)
+    (~(gas in *(set perm:gall)) [%ames %debug]~)
+  =/  task-1=task:gall
+    [%free test-desk per]
+  ::
+  =/  expected-moves=(list move)
+    [duct %give %unto %fact `cage`[%noun !>(task-1)]]~
+  ::
+  =^  moves  dep-gall
+    (inject-agent dep-gall test-dummy test-desk %buster duct)
+  =^  moves  dep-gall
+    (call dep-gall duct task-1)
+  ::
+  ~&  -.moves
+  ::
+  *tang
+::    %+  expect-eq
+::      !>  expected-moves
+    ::
+::      !>  moves
 ::
 ++  test-scry-desk-perms
   ^-  tang
