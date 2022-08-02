@@ -36,7 +36,6 @@
       ++  on-load   on-load:def
       ++  on-poke
         |=  [=mark =vase]
-        ~&  'on-poke'
         ^-  (quip card _this)
         ?.  ?=(%noun mark)
           `this
@@ -135,8 +134,7 @@
     =(~ per.bowl)
   ::
   =/  =task:agent:gall
-    :-  %poke
-    :-  %noun
+    :+  %poke  %noun
     !>  [%run-test gat]
   ::
   =^  moves  dep-gall
@@ -147,9 +145,6 @@
   ::
 ::
 ++  test-free-test-dummy
-  :: it seems that the perms make it into the state
-  :: of gall - in perms=(map desk (set perm)). but its not
-  :: ending up in the bowl for some reason
   ^-  tang
   ::
   =/  =duct  ~[/perm]
@@ -309,7 +304,6 @@
   |=  [vane=_dep-gall =agent:gall =desk =dude:gall =duct]
   ^-  [moves=(list move) _dep-gall]
   =/  =wire  /sys/cor/[dude]/~dep/[desk]/foo
-::  =/  =duct  ~[/perm]
   =/  =sign-arvo
     =;  =gift:clay
       [%clay gift]
