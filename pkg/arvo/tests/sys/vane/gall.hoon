@@ -216,66 +216,49 @@
   ::
     !>  moves
 ::
-++  test-ward-same-desk
+++  test-scry-desk-perms
   ^-  tang
-  ::
-  =/  =duct  ~[/perm]
-  =/  per  %-  ~(gas in *(set perm:gall))
-           ~[[%ames %debug]]
-  ::
-  =/  task-1=task:gall  [%ward ~]
-  =/  task-2=task:gall  [%free test-desk per]
-  ::
-  =^  moves  dep-gall
-    (inject-agent dep-gall test-dummy test-desk %alice ~[/perm])
-  =^  moves  dep-gall
-    (inject-agent dep-gall test-dummy test-desk %bob ~[/perm])
-  =^  moves  dep-gall
-    (call dep-gall duct task-1)
-  =^  moves  dep-gall
-    (call dep-gall duct task-2)
-  ::
-  ~&  moves+moves
+  ::  TODO: should be able to scry permissions for a desk from gall
   *tang
 ::
-::  TODO not sure if %ward is firing off the notifications or if
-::  im just not understanding how to detect them. i see that a %give
-::  appears for the chosen duct. but how does it make its way to the
-::  agents that want to hear about permissions changes? is it supposed
-::  to be the agents with the same control duct as the duct that %ward
-::  was sent on?
-++  test-ward-different-desk
+::  +test-ward-wink-notifications: can get a permission change notification
+::  after sending a %ward task. after sending a %wink, notifications cease.
+::  these tests are grouped since if %ward doesn't work, %wink would be a
+::  no-op
+++  test-ward-wink-notifications
   ^-  tang
   ::
   =/  =duct  ~[/perm]
   =/  per  %-  ~(gas in *(set perm:gall))
            ~[[%ames %debug]]
-  =/  qer  %-  ~(gas in *(set perm:gall))
-           ~[[%behn %timer]]
   ::
   =/  task-1=task:gall  [%ward ~]
   =/  task-2=task:gall  [%free test-desk per]
   =/  task-3=task:gall  [%wink ~]
   ::
-  =^  moves  dep-gall
-    (inject-agent dep-gall *agent:gall test-desk %alice ~[/perm])
-  =^  moves  dep-gall
-    (inject-agent dep-gall test-dummy %labz %bob ~[/foo])
-  ~&  %send-ward
-  =^  moves  dep-gall  (call dep-gall ~[/foo] task-1)
-  ~&  %send-free-lab
-  =^  moves  dep-gall  (call dep-gall duct task-2)
-  ~&  %send-free-labz
-  =^  moves  dep-gall  (call dep-gall ~[/foo] [%free %labz qer])
-  ~&  %send-lock-lab
-  =^  moves  dep-gall  (call dep-gall ~[/foo] [%lock test-desk per])
-  ~&  %send-wink-labz
-  =^  moves  dep-gall  (call dep-gall ~[/foo] task-3)
-::  ~&  %send-lock-lab
-::  =^  moves  dep-gall  (call dep-gall duct [%lock test-desk per])
+  =/  expected-moves-ward=(list move)
+    [duct %give %perm %free test-desk per]~
+  =|  expected-moves-wink=(list move)
   ::
-  ~&  moves+moves
-  *tang
+  =^  moves  dep-gall
+    (call dep-gall duct task-1)
+  =^  moves-ward  dep-gall
+    (call dep-gall duct task-2)
+  =^  moves-wink  dep-gall
+    (call dep-gall duct task-3)
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  expected-moves-ward
+    ::
+      !>  moves-ward
+  ::
+    %+  expect-eq
+      !>  expected-moves-wink
+    ::
+      !>  moves-wink
+  ==
+::
 +|  %utilities
 ::
 ++  call
