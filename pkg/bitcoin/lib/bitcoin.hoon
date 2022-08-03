@@ -74,6 +74,7 @@
       :-  ?-  network
               %main     1^0x0
               %testnet  1^0x6f
+              %regtest  1^0x6f
           ==
       ~[(hash-160:bcu pubkey)]
       ::
@@ -84,6 +85,7 @@
       :~  ?-  network
             %main     1^0x5
             %testnet  1^0xc4
+            %regtest  1^0xc4
           ==
           %-  hash-160:bcu
           (cat:byt:bcu ~[2^0x14 (hash-160:bcu pubkey)])
@@ -109,7 +111,8 @@
     ++  is-base58
       |=  at=tape
       ^-  ?
-      ?|  =("m" (scag 1 at))
+      ?|  =("n" (scag 1 at))
+          =("m" (scag 1 at))
           =("1" (scag 1 at))
           =("3" (scag 1 at))
           =("2" (scag 1 at))
@@ -120,6 +123,7 @@
       ^-  ?
       ?|  =("bc1" (scag 3 at))
           =("tb1" (scag 3 at))
+          =("bcrt1" (scag 5 at))
       ==
     --
   ::

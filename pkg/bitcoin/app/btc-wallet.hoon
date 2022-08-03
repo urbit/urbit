@@ -900,7 +900,7 @@
     ?:  =(~ prov)  `state
     ?.  =(host:(need prov) src.bowl)  `state
     ?.  ?=(%.y -.upd)  `state
-    ?-  -.p.upd
+    ?+  -.p.upd  `state
         %address-info
       ::  located in the helper in Scan Logic to keep all of that unified
       ::
