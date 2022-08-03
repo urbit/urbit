@@ -2246,6 +2246,9 @@
       ::  %eyre: cancel request
       ::
       [%cancel-request ~]
+      ::  %clay: inject ford cache
+      ::
+      $>(%feed task:clay)
       ::  %dill: reset terminal configuration
       ::
       $>(%hail task:dill)
