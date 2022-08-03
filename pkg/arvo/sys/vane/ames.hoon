@@ -3000,7 +3000,7 @@
             mnum=message-num
             next=next.state
             unsent-messages=~(wyt in unsent-messages.state)
-            unsent-fragments=~(wyt in unsent-fragments.state)
+            unsent-fragments=(lent unsent-fragments.state)
             any-live=!=(~ live.packet-pump-state.state)
         ==
     ?>  (lth message-num next.state)
