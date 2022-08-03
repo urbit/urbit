@@ -127,6 +127,7 @@
 ::
 :+  %pill  %solid
 :+  boot-ova  ~
-%+  turn
+%+  roll
   (snoc dez [%base bas])
-file-ovum:pill
+|=  [des=[lab=desk path] acc=(list unix-event:pill)]
+(weld acc ~[(file-ovum:pill des) (fill-flow:pill lab.des)])
