@@ -1,6 +1,8 @@
 /+  dbug, default-agent, strandio, *test
 /=  gall-raw  /sys/vane/gall
+/=  clay-raw  /sys/vane/clay
 ::
+::  gall boilerplate
 =/  nec-gall-pupal   (gall-raw ~nec)
 =/  dep-gall-pupal   (gall-raw ~dep)
 =.  now.dep-gall-pupal        ~1111.1.1
@@ -11,6 +13,9 @@
 ::
 ::  metamorphose
 =/  dep-gall  +:(call:(dep-gall-pupal) ~[/init] ~ %init ~)
+::
+::  clay boilerplate
+=/  clay-gate  (clay-raw ~nec)
 ::
 =>  |%
     +|  %gall-structures
@@ -348,7 +353,7 @@
     ::
       !>  moves
 ::
-+|  %utilities
++|  %gall-utilities
 ::
 ++  call
   |=  [vane=_dep-gall =duct =task:gall]
@@ -427,4 +432,46 @@
       !>  -.res
   ::
   [output +.res]
+::
++|  %clay-utilities
+::
+++  clay-call
+  |=  $:  clay-gate=_clay-gate
+          now=@da
+          scry=roof
+          call-args=[=duct wrapped-task=(hobo task:clay)]
+          expected-moves=(list move:clay-gate)
+      ==
+  ^-  [tang _clay-gate]
+  ::
+  =/  clay-core  (clay-gate now=now eny=`@`0xdead.beef scry=scry)
+  ::
+  =^  moves  clay-gate  (call:clay-core [duct ~ wrapped-task]:call-args)
+  ::
+  =/  output=tang
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
+  ::
+  [output clay-gate]
+::
+++  clay-take
+  |=  $:  clay-gate=_clay-gate
+          now=@da
+          scry=roof
+          take-args=[=wire =duct =sign:clay-gate]
+          expected-moves=(list move:clay-gate)
+      ==
+  ^-  [tang _clay-gate]
+  ::
+  =/  clay-core  (clay-gate now=now eny=`@`0xdead.beef scry=scry)
+  ::
+  =^  moves  clay-gate  (take:clay-core [wire duct ~ sign]:take-args)
+  ::
+  =/  output=tang
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
+  ::
+  [output clay-gate]
 --
