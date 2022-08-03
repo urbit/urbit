@@ -777,6 +777,12 @@
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
         [%rein des=desk liv=? ren=(map dude:gall ?)]    ::  live
+        ::TODO  perms should be included in %rein task... right?
+        ::NOTE  for now, separate task: seems cleaner api design,
+        ::      more flexibility on userspace side, and doesn't lose us
+        ::      any atomicity: we always send %load to gall anyway.
+        ::      "%rein together with %visa" is weird case.
+        [%visa des=desk pes=(set perm)]                 ::  allowed opt. perms
         [%stir arg=*]                                   ::  debug
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
@@ -1689,7 +1695,10 @@
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak =agent])                 ::  loadout
+  +$  load                                              ::  loadout
+    $:  perms=(list [=desk (set perm)])
+        dudes=(list [=dude =beak =agent])
+    ==
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -1787,7 +1796,7 @@
   ::
   +$  perm  $%(perm-arvo perm-gall)
   ::
-  +$  perm-gall  ::TODO  by desk?
+  +$  perm-gall  ::TODO  by desk? agents from same desk µay always talk
     $%  [%write dude=$?(%peers (unit dude:gall))]  ::  poke
         [%watch dude=$?(%peers (unit dude:gall))]  ::  subscribe
         [%reads vane=term desk=(unit desk) =spur]  ::  scry
@@ -1877,6 +1886,7 @@
       ?@  must  must
       ?+  must  (~(has in pers) must)
           [?(%write %watch) *]
+        ::TODO  make sure agents on same desk are allowed to talk to each other
         %+  lien  ~(tap in pers)
         |=  p=perm
         ?&  ?=(?(%write %watch) -.p)

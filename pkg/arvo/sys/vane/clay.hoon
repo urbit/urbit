@@ -126,6 +126,7 @@
       fod=flue                                          ::  ford cache
       liv=?                                             ::  running agents
       ren=(map dude:gall ?)                             ::  force agents on/off
+      pes=(set perm:gall)                               ::  granted opt. perms
   ==                                                    ::
 ::
 ::  Commit state.
@@ -3019,7 +3020,10 @@
     |=  [liv=? ren=(map dude:gall ?)]
     ^+  ..park
     =?  liv  =(%base syd)  &
+    ::TODO  =?  perms  =(%base syd)  ~
     ..park(liv.dom liv, ren.dom ren)
+  ::
+  ::TODO  +visa
   ::
   ++  rise
     |=  [=dude:gall on=(unit ?)]
@@ -4286,8 +4290,17 @@
   ::
   ++  goad
     ^+  ..abet
+    =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+    ::
+    =^  perms=(list [=desk (set perm)])  ..abet
+      |-  ^-  ...  ::TODO
+      ::NOTE  this makes /desk/seal required to be present on desk
+      =^  res  den  (aver:den ~ %x da+now /desk/seal)
+      =.  ruf  +:abet:den
+      =/  seal=[req=(list perm) opt=(list perm)]  xx
+      [i.desks (~(uni in req.seal) pes:dom:den)]
+    ::
     =^  sat=(list [=desk =bill])  ..abet
-      =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
       |-  ^-  [(list [desk bill]) _..abet]
       ?~  desks
         [~ ..abet]
@@ -4303,7 +4316,7 @@
     =.  sat  (apply-precedence sat)
     =^  agents  ..abet  (build-agents sat)
     =.  ..abet  (build-marks (turn sat head))
-    (emit hen %pass /lu/load %g %load agents)
+    (emit hen %pass /lu/load %g %load perms agents)
   ::  +override: apply rein to bill
   ::
   ++  override
@@ -4644,6 +4657,8 @@
       abet:(rein:den liv.req ren.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
+  ::
+  ::TODO  %visa
   ::
       %stir
     ?+    arg.req  ~|(%strange-stir !!)
