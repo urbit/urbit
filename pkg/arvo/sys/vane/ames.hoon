@@ -2996,7 +2996,13 @@
     ^+  message-pump
     ::  unsent messages from the future should never get acked
     ::
-    ~|  [message-num next.state]
+    ~|  :*  bone=bone
+            mnum=message-num
+            next=next.state
+            unsent-messages=~(wyt to unsent-messages.state)
+            unsent-fragments=~(wyt to unsent-fragments.state)
+            any-live=!=(~ live.packet-pump-state.state)
+        ==
     ?>  (lth message-num next.state)
     ::  ignore duplicate message acks
     ::
