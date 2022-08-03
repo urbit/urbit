@@ -867,7 +867,7 @@
         =^  moves  adult-gate  (call:adult-core duct dud task)
         %-  molt
         ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~d1)])
+        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
@@ -954,7 +954,7 @@
           [moves adult-gate]
         %-  molt
         ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~d1)])
+        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
@@ -1818,7 +1818,7 @@
     |-  ^+  event-core
     ?^  wires
       $(wires t.wires, event-core (handle-single-wire i.wires recork=&))
-    (emit duct %pass /recork %b %wait `@da`(add now ~d1))
+    (emit duct %pass /recork %b %wait `@da`(add now ~m20))
     ::
     ++  handle-single-wire
       |=  [=^wire recork=?]
@@ -2836,7 +2836,7 @@
         ::  receiving the OTA, so we set up a timer to retry in one day.
         ::
         %-  %+  trace  msg.veb
-            |.("old publisher, resend %cork on bone={<target-bone>} in ~d1")
+            |.("old publisher, resend %cork on bone={<target-bone>} in ~m20")
         =/  =wire  (make-pump-timer-wire her.channel target-bone)
         =.  corks.ames-state  (~(put in corks.ames-state) wire)
         peer-core
