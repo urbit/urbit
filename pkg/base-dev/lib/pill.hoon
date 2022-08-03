@@ -32,6 +32,17 @@
       [/sys/hoon hoon/hoon]
       [/sys/arvo hoon/arvo]
   ==
+::  +fill-flow: cache injection
+::
+++  fill-flow
+  =/  flows=(map desk flow:clay)  ~  :: XX populate me somehow
+  |=  des=desk
+  ^-  unix-event
+  =/  =flow:clay
+    ?~  got=(~(get by flows) des)
+      ~
+    u.got
+  [/c/feed [%feed flow]]
 ::  +file-ovum: userspace filesystem load
 ::
 ::    bas: full path to / directory
