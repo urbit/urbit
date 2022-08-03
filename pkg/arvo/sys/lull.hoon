@@ -776,6 +776,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%rein des=desk liv=? ren=(map dude:gall ?)]    ::  live
         [%stir arg=*]                                   ::  debug
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
@@ -814,9 +815,14 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone                                              ::  domes
-    %+  map  [ship desk]                                ::
-    [dome tom=(map tako norm) nor=norm]                 ::
+  +$  cone  (map [ship desk] foam)                      ::  domes
+  +$  foam                                              ::
+    $:  dome                                            ::
+        tom=(map tako norm)                             ::
+        nor=norm                                        ::
+        liv=?                                           ::
+        ren=(map dude:gall ?)                           ::
+    ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
@@ -1651,6 +1657,7 @@
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
+        [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
         [%free =desk pes=(set perm)]                    ::  allow
         [%lock =desk pes=(set perm)]                    ::  disallow
@@ -1682,6 +1689,7 @@
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
+  +$  load  (list [=dude =beak =agent])                 ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -2431,6 +2439,9 @@
       ::  %eyre: cancel request
       ::
       [%cancel-request ~]
+      ::  %khan: fire thread
+      ::
+      $>(%fyrd task:khan)
       ::  %dill: reset terminal configuration
       ::
       $>(%hail task:dill)
