@@ -1482,9 +1482,10 @@
     =/  snds=(list (list [ship bone message-pump-state]))
       %+  turn  states
       |=  [=ship peer-state]
-      %+  turn  ~(tap by snd)
+      %+  murn  ~(tap by snd)
       |=  [=bone =message-pump-state]
-      [ship bone message-pump-state]
+      ?:  (~(has in closing) bone)  ~
+      `[ship bone message-pump-state]
     =/  next-wakes
       %+  turn  `(list [ship bone message-pump-state])`(zing snds)
       |=  [=ship =bone message-pump-state]
@@ -1498,7 +1499,7 @@
       %-  silt
       ;;  (list [@da ^duct])
       =<  q.q  %-  need  %-  need
-      (rof ~ %b [[our %timers da+now] /])
+      (rof ~ %bx [[our %$ da+now] /debug/timers])
     =/  to-stir
       %+  skip  next-real-wakes
       |=  [=ship =bone =@da]
