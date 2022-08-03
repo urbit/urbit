@@ -2999,8 +2999,8 @@
     ~|  :*  bone=bone
             mnum=message-num
             next=next.state
-            unsent-messages=~(wyt to unsent-messages.state)
-            unsent-fragments=~(wyt to unsent-fragments.state)
+            unsent-messages=~(wyt in unsent-messages.state)
+            unsent-fragments=~(wyt in unsent-fragments.state)
             any-live=!=(~ live.packet-pump-state.state)
         ==
     ?>  (lth message-num next.state)
