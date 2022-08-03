@@ -321,6 +321,8 @@
       haw=(map mood (unit cage))                        ::  simple cache
   ==                                                    ::
 ::
++$  seal  [req=(list perm:gall) opt=(list perm:gall)]
+::
 +$  bill  (list dude:gall)
 ::  diff from desk.bill
 ::
@@ -3020,10 +3022,13 @@
     |=  [liv=? ren=(map dude:gall ?)]
     ^+  ..park
     =?  liv  =(%base syd)  &
-    ::TODO  =?  perms  =(%base syd)  ~
     ..park(liv.dom liv, ren.dom ren)
   ::
-  ::TODO  +visa
+  ++  visa
+    |=  pes=(set perm:gall)
+    ^+  ..park
+    =?  pes  =(%base syd)  *(set perm:gall)
+    ..park(pes.dom pes)
   ::
   ++  rise
     |=  [=dude:gall on=(unit ?)]
@@ -4292,13 +4297,24 @@
     ^+  ..abet
     =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
     ::
-    =^  perms=(list [=desk (set perm)])  ..abet
-      |-  ^-  ...  ::TODO
+    =^  perms=(list [=desk (set perm:gall)])  ..abet
+      |-  ^-  [(list [desk (set perm:gall)] _..abet)]
+      ?~  desks
+        [~ ..abet]
+      =/  den  ((de now rof hen ruf) our i.desks)
       ::NOTE  this makes /desk/seal required to be present on desk
       =^  res  den  (aver:den ~ %x da+now /desk/seal)
       =.  ruf  +:abet:den
-      =/  seal=[req=(list perm) opt=(list perm)]  xx
-      [i.desks (~(uni in req.seal) pes:dom:den)]
+      ?.  ?=([~ ~ *] res)
+        $(desks t.desks)
+      :: TODO: what to do with optional permissions?
+      =/  seel=[req=(set perm:gall) opt=(set perm:gall)]
+        ~|  [%building-seal i.desks]
+        =/  =seal  !<(seal q.u.u.res)
+        :-  (~(gas in *(set perm:gall)) req.seal)
+        (~(gas in *(set perm:gall)) opt.seal)
+      =^  purms  ..abet  $(desks t.desks)
+      [[[i.desks (~(uni in req.seel) pes:dom:den)] purms] ..abet]
     ::
     =^  sat=(list [=desk =bill])  ..abet
       |-  ^-  [(list [desk bill]) _..abet]
@@ -4658,7 +4674,12 @@
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
   ::
-  ::TODO  %visa
+      %visa
+    =^  m1  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(visa:den pes.req)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld m1 m2) ..^$]
   ::
       %stir
     ?+    arg.req  ~|(%strange-stir !!)
