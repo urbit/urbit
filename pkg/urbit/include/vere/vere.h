@@ -459,7 +459,7 @@
       */
         typedef struct _u3_lord_cb {
           void* ptr_v;
-          void (*live_f)(void*);
+          void (*live_f)(void*, u3_atom, c3_o);
           void (*slog_f)(void*, c3_w, u3_noun);
           void (*spin_f)(void*, u3_atom, c3_o);
           void (*spun_f)(void*);

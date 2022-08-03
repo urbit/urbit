@@ -759,9 +759,14 @@ _pier_on_lord_bail(void* ptr_v)
 /* _pier_on_lord_live(): worker is ready.
 */
 static void
-_pier_on_lord_live(void* ptr_v)
+_pier_on_lord_live(void* ptr_v, u3_atom who, c3_o fak_o)
 {
   u3_pier* pir_u = ptr_v;
+
+  //  XX validate
+  //
+  u3r_chubs(0, 2, pir_u->who_d, who);
+  pir_u->fak_o = fak_o;
 
   //  early exit, preparing for upgrade
   //

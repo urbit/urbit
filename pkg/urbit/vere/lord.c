@@ -262,15 +262,14 @@ _lord_plea_ripe(u3_lord* god_u, u3_noun dat)
       return;
     }
 
-    //  XX pass who/fak to cb, save mug_l?
+    //  XX save mug_l
     //
-
     god_u->eve_d = eve_d;
+
+    god_u->liv_o = c3y;
+    god_u->cb_u.live_f(god_u->cb_u.ptr_v, who, fak);
   }
-
-
-  god_u->liv_o = c3y;
-  god_u->cb_u.live_f(god_u->cb_u.ptr_v);
+;
 
   u3z(dat);
 }
