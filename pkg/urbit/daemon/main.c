@@ -4,7 +4,9 @@
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
+#include "rsignal.h"
 #include "vere/vere.h"
+#include <vere/mars.h>
 #if !defined(U3_OS_mingw)
 #include <sigsegv.h>
 #endif
@@ -16,13 +18,43 @@
 #include <curl/curl.h>
 #include <vere/db/lmdb.h>
 #include <getopt.h>
+#include <libgen.h>
 
 #include "ca-bundle.h"
+#include "whereami.h"
+
+static u3_moat      inn_u;             //  input stream
+static u3_mojo      out_u;             //  output stream
 
 /* Require unsigned char
  */
 STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ),
               "unsigned char required");
+
+/* _main_self_path(): get binary self-path.
+*/
+static void
+_main_self_path(void)
+{
+  c3_c* pat_c;
+  c3_i  len_i, pat_i;
+
+  if ( 0 < (len_i = wai_getExecutablePath(NULL, 0, &pat_i)) ) {
+    pat_c = c3_malloc( 1 + len_i );
+    wai_getExecutablePath(pat_c, len_i, &pat_i);
+    pat_c[len_i] = 0;
+
+    u3_Host.dem_c = pat_c;
+  }
+  else {
+    fprintf(stderr, "unable to get binary self path\r\n");
+    exit(1);
+
+    //  XX continue?
+    //
+    // u3_Host.dem_c = strdup(bin_c);
+  }
+}
 
 /* _main_readw(): parse a word from a string.
 */
@@ -106,13 +138,13 @@ _main_add_prop(c3_i kin_i, c3_c* loc_c)
   return nex_u;
 }
 
-/* _main_getopt(): extract option map from command line.
+/* _main_init(): initialize globals
 */
-static u3_noun
-_main_getopt(c3_i argc, c3_c** argv)
+static void
+_main_init(void)
 {
-  c3_i ch_i, lid_i;
-  c3_w arg_w;
+  u3_Host.nex_o = c3n;
+  u3_Host.pep_o = c3n;
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.dem = c3n;
@@ -138,6 +170,37 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.puf_c = "jam";
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
+}
+
+/* _main_pier_run(): get pier from binary path (argv[0]), if appropriate
+*/
+static c3_c*
+_main_pier_run(c3_c* bin_c)
+{
+  c3_c* dir_c = 0;
+  c3_w  bin_w = strlen(bin_c);
+  c3_w  len_w = strlen(U3_BIN_ALIAS);
+
+  //  no args, argv[0] == $pier/.run
+  //
+  if (  (len_w <= bin_w)
+     && (0 == strcmp(bin_c + (bin_w - len_w), U3_BIN_ALIAS)) )
+  {
+    bin_c = strdup(bin_c); // dirname can modify
+    dir_c = _main_repath(dirname(bin_c));
+    c3_free(bin_c);
+  }
+
+  return dir_c;
+}
+
+/* _main_getopt(): extract option map from command line.
+*/
+static u3_noun
+_main_getopt(c3_i argc, c3_c** argv)
+{
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
 
   static struct option lop_u[] = {
     { "arvo",                required_argument, NULL, 'A' },
@@ -167,6 +230,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "http-port",           required_argument, NULL, c3__http },
     { "https-port",          required_argument, NULL, c3__htls },
     { "no-conn",             no_argument,       NULL, c3__noco },
+    { "no-dock",             no_argument,       NULL, c3__nodo },
     { "quiet",               no_argument,       NULL, 'q' },
     { "versions",            no_argument,       NULL, 'R' },
     { "skip-battery-hashes", no_argument,       NULL, 'S' },
@@ -201,7 +265,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'Y': {
-        u3_Host.ops_u.puk_c = _main_repath(optarg);
+        u3_Host.ops_u.puk_c = strdup(optarg);
         break;
       }
       case 'Z': {
@@ -300,6 +364,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.con = c3n;
         break;
       }
+      case c3__nodo: {
+        u3_Host.ops_u.doc = c3n;
+        break;
+      }
       case 'R': {
         u3_Host.ops_u.rep = c3y;
         return c3y;
@@ -351,8 +419,9 @@ _main_getopt(c3_i argc, c3_c** argv)
     if ( u3_Host.ops_u.who_c != 0 ) {
       u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
     }
-    else {
-      //  XX not sure how this might be reachable
+    //  no trailing positional arg, argv[0] != $pier/.run, invalid command
+    //
+    else  if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
       return c3n;
     }
   }
@@ -556,6 +625,44 @@ _setup_ssl_curl(void* arg)
   curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, _curl_ssl_ctx_cb);
 }
 
+/* _cw_usage(): print utility usage.
+*/
+static void
+_cw_usage(c3_c* bin_c)
+{
+  c3_c *use_c[] = {
+    "utilities:\n",
+    "  %s cram %.*s              jam state:\n",
+    "  %s dock %.*s              copy binary:\n",
+    "  %s grab %.*s              measure memory usage:\n",
+    "  %s info %.*s              print pier info:\n",
+    "  %s meld %.*s              deduplicate snapshot:\n",
+    "  %s pack %.*s              defragment snapshot:\n",
+    "  %s prep %.*s              prepare for upgrade:\n",
+    "  %s next %.*s              request upgrade:\n",
+    "  %s queu %.*s<at-event>    cue state:\n",
+    "  %s vere ARGS <output dir>    download binary:\n",
+    "\nmars, ipc:\n",
+    "  boot a pier:\n",
+    "    %s boot <pier> <key> <flags> <cache-size>\n",
+    "  run a pier:\n",
+    "    %s work <pier> <key> <flags> <cache-size> <replay-to>"
+#ifdef U3_OS_mingw
+    " <ctrlc-handle>"
+#endif
+    "\n",
+    0
+  };
+
+  c3_c* d = _main_pier_run(bin_c);
+  c3_i  i;
+
+  for ( i=0; use_c[i]; i++ ) {
+    fprintf(stderr, use_c[i], bin_c, d ? 0 : 7, "<pier> ");
+  }
+
+  c3_free(d);
+}
 
 /* u3_ve_usage(): print usage and exit.
 */
@@ -610,6 +717,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-Y, --scry-into FILE          Optional name of file (for -X)\n",
     "-Z, --scry-format FORMAT      Optional file format ('jam', or aura, for -X)\n",
     "    --no-conn                 Do not run control plane\n",
+    "    --no-dock                 Skip binary \"docking\" on boot\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
@@ -629,6 +737,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
   for ( i=0; use_c[i]; i++ ) {
     fprintf(stderr, use_c[i], argv[0]);
   }
+  _cw_usage(argv[0]);
   exit(1);
 }
 
@@ -696,62 +805,901 @@ _stop_on_boot_completed_cb()
   u3_king_exit();
 }
 
-static c3_i
-_debug_db_stats(const c3_c* dir_c)
+/* _cw_io_fail(): failure stub.
+*/
+static void
+_cw_io_fail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
-#if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
-  const size_t siz_i = 64424509440;
-#else
-  const size_t siz_i = 1099511627776;
-#endif
-
-  c3_c* log_c = c3_malloc(10 + strlen(dir_c));
-
-  strcpy(log_c, dir_c);
-  strcat(log_c, "/.urb/log");
-
-  MDB_env* mdb_u = u3_lmdb_init(log_c, siz_i);
-
-  if ( mdb_u ) {
-    u3_lmdb_stat(mdb_u, stdout);
-    u3_lmdb_exit(mdb_u);
-    return 0;
+  if ( UV_EOF == err_i ) {
+    fprintf(stderr, "mars: urth unexpectedly shut down\r\n");
   }
   else {
-    return 1;
+    fprintf(stderr, "mars: ipc error: %s\r\n", err_c);
   }
+
+  exit(1);
+}
+
+/* _cw_io_send(): send plea back to daemon.
+*/
+static void
+_cw_io_send(u3_noun pel)
+{
+  c3_d  len_d;
+  c3_y* byt_y;
+
+  u3s_jam_xeno(pel, &len_d, &byt_y);
+  u3_newt_send(&out_u, len_d, byt_y);
+
+  u3z(pel);
+}
+
+/* _cw_io_send_slog(): send hint output (hod is [priority tank]).
+*/
+static void
+_cw_io_send_slog(u3_noun hod)
+{
+  _cw_io_send(u3nc(c3__slog, hod));
+}
+
+/* _cw_io_send_stdr(): send stderr output (%flog)
+*/
+static void
+_cw_io_send_stdr(c3_c* str_c)
+{
+  _cw_io_send(u3nc(c3__flog, u3i_string(str_c)));
+}
+
+/* _cw_init_io(): initialize i/o streams.
+*/
+static void
+_cw_init_io(uv_loop_t* lup_u)
+{
+  //  mars is spawned with [FD 0] = events and [FD 1] = effects
+  //  we dup [FD 0 & 1] so we don't accidently use them for something else
+  //  we replace [FD 0] (stdin) with a fd pointing to /dev/null
+  //  we replace [FD 1] (stdout) with a dup of [FD 2] (stderr)
+  //
+  c3_i nul_i = c3_open(c3_dev_null, O_RDWR, 0);
+  c3_i inn_i = dup(0);
+  c3_i out_i = dup(1);
+
+  dup2(nul_i, 0);
+  dup2(2, 1);
+
+  close(nul_i);
+
+  //  set stream I/O to unbuffered because it's now a pipe not a console
+  //
+  setvbuf(stdout, NULL, _IONBF, 0);
+  setvbuf(stderr, NULL, _IONBF, 0);
+
+  //  Ignore SIGPIPE signals.
+  //
+#ifndef U3_OS_mingw
+  {
+    struct sigaction sig_s = {{0}};
+    sigemptyset(&(sig_s.sa_mask));
+    sig_s.sa_handler = SIG_IGN;
+    sigaction(SIGPIPE, &sig_s, 0);
+  }
+#endif
+
+  //  configure pipe to daemon process
+  //
+  {
+    c3_i err_i;
+    err_i = uv_timer_init(lup_u, &inn_u.tim_u);
+    c3_assert(!err_i);
+    err_i = uv_pipe_init(lup_u, &inn_u.pyp_u, 0);
+    c3_assert(!err_i);
+    uv_pipe_open(&inn_u.pyp_u, inn_i);
+    err_i = uv_pipe_init(lup_u, &out_u.pyp_u, 0);
+    c3_assert(!err_i);
+    uv_pipe_open(&out_u.pyp_u, out_i);
+
+    uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
+  }
+}
+
+#ifdef U3_OS_mingw
+/* _cw_intr_win_cb(): invoked when urth signals ctrl-c.
+*/
+static void
+_cw_intr_win_cb(PVOID param, BOOLEAN timedOut)
+{
+  rsignal_raise(SIGINT);
+}
+
+/* _cw_intr_win(): initialize ctrl-c handling.
+*/
+static void
+_cw_intr_win(c3_c* han_c)
+{
+  HANDLE h;
+  if ( 1 != sscanf(han_c, "%" PRIu64, &h) ) {
+    fprintf(stderr, "mars: ctrl-c event: bad handle %s: %s\r\n",
+            han_c, strerror(errno));
+  }
+  else {
+    if ( !RegisterWaitForSingleObject(&h, h, _cw_intr_win_cb,
+                                      NULL, INFINITE, 0) )
+    {
+      fprintf(stderr,
+        "mars: ctrl-c event: RegisterWaitForSingleObject(%u) failed (%d)\r\n",
+        h, GetLastError());
+    }
+  }
+}
+#endif
+
+/* _cw_disk_init(): open event log
+*/
+static u3_disk*
+_cw_disk_init(c3_c* dir_c)
+{
+  u3_disk* log_u = u3_disk_init(dir_c);
+
+  if ( !log_u ) {
+    fprintf(stderr, "unable to open event log\n");
+    exit(1);
+  }
+
+  return log_u;
+}
+
+/* _cw_dock(): copy binary into pier
+*/
+static void
+_cw_dock(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  _main_self_path();
+
+  u3_king_dock(U3_VERE_PACE);
+}
+
+/* _cw_info(): print pier info
+*/
+static void
+_cw_info(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c);
+
+  fprintf(stderr, "\r\nurbit: %s at event %" PRIu64 "\r\n",
+                  u3_Host.dir_c, eve_d);
+
+  u3_disk_slog(log_u);
+  printf("\n");
+  u3_lmdb_stat(log_u->mdb_u, stdout);
+  u3_disk_exit(log_u);
+
+  u3m_stop();
+}
+
+/* _cw_grab(): gc pier.
+*/
+static void
+_cw_grab(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3m_boot(u3_Host.dir_c);
+  u3C.wag_w |= u3o_hashless;
+  u3_mars_grab();
+  u3m_stop();
+}
+
+/* _cw_cram(): jam persistent state (rock), and exit.
+*/
+static void
+_cw_cram(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
+  c3_o  ret_o;
+
+  fprintf(stderr, "urbit: cram: preparing\r\n");
+
+  if ( c3n == (ret_o = u3u_cram(u3_Host.dir_c, eve_d)) ) {
+    fprintf(stderr, "urbit: cram: unable to jam state\r\n");
+  }
+  else {
+    fprintf(stderr, "urbit: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
+  }
+
+  //  save even on failure, as we just did all the work of deduplication
+  //
+  u3e_save();
+  u3_disk_exit(log_u);
+
+  if ( c3n == ret_o ) {
+    exit(1);
+  }
+
+  u3m_stop();
+}
+
+/* _cw_queu(): cue rock, save, and exit.
+*/
+static void
+_cw_queu(c3_i argc, c3_c* argv[])
+{
+  c3_c* eve_c;
+  c3_d  eve_d;
+
+  switch ( argc ) {
+    case 3: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+      eve_c = argv[2];
+    } break;
+
+    case 4: {
+      u3_Host.dir_c = argv[2];
+      eve_c         = argv[3];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
+    fprintf(stderr, "urbit: queu: invalid number '%s'\r\n", eve_c);
+    exit(1);
+  }
+  else {
+    u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
+
+    fprintf(stderr, "urbit: queu: preparing\r\n");
+
+    u3m_boot(u3_Host.dir_c);
+
+    //  XX can spuriously fail do to corrupt memory-image checkpoint,
+    //  need a u3m_half_boot equivalent
+    //  workaround is to delete/move the checkpoint in case of corruption
+    //
+    if ( c3n == u3u_uncram(u3_Host.dir_c, eve_d) ) {
+      fprintf(stderr, "urbit: queu: failed\r\n");
+      exit(1);
+    }
+
+    u3e_save();
+    u3_disk_exit(log_u);
+
+    fprintf(stderr, "urbit: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
+    u3m_stop();
+  }
+}
+
+/* _cw_uniq(): deduplicate persistent nouns
+*/
+static void
+_cw_meld(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
+  c3_w     pre_w;
+
+  u3C.wag_w |= u3o_hashless;
+  u3m_boot(u3_Host.dir_c);
+
+  pre_w = u3a_open(u3R);
+  u3u_meld();
+  u3a_print_memory(stderr, "urbit: meld: gained", (u3a_open(u3R) - pre_w));
+
+  u3e_save();
+  u3_disk_exit(log_u);
+  u3m_stop();
+}
+
+/* _cw_next(): request upgrade
+*/
+static void
+_cw_next(c3_i argc, c3_c* argv[])
+{
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
+
+  static struct option lop_u[] = {
+    { "arch",                required_argument, NULL, 'a' },
+    { NULL, 0, NULL, 0 }
+  };
+
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "a:", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 'a': {
+        u3_Host.arc_c = strdup(optarg);
+      } break;
+
+      case '?': {
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "next"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
+      exit(1);
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
+  }
+
+  u3_Host.pep_o = c3y;
+  u3_Host.nex_o = c3y;
+}
+
+/* _cw_pack(): compact memory, save, and exit.
+*/
+static void
+_cw_pack(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
+
+  u3m_boot(u3_Host.dir_c);
+  u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
+
+  u3e_save();
+  u3_disk_exit(log_u);
+  u3m_stop();
+}
+
+/* _cw_prep(): prepare for upgrade
+*/
+static void
+_cw_prep(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  u3_Host.pep_o = c3y;
+}
+
+/* _cw_vere(): download vere
+*/
+static void
+_cw_vere(c3_i argc, c3_c* argv[])
+{
+  c3_c* pac_c = "live";
+  c3_c* arc_c = 0;
+  c3_c* ver_c = 0;
+  c3_c* dir_c;
+
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
+
+  static struct option lop_u[] = {
+    { "arch",                required_argument, NULL, 'a' },
+    { "pace",             required_argument, NULL, 'p' },
+    { "version",             required_argument, NULL, 'v' },
+    { NULL, 0, NULL, 0 }
+  };
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "a:p:v:", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 'a': {
+        arc_c = strdup(optarg);
+      } break;
+
+      case 'p': {
+        pac_c = strdup(optarg);
+      } break;
+
+      case 'v': {
+        ver_c = strdup(optarg);
+      } break;
+
+      case '?': {
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "vere"/"fetch-vere"
+  //
+
+  if ( optind + 1 < argc ) {
+    dir_c = argv[optind + 1];
+    optind++;
+  }
+  else {
+    fprintf(stderr, "invalid command, output directory required\r\n");
+    exit(1);
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
+  }
+
+  if ( !arc_c ) {
+#ifdef U3_OS_ARCH
+    arc_c = U3_OS_ARCH;
+#else
+    fprintf(stderr, "unknown architecture, --arch required\r\n");
+    exit(1);
+#endif
+  }
+
+  //  Initialize OpenSSL for client and server
+  //
+  {
+    SSL_library_init();
+    SSL_load_error_strings();
+  }
+
+  //  initialize curl
+  //
+  if ( 0 != curl_global_init(CURL_GLOBAL_DEFAULT) ) {
+    u3l_log("boot: curl initialization failed\r\n");
+    exit(1);
+  }
+
+  _setup_cert_store();
+  u3K.ssl_curl_f = _setup_ssl_curl;
+  u3K.ssl_x509_f = _setup_ssl_x509;
+
+  if ( !ver_c ) {
+    switch ( u3_king_next(pac_c, &ver_c) ) {
+      case -2: {
+        fprintf(stderr, "vere: unable to check for next version\n");
+        exit(1);
+      } break;
+
+      case -1: {
+        fprintf(stderr, "you're already running it!\n");
+        exit(0);
+      } break;
+
+      case 0: {
+        fprintf(stderr, "vere: next (%%%s): %s\n", pac_c, ver_c);
+      } break;
+
+      default: c3_assert(0);
+    }
+  }
+
+
+  if ( u3_king_vere(pac_c, ver_c, arc_c, dir_c, 0) ) {
+    u3l_log("vere: download failed\r\n");
+    exit(1);
+  }
+
+  u3l_log("vere: download succeeded\r\n");
+}
+
+/* _cw_boot_writ(): process boot command
+*/
+static c3_o
+_cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
+{
+  u3_weak jar = u3s_cue_xeno(len_d, byt_y);
+
+  u3_noun com;
+
+  if (  (u3_none == jar)
+     || (c3n == u3r_p(jar, c3__boot, &com)) )
+  {
+    fprintf(stderr, "boot: parse fail\r\n");
+    exit(1);
+  }
+  else {
+    u3k(com);
+    u3z(jar);
+
+    //  XX get [dir_c] from elsewhere
+    //
+    if ( c3n == u3_mars_boot(u3P.dir_c, com) ) {
+      fprintf(stderr, "boot: fail\r\n");
+      exit(1);
+    }
+  }
+
+  exit(0);
+
+  return c3y;
+}
+
+/* _cw_boot(): initialize, await boot msg.
+*/
+static void
+_cw_boot(c3_i argc, c3_c* argv[])
+{
+  if ( 4 > argc ) {
+    fprintf(stderr, "boot: missing args\r\n");
+    exit(1);
+  }
+
+  uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
+  c3_c*      dir_c = argv[0];
+  c3_c*      key_c = argv[1]; // XX use passkey
+  c3_c*      wag_c = argv[2];
+  c3_c*      hap_c = argv[3];
+
+  //  XX windows ctrl-c?
+
+  _cw_init_io(lup_u);
+
+  fprintf(stderr, "boot: %s\r\n", dir_c);
+
+  //  load runtime config
+  //
+  {
+    memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
+    sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
+    sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
+  }
+
+  //  set up stdio read/write callbacks
+  //
+  inn_u.ptr_v = 0;
+  inn_u.pok_f = _cw_boot_writ;
+  inn_u.bal_f = _cw_io_fail;
+  out_u.ptr_v = 0;
+  out_u.bal_f = _cw_io_fail;
+
+  //  setup loom
+  //
+  //    XX s/b explicitly initialization, not maybe-restore
+  //
+  u3m_boot(dir_c);
+
+  //  set up logging
+  //
+  //    XX must be after u3m_boot due to u3l_log
+  //
+  {
+    u3C.stderr_log_f = _cw_io_send_stdr;
+    u3C.slog_f = _cw_io_send_slog;
+  }
+
+  //  start reading
+  //
+  u3_newt_read(&inn_u);
+
+  //  enter loop
+  //
+  uv_run(lup_u, UV_RUN_DEFAULT);
+  u3m_stop();
+}
+
+/* _cw_work(): resume and run; replay and start event processing
+*/
+static void
+_cw_work(c3_i argc, c3_c* argv[])
+{
+#ifdef U3_OS_mingw
+  if ( 6 > argc ) {
+#else
+  if ( 5 > argc ) {
+#endif
+    fprintf(stderr, "work: missing args\n");
+    exit(1);
+  }
+
+  c3_d       eve_d = 0;
+  uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
+  c3_c*      dir_c = argv[0];
+  c3_c*      key_c = argv[1]; // XX use passkey
+  c3_c*      wag_c = argv[2];
+  c3_c*      hap_c = argv[3];
+  c3_c*      eve_c = argv[4];
+#ifdef U3_OS_mingw
+  c3_c*      han_c = argv[5];
+  _cw_intr_win(han_c);
+#endif
+
+  _cw_init_io(lup_u);
+
+  fprintf(stderr, "work: %s\r\n", dir_c);
+
+  //  load runtime config
+  //
+  {
+    memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
+    sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
+    sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
+
+    if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
+      fprintf(stderr, "mars: replay-to invalid: '%s'\r\n", eve_c);
+    }
+  }
+
+  //  setup loom XX strdup?
+  //
+  u3m_boot(dir_c);
+
+  //  set up logging
+  //
+  //    XX must be after u3m_boot due to u3l_log
+  //
+  {
+    u3C.stderr_log_f = _cw_io_send_stdr;
+    u3C.slog_f = _cw_io_send_slog;
+  }
+
+  //  setup mars
+  //
+  {
+    //  XX set exit cb
+    //
+    u3_mars* mar_u = u3_mars_init(dir_c, &inn_u, &out_u, eve_d);
+
+    if ( !mar_u ) {
+      fprintf(stderr, "mars: init failed\r\n");
+      //  XX cleanup, exit codes
+      //
+      exit(1);
+    }
+
+    //  set up stdio read/write callbacks
+    //
+    inn_u.ptr_v = mar_u;
+    inn_u.pok_f = (u3_moor_poke)u3_mars_kick;
+    inn_u.bal_f = _cw_io_fail; // XX cleanup
+    out_u.ptr_v = mar_u;
+    out_u.bal_f = _cw_io_fail; // XX cleanup
+  }
+
+  //  start reading
+  //
+  u3_newt_read(&inn_u);
+
+  //  enter loop
+  //
+  uv_run(lup_u, UV_RUN_DEFAULT);
+  u3m_stop();
+}
+
+/* _cw_utils(): "worker" utilities and mars-process entrypoints
+*/
+static c3_i
+_cw_utils(c3_i argc, c3_c* argv[])
+{
+  //  utility commands and positional arguments, by analogy
+  //
+  //    $@  ~                                             ::  usage
+  //    $%  [%cram dir=@t]                                ::  jam state
+  //        [%dock dir=@t]                                ::  copy binary
+  //        [?(%grab %mass) dir=@t]                       ::  gc
+  //        [%info dir=@t]                                ::  print
+  //        [%meld dir=@t]                                ::  deduplicate
+  //        [?(%next %upgrade) dir=@t]                    ::  upgrade
+  //        [%pack dir=@t]                                ::  defragment
+  //        [%prep dir=@t]                                ::  prep upgrade
+  //        [%queu dir=@t eve=@ud]                        ::  cue state
+  //        [?(%vere %fetch-vere) dir=@t]                 ::  download vere
+  //    ::                                                ::    ipc:
+  //        [%boot dir=@t key=@t wag=@t hap=@ud]          ::  boot
+  //        [%work dir=@t key=@t wag=@t hap=@ud eve=@ud]  ::  run
+  //    ==
+  //
+  //    NB: don't print to anything other than stderr;
+  //    other streams may be used for ipc.
+  //
+  c3_m mot_m = 0;
+
+  if ( 2 <= argc ) {
+    if ( 4 == strlen(argv[1]) ) {
+      c3_c* s = argv[1];
+      mot_m = c3_s4(s[0], s[1], s[2], s[3]);
+    }
+    else if ( 0 == strcmp(argv[1], "upgrade") ) {
+      mot_m = c3__next;
+    }
+    else if ( 0 == strcmp(argv[1], "fetch-vere") ) {
+      mot_m = c3__vere;
+    }
+  }
+
+  switch ( mot_m ) {
+    case c3__cram: _cw_cram(argc, argv); return 1;
+    case c3__dock: _cw_dock(argc, argv); return 1;
+
+    case c3__mass:
+    case c3__grab: _cw_grab(argc, argv); return 1;
+
+    case c3__info: _cw_info(argc, argv); return 1;
+    case c3__meld: _cw_meld(argc, argv); return 1;
+    case c3__next: _cw_next(argc, argv); return 2; // continue on
+    case c3__pack: _cw_pack(argc, argv); return 1;
+    case c3__prep: _cw_prep(argc, argv); return 2; // continue on
+    case c3__queu: _cw_queu(argc, argv); return 1;
+    case c3__vere: _cw_vere(argc, argv); return 1;
+
+    case c3__boot: _cw_boot(argc - 2, argv + 2); return 1;
+    case c3__work: _cw_work(argc - 2, argv + 2); return 1;
+  }
+
+  return 0;
 }
 
 c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
-  //  Parse options.
+  if ( argc <= 0 ) {
+    fprintf(stderr, "nice try, fbi\r\n");
+    exit(1);
+  }
+
+  _main_init();
+
+  c3_c* bin_c = strdup(argv[0]);
+
+  //  parse for subcommands
   //
-  if ( c3n == _main_getopt(argc, argv) ) {
-    if (  (3 == argc)
-       && (0 == strcmp("db-info", argv[1])) )
-    {
-      return _debug_db_stats(argv[2]);
+  switch ( _cw_utils(argc, argv) ) {
+    default: c3_assert(0);
+
+    //  no matching subcommand, parse arguments
+    //
+    case 0: {
+      if ( c3n == _main_getopt(argc, argv) ) {
+        u3_ve_usage(argc, argv);
+        return 1;
+      }
+    } break;
+
+    //  ran subcommand
+    case 1: {
+      return 0;
     }
 
-    u3_ve_usage(argc, argv);
-    return 1;
+    //  found subcommand, continue
+    //
+    case 2: break;
   }
 
-  //  Set `u3_Host.wrk_c` to the worker executable path.
-  c3_i urbit_exe_len = strlen(argv[0]);
-  c3_i worker_exe_len = 1 + urbit_exe_len + strlen("-worker");
-  u3_Host.wrk_c = c3_malloc(worker_exe_len);
-  #if defined(U3_OS_mingw)
-  if ( urbit_exe_len >= 4 && !strcmp(argv[0] + urbit_exe_len - 4, ".exe")) {
-    snprintf(u3_Host.wrk_c, worker_exe_len, "%.*s-worker.exe", urbit_exe_len - 4, argv[0]);
-  } else {
-    snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
+  _main_self_path();
+
+  //  XX add argument
+  //
+  if ( !u3_Host.wrk_c ) {
+    u3_Host.wrk_c = bin_c;
   }
-  #else
-  snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
-  #endif
+  else {
+    c3_free(bin_c);
+  }
 
   if ( c3y == u3_Host.ops_u.dem ) {
     //  In daemon mode, run the urbit as a background process, but don't
@@ -874,7 +1822,7 @@ main(c3_i   argc,
       }
     }
 
-    #if defined(U3_OS_mingw)
+#ifdef U3_OS_mingw
     //  Initialize event used to transmit Ctrl-C to worker process
     //
     {
@@ -884,7 +1832,7 @@ main(c3_i   argc,
         exit(1);
       }
     }
-    #endif
+#endif
 
     //  starting u3m configures OpenSSL memory functions, so we must do it
     //  before any OpenSSL allocations

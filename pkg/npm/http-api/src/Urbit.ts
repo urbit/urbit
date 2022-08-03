@@ -14,6 +14,7 @@ import {
   SSEOptions,
   PokeHandlers,
   Message,
+  FatalError,
 } from './types';
 import { hexString } from './utils';
 
@@ -234,9 +235,9 @@ export class Urbit {
             console.log('Received SSE: ', event);
           }
           if (!event.id) return;
-          this.lastEventId = parseInt(event.id, 10);
-          if (this.lastEventId - this.lastAcknowledgedEventId > 20) {
-            this.ack(this.lastEventId);
+          const eventId = parseInt(event.id, 10);
+          if (eventId - this.lastAcknowledgedEventId > 20) {
+            this.ack(eventId);
           }
 
           if (event.data && JSON.parse(event.data)) {
@@ -291,7 +292,7 @@ export class Urbit {
         },
         onerror: (error) => {
           console.warn(error);
-          if (this.errorCount++ < 4) {
+          if (!(error instanceof FatalError) && this.errorCount++ < 4) {
             this.onRetry && this.onRetry();
             return Math.pow(2, this.errorCount - 1) * 750;
           }
@@ -311,6 +312,9 @@ export class Urbit {
    *
    */
   reset() {
+    if (this.verbose) {
+      console.log('resetting');
+    }
     this.delete();
     this.abort.abort();
     this.abort = new AbortController();

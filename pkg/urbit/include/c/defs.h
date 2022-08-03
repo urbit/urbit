@@ -56,6 +56,16 @@
 #     define c3_max(x, y) ( ((x) > (y)) ? (x) : (y) )
 #     define c3_min(x, y) ( ((x) < (y)) ? (x) : (y) )
 
+
+//! Round up/down (respectively).
+//!
+//! @param[in] x  Integer to round.
+//! @param[in] n  Multiple to round to. Must be power of 2.
+//!
+//! @return  `x` rounded to the nearest multiple of `n`.
+#     define c3_rop(x, n) (((x) + ((n) - 1)) & (~((n) - 1)))
+#     define c3_rod(x, n) ((x) & ~((n) - 1))
+
     /* Rotate.
     */
 #     define c3_rotw(r, x)  ( ((x) << (r)) | ((x) >> (32 - (r))) )
@@ -135,22 +145,16 @@
       // defined in vere/io/unix.c.
       c3_t u3_unix_cane(const c3_c* pax_c);
 #     define c3_open(a, ...) ({                                 \
-        c3_assert(u3_unix_cane(a));                             \
         open(a, __VA_ARGS__);})
 #     define c3_opendir(a) ({                                   \
-        c3_assert(u3_unix_cane(a));                             \
         opendir(a);})
 #     define c3_mkdir(a, b) ({                                  \
-        c3_assert(u3_unix_cane(a));                             \
         mkdir(a, b);})
 #     define c3_rmdir(a) ({                                     \
-        c3_assert(u3_unix_cane(a));                             \
         rmdir(a);})
 #     define c3_unlink(a) ({                                    \
-        c3_assert(u3_unix_cane(a));                             \
         unlink(a);})
 #     define c3_fopen(a, b) ({                                  \
-        c3_assert(u3_unix_cane(a));                             \
         fopen(a, b);})
 
 #endif /* ifndef C3_DEFS_H */

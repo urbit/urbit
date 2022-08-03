@@ -361,7 +361,9 @@ _cm_signal_deep(c3_w mil_w)
   // go utterly haywire.
   //
   if ( 0 == u3H->rod_u.bug.mer ) {
-    u3H->rod_u.bug.mer = u3i_string("emergency buffer");
+    u3H->rod_u.bug.mer = u3i_string(
+      "emergency buffer with sufficient space to cons the trace and bail"
+    );
   }
 
   if ( mil_w ) {
@@ -731,6 +733,11 @@ u3m_bail(u3_noun how)
     u3m_signal(how);
   }
 
+  //  release the emergency buffer, ensuring space for cells
+  //
+  u3z(u3R->bug.mer);
+  u3R->bug.mer = 0;
+
   /* Reconstruct a correct error ball.
   */
   if ( _(u3ud(how)) ) {
@@ -864,6 +871,18 @@ u3m_fall()
   _print_diff("unused free", u3R->hat_p, u3R->cap_p);
   _print_diff("freeing", u3R->rut_p, u3R->hat_p);
   _print_diff("stack", u3R->cap_p, u3R->mat_p);
+  static c3_w wat_w = 500000000;
+  if (u3to(u3_road, u3R->par_p) == &u3H->rod_u) {
+    wat_w = 500000000;
+  }
+  else {
+    wat_w = c3_min(wat_w,
+                   u3R->hat_p < u3R->cap_p ?
+                     u3R->cap_p - u3R->hat_p :
+                     u3R->hat_p - u3R->cap_p);
+  }
+  u3a_print_memory(stderr, "low water mark", wat_w);
+
 #endif
 
   u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;
@@ -888,6 +907,10 @@ u3m_hate(c3_w pad_w)
 
   u3R->ear_p = u3R->cap_p;
   u3m_leap(pad_w);
+
+  u3R->bug.mer = u3i_string(
+    "emergency buffer with sufficient space to cons the trace and bail"
+  );
 }
 
 /* u3m_love(): return product from leap.
@@ -1278,20 +1301,32 @@ u3m_soft(c3_w    mil_w,
     return why;
   }
   else {
-    //  don't use .^ at the top level!
-    //
-    c3_assert(1 != u3h(why));
+    u3_noun tax, cod, pro;
+
+    switch ( u3h(why) ) {
+      case 2: {
+        cod = c3__exit;
+        tax = u3t(why);
+      } break;
+
+      case 3: {
+        cod = u3h(u3t(why));
+        tax = u3t(u3t(why));
+      } break;
+
+      //  don't use .^ at the top level!
+      //
+      default: {
+        u3m_p("invalid mot", u3h(why));
+        c3_assert(0);
+      }
+    }
 
     //  don't call +mook if we have no kernel
     //
     //    This is required to soft the boot sequence.
-    //    XX produce specific error motes instead of %2?
     //
     if ( 0 == u3A->roc ) {
-      u3_noun tax = u3t(why);
-
-      u3m_p("tone", u3h(why));
-
       while ( u3_nul != tax ) {
         u3_noun dat, mot, val;
         u3x_cell(tax, &dat, &tax);
@@ -1311,31 +1346,21 @@ u3m_soft(c3_w    mil_w,
         }
       }
 
-      u3z(why);
-      return u3nc(c3__fail, u3_nul);
+      pro = u3nc(u3k(cod), u3_nul);
+    }
+    //  %evil leaves no trace
+    //
+    else if ( c3__evil == cod ) {
+      pro = u3nc(u3k(cod), u3_nul);
     }
     else {
-      u3_noun tax, cod, pro, mok;
-
-      if ( 2 == u3h(why) ) {
-        cod = c3__exit;
-        tax = u3k(u3t(why));
-      }
-      else {
-        c3_assert(3 == u3h(why));
-
-        cod = u3k(u3h(u3t(why)));
-        tax = u3k(u3t(u3t(why)));
-      }
-
-      mok = u3dc("mook", 2, tax);
-      pro = u3nc(cod, u3k(u3t(mok)));
-
+      u3_noun mok = u3dc("mook", 2, u3k(tax));
+      pro = u3nc(u3k(cod), u3k(u3t(mok)));
       u3z(mok);
-      u3z(why);
-
-      return pro;
     }
+
+    u3z(why);
+    return pro;
   }
 }
 
@@ -1787,6 +1812,10 @@ u3m_boot(c3_c* dir_c)
   /* Construct or activate the allocator.
   */
   u3m_pave(nuu_o);
+
+  /* Place the guard page.
+  */
+  u3e_init();
 
   /* Initialize the jet system.
   */

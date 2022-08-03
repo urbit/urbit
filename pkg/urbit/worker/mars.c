@@ -291,7 +291,7 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
   return vir;
 }
 
-/* _mars_poke(): attempt to compute an event.
+/* _mars_poke(): attempt to compute an event. [*eve] is RETAINED.
 */
 static c3_o
 _mars_poke(c3_w mil_w, u3_noun* eve, u3_noun* out)
@@ -339,16 +339,27 @@ _mars_poke(c3_w mil_w, u3_noun* eve, u3_noun* out)
   }
 #endif
 
-  if ( c3n == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), out)) ) {
-    u3_noun dud = *out;
+  {
+    u3_noun pro;
 
-    *eve = _mars_make_crud(*eve, u3k(dud));
-
-    if ( c3n == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), out)) ) {
-      *out = u3nt(dud, *out, u3_nul);
+    if ( c3y == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), &pro)) ) {
+      *out = pro;
+    }
+    else if ( c3__evil == u3h(pro) ) {
+      *out = u3nc(pro, u3_nul);
     }
     else {
-      u3z(dud);
+      u3_noun dud = pro;
+
+      *eve = _mars_make_crud(*eve, u3k(dud));
+
+      if ( c3y == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), &pro)) ) {
+        *out = pro;
+        u3z(dud);
+      }
+      else {
+        *out = u3nt(dud, pro, u3_nul);
+      }
     }
   }
 
@@ -970,7 +981,7 @@ u3_mars_init(c3_c*    dir_c,
 static u3_noun
 _mars_wyrd_card(c3_m nam_m, c3_w ver_w, c3_l sev_l)
 {
-  //  ghetto (scot %ta)
+  //  XX ghetto (scot %ta)
   //
   u3_noun ver = u3nt(c3__vere, u3i_string("~." URBIT_VERSION), u3_nul);
   // u3_noun sen = u3dc("scot", c3__uv, sev_l); //  lol no
@@ -979,17 +990,19 @@ _mars_wyrd_card(c3_m nam_m, c3_w ver_w, c3_l sev_l)
 
   //  special case versions requiring the full stack
   //
-  if (  ((c3__zuse == nam_m) && (419 == ver_w))
-     || ((c3__lull == nam_m) && (330 == ver_w))
+  if (  ((c3__zuse == nam_m) && (418 == ver_w))
+     || ((c3__lull == nam_m) && (329 == ver_w))
      || ((c3__arvo == nam_m) && (240 == ver_w)) )
   {
-    kel = u3nl(u3nc(c3__zuse, 419),
-               u3nc(c3__lull, 330),
+    kel = u3nl(u3nc(c3__zuse, 418),
+               u3nc(c3__lull, 329),
                u3nc(c3__arvo, 240),
                u3nc(c3__hoon, 140),
                u3nc(c3__nock, 4),
                u3_none);
   }
+  //  XX speculative!
+  //
   else {
     kel = u3nc(nam_m, u3i_word(ver_w));
   }
@@ -1296,7 +1309,7 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
   inp_u.veb_o = c3y;
   inp_u.lit_o = c3n;
   inp_u.ver_u.nam_m = c3__zuse;
-  inp_u.ver_u.ver_w = 419;
+  inp_u.ver_u.ver_w = 418;
 
   gettimeofday(&inp_u.tim_u, 0);
   c3_rand(inp_u.eny_w);

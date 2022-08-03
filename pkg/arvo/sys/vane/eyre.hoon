@@ -251,7 +251,7 @@
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
       ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
-      ;title:"OS1"
+      ;title:"Urbit"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
              @font-face {
@@ -1705,13 +1705,14 @@
         ==
       ::
           %fact
-        :~  ['response' [%s 'diff']]
-          ::
-            :-  'json'
-            ~|  [%unexpected-fact-mark p.cage.sign]
-            ?>  =(%json p.cage.sign)
-            !<(json q.cage.sign)
-        ==
+        :+  ['response' [%s 'diff']]
+          :-  'json'
+          ~|  [%unexpected-fact-mark p.cage.sign]
+          ?>  =(%json p.cage.sign)
+          !<(json q.cage.sign)
+        ::
+        ?~  from  ~
+        ['mark' [%s mark.u.from]]~
       ::
           %kick
         ['response' [%s 'quit']]~

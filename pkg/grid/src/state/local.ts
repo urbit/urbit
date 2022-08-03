@@ -4,7 +4,7 @@ import produce from 'immer';
 import { clearStorageMigration, createStorageKey, storageVersion } from './util';
 
 interface LocalState {
-  protocolHandling: boolean;
+  browserId: string;
   currentTheme: 'light' | 'dark';
   set: (f: (s: LocalState) => void) => void;
 }
@@ -14,7 +14,7 @@ export const useLocalState = create<LocalState>(
     (set, get) => ({
       set: (f) => set(produce(get(), f)),
       currentTheme: 'light',
-      protocolHandling: false
+      browserId: ''
     }),
     {
       name: createStorageKey('local'),
@@ -24,9 +24,9 @@ export const useLocalState = create<LocalState>(
   )
 );
 
-const selProtocolHandling = (s: LocalState) => s.protocolHandling;
-export function useProtocolHandling() {
-  return useLocalState(selProtocolHandling);
+const selBrowserId = (s: LocalState) => s.browserId;
+export function useBrowserId() {
+  return useLocalState(selBrowserId);
 }
 
 const selCurrentTheme = (s: LocalState) => s.currentTheme;

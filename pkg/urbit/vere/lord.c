@@ -930,7 +930,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     }
 
 #ifdef U3_OS_mingw
-    sprintf(cev_c, "%u", u3_Host.cev_u);
+    sprintf(cev_c, "%" PRIu64, u3_Host.cev_u);
     arg_c[7] = cev_c;
     arg_c[8] = 0;
 #else

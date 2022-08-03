@@ -163,7 +163,7 @@ stdenvNoCC.mkDerivation {
     fail=0
 
     for f in $(find "$out/" -type f); do
-      if egrep "((FAILED|CRASHED)|(ford|warn):) " $f >/dev/null; then
+      if egrep "((FAILED|CRASHED)|warn:) " $f >/dev/null; then
         if [[ $fail -eq 0 ]]; then
           hdr "Test Failures"
         fi

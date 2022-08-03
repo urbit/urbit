@@ -653,18 +653,14 @@ u3_disk_release(c3_c* pax_c)
 void
 u3_disk_exit(u3_disk* log_u)
 {
-  //  cancel write thread
+  //  try to cancel write thread
+  //  shortcircuit cleanup if we cannot
   //
-  //    XX can deadlock when called from signal handler
-  //    XX revise SIGTSTP handling
-  //
-  if ( c3y == log_u->sav_u.ted_o ) {
-    c3_i sas_i;
-
-    do {
-      sas_i = uv_cancel(&log_u->sav_u.req_u);
-    }
-    while ( UV_EBUSY == sas_i );
+  if (  (c3y == log_u->sav_u.ted_o)
+     && (0 > uv_cancel(&log_u->sav_u.req_u)) )
+  {
+    // u3l_log("disk: unable to cleanup\r\n");
+    return;
   }
 
   //  close database
@@ -673,7 +669,6 @@ u3_disk_exit(u3_disk* log_u)
 
   //  dispose planned writes
   //
-
   {
     u3_feat* fet_u = log_u->put_u.ext_u;
 
@@ -838,8 +833,11 @@ u3_disk_init(c3_c* pax_c)
     //
     {
       const size_t siz_i =
-      #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
+      #if defined(U3_OS_mingw)
         0xf00000000;
+      // 500 GiB is as large as musl on aarch64 wants to allow
+      #elif (defined(U3_CPU_aarch64) && defined(U3_OS_linux))
+        0x7d00000000;
       #else
         0x10000000000;
       #endif

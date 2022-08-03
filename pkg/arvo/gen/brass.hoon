@@ -26,7 +26,7 @@
       ::
         prime=_|
     ==
-:-  %boot-pill
+:-  %pill
 ^-  pill:pill
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
 ::  bas: root path to boot system' desk
