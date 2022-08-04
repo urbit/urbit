@@ -2557,7 +2557,7 @@
       |-  ^+  peer-core
       ?~  boz  peer-core
       =/  pum=message-pump-state  (~(got by snd.peer-state) i.boz)
-      ?:  =(next current):pum
+      ?.  =(next current):pum
         $(boz t.boz)
       ::  sanity check on the message pump state
       ::
