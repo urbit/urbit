@@ -776,6 +776,13 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%rein des=desk liv=? ren=(map dude:gall ?)]    ::  live
+        ::TODO  perms should be included in %rein task... right?
+        ::NOTE  for now, separate task: seems cleaner api design,
+        ::      more flexibility on userspace side, and doesn't lose us
+        ::      any atomicity: we always send %load to gall anyway.
+        ::      "%rein together with %visa" is weird case.
+        [%visa des=desk pes=(set perm:gall)]            ::  allowed opt. perms
         [%stir arg=*]                                   ::  debug
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
@@ -814,9 +821,14 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone                                              ::  domes
-    %+  map  [ship desk]                                ::
-    [dome tom=(map tako norm) nor=norm]                 ::
+  +$  cone  (map [ship desk] foam)                      ::  domes
+  +$  foam                                              ::
+    $:  dome                                            ::
+        tom=(map tako norm)                             ::
+        nor=norm                                        ::
+        liv=?                                           ::
+        ren=(map dude:gall ?)                           ::
+    ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
@@ -1651,6 +1663,7 @@
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
+        [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
         [%free =desk pes=(set perm)]                    ::  allow
         [%lock =desk pes=(set perm)]                    ::  disallow
@@ -1682,6 +1695,10 @@
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
+  +$  load                                              ::  loadout
+    $:  perms=(list [=desk (set perm)])
+        dudes=(list [=dude =beak =agent])
+    ==
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -1779,7 +1796,7 @@
   ::
   +$  perm  $%(perm-arvo perm-gall)
   ::
-  +$  perm-gall  ::TODO  by desk?
+  +$  perm-gall  ::TODO  by desk? agents from same desk µay always talk
     $%  [%write dude=$?(%peers (unit dude:gall))]  ::  poke
         [%watch dude=$?(%peers (unit dude:gall))]  ::  subscribe
         [%reads vane=term desk=(unit desk) =spur]  ::  scry
@@ -1869,6 +1886,7 @@
       ?@  must  must
       ?+  must  (~(has in pers) must)
           [?(%write %watch) *]
+        ::TODO  make sure agents on same desk are allowed to talk to each other
         %+  lien  ~(tap in pers)
         |=  p=perm
         ?&  ?=(?(%write %watch) -.p)
@@ -2431,6 +2449,9 @@
       ::  %eyre: cancel request
       ::
       [%cancel-request ~]
+      ::  %khan: fire thread
+      ::
+      $>(%fyrd task:khan)
       ::  %dill: reset terminal configuration
       ::
       $>(%hail task:dill)

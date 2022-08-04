@@ -12,9 +12,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-8: overall gall state, versioned
+::  $state-9: overall gall state, versioned
 ::
-+$  state-8  [%8 state]
++$  state-9  [%9 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -48,9 +48,9 @@
 ::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
-::    live: is this agent running? TODO document better
 ::    stats: TODO document
 ::    watches: incoming and outgoing subscription state
+::    code: most recently loaded code
 ::    agent: agent core
 ::    beak: compilation source
 ::    marks: mark conversion requests
@@ -58,9 +58,9 @@
 +$  yoke
   $:  control-duct=duct
       nonce=@t
-      live=?  ::TODO  remove, replaced by -.agent
       =stats
       =watches
+      code=*
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
@@ -119,7 +119,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %8
+  $:  %9
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -134,148 +134,19 @@
 +$  egg
   $:  control-duct=duct
       nonce=@t
-      live=?
       =stats
       =watches
-      old-state=(each vase vase)
+      code=~
+      old-state=[%| vase]
       =beak
       marks=(map duct mark)
   ==
 --
-::  pupal gall core, on upgrade
-::
-=<  =*  adult-gate  .
-    =|  =spore
-    |=  [now=@da eny=@uvJ rof=roof]
-    =*  pupal-gate  .
-    =*  adult-core  (adult-gate +<)
-    =<  |%
-        ++  call  ^call
-        ++  load  ^load
-        ++  scry  ^scry
-        ++  stay  ^stay
-        ++  take  ^take
-        --
-    |%
-    ++  molt
-      |=  [=duct fec=(unit move)]
-      ^-  [(list move) _adult-gate]
-      ~>  %slog.[0 leaf+"gall: molting"]
-      ~<  %slog.[0 leaf+"gall: molted"]
-      ::  +molt should never notify its client about agent changes
-      ::
-      =-  :_  ->
-          %+  welp
-            (skip -< |=(move ?=([* %give %onto *] +<)))
-          [^duct %pass /whiz/gall %$ %whiz ~]~
-      =/  adult  adult-core
-      =.  state.adult
-        [%8 system-duct outstanding contacts yokes=~ blocked perms wants wards]:spore
-      =/  mo-core  (mo-abed:mo:adult duct)
-      =.  mo-core
-        =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
-        |-  ^+  mo-core
-        ?~  apps  mo-core
-        ?.  =(%base q.beak.egg.i.apps)
-          ~>  %slog.[0 leaf+"gall: suspending {<dap.i.apps>}"]
-          =.  old-state.egg.i.apps
-            =/  old  old-state.egg.i.apps
-            |/?-(-.old %| p.old, %& p.old)
-          =/  ap-core  (ap-abut:ap:mo-core i.apps)
-          $(apps t.apps, mo-core ap-abet:ap-core)
-        ~>  %slog.[0 leaf+"gall: upgrading {<dap.i.apps>}"]
-        =/  ap-core  (ap-abut:ap:mo-core i.apps)
-        =?  ap-core  ?=(%& -.old-state.egg.i.apps)
-          =^  tan  ap-core  (ap-install:ap-core `p.old-state.egg.i.apps)
-          ?^  tan
-            (mean u.tan)
-          ap-core
-        $(apps t.apps, mo-core ap-abet:ap-core)
-      =.  mo-core  (mo-subscribe-to-agent-builds:mo-core now)
-      =^  moves  adult-gate  mo-abet:mo-core
-      =?  moves  ?=(^ fec)  (weld moves [u.fec]~)
-      [moves adult-gate]
-    ::
-    ++  call
-      |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
-      =*  call-args  +<
-      ?:  =(~ eggs.spore)
-        ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-        =.  state.adult-gate  spore(eggs *(map term yoke))
-        (call:adult-core call-args)
-      ?^  dud
-        ~>  %slog.[0 leaf+"gall: pupa call dud"]
-        (mean >mote.u.dud< tang.u.dud)
-      =/  task  ((harden task:gall) wrapped-task)
-      ?:  ?=(%vega -.task)
-        [~ pupal-gate]
-      (molt duct `[duct %slip %g task])
-    ::
-    ++  scry  scry:adult-core
-    ++  stay  spore
-    ++  take
-      |=  [=wire =duct dud=(unit goof) sign=sign-arvo]
-      =*  take-args  +<
-      ?:  =(~ eggs.spore)
-        ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-        =.  state.adult-gate  spore(eggs *(map term yoke))
-        (take:adult-core take-args)
-      ?^  dud
-        ~>  %slog.[0 leaf+"gall: pupa take dud"]
-        (mean >mote.u.dud< tang.u.dud)
-      ?:  =(/sys/lyv wire)
-        (molt duct ~)
-      (molt duct `[duct %pass wire %b %huck sign])
-    ::
-    ++  load
-      |^  |=  old=spore-any
-          =?  old  ?=(%7 -.old)
-            (spore-7-to-8 old)
-          ?>  ?=(%8 -.old)
-          =.  spore  old
-          ?.  =(~ eggs.spore)
-            pupal-gate
-          ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-          %_  adult-gate
-            state  spore(eggs *(map term yoke))
-          ==
-      ::
-      +$  spore-any  $%(^spore spore-7)
-      +$  spore-7
-        $:  %7
-            wipe-eyre-subs=_|  ::NOTE  band-aid for #3196
-            system-duct=duct
-            outstanding=(map [wire duct] (qeu remote-request))
-            contacts=(set ship)
-            eggs=(map term egg)
-            blocked=(map term (qeu blocked-move))
-        ==
-      ::
-      ++  spore-7-to-8
-        |=  old=spore-7
-        ^-  ^spore
-        :-  %8
-        =.  eggs.old
-          %-  ~(urn by eggs.old)
-          |=  [a=term e=egg]
-          ::NOTE  kiln will kick off appropriate app revival
-          e(old-state [%| p.old-state.e])
-        +>.old(blocked [blocked.old ~ ~ ~])  ::TODO  actually 8->9
-      --
-    --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-8
+=|  state=state-9
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
-=<  ~%  %gall-wrap  ..mo  ~
-    |%
-    ++  call  ^call
-    ++  load  ^load
-    ++  scry  ^scry
-    ++  stay  ^stay
-    ++  take  ^take
-    --
 ~%  %gall-top  ..part  ~
 |%
 ::  +mo: Arvo-level move handling
@@ -302,27 +173,14 @@
       mo-core
     =.  mo-core  (mo-pass i.list)
     $(list t.list)
-  ::  +mo-jolt: (re)start agent if not already started on this desk
+  ::  +mo-jolt: (re)start agent
   ::
   ++  mo-jolt
     |=  [dap=term =ship =desk]
     ^+  mo-core
-    =/  yak  (~(get by yokes.state) dap)
-    ?~  yak
-      (mo-boot dap ship desk)
-    ?.  -.agent.u.yak
-      (mo-boot dap ship desk)
-    ?.  =(desk q.beak.u.yak)
-      (mo-boot dap ship desk)
-    mo-core
-  ::  +mo-boot: ask %ford to build us a core for the specified agent.
-  ::
-  ++  mo-boot
-    |=  [dap=term =ship =desk]
-    ^+  mo-core
-    =/  =case  [%da now]
-    =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]/(scot case)
-    (mo-pass wire %c %warp ship desk ~ %sing %a case /app/[dap]/hoon)
+    =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]
+    ..mo-core
+    ::  XX  (mo-pass wire %c %jolt dap ship desk)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -350,8 +208,11 @@
     ~>  %slog.[0 leaf+"gall: {tex} {<dap>}"]
     ::
     ?^  yak
+      ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
+        mo-core
+      ::
       =.  yokes.state
-        (~(put by yokes.state) dap u.yak(beak bek))
+        (~(put by yokes.state) dap u.yak(beak bek, code agent))
       =/  ap-core  (ap-abed:ap dap `our)
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
@@ -362,6 +223,7 @@
       %*  .  *yoke
         control-duct  hen
         beak          bek
+        code          agent
         agent         &+agent
         nonce         (scot %uw (end 5 (shas %yoke-nonce eny)))
       ==
@@ -381,60 +243,6 @@
     =.  mo-core  (mo-clear-queue dap)
     =/  =suss  [dap %boot now]
     (mo-give %onto [%.y suss])
-  ::  +mo-subscribe-to-agent-builds: request agent update notices
-  ::
-  ::    Also subscribe to our own source path, in case we get reloaded
-  ::    but none of the agents do.  This way, Clay will still notify us,
-  ::    and we'll be able to exit the chrysalis.
-  ::
-  ++  mo-subscribe-to-agent-builds
-    |=  date=@da
-    ^+  mo-core
-    =.  mo-core  (mo-abed system-duct.state)
-    ::
-    =/  sources=(jug desk [care:clay path])
-      %+  ~(put by *(jug desk [care:clay path]))  %base
-      %-  sy
-      :~  [%z /sys/hoon/hoon]
-          [%z /sys/arvo/hoon]
-          [%z /sys/lull/hoon]
-          [%z /sys/zuse/hoon]
-          [%z /sys/vane/gall/hoon]
-          [%z /sys/kelvin]
-      ==
-    ::
-    =.  sources
-      =/  apps=(list [dap=term =yoke])  ~(tap by yokes.state)
-      |-  ^+  sources
-      ?~  apps
-        sources
-      =?  sources  ?=(%& -.agent.yoke.i.apps)
-        (~(put ju sources) q.beak.yoke.i.apps %a /app/[dap.i.apps]/hoon)
-      $(apps t.apps)
-    ::
-    %-  mo-past
-    %-  zing
-    %+  turn  ~(tap by sources)
-    |=  [=desk paths=(set [care:clay path])]
-    :~  [/sys/lyv %c %warp our desk ~]
-        [/sys/lyv %c %warp our desk ~ %mult da+date paths]
-    ==
-  ::  +mo-scry-agent-cage: read $agent core from clay
-  ::
-  ++  mo-scry-agent-cage
-    |=  [dap=term =desk =case:clay]
-    ^-  (each agent tang)
-    =/  bek=beak  [our desk case]
-    =/  sky  (rof ~ %ca bek /app/[dap]/hoon)
-    ?~  sky  |+[leaf+"gall: {<dap>} scry blocked"]~
-    ?~  u.sky  |+[leaf+"gall: {<dap>} scry failed"]~
-    =/  =cage  u.u.sky
-    ?.  =(%vase p.cage)
-      |+[leaf+"gall: bad mark {<p.cage>} for agent {<dap>}"]~
-    =/  res  (mule |.(!<(agent !<(vase q.cage))))
-    ?:  ?=(%& -.res)
-      &+p.res
-    |+[[leaf+"gall: {<dap>} not valid agent"] p.res]
   ::  +mo-send-foreign-request: handle local request to .ship
   ::
   ++  mo-send-foreign-request
@@ -537,9 +345,9 @@
     ^+  mo-core
     ::
     ?+  -.wire  !!
-      %lyv  (mo-handle-sys-lyv wire sign-arvo)
+      %lyv  ..mo-core  ::  vestigial
+      %cor  ..mo-core  ::  vestigial
       %era  (mo-handle-sys-era wire sign-arvo)
-      %cor  (mo-handle-sys-cor wire sign-arvo)
       %lag  (mo-handle-sys-lag wire sign-arvo)
       %req  (mo-handle-sys-req wire sign-arvo)
       %way  (mo-handle-sys-way wire sign-arvo)
@@ -554,60 +362,6 @@
     ?.  ?=(%breach -.public-keys-result.sign-arvo)
       mo-core
     (mo-breach who.public-keys-result.sign-arvo)
-  ::  +mo-handle-sys-cor: receive a built agent from %clay
-  ::
-  ++  mo-handle-sys-cor
-    |=  [=wire =sign-arvo]
-    ^+  mo-core
-    ::
-    ?>  ?=([%cor @ @ @ @ ~] wire)
-    =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.wire
-    =/  =beak  [(slav %p her) desk da+now]
-    ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
-    ?~  p.sign-arvo
-      (mean leaf+"gall: failed to build agent {<dap>}" ~)
-    =/  cag=cage  r.u.p.sign-arvo
-    ?.  =(%vase p.cag)
-      (mean leaf+"gall: bad %writ {<p.cag>} for {<dap>}" ~)
-    =/  res  (mule |.(!<(agent !<(vase q.cag))))
-    ?:  ?=(%| -.res)
-      (mean leaf+["gall: bad agent {<dap>}"] p.res)
-    =.  mo-core  (mo-receive-core dap beak p.res)
-    (mo-subscribe-to-agent-builds now)
-  ::  +mo-handle-sys-lyv: handle notice that agents have been rebuilt
-  ::
-  ++  mo-handle-sys-lyv
-    |=  [=wire =sign-arvo]
-    ^+  mo-core
-    ?>  ?=([%lyv ~] wire)
-    ?>  ?=([?(%behn %clay) %wris *] sign-arvo)
-    =/  nex=(list [=care:clay =path])  ~(tap in q.sign-arvo)
-    ~>  %slog.[0 leaf+"gall: reloading agents"]
-    ~<  %slog.[0 leaf+"gall: reloaded agents"]
-    =;  cor  (mo-subscribe-to-agent-builds:cor now)
-    %+  roll  nex
-    |=  [[=care:clay =path] cor=_mo-core]
-    ^+  cor
-    ::  We throw away %z results because we only have them to guarantee
-    ::  molting.  Clay will tell us if e.g. changing hoon.hoon affects
-    ::  the result of a particular app (usually it will).
-    ::
-    ?.  =(%a care)
-      cor
-    ~|  path=path
-    =/  dap  dap:;;([%app dap=@tas %hoon ~] path)
-    =/  yok=(unit yoke)  (~(get by yokes.state) dap)
-    ?~  yok
-      ~>  %slog.[0 leaf+"gall: no agent to reload: {<dap>}"]
-      cor
-    ?:  ?=(%| -.agent.u.yok)
-      ~>  %slog.[0 leaf+"gall: dead agent reload: {<dap>}"]
-      cor
-    =/  bek=beak  [our q.beak.u.yok da+now]
-    =/  rag  (mo-scry-agent-cage dap q.bek da+now)
-    ?:  ?=(%| -.rag)
-      (mean p.rag)
-    (mo-receive-core:cor dap bek p.rag)
   ::  +mo-handle-sys-lag: handle an ames %clog notification
   ::
   ++  mo-handle-sys-lag
@@ -903,6 +657,26 @@
   ::
   ++  mo-wink
     mo-core(wards.state (~(del in wards.state) hen))
+  ::  +mo-load: install agents
+  ::
+  ++  mo-load
+    |=  ^load
+    ::TODO  handle permissions
+    =.  mo-core
+      |-  ^+  mo-core
+      ?~  dudes  mo-core
+      =/  [=dude =desk]  [dude q.beak]:i.dudes
+      ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
+      $(dudes t.dudes, mo-core (mo-receive-core i.dudes))
+    ::
+    =/  kil
+      =/  old  ~(key by yokes.state)
+      =/  new  (silt (turn dudes head))
+      ~(tap in (~(dif in old) new))
+    |-  ^+  mo-core
+    ?~  kil  mo-core
+    ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
+    $(kil t.kil, mo-core (mo-idle i.kil))
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
@@ -1054,19 +828,6 @@
       |=  [dap=term =routes]
       ^+  ap-core
       (ap-yoke dap routes (~(got by yokes.state) dap))
-    ::  +ap-hatch: initialize agent state from $egg, after upgrade
-    ::
-    ++  ap-abut
-      |=  [dap=term =egg]
-      ^+  ap-core
-      =/  yak=^yoke
-        ?:  ?=(%| -.old-state.egg)
-          egg
-        =/  res  (mo-scry-agent-cage dap q.beak.egg da+now)
-        ?:  ?=(%| -.res)
-          (mean p.res)
-        egg(p.old-state `agent`p.res)
-      (ap-yoke dap `our yak)
     ::  +ap-yoke: initialize agent state, starting from a $yoke
     ::
     ++  ap-yoke
@@ -1110,7 +871,7 @@
         %+  turn  ~(tap by inbound.watches.yoke)
         |=  [=duct =ship =path]
         path
-      =/  will=(list card:agent:gall)
+      =/  will=(list card:agent)
         %+  welp
           ?:  =(~ inbound-paths)
             ~
@@ -1818,6 +1579,7 @@
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
+      %load  mo-abet:(mo-load:mo-core +.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %free  mo-abet:(mo-free:mo-core +.task)
       %lock  mo-abet:(mo-lock:mo-core +.task)
@@ -1828,7 +1590,75 @@
   ==
 ::  +load: recreate vane; note, only valid if called from pupa
 ::
-++  load  !!
+++  load
+  |^  |=  old=spore-any
+      =?  old  ?=(%7 -.old)
+        (spore-7-to-8 old)
+      =?  old  ?=(%8 -.old)
+        (spore-8-to-9 old)
+      ?>  ?=(%9 -.old)
+      gall-payload(state old)
+  ::
+  +$  spore-any  $%(spore spore-7 spore-8)
+  +$  spore-8
+    $:  %8
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-8)
+        blocked=(map term (qeu blocked-move))
+    ==
+  +$  egg-8
+    $:  control-duct=duct
+        nonce=@t
+        live=?
+        =stats
+        =watches
+        old-state=(each vase vase)
+        =beak
+        marks=(map duct mark)
+    ==
+  +$  spore-7
+    $:  %7
+        wipe-eyre-subs=_|  ::NOTE  band-aid for #3196
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-8)
+        blocked=(map term (qeu blocked-move))
+    ==
+  ::
+  ++  spore-7-to-8
+    |=  old=spore-7
+    ^-  spore-8
+    :-  %8
+    =.  eggs.old
+      %-  ~(urn by eggs.old)
+      |=  [a=term e=egg-8]
+      ::  kiln will kick off appropriate app revival
+      ::
+      e(old-state [%| p.old-state.e])
+    +>.old
+  ::
+  ::  removed live
+  ::  changed old-state from (each vase vase) to [%| vase]
+  ::  added code
+  ::
+  ++  spore-8-to-9
+    |=  old=spore-8
+    ^-  spore
+    %=    old
+        -  %9
+        eggs
+      %-  ~(urn by eggs.old)
+      |=  [a=term e=egg-8]
+      ^-  egg
+      e(|2 |3.e(|2 `|5.e(old-state [%| p.old-state.e])))
+    ::
+        blocked
+      [blocked.old ~ ~ ~]
+    ==
+  --
 ::  +scry: standard scry
 ::
 ++  scry
@@ -1915,12 +1745,12 @@
   |=  =yoke
   ^-  egg
   %=    yoke
+      code   ~
       agent
+    :-  %|
     ?:  ?=(%| -.agent.yoke)
-      [%| p.agent.yoke]
-    ?:  =(%base q.beak.yoke)
-      [%& on-save:p.agent.yoke]
-    [%| on-save:p.agent.yoke]
+      p.agent.yoke
+    on-save:p.agent.yoke
   ==
 ::  +take: response
 ::
