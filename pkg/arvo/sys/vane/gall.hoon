@@ -660,17 +660,18 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  agents=(list [=dude =beak =agent])
+    |=  ^load
+    ::TODO  handle permissions
     =.  mo-core
       |-  ^+  mo-core
-      ?~  agents  mo-core
-      =/  [=dude =desk]  [dude q.beak]:i.agents
+      ?~  dudes  mo-core
+      =/  [=dude =desk]  [dude q.beak]:i.dudes
       ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
-      $(agents t.agents, mo-core (mo-receive-core i.agents))
+      $(dudes t.dudes, mo-core (mo-receive-core i.dudes))
     ::
     =/  kil
       =/  old  ~(key by yokes.state)
-      =/  new  (silt (turn agents head))
+      =/  new  (silt (turn dudes head))
       ~(tap in (~(dif in old) new))
     |-  ^+  mo-core
     ?~  kil  mo-core

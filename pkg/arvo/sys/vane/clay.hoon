@@ -126,6 +126,7 @@
       fod=flue                                          ::  ford cache
       liv=?                                             ::  running agents
       ren=(map dude:gall ?)                             ::  force agents on/off
+      pes=(set perm:gall)                               ::  granted opt. perms
   ==                                                    ::
 ::
 ::  Commit state.
@@ -319,6 +320,8 @@
       fod=(map duct @ud)                                ::  current requests
       haw=(map mood (unit cage))                        ::  simple cache
   ==                                                    ::
+::
++$  seal  [req=(list perm:gall) opt=(list perm:gall)]
 ::
 +$  bill  (list dude:gall)
 ::  diff from desk.bill
@@ -3021,6 +3024,12 @@
     =?  liv  =(%base syd)  &
     ..park(liv.dom liv, ren.dom ren)
   ::
+  ++  visa
+    |=  pes=(set perm:gall)
+    ^+  ..park
+    =?  pes  =(%base syd)  *(set perm:gall)
+    ..park(pes.dom pes)
+  ::
   ++  rise
     |=  [=dude:gall on=(unit ?)]
     ?<  =(%base syd)
@@ -4286,8 +4295,26 @@
   ::
   ++  goad
     ^+  ..abet
+    =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+    ::
+    =^  perms=(list [=desk (set perm:gall)])  ..abet
+      |-  ^-  [(list [desk (set perm:gall)]) _..abet]
+      ?~  desks
+        [~ ..abet]
+      =/  den  ((de now rof hen ruf) our i.desks)
+      =^  res  den  (aver:den ~ %x da+now /desk/seal)
+      =.  ruf  +:abet:den
+      ?.  ?=([~ ~ *] res)
+        ~&  [%clay %no-seal-in i.desks]
+        $(desks t.desks)
+      =/  req=(set perm:gall)
+        ~|  [%building-seal i.desks]
+        =/  =seal  !<(seal q.u.u.res)
+        (~(gas in *(set perm:gall)) req.seal)
+      =^  rest  ..abet  $(desks t.desks)
+      [[[i.desks (~(uni in req) pes:dom:den)] rest] ..abet]
+    ::
     =^  sat=(list [=desk =bill])  ..abet
-      =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
       |-  ^-  [(list [desk bill]) _..abet]
       ?~  desks
         [~ ..abet]
@@ -4303,7 +4330,7 @@
     =.  sat  (apply-precedence sat)
     =^  agents  ..abet  (build-agents sat)
     =.  ..abet  (build-marks (turn sat head))
-    (emit hen %pass /lu/load %g %load agents)
+    (emit hen %pass /lu/load %g %load perms agents)
   ::  +override: apply rein to bill
   ::
   ++  override
@@ -4367,15 +4394,15 @@
   ::
   ++  build-agents
     |=  sat=(list [=desk =bill])
-    ^-  [load:gall _..abet]
-    =|  lad=load:gall
-    |-  ^-  [load:gall _..abet]
+    ^+  [dudes:*load:gall ..abet]
+    =/  lad  dudes:*load:gall
+    |-  ^+  [dudes:*load:gall ..abet]
     ?~  sat
       [lad ..abet]
     =/  f  (ford our desk.i.sat ~)
-    =^  new=load:gall  ..abet
+    =^  new=_dudes:*load:gall  ..abet
       %-  wrap  :^  our  desk.i.sat  ~
-      |-  ^-  [load:gall state:ford:fusion]
+      |-  ^-  [_dudes:*load:gall state:ford:fusion]
       ?~  bill.i.sat
         [~ nub.f]
       =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
@@ -4642,6 +4669,13 @@
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(rein:den liv.req ren.req)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld m1 m2) ..^$]
+  ::
+      %visa
+    =^  m1  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(visa:den pes.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
   ::
@@ -5279,7 +5313,7 @@
     ++  dome-11-to-13
       |=  dom=dome-11
       ^-  dome
-      dom(fod [fod.dom liv=| ren=~])
+      dom(fod [fod.dom liv=| ren=~ pes=~])
     --
   --
 ::
