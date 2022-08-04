@@ -1831,42 +1831,18 @@
     ::
     =.  event-core
       (emit duct %pass /recork %b %wait `@da`(add now ~m20))
+    ::  recork up to one bone per peer
     ::
     =/  pez  ~(tap by peers.ames-state)
     |-  ^+  event-core
-    =*  ship-loop  $
     ?~  pez  event-core
     =+  [her sat]=i.pez
     ?.  ?=(%known -.sat)
-      ship-loop(pez t.pez)
+      $(pez t.pez)
     =*  peer-state  +.sat
-    =/  boz  (sort ~(tap in closing.peer-state) lte)
-    |-  ^+  event-core
-    =*  bone-loop  $
-    ?~  boz  ship-loop(pez t.pez)
-    =/  pum=message-pump-state  (~(got by snd.peer-state) i.boz)
-    ?:  =(next current):pum
-      bone-loop(boz t.boz)
-    ::  sanity check on the message pump state
-    ::
-    ?.  ?&  =(~ unsent-messages.pum)
-            =(~ unsent-fragments.pum)
-            =(~ live.packet-pump-state.pum)
-        ==
-      ~>  %slog.0^leaf/"ames: incoherent pump state {<[her i.boz]>}"
-      bone-loop(boz t.boz)
-    ::  no outstanding messages, so send a new %cork
-    ::
-    ::  TODO use +trace
-    ~>  %slog.0^leaf/"ames: recork {<[her i.boz]>}"
-    ::
-    =.  event-core
-      =/  =channel  [[our her] now channel-state -.peer-state]
-      =/  peer-core  (make-peer-core peer-state channel)
-      =/  =plea  [%$ /flow [%cork ~]]
-      abet:(on-memo:peer-core i.boz plea %plea)
-    ::
-    ship-loop(pez t.pez)
+    =/  =channel  [[our her] now channel-state -.peer-state]
+    =/  peer-core  (make-peer-core peer-state channel)
+    $(pez t.pez, event-core abet:recork-one:peer-core)
   ::  +on-init: first boot; subscribe to our info from jael
   ::
   ++  on-init
@@ -2573,6 +2549,30 @@
           our-life.channel  her-life.channel
         ==
       peer-core
+    ::  +recork-one: re-send the next %cork to the peer
+    ::
+    ++  recork-one
+      ^+  peer-core
+      =/  boz  (sort ~(tap in closing.peer-state) lte)
+      |-  ^+  peer-core
+      ?~  boz  peer-core
+      =/  pum=message-pump-state  (~(got by snd.peer-state) i.boz)
+      ?:  =(next current):pum
+        $(boz t.boz)
+      ::  sanity check on the message pump state
+      ::
+      ?.  ?&  =(~ unsent-messages.pum)
+              =(~ unsent-fragments.pum)
+              =(~ live.packet-pump-state.pum)
+          ==
+        ~>  %slog.0^leaf/"ames: bad pump state {<[her.channel i.boz]>}"
+        $(boz t.boz)
+      ::  no outstanding messages, so send a new %cork
+      ::
+      ::  TODO use +trace
+      ~>  %slog.0^leaf/"ames: recork {<[her.channel i.boz]>}"
+      =/  =plea  [%$ /flow [%cork ~]]
+      (on-memo i.boz plea %plea)
     ::  +got-duct: look up $duct by .bone, asserting already bound
     ::
     ++  got-duct
@@ -2669,8 +2669,10 @@
             by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
             by-bone.ossuary  (~(del by by-bone.ossuary) bone)
           ==
-        peer-core
-      ::  +on-pump-krock: if we get a nack for a cork, add it to the recork set
+        ::  since we got one cork ack, try the next one
+        ::
+        recork-one
+      ::  +on-pump-kroc: if we get a nack for a cork, add it to the recork set
       ::
       ++  on-pump-kroc
         |=  =^bone
