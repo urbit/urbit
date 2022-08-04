@@ -782,7 +782,7 @@
         ::      more flexibility on userspace side, and doesn't lose us
         ::      any atomicity: we always send %load to gall anyway.
         ::      "%rein together with %visa" is weird case.
-        [%visa des=desk pes=(set perm)]                 ::  allowed opt. perms
+        [%visa des=desk pes=(set perm:gall)]            ::  allowed opt. perms
         [%stir arg=*]                                   ::  debug
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state

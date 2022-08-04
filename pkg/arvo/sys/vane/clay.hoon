@@ -4298,23 +4298,21 @@
     =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
     ::
     =^  perms=(list [=desk (set perm:gall)])  ..abet
-      |-  ^-  [(list [desk (set perm:gall)] _..abet)]
+      |-  ^-  [(list [desk (set perm:gall)]) _..abet]
       ?~  desks
         [~ ..abet]
       =/  den  ((de now rof hen ruf) our i.desks)
-      ::NOTE  this makes /desk/seal required to be present on desk
       =^  res  den  (aver:den ~ %x da+now /desk/seal)
       =.  ruf  +:abet:den
       ?.  ?=([~ ~ *] res)
+        ~&  [%clay %no-seal-in i.desks]
         $(desks t.desks)
-      :: TODO: what to do with optional permissions?
-      =/  seel=[req=(set perm:gall) opt=(set perm:gall)]
+      =/  req=(set perm:gall)
         ~|  [%building-seal i.desks]
         =/  =seal  !<(seal q.u.u.res)
-        :-  (~(gas in *(set perm:gall)) req.seal)
-        (~(gas in *(set perm:gall)) opt.seal)
-      =^  purms  ..abet  $(desks t.desks)
-      [[[i.desks (~(uni in req.seel) pes:dom:den)] purms] ..abet]
+        (~(gas in *(set perm:gall)) req.seal)
+      =^  rest  ..abet  $(desks t.desks)
+      [[[i.desks (~(uni in req) pes:dom:den)] rest] ..abet]
     ::
     =^  sat=(list [=desk =bill])  ..abet
       |-  ^-  [(list [desk bill]) _..abet]
@@ -4396,15 +4394,15 @@
   ::
   ++  build-agents
     |=  sat=(list [=desk =bill])
-    ^-  [load:gall _..abet]
-    =|  lad=load:gall
-    |-  ^-  [load:gall _..abet]
+    ^+  [dudes:*load:gall ..abet]
+    =/  lad  dudes:*load:gall
+    |-  ^+  [dudes:*load:gall ..abet]
     ?~  sat
       [lad ..abet]
     =/  f  (ford our desk.i.sat ~)
-    =^  new=load:gall  ..abet
+    =^  new=_dudes:*load:gall  ..abet
       %-  wrap  :^  our  desk.i.sat  ~
-      |-  ^-  [load:gall state:ford:fusion]
+      |-  ^-  [_dudes:*load:gall state:ford:fusion]
       ?~  bill.i.sat
         [~ nub.f]
       =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
@@ -5315,7 +5313,7 @@
     ++  dome-11-to-13
       |=  dom=dome-11
       ^-  dome
-      dom(fod [fod.dom liv=| ren=~])
+      dom(fod [fod.dom liv=| ren=~ pes=~])
     --
   --
 ::
