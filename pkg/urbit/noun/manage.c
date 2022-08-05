@@ -1746,23 +1746,23 @@ u3m_init(void)
   /* Map at fixed address.
   */
   {
-    c3_w  len_w = u3a_bytes;
-    void* map_v;
+    size_t len_i = u3a_bytes;
+    void*  map_v;
 
     map_v = mmap((void *)u3_Loom,
-                 len_w,
+                 len_i,
                  (PROT_READ | PROT_WRITE),
                  (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
                  -1, 0);
 
     if ( -1 == (c3_ps)map_v ) {
       void* dyn_v = mmap((void *)0,
-                         len_w,
+                         len_i,
                          PROT_READ,
                          MAP_ANON | MAP_PRIVATE,
                          -1, 0);
 
-      u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      u3l_log("boot: mapping %zuMB failed\r\n", len_i >> 20);
       u3l_log("see urbit.org/using/install/#about-swap-space"
               " for adding swap space\r\n");
       if ( -1 != (c3_ps)dyn_v ) {
@@ -1772,7 +1772,7 @@ u3m_init(void)
       exit(1);
     }
 
-    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
+    u3l_log("loom: mapped %zuMB\r\n", len_i >> 20);
   }
 }
 
