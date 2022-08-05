@@ -91,6 +91,11 @@
   ==
 ::
 +$  base-state-3
+  $:  =associations:three:store
+      ~
+  ==
+::
++$  base-state-4
   $:  =associations:store
       ~
   ==
@@ -108,6 +113,7 @@
 +$  state-10   [%10 base-state-3]
 +$  state-11   [%11 base-state-3]
 +$  state-12   [%12 base-state-3]
++$  state-13   [%13 base-state-4]
 +$  versioned-state
   $%  state-0
       state-1
@@ -122,10 +128,11 @@
       state-10
       state-11
       state-12
+      state-13
   ==
 ::
 +$  inflated-state
-  $:  state-12
+  $:  state-13
       cached-indices
   ==
 --
@@ -216,6 +223,7 @@
             %hidden       metadatum(hidden hidden.edit-field)
             %preview      metadatum(preview preview.edit-field)
             %vip          metadatum(vip vip.edit-field)
+            %tomb         metadatum(tomb tomb.edit-field)
           ==
         :-  (send-diff:mc %add group md-resource metadatum)
         %_  state
@@ -303,7 +311,7 @@
       ::
       ++  remake-metadata
         |=  tm=tree-metadata
-        ^-  base-state-3
+        ^-  base-state-4
         :*  (remake-map associations.tm)
             ~
         ==
@@ -401,7 +409,7 @@
   =|  cards=(list card)
   |^
   =*  loop  $
-  ?:  ?=(%12 -.old)
+  ?:  ?=(%13 -.old)
     :-  cards
     %_  state
       associations      associations.old
@@ -409,33 +417,39 @@
       group-indices     (rebuild-group-indices associations.old)
       app-indices       (rebuild-app-indices associations.old)
     ==
+  ::
+  ?:  ?=(%12 -.old)
+    %_    $
+      -.old             %13
+      associations.old  (associations-3-to-4 associations.old)
+    ==
   ?:  ?=(%11 -.old)
-    $(-.old %12, associations.old (reset-group-hidden associations.old))
+    !! :: $(-.old %12, associations.old (reset-group-hidden associations.old))
   ?:  ?=(%10 -.old)
     $(-.old %11, associations.old (hide-dm-assoc associations.old))
-  ?:  ?=(%9 -.old)
-    =/  groups  
-      (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~)
-    =/  pokes=(list card)
-      %+  murn  ~(tap in ~(key by groups))
-      |=  group=resource
-      ^-  (unit card)
-      =/  =association:store  (~(got by associations.old) [%groups group])
-      =*  met  metadatum.association
-      ?.  ?=([%group [~ [~ [@ [@ @]]]]] config.met)
-        ~
-      =*  res  resource.u.u.feed.config.met
-      ?:  =(our.bowl entity.res)  ~
-      =-  `[%pass /fix-feed %agent [our.bowl %graph-pull-hook] %poke -]
-      :-  %pull-hook-action
-      !>  ^-  action:pull-hook
-      [%add entity.res res]
-    %_  $
-      cards  (weld cards pokes)
-      -.old  %10
-    ==
+:: ?:  ?=(%9 -.old)
+::   =/  groups  
+::     :: (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~) TODO: fix
+::   =/  pokes=(list card)
+::     %+  murn  ~(tap in ~(key by groups))
+::     |=  group=resource
+::     ^-  (unit card)
+::     =/  =association:store  (~(got by associations.old) [%groups group])
+::     =*  met  metadatum.association
+::     ?.  ?=([%group [~ [~ [@ [@ @]]]]] config.met)
+::       ~
+::     =*  res  resource.u.u.feed.config.met
+::     ?:  =(our.bowl entity.res)  ~
+::     =-  `[%pass /fix-feed %agent [our.bowl %graph-pull-hook] %poke -]
+::     :-  %pull-hook-action
+::     !>  ^-  action:pull-hook
+::     [%add entity.res res]
+::   %_  $
+::     cards  (weld cards pokes)
+::     -.old  %10
+::   ==
   ?:  ?=(%8 -.old)
-    $(-.old %9)
+    $(-.old %10)
   ?:  ?=(%7 -.old)
     $(old [%8 (associations-2-to-3 associations.old) ~])
   ?:  ?=(%6 -.old)
@@ -453,24 +467,45 @@
   ::  pre-breach, can safely throw away
   loop(old *state-8)
   ::
-  ++  reset-group-hidden
-    |=  assoc=associations:store
+  ++  associations-3-to-4
+    |=  assoc=associations:three:store
     ^-  associations:store
     %-  ~(gas by *associations:store)
     %+  turn  ~(tap by assoc)
-    |=  [m=md-resource:store [g=resource met=metadatum:store]]
+    |=  [m=md-resource:store [g=resource met=metadatum:three:store]]
     ^-  [md-resource:store association:store]
+    :+  m  g
+    :*  title.met
+        description.met
+        color.met
+        date-created.met
+        creator.met
+        config.met
+        picture.met
+        preview.met
+        hidden.met
+        vip.met
+        tomb=|
+    ==
+  ::
+  ++  reset-group-hidden
+    |=  assoc=associations:three:store
+    ^-  associations:three:store
+    %-  ~(gas by *associations:three:store)
+    %+  turn  ~(tap by assoc)
+    |=  [m=md-resource:store [g=resource met=metadatum:three:store]]
+    ^-  [md-resource:store association:three:store]
     =?  hidden.met  ?=(%groups app-name.m)
       %.n
     [m [g met]]
   ::
   ++  hide-dm-assoc
-    |=  assoc=associations:store
-    ^-  associations:store
-    %-  ~(gas by *associations:store)
+    |=  assoc=associations:three:store
+    ^-  associations:three:store
+    %-  ~(gas by *associations:three:store)
     %+  turn  ~(tap by assoc)
-    |=  [m=md-resource:store [g=resource met=metadatum:store]]
-    ^-  [md-resource:store association:store]
+    |=  [m=md-resource:store [g=resource met=metadatum:three:store]]
+    ^-  [md-resource:store association:three:store]
     =?    hidden.met
         ?&  ?=(^ (rush name.resource.m ;~(pfix (jest 'dm--') fed:ag)))  
             ?=(%graph app-name.m)
@@ -480,15 +515,15 @@
   ::
   ++  associations-2-to-3
     |=  assoc=associations-2
-    ^-  associations:store
-    %-  ~(gas by *associations:store)
+    ^-  associations:three:store
+    %-  ~(gas by *associations:three:store)
     %+  turn  ~(tap by assoc)
     |=  [m=md-resource:store [g=resource met=metadatum-2]]
     [m [g (metadatum-2-to-3 met)]]
   ::
   ++  metadatum-2-to-3
     |=  m=metadatum-2
-    %*  .  *metadatum:store
+    %*  .  *metadatum:three:store
       title         title.m
       description   description.m
       color         color.m

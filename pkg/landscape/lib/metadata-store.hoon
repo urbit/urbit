@@ -45,7 +45,7 @@
     ?-  -.edt
       %color                                [%s `@t`(scot %ux color.edt)]
       ?(%title %description %picture %vip)  [%s `@t`+.edt]
-      ?(%preview %hidden)                   [%b `?`+.edt]
+      ?(%preview %hidden %tomb)                   [%b `?`+.edt]
     ==
   ::
   ++  metadatum
@@ -56,6 +56,7 @@
         [%description s+description.met]
         [%color s+(scot %ux color.met)]
         [%date-created s+(scot %da date-created.met)]
+        [%tomb b+tomb.met]
         [%creator s+(scot %p creator.met)]
       ::
         :-  %config
@@ -176,6 +177,7 @@
         [%preview bo]
         [%hidden bo]
         [%vip vip]
+        [%tomb bo]
     ==
   ::
   ++  initial-group
@@ -222,6 +224,7 @@
         [%preview bo]
         [%hidden bo]
         [%vip vip]
+        [%tomb bo]
     ==
   ::
   ++  config

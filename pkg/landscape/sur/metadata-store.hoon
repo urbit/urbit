@@ -52,6 +52,7 @@
       [%preview preview=?]
       [%hidden hidden=?]
       [%vip vip=vip-metadata]
+      [%tomb tomb=_|]
   ==
 ::
 +$  metadatum
@@ -65,7 +66,9 @@
       preview=?
       hidden=?
       vip=vip-metadata
+      tomb=?
   ==
+
 ::
 +$  action
   $%  [%add group=resource resource=md-resource =metadatum]
@@ -90,16 +93,54 @@
       ==
   ==
 ::  historical
+++  three
+  |%
+  ::
+  +$  association   [group=resource =metadatum]
+  ::
+  +$  associations  (map md-resource association)
+  ::
+  +$  edit-field
+    $%  [%title title=cord]
+        [%description description=cord]
+        [%color color=@ux]
+        [%picture =url]
+        [%preview preview=?]
+        [%hidden hidden=?]
+        [%vip vip=vip-metadata]
+    ==
+  ::
+  +$  action
+    $%  [%add group=resource resource=md-resource =metadatum]
+        [%remove group=resource resource=md-resource]
+        [%edit group=resource resource=md-resource =edit-field]
+        [%initial-group group=resource =associations]
+    ==
+  ::
+  +$  metadatum
+    $:  title=cord
+        description=cord
+        =color
+        date-created=time
+        creator=ship
+        config=md-config
+        picture=url
+        preview=?
+        hidden=?
+        vip=vip-metadata
+    ==
+  --
+::
 ++  one
   |%
   ::
   +$  action
     $~  [%remove *resource *md-resource]
-    $<  %edit  ^action
+    $<  ?(%edit %tomb)  ^action
   ::
   +$  update
     $~  [%remove *resource *md-resource]
-    $<  %edit  ^update
+    $<  ?(%edit %tomb)  ^update
   ::
   --
 ++  zero
