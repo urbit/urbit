@@ -659,16 +659,6 @@ _ce_image_sync(u3e_image* img_u)
 static void
 _ce_image_resize(u3e_image* img_u, c3_w pgs_w, void* bas_y)
 {
-  if ( img_u->pgs_w > pgs_w ) {
-    if ( ftruncate(img_u->fid_i, pgs_w * pag_siz_i) ) {
-      fprintf(stderr,
-              "loom: image truncate %s: %s\r\n",
-              img_u->nam_c,
-              strerror(errno));
-      exit(1);
-    }
-  }
-
   if ( bas_y ) { // (1)
     c3_ws dif_ws = (img_u->pgs_w - pgs_w) * pag_siz_i;
     if ( dif_ws > 0 ) { // (2)
@@ -701,6 +691,16 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w, void* bas_y)
                 strerror(errno));
         exit(1);
       }
+    }
+  }
+
+  if ( img_u->pgs_w > pgs_w ) {
+    if ( ftruncate(img_u->fid_i, pgs_w * pag_siz_i) ) {
+      fprintf(stderr,
+              "loom: image truncate %s: %s\r\n",
+              img_u->nam_c,
+              strerror(errno));
+      exit(1);
     }
   }
 
