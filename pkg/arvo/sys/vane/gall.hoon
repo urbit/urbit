@@ -443,9 +443,13 @@
       |-  ^+  ap-core
       ?~  subs  ap-core
       =+  [wyr dok]=i.subs
-      =.  wyr  :_(wyr (scot %ud (~(got by boar.yok) wyr dok)))
-      ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap>} {<dok>}"]
-      $(subs t.subs, ap-core (ap-kill-down:ap-core wyr dok))
+      =/  let  (~(got by boar.yok) wyr dok)
+      |-  ^+  ap-core
+      ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap>} {<dok>} {<let>}"]
+      ?:  =(0 let)
+        ^$(subs t.subs, ap-core (ap-kill-down:ap-core wyr dok))
+      =.  ap-core  (ap-kill-down:ap-core [(scot %ud let) wyr] dok)
+      $(let (dec let))
     $(apps t.apps, mo-core ap-abet:ap-core)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::

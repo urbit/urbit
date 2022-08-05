@@ -2585,6 +2585,14 @@
     ++  run-message-pump
       |=  [=bone task=message-pump-task]
       ^+  peer-core
+      ?:  ?&  (~(has in closing.peer-state) bone)
+              !=(task [%memo (dedup-message (jim [%$ /flow [%cork ~]]))])
+          ==
+        ~&  memo-on-closing-bone/bone
+        peer-core
+      ?:  (~(has in corked.peer-state) bone)
+        ~&  memo-on-closed-bone/bone
+        peer-core
       ::  pass .task to the |message-pump and apply state mutations
       ::
       =/  =message-pump-state
