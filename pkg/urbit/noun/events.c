@@ -657,7 +657,7 @@ _ce_image_sync(u3e_image* img_u)
 //! @n (2) The image shrunk.
 //! @n (3) The image grew.
 static void
-_ce_image_resize(u3e_image* img_u, c3_w pgs_w, void* bas_y)
+_ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
 {
   if ( bas_y ) { // (1)
     c3_ws dif_ws = (img_u->pgs_w - pgs_w) * pag_siz_i;
