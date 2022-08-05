@@ -714,18 +714,6 @@ _ce_patch_apply(u3_ce_patch* pat_u)
 {
   c3_w i_w;
 
-  // resize images
-  //
-  {
-    _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w, (c3_y*)u3_Loom);
-
-    // XXX: if the south image grows, we're in trouble because
-    // _ce_image_resize() assumes that an image grows upwards in memory, not
-    // downwards.
-    c3_y* bas_y = ((c3_y*)u3_Loom + u3a_bytes) - (u3P.sou_u.pgs_w * pag_siz_i);
-    _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w, bas_y);
-  }
-
   // seek to begining of patch and images
   //
   if ( (-1 == lseek(pat_u->mem_i, 0, SEEK_SET))
@@ -760,6 +748,19 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     u3l_log("apply: %d, %x\n", pag_w, u3r_mug_words(mem_w, pag_wiz_i));
 #endif
   }
+
+  // resize images
+  //
+  {
+    _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w, (c3_y*)u3_Loom);
+
+    // XXX: if the south image grows, we're in trouble because
+    // _ce_image_resize() assumes that an image grows upwards in memory, not
+    // downwards.
+    c3_y* bas_y = ((c3_y*)u3_Loom + u3a_bytes) - (u3P.sou_u.pgs_w * pag_siz_i);
+    _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w, bas_y);
+  }
+
 }
 
 //! Apply north and south images to memory.
