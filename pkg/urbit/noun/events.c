@@ -808,12 +808,12 @@ _ce_image_apply(u3e_image* nor_u, u3e_image* sou_u, c3_o pro_o)
 
   const c3_i pro_i = ( c3y == pro_o ) ? PROT_READ : PROT_READ | PROT_WRITE;
 
-  if ( sou_u ) {
+  if ( sou_u && sou_u->pgs_w > 0 ) {
     c3_y* bas_y = ((c3_y*)u3_Loom + u3a_bytes) - (sou_u->pgs_w * pag_siz_i);
     map_image(sou_u, bas_y, pro_i);
   }
 
-  if ( nor_u ) {
+  if ( nor_u && nor_u->pgs_w > 0 ) {
     map_image(nor_u, (c3_y*)u3_Loom, pro_i);
   }
 #undef map_image
