@@ -442,8 +442,10 @@
       =/  subs  ~(tap in ~(key by boat.yok))
       |-  ^+  ap-core
       ?~  subs  ap-core
-      ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap>} {<i.subs>}"]
-      $(subs t.subs, ap-core (ap-kill-down:ap-core i.subs))
+      =+  [wyr dok]=i.subs
+      =.  wyr  :_(wyr (scot %ud (~(got by boar.yok) wyr dok)))
+      ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap>} {<dok>}"]
+      $(subs t.subs, ap-core (ap-kill-down:ap-core wyr dok))
     $(apps t.apps, mo-core ap-abet:ap-core)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
