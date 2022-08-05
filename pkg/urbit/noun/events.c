@@ -704,15 +704,62 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   }
 }
 
-/* _ce_image_blit(): apply image to memory.
- */
+//! Apply north and south images to memory.
+//!
+//! Maps the entire north (i.e. heap) image at the bottom of the loom and the
+//! entire south (i.e. stack) image at the top of the loom. Both are private
+//! (copy-on-write) mappings so that the kernel can swap clean pages out of
+//! memory without resorting to writing to swap space.
+//!
+//! @param[in] nor_u  North (heap) image.
+//! @param[in] sou_u  South (stack) image.
+//! @param[in] pro_o  Write-protect the memory to which image is applied if
+//!                   `c3y`.
 static void
-_ce_image_blit(u3e_image* img_u, c3_w* ptr_w, ssize_t stp_ws, c3_o pro_o)
+_ce_image_apply(u3e_image* nor_u, u3e_image* sou_u, c3_o pro_o)
 {
-  if ( 0 == img_u->pgs_w ) {
-    return;
+#if 1
+#define map_image(image, base_address, page_protections)                       \
+  do {                                                                         \
+    if ( -1 == (c3_ps)mmap(base_address,                                       \
+                    (image)->pgs_w * pag_siz_i,                                \
+                    page_protections,                                          \
+                    MAP_FIXED | MAP_PRIVATE,                                   \
+                    (image)->fid_i,                                            \
+                    0) )                                                       \
+    {                                                                          \
+      fprintf(stderr,                                                          \
+              "loom: failed to map %s snapshot "                               \
+              "image at base address %p: %s\r\n",                              \
+              (image)->nam_c,                                                  \
+              base_address,                                                    \
+              strerror(errno));                                                \
+      exit(1);                                                                 \
+    }                                                                          \
+                                                                               \
+    c3_y* ptr_y = base_address;                                                \
+    for ( c3_w idx_w = 0; idx_w < (image)->pgs_w; idx_w++ ) {                  \
+      c3_w pag_w = u3a_outa(ptr_y) >> u3a_page;                                \
+      c3_w blk_w = pag_w >> 5;                                                 \
+      c3_w bit_w = pag_w & 31;                                                 \
+      u3P.dit_w[blk_w] &= ~(1 << bit_w);                                       \
+      ptr_y += pag_siz_i;                                                      \
+    }                                                                          \
+  } while ( 0 )                                                                \
+
+
+  const c3_i pro_i = ( c3y == pro_o ) ? PROT_READ : PROT_READ | PROT_WRITE;
+
+  if ( sou_u ) {
+    c3_y* bas_y = ((c3_y*)u3_Loom + u3a_bytes) - (sou_u->pgs_w * pag_siz_i);
+    map_image(sou_u, bas_y, pro_i);
   }
 
+  if ( nor_u ) {
+    map_image(nor_u, (c3_y*)u3_Loom, pro_i);
+  }
+#undef map_image
+#else
   c3_w i_w;
 
   lseek(img_u->fid_i, 0, SEEK_SET);
@@ -730,6 +777,7 @@ _ce_image_blit(u3e_image* img_u, c3_w* ptr_w, ssize_t stp_ws, c3_o pro_o)
 
     ptr_w += stp_ws;
   }
+#endif
 }
 
 #ifdef U3_SNAPSHOT_VALIDATION
@@ -955,11 +1003,7 @@ u3e_load(const c3_c* dir_c)
     exit(1);
   }
 
-  {
-    void* pag_v = u3_Loom + (1 << u3a_bits) - pag_wiz_i;
-    _ce_image_blit(&nor_u, u3_Loom, pag_wiz_i, c3n);
-    _ce_image_blit(&sou_u, pag_v, -(ssize_t)pag_wiz_i, c3n);
-  }
+  _ce_image_apply(&nor_u, &sou_u, c3n);
 
   u3e_foul();
 
@@ -1024,16 +1068,8 @@ u3e_live(const c3_c* dir_c)
 
       /* Write image files to memory; reinstate protection.
        */
-      {
-        _ce_image_blit(&u3P.nor_u, u3_Loom, pag_wiz_i, c3y);
-
-        _ce_image_blit(&u3P.sou_u,
-                       (u3_Loom + (1 << u3a_bits) - pag_wiz_i),
-                       -(ssize_t)pag_wiz_i,
-                       c3y);
-
-        u3l_log("boot: protected loom\r\n");
-      }
+      _ce_image_apply(&u3P.nor_u, &u3P.sou_u, c3y);
+      u3l_log("boot: protected loom\r\n");
 
       /* If the images were empty, we are logically booting.
        */
