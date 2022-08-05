@@ -590,6 +590,11 @@ _find_home(void)
 
   u3H = (void *)((mem_w + len_w) - siz_w);
   u3R = &u3H->rod_u;
+
+  //  this looks risky, but there are no legitimate scenarios
+  //  where it's wrong
+  //
+  u3R->cap_p = u3R->mat_p = u3a_words - c3_wiseof(*u3H);
 }
 
 /* u3m_pave(): instantiate or activate image.
