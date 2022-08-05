@@ -1718,21 +1718,74 @@ _cm_signals(void)
 # endif
 }
 
-extern void u3je_secp_init(void);
-extern void u3je_secp_stop(void);
+/* _cm_malloc_ssl(): openssl-shaped malloc
+*/
+static void*
+_cm_malloc_ssl(size_t len_i
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+               , const char* file, int line
+#endif
+               )
+{
+  return u3a_malloc(len_i);
+}
 
+/* _cm_realloc_ssl(): openssl-shaped realloc.
+*/
+static void*
+_cm_realloc_ssl(void* lag_v, size_t len_i
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+                , const char* file, int line
+#endif
+                )
+{
+  return u3a_realloc(lag_v, len_i);
+}
+
+/* _cm_free_ssl(): openssl-shaped free.
+*/
+static void
+_cm_free_ssl(void* tox_v
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+             , const char* file, int line
+#endif
+             )
+{
+  return u3a_free(tox_v);
+}
+
+extern void u3je_secp_init(void);
+
+/* _cm_crypto(): initialize openssl and crypto jets.
+*/
 static void
 _cm_crypto()
 {
   /* Initialize OpenSSL with loom allocation functions. */
-  if ( 0 == CRYPTO_set_mem_functions(&u3a_malloc_ssl,
-                                     &u3a_realloc_ssl,
-                                     &u3a_free_ssl) ) {
+  if ( 0 == CRYPTO_set_mem_functions(&_cm_malloc_ssl,
+                                     &_cm_realloc_ssl,
+                                     &_cm_free_ssl) ) {
     u3l_log("%s\r\n", "openssl initialization failed");
     abort();
   }
 
   u3je_secp_init();
+}
+
+/* _cm_realloc2(): gmp-shaped realloc.
+*/
+static void*
+_cm_realloc2(void* lag_v, size_t old_i, size_t new_i)
+{
+  return u3a_realloc(lag_v, new_i);
+}
+
+/* _cm_free2(): gmp-shaped free.
+*/
+static void
+_cm_free2(void* tox_v, size_t siz_i)
+{
+  return u3a_free(tox_v);
 }
 
 /* u3m_init(): start the environment.
@@ -1746,7 +1799,7 @@ u3m_init(void)
 
   /* Make sure GMP uses our malloc.
   */
-  mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
+  mp_set_memory_functions(u3a_malloc, _cm_realloc2, _cm_free2);
 
   /* Map at fixed address.
   */
@@ -1781,7 +1834,10 @@ u3m_init(void)
   }
 }
 
-/* u3m_stop(): graceful shutdown cleanup. */
+extern void u3je_secp_stop(void);
+
+/* u3m_stop(): graceful shutdown cleanup.
+*/
 void
 u3m_stop()
 {
