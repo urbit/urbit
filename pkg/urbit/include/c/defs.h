@@ -51,10 +51,11 @@
     */
 #     define c3_bits_word(w) ((w) ? (32 - __builtin_clz(w)) : 0)
 
-    /* Min and max.
+    /* Min, max, absolute value.
     */
 #     define c3_max(x, y) ( ((x) > (y)) ? (x) : (y) )
 #     define c3_min(x, y) ( ((x) < (y)) ? (x) : (y) )
+#     define c3_abs(x)    ( ((x) < 0) ? -(x) : (x) )
 
     /* Rotate.
     */

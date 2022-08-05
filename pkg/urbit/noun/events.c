@@ -638,18 +638,69 @@ _ce_image_sync(u3e_image* img_u)
   }
 }
 
-/* _ce_image_resize(): resize image, truncating if it shrunk.
- */
+//! Resize an image.
+//!
+//! Truncates an image if it shrunk. If the image shrunk and was also mapped
+//! into memory, then the truncated portion is replaced with an anonymous
+//! private (copy-on-write) mapping. If the image grew and was also mapped into
+//! memory, then a new private (copy-on-write) mapping is established that is
+//! backed by the image.
+//!
+//! @param[in] img_u  Image.
+//! @param[in] pgs_w  New size of the image.
+//! @param[in] bas_y  Base address of the image in memory. Used to establish a
+//!                   new mapping in memory. Should be NULL so that no new
+//!                   mappings are created if if the image is not actively
+//!                   loaded into memory.
+//!
+//! @n (1) The image is mapped into memory at base address `bas_y`.
+//! @n (2) The image shrunk.
+//! @n (3) The image grew.
 static void
-_ce_image_resize(u3e_image* img_u, c3_w pgs_w)
+_ce_image_resize(u3e_image* img_u, c3_w pgs_w, void* bas_y)
 {
   if ( img_u->pgs_w > pgs_w ) {
-    if ( ftruncate(img_u->fid_i, pgs_w << (u3a_page + 2)) ) {
+    if ( ftruncate(img_u->fid_i, pgs_w * pag_siz_i) ) {
       fprintf(stderr,
               "loom: image truncate %s: %s\r\n",
               img_u->nam_c,
               strerror(errno));
-      c3_assert(0);
+      exit(1);
+    }
+  }
+
+  if ( bas_y ) { // (1)
+    c3_ws dif_ws = (img_u->pgs_w - pgs_w) * pag_siz_i;
+    if ( dif_ws > 0 ) { // (2)
+      if ( -1 == (c3_ps)mmap(bas_y + (pgs_w * pag_siz_i),
+                             dif_ws,
+                             PROT_READ | PROT_WRITE,
+                             MAP_ANONYMOUS | MAP_FIXED | MAP_PRIVATE,
+                             -1,
+                             0) )
+      {
+        fprintf(stderr,
+                "loom: failed to establish anonymous mapping for %s: %s\r\n",
+                img_u->nam_c,
+                strerror(errno));
+        exit(1);
+      }
+    }
+    else if ( dif_ws < 0 ) { // (3)
+      size_t len_i = img_u->pgs_w * pag_siz_i;
+      if ( -1 == (c3_ps)mmap(bas_y + len_i,
+                             c3_abs(dif_ws),
+                             PROT_READ | PROT_WRITE,
+                             MAP_FIXED | MAP_PRIVATE,
+                             img_u->fid_i,
+                             len_i) )
+      {
+        fprintf(stderr,
+                "loom: failed to extend file-backed mapping for %s: %s\r\n",
+                img_u->nam_c,
+                strerror(errno));
+        exit(1);
+      }
     }
   }
 
@@ -665,8 +716,15 @@ _ce_patch_apply(u3_ce_patch* pat_u)
 
   // resize images
   //
-  _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w);
-  _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w);
+  {
+    _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w, (c3_y*)u3_Loom);
+
+    // XXX: if the south image grows, we're in trouble because
+    // _ce_image_resize() assumes that an image grows upwards in memory, not
+    // downwards.
+    c3_y* bas_y = ((c3_y*)u3_Loom + u3a_bytes) - (u3P.sou_u.pgs_w * pag_siz_i);
+    _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w, bas_y);
+  }
 
   // seek to begining of patch and images
   //
@@ -823,8 +881,7 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
 
   // resize images
   //
-  tou_u->pgs_w = fom_u->pgs_w;
-  _ce_image_resize(tou_u, fom_u->pgs_w);
+  _ce_image_resize(tou_u, fom_u->pgs_w, NULL);
 
   // seek to begining of patch and images
   //
