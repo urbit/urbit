@@ -640,11 +640,43 @@ _ce_image_sync(u3e_image* img_u)
 
 //! Resize an image.
 //!
-//! Truncates an image if it shrunk. If the image shrunk and was also mapped
-//! into memory, then the truncated portion is replaced with an anonymous
-//! private (copy-on-write) mapping. If the image grew and was also mapped into
-//! memory, then a new private (copy-on-write) mapping is established that is
-//! backed by the image.
+//! Truncates an image if it shrunk.
+//!
+//! If the image shrunk and was mapped into memory, then the truncated portion
+//! is replaced with an anonymous, private (copy-on-write) mapping:
+//!
+//! ```
+//!  <high address>
+//! +==================+ <- previous end of image in memory
+//! |                  | <-+
+//! |                  |   |
+//! |------------------+   |
+//! |                  |   +- file-backed mapping replaced with anonymous
+//! |                  |   |  mapping
+//! |------------------    |
+//! |                  |   |
+//! |                  | <-+
+//! +==================+ <- new end of image in memory
+//!  <low address>
+//! ```
+//!
+//! If the image grew and was mapped into memory, then a new file-backed private
+//! (copy-on-write) mapping is established that is backed by the image:
+//!
+//! ```
+//!  <high address>
+//! +==================+ <- new end of image in memory
+//! |                  | <-+
+//! |                  |   |
+//! |------------------+   |
+//! |                  |   +- anonymous mapping replaced with file-backed
+//! |                  |   |  mapping
+//! |------------------    |
+//! |                  |   |
+//! |                  | <-+
+//! +==================+ <- previous end of image in memory
+//!  <low address>
+//! ```
 //!
 //! @param[in] img_u  Image.
 //! @param[in] pgs_w  New size of the image.
@@ -660,37 +692,50 @@ static void
 _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
 {
   if ( bas_y ) { // (1)
+    c3_y* ptr_y  = bas_y + c3_min(img_u->pgs_w, pgs_w) * pag_siz_i;
     c3_ws dif_ws = (img_u->pgs_w - pgs_w) * pag_siz_i;
+    c3_y* end_y  = ptr_y + c3_abs(dif_ws);
+
+    c3_i fla_i, fid_i;
+    size_t off_i;
     if ( dif_ws > 0 ) { // (2)
-      if ( -1 == (c3_ps)mmap(bas_y + (pgs_w * pag_siz_i),
-                             dif_ws,
-                             PROT_READ | PROT_WRITE,
-                             MAP_ANONYMOUS | MAP_FIXED | MAP_PRIVATE,
-                             -1,
-                             0) )
-      {
-        fprintf(stderr,
-                "loom: failed to establish anonymous mapping for %s: %s\r\n",
-                img_u->nam_c,
-                strerror(errno));
-        exit(1);
-      }
+      fla_i = MAP_ANONYMOUS | MAP_FIXED | MAP_PRIVATE;
+      fid_i = -1;
+      off_i = 0;
     }
     else if ( dif_ws < 0 ) { // (3)
-      size_t len_i = img_u->pgs_w * pag_siz_i;
-      if ( -1 == (c3_ps)mmap(bas_y + len_i,
-                             c3_abs(dif_ws),
-                             PROT_READ | PROT_WRITE,
-                             MAP_FIXED | MAP_PRIVATE,
-                             img_u->fid_i,
-                             len_i) )
+      fla_i = MAP_FIXED | MAP_PRIVATE;
+      fid_i = img_u->fid_i;
+      off_i = (size_t)(ptr_y - bas_y);
+    }
+
+    while ( ptr_y < end_y ) {
+      c3_w off_w = u3a_outa(ptr_y);
+      c3_w pag_w = off_w >> u3a_page;
+      c3_w blk_w = pag_w >> 5;
+      c3_w bit_w = pag_w & 31;
+      c3_i pro_i = u3P.dit_w[blk_w] & (1 << bit_w)
+                   ? PROT_READ | PROT_WRITE
+                   : PROT_READ;
+      if ( -1 == (c3_ps)mmap(ptr_y,
+                             pag_siz_i,
+                             pro_i,
+                             fla_i,
+                             fid_i,
+                             off_i) )
       {
         fprintf(stderr,
-                "loom: failed to extend file-backed mapping for %s: %s\r\n",
+                "loom: failed to establish new mapping "
+                "for %s after resizing: %s\r\n",
                 img_u->nam_c,
                 strerror(errno));
         exit(1);
       }
+
+      if ( dif_ws < 0 ) {
+        off_i += pag_siz_i;
+      }
+      ptr_y += pag_siz_i;
     }
   }
 
