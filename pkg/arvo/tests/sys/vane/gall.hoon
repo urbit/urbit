@@ -134,6 +134,48 @@
   ::
   -.res
 ::
+++  test-load-dudes
+  ^-  tang
+  ::
+  =/  =duct  ~[/perm]
+  ::
+  =/  task-1=task:gall
+    =;  =load:gall  [%load load]
+    =;  =beak  [~ [%buster beak test-dummy]~]
+    [~dep test-desk [%da now.dep-gall]]
+  ::
+  =/  expected-moves=(list move)
+    =;  =suss:gall  [duct %give %onto [%.y suss]]~
+    [%buster %boot (add ~s1 now.dep-gall)]
+  ::
+  =^  moves  dep-gall
+    (call dep-gall duct task-1)
+  ::
+  %+  expect-eq
+    !>  expected-moves
+  ::
+    !>  moves
+::
+++  test-load-perms
+  ^-  tang
+  ::
+  =/  =duct  ~[/perm]
+  ::
+  =/  task-1=task:gall
+    =;  perms=(list [=desk (set perm:gall)])  [%load perms ~]
+    [test-desk (~(gas in *(set perm:gall)) [%ames %debug]~)]~
+  ::
+  =/  expected-jug
+    (~(gas ju *(jug desk perm:gall)) [test-desk [%ames %debug]]~)
+  ::
+  =^  moves  dep-gall
+    (call dep-gall duct task-1)
+  ::
+  %+  expect-eq
+    !>  perms.state.dep-gall
+  ::
+    !>  expected-jug
+::
 ++  test-dummy-empty-bowl
   ^-  tang
   ::
