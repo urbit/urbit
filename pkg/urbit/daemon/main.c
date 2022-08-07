@@ -1409,6 +1409,7 @@ _cw_next(c3_i argc, c3_c* argv[])
 
   u3_Host.pep_o = c3y;
   u3_Host.nex_o = c3y;
+  u3_Host.ops_u.tem = c3y;
 }
 
 /* _cw_pack(): compact memory, save, and exit.
@@ -1468,6 +1469,7 @@ _cw_prep(c3_i argc, c3_c* argv[])
   }
 
   u3_Host.pep_o = c3y;
+  u3_Host.ops_u.tem = c3y;
 }
 
 /* _cw_vere(): download vere
