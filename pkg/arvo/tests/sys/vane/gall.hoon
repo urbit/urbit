@@ -138,18 +138,12 @@
   ^-  tang
   ::
   =/  =duct  ~[/perm]
-  ::
-  =/  task-1=task:gall
-    =;  =load:gall  [%load load]
-    =;  =beak  [~ [%buster beak test-dummy]~]
-    [~dep test-desk [%da now.dep-gall]]
-  ::
   =/  expected-moves=(list move)
     =;  =suss:gall  [duct %give %onto [%.y suss]]~
     [%buster %boot (add ~s1 now.dep-gall)]
   ::
   =^  moves  dep-gall
-    (call dep-gall duct task-1)
+    (load-one dep-gall duct test-desk ~ `[%buster test-dummy])
   ::
   %+  expect-eq
     !>  expected-moves
@@ -160,16 +154,13 @@
   ^-  tang
   ::
   =/  =duct  ~[/perm]
-  ::
-  =/  task-1=task:gall
-    =;  perms=(list [=desk (set perm:gall)])  [%load perms ~]
-    [test-desk (~(gas in *(set perm:gall)) [%ames %debug]~)]~
-  ::
+  =/  perms
+    (~(gas in *(set perm:gall)) [%ames %debug]~)
   =/  expected-jug
     (~(gas ju *(jug desk perm:gall)) [test-desk [%ames %debug]]~)
   ::
   =^  moves  dep-gall
-    (call dep-gall duct task-1)
+    (load-one dep-gall duct test-desk perms ~)
   ::
   %+  expect-eq
     !>  perms.state.dep-gall
@@ -236,14 +227,11 @@
   ::
     !>  per.bowl
 ::
-++  test-read-permissions-dummy
+++  test-read-bowl-permissions
   ^-  tang
-  ::
   =/  =duct  ~[/perm]
-  =/  per=(set perm:gall)
-    (~(gas in *(set perm:gall)) [%ames %debug]~)
-  =/  task-1=task:gall
-    [%free test-desk per]
+  =/  pes  (~(gas in *(set perm:gall)) [%ames %debug]~)
+  ::
   =/  poke-1=task:agent:gall
     [%poke %noun !>(`poke`[%get-perms ~])]
   ::
@@ -251,16 +239,17 @@
     =/  move-1=move
       [duct %give %unto %poke-ack ~]
     =/  move-2=move
-      =/  =sign:agent:gall  [%fact %noun !>(per)]
+      =/  =sign:agent:gall  [%fact %noun !>(pes)]
       [duct %give %unto sign]
     [move-1 move-2 ~]
   ::
   =^  moves  dep-gall
-    (inject-agent dep-gall test-dummy test-desk %buster duct)
-  =^  moves  dep-gall
-    (call dep-gall duct task-1)
+    (load-one dep-gall duct test-desk pes `[%buster test-dummy])
   =^  moves  dep-gall
     (task-test-dummy dep-gall poke-1)
+  ::TODO: there's something weird about comparing these. the values are
+  ::equal, but the types are different, even though they're both
+  ::(set perm:gall)...????
   ::
   %+  expect-eq
     !>  expected-moves
@@ -269,33 +258,47 @@
 ::
 ::  +test-agent-perm-notification: agents are notified when the
 ::  permissions in their desk changes in +on-arvo
-++  test-agent-perm-notification
-::  TODO: what is the right way to make sure the agent got the
-::  notification? im having trouble getting the expected move to
-::  match
-  ^-  tang
-  ::
-  =/  =duct  ~[/perm]
-  =/  per=(set perm:gall)
-    (~(gas in *(set perm:gall)) [%ames %debug]~)
-  =/  task-1=task:gall
-    [%free test-desk per]
-  ::
-  =/  expected-moves=(list move)
-    [duct %give %unto %fact `cage`[%noun !>(task-1)]]~
-  ::
-  =^  moves  dep-gall
-    (inject-agent dep-gall test-dummy test-desk %buster duct)
-  =^  moves  dep-gall
-    (call dep-gall duct task-1)
-  ::
-  ~&  -.moves
-  ::
-  *tang
+::  ++  test-agent-perm-notification
+::  ::  TODO: what is the right way to make sure the agent got the
+::  ::  notification? im having trouble getting the expected move to
+::  ::  match
+::    ^-  tang
+::    ::
+::    =/  =duct  ~[/perm]
+::    =/  per=(set perm:gall)
+::      (~(gas in *(set perm:gall)) [%ames %debug]~)
+::    =/  task-1=task:gall
+::      [%free test-desk per]
+::    ::
+::    =/  expected-moves=(list move)
+::      [duct %give %unto %fact `cage`[%noun !>(task-1)]]~
+::    ::
+::    =^  moves  dep-gall
+::      (inject-agent dep-gall test-dummy test-desk %buster duct)
+::    =^  moves  dep-gall
+::      (call dep-gall duct task-1)
+::    ::
+::    ~&  -.moves
+::    ::
+::    *tang
 ::    %+  expect-eq
 ::      !>  expected-moves
     ::
 ::      !>  moves
+::TODO: do we still need agent permission notifications since they're always
+::included with %load?
+++  test-agent-perm-notification
+  ^-  tang
+  ::
+  =/  =duct  ~[/perm]
+  =/  pes  (~(gas in *(set perm:gall)) [%ames %debug]~)
+  ::
+  =^  moves  dep-gall
+    (load-one dep-gall duct test-desk pes `[%buster test-dummy])
+  ::
+  ~&  moves+moves
+  ::
+  *tang
 ::
 ++  test-scry-desk-perms
   ^-  tang
@@ -310,15 +313,14 @@
   ^-  tang
   ::
   =/  =duct  ~[/perm]
-  =/  per  %-  ~(gas in *(set perm:gall))
-           ~[[%ames %debug]]
+  =/  pes  (~(gas in *(set perm:gall)) [%ames %debug]~)
   ::
   =/  task-1=task:gall  [%ward ~]
-  =/  task-2=task:gall  [%free test-desk per]
+  =/  task-2=task:gall  [%free test-desk pes]
   =/  task-3=task:gall  [%wink ~]
   ::
   =/  expected-moves-ward=(list move)
-    [duct %give %perm %free test-desk per]~
+    [duct %give %perm %free test-desk pes]~
   =|  expected-moves-wink=(list move)
   ::
   =^  moves  dep-gall
@@ -340,60 +342,60 @@
       !>  moves-wink
   ==
 ::
-::  +test-non-base-perms: make sure moves get dropped if an agent doesnt have
-::  permission
-  ++  test-non-base-perms
-    ^-  tang
-    ::  TODO: currently fails, but %would-drop printf does appear. does the
-    ::  move get dropped later when we try to pass it along?
-    ::
-    =/  =duct  ~[/perm]
-    ::
-    =/  task-1=task:ames  [%sift *(list ship)]
-    ::
-    =/  poke-1=task:agent:gall
-      [%poke %noun !>(`poke`[%ames-test task-1])]
-    ::
-    =/  expected-moves=(list move)
-      [duct %give %unto %poke-ack ~]~
-    ::
-    =^  moves  dep-gall
-      (inject-agent dep-gall test-dummy test-desk %buster duct)
-    =^  moves  dep-gall
-      (task-test-dummy dep-gall poke-1)
-    ::
-    %+  expect-eq
-      !>  expected-moves
-    ::
-      !>  moves
-::
 ::  +test-base-perms: %base agents should have all permissions by default
-  ++  test-base-perms
-    ^-  tang
-    ::
-    =/  =duct  ~[/perm]
-    ::
-    =/  task-1=task:ames  [%sift *(list ship)]
-    ::
-    =/  poke-1=task:agent:gall
-      [%poke %noun !>(`poke`[%ames-test task-1])]
-    ::
-    =/  expected-moves=(list move)
-      =/  move-1=move
-        [duct %give %unto %poke-ack ~]
-      =/  move-2=move
-        [~[/init] %pass /use/buster/0w1.d6Isf/~dep/test %a task-1]
-      ~[move-1 move-2]
-    ::
-    =^  moves  dep-gall
-      (inject-agent dep-gall test-dummy %base %buster duct)
-    =^  moves  dep-gall
-      (task-test-dummy dep-gall poke-1)
-    ::
-    %+  expect-eq
-      !>  expected-moves
-    ::
-      !>  moves
+++  test-base-perms
+  ^-  tang
+  ::
+  =/  =duct  ~[/perm]
+  ::
+  =/  task-1=task:ames  [%sift *(list ship)]
+  ::
+  =/  poke-1=task:agent:gall
+    [%poke %noun !>(`poke`[%ames-test task-1])]
+  ::
+  =/  expected-moves=(list move)
+   =/  move-1=move
+     [duct %give %unto %poke-ack ~]
+   =/  move-2=move
+     [~[/init] %pass /use/buster/0w1.d6Isf/~dep/test %a task-1]
+   ~[move-1 move-2]
+  ::
+  =^  moves  dep-gall
+    (load-one dep-gall duct %base ~ `[%buster test-dummy])
+  =^  moves  dep-gall
+    (task-test-dummy dep-gall poke-1)
+  ::
+  %+  expect-eq
+    !>  expected-moves
+  ::
+    !>  moves
+::
+::  +test-non-base-perms: make sure moves get dropped outside of base w/o perms
+::TODO: fails, gall printfs %would-drop but the move still appears in the list
+++  test-non-base-perms
+  ^-  tang
+  ::
+  =/  =duct  ~[/perm]
+  ::
+  =/  task-1=task:ames  [%sift *(list ship)]
+  ::
+  =/  poke-1=task:agent:gall
+    [%poke %noun !>(`poke`[%ames-test task-1])]
+  ::
+  =/  expected-moves=(list move)
+   =/  move-1=move
+     [duct %give %unto %poke-ack ~]
+   ~[move-1]
+  ::
+  =^  moves  dep-gall
+    (load-one dep-gall duct test-desk ~ `[%buster test-dummy])
+  =^  moves  dep-gall
+    (task-test-dummy dep-gall poke-1)
+  ::
+  %+  expect-eq
+    !>  expected-moves
+  ::
+    !>  moves
 ::
 +|  %gall-utilities
 ::
@@ -417,6 +419,27 @@
   =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
   ::
   (take:vane-core wire duct ~ sign-arvo)
+::
+::  +load-one: passes a %load task for an agent and perms on one desk
+++  load-one
+  |=  $:  vane=_dep-gall
+          =duct
+          =desk
+          pes=(set perm:gall)
+          dud=(unit [=dude:gall =agent:gall])
+      ==
+  ^-  [(list move) _dep-gall]
+  ::
+  =/  task-1=task:gall
+    =/  perms=(list [_desk (set perm:gall)])
+      [desk pes]~
+    :+  %load  perms
+    ?~  dud  ~
+    =/  =beak  [~dep desk [%da now.dep-gall]]
+    [dude.u.dud beak agent.u.dud]~
+  ::
+  =^  moves  dep-gall  (call dep-gall duct task-1)
+  [moves dep-gall]
 ::
 ::  +inject-agent: creates a .agent named .dude in .desk at .duct
 ++  inject-agent
