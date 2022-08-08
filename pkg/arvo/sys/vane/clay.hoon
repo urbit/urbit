@@ -4180,7 +4180,12 @@
       ==
   ^-  [(list move) _..^$]
   ::
-  =/  req=task  ((harden task) wrapped-task)
+  =/  req=task
+    ::  %feed tasks contain vases, so don't harden them
+    ::
+    ?:  ?=([%soft %feed *] wrapped-task)
+      !<(task [-:!>(*task) +.wrapped-task])
+    ((harden task) wrapped-task)
   ::
   ::  TODO handle error notifications
   ::
