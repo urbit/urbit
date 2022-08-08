@@ -27,8 +27,8 @@
   $:  system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
-      yokes=(map term yoke)
-      blocked=(map term (qeu blocked-move))
+      yokes=(map dude yoke)
+      blocked=(map dude (qeu blocked-move))
       perms=(jug desk perm)
       wants=(map desk (map perm new=?))
       wards=(set duct)
