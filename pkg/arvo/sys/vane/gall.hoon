@@ -661,7 +661,12 @@
   ::
   ++  mo-load
     |=  ^load
-    ::TODO  handle permissions
+    ::TODO: does it matter if this is before or after
+    ::agents are reloaded/killed?
+    =.  perms.state
+      ^-  (jug desk perm)
+      (~(gas by *(map desk (set perm))) perms)
+    ::
     =.  mo-core
       |-  ^+  mo-core
       ?~  dudes  mo-core
