@@ -827,7 +827,15 @@
         ::
         !!
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
-      (mo-handle-ames-response ames-response)
+      ::  %d: diff; ask clay to validate .noun as .mark
+      ::  %x: kick; tell agent the publisher canceled the subscription, and
+      ::      cork; tell ames to close the associated flow.
+      ::
+      ?-  -.ames-response
+        %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
+        %x  =.  mo-core  (mo-give %unto %kick ~)
+            (mo-pass wire %a %cork ship)
+      ==
     ::
         [%ames %lost *]
       ::  note this should only happen on reverse bones, so only facts
@@ -1072,18 +1080,6 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our] agent-name deal)
-  ::  +mo-handle-ames-response: handle ames response message.
-  ::
-  ++  mo-handle-ames-response
-    |=  =ames-response
-    ^+  mo-core
-      ::  %d: diff; ask clay to validate .noun as .mark
-      ::  %x: kick; tell agent the publisher canceled the subscription
-      ::
-    ?-  -.ames-response
-      %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
-      %x  (mo-give %unto %kick ~)
-    ==
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
