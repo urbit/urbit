@@ -1,6 +1,7 @@
 ::  |pill: helper functions for making pills
 ::
 /-  dice
+/=  clay-raw  /sys/vane/clay
 ^?
 |%
 ::
@@ -32,22 +33,34 @@
       [/sys/hoon hoon/hoon]
       [/sys/arvo hoon/arvo]
   ==
-::  +fill-flow: cache injection
+::  +fill-flow: construct cache
 ::
 ++  fill-flow
-  =/  flows=(map desk flow:clay)  ~  :: XX populate me somehow
-  |=  des=desk
+  |=  [des=desk =yoki:clay our=ship now=@da]
+  ^-  flow:clay
+  ::  pocket clay
+  ::
+  =/  clay-gate  (clay-raw our)
+  =/  ruf  *raft:clay-gate
+  =/  den  ((de:clay-gate now *roof *duct ruf) our des)
+  ::  make flow
+  ::
+  ~&  [%filling-flow-for des]
+  =^  moz  ruf  abet:(park:den & yoki *rang:clay)
+  ~&  [%flow-filled-having-size ~(wyt by fad.ruf)]
+  fad.ruf
+::  +inject-flow: inject cache
+::
+++  inject-flow
+  |=  [des=desk =yoki:clay our=ship now=@da]
   ^-  unix-event
-  =/  =flow:clay
-    ?~  got=(~(get by flows) des)
-      ~
-    u.got
-  [/c/feed [%feed flow]]
-::  +file-ovum: userspace filesystem load
+  =/  =flow:clay  (fill-flow des yoki our now)
+  [/c/feed %feed flow]
+::  +file-yoki: assemble yoki from desk and path
 ::
 ::    bas: full path to / directory
 ::
-++  file-ovum
+++  file-yoki
   =/  directories=(list path)
     :~  /app    ::  %gall applications
         /gen    ::  :dojo generators
@@ -60,12 +73,12 @@
         /desk   ::  desk manifest
     ==
   |=  [des=desk bas=path]
-  ^-  unix-event
+  ^-  yoki:clay
   %.  directories
   |=  ::  sal: all spurs to load from
       ::
       sal=(list spur)
-  ^-  unix-event
+  ^-  yoki:clay
   ::
   ::  hav: all user files
   ::
@@ -74,7 +87,7 @@
              :-  *(list tako:clay)
              %-  ~(gas by *(map path (each page lobe:clay)))
              (turn hav |=([=path =page] [path &+page]))
-           [/c/sync [%park des &+yuki *rang:clay]]
+           &+yuki
   =|  hav=(list [path page])
   |-  ^+  hav
   ?~  sal  ~
@@ -104,6 +117,23 @@
   ?~  all  hav
   $(all t.all, hav ^$(tyl [p.i.all tyl]))
 ::
+::  +file-ovum: userspace filesystem load
+::
+::    bas: full path to / directory
+::
+++  file-ovum
+  |=  [des=desk bas=path]
+  ^-  unix-event
+  =-  (yoki-ovum des -)
+  (file-yoki des bas)
+::
+::  +yoki-ovum: direct yoki load
+::
+++  yoki-ovum
+  |=  [des=desk =yoki:clay]
+  ^-  unix-event
+  [/c/sync [%park des yoki *rang:clay]]
+::
 ::  +file-ovum2: electric boogaloo
 ::
 ++  file-ovum2  |=(p=path `unix-event`[//arvo what/(user-files p)])
@@ -112,7 +142,7 @@
 ::
 ++  user-files
   |=  bas=path
-  %.  directories:file-ovum
+  %.  directories:file-yoki
   |=  sal=(list spur)
   ^-  (list (pair path (cask)))
   ::
