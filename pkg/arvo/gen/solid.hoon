@@ -27,7 +27,9 @@
             rest=(list desk)
         ==
       ::
-        dub=_|
+        $:  dub=_|
+            fil=_|
+        ==
     ==
 :-  %pill
 ^-  pill:pill
@@ -123,11 +125,16 @@
 ::
 ::    Our kernel event-list is ~, as we've already installed them.
 ::    Our userspace event-list is a list containing a full %clay
-::    filesystem sync event.
+::    filesystem sync event (with, optionally, a ford cache pre-fill).
 ::
 :+  %pill  %solid
 :+  boot-ova  ~
 %+  roll
   (snoc dez [%base bas])
 |=  [des=[lab=desk path] acc=(list unix-event:pill)]
-(weld acc ~[(file-ovum:pill des) (fill-flow:pill lab.des)])
+=/  =yoki:clay  (file-yoki:pill des)
+=/  ves=(list unix-event:pill)
+  ~[(yoki-ovum:pill lab.des yoki)]
+=?  ves  fil
+  :_  ves  (inject-flow:pill lab.des yoki p.bec now)
+(weld acc ves)
