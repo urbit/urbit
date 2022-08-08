@@ -596,59 +596,34 @@
     ~>  %slog.0^leaf/"gall: nuking {<dap>}"
     =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
     mo-core(yokes.state (~(del by yokes.state) dap))
-  ::  +mo-free: expand permissions to an agent
-  ::
-  ++  mo-free
-    |=  [=desk pes=(set perm)]
-    ^+  mo-core
-    =/  pez=(list perm)   ~(tap in pes)
-    =/  wan=(map perm ?)  (~(gut by wants.state) desk *(map perm ?))
-    =|  new=(set perm)
-    |-
-    ?~  pez
-      (mo-perm %free desk new)
-    ?:  (~(has ju perms.state) desk i.pez)
-      $(pez t.pez)
-    =.  perms.state  (~(put ju perms.state) desk i.pez)
-    =.  wan          (~(del by wan) i.pez)
-    =.  new          (~(put in new) i.pez)
-    $(pez t.pez)
-  ::  +mo-lock: restrict permissions of an agent
-  ::
-  ++  mo-lock
-    |=  [=desk pes=(set perm)]
-    ^+  mo-core
-    =/  pez=(list perm)  ~(tap in pes)
-    =|  bye=(set perm)
-    |-
-    ?~  pez
-      (mo-perm %lock desk bye)
-    ?.  (~(has ju perms.state) desk i.pez)
-      $(pez t.pez)
-    =.  perms.state  (~(del ju perms.state) desk i.pez)
-    =.  bye          (~(put in bye) i.pez)
-    $(pez t.pez)
-  ::  +mo-perm: notify interested parties about permission change
   ::
   ++  mo-perm
-    |=  dif=$~([%free %$ ~] $>(?(%free %lock) task))
+    |=  dif=(list [=desk free=(set perm) lock=(set perm)])
     ^+  mo-core
+    =/  dif-map
+      (~(gas by *(map desk [free=(set perm) lock=(set perm)])) dif)
+    ::
+    ::TODO: send updates to ducts
     =/  dux=(list duct)
       ~(tap in wards.state)
-    |-
-    ?^  dux
-      =.  mo-core  (mo-give(hen i.dux) %perm dif)
-      $(dux t.dux)
     ::
-    =/  aps=(list dude)
-      =-  (sort - aor)
-      %+  murn  ~(tap by yokes.state)
+    =/  desks=(list desk)  ~(tap in ~(key by dif-map))
+    ::TODO this is simply a list of all dudes and their desks. we actually
+    ::  only want the ones for which perms have changed
+    =/  aps=(list [=dude =desk])
+      %+  turn  ~(tap by yokes.state)
       |=  [=dude yoke]
-      ?:(=(desk.dif q.beak) (some dude) ~)
+      [dude q.beak]
+    ::
     |-
     ?~  aps  mo-core
-    =.  mo-core  ap-abet:(ap-perm:(ap-abed:ap i.aps `our) dif)
+    =/  dude-dif  (~(get by dif-map) desk.i.aps)
+    ?~  dude-dif
+      $(aps t.aps)
+    =.  mo-core
+      ap-abet:(ap-perm:(ap-abed:ap dude.i.aps `our) [desk.i.aps u.dude-dif])
     $(aps t.aps)
+  ::
   ::  +mo-ward: add permission notification subsciber
   ::
   ++  mo-ward
@@ -661,11 +636,31 @@
   ::
   ++  mo-load
     |=  ^load
+    ::
+    =/  new-perms=(jug desk perm)
+      (~(gas by *(map desk (set perm))) perms)
+    ::
+    ::  desks no longer active. do agents on these desks need permissions notifications
+    ::  before theyre shut off? if they're ever turned back on, it will be via a %load move,
+    ::  and they should find out their permissions that way. but if we're computing a diff,
+    ::  they would compare against their old perms, which might have changed in the meantime?
+     =/  pes-dif=(list [=desk free=(set perm) lock=(set perm)])
+       =/  desks=(list desk)
+         ~(tap in (~(uni in ~(key by perms.state)) ~(key by new-perms)))
+       |-
+       ?~  desks  ~
+       =/  rest  $(desks t.desks)
+       =/  old  (~(get ju perms.state) i.desks)
+       =/  new  (~(get ju new-perms) i.desks)
+       :_  rest
+       :*  i.desks
+           (~(dif in new) old)
+           (~(dif in old) new)
+       ==
+    ::
     ::TODO: does it matter if this is before or after
     ::agents are reloaded/killed?
-    =.  perms.state
-      ^-  (jug desk perm)
-      (~(gas by *(map desk (set perm))) perms)
+    =.  perms.state  new-perms
     ::
     =.  mo-core
       |-  ^+  mo-core
@@ -673,6 +668,8 @@
       =/  [=dude =desk]  [dude q.beak]:i.dudes
       ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
       $(dudes t.dudes, mo-core (mo-receive-core i.dudes))
+    ::
+    =.  mo-core  (mo-perm pes-dif)
     ::
     =/  kil
       =/  old  ~(key by yokes.state)
@@ -888,9 +885,9 @@
       ap-core
     ::
     ++  ap-perm
-      |=  dif=$~([%free %$ ~] $>(?(%free %lock) task))
+      |=  dif=[=desk free=(set perm) lock=(set perm)]
       ^+  ap-core
-      ::TODO  fake wire...
+      ::TODO  fake wire
       (ap-generic-take /~ %gall %perm dif)
     ::  +ap-from-internal: internal move to move.
     ::
@@ -1586,8 +1583,8 @@
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %load  mo-abet:(mo-load:mo-core +.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
-      %free  mo-abet:(mo-free:mo-core +.task)
-      %lock  mo-abet:(mo-lock:mo-core +.task)
+::      %free  mo-abet:(mo-free:mo-core +.task)
+::      %lock  mo-abet:(mo-lock:mo-core +.task)
       %ward  mo-abet:mo-ward:mo-core
       %wink  mo-abet:mo-wink:mo-core
       %trim  [~ gall-payload]

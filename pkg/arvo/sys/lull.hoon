@@ -1655,7 +1655,7 @@
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%onto p=(each suss tang)]                      ::  about agent
         [%unto p=unto]                                  ::
-        [%perm $~([%free %$ ~] $>(?(%free %lock) task))]::  perms changed
+        [%perm p=[=desk free=(set perm) lock=(set perm)]]
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
@@ -1665,8 +1665,6 @@
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
-        [%free =desk pes=(set perm)]                    ::  allow
-        [%lock =desk pes=(set perm)]                    ::  disallow
         [%ward ~]                                       ::  watch %perm diffs
         [%wink ~]                                       ::  stop watching
         $>(%init vane-task)                             ::  set owner
@@ -1835,6 +1833,7 @@
         $:  %gall
         ::TODO  %jolt can vary desk, and suspending is weird
         ::TODO  consider making base special
+        ::TODO  how does this look with %load instead of %free and %lock?
         $%  [%agent desk=(unit desk)]  ::  %jolt %idle
             [%clear desk=(unit desk)]  ::  %nuke
             [%perms desk=(unit desk)]  ::  %free %lock
