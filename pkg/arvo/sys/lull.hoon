@@ -801,7 +801,9 @@
         file-path=term                                  ::
     ==                                                  ::
   +$  care                                              ::  clay submode
-    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
+    $?  %a  %b  %c  %d  %e  %f  %g  %p  %r              ::
+        %s  %t  %u  %v  %w  %x  %y  %z                  ::
+    ==
   +$  case                                              ::  ship desk case spur
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label
