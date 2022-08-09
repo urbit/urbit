@@ -350,7 +350,7 @@
         =/  [=bitt =boat =boar]  (watches-8-to-9 watches.egg-8)
         :*  control-duct.egg-8
             run-nonce.egg-8
-            sub-nonce=0
+            sub-nonce=1
             live.egg-8
             stats.egg-8
             bitt  boat  boar
