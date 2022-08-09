@@ -776,13 +776,12 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
-        [%rein des=desk liv=? ren=(map dude:gall ?)]    ::  live
-        ::TODO  perms should be included in %rein task... right?
-        ::NOTE  for now, separate task: seems cleaner api design,
-        ::      more flexibility on userspace side, and doesn't lose us
-        ::      any atomicity: we always send %load to gall anyway.
-        ::      "%rein together with %visa" is weird case.
-        [%visa des=desk pes=(set perm:gall)]            ::  allowed opt. perms
+        $:  %rein
+            des=desk
+            liv=?
+            ren=(map dude:gall ?)
+            pes=(set perm:gall)
+        ==
         [%stir arg=*]                                   ::  debug
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
@@ -1655,12 +1654,14 @@
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%onto p=(each suss tang)]                      ::  about agent
         [%unto p=unto]                                  ::
-        [%perm p=[=desk free=(set perm) lock=(set perm)]]
+        ::TODO: should this be a list instead?
+        [%perm [=desk free=(set perm) lock=(set perm)]] ::  perm notification
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
     $%  [%deal p=sock q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
+        ::TODO: remove %jolt and %idle
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
@@ -1693,9 +1694,10 @@
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
+  ::TODO: change perms to a jug?
   +$  load                                              ::  loadout
-    $:  perms=(list [=desk (set perm)])
-        dudes=(list [=dude =beak =agent])
+    $:  perms=(list [=desk (set perm)])                 ::  permissions per desk
+        dudes=(list [=dude =beak =agent])               ::  agents to run
     ==
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence

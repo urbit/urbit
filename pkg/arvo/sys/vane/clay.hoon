@@ -3019,16 +3019,11 @@
     r(who (~(del in who.r) |+nom))
   ::
   ++  rein
-    |=  [liv=? ren=(map dude:gall ?)]
+    |=  [liv=? ren=(map dude:gall ?) pes=(set perm:gall)]
     ^+  ..park
     =?  liv  =(%base syd)  &
-    ..park(liv.dom liv, ren.dom ren)
-  ::
-  ++  visa
-    |=  pes=(set perm:gall)
-    ^+  ..park
     =?  pes  =(%base syd)  *(set perm:gall)
-    ..park(pes.dom pes)
+    ..park(liv.dom liv, ren.dom ren, pes.dom pes)
   ::
   ++  rise
     |=  [=dude:gall on=(unit ?)]
@@ -4291,7 +4286,7 @@
       =/  den  ((de now rof hen ruf) her syd)
       abet:+:(aeon-flow:den ?~(yon let.dom:den u.yon) res cache.state &2.state)
     [res (emil moves)]
-  ::  +goad: emit %jolt moves for all desks, applying $rein's
+  ::  +goad: emit %load move with all agents and permissions for all desks
   ::
   ++  goad
     ^+  ..abet
@@ -4668,14 +4663,7 @@
       %rein
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(rein:den liv.req ren.req)
-    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
-    [(weld m1 m2) ..^$]
-  ::
-      %visa
-    =^  m1  ruf
-      =/  den  ((de now rof hen ruf) our des.req)
-      abet:(visa:den pes.req)
+      abet:(rein:den liv.req ren.req pes.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
   ::
