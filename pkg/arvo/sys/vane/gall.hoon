@@ -350,7 +350,7 @@
         =/  [=bitt =boat =boar]  (watches-8-to-9 watches.egg-8)
         :*  control-duct.egg-8
             run-nonce.egg-8
-            sub-nonce=0
+            sub-nonce=1
             live.egg-8
             stats.egg-8
             bitt  boat  boar
@@ -1122,6 +1122,13 @@
       ^+  same
       (^trace verb agent-name print)
     ::
+    ++  ap-nonce-wire
+      |=  [=wire =dock]
+      ^+  wire
+      =/  nonce=@  (~(got by boar.yoke) wire dock)
+      ?:  =(0 nonce)  wire
+      [(scot %ud nonce) wire]
+    ::
     ++  ap-core  .
     ::  +ap-abed: initialise state for an agent, with the supplied routes.
     ::
@@ -1193,8 +1200,8 @@
             ~
           [%give %kick ~(tap in inbound-paths) ~]~
         %+  turn  ~(tap by boat.yoke)
-        |=  [[=wire =ship =term] ? =path]
-        [%pass wire %agent [ship term] %leave ~]
+        |=  [[=wire =dock] ? =path]
+        [%pass (ap-nonce-wire wire dock) %agent dock %leave ~]
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::  +ap-from-internal: internal move to move.
@@ -1305,19 +1312,16 @@
           core(agent-duct agent-duct)
         $(in t.in)
       ::
-      =/  out=(list [[=wire =^ship =term] ? =path nonce=@])
-        %+  turn  ~(tap by boat.yoke)
-        |=  [key=[wire ^ship term] val=[? path]]
-        :-  key
-        val(+ [+.val (~(got by boar.yoke) key)])
+      =/  out=(list [=wire =^ship =term])
+        ~(tap ^in ~(key by boat.yoke))
       |-  ^+  ap-core
       ?~  out
         ap-core
       =?  ap-core  =(ship ship.i.out)
         =/  core
           =.  agent-duct  system-duct.state
-          =/  way
-            [%out (scot %p ship) term.i.out (scot %ud nonce.i.out) wire.i.out]
+          =.  wire.i.out  (ap-nonce-wire i.out)
+          =/  way         [%out (scot %p ship) term.i.out wire.i.out]
           (ap-specific-take way %kick ~)
         core(agent-duct agent-duct)
       $(out t.out)
@@ -1740,12 +1744,13 @@
     ::    Must process leave first in case kick handler rewatches.
     ::
     ++  ap-kill-down
-      |=  [=wire =dock]
+      |=  [sub-wire=wire =dock]
       ^+  ap-core
-      ::
       =.  ap-core
-        (ap-pass wire %agent dock %leave ~)
-      (ap-pass wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
+        ::  we take care to include the nonce in the "kernel-facing" wire
+        ::
+        (ap-pass (ap-nonce-wire sub-wire dock) %agent dock %leave ~)
+      (ap-pass sub-wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -1856,11 +1861,7 @@
         =/  nonce=@  (~(got by boar.yoke) sub-wire dock)
         =.  p.move.move
           %+  weld  sys-wire
-          ?:  =(nonce 0)
-            ::  skip adding nonce to pre-nonce subscription wires
-            ::
-            sub-wire
-          [(scot %ud nonce) sub-wire]
+          (ap-nonce-wire sub-wire dock)
         =:  boat.yoke  (~(del by boat.yoke) [sub-wire dock])
             boar.yoke  (~(del by boar.yoke) [sub-wire dock])
           ==
@@ -1886,7 +1887,8 @@
           (ap-error %watch-not-unique tang)  ::  reentrant, maybe bad?
         $(moves t.moves)
       ::
-      =.  p.move.move
+      ::NOTE  0-check guards against pre-release bug
+      =?  p.move.move  !=(0 sub-nonce.yoke)
         (weld sys-wire [(scot %ud sub-nonce.yoke) sub-wire])
       %_    $
           moves            t.moves
