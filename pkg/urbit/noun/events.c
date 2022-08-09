@@ -90,6 +90,9 @@ static const size_t pag_siz_i = 1 << (u3a_page + 2);
 //! Urbit page size in 4-byte words.
 static const size_t pag_wiz_i = 1 << u3a_page;
 
+//! `mmap()` the north (heap) image if `c3n`.
+static const c3_o not_map_o = c3n;
+
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
 */
@@ -806,7 +809,8 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   // resize images
   //
   {
-    _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w, (c3_y*)u3_Loom);
+    c3_y* bas_y = c3n == not_map_o ? (c3_y*)u3_Loom : NULL;
+    _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w, bas_y);
     // Don't map the south (stack) image because it's almost always dirty and a
     // single page.
     _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w, NULL);
@@ -828,7 +832,28 @@ _ce_patch_apply(u3_ce_patch* pat_u)
 static void
 _ce_image_apply(u3e_image* nor_u, u3e_image* sou_u, c3_o pro_o)
 {
-#if 1
+#define mark_page_clean(address)                                               \
+  do {                                                                         \
+    c3_w pag_w = u3a_outa(address) >> u3a_page;                                \
+    c3_w blk_w = pag_w >> 5;                                                   \
+    c3_w bit_w = pag_w & 31;                                                   \
+    u3P.dit_w[blk_w] &= ~(1 << bit_w);                                         \
+  } while ( 0 )
+
+#define read_image(image, base_address, should_protect, step_direction)        \
+  do {                                                                         \
+    lseek((image)->fid_i, 0, SEEK_SET);                                        \
+    c3_y* ptr_y = (c3_y*)(base_address);                                       \
+    for ( c3_w idx_w = 0; idx_w < (image)->pgs_w; idx_w++ ) {                  \
+      c3_assert(-1 != read((image)->fid_i, ptr_y, pag_siz_i));                 \
+      if ( c3y == (should_protect) ) {                                         \
+        c3_assert(0 == mprotect(ptr_y, pag_siz_i, PROT_READ));                 \
+      }                                                                        \
+      mark_page_clean(ptr_y);                                                  \
+      ptr_y += (step_direction) * pag_siz_i;                                   \
+    }                                                                          \
+  } while ( 0 )
+
 #define map_image(image, base_address, page_protections)                       \
   do {                                                                         \
     if ( -1 == (c3_ps)mmap(base_address,                                       \
@@ -849,45 +874,29 @@ _ce_image_apply(u3e_image* nor_u, u3e_image* sou_u, c3_o pro_o)
                                                                                \
     c3_y* ptr_y = base_address;                                                \
     for ( c3_w idx_w = 0; idx_w < (image)->pgs_w; idx_w++ ) {                  \
-      c3_w pag_w = u3a_outa(ptr_y) >> u3a_page;                                \
-      c3_w blk_w = pag_w >> 5;                                                 \
-      c3_w bit_w = pag_w & 31;                                                 \
-      u3P.dit_w[blk_w] &= ~(1 << bit_w);                                       \
+      mark_page_clean(ptr_y);                                                  \
       ptr_y += pag_siz_i;                                                      \
     }                                                                          \
   } while ( 0 )                                                                \
 
 
-  const c3_i pro_i = ( c3y == pro_o ) ? PROT_READ : PROT_READ | PROT_WRITE;
-
   if ( sou_u && sou_u->pgs_w > 0 ) {
-    c3_y* bas_y = ((c3_y*)u3_Loom + u3a_bytes) - (sou_u->pgs_w * pag_siz_i);
-    map_image(sou_u, bas_y, pro_i);
+    c3_y* bas_y = ((c3_y*)u3_Loom + u3a_bytes) - pag_siz_i;
+    read_image(sou_u, bas_y, pro_o, -1);
   }
 
   if ( nor_u && nor_u->pgs_w > 0 ) {
-    map_image(nor_u, (c3_y*)u3_Loom, pro_i);
-  }
-#undef map_image
-#else
-  c3_w i_w;
-
-  lseek(img_u->fid_i, 0, SEEK_SET);
-  for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
-    c3_assert(-1 != read(img_u->fid_i, ptr_w, pag_siz_i));
-
-    if ( c3y == pro_o ) {
-      c3_assert(0 == mprotect(ptr_w, pag_siz_i, PROT_READ));
+    const c3_i pro_i = ( c3y == pro_o ) ? PROT_READ : PROT_READ | PROT_WRITE;
+    if ( c3n == not_map_o ) {
+      map_image(nor_u, (c3_y*)u3_Loom, pro_i);
     }
-
-    c3_w pag_w = u3a_outa(ptr_w) >> u3a_page;
-    c3_w blk_w = pag_w >> 5;
-    c3_w bit_w = pag_w & 31;
-    u3P.dit_w[blk_w] &= ~(1 << bit_w);
-
-    ptr_w += stp_ws;
+    else {
+      read_image(nor_u, (c3_y*)u3_Loom, pro_i, 1);
+    }
   }
-#endif
+#undef mark_page_clean
+#undef read_image
+#undef map_image
 }
 
 #ifdef U3_SNAPSHOT_VALIDATION
