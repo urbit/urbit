@@ -1744,12 +1744,18 @@
     ::    Must process leave first in case kick handler rewatches.
     ::
     ++  ap-kill-down
-      |=  [=wire =dock]
+      |=  [sub-wire=wire =dock]
       ^+  ap-core
+      ::  ensure the nonce is in the kernel-facing wire
+      ::
+      =/  =wire
+        =/  nonce=@ud   (~(got by boar.yoke) sub-wire dock)
+        ?:  =(0 nonce)  sub-wire
+        [(scot %ud nonce) sub-wire]
       ::
       =.  ap-core
         (ap-pass wire %agent dock %leave ~)
-      (ap-pass wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
+      (ap-pass sub-wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
