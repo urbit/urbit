@@ -1891,6 +1891,7 @@
           (ap-error %watch-not-unique tang)  ::  reentrant, maybe bad?
         $(moves t.moves)
       ::
+      ::NOTE  0-check guards against pre-release bug
       =?  p.move.move  !=(0 sub-nonce.yoke)
         (weld sys-wire [(scot %ud sub-nonce.yoke) sub-wire])
       %_    $
