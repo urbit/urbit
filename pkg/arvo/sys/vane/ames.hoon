@@ -2396,6 +2396,10 @@
             :_  tang.u.dud
             leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
         (run-message-sink bone %hear lane shut-packet ?=(~ dud))
+      ::  benign ack on corked bone
+      ::
+      ?:  (~(has in corked.peer-state) bone)
+        peer-core
       ::  Just try again on error, printing trace
       ::
       ::    Note this implies that vanes should never crash on %done,
