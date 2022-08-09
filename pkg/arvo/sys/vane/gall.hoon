@@ -600,14 +600,20 @@
   ++  mo-perm
     |=  dif=(list [=desk free=(set perm) lock=(set perm)])
     ^+  mo-core
-    =/  dif-map
-      (~(gas by *(map desk [free=(set perm) lock=(set perm)])) dif)
     ::
-    ::TODO: send updates to ducts
     =/  dux=(list duct)
       ~(tap in wards.state)
+    |-
+    ?^  dux
+      |-
+      ?~  dif  ^$(dux t.dux)
+      =.  mo-core  (mo-give(hen i.dux) %perm i.dif)
+      $(dif t.dif)
     ::
-    =/  desks=(list desk)  ~(tap in ~(key by dif-map))
+    =/  dif-map
+      (~(gas by *(map desk [free=(set perm) lock=(set perm)])) dif)
+    =/  desks  ~(tap in ~(key by dif-map))
+    ::
     ::TODO this is simply a list of all dudes and their desks. we actually
     ::  only want the ones for which perms have changed
     =/  aps=(list [=dude =desk])
