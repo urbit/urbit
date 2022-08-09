@@ -1080,6 +1080,7 @@
     %kiln-suspend            =;(f (f !<(_+<.f vase)) poke-suspend)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
+    %kiln-stir               =;(f (f !<(_+<.f vase)) poke-stir)
     %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
@@ -1278,6 +1279,10 @@
   ?:  (~(has by syn) hos)
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
   abet:abet:start-sync:(auto hos)
+::
+++  poke-stir
+  |=  [mod=?(%verb %mass) val=@]
+  abet:(emit %pass /stir-clay %arvo %c [%stir mod val])
 ::
 ++  poke-syncs                                        ::  print sync config
   |=  ~
