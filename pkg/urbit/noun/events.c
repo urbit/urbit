@@ -671,19 +671,36 @@ _ce_image_sync(u3e_image* img_u)
 //! |------------------+   |
 //! |                  |   +- anonymous mapping replaced with file-backed
 //! |                  |   |  mapping
-//! |------------------    |
+//! |------------------|   |
 //! |                  |   |
 //! |                  | <-+
 //! +==================+ <- previous end of image in memory
+//! |                  |
+//! |                  |
+//! |      .....       |
+//! |                  |
+//! |                  |
+//! +==================+ <- base of image in memory
 //!  <low address>
 //! ```
+//!
+//! It's unclear whether anonymous mappings that lie within the previous bounds
+//! of the image (identified by `.....` in the diagram above) should be replaced
+//! with file-backed mappings when the image is resized. If the
+//! (Linux/macOS/Windows) kernel is smart enough to simply replace the
+//! anonymous mapping in the page cache with the file-backed mapping, then the
+//! anonymous mappings should be replaced with file-backed mappings. If, on the
+//! other hand, the kernel treats the pages of the two mappings as separate
+//! entities, then the cost of a cache miss may make replacing the anonymous
+//! mapping too expensive. For now, we remain conservative and don't replace the
+//! mappings and accept the potential cost of the accumulation of anonymous
+//! mappings (and the use of swap space that likely accompanies those mappings).
 //!
 //! @param[in] img_u  Image.
 //! @param[in] pgs_w  New size of the image.
 //! @param[in] bas_y  Base address of the image in memory. Used to establish a
 //!                   new mapping in memory. Should be NULL so that no new
-//!                   mappings are created if if the image is not actively
-//!                   loaded into memory.
+//!                   if no new mappings should be created.
 //!
 //! @n (1) The image is mapped into memory at base address `bas_y`.
 //! @n (2) The image shrunk.
@@ -694,49 +711,41 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
   if ( bas_y ) { // (1)
     c3_y* ptr_y  = bas_y + c3_min(img_u->pgs_w, pgs_w) * pag_siz_i;
     c3_ws dif_ws = (img_u->pgs_w - pgs_w) * pag_siz_i;
-    c3_y* end_y  = ptr_y + c3_abs(dif_ws);
 
-    c3_i fla_i, fid_i;
+    c3_i fla_i, fid_i, pro_i;
     size_t off_i;
     if ( dif_ws > 0 ) { // (2)
       fla_i = MAP_ANONYMOUS | MAP_FIXED | MAP_PRIVATE;
       fid_i = -1;
+      pro_i = PROT_READ | PROT_WRITE;
       off_i = 0;
     }
     else if ( dif_ws < 0 ) { // (3)
       fla_i = MAP_FIXED | MAP_PRIVATE;
       fid_i = img_u->fid_i;
+      pro_i = PROT_READ;
       off_i = (size_t)(ptr_y - bas_y);
     }
 
-    while ( ptr_y < end_y ) {
-      c3_w off_w = u3a_outa(ptr_y);
-      c3_w pag_w = off_w >> u3a_page;
-      c3_w blk_w = pag_w >> 5;
-      c3_w bit_w = pag_w & 31;
-      c3_i pro_i = u3P.dit_w[blk_w] & (1 << bit_w)
-                   ? PROT_READ | PROT_WRITE
-                   : PROT_READ;
-      if ( -1 == (c3_ps)mmap(ptr_y,
-                             pag_siz_i,
-                             pro_i,
-                             fla_i,
-                             fid_i,
-                             off_i) )
-      {
-        fprintf(stderr,
-                "loom: failed to establish new mapping "
-                "for %s after resizing: %s\r\n",
-                img_u->nam_c,
-                strerror(errno));
-        exit(1);
-      }
-
-      if ( dif_ws < 0 ) {
-        off_i += pag_siz_i;
-      }
-      ptr_y += pag_siz_i;
+    if ( dif_ws != 0 && -1 == (c3_ps)mmap(ptr_y,
+                                          pag_siz_i,
+                                          pro_i,
+                                          fla_i,
+                                          fid_i,
+                                          off_i) )
+    {
+      fprintf(stderr,
+              "loom: failed to establish new mapping "
+              "for %s after resizing: %s\r\n",
+              img_u->nam_c,
+              strerror(errno));
+      exit(1);
     }
+
+    if ( dif_ws < 0 ) {
+      off_i += pag_siz_i;
+    }
+    ptr_y += pag_siz_i;
   }
 
   if ( img_u->pgs_w > pgs_w ) {
@@ -798,12 +807,9 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   //
   {
     _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w, (c3_y*)u3_Loom);
-
-    // XXX: if the south image grows, we're in trouble because
-    // _ce_image_resize() assumes that an image grows upwards in memory, not
-    // downwards.
-    c3_y* bas_y = ((c3_y*)u3_Loom + u3a_bytes) - (u3P.sou_u.pgs_w * pag_siz_i);
-    _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w, bas_y);
+    // Don't map the south (stack) image because it's almost always dirty and a
+    // single page.
+    _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w, NULL);
   }
 
 }
