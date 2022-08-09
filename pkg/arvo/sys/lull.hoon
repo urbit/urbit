@@ -827,6 +827,7 @@
         nor=norm                                        ::
         liv=?                                           ::
         ren=(map dude:gall ?)                           ::
+        pes=(set perm:gall)                             ::
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission

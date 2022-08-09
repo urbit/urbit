@@ -5359,7 +5359,7 @@
       %-  ~(gas by *cone)
       %+  turn  ~(tap by dos.rom.ruf)
       |=  [=desk =dojo]
-      [[our desk] [[let hit lab] tom nor liv ren]:dom.dojo]
+      [[our desk] [[let hit lab] tom nor liv ren pes]:dom.dojo]
     =.  domes
       %-  ~(uni by domes)
       %-  ~(gas by *cone)
@@ -5371,7 +5371,7 @@
       ^-  (list [[^ship desk] foam])
       %+  turn  ~(tap by rus.rung)
       |=  [=desk =rede]
-      [[ship desk] [[let hit lab] tom nor liv ren]:dom.rede]
+      [[ship desk] [[let hit lab] tom nor liv ren pes]:dom.rede]
     ``[%domes !>(`cone`domes)]
   ::
   ::  True if file is accessible
