@@ -1204,8 +1204,8 @@
             ~
           [%give %kick ~(tap in inbound-paths) ~]~
         %+  turn  ~(tap by boat.yoke)
-        |=  [[=wire =ship =term] ? =path]
-        [%pass wire %agent [ship term] %leave ~]
+        |=  [[=wire =dock] ? =path]
+        [%pass (ap-nonce-wire wire dock) %agent dock %leave ~]
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::  +ap-from-internal: internal move to move.
@@ -1891,7 +1891,7 @@
           (ap-error %watch-not-unique tang)  ::  reentrant, maybe bad?
         $(moves t.moves)
       ::
-      =.  p.move.move
+      =?  p.move.move  !=(0 sub-nonce.yoke)
         (weld sys-wire [(scot %ud sub-nonce.yoke) sub-wire])
       %_    $
           moves            t.moves
