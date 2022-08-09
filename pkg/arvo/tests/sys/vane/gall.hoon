@@ -243,8 +243,7 @@
 ::      !>  expected-moves
     ::
 ::      !>  moves
-::TODO: do we still need agent permission notifications since they're always
-::included with %load?
+::
 ++  test-agent-perm-notification
   ^-  tang
   ::
@@ -263,43 +262,40 @@
   ::  TODO: should be able to scry permissions for a desk from gall
   *tang
 ::
-::  +test-ward-wink-notifications: can get a permission change notification
-::  after sending a %ward task. after sending a %wink, notifications cease.
-::  these tests are grouped since if %ward doesn't work, %wink would be a
-::  no-op
 ++  test-ward-wink-notifications
   ^-  tang
   ::
-  =/  =duct  ~[/perm]
+  =/  duct-1=duct  ~[/perm]
+  =/  duct-2=duct  ~[/init]
   =/  pes  (~(gas in *(set perm:gall)) [%ames %debug]~)
   ::
   =/  task-1=task:gall  [%ward ~]
-  =/  task-2=task:gall  [%free test-desk pes]
-  =/  task-3=task:gall  [%wink ~]
+  =/  task-2=task:gall  [%wink ~]
   ::
   =/  expected-moves-ward=(list move)
-    [duct %give %perm %free test-desk pes]~
+    [duct-1 %give %perm test-desk free=pes lock=*(set perm:gall)]~
   =|  expected-moves-wink=(list move)
   ::
   =^  moves  dep-gall
-    (call dep-gall duct task-1)
+    (call dep-gall duct-1 task-1)
   =^  moves-ward  dep-gall
-    (call dep-gall duct task-2)
+    (load-one dep-gall duct-2 test-desk pes ~)
+  =^  moves  dep-gall
+    (call dep-gall duct-1 task-2)
   =^  moves-wink  dep-gall
-    (call dep-gall duct task-3)
+    (load-one dep-gall duct-2 test-desk *(set perm:gall) ~)
   ::
   ;:  weld
     %+  expect-eq
       !>  expected-moves-ward
     ::
       !>  moves-ward
-  ::
+    ::
     %+  expect-eq
       !>  expected-moves-wink
     ::
       !>  moves-wink
   ==
-::
 ::  +test-base-perms: %base agents should have all permissions by default
 ++  test-base-perms
   ^-  tang
