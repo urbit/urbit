@@ -185,48 +185,6 @@
     (task-test-dummy dep-gall task)
   *tang
   ::
-::
-++  test-free-test-dummy
-  ^-  tang
-  ::
-  =/  =duct  ~[/perm]
-  =/  per  (~(gas in *(set perm:gall)) [%ames %debug]~)
-  =/  =task:gall  [%free test-desk per]
-  ::
-  =^  moves  dep-gall
-    (inject-agent dep-gall test-dummy test-desk %buster ~[/perm])
-  =^  moves  dep-gall
-    (call dep-gall duct task)
-  =/  =bowl:gall  (scry-test-dummy-bowl dep-gall)
-  ::
-  %+  expect-eq
-    !>  per
-  ::
-    !>  per.bowl
-::
-++  test-lock-test-dummy
-  ^-  tang
-  ::
-  =/  =duct  ~[/perm]
-  =/  per  %-    ~(gas in *(set perm:gall))
-           ~[[%ames %debug] [%behn %timer]]
-  =/  ner   (~(del in per) [%behn %timer])
-  =/  task-1=task:gall    [%free test-desk per]
-  =/  task-2=task:gall    [%lock test-desk ner]
-  ::
-  =^  moves  dep-gall
-    (inject-agent dep-gall test-dummy test-desk %buster duct)
-  =^  moves  dep-gall
-    (call dep-gall duct task-1)
-  =^  moves  dep-gall
-    (call dep-gall duct task-2)
-  =/  =bowl:gall  (scry-test-dummy-bowl dep-gall)
-  ::
-  %+  expect-eq
-    !>  (~(dif in per) ner)
-  ::
-    !>  per.bowl
-::
 ++  test-read-bowl-permissions
   ^-  tang
   =/  =duct  ~[/perm]
