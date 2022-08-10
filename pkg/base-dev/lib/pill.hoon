@@ -45,10 +45,27 @@
   =/  den  ((de:clay-gate now *roof *duct ruf) our des)
   ::  make flow
   ::
-  ~&  [%filling-flow-for des]
-  =^  moz  ruf  abet:(park:den & yoki *rang:clay)
-  ~&  [%flow-filled-having-size ~(wyt by fad.ruf)]
-  fad.ruf
+  %-  (slog leaf+"pill: filling flow for {<des>}" ~)
+  =^  tow  ruf  abet:(park:den & yoki *rang:clay)
+  =.  den  ((de:clay-gate now *roof *duct ruf) our des)
+  =/  pas=(list path)
+    %+  murn  ~(tap in ~(key by fad.ruf))
+    |=  =leak:clay
+    ^-  (unit path)
+    ?+  -.pour.leak  ~
+        %vale
+      =/  pat=path  path.pour.leak
+      ?.  &(?=(^ pat) =(%app i.pat) =(%hoon (rear t.pat)))
+        ~
+      `pat
+    ==
+  |-  ^-  flow:clay
+  ?~  pas
+    %-  (slog leaf+"pill: filled flow with size {<~(wyt by fad.ruf)>}" ~)
+    fad.ruf
+  %-  (slog leaf+"pill: building {<i.pas>}" ~)
+  =^  tow  ruf  abet:(read-at-aeon:ze:den ~ 1 [%a [%da now] i.pas])
+  $(pas t.pas, den ((de:clay-gate now *roof *duct ruf) our des))
 ::  +inject-flow: inject cache
 ::
 ++  inject-flow
