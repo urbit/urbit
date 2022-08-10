@@ -436,21 +436,8 @@
     =/  apps  ~(tap by yokes.state)
     |-  ^+  mo-core
     ?~  apps  mo-core
-    =+  [dap yok]=[p q]:i.apps
-    =/  ap-core  (ap-yoke:ap:mo-core dap [~ our] yok)
-    =.  ap-core
-      =/  subs  ~(tap in ~(key by boat.yok))
-      |-  ^+  ap-core
-      ?~  subs  ap-core
-      =+  [wyr dok]=i.subs
-      =/  let  (~(got by boar.yok) wyr dok)
-      |-  ^+  ap-core
-      ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap>} {<dok>} {<let>}"]
-      ?:  =(0 let)
-        ^$(subs t.subs, ap-core (ap-kill-down:ap-core wyr dok))
-      =.  ap-core  (ap-kill-down:ap-core [(scot %ud let) wyr] dok)
-      $(let (dec let))
-    $(apps t.apps, mo-core ap-abet:ap-core)
+    =/  ap-core  (ap-yoke:ap:mo-core p.i.apps [~ our] q.i.apps)
+    $(apps t.apps, mo-core ap-abet:ap-doff:ap-core)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1773,6 +1760,29 @@
         ::
         (ap-pass (ap-nonce-wire sub-wire dock) %agent dock %leave ~)
       (ap-pass sub-wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
+    ::  +ap-doff: kill all outgoing subscriptions
+    ::
+    ::    Also kills old subscriptions that should have been killed but
+    ::    were not correctly removed in prerelease versions of the
+    ::    request queue fix.
+    ::
+    ++  ap-doff
+      ^+  ap-core
+      =/  subs  ~(tap in ~(key by boat.yoke))
+      |-  ^+  ap-core
+      ?~  subs  ap-core
+      =+  [wyr dok]=i.subs
+      =/  let  (~(got by boar.yoke) wyr dok)
+      |-  ^+  ap-core
+      ~>  %slog.[0 leaf+"gall: +ap-doff {<agent-name>} {<dok>} {<let>}"]
+      =.  ap-core  (ap-pass [(scot %ud let) wyr] %agent dok %leave ~)
+      =.  ap-core  (ap-pass wyr %huck dok %b %huck [%gall %unto %kick ~])
+      ?.  =(0 let)
+        $(let (dec let))
+      ::  kill old-style subscription wire with no nonce
+      ::
+      =.  ap-core  (ap-pass wyr %agent dok %leave ~)
+      ^$(subs t.subs)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
