@@ -429,6 +429,15 @@
     =/  =case  [%da now]
     =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]/(scot case)
     (mo-pass wire %c %warp ship desk ~ %sing %a case /app/[dap]/hoon)
+  ::  +mo-doff: kill all outgoing subscriptions
+  ::
+  ++  mo-doff
+    ^+  mo-core
+    =/  apps  ~(tap by yokes.state)
+    |-  ^+  mo-core
+    ?~  apps  mo-core
+    =/  ap-core  (ap-yoke:ap:mo-core p.i.apps [~ our] q.i.apps)
+    $(apps t.apps, mo-core ap-abet:ap-doff:ap-core)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1751,6 +1760,29 @@
         ::
         (ap-pass (ap-nonce-wire sub-wire dock) %agent dock %leave ~)
       (ap-pass sub-wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
+    ::  +ap-doff: kill all outgoing subscriptions
+    ::
+    ::    Also kills old subscriptions that should have been killed but
+    ::    were not correctly removed in prerelease versions of the
+    ::    request queue fix.
+    ::
+    ++  ap-doff
+      ^+  ap-core
+      =/  subs  ~(tap in ~(key by boat.yoke))
+      |-  ^+  ap-core
+      ?~  subs  ap-core
+      =+  [wyr dok]=i.subs
+      =/  let  (~(got by boar.yoke) wyr dok)
+      |-  ^+  ap-core
+      ~>  %slog.[0 leaf+"gall: +ap-doff {<agent-name>} {<dok>} {<let>}"]
+      =.  ap-core  (ap-pass [(scot %ud let) wyr] %agent dok %leave ~)
+      =.  ap-core  (ap-pass wyr %huck dok %b %huck [%gall %unto %kick ~])
+      ?.  =(0 let)
+        $(let (dec let))
+      ::  kill old-style subscription wire with no nonce
+      ::
+      =.  ap-core  (ap-pass wyr %agent dok %leave ~)
+      ^$(subs t.subs)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -1945,6 +1977,7 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
+      %doff  mo-abet:mo-doff:mo-core
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]

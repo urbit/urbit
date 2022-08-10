@@ -1659,6 +1659,7 @@
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%nuke =dude]                                   ::  delete agent
+        [%doff ~]                                       ::  kill subscriptions
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
