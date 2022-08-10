@@ -702,8 +702,8 @@ _ce_image_sync(u3e_image* img_u)
 //! @param[in] img_u  Image.
 //! @param[in] pgs_w  New size of the image.
 //! @param[in] bas_y  Base address of the image in memory. Used to establish a
-//!                   new mapping in memory. Should be NULL so that no new
-//!                   if no new mappings should be created.
+//!                   new mapping in memory. Should be NULL if no new mappings
+//!                   should be created.
 //!
 //! @n (1) The image is mapped into memory at base address `bas_y`.
 //! @n (2) The image shrunk.
@@ -731,7 +731,7 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
     }
 
     if ( dif_ws != 0 && -1 == (c3_ps)mmap(ptr_y,
-                                          pag_siz_i,
+                                          c3_abs(dif_ws),
                                           pro_i,
                                           fla_i,
                                           fid_i,
