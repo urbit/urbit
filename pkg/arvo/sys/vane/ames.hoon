@@ -1746,6 +1746,14 @@
   ++  on-plea
     |=  [=ship =plea]
     ^+  event-core
+    ::  since flow kill goes like:
+    ::  client vane cork task -> client ames pass cork as plea ->
+    ::  -> server ames sinks plea -> server ames +on-plea (we are here);
+    ::  if it's %cork plea passed to ames from its sink,
+    ::  give %done and process flow closing after +on-take-done call
+    ::
+    ?:  =([%a /close ~] plea)
+      (emit duct %give %done ~)
     ::  .plea is from local vane to foreign ship
     ::
     =/  ship-state  (~(get by peers.ames-state) ship)
@@ -1764,14 +1772,6 @@
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
         "plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
-    ::  since flow kill goes like:
-    ::  client vane cork task -> client ames pass cork as plea ->
-    ::  -> server ames sinks plea -> server ames +on-plea (we are here);
-    ::  if it's %cork plea passed to ames from its sink,
-    ::  give %done and process flow closing after +on-take-done call
-    ::
-    ?:  &(=(vane.plea %a) =(path.plea `path`/close) ?=(~ payload.plea))
-      (emit duct %give %done ~)
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-cork: handle request to kill a flow
   ::
@@ -2396,6 +2396,10 @@
             :_  tang.u.dud
             leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
         (run-message-sink bone %hear lane shut-packet ?=(~ dud))
+      ::  benign ack on corked bone
+      ::
+      ?:  (~(has in corked.peer-state) bone)
+        peer-core
       ::  Just try again on error, printing trace
       ::
       ::    Note this implies that vanes should never crash on %done,
