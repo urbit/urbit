@@ -1791,41 +1791,49 @@ _cm_free2(void* tox_v, size_t siz_i)
 /* u3m_init(): start the environment.
 */
 void
-u3m_init(void)
+u3m_init(size_t len_i)
 {
   _cm_limits();
   _cm_signals();
   _cm_crypto();
 
-  /* Make sure GMP uses our malloc.
-  */
+  //  make sure GMP uses our malloc.
+  //
   mp_set_memory_functions(u3a_malloc, _cm_realloc2, _cm_free2);
 
-  /* Map at fixed address.
-  */
+  //  make sure that [len_i] is a fully-addressible non-zero power of two.
+  //
+  if (  !len_i
+     || (len_i & (len_i - 1))
+     || (len_i < (1 << (u3a_page + 2)))
+     || (len_i > u3a_bytes) )
   {
-    size_t len_i = u3a_bytes;
-    void*  map_v;
+    u3l_log("loom: bad size: %zu\r\n", len_i);
+    exit(1);
+  }
 
-    map_v = mmap((void *)u3_Loom,
-                 len_i,
-                 (PROT_READ | PROT_WRITE),
-                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
-                 -1, 0);
+  // map at fixed address.
+  //
+  {
+    void* map_v = mmap((void *)u3_Loom,
+                       len_i,
+                       (PROT_READ | PROT_WRITE),
+                       (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
+                       -1, 0);
 
     if ( -1 == (c3_ps)map_v ) {
-      void* dyn_v = mmap((void *)0,
-                         len_i,
-                         PROT_READ,
-                         MAP_ANON | MAP_PRIVATE,
-                         -1, 0);
+      map_v = mmap((void *)0,
+                   len_i,
+                   (PROT_READ | PROT_WRITE),
+                   (MAP_ANON | MAP_PRIVATE),
+                   -1, 0);
 
       u3l_log("boot: mapping %zuMB failed\r\n", len_i >> 20);
       u3l_log("see urbit.org/using/install/#about-swap-space"
               " for adding swap space\r\n");
-      if ( -1 != (c3_ps)dyn_v ) {
+      if ( -1 != (c3_ps)map_v ) {
         u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
-                dyn_v);
+                map_v);
       }
       exit(1);
     }
@@ -1855,7 +1863,7 @@ u3m_boot(c3_c* dir_c)
 
   /* Activate the loom.
   */
-  u3m_init();
+  u3m_init(u3a_bytes);
 
   /* Activate the storage system.
   */
@@ -1906,7 +1914,7 @@ u3m_boot_lite(void)
 {
   /* Activate the loom.
   */
-  u3m_init();
+  u3m_init(u3a_bytes);
 
   /* Activate tracing.
   */
