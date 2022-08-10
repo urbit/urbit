@@ -1776,7 +1776,7 @@
       |-  ^+  ap-core
       ?~  subs  ap-core
       =+  [wyr dok]=i.subs
-      ?.  |(?=(~ ship) =(u.ship ship.dok))
+      ?:  =(ship `ship.dok)
         $(subs t.subs)
       =/  let  (~(got by boar.yoke) wyr dok)
       |-  ^+  ap-core
