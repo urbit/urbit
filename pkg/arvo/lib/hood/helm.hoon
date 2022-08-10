@@ -261,9 +261,9 @@
   (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
 ::
 ++  poke-doff
-  |=  ~
+  |=  [dude=(unit dude:gall) ship=(unit ship)]
   =<  abet
-  (emit %pass /helm/doff %arvo %g %doff ~)
+  (emit %pass /helm/doff %arvo %g %doff dude ship)
 ::
 ++  poke
   |=  [=mark =vase]

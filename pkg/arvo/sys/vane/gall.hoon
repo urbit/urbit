@@ -432,12 +432,15 @@
   ::  +mo-doff: kill all outgoing subscriptions
   ::
   ++  mo-doff
+    |=  [dude=(unit dude) ship=(unit ship)]
     ^+  mo-core
-    =/  apps  ~(tap by yokes.state)
+    =/  apps=(list (pair term yoke))
+      ?~  dude  ~(tap by yokes.state)
+      (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
     |-  ^+  mo-core
     ?~  apps  mo-core
     =/  ap-core  (ap-yoke:ap:mo-core p.i.apps [~ our] q.i.apps)
-    $(apps t.apps, mo-core ap-abet:ap-doff:ap-core)
+    $(apps t.apps, mo-core ap-abet:(ap-doff:ap-core ship))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1767,11 +1770,14 @@
     ::    request queue fix.  This includes nonce 0, which no longer exists.
     ::
     ++  ap-doff
+      |=  ship=(unit ship)
       ^+  ap-core
       =/  subs  ~(tap in ~(key by boat.yoke))
       |-  ^+  ap-core
       ?~  subs  ap-core
       =+  [wyr dok]=i.subs
+      ?.  |(?=(~ ship) =(u.ship ship.dok))
+        $(subs t.subs)
       =/  let  (~(got by boar.yoke) wyr dok)
       |-  ^+  ap-core
       ~>  %slog.[0 leaf+"gall: +ap-doff {<[agent-name wyr dok let]>}"]
@@ -1977,7 +1983,7 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
-      %doff  mo-abet:mo-doff:mo-core
+      %doff  mo-abet:(mo-doff:mo-core +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
