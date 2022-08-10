@@ -1774,14 +1774,14 @@
       =+  [wyr dok]=i.subs
       =/  let  (~(got by boar.yoke) wyr dok)
       |-  ^+  ap-core
-      ~>  %slog.[0 leaf+"gall: +ap-doff {<agent-name>} {<dok>} {<let>}"]
+      ~>  %slog.[0 leaf+"gall: +ap-doff {<[agent-name wyr dok let]>}"]
       =.  ap-core  (ap-pass [(scot %ud let) wyr] %agent dok %leave ~)
-      =.  ap-core  (ap-pass wyr %huck dok %b %huck [%gall %unto %kick ~])
       ?.  =(0 let)
         $(let (dec let))
       ::  kill old-style subscription wire with no nonce
       ::
       =.  ap-core  (ap-pass wyr %agent dok %leave ~)
+      =.  ap-core  (ap-pass wyr %huck dok %b %huck [%gall %unto %kick ~])
       ^$(subs t.subs)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
