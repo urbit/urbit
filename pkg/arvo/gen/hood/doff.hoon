@@ -1,6 +1,8 @@
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         ~
-        [dude=(unit dude:gall) ship=(unit ship)]
+        [dude=_`dude:gall`%$ ship=_`@p`(bex 128)]
     ==
-[%helm-doff dude ship]
+=/  darg=(unit dude:gall)  ?:(=(%$ dude) ~ `dude)
+=/  sarg=(unit ^ship)      ?:(=((bex 128) ship) ~ `ship)
+[%helm-doff darg sarg]
