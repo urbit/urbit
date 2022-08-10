@@ -22,7 +22,7 @@ c3_c tac_c[256];  //  tracing label
   $%  [%live ?(%meld %pack) ~] :: XX rename
       [%exit ~]
       [%peek mil=@ peek]
-      [%poke mil=@ ovum]  ::  XX replacement y/n
+      [%poke mil=@ ovum]
       [%sync %save ~]
   ==
 +$  gift                                                ::  mars -> urth
@@ -435,8 +435,6 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
       pre_w = u3a_open(u3R);
       mar_u->sen_d++;
 
-      //  XX needs u3_event_trace
-      //
       if ( c3y == _mars_poke(mil_w, &job, &pro) ) {
         mar_u->dun_d = mar_u->sen_d;
         mar_u->mug_l = u3r_mug(u3A->roc);

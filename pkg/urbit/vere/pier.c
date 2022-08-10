@@ -179,6 +179,8 @@ _pier_on_lord_work_done(void*    ptr_v,
 
   u3_auto_done(egg_u);
 
+  //  XX consider async
+  //
   u3_auto_kick(pir_u->wok_u->car_u, act);
 
   _pier_work(pir_u->wok_u);
@@ -682,12 +684,7 @@ _pier_wyrd_init(u3_pier* pir_u)
 
     c3_assert( u3_auto_next(car_u, &ovo) == egg_u );
 
-    {
-      // struct timeval tim_tv;
-      // gettimeofday(&tim_tv, 0);
-      // u3_lord_work(god_u, egg_u, u3nc(u3_time_in_tv(&tim_tv), ovo));
-      u3_lord_work(god_u, egg_u, ovo);
-    }
+    u3_lord_work(god_u, egg_u, ovo);
   }
 }
 

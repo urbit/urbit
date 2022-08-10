@@ -24,7 +24,7 @@
   $%  [%live ?(%meld %pack) ~] :: XX rename
       [%exit ~]
       [%peek mil=@ peek]
-      [%poke mil=@ ovum]  ::  XX replacement y/n
+      [%poke mil=@ ovum]
       [%sync %save ~]
   ==
 ::  +gift: from mars to urth
@@ -287,9 +287,6 @@ _lord_plea_slog(u3_lord* god_u, u3_noun dat)
   {
     return _lord_plea_foul(god_u, c3__slog, dat);
   }
-
-  //  XX per-writ slog_f?
-  //
 
   god_u->cb_u.slog_f(god_u->cb_u.ptr_v, pri_w, u3k(tan));
   u3z(dat);
@@ -712,7 +709,6 @@ u3_lord_meld(u3_lord* god_u)
 
   //  XX set callback
   //
-
   _lord_send(god_u, u3nt(c3__live, c3__meld, u3_nul));
 }
 
@@ -726,7 +722,6 @@ u3_lord_pack(u3_lord* god_u)
 
   //  XX set callback
   //
-
   _lord_send(god_u, u3nt(c3__live, c3__pack, u3_nul));
 }
 
@@ -1045,7 +1040,7 @@ _lord_on_serf_boot_exit(uv_process_t* cub_u,
   u3_newt_mojo_stop(&bot_u->inn_u, _lord_bail_noop);
 
   //  XX add stderr?
-
+  //
   uv_close((uv_handle_t*)cub_u, 0);
 }
 
