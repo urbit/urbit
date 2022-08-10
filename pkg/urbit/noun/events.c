@@ -739,8 +739,9 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
     {
       fprintf(stderr,
               "loom: failed to establish new mapping "
-              "for %s after resizing: %s\r\n",
+              "for %s at %p after resizing: %s\r\n",
               img_u->nam_c,
+              ptr_y,
               strerror(errno));
       exit(1);
     }
