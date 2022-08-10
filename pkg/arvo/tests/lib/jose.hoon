@@ -5,6 +5,7 @@
 |%
 ++  test-jwk
   :: rfc7638 section 3.1
+  ~&  "hello world!"
   =/  n
     :~  '0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2'
         'aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCi'
