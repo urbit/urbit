@@ -553,7 +553,7 @@ _pave_home(void)
 {
   c3_w* mem_w = u3_Loom + 1;
   c3_w  siz_w = c3_wiseof(u3v_home);
-  c3_w  len_w = u3a_words - 1;
+  c3_w  len_w = u3C.wor_i - 1;
 
   u3H = (void *)_pave_north(mem_w, siz_w, len_w);
   u3H->ver_w = u3v_version;
@@ -574,7 +574,7 @@ _find_home(void)
   //
   c3_w* mem_w = u3_Loom + 1;
   c3_w  siz_w = c3_wiseof(u3v_home);
-  c3_w  len_w = u3a_words - 1;
+  c3_w  len_w = u3C.wor_i - 1;
 
   {
     c3_w ver_w = *((mem_w + len_w) - 1);
@@ -594,7 +594,7 @@ _find_home(void)
   //  this looks risky, but there are no legitimate scenarios
   //  where it's wrong
   //
-  u3R->cap_p = u3R->mat_p = u3a_words - c3_wiseof(*u3H);
+  u3R->cap_p = u3R->mat_p = u3C.wor_i - c3_wiseof(*u3H);
 }
 
 /* u3m_pave(): instantiate or activate image.
@@ -1830,6 +1830,8 @@ u3m_init(void)
       exit(1);
     }
 
+    u3C.byt_i = len_i;
+    u3C.wor_i = len_i >> 2;
     u3l_log("loom: mapped %zuMB\r\n", len_i >> 20);
   }
 }

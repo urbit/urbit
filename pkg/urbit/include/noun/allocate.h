@@ -13,15 +13,15 @@
     */
 #     define u3a_page   12
 
-    /* u3a_pages: number of pages in memory.
+    /* u3a_pages: maximum number of pages in memory.
     */
 #     define u3a_pages  (1 << (u3a_bits - u3a_page))
 
-    /* u3a_words: number of words in memory.
+    /* u3a_words: maximum number of words in memory.
     */
 #     define u3a_words  (1 << u3a_bits)
 
-    /* u3a_bytes: number of bytes in memory.
+    /* u3a_bytes: maximum number of bytes in memory.
     */
 #     define u3a_bytes  (sizeof(c3_w) * u3a_words)
 
