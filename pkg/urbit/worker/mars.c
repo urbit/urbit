@@ -1304,10 +1304,11 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
   u3_meta      met_u;
   u3_noun        ova;
 
-  //  XX source properly
+  inp_u.veb_o = __( u3C.wag_w & u3o_verbose );
+  inp_u.lit_o = c3n; // unimplemented in arvo
+
+  //  XX source kelvin from args?
   //
-  inp_u.veb_o = c3y;
-  inp_u.lit_o = c3n;
   inp_u.ver_u.nam_m = c3__zuse;
   inp_u.ver_u.ver_w = 418;
 
