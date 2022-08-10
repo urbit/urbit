@@ -1764,7 +1764,7 @@
     ::
     ::    Also kills old subscriptions that should have been killed but
     ::    were not correctly removed in prerelease versions of the
-    ::    request queue fix.
+    ::    request queue fix.  This includes nonce 0, which no longer exists.
     ::
     ++  ap-doff
       ^+  ap-core
