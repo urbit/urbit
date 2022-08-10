@@ -94,20 +94,22 @@ u3e_copy(const c3_c* const dir_c);
 //! Load a snapshot copy from a directory into memory.
 //!
 //! @param[in] dir_c  Must contain a valid snapshot.
+//! @param[in] map_o  Don't `mmap()` the snapshot if `c3y`.
 //!
 //! @return c3n  Existing snapshot loaded.
 c3_o
-u3e_load(const c3_c* dir_c);
+u3e_load(const c3_c* dir_c, const c3_o map_o);
 
 //! Start the incremental snapshot system.
 //!
 //! @param[in] dir_c  Directory to run the incremental snapshot system in. Will
 //!                   be created if it doesn't exist.
+//! @param[in] map_o  Don't `mmap()` the snapshot if `c3y`.
 //!
 //! @return c3y  No existing snapshot.
 //! @return c3n  Existing snapshot loaded.
 c3_o
-u3e_live(const c3_c* dir_c);
+u3e_live(const c3_c* dir_c, const c3_o map_o);
 
 //! Disable dirty page tracking allowing read/write of entire loom.
 //!

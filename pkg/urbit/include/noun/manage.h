@@ -9,7 +9,7 @@
 //!
 //! @return  Next event number (starting from 1).
 c3_d
-u3m_boot(const c3_c* dir_c, c3_o (*sap_f)(const c3_c* dir_c));
+u3m_boot(const c3_c* dir_c, c3_o (*sap_f)(const c3_c* dir_c, const c3_o map_o));
 
 //! start without checkpointing.
 c3_d

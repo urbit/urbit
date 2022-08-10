@@ -91,7 +91,7 @@ static const size_t pag_siz_i = 1 << (u3a_page + 2);
 static const size_t pag_wiz_i = 1 << u3a_page;
 
 //! `mmap()` the north (heap) image if `c3n`.
-static const c3_o not_map_o = c3n;
+static c3_o not_map_o = c3n;
 
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
@@ -1108,9 +1108,11 @@ exit:
 }
 
 c3_o
-u3e_load(const c3_c* dir_c)
+u3e_load(const c3_c* dir_c, const c3_o map_o)
 {
   c3_assert(dir_c);
+
+  not_map_o = map_o;
 
   u3e_image nor_u = {.nam_c = nor_nam_c};
   u3e_image sou_u = {.nam_c = sou_nam_c};
@@ -1130,8 +1132,12 @@ u3e_load(const c3_c* dir_c)
 }
 
 c3_o
-u3e_live(const c3_c* dir_c)
+u3e_live(const c3_c* dir_c, const c3_o map_o)
 {
+  c3_assert(dir_c);
+
+  not_map_o = map_o;
+
   c3_o nuu_o = c3n;
 
   // require that our page size is a multiple of the system page size.
