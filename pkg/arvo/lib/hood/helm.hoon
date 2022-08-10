@@ -189,7 +189,6 @@
       %helm-hi  !>(?~(mes '' (crip u.mes)))
   ==
 ::
-::
 ++  poke-hi
   |=  mes=@t
   ~|  %poke-hi-fail
@@ -252,7 +251,24 @@
   =<  abet
   (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
 ::
-::TODO: add helm generator for add/remove agent permissions using %load
+::TODO: give warning if permissions are unchanged?
+++  poke-clay-free
+  |=  [=desk pes=(set perm:gall)]
+  =/  =foam:clay
+    .^(foam:clay %cg /(scot %p our:bowl)/(scot %tas desk)/(scot %da now:bowl))
+  =/  rei  [desk liv.foam ren.foam (~(uni in pes.foam) pes)]
+  =<  abet
+  (emit %pass /helm/clay/free %arvo %c %rein ren)
+::
+++  poke-clay-lock
+  |=  [=desk pes=(set perm:gall)]
+  =/  =foam:clay
+    .^(foam:clay %cg /(scot %p our:bowl)/(scot %tas desk)/(scot %da now:bowl))
+  =/  rei  [desk liv.foam ren.foam (~(dif in pes.foam) pes)]
+  =<  abet
+  (emit %pass /helm/clay/lock %arvo %c %rein rei)
+::
+::TODO: add helm generator for revive/idle agent using %load
 ++  poke
   |=  [=mark =vase]
   ?>  ?|  ?=(%helm-hi mark)
@@ -270,8 +286,8 @@
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
     %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
     %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
-::    %helm-gall-free        =;(f (f !<(_+<.f vase)) poke-gall-free)
-::    %helm-gall-lock        =;(f (f !<(_+<.f vase)) poke-gall-lock)
+    %helm-clay-free        =;(f (f !<(_+<.f vase)) poke-clay-free)
+    %helm-clay-lock        =;(f (f !<(_+<.f vase)) poke-clay-lock)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
