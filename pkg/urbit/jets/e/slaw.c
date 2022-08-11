@@ -427,6 +427,7 @@ _parse_tas(u3_noun txt) {
     u3a_free(c);
     return u3nc(0, u3k(txt));
   }
+
   // First character must represent a lowercase letter
   if (!islower(cur[0])) {
     u3a_free(c);
