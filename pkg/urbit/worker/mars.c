@@ -623,10 +623,6 @@ top:
       goto top;
     }
     else if ( u3_mars_exit_e == mar_u->sat_e ) {
-      //  XX wire up to signal handler
-      //
-      u3_disk_slog(mar_u->log_u);
-
       u3e_save();
       u3_disk_exit(mar_u->log_u);
       u3s_cue_xeno_done(mar_u->sil_u);
@@ -868,6 +864,105 @@ _mars_do_boot(u3_disk* log_u, c3_d eve_d)
   return c3y;
 }
 
+/* _mars_sign_init(): initialize daemon signal handlers
+*/
+static void
+_mars_sign_init(u3_mars* mar_u)
+{
+  //  handle SIGINFO (if available)
+  //
+#ifdef SIGINFO
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->sil_u.data = mar_u;
+
+    sig_u->num_i = SIGINFO;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+#endif
+
+  //  handle SIGUSR1 (fallback for SIGINFO)
+  //
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->sil_u.data = mar_u;
+
+    sig_u->num_i = SIGUSR1;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+}
+
+/* _mars_sign_cb: signal callback.
+*/
+static void
+_mars_sign_cb(uv_signal_t* sil_u, c3_i num_i)
+{
+  u3_mars* mar_u = sil_u->data;
+
+  switch ( num_i ) {
+    default: {
+      u3l_log("\r\nmars: mysterious signal %d\r\n", num_i);
+    } break;
+
+    //  fallthru if defined
+    //
+#ifdef SIGINFO
+    case SIGINFO:
+#endif
+    case SIGUSR1: {
+      //  XX add u3_mars_slog()
+      //
+      u3_disk_slog(mar_u->log_u);
+    } break;
+  }
+}
+
+/* _mars_sign_move(): enable daemon signal handlers
+*/
+static void
+_mars_sign_move(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_signal_start(&sig_u->sil_u, _mars_sign_cb, sig_u->num_i);
+  }
+}
+
+/* _mars_sign_hold(): disable daemon signal handlers
+*/
+static void
+_mars_sign_hold(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_signal_stop(&sig_u->sil_u);
+  }
+}
+
+/* _mars_sign_close(): dispose daemon signal handlers
+*/
+static void
+_mars_sign_close(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_close((uv_handle_t*)&sig_u->sil_u, (uv_close_cb)free);
+  }
+}
+
 /* u3_mars_init(): init mars, replay if necessary.
 */
 u3_mars*
@@ -889,6 +984,16 @@ u3_mars_init(c3_c*    dir_c,
   mar_u->xit_f = 0;
 
   mar_u->sil_u = u3s_cue_xeno_init();
+
+  //  start signal handlers
+  //
+  _mars_sign_init(mar_u);
+  _mars_sign_move();
+
+  //  wire up signal controls
+  //
+  u3C.sign_hold_f = _mars_sign_hold;
+  u3C.sign_move_f = _mars_sign_move;
 
   //  initialize persistence
   //
