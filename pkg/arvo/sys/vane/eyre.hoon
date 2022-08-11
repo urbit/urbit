@@ -2617,15 +2617,13 @@
       %+  skim  bindings.server-state.old
         |=  [=binding =duct =action]
         =(%authentication -.action)
-    =/  new
-    %=  old
-      date  %~2022.7.26
-    ::
-      bindings.server-state
-      ^-  (list [binding duct action])
-      :-  [[~ /~/name] d [%name ~]]  bindings.server-state.old
+    ~&  [%duct d]
+    %=  $
+      date.old  %~2022.7.26
+      ::
+      bindings.server-state.old
+      (insert-binding [[~ /~/name] d [%name ~]] bindings.server-state.old)
     ==
-    $(old new)
   ::
       %~2022.7.26
     ::  enable https redirects if certificate configured
