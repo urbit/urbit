@@ -2617,7 +2617,7 @@
       ::
       bindings.server-state.old
       %+  insert-binding
-        [[~ /~/name] ~[/dill //term/1] [%name ~]]
+        [[~ /~/name] outgoing-duct.server-state.old [%name ~]]
       bindings.server-state.old
     ==
   ::
