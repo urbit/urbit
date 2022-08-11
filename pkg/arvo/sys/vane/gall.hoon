@@ -846,7 +846,7 @@
       ?-  -.ames-response
         %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
         %x  =.  mo-core  (mo-give %unto %kick ~)
-            (mo-pass wire %a %cork ship)
+            (mo-pass [%sys wire] %a %cork ship)
       ==
     ::
         [%ames %lost *]
