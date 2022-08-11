@@ -1,5 +1,5 @@
-::  Helm: turn off an agent in a desk
+::  Kiln: turn off an agent in a desk
 ::
 :-  %say
 |=  [^ [=desk =dude:gall ~] ~]
-helm-clay-idle+[desk dude]
+kiln-clay-idle+[desk dude]

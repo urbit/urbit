@@ -251,41 +251,6 @@
   =<  abet
   (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
 ::
-::TODO: give warning if permissions are unchanged?
-++  poke-clay-free
-  |=  [=desk pes=(set perm:gall)]
-  =/  =foam:clay
-    .^(foam:clay %cg /(scot %p our:bowl)/(scot %tas desk)/(scot %da now:bowl))
-  =/  rei  [desk liv.foam ren.foam (~(uni in pes.foam) pes)]
-  =<  abet
-  (emit %pass /helm/clay/free %arvo %c %rein rei)
-::
-++  poke-clay-lock
-  |=  [=desk pes=(set perm:gall)]
-  =/  =foam:clay
-    .^(foam:clay %cg /(scot %p our:bowl)/(scot %tas desk)/(scot %da now:bowl))
-  =/  rei  [desk liv.foam ren.foam (~(dif in pes.foam) pes)]
-  =<  abet
-  (emit %pass /helm/clay/lock %arvo %c %rein rei)
-::
-::TODO: give warning if agent already running or doesnt exist?
-++  poke-clay-jolt
-  |=  [=desk =dude:gall]
-  =/  =foam:clay
-    .^(foam:clay %cg /(scot %p our:bowl)/(scot %tas desk)/(scot %da now:bowl))
-  =/  rei  [desk liv.foam (~(put by ren.foam) dude &) pes.foam]
-  =<  abet
-  (emit %pass /helm/clay/jolt %arvo %c %rein rei)
-::
-::TODO: give warning if agent not running or doesnt exist?
-++  poke-clay-idle
-  |=  [=desk =dude:gall]
-  =/  =foam:clay
-    .^(foam:clay %cg /(scot %p our:bowl)/(scot %tas desk)/(scot %da now:bowl))
-  =/  rei  [desk liv.foam (~(put by ren.foam) dude |) pes.foam]
-  =<  abet
-  (emit %pass /helm/clay/idle %arvo %c %rein rei)
-::
 ++  poke
   |=  [=mark =vase]
   ?>  ?|  ?=(%helm-hi mark)
@@ -303,10 +268,6 @@
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
     %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
     %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
-    %helm-clay-free        =;(f (f !<(_+<.f vase)) poke-clay-free)
-    %helm-clay-lock        =;(f (f !<(_+<.f vase)) poke-clay-lock)
-    %helm-clay-jolt        =;(f (f !<(_+<.f vase)) poke-clay-jolt)
-    %helm-clay-idle        =;(f (f !<(_+<.f vase)) poke-clay-idle)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)

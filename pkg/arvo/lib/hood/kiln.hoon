@@ -1063,6 +1063,10 @@
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
     %kiln-fuse               =;(f (f !<(_+<.f vase)) poke-fuse)
     %kiln-fuse-list          =;(f (f !<(_+<.f vase)) poke-fuse-list)
+    %kiln-clay-free          =;(f (f !<(_+<.f vase)) poke-clay-free)
+    %kiln-clay-lock          =;(f (f !<(_+<.f vase)) poke-clay-lock)
+    %kiln-clay-jolt          =;(f (f !<(_+<.f vase)) poke-clay-jolt)
+    %kiln-clay-idle          =;(f (f !<(_+<.f vase)) poke-clay-idle)
     %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-install            =;(f (f !<(_+<.f vase)) poke-install)
@@ -1189,6 +1193,41 @@
   ?~  f
     abet
   abet:abet:fuse:u.f
+::
+::TODO: give warning if permissions are unchanged?
+++  poke-clay-free
+  |=  [=desk pes=(set perm:gall)]
+  =/  =foam:clay
+    .^(foam:clay %cg /(scot %p our)/(scot %tas desk)/(scot %da now))
+  =/  rei  [desk liv.foam ren.foam (~(uni in pes.foam) pes)]
+  =<  abet
+  (emit %pass /helm/clay/free %arvo %c %rein rei)
+::
+++  poke-clay-lock
+  |=  [=desk pes=(set perm:gall)]
+  =/  =foam:clay
+    .^(foam:clay %cg /(scot %p our)/(scot %tas desk)/(scot %da now))
+  =/  rei  [desk liv.foam ren.foam (~(dif in pes.foam) pes)]
+  =<  abet
+  (emit %pass /helm/clay/lock %arvo %c %rein rei)
+::
+::TODO: give warning if agent already running or doesnt exist?
+++  poke-clay-jolt
+  |=  [=desk =dude:gall]
+  =/  =foam:clay
+    .^(foam:clay %cg /(scot %p our)/(scot %tas desk)/(scot %da now))
+  =/  rei  [desk liv.foam (~(put by ren.foam) dude &) pes.foam]
+  =<  abet
+  (emit %pass /helm/clay/jolt %arvo %c %rein rei)
+::
+::TODO: give warning if agent not running or doesnt exist?
+++  poke-clay-idle
+  |=  [=desk =dude:gall]
+  =/  =foam:clay
+    .^(foam:clay %cg /(scot %p our)/(scot %tas desk)/(scot %da now))
+  =/  rei  [desk liv.foam (~(put by ren.foam) dude |) pes.foam]
+  =<  abet
+  (emit %pass /helm/clay/idle %arvo %c %rein rei)
 ::
 ++  poke-gall-sear
   |=  =ship

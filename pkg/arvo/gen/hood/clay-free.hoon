@@ -1,5 +1,5 @@
-::  Helm: give userspace permissions to a desk
+::  Kiln: give userspace permissions to a desk
 ::
 :-  %say
 |=  [^ [=desk pes=(set perm:gall) ~] ~]
-helm-clay-free+[desk pes]
+kiln-clay-free+[desk pes]
