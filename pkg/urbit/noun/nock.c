@@ -1707,25 +1707,6 @@ _intlen(c3_w num_w)
   return len_w;
 }
 
-/* _invalid_op(): return true if 'go' is not in 0-2,4
- *                which means that _slog_bytecode doesn't
- *                know how to handle it.
- */
-c3_b
-_invalid_op(c3_y go)
-{
-  return !(go == 0 || go == 1 || go == 2 | go == 4);
-}
-
-/*  _is_pair(): return true if go > 0
- *              which means the opcode is paired with an argument
- */
-c3_b
-_is_pair(c3_y go)
-{
-  return (go == 1 || go == 2 | go == 4);
-}
-
 /* _is_indexed(): return true if the opcode is
  *                in the set of opcodes known to
  *                use pog_u->lit_u.non
@@ -1777,11 +1758,10 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   // lets count the chars in this string
   while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
-    if (_invalid_op(go)) break;      // give up if we dont know how to print it
     op_num = pog[ip_w++];            // move ip_w for reading a opcode name
     is_idx_op = _is_indexed(op_num); // is this an indexed bytecode argument
     len_c += 5;                      // a leading space, and opcode name
-    if (_is_pair(go)) {              // if pair: "[bytecode arg]" else "bytecode"
+    if (go > 0) {                    // if pair: "[bytecode arg]" else "bytecode"
       len_c += 3;                    // "[", space between opcode & arg, "]"
       if ( is_idx_op ) len_c += 2;   // 'i:'
       len_c += _intlen(              // length of the bytecode argument
@@ -1797,13 +1777,12 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   // lets print this string
   while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
-    if (_invalid_op(go)) break;              // give up if we dont know how to print it
     op_num = pog[ip_w++];                    // move ip_w for reading a opcode name
     is_idx_op = _is_indexed(op_num);         // is this an indexed bytecode argument
     strcat(str_c, " ");                      // leading space
-    if (_is_pair(go)) strcat(str_c, "[");    // add "[" if the opcode pairs
+    if (go > 0) strcat(str_c, "[");          // add "[" if the opcode pairs
     strncat(str_c, opcode_names[op_num], 4); // add the opcode name
-    if (_is_pair(go)) {                      // finish the pair
+    if (go > 0) {                            // finish the pair
       strcat(str_c, " ");                    // add the space between byt and arg
       if ( is_idx_op ) strcat(str_c, "i:");  // indexed args are labeled as "index of arg"
       num = _num_from_pog(go, pog, ip_w);    // the bytecode argument
@@ -1831,10 +1810,10 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
 }
 
 /* _xray(): given a text render style priority hint pri_l (int 0-3),
- *          and a noun fol to complie into a u3n_prog bytecode program,
- *          slog the program as a string of bytecodes,
- *          and free the temp program afterwards.
- */
+**          and a noun fol to complie into a u3n_prog bytecode program,
+**          slog the program as a string of bytecodes,
+**          and free the temp program afterwards.
+*/
 void
 _xray(c3_l pri_l, u3_noun fol) {
   u3n_prog* pog_u = _n_bite(fol);
