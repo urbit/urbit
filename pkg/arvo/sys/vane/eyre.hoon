@@ -2612,17 +2612,13 @@
   ~!  %loading
   ?-    -.old
       %~2020.10.18
-    =/  [* d=duct *]
-      %+  snag  0
-      %+  skim  bindings.server-state.old
-        |=  [=binding =duct =action]
-        =(%authentication -.action)
-    ~&  [%duct d]
     %=  $
       date.old  %~2022.7.26
       ::
       bindings.server-state.old
-      (insert-binding [[~ /~/name] d [%name ~]] bindings.server-state.old)
+      %+  insert-binding
+        [[~ /~/name] ~[/dill //term/1] [%name ~]]
+      bindings.server-state.old
     ==
   ::
       %~2022.7.26
