@@ -35,14 +35,28 @@ open = \case
     open $ Bccl fork [Kthp (Bass HC.Typ) $ Wthp [Axis 2] pats]
   Bcgr t ss -> Left "unsupported $>" --Fok <$> open t <*> traverse flay ss
   Bcgl{} -> Left "unsupported $<"
-  Bchp s t -> Gat <$> open s <*> open t
+  Bchp s t -> do
+    s <- open s
+    t <- open t
+    pure $
+      Sal [Axis 7] $
+        Cor
+          (Cel (Mot s Non) Non)
+          (Cel s Non)
+          (mapFromList [("", t)])
   Bckt{} -> Left "unsupported $^"
+  Bcmc s t -> Mot <$> open s <*> open t
   Bcts h s -> Sin <$> open h <*> open s
   Bcpt{} -> Left "unsupported $@"
-  Bcwt{} -> Left "unsupported $?"
+  Bcwt w h -> Sal w <$> open h
   --
   Brcn hs -> Cru <$> traverse open hs
-  Brts t h -> Lam <$> open t <*> open h
+  Brts t h -> do
+    t <- open t
+    h <- open h
+    pure $
+      Mut t (Net {sof = Atm 0 Sand "", typ = Non}) $
+        Cru (mapFromList [("", h)])
   --
   Clcb h j -> Cel <$> open j <*> open h
   Clkt h j k l -> Cel <$> open h
@@ -57,14 +71,28 @@ open = \case
   Cltr [h] -> open h
   Cltr (h:hs) -> Cel <$> open h <*> open (Cltr hs)
   --
-  Cndt h j -> Sla <$> open j <*> open h
-  Cnhp h j -> Sla <$> open h <*> open j
-  Cncl h hs -> Sla <$> open h <*> open (Cltr hs)
-  Cnkt h j k l -> Sla <$> open h
-                       <*> (Sla <$> open j
-                                 <*> (Sla <$> open k
-                                           <*> open l))
-  Cnls h j k -> Sla <$> open h <*> (Sla <$> open j <*> open k)
+  Cndt h j -> open $ Cnhp j h
+  -- XX are there other cases in which we can elim =+?
+  {-
+  -- Not ok here because it might be an arm wing
+  -- needs to move to next pass XX.
+  Cnhp (Wung w) j -> do
+    t <- open j
+    pure $ Wng (Ally "" : w) [([Axis 6], t)]
+  -}
+  Cnhp h j -> do
+    s <- open h
+    t <- open j
+    pure $
+      Pus s $
+        Wng [Ally "", Axis 2]
+          [ ( [Axis 6]
+            , Wit (Wng [Axis 3] []) t
+            )
+          ]
+  Cncl h hs -> open $ Cnhp h (Cltr hs)
+  Cnkt h j k l -> open $ Cnhp h (Clls j k l)
+  Cnls h j k -> open $ Cnhp h (Clhp j k)
   Cnts w whs -> Wng w <$> traverse (\(w, h) -> (w,) <$> open h) whs
   --
   Dtkt{} -> Left "unsupported .^"
@@ -77,7 +105,7 @@ open = \case
   Kthp s h -> do typ <- open s; sof <- open h; pure Net {typ, sof}
   Ktfs h s -> do typ <- open s; sof <- open h; pure Net {typ, sof}
   Ktzp s h -> do typ <- open s; sof <- open h; pure Cat {typ, sof}
-  Ktwt h -> Left "unsupported ^? lead cast"  -- XX fixme soon
+  Ktwt w h -> Hid w <$> open h
   Ktts s h -> Fac <$> flay s <*> open h
   Ktcn h -> Left "unsupported ^%"
   Ktcl{} -> Left "unsupported ^: mold"
@@ -86,6 +114,7 @@ open = \case
   --
   Tsfs s h j -> open $ Tsls (Ktts s h) j
   Tsmc s h j -> open $ Tsfs s j h
+  Tscl s h j -> Mut <$> open s <*> open h <*> open j
   Tsdt{} -> Left "unsupported =."
   Tswt{} -> Left "unsupported =?"
   --Tsgl (Brcn m) h -> cook h m unname open (flip Core)
@@ -145,9 +174,11 @@ flay = \case
   --
   h -> Left ("flay-meat: expression in pattern context: " <> tshow h)
 
+-- | Resugar a Soft into a Hoon.
 shut :: Soft -> Hoon
 shut = \case
   Wng w [] -> Wung w
+  -- Wng (Ally "" : ws) [([Axis 6], s)] -> sla (Wng ws []) s
   Wng w wss -> Cnts w $ map (\(w, s) -> (w, shut s)) wss
   --
   Atm a g au -> Adam g a au
@@ -157,18 +188,12 @@ shut = \case
     Clkt h j k l -> Cltr [shut c, h, j, k, l]
     Cltr hs -> Cltr (shut c : hs)
     h -> Clhp (shut c) h
-  Lam c d -> Brts (shut c) (shut d)
+--  Lam c d -> Brts (shut c) (shut d)
   Fac p c -> Ktts (flap p) (shut c)
   Cru cs -> Brcn (fmap shut cs)
   --Core b p -> Tsgr (shut p) (Brcn $ fmap (shut (unname e p) . fromScope) b)
   --
   Plu c -> Dtls (shut c)
-  Sla c d -> case shut d of
-    Clhp h j -> Cnls (shut c) h j
-    Clls h j k -> Cnkt (shut c) h j k
-    Clkt h j k l -> Cncl (shut c) [h, j, k, l]
-    Cltr hs -> Cncl (shut c) hs
-    h -> Cnhp (shut c) h
   Equ c d -> Dtts (shut c) (shut d)
   Tes c d e -> Wtcl (shut c) (shut d) (shut e)
   Rhe c d -> Wtwt (shut c) (shut d)
@@ -185,16 +210,96 @@ shut = \case
   Cor c d es -> Bcbr (shut c) (shut d) (fmap shut es)
   --Fok t ss -> Bcgr (shut t) (map flap ss)
   Sin c t -> Bcts (shut c) (shut t)
+  Mot t u -> Bcmc (shut t) (shut u)
   Fus c p -> Bcgr (shut c) (flap p)
+  Sal [Axis 7] (Cor (Cel (Mot _ Non) _) (Cel s _) (mapToList -> [("", t)])) ->
+    Bchp (shut s) (shut t)
+  Sal [Axis 7] (Cor (Cel Non _) (Cel s _) (mapToList -> [("", t)])) ->
+    Bchp (shut s) (shut t)
+  Sal w t -> Bcwt w (shut t)
   Non -> Bass HC.Non
   Vod -> Bass HC.Vod
   Typ -> Bass HC.Typ
   --
+  -- XX ridiculous hack for printing holds
+  Wit (Wit _ (Cru cs)) c
+    | (ar, _) :  _ <- filter (\(_,d) -> c == d) (mapToList cs) ->
+      Wung [Ally ar]
+  -- XX another ridiculous hack because lofted Crux' has this tisgar that I
+  -- basically never want to see, but which is needed for the correct semantics
+  -- (XX rethink? also how can we resugar to |=?)
+  -- This will cause glorious Issues if the user source has an actual =>  |% lol
+  Wit _ (Cru cs) -> shut (Cru cs)
   Wit c d -> Tsgr (shut c) (shut d)
+  Pus c (Wng [Ally "", Axis 2] [([Axis 6], Wit (Wng [Axis 3] []) d)]) -> sla c d
+  Pus (Atm 0 Sand _) (Cru (mapToList -> [("", d)])) -> Brts Wild (shut d)
   Pus c d -> Tsls (shut c) (shut d)
+  Mut c
+    (Net { sof = Atm 0 Sand "", typ = Non })
+    (Cru (mapToList -> [("", d)])) ->
+   Brts (shut c) (shut d)
+  Mut c d e -> Tscl (shut c) (shut d) (shut e)
   --Case c ss ds -> error "open: case"
   Net{sof, typ} -> Kthp (shut typ) (shut sof)  -- XX should print as / wide
   Cat{sof, typ} -> Ktzp (shut typ) (shut sof)
+  Hid w s -> Ktwt w (shut s)
+ where
+  sla c d = case shut d of
+    Clhp h j -> Cnls (shut c) h j
+    Clls h j k -> Cnkt (shut c) h j k
+    Clkt h j k l -> Cncl (shut c) [h, j, k, l]
+    Cltr hs -> Cncl (shut c) hs
+    h -> Cnhp (shut c) h
+
+-- | Read back a Soft into a hoon without resugaring much.
+shut' :: Soft -> Hoon
+shut' = \case
+  Wng w [] -> Wung w
+  Wng w wss -> Cnts w $ map (\(w, s) -> (w, shut' s)) wss
+  --
+  Atm a g au -> Adam g a au
+  Cel c d -> case shut' d of
+    Clhp h j -> Clls (shut' c) h j
+    Clls h j k -> Clkt (shut' c) h j k
+    Clkt h j k l -> Cltr [shut' c, h, j, k, l]
+    Cltr hs -> Cltr (shut' c : hs)
+    h -> Clhp (shut' c) h
+--  Lam c d -> Brts (shut' c) (shut' d)
+  Fac p c -> Ktts (flap p) (shut' c)
+  Cru cs -> Brcn (fmap shut' cs)
+  --Core b p -> Tsgr (shut' p) (Brcn $ fmap (shut' (unname e p) . fromScope) b)
+  --
+  Plu c -> Dtls (shut' c)
+  Equ c d -> Dtts (shut' c) (shut' d)
+  Tes c d e -> Wtcl (shut' c) (shut' d) (shut' e)
+  Rhe c d -> Wtwt (shut' c) (shut' d)
+  Fis p c -> Wtts (flap p) (shut' c)
+  --
+  Aur au Bowl -> Bass (HC.Aur au)
+  Aur "n" (Fork as) | as == setFromList [0] -> Bass HC.Nul
+  Aur "f" (Fork as) | as == setFromList [0, 1] -> Bass HC.Flg
+  Aur au (Fork as) -> Bass (HC.Fok (toList as) au)
+  Ral c d -> case shut' d of
+    Bccl s ss -> Bccl (shut' c) (s:ss)
+    s -> Bccl (shut' c) [s]
+  Gat c d -> Bchp (shut' c) (shut' d)
+  Cor c d es -> Bcbr (shut' c) (shut' d) (fmap shut' es)
+  --Fok t ss -> Bcgr (shut' t) (map flap ss)
+  Sin c t -> Bcts (shut' c) (shut' t)
+  Mot t u -> Bcmc (shut' t) (shut' u)
+  Fus c p -> Bcgr (shut' c) (flap p)
+  Sal w t -> Bcwt w (shut' t)
+  Non -> Bass HC.Non
+  Vod -> Bass HC.Vod
+  Typ -> Bass HC.Typ
+  --
+  Wit c d -> Tsgr (shut' c) (shut' d)
+  Pus c d -> Tsls (shut' c) (shut' d)
+  Mut c d e -> Tscl (shut' c) (shut' d) (shut' e)
+  --Case c ss ds -> error "open: case"
+  Net{sof, typ} -> Kthp (shut' typ) (shut' sof)  -- XX should print as / wide
+  Cat{sof, typ} -> Ktzp (shut' typ) (shut' sof)
+  Hid w s -> Ktwt w (shut' s)
 
 flap :: Pelt -> Hoon
 flap = \case
@@ -217,7 +322,7 @@ lock :: Var a => Semi a -> Hoon
 lock = \case
   Spot' a -> Wung [Ally $ tshow a]
   Fore' x -> Wung [Ally $ tshow $ Old @Text x]
-  Hold' x c -> Hxgl (shut . rest $ c) (lock x)
+  Hold' t x c -> Hxgl (shut . rest $ c) (lock x)  -- Wung [Ally t]
   --
   Atom' a -> Adam Sand a (heuAura a)
   Cell' x y -> case lock y of
@@ -226,22 +331,28 @@ lock = \case
     Clkt h j k l -> Cltr [lock x, h, j, k, l]
     Cltr hs -> Cltr (lock x : hs)
     h -> Clhp (lock x) h
-  Lamb' (Jamb c x) -> Tsgr (lock x) $ Brts Wild (shut . rest $ c)
-  Crux' as x -> Tsgr (lock x) $ Brcn (fmap (shut . rest) as)
+  -- Lamb' (Jamb c x) -> Tsgr (lock x) $ Brts Wild (shut . rest $ c)
+  Crux' _ as x -> Tsgr (lock x) $ Brcn (fmap (shut . rest) as)
   --
-  Pull' ar _ (Spot' a) -> Wung [Ally ar, Ally $ tshow a]
-  Pull' ar _ x -> Tsgl (Wung [Ally ar]) (lock x)
+  Pull' ar _ x -> case lock x of
+    Cnts w eds -> Cnts (Ally ar : w) eds
+    h -> Tsgl (Wung [Ally ar]) h
   Plus' x -> Dtls (lock x)
+  {-
   Slam' x y ->  case lock y of
     Clhp h j -> Cnls (lock x) h j
     Clls h j k -> Cnkt (lock x) h j k
     Clkt h j k l -> Cncl (lock x) [h, j, k, l]
     Cltr hs -> Cncl (lock x) hs
     h -> Cnhp (lock x) h
+  -}
   Equl' x y -> Dtts (lock x) (lock y)
   Test' x y z -> Wtcl (lock x) (lock y) (lock z)
   Fish' f x -> Wtts (flap $ pond f) (lock x)
   Look' x a -> Tsgl (Wung [Axis a]) (lock x)
+  Edit' x a y -> case lock x of
+    Cnts w eds -> Cnts w (eds ++ [([Axis a], lock y)])
+    h -> Tsgr h (Cnts [] [([Axis a], lock y)])
   --
   Aura' au Bowl -> Bass (HC.Aur au)
   Aura' "n" (Fork as) | as == setFromList [0] -> Bass HC.Nul
@@ -256,9 +367,11 @@ lock = \case
     Tsgr (lock s) $ Bcbr (lock u) (lock t) (fmap (shut . rest) js)
 --  Fork' fs t -> Bcgr (lock t) (map (flap . pond) $ setToList fs)
   Sing' x y -> Bcts (lock x) (lock y)
+  Molt' x y -> Bcmc (lock x) (lock y)
   Fuse' x f -> Bcgr (lock x) (flap $ pond f)
   Face' (Mask m) x -> Ktts (Wung [Ally m]) (lock x)
   Face' (Link ls) x -> Ktts Wild (lock x)  -- FIXME ?
+  Seal' a x -> Bcwt [Axis a] (lock x)
   Noun' -> Bass HC.Non
   Void' -> Bass HC.Vod
   Type' -> Bass HC.Typ

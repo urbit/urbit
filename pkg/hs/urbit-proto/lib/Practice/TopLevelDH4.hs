@@ -67,7 +67,7 @@ ride filename con txt =
           case runCheck (play con sof) of
             Left ert -> ResOpen{..}
             Right (cod, typ, fis) ->
-              let ken = evil con cod
+              let ken = spun con cod
                   nok = mint cod
               in ResType{..}
 
@@ -85,6 +85,6 @@ road filename con txt =
               let ert = (traceToStack mor, er)
               in ResOpen{..}
             (mor, Right (cod, typ, fis)) ->
-              let ken = evil con cod
+              let ken = spun con cod
                   nok = mint cod
               in ResType{..}

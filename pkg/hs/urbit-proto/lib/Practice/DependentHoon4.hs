@@ -1,10 +1,13 @@
+{-# LANGUAGE Strict #-}
+
 module Practice.DependentHoon4 where
 
 import ClassyPrelude hiding ((/), even, find, head, join, read, tail, catch)
 import Prelude (head, tail)
 
 import Control.Arrow (left)
-import Control.Exception (ArithException, catch)
+-- import Control.Concurrent.Async (AsyncCancelled)
+import Control.Exception (ArithException(..), catch, throw)
 import Control.Monad.Except hiding (join)
 import Control.Monad.Reader hiding (join)
 import Control.Monad.State.Strict hiding (join)
@@ -25,33 +28,33 @@ data Soft
   | Atm Atom Grit Aura             --  1, %foo                      atomic value
   | Cel Soft Soft                  --  [h j], [t u]    cell value, type (nondep)
   | Fac Pelt Soft                  --  s=h              face(s) applied to value
-  | Lam Soft Soft                  --  |=  t  h                   function value
+--   | Lam Soft Soft                  --  |=  t  h                   function value
   | Cru (Map Term Soft)            --  |%  ++  foo  h  --             core value
   --
   | Plu Soft                       --  +(h)                     atomic increment
-  | Sla Soft Soft                  --  (h j)                       function call
   | Equ Soft Soft                  --  =(h j)                      equality test
   | Tes Soft Soft Soft             --  ?:  h  j  k                boolean branch
   | Rhe Soft Soft                  --  ??  h  j                rhetorical branch
   | Fis Pelt Soft                  --  ?=(s h)                      pattern test
---  | Edi Wing [(Wing, Soft)]      --  h(a.b j, +6 k)
   --
   | Aur Aura Tool                  --  @ud,  ?(%foo, %bar)           atomic type
   | Ral Soft Soft                  --  {t u}                          sigma type
   | Gat Soft Soft                  --  $-(t u)                      pi/gate type
   | Cor Soft Soft (Map Term Soft)  --  $|  t  u  ++  foo v  --         core type
--- | God
--- | Led
   | Sin Soft Soft                  --  1|@,  $=  1  @             singleton type
+  | Mot Soft Soft                  --  $;(t u)                formal/actual type
   | Fus Soft Pelt                  --  $>  t  p, t?(p)                 fuse type
+  | Sal Wing Soft                  --  $?  w  t                    abstract type
   | Non                            --  *                           top/noun type
   | Vod                            --  !                        bottom/void type
   | Typ                            --  $                            type of type
   --
   | Wit Soft Soft
   | Pus Soft Soft
+  | Mut Soft Soft Soft
   | Net { sof :: Soft, typ :: Soft }
   | Cat { sof :: Soft, typ :: Soft }
+  | Hid Wing Soft                  -- ^?  w  h             cast to abstract type
   deriving (Eq, Ord, Show, Generic)
 
 data Pelt
@@ -72,12 +75,10 @@ data Code a
   --
   | Atom Atom
   | Cell (Code a) (Code a)
-  | Lamb (Code a)
-  | Crux (Map Term (Code a))
+  | Crux Mesh (Map Term (Code a))
   --
   | Pull Term (Set Term) (Code a)
   | Plus (Code a)
-  | Slam (Code a) (Code a)
   | Equl (Code a) (Code a)
   | Test (Code a) (Code a) (Code a)
   | Fish Fish (Code a)
@@ -86,8 +87,10 @@ data Code a
   | Aura Aura Tool
   | Rail (Code a) (Code a)
   | Gate (Code a) (Code a)
-  | Core (Code a) (Map Term (Code a)) (Code a)  -- FIXME user syntax fom/act
+  | Core (Code a) (Map Term (Code a)) (Code a)
   | Sing (Code a) (Code a)
+  | Molt (Code a) (Code a)
+  | Seal Axis (Code a)
   | Face Face (Code a)
   | Fuse (Code a) Fish
   | Noun
@@ -116,6 +119,16 @@ data Tool
   = Fork (Set Atom)
   | Bowl
   deriving (Eq, Ord, Show)
+
+-- | Mark those parts of the payload that should be stubbed out with unknowns
+-- when the core value (Crux') is fits-checked. For example [%milk %meat] means
+-- "stub out the +6 but not the +7" of this core. By this mechanism, eta-beta
+-- equivalence (actually nest) checking is effected for cores.
+data Mesh
+  = Mesh Mesh Mesh  -- ^ cons two meshes together
+  | Meat            -- ^ do not stub out this part of the payload
+  | Milk            -- ^ please stub out this part of the payload
+  deriving (Eq, Ord, Show, Generic)
 
 -- | A layer of facial information on a type or annotating a value to change its
 -- type.
@@ -217,23 +230,24 @@ data Semi a
   = Spot' Rump
   | Fore' a
   -- | Evaluation hold. Hold' sub cod has the semantics of (eval sub cod),
-  -- except in fits where the Amber rule is applied.
-  | Hold' (Semi a) (Code a)
+  -- except in fits where the Amber rule is applied. The text is the display
+  -- name for printing, because we don't want to print the whole code. Since
+  -- holds arise from arm pulls, we just print the arm name, so the user sees
+  -- e.g. `(list @)` where list stands for a hold.
+  | Hold' Text (Semi a) (Code a)
   --
   | Atom' Atom
   | Cell' (Semi a) (Semi a)
-  | Lamb' (Jamb a)
-  | Crux' (Map Term (Code a)) (Semi a)
+  | Crux' Mesh (Map Term (Code a)) (Semi a)
 -- | Crux' or Bulk'
   --
   | Pull' Text (Set Text) (Semi a)
   | Plus' (Semi a)
-  | Slam' (Semi a) (Semi a)
   | Equl' (Semi a) (Semi a)
   | Test' (Semi a) (Semi a) (Semi a)
   | Fish' Fish (Semi a)
   | Look' (Semi a) Axis
---  | Edit' (Semi a) Axis (Semi a)
+  | Edit' (Semi a) Axis (Semi a)
   --
   | Aura' Aura Tool
   | Rail' (Semi a) (Jamb a)
@@ -249,6 +263,8 @@ data Semi a
     -- | actual payload type
     (Semi a)
   | Sing' {- | val -} (Semi a) {- | type -} (Semi a)
+  | Molt' {- | formal type -} (Semi a) {- | actual type -} (Semi a)
+  | Seal' Axis (Semi a)
   | Face' Face (Semi a)
   | Fuse' (Semi a) Fish
   | Noun'
@@ -360,14 +376,14 @@ instance (Rise a, Rise b) => Rise (Hop b a) where
 instance (Peg a) => Peg (Semi a) where
   s / a = case (cut a, s) of
     (Nothing,     s)                   -> s
-    (_,           Hold' s c)           -> Hold' s $ With c (Spot a)
+--  (_,           Hold' t s c)         -> Hold' t s $ With c (Spot a)
     (_,           Spot' r)             -> Spot' $ r / a
     (_,           Fore' x)             -> Fore' $ x / a
     (_,           Look' c st)          -> Look' c $ st / a
 --  (_,           Face' _ c)           -> walk a c  -- Faces only on types now
     (Just (L, a), Cell' s _)           -> s / a
     (Just (R, a), Cell' _ s)           -> s / a
-    (Just (R, a), Crux' _ p)           -> p / a
+    (Just (R, a), Crux' _ _ p)         -> p / a
     (Just _,      _)                   -> Look' s a
 
 -- instance Functor f => SetFunctor f where
@@ -390,12 +406,12 @@ mint = \case
   Cell c d -> case (mint c, mint d) of
     (N1 n, N1 m) -> N1 (C n m)
     (f, g) -> NC f g
-  Lamb c  -> NC (mint c)  $ NC (N1 $ A 0) (N0 1)
-  Crux cs -> NC (mine cs) $ NC (N1 $ A 0) (N0 1)
+--Lamb c  -> NC (mint c)  $ NC (N1 $ A 0) (N0 1)
+  Crux _ cs -> NC (mine mint cs) $ NC (N1 $ A 0) (N0 1)
   --
   Pull a as c -> N9 (loot a as) (mint c)
   Plus c -> N4 (mint c)
-  Slam c d -> N9 2 $ N10 6 (mint d) $ mint c  -- XX check
+  -- Slam c d -> N9 2 $ N10 6 (mint d) $ mint c  -- XX check
   Equl c d -> N5 (mint c) (mint d)
   Test c d e -> N6 (mint c) (mint d) (mint e)
   Fish f (Spot a) -> lure a f
@@ -408,12 +424,17 @@ mint = \case
     where as' = foldr C (A 0) $ map A $ setToList as
   Rail c d -> NC (N1 RAIL) $ NC (N1 $ mint c) $ NC (N1 $ mint d) (N0 1)
   Gate c d -> NC (N1 GATE) $ NC (N1 $ mint c) $ NC (N1 $ mint d) (N0 1)
-  Core{} -> A 424242  -- FIXME finalize Core' layout
+  Core fom ars act -> NC (N1 CORE)
+                    $ NC (N1 $ mint act)
+                    $ NC (N1 $ mint fom)
+                    $ mine (N1 . mint) ars
   Sing c d -> NC (N1 SING) $ NC (mint c) (mint d)
+  Molt c d -> NC (N1 MOLT) $ NC (mint c) (mint d)
   Face (Mask m) c -> NC (N1 FACE) $ NC (A $ utf8Atom m) (mint c)
   -- FIXME, also strip on empty link to avoid colliding with empty mask.
   Face (Link l) c -> NC (N1 FACE) $ NC (C (A 999) (A 888)) (mint c)
   Fuse c f -> NC (N1 FUSE) $ NC (mint c) (land f)
+  Seal a c -> NC (N1 SEAL) (mint c)
   Noun -> N1 NOUN
   Void -> N1 VOID
   Type -> N1 TYPE
@@ -426,8 +447,10 @@ pattern RAIL = A 1_818_845_554
 pattern GATE = A 1_702_125_927
 pattern CORE = A 1_701_998_435
 pattern SING = A 1_735_289_203
+pattern MOLT = A 1_953_263_469
 pattern FACE = A 1_701_011_814
 pattern FUSE = A 1_702_065_510
+pattern SEAL = A 1_818_322_291
 pattern NOUN = A 1_853_189_998
 pattern VOID = A 1_684_631_414
 pattern TYPE = A 1_701_869_940
@@ -438,10 +461,10 @@ loot _ _ = 1338  -- FIXME
 
 -- | Build the formula tree for the battery of a core.
 -- FIXME
-mine :: Map Term (Code Void) -> Noun
-mine bat = foldr step (A 0) $ mapToList bat
+mine :: (Code Void -> Noun) -> Map Term (Code Void) -> Noun
+mine fun bat = foldr step (A 0) $ mapToList bat
  where
-  step (_, cod) bod = C (mint cod) bod
+  step (_, cod) bod = C (fun cod) bod
 
 -- | Compile pattern tests. FIXME add .? for $@
 lure :: Axis -> Fish -> Nock
@@ -471,17 +494,20 @@ land = \case
 -- seminoun is used to generate unknowns.
 read :: Var a => Semi a -> Type a -> Semi a
 read nul = \case
+  -- XX holds?
   Sing' s _ -> s
+  Molt' _ t -> read nul t
+  Face' _ t -> read nul t
+  Seal' a t -> read nul t  -- FIXME WRONG
   Fuse' t h -> skim (read nul t) h
   Aura' au (Fork ss) | [a] <- setToList ss -> Atom' a
-  Face' _ t -> read nul t
   Test' b t f -> Test' b (read nul t) (read nul f)   -- XX correct?
   Cell' t u -> Cell' (read (nul / 2) t) (read (nul / 3) u)
   Rail' t j -> Cell' lef rit
-  -- XX Core'?
    where
     lef = read (nul / 2) t
     rit = read (nul / 3) $ jamb j lef
+  Core' _ (_, _) act -> Cell' (nul / 2) (read (nul / 3) act)
   _ -> nul
 
 -- | Refine the given seminoun according to the given fish.
@@ -516,12 +542,21 @@ look st b = home $ b / a
 -}
 
 -- | Change the part of a value found at the given axis.
+--
 edit :: Var a => Semi a -> Axis -> Semi a -> Semi a
 edit bas a mod = case (cut a, bas) of
   (Nothing, s) -> mod
-  (Just (R, a), Crux' bat pay) -> Crux' bat (edit pay a mod)
+  (Just (L, a), Cell' l r) -> Cell' (edit l a mod) r
+  (Just (R, a), Cell' l r) -> Cell' l (edit r a mod)
+  (Just (R, a), Crux' m bat pay) -> Crux' m bat (edit pay a mod)
+  _ -> Edit' bas a mod
+  {-
+  -- XX does this work for a %= arm pull?
+  -- Answer, lol no, crashes and burns horribly on holds. You get
+  -- %:[+2:list @ +7:list] for (list @) which is completely unworkable.
   (Just (L, a), _) -> Cell' (edit (bas / 2) a mod) (bas / 3)
   (Just (R, a), _) -> Cell' (bas / 2) (edit (bas / 3) a mod)
+  -}
 
 hook :: Fish -> Semi a -> Maybe Bool
 hook h b = case (h, b) of
@@ -588,44 +623,61 @@ fuse typ fis = case (typ, fis) of
   -- Stuck types.
   (_,                     _)         -> Fuse' typ fis
 
-eval :: Var a => Semi a -> Code a -> Semi a
-eval sub = \case
+-- | Evaluation mode.
+data EvalMode
+  = EvalHold  -- ^ Evaluate, pausing at each arm pull
+  | EvalFull  -- ^ Evaluate all the way. Do NOT use in type checker.
+
+-- | Evaluate the code to a seminoun.
+semi :: Var a => EvalMode -> Semi a -> Code a -> Semi a
+semi mod sub = \case
   Spot s -> sub / s
   Fore x -> Fore' x
   --
   Atom a -> Atom' a
   -- XX cannot use cell' here because consider e.g. [! 1]. This is not !.
   -- A possibly serious drawback of cell/cons unification.
-  Cell c d -> Cell' (eval sub c) (eval sub d)
-  Lamb a -> Lamb' (Jamb a sub)
-  Crux as -> Crux' as sub
+  Cell c d -> Cell' (semi mod sub c) (semi mod sub d)
+  Crux m as -> Crux' m as sub
   --
-  Pull a ar c -> pull a ar (eval sub c)
+  Pull a ar c -> pull mod a ar (semi mod sub c)
 
-  Plus c -> plus (eval sub c)
-  Slam c d -> slam (eval sub c) (eval sub d)
-  Equl c d -> equl (eval sub c) (eval sub d)
-  Test c d e -> test (eval sub c) (eval sub d) (eval sub e)  -- Laziness!
-  Fish f c -> fisk f (eval sub c)
-  Edit c a d -> edit (eval sub c) a (eval sub d)
+  Plus c -> plus (semi mod sub c)
+  Equl c d -> equl (semi mod sub c) (semi mod sub d)
+  Test c d e -> test (semi mod sub c) (semi mod sub d) (semi mod sub e)  -- Laziness!
+  Fish f c -> fisk f (semi mod sub c)
+  Edit c a d -> edit (semi mod sub c) a (semi mod sub d)
   --
   Aura au to -> Aura' au to
-  Rail c d -> rail' (eval sub c) (Jamb d sub)
-  Gate c d -> gate' (eval sub c) (Jamb d sub)
-  Core c ds e -> core' (eval sub c) (sub, ds) (eval sub e)
-  Sing c d -> sing' (eval sub c) (eval sub d)
-  Face f c -> face' [f] (eval sub c)
-  Fuse c f -> fuse (eval sub c) f
+  Rail c d -> rail' (semi mod sub c) (Jamb d sub)
+  Gate c d -> gate' (semi mod sub c) (Jamb d sub)
+  Core c ds e -> core' (semi mod sub c) (sub, ds) (semi mod sub e)
+  Sing c d -> sing' (semi mod sub c) (semi mod sub d)
+  Molt c d -> Molt' (semi mod sub c) (semi mod sub d)
+  Face f c -> face' [f] (semi mod sub c)
+  Fuse c f -> fuse (semi mod sub c) f
+  Seal a c -> Seal' a (semi mod sub c)  -- no void->void
   Noun -> Noun'
   Void -> Void'
   Type -> Type'
-  With c d -> eval (eval sub c) d
-  Push c d -> eval (Cell' (eval sub c) sub) d
+  With c d -> semi mod (semi mod sub c) d
+  Push c d -> semi mod (Cell' (semi mod sub c) sub) d
+
+-- | The partial evaluator for use in the typechecker.
+eval :: Var a => Semi a -> Code a -> Semi a
+eval = semi EvalHold
+
+-- | Evaluate all the way. You probably don't mean to call this from within the
+-- compiler
+spin :: Var a => Semi a -> Code a -> Semi a
+spin = semi EvalFull
 
 -- | Implement the Pull eliminator.
-pull :: Text -> Set Text -> Semi a -> Semi a
-pull ar ax b = case b of
-  Crux' cs _ | Just c <- lookup ar cs -> Hold' b c
+pull :: Var a => EvalMode -> Text -> Set Text -> Semi a -> Semi a
+pull mod ar ax b = case b of
+  Crux' _ cs _ | Just c <- lookup ar cs -> case mod of
+    EvalHold -> Hold' ar b c
+    EvalFull -> semi EvalFull b c
   x -> Pull' ar ax x
 
 -- | Implement the Plus eliminator.
@@ -634,14 +686,16 @@ plus = \case
   Atom' a -> Atom' (a + 1)
   x -> Plus' x
 
+{-
 -- | Implement the Slam eliminator.
 slam :: Var a => Semi a -> Semi a -> Semi a
 slam x y = case x of
-  Lamb' (Jamb{clo, cod}) ->
-    slam (Crux' (mapFromList [("", cod)]) (Cell' (Atom' 0) clo)) y
+  {-Lamb' (Jamb{clo, cod}) ->
+    slam (Crux' (mapFromList [("", cod)]) (Cell' (Atom' 0) clo)) y-}
   -- I like the reporting better below than using hold.
   Crux' cs pay | Just c <- lookup "" cs -> eval (edit x 6 y) c
   x -> Slam' x y
+-}
 
 -- | Implement the Equl eliminator.
 equl :: Var a => Semi a -> Semi a -> Semi a
@@ -678,45 +732,56 @@ fisk h b = case hook h b of
 -- hold, will later be evaluated against the *wrong* subject.
 held :: Var a => Semi a -> Maybe (Semi a)
 held = \case
-  Hold' s c     -> Just (eval s c)
-  Pull' ar ax s -> pull ar ax <$> held s
+  Hold' _ s c   -> Just (eval s c)
+  Pull' ar ax s -> pull EvalHold ar ax <$> held s
   Plus' s       -> plus <$> held s
-  Slam' s t     -> slam <$> held s <*> pure t
+  -- FIXME think about the equivalent of this. Do we need different handling for
+  -- Cell' or an "Edit'" here?
+  -- Slam' s t     -> slam <$> held s <*> pure t
   Equl' s t     -> equl <$> held s <*> pure t  -- advance one step at a time
                <|> equl <$> pure s <*> held t
   Test' s t u   -> test <$> held s <*> pure t <*> pure u
   Fish' f s     -> fisk f <$> held s
   Look' s a     -> (/ a) <$> held s
+  Edit' s a t   -> edit <$> held s <*> pure a <*> pure t
   --
   Fuse' s f     -> fuse <$> held s <*> pure f
   --
   _ -> Nothing
 
+
+-- | Convert a rump into an axis. If the rump is at a level higher than this
+-- one, that's still ok, provided that it's still on the right side.
+slim :: Level -> Loc -> Maybe Axis
+slim lvl (l, a)
+  | l <= lvl             = pure $ peg (2 ^ (lvl + 1 - l) - 1) a
+  | Just (R, a) <- cut a = slim lvl (l - 1, a)  -- turn e.g. +2_3 into +1_1
+  | otherwise            = Nothing
+
 loft :: Var a => Level -> Semi a -> Code a
 loft lvl = \case
   -- XX we should have some printout here if lvl < l, which is a serious
   -- invariant violation that should be more legible
-  Spot' (Leg' (l, a)) -> Spot ax
-   where
-    ax = if lvl < l then 9001 else peg (2 ^ (lvl + 1 - l) - 1) a
+  Spot' (Leg' (l, a)) -> Spot case slim lvl (l, a) of
+    Nothing -> 90000001
+    Just ax -> ax
   Fore' x -> Fore x
   -- XX no longer a split morphism. Consider Hold' Term Crux
-  Hold' s c -> With (loft lvl s) c
+  Hold' _ s c -> With (loft lvl s) c
   --
   Atom' a -> Atom a
   Cell' a b -> Cell (loft lvl a) (loft lvl b)
-  Lamb' j -> Lamb $ laft lvl j
   -- cf the discussion on luft below. Otoh, I think we do want contexts printed
   -- for cruxen.
-  Crux' ars pay -> With (loft lvl pay) (Crux ars)
+  Crux' m ars pay -> With (loft lvl pay) (Crux m ars)
   --
   Pull' x xr a -> Pull x xr (loft lvl a)
   Plus' a -> Plus (loft lvl a)
-  Slam' a b -> Slam (loft lvl a) (loft lvl b)
   Equl' a b -> Equl (loft lvl a) (loft lvl b)
   Test' a b c -> Test (loft lvl a) (loft lvl b) (loft lvl c)
   Fish' h a -> Fish h (loft lvl a)
   Look' a s -> With (loft lvl a) $ Spot s
+  Edit' a ax b -> Edit (loft lvl a) ax (loft lvl b)
   --
   Aura' au to -> Aura au to
   Rail' l j -> Rail (loft lvl l) (luft lvl j)
@@ -724,8 +789,10 @@ loft lvl = \case
   Core' a (s, as) b ->
     Core (loft lvl a) (fmap (luft lvl . (`Jamb` s)) as) (loft lvl b)
   Sing' a b -> Sing (loft lvl a) (loft lvl b)
+  Molt' a b -> Molt (loft lvl a) (loft lvl b)
   Face' f t -> Face f (loft lvl t)
   Fuse' t h -> Fuse (loft lvl t) h
+  Seal' a t -> Seal a (loft lvl t)
   Noun' -> Noun
   Void' -> Void
   Type' -> Type
@@ -753,6 +820,12 @@ laft l j = loft (l + 2) $ jamb j $ rump (l + 2, 6)
 -- and evaluate against the resulting seminoun.
 evil :: Var a => Con a -> Code Void -> Semi a
 evil Con{lvl, sut} cod = eval (read (rump (lvl, 1)) sut) (fmap absurd cod)
+
+-- | Given a Code coming straight out of the compiler, read the subject type
+-- and fully evaluate against the resulting seminoun. For external use; do NOT
+-- call from the type checker
+spun :: Var a => Con a -> Code Void -> Semi a
+spun Con{lvl, sut} cod = spin (read (rump (lvl, 1)) sut) (fmap absurd cod)
 
 -- | Given a semi/type possibly stuck on references to the outer subject, read
 -- it back into nockable code (Code Void), failing if there are in fact such
@@ -899,8 +972,8 @@ instance MonadCheck m => MonadFail m where
 -- so they can serve as breadcrumbs in error messages.
 data Act
   =                    ActRoot
-  | forall a. Var a => ActFits Fit Level (Type a) (Type a)
-  | forall a. Var a => ActSeal (Line a)
+  | forall a. Var a => ActFits Fit Level (Type a) (Type a) Warp
+  | forall a. Var a => ActDraw (Line a)
   | forall a. Var a => ActFind (Level, Axis) (Type a) Wing
   | forall a. Var a => ActFuse (Level, Axis) (Type a) Fish
   | forall a. Var a => ActCrop (Level, Axis) (Type a) Fish
@@ -909,8 +982,9 @@ data Act
   | forall a. Var a => ActTear Claw (Cube a)
   | forall a. Var a => ActTyre (Cube a)
   | forall a. Var a => ActTire Level (Set Fish) (Type a)
+  | forall a. Var a => ActThin Level (Semi a)
   | forall a. Var a => ActScan (Con a) Soft
-  | forall a. Var a => ActWork (Con a) Fit Soft (Type a)
+  | forall a. Var a => ActWork (Con a) Fit Soft (Type a) Warp
   | forall a. Var a => ActPlay (Con a) Soft
   |                    ActDone
 
@@ -920,7 +994,7 @@ data Fail
   -- | Invariant violation: unknown seminoun on exiting tisgar.
   | forall a. Var a => PareFree Rump (Semi (Hop Rump a))
   -- | Trying to refine the type of an arm.
-  |                    SealCore Text
+  |                    DrawCore Text
   -- | Cannot locate the given ally in the subject.
   | forall a. Var a => FindFail Limb (Type a)
   -- | Two cores or core types have differing arm sets.
@@ -933,6 +1007,8 @@ data Fail
   | forall a. Var a => ToilFish Pelt (Type a)
   -- | Here is a case you failed to consider in your pattern matching.
   |                    TireFish Axis Fish
+  -- | You are stuck on something in a context you are exiting (invariant viol.)
+  | forall a. Var a => ThinFree Level (Semi a)
   -- | You are trying to edit the return value of an arm pull
   | forall a. Var a => EditPull Wing (Type a)
   -- | You need to put an explicit type annotation on this subexpression.
@@ -943,6 +1019,8 @@ data Fail
   | forall a. Var a => WorkMiss Soft (Semi a)
   -- | A rhetorical question had a non-rhetorical answer.
   | forall a. Var a => PlayMiss Soft (Semi a)
+  -- | You are trying to seal a core arm.
+  |                    SealPull Wing
   | BailNote Text  -- ^ failure with note
   | BailFail  -- ^ unspecified failure
 
@@ -973,8 +1051,9 @@ catchCheck (ExceptT (ReaderT c)) h = ExceptT $ ReaderT \r -> c r `catch` \e ->
   runReaderT (runExceptT $ h e) r
 
 instance MonadCheck (ExceptT ([Act], Fail) (ReaderT [Act] IO)) where
-  act a chk = local (a:) $ catchCheck chk
-    \(e::ArithException) -> bail (BailNote $ tshow e)
+  act a chk = local (a:) $ chk
+    `catchCheck` (\(e::SomeException) -> bail (BailNote $ tshow e))
+    -- `catchCheck` (\(e::AsyncCancelled)  -> bail (BailNote "interrupt"))
   bail f = ask >>= \as -> throwError (as, f)
   bailSwap f chk = ExceptT $ ReaderT \r ->
     runReaderT (runExceptT chk) r <&> \case
@@ -1014,7 +1093,8 @@ instance MonadCheck (ExceptT Fail (StateT [ActTree] IO)) where
   act a m = do
     modify' (ActTree a [] :)
     res <- m
-      `catchTrace` \(e::ArithException) -> bail (BailNote $ tshow e)
+      `catchTrace` (\(e::SomeException) -> bail (BailNote $ tshow e))
+      -- `catchTrace` (\(e::AsyncCancelled)  -> bail (BailNote "interrupt"))
     modify' \(curAct:rest) -> insertTree (ActExit a res) curAct : rest
     modify' \(curAct:prevAct:rest) -> insertTree curAct prevAct : rest
     pure res
@@ -1057,33 +1137,43 @@ shew Con{lvl, sut} ken typ = Con
   , sut = Cell' (Sing' ken typ) sut
   }
 
+moot :: Var a => Con a -> Type a -> Semi a -> Type a -> Con a
+moot Con{lvl, sut} fom ken act = Con
+  { lvl = lvl + 1
+  , sut = Cell' (Molt' fom (Sing' ken act)) sut
+  }
+
+melt :: Var a => Con a -> Con a
+melt Con{lvl, sut} = Con{lvl, sut = molt sut}
+
 -- | Grow the type because we have passed under a tisgar
 grow :: forall a. Var a => Type a -> Type (Hop Rump a)
 grow = \case
   Spot' r -> Fore' (New r)
   Fore' x -> Fore' (Old x)
-  Hold' s c -> Hold' (grow s) (crow c)
+  Hold' t s c -> Hold' t (grow s) (crow c)
   --
   Atom' a -> Atom' a
   Cell' x y -> Cell' (grow x) (grow y)
-  Lamb' j -> Lamb' (jrow j)
-  Crux' cs s -> Crux' (fmap crow cs) (grow s)
+  Crux' m cs s -> Crux' m (fmap crow cs) (grow s)
   --
   Pull' ar ars x -> Pull' ar ars (grow x)
   Plus' x -> Plus' (grow x)
-  Slam' x y -> Slam' (grow x) (grow y)
   Equl' x y -> Equl' (grow x) (grow y)
   Test' x y z -> Test' (grow x) (grow y) (grow z)
   Fish' f x -> Fish' f (grow x)
   Look' x st -> Look' (grow x) st
+  Edit' x a y -> Edit' (grow x) a (grow y)
   --
   Aura' au to -> Aura' au to
   Rail' x j -> Rail' (grow x) (jrow j)
   Gate' x j -> Gate' (grow x) (jrow j)
   Core' x (s, j) y -> Core' (grow x) (grow s, fmap crow j) (grow y)
   Sing' x y -> Sing' (grow x) (grow y)
+  Molt' x y -> Molt' (grow x) (grow y)
   Face' f x -> Face' f (grow x)
   Fuse' x f -> Fuse' (grow x) f
+  Seal' a x -> Seal' a (grow x)
   Noun' -> Noun'
   Void' -> Void'
   Type' -> Type'
@@ -1101,12 +1191,10 @@ grow = \case
     --
     Atom a -> Atom a
     Cell c d -> Cell (crow c) (crow d)
-    Lamb c -> Lamb (crow c)
-    Crux cs -> Crux (fmap crow cs)
+    Crux m cs -> Crux m (fmap crow cs)
     --
     Pull ar ars c -> Pull ar ars (crow c)
     Plus c -> Plus (crow c)
-    Slam c d -> Slam (crow c) (crow d)
     Equl x y -> Equl (crow x) (crow y)
     Test x y z -> Test (crow x) (crow y) (crow z)
     Fish f x -> Fish f (crow x)
@@ -1117,8 +1205,10 @@ grow = \case
     Gate c d -> Gate (crow c) (crow d)
     Core c ds e -> Core (crow c) (fmap crow ds) (crow e)
     Sing c d -> Sing (crow c) (crow d)
+    Molt c d -> Molt (crow c) (crow d)
     Face f c -> Face f (crow c)
     Fuse c f -> Fuse (crow c) f
+    Seal a c -> Seal a (crow c)
     Noun -> Noun
     Void -> Void
     Type -> Type
@@ -1135,20 +1225,19 @@ pare bas = go bas
     Spot' l -> bail (PareFree l bas)
     Fore' (New l) -> pure $ Spot' l
     Fore' (Old x) -> pure $ Fore' x
-    Hold' s c -> Hold' <$> go s <*> care c
+    Hold' t s c -> Hold' t <$> go s <*> care c
     --
     Atom' a -> pure $ Atom' a
     Cell' x y -> Cell' <$> go x <*> go y
-    Lamb' j -> Lamb' <$> jare j
-    Crux' cs s -> Crux' <$>traverse care cs <*> go s
+    Crux' m cs s -> Crux' m <$>traverse care cs <*> go s
     --
     Pull' ar ars x -> Pull' ar ars <$> go x
     Plus' x -> Plus' <$> go x
-    Slam' x y -> Slam' <$> go x <*> go y
     Equl' x y -> Equl' <$> go x <*> go y
     Test' x y z -> Test' <$> go x <*> go y <*> go z
     Fish' f x -> Fish' f <$> go x
     Look' x st -> flip Look' st <$> go x
+    Edit' x a y -> Edit' <$> go x <*> pure a <*> go y
     --
     Aura' au to -> pure $ Aura' au to
     Rail' x j -> Rail' <$> go x <*> jare j
@@ -1156,8 +1245,10 @@ pare bas = go bas
     Core' x (s, j) y ->
       Core' <$> go x <*> ((,) <$> go s <*> traverse care j) <*> go y
     Sing' x y -> Sing' <$> go x <*> go y
+    Molt' x y -> Molt' <$> go x <*> go y
     Face' f x -> Face' f <$> go x
     Fuse' x f -> Fuse' <$> go x <*> pure f
+    Seal' a x -> Seal' a <$> go x
     Noun' -> pure Noun'
     Void' -> pure Void'
     Type' -> pure Type'
@@ -1174,12 +1265,10 @@ pare bas = go bas
     --
     Atom a -> pure $ Atom a
     Cell c d -> Cell <$> care c <*> care d
-    Lamb c -> Lamb <$> care c
-    Crux cs -> Crux <$> traverse care cs
+    Crux m cs -> Crux m <$> traverse care cs
     --
     Pull ar ars c -> Pull ar ars <$> care c
     Plus c -> Plus <$> care c
-    Slam c d -> Slam <$> care c <*> care d
     Equl c d -> Equl <$> care c <*> care d
     Test c d e -> Test <$> care c <*> care d <*> care e
     Fish f c -> Fish f <$> care c
@@ -1190,8 +1279,10 @@ pare bas = go bas
     Gate c d -> Gate <$> care c <*> care d
     Core c ds e -> Core <$> care c <*> traverse care ds <*> care e
     Sing c d -> Sing <$> care c <*> care d
+    Molt c d -> Molt <$> care c <*> care d
     Face f c -> Face f <$> care c
     Fuse c f -> Fuse <$> care c <*> pure f
+    Seal a c -> Seal a <$> care c
     Noun -> pure Noun
     Void -> pure Void
     Type -> pure Type
@@ -1203,6 +1294,85 @@ pare bas = go bas
 --------------------------------------------------------------------------------
 -- Core operations of the compiler ---------------------------------------------
 --------------------------------------------------------------------------------
+
+-- Mesh calculus ---------------------------------------------------------------
+
+-- | Given a mesh, replace the indicated parts of the seminoun with rumps
+-- stuck on the given location. This is required for fits checking of core
+-- values, because those parts of the subject are assumed to change (and may not
+-- even be of the correct type for the arm bodies!).
+sift :: Var a => Mesh -> Semi a -> Loc -> Semi a
+sift mes ken loc = case mes of
+  Mesh m n -> Cell' (sift m (ken / 2) (loc / 2)) (sift n (ken / 3) (loc / 3))
+  Meat -> ken
+  Milk -> rump loc
+
+-- | Given a subject type, construct its mesh. Those parts of the subject type
+-- where Molt' is found (arising from =:) are considered "milky"; the others
+-- (arising from =+) "meaty." If part of the type is stuck/unknown, it is
+-- presumed milk.
+knit :: Var a => Type a -> Mesh
+knit = \case
+  t | Just t' <- held t -> knit t'
+  Spot'{} -> Milk
+  Fore'{} -> Milk
+  Hold'{} -> error "knit: impossible unheld Hold'"
+  --
+  Atom'{} -> error "knit: atom"
+  Cell' t u -> Mesh (knit t) (knit u)
+  Crux'{} -> error "knit: crux"
+  --
+  Pull'{} -> Milk
+  Plus'{} -> error "knit: plus"
+  Equl'{} -> error "knit: equl"
+  Test'{} -> Milk
+  Fish'{} -> error "knit: fish"
+  Look'{} -> Milk
+  Edit'{} -> Milk
+  --
+  Aura'{} -> Milk
+  Rail' t j -> Milk  -- XX could actually be mesh if we wanted to do more
+  Gate'{} -> Milk
+  Core'{} -> Milk
+  Sing' _ _ -> Meat
+  Molt' _ _ -> Milk   -- Consider a `| Mead (Semi a)` case for sing in molt.
+  Face' _ t -> knit t
+  Fuse' t _ -> knit t
+  Seal' _ t -> knit t
+  Noun' -> Milk
+  Void' -> Milk
+  Type' -> Milk
+
+-- | Given a type, construct its molten version. Those parts of the type where
+-- Molt' is found will be replaced by the replacement types (on the left of the
+-- Molt', which are otherwise ignored) in the "molten version." The non-Molt
+-- parts will stay the same.
+--
+-- Consider the below example:
+--
+--   =+  `t`e
+--   =+  `u`f
+--   =:  v  `w`g
+--   |%
+--   ..
+--   --
+--
+-- The subject type before the |% is [e|t f|u $;(v g|w)]. This is also the
+-- actual payload type of the core. However, the formal payload type of the core
+-- is instead the "molten" version of this type: [e|t f|u v]. The two singletons
+-- mean the user may have difficulty in changing these values when pulling an
+-- arm. On the other hand, the user is free to change the third value to
+-- anything of type v, and may in fact be required to, if w does not nest under
+-- v.
+molt :: Type a -> Type a
+molt = \case
+  -- XX we don't bother with Rails. Should we though? Seems we can only do so
+  -- on the right, and that would require making Knit computational, which seems
+  -- excessive.
+  Cell' t u -> Cell' (molt t) (molt u)
+  Molt' t _ -> t
+  t         -> t
+
 
 -- The calculus of types -------------------------------------------------------
 
@@ -1226,20 +1396,37 @@ join _ _ = bail $ BailNote "join: Not implemented. Please put a ^- on your ?:"
 meet :: (MonadCheck m, Var a) => Type a -> Type a -> m (Type a)
 meet _ _ = bail $ BailNote "meet: Not implemented. Please put a ^- on your ?:"
 
+-- | Context for managing subtyping relations in the presence of sealing; passed
+-- down (like Reader) but not side-to-side.
+data Warp = Warp
+  { lax :: Set Axis  -- ^ axes sealed to the left
+  , rax :: Set Axis  -- ^ axes sealed to the right
+  , pax :: Axis      -- ^ current axis
+  }
+  deriving Show
 
--- | State for tracking the the subtyping relations of recursive types.
--- alternate name: mesh
-data Lace a = Lace
+-- | Empty warp. Knowing when to shed is, uh, a thing that's very important :/
+-- I use a pattern so I can make it all caps to be very visible.
+pattern SHED :: Warp
+pattern SHED <- Warp ((== mempty) -> True) ((== mempty) -> True) 1 where
+  SHED = Warp mempty mempty 1
+
+instance Peg Warp where
+  wap@Warp{pax} / a = wap { pax = pax / a }
+
+-- | State for tracking the the subtyping relations of recursive types; passed
+-- and returned side-to-side (like State).
+data Weft a = Weft
   { seg :: Set (Type a)          -- ^ recursion points we have passed on left
   , reg :: Set (Type a)          -- ^ recursion points we have passed on right
   , gil :: Set (Type a, Type a)  -- ^ induction hypotheses
   }
 
-deriving instance (Show a) => Show (Lace a)
+deriving instance (Show a) => Show (Weft a)
 
 {-
-laceMap :: (Ord a, Ord b) => (a -> b) -> Lace a -> Lace b
-laceMap f Lace{seg, reg, gil} = Lace
+laceMap :: (Ord a, Ord b) => (a -> b) -> Weft a -> Weft b
+laceMap f Weft{seg, reg, gil} = Weft
   { seg = setFromList $ map f         $ setToList seg
   , reg = setFromList $ map f         $ setToList reg
   , gil = setFromList $ map (f *** f) $ setToList gil
@@ -1259,11 +1446,38 @@ laceMap f Lace{seg, reg, gil} = Lace
 -- a variant of Same, although instead of passing to Same, internals must not.
 fits :: forall a m. (MonadCheck m, Var a)
      => Fit -> Level -> Type a -> Type a -> m ()
-fits fit lvl t u = void $ fest fit lvl t u Lace
-  { seg = mempty
-  , reg = mempty
-  , gil = mempty
-  }
+fits fit lvl t u = void $ fest fit lvl t u
+  Warp
+    { lax = mempty
+    , rax = mempty
+    , pax = 1
+    }
+  Weft
+    { seg = mempty
+    , reg = mempty
+    , gil = mempty
+    }
+
+-- | When calling fits from work, we often have need to abstract out parts of
+-- the left or right. That is, we may come in with our own pre-filled Warp.
+fist :: forall a m. (MonadCheck m, Var a)
+     => Fit -> Level -> Type a -> Type a -> Warp -> m ()
+fist fit lvl t u wap = void $ fest fit lvl t u wap
+  Weft
+    { seg = mempty
+    , reg = mempty
+    , gil = mempty
+    }
+
+firm :: forall a r m. (MonadCheck m)
+     => Map Text a -> r -> (Text -> a -> r -> m r) -> m r
+firm a state act = do
+  let arms = keysSet a
+  foldlM step state arms
+ where
+  step state arm = do
+    let x = fromJust $ lookup arm a
+    act arm x state
 
 farm :: forall a b r m. (MonadCheck m)
      => Map Text a -> Map Text b -> r -> (Text -> a -> b -> r -> m r) -> m r
@@ -1279,41 +1493,20 @@ farm a b state act = do
     act arm x y state
 
 fest :: forall a m. (MonadCheck m, Var a)
-     => Fit -> Level -> Type a -> Type a -> Lace a -> m (Lace a)
-fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit lvl t u)
-                                           case (t, u) of
-  _ | (t, u) `elem` gil -> pure ace
---  | t      `elem` seg -> fitsFail
---  | u      `elem` reg -> pure ace  --  ?!?!
-
-  {-
-  -- XX The held logic subsumes these cases, so they should probably be removed.
-  (Hold' s c, u)
-    | (s, c) `elem` seg -> fitsFail  -- XX correct to do this? not in TAPL
-    | otherwise         -> fest fit lvl (eval s c) u Lace
-        { seg = insertSet (s, c) seg
-        , reg
-        , gil = insertSet (t, u) gil
-        }
-
-  (t, Hold' s c)
-    | (s, c) `elem` reg -> fitsFail
-    | otherwise         -> fest fit lvl t (eval s c) Lace
-        { seg
-        , reg = insertSet (s, c) reg
-        , gil = insertSet (t, u) gil
-        }
-  -}
+     => Fit -> Level -> Type a -> Type a -> Warp -> Weft a -> m (Weft a)
+fest fit lvl t u wap@Warp{lax, rax, pax} wef@Weft{seg, reg, gil} =
+ act (ActFits fit lvl t u wap) case (t, u) of
+  _ | (t, u) `elem` gil -> pure wef
 
   _ | Just t' <- held t ->
-        fest fit lvl t' u Lace
+        fest fit lvl t' u wap Weft
           { seg = insertSet t seg
           , reg
           , gil = insertSet (t, u) gil
           }
 
   _ | Just u' <- held u ->
-        fest fit lvl t u' Lace
+        fest fit lvl t u' wap Weft
           { seg
           , reg = insertSet u' reg
           , gil = insertSet (t, u) gil
@@ -1322,43 +1515,91 @@ fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit lvl t u)
   (Hold'{}, _) -> error "fits: invariant violation: Hold' should be held"
   (_, Hold'{}) -> error "fits: invariant violation: Hold' should be held"
 
-  (Face' _ t, u) -> fest fit lvl t u ace
-  (t, Face' _ u) -> fest fit lvl t u ace
+  -- type "metadata" section
 
-  (Noun', Noun') -> pure ace
+  (Face' _ t, u) -> fest fit lvl t u wap wef
+  (t, Face' _ u) -> fest fit lvl t u wap wef
+
+  -- The data in the formal part of a Molt is completely ignored, except when
+  -- we need to read a formal type out of the subject when a core is arising.
+  (Molt' _ t, u) -> fest fit lvl t u wap wef
+  (t, Molt' _ u) -> fest fit lvl t u wap wef
+
+  (Sing' s t, Sing' z u) -> do
+    wef <- fest FitSame lvl s z SHED wef
+    fest fit lvl t u wap wef
+
+  (Sing' s t, _) -> do
+    note "TTT" t
+    note "UUU" u
+    fest fit lvl t u wap wef
+
+  (Fuse' t f, Fuse' u g) -> do
+    when (not $ prey g f) fitsFail
+    fest fit lvl t u wap wef
+
+  (Fuse' t f, u) -> fest fit lvl t u wap wef
+
+  -- Record axis of sealing on the left
+  (Seal' axe t, u) ->
+    fest fit lvl t u wap
+      { lax = insertSet (pax / axe) lax
+      , rax
+      , pax
+      }
+      wef
+
+  -- Record axis of sealing on the right; perform binding check on the left.
+  (t, Seal' axe u) -> do
+    seal lvl axe t  -- TODO perf: thread weft, avoid double-traversal of t.
+    fest fit lvl t u wap
+      { lax
+      , rax = insertSet (pax / axe) rax
+      , pax
+      }
+      wef
+
+  -- Encounter axes of sealing
+  _ | pax `elem` rax -> pure wef  -- intuition: gold nests under lead
+  _ | pax `elem` lax -> fitsFail  -- intuition: lead doesn't nest under gold
+
+  (Noun', Noun') -> pure wef
   (Noun', _) -> fitsFail
   (_, Noun') -> case fit of
     FitSame -> fitsFail
-    FitNest -> pure ace
-    FitCast -> pure ace
+    FitNest -> pure wef
+    FitCast -> pure wef
 
-  (Void', Void') -> pure ace
+  (Void', Void') -> pure wef
   (Void', _) -> case fit of
     FitSame -> fitsFail
-    FitNest -> pure ace
-    FitCast -> pure ace
+    FitNest -> pure wef
+    FitCast -> pure wef
   (_, Void') -> fitsFail
 
   (Spot' a, Spot' b)
-    | a == b -> pure ace
+    | a == b -> pure wef
     | otherwise      -> fitsFail
   (Spot'{}, _) -> fitsFail
   (_, Spot'{}) -> fitsFail
 
   (Fore' r, Fore' s)
-    | r == s    -> pure ace
+    | r == s    -> pure wef
     | otherwise -> fitsFail
   (Fore'{}, _) -> fitsFail
   (_, Fore'{}) -> fitsFail
 
   --
 
-  (Atom' a, Atom' b) | a == b -> pure ace
+  (Atom' a, Atom' b) | a == b -> pure wef
   (Atom'{}, _) -> fitsFail
   (_, Atom'{}) -> fitsFail
 
-  (Cell' v w, Cell' v' w') -> fest fit lvl v v' ace >>= fest fit lvl w w'
+  (Cell' v w, Cell' v' w') -> do
+    wef <- fest fit lvl v v' wap { pax = pax / 2 } wef
+    fest fit lvl w w' wap { pax = pax / 3 } wef
 
+  {-
   -- Evaluate the function bodies against a fresh opaque symbol. To get a fresh
   -- symbol, we have a bunch of options:
   --   - Track level as an argument to fits, as Kovacs does, incrementing under
@@ -1383,159 +1624,227 @@ fest fit lvl t u ace@Lace{seg, reg, gil} = act (ActFits fit lvl t u)
   -- XX does the above work in the presence of Edit?
   --
   (Lamb' j, Lamb' k) ->
-    fest fit (lvl + 1) (jamb j new) (jamb k new) ace
+    fest fit (lvl + 1) (jamb j new) (jamb k new) wef
    where
     new = rump (lvl + 1, 2)
 
   -- XX should we read and do comb explosion?
 
   (Lamb' j, _) ->
-    fest fit (lvl + 1) (jamb j new) (Slam' u new) ace
+    fest fit (lvl + 1) (jamb j new) (Slam' u new) wef
    where
     new = rump (lvl + 1, 2)
 
   (_, Lamb' k) ->
-    fest fit (lvl + 1) (Slam' t new) (jamb k new) ace
+    fest fit (lvl + 1) (Slam' t new) (jamb k new) wef
    where
     new = rump (lvl + 1, 2)
+  -}
 
-  -- It seems we arguably should be evaluating all the arms here?
-  (Crux' as p, Crux' bs q) -> do
-    ace <- fest fit lvl p q ace
-    farm as bs ace \_ a b ace ->
-      fest fit lvl (eval p a) (eval q b) ace
+  -- We need a version of the eta-beta rule here, akin to that commented out for
+  -- Lamb'. Was expecting this to stump me for days, but it actually took 15m.
+  -- The solution is to introduce a new kind of =+ in Code which pushes an
+  -- unknown rather than a known. This is the new way unknowns enter into the
+  -- subject, having previously entered via Lamb directly.
+  --
+  -- If we want eta-beta, we have to evaluate all arms here.
+  (Crux' m as p, Crux' n bs q) -> do
+    wef <- fest fit lvl p q SHED wef
+    let p' = sift m p new
+    let q' = sift m q new
+    farm as bs wef \_ a b wef ->
+      fest fit lvl (eval p' a) (eval q' b) SHED wef
+   where
+    new = (lvl + 1, 2)
 
-  -- XX is there an analogy to the Lamb' Slam' above?
-  (Crux'{}, _) -> fitsFail
-  (_, Crux'{}) -> fitsFail
+  -- XX figure out tests for these
+  (Crux' m as p, _) -> do
+    wef <- fest fit lvl p (u / 3) SHED wef
+    let p' = sift m p new
+    let q' = sift m (u / 3) new
+    let ks = keysSet as
+    firm as wef \nom a -> fest fit lvl (eval p' a) (Pull' nom ks q') SHED
+   where
+    new = (lvl + 1, 2)
+
+  (_, Crux' n bs q) -> do
+    wef <- fest fit lvl (t / 3) q SHED wef
+    let p' = sift n (t / 3) new
+    let q' = sift n q new
+    let ks = keysSet bs
+    firm bs wef \nom b -> fest fit lvl (Pull' nom ks p') (eval q' b) SHED
+   where
+    new = (lvl + 1, 2)
 
   (Pull' ar _ t, Pull' br _ u)
-    | ar == br  -> fest fit lvl t u ace
+    -- FitSame for the same reason as with Slam' below. TODO rewrite comment.
+    -- In fact it seems we do this with every eliminator. We should say more
+    -- about that, when we are not as stupid as we are right now.
+    | ar == br  -> fest FitSame lvl t u SHED wef
     | otherwise -> fitsFail
   (Pull'{}, _) -> fitsFail
   (_, Pull'{}) -> fitsFail
 
-  (Plus' v, Plus' w) -> fest FitSame lvl v w ace
+  (Plus' v, Plus' w) -> fest FitSame lvl v w SHED wef
   (Plus'{}, _) -> fitsFail
   (_, Plus'{}) -> fitsFail
 
   -- Since it hasn't been evaluated away, we are dealing with an opaque type
   -- function application. This means we have no choice but to regard the
   -- function as invariant in its argument.
-  (Slam' v w, Slam' v' w') -> fest fit lvl v v' ace >>= fest FitSame lvl w w'
+  {-
+  (Slam' v w, Slam' v' w') -> fest fit lvl v v' wef >>= fest FitSame lvl w w'
   (Slam'{}, _) -> fitsFail
   (_, Slam'{}) -> fitsFail
+  -}
 
+  -- To prove v == w and v' == w' have the same value, we can prove:
+  --   - v = v' and w = w'; or
+  --   - v = w' and w = v'
   (Equl' v w, Equl' v' w') -> asum
-    [ fest FitSame lvl v v' ace >>= fest FitSame lvl w w'
-    , fest FitSame lvl v w' ace >>= fest FitSame lvl w v'
+    [ fest FitSame lvl v v' SHED wef >>= fest FitSame lvl w w' SHED
+    , fest FitSame lvl v w' SHED wef >>= fest FitSame lvl w v' SHED
     ]
+  -- You could also imagine having a (Equl' a b, Atom 0) case here, but I need
+  -- to think carefully about whether FitsSame seminoun implies .= runtime noun.
   (Equl'{}, _) -> fitsFail
   (_, Equl'{}) -> fitsFail
 
-  (Test' u v w, Test' u' v' w') -> ogle (fest FitSame lvl u u' ace) >>= \case
-    Right ace -> do
-     ace <- fest fit lvl v v' ace
-     fest fit lvl w w' ace
-    Left _ -> do
-      ace <- fest fit lvl v v' ace
-      ace <- fest fit lvl v w' ace
-      ace <- fest fit lvl w v' ace
-      fest fit lvl w w' ace
+  (Test' u v w, Test' u' v' w') -> ogle (fest FitSame lvl u u' SHED wef)
+    >>= \case
+      Right wef -> do
+       wef <- fest fit lvl v v' wap wef
+       fest fit lvl w w' wap wef
+      Left _ -> do
+        wef <- fest fit lvl v v' wap wef
+        wef <- fest fit lvl v w' wap wef
+        wef <- fest fit lvl w v' wap wef
+        fest fit lvl w w' wap wef
   (Test' _ v w, u) -> do
-    ace <- fest fit lvl v u ace
-    fest fit lvl w u ace
+    wef <- fest fit lvl v u wap wef
+    fest fit lvl w u wap wef
   (t, Test' _ v w) -> do
-    ace <- fest fit lvl t v ace
-    fest fit lvl t w ace
+    wef <- fest fit lvl t v wap wef
+    fest fit lvl t w wap wef
 
   (Fish' f v, Fish' f' v') -> do
     when (f /= f') fitsFail
-    fest FitSame lvl v v' ace
+    fest FitSame lvl v v' SHED wef
   (Fish'{}, _) -> fitsFail
   (_, Fish'{}) -> fitsFail
 
   -- The assumption is that these are fully evaluated. This rules out Looks
   -- stacked on top of Looks, as well of Looks on top of cells. Accordingly the
   -- rules are pretty tight. I don't think there's any equiv of the beta-eta
-  -- conversion we saw above with functions here.
+  -- conversion we saw above with functions/arms here.
   (Look' b st, Look' c ub)
-    | st == ub  -> fest fit lvl b c ace
+    | st == ub  -> fest fit lvl b c SHED wef
     | otherwise -> fitsFail
   (Look'{}, _) -> fitsFail
   (_, Look'{}) -> fitsFail
 
+  -- TODO really think through this
+  --   - should we SHED?
+  --   - should the FitSame from Slam' be here rather than / in addition to
+  --     in Pull'?
+  --   - Are there nonidentical cases to consider?
+  --       - Differing axes
+  --       - (Edit, non-Edit)
+  (Edit' s a t, Edit' s' a' t')
+    | a == a' -> fest fit lvl s s' SHED wef >>= fest fit lvl t t' SHED
+    | otherwise -> fitsFail
+  (Edit'{}, _) -> fitsFail
+  (_, Edit'{}) -> fitsFail
+
   (Aura' au as, Aura' ag bs) -> case fit of
     FitCast -> tule as bs
     FitNest -> if ag `isPrefixOf` au   then tule as bs else fitsFail
-    FitSame -> if ag == au && as == bs then pure ace   else fitsFail
+    FitSame -> if ag == au && as == bs then pure wef   else fitsFail
    where
-    tule _         Bowl                               = pure ace
-    tule (Fork as) (Fork bs) | as `Set.isSubsetOf` bs = pure ace
+    tule _         Bowl                               = pure wef
+    tule (Fork as) (Fork bs) | as `Set.isSubsetOf` bs = pure wef
                              | otherwise              = fitsFail
     tule Bowl      _                                  = fitsFail
 
   -- Should empties otherwise be ruled out here?
-  -- (Aura' au (Fork ss), Void') | ss == mempty -> pure ace
-
-  (Sing' s t, Sing' z u) -> do
-    ace <- fest FitSame lvl s z ace
-    fest fit lvl t u ace
-
-  (Sing' s t, _) -> fest fit lvl t u ace
-
-  (Fuse' t f, Fuse' u g) -> do
-    when (not $ prey g f) fitsFail
-    fest fit lvl t u ace
-
-  (Fuse' t f, u) -> fest fit lvl t u ace
+  -- (Aura' au (Fork ss), Void') | ss == mempty -> pure wef
 
   (Rail' v j, Rail' w k) -> do
-    ace <- fest fit lvl v w ace
-    -- XX should this be read new v, read new v, per Cardelli?
-    fest fit (lvl + 1) (jamb j $ read new v) (jamb k $ read new w) ace
+    wef <- fest fit lvl v w wap { pax = pax / 2 } wef
+    -- Note that, following Cardelli, we read the *smaller* type.
+    let x = read new v
+    fest fit (lvl + 1) (jamb j x) (jamb k x) wap { pax = pax / 3 } wef
    where
     new = rump (lvl + 1, 2)
 
   (Rail' v j, Cell' w u) -> do
-    ace <- fest fit lvl v w ace
-    fest fit (lvl + 1) (jamb j $ read new v) u ace
+    wef <- fest fit lvl v w wap { pax = pax / 2 } wef
+    -- Note that, following Cardelli, we read the *smaller* type.
+    fest fit (lvl + 1) (jamb j $ read new v) u wap { pax = pax / 3 } wef
    where
     new = rump (lvl + 1, 2)
 
   (Cell' v u, Rail' w k) -> do
-    ace <- fest fit lvl v w ace
-    fest fit (lvl + 1) u (jamb k $ read new v) ace
+    wef <- fest fit lvl v w wap { pax = pax / 2 } wef
+    -- Note that, following Cardelli, we read the *smaller* type.
+    fest fit (lvl + 1) u (jamb k $ read new v) wap { pax = pax / 3 } wef
    where
     new = rump (lvl + 1, 2)
 
   -- Allow use of cell of types as type
   (Cell' v u, Type') -> do
-    ace <- fest fit lvl v Type' ace
-    fest fit lvl u Type' ace
+    wef <- fest fit lvl v Type' wap { pax = pax / 2 } wef
+    fest fit lvl u Type' wap { pax = pax / 3 } wef
 
   (Gate' v j, Gate' w k) -> do
-    ace <- fest fit lvl w v ace
-    -- XX should this be read new w, read new w, per Cardelli?
-    fest fit (lvl + 1) (jamb j $ read new v) (jamb k $ read new w) ace
+    wef <- fest fit lvl w v SHED wef
+    -- Note that, following Cardelli, we read the *smaller* type.
+    let x = read new w
+    fest fit (lvl + 1) (jamb j x) (jamb k x) SHED wef
    where
     new = rump (lvl + 1, 2)
 
-  (Core' u (clo, arms) v, Core' u' (clo', arms') v') -> do
+  {-
+  -- As a foretaste of the forthcoming ^?/$? machinery, we implement the below
+  -- special case, where $-(a b) is a stand-in for $?(+7 $|(^ [a *] % b)),
+  -- modulo an impedance mismatch in the layout of the b Jambs.
+  (Core' fom (clo, mapToList -> [("", ret)]) act, Gate' w k) -> case fit of
+    FitSame -> fitsFail
+    FitCast -> go
+    FitNest -> go
+   where
+    go = do
+      -- early binding check
+      actCon <- peek (lvl, 1) act 3  -- XX is this right with (lvl, 1)?
+      fomCon <- peek (lvl, 1) fom 3
+      wef <- fest FitNest lvl actCon fomCon wef  -- yes, nest
+      -- argument check
+      wef <- fest fit lvl (Cell' w Void') fom wef
+      -- result check
+      let j = Jamb ret clo
+      fest fit (lvl + 1) (jamb j $ read new fom) (jamb k $ read (new / 2) w) wef
+
+    -- XX ugh, do I have any of this right?
+    new = rump (lvl + 1, 2)
+  -}
+
+  (Core' fom (clo, arms) act, Core' fom' (clo', arms') act') -> do
     -- actual types are covariant
-    ace <- fest fit lvl v v' ace
+    wef <- fest fit lvl act act' wap { pax = pax / 3 } wef
     -- formal types are contravariant
-    ace <- fest fit lvl u' u ace
+    wef <- fest fit lvl fom' fom wap { pax = pax / 3 } wef
     let as = fmap (`Jamb` clo)  arms
     let bs = fmap (`Jamb` clo') arms'
-    let x = read new t
-    let y = read new u
-    farm as bs ace \_ a b ace ->
-      fest fit (lvl + 1) (jamb a x) (jamb b y) ace
+    -- The arms must nest in all possible universes where the payloads nest.
+    -- Because arm bodies can do %=, reading the smaller actual type is too
+    -- specific.
+    let y = read new fom'
+    farm as bs wef \_ a b wef ->
+      fest fit (lvl + 1) (jamb a y) (jamb b y) SHED wef
    where
     new = rump (lvl + 1, 2)
 
-  (Type', Type') -> pure ace
+  (Type', Type') -> pure wef
 
   (Aura'{}, _) -> fitsFail
   (_, Aura'{}) -> fitsFail
@@ -1569,22 +1878,28 @@ data Line a = Line
   { lev :: Level
   , loc :: Axis
   , lyt :: Type a
+  , lix :: Set Axis  -- ^ axes sealed
   , las :: [Dash a]  -- ^ stack of steps taken
   }
 
--- Record one step of the path we took to reach the result of a successful find.
+-- | Record one step of the path we took to reach the result of a find.
 data Dash a
-  -- ^ We have passed under a face annotation
+  -- | We have passed under a face annotation
   = DashFace Face
-  -- ^ we have passed under a singleton value annotation
+  -- | We have passed under a singleton value annotation
   | DashSing (Semi a)
-  -- ^ We have passed into the left of a nondependent cell, and record the right
+  -- | We have passed underneath metadata specifying what this part of the type
+  -- should be replaced with when the whole type becomes a core's formal type.
+  | DashMolt (Type a)
+  -- | We have passed under an abstract type marker
+  | DashSeal Axis
+  -- | We have passed into the left of a nondependent cell, and record the right
   | DashCellLeft (Type a)
-  -- ^ We have passed into the left of a dependent cell, and record the right
+  -- | We have passed into the left of a dependent cell, and record the right
   | DashRailLeft (Jamb a)
-  -- ^ We have passed into the right of any cell, and record the left
+  -- | We have passed into the right of any cell, and record the left
   | DashCellRight (Type a)
-  -- ^ We have passed into the payload of a core, and record the battery
+  -- | We have passed into the payload of a core, and record the battery
   | DashCorePayload (Type a) (Semi a, Map Term (Code a))
 
 deriving instance (Show a) => Show (Line a)
@@ -1607,58 +1922,79 @@ retcon :: Var a => Line a -> Con a
 retcon Line{lev, lyt} = Con lev $ eval (read (rump (lev, 1)) lyt) $ loft lev lyt
 
 -- | Kind of change to the subject to be rolled up.
-data Seal
-  = SealFine  -- ^ Refine a part of the subject to a subtype
-  | SealEdit  -- ^ Edit a part of the subject to an arbitrary type
+data Draw
+  = DrawFine  -- ^ Refine a part of the subject to a subtype
+  | DrawEdit  -- ^ Edit a part of the subject to an arbitrary type
 
--- | When the found type (lyt) has been refined, zip the zipper back up to get
--- the fullsize refined subject type.
---
--- FIXME rename to `draw`, fix comment
-seal :: Var a => Seal -> Line a -> Line a
-seal mod lin@Line{lev, loc, lyt, las} = case las of
+-- | When the found type (lyt) has been refined or edited, zip the zipper back
+-- up to get the fullsize refined or edited subject type.
+draw :: Var a => Draw -> Line a -> Line a
+draw mod lin@Line{lev, loc, lyt, lix, las} = case las of
   [] -> lin
-  DashFace f : las -> seal mod Line
+  DashFace f : las -> draw mod Line
     { lev
     , loc
     , lyt = Face' f lyt
+    , lix
     , las
     }
-  DashSing s : las -> seal mod Line
+  DashSing s : las -> draw mod Line
     { lev
     , loc
-    , lyt = Sing' s lyt
+    , lyt = case mod of
+        DrawFine -> Sing' s lyt
+        DrawEdit -> lyt
+    , lix
     , las
     }
-  DashCellLeft tr : las -> seal mod Line
+  DashMolt t : las -> draw mod Line
+    { lev
+    , loc
+    , lyt = Molt' t lyt
+    , lix
+    , las
+    }
+  DashSeal a : las -> draw mod Line
+    { lev
+    , loc
+    , lyt = Seal' a lyt
+    , lix
+    , las
+    }
+  DashCellLeft tr : las -> draw mod Line
     { lev
     , loc = rise loc
     , lyt = Cell' lyt tr
+    , lix
     , las
     }
   DashRailLeft jr : las -> case mod of
-    SealFine -> seal mod Line
+    DrawFine -> draw mod Line
       { lev
       , loc = rise loc
-      , lyt = Rail' lyt jr  -- XX is this correct? prev did as SealEdit
+      , lyt = Rail' lyt jr  -- XX is this correct? prev did as DrawEdit
+      , lix
       , las
       }
-    SealEdit -> seal mod Line
+    DrawEdit -> draw mod Line
       { lev
       , loc = rise loc
       , lyt = Cell' lyt (jamb jr $ read (rump (lev, rise loc / 2)) lyt)
+      , lix
       , las
       }
-  DashCellRight tl : las -> seal mod Line
+  DashCellRight tl : las -> draw mod Line
     { lev
     , loc = rise loc
     , lyt = Cell' tl lyt
+    , lix
     , las
     }
-  DashCorePayload fom bat : las -> seal mod Line
+  DashCorePayload fom bat : las -> draw mod Line
     { lev
     , loc = rise loc
     , lyt = Core' fom bat lyt
+    , lix
     , las
     }
 
@@ -1666,41 +2002,44 @@ seal mod lin@Line{lev, loc, lyt, las} = case las of
 find :: forall a m. (MonadCheck m, Var a)
      => (Level, Axis) -> Type a -> Wing -> m (Stub, Line a)
 find (lev, loc) typ win = act (ActFind (lev, loc) typ win) $
-  fond Line
+  fond (read (rump (lev, 1)) typ) Line
     { lev
     , loc
     , lyt = typ
+    , lix = mempty
     , las = []
     }
     win
 
 fond :: forall a m. (MonadCheck m, Var a)
-     => Line a -> Wing -> m (Stub, Line a)
-fond lin = \case
+     => Semi a -> Line a -> Wing -> m (Stub, Line a)
+fond ken lin = \case
   [] -> pure (Leg 1, lin)
-  l:ls -> fond lin ls >>= \case
+  l:ls -> fond ken lin ls >>= \case
     -- arm1.arm2: as in 140, go back up to root of core.
     (rest, lin) -> do
-      (st, con) <- limb lin l
+      (st, con) <- limb (ken / a) lin l
       pure (pole a st, con)
      where
       a = case rest of
         Leg a -> a
         Arm a _ _ -> a
  where
-  limb :: Line a -> Limb -> m (Stub, Line a)
-  limb lin = \case
+  limb :: Semi a -> Line a -> Limb -> m (Stub, Line a)
+  limb ken lin = \case
     Ares   -> pure (Leg 1, ares lin)
-    Axis a -> (Leg a,) <$> axis a lin
-    Ally f -> ally f lin
+    Axis a -> (Leg a,) <$> axis a ken lin
+    Ally f -> ally f ken lin
 
 -- | Strip metadata (faces, forks, sings)
+-- XX FIXME this doesn't work right now, rethink
 ares :: Var a => Line a -> Line a
-ares lin@Line{lev, loc, lyt, las} = case lyt of
+ares lin@Line{lev, loc, lyt, lix, las} = case lyt of
   Face' f t -> ares Line
     { lev
     , loc
     , lyt = t
+    , lix
     , las = DashFace f : las
     }
 
@@ -1708,6 +2047,7 @@ ares lin@Line{lev, loc, lyt, las} = case lyt of
     { lev
     , loc
     , lyt = t
+    , lix
     , las = DashSing s : las
     }
 
@@ -1716,14 +2056,35 @@ ares lin@Line{lev, loc, lyt, las} = case lyt of
   _ -> lin
 
 axis :: forall a m. (MonadCheck m, Var a)
-     => Axis -> Line a -> m (Line a)
-axis a lin@Line{lev, loc, lyt, las} = case (cut a, lyt) of
-  (Nothing, _) -> pure lin
+     => Axis -> Semi a -> Line a -> m (Line a)
+axis a ken lin@Line{lev, loc, lyt, lix, las} = case (cut a, lyt) of
+  -- We must pass under Molts no matter what
+  (_, Molt' fom act) -> axis a ken Line
+    { lev
+    , loc
+    , lyt = act
+    , lix
+    , las = DashMolt fom : las
+    }
 
-  (_, _) | Just t <- held lyt -> axis a Line
+  (_, Seal' axe t) -> axis a ken Line
+    { lev
+    , loc
+    , lyt
+    , lix = insertSet axe lix
+    , las = DashSeal a : las
+    }
+
+  (Nothing, _)
+    -- FIXME this error message has unhelpful type and axis
+    | a `elem` lix -> bail (FindFail (Axis a) lyt)
+    | otherwise    -> pure lin
+
+  (_, _) | Just t <- held lyt -> axis a ken Line
     { lev
     , loc
     , lyt = t
+    , lix
     , las  -- XX should we add a trace frame?
     }
 
@@ -1732,20 +2093,23 @@ axis a lin@Line{lev, loc, lyt, las} = case (cut a, lyt) of
     { lev
     , loc = loc / a
     , lyt = Void'
+    , lix
     , las  -- there's really no good answer here
     }
 
-  (_, Face' f t) -> axis a Line
+  (_, Face' f t) -> axis a ken Line
     { lev
     , loc
     , lyt = t
+    , lix
     , las = DashFace f : las
     }
 
-  (_, Sing' s t) -> axis a Line
+  (_, Sing' s t) -> axis a s Line
     { lev
     , loc
     , lyt = t
+    , lix
     , las = DashSing s : las
     }
 
@@ -1754,51 +2118,66 @@ axis a lin@Line{lev, loc, lyt, las} = case (cut a, lyt) of
   -- produced by crop.
   -- XX allegedly broken. Requires dual traces in the Dash infra, it seems.
   (_, Test' x t u) -> do
-    lin <- axis a lin { lyt = t }
-    lon <- axis a lin { lyt = u }
+    lin <- axis a ken lin { lyt = t }
+    lon <- axis a ken lin { lyt = u }
     -- XX There are questions around leaving behind the las of u
-    pure Line { lev, loc = loc / a, las, lyt = Test' x (long lin) (long lon) }
+    pure Line
+      { lev
+      , loc = loc / a
+      , lyt = Test' x (long lin) (long lon)
+      , lix
+      , las
+      }
 
-  (Just (L, a), Cell' tl tr) -> axis a Line
+  (Just (L, a), Cell' tl tr) -> axis a (ken / 2) Line
     { lev
     , loc = loc / 2
     , lyt = tl
+    , lix
     , las = DashCellLeft tr : las
     }
 
-  (Just (L, a), Rail' tl jr) -> axis a Line
+  (Just (L, a), Rail' tl jr) -> axis a (ken / 2) Line
     { lev
     , loc = loc / 2
     , lyt = tl
+    , lix
     , las = DashRailLeft jr : las
     }
 
-  (Just (R, a), Cell' tl tr) -> axis a Line
+  (Just (R, a), Cell' tl tr) -> axis a (ken / 3) Line
     { lev
     , loc = loc / 3
     , lyt = tr
+    , lix
     , las = DashCellRight tl : las
     }
 
-  (Just (R, a), Rail' tl jr) -> axis a Line
+  (Just (R, a), Rail' tl jr) -> axis a (ken / 3) Line
     { lev
     , loc = loc / 3
-    , lyt = jamb jr $ read (rump (lev, loc / 2)) tl
+    -- FIXME XX are we sure this should be loc / 2 instead of just 2??
+    -- What is more, once Jambs have levels inside of them, should we even
+    -- be using the ambient level? What is going on here?
+    , lyt = jamb jr (ken / 2)
+    , lix
     , las = DashCellRight tl : las
     }
 
-  (Just (L, a), Core' _ _ act) -> axis a Line
+  (Just (L, a), Core' _ _ act) -> axis a (ken / 2) Line
     { lev
     , loc = loc / 2
     , lyt = Noun'
     -- This way, if the user edits, she'll get a cell back rather than a core.
+    , lix
     , las = DashCellLeft act : las
     }
 
-  (Just (R, a), Core' fom bat pay) -> axis a Line
+  (Just (R, a), Core' fom bat pay) -> axis a (ken / 3) Line
     { lev
     , loc = loc / 3
     , lyt = pay
+    , lix
     , las = DashCorePayload fom bat : las
     }
 
@@ -1807,63 +2186,89 @@ axis a lin@Line{lev, loc, lyt, las} = case (cut a, lyt) of
   (_, _) -> bail (FindFail (Axis a) lyt)
 
 ally :: forall a m. (MonadCheck m, Var a)
-     => Term -> Line a -> m (Stub, Line a)
-ally f lin@Line{lyt} =
-  maybe (bail $ FindFail (Ally f) lyt) id $ lope lin
+     => Term -> Semi a -> Line a -> m (Stub, Line a)
+ally f ken lin@Line{lyt} =
+  maybe (bail $ FindFail (Ally f) lyt) id $ lope ken lin
  where
-  lope :: Line a -> Maybe (m (Stub, Line a))
-  lope lin@Line{lev, loc, lyt, las} = case lyt of
+  lope :: Semi a -> Line a -> Maybe (m (Stub, Line a))
+  lope ken lin@Line{lev, loc, lyt, lix, las} = case lyt of
+
+    _ | loc `elem` lix -> Nothing
+
     Face' (Mask m) t
       | f == m -> Just $ pure $ (Leg 1,) $ Line
           { lev
           , loc
           , lyt = t
+          , lix
           , las = DashFace (Mask m) : las
           }
       | otherwise -> Nothing
 
     Face' (Link ls) t
-      | Just (a, fs) <- lookup f ls -> Just $ (Leg a,) <$> axis a lin
-      | otherwise -> lope Line
+      | Just (a, fs) <- lookup f ls -> Just $ (Leg a,) <$> axis a ken lin
+      | otherwise -> lope ken Line
           { lev
           , loc
           , lyt = t
+          , lix
           , las = DashFace (Link ls) : las
           }
 
-    Sing' s t -> lope Line
+    Sing' s t -> lope s Line
       { lev
       , loc
       , lyt = t
+      , lix
       , las = DashSing s : las
       }
 
+    Molt' t u -> lope ken Line
+      { lev
+      , loc
+      , lyt = u
+      , lix
+      , las = DashMolt t : las
+      }
+
+    Seal' a t -> lope ken Line
+      { lev
+      , loc
+      , lyt = t
+      , lix = insertSet a lix
+      , las
+      }
+
     Cell' tl tr -> asum
-      [ fmap (first (pole 2)) <$> lope Line
+      [ fmap (first (pole 2)) <$> lope (ken / 2) Line
           { lev
           , loc = loc / 2
           , lyt = tl
+          , lix
           , las = DashCellLeft tr : las
           }
-      , fmap (first (pole 3)) <$> lope Line
+      , fmap (first (pole 3)) <$> lope (ken / 3) Line
           { lev
           , loc = loc / 3
           , lyt = tr
+          , lix
           , las = DashCellRight tl : las
           }
       ]
 
     Rail' tl jr -> asum
-      [ fmap (first (pole 2)) <$> lope Line
+      [ fmap (first (pole 2)) <$> lope (ken / 2) Line
           { lev
           , loc = loc / 2
           , lyt = tl
+          , lix
           , las = DashRailLeft jr : las
           }
-      , fmap (first (pole 3)) <$> lope Line
+      , fmap (first (pole 3)) <$> lope (ken / 3) Line
           { lev
           , loc = loc / 3
-          , lyt = jamb jr $ read (rump (lev, loc / 2)) tl
+          , lyt = jamb jr (ken / 2)
+          , lix
           , las = DashCellRight tl : las
           }
       ]
@@ -1873,20 +2278,23 @@ ally f lin@Line{lyt} =
           { lev
           , loc  -- NOT loc / 2
           , lyt  -- type of the whole core
+          , lix
           , las
           }
-      , fmap (first (pole 3)) <$> lope Line
+      , fmap (first (pole 3)) <$> lope (ken / 3) Line
           { lev
           , loc = loc / 3
           , lyt = act
+          , lix
           , las = DashCorePayload fom (clo, bat) : las
           }
       ]
 
-    _ | Just t <- held lyt -> lope Line
+    _ | Just t <- held lyt -> lope ken Line
         { lev
         , loc
         , lyt = t
+        , lix
         , las  -- XX should we add a trace frame?
         }
 
@@ -2002,8 +2410,8 @@ clew fs = setFromList $ fs >>= \case
   Char{} -> [Nothing]
 
 -- | Bring a claw back to a fish.
-molt :: Claw -> Fish
-molt = \case
+lobe :: Claw -> Fish
+lobe = \case
   Nothing -> Char Tuna Tuna
   Just a -> Sole a
 
@@ -2183,7 +2591,7 @@ tyre cub@Cube{lvv, mat, hed, axs} = act (ActTyre cub) case hed of
       -- by prepending a missing example pattern. This is either _ or something
       -- more specific based on a heuristic.
       Just ex -> pure $ Just (missing : ex)
-        where missing = if explicits == mempty then Tuna else molt cl
+        where missing = if explicits == mempty then Tuna else lobe cl
     -- On the other hand, if the explicit matches in first position are
     -- exhaustive, we segregate the matrix by claw of first match and require
     -- each resultant specialized submatrix to be exhaustive. We glue together
@@ -2195,7 +2603,7 @@ tyre cub@Cube{lvv, mat, hed, axs} = act (ActTyre cub) case hed of
       -- in tore or atomic tear.
       cub' cl = do
         hed <- case hed of
-          Eons t rest -> Eons (fuse t (molt cl)) <$> pure rest
+          Eons t rest -> Eons (fuse t (lobe cl)) <$> pure rest
         pure cub{hed}
       -- The first claw-specialized submatrix that gives a missing example needs
       -- translated back into our language based on the claw in question. For
@@ -2235,6 +2643,52 @@ tire (lvv, axe) fis typ = act (ActTire lvv fis typ) $
 
 -- Type checking ---------------------------------------------------------------
 
+-- | Guarantee that the given seminoun isn't stuck on anything in the head of
+-- the subject, transforming it into a seminoun that is guaranteed to have all
+-- levels strictly less than that passed in. This is used in a single place, to
+-- make sure core arm types don't reference core arm values or the whole core.
+thin :: forall a m. (MonadCheck m, Var a)
+     => Level -> Semi a -> m (Semi a)
+thin lvl bas = act (ActThin lvl bas) $ go bas
+ where
+  -- Procedure for reducing excessive levels. Make sure you understand this.
+  slim :: Loc -> Maybe Loc
+  slim (l, a)
+    | l < lvl              = pure (l, a)
+    | Just (R, a) <- cut a = slim (l - 1, a)  -- turn e.g. +2_3 into +1_1
+    | otherwise            = Nothing
+  go = \case
+    Spot' (Leg' (l, a)) -> case slim (l, a) of
+      Nothing     -> bail (ThinFree l bas)
+      Just (l, a) -> pure $ Spot' (Leg' (l, a))
+    Fore' x -> pure $ Fore' x
+    Hold' t s c -> Hold' t <$> go s <*> pure c
+    --
+    Atom' a -> pure $ Atom' a
+    Cell' x y -> Cell' <$> go x <*> go y
+    Crux' m cs s -> Crux' m cs <$> go s
+    --
+    Pull' ar ars x -> Pull' ar ars <$> go x
+    Plus' x -> Plus' <$> go x
+    Equl' x y -> Equl' <$> go x <*> go y
+    Test' x y z -> Test' <$> go x <*> go y <*> go z
+    Fish' f x -> Fish' f <$> go x
+    Look' x st -> flip Look' st <$> go x
+    Edit' x a y -> Edit' <$> go x <*> pure a <*> go y
+    --
+    Aura' au to -> pure $ Aura' au to
+    Rail' x (Jamb cod clo) -> Rail' <$> go x <*> (Jamb cod <$> go clo)
+    Core' x (s, j) y ->
+      Core' <$> go x <*> ((, j) <$> go s) <*> go y
+    Sing' x y -> Sing' <$> go x <*> go y
+    Molt' x y -> Molt' <$> go x <*> go y
+    Face' f x -> Face' f <$> go x
+    Fuse' x f -> Fuse' <$> go x <*> pure f
+    Seal' a x -> Seal' a <$> go x
+    Noun' -> pure Noun'
+    Void' -> pure Void'
+    Type' -> pure Type'
+
 -- | Type check the condition of a Test, producing its Code as well as the
 -- possibly refined subjects for the branches to be checked against.
 chip :: (MonadCheck m, Var a)
@@ -2247,9 +2701,9 @@ chip con@Con{lvl, sut} sof = case sof of
       Leg axe -> do
         let fis = fish p
         let tru = retcon
-                $ seal SealFine lin { lyt = face' [Link $ clop $ derm p]
+                $ draw DrawFine lin { lyt = face' [Link $ clop $ derm p]
                                           $ fuse lyt fis }
-        -- fal <- seal in { lyt = crop lyt fis }
+        -- fal <- draw in { lyt = crop lyt fis }
         fal <- pure con
         pure (Fish fis $ Spot axe, tru, fal, singleton $ gill axe fis)
 
@@ -2263,13 +2717,19 @@ chip con@Con{lvl, sut} sof = case sof of
     pure (x, con, con, ns)
 
 -- | Perform type checking for centis.
+-- FIXME WRONG suppose we have a singleton [1 2]|[@ @] and we edit the
+-- +2 to 3. The resulting type will be [1 2]|[3|@ @] which is invalid.
+-- It may be that we should just abandon singleton types entirely and go back to
+-- having a separate seminoun.
 fend :: forall a m. (MonadCheck m, Var a)
      => Con a -> Wing -> [(Wing, Soft)] -> m (Code Void, Type a, Set Fish)
 fend con@Con{lvl, sut} w whs = do
   (st, lin) <- find (lvl, 1) sut w
-  (c, lin, ms) <- foldlM
+  let axe = case st of { Leg a -> a; Arm a _ _ -> a }
+  let ken = read (rump (lvl, axe)) sut
+  (c, _, lin, ms) <- foldlM
     loop
-    (Spot (loc lin), lin {las = []}, singleton Tuna)
+    (Spot (loc lin), ken, lin {las = []}, singleton Tuna)
     whs
   case st of
     Leg _ -> pure (c, lyt lin, ms)
@@ -2278,27 +2738,129 @@ fend con@Con{lvl, sut} w whs = do
         -- late binding check: actual must nest under formal
         fits FitNest lvl act fom
         -- compute return type given actual argument value seminoun
+        note "COD " cod
+        note "CLO " clo
+        note "RED " $ read (rump (lvl, loc lin / 3)) act
         let ret = jamb Jamb{cod, clo} $ read (rump (lvl, loc lin / 3)) act
+        note "RET " ret
         pure (Pull arm arms c, ret, ms)
       t -> bail (BailNote $
         "fend: invariant violation: expected core with arm " <> arm <>
         " but got " <> tshow t)
  where
-  loop :: (Code Void, Line a, Set Fish)
+  loop :: (Code Void, Semi a, Line a, Set Fish)
        -> (Wing, Soft)
-       -> m (Code Void, Line a, Set Fish)
-  loop (c, lin, ms) (win, sof) = do
-    (st, lin) <- fond lin win
-    (rhs, typ, ns) <- play con sof
+       -> m (Code Void, Semi a, Line a, Set Fish)
+  loop (c, ken, lin, ms) (win, sof) = do
+    note "LON " lin
+    (st, lin) <- fond ken lin win
+    (rhs, typ, ns) <- case las lin of
+      -- XX HACK rethink :/
+      DashMolt t : _ -> do
+        note "MOLT" t
+        do { (rhs, ns) <- work con FitNest sof t; pure (rhs, t, ns) }
+    --  <|> play con sof
+      _ -> note "MEAT" () >> play con sof
+    note "RHS " rhs
+    note "TYP " typ
+    note "LIN " lin
+    let big = draw DrawEdit lin { lyt = Sing' (evil con rhs) typ }
+    note "BIG " big
     case st of
       Arm{} -> bail (EditPull win (lyt lin))
       Leg ax -> pure
         ( Edit c ax rhs
-        , seal SealEdit lin { lyt = typ }
+        -- FIXME I feel so helpless right now
+        , read (rump (lvl, ax)) (lyt big)
+        -- The singleton is needed for the dependency to work!
+        , big
         , swam ms ns
         )
 
--- | Given an "explicitly typed" expression, produce its type.
+-- | Perform early binding check to seal a type.
+-- TODO thread the Weft into the nest check in (R, Core')
+seal :: forall a m. (MonadCheck m, Var a)
+     => Level -> Axis -> Type a -> m ()
+seal lvl a t = case (cut a, t) of
+  (Nothing, _) -> pure ()
+  (_, t) | Just t' <- held t -> seal lvl a t'
+  (_, Spot'{}) -> sealFail
+  (_, Fore'{}) -> sealFail
+  (_, Hold'{}) -> error "seal: hold"
+  --
+  (_, Atom'{}) -> sealFail
+  (Just (L, a), Cell' t _) -> seal lvl a t
+  (Just (R, a), Cell' _ t) -> seal lvl a t
+  (_, Crux'{}) -> sealFail
+  --
+  (_, Pull'{}) -> sealFail
+  (_, Plus'{}) -> sealFail
+  (_, Equl'{}) -> sealFail
+  (_, Test' _ t u) -> seal lvl a t >> seal lvl a u
+  (_, Fish'{}) -> sealFail
+  (_, Look'{}) -> sealFail
+  (_, Edit'{}) -> sealFail
+  --
+  (_, Aura'{}) -> pure ()
+  (Just (L, a), Rail' t _) -> seal lvl a t
+  (Just (R, a), Rail' t j) -> seal (lvl + 1)
+                                   a
+                                   (jamb j $ read (rump (lvl + 1, 2)) t)
+  (Just (L, a), Core'{}) -> pure ()  -- XX think about this.
+  (Just (R, a), Core' fom _ act) -> do
+    -- Note: Consider a core type nested in the fom/act of a core type. E.g.
+    -- $|  ^=  t
+    --     $|  A
+    --       B
+    --     --
+    --   ^=  u
+    --   $|  C
+    --     D
+    --   --
+    -- --
+    -- and suppose we wish to seal +7. The effect is to turn [both of] the inner
+    -- core[s] lead. So we must have B < A and D < C. Meanwhile we must *also*
+    -- have u=$|(C D) < t=$|(A B) which means A < C and D < B. By transitivity
+    -- then, u < t and B < A implies D < C, so we only need to recursively seal
+    -- the formal core.
+    --
+    -- However, what the above analysis fails to understand is that if the
+    -- formal nested core type fails the binding check, then arms of the outer
+    -- core will never be able to pull the inner core's arms no matter what.
+    -- This means the actual core needs to bind if and only if the formal core
+    -- binds. The theorem of the previous paragraph in fact says that if t binds
+    -- and u < t, then u binds. So to handle internal arm pulls, we don't need
+    -- to recursively seal at all.
+    --
+    -- But we might also pull an inner core arm from *outside* the outer core.
+    -- This certainly requires the actual inner core to bind, so we do need to
+    -- test it.
+    --
+    -- Summarizing:
+    --   - For the outer core arms to be valid, the actual inner core must bind
+    --     iff the formal inner core does. But this is true if the inner cores
+    --     nest
+    --   - For a person sitting outside the outer core to pull an inner core arm
+    --     the actual inner core must bind (which is a weaker condition than the
+    --     formal core binding).
+    --   - I hope you had fun.
+    seal lvl a act  -- in case we have any inner cores
+    low <- peek (lvl + 1, 2) act a
+    hig <- peek (lvl + 1, 2) fom a
+    fits FitNest (lvl + 1) low hig  -- bind check on this (outer) core
+  (_, Sing' _ t) -> seal lvl a t
+  (_, Molt' _ t) -> seal lvl a t
+  (_, Face' _ t) -> seal lvl a t
+  (_, Fuse' t _) -> seal lvl a t
+  (_, Seal' _ t) -> seal lvl a t  -- FIXME check for axis cover; already sealed
+  (_, Noun') -> pure ()
+  (_, Void') -> pure ()  -- XX correct?
+  (_, Type') -> pure ()
+
+ where
+  sealFail = bailFail
+
+-- | Given an "explicitly typed" expression, produce its unevaluated type.
 scan :: forall a m. (MonadCheck m, Var a)
      => Con a -> Soft -> m (Type a)
 scan con@Con{lvl, sut} cod = act (ActScan con cod) case cod of
@@ -2309,18 +2871,20 @@ scan con@Con{lvl, sut} cod = act (ActScan con cod) case cod of
 
   Cel c d -> Cell' <$> scan con c <*> scan con d
 
-  Lam a c -> undefined {- do
-    a <- work con FitNest a Type'
-    let t = evil con a
-    let ken = read (rump (
-    Gate' t . (`Jamb`loft (lvl + 1) <$> scan (hide con t) c -}
-
-  Cru _ -> undefined
+  Cru cs -> do
+    -- FIXME this WRONGLY treats type annotations on arms that contain wings
+    -- that refer to the current core. Unclear what to do there. Here Noun'
+    -- stands in for the "battery type."
+    ts <- for cs \c -> do
+      t <- scan (melt $ hide con Noun') c
+      -- t <- thin (lvl + 1) t
+      pure (With (Spot 2) $ loft lvl t)
+    let ken = read (rump (lvl, 1)) sut
+    pure $ Core' (molt sut) (ken, ts) sut
 
   Fac p c -> face' (derm p) <$> scan con c
 
   Plu{} -> scanMurk
-  Sla{} -> scanMurk
   Equ{} -> scanMurk
   Tes{} -> scanMurk
   Rhe{} -> scanMurk
@@ -2331,17 +2895,29 @@ scan con@Con{lvl, sut} cod = act (ActScan con cod) case cod of
   Gat{} -> pure Type'
   Cor{} -> pure Type'
   Sin{} -> pure Type'
+  Mot{} -> pure Type'
   Fus{} -> pure Type'
+  Sal{} -> pure Type'
   Non{} -> pure Type'
   Vod{} -> pure Type'
   Typ{} -> pure Type'
 
-  -- XX can these be relaxed?
+  -- XX can this be relaxed?
   Wit{} -> scanMurk
-  Pus{} -> scanMurk
+
+  Pus c d -> do
+    (x, t, _) <- play con c
+    scan (shew con (evil con x) t) d
+
+  Mut c d e -> do
+    fom <- evil con . fst <$> work con FitNest c Type'
+    (x, act, _) <- play con d
+    scan (moot con fom (evil con x) act) e
 
   Net{typ} -> evil con . fst <$> work con FitNest typ Type'
   Cat{typ} -> evil con . fst <$> work con FitNest typ Type'
+
+  Hid{} -> scanMurk  -- FIXME ideally
 
  where
   scanMurk = bail (ScanMurk cod)
@@ -2350,13 +2926,20 @@ scan con@Con{lvl, sut} cod = act (ActScan con cod) case cod of
 -- Since the expected result type is known in this mode, we can lighten the
 -- user's annotation burden. Read about "bidirectional type checking" to
 -- learn more.
+-- TODO ugh pass Weft through
 work :: forall a m. (MonadCheck m, Var a)
      => Con a -> Fit -> Soft -> Type a -> m (Code Void, Set Fish)
-work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
-  let playFits = do (x, t', ns) <- play con cod
-                    fits fit lvl t' gol
-                    pure (x, ns)
-  in case cod of
+work con fit cod gol = let
+ -- On its inside, work needs to thread a Warp for *some* of its nest checks.
+ work :: forall a m. (MonadCheck m, Var a)
+      => Con a -> Fit -> Soft -> Type a -> Warp -> m (Code Void, Set Fish)
+ work con@Con{lvl, sut} fit cod gol wap@Warp{lax, rax, pax} =
+  let
+    playFits = do
+      (x, t', ns) <- play con cod
+      fist fit lvl t' gol wap
+      pure (x, ns)
+  in act (ActWork con fit cod gol wap) case cod of
     Wng{} -> playFits
 
     -- for introduction forms except atoms, we push the type constraint inward
@@ -2366,21 +2949,33 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
     Atm{} -> playFits
 
     Cel c d -> case gol of
-      -- XX FIXME deal with other metadata like Fork, Sing
-      (held -> Just t) -> work con fit cod t
-      Face' f t -> work con fit cod t
-      Type' -> playFits
+      (held -> Just gol) -> work con fit cod gol wap
+      Sing' s gol -> do
+        (x, ms) <- work con fit cod gol wap
+        fits FitSame lvl s (evil con x)
+        pure (x, ms)
+      Molt' _ gol -> work con fit cod gol wap
+      Seal' a t -> work con fit cod t wap { rax = insertSet (pax / a) rax }
+      Face' f t -> work con fit cod t wap
+      Fuse' _ _ -> playFits  -- FIXME?
+      --
       Cell' t u -> do
-        (x, ns) <- work con fit c t
-        (y, ms) <- work con fit d u
+        (x, ms) <- work con fit c t (wap / 2)
+        (y, ns) <- work con fit d u (wap / 3)
         pure (Cell x y, swam ms ns)
       Rail' t j -> do
-        (x, ms) <- work con fit c t
+        (x, ms) <- work con fit c t (wap / 2)
         let u = jamb j $ evil con x
-        (y, ns) <- work con fit d u
+        (y, ns) <- work con fit d u (wap / 3)
+        pure (Cell x y, swam ms ns)
+      Type' -> do
+        -- We have to recurse in to ensure faces appear in the generated code.
+        (x, ms) <- work con fit c Type' (wap / 2)
+        (y, ns) <- work con fit d Type' (wap / 3)
         pure (Cell x y, swam ms ns)
       _ -> playFits
 
+    {-
     Lam a c -> case gol of
       -- XX FIXME deal with other metadata like Fuse' (?)
       (held -> Just t) -> work con fit cod t
@@ -2393,6 +2988,7 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
         (argC, ms) <- work con FitNest a Type'
         let argT = evil con argC
         fits FitNest lvl golArgT argT
+        tire (lvl, 1) ms sut
         let fom = Cell' argT sut
         -- This is hard to get right. :/ It will clean up when Gate' becomes
         -- epiphenominal.
@@ -2403,9 +2999,8 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
         let resC = With (Cell (Spot 1) (Spot 1)) resCod
         let cod = Cru (mapFromList [("", c)])
         let gol = Core' fom (ken, mapFromList [("", resC)]) fom
-        (Crux (lookup "" -> Just x), ms) <-
-          work Con{lvl = lvl + 1, sut = fom} fit cod gol
-        pure (Lamb x, ms)
+        (x, ms) <- work Con{lvl = lvl + 1, sut = fom} fit cod gol
+        pure (Push (Atom 0) x, ms)
         {-
         -- FIXME switch this to type not skin
         (argC, ms) <- work con FitNest a Type'
@@ -2431,43 +3026,67 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
         pure (Lamb x, singleton Tuna)
         -}
       _ -> playFits
+    -}
 
     Cru arms -> case gol of
-      -- XX FIXME deal with other metadata like Fuse' (?)
-      (held -> Just t) -> work con fit cod t
-      Face' f gol -> work con fit cod gol
+      (held -> Just gol) -> work con fit cod gol wap
       Sing' s gol -> do
-        (x, ms) <- work con fit cod gol
+        (x, ms) <- work con fit cod gol wap
         fits FitSame lvl s (evil con x)
         pure (x, ms)
+      Molt' _ gol -> work con fit cod gol wap
+      Seal' a t -> work con fit cod t wap { rax = insertSet (pax / a) rax }
+      Face' f t -> work con fit cod t wap
+      Fuse' _ _ -> playFits  -- FIXME?
+      --
       Core' fom (clo, bat) act -> do
-        fits fit lvl sut act
-        let ken = read sut (rump (lvl, 1))
-        let sut = gol
+        let mot = molt sut
+        fist fit lvl sut act (wap / 3)
+        -- XX this is here because we otherwise have no way to determine the
+        -- mesh for the Crux. This limitation is in principle unnecessary,
+        -- because we ought to be able to jointly traverse fom and act to find
+        -- the axes at which they don't nest. That would free you to cast your
+        -- formal type to whatever you want. But also arguably you shouldn't be
+        -- allowed to do that with this construct anyway because |% doesn't
+        -- innately provide that capability, e.g. in play. Let's see if people
+        -- care.
+        --
+        -- Or said differently, when you do a |%, you get something that runs
+        -- against the molted subject, whether worked or played. By casting, you
+        -- can lose information, subsequently turning it into something that
+        -- can accept fewer things, in the usual way that $-(@ X) < $-(* X).
+        fist fit lvl fom (molt sut) (wap / 3)
+        -- XX if we go back to separate seminoun this may be a problem.
+        let ken = read (rump (lvl, 1)) mot
+        -- The arms are checked against a core subject. The formal type is the
+        -- molted original subject. The actual type is *also* the molted orig,
+        -- reflecting that by the time we get to executing arm code, the actual
+        -- contents will necessarily be of that type.
+        let sut = Core' mot (clo, bat) mot
         xs <- farm arms bat mempty \nom arm armT xs -> do
           (x, ms) <- work
-            Con{sut, lvl = lvl + 1}
+            Con{sut, lvl = lvl + 1}  -- TODO FIXME is this lvl right????
             fit
             arm
             (jamb (Jamb armT clo) ken)
-          tire (lvl + 1, 1) ms sut
+            SHED
+          tire (lvl + 1, 1) ms (Core' fom (clo, bat) fom)
           pure (insertMap nom x xs)
-        pure (Crux xs, singleton Tuna)
+        pure (Crux (knit sut) xs, singleton Tuna)
       _ -> playFits
 
     Fac p c -> do
       -- XX think about whether we should instead play here, so that toil can
       -- operate against a more specific scrutinee type.
-      (x, ns) <- work con fit c gol
+      (x, ns) <- work con fit c gol wap
       let fs = derm p
       asum
-        [ fits FitNest lvl gol Type' >> pure (face fs x, ns)
+        [ fist FitNest lvl gol Type' wap >> pure (face fs x, ns)
         , pure (x, ns)
         ]
 
     -- elimination forms just use nest
     Plu{} -> playFits
-    Sla{} -> playFits
     Equ{} -> playFits
     Fis{} -> playFits  -- not inside Tes
 
@@ -2478,8 +3097,8 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
     -- is likely already present.
     Tes c d e -> do
       (x, tru, fal, fis) <- chip con c
-      (y, met) <- work tru fit d gol
-      (z, jon) <- work fal fit e gol
+      (y, met) <- work tru fit d gol wap
+      (z, jon) <- work fal fit e gol wap
       pure (Test x y z, union (swam fis met) jon)
 
     -- "rhetorical" tests are required to evaluate to true at compile time.
@@ -2488,7 +3107,7 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
     -- XX update this comment in light of the new exhaustiveness checker
     Rhe c d -> do
       (x, tru, _, fis) <- chip con c
-      (y, met) <- work tru fit d gol
+      (y, met) <- work tru fit d gol wap
       pure (y, swam fis met)
 
     --Run{} -> playFits
@@ -2499,7 +3118,9 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
     Gat{} -> playFits
     Cor{} -> playFits
     Sin{} -> playFits
+    Mot{} -> playFits
     Fus{} -> playFits
+    Sal{} -> playFits
 
     Non -> playFits
     Vod -> playFits
@@ -2507,7 +3128,8 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
 
     Wit c d -> do
       (x, t, pre) <- play con c
-      (y, pos) <- work Con { lvl = 0, sut = grow t } fit d (grow gol)
+      let con' = Con { lvl = 0, sut = grow $ Sing' (evil con x) t }
+      (y, pos) <- work con' fit d (grow gol) wap
       -- XX investigate when this can be relaxed
       tire (lvl, 1) pos t
       pure (With x y, pre)
@@ -2516,23 +3138,23 @@ work con@Con{lvl, sut} fit cod gol = act (ActWork con fit cod gol)
       -- The fishing here is remarkable. The newly introduced part of the
       -- subject is the only exhastiveness requirement. The rest passes through.
       (x, t, ns) <- play con c
-      (y, ms) <- work (shew con (evil con x) t) fit d gol
+      (y, ms) <- work (shew con (evil con x) t) fit d gol wap
       tire (lvl + 1, 2) (slip L ms) t
       pure (Push x y, swam ns (slip R ms))
 
+    Mut c d e -> do
+      (fom, ms) <- work con FitNest c Type' SHED
+      (x, act, ns) <- play con d
+      (y, os) <- work (moot con (evil con fom) (evil con x) act) fit e gol wap
+      tire (lvl + 1, 2) (slip L os) act
+      pure (Push x y, swam ms (swam ns (slip R os)))
+
     Net{} -> playFits
     Cat{} -> playFits
+    Hid{} -> playFits
 
     --Sin c -> work con fit c gol
-
--- | Require the given type to be a function type.
--- XX Deppy had a cas rule here; why?
-{-needGate :: (MonadCheck m, Var a)
-         => Con a -> Type a -> m (Type a, Semi a, Code a)
-needGate con = \case
-  Gate' t s c -> pure (t, s, c)
-  Face' _ t -> needGate con t
-  t -> bail $ NeedGate t-}
+ in work con fit cod gol SHED
 
 -- | Given subject type, determine product type of code. In the process, also
 -- generate allyless untyped core and exaustiveness checking data.
@@ -2551,7 +3173,16 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     (y, u, ns) <- play con d
     pure (Cell x y, Cell' t u, swam ms ns)
 
+  {-
   Lam a c -> do
+    (argC, ms) <- work con FitNest a Type'
+    tire (lvl, 1) ms sut
+    let argT = evil con argC
+    (x, t, ns) <- play (hide con argT) c
+    -- Note that we produce a "gold core type" here, as in 140. It'll nest under
+    -- whatever $- you care to pass it as, so it's actually fine.
+    pure (Push (Atom 0) x, t, ns)
+    {-
     (argC, ms) <- work con FitNest a Type'
     let argT = evil con argC
     ( Crux (lookup "" -> Just x)
@@ -2568,23 +3199,23 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     tire (lvl, 1) ms sut
     -- Meanwhile we already do tire in the Cru case below for the body.
     pure (Lamb x, Gate' argT (Jamb resC ken), singleton Tuna)
+    -}
+  -}
 
   Cru arms -> do
-    -- let enjamb c = Jamb (fmap absurd c) (read (rump (lvl, 1)) sut)
-    -- TODO relax this requirement
-    tys :: Map Term (Code a) <- for arms \case
-      Net{typ} -> fmap absurd . fst <$> work (hide con Void') FitNest typ Type'
-      Cat{typ} -> fmap absurd . fst <$> work (hide con Void') FitNest typ Type'
-      _ -> bail (BailNote "must annotate every arm with type for now")
-    let cor = Core' sut (read (rump (lvl, 1)) sut, tys) sut
-    ress <- traverse (play con { sut = cor, lvl = lvl + 1}) arms
-    for_ ress (\(_, _, ns) -> tire (lvl + 1, 1) ns cor)
-    let crux = Crux (ress <&> \(x, _, _) -> x)
-    let crux' = evil con crux
+    cor <- scan (melt con) cod  -- molt con to get fom in act; XX double molt
+    let ken = read (rump (lvl, 1)) sut
+    res <- for arms $ play Con { sut = cor, lvl = lvl + 1 }
+    let cru = Crux (knit sut) (res <&> \(x, _, _) -> x)
+    tys <- for res \(_, t, _) -> do
+      -- t <- thin (lvl + 1) t
+      pure (With (Spot 2) $ loft lvl t)
+    let cor = Core' (molt sut) (ken, tys) sut   -- NOTE molt only in fom
+    -- XX correct?
+    for_ res \(_, _, ns) -> tire (lvl + 1, 1) ns cor
     pure
-      ( crux
-      -- XX ideally, the singleton would sit only on the battery
-      , Sing' crux' cor
+      ( cru
+      , cor
       -- (Core' sut <$> for ress (\(_, t, _) -> loft t)
       , singleton Tuna
       )
@@ -2607,6 +3238,7 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     (x, ms) <- work con FitNest c (Aura' "" Bowl)
     pure (Plus x, Aura' "" Bowl, ms)
 
+  {-
   Sla c d -> do
     (x, ct, ms) <- play con c
     let go = \case
@@ -2618,6 +3250,7 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     (at, j) <- go ct
     (y, ns) <- work con FitNest d at
     pure (Slam x y, jamb j $ evil con y, swam ms ns)
+    -}
 
   Equ c d -> do
     (x, _, ms) <- play con c
@@ -2678,7 +3311,7 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
   Cor act fom bat -> do
     (x, ms) <- work con FitNest act Type'
     (y, ns) <- work con FitNest fom Type'
-    ress <- for bat \arm -> work con FitNest arm Type'
+    ress <- for bat \arm -> work (hide con (evil con y)) FitNest arm Type'
     let xs  = fmap fst ress
     let mss = fmap snd ress
     pure (Core y xs x, Type', foldl' swam (swam ms ns) mss)
@@ -2688,12 +3321,23 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     (x, ms) <- work con FitNest sof $ evil con y
     pure (Sing x y, Type', swam ns ms)
 
+  Mot fom act -> do
+    (x, ms) <- work con FitNest fom Type'
+    (y, ns) <- work con FitNest act Type'
+    pure (Molt x y, Type', swam ms ns)
+
   Fus typ pet -> do
     (x, ns) <- work con FitNest typ Type'
     let fis = fish pet
     let fac = derm pet
     -- XX do we want something like constant folding in the fst below?
     pure (Face (Link $ clop fac) $ Fuse x fis, Type', ns)
+
+  Sal win typ -> do
+    (x, ms) <- work con FitNest typ Type'
+    find (lvl, 1) (evil con x) win >>= \case
+      (Arm{}, _) -> bail (SealPull win)
+      (Leg a, _) -> pure (Seal a x, Type', ms)
 
   Non -> pure (Noun, Type', singleton Tuna)
 
@@ -2703,9 +3347,8 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
 
   Wit c d -> do
     (x, t, pre) <- play con c
-    -- XX should we make a singleton type here, analogous to storing the
-    -- seminoun in 3?
-    (y, u, pos) <- play Con{lvl=0, sut=(grow t)} d
+    let con' = Con { lvl = 0, sut = grow $ Sing' (evil con x) t }
+    (y, u, pos) <- play con' d
     ret <- pare u
     -- XX investigate when this can be relaxed. seems like regression for eg =.
     tire (lvl, 1) pos t
@@ -2716,6 +3359,13 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     (y, u, ns) <- play (shew con (evil con x) t) d
     tire (lvl + 1, 2) (slip L ns) t
     pure (Push x y, u, swam ms (slip R ns))
+
+  Mut c d e -> do
+    (fom, ms) <- work con FitNest c Type'
+    (x, act, ns) <- play con d
+    (y, t, os) <- play (moot con (evil con fom) (evil con x) act) e
+    tire (lvl + 1, 2) (slip L os) act
+    pure (Push x y, t, swam ms (swam ns (slip R os)))
 
   Net{sof, typ} -> do
     (x, ms) <- work con FitNest typ Type'
@@ -2729,6 +3379,13 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     (y, ns) <- work con FitCast sof t
     pure (y, t, swam ms ns)
 
+  Hid win sof -> find (lvl, 1) sut win >>= \case
+    (Arm{}, _) -> bail (SealPull win)
+    (Leg a, _) -> do
+      (x, t, ms) <- play con sof
+      seal lvl a t
+      pure (x, Seal' a t, ms)
+
 -- | Read code back to soft, making no attempt to untranslate axes to wings with
 -- names.
 rest :: forall a m. Var a => Code a -> Soft
@@ -2740,13 +3397,13 @@ rest = \case
   Cell c d -> Cel (rest c) (rest d)
   -- XX this loss of facial information may be unfortunate for diagnostic
   -- purposes. Think about this. Fixed by doze?
-  Lamb c -> Lam Non (rest c)
-  Crux cs -> Cru (fmap rest cs)
+  -- Lamb c -> Lam Non (rest c)
+  Crux _ cs -> Cru (fmap rest cs)
   --
-  Pull ar _ (Spot a) -> Wng [Ally ar, Axis a] []
-  Pull ar _ c -> Wit (rest c) $ Wng [Ally ar] []
+  Pull ar _ c -> case rest c of
+    Wng w eds -> Wng (Ally ar : w) eds
+    sof -> Wit sof $ Wng [Ally ar] []
   Plus c -> Plu (rest c)
-  Slam c d -> Sla (rest c) (rest d)
   Equl c d -> Equ (rest c) (rest d)
   Test c d e -> Tes (rest c) (rest d) (rest e)
   Fish h c -> Fis (pond h) (rest c)
@@ -2758,9 +3415,11 @@ rest = \case
   Gate c d -> Gat (rest c) (rest d)
   Core c d e -> Cor (rest e) (rest c) (fmap rest d)
   Sing s t -> Sin (rest s) (rest t)
+  Molt c d -> Mot (rest c) (rest d)
   Face (Mask m) c -> Fac (Peer m) (rest c)
   Face (Link ls) c -> Fac Punt (rest c)  -- FIXME ?
   Fuse c h -> Fus (rest c) (pond h)
+  Seal a c -> Sal [Axis a] (rest c)
   Noun -> Non
   Void -> Vod
   Type -> Typ

@@ -6,6 +6,11 @@ SOFT
 
 (1 2)
 
+HARD
+
+=+  1
+%.+2(+6 2:+3)
+
 ERROR
 
   trace:  play:
@@ -14,5 +19,19 @@ ERROR
           ----
           code  (1 2)
 
+          play:
+          lvl   1
+          sut   [1|@ud 0|*]
+          ----
+          code  %.+2(+6 2:+3)
 
-  need-gate:  @ud
+          find:
+          loc   (1,1)
+          sut   [1|@ud 0|*]
+          ----
+          wing  %.+2
+
+
+  find.%
+  type  1|@ud
+

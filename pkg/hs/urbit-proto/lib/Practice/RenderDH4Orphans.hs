@@ -64,8 +64,15 @@ instance Var a => Rolling (Cube a) where
       )
     ]
 
-instance Var a => Rolling (Lace a) where
-  roll Lace{seg, reg, gil} = Huge $ Stem "Lace" "" []
+instance Rolling Warp where
+  roll Warp{lax,rax,pax} = Huge $ Stem "Warp" "" []
+    [ ("lax ", tank $ roll lax, Leaf "")
+    , ("rax ", tank $ roll rax, Leaf "")
+    , ("pax ", tank $ roll pax, Leaf "")
+    ]
+
+instance Var a => Rolling (Weft a) where
+  roll Weft{seg, reg, gil} = Huge $ Stem "Weft" "" []
     [ ("seg ", tank $ roll seg, Leaf "")
     , ("reg ", tank $ roll reg, Leaf "")
     , ("gil ", tank $ roll gil, Leaf "")
@@ -78,6 +85,8 @@ rollDash lvl = roll . \case
   DashFace f -> Ktts (flap $ mred f) Wild
   -- DashFork hs -> Bcgr Wild (map (flap . pond) $ setToList hs)
   DashSing s -> Bcts (baseToHoon lvl s) Wild
+  DashMolt t -> Bcmc (baseToHoon lvl t) Wild
+  DashSeal a -> Bcwt [Axis a] Wild
   DashCellLeft tr -> Clhp Wild (baseToHoon lvl tr)
   DashRailLeft jr -> Bccl Wild [shut $ rest $ luft lvl jr]
   DashCellRight tl -> Clhp (baseToHoon lvl tl) Wild
@@ -106,11 +115,11 @@ instance Rolling ActTree where
 instance Rolling Act where
   roll = \case
     ActRoot -> leaf "root"
-    ActFits f lvl t u -> Huge $ Stem (tshow f <> ":") "" []
+    ActFits f lvl t u wap -> Huge $ Stem (tshow f <> ":") "" []
       [ ("have", tank $ roll $ loft lvl t, Leaf "")
       , ("need", tank $ roll $ loft lvl u, Leaf "")
       ]
-    ActSeal Line{lev, loc, lyt, las} -> Huge $ Stem "seal:" "" []
+    ActDraw Line{lev, loc, lyt, las} -> Huge $ Stem "draw:" "" []
       [ ("loc ", Leaf $ tshow loc, Leaf "")
       , ("lyt ", tank $ roll lyt, Leaf "")
       , ("las ", tank $ rollDashes lev las, Leaf "")
@@ -146,7 +155,17 @@ instance Rolling Act where
       [ ("fish", tank $ roll fis, Leaf "")
       , ("type", tank $ roll $ loft lvl typ, Leaf "")
       ]
-    ActWork Con{lvl, sut} f c t -> Huge $ Stem "work:" "" []
+    ActThin lvl ken -> Huge $ Stem "thin:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("ken ", tank $ roll ken, Leaf "")
+      ]
+    ActScan Con{lvl, sut} c -> Huge $ Stem "scan:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
+      , ("----", Leaf "",          Leaf "")
+      , ("code", tank $ roll c,    Leaf "")
+      ]
+    ActWork Con{lvl, sut} f c t wap -> Huge $ Stem "work:" "" []
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
       , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
       , ("----", Leaf "",          Leaf "")
@@ -158,7 +177,7 @@ instance Rolling Act where
       [ ("lvl ", Leaf $ tshow lvl, Leaf "")
       , ("sut ", tank $ roll $ loft lvl sut,  Leaf "")
       , ("----", Leaf "",          Leaf "")
-      , ("code", tank $ roll c, Leaf "")
+      , ("code", tank $ roll $ c, Leaf "")
       ]
     ActDone -> leaf "done"
 
@@ -172,7 +191,7 @@ instance Rolling Fail where
       [ ("rump", Leaf $ tshow r, Leaf "")
       , ("base", tank $ roll b, Leaf "")
       ]
-    SealCore t -> leaf $ "seal-core: " <> t
+    DrawCore t -> leaf $ "draw-core: " <> t
     FindFail f t -> Huge $ Stem ("find." <> printLimb f) "" []
       [ ("type", tank $ roll t, Leaf "")
       ]
@@ -192,11 +211,16 @@ instance Rolling Fail where
       [ ("axis", tank $ roll a, Leaf "")
       , ("miss", tank $ roll f, Leaf "")
       ]
+    ThinFree lvl ken -> Huge $ Stem "thin-free:" "" []
+      [ ("lvl ", Leaf $ tshow lvl, Leaf "")
+      , ("ken ", tank $ roll ken, Leaf "")
+      ]
     EditPull w t -> Huge $ Stem "edit-pull:" "" []
       [ ("wing", Leaf $ tshow w, Leaf "")
       , ("type", tank $ roll t,  Leaf "")
       ]
     NeedGate t -> Huge $ Palm "need-gate:" [tank $ roll t]
+    ScanMurk s -> Huge $ Palm "scan-murk:" [tank $ roll s]
     WorkMiss s b -> Huge $ Stem "work-miss:" "" []
       [ ("test", tank $ roll s, Leaf "")
       , ("base", tank $ roll b, Leaf "")
@@ -205,5 +229,10 @@ instance Rolling Fail where
       [ ("test", tank $ roll s, Leaf "")
       , ("base", tank $ roll b, Leaf "")
       ]
+    SealPull w -> Huge $ Palm "seal-pull:" [tank $ roll w]
     BailNote t -> Huge $ Palm "bail-note:" [Leaf t]
     BailFail -> leaf "bail-fail"
+
+-- | Display loft
+lyft :: Var a => Level -> Semi a -> Hoon
+lyft lvl = undefined

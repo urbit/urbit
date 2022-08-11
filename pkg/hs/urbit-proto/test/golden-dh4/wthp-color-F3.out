@@ -13,6 +13,19 @@ SOFT
     "red"
 %b
 
+HARD
+
+=+  =:  color=?(%b %g %r)
+      ^-  *
+      0
+    |%
+    ++  %
+      ^-  @t
+      ??  ?=(%114 color)
+      "red"
+    --
+%.+2(+6 %b:+3)
+
 ERROR
 
   trace:  play:

@@ -10,8 +10,10 @@ import Test.Tasty
 import Test.Tasty.Golden
 import Text.Show.Pretty (ppShow)
 
+import Practice.DependentHoon4 (loft, spin)
 import Practice.Render
 import Practice.TopLevelDH4
+import Practice.Hoon2DependentHoon4 (shut')
 
 listTests :: IO [FilePath]
 listTests = findByExtension [".hoon"] "test/golden-dh4"
@@ -40,16 +42,18 @@ testEachPass file =
         pure $
           "PARSED\n\n" <> renderLBS cst <>
           "\n\nSOFT\n\n" <> renderLBS sof <>
+          "\n\nHARD\n\n" <> renderLBS (shut' sof) <>
           "\n\nERROR\n\n" <> renderLBS ert
       ResType{cst, sof, cod, typ, ken, mor} -> do
         writeFile (replaceExtension file ".trace") $ encodeUtf8 $ render mor
         pure $
           "PARSED\n\n" <> renderLBS cst <>
           "\n\nSOFT\n\n" <> renderLBS sof <>
+          "\n\nHARD\n\n" <> renderLBS (shut' sof) <>
           "\n\nCODE\n\n" <> renderLBS cod <>
-          "\n\nTYPE\n\n" <> renderLBS typ <>
+          "\n\nTYPE\n\n" <> renderLBS (loft 0 typ) <>
               -- "\n\n" <> encodeUtf8 (LT.fromStrict $ tshow typ) <>
-          "\n\nBASE\n\n" <> renderLBS ken
+          "\n\nBASE\n\n" <> renderLBS (loft 0 ken)
 
  where
   baseName = takeBaseName file
@@ -57,6 +61,8 @@ testEachPass file =
 testsIO :: IO TestTree
 testsIO = do
   tests <- listTests
-  pure $ testGroup "DependentHoon4 golden tests" $ fmap testEachPass tests
+  pure $ localOption (mkTimeout 60_000_000)
+       $ testGroup "DependentHoon4 golden tests"
+       $ fmap testEachPass tests
 
 

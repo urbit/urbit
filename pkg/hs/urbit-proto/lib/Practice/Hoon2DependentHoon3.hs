@@ -66,7 +66,7 @@ open = \case
   Kthp s h -> do typ <- open s; sof <- open h; pure Net {typ, sof}
   Ktfs h s -> do typ <- open s; sof <- open h; pure Net {typ, sof}
   Ktzp s h -> do typ <- open s; sof <- open h; pure Cat {typ, sof}
-  Ktwt h -> Left "unsupported ^? lead cast"  -- XX fixme soon
+  Ktwt w h -> Left "unsupported ^? lead cast"  -- XX fixme soon
   Ktts s h -> Fac <$> flay s <*> open h
   Ktcl{} -> Left "unsupported ^: mold"
   --

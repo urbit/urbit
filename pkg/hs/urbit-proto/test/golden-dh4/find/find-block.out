@@ -9,6 +9,11 @@ SOFT
 =+  a=p=q=1
 q.p.a
 
+HARD
+
+=+  a=p=q=1
+q.p.a
+
 CODE
 
 =+  1

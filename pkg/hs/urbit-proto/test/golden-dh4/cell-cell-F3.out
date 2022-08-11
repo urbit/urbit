@@ -8,6 +8,11 @@ SOFT
 ^-  {@ @}
 {@ @}
 
+HARD
+
+^-  {@ @}
+{@ @}
+
 ERROR
 
   trace:  play:

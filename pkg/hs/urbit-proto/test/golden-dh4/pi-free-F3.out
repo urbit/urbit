@@ -6,6 +6,13 @@ SOFT
 
 $-(t=$ q)
 
+HARD
+
+$?  +7
+$|  [$;(t=$ *) *]
+++  %  q
+--
+
 ERROR
 
   trace:  play:
@@ -15,8 +22,28 @@ ERROR
           code  $-(t=$ q)
 
           work:
+          lvl   0
+          sut   0|*
+          ----
+          mode  nest
+          code  $|  [$;(t=$ *) *]
+                ++  %  q
+                --
+
+          type  $
+
+          play:
+          lvl   0
+          sut   0|*
+          ----
+          code  $|  [$;(t=$ *) *]
+                ++  %  q
+                --
+
+
+          work:
           lvl   1
-          sut   [t=$ 0|*]
+          sut   [[t=$ *] 0|*]
           ----
           mode  nest
           code  q
@@ -24,17 +51,17 @@ ERROR
 
           play:
           lvl   1
-          sut   [t=$ 0|*]
+          sut   [[t=$ *] 0|*]
           ----
           code  q
 
           find:
           loc   (1,1)
-          sut   [t=$ 0|*]
+          sut   [[t=$ *] 0|*]
           ----
           wing  q
 
 
   find.q
-  type  [t=$ 0|*]
+  type  [[t=$ *] 0|*]
 

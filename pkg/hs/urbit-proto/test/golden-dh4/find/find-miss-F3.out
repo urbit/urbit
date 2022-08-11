@@ -9,6 +9,11 @@ SOFT
 =+  a=p=1
 q.a
 
+HARD
+
+=+  a=p=1
+q.a
+
 ERROR
 
   trace:  play:

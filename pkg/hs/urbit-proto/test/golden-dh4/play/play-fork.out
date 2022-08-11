@@ -6,6 +6,10 @@ SOFT
 
 ?(%foo %bar)
 
+HARD
+
+?(%foo %bar)
+
 CODE
 
 ?(%foo %bar)

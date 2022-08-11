@@ -6,6 +6,10 @@ SOFT
 
 [%foo 2]
 
+HARD
+
+[%foo 2]
+
 CODE
 
 ["foo" 2]

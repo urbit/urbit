@@ -6,6 +6,13 @@ SOFT
 
 $-(1 2)
 
+HARD
+
+$?  +7
+$|  [$;(1 *) *]
+++  %  2
+--
+
 ERROR
 
   trace:  play:
@@ -13,6 +20,48 @@ ERROR
           sut   0|*
           ----
           code  $-(1 2)
+
+          work:
+          lvl   0
+          sut   0|*
+          ----
+          mode  nest
+          code  $|  [$;(1 *) *]
+                ++  %  2
+                --
+
+          type  $
+
+          play:
+          lvl   0
+          sut   0|*
+          ----
+          code  $|  [$;(1 *) *]
+                ++  %  2
+                --
+
+
+          work:
+          lvl   0
+          sut   0|*
+          ----
+          mode  nest
+          code  [$;(1 *) *]
+          type  $
+
+          work:
+          lvl   0
+          sut   0|*
+          ----
+          mode  nest
+          code  $;(1 *)
+          type  $
+
+          play:
+          lvl   0
+          sut   0|*
+          ----
+          code  $;(1 *)
 
           work:
           lvl   0

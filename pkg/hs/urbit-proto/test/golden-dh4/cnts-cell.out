@@ -20,6 +20,17 @@ SOFT
     a(d d.a)
 ==
 
+HARD
+
+=+  a=[b=1 c=2 d=[3 4]]
+:*  a
+    a
+    a(b 2, c [88 99])
+    d.a(+3 123)
+    a(b d.a(+2 [0 0 0]))
+    a(d d.a)
+==
+
 CODE
 
 =+  [1 2 3 4]
@@ -35,14 +46,16 @@ TYPE
 
 :*  [b=@ud c=@ud d=[@ud @ud]]
     [b=@ud c=@ud d=[@ud @ud]]
-    [b=@ud c=[@ud @ud] d=[@ud @ud]]
-    [@ud @ud]
-    :+  b=[[@ud @ud @ud] @ud]
+    :+  b=2|@ud
+      c=[88 99]|[@ud @ud]
+    d=[@ud @ud]
+    [@ud 123|@ud]
+    :+  b=[[0 0 0] 4]|[[0 0 0]|[@ud @ud @ud] @ud]
       c=@ud
     d=[@ud @ud]
     b=@ud
     c=@ud
-    d=[@ud @ud]
+    d=[3 4]|[@ud @ud]
 ==
 
 BASE

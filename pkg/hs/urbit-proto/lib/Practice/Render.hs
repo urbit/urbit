@@ -300,7 +300,7 @@ instance Rolling Hoon where
     --
     Bass b -> roll b
     Bcbr s t ms ->
-      Huge $ Stem "$|" "--" [tank $ roll s, tank $ roll t] (arms ms)
+      Huge $ Stem "$|" "--" [tank $ roll s{-, tank $ roll t-}] (arms ms)
     Bccb h -> going (\(_, s) -> (Long, "_" <> s)) (Palm "$_" . singleton)
             $ roll h
     Bccl s ss -> running "$:" "==" "{" "}" (map roll $ s:ss)
@@ -316,9 +316,10 @@ instance Rolling Hoon where
       where tnk = Rose "$>" "==" $ map (tank . roll) [s, t]
     Bchp s t -> fixed "$-" "$-(" ")" [roll s, roll t]
     Bckt s t -> fixed "$^" "$^(" ")" [roll s, roll t]
+    Bcmc s t -> fixed "$;" "$;(" ")" [roll s, roll t]
     Bcts s t -> binary "$=" "|" (roll s) (roll t)
     Bcpt s t -> fixed "$@" "$@(" ")" [roll s, roll t]
-    Bcwt ms -> Huge $ Stem "$?" "--" [] (arms ms)
+    Bcwt w s -> fixed "$?" "$?(" ")" [roll w, roll s]
     --
     Brcn ms -> Huge $ Stem "|%" "--" [] (arms ms)
     Brts s h -> fixed "|=" "|=(" ")" [roll s, roll h]
@@ -356,7 +357,7 @@ instance Rolling Hoon where
     Ktls h j -> Huge $ Palm "^+" [tank $ roll h, tank $ roll j]
     Kthp s h -> Huge $ Palm "^-" [tank $ roll s, tank $ roll h]
     Ktfs h s -> binary "^/" "/" (roll h) (roll s)
-    Ktwt h -> fixed "^?" "^?(" ")" [roll h]
+    Ktwt w h -> fixed "^?" "^?(" ")" [roll w, roll h]
     Ktts s h -> binary "^=" "=" (roll s) (roll h)
     Ktcl s -> fixed "^:" "^:(" ")" [roll s]
     Ktcn s -> fixed "^%" "^%(" ")" [roll s]
@@ -374,10 +375,15 @@ instance Rolling Hoon where
     -- b
     Tsfs s h j -> Huge $ Palm "=/" [tank $ roll s, tank $ roll h, tank $ roll j]
     Tsmc s h j -> Huge $ Palm "=;" [tank $ roll s, tank $ roll h, tank $ roll j]
+    Tscl s h j -> Huge $ Palm "=:" [tank $ roll s, tank $ roll h, tank $ roll j]
     Tsdt w h j -> Huge $ Palm "=." [tank $ roll w, tank $ roll h, tank $ roll j]
     Tswt w h j k -> Huge $ Palm "=?" $ tank (roll w) : map (tank.roll) [h, j, k]
     Tsgl h j -> binary "=<" ":" (roll h) (roll j)
-    Tsgr h j -> Huge $ Palm "=>" [tank $ roll h, tank $ roll j]
+    -- TODO reduce awful
+    Tsgr h j -> case (roll j, roll h) of
+      (Smol Scat t1 x, Smol _ t2 y) ->
+        Smol Long (Palm "=>" [t2, t1]) (x <> ":" <> y)
+      (r2, r1) -> Huge (Palm "=>" [tank r1, tank r2])
     Tshp h j -> Huge $ Palm "=-" [tank $ roll h, tank $ roll j]
     Tskt s w h j -> Huge $ Palm "=^"
       [tank $ roll s, tank $ roll w, tank $ roll h, tank $ roll j]

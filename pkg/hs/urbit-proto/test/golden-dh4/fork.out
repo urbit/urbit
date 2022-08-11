@@ -8,6 +8,11 @@ SOFT
 ^-  ?(%foo %bar)
 %foo
 
+HARD
+
+^-  ?(%foo %bar)
+%foo
+
 CODE
 
 "foo"

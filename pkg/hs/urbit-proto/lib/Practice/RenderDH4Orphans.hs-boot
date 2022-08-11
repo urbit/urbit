@@ -27,6 +27,8 @@ instance Rolling [Fish]
 
 instance Var a => Rolling (Cube a)
 
-instance Var a => Rolling (Lace a)
+instance Rolling Warp
+
+instance Var a => Rolling (Weft a)
 
 instance Rolling Fail

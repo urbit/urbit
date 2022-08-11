@@ -17,7 +17,8 @@ data Fish
 data Con a
 data Line a
 data Cube a
-data Lace a
+data Warp
+data Weft a
 
 data Fail
 
@@ -25,4 +26,4 @@ type role Semi representational
 type role Con  representational
 type role Line representational
 type role Cube representational
-type role Lace nominal
+type role Weft nominal

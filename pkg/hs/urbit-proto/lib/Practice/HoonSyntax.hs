@@ -33,9 +33,10 @@ data Hoon
   | Bcgr Spec Skin  -- ^ fuse type
   | Bchp Spec Spec  -- ^ function
   | Bckt Spec Spec  -- ^ god save me
-  | Bcts Hoon Spec  -- ^ singleton type
+  | Bcmc Spec Spec  -- ^ alternative type for core formal
   | Bcpt Spec Spec  -- ^ atomic-cellular disjunction
-  | Bcwt (Map Term Spec)  -- ^ lead core type
+  | Bcts Hoon Spec  -- ^ singleton type
+  | Bcwt Wing Spec  -- ^ sealed type
   --
   | Brcn (Map Term Hoon)
   | Brts Skin Hoon
@@ -67,7 +68,7 @@ data Hoon
   | Kthp Spec Hoon
   | Ktfs Hoon Spec
   -- | Ktsg fold constant?
-  | Ktwt Hoon  -- ^ lead
+  | Ktwt Wing Hoon  -- ^ cast to sealed type
   | Ktts Skin Hoon  -- ^ apply faces
   | Ktcl Spec  -- ^ mold
   | Ktcn Hoon
@@ -78,6 +79,7 @@ data Hoon
   --
   | Tsfs Skin Hoon Hoon
   | Tsmc Skin Hoon Hoon  -- XX why is this not =\
+  | Tscl Spec Hoon Hoon
   | Tsdt Wing Hoon Hoon
   | Tswt Wing Hoon Hoon Hoon
   | Tsgl Hoon Hoon
@@ -184,9 +186,10 @@ rune = choice
   , r2   "$>" Bcgr spec skin
   , r2   "$-" Bchp spec spec
   , r2   "$^" Bckt spec spec
+  , r2   "$;" Bcmc spec spec
   , r2   "$=" Bcts hoon spec
   , r2   "$@" Bcpt spec spec
-  , hop  "$?" Bcwt term spec
+  , r2   "$?" Bcwt wing spec
   --
   , hop  "|%" Brcn term hoon
   , r2   "|=" Brts skin hoon
@@ -214,7 +217,7 @@ rune = choice
   , r2   "^+" Ktls hoon hoon
   , r2   "^-" Kthp spec hoon
   , r2   "^/" Ktfs hoon spec
-  , r1   "^?" Ktwt hoon
+  , r2   "^?" Ktwt wing hoon
   , r2   "^=" Ktts skin hoon
   , r1   "^:" Ktcl spec
   , r1   "^%" Ktcn hoon
@@ -224,6 +227,7 @@ rune = choice
   --
   , r3   "=/" Tsfs skin hoon hoon
   , r3   "=;" Tsmc skin hoon hoon
+  , r3   "=:" Tscl spec hoon hoon
   , r3   "=." Tsdt wing hoon hoon
   , r2   "=<" Tsgl hoon hoon
   , r2   "=>" Tsgr hoon hoon
