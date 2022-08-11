@@ -1830,8 +1830,6 @@ u3m_boot(c3_c* dir_c)
   if ( c3n == nuu_o ) {
     u3j_ream();
     u3n_ream();
-    // TODO: remove me before PR
-    u3m_reclaim();
     return u3A->eve_d;
   }
   else {
@@ -1926,4 +1924,3 @@ u3m_pack(void)
 
   return (u3a_open(u3R) - pre_w);
 }
-
