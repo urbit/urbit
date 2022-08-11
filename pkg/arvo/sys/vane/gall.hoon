@@ -2064,6 +2064,15 @@
       acc
     (~(put in acc) [dude -.agent.yoke])
   ::
+  ?:  ?&  =(%f care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    :+  ~  ~
+    :-  %nonces  !>  ^-  (map dude @)
+    (~(run by yokes.state) |=(yoke sub-nonce))
+  ::
   ?:  ?&  =(%n care)
           ?=([@ @ ^] path)
           =([%$ %da now] coin)
