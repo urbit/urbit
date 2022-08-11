@@ -11,16 +11,17 @@
       [%3 network:one:store]
       [%4 network:store]
       [%5 network:store]
-      state-6
+      [%6 network:store]
+      state-7
   ==
 ::-
-+$  state-6  [%6 network:store]
++$  state-7  [%7 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 ++  mar      %graph-update-3
 --
 ::
-=|  state-6
+=|  state-7
 =*  state  -
 ::
 %-  agent:dbug
@@ -96,7 +97,32 @@
       (scag 2 (tap:orm-log update-log))
     ==
   ::
-    %6  [cards this(state old)]
+      %6
+    %_    $
+        -.old  %7
+    ::
+        graphs.old
+      %-  ~(rut by graphs.old)
+      |=  [=resource:store =graph:store mar=(unit mark)]
+      ^-  [graph:store (unit mark)]
+      :_  mar
+      |-  =*  loop-graph  $
+      ^-  graph:store
+      %+  run:orm:store  graph
+      |=  =node:store
+      ?.  ?=(%& -.post.node)
+        node
+      %_    node
+          signatures.p.post  *signatures:store
+      ::
+          children
+        ?.  ?=(%graph -.children.node)
+          children.node
+        [%graph loop-graph(graph p.children.node)]
+      ==
+    ==
+  ::
+    %7  [cards this(state old)]
   ==
 ::
 ++  on-watch

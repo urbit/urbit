@@ -758,9 +758,9 @@
   --
 ++  import
   |=  [arc=* our=ship]
-  ^-  (quip card:agent:gall [%6 network])
+  ^-  (quip card:agent:gall [%7 network])
   |^
-  =/  sty  [%6 (remake-network ;;(tree-network +.arc))]
+  =/  sty  [%7 (remake-network ;;(tree-network +.arc))]
   :_  sty
   %+  turn  ~(tap by graphs.sty)
   |=  [rid=resource =marked-graph]
