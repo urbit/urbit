@@ -1776,7 +1776,7 @@
       |-  ^+  ap-core
       ?~  subs  ap-core
       =+  [wyr dok]=i.subs
-      ?:  =(ship `ship.dok)
+      ?:  &(?=(^ ship) !=(u.ship ship.dok))
         $(subs t.subs)
       ::  kill old-style subscription wire with no nonce
       ::
