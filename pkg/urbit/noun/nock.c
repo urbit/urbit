@@ -1736,16 +1736,16 @@ _is_indexed(c3_w op)
   // NOTE: this logic is copied from ___
   // and must be changed here if that changes.
   switch (op) {
-  case FIBK: case FIBK+1:
-  case FIBL: case FIBL+1:
-  case LIBK: case LIBK+1:
-  case LIBL: case LIBL+1:
-  case BUSH: case BUSH+1:
-  case SANB: case SANB+1:
-  case KITB: case KITB+1:
-  case MITB: case MITB+1:
-  case HILB: case HILB+1:
-  case HINB: case HINB+1:
+    case FIBK: case FISK:
+    case FIBL: case FISL:
+    case LIBK: case LISK:
+    case LIBL: case LISL:
+    case BUSH: case SUSH:
+    case SANB: case SANS:
+    case KITB: case KITS:
+    case MITB: case MITS:
+    case HILB: case HILS:
+    case HINB: case HINS:
     return 1;
   default:
     return 0;
