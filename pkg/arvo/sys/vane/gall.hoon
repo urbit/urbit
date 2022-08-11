@@ -1785,9 +1785,10 @@
       ::
       =/  let  (~(got by boar.yoke) wyr dok)
       =/  non  0
+      =/  pre  "gall: +ap-doff {<[agent-name wyr dok]>}"
+      =-  ((slog leaf+"{pre} done" ~) -)
+      %-  (slog leaf+"{pre} {<,.let>} total..." ~)
       |-  ^+  ap-core
-      %-  =-  (slog leaf+- ~)
-          "gall: +ap-doff {<[agent-name wyr dok]>} {<non>}/{<,.let>}"
       =.  ap-core  (ap-pass [(scot %ud non) wyr] %agent dok %leave ~)
       ?:  (lth non let)
         $(non +(non))
