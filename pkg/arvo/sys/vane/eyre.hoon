@@ -756,46 +756,53 @@
   ::
   ++  handle-name
     |=  [authenticated=? =request:http]
-    ^-  (quip move server-state)
+    |^  ^-  (quip move server-state)
     ?.  authenticated
-      (error-response authenticated url.request 403 ~)
+      (error-response 403 ~)
     ?.  =(%'GET' method.request)
-      (error-response authenticated url.request 405 "may only GET name")
+      (error-response 405 "may only GET name")
     %^  return-static-data-on-duct  200  'text/plain'
     (as-octs:mimes:html (scot %p our))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
     |=  [authenticated=? =address =request:http]
     |^  ^-  (quip move server-state)
     ?.  authenticated
-      (error-response authenticated url.request 403 ~)
+      (error-response 403 ~)
     ?.  =(%'GET' method.request)
-      (error-response authenticated url.request 405 "may only GET scries")
+      (error-response 405 "may only GET scries")
     ::  make sure the path contains an app to scry into
     ::
     =+  req=(parse-request-line url.request)
     ?.  ?=(^ site.req)
-      (error-response authenticated url.request 400 "scry path must start with app name")
+      (error-response 400 "scry path must start with app name")
     ::  attempt the scry that was asked for
     ::
     =/  res=(unit (unit cage))
       (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
-    ?~  res    (error-response authenticated url.request 500 "failed scry")
-    ?~  u.res  (error-response authenticated url.request 404 "no scry result")
+    ?~  res    (error-response 500 "failed scry")
+    ?~  u.res  (error-response 404 "no scry result")
     =*  mark   p.u.u.res
     =*  vase   q.u.u.res
     ::  attempt to find conversion gate to mime
     ::
     =/  tub=(unit tube:clay)
       (find-tube i.site.req mark %mime)
-    ?~  tub  (error-response authenticated url.request 500 "no tube from {(trip mark)} to mime")
+    ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
     ::
     =/  mym=(each mime tang)
       (mule |.(!<(mime (u.tub vase))))
     ?-  -.mym
-      %|  (error-response authenticated url.request 500 "failed tube from {(trip mark)} to mime")
+      %|  (error-response 500 "failed tube from {(trip mark)} to mime")
       %&  %+  return-static-data-on-duct  200
           [(rsh 3 (spat p.p.mym)) q.p.mym]
     ==
@@ -818,6 +825,11 @@
       ^-  (unit (unit cage))
       (rof ~ care [our desk da+now] path)
     ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
     --
   ::  +subscribe-to-app: subscribe to app and poke it with request data
   ::
@@ -884,13 +896,6 @@
         data=[~ data]
         complete=%.y
     ==
-  ::  +error-response: return error data all at once
-  ::
-  ++  error-response
-    |=  [authenticated=? url=@t status=@ud =tape]
-    ^-  (quip move server-state)
-    %^  return-static-data-on-duct  status  'text/html'
-    (error-page status authenticated url tape)
   ::  +authentication: per-event authentication as this Urbit's owner
   ::
   ::    Right now this hard codes the authentication page using the old +code
