@@ -433,14 +433,7 @@
   ::
   ++  mo-doff
     |=  [dude=(unit dude) ship=(unit ship)]
-    ^+  mo-core
-    =/  apps=(list (pair term yoke))
-      ?~  dude  ~(tap by yokes.state)
-      (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
-    |-  ^+  mo-core
-    ?~  apps  mo-core
-    =/  ap-core  (ap-yoke:ap:mo-core p.i.apps [~ our] q.i.apps)
-    $(apps t.apps, mo-core ap-abet:(ap-doff:ap-core ship))
+    ~&(%not-implemented mo-core)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
