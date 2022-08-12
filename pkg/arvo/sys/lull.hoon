@@ -1274,6 +1274,9 @@
   ::         entry and emit a nack to the local vane that asked us to send
   ::         the message.
   ::    heeds: listeners for %clog notifications
+  ::    closing: bones closed on the sender side
+  ::    corked:  bones closed on both sender and receiver
+  ::    krocs:   bones that need to be sent again to the publisher
   ::
   +$  peer-state
     $:  $:  =symmetric-key
@@ -1291,6 +1294,7 @@
         heeds=(set duct)
         closing=(set bone)
         corked=(set bone)
+        krocs=(set bone)
         scry=scry-state
     ==
   +$  scry-state
@@ -2641,6 +2645,7 @@
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%nuke =dude]                                   ::  delete agent
+        [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade

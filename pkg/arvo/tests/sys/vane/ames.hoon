@@ -391,10 +391,14 @@
       !>  [~[/g/talk] %give %boon [%post 'first1']]
       !>  (snag 0 `(list move:ames)`moves6)
   ==
+::  +test-comet-message-flow: galaxy<->comet comms
+::
+::    same as test-message-flow, but ~nec will send a sendkeys packet to
+::    request comet's self-attestation directly
 ::
 ++  test-comet-message-flow  ^-  tang
-  ::  same as test-message-flow, but ~nec will send a sendkeys packet to request
-  ::  comet's self-attestation directly
+  ::=^  *       nec   (call nec ~[//nemo] %spew ~[%snd %rcv %odd %msg])
+  ::=^  *     comet   (call comet ~[//nemo] %spew ~[%snd %rcv %odd %msg])
   ::
   =^  moves0  nec    (call nec ~[/g/talk] %plea our-comet %g /talk [%get %post])
   =^  moves1  comet  (call comet ~[//unix] %hear (snag-packet 0 moves0))
@@ -409,27 +413,34 @@
     :^  comet  /public-keys  ~[//unix]
     ^-  sign:ames
     [%jael %public-keys %full [n=[~nec point] ~ ~]]
-  ::  give comet's self-attestation to ~nec; at this point, we have established
-  ::  a channel, and can proceed as usual
+  ::  give comet's self-attestation to ~nec; at this point, we have
+  ::  established a channel, and can proceed as usual
   ::
+  =/  post  [%post 'first1!!']
   =^  moves3  nec    (call nec ~[//unix] %hear (snag-packet 0 moves2))
+  %+  weld
+    %-  expect-fail  |.
+    (call nec ~[//unix] %hear (snag-packet 1 moves2))
+  ::
   =^  moves4  comet  (call comet ~[//unix] %hear (snag-packet 0 moves3))
-  =^  moves5  comet  (take comet /bone/~nec/0/1 ~[//unix] %g %done ~)
+  =^  moves5  comet  (take comet /bone/~nec/1/1 ~[//unix] %g %done ~)
   =^  moves6  nec    (call nec ~[//unix] %hear (snag-packet 0 moves5))
-  =^  moves7  comet  (take comet /bone/~nec/0/1 ~[//unix] %g %boon [%post 'first1!!'])
+  =^  moves7  comet  (take comet /bone/~nec/1/1 ~[//unix] %g %boon post)
   =^  moves8  nec    (call nec ~[//unix] %hear (snag-packet 0 moves7))
   ::
   ;:  weld
     %+  expect-eq
-      !>  [~[//unix] %pass /qos %d %flog %text "; ~nec is your neighbor"]
+      !>  =-  [~[//unix] %pass /qos %d %flog %text -]
+              "; ~nec is your neighbor"
       !>  (snag 0 `(list move:ames)`moves4)
   ::
     %+  expect-eq
-      !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet>} is your neighbor"]
+      !>  =-  [~[//unix] %pass /qos %d %flog %text -]
+              "; {<our-comet>} is your neighbor"
       !>  (snag 0 `(list move:ames)`moves6)
   ::
     %+  expect-eq
-      !>  [~[/g/talk] %give %boon [%post 'first1!!']]
+      !>  [~[/g/talk] %give %boon post]
       !>  (snag 0 `(list move:ames)`moves8)
   ==
 ::
