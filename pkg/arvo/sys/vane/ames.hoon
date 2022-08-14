@@ -1040,9 +1040,10 @@
         larval-gate
       ::
           [%8 %adult *]
-        =.  cached-state  `[%8 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
-        larval-gate
+        (load:adult-core %7 state.old)
+        ::=.  cached-state  `[%8 state.old]
+        ::~>  %slog.0^leaf/"ames: larva reload"
+        ::larval-gate
       ::
           [%8 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
@@ -1157,8 +1158,11 @@
 ++  load
   =<  |=  $=  old-state
           $%  [%save ^ames-state]
+              [%8 ames-state-8]
           ==
       ^+  ames-gate
+      =?  old-state  ?=(%8 -.old-state)
+        [%save (state-8-to-save +.old-state)]
       ?>  ?=(%save -.old-state)
       ames-gate(ames-state +.old-state)
   ::
