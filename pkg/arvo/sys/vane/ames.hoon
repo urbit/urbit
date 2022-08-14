@@ -2329,6 +2329,7 @@
     ++  on-wake
       |=  [=bone error=(unit tang)]
       ^+  peer-core
+      ::  throttle a couple ships
       ?:  ?=  $?  %~marnec-dozzod-marzod
                   %~tirrel
               ==
@@ -2338,7 +2339,9 @@
         ?~  next-wake.packet-pump-state.u.message-pump-state
           peer-core
         =/  wen  (add now.channel ~d6)
-        =.  next-wake.packet-pump-state.u.message-pump-state  `wen
+        =.  snd.peer-state
+          %+  ~(put by snd.peer-state)  bone
+          u.message-pump-state(next-wake.packet-pump-state (some wen))
         =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit duct %pass wire %b %wait wen)
       ::  if we previously errored out, print and reset timer for later
