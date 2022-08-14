@@ -693,7 +693,7 @@
 ::
 +$  cached-state
   %-  unit
-  $%  [%8 ames-state-8]
+  $%  [%8 ames-state]
   ==
 --
 ::  external vane interface
@@ -832,7 +832,7 @@
           $%  $:  %8
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=ames-state-8
+                      state=ames-state
                   ==
                   [%adult state=_ames-state.adult-gate]
           ==  ==  ==
