@@ -1065,16 +1065,8 @@
         `%7^(state-6-to-7:load:adult-core +.u.cached-state)
       =?  cached-state  &(?=(^ cached-state) ?=(%7 +<.cached-state))
         `%8^(state-7-to-8:load:adult-core +.u.cached-state)
-      =.  ames-state.adult-gate
-        ?>  ?=(^ cached-state)
-        =?  u.cached-state  ?=(%5 -.u.cached-state)
-          [%6 (state-5-to-6:load:adult-core +.u.cached-state)]
-        =?  u.cached-state  ?=(%6 -.u.cached-state)
-          [%7 (state-6-to-7:load:adult-core +.u.cached-state)]
-        =?  u.cached-state  ?=(%7 -.u.cached-state)
-          [%8 (state-7-to-8:load:adult-core +.u.cached-state)]
-        ?>  ?=(%8 -.u.cached-state)
-        (state-8-to-save:load:adult-core +.u.cached-state)
+      =?  cached-state  &(?=(^ cached-state) ?=(%8 +<.cached-state))
+        `%8^(state-8-to-save:load:adult-core +.u.cached-state)
       =.  cached-state  ~
       ~>  %slog.0^leaf/"ames: metamorphosis reload"
       [moves adult-gate]
