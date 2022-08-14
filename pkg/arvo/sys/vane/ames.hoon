@@ -536,7 +536,7 @@
       closing=(set bone)
       corked=(set bone)
       ::krocs=(set bone)  ::  missing
-      scry=scry-state
+      scry=*
   ==
 ::
 +$  peer-state-5
@@ -989,7 +989,7 @@
               ==  ==
               $:  %8
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu *)  ::  this will be empty
                       state=ames-state-8
                   ==
                   [%adult state=ames-state-8]
@@ -1259,7 +1259,7 @@
     ^-  ship-state
     ?:  ?=(%alien -.old)
       old
-    old(scry [krocs=*(set bone) scry.old])
+    old(scry [krocs=*(set bone) *scry-state])
   --
 ::  +scry: dereference namespace
 ::
