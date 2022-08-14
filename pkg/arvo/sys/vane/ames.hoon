@@ -1192,18 +1192,6 @@
     ?:  ?=(%alien -.old)
       old(heeds [heeds.old ~ ~])
     old(corked [corked.old krocs=~ *scry-state])
-  ::  +state-7-to-8 called from larval-ames
-  ::
-  ++  state-7-to-8
-    |=  ames-state=ames-state-7
-    ^-  ^^ames-state
-    :*  peers.ames-state
-        unix-duct.ames-state
-        life.ames-state
-        crypto-core.ames-state
-        bug.ames-state
-        corks=*(set wire)
-    ==
   --
 ::  +scry: dereference namespace
 ::
