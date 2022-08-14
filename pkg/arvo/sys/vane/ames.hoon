@@ -492,67 +492,6 @@
       =bug
       corks=(set wire)
   ==
-+$  ames-state-8
-  $:  peers=(map ship ship-state-8)
-      =unix=duct
-      =life
-      =rift
-      crypto-core=acru:ames
-      =bug
-      corks=(set wire)
-  ==
-+$  ames-state-4  ames-state-5
-+$  ames-state-5
-  $:  peers=(map ship ship-state-5)
-      =unix=duct
-      =life
-      crypto-core=acru-6
-      =bug
-  ==
-::
-+$  ship-state-8
-  $%  [%alien alien-agenda]
-      [%known peer-state-8]
-  ==
-+$  ship-state-4  ship-state-5
-+$  ship-state-5
-  $%  [%alien alien-agenda-7]
-      [%known peer-state-5]
-  ==
-+$  peer-state-8
-  $:  $:  =symmetric-key
-          =life
-          =rift
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      =qos
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-      closing=(set bone)
-      corked=(set bone)
-      ::krocs=(set bone)  ::  missing
-      scry=scry-state
-  ==
-::
-+$  peer-state-5
-  $:  $:  =symmetric-key
-          =life
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      =qos
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-  ==
 ::
 ++  acru-6  $_  ^?
   |%
