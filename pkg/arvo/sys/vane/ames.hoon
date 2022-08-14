@@ -1189,7 +1189,7 @@
     ^-  ship-state
     ?:  ?=(%alien -.old)
       old(heeds [heeds.old ~ ~])
-    old(corked [corked.old *scry-state])
+    old(corked [corked.old krocs=~ *scry-state])
   ::  +state-7-to-8 called from larval-ames
   ::
   ++  state-7-to-8
