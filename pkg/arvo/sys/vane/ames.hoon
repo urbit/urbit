@@ -499,7 +499,7 @@
       =rift
       crypto-core=acru:ames
       =bug
-      corks=(set wire)
+      ::corks=(set wire)  ::  missing from ~rovnys
   ==
 +$  ames-state-4  ames-state-5
 +$  ames-state-5
