@@ -952,47 +952,41 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%save %larva queued-events ames-state.adult-gate]
+    ++  stay  [%save %larva ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
               $%  $:  %larva
-                      events=(qeu queued-event)
                       state=ames-state-4
                   ==
                   [%adult state=ames-state-4]
               ==  ==
               $:  %5
               $%  $:  %larva
-                      events=(qeu queued-event)
                       state=ames-state-5
                   ==
                   [%adult state=ames-state-5]
               ==  ==
               $:  %6
               $%  $:  %larva
-                      events=(qeu queued-event)
                       state=ames-state-6
                   ==
                   [%adult state=ames-state-6]
               ==  ==
               $:  %7
               $%  $:  %larva
-                      events=(qeu queued-event)
                       state=ames-state-7
                   ==
                   [%adult state=ames-state-7]
               ==  ==
               $:  %8
               $%  $:  %larva
-                      events=(qeu *)  ::  this will be empty
                       state=ames-state-8
                   ==
                   [%adult state=ames-state-8]
               ==  ==
               $:  %save
               $%  $:  %larva
-                      events=(qeu queued-event)
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
@@ -1012,7 +1006,6 @@
       ::
           [%5 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
         larval-gate
       ::
           [%6 %adult *]
@@ -1022,7 +1015,6 @@
       ::
           [%6 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
         larval-gate
       ::
           [%7 %adult *]
@@ -1032,7 +1024,6 @@
       ::
           [%7 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
         larval-gate
       ::
           [%8 %adult *]
@@ -1043,7 +1034,6 @@
       ::
           [%8 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
         larval-gate
       ::
           [%save %adult *]  (load:adult-core %save state.old)
