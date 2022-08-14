@@ -986,7 +986,7 @@
               $:  %8
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=_ames-state.adult-gate
+                      state=ames-state-8
                   ==
                   [%adult state=_ames-state.adult-gate]
               ==  ==
