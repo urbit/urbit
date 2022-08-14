@@ -1021,7 +1021,7 @@
         =?  u.cached-state  ?=(%6 -.u.cached-state)
           [%7 (state-6-to-7:load:adult-core +.u.cached-state)]
         ?>  ?=(%7 -.u.cached-state)
-        (state-7-to-8:load:adult-core +.u.cached-state)
+        (state-7-to-8-larva:load:adult-core +.u.cached-state)
       =.  cached-state  ~
       ~>  %slog.0^leaf/"ames: metamorphosis reload"
       [moves adult-gate]
@@ -1168,10 +1168,11 @@
     :-  %known
     ^-  peer-state-7
     :-  +<.ship-state
+    ~!  ship-state
     [route qos ossuary snd rcv nax heeds ~ ~]:ship-state
-  ::  +state-7-to-8 called from larval-ames
+  ::  +state-7-to-8-larva called from larval-ames
   ::
-  ++  state-7-to-8
+  ++  state-7-to-8-larva
     |=  old=ames-state-7
     ^-  ^ames-state
     =+  !<  =rift
