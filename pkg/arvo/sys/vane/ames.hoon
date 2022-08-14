@@ -901,7 +901,7 @@
   =<  |=  $=  old-state
           $%  [%save %adult ^ames-state]
               $:  %8
-              $%  [%larva q=(qeu) s=ames=state-8]
+              $%  [%larva q=(qeu) s=ames-state-8]
                   [%adult s=ames-state-8]
           ==  ==  ==
       ^+  ames-gate
