@@ -819,7 +819,6 @@
   ==
 ::  adult ames, after metamorphosis from larva
 ::
-=<
 =|  =ames-state
 |=  [now=@da eny=@ rof=roof]
 =*  ames-gate  .
