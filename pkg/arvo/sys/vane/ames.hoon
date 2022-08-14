@@ -1155,7 +1155,10 @@
   ++  state-8-to-save
     |=  old=ames-state-8
     ^-  ^ames-state
-    old(peers (~(run by peers.old) ship-state-8-to-save))
+    %=  old
+      peers  (~(run by peers.old) ship-state-8-to-save)
+      bug  [bug.old corks=*(set wire)]
+    ==
   ::
   ++  ship-state-8-to-save
     |=  old=ship-state-8
