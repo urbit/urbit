@@ -899,18 +899,19 @@
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%save %adult ^ames-state]
+          $%  [%save %adult s=^ames-state]
               $:  %8
               $%  [%larva q=(qeu) s=ames-state-8]
                   [%adult s=ames-state-8]
           ==  ==  ==
       ^+  ames-gate
-      =?  old-state  ?=(%8 -.old-state)
-        ?>  =(~ q.old-state)
-        [%save %adult (state-8-to-save s.old-state)]
-      ?>  ?=(%save -.old-state)
-      ?>  ?=(%adult +<.old-state)
-      ames-gate(ames-state +>.old-state)
+      =/  new=^ames-state
+        ?+  old-state  !!
+          [%save %adult *]  s.old-state
+          [%8 %larva ~ *]   (state-8-to-save s.old-state)
+          [%8 %adult *]     (state-8-to-save s.old-state)
+        ==
+      ames-gate(ames-state new)
   ::
   |%
   ::  +state-4-to-5 called from larval-ames
