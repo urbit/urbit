@@ -2329,6 +2329,17 @@
     ++  on-wake
       |=  [=bone error=(unit tang)]
       ^+  peer-core
+      ?:  ?=  $?  %~marnec-dozzod-marzod
+                  %~tirrel
+              ==
+            her.channel
+        ?~  message-pump-state=(~(get by snd.peer-state) bone)
+          peer-core
+        ?~  next-wake.packet-pump-state.u.message-pump-state
+          peer-core
+        =/  wen  (add now.channel ~d6)
+        =.  next-wake.packet-pump-state.u.message-pump-state  `wen
+        (emit duct %pass wire %b %wait wen)
       ::  if we previously errored out, print and reset timer for later
       ::
       ::    This really shouldn't happen, but if it does, make sure we
