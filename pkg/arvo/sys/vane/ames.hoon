@@ -817,9 +817,10 @@
         ?.  ?=(^ cached-state)
           ~>  %slog.0^leaf/"ames: metamorphosis"
           [moves adult-gate]
-        %-  molt
-        ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
+        !!  ::  ~rovnys won't do this
+        ::%-  molt
+        ::~>  %slog.0^leaf/"ames: init daily recork timer"
+        :::_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
