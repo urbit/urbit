@@ -820,7 +820,12 @@
   ==
 ::
 +$  cached-state
-  (unit $%([%5 ames-state-5] [%6 ames-state-6] [%7 ames-state-7]))
+  %-  unit
+  $%  [%5 ames-state-5]
+      [%6 ames-state-6]
+      [%7 ames-state-7]
+      [%8 ames-state-8]
+  ==
 --
 ::  external vane interface
 ::
