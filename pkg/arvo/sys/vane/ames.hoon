@@ -855,100 +855,18 @@
       ::
       ?^  dud
         ~|(%ames-larval-call-dud (mean tang.u.dud))
-      ::
-      ?:  ?=(^ cached-state)
-        =^  moves  adult-gate  (call:adult-core duct dud task)
-        %-  molt
-        ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
-      ::  %born: set .unix-duct and start draining .queued-events
-      ::
-      ?:  ?=(%born -.task)
-        ::  process %born using wrapped adult ames
-        ::
-        =^  moves  adult-gate  (call:adult-core duct dud task)
-        ::  if no events were queued up, metamorphose
-        ::
-        ~>  %slog.0^leaf/"ames: metamorphosis"
-        [moves adult-gate]
-      ::  any other event: enqueue it until we have a .unix-duct
-      ::
-      ::    XX what to do with errors?
-      ::
+      ::  ~rovnys-specific
+      ~&  %ames-call-larva
       !!
-      ::=.  queued-events  (~(put to queued-events) %call duct task)
-      ::[~ larval-gate]
     ::  +take: handle response $sign
     ::
     ++  take
       |=  [=wire =duct dud=(unit goof) =sign]
       ?^  dud
         ~|(%ames-larval-take-dud (mean tang.u.dud))
-::      ::  enqueue event if not a larval drainage timer
-::      ::
-::      =?  queued-events  !=(/larva wire)
-::        (~(put to queued-events) %take wire duct sign)
-      ::  start drainage timer if have regressed from adult ames
-      ::
-      ?:  ?&  !=(/larva wire)
-              ?=(^ cached-state)
-          ==
-        [[duct %pass /larva %b %wait now]~ larval-gate]
-      ::    XX what to do with errors?
-      ::
-      ?.  =(/larva wire)  [~ larval-gate]
-      ::  larval event drainage timer; pop and process a queued event
-      ::
-      ?.  ?=([%behn %wake *] sign)
-        ~>  %slog.0^leaf/"ames: larva: strange sign"
-        [~ larval-gate]
-      ::  if crashed, print, dequeue, and set next drainage timer
-      ::
-      ?^  error.sign
-        ::  .queued-events should never be ~ here, but if it is, don't crash
-        ::
-::        ?:  =(~ queued-events)
-          =/  =tang  [leaf/"ames: cursed metamorphosis" u.error.sign]
-          =/  moves  [duct %pass /larva-crash %d %flog %crud %larva tang]~
-          [moves adult-gate]
-::        ::  dequeue and discard crashed event
-::        ::
-::        =.  queued-events  +:~(get to queued-events)
-::        ::  .queued-events has been cleared; metamorphose
-::        ::
-::        ?~  queued-events
-::          ~>  %slog.0^leaf/"ames: metamorphosis"
-::          [~ adult-gate]
-::        ::  set timer to drain next event
-::        ::
-::        =/  moves
-::          =/  =tang  [leaf/"ames: larva: drain crash" u.error.sign]
-::          :~  [duct %pass /larva-crash %d %flog %crud %larva tang]
-::              [duct %pass /larva %b %wait now]
-::          ==
-::        [moves larval-gate]
-      ::  normal drain timer; dequeue and run event
-      ::
-      ::=^  first-event  queued-events  ~(get to queued-events)
-      ::=^  moves  adult-gate
-      ::  ?-  -.first-event
-      ::    %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
-      ::    %take  (take:adult-core [wire duct ~ sign]:+.first-event)
-      ::  ==
-      ::::  .queued-events has been cleared; metamorphose
-      ::
-      ::?~  queued-events
-        ?.  ?=(^ cached-state)
-          ~>  %slog.0^leaf/"ames: metamorphosis"
-          [moves adult-gate]
-        %-  molt
-        ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
-      ::~&  %ames-larva-drain
-      ::::  set timer to drain next event
-      ::::
-      ::=.  moves  :_(moves [duct %pass /larva %b %wait now])
-      ::[moves larval-gate]
+      ::  ~rovnys-specific
+      ~&  %ames-take-larva
+      !!
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
