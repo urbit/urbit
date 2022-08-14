@@ -578,72 +578,6 @@
     --
   --
 ::
-+$  ames-state-6
-  $:  peers=(map ship ship-state-6)
-      =unix=duct
-      =life
-      crypto-core=acru-6
-      =bug
-  ==
-::
-+$  ship-state-6
-  $%  [%alien alien-agenda-7]
-      [%known peer-state-6]
-  ==
-::
-+$  peer-state-6
-  $:  $:  =symmetric-key
-          =life
-          =rift
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      =qos
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-  ==
-::
-+$  ames-state-7
-  $:  peers=(map ship ship-state-7)
-      =unix=duct
-      =life
-      crypto-core=acru-7
-      =bug
-  ==
-::
-+$  ship-state-7
-  $%  [%alien alien-agenda-7]
-      [%known peer-state-7]
-  ==
-::
-+$  alien-agenda-7
-  $:  messages=(list [=duct =plea])
-      packets=(set =blob)
-      heeds=(set duct)
-  ==
-::
-+$  peer-state-7
-  $:  $:  =symmetric-key
-          =life
-          =rift
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      =qos
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-      closing=(set bone)
-      corked=(set bone)
-  ==
-::
 ++  acru-7  $_  ^?
   |%
   ++  as  ^?
@@ -820,10 +754,7 @@
 ::
 +$  cached-state
   %-  unit
-  $%  [%5 ames-state-5]
-      [%6 ames-state-6]
-      [%7 ames-state-7]
-      [%8 ames-state-8]
+  $%  [%8 ames-state-8]
   ==
 --
 ::  external vane interface
@@ -956,105 +887,23 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%save %larva queued-events ames-state.adult-gate]
+    ++  stay  [%8 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
-          $%  $:  %4
-              $%  $:  %larva
-                      events=(qeu queued-event)
-                      state=ames-state-4
-                  ==
-                  [%adult state=ames-state-4]
-              ==  ==
-              $:  %5
-              $%  $:  %larva
-                      events=(qeu queued-event)
-                      state=ames-state-5
-                  ==
-                  [%adult state=ames-state-5]
-              ==  ==
-              $:  %6
-              $%  $:  %larva
-                      events=(qeu queued-event)
-                      state=ames-state-6
-                  ==
-                  [%adult state=ames-state-6]
-              ==  ==
-              $:  %7
-              $%  $:  %larva
-                      events=(qeu queued-event)
-                      state=ames-state-7
-                  ==
-                  [%adult state=ames-state-7]
-              ==  ==
-              $:  %8
+          $%  $:  %8
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=ames-state-8
                   ==
                   [%adult state=_ames-state.adult-gate]
-              ==  ==
-              $:  %save
-              $%  $:  %larva
-                      events=(qeu queued-event)
-                      state=_ames-state.adult-gate
-                  ==
-                  [%adult state=_ames-state.adult-gate]
           ==  ==  ==
       ?-    old
-          [%4 %adult *]
-        $(old [%5 %adult (state-4-to-5:load:adult-core state.old)])
-      ::
-          [%4 %larva *]
-        =.  state.old  (state-4-to-5:load:adult-core state.old)
-        $(-.old %5)
-      ::
-           [%5 %adult *]
-        =.  cached-state  `[%5 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
-        larval-gate
-      ::
-          [%5 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
-        larval-gate
-      ::
-          [%6 %adult *]
-        =.  cached-state  `[%6 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
-        larval-gate
-      ::
-          [%6 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
-        larval-gate
-      ::
-          [%7 %adult *]
-        =.  cached-state  `[%7 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
-        larval-gate
-      ::
-          [%7 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
-        larval-gate
-      ::
-          [%8 %adult *]
-        =.  cached-state  `[%8 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
-        larval-gate
+          [%8 %adult *]  (load:adult-core %8 state.old)
       ::
           [%8 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
-        larval-gate
-      ::
-          [%save %adult *]  (load:adult-core %save state.old)
-      ::
-          [%save %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %save state.old)
+        =.  adult-gate     (load:adult-core %8 state.old)
         larval-gate
        ::
       ==
@@ -1063,18 +912,13 @@
     ++  molt
       |=  moves=(list move)
       ^-  (quip move _adult-gate)
-      =?  cached-state  &(?=(^ cached-state) ?=(%5 +<.cached-state))
-        `%6^(state-5-to-6:load:adult-core +.u.cached-state)
-      =?  cached-state  &(?=(^ cached-state) ?=(%6 +<.cached-state))
-        `%7^(state-6-to-7:load:adult-core +.u.cached-state)
-      =?  cached-state  &(?=(^ cached-state) ?=(%7 +<.cached-state))
-        `%8^(state-7-to-8:load:adult-core +.u.cached-state)
-      =.  ames-state.adult-gate
-        ?>  &(?=(^ cached-state) ?=(%8 +<.cached-state))
-        (state-8-to-save:load:adult-core +.u.cached-state)
-      =.  cached-state  ~
-      ~>  %slog.0^leaf/"ames: metamorphosis reload"
-      [moves adult-gate]
+      !!  ::  ~rovnys is an adult
+::      =.  ames-state.adult-gate
+::        ?>  &(?=(^ cached-state) ?=(%8 +<.cached-state))
+::        (state-8-to-save:load:adult-core +.u.cached-state)
+::      =.  cached-state  ~
+::      ~>  %slog.0^leaf/"ames: metamorphosis reload"
+::      [moves adult-gate]
     --
 ::  adult ames, after metamorphosis from larva
 ::
@@ -1151,111 +995,16 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%save %adult ames-state]
+++  stay  [%8 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%save ^ames-state]
+          $%  [%8 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%save -.old-state)
+      ?>  ?=(%8 -.old-state)
       ames-gate(ames-state +.old-state)
-  ::
-  |%
-  ::  +state-4-to-5 called from larval-ames
-  ::
-  ++  state-4-to-5
-    |=  ames-state=ames-state-4
-    ^-  ames-state-5
-    =.  peers.ames-state
-      %-  ~(run by peers.ames-state)
-      |=  ship-state=ship-state-4
-      ?.  ?=(%known -.ship-state)
-        ship-state
-      =.  snd.ship-state
-        %-  ~(run by snd.ship-state)
-        |=  =message-pump-state
-        =.  num-live.metrics.packet-pump-state.message-pump-state
-          ~(wyt in live.packet-pump-state.message-pump-state)
-        message-pump-state
-      ship-state
-    ames-state
-  ::  +state-5-to-6 called from larval-ames
-  ::
-  ++  state-5-to-6
-    |=  ames-state=ames-state-5
-    ^-  ames-state-6
-    :_  +.ames-state
-    %-  ~(rut by peers.ames-state)
-    |=  [=ship ship-state=ship-state-5]
-    ^-  ship-state-6
-    ?.  ?=(%known -.ship-state)
-      ship-state
-    =/  peer-state=peer-state-5  +.ship-state
-    =/  =rift
-      ::  harcoded because %jael doesn't have data about comets
-      ::
-      ?:  ?=(%pawn (clan:title ship))  0
-      ;;  @ud
-      =<  q.q  %-  need  %-  need
-      (rof ~ %j `beam`[[our %rift %da now] /(scot %p ship)])
-    :-   -.ship-state
-    :_  +.peer-state
-    =,  -.peer-state
-    [symmetric-key life rift public-key sponsor]
-  ::  +state-6-to-7 called from larval-ames
-  ::
-  ++  state-6-to-7
-    |=  ames-state=ames-state-6
-    ^-  ames-state-7
-    :_  +.ames-state
-    %-  ~(run by peers.ames-state)
-    |=  ship-state=ship-state-6
-    ^-  ship-state-7
-    ?.  ?=(%known -.ship-state)
-      ship-state
-    :-  %known
-    ^-  peer-state-7
-    :-  +<.ship-state
-    ~!  ship-state
-    [route qos ossuary snd rcv nax heeds ~ ~]:ship-state
-  ::  +state-7-to-8 called from larval-ames
-  ::
-  ++  state-7-to-8
-    |=  old=ames-state-7
-    ^-  ames-state-8
-    =+  !<  =rift
-        q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
-    :*  peers=(~(run by peers.old) ship-state-7-to-8)
-        unix-duct.old
-        life.old
-        rift
-        crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
-        bug.old
-        corks=*(set wire)
-    ==
-  ::
-  ++  ship-state-7-to-8
-    |=  old=ship-state-7
-    ^-  ship-state-8
-    *ship-state-8
-    ::  not needed, ~rovnys was already at 8
-    ::?:  ?=(%alien -.old)
-    ::  old(heeds [heeds.old ~ ~])
-    ::old(corked [corked.old *scry-state])
-  ::
-  ++  state-8-to-save
-    |=  old=ames-state-8
-    ^-  ^ames-state
-    old(peers (~(run by peers.old) ship-state-8-to-save))
-  ::
-  ++  ship-state-8-to-save
-    |=  old=ship-state-8
-    ^-  ship-state
-    ?:  ?=(%alien -.old)
-      old
-    old(scry [krocs=*(set bone) scry.old])
   --
 ::  +scry: dereference namespace
 ::
