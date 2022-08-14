@@ -1234,7 +1234,7 @@
         rift
         crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
         bug.old
-        ::corks=*(set wire)  ::  missing from ~rovnys
+        corks=*(set wire)  ::  missing from ~rovnys
     ==
   ::
   ++  ship-state-7-to-8
@@ -1249,8 +1249,7 @@
   ++  state-8-to-save
     |=  old=ames-state-8
     ^-  ^ames-state
-    =-  old(peers -, bug [bug.old corks=*(set wire)])
-    (~(run by peers.old) ship-state-8-to-save)
+    old(peers (~(run by peers.old) ship-state-8-to-save))
   ::
   ++  ship-state-8-to-save
     |=  old=ship-state-8
@@ -1408,8 +1407,8 @@
       [~ ~ *]  ``noun+!>((etch-hunk:fin pax.tyl hunk [p q.q]:u.u.res))
     ==
   ::
-::    [%corks ~]
-::  ``noun+!>(~(tap in corks.ames-state))
+    [%corks ~]
+  ``noun+!>(~(tap in corks.ames-state))
   ==
 --
 ::  |per-event: inner event-handling core
