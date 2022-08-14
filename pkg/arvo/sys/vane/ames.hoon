@@ -490,9 +490,18 @@
       =rift
       crypto-core=acru:ames
       =bug
-      ::corks=(set wire)  ::  TODO: bring back for return to mainline
+      corks=(set wire)
   ==
-::
++$  ames-state-save  ames-state
++$  ames-state-8
+  $:  peers=(map ship ship-state-8)
+      =unix=duct
+      =life
+      =rift
+      crypto-core=acru:ames
+      =bug
+      ::  missing .corks
+  ==
 +$  ames-state-4  ames-state-5
 +$  ames-state-5
   $:  peers=(map ship ship-state-5)
@@ -502,10 +511,33 @@
       =bug
   ==
 ::
++$  ship-state-8
+  $%  [%alien alien-agenda]
+      [%known peer-state-8]
+  ==
 +$  ship-state-4  ship-state-5
 +$  ship-state-5
   $%  [%alien alien-agenda-7]
       [%known peer-state-5]
+  ==
++$  peer-state-8
+  $:  $:  =symmetric-key
+          =life
+          =rift
+          =public-key
+          sponsor=ship
+      ==
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+      closing=(set bone)
+      corked=(set bone)
+      ::krocs=(set bone)  ::  missing
+      scry=scry-state
   ==
 ::
 +$  peer-state-5
@@ -920,7 +952,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%8 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%save %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -952,6 +984,12 @@
                   [%adult state=ames-state-7]
               ==  ==
               $:  %8
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=_ames-state.adult-gate
+                  ==
+                  [%adult state=_ames-state.adult-gate]
+              $:  %save
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -996,12 +1034,22 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%8 %adult *]  (load:adult-core %8 state.old)
+          [%8 %adult *]
+        =.  cached-state  `[%8 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%8 %larva *]
+        ~>  %slog.0^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        larval-gate
+      ::
+          [%save %adult *]  (load:adult-core %save state.old)
+      ::
+          [%save %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %8 state.old)
+        =.  adult-gate     (load:adult-core %save state.old)
         larval-gate
        ::
       ==
@@ -1014,14 +1062,18 @@
         `%6^(state-5-to-6:load:adult-core +.u.cached-state)
       =?  cached-state  &(?=(^ cached-state) ?=(%6 +<.cached-state))
         `%7^(state-6-to-7:load:adult-core +.u.cached-state)
+      =?  cached-state  &(?=(^ cached-state) ?=(%7 +<.cached-state))
+        `%8^(state-7-to-8:load:adult-core +.u.cached-state)
       =.  ames-state.adult-gate
         ?>  ?=(^ cached-state)
         =?  u.cached-state  ?=(%5 -.u.cached-state)
           [%6 (state-5-to-6:load:adult-core +.u.cached-state)]
         =?  u.cached-state  ?=(%6 -.u.cached-state)
           [%7 (state-6-to-7:load:adult-core +.u.cached-state)]
-        ?>  ?=(%7 -.u.cached-state)
-        (state-7-to-8-larva:load:adult-core +.u.cached-state)
+        =?  u.cached-state  ?=(%7 -.u.cached-state)
+          [%7 (state-7-to-8:load:adult-core +.u.cached-state)]
+        ?>  ?=(%8 -.u.cached-state)
+        (state-8-to-save:load:adult-core +.u.cached-state)
       =.  cached-state  ~
       ~>  %slog.0^leaf/"ames: metamorphosis reload"
       [moves adult-gate]
@@ -1101,15 +1153,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%8 %adult ames-state]
+++  stay  [%save %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%8 ^ames-state]
+          $%  [%save ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%8 -.old-state)
+      ?>  ?=(%save -.old-state)
       ames-gate(ames-state +.old-state)
   ::
   |%
@@ -1170,11 +1222,11 @@
     :-  +<.ship-state
     ~!  ship-state
     [route qos ossuary snd rcv nax heeds ~ ~]:ship-state
-  ::  +state-7-to-8-larva called from larval-ames
+  ::  +state-7-to-8 called from larval-ames
   ::
-  ++  state-7-to-8-larva
+  ++  state-7-to-8
     |=  old=ames-state-7
-    ^-  ^ames-state
+    ^-  ames-state-8
     =+  !<  =rift
         q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
     :*  peers=(~(run by peers.old) ship-state-7-to-8)
@@ -1183,15 +1235,30 @@
         rift
         crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
         bug.old
-        ::corks=*(set wire)
+        ::corks=*(set wire)  ::  missing from ~rovnys
     ==
   ::
   ++  ship-state-7-to-8
     |=  old=ship-state-7
+    ^-  ship-state-8
+    *ship-state-8
+    ::  not needed, ~rovnys was already at 8
+    ::?:  ?=(%alien -.old)
+    ::  old(heeds [heeds.old ~ ~])
+    ::old(corked [corked.old *scry-state])
+  ::
+  ++  state-8-to-save
+    |=  old=ames-state-8
+    ^-  ^ames-state
+    =-  old(peers -, bug [bug.old corks=*(set wire)])
+    (~(run by peers.old) ship-state-8-to-save)
+  ::
+  ++  ship-state-8-to-save
+    |=  old=ship-state-8
     ^-  ship-state
     ?:  ?=(%alien -.old)
-      old(heeds [heeds.old ~ ~])
-    old(corked [corked.old krocs=~ *scry-state])
+      old
+    old(scry [krocs=*(set bone) scry.old])
   --
 ::  +scry: dereference namespace
 ::
