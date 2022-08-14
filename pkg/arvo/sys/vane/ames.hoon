@@ -1072,7 +1072,7 @@
         =?  u.cached-state  ?=(%6 -.u.cached-state)
           [%7 (state-6-to-7:load:adult-core +.u.cached-state)]
         =?  u.cached-state  ?=(%7 -.u.cached-state)
-          [%7 (state-7-to-8:load:adult-core +.u.cached-state)]
+          [%8 (state-7-to-8:load:adult-core +.u.cached-state)]
         ?>  ?=(%8 -.u.cached-state)
         (state-8-to-save:load:adult-core +.u.cached-state)
       =.  cached-state  ~
