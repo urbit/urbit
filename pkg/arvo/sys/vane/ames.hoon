@@ -806,7 +806,7 @@
       ::
 ::      =^  first-event  queued-events  ~(get to queued-events)
 ::      =^  moves  adult-gate
-      =^  moves  adult-gate  [*move adult-gate]
+      =^  moves  adult-gate  [*(list move) adult-gate]
 ::        ?-  -.first-event
 ::          %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
 ::          %take  (take:adult-core [wire duct ~ sign]:+.first-event)
