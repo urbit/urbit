@@ -2339,6 +2339,7 @@
           peer-core
         =/  wen  (add now.channel ~d6)
         =.  next-wake.packet-pump-state.u.message-pump-state  `wen
+        =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit duct %pass wire %b %wait wen)
       ::  if we previously errored out, print and reset timer for later
       ::
