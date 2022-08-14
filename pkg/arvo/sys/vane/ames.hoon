@@ -820,6 +820,7 @@
 --
 ::  adult ames, after metamorphosis from larva
 ::
+|=  our=ship
 =<
 =|  =ames-state
 |=  [now=@da eny=@ rof=roof]
