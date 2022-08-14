@@ -1168,7 +1168,7 @@
     :-  %known
     ^-  peer-state-7
     :-  +<.ship-state
-    [route qos ossuary snd rcv nax heeds ~ ~ ~]:ship-state
+    [route qos ossuary snd rcv nax heeds ~ ~]:ship-state
   ::  +state-7-to-8 called from larval-ames
   ::
   ++  state-7-to-8
