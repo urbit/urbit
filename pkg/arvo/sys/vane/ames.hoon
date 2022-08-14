@@ -1183,6 +1183,7 @@
         rift
         crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
         bug.old
+        corks=*(set wire)
     ==
   ::
   ++  ship-state-7-to-8
@@ -1201,7 +1202,7 @@
         life.ames-state
         crypto-core.ames-state
         bug.ames-state
-        *(set wire)
+        corks=*(set wire)
     ==
   --
 ::  +scry: dereference namespace
