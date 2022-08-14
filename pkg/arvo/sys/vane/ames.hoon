@@ -999,13 +999,12 @@
 ::  +load: load in old state after reload
 ::
 ++  load
-  =<  |=  $=  old-state
+      |=  $=  old-state
           $%  [%8 ^ames-state]
           ==
       ^+  ames-gate
       ?>  ?=(%8 -.old-state)
       ames-gate(ames-state +.old-state)
-  --
 ::  +scry: dereference namespace
 ::
 ++  scry
