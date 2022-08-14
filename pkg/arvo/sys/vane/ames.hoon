@@ -492,7 +492,6 @@
       =bug
       corks=(set wire)
   ==
-+$  ames-state-save  ames-state
 +$  ames-state-8
   $:  peers=(map ship ship-state-8)
       =unix=duct
@@ -500,7 +499,7 @@
       =rift
       crypto-core=acru:ames
       =bug
-      ::  missing .corks
+      corks=(set wire)
   ==
 +$  ames-state-4  ames-state-5
 +$  ames-state-5
@@ -1234,7 +1233,7 @@
         rift
         crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
         bug.old
-        corks=*(set wire)  ::  missing from ~rovnys
+        corks=*(set wire)
     ==
   ::
   ++  ship-state-7-to-8
