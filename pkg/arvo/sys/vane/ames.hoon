@@ -817,169 +817,6 @@
       [%send =message-num =ack-meat]
       [%cork ~]
   ==
-::
-+$  cached-state
-  %-  unit
-  $%  [%5 ames-state-5]
-      [%6 ames-state-6]
-      [%7 ames-state-7]
-      [%8 ames-state-8]
-  ==
---
-::  external vane interface
-::
-|=  our=ship
-::  larval ames, before %born sets .unix-duct; wraps adult ames core
-::
-=<  =*  adult-gate  .
-    =|  =cached-state
-    ::
-    |=  [now=@da eny=@ rof=roof]
-    =*  larval-gate  .
-    =*  adult-core   (adult-gate +<)
-    =<  |%
-        ++  call  ^call
-        ++  load  ^load
-        ++  scry  ^scry
-        ++  stay  ^stay
-        ++  take  ^take
-        --
-    |%
-    ::  +call: handle request $task
-    ::
-    ++  call
-      |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
-      ::
-      =/  =task  ((harden task) wrapped-task)
-      ::  reject larval error notifications
-      ::
-      ?^  dud
-        ~|(%ames-larval-call-dud (mean tang.u.dud))
-      ::  ~rovnys-specific
-      ~&  %ames-call-larva
-      !!
-    ::  +take: handle response $sign
-    ::
-    ++  take
-      |=  [=wire =duct dud=(unit goof) =sign]
-      ?^  dud
-        ~|(%ames-larval-take-dud (mean tang.u.dud))
-      ::  ~rovnys-specific
-      ~&  %ames-take-larva
-      !!
-    ::  lifecycle arms; mostly pass-throughs to the contained adult ames
-    ::
-    ++  scry  scry:adult-core
-    ++  stay  [%save %larva ames-state.adult-gate]
-    ++  load
-      |=  $=  old
-          $%  $:  %4
-              $%  $:  %larva
-                      state=ames-state-4
-                  ==
-                  [%adult state=ames-state-4]
-              ==  ==
-              $:  %5
-              $%  $:  %larva
-                      state=ames-state-5
-                  ==
-                  [%adult state=ames-state-5]
-              ==  ==
-              $:  %6
-              $%  $:  %larva
-                      state=ames-state-6
-                  ==
-                  [%adult state=ames-state-6]
-              ==  ==
-              $:  %7
-              $%  $:  %larva
-                      state=ames-state-7
-                  ==
-                  [%adult state=ames-state-7]
-              ==  ==
-              $:  %8
-              $%  $:  %larva
-                      state=ames-state-8
-                  ==
-                  [%adult state=ames-state-8]
-              ==  ==
-              $:  %save
-              $%  $:  %larva
-                      state=_ames-state.adult-gate
-                  ==
-                  [%adult state=_ames-state.adult-gate]
-          ==  ==  ==
-      ?-    old
-          [%4 %adult *]
-        $(old [%5 %adult (state-4-to-5:load:adult-core state.old)])
-      ::
-          [%4 %larva *]
-        =.  state.old  (state-4-to-5:load:adult-core state.old)
-        $(-.old %5)
-      ::
-           [%5 %adult *]
-        =.  cached-state  `[%5 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
-        larval-gate
-      ::
-          [%5 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        larval-gate
-      ::
-          [%6 %adult *]
-        =.  cached-state  `[%6 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
-        larval-gate
-      ::
-          [%6 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        larval-gate
-      ::
-          [%7 %adult *]
-        =.  cached-state  `[%7 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
-        larval-gate
-      ::
-          [%7 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        larval-gate
-      ::
-          [%8 %adult *]
-        (load:adult-core %8 state.old)
-        ::=.  cached-state  `[%8 state.old]
-        ::~>  %slog.0^leaf/"ames: larva reload"
-        ::larval-gate
-      ::
-          [%8 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        larval-gate
-      ::
-          [%save %adult *]  (load:adult-core %save state.old)
-      ::
-          [%save %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
-        =.  adult-gate     (load:adult-core %save state.old)
-        larval-gate
-       ::
-      ==
-    ::  +molt: re-evolve to adult-ames
-    ::
-    ++  molt
-      |=  moves=(list move)
-      ^-  (quip move _adult-gate)
-      =?  cached-state  &(?=(^ cached-state) ?=(%5 +<.cached-state))
-        `%6^(state-5-to-6:load:adult-core +.u.cached-state)
-      =?  cached-state  &(?=(^ cached-state) ?=(%6 +<.cached-state))
-        `%7^(state-6-to-7:load:adult-core +.u.cached-state)
-      =?  cached-state  &(?=(^ cached-state) ?=(%7 +<.cached-state))
-        `%8^(state-7-to-8:load:adult-core +.u.cached-state)
-      =.  ames-state.adult-gate
-        ?>  &(?=(^ cached-state) ?=(%8 +<.cached-state))
-        (state-8-to-save:load:adult-core +.u.cached-state)
-      =.  cached-state  ~
-      ~>  %slog.0^leaf/"ames: metamorphosis reload"
-      [moves adult-gate]
-    --
 ::  adult ames, after metamorphosis from larva
 ::
 =<
@@ -1060,14 +897,18 @@
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%save ^ames-state]
-              [%8 ames-state-8]
-          ==
+          $%  [%save %adult ames-state]
+              $:  %8
+              $%  [%larva q=(qeu) s=ames=state-8]
+                  [%adult s=ames-state-8]
+          ==  ==  ==
       ^+  ames-gate
       =?  old-state  ?=(%8 -.old-state)
-        [%save (state-8-to-save +.old-state)]
+        ?>  =(~ q.old-state)
+        [%save %adult (state-8-to-save s.old-state)]
       ?>  ?=(%save -.old-state)
-      ames-gate(ames-state +.old-state)
+      ?>  ?=(%adult +<.old-state)
+      ames-gate(ames-state +>.old-state)
   ::
   |%
   ::  +state-4-to-5 called from larval-ames
