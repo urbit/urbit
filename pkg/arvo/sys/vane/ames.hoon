@@ -1040,7 +1040,7 @@
         larval-gate
       ::
           [%8 %adult *]
-        (load:adult-core %7 state.old)
+        (load:adult-core %8 state.old)
         ::=.  cached-state  `[%8 state.old]
         ::~>  %slog.0^leaf/"ames: larva reload"
         ::larval-gate
