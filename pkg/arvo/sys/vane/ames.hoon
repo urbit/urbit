@@ -490,7 +490,7 @@
       =rift
       crypto-core=acru:ames
       =bug
-      corks=(set wire)
+      ::corks=(set wire)  ::  TODO: bring back for return to mainline
   ==
 ::
 +$  ames-state-4  ames-state-5
@@ -1183,7 +1183,7 @@
         rift
         crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
         bug.old
-        corks=*(set wire)
+        ::corks=*(set wire)
     ==
   ::
   ++  ship-state-7-to-8
@@ -1342,8 +1342,8 @@
       [~ ~ *]  ``noun+!>((etch-hunk:fin pax.tyl hunk [p q.q]:u.u.res))
     ==
   ::
-      [%corks ~]
-    ``noun+!>(~(tap in corks.ames-state))
+::    [%corks ~]
+::  ``noun+!>(~(tap in corks.ames-state))
   ==
 --
 ::  |per-event: inner event-handling core
@@ -4261,7 +4261,7 @@
   ++  clamp-rto
     |=  rto=@dr
     ^+  rto
-    (min ~s5 (max ^~((div ~s1 5)) rto))
+    (min ~d1 (max ^~((div ~s1 5)) rto))
   ::  +in-slow-start: %.y iff we're in "slow-start" mode
   ::
   ++  in-slow-start
