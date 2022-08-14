@@ -702,7 +702,7 @@
 ::  larval ames, before %born sets .unix-duct; wraps adult ames core
 ::
 =<  =*  adult-gate  .
-    =|  queued-events=(qeu queued-event)
+    =|  queued-events=(qeu *)  ::  ~rovnys has grown past this
     =|  =cached-state
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -751,7 +751,7 @@
       ::
       ::    XX what to do with errors?
       ::
-      =.  queued-events  (~(put to queued-events) %call duct task)
+      ::=.  queued-events  (~(put to queued-events) %call duct task)
       [~ larval-gate]
     ::  +take: handle response $sign
     ::
@@ -761,8 +761,8 @@
         ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::  enqueue event if not a larval drainage timer
       ::
-      =?  queued-events  !=(/larva wire)
-        (~(put to queued-events) %take wire duct sign)
+::      =?  queued-events  !=(/larva wire)
+::        (~(put to queued-events) %take wire duct sign)
       ::  start drainage timer if have regressed from adult ames
       ::
       ?:  ?&  !=(/larva wire)
@@ -788,7 +788,7 @@
           [moves adult-gate]
         ::  dequeue and discard crashed event
         ::
-        =.  queued-events  +:~(get to queued-events)
+::        =.  queued-events  +:~(get to queued-events)
         ::  .queued-events has been cleared; metamorphose
         ::
         ?~  queued-events
@@ -804,12 +804,12 @@
         [moves larval-gate]
       ::  normal drain timer; dequeue and run event
       ::
-      =^  first-event  queued-events  ~(get to queued-events)
-      =^  moves  adult-gate
-        ?-  -.first-event
-          %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
-          %take  (take:adult-core [wire duct ~ sign]:+.first-event)
-        ==
+::      =^  first-event  queued-events  ~(get to queued-events)
+::      =^  moves  adult-gate
+::        ?-  -.first-event
+::          %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
+::          %take  (take:adult-core [wire duct ~ sign]:+.first-event)
+::        ==
       ::  .queued-events has been cleared; metamorphose
       ::
       ?~  queued-events
@@ -831,7 +831,7 @@
       |=  $=  old
           $%  $:  %8
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu *)
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
