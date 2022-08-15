@@ -604,31 +604,37 @@
     =/  dux=(list duct)
       ~(tap in wards.state)
     |-
-    ?^  dux
-      |-
-      ?~  dif  ^$(dux t.dux)
-      =.  mo-core  (mo-give(hen i.dux) %perm i.dif)
-      $(dif t.dif)
-    ::
-    =/  dif-map
-      (~(gas by *(map desk [free=(set perm) lock=(set perm)])) dif)
-    =/  desks  ~(tap in ~(key by dif-map))
-    ::
-    ::TODO this is simply a list of all dudes and their desks. we actually
-    ::  only want the ones for which perms have changed
-    =/  aps=(list [=dude =desk])
-      %+  turn  ~(tap by yokes.state)
-      |=  [=dude yoke]
-      [dude q.beak]
-    ::
+    ?~  dux  mo-core
     |-
-    ?~  aps  mo-core
-    =/  dude-dif  (~(get by dif-map) desk.i.aps)
-    ?~  dude-dif
-      $(aps t.aps)
-    =.  mo-core
-      ap-abet:(ap-perm:(ap-abed:ap dude.i.aps `our) [desk.i.aps u.dude-dif])
-    $(aps t.aps)
+    ?~  dif  ^$(dux t.dux)
+    =.  mo-core  (mo-give(hen i.dux) %perm i.dif)
+    $(dif t.dif)
+    ::  |-
+    ::  ?^  dux
+    ::    |-
+    ::    ?~  dif  ^$(dux t.dux)
+    ::    =.  mo-core  (mo-give(hen i.dux) %perm i.dif)
+    ::    $(dif t.dif)
+    ::
+    ::  =/  dif-map
+    ::    (~(gas by *(map desk [free=(set perm) lock=(set perm)])) dif)
+    ::  =/  desks  ~(tap in ~(key by dif-map))
+    ::  ::
+    ::  ::TODO this is simply a list of all dudes and their desks. we actually
+    ::  ::  only want the ones for which perms have changed
+    ::  =/  aps=(list [=dude =desk])
+    ::    %+  turn  ~(tap by yokes.state)
+    ::    |=  [=dude yoke]
+    ::    [dude q.beak]
+    ::  ::
+    ::  |-
+    ::  ?~  aps  mo-core
+    ::  =/  dude-dif  (~(get by dif-map) desk.i.aps)
+    ::  ?~  dude-dif
+    ::    $(aps t.aps)
+    ::  =.  mo-core
+    ::    ap-abet:(ap-perm:(ap-abed:ap dude.i.aps `our) [desk.i.aps u.dude-dif])
+    ::  $(aps t.aps)
   ::
   ::  +mo-ward: add permission notification subsciber
   ::
@@ -890,11 +896,14 @@
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::
+    ::TODO: this is not the right way to inform an agent
+    ::since they haven't subscribed to perm notifications,
+    ::so they just crash
     ++  ap-perm
       |=  dif=[=desk free=(set perm) lock=(set perm)]
       ^+  ap-core
       ::TODO  fake wire
-      (ap-generic-take /~ %gall %perm dif)
+      (ap-generic-take /perms %gall %perm dif)
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -1483,6 +1492,7 @@
         |=  =card:agent
         (cred our card (~(get ju perms.state) q.beak.yoke))
       ~?  !=(~ bad)  [%would-drop agent-name (turn bad head)]
+::      =/  moves  (zing (turn gud ap-from-internal))
       =/  moves  (zing (turn -.p.result ap-from-internal))
       =.  inbound.watches.yoke
         (ap-handle-kicks moves)
