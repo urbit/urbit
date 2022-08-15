@@ -917,19 +917,33 @@
     =/  running  (~(get by yokes.state) agent)
     =/  is-running  ?~(running %| ?=(%& -.agent.u.running))
     =/  is-blocked  (~(has by blocked.state) agent)
+    ::  agent is running; deliver move normally
     ::
-    ?:  |(!is-running is-blocked)
-      =/  blocked=(qeu blocked-move)
-        =/  waiting  (~(get by blocked.state) agent)
-        =/  deals  (fall waiting *(qeu blocked-move))
-        =/  deal  [hen routes &+deal]
-        (~(put to deals) deal)
-      ::
-      %-  (slog leaf+"gall: not running {<agent>} yet, got {<-.deal>}" ~)
-      %_  mo-core
-        blocked.state  (~(put by blocked.state) agent blocked)
-      ==
-    (mo-apply agent routes deal)
+    ?.  |(!is-running is-blocked)
+      (mo-apply agent routes deal)
+    ::  %hood or %dojo must run; wake them up
+    ::
+    ?:  ?=(?(%hood %dojo) agent-name)
+      ~>  %slog.2^leaf/"gall: force load {<agent-name>}"
+      =/  bek=beak  [our q.beak.yoke da+now]
+      =/  rag  (mo-scry-agent-cage agent-name q.bek da+now)
+      ?:  ?=(%| -.rag)
+        ~>  %slog.2^leaf/"gall: force load {<agent-name>} failed"
+        (mean p.rag)
+      =.  mo-core  (mo-receive-core:cor dap bek p.rag)
+      ~>  %slog.2^leaf/"gall: force load {<agent-name>} succeeded"
+      (mo-apply agent routes deal)
+    ::
+    =/  blocked=(qeu blocked-move)
+      =/  waiting  (~(get by blocked.state) agent)
+      =/  deals  (fall waiting *(qeu blocked-move))
+      =/  deal  [hen routes &+deal]
+      (~(put to deals) deal)
+    ::
+    %-  (slog leaf+"gall: not running {<agent>} yet, got {<-.deal>}" ~)
+    %_  mo-core
+      blocked.state  (~(put by blocked.state) agent blocked)
+    ==
   ::  +mo-handle-ames-request: handle %ames request message.
   ::
   ++  mo-handle-ames-request
