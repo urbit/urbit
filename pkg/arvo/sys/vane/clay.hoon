@@ -3129,7 +3129,6 @@
           %c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
           %d  ~|  %totally-temporary-error-please-replace-me  !!
           %e  ~|  %yes-naves-also-shouldnt-cross-the-network  !!
-          %g  ~|  %g-network-error-replace-me                 !!
           %f  ~|  %even-static-casts-should-be-built-locally  !!
           %p  ~|  %requesting-foreign-permissions-is-invalid  !!
           %r  ~|  %no-cages-please-they-are-just-way-too-big  !!
@@ -3871,17 +3870,6 @@
         (build-cast:(aeon-ford aeon) [i i.t]:path)
       :_(..park [~ ~ %cast vase])
     ::
-    ::TODO: should this look more like +read-v and return the dome at
-    ::a given aeon rather than just the current one?
-    ++  read-g
-      !.
-      |=  [=aeon =path]
-      ^-  (unit (unit cage))
-      ::TODO: do i want this check?
-      ?.  =(our her)
-        [~ ~]
-      ``[%foam -:!>(*foam:clay) [[let hit lab] tom nor liv ren pes]:dom]
-    ::
     ::  XX move to +read-buc
     ::
     ++  read-d
@@ -4252,7 +4240,6 @@
           %d  [(read-d yon path.mun) ..park]
           %e  (read-e yon path.mun)
           %f  (read-f yon path.mun)
-          %g  [(read-g yon path.mun) ..park]
           %p  [(read-p path.mun) ..park]
           %r  (read-r yon path.mun)
           %s  [(read-s yon path.mun) ..park]
@@ -5361,10 +5348,11 @@
     ?~  path
       ~
     ?+    i.path  ~
-        %sweep  ``[%sweep !>(sweep)]
-        %rang   ``[%rang !>(ran.ruf)]
-        %tomb   ``[%flag !>((tomb t.path))]
-        %domes  domes
+        %sweep   ``[%sweep !>(sweep)]
+        %rang    ``[%rang !>(ran.ruf)]
+        %tomb    ``[%flag !>((tomb t.path))]
+        %domes   domes
+        %loams   loams
     ==
   ::
   ++  domes
@@ -5453,6 +5441,14 @@
     ?:  =(need have)
       ~
     `u=[need have leak]
+  ::
+  ::TODO: refactor to use +domes?
+  ++  loams
+    =;  hon  ``[%loams !>(`hone`hon)]
+    %-  ~(gas by *hone)
+    %+  turn  ~(tap by dos.rom.ruf)
+    |=  [=desk =dojo]
+    [desk [tom nor liv ren pes]:dom.dojo]
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.

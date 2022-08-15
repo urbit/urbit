@@ -801,7 +801,7 @@
         file-path=term                                  ::
     ==                                                  ::
   +$  care                                              ::  clay submode
-    $?  %a  %b  %c  %d  %e  %f  %g  %p  %r              ::
+    $?  %a  %b  %c  %d  %e  %f  %p  %r                  ::
         %s  %t  %u  %v  %w  %x  %y  %z                  ::
     ==
   +$  case                                              ::  ship desk case spur
@@ -822,15 +822,19 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone  (map [ship desk] foam)                      ::  domes
+  +$  cone  (map [ship desk] foam)                      ::  /domes scry return
+  +$  hone  (map desk loam)                             ::  /loams scry return
   +$  foam                                              ::
-    $:  dome                                            ::
-        tom=(map tako norm)                             ::
-        nor=norm                                        ::
-        liv=?                                           ::
-        ren=(map dude:gall ?)                           ::
-        pes=(set perm:gall)                             ::
+    $:  dome                                            ::  ref transparent
+        loam                                            ::  non-ref transparent
     ==                                                  ::
+  +$  loam                                              ::  non-ref transparent
+    $:  tom=(map tako norm)                             ::  tombstone override
+        nor=norm                                        ::  gen tombstone policy
+        liv=?                                           ::  desk liveness
+        ren=(map dude:gall ?)                           ::  liveness override
+        pes=(set perm:gall)                             ::  userspace perms
+    ==
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
