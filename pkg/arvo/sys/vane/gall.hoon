@@ -226,24 +226,6 @@
             (mean u.tan)
           ap-core
         $(apps t.apps, mo-core ap-abet:ap-core)
-      ::  FIXME: ! kiln: %base not installed
-      ::         ! /lib/hood/kiln/hoon:<[461 23].[461 42]>
-      ::         ! /base/gall-lyv
-      ::  kill subscriptions when upgrading to gall request queue fix
-      ::
-      :: =?  mo-core  (lth spore-tag %9)
-      ::   |-  ^+  mo-core
-      ::   ?~  apps  mo-core
-      ::   ~>  %slog.[0 leaf+"gall: +ap-kill-down {<dap.i.apps>}"]
-      ::   =/  ap-core  (ap-abut:ap:mo-core i.apps)
-      ::   =.  ap-core
-      ::     =/  boats=(list [=wire =dock])
-      ::       ~(tap in ~(key by boat.egg.i.apps))
-      ::     |-  ^+  ap-core
-      ::     ?~  boats  ap-core
-      ::     =/  [=wire =dock]  i.boats
-      ::     $(boats t.boats, ap-core (ap-kill-down:ap-core wire dock))
-      ::   $(apps t.apps, mo-core ap-abet:ap-core)
       =.  mo-core  (mo-subscribe-to-agent-builds:mo-core now)
       =^  moves  adult-gate  mo-abet:mo-core
       =?  moves  ?=(^ fec)  (weld moves [u.fec]~)
