@@ -1038,18 +1038,26 @@
     ::
     ?.  |(!is-running is-blocked)
       (mo-apply agent routes deal)
-    ::  %hood or %dojo must run; wake them up
+    ::  if agent must be running, revive all needed agents and apply
     ::
     ?:  ?=(?(%hood %dojo) agent)
-      ~>  %slog.2^leaf/"gall: force load {<agent>}"
-      =/  bek=beak  [our %base da+now]
-      =/  rag  (mo-scry-agent-cage agent q.bek da+now)
-      ?:  ?=(%| -.rag)
-        ~>  %slog.2^leaf/"gall: force load {<agent>} failed"
-        (mean p.rag)
-      =.  mo-core  (mo-receive-core agent bek p.rag)
-      ~>  %slog.2^leaf/"gall: force load {<agent>} succeeded"
-      (mo-apply agent routes deal)
+      |^  ^+  mo-core
+          =.  mo-core  (force-install %hood)
+          =.  mo-core  (force-install %dojo)
+          (mo-apply agent routes deal)
+      ::
+      ++  force-install
+        |=  dap=dude
+        ^+  mo-core
+        ~>  %slog.2^leaf/"gall: force load {<dap>}"
+        ~<  %slog.2^leaf/"gall: force load {<dap>} succeeded"
+        =/  bek=beak  [our %base da+now]
+        =/  rag  (mo-scry-agent-cage dap q.bek da+now)
+        ?:  ?=(%| -.rag)
+          ~>  %slog.2^leaf/"gall: force load {<dap>} failed"
+          (mean p.rag)
+        (mo-receive-core dap bek p.rag)
+      --
     ::
     =/  blocked=(qeu blocked-move)
       =/  waiting  (~(get by blocked.state) agent)
