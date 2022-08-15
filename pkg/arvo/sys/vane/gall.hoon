@@ -288,8 +288,9 @@
   ++  mo-core  .
   ++  mo-abed  |=(hun=duct mo-core(hen hun))
   ++  mo-abet  [(flop moves) gall-payload]
-  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
   ++  mo-give  |=(g=gift mo-core(moves [[hen give+g] moves]))
+  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
+  ++  mo-slip  |=(p=note-arvo mo-core(moves [[hen slip+p] moves]))
   ++  mo-past
     |=  =(list [wire note-arvo])
     ?~  list
@@ -741,6 +742,15 @@
     ?.  =(nonce.u.yoke i.t.wire)
       %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
       mo-core
+    ::  if agent must be running, revive all needed agents then apply
+    ::
+    ?:  ?&  ?=(%| -.agent.u.yoke)
+            ?=(?(%dojo %hood) dap)
+        ==
+      =.  mo-core  (mo-pass /nowhere %g %jolt %base %hood)
+      =.  mo-core  (mo-pass /nowhere %g %jolt %base %dojo)
+      (mo-pass use+wire %b %huck sign-arvo)
+    ::
     ?.  ?=([?(%gall %behn) %unto *] sign-arvo)
       ?:  ?=(%| -.agent.u.yoke)
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
@@ -921,26 +931,12 @@
     ::
     ?.  |(!is-running is-blocked)
       (mo-apply agent routes deal)
-    ::  if agent must be running, revive all needed agents and apply
+    ::  if agent must be running, revive all needed agents then apply
     ::
     ?:  ?=(?(%hood %dojo) agent)
-      |^  ^+  mo-core
-          =.  mo-core  (force-install %hood)
-          =.  mo-core  (force-install %dojo)
-          (mo-apply agent routes deal)
-      ::
-      ++  force-install
-        |=  dap=dude
-        ^+  mo-core
-        ~>  %slog.2^leaf/"gall: force load {<dap>}"
-        ~<  %slog.2^leaf/"gall: force load {<dap>} succeeded"
-        =/  bek=beak  [our %base da+now]
-        =/  rag  (mo-scry-agent-cage dap q.bek da+now)
-        ?:  ?=(%| -.rag)
-          ~>  %slog.2^leaf/"gall: force load {<dap>} failed"
-          (mean p.rag)
-        (mo-receive-core dap bek p.rag)
-      --
+      =.  mo-core  (mo-pass /nowhere %g %jolt %base %hood)
+      =.  mo-core  (mo-pass /nowhere %g %jolt %base %dojo)
+      (mo-slip %g %deal [ship our] agent deal)
     ::
     =/  blocked=(qeu blocked-move)
       =/  waiting  (~(get by blocked.state) agent)
