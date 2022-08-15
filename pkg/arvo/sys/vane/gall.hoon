@@ -1175,7 +1175,7 @@
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
           ==                                          ::
-          :*  per=(~(get ju perms.state) q.beak.yoke) ::  permissions
+          :*  pes=(~(get ju perms.state) q.beak.yoke) ::  permissions
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::

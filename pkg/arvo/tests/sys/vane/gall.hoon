@@ -52,9 +52,9 @@
           `this
         ::
             [%get-perms ~]
-          ~&  per.bowl
+          ~&  pes.bowl
           :_  this
-          [%give %fact ~ %noun !>(per.bowl)]~
+          [%give %fact ~ %noun !>(pes.bowl)]~
         ::
             [%ames-test *]
           :_  this
@@ -173,7 +173,7 @@
   =/  =duct  ~[/init]
   =/  gat
     |=  =bowl:gall
-    =(~ per.bowl)
+    =(~ pes.bowl)
   ::
   =/  =task:agent:gall
     :+  %poke  %noun

@@ -1693,7 +1693,7 @@
                   now=@da                               ::  current time
                   byk=beak                              ::  load source
               ==
-              $:  per=(set perm)
+              $:  pes=(set perm)
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
@@ -1863,7 +1863,7 @@
     ==
   ::
   ++  rite  !:
-    |=  [our=ship [=view =beam] pers=(set perm)]
+    |=  [our=ship [=view =beam] pes=(set perm)]
     ^-  ?
     ?.  =(our p.beam)  |
     =/  vane=term
@@ -1871,7 +1871,7 @@
       ?.  =(2 (met 3 view))
         view
       (end 3 view)
-    %+  lien  ~(tap in pers)
+    %+  lien  ~(tap in pes)
     |=  p=perm
     ?.  ?=(%reads -.p)  |
     ?&  =(vane.p vane)
@@ -1985,15 +1985,15 @@
     ==
 ::
   ++  cred  !:
-    |=  [our=ship =card:agent pers=(set perm)]
+    |=  [our=ship =card:agent pes=(set perm)]
     ^-  ?
     =/  must=$@(? perm)
       (must our card)
     ?@  must  must
-    ?+  must  (~(has in pers) must)
+    ?+  must  (~(has in pes) must)
         [?(%write %watch) *]
       ::TODO  make sure agents on same desk are allowed to talk to each other
-      %+  lien  ~(tap in pers)
+      %+  lien  ~(tap in pes)
       |=  p=perm
       ?&  ?=(?(%write %watch) -.p)
           =(-.must -.p)
@@ -2007,7 +2007,7 @@
         [%clay ?(%write %local %build) *]
       =/  =desk  (need desk.must)
       :: =/  =spur  (need spur.must)
-      %+  lien  ~(tap in pers)
+      %+  lien  ~(tap in pes)
       |=  p=perm
       ?&  ?=([%clay *] p)
           =(+<.must +<.p)
@@ -2018,7 +2018,7 @@
     ::
         [%gall ?(%agent %clear %perms) *]
       =/  =dude  (need desk.must)
-      %+  lien  ~(tap in pers)
+      %+  lien  ~(tap in pes)
       |=  p=perm
       ?&  ?=([%gall *] p)
           =(+<.must +<.p)
