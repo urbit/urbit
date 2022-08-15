@@ -5459,6 +5459,7 @@
       ++  rear  |=(rom=tape rend(rep rom))
       ++  rent  ~+  `@ta`(rap 3 rend)
       ++  rend
+        !:
         ^-  tape
         ~+
         ?:  ?=(%blob -.lot)
@@ -5580,6 +5581,43 @@
               (weld (rip 3 q.p.lot) rep)
             ['~' '.' (weld (rip 3 q.p.lot) rep)]
           ['~' '~' (weld (rip 3 (wood q.p.lot)) rep)]
+        ::
+            %l
+          ?+  hay  (z-co q.p.lot)
+            %v
+            ?+  (cut 3 [2 1] p.p.lot)  (z-co q.p.lot)
+              %s  =/  u  q.p.lot
+                  %~  ram  re
+                  :+  %rose  [" " "[" "]"]
+                  %+  turn
+                  ?~(u ~ (flop `(list @rs)`+:(flop (rip 5 u))))
+                  |=(a=@rs [%leaf (trip (scot %rs a))])
+              %d  =/  u  q.p.lot
+                  %~  ram  re
+                  :+  %rose  [" " "[" "]"]
+                  %+  turn
+                  ?~(u ~ (flop `(list @rd)`+:(flop (rip 6 u))))
+                  |=(a=@rd [%leaf (trip (scot %rd a))])
+            ==
+            %m
+            ?+  (cut 3 [2 1] p.p.lot)  (z-co q.p.lot)
+              %s  =/  u  q.p.lot
+                  %~  ram  re
+                  :+  %rose  [" " "[" "]"]
+                  %+  turn
+                  ?~  u  `(list (list @rs))`~
+                  =/  m  (end [5 1] (rsh [5 (dec (dec (met 5 u)))] u))
+                  =/  n  (div (dec (dec (met 5 u))) m)
+                  =/  i  0  :: index over rows
+                  =/  a  `(list @rs)`(oust [0 2] (flop (rip 5 u)))
+                  =/  b  `(list (list @rs))`~
+                  |-  ^-  (list (list @rs))
+                    ?:  =(i m)  `(list (list @rs))`b
+                    =/  c  `(list @rs)`(scag n (slag (mul i n) a))
+                  $(i +(i), b `(list (list @rs))`(weld b ~[c]))
+                  |=(a=(list @rs) [%rose [" " "[" "]"] (turn a |=(a=@rs [%leaf (trip (scot %rs a))]))])
+            ==
+          ==
         ==
       --
   =|  rep=tape
@@ -13866,6 +13904,9 @@
     ==
   ==
 ::
+::::  5g: vector and matrix array support
+  ::
+::
 ::  Single-precision floating-point vector type & operations
 ::
 ++  lvs
@@ -13914,6 +13955,7 @@
   ++  unmake
     |=  [u=@lvs]  ^-  (list @rs)
     ~_  leaf+"lagoon-fail"
+    ?~  u  `(list @rs)`~
     (flop `(list @rs)`+:(flop (rip 5 u)))
   ++  append
     |=  [u=@lvs s=@rs]  ^-  @lvs
@@ -13954,9 +13996,10 @@
     (cut 5 [(dec i) 1] u)
   ::
   ::    Pretty-print the contents of the vector.
-  ++  pprint
-    |=  u=@lvs  ^-  tape
-    `tape`(zing (join " " (turn (unmake u) |=(s=@rs <s>))))
+  ++  print
+    |=  u=@lvs  ^-  tank
+    :+  %rose  [" " "[" "]"]
+    (turn (unmake u) |=(a=@rs [%leaf (trip (scot %rs a))]))
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
@@ -14126,6 +14169,7 @@
   ++  unmake
     |=  [u=@lvd]  ^-  (list @rd)
     ~_  leaf+"lagoon-fail"
+    ?~  u  `(list @rd)`~
     (flop `(list @rd)`+:(flop (rip 6 u)))
   ++  append
     |=  [u=@lvd s=@rd]  ^-  @lvd
@@ -14166,9 +14210,10 @@
     (cut 6 [(dec i) 1] u)
   ::
   ::    Pretty-print the contents of the vector.
-  ++  pprint
-    |=  u=@lvd  ^-  tape
-    `tape`(zing (join " " (turn (unmake u) |=(s=@rd <s>))))
+  ++  print
+    |=  u=@lvd  ^-  tank
+    :+  %rose  [" " "[" "]"]
+    (turn (unmake u) |=(a=@rd [%leaf (trip (scot %rd a))]))
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
@@ -14356,6 +14401,7 @@
   ++  unmake
     |=  [u=@lms]  ^-  (list (list @rs))
     ~_  leaf+"lagoon-fail"
+    ?~  u  `(list (list @rs))`~
     =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  i  0  :: index over rows
@@ -14366,10 +14412,12 @@
       =/  c  `(list @rs)`(scag n (slag (mul i n) a))
     $(i +(i), b `(list (list @rs))`(weld b ~[c]))
   ::
-  ::    Pretty-print the contents of the matrix.  XX deal with rows better
-  ++  pprint
-    |=  u=@lms  ^-  tape
-    `tape`(zing (join " " (turn `(list @rs)`(zing (unmake u)) |=(s=@rs <s>))))
+  ::    Pretty-print the contents of the matrix.
+  ++  print
+    |=  u=@lms  ^-  tank
+    :+  %rose  [" " "[" "]"]
+    %+  turn  (unmake u)
+    |=(a=(list @rs) [%rose [" " "[" "]"] (turn a |=(a=@rs [%leaf (trip (scot %rs a))]))])
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
