@@ -4290,42 +4290,47 @@
   ::
   ++  goad
     ^+  ..abet
-    =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
     ::
-    =^  perms=(list [=desk (set perm:gall)])  ..abet
-      |-  ^-  [(list [desk (set perm:gall)]) _..abet]
-      ?~  desks
-        [~ ..abet]
-      =/  den  ((de now rof hen ruf) our i.desks)
-      =^  res  den  (aver:den ~ %x da+now /desk/seal)
-      =.  ruf  +:abet:den
-      ?.  ?=([~ ~ *] res)
-        ~&  [%clay %no-seal-in i.desks]
-        $(desks t.desks)
-      =/  req=(set perm:gall)
-        ~|  [%building-seal i.desks]
-        =/  =seal  !<(seal q.u.u.res)
-        (~(gas in *(set perm:gall)) req.seal)
-      =^  rest  ..abet  $(desks t.desks)
-      [[[i.desks (~(uni in req) pes:dom:den)] rest] ..abet]
-    ::
-    =^  sat=(list [=desk =bill])  ..abet
-      |-  ^-  [(list [desk bill]) _..abet]
-      ?~  desks
-        [~ ..abet]
-      =/  den  ((de now rof hen ruf) our i.desks)
-      =^  res  den  (aver:den ~ %x da+now /desk/bill)
-      =.  ruf  +:abet:den
-      ?.  ?=([~ ~ *] res)
-        $(desks t.desks)
-      =/  bill  ~|  [%building-bill i.desks]  !<(bill q.u.u.res)
-      =^  sats  ..abet  $(desks t.desks)
-      [[[i.desks (override bill [liv ren]:dom:den)] sats] ..abet]
-    ::
-    =.  sat  (apply-precedence sat)
+    =^  per=(list [=desk (set perm:gall)])  ..abet  pers
+    =^  sat=(list [=desk =bill])  ..abet  sats
     =^  agents  ..abet  (build-agents sat)
     =.  ..abet  (build-marks (turn sat head))
-    (emit hen %pass /lu/load %g %load perms agents)
+    (emit hen %pass /lu/load %g %load per agents)
+  ::
+  ::  +pers: produce list of [desk (set perm:gall)], update ford cache
+  ++  pers
+    =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+    |-  ^-  [(list [desk (set perm:gall)]) _..abet]
+    ?~  desks
+      [~ ..abet]
+    =/  den  ((de now rof hen ruf) our i.desks)
+    =^  res  den  (aver:den ~ %x da+now /desk/seal)
+    =.  ruf  +:abet:den
+    ?.  ?=([~ ~ *] res)
+      ~&  [%clay %no-seal-in i.desks]
+      $(desks t.desks)
+    =/  req=(set perm:gall)
+      ~|  [%building-seal i.desks]
+      =/  =seal  !<(seal q.u.u.res)
+      (~(gas in *(set perm:gall)) req.seal)
+    =^  rest  ..abet  $(desks t.desks)
+    [[[i.desks (~(uni in req) pes:dom:den)] rest] ..abet]
+  ::
+  ::  +sats: produce list of [desk bill], update ford cache
+  ++  sats
+    =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+    =;  sat  [(apply-precedence -.sat) +.sat]
+    |-  ^-  [(list [desk bill]) _..abet]
+    ?~  desks
+      [~ ..abet]
+    =/  den  ((de now rof hen ruf) our i.desks)
+    =^  res  den  (aver:den ~ %x da+now /desk/bill)
+    =.  ruf  +:abet:den
+    ?.  ?=([~ ~ *] res)
+      $(desks t.desks)
+    =/  bill  ~|  [%building-bill i.desks]  !<(bill q.u.u.res)
+    =^  duds  ..abet  $(desks t.desks)
+    [[[i.desks (override bill [liv ren]:dom:den)] duds] ..abet]
   ::  +override: apply rein to bill
   ::
   ++  override
