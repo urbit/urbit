@@ -4242,11 +4242,11 @@
   ::
       %feed
     %-  (slog leaf+"clay: feeding flow of size {<~(wyt by fad.req)>}" ~)
-    %-  (slog leaf+"clay: old flow sized {<~(wyt by fad.ruf)>}" ~)
     =.  fad.ruf  %-  (~(uno by fad.ruf) fad.req)
-                 |=  [leak [lrefs=@ soak] [rrefs=@ soc=soak]]
-                 [(add lrefs rrefs) soc]
-    %-  (slog leaf+"clay: new flow sized {<~(wyt by fad.ruf)>}" ~)
+                 |=  [leak [lrefs=@ sol=soak] [rrefs=@ sor=soak]]
+                 ~_  leaf+"clay: mismatched soaks"
+                 ?>  =(sol sor)
+                 [(add lrefs rrefs) sor]
     [~ ..^$]
   ::
       %info
