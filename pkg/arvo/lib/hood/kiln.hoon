@@ -1197,35 +1197,40 @@
 ::TODO: give warning if permissions are unchanged?
 ++  poke-clay-free
   |=  [=desk pes=(set perm:gall)]
-  =/  =foam:clay
-    .^(foam:clay %cg /(scot %p our)/(scot %tas desk)/(scot %da now))
-  =/  rei  [desk liv.foam ren.foam (~(uni in pes.foam) pes)]
+  =/  =hone:clay
+    .^(hone:clay %cx /(scot %p our)//(scot %da now)/loams)
+  =/  =loam:clay  (~(got by hone) desk)
+  =/  rei  [desk liv.loam ren.loam (~(uni in pes.loam) pes)]
   =<  abet
   (emit %pass /helm/clay/free %arvo %c %rein rei)
 ::
+::TODO: give warning if permissions are unchanged?
 ++  poke-clay-lock
   |=  [=desk pes=(set perm:gall)]
-  =/  =foam:clay
-    .^(foam:clay %cg /(scot %p our)/(scot %tas desk)/(scot %da now))
-  =/  rei  [desk liv.foam ren.foam (~(dif in pes.foam) pes)]
+  =/  =hone:clay
+    .^(hone:clay %cx /(scot %p our)//(scot %da now)/loams)
+  =/  =loam:clay  (~(got by hone) desk)
+  =/  rei  [desk liv.loam ren.loam (~(dif in pes.loam) pes)]
   =<  abet
   (emit %pass /helm/clay/lock %arvo %c %rein rei)
 ::
 ::TODO: give warning if agent already running or doesnt exist?
 ++  poke-clay-jolt
   |=  [=desk =dude:gall]
-  =/  =foam:clay
-    .^(foam:clay %cg /(scot %p our)/(scot %tas desk)/(scot %da now))
-  =/  rei  [desk liv.foam (~(put by ren.foam) dude &) pes.foam]
+  =/  =hone:clay
+    .^(hone:clay %cx /(scot %p our)//(scot %da now)/loams)
+  =/  =loam:clay  (~(got by hone) desk)
+  =/  rei  [desk liv.loam (~(put by ren.loam) dude &) pes.loam]
   =<  abet
   (emit %pass /helm/clay/jolt %arvo %c %rein rei)
 ::
 ::TODO: give warning if agent not running or doesnt exist?
 ++  poke-clay-idle
   |=  [=desk =dude:gall]
-  =/  =foam:clay
-    .^(foam:clay %cg /(scot %p our)/(scot %tas desk)/(scot %da now))
-  =/  rei  [desk liv.foam (~(put by ren.foam) dude |) pes.foam]
+  =/  =hone:clay
+    .^(hone:clay %cx /(scot %p our)//(scot %da now)/loams)
+  =/  =loam:clay  (~(got by hone) desk)
+  =/  rei  [desk liv.loam (~(put by ren.loam) dude |) pes.loam]
   =<  abet
   (emit %pass /helm/clay/idle %arvo %c %rein rei)
 ::
