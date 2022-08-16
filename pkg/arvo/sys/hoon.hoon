@@ -5588,25 +5588,25 @@
             ?+  (cut 3 [2 1] p.p.lot)  (z-co q.p.lot)
               %h  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "[" "]"]
+                  :+  %rose  [" " "≺" "≻"]
                   %+  turn
                   ?~(u ~ (flop `(list @rh)`+:(flop (rip 4 u))))
                   |=(a=@rh [%leaf (trip (scot %rh a))])
               %s  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "[" "]"]
+                  :+  %rose  [" " "<" ">"]
                   %+  turn
                   ?~(u ~ (flop `(list @rs)`+:(flop (rip 5 u))))
                   |=(a=@rs [%leaf (trip (scot %rs a))])
               %d  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "[" "]"]
+                  :+  %rose  [" " "«" "»"]
                   %+  turn
                   ?~(u ~ (flop `(list @rd)`+:(flop (rip 6 u))))
                   |=(a=@rd [%leaf (trip (scot %rd a))])
               %q  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "[" "]"]
+                  :+  %rose  [" " "⋘" "⋙"]
                   %+  turn
                   ?~(u ~ (flop `(list @rq)`+:(flop (rip 7 u))))
                   |=(a=@rq [%leaf (trip (scot %rq a))])
@@ -5615,7 +5615,7 @@
             ?+  (cut 3 [2 1] p.p.lot)  (z-co q.p.lot)
               %h  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "[" "]"]
+                  :+  %rose  [" " "|" "|"]
                   %+  turn
                   ?~  u  `(list (list @rh))`~
                   =/  m  (end [4 1] (rsh [4 (dec (dec (met 4 u)))] u))
@@ -5627,10 +5627,10 @@
                     ?:  =(i m)  `(list (list @rh))`b
                     =/  c  `(list @rh)`(scag n (slag (mul i n) a))
                   $(i +(i), b `(list (list @rh))`(weld b ~[c]))
-                  |=(a=(list @rh) [%rose [" " "[" "]"] (turn a |=(a=@rh [%leaf (trip (scot %rh a))]))])
+                  |=(a=(list @rh) [%rose [" " "<" ">"] (turn a |=(a=@rh [%leaf (trip (scot %rh a))]))])
               %s  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "[" "]"]
+                  :+  %rose  [" " "|" "|"]
                   %+  turn
                   ?~  u  `(list (list @rs))`~
                   =/  m  (end [5 1] (rsh [5 (dec (dec (met 5 u)))] u))
@@ -5642,10 +5642,10 @@
                     ?:  =(i m)  `(list (list @rs))`b
                     =/  c  `(list @rs)`(scag n (slag (mul i n) a))
                   $(i +(i), b `(list (list @rs))`(weld b ~[c]))
-                  |=(a=(list @rs) [%rose [" " "[" "]"] (turn a |=(a=@rs [%leaf (trip (scot %rs a))]))])
+                  |=(a=(list @rs) [%rose [" " "<" ">"] (turn a |=(a=@rs [%leaf (trip (scot %rs a))]))])
               %d  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "[" "]"]
+                  :+  %rose  [" " "|" "|"]
                   %+  turn
                   ?~  u  `(list (list @rd))`~
                   =/  m  (end [6 1] (rsh [6 (dec (dec (met 6 u)))] u))
@@ -5657,10 +5657,10 @@
                     ?:  =(i m)  `(list (list @rd))`b
                     =/  c  `(list @rd)`(scag n (slag (mul i n) a))
                   $(i +(i), b `(list (list @rd))`(weld b ~[c]))
-                  |=(a=(list @rd) [%rose [" " "[" "]"] (turn a |=(a=@rd [%leaf (trip (scot %rd a))]))])
+                  |=(a=(list @rd) [%rose [" " "<" ">"] (turn a |=(a=@rd [%leaf (trip (scot %rd a))]))])
               %q  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "[" "]"]
+                  :+  %rose  [" " "|" "|"]
                   %+  turn
                   ?~  u  `(list (list @rq))`~
                   =/  m  (end [7 1] (rsh [7 (dec (dec (met 7 u)))] u))
@@ -5672,7 +5672,7 @@
                     ?:  =(i m)  `(list (list @rq))`b
                     =/  c  `(list @rq)`(scag n (slag (mul i n) a))
                   $(i +(i), b `(list (list @rq))`(weld b ~[c]))
-                  |=(a=(list @rq) [%rose [" " "[" "]"] (turn a |=(a=@rq [%leaf (trip (scot %rq a))]))])
+                  |=(a=(list @rq) [%rose [" " "<" ">"] (turn a |=(a=@rq [%leaf (trip (scot %rq a))]))])
             ==
           ==
         ==
@@ -5993,6 +5993,7 @@
       royl
       (stag %f ;~(pose (cold & (just 'y')) (cold | (just 'n'))))
       (stag %q ;~(pfix sig feq:ag))
+      ::lago
     ==
   --
 ::
