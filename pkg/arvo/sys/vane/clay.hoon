@@ -5357,7 +5357,7 @@
         %tomb    ``[%flag !>((tomb t.path))]
         %domes   domes
         %loams   loams
-        %agents  agents
+        %dudes   dudes
     ==
   ::
   ++  domes
@@ -5455,11 +5455,10 @@
     |=  [=desk =dojo]
     [desk [tom nor liv ren pes]:dom.dojo]
   ::
-  ++  agents
-    ::TODO: is the sig for the duct OK? (it generally would be hen, but there
-    ::is no hen here)
+  ::TODO: add in desks to paths
+  ++  dudes
     =/  age  -:sats:(lu now rof ~ ruf)
-    ``[%agents !>(`(list [=desk =bill])`age)]
+    ``[%dudes !>(`(list [=desk =bill])`age)]
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.
