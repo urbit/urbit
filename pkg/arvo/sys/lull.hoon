@@ -834,7 +834,7 @@
         nor=norm                                        ::  gen tombstone policy
         liv=?                                           ::  desk liveness
         ren=(map dude:gall ?)                           ::  liveness override
-        pes=(set perm:gall)                             ::  userspace perms
+        pes=(set perm:gall)                             ::  opt. userspace perms
     ==
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
