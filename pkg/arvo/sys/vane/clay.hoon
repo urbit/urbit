@@ -5355,30 +5355,41 @@
         %sweep   ``[%sweep !>(sweep)]
         %rang    ``[%rang !>(ran.ruf)]
         %tomb    ``[%flag !>((tomb t.path))]
-        %domes   domes
-        %loams   loams
-        %dudes   dudes
+        %domes   (domes t.path)
+        %loams   (loams t.path)
+        %dudes   (dudes t.path)
     ==
   ::
   ++  domes
+    |=  =path
     =/  domes
       %-  ~(gas by *cone)
       %+  turn  ~(tap by dos.rom.ruf)
       |=  [=desk =dojo]
       [[our desk] [[let hit lab] tom nor liv ren pes]:dom.dojo]
-    =.  domes
-      %-  ~(uni by domes)
-      %-  ~(gas by *cone)
-      ^-  (list [[ship desk] foam])
-      %-  zing
-      ^-  (list (list [[ship desk] foam]))
-      %+  turn  ~(tap by hoy.ruf)
-      |=  [=ship =rung]
-      ^-  (list [[^ship desk] foam])
-      %+  turn  ~(tap by rus.rung)
-      |=  [=desk =rede]
-      [[ship desk] [[let hit lab] tom nor liv ren pes]:dom.rede]
-    ``[%domes !>(`cone`domes)]
+    ::
+    ::TODO: are the ~ and [~ ~] returns here correct?
+    ?+  path  [~ ~]
+        [@tas ~]
+      =/  fum=(unit foam)  (~(get by domes) [our i.path])
+      ?~  fum  ~
+      ``[%dome !>(u.fum)]
+    ::
+        ~
+      =.  domes
+        %-  ~(uni by domes)
+        %-  ~(gas by *cone)
+        ^-  (list [[ship desk] foam])
+        %-  zing
+        ^-  (list (list [[ship desk] foam]))
+        %+  turn  ~(tap by hoy.ruf)
+        |=  [=ship =rung]
+        ^-  (list [[^ship desk] foam])
+        %+  turn  ~(tap by rus.rung)
+        |=  [=desk =rede]
+        [[ship desk] [[let hit lab] tom nor liv ren pes]:dom.rede]
+      ``[%domes !>(domes)]
+    ==
   ::
   ::  True if file is accessible
   ::
@@ -5449,16 +5460,37 @@
   ::
   ::TODO: refactor to use +domes?
   ++  loams
-    =;  hon  ``[%loams !>(`hone`hon)]
-    %-  ~(gas by *hone)
-    %+  turn  ~(tap by dos.rom.ruf)
-    |=  [=desk =dojo]
-    [desk [tom nor liv ren pes]:dom.dojo]
+    |=  =path
+    =/  =hone
+      %-  ~(gas by *hone)
+      %+  turn  ~(tap by dos.rom.ruf)
+      |=  [=desk =dojo]
+      [desk [tom nor liv ren pes]:dom.dojo]
+    ::TODO: are the ~ and [~ ~] returns correct?
+    ?+  path  [~ ~]
+        ~
+      ``[%loams !>(hone)]
+    ::
+        [@tas ~]
+      =/  lum=(unit loam)  (~(get by hone) i.path)
+      ?~  lum  ~
+      ``[%loam !>(`loam`u.lum)]
+    ==
   ::
-  ::TODO: add in desks to paths
   ++  dudes
-    =/  age  -:sats:(lu now rof ~ ruf)
-    ``[%dudes !>(`(list [=desk =bill])`age)]
+    |=  =path
+    =/  duds=(list [=desk =bill])  -:sats:(lu now rof ~ ruf)
+    ::TODO: are the ~ and [~ ~] returns correct?
+    ?+  path  [~ ~]
+        ~
+      ``[%dudes !>(`(list [=desk =bill])`duds)]
+    ::
+        [@tas ~]
+      =/  bul=(unit bill)
+        (~(get by (~(gas by *(map desk bill)) duds)) i.path)
+      ?~  bul  ~
+      ``[%bill !>(`bill`u.bul)]
+    ==
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.
