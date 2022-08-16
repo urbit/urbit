@@ -5358,6 +5358,7 @@
         %domes   (domes t.path)
         %loams   (loams t.path)
         %dudes   (dudes t.path)
+        %visas   (visas t.path)
     ==
   ::
   ++  domes
@@ -5491,6 +5492,23 @@
       ?~  bul  ~
       ``[%bill !>(`bill`u.bul)]
     ==
+  ::
+    ++  visas
+      |=  =path
+      =/  visas=(list [=desk (set perm:gall)])
+        -:pers:(lu now rof ~ ruf)
+      ::
+      ::TODO: are the ~ and [~ ~] returns correct?
+      ?+  path  [~ ~]
+          ~
+        ``[%visas !>(visas)]
+      ::
+          [@tas ~]
+        =/  vus=(unit (set perm:gall))
+          (~(get by (~(gas by *(map desk (set perm:gall))) visas)) i.path)
+        ?~  vus  ~
+        ``[%visa !>(`(set perm:gall)`u.vus)]
+      ==
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.
