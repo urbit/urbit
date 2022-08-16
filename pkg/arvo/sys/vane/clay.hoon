@@ -323,7 +323,6 @@
 ::
 +$  seal  [req=(list perm:gall) opt=(list perm:gall)]
 ::
-+$  bill  (list dude:gall)
 ::  diff from desk.bill
 ::
 ::  -- `.liv`: suspended? if suspended, no agents should run
@@ -5358,6 +5357,7 @@
         %tomb    ``[%flag !>((tomb t.path))]
         %domes   domes
         %loams   loams
+        %agents  agents
     ==
   ::
   ++  domes
@@ -5454,6 +5454,12 @@
     %+  turn  ~(tap by dos.rom.ruf)
     |=  [=desk =dojo]
     [desk [tom nor liv ren pes]:dom.dojo]
+  ::
+  ++  agents
+    ::TODO: is the sig for the duct OK? (it generally would be hen, but there
+    ::is no hen here)
+    =/  age  -:sats:(lu now rof ~ ruf)
+    ``[%agents !>(`(list [=desk =bill])`age)]
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal.

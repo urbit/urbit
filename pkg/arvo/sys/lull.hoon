@@ -796,6 +796,7 @@
   +$  aeon  @ud                                         ::  version number
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
+  +$  bill  (list dude:gall)                            ::  live agents on desk
   +$  cable                                             ::  lib/sur/mark ref
     $:  face=(unit term)                                ::
         file-path=term                                  ::
