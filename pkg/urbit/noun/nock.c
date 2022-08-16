@@ -503,11 +503,11 @@ _n_nock_on(u3_noun bus, u3_noun fol)
   X(MUTB, "mutb", &&do_mutb),  /* 87: c3_b */                                  \
   X(MUTS, "muts", &&do_muts),  /* 88: c3_s */                                  \
   X(MITB, "mitb", &&do_mitb),  /* 89: c3_b */                                  \
-  X(MITS, "mits", &&do_mits),  /* 90: c3_s, seems unused in codebase */        \
+  X(MITS, "mits", &&do_mits),  /* 90: c3_s */                                  \
   X(KUTB, "kutb", &&do_kutb),  /* 91: c3_b */                                  \
   X(KUTS, "kuts", &&do_kuts),  /* 92: c3_s */                                  \
   X(KITB, "kitb", &&do_kitb),  /* 93: c3_b */                                  \
-  X(KITS, "kits", &&do_kits),  /* 94: c3_s, seems unused in codebase */        \
+  X(KITS, "kits", &&do_kits),  /* 94: c3_s */                                  \
   X(LAST,   NULL,      NULL),  /* 95 */
 
 // Opcodes. Define X to select the enum name from OPCODES.
@@ -1787,7 +1787,7 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
       if ( is_idx_op ) strcat(str_c, "i:");  // indexed args are labeled as "index of arg"
       num = _num_from_pog(go, pog, ip_w);    // the bytecode argument
       if (num == 0) {                        //
-        strcat(str_c, "0");                  // handle a litteral zero
+        strcat(str_c, "0");                  // handle a literal zero
       }                                      //
       else {                                 //
         c3_w x = 0;                          //
@@ -1806,7 +1806,7 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   // replace the first leading space and append the last char to the string
   str_c[0] = '{';
   strcat(str_c, "}");
-  u3t_slog_cap(pri_l, u3i_string("bytecode"), u3i_string(str_c));
+  u3t_slog( u3nc(pri_l, u3i_string(str_c)) );
 }
 
 /* _xray(): given a text render style priority hint pri_l (int 0-3),
