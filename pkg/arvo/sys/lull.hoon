@@ -1888,10 +1888,52 @@
         &(=(i.spur.p i.s.beam) $(spur.p t.spur.p, s.beam t.s.beam))
     ==
   ::
-  ::  +must: agents call this to determine the perm they need for a card
-  ++  must  !:
-    |=  [our=ship =card:agent]
-    ^-  $@(? perm)
+  ::  +cred: userspace permissions check
+  ::
+  ::    agents should call +cred to see if they have the right optional
+  ::    permissions to send a card. they shouldn't check this when sending
+  ::    a task that only needs the required permissions they're already
+  ::    guaranteed to have in their desk.seal
+  ++  cred  !:
+    |=  [our=ship =card:agent pes=(set perm)]
+    ^-  ?  ~+
+    =;  must=$@(? perm)
+    ?@  must  must
+    ?+  must  (~(has in pes) must)
+        [?(%write %watch) *]
+      ::TODO  make sure agents on same desk are allowed to talk to each other
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=(?(%write %watch) -.p)
+          =(-.must -.p)
+          ?-  dude.p
+            %peers  =(%peers dude.must)
+            ^       =(dude.must dude.p)
+            ~       ?=(^ dude.must)
+          ==
+      ==
+    ::
+        [%clay ?(%write %local %build) *]
+      =/  =desk  (need desk.must)
+      :: =/  =spur  (need spur.must)
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay *] p)
+          =(+<.must +<.p)
+          ?>  ?=(?(%write %local %build) +<.p)
+          =(desk (fall desk.p desk))
+          :: |(=(/ spur.p) =(`0 (find spur.p spur)))
+      ==
+    ::
+        [%gall ?(%agent %clear %perms) *]
+      =/  =dude  (need desk.must)
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%gall *] p)
+          =(+<.must +<.p)
+          =(dude (fall desk.p dude))
+      ==
+    ==
     ?:  ?=(%give -.card)
       &
     =/  =note:agent
@@ -1902,6 +1944,8 @@
     ?:  ?=(%pyre -.note)
       &
     ?:  ?=(%agent -.note)
+      ::TODO add in desk scry for agents to figure out
+      ::what desk an agent is on
       =*  target
         ?:(=(our ship.note) `name.note %peers)
       ?-  -.task.note
@@ -1987,48 +2031,6 @@
     ::
       %$    |
       @tas  |
-    ==
-::
-  ++  cred  !:
-    |=  [our=ship =card:agent pes=(set perm)]
-    ^-  ?
-    =/  must=$@(? perm)
-      (must our card)
-    ?@  must  must
-    ?+  must  (~(has in pes) must)
-        [?(%write %watch) *]
-      ::TODO  make sure agents on same desk are allowed to talk to each other
-      %+  lien  ~(tap in pes)
-      |=  p=perm
-      ?&  ?=(?(%write %watch) -.p)
-          =(-.must -.p)
-          ?-  dude.p
-            %peers  =(%peers dude.must)
-            ^       =(dude.must dude.p)
-            ~       ?=(^ dude.must)
-          ==
-      ==
-    ::
-        [%clay ?(%write %local %build) *]
-      =/  =desk  (need desk.must)
-      :: =/  =spur  (need spur.must)
-      %+  lien  ~(tap in pes)
-      |=  p=perm
-      ?&  ?=([%clay *] p)
-          =(+<.must +<.p)
-          ?>  ?=(?(%write %local %build) +<.p)
-          =(desk (fall desk.p desk))
-          :: |(=(/ spur.p) =(`0 (find spur.p spur)))
-      ==
-    ::
-        [%gall ?(%agent %clear %perms) *]
-      =/  =dude  (need desk.must)
-      %+  lien  ~(tap in pes)
-      |=  p=perm
-      ?&  ?=([%gall *] p)
-          =(+<.must +<.p)
-          =(dude (fall desk.p dude))
-      ==
     ==
   --  ::gall
 ::  %iris http-client interface
