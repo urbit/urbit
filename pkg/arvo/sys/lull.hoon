@@ -820,7 +820,7 @@
     $:  dome                                            ::
         tom=(map tako norm)                             ::
         nor=norm                                        ::
-        liv=?                                           ::
+        liv=zest                                        ::
         ren=(map dude:gall ?)                           ::
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
@@ -927,6 +927,7 @@
         r=tako                                          ::  self-reference
         t=@da                                           ::  date
     ==                                                  ::
+  +$  zest  $~(%dead ?(%dead %live %next))              ::  how live
   ::
   ::  +page-to-lobe: hash a page to get a lobe.
   ::

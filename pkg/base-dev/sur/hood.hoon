@@ -15,32 +15,6 @@
       [%suspend =desk =arak]
       [%revive =desk =arak]
   ==
-::  $arak: foreign vat tracker
-::
-::    .rail: upstream tracking state, if any
-::    .rein: configuration for agents
-::
-+$  arak
-  $:  rail=(unit rail)
-      =rein
-  ==
-::  $rail: upstream tracking state
-::
-::    .publisher: Ship that originally published desk, if available
-::    .paused: is tracking paused? or live
-::    .ship: upstream ship (could be .our)
-::    .desk: name of upstream desk
-::    .aeon: next aeon to pull from upstream
-::    .next: list of pending commits with future kelvins
-::
-+$  rail
-  $:  publisher=(unit ship)
-      paused=?
-      =ship
-      =desk
-      =aeon
-      next=(list rung)
-  ==
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
