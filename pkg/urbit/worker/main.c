@@ -366,7 +366,7 @@ _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 static void
 _cw_boot(c3_i argc, c3_c* argv[])
 {
-  if ( 5 > argc ) {
+  if ( 4 > argc ) {
     fprintf(stderr, "boot: missing args\r\n");
     exit(1);
   }
@@ -376,7 +376,6 @@ _cw_boot(c3_i argc, c3_c* argv[])
   c3_c*      key_c = argv[1]; // XX use passkey
   c3_c*      wag_c = argv[2];
   c3_c*      hap_c = argv[3];
-  c3_c*      map_c = argv[4];
 
   //  XX windows ctrl-c?
 
@@ -390,7 +389,6 @@ _cw_boot(c3_i argc, c3_c* argv[])
     memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
     sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
-    sscanf(map_c, "%c",       &u3_Host.ops_u.map);
   }
 
   //  set up stdio read/write callbacks
@@ -432,9 +430,9 @@ static void
 _cw_work(c3_i argc, c3_c* argv[])
 {
 #ifdef U3_OS_mingw
-  if ( 7 > argc ) {
-#else
   if ( 6 > argc ) {
+#else
+  if ( 5 > argc ) {
 #endif
     fprintf(stderr, "work: missing args\n");
     exit(1);
@@ -446,10 +444,9 @@ _cw_work(c3_i argc, c3_c* argv[])
   c3_c*      key_c = argv[1]; // XX use passkey
   c3_c*      wag_c = argv[2];
   c3_c*      hap_c = argv[3];
-  c3_c*      map_c = argv[4];
-  c3_c*      eve_c = argv[5];
+  c3_c*      eve_c = argv[4];
 #ifdef U3_OS_mingw
-  c3_c*      han_c = argv[6];
+  c3_c*      han_c = argv[5];
   _cw_intr_win(han_c);
 #endif
 
@@ -463,7 +460,6 @@ _cw_work(c3_i argc, c3_c* argv[])
     memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
     sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
-    sscanf(map_c, "%c",       &u3_Host.ops_u.map);
 
     if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
       fprintf(stderr, "mars: replay-to invalid: '%s'\r\n", eve_c);
