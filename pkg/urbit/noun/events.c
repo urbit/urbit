@@ -704,26 +704,25 @@ _ce_image_sync(u3e_image* img_u)
 //! @param[in] bas_y  Base address of the image in memory. Used to establish a
 //!                   new mapping in memory. Should be NULL if no new mappings
 //!                   should be created.
-//!
-//! @n (1) The image is mapped into memory at base address `bas_y`.
-//! @n (2) The image shrunk.
-//! @n (3) The image grew.
 static void
 _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
 {
-  if ( bas_y ) { // (1)
+  // The image is mapped into memory at base address `bas_y`.
+  if ( bas_y ) {
     c3_y* ptr_y  = bas_y + c3_min(img_u->pgs_w, pgs_w) * pag_siz_i;
     c3_ws dif_ws = (img_u->pgs_w - pgs_w) * pag_siz_i;
 
     c3_i fla_i, fid_i, pro_i;
     size_t off_i;
-    if ( dif_ws > 0 ) { // (2)
+    // The image shrunk.
+    if ( dif_ws > 0 ) {
       fla_i = MAP_ANONYMOUS | MAP_FIXED | MAP_PRIVATE;
       fid_i = -1;
       pro_i = PROT_READ | PROT_WRITE;
       off_i = 0;
     }
-    else if ( dif_ws < 0 ) { // (3)
+    // The image grew.
+    else if ( dif_ws < 0 ) {
       fla_i = MAP_FIXED | MAP_PRIVATE;
       fid_i = img_u->fid_i;
       pro_i = PROT_READ;
@@ -1047,10 +1046,6 @@ u3e_save(void)
   }
 }
 
-//! @n (1) Attempt to `dir_c`.
-//! @n (2) Attempt to create north image file in `dir_c`.
-//! @n (3) Attempt to create south image file in `dir_c`.
-//! @n (4) Copy north and south image files to `dir_c` from `u3P.dir_c`.
 c3_o
 u3e_copy(const c3_c* const dir_c)
 {
@@ -1058,7 +1053,7 @@ u3e_copy(const c3_c* const dir_c)
   static c3_i         fla_i = O_RDWR | O_CREAT;
   static const mode_t mod_u = 0666;
 
-  // (1)
+  // Attempt to create `dir_c`.
   if ( 0 != mkdir(dir_c, 0700) && EEXIST != errno ) {
     fprintf(stderr,
             "loom: failed to create %s: %s\r\n",
@@ -1067,7 +1062,7 @@ u3e_copy(const c3_c* const dir_c)
     goto exit;
   }
 
-  // (2)
+  // Attempt to create north image file in `dir_c`.
   u3e_image nop_u = {.nam_c = nor_nam_c, .pgs_w = 0};
   c3_c      pan_c[8193];
   snprintf(pan_c, sizeof(pan_c), "%s/%s", dir_c, nop_u.nam_c);
@@ -1076,7 +1071,7 @@ u3e_copy(const c3_c* const dir_c)
     goto exit;
   }
 
-  // (3)
+  // Attempt to create south image file in `dir_c`.
   u3e_image sop_u = {.nam_c = sou_nam_c, .pgs_w = 0};
   c3_c      pas_c[8193];
   snprintf(pas_c, sizeof(pas_c), "%s/%s", dir_c, sop_u.nam_c);
@@ -1085,7 +1080,7 @@ u3e_copy(const c3_c* const dir_c)
     goto close_north;
   }
 
-  // (4)
+  // Copy north and south image files to `dir_c` from `u3P.dir_c`.
   if ( (c3y == _ce_image_copy(&u3P.nor_u, &nop_u))
        && (c3y == _ce_image_copy(&u3P.sou_u, &sop_u)) )
   {
