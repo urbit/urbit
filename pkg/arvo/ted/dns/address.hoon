@@ -30,12 +30,12 @@
   ?.  good
     %+  strand-fail:strandio  %bail-early-self-check
     [>"couldn't access ship on port 80"< ~]
+  ;<  our=@p  bind:m  get-our:strandio
+  ;<  ~       bind:m  (watch:strandio /sub collector-app /(scot %p our))
   ;<  ~       bind:m  (poke:strandio collector-app %dns-address !>([%if if]))
   =/  msg=cord
     (cat 3 'request for DNS sent to ' (scot %p p:collector-app))
   ;<  ~       bind:m  (app-message:strandio %dns msg ~)
-  ;<  our=@p  bind:m  get-our:strandio
-  ;<  ~       bind:m  (watch:strandio /sub collector-app /(scot %p our))
   =/  msg=cord
     (cat 3 'awaiting response from ' (scot %p p:collector-app))
   ;<  ~       bind:m  (app-message:strandio %dns msg ~)
