@@ -883,6 +883,12 @@ main(c3_i   argc,
         u3_Host.tra_u.con_w = 0;
         u3_Host.tra_u.fun_w = 0;
       }
+
+      /*  Set snapshot mapping flag
+      */
+      if ( c3n == u3_Host.ops_u.map ) {
+        u3C.wag_w |= u3o_map_snapshot;
+      }
     }
 
     #if defined(U3_OS_mingw)

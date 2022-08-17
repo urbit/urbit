@@ -1776,7 +1776,7 @@ u3m_boot(const c3_c* dir_c, c3_o (*sap_f)(const c3_c* dir_c, const c3_o map_o))
 
   /* Activate the storage system.
   */
-  c3_o nuu_o = sap_f(dir_c, u3_Host.ops_u.map);
+  c3_o nuu_o = sap_f(dir_c, u3C.wag_w & u3o_map_snapshot ? c3y : c3n);
 
   /* Activate tracing.
   */

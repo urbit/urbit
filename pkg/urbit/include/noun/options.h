@@ -30,6 +30,7 @@
         u3o_quiet =         1 << 6,           //  disable ~&
         u3o_hashless =      1 << 7,           //  disable hashboard
         u3o_trace =         1 << 8,           //  enables trace dumping
+        u3o_map_snapshot =  1 << 9,           //  mmap() the snapshot
       };
 
   /** Globals.
