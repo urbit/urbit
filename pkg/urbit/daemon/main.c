@@ -129,7 +129,14 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.lit = c3n;
+  // Disable snapshot memmapping on Windows because the Windows memory mapping
+  // mechanism doesn't overwrite existing mappings by default, which is behavior
+  // that we rely on for remapping the snapshot.
+#ifdef U3_OS_mingw
+  u3_Host.ops_u.map = c3y;
+#else
   u3_Host.ops_u.map = c3n;
+#endif
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.qui = c3n;
