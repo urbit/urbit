@@ -11490,6 +11490,26 @@
   =>  [tap=tap gun=gun]
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
+::  +shed: deferred +slop
+::
+++  shed
+  |=  [hed=(trap vase) tal=(trap vase)]
+  ^-  (trap vase)
+  =>  [hed=hed tal=tal]
+  |.  ~+
+  [[%cell p:$:hed p:$:tal] [q:$:hed q:$:tal]]
+::  +shut: deferred +slam
+::
+++  shut
+  |=  [gat=(trap vase) sam=(trap vase)]
+  ^-  (trap vase)
+  =/  typ=type  [%cell p:$:gat p:$:sam]
+  =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+  =/  gun  (~(mint ut typ) %noun gen)
+  =/  noc  (slum q:$:gat q:$:sam)
+  =>  [gun=gun noc=noc]
+  |.  ~+
+  [p.gun noc]
 ::
 ::::  5d: parser
   ::
