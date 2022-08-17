@@ -3,7 +3,7 @@
 /+  *test, vane-test
 |%
 ++  test-nec-bud
-  =+  ames-nec-bud:vane-test
+  =+  nec-bud:vane-test
   ;:  weld
     %+  expect-eq
       !>  nec

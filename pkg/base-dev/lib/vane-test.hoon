@@ -1,8 +1,39 @@
 /+  *test
-/=  ames  /sys/vane/ames
-/=  jael  /sys/vane/jael
+/=  ames      /sys/vane/ames
+/=  gall-raw  /sys/vane/gall
+::
+=/  gall-bunt  (gall-raw ~zod)
 ::
 |%
+++  gall-gate  _(make-gall ~zod)
+++  nec-bud
+  =/  a  ames-nec-bud
+  :*  nec=[ames=nec.a gall=(make-gall ~nec)]
+      bud=[ames=bud.a gall=(make-gall ~bud)]
+  ==
+::  +gall-call: have %gall run a +task and assert it produces expected-moves
+::
+++  gall-call
+  |=  $:  =gall-gate
+          now=@da
+          scry=roof
+          call-args=[=duct wrapped-task=(hobo task:gall)]
+          expected-moves=(list move:gall-bunt)
+      ==
+  ^-  [tang ^gall-gate]
+  =/  gall-core  (gall-gate now=now eny=`@`0xdead.beef scry=scry)
+  ::
+  =/  res
+    =/  =type  -:!>(*task:gall)
+    (call:gall-core duct.call-args dud=~ wrapped-task.call-args)
+  ::
+  =/  output=tang
+    %+  expect-eq
+      !>  expected-moves
+      !>  -.res
+  ::
+  [output +.res]
+::
 ++  ames-nec-bud
   ::  create ~nec
   ::
@@ -62,4 +93,11 @@
   =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
   ::
   [nec=nec bud=bud]
+::
+++  make-gall
+  |=  =ship
+  =/  gall-pupa  (gall-raw ship)
+  =/  gall-core  (gall-pupa now=~1111.1.1 eny=`@`0xdead.beef scry=*roof)
+  =+  [out adult]=(call:gall-core duct=~[/init] dud=~ task=[%init ~])
+  adult
 --
