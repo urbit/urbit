@@ -238,9 +238,9 @@ u3e_fault(void* adr_v, c3_i ser_i)
 
     u3P.dit_w[blk_w] |= (1 << bit_w);
 
-    if ( -1 == mprotect((void*)(u3_Loom + (pag_w * pag_wiz_i)),
+    if ( -1 == mprotect(u3_Loom + (pag_w * pag_wiz_i),
                         pag_siz_i,
-                        PROT_READ | PROT_WRITE)) )
+                        PROT_READ | PROT_WRITE) )
     {
       fprintf(stderr, "loom: fault mprotect: %s\r\n", strerror(errno));
       c3_assert(0);
@@ -1208,7 +1208,7 @@ u3e_yolo(void)
 {
   // NB: u3e_save() will reinstate protection flags
   //
-  if ( 0 != mprotect((void*)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
+  if ( 0 != mprotect(u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
     return c3n;
   }
 
@@ -1218,5 +1218,5 @@ u3e_yolo(void)
 void
 u3e_foul(void)
 {
-  memset((void*)u3P.dit_w, 0xff, sizeof(u3P.dit_w));
+  memset(u3P.dit_w, 0xff, sizeof(u3P.dit_w));
 }
