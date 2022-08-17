@@ -415,7 +415,14 @@
   ::
   ++  mo-doff
     |=  [dude=(unit dude) ship=(unit ship)]
-    ~&(%not-implemented mo-core)
+    ^+  mo-core
+    =/  apps=(list (pair term yoke))
+      ?~  dude  ~(tap by yokes.state)
+      (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
+    |-  ^+  mo-core
+    ?~  apps  mo-core
+    =/  ap-core  (ap-yoke:ap:mo-core p.i.apps [~ our] q.i.apps)
+    $(apps t.apps, mo-core ap-abet:(ap-doff:ap-core ship))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1738,11 +1745,7 @@
         ::
         (ap-pass (ap-nonce-wire sub-wire dock) %agent dock %leave ~)
       (ap-pass sub-wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
-    ::  +ap-doff: kill all outgoing subscriptions
-    ::
-    ::    Also kills old subscriptions that should have been killed but
-    ::    were not correctly removed in prerelease versions of the
-    ::    request queue fix.  This includes nonce 0, which no longer exists.
+    ::  +ap-doff: kill old-style outgoing subscriptions
     ::
     ++  ap-doff
       |=  ship=(unit ship)
@@ -1753,24 +1756,15 @@
       =+  [wyr dok]=i.subs
       ?:  &(?=(^ ship) !=(u.ship ship.dok))
         $(subs t.subs)
-      ::  kill old-style subscription wire with no nonce
+      ::  if we haven't created new-style (nonced) subscriptions yet,
+      ::  kick the old-style (nonceless) one that's in use right now.
       ::
-      =.  ap-core  (ap-pass wyr %agent dok %leave ~)
-      ::  kill new-style subscriptions at every previously-known nonce
+      ::NOTE  yes, still safe for pre-release ships with nonce=1,
+      ::      this makes a new flow but cleans it up right away.
       ::
-      =/  let  (~(got by boar.yoke) wyr dok)
-      =/  non  0
-      =/  pre  "gall: +ap-doff {<[agent-name wyr dok]>}"
-      =-  ((slog leaf+"{pre} done" ~) -)
-      %-  (slog leaf+"{pre} {<,.let>} total..." ~)
-      |-  ^+  ap-core
-      =.  ap-core  (ap-pass [(scot %ud non) wyr] %agent dok %leave ~)
-      ?:  (lth non let)
-        $(non +(non))
-      ::  do the %kick last: leaves must be processed first
-      ::
-      =.  ap-core  (ap-pass wyr %huck dok %b %huck [%gall %unto %kick ~])
-      ^$(subs t.subs)
+      =?  ap-core  (gte 1 (~(got by boar.yoke) wyr dok))
+        (ap-pass wyr %agent dok %leave ~)
+      $(subs t.subs)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
