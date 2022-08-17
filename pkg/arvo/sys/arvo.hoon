@@ -46,6 +46,7 @@
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
++$  coop  (cask (trap vase))
 +$  desk  @tas
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))
