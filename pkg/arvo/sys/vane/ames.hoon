@@ -2612,6 +2612,8 @@
       |^  ^+  peer-core
           ?~  pump-gifts  peer-core
           =*  gift  i.pump-gifts
+          ~?  ?=(?(%cork %kroc %done) -.gift)
+            [%m-pump-gift -.gift her.channel bone=bone close=close]
           =.  peer-core
             ?-  -.gift
               %done  (on-pump-done [message-num error]:gift)
