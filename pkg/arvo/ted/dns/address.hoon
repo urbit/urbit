@@ -31,7 +31,7 @@
     %+  strand-fail:strandio  %bail-early-self-check
     [>"couldn't access ship on port 80"< ~]
   ;<  our=@p  bind:m  get-our:strandio
-  ;<  ~       bind:m  (watch:strandio /sub collector-app /(scot %p our))
+  ;<  ~       bind:m  (watch:strandio /response collector-app /(scot %p our))
   ;<  ~       bind:m  (poke:strandio collector-app %dns-address !>([%if if]))
   =/  msg=cord
     (cat 3 'request for DNS sent to ' (scot %p p:collector-app))
@@ -45,7 +45,7 @@
   =/  m  (strand ,~)
   ^-  form:m
   ;<  our=ship  bind:m  get-our:strandio
-  ;<  =cage     bind:m  (take-fact:strandio /(scot %p our))
+  ;<  =cage     bind:m  (take-fact:strandio /response)
   ?>  ?=(%dns-binding p.cage)
   =/  =binding:dns  !<(binding:dns q.cage)
   ;<  good=?    bind:m  (turf-confirm-install:libdns turf.binding)
