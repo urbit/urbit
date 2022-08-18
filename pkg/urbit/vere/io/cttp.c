@@ -1,4 +1,4 @@
-//! @file cttp.c
+/// @file cttp.c
 
 #include "vere/vere.h"
 #include "vere/io.h"
@@ -8,41 +8,41 @@
 //==============================================================================
 
 typedef struct {
-  c3_d  len_d;  //!< length of jammed request
-  c3_y* jam_y;  //!< jammed request
+  c3_d  len_d;  ///< length of jammed request
+  c3_y* jam_y;  ///< jammed request
 } _io_req;
 
 typedef struct {
-  c3_d len_d;    //!< length of jammed response
-  c3_y resp_y[]; //!< jammed response
+  c3_d len_d;    ///< length of jammed response
+  c3_y resp_y[]; ///< jammed response
 } _io_resp;
 
 struct client;
 
 typedef struct {
-  uv_pipe_t      pipe_u;   //!< pipe handle
-  struct client *client_u; //!< back pointer to enclosing client
+  uv_pipe_t      pipe_u;   ///< pipe handle
+  struct client *client_u; ///< back pointer to enclosing client
 } _stream;
 
 typedef struct client {
-  u3_auto        driver_u;   //!< driver handle
-  c3_l           inst_num_l; //!< instance number
+  u3_auto        driver_u;   ///< driver handle
+  c3_l           inst_num_l; ///< instance number
   struct {
-    uv_process_t proc_u;     //!< process handle
-    _stream      stdin_u;    //!< stdin stream to IO process
-    _stream      stdout_u;   //!< stdout stream to IO process
-  } child_u;                 //!< IO process
+    uv_process_t proc_u;     ///< process handle
+    _stream      stdin_u;    ///< stdin stream to IO process
+    _stream      stdout_u;   ///< stdout stream to IO process
+  } child_u;                 ///< IO process
 } _client;
 
 //==============================================================================
 // Macros
 //==============================================================================
 
-//! Error-handling wrapper for libuv API calls that return a non-negative
-//! integer on success and a negative integer on failure.
-//!
-//! @param[in] uv_call         libuv API call.
-//! @param[in] failure_action  Statement to execute after logging failure.
+/// Error-handling wrapper for libuv API calls that return a non-negative
+/// integer on success and a negative integer on failure.
+///
+/// @param[in] uv_call         libuv API call.
+/// @param[in] failure_action  Statement to execute after logging failure.
 #define try_uv(uv_call, failure_action, ...)                                   \
   do {                                                                         \
     c3_i ret_i = uv_call;                                                      \
@@ -137,7 +137,7 @@ end:
   return suc_o;
 }
 
-//! Notify that the HTTP client driver is live.
+/// Notify that the HTTP client driver is live.
 static void
 _driver_talk(u3_auto* driver_u)
 {
@@ -267,7 +267,7 @@ _write_cb(uv_write_t* write_req_u, c3_i status_i)
 //==============================================================================
 
 u3_auto*
-u3_cttp_io_init(u3_pier* pir_u)
+u3_cttp_io_init(u3_pier* const pir_u)
 {
   _client* client_u = c3_calloc(sizeof(*client_u));
 
