@@ -1490,7 +1490,7 @@
         ?:  =(%base q.beak.yoke)  [-.p.result ~]
         %+  skid  -.p.result
         |=  =card:agent
-        (cred our card (~(get ju perms.state) q.beak.yoke))
+        (cred our agent-name card (~(get ju perms.state) q.beak.yoke) now)
       ~?  !=(~ bad)  [%would-drop agent-name (turn bad head)]
 ::      =/  moves  (zing (turn gud ap-from-internal))
       =/  moves  (zing (turn -.p.result ap-from-internal))

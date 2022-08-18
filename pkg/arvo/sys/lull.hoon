@@ -1804,10 +1804,10 @@
   ::
   +$  perm  $%(perm-arvo perm-gall)
   ::
-  +$  perm-gall  ::TODO  by desk? agents from same desk µay always talk
-    $%  [%write dude=$?(%peers (unit dude:gall))]  ::  poke
-        [%watch dude=$?(%peers (unit dude:gall))]  ::  subscribe
-        [%reads vane=term desk=(unit desk) =spur]  ::  scry
+  +$  perm-gall                                        ::  inter-agent perms
+    $%  [%write desk=$?(%peers (unit desk))]           ::  poke
+        [%watch desk=$?(%peers (unit desk))]           ::  subscribe
+        [%reads vane=term desk=(unit desk) =spur]      ::  scry
     ==
   ::
   +$  perm-arvo  ::TODO  more narrow
@@ -1894,22 +1894,26 @@
   ::    permissions to send a card. they shouldn't check this when sending
   ::    a task that only needs the required permissions they're already
   ::    guaranteed to have in their desk.seal
+  ::
+  ::    .cas is needed for the scry into clay to find out which desks
+  ::    agents are running on. the scry will crash unless cas is now,
+  ::    since which agents are currently running is not referentially
+  ::    transparent data.
   ++  cred  !:
-    |=  [our=ship =card:agent pes=(set perm)]
+    |=  [our=ship from=dude =card:agent pes=(set perm) cas=@da]
     ^-  ?  ~+
     =;  must=$@(? perm)
     ?@  must  must
     ?+  must  (~(has in pes) must)
         [?(%write %watch) *]
-      ::TODO  make sure agents on same desk are allowed to talk to each other
       %+  lien  ~(tap in pes)
       |=  p=perm
       ?&  ?=(?(%write %watch) -.p)
           =(-.must -.p)
-          ?-  dude.p
-            %peers  =(%peers dude.must)
-            ^       =(dude.must dude.p)
-            ~       ?=(^ dude.must)
+          ?-  desk.p
+            %peers  =(%peers desk.must)
+            ^       =(desk.must desk.p)
+            ~       ?=(^ desk.must)
           ==
       ==
     ::
@@ -1944,15 +1948,47 @@
     ?:  ?=(%pyre -.note)
       &
     ?:  ?=(%agent -.note)
-      ::TODO add in desk scry for agents to figure out
-      ::what desk an agent is on
-      =*  target
-        ?:(=(our ship.note) `name.note %peers)
-      ?-  -.task.note
-        ?(%watch %watch-as)  [%watch target]
-        ?(%poke %poke-as)    [%write target]
-        %leave               &
-      ==
+      |^
+      ::TODO: why does it crash if i put bill:clay instead of bill=(list dude)?
+      =/  bills
+        .^((list [=desk bill=(list dude)]) %cx /(scot %p our)//(scot %da cas)/bills)
+      =/  from-desk=(unit desk)
+        (get-desk from bills)
+      =/  target=$?(%peers desk=(unit desk))
+        ?.  =(our ship.note)
+          %peers
+        (get-desk name.note bills)
+      ?@  target
+        ::  if target is an atom, its %peers or ~. if its ~, then
+        ::  the recipient of the task doesn't exist yet, so the
+        ::  sender needs to have permission to poke/watch any desk
+        (target-perm task.note target)
+      ?:  =(from-desk target)
+        ::  agents on the same desk can always talk
+        &
+      (target-perm task.note target)
+      ::
+      ::  +get-desk: find the desk an agent is running on
+      ::TODO: should this be factored out into its own arm?
+      ++  get-desk
+        |=  [dud=dude bills=(list [=desk bill=(list dude)])]
+        ^-  (unit desk)
+        |-
+        ?~  bills
+          ~
+        ?:  %+  lien  bill.i.bills
+            |=(=dude =(dude dud))
+          `desk.i.bills
+        $(bills t.bills)
+      ::
+      ++  target-perm
+        |=  [=task:agent target=$?(%peers desk=(unit desk))]
+        ?-  -.task
+          ?(%watch %watch-as)  [%watch target]
+          ?(%poke %poke-as)    [%write target]
+          %leave               &
+        ==
+      --
     ::
     ?-  +<.note
         %a
