@@ -2,7 +2,7 @@
 ::
 /+  *test, vane-test
 |%
-++  test-nec-bud
+++  test-setup-nec-bud
   =+  nec-bud:vane-test
   ;:  weld
     %+  expect-eq

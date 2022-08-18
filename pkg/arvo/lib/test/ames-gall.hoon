@@ -1,4 +1,4 @@
-/+  *test
+/+  *test, test-pub, test-sub
 /=  ames      /sys/vane/ames
 /=  gall-raw  /sys/vane/gall
 ::
@@ -8,12 +8,16 @@
 ++  gall-gate  _(make-gall ~zod)
 ++  nec-bud
   =/  a  ames-nec-bud
-  :*  nec=[ames=nec.a gall=(make-gall ~nec)]
-      bud=[ames=bud.a gall=(make-gall ~bud)]
+  =/  gall-nec  (make-gall ~nec)
+  =.  gall-nec  (load-agent ~nec gall-nec %sub test-sub)
+  =/  gall-bud  (make-gall ~bud)
+  =.  gall-bud  (load-agent ~bud gall-bud %pub test-pub)
+  :*  nec=[ames=nec.a gall=gall-nec]
+      bud=[ames=bud.a gall=gall-bud]
   ==
-::  +gall-call: have %gall run a +task and assert it produces expected-moves
+::  +gall-check-call: run gall task, assert produces expected-moves
 ::
-++  gall-call
+++  gall-check-call
   |=  $:  =gall-gate
           now=@da
           scry=roof
@@ -33,6 +37,16 @@
       !>  -.res
   ::
   [output +.res]
+::
+++  gall-call
+  |=  [=gall-gate =duct task=(hobo task:gall) =roof]
+  %.  [duct dud=~ task]
+  call:(gall-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+::
+++  gall-take
+  |=  [=gall-gate =wire =duct =sign-arvo =roof]
+  %.  [wire duct dud=~ sign-arvo]
+  take:(gall-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
 ::
 ++  ames-nec-bud
   ::  create ~nec
@@ -100,4 +114,21 @@
   =/  gall-core  (gall-pupa now=~1111.1.1 eny=`@`0xdead.beef scry=*roof)
   =+  [out adult]=(call:gall-core duct=~[/init] dud=~ task=[%init ~])
   adult
+::
+++  load-agent
+  |=  [=ship =gall-gate =dude:gall =agent:gall]
+  =^  *  gall-gate
+    (gall-call gall-gate ~[/jolt] [%jolt %base dude] *roof)
+  =^  *  gall-gate
+    =/  =sign-arvo
+      :+  %clay  %writ
+      `[[%a da+~1111.1.1 %base] /app/[dude]/hoon vase+!>(!>(agent))]
+    %:  gall-take
+      gall-gate
+      /sys/cor/[dude]/(scot %p ship)/base/(scot %da ~1111.1.1)
+      ~[/jolt]
+      sign-arvo
+      *roof
+    ==
+  gall-gate
 --
