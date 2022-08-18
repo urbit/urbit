@@ -563,7 +563,7 @@
     =.  outstanding.state
       =/  stand
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
-      ~&  :*  -.deal  [wire hen]  stand=stand
+      ~&  :*  %mo-send  -.deal  [wire hen]  stand=stand
           ==
       %+  ~(put by outstanding.state)  [wire hen]
       (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave %cork]))
@@ -795,7 +795,7 @@
           ~?  &(=(rr %cork) ?=(^ stand))
             [%outstanding-queue-not-empty wire hen]
           :-  rr
-          ~&  [rr [full-wire hen] stand=stand]
+          ~&  [%mo-handle rr [full-wire hen] stand=stand]
           ?:  ?=(%cork rr)
             (~(del by outstanding.state) [full-wire hen])
           (~(put by outstanding.state) [full-wire hen] stand)
