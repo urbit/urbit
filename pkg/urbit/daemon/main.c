@@ -992,17 +992,6 @@ _cw_intr_win(c3_c* han_c)
 }
 #endif
 
-static u3_noun
-virt_nock(u3_noun cons)
-{
-  u3_noun bus = u3h(cons);
-  u3_noun fol = u3t(cons);
-  
-  u3_noun res = u3n_nock_on(bus, fol);
-
-  return res;
-}
-
 /* _cw_eval_commence(): initialize and run the hoon evaluator
 */
 static void
@@ -1012,7 +1001,6 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
   c3_c* line = NULL;
   size_t len = 0;
   ssize_t nread;
-  //c3_c* evl_c = "%-  sell  !>  \n";
   c3_c* evl_c = "";
 
   while((nread = getline(&line, &len, stdin)) != -1)
@@ -1048,9 +1036,12 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
   //Run the input through a virtualization (u3v_wish_n) and get the ouput
   //u3_noun res = u3m_soft(0, u3v_wish_n, u3i_string(evl_c));
   u3_noun gat = u3v_wish("|=(a=@t (sell (slap !>(+>.$) (rain /eval a))))");
-  u3_noun sam = u3i_string(evl_c);
-  u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
-  u3_noun res = u3m_soft(0, u3n_kick_on, cor);
+  u3_noun res;
+  {
+    u3_noun sam = u3i_string(evl_c);
+    u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
+    res = u3m_soft(0, u3n_kick_on, cor); // Transfer cor and sam
+  }
 
 
 
@@ -1062,8 +1053,6 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
   }
   u3z(res);
   u3z(gat);
-  //u3z(sam);
-  //u3z(cor);
 
   //printf("finishing\n");
 }
