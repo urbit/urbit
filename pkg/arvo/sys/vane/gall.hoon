@@ -1793,14 +1793,9 @@
       ::
       =/  dud=(set duct)
         =/  mod=^wire
-          :*  %gall  %use
-              agent-name
-              run-nonce.yoke
-              %out
-              (scot %p p.dock)
-              q.dock
-              '0'
-              wire
+          :*  %gall  %use  agent-name  run-nonce.yoke
+              %out  (scot %p p.dock)  q.dock
+              '0'  wire
           ==
         %-  ~(rep by by-duct.ossuary.u.per)
         |=  [[=duct =bone] out=(set duct)]
