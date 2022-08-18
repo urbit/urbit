@@ -1792,14 +1792,24 @@
         $(subs t.subs)
       ::
       =/  dud=(set duct)
-        =/  mod  [%gall %use agent-name run-nonce.yoke %out 0 wire]
+        =/  mod=^wire
+          :*  %gall  %use
+              agent-name
+              run-nonce.yoke
+              %out
+              (scot %p p.dock)
+              q.dock
+              '0'
+              wire
+          ==
         %-  ~(rep by by-duct.ossuary.u.per)
-        |=  [[=duct @] out=(set duct)]
+        |=  [[=duct =bone] out=(set duct)]
         ^+  out
-        ?.  ?&  ?=([* [%gall %use @ @ %out ^] *] duct)
-                =(mod i.t.duct(i.t.t.t.t.t 0))
+        ?.  ?&  ?=([* [%gall %use @ @ %out @ @ @ *] *] duct)
+                =(mod i.t.duct(i.t.t.t.t.t.t.t '0'))
             ==
           out
+        ?:  (~(has in closing.u.per) bone)  out
         ~>  %slog.0^leaf+"gall: rake {<i.t.duct>}"
         (~(put in out) duct)
       ::
