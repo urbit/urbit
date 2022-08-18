@@ -9,7 +9,6 @@
 
 typedef struct {
   c3_d  len_d;  //!< length of jammed request
-  c3_y  type_y; //!< type of IO request (0 = HTTP client)
   c3_y* jam_y;  //!< jammed request
 } _io_req;
 
@@ -106,19 +105,12 @@ _driver_kick(u3_auto* driver_u, u3_noun wire, u3_noun card)
   _client* client_u = (_client*)driver_u;
   _io_req* io_req_u = c3_malloc(sizeof(*io_req_u));
   u3s_jam_xeno(card, &io_req_u->len_d, &io_req_u->jam_y);
-  io_req_u->type_y = IO_HTTP_CLIENT;
-  //io_req_u->len_d += sizeof(io_req_u->type_y);
 
   uv_buf_t req_bufs_u[] = {
     {
       // Jammed request length.
       .base = (c3_c*)&io_req_u->len_d,
       .len  = sizeof(io_req_u->len_d),
-    },
-    {
-      // Request type.
-      .base = (c3_c*)&io_req_u->type_y,
-      .len  = sizeof(io_req_u->type_y),
     },
     {
       // Jammed request.
@@ -298,7 +290,7 @@ u3_cttp_io_init(u3_pier* pir_u)
   {
     // TODO: integrate the Rust binary.
     c3_c* args_c[] = {
-      "/home/tlon/code/io/target/release/io",
+      "/home/tlon/code/io_drivers/target/release/io_drivers",
       NULL,
     };
 
