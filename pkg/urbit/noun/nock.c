@@ -1673,7 +1673,7 @@ u3n_find(u3_noun key, u3_noun fol)
 }
 
 /* _n_prog_free(): free memory retained by program pog_u
- */
+*/
 static void
 _n_prog_free(u3n_prog* pog_u)
 {
@@ -1693,11 +1693,11 @@ _n_prog_free(u3n_prog* pog_u)
   u3a_free(pog_u);
 }
 
-/* _intlen(): find the number of characters the given int
- *            would take to print.
- */
+/* _cn_intlen(): find the number of characters num_w would take to print.
+**        num_w: an int we want to later serialize to a string
+*/
 c3_w
-_intlen(c3_w num_w)
+_cn_intlen(c3_w num_w)
 {
   c3_w len_w=0;
   while(num_w){
@@ -1707,15 +1707,12 @@ _intlen(c3_w num_w)
   return len_w;
 }
 
-/* _is_indexed(): return true if the opcode is
- *                in the set of opcodes known to
- *                use pog_u->lit_u.non
- */
+/* _cn_is_indexed(): return true if op is an opcodes that uses pog_u->lit_u.non
+**               op: opcode (assumed 0-94)
+*/
 c3_b
-_is_indexed(c3_w op)
+_cn_is_indexed(c3_w op)
 {
-  // NOTE: this logic is copied from ___
-  // and must be changed here if that changes.
   switch (op) {
     case FIBK: case FISK:
     case FIBL: case FISL:
@@ -1733,22 +1730,22 @@ _is_indexed(c3_w op)
   }
 }
 
-/* _num_from_pog(): returns an unsigned int of variable size
- *                  with a side effect of correctly incrementing ip_w
- *                  defined as a macro to avoid further pointer manipulations
- */
-#define _num_from_pog(go, pog, ip_w) (\
-  go == 4 ? _n_rewo(pog, &ip_w):      \
-  go == 2 ? _n_resh(pog, &ip_w):      \
+/* _cn_num_from_pog(): read a bytecode from the steam and advance the index
+**          go:  c3_w: can be 0, 2, 4
+**         pog: c3_y*: a bytecode stream
+**        ip_w:  c3_w: an index into pog
+*/
+#define _cn_num_from_pog(go, pog, ip_w) (\
+  go == 4 ? _n_rewo(pog, &ip_w):         \
+  go == 2 ? _n_resh(pog, &ip_w):         \
   pog[ip_w++])
 
-/* _slog_bytecode(): given a text render style priority hint pri_l (int 0-3),
- *                   and a u3n_prog bytecode program, compute the number of
- *                   chars needed to render the bytecode program to a string,
- *                   render it to a string, and slog that string to dill.
- */
+/* _cn_slog_bytecode(): render a nock program as string of bytecodes & slog it
+**               pri_l: priority render hint (assumed 0-3)
+**               pog_u: a nock formula compilied to a program
+*/
 void
-_slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
+_cn_slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   c3_y* pog = pog_u->byc_u.ops_y;
   c3_w len_w = pog_u->byc_u.len_w;
   c3_w ip_w=0, num=0, op_num=0, is_idx_op=0;
@@ -1758,14 +1755,14 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   // lets count the chars in this string
   while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
-    op_num = pog[ip_w++];            // move ip_w for reading a opcode name
-    is_idx_op = _is_indexed(op_num); // is this an indexed bytecode argument
-    len_c += 5;                      // a leading space, and opcode name
-    if (go > 0) {                    // if pair: "[bytecode arg]" else "bytecode"
-      len_c += 3;                    // "[", space between opcode & arg, "]"
-      if ( is_idx_op ) len_c += 2;   // 'i:'
-      len_c += _intlen(              // length of the bytecode argument
-        _num_from_pog(go, pog, ip_w)
+    op_num = pog[ip_w++];               // move ip_w for reading a opcode name
+    is_idx_op = _cn_is_indexed(op_num); // is this an indexed bytecode argument
+    len_c += 5;                         // a leading space, and opcode name
+    if (go > 0) {                       // if pair: "[bytecode arg]" else "bytecode"
+      len_c += 3;                       // "[", space between opcode & arg, "]"
+      if ( is_idx_op ) len_c += 2;      // 'i:'
+      len_c += _cn_intlen(              // length of the bytecode argument
+        _cn_num_from_pog(go, pog, ip_w)
       );
     }
   }
@@ -1777,30 +1774,30 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   // lets print this string
   while ( ip_w < len_w ) {
     go = _n_arg(pog[ip_w]);
-    op_num = pog[ip_w++];                    // move ip_w for reading a opcode name
-    is_idx_op = _is_indexed(op_num);         // is this an indexed bytecode argument
-    strcat(str_c, " ");                      // leading space
-    if (go > 0) strcat(str_c, "[");          // add "[" if the opcode pairs
-    strncat(str_c, opcode_names[op_num], 4); // add the opcode name
-    if (go > 0) {                            // finish the pair
-      strcat(str_c, " ");                    // add the space between byt and arg
-      if ( is_idx_op ) strcat(str_c, "i:");  // indexed args are labeled as "index of arg"
-      num = _num_from_pog(go, pog, ip_w);    // the bytecode argument
-      if (num == 0) {                        //
-        strcat(str_c, "0");                  // handle a literal zero
-      }                                      //
-      else {                                 //
-        c3_w x = 0;                          //
-        for (x = _intlen(num); x>0; x--) {   //
-          strcat(str_c, "_");                // prefill the buffer
-        }                                    //
-        c3_w f = strlen(str_c)-1;            // get the index of the last prefill
-        while (num > 0) {                    // stringify number in LSB order
-          str_c[f--] = (num%10)+'0';         // .. stringify the tail of num into tail of buf
-          num /= 10;                         // .. turncate num by one digit
-        }                                    //
-      }                                      //
-      strcat(str_c, "]");                    // add the closing brace
+    op_num = pog[ip_w++];                     // move ip_w for reading a opcode name
+    is_idx_op = _cn_is_indexed(op_num);       // is this an indexed bytecode argument
+    strcat(str_c, " ");                       // leading space
+    if (go > 0) strcat(str_c, "[");           // add "[" if the opcode pairs
+    strncat(str_c, opcode_names[op_num], 4);  // add the opcode name
+    if (go > 0) {                             // finish the pair
+      strcat(str_c, " ");                     // add the space between byt and arg
+      if ( is_idx_op ) strcat(str_c, "i:");   // indexed args are labeled as "index of arg"
+      num = _cn_num_from_pog(go, pog, ip_w);  // the bytecode argument
+      if (num == 0) {                         //
+        strcat(str_c, "0");                   // handle a literal zero
+      }                                       //
+      else {                                  //
+        c3_w x = 0;                           //
+        for (x = _cn_intlen(num); x>0; x--) { //
+          strcat(str_c, "_");                 // prefill the buffer
+        }                                     //
+        c3_w f = strlen(str_c)-1;             // get the index of the last prefill
+        while (num > 0) {                     // stringify number in LSB order
+          str_c[f--] = (num%10)+'0';          // .. stringify the tail of num into tail of buf
+          num /= 10;                          // .. turncate num by one digit
+        }                                     //
+      }                                       //
+      strcat(str_c, "]");                     // add the closing brace
     }
   }
   // replace the first leading space and append the last char to the string
@@ -1809,15 +1806,14 @@ _slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   u3t_slog( u3nc(pri_l, u3i_string(str_c)) );
 }
 
-/* _xray(): given a text render style priority hint pri_l (int 0-3),
-**          and a noun fol to complie into a u3n_prog bytecode program,
-**          slog the program as a string of bytecodes,
-**          and free the temp program afterwards.
+/* _cn_xray(): slog a noun as a string of vere bytecodes
+**      pri_l: priority render hint (assumed 0-3)
+**        fol: a nock formula noun
 */
 void
-_xray(c3_l pri_l, u3_noun fol) {
+_cn_xray(c3_l pri_l, u3_noun fol) {
   u3n_prog* pog_u = _n_bite(fol);
-  _slog_bytecode(pri_l, pog_u);
+  _cn_slog_bytecode(pri_l, pog_u);
   _n_prog_free(pog_u);
 }
 
@@ -1852,7 +1848,7 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
     } break;
 
     case c3__xray : {
-      _xray(0, fol);
+      _cn_xray(0, fol);
       *out = u3_nul;
     } break;
 
@@ -1935,7 +1931,7 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
       if ( c3y == u3r_cell(*clu, &pri, &tan) ) {
         c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
         u3t_slog_cap(pri_l, u3i_string("bytecode of"), u3k(tan));
-        _xray(pri_l, fol);
+        _cn_xray(pri_l, fol);
       }
       u3z(*clu);
       *clu = u3_nul;
