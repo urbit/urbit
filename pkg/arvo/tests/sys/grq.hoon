@@ -6,6 +6,7 @@
   %-  run-chain
   |.  :-  %|
   =+  nec-bud:v
+  ::  poke %sub to tell it to subscribe
   =/  =task:gall  [%deal [~nec ~nec] %sub %poke watch+!>(~bud)]
   =^  t1  gall.nec
     %:  gall-check-call:v  gall.nec
@@ -18,6 +19,7 @@
       ==  ==
     ==
   :-  t1  |.  :-  %|
+  ::  handle gall passing the %watch to itself, which passes to ames
   =^  t2  gall.nec
     %:  gall-check-call:v  gall.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -30,6 +32,7 @@
       ==
     ==
   :-  t2  |.  :-  %|
+  ::  pass %plea to ames, which gives a packet to vere
   =^  t3  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -45,6 +48,7 @@
       ==
     ==
   :-  t3  |.  :-  %|
+  ::  send packet across the network
   =^  t4  ames.bud
     %:  ames-check-call:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -60,6 +64,7 @@
       ==
     ==
   :-  t4  |.  :-  %|
+  ::  handle pass from ames to gall, which passes the %watch to itself
   =^  t5  gall.bud
     %:  gall-check-call:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -72,6 +77,7 @@
       ==
     ==
   :-  t5  |.  :-  %|
+  ::  gall runs %pub with %watch, gives ack to itself
   =^  t6  gall.bud
     %:  gall-check-call:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -82,6 +88,7 @@
       ==
     ==
   :-  t6  |.  :-  %|
+  ::  gall gives ack to ames
   =^  t7  gall.bud
     %:  gall-check-take:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -91,6 +98,7 @@
       ==
     ==
   :-  t7  |.  :-  %|
+  ::  ames hears ack from gall, sends over the network
   =^  t8  ames.bud
     %:  ames-check-take:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -103,6 +111,7 @@
       ==  ==
     ==
   :-  t8  |.  :-  %|
+  ::  ames hears watch-ack packet, gives to gall
   =^  t9  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.3 0xdead.beef *roof]
@@ -118,6 +127,7 @@
       ==
     ==
   :-  t9  |.  :-  %|
+  ::  gall gives watch-ack to itself
   =^  t10  gall.nec
     %:  gall-check-take:v  gall.nec
       [~1111.1.3 0xdead.beef *roof]
@@ -129,11 +139,23 @@
       ==
     ==
   :-  t10  |.  :-  %|
+  ::  gall delivers %watch-ack to %sub
   =^  t11  gall.nec
     %:  gall-check-take:v  gall.nec
       [~1111.1.3 0xdead.beef *roof]
       [/use/sub/0w1.d6Isf/out/~bud/pub/1/sub ~[/init] %gall %unto %watch-ack ~]
       ~
     ==
-  :-  t11  |.  :-  %&  ~
+  ::  start the clog and kick process; give clog to publisher gall
+  :-  t11  |.  :-  %|
+  =^  t12  gall.bud
+    %:  gall-check-take:v  gall.bud
+      [~1111.1.4 0xbeef.dead *roof]
+      :+  /sys/lag  ~[/init]
+      [%ames %clog ~nec]
+      :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
+          [%give %unto %kick ~]
+      ==
+    ==
+  :-  t12  |.  :-  %&  ~
 --
