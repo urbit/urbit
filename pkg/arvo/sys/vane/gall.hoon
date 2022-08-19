@@ -828,6 +828,10 @@
       ?-  -.ames-response
         %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
         %x  =.  mo-core  (mo-give %unto %kick ~)
+            =.  outstanding.state
+              =/  key  [[%sys wire] hen]
+              %+  ~(put by outstanding.state)  key
+              (~(put to (~(gut by outstanding.state) key ~)) %cork)
             (mo-pass [%sys wire] %a %cork ship)
       ==
     ::
