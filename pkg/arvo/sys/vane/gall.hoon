@@ -382,8 +382,9 @@
   ++  mo-core  .
   ++  mo-abed  |=(hun=duct mo-core(hen hun))
   ++  mo-abet  [(flop moves) gall-payload]
-  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
   ++  mo-give  |=(g=gift mo-core(moves [[hen give+g] moves]))
+  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
+  ++  mo-slip  |=(p=note-arvo mo-core(moves [[hen slip+p] moves]))
   ++  mo-past
     |=  =(list [wire note-arvo])
     ?~  list
@@ -869,6 +870,15 @@
     ?.  =(run-nonce.u.yoke i.t.wire)
       %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
       mo-core
+    ::  if agent must be running, revive all needed agents then apply
+    ::
+    ?:  ?&  ?=(%| -.agent.u.yoke)
+            ?=(?(%dojo %hood) dap)
+        ==
+      =.  mo-core  (mo-pass /nowhere %g %jolt %base %hood)
+      =.  mo-core  (mo-pass /nowhere %g %jolt %base %dojo)
+      (mo-pass use+wire %b %huck sign-arvo)
+    ::
     ?.  ?=([?(%gall %behn) %unto *] sign-arvo)
       ?:  ?=(%| -.agent.u.yoke)
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
@@ -1045,19 +1055,27 @@
     =/  running  (~(get by yokes.state) agent)
     =/  is-running  ?~(running %| ?=(%& -.agent.u.running))
     =/  is-blocked  (~(has by blocked.state) agent)
+    ::  agent is running; deliver move normally
     ::
-    ?:  |(!is-running is-blocked)
-      =/  blocked=(qeu blocked-move)
-        =/  waiting  (~(get by blocked.state) agent)
-        =/  deals  (fall waiting *(qeu blocked-move))
-        =/  deal  [hen routes &+deal]
-        (~(put to deals) deal)
-      ::
-      %-  (slog leaf+"gall: not running {<agent>} yet, got {<-.deal>}" ~)
-      %_  mo-core
-        blocked.state  (~(put by blocked.state) agent blocked)
-      ==
-    (mo-apply agent routes deal)
+    ?.  |(!is-running is-blocked)
+      (mo-apply agent routes deal)
+    ::  if agent must be running, revive all needed agents then apply
+    ::
+    ?:  ?=(?(%hood %dojo) agent)
+      =.  mo-core  (mo-pass /nowhere %g %jolt %base %hood)
+      =.  mo-core  (mo-pass /nowhere %g %jolt %base %dojo)
+      (mo-slip %g %deal [ship our] agent deal)
+    ::
+    =/  blocked=(qeu blocked-move)
+      =/  waiting  (~(get by blocked.state) agent)
+      =/  deals  (fall waiting *(qeu blocked-move))
+      =/  deal  [hen routes &+deal]
+      (~(put to deals) deal)
+    ::
+    %-  (slog leaf+"gall: not running {<agent>} yet, got {<-.deal>}" ~)
+    %_  mo-core
+      blocked.state  (~(put by blocked.state) agent blocked)
+    ==
   ::  +mo-handle-ames-request: handle %ames request message.
   ::
   ++  mo-handle-ames-request
