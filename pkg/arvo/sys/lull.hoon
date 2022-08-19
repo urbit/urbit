@@ -2202,9 +2202,6 @@
       ::  %eyre: cancel request
       ::
       [%cancel-request ~]
-      ::  %khan: fire thread
-      ::
-      $>(%fyrd task:khan)
       ::  %dill: reset terminal configuration
       ::
       $>(%hail task:dill)

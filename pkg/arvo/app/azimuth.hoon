@@ -249,6 +249,7 @@
           spo.state   sponsors.snap.poke
           url.state   'http://eth-mainnet.urbit.org:8545'
           sap.state   snap.poke
+          logs.state  ~
         ==
       $(poke [%kick ~])
     ::
@@ -340,13 +341,14 @@
     ^-  (unit (unit cage))
     |^
     ?+  path  (on-peek:def path)
-        [%x %logs ~]     ``noun+!>(logs.state)
-        [%x %nas ~]      ``noun+!>(nas.state)
-        [%x %dns ~]      ``noun+!>(dns.nas.state)
-        [%x %own ~]      ``noun+!>(own.state)
-        [%x %spo ~]      ``noun+!>(spo.state)
-        [%x %refresh ~]  ``atom+!>(refresh.state)
-        [%x %point @ ~]  ``noun+(point i.t.t.path)
+        [%x %logs ~]       ``noun+!>(logs.state)
+        [%x %nas ~]        ``noun+!>(nas.state)
+        [%x %dns ~]        ``noun+!>(dns.nas.state)
+        [%x %own ~]        ``noun+!>(own.state)
+        [%x %spo ~]        ``noun+!>(spo.state)
+        [%x %refresh ~]    ``atom+!>(refresh.state)
+        [%x %point @ ~]    ``noun+(point i.t.t.path)
+        [%x %last-snap ~]  ``noun+!>(sap.state)
     ==
     ::
     ++  point
