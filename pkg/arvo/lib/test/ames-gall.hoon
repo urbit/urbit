@@ -45,7 +45,7 @@
   ^-  [tang ^gall-gate]
   =/  gall-core  (gall-gate now eny roof)
   =^  moves  gall-gate  (take:gall-core wire duct dud=~ sign-arvo)
-  [(expect-eq !>(moves) !>(expected-moves)) gall-gate]
+  [(expect-eq !>(expected-moves) !>(moves)) gall-gate]
 ::
 ++  gall-take
   |=  [=gall-gate =wire =duct =sign-arvo =roof]

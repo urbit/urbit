@@ -11,11 +11,9 @@
     %:  gall-check-call:v  gall.nec
       [~1111.1.1 0xdead.beef *roof]
       [~[/foo] task]
-      :~  ^-  move:gall-bunt:v
-          :*  ~[/foo]  %give  [%unto %poke-ack ~]
-          ==
-          ^-  move:gall-bunt:v
-          :*  ~[/init]  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub
+      :~  :-  ~[/foo]  [%give %unto %poke-ack ~]
+          :-  ~[/init]
+          :*  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub
               [%g %deal [~nec ~bud] %pub %watch /foo]
       ==  ==
     ==
@@ -23,10 +21,11 @@
   =^  t2  gall.nec
     %:  gall-check-call:v  gall.nec
       [~1111.1.1 0xdead.beef *roof]
-      [~[/init] [%deal [~nec ~bud] %pub %watch /foo]]
+      :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub /init]
+      [%deal [~nec ~bud] %pub %watch /foo]
       :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~bud]
           :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~bud ~)]
-          :-  ~[/init]
+          :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub /init]
           [%pass /sys/way/~bud/pub %a %plea ~bud %g /ge/pub [%0 %s /foo]]
       ==
     ==
@@ -34,7 +33,8 @@
   =^  t3  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
-      [~[/sys/way/~bud/pub /init] %plea ~bud %g /ge/pub [%0 %s /foo]]
+      :-  ~[/sys/way/~bud/pub /use/sub/0w1.d6Isf/out/~bud/pub/1/sub /init]
+      [%plea ~bud %g /ge/pub [%0 %s /foo]]
       :~  :-  ~[//unix]
           :*  %give  %send  [%& ~nec]
               0xae59.5b29.277b.22c1.20b7.a8db.9086.46df.31bd.f9bc.
@@ -112,9 +112,28 @@
             2d9d.076e.6d00.0100.0223.9ae9.5000
       ==
       :~  :-  ~[//unix]  [%pass /qos %d %flog %text "; ~bud is your neighbor"]
-          :-  ~[/sys/way/~bud/pub /init]  [%give %done ~]
+          :-  ~[/sys/way/~bud/pub /use/sub/0w1.d6Isf/out/~bud/pub/1/sub /init]
+          [%give %done ~]
           :-  ~[/ames]  [%pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.01]
       ==
     ==
-  :-  t9  |.  :-  %&  ~
+  :-  t9  |.  :-  %|
+  =^  t10  gall.nec
+    %:  gall-check-take:v  gall.nec
+      [~1111.1.3 0xdead.beef *roof]
+      :+  /sys/way/~bud/pub
+        ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub /init]
+      [%ames %done ~]
+      :~  :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub /init]
+          [%give %unto %watch-ack ~]
+      ==
+    ==
+  :-  t10  |.  :-  %|
+  =^  t11  gall.nec
+    %:  gall-check-take:v  gall.nec
+      [~1111.1.3 0xdead.beef *roof]
+      [/use/sub/0w1.d6Isf/out/~bud/pub/1/sub ~[/init] %gall %unto %watch-ack ~]
+      ~
+    ==
+  :-  t11  |.  :-  %&  ~
 --

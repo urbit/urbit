@@ -22,7 +22,7 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ?.  =(/foo wire)
+  ?.  =(/sub wire)
     ~|  wire+wire  !!
   ~&  sub+-.sign
   ?+  -.sign  !!
