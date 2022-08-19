@@ -19,29 +19,31 @@
 ::
 ++  gall-check-call
   |=  $:  =gall-gate
-          now=@da
-          scry=roof
-          call-args=[=duct wrapped-task=(hobo task:gall)]
+          [now=@da eny=@ =roof]
+          [=duct task=(hobo task:gall)]
           expected-moves=(list move:gall-bunt)
       ==
   ^-  [tang ^gall-gate]
-  =/  gall-core  (gall-gate now=now eny=`@`0xdead.beef scry=scry)
-  ::
-  =/  res
-    =/  =type  -:!>(*task:gall)
-    (call:gall-core duct.call-args dud=~ wrapped-task.call-args)
-  ::
-  =/  output=tang
-    %+  expect-eq
-      !>  expected-moves
-      !>  -.res
-  ::
-  [output +.res]
+  =/  gall-core  (gall-gate now eny roof)
+  =^  moves  gall-gate  (call:gall-core duct dud=~ task)
+  [(expect-eq !>(expected-moves) !>(moves)) gall-gate]
 ::
 ++  gall-call
   |=  [=gall-gate =duct task=(hobo task:gall) =roof]
   %.  [duct dud=~ task]
   call:(gall-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+::  +gall-check-take: run gall sign, assert produces expected-moves
+::
+++  gall-check-take
+  |=  $:  =gall-gate
+          [now=@da eny=@ =roof]
+          [=wire =duct =sign-arvo]
+          expected-moves=(list move:gall-bunt)
+      ==
+  ^-  [tang ^gall-gate]
+  =/  gall-core  (gall-gate now eny roof)
+  =^  moves  gall-gate  (take:gall-core wire duct dud=~ sign-arvo)
+  [(expect-eq !>(moves) !>(expected-moves)) gall-gate]
 ::
 ++  gall-take
   |=  [=gall-gate =wire =duct =sign-arvo =roof]
