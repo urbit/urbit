@@ -68,6 +68,18 @@
   |=  [=ames-gate =duct task=(hobo task:ames) =roof]
   %.  [duct dud=~ task]
   call:(ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+::  +ames: run ames sign, assert produces expected-moves
+::
+++  ames-check-take
+  |=  $:  =ames-gate
+          [now=@da eny=@ =roof]
+          [=wire =duct =sign:ames-bunt]
+          expected-moves=(list move:ames-bunt)
+      ==
+  ^-  [tang ^ames-gate]
+  =/  ames-core  (ames-gate now eny roof)
+  =^  moves  ames-gate  (take:ames-core wire duct dud=~ sign)
+  [(expect-eq !>(moves) !>(expected-moves)) ames-gate]
 ::
 ++  ames-nec-bud
   ::  create ~nec

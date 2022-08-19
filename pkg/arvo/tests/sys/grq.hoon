@@ -2,7 +2,7 @@
 ::
 /+  *test, v=test-ames-gall
 |%
-++  test-setup-nec-bud
+++  test-watch
   %-  run-chain
   |.  :-  %|
   =+  nec-bud:v
@@ -45,7 +45,7 @@
       ==
     ==
   :-  t3  |.  :-  %|
-  =^  t4  ames.nec
+  =^  t4  ames.bud
     %:  ames-check-call:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[//unix]
@@ -90,5 +90,17 @@
       :~  :-  ~[/bone/~nec/0/1 //unix]  [%give %done ~]
       ==
     ==
-  :-  t7  |.  :-  %&  ~
+  :-  t7  |.  :-  %|
+  =^  t8  ames.bud
+    %:  ames-check-take:v  ames.bud
+      [~1111.1.2 0xbeef.dead *roof]
+      :+  /bone/~nec/0/1  ~[//unix]
+      [%gall %done ~]
+      :~  :-  ~[//unix]
+          :*  %give  %send  [%| `@`'lane-bar']
+              0x2.0219.8100.0485.5530.3c88.9068.3cc6.484e.
+                2d9d.076e.6d00.0100.0223.9ae9.5000
+      ==  ==
+    ==
+  :-  t8  |.  :-  %&  ~
 --
