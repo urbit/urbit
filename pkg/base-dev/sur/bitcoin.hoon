@@ -4,7 +4,7 @@
 ::  chyg: whether account is (non-)change. 0 or 1
 ::  bytc: "btc-byts" with dat cast to @ux
 |%
-+$  network  ?(%main %testnet)
++$  network  ?(%main %testnet %regtest)
 +$  hexb  [wid=@ dat=@ux]                :: hex byts
 +$  bits  [wid=@ dat=@ub]
 +$  xpub  @ta
