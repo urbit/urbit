@@ -98,7 +98,7 @@
       ==
     ==
   :-  t7  |.  :-  %|
-  ::  ames hears ack from gall, sends over the network
+  ::  publisher ames hears ack from gall, sends over the network
   =^  t8  ames.bud
     %:  ames-check-take:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -111,7 +111,7 @@
       ==  ==
     ==
   :-  t8  |.  :-  %|
-  ::  ames hears watch-ack packet, gives to gall
+  ::  subscriber ames hears watch-ack packet, gives to gall
   =^  t9  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.3 0xdead.beef *roof]
@@ -184,5 +184,23 @@
           :-  ~[/ames]  [%pass /pump/~nec/1 %b %wait ~1111.1.4..00.00.01]
       ==
     ==
-  :-  t14  |.  :-  %&  ~
+  :-  t14  |.  :-  %|
+  ::  subscriber ames receives kick, gives to gall and gives ack to ames
+  =^  t15  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.4 0xdead.beef *roof]
+      :-  ~[//unix]
+      :*  %hear  [%& ~bud]
+          0xa1fc.cd35.c730.9a00.07e0.90a2.f87c.3657.935e.
+            4ca0.801d.3ddc.d400.0100.0223.bc18.1000
+      ==
+      :~  :-  ~[/sys/way/~bud/pub /use/sub/0w1.d6Isf/out/~bud/pub/1/sub /init]
+          [%give %boon %x ~]
+          :-  ~[//unix]
+          :*  %give  %send  [%& ~nec]
+              0xfe.e208.da00.0491.bf7f.9594.2ddc.0948.
+              9de0.3906.b678.6e00.0200.0132.e55d.5000
+      ==  ==
+    ==
+  :-  t15  |.  :-  %&  ~
 --
