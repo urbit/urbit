@@ -617,7 +617,7 @@
       =life
       crypto-core=acru:ames
       =bug
-      corks=(set wire)
+      corks=(set wire)  ::TODO  unused, remove in next version of state
   ==
 ::
 +$  ames-state-4  ames-state-5
@@ -841,7 +841,7 @@
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
-    =|  cached-state=(unit $%([%5 ames-state-5] [%6 ames-state-6] [%7 ames-state-7]))
+    =|  cached-state=(unit $%([%5 ames-state-5] [%6 ames-state-6] [%7 ames-state-7] [%8 ^ames-state]))
     ::
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
@@ -864,23 +864,21 @@
       ::
       ?^  dud
         ~|(%ames-larval-call-dud (mean tang.u.dud))
+      ::  before processing events, make sure we have state loaded
       ::
-      ?:  &(?=(^ cached-state) ?=(~ queued-events))
+      =^  molt-moves  adult-gate  molt
+      ::
+      ?:  =(~ queued-events)
         =^  moves  adult-gate  (call:adult-core duct dud task)
-        %-  molt
-        ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
+        ~>  %slog.0^leaf/"ames: metamorphosis"
+        [(weld molt-moves moves) adult-gate]
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
         ::  process %born using wrapped adult ames
         ::
         =^  moves  adult-gate  (call:adult-core duct dud task)
-        ::  if no events were queued up, metamorphose
-        ::
-        ?~  queued-events
-          ~>  %slog.0^leaf/"ames: metamorphosis"
-          [moves adult-gate]
+        =.  moves  (weld molt-moves moves)
         ::  kick off a timer to process the first of .queued-events
         ::
         =.  moves  :_(moves [duct %pass /larva %b %wait now])
@@ -940,6 +938,9 @@
               [duct %pass /larva %b %wait now]
           ==
         [moves larval-gate]
+      ::  before processing events, make sure we have state loaded
+      ::
+      =^  molt-moves  adult-gate  molt
       ::  normal drain timer; dequeue and run event
       ::
       =^  first-event  queued-events  ~(get to queued-events)
@@ -948,15 +949,11 @@
           %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
           %take  (take:adult-core [wire duct ~ sign]:+.first-event)
         ==
-      ::  .queued-events has been cleared; metamorphose
+      =.  moves  (weld molt-moves moves)
+      ::  .queued-events has been cleared; done!
       ::
       ?~  queued-events
-        ?.  ?=(^ cached-state)
-          ~>  %slog.0^leaf/"ames: metamorphosis"
-          [moves adult-gate]
-        %-  molt
-        ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
+        [moves adult-gate]
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
@@ -1052,18 +1049,21 @@
     ::  +molt: re-evolve to adult-ames
     ::
     ++  molt
-      |=  moves=(list move)
       ^-  (quip move _adult-gate)
-      =?  cached-state  &(?=(^ cached-state) ?=(%5 +<.cached-state))
-        `%6^(state-5-to-6:load:adult-core +.u.cached-state)
-      =?  cached-state  &(?=(^ cached-state) ?=(%6 +<.cached-state))
-        `%7^(state-6-to-7:load:adult-core +.u.cached-state)
-      =.  ames-state.adult-gate
-        ?>  &(?=(^ cached-state) ?=(%7 +<.cached-state))
-        (state-7-to-8:load:adult-core +.u.cached-state)
-      =.  cached-state  ~
-      ~>  %slog.0^leaf/"ames: metamorphosis reload"
-      [moves adult-gate]
+      ?~  cached-state  [~ adult-gate]
+      ~>  %slog.0^leaf/"ames: molt"
+      =?  u.cached-state  ?=(%5 -.u.cached-state)
+        6+(state-5-to-6:load:adult-core +.u.cached-state)
+      =?  u.cached-state  ?=(%6 -.u.cached-state)
+        7+(state-6-to-7:load:adult-core +.u.cached-state)
+      =^  moz  u.cached-state
+        ?.  ?=(%7 -.u.cached-state)  [~ u.cached-state]
+        ~>  %slog.0^leaf/"ames: init daily recork timer"
+        :-  [[/ames]~ %pass /recork %b %wait `@da`(add now ~m20)]~
+        8+(state-7-to-8:load:adult-core +.u.cached-state)
+      ?>  ?=(%8 -.u.cached-state)
+      =.  ames-state.adult-gate  +.u.cached-state
+      [moz adult-gate]
     --
 ::  adult ames, after metamorphosis from larva
 ::
