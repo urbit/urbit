@@ -1036,13 +1036,11 @@ u3_term_ef_ctlc(void)
 {
   u3_utty* uty_u = _term_main();
 
-  {
+  if ( uty_u->car_u ) {
     u3_noun wir = u3nt(c3__term, '1', u3_nul);
     u3_noun cad = u3nt(c3__belt, c3__ctl, 'c');
 
     c3_assert( 1 == uty_u->tid_l );
-    c3_assert( uty_u->car_u );
-
     _term_ovum_plan(uty_u->car_u, wir, cad);
   }
 

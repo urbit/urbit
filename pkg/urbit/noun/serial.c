@@ -158,15 +158,9 @@ u3s_jam_fib(u3i_slab* sab_u, u3_noun a)
   fib_u.bit_w = 0;
   u3i_slab_init(sab_u, 0, fib_u.a_w);
 
-  //  as this is a hot path, we unsafely elide overflow checks
-  //
-  //    a page-fault overflow detection system is urgently needed ...
-  //
-  u3a_walk_fore_unsafe(a, &fib_u, _cs_jam_fib_atom_cb,
-                                  _cs_jam_fib_cell_cb);
+  u3a_walk_fore(a, &fib_u, _cs_jam_fib_atom_cb, _cs_jam_fib_cell_cb);
 
   u3h_free(fib_u.har_p);
-
   return fib_u.bit_w;
 }
 
@@ -270,18 +264,11 @@ u3s_jam_xeno(u3_noun a, c3_d* len_d, c3_y** byt_y)
 {
   _jam_xeno_t jam_u = {0};
   ur_bsw_init(&jam_u.rit_u, ur_fib11, ur_fib12);
-
   jam_u.har_p = u3h_new();
 
-  //  as this is a hot path, we unsafely elide overflow checks
-  //
-  //    a page-fault overflow detection system is urgently needed ...
-  //
-  u3a_walk_fore_unsafe(a, &jam_u, _cs_jam_xeno_atom,
-                                  _cs_jam_xeno_cell);
+  u3a_walk_fore(a, &jam_u, _cs_jam_xeno_atom, _cs_jam_xeno_cell);
 
   u3h_free(jam_u.har_p);
-
   return ur_bsw_done(&jam_u.rit_u, len_d, byt_y);
 }
 
@@ -360,7 +347,6 @@ _cs_cue_next(u3a_pile*     pil_u,
       //
       else {
         _cs_cue* fam_u = u3a_push(pil_u);
-        u3a_pile_sane(pil_u);
 
         //  NB: fam_u->wid unused in head-frame
         //
@@ -472,7 +458,6 @@ _cs_cue_xeno_next(u3a_pile*    pil_u,
 
       case ur_jam_cell: {
         _cue_frame_t* fam_u = u3a_push(pil_u);
-        u3a_pile_sane(pil_u);
 
         fam_u->ref   = u3_none;
         fam_u->bit_d = bit_d;
@@ -731,7 +716,6 @@ _cs_cue_bytes_next(u3a_pile*     pil_u,
 
       case ur_jam_cell: {
         _cue_frame_t* fam_u = u3a_push(pil_u);
-        u3a_pile_sane(pil_u);
 
         fam_u->ref   = u3_none;
         fam_u->bit_d = bit_d;

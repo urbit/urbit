@@ -666,6 +666,14 @@ _http_start_respond(u3_hreq* req_u,
   c3_i has_len_i = 0;
 
   while ( 0 != hed_u ) {
+    if ( 0x200 <= rec_u->version ) {
+      h2o_strtolower(hed_u->nam_c, hed_u->nam_w);
+
+      if ( 0 == strncmp(hed_u->nam_c, "connection", 10) ) {
+        hed_u = hed_u->nex_u;
+        continue;
+      }
+    }
     if ( 0 == strncmp(hed_u->nam_c, "content-length", 14) ) {
       has_len_i = 1;
     }
@@ -1608,7 +1616,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
   // enable ALPN for HTTP 2 support
-#if 0 //H2O_USE_ALPN
+#if H2O_USE_ALPN
   {
     SSL_CTX_set_ecdh_auto(tls_u, 1);
     h2o_ssl_register_alpn_protocols(tls_u, h2o_http2_alpn_protocols);
