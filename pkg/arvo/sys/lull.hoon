@@ -2269,6 +2269,9 @@
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)
+      ::  %clay: remove superfluous ford cache refcounts
+      ::
+      $>(%reap task:clay)
       ::  %iris: hear (partial) http response
       ::
       $>(%receive task:iris)
