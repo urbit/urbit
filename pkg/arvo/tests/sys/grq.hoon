@@ -102,5 +102,18 @@
                 2d9d.076e.6d00.0100.0223.9ae9.5000
       ==  ==
     ==
-  :-  t8  |.  :-  %&  ~
+  =^  t9  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.3 0xdead.beef *roof]
+      :-  ~[//unix]
+      :*  %hear  [%& ~bud]
+          0x2.0219.8100.0485.5530.3c88.9068.3cc6.484e.
+            2d9d.076e.6d00.0100.0223.9ae9.5000
+      ==
+      :~  :-  ~[//unix]  [%pass /qos %d %flog %text "; ~bud is your neighbor"]
+          :-  ~[/sys/way/~bud/pub /init]  [%give %done ~]
+          :-  ~[/ames]  [%pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.01]
+      ==
+    ==
+  :-  t9  |.  :-  %&  ~
 --
