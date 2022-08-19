@@ -422,8 +422,20 @@
       (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
     |-  ^+  mo-core
     ?~  apps  mo-core
-    =/  ap-core  (ap-yoke:ap:mo-core p.i.apps [~ our] q.i.apps)
+    =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-doff:ap-core ship))
+  ::  +mo-rake: send %cork's for old subscriptions if needed
+  ::
+  ++  mo-rake
+    |=  [dude=(unit dude) all=?]
+    ^+  mo-core
+    =/  apps=(list (pair term yoke))
+      ?~  dude  ~(tap by yokes.state)
+      (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
+    |-  ^+  mo-core
+    ?~  apps  mo-core
+    =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
+    $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1787,6 +1799,49 @@
       =?  ap-core  (gte 1 (~(got by boar.yoke) wyr dok))
         (ap-pass wyr %agent dok %leave ~)
       $(subs t.subs)
+    ::  +ap-rake: clean up the dead %leave's
+    ::
+    ++  ap-rake
+      |=  all=?
+      =/  subs  ~(tap in ~(key by boat.yoke))
+      |^  ^+  ap-core
+      ?~  subs  ap-core
+      =/  [=wire =dock]  i.subs
+      =/  non  (~(got by boar.yoke) wire dock)
+      ?:  &(!all =(0 non))
+        $(subs t.subs)
+      ?~  per=(scry-peer-state p.dock)
+        $(subs t.subs)
+      ::
+      =/  dud=(set duct)
+        =/  mod=^wire
+          :*  %gall  %use  agent-name  run-nonce.yoke
+              %out  (scot %p p.dock)  q.dock
+              '0'  wire
+          ==
+        %-  ~(rep by by-duct.ossuary.u.per)
+        |=  [[=duct =bone] out=(set duct)]
+        ^+  out
+        ?.  ?&  ?=([* [%gall %use @ @ %out @ @ @ *] *] duct)
+                =(mod i.t.duct(i.t.t.t.t.t.t.t '0'))
+            ==
+          out
+        ?:  (~(has in closing.u.per) bone)  out
+        ~>  %slog.0^leaf+"gall: rake {<i.t.duct>}"
+        (~(put in out) duct)
+      ::
+      %-  ap-move
+      (turn ~(tap in dud) |=(d=duct [+.d %pass -.d %a %cork p.dock]))
+      ::
+      ++  scry-peer-state
+        |=  her=ship
+        ~+  ^-  (unit peer-state:ames)
+        =/  sky  (rof [~ ~] %ax [our %$ da+now] /peers/(scot %p her))
+        ?:  |(?=(~ sky) ?=(~ u.sky))
+          ~
+        =/  sat  !<(ship-state:ames q.u.u.sky)
+        ?>(?=(%known -.sat) (some +.sat))
+      --
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -1982,6 +2037,7 @@
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %doff  mo-abet:(mo-doff:mo-core +.task)
+      %rake  mo-abet:(mo-rake:mo-core +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
