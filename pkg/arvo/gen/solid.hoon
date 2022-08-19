@@ -121,6 +121,21 @@
 =/  boot-ova=(list)
   [aeon:eden:part boot-two kernel-formula ~]
 ::
+::  userspace ova
+::
+=/  user-ova
+  =;  use=(list unix-event:pill)
+    ?:  fil  (snoc use [/c/reap %reap ~])
+    use
+  %+  roll
+    (snoc dez [%base bas])
+  |=  [des=[lab=desk path] acc=(list unix-event:pill)]
+  =/  =yoki:clay  (file-yoki:pill des)
+  =/  ves=(list unix-event:pill)
+    ~[(yoki-ovum:pill lab.des yoki)]
+  =?  ves  fil
+    :_  ves  (inject-flow:pill lab.des yoki p.bec now)
+  (weld acc ves)
 ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
 ::
 ::    Our kernel event-list is ~, as we've already installed them.
@@ -129,12 +144,4 @@
 ::
 :+  %pill  %solid
 :+  boot-ova  ~
-%+  roll
-  (snoc dez [%base bas])
-|=  [des=[lab=desk path] acc=(list unix-event:pill)]
-=/  =yoki:clay  (file-yoki:pill des)
-=/  ves=(list unix-event:pill)
-  ~[(yoki-ovum:pill lab.des yoki)]
-=?  ves  fil
-  :_  ves  (inject-flow:pill lab.des yoki p.bec now)
-(weld acc ves)
+user-ova
