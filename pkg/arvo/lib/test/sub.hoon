@@ -10,9 +10,10 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
+  =+  !<(=ship vase)
   ?+  mark  !!
-    %leave  [[%pass /sub %agent [our.bowl %pub] %leave ~]~ this]
-    %watch  [[%pass /sub %agent [our.bowl %pub] %watch /foo]~ this]
+    %leave  [[%pass /sub %agent [ship %pub] %leave ~]~ this]
+    %watch  [[%pass /sub %agent [ship %pub] %watch /foo]~ this]
   ==
 ::
 ++  on-watch
@@ -38,7 +39,7 @@
   |=  =path
   `this
 ::
-++  on-init   ~&  %sub-on-init  `this
+++  on-init   `this
 ++  on-save   !>(state)
 ++  on-load   |=(old=vase `this(state !<(_state old)))
 ++  on-arvo   on-arvo:def
