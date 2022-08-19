@@ -825,7 +825,7 @@
         %poke      (mo-give %unto %poke-ack err)
         %leave     mo-core
         %cork      mo-core
-        %missing   (mo-give:(mo-give %unto %watch-ack err) %unto %poke-ack err)
+        %missing   ~>(%slog.[3 'gall: missing'] mo-core)
       ==
     ::
         [%ames %boon *]
