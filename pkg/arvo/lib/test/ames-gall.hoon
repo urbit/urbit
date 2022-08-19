@@ -4,10 +4,84 @@
 ::
 =/  ames-bunt  (ames-raw ~zod)
 =/  gall-bunt  (gall-raw ~zod)
+::  basic helpers
 ::
 |%
-+$  gall-gate  _(make-gall ~zod)
-+$  ames-gate  _nec:ames-nec-bud
+++  make-gall
+  |=  =ship
+  =/  gall-pupa  (gall-raw ship)
+  =/  gall-core  (gall-pupa now=~1111.1.1 eny=`@`0xdead.beef scry=*roof)
+  =+  [out adult]=(call:gall-core duct=~[/init] dud=~ task=[%init ~])
+  adult
+::
+++  ames-nec-bud
+  ::  create ~nec
+  ::
+  =/  nec  (ames-raw ~nec)
+  =.  now.nec        ~1111.1.1
+  =.  eny.nec        0xdead.beef
+  =.  life.ames-state.nec  2
+  =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
+  =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
+  =/  nec-pub  pub:ex:crypto-core.ames-state.nec
+  =/  nec-sec  sec:ex:crypto-core.ames-state.nec
+  ::  create ~bud
+  ::
+  =/  bud  (ames-raw ~bud)
+  =.  now.bud        ~1111.1.1
+  =.  eny.bud        0xbeef.dead
+  =.  life.ames-state.bud  3
+  =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
+  =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+  =/  bud-pub  pub:ex:crypto-core.ames-state.bud
+  =/  bud-sec  sec:ex:crypto-core.ames-state.bud
+  ::
+  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub nec-sec)
+  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub bud-sec)
+  ?>  =(nec-sym bud-sym)
+  ::  tell ~nec about ~bud
+  ::
+  =.  peers.ames-state.nec
+    %+  ~(put by peers.ames-state.nec)  ~bud
+    =|  =peer-state:ames
+    =.  -.peer-state
+      :*  symmetric-key=bud-sym
+          life=3
+          rift=0
+          public-key=bud-pub
+          sponsor=~nec
+      ==
+    =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
+    [%known peer-state]
+  ::  tell ~bud about ~nec
+  ::
+  =.  peers.ames-state.bud
+    %+  ~(put by peers.ames-state.bud)  ~nec
+    =|  =peer-state:ames
+    =.  -.peer-state
+      :*  symmetric-key=nec-sym
+          life=2
+          rift=0
+          public-key=nec-pub
+          sponsor=~nec
+      ==
+    =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+    [%known peer-state]
+  ::  metamorphose
+  ::
+  =>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
+  =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
+  ::
+  [nec=nec bud=bud]
+--
+::  forward-declare to avoid repeated metamorphoses
+=/  gall-adult  (make-gall ~zod)
+=/  ames-adult  nec:ames-nec-bud
+::  main core
+::
+|%
++$  gall-gate  _gall-adult
++$  ames-gate  _ames-adult
 ++  nec-bud
   =/  a  ames-nec-bud
   =/  gall-nec  (make-gall ~nec)
@@ -81,72 +155,6 @@
   =^  moves  ames-gate  (take:ames-core wire duct dud=~ sign)
   [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
-++  ames-nec-bud
-  ::  create ~nec
-  ::
-  =/  nec  (ames-raw ~nec)
-  =.  now.nec        ~1111.1.1
-  =.  eny.nec        0xdead.beef
-  =.  life.ames-state.nec  2
-  =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-  =/  nec-pub  pub:ex:crypto-core.ames-state.nec
-  =/  nec-sec  sec:ex:crypto-core.ames-state.nec
-  ::  create ~bud
-  ::
-  =/  bud  (ames-raw ~bud)
-  =.  now.bud        ~1111.1.1
-  =.  eny.bud        0xbeef.dead
-  =.  life.ames-state.bud  3
-  =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
-  =/  bud-pub  pub:ex:crypto-core.ames-state.bud
-  =/  bud-sec  sec:ex:crypto-core.ames-state.bud
-  ::
-  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub nec-sec)
-  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub bud-sec)
-  ?>  =(nec-sym bud-sym)
-  ::  tell ~nec about ~bud
-  ::
-  =.  peers.ames-state.nec
-    %+  ~(put by peers.ames-state.nec)  ~bud
-    =|  =peer-state:ames
-    =.  -.peer-state
-      :*  symmetric-key=bud-sym
-          life=3
-          rift=0
-          public-key=bud-pub
-          sponsor=~nec
-      ==
-    =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
-    [%known peer-state]
-  ::  tell ~bud about ~nec
-  ::
-  =.  peers.ames-state.bud
-    %+  ~(put by peers.ames-state.bud)  ~nec
-    =|  =peer-state:ames
-    =.  -.peer-state
-      :*  symmetric-key=nec-sym
-          life=2
-          rift=0
-          public-key=nec-pub
-          sponsor=~nec
-      ==
-    =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
-    [%known peer-state]
-  ::  metamorphose
-  ::
-  =>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
-  =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
-  ::
-  [nec=nec bud=bud]
-::
-++  make-gall
-  |=  =ship
-  =/  gall-pupa  (gall-raw ship)
-  =/  gall-core  (gall-pupa now=~1111.1.1 eny=`@`0xdead.beef scry=*roof)
-  =+  [out adult]=(call:gall-core duct=~[/init] dud=~ task=[%init ~])
-  adult
 ::
 ++  load-agent
   |=  [=ship =gall-gate =dude:gall =agent:gall]
