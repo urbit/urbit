@@ -157,5 +157,14 @@
           [%give %unto %kick ~]
       ==
     ==
-  :-  t12  |.  :-  %&  ~
+  :-  t12  |.  :-  %|
+  =^  t13  gall.bud
+    %:  gall-check-take:v  gall.bud
+      [~1111.1.4 0xbeef.dead *roof]
+      :+  /sys/req/~nec/pub  ~[/bone/~nec/0/1 /init]
+      [%gall %unto %kick ~]
+      :~  :-  ~[/bone/~nec/0/1 /init]  [%give %boon %x ~]
+      ==
+    ==
+  :-  t13  |.  :-  %&  ~
 --

@@ -26,7 +26,6 @@
 ::
 ++  on-leave
   |=  =path
-  ~&  pub-leave+path
   `this
 ::
 ++  on-init   `this
