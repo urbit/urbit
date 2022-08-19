@@ -690,22 +690,27 @@ u3m_bail(u3_noun how)
     abort();
   }
 
-  /* Printf some metadata.
-  */
-  if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
-    if ( _(u3ud(how)) ) {
-      c3_c str_c[5];
+  //  printf some metadata
+  //
+  switch ( how ) {
+    case c3__evil:
+    case c3__exit: break;
 
-      str_c[0] = ((how >> 0) & 0xff);
-      str_c[1] = ((how >> 8) & 0xff);
-      str_c[2] = ((how >> 16) & 0xff);
-      str_c[3] = ((how >> 24) & 0xff);
-      str_c[4] = 0;
-      fprintf(stderr, "\r\nbail: %s\r\n", str_c);
-    }
-    else {
-      c3_assert(_(u3ud(u3h(how))));
-      fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
+    default: {
+      if ( _(u3ud(how)) ) {
+        c3_c str_c[5];
+
+        str_c[0] = ((how >>  0) & 0xff);
+        str_c[1] = ((how >>  8) & 0xff);
+        str_c[2] = ((how >> 16) & 0xff);
+        str_c[3] = ((how >> 24) & 0xff);
+        str_c[4] = 0;
+        fprintf(stderr, "\r\nbail: %s\r\n", str_c);
+      }
+      else if ( 1 != u3h(how) ) {
+        c3_assert(_(u3ud(u3h(how))));
+        fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
+      }
     }
   }
 
