@@ -143,7 +143,9 @@
   =^  t11  gall.nec
     %:  gall-check-take:v  gall.nec
       [~1111.1.3 0xdead.beef *roof]
-      [/use/sub/0w1.d6Isf/out/~bud/pub/1/sub ~[/init] %gall %unto %watch-ack ~]
+      :+  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub
+        ~[/init]
+      [%gall %unto %watch-ack ~]
       ~
     ==
   ::  start the clog and kick process; give clog to publisher gall
@@ -158,13 +160,29 @@
       ==
     ==
   :-  t12  |.  :-  %|
+  ::  gall gives %kick %boon to ames
   =^  t13  gall.bud
     %:  gall-check-take:v  gall.bud
       [~1111.1.4 0xbeef.dead *roof]
-      :+  /sys/req/~nec/pub  ~[/bone/~nec/0/1 /init]
+      :+  /sys/req/~nec/pub  ~[/bone/~nec/0/1 //unix]
       [%gall %unto %kick ~]
-      :~  :-  ~[/bone/~nec/0/1 /init]  [%give %boon %x ~]
+      :~  :-  ~[/bone/~nec/0/1 //unix]  [%give %boon %x ~]
       ==
     ==
-  :-  t13  |.  :-  %&  ~
+  :-  t13  |.  :-  %|
+  ::  ames gives kick over the network
+  =^  t14  ames.bud
+    %:  ames-check-take:v  ames.bud
+      [~1111.1.4 0xbeef.dead *roof]
+      :+  /bone/~nec/0/1  ~[//unix]
+      [%gall %boon %x ~]
+      :~  :-  ~[//unix]
+          :*  %give  %send  [%| `@`'lane-bar']
+              0xa1fc.cd35.c730.9a00.07e0.90a2.f87c.3657.935e.
+                4ca0.801d.3ddc.d400.0100.0223.bc18.1000
+          ==
+          :-  ~[/ames]  [%pass /pump/~nec/1 %b %wait ~1111.1.4..00.00.01]
+      ==
+    ==
+  :-  t14  |.  :-  %&  ~
 --

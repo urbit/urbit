@@ -79,7 +79,7 @@
   ^-  [tang ^ames-gate]
   =/  ames-core  (ames-gate now eny roof)
   =^  moves  ames-gate  (take:ames-core wire duct dud=~ sign)
-  [(expect-eq !>(moves) !>(expected-moves)) ames-gate]
+  [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
 ++  ames-nec-bud
   ::  create ~nec
