@@ -953,6 +953,7 @@
       ::  .queued-events has been cleared; done!
       ::
       ?~  queued-events
+        ~>  %slog.0^leaf/"ames: metamorphosis"
         [moves adult-gate]
       ::  set timer to drain next event
       ::
