@@ -1484,10 +1484,9 @@
     =/  snds=(list (list [ship bone message-pump-state]))
       %+  turn  states
       |=  [=ship peer-state]
-      %+  murn  ~(tap by snd)
+      %+  turn  ~(tap by snd)
       |=  [=bone =message-pump-state]
-      ?:  (~(has in closing) bone)  ~
-      `[ship bone message-pump-state]
+      [ship bone message-pump-state]
     =/  next-wakes
       %+  turn  `(list [ship bone message-pump-state])`(zing snds)
       |=  [=ship =bone message-pump-state]
