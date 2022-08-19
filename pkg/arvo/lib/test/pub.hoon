@@ -14,8 +14,7 @@
 ::
 ++  on-watch
   |=  =path
-  ~&  pub-watch+path
-  (on-watch:def +<)
+  `this
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]

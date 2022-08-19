@@ -71,5 +71,15 @@
           [%pass /sys/req/~nec/pub %g %deal [~nec ~bud] %pub %watch /foo]
       ==
     ==
-  :-  t5  |.  :-  %&  ~
+  :-  t5  |.  :-  %|
+  =^  t6  gall.bud
+    %:  gall-check-call:v  gall.bud
+      [~1111.1.2 0xbeef.dead *roof]
+      :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
+      [%deal [~nec ~bud] %pub %watch /foo]
+      :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
+          [%give %unto %watch-ack ~]
+      ==
+    ==
+  :-  t6  |.  :-  %&  ~
 --
