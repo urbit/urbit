@@ -102,6 +102,7 @@
                 2d9d.076e.6d00.0100.0223.9ae9.5000
       ==  ==
     ==
+  :-  t8  |.  :-  %|
   =^  t9  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.3 0xdead.beef *roof]
