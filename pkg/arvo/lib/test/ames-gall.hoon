@@ -1,11 +1,13 @@
 /+  *test, test-pub, test-sub
-/=  ames      /sys/vane/ames
+/=  ames-raw      /sys/vane/ames
 /=  gall-raw  /sys/vane/gall
 ::
+=/  ames-bunt  (ames-raw ~zod)
 =/  gall-bunt  (gall-raw ~zod)
 ::
 |%
-++  gall-gate  _(make-gall ~zod)
++$  gall-gate  _(make-gall ~zod)
++$  ames-gate  _nec:ames-nec-bud
 ++  nec-bud
   =/  a  ames-nec-bud
   =/  gall-nec  (make-gall ~nec)
@@ -49,11 +51,28 @@
   |=  [=gall-gate =wire =duct =sign-arvo =roof]
   %.  [wire duct dud=~ sign-arvo]
   take:(gall-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+::  +ames-check-call: run gall task, assert produces expected-moves
+::
+++  ames-check-call
+  |=  $:  =ames-gate
+          [now=@da eny=@ =roof]
+          [=duct task=(hobo task:ames)]
+          expected-moves=(list move:ames-bunt)
+      ==
+  ^-  [tang ^ames-gate]
+  =/  ames-core  (ames-gate now eny roof)
+  =^  moves  ames-gate  (call:ames-core duct dud=~ task)
+  [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
+::
+++  ames-call
+  |=  [=ames-gate =duct task=(hobo task:ames) =roof]
+  %.  [duct dud=~ task]
+  call:(ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
 ::
 ++  ames-nec-bud
   ::  create ~nec
   ::
-  =/  nec  (ames ~nec)
+  =/  nec  (ames-raw ~nec)
   =.  now.nec        ~1111.1.1
   =.  eny.nec        0xdead.beef
   =.  life.ames-state.nec  2
@@ -63,7 +82,7 @@
   =/  nec-sec  sec:ex:crypto-core.ames-state.nec
   ::  create ~bud
   ::
-  =/  bud  (ames ~bud)
+  =/  bud  (ames-raw ~bud)
   =.  now.bud        ~1111.1.1
   =.  eny.bud        0xbeef.dead
   =.  life.ames-state.bud  3
@@ -72,8 +91,8 @@
   =/  bud-pub  pub:ex:crypto-core.ames-state.bud
   =/  bud-sec  sec:ex:crypto-core.ames-state.bud
   ::
-  =/  nec-sym  (derive-symmetric-key:ames bud-pub nec-sec)
-  =/  bud-sym  (derive-symmetric-key:ames nec-pub bud-sec)
+  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub nec-sec)
+  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub bud-sec)
   ?>  =(nec-sym bud-sym)
   ::  tell ~nec about ~bud
   ::
