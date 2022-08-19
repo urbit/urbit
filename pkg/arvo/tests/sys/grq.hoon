@@ -81,5 +81,14 @@
           [%give %unto %watch-ack ~]
       ==
     ==
-  :-  t6  |.  :-  %&  ~
+  :-  t6  |.  :-  %|
+  =^  t7  gall.bud
+    %:  gall-check-take:v  gall.bud
+      [~1111.1.2 0xbeef.dead *roof]
+      :+  /sys/req/~nec/pub  ~[/bone/~nec/0/1 //unix]
+      [%gall %unto %watch-ack ~]
+      :~  :-  ~[/bone/~nec/0/1 //unix]  [%give %done ~]
+      ==
+    ==
+  :-  t7  |.  :-  %&  ~
 --
