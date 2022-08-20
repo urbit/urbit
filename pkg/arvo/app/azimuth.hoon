@@ -269,12 +269,14 @@
         |((~(has in dudes) [%eth-watcher &]) (~(has in dudes) [%eth-watcher |]))
       :_  this
       =/  cards=(list card)
-        :-  ::  %jael will re-subscribe to get all azimuth diffs
-            ::
-            (listen-to-azimuth ~ [%| dap.bowl])
-        ::  we poke eth-watcher to retrieve logs from the latest we have
+        ?:  installed
+          ~
+        ::  reinstall %base desk
         ::
-        %*(start do number.id.sap.state last-block)
+        =+  spo=(sein:title [our now our]:bowl)
+        ~&  >>  re-installing-base-from+spo
+        =/  fresh=[desk ship desk]  [%base spo %kids]
+        [%pass /fresh %agent [our.bowl %hood] %poke kiln-install+!>(fresh)]~
       =?  cards  !running
         ::  restart %eth-watcher
         ::
@@ -282,20 +284,19 @@
         =/  rein=[desk rein]  [%base %.y [%eth-watcher ~ ~] ~]
         :_  cards
         [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>(rein)]
-      =?  cards  !installed
-        ::  reinstall %base desk
+      =.  cards
+        ::  we poke eth-watcher to retrieve logs from the latest we have
         ::
-        =+  spo=(sein:title [our now our]:bowl)
-        ~&  >>  re-installing-base-from+spo
-        =/  fresh=[desk ship desk]  [%base spo %kids]
-        :_  cards
-        [%pass /fresh %agent [our.bowl %hood] %poke kiln-install+!>(fresh)]
-      ::  resubscribe if we somehow get unsubscribed from eth-watcher
-      ::
-      ?:  (~(has by wex.bowl) [/eth-watcher our.bowl %eth-watcher])
-        cards
-      ::  ~&  >>  %resubscribing-to-eth-watcher
-      [(subscribe-to-eth-watcher bowl) cards]
+        (weld %*(start do number.id.sap.state last-block) cards)
+      =?  cards  !(~(has by wex.bowl) [/eth-watcher our.bowl %eth-watcher])
+        ::  resubscribe if we somehow get unsubscribed from eth-watcher
+        ::
+        [(subscribe-to-eth-watcher bowl) cards]
+      =.  cards
+        ::  %jael will re-subscribe to get all azimuth diffs
+        ::
+        [(listen-to-azimuth ~ [%| dap.bowl]) cards]
+      (flop cards)
     ::
         %watch
       =:  nas.state   ?:(?=(%default net.poke) nas.sap.state *^state:naive)
