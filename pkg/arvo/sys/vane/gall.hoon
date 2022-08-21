@@ -32,6 +32,8 @@
       perms=(jug desk perm)
       wants=(map desk (map perm new=?))
       wards=(set duct)
+      ::TODO: .agencies is derived state - maybe should have another structure?
+      agencies=(jug desk dude)
   ==
 ::  $watches: subscribers and publications
 ::
@@ -128,6 +130,7 @@
       perms=(jug desk perm)
       wants=(map desk (map perm new=?))
       wards=(set duct)
+      agencies=(jug desk dude)
   ==
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
 ::
@@ -673,6 +676,16 @@
     ::TODO: does it matter if this is before or after
     ::agents are reloaded/killed?
     =.  perms.state  new-perms
+    ::
+    =.  agencies.state
+      =/  cal=(list [desk dude])
+        %+  turn  dudes
+        |=  [=dude =beak =agent]
+        [q.beak dude]
+      =|  res=(jug desk dude)
+      |-
+      ?~  cal  res
+      $(cal t.cal, res (~(put ju res) i.cal))
     ::
     =.  mo-core
       |-  ^+  mo-core
@@ -1674,7 +1687,7 @@
       e(|2 |3.e(|2 `|5.e(old-state [%| p.old-state.e])))
     ::
         blocked
-      [blocked.old ~ ~ ~]
+      [blocked.old ~ ~ ~ ~]
     ==
   --
 ::  +scry: standard scry
