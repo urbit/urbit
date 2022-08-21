@@ -1221,7 +1221,7 @@
             dudes
           =;  hav=(set (unit dude))
             (~(uni in dudes) hav)
-          (~(run in (~(get ju agencies.state) (need desk))) some)
+          (~(run in (~(got by agencies.state) (need desk))) some)
         --
       --
     ::
