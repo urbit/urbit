@@ -1699,8 +1699,9 @@
                   byk=beak                              ::  load source
               ==                                        ::
               $:  pes=(set perm)                        ::  userspace perms
-                  gab=(set (unit dude))                 ::  pokeable dudes
-                  wat=(set (unit dude))                 ::  watchable dudes
+                  gab=(unit (unit (set dude)))          ::  pokeable dudes
+                  wat=(unit (unit (set dude)))          ::  watchable dudes
+                  red=(unit (unit (set dude)))          ::  scryable dudes
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact

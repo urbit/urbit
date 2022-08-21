@@ -32,8 +32,6 @@
       perms=(jug desk perm)
       wants=(map desk (map perm new=?))
       wards=(set duct)
-      ::TODO: .agencies is derived state - maybe should have another structure?
-      agencies=(jug desk dude)
   ==
 ::  $watches: subscribers and publications
 ::
@@ -63,6 +61,9 @@
       =stats
       =watches
       code=*
+      write=(unit (unit (set dude)))
+      watch=(unit (unit (set dude)))
+      reads=(unit (unit (set dude)))
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
@@ -130,7 +131,6 @@
       perms=(jug desk perm)
       wants=(map desk (map perm new=?))
       wards=(set duct)
-      agencies=(jug desk dude)
   ==
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
 ::
@@ -140,6 +140,10 @@
       =stats
       =watches
       code=~
+      ::TODO add migration logic
+      write=(unit (unit (set dude)))
+      watch=(unit (unit (set dude)))
+      reads=(unit (unit (set dude)))
       old-state=[%| vase]
       =beak
       marks=(map duct mark)
@@ -197,9 +201,15 @@
   ::    running agent case.
   ::
   ++  mo-receive-core
+    ::TODO: fix this jet registration probably
     ~/  %mo-receive-core
+    ::TODO why do i need to make this a separate sample? it breaks
+    ::if i try to put it in the next gate
+    |=  agencies=(jug desk dude)
+    |^
     |=  [dap=term bek=beak =agent]
     ^+  mo-core
+    =/  vis  (whom (~(get ju perms.state) q.bek) agencies)
     ::
     =/  yak  (~(get by yokes.state) dap)
     =/  tex
@@ -211,11 +221,19 @@
     ~>  %slog.[0 leaf+"gall: {tex} {<dap>}"]
     ::
     ?^  yak
-      ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
+      ?:  ?&  =(q.beak.u.yak q.bek)
+              =(code.u.yak agent)
+              =(-.agent.u.yak &)
+              =(write.u.yak gab.vis)
+              =(watch.u.yak wat.vis)
+              =(reads.u.yak red.vis)
+          ==
         mo-core
       ::
       =.  yokes.state
-        (~(put by yokes.state) dap u.yak(beak bek, code agent))
+        %+  ~(put by yokes.state)
+          dap
+        u.yak(beak bek, code agent, write gab.vis, watch wat.vis, reads red.vis)
       =/  ap-core  (ap-abed:ap dap `our)
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
@@ -229,6 +247,9 @@
         code          agent
         agent         &+agent
         nonce         (scot %uw (end 5 (shas %yoke-nonce eny)))
+        write         gab.vis
+        watch         wat.vis
+        reads         red.vis
       ==
     ::
     =/  old  mo-core
@@ -246,6 +267,56 @@
     =.  mo-core  (mo-clear-queue dap)
     =/  =suss  [dap %boot now]
     (mo-give %onto [%.y suss])
+    ::
+    ++  whom
+      ::TODO there has to be a way to reduce the
+      ::(unit (unit (set dude))) spam here
+      |=  [pes=(set perm) agencies=(jug desk dude)]
+      ^-  $:  gab=(unit (unit (set dude)))
+              wat=(unit (unit (set dude)))
+              red=(unit (unit (set dude)))
+          ==
+      %-  tail
+      %^    spin
+          ~(tap in pes)
+        :*  *(unit (unit (set dude)))
+            *(unit (unit (set dude)))
+            *(unit (unit (set dude)))
+        ==
+      |=  $:  a=perm
+              gab=(unit (unit (set dude)))
+              wat=(unit (unit (set dude)))
+              red=(unit (unit (set dude)))
+          ==
+      |^
+      ?+  a         [a gab wat red]
+        [%write *]  [a (corral desk.a gab agencies) wat red]
+        [%watch *]  [a gab (corral desk.a wat agencies) red]
+        [%reads *]  ?.  =(%g vane.a)
+                      [a gab wat red]
+                    [a gab wat (corral desk.a red agencies)]
+      ==
+      ::
+      ++  corral
+        |=  $:  desk=$?(%peers (unit desk))
+                dudes=(unit (unit (set dude)))
+                agencies=(jug desk dude)
+            ==
+        ^+  dudes
+        ?:  =([~ ~] dudes)
+          dudes
+        ?@  desk
+          ?-  desk
+            %peers  dudes
+            ~       [~ ~]
+          ==
+        ?.  (~(has by agencies) (need desk))
+          dudes
+        ?~  dudes
+          ``(~(got by agencies) (need desk))
+        ``(~(uni in (need (need dudes))) (~(got by agencies) (need desk)))
+      --
+    --
   ::  +mo-send-foreign-request: handle local request to .ship
   ::
   ++  mo-send-foreign-request
@@ -677,7 +748,13 @@
     ::agents are reloaded/killed?
     =.  perms.state  new-perms
     ::
-    =.  agencies.state
+    =.  mo-core
+      =;  agencies=(jug desk dude)
+        |-  ^+  mo-core
+        ?~  dudes  mo-core
+        =/  [=dude =desk]  [dude q.beak]:i.dudes
+        ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
+        $(dudes t.dudes, mo-core ((mo-receive-core agencies) i.dudes))
       %-  tail
       %^    spin
           %+  turn  dudes
@@ -686,13 +763,6 @@
         *(jug desk dude)
       |=  [a=[desk dude] b=(jug desk dude)]
       [a (~(put ju b) a)]
-    ::
-    =.  mo-core
-      |-  ^+  mo-core
-      ?~  dudes  mo-core
-      =/  [=dude =desk]  [dude q.beak]:i.dudes
-      ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
-      $(dudes t.dudes, mo-core (mo-receive-core i.dudes))
     ::
     =.  mo-core  (mo-perm pes-dif)
     ::
@@ -1176,8 +1246,6 @@
     ::
     ++  ap-construct-bowl
       ^-  bowl
-      =/  pes  (~(get ju perms.state) q.beak.yoke)
-      |^
       :*  :*  our                                     ::  host
               attributing.agent-routes                ::  guest
               agent-name                              ::  agent
@@ -1190,41 +1258,11 @@
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
           ==                                          ::
-          :*  pes=pes                                 ::  permissions
-              gab=-:(whom pes)                        ::  pokeable dudes
-              wat=+:(whom pes)                        ::  watchable dudes
+          :*  pes=(~(get ju perms.state) q.beak.yoke) ::  permissions
+              gab=write.yoke                          ::  pokeable dudes
+              wat=watch.yoke                          ::  watchable dudes
+              red=reads.yoke                          ::  scryable dudes
       ==  ==
-      ::
-      ++  whom
-        |=  [pes=(set perm)]
-        ^-  [(set (unit dude)) (set (unit dude))]
-        %-  tail
-        %^    spin
-            ~(tap in pes)
-          [*(set (unit dude)) *(set (unit dude))]
-        |=  [a=perm [gab=(set (unit dude)) wat=(set (unit dude))]]
-        |^
-        ?+  a  [a gab wat]
-          [%write *]  [a (corral desk.a gab) wat]
-          [%watch *]  [a gab (corral desk.a wat)]
-        ==
-        ::
-        ++  corral
-          |=  [desk=$?(%peers (unit desk)) dudes=(set (unit dude))]
-          ^+  dudes
-          ?@  desk
-            ?-  desk
-              %peers  dudes
-              ~       (~(put in dudes) `(unit dude)`~)
-            ==
-          ?.  (~(has by agencies.state) (need desk))
-            dudes
-          =;  hav=(set (unit dude))
-            (~(uni in dudes) hav)
-          (~(run in (~(got by agencies.state) (need desk))) some)
-        --
-      --
-    ::
     ::  +ap-reinstall: reinstall.
     ::
     ++  ap-reinstall
@@ -1709,7 +1747,6 @@
   ::  removed live
   ::  changed old-state from (each vase vase) to [%| vase]
   ::  added code
-  ::
   ++  spore-8-to-9
     |=  old=spore-8
     ^-  spore
@@ -1718,11 +1755,18 @@
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-8]
-      ^-  egg
-      e(|2 |3.e(|2 `|5.e(old-state [%| p.old-state.e])))
+      %*  .  *egg
+        control-duct  control-duct.e
+        nonce         nonce.e
+        stats         stats.e
+        watches       watches.e
+        old-state     [%| p.old-state.e]
+        beak          beak.e
+        marks         marks.e
+      ==
     ::
         blocked
-      [blocked.old ~ ~ ~ ~]
+      [blocked.old ~ ~ ~]
     ==
   --
 ::  +scry: standard scry
