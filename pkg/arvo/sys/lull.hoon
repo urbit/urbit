@@ -1697,8 +1697,10 @@
                   eny=@uvJ                              ::  entropy
                   now=@da                               ::  current time
                   byk=beak                              ::  load source
-              ==
-              $:  pes=(set perm)
+              ==                                        ::
+              $:  pes=(set perm)                        ::  userspace perms
+                  gab=(set (unit dude))                 ::  pokeable dudes
+                  wat=(set (unit dude))                 ::  watchable dudes
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact

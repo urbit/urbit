@@ -678,14 +678,14 @@
     =.  perms.state  new-perms
     ::
     =.  agencies.state
-      =/  cal=(list [desk dude])
-        %+  turn  dudes
-        |=  [=dude =beak =agent]
-        [q.beak dude]
-      =|  res=(jug desk dude)
-      |-
-      ?~  cal  res
-      $(cal t.cal, res (~(put ju res) i.cal))
+      %-  tail
+      %^    spin
+          %+  turn  dudes
+          |=  [=dude =beak =agent]
+          [q.beak dude]
+        *(jug desk dude)
+      |=  [a=[desk dude] b=(jug desk dude)]
+      [a (~(put ju b) a)]
     ::
     =.  mo-core
       |-  ^+  mo-core
@@ -1176,6 +1176,8 @@
     ::
     ++  ap-construct-bowl
       ^-  bowl
+      =/  pes  (~(get ju perms.state) q.beak.yoke)
+      |^
       :*  :*  our                                     ::  host
               attributing.agent-routes                ::  guest
               agent-name                              ::  agent
@@ -1188,8 +1190,41 @@
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
           ==                                          ::
-          :*  pes=(~(get ju perms.state) q.beak.yoke) ::  permissions
+          :*  pes=pes                                 ::  permissions
+              gab=-:(whom pes)                        ::  pokeable dudes
+              wat=+:(whom pes)                        ::  watchable dudes
       ==  ==
+      ::
+      ++  whom
+        |=  [pes=(set perm)]
+        ^-  [(set (unit dude)) (set (unit dude))]
+        %-  tail
+        %^    spin
+            ~(tap in pes)
+          [*(set (unit dude)) *(set (unit dude))]
+        |=  [a=perm [gab=(set (unit dude)) wat=(set (unit dude))]]
+        |^
+        ?+  a  [a gab wat]
+          [%write *]  [a (corral desk.a gab) wat]
+          [%watch *]  [a gab (corral desk.a wat)]
+        ==
+        ::
+        ++  corral
+          |=  [desk=$?(%peers (unit desk)) dudes=(set (unit dude))]
+          ^+  dudes
+          ?@  desk
+            ?-  desk
+              %peers  dudes
+              ~       (~(put in dudes) `(unit dude)`~)
+            ==
+          ?.  (~(has by agencies.state) (need desk))
+            dudes
+          =;  hav=(set (unit dude))
+            (~(uni in dudes) hav)
+          (~(run in (~(get ju agencies.state) (need desk))) some)
+        --
+      --
+    ::
     ::  +ap-reinstall: reinstall.
     ::
     ++  ap-reinstall
