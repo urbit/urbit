@@ -54,6 +54,7 @@
 ::    agent: agent core
 ::    beak: compilation source
 ::    marks: mark conversion requests
+::    membrane: perms to poke/subscribe/scry other agents
 ::
 +$  yoke
   $:  control-duct=duct
@@ -61,12 +62,10 @@
       =stats
       =watches
       code=*
-      write=(unit (unit (set dude)))
-      watch=(unit (unit (set dude)))
-      reads=(unit (unit (set dude)))
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
+      membrane=film
   ==
 ::  $blocked-move: enqueued move to an agent
 ::
@@ -140,13 +139,10 @@
       =stats
       =watches
       code=~
-      ::TODO add migration logic
-      write=(unit (unit (set dude)))
-      watch=(unit (unit (set dude)))
-      reads=(unit (unit (set dude)))
       old-state=[%| vase]
       =beak
       marks=(map duct mark)
+      membrane=film
   ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
@@ -209,7 +205,8 @@
     |^
     |=  [dap=term bek=beak =agent]
     ^+  mo-core
-    =/  vis  (whom (~(get ju perms.state) q.bek) agencies)
+    =/  mem=film
+      (permeable (~(get ju perms.state) q.bek) agencies)
     ::
     =/  yak  (~(get by yokes.state) dap)
     =/  tex
@@ -224,16 +221,14 @@
       ?:  ?&  =(q.beak.u.yak q.bek)
               =(code.u.yak agent)
               =(-.agent.u.yak &)
-              =(write.u.yak gab.vis)
-              =(watch.u.yak wat.vis)
-              =(reads.u.yak red.vis)
+              =(membrane.u.yak mem)
           ==
         mo-core
       ::
       =.  yokes.state
         %+  ~(put by yokes.state)
           dap
-        u.yak(beak bek, code agent, write gab.vis, watch wat.vis, reads red.vis)
+        u.yak(beak bek, code agent, membrane mem)
       =/  ap-core  (ap-abed:ap dap `our)
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
@@ -247,9 +242,7 @@
         code          agent
         agent         &+agent
         nonce         (scot %uw (end 5 (shas %yoke-nonce eny)))
-        write         gab.vis
-        watch         wat.vis
-        reads         red.vis
+        membrane      mem
       ==
     ::
     =/  old  mo-core
@@ -268,53 +261,53 @@
     =/  =suss  [dap %boot now]
     (mo-give %onto [%.y suss])
     ::
-    ++  whom
-      ::TODO there has to be a way to reduce the
-      ::(unit (unit (set dude))) spam here
+    ++  permeable
       |=  [pes=(set perm) agencies=(jug desk dude)]
-      ^-  $:  gab=(unit (unit (set dude)))
-              wat=(unit (unit (set dude)))
-              red=(unit (unit (set dude)))
-          ==
-      %-  tail
-      %^    spin
-          ~(tap in pes)
-        :*  *(unit (unit (set dude)))
-            *(unit (unit (set dude)))
-            *(unit (unit (set dude)))
-        ==
-      |=  $:  a=perm
-              gab=(unit (unit (set dude)))
-              wat=(unit (unit (set dude)))
-              red=(unit (unit (set dude)))
-          ==
+      ^-  film
+      %+  roll  ~(tap in pes)
+      |=  [a=perm =film]
       |^
-      ?+  a         [a gab wat red]
-        [%write *]  [a (corral desk.a gab agencies) wat red]
-        [%watch *]  [a gab (corral desk.a wat agencies) red]
+      ?+  a         film
+        [%write *]  [(accord desk.a gab.film agencies) wat.film red.film]
+        [%watch *]  [gab.film (accord desk.a wat.film agencies) red.film]
         [%reads *]  ?.  =(%g vane.a)
-                      [a gab wat red]
-                    [a gab wat (corral desk.a red agencies)]
+                      [gab.film wat.film red.film]
+                    [gab.film wat.film (gaze desk.a spur.a red.film agencies)]
       ==
       ::
-      ++  corral
+      ++  accord
         |=  $:  desk=$?(%peers (unit desk))
-                dudes=(unit (unit (set dude)))
+                dudes=(unit (set dude))
                 agencies=(jug desk dude)
             ==
         ^+  dudes
-        ?:  =([~ ~] dudes)
+        ?~  dudes
           dudes
         ?@  desk
           ?-  desk
             %peers  dudes
-            ~       [~ ~]
+            ~       ~                                   ::  all agents
           ==
         ?.  (~(has by agencies) (need desk))
           dudes
+        `(~(uni in (need dudes)) (~(got by agencies) (need desk)))
+      ::
+      ++  gaze
+        |=  $:  desk=(unit desk)
+                spu=spur
+                dudes=(unit (set [dude spur]))
+                agencies=(jug desk dude)
+            ==
+        ^+  dudes
         ?~  dudes
-          ``(~(got by agencies) (need desk))
-        ``(~(uni in (need (need dudes))) (~(got by agencies) (need desk)))
+          dudes
+        ?@  desk
+          ~                                             ::  all agents
+        ::TODO can't seem to do this without setting a face? fuse-loop/mull-grow
+        =;  new=(set [dude spur])
+          `(~(uni in (need dudes)) new)
+        %-  ~(run in (~(got by agencies) (need desk)))
+        |=(=dude [dude spu])
       --
     --
   ::  +mo-send-foreign-request: handle local request to .ship
@@ -755,14 +748,11 @@
         =/  [=dude =desk]  [dude q.beak]:i.dudes
         ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
         $(dudes t.dudes, mo-core ((mo-receive-core agencies) i.dudes))
-      %-  tail
-      %^    spin
-          %+  turn  dudes
-          |=  [=dude =beak =agent]
-          [q.beak dude]
-        *(jug desk dude)
+      %+  roll  %+  turn  dudes
+                |=  [=dude =beak =agent]
+                [q.beak dude]
       |=  [a=[desk dude] b=(jug desk dude)]
-      [a (~(put ju b) a)]
+      (~(put ju b) a)
     ::
     =.  mo-core  (mo-perm pes-dif)
     ::
@@ -1259,9 +1249,7 @@
               byk=beak.yoke                           ::  source
           ==                                          ::
           :*  pes=(~(get ju perms.state) q.beak.yoke) ::  permissions
-              gab=write.yoke                          ::  pokeable dudes
-              wat=watch.yoke                          ::  watchable dudes
-              red=reads.yoke                          ::  scryable dudes
+              membrane.yoke                           ::  per-agent perms
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::
@@ -1755,14 +1743,17 @@
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-8]
-      %*  .  *egg
-        control-duct  control-duct.e
-        nonce         nonce.e
-        stats         stats.e
-        watches       watches.e
-        old-state     [%| p.old-state.e]
-        beak          beak.e
-        marks         marks.e
+      ::TODO just make this as a cell
+      ^-  egg
+      :*  control-duct.e
+          nonce.e
+          stats.e
+          watches.e
+          ~
+          [%| p.old-state.e]
+          beak.e
+          marks.e
+          *film
       ==
     ::
         blocked

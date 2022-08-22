@@ -1699,11 +1699,16 @@
                   byk=beak                              ::  load source
               ==                                        ::
               $:  pes=(set perm)                        ::  userspace perms
-                  gab=(unit (unit (set dude)))          ::  pokeable dudes
-                  wat=(unit (unit (set dude)))          ::  watchable dudes
-                  red=(unit (unit (set dude)))          ::  scryable dudes
+                  film                                  ::  per-agent perms
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
+  +$  film                                              ::  membrane/agent perms
+          $:  gab=$~(`*(set dude) (unit (set dude)))    ::  pokeable agents
+              wat=$~(`*(set dude) (unit (set dude)))    ::  watchable agents
+              $=  red                                   ::  scryable agents
+              $~  `*(set [dude spur])                   ::
+              (unit (set [dude spur]))                  ::
+          ==
   +$  gill  (pair ship term)                            ::  general contact
   ::TODO: change perms to a jug?
   +$  load                                              ::  loadout
@@ -1903,6 +1908,7 @@
   ::    since which agents are currently running is not referentially
   ::    transparent data.
   ++  cred  !:
+    ::TODO add a version that takes in bowl perm data
     |=  [our=ship from=dude =card:agent pes=(set perm) cas=@da]
     ^-  ?  ~+
     =;  must=$@(? perm)
