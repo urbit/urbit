@@ -1475,44 +1475,40 @@
   ::
   ++  on-stir
     |=  arg=@t
-    =/  states=(list [ship peer-state])
-      %+  murn  ~(tap by peers.ames-state)
-      |=  [=ship =ship-state]
-      ^-  (unit [^ship peer-state])
-      ?.  ?=(%known -.ship-state)
-        ~
-      `[ship +.ship-state]
-    =/  snds=(list (list [ship bone message-pump-state]))
-      %+  turn  states
-      |=  [=ship peer-state]
-      %+  turn  ~(tap by snd)
-      |=  [=bone =message-pump-state]
-      [ship bone message-pump-state]
-    =/  next-wakes
-      %+  turn  `(list [ship bone message-pump-state])`(zing snds)
-      |=  [=ship =bone message-pump-state]
-      [ship bone next-wake.packet-pump-state]
-    =/  next-real-wakes=(list [=ship =bone =@da])
-      %+  murn  next-wakes
-      |=  [=ship =bone tym=(unit @da)]
-      ^-  (unit [^ship ^bone @da])
-      ?~(tym ~ `[ship bone u.tym])
-    =/  timers
-      %-  silt
-      ;;  (list [@da ^duct])
-      =<  q.q  %-  need  %-  need
-      (rof ~ %bx [[our %$ da+now] /debug/timers])
-    =/  to-stir
-      %+  skip  next-real-wakes
-      |=  [=ship =bone =@da]
-      (~(has in timers) [da `^duct`~[a+(make-pump-timer-wire ship bone) /ames]])
-    ~&  [%stirring to-stir]
-    |-  ^+  event-core
-    ?~  to-stir
-      event-core
-    =/  =wire  (make-pump-timer-wire [ship bone]:i.to-stir)
-    =.  event-core  (emit duct %pass wire %b %wait da.i.to-stir)
-    $(to-stir t.to-stir)
+    ^+  event-core
+    =/  want=(set [@da ^duct])
+      %-  ~(rep by peers.ames-state)
+      |=  [[who=ship s=ship-state] acc=(set [@da ^duct])]
+      ?.  ?=(%known -.s)  acc
+      %-  ~(rep by snd.+.s)
+      |=  [[b=bone m=message-pump-state] acc=_acc]
+      =*  tim  next-wake.packet-pump-state.m
+      ?~  tim  acc
+      %-  ~(put in acc)
+      [u.tim `^duct`~[ames+(make-pump-timer-wire who b) /ames]]
+    ::
+    =/  have
+      %-  ~(gas in *(set [@da ^duct]))
+      =/  tim
+        ;;  (list [@da ^duct])
+        =<  q.q  %-  need  %-  need
+        (rof ~ %bx [[our %$ da+now] /debug/timers])
+      (skim tim |=([@da hen=^duct] ?=([[%ames %pump *] *] hen)))
+    ::
+    ::  %wait on missing flows
+    ::
+    =.  event-core
+      %-  ~(rep in (~(dif in want) have))
+      |=  [[wen=@da hen=^duct] this=_event-core]
+      ?>  ?=([^ *] hen)
+      (emit:this ~[/ames] %pass t.i.hen %b %wait wen)
+    ::
+    ::  %rest on this bullshit
+    ::
+    %-  ~(rep in (~(dif in have) want))
+    |=  [[wen=@da hen=^duct] this=_event-core]
+    ?>  ?=([^ *] hen)
+    (emit:this t.hen %pass t.i.hen %b %wait wen)
   ::  +on-crud: handle event failure; print to dill
   ::
   ++  on-crud
