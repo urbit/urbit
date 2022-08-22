@@ -1508,7 +1508,7 @@
     %-  ~(rep in (~(dif in have) want))
     |=  [[wen=@da hen=^duct] this=_event-core]
     ?>  ?=([^ *] hen)
-    (emit:this t.hen %pass t.i.hen %b %wait wen)
+    (emit:this t.hen %pass t.i.hen %b %rest wen)
   ::  +on-crud: handle event failure; print to dill
   ::
   ++  on-crud
