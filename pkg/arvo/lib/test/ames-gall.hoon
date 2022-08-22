@@ -49,9 +49,9 @@
           life=3
           rift=0
           public-key=bud-pub
-          sponsor=~nec
+          sponsor=~bud
       ==
-    =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
+    =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~bud]]
     [%known peer-state]
   ::  tell ~bud about ~nec
   ::
@@ -65,7 +65,7 @@
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+    =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
     [%known peer-state]
   ::  metamorphose
   ::
