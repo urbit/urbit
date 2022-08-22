@@ -1034,6 +1034,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
             ++tot_w; _n_emit(ops, TOSS);
             tot_w += _n_comp(ops, nef, los_o, tel_o);
           } break;
+          case c3__meme:
           case c3__nara:
           case c3__hela:
           case c3__bout: {
@@ -1695,6 +1696,11 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
       *out = u3_nul;
     } break;
 
+    case c3__meme : {
+      u3t_slog_meme(0);
+      *out = u3_nul;
+    } break;
+
     default: {
       *out = u3_nul;
     } break;
@@ -1764,6 +1770,17 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
         c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
         u3t_slog_cap(pri_l, u3i_string("trace of"), u3k(tan));
         u3t_slog_hela(pri_l);
+      }
+      u3z(*clu);
+      *clu = u3_nul;
+    } break;
+
+    case c3__meme : {
+      u3_noun pri, tan;
+      if ( c3y == u3r_cell(*clu, &pri, &tan) ) {
+        c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
+        u3t_slog_cap(pri_l, u3i_string("memeory profile at"), u3k(tan));
+        u3t_slog_meme(pri_l);
       }
       u3z(*clu);
       *clu = u3_nul;
