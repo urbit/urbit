@@ -11,9 +11,10 @@
 ++  on-poke
   |=  [=mark =vase]
   =+  !<(=ship vase)
+  :_  this
   ?+  mark  !!
-    %leave  [[%pass /sub %agent [ship %pub] %leave ~]~ this]
-    %watch  [[%pass /sub %agent [ship %pub] %watch /foo]~ this]
+    %leave  [%pass /sub-foo/(scot %p ship) %agent [ship %pub] %leave ~]~
+    %watch  [%pass /sub-foo/(scot %p ship) %agent [ship %pub] %watch /foo]~
   ==
 ::
 ++  on-watch
@@ -22,13 +23,12 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ?.  =(/sub wire)
-    ~|  wire+wire  !!
-  ~&  sub+-.sign
-  ?+  -.sign  !!
-    %kick  [[%pass /sub %agent [our.bowl %pub] %watch /foo]~ this]
-    %fact       `this
-    %watch-ack  `this
+  =/  =ship  (slav %p &2.wire)
+  ?+    -.sign  !!
+      %fact       `this
+      %watch-ack  `this
+      %kick
+    [[%pass /sub-foo/(scot %p ship) %agent [ship %pub] %watch /foo]~ this]
   ==
 ::
 ++  on-fail
