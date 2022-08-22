@@ -90,9 +90,6 @@ static const size_t pag_siz_i = 1 << (u3a_page + 2);
 //! Urbit page size in 4-byte words.
 static const size_t pag_wiz_i = 1 << u3a_page;
 
-//! `mmap()` the north (heap) image if `c3y`.
-static c3_o map_nor_o = c3y;
-
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
 */
@@ -771,7 +768,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   // resize images
   //
   {
-    c3_y* bas_y = c3y == map_nor_o ? (c3_y*)u3_Loom : NULL;
+    c3_y* bas_y = c3y == u3C.wag_w & u3o_map_snapshot ? (c3_y*)u3_Loom : NULL;
     _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w, bas_y);
     // Don't map the south (stack) image because it's almost always dirty and a
     // single page.
@@ -857,7 +854,7 @@ _ce_image_apply(u3e_image* nor_u, u3e_image* sou_u, c3_o pro_o)
 
   if ( nor_u && nor_u->pgs_w > 0 ) {
     // mmap() the image.
-    if ( c3y == map_nor_o ) {
+    if ( u3C.wag_w & u3o_map_snapshot) {
       if ( -1 == (c3_ps)mmap(u3_Loom,
                              nor_u->pgs_w * pag_siz_i,
                              c3y == pro_o ? PROT_READ : PROT_READ | PROT_WRITE,
@@ -1092,11 +1089,9 @@ exit:
 }
 
 c3_o
-u3e_load(const c3_c* dir_c, const c3_o map_o)
+u3e_load(const c3_c* dir_c)
 {
   c3_assert(dir_c);
-
-  map_nor_o = map_o;
 
   u3e_image nor_u = {.nam_c = nor_nam_c};
   u3e_image sou_u = {.nam_c = sou_nam_c};
@@ -1116,11 +1111,9 @@ u3e_load(const c3_c* dir_c, const c3_o map_o)
 }
 
 c3_o
-u3e_live(const c3_c* dir_c, const c3_o map_o)
+u3e_live(const c3_c* dir_c)
 {
   c3_assert(dir_c);
-
-  map_nor_o = map_o;
 
   c3_o nuu_o = c3n;
 
