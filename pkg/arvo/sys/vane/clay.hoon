@@ -5357,7 +5357,7 @@
         %tomb    ``[%flag !>((tomb t.path))]
         %domes   (domes t.path)
         %loams   (loams t.path)
-        %bills   (bills t.path)
+        %dudes   (dudes t.path)
         %visas   (visas t.path)
     ==
   ::
@@ -5478,19 +5478,20 @@
       ``[%loam !>(`loam`u.lum)]
     ==
   ::
-  ++  bills
+  ++  dudes
     |=  =path
-    =/  bils=(list [=desk =bill])  -:sats:(lu now rof ~ ruf)
+    =/  duds=(list [=desk =(list dude:gall)])
+      -:sats:(lu now rof ~ ruf)
     ::TODO: are the ~ and [~ ~] returns correct?
     ?+  path  [~ ~]
         ~
-      ``[%bills !>(`(list [=desk =bill])`bils)]
+      ``[%dudes !>(`(list [=desk (list dude:gall)])`duds)]
     ::
         [@tas ~]
-      =/  bul=(unit bill)
-        (~(get by (~(gas by *(map desk bill)) bils)) i.path)
-      ?~  bul  ~
-      ``[%bill !>(`bill`u.bul)]
+      =/  dul=(unit (list dude:gall))
+        (~(get by (~(gas by *(map desk (list dude:gall))) duds)) i.path)
+      ?~  dul  ~
+      ``[%dude !>(`(list dude:gall)`u.dul)]
     ==
   ::
     ++  visas

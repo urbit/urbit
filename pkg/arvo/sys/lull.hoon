@@ -1960,7 +1960,7 @@
       |^
       ::TODO: why does it crash if i put bill:clay instead of bill=(list dude)?
       =/  bills
-        .^((list [=desk bill=(list dude)]) %cx /(scot %p our)//(scot %da cas)/bills)
+        .^((list [=desk bill=(list dude)]) %cx /(scot %p our)//(scot %da cas)/dudes)
       =/  from-desk=(unit desk)
         (get-desk from bills)
       =/  target=$?(%peers desk=(unit desk))
