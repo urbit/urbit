@@ -676,32 +676,6 @@
     ?~  dif  ^$(dux t.dux)
     =.  mo-core  (mo-give(hen i.dux) %perm i.dif)
     $(dif t.dif)
-    ::  |-
-    ::  ?^  dux
-    ::    |-
-    ::    ?~  dif  ^$(dux t.dux)
-    ::    =.  mo-core  (mo-give(hen i.dux) %perm i.dif)
-    ::    $(dif t.dif)
-    ::
-    ::  =/  dif-map
-    ::    (~(gas by *(map desk [free=(set perm) lock=(set perm)])) dif)
-    ::  =/  desks  ~(tap in ~(key by dif-map))
-    ::  ::
-    ::  ::TODO this is simply a list of all dudes and their desks. we actually
-    ::  ::  only want the ones for which perms have changed
-    ::  =/  aps=(list [=dude =desk])
-    ::    %+  turn  ~(tap by yokes.state)
-    ::    |=  [=dude yoke]
-    ::    [dude q.beak]
-    ::  ::
-    ::  |-
-    ::  ?~  aps  mo-core
-    ::  =/  dude-dif  (~(get by dif-map) desk.i.aps)
-    ::  ?~  dude-dif
-    ::    $(aps t.aps)
-    ::  =.  mo-core
-    ::    ap-abet:(ap-perm:(ap-abed:ap dude.i.aps `our) [desk.i.aps u.dude-dif])
-    ::  $(aps t.aps)
   ::
   ::  +mo-ward: add permission notification subsciber
   ::
@@ -969,14 +943,6 @@
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::
-    ::TODO: this is not the right way to inform an agent
-    ::since they haven't subscribed to perm notifications,
-    ::so they just crash
-    ++  ap-perm
-      |=  dif=[=desk free=(set perm) lock=(set perm)]
-      ^+  ap-core
-      ::TODO  fake wire
-      (ap-generic-take /perms %gall %perm dif)
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -1673,8 +1639,6 @@
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %load  mo-abet:(mo-load:mo-core +.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
-::      %free  mo-abet:(mo-free:mo-core +.task)
-::      %lock  mo-abet:(mo-lock:mo-core +.task)
       %ward  mo-abet:mo-ward:mo-core
       %wink  mo-abet:mo-wink:mo-core
       %trim  [~ gall-payload]
