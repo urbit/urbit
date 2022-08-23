@@ -854,6 +854,7 @@
         ++  take  ^take
         --
     |%
+    ++  larval-core  .
     ::  +call: handle request $task
     ::
     ++  call
@@ -866,7 +867,7 @@
         ~|(%ames-larval-call-dud (mean tang.u.dud))
       ::  before processing events, make sure we have state loaded
       ::
-      =^  molt-moves  adult-gate  molt
+      =^  molt-moves  larval-core  molt
       ::
       ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
         =^  moves  adult-gate  (call:adult-core duct dud task)
@@ -900,7 +901,7 @@
       ?^  dud
         ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::
-      =^  molt-moves  adult-gate  molt
+      =^  molt-moves  larval-core  molt
       ::
       ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
         =^  moves  adult-gate  (take:adult-core wire duct dud sign)
@@ -908,17 +909,9 @@
         [(weld molt-moves moves) adult-gate]
       ::  enqueue event if not a larval drainage timer
       ::
-      =?  queued-events  !=(/larva wire)
-        (~(put to queued-events) %take wire duct sign)
-      ::  start drainage timer if have regressed from adult ames
-      ::
-      ?:  ?&  !=(/larva wire)
-              ?=(^ cached-state)
-          ==
-        [[duct %pass /larva %b %wait now]~ larval-gate]
-      ::    XX what to do with errors?
-      ::
-      ?.  =(/larva wire)  [~ larval-gate]
+      ?.  =(/larva wire)
+        =.  queued-events  (~(put to queued-events) %take wire duct sign)
+        [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
       ?.  ?=([%behn %wake *] sign)
@@ -1058,8 +1051,8 @@
     ::  +molt: re-evolve to adult-ames
     ::
     ++  molt
-      ^-  (quip move _adult-gate)
-      ?~  cached-state  [~ adult-gate]
+      ^-  (quip move _larval-core)
+      ?~  cached-state  [~ larval-core]
       ~>  %slog.0^leaf/"ames: molt"
       =?  u.cached-state  ?=(%5 -.u.cached-state)
         6+(state-5-to-6:load:adult-core +.u.cached-state)
@@ -1072,7 +1065,7 @@
         8+(state-7-to-8:load:adult-core +.u.cached-state)
       ?>  ?=(%8 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
-      [moz adult-gate]
+      [moz larval-core(cached-state ~)]
     --
 ::  adult ames, after metamorphosis from larva
 ::
