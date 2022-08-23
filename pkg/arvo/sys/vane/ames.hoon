@@ -1469,7 +1469,7 @@
       =.  peer-core  (run-message-pump:peer-core i.bones %prod ~)
       $(bones t.bones)
     --
-  ::  +on-stir: start timers for any flow that lack them
+  ::  +on-stir: recover from timer desync, setting new timers as needed
   ::
   ::    .arg is unused, meant to ease future debug commands
   ::
@@ -1495,7 +1495,7 @@
         (rof ~ %bx [[our %$ da+now] /debug/timers])
       (skim tim |=([@da hen=^duct] ?=([[%ames %pump *] *] hen)))
     ::
-    ::  %wait on missing flows
+    ::  set timers for flows that should have one set but don't
     ::
     =.  event-core
       %-  ~(rep in (~(dif in want) have))
@@ -1503,7 +1503,7 @@
       ?>  ?=([^ *] hen)
       (emit:this ~[/ames] %pass t.i.hen %b %wait wen)
     ::
-    ::  %rest on this bullshit
+    ::  cancel timers for flows that have one set but shouldn't
     ::
     %-  ~(rep in (~(dif in have) want))
     |=  [[wen=@da hen=^duct] this=_event-core]
