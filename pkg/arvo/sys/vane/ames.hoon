@@ -1827,6 +1827,10 @@
     ::
     =.  event-core
       (emit duct %pass /recork %b %wait `@da`(add now ~m20))
+    ::
+    ?^  error
+      %-  (slog 'ames: recork timer failed' u.error)
+      event-core
     ::  recork up to one bone per peer
     ::
     =/  pez  ~(tap by peers.ames-state)
