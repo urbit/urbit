@@ -776,6 +776,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%prep gap=(list page)]                         ::  prime blob store
         [%stir arg=*]                                   ::  debug
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
@@ -1064,6 +1065,7 @@
         [%meld ~]                                       ::  unify memory
         [%noop ~]                                       ::  no operation
         [%pack ~]                                       ::  compact memory
+        [%seat =desk]                                   ::  install desk
         [%talk p=tank]                                  ::
         [%text p=tape]                                  ::
         [%view session=~]                               ::  watch session blits
@@ -2219,6 +2221,9 @@
       ::    TODO: make $yuki an option for %into?
       ::
       $>(%park task:clay)
+      ::  %clay: load blob store
+      ::
+      $>(%prep task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)

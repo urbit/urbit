@@ -3954,6 +3954,15 @@
           ~
         ``blob+[-:!>(*page) u.peg]
       ::
+          %bloc
+        :^  ~  ~  %noun
+        !>  ^-  (set page)
+        %-  ~(rep in (reachable-takos (~(got by hit.dom) yon)))
+        |=  [t=tako o=(set page)]
+        %-  ~(rep by q:(~(got by hut.ran) t))
+        |=  [[path l=lobe] o=_o]
+        (~(put in o) (~(got by lat.ran) l))
+      ::
           %hash
         =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
         ?~  yak
@@ -4397,6 +4406,13 @@
       =/  den  ((de now rof hen ruf) our syd)
       abet:(park:den & yoki *rang)
     [mos ..^$]
+  ::
+      %prep
+    =/  lat
+      %+  roll  gap.req
+      |=  [p=page m=(map lobe page)]
+      (~(put by m) (page-to-lobe p) p)
+    [~ ..^$(lat.ran.ruf (~(uni by lat) lat.ran.ruf))]
   ::
       %perm
     =^  mos  ruf

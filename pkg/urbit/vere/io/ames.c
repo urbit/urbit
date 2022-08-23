@@ -1254,9 +1254,8 @@ _ames_io_start(u3_ames* sam_u)
         u3l_log("    ...perhaps you've got two copies of vere running?\n");
       }
 
-      //  XX revise
-      //
-      u3_pier_bail(u3_king_stub());
+      u3_king_bail();
+      exit(1);
     }
 
     uv_udp_getsockname(&sam_u->wax_u, (struct sockaddr *)&add_u, &add_i);

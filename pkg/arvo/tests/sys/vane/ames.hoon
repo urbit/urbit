@@ -251,7 +251,7 @@
     !>  shut-packet
     !>  decoded
 ::
-++  test-shut-packet-associated-data  ^-  tang
+++  disabled-test-shut-packet-associated-data  ^-  tang
   ::
   =/  =shut-packet:ames
     :+  bone=17  message-num=18
