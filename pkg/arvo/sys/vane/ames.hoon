@@ -868,10 +868,14 @@
       ::
       =^  molt-moves  adult-gate  molt
       ::
-      ?:  =(~ queued-events)
+      ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
         =^  moves  adult-gate  (call:adult-core duct dud task)
         ~>  %slog.0^leaf/"ames: metamorphosis"
         [(weld molt-moves moves) adult-gate]
+      ::  drop incoming packets until we metamorphose
+      ::
+      ?:  ?=(%hear -.task)
+        [~ larval-gate]
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
