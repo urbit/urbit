@@ -738,11 +738,6 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
               strerror(errno));
       exit(1);
     }
-
-    if ( dif_ws < 0 ) {
-      off_i += pag_siz_i;
-    }
-    ptr_y += pag_siz_i;
   }
 
   if ( img_u->pgs_w > pgs_w ) {
