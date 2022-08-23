@@ -5985,6 +5985,49 @@
       ==
     ==
   ::
+  ++  lago
+    ~+
+    ;~  pose
+      (stag %lvh lago-lvh)
+      (stag %lvq lago-lvq)
+      (stag %lvd lago-lvd)
+      (stag %lvs lago-lvs)
+    ==
+  ::
+  ++  lago-lvh  (cook lagh lago-base-h)
+  ++  lago-lvq  (cook lagq lago-base-q)
+  ++  lago-lvd  (cook lagd lago-base-d)
+  ++  lago-lvs  (cook lags lago-base-s)
+  ::
+  ++  lago-base-h
+    |=  b=nail
+    (;~(sfix (most cab ;~(pfix dot royl-rh:so)) cab) b)
+  ++  lago-base-q
+    |=  b=nail
+    (;~(sfix (most cab ;~(pfix dot royl-rq:so)) cab) b)
+  ++  lago-base-d
+    |=  b=nail
+    (;~(sfix (most cab ;~(pfix dot royl-rd:so)) cab) b)
+  ++  lago-base-s
+    |=  b=nail
+    (;~(sfix (most cab ;~(pfix dot royl-rs:so)) cab) b)
+  ++  lagh
+    |=  a=(list @rh)
+    ^-  @lvh
+    (mix (rep [4 1] a) (lsh [4 (lent a)] 1))
+  ++  lagq
+    |=  a=(list @rq)
+    ^-  @lvq
+    (mix (rep [7 1] a) (lsh [7 (lent a)] 1))
+  ++  lagd
+    |=  a=(list @rd)
+    ^-  @lvd
+    (mix (rep [6 1] a) (lsh [6 (lent a)] 1))
+  ++  lags
+    |=  a=(list @rs)
+    ^-  @lvs
+    (mix (rep [5 1] a) (lsh [5 (lent a)] 1))
+  ::
   ++  zust
     ~+
     ;~  pose
@@ -5993,7 +6036,7 @@
       royl
       (stag %f ;~(pose (cold & (just 'y')) (cold | (just 'n'))))
       (stag %q ;~(pfix sig feq:ag))
-      ::lago
+      lago
     ==
   --
 ::
