@@ -1800,7 +1800,7 @@
       ::  if we haven't received an attestation, ask again
       ::
       ?^  error
-        %-  (slog leaf+"ames: attestation timer failed: {<u.error>}" ~)
+        %-  (slog 'ames: attestation timer failed' u.error)
         event-core
       ?~  ship=`(unit @p)`(slaw %p i.t.wire)
         %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
