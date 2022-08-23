@@ -895,6 +895,13 @@
       |=  [=wire =duct dud=(unit goof) =sign]
       ?^  dud
         ~|(%ames-larval-take-dud (mean tang.u.dud))
+      ::
+      =^  molt-moves  adult-gate  molt
+      ::
+      ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
+        =^  moves  adult-gate  (take:adult-core wire duct dud sign)
+        ~>  %slog.0^leaf/"ames: metamorphosis"
+        [(weld molt-moves moves) adult-gate]
       ::  enqueue event if not a larval drainage timer
       ::
       =?  queued-events  !=(/larva wire)
@@ -938,9 +945,6 @@
               [duct %pass /larva %b %wait now]
           ==
         [moves larval-gate]
-      ::  before processing events, make sure we have state loaded
-      ::
-      =^  molt-moves  adult-gate  molt
       ::  normal drain timer; dequeue and run event
       ::
       =^  first-event  queued-events  ~(get to queued-events)
