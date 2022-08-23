@@ -268,6 +268,8 @@
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
+      tyr=(set duct)                                    ::  app subs
+      tur=rock:tire                                     ::  last tire
       pud=(unit [=desk =yoki])                          ::  pending update
       bug=[veb=@ mas=@]                                 ::  verbosity
   ==                                                    ::
@@ -1785,7 +1787,7 @@
     ::
     =/  kel=weft  (get-kelvin yoki)
     ?.  |(=(%base syd) =(kel [%zuse zuse]))
-      =.  wic  (~(put by wic) kel yoki)
+      =.  wic.dom  (~(put by wic.dom) kel yoki)
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ..park
     ::
@@ -1886,12 +1888,12 @@
         (emil (weld moves-1 moves-2))
       ?.  ?=(%live liv.dom.dojo.i.desks)
         $(desks t.desks)
-      ?~  wat=(~(get by wic.dom.dojo) kel)
+      ?~  wat=(~(get by wic.dom.dojo.i.desks) kel)
         ::  XX should crash here
         ::
         $(desks t.desks)
-      =/  den  ((de now rof duct ruf) our desk)
-      =^  moves-3  ruf  abet:(park-main:den | u.wat *rang)
+      =/  den  ((de now rof hen ruf) our desk.i.desks)
+      =^  moves-3  ruf  abet:(park-main:den | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
     ..park
@@ -4346,6 +4348,7 @@
     =.  sat  (apply-precedence sat)
     =^  agents  ..abet  (build-agents sat)
     =.  ..abet  (build-marks (turn sat head))
+    =.  ..abet  tare
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
   ::
@@ -4475,6 +4478,30 @@
       =^  =dais  nub.f  (build-dais:f i.marks)
       $(marks t.marks)
     $(desks t.desks)
+  ::
+  ++  tore
+    ^-  rock:tire
+    %-  ~(run by dos.rom)
+    |=  =dojo
+    [liv.dom.dojo ~(key by wic.dom.dojo)]
+  ::
+  ++  tare
+    ?:  =(~ tyr)
+      ..abet
+    =/  tor  tore
+    =/  waves=(list wave:tire)  (walk:tire tur tor)
+    ?~  waves
+      ..abet
+    =.  tur  tor
+    %-  emil
+    %-  zing
+    %+  turn  ~(tap in tyr)
+    |=  =duct
+    ^-  (list move)
+    %+  turn  waves
+    |=  =wave:tire
+    ^-  move
+    [duct %give %tire %| wave]
   --
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -4703,6 +4730,14 @@
       =^  m2  ruf  abet:goad:(lu now rof hen ruf)
       [(weld m1 m2) ..^$]
     ==
+  ::
+      %tire
+    ?~  p.req
+      =.  tyr.ruf  (~(del in tyr.ruf) hen)
+      `..^$
+    =.  tyr.ruf  (~(put in tyr.ruf) hen)
+    :_  ..^$
+    [hen %give %tire %& tore:(lu now rof hen ruf)]~
   ::
       %tomb  (tomb-clue:tomb hen clue.req)
       %trim
@@ -5290,7 +5325,10 @@
     |=  raf=raft-11
     ^-  raft-12
     raf(pud [pud.raf 0 0])
-  ::  +raft-12-to-13: add .liv and .ren to $dome's
+  ::  +raft-12-to-13:
+  ::
+  ::    add .liv and .ren to $dome's
+  ::    add .tyr and .tur to $raft
   ::
   ++  raft-12-to-13
     |=  raf=raft-12
@@ -5300,10 +5338,13 @@
     ::
     =;  rof
       rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom %live))))
+    ^-  raft-13
     %=  raf
       dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
-      hoy  (~(run by hoy.raf) rung-11-to-13)
+      hoy      (~(run by hoy.raf) rung-11-to-13)
+      |6       [&7.raf ~ ~ |7.raf]
     ==
+    ::
     ++  dojo-11-to-13
       |=  doj=dojo-11
       ^-  dojo
@@ -5322,7 +5363,7 @@
     ++  dome-11-to-13
       |=  dom=dome-11
       ^-  dome
-      dom(fod [fod.dom liv=%dead ren=~])
+      dom(fod [fod.dom ~ liv=%dead ren=~])
     --
   --
 ::

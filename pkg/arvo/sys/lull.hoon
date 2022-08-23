@@ -747,6 +747,7 @@
         [%note p=@tD q=tank]                            ::  debug message
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
+        [%tire p=(each rock:tire wave:tire)]            ::  app state
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
     ==                                                  ::
@@ -776,8 +777,9 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
-        [%rein des=desk liv=? ren=(map dude:gall ?)]    ::  live
+        [%rein des=desk liv=zest ren=(map dude:gall ?)] ::  live
         [%stir arg=*]                                   ::  debug
+        [%tire p=(unit ~)]                              ::  app state subscribe
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -928,6 +930,87 @@
         t=@da                                           ::  date
     ==                                                  ::
   +$  zest  $~(%dead ?(%dead %live %next))              ::  how live
+  ::                                                    ::
+  ++  tire                                              ::  app state
+    |%                                                  ::
+    +$  rock  (map desk [=zest wic=(set weft)])         ::
+    +$  wave                                            ::
+      $%  [%wait =desk =weft]                           ::  blocked
+          [%warp =desk =weft]                           ::  unblocked
+          [%zest =desk =zest]                           ::  running
+      ==                                                ::
+    ::
+    ++  wash                                            ::  patch
+      |=  [=rock =wave]
+      ^+  rock
+      ?-    -.wave
+          %wait
+        =/  got=[=zest wic=(set weft)]
+          (~(gut by rock) desk.wave *zest ~)
+        (~(put by rock) desk.wave got(wic (~(put in wic.got) weft.wave)))
+      ::
+          %warp
+        %-  ~(run by rock)
+        |=  [=zest wic=(set weft)]
+        [zest (~(del in wic) weft.wave)]
+      ::
+          %zest
+        ?:  ?=(%dead zest.wave)
+          (~(del by rock) desk.wave)
+        =/  got=[=zest wic=(set weft)]
+          (~(gut by rock) desk.wave *zest ~)
+        (~(put by rock) desk.wave got(zest zest.wave))
+      ==
+    ::
+    ++  walk                                            ::  diff
+      |=  [a=rock b=rock]
+      ^-  (list wave)
+      =/  adds  (~(dif by b) a)
+      =/  dels  (~(dif by a) b)
+      =/  bots  (~(int by a) b)
+      ;:  welp
+        ^-  (list wave)
+        %-  zing
+        %+  turn  ~(tap by adds)
+        |=  [=desk =zest wic=(set weft)]
+        ^-  (list wave)
+        :-  [%zest desk zest]
+        %+  turn  ~(tap in wic)
+        |=  =weft
+        [%wait desk weft]
+      ::
+        ^-  (list wave)
+        %+  turn  ~(tap by dels)
+        |=  [=desk =zest wic=(set weft)]
+        ^-  wave
+        [%zest desk %dead]
+      ::
+        ^-  (list wave)
+        %-  zing
+        %+  turn  ~(tap by bots)
+        |=  [=desk * *]
+        ^-  (list wave)
+        =/  aa  (~(got by a) desk)
+        =/  bb  (~(got by b) desk)
+        =/  wadds  (~(dif in wic.bb) wic.aa)
+        =/  wdels  (~(dif in wic.aa) wic.bb)
+        ;:  welp
+          ?:  =(zest.aa zest.bb)
+            ~
+          [%zest desk zest.bb]~
+        ::
+          %+  turn  ~(tap by wadds)
+          |=  =weft
+          ^-  wave
+          [%wait desk weft]
+        ::
+          %+  turn  ~(tap by wdels)
+          |=  =weft
+          ^-  wave
+          [%warp desk weft]
+        ==
+      ==
+    --
   ::
   ::  +page-to-lobe: hash a page to get a lobe.
   ::
