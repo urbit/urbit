@@ -768,7 +768,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   // resize images
   //
   {
-    c3_y* bas_y = ( c3y == u3C.wag_w ) & u3o_map_snapshot ? (c3_y*)u3_Loom : NULL;
+    c3_y* bas_y = ( u3C.wag_w & u3o_map_snapshot ) ? (c3_y*)u3_Loom : NULL;
     _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w, bas_y);
     // Don't map the south (stack) image because it's almost always dirty and a
     // single page.
