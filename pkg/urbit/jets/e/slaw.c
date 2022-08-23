@@ -421,8 +421,14 @@ _parse_tas(u3_noun txt) {
   // value. Therefore, this is mostly checking validity.
   c3_c* c = u3a_string(txt);
 
-  // First character must represent a lowercase letter
+  // Parse empty string to %$
   c3_c* cur = c;
+  if(cur[0] == 0) {
+    u3a_free(c);
+    return u3nc(0, u3k(txt));
+  }
+
+  // First character must represent a lowercase letter
   if (!islower(cur[0])) {
     u3a_free(c);
     return 0;

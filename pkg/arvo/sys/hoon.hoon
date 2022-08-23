@@ -5940,7 +5940,7 @@
     (rush txt ;~(pfix ;~(plug sig dot) urs:ab))
   ::
       %tas
-    (rush txt sym)
+    (rush txt ;~(pose (jest '') sym))
   ==
 ::
 ++  slay
