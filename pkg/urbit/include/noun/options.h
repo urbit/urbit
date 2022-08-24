@@ -21,15 +21,16 @@
     **  _check flags are set inside u3 and heard outside it.
     */
       enum u3o_flag {                         //  execution flags
-        u3o_debug_ram =     0x1,              //  debug: gc
-        u3o_debug_cpu =     0x2,              //  debug: profile
-        u3o_check_corrupt = 0x4,              //  check: gc memory
-        u3o_check_fatal =   0x8,              //  check: unrecoverable
-        u3o_verbose =       0x10,             //  be remarkably wordy
-        u3o_dryrun =        0x20,             //  don't touch checkpoint
-        u3o_quiet =         0x40,             //  disable ~&
-        u3o_hashless =      0x80,             //  disable hashboard
-        u3o_trace =         0x100             //  enables trace dumping
+        u3o_debug_ram =     1,                //  debug: gc
+        u3o_debug_cpu =     1 << 1,           //  debug: profile
+        u3o_check_corrupt = 1 << 2,           //  check: gc memory
+        u3o_check_fatal =   1 << 3,           //  check: unrecoverable
+        u3o_verbose =       1 << 4,           //  be remarkably wordy
+        u3o_dryrun =        1 << 5,           //  don't touch checkpoint
+        u3o_quiet =         1 << 6,           //  disable ~&
+        u3o_hashless =      1 << 7,           //  disable hashboard
+        u3o_trace =         1 << 8,           //  enables trace dumping
+        u3o_map_snapshot =  1 << 9,           //  mmap() the snapshot
       };
 
   /** Globals.

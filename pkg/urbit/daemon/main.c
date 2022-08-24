@@ -129,6 +129,14 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.lit = c3n;
+  // Disable snapshot memmapping on Windows because the Windows memory mapping
+  // mechanism doesn't overwrite existing mappings by default, which is behavior
+  // that we rely on for remapping the snapshot.
+#ifdef U3_OS_mingw
+  u3_Host.ops_u.map = c3y;
+#else
+  u3_Host.ops_u.map = c3n;
+#endif
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.qui = c3n;
@@ -163,6 +171,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "key-file",            required_argument, NULL, 'k' },
     { "local",               no_argument,       NULL, 'L' },
     { "lite-boot",           no_argument,       NULL, 'l' },
+    { "no-mmap",             no_argument,       NULL, 'm' },
     { "replay-to",           required_argument, NULL, 'n' },
     { "profile",             no_argument,       NULL, 'P' },
     { "ames-port",           required_argument, NULL, 'p' },
@@ -190,7 +199,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   };
 
   while ( -1 != (ch_i=getopt_long(argc, argv,
-                 "A:B:C:DF:G:H:I:J:K:LPRSX:Y:Z:ab:cde:gi:jk:ln:p:qstu:vw:x",
+                 "A:B:C:DF:G:H:I:J:K:LPRSX:Y:Z:ab:cde:gi:jk:lmn:p:qstu:vw:x",
                  lop_u, &lid_i)) )
   {
     switch ( ch_i ) {
@@ -274,6 +283,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'k': {
         u3_Host.ops_u.key_c = _main_repath(optarg);
+        break;
+      }
+      case 'm': {
+        u3_Host.ops_u.map = c3y;
         break;
       }
       case 'n': {
@@ -593,6 +606,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-k, --key-file KEYS           Private key file (see also -G)\n",
     "-L, --local                   Local networking only\n",
     "-l, --lite-boot               Most-minimal startup\n",
+    "-m, --no-mmap                 Disable snapshot memmapping\n",
     "-n, --replay-to NUMBER        Replay up to event\n",
     "-P, --profile                 Profiling\n",
     "-p, --ames-port PORT          Set the ames port to bind to\n",
@@ -875,6 +889,12 @@ main(c3_i   argc,
         u3_Host.tra_u.fil_u = NULL;
         u3_Host.tra_u.con_w = 0;
         u3_Host.tra_u.fun_w = 0;
+      }
+
+      /*  Set snapshot mapping flag
+      */
+      if ( c3n == u3_Host.ops_u.map ) {
+        u3C.wag_w |= u3o_map_snapshot;
       }
     }
 
