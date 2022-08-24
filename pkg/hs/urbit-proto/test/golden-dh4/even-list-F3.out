@@ -93,8 +93,7 @@ ERROR
 
           play:
           lvl   0
-          sut   $=  =>  0
-                    |%
+          sut   $=  |%
                     ++  even-list
                       $:  ?(%7104878 %7237475)
                           ?:  ?=(%"nil" +2)
@@ -109,7 +108,6 @@ ERROR
                       ==
                     --
                 $|  0|*
-                  0|*
                 ++  even-list  $
                 ++  list  $
                 --
@@ -119,8 +117,7 @@ ERROR
 
           work:
           lvl   0
-          sut   $=  =>  0
-                    |%
+          sut   $=  |%
                     ++  even-list
                       $:  ?(%7104878 %7237475)
                           ?:  ?=(%"nil" +2)
@@ -135,7 +132,6 @@ ERROR
                       ==
                     --
                 $|  0|*
-                  0|*
                 ++  even-list  $
                 ++  list  $
                 --

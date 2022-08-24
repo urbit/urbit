@@ -174,6 +174,10 @@ instance (Rolling a, Rolling b, Rolling c) => Rolling (a, b, c) where
   roll (a, b, c) = Huge $ Rose "" ""
     [tank $ roll a, tank $ roll b, tank $ roll c]
 
+instance (Ord k, Rolling k, Rolling v) => Rolling (Map k v) where
+  roll m = Huge $ Stem "" "" []
+    (mapToList m <&> \(k, v) -> ("++", tank $ roll k, tank $ roll v))
+
 
 -- | Limit the width of a wide form in two ways.
 chop :: Int -> Roll -> Roll
@@ -300,7 +304,7 @@ instance Rolling Hoon where
     --
     Bass b -> roll b
     Bcbr s t ms ->
-      Huge $ Stem "$|" "--" [tank $ roll s{-, tank $ roll t-}] (arms ms)
+      Huge $ Stem "$|" "--" [tank $ roll s, tank $ roll t] (arms ms)
     Bccb h -> going (\(_, s) -> (Long, "_" <> s)) (Palm "$_" . singleton)
             $ roll h
     Bccl s ss -> running "$:" "==" "{" "}" (map roll $ s:ss)

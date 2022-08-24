@@ -90,8 +90,9 @@ rollDash lvl = roll . \case
   DashCellLeft tr -> Clhp Wild (baseToHoon lvl tr)
   DashRailLeft jr -> Bccl Wild [shut $ rest $ luft lvl jr]
   DashCellRight tl -> Clhp (baseToHoon lvl tl) Wild
-  DashCorePayload fom (s, js) -> Bcbr Wild (baseToHoon lvl fom)
-                               $ fmap (shut . rest . luft lvl . (`Jamb` s)) js
+  DashCorePayload fom (Comb s js) ->
+    Bcbr Wild (baseToHoon lvl fom) $
+      fmap (shut . rest . luft lvl . (`Jamb` s)) js
 rollDashes lvl ds =
   Huge $ Stem "" "" [] (ds <&> \d -> ("**", tank $ rollDash lvl d, Leaf ""))
 
@@ -116,8 +117,8 @@ instance Rolling Act where
   roll = \case
     ActRoot -> leaf "root"
     ActFits f lvl t u wap -> Huge $ Stem (tshow f <> ":") "" []
-      [ ("have", tank $ roll $ loft lvl t, Leaf "")
-      , ("need", tank $ roll $ loft lvl u, Leaf "")
+      [ ("have", tank $ roll {-$ loft lvl-} t, Leaf "")
+      , ("need", tank $ roll {-$ loft lvl-} u, Leaf "")
       ]
     ActDraw Line{lev, loc, lyt, las} -> Huge $ Stem "draw:" "" []
       [ ("loc ", Leaf $ tshow loc, Leaf "")

@@ -363,7 +363,7 @@ lock = \case
     h -> [h]
   Gate' t (Jamb c s) ->
     Tsgr (lock s) $ Bchp (lock t) (shut . rest $ fmap hack c)
-  Core' t (s, js) u ->
+  Core' t (Comb s js) u ->
     Tsgr (lock s) $ Bcbr (lock u) (lock t) (fmap (shut . rest) js)
 --  Fork' fs t -> Bcgr (lock t) (map (flap . pond) $ setToList fs)
   Sing' x y -> Bcts (lock x) (lock y)

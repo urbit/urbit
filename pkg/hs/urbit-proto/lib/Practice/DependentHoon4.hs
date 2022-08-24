@@ -222,9 +222,17 @@ type Type = Semi
 data Jamb a = Jamb { cod :: Code a, clo :: Semi a }
   deriving (Functor, Foldable, Traversable, Generic)
 
+-- | Closure but for core types lol.
+data Comb a = Comb { bak :: Semi a, bat :: Map Term (Code a) }
+  deriving (Functor, Foldable, Traversable, Generic)
+
 deriving instance Eq   a => Eq   (Jamb a)
 deriving instance Ord  a => Ord  (Jamb a)
 deriving instance Show a => Show (Jamb a)
+
+deriving instance Eq   a => Eq   (Comb a)
+deriving instance Ord  a => Ord  (Comb a)
+deriving instance Show a => Show (Comb a)
 
 data Semi a
   = Spot' Rump
@@ -255,11 +263,11 @@ data Semi a
   | Core'
     -- | formal payload type (to be thought of as part of the battery type)
     (Semi a)
-    -- | map of Jambs to calculate arm types, with shared closure.
+    -- | map of Codes to calculate arm types, with shared front-closure.
     -- The rule is that you must cons a semi for the *whole* context value onto
     -- the closure. This may often in practice mean that the same value is
     -- doubled.
-    (Semi a, Map Term (Code a))
+    (Comb a)
     -- | actual payload type
     (Semi a)
   | Sing' {- | val -} (Semi a) {- | type -} (Semi a)
@@ -281,7 +289,6 @@ deriving instance Eq   a => Eq   (Semi a)
 deriving instance Ord  a => Ord  (Semi a)
 deriving instance Show a => Show (Semi a)
 
-
 -- Smart constructors to handle Void' properly.
 
 cell' :: Type a -> Type a -> Type a
@@ -297,7 +304,7 @@ gate' :: Type a -> Jamb a -> Type a
 gate' Void' _ = Void'
 gate' t     j = Gate' t j
 
-core' :: Type a -> (Semi a, Map Term (Code a)) -> Type a -> Type a
+core' :: Type a -> Comb a -> Type a -> Type a
 core' _ _  Void' = Void'
 core' t js     u = Core' t js u
 
@@ -507,7 +514,7 @@ read nul = \case
    where
     lef = read (nul / 2) t
     rit = read (nul / 3) $ jamb j lef
-  Core' _ (_, _) act -> Cell' (nul / 2) (read (nul / 3) act)
+  Core' _ _ act -> Cell' (nul / 2) (read (nul / 3) act)
   _ -> nul
 
 -- | Refine the given seminoun according to the given fish.
@@ -521,8 +528,13 @@ skim ken = \case
 rump :: Var a => (Level, Axis) -> Semi a
 rump = Spot' . Leg'
 
+-- | Execute a forward-consing closure with argument.
 jamb :: Var a => Jamb a -> Semi a -> Semi a
 jamb Jamb{..} arg = eval (Cell' arg clo) cod
+
+-- | Execute a backwards-consing multi-closure with argument.
+comb :: Var a => Comb a -> Semi a -> Map Term (Semi a)
+comb Comb{..} arg = eval (Cell' bak arg) <$> bat
 
 {-
 -- | Axially project a value; i.e. implement Nock 0 or 9.
@@ -651,7 +663,7 @@ semi mod sub = \case
   Aura au to -> Aura' au to
   Rail c d -> rail' (semi mod sub c) (Jamb d sub)
   Gate c d -> gate' (semi mod sub c) (Jamb d sub)
-  Core c ds e -> core' (semi mod sub c) (sub, ds) (semi mod sub e)
+  Core c ds e -> core' (semi mod sub c) (Comb sub ds) (semi mod sub e)
   Sing c d -> sing' (semi mod sub c) (semi mod sub d)
   Molt c d -> Molt' (semi mod sub c) (semi mod sub d)
   Face f c -> face' [f] (semi mod sub c)
@@ -786,8 +798,8 @@ loft lvl = \case
   Aura' au to -> Aura au to
   Rail' l j -> Rail (loft lvl l) (luft lvl j)
   Gate' a j -> Gate (loft lvl a) (luft lvl j)
-  Core' a (s, as) b ->
-    Core (loft lvl a) (fmap (luft lvl . (`Jamb` s)) as) (loft lvl b)
+  Core' a com b ->
+    Core (loft lvl a) (laft lvl com) (loft lvl b)
   Sing' a b -> Sing (loft lvl a) (loft lvl b)
   Molt' a b -> Molt (loft lvl a) (loft lvl b)
   Face' f t -> Face f (loft lvl t)
@@ -813,8 +825,7 @@ loft lvl = \case
 -- would sidestep the need to loft on the semantic path entirely.
 luft l j = loft (l + 1) $ jamb j $ rump (l + 1, 2)
 
--- And this one is for lambdas, which are secretly cores, ugh.
-laft l j = loft (l + 2) $ jamb j $ rump (l + 2, 6)
+laft l c = fmap (loft (l + 1)) $ comb c $ rump (l + 1, 3)
 
 -- | Given a Code coming straight out of the compiler, read the subject type
 -- and evaluate against the resulting seminoun.
@@ -1131,6 +1142,18 @@ hide Con{lvl, sut} typ = Con
   , sut = Cell' typ sut
   }
 
+-- FIXME really very sorry fml
+side Con{lvl, sut} typ = Con
+  { lvl = lvl + 1
+  , sut = mete horrible $ Cell' sut typ
+  }
+ where
+  horrible (Leg' loc) = Leg' (lvl + 1, ax)
+   where
+    ax = case slim lvl loc of
+      Just ax -> peg 2 ax
+      Nothing -> error "horrible: go away"
+
 shew :: Var a => Con a -> Semi a -> Type a -> Con a
 shew Con{lvl, sut} ken typ = Con
   { lvl = lvl + 1
@@ -1145,6 +1168,16 @@ moot Con{lvl, sut} fom ken act = Con
 
 melt :: Var a => Con a -> Con a
 melt Con{lvl, sut} = Con{lvl, sut = molt sut}
+
+-- | Ridiculous hack for modifying rumps in place.
+mete :: forall a. Var a => (Rump -> Rump) -> Type a -> Type a
+mete op = fromRight . runCheck . pare . fmap psy . grow
+ where
+  psy = \case
+    New r -> New (op r)
+    Old x -> Old x
+
+  fromRight (Right x) = x
 
 -- | Grow the type because we have passed under a tisgar
 grow :: forall a. Var a => Type a -> Type (Hop Rump a)
@@ -1168,7 +1201,7 @@ grow = \case
   Aura' au to -> Aura' au to
   Rail' x j -> Rail' (grow x) (jrow j)
   Gate' x j -> Gate' (grow x) (jrow j)
-  Core' x (s, j) y -> Core' (grow x) (grow s, fmap crow j) (grow y)
+  Core' x (Comb s j) y -> Core' (grow x) (Comb (grow s) (fmap crow j)) (grow y)
   Sing' x y -> Sing' (grow x) (grow y)
   Molt' x y -> Molt' (grow x) (grow y)
   Face' f x -> Face' f (grow x)
@@ -1242,8 +1275,8 @@ pare bas = go bas
     Aura' au to -> pure $ Aura' au to
     Rail' x j -> Rail' <$> go x <*> jare j
     Gate' x j -> Gate' <$> go x <*> jare j
-    Core' x (s, j) y ->
-      Core' <$> go x <*> ((,) <$> go s <*> traverse care j) <*> go y
+    Core' x (Comb s j) y ->
+      Core' <$> go x <*> (Comb <$> go s <*> traverse care j) <*> go y
     Sing' x y -> Sing' <$> go x <*> go y
     Molt' x y -> Molt' <$> go x <*> go y
     Face' f x -> Face' f <$> go x
@@ -1828,19 +1861,30 @@ fest fit lvl t u wap@Warp{lax, rax, pax} wef@Weft{seg, reg, gil} =
     new = rump (lvl + 1, 2)
   -}
 
-  (Core' fom (clo, arms) act, Core' fom' (clo', arms') act') -> do
+  (Core' fom cob act, Core' fom' cob' act') -> do
     -- actual types are covariant
     wef <- fest fit lvl act act' wap { pax = pax / 3 } wef
     -- formal types are contravariant
     wef <- fest fit lvl fom' fom wap { pax = pax / 3 } wef
-    let as = fmap (`Jamb` clo)  arms
-    let bs = fmap (`Jamb` clo') arms'
     -- The arms must nest in all possible universes where the payloads nest.
     -- Because arm bodies can do %=, reading the smaller actual type is too
     -- specific.
+    note "NT" t
+    note "NU" u
+    note "NFOM'" $ fom'
     let y = read new fom'
-    farm as bs wef \_ a b wef ->
-      fest fit (lvl + 1) (jamb a y) (jamb b y) SHED wef
+    let as = comb cob  y
+    let bs = comb cob' y
+    note "NY  " y
+    note "NBAK" $ bak cob
+    note "NCAK" $ bak cob'
+    note "MBAT" $ bat cob
+    note "MCAT" $ bat cob'
+    farm as bs wef \arm a b wef -> do
+      note "NARM" arm
+      note "NA  " a
+      note "NB  " b
+      fest fit (lvl + 1) a b SHED wef
    where
     new = rump (lvl + 1, 2)
 
@@ -1900,7 +1944,7 @@ data Dash a
   -- | We have passed into the right of any cell, and record the left
   | DashCellRight (Type a)
   -- | We have passed into the payload of a core, and record the battery
-  | DashCorePayload (Type a) (Semi a, Map Term (Code a))
+  | DashCorePayload (Type a) (Comb a)
 
 deriving instance (Show a) => Show (Line a)
 deriving instance (Show a) => Show (Dash a)
@@ -2273,7 +2317,7 @@ ally f ken lin@Line{lyt} =
           }
       ]
 
-    Core' fom (clo, bat) act -> asum
+    Core' fom cob@Comb{bat} act -> asum
       [ lookup f bat <&> \jam -> pure $ (Arm 1 f (keysSet bat),) $ Line
           { lev
           , loc  -- NOT loc / 2
@@ -2286,7 +2330,7 @@ ally f ken lin@Line{lyt} =
           , loc = loc / 3
           , lyt = act
           , lix
-          , las = DashCorePayload fom (clo, bat) : las
+          , las = DashCorePayload fom cob : las
           }
       ]
 
@@ -2678,8 +2722,8 @@ thin lvl bas = act (ActThin lvl bas) $ go bas
     --
     Aura' au to -> pure $ Aura' au to
     Rail' x (Jamb cod clo) -> Rail' <$> go x <*> (Jamb cod <$> go clo)
-    Core' x (s, j) y ->
-      Core' <$> go x <*> ((, j) <$> go s) <*> go y
+    Core' x (Comb s j) y ->
+      Core' <$> go x <*> (Comb <$> go s <*> pure j) <*> go y
     Sing' x y -> Sing' <$> go x <*> go y
     Molt' x y -> Molt' <$> go x <*> go y
     Face' f x -> Face' f <$> go x
@@ -2734,16 +2778,15 @@ fend con@Con{lvl, sut} w whs = do
   case st of
     Leg _ -> pure (c, lyt lin, ms)
     Arm _ arm arms -> case lyt lin of
-      Core' fom (clo, lookup arm -> Just cod) act -> do
-        -- late binding check: actual must nest under formal
-        fits FitNest lvl act fom
-        -- compute return type given actual argument value seminoun
-        note "COD " cod
-        note "CLO " clo
-        note "RED " $ read (rump (lvl, loc lin / 3)) act
-        let ret = jamb Jamb{cod, clo} $ read (rump (lvl, loc lin / 3)) act
-        note "RET " ret
-        pure (Pull arm arms c, ret, ms)
+      Core' fom cob act
+        | Just ret <- lookup arm $ comb cob $ read (rump (lvl, loc lin / 3)) act
+        -> do
+          note "ACT " act
+          note "RED " $ read (rump (lvl, loc lin / 3)) act
+          note "RET " ret
+          -- late binding check: actual must nest under formal
+          fits FitNest lvl act fom
+          pure (Pull arm arms c, ret, ms)
       t -> bail (BailNote $
         "fend: invariant violation: expected core with arm " <> arm <>
         " but got " <> tshow t)
@@ -2875,12 +2918,40 @@ scan con@Con{lvl, sut} cod = act (ActScan con cod) case cod of
     -- FIXME this WRONGLY treats type annotations on arms that contain wings
     -- that refer to the current core. Unclear what to do there. Here Noun'
     -- stands in for the "battery type."
+    --
+    -- XX lol@above. We are so far gone from this discourse, let me tell you,
+    -- friend.
+    --
+    -- In a core type, recall that we have an closure (`bak`) representing the
+    -- value of the subject at the place at which the core type expression was
+    -- executed. To the back (right side) of this core is consed the type of the
+    -- payload, when that type is known. This achieves dependency. Against this
+    -- pair type [bak pay], we check/infer the type of the arms. In the context
+    -- in which this type is being synthesized, the "subject where the type
+    -- type expression is being written" is the same as the subject where the
+    -- core value is being synthesized, i.e. bak=pay. HOWEVER, bak is fully
+    -- closed over, while pay is exposed to edit via %=. (Actually pay is in
+    -- two copies, fom and act, and only act is exposed to edit. You can see
+    -- from how this essay goes that a reform is necessary here, but I digress.)
+    -- Since the subject occurs in two copies, which should we be using for
+    -- resolving the wings in the ^-s on the arms?
+    --
+    -- I ANSWER THAT it should be the first, in the +2. To understand why,
+    -- consider a core whose arm produces a core. Suppose this product core type
+    -- depends on the payload of the outer core. This payload will of course
+    -- recur in the copy of the outer core that is nested inside the inner core
+    -- if we allow the reference to this payload element to point into the
+    -- payload of the inner core, we purport to allow type change by editing
+    -- this payload, where no such capability may exist, for example, because
+    -- we decide which core to produce based on this value in the arm of the
+    -- outer core.
+    --
+    -- XX LOLOLOL I called bak a type but it's actually a seminoun enjoy.
     ts <- for cs \c -> do
-      t <- scan (melt $ hide con Noun') c
-      -- t <- thin (lvl + 1) t
-      pure (With (Spot 2) $ loft lvl t)
+      t <- scan (melt $ side con Noun') c
+      pure (loft (lvl + 1) t)
     let ken = read (rump (lvl, 1)) sut
-    pure $ Core' (molt sut) (ken, ts) sut
+    pure $ Core' (molt sut) (Comb ken ts) sut
 
   Fac p c -> face' (derm p) <$> scan con c
 
@@ -3039,7 +3110,7 @@ work con fit cod gol = let
       Face' f t -> work con fit cod t wap
       Fuse' _ _ -> playFits  -- FIXME?
       --
-      Core' fom (clo, bat) act -> do
+      Core' fom cob act -> do
         let mot = molt sut
         fist fit lvl sut act (wap / 3)
         -- XX this is here because we otherwise have no way to determine the
@@ -3062,15 +3133,14 @@ work con fit cod gol = let
         -- molted original subject. The actual type is *also* the molted orig,
         -- reflecting that by the time we get to executing arm code, the actual
         -- contents will necessarily be of that type.
-        let sut = Core' mot (clo, bat) mot
-        xs <- farm arms bat mempty \nom arm armT xs -> do
+        xs <- farm arms (comb cob ken) mempty \nom arm armT xs -> do
           (x, ms) <- work
-            Con{sut, lvl = lvl + 1}  -- TODO FIXME is this lvl right????
+            Con { sut = Core' mot cob mot, lvl = lvl + 1 }
             fit
             arm
-            (jamb (Jamb armT clo) ken)
+            armT
             SHED
-          tire (lvl + 1, 1) ms (Core' fom (clo, bat) fom)
+          tire (lvl + 1, 1) ms (Core' fom cob fom)
           pure (insertMap nom x xs)
         pure (Crux (knit sut) xs, singleton Tuna)
       _ -> playFits
@@ -3207,16 +3277,13 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
     let ken = read (rump (lvl, 1)) sut
     res <- for arms $ play Con { sut = cor, lvl = lvl + 1 }
     let cru = Crux (knit sut) (res <&> \(x, _, _) -> x)
-    tys <- for res \(_, t, _) -> do
-      -- t <- thin (lvl + 1) t
-      pure (With (Spot 2) $ loft lvl t)
-    let cor = Core' (molt sut) (ken, tys) sut   -- NOTE molt only in fom
+    let tys = res <&> \(_, t, _) -> loft (lvl + 1) t
+    let cor = Core' (molt sut) (Comb ken tys) sut   -- NOTE molt only in fom
     -- XX correct?
     for_ res \(_, _, ns) -> tire (lvl + 1, 1) ns cor
     pure
       ( cru
       , cor
-      -- (Core' sut <$> for ress (\(_, t, _) -> loft t)
       , singleton Tuna
       )
 
@@ -3311,7 +3378,7 @@ play con@Con{lvl, sut} cod = act (ActPlay con cod) case cod of
   Cor act fom bat -> do
     (x, ms) <- work con FitNest act Type'
     (y, ns) <- work con FitNest fom Type'
-    ress <- for bat \arm -> work (hide con (evil con y)) FitNest arm Type'
+    ress <- for bat \arm -> work (side con (evil con y)) FitNest arm Type'
     let xs  = fmap fst ress
     let mss = fmap snd ress
     pure (Core y xs x, Type', foldl' swam (swam ms ns) mss)
