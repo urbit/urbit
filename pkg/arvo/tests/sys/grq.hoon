@@ -479,5 +479,14 @@
             [~1111.1.8 0xbeef.dead *roof]
             [~bud ~nec]
           ==
+  ::
+    %+  expect-eq
+      !>  2
+      !>  %:  gall-scry-nonce:v
+            gall.nec
+            [~1111.1.10 0xdead.beef *roof]
+            ~nec  %sub
+            [~bud %pub /sub-foo/~bud]
+          ==
   ==
 --

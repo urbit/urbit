@@ -170,6 +170,19 @@
   %-  scry:(ames-gate now eny roof)
   [~ %x [[our %$ da+now] /peers/(scot %p her)]]
 ::
+++  gall-scry-nonce
+  |=  $:  =gall-gate
+          [now=@da eny=@ =roof]
+          our=ship
+          =dude:gall
+          sub=[=ship =term =wire]
+      ==
+  ^-  @ud
+  !<  @ud
+  =<  q
+  %-  need  %-  need
+  %-  scry:(gall-gate now eny roof)
+  [~ %n [[our dude da+now] [(scot %p ship.sub) [term wire]:sub]]]
 ::
 ++  load-agent
   |=  [=ship =gall-gate =dude:gall =agent:gall]
