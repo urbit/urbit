@@ -6,6 +6,11 @@
   %-  run-chain
   |.  :-  %|
   =+  nec-bud:v
+  ::  uncomment to turn on verbose debug output
+  ::=^  *  ames.nec
+  ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
+  ::=^  *  ames.bud
+  ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
   ::  poke %sub to tell it to subscribe
   =/  =task:gall  [%deal [~nec ~nec] %sub %poke watch+!>(~bud)]
   =^  t1  gall.nec
@@ -32,7 +37,7 @@
       ==
     ==
   :-  t2  |.  :-  %|
-  ::  pass %plea to ames, which gives a packet to vere
+  ::  subscriber ames handles %plea from gall, gives a packet to vere
   =^  t3  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -44,22 +49,22 @@
       :~  :-  ~[//unix]
           :*  %give  %send  [%& ~bud]
               0xae59.5b29.277b.22c1.20b7.a8db.9086.46df.31bd.f9bc.
-                2633.7300.17d4.f5fc.8be5.8bfe.5c9d.36d9.2ea1.7cb3.
-                8a00.0200.0132.8fd4.f000
+              2633.7300.17d4.f5fc.8be5.8bfe.5c9d.36d9.2ea1.7cb3.
+              8a00.0200.0132.8fd4.f000
           ==
           :-  ~[/ames]  [%pass /pump/~bud/0 %b %wait ~1111.1.1..00.00.01]
       ==
     ==
   :-  t3  |.  :-  %|
-  ::  send packet across the network
+  ::  publisher ames hears %watch, passes to gall
   =^  t4  ames.bud
     %:  ames-check-call:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[//unix]
       :*  %hear  [%& ~nec]
           0xae59.5b29.277b.22c1.20b7.a8db.9086.46df.31bd.f9bc.
-            2633.7300.17d4.f5fc.8be5.8bfe.5c9d.36d9.2ea1.7cb3.
-            8a00.0200.0132.8fd4.f000
+          2633.7300.17d4.f5fc.8be5.8bfe.5c9d.36d9.2ea1.7cb3.
+          8a00.0200.0132.8fd4.f000
       ==
       :~  :-  ~[//unix]  [%pass /qos %d %flog %text "; ~nec is your neighbor"]
           :-  ~[//unix]
@@ -67,7 +72,7 @@
       ==
     ==
   :-  t4  |.  :-  %|
-  ::  handle pass from ames to gall, which passes the %watch to itself
+  ::  publisher gall hears %watch from ames, passes to itself
   =^  t5  gall.bud
     %:  gall-check-call:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -80,7 +85,7 @@
       ==
     ==
   :-  t5  |.  :-  %|
-  ::  gall runs %pub with %watch, gives ack to itself
+  ::  publisher gall runs %pub with %watch, gives ack to itself
   =^  t6  gall.bud
     %:  gall-check-call:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -110,7 +115,7 @@
       :~  :-  ~[//unix]
           :*  %give  %send  [%& ~nec]
               0x2.0219.8100.0485.5530.3c88.9068.3cc6.484e.
-                2d9d.076e.6d00.0100.0223.9ae9.5000
+              2d9d.076e.6d00.0100.0223.9ae9.5000
       ==  ==
     ==
   :-  t8  |.  :-  %|
@@ -121,7 +126,7 @@
       :-  ~[//unix]
       :*  %hear  [%& ~bud]
           0x2.0219.8100.0485.5530.3c88.9068.3cc6.484e.
-            2d9d.076e.6d00.0100.0223.9ae9.5000
+          2d9d.076e.6d00.0100.0223.9ae9.5000
       ==
       :~  :-  ~[//unix]  [%pass /qos %d %flog %text "; ~bud is your neighbor"]
           :-  :~  /sys/way/~bud/pub
@@ -185,7 +190,7 @@
       :~  :-  ~[//unix]
           :*  %give  %send  [%& ~nec]
               0xa1fc.cd35.c730.9a00.07e0.90a2.f87c.3657.935e.
-                4ca0.801d.3ddc.d400.0100.0223.bc18.1000
+              4ca0.801d.3ddc.d400.0100.0223.bc18.1000
           ==
           :-  ~[/ames]  [%pass /pump/~nec/1 %b %wait ~1111.1.4..00.00.01]
       ==
@@ -198,7 +203,7 @@
       :-  ~[//unix]
       :*  %hear  [%& ~bud]
           0xa1fc.cd35.c730.9a00.07e0.90a2.f87c.3657.935e.
-            4ca0.801d.3ddc.d400.0100.0223.bc18.1000
+          4ca0.801d.3ddc.d400.0100.0223.bc18.1000
       ==
       :~  :-  :~  /sys/way/~bud/pub
                   /use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud
@@ -254,7 +259,7 @@
     %:  ames-check-call:v  ames.nec
       [~1111.1.5 0xdead.beef *roof]
       :-  :~  /sys/way/~bud/pub
-              /use/sub/0w1.d6Isf/out/~nec/pub/2/sub
+              /use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud
               /init
           ==
       [%plea ~bud %g /ge/pub [%0 %s /foo]]
@@ -284,5 +289,195 @@
           :-  ~[/ames]  [%pass /pump/~bud/0 %b %wait ~1111.1.5..00.02.00]
       ==
     ==
-  :-  t20  |.  :-  %&  ~
+  ::  publisher ames hears %kick ack
+  :-  t20  |.  :-  %|
+  =^  t21  ames.bud
+    %:  ames-check-call:v  ames.bud
+      [~1111.1.6 0xbeef.dead *roof]
+      :-  ~[//unix]
+      :*  %hear  [%& ~nec]
+          0xfe.e208.da00.0491.bf7f.9594.2ddc.0948.
+          9de0.3906.b678.6e00.0200.0132.e55d.5000
+      ==
+      :~  :-  ~[/ames]  [%pass /pump/~nec/1 %b %rest ~1111.1.4..00.00.01]
+      ==
+    ==
+  ::  publisher ames hears new %watch
+  :-  t21  |.  :-  %|
+  =^  t22  ames.bud
+    %:  ames-check-call:v  ames.bud
+      [~1111.1.7 0xbeef.dead *roof]
+      :-  ~[//unix]
+      :*  %hear  [%& ~nec]
+          0xfe.9174.6d7c.e042.4ea7.cf3c.08da.3acf.68ec.3bd1.1f2c.abfe.f500.
+          1897.c42e.a3ec.2159.86d6.e2f1.b344.9d06.b600.0200.0132.ebe7.8800
+      ==
+      :~  :-  ~[//unix]
+          [%pass /bone/~nec/0/5 %g %plea ~nec %g /ge/pub [%0 %s /foo]]
+      ==
+    ==
+  ::  publisher gall hears new %watch, passes to self
+  :-  t22  |.  :-  %|
+  =^  t23  gall.bud
+    %:  gall-check-call:v  gall.bud
+      [~1111.1.7 0xbeef.dead *roof]
+      :-  ~[/bone/~nec/0/5 //unix]
+      [%plea ~nec %g /ge/pub [%0 %s /foo]]
+      :~  :-  ~[/bone/~nec/0/5 //unix]
+          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud] %pub %watch /foo]
+      ==
+    ==
+  ::  publisher gall runs :pub's +on-watch, gives ack to self
+  :-  t23  |.  :-  %|
+  =^  t24  gall.bud
+    %:  gall-check-call:v  gall.bud
+      [~1111.1.7 0xbeef.dead *roof]
+      :-  ~[/sys/req/~nec/pub /bone/~nec/0/5 //unix]
+      [%deal [~nec ~bud] %pub %watch /foo]
+      :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/5 //unix]
+          [%give %unto %watch-ack ~]
+      ==
+    ==
+    ::  publisher gall hears %watch-ack, gives to ames
+  :-  t24  |.  :-  %|
+  =^  t25  gall.bud
+    %:  gall-check-take:v  gall.bud
+      [~1111.1.7 0xbeef.dead *roof]
+      :+  /sys/req/~nec/pub  ~[/bone/~nec/0/5 //unix]
+      [%gall %unto %watch-ack ~]
+      :~  :-  ~[/bone/~nec/0/5 //unix]  [%give %done ~]
+      ==
+    ==
+  ::  publisher ames hears done from gall, sends over the network
+  :-  t25  |.  :-  %|
+  =^  t26  ames.bud
+    %:  ames-check-take:v  ames.bud
+      [~1111.1.7 0xbeef.dead *roof]
+      :+  /bone/~nec/0/5  ~[//unix]
+      [%gall %done ~]
+      :~  :-  ~[//unix]
+          :*  %give  %send  [%& ~nec]
+              0x5f5.c27c.c400.0587.8b0d.0a5d.eb8e.39fa.
+              49f4.4848.bfa6.f600.0100.0223.c98c.8800
+      ==  ==
+    ==
+  ::  publisher ames hears %cork, passes to itself
+  :-  t26  |.  :-  %|
+  =^  t27  ames.bud
+    %:  ames-check-call:v  ames.bud
+      [~1111.1.8 0xbeef.dead *roof]
+      :-  ~[//unix]
+      :*  %hear  [%& ~nec]
+          0xb.130c.ab37.ca24.49cd.aecb.23ba.70f1.6f1c.4d00.124e.c9a5.
+          3413.3843.d81c.47c4.7040.6e62.3700.0200.0132.e1ab.9000
+      ==
+      :~  :-  ~[//unix]  [%pass /bone/~nec/0/1 %a %plea ~nec [%a /close ~]]
+      ==
+    ==
+  :-  t27  |.  :-  %|
+  ::  publisher ames hear cork plea from self, give %done to self
+  =^  t28  ames.bud
+    %:  ames-check-call:v  ames.bud
+      [~1111.1.8 0xbeef.dead *roof]
+      :-  ~[/bone/~nec/0/1 //unix]
+      [%plea ~nec [%a /close ~]]
+      :~  :-  ~[/bone/~nec/0/1 //unix]  [%give %done ~]
+      ==
+    ==
+  ::  publisher ames hears cork done from self, sends ack packet
+  :-  t28  |.  :-  %|
+  =^  t29  ames.bud
+    %:  ames-check-take:v  ames.bud
+      [~1111.1.8 0xbeef.dead *roof]
+      :+  /bone/~nec/0/1
+        ~[//unix]
+      [%ames %done ~]
+      :~  :-  ~[//unix]
+          :*  %give  %send  [%& ~nec]
+              0x5f.f966.8e00.0449.bdec.9006.c7e5.1237.
+              1d87.53fe.d7bb.ad00.0100.0223.c6a8.5800
+      ==  ==
+    ==
+  ::  subscriber ames hears %watch-ack, gives to gall
+  :-  t29  |.  :-  %|
+  =^  t30  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.9 0xdead.beef *roof]
+      :-  ~[//unix]
+      :*  %hear  [%& ~bud]
+          0x5f5.c27c.c400.0587.8b0d.0a5d.eb8e.39fa.
+          49f4.4848.bfa6.f600.0100.0223.c98c.8800
+      ==
+      :~  :-  :~  /sys/way/~bud/pub
+                  /use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud
+                  /init
+              ==
+          [%give %done ~]
+          :-  ~[/ames]  [%pass /pump/~bud/4 %b %rest ~1111.1.5..00.00.01]
+      ==
+    ==
+  ::  subscriber gall hears new %watch-ack from ames, gives to self
+  :-  t30  |.  :-  %|
+  =^  t31  gall.nec
+    %:  gall-check-take:v  gall.nec
+      [~1111.1.9 0xdead.beef *roof]
+      :+  /sys/way/~bud/pub
+        :~  /use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud
+            /init
+        ==
+      [%ames %done ~]
+      :~  :-  :~  /use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud
+                  /init
+              ==
+          [%give %unto %watch-ack ~]
+      ==
+    ==
+  ::  subscriber gall hears new %watch-ack from self, tells :sub
+  :-  t31  |.  :-  %|
+  =^  t32  gall.nec
+    %:  gall-check-take:v  gall.nec
+      [~1111.1.9 0xdead.beef *roof]
+      :+  /use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud
+        ~[/init]
+      [%gall %unto %watch-ack ~]
+      ~
+    ==
+  ::  subscriber ames hears %cork ack
+  :-  t32  |.  :-  %|
+  =^  t33  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.10 0xdead.beef *roof]
+      :-  ~[//unix]
+      :*  %hear  [%& ~bud]
+          0x5f.f966.8e00.0449.bdec.9006.c7e5.1237.
+          1d87.53fe.d7bb.ad00.0100.0223.c6a8.5800
+      ==
+      :~  :-  :~  /sys/way/~bud/pub
+                  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud
+                  /init
+              ==
+          [%give %done ~]
+          :-  ~[/ames]  [%pass /pump/~bud/0 %b %rest ~1111.1.5..00.02.00]
+      ==
+    ==
+  :-  t33  |.  :-  %&
+  ;:  weld
+    %+  expect-eq
+      !>  (sy 0 ~)
+      !>  =<  corked
+          %:  ames-scry-peer:v
+            ames.nec
+            [~1111.1.10 0xdead.beef *roof]
+            [~nec ~bud]
+          ==
+  ::
+    %+  expect-eq
+      !>  (sy 1 ~)
+      !>  =<  corked
+          %:  ames-scry-peer:v
+            ames.bud
+            [~1111.1.8 0xbeef.dead *roof]
+            [~bud ~nec]
+          ==
+  ==
 --

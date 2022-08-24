@@ -82,6 +82,7 @@
 |%
 +$  gall-gate  _gall-adult
 +$  ames-gate  _ames-adult
+::
 ++  nec-bud
   =/  a  ames-nec-bud
   =/  gall-nec  (make-gall ~nec)
@@ -154,6 +155,20 @@
   =/  ames-core  (ames-gate now eny roof)
   =^  moves  ames-gate  (take:ames-core wire duct dud=~ sign)
   [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
+::
+++  ames-scry-peer
+  |=  $:  =ames-gate
+          [now=@da eny=@ =roof]
+          our=ship
+          her=ship
+      ==
+  ^-  peer-state:ames
+  =-  ?>(?=(%known -<) ->)
+  !<  ship-state:ames
+  =<  q
+  %-  need  %-  need
+  %-  scry:(ames-gate now eny roof)
+  [~ %x [[our %$ da+now] /peers/(scot %p her)]]
 ::
 ::
 ++  load-agent
