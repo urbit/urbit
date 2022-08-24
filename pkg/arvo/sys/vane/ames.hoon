@@ -2744,7 +2744,6 @@
       ::
       ++  on-sink-cork
         ^+  peer-core
-        ~>  %slog.0^leaf+"ames: got cork {<[her.channel bone]>}"
         =/  =message-pump-state
           (~(gut by snd.peer-state) bone *message-pump-state)
         =?  peer-core  ?=(^ next-wake.packet-pump-state.message-pump-state)
