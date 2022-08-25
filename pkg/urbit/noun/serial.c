@@ -923,11 +923,58 @@ _cs_etch_ud_bytes(mpz_t a_mp, size_t len_i, c3_y* hun_y)
   return len_i;
 }
 
+/* u3s_etch_ud_smol(): c3_d to @ud
+**
+**   =(26 (met 3 (scot %ud (dec (bex 64)))))
+*/
+c3_y*
+u3s_etch_ud_smol(c3_d a_d, c3_y hun_y[26])
+{
+  c3_y*  buf_y = hun_y + 25;
+  c3_w     b_w;
+
+  if ( !a_d ) {
+    *buf_y-- = '0';
+  }
+  else {
+    while ( 1 ) {
+      b_w  = a_d % 1000;
+      a_d /= 1000;
+
+      if ( !a_d ) {
+        while ( b_w ) {
+          *buf_y-- = '0' + (b_w % 10);
+          b_w /= 10;
+        }
+        break;
+      }
+
+      *buf_y-- = '0' + (b_w % 10);
+      b_w /= 10;
+      *buf_y-- = '0' + (b_w % 10);
+      b_w /= 10;
+      *buf_y-- = '0' + (b_w % 10);
+      *buf_y-- = '.';
+    }
+  }
+
+  return buf_y + 1;
+}
+
 /* u3s_etch_ud(): atom to @ud.
 */
 u3_atom
 u3s_etch_ud(u3_atom a)
 {
+  c3_d a_d;
+
+  if ( c3y == u3r_safe_chub(a, &a_d) ) {
+    c3_y  hun_y[26];
+    c3_y* buf_y = u3s_etch_ud_smol(a_d, hun_y);
+    c3_w  dif_w = (c3_p)buf_y - (c3_p)hun_y;
+    return u3i_bytes(26 - dif_w, buf_y);
+  }
+
   u3i_slab sab_u;
   size_t   len_i;
   mpz_t     a_mp;
@@ -948,8 +995,23 @@ u3s_etch_ud(u3_atom a)
 size_t
 u3s_etch_ud_c(u3_atom a, c3_c** out_c)
 {
-  c3_y*  buf_y;
+  c3_d     a_d;
   size_t len_i;
+  c3_y*  buf_y;
+
+  if ( c3y == u3r_safe_chub(a, &a_d) ) {
+    c3_y  hun_y[26];
+
+    buf_y = u3s_etch_ud_smol(a_d, hun_y);
+    len_i = 26 - ((c3_p)buf_y - (c3_p)hun_y);
+
+    *out_c = c3_malloc(len_i + 1);
+    (*out_c)[len_i] = 0;
+    memcpy(*out_c, buf_y, len_i);
+
+    return len_i;
+  }
+
   mpz_t   a_mp;
   u3r_mp(a_mp, a);
 

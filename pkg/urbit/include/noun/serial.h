@@ -66,6 +66,13 @@
         u3_noun
         u3s_cue_atom(u3_atom a);
 
+      /* u3s_etch_ud_smol(): c3_d to @ud
+      **
+      **   =(26 (met 3 (scot %ud (dec (bex 64)))))
+      */
+        c3_y*
+        u3s_etch_ud_smol(c3_d a_d, c3_y hun_y[26]);
+
       /* u3s_etch_ud(): atom to @ud.
       */
         u3_atom
