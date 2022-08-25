@@ -3074,8 +3074,11 @@
     ::
     ?-    -.u.cur
         %ok
-      =.  message-pump  (give %done current.state ~)
-      =?  message-pump  cork  (give %cork ~)
+      =.  message-pump
+        ::  don't give %done for corks
+        ::
+        ?:  cork  (give %cork ~)
+        (give %done current.state ~)
       $(current.state +(current.state))
     ::
         %nack
