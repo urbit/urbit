@@ -2061,7 +2061,7 @@
           (try-next-sponsor sponsor.peer-state)
         ::  if forwarding, route must not be stale
         ::
-        ?:  &(for (lth last-contact.qos.peer-state (add now ~h1)))
+        ?:  &(for (lth last-contact.qos.peer-state (sub now ~h1)))
           (try-next-sponsor sponsor.peer-state)
         ::
         ?~  route=route.peer-state
