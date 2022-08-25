@@ -1,4 +1,4 @@
-::  test gall request queue fix, which implicates ames and gall
+::  test gall subscription nonce incrementation and ames flow killing
 ::
 /+  *test, v=test-ames-gall
 |%
@@ -460,7 +460,19 @@
           :-  ~[/ames]  [%pass /pump/~bud/0 %b %rest ~1111.1.5..00.02.00]
       ==
     ==
-  :-  t33  |.  :-  %&
+  ::  subscriber gall hears %cork ack from ames
+  :-  t33  |.  :-  %|
+  =^  t34  gall.nec
+    %:  gall-check-take:v  gall.nec
+      [~1111.1.10 0xdead.beef *roof]
+      :+  /sys/way/~bud/pub
+        :~  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud
+            /init
+        ==
+      [%ames %done ~]
+      ~
+    ==
+  :-  t34  |.  :-  %&
   ;:  weld
     %+  expect-eq
       !>  (sy 0 ~)
