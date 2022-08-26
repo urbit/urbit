@@ -1,11 +1,19 @@
 /* noun/serial.c
 **
 */
-
 #include "all.h"
 #include "ur/ur.h"
 #include <errno.h>
 #include <fcntl.h>
+
+const c3_y u3s_dit_y[64] = {
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+  'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+  'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+  '-', '~'
+};
 
 /* _cs_jam_buf: struct for tracking the fibonacci-allocated jam of a noun
 */
@@ -1022,6 +1030,79 @@ u3s_etch_ud_c(u3_atom a, c3_c** out_c)
   len_i = _cs_etch_ud_bytes(a_mp, len_i, buf_y);
 
   mpz_clear(a_mp);
+
+  *out_c = (c3_c*)buf_y;
+  return len_i;
+}
+
+/* _cs_etch_ux_bytes(): atom to @ux impl.
+*/
+static void
+_cs_etch_ux_bytes(u3_atom a, c3_w len_w, c3_y* buf_y)
+{
+  c3_w   i_w;
+  c3_s inp_s;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    inp_s = u3r_short(i_w, a);
+
+    *buf_y-- = u3s_dit_y[(inp_s >>  0) & 0xf];
+    *buf_y-- = u3s_dit_y[(inp_s >>  4) & 0xf];
+    *buf_y-- = u3s_dit_y[(inp_s >>  8) & 0xf];
+    *buf_y-- = u3s_dit_y[(inp_s >> 12) & 0xf];
+    *buf_y-- = '.';
+  }
+
+  inp_s = u3r_short(len_w, a);
+
+  while ( inp_s ) {
+    *buf_y-- = u3s_dit_y[inp_s & 0xf];
+    inp_s >>= 4;
+  }
+
+  *buf_y-- = 'x';
+  *buf_y   = '0';
+}
+
+/* u3s_etch_ux(): atom to @ux.
+*/
+u3_atom
+u3s_etch_ux(u3_atom a)
+{
+  if ( u3_blip == a ) {
+    return c3_s3('0', 'x', '0');
+  }
+
+  c3_w     sep_w = u3r_met(4, a) - 1;                //  number of separators
+  c3_w     las_w = u3r_met(2, u3r_short(sep_w, a));  //  digits before separator
+  c3_w     len_w = 2 + las_w + (sep_w * 5);          //  output bytes
+  u3i_slab sab_u;
+  u3i_slab_bare(&sab_u, 3, len_w);
+  sab_u.buf_w[sab_u.len_w - 1] = 0;
+
+  _cs_etch_ux_bytes(a, sep_w, sab_u.buf_y + len_w - 1);
+
+  return u3i_slab_moot_bytes(&sab_u);
+}
+
+/* u3s_etch_ux_c(): atom to @ux, as a malloc'd c string.
+*/
+size_t
+u3s_etch_ux_c(u3_atom a, c3_c** out_c)
+{
+  if ( u3_blip == a ) {
+    *out_c = strdup("0x0");
+    return 3;
+  }
+
+  c3_y*  buf_y;
+  c3_w   sep_w = u3r_met(4, a) - 1;
+  c3_w   las_w = u3r_met(2, u3r_short(sep_w, a));
+  size_t len_i = 2 + las_w + (sep_w * 5);
+
+  buf_y = c3_malloc(1 + len_i);
+  buf_y[len_i] = 0;
+  _cs_etch_ux_bytes(a, sep_w, buf_y + len_i - 1);
 
   *out_c = (c3_c*)buf_y;
   return len_i;

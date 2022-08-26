@@ -1,6 +1,12 @@
 #ifndef U3_SERIAL_H
 #define U3_SERIAL_H
 
+    /*  constants
+    */
+      /* u3_dit_y: digit table for @ux/@uv/@uw.
+      */
+        extern const c3_y u3s_dit_y[64];
+
     /*  opaque handles
     */
       /* u3_cue_xeno: handle for cue-ing with an off-loom dictionary.
@@ -82,6 +88,16 @@
       */
         size_t
         u3s_etch_ud_c(u3_atom a, c3_c** out_c);
+
+      /* u3s_etch_ux(): atom to @ux.
+      */
+        u3_atom
+        u3s_etch_ux(u3_atom a);
+
+      /* u3s_etch_ux_c(): atom to @ux, as a malloc'd c string.
+      */
+        size_t
+        u3s_etch_ux_c(u3_atom a, c3_c** out_c);
 
       /* u3s_sift_ud_bytes: parse @ud.
       */
