@@ -66,6 +66,16 @@
         u3_noun
         u3s_cue_atom(u3_atom a);
 
+      /* u3s_etch_ud(): atom to @ud.
+      */
+        u3_atom
+        u3s_etch_ud(u3_atom a);
+
+      /* u3s_etch_ud_c(): atom to @ud, as a malloc'd c string.
+      */
+        size_t
+        u3s_etch_ud_c(u3_atom a, c3_c** out_c);
+
       /* u3s_sift_ud_bytes: parse @ud.
       */
         u3_weak

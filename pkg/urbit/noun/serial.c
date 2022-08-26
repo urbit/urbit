@@ -856,6 +856,115 @@ u3s_cue_atom(u3_atom a)
   return u3s_cue_bytes((c3_d)len_w, byt_y);
 }
 
+/* _cs_etch_ud_size(): output length in @ud for given mpz_t.
+*/
+static inline size_t
+_cs_etch_ud_size(mpz_t a_mp)
+{
+  size_t len_i = mpz_sizeinbase(a_mp, 10);
+  return len_i + (len_i / 3); // separators
+}
+
+/* _cs_etch_ud_bytes(): atom to @ud impl.
+*/
+static size_t
+_cs_etch_ud_bytes(mpz_t a_mp, size_t len_i, c3_y* hun_y)
+{
+  c3_y*   buf_y = hun_y + (len_i - 1);
+  mpz_t   b_mp;
+  c3_w     b_w;
+  size_t dif_i;
+
+  mpz_init2(b_mp, 10);
+
+  if ( !mpz_size(a_mp) ) {
+    *buf_y-- = '0';
+  }
+  else {
+    while ( 1 ) {
+      b_w = mpz_tdiv_qr_ui(a_mp, b_mp, a_mp, 1000);
+      c3_assert( mpz_get_ui(b_mp) == b_w ); // XX
+
+      if ( !mpz_size(a_mp) ) {
+        while ( b_w ) {
+          *buf_y-- = '0' + (b_w % 10);
+          b_w /= 10;
+        }
+        break;
+      }
+
+      *buf_y-- = '0' + (b_w % 10);
+      b_w /= 10;
+      *buf_y-- = '0' + (b_w % 10);
+      b_w /= 10;
+      *buf_y-- = '0' + (b_w % 10);
+      *buf_y-- = '.';
+    }
+  }
+
+  buf_y++;
+
+  c3_assert( buf_y >= hun_y ); // XX
+
+  //  mpz_sizeinbase may overestimate by 1
+  //
+  {
+    size_t dif_i = buf_y - hun_y;
+
+    if ( dif_i ) {
+      len_i -= dif_i;
+      memmove(hun_y, buf_y, len_i);
+      memset(hun_y + len_i, 0, dif_i);
+    }
+  }
+
+  mpz_clear(b_mp);
+
+  return len_i;
+}
+
+/* u3s_etch_ud(): atom to @ud.
+*/
+u3_atom
+u3s_etch_ud(u3_atom a)
+{
+  u3i_slab sab_u;
+  size_t   len_i;
+  mpz_t     a_mp;
+  u3r_mp(a_mp, a);
+
+  len_i = _cs_etch_ud_size(a_mp);
+  u3i_slab_bare(&sab_u, 3, len_i);
+  sab_u.buf_w[sab_u.len_w - 1] = 0;
+
+  _cs_etch_ud_bytes(a_mp, len_i, sab_u.buf_y);
+
+  mpz_clear(a_mp);
+  return u3i_slab_mint_bytes(&sab_u);
+}
+
+/* u3s_etch_ud_c(): atom to @ud, as a malloc'd c string.
+*/
+size_t
+u3s_etch_ud_c(u3_atom a, c3_c** out_c)
+{
+  c3_y*  buf_y;
+  size_t len_i;
+  mpz_t   a_mp;
+  u3r_mp(a_mp, a);
+
+  len_i = _cs_etch_ud_size(a_mp);
+  buf_y = c3_malloc(len_i + 1);
+  buf_y[len_i] = 0;
+
+  len_i = _cs_etch_ud_bytes(a_mp, len_i, buf_y);
+
+  mpz_clear(a_mp);
+
+  *out_c = (c3_c*)buf_y;
+  return len_i;
+}
+
 #define DIGIT(a) ( ((a) >= '0') && ((a) <= '9') )
 #define BLOCK(a) (  ('.' == (a)[0]) \
                  && DIGIT(a[1])     \
