@@ -3,9 +3,6 @@
 */
 #include "all.h"
 
-const c3_y hex_y[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
-                         '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'  };
-
 u3_noun
 u3qe_en_base16(u3_atom len, u3_atom dat)
 {
@@ -26,8 +23,8 @@ u3qe_en_base16(u3_atom len, u3_atom dat)
       while ( len_w-- ) {
         inp_y = u3r_byte(len_w, dat);
 
-        *buf_y++ = hex_y[inp_y >> 4];
-        *buf_y++ = hex_y[inp_y & 0xf];
+        *buf_y++ = u3s_dit_y[inp_y >> 4];
+        *buf_y++ = u3s_dit_y[inp_y & 0xf];
       }
     }
 
