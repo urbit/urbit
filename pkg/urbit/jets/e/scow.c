@@ -15,22 +15,6 @@ c3_y to_digit(c3_y tig)
   }
 }
 
-static
-c3_y to_w_digit(c3_y tig)
-{
-  if (tig == 63) {
-    return '~';
-  } else if (tig == 62) {
-    return '-';
-  } else if (tig >= 36) {
-    return 29 + tig;
-  } else if (tig >= 10) {
-    return 87 + tig;
-  } else {
-    return '0' + tig;
-  }
-}
-
 // gives the characters for a four 'digit' small hex atom.
 static
 void
@@ -231,159 +215,34 @@ _print_p(u3_atom cor, u3_atom p)
   return u3nc('~', list);
 }
 
-static
-u3_noun
-_print_ud(u3_atom ud)
+u3_atom
+u3qe_scow(u3_atom a, u3_atom b)
 {
-  // number of characters printed "between" periods.
-  c3_i between = 0;
-  u3_noun list = 0;
+  switch (a) {
+    //  XX disabled due to memory corruption
+    //  rewrite for +scot jet and test there
+    //
+    // case c3__da: return _print_da(cor, atom);
+    // case 'p':    return _print_p(cor, atom);
 
-  // increase input refcount to be consumed in u3ka_div(), which will free each
-  // intermediary state.
-  u3k(ud);
+    default: {
+      u3_weak dat = u3qe_scot(a, b);
+      u3_weak pro = u3_none;
 
-  do {
-    if (between == 3) {
-      list = u3nc('.', list);
-      between = 0;
+      if ( u3_none != dat ) {
+        pro = u3qc_rip(3, 1, dat);
+        u3z(dat);
+      }
+
+      return pro;
     }
-
-    list = u3nc(u3ka_add(u3qa_mod(ud, 10), '0'), list);
-    between++;
-    ud = u3ka_div(ud, 10);
-  } while (ud != 0);
-
-  return list;
-}
-
-static
-u3_noun
-_print_uv(u3_atom uv)
-{
-  // number of characters printed "between" periods.
-  c3_i between = 0;
-  u3_noun list = 0;
-
-  // increase input refcount to be consumed in u3ka_div(), which will free each
-  // intermediary state.
-  u3k(uv);
-
-  do {
-    if (between == 5) {
-      list = u3nc('.', list);
-      between = 0;
-    }
-
-    c3_y tig = u3qa_mod(uv, 32);
-    list = u3nc(to_digit(tig), list);
-    between++;
-    uv = u3ka_div(uv, 32);
-  } while (uv != 0);
-
-  return u3nt('0', 'v', list);
-}
-
-static
-u3_noun
-_print_uw(u3_atom uw)
-{
-  // number of characters printed "between" periods.
-  c3_i between = 0;
-  u3_noun list = 0;
-
-  // increase input refcount to be consumed in u3ka_div(), which will free each
-  // intermediary state.
-  u3k(uw);
-
-  do {
-    if (between == 5) {
-      list = u3nc('.', list);
-      between = 0;
-    }
-
-    c3_y tig = u3qa_mod(uw, 64);
-    list = u3nc(to_w_digit(tig), list);
-    between++;
-    uw = u3ka_div(uw, 64);
-  } while (uw != 0);
-
-  return u3nt('0', 'w', list);
+  }
 }
 
 u3_noun
 u3we_scow(u3_noun cor)
 {
-  u3_atom mod;
-  u3_atom atom;
-
-  if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
-                      u3x_sam_3, &atom, 0)) {
-    return u3m_bail(c3__exit);
-  }
-
-  switch (mod) {
-    case c3__da:
-      return _print_da(cor, atom);
-
-    case 'p':
-      return _print_p(cor, atom);
-
-    case c3__ud:
-      return _print_ud(atom);
-
-    case c3__uv:
-      return _print_uv(atom);
-
-    case c3__uw:
-      return _print_uw(atom);
-
-    default:
-      return u3_none;
-  }
-}
-
-u3_noun
-u3we_scot(u3_noun cor)
-{
-  u3_atom mod;
-  u3_atom atom;
-
-  if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
-                      u3x_sam_3, &atom, 0)) {
-    return u3m_bail(c3__exit);
-  }
-
-  u3_noun tape;
-  switch (mod) {
-    case c3__da:
-      tape = _print_da(cor, atom);
-      break;
-
-    case 'p':
-      tape = _print_p(cor, atom);
-      break;
-
-    case c3__ud:
-      tape = _print_ud(atom);
-      break;
-
-    case c3__uv:
-      tape = _print_uv(atom);
-      break;
-
-    case c3__uw:
-      tape = _print_uw(atom);
-      break;
-
-    default:
-      return u3_none;
-  }
-
-  if (tape == u3_none) {
-    return tape;
-  }
-  u3_noun ret = u3qc_rap(3, tape);
-  u3z(tape);
-  return ret;
+  u3_atom a, b;
+  u3x_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0);
+  return u3qe_scow(u3x_atom(a), u3x_atom(b));
 }

@@ -120,6 +120,9 @@
     u3_noun u3qe_rexp(u3_noun, u3_noun);
     u3_noun u3qe_trip(u3_atom);
 
+    u3_atom u3qe_scot(u3_atom, u3_atom);
+    u3_atom u3qe_scow(u3_atom, u3_atom);
+
     u3_noun u3qea_ecba_en(u3_atom, u3_atom);
     u3_noun u3qea_ecba_de(u3_atom, u3_atom);
     u3_noun u3qea_ecbb_en(u3_atom, u3_atom);
