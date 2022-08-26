@@ -1740,12 +1740,13 @@ _cn_is_indexed(c3_w bop_w)
   par_w == 2 ? _n_resh(pog_y, &ip_w):       \
   pog_y[ip_w++])
 
-/* _cn_slog_bytecode(): render a nock program as string of bytecodes & slog it
-**               pri_l: priority render hint (assumed 0-3)
-**               pog_u: a nock formula compilied to a program
+/* _cn_etch_bytecode(): render a nock program as string of bytecodes
+**                 fol: a nock formula to compile and render
+**             returns: a u3i_string noun of the rendered bytecode
 */
-void
-_cn_slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
+u3_noun
+_cn_etch_bytecode(u3_noun fol) {
+  u3n_prog* pog_u = _n_bite(fol);
   c3_y* pog_y = pog_u->byc_u.ops_y;
   c3_w len_w = pog_u->byc_u.len_w;
   c3_w ip_w=0, num_w=0, bop_w=0, dex_w=0;
@@ -1804,19 +1805,10 @@ _cn_slog_bytecode(c3_l pri_l, u3n_prog* pog_u) {
   // replace the first leading space and append the last char to the string
   str_c[0] = '{';
   strcat(str_c, "}");
-  u3t_slog( u3nc(pri_l, u3i_string(str_c)) );
+  _cn_prog_free(pog_u);
+  return u3i_string(str_c);
 }
 
-/* _cn_xray(): slog a noun as a string of vere bytecodes
-**      pri_l: priority render hint (assumed 0-3)
-**        fol: a nock formula noun
-*/
-void
-_cn_xray(c3_l pri_l, u3_noun fol) {
-  u3n_prog* pog_u = _n_bite(fol);
-  _cn_slog_bytecode(pri_l, pog_u);
-  _cn_prog_free(pog_u);
-}
 
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
 **            hin: [hint-atom, formula]. TRANSFER
@@ -1849,7 +1841,7 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
     } break;
 
     case c3__xray : {
-      _cn_xray(0, fol);
+      u3t_slog(u3nc(0, _cn_etch_bytecode(fol)));
       *out = u3_nul;
     } break;
 
@@ -1931,8 +1923,7 @@ _n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
       u3_noun pri, tan;
       if ( c3y == u3r_cell(*clu, &pri, &tan) ) {
         c3_l pri_l = c3y == u3a_is_cat(pri) ? pri : 0;
-        u3t_slog_cap(pri_l, u3i_string("bytecode of"), u3k(tan));
-        _cn_xray(pri_l, fol);
+        u3t_slog_cap(pri_l, u3k(tan), _cn_etch_bytecode(fol));
       }
       u3z(*clu);
       *clu = u3_nul;
