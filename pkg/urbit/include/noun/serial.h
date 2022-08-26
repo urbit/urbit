@@ -99,6 +99,26 @@
         size_t
         u3s_etch_ux_c(u3_atom a, c3_c** out_c);
 
+      /* u3s_etch_uv(): atom to @uv.
+      */
+        u3_atom
+        u3s_etch_uv(u3_atom a);
+
+      /* u3s_etch_uv_c(): atom to @uv, as a malloc'd c string.
+      */
+        size_t
+        u3s_etch_uv_c(u3_atom a, c3_c** out_c);
+
+      /* u3s_etch_uw(): atom to @uw.
+      */
+        u3_atom
+        u3s_etch_uw(u3_atom a);
+
+      /* u3s_etch_uw_c(): atom to @uw, as a malloc'd c string.
+      */
+        size_t
+        u3s_etch_uw_c(u3_atom a, c3_c** out_c);
+
       /* u3s_sift_ud_bytes: parse @ud.
       */
         u3_weak

@@ -1108,6 +1108,199 @@ u3s_etch_ux_c(u3_atom a, c3_c** out_c)
   return len_i;
 }
 
+//  uint div+ceil non-zero
+//
+#define _divc_nz(x, y)  (((x) + ((y) - 1)) / (y))
+
+/* _cs_etch_uv_size(): output length in @uv (and aligned bits).
+*/
+static inline size_t
+_cs_etch_uv_size(u3_atom a, c3_w* out_w)
+{
+  c3_w met_w = u3r_met(0, a);
+  c3_w sep_w = _divc_nz(met_w, 25) - 1;  //  number of separators
+  c3_w max_w = sep_w * 25;
+  c3_w end_w = 0;
+  u3r_chop(0, max_w, 25, 0, &end_w, a);
+
+  c3_w bit_w = c3_bits_word(end_w);
+  c3_w las_w = _divc_nz(bit_w, 5);       //  digits before separator
+
+  *out_w = max_w;
+  return 2 + las_w + (sep_w * 6);
+}
+
+
+/* _cs_etch_uv_bytes(): atom to @uv impl.
+*/
+static void
+_cs_etch_uv_bytes(u3_atom a, c3_w max_w, c3_y* buf_y)
+{
+  c3_w   i_w;
+  c3_w inp_w;
+
+  for ( i_w = 0; i_w < max_w; i_w += 25 ) {
+    inp_w = 0;
+    u3r_chop(0, i_w, 25, 0, &inp_w, a);
+
+    *buf_y-- = u3s_dit_y[(inp_w >>  0) & 0x1f];
+    *buf_y-- = u3s_dit_y[(inp_w >>  5) & 0x1f];
+    *buf_y-- = u3s_dit_y[(inp_w >> 10) & 0x1f];
+    *buf_y-- = u3s_dit_y[(inp_w >> 15) & 0x1f];
+    *buf_y-- = u3s_dit_y[(inp_w >> 20) & 0x1f];
+    *buf_y-- = '.';
+  }
+
+  inp_w = 0;
+  u3r_chop(0, max_w, 25, 0, &inp_w, a);
+
+  while ( inp_w ) {
+    *buf_y-- = u3s_dit_y[inp_w & 0x1f];
+    inp_w >>= 5;
+  }
+
+  *buf_y-- = 'v';
+  *buf_y   = '0';
+}
+
+/* u3s_etch_uv(): atom to @uv.
+*/
+u3_atom
+u3s_etch_uv(u3_atom a)
+{
+  if ( u3_blip == a ) {
+    return c3_s3('0', 'v', '0');
+  }
+
+  u3i_slab sab_u;
+  c3_w     max_w;
+  size_t   len_i = _cs_etch_uv_size(a, &max_w);
+
+  u3i_slab_bare(&sab_u, 3, len_i);
+  sab_u.buf_w[sab_u.len_w - 1] = 0;
+
+  _cs_etch_uv_bytes(a, max_w, sab_u.buf_y + len_i - 1);
+
+  return u3i_slab_moot_bytes(&sab_u);
+}
+
+/* u3s_etch_uv_c(): atom to @uv, as a malloc'd c string.
+*/
+size_t
+u3s_etch_uv_c(u3_atom a, c3_c** out_c)
+{
+  if ( u3_blip == a ) {
+    *out_c = strdup("0v0");
+    return 3;
+  }
+
+  c3_y*  buf_y;
+  c3_w   max_w;
+  size_t len_i = _cs_etch_uv_size(a, &max_w);
+
+  buf_y = c3_malloc(1 + len_i);
+  buf_y[len_i] = 0;
+  _cs_etch_uv_bytes(a, max_w, buf_y + len_i - 1);
+
+  *out_c = (c3_c*)buf_y;
+  return len_i;
+}
+
+/* _cs_etch_uw_size(): output length in @uw (and aligned bits).
+*/
+static inline size_t
+_cs_etch_uw_size(u3_atom a, c3_w* out_w)
+{
+  c3_w met_w = u3r_met(0, a);
+  c3_w sep_w = _divc_nz(met_w, 30) - 1;  //  number of separators
+  c3_w max_w = sep_w * 30;
+  c3_w end_w = 0;
+  u3r_chop(0, max_w, 30, 0, &end_w, a);
+
+  c3_w bit_w = c3_bits_word(end_w);
+  c3_w las_w = _divc_nz(bit_w, 6);       //  digits before separator
+
+  *out_w = max_w;
+  return 2 + las_w + (sep_w * 6);
+}
+
+/* _cs_etch_uw_bytes(): atom to @uw impl.
+*/
+static void
+_cs_etch_uw_bytes(u3_atom a, c3_w max_w, c3_y* buf_y)
+{
+  c3_w   i_w;
+  c3_w inp_w;
+
+  for ( i_w = 0; i_w < max_w; i_w += 30 ) {
+    inp_w = 0;
+    u3r_chop(0, i_w, 30, 0, &inp_w, a);
+
+    *buf_y-- = u3s_dit_y[(inp_w >>  0) & 0x3f];
+    *buf_y-- = u3s_dit_y[(inp_w >>  6) & 0x3f];
+    *buf_y-- = u3s_dit_y[(inp_w >> 12) & 0x3f];
+    *buf_y-- = u3s_dit_y[(inp_w >> 18) & 0x3f];
+    *buf_y-- = u3s_dit_y[(inp_w >> 24) & 0x3f];
+    *buf_y-- = '.';
+  }
+
+  inp_w = 0;
+  u3r_chop(0, max_w, 30, 0, &inp_w, a);
+
+  while ( inp_w ) {
+    *buf_y-- = u3s_dit_y[inp_w & 0x3f];
+    inp_w >>= 6;
+  }
+
+  *buf_y-- = 'w';
+  *buf_y   = '0';
+}
+
+/* u3s_etch_uw(): atom to @uw.
+*/
+u3_atom
+u3s_etch_uw(u3_atom a)
+{
+  if ( u3_blip == a ) {
+    return c3_s3('0', 'w', '0');
+  }
+
+  u3i_slab sab_u;
+  c3_w     max_w;
+  size_t   len_i = _cs_etch_uw_size(a, &max_w);
+
+  u3i_slab_bare(&sab_u, 3, len_i);
+  sab_u.buf_w[sab_u.len_w - 1] = 0;
+
+  _cs_etch_uw_bytes(a, max_w, sab_u.buf_y + len_i - 1);
+
+  return u3i_slab_moot_bytes(&sab_u);
+}
+
+/* u3s_etch_uw_c(): atom to @uw, as a malloc'd c string.
+*/
+size_t
+u3s_etch_uw_c(u3_atom a, c3_c** out_c)
+{
+  if ( u3_blip == a ) {
+    *out_c = strdup("0w0");
+    return 3;
+  }
+
+  c3_y*  buf_y;
+  c3_w   max_w;
+  size_t len_i = _cs_etch_uw_size(a, &max_w);
+
+  buf_y = c3_malloc(1 + len_i);
+  buf_y[len_i] = 0;
+  _cs_etch_uw_bytes(a, max_w, buf_y + len_i - 1);
+
+  *out_c = (c3_c*)buf_y;
+  return len_i;
+}
+
+#undef _divc_nz
+
 #define DIGIT(a) ( ((a) >= '0') && ((a) <= '9') )
 #define BLOCK(a) (  ('.' == (a)[0]) \
                  && DIGIT(a[1])     \
