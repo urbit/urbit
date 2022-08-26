@@ -18,7 +18,8 @@
 +$  state-0   [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-9
+  $%  state-10
+      state-9
       state-8
       state-7
       state-6
@@ -32,7 +33,7 @@
 ::
 +$  pith-10
   $:  rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
+      syn=(map kiln-sync [let=@ud nex=(unit desk)])     ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
       ::  map desk to the currently ongoing fuse request
       ::  and the latest version numbers for beaks to
@@ -60,12 +61,24 @@
       hxs=(map desk @ud)
   ==
 ::
+::  $rein-9: diff from desk manifest
+::
+::    .liv: suspended? if suspended, no agents should run
+::    .add: agents not in manifest that should be running
+::    .sub: agents in manifest that should not be running
+::
++$  rein-9
+  $:  liv=_&
+      add=(set dude)
+      sub=(set dude)
+  ==
+::
 +$  pith-7
   $:  wef=(unit weft)
-      rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
-      ark=(map desk arak-7)                               ::
-      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      rem=(map desk per-desk)
+      syn=(map kiln-sync let=@ud)
+      ark=(map desk arak-7)
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]
       ::  map desk to the currently ongoing fuse request
       ::  and the latest version numbers for beaks to
       fus=(map desk per-fuse)
@@ -74,16 +87,25 @@
       ::  ensure they're unique even when the same
       ::  request is made multiple times.
       hxs=(map desk @ud)
-  ==                                                    ::
+  ==
 ::
 +$  arak-9
   $:  rail=(unit rail-9)
-      =rein
+      rein=rein-9
+  ==
+::
+++  rail-9
+  $:  publisher=(unit ship)
+      paused=?
+      =ship
+      =desk
+      =aeon
+      next=(list rung)
   ==
 ::
 +$  arak-7
   $:  rail=(unit rail-7)
-      =rein
+      rein=rein-9
   ==
 ::
 +$  rail-7
@@ -110,7 +132,7 @@
       hxs=(map desk @ud)
   ==                                                    ::
 ::
-+$  arak-6  [rail=rail-6 next=(list rung) =rein]
++$  arak-6  [rail=rail-6 next=(list rung) rein=rein-9]
 +$  rail-6  [paused=? =ship =desk =aeon]
 ::
 +$  pith-5
@@ -147,7 +169,7 @@
       =desk
       =aeon
       next=(list rung)
-      =rein
+      rein=rein-9
   ==
 +$  pith-3                                              ::
   $:  rem=(map desk per-desk)                           ::
@@ -287,6 +309,15 @@
   :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
+++  sources
+  =/  syns=(list [[syd=desk her=ship sud=desk] let=@ud])  ~(tap by syn)
+  =|  sources=(map desk [ship desk])
+  |-  ^+  sources
+  ?~  syns
+    sources
+  =.  sources  (~(put by sources) desk.i.syns [her sud])
+  $(syns t.syns)
+::
 ++  on-init
   =<  abet
   ~>  %slog.(fmt "boot")
@@ -296,26 +327,24 @@
   =.  desks  (~(del in desks) %kids)
   ::
   =/  sop=ship  (sein:title our now our)
-  ::  XX sync desks
   ::  set up base desk
   ::
-  =.  ..on-init  abet:(install-local:vats %base)
   =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))
-    abet:(install:vats %base sop %kids)
+    abet:start-sync:(set-next:(auto %base sop %kids) `%kids)
   ::  install other desks and make them public
   ::
   =/  dez=(list desk)  ~(tap in desks)
   |-  ^+  ..on-init
   ?~  dez  ..on-init
   =.  ..on-init
-    abet:(install-local:vats i.dez)
+    (emit %pass /kiln-init-zest %arvo %c %zest i.dez %next)
   =.  ..on-init
     %-  emit
     :^  %pass  /kiln/permission  %arvo
     [%c %perm i.dez / %r `[%black ~]]
   =/  src  (get-publisher our i.dez now)
   =?  ..on-init  &(?=(^ src) !=(our u.src))
-    abet:(install:vats i.dez u.src i.dez)
+    abet:start-sync:(auto i.dez u.src i.dez)
   $(dez t.dez)
 ::
 ++  on-load
@@ -423,6 +452,9 @@
       [%x %kiln %base-hash ~]
     =/  ver  (mergebase-hashes our %base now (~(got by ark) %base))
     ``noun+!>(?~(ver 0v0 i.ver))
+  ::
+      [%x %kiln %syncs ~]  ``noun+!>(syn)
+      [%x %kiln %sources ~]  ``noun+!>(sources)
   ==
 ::
 ::  +get-germ: select merge strategy into local desk
@@ -457,7 +489,6 @@
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
     %kiln-pause              =;(f (f !<(_+<.f vase)) poke-pause)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
-    %kiln-resume             =;(f (f !<(_+<.f vase)) poke-resume)
     %kiln-revive             =;(f (f !<(_+<.f vase)) poke-revive)
     %kiln-rein               =;(f (f !<(_+<.f vase)) poke-rein)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
@@ -577,7 +608,9 @@
 ::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
-  abet:abet:(install:vats +<)
+  ::  XX should check if already installed before changing zest?
+  =.  ..on-init  (emit %pass /kiln-install %arvo %c %zest loc %next)
+  (poke-sync loc her rem)
 ::
 ++  poke-label
   |=  [syd=desk lab=@tas aey=(unit aeon)]
@@ -603,12 +636,15 @@
   ?.  desk
     (emit %pass /nuke %arvo %g [%nuke term])
   %-  emil
-  %+  turn  (get-apps-have our term now)
+  ::  XX
+  %+  turn  *(list [dude ?])  ::  (get-apps-have our term now)
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
 ::
 ++  poke-pause
   |=  =desk
-  abet:abet:(pause:vats desk)
+  ?~  got=(~(get by sources) desk)
+    abet:(spam leaf+"desk not installed: {<desk>}" ~)
+  (poke-unsync desk u.got)
 ::
 ++  poke-permission
   |=  [syd=desk pax=path pub=?]
@@ -619,15 +655,11 @@
 ::
 ++  poke-rein
   |=  [=desk =rein]
-  abet:abet:(set-rein:vats +<)
-::
-++  poke-resume
-  |=  =desk
-  abet:abet:(resume:vats desk)
+  abet:(emit %pass /kiln-rein %arvo %c %rein desk rein)
 ::
 ++  poke-revive
   |=  =desk
-  abet:abet:(revive:vats desk)
+  abet:(emit %pass /kiln-revive %arvo %c %zest desk %live)
 ::
 ++  poke-rm
   |=  a=path
@@ -646,13 +678,14 @@
 ::
 ++  poke-suspend
   |=  =desk
-  abet:abet:(suspend:vats desk)
+  abet:(emit %pass /kiln-suspend %arvo %c %zest desk %dead)
 ::
 ++  poke-sync
-  |=  hos=kiln-sync
-  ?:  (~(has by syn) hos)
+  |=  [hos=kiln-sync nex=(unit desk)]
+  ?^  got=(~(get by syn) hos)
+    =.  syn  (~(put by syn) hos u.got(nex nex))
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
-  abet:abet:start-sync:(auto hos)
+  abet:abet:start-sync:(set-next:(auto hos) nex)
 ::
 ++  poke-syncs                                        ::  print sync config
   |=  ~
@@ -670,7 +703,10 @@
 ::
 ++  poke-uninstall
   |=  loc=desk
-  abet:(uninstall:vats +<)
+  ?~  got=(~(get by sources) loc)
+    abet:(spam leaf+"desk not installed: {<loc>}" ~)
+  =.  ..on-init  (emit %pass /kiln-uninstall %arvo %c %zest loc %dead)
+  (poke-unsync loc u.got)
 ::
 ++  poke-unmount
   |=  mon=kiln-unmount
@@ -696,7 +732,7 @@
   ?>  (team:title our src)
   ?+    path  ~|(kiln-path/path !!)
       [%vats ~]
-    abet(moz :_(moz [%give %fact ~ %kiln-vats-snap-0 !>(ark)]))
+    (mean leaf+"kiln: old subscription to /kiln/vats failed" ~)
   ==
 ::
 ++  take-agent
@@ -727,7 +763,7 @@
                         ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
-      [%vats *]         abet:(take:vats t.wire sign-arvo)
+      [%vats *]         ..abet
       [%fuse-request @tas *]
                       =/  f  (fuzz i.t.wire now)
                       ?~  f
@@ -945,7 +981,7 @@
 ::
 ++  auto
   |=  kiln-sync
-  =+  (~(gut by syn) [syd her sud] let=*@ud)
+  =+  (~(gut by syn) [syd her sud] let=*@ud nex=~)
   |%
   ++  abet
     ..auto(syn (~(put by syn) [syd her sud] let))
@@ -964,6 +1000,10 @@
     =>  (spam (render "ended autosync" sud her syd) ~)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     (warp wire her sud ~)
+  ::
+  ++  set-next
+    |=  nex=(unit desk)
+    ..abet(nex nex)
   ::  duplicate of start-sync? see |track
   ::
   ++  start-track
@@ -1028,6 +1068,7 @@
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
       ==
+    ::  XX  fire merge to nex
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     (warp wire her sud `[%sing %y ud+let /])
   --

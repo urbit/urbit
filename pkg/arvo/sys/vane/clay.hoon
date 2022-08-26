@@ -324,17 +324,6 @@
   ==                                                    ::
 ::
 +$  bill  (list dude:gall)
-::  diff from desk.bill
-::
-::  -- `.liv`: suspended? if suspended, no agents should run
-::  -- `.add`: agents not in manifest that should be running
-::  -- `.sub`: agents in manifest that should not be running
-::
-+$  rein
-  $:  liv=zest
-      add=(set dude:gall)
-      sub=(set dude:gall)
-  ==
 ::
 ::  Active downloads
 ::
@@ -3060,11 +3049,15 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  rein
-    |=  [liv=zest ren=(map dude:gall ?)]
+  ++  set-rein
+    |=  [ren=(map dude:gall ?)]
     ^+  ..park
+    ..park(ren.dom ren)
+  ::
+  ++  set-zest
+    |=  liv=zest
     =?  liv  =(%base syd)  %live
-    ..park(liv.dom liv, ren.dom ren)
+    ..park(liv.dom liv)
   ::
   ++  rise
     |=  [=dude:gall on=(unit ?)]
@@ -4711,7 +4704,7 @@
       %rein
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(rein:den liv.req ren.req)
+      abet:(set-rein:den ren.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
   ::
@@ -4801,6 +4794,13 @@
         cancel-request:den
       (start-request:den for u.q.rif)
     [mos ..^$]
+  ::
+      %zest
+    =^  m1  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-zest:den liv.req)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld m1 m2) ..^$]
   ::
       %plea
     =*  her  ship.req
@@ -5414,6 +5414,7 @@
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
         %domes  domes
+        %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
     ==
   ::
   ++  domes

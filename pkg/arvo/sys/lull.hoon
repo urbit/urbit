@@ -777,7 +777,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
-        [%rein des=desk liv=zest ren=(map dude:gall ?)] ::  live
+        [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
         [%tomb =clue]                                   ::  tombstone specific
@@ -785,6 +785,7 @@
         $>(%vega vane-task)                             ::  report upgrade
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
+        [%zest des=desk liv=zest]                       ::  live
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::
   ::                                                    ::
@@ -894,6 +895,7 @@
         who=(pair (set ship) (map @ta crew))            ::
     ==                                                  ::
   +$  regs  (map path rule)                             ::  rules for paths
+  +$  rein  (map dude:gall ?)                           ::  extra apps
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
   +$  riff-any                                          ::
     $%  [%1 =riff]                                      ::
