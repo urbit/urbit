@@ -2615,7 +2615,7 @@
     %=  $
       date.old  %~2022.7.26
       ::
-      bindings.server-state.old
+        bindings.server-state.old
       %+  insert-binding
         [[~ /~/name] outgoing-duct.server-state.old [%name ~]]
       bindings.server-state.old
