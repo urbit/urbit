@@ -76,6 +76,19 @@ static const c3_c ver_nam_c[] = "version.bin";
 //! Name of binary file containing the lifecycle length.
 static const c3_c lif_nam_c[] = "lifecycle.bin";
 
+//! Name of text file containing a readme.
+static const c3_c red_nam_c[] = "DO-NOT-MODIFY-THIS-FOLDER.txt";
+
+//! Contents of text file containing a readme.
+static const c3_c red_con_c[] =
+         "This folder contains a snapshot of your ship's state and"
+  "\r\n" "logs of events your ship has run.  If you modify it, your ship"
+  "\r\n" "might never be able to run again."
+  "\r\n" "This includes the version file, which the urbit executable needs"
+  "\r\n" "in order know how to replay events properly."
+  "\r\n"
+;
+
 //! Name of LMDB database holding the events.
 static const c3_c dab_nam_c[] = "EVENTS";
 
@@ -371,13 +384,14 @@ end:
 //==============================================================================
 
 //! @n (1) Protect against (unlikely) potential underflow.
-//! @n (2) Write the epoch version number to a file.
-//! @n (3) Convert to network byte order to ensure portability across platforms
+//! @n (2) Write the readme to a file.
+//! @n (3) Write the epoch version number to a file.
+//! @n (4) Convert to network byte order to ensure portability across platforms
 //!        of varying endianness.
-//! @n (4) Take snapshot to save the state before the first event in the
+//! @n (5) Take snapshot to save the state before the first event in the
 //!        epoch is applied unless this is the very first epoch.
-//! @n (5) Write the lifecycle length to a file if this is the very first epoch.
-//! @n (6) See (3).
+//! @n (6) Write the lifecycle length to a file if this is the very first epoch.
+//! @n (7) See (4).
 u3_epoc*
 u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
 {
@@ -399,9 +413,21 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     goto free_epoc;
   }
 
-  { // (2)
+  // (2)
+  {
+    c3_path_push(poc_u->pax_u, red_nam_c);
+    if ( !c3_bile_write_new(poc_u->pax_u, red_con_c, sizeof(red_con_c)) ) {
+      fprintf(stderr,
+               "epoc: failed to write readme to %s\r\n",
+               c3_path_str(poc_u->pax_u));
+      goto free_epoc;
+    }
+    c3_path_pop(poc_u->pax_u);
+  }
+
+  { // (3)
     c3_path_push(poc_u->pax_u, ver_nam_c);
-    c3_w ver_w = htonl(epo_ver_w); // (3)
+    c3_w ver_w = htonl(epo_ver_w); // (4)
     if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
       fprintf(stderr,
                "epoc: failed to write version number to %s\r\n",
@@ -411,15 +437,15 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     c3_path_pop(poc_u->pax_u);
   }
 
-  if ( epo_min_d != fir_d ) { // (4)
+  if ( epo_min_d != fir_d ) { // (5)
 #ifndef U3_EPOC_TEST
     u3e_save();
     c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u)));
 #endif
   }
-  else { // (5)
+  else { // (6)
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    lif_w = htonl(lif_w); // (6)
+    lif_w = htonl(lif_w); // (7)
     if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
       fprintf(stderr,
               "epoc: failed to write lifecycle length to %s\r\n",
