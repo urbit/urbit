@@ -141,8 +141,11 @@ main(int argc, char* argv[])
   // There's no straightforward way to recursively remove a directory tree from
   // C, so `rm -rf <dir_c>` will need to be run from the command line to remove
   // the artifacts from a test run.
-#endif /* ifdef U3_EPOC_TEST */
 
   fprintf(stderr, "epoc_tests: ok\r\n");
+#else
+  fprintf(stderr, "epoc_tests: skipped\r\n");
+#endif /* ifdef U3_EPOC_TEST */
+
   return 0;
 }
