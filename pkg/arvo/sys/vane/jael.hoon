@@ -306,28 +306,6 @@
         %^  poke-watch  hen  %azimuth
         %+  fall  node.tac
         (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
-      =.  +>.$
-        ::  get everything from /app/azimuth because jael subscriptions
-        ::  seem to be flaky for now
-        ::
-        ?:  &
-          %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%| %azimuth])
-        ::
-        ?-    (clan:title our)
-            %czar
-          %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%| %azimuth])
-        ::
-            *
-          =.  +>.$
-            %-  curd  =<  abet
-            %+  sources:~(feel su hen now pki etn)
-              (silt (turn spon-points head))
-            [%| %azimuth]
-          %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%& (need spon-ship)])
-        ==
       ::
       =.  moz
         %+  weld  moz
@@ -391,7 +369,7 @@
     ::    [%listen whos=(set ship) =source]
     ::
         %listen
-      ~&  [%jael-listen whos source]:tac
+      ::  %-  (slog leaf+"jael: listen {<whos.tac>} {<source.tac>}" ~)
       %-  curd  =<  abet
       (sources:~(feel su hen now pki etn) [whos source]:tac)
     ::
