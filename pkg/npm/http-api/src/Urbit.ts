@@ -200,8 +200,13 @@ export class Urbit {
         throw new Error('Login failed with status ' + response.status);
       }
 
+      const cookie = response.headers.get('set-cookie');
+
+      if (!this.ship && cookie) {
+        this.ship = new RegExp(/urbauth-~([\w-]+)/).exec(cookie)[1];
+      }
+
       if (!isBrowser) {
-        const cookie = response.headers.get('set-cookie');
         this.cookie = cookie;
       }
 
