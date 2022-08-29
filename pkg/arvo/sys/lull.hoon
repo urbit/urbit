@@ -1551,7 +1551,7 @@
         ::  gall scry endpoint
         ::
         [%scry ~]
-        ::  internal name endpoint, returns ship @p
+        ::  respond with the @p the requester is authenticated as
         ::
         [%name ~]
         ::  respond with the default file not found page
