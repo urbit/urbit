@@ -307,12 +307,12 @@
 ::
 ++  handle-inline-thread
   ~/  %handle-inline-thread
-  |=  [parent-tid=(unit tid) use=(unit tid) =beak =shred:spider]
-  (prep-thread parent-tid use beak %& shred)
+  |=  [parent-tid=(unit tid) use=(unit tid) =beak =shed:khan]
+  (prep-thread parent-tid use beak %& shed)
 ::
 ++  prep-thread
   |=  $:  parent-tid=(unit tid)  use=(unit tid)  =beak
-          source=(each shred:spider [file=term =vase])
+          source=(each shed:khan [file=term =vase])
       ==
   ^-  (quip card ^state)
   =/  parent-yarn=yarn
@@ -385,10 +385,10 @@
   (begin-thread yarn p.res)
 ::
 ++  begin-thread
-  |=  [=yarn =shred:spider]
+  |=  [=yarn =shed:khan]
   ?<  (~(has of running.state) yarn)
   =/  m  (strand ,vase)
-  =/  =eval-form:eval:m  (from-form:eval:m shred)
+  =/  =eval-form:eval:m  (from-form:eval:m shed)
   =.  running.state  (~(put of running.state) yarn eval-form)
   (take-input yarn ~)
 ::
