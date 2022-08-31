@@ -31,6 +31,30 @@
       [%palm [": " ~ ~ ~] [leaf+"actual" leaf+(pprint:lvd actual) ~]]
   ==
 ::
+::  Tests for various empty vectors.
+::
+++  test-nulls  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  `@lvs`~
+      !>  ._
+    %+  expect-eq
+      !>  0x1
+      !>  `@ux`(make:lvs ~)
+    %+  expect-eq
+      !>  `@lvd`~
+      !>  .~_
+    %+  expect-eq
+      !>  0x1
+      !>  `@ux`(make:lvd ~)
+    %+  expect-eq
+      !>  `@lvh`~
+      !>  .~~_
+    %+  expect-eq
+      !>  `@lvq`~
+      !>  .~~~_
+  ==
+::
 ::  Tests for vector creation
 ::
 ++  test-lvs-zeros  ^-  tang

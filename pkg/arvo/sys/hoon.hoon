@@ -5453,7 +5453,6 @@
 ::::  4k: atom printing
   ::
 ++  co
-  !:
   ~%  %co  ..co  ~
   =<  |_  lot=coin
       ++  rear  |=(rom=tape rend(rep rom))
@@ -5588,25 +5587,25 @@
             ?+  (cut 3 [2 1] p.p.lot)  (z-co q.p.lot)
               %h  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "^" "^"]
+                  :+  %rose  ["_" "." "_"]
                   %+  turn
                   ?~(u ~ (flop `(list @rh)`+:(flop (rip 4 u))))
                   |=(a=@rh [%leaf (trip (scot %rh a))])
               %s  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "<" ">"]
+                  :+  %rose  ["_" "." "_"]
                   %+  turn
                   ?~(u ~ (flop `(list @rs)`+:(flop (rip 5 u))))
                   |=(a=@rs [%leaf (trip (scot %rs a))])
               %d  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "<<" ">>"]
+                  :+  %rose  ["_" "." "_"]
                   %+  turn
                   ?~(u ~ (flop `(list @rd)`+:(flop (rip 6 u))))
                   |=(a=@rd [%leaf (trip (scot %rd a))])
               %q  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "<<<" ">>>"]
+                  :+  %rose  ["_" "." "_"]
                   %+  turn
                   ?~(u ~ (flop `(list @rq)`+:(flop (rip 7 u))))
                   |=(a=@rq [%leaf (trip (scot %rq a))])
@@ -5615,7 +5614,7 @@
             ?+  (cut 3 [2 1] p.p.lot)  (z-co q.p.lot)
               %h  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "|" "|"]
+                  :+  %rose  ["_" "" "_"]
                   %+  turn
                   ?~  u  `(list (list @rh))`~
                   =/  m  (end [4 1] (rsh [4 (dec (dec (met 4 u)))] u))
@@ -5810,6 +5809,7 @@
   ::
 ++  so
   ~%  %so  +  ~
+  !:  ::TODO
   |%
   ++  bisk
     ~+
@@ -5992,27 +5992,27 @@
       (stag %lvq lago-lvq)
       (stag %lvd lago-lvd)
       (stag %lvs lago-lvs)
-      (stag %lmh lago-lmh)
-      (stag %lmq lago-lmq)
-      (stag %lmd lago-lmd)
-      (stag %lms lago-lms)
+      ::(stag %lmh lago-lmh)
+      ::(stag %lmq lago-lmq)
+      ::(stag %lmd lago-lmd)
+      ::(stag %lms lago-lms)
     ==
   ::
   ++  lago-lvh  (cook lagvh lago-base-vh)
   ++  lago-lvq  (cook lagvq lago-base-vq)
   ++  lago-lvd  (cook lagvd lago-base-vd)
   ++  lago-lvs  (cook lagvs lago-base-vs)
-  ++  lago-lmh  (cook lagmh lago-base-mh)
-  ++  lago-lmq  (cook lagmq lago-base-mq)
+  ::++  lago-lmh  (cook lagmh lago-base-mh)
+  ::++  lago-lmq  (cook lagmq lago-base-mq)
   ++  lago-lmd  (cook lagmd lago-base-md)
-  ++  lago-lms  (cook lagms lago-base-ms)
+  ::++  lago-lms  (cook lagms lago-base-ms)
   ::
   ++  lago-base-vh
     |=  b=nail
     %-
     ;~  pose
     :: parse for null vector, .~~_
-    (cook |=(a=@ ~) (jest '~~_'))
+    (cook |=(a=@ `(list @rh)`~) (jest '~~_'))
     :: parse regular vector, ..~~1.0_.~~2.0_
     ;~(sfix (most cab ;~(pfix dot royl-rh:so)) cab)
     ==
@@ -6022,7 +6022,7 @@
     %-
     ;~  pose
     :: parse for null vector, .~~~_
-    (cook |=(a=@ ~) (jest '~~~_'))
+    (cook |=(a=@ `(list @rq)`~) (jest '~~~_'))
     :: parse regular vector, ..~~~1.0_.~~~2.0_
     ;~(sfix (most cab ;~(pfix dot royl-rq:so)) cab)
     ==
@@ -6032,7 +6032,7 @@
     %-
     ;~  pose
     :: parse for null vector, .~_
-    (cook |=(a=@ ~) (jest '~_'))
+    (cook |=(a=@ `(list @rd)`~) (jest '~_'))
     :: parse regular vector, ..~1.0_.~2.0_
     ;~(sfix (most cab ;~(pfix dot royl-rd:so)) cab)
     ==
@@ -6042,7 +6042,7 @@
     %-
     ;~  pose
     :: parse for null vector, ._
-    (cook |=(a=@ ~) (just '_'))
+    (cook |=(a=@ `(list @rs)`~) (just '_'))
     :: parse regular vector, ..1.0_.2.0_
     ;~(sfix (most cab ;~(pfix dot royl-rs:so)) cab)
     ==
@@ -6052,11 +6052,11 @@
     %-
     ;~  pose
     :: parse for null matrix, .~~__
-    (cook |=(a=@ ~) (jest '~~__'))
+    (cook |=(a=@ `(list (list @rh))`~) (jest '~~__'))
     :: parse for empty matrix, .~~.__
     (cook |=(a=@ `(list (list @rh))`~[~]) (jest '~~.__'))
     :: parse regular matrix, ..~~1.0_.~~2.0__.~~3.0_.~~4.0__
-    (star ;~(sfix lago-base-vh:so cab))
+    (star ;~(sfix lago-base-vh cab))
     ==
     b
   ++  lago-base-mq
@@ -6064,11 +6064,11 @@
     %-
     ;~  pose
     :: parse for null matrix, .~~~__
-    (cook |=(a=@ ~) (jest '~~~__'))
+    (cook |=(a=@ `(list (list @rq))`~) (jest '~~~__'))
     :: parse for empty matrix, .~~.__
     (cook |=(a=@ `(list (list @rq))`~[~]) (jest '~~~.__'))
     :: parse regular matrix, ..~~~1.0_.~~~2.0__.~~~3.0_.~~~4.0__
-    (star ;~(sfix lago-base-vq:so cab))
+    (star ;~(sfix lago-base-vq cab))
     ==
     b
   ++  lago-base-md
@@ -6076,11 +6076,11 @@
     %-
     ;~  pose
     :: parse for null matrix, .~__
-    (cook |=(a=@ ~) (jest '~__'))
+    (cook |=(a=@ `(list (list @rd))`~) (jest '~__'))
     :: parse for empty matrix, .~.__
     (cook |=(a=@ `(list (list @rd))`~[~]) (jest '~.__'))
     :: parse regular matrix, ..~1.0_.~2.0__.~3.0_.~4.0__
-    (star ;~(sfix lago-base-vd:so cab))
+    (star ;~(sfix lago-base-vd cab))
     ==
     b
   ++  lago-base-ms
@@ -6088,11 +6088,11 @@
     %-
     ;~  pose
     :: parse for null matrix, .__
-    (cook |=(a=@ ~) (jest '__'))
+    (cook |=(a=@ `(list (list @rs))`~) (jest '__'))
     :: parse for empty matrix, ..__
     (cook |=(a=@ `(list (list @rs))`~[~]) (jest '.__'))
     :: parse regular matrix, ..1.0_.2.0_.3.0__.4.0_.5.0_.6.0__
-    (star ;~(sfix lago-base-vs:so cab))
+    (star ;~(sfix lago-base-vs cab))
     ==
     b
   ++  lagvh
@@ -6117,24 +6117,29 @@
     (mix (rep [5 1] a) (lsh [5 (lent a)] 1))
   ++  lagmh  !!
   ++  lagmq  !!
-  ++  lagmd  !!
-  ++  lagms
-    |=  a=(list (list @rs))
-    ^-  @lms
-    ?@  a  `@lms`~
-    :: TODO this is not fixed yet
-    =+  [m n]=[&1 &2]:[(lent a) (lent (snag 0 a))]
+  ++  lagmd
+    |=  a=(list (list @rd))
+    ^-  @lmd
+    ::  process `@lmd`~, .~__
+    ?~  a  `@lmd`~
+    ::  process `@lmd`~[~]
+    ?~  i.a  `@lmd`0x2.0000.0000.0000.0001
+    =/  m  (lent `(list (list @rd))`a)  :: number of rows
+    =/  n  (lent `(list @rd)`i.a)       :: number of columns
     =/  mn  (mul m n)
-    =/  b  (mix (lsh [5 +(mn)] 2) (lsh [5 mn] m))
-    =/  i  1  :: index over rows
-    |-  ^-  @lms
-      ?:  (gth i m)  b
+    =/  b  (mix (lsh [6 +(mn)] 2) (lsh [6 mn] m))
+    =/  i  0  :: index over rows
+    =/  j  0  :: index over columns
+    |-  ^-  @lmd
+    ?:  =(i m)  b
+    ?:  =(j n)  $(i +(i), j 0)
+    =/  idx  (add (mul n i) j)
+    =/  val  (snag j (snag i `(list (list @rd))`a))
     %=  $
-      i  +(i)
-      b  (setr w ii (make:lvs (snag (dec ii) a)))
+      j  +(j)
+      b  (sew 6 [(dec (sub mn idx)) 1 val] b)
     ==
-
-    (mix (rep [5 1] a) (lsh [5 (lent a)] 1))
+  ++  lagms  !!
   ::
   ++  zust
     ~+
