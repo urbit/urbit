@@ -53,8 +53,9 @@ typedef enum {
 
 //! Create a new list.
 //!
-//! @return  Newly created list. MUST be freed by caller when list is ready for
-//!          disposal.
+//! @return  NULL  List could not be created.
+//! @return        Newly created list. MUST be freed by caller when list is ready for
+//!                disposal.
 c3_list*
 c3_list_init(void);
 
