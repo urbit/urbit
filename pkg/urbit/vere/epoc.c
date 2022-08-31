@@ -694,7 +694,7 @@ u3_epoc_has(const u3_epoc* const poc_u, const c3_d ide_d)
 c3_t
 u3_epoc_is_first(const u3_epoc* const poc_u)
 {
-  return u3_epoc_has(poc_u, epo_min_d);
+  return epo_min_d == u3_epoc_first_commit(poc_u);
 }
 
 c3_t

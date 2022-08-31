@@ -475,7 +475,7 @@ u3_saga_needs_bootstrap(const u3_saga* const log_u)
   const u3_epoc* const poc_u = c3_lode_data(c3_list_peekf(log_u->epo_u.lis_u));
   const size_t         len_i = c3_list_len(log_u->epo_u.lis_u);
   // Bootstrap is needed if the only epoch present is the first epoch.
-  return epo_min_d == u3_epoc_first_commit(poc_u) && 1 == len_i;
+  return u3_epoc_is_first(poc_u) && 1 == len_i;
 }
 
 void
