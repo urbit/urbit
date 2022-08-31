@@ -9005,9 +9005,9 @@
                          ref
                        [%atom %$ ~]
             [%atom *]  ref
-            [%cell *]  =+  ^$(skin skin.skin, ref p.ref)
-                       ?:  =(%void -)  %void
-                       (cell - ^$(skin ^skin.skin, ref q.ref))
+            [%cell *]  =/  lef  ^$(skin skin.skin, ref p.ref)
+                       =/  rig  ^$(skin ^skin.skin, ref q.ref)
+                       (fork (cell lef rig) (cell lef q.ref) (cell p.ref rig) ~)
             [%core *]  =+  ^$(skin skin.skin, ref p.ref)
                        ?:  =(%void -)  %void
                        ?.  =(%noun ^skin.skin)
