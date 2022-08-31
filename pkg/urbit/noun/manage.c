@@ -1750,7 +1750,7 @@ u3m_init(void)
       exit(1);
     }
 
-    fprintf(stderr, "loom: mapped %dMB\r\n", len_w >> 20);
+    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
   }
 }
 

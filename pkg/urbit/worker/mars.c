@@ -727,15 +727,12 @@ _saga_replay_cb(void*        ptr_v,
   static c3_t fir_t = 1;
   if ( fir_t ) {
     if ( las_d == cur_d ) {
-      fprintf(stderr, "play: event %" PRIu64 "\r\n", las_d);
+      u3l_log("play: event %" PRIu64 "\r\n", las_d);
     }
     else {
-      fprintf(stderr,
-              "play: events %" PRIu64 "-%" PRIu64 "\r\n",
-              cur_d,
-              las_d);
+      u3l_log("play: events %" PRIu64 "-%" PRIu64 "\r\n", cur_d, las_d);
     }
-    fprintf(stderr, "---------------- playback starting ----------------\r\n");
+    u3l_log("---------------- playback starting ----------------\r\n");
   }
 
   c3_t     suc_t = 0;
@@ -776,11 +773,11 @@ _saga_replay_cb(void*        ptr_v,
     u3z(mar_u->sac);
     mar_u->sac = u3_nul;
     _mars_post(mar_u);
-    fprintf(stderr, "play (%" PRIu64 "): done\r\n", mar_u->dun_d);
+    u3l_log("play (%" PRIu64 "): done\r\n", mar_u->dun_d);
   }
 
   if ( las_d == cur_d ) {
-    fprintf(stderr, "---------------- playback complete ----------------\r\n");
+    u3l_log("---------------- playback complete ----------------\r\n");
     fir_t = 1;
   }
   else {
@@ -806,7 +803,7 @@ _saga_boot_cb(void*        ptr_v,
 {
   u3_noun* evt = ptr_v;
   if ( u3_nul == *evt ) {
-    fprintf(stderr, "--------------- bootstrap starting ----------------\r\n");
+    u3l_log("--------------- bootstrap starting ----------------\r\n");
   }
   *evt = u3nc(u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4)), *evt);
 
@@ -821,7 +818,7 @@ _saga_boot_cb(void*        ptr_v,
     fprintf(stderr, "boot: failed to evaluate boot event\r\n");
     return 0;
   }
-  fprintf(stderr, "--------------- bootstrap complete ----------------\r\n");
+  u3l_log("--------------- bootstrap complete ----------------\r\n");
 
   u3e_save();
 
@@ -854,8 +851,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
   c3_path* const dir_u = c3_path_fv(3, c3_path_str(mar_u->dir_u), ".urb", "log");
   { // XX load/set secrets.
     if ( eve_d && eve_d <= mar_u->dun_d ) {
-      fprintf(stderr,
-              "mars: replay to %" PRIu64 " already done (at %" PRIu64 ")\r\n",
+      u3l_log("mars: replay to %" PRIu64 " already done (at %" PRIu64 ")\r\n",
               eve_d,
               mar_u->dun_d);
       goto release_lock;
