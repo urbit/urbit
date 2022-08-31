@@ -855,11 +855,10 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     };
   }
 
-  c3_path* const lok_u = c3_path_fp(mar_u->dir_u);
-  u3_lock_acquire(lok_u);
+  u3_lock_acquire(mar_u->dir_u);
 
+  c3_path* const dir_u = c3_path_fv(3, c3_path_str(mar_u->dir_u), ".urb", "log");
   { // XX load/set secrets.
-
     if ( eve_d && eve_d <= mar_u->dun_d ) {
       fprintf(stderr,
               "mars: replay to %" PRIu64 " already done (at %" PRIu64 ")\r\n",
@@ -868,12 +867,10 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       goto release_lock;
     }
 
-    c3_path_push(mar_u->dir_u, ".urb");
-    c3_path_push(mar_u->dir_u, "log");
-    try_saga(mar_u->log_u = u3_saga_open(mar_u->dir_u, &mar_u->met_u),
+    try_saga(mar_u->log_u = u3_saga_open(dir_u, &mar_u->met_u),
              goto release_lock,
              "failed to open event log at %s",
-             c3_path_str(mar_u->dir_u));
+             c3_path_str(dir_u));
 
     // Play boot events if necessary.
     if ( 0 == mar_u->dun_d && u3_saga_needs_bootstrap(mar_u->log_u) ) {
@@ -895,8 +892,6 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
                             mar_u),
              goto free_event_log,
              "failed to replay event log");
-    c3_path_pop(mar_u->dir_u);
-    c3_path_pop(mar_u->dir_u);
 
     if ( u3_saga_last_commit(mar_u->log_u) > mar_u->dun_d ) {
       goto free_event_log;
@@ -938,16 +933,16 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
   mar_u->sav_u.eve_d      = mar_u->dun_d;
   mar_u->sav_u.tim_u.data = mar_u;
 
-  c3_path_free(lok_u);
+  c3_path_free(dir_u);
   goto succeed;
 
 free_event_log:
   u3_saga_close(mar_u->log_u);
   c3_free(mar_u->log_u);
 release_lock:
-  u3_lock_release(lok_u);
-  c3_path_free(lok_u);
+  u3_lock_release(mar_u->dir_u);
 free_mars:
+  c3_path_free(dir_u);
   c3_path_free(mar_u->dir_u);
   c3_free(mar_u->gif_u);
   c3_free(mar_u);
