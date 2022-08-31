@@ -120,8 +120,6 @@ _mars_grab(u3_noun sac)
 
 /* _mars_fact(): commit a fact and enqueue its effects.
  */
-
-//! @n (1) TRANSFER.
 static void
 _mars_fact(u3_mars* mar_u, u3_noun job, u3_noun pro)
 {
