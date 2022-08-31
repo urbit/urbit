@@ -771,7 +771,7 @@ _saga_replay_cb(void*        ptr_v,
 
   // XX refactor |mass
   // XX get batch size from args
-  static const c3_d bat_d = 1;
+  static const c3_d bat_d = 500;
   if ( 0 == cur_d % bat_d || las_d == cur_d ) {
     u3z(mar_u->sac);
     mar_u->sac = u3_nul;
