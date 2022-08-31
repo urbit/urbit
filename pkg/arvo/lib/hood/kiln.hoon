@@ -32,9 +32,9 @@
   ==
 ::
 +$  pith-10
-  $:  rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync [let=@ud nex=(unit desk)])     ::
-      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+  $:  rem=(map desk per-desk)
+      syn=(map kiln-sync sync-state)
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]
       ::  map desk to the currently ongoing fuse request
       ::  and the latest version numbers for beaks to
       fus=(map desk per-fuse)
@@ -47,10 +47,10 @@
 ::
 +$  pith-9
   $:  wef=(unit weft)
-      rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
-      ark=(map desk arak-9)                               ::
-      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      rem=(map desk per-desk)
+      syn=(map kiln-sync let=@ud)
+      ark=(map desk arak-9)
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]
       ::  map desk to the currently ongoing fuse request
       ::  and the latest version numbers for beaks to
       fus=(map desk per-fuse)
@@ -261,6 +261,7 @@
       cas=case                                          ::
       gim=?(%auto germ)                                 ::
   ==
++$  sync-state  [kid=(unit desk) let=*@ud]
 +$  fuse-source  [who=ship des=desk ver=$@(%trak case)]
 ::  actual poke
 +$  kiln-fuse
@@ -695,12 +696,6 @@
   %+  turn  ~(tap in ~(key by syn))
   |=(a=kiln-sync (render "sync configured" [sud her syd]:a))
 ::
-++  poke-track
-  |=  hos=kiln-sync
-  ?:  (~(has by syn) hos)
-    abet:(spam (render "already tracking" [sud her syd]:hos) ~)
-  abet:abet:start-track:(auto hos)
-::
 ++  poke-uninstall
   |=  loc=desk
   ?~  got=(~(get by sources) loc)
@@ -761,6 +756,7 @@
                         ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
       [%sync *]         %+  take-writ-sync  t.wire
                         ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
+      [%zinc *]         (take-sync t.wire sign-arvo)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       [%vats *]         ..abet
@@ -979,6 +975,153 @@
     u.let
   --
 ::
+++  take-sync
+  |=  [=wire =sign-arvo]
+  ?>  ?=([@ @ @ *] wire)
+  =*  syd  i.wire
+  =/  her  (slav %p i.t.wire)
+  =*  sud  i.t.t.wire
+  abet:abet:(take:(sync syd her sud) t.t.t.wire sign-arvo)
+::
+++  sync
+  |=  kiln-sync
+  =+  (~(gut by syn) [syd her sud] *sync-state)
+  |%
+  ++  abet  ..sync(syn (~(put by syn) [syd her sud] kid let))
+  ++  emit  |=(card:agent:gall vats(kiln (^emit +<)))
+  ++  emil  |=((list card:agent:gall) vats(kiln (^emil +<)))
+  ++  here  "{<syd>} from {<[her sud]>}"
+  ++  ware
+    |=  =wire
+    [syd (scot %p her) sud wire]
+  ++  lard
+    |=  [=wire =shed:khan]
+    (emit %pass (ware wire) %arvo %k %lard %base shed)
+  ++  merg
+    |=  [=wire =desk]
+    (emit %pass (ware wire) %arvo %c %merg desk her sud ud+(dec let) germ)
+  ::
+  ::  (re)Start a sync from scratch by finding what version the source
+  ::  desk is at
+  ::
+  ++  init
+    ^+  ..abet
+    =.  let    0
+    %+  lard  /init
+    =/  m  (strand ,vase)
+    ~>  %slog.(fmt "beginning install into {here}")
+    ;<  =riot:clay  (warp:strandio her sud ~ %sing %y ud+1 /)
+    ~>  %slog.(fmt "activated install into {here}")
+    ;<  now=@da     get-time:strandio
+    ;<  =riot:clay  (warp:strandio her sud ~ %sing %w da+now /)
+    ?>  ?=(^ riot)
+    =+  !<(=cass:clay q.r.u.riot)
+    (pure:m !>(ud.cass))
+  ::
+  ::  Listen for the next revision, and download it
+  ::
+  ++  next
+    ^+  ..abet
+    %+  lard  /next
+    =/  m  (strand ,vase)
+    ;<  =riot:clay  (warp:strandio her sud ~ %sing %w ud+let /)
+    ~>  %slog.(fmt "downloading update for {here}")
+    ;<  =riot:clay  (warp:strandio her sud ~ %sing %v ud+let /)
+    ?>  ?=(^ riot)
+    (pure:m !>(%done))
+  ::
+  ::  Main control router
+  ::
+  ::  NB: %next, %main, and %kids are conceptually a single state with a
+  ::  single error handling mechanism (move on to the next version).  We
+  ::  cannot combine them into a single lard because when you update
+  ::  main you may update spider, and in that case all active threads
+  ::  are killed, which would stop us from continuing that thread.
+  ::  Instead, we do the merges to syd and kid explicitly.
+  ::
+  ++  take
+    |=  [=wire =sign-arvo]
+    ^+  ..abet
+    ?>  ?=([@ *] wire)
+    ?+      i.wire
+          ~>  %slog.(fmt "sync-bad-take {<wire>}")
+          ..abet
+        %init
+      ?.  =(0 let)
+        ~>  %slog.(fmt "sync-bad-stage {<let>} {<wire>}")
+        ..abet
+      ?>  ?=(%arow +<.sign-arvo)
+      ?:  ?=(%| -.p.sign-arvo)
+        ~>  %slog.(fmt "activation failed into {here}; retrying sync")
+        %-  (slog p.p.sign-arvo)
+        init
+      ::  Now that we know the revision, start main download loop
+      ::
+      =.  let  !<(@ud q.p.p.sign-arvo)
+      next
+    ::
+        %next
+      ?>  ?=(%arow +<.sign-arvo)
+      ?:  ?=(%| -.p.sign-arvo)
+        ~>  %slog.(fmt "download failed into {here}; retrying sync")
+        %-  (slog p.p.sign-arvo)
+        init
+      ::
+      ~>  %slog.(fmt "finished downloading update for {here}")
+      =.  let  +(let)
+      ::  If nothing changed, just advance
+      ::
+      ?.  (get-remote-diff our syd now [her sud let])
+        ~>  %slog.(fmt "remote is identical to {here}, skipping")
+        next
+      ::  Else start merging, but also immediately start listening to
+      ::  the next revision.  Now, all errors should no-op -- we're
+      ::  already waiting for the next revision.
+      ::
+      =.  ..abet  (merg /main syd)
+      next
+    ::
+        %main
+      ?>  ?=(%mere +<.sign-arvo)
+      ::  This case is maintained by superstition.  If you remove it,
+      ::  carefully test that if the source ship is breached, we
+      ::  correctly reset let to 0
+      ::
+      ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
+        =+  "kiln: merge into {here} failed, maybe because sunk; restarting"
+        %-  (slog leaf/- p.p.sign-arvo)
+        init
+      ?:  ?=(%| -.p.sign-arvo)
+        =+  "kiln: merge into {here} failed, waiting for next revision"
+        %-  (slog leaf/- p.p.sign-arvo)
+        ..abet
+      ~>  %slog.(fmt "merge into {<loc>} succeeded")
+      ::  If we have a kids desk parameter, merge into that
+      ::
+      ?~  kid
+        ..abet
+      ~>  %slog.(fmt "kids merge into {kid}")
+      (merg /kids u.kid)
+    ::
+        %kids
+      ::  See %main for this case
+      ::
+      ?:  ?=([%| %ali-unavailable *] p.syn)
+        =+  "kids merge to {kid} failed, maybe peer sunk; restarting"
+        ~>  %slog.(fmt -)
+        init
+      ::  Just notify; we've already started listening for the next
+      ::  version
+      ::
+      ?-  -.p.syn
+        %&  ~>  %slog.(fmt "kids merge to {kid} succeeded")
+            ..abet
+        %|  ~>  %slog.(fmt "kids merge to {kid} failed")
+            %-  (slog p.p.sign-arvo)
+            ..abet
+      ==
+    ==
+  --
 ++  auto
   |=  kiln-sync
   =+  (~(gut by syn) [syd her sud] let=*@ud nex=~)
@@ -1004,13 +1147,6 @@
   ++  set-next
     |=  nex=(unit desk)
     ..abet(nex nex)
-  ::  duplicate of start-sync? see |track
-  ::
-  ++  start-track
-    =>  (spam (render "activated track" sud her syd) ~)
-    =.  let  1
-    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
-    (warp wire her sud `[%sing %y ud+let /])
   ::
   ++  start-sync
     =>  (spam (render "finding ship and desk" sud her syd) ~)
