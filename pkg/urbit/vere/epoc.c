@@ -238,11 +238,11 @@ _epoc_is_first(const c3_path* const pax_u)
   return sar_c && 0 == strcmp(sar_c, fir_nam_c);
 }
 
-//! @n (1) This is the largest possible unsigned 64-bit number.
 static c3_path*
 _epoc_path(const c3_path* const par_u, const c3_d fir_d)
 {
-  static const c3_c lar_c[] = "18446744073709551615"; // (1)
+  // This is the largest possible unsigned 64-bit number.
+  static const c3_c lar_c[] = "18446744073709551615";
 
   c3_c dir_c[sizeof(epo_pre_c) + sizeof(lar_c)];
   snprintf(dir_c, sizeof(dir_c), "%s%" PRIu64, epo_pre_c, fir_d);
@@ -250,8 +250,6 @@ _epoc_path(const c3_path* const par_u, const c3_d fir_d)
   return c3_path_fv(2, c3_path_str(par_u), dir_c);
 }
 
-//! @n (1) If the events database can't be opened, then it must not exist, which
-//!        means that the epoch to which this LMDB environment belongs is empty.
 static c3_t
 _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d)
 {
@@ -266,6 +264,8 @@ _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d)
            goto end,
            "failed to create read transaction");
 
+  // If the events database can't be opened, then it must not exist, which means
+  // that the epoch to which this LMDB environment belongs is empty.
   MDB_dbi dbi_u;
   if ( 0 != mdb_dbi_open(txn_u, dab_nam_c, MDB_INTEGERKEY, &dbi_u) ) { // (1)
     *fir_d = epo_min_d;
@@ -300,8 +300,6 @@ end:
   return suc_t;
 }
 
-//! @n (1) From the LMDB docs: "The [map size] value should be chosen as large
-//!        as possible, to accommodate future growth of the database."
 static MDB_env*
 _lmdb_init(const c3_path* const pax_u)
 {
@@ -309,7 +307,8 @@ _lmdb_init(const c3_path* const pax_u)
   MDB_env* env_u;
   try_lmdb(mdb_env_create(&env_u), goto fail, "failed to create environment");
 
-  // (1)
+  // From the LMDB docs: "The [map size] value should be chosen as large as
+  // possible, to accommodate future growth of the database."
   static size_t siz_i =
 #if ( defined(U3_CPU_aarch64) && defined(U3_OS_linux) ) || defined(U3_OS_mingw)
     0xf00000000;
@@ -370,14 +369,6 @@ end:
 // Functions
 //==============================================================================
 
-//! @n (1) Protect against (unlikely) potential underflow.
-//! @n (2) Write the epoch version number to a file.
-//! @n (3) Convert to network byte order to ensure portability across platforms
-//!        of varying endianness.
-//! @n (4) Take snapshot to save the state before the first event in the
-//!        epoch is applied unless this is the very first epoch.
-//! @n (5) Write the lifecycle length to a file if this is the very first epoch.
-//! @n (6) See (3).
 u3_epoc*
 u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
 {
@@ -389,6 +380,7 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
 
   poc_u->fir_d = fir_d;
   poc_u->las_d = fir_d - 1;
+  // Protect against (unlikely) potential underflow.
   c3_assert(poc_u->las_d < poc_u->fir_d); // (1)
   poc_u->pax_u = _epoc_path(par_u, poc_u->fir_d);
 
@@ -399,9 +391,11 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     goto free_epoc;
   }
 
-  { // (2)
+  { // Write the epoch version number to a file.
     c3_path_push(poc_u->pax_u, ver_nam_c);
-    c3_w ver_w = htonl(epo_ver_w); // (3)
+    // Convert to network byte order to ensure portability across platforms of
+    // varying endianness.
+    c3_w ver_w = htonl(epo_ver_w);
     if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
       fprintf(stderr,
                "epoc: failed to write version number to %s\r\n",
@@ -411,15 +405,18 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     c3_path_pop(poc_u->pax_u);
   }
 
-  if ( epo_min_d != fir_d ) { // (4)
+  // Take snapshot to save the state before the first event in the epoch is
+  // applied unless this is the very first epoch.
+  if ( epo_min_d != fir_d ) {
 #ifndef U3_EPOC_TEST
     u3e_save();
     c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u)));
 #endif
   }
-  else { // (5)
+  // Write the lifecycle length to a file if this is the very first epoch.
+  else {
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    lif_w = htonl(lif_w); // (6)
+    lif_w = htonl(lif_w);
     if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
       fprintf(stderr,
               "epoc: failed to write lifecycle length to %s\r\n",
@@ -441,15 +438,6 @@ succeed:
   return poc_u;
 }
 
-//! @n (1) Protect against unlikely case where `epo_min_d` is erroneously
-//!        changed to 0.
-//! @n (2) Relocate LDMB instance to the newly created epoch.
-//! @n (3) The incremental snapshot must be up-to-date to successfully migrate.
-//! @n (4) Read metadata out of LMDB instance.
-//! @n (5) Write metadata to binary files.
-//! @n (6) Convert to network byte order to ensure portability across platforms
-//!        of varying endianness.
-//! @n (7) See (6).
 u3_epoc*
 u3_epoc_migrate(c3_path* const       src_u,
                 const c3_path* const par_u,
@@ -463,11 +451,13 @@ u3_epoc_migrate(c3_path* const       src_u,
   u3_epoc* poc_u = c3_calloc(sizeof(*poc_u));
   poc_u->fir_d   = epo_min_d;
   poc_u->las_d   = epo_min_d - 1;
+  // Protect against unlikely case where `epo_min_d` is erroneously changed to
+  // 0.
   c3_assert(poc_u->las_d < poc_u->fir_d); // (1)
   poc_u->pax_u   = _epoc_path(par_u, epo_min_d);
   mkdir(c3_path_str(poc_u->pax_u), 0700);
 
-  { // (2)
+  { // Relocate LMDB instance to the newly created epoch.
     if ( !_move_file(src_u, poc_u->pax_u, "data.mdb") ) {
       goto free_epoc;
     }
@@ -491,7 +481,8 @@ u3_epoc_migrate(c3_path* const       src_u,
     goto rename_lock_mdb;
   }
 
-  if ( cur_d != poc_u->las_d ) { // (3)
+  // The incremental snapshot must be up-to-date to successfully migrate.
+  if ( cur_d != poc_u->las_d ) {
     // TODO(peter): update version number.
     fprintf(stderr,
             "IMPORTANT: cannot migrate the existing event log format to the\r\n"
@@ -508,7 +499,7 @@ u3_epoc_migrate(c3_path* const       src_u,
   }
 
   MDB_txn* txn_u;
-  { // (4)
+  { // Read metadata out of LMDB instance.
     try_lmdb(mdb_txn_begin(poc_u->env_u, NULL, MDB_RDONLY, &txn_u),
              goto rename_lock_mdb,
              "failed to create read-only transaction");
@@ -544,16 +535,18 @@ u3_epoc_migrate(c3_path* const       src_u,
     mdb_txn_abort(txn_u);
   }
 
-  { // (5)
+  { // Write metadata to binary files.
     c3_path_push(poc_u->pax_u, ver_nam_c);
-    c3_w ver_w = htonl(met_u->ver_w); // (6)
+    // Convert to network byte order to ensure portability across platforms of
+    // varying endianness.
+    c3_w ver_w = htonl(met_u->ver_w);
     if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
       goto rename_lock_mdb;
     }
     c3_path_pop(poc_u->pax_u);
 
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    c3_w lif_w = htonl(met_u->lif_w); // (7)
+    c3_w lif_w = htonl(met_u->lif_w);
     if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
       goto rename_lock_mdb;
     }
@@ -578,11 +571,6 @@ succeed:
   return poc_u;
 }
 
-//! @n (1) Read contents of version file.
-//! @n (2) We'll need to do something more sophisticated than a simple assertion
-//!        when we bump the epoch version number for the first time, but this is
-//!        fine for now.
-//! @n (3) Read contents of lifecycle file.
 u3_epoc*
 u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
 {
@@ -598,7 +586,7 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
     goto free_epoc;
   }
 
-  { // (1)
+  { // Read contents of version file.
     c3_path_push(poc_u->pax_u, ver_nam_c);
     c3_w ver_w;
     if ( !c3_bile_read_existing(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
@@ -606,10 +594,14 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
     }
     ver_w = ntohl(ver_w);
     c3_path_pop(poc_u->pax_u);
-    c3_assert(epo_ver_w == ver_w); // (2)
+    // We'll need to do something more sophisticated than a simple assertion
+    // when we bump the epoch version number for the first time, but this is
+    // fine for now.
+    c3_assert(epo_ver_w == ver_w);
   }
 
-  if ( _epoc_is_first(poc_u->pax_u) ) { // (3)
+  // Read contents of life cycle file.
+  if ( _epoc_is_first(poc_u->pax_u) ) {
     c3_path_push(poc_u->pax_u, lif_nam_c);
     if ( !c3_bile_read_existing(poc_u->pax_u, lif_w, sizeof(*lif_w)) ) {
       goto free_epoc;
@@ -756,10 +748,6 @@ succeed:
   return 1;
 }
 
-//! @n (1) Open read-only transaction.
-//! @n (2) Open database containing the events.
-//! @n (3) Create cursor in events database.
-//! @n (4) Position cursor on event ID `ide_d`.
 c3_t
 u3_epoc_iter_open(u3_epoc* const poc_u, c3_d ide_d)
 {
@@ -768,26 +756,26 @@ u3_epoc_iter_open(u3_epoc* const poc_u, c3_d ide_d)
     goto fail;
   }
 
-  // (1)
+  // Open read-only transaction.
   MDB_txn* txn_u;
   try_lmdb(mdb_txn_begin(poc_u->env_u, NULL, MDB_RDONLY, &txn_u),
            goto fail,
            "failed to open read transaction");
 
-  // (2)
+  // Open database containing the events.
   MDB_dbi dbi_u;
   try_lmdb(mdb_dbi_open(txn_u, dab_nam_c, MDB_INTEGERKEY, &dbi_u),
            goto abort_txn,
            "failed to open %s database",
            dab_nam_c);
 
-  // (3)
+  // Create cursor in events database.
   MDB_cursor* cur_u;
   try_lmdb(mdb_cursor_open(txn_u, dbi_u, &cur_u),
            goto abort_txn,
            "failed to open cursors");
 
-  // (4)
+  // Position cursor on event ID `ide_d`.
   MDB_val key_u = {.mv_data = &ide_d, .mv_size = sizeof(ide_d)}, val_u;
   try_lmdb(mdb_cursor_get(cur_u, &key_u, &val_u, MDB_SET_KEY),
            goto close_cursor,
@@ -816,10 +804,6 @@ succeed:
   return 1;
 }
 
-//! @n (1) We already consumed the last event in the epoch.
-//! @n (2) No need to advance to the next key if this is the first call to
-//!        u3_epoc_iter_step().
-//! @n (3) The key we fetched from database didn't match the key we expected.
 c3_t
 u3_epoc_iter_step(u3_epoc* const poc_u, c3_y** const byt_y, size_t* const byt_i)
 
@@ -829,19 +813,23 @@ u3_epoc_iter_step(u3_epoc* const poc_u, c3_y** const byt_y, size_t* const byt_i)
     goto fail;
   }
 
-  if ( poc_u->las_d < poc_u->itr_u.cur_d ) { // (1)
+  // We already consumed the last event in the epoch.
+  if ( poc_u->las_d < poc_u->itr_u.cur_d ) {
     goto fail;
   }
 
   MDB_val       key_u, val_u;
   c3_t          fir_t = (poc_u->itr_u.fir_d == poc_u->itr_u.cur_d);
-  MDB_cursor_op ops_u = (fir_t ? MDB_GET_CURRENT : MDB_NEXT); // (2)
+  // No need to advance to the next key if this is the first call to
+  // u3_epoc_iter_step().
+  MDB_cursor_op ops_u = (fir_t ? MDB_GET_CURRENT : MDB_NEXT);
   try_lmdb(mdb_cursor_get(poc_u->itr_u.cur_u, &key_u, &val_u, ops_u),
            goto fail,
            "failed to get event ID %" PRIu64,
            poc_u->itr_u.cur_d);
 
   c3_d key_d = *(c3_d*)key_u.mv_data;
+  // The key we fetched from the database didn't match the key we expected.
   if ( key_d != poc_u->itr_u.cur_d ) { // (3)
     fprintf(stderr,
             "epoc: event ID mismatch: expected %" PRIu64 ", received %" PRIu64

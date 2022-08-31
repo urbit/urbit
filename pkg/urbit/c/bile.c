@@ -109,10 +109,6 @@ c3_bile_path_str(const c3_bile* const bil_u)
   return bil_u ? c3_path_str(bil_u->pax_u) : NULL;
 }
 
-//! @n (1) Seek to the end of the file to ensure append-only behavior.
-//! @n (2) Attempt the write again if we were interrupted by a signal.
-//! @n (3) Writing failed partway through, so clear clear the file of any data
-//!        from the partial write.
 c3_t
 c3_bile_put_raw(c3_bile* const    bil_u,
                 const void* const dat_v,
@@ -122,7 +118,8 @@ c3_bile_put_raw(c3_bile* const    bil_u,
     goto fail;
   }
 
-  if ( bil_u->off_i != bil_u->len_i ) { // (1)
+  // Seek to the end of the file to ensure append-only behavior.
+  if ( bil_u->off_i != bil_u->len_i ) {
     try_syscall(lseek(bil_u->fid_i, bil_u->len_i, SEEK_SET), goto fail);
     bil_u->off_i = bil_u->len_i;
   }
@@ -132,7 +129,8 @@ c3_bile_put_raw(c3_bile* const    bil_u,
   ssize_t     wri_i;
   while ( 0 < lef_i ) {
     if ( -1 == (wri_i = write(bil_u->fid_i, dat_y, lef_i)) ) {
-      if ( EINTR == errno ) { // (2)
+      // Attempt to write again if we were interrupted by a signal.
+      if ( EINTR == errno ) {
         continue;
       }
       else {
@@ -148,6 +146,8 @@ c3_bile_put_raw(c3_bile* const    bil_u,
   bil_u->off_i = bil_u->len_i;
   goto succeed;
 
+  // Writing failed partway through, so clear the file of any data from the
+  // partial write.
 abandon_write: // (3)
   try_syscall(truncate(c3_path_str(bil_u->pax_u), bil_u->len_i), goto fail);
   try_syscall(lseek(bil_u->fid_i, bil_u->len_i, SEEK_SET), goto fail);
@@ -159,9 +159,6 @@ succeed:
   return 1;
 }
 
-//! @n (1) If we're at the end of the file (or past it), seek back to the
-//!        beginning.
-//! @n (2) Attempt the read again if we were interrupted by a signal.
 c3_t
 c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t dat_i)
 {
@@ -169,7 +166,8 @@ c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t dat_i)
     goto fail;
   }
 
-  if ( bil_u->len_i <= bil_u->off_i ) { // (1)
+  // If we're at the end of the file (or past it), seek back to the beginning.
+  if ( bil_u->len_i <= bil_u->off_i ) {
     try_syscall(lseek(bil_u->fid_i, 0, SEEK_SET), goto fail);
     bil_u->off_i = 0;
   }
@@ -180,7 +178,8 @@ c3_bile_get_raw(c3_bile* const bil_u, void* const dat_v, const size_t dat_i)
   while ( 0 < lef_i ) {
     rea_i = read(bil_u->fid_i, dat_y, lef_i);
     if ( -1 == rea_i ) {
-      if ( EINTR == errno ) { // (2)
+      // Attempt to read again if we were interrupted by a signal.
+      if ( EINTR == errno ) {
         continue;
       }
       else {

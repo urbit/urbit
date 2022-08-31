@@ -834,14 +834,6 @@ succeed:
   return 1;
 }
 
-//! @n (1) XX load/set secrets.
-//! @n (2) Play boot events if necessary.
-//! @n (3) Turn on async commit mode for last epoch.
-//! @n (4) These must be set after the replay in order to adhere to the
-//!        invariant that all noun references be roots when calling the u3_saga
-//!        interface.
-//! @n (5) Send ready status message. XX version negotation.
-//! @n (6) XX check return, make interval configurable.
 u3_mars*
 u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
 {
@@ -866,7 +858,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
   c3_path* const lok_u = c3_path_fp(mar_u->dir_u);
   u3_lock_acquire(lok_u);
 
-  { // (1)
+  { // XX load/set secrets.
 
     if ( eve_d && eve_d <= mar_u->dun_d ) {
       fprintf(stderr,
@@ -883,7 +875,8 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
              "failed to open event log at %s",
              c3_path_str(mar_u->dir_u));
 
-    if ( 0 == mar_u->dun_d && u3_saga_needs_bootstrap(mar_u->log_u) ) { // (2)
+    // Play boot events if necessary.
+    if ( 0 == mar_u->dun_d && u3_saga_needs_bootstrap(mar_u->log_u) ) {
       u3_noun evt = u3_nul;
       try_saga(u3_saga_replay(mar_u->log_u,
                               mar_u->dun_d,
@@ -914,15 +907,16 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       .com_f = _saga_commit_cb,
       .ptr_v = mar_u,
     };
-    u3_saga_commit_mode(mar_u->log_u, &asy_u); // (3)
+    // Turn on async commit mode for last epoch.
+    u3_saga_commit_mode(mar_u->log_u, &asy_u);
   }
 
-  { // (4)
-    mar_u->mug_l = u3r_mug(u3A->roc);
-    mar_u->sil_u = u3s_cue_xeno_init();
-  }
+  // These must be set after the replay in order to adhere to the invariant
+  // that all noun references be roots when calling the u3_saga interface.
+  mar_u->mug_l = u3r_mug(u3A->roc);
+  mar_u->sil_u = u3s_cue_xeno_init();
 
-  { // (5)
+  { // Send ready status message. XX version negotation.
     c3_d    len_d;
     c3_y*   hun_y;
     u3_noun wyn = u3_nul;
@@ -937,16 +931,12 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     u3z(msg);
   }
 
-  // (6)
-  {
-    uv_timer_init(u3L, &(mar_u->sav_u.tim_u));
-    uv_timer_start(&(mar_u->sav_u.tim_u), _mars_timer_cb, 120000, 120000);
-  }
+  // XX check return, make interval configurable.
+  uv_timer_init(u3L, &(mar_u->sav_u.tim_u));
+  uv_timer_start(&(mar_u->sav_u.tim_u), _mars_timer_cb, 120000, 120000);
 
-  {
-    mar_u->sav_u.eve_d      = mar_u->dun_d;
-    mar_u->sav_u.tim_u.data = mar_u;
-  }
+  mar_u->sav_u.eve_d      = mar_u->dun_d;
+  mar_u->sav_u.tim_u.data = mar_u;
 
   c3_path_free(lok_u);
   goto succeed;
@@ -1286,13 +1276,6 @@ _mars_boot_make(u3_boot_opts* inp_u,
 //!      more=(list ovum)
 //!  ==
 //!  ```
-//!
-//! @n (1) Create `<pier>`, `<pier>/.urb`, `<pier>/.urb/put`, `<pier>/.urb/get`,
-//!        and `<pier>/.urb/log`.
-//! @n (2) Commit boot events to the event log.
-//! @n (3) Serialize boot event noun into buffer.
-//! @n (4) First four bytes are for mug, and the mug for boot events is 0.
-//! @n (5) Create single event out of boot events and attempt to boot.
 c3_o
 u3_mars_boot(const c3_c* dir_c, u3_noun com)
 {
@@ -1321,21 +1304,25 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
     goto end;
   }
 
-  // (1)
+  // Create <pier>.
   c3_path* pax_u = c3_path_fv(1, dir_c);
   mkdir(c3_path_str(pax_u), 0700);
 
+  // Create <pier>/.urb.
   c3_path_push(pax_u, ".urb");
   mkdir(c3_path_str(pax_u), 0700);
 
+  // Create <pier>/.urb/put.
   c3_path_push(pax_u, "put");
   mkdir(c3_path_str(pax_u), 0700);
   c3_path_pop(pax_u);
 
+  // Create <pier>/.urb/get
   c3_path_push(pax_u, "get");
   mkdir(c3_path_str(pax_u), 0700);
   c3_path_pop(pax_u);
 
+  // Create <pier>.urb/log
   c3_path_push(pax_u, "log");
   u3_saga* log_u = u3_saga_new(pax_u, &met_u);
 
@@ -1343,29 +1330,33 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
   c3_path_pop(pax_u);
   u3_lock_acquire(pax_u);
 
-  u3_noun i, t = ova;
-  while ( u3_nul != t ) { // (2)
-    u3x_cell(t, &i, &t);
+  { // Commit boot events to the event log.
+    u3_noun i, t = ova;
+    while ( u3_nul != t ) {
+      u3x_cell(t, &i, &t);
 
-    // (3)
-    u3_atom mat   = u3qe_jam(i);
-    c3_w    len_w = u3r_met(3, mat);
-    c3_y    dat_y[4 + len_w];
-    dat_y[0] = dat_y[1] = dat_y[2] = dat_y[3] = 0; // (4)
-    u3r_bytes(0, len_w, dat_y + 4, mat);
-    u3z(mat);
+      // Serialize boot event noun into buffer.
+      u3_atom mat   = u3qe_jam(i);
+      c3_w    len_w = u3r_met(3, mat);
+      c3_y    dat_y[4 + len_w];
+      // First four bytes are for mug, and the mug for boot events is 0.
+      memset(dat_y, 0, sizeof(c3_w));
+      u3r_bytes(0, len_w, dat_y + 4, mat);
+      u3z(mat);
 
-    if ( !u3_saga_commit(log_u, dat_y, 4 + len_w) ) {
-      fprintf(stderr, "boot: failed to commit boot event to event log\r\n");
-      goto free_event_log;
+      if ( !u3_saga_commit(log_u, dat_y, 4 + len_w) ) {
+        fprintf(stderr, "boot: failed to commit boot event to event log\r\n");
+        goto free_event_log;
+      }
     }
+    u3z(ova);
   }
-  u3z(ova);
 
   _mars_step_trace(dir_c);
 
   u3_noun evt = u3_nul;
-  if ( !u3_saga_replay(log_u, 0, met_u.lif_w, _saga_boot_cb, &evt) ) { // (5)
+  // Create single event out of boot events and attempt to boot.
+  if ( !u3_saga_replay(log_u, 0, met_u.lif_w, _saga_boot_cb, &evt) ) {
     goto free_event_log;
   }
   suc_o = c3y;

@@ -48,11 +48,11 @@ _is_parent(const c3_c* const tok_c)
 // Functions
 //==============================================================================
 
-//! @n (1) Allocate 32 bytes for the path string as a default.
 c3_path*
 c3_path_fa(const c3_c** tok_c, const size_t tok_i)
 {
-  static const size_t cap_i = 32; // (1)
+  // Allocate 32 bytes for the path string as a default.
+  static const size_t cap_i = 32;
   c3_path*            pax_u = c3_calloc(sizeof(*pax_u));
   pax_u->cap_i              = cap_i;
   pax_u->str_c              = c3_calloc(cap_i);
@@ -92,8 +92,6 @@ c3_path_str(const c3_path* const pax_u)
   return pax_u->str_c;
 }
 
-//! @n (1) The root directory is its own parent.
-//! @n (2) Double the needed size to minimize future allocations.
 void
 c3_path_push(c3_path* pax_u, const c3_c* const tok_c)
 {
@@ -102,7 +100,8 @@ c3_path_push(c3_path* pax_u, const c3_c* const tok_c)
   }
 
   if ( _is_parent(tok_c) ) {
-    if ( !_is_root(pax_u->str_c) ) { // (1)
+    // The root directory is its own parent.
+    if ( !_is_root(pax_u->str_c) ) {
       c3_path_pop(pax_u);
     }
     return;
@@ -110,7 +109,8 @@ c3_path_push(c3_path* pax_u, const c3_c* const tok_c)
 
   size_t tok_i = sizeof(pax_sep_c) + strlen(tok_c);
   if ( pax_u->cap_i - pax_u->len_i < tok_i ) {
-    size_t cap_i = 2 * (pax_u->cap_i + tok_i); // (2)
+    // Double the needed size to minimize future allocations.
+    size_t cap_i = 2 * (pax_u->cap_i + tok_i);
     pax_u->cap_i = cap_i;
     pax_u->str_c = c3_realloc(pax_u->str_c, cap_i);
   }
@@ -123,8 +123,6 @@ c3_path_push(c3_path* pax_u, const c3_c* const tok_c)
   pax_u->len_i = strlen(pax_u->str_c);
 }
 
-//! @n (1) This is a path of the form `some-file-or-directory`.
-//! @n (2) This is a path of the form `/some-file-or-directory`.
 void
 c3_path_pop(c3_path* const pax_u)
 {
@@ -139,10 +137,12 @@ c3_path_pop(c3_path* const pax_u)
   }
 
   c3_c* sep_c = strrchr(pax_u->str_c, *pax_sep_c);
-  if ( !sep_c ) { // (1)
+  // This is a path of the form `some-file-or-directory`.
+  if ( !sep_c ) {
     sep_c = pax_u->str_c;
   }
-  else if ( sep_c == pax_u->str_c ) { // (2)
+  // This is a path of the form `/some-file-or-directory`.
+  else if ( sep_c == pax_u->str_c ) {
     sep_c++;
   }
   *sep_c       = '\0';

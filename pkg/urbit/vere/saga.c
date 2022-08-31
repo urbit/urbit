@@ -202,8 +202,6 @@ _is_epoc_dir(const c3_c* const nam_c)
   return 0 == strncmp(nam_c, epo_pre_c, strlen(epo_pre_c));
 }
 
-//! @n (1) Push the newly created epoch from migration onto the epoch list.
-//! @n (2) Immediately rollover to a new epoch.
 static c3_t
 _migrate(u3_saga* const log_u, u3_meta* const met_u)
 {
@@ -221,12 +219,13 @@ _migrate(u3_saga* const log_u, u3_meta* const met_u)
 
   log_u->eve_d = u3_epoc_last_commit(poc_u);
 
-  { // (1)
+  { // Push the newly created epoch from migration onto the epoch list.
     try_list(log_u->epo_u.lis_u = c3_list_init(), goto fail);
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
   }
 
+  // Immediately rollover to a new epoch.
   if ( !u3_saga_rollover(log_u) ) {
     fprintf(stderr, "saga: failed to rollover to new epoch after migrating\r\n");
     goto fail;
@@ -243,8 +242,6 @@ succeed:
   return 1;
 }
 
-//! @n (1) Arbitrarily choose 16 as the initial guess at the max number of
-//!        epochs.
 static c3_t
 _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
 {
@@ -257,7 +254,8 @@ _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
   *ent_i = 0;
 
   struct dirent* ent_u;
-  size_t         cap_i = 16; // (1)
+  // Arbitrarily choose 16 as the initial guess at the max number of epochs.
+  size_t         cap_i = 16;
   c3_c(*dst_c)[dname_size]  = c3_malloc(cap_i * dname_size);
   size_t dst_i         = 0;
   while ( (ent_u = readdir(dir_u)) ) {
@@ -290,7 +288,6 @@ _remove_committed_events(u3_saga* const log_u)
   }
 }
 
-//! @n (1) Attempt to commit events that were enqueued after the commit began.
 static void
 _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
 {
@@ -305,7 +302,8 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
   c3_d las_d = u3_epoc_last_commit(log_u->epo_u.cur_u);
   log_u->asy_u.com_f(log_u->asy_u.ptr_v, las_d, suc_t);
 
-  if ( UV_ECANCELED != sas_i ) { // (1)
+  // Attempt to commit events that were enqueued after the commit began.
+  if ( UV_ECANCELED != sas_i ) {
     u3_saga_commit(log_u, NULL, 0);
   }
 }
@@ -339,8 +337,6 @@ _find_epoc(u3_saga* const log_u, const c3_d ide_d)
 // Functions
 //==============================================================================
 
-//! @n (1) Persist metadata.
-//! @n (2) Create first epoch.
 u3_saga*
 u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
 {
@@ -350,11 +346,12 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
   }
   mkdir(c3_path_str(log_u->pax_u), 0700);
 
-  if ( !_create_metadata_files(log_u, met_u) ) { // (1)
+  // Persist metadata.
+  if ( !_create_metadata_files(log_u, met_u) ) {
     goto free_event_log;
   }
 
-  { // (2)
+  { // Create first epoch.
     try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_event_log);
     u3_epoc* poc_u;
     try_epoc(poc_u = u3_epoc_new(log_u->pax_u, epo_min_d, met_u->lif_w),
@@ -377,9 +374,6 @@ succeed:
   return log_u;
 }
 
-//! @n (1) Attempt to migrate old non-epoch-based event log.
-//! @n (2) Read metadata from filesystem.
-//! @n (3) TODO
 u3_saga*
 u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
 {
@@ -388,7 +382,7 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     goto free_event_log;
   }
 
-  { // (1)
+  { // Attempt to migrate old non-epoch-based event log.
     c3_path_push(log_u->pax_u, "data.mdb");
     c3_i ret_i = access(c3_path_str(log_u->pax_u), R_OK | W_OK);
     c3_path_pop(log_u->pax_u);
@@ -403,7 +397,7 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     }
   }
 
-  { // (2)
+  { // Read metadata from file system.
     void* dat_v;
 
     c3_path_push(log_u->pax_u, fak_nam_c);
@@ -474,8 +468,6 @@ u3_saga_needs_rollover(const u3_saga* const log_u)
   return u3_epoc_len(log_u->epo_u.cur_u) >= epo_len_i;
 }
 
-//! @n (1) Bootstrap is needed if the only epoch present is the first epoch.
-//! @n (2) Bootstrap is always required on full replay.
 c3_t
 u3_saga_needs_bootstrap(const u3_saga* const log_u)
 {
@@ -483,9 +475,11 @@ u3_saga_needs_bootstrap(const u3_saga* const log_u)
   c3_assert(log_u);
   const u3_epoc* const poc_u = c3_lode_data(c3_list_peekf(log_u->epo_u.lis_u));
   const size_t         len_i = c3_list_len(log_u->epo_u.lis_u);
-  return epo_min_d == u3_epoc_first_commit(poc_u) && 1 == len_i; // (1)
+  // Bootstrap is needed if the only epoch present is the first epoch.
+  return epo_min_d == u3_epoc_first_commit(poc_u) && 1 == len_i;
 #else
-  return 1; // (2)
+  // Bootstrap is always required on full replay.
+  return 1;
 # endif /* ifndef U3_REPLAY_FULL */
 }
 
@@ -506,12 +500,12 @@ u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u)
   };
 }
 
-//! @n (1) A NULL event can be passed to invoke another commit batch.
 c3_t
 u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
 {
   c3_list* eve_u = log_u->eve_u.lis_u;
-  if ( byt_y ) { // (1)
+  // A NULL event can be passed to invoke another commit batch.
+  if ( byt_y ) {
     c3_list_pushb(eve_u, byt_y, byt_i);
     log_u->eve_d++;
   }
@@ -573,11 +567,6 @@ succeed:
   return 1;
 }
 
-//! TODO(peter): what happens if the requested replay-to event is no longer
-//! present because it was in a truncated epoch?
-//! @n (1) Replay by restoring the latest epoch's snapshot and then replaying
-//!        that epoch's events (the default).
-//! @n (2) Replay by replaying all epoch's events.
 c3_t
 u3_saga_replay(u3_saga* const log_u,
                c3_d           cur_d,
@@ -596,7 +585,9 @@ u3_saga_replay(u3_saga* const log_u,
     goto end;
   }
 
-#ifndef U3_REPLAY_FULL /* (1) */
+  // Replay by restoring the latest epoch's snapshot and then replaying that
+  // epoch's events (the default).
+#ifndef U3_REPLAY_FULL
   u3_epoc* poc_u;
   try_saga(poc_u = _find_epoc(log_u, las_d),
            goto end,
@@ -621,7 +612,8 @@ u3_saga_replay(u3_saga* const log_u,
     }
     cur_d++;
   }
-#else /* (2) */
+  // Replay by replaying all epoch's events.
+#else
   cur_d++;
 
   c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
@@ -683,11 +675,6 @@ u3_saga_info(const u3_saga* const log_u)
   }
 }
 
-//! @n (1) Cancel thread that is performing async commits.
-//!        XX can deadlock from signal handler
-//!        XX revise SIGTSTP handling
-//! @n (2) Free epochs.
-//! @n (3) Free events pending commit.
 void
 u3_saga_close(u3_saga* const log_u)
 {
@@ -695,7 +682,10 @@ u3_saga_close(u3_saga* const log_u)
     return;
   }
 
-  if ( u3_saga_async == log_u->mod_e && log_u->act_t ) { // (1)
+  // Cancel thread that is performing async commits.
+  // XX can deadlock from signal handler.
+  // XX revise SIGTSTP handlng.
+  if ( u3_saga_async == log_u->mod_e && log_u->act_t ) {
     while ( UV_EBUSY == uv_cancel((uv_req_t*)&log_u->asy_u.req_u) );
   }
 
@@ -703,7 +693,7 @@ u3_saga_close(u3_saga* const log_u)
     c3_path_free(log_u->pax_u);
   }
 
-  { // (2)
+  { // Free epochs.
     c3_list* epo_u = log_u->epo_u.lis_u;
     if ( epo_u ) {
       c3_lode* nod_u;
@@ -716,7 +706,7 @@ u3_saga_close(u3_saga* const log_u)
     }
   }
 
-  { // (3)
+  { // Free events pending commit.
     c3_list* eve_u = log_u->eve_u.lis_u;
     if ( eve_u ) {
       for ( size_t idx_i = 0; idx_i < c3_list_len(eve_u); idx_i++ ) {

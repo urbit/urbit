@@ -216,8 +216,6 @@ _cw_grab(c3_i argc, c3_c* argv[])
 }
 
 //! Jam persistent state (rock) and exit.
-//!
-//! @n (1) XX s/b try_aquire lock.
 static void
 _cw_cram(c3_i argc, c3_c* argv[])
 {
