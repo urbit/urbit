@@ -24,7 +24,7 @@
   $%  [%live ?(%meld %pack) ~] :: XX rename
       [%exit ~]
       [%peek mil=@ peek]
-      [%poke mil=@ ovum]  ::  XX replacement y/n
+      [%poke mil=@ ovum]
       [%sync %save ~]
   ==
 ::  +gift: from mars to urth
@@ -262,15 +262,14 @@ _lord_plea_ripe(u3_lord* god_u, u3_noun dat)
       return;
     }
 
-    //  XX pass who/fak to cb, save mug_l?
+    //  XX save mug_l
     //
-
     god_u->eve_d = eve_d;
+
+    god_u->liv_o = c3y;
+    god_u->cb_u.live_f(god_u->cb_u.ptr_v, who, fak);
   }
-
-
-  god_u->liv_o = c3y;
-  god_u->cb_u.live_f(god_u->cb_u.ptr_v);
+;
 
   u3z(dat);
 }
@@ -288,9 +287,6 @@ _lord_plea_slog(u3_lord* god_u, u3_noun dat)
   {
     return _lord_plea_foul(god_u, c3__slog, dat);
   }
-
-  //  XX per-writ slog_f?
-  //
 
   god_u->cb_u.slog_f(god_u->cb_u.ptr_v, pri_w, u3k(tan));
   u3z(dat);
@@ -713,7 +709,6 @@ u3_lord_meld(u3_lord* god_u)
 
   //  XX set callback
   //
-
   _lord_send(god_u, u3nt(c3__live, c3__meld, u3_nul));
 }
 
@@ -727,7 +722,6 @@ u3_lord_pack(u3_lord* god_u)
 
   //  XX set callback
   //
-
   _lord_send(god_u, u3nt(c3__live, c3__pack, u3_nul));
 }
 
@@ -930,7 +924,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     }
 
 #ifdef U3_OS_mingw
-    sprintf(cev_c, "%u", u3_Host.cev_u);
+    sprintf(cev_c, "%" PRIu64, u3_Host.cev_u);
     arg_c[7] = cev_c;
     arg_c[8] = 0;
 #else
@@ -1046,7 +1040,7 @@ _lord_on_serf_boot_exit(uv_process_t* cub_u,
   u3_newt_mojo_stop(&bot_u->inn_u, _lord_bail_noop);
 
   //  XX add stderr?
-
+  //
   uv_close((uv_handle_t*)cub_u, 0);
 }
 

@@ -68,13 +68,13 @@
   ?.  (verify-sig-and-nonce:naive verifier chain-t nas raw-tx)
     =+  [force ~ nas indices]
     ?.  verb  -
-    ~&  >>>  [verb+verb %verify-sig-and-nonce %failed tx.raw-tx]  -
+    ~&  >>>  [force+force %verify-sig-and-nonce %failed tx.raw-tx]  -
   =^  effects-1  points.nas
     (increment-nonce:naive nas from.tx.raw-tx)
   ?~  nex=(receive-tx:naive nas tx.raw-tx)
     =+  [force ~ ?:(force nas cache) indices]
     ?.  verb  -
-    ~&  >>>  [verb+verb %receive-tx %failed]  -
+    ~&  >>>  [force+force %receive-tx %failed]  -
   =*  new-nas   +.u.nex
   =/  effects   (welp effects-1 -.u.nex)
   =^  updates   indices

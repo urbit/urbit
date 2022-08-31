@@ -11,7 +11,7 @@
 |%
 ++  prefixes
   ^-  (map network tape)
-  (my [[%main "bc"] [%testnet "tb"] ~])
+  (my [[%main "bc"] [%testnet "tb"] [%regtest "bcrt"] ~])
 ++  charset  "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 +$  raw-decoded  [hrp=tape data=(list @) checksum=(list @)]
 ::  below is a port of: https://github.com/bitcoinjs/bech32/blob/master/index.js

@@ -9,6 +9,8 @@
 #include <curl/curl.h>
 #include <uv.h>
 
+static const c3_c* ver_hos_c = "https://bootstrap.urbit.org/vere";
+
 //  stash config flags for worker
 //
 static c3_w sag_w;
@@ -335,59 +337,179 @@ _king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
   return siz_t;
 }
 
-/* _king_get_atom(): HTTP GET url_c, produce the response body as an atom.
+/* _king_curl_bytes(): HTTP GET url_c, produce response body bytes.
 **  XX deduplicate with dawn.c
 */
-static u3_noun
-_king_get_atom(c3_c* url_c)
+static c3_i
+_king_curl_bytes(c3_c* url_c, c3_w* len_w, c3_y** hun_y, c3_t veb_t)
 {
-  CURL *curl;
-  CURLcode result;
-  long cod_l;
-  c3_y  try_y = 0;
-  u3_noun pro = u3_none;
+  c3_i     ret_i = 0;
+  c3_y     try_y = 0;
+  CURL    *cul_u;
+  CURLcode res_i;
+  long     cod_i;
 
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
-  if ( !(curl = curl_easy_init()) ) {
+  if ( !(cul_u = curl_easy_init()) ) {
     u3l_log("failed to initialize libcurl\n");
-    exit(1);
-  }
-
-  u3K.ssl_curl_f(curl);
-  curl_easy_setopt(curl, CURLOPT_URL, url_c);
-  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
-  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
-
-  while ( u3_none == pro && 5 > try_y ) {
-    sleep(try_y++);
-    result = curl_easy_perform(curl);
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
-
-    //  XX retry?
-    //
-    if ( CURLE_OK != result ) {
-      u3l_log("failed to fetch %s: %s\n",
-              url_c, curl_easy_strerror(result));
-    }
-    else if ( 300 <= cod_l ) {
-      u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
-    }
-    else {
-      curl_easy_cleanup(curl);
-      pro = u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
-      c3_free(buf_u.base);
-      break;
-    }
-  }
-
-  if ( u3_none == pro ) {
-    u3l_log("consistently failed to fetch %s.\n", url_c);
     u3_king_bail();
     exit(1);
   }
 
+  u3K.ssl_curl_f(cul_u);
+  curl_easy_setopt(cul_u, CURLOPT_URL, url_c);
+  curl_easy_setopt(cul_u, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
+  curl_easy_setopt(cul_u, CURLOPT_WRITEDATA, (void*)&buf_u);
+
+  do {
+    sleep(try_y++);
+    res_i = curl_easy_perform(cul_u);
+    curl_easy_getinfo(cul_u, CURLINFO_RESPONSE_CODE, &cod_i);
+
+    //  XX retry?
+    //
+    if ( CURLE_OK != res_i ) {
+      if ( veb_t ) {
+        u3l_log("curl: failed %s: %s\n", url_c, curl_easy_strerror(res_i));
+      }
+      ret_i = -1;
+    }
+    else if ( 300 <= cod_i ) {
+      if ( veb_t ) {
+        u3l_log("curl: error %s: HTTP %ld\n", url_c, cod_i);
+      }
+      ret_i = -2;
+    }
+    else {
+      curl_easy_cleanup(cul_u);
+      *len_w = buf_u.len;
+      *hun_y = (c3_y*)buf_u.base;
+      ret_i  = 0;
+      break;
+    }
+  }
+  while ( 0 != res_i && 5 > try_y );
+
+  //  XX always curl_easy_cleanup()?
+  //
+
+  return ret_i;
+}
+
+/* _king_get_atom(): HTTP GET url_c, produce response body as atom.
+*/
+static u3_noun
+_king_get_atom(c3_c* url_c)
+{
+  c3_w  len_w;
+  c3_y* hun_y;
+  u3_noun pro;
+
+  if ( _king_curl_bytes(url_c, &len_w, &hun_y, 1) ) {
+    u3_king_bail();
+    exit(1);
+  }
+
+  pro = u3i_bytes(len_w, hun_y);
+  c3_free(hun_y);
   return pro;
+}
+
+/* _king_get_pace(): get "pace" (release channel name).
+*/
+static c3_c*
+_king_get_pace(void)
+{
+  struct stat buf_u;
+  c3_c*       pat_c;
+  c3_w red_w, len_w;
+  c3_i ret_i, fid_i;
+
+  ret_i = asprintf(&pat_c, "%s/.bin/pace", u3_Host.dir_c);
+  c3_assert( ret_i > 0 );
+
+  fid_i = c3_open(pat_c, O_RDONLY, 0644);
+
+  if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
+    c3_free(pat_c);
+    return strdup("live");
+  }
+
+  c3_free(pat_c);
+
+  len_w = buf_u.st_size;
+  pat_c = c3_malloc(len_w + 1);
+  red_w = read(fid_i, pat_c, len_w);
+  close(fid_i);
+
+  if ( len_w != red_w ) {
+    c3_free(pat_c);
+    u3l_log("unable to read pace file, "
+            "falling back to default (\"live\")\n");
+    return strdup("live");
+  }
+
+  pat_c[len_w] = 0;
+
+  while ( len_w-- && isspace(pat_c[len_w]) ) {
+    pat_c[len_w] = 0;
+  }
+
+  return pat_c;
+}
+
+/* u3_king_next(): get next vere version string, if it exists.
+**         return: 0 is success, -1 is no-op (same version), -2 is error
+*/
+c3_i
+u3_king_next(c3_c* pac_c, c3_c** out_c)
+{
+  c3_c* ver_c;
+  c3_c* url_c;
+  c3_w  len_w;
+  c3_y* hun_y;
+  c3_i  ret_i;
+
+  ret_i = asprintf(&url_c, "%s/%s/%s/next", ver_hos_c, pac_c, URBIT_VERSION);
+  c3_assert( ret_i > 0 );
+
+  //  skip printfs on failed requests (/next is usually not present)
+  //
+  if ( _king_curl_bytes(url_c, &len_w, &hun_y, 0) ) {
+    c3_free(url_c);
+
+    ret_i = asprintf(&url_c, "%s/%s/last", ver_hos_c, pac_c);
+    c3_assert( ret_i > 0 );
+
+    //  enable printfs on failed requests (/last must be present)
+    //  XX support channel redirections
+    //
+    if ( _king_curl_bytes(url_c, &len_w, &hun_y, 1) )
+    {
+      c3_free(url_c);
+      return -2;
+    }
+  }
+
+  c3_free(url_c);
+
+  //  null-terminate
+  //
+  hun_y = c3_realloc(hun_y, 1 + len_w);
+  hun_y[len_w] = 0;
+
+  ver_c = (c3_c*)hun_y;
+
+  //  XX trim ver_c ?
+  //
+  if ( 0 == strcmp(ver_c, URBIT_VERSION) ) {
+    c3_free(ver_c);
+    return -1;
+  }
+
+  *out_c = ver_c;
+  return 0;
 }
 
 /* _get_cmd_output(): Run a shell command and capture its output.
@@ -571,7 +693,7 @@ _boothack_doom(void)
 
     if ( u3_nul == whu ) {
       u3l_log("boot: malformed -F ship %s\r\n", u3_Host.ops_u.fak_c);
-      exit(1);
+      u3_king_bail();
     }
 
     bot = u3nc(c3__fake, u3k(u3t(whu)));
@@ -712,9 +834,9 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
       u3l_log("\r\ninterrupt\r\n");
       u3_term_ef_ctlc();
 
-      #if defined(U3_OS_mingw)
+#ifdef U3_OS_mingw
       PulseEvent(u3_Host.cev_u);
-      #endif
+#endif
       break;
     }
 
@@ -957,6 +1079,527 @@ _king_forall_unlink(void (*pir_f)(u3_pier*))
   }
 }
 
+/* _king_curl_file(): HTTP GET [url_c], write response body to [fil_u].
+*/
+static c3_i
+_king_save_file(c3_c* url_c, FILE* fil_u)
+{
+  c3_i     ret_i = 0;
+  CURL    *cul_u;
+  CURLcode res_i;
+  long     cod_i;
+
+  if ( !(cul_u = curl_easy_init()) ) {
+    u3l_log("failed to initialize libcurl\n");
+    exit(1);
+  }
+
+  u3K.ssl_curl_f(cul_u);
+  curl_easy_setopt(cul_u, CURLOPT_URL, url_c);
+  curl_easy_setopt(cul_u, CURLOPT_WRITEDATA, (void*)fil_u);
+
+  res_i = curl_easy_perform(cul_u);
+  curl_easy_getinfo(cul_u, CURLINFO_RESPONSE_CODE, &cod_i);
+
+  //  XX retry?
+  //
+  if ( CURLE_OK != res_i ) {
+    u3l_log("curl: failed %s: %s\n", url_c, curl_easy_strerror(res_i));
+    ret_i = -1;
+  }
+  if ( 300 <= cod_i ) {
+    u3l_log("curl: error %s: HTTP %ld\n", url_c, cod_i);
+    ret_i = -2;
+  }
+
+  curl_easy_cleanup(cul_u);
+  return ret_i;
+}
+
+/* _king_make_pace(): mkdir -p $pier/.bin/[pace]
+*/
+static c3_i
+_king_make_pace(c3_c* pac_c)
+{
+  c3_c* bin_c;
+  c3_i  ret_i;
+
+  ret_i = asprintf(&bin_c, "%s/.bin", u3_Host.dir_c);
+  c3_assert( ret_i > 0 );
+
+  ret_i = c3_mkdir(bin_c, 0700);
+
+  if ( ret_i && (EEXIST != errno) ) {
+    fprintf(stderr, "vere: mkdir %s failed: %s\n", bin_c, strerror(errno));
+    c3_free(bin_c);
+    return -1;
+  }
+
+  c3_free(bin_c);
+
+  ret_i = asprintf(&bin_c, "%s/.bin/%s/", u3_Host.dir_c, pac_c);
+  c3_assert( ret_i > 0 );
+
+  //  XX asserting wrapper conflicts here (and is bypassed for .urb)
+  //
+  ret_i = mkdir(bin_c, 0700);
+
+  if ( ret_i && (EEXIST != errno) ) {
+    fprintf(stderr, "vere: mkdir %s failed: %s\n", bin_c, strerror(errno));
+    c3_free(bin_c);
+    return -1;
+  }
+
+  c3_free(bin_c);
+  return 0;
+}
+
+static c3_i
+_king_write_raw(c3_i fid_i, c3_y* buf_y, size_t len_i);
+
+/* _king_init_pace(): save pace file if not present
+*/
+static c3_i
+_king_init_pace(c3_c* pac_c)
+{
+  c3_c* bin_c;
+  c3_i  fid_i, ret_i = asprintf(&bin_c, "%s/.bin/pace", u3_Host.dir_c);
+  c3_assert( ret_i > 0 );
+
+  if ( (-1 == (fid_i = open(bin_c, O_WRONLY | O_CREAT | O_EXCL, 0644))) ) {
+    if ( EEXIST == errno ) {
+      c3_free(bin_c);
+      //  XX print something here?
+      //
+      return 0;
+    }
+    else {
+      u3l_log("dock: init pace (%s): open %s\n", pac_c, strerror(errno));
+      c3_free(bin_c);
+      return -1;
+    }
+  }
+
+  if ( _king_write_raw(fid_i, (c3_y*)pac_c, strlen(pac_c)) ) {
+    u3l_log("dock: init pace (%s): write %s\n", pac_c, strerror(errno));
+    close(fid_i);
+    c3_free(bin_c);
+    return -1;
+  }
+  // XX sync first?
+  //
+  else if ( close(fid_i) ) {
+    u3l_log("dock: init pace (%s): close %s\n", pac_c, strerror(errno));
+    c3_free(bin_c);
+    return 1;
+  }
+
+  u3l_log("dock: pace (%s): configured at %s/.bin/pace\r\n",
+          pac_c, u3_Host.dir_c);
+
+  return 0;
+}
+
+/* _king_link_run(): ln [bin_c] $pier/.run
+*/
+static c3_i
+_king_link_run(c3_c* bin_c)
+{
+  c3_c* lin_c;
+  c3_i  ret_i;
+
+  ret_i = asprintf(&lin_c, "%s/%s", u3_Host.dir_c, U3_BIN_ALIAS);
+  c3_assert( ret_i > 0 );
+
+  ret_i = unlink(lin_c);
+
+  if ( ret_i && (ENOENT != errno) ) {
+    fprintf(stderr, "vere: unlink %s failed: %s\n", lin_c, strerror(errno));
+    c3_free(lin_c);
+    return -1;
+  }
+
+  ret_i = link(bin_c, lin_c);
+
+  if ( ret_i ) {
+    fprintf(stderr, "vere: link %s -> %s failed: %s\n",
+                    lin_c, bin_c, strerror(errno));
+    c3_free(lin_c);
+    return -1;
+  }
+
+  c3_free(lin_c);
+  return 0;
+}
+
+/* u3_king_vere(): download binary as specified.
+*/
+c3_i
+u3_king_vere(c3_c* pac_c,  // pace
+             c3_c* ver_c,  // version
+             c3_c* arc_c,  // architecture
+             c3_c* dir_c,  // output directory
+             c3_t  lin_t)  // link to $pier/.run
+{
+  c3_c* bin_c;
+  c3_c* url_c;
+  FILE* fil_u;
+  c3_i  fid_i, ret_i;
+
+  ret_i = asprintf(&bin_c, "%s/vere-v%s-%s" U3_BIN_SUFFIX,
+                           dir_c, ver_c, arc_c);
+  c3_assert( ret_i > 0 );
+
+  if (   (-1 == (fid_i = open(bin_c, O_WRONLY | O_CREAT | O_EXCL, 0755)))
+     || !(fil_u = fdopen(fid_i, "wb")) )
+  {
+    if ( EEXIST == errno ) {
+      u3l_log("already installed\n");
+      c3_free(bin_c);
+      return 0;
+    }
+    else {
+      u3l_log("unable to open %s: %s\r\n", bin_c, strerror(errno));
+      c3_free(bin_c);
+      return -1;
+    }
+  }
+
+  ret_i = asprintf(&url_c, "%s/%s/%s/vere-v%s-%s",
+                   ver_hos_c, pac_c, ver_c, ver_c, arc_c);
+  c3_assert( ret_i > 0 );
+
+  if ( (ret_i = _king_save_file(url_c, fil_u)) ) {
+    u3l_log("unable to save %s to %s: %d\r\n", url_c, bin_c, ret_i);
+    c3_free(url_c);
+    fclose(fil_u);
+    unlink(bin_c);
+    c3_free(bin_c);
+    return -1; // XX
+  }
+
+  //  XX sync unnecessary here?
+  //
+  if ( fflush(fil_u) || c3_sync(fid_i) ) {
+    fprintf(stderr, "vere: sync %s failed: %s\n", bin_c, strerror(errno));
+    c3_free(url_c);
+    fclose(fil_u);
+    unlink(bin_c);
+    c3_free(bin_c);
+    return -1;
+  }
+
+  fclose(fil_u);
+
+  //  XX if link fails wat do?
+  //  XX set via cli option
+  //
+  if ( lin_t ) {
+    if ( _king_link_run(bin_c) ) {
+      fprintf(stderr, "vere: link %s/%s failed\n", u3_Host.dir_c, U3_BIN_ALIAS);
+      c3_free(url_c);
+      c3_free(bin_c);
+      return -1;
+    }
+  }
+
+  u3l_log("vere: saved to %s\n", bin_c);
+
+  c3_free(url_c);
+  c3_free(bin_c);
+
+  return 0;
+}
+
+/* _king_do_upgrade(): get arch-appropriate binary at [ver_c].
+*/
+static void
+_king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
+{
+  c3_c* dir_c;
+  c3_c* arc_c;
+
+#ifdef U3_OS_ARCH
+  arc_c = U3_OS_ARCH;
+#else
+  if ( u3_Host.arc_c ) {
+    arc_c = u3_Host.arc_c;
+  }
+  else {
+    u3l_log("vere: --arch required\r\n");
+    return;
+  }
+#endif
+
+  if ( _king_make_pace(pac_c) ) {
+    u3l_log("vere: unable to make pace (%s) directory in pier\n", pac_c);
+    u3_king_bail();
+    exit(1);
+  }
+
+  {
+    c3_i ret_i = asprintf(&dir_c, "%s/.bin/%s", u3_Host.dir_c, pac_c);
+    c3_assert( ret_i > 0 );
+  }
+
+  //  XX get link option
+  //
+  if ( u3_king_vere(pac_c, ver_c, arc_c, dir_c, 1) ) {
+    u3l_log("vere: upgrade failed\r\n");
+    u3_king_bail();
+    exit(1);
+  }
+
+  c3_free(dir_c);
+  u3l_log("vere: upgrade succeeded\r\n");
+  //  XX print restart instructions
+}
+
+/* _king_read_raw: read (up to) [len_i] from [fid_i] to [buf_y]
+*/
+static ssize_t
+_king_read_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
+{
+  ssize_t ret_i;
+
+  do {
+    ret_i = read(fid_i, buf_y, len_i);
+  }
+  while ( (ret_i < 0) && (errno == EINTR) );
+
+  return ret_i;
+}
+
+/* _king_read_raw: write [len_i] from [buf_y] to [fid_i].
+*/
+static c3_i
+_king_write_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
+{
+  ssize_t ret_i;
+
+  while ( len_i ) {
+
+    do {
+      ret_i = write(fid_i, buf_y, len_i);
+    }
+    while ( (ret_i < 0) && (errno == EINTR) );
+
+    if ( ret_i < 0 ) {
+      return -1;
+    }
+    else {
+      len_i -= ret_i;
+      buf_y += ret_i;
+    }
+  }
+
+  return 0;
+}
+
+static c3_i
+_king_copy_raw(c3_i src_i, c3_i dst_i, c3_y* buf_y, size_t pag_i)
+{
+  ssize_t red_i;
+
+  do {
+    if ( 0 > (red_i = _king_read_raw(src_i, buf_y, pag_i)) ) {
+      return -1;
+    }
+
+    if ( _king_write_raw(dst_i, buf_y, (size_t)red_i) ) {
+      return -1;
+    }
+  }
+  while ( red_i );
+
+  return 0;
+}
+
+#if defined(U3_OS_mingw)
+int err_win_to_posix(DWORD winerr);
+#endif
+
+static c3_i
+_king_copy_file(c3_c* src_c, c3_c* dst_c)
+{
+#if defined(U3_OS_mingw)
+  //  XX try FSCTL_DUPLICATE_EXTENTS_TO_FILE
+  //
+  if ( CopyFileA(src_c, dst_c, TRUE) ) {
+    return 0;
+  }
+
+  //  XX fallback on any?
+  //
+  errno = err_win_to_posix(GetLastError());
+  return -1;
+#elif defined(U3_OS_osx)
+  if ( !clonefile(src_c, dst_c, 0) ) {
+    return 0;
+  }
+  //  fallthru to copying bytes on some errors
+  //
+  else if ( (ENOTSUP != errno) && (EXDEV != errno) ) {
+    return -1;
+  }
+#endif
+
+  {
+    c3_i src_i, dst_i, ret_i = 0, err_i = 0;
+
+    if ( -1 == (src_i = open(src_c, O_RDONLY, 0644)) ) {
+      err_i = errno;
+      ret_i = -1;
+      goto done1;
+    }
+
+    if ( -1 == (dst_i = open(dst_c, O_RDWR | O_CREAT, 0755)) ) {
+      err_i = errno;
+      ret_i = -1;
+      goto done2;
+    }
+
+    //  XX try clone_file_range ?
+    //
+#if defined(U3_OS_linux)
+  #if defined(FICLONE)
+    if ( !ioctl(dst_i, FICLONE, src_i) ) {
+      ret_i = 0;
+      goto done3;
+    }
+    //  fallthru to copying bytes on some errors
+    //
+    else if ( (EOPNOTSUPP != errno) && (EXDEV != errno) ) {
+      err_i = errno;
+      ret_i = -1;
+      goto done3;
+    }
+  #endif
+
+    {
+      off_t   off_i = 0;
+      ssize_t sen_i;
+      size_t  len_i;
+      {
+        struct stat sat_u;
+        if ( -1 == fstat(src_i, &sat_u) ) {
+          err_i = errno;
+          ret_i = -1;
+          goto done3;
+        }
+        len_i = sat_u.st_size;
+      }
+
+      do {
+        //  XX fallback on any errors?
+        //
+        if ( 0 > (sen_i = sendfile64(dst_i, src_i, &off_i, len_i)) ) {
+          err_i = errno;
+          ret_i = -1;
+          goto done3;
+        }
+
+        len_i -= off_i;
+      }
+      while ( len_i );
+
+      ret_i = 0;
+      goto done3;
+    }
+#elif defined(U3_OS_osx)
+    if ( !fcopyfile(src_i, dst_i, NULL, COPYFILE_ALL) ) {
+      ret_i = 0;
+      goto done3;
+    }
+
+    //  XX fallback on any errors?
+    //
+#endif
+
+    {
+      size_t pag_i = 1 << 14;;
+      c3_y*  buf_y = c3_malloc(pag_i);
+      ret_i = _king_copy_raw(src_i, dst_i, buf_y, pag_i);
+      err_i = errno;
+      c3_free(buf_y);
+    }
+
+done3:
+    close(dst_i);
+done2:
+    close(src_i);
+done1:
+    errno = err_i;
+    return ret_i;
+  }
+}
+
+/* _king_copy_vere(): copy current binary into $pier/.bin (COW if possible)
+*/
+static c3_i
+_king_copy_vere(c3_c* pac_c, c3_c* ver_c, c3_c* arc_c, c3_t lin_t)
+{
+  c3_c* bin_c;
+  c3_i  ret_i;
+
+  if ( _king_make_pace(pac_c) ) {
+    return -1; // XX
+  }
+
+  ret_i = asprintf(&bin_c, "%s/.bin/%s/vere-v%s-%s" U3_BIN_SUFFIX,
+                           u3_Host.dir_c, pac_c, ver_c, arc_c);
+  c3_assert( ret_i > 0 );
+
+  ret_i = _king_copy_file(u3_Host.dem_c, bin_c);
+
+  if ( ret_i ) {
+    fprintf(stderr, "vere: copy %s -> %s failed: %s\r\n",
+                    bin_c, u3_Host.dem_c, strerror(errno));
+    c3_free(bin_c);
+    return -1;
+  }
+
+  //  XX option
+  //
+  if ( lin_t ) {
+    if ( _king_link_run(bin_c) ) {
+      fprintf(stderr, "vere: link %s/%s failed\n", u3_Host.dir_c, U3_BIN_ALIAS);
+      c3_free(bin_c);
+      return -1;
+    }
+  }
+
+  c3_free(bin_c);
+  return 0;
+}
+
+/* u3_king_dock(): copy binary into pier on boot.
+*/
+void
+u3_king_dock(c3_c* pac_c)
+{
+  c3_c* arc_c = "unknown";
+
+#ifdef U3_OS_ARCH
+  arc_c = U3_OS_ARCH;
+#endif
+
+  //  XX get link option
+  //
+  if ( _king_copy_vere(pac_c, URBIT_VERSION, arc_c, 1) ) {
+    u3l_log("vere: binary copy failed\r\n");
+    u3_king_bail();
+    exit(1);
+  }
+  else {
+    //  NB: failure ignored
+    //
+    _king_init_pace(pac_c);
+    u3l_log("vere: binary copy succeeded\r\n");
+    //  XX print restart instructions
+  }
+}
+
 /* _king_done_cb():
 */
 static void
@@ -980,6 +1623,63 @@ u3_king_done(void)
 {
   uv_handle_t* han_u = (uv_handle_t*)&u3K.tim_u;
 
+  if ( u3_Host.xit_i ) {
+    if ( c3y == u3_Host.nex_o ) {
+      u3l_log("vere: upgrade failed\r\n");
+    }
+    else if ( c3y == u3_Host.pep_o ) {
+      u3l_log("vere: prep for upgrade failed\r\n");
+    }
+  }
+  else {
+    //  get next binary
+    //
+    if ( c3y == u3_Host.nex_o ) {
+      c3_c* pac_c;
+      c3_c* ver_c;
+
+      //  hack to ensure we only try once
+      //
+      u3_Host.nex_o = c3n;
+
+      pac_c = _king_get_pace();
+
+      switch ( u3_king_next(pac_c, &ver_c) ) {
+        case -2: {
+          u3l_log("vere: unable to check for next version\n");
+        } break;
+
+        case -1: {
+          u3l_log("vere: up to date\n");
+        } break;
+
+        case 0: {
+          u3l_log("vere: next (%%%s): %s\n", pac_c, ver_c);
+          _king_do_upgrade(pac_c, ver_c);
+          c3_free(ver_c);
+        } break;
+
+        default: c3_assert(0);
+      }
+
+      c3_free(pac_c);
+    }
+    else if ( c3y == u3_Host.pep_o ) {
+      u3l_log("vere: ready for upgrade\n");
+    }
+
+    //  copy binary into pier on boot
+    //
+    if (  (c3y == u3_Host.ops_u.nuu)
+       && (c3y == u3_Host.ops_u.doc) )
+    {
+      //  hack to ensure we only try once
+      //
+      u3_Host.ops_u.nuu = c3n;
+      u3_king_dock(U3_VERE_PACE);
+    }
+  }
+
   //  XX hack, if pier's are still linked, we're not actually done
   //
   if ( !u3K.pir_u && !uv_is_closing(han_u) ) {
@@ -989,6 +1689,10 @@ u3_king_done(void)
     u3_term_log_exit();
     fflush(stdout);
   }
+
+  //  XX remove move
+  //
+  exit(u3_Host.xit_i);
 }
 
 /* u3_king_exit(): shutdown gracefully
@@ -1004,10 +1708,11 @@ u3_king_exit(void)
 void
 u3_king_bail(void)
 {
+  u3_Host.xit_i = 1;
   _king_forall_unlink(u3_pier_bail);
   _king_loop_exit();
   u3_king_done();
-  exit(1);
+  exit(u3_Host.xit_i);
 }
 
 /* u3_king_grab(): gc the daemon

@@ -31,7 +31,7 @@ c3_c tac_c[256];  //  tracing label
   $%  [%live ?(%meld %pack) ~] :: XX rename
       [%exit ~]
       [%peek mil=@ peek]
-      [%poke mil=@ ovum]  ::  XX replacement y/n
+      [%poke mil=@ ovum]
       [%sync %save ~]
   ==
 +$  gift                                                ::  mars -> urth
@@ -291,7 +291,7 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
   return vir;
 }
 
-/* _mars_poke(): attempt to compute an event.
+/* _mars_poke(): attempt to compute an event. [*eve] is RETAINED.
 */
 static c3_o
 _mars_poke(c3_w mil_w, u3_noun* eve, u3_noun* out)
@@ -339,16 +339,27 @@ _mars_poke(c3_w mil_w, u3_noun* eve, u3_noun* out)
   }
 #endif
 
-  if ( c3n == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), out)) ) {
-    u3_noun dud = *out;
+  {
+    u3_noun pro;
 
-    *eve = _mars_make_crud(*eve, u3k(dud));
-
-    if ( c3n == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), out)) ) {
-      *out = u3nt(dud, *out, u3_nul);
+    if ( c3y == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), &pro)) ) {
+      *out = pro;
+    }
+    else if ( c3__evil == u3h(pro) ) {
+      *out = u3nc(pro, u3_nul);
     }
     else {
-      u3z(dud);
+      u3_noun dud = pro;
+
+      *eve = _mars_make_crud(*eve, u3k(dud));
+
+      if ( c3y == (ret_o = u3v_poke_sure(mil_w, u3k(*eve), &pro)) ) {
+        *out = pro;
+        u3z(dud);
+      }
+      else {
+        *out = u3nt(dud, pro, u3_nul);
+      }
     }
   }
 
@@ -424,8 +435,6 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
       pre_w = u3a_open(u3R);
       mar_u->sen_d++;
 
-      //  XX needs u3_event_trace
-      //
       if ( c3y == _mars_poke(mil_w, &job, &pro) ) {
         mar_u->dun_d = mar_u->sen_d;
         mar_u->mug_l = u3r_mug(u3A->roc);
@@ -825,6 +834,107 @@ _saga_boot_cb(void*        ptr_v,
   return 1;
 }
 
+/* _mars_sign_init(): initialize daemon signal handlers
+*/
+static void
+_mars_sign_init(u3_mars* mar_u)
+{
+  //  handle SIGINFO (if available)
+  //
+#ifdef SIGINFO
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->sil_u.data = mar_u;
+
+    sig_u->num_i = SIGINFO;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+#endif
+
+  //  handle SIGUSR1 (fallback for SIGINFO)
+  //
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->sil_u.data = mar_u;
+
+    sig_u->num_i = SIGUSR1;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+}
+
+/* _mars_sign_cb: signal callback.
+*/
+static void
+_mars_sign_cb(uv_signal_t* sil_u, c3_i num_i)
+{
+  u3_mars* mar_u = sil_u->data;
+
+  switch ( num_i ) {
+    default: {
+      u3l_log("\r\nmars: mysterious signal %d\r\n", num_i);
+    } break;
+
+    //  fallthru if defined
+    //
+#ifdef SIGINFO
+    case SIGINFO:
+#endif
+    case SIGUSR1: {
+      //  XX add u3_mars_slog()
+      //
+      u3_saga_info(mar_u->log_u);
+    } break;
+  }
+}
+
+/* _mars_sign_move(): enable daemon signal handlers
+*/
+static void
+_mars_sign_move(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_signal_start(&sig_u->sil_u, _mars_sign_cb, sig_u->num_i);
+  }
+}
+
+/* _mars_sign_hold(): disable daemon signal handlers
+*/
+static void
+_mars_sign_hold(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_signal_stop(&sig_u->sil_u);
+  }
+}
+
+/* _mars_sign_close(): dispose daemon signal handlers
+*/
+static void
+_mars_sign_close(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_close((uv_handle_t*)&sig_u->sil_u, (uv_close_cb)free);
+  }
+}
+
+/* u3_mars_init(): init mars, replay if necessary.
+*/
 u3_mars*
 u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
 {
@@ -843,8 +953,19 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       .out_u = out_u,
       .sat_e = u3_mars_work_e,
       .gif_u = c3_list_init(),
+      .xit_f = NULL,
     };
   }
+
+  //  start signal handlers
+  //
+  _mars_sign_init(mar_u);
+  _mars_sign_move();
+
+  //  wire up signal controls
+  //
+  u3C.sign_hold_f = _mars_sign_hold;
+  u3C.sign_move_f = _mars_sign_move;
 
   u3_lock_acquire(mar_u->dir_u);
 
@@ -946,7 +1067,7 @@ succeed:
 static u3_noun
 _mars_wyrd_card(c3_m nam_m, c3_w ver_w, c3_l sev_l)
 {
-  //  ghetto (scot %ta)
+  //  XX ghetto (scot %ta)
   //
   u3_noun ver = u3nt(c3__vere, u3i_string("~." URBIT_VERSION), u3_nul);
   // u3_noun sen = u3dc("scot", c3__uv, sev_l); //  lol no
@@ -955,17 +1076,19 @@ _mars_wyrd_card(c3_m nam_m, c3_w ver_w, c3_l sev_l)
 
   //  special case versions requiring the full stack
   //
-  if (  ((c3__zuse == nam_m) && (419 == ver_w))
-     || ((c3__lull == nam_m) && (330 == ver_w))
+  if (  ((c3__zuse == nam_m) && (418 == ver_w))
+     || ((c3__lull == nam_m) && (329 == ver_w))
      || ((c3__arvo == nam_m) && (240 == ver_w)) )
   {
-    kel = u3nl(u3nc(c3__zuse, 419),
-               u3nc(c3__lull, 330),
+    kel = u3nl(u3nc(c3__zuse, 418),
+               u3nc(c3__lull, 329),
                u3nc(c3__arvo, 240),
                u3nc(c3__hoon, 140),
                u3nc(c3__nock, 4),
                u3_none);
   }
+  //  XX speculative!
+  //
   else {
     kel = u3nc(nam_m, u3i_word(ver_w));
   }
@@ -1264,14 +1387,13 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
 {
   c3_o suc_o = c3n;
 
-  // XX source properly
-  //
   u3_boot_opts inp_u;
   {
-    inp_u.veb_o       = c3n;
-    inp_u.lit_o       = c3y;
+    inp_u.veb_o       = __( u3C.wag_w & u3o_verbose );
+    inp_u.lit_o       = c3n; // unimplemented in arvo
+    // XX source kelvin from args?
     inp_u.ver_u.nam_m = c3__zuse;
-    inp_u.ver_u.ver_w = 419;
+    inp_u.ver_u.ver_w = 418;
 
     gettimeofday(&inp_u.tim_u, 0);
     c3_rand(inp_u.eny_w);

@@ -30,7 +30,7 @@
         dub=_|
         prime=_|
     ==
-:-  %boot-pill
+:-  %pill
 ^-  pill:pill
 ::
 =/  sys=path

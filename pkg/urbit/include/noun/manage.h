@@ -43,6 +43,10 @@ u3m_init();
 void
 u3m_pave(c3_o nuu_o);
 
+//! Treat a nock-level exceptoin as a signal interrupt.
+void
+u3m_signal(u3_noun sig_l);
+
 //! Load file, as atom, or bail.
 u3_noun
 u3m_file(c3_c* pas_c);

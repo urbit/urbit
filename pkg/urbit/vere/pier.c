@@ -178,6 +178,8 @@ _pier_on_lord_work_done(void*    ptr_v,
 
   u3_auto_done(egg_u);
 
+  //  XX consider async
+  //
   u3_auto_kick(pir_u->wok_u->car_u, act);
 
   _pier_work(pir_u->wok_u);
@@ -325,14 +327,14 @@ static void
 _pier_on_scry_done(void* ptr_v, u3_noun nun)
 {
   u3_pier* pir_u = ptr_v;
-  u3_weak res = u3r_at(7, nun);
+  u3_weak    res = u3r_at(7, nun);
 
   if (u3_none == res) {
     u3l_log("pier: scry failed\n");
   }
   else {
-    u3_weak out,    pad;
-    c3_c   *ext_c, *pac_c;
+    u3_weak out;
+    c3_c *ext_c, *pac_c;
 
     u3l_log("pier: scry succeeded\n");
 
@@ -362,30 +364,13 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
       u3z(puf);
     }
 
-    //  try to build export target path
-    //
-    {
-      u3_noun pro = u3m_soft(0, _pier_stab, u3i_string(pac_c));
-      if ( 0 == u3h(pro) ) {
-        c3_w len_w = u3kb_lent(u3k(u3t(pro)));
-        pad = u3nt(c3_s4('.', 'u', 'r', 'b'),
-                   c3_s3('p', 'u', 't'),
-                   u3qb_scag(len_w - 1, u3t(pro)));
-      }
-      else {
-        u3l_log("pier: invalid export path %s\n", pac_c);
-        pad = u3_none;
-      }
-      u3z(pro);
-    }
-
     //  if serialization and export path succeeded, write to disk
     //
-    if ( (u3_none != out) && (u3_none != pad) ) {
+    if ( u3_none != out ) {
       c3_c fil_c[256];
       snprintf(fil_c, 256, "%s.%s", pac_c + 1, ext_c);
 
-      u3_unix_save(fil_c, pad);
+      u3_unix_save(fil_c, out);
       u3l_log("pier: scry result in %s/.urb/put/%s\n", u3_Host.dir_c, fil_c);
     }
   }
@@ -529,7 +514,8 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 //  XX organizing version constants
 //
 #define VERE_NAME  "vere"
-#define VERE_ZUSE  419
+#define VERE_ZUSE  418
+#define VERE_LULL  329
 
 /* _pier_wyrd_aver(): check for %wend effect and version downgrade. RETAIN
 */
@@ -628,7 +614,7 @@ _pier_on_lord_wyrd_bail(void* ptr_v, u3_ovum* egg_u, u3_noun lud)
 #endif
 }
 
-/* _pier_wyrd_init(): construct %wyrd.
+/* _pier_wyrd_card(): construct %wyrd.
 */
 static u3_noun
 _pier_wyrd_card(u3_pier* pir_u)
@@ -657,7 +643,7 @@ _pier_wyrd_card(u3_pier* pir_u)
                      u3dc("scot", c3__ta, u3i_string(URBIT_VERSION)),
                      u3_nul);
   u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),  //  XX from both king and serf?
-                     u3nc(c3__lull, 330),        //  XX define
+                     u3nc(c3__lull, VERE_LULL),  //  XX from both king and serf?
                      u3nc(c3__arvo, 240),        //  XX from both king and serf?
                      u3nc(c3__hoon, 140),        //  god_u->hon_y
                      u3nc(c3__nock, 4),          //  god_u->noc_y
@@ -697,12 +683,7 @@ _pier_wyrd_init(u3_pier* pir_u)
 
     c3_assert( u3_auto_next(car_u, &ovo) == egg_u );
 
-    {
-      // struct timeval tim_tv;
-      // gettimeofday(&tim_tv, 0);
-      // u3_lord_work(god_u, egg_u, u3nc(u3_time_in_tv(&tim_tv), ovo));
-      u3_lord_work(god_u, egg_u, ovo);
-    }
+    u3_lord_work(god_u, egg_u, ovo);
   }
 }
 
@@ -734,6 +715,9 @@ _pier_on_lord_save(void* ptr_v)
   // _pier_next(pir_u);
 }
 
+static void
+_pier_bail_impl(u3_pier* pir_u);
+
 /* _pier_on_lord_exit(): worker shutdown.
 */
 static void
@@ -747,9 +731,11 @@ _pier_on_lord_exit(void* ptr_v)
 
   if ( u3_psat_done != pir_u->sat_e ) {
     u3l_log("pier: serf shutdown unexpected\r\n");
+    u3_pier_bail(pir_u);
   }
-
-  u3_pier_bail(pir_u);
+  else {
+    _pier_bail_impl(pir_u);
+  }
 }
 
 /* _pier_on_lord_bail(): worker error.
@@ -769,10 +755,25 @@ _pier_on_lord_bail(void* ptr_v)
 /* _pier_on_lord_live(): worker is ready.
 */
 static void
-_pier_on_lord_live(void* ptr_v)
+_pier_on_lord_live(void* ptr_v, u3_atom who, c3_o fak_o)
 {
   u3_pier* pir_u = ptr_v;
-  _pier_wyrd_init(pir_u);
+
+  //  XX validate
+  //
+  u3r_chubs(0, 2, pir_u->who_d, who);
+  pir_u->fak_o = fak_o;
+
+  //  early exit, preparing for upgrade
+  //
+  //    XX check kelvins?
+  //
+  if ( c3y == u3_Host.pep_o ) {
+    u3_pier_exit(pir_u);
+  }
+  else {
+    _pier_wyrd_init(pir_u);
+  }
 }
 
 /* u3_pier_mass(): construct a $mass branch with noun/list.
@@ -1000,10 +1001,10 @@ _pier_work_close(u3_work* wok_u)
   wok_u->pep_u.data = wok_u;
 }
 
-/* u3_pier_bail(): immediately shutdown.
+/* _pier_bail_impl(): immediately shutdown.
 */
-void
-u3_pier_bail(u3_pier* pir_u)
+static void
+_pier_bail_impl(u3_pier* pir_u)
 {
   pir_u->sat_e = u3_psat_done;
 
@@ -1031,6 +1032,15 @@ u3_pier_bail(u3_pier* pir_u)
   u3_king_done();
 }
 
+/* u3_pier_bail(): fatal error.
+*/
+void
+u3_pier_bail(u3_pier* pir_u)
+{
+  u3_Host.xit_i = 1;
+  _pier_bail_impl(pir_u);
+}
+
 /* u3_pier_exit(): graceful shutdown.
 */
 void
@@ -1047,7 +1057,7 @@ u3_pier_exit(u3_pier* pir_u)
     pir_u->god_u = 0;
   }
   else {
-    u3_pier_bail(pir_u);
+    _pier_bail_impl(pir_u);
   }
 }
 

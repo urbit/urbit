@@ -216,7 +216,7 @@ Hoon kernel (anything under [`pkg/arvo/sys/`][sys]) is bootstrapped from a
 so-called *pill*, and must be recompiled if any changes are made. This should
 happen automatically when you make changes, but if it doesn't, the command to
 manually recompile and install the new kernel is `|reset` in `dojo`.  This
-rebuilds from the `sys` directory in the `home` desk in `%clay`.
+rebuilds from the `sys` directory in the `base` desk in `%clay`.
 
 Currently, `|reset` does not reload apps like `dojo` itself, which will still
 reference the old kernel. To force them to reload, make a trivial edit to their

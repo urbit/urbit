@@ -312,6 +312,7 @@
         c3_c*   puk_c;                      //  -Y, scry result filename
         c3_c*   puf_c;                      //  -Z, scry result format
         c3_o    con;                        //      run conn
+        c3_o    doc;                        //      dock binary in pier
         u3_even* vex_u;                     //  --prop-*, boot enhanchements
       } u3_opts;
 
@@ -320,15 +321,19 @@
       typedef struct _u3_host {
         c3_w       kno_w;                   //  current executing stage
         c3_c*      dir_c;                   //  pier path (no trailing /)
+        c3_c*      dem_c;                   //  daemon executable path
         c3_c*      wrk_c;                   //  worker executable path
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u3_usig*   sig_u;                   //  signal list
-        #if defined(U3_OS_mingw)
+#if defined(U3_OS_mingw)
         HANDLE     cev_u;                   //  Ctrl-C event handle
-        #endif
+#endif
         u3_utty*   uty_u;                   //  linked terminal list
+        c3_o       nex_o;                   //  upgrade requested
+        c3_c*      arc_c;                   //  upgrade to arch
         u3_opts    ops_u;                   //  commandline options
+        c3_o       pep_o;                   //  prep for upgrade
         c3_i       xit_i;                   //  exit code for shutdown
         u3_trac    tra_u;                   //  tracing information
         void     (*bot_f)();                //  call when chis is up
@@ -459,7 +464,7 @@
       */
         typedef struct _u3_lord_cb {
           void* ptr_v;
-          void (*live_f)(void*);
+          void (*live_f)(void*, u3_atom, c3_o);
           void (*slog_f)(void*, c3_w, u3_noun);
           void (*spin_f)(void*, u3_atom, c3_o);
           void (*spun_f)(void*);
@@ -1215,6 +1220,11 @@
         void
         u3_king_slog(void);
 
+      /* u3_king_dock(): copy binary into pier on boot.
+      */
+        void
+        u3_king_dock(c3_c* pac_c);
+
       /* u3_king_done(): all piers closed
       */
         void
@@ -1234,6 +1244,21 @@
       */
         void
         u3_king_grab(void* ptr_v);
+
+      /* u3_king_next(): get next vere version string, if it exists.
+      **         return: 0 is success, -1 is no-op (same version), -2 is error
+      */
+        c3_i
+        u3_king_next(c3_c* pac_c, c3_c** out_c);
+
+      /* u3_king_vere(): download binary as specified.
+      */
+        c3_i
+        u3_king_vere(c3_c* pac_c,  // pace
+                     c3_c* ver_c,  // version
+                     c3_c* arc_c,  // architecture
+                     c3_c* dir_c,  // output directory
+                     c3_t  lin_t); // link to $pier/.run
 
       /* u3_daemon_init(): platform-specific daemon mode initialization.
       */

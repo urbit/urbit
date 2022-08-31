@@ -52,6 +52,7 @@
       c3_d           foq_d;             //  forward queue size
       c3_d           fow_d;             //  forwarded count
       c3_d           fod_d;             //  forwards dropped count
+      c3_d           bad_d;             //  bad ciphertext count
     } sat_u;                            //
   } u3_ames;
 
@@ -768,51 +769,47 @@ _ames_cap_queue(u3_ames* sam_u)
   }
 }
 
-/* _ames_punt_goof(): print %bail error report(s).
-*/
-static void
-_ames_punt_goof(u3_noun lud)
-{
-  if ( 2 == u3qb_lent(lud) ) {
-    u3_pier_punt_goof("hear", u3k(u3h(lud)));
-    u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
-  }
-  else {
-    u3_noun dul = lud;
-    c3_w len_w = 1;
-
-    while ( u3_nul != dul ) {
-      u3l_log("ames: bail %u\r\n", len_w++);
-      u3_pier_punt_goof("ames", u3k(u3h(dul)));
-      dul = u3t(dul);
-    }
-  }
-
-  u3z(lud);
-}
-
 /* _ames_hear_bail(): handle packet failure.
 */
 static void
 _ames_hear_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_ames* sam_u = (u3_ames*)egg_u->car_u;
-  sam_u->sat_u.fal_d++;
+  c3_w     len_w = u3qb_lent(lud);
 
-  if (  (u3C.wag_w & u3o_verbose)
-     || (0 == (sam_u->sat_u.fal_d % 1000)) )
-  {
-    _ames_punt_goof(lud);
-    u3l_log("ames: packet failed (%" PRIu64 " total)\n\n", sam_u->sat_u.fal_d);
+  if ( (1 == len_w) && c3__evil == u3h(u3h(lud)) ) {
+    sam_u->sat_u.bad_d++;
+
+    if (  (u3C.wag_w & u3o_verbose)
+       || (0 == (sam_u->sat_u.bad_d % 100)) )
+    {
+      u3l_log("ames: heard bad crypto (%" PRIu64 " total), "
+              "check azimuth state\r\n",
+              sam_u->sat_u.bad_d);
+    }
   }
   else {
-    u3z(lud);
+    sam_u->sat_u.fal_d++;
 
-    if (  0 == (sam_u->sat_u.fal_d % 1000) )  {
-      u3l_log("ames: packet failed (%" PRIu64 " total)\n\n", sam_u->sat_u.fal_d);
+    if (  (u3C.wag_w & u3o_verbose)
+       || (0 == (sam_u->sat_u.fal_d % 100)) )
+    {
+      if ( 2 == len_w ) {
+        u3_pier_punt_goof("hear", u3k(u3h(lud)));
+        u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
+      }
+      //  !2 traces is unusual, just print the first if present
+      //
+      else if ( len_w ) {
+        u3_pier_punt_goof("hear", u3k(u3h(lud)));
+      }
+
+      u3l_log("ames: packet failed (%" PRIu64 " total)\r\n",
+              sam_u->sat_u.fal_d);
     }
   }
 
+  u3z(lud);
   u3_ovum_free(egg_u);
 }
 
@@ -853,9 +850,10 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
     c3_c* rec_c = u3r_string(rec);
     c3_y* pip_y = (c3_y*)&pac_u->ore_u.pip_w;
 
+    //NOTE  ip byte order assumes little-endian
     u3l_log("ames: forwarding for %s to %s from %d.%d.%d.%d:%d\n",
             sen_c, rec_c,
-            pip_y[0], pip_y[1], pip_y[2], pip_y[3],
+            pip_y[3], pip_y[2], pip_y[1], pip_y[0],
             pac_u->ore_u.por_s);
 
     c3_free(sen_c); c3_free(rec_c);
