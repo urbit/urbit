@@ -471,16 +471,11 @@ u3_saga_needs_rollover(const u3_saga* const log_u)
 c3_t
 u3_saga_needs_bootstrap(const u3_saga* const log_u)
 {
-#ifndef U3_REPLAY_FULL
   c3_assert(log_u);
   const u3_epoc* const poc_u = c3_lode_data(c3_list_peekf(log_u->epo_u.lis_u));
   const size_t         len_i = c3_list_len(log_u->epo_u.lis_u);
   // Bootstrap is needed if the only epoch present is the first epoch.
   return epo_min_d == u3_epoc_first_commit(poc_u) && 1 == len_i;
-#else
-  // Bootstrap is always required on full replay.
-  return 1;
-# endif /* ifndef U3_REPLAY_FULL */
 }
 
 void
@@ -567,6 +562,8 @@ succeed:
   return 1;
 }
 
+//! Replay by restoring the latest epoch's snapshot and then replaying that
+//! epoch's events.
 c3_t
 u3_saga_replay(u3_saga* const log_u,
                c3_d           cur_d,
@@ -585,9 +582,6 @@ u3_saga_replay(u3_saga* const log_u,
     goto end;
   }
 
-  // Replay by restoring the latest epoch's snapshot and then replaying that
-  // epoch's events (the default).
-#ifndef U3_REPLAY_FULL
   u3_epoc* poc_u;
   try_saga(poc_u = _find_epoc(log_u, las_d),
            goto end,
@@ -612,36 +606,6 @@ u3_saga_replay(u3_saga* const log_u,
     }
     cur_d++;
   }
-  // Replay by replaying all epoch's events.
-#else
-  cur_d++;
-
-  c3_lode* nod_u = c3_list_peekf(log_u->epo_u.lis_u);
-  u3_epoc* poc_u = NULL;
-  c3_d     end_d = 0;
-  while ( 1 ) {
-    if ( !poc_u ) {
-      poc_u = c3_lode_data(nod_u);
-      end_d = u3_epoc_last_commit(poc_u);
-      try_epoc(u3_epoc_iter_open(poc_u, cur_d), goto take_snapshot);
-    }
-    c3_y*  byt_y;
-    size_t byt_i;
-    try_epoc(u3_epoc_iter_step(poc_u, &byt_y, &byt_i), goto take_snapshot);
-    if ( !pla_f(ptr_v, cur_d, las_d, byt_y, byt_i) ) {
-      goto take_snapshot;
-    }
-    cur_d++;
-    if ( las_d < cur_d ) {
-      break;
-    }
-    else if ( end_d < cur_d ) {
-      u3_epoc_iter_close(poc_u);
-      poc_u = NULL;
-      nod_u = c3_lode_next(nod_u);
-    }
-  }
-#endif /* ifndef U3_REPLAY_FULL */
   suc_t = 1;
 
 close_iterator:
