@@ -6519,12 +6519,14 @@
   ::                                            ::::::  conditionals
     [%wtbr p=(list hoon)]                               ::  ?|  loobean or
     [%wthp p=wing q=(list (pair spec hoon))]            ::  ?-  pick case in q
+    [%wtfs p=wing q=(list (pair skin hoon))]            ::  ?-  pick case in q
     [%wtcl p=hoon q=hoon r=hoon]                        ::  ?:  if=then=else
     [%wtdt p=hoon q=hoon r=hoon]                        ::  ?.  ?:(p r q)
     [%wtkt p=wing q=hoon r=hoon]                        ::  ?^  if p is a cell
     [%wtgl p=hoon q=hoon]                               ::  ?<  ?:(p !! q)
     [%wtgr p=hoon q=hoon]                               ::  ?>  ?:(p q !!)
     [%wtls p=wing q=hoon r=(list (pair spec hoon))]     ::  ?+  ?-  w=default
+    [%wtbs p=wing q=hoon r=(list (pair skin hoon))]     ::  ?+  ?-  w=default
     [%wtpm p=(list hoon)]                               ::  ?&  loobean and
     [%wtpt p=wing q=hoon r=hoon]                        ::  ?@  if p is atom
     [%wtsg p=wing q=hoon r=hoon]                        ::  ?~  if p is null
@@ -7536,6 +7538,13 @@
   ++  wtsg  |=([sic=hoon non=hoon] (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wthx  |=(syn=skin (gray [%wthx (tele syn) puce]))
   ++  wtts  |=(mod=spec (gray [%wtts (teal mod) puce]))
+  ::
+  ++  wtbs  |=  [gen=hoon opt=(list (pair skin hoon))]
+            %+  gray  %wtbs
+            [puce (blue gen) (turn opt |=([a=skin b=hoon] [a (blue b)]))]
+  ++  wtfs  |=  opt=(list (pair skin hoon))
+            %+  gray  %wtfs
+            [puce (turn opt |=([a=skin b=hoon] [a (blue b)]))]
   --
 ::
 ++  ax
@@ -8673,6 +8682,14 @@
     ::
         [%wtls *]
       [%wthp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
+    ::
+        [%wtfs *]
+      |-  ^-  hoon
+      ?~  q.gen  [%lost [%wing p.gen]]
+      [%wtcl [%wthx p.i.q.gen p.gen] q.i.q.gen $(q.gen t.q.gen)]
+    ::
+        [%wtbs *]
+      [%wtfs p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
     ::
         [%wtpm *]
       |-
@@ -13221,6 +13238,10 @@
                   ['^' ;~(pfix ket (toad tkkt))]
                   ['=' ;~(pfix tis (toad txts))]
                   ['#' ;~(pfix hax (toad txhx))]
+                  ::
+                  ['\\' ;~(pfix bas (toad txbs))]
+                  ['/' ;~(pfix fas (toad txfs))]
+                  ::
                   ['+' ;~(pfix lus (toad txls))]
                   ['&' (rune pam %wtpm exps)]
                   ['@' ;~(pfix pat (toad tkvt))]
@@ -13439,6 +13460,7 @@
               ==
     ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [hoon hoon]
     ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [spec hoon]
+    ++  rucc  (most mash ;~(gunk lore loaf))            ::  list [skin hoon]
     ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing hoon]
     ::
     ::    hoon contents
@@ -13512,6 +13534,13 @@
     ++  txhx  |.  %+  cook  |=  [a=skin b=tiki]
                             (~(wthx ah b) a)
                   ;~(gunk lore teak)
+    ::
+    ++  txbs  |.  %+  cook  |=  [a=tiki b=hoon c=(list (pair skin hoon))]
+                            (~(wtbs ah a) b c)
+                  (butt ;~(gunk teak loaf rucc))
+    ++  txfs  |.  %+  cook  |=  [a=tiki b=(list (pair skin hoon))]
+                            (~(wtfs ah a) b)
+                  (butt ;~(gunk teak rucc))
     ::
     ::    hint syntax
     ::
