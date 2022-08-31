@@ -854,11 +854,11 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       u3l_log("mars: replay to %" PRIu64 " already done (at %" PRIu64 ")\r\n",
               eve_d,
               mar_u->dun_d);
-      goto release_lock;
+      goto free_mars;
     }
 
     try_saga(mar_u->log_u = u3_saga_open(dir_u, &mar_u->met_u),
-             goto release_lock,
+             goto free_mars,
              "failed to open event log at %s",
              c3_path_str(dir_u));
 
@@ -929,8 +929,6 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
 free_event_log:
   u3_saga_close(mar_u->log_u);
   c3_free(mar_u->log_u);
-release_lock:
-  u3_lock_release(mar_u->dir_u);
 free_mars:
   c3_path_free(dir_u);
   c3_path_free(mar_u->dir_u);
