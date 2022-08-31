@@ -1287,40 +1287,23 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
     goto end;
   }
 
-#define try_mkdir(path, failure_action)                                        \
-  do {                                                                         \
-    if ( -1 == mkdir(c3_path_str(path), 0700) ) {                              \
-      if ( EEXIST == errno ) {                                                 \
-        fprintf(stderr, "boot: %s already exists\r\n", c3_path_str(path));     \
-      }                                                                        \
-      else {                                                                   \
-        fprintf(stderr,                                                        \
-                "boot: failed to create directory at %s\r\n",                  \
-                c3_path_str(path));                                            \
-      }                                                                        \
-      failure_action;                                                          \
-    }                                                                          \
-  } while ( 0 )
-
   // Create <pier>.
   c3_path* pax_u = c3_path_fv(1, dir_c);
-  try_mkdir(pax_u, goto free_path);
+  mkdir(c3_path_str(pax_u), 0700);
 
   // Create <pier>/.urb.
   c3_path_push(pax_u, ".urb");
-  try_mkdir(pax_u, goto free_path);
+  mkdir(c3_path_str(pax_u), 0700);
 
   // Create <pier>/.urb/put.
   c3_path_push(pax_u, "put");
-  try_mkdir(pax_u, goto free_path);
+  mkdir(c3_path_str(pax_u), 0700);
   c3_path_pop(pax_u);
 
   // Create <pier>/.urb/get
   c3_path_push(pax_u, "get");
-  try_mkdir(pax_u, goto free_path);
+  mkdir(c3_path_str(pax_u), 0700);
   c3_path_pop(pax_u);
-
-#undef try_mkdir
 
   // Create <pier>.urb/log
   c3_path_push(pax_u, "log");
@@ -1365,7 +1348,6 @@ free_event_log:
   u3_saga_close(log_u);
   c3_free(log_u);
   u3_lock_release(pax_u);
-free_path:
   c3_path_free(pax_u);
 
 end:
