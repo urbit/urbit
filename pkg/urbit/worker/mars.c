@@ -811,7 +811,7 @@ _saga_boot_cb(void*        ptr_v,
   *evt = u3nc(u3ke_cue(u3i_bytes(len_i - 4, byt_y + 4)), *evt);
 
   if ( cur_d < las_d ) {
-    goto succeed;
+    return 1;
   }
 
   *evt       = u3kb_flop(*evt);
@@ -819,18 +819,12 @@ _saga_boot_cb(void*        ptr_v,
   *evt       = u3_nul;
   if ( c3n == suc_o ) {
     fprintf(stderr, "boot: failed to evaluate boot event\r\n");
-    goto fail;
+    return 0;
   }
   fprintf(stderr, "--------------- bootstrap complete ----------------\r\n");
 
   u3e_save();
 
-  goto succeed;
-
-fail:
-  return 0;
-
-succeed:
   return 1;
 }
 
