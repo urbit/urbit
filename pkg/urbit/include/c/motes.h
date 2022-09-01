@@ -979,6 +979,7 @@
 #   define c3__sail   c3_s4('s','a','i','l')
 #   define c3__same   c3_s4('s','a','m','e')
 #   define c3__sand   c3_s4('s','a','n','d')
+#   define c3__sane   c3_s4('s','a','n','e')
 #   define c3__sard   c3_s4('s','a','r','d')
 #   define c3__sav    c3_s3('s','a','v')
 #   define c3__save   c3_s4('s','a','v','e')

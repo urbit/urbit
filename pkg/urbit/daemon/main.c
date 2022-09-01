@@ -651,6 +651,7 @@ _cw_usage(c3_c* bin_c)
     "  %s dock %.*s              copy binary:\n",
     "  %s grab %.*s              measure memory usage:\n",
     "  %s info %.*s              print pier info:\n",
+    "  %s sane %.*s              validate pier state:\n"
     "  %s meld %.*s              deduplicate snapshot:\n",
     "  %s pack %.*s              defragment snapshot:\n",
     "  %s prep %.*s              prepare for upgrade:\n",
@@ -1051,6 +1052,57 @@ _cw_info(c3_i argc, c3_c* argv[])
   _cw_saga_close(u3_Host.dir_c, log_u);
 
   u3m_stop();
+}
+
+/* _cw_sane(): validate pier contents
+*/
+static c3_i
+_cw_sane(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  c3_i sat_i = 0;
+  {
+    c3_path* pax_u = c3_path_fv(1, u3_Host.dir_c);
+    u3_lock_acquire(pax_u);
+    c3_path_push(pax_u, ".urb");
+    c3_path_push(pax_u, "log");
+
+    sat_i = u3_saga_sane(pax_u);
+
+    c3_path_pop(pax_u);
+    c3_path_pop(pax_u);
+    u3_lock_release(pax_u);
+    c3_path_free(pax_u);
+  }
+
+  if ( 0 != sat_i ) {
+    return sat_i;
+  }
+
+  //  do a gc pass to validate the current snapshot
+  //
+  u3m_boot(u3_Host.dir_c, u3e_live);
+  u3C.wag_w |= u3o_hashless;
+  u3_mars_grab();
+  u3m_stop();
+  return 0;
 }
 
 /* _cw_grab(): gc pier.
@@ -1644,6 +1696,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //        [%dock dir=@t]                                ::  copy binary
   //        [?(%grab %mass) dir=@t]                       ::  gc
   //        [%info dir=@t]                                ::  print
+  //        [%sane dir=@t]                                ::  validate
   //        [%meld dir=@t]                                ::  deduplicate
   //        [?(%next %upgrade) dir=@t]                    ::  upgrade
   //        [%pack dir=@t]                                ::  defragment
@@ -1681,6 +1734,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__grab: _cw_grab(argc, argv); return 1;
 
     case c3__info: _cw_info(argc, argv); return 1;
+    case c3__sane: exit(_cw_sane(argc, argv));
     case c3__meld: _cw_meld(argc, argv); return 1;
     case c3__next: _cw_next(argc, argv); return 2; // continue on
     case c3__pack: _cw_pack(argc, argv); return 1;

@@ -112,6 +112,15 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u);
 u3_saga*
 u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u);
 
+//! Validate an existing event log
+//!
+//! @param[in]  pax_u  Root directory of event log.
+//!
+//! @return 0  All epochs sane.
+//! @return    Non-zero status code indicating a problem with the log.
+c3_i
+u3_saga_sane(const c3_path* const pax_u);
+
 //! Get the ID of the last committed event in an event log.
 //!
 //! @param[in] log_u  Event log handle. Must not be NULL.
