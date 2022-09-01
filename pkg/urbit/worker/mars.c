@@ -746,7 +746,6 @@ _saga_replay_cb(void*        ptr_v,
     u3l_log("---------------- playback starting ----------------\r\n");
   }
 
-  c3_t     suc_t = 0;
   u3_mars* mar_u = ptr_v;
 
   mar_u->sen_d = cur_d;
@@ -760,7 +759,7 @@ _saga_replay_cb(void*        ptr_v,
   if ( c3n == u3v_poke_sure(0, evt, &vir) ) {
     u3z(vir);
     fprintf(stderr, "play (%" PRIu64 "): failed\r\n", cur_d);
-    goto end;
+    return 0;
   }
   u3z(_mars_sure_feck(mar_u, pre_w, vir));
 
@@ -794,10 +793,7 @@ _saga_replay_cb(void*        ptr_v,
   else {
     fir_t = 0;
   }
-  suc_t = 1;
-
-end:
-  return suc_t;
+  return 1;
 }
 
 //! Callback invoked for each boot event during boot sequence replay. Create
