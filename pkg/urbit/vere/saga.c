@@ -73,6 +73,18 @@ static const size_t epo_len_i = 100;
 // Static functions
 //==============================================================================
 
+//! Boot from a snapshot.
+//!
+//! Upon successful completion, `u3A->eve_d` represents the most recent event
+//! represented by the epoch's snapshot.
+//!
+//! @param[in] poc_u  Epoch whose snapshot should be used to boot.
+//!
+//! @return 0  The epoch was `NULL`.
+//! @return 1  Successfully booted from the epoch's snapshot.
+static c3_t
+_boot_from_epoc_snapshot(const u3_epoc* const poc_u);
+
 //! Compare two epoch directory names. Used as the comparison function for
 //! qsort().
 //!
@@ -162,6 +174,24 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i);
 //! @param[in] req_u  libuv work handle.
 static void
 _uv_commit_cb(uv_work_t* req_u);
+
+static c3_t
+_boot_from_epoc_snapshot(const u3_epoc* const poc_u)
+{
+  if ( !poc_u ) {
+    return 0;
+  }
+
+  u3e_load(u3_epoc_path_str(poc_u));
+  u3m_pave(c3n);
+  // Place the guard page.
+  u3e_init();
+  u3j_boot(c3n);
+  u3j_ream();
+  u3n_ream();
+
+  return 1;
+}
 
 static inline c3_i
 _cmp_epocs(const void* lef_v, const void* rih_v)
@@ -589,9 +619,13 @@ u3_saga_replay(u3_saga* const log_u,
            las_d);
 
   if ( !u3_epoc_is_first(poc_u) ) {
-    cur_d = u3_epoc_first_evt(poc_u) <= u3A->eve_d
-              ? u3A->eve_d
-              : u3m_boot(u3_epoc_path_str(poc_u), u3e_load);
+    if ( u3A->eve_d < u3_epoc_first_evt(poc_u) ) {
+      try_saga(_boot_from_epoc_snapshot(poc_u),
+               goto end,
+               "failed to boot from %s snapshot\r\n",
+               u3_epoc_path_str(poc_u));
+    }
+    cur_d = u3A->eve_d;
   }
 
   cur_d++;
