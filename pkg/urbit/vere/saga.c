@@ -680,11 +680,14 @@ u3_saga_close(u3_saga* const log_u)
     return;
   }
 
-  // Cancel thread that is performing async commits.
-  // XX can deadlock from signal handler.
-  // XX revise SIGTSTP handlng.
-  if ( u3_saga_async == log_u->mod_e && log_u->act_t ) {
-    while ( UV_EBUSY == uv_cancel((uv_req_t*)&log_u->asy_u.req_u) );
+  // Cancel thread that is performing async commits, short-circuiting clean-up
+  // if we can't cancel the thread.
+  if ( u3_saga_async == log_u->mod_e
+      && log_u->act_t
+      && uv_cancel((uv_req_t*)&log_u->asy_u.req_u) < 0 )
+  {
+    fprintf(stderr, "saga: could not cancel libuv write thread\r\n");
+    return;
   }
 
   if ( log_u->pax_u ) {
