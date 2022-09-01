@@ -43,12 +43,14 @@ struct _u3_saga {
     c3_list*   lis_u;   //!< list of events pending commit
     size_t     req_i;   //!< number of events in commit request
   } eve_u;              //!< events pending commit
-  enum {
-    u3_saga_sync = 0,   //!< sync commit mode
-    u3_saga_async,      //!< async commit mode
-  } mod_e;              //!< commit mode
   c3_t         act_t;   //!< active commit flag
-  u3_saga_acon asy_u;   //!< async commit context
+  struct {
+    uv_loop_t*   lup_u;  //!< libuv event loop
+    uv_work_t    req_u;  //!< libuv work queue handle
+    u3_saga_news com_f;  //!< callback invoked upon commit completion
+    void*        ptr_v;  //!< user context passed to `com_f`
+    c3_t         suc_t;  //!< commit success flag
+  } asy_u;   //!< async commit context
 };
 
 //==============================================================================
@@ -334,7 +336,7 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
 
   // Attempt to commit events that were enqueued after the commit began.
   if ( UV_ECANCELED != sas_i ) {
-    u3_saga_commit(log_u, NULL, 0);
+    u3_saga_commit_async(log_u, NULL, 0);
   }
 }
 
@@ -508,63 +510,63 @@ u3_saga_needs_bootstrap(const u3_saga* const log_u)
   return u3_epoc_is_first(poc_u) && 1 == len_i;
 }
 
-void
-u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u)
+c3_t
+u3_saga_commit_sync(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
 {
-  if ( !asy_u ) {
-    log_u->mod_e = u3_saga_sync;
-    return;
-  }
+  c3_list* const eve_u = log_u->eve_u.lis_u;
+  c3_list_pushb(eve_u, byt_y, byt_i);
+  log_u->eve_d++;
 
-  log_u->mod_e = u3_saga_async;
-  log_u->asy_u = (u3_saga_acon){
-    .lup_u      = asy_u->lup_u,
-    .req_u.data = log_u,
-    .com_f      = asy_u->com_f,
-    .ptr_v      = asy_u->ptr_v,
-  };
+  log_u->eve_u.req_i   = c3_list_len(eve_u);
+  c3_lode* const nod_u = c3_list_peekf(eve_u);
+
+  log_u->act_t = 1;
+  c3_t suc_t   = u3_epoc_commit(log_u->epo_u.cur_u, nod_u, log_u->eve_u.req_i);
+  _remove_committed_events(log_u);
+  log_u->act_t = 0;
+
+  return suc_t;
 }
 
-c3_t
-u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
+void
+u3_saga_set_async_ctx(u3_saga* log_u,
+                      uv_loop_t* const lup_u,
+                      u3_saga_news com_f,
+                      void* ptr_v)
 {
-  c3_list* eve_u = log_u->eve_u.lis_u;
+  if ( !log_u ) {
+    return;
+  }
+  log_u->asy_u.lup_u      = lup_u;
+  log_u->asy_u.req_u.data = log_u;
+  log_u->asy_u.com_f      = com_f;
+  log_u->asy_u.ptr_v      = ptr_v;
+}
+
+
+c3_t
+u3_saga_commit_async(u3_saga* const log_u,
+                     c3_y* const byt_y,
+                     const size_t byt_i)
+{
+  c3_list* const eve_u = log_u->eve_u.lis_u;
   // A NULL event can be passed to invoke another commit batch.
   if ( byt_y ) {
     c3_list_pushb(eve_u, byt_y, byt_i);
     log_u->eve_d++;
   }
-  else if ( 0 == c3_list_len(eve_u) ) {
-    goto succeed;
+
+  // Schedule another commit batch if there are scheduled events to be committed
+  // and no batch is already in progress.
+  if ( c3_list_len(eve_u) > 0 && !log_u->act_t ) {
+    log_u->eve_u.req_i = c3_list_len(eve_u);
+    log_u->act_t       = 1;
+    uv_queue_work(log_u->asy_u.lup_u,
+                  &log_u->asy_u.req_u,
+                  _uv_commit_cb,
+                  _uv_commit_after_cb);
   }
 
-  switch ( log_u->mod_e ) {
-    case u3_saga_sync:
-      log_u->eve_u.req_i = c3_list_len(eve_u);
-      c3_lode* nod_u     = c3_list_peekf(eve_u);
-      log_u->act_t       = 1;
-      if ( !u3_epoc_commit(log_u->epo_u.cur_u, nod_u, log_u->eve_u.req_i) ) {
-        goto fail;
-      }
-      _remove_committed_events(log_u);
-      log_u->act_t = 0;
-      goto succeed;
-    case u3_saga_async:
-      if ( !log_u->act_t ) {
-        log_u->eve_u.req_i = c3_list_len(eve_u);
-        log_u->act_t       = 1;
-        uv_queue_work(log_u->asy_u.lup_u,
-                      &log_u->asy_u.req_u,
-                      _uv_commit_cb,
-                      _uv_commit_after_cb);
-      }
-      goto succeed;
-  }
-
-fail:
-  return 0;
-
-succeed:
   return 1;
 }
 
@@ -682,10 +684,7 @@ u3_saga_close(u3_saga* const log_u)
 
   // Cancel thread that is performing async commits, short-circuiting clean-up
   // if we can't cancel the thread.
-  if ( u3_saga_async == log_u->mod_e
-      && log_u->act_t
-      && uv_cancel((uv_req_t*)&log_u->asy_u.req_u) < 0 )
-  {
+  if ( log_u->act_t && uv_cancel((uv_req_t*)&log_u->asy_u.req_u) < 0 ) {
     fprintf(stderr, "saga: could not cancel libuv write thread\r\n");
     return;
   }

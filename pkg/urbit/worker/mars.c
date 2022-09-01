@@ -149,7 +149,9 @@ _mars_fact(u3_mars* mar_u, u3_noun job, u3_noun pro)
     u3r_bytes(0, len_w, dat_y + sizeof(mug_l), mat);
     u3z(mat);
 
-    u3_saga_commit(mar_u->log_u, dat_y, len_i);
+    u3_saga_commit_async(mar_u->log_u,
+                         dat_y,
+                         len_i);
   }
 
 }
@@ -1008,13 +1010,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       goto free_event_log;
     }
 
-    u3_saga_acon asy_u = {
-      .lup_u = u3L,
-      .com_f = _saga_commit_cb,
-      .ptr_v = mar_u,
-    };
-    // Turn on async commit mode for last epoch.
-    u3_saga_commit_mode(mar_u->log_u, &asy_u);
+    u3_saga_set_async_ctx(mar_u->log_u, u3L, _saga_commit_cb, mar_u);
   }
 
   // These must be set after the replay in order to adhere to the invariant
@@ -1449,7 +1445,7 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
       u3r_bytes(0, len_w, dat_y + 4, mat);
       u3z(mat);
 
-      if ( !u3_saga_commit(log_u, dat_y, 4 + len_w) ) {
+      if ( !u3_saga_commit_sync(log_u, dat_y, 4 + len_w) ) {
         fprintf(stderr, "boot: failed to commit boot event to event log\r\n");
         goto free_event_log;
       }

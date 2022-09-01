@@ -41,22 +41,13 @@ typedef c3_t (*u3_saga_play)(void*        ptr_v,
 //! User-provided function to execute on main thread after an async batch commit
 //! has completed.
 //!
-//! @param[in] ptr_v  Context provided to u3_saga_commit_mode() as `ptr_v`.
+//! @param[in] ptr_v  Context provided to u3_saga_commit_async() as `ptr_v`.
 //! @param[in] ide_d  ID of last event committed in async batch commit.
 //! @param[in] suc_t  True if the commit succeeded.
 //!
 //! @return 1  Success.
 //! @return 0  Otherwise.
 typedef c3_t (*u3_saga_news)(void* ptr_v, c3_d ide_d, c3_t suc_t);
-
-//! Event log async commit mode context.
-typedef struct {
-  uv_loop_t*   lup_u; //!< libuv event loop
-  uv_work_t    req_u; //!< libuv work queue handle
-  u3_saga_news com_f; //!< callback invoked upon commit completion
-  void*        ptr_v; //!< user context passed to `com_f`
-  c3_t         suc_t; //!< commit success flag
-} u3_saga_acon;
 
 //! Event log.
 struct _u3_saga;
@@ -139,26 +130,48 @@ u3_saga_needs_rollover(const u3_saga* const log_u);
 c3_t
 u3_saga_needs_bootstrap(const u3_saga* const log_u);
 
-//! Set the commit mode of an event log to synchronous (the default) or
-//! asynchronous. Must not be called when async commits are in progress.
+//! Synchronously commit an event to an event log.
+//!
+//! Blocks until the event has been committed.
 //!
 //! @param[in] log_u  Event log handle.
-//! @param[in] asy_u  Async context to use for async commits. If NULL, sets
-//!                   commit mode to synchronous.
-void
-u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u);
+//! @param[in] byt_y  Serialized event.
+//! @param[in] byt_i  Length of `byt_y` in byts.
+//!
+//! @return 1  Event was committed.
+//! @return 0  Otherwise.
+c3_t
+u3_saga_commit_sync(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i);
 
-//! Commit an event to an event log.
+//! Set the context for an asynchronous commit.
+//!
+//! This MUST be called before u3_saga_commit_async().
+//!
+//! @param[in] log_u  Event log handle.
+//! @param[in] lup_u  libuv event loop.
+//! @param[in] com_f  Callback invoked upon commit completion.
+//! @param[in] ptr_v  User context passed to `com_f`.
+void
+u3_saga_set_async_ctx(u3_saga* const log_u,
+                      uv_loop_t* const lup_u,
+                      u3_saga_news com_f,
+                      void* ptr_v);
+
+//! Asynchronously commit an event to an event log.
+//!
+//! Returns immediately and invokes the user-provided callback on the main
+//! thread once the event is committed.
 //!
 //! @param[in] log_u  Event log handle.
 //! @param[in] byt_y  Serialized event.
 //! @param[in] byt_i  Length of `byt_y` in bytes.
 //!
-//! @return 1  Event was committed (sync commit mode) or scheduled (async commit
-//!            mode).
+//! @return 1  Event was scheduled for commit.
 //! @return 0  Otherwise.
 c3_t
-u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i);
+u3_saga_commit_async(u3_saga* const log_u,
+                     c3_y* const byt_y,
+                     const size_t byt_i);
 
 //! Roll an event log over to a new epoch. Future calls to u3_saga_commit()
 //! will commit to this new epoch.
