@@ -174,8 +174,10 @@ u3_saga_rollover(u3_saga* const log_u);
 //!
 //! @param[in] log_u  Event log handle.
 //! @param[in] cur_d  ID of event last applied.
-//! @param[in] las_d  ID of event to end replay at (inclusive). If 0, all
-//!                   remaining committed events will be replayed.
+//! @param[in] las_d  ID of event to end replay at (inclusive). Must be greater
+//!                   than or equal to the ID of the first committed event in
+//!                   the most recent epoch. If 0, all remaining committed
+//!                   events will be replayed.
 //! @param[in] pla_f  Replay function invoked on each event.
 //! @param[in] ptr_v  Context passed to replay function.
 //!
