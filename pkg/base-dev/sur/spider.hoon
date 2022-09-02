@@ -1,7 +1,7 @@
 /+  libstrand=strand
 =,  strand=strand:libstrand
 |%
-+$  thread  $-(vase _*form:(strand ,vase))
++$  thread  $-(vase shed:khan)
 +$  input   [=tid =cage]
 +$  tid     tid:strand
 +$  bowl    bowl:strand
@@ -17,5 +17,11 @@
       =beak
       file=term
       =vase
+  ==
++$  inline-args
+  $:  parent=(unit tid)
+      use=(unit tid)
+      =beak
+      =shed:khan
   ==
 --
