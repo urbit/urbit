@@ -40,7 +40,7 @@ static const c3_c who_nam_c[] = "who.bin";
 const c3_w elo_ver_w = 1;
 
 //! Minimum number of events per epoch.
-static const size_t epo_len_i = 100;
+static const size_t epo_len_i = 50000;
 
 //! Maximum number of events in a single batch commit.
 #define max_batch_size 100
