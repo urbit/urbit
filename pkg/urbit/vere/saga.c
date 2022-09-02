@@ -387,7 +387,9 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
     try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_event_log);
     u3_epoc* poc_u;
     try_epoc(poc_u = u3_epoc_new(log_u->pax_u, epo_min_d, met_u->lif_w),
-             goto free_event_log);
+             goto free_event_log,
+             "failed to create first epoch in %s\r\n",
+             c3_path_str(log_u->pax_u));
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
     log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
