@@ -4320,7 +4320,7 @@
       =/  den  ((de now rof hen ruf) her syd)
       abet:+:(aeon-flow:den ?~(yon let.dom:den u.yon) res cache.state &2.state)
     [res (emil moves)]
-  ::  +goad: emit %jolt moves for all desks, applying $rein's
+  ::  +goad: emit %load move for all desks, applying $rein's
   ::
   ++  goad
     ^+  ..abet
@@ -4340,7 +4340,8 @@
     ::
     =.  sat  (apply-precedence sat)
     =^  agents  ..abet  (build-agents sat)
-    =.  ..abet  (build-marks (turn sat head))
+    ::  XX enable before release
+    ::  =.  ..abet  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     =.  ..abet  tare
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill

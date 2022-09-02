@@ -586,14 +586,6 @@
     ?.  =(run-nonce.u.yoke i.t.wire)
       %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
       mo-core
-    ::  if agent must be running, revive all needed agents then apply
-    ::
-    ?:  ?&  ?=(%| -.agent.u.yoke)
-            ?=(?(%dojo %hood) dap)
-        ==
-      =.  mo-core  (mo-pass /nowhere %g %jolt %base %hood)
-      =.  mo-core  (mo-pass /nowhere %g %jolt %base %dojo)
-      (mo-pass use+wire %b %huck sign-arvo)
     ::
     ?.  ?=([?(%gall %behn) %unto *] sign-arvo)
       ?:  ?=(%| -.agent.u.yoke)

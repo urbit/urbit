@@ -157,15 +157,13 @@
 ::    =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
 ::    duz
 ::  ::
-::  ++  mergebase-hashes
-::    |=  [our=@p =desk now=@da =arak]
-::    ?~  rail.arak
-::      ~
-::    =/  her  (scot %p ship.u.rail.arak)
-::    =/  ego  (scot %p our)
-::    =/  wen  (scot %da now)
-::    %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.u.rail.arak])
-::    |=(=tako .^(@uv %cs ~[ego desk wen %hash (scot %uv tako)]))
+++  mergebase-hashes
+  |=  [our=@p syd=desk now=@da =ship sud=desk]
+  =/  her  (scot %p ship)
+  =/  ego  (scot %p our)
+  =/  wen  (scot %da now)
+  %+  turn  .^((list tako) %cs ~[ego syd wen %base her sud])
+  |=(=tako .^(@uv %cs ~[ego syd wen %hash (scot %uv tako)]))
 ::
 ++  enjs
   =,  enjs:format
