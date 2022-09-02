@@ -28,32 +28,6 @@
 #include "c/bile.h"
 
 //==============================================================================
-// Types
-//==============================================================================
-
-//! Event log. Typedefed to `u3_saga`.
-struct _u3_saga {
-  c3_path*     pax_u;   //!< path to event log directory
-  c3_d         eve_d;   //!< ID of youngest event
-  struct {
-    c3_list*   lis_u;   //!< list of epochs (front is oldest, back is youngest)
-    u3_epoc*   cur_u;   //!< current epoch
-  } epo_u;              //!< epochs
-  struct {
-    c3_list*   lis_u;   //!< list of events pending commit
-    size_t     req_i;   //!< number of events in commit request
-  } eve_u;              //!< events pending commit
-  c3_t         act_t;   //!< active commit flag
-  struct {
-    uv_loop_t*   lup_u;  //!< libuv event loop
-    uv_work_t    req_u;  //!< libuv work queue handle
-    u3_saga_news com_f;  //!< callback invoked upon commit completion
-    void*        ptr_v;  //!< user context passed to `com_f`
-    c3_t         suc_t;  //!< commit success flag
-  } asy_u;   //!< async commit context
-};
-
-//==============================================================================
 // Constants
 //==============================================================================
 
@@ -68,8 +42,38 @@ const c3_w elo_ver_w = 1;
 //! Minimum number of events per epoch.
 static const size_t epo_len_i = 100;
 
+//! Maximum number of events in a single batch commit.
+#define max_batch_size 100
+
 //! Size of the `d_name` field of `struct dirent`.
-#define dname_size sizeof(((struct dirent*)NULL)->d_name)
+#define dname_size     sizeof(((struct dirent*)NULL)->d_name)
+
+//==============================================================================
+// Types
+//==============================================================================
+
+//! Event log. Typedefed to `u3_saga`.
+struct _u3_saga {
+  c3_path* pax_u; //!< path to event log directory
+  c3_d     eve_d; //!< ID of youngest event
+  struct {
+    c3_list* lis_u; //!< list of epochs (front is oldest, back is youngest)
+    u3_epoc* cur_u; //!< current epoch
+  } epo_u;          //!< epochs
+  struct {
+    c3_list* lis_u;             //!< list of events pending commit
+    size_t   req_i;             //!< number of events in commit request
+  } eve_u;                      //!< events pending commit
+  size_t his_w[max_batch_size]; //!< histogram of commit batch size
+  c3_t   act_t;                 //!< active commit flag
+  struct {
+    uv_loop_t*   lup_u; //!< libuv event loop
+    uv_work_t    req_u; //!< libuv work queue handle
+    u3_saga_news com_f; //!< callback invoked upon commit completion
+    void*        ptr_v; //!< user context passed to `com_f`
+    c3_t         suc_t; //!< commit success flag
+  } asy_u;              //!< async commit context
+};
 
 //==============================================================================
 // Static functions
@@ -519,7 +523,11 @@ u3_saga_commit_sync(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
   c3_list_pushb(eve_u, byt_y, byt_i);
   log_u->eve_d++;
 
-  log_u->eve_u.req_i   = c3_list_len(eve_u);
+  // There should never be more than one event on the pending commits queue
+  // (i.e. the one we just added), let alone `max_batch_size` (100) commits.
+  log_u->eve_u.req_i = c3_min(c3_list_len(eve_u), max_batch_size);
+  log_u->his_w[log_u->eve_u.req_i]++;
+
   c3_lode* const nod_u = c3_list_peekf(eve_u);
 
   log_u->act_t = 1;
@@ -561,8 +569,10 @@ u3_saga_commit_async(u3_saga* const log_u,
   // Schedule another commit batch if there are scheduled events to be committed
   // and no batch is already in progress.
   if ( c3_list_len(eve_u) > 0 && !log_u->act_t ) {
-    log_u->eve_u.req_i = c3_list_len(eve_u);
-    log_u->act_t       = 1;
+    log_u->eve_u.req_i = c3_min(c3_list_len(eve_u), max_batch_size);
+    log_u->his_w[log_u->eve_u.req_i]++;
+
+    log_u->act_t = 1;
     uv_queue_work(log_u->asy_u.lup_u,
                   &log_u->asy_u.req_u,
                   _uv_commit_cb,
@@ -719,4 +729,5 @@ u3_saga_close(u3_saga* const log_u)
   }
 }
 
+#undef max_batch_size
 #undef dname_size
