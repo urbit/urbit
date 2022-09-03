@@ -244,4 +244,16 @@ u3_epoc_info(const u3_epoc* const poc_u);
 void
 u3_epoc_close(u3_epoc* const poc_u);
 
+//! Delete an epoch from the file system.
+//!
+//! Does not dispose of an epoch's resources. To do so, call
+//! u3_epoc_close() and then free the epoch handle.
+//!
+//! @param[in] poc_u  Epoch handle.
+//!
+//! @return 1  Epoch was successfully deleted from the file system.
+//! @return 0  Otherwise.
+c3_t
+u3_epoc_delete(u3_epoc* const poc_u);
+
 #endif /* ifndef U3_VERE_EPOC_H */

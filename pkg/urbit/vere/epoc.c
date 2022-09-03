@@ -901,4 +901,62 @@ u3_epoc_close(u3_epoc* const poc_u)
   }
 }
 
+c3_t
+u3_epoc_delete(u3_epoc* const poc_u)
+{
+  if ( !poc_u ) {
+    return 0;
+  }
+
+  DIR* dir_u = opendir(u3_epoc_path_str(poc_u));
+  if ( !dir_u ) {
+    fprintf(stderr,
+            "epoc: failed to open %s: %s\r\n",
+            u3_epoc_path_str(poc_u),
+            strerror(errno));
+    return 0;
+  }
+
+  c3_path* pax_u = c3_path_fp(u3_epoc_path(poc_u));
+  struct dirent* ent_u;
+  errno = 0;
+  while ( (ent_u = readdir(dir_u)) ) {
+    if ( 0 == strcmp(ent_u->d_name, ".") || 0 == strcmp(ent_u->d_name, "..") ) {
+      continue;
+    }
+
+    c3_path_push(pax_u, ent_u->d_name);
+    if ( 0 != unlink(c3_path_str(pax_u)) ){
+      fprintf(stderr,
+              "epoc: failed to delete %s: %s\r\n",
+              c3_path_str(pax_u),
+              strerror(errno));
+      c3_path_free(pax_u);
+      return 0;
+    }
+    c3_path_pop(pax_u);
+  }
+  c3_path_free(pax_u);
+
+  c3_t suc_t = (0 == errno);
+  closedir(dir_u);
+  if ( !suc_t ) {
+    fprintf(stderr,
+            "epoc: failed to delete all files in %s: %s\r\n",
+            u3_epoc_path_str(poc_u),
+            strerror(errno));
+    return 0;
+  }
+
+  if ( 0 != rmdir(u3_epoc_path_str(poc_u)) ) {
+    fprintf(stderr,
+            "epoc: failed to delete %s: %s\r\n",
+            u3_epoc_path_str(poc_u),
+            strerror(errno));
+    return 0;
+  }
+
+  return 1;
+}
+
 #undef try_lmdb

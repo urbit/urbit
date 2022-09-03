@@ -647,6 +647,7 @@ _cw_usage(c3_c* bin_c)
 {
   c3_c *use_c[] = {
     "utilities:\n",
+    "  %s chop %.*s<epoch-count> truncate event log:\n",
     "  %s cram %.*s              jam state:\n",
     "  %s dock %.*s              copy binary:\n",
     "  %s grab %.*s              measure memory usage:\n",
@@ -1103,6 +1104,72 @@ _cw_cram(c3_i argc, c3_c* argv[])
   }
 
   u3m_stop();
+}
+
+/* Truncate the event log.
+*/
+static void
+_cw_chop(c3_i argc, c3_c* argv[])
+{
+  // Converts arg to an unsigned long and assigns to cnt_i.
+#define get_epoc_count(arg)                                                    \
+  do {                                                                         \
+      c3_c* end_c;                                                             \
+      cnt_i = strtoul(arg, &end_c, 10);                                        \
+      if ( '\0' != *end_c ) {                                                  \
+        fprintf(stderr, "invalid epoch count: %s\r\n", arg);                   \
+        exit(1);                                                               \
+      }                                                                        \
+  } while ( 0 )
+
+  // If no epoch count is specified at the command line, default to 0
+  // (truncate as many epochs as possible).
+  size_t cnt_i = 0;
+
+  switch ( argc ) {
+    case 3: {
+      // urbit chop <pier>
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        u3_Host.dir_c = argv[2];
+      }
+      // <pier>/.run chop <epoch-count>
+      else {
+        get_epoc_count(argv[2]);
+      }
+    } break;
+
+    // urbit chop <pier> <epoch-count>
+    case 4: {
+      u3_Host.dir_c = argv[2];
+      get_epoc_count(argv[3]);
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+#undef get_epoc_count
+
+  c3_path* const pax_u = c3_path_fv(3, u3_Host.dir_c, ".urb", "log");
+  u3_meta        met_u;
+  u3_saga*       log_u;
+  try_saga(log_u = u3_saga_open(pax_u, &met_u),
+           goto free_path,
+           "failed to open event log at %s\r\n",
+           c3_path_str(pax_u));
+
+  try_saga(u3_saga_truncate(log_u, cnt_i),
+           goto free_event_log,
+           "failed to truncate %lu epochs from event log at %s\r\n",
+           cnt_i,
+           c3_path_str(pax_u));
+
+free_event_log:
+  u3_saga_close(log_u);
+  c3_free(log_u);
+free_path:
+  c3_path_free(pax_u);
 }
 
 /* _cw_queu(): cue rock, save, and exit.
@@ -1654,6 +1721,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   }
 
   switch ( mot_m ) {
+    case c3__chop: _cw_chop(argc, argv); return 1;
     case c3__cram: _cw_cram(argc, argv); return 1;
     case c3__dock: _cw_dock(argc, argv); return 1;
 

@@ -183,6 +183,17 @@ u3_saga_commit_async(u3_saga* const log_u,
 c3_t
 u3_saga_rollover(u3_saga* const log_u);
 
+//! Truncate the event log by deleting old epochs.
+//!
+//! @param[in] cnt_i  Number of old epochs to remove. If 0 or if greater
+//!                   than or equal to the current number of epochs, all but the
+//!                   most recent epoch will be deleted
+//!
+//! @return 1  Old epochs successfully deleted.
+//! @return 0  Otherwise.
+c3_t
+u3_saga_truncate(u3_saga* const log_u, size_t cnt_i);
+
 //! Replay part or all of an event log.
 //!
 //! @param[in] log_u  Event log handle.

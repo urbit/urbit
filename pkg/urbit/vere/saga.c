@@ -606,6 +606,34 @@ succeed:
   return 1;
 }
 
+c3_t
+u3_saga_truncate(u3_saga* const log_u, size_t cnt_i)
+{
+  if ( !log_u ) {
+    return 0;
+  }
+
+  c3_list* const epo_u = log_u->epo_u.lis_u;
+
+  size_t len_i = c3_list_len(epo_u);
+  c3_assert(len_i > 0);
+  cnt_i = ( 0 == cnt_i ) ? len_i - 1 : c3_min(cnt_i, len_i - 1);
+
+  for ( size_t idx_i = 0; idx_i < cnt_i; idx_i++ ) {
+    c3_lode* nod_u = c3_list_popf(epo_u);
+    u3_epoc* poc_u = c3_lode_data(nod_u);
+    if ( !u3_epoc_delete(poc_u) ) {
+      fprintf(stderr,
+              "saga: failed to delete epoch %s\r\n",
+              u3_epoc_path_str(poc_u));
+      return 0;
+    }
+    u3_epoc_close(poc_u);
+    c3_free(nod_u);
+  }
+  return 1;
+}
+
 //! Replay by restoring the latest epoch's snapshot and then replaying that
 //! epoch's events.
 c3_t

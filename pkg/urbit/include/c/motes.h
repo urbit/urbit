@@ -197,6 +197,7 @@
 #   define c3__chew   c3_s4('c','h','e','w')
 #   define c3__chis   c3_s4('c','h','i','s')
 #   define c3__chob   c3_s4('c','h','o','b')
+#   define c3__chop   c3_s4('c','h','o','p')
 #   define c3__chug   c3_s4('c','h','u','g')
 #   define c3__claf   c3_s4('c','l','a','f')
 #   define c3__clam   c3_s4('c','l','a','m')
