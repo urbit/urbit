@@ -551,6 +551,18 @@
       (easy ~)
     ==
   ==
+::  +host-parser: returns [(unit userinfo=@t) (unit port=@ud) host:eyre]
+::
+++  host-parser
+  |^
+  ;~(plug userinfo thor:de-purl:html)
+  ++  userinfo       (punt (cook crip ;~(sfix (star userinfo-char) pat)))
+  ++  userinfo-char  ;~(pose col unreserved sub-delims pct-encoded)
+  ++  unreserved     ;~(pose aln hep dot cab sig)
+  ++  sub-delims     ;~(pose zap buc pam soq pal par tar lus com mic tis)
+  ++  pct-encoded    (cook crip ;~(plug cen hex-char hex-char (easy ~)))
+  ++  hex-char       ;~(pose nud (shim 'a' 'f') (shim 'A' 'F'))
+  --
 ::  +per-server-event: per-event server core
 ::
 ++  per-server-event
@@ -580,7 +592,7 @@
   ::
   ++  request
     |=  [secure=? =address =request:http]
-    ^-  [(list move) server-state]
+    |^  ^-  [(list move) server-state]
     =*  headers  header-list.request
     ::  for requests from localhost, respect the "forwarded" header
     ::
@@ -602,6 +614,35 @@
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
+    :: redirect to https if insecure, redirects enabled,
+    :: secure port live, not an acme challenge and host
+    :: is in domains.state
+    ::
+    ?:  ?&  !secure
+            redirect.http-config.state
+            ?=(^ secure.ports.state)
+            ?!  ?=  [* [%'.well-known' %acme-challenge *] *]
+                (parse-request-line url.request)
+            (host-in-domains host)
+        ==
+      =/  location=@t
+        ;:  (cury cat 3)
+          'https://'
+          (need host)
+          ?:  =(443 u.secure.ports.state)
+            ''
+          (crip ":{(a-co:co u.secure.ports.state)}")
+          ?:  ?=([[~ ~] ~] (parse-request-line url.request))
+            '/'
+          url.request
+        ==
+      %-  handle-response
+      :*  %start
+          :-  status-code=301
+          headers=['location' location]~
+          data=~
+          complete=%.y
+      ==
     ::  figure out whether this is a cors request,
     ::  whether the origin is approved or not,
     ::  and maybe add it to the "pending approval" set
@@ -712,6 +753,20 @@
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+    :: test if host header is valid and turf in domains.state
+    ::
+    ++  host-in-domains
+      |=  raw-host=(unit @t)
+      ^-  ?
+      ?~  raw-host  |
+      =/  auth=(unit [* * =host:eyre])
+        (rush u.raw-host host-parser)
+      ?&  ?=(^ auth)
+          ?=(%.y -.host.u.auth)
+          (~(has in domains.state) p.host.u.auth)
+      ==
+    --
+::
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
@@ -2271,6 +2326,10 @@
       ::
       %live
     =.  ports.server-state.ax  +.task
+    ::  enable http redirects if https port live and cert set
+    ::
+    =.  redirect.http-config.server-state.ax
+      &(?=(^ secure.task) ?=(^ secure.http-config.server-state.ax))
     [~ http-server-gate]
       ::  %rule: updates our http configuration
       ::
@@ -2283,6 +2342,8 @@
       ?:  =(secure.config cert.http-rule.task)
         [~ http-server-gate]
       =.  secure.config  cert.http-rule.task
+      =.  redirect.config
+        &(?=(^ secure.ports.server-state.ax) ?=(^ cert.http-rule.task))
       :_  http-server-gate
       =*  out-duct  outgoing-duct.server-state.ax
       ?~  out-duct  ~
@@ -2533,6 +2594,12 @@
 ++  load
   |=  old=axle
   ^+  ..^$
+  :: enable https redirects if certificate configured
+  ::
+  =.  redirect.http-config.server-state.old
+    ?&  ?=(^ secure.ports.server-state.old)
+        ?=(^ secure.http-config.server-state.old)
+    ==
   ..^$(ax old)
 ::  +stay: produce current state
 ::
