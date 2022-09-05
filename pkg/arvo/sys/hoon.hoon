@@ -11806,7 +11806,7 @@
       %-  punt
       %+  ifix  [pal par]
       %+  more  (jest ', ')
-      ;~((glue ace) a-mane hopefully-quote)
+      ;~((glue ace) a-matt hopefully-quote)
     ::
     ++  wide-tail                                       ::  wide elements
       %+  cook  |=(a=marl:hoot a)
@@ -11873,6 +11873,11 @@
     ::
     ::+|
     ::
+    ++  a-matt                                          ::  matt as hoon
+      %+  cook
+        |=(a=tape (rap 3 ^-((list @) a)))
+      (plus ;~(less (mask " \0a<>\"'=`") prn))
+    ::
     ++  a-mane                                          ::  mane as hoon
       %+  cook
         |=  [a=@tas b=(unit @tas)]
@@ -11938,7 +11943,7 @@
     ++  tall-attrs                                      ::  tall attributes
       %-  star
       ;~  pfix  ;~(plug gap tis)
-        ;~((glue gap) a-mane hopefully-quote)
+        ;~((glue gap) a-matt hopefully-quote)
       ==
     ::
     ++  tall-elem                                       ::  tall preface
@@ -13726,7 +13731,8 @@
 +$  manx  $~([[%$ ~] ~] [g=marx c=marl])                ::  dynamic XML node
 +$  marl  (list manx)                                   ::  XML node list
 +$  mars  [t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]        ::  XML cdata
-+$  mart  (list [n=mane v=tape])                        ::  XML attributes
++$  matt  @t                                            ::  XML attribute name
++$  mart  (list [n=matt v=tape])                        ::  XML attributes
 +$  marx  $~([%$ ~] [n=mane a=mart])                    ::  dynamic XML tag
 +$  mite  (list @ta)                                    ::  mime type
 +$  pass  @                                             ::  public key

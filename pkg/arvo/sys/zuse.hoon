@@ -4398,7 +4398,7 @@
       ?~  tat  rez
       =.  rez  $(tat t.tat)
       ;:  weld
-        (name n.i.tat)
+        (trip n.i.tat)
         "=\""
         (escp(unq |) v.i.tat '"' ?~(t.tat rez [' ' rez]))
       ==
@@ -4461,7 +4461,11 @@
       %+  knee  *mart  |.  ~+
       %-  star
       ;~  plug
-        ;~(pfix (plus whit) name)
+        ;~  pfix  
+          (plus whit)
+          %+  cook  crip
+          (plus ;~(less (mask " \0a<>\"'=`") prn))
+        ==
         ;~  pose
           %+  ifix
             :_  doq
