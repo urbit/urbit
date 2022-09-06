@@ -1487,6 +1487,8 @@
       ?~  tim  acc
       %-  ~(put in acc)
       [u.tim `^duct`~[ames+(make-pump-timer-wire who b) /ames]]
+    =.  want
+      (~(put in want) (add now ~d1) ~[/ames/recork /ames])
     ::
     =/  have
       %-  ~(gas in *(set [@da ^duct]))
@@ -1494,7 +1496,7 @@
         ;;  (list [@da ^duct])
         =<  q.q  %-  need  %-  need
         (rof ~ %bx [[our %$ da+now] /debug/timers])
-      (skim tim |=([@da hen=^duct] ?=([[%ames %pump *] *] hen)))
+      (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
     ::
     ::  set timers for flows that should have one set but don't
     ::
