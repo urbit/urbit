@@ -1229,7 +1229,7 @@
           [%give %kick ~(tap in inbound-paths) ~]~
         %+  turn  ~(tap by boat.yoke)
         |=  [[=wire =dock] ? =path]
-        [%pass (ap-nonce-wire wire dock) %agent dock %leave ~]
+        [%pass wire %agent dock %leave ~]
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::  +ap-from-internal: internal move to move.
