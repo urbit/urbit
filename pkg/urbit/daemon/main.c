@@ -1011,7 +1011,7 @@ _cw_info(c3_i argc, c3_c* argv[])
   c3_path_push(pax_u, ".urb");
   c3_path_push(pax_u, "log");
   u3_meta met_u;
-  u3_saga* log_u = u3_saga_open(pax_u, &met_u);
+  u3_saga* log_u = u3_saga_open(pax_u, c3n, &met_u);
 
   fprintf(stderr,
           "\r\nurbit: %s at event %" PRIu64 "\r\n",
@@ -1030,7 +1030,7 @@ _cw_info(c3_i argc, c3_c* argv[])
 
 /* _cw_sane(): validate pier contents
 */
-static c3_i
+static void
 _cw_sane(c3_i argc, c3_c* argv[])
 {
   switch ( argc ) {
@@ -1051,14 +1051,15 @@ _cw_sane(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_i sat_i = 0;
+  u3_saga* sag_u = NULL;
   {
     c3_path* pax_u = c3_path_fv(1, u3_Host.dir_c);
     u3_lock_acquire(pax_u);
     c3_path_push(pax_u, ".urb");
     c3_path_push(pax_u, "log");
 
-    sat_i = u3_saga_sane(pax_u);
+    u3_meta met_u;
+    sag_u = u3_saga_open(pax_u, c3y, &met_u);
 
     c3_path_pop(pax_u);
     c3_path_pop(pax_u);
@@ -1066,17 +1067,18 @@ _cw_sane(c3_i argc, c3_c* argv[])
     c3_path_free(pax_u);
   }
 
-  if ( 0 != sat_i ) {
-    return sat_i;
+  if ( NULL == sag_u ) {
+    exit(1);
   }
 
   //  do a gc pass to validate the current snapshot
   //
-  u3m_boot(u3_Host.dir_c, u3e_live);
+  u3m_boot(u3_Host.dir_c);
   u3C.wag_w |= u3o_hashless;
   u3_mars_grab();
   u3m_stop();
-  return 0;
+
+  return;
 }
 
 /* _cw_grab(): gc pier.
@@ -1206,7 +1208,7 @@ _cw_chop(c3_i argc, c3_c* argv[])
   c3_path* const pax_u = c3_path_fv(3, u3_Host.dir_c, ".urb", "log");
   u3_meta        met_u;
   u3_saga*       log_u;
-  try_saga(log_u = u3_saga_open(pax_u, &met_u),
+  try_saga(log_u = u3_saga_open(pax_u, c3n, &met_u),
            goto free_path,
            "failed to open event log at %s\r\n",
            c3_path_str(pax_u));
@@ -1782,7 +1784,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__grab: _cw_grab(argc, argv); return 1;
 
     case c3__info: _cw_info(argc, argv); return 1;
-    case c3__sane: exit(_cw_sane(argc, argv));
+    case c3__sane: _cw_sane(argc, argv); return 1;
     case c3__meld: _cw_meld(argc, argv); return 1;
     case c3__next: _cw_next(argc, argv); return 2; // continue on
     case c3__pack: _cw_pack(argc, argv); return 1;

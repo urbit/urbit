@@ -976,7 +976,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       goto free_mars;
     }
 
-    try_saga(mar_u->log_u = u3_saga_open(dir_u, &mar_u->met_u),
+    try_saga(mar_u->log_u = u3_saga_open(dir_u, c3n, &mar_u->met_u),
              goto free_mars,
              "failed to open event log at %s",
              c3_path_str(dir_u));

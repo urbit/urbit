@@ -96,21 +96,13 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u);
 //! Load an existing event log created with u3_saga_new().
 //!
 //! @param[in]  pax_u  Root directory of event log.
+//! @param[in]  san_o  If c3y, only open if full event log passes sanity check.
 //! @param[out] met_u  Pier metadata.
 //!
 //! @return NULL  Existing event log could not be opened.
 //! @return       Handle to open event log.
 u3_saga*
-u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u);
-
-//! Validate an existing event log
-//!
-//! @param[in]  pax_u  Root directory of event log.
-//!
-//! @return 0  All epochs sane.
-//! @return    Non-zero status code indicating a problem with the log.
-c3_i
-u3_saga_sane(const c3_path* const pax_u);
+u3_saga_open(const c3_path* const pax_u, c3_o san_o, u3_meta* const met_u);
 
 //! Get the ID of the last committed event in an event log.
 //!
