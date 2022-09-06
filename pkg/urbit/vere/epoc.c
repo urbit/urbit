@@ -449,6 +449,131 @@ u3_epoc_migrate(c3_path* const       src_u,
     goto fail;
   }
 
+  MDB_env* env_u = _lmdb_init(src_u);
+  if ( !env_u ) {
+    fprintf(stderr,
+            "failed to initialize environment at %s\r\n",
+            c3_path_str(src_u));
+    goto fail;
+  }
+
+  c3_d fir_d, las_d;
+  if ( !_lmdb_gulf(env_u, &fir_d, &las_d) ) {
+    fprintf(stderr,
+            "failed to read first and last event "
+            "numbers from environment at %s\r\n",
+            c3_path_str(src_u));
+    goto close_env;
+  }
+
+  // The incremental snapshot must be up-to-date to successfully update.
+  if ( cur_d != las_d ) {
+    // TODO(peter): update version number.
+    fprintf(stderr,
+            "IMPORTANT: cannot migrate the existing event log format to the\r\n"
+            "           new epoch-based event log format because the\r\n"
+            "           incremental snapshot is not up-to-date. To resolve\r\n"
+            "           this, run your ship using version 1.8 of the urbit\r\n"
+            "           binary and exit *gracefully* using Ctrl-D. Then,\r\n"
+            "           try again using the latest version of the urbit\r\n"
+            "           binary. If you have questions or concerns, please\r\n"
+            "           file an issue against\r\n"
+            "           https://github.com/urbit/urbit and assign it to\r\n"
+            "           mcevoypeter.\r\n");
+    goto close_env;
+  }
+
+  MDB_txn* txn_u;
+  { // Read metadata out of LMDB instance.
+    try_lmdb(mdb_txn_begin(env_u, NULL, MDB_RDONLY, &txn_u),
+             goto close_env,
+             "failed to create read-only transaction");
+
+    MDB_dbi dbi_u;
+    try_lmdb(mdb_dbi_open(txn_u, "META", 0, &dbi_u),
+             goto abort_txn,
+             "failed to open META database in environment at %s",
+             c3_path_str(src_u));
+
+#define lookup_metadata(key_string, destination)                               \
+    do {                                                                       \
+      MDB_val key_u = {                                                        \
+        .mv_data = (void*)key_string,                                          \
+        /* Keys in the META table omit a null terminator. */                   \
+        .mv_size = strlen(key_string),                                         \
+      };                                                                       \
+      MDB_val val_u;                                                           \
+      try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),                          \
+               goto abort_txn,                                                 \
+               "failed to lookup metadata value for key '%s'",                 \
+               key_string);                                                    \
+      destination = u3i_bytes(val_u.mv_size, val_u.mv_data);                   \
+    } while ( 0 )
+
+    {
+      u3_atom who;
+      lookup_metadata("who", who);
+      u3r_chubs(0, 2, met_u->who_d, who);
+      u3z(who);
+    }
+    lookup_metadata("fake", met_u->fak_o);
+    lookup_metadata("life", met_u->lif_w);
+    lookup_metadata("version", met_u->ver_w);
+#undef lookup_metadata
+  }
+
+  // TODO: move LMDB environment and create metadata files.
+  u3_epoc* const poc_u = c3_calloc(sizeof(*poc_u));
+  poc_u->env_u         = env_u;
+  poc_u->fir_d         = fir_d;
+  poc_u->las_d         = las_d;
+  poc_u->pax_u         = _epoc_path(par_u, poc_u->fir_d);
+  mkdir(c3_path_str(poc_u->pax_u), 0700);
+
+  { // Write metadata to binary files.
+    c3_path_push(poc_u->pax_u, ver_nam_c);
+    // Convert to network byte order to ensure portability across platforms of
+    // varying endianness.
+    c3_w ver_w = htonl(met_u->ver_w);
+    if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
+      goto free_epoc;
+    }
+    c3_path_pop(poc_u->pax_u);
+
+    c3_path_push(poc_u->pax_u, lif_nam_c);
+    c3_w lif_w = htonl(met_u->lif_w);
+    if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
+      goto free_epoc;
+    }
+    c3_path_pop(poc_u->pax_u);
+  }
+
+  { // Relocate LMDB instance to the newly created epoch.
+    if ( !_move_file(src_u, poc_u->pax_u, "lock.mdb") ) {
+      goto free_epoc;
+    }
+    if ( !_move_file(src_u, poc_u->pax_u, "data.mdb") ) {
+      goto rename_lock_mdb;
+    }
+  }
+
+  mdb_txn_abort(txn_u);
+  return poc_u;
+
+rename_lock_mdb:
+  c3_assert(_move_file(poc_u->pax_u, src_u, "lock.mdb"));
+  // TODO: remove binary files on failure.
+free_epoc:
+  u3_epoc_close(poc_u);
+  c3_free(poc_u);
+abort_txn:
+  mdb_txn_abort(txn_u);
+close_env:
+  mdb_env_close(env_u);
+fail:
+  return NULL;
+
+#if 0
   u3_epoc* poc_u = c3_calloc(sizeof(*poc_u));
   poc_u->fir_d   = epo_min_d;
   poc_u->las_d   = epo_min_d - 1;
@@ -571,6 +696,7 @@ fail:
 
 succeed:
   return poc_u;
+#endif
 }
 
 u3_epoc*
