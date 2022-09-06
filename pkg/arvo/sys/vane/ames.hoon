@@ -1061,7 +1061,7 @@
       =^  moz  u.cached-state
         ?.  ?=(%7 -.u.cached-state)  [~ u.cached-state]
         ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :-  [[/ames]~ %pass /recork %b %wait `@da`(add now ~m20)]~
+        :-  [[/ames]~ %pass /recork %b %wait `@da`(add now ~d1)]~
         8+(state-7-to-8:load:adult-core +.u.cached-state)
       ?>  ?=(%8 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
@@ -1829,7 +1829,7 @@
       abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
     ::
     =.  event-core
-      (emit duct %pass /recork %b %wait `@da`(add now ~m20))
+      (emit duct %pass /recork %b %wait `@da`(add now ~d1))
     ::
     ?^  error
       %-  (slog 'ames: recork timer failed' u.error)
