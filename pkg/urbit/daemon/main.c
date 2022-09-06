@@ -647,6 +647,7 @@ _cw_usage(c3_c* bin_c)
 {
   c3_c *use_c[] = {
     "utilities:\n",
+    "  %s chop %.*s<epoch-count> truncate event log:\n",
     "  %s cram %.*s              jam state:\n",
     "  %s dock %.*s              copy binary:\n",
     "  %s grab %.*s              measure memory usage:\n",
@@ -950,44 +951,6 @@ _cw_intr_win(c3_c* han_c)
 }
 #endif
 
-//! Get a handle to the event log.
-//!
-//! @param[in] dir_c  Pier directory.
-static inline u3_saga*
-_cw_saga_open(const c3_c* const dir_c)
-{
-  if ( !dir_c ) {
-    return NULL;
-  }
-  c3_path* pax_u = c3_path_fv(1, dir_c);
-  u3_lock_acquire(pax_u);
-  c3_path_push(pax_u, ".urb");
-  c3_path_push(pax_u, "log");
-
-  u3_meta met_u;
-  u3_saga* log_u = u3_saga_open(pax_u, &met_u);
-
-  c3_path_free(pax_u);
-  return log_u;
-}
-
-//! Close handle to event log.
-//!
-//! @param[in] dir_c  Pier directory.
-//! @param[in] log_u  Event log handle.
-static inline void
-_cw_saga_close(const c3_c* const dir_c, u3_saga* const log_u)
-{
-  if ( !dir_c || !log_u ) {
-    return;
-  }
-  u3_saga_close(log_u);
-  c3_free(log_u);
-  c3_path* pax_u = c3_path_fv(1, dir_c);
-  u3_lock_release(pax_u);
-  c3_path_free(pax_u);
-}
-
 /* _cw_dock(): copy binary into pier
 */
 static void
@@ -1039,8 +1002,16 @@ _cw_info(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3e_live);
-  u3_saga* log_u = _cw_saga_open(u3_Host.dir_c);
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+
+  c3_path* pax_u = c3_path_fv(1, u3_Host.dir_c);
+  u3_lock_acquire(pax_u);
+
+  // Open event log.
+  c3_path_push(pax_u, ".urb");
+  c3_path_push(pax_u, "log");
+  u3_meta met_u;
+  u3_saga* log_u = u3_saga_open(pax_u, &met_u);
 
   fprintf(stderr,
           "\r\nurbit: %s at event %" PRIu64 "\r\n",
@@ -1049,7 +1020,10 @@ _cw_info(c3_i argc, c3_c* argv[])
 
   u3_saga_info(log_u);
 
-  _cw_saga_close(u3_Host.dir_c, log_u);
+  u3_saga_close(log_u);
+  c3_free(log_u);
+  u3_lock_release(pax_u);
+  c3_path_free(pax_u);
 
   u3m_stop();
 }
@@ -1128,7 +1102,7 @@ _cw_grab(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  u3m_boot(u3_Host.dir_c, u3e_live);
+  u3m_boot(u3_Host.dir_c);
   u3C.wag_w |= u3o_hashless;
   u3_mars_grab();
   u3m_stop();
@@ -1157,9 +1131,10 @@ _cw_cram(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3e_live);
-  u3_saga* log_u = _cw_saga_open(u3_Host.dir_c);
-  c3_o     ret_o = c3n;
+  c3_d           eve_d = u3m_boot(u3_Host.dir_c);
+  c3_o           ret_o = c3n;
+  c3_path* const pax_u = c3_path_fv(1, u3_Host.dir_c);
+  u3_lock_acquire(pax_u);
 
   fprintf(stderr, "urbit: cram: preparing\r\n");
 
@@ -1173,13 +1148,80 @@ _cw_cram(c3_i argc, c3_c* argv[])
   //  save even on failure, as we just did all the work of deduplication
   //
   u3e_save();
-  _cw_saga_close(u3_Host.dir_c, log_u);
+  u3_lock_release(pax_u);
+  c3_path_free(pax_u);
 
   if ( c3n == ret_o ) {
     exit(1);
   }
 
   u3m_stop();
+}
+
+/* Truncate the event log.
+*/
+static void
+_cw_chop(c3_i argc, c3_c* argv[])
+{
+  // Converts arg to an unsigned long and assigns to cnt_i.
+#define get_epoc_count(arg)                                                    \
+  do {                                                                         \
+      c3_c* end_c;                                                             \
+      cnt_i = strtoul(arg, &end_c, 10);                                        \
+      if ( '\0' != *end_c ) {                                                  \
+        fprintf(stderr, "invalid epoch count: %s\r\n", arg);                   \
+        exit(1);                                                               \
+      }                                                                        \
+  } while ( 0 )
+
+  // If no epoch count is specified at the command line, default to 0
+  // (truncate as many epochs as possible).
+  size_t cnt_i = 0;
+
+  switch ( argc ) {
+    case 3: {
+      // urbit chop <pier>
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        u3_Host.dir_c = argv[2];
+      }
+      // <pier>/.run chop <epoch-count>
+      else {
+        get_epoc_count(argv[2]);
+      }
+    } break;
+
+    // urbit chop <pier> <epoch-count>
+    case 4: {
+      u3_Host.dir_c = argv[2];
+      get_epoc_count(argv[3]);
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+#undef get_epoc_count
+
+  c3_path* const pax_u = c3_path_fv(3, u3_Host.dir_c, ".urb", "log");
+  u3_meta        met_u;
+  u3_saga*       log_u;
+  try_saga(log_u = u3_saga_open(pax_u, &met_u),
+           goto free_path,
+           "failed to open event log at %s\r\n",
+           c3_path_str(pax_u));
+
+  try_saga(u3_saga_truncate(log_u, cnt_i),
+           goto free_event_log,
+           "failed to truncate %lu epochs from event log at %s\r\n",
+           cnt_i,
+           c3_path_str(pax_u));
+
+free_event_log:
+  u3_saga_close(log_u);
+  c3_free(log_u);
+free_path:
+  c3_path_free(pax_u);
 }
 
 /* _cw_queu(): cue rock, save, and exit.
@@ -1217,9 +1259,10 @@ _cw_queu(c3_i argc, c3_c* argv[])
   else {
     fprintf(stderr, "urbit: queu: preparing\r\n");
 
-    u3m_boot(u3_Host.dir_c, u3e_live);
+    u3m_boot(u3_Host.dir_c);
 
-    u3_saga* log_u = _cw_saga_open(u3_Host.dir_c);
+    c3_path* const pax_u = c3_path_fv(1, u3_Host.dir_c);
+    u3_lock_acquire(pax_u);
 
     //  XX can spuriously fail do to corrupt memory-image checkpoint,
     //  need a u3m_half_boot equivalent
@@ -1231,7 +1274,8 @@ _cw_queu(c3_i argc, c3_c* argv[])
     }
 
     u3e_save();
-    _cw_saga_close(u3_Host.dir_c, log_u);
+    u3_lock_release(pax_u);
+    c3_path_free(pax_u);
 
     fprintf(stderr, "urbit: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
     u3m_stop();
@@ -1261,18 +1305,19 @@ _cw_meld(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  u3_saga* log_u = _cw_saga_open(u3_Host.dir_c);
-  c3_w     pre_w;
+  c3_path* const pax_u = c3_path_fv(1, u3_Host.dir_c);
+  u3_lock_acquire(pax_u);
 
   u3C.wag_w |= u3o_hashless;
-  u3m_boot(u3_Host.dir_c, u3e_live);
+  u3m_boot(u3_Host.dir_c);
 
-  pre_w = u3a_open(u3R);
+  c3_w pre_w = u3a_open(u3R);
   u3u_meld();
   u3a_print_memory(stderr, "urbit: meld: gained", (u3a_open(u3R) - pre_w));
 
   u3e_save();
-  _cw_saga_close(u3_Host.dir_c, log_u);
+  u3_lock_release(pax_u);
+  c3_path_free(pax_u);
   u3m_stop();
 }
 
@@ -1351,13 +1396,15 @@ _cw_pack(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  u3_saga* log_u = _cw_saga_open(u3_Host.dir_c);
+  c3_path* const pax_u = c3_path_fv(1, u3_Host.dir_c);
+  u3_lock_acquire(pax_u);
 
-  u3m_boot(u3_Host.dir_c, u3e_live);
+  u3m_boot(u3_Host.dir_c);
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3e_save();
-  _cw_saga_close(u3_Host.dir_c, log_u);
+  u3_lock_release(pax_u);
+  c3_path_free(pax_u);
   u3m_stop();
 }
 
@@ -1575,7 +1622,7 @@ _cw_boot(c3_i argc, c3_c* argv[])
   //
   //    XX s/b explicitly initialization, not maybe-restore
   //
-  u3m_boot(dir_c, u3e_live);
+  u3m_boot(dir_c);
 
   //  set up logging
   //
@@ -1640,7 +1687,7 @@ _cw_work(c3_i argc, c3_c* argv[])
 
   //  setup loom XX strdup?
   //
-  u3m_boot(dir_c, u3e_live);
+  u3m_boot(dir_c);
 
   //  set up logging
   //
@@ -1727,6 +1774,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   }
 
   switch ( mot_m ) {
+    case c3__chop: _cw_chop(argc, argv); return 1;
     case c3__cram: _cw_cram(argc, argv); return 1;
     case c3__dock: _cw_dock(argc, argv); return 1;
 

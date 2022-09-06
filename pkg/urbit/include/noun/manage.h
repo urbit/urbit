@@ -4,12 +4,10 @@
 //! Start the u3 system.
 //!
 //! @param[in] dir_c  Pier directory.
-//! @param[in] sap_f  Function used to load the snapshot. Must be one of
-//!                   u3e_live() or u3e_load().
 //!
 //! @return  Next event number (starting from 1).
 c3_d
-u3m_boot(const c3_c* dir_c, c3_o (*sap_f)(const c3_c* dir_c));
+u3m_boot(const c3_c* dir_c);
 
 //! start without checkpointing.
 c3_d

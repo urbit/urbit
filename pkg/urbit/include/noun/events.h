@@ -94,9 +94,7 @@ u3e_copy(const c3_c* const dir_c);
 //! Load a snapshot copy from a directory into memory.
 //!
 //! @param[in] dir_c  Must contain a valid snapshot.
-//!
-//! @return c3n  Existing snapshot loaded.
-c3_o
+void
 u3e_load(const c3_c* dir_c);
 
 //! Start the incremental snapshot system.

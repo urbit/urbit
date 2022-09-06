@@ -1161,7 +1161,7 @@ exit:
   return suc_o;
 }
 
-c3_o
+void
 u3e_load(const c3_c* dir_c)
 {
   c3_assert(dir_c);
@@ -1179,8 +1179,6 @@ u3e_load(const c3_c* dir_c)
   _ce_image_apply(&nor_u, &sou_u, c3n);
 
   u3e_foul();
-
-  return c3n;
 }
 
 c3_o

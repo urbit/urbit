@@ -67,8 +67,8 @@ const c3_c epo_pre_c[] = "0i";
 //! underflow.
 const c3_d epo_min_d = 1ULL;
 
-//! Name of directory housing first epoch. Should be `<epo_pre_c><epo_min_d>`.
-static const c3_c fir_nam_c[] = "0i1";
+//! Name of directory housing first epoch. Should be `<epo_pre_c><epo_min_d - 1>`.
+static const c3_c fir_nam_c[] = "0i0";
 
 //! Name of binary file containing the epoch version number.
 static const c3_c ver_nam_c[] = "version.bin";
@@ -161,10 +161,11 @@ _epoc_first_evt_from_path(const c3_path* const pax_u);
 static inline c3_t
 _epoc_is_first(const c3_path* const pax_u);
 
-//! Build an epoch path of the form `<par_c>/0i<fir_d>`.
+//! Build an epoch path of the form `<par_c>/0i<fir_d - 1>`.
 //!
 //! @param[in] par_u  Path to parent directory.
-//! @param[in] fir_d
+//! @param[in] fir_d  ID of first event committed to the epoch. Must NOT
+//!                   be 0.
 //!
 //! @return  Epoch path.
 static c3_path*
@@ -245,7 +246,7 @@ _epoc_path(const c3_path* const par_u, const c3_d fir_d)
   static const c3_c lar_c[] = "18446744073709551615";
 
   c3_c dir_c[sizeof(epo_pre_c) + sizeof(lar_c)];
-  snprintf(dir_c, sizeof(dir_c), "%s%" PRIu64, epo_pre_c, fir_d);
+  snprintf(dir_c, sizeof(dir_c), "%s%" PRIu64, epo_pre_c, fir_d - 1);
 
   return c3_path_fv(2, c3_path_str(par_u), dir_c);
 }
@@ -269,7 +270,7 @@ _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d)
   MDB_dbi dbi_u;
   if ( 0 != mdb_dbi_open(txn_u, dab_nam_c, MDB_INTEGERKEY, &dbi_u) ) { // (1)
     *fir_d = epo_min_d;
-    *las_d = 0;
+    *las_d = epo_min_d - 1;
     suc_t = 1;
     goto abort_txn;
   }
@@ -898,6 +899,64 @@ u3_epoc_close(u3_epoc* const poc_u)
   if ( poc_u->pax_u ) {
     c3_path_free(poc_u->pax_u);
   }
+}
+
+c3_t
+u3_epoc_delete(u3_epoc* const poc_u)
+{
+  if ( !poc_u ) {
+    return 0;
+  }
+
+  DIR* dir_u = opendir(u3_epoc_path_str(poc_u));
+  if ( !dir_u ) {
+    fprintf(stderr,
+            "epoc: failed to open %s: %s\r\n",
+            u3_epoc_path_str(poc_u),
+            strerror(errno));
+    return 0;
+  }
+
+  c3_path* pax_u = c3_path_fp(u3_epoc_path(poc_u));
+  struct dirent* ent_u;
+  errno = 0;
+  while ( (ent_u = readdir(dir_u)) ) {
+    if ( 0 == strcmp(ent_u->d_name, ".") || 0 == strcmp(ent_u->d_name, "..") ) {
+      continue;
+    }
+
+    c3_path_push(pax_u, ent_u->d_name);
+    if ( 0 != unlink(c3_path_str(pax_u)) ){
+      fprintf(stderr,
+              "epoc: failed to delete %s: %s\r\n",
+              c3_path_str(pax_u),
+              strerror(errno));
+      c3_path_free(pax_u);
+      return 0;
+    }
+    c3_path_pop(pax_u);
+  }
+  c3_path_free(pax_u);
+
+  c3_t suc_t = (0 == errno);
+  closedir(dir_u);
+  if ( !suc_t ) {
+    fprintf(stderr,
+            "epoc: failed to delete all files in %s: %s\r\n",
+            u3_epoc_path_str(poc_u),
+            strerror(errno));
+    return 0;
+  }
+
+  if ( 0 != rmdir(u3_epoc_path_str(poc_u)) ) {
+    fprintf(stderr,
+            "epoc: failed to delete %s: %s\r\n",
+            u3_epoc_path_str(poc_u),
+            strerror(errno));
+    return 0;
+  }
+
+  return 1;
 }
 
 #undef try_lmdb

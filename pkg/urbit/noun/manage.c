@@ -1736,8 +1736,6 @@ _cm_crypto()
 }
 
 //! Start the environment.
-//!
-//! @note u3l_log() should not be used here.
 void
 u3m_init(void)
 {
@@ -1798,7 +1796,7 @@ u3m_stop()
 /* u3m_boot(): start the u3 system. return next event, starting from 1.
 */
 c3_d
-u3m_boot(const c3_c* dir_c, c3_o (*sap_f)(const c3_c* dir_c))
+u3m_boot(const c3_c* dir_c)
 {
   /* Activate the loom.
   */
@@ -1806,7 +1804,7 @@ u3m_boot(const c3_c* dir_c, c3_o (*sap_f)(const c3_c* dir_c))
 
   /* Activate the storage system.
   */
-  c3_o nuu_o = sap_f(dir_c);
+  c3_o nuu_o = u3e_live(dir_c);
 
   /* Activate tracing.
   */

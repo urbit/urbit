@@ -28,30 +28,6 @@
 #include "c/bile.h"
 
 //==============================================================================
-// Types
-//==============================================================================
-
-//! Event log. Typedefed to `u3_saga`.
-struct _u3_saga {
-  c3_path*     pax_u;   //!< path to event log directory
-  c3_d         eve_d;   //!< ID of youngest event
-  struct {
-    c3_list*   lis_u;   //!< list of epochs (front is oldest, back is youngest)
-    u3_epoc*   cur_u;   //!< current epoch
-  } epo_u;              //!< epochs
-  struct {
-    c3_list*   lis_u;   //!< list of events pending commit
-    size_t     req_i;   //!< number of events in commit request
-  } eve_u;              //!< events pending commit
-  enum {
-    u3_saga_sync = 0,   //!< sync commit mode
-    u3_saga_async,      //!< async commit mode
-  } mod_e;              //!< commit mode
-  c3_t         act_t;   //!< active commit flag
-  u3_saga_acon asy_u;   //!< async commit context
-};
-
-//==============================================================================
 // Constants
 //==============================================================================
 
@@ -64,14 +40,56 @@ static const c3_c who_nam_c[] = "who.bin";
 const c3_w elo_ver_w = 1;
 
 //! Minimum number of events per epoch.
-static const size_t epo_len_i = 100;
+static const size_t epo_len_i = 50000;
+
+//! Maximum number of events in a single batch commit.
+#define max_batch_size 100
 
 //! Size of the `d_name` field of `struct dirent`.
-#define dname_size sizeof(((struct dirent*)NULL)->d_name)
+#define dname_size     sizeof(((struct dirent*)NULL)->d_name)
+
+//==============================================================================
+// Types
+//==============================================================================
+
+//! Event log. Typedefed to `u3_saga`.
+struct _u3_saga {
+  c3_path* pax_u; //!< path to event log directory
+  c3_d     eve_d; //!< ID of youngest event
+  struct {
+    c3_list* lis_u; //!< list of epochs (front is oldest, back is youngest)
+    u3_epoc* cur_u; //!< current epoch
+  } epo_u;          //!< epochs
+  struct {
+    c3_list* lis_u;             //!< list of events pending commit
+    size_t   req_i;             //!< number of events in commit request
+  } eve_u;                      //!< events pending commit
+  size_t his_w[max_batch_size]; //!< histogram of commit batch size
+  c3_t   act_t;                 //!< active commit flag
+  struct {
+    uv_loop_t*   lup_u; //!< libuv event loop
+    uv_work_t    req_u; //!< libuv work queue handle
+    u3_saga_news com_f; //!< callback invoked upon commit completion
+    void*        ptr_v; //!< user context passed to `com_f`
+    c3_t         suc_t; //!< commit success flag
+  } asy_u;              //!< async commit context
+};
 
 //==============================================================================
 // Static functions
 //==============================================================================
+
+//! Boot from a snapshot.
+//!
+//! Upon successful completion, `u3A->eve_d` represents the most recent event
+//! represented by the epoch's snapshot.
+//!
+//! @param[in] poc_u  Epoch whose snapshot should be used to boot.
+//!
+//! @return 0  The epoch was `NULL`.
+//! @return 1  Successfully booted from the epoch's snapshot.
+static c3_t
+_boot_from_epoc_snapshot(const u3_epoc* const poc_u);
 
 //! Compare two epoch directory names. Used as the comparison function for
 //! qsort().
@@ -162,6 +180,24 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i);
 //! @param[in] req_u  libuv work handle.
 static void
 _uv_commit_cb(uv_work_t* req_u);
+
+static c3_t
+_boot_from_epoc_snapshot(const u3_epoc* const poc_u)
+{
+  if ( !poc_u ) {
+    return 0;
+  }
+
+  u3e_load(u3_epoc_path_str(poc_u));
+  u3m_pave(c3n);
+  // Place the guard page.
+  u3e_init();
+  u3j_boot(c3n);
+  u3j_ream();
+  u3n_ream();
+
+  return 1;
+}
 
 static inline c3_i
 _cmp_epocs(const void* lef_v, const void* rih_v)
@@ -304,7 +340,7 @@ _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i)
 
   // Attempt to commit events that were enqueued after the commit began.
   if ( UV_ECANCELED != sas_i ) {
-    u3_saga_commit(log_u, NULL, 0);
+    u3_saga_commit_async(log_u, NULL, 0);
   }
 }
 
@@ -355,7 +391,9 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
     try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_event_log);
     u3_epoc* poc_u;
     try_epoc(poc_u = u3_epoc_new(log_u->pax_u, epo_min_d, met_u->lif_w),
-             goto free_event_log);
+             goto free_event_log,
+             "failed to create first epoch in %s\r\n",
+             c3_path_str(log_u->pax_u));
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
     log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
@@ -559,63 +597,69 @@ u3_saga_needs_bootstrap(const u3_saga* const log_u)
   return u3_epoc_is_first(poc_u) && 1 == len_i;
 }
 
-void
-u3_saga_commit_mode(u3_saga* const log_u, u3_saga_acon* asy_u)
+c3_t
+u3_saga_commit_sync(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
 {
-  if ( !asy_u ) {
-    log_u->mod_e = u3_saga_sync;
-    return;
-  }
+  c3_list* const eve_u = log_u->eve_u.lis_u;
+  c3_list_pushb(eve_u, byt_y, byt_i);
+  log_u->eve_d++;
 
-  log_u->mod_e = u3_saga_async;
-  log_u->asy_u = (u3_saga_acon){
-    .lup_u      = asy_u->lup_u,
-    .req_u.data = log_u,
-    .com_f      = asy_u->com_f,
-    .ptr_v      = asy_u->ptr_v,
-  };
+  // There should never be more than one event on the pending commits queue
+  // (i.e. the one we just added), let alone `max_batch_size` (100) commits.
+  log_u->eve_u.req_i = c3_min(c3_list_len(eve_u), max_batch_size);
+  log_u->his_w[log_u->eve_u.req_i]++;
+
+  c3_lode* const nod_u = c3_list_peekf(eve_u);
+
+  log_u->act_t = 1;
+  c3_t suc_t   = u3_epoc_commit(log_u->epo_u.cur_u, nod_u, log_u->eve_u.req_i);
+  _remove_committed_events(log_u);
+  log_u->act_t = 0;
+
+  return suc_t;
 }
 
-c3_t
-u3_saga_commit(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
+void
+u3_saga_set_async_ctx(u3_saga* log_u,
+                      uv_loop_t* const lup_u,
+                      u3_saga_news com_f,
+                      void* ptr_v)
 {
-  c3_list* eve_u = log_u->eve_u.lis_u;
+  if ( !log_u ) {
+    return;
+  }
+  log_u->asy_u.lup_u      = lup_u;
+  log_u->asy_u.req_u.data = log_u;
+  log_u->asy_u.com_f      = com_f;
+  log_u->asy_u.ptr_v      = ptr_v;
+}
+
+
+c3_t
+u3_saga_commit_async(u3_saga* const log_u,
+                     c3_y* const byt_y,
+                     const size_t byt_i)
+{
+  c3_list* const eve_u = log_u->eve_u.lis_u;
   // A NULL event can be passed to invoke another commit batch.
   if ( byt_y ) {
     c3_list_pushb(eve_u, byt_y, byt_i);
     log_u->eve_d++;
   }
-  else if ( 0 == c3_list_len(eve_u) ) {
-    goto succeed;
+
+  // Schedule another commit batch if there are scheduled events to be committed
+  // and no batch is already in progress.
+  if ( c3_list_len(eve_u) > 0 && !log_u->act_t ) {
+    log_u->eve_u.req_i = c3_min(c3_list_len(eve_u), max_batch_size);
+    log_u->his_w[log_u->eve_u.req_i]++;
+
+    log_u->act_t = 1;
+    uv_queue_work(log_u->asy_u.lup_u,
+                  &log_u->asy_u.req_u,
+                  _uv_commit_cb,
+                  _uv_commit_after_cb);
   }
 
-  switch ( log_u->mod_e ) {
-    case u3_saga_sync:
-      log_u->eve_u.req_i = c3_list_len(eve_u);
-      c3_lode* nod_u     = c3_list_peekf(eve_u);
-      log_u->act_t       = 1;
-      if ( !u3_epoc_commit(log_u->epo_u.cur_u, nod_u, log_u->eve_u.req_i) ) {
-        goto fail;
-      }
-      _remove_committed_events(log_u);
-      log_u->act_t = 0;
-      goto succeed;
-    case u3_saga_async:
-      if ( !log_u->act_t ) {
-        log_u->eve_u.req_i = c3_list_len(eve_u);
-        log_u->act_t       = 1;
-        uv_queue_work(log_u->asy_u.lup_u,
-                      &log_u->asy_u.req_u,
-                      _uv_commit_cb,
-                      _uv_commit_after_cb);
-      }
-      goto succeed;
-  }
-
-fail:
-  return 0;
-
-succeed:
   return 1;
 }
 
@@ -640,6 +684,34 @@ fail:
   return 0;
 
 succeed:
+  return 1;
+}
+
+c3_t
+u3_saga_truncate(u3_saga* const log_u, size_t cnt_i)
+{
+  if ( !log_u ) {
+    return 0;
+  }
+
+  c3_list* const epo_u = log_u->epo_u.lis_u;
+
+  size_t len_i = c3_list_len(epo_u);
+  c3_assert(len_i > 0);
+  cnt_i = ( 0 == cnt_i ) ? len_i - 1 : c3_min(cnt_i, len_i - 1);
+
+  for ( size_t idx_i = 0; idx_i < cnt_i; idx_i++ ) {
+    c3_lode* nod_u = c3_list_popf(epo_u);
+    u3_epoc* poc_u = c3_lode_data(nod_u);
+    if ( !u3_epoc_delete(poc_u) ) {
+      fprintf(stderr,
+              "saga: failed to delete epoch %s\r\n",
+              u3_epoc_path_str(poc_u));
+      return 0;
+    }
+    u3_epoc_close(poc_u);
+    c3_free(nod_u);
+  }
   return 1;
 }
 
@@ -670,9 +742,13 @@ u3_saga_replay(u3_saga* const log_u,
            las_d);
 
   if ( !u3_epoc_is_first(poc_u) ) {
-    cur_d = u3_epoc_first_evt(poc_u) <= u3A->eve_d
-              ? u3A->eve_d
-              : u3m_boot(u3_epoc_path_str(poc_u), u3e_load);
+    if ( u3A->eve_d < u3_epoc_first_evt(poc_u) ) {
+      try_saga(_boot_from_epoc_snapshot(poc_u),
+               goto end,
+               "failed to boot from %s snapshot\r\n",
+               u3_epoc_path_str(poc_u));
+    }
+    cur_d = u3A->eve_d;
   }
 
   cur_d++;
@@ -727,11 +803,11 @@ u3_saga_close(u3_saga* const log_u)
     return;
   }
 
-  // Cancel thread that is performing async commits.
-  // XX can deadlock from signal handler.
-  // XX revise SIGTSTP handlng.
-  if ( u3_saga_async == log_u->mod_e && log_u->act_t ) {
-    while ( UV_EBUSY == uv_cancel((uv_req_t*)&log_u->asy_u.req_u) );
+  // Cancel thread that is performing async commits, short-circuiting clean-up
+  // if we can't cancel the thread.
+  if ( log_u->act_t && uv_cancel((uv_req_t*)&log_u->asy_u.req_u) < 0 ) {
+    fprintf(stderr, "saga: could not cancel libuv write thread\r\n");
+    return;
   }
 
   if ( log_u->pax_u ) {
@@ -762,4 +838,5 @@ u3_saga_close(u3_saga* const log_u)
   }
 }
 
+#undef max_batch_size
 #undef dname_size
