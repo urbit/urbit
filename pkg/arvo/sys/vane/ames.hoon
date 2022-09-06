@@ -1801,7 +1801,7 @@
       ::  if we haven't received an attestation, ask again
       ::
       ?^  error
-        %-  (slog leaf+"ames: attestation timer failed: {<u.error>}" ~)
+        %-  (slog 'ames: attestation timer failed' u.error)
         event-core
       ?~  ship=`(unit @p)`(slaw %p i.t.wire)
         %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
@@ -1828,6 +1828,10 @@
     ::
     =.  event-core
       (emit duct %pass /recork %b %wait `@da`(add now ~m20))
+    ::
+    ?^  error
+      %-  (slog 'ames: recork timer failed' u.error)
+      event-core
     ::  recork up to one bone per peer
     ::
     =/  pez  ~(tap by peers.ames-state)
