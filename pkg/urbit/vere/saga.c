@@ -466,7 +466,8 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
   c3_w* lif_w = &met_u->lif_w;
   for ( size_t idx_i = 0; idx_i < ent_i; idx_i++ ) {
     c3_path_push(log_u->pax_u, ent_c[idx_i]);
-    try_epoc(poc_u = u3_epoc_open(log_u->pax_u, lif_w), goto free_dir_entries);
+    try_epoc(poc_u = u3_epoc_open(log_u->pax_u, idx_i < ent_i - 1, lif_w),
+             goto free_dir_entries);
     c3_path_pop(log_u->pax_u);
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);

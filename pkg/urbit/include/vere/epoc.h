@@ -98,6 +98,10 @@ u3_epoc_migrate(c3_path* const       src_u,
 //! Load an existing epoch created with u3_epoc_new().
 //!
 //! @param[in]  pax_u  Root directory of epoch.
+//! @param[in]  rdo_t  If non-zero, the epoch will be inert (a strict form of
+//!                    read-only), meaning that only the epoch's first and last
+//!                    event numbers and path will be accessible. In particular,
+//!                    u3_epoc_commit() and u3_epoc_iter_*() must NOT be called.
 //! @param[out] lif_w  Pointer to length of boot sequence. Only relevant for
 //!                    first epoch. Can be NULL if not first epoch. If not NULL
 //!                    and not first epoch, will be set to 0.
@@ -105,7 +109,7 @@ u3_epoc_migrate(c3_path* const       src_u,
 //! @return NULL  Existing epoch could not be opened.
 //! @return       Handle to open epoch.
 u3_epoc*
-u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w);
+u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w);
 
 //! Get the file path of an epoch.
 //!

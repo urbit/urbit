@@ -700,7 +700,7 @@ succeed:
 }
 
 u3_epoc*
-u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
+u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w)
 {
   if ( !pax_u ) {
     goto fail;
@@ -758,16 +758,18 @@ u3_epoc_open(const c3_path* const pax_u, c3_w* const lif_w)
     poc_u->las_d = poc_u->fir_d - 1;
   }
 
-  goto succeed;
+  if ( rdo_t ) {
+    mdb_env_close(poc_u->env_u);
+    poc_u->env_u = NULL;
+  }
+
+  return poc_u;
 
 free_epoc:
   u3_epoc_close(poc_u);
   c3_free(poc_u);
 fail:
   return NULL;
-
-succeed:
-  return poc_u;
 }
 
 const c3_path*
