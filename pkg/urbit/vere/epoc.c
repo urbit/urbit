@@ -514,7 +514,8 @@ u3_epoc_migrate(c3_path* const       src_u,
     do {                                                                       \
       MDB_val key_u = {                                                        \
         .mv_data = (void*)key_string,                                          \
-        .mv_size = strlen(key_string) + 1,                                     \
+        /* Keys in the META table omit a null terminator. */                   \
+        .mv_size = strlen(key_string),                                         \
       };                                                                       \
       MDB_val val_u;                                                           \
       try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),                          \
