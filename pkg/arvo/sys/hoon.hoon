@@ -11410,13 +11410,12 @@
   ==
 ::
 ++  slew                                                ::  get axis in vase
-  |=  [axe=@ vax=vase]  ^-  (unit vase)
-  ?.  |-  ^-  ?
-      ?:  =(1 axe)  &
-      ?.  ?=(^ q.vax)  |
-      $(axe (mas axe), q.vax .*(q.vax [0 (cap axe)]))
-    ~
-  `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
+  |=  [axe=@ vax=vase]
+  =/  typ  |.  (~(peek ut p.vax) %free axe)
+  |-  ^-  (unit vase)
+  ?:  =(1 axe)  `[$:typ q.vax]
+  ?@  q.vax     ~
+  $(axe (mas axe), q.vax ?-((cap axe) %2 -.q.vax, %3 +.q.vax))
 ::
 ++  slim                                                ::  identical to seer?
   |=  old=vise  ^-  vase
