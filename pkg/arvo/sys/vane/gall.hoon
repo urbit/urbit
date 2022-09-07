@@ -262,13 +262,17 @@
     ^+  mo-core
     ::
     =/  yak  (~(get by yokes.state) dap)
-    =/  tex
-      ?~  yak  "installing"
-      ?-  -.agent.u.yak
-        %&  "reloading"
-        %|  "reviving"
+    =/  tex=(unit tape)
+      ?~  yak  `"installing"
+      ?-    -.agent.u.yak
+          %|  `"reviving"
+          %&
+        ?:  =(code.u.yak agent)
+          ~
+        `"reloading"
       ==
-    ~>  %slog.[0 leaf+"gall: {tex} {<dap>}"]
+    =+  ?~  tex  ~
+        ~>  %slog.[0 leaf+"gall: {u.tex} {<dap>}"]  ~
     ::
     ?^  yak
       ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
@@ -690,13 +694,15 @@
       |-  ^+  mo-core
       ?~  agents  mo-core
       =/  [=dude =desk]  [dude q.beak]:i.agents
-      ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
+      ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
       $(agents t.agents, mo-core (mo-receive-core i.agents))
     ::
     =/  kil
-      =/  old  ~(key by yokes.state)
+      =/  lol  (skim ~(tap by yokes.state) |=([term yoke] -.agent))
+      =/  mol  (~(gas by *(map term yoke)) lol)
+      =/  sol  ~(key by mol)
       =/  new  (silt (turn agents head))
-      ~(tap in (~(dif in old) new))
+      ~(tap in (~(dif in sol) new))
     |-  ^+  mo-core
     ?~  kil  mo-core
     ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
@@ -786,12 +792,6 @@
     ::
     ?.  |(!is-running is-blocked)
       (mo-apply agent routes deal)
-    ::  if agent must be running, revive all needed agents then apply
-    ::
-    ?:  ?=(?(%hood %dojo) agent)
-      =.  mo-core  (mo-pass /nowhere %g %jolt %base %hood)
-      =.  mo-core  (mo-pass /nowhere %g %jolt %base %dojo)
-      (mo-slip %g %deal [ship our] agent deal)
     ::
     =/  blocked=(qeu blocked-move)
       =/  waiting  (~(get by blocked.state) agent)
