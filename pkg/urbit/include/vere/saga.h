@@ -95,6 +95,8 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u);
 
 //! Load an existing event log created with u3_saga_new().
 //!
+//! TODO: explain assumptions around u3m_init().
+//!
 //! @param[in]  pax_u  Root directory of event log.
 //! @param[out] met_u  Pier metadata.
 //!
@@ -195,6 +197,8 @@ c3_t
 u3_saga_truncate(u3_saga* const log_u, size_t cnt_i);
 
 //! Replay part or all of an event log.
+//!
+//! TODO: explain assumptions around u3m_init().
 //!
 //! @param[in] log_u  Event log handle.
 //! @param[in] cur_d  ID of event last applied.
