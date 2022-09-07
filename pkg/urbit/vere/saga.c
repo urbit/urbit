@@ -235,32 +235,32 @@ _check_epoc_sanity(u3_epoc* const poc_u, c3_d* const nex_d, c3_l* const mug_l)
     if ( *mug_l != u3r_mug(u3A->roc) ) {
       u3l_log("saga: snapshot for epoch %s not contiguous: mug mismatch\n",
               u3_epoc_path_str(poc_u));
-      return FALSE;
+      return 0;
     }
   }
 
   //  read the next mug from the last event in the epoch
   if ( !u3_epoc_iter_open(poc_u, u3_epoc_last_commit(poc_u)) ) {
     u3l_log("saga: failed to open epoch event log\n");
-    return FALSE;
+    return 0;
   }
   c3_y*  dat_y;
   size_t dat_i;
   if ( !u3_epoc_iter_step(poc_u, &dat_y, &dat_i) ) {
     u3l_log("saga: failed to read last event\n");
     u3_epoc_iter_close(poc_u);
-    return FALSE;
+    return 0;
   }
   u3_epoc_iter_close(poc_u);
   if ( dat_i < 4 ) {
     u3l_log("saga: malformed event, too short for mug\n");
-    return FALSE;
+    return 0;
   }
   *mug_l = dat_y[0]
          | dat_y[1] << 8
          | dat_y[2] << 16
          | dat_y[3] << 24;
-  return TRUE;
+  return 1;
 }
 
 static c3_t
@@ -518,7 +518,7 @@ u3_saga_open(const c3_path* const pax_u, c3_t san_t, u3_meta* const met_u)
   try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_dir_entries);
   u3_epoc *poc_u;
   c3_w* lif_w = &met_u->lif_w;
-  c3_t  pas_t = TRUE;
+  c3_t  pas_t = 1;
   c3_d  nex_d = 0;
   c3_l  mug_l = 0;
   for ( size_t idx_i = 0; idx_i < ent_i; idx_i++ ) {
