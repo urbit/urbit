@@ -1035,67 +1035,60 @@ ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 }
 
 static inline void
-_bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
+_bsw_bytes_unsafe(ur_bsw_t *bsw, const uint64_t len, const uint8_t* src)
 {
-  uint64_t len_byt = len >> 3;
-  uint8_t  len_bit = ur_mask_3(len);
-  uint64_t    fill = bsw->fill;
-  uint8_t      off = bsw->off;
+  uint64_t fill = bsw->fill;
+  uint8_t   off = bsw->off;
+  uint8_t  *dst = bsw->bytes + fill;
 
   if ( !off ) {
-    memcpy(bsw->bytes + fill, byt, len_byt);
-    fill += len_byt;
-    off   = len_bit;
+    const uint64_t len_byt = len >> 3;
+    const uint8_t  len_bit = ur_mask_3(len);
 
-    if ( off ) {
-      bsw->bytes[fill] = byt[len_byt] & ((1 << off) - 1);
+    memcpy(dst, src, len_byt);
+    bsw->fill = fill + len_byt;
+
+    if ( len_bit ) {
+      dst[len_byt] = src[len_byt] & ((1 << len_bit) - 1);
+      bsw->off = len_bit;
     }
   }
-  //  the least-significant bits of the input become the
-  //  most-significant bits of a byte in the output stream, and vice-versa
-  //
-  else {
-    uint8_t rest = 8 - off;
-    uint8_t mask = (1 << rest) - 1;
-    uint8_t l, m = bsw->bytes[fill];
-    uint64_t   i;
+  else  {
+    const uint8_t rest = 8 - off;
 
-    for ( i = 0; i < len_byt; i++ ) {
-      l = byt[i] & mask;
-      bsw->bytes[fill++] = m ^ (l << off);
-      m = byt[i] >> rest;
-    }
+    if ( rest >= len ) {
+      uint16_t ful = off + len;
 
-    //  no trailing bits; we need only write the rest of the last byte.
-    //
-    //    NB: while semantically equivalent to the subsequent block,
-    //    this case must be separate to avoid reading off the end of [byt]
-    //
-    if ( !len_bit ) {
-      bsw->bytes[fill] = m;
+      *dst ^= (*src & ((1 << len) - 1)) << off;
+
+      if ( ful >> 3 ) {
+        bsw->fill = fill + 1;
+      }
+
+      bsw->off = ur_mask_3(ful);
     }
-    //  trailing bits fit into the current output byte.
-    //
-    else if ( len_bit < rest ) {
-      l = byt[len_byt] & ((1 << len_bit) - 1);
-      bsw->bytes[fill] = m ^ (l << off);
-      off += len_bit;
-    }
-    //  trailing bits extend into the next output byte.
-    //
     else {
-      l = byt[len_byt] & mask;
-      bsw->bytes[fill++] = m ^ (l << off);
+      const uint64_t     nel = len - rest;
+      const uint64_t len_byt = nel >> 3;
+      const uint8_t  len_bit = ur_mask_3(nel);
 
-      m = byt[len_byt] >> rest;
+      *dst++ ^= *src << off;
 
-      off = len_bit - rest;
-      bsw->bytes[fill] = m & ((1 << off) - 1);
+      for ( uint64_t i = 0; i < len_byt; i++ ) {
+        dst[i] = (src[i] >> rest) ^ (src[i + 1] << off);
+      }
+
+      {
+        uint8_t  tal = (src[len_byt] >> rest)
+                     ^ (( off > len_bit ) ? 0 : (src[len_byt + 1] << off));
+        dst[len_byt] = tal & ((1 << len_bit) - 1);
+      }
+
+      bsw->fill = fill + len_byt + 1;
+      bsw->off  = len_bit;
     }
   }
 
-  bsw->off   = off;
-  bsw->fill  = fill;
   bsw->bits += len;
 }
 
