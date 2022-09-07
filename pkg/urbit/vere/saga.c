@@ -209,12 +209,8 @@ _cmp_epocs(const void* lef_v, const void* rih_v)
   return len_i == ren_i ? strcmp(lef_c, rih_c) : len_i - ren_i;
 }
 
-static c3_o
-_check_epoc_sanity(      u3_epoc* poc_u,
-                         c3_path* pax_u,
-                   const c3_c*    ent_c,
-                         c3_d*    nex_d,
-                         c3_l*    mex_l)
+static c3_t
+_check_epoc_sanity(u3_epoc* const poc_u, c3_d* const nex_d, c3_l* const mug_l)
 {
   //  check epoch's event range for contiguousness with earlier epochs.
   //  first epoch may start at arbitrary event nr, so we don't check it.
@@ -223,49 +219,48 @@ _check_epoc_sanity(      u3_epoc* poc_u,
     u3l_log("saga: snapshot for epoch %s not contiguous: "
             "expected first event of %" PRIu64 ", got %" PRIu64 "\n",
             u3_epoc_path_str(poc_u), *nex_d, fir_d);
-    return c3n;
+    return 0;
   }
   *nex_d = u3_epoc_last_commit(poc_u) + 1;
 
   //  load the snapshot so we can validate its mug
-  if ( 0 != *mex_l ) {
+  if ( 0 != *mug_l ) {
     //NOTE  careful, will clobber all existing noun references!
-    c3_path_push(pax_u, ent_c);
-    //TODO  want _boot_from_epoc_snapshot but it ends up crashing in events.c
+    //  we want to use _boot_from_epoc_snapshot here but the boot logic is
+    //  fragile and doesn't play nice with what we're doing here.
     u3m_init();
-    u3e_load(c3_path_str(pax_u));
+    u3e_load(u3_epoc_path_str(poc_u));
     u3m_pave(c3n);
-    c3_path_pop(pax_u);
 
-    if ( *mex_l != u3r_mug(u3A->roc) ) {
+    if ( *mug_l != u3r_mug(u3A->roc) ) {
       u3l_log("saga: snapshot for epoch %s not contiguous: mug mismatch\n",
               u3_epoc_path_str(poc_u));
-      return c3n;
+      return FALSE;
     }
   }
 
   //  read the next mug from the last event in the epoch
   if ( !u3_epoc_iter_open(poc_u, u3_epoc_last_commit(poc_u)) ) {
     u3l_log("saga: failed to open epoch event log\n");
-    return c3n;
+    return FALSE;
   }
   c3_y*  dat_y;
   size_t dat_i;
   if ( !u3_epoc_iter_step(poc_u, &dat_y, &dat_i) ) {
     u3l_log("saga: failed to read last event\n");
     u3_epoc_iter_close(poc_u);
-    return c3n;
+    return FALSE;
   }
   u3_epoc_iter_close(poc_u);
   if ( dat_i < 4 ) {
     u3l_log("saga: malformed event, too short for mug\n");
-    return c3n;
+    return FALSE;
   }
-  *mex_l = dat_y[0]
+  *mug_l = dat_y[0]
          | dat_y[1] << 8
          | dat_y[2] << 16
          | dat_y[3] << 24;
-  return c3y;
+  return TRUE;
 }
 
 static c3_t
@@ -472,7 +467,7 @@ succeed:
 }
 
 u3_saga*
-u3_saga_open(const c3_path* const pax_u, c3_o san_o, u3_meta* const met_u)
+u3_saga_open(const c3_path* const pax_u, c3_t san_t, u3_meta* const met_u)
 {
   u3_saga* log_u = c3_calloc(sizeof(*log_u));
   if ( !(log_u->pax_u = c3_path_fp(pax_u)) ) {
@@ -523,17 +518,16 @@ u3_saga_open(const c3_path* const pax_u, c3_o san_o, u3_meta* const met_u)
   try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_dir_entries);
   u3_epoc *poc_u;
   c3_w* lif_w = &met_u->lif_w;
-  c3_o  pas_o = c3y;
+  c3_t  pas_t = TRUE;
   c3_d  nex_d = 0;
-  c3_l  mex_l = 0;
+  c3_l  mug_l = 0;
   for ( size_t idx_i = 0; idx_i < ent_i; idx_i++ ) {
     c3_path_push(log_u->pax_u, ent_c[idx_i]);
     try_epoc(poc_u = u3_epoc_open(log_u->pax_u, lif_w), goto free_dir_entries);
     c3_path_pop(log_u->pax_u);
 
-    if ( c3y == san_o ) {
-      pas_o = _check_epoc_sanity(
-        poc_u, log_u->pax_u, ent_c[idx_i], &nex_d, &mex_l);
+    if ( san_t ) {
+      pas_t = _check_epoc_sanity(poc_u, &nex_d, &mug_l);
     }
 
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
@@ -541,7 +535,7 @@ u3_saga_open(const c3_path* const pax_u, c3_o san_o, u3_meta* const met_u)
     if ( lif_w ) {
       lif_w = NULL;
     }
-    if ( c3n == pas_o ) {
+    if ( !pas_t ) {
       goto free_dir_entries;
     }
   }

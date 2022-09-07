@@ -1011,7 +1011,7 @@ _cw_info(c3_i argc, c3_c* argv[])
   c3_path_push(pax_u, ".urb");
   c3_path_push(pax_u, "log");
   u3_meta met_u;
-  u3_saga* log_u = u3_saga_open(pax_u, c3n, &met_u);
+  u3_saga* log_u = u3_saga_open(pax_u, FALSE, &met_u);
 
   fprintf(stderr,
           "\r\nurbit: %s at event %" PRIu64 "\r\n",
@@ -1059,7 +1059,7 @@ _cw_sane(c3_i argc, c3_c* argv[])
     c3_path_push(pax_u, "log");
 
     u3_meta met_u;
-    sag_u = u3_saga_open(pax_u, c3y, &met_u);
+    sag_u = u3_saga_open(pax_u, TRUE, &met_u);
 
     c3_path_pop(pax_u);
     c3_path_pop(pax_u);
@@ -1208,7 +1208,7 @@ _cw_chop(c3_i argc, c3_c* argv[])
   c3_path* const pax_u = c3_path_fv(3, u3_Host.dir_c, ".urb", "log");
   u3_meta        met_u;
   u3_saga*       log_u;
-  try_saga(log_u = u3_saga_open(pax_u, c3n, &met_u),
+  try_saga(log_u = u3_saga_open(pax_u, FALSE, &met_u),
            goto free_path,
            "failed to open event log at %s\r\n",
            c3_path_str(pax_u));

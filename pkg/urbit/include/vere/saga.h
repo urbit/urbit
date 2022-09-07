@@ -102,7 +102,7 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u);
 //! @return NULL  Existing event log could not be opened.
 //! @return       Handle to open event log.
 u3_saga*
-u3_saga_open(const c3_path* const pax_u, c3_o san_o, u3_meta* const met_u);
+u3_saga_open(const c3_path* const pax_u, c3_t san_t, u3_meta* const met_u);
 
 //! Get the ID of the last committed event in an event log.
 //!
