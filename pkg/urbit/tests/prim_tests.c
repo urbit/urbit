@@ -121,6 +121,19 @@ _prim_put_get(void)
 
     c3_path_free(path_u);
   }
+
+  { // Test floating point.
+    c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
+
+    double data_f = 1.8;
+    c3_assert(c3_prim_put(path_u, c3_prim_float, &data_f));
+
+    data_f = 0;
+    c3_assert(c3_prim_get(path_u, c3_prim_float, &data_f));
+    c3_assert(data_f == 1.8);
+
+    c3_path_free(path_u);
+  }
 }
 
 int

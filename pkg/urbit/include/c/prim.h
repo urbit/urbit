@@ -45,6 +45,10 @@ typedef enum {
   /// A signed 64-bit integer.
   c3_prim_int64,
 
+  // A double precision floating point number.
+  // @warning watch out for rounding bugs.
+  c3_prim_float,
+
   /// Sentinel value. Not actually a type.
   c3_prim_last,
 

@@ -97,6 +97,9 @@ c3_prim_get(const c3_path* const path_u,
     case c3_prim_int64:
       buf_to_num(c3_ds, SCNi64);
       break;
+    case c3_prim_float:
+      buf_to_num(double, "lf");
+      break;
     // This is dead code, but it's needed to appease macOS.
     case c3_prim_last:
       break;
@@ -171,6 +174,9 @@ c3_prim_put(const c3_path* const path_u,
       break;
     case c3_prim_int64:
       num_to_buf(c3_ds, SCNi64);
+      break;
+    case c3_prim_float:
+      num_to_buf(double, "lf");
       break;
     // This is dead code, but it's needed to appease macOS.
     case c3_prim_last:
