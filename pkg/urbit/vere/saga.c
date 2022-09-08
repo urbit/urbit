@@ -25,17 +25,17 @@
 #include "vere/saga.h"
 
 #include "all.h"
-#include "c/bile.h"
+#include "c/prim.h"
 
 //==============================================================================
 // Constants
 //==============================================================================
 
-//! Name of file containing the fake bit.
-static const c3_c fak_nam_c[] = "fake.bin";
+//! Name of text file containing the fake bit.
+static const c3_c fak_nam_c[] = "fake.txt";
 
-//! Name of file containing the name of the ship.
-static const c3_c who_nam_c[] = "who.bin";
+//! Name of text file containing the name of the ship.
+static const c3_c who_nam_c[] = "who.txt";
 
 const c3_w elo_ver_w = 1;
 
@@ -216,15 +216,14 @@ _create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u)
   const void* dat_v;
 
   c3_path_push(log_u->pax_u, fak_nam_c);
-  dat_v = &met_u->fak_o;
-  if ( !c3_bile_write_new(log_u->pax_u, dat_v, sizeof(met_u->fak_o)) ) {
+  if ( !c3_prim_put(log_u->pax_u, c3_prim_uint8, &met_u->fak_o) ) {
     goto pop_path;
   }
   c3_path_pop(log_u->pax_u);
 
   c3_path_push(log_u->pax_u, who_nam_c);
-  dat_v = met_u->who_d;
-  suc_t = c3_bile_write_new(log_u->pax_u, dat_v, sizeof(met_u->who_d));
+  // TODO: this is broken because who_d is c3_d[2].
+  suc_t = c3_prim_put(log_u->pax_u, c3_prim_uint64, met_u->who_d);
 
 pop_path:
   c3_path_pop(log_u->pax_u);
@@ -440,15 +439,15 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
 
     c3_path_push(log_u->pax_u, fak_nam_c);
     dat_v = &met_u->fak_o;
-    if ( !c3_bile_read_existing(log_u->pax_u, dat_v, sizeof(met_u->fak_o)) ) {
+    if ( !c3_prim_get(log_u->pax_u, c3_prim_uint8, &met_u->fak_o) ) {
       fprintf(stderr, "saga: failed to read %s\r\n", c3_path_str(log_u->pax_u));
       goto free_event_log;
     }
     c3_path_pop(log_u->pax_u);
 
     c3_path_push(log_u->pax_u, who_nam_c);
-    dat_v = met_u->who_d;
-    if ( !c3_bile_read_existing(log_u->pax_u, dat_v, sizeof(met_u->who_d)) ) {
+    // TODO: this is broken because who_d is c3_d[2].
+    if ( !c3_prim_put(log_u->pax_u, c3_prim_uint64, met_u->who_d) ) {
       fprintf(stderr, "saga: failed to read %s\r\n", c3_path_str(log_u->pax_u));
       goto free_event_log;
     }
