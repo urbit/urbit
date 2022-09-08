@@ -2,18 +2,14 @@
 //!
 //! Epoch-backed event log.
 //!
-//! Consists of a list of epochs, each with the same maximum number of committed
-//! events, and a pair of metadata files recording the identity of the ship and
-//! whether the ship is fake. Events can be committed synchronously or
-//! asynchronously. When the most recent epoch fills up (i.e. reaches the
-//! maximum number of committed events), a new epoch is automatically created
-//! and rolled over to.
+//! Consists of a list of epochs, each containing a contiguous slice of events.
+//! Events can be committed synchronously or asynchronously. When the most
+//! recent epoch fills up (i.e. reaches the maximum number of committed events),
+//! a new epoch is automatically created and rolled over to.
 //!
 //! As an example, the directory layout of an event log containing epochs N
 //! through M, inclusive, is:
 //! ```console
-//! fake.bin
-//! who.bin
 //! <epoch_N>/
 //! <epoch_N+1>/
 //! ...
@@ -25,17 +21,10 @@
 #include "vere/saga.h"
 
 #include "all.h"
-#include "c/prim.h"
 
 //==============================================================================
 // Constants
 //==============================================================================
-
-//! Name of text file containing the fake bit.
-static const c3_c fak_nam_c[] = "fake.txt";
-
-//! Name of text file containing the name of the ship.
-static const c3_c who_nam_c[] = "who.txt";
 
 const c3_w elo_ver_w = 1;
 
@@ -105,16 +94,6 @@ _boot_from_epoc_snapshot(const u3_epoc* const poc_u);
 //! @return >0  The left epoch is younger than the right epoch.
 static inline c3_i
 _cmp_epocs(const void* lef_v, const void* rih_v);
-
-//! Create metadata files for the fake bit and identity.
-//!
-//! @param[in] log_u  Event log handle.
-//! @param[in] met_u  Pier metadata.
-//!
-//! @return 1  Both files were created.
-//! @return 0  Otherwise.
-static c3_t
-_create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u);
 
 //! Search an event log's list of epochs for the epoch that contains the given
 //! event ID. Runs in O(n) where n is the length of the list of epochs.
@@ -209,28 +188,6 @@ _cmp_epocs(const void* lef_v, const void* rih_v)
   return len_i == ren_i ? strcmp(lef_c, rih_c) : len_i - ren_i;
 }
 
-static c3_t
-_create_metadata_files(const u3_saga* const log_u, const u3_meta* const met_u)
-{
-  c3_t        suc_t = 0;
-  const void* dat_v;
-
-  c3_path_push(log_u->pax_u, fak_nam_c);
-  if ( !c3_prim_put(log_u->pax_u, c3_prim_uint8, &met_u->fak_o) ) {
-    goto pop_path;
-  }
-  c3_path_pop(log_u->pax_u);
-
-  c3_path_push(log_u->pax_u, who_nam_c);
-  // TODO: this is broken because who_d is c3_d[2].
-  suc_t = c3_prim_put(log_u->pax_u, c3_prim_uint64, met_u->who_d);
-
-pop_path:
-  c3_path_pop(log_u->pax_u);
-end:
-  return suc_t;
-}
-
 static inline c3_t
 _is_epoc_dir(const c3_c* const nam_c)
 {
@@ -245,10 +202,6 @@ _migrate(u3_saga* const log_u, u3_meta* const met_u)
                                    u3A->eve_d,
                                    met_u);
   if ( !poc_u ) {
-    goto fail;
-  }
-
-  if ( !_create_metadata_files(log_u, met_u) ) {
     goto fail;
   }
 
@@ -381,11 +334,6 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
   }
   mkdir(c3_path_str(log_u->pax_u), 0700);
 
-  // Persist metadata.
-  if ( !_create_metadata_files(log_u, met_u) ) {
-    goto free_event_log;
-  }
-
   { // Create first epoch.
     try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_event_log);
     u3_epoc* poc_u;
@@ -432,26 +380,6 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
       }
       goto succeed;
     }
-  }
-
-  { // Read metadata from file system.
-    void* dat_v;
-
-    c3_path_push(log_u->pax_u, fak_nam_c);
-    dat_v = &met_u->fak_o;
-    if ( !c3_prim_get(log_u->pax_u, c3_prim_uint8, &met_u->fak_o) ) {
-      fprintf(stderr, "saga: failed to read %s\r\n", c3_path_str(log_u->pax_u));
-      goto free_event_log;
-    }
-    c3_path_pop(log_u->pax_u);
-
-    c3_path_push(log_u->pax_u, who_nam_c);
-    // TODO: this is broken because who_d is c3_d[2].
-    if ( !c3_prim_put(log_u->pax_u, c3_prim_uint64, met_u->who_d) ) {
-      fprintf(stderr, "saga: failed to read %s\r\n", c3_path_str(log_u->pax_u));
-      goto free_event_log;
-    }
-    c3_path_pop(log_u->pax_u);
   }
 
   c3_c(*ent_c)[dname_size];

@@ -1008,6 +1008,46 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     u3_saga_set_async_ctx(mar_u->log_u, u3L, _saga_commit_cb, mar_u);
   }
 
+  { // Read identity from Arvo's sample.
+    u3_noun who = u3x_at(u3x_sam_12, u3A->roc);
+    if ( c3n == u3ud(who) ) {
+      goto free_event_log;
+    }
+    u3r_bytes(0, u3r_met(3, who), (c3_y*)&mar_u->met_u.who_d, who);
+  }
+
+  { // Scry fake bit from Arvo.
+    // Scry sample for reading fake bit is [[~ ~] [%.n [%once %j %fake ~]]]
+    u3_cell sam = u3nc(u3nc(u3_nul, u3_nul),
+                       u3nc(c3n, u3nq(c3__once, 'j', c3__fake, u3_nul)));
+    u3_noun res = u3v_soft_peek(1000 /* ms */, sam);
+    // Response should be something like:
+    // [0 0 %omen [106 '~zod' %fake '~2022.9.8..20.38.03..f7d0' 0] %noun 0]
+    u3_noun a, b, c, d, e, f;
+    // TODO: figure out if there's a better way than u3r_word().
+    if ( c3n == u3r_hext(res, &a, &b, &c, &d, &e, &f)
+        || u3r_word(0, a) != u3_nul
+        || u3r_word(0, b) != u3_nul
+        || c != c3__omen
+        || e != c3__noun
+        || u3r_word(0, f) != u3_nul )
+    {
+      u3z(res);
+      // TODO: will this leak mar_u->met_u.who_d?
+      goto free_event_log;
+    }
+
+    u3_noun fak;
+    if ( c3n == u3r_quil(d, NULL, NULL, &fak, NULL, NULL)
+        || c3n == u3a_is_cat(fak) )
+    {
+      u3z(res);
+      goto free_scry_result;
+    }
+    mar_u->met_u.fak_o = ( fak == c3__fake ) ? c3y : c3n;
+    u3z(res);
+  }
+
   // These must be set after the replay in order to adhere to the invariant
   // that all noun references be roots when calling the u3_saga interface.
   mar_u->mug_l = u3r_mug(u3A->roc);

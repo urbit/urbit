@@ -566,13 +566,6 @@ u3_epoc_migrate(c3_path* const       src_u,
       destination = u3i_bytes(val_u.mv_size, val_u.mv_data);                   \
     } while ( 0 )
 
-    {
-      u3_atom who;
-      lookup_metadata("who", who);
-      u3r_chubs(0, 2, met_u->who_d, who);
-      u3z(who);
-    }
-    lookup_metadata("fake", met_u->fak_o);
     lookup_metadata("life", met_u->lif_w);
     lookup_metadata("version", met_u->ver_w);
 #undef lookup_metadata
