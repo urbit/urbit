@@ -144,7 +144,7 @@ export class Urbit {
     code,
     verbose = false,
   }: AuthenticationInterface) {
-    const airlock = new Urbit(`http://${url}`, code);
+    const airlock = new Urbit(url.startsWith('http') ? url : `http://${url}, code);
     airlock.verbose = verbose;
     airlock.ship = ship;
     await airlock.connect();
