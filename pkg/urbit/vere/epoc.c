@@ -71,7 +71,10 @@ const c3_d epo_min_d = 1ULL;
 static const c3_c fir_nam_c[] = "0i0";
 
 //! Name of text file containing the epoch version number.
-static const c3_c ver_nam_c[] = "version.txt";
+static const c3_c epv_nam_c[] = "epoc_version.txt";
+
+//! Name of text file containing the urbit binary version number.
+static const c3_c urv_nam_c[] = "urbit_version.txt";
 
 //! Name of text file containing the lifecycle length.
 static const c3_c lif_nam_c[] = "lifecycle.txt";
@@ -209,6 +212,26 @@ _lmdb_init(const c3_path* const pax_u);
 //! @return 0  Otherwise.
 static c3_t
 _move_file(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c);
+
+//! Persist the Urbit binary version number to `urv_nam_c`.
+//!
+//! @param[in] pax_u  Path to house `urv_nam_c`.
+//! @param[in] ver_c  Binary version number.
+//!
+//! @return 1  Success.
+//! @return 0  Otherwise.
+static c3_t
+_persist_binary_version(c3_path* const pax_u, const c3_c* const ver_c);
+
+//! Persist the epoch version number to `epv_nam_c`.
+//!
+//! @param[in] pax_u  Path to house `epv_nam_c`.
+//! @param[in] ver_w  Epoch version number.
+//!
+//! @return 1  Success.
+//! @return 0  Otherwise.
+static c3_t
+_persist_epoc_version(c3_path* const pax_u, const c3_w ver_w);
 
 static c3_d
 _epoc_first_evt_from_path(const c3_path* const pax_u)
@@ -366,6 +389,46 @@ end:
   return suc_t;
 }
 
+static c3_t
+_persist_binary_version(c3_path* const pax_u, const c3_c* const ver_c)
+{
+  if ( !pax_u || !ver_c ) {
+    return 0;
+  }
+
+  c3_path_push(pax_u, urv_nam_c);
+  c3_t suc_t = c3_prim_put(pax_u, c3_prim_str, &ver_c);
+  c3_path_pop(pax_u);
+
+  if ( !suc_t ) {
+    fprintf(stderr,
+            "epoc: failed to write Urbit binary version number to %s\r\n",
+            c3_path_str(pax_u));
+  }
+
+  return suc_t;
+}
+
+static c3_t
+_persist_epoc_version(c3_path* const pax_u, const c3_w ver_w)
+{
+  if ( !pax_u ) {
+    return 0;
+  }
+
+  c3_path_push(pax_u, epv_nam_c);
+  c3_t suc_t = c3_prim_put(pax_u, c3_prim_uint32, &ver_w);
+  c3_path_pop(pax_u);
+
+  if ( !suc_t ) {
+    fprintf(stderr,
+            "epoc: failed to write epoch version number to %s\r\n",
+            c3_path_str(pax_u));
+  }
+
+  return suc_t;
+}
+
 //==============================================================================
 // Functions
 //==============================================================================
@@ -392,15 +455,12 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     goto free_epoc;
   }
 
-  { // Write the epoch version number to a file.
-    c3_path_push(poc_u->pax_u, ver_nam_c);
-    if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &epo_ver_w) ) {
-      fprintf(stderr,
-               "epoc: failed to write version number to %s\r\n",
-               c3_path_str(poc_u->pax_u));
-      goto free_epoc;
-    }
-    c3_path_pop(poc_u->pax_u);
+  if ( !_persist_epoc_version(poc_u->pax_u, epo_ver_w) ) {
+    goto free_epoc;
+  }
+
+  if ( !_persist_binary_version(poc_u->pax_u, URBIT_VERSION) ) {
+    goto free_epoc;
   }
 
   // Take snapshot to save the state before the first event in the epoch is
@@ -526,13 +586,15 @@ u3_epoc_migrate(c3_path* const       src_u,
   poc_u->pax_u         = _epoc_path(par_u, poc_u->fir_d);
   mkdir(c3_path_str(poc_u->pax_u), 0700);
 
-  { // Write metadata to binary files.
-    c3_path_push(poc_u->pax_u, ver_nam_c);
-    if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &met_u->ver_w) ) {
-      goto free_epoc;
-    }
-    c3_path_pop(poc_u->pax_u);
+  if ( !_persist_epoc_version(poc_u->pax_u, met_u->ver_w) ) {
+    goto free_epoc;
+  }
 
+  if ( !_persist_binary_version(poc_u->pax_u, URBIT_VERSION) ) {
+    goto free_epoc;
+  }
+
+  { // Write lifecycle length to file.
     c3_path_push(poc_u->pax_u, lif_nam_c);
     if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &met_u->lif_w) ) {
       goto free_epoc;
@@ -582,7 +644,7 @@ u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w)
   }
 
   { // Read contents of version file.
-    c3_path_push(poc_u->pax_u, ver_nam_c);
+    c3_path_push(poc_u->pax_u, epv_nam_c);
     c3_w ver_w;
     if ( !c3_prim_get(poc_u->pax_u, c3_prim_uint32, &ver_w) ) {
       goto free_epoc;
