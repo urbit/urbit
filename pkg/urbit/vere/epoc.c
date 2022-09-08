@@ -10,11 +10,11 @@
 //! support in the manner of its choosing so that this module can remain
 //! relatively simple.
 //!
-//! As an example, the directory layout for epoch `0i101`, which contains a
+//! As an example, the directory layout for epoch `0i100`, which contains a
 //! snapshot representing the state after event 100 and whose first committed
 //! event in the LMDB instance is 101, is:
 //! ```console
-//! 0i101/
+//! 0i100/
 //!   data.mdb
 //!   lock.mdb
 //!   north.bin
@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 
 #include "all.h"
-#include "c/bile.h"
+#include "c/prim.h"
 #include "vere/vere.h"
 
 //==============================================================================
@@ -70,11 +70,11 @@ const c3_d epo_min_d = 1ULL;
 //! Name of directory housing first epoch. Should be `<epo_pre_c><epo_min_d - 1>`.
 static const c3_c fir_nam_c[] = "0i0";
 
-//! Name of binary file containing the epoch version number.
-static const c3_c ver_nam_c[] = "version.bin";
+//! Name of text file containing the epoch version number.
+static const c3_c ver_nam_c[] = "version.txt";
 
-//! Name of binary file containing the lifecycle length.
-static const c3_c lif_nam_c[] = "lifecycle.bin";
+//! Name of text file containing the lifecycle length.
+static const c3_c lif_nam_c[] = "lifecycle.txt";
 
 //! Name of LMDB database holding the events.
 static const c3_c dab_nam_c[] = "EVENTS";
@@ -394,10 +394,7 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
 
   { // Write the epoch version number to a file.
     c3_path_push(poc_u->pax_u, ver_nam_c);
-    // Convert to network byte order to ensure portability across platforms of
-    // varying endianness.
-    c3_w ver_w = htonl(epo_ver_w);
-    if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
+    if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &epo_ver_w) ) {
       fprintf(stderr,
                "epoc: failed to write version number to %s\r\n",
                c3_path_str(poc_u->pax_u));
@@ -417,8 +414,7 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
   // Write the lifecycle length to a file if this is the very first epoch.
   else {
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    lif_w = htonl(lif_w);
-    if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
+    if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &lif_w) ) {
       fprintf(stderr,
               "epoc: failed to write lifecycle length to %s\r\n",
               c3_path_str(poc_u->pax_u));
@@ -532,17 +528,13 @@ u3_epoc_migrate(c3_path* const       src_u,
 
   { // Write metadata to binary files.
     c3_path_push(poc_u->pax_u, ver_nam_c);
-    // Convert to network byte order to ensure portability across platforms of
-    // varying endianness.
-    c3_w ver_w = htonl(met_u->ver_w);
-    if ( !c3_bile_write_new(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
+    if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &met_u->ver_w) ) {
       goto free_epoc;
     }
     c3_path_pop(poc_u->pax_u);
 
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    c3_w lif_w = htonl(met_u->lif_w);
-    if ( !c3_bile_write_new(poc_u->pax_u, &lif_w, sizeof(lif_w)) ) {
+    if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &met_u->lif_w) ) {
       goto free_epoc;
     }
     c3_path_pop(poc_u->pax_u);
@@ -592,10 +584,9 @@ u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w)
   { // Read contents of version file.
     c3_path_push(poc_u->pax_u, ver_nam_c);
     c3_w ver_w;
-    if ( !c3_bile_read_existing(poc_u->pax_u, &ver_w, sizeof(ver_w)) ) {
+    if ( !c3_prim_get(poc_u->pax_u, c3_prim_uint32, &ver_w) ) {
       goto free_epoc;
     }
-    ver_w = ntohl(ver_w);
     c3_path_pop(poc_u->pax_u);
     // We'll need to do something more sophisticated than a simple assertion
     // when we bump the epoch version number for the first time, but this is
@@ -606,14 +597,10 @@ u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w)
   // Read contents of life cycle file.
   if ( _epoc_is_first(poc_u->pax_u) ) {
     c3_path_push(poc_u->pax_u, lif_nam_c);
-    if ( !c3_bile_read_existing(poc_u->pax_u, lif_w, sizeof(*lif_w)) ) {
+    if ( !c3_prim_get(poc_u->pax_u, c3_prim_uint32, lif_w) ) {
       goto free_epoc;
     }
     c3_path_pop(poc_u->pax_u);
-    if ( !lif_w ) {
-      goto free_epoc;
-    }
-    *lif_w = ntohl(*lif_w);
   } else if ( lif_w ) {
     *lif_w = 0;
   }

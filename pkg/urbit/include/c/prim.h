@@ -92,6 +92,6 @@ c3_prim_get(const c3_path* const path_u,
 c3_t
 c3_prim_put(const c3_path* const path_u,
             const c3_prim_type   type_e,
-            void* const          data_v);
+            const void* const    data_v);
 
 #endif /* ifndef C3_PRIM_H */

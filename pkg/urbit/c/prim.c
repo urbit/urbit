@@ -122,7 +122,7 @@ end:
 c3_t
 c3_prim_put(const c3_path* const path_u,
             const c3_prim_type   type_e,
-            void* const          data_v)
+            const void* const    data_v)
 {
   c3_t suc_t = 0;
 
