@@ -33,6 +33,11 @@
       [%broadcast-tx rawtx=hexb]
       [%ping ~]
       [%block-info block=(unit @ud)]
+      [%histogram ~]
+      [%block-headers start=@ud count=@ud cp=(unit @ud)]
+      [%tx-from-pos height=@ud pos=@ud merkle=?]
+      [%fee block=@ud]
+      [%psbt psbt=@t]
   ==
 ::
 +$  result
@@ -41,6 +46,11 @@
       [%raw-tx txid=hexb rawtx=hexb]
       [%broadcast-tx txid=hexb broadcast=? included=?]
       [%block-info =network block=@ud fee=(unit sats) blockhash=hexb blockfilter=hexb]
+      [%histogram hist=(list (list @ud))]
+      [%block-headers count=@ud hex=hexb max=@ud root=(unit hexb) branch=(list hexb)]
+      [%tx-from-pos tx-hash=hexb merkle=(list hexb)]
+      [%fee fee=@rd]
+      [%psbt psbt=@t]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -64,6 +74,11 @@
         [%broadcast-tx rawtx=hexb]
         [%get-block-count ~]
         [%get-block-info block=(unit @ud)]
+        [%get-histogram ~]
+        [%get-block-headers start=@ud count=@ud cp=(unit @ud)]
+        [%get-tx-from-pos height=@ud pos=@ud merkle=?]
+        [%get-fee block=@ud]
+        [%update-psbt psbt=@t]
     ==
   ::
   +$  result
@@ -74,7 +89,11 @@
         [%broadcast-tx txid=hexb broadcast=? included=?]
         [%get-block-count block=@ud]
         [%get-block-info block=@ud fee=(unit sats) blockhash=hexb blockfilter=hexb]
-
+        [%get-histogram hist=(list (list @ud))]
+        [%get-block-headers count=@ud hex=hexb max=@ud root=(unit hexb) branch=(list hexb)]
+        [%get-tx-from-pos tx-hash=hexb merkle=(list hexb)]
+        [%get-fee fee=@rd]
+        [%update-psbt psbt=@t]
     ==
   --
 --

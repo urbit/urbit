@@ -249,6 +249,7 @@
           spo.state   sponsors.snap.poke
           url.state   'http://eth-mainnet.urbit.org:8545'
           sap.state   snap.poke
+          logs.state  ~
         ==
       $(poke [%kick ~])
     ::
@@ -268,33 +269,34 @@
         |((~(has in dudes) [%eth-watcher &]) (~(has in dudes) [%eth-watcher |]))
       :_  this
       =/  cards=(list card)
-        :-  ::  %jael will re-subscribe to get all azimuth diffs
-            ::
-            (listen-to-azimuth ~ [%| dap.bowl])
-        ::  we poke eth-watcher to retrieve logs from the latest we have
-        ::
-        %*(start do number.id.sap.state last-block)
-      =?  cards  !running
-        ::  restart %eth-watcher
-        ::
-        ~&  >>  %starting-eth-watcher
-        =/  rein=[desk rein]  [%base %.y [%eth-watcher ~ ~] ~]
-        :_  cards
-        [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>(rein)]
-      =?  cards  !installed
+        ?:  installed
+          ~
         ::  reinstall %base desk
         ::
         =+  spo=(sein:title [our now our]:bowl)
         ~&  >>  re-installing-base-from+spo
         =/  fresh=[desk ship desk]  [%base spo %kids]
+        [%pass /fresh %agent [our.bowl %hood] %poke kiln-install+!>(fresh)]~
+      =?  cards  !running
+        ::  restart %eth-watcher
+        ::
+        ~&  >>  %starting-eth-watcher
+        =/  rein=[desk rein]  [%base [%eth-watcher %&] ~ ~]
         :_  cards
-        [%pass /fresh %agent [our.bowl %hood] %poke kiln-install+!>(fresh)]
-      ::  resubscribe if we somehow get unsubscribed from eth-watcher
-      ::
-      ?:  (~(has by wex.bowl) [/eth-watcher our.bowl %eth-watcher])
-        cards
-      ::  ~&  >>  %resubscribing-to-eth-watcher
-      [(subscribe-to-eth-watcher bowl) cards]
+        [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>(rein)]
+      =.  cards
+        ::  we poke eth-watcher to retrieve logs from the latest we have
+        ::
+        (weld %*(start do number.id.sap.state last-block) cards)
+      =?  cards  !(~(has by wex.bowl) [/eth-watcher our.bowl %eth-watcher])
+        ::  resubscribe if we somehow get unsubscribed from eth-watcher
+        ::
+        [(subscribe-to-eth-watcher bowl) cards]
+      =.  cards
+        ::  %jael will re-subscribe to get all azimuth diffs
+        ::
+        [(listen-to-azimuth ~ [%| dap.bowl]) cards]
+      (flop cards)
     ::
         %watch
       =:  nas.state   ?:(?=(%default net.poke) nas.sap.state *^state:naive)
@@ -340,13 +342,14 @@
     ^-  (unit (unit cage))
     |^
     ?+  path  (on-peek:def path)
-        [%x %logs ~]     ``noun+!>(logs.state)
-        [%x %nas ~]      ``noun+!>(nas.state)
-        [%x %dns ~]      ``noun+!>(dns.nas.state)
-        [%x %own ~]      ``noun+!>(own.state)
-        [%x %spo ~]      ``noun+!>(spo.state)
-        [%x %refresh ~]  ``atom+!>(refresh.state)
-        [%x %point @ ~]  ``noun+(point i.t.t.path)
+        [%x %logs ~]       ``noun+!>(logs.state)
+        [%x %nas ~]        ``noun+!>(nas.state)
+        [%x %dns ~]        ``noun+!>(dns.nas.state)
+        [%x %own ~]        ``noun+!>(own.state)
+        [%x %spo ~]        ``noun+!>(spo.state)
+        [%x %refresh ~]    ``atom+!>(refresh.state)
+        [%x %point @ ~]    ``noun+(point i.t.t.path)
+        [%x %last-snap ~]  ``noun+!>(sap.state)
     ==
     ::
     ++  point

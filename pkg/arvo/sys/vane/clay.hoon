@@ -124,7 +124,8 @@
       nor=norm                                          ::  default policy
       mim=(map path mime)                               ::  mime cache
       fod=flue                                          ::  ford cache
-      liv=?                                             ::  running agents
+      wic=(map weft yoki)                               ::  commit-in-waiting
+      liv=zest                                          ::  running agents
       ren=(map dude:gall ?)                             ::  force agents on/off
       pes=(set perm:gall)                               ::  granted opt. perms
   ==                                                    ::
@@ -268,6 +269,8 @@
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
+      tyr=(set duct)                                    ::  app subs
+      tur=rock:tire                                     ::  last tire
       pud=(unit [=desk =yoki])                          ::  pending update
       bug=[veb=@ mas=@]                                 ::  verbosity
   ==                                                    ::
@@ -321,19 +324,8 @@
       haw=(map mood (unit cage))                        ::  simple cache
   ==                                                    ::
 ::
++$  bill  (list dude:gall)
 +$  seal  [req=(list perm:gall) opt=(list perm:gall)]
-::
-::  diff from desk.bill
-::
-::  -- `.liv`: suspended? if suspended, no agents should run
-::  -- `.add`: agents not in manifest that should be running
-::  -- `.sub`: agents in manifest that should not be running
-::
-+$  rein
-  $:  liv=_&
-      add=(set dude:gall)
-      sub=(set dude:gall)
-  ==
 ::
 ::  Active downloads
 ::
@@ -1544,6 +1536,13 @@
       (~(has in ^~((silt `(list ^care)`~[%u %w %x %y %z]))) care)
     --
   ::
+  ++  goad
+    ^+  ..park
+    =^  moves-1  ruf  abet
+    =^  moves-2  ruf  abet:goad:(lu now rof hen ruf)
+    =.  ..park  apex
+    (emil (weld moves-1 moves-2))
+  ::
   ::  Create a request that cannot be filled immediately.
   ::
   ::  If it's a local request, we just put in in `qyx`, setting a timer if it's
@@ -1745,6 +1744,17 @@
   ::    TODO: needs to check tako in rang
   ::
   ++  park
+    |=  [updated=? =yoki =rang]
+    =.  ..park  (park-main +<)
+    ::  tell gall which agents to run
+    ::
+    ?-    liv.dom
+        %dead  ..park
+        %live  goad
+        %next  (emit hen %pass /park-next/[syd] %b %wait now)
+    ==
+  ::
+  ++  park-main
     =/  check-sane  |
     |^
     |=  [updated=? =yoki =rang]
@@ -1768,7 +1778,9 @@
     ::
     =/  kel=weft  (get-kelvin yoki)
     ?.  |(=(%base syd) =(kel [%zuse zuse]))
-      ~>(%mean.|.(leaf/"clay: bad-kelvin, {<[need=zuse/zuse have=kel]>}") !!)
+      =.  wic.dom  (~(put by wic.dom) kel yoki)
+      %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
+      ..park
     ::
     =/  old-yaki
       ?:  =(0 let.dom)
@@ -1852,16 +1864,30 @@
     =.  fod.dom  [spill sprig]:args
     =.  fad      cache.args
     =.  ..park   (emil (print q.old-yaki data))
-    ::  tell gall which agents to run
-    ::
-    =?  ..park  liv.dom
-      =^  moves-1  ruf  abet
-      =^  moves-2  ruf  abet:goad:(lu now rof hen ruf)
-      =.  ..park  apex
-      (emil (weld moves-1 moves-2))
     ::  notify unix and subscribers
     ::
-    wake:?:(mem (ergo 0 mum.res) ..park)
+    =.  ..park  wake:?:(mem (ergo 0 mum.res) ..park)
+    ::  if upgrading kelvin and there's a commit-in-waiting, use that
+    ::
+    =?  ..park  &(=(%base syd) !=(kel [%zuse zuse]))
+      =/  desks=(list [=desk =dojo])  ~(tap by dos.rom)
+      =^  moves-1  ruf  abet
+      =|  moves-2=(list move)
+      |-  ^+  ..park
+      ?~  desks
+        =.  ..park  apex
+        (emil (weld moves-1 moves-2))
+      ?.  ?=(%live liv.dom.dojo.i.desks)
+        $(desks t.desks)
+      ?~  wat=(~(get by wic.dom.dojo.i.desks) kel)
+        ::  XX should crash here
+        ::
+        $(desks t.desks)
+      =/  den  ((de now rof hen ruf) our desk.i.desks)
+      =^  moves-3  ruf  abet:(park-main:den | u.wat *^rang)
+      =.  moves-2  (weld moves-2 moves-3)
+      $(desks t.desks)
+    ..park
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -2154,6 +2180,14 @@
         (emit hen %pass /what %$ what/fil)
       --
     --
+  ::
+  ++  take-park-next
+    |=  err=(unit tang)
+    ^+  ..park
+    ?^  err
+      ((slog leaf+"clay: desk {<syd>} failed to unsuspend" u.err) ..park)
+    =.  liv.dom  %live
+    goad
   ::
   ::  We always say we're merging from 'ali' to 'bob'.  The basic steps,
   ::  not all of which are always needed, are:
@@ -3017,12 +3051,16 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  rein
-    |=  [liv=? ren=(map dude:gall ?) pes=(set perm:gall)]
+  ++  set-rein
+    |=  [ren=(map dude:gall ?) pes=(set perm:gall)]
     ^+  ..park
-    =?  liv  =(%base syd)  &
     =?  pes  =(%base syd)  *(set perm:gall)
-    ..park(liv.dom liv, ren.dom ren, pes.dom pes)
+    ..park(ren.dom ren, pes.dom pes)
+  ::
+  ++  set-zest
+    |=  liv=zest
+    =?  liv  =(%base syd)  %live
+    ..park(liv.dom liv)
   ::
   ++  rise
     |=  [=dude:gall on=(unit ?)]
@@ -4293,7 +4331,9 @@
     =^  per=(list [=desk (set perm:gall)])  ..abet  pers
     =^  sat=(list [=desk =bill])  ..abet  sats
     =^  agents  ..abet  (build-agents sat)
-    =.  ..abet  (build-marks (turn sat head))
+    ::  XX enable before release
+    ::  =.  ..abet  (build-marks (turn sat head))
+    =.  ..abet  tare
     (emit hen %pass /lu/load %g %load per agents)
   ::
   ::  +pers: produce list of [desk (set perm:gall)], update ford cache
@@ -4333,9 +4373,9 @@
   ::  +override: apply rein to bill
   ::
   ++  override
-    |=  [duz=bill liv=? ren=(map dude:gall ?)]
+    |=  [duz=bill liv=zest ren=(map dude:gall ?)]
     ^-  bill
-    ?.  liv  ~
+    ?.  ?=(%live liv)  ~
     =.  duz
       %+  skip  duz
       |=  =dude:gall
@@ -4458,6 +4498,30 @@
       =^  =dais  nub.f  (build-dais:f i.marks)
       $(marks t.marks)
     $(desks t.desks)
+  ::
+  ++  tore
+    ^-  rock:tire
+    %-  ~(run by dos.rom)
+    |=  =dojo
+    [liv.dom.dojo ~(key by wic.dom.dojo)]
+  ::
+  ++  tare
+    ?:  =(~ tyr)
+      ..abet
+    =/  tor  tore
+    =/  waves=(list wave:tire)  (walk:tire tur tor)
+    ?~  waves
+      ..abet
+    =.  tur  tor
+    %-  emil
+    %-  zing
+    %+  turn  ~(tap in tyr)
+    |=  =duct
+    ^-  (list move)
+    %+  turn  waves
+    |=  =wave:tire
+    ^-  move
+    [duct %give %tire %| wave]
   --
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -4667,7 +4731,7 @@
       %rein
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(rein:den liv.req ren.req pes.req)
+      abet:(set-rein:den ren.req pes.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
   ::
@@ -4686,6 +4750,14 @@
       =^  m2  ruf  abet:goad:(lu now rof hen ruf)
       [(weld m1 m2) ..^$]
     ==
+  ::
+      %tire
+    ?~  p.req
+      =.  tyr.ruf  (~(del in tyr.ruf) hen)
+      `..^$
+    =.  tyr.ruf  (~(put in tyr.ruf) hen)
+    :_  ..^$
+    [hen %give %tire %& tore:(lu now rof hen ruf)]~
   ::
       %tomb  (tomb-clue:tomb hen clue.req)
       %trim
@@ -4749,6 +4821,13 @@
         cancel-request:den
       (start-request:den for u.q.rif)
     [mos ..^$]
+  ::
+      %zest
+    =^  m1  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-zest:den liv.req)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld m1 m2) ..^$]
   ::
       %plea
     =*  her  ship.req
@@ -5273,7 +5352,10 @@
     |=  raf=raft-11
     ^-  raft-12
     raf(pud [pud.raf 0 0])
-  ::  +raft-12-to-13: add .liv and .ren to $dome's
+  ::  +raft-12-to-13:
+  ::
+  ::    add .liv and .ren to $dome's
+  ::    add .tyr and .tur to $raft
   ::
   ++  raft-12-to-13
     |=  raf=raft-12
@@ -5282,11 +5364,14 @@
     ::                      ::  maybe have kiln send one-time list of desks
     ::
     =;  rof
-      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom &))))
+      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom %live))))
+    ^-  raft-13
     %=  raf
       dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
-      hoy  (~(run by hoy.raf) rung-11-to-13)
+      hoy      (~(run by hoy.raf) rung-11-to-13)
+      |6       [&7.raf ~ ~ |7.raf]
     ==
+    ::
     ++  dojo-11-to-13
       |=  doj=dojo-11
       ^-  dojo
@@ -5305,7 +5390,7 @@
     ++  dome-11-to-13
       |=  dom=dome-11
       ^-  dome
-      dom(fod [fod.dom liv=| ren=~ pes=~])
+      dom(fod [fod.dom ~ liv=%dead ren=~ pes=~])
     --
   --
 ::
@@ -5355,6 +5440,7 @@
         %sweep   ``[%sweep !>(sweep)]
         %rang    ``[%rang !>(ran.ruf)]
         %tomb    ``[%flag !>((tomb t.path))]
+        %tire    ``[%tire !>(tore:(lu now rof *duct ruf))]
         %domes   (domes t.path)
         %loams   (loams t.path)
         %dudes   (dudes t.path)
@@ -5560,7 +5646,7 @@
     =*  ali-desk  i.t.t.t.tea
     =/  germ  (germ i.t.t.t.t.tea)
     =^  mos  ruf
-      =/  den  ((de now rof hen ruf) our i.t.tea)
+      =/  den  ((de now rof hen ruf) our syd)
       abet:(merge:den ali-ship ali-desk germ p.hin)
     [mos ..^$]
   ::
@@ -5572,8 +5658,16 @@
     =/  ali-case  (rash i.t.t.t.t.tea nuck:so)
     ?>  ?=([%$ *] ali-case)
     =^  mos  ruf
-      =/  den  ((de now rof hen ruf) our i.t.tea)
+      =/  den  ((de now rof hen ruf) our syd)
       abet:(take-fuse:den [ali-ship ali-desk (case +.ali-case)] p.hin)
+    [mos ..^$]
+  ::
+  ?:  ?=([%park-next @ ~] tea)
+    ?>  ?=(%wake +<.hin)
+    =*  syd  i.t.tea
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our syd)
+      abet:(take-park-next:den error.hin)
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)

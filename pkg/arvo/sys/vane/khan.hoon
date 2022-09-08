@@ -102,10 +102,10 @@
   =/  =beam  (need (de-beam t.wire))
   ?>(?=([@ ~] s.beam) beam(s i.s.beam))
 ::
-++  start-spider
-  |=  =vase
+++  poke-spider
+  |=  =cage
   ^-  note
-  [%g %deal [our our] %spider %poke %spider-start vase]
+  [%g %deal [our our] %spider %poke cage]
 ::
 ++  watch-spider
   |=  =path
@@ -146,7 +146,7 @@
     :_  khan-gate
     %+  turn
       :~  (watch-spider /thread-result/[tid])
-          (start-spider !>(args))
+          (poke-spider %spider-start !>(args))
       ==
     |=(=note ^-(move [hen %pass //g note]))
   ::
@@ -159,6 +159,21 @@
       (slap (vale.dais q.q.args.fyd) !,(*hoon [~ u=.]))
     =-  [[hen %pass wire -]~ khan-gate]
     [%k %fard bear.fyd name.fyd p.q.args.fyd vase]
+  ::
+      %lard
+    =/  tid=@ta
+      %^  cat  3
+        'khan-lard--'
+      (scot %uv (sham (mix tic eny)))
+    =.  tic         +(tic)
+    =/  =beak       (get-beak bear.task now)
+    =/  args        [~ `tid beak shed.task]
+    :_  khan-gate
+    %+  turn
+      :~  (watch-spider /thread-result/[tid])
+          (poke-spider %spider-inline !>(args))
+      ==
+    |=(=note ^-(move [hen %pass //g note]))
   ==
 ::  +load: migrate an old state to a new khan version
 ::
