@@ -1042,7 +1042,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
         || c3n == u3a_is_cat(fak) )
     {
       u3z(res);
-      goto free_scry_result;
+      goto free_event_log;
     }
     mar_u->met_u.fak_o = ( fak == c3__fake ) ? c3y : c3n;
     u3z(res);
