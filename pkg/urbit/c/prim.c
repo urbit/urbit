@@ -64,7 +64,7 @@ c3_prim_get(const c3_path* const path_u,
 
 #define buf_to_num(type, conversion_specifier)                                 \
   do {                                                                         \
-    if ( 1 != sscanf(buf_c, conversion_specifier, (type*)data_v) ) {           \
+    if ( 1 != sscanf(buf_c, "%" conversion_specifier, (type*)data_v) ) {       \
       goto free_buf;                                                           \
     }                                                                          \
   } while ( 0 )
@@ -74,28 +74,28 @@ c3_prim_get(const c3_path* const path_u,
       *(c3_c**)data_v = buf_c;
       break;
     case c3_prim_uint8:
-      buf_to_num(c3_y, "%hhu");
+      buf_to_num(c3_y, SCNu8);
       break;
     case c3_prim_uint16:
-      buf_to_num(c3_s, "%hu");
+      buf_to_num(c3_s, SCNu16);
       break;
     case c3_prim_uint32:
-      buf_to_num(c3_w, "%u");
+      buf_to_num(c3_w, SCNu32);
       break;
     case c3_prim_uint64:
-      buf_to_num(c3_d, "%lu");
+      buf_to_num(c3_d, SCNu64);
       break;
     case c3_prim_int8:
-      buf_to_num(c3_ys, "%hhd");
+      buf_to_num(c3_ys, SCNi8);
       break;
     case c3_prim_int16:
-      buf_to_num(c3_ss, "%hd");
+      buf_to_num(c3_ss, SCNi16);
       break;
     case c3_prim_int32:
-      buf_to_num(c3_ws, "%d");
+      buf_to_num(c3_ws, SCNi32);
       break;
     case c3_prim_int64:
-      buf_to_num(c3_ds, "%ld");
+      buf_to_num(c3_ds, SCNi64);
       break;
     // This is dead code, but it's needed to appease macOS.
     case c3_prim_last:
@@ -139,7 +139,7 @@ c3_prim_put(const c3_path* const path_u,
   c3_c* buf_c = NULL;
 #define num_to_buf(type, conversion_specifier)                                 \
   do {                                                                         \
-    if ( -1 == asprintf(&buf_c, conversion_specifier, *(type*)data_v) ) {      \
+    if ( -1 == asprintf(&buf_c, "%" conversion_specifier, *(type*)data_v) ) {  \
       goto close_file;                                                         \
     }                                                                          \
   } while ( 0 )
@@ -149,28 +149,28 @@ c3_prim_put(const c3_path* const path_u,
       buf_c = *(c3_c**)data_v;
       break;
     case c3_prim_uint8:
-      num_to_buf(c3_y, "%hhu");
+      num_to_buf(c3_y, SCNu8);
       break;
     case c3_prim_uint16:
-      num_to_buf(c3_s, "%hu");
+      num_to_buf(c3_s, SCNu16);
       break;
     case c3_prim_uint32:
-      num_to_buf(c3_w, "%u");
+      num_to_buf(c3_w, SCNu32);
       break;
     case c3_prim_uint64:
-      num_to_buf(c3_d, "%lu");
+      num_to_buf(c3_d, SCNu64);
       break;
     case c3_prim_int8:
-      num_to_buf(c3_ys, "%hhd");
+      num_to_buf(c3_ys, SCNi8);
       break;
     case c3_prim_int16:
-      num_to_buf(c3_ss, "%hd");
+      num_to_buf(c3_ss, SCNi16);
       break;
     case c3_prim_int32:
-      num_to_buf(c3_ws, "%d");
+      num_to_buf(c3_ws, SCNi32);
       break;
     case c3_prim_int64:
-      num_to_buf(c3_ds, "%ld");
+      num_to_buf(c3_ds, SCNi64);
       break;
     // This is dead code, but it's needed to appease macOS.
     case c3_prim_last:
