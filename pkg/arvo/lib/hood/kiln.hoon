@@ -312,7 +312,7 @@
   :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
   :^  leaf+"from {<sud>}"  leaf+"on {<who>}"  leaf+"to {<syd>}"
   ?~  kid  ~
-  [leaf+", then {<u.kid>}" ~]
+  [leaf+"then {<u.kid>}" ~]
 ::
 ++  sources
   =/  zyns=(list [[syd=desk her=ship sud=desk] *])  ~(tap by zyn)
@@ -342,7 +342,7 @@
   |-  ^+  ..on-init
   ?~  dez  ..on-init
   =.  ..on-init
-    (emit %pass /kiln-init-zest %arvo %c %zest i.dez %next)
+    (emit %pass /kiln/init-zest %arvo %c %zest i.dez %next)
   =.  ..on-init
     %-  emit
     :^  %pass  /kiln/permission  %arvo
@@ -438,13 +438,55 @@
   =?  old  ?=(%8 -.old)
     [%9 +.old]
   ::
-  ::  XX need to merge ark into syn
-  =?  old  ?=(%9 -.old)
-    [%10 |1.+.old(syn 0, ark ~)]
+  =^  cards-9=(list card:agent:gall)  old
+    ?.  ?=(%9 -.old)
+      `old
+    =/  syn=(set kiln-sync)
+      %-  ~(gas in ~(key by syn.old))
+      %+  murn  ~(tap by ark.old)
+      |=  [=desk =arak-9]
+      ?~  rail.arak-9
+        ~
+      ?:  paused.u.rail.arak-9
+        ~
+      `u=[desk ship.u.rail.arak-9 desk.u.rail.arak-9]
+    =/  zet=(list [desk zest])
+      %+  murn  ~(tap by ark.old)
+      |=  [=desk =arak-9]
+      ^-  (unit [^desk zest])
+      ?:  liv.rein.arak-9
+        `[desk %next]
+      ?~  rail.arak-9
+        ~
+      ?:  paused.u.rail.arak-9
+        ~
+      `[desk %next]
+    ::
+    :_  [%10 |1.+.old(syn 0, ark ~)]
+    ;:  weld
+      %+  turn  zet
+      |=  [=desk =zest]
+      [%pass /kiln/load-zest %arvo %c %zest desk zest]
+    ::
+      %+  turn  ~(tap in syn)
+      |=  k=kiln-sync
+      [%pass /kiln/load-sync %agent [our %hood] %poke %kiln-sync !>(k)]
+    ::
+      =/  ks  ~(tap in syn)
+      |-  ^-  (list card:agent:gall)
+      ?~  ks
+        ~
+      ?:  =(%base syd.i.ks)
+        :_  ~
+        :*  %pass  /kiln/load-kids  %agent  [our %hood]
+            %poke  %kiln-kids  !>([i.ks `%kids])
+        ==
+      $(ks t.ks)
+    ==
   ::
   ?>  ?=(%10 -.old)
   =.  state  old
-  abet:kiln
+  abet:(emil cards-9)
 ::
 ++  on-peek
   |=  =path
@@ -487,6 +529,7 @@
     %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-install            =;(f (f !<(_+<.f vase)) poke-install)
+    %kiln-kids               =;(f (f !<(_+<.f vase)) poke-kids)
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
@@ -611,15 +654,18 @@
 ::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
-  ::  XX should check if already installed before changing zest?
   =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
   =/  =zest
     ?~  got=(~(get by rock) loc)
       %dead
     zest.u.got
   =?  ..on-init  ?=(%dead zest)
-    (emit %pass /kiln-install %arvo %c %zest loc %next)
+    (emit %pass /kiln/install %arvo %c %zest loc %next)
   (poke-sync loc her rem)
+::
+++  poke-kids
+  |=  [hos=kiln-sync nex=(unit desk)]
+  abet:abet:(apex:(sync hos) nex)
 ::
 ++  poke-label
   |=  [syd=desk lab=@tas aey=(unit aeon)]
@@ -645,8 +691,7 @@
   ?.  desk
     (emit %pass /nuke %arvo %g [%nuke term])
   %-  emil
-  ::  XX
-  %+  turn  *(list [dude ?])  ::  (get-apps-have our term now)
+  %+  turn  (get-apps-have our term now)
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
 ::
 ++  poke-pause
@@ -664,11 +709,11 @@
 ::
 ++  poke-rein
   |=  [=desk =rein]
-  abet:(emit %pass /kiln-rein %arvo %c %rein desk rein)
+  abet:(emit %pass /kiln/rein %arvo %c %rein desk rein)
 ::
 ++  poke-revive
   |=  =desk
-  abet:(emit %pass /kiln-revive %arvo %c %zest desk %live)
+  abet:(emit %pass /kiln/revive %arvo %c %zest desk %live)
 ::
 ++  poke-rm
   |=  a=path
@@ -687,7 +732,7 @@
 ::
 ++  poke-suspend
   |=  =desk
-  abet:(emit %pass /kiln-suspend %arvo %c %zest desk %dead)
+  abet:(emit %pass /kiln/suspend %arvo %c %zest desk %dead)
 ::
 ++  poke-sync
   |=  hos=kiln-sync
@@ -708,7 +753,7 @@
   |=  loc=desk
   ?~  got=(~(get by sources) loc)
     abet:(spam leaf+"desk not installed: {<loc>}" ~)
-  =.  ..on-init  (emit %pass /kiln-uninstall %arvo %c %zest loc %dead)
+  =.  ..on-init  (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
   (poke-unsync loc u.got)
 ::
 ++  poke-unmount
@@ -742,7 +787,12 @@
 ::
 ++  take-agent
   |=  [=wire =sign:agent:gall]
-  ?+    wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
+  ?+      wire
+        ?:  ?=(%poke-ack -.sign)
+          ~?  ?=(^ p.sign)  [%kiln-poke-nack u.p.sign]
+          abet
+        ~|([%kiln-bad-take-agent wire -.sign] !!)
+  ::
       [%fancy *]
     ?>  ?=(%poke-ack -.sign)
     (take-coup-fancy t.wire p.sign)
@@ -786,10 +836,8 @@
       *
     ?+    +<.sign-arvo
         ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
-      %done  %+  done  wire
-             ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
-      %mere  %+  take-mere  wire
-             ?>(?=(%mere +<.sign-arvo) +>.sign-arvo)
+      %done  (done wire +>.sign-arvo)
+      %mere  (take-mere wire +>.sign-arvo)
     ==
   ==
 ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler

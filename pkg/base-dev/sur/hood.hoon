@@ -139,13 +139,13 @@
 ::    ^-  (list dude)
 ::    %+  murn  (get-apps-have our desk now)
 ::    |=([=dude live=?] ?.(live ~ `dude))
-::  ::  +get-apps-have: find which apps Gall is running on a desk
-::  ::
-::  ++  get-apps-have
-::    |=  [our=ship =desk now=@da]
-::    ^-  (list [=dude live=?])
-::    %~  tap  in
-::    .^((set [=dude live=?]) ge+/(scot %p our)/[desk]/(scot %da now))
+::  +get-apps-have: find which apps Gall is running on a desk
+::
+++  get-apps-have
+  |=  [our=ship =desk now=@da]
+  ^-  (list [=dude live=?])
+  %~  tap  in
+  .^((set [=dude live=?]) ge+/(scot %p our)/[desk]/(scot %da now))
 ::  ::  +get-apps-want: find which apps should be running on a desk
 ::  ::
 ::  ++  get-apps-want
