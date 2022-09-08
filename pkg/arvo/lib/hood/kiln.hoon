@@ -342,7 +342,7 @@
   |-  ^+  ..on-init
   ?~  dez  ..on-init
   =.  ..on-init
-    (emit %pass /kiln/init-zest %arvo %c %zest i.dez %next)
+    (emit %pass /kiln/init-zest %arvo %c %zest i.dez %live)
   =.  ..on-init
     %-  emit
     :^  %pass  /kiln/permission  %arvo
@@ -659,7 +659,11 @@
     ?~  got=(~(get by rock) loc)
       %dead
     zest.u.got
-  =?  ..on-init  ?=(%dead zest)
+  =.  zyn
+    ?~  got=(~(get by sources) loc)
+      zyn
+    (~(del by zyn) loc u.got)
+  =?  ..abet  ?=(%dead zest)
     (emit %pass /kiln/install %arvo %c %zest loc %next)
   (poke-sync loc her rem)
 ::
@@ -1015,7 +1019,7 @@
   ++  apex  |=(nex=(unit desk) ..abet(kid nex))
   ++  emit  |=(card:agent:gall ..abet(kiln (^emit +<)))
   ++  emil  |=((list card:agent:gall) ..abet(kiln (^emil +<)))
-  ++  here  "{<syd>} from {<[her sud]>}"
+  ++  here  "{<syd>} from {<her>}/{<sud>}"
   ++  ware
     |=  =wire
     [%kiln %zinc syd (scot %p her) sud nun wire]
