@@ -3,7 +3,6 @@
 //! Main loop of a serf process.
 
 #include "all.h"
-#include "c/bile.h"
 #include "c/list.h"
 #include "c/path.h"
 #include "vere/vere.h"
