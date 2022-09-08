@@ -578,7 +578,6 @@ u3_epoc_migrate(c3_path* const       src_u,
 #undef lookup_metadata
   }
 
-  // TODO: move LMDB environment and create metadata files.
   u3_epoc* const poc_u = c3_calloc(sizeof(*poc_u));
   poc_u->env_u         = env_u;
   poc_u->fir_d         = fir_d;
