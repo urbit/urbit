@@ -1021,30 +1021,20 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     u3_cell sam = u3nc(u3nc(u3_nul, u3_nul),
                        u3nc(c3n, u3nq(c3__once, 'j', c3__fake, u3_nul)));
     u3_noun res = u3v_soft_peek(1000 /* ms */, sam);
-    // Response should be something like:
+    // Response is something like:
     // [0 0 %omen [106 '~zod' %fake '~2022.9.8..20.38.03..f7d0' 0] %noun 0]
-    u3_noun a, b, c, d, e, f;
+    u3_noun ome, nou, fak;
     // TODO: figure out if there's a better way than u3r_word().
-    if ( c3n == u3r_hext(res, &a, &b, &c, &d, &e, &f)
-        || u3r_word(0, a) != u3_nul
-        || u3r_word(0, b) != u3_nul
-        || c != c3__omen
-        || e != c3__noun
-        || u3r_word(0, f) != u3_nul )
+    if ( c3n == u3r_hext(res, NULL, NULL, &ome, NULL, &nou, &fak)
+        || ome != c3__omen
+        || nou != c3__noun )
     {
       u3z(res);
       // TODO: will this leak mar_u->met_u.who_d?
       goto free_event_log;
     }
 
-    u3_noun fak;
-    if ( c3n == u3r_quil(d, NULL, NULL, &fak, NULL, NULL)
-        || c3n == u3a_is_cat(fak) )
-    {
-      u3z(res);
-      goto free_event_log;
-    }
-    mar_u->met_u.fak_o = ( fak == c3__fake ) ? c3y : c3n;
+    mar_u->met_u.fak_o = u3r_word(0, fak);
     u3z(res);
   }
 
