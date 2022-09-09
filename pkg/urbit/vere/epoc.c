@@ -171,29 +171,39 @@ _epoc_is_first(const c3_path* const pax_u);
 static c3_path*
 _epoc_path(const c3_path* const par_u, const c3_d fir_d);
 
-//! Determine the length of the boot sequence (aka life cycle length).
+//! Determine the length of the boot sequence.
 //!
-//! This only makes sense in the context of the first epoch, and passing a
-//! non-first epoch to this function will simply succeed and populate `lif_w`
-//! with 0.
+//! The boot sequence is the sequence of events needed to boot a new ship. The
+//! length of the initial subset of the boot sequence required to minimally
+//! bootstrap an Arvo kernel is referred to as the life cycle length because
+//! this subset must be computed using the life cycle function.
+//!
+//! The notion of a boot sequence only makes sense in the context of the first
+//! epoch, and passing a non-first epoch to this function will simply succeed
+//! and populate `len_w` with 0.
 //!
 //! For the first epoch, the boot sequence length is determined by attempting to
-//! read the value of the "life" key of the META database. A first epoch will
-//! only have a META database if it was migrated from the event log format that
-//! predated the epoch-based event log. If there is no META database, then the
-//! epoch was not migrated and the length of the entire epoch is understood to
-//! be the length of the boot sequence.
+//! read the value of the "life" key of the META database. Unfortunately, this
+//! isn't actually the boot sequence length but instead the life cycle length,
+//! but we intentionally overlook this discrepancy because it's unlikely to
+//! cause issues in practice most first epochs with a META database will
+//! presumably be truncated sooner rather than later.
+//!
+//! A first epoch will only have a META database if it was migrated from the
+//! event log format that predated the epoch-based event log. If there is no
+//! META database, then the epoch was not migrated and the length of the entire
+//! epoch is understood to be the boot sequence length.
 //!
 //! @param[in]  poc_u  Epoch handle.
-//! @param[out] lif_w  Pointer to length of boot sequence. Only relevant for
+//! @param[out] len_w  Pointer to length of boot sequence. Only relevant for
 //!                    first epoch. Can be NULL if not first epoch. If not NULL
 //!                    and not first epoch, will be set to 0.
 //!
-//! @return 1  `poc_u` is not the first epoch and `lif_w` was NULL.
-//! @return 1  `lif_w` was not NULL and successfully populated.
+//! @return 1  `poc_u` is not the first epoch and `len_w` was NULL.
+//! @return 1  `len_w` was not NULL and successfully populated.
 //! @return 0  Otherwise.
 static c3_t
-_get_life_cycle_len(const u3_epoc* const poc_u, c3_w* const lif_w)
+_get_boot_seq_len(const u3_epoc* const poc_u, c3_w* const len_w)
 {
   c3_t suc_t = 0;
 
@@ -201,16 +211,16 @@ _get_life_cycle_len(const u3_epoc* const poc_u, c3_w* const lif_w)
     goto end;
   }
 
-  // Non-first epochs don't have life cycle lengths, so return successfully.
+  // Non-first epochs don't have boot sequence lengths, so return successfully.
   if ( !_epoc_is_first(poc_u->pax_u) ) {
-    if ( lif_w ) {
-      *lif_w = 0;
+    if ( len_w ) {
+      *len_w = 0;
     }
     suc_t = 1;
     goto end;
   }
 
-  if ( !lif_w ) {
+  if ( !len_w ) {
     goto end;
   }
 
@@ -234,15 +244,15 @@ _get_life_cycle_len(const u3_epoc* const poc_u, c3_w* const lif_w)
                break,
                "failed to get value for key '%s' in META database",
                key_c);
-      if ( val_u.mv_size != sizeof(*lif_w) ) {
+      if ( val_u.mv_size != sizeof(*len_w) ) {
         fprintf(stderr,
                 "epoc: size of life cycle length unexpected:"
                 " expected %lu, got %lu\r\n",
-                sizeof(*lif_w),
+                sizeof(*len_w),
                 val_u.mv_size);
       }
       else {
-        memcpy(lif_w, val_u.mv_data, sizeof(*lif_w));
+        memcpy(len_w, val_u.mv_data, sizeof(*len_w));
         suc_t = 1;
       }
       break;
@@ -251,7 +261,7 @@ _get_life_cycle_len(const u3_epoc* const poc_u, c3_w* const lif_w)
     // The epoch doesn't have a META database, which means that its entire
     // length is the life cycle length.
     case MDB_NOTFOUND:
-      *lif_w = u3_epoc_len(poc_u);
+      *len_w = u3_epoc_len(poc_u);
       suc_t = 1;
       break;
 
@@ -664,7 +674,7 @@ fail:
 }
 
 u3_epoc*
-u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w)
+u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const len_w)
 {
   if ( !pax_u ) {
     goto fail;
@@ -706,7 +716,7 @@ u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w)
     poc_u->las_d = poc_u->fir_d - 1;
   }
 
-  if ( !_get_life_cycle_len(poc_u, lif_w) ) {
+  if ( !_get_boot_seq_len(poc_u, len_w) ) {
     fprintf(stderr,
             "epoc: failed to determine life cycle length from epoch %s\r\n",
             c3_path_str(poc_u->pax_u));

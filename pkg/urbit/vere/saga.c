@@ -358,7 +358,7 @@ succeed:
 }
 
 u3_saga*
-u3_saga_open(const c3_path* const pax_u, c3_w* const lif_w)
+u3_saga_open(const c3_path* const pax_u, c3_w* const len_w)
 {
   u3_saga* log_u = c3_calloc(sizeof(*log_u));
   if ( !(log_u->pax_u = c3_path_fp(pax_u)) ) {
@@ -396,7 +396,7 @@ u3_saga_open(const c3_path* const pax_u, c3_w* const lif_w)
     // is needed to replay the boot sequence.
     try_epoc(poc_u = u3_epoc_open(log_u->pax_u,
                                   ent_i > 2 && idx_i < ent_i - 2,
-                                  idx_i == 0 ? lif_w : NULL),
+                                  idx_i == 0 ? len_w : NULL),
              goto free_dir_entries);
     c3_path_pop(log_u->pax_u);
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
@@ -513,7 +513,9 @@ u3_saga_commit_async(u3_saga* const log_u,
 c3_t
 u3_saga_rollover(u3_saga* const log_u)
 {
-  if ( !log_u ) {
+  // Rollover should not be allowed if Arvo's current event ID doesn't match the
+  // most recently committed event ID.
+  if ( !log_u || log_u->eve_d != u3A->eve_d ) {
     goto fail;
   }
   u3_epoc* const poc_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1);

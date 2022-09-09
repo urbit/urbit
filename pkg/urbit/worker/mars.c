@@ -1481,7 +1481,7 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
 
   u3_noun evt = u3_nul;
   // Create single event out of boot events and attempt to boot.
-  if ( !u3_saga_replay(log_u, 0, met_u.lif_w, _saga_boot_cb, &evt) ) {
+  if ( !u3_saga_replay(log_u, 0, 0, _saga_boot_cb, &evt) ) {
     goto free_event_log;
   }
 

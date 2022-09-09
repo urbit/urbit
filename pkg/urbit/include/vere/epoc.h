@@ -12,6 +12,9 @@
 #include "c/list.h"
 #include "c/path.h"
 
+// Uncomment if running tests in epoc_tests.c.
+//#define U3_EPOC_TEST
+
 //==============================================================================
 // Types
 //==============================================================================
@@ -97,14 +100,14 @@ u3_epoc_migrate(c3_path* const       src_u,
 //!                    read-only), meaning that only the epoch's first and last
 //!                    event numbers and path will be accessible. In particular,
 //!                    u3_epoc_commit() and u3_epoc_iter_*() must NOT be called.
-//! @param[out] lif_w  Pointer to length of boot sequence. Only relevant for
+//! @param[out] len_w  Pointer to length of boot sequence. Only relevant for
 //!                    first epoch. Can be NULL if not first epoch. If not NULL
 //!                    and not first epoch, will be set to 0.
 //!
 //! @return NULL  Existing epoch could not be opened.
 //! @return       Handle to open epoch.
 u3_epoc*
-u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w);
+u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const len_w);
 
 //! Get the file path of an epoch.
 //!

@@ -97,13 +97,13 @@ u3_saga_new(const c3_path* const pax_u);
 //! TODO: explain assumptions around u3m_init().
 //!
 //! @param[in]  pax_u  Root directory of event log.
-//! @param[out] lif_w  Pointer to life cycle (boot sequence) length. If set to
-//!                    0, this indicates that the first epoch has been truncated.
+//! @param[out] len_w  Pointer to boot sequence length. If set to 0, this
+//!                    indicates that the first epoch has been truncated.
 //!
 //! @return NULL  Existing event log could not be opened.
 //! @return       Handle to open event log.
 u3_saga*
-u3_saga_open(const c3_path* const pax_u, c3_w* const lif_w);
+u3_saga_open(const c3_path* const pax_u, c3_w* const len_w);
 
 //! Get the ID of the last committed event in an event log.
 //!

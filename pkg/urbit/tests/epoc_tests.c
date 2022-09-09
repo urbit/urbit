@@ -21,11 +21,10 @@ static void
 test_u3_epoc_new(void)
 {
   {
-    static const c3_c pax_c[] = "/tmp/event_log/0i110";
+    static const c3_c pax_c[] = "/tmp/event_log/0i109";
     static const c3_d fir_d   = 110;
-    static const c3_w lif_w   = 5;
     c3_path* const    pax_u   = c3_path_fv(3, "/", "tmp", "event_log");
-    u3_epoc*          poc_u   = u3_epoc_new(pax_u, fir_d, lif_w);
+    u3_epoc*          poc_u   = u3_epoc_new(pax_u, fir_d);
     c3_assert(poc_u);
     c3_assert(u3_epoc_is_empty(poc_u));
     c3_assert(0 == u3_epoc_len(poc_u));
@@ -42,12 +41,12 @@ test_sync_mixed(void)
   c3_path* const    par_u = c3_path_fv(3, "/", "tmp", "event_log");
   static const c3_d fir_d = 137;
   static c3_y       eve_c = 'a';
-  static const c3_w lif_w = 5;
+  static const c3_w len_w = 5;
   c3_list* const    lis_u = c3_list_init();
   {
     // Create new epoch.
-    c3_path* const pax_u = c3_path_fv(4, "/", "tmp", "event_log", "0i137");
-    u3_epoc*       poc_u = u3_epoc_new(par_u, fir_d, lif_w);
+    c3_path* const pax_u = c3_path_fv(4, "/", "tmp", "event_log", "0i136");
+    u3_epoc*       poc_u = u3_epoc_new(par_u, fir_d);
     c3_assert(poc_u);
     c3_assert(u3_epoc_is_empty(poc_u));
     c3_assert(0 == u3_epoc_len(poc_u));
@@ -61,7 +60,7 @@ test_sync_mixed(void)
     c3_free(poc_u);
 
     // Load recently closed epoch.
-    poc_u = u3_epoc_open(pax_u, NULL);
+    poc_u = u3_epoc_open(pax_u, 0, NULL);
     c3_assert(poc_u);
     c3_assert(!u3_epoc_is_empty(poc_u));
     c3_assert(1 == u3_epoc_len(poc_u));
@@ -74,16 +73,16 @@ test_sync_mixed(void)
 
   {
     // Attempt to load epoch that does not exist.
-    c3_path* const pax_u = c3_path_fv(4, "/", "tmp", "event_log", "0i138");
-    u3_epoc*       poc_u = u3_epoc_open(pax_u, NULL);
+    c3_path* const pax_u = c3_path_fv(4, "/", "tmp", "event_log", "0i137");
+    u3_epoc*       poc_u = u3_epoc_open(pax_u, 0, NULL);
     c3_assert(!poc_u);
     c3_path_free(pax_u);
   }
 
   {
     // Load existing epoch.
-    c3_path* const pax_u = c3_path_fv(4, "/", "tmp", "event_log", "0i137");
-    u3_epoc*       poc_u = u3_epoc_open(pax_u, NULL);
+    c3_path* const pax_u = c3_path_fv(4, "/", "tmp", "event_log", "0i136");
+    u3_epoc*       poc_u = u3_epoc_open(pax_u, 0, NULL);
     c3_assert(poc_u);
     c3_assert(!u3_epoc_is_empty(poc_u));
     c3_assert(1 == u3_epoc_len(poc_u));
@@ -103,7 +102,7 @@ test_sync_mixed(void)
     c3_free(poc_u);
 
     // Load recently closed epoch.
-    poc_u = u3_epoc_open(pax_u, NULL);
+    poc_u = u3_epoc_open(pax_u, 0, NULL);
     c3_assert(poc_u);
     c3_assert(cnt_i + 1 == u3_epoc_len(poc_u));
     c3_assert(fir_d == u3_epoc_first_commit(poc_u));
