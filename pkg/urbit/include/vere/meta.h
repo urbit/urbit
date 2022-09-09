@@ -11,8 +11,7 @@
 typedef struct {
   c3_d who_d[2]; //!< identity
   c3_o fak_o;    //!< fake bit
-  c3_w lif_w;    //!< lifecycle length
-  c3_w ver_w;    //!< event log version
+  c3_w lif_w;    //!< life cycle (boot sequence) length
 } u3_meta;
 
 #endif /* ifndef U3_VERE_META_H */

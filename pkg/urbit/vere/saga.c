@@ -118,12 +118,11 @@ _is_epoc_dir(const c3_c* const nam_c);
 //! Migrate from old non-epoch-based event log to epoch-based event log.
 //!
 //! @param[in]  log_u  Event log handle.
-//! @param[out] met_u  Pointer to pier metadata.
 //!
 //! @return 1  Migration succeeded.
 //! @return 0  Otherwise.
 static c3_t
-_migrate(u3_saga* const log_u, u3_meta* const met_u);
+_migrate(u3_saga* const log_u);
 
 //! Discover epoch directories in a given directory.
 //!
@@ -195,12 +194,11 @@ _is_epoc_dir(const c3_c* const nam_c)
 }
 
 static c3_t
-_migrate(u3_saga* const log_u, u3_meta* const met_u)
+_migrate(u3_saga* const log_u)
 {
   u3_epoc* poc_u = u3_epoc_migrate(log_u->pax_u,
                                    log_u->pax_u,
-                                   u3A->eve_d,
-                                   met_u);
+                                   u3A->eve_d);
   if ( !poc_u ) {
     goto fail;
   }
@@ -326,7 +324,7 @@ _find_epoc(u3_saga* const log_u, const c3_d ide_d)
 //==============================================================================
 
 u3_saga*
-u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
+u3_saga_new(const c3_path* const pax_u)
 {
   u3_saga* log_u = c3_calloc(sizeof(*log_u));
   if ( !(log_u->pax_u = c3_path_fp(pax_u)) ) {
@@ -337,7 +335,7 @@ u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u)
   { // Create first epoch.
     try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_event_log);
     u3_epoc* poc_u;
-    try_epoc(poc_u = u3_epoc_new(log_u->pax_u, epo_min_d, met_u->lif_w),
+    try_epoc(poc_u = u3_epoc_new(log_u->pax_u, epo_min_d),
              goto free_event_log,
              "failed to create first epoch in %s\r\n",
              c3_path_str(log_u->pax_u));
@@ -360,7 +358,7 @@ succeed:
 }
 
 u3_saga*
-u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
+u3_saga_open(const c3_path* const pax_u, c3_w* const lif_w)
 {
   u3_saga* log_u = c3_calloc(sizeof(*log_u));
   if ( !(log_u->pax_u = c3_path_fp(pax_u)) ) {
@@ -372,7 +370,7 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
     c3_i ret_i = access(c3_path_str(log_u->pax_u), R_OK | W_OK);
     c3_path_pop(log_u->pax_u);
     if ( 0 == ret_i ) {
-      if ( !_migrate(log_u, met_u) ) {
+      if ( !_migrate(log_u) ) {
         fprintf(stderr,
                 "saga: failed to create first "
                 "epoch from existing event log\r\n");
@@ -390,17 +388,19 @@ u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u)
 
   try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_dir_entries);
   u3_epoc *poc_u, *pre_u;
-  c3_w* lif_w = &met_u->lif_w;
   for ( size_t idx_i = 0; idx_i < ent_i; idx_i++ ) {
     c3_path_push(log_u->pax_u, ent_c[idx_i]);
-    try_epoc(poc_u = u3_epoc_open(log_u->pax_u, idx_i < ent_i - 1, lif_w),
+    // The two most recent epochs must be mapped into memory. It'd be nice to
+    // map only the most recent epoch, but the second most recent epoch is also
+    // required when relaunching after boot because the second most recent epoch
+    // is needed to replay the boot sequence.
+    try_epoc(poc_u = u3_epoc_open(log_u->pax_u,
+                                  ent_i > 2 && idx_i < ent_i - 2,
+                                  idx_i == 0 ? lif_w : NULL),
              goto free_dir_entries);
     c3_path_pop(log_u->pax_u);
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
-    if ( lif_w ) {
-      lif_w = NULL;
-    }
   }
 
   log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
@@ -516,7 +516,7 @@ u3_saga_rollover(u3_saga* const log_u)
   if ( !log_u ) {
     goto fail;
   }
-  u3_epoc* const poc_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1, 0);
+  u3_epoc* const poc_u = u3_epoc_new(log_u->pax_u, log_u->eve_d + 1);
   if ( !poc_u ) {
     goto fail;
   }

@@ -76,9 +76,6 @@ static const c3_c epv_nam_c[] = "epoc_version.txt";
 //! Name of text file containing the urbit binary version number.
 static const c3_c urv_nam_c[] = "urbit_version.txt";
 
-//! Name of text file containing the lifecycle length.
-static const c3_c lif_nam_c[] = "lifecycle.txt";
-
 //! Name of LMDB database holding the events.
 static const c3_c dab_nam_c[] = "EVENTS";
 
@@ -174,6 +171,104 @@ _epoc_is_first(const c3_path* const pax_u);
 static c3_path*
 _epoc_path(const c3_path* const par_u, const c3_d fir_d);
 
+//! Determine the length of the boot sequence (aka life cycle length).
+//!
+//! This only makes sense in the context of the first epoch, and passing a
+//! non-first epoch to this function will simply succeed and populate `lif_w`
+//! with 0.
+//!
+//! For the first epoch, the boot sequence length is determined by attempting to
+//! read the value of the "life" key of the META database. A first epoch will
+//! only have a META database if it was migrated from the event log format that
+//! predated the epoch-based event log. If there is no META database, then the
+//! epoch was not migrated and the length of the entire epoch is understood to
+//! be the length of the boot sequence.
+//!
+//! @param[in]  poc_u  Epoch handle.
+//! @param[out] lif_w  Pointer to length of boot sequence. Only relevant for
+//!                    first epoch. Can be NULL if not first epoch. If not NULL
+//!                    and not first epoch, will be set to 0.
+//!
+//! @return 1  `poc_u` is not the first epoch and `lif_w` was NULL.
+//! @return 1  `lif_w` was not NULL and successfully populated.
+//! @return 0  Otherwise.
+static c3_t
+_get_life_cycle_len(const u3_epoc* const poc_u, c3_w* const lif_w)
+{
+  c3_t suc_t = 0;
+
+  if ( !poc_u ) {
+    goto end;
+  }
+
+  // Non-first epochs don't have life cycle lengths, so return successfully.
+  if ( !_epoc_is_first(poc_u->pax_u) ) {
+    if ( lif_w ) {
+      *lif_w = 0;
+    }
+    suc_t = 1;
+    goto end;
+  }
+
+  if ( !lif_w ) {
+    goto end;
+  }
+
+  MDB_txn* txn_u;
+  try_lmdb(mdb_txn_begin(poc_u->env_u, NULL, MDB_RDONLY, &txn_u),
+           goto end,
+           "failed to create read-only transaction");
+
+  MDB_dbi dbi_u;
+  switch ( mdb_dbi_open(txn_u, "META", 0, &dbi_u) ) {
+    // Read the life cycle length out of the epoch's META database.
+    case 0: {
+      static const c3_c key_c[] = "life";
+      MDB_val key_u = {
+        .mv_data = (void*)key_c,
+        // Keys in the META database omit the NULL terminator.
+        .mv_size = sizeof(key_c) - 1,
+      };
+      MDB_val val_u;
+      try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),
+               break,
+               "failed to get value for key '%s' in META database",
+               key_c);
+      if ( val_u.mv_size != sizeof(*lif_w) ) {
+        fprintf(stderr,
+                "epoc: size of life cycle length unexpected:"
+                " expected %lu, got %lu\r\n",
+                sizeof(*lif_w),
+                val_u.mv_size);
+      }
+      else {
+        memcpy(lif_w, val_u.mv_data, sizeof(*lif_w));
+        suc_t = 1;
+      }
+      break;
+    }
+
+    // The epoch doesn't have a META database, which means that its entire
+    // length is the life cycle length.
+    case MDB_NOTFOUND:
+      *lif_w = u3_epoc_len(poc_u);
+      suc_t = 1;
+      break;
+
+    default:
+      fprintf(stderr,
+              "epoc: unexpected error occurred while determining"
+              " the life cycle length from %s\r\n",
+              u3_epoc_path_str(poc_u));
+      break;
+  }
+
+  mdb_txn_abort(txn_u);
+
+end:
+  return suc_t;
+}
+
 //! Get the first and last event numbers from an epoch's LMDB instance.
 //!
 //! @param[in]  env_u  Epoch LMDB instance.
@@ -248,7 +343,7 @@ _epoc_first_evt_from_path(const c3_path* const pax_u)
   c3_c* end_c;
   c3_d fir_d = strtoull(cur_c + sizeof(epo_pre_c) - 1, &end_c, 10);
   if ( '\0' == *end_c && 0 != fir_d ) {
-    return fir_d;
+    return fir_d + 1;
   }
 
 fail:
@@ -343,6 +438,10 @@ _lmdb_init(const c3_path* const pax_u)
            goto close_env,
            "failed to set map size");
 
+  // The greatest number of databases an epoch can have is 2: META and EVENTS.
+  // The only epoch that will have a META database is the first epoch of a ship
+  // that predates the epoch-based event log. All other epochs will only have an
+  // EVENTS database.
   try_lmdb(mdb_env_set_maxdbs(env_u, 2),
            goto close_env,
            "failed to set max number of databases");
@@ -434,7 +533,7 @@ _persist_epoc_version(c3_path* const pax_u, const c3_w ver_w)
 //==============================================================================
 
 u3_epoc*
-u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
+u3_epoc_new(const c3_path* const par_u, const c3_d fir_d)
 {
   if ( !par_u || 0 == fir_d ) {
     goto fail;
@@ -471,35 +570,20 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w)
     c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u)));
 #endif
   }
-  // Write the lifecycle length to a file if this is the very first epoch.
-  else {
-    c3_path_push(poc_u->pax_u, lif_nam_c);
-    if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &lif_w) ) {
-      fprintf(stderr,
-              "epoc: failed to write lifecycle length to %s\r\n",
-              c3_path_str(poc_u->pax_u));
-      goto free_epoc;
-    }
-    c3_path_pop(poc_u->pax_u);
-  }
 
-  goto succeed;
+  return poc_u;
 
 free_epoc:
   u3_epoc_close(poc_u);
   c3_free(poc_u);
 fail:
   return NULL;
-
-succeed:
-  return poc_u;
 }
 
 u3_epoc*
 u3_epoc_migrate(c3_path* const       src_u,
                 const c3_path* const par_u,
-                const c3_d           cur_d,
-                u3_meta* const       met_u)
+                const c3_d           cur_d)
 {
   if ( !src_u || !par_u ) {
     goto fail;
@@ -539,38 +623,6 @@ u3_epoc_migrate(c3_path* const       src_u,
     goto close_env;
   }
 
-  MDB_txn* txn_u;
-  { // Read metadata out of LMDB instance.
-    try_lmdb(mdb_txn_begin(env_u, NULL, MDB_RDONLY, &txn_u),
-             goto close_env,
-             "failed to create read-only transaction");
-
-    MDB_dbi dbi_u;
-    try_lmdb(mdb_dbi_open(txn_u, "META", 0, &dbi_u),
-             goto abort_txn,
-             "failed to open META database in environment at %s",
-             c3_path_str(src_u));
-
-#define lookup_metadata(key_string, destination)                               \
-    do {                                                                       \
-      MDB_val key_u = {                                                        \
-        .mv_data = (void*)key_string,                                          \
-        /* Keys in the META table omit a null terminator. */                   \
-        .mv_size = strlen(key_string),                                         \
-      };                                                                       \
-      MDB_val val_u;                                                           \
-      try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),                          \
-               goto abort_txn,                                                 \
-               "failed to lookup metadata value for key '%s'",                 \
-               key_string);                                                    \
-      destination = u3i_bytes(val_u.mv_size, val_u.mv_data);                   \
-    } while ( 0 )
-
-    lookup_metadata("life", met_u->lif_w);
-    lookup_metadata("version", met_u->ver_w);
-#undef lookup_metadata
-  }
-
   u3_epoc* const poc_u = c3_calloc(sizeof(*poc_u));
   poc_u->env_u         = env_u;
   poc_u->fir_d         = fir_d;
@@ -578,20 +630,14 @@ u3_epoc_migrate(c3_path* const       src_u,
   poc_u->pax_u         = _epoc_path(par_u, poc_u->fir_d);
   mkdir(c3_path_str(poc_u->pax_u), 0700);
 
-  if ( !_persist_epoc_version(poc_u->pax_u, met_u->ver_w) ) {
+  // TODO: are there any repercussions to not reading the event log version out
+  // of the META database here?
+  if ( !_persist_epoc_version(poc_u->pax_u, epo_ver_w) ) {
     goto free_epoc;
   }
 
   if ( !_persist_binary_version(poc_u->pax_u, URBIT_VERSION) ) {
     goto free_epoc;
-  }
-
-  { // Write lifecycle length to file.
-    c3_path_push(poc_u->pax_u, lif_nam_c);
-    if ( !c3_prim_put(poc_u->pax_u, c3_prim_uint32, &met_u->lif_w) ) {
-      goto free_epoc;
-    }
-    c3_path_pop(poc_u->pax_u);
   }
 
   { // Relocate LMDB instance to the newly created epoch.
@@ -603,7 +649,6 @@ u3_epoc_migrate(c3_path* const       src_u,
     }
   }
 
-  mdb_txn_abort(txn_u);
   return poc_u;
 
 rename_lock_mdb:
@@ -612,8 +657,6 @@ rename_lock_mdb:
 free_epoc:
   u3_epoc_close(poc_u);
   c3_free(poc_u);
-abort_txn:
-  mdb_txn_abort(txn_u);
 close_env:
   mdb_env_close(env_u);
 fail:
@@ -648,17 +691,6 @@ u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w)
     c3_assert(epo_ver_w == ver_w);
   }
 
-  // Read contents of life cycle file.
-  if ( _epoc_is_first(poc_u->pax_u) ) {
-    c3_path_push(poc_u->pax_u, lif_nam_c);
-    if ( !c3_prim_get(poc_u->pax_u, c3_prim_uint32, lif_w) ) {
-      goto free_epoc;
-    }
-    c3_path_pop(poc_u->pax_u);
-  } else if ( lif_w ) {
-    *lif_w = 0;
-  }
-
   if ( !_lmdb_gulf(poc_u->env_u, &poc_u->fir_d, &poc_u->las_d) ) {
     goto free_epoc;
   }
@@ -672,6 +704,13 @@ u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const lif_w)
       goto free_epoc;
     }
     poc_u->las_d = poc_u->fir_d - 1;
+  }
+
+  if ( !_get_life_cycle_len(poc_u, lif_w) ) {
+    fprintf(stderr,
+            "epoc: failed to determine life cycle length from epoch %s\r\n",
+            c3_path_str(poc_u->pax_u));
+    goto free_epoc;
   }
 
   if ( rdo_t ) {

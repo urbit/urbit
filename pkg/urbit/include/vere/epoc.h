@@ -11,7 +11,6 @@
 #include "c/types.h"
 #include "c/list.h"
 #include "c/path.h"
-#include "vere/meta.h"
 
 //==============================================================================
 // Types
@@ -68,13 +67,11 @@ extern const c3_d epo_min_d;
 //! @param[in] par_u  Parent directory to house epoch. Will be created if it
 //!                   doesn't already exist.
 //! @param[in] fir_d  Event ID of first event in epoch.
-//! @param[in] lif_w  Lifecycle length of boot sequence. Only relevant for first
-//!                   epoch (i.e. ignored if `fir_d != epo_min_d`).
 //!
 //! @return NULL  New epoch could not be created.
 //! @return       Handle to new epoch.
 u3_epoc*
-u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w);
+u3_epoc_new(const c3_path* const par_u, const c3_d fir_d);
 
 //! Create a new first epoch from an existing (non-epoch-based) event log.
 //!
@@ -85,15 +82,13 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d, c3_w lif_w);
 //! @param[in]  par_u  Parent directory to house epoch. Will be created if it
 //!                    doesn't already exist.
 //! @param[in]  cur_d  Event number of most recently applied event.
-//! @param[out] met_u  Pointer to pier metadata.
 //!
 //! @return NULL  New epoch could not be created from old event log.
 //! @return       Handle to migrated epoch.
 u3_epoc*
 u3_epoc_migrate(c3_path* const       src_u,
                 const c3_path* const par_u,
-                const c3_d           cur_d,
-                u3_meta* const       met_u);
+                const c3_d           cur_d);
 
 //! Load an existing epoch created with u3_epoc_new().
 //!

@@ -86,24 +86,24 @@ extern const c3_w elo_ver_w;
 //!
 //! @param[in] pax_u  Root directory of event log. Will be created if it
 //!                   doesn't already exist.
-//! @param[in] met_u  Pier metadata.
 //!
 //! @return NULL  New event log could not be created.
 //! @return       Handle to new event log.
 u3_saga*
-u3_saga_new(const c3_path* const pax_u, const u3_meta* const met_u);
+u3_saga_new(const c3_path* const pax_u);
 
 //! Load an existing event log created with u3_saga_new().
 //!
 //! TODO: explain assumptions around u3m_init().
 //!
 //! @param[in]  pax_u  Root directory of event log.
-//! @param[out] met_u  Pier metadata.
+//! @param[out] lif_w  Pointer to life cycle (boot sequence) length. If set to
+//!                    0, this indicates that the first epoch has been truncated.
 //!
 //! @return NULL  Existing event log could not be opened.
 //! @return       Handle to open event log.
 u3_saga*
-u3_saga_open(const c3_path* const pax_u, u3_meta* const met_u);
+u3_saga_open(const c3_path* const pax_u, c3_w* const lif_w);
 
 //! Get the ID of the last committed event in an event log.
 //!

@@ -975,7 +975,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       goto free_mars;
     }
 
-    try_saga(mar_u->log_u = u3_saga_open(dir_u, &mar_u->met_u),
+    try_saga(mar_u->log_u = u3_saga_open(dir_u, &mar_u->met_u.lif_w),
              goto free_mars,
              "failed to open event log at %s",
              c3_path_str(dir_u));
@@ -1272,7 +1272,6 @@ _mars_boot_make(u3_boot_opts* inp_u,
   }
 
   u3r_chubs(0, 2, met_u->who_d, who);
-  met_u->ver_w = elo_ver_w;
 
   {
     u3_noun bot, mod, use;
@@ -1450,7 +1449,7 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
 
   // Create <pier>.urb/log
   c3_path_push(pax_u, "log");
-  u3_saga* log_u = u3_saga_new(pax_u, &met_u);
+  u3_saga* log_u = u3_saga_new(pax_u);
 
   c3_path_pop(pax_u);
   c3_path_pop(pax_u);
@@ -1485,7 +1484,10 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
   if ( !u3_saga_replay(log_u, 0, met_u.lif_w, _saga_boot_cb, &evt) ) {
     goto free_event_log;
   }
-  suc_o = c3y;
+
+  // Immediately rollover so that the first epoch contains the boot sequence
+  // only.
+  suc_o = u3_saga_rollover(log_u) ? c3y : c3n;
 
 free_event_log:
   u3_saga_close(log_u);
