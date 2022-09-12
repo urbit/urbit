@@ -545,7 +545,12 @@ export class Urbit {
     const response = await fetch(
       `${this.url}/~/scry/${app}${path}.json`,
       this.fetchOptions
-    );
+    )
+
+    if (!response.ok) {
+      return Promise.reject(response);
+    }
+
     return await response.json();
   }
 
