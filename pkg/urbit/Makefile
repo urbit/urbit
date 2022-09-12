@@ -2,7 +2,7 @@ include config.mk
 compat_mks := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
 include $(compat_mks)
 
-c    = $(wildcard c/*.c)
+c      = $(wildcard c/*.c)
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
 ur   = $(wildcard ur/*.c)

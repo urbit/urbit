@@ -166,8 +166,11 @@ _ce_maplloc(c3_w len_w)
 {
   void* map_v;
 
-  map_v
-    = mmap(0, len_w, (PROT_READ | PROT_WRITE), (MAP_ANON | MAP_PRIVATE), -1, 0);
+  map_v = mmap(0,
+               len_w,
+               (PROT_READ | PROT_WRITE),
+               (MAP_ANON | MAP_PRIVATE),
+               -1, 0);
 
   if ( -1 == (c3_ps)map_v ) {
     c3_assert(0);
@@ -182,12 +185,12 @@ _ce_maplloc(c3_w len_w)
 }
 
 /* _ce_mapfree(): crude off-loom allocator.
- */
+*/
 static void
 _ce_mapfree(void* map_v)
 {
   c3_w* map_w = map_v;
-  c3_i  res_i;
+  c3_i res_i;
 
   map_w -= 1;
   res_i = munmap(map_w, map_w[0]);
@@ -255,13 +258,13 @@ fail:
 c3_i
 u3e_fault(void* adr_v, c3_i ser_i)
 {
-  // Let the stack overflow handler run.
+  //  Let the stack overflow handler run.
   if ( 0 == ser_i ) {
     return 0;
   }
 
-  // XX u3l_log avoid here, as it can
-  // cause problems when handling errors
+  //  XX u3l_log avoid here, as it can
+  //  cause problems when handling errors
 
   c3_w* adr_w = (c3_w*)adr_v;
 
@@ -346,7 +349,7 @@ _ce_image_open(const c3_c* const dir_c, u3e_image* img_u)
           fprintf(stderr, "%s: corrupt size %" PRIx64 "\r\n", ful_c, siz_d);
           return c3n;
         }
-        img_u->pgs_w = (c3_w)pgs_d;
+        img_u->pgs_w = (c3_w) pgs_d;
         c3_assert(pgs_d == (c3_d)img_u->pgs_w);
 
         return c3y;
@@ -357,12 +360,15 @@ _ce_image_open(const c3_c* const dir_c, u3e_image* img_u)
 
 /* _ce_patch_write_control(): write control block file.
 */
-static inline void
+static void
 _ce_patch_write_control(u3_ce_patch* pat_u)
 {
-  c3_w len_w = sizeof(u3e_control) + (pat_u->con_u->pgs_w * sizeof(u3e_line));
+  c3_w len_w = sizeof(u3e_control) +
+               (pat_u->con_u->pgs_w * sizeof(u3e_line));
 
-  c3_assert(len_w == write(pat_u->ctl_i, pat_u->con_u, len_w));
+  if ( len_w != write(pat_u->ctl_i, pat_u->con_u, len_w) ) {
+    c3_assert(0);
+  }
 }
 
 /* _ce_patch_read_control(): read control block file.
@@ -376,14 +382,17 @@ _ce_patch_read_control(u3_ce_patch* pat_u)
   {
     struct stat buf_u;
 
-    c3_assert(-1 != fstat(pat_u->ctl_i, &buf_u));
-    len_w = (c3_w)buf_u.st_size;
+    if ( -1 == fstat(pat_u->ctl_i, &buf_u) ) {
+      c3_assert(0);
+      return c3n;
+    }
+    len_w = (c3_w) buf_u.st_size;
   }
 
   pat_u->con_u = c3_malloc(len_w);
-  if ( len_w != read(pat_u->ctl_i, pat_u->con_u, len_w)
-       || len_w
-            != sizeof(u3e_control) + pat_u->con_u->pgs_w * sizeof(u3e_line) )
+  if ( (len_w != read(pat_u->ctl_i, pat_u->con_u, len_w)) ||
+        (len_w != sizeof(u3e_control) +
+                  (pat_u->con_u->pgs_w * sizeof(u3e_line))) )
   {
     c3_free(pat_u->con_u);
     pat_u->con_u = 0;
@@ -406,15 +415,13 @@ _ce_patch_create(u3_ce_patch* pat_u)
   c3_mkdir(ful_c, 0700);
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, ctl_nam_c);
-  if ( -1 == (pat_u->ctl_i = c3_open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) )
-  {
+  if ( -1 == (pat_u->ctl_i = c3_open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
     fprintf(stderr, "loom: patch open %s: %s\r\n", ctl_nam_c, strerror(errno));
     c3_assert(0);
   }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, mem_nam_c);
-  if ( -1 == (pat_u->mem_i = c3_open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) )
-  {
+  if ( -1 == (pat_u->mem_i = c3_open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
     fprintf(stderr, "loom: patch open %s: %s\r\n", mem_nam_c, strerror(errno));
     c3_assert(0);
   }
@@ -442,10 +449,9 @@ _ce_patch_verify(u3_ce_patch* pat_u)
   c3_w i_w;
 
   if ( u3e_version != pat_u->con_u->ver_y ) {
-    fprintf(stderr,
-            "loom: patch version mismatch: have %u, need %u\r\n",
-            pat_u->con_u->ver_y,
-            u3e_version);
+    fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
+                    pat_u->con_u->ver_y,
+                    u3e_version);
     return c3n;
   }
 
@@ -465,12 +471,8 @@ _ce_patch_verify(u3_ce_patch* pat_u)
     {
       c3_w nug_w = u3r_mug_words(mem_w, pag_wiz_i);
       if ( mug_w != nug_w ) {
-        fprintf(stderr,
-                "loom: patch mug mismatch %d/%d; (%x, %x)\r\n",
-                pag_w,
-                i_w,
-                mug_w,
-                nug_w);
+        fprintf(stderr, "loom: patch mug mismatch %d/%d; (%x, %x)\r\n",
+                        pag_w, i_w, mug_w, nug_w);
         return c3n;
       }
 #if 0
@@ -495,13 +497,13 @@ _ce_patch_free(u3_ce_patch* pat_u)
 }
 
 /* _ce_patch_open(): open patch, if any.
- */
+*/
 static u3_ce_patch*
 _ce_patch_open(void)
 {
   u3_ce_patch* pat_u;
-  c3_c         ful_c[8193];
-  c3_i         ctl_i, mem_i;
+  c3_c ful_c[8193];
+  c3_i ctl_i, mem_i;
 
   snprintf(ful_c, 8192, "%s", u3P.dir_c);
   c3_mkdir(ful_c, 0700);
@@ -521,7 +523,7 @@ _ce_patch_open(void)
     _ce_patch_delete();
     return 0;
   }
-  pat_u        = c3_malloc(sizeof(u3_ce_patch));
+  pat_u = c3_malloc(sizeof(u3_ce_patch));
   pat_u->ctl_i = ctl_i;
   pat_u->mem_i = mem_i;
   pat_u->con_u = 0;
@@ -544,17 +546,20 @@ _ce_patch_open(void)
 
 /* _ce_patch_write_page(): write a page of patch memory.
  */
-static inline void
-_ce_patch_write_page(u3_ce_patch* pat_u, c3_w pgc_w, c3_w* mem_w)
+static void
+_ce_patch_write_page(u3_ce_patch* pat_u,
+                     c3_w         pgc_w,
+                     c3_w*        mem_w)
 {
   c3_assert(-1 != lseek(pat_u->mem_i, pgc_w * pag_siz_i, SEEK_SET));
   c3_assert(pag_siz_i == write(pat_u->mem_i, mem_w, pag_siz_i));
 }
 
 /* _ce_patch_count_page(): count a page, producing new counter.
- */
+*/
 static c3_w
-_ce_patch_count_page(c3_w pag_w, c3_w pgc_w)
+_ce_patch_count_page(c3_w pag_w,
+                     c3_w pgc_w)
 {
   c3_w blk_w = (pag_w >> 5);
   c3_w bit_w = (pag_w & 31);
@@ -566,9 +571,11 @@ _ce_patch_count_page(c3_w pag_w, c3_w pgc_w)
 }
 
 /* _ce_patch_save_page(): save a page, producing new page counter.
- */
+*/
 static c3_w
-_ce_patch_save_page(u3_ce_patch* pat_u, c3_w pag_w, c3_w pgc_w)
+_ce_patch_save_page(u3_ce_patch* pat_u,
+                    c3_w         pag_w,
+                    c3_w         pgc_w)
 {
   c3_w blk_w = (pag_w >> 5);
   c3_w bit_w = (pag_w & 31);
@@ -640,12 +647,12 @@ _ce_patch_compose(void)
   }
   else {
     u3_ce_patch* pat_u = c3_malloc(sizeof(u3_ce_patch));
-    c3_w         i_w, pgc_w;
+    c3_w i_w, pgc_w;
 
     _ce_patch_create(pat_u);
     pat_u->con_u = c3_malloc(sizeof(u3e_control) + (pgs_w * sizeof(u3e_line)));
     pat_u->con_u->ver_y = u3e_version;
-    pgc_w               = 0;
+    pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {
       pgc_w = _ce_patch_save_page(pat_u, i_w, pgc_w);
@@ -664,31 +671,32 @@ _ce_patch_compose(void)
 }
 
 /* _ce_patch_sync(): make sure patch is synced to disk.
- */
+*/
 static void
 _ce_patch_sync(u3_ce_patch* pat_u)
 {
   if ( -1 == c3_sync(pat_u->ctl_i) ) {
-    fprintf(stderr, "loom: control file sync failed: %s\r\n", strerror(errno));
+    fprintf(stderr, "loom: control file sync failed: %s\r\n",
+                    strerror(errno));
     c3_assert(!"loom: control sync");
   }
 
   if ( -1 == c3_sync(pat_u->mem_i) ) {
-    fprintf(stderr, "loom: patch file sync failed: %s\r\n", strerror(errno));
+    fprintf(stderr, "loom: patch file sync failed: %s\r\n",
+                    strerror(errno));
     c3_assert(!"loom: patch sync");
   }
 }
 
 /* _ce_image_sync(): make sure image is synced to disk.
- */
+*/
 static void
 _ce_image_sync(u3e_image* img_u)
 {
   if ( -1 == c3_sync(img_u->fid_i) ) {
-    fprintf(stderr,
-            "loom: image (%s) sync failed: %s\r\n",
-            img_u->nam_c,
-            strerror(errno));
+    fprintf(stderr, "loom: image (%s) sync failed: %s\r\n",
+                    img_u->nam_c,
+                    strerror(errno));
     c3_assert(!"loom: image sync");
   }
 }
@@ -800,11 +808,10 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
 
   if ( img_u->pgs_w > pgs_w ) {
     if ( ftruncate(img_u->fid_i, pgs_w * pag_siz_i) ) {
-      fprintf(stderr,
-              "loom: image truncate %s: %s\r\n",
-              img_u->nam_c,
-              strerror(errno));
-      exit(1);
+      fprintf(stderr, "loom: image truncate %s: %s\r\n",
+                      img_u->nam_c,
+                      strerror(errno));
+      c3_assert(0);
     }
   }
 
@@ -812,13 +819,13 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
 }
 
 /* _ce_patch_apply(): apply patch to images.
- */
+*/
 static void
 _ce_patch_apply(u3_ce_patch* pat_u)
 {
   c3_w i_w;
 
-  // resize images
+  //  resize images
   //
   {
     c3_y* bas_y = ( u3C.wag_w & u3o_map_snapshot ) ? (c3_y*)u3_Loom : NULL;
@@ -828,17 +835,17 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w, NULL);
   }
 
-  // seek to begining of patch and images
+  //  seek to begining of patch and images
   //
-  if ( (-1 == lseek(pat_u->mem_i, 0, SEEK_SET))
-       || (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET))
-       || (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
+  if (  (-1 == lseek(pat_u->mem_i, 0, SEEK_SET))
+     || (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET))
+     || (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
   {
     fprintf(stderr, "loom: patch apply seek 0: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 
-  // write patch pages into the appropriate image
+  //  write patch pages into the appropriate image
   //
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
@@ -960,13 +967,15 @@ _ce_image_apply(u3e_image* nor_u, u3e_image* sou_u, c3_o pro_o)
 /* _ce_image_fine(): compare image to memory.
  */
 static void
-_ce_image_fine(u3e_image* img_u, c3_w* ptr_w, c3_ws stp_ws)
+_ce_image_fine(u3e_image* img_u,
+               c3_w*        ptr_w,
+               c3_ws        stp_ws)
 {
   c3_w i_w;
   c3_w buf_w[pag_wiz_i];
 
   lseek(img_u->fid_i, 0, SEEK_SET);
-  for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
+  for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
     c3_w mem_w, fil_w;
 
     if ( -1 == read(img_u->fid_i, buf_w, pag_siz_i) ) {
@@ -979,13 +988,12 @@ _ce_image_fine(u3e_image* img_u, c3_w* ptr_w, c3_ws stp_ws)
     if ( mem_w != fil_w ) {
       c3_w pag_w = (ptr_w - u3_Loom) / pag_wiz_i;
 
-      fprintf(stderr,
-              "mismatch: %s page %d, mem_w %x, fil_w %x, K %x\r\n",
-              img_u->nam_c,
-              pag_w,
-              mem_w,
-              fil_w,
-              u3K.mug_w[pag_w]);
+      fprintf(stderr, "mismatch: %s page %d, mem_w %x, fil_w %x, K %x\r\n",
+                     img_u->nam_c,
+                     pag_w,
+                     mem_w,
+                     fil_w,
+                     u3K.mug_w[pag_w]);
       abort();
     }
     ptr_w += stp_ws;
@@ -994,26 +1002,26 @@ _ce_image_fine(u3e_image* img_u, c3_w* ptr_w, c3_ws stp_ws)
 #endif
 
 /* _ce_image_copy():
- */
+*/
 static c3_o
 _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
 {
   c3_w i_w;
 
-  // resize images
+  //  resize images
   //
   _ce_image_resize(tou_u, fom_u->pgs_w, NULL);
 
-  // seek to begining of patch and images
+  //  seek to begining of patch and images
   //
-  if ( (-1 == lseek(fom_u->fid_i, 0, SEEK_SET))
-       || (-1 == lseek(tou_u->fid_i, 0, SEEK_SET)) )
+  if (  (-1 == lseek(fom_u->fid_i, 0, SEEK_SET))
+     || (-1 == lseek(tou_u->fid_i, 0, SEEK_SET)) )
   {
     fprintf(stderr, "loom: image copy seek 0: %s\r\n", strerror(errno));
     return c3n;
   }
 
-  // copy pages into destination image
+  //  copy pages into destination image
   //
   for ( i_w = 0; i_w < fom_u->pgs_w; i_w++ ) {
     c3_w mem_w[pag_wiz_i];

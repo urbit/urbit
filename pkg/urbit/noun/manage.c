@@ -420,16 +420,12 @@ _cm_signal_done()
   u3t_boff();
 }
 
-/* u3m_signal(): treat a nock-level exception as a signal interrupt.
-*/
 void
 u3m_signal(u3_noun sig_l)
 {
   rsignal_longjmp(u3_Signal, sig_l);
 }
 
-/* u3m_file(): load file, as atom, or bail.
-*/
 u3_noun
 u3m_file(c3_c* pas_c)
 {
@@ -460,8 +456,6 @@ u3m_file(c3_c* pas_c)
   }
 }
 
-/* u3m_mark(): mark all nouns in the road.
-*/
 c3_w
 u3m_mark(FILE* fil_u)
 {
@@ -592,8 +586,6 @@ _find_home(void)
   u3R = &u3H->rod_u;
 }
 
-/* u3m_pave(): instantiate or activate image.
-*/
 void
 u3m_pave(c3_o nuu_o)
 {
@@ -658,27 +650,7 @@ u3m_dump(void)
 }
 #endif
 
-/* u3m_bail(): bail out.  Does not return.
-**
-**  Bail motes:
-**
-**    %evil               ::  erroneous cryptography
-**    %exit               ::  semantic failure
-**    %oops               ::  assertion failure
-**    %intr               ::  interrupt
-**    %fail               ::  computability failure
-**    %over               ::  stack overflow (a kind of %fail)
-**    %meme               ::  out of memory
-**
-**  These are equivalents of the full exception noun, the error ball:
-**
-**    $%  [%0 success]
-**        [%1 paths]
-**        [%2 trace]
-**        [%3 code trace]
-**    ==
-**
-**  XX several of these abort() calls should be gated by -a
+/*  XX several of these abort() calls should be gated by -a
 */
 c3_i
 u3m_bail(u3_noun how)
@@ -764,8 +736,6 @@ u3m_bail(u3_noun how)
 
 int c3_cooked() { return u3m_bail(c3__oops); }
 
-/* u3m_error(): bail out with %exit, ct_pushing error.
-*/
 c3_i
 u3m_error(c3_c* str_c)
 {
@@ -903,8 +873,6 @@ u3m_fall()
   u3R->kid_p = 0;
 }
 
-/* u3m_hate(): new, integrated leap mechanism (enter).
-*/
 void
 u3m_hate(c3_w pad_w)
 {
@@ -918,8 +886,6 @@ u3m_hate(c3_w pad_w)
   );
 }
 
-/* u3m_love(): return product from leap.
-*/
 u3_noun
 u3m_love(u3_noun pro)
 {
@@ -987,8 +953,6 @@ u3m_flog(c3_w gof_w)
   }
 }
 
-/* u3m_water(): produce watermarks.
-*/
 void
 u3m_water(c3_w* low_w, c3_w* hig_w)
 {
@@ -1074,8 +1038,6 @@ u3m_soft_top(c3_w    mil_w,                     //  timer ms
   return pro;
 }
 
-/* u3m_soft_sure(): top-level call assumed correct.
-*/
 u3_noun
 u3m_soft_sure(u3_funk fun_f, u3_noun arg)
 {
@@ -1088,8 +1050,6 @@ u3m_soft_sure(u3_funk fun_f, u3_noun arg)
   return pro;
 }
 
-/* u3m_soft_slam: top-level call.
-*/
 u3_noun _cm_slam(u3_noun arg) { return u3n_slam_on(u3h(arg), u3t(arg)); }
 u3_noun
 u3m_soft_slam(u3_noun gat, u3_noun sam)
@@ -1097,8 +1057,6 @@ u3m_soft_slam(u3_noun gat, u3_noun sam)
   return u3m_soft_sure(_cm_slam, u3nc(gat, sam));
 }
 
-/* u3m_soft_nock: top-level nock.
-*/
 u3_noun _cm_nock(u3_noun arg) { return u3n_nock_on(u3h(arg), u3t(arg)); }
 u3_noun
 u3m_soft_nock(u3_noun bus, u3_noun fol)
@@ -1106,8 +1064,6 @@ u3m_soft_nock(u3_noun bus, u3_noun fol)
   return u3m_soft_sure(_cm_nock, u3nc(bus, fol));
 }
 
-/* u3m_soft_run(): descend into virtualization context.
-*/
 u3_noun
 u3m_soft_run(u3_noun gul,
              u3_funq fun_f,
@@ -1206,8 +1162,6 @@ u3m_soft_run(u3_noun gul,
   return pro;
 }
 
-/* u3m_soft_esc(): namespace lookup.  Produces direct result.
-*/
 u3_noun
 u3m_soft_esc(u3_noun ref, u3_noun sam)
 {
@@ -1262,8 +1216,6 @@ u3m_soft_esc(u3_noun ref, u3_noun sam)
   return pro;
 }
 
-/* u3m_grab(): garbage-collect the world, plus extra roots.
-*/
 void
 u3m_grab(u3_noun som, ...)   // terminate with u3_none
 {
@@ -1508,8 +1460,6 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
   }
 }
 
-/* u3m_pretty(): dumb prettyprint to string.
-*/
 c3_c*
 u3m_pretty(u3_noun som)
 {
@@ -1558,8 +1508,6 @@ _cm_in_pretty_path(u3_noun som, c3_c* str_c)
   }
 }
 
-/* u3m_pretty_path(): prettyprint a path to string.
-*/
 c3_c*
 u3m_pretty_path(u3_noun som)
 {
@@ -1571,8 +1519,6 @@ u3m_pretty_path(u3_noun som)
   return pre_c;
 }
 
-/* u3m_p(): dumb print with caption.
-*/
 void
 u3m_p(const c3_c* cap_c, u3_noun som)
 {
@@ -1582,8 +1528,6 @@ u3m_p(const c3_c* cap_c, u3_noun som)
   c3_free(pre_c);
 }
 
-/* u3m_tape(): dump a tape to stdout.
-*/
 void
 u3m_tape(u3_noun tep)
 {
@@ -1602,8 +1546,6 @@ u3m_tape(u3_noun tep)
   u3z(tep);
 }
 
-/* u3m_wall(): dump a wall to stdout.
-*/
 void
 u3m_wall(u3_noun wol)
 {
@@ -1735,7 +1677,6 @@ _cm_crypto()
   u3je_secp_init();
 }
 
-//! Start the environment.
 void
 u3m_init(void)
 {
@@ -1782,7 +1723,6 @@ u3m_init(void)
   }
 }
 
-/* u3m_stop(): graceful shutdown cleanup. */
 void
 u3m_stop()
 {
@@ -1793,8 +1733,6 @@ u3m_stop()
   c3_free(u3D.ray_u);
 }
 
-/* u3m_boot(): start the u3 system. return next event, starting from 1.
-*/
 c3_d
 u3m_boot(const c3_c* dir_c)
 {
@@ -1843,8 +1781,6 @@ u3m_boot(const c3_c* dir_c)
   }
 }
 
-/* u3m_boot_lite(): start without checkpointing.
-*/
 c3_d
 u3m_boot_lite(void)
 {
@@ -1873,8 +1809,6 @@ u3m_boot_lite(void)
   return 0;
 }
 
-/* u3m_reclaim: clear persistent caches to reclaim memory
-*/
 void
 u3m_reclaim(void)
 {
@@ -1902,8 +1836,6 @@ _cm_pack_rewrite(void)
   u3a_rewrite_compact();
 }
 
-/* u3m_pack: compact (defragment) memory.
-*/
 c3_w
 u3m_pack(void)
 {

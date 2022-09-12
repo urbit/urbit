@@ -208,7 +208,7 @@ void* mmap(void *addr, size_t len, int prot, int flags, int fildes, off_t off)
         return MAP_FAILED;
     }
 
-    if ((flags & MAP_ANONYMOUS) == 0)
+    if ((flags & MAP_ANON) == 0)
     {
         h = (HANDLE)_get_osfhandle(fildes);
 
