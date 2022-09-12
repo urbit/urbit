@@ -1061,7 +1061,7 @@
       =^  moz  u.cached-state
         ?.  ?=(%7 -.u.cached-state)  [~ u.cached-state]
         ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :-  [[/ames]~ %pass /recork %b %wait `@da`(add now ~m20)]~
+        :-  [[/ames]~ %pass /recork %b %wait `@da`(add now ~d1)]~
         8+(state-7-to-8:load:adult-core +.u.cached-state)
       ?>  ?=(%8 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
@@ -1487,6 +1487,8 @@
       ?~  tim  acc
       %-  ~(put in acc)
       [u.tim `^duct`~[ames+(make-pump-timer-wire who b) /ames]]
+    =.  want
+      (~(put in want) (add now ~d1) ~[/ames/recork /ames])
     ::
     =/  have
       %-  ~(gas in *(set [@da ^duct]))
@@ -1494,7 +1496,7 @@
         ;;  (list [@da ^duct])
         =<  q.q  %-  need  %-  need
         (rof ~ %bx [[our %$ da+now] /debug/timers])
-      (skim tim |=([@da hen=^duct] ?=([[%ames %pump *] *] hen)))
+      (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
     ::
     ::  set timers for flows that should have one set but don't
     ::
@@ -1801,7 +1803,7 @@
       ::  if we haven't received an attestation, ask again
       ::
       ?^  error
-        %-  (slog leaf+"ames: attestation timer failed: {<u.error>}" ~)
+        %-  (slog 'ames: attestation timer failed' u.error)
         event-core
       ?~  ship=`(unit @p)`(slaw %p i.t.wire)
         %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
@@ -1827,7 +1829,11 @@
       abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
     ::
     =.  event-core
-      (emit duct %pass /recork %b %wait `@da`(add now ~m20))
+      (emit duct %pass /recork %b %wait `@da`(add now ~d1))
+    ::
+    ?^  error
+      %-  (slog 'ames: recork timer failed' u.error)
+      event-core
     ::  recork up to one bone per peer
     ::
     =/  pez  ~(tap by peers.ames-state)
@@ -3074,8 +3080,11 @@
     ::
     ?-    -.u.cur
         %ok
-      =.  message-pump  (give %done current.state ~)
-      =?  message-pump  cork  (give %cork ~)
+      =.  message-pump
+        ::  don't give %done for corks
+        ::
+        ?:  cork  (give %cork ~)
+        (give %done current.state ~)
       $(current.state +(current.state))
     ::
         %nack
