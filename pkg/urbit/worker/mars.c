@@ -1,6 +1,6 @@
-//! @file mars.c
-//!
-//! Main loop of a serf process.
+/// @file mars.c
+///
+/// Main loop of a serf process.
 
 #include "all.h"
 #include "c/list.h"
@@ -708,7 +708,7 @@ _mars_timer_cb(uv_timer_t* tim_u)
   _mars_flush(mar_u);
 }
 
-//! Callback invoked upon completion of successful commit to event log.
+/// Callback invoked upon completion of successful commit to event log.
 static c3_t
 _saga_commit_cb(void* ptr_v, c3_d ide_d, c3_t suc_t)
 {
@@ -725,8 +725,8 @@ _saga_commit_cb(void* ptr_v, c3_d ide_d, c3_t suc_t)
   return 1;
 }
 
-//! Callback invoked for each event during event log replay. See u3_saga_play
-//! for description of parameters.
+/// Callback invoked for each event during event log replay. See u3_saga_play
+/// for description of parameters.
 static c3_t
 _saga_replay_cb(void*        ptr_v,
                 c3_d         cur_d,
@@ -795,11 +795,11 @@ _saga_replay_cb(void*        ptr_v,
   return 1;
 }
 
-//! Callback invoked for each boot event during boot sequence replay. Create
-//! single event out of boot events over repeated calls to _saga_boot_cb() and
-//! attempt to boot once the single event has been assembled. `ptr_v` is used to
-//! store a noun pointer that should initially be set to `u3_nul`. See
-//! u3_saga_play for description of parameters.
+/// Callback invoked for each boot event during boot sequence replay. Create
+/// single event out of boot events over repeated calls to _saga_boot_cb() and
+/// attempt to boot once the single event has been assembled. `ptr_v` is used to
+/// store a noun pointer that should initially be set to `u3_nul`. See
+/// u3_saga_play for description of parameters.
 static c3_t
 _saga_boot_cb(void*        ptr_v,
               c3_d         cur_d,
@@ -1392,16 +1392,16 @@ _mars_boot_make(u3_boot_opts* inp_u,
   return c3y;
 }
 
-//! ```
-//!  $=  com
-//!  $:  pill=[p=@ q=(unit ovum)]
-//!      $=  vent
-//!      $%  [%fake p=ship]
-//!          [%dawn p=seed]
-//!      ==
-//!      more=(list ovum)
-//!  ==
-//!  ```
+/// ```
+///  $=  com
+///  $:  pill=[p=@ q=(unit ovum)]
+///      $=  vent
+///      $%  [%fake p=ship]
+///          [%dawn p=seed]
+///      ==
+///      more=(list ovum)
+///  ==
+///  ```
 c3_o
 u3_mars_boot(const c3_c* dir_c, u3_noun com)
 {

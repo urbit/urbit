@@ -1,101 +1,101 @@
-//! @file events.c
-//!
-//! incremental, orthogonal, paginated loom snapshots
-//!
-//! ### components
-//!
-//!   - page: 16KB chunk of the loom.
-//!   - north segment (u3e_image, north.bin): low contiguous loom pages,
-//!     (in practice, the home road heap). indexed from low to high:
-//!     in-order on disk.
-//!   - south segment (u3e_image, south.bin): high contiguous loom pages,
-//!     (in practice, the home road stack). indexed from high to low:
-//!     reversed on disk.
-//!   - patch memory (memory.bin): new or changed pages since the last snapshot
-//!   - patch control (u3e_control control.bin): patch metadata, watermarks,
-//!     and indices/mugs for pages in patch memory.
-//!
-//! ### initialization (u3e_live())
-//!
-//!   - with the loom already mapped, all pages are marked dirty in a bitmap.
-//!   - if snapshot is missing or partial, empty segments are created.
-//!   - if a patch is present, it's applied (crash recovery).
-//!   - snapshot segments are copied onto the loom; all included pages
-//!     are marked clean and protected (read-only).
-//!
-//! #### page faults (u3e_fault())
-//!
-//!   - stores into protected pages generate faults (currently SIGSEGV,
-//!     handled outside this module).
-//!   - faults are handled by dirtying the page and switching protections to
-//!     read/write.
-//!   - a guard page is initially placed in the approximate middle of the free
-//!     space between the heap and stack at the time of the first page fault.
-//!     when a fault is detected in the guard page, the guard page is recentered
-//!     in the free space of the current road. if the guard page cannot be
-//!     recentered, then memory exhaustion has occurred.
-//!
-//! ### updates (u3e_save())
-//!
-//!   - all updates to a snapshot are made through a patch.
-//!   - high/low watermarks for the north/south segments are established,
-//!     and dirty pages below/above them are added to the patch.
-//!     - modifications have been caught by the fault handler.
-//!     - newly-used pages are automatically included (preemptively dirtied).
-//!     - unused, innermost pages are reclaimed (segments are truncated to the
-//!       high/low watermarks; the last page in each is always adjacent to the
-//!       contiguous free space).
-//!   - patch pages are written to memory.bin, metadata to control.bin.
-//!   - the patch is applied to the snapshot segments, in-place.
-//!   - patch files are deleted.
-//!
-//! ### limitations
-//!
-//!   - loom page size is fixed (16 KB), and must be a multiple of the
-//!     system page size. (can the size vary at runtime give south.bin's
-//!     reversed order? alternately, if system page size > ours, the fault
-//!     handler could dirty N pages at a time.)
-//!   - update atomicity is suspect: patch application must either
-//!     completely succeed or leave on-disk segments intact. unapplied
-//!     patches can be discarded (triggering event replay), but once
-//!     patch application begins it must succeed (can fail if disk is full).
-//!     may require integration into the overall signal-handling regime.
-//!   - any errors are handled with assertions; failed/partial writes are not
-//!     retried.
-//!
-//! ### enhancements
-//!
-//!   - use platform specific page fault mechanism (mach rpc, userfaultfd, &c).
-//!   - implement demand paging / heuristic page-out.
-//!   - add a guard page in the middle of the loom to reactively handle stack
-//!     overflow.
-//!   - parallelism
-//!
+/// @file events.c
+///
+/// incremental, orthogonal, paginated loom snapshots
+///
+/// ### components
+///
+///   - page: 16KB chunk of the loom.
+///   - north segment (u3e_image, north.bin): low contiguous loom pages,
+///     (in practice, the home road heap). indexed from low to high:
+///     in-order on disk.
+///   - south segment (u3e_image, south.bin): high contiguous loom pages,
+///     (in practice, the home road stack). indexed from high to low:
+///     reversed on disk.
+///   - patch memory (memory.bin): new or changed pages since the last snapshot
+///   - patch control (u3e_control control.bin): patch metadata, watermarks,
+///     and indices/mugs for pages in patch memory.
+///
+/// ### initialization (u3e_live())
+///
+///   - with the loom already mapped, all pages are marked dirty in a bitmap.
+///   - if snapshot is missing or partial, empty segments are created.
+///   - if a patch is present, it's applied (crash recovery).
+///   - snapshot segments are copied onto the loom; all included pages
+///     are marked clean and protected (read-only).
+///
+/// #### page faults (u3e_fault())
+///
+///   - stores into protected pages generate faults (currently SIGSEGV,
+///     handled outside this module).
+///   - faults are handled by dirtying the page and switching protections to
+///     read/write.
+///   - a guard page is initially placed in the approximate middle of the free
+///     space between the heap and stack at the time of the first page fault.
+///     when a fault is detected in the guard page, the guard page is recentered
+///     in the free space of the current road. if the guard page cannot be
+///     recentered, then memory exhaustion has occurred.
+///
+/// ### updates (u3e_save())
+///
+///   - all updates to a snapshot are made through a patch.
+///   - high/low watermarks for the north/south segments are established,
+///     and dirty pages below/above them are added to the patch.
+///     - modifications have been caught by the fault handler.
+///     - newly-used pages are automatically included (preemptively dirtied).
+///     - unused, innermost pages are reclaimed (segments are truncated to the
+///       high/low watermarks; the last page in each is always adjacent to the
+///       contiguous free space).
+///   - patch pages are written to memory.bin, metadata to control.bin.
+///   - the patch is applied to the snapshot segments, in-place.
+///   - patch files are deleted.
+///
+/// ### limitations
+///
+///   - loom page size is fixed (16 KB), and must be a multiple of the
+///     system page size. (can the size vary at runtime give south.bin's
+///     reversed order? alternately, if system page size > ours, the fault
+///     handler could dirty N pages at a time.)
+///   - update atomicity is suspect: patch application must either
+///     completely succeed or leave on-disk segments intact. unapplied
+///     patches can be discarded (triggering event replay), but once
+///     patch application begins it must succeed (can fail if disk is full).
+///     may require integration into the overall signal-handling regime.
+///   - any errors are handled with assertions; failed/partial writes are not
+///     retried.
+///
+/// ### enhancements
+///
+///   - use platform specific page fault mechanism (mach rpc, userfaultfd, &c).
+///   - implement demand paging / heuristic page-out.
+///   - add a guard page in the middle of the loom to reactively handle stack
+///     overflow.
+///   - parallelism
+///
 
 #include "all.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 
-//! North segment image file name.
+/// North segment image file name.
 static const c3_c nor_nam_c[] = "north.bin";
 
-//! South segment image file name.
+/// South segment image file name.
 static const c3_c sou_nam_c[] = "south.bin";
 
-//! Control patch file name.
+/// Control patch file name.
 static const c3_c ctl_nam_c[] = "control.bin";
 
-//! Memory patch file name.
+/// Memory patch file name.
 static const c3_c mem_nam_c[] = "memory.bin";
 
 // Base loom offset of the guard page.
 static u3p(c3_w) gar_pag_p;
 
-//! Urbit page size in 4-byte words.
+/// Urbit page size in 4-byte words.
 static const size_t pag_wiz_i = 1 << u3a_page;
 
-//! Urbit page size in bytes.
+/// Urbit page size in bytes.
 static const size_t pag_siz_i = sizeof(c3_w) * pag_wiz_i;
 
 #ifdef U3_SNAPSHOT_VALIDATION
@@ -200,9 +200,9 @@ _ce_mapfree(void* map_v)
 #endif
 
 #ifdef U3_GUARD_PAGE
-//! Place a guard page at the (approximate) middle of the free space between
-//! the heap and stack of the current road, bailing if memory has been
-//! exhausted.
+/// Place a guard page at the (approximate) middle of the free space between
+/// the heap and stack of the current road, bailing if memory has been
+/// exhausted.
 static c3_i
 _ce_center_guard_page(void)
 {
@@ -309,16 +309,16 @@ u3e_fault(void* adr_v, c3_i ser_i)
   return 1;
 }
 
-//! Open/create an image.
-//!
-//! @param[in] dir_c  Directory in which the image file resides/will
-//!                   reside. Must already exist.
-//! @param[in] img_u  Image to open/create.
-//!
-//! @return c3n  Image file can't be opened.
-//! @return c3n  `fstat()` failed.
-//! @return c3n  Image file size is not a multiple of the page size.
-//! @return c3y  Otherwise.
+/// Open/create an image.
+///
+/// @param[in] dir_c  Directory in which the image file resides/will
+///                   reside. Must already exist.
+/// @param[in] img_u  Image to open/create.
+///
+/// @return c3n  Image file can't be opened.
+/// @return c3n  `fstat()` failed.
+/// @return c3n  Image file size is not a multiple of the page size.
+/// @return c3y  Otherwise.
 static c3_o
 _ce_image_open(const c3_c* const dir_c, u3e_image* img_u)
 {
@@ -701,69 +701,69 @@ _ce_image_sync(u3e_image* img_u)
   }
 }
 
-//! Resize an image.
-//!
-//! Truncates an image if it shrunk.
-//!
-//! If the image shrunk and was mapped into memory, then the truncated portion
-//! is replaced with an anonymous, private (copy-on-write) mapping:
-//!
-//! ```
-//!  <high address>
-//! +==================+ <- previous end of image in memory
-//! |                  | <-+
-//! |                  |   |
-//! |------------------+   |
-//! |                  |   +- file-backed mapping replaced with anonymous
-//! |                  |   |  mapping
-//! |------------------    |
-//! |                  |   |
-//! |                  | <-+
-//! +==================+ <- new end of image in memory
-//!  <low address>
-//! ```
-//!
-//! If the image grew and was mapped into memory, then a new file-backed private
-//! (copy-on-write) mapping is established that is backed by the image:
-//!
-//! ```
-//!  <high address>
-//! +==================+ <- new end of image in memory
-//! |                  | <-+
-//! |                  |   |
-//! |------------------+   |
-//! |                  |   +- anonymous mapping replaced with file-backed
-//! |                  |   |  mapping
-//! |------------------|   |
-//! |                  |   |
-//! |                  | <-+
-//! +==================+ <- previous end of image in memory
-//! |                  |
-//! |                  |
-//! |      .....       |
-//! |                  |
-//! |                  |
-//! +==================+ <- base of image in memory
-//!  <low address>
-//! ```
-//!
-//! It's unclear whether anonymous mappings that lie within the previous bounds
-//! of the image (identified by `.....` in the diagram above) should be replaced
-//! with file-backed mappings when the image is resized. If the
-//! (Linux/macOS/Windows) kernel is smart enough to simply replace the
-//! anonymous mapping in the page cache with the file-backed mapping, then the
-//! anonymous mappings should be replaced with file-backed mappings. If, on the
-//! other hand, the kernel treats the pages of the two mappings as separate
-//! entities, then the cost of a cache miss may make replacing the anonymous
-//! mapping too expensive. For now, we remain conservative and don't replace the
-//! mappings and accept the potential cost of the accumulation of anonymous
-//! mappings (and the use of swap space that likely accompanies those mappings).
-//!
-//! @param[in] img_u  Image.
-//! @param[in] pgs_w  New size of the image.
-//! @param[in] bas_y  Base address of the image in memory. Used to establish a
-//!                   new mapping in memory. Should be NULL if no new mappings
-//!                   should be created.
+/// Resize an image.
+///
+/// Truncates an image if it shrunk.
+///
+/// If the image shrunk and was mapped into memory, then the truncated portion
+/// is replaced with an anonymous, private (copy-on-write) mapping:
+///
+/// ```
+///  <high address>
+/// +==================+ <- previous end of image in memory
+/// |                  | <-+
+/// |                  |   |
+/// |------------------+   |
+/// |                  |   +- file-backed mapping replaced with anonymous
+/// |                  |   |  mapping
+/// |------------------    |
+/// |                  |   |
+/// |                  | <-+
+/// +==================+ <- new end of image in memory
+///  <low address>
+/// ```
+///
+/// If the image grew and was mapped into memory, then a new file-backed private
+/// (copy-on-write) mapping is established that is backed by the image:
+///
+/// ```
+///  <high address>
+/// +==================+ <- new end of image in memory
+/// |                  | <-+
+/// |                  |   |
+/// |------------------+   |
+/// |                  |   +- anonymous mapping replaced with file-backed
+/// |                  |   |  mapping
+/// |------------------|   |
+/// |                  |   |
+/// |                  | <-+
+/// +==================+ <- previous end of image in memory
+/// |                  |
+/// |                  |
+/// |      .....       |
+/// |                  |
+/// |                  |
+/// +==================+ <- base of image in memory
+///  <low address>
+/// ```
+///
+/// It's unclear whether anonymous mappings that lie within the previous bounds
+/// of the image (identified by `.....` in the diagram above) should be replaced
+/// with file-backed mappings when the image is resized. If the
+/// (Linux/macOS/Windows) kernel is smart enough to simply replace the
+/// anonymous mapping in the page cache with the file-backed mapping, then the
+/// anonymous mappings should be replaced with file-backed mappings. If, on the
+/// other hand, the kernel treats the pages of the two mappings as separate
+/// entities, then the cost of a cache miss may make replacing the anonymous
+/// mapping too expensive. For now, we remain conservative and don't replace the
+/// mappings and accept the potential cost of the accumulation of anonymous
+/// mappings (and the use of swap space that likely accompanies those mappings).
+///
+/// @param[in] img_u  Image.
+/// @param[in] pgs_w  New size of the image.
+/// @param[in] bas_y  Base address of the image in memory. Used to establish a
+///                   new mapping in memory. Should be NULL if no new mappings
+///                   should be created.
 static void
 _ce_image_resize(u3e_image* img_u, c3_w pgs_w, c3_y* bas_y)
 {
@@ -882,17 +882,17 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   }
 }
 
-//! Apply north and south images to memory.
-//!
-//! Maps the entire north (i.e. heap) image at the bottom of the loom and the
-//! entire south (i.e. stack) image at the top of the loom. Both are private
-//! (copy-on-write) mappings so that the kernel can swap clean pages out of
-//! memory without resorting to writing to swap space.
-//!
-//! @param[in] nor_u  North (heap) image.
-//! @param[in] sou_u  South (stack) image.
-//! @param[in] pro_o  Write-protect the memory to which image is applied if
-//!                   `c3y`.
+/// Apply north and south images to memory.
+///
+/// Maps the entire north (i.e. heap) image at the bottom of the loom and the
+/// entire south (i.e. stack) image at the top of the loom. Both are private
+/// (copy-on-write) mappings so that the kernel can swap clean pages out of
+/// memory without resorting to writing to swap space.
+///
+/// @param[in] nor_u  North (heap) image.
+/// @param[in] sou_u  South (stack) image.
+/// @param[in] pro_o  Write-protect the memory to which image is applied if
+///                   `c3y`.
 static void
 _ce_image_apply(u3e_image* nor_u, u3e_image* sou_u, c3_o pro_o)
 {

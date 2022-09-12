@@ -1,25 +1,27 @@
-//! @file epoc.c
-//!
-//! Event log epoch containing a snapshot and an LMDB instance. The snapshot
-//! represents the state before the application of the first event committed to
-//! the LMDB instance (which is also the event number that shows up in the epoch
-//! directory name).
-//!
-//! Only synchronous commits are supported; the event log implementation that
-//! uses this module is intended to implement asynchronous event log commit
-//! support in the manner of its choosing so that this module can remain
-//! relatively simple.
-//!
-//! As an example, the directory layout for epoch `0i100`, which contains a
-//! snapshot representing the state after event 100 and whose first committed
-//! event in the LMDB instance is 101, is:
-//! ```console
-//! 0i100/
-//!   data.mdb
-//!   lock.mdb
-//!   north.bin
-//!   south.bin
-//! ```
+/// @file epoc.c
+///
+/// Event log epoch containing a snapshot and an LMDB instance. The snapshot
+/// represents the state before the application of the first event committed to
+/// the LMDB instance (which is also the event number that shows up in the epoch
+/// directory name).
+///
+/// Only synchronous commits are supported; the event log implementation that
+/// uses this module is intended to implement asynchronous event log commit
+/// support in the manner of its choosing so that this module can remain
+/// relatively simple.
+///
+/// As an example, the directory layout for epoch `0i100`, which contains a
+/// snapshot representing the state after event 100 and whose first committed
+/// event in the LMDB instance is 101, is:
+/// ```console
+/// 0i100/
+///   data.mdb
+///   epoc_version.txt
+///   lock.mdb
+///   north.bin
+///   south.bin
+///   urbit_version.txt
+/// ```
 
 #include "vere/epoc.h"
 
@@ -33,23 +35,23 @@
 // Types
 //==============================================================================
 
-//! Iterator over an epoch's events.
+/// An iterator over an epoch's events.
 struct _u3_epoc_iter {
-  c3_t        ope_t; //!< true if iterator is open
-  MDB_txn*    txn_u; //!< LMDB read-only transaction
-  MDB_dbi     dbi_u; //!< LMDB database handle
-  MDB_cursor* cur_u; //!< LMDB cursor
-  c3_d        fir_d; //!< starting event ID of iterator
-  c3_d        cur_d; //!< current event ID of iterator
+  c3_t        ope_t; ///< true if iterator is open
+  MDB_txn*    txn_u; ///< LMDB read-only transaction
+  MDB_dbi     dbi_u; ///< LMDB database handle
+  MDB_cursor* cur_u; ///< LMDB cursor
+  c3_d        fir_d; ///< starting event ID of iterator
+  c3_d        cur_d; ///< current event ID of iterator
 };
 
-//! Epoch.
+/// An epoch.
 struct _u3_epoc {
-  c3_path*     pax_u; //!< path to epoch directory
-  MDB_env*     env_u; //!< LMDB environment
-  c3_d         fir_d; //!< ID of first committed event
-  c3_d         las_d; //!< ID of last committed event
-  u3_epoc_iter itr_u; //!< iterator
+  c3_path*     pax_u; ///< path to epoch directory
+  MDB_env*     env_u; ///< LMDB environment
+  c3_d         fir_d; ///< ID of first committed event
+  c3_d         las_d; ///< ID of last committed event
+  u3_epoc_iter itr_u; ///< iterator
 };
 
 //==============================================================================
@@ -62,32 +64,32 @@ const size_t epo_siz_i = sizeof(u3_epoc);
 
 const c3_c epo_pre_c[] = "0i";
 
-//! Zero is not a valid value of `epo_min_d` because the `las_d` field of the
-//! `u3_epoc` handle is set to `epo_min_d - 1` for the first epoch, which would
-//! underflow.
+/// Zero is not a valid value of `epo_min_d` because the `las_d` field of the
+/// `u3_epoc` handle is set to `epo_min_d - 1` for the first epoch, which would
+/// underflow.
 const c3_d epo_min_d = 1ULL;
 
-//! Name of directory housing first epoch. Should be `<epo_pre_c><epo_min_d - 1>`.
+/// Name of directory housing first epoch. Should be `<epo_pre_c><epo_min_d - 1>`.
 static const c3_c fir_nam_c[] = "0i0";
 
-//! Name of text file containing the epoch version number.
+/// Name of text file containing the epoch version number.
 static const c3_c epv_nam_c[] = "epoc_version.txt";
 
-//! Name of text file containing the urbit binary version number.
+/// Name of text file containing the urbit binary version number.
 static const c3_c urv_nam_c[] = "urbit_version.txt";
 
-//! Name of LMDB database holding the events.
+/// Name of LMDB database holding the events.
 static const c3_c dab_nam_c[] = "EVENTS";
 
 //==============================================================================
 // Macros
 //==============================================================================
 
-//! Error-handling wrapper for LMDB API calls that return 0 on success and
-//! non-zero on failure.
-//!
-//! @param[in] lmdb_call       LMDB API call.
-//! @param[in] failure_action  Statement to execute after logging failure.
+/// Error-handling wrapper for LMDB API calls that return 0 on success and
+/// non-zero on failure.
+///
+/// @param[in] lmdb_call       LMDB API call.
+/// @param[in] failure_action  Statement to execute after logging failure.
 #define try_lmdb(lmdb_call, failure_action, ...)                               \
   do {                                                                         \
     c3_i ret_i = lmdb_call;                                                    \
@@ -105,17 +107,17 @@ static const c3_c dab_nam_c[] = "EVENTS";
 // mdb_logerror(), so we need to declare mdb_logerror() here and provide an
 // implementation of it for non-MinGW systems.
 
-//! Write an error message and LMDB error code to a file stream.
-//!
-//! @param[in] f    File stream.
-//! @param[in] err  LMDB error code.
-//! @param[in] fmt  Error message format string.
+/// Write an error message and LMDB error code to a file stream.
+///
+/// @param[in] f    File stream.
+/// @param[in] err  LMDB error code.
+/// @param[in] fmt  Error message format string.
 void
 mdb_logerror(FILE* f, int err, const char* fmt, ...);
 
-//! Get the size of an LMDB database file on disk.
-//!
-//! @param[in] handle  LMDB file handle.
+/// Get the size of an LMDB database file on disk.
+///
+/// @param[in] handle  LMDB file handle.
 intmax_t
 mdb_get_filesize(mdb_filehandle_t handle);
 
@@ -143,65 +145,65 @@ mdb_get_filesize(mdb_filehandle_t han_u)
 // Static functions
 //==============================================================================
 
-//! Parse the first event number of an epoch out of its path.
-//!
-//! @param[in] pax_u  Path housing epoch.
-//!
-//! @return 0  Parsing failed.
-//! @return    First event number of epoch.
+/// Parse the first event number of an epoch out of its path.
+///
+/// @param[in] pax_u  Path housing epoch.
+///
+/// @return 0  Parsing failed.
+/// @return    First event number of epoch.
 static c3_d
 _epoc_first_evt_from_path(const c3_path* const pax_u);
 
-//! Determine if an epoch is the first epoch.
-//!
-//! @param[in] pax_u  Path housing epoch.
-//!
-//! @return 1  Epoch is the first epoch.
-//! @return 0  Otherwise.
+/// Determine if an epoch is the first epoch.
+///
+/// @param[in] pax_u  Path housing epoch.
+///
+/// @return 1  Epoch is the first epoch.
+/// @return 0  Otherwise.
 static inline c3_t
 _epoc_is_first(const c3_path* const pax_u);
 
-//! Build an epoch path of the form `<par_c>/0i<fir_d - 1>`.
-//!
-//! @param[in] par_u  Path to parent directory.
-//! @param[in] fir_d  ID of first event committed to the epoch. Must NOT
-//!                   be 0.
-//!
-//! @return  Epoch path.
+/// Build an epoch path of the form `<par_c>/0i<fir_d - 1>`.
+///
+/// @param[in] par_u  Path to parent directory.
+/// @param[in] fir_d  ID of first event committed to the epoch. Must NOT
+///                   be 0.
+///
+/// @return  Epoch path.
 static c3_path*
 _epoc_path(const c3_path* const par_u, const c3_d fir_d);
 
-//! Determine the length of the boot sequence.
-//!
-//! The boot sequence is the sequence of events needed to boot a new ship. The
-//! length of the initial subset of the boot sequence required to minimally
-//! bootstrap an Arvo kernel is referred to as the life cycle length because
-//! this subset must be computed using the life cycle function.
-//!
-//! The notion of a boot sequence only makes sense in the context of the first
-//! epoch, and passing a non-first epoch to this function will simply succeed
-//! and populate `len_w` with 0.
-//!
-//! For the first epoch, the boot sequence length is determined by attempting to
-//! read the value of the "life" key of the META database. Unfortunately, this
-//! isn't actually the boot sequence length but instead the life cycle length,
-//! but we intentionally overlook this discrepancy because it's unlikely to
-//! cause issues in practice most first epochs with a META database will
-//! presumably be truncated sooner rather than later.
-//!
-//! A first epoch will only have a META database if it was migrated from the
-//! event log format that predated the epoch-based event log. If there is no
-//! META database, then the epoch was not migrated and the length of the entire
-//! epoch is understood to be the boot sequence length.
-//!
-//! @param[in]  poc_u  Epoch handle.
-//! @param[out] len_w  Pointer to length of boot sequence. Only relevant for
-//!                    first epoch. Can be NULL if not first epoch. If not NULL
-//!                    and not first epoch, will be set to 0.
-//!
-//! @return 1  `poc_u` is not the first epoch and `len_w` was NULL.
-//! @return 1  `len_w` was not NULL and successfully populated.
-//! @return 0  Otherwise.
+/// Determine the length of the boot sequence.
+///
+/// The boot sequence is the sequence of events needed to boot a new ship. The
+/// length of the initial subset of the boot sequence required to minimally
+/// bootstrap an Arvo kernel is referred to as the life cycle length because
+/// this subset must be computed using the life cycle function.
+///
+/// The notion of a boot sequence only makes sense in the context of the first
+/// epoch, and passing a non-first epoch to this function will simply succeed
+/// and populate `len_w` with 0.
+///
+/// For the first epoch, the boot sequence length is determined by attempting to
+/// read the value of the "life" key of the META database. Unfortunately, this
+/// isn't actually the boot sequence length but instead the life cycle length,
+/// but we intentionally overlook this discrepancy because it's unlikely to
+/// cause issues in practice most first epochs with a META database will
+/// presumably be truncated sooner rather than later.
+///
+/// A first epoch will only have a META database if it was migrated from the
+/// event log format that predated the epoch-based event log. If there is no
+/// META database, then the epoch was not migrated and the length of the entire
+/// epoch is understood to be the boot sequence length.
+///
+/// @param[in]  poc_u  Epoch handle.
+/// @param[out] len_w  Pointer to length of boot sequence. Only relevant for
+///                    first epoch. Can be NULL if not first epoch. If not NULL
+///                    and not first epoch, will be set to 0.
+///
+/// @return 1  `poc_u` is not the first epoch and `len_w` was NULL.
+/// @return 1  `len_w` was not NULL and successfully populated.
+/// @return 0  Otherwise.
 static c3_t
 _get_boot_seq_len(const u3_epoc* const poc_u, c3_w* const len_w)
 {
@@ -279,62 +281,62 @@ end:
   return suc_t;
 }
 
-//! Get the first and last event numbers from an epoch's LMDB instance.
-//!
-//! @param[in]  env_u  Epoch LMDB instance.
-//! @param[out] fir_d  Will be filled with first event number.
-//! @param[out] las_d  Will be filled with last event number.
-//!
-//! @return 1  `fir_d` and `las_d` were populated with the first and last event
-//!            numbers or `epo_min_d` and `0`, respectively, if the LMDB
-//!            instance has no events committed yet.
-//! @return 0  Otherwise.
+/// Get the first and last event numbers from an epoch's LMDB instance.
+///
+/// @param[in]  env_u  Epoch LMDB instance.
+/// @param[out] fir_d  Will be filled with first event number.
+/// @param[out] las_d  Will be filled with last event number.
+///
+/// @return 1  `fir_d` and `las_d` were populated with the first and last event
+///            numbers or `epo_min_d` and `0`, respectively, if the LMDB
+///            instance has no events committed yet.
+/// @return 0  Otherwise.
 static c3_t
 _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d);
 
-//! Open an epoch's LMDB environment.
-//!
-//! An epoch's LMDB environment consists of only a single database which is used
-//! to store the epoch's events unless it's the first epoch that was created as
-//! a result of u3_epoc_migrate(), in which case the LMDB environment will
-//! contain a database for the epoch's events and another for its metadata
-//! (which is unused but retained for archival reasons).
-//!
-//! @param[in] pax_u  Path to directory containing LMDB environment.
-//!
-//! @return  NULL         LMDB environment could not be created.
-//! @return  LMDB handle  Otherwise.
+/// Open an epoch's LMDB environment.
+///
+/// An epoch's LMDB environment consists of only a single database which is used
+/// to store the epoch's events unless it's the first epoch that was created as
+/// a result of u3_epoc_migrate(), in which case the LMDB environment will
+/// contain a database for the epoch's events and another for its metadata
+/// (which is unused but retained for archival reasons).
+///
+/// @param[in] pax_u  Path to directory containing LMDB environment.
+///
+/// @return  NULL         LMDB environment could not be created.
+/// @return  LMDB handle  Otherwise.
 static MDB_env*
 _lmdb_init(const c3_path* const pax_u);
 
-//! Move a file to a new directory.
-//!
-//! @param[in] src_u  Source directory containing the file.
-//! @param[in] dst_u  Destination directory to contain the file.
-//! @param[in] nam_c  Name of the file.
-//!
-//! @return 1  File was successfully moved.
-//! @return 0  Otherwise.
+/// Move a file to a new directory.
+///
+/// @param[in] src_u  Source directory containing the file.
+/// @param[in] dst_u  Destination directory to contain the file.
+/// @param[in] nam_c  Name of the file.
+///
+/// @return 1  File was successfully moved.
+/// @return 0  Otherwise.
 static c3_t
 _move_file(c3_path* const src_u, c3_path* const dst_u, const c3_c* const nam_c);
 
-//! Persist the Urbit binary version number to `urv_nam_c`.
-//!
-//! @param[in] pax_u  Path to house `urv_nam_c`.
-//! @param[in] ver_c  Binary version number.
-//!
-//! @return 1  Success.
-//! @return 0  Otherwise.
+/// Persist the Urbit binary version number to `urv_nam_c`.
+///
+/// @param[in] pax_u  Path to house `urv_nam_c`.
+/// @param[in] ver_c  Binary version number.
+///
+/// @return 1  Success.
+/// @return 0  Otherwise.
 static c3_t
 _persist_binary_version(c3_path* const pax_u, const c3_c* const ver_c);
 
-//! Persist the epoch version number to `epv_nam_c`.
-//!
-//! @param[in] pax_u  Path to house `epv_nam_c`.
-//! @param[in] ver_w  Epoch version number.
-//!
-//! @return 1  Success.
-//! @return 0  Otherwise.
+/// Persist the epoch version number to `epv_nam_c`.
+///
+/// @param[in] pax_u  Path to house `epv_nam_c`.
+/// @param[in] ver_w  Epoch version number.
+///
+/// @return 1  Success.
+/// @return 0  Otherwise.
 static c3_t
 _persist_epoc_version(c3_path* const pax_u, const c3_w ver_w);
 

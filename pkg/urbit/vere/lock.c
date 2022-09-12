@@ -1,4 +1,4 @@
-//! @file lock.c
+/// @file lock.c
 
 #include "vere/lock.h"
 

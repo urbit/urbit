@@ -1,4 +1,4 @@
-//! @file path_tests.c
+/// @file path_tests.c
 
 #include "c/path.h"
 

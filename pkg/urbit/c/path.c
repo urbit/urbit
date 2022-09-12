@@ -1,4 +1,4 @@
-//! @file path.c
+/// @file path.c
 
 #include "c/path.h"
 
@@ -8,18 +8,23 @@
 // Types
 //==============================================================================
 
-//! File path. Typedefed to c3_path.
+/// File path. Typedefed to c3_path.
 struct _c3_path {
-  size_t cap_i; //!< number of bytes allocated for `str_c`
-  size_t len_i; //!< length of `str_c` (equivalent to `strlen(str_c)`)
-  c3_c*  str_c; //!< path string (null-terminated)
+  /// Number of bytes allocated for `str_c`.
+  size_t cap_i;
+
+  /// Length of `str_c` (equivalent to `strlen(str_c)`).
+  size_t len_i;
+
+  /// Path string (NULL-terminated).
+  c3_c*  str_c;
 };
 
 //==============================================================================
 // Constants
 //==============================================================================
 
-//! Path separator. Must be only a single character.
+/// Path separator. Must be only a single character.
 static const c3_c pax_sep_c[] = "/";
 
 //==============================================================================

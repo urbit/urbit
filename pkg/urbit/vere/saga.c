@@ -1,22 +1,22 @@
-//! @file saga.c
-//!
-//! Epoch-backed event log.
-//!
-//! Consists of a list of epochs, each containing a contiguous slice of events.
-//! Events can be committed synchronously or asynchronously. When the most
-//! recent epoch fills up (i.e. reaches the maximum number of committed events),
-//! a new epoch is automatically created and rolled over to.
-//!
-//! As an example, the directory layout of an event log containing epochs N
-//! through M, inclusive, is:
-//! ```console
-//! <epoch_N>/
-//! <epoch_N+1>/
-//! ...
-//! <epoch_M>/
-//! ```
-//! Note that the epoch directory names are ommitted because they are an
-//! implementation detail of the epoc module.
+/// @file saga.c
+///
+/// Epoch-backed event log.
+///
+/// Consists of a list of epochs, each containing a contiguous slice of events.
+/// Events can be committed synchronously or asynchronously. When the most
+/// recent epoch fills up (i.e. reaches the maximum number of committed events),
+/// a new epoch is automatically created and rolled over to.
+///
+/// As an example, the directory layout of an event log containing epochs N
+/// through M, inclusive, is:
+/// ```console
+/// <epoch_N>/
+/// <epoch_N+1>/
+/// ...
+/// <epoch_M>/
+/// ```
+/// Note that the epoch directory names are ommitted because they are an
+/// implementation detail of the epoc module.
 
 #include "vere/saga.h"
 
@@ -28,134 +28,162 @@
 
 const c3_w elo_ver_w = 1;
 
-//! Minimum number of events per epoch.
+/// Minimum number of events per epoch.
 static const size_t epo_len_i = 50000;
 
-//! Maximum number of events in a single batch commit.
+/// Maximum number of events in a single batch commit.
 #define max_batch_size 100
 
-//! Size of the `d_name` field of `struct dirent`.
+/// Size of the `d_name` field of `struct dirent`.
 #define dname_size     sizeof(((struct dirent*)NULL)->d_name)
 
 //==============================================================================
 // Types
 //==============================================================================
 
-//! Event log. Typedefed to `u3_saga`.
+/// Event log. Typedefed to `u3_saga`.
 struct _u3_saga {
-  c3_path* pax_u; //!< path to event log directory
-  c3_d     eve_d; //!< ID of youngest event
+  /// Path to event log directory.
+  c3_path* pax_u;
+
+  /// ID of youngest event.
+  c3_d     eve_d;
+
+  /// Epochs.
   struct {
-    c3_list* lis_u; //!< list of epochs (front is oldest, back is youngest)
-    u3_epoc* cur_u; //!< current epoch
-  } epo_u;          //!< epochs
+    /// List of epochs (front is oldest, back is youngest).
+    c3_list* lis_u;
+
+    /// Current epoch.
+    u3_epoc* cur_u;
+  } epo_u;
+
+  /// Events pending commit.
   struct {
-    c3_list* lis_u;             //!< list of events pending commit
-    size_t   req_i;             //!< number of events in commit request
-  } eve_u;                      //!< events pending commit
-  size_t his_w[max_batch_size]; //!< histogram of commit batch size
-  c3_t   act_t;                 //!< active commit flag
+    /// List of events pending commit.
+    c3_list* lis_u;
+
+    /// Number of events in commit request.
+    size_t   req_i;
+  } eve_u;
+
+  /// Histogram of commit batch size.
+  size_t his_w[max_batch_size];
+
+  /// Active commit flag.
+  c3_t   act_t;
+
+  /// Async commit context.
   struct {
-    uv_loop_t*   lup_u; //!< libuv event loop
-    uv_work_t    req_u; //!< libuv work queue handle
-    u3_saga_news com_f; //!< callback invoked upon commit completion
-    void*        ptr_v; //!< user context passed to `com_f`
-    c3_t         suc_t; //!< commit success flag
-  } asy_u;              //!< async commit context
+    /// libuv event loop.
+    uv_loop_t*   lup_u;
+
+    /// libuv work queue handle.
+    uv_work_t    req_u;
+
+    /// Callback invoked upon commit completion.
+    u3_saga_news com_f;
+
+    /// User context passed to `com_f`.
+    void*        ptr_v;
+
+    /// Commit success flag.
+    c3_t         suc_t;
+  } asy_u;
 };
 
 //==============================================================================
 // Static functions
 //==============================================================================
 
-//! Boot from a snapshot.
-//!
-//! Upon successful completion, `u3A->eve_d` represents the most recent event
-//! represented by the epoch's snapshot.
-//!
-//! @param[in] poc_u  Epoch whose snapshot should be used to boot.
-//!
-//! @return 0  The epoch was `NULL`.
-//! @return 1  Successfully booted from the epoch's snapshot.
+/// Boot from a snapshot.
+///
+/// Upon successful completion, `u3A->eve_d` represents the most recent event
+/// represented by the epoch's snapshot.
+///
+/// @param[in] poc_u  Epoch whose snapshot should be used to boot.
+///
+/// @return 0  The epoch was `NULL`.
+/// @return 1  Successfully booted from the epoch's snapshot.
 static c3_t
 _boot_from_epoc_snapshot(const u3_epoc* const poc_u);
 
-//! Compare two epoch directory names. Used as the comparison function for
-//! qsort().
-//!
-//! @param[in] lef_v  Pointer to character array representing left epoch
-//!                   directory name.
-//! @param[in] rih_v  Pointer to character array representing right epoch
-//!                   directory name.
-//!
-//! @return <0  The left epoch is older than the right epoch.
-//! @return  0  The left epoch and right epoch are the same age (i.e. the same
-//!             epoch).
-//! @return >0  The left epoch is younger than the right epoch.
+/// Compare two epoch directory names. Used as the comparison function for
+/// qsort().
+///
+/// @param[in] lef_v  Pointer to character array representing left epoch
+///                   directory name.
+/// @param[in] rih_v  Pointer to character array representing right epoch
+///                   directory name.
+///
+/// @return <0  The left epoch is older than the right epoch.
+/// @return  0  The left epoch and right epoch are the same age (i.e. the same
+///             epoch).
+/// @return >0  The left epoch is younger than the right epoch.
 static inline c3_i
 _cmp_epocs(const void* lef_v, const void* rih_v);
 
-//! Search an event log's list of epochs for the epoch that contains the given
-//! event ID. Runs in O(n) where n is the length of the list of epochs.
-//!
-//! @param[in] log_u  Event log handle.
-//! @param[in] ide_d  Event ID to search for.
-//!
-//! @return NULL  `ide_d` does not belong to any epoch in `log_u`.
-//! @return       Epoch handle of epoch containing `ide_d`.
+/// Search an event log's list of epochs for the epoch that contains the given
+/// event ID. Runs in O(n) where n is the length of the list of epochs.
+///
+/// @param[in] log_u  Event log handle.
+/// @param[in] ide_d  Event ID to search for.
+///
+/// @return NULL  `ide_d` does not belong to any epoch in `log_u`.
+/// @return       Epoch handle of epoch containing `ide_d`.
 static u3_epoc*
 _find_epoc(u3_saga* const log_u, const c3_d ide_d);
 
-//! Determine if a string is a valid epoch directory name.
-//!
-//! @param[in] nam_c  Name.
-//!
-//! @return 1  `nam_c` is a valid epoch directory name.
-//! @return 0  Otherwise.
+/// Determine if a string is a valid epoch directory name.
+///
+/// @param[in] nam_c  Name.
+///
+/// @return 1  `nam_c` is a valid epoch directory name.
+/// @return 0  Otherwise.
 static inline c3_t
 _is_epoc_dir(const c3_c* const nam_c);
 
-//! Migrate from old non-epoch-based event log to epoch-based event log.
-//!
-//! @param[in]  log_u  Event log handle.
-//!
-//! @return 1  Migration succeeded.
-//! @return 0  Otherwise.
+/// Migrate from old non-epoch-based event log to epoch-based event log.
+///
+/// @param[in]  log_u  Event log handle.
+///
+/// @return 1  Migration succeeded.
+/// @return 0  Otherwise.
 static c3_t
 _migrate(u3_saga* const log_u);
 
-//! Discover epoch directories in a given directory.
-//!
-//! @param[in]  dir_c  Directory to search for epoch directories.
-//! @param[out] ent_c  Pointer to array of 256-byte arrays.
-//! @param[out] ent_i  Pointer to number of elements in `*ent_c`.
-//!
-//! @return 1  Discovered one or more epoch directories.
-//! @return 0  Otherwise.
+/// Discover epoch directories in a given directory.
+///
+/// @param[in]  dir_c  Directory to search for epoch directories.
+/// @param[out] ent_c  Pointer to array of 256-byte arrays.
+/// @param[out] ent_i  Pointer to number of elements in `*ent_c`.
+///
+/// @return 1  Discovered one or more epoch directories.
+/// @return 0  Otherwise.
 static c3_t
 _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[dname_size], size_t* ent_i);
 
-//! Remove events that were committed in the last commit request from an event
-//! log's pending commits list.
-//!
-//! @param[in] log_u  Event log handle.
+/// Remove events that were committed in the last commit request from an event
+/// log's pending commits list.
+///
+/// @param[in] log_u  Event log handle.
 static inline void
 _remove_committed_events(u3_saga* const log_u);
 
-//! Invoke user callback after batch async commit.
-//!
-//! @note Runs on main thread.
-//!
-//! @param[in] req_u  libuv work handle.
-//! @param[in] sas_i  libuv return status.
+/// Invoke user callback after batch async commit.
+///
+/// @note Runs on main thread.
+///
+/// @param[in] req_u  libuv work handle.
+/// @param[in] sas_i  libuv return status.
 static void
 _uv_commit_after_cb(uv_work_t* req_u, c3_i sas_i);
 
-//! Initiate async batch commit.
-//!
-//! @note Runs off main thread.
-//!
-//! @param[in] req_u  libuv work handle.
+/// Initiate async batch commit.
+///
+/// @note Runs off main thread.
+///
+/// @param[in] req_u  libuv work handle.
 static void
 _uv_commit_cb(uv_work_t* req_u);
 
@@ -564,8 +592,8 @@ u3_saga_truncate(u3_saga* const log_u, size_t cnt_i)
   return 1;
 }
 
-//! Replay by restoring the latest epoch's snapshot and then replaying that
-//! epoch's events.
+/// Replay by restoring the latest epoch's snapshot and then replaying that
+/// epoch's events.
 c3_t
 u3_saga_replay(u3_saga* const log_u,
                c3_d           cur_d,

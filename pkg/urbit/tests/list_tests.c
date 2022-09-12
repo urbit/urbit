@@ -1,4 +1,4 @@
-//! @file list_tests.c
+/// @file list_tests.c
 
 #include "c/list.h"
 

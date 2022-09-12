@@ -1,4 +1,4 @@
-//! @file list.c
+/// @file list.c
 
 #include "c/list.h"
 
@@ -6,19 +6,31 @@
 // Types
 //==============================================================================
 
-//! Doubly-linked list node. Typedefed to `c3_lode`.
+/// Doubly-linked list node. Typedefed to `c3_lode`.
 struct _c3_list_node {
-  struct _c3_list_node* nex_u;   //!< next node
-  struct _c3_list_node* pre_u;   //!< previous node
-  size_t                dat_i;   //!< length of `dat_y` in bytes
-  c3_y                  dat_y[]; //!< payload data
+  /// Next node in the list.
+  struct _c3_list_node* nex_u;
+
+  /// Previous node in the list.
+  struct _c3_list_node* pre_u;
+
+  /// Length of `dat_y` in bytes.
+  size_t                dat_i;
+
+  /// Payload data.
+  c3_y                  dat_y[];
 };
 
-//! Doubly-linked list handle. Typedefed to `c3_list`.
+/// Doubly-linked list handle. Typedefed to `c3_list`.
 struct _c3_list {
-  c3_lode* fro_u; //!< node at front of list
-  c3_lode* bak_u; //!< node at back of list
-  size_t   len_i; //!< number of nodes in list
+  /// Node at the front of the list.
+  c3_lode* fro_u;
+
+  /// Node at the back of the list.
+  c3_lode* bak_u;
+
+  /// Number of nodes in the list.
+  size_t   len_i;
 };
 
 //==============================================================================

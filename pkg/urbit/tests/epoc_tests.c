@@ -1,10 +1,10 @@
-//! @file epoc_tests.c
-//!
-//! Tests for the epoc module.
-//! @note `#define U3_EPOC_TEST` must be included at the top of `epoc.h` in
-//!       order to use these tests. If this step is omitted, the tests will
-//!       segfault because the `epoc` module relies on the snapshotting system
-//!       by default, which is too complex to set up for these tests.
+/// @file epoc_tests.c
+///
+/// Tests for the epoc module.
+/// @note `#define U3_EPOC_TEST` must be included at the top of `epoc.h` in
+///       order to use these tests. If this step is omitted, the tests will
+///       segfault because the `epoc` module relies on the snapshotting system
+///       by default, which is too complex to set up for these tests.
 
 #include "vere/epoc.h"
 

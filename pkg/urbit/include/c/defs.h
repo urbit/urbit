@@ -58,12 +58,12 @@
 #     define c3_abs(x)    ( ((x) < 0) ? -(x) : (x) )
 
 
-//! Round up/down (respectively).
-//!
-//! @param[in] x  Integer to round.
-//! @param[in] n  Multiple to round to. Must be power of 2.
-//!
-//! @return  `x` rounded to the nearest multiple of `n`.
+/// Round up/down (respectively).
+///
+/// @param[in] x  Integer to round.
+/// @param[in] n  Multiple to round to. Must be power of 2.
+///
+/// @return  `x` rounded to the nearest multiple of `n`.
 #     define c3_rop(x, n) (((x) + ((n) - 1)) & (~((n) - 1)))
 #     define c3_rod(x, n) ((x) & ~((n) - 1))
 
