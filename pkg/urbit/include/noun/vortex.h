@@ -57,11 +57,6 @@
       u3_noun
       u3v_do(const c3_c* txt_c, u3_noun arg);
 
-    /* u3v_wish_n(): text expression with cache.
-    */
-      u3_noun
-      u3v_wish_n(const u3_noun txt);
-
     /* u3v_wish(): text expression with cache.
     */
       u3_noun

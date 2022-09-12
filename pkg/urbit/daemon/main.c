@@ -999,19 +999,17 @@ static void
 _cw_eval_commence(c3_i argc, c3_c* argv[])
 {
   //Read from stdin until an EOF is recieved
-  c3_c* line = NULL;
-  size_t len = 0;
-  ssize_t nread;
+  c3_c* lin_c = NULL;
+  size_t len_i = 0;
+  ssize_t red_i;
   c3_c* evl_c = "";
 
-  while((nread = getline(&line, &len, stdin)) != -1)
+  while((red_i = getline(&lin_c, &len_i, stdin)) != -1)
   {
-     len = asprintf(&evl_c, "%s%s", evl_c, line);
+     len_i = asprintf(&evl_c, "%s%s", evl_c, lin_c);
   }
 
-  free(line);
-
-  //printf("%s", evl_c);
+  free(lin_c);
 
   //Initialize the Loom and load the Ivory Pill
   c3_d          len_d = u3_Ivory_pill_len;
@@ -1032,10 +1030,9 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
     exit(1);
   }
 
-  printf("Executing hoon:\n");
+  printf("eval:\n");
 
-  //Run the input through a virtualization (u3v_wish_n) and get the ouput
-  //u3_noun res = u3m_soft(0, u3v_wish_n, u3i_string(evl_c));
+  //Run the input through a virtualization (u3v_wish) and get the ouput
   u3_noun gat = u3v_wish("|=(a=@t (sell (slap !>(+>.$) (rain /eval a))))");
   u3_noun res;
   {
@@ -1043,22 +1040,16 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
     u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
     res = u3m_soft(0, u3n_kick_on, cor); // Transfer cor and sam
   }
-
-
-
   
   if(0 == u3h(res)){//Succuessful execution print the output
      u3_pier_tank(0,0,u3k(u3t(res)));
-  }else{
-     u3_pier_punt_goof("Hoon Error", u3k(res)); //print stack trace error
+  }
+  else{
+     u3_pier_punt_goof("eval", u3k(res)); //print stack trace error
   }
   u3z(res);
   u3z(gat);
-
-  //printf("finishing\n");
 }
-
-
 
 /* _cw_serf_commence(): initialize and run serf
 */
