@@ -6,8 +6,8 @@
 //!          roots. If not all noun references are roots, memory leaks will
 //!          result.
 
-#ifndef U3_VERE_EVLO_H
-#define U3_VERE_EVLO_H
+#ifndef U3_VERE_SAGA_H
+#define U3_VERE_SAGA_H
 
 #include <uv.h>
 
@@ -231,4 +231,4 @@ u3_saga_info(const u3_saga* const log_u);
 void
 u3_saga_close(u3_saga* const log_u);
 
-#endif /* ifndef U3_VERE_EVLO_H */
+#endif /* ifndef U3_VERE_SAGA_H */
