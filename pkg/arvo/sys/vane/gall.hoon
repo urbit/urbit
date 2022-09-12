@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-9: overall gall state, versioned
+::  $state-10: overall gall state, versioned
 ::
-+$  state-9  [%9 state]
++$  state-10  [%10 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -141,7 +141,6 @@
       %poke
       %leave
       %missing
-      %cork
   ==
 ::  |migrate: data structures for upgrades
 ::
@@ -150,7 +149,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %9
+  $:  %10
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -203,7 +202,7 @@
           [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
-        [%9 system-duct outstanding contacts yokes=~ blocked bug]:spore
+        [%10 system-duct outstanding contacts yokes=~ blocked bug]:spore
       =/  mo-core  (mo-abed:mo:adult system-duct.state.adult)
       =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
       ::  upgrade %base apps and suspend others
@@ -267,7 +266,8 @@
           =.  spore-tag  `@ud`-.old
           =?  old  ?=(%7 -.old)  (spore-7-to-8 old)
           =?  old  ?=(%8 -.old)  (spore-8-to-9 old)
-          ?>  ?=(%9 -.old)
+          =?  old  ?=(%9 -.old)  (spore-9-to-10 old)
+          ?>  ?=(%10 -.old)
           =.  spore  old
           ?.  =(~ eggs.spore)
             pupal-gate
@@ -276,12 +276,12 @@
             state  spore(eggs *(map term yoke))
           ==
       ::
-      +$  spore-any  $%(^spore spore-8 spore-7)
+      +$  spore-any  $%(^spore spore-9 spore-8 spore-7)
       +$  spore-7
         $:  %7
             wipe-eyre-subs=_|  ::NOTE  band-aid for #3196
             system-duct=duct
-            outstanding=(map [wire duct] (qeu remote-request))
+            outstanding=(map [wire duct] (qeu remote-request-9))
             contacts=(set ship)
             eggs=(map term egg-7)
             blocked=(map term (qeu blocked-move))
@@ -290,7 +290,7 @@
       +$  spore-8
         $:  %8
             system-duct=duct
-            outstanding=(map [wire duct] (qeu remote-request))
+            outstanding=(map [wire duct] (qeu remote-request-9))
             contacts=(set ship)
             eggs=(map term egg-8)
             blocked=(map term (qeu blocked-move))
@@ -311,6 +311,19 @@
       +$  watches-8  [inbound=bitt outbound=boat-8]
       +$  boat-8  (map [wire ship term] [acked=? =path])
       ::
+      +$  spore-9
+        $:  %9
+            system-duct=duct
+            outstanding=(map [wire duct] (qeu remote-request-9))
+            contacts=(set ship)
+            eggs=(map term egg)
+            blocked=(map term (qeu blocked-move))
+            =bug
+        ==
+      ::
+      +$  remote-request-9
+        ?(remote-request %cork)
+      ::
       ++  spore-7-to-8
         |=  old=spore-7
         ^-  spore-8
@@ -324,7 +337,7 @@
       ::
       ++  spore-8-to-9
         |=  old=spore-8
-        ^-  ^spore
+        ^-  spore-9
         =-  old(- %9, eggs -, blocked [blocked.old *bug])
         %-  ~(run by eggs.old)
         |=  =egg-8
@@ -343,11 +356,20 @@
         |=  watches-8
         ^-  [bitt boat boar]
         [inbound outbound (~(run by outbound) |=([acked=? =path] nonce=0))]
+      ::
+      ++  spore-9-to-10
+        |=  old=spore-9
+        =-  old(- %10, outstanding -)
+        %-  ~(run by outstanding.old)
+        |=  q=(qeu remote-request-9)
+        %-  ~(gas to *(qeu remote-request))
+        %+  murn  ~(tap to q)
+        |=(r=remote-request-9 ?:(?=(%cork r) ~ `r))
       --
     --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-9
+=|  state=state-10
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 =<  ~%  %gall-wrap  ..mo  ~
@@ -577,7 +599,7 @@
       =/  stand
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       %+  ~(put by outstanding.state)  [wire hen]
-      (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave %cork]))
+      (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave]))
     =.  mo-core  (mo-pass wire note-arvo)
     ?.  ?=(%leave -.deal)
       mo-core
@@ -803,10 +825,8 @@
             (~(put to *(qeu remote-request)) %missing)
           ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)
-          ~?  &(=(rr %cork) ?=(^ stand))
-            [%outstanding-queue-not-empty wire hen]
           :-  rr
-          ?:  ?=(%cork rr)
+          ?:  =(~ stand)
             (~(del by outstanding.state) [full-wire hen])
           (~(put by outstanding.state) [full-wire hen] stand)
         ::  non-null case of wire is old, remove on next breach after
@@ -824,7 +844,6 @@
         %watch     (mo-give %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
         %leave     mo-core
-        %cork      mo-core
         %missing   ~>(%slog.[3 'gall: missing'] mo-core)
       ==
     ::
@@ -841,10 +860,9 @@
       ?-  -.ames-response
         %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
         %x  =.  mo-core  (mo-give %unto %kick ~)
-            =.  outstanding.state
-              =/  key  [[%sys wire] hen]
-              %+  ~(put by outstanding.state)  key
-              (~(put to (~(gut by outstanding.state) key ~)) %cork)
+            =/  key  [[%sys wire] hen]
+            =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
+              (~(del by outstanding.state) key)
             (mo-pass [%sys wire] %a %cork ship)
       ==
     ::
