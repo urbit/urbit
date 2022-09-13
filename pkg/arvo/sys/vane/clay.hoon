@@ -126,7 +126,7 @@
       fod=flue                                          ::  ford cache
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
-      ren=(map dude:gall ?)                             ::  force agents on/off
+      ren=rein                                          ::  force agents on/off
   ==                                                    ::
 ::
 ::  Commit state.

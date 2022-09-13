@@ -167,12 +167,11 @@
   ?.  .^(? %cu pax)  ~
   `.^(ship %cx pax)
 ::
-::  XX
-::  ++  get-apps-live
-::    |=  [our=ship =desk now=@da]
-::    ^-  (list dude)
-::    %+  murn  (get-apps-have our desk now)
-::    |=([=dude live=?] ?.(live ~ `dude))
+++  get-apps-live
+  |=  [our=ship =desk now=@da]
+  ^-  (list dude)
+  %+  murn  (get-apps-have our desk now)
+  |=([=dude live=?] ?.(live ~ `dude))
 ::  +get-apps-have: find which apps Gall is running on a desk
 ::
 ++  get-apps-have
@@ -180,17 +179,7 @@
   ^-  (list [=dude live=?])
   %~  tap  in
   .^((set [=dude live=?]) ge+/(scot %p our)/[desk]/(scot %da now))
-::  ::  +get-apps-want: find which apps should be running on a desk
-::  ::
-::  ++  get-apps-want
-::    |=  [local=[our=ship =desk now=@da] duz=(list dude) =rein]
-::    ^-  (list dude)
-::    ?.  liv.rein  ~
-::    ?.  |(=(`zuse+zuse (read-kelvin-local local)) =(%base desk.local))  ~
-::    =.  duz  (skip duz ~(has in sub.rein))
-::    =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
-::    duz
-::  ::
+::
 ++  mergebase-hashes
   |=  [our=@p syd=desk now=@da her=ship sud=desk]
   =/  her  (scot %p her)
@@ -202,15 +191,6 @@
 ++  enjs
   =,  enjs:format
   |%
-  ::  XX
-  ::  ++  vats
-  ::    |=  v=(list ^vat)
-  ::    ^-  json
-  ::    %-  pairs
-  ::    %+  turn  v
-  ::    |=  va=^vat
-  ::    [desk.va (vat va)]
-  ::
   ++  tim
     |=  t=@
     ^-  json
@@ -222,16 +202,6 @@
     :~  ud+(numb ud.c)
         da+(tim da.c)
     ==
-  ::
-  ::  XX
-  ::  ++  vat
-  ::    |=  v=^vat
-  ::    %-  pairs
-  ::    :~  desk+s+desk.v
-  ::        hash+s+(scot %uv hash.v)
-  ::        cass+(cass cass.v)
-  ::        arak+(arak arak.v)
-  ::    ==
   ::
   ++  weft
     |=  w=^weft
@@ -246,14 +216,5 @@
     :~  aeon+(numb aeon.r)
         weft+(weft weft.r)
     ==
-  ::
-  ::  XX
-  ::  ++  rein
-  ::    |=  r=^rein
-  ::    %-  pairs
-  ::    :~  add+a+(turn ~(tap in add.r) (lead %s))
-  ::        sub+a+(turn ~(tap in sub.r) (lead %s))
-  ::    ==
-  ::
   --
 --
