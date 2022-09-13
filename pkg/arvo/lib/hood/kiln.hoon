@@ -263,7 +263,6 @@
       cas=case                                          ::
       gim=?(%auto germ)                                 ::
   ==
-+$  sync-state   [nun=@ta kid=(unit desk) let=@ud]
 +$  fuse-source  [who=ship des=desk ver=$@(%trak case)]
 ::  actual poke
 +$  kiln-fuse
