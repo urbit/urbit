@@ -131,8 +131,8 @@ describe('subscription', () => {
     await wait(600);
 
     expect(airlock.onOpen).toBeCalled();
-    expect(params.event).toHaveBeenNthCalledWith(1, firstEv);
-    expect(params.event).toHaveBeenNthCalledWith(2, secondEv);
+    expect(params.event).toHaveBeenNthCalledWith(1, firstEv, 'json');
+    expect(params.event).toHaveBeenNthCalledWith(2, secondEv, 'json');
   }, 800);
   it('should poke', async () => {
     fetchSpy = jest.spyOn(window, 'fetch');
