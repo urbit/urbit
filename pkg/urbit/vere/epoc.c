@@ -562,8 +562,13 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d)
   c3_assert(0 != access(c3_path_str(poc_u->pax_u), F_OK));
   mkdir(c3_path_str(poc_u->pax_u), 0700);
 
-  if ( !(poc_u->env_u = _lmdb_init(poc_u->pax_u)) ) {
-    goto free_epoc;
+  // Take snapshot to save the state before the first event in the epoch is
+  // applied unless this is the very first epoch.
+  if ( epo_min_d != fir_d ) {
+#ifndef U3_EPOC_TEST
+    u3e_save();
+    c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u)));
+#endif
   }
 
   if ( !_persist_epoc_version(poc_u->pax_u, epo_ver_w) ) {
@@ -574,13 +579,8 @@ u3_epoc_new(const c3_path* const par_u, const c3_d fir_d)
     goto free_epoc;
   }
 
-  // Take snapshot to save the state before the first event in the epoch is
-  // applied unless this is the very first epoch.
-  if ( epo_min_d != fir_d ) {
-#ifndef U3_EPOC_TEST
-    u3e_save();
-    c3_assert(c3y == u3e_copy(c3_path_str(poc_u->pax_u)));
-#endif
+  if ( !(poc_u->env_u = _lmdb_init(poc_u->pax_u)) ) {
+    goto free_epoc;
   }
 
   return poc_u;
