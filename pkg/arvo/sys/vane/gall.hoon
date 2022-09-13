@@ -760,19 +760,6 @@
     =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
     mo-core(yokes.state (~(del by yokes.state) dap))
   ::
-  ++  mo-perm
-    |=  dif=(list [=desk free=(set perm) lock=(set perm)])
-    ^+  mo-core
-    ::
-    =/  dux=(list duct)
-      ~(tap in wards.state)
-    |-
-    ?~  dux  mo-core
-    |-
-    ?~  dif  ^$(dux t.dux)
-    =.  mo-core  (mo-give(hen i.dux) %perm i.dif)
-    $(dif t.dif)
-  ::
   ::  +mo-ward: add permission notification subsciber
   ::
   ++  mo-ward
@@ -785,30 +772,41 @@
   ::
   ++  mo-load
     |=  ^load
+    ::  calculate new permission state, and the diff
     ::
     =/  new-perms=(jug desk perm)
-      (~(gas by *(map desk (set perm))) perms)
+      (~(gas by *(jug desk perm)) perms)
     ::
-    ::  desks no longer active. do agents on these desks need permissions notifications
-    ::  before theyre shut off? if they're ever turned back on, it will be via a %load move,
-    ::  and they should find out their permissions that way. but if we're computing a diff,
-    ::  they would compare against their old perms, which might have changed in the meantime?
-     =/  pes-dif=(list [=desk free=(set perm) lock=(set perm)])
-       =/  desks=(list desk)
-         ~(tap in (~(uni in ~(key by perms.state)) ~(key by new-perms)))
-       |-
-       ?~  desks  ~
-       =/  rest  $(desks t.desks)
-       =/  old  (~(get ju perms.state) i.desks)
-       =/  new  (~(get ju new-perms) i.desks)
-       :_  rest
-       :*  i.desks
-           (~(dif in new) old)
-           (~(dif in old) new)
-       ==
+    =/  pes-dif=(list [=desk free=(set perm) lock=(set perm)])
+      =/  desks=(list desk)
+        ~(tap in (~(uni in ~(key by perms.state)) ~(key by new-perms)))
+      |-
+      ?~  desks  ~
+      =/  rest  $(desks t.desks)
+      =/  old  (~(get ju perms.state) i.desks)
+      =/  new  (~(get ju new-perms) i.desks)
+      :_  rest
+      :*  i.desks
+          (~(dif in new) old)
+          (~(dif in old) new)
+      ==
+    ::  before updating permission state, we shut down agents that need to
+    ::  be stopped, to avoid +on-save running with inappropriate permissions
     ::
-    ::TODO: does it matter if this is before or after
-    ::agents are reloaded/killed?
+    =.  mo-core
+      =/  kil
+        =/  lol  (skim ~(tap by yokes.state) |=([term yoke] -.agent))
+        =/  mol  (~(gas by *(map term yoke)) lol)
+        =/  sol  ~(key by mol)
+        =/  new  (silt (turn dudes head))
+        ~(tap in (~(dif in sol) new))
+      |-  ^+  mo-core
+      ?~  kil  mo-core
+      ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
+      $(kil t.kil, mo-core (mo-idle i.kil))
+    ::  we must update permissions before re/loading & killing agents,
+    ::  to ensure that new agents aren't run with old permissions
+    ::
     =.  perms.state  new-perms
     ::
     =.  mo-core
@@ -823,20 +821,18 @@
                 [q.beak dude]
       |=  [a=[desk dude] b=(jug desk dude)]
       (~(put ju b) a)
+    ::  lastly notify about the permission change, which would reach agents
+    ::  only after all of the above anyway
     ::
-    =.  mo-core  (mo-perm pes-dif)
-    ::
-    =/  kil
-      =/  lol  (skim ~(tap by yokes.state) |=([term yoke] -.agent))
-      =/  mol  (~(gas by *(map term yoke)) lol)
-      =/  sol  ~(key by mol)
-      =/  new  (silt (turn dudes head))
-      ~(tap in (~(dif in sol) new))
-    |-  ^+  mo-core
-    ?~  kil  mo-core
-    ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
-    $(kil t.kil, mo-core (mo-idle i.kil))
-  ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
+    =/  dux=(list duct)
+      ~(tap in wards.state)
+    |-
+    ?~  dux  mo-core
+    |-
+    ?~  pes-dif  ^$(dux t.dux)
+    =.  mo-core  (mo-give(hen i.dux) %perm i.pes-dif)
+    $(pes-dif t.pes-dif)
+  ::  +mo-peek: call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
     ~/  %mo-peek
