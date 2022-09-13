@@ -651,25 +651,25 @@
   |=  [=desk pes=(set perm:gall)]
   =/  =loam:clay
     .^(loam:clay %cx /(scot %p our)//(scot %da now)/loams/(scot %tas desk))
-  =/  rei  [desk ren.loam (~(uni in pes.loam) pes)]
+  =/  cub  [desk (~(uni in pes.loam) pes)]
   =<  abet
-  (emit %pass /helm/clay/free %arvo %c %rein rei)
+  (emit %pass /helm/clay/free %arvo %c %curb cub)
 ::
 ::TODO: give warning if permissions are unchanged?
 ++  poke-clay-lock
   |=  [=desk pes=(set perm:gall)]
   =/  =loam:clay
     .^(loam:clay %cx /(scot %p our)//(scot %da now)/loams/(scot %tas desk))
-  =/  rei  [desk ren.loam (~(dif in pes.loam) pes)]
+  =/  cub  [desk (~(dif in pes.loam) pes)]
   =<  abet
-  (emit %pass /helm/clay/lock %arvo %c %rein rei)
+  (emit %pass /helm/clay/lock %arvo %c %curb cub)
 ::
 ::TODO: give warning if agent already running or doesnt exist?
 ++  poke-clay-jolt
   |=  [=desk =dude:gall]
   =/  =loam:clay
     .^(loam:clay %cx /(scot %p our)//(scot %da now)/loams/(scot %tas desk))
-  =/  rei  [desk (~(put by ren.loam) dude &) pes.loam]
+  =/  rei  [desk (~(put by ren.loam) dude &)]
   =<  abet
   (emit %pass /helm/clay/jolt %arvo %c %rein rei)
 ::
@@ -678,7 +678,7 @@
   |=  [=desk =dude:gall]
   =/  =loam:clay
     .^(loam:clay %cx /(scot %p our)//(scot %da now)/loams/(scot %tas desk))
-  =/  rei  [desk (~(put by ren.loam) dude |) pes.loam]
+  =/  rei  [desk (~(put by ren.loam) dude |)]
   =<  abet
   (emit %pass /helm/clay/idle %arvo %c %rein rei)
 ::
@@ -759,8 +759,7 @@
 ::
 ++  poke-rein
   |=  [=desk =rein]
-  ::TODO  get current perms from somewhere
-  abet:(emit %pass /kiln/rein %arvo %c %rein desk rein ~)
+  abet:(emit %pass /kiln/rein %arvo %c %rein desk rein)
 ::
 ++  poke-revive
   |=  =desk

@@ -785,7 +785,8 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
-        [%rein des=desk ren=rein pes=(set perm:gall)]   ::  extra apps
+        [%curb des=desk pes=(set perm:gall)]            ::  allowed permissions
+        [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
         [%tomb =clue]                                   ::  tombstone specific

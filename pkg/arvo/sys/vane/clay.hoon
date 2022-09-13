@@ -3051,11 +3051,16 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  set-rein
-    |=  [ren=(map dude:gall ?) pes=(set perm:gall)]
+  ++  set-curb
+    |=  pes=(set perm:gall)
     ^+  ..park
-    =?  pes  =(%base syd)  *(set perm:gall)
-    ..park(ren.dom ren, pes.dom pes)
+    =?  pes  =(%base syd)  ~
+    ..park(pes.dom pes)
+  ::
+  ++  set-rein
+    |=  ren=(map dude:gall ?)
+    ^+  ..park
+    ..park(ren.dom ren)
   ::
   ++  set-zest
     |=  liv=zest
@@ -4728,10 +4733,17 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %curb
+    =^  m1  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-curb:den pes.req)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld m1 m2) ..^$]
+  ::
       %rein
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(set-rein:den ren.req pes.req)
+      abet:(set-rein:den ren.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
   ::
