@@ -2,6 +2,25 @@
 ///
 /// Epoch-based event log.
 ///
+/// An event log abstracts over the storage method for events and snapshots and
+/// the mechanism for replay, epoch truncation, and epoch rollover.
+///
+/// This interface is designed to be shared by all event log implementations,
+/// regardless of whether they're tailored to a self-hosted use case, a
+/// large-scale hosting provider's use case, or a use case that falls in
+/// between. More specifically, the interface is a step toward more explicitly
+/// defined subsystems within the runtime.
+///
+/// The event log, of course, constitutes the persistence subsystem. The
+/// persistence subsystem *should* manage the persistence of both events and the
+/// Nock interpreter's memory arena in its entirety. However, this is not
+/// currently possible in the runtime due to the current factoring of interfaces
+/// i.e. the `manage` module handles the initialization of the memory arena, the
+/// `events` module handles snapshotting of that memory arena. As a result,
+/// different implementations of this interface may make certain assumptions
+/// about the state of the system when certain interface functions are called.
+/// These assumptions must be clearly documented in the implementation.
+///
 /// @warning Do *not* call into this module unless *all* noun references are
 ///          roots. If not all noun references are roots, memory leaks will
 ///          result.
@@ -94,8 +113,6 @@ u3_saga_new(const c3_path* const pax_u);
 
 /// Load an existing event log created with u3_saga_new().
 ///
-/// TODO: explain assumptions around u3m_init().
-///
 /// @param[in]  pax_u  Root directory of event log.
 /// @param[out] len_w  Pointer to boot sequence length. If set to 0, this
 ///                    indicates that the first epoch has been truncated.
@@ -113,8 +130,9 @@ u3_saga_open(const c3_path* const pax_u, c3_w* const len_w);
 c3_d
 u3_saga_last_commit(const u3_saga* const log_u);
 
-/// Determine if a new epoch should be created. Does NOT create a new epoch. To
-/// do so, call u3_saga_rollover().
+/// Determine if a new epoch should be created.
+///
+/// Does NOT create a new epoch. To do so, call u3_saga_rollover().
 ///
 /// @param[in] log_u  Event log handle. Must not be NULL.
 ///
@@ -164,6 +182,8 @@ u3_saga_set_async_ctx(u3_saga* const log_u,
 /// Returns immediately and invokes the user-provided callback on the main
 /// thread once the event is committed.
 ///
+/// u3_saga_set_async_ctx() MUST be called before this.
+///
 /// @param[in] log_u  Event log handle.
 /// @param[in] byt_y  Serialized event.
 /// @param[in] byt_i  Length of `byt_y` in bytes.
@@ -175,8 +195,10 @@ u3_saga_commit_async(u3_saga* const log_u,
                      c3_y* const byt_y,
                      const size_t byt_i);
 
-/// Roll an event log over to a new epoch. Future calls to u3_saga_commit()
-/// will commit to this new epoch.
+/// Roll an event log over to a new epoch.
+///
+/// Future calls to u3_saga_commit_sync() and u3_saga_commit_async() will commit
+/// to this new epoch.
 ///
 /// @param[in] log_u  Event log handle.
 ///

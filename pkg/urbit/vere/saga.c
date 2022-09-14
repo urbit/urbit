@@ -594,6 +594,11 @@ u3_saga_truncate(u3_saga* const log_u, size_t cnt_i)
 
 /// Replay by restoring the latest epoch's snapshot and then replaying that
 /// epoch's events.
+///
+/// @attention This implementation assumes that the loom has already been
+///            initialized by calling u3m_boot(). This assumption is necessary
+///            to enable the application of the most recent epoch's snapshot to
+///            the loom.
 c3_t
 u3_saga_replay(u3_saga* const log_u,
                c3_d           cur_d,

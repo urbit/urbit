@@ -1,6 +1,17 @@
 /// @file epoc.h
 ///
 /// Event log epoch.
+///
+/// An epoch abstracts over the storage method for the events and snapshot of a
+/// subset of the event log as well as the access pattern for events.
+///
+/// This interface is designed to be shared by all epoch implementations and to
+/// be used by an implementation of the `saga` interface.
+///
+/// @note There is no function for asynchronous commit by design. The event log
+///       implementation that uses this interface can implement asynchronous
+///       event log commits if it chooses, but removing the concept of
+///       asynchronicity from this interface simplifies its implementations.
 
 #ifndef U3_VERE_EPOC_H
 #define U3_VERE_EPOC_H
@@ -189,7 +200,7 @@ u3_epoc_has(const u3_epoc* const poc_u, const c3_d ide_d);
 c3_t
 u3_epoc_is_first(const u3_epoc* const poc_u);
 
-/// Commit one or more serialized events to an epoch.
+/// Synchronously commit one or more serialized events to an epoch.
 ///
 /// @param[in] poc_u  Epoch handle.
 /// @param[in] nod_u  c3_list node of first event to commit with serialized

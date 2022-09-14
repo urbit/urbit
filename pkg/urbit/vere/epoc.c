@@ -5,11 +5,6 @@
 /// the LMDB instance (which is also the event number that shows up in the epoch
 /// directory name).
 ///
-/// Only synchronous commits are supported; the event log implementation that
-/// uses this module is intended to implement asynchronous event log commit
-/// support in the manner of its choosing so that this module can remain
-/// relatively simple.
-///
 /// As an example, the directory layout for epoch `0i100`, which contains a
 /// snapshot representing the state after event 100 and whose first committed
 /// event in the LMDB instance is 101, is:
