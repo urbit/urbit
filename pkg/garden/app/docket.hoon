@@ -42,7 +42,7 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  :~  ~(tire pass /tire)  ::  XX  need to do this in +on-load
+  :~  ~(tire pass /tire)
       (~(connect pass /eyre) [~ /] %docket)
       (~(wait pass /init) (add 1 now.bowl))
       (~(connect pass /eyre) [~ /apps] %docket)
@@ -96,7 +96,7 @@
   --
 ::
 
-++  on-save  !>(-.state(- %2))  ::  XX
+++  on-save  !>(-.state)
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)

@@ -65,7 +65,8 @@
     (mergebase-hashes our syd now her.u.sink sud.u.sink)
   =/  dek  (~(got by tyr) syd)
   =/  =foam  (~(got by cone) our syd)
-  =+  [on of]=(skid ~(tap by ren.foam) |=([* ?] +<+))
+  =/  [on=(list [@tas ?]) of=(list [@tas ?])]
+    (skid ~(tap by ren.foam) |=([* ?] +<+))
   =/  sat
     ?-  zest.dek
       %live  "running"
@@ -86,7 +87,7 @@
       leaf/"source desk:      {?~(sink <~> <sud.u.sink>)}"
       leaf/"source aeon:      {?~(sink <~> <let.u.sink>)}"
       leaf/"kids desk:        {?~(sink <~> ?~(kid.u.sink <~> <u.kid.u.sink>))}"
-      leaf/"pending updates:  {<~(tap in wic.dek)>}"
+      leaf/"pending updates:  {<`(list [@tas @ud])`~(tap in wic.dek)>}"
   ==
 ::  +report-kids: non-vat cz hash report for kids desk
 ::
