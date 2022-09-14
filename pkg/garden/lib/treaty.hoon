@@ -22,13 +22,14 @@
   ::
   ++  case
     |=  c=^case
+    ~!  c=c
     %+  frond  -.c
     ?-  -.c
       %da   s+(scot %da p.c)
       %tas  s+(scot %tas p.c)  
       %ud   (numb p.c)
-      %uv   s+(scot %uv p.c)
     ==
+  ::
   ++  foreign-desk
     |=  [s=^ship =desk]
     ^-  cord

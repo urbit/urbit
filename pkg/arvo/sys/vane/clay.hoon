@@ -579,6 +579,7 @@
     $(vaz t.vaz)
   ::
   ++  ford
+    !.
     =>  |%
         +$  state
           $:  cache=flow
@@ -4360,7 +4361,7 @@
       %+  weld  duz
       %+  murn  ~(tap by ren)
       |=  [=dude:gall on=?]
-      ?:  &(=(`& on) !(~(has in dus) dude))
+      ?:  &(?=(%& on) !(~(has in dus) dude))
         `u=dude
       ~
     duz
@@ -5416,6 +5417,7 @@
         %tomb   ``[%flag !>((tomb t.path))]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
+        %tyre   ``[%tyre !>(tyr.ruf)]
     ==
   ::
   ++  domes

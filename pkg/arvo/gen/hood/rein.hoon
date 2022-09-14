@@ -8,11 +8,7 @@
     ==
 :-  %kiln-rein
 :-  desk
+=+  .^(=cone:clay %cx /(scot %p p.bec)//(scot %da now)/domes)
 %+  roll  arg
-=/  =rein:hood
-  =<  rein.arak
-  .^(vat:hood %gx /(scot %p p.bec)/hood/(scot %da now)/kiln/vat/[desk]/noun)
-|:  [*[on=? =dude:gall] rein=rein(liv liv)]
-?:  on
-  rein(add (~(put in add.rein) dude))
-rein(sub (~(put in sub.rein) dude))
+|:  [*[on=? =dude:gall] rein=ren:(~(got by cone) [p.bec desk])]
+(~(put in rein) dude on)
