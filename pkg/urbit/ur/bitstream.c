@@ -411,25 +411,21 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
     //
     else {
       uint8_t  rest = 8 - off;
-      uint8_t  mask = (1 << off) - 1;
-      uint8_t   byt, l, m = *b >> off;
       uint64_t last = left - 1;
+      uint64_t  max = ur_min(last, len_byt);
+      uint8_t  m, l;
 
       //  loop over all the bytes we need (or all that remain)
       //
-      //    [l] holds [off] bits
-      //    [m] holds [rest] bits
-      //
       {
-        uint64_t  max = ur_min(last, len_byt);
         uint64_t i;
 
         for ( i = 0; i < max; i++ ) {
-          byt    = *++b;
-          l      = byt & mask;
-          out[i] = m ^ (l << rest);
-          m      = byt >> off;
+          out[i] = (b[i] >> off) ^ (b[i + 1] << rest);
         }
+
+        b += max;
+        m = *b >> off;
       }
 
       //  we're reading into or beyond the last byte [bsr]
@@ -441,13 +437,13 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
         uint8_t bits = len - (last << 3);
 
         if ( bits < rest ) {
-          out[last] = m & ((1 << bits) - 1);
+          out[max] = m & ((1 << len_bit) - 1);
           bsr->bytes = b;
           left = 1;
           off += len_bit;
         }
         else {
-          out[last] = m;
+          out[max] = m;
           bsr->bytes = 0;
           left = 0;
           off  = 0;
@@ -465,11 +461,11 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
 
         if ( len_bit ) {
           if ( len_bit <= rest ) {
-            out[len_byt] = m & ((1 << len_bit) - 1);
+            out[max] = m & ((1 << len_bit) - 1);
           }
           else {
             l = *++b & ((1 << off) - 1);
-            out[len_byt] = m ^ (l << rest);
+            out[max] = (m ^ (l << rest)) & ((1 << len_bit) - 1);
           }
         }
       }
