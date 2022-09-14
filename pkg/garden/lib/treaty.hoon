@@ -22,7 +22,6 @@
   ::
   ++  case
     |=  c=^case
-    ~!  c=c
     %+  frond  -.c
     ?-  -.c
       %da   s+(scot %da p.c)

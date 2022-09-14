@@ -251,17 +251,19 @@
     !>  shut-packet
     !>  decoded
 ::
-++  test-shut-packet-associated-data  ^-  tang
-  ::
-  =/  =shut-packet:ames
-    :+  bone=17  message-num=18
-    [%& num-fragments=1 fragment-num=1 fragment=`@`0xdead.beef]
-  ::
-  =/  =packet:ames
-    (encode-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 1)
-  ::
-  %-  expect-fail
-  |.((decode-shut-packet:ames packet nec-sym 3 17))
+::  Crypto failures are now non-deterministic
+::
+::  ++  test-shut-packet-associated-data  ^-  tang
+::    ::
+::    =/  =shut-packet:ames
+::      :+  bone=17  message-num=18
+::      [%& num-fragments=1 fragment-num=1 fragment=`@`0xdead.beef]
+::    ::
+::    =/  =packet:ames
+::      (encode-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 1)
+::    ::
+::    %-  expect-fail
+::    |.((decode-shut-packet:ames packet nec-sym 3 17))
 ::
 ++  test-alien-encounter  ^-  tang
   ::
