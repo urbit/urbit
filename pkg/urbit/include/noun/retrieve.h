@@ -362,18 +362,50 @@
         u3r_bytes_all(c3_w*   len_w,
                       u3_atom a);
 
+      /* u3r_chop_bits():
+      **
+      **   XOR `wid_d` bits from`src_w` at `bif_g` to `dst_w` at `bif_g`
+      **
+      **   NB: [dst_w] must have space for [bit_g + wid_d] bits
+      */
+        void
+        u3r_chop_bits(c3_g  bif_g,
+                      c3_d  wid_d,
+                      c3_g  bit_g,
+                      c3_w* dst_w,
+                const c3_w* src_w);
+
+      /* u3r_chop_words():
+      **
+      **   Into the bloq space of `met`, from position `fum` for a
+      **   span of `wid`, to position `tou`, XOR from `src_w`
+      **   into `dst_w`.
+      **
+      **   NB: [dst_w] must have space for [tou_w + wid_w] bloqs
+      */
+        void
+        u3r_chop_words(c3_g  met_g,
+                       c3_w  fum_w,
+                       c3_w  wid_w,
+                       c3_w  tou_w,
+                       c3_w* dst_w,
+                       c3_w  len_w,
+                 const c3_w* src_w);
+
       /* u3r_chop():
       **
       **   Into the bloq space of `met`, from position `fum` for a
       **   span of `wid`, to position `tou`, XOR from atom `src`
-      **   into ray `dst`.
+      **   into `dst_w`.
+      **
+      **   NB: [dst_w] must have space for [tou_w + wid_w] bloqs
       */
         void
-        u3r_chop(c3_g    met_g,
-                 c3_w    fum_w,
-                 c3_w    wid_w,
-                 c3_w    tou_w,
-                 c3_w*   dst_w,
+        u3r_chop(c3_g  met_g,
+                 c3_w  fum_w,
+                 c3_w  wid_w,
+                 c3_w  tou_w,
+                 c3_w* dst_w,
                  u3_atom src);
 
       /* u3r_mp():

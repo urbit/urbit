@@ -1448,79 +1448,201 @@ u3r_safe_chub(u3_noun dat, c3_d* out_d)
   return c3y;
 }
 
+/* u3r_chop_bits():
+**
+**   XOR `wid_d` bits from`src_w` at `bif_g` to `dst_w` at `bif_g`
+**
+**   NB: [dst_w] must have space for [bit_g + wid_d] bits
+*/
+void
+u3r_chop_bits(c3_g  bif_g,
+              c3_d  wid_d,
+              c3_g  bit_g,
+              c3_w* dst_w,
+        const c3_w* src_w)
+{
+  c3_y fib_y = 32 - bif_g;
+  c3_y tib_y = 32 - bit_g;
+
+  //  we need to chop words
+  //
+  if ( wid_d >= tib_y ) {
+    //  align *dst_w
+    //
+    if ( bit_g ) {
+      c3_w low_w = src_w[0] >> bif_g;
+
+      if ( bif_g > bit_g ) {
+        low_w   ^= src_w[1] << fib_y;
+      }
+
+      *dst_w++  ^= low_w << bit_g;
+
+      wid_d -= tib_y;
+      bif_g += tib_y;
+      src_w += !!(bif_g >> 5);
+      bif_g &= 31;
+      fib_y  = 32 - bif_g;
+    }
+
+    {
+      size_t i_i, byt_i = wid_d >> 5;
+
+      if ( !bif_g ) {
+        for ( i_i = 0; i_i < byt_i; i_i++ ) {
+          dst_w[i_i] ^= src_w[i_i];
+        }
+      }
+      else {
+        for ( i_i = 0; i_i < byt_i; i_i++ ) {
+          dst_w[i_i] ^= (src_w[i_i] >> bif_g) ^ (src_w[i_i + 1] << fib_y);
+        }
+      }
+
+      src_w += byt_i;
+      dst_w += byt_i;
+      wid_d &= 31;
+      bit_g  = 0;
+    }
+  }
+
+  //  we need to chop (more) bits
+  //
+  if ( wid_d ) {
+    c3_w hig_w = src_w[0] >> bif_g;
+
+    if ( wid_d > fib_y ) {
+      hig_w   ^= src_w[1] << fib_y;
+    }
+
+    *dst_w    ^= (hig_w & ((1 << wid_d) - 1)) << bit_g;
+  }
+}
+
+/* u3r_chop_words():
+**
+**   Into the bloq space of `met`, from position `fum` for a
+**   span of `wid`, to position `tou`, XOR from `src_w`
+**   into `dst_w`.
+**
+**   NB: [dst_w] must have space for [tou_w + wid_w] bloqs
+*/
+void
+u3r_chop_words(c3_g  met_g,
+               c3_w  fum_w,
+               c3_w  wid_w,
+               c3_w  tou_w,
+               c3_w* dst_w,
+               c3_w  len_w,
+         const c3_w* src_w)
+{
+  //  operate on words
+  //
+  if ( met_g >= 5 ) {
+    size_t i_i, wid_i;
+
+    {
+      c3_g   hut_g = met_g - 5;
+      size_t fum_i = (size_t)fum_w << hut_g;
+      size_t tou_i = (size_t)tou_w << hut_g;
+      size_t tot_i;
+
+      wid_i = (size_t)wid_w << hut_g;
+      tot_i = fum_i + wid_i;
+
+      //  since [dst_w] must have space for (tou_w + wid_w) bloqs,
+      //  neither conversion can overflow
+      //
+      if ( (fum_i >> hut_g != fum_w) || (tot_i  - wid_i != fum_i) ) {
+        u3m_bail(c3__fail);
+        return;
+      }
+      else if ( fum_i >= len_w ) {
+        return;
+      }
+
+      if ( tot_i > len_w ) {
+        wid_i -= tot_i - len_w;
+      }
+
+      src_w += fum_i;
+      dst_w += tou_i;
+    }
+
+    for ( i_i = 0; i_i < wid_i; i_i++ ) {
+      dst_w[i_i] ^= src_w[i_i];
+    }
+  }
+  //  operate on bits
+  //
+  else {
+    c3_d wid_d = (c3_d)wid_w << met_g;
+    c3_g bif_g, bit_g;
+
+    {
+      c3_d len_d = (c3_d)len_w << 5;
+      c3_d fum_d = (c3_d)fum_w << met_g;
+      c3_d tou_d = (c3_d)tou_w << met_g;
+      c3_d tot_d = fum_d + wid_d;
+
+      // see above
+      //
+      if ( (fum_d >> met_g != fum_w) || (tot_d  - wid_d != fum_d) ) {
+        u3m_bail(c3__fail);
+        return;
+      }
+      else if ( fum_d > len_d ) {
+        return;
+      }
+
+      if ( tot_d > len_d ) {
+        wid_d -= tot_d - len_d;
+      }
+
+      src_w += fum_d >> 5;
+      dst_w += tou_d >> 5;
+      bif_g  = fum_d & 31;
+      bit_g  = tou_d & 31;
+    }
+
+    u3r_chop_bits(bif_g, wid_d, bit_g, dst_w, src_w);
+  }
+}
+
 /* u3r_chop():
 **
 **   Into the bloq space of `met`, from position `fum` for a
 **   span of `wid`, to position `tou`, XOR from atom `src`
 **   into `dst_w`.
+**
+**   NB: [dst_w] must have space for [tou_w + wid_w] bloqs
 */
 void
-u3r_chop(c3_g    met_g,
-           c3_w    fum_w,
-           c3_w    wid_w,
-           c3_w    tou_w,
-           c3_w*   dst_w,
-           u3_atom src)
+u3r_chop(c3_g  met_g,
+         c3_w  fum_w,
+         c3_w  wid_w,
+         c3_w  tou_w,
+         c3_w* dst_w,
+         u3_atom src)
 {
-  c3_w  i_w;
+  c3_w* src_w;
   c3_w  len_w;
-  c3_w* buf_w;
-
-  c3_assert(u3_none != src);
-  c3_assert(_(u3a_is_atom(src)));
 
   if ( _(u3a_is_cat(src)) ) {
     len_w = src ? 1 : 0;
-    buf_w = &src;
+    src_w = &src;
   }
   else {
     u3a_atom* src_u = u3a_to_ptr(src);
 
+    c3_assert(u3_none != src);
+    c3_assert(_(u3a_is_atom(src)));
+
     len_w = src_u->len_w;
-    buf_w = src_u->buf_w;
+    src_w = src_u->buf_w;
   }
 
-  if ( met_g < 5 ) {
-    c3_w san_w = (1 << met_g);
-    c3_w mek_w = ((1 << san_w) - 1);
-    c3_w baf_w = (fum_w << met_g);
-    c3_w bat_w = (tou_w << met_g);
-
-    // XX: efficiency: poor.  Iterate by words.
-    //
-    for ( i_w = 0; i_w < wid_w; i_w++ ) {
-      c3_w waf_w = (baf_w >> 5);
-      c3_g raf_g = (baf_w & 31);
-      c3_w wat_w = (bat_w >> 5);
-      c3_g rat_g = (bat_w & 31);
-      c3_w hop_w;
-
-      hop_w = (waf_w >= len_w) ? 0 : buf_w[waf_w];
-      hop_w = (hop_w >> raf_g) & mek_w;
-
-      dst_w[wat_w] ^= (hop_w << rat_g);
-
-      baf_w += san_w;
-      bat_w += san_w;
-    }
-  }
-  else {
-    c3_g hut_g = (met_g - 5);
-    c3_w san_w = (1 << hut_g);
-    c3_w j_w;
-
-    for ( i_w = 0; i_w < wid_w; i_w++ ) {
-      c3_w wuf_w = (fum_w + i_w) << hut_g;
-      c3_w wut_w = (tou_w + i_w) << hut_g;
-
-      for ( j_w = 0; j_w < san_w; j_w++ ) {
-        dst_w[wut_w + j_w] ^=
-            ((wuf_w + j_w) >= len_w)
-              ? 0
-              : buf_w[wuf_w + j_w];
-      }
-    }
-  }
+  u3r_chop_words(met_g, fum_w, wid_w, tou_w, dst_w, len_w, src_w);
 }
 
 /* u3r_string(): `a` as malloced C string.

@@ -12,6 +12,356 @@ _setup(void)
   u3m_pave(c3y);
 }
 
+/* _test_u3r_chop: "extract bit slices from atom"
+*/
+static c3_i
+_test_u3r_chop()
+{
+  c3_i  ret_i = 1;
+  c3_w  dst_w = 0;
+  u3_atom src = 0b11011;
+
+  //  bloq 0
+  //
+  {
+    //  read 1 bit from pos=0 (far right)
+    //
+    dst_w = 0;
+    u3r_chop(0, 0, 1, 0, &dst_w, src);
+    if ( 0x1 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 0, 0\r\n");
+      ret_i = 0;
+    }
+
+    //  read 1 bit from pos=1
+    //
+    dst_w = 0;
+    u3r_chop(0, 1, 1, 0, &dst_w, src);
+    if ( 0x1 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 0, 1\r\n");
+      ret_i = 0;
+    }
+
+    //  read 1 bit from pos=2
+    //
+    dst_w = 0;
+    u3r_chop(0, 2, 1, 0, &dst_w, src);
+    if ( 0x0 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 0, 2\r\n");
+      ret_i = 0;
+    }
+
+    //  read 4 x 1 bit bloq from pos=0
+    //
+    dst_w = 0;
+    u3r_chop(0, 0, 4, 0, &dst_w, src);
+    if ( 0b1011 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 0, 3\r\n");
+      ret_i = 0;
+    }
+
+    //  read 4 x 1 bit bloq from pos=0 into offset 1
+    //
+    dst_w = 0;
+    u3r_chop(0, 0, 4, 1, &dst_w, src);
+    if ( 0b10110 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 0, 4\r\n");
+      ret_i = 0;
+    }
+  }
+
+  //  bloq 1
+  //
+  {
+    //  read 2 bit from pos=0 (far right)
+    //
+    dst_w = 0;
+    u3r_chop(1, 0, 1, 0, &dst_w, src);
+    if ( 0b11 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 1, 0\r\n");
+      ret_i = 0;
+    }
+
+    //  read 2 bit from pos=1
+    //
+    dst_w = 0;
+    u3r_chop(1, 1, 1, 0, &dst_w, src);
+    if ( 0b10 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 1, 1\r\n");
+      ret_i = 0;
+    }
+
+    // read 2 bit from pos=2 (2 bloq over)
+    dst_w = 0;
+    u3r_chop(1, 2, 1, 0, &dst_w, src);
+    if ( 0b01 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 1, 2\r\n");
+      ret_i = 0;
+    }
+  }
+
+  //  bloq 3
+  {
+    dst_w = 0;
+    u3r_chop(3, 0, 1, 0, &dst_w, src);
+    if ( 0b11011 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: bloq 3, 0\r\n");
+      ret_i = 0;
+    }
+  }
+
+  //  read 1,8,16 bit bloqs from an indirect atom
+  //
+  {
+    src = u3i_string("abcdefghij");
+
+    //  1 bit pos=0 (far right)
+    //
+    dst_w = 0;
+    u3r_chop(0, 0, 1, 0, &dst_w, src);
+    if ( 0b1 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: indirect 0\r\n");
+      ret_i = 0;
+    }
+
+    //  8 bits pos=0
+    //
+    dst_w = 0;
+    u3r_chop(0, 0, 8, 0, &dst_w, src);
+    if ( 0b1100001 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: indirect 1\r\n");
+      ret_i = 0;
+    }
+
+    //  1 byte pos=0
+    //
+    dst_w = 0;
+    u3r_chop(3, 0, 1, 0, &dst_w, src);
+    if ( 0b1100001 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: indirect 2\r\n");
+      ret_i = 0;
+    }
+
+    //  1 short pos=0
+    //
+    dst_w = 0;
+    u3r_chop(4, 0, 1, 0, &dst_w, src);
+    if ( 0b0110001001100001 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: indirect 3\r\n");
+      ret_i = 0;
+    }
+
+    u3z(src);
+  }
+
+  // read lots of bits from a direct noun which holds 64 bits of data
+  // makes sure that we handle top 32 / bottom 32 correctly
+  {
+    c3_y inp_y[8] = { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7 };
+    src = u3i_bytes(8, inp_y);
+
+    c3_w dst_w[2] = {0};
+    u3r_chop(0, 0, 63, 0, dst_w, src);
+    if ( (0x3020100 != dst_w[0]) || (0x7060504 != dst_w[1]) ) {
+      fprintf(stderr, "test: u3r_chop: indirect 4\r\n");
+      ret_i = 0;
+    }
+
+    u3z(src);
+  }
+
+  // as above (read lots of bits from a direct noun which holds 64 bits of data
+  // makes sure that we handle top 32 / bottom 32 correctly)
+  // but with a bit more nuance
+  {
+    c3_y inp_y[8] = { 0x0, 0x0, 0x0, 0xaa, 0xff, 0x0, 0x0, 0x0 };
+    src = u3i_bytes(8, (c3_y*)inp_y);
+
+    dst_w = 0;
+    u3r_chop(0, 24, 16, 0, &dst_w, src);
+    if ( 0b1111111110101010 != dst_w ) {
+      fprintf(stderr, "test: u3r_chop: indirect 5\r\n");
+      ret_i = 0;
+    }
+
+    u3z(src);
+  }
+
+  return ret_i;
+}
+
+/* _test_chop_slow(): "golden master" for chop tests (formerly u3r_chop())
+*/
+void
+_test_chop_slow(c3_g    met_g,
+                c3_w    fum_w,
+                c3_w    wid_w,
+                c3_w    tou_w,
+                c3_w*   dst_w,
+                c3_w    len_w,
+                c3_w*   buf_w)
+{
+  c3_w  i_w;
+
+  if ( met_g < 5 ) {
+    c3_w san_w = (1 << met_g);
+    c3_w mek_w = ((1 << san_w) - 1);
+    c3_w baf_w = (fum_w << met_g);
+    c3_w bat_w = (tou_w << met_g);
+
+    // XX: efficiency: poor.  Iterate by words.
+    //
+    for ( i_w = 0; i_w < wid_w; i_w++ ) {
+      c3_w waf_w = (baf_w >> 5);
+      c3_g raf_g = (baf_w & 31);
+      c3_w wat_w = (bat_w >> 5);
+      c3_g rat_g = (bat_w & 31);
+      c3_w hop_w;
+
+      hop_w = (waf_w >= len_w) ? 0 : buf_w[waf_w];
+      hop_w = (hop_w >> raf_g) & mek_w;
+
+      dst_w[wat_w] ^= (hop_w << rat_g);
+
+      baf_w += san_w;
+      bat_w += san_w;
+    }
+  }
+  else {
+    c3_g hut_g = (met_g - 5);
+    c3_w san_w = (1 << hut_g);
+    c3_w j_w;
+
+    for ( i_w = 0; i_w < wid_w; i_w++ ) {
+      c3_w wuf_w = (fum_w + i_w) << hut_g;
+      c3_w wut_w = (tou_w + i_w) << hut_g;
+
+      for ( j_w = 0; j_w < san_w; j_w++ ) {
+        dst_w[wut_w + j_w] ^=
+            ((wuf_w + j_w) >= len_w)
+              ? 0
+              : buf_w[wuf_w + j_w];
+      }
+    }
+  }
+}
+
+/* _test_chop_smol(): test permuations of chop from bloq 0-4
+*/
+static c3_i
+_test_chop_smol(c3_c* cap_c, c3_y val_y)
+{
+  c3_i ret_i = 1;
+  c3_g met_g;
+  c3_w fum_w, wid_w, tou_w;
+  c3_w len_w = 34;  //  (rsh [0 5] (mul 2 (mul 34 (bex 4))))
+  c3_w src_w[len_w];
+  c3_w   a_w[len_w];
+  c3_w   b_w[len_w];
+
+  memset(src_w, val_y, len_w << 2);
+
+  for ( met_g = 0; met_g < 5; met_g++ ) {
+    for ( fum_w = 0; fum_w <= len_w; fum_w++ ) {
+      for ( wid_w = 0; wid_w <= len_w; wid_w++ ) {
+        for ( tou_w = 0; tou_w <= len_w; tou_w++ ) {
+          memset(a_w, 0, len_w << 2);
+          memset(b_w, 0, len_w << 2);
+          u3r_chop_words(met_g, fum_w, wid_w, tou_w, a_w, len_w, src_w);
+          _test_chop_slow(met_g, fum_w, wid_w, tou_w, b_w, len_w, src_w);
+
+          if ( 0 != memcmp(a_w, b_w, len_w << 2) ) {
+            c3_g sif_g = 5 - met_g;
+            c3_w mas_w = (1 << met_g) - 1;
+            c3_w out_w = tou_w >> sif_g;
+            c3_w max_w = out_w + !!(fum_w & mas_w)
+                       + (wid_w >> sif_g) + !!(wid_w & mas_w);
+
+            fprintf(stderr, "%s (0x%x): met_g=%u fum_w=%u wid_w=%u tou_w=%u\r\n",
+                            cap_c, val_y,
+                            met_g, fum_w, wid_w, tou_w);
+
+
+            fprintf(stderr, "%u-%u: ", out_w, max_w - 1);
+            for ( ; out_w < max_w; out_w++ ) {
+              fprintf(stderr, "[0x%x 0x%x] ", a_w[out_w], b_w[out_w]);
+            }
+            fprintf(stderr, "\r\n");
+          }
+        }
+      }
+    }
+  }
+
+  return ret_i;
+}
+
+/* _test_chop_huge(): test permuations of chop from bloq 5+
+*/
+static c3_i
+_test_chop_huge(c3_c* cap_c, c3_y val_y)
+{
+  c3_i ret_i = 1;
+  c3_g met_g;
+  c3_w fum_w, wid_w, tou_w;
+  c3_w len_w = 192;  //   (rsh [0 5] (mul 2 (mul 3 (bex 10))))
+  c3_w src_w[len_w];
+  c3_w   a_w[len_w];
+  c3_w   b_w[len_w];
+
+  memset(src_w, val_y, len_w << 2);
+
+  for ( met_g = 5; met_g <= 10; met_g++ ) {
+    for ( fum_w = 0; fum_w <= 3; fum_w++ ) {
+      for ( wid_w = 0; wid_w <= 2; wid_w++ ) {
+        for ( tou_w = 0; tou_w <= 1; tou_w++ ) {
+          memset(a_w, 0, len_w << 2);
+          memset(b_w, 0, len_w << 2);
+          u3r_chop_words(met_g, fum_w, wid_w, tou_w, a_w, len_w, src_w);
+          _test_chop_slow(met_g, fum_w, wid_w, tou_w, b_w, len_w, src_w);
+
+          if ( 0 != memcmp(a_w, b_w, len_w << 2) ) {
+            c3_g sif_g = met_g - 5;
+            c3_w mas_w = (1 << met_g) - 1;
+            c3_w out_w = tou_w << sif_g;
+            c3_w max_w = out_w + !!(fum_w & mas_w)
+                       + (wid_w << sif_g) + !!(wid_w & mas_w);
+
+            fprintf(stderr, "%s (0x%x): met_g=%u fum_w=%u wid_w=%u tou_w=%u\r\n",
+                            cap_c, val_y,
+                            met_g, fum_w, wid_w, tou_w);
+
+
+            fprintf(stderr, "%u-%u: ", out_w, max_w - 1);
+            for ( ; out_w < max_w; out_w++ ) {
+              fprintf(stderr, "[0x%x 0x%x] ", a_w[out_w], b_w[out_w]);
+            }
+            fprintf(stderr, "\r\n");
+          }
+        }
+      }
+    }
+  }
+
+  return ret_i;
+}
+
+/* _test_u3r_chop(): bit slice XOR
+*/
+static c3_i
+_test_chop()
+{
+  return _test_u3r_chop()
+       & _test_chop_smol("chop smol zeros", 0x0)
+       & _test_chop_smol("chop smol ones", 0xff)
+       & _test_chop_smol("chop smol alt 1", 0xaa)
+       & _test_chop_smol("chop smol alt 2", 0x55)
+       & _test_chop_huge("chop huge zeros", 0x0)
+       & _test_chop_huge("chop huge ones", 0xff)
+       & _test_chop_huge("chop huge alt 1", 0xaa)
+       & _test_chop_huge("chop huge alt 2", 0x55);
+}
+
 /* _util_rand_string(): dynamically allocated len_w random string
 */
 static c3_y*
@@ -1247,256 +1597,6 @@ _test_u3r_at()
   if (bignum != ret) {  printf("*** u3r_at \n"); }
 }
 
-/* _test_u3r_chop: "extract bit slices from atom"
-*/
-static void
-_test_u3r_chop()
-{
-  c3_w   dst_w = 0;
-
-  // read 1 bit bloq
-  {
-    // read 1 bit from pos=0 (far right)
-    u3_atom src = 0b11011;
-
-    c3_g bloqsize_g = 0;
-
-
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0x1 != dst_w) {  printf("*** test_u3r_chop \n"); }
-
-
-    // read 1 bit from pos=1
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             1,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0x1 != dst_w) {  printf("*** test_u3r_chop 2\n"); }
-
-    // read 1 bit from pos=2
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             2,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0x0 != dst_w) {  printf("*** test_u3r_chop 3\n"); }
-
-    // read 4 x 1 bit bloq from pos=0
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             4,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b1011 != dst_w) {  printf("*** test_u3r_chop 4\n"); }
-
-
-    // read 1 x 1 bit bloq from pos=0 into offset 1
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             4,   // count of bloqs
-             1,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b10110 != dst_w) {  printf("*** test_u3r_chop 5\n"); }
-
-
-
-  }
-
-  // read 2 bit bloq
-  {
-    u3_atom src = 0b11011;
-
-    c3_g bloqsize_g = 1;
-
-    // read 2 bit from pos=0 (far right)
-
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b11 != dst_w) {  printf("*** test_u3r_chop 2.1\n"); }
-
-
-    // read 2 bit from pos=1 (1 bloq over )
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             1,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b10 != dst_w) {  printf("*** test_u3r_chop 2.2\n"); }
-
-    // read 2 bit from pos=2 (2 bloq over)
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             2,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b01 != dst_w) {  printf("*** test_u3r_chop 2.3\n"); }
-
-  }
-
-  // read 8 bit bloq
-  {
-    u3_atom src = 0b11011;
-
-    c3_g bloqsize_g = 3; // 2^3 = 8 bits
-
-    // pos=0 (far right)
-
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b11011 != dst_w) {  printf("*** test_u3r_chop 8.1\n"); }
-  }
-
-  // read 1,8,16 bit bloqs from an indirect atom
-  {
-    // build an indirect noun 'src'
-
-    c3_c* input_c =  "abcdefghij";
-    u3_noun src = u3i_bytes(10, (c3_y*)input_c);
-
-
-    c3_g bloqsize_g = 0;  // 2^0 = 1 bit
-
-    // 1 x 1 bit pos=0 (far right)
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b1 != dst_w) {
-      printf("*** test_u3r_chop indirect.1\n");
-    }
-
-    // 8 x 1 bit pos=0 (far right)
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             8,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b1100001 != dst_w) {
-      printf("*** test_u3r_chop indirect.2\n");
-    }
-
-    // 1 x 1 byte = 8 bit, pos=0 (far right)
-    bloqsize_g = 3;  // 2^3 = 1 byte
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b1100001 != dst_w) {
-      printf("*** test_u3r_chop indirect.3\n");
-    }
-
-    // 1 x 16 bit bloq, pos = 0
-    bloqsize_g = 4;  // 2^4 = 2 bytes
-
-    dst_w = 0;
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,   // start index
-             1,   // count of bloqs
-             0,   // end index
-             & dst_w,   // where bytes go to
-             src);     // where bytes come from
-
-    if (0b0110001001100001 != dst_w) {
-      printf("*** test_u3r_chop indirect.4\n");
-    }
-  }
-
-  // read lots of bits from a direct noun which holds 64 bits of data
-  // makes sure that we handle top 32 / bottom 32 correctly
-  {
-    // build an indirect noun 'src'
-
-    c3_c input_c[8] =  { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7 };
-    u3_noun src = u3i_bytes(8, (c3_y*)input_c);
-
-    c3_g bloqsize_g = 0;  // 2^0 = 1 bit
-
-    c3_w dst_w[2];
-    memset(dst_w, 0, 2 * sizeof(c3_w));
-
-    u3r_chop(bloqsize_g,   /// bloq size
-             0,       // start index
-             63,      // count of bloqs
-             0,       // offset on out index
-             dst_w,   // where bytes go to
-             src);    // where bytes come from
-
-  }
-
-  // as above (read lots of bits from a direct noun which holds 64 bits of data
-  // makes sure that we handle top 32 / bottom 32 correctly)
-  // but with a bit more nuance
-  {
-    //                   least significant                    most
-    c3_c input_c[8] =  { 0x0, 0x0, 0x0, 0xaa, 0xff, 0x0, 0x0, 0x0 };
-    u3_noun src = u3i_bytes(8, (c3_y*)input_c);
-
-    c3_g bloqsize_g = 0;  // 2^0 = 1 bit
-
-    c3_w dst_w = 0;
-
-    u3r_chop(bloqsize_g,   /// bloq size
-             24,       // start index
-             16,      // count of bloqs
-             0,       // offset on out index
-             & dst_w,   // where bytes go to
-             src);    // where bytes come from
-
-    if (0b1111111110101010 != dst_w) {
-      printf("*** test_u3r_chop indirect. 6\n");
-    }
-  }
-}
-
 //  XX disabled, static functions
 //
 #if 0
@@ -1634,6 +1734,19 @@ _test_nvm_stack()
 #endif
 }
 
+static c3_i
+_test_noun(void)
+{
+  c3_i ret_i = 1;
+
+  if ( !_test_chop() ) {
+    fprintf(stderr, "test noun: chop failed\r\n");
+    ret_i = 0;
+  }
+
+  return ret_i;
+}
+
 /* main(): run all test cases.
 */
 int
@@ -1641,9 +1754,20 @@ main(int argc, char* argv[])
 {
    _setup();
 
+  if ( !_test_noun() ) {
+    fprintf(stderr, "test noun: failed\r\n");
+    exit(1);
+  }
+
+  //  GC
+  //
+  u3m_grab(u3_none);
+
+  //  XX the following tests leak memory
+  //  fix and move to _test_noun()
+  //
   _test_noun_bits_set();
   _test_noun_bits_read();
-  _test_u3r_chop();
   _test_imprison();
   _test_imprison_complex();
   _test_sing();
