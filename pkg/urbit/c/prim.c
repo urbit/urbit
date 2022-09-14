@@ -204,6 +204,14 @@ c3_prim_put(const c3_path* const path_u,
       ptr_c += bytes_written_i;
       bytes_remaining_i -= bytes_written_i;
     } while ( bytes_remaining_i > 0 );
+
+    if ( -1 == c3_sync(fd_i) ) {
+      fprintf(stderr,
+              "prim: failed to fsync %s: %s\r\n",
+              c3_path_str(path_u),
+              strerror(errno));
+      goto free_buf;
+    }
   }
 
   suc_t = 1;
