@@ -61,7 +61,6 @@
       yokes=(map dude yoke)
       blocked=(map dude (qeu blocked-move))
       perms=(jug desk perm)
-      wants=(map desk (map perm new=?))
       wards=(set duct)
       =bug
   ==
@@ -162,7 +161,6 @@
       eggs=(map term egg)
       blocked=(map term (qeu blocked-move))
       perms=(jug desk perm)
-      wants=(map desk (map perm new=?))
       wards=(set duct)
       =bug
   ==
@@ -2022,7 +2020,7 @@
       ==
     ::
         bug
-      [~ ~ ~ bug.old]
+      [~ ~ bug.old]
     ==
   --
 ::  +scry: standard scry
