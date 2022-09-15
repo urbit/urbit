@@ -4170,7 +4170,6 @@
         [~ ..park]
       ::  virtualize to catch and produce deterministic failures
       ::
-      !:
       |^  =/  res  (mule |.(read))
           ?:  ?=(%& -.res)  p.res
           %.  [[~ ~] ..park]
