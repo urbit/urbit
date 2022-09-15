@@ -1,5 +1,4 @@
 ::  clay (4c), revision control
-!:
 ::  The way to understand Clay is to take it section-by-section:
 ::
 ::  - Data structures.  You *must* start here; make sure you understand
