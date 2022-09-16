@@ -173,6 +173,7 @@ _ce_maplloc(c3_w len_w)
                -1, 0);
 
   if ( -1 == (c3_ps)map_v ) {
+    fprintf(stderr, "loom: mmap() failed: %s\r\n", strerror(errno));
     c3_assert(0);
   }
   else {
@@ -367,6 +368,9 @@ _ce_patch_write_control(u3_ce_patch* pat_u)
                (pat_u->con_u->pgs_w * sizeof(u3e_line));
 
   if ( len_w != write(pat_u->ctl_i, pat_u->con_u, len_w) ) {
+    fprintf(stderr,
+            "loom: failed to write to patch control file: %s\r\n",
+            strerror(errno));
     c3_assert(0);
   }
 }
@@ -513,11 +517,17 @@ _ce_patch_open(void)
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, ctl_nam_c);
   if ( -1 == (ctl_i = c3_open(ful_c, O_RDWR)) ) {
+    fprintf(stderr,
+            "loom: failed to open patch control file: %s\r\n",
+            strerror(errno));
     return 0;
   }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s", u3P.dir_c, mem_nam_c);
   if ( -1 == (mem_i = c3_open(ful_c, O_RDWR)) ) {
+    fprintf(stderr,
+            "loom: failed to open patch memory file: %s\r\n",
+            strerror(errno));
     close(ctl_i);
 
     _ce_patch_delete();
@@ -551,8 +561,14 @@ _ce_patch_write_page(u3_ce_patch* pat_u,
                      c3_w         pgc_w,
                      c3_w*        mem_w)
 {
-  c3_assert(-1 != lseek(pat_u->mem_i, pgc_w * pag_siz_i, SEEK_SET));
-  c3_assert(pag_siz_i == write(pat_u->mem_i, mem_w, pag_siz_i));
+  if ( -1 == lseek(pat_u->mem_i, pgc_w * pag_siz_i, SEEK_SET) ) {
+    fprintf(stderr, "loom: patch seek failed: %s\r\n", strerror(errno));
+    c3_assert(0);
+  }
+  if ( pag_siz_i != write(pat_u->mem_i, mem_w, pag_siz_i) ) {
+    fprintf(stderr, "loom: patch write page failed: %s\r\n", strerror(errno));
+    c3_assert(0);
+  }
 }
 
 /* _ce_patch_count_page(): count a page, producing new counter.
@@ -595,6 +611,7 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
                         pag_siz_i,
                         PROT_READ) )
     {
+      fprintf(stderr, "loom: mprotect failed: %s\r\n", strerror(errno));
       c3_assert(0);
     }
 
@@ -909,9 +926,21 @@ _ce_image_apply(u3e_image* nor_u, u3e_image* sou_u, c3_o pro_o)
     lseek((image)->fid_i, 0, SEEK_SET);                                        \
     c3_y* ptr_y = (c3_y*)(base_address);                                       \
     for ( c3_w idx_w = 0; idx_w < (image)->pgs_w; idx_w++ ) {                  \
-      c3_assert(-1 != read((image)->fid_i, ptr_y, pag_siz_i));                 \
+      if ( -1 == read((image)->fid_i, ptr_y, pag_siz_i) ) {                    \
+        fprintf(stderr,                                                        \
+                "loom: failed to read page in %s: %s\r\n",                     \
+                (image)->nam_c,                                                \
+                strerror(errno));                                              \
+        c3_assert(0);                                                          \
+      }                                                                        \
       if ( c3y == (should_protect) ) {                                         \
-        c3_assert(0 == mprotect(ptr_y, pag_siz_i, PROT_READ));                 \
+        if ( 0 != mprotect(ptr_y, pag_siz_i, PROT_READ) ) {                    \
+          fprintf(stderr,                                                      \
+                  "loom: failed to mprotect page in %s: %s\r\n",               \
+                  (image)->nam_c,                                              \
+                  strerror(errno));                                            \
+          c3_assert(0);                                                        \
+        }                                                                      \
       }                                                                        \
       mark_page_clean(ptr_y);                                                  \
       ptr_y += (step_direction) * pag_siz_i;                                   \
