@@ -216,14 +216,6 @@
       mo-core
     =.  mo-core  (mo-pass i.list)
     $(list t.list)
-  ::  +mo-jolt: (re)start agent
-  ::
-  ++  mo-jolt
-    |=  [dap=term =ship =desk]
-    ^+  mo-core
-    =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]
-    ..mo-core
-    ::  XX  (mo-pass wire %c %jolt dap ship desk)
   ::  +mo-doff: kill all outgoing subscriptions
   ::
   ++  mo-doff
@@ -675,15 +667,6 @@
     =?  new-blocked  !=(ship attributing.routes.mov)
       (~(put to new-blocked) mov)
     $
-  ::  +mo-idle: put agent to sleep
-  ::
-  ++  mo-idle
-    |=  dap=dude
-    ^+  mo-core
-    ?.  (~(has by yokes.state) dap)
-      ~>  %slog.0^leaf/"gall: ignoring %idle for {<dap>}, not running"
-      mo-core
-    ap-abet:ap-idle:(ap-abed:ap dap `our)
   ::  +mo-nuke: delete agent completely
   ::
   ++  mo-nuke
@@ -730,7 +713,7 @@
     ::  be stopped, to avoid +on-save running with inappropriate permissions
     ::
     =.  mo-core
-      =/  kil
+      =/  kil=(list dude)
         =/  lol  (skim ~(tap by yokes.state) |=([term yoke] -.agent))
         =/  mol  (~(gas by *(map term yoke)) lol)
         =/  sol  ~(key by mol)
@@ -739,7 +722,8 @@
       |-  ^+  mo-core
       ?~  kil  mo-core
       ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
-      $(kil t.kil, mo-core (mo-idle i.kil))
+      =.  mo-core  ap-abet:ap-idle:(ap-abed:ap i.kil `our)
+      $(kil t.kil)
     ::  we must update permissions before re/loading & killing agents,
     ::  to ensure that new agents aren't run with old permissions
     ::
@@ -1818,8 +1802,6 @@
     mo-abet
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
-      %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
-      %idle  mo-abet:(mo-idle:mo-core dude.task)
       %load  mo-abet:(mo-load:mo-core +.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %ward  mo-abet:mo-ward:mo-core

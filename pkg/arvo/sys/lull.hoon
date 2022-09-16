@@ -1759,9 +1759,6 @@
     $~  [%vega ~]                                       ::
     $%  [%deal p=sock q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
-        ::TODO: remove %jolt and %idle
-        [%jolt =desk =dude]                             ::  (re)start agent
-        [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
         ::TODO  %ward & %wink in clay now y/n?

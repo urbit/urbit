@@ -407,7 +407,6 @@
       ==                                                ::
       $:  %g                                            ::  to %gall
           $>  $?  %deal
-                  %jolt
                   %load
               ==
           task:gall
