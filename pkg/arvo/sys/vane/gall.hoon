@@ -339,8 +339,8 @@
       |=  [a=perm =film]
       |^
       ?+  a         film
-        [%write *]  [(accord desk.a gab.film agencies) wat.film red.film]
-        [%watch *]  [gab.film (accord desk.a wat.film agencies) red.film]
+        [%write *]  [(accord dude.a gab.film agencies) wat.film red.film]
+        [%watch *]  [gab.film (accord dude.a wat.film agencies) red.film]
         [%reads *]  ?.  =(%g vane.a)
                       [gab.film wat.film red.film]
                     [gab.film wat.film (gaze desk.a spur.a red.film agencies)]
@@ -1752,7 +1752,7 @@
         ?:  =(%base q.beak.yoke)  [-.p.result ~]
         %+  skid  -.p.result
         |=  =card:agent
-        (cred our agent-name card (~(get ju perms.state) q.beak.yoke) now)
+        (cred [our agent-name] (~(get ju perms.state) q.beak.yoke) card)
       ~?  !=(~ bad)  [%would-drop agent-name (turn bad head)]
       :: =/  moves  (zing (turn gud ap-from-internal))
       =/  moves       (zing (turn -.p.result ap-from-internal))

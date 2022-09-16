@@ -1764,6 +1764,7 @@
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
+        ::TODO  %ward & %wink in clay now y/n?
         [%ward ~]                                       ::  watch %perm diffs
         [%wink ~]                                       ::  stop watching
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
@@ -1795,17 +1796,17 @@
                   film                                  ::  per-agent perms
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
-  +$  film                                              ::  membrane/agent perms
-          $:  gab=$~(`*(set dude) (unit (set dude)))    ::  pokeable agents
-              wat=$~(`*(set dude) (unit (set dude)))    ::  watchable agents
-              $=  red                                   ::  scryable agents
-              $~  `*(set [dude spur])                   ::
-              (unit (set [dude spur]))                  ::
-          ==
+  +$  film                                              ::  membran/agent perms
+    $:  gab=$~(`*(set dude) (unit (set dude)))          ::  pokeable agents
+        wat=$~(`*(set dude) (unit (set dude)))          ::  watchable agents
+        $=  red                                         ::  scryable agents
+        $~  `*(set [dude spur])                         ::
+        (unit (set [dude spur]))                        ::
+    ==
   +$  gill  (pair ship term)                            ::  general contact
   ::TODO: change perms to a jug?
   +$  load                                              ::  loadout
-    $:  perms=(list [=desk (set perm)])                 ::  permissions per desk
+    $:  perms=(list [=desk (set perm)])                 ::  desk permissions
         dudes=(list [=dude =beak =agent])               ::  agents to run
     ==
   +$  scar                                              ::  opaque duct
@@ -1909,8 +1910,9 @@
   +$  perm  $%(perm-arvo perm-gall)
   ::
   +$  perm-gall                                        ::  inter-agent perms
-    $%  [%write desk=$?(%peers (unit desk))]           ::  poke
-        [%watch desk=$?(%peers (unit desk))]           ::  subscribe
+    $%  [%write dude=$?(%peers (unit dude))]           ::  poke
+        [%watch dude=$?(%peers (unit dude))]           ::  subscribe
+        ::TODO  what about %u scries?
         [%reads vane=term desk=(unit desk) =spur]      ::  scry
     ==
   ::
@@ -1925,11 +1927,15 @@
       ::
         $:  %clay
         $%  [%mount ~]                 ::  %mont %ogre %dirk
-            [%perms ~]                 ::  %cred %crew %perm
+            [%creds ~]                 ::  %cred %crew %perm
             [%write desk=(unit desk)]  ::  %info %merg %fuse
             [%local desk=(unit desk)]  ::  %warp
             [%build desk=(unit desk)]  ::  %warp with ford build $care
             [%peers ~]                 ::  %werp
+          ::
+            [%perms desk=(unit desk)]  ::  %curb
+            [%liven desk=(unit desk)]  ::  %rein %zest
+            [%pulse ~]                 ::  %tire
         ==  ==
       ::
         $:  %dill  ::TODO  revisit wrt nu-tem  ::REVIEW  %belt separate?
@@ -1945,12 +1951,8 @@
         ==  ==
       ::
         $:  %gall
-        ::TODO  %jolt can vary desk, and suspending is weird
-        ::TODO  consider making base special
-        ::TODO  how does this look with %load instead of %free and %lock?
-        $%  [%agent desk=(unit desk)]  ::  %jolt %idle
-            [%clear desk=(unit desk)]  ::  %nuke
-            [%perms desk=(unit desk)]  ::  %free %lock
+        $%  [%clear dude=(unit dude)]  ::  %nuke
+            [%guard ~]                 ::  %ward %wink  ::TODO  clay?
         ==  ==
       ::
         $:  %iris
@@ -1994,55 +1996,50 @@
   ::
   ::  +cred: userspace permissions check
   ::
-  ::    agents should call +cred to see if they have the right optional
+  ::    agents may call +cred to see if they have the right optional
   ::    permissions to send a card. they shouldn't check this when sending
   ::    a task that only needs the required permissions they're already
-  ::    guaranteed to have in their desk.seal
+  ::    guaranteed to have in their desk.seal. of course, it might often be
+  ::    easier to just check for the optional permission's presence in :pes.
   ::
-  ::    .cas is needed for the scry into clay to find out which desks
-  ::    agents are running on. the scry will crash unless cas is now,
-  ::    since which agents are currently running is not referentially
-  ::    transparent data.
   ++  cred  !:
-    ::TODO add a version that takes in bowl perm data
-    |=  [our=ship from=dude =card:agent pes=(set perm) cas=@da]
+    |=  [[our=ship dap=dude] pes=(set perm) =card:agent]
     ^-  ?  ~+
     =;  must=$@(? perm)
-    ?@  must  must
-    ?+  must  (~(has in pes) must)
-        [?(%write %watch) *]
-      %+  lien  ~(tap in pes)
-      |=  p=perm
-      ?&  ?=(?(%write %watch) -.p)
-          =(-.must -.p)
-          ?-  desk.p
-            %peers  =(%peers desk.must)
-            ^       =(desk.must desk.p)
-            ~       ?=(^ desk.must)
-          ==
+      ?@  must  must
+      ?+  must  (~(has in pes) must)
+          [?(%write %watch) *]
+        %+  lien  ~(tap in pes)
+        |=  p=perm
+        ?&  ?=(?(%write %watch) -.p)
+            =(-.must -.p)
+            ?-  dude.p
+              %peers  =(%peers dude.must)
+              ^       =(dude.must dude.p)
+              ~       ?=(^ dude.must)  ::TODO
+            ==
+        ==
+      ::
+          [%clay ?(%write %local %build %perms %liven) *]
+        =/  =desk  (need desk.must)
+        :: =/  =spur  (need spur.must)
+        %+  lien  ~(tap in pes)
+        |=  p=perm
+        ?&  ?=([%clay *] p)
+            =(+<.must +<.p)
+            ?>  ?=(?(%write %local %build) +<.p)
+            =(desk (fall desk.p desk))
+            :: |(=(/ spur.p) =(`0 (find spur.p spur)))
+        ==
+      ::
+          [%gall %clear *]
+        =/  =dude  (need dude.must)
+        %+  lien  ~(tap in pes)
+        |=  p=perm
+        ?&  ?=([%gall %clear *] p)
+            =(dude (fall dude.p dude))
+        ==
       ==
-    ::
-        [%clay ?(%write %local %build) *]
-      =/  =desk  (need desk.must)
-      :: =/  =spur  (need spur.must)
-      %+  lien  ~(tap in pes)
-      |=  p=perm
-      ?&  ?=([%clay *] p)
-          =(+<.must +<.p)
-          ?>  ?=(?(%write %local %build) +<.p)
-          =(desk (fall desk.p desk))
-          :: |(=(/ spur.p) =(`0 (find spur.p spur)))
-      ==
-    ::
-        [%gall ?(%agent %clear %perms) *]
-      =/  =dude  (need desk.must)
-      %+  lien  ~(tap in pes)
-      |=  p=perm
-      ?&  ?=([%gall *] p)
-          =(+<.must +<.p)
-          =(dude (fall desk.p dude))
-      ==
-    ==
     ?:  ?=(%give -.card)
       &
     =/  =note:agent
@@ -2053,41 +2050,14 @@
     ?:  ?=(%pyre -.note)
       &
     ?:  ?=(%agent -.note)
-      |^
-      ::TODO: why does it crash if i put bill:clay instead of bill=(list dude)?
-      =/  bills
-        .^((list [=desk bill=(list dude)]) %cx /(scot %p our)//(scot %da cas)/dudes)
-      =/  from-desk=(unit desk)
-        (get-desk from bills)
-      =/  target=$?(%peers desk=(unit desk))
-        ?.  =(our ship.note)
-          %peers
-        (get-desk name.note bills)
-      ?@  target
-        ::  if target is an atom, its %peers or ~. if its ~, then
-        ::  the recipient of the task doesn't exist yet, so the
-        ::  sender needs to have permission to poke/watch any desk
-        (target-perm task.note target)
-      ?:  =(from-desk target)
-        ::  agents on the same desk can always talk
-        &
-      (target-perm task.note target)
-      ::
-      ::  +get-desk: find the desk an agent is running on
-      ::TODO: should this be factored out into its own arm?
-      ++  get-desk
-        |=  [dud=dude bills=(list [=desk bill=(list dude)])]
-        ^-  (unit desk)
-        |-
-        ?~  bills
-          ~
-        ?:  %+  lien  bill.i.bills
-            |=(=dude =(dude dud))
-          `desk.i.bills
-        $(bills t.bills)
+      |^  ?.  =(our ship.note)
+            (target-perm task.note %peers)
+          ?:  =(dap name.note)
+            &
+          (target-perm task.note `name.note)
       ::
       ++  target-perm
-        |=  [=task:agent target=$?(%peers desk=(unit desk))]
+        |=  [=task:agent target=$?(%peers dude=(unit dude))]
         ?-  -.task
           ?(%watch %watch-as)  [%watch target]
           ?(%poke %poke-as)    [%write target]
@@ -2109,7 +2079,8 @@
         %c
       ?+  +>-.note  |
         ?(%mont %ogre %dirk)  [%clay %mount ~]
-        ?(%cred %cred %perm)  [%clay %perms ~]
+        ?(%cred %cred %perm)  [%clay %creds ~]
+        %curb                 [%clay %perms ~]
         ?(%info %merg %fuse)  [%clay %write `des.note]
         %werp                 [%clay %peers ~]
       ::
@@ -2142,14 +2113,10 @@
       ==
     ::
         %g
-      ::TODO  requires scry to look up where target is running...
-      ::      what if not running?
-      |
-      :: ?+  +>-.note  |
-      ::   ?(%jolt %idle)  [%gall %agent `?:(?=(%jolt +>-.note) dude.note dude.note)]
-      ::   %nuke           [%gall %clear `dude.note]
-      ::   ?(%free %lock)  [%gall %perms `desk.note]
-      :: ==
+      ?+  +>-.note  |
+        %nuke           [%gall %clear `dude.note]
+        ?(%ward %wink)  [%gall %guard ~]
+      ==
     ::
         %i
       ?+  +>-.note  |
