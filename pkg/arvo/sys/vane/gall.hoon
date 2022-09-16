@@ -83,7 +83,6 @@
 ::    agent: agent core
 ::    beak: compilation source
 ::    marks: mark conversion requests
-::    membrane: perms to poke/subscribe/scry other agents
 ::
 +$  yoke
   $:  control-duct=duct
@@ -97,7 +96,6 @@
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
-      membrane=film
   ==
 ::  $blocked-move: enqueued move to an agent
 ::
@@ -178,7 +176,6 @@
       old-state=[%| vase]
       =beak
       marks=(map duct mark)
-      membrane=film
   ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
@@ -264,16 +261,9 @@
   ::    running agent case.
   ::
   ++  mo-receive-core
-    ::TODO: fix this jet registration probably
     ~/  %mo-receive-core
-    ::TODO why do i need to make this a separate sample? it breaks
-    ::if i try to put it in the next gate
-    |=  agencies=(jug desk dude)
-    |^
     |=  [dap=term bek=beak =agent]
     ^+  mo-core
-    =/  mem=film
-      (permeable (~(get ju perms.state) q.bek) agencies)
     ::
     =/  yak  (~(get by yokes.state) dap)
     =/  tex=(unit tape)
@@ -292,14 +282,13 @@
       ?:  ?&  =(q.beak.u.yak q.bek)
               =(code.u.yak agent)
               =(-.agent.u.yak &)
-              =(membrane.u.yak mem)
           ==
         mo-core
       ::
       =.  yokes.state
         %+  ~(put by yokes.state)
           dap
-        u.yak(beak bek, code agent, membrane mem)
+        u.yak(beak bek, code agent)
       =/  ap-core  (ap-abed:ap dap `our)
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
@@ -313,7 +302,6 @@
         code          agent
         agent         &+agent
         run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
-        membrane      mem
       ==
     ::
     =/  old  mo-core
@@ -331,56 +319,6 @@
     =.  mo-core  (mo-clear-queue dap)
     =/  =suss  [dap %boot now]
     (mo-give %onto [%.y suss])
-    ::
-    ++  permeable
-      |=  [pes=(set perm) agencies=(jug desk dude)]
-      ^-  film
-      %+  roll  ~(tap in pes)
-      |=  [a=perm =film]
-      |^
-      ?+  a         film
-        [%write *]  [(accord dude.a gab.film agencies) wat.film red.film]
-        [%watch *]  [gab.film (accord dude.a wat.film agencies) red.film]
-        [%reads *]  ?.  =(%g vane.a)
-                      [gab.film wat.film red.film]
-                    [gab.film wat.film (gaze desk.a spur.a red.film agencies)]
-      ==
-      ::
-      ++  accord
-        |=  $:  desk=$?(%peers (unit desk))
-                dudes=(unit (set dude))
-                agencies=(jug desk dude)
-            ==
-        ^+  dudes
-        ?~  dudes
-          dudes
-        ?@  desk
-          ?-  desk
-            %peers  dudes
-            ~       ~                                   ::  all agents
-          ==
-        ?.  (~(has by agencies) (need desk))
-          dudes
-        `(~(uni in (need dudes)) (~(got by agencies) (need desk)))
-      ::
-      ++  gaze
-        |=  $:  desk=(unit desk)
-                spu=spur
-                dudes=(unit (set [dude spur]))
-                agencies=(jug desk dude)
-            ==
-        ^+  dudes
-        ?~  dudes
-          dudes
-        ?@  desk
-          ~                                             ::  all agents
-        ::TODO can't seem to do this without setting a face? fuse-loop/mull-grow
-        =;  new=(set [dude spur])
-          `(~(uni in (need dudes)) new)
-        %-  ~(run in (~(got by agencies) (need desk)))
-        |=(=dude [dude spu])
-      --
-    --
   ::  +mo-send-foreign-request: handle local request to .ship
   ::
   ++  mo-send-foreign-request
@@ -813,7 +751,7 @@
         ?~  dudes  mo-core
         =/  [=dude =desk]  [dude q.beak]:i.dudes
         ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
-        $(dudes t.dudes, mo-core ((mo-receive-core agencies) i.dudes))
+        $(dudes t.dudes, mo-core (mo-receive-core i.dudes))
       %+  roll  %+  turn  dudes
                 |=  [=dude =beak =agent]
                 [q.beak dude]
@@ -1321,7 +1259,6 @@
               byk=beak.yoke                           ::  source
           ==                                          ::
           :*  pes=(~(get ju perms.state) q.beak.yoke) ::  permissions
-              membrane.yoke                           ::  per-agent perms
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::
@@ -2016,7 +1953,6 @@
           old-state=[%| p.old-state.e]
           beak.e
           marks.e
-          *film
       ==
     ::
         bug

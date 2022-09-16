@@ -1792,17 +1792,9 @@
                   now=@da                               ::  current time
                   byk=beak                              ::  load source
               ==                                        ::
-              $:  pes=(set perm)                        ::  userspace perms
-                  film                                  ::  per-agent perms
+              $:  pes=(set perm)                        ::  agent allowance
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
-  +$  film                                              ::  membran/agent perms
-    $:  gab=$~(`*(set dude) (unit (set dude)))          ::  pokeable agents
-        wat=$~(`*(set dude) (unit (set dude)))          ::  watchable agents
-        $=  red                                         ::  scryable agents
-        $~  `*(set [dude spur])                         ::
-        (unit (set [dude spur]))                        ::
-    ==
   +$  gill  (pair ship term)                            ::  general contact
   ::TODO: change perms to a jug?
   +$  load                                              ::  loadout
