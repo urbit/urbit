@@ -610,6 +610,7 @@ u3i_edit(u3_noun big, u3_noun axe, u3_noun som)
 
       do {
         u3a_cell*  big_u = u3a_to_ptr(big);
+        u3_noun*     old = (u3_noun*)&(big_u->hed);
         const c3_y bit_y = u3r_bit(dep_w, axe);
 
         if ( c3n == u3a_is_cell(big) ) {
@@ -617,36 +618,20 @@ u3i_edit(u3_noun big, u3_noun axe, u3_noun som)
         }
         else if ( c3y == u3a_is_mutable(u3R, big) ) {
           *out = big;
-
-          if ( !bit_y ) {
-            out = &(big_u->hed);
-          }
-          else {
-            out = &(big_u->tel);
-          }
-
-          big = *out;
+          out  = &(old[bit_y]);
+          big  = *out;
           big_u->mug_w = 0;
         }
         else  {
-          u3_noun  old = big;
-          u3_noun* hed;
-          u3_noun* tel;
+          u3_noun  luz = big;
+          u3_noun* new[2];
 
-          *out = u3i_defcons(&hed, &tel);
+          *out = u3i_defcons(&new[0], &new[1]);
+          out  = new[bit_y];
+          big  = u3k(old[bit_y]);
+          *(new[!bit_y]) = u3k(old[!bit_y]);
 
-          if ( !bit_y ) {
-            out  = hed;
-            big  = u3k(big_u->hed);
-            *tel = u3k(big_u->tel);
-          }
-          else {
-            out  = tel;
-            big  = u3k(big_u->tel);
-            *hed = u3k(big_u->hed);
-          }
-
-          u3z(old);
+          u3z(luz);
         }
       }
       while ( dep_w-- );
