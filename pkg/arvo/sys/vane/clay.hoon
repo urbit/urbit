@@ -126,7 +126,7 @@
       fod=flue                                          ::  ford cache
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
-      ren=(map dude:gall ?)                             ::  force agents on/off
+      ren=rein                                          ::  force agents on/off
       pes=(set perm:gall)                               ::  granted opt. perms
   ==                                                    ::
 ::
@@ -399,6 +399,7 @@
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
+                  %wick                                 ::
               ==                                        ::
           task                                          ::
       ==                                                ::
@@ -580,6 +581,7 @@
     $(vaz t.vaz)
   ::
   ++  ford
+    !.
     =>  |%
         +$  state
           $:  cache=flow
@@ -1696,7 +1698,7 @@
       ?>  ?=(~ deletes)
       =/  data=(map path (each page lobe))
         (~(run by changes) |=(=cage &+[p q.q]:cage))
-      (park | &+[~ data] *rang)
+      (park | & &+[~ data] *rang)
     ::
     =/  parent-tako=tako  (aeon-to-tako:ze let.dom)
     =/  data=(map path (each page lobe))
@@ -1711,7 +1713,7 @@
       (~(run by changes) |=(=cage &+[p q.q]:cage))
     ::
     =/  =yuki  [~[parent-tako] data]
-    (park | &+yuki *rang)
+    (park | & &+yuki *rang)
   ::
   ::  Unix commit
   ::
@@ -1743,20 +1745,9 @@
   ::    TODO: needs to check tako in rang
   ::
   ++  park
-    |=  [updated=? =yoki =rang]
-    =.  ..park  (park-main +<)
-    ::  tell gall which agents to run
-    ::
-    ?-    liv.dom
-        %dead  ..park
-        %live  goad
-        %next  (emit hen %pass /park-next/[syd] %b %wait now)
-    ==
-  ::
-  ++  park-main
     =/  check-sane  |
     |^
-    |=  [updated=? =yoki =rang]
+    |=  [updated=? goat=? =yoki =rang]
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
@@ -1776,15 +1767,30 @@
     ::  find desk kelvin
     ::
     =/  kel=weft  (get-kelvin yoki)
-    ?.  |(=(%base syd) =(kel [%zuse zuse]))
+    ?.  ?|  =(kel zuse+zuse)
+            ?&  =(%base syd)
+                %+  levy  ~(tap by tore:(lu now rof hen ruf))
+                |=  [=desk =zest wic=(set weft)]
+                ?|  =(%base desk)
+                    !?=(%live zest)
+                    (~(has in wic) kel)
+                ==
+            ==
+        ==
       =.  wic.dom  (~(put by wic.dom) kel yoki)
+      =?  ..park  !?=(%base syd)  (emit hen %pass /park-wick %c %wick ~)
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ..park
+    =.  wic.dom  (~(del by wic.dom) kel)
     ::
     =/  old-yaki
       ?:  =(0 let.dom)
         *yaki
       (aeon-to-yaki:ze let.dom)
+    =/  old-kel
+      ?:  =(0 let.dom)
+        zuse+zuse
+      (get-kelvin %| old-yaki)
     =/  [deletes=(set path) changes=(map path (each page lobe))]
       (get-changes q.old-yaki new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
@@ -1868,7 +1874,8 @@
     =.  ..park  wake:?:(mem (ergo 0 mum.res) ..park)
     ::  if upgrading kelvin and there's a commit-in-waiting, use that
     ::
-    =?  ..park  &(=(%base syd) !=(kel [%zuse zuse]))
+    ::  XX delete old items from wic
+    =?  ..park  &(=(%base syd) !=(old-kel kel))
       =/  desks=(list [=desk =dojo])  ~(tap by dos.rom)
       =^  moves-1  ruf  abet
       =|  moves-2=(list move)
@@ -1883,10 +1890,18 @@
         ::
         $(desks t.desks)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
-      =^  moves-3  ruf  abet:(park-main:den | u.wat *^rang)
+      =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
-    ..park
+    ::  tell gall which agents to run
+    ::
+    ?.  goat
+      ..park
+    ?-    liv.dom
+        %dead  ..park
+        %live  goad
+        %next  (emit hen %pass /park-next/[syd] %b %wait now)
+    ==
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -2278,7 +2293,7 @@
     ^+  ..take-fuse
     ?~  merges
       =.  ..take-fuse  (done-fuse clean-state %& ~)
-      (park | [%| next-yaki(p (flop parents))] rag)
+      (park | & [%| next-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
     =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `next-yaki)
@@ -2359,7 +2374,7 @@
       ?~  mr
         (done %& ~)
       =.  ..merge  (done %& conflicts.u.mr)
-      (park | new.u.mr ~ lat.u.mr)
+      (park | & new.u.mr ~ lat.u.mr)
     ==
   ::
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe page)]
@@ -3075,6 +3090,19 @@
         (~(del by ren.dom) dude)
       (~(put by ren.dom) dude u.on)
     ==
+  ::
+  ::  Try to apply highest-versioned %base commit-in-waiting
+  ::
+  ++  wick
+    ^+  ..park
+    ?>  ?=(%base syd)
+    =/  wis=(list [weft =yoki])
+      %+  sort  ~(tap by wic.dom)
+      |=  [a=[weft yoki] b=[weft yoki]]
+      (gth num.a num.b)
+    ?~  wis
+      ..park
+    (park | & yoki.i.wis *rang)
   ::
   ::  Cancel a request.
   ::
@@ -4390,7 +4418,7 @@
       %+  weld  duz
       %+  murn  ~(tap by ren)
       |=  [=dude:gall on=?]
-      ?:  &(=(`& on) !(~(has in dus) dude))
+      ?:  &(?=(%& on) !(~(has in dus) dude))
         `u=dude
       ~
     duz
@@ -4715,7 +4743,7 @@
       %park
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(park:den | [yok ran]:req)
+      abet:(park:den | & [yok ran]:req)
     [mos ..^$]
   ::
       %pork
@@ -4723,7 +4751,7 @@
     =.  pud.ruf  ~
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our syd)
-      abet:(park:den & yoki *rang)
+      abet:(park:den & & yoki *rang)
     [mos ..^$]
   ::
       %perm
@@ -4833,12 +4861,19 @@
       (start-request:den for u.q.rif)
     [mos ..^$]
   ::
+      %wick
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our %base)
+      abet:wick:den
+    [mos ..^$]
+  ::
       %zest
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-zest:den liv.req)
-    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
-    [(weld m1 m2) ..^$]
+    =^  m2  ..^$  $(wrapped-task [%wick ~])
+    =^  m3  ruf  abet:goad:(lu now rof hen ruf)
+    [:(weld m1 m2 m3) ..^$]
   ::
       %plea
     =*  her  ship.req
@@ -5452,6 +5487,7 @@
         %rang    ``[%rang !>(ran.ruf)]
         %tomb    ``[%flag !>((tomb t.path))]
         %tire    ``[%tire !>(tore:(lu now rof *duct ruf))]
+        %tyre    ``[%tyre !>(tyr.ruf)]
         %domes   (domes t.path)
         %loams   (loams t.path)
         %dudes   (dudes t.path)
