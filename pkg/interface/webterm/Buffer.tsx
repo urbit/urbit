@@ -271,7 +271,7 @@ export default function Buffer({ name, selected, dark }: BufferProps) {
       await api.poke(pokeTask(name, { blew: { w: session.term.cols, h: session.term.rows } }));
       session.term.focus();
     }
-  }, [session, selected]);
+  }, [session?.term, selected]);
 
   // Effects
   // init session
