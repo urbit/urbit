@@ -1025,8 +1025,8 @@ u3r_hext(u3_noun  a,
 **   For example, (a_y == 3) returns the size in bytes.
 */
 c3_w
-u3r_met(c3_y    a_y,
-          u3_atom b)
+u3r_met(c3_y  a_y,
+        u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1056,24 +1056,17 @@ u3r_met(c3_y    a_y,
       case 0:
       case 1:
       case 2: {
-        /* col_w: number of bits in (daz_w)
-        ** bif_w: number of bits in (b)
-        */
-        c3_w bif_w, col_w;
+        //  number of bits in [b], rounded up
+        //
+        c3_w bif_w = (gal_w << 5) + c3_bits_word(daz_w) + ((1 << a_y) - 1);
 
-        col_w = c3_bits_word(daz_w);
-        bif_w = col_w + (gal_w << 5);
+        return bif_w >> a_y;
+      }
 
-        return (bif_w + ((1 << a_y) - 1)) >> a_y;
-      }
-      case 3: {
-        return  (gal_w << 2)
-              + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
-      }
-      case 4: {
-        return  (gal_w << 1)
-              + ((daz_w >> 16) ? 2 : 1);
-      }
+      case 3: return (gal_w << 2) + ((c3_bits_word(daz_w) +  7) >> 3);
+
+      case 4: return (gal_w << 1) + ((c3_bits_word(daz_w) + 15) >> 4);
+
       default: {
         c3_y gow_y = (a_y - 5);
 
