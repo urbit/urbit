@@ -1060,8 +1060,15 @@ u3r_met(c3_y  a_y,
         //
         c3_w bif_w = (gal_w << 5) + c3_bits_word(daz_w) + ((1 << a_y) - 1);
 
+        if ( bif_w < gal_w ) {
+          return u3m_bail(c3__fail);
+        }
+
         return bif_w >> a_y;
       }
+
+      STATIC_ASSERT((UINT32_MAX > ((c3_d)u3a_maximum << 2)),
+                    "met overflow");
 
       case 3: return (gal_w << 2) + ((c3_bits_word(daz_w) +  7) >> 3);
 
