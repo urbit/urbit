@@ -733,6 +733,7 @@
       $%  [%private-keys ~]
           [%public-keys ships=(set ship)]
           [%turf ~]
+          [%ruin ships=(set ship)]
       ==  ==
       $:  @tas
       $%  [%plea =ship =plea]
@@ -2136,10 +2137,27 @@
     ::
     (emit unix-duct.ames-state %give %turf turfs)
   ::  +on-vega: handle kernel reload
-  ::  +on-trim: handle request to free memory
   ::
   ++  on-vega  event-core
-  ++  on-trim  event-core
+  ::  +on-trim: handle request to free memory
+  ::
+  ::  %ruin comets not seen for six months
+  ::
+  ++  on-trim
+    ^+  event-core
+    =;  rui=(set @p)
+      (emit duct %pass /ruin %j %ruin rui)
+    =-  (silt (turn - head))
+    %+  skim
+      ~(tap by peers.ames-state)
+    |=  [=ship s=ship-state]
+    ?.  &(?=(%known -.s) =(%pawn (clan:title ship)))  %.n
+    ?&  (gth (sub now ~d180) last-contact.qos.s)
+        ::
+        %+  levy  (turn ~(tap by snd.s) tail)
+        |=  m=message-pump-state
+        ?~(unsent-fragments.m %.y %.n)
+    ==
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
   ::    Also requests key and life from Jael on first request.
