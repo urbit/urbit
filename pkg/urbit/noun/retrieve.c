@@ -1056,28 +1056,29 @@ u3r_met(c3_y  a_y,
       case 0:
       case 1:
       case 2: {
-        //  number of bits in [b], rounded up
-        //
-        c3_w bif_w = (gal_w << 5) + c3_bits_word(daz_w) + ((1 << a_y) - 1);
+        c3_y bex_y = 1 << a_y;
 
-        if ( bif_w < gal_w ) {
+        //  .=  35          (add 32 (dec (bex 2))))
+        //  .=  0x7ff.fffe  (rsh [0 5] (sub (bex 32) 35)))
+        //
+        if ( gal_w > 0x7fffffe ) {
           return u3m_bail(c3__fail);
         }
 
-        return bif_w >> a_y;
+        return ((gal_w << 5) + c3_rop(c3_bits_word(daz_w), bex_y)) >> a_y;
       }
 
       STATIC_ASSERT((UINT32_MAX > ((c3_d)u3a_maximum << 2)),
                     "met overflow");
 
-      case 3: return (gal_w << 2) + ((c3_bits_word(daz_w) +  7) >> 3);
-
-      case 4: return (gal_w << 1) + ((c3_bits_word(daz_w) + 15) >> 4);
+      case 3: return (gal_w << 2) + (c3_rop(c3_bits_word(daz_w),  8) >> 3);
+      case 4: return (gal_w << 1) + (c3_rop(c3_bits_word(daz_w), 16) >> 4);
 
       default: {
-        c3_y gow_y = (a_y - 5);
+        c3_y gow_y = a_y - 5;
+        c3_y bex_y = 1 << gow_y;
 
-        return ((gal_w + 1) + ((1 << gow_y) - 1)) >> gow_y;
+        return c3_rop(gal_w + 1, bex_y) >> gow_y;
       }
     }
   }
