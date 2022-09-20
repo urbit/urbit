@@ -1078,6 +1078,10 @@ u3r_met(c3_y  a_y,
         c3_y gow_y = a_y - 5;
         c3_y bex_y = 1 << gow_y;
 
+        if ( gow_y > 31 ) {
+          return u3m_bail(c3__fail);
+        }
+
         return c3_rop(gal_w + 1, bex_y) >> gow_y;
       }
     }
@@ -1677,7 +1681,7 @@ u3r_mug_words(const c3_w* key_w, c3_w len_w)
     c3_w gal_w = len_w - 1;
     c3_w daz_w = key_w[gal_w];
 
-    byt_w = (gal_w << 2) + (c3_rop(c3_bits_word(daz_w),  8) >> 3);
+    byt_w = (gal_w << 2) + (c3_rop(c3_bits_word(daz_w), 8) >> 3);
   }
 
   //  XX: assumes little-endian
