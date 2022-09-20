@@ -435,7 +435,7 @@ u3m_file(c3_c* pas_c)
 {
   struct stat buf_b;
   c3_i        fid_i = c3_open(pas_c, O_RDONLY, 0644);
-  c3_w        fln_w, red_w;
+  c3_w        fln_w;
   c3_y*       pad_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
@@ -445,10 +445,10 @@ u3m_file(c3_c* pas_c)
   fln_w = buf_b.st_size;
   pad_y = c3_malloc(buf_b.st_size);
 
-  red_w = read(fid_i, pad_y, fln_w);
+  ssize_t red_i = c3_read(fid_i, pad_y, fln_w);
   close(fid_i);
 
-  if ( fln_w != red_w ) {
+  if ( red_i != fln_w ) {
     c3_free(pad_y);
     return u3m_bail(c3__fail);
   }

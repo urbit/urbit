@@ -564,56 +564,14 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
 
   //  write jam-buffer into [fid_i]
   //
-  //    XX deduplicate with _write() wrapper in term.c
-  //
-  {
-    ssize_t ret_i;
-
-    while ( len_d > 0 ) {
-      c3_w lop_w = 0;
-      //  retry interrupt/async errors
-      //
-      do {
-        //  abort pathological retry loop
-        //
-        if ( 100 == ++lop_w ) {
-          fprintf(stderr, "rock: write loop: %s\r\n", strerror(errno));
-          close(fid_i);
-          //  XX unlink file?
-          //
-          return c3n;
-        }
-
-        ret_i = write(fid_i, byt_y, len_d);
-      }
-      while (  (ret_i < 0)
-            && (  (errno == EINTR)
-               || (errno == EAGAIN)
-               || (errno == EWOULDBLOCK) ));
-
-      //  assert on true errors
-      //
-      //    NB: can't call u3l_log here or we would re-enter _write()
-      //
-      if ( ret_i < 0 ) {
-        fprintf(stderr, "rock: write failed %s\r\n", strerror(errno));
-        close(fid_i);
-        //  XX unlink file?
-        //
-        return c3n;
-      }
-      //  continue partial writes
-      //
-      else {
-        len_d -= ret_i;
-        byt_y += ret_i;
-      }
-    }
+  ssize_t rit_i = c3_write(fid_i, byt_y, len_d);
+  if ( rit_i < 0 ) {
+    fprintf(stderr, "rock: write failed: %s\r\n", strerror(-rit_i));
   }
 
   close(fid_i);
 
-  return c3y;
+  return rit_i < 0 ? c3n : c3y;
 }
 
 /* u3u_cram(): globably deduplicate memory, and write a rock to disk.

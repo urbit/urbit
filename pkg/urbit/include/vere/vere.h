@@ -1404,11 +1404,6 @@
         void
         u3_daemon_init();
 
-      /* u3_write_fd(): retry interrupts, continue partial writes, assert errors.
-      */
-        void
-        u3_write_fd(c3_i fid_i, const void* buf_v, size_t len_i);
-
         c3_w
         u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
 

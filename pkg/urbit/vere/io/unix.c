@@ -342,12 +342,12 @@ u3_unix_save(c3_c* pax_c, u3_atom pad)
   pad_y = c3_malloc(fln_w);
   u3r_bytes(0, fln_w, pad_y, pad);
   u3z(pad);
-  rit_w = write(fid_i, pad_y, fln_w);
+  ssize_t rit_i = c3_write(fid_i, pad_y, fln_w);
   close(fid_i);
   c3_free(pad_y);
 
-  if ( rit_w != fln_w ) {
-    u3l_log("%s: %s\n", ful_c, strerror(errno));
+  if ( rit_i < 0 ) {
+    u3l_log("%s: %s\n", ful_c, strerror(-rit_i));
     c3_free(ful_c);
     u3m_bail(c3__fail);
   }
@@ -427,7 +427,7 @@ static c3_w
 _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
 {
   c3_i  fid_i = c3_open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-  c3_w  len_w, rit_w, siz_w, mug_w = 0;
+  c3_w  len_w, siz_w, mug_w = 0;
   c3_y* dat_y;
 
   u3_noun dat = u3t(u3t(mim));
@@ -446,11 +446,11 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
   u3r_bytes(0, len_w, dat_y, dat);
   u3z(mim);
 
-  rit_w = write(fid_i, dat_y, siz_w);
+  ssize_t rit_i = c3_write(fid_i, dat_y, siz_w);
 
-  if ( rit_w != siz_w ) {
+  if ( rit_i < 0 ) {
     u3l_log("error writing %s: %s\r\n",
-            pax_c, strerror(errno));
+            pax_c, strerror(-rit_i));
     mug_w = 0;
   }
   else {
@@ -470,7 +470,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
 {
   struct stat buf_u;
   c3_i  fid_i = c3_open(fil_u->pax_c, O_RDONLY, 0644);
-  c3_ws len_ws, red_ws;
+  c3_ws len_ws;
   c3_w  old_w;
   c3_y* old_y;
 
@@ -489,21 +489,21 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
   len_ws = buf_u.st_size;
   old_y = c3_malloc(len_ws);
 
-  red_ws = read(fid_i, old_y, len_ws);
+  ssize_t red_i = c3_read(fid_i, old_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
     u3l_log("error closing file (soft) %s: %s\r\n",
             fil_u->pax_c, strerror(errno));
   }
 
-  if ( len_ws != red_ws ) {
-    if ( red_ws < 0 ) {
+  if ( red_i != len_ws ) {
+    if ( red_i < 0 ) {
       u3l_log("error reading file (soft) %s: %s\r\n",
-              fil_u->pax_c, strerror(errno));
+              fil_u->pax_c, strerror(-red_i));
     }
     else {
-      u3l_log("wrong # of bytes read in file %s: %d %d\r\n",
-              fil_u->pax_c, len_ws, red_ws);
+      u3l_log("wrong # of bytes read in file %s: %d %lu\r\n",
+              fil_u->pax_c, len_ws, red_i);
     }
     c3_free(old_y);
     u3z(mim);
@@ -893,7 +893,7 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
 
   struct stat buf_u;
   c3_i  fid_i = c3_open(fil_u->pax_c, O_RDONLY, 0644);
-  c3_ws len_ws, red_ws;
+  c3_ws len_ws;
   c3_y* dat_y;
 
   if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
@@ -910,21 +910,21 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
   len_ws = buf_u.st_size;
   dat_y = c3_malloc(len_ws);
 
-  red_ws = read(fid_i, dat_y, len_ws);
+  ssize_t red_i = c3_read(fid_i, dat_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
     u3l_log("error closing file %s: %s\r\n",
             fil_u->pax_c, strerror(errno));
   }
 
-  if ( len_ws != red_ws ) {
-    if ( red_ws < 0 ) {
+  if ( red_i != len_ws ) {
+    if ( red_i < 0 ) {
       u3l_log("error reading file %s: %s\r\n",
-              fil_u->pax_c, strerror(errno));
+              fil_u->pax_c, strerror(-red_i));
     }
     else {
-      u3l_log("wrong # of bytes read in file %s: %d %d\r\n",
-              fil_u->pax_c, len_ws, red_ws);
+      u3l_log("wrong # of bytes read in file %s: %d %lu\r\n",
+              fil_u->pax_c, len_ws, red_i);
     }
     c3_free(dat_y);
     return u3_nul;
@@ -1159,7 +1159,7 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
 {
   struct stat buf_u;
   c3_i  fid_i = c3_open(pax_c, O_RDONLY, 0644);
-  c3_ws len_ws, red_ws;
+  c3_ws len_ws;
   c3_y* dat_y;
 
   if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
@@ -1176,21 +1176,21 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
   len_ws = buf_u.st_size;
   dat_y = c3_malloc(len_ws);
 
-  red_ws = read(fid_i, dat_y, len_ws);
+  ssize_t red_i = c3_read(fid_i, dat_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
     u3l_log("error closing initial file %s: %s\r\n",
             pax_c, strerror(errno));
   }
 
-  if ( len_ws != red_ws ) {
-    if ( red_ws < 0 ) {
+  if ( red_i != len_ws ) {
+    if ( red_i < 0 ) {
       u3l_log("error reading initial file %s: %s\r\n",
-              pax_c, strerror(errno));
+              pax_c, strerror(-red_i));
     }
     else {
-      u3l_log("wrong # of bytes read in initial file %s: %d %d\r\n",
-              pax_c, len_ws, red_ws);
+      u3l_log("wrong # of bytes read in initial file %s: %d %lu\r\n",
+              pax_c, len_ws, red_i);
     }
     c3_free(dat_y);
     return u3_nul;
