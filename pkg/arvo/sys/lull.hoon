@@ -1962,6 +1962,7 @@
         $?  %tread  ::  %fard
         ==  ==
     ==
+  ::  +rite: namespace permissions check
   ::
   ++  rite  !:
     |=  [our=ship [=view =beam] pes=(set perm)]
@@ -1983,7 +1984,6 @@
         ?~  s.beam  |
         &(=(i.spur.p i.s.beam) $(spur.p t.spur.p, s.beam t.s.beam))
     ==
-  ::
   ::  +cred: userspace permissions check
   ::
   ::    agents may call +cred to see if they have the right optional
@@ -1994,42 +1994,53 @@
   ::
   ++  cred  !:
     |=  [[our=ship dap=dude] pes=(set perm) =card:agent]
-    ^-  ?  ~+
-    =;  must=$@(? perm)
-      ?@  must  must
-      ?+  must  (~(has in pes) must)
-          [?(%write %watch) *]
-        %+  lien  ~(tap in pes)
-        |=  p=perm
-        ?&  ?=(?(%write %watch) -.p)
-            =(-.must -.p)
-            ?-  dude.p
-              %peers  =(%peers dude.must)
-              ^       =(dude.must dude.p)
-              ~       ?=(^ dude.must)  ::TODO
-            ==
-        ==
-      ::
-          [%clay ?(%write %local %build %perms %liven) *]
-        =/  =desk  (need desk.must)
-        :: =/  =spur  (need spur.must)
-        %+  lien  ~(tap in pes)
-        |=  p=perm
-        ?&  ?=([%clay *] p)
-            =(+<.must +<.p)
-            ?>  ?=(?(%write %local %build) +<.p)
-            =(desk (fall desk.p desk))
-            :: |(=(/ spur.p) =(`0 (find spur.p spur)))
-        ==
-      ::
-          [%gall %clear *]
-        =/  =dude  (need dude.must)
-        %+  lien  ~(tap in pes)
-        |=  p=perm
-        ?&  ?=([%gall %clear *] p)
-            =(dude (fall dude.p dude))
-        ==
+    ^-  ?
+    =/  mus  (must [our dap] card)
+    ?@  mus  mus
+    (have pes mus)
+  ::  +have: check if mus, or a broader perm, is present in pes
+  ::
+  ++  have  !:
+    |=  [pes=(set perm) mus=perm]
+    ^-  ?
+    ?+  mus  (~(has in pes) mus)
+        [?(%write %watch) *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=(?(%write %watch) -.p)
+          =(-.mus -.p)
+          ?-  dude.p
+            %peers  =(%peers dude.mus)
+            ^       =(dude.mus dude.p)
+            ~       ?=(^ dude.mus)  ::TODO  ?
+          ==
       ==
+    ::
+        [%clay ?(%write %local %build %perms %liven) *]
+      =/  =desk  (need desk.mus)
+      :: =/  =spur  (need spur.mus)
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay *] p)
+          =(+<.mus +<.p)
+          ?>  ?=(?(%write %local %build) +<.p)
+          =(desk (fall desk.p desk))
+          :: |(=(/ spur.p) =(`0 (find spur.p spur)))
+      ==
+    ::
+        [%gall %clear *]
+      =/  =dude  (need dude.mus)
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%gall %clear *] p)
+          =(dude (fall dude.p dude))
+      ==
+    ==
+  ::  +must: perm required for card, or loob if guaranteed
+  ::
+  ++  must  !:
+    |=  [[our=ship dap=dude] =card:agent]
+    ^-  $@(? perm)
     ?:  ?=(%give -.card)
       &
     =/  =note:agent

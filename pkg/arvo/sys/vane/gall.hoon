@@ -1669,16 +1669,42 @@
         `ap-core
       ::
       =.  agent.yoke  &++.p.result
-      =/  [gud=(list card:agent) bad=(list card:agent)]
-        ?:  =(%base q.beak.yoke)  [-.p.result ~]
-        %+  skid  -.p.result
+      =/  bad=(list [=card:agent perm=(unit perm)])
+        ?:  =(%base q.beak.yoke)  ~
+        =/  pes=(set perm)  (~(get ju perms.state) q.beak.yoke)
+        %+  murn  -.p.result
         |=  =card:agent
-        (cred [our agent-name] (~(get ju perms.state) q.beak.yoke) card)
-      ~?  !=(~ bad)  [%would-drop agent-name (turn bad head)]
-      :: =/  moves  (zing (turn gud ap-from-internal))
-      =/  moves       (zing (turn -.p.result ap-from-internal))
-      =.  bitt.yoke   (ap-handle-kicks moves)
-      (ap-handle-peers moves)
+        ^-  (unit [card:agent (unit perm)])
+        =/  mus  (must [our agent-name] card)
+        ?@  mus  ?:(mus ~ `card^~)
+        ?:  (have pes mus)  ~
+        `[card `mus]
+      ?:  =(~ bad)
+        =/  moves       (zing (turn -.p.result ap-from-internal))
+        =.  bitt.yoke   (ap-handle-kicks moves)
+        (ap-handle-peers moves)
+      :-  ~
+      %+  ap-error  %not-permitted
+      ::  put the unpermitted cards and their requirements in the tang,
+      ::  making sure to exclude actual card data to avoid huge nouns.
+      ::
+      |-  ^-  tang
+      ?~  bad  ~
+      :_  $(bad t.bad)
+      =-  ?~  perm.i.bad  >[never=-]<
+          >[need=u.perm.i.bad for=-]<
+      =/  =card:agent  card.i.bad
+      |-
+      ?-  -.card
+        %pass  [%pass p.card $(card [%slip q.card])]
+        %slip  ?-  -.p.card
+                 %agent  ~!  card
+                         p.card(task -.task.p.card)
+                 %arvo   [- +<]:+.p.card
+                 %pyre   %pyre
+               ==
+        %give  [%give +<.gift]
+      ==
     ::  +ap-handle-kicks: handle cancels of bitt.watches
     ::
     ++  ap-handle-kicks
