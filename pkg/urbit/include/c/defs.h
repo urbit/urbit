@@ -164,6 +164,8 @@
 
       /// Reads the contents of a file into memory.
       ///
+      /// @warn The file must be seekable, otherwise the behavior is undefined.
+      ///
       /// This function correctly handles the case in which read() reads fewer
       /// bytes than was requested by retrying until all bytes have been read or
       /// until an error occurs, whichever comes first.
