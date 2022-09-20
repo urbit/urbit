@@ -251,7 +251,7 @@
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
       ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
-      ;title:"OS1"
+      ;title:"Urbit"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
              @font-face {
@@ -2178,7 +2178,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[eny duct now rof] server-state.ax]
+    =*  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
