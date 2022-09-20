@@ -1080,6 +1080,10 @@ u3r_met(c3_y  a_y,
       default: {
         c3_y gow_y = (a_y - 5);
 
+        if ( gow_y > 31 ) {
+          return u3m_bail(c3__fail);
+        }
+
         return ((gal_w + 1) + ((1 << gow_y) - 1)) >> gow_y;
       }
     }
