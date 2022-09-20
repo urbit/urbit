@@ -193,6 +193,7 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
 {
   c3_o rec_o = c3n;
   c3_o pac_o = c3n;
+  c3_o mel_o = c3n;
 
   //  intercept |mass, observe |reset
   //
@@ -263,6 +264,7 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
     }
     else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
       pac_o = c3y;
+      mel_o = c3y;
       rec_o = c3y;
       pri   = 0;
     }
@@ -287,6 +289,7 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
 
   mar_u->rec_o = c3o(mar_u->rec_o, rec_o);
   mar_u->pac_o = c3o(mar_u->pac_o, pac_o);
+  mar_u->mel_o = c3a(u3_Host.ops_u.mel, c3o(mar_u->mel_o, mel_o));
 
   return vir;
 }
@@ -544,6 +547,13 @@ _mars_post(u3_mars* mar_u)
     u3a_print_memory(stderr, "mars: pack: gained", u3m_pack());
     u3l_log("\n");
     mar_u->pac_o = c3n;
+  }
+
+  if ( c3y == mar_u->mel_o ) {
+    u3l_log("mars: meld: starting\n");
+    u3u_meld();
+    u3l_log("mars: meld: complete\n");
+    mar_u->mel_o = c3n;
   }
 }
 

@@ -28,6 +28,7 @@
         c3_d    dun_d;                    //  last event processed
         c3_l    mug_l;                    //  hash of state
         c3_o    pac_o;                    //  pack kernel
+        c3_o    mel_o;                    //  meld kernel
         c3_o    rec_o;                    //  reclaim cache
         c3_o    mut_o;                    //  mutated kerne
         u3_noun sac;                      //  space measurement
