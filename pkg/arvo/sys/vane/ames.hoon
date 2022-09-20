@@ -617,7 +617,7 @@
       =life
       crypto-core=acru:ames
       =bug
-      corks=(set wire)
+      corks=(set wire)  ::TODO  unused, remove in next version of state
   ==
 ::
 +$  ames-state-4  ames-state-5
@@ -841,7 +841,7 @@
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
-    =|  cached-state=(unit $%([%5 ames-state-5] [%6 ames-state-6] [%7 ames-state-7]))
+    =|  cached-state=(unit $%([%5 ames-state-5] [%6 ames-state-6] [%7 ames-state-7] [%8 ^ames-state]))
     ::
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
@@ -854,6 +854,7 @@
         ++  take  ^take
         --
     |%
+    ++  larval-core  .
     ::  +call: handle request $task
     ::
     ++  call
@@ -864,23 +865,25 @@
       ::
       ?^  dud
         ~|(%ames-larval-call-dud (mean tang.u.dud))
+      ::  before processing events, make sure we have state loaded
       ::
-      ?:  &(?=(^ cached-state) ?=(~ queued-events))
+      =^  molt-moves  larval-core  molt
+      ::
+      ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
         =^  moves  adult-gate  (call:adult-core duct dud task)
-        %-  molt
-        ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
+        ~>  %slog.0^leaf/"ames: metamorphosis"
+        [(weld molt-moves moves) adult-gate]
+      ::  drop incoming packets until we metamorphose
+      ::
+      ?:  ?=(%hear -.task)
+        [~ larval-gate]
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
         ::  process %born using wrapped adult ames
         ::
         =^  moves  adult-gate  (call:adult-core duct dud task)
-        ::  if no events were queued up, metamorphose
-        ::
-        ?~  queued-events
-          ~>  %slog.0^leaf/"ames: metamorphosis"
-          [moves adult-gate]
+        =.  moves  (weld molt-moves moves)
         ::  kick off a timer to process the first of .queued-events
         ::
         =.  moves  :_(moves [duct %pass /larva %b %wait now])
@@ -897,19 +900,18 @@
       |=  [=wire =duct dud=(unit goof) =sign]
       ?^  dud
         ~|(%ames-larval-take-dud (mean tang.u.dud))
+      ::
+      =^  molt-moves  larval-core  molt
+      ::
+      ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
+        =^  moves  adult-gate  (take:adult-core wire duct dud sign)
+        ~>  %slog.0^leaf/"ames: metamorphosis"
+        [(weld molt-moves moves) adult-gate]
       ::  enqueue event if not a larval drainage timer
       ::
-      =?  queued-events  !=(/larva wire)
-        (~(put to queued-events) %take wire duct sign)
-      ::  start drainage timer if have regressed from adult ames
-      ::
-      ?:  ?&  !=(/larva wire)
-              ?=(^ cached-state)
-          ==
-        [[duct %pass /larva %b %wait now]~ larval-gate]
-      ::    XX what to do with errors?
-      ::
-      ?.  =(/larva wire)  [~ larval-gate]
+      ?.  =(/larva wire)
+        =.  queued-events  (~(put to queued-events) %take wire duct sign)
+        [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
       ?.  ?=([%behn %wake *] sign)
@@ -948,15 +950,12 @@
           %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
           %take  (take:adult-core [wire duct ~ sign]:+.first-event)
         ==
-      ::  .queued-events has been cleared; metamorphose
+      =.  moves  (weld molt-moves moves)
+      ::  .queued-events has been cleared; done!
       ::
       ?~  queued-events
-        ?.  ?=(^ cached-state)
-          ~>  %slog.0^leaf/"ames: metamorphosis"
-          [moves adult-gate]
-        %-  molt
-        ~>  %slog.0^leaf/"ames: init daily recork timer"
-        :_(moves [duct %pass /recork %b %wait `@da`(add now ~m20)])
+        ~>  %slog.0^leaf/"ames: metamorphosis"
+        [moves adult-gate]
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
@@ -1052,18 +1051,21 @@
     ::  +molt: re-evolve to adult-ames
     ::
     ++  molt
-      |=  moves=(list move)
-      ^-  (quip move _adult-gate)
-      =?  cached-state  &(?=(^ cached-state) ?=(%5 +<.cached-state))
-        `%6^(state-5-to-6:load:adult-core +.u.cached-state)
-      =?  cached-state  &(?=(^ cached-state) ?=(%6 +<.cached-state))
-        `%7^(state-6-to-7:load:adult-core +.u.cached-state)
-      =.  ames-state.adult-gate
-        ?>  &(?=(^ cached-state) ?=(%7 +<.cached-state))
-        (state-7-to-8:load:adult-core +.u.cached-state)
-      =.  cached-state  ~
-      ~>  %slog.0^leaf/"ames: metamorphosis reload"
-      [moves adult-gate]
+      ^-  (quip move _larval-core)
+      ?~  cached-state  [~ larval-core]
+      ~>  %slog.0^leaf/"ames: molt"
+      =?  u.cached-state  ?=(%5 -.u.cached-state)
+        6+(state-5-to-6:load:adult-core +.u.cached-state)
+      =?  u.cached-state  ?=(%6 -.u.cached-state)
+        7+(state-6-to-7:load:adult-core +.u.cached-state)
+      =^  moz  u.cached-state
+        ?.  ?=(%7 -.u.cached-state)  [~ u.cached-state]
+        ~>  %slog.0^leaf/"ames: init daily recork timer"
+        :-  [[/ames]~ %pass /recork %b %wait `@da`(add now ~d1)]~
+        8+(state-7-to-8:load:adult-core +.u.cached-state)
+      ?>  ?=(%8 -.u.cached-state)
+      =.  ames-state.adult-gate  +.u.cached-state
+      [moz larval-core(cached-state ~)]
     --
 ::  adult ames, after metamorphosis from larva
 ::
@@ -1468,51 +1470,48 @@
       =.  peer-core  (run-message-pump:peer-core i.bones %prod ~)
       $(bones t.bones)
     --
-  ::  +on-stir: start timers for any flow that lack them
+  ::  +on-stir: recover from timer desync, setting new timers as needed
   ::
   ::    .arg is unused, meant to ease future debug commands
   ::
   ++  on-stir
     |=  arg=@t
-    =/  states=(list [ship peer-state])
-      %+  murn  ~(tap by peers.ames-state)
-      |=  [=ship =ship-state]
-      ^-  (unit [^ship peer-state])
-      ?.  ?=(%known -.ship-state)
-        ~
-      `[ship +.ship-state]
-    =/  snds=(list (list [ship bone message-pump-state]))
-      %+  turn  states
-      |=  [=ship peer-state]
-      %+  murn  ~(tap by snd)
-      |=  [=bone =message-pump-state]
-      ?:  (~(has in closing) bone)  ~
-      `[ship bone message-pump-state]
-    =/  next-wakes
-      %+  turn  `(list [ship bone message-pump-state])`(zing snds)
-      |=  [=ship =bone message-pump-state]
-      [ship bone next-wake.packet-pump-state]
-    =/  next-real-wakes=(list [=ship =bone =@da])
-      %+  murn  next-wakes
-      |=  [=ship =bone tym=(unit @da)]
-      ^-  (unit [^ship ^bone @da])
-      ?~(tym ~ `[ship bone u.tym])
-    =/  timers
-      %-  silt
-      ;;  (list [@da ^duct])
-      =<  q.q  %-  need  %-  need
-      (rof ~ %bx [[our %$ da+now] /debug/timers])
-    =/  to-stir
-      %+  skip  next-real-wakes
-      |=  [=ship =bone =@da]
-      (~(has in timers) [da `^duct`~[a+(make-pump-timer-wire ship bone) /ames]])
-    ~&  [%stirring to-stir]
-    |-  ^+  event-core
-    ?~  to-stir
-      event-core
-    =/  =wire  (make-pump-timer-wire [ship bone]:i.to-stir)
-    =.  event-core  (emit duct %pass wire %b %wait da.i.to-stir)
-    $(to-stir t.to-stir)
+    ^+  event-core
+    =/  want=(set [@da ^duct])
+      %-  ~(rep by peers.ames-state)
+      |=  [[who=ship s=ship-state] acc=(set [@da ^duct])]
+      ?.  ?=(%known -.s)  acc
+      %-  ~(rep by snd.+.s)
+      |=  [[b=bone m=message-pump-state] acc=_acc]
+      =*  tim  next-wake.packet-pump-state.m
+      ?~  tim  acc
+      %-  ~(put in acc)
+      [u.tim `^duct`~[ames+(make-pump-timer-wire who b) /ames]]
+    =.  want
+      (~(put in want) (add now ~d1) ~[/ames/recork /ames])
+    ::
+    =/  have
+      %-  ~(gas in *(set [@da ^duct]))
+      =/  tim
+        ;;  (list [@da ^duct])
+        =<  q.q  %-  need  %-  need
+        (rof ~ %bx [[our %$ da+now] /debug/timers])
+      (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
+    ::
+    ::  set timers for flows that should have one set but don't
+    ::
+    =.  event-core
+      %-  ~(rep in (~(dif in want) have))
+      |=  [[wen=@da hen=^duct] this=_event-core]
+      ?>  ?=([^ *] hen)
+      (emit:this ~[/ames] %pass t.i.hen %b %wait wen)
+    ::
+    ::  cancel timers for flows that have one set but shouldn't
+    ::
+    %-  ~(rep in (~(dif in have) want))
+    |=  [[wen=@da hen=^duct] this=_event-core]
+    ?>  ?=([^ *] hen)
+    (emit:this t.hen %pass t.i.hen %b %rest wen)
   ::  +on-crud: handle event failure; print to dill
   ::
   ++  on-crud
@@ -1804,7 +1803,7 @@
       ::  if we haven't received an attestation, ask again
       ::
       ?^  error
-        %-  (slog leaf+"ames: attestation timer failed: {<u.error>}" ~)
+        %-  (slog 'ames: attestation timer failed' u.error)
         event-core
       ?~  ship=`(unit @p)`(slaw %p i.t.wire)
         %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
@@ -1830,7 +1829,11 @@
       abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
     ::
     =.  event-core
-      (emit duct %pass /recork %b %wait `@da`(add now ~m20))
+      (emit duct %pass /recork %b %wait `@da`(add now ~d1))
+    ::
+    ?^  error
+      %-  (slog 'ames: recork timer failed' u.error)
+      event-core
     ::  recork up to one bone per peer
     ::
     =/  pez  ~(tap by peers.ames-state)
@@ -3077,8 +3080,11 @@
     ::
     ?-    -.u.cur
         %ok
-      =.  message-pump  (give %done current.state ~)
-      =?  message-pump  cork  (give %cork ~)
+      =.  message-pump
+        ::  don't give %done for corks
+        ::
+        ?:  cork  (give %cork ~)
+        (give %done current.state ~)
       $(current.state +(current.state))
     ::
         %nack

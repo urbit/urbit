@@ -433,7 +433,6 @@
   %-  pure:m
   ?~  full-file.client-response  ''
   q.data.u.full-file.client-response
-
 ::
 ++  fetch-cord
   |=  url=tape

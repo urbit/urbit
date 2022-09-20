@@ -388,6 +388,7 @@
 #   define c3__ergo   c3_s4('e','r','g','o')
 #   define c3__esh    c3_s3('e','s','h')
 #   define c3__etch   c3_s4('e','t','c','h')
+#   define c3__evil   c3_s4('e','v','i','l')
 #   define c3__ex     c3_s2('e','x')
 #   define c3__exit   c3_s4('e','x','i','t')
 #   define c3__eyre   c3_s4('e','y','r','e')
