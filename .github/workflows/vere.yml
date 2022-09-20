@@ -16,11 +16,11 @@ on:
         required: false
     secrets:
       CACHIX_AUTH_TOKEN:
-        required: true
+        required: false
       GCS_SERVICE_ACCOUNT_KEY:
-        required: true
+        required: false
       GCS_PROJECT:
-        required: true
+        required: false
 
   workflow_dispatch:
     inputs:
