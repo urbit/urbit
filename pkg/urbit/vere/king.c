@@ -1457,15 +1457,28 @@ _king_copy_file(c3_c* src_c, c3_c* dst_c)
     //
 #endif
 
-    {
-      size_t pag_i = 1 << 14;;
-      c3_y*  buf_y = c3_malloc(pag_i);
-      ret_i        = c3_read(src_i, buf_y, pag_i) == pag_i
-                  && c3_write(dst_i, buf_y, pag_i) == pag_i
-                       ? 0
-                       : -1;
-      err_i        = errno;
-      c3_free(buf_y);
+    { // Copy from src_i to dst_i 16K at a time.
+      c3_y buf_y[1 << 14];
+      while ( 1 ) {
+        ret_i = c3_read(src_i, buf_y, sizeof(buf_y));
+        if ( ret_i < 0 ) {
+          break;
+        }
+
+        if ( ret_i == 0 ) {
+          break;
+        }
+
+        ret_i = c3_write(dst_i, buf_y, sizeof(buf_y));
+        if ( ret_i < 0 ) {
+          break;
+        }
+      }
+
+      if ( ret_i < 0 ) {
+        err_i = -ret_i;
+        ret_i = -1;
+      }
     }
 
 done3:
