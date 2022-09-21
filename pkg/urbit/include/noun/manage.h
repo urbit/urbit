@@ -37,7 +37,7 @@
       /* u3m_init(): start the environment.
       */
         void
-        u3m_init();
+        u3m_init(size_t len_i);
 
       /* u3m_pave(): instantiate or activate image.
       */
