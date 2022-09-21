@@ -1683,9 +1683,7 @@ u3r_mug_words(const c3_w* key_w, c3_w len_w)
     c3_w gal_w = len_w - 1;
     c3_w daz_w = key_w[gal_w];
 
-    byt_w = (gal_w << 2)
-            + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
-
+    byt_w = (gal_w << 2) + ((c3_bits_word(daz_w) + 7) >> 3);
   }
 
   //  XX: assumes little-endian
