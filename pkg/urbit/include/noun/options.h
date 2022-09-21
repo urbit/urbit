@@ -9,7 +9,6 @@
         u3_noun who;                          //  single identity
         c3_c*   dir_c;                        //  execution directory (pier)
         c3_w    wag_w;                        //  flags (both ways)
-        size_t  byt_i;                        //  loom byte-length (<= u3a_bytes)
         size_t  wor_i;                        //  loom word-length (<= u3a_words)
         void (*stderr_log_f)(c3_c*);          //  errors from c code
         void (*slog_f)(u3_noun);              //  function pointer for slog

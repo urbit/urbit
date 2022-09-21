@@ -1099,9 +1099,12 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
 c3_o
 u3e_yolo(void)
 {
-  //    NB: u3e_save() will reinstate protection flags
+  //  NB: u3e_save() will reinstate protection flags
   //
-  if ( 0 != mprotect((void *)u3_Loom, u3C.byt_i, (PROT_READ | PROT_WRITE)) ) {
+  if ( 0 != mprotect((void *)u3_Loom,
+                     u3C.wor_i << 2,
+                     (PROT_READ | PROT_WRITE)) )
+  {
     return c3n;
   }
 

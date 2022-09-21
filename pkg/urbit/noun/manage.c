@@ -1838,7 +1838,6 @@ u3m_init(size_t len_i)
       exit(1);
     }
 
-    u3C.byt_i = len_i;
     u3C.wor_i = len_i >> 2;
     u3l_log("loom: mapped %zuMB\r\n", len_i >> 20);
   }
