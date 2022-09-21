@@ -1787,6 +1787,12 @@ main(c3_i   argc,
         u3C.wag_w |= u3o_debug_ram;
       }
 
+      /*  Set auto-meld flag.
+      */
+      if ( _(u3_Host.ops_u.mel) ) {
+        u3C.wag_w |= u3o_auto_meld;
+      }
+
       /*  Set profile flag.
       */
       if ( _(u3_Host.ops_u.pro) ) {
