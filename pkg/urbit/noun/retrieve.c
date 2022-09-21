@@ -1056,9 +1056,10 @@ u3r_met(c3_y  a_y,
       case 0:
       case 1:
       case 2: {
-        //  number of bits in [b], rounded up
-        //
-        c3_w bif_w = (gal_w << 5) + c3_bits_word(daz_w) + ((1 << a_y) - 1);
+        /* col_w: number of bits in (daz_w)
+        ** bif_w: number of bits in (b)
+        */
+        c3_w bif_w, col_w;
 
         //  .=  35          (add 32 (dec (bex 2))))
         //  .=  0x7ff.fffe  (rsh [0 5] (sub (bex 32) 35)))
@@ -1067,7 +1068,10 @@ u3r_met(c3_y  a_y,
           return u3m_bail(c3__fail);
         }
 
-        return bif_w >> a_y;
+        col_w = c3_bits_word(daz_w);
+        bif_w = col_w + (gal_w << 5);
+
+        return (bif_w + ((1 << a_y) - 1)) >> a_y;
       }
 
       STATIC_ASSERT((UINT32_MAX > ((c3_d)u3a_maximum << 2)),
