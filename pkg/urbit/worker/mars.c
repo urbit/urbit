@@ -289,7 +289,10 @@ _mars_sure_feck(u3_mars* mar_u, c3_w pre_w, u3_noun vir)
 
   mar_u->rec_o = c3o(mar_u->rec_o, rec_o);
   mar_u->pac_o = c3o(mar_u->pac_o, pac_o);
-  mar_u->mel_o = c3a(u3_Host.ops_u.mel, c3o(mar_u->mel_o, mel_o));
+
+  if ( u3C.wag_w & u3o_auto_meld ) {
+    mar_u->mel_o = c3o(mar_u->mel_o, mel_o);
+  }
 
   return vir;
 }
