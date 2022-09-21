@@ -1060,7 +1060,10 @@ u3r_met(c3_y  a_y,
         //
         c3_w bif_w = (gal_w << 5) + c3_bits_word(daz_w) + ((1 << a_y) - 1);
 
-        if ( bif_w < gal_w ) {
+        //  .=  35          (add 32 (dec (bex 2))))
+        //  .=  0x7ff.fffe  (rsh [0 5] (sub (bex 32) 35)))
+        //
+        if ( gal_w > 0x7fffffe ) {
           return u3m_bail(c3__fail);
         }
 
