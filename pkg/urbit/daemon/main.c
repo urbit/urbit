@@ -1005,7 +1005,7 @@ _cw_info(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c);
 
   fprintf(stderr, "\r\nurbit: %s at event %" PRIu64 "\r\n",
@@ -1042,7 +1042,7 @@ _cw_grab(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3C.wag_w |= u3o_hashless;
   u3_mars_grab();
   u3m_stop();
@@ -1071,7 +1071,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
   c3_o  ret_o;
 
@@ -1133,7 +1133,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
 
     fprintf(stderr, "urbit: queu: preparing\r\n");
 
-    u3m_boot(u3_Host.dir_c);
+    u3m_boot(u3_Host.dir_c, u3a_bytes);
 
     //  XX can spuriously fail do to corrupt memory-image checkpoint,
     //  need a u3m_half_boot equivalent
@@ -1179,7 +1179,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
   c3_w     pre_w;
 
   u3C.wag_w |= u3o_hashless;
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
 
   pre_w = u3a_open(u3R);
   u3u_meld();
@@ -1267,7 +1267,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
 
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
 
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3e_save();
@@ -1489,7 +1489,7 @@ _cw_boot(c3_i argc, c3_c* argv[])
   //
   //    XX s/b explicitly initialization, not maybe-restore
   //
-  u3m_boot(dir_c);
+  u3m_boot(dir_c, u3a_bytes);
 
   //  set up logging
   //
@@ -1554,7 +1554,7 @@ _cw_work(c3_i argc, c3_c* argv[])
 
   //  setup loom XX strdup?
   //
-  u3m_boot(dir_c);
+  u3m_boot(dir_c, u3a_bytes);
 
   //  set up logging
   //
@@ -1851,7 +1851,7 @@ main(c3_i   argc,
     //  starting u3m configures OpenSSL memory functions, so we must do it
     //  before any OpenSSL allocations
     //
-    u3m_boot_lite();
+    u3m_boot_lite(u3a_bytes);
 
     //  Initialize OpenSSL for client and server
     //
