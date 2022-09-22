@@ -990,7 +990,7 @@ u3_mars_init(c3_c*    dir_c,
   mar_u->out_u = out_u;
   mar_u->sen_d = mar_u->dun_d = u3A->eve_d;
   mar_u->mug_l = u3r_mug(u3A->roc);
-  mar_u->pac_o = mar_u->rec_o = mar_u->mut_o = c3n;
+  mar_u->pac_o = mar_u->rec_o = mar_u->mut_o = mar_u->mel_o = c3n;
   mar_u->sac   = u3_nul;
   mar_u->sat_e = u3_mars_work_e;
   mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = 0;
