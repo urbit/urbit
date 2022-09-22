@@ -17,7 +17,7 @@ _setup(void)
   u3_weak       pil;
 
   u3C.wag_w |= u3o_hashless;
-  u3m_boot_lite();
+  u3m_boot_lite(u3a_bytes);
   sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
   if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
     printf("*** fail _setup 1\n");

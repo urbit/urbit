@@ -1064,7 +1064,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   //
   {
     u3V.dir_c = strdup(dir_c);
-    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
+    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c, u3a_bytes);
 
     if ( eve_d ) {
       //  XX need not be fatal, need a u3m_reboot equivalent
@@ -1192,7 +1192,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
     u3_weak      pil;
 
     u3C.wag_w |= u3o_hashless;
-    u3m_boot_lite();
+    u3m_boot_lite(u3a_bytes);
     sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
     if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
       printf("lite: unable to cue ivory pill\r\n");
@@ -1253,7 +1253,7 @@ _cw_info(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c);
 
   fprintf(stderr, "\r\nurbit: %s at event %" PRIu64 "\r\n",
@@ -1290,7 +1290,7 @@ _cw_grab(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3C.wag_w |= u3o_hashless;
   u3_serf_grab();
   u3m_stop();
@@ -1319,7 +1319,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
   c3_o  ret_o;
 
@@ -1381,7 +1381,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
 
     fprintf(stderr, "urbit: queu: preparing\r\n");
 
-    u3m_boot(u3_Host.dir_c);
+    u3m_boot(u3_Host.dir_c, u3a_bytes);
 
     //  XX can spuriously fail do to corrupt memory-image checkpoint,
     //  need a u3m_half_boot equivalent
@@ -1427,7 +1427,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
   c3_w     pre_w;
 
   u3C.wag_w |= u3o_hashless;
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
 
   pre_w = u3a_open(u3R);
   u3u_meld();
@@ -1515,7 +1515,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
 
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
 
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3e_save();
@@ -1688,7 +1688,7 @@ _cw_vile(c3_i argc, c3_c* argv[])
 
   //  XX check if snapshot is stale?
   //
-  c3_d  eve_d = u3m_boot(u3_Host.dir_c);
+  c3_d  eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3_noun sam = u3nc(u3nc(u3_nul, u3_nul),
                      u3nc(c3n, u3nq(c3__once, 'j', c3__vile, u3_nul)));
   u3_noun res = u3v_soft_peek(0, sam);
@@ -1974,7 +1974,7 @@ main(c3_i   argc,
     //  starting u3m configures OpenSSL memory functions, so we must do it
     //  before any OpenSSL allocations
     //
-    u3m_boot_lite();
+    u3m_boot_lite(u3a_bytes);
 
     //  Initialize OpenSSL for client and server
     //
