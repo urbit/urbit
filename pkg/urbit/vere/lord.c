@@ -890,11 +890,12 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
   //  spawn new process and connect to it
   //
   {
-    c3_c* arg_c[8];
+    c3_c* arg_c[10];
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_c  hap_c[11];
     c3_c  cev_c[11];
+    c3_c  lom_c[11];
     c3_i  err_i;
 
     sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
@@ -907,29 +908,33 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
 
     sprintf(hap_c, "%u", u3_Host.ops_u.hap_w);
 
+    sprintf(lom_c, "%u", u3_Host.ops_u.lom_y);
+
     arg_c[0] = god_u->bin_c;            //  executable
     arg_c[1] = "work";                  //  protocol
     arg_c[2] = god_u->pax_c;            //  path to checkpoint directory
     arg_c[3] = key_c;                   //  disk key
     arg_c[4] = wag_c;                   //  runtime config
     arg_c[5] = hap_c;                   //  hash table size
+    arg_c[6] = lom_c;                   //  loom bex
 
     if ( u3_Host.ops_u.til_c ) {
       //  XX validate
       //
-      arg_c[6] = u3_Host.ops_u.til_c;
+      arg_c[7] = u3_Host.ops_u.til_c;
     }
     else {
-      arg_c[6] = "0";
+      arg_c[7] = "0";
     }
 
 #ifdef U3_OS_mingw
     sprintf(cev_c, "%" PRIu64, u3_Host.cev_u);
-    arg_c[7] = cev_c;
-    arg_c[8] = 0;
+    arg_c[8] = cev_c;
 #else
-    arg_c[7] = 0;
+    arg_c[8] = 0;
 #endif
+
+    arg_c[9] = 0;
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
     uv_timer_init(u3L, &god_u->out_u.tim_u);
@@ -1141,6 +1146,7 @@ u3_lord_boot(c3_c* pax_c,
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_c  hap_c[11];
+    c3_c  lom_c[11];
     c3_i  err_i;
 
     sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
@@ -1153,13 +1159,16 @@ u3_lord_boot(c3_c* pax_c,
 
     sprintf(hap_c, "%u", u3_Host.ops_u.hap_w);
 
+    sprintf(lom_c, "%u", u3_Host.ops_u.lom_y);
+
     arg_c[0] = bot_u->bin_c;            //  executable
     arg_c[1] = "boot";                  //  protocol
     arg_c[2] = bot_u->pax_c;            //  path to checkpoint directory
     arg_c[3] = key_c;                   //  disk key
     arg_c[4] = wag_c;                   //  runtime config
     arg_c[5] = hap_c;                   //  hash table size
-    arg_c[6] = 0;
+    arg_c[6] = lom_c;                   //  loom bex
+    arg_c[7] = 0;
 
     uv_pipe_init(u3L, &bot_u->inn_u.pyp_u, 0);
     uv_timer_init(u3L, &bot_u->out_u.tim_u);

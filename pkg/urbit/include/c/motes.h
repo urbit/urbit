@@ -698,6 +698,7 @@
 #   define c3__lond   c3_s4('l','o','n','d')
 #   define c3__lonk   c3_s4('l','o','n','k')
 #   define c3__look   c3_s4('l','o','o','k')
+#   define c3__loom   c3_s4('l','o','o','m')
 #   define c3__loop   c3_s4('l','o','o','p')
 #   define c3__lorb   c3_s4('l','o','r','b')
 #   define c3__lord   c3_s4('l','o','r','d')
