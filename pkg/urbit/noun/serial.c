@@ -19,7 +19,7 @@ struct _cs_jam_fib {
 
 /* _cs_jam_fib_grow(): reallocate buffer with fibonacci growth
 */
-static void
+static inline void
 _cs_jam_fib_grow(struct _cs_jam_fib* fib_u, c3_w mor_w)
 {
   c3_w wan_w = fib_u->bit_w + mor_w;
@@ -28,6 +28,7 @@ _cs_jam_fib_grow(struct _cs_jam_fib* fib_u, c3_w mor_w)
   //
   if ( wan_w < mor_w ) {
     u3m_bail(c3__fail);
+    return;
   }
 
   if ( wan_w > fib_u->a_w ) {
@@ -48,7 +49,7 @@ _cs_jam_fib_grow(struct _cs_jam_fib* fib_u, c3_w mor_w)
 
 /* _cs_jam_fib_chop(): chop [met_w] bits of [a] into [fib_u]
 */
-static void
+static inline void
 _cs_jam_fib_chop(struct _cs_jam_fib* fib_u, c3_w met_w, u3_noun a)
 {
   c3_w bit_w = fib_u->bit_w;
@@ -70,12 +71,51 @@ _cs_jam_fib_mat(struct _cs_jam_fib* fib_u, u3_noun a)
     _cs_jam_fib_chop(fib_u, 1, 1);
   }
   else {
-    c3_w a_w = u3r_met(0, a);
-    c3_w b_w = c3_bits_word(a_w);
+    c3_w   a_w = u3r_met(0, a);
+    c3_w   b_w = c3_bits_word(a_w);
+    c3_w bit_w = fib_u->bit_w;
 
-    _cs_jam_fib_chop(fib_u, b_w+1, 1 << b_w);
-    _cs_jam_fib_chop(fib_u, b_w-1, a_w & ((1 << (b_w-1)) - 1));
-    _cs_jam_fib_chop(fib_u, a_w, a);
+    //  amortize overflow checks and reallocation
+    //
+    {
+      c3_w met_w = a_w + (2 * b_w);
+
+      if ( a_w > (UINT32_MAX - 64) ) {
+        u3m_bail(c3__fail);
+        return;
+      }
+
+      _cs_jam_fib_grow(fib_u, met_w);
+      fib_u->bit_w += met_w;
+    }
+
+    {
+      c3_w  src_w[2];
+      c3_w* buf_w = fib_u->sab_u->buf_w;
+
+      //  _cs_jam_fib_chop(fib_u, b_w+1, 1 << b_w);
+      //
+      {
+        c3_d dat_d = (c3_d)1 << b_w;
+        src_w[0]   = (c3_w)dat_d;
+        src_w[1]   = dat_d >> 32;
+
+        u3r_chop_words(0, 0, b_w + 1, bit_w, buf_w, 2, src_w);
+        bit_w += b_w + 1;
+      }
+
+      //  _cs_jam_fib_chop(fib_u, b_w-1, a_w);
+      //
+      {
+        src_w[0] = a_w;
+        u3r_chop_words(0, 0, b_w - 1, bit_w, buf_w, 1, src_w);
+        bit_w += b_w - 1;
+      }
+
+      //  _cs_jam_fib_chop(fib_u, a_w, a);
+      //
+      u3r_chop(0, 0, a_w, bit_w, buf_w, a);
+    }
   }
 }
 
