@@ -1997,14 +1997,15 @@
       event-core
     ::  +on-publ-sponsor: handle new or lost sponsor for peer
     ::
-    ::    TODO: handle sponsor loss
+    ::    TODO: really handle sponsor loss
     ::
     ++  on-publ-sponsor
       |=  [=ship sponsor=(unit ship)]
       ^+  event-core
       ::
       ?~  sponsor
-        ~|  %ames-lost-sponsor^our^ship  !!
+        %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
+        event-core
       ::
       =/  state=(unit peer-state)  (get-peer-state ship)
       ?~  state
