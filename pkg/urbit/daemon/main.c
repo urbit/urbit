@@ -1598,6 +1598,69 @@ _cw_work(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
+/* _cw_vile(): generatoe/print keyfile
+*/
+static void
+_cw_vile(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  //  XX check if snapshot is stale?
+  //
+  c3_d  eve_d = u3m_boot(u3_Host.dir_c);
+  u3_noun sam = u3nc(u3nc(u3_nul, u3_nul),
+                     u3nc(c3n, u3nq(c3__once, 'j', c3__vile, u3_nul)));
+  u3_noun res = u3v_soft_peek(0, sam);
+
+
+  switch ( u3h(res) ) {
+    default: c3_assert(0);
+
+    case c3n: {
+      fprintf(stderr, "vile: unable to retrieve key file\r\n");
+      u3_pier_punt_goof("foo", u3k(u3t(res)));
+    }
+    case c3y: {
+      u3_noun dat, vil, out;
+      c3_c* out_c;
+
+      if (  (u3_nul != u3h(u3t(res)))
+         || (c3n == u3r_pq(u3t(u3t(res)), c3__omen, 0, &dat))
+         || (c3n == u3r_p(dat, c3__atom, &vil))
+         || (c3n == u3a_is_atom(vil)) )
+      {
+        fprintf(stderr, "vile: unable to extract key file\r\n");
+        u3m_p("vil", res);
+      }
+      else {
+        out = u3dc("scot", c3__uw, u3k(vil));
+        out_c = u3r_string(out);
+        puts(out_c);
+        c3_free(out_c);
+        u3z(out);
+      }
+    }
+  }
+
+  u3z(res);
+}
+
 /* _cw_utils(): "worker" utilities and mars-process entrypoints
 */
 static c3_i
@@ -1616,6 +1679,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //        [%prep dir=@t]                                ::  prep upgrade
   //        [%queu dir=@t eve=@ud]                        ::  cue state
   //        [?(%vere %fetch-vere) dir=@t]                 ::  download vere
+  //        [%vile dir=@t]                                ::  extract keys
   //    ::                                                ::    ipc:
   //        [%boot dir=@t key=@t wag=@t hap=@ud]          ::  boot
   //        [%work dir=@t key=@t wag=@t hap=@ud eve=@ud]  ::  run
@@ -1653,6 +1717,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__prep: _cw_prep(argc, argv); return 2; // continue on
     case c3__queu: _cw_queu(argc, argv); return 1;
     case c3__vere: _cw_vere(argc, argv); return 1;
+    case c3__vile: _cw_vile(argc, argv); return 1;
 
     case c3__boot: _cw_boot(argc - 2, argv + 2); return 1;
     case c3__work: _cw_work(argc - 2, argv + 2); return 1;
