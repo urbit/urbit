@@ -4,6 +4,8 @@
 #define mkdir(A, B) mkdir(A)
 
 int link(const char *path1, const char *path2);
+ssize_t pread(int fd, void *buf, size_t count, off_t offset);
+ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset);
 char *realpath(const char *path, char *resolved_path);
 int fdatasync(int fd);
 int utimes(const char *path, const struct timeval times[2]);
