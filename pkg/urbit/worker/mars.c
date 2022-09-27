@@ -123,18 +123,6 @@ static void
 _mars_fact(u3_mars* mar_u, u3_noun job, u3_noun pro)
 {
   {
-    u3_gift gif_u = {
-      .sat_e = u3_gift_fact_e,
-      .eve_d = mar_u->dun_d,
-    };
-
-    u3s_jam_xeno(pro, &gif_u.len_d, &gif_u.hun_y);
-    u3z(pro);
-
-    c3_list_pushb(mar_u->gif_u, &gif_u, sizeof(gif_u));
-  }
-
-  {
     u3_atom mat = u3ke_jam(job);
     c3_w  len_w = u3r_met(3, mat);
 
@@ -153,6 +141,18 @@ _mars_fact(u3_mars* mar_u, u3_noun job, u3_noun pro)
     u3_saga_commit_async(mar_u->log_u,
                          dat_y,
                          len_i);
+  }
+
+  {
+    u3_gift gif_u = {
+      .sat_e = u3_gift_fact_e,
+      .eve_d = mar_u->dun_d,
+    };
+
+    u3s_jam_xeno(pro, &gif_u.len_d, &gif_u.hun_y);
+    u3z(pro);
+
+    c3_list_pushb(mar_u->gif_u, &gif_u, sizeof(gif_u));
   }
 
 }
