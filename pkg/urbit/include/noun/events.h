@@ -64,6 +64,9 @@
         /// Tracking structure for pages touched since last save.
         c3_w        dit_w[u3a_pages >> 5];
 
+        /// Number of pages (<= u3a_pages).
+        c3_w pag_w;
+
         /// North segment (heap).
         u3e_image   nor_u;
 

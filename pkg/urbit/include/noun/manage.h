@@ -49,7 +49,7 @@
 
         /// Start the environment.
         void
-        u3m_init();
+        u3m_init(size_t len_i);
 
         /// Instantiate or activate image.
         void

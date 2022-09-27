@@ -314,6 +314,7 @@
         c3_o    con;                        //      run conn
         c3_o    doc;                        //      dock binary in pier
         u3_even* vex_u;                     //  --prop-*, boot enhanchements
+        c3_o    mel;                        //  --auto-meld
       } u3_opts;
 
     /* u3_host: entire host.

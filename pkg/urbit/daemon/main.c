@@ -177,6 +177,7 @@ _main_init(void)
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.tra = c3n;
   u3_Host.ops_u.veb = c3n;
+  u3_Host.ops_u.mel = c3n;
   u3_Host.ops_u.puf_c = "jam";
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
@@ -258,6 +259,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "prop-file",           required_argument, NULL, 1 },
     { "prop-url",            required_argument, NULL, 2 },
     { "prop-name",           required_argument, NULL, 3 },
+    { "auto-meld",           no_argument,       NULL, 4 },
     //
     { NULL, 0, NULL, 0 },
   };
@@ -269,6 +271,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     switch ( ch_i ) {
       case 1: case 2: case 3: {  //  prop-*
         _main_add_prop(ch_i, strdup(optarg));
+        break;
+      }
+      case 4: {  //  auto-meld
+        u3_Host.ops_u.mel = c3y;
         break;
       }
       case 'X': {
@@ -1867,6 +1873,12 @@ main(c3_i   argc,
       */
       if ( _(u3_Host.ops_u.gab) ) {
         u3C.wag_w |= u3o_debug_ram;
+      }
+
+      /*  Set auto-meld flag.
+      */
+      if ( _(u3_Host.ops_u.mel) ) {
+        u3C.wag_w |= u3o_auto_meld;
       }
 
       /*  Set profile flag.
