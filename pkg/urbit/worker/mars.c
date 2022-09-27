@@ -1029,7 +1029,6 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
         || nou != c3__noun )
     {
       u3z(res);
-      // TODO: will this leak mar_u->met_u.who_d?
       goto free_event_log;
     }
 
