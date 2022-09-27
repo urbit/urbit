@@ -1019,7 +1019,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     // Scry sample for reading fake bit is [[~ ~] [%.n [%once %j %fake ~]]]
     u3_cell sam = u3nc(u3nc(u3_nul, u3_nul),
                        u3nc(c3n, u3nq(c3__once, 'j', c3__fake, u3_nul)));
-    u3_noun res = u3v_soft_peek(1000 /* ms */, sam);
+    u3_noun res = u3v_soft_peek(0 /* don't timeout */, sam);
     // Response is something like:
     // [0 0 %omen [106 '~zod' %fake '~2022.9.8..20.38.03..f7d0' 0] %noun 0]
     u3_noun ome, nou, fak;
