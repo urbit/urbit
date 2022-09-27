@@ -624,7 +624,7 @@ u3_saga_replay(u3_saga* const log_u,
            las_d);
 
   if ( !u3_epoc_is_first(poc_u) ) {
-    if ( u3A->eve_d < u3_epoc_first_evt(poc_u) ) {
+    if ( u3A->eve_d < u3_epoc_num(poc_u) ) {
       try_saga(_boot_from_epoc_snapshot(poc_u),
                goto end,
                "failed to boot from %s snapshot\r\n",

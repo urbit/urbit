@@ -759,7 +759,7 @@ u3_epoc_last_commit(const u3_epoc* const poc_u)
 }
 
 c3_d
-u3_epoc_first_evt(const u3_epoc* const poc_u)
+u3_epoc_num(const u3_epoc* const poc_u)
 {
   return u3_epoc_first_commit(poc_u) - 1;
 }

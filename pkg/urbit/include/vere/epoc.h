@@ -154,14 +154,16 @@ u3_epoc_first_commit(const u3_epoc* const poc_u);
 c3_d
 u3_epoc_last_commit(const u3_epoc* const poc_u);
 
-/// Get the ID of the first event represented by the epoch, which is equivalent
-/// to the ID of the event that corresponds to the epoch's snapshot.
+/// Get an epoch's number.
+///
+/// An epoch's number is equivalent to the ID of the event that corresponds to
+/// the epoch's snapshot.
 ///
 /// @param[in] poc_u  Epoch handle. Must not be NULL.
 ///
-/// @return  ID of epoch's first event.
+/// @return  Epoch number.
 c3_d
-u3_epoc_first_evt(const u3_epoc* const poc_u);
+u3_epoc_num(const u3_epoc* const poc_u);
 
 /// Determine whether an epoch has been committed to.
 ///
