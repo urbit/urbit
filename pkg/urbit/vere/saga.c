@@ -676,6 +676,12 @@ u3_saga_info(const u3_saga* const log_u)
     u3_epoc_info(poc_u);
     nod_u = c3_lode_next(nod_u);
   }
+
+  fprintf(stderr, "  histogram of commit sizes:\r\n");
+  fprintf(stderr, "    (number of events in commit): (number of commits)\r\n");
+  for ( size_t idx_i = 0; idx_i < max_batch_size; idx_i++ ) {
+    fprintf(stderr, "    %lu: %lu\r\n", idx_i, log_u->his_w[idx_i]);
+  }
 }
 
 void
