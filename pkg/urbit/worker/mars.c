@@ -762,7 +762,6 @@ _saga_replay_cb(void*        ptr_v,
   }
   u3z(_mars_sure_feck(mar_u, pre_w, vir));
 
-  // (4)
   mar_u->mug_l = u3r_mug(u3A->roc);
   if ( mug_l && mar_u->mug_l != mug_l ) {
     fprintf(stderr,
