@@ -205,8 +205,9 @@ u3_epoc_is_first(const u3_epoc* const poc_u);
 /// Synchronously commit one or more serialized events to an epoch.
 ///
 /// @param[in] poc_u  Epoch handle.
-/// @param[in] nod_u  c3_list node of first event to commit with serialized
-///                   event as payload.
+/// @param[in] nod_u  c3_list node (from list with `C3_LIST_TRANSFER` semantics)
+///                   of first event to commit with a reference to a serialized
+///                   event as a payload.
 /// @param[in] len_i  Number of events to commit.
 ///
 /// @return 0  Event could not be committed to epoc.

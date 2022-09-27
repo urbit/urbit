@@ -15,10 +15,10 @@ struct _c3_list_node {
   struct _c3_list_node* pre_u;
 
   /// Length of `dat_y` in bytes.
-  size_t                dat_i;
+  size_t dat_i;
 
   /// Payload data.
-  c3_y                  dat_y[];
+  c3_y dat_y[];
 };
 
 /// Doubly-linked list handle. Typedefed to `c3_list`.
@@ -30,7 +30,10 @@ struct _c3_list {
   c3_lode* bak_u;
 
   /// Number of nodes in the list.
-  size_t   len_i;
+  size_t len_i;
+
+  /// Ownership mode of the list.
+  c3_list_ownership own_e;
 };
 
 //==============================================================================
@@ -38,11 +41,21 @@ struct _c3_list {
 //==============================================================================
 
 static inline c3_lode*
-_create_node(const void* const dat_v, const size_t dat_i)
+_create_node(const void* const dat_v, size_t dat_i, c3_list_ownership own_e)
 {
-  c3_lode* nod_u = c3_calloc(sizeof(*nod_u) + dat_i);
-  nod_u->dat_i   = dat_i;
-  memcpy(nod_u->dat_y, dat_v, dat_i);
+  c3_lode* nod_u = NULL;
+  switch ( own_e ) {
+    case C3_LIST_COPY:
+      nod_u        = c3_calloc(sizeof(*nod_u) + dat_i);
+      nod_u->dat_i = dat_i;
+      memcpy(nod_u->dat_y, dat_v, dat_i);
+      break;
+    case C3_LIST_TRANSFER:
+      nod_u        = c3_calloc(sizeof(*nod_u) + sizeof(dat_v));
+      nod_u->dat_i = dat_i;
+      memcpy(nod_u->dat_y, &dat_v, sizeof(dat_v));
+      break;
+  }
   return nod_u;
 }
 
@@ -50,10 +63,17 @@ _create_node(const void* const dat_v, const size_t dat_i)
 // Functions
 //==============================================================================
 
-c3_list*
-c3_list_init(void)
+c3_list* const
+c3_list_init(c3_list_ownership own_e)
 {
-  return c3_calloc(sizeof(c3_list));
+  if ( own_e >= C3_LIST_OWNERSHIP_END ) {
+    return NULL;
+  }
+
+  c3_list* const lis_u = c3_calloc(sizeof(*lis_u));
+  lis_u->own_e         = own_e;
+
+  return lis_u;
 }
 
 size_t
@@ -68,7 +88,7 @@ c3_list_push(c3_list* const    lis_u,
              const void* const dat_v,
              const size_t      siz_i)
 {
-  c3_lode* nod_u = _create_node(dat_v, siz_i);
+  c3_lode* nod_u = _create_node(dat_v, siz_i, lis_u->own_e);
 
   if ( 0 == c3_list_len(lis_u) ) {
     lis_u->fro_u = lis_u->bak_u = nod_u;

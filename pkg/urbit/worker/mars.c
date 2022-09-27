@@ -140,7 +140,9 @@ _mars_fact(u3_mars* mar_u, u3_noun job, u3_noun pro)
 
     c3_l   mug_l = mar_u->mug_l;
     size_t len_i = sizeof(mug_l) + len_w;
-    c3_y   dat_y[len_i];
+    // Heap allocation is required to support arbitrarily-sized events. If
+    // allocated on the stack, overflow could occur.
+    c3_y*  dat_y = c3_malloc(len_i);
     dat_y[0] = mug_l & 0xff;
     dat_y[1] = (mug_l >> 8) & 0xff;
     dat_y[2] = (mug_l >> 16) & 0xff;
@@ -951,7 +953,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       .inn_u = inn_u,
       .out_u = out_u,
       .sat_e = u3_mars_work_e,
-      .gif_u = c3_list_init(),
+      .gif_u = c3_list_init(C3_LIST_COPY),
       .xit_f = NULL,
     };
   }
@@ -1466,7 +1468,7 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
       // Serialize boot event noun into buffer.
       u3_atom mat   = u3qe_jam(i);
       c3_w    len_w = u3r_met(3, mat);
-      c3_y    dat_y[4 + len_w];
+      c3_y*   dat_y = c3_malloc(4 + len_w);
       // First four bytes are for mug, and the mug for boot events is 0.
       memset(dat_y, 0, sizeof(c3_w));
       u3r_bytes(0, len_w, dat_y + 4, mat);

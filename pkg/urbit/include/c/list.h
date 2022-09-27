@@ -29,6 +29,21 @@ typedef enum {
   C3_LIST_BACK  = 1,
 } c3_list_end;
 
+/// Ownership modes of list node payloads.
+typedef enum {
+  /// When pushing a new node onto a list, the data supplied by the caller is
+  /// copied into the new node, and ownership of the supplied data is retained
+  /// by the caller.
+  C3_LIST_COPY,
+
+  /// When pushing a new node onto a list, the data supplied by the caller is
+  /// transferred into the new node without copying, and ownership of the
+  /// supplied data is transferred from the caller to the list.
+  C3_LIST_TRANSFER,
+
+  C3_LIST_OWNERSHIP_END,
+} c3_list_ownership;
+
 //==============================================================================
 // Macros
 //==============================================================================
@@ -53,11 +68,14 @@ typedef enum {
 
 /// Create a new list.
 ///
-/// @return  NULL  List could not be created.
-/// @return        Newly created list. MUST be freed by caller when list is ready for
-///                disposal.
-c3_list*
-c3_list_init(void);
+/// @param[in] own_e  Ownership mode of the list.
+///
+/// @return  NULL  List could not be created because of an invalid ownership
+///                mode.
+/// @return        Newly created list. MUST be freed by caller when list is
+///                ready for disposal.
+c3_list* const
+c3_list_init(c3_list_ownership own_e);
 
 /// Get number of nodes in a list.
 ///
@@ -69,8 +87,13 @@ c3_list_len(const c3_list* const lis_u);
 
 /// Add a new node onto the end of a list.
 ///
-/// When pushing a new element onto a list, `siz_i` bytes from `dat_v` are
-/// copied to the payload field of the newly allocated node.
+/// If the list was created with `C3_LIST_COPY`, when pushing a new element
+/// onto the list, `siz_i` bytes from `dat_v` are copied to the payload field of
+/// the newly allocated node.
+///
+/// If the list was created with `C3_LIST_TRANSFER`, when pushing a new element
+/// onto the list, `dat_v` is referenced by the payload field of the newly
+/// allocated node.
 ///
 /// @param[in] lis_u  If NULL, behavior is undefined.
 /// @param[in] end_u  If C3_LIST_FRONT, push onto the front of `lis_u`.

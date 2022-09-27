@@ -231,10 +231,10 @@ _get_boot_seq_len(const u3_epoc* const poc_u, c3_w* const len_w)
     // Read the life cycle length out of the epoch's META database.
     case 0: {
       static const c3_c key_c[] = "life";
-      MDB_val key_u = {
-        .mv_data = (void*)key_c,
-        // Keys in the META database omit the NULL terminator.
-        .mv_size = sizeof(key_c) - 1,
+      MDB_val           key_u   = {
+                    .mv_data = (void*)key_c,
+                    // Keys in the META database omit the NULL terminator.
+                    .mv_size = sizeof(key_c) - 1,
       };
       MDB_val val_u;
       try_lmdb(mdb_get(txn_u, dbi_u, &key_u, &val_u),
@@ -259,7 +259,7 @@ _get_boot_seq_len(const u3_epoc* const poc_u, c3_w* const len_w)
     // length is the life cycle length.
     case MDB_NOTFOUND:
       *len_w = u3_epoc_len(poc_u);
-      suc_t = 1;
+      suc_t  = 1;
       break;
 
     default:
@@ -348,7 +348,7 @@ _epoc_first_evt_from_path(const c3_path* const pax_u)
   }
 
   c3_c* end_c;
-  c3_d fir_d = strtoull(cur_c + sizeof(epo_pre_c) - 1, &end_c, 10);
+  c3_d  fir_d = strtoull(cur_c + sizeof(epo_pre_c) - 1, &end_c, 10);
   if ( '\0' == *end_c && 0 != fir_d ) {
     return fir_d + 1;
   }
@@ -396,7 +396,7 @@ _lmdb_gulf(MDB_env* env_u, c3_d* const fir_d, c3_d* const las_d)
   if ( 0 != mdb_dbi_open(txn_u, dab_nam_c, MDB_INTEGERKEY, &dbi_u) ) { // (1)
     *fir_d = epo_min_d;
     *las_d = epo_min_d - 1;
-    suc_t = 1;
+    suc_t  = 1;
     goto abort_txn;
   }
 
@@ -811,7 +811,7 @@ u3_epoc_commit(u3_epoc* const poc_u, const c3_lode* nod_u, const size_t len_i)
     }
     MDB_val key_u = {.mv_data = &ide_d, .mv_size = sizeof(ide_d)};
     MDB_val val_u = {
-      .mv_data = c3_lode_data(nod_u),
+      .mv_data = *(c3_y**)c3_lode_data(nod_u),
       .mv_size = c3_lode_len(nod_u),
     };
 
@@ -910,8 +910,8 @@ u3_epoc_iter_step(u3_epoc* const poc_u, c3_y** const byt_y, size_t* const byt_i)
     goto fail;
   }
 
-  MDB_val       key_u, val_u;
-  c3_t          fir_t = (poc_u->itr_u.fir_d == poc_u->itr_u.cur_d);
+  MDB_val key_u, val_u;
+  c3_t    fir_t = (poc_u->itr_u.fir_d == poc_u->itr_u.cur_d);
   // No need to advance to the next key if this is the first call to
   // u3_epoc_iter_step().
   MDB_cursor_op ops_u = (fir_t ? MDB_GET_CURRENT : MDB_NEXT);
@@ -1008,7 +1008,7 @@ u3_epoc_delete(u3_epoc* const poc_u)
     return 0;
   }
 
-  c3_path* pax_u = c3_path_fp(u3_epoc_path(poc_u));
+  c3_path*       pax_u = c3_path_fp(u3_epoc_path(poc_u));
   struct dirent* ent_u;
   errno = 0;
   while ( (ent_u = readdir(dir_u)) ) {
@@ -1017,7 +1017,7 @@ u3_epoc_delete(u3_epoc* const poc_u)
     }
 
     c3_path_push(pax_u, ent_u->d_name);
-    if ( 0 != unlink(c3_path_str(pax_u)) ){
+    if ( 0 != unlink(c3_path_str(pax_u)) ) {
       fprintf(stderr,
               "epoc: failed to delete %s: %s\r\n",
               c3_path_str(pax_u),

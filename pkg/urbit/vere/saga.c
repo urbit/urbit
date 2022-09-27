@@ -47,7 +47,7 @@ struct _u3_saga {
   c3_path* pax_u;
 
   /// ID of youngest event.
-  c3_d     eve_d;
+  c3_d eve_d;
 
   /// Epochs.
   struct {
@@ -64,31 +64,31 @@ struct _u3_saga {
     c3_list* lis_u;
 
     /// Number of events in commit request.
-    size_t   req_i;
+    size_t req_i;
   } eve_u;
 
   /// Histogram of commit batch size.
   size_t his_w[max_batch_size];
 
   /// Active commit flag.
-  c3_t   act_t;
+  c3_t act_t;
 
   /// Async commit context.
   struct {
     /// libuv event loop.
-    uv_loop_t*   lup_u;
+    uv_loop_t* lup_u;
 
     /// libuv work queue handle.
-    uv_work_t    req_u;
+    uv_work_t req_u;
 
     /// Callback invoked upon commit completion.
     u3_saga_news com_f;
 
     /// User context passed to `com_f`.
-    void*        ptr_v;
+    void* ptr_v;
 
     /// Commit success flag.
-    c3_t         suc_t;
+    c3_t suc_t;
   } asy_u;
 };
 
@@ -161,7 +161,9 @@ _migrate(u3_saga* const log_u);
 /// @return 1  Discovered one or more epoch directories.
 /// @return 0  Otherwise.
 static c3_t
-_read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[dname_size], size_t* ent_i);
+_read_epoc_dirs(const c3_c* const dir_c,
+                c3_c (**ent_c)[dname_size],
+                size_t* ent_i);
 
 /// Remove events that were committed in the last commit request from an event
 /// log's pending commits list.
@@ -208,8 +210,8 @@ _boot_from_epoc_snapshot(const u3_epoc* const poc_u)
 static inline c3_i
 _cmp_epocs(const void* lef_v, const void* rih_v)
 {
-  const c3_c* lef_c = *(const c3_c(*)[dname_size])lef_v;
-  const c3_c* rih_c = *(const c3_c(*)[dname_size])rih_v;
+  const c3_c*   lef_c = *(const c3_c(*)[dname_size])lef_v;
+  const c3_c*   rih_c = *(const c3_c(*)[dname_size])rih_v;
   const ssize_t len_i = (ssize_t)strlen(lef_c);
   const ssize_t ren_i = (ssize_t)strlen(rih_c);
   return len_i == ren_i ? strcmp(lef_c, rih_c) : len_i - ren_i;
@@ -224,9 +226,7 @@ _is_epoc_dir(const c3_c* const nam_c)
 static c3_t
 _migrate(u3_saga* const log_u)
 {
-  u3_epoc* poc_u = u3_epoc_migrate(log_u->pax_u,
-                                   log_u->pax_u,
-                                   u3A->eve_d);
+  u3_epoc* poc_u = u3_epoc_migrate(log_u->pax_u, log_u->pax_u, u3A->eve_d);
   if ( !poc_u ) {
     goto fail;
   }
@@ -234,18 +234,19 @@ _migrate(u3_saga* const log_u)
   log_u->eve_d = u3_epoc_last_commit(poc_u);
 
   { // Push the newly created epoch from migration onto the epoch list.
-    try_list(log_u->epo_u.lis_u = c3_list_init(), goto fail);
+    try_list(log_u->epo_u.lis_u = c3_list_init(C3_LIST_COPY), goto fail);
     c3_list_pushb(log_u->epo_u.lis_u, poc_u, epo_siz_i);
     c3_free(poc_u);
   }
 
   // Immediately rollover to a new epoch.
   if ( !u3_saga_rollover(log_u) ) {
-    fprintf(stderr, "saga: failed to rollover to new epoch after migrating\r\n");
+    fprintf(stderr,
+            "saga: failed to rollover to new epoch after migrating\r\n");
     goto fail;
   }
 
-  try_list(log_u->eve_u.lis_u = c3_list_init(), goto fail);
+  try_list(log_u->eve_u.lis_u = c3_list_init(C3_LIST_TRANSFER), goto fail);
 
   goto succeed;
 
@@ -269,9 +270,9 @@ _read_epoc_dirs(const c3_c* const dir_c, c3_c (**ent_c)[], size_t* ent_i)
 
   struct dirent* ent_u;
   // Arbitrarily choose 16 as the initial guess at the max number of epochs.
-  size_t         cap_i = 16;
-  c3_c(*dst_c)[dname_size]  = c3_malloc(cap_i * dname_size);
-  size_t dst_i         = 0;
+  size_t cap_i             = 16;
+  c3_c(*dst_c)[dname_size] = c3_malloc(cap_i * dname_size);
+  size_t dst_i             = 0;
   while ( (ent_u = readdir(dir_u)) ) {
     if ( !_is_epoc_dir(ent_u->d_name) ) {
       continue;
@@ -298,7 +299,9 @@ _remove_committed_events(u3_saga* const log_u)
   c3_list* eve_u = log_u->eve_u.lis_u;
   size_t   len_i = log_u->eve_u.req_i;
   for ( size_t idx_i = 0; idx_i < len_i; idx_i++ ) {
-    c3_free(c3_list_popf(eve_u));
+    c3_lode* nod_u = c3_list_popf(eve_u);
+    c3_free(*(c3_y**)c3_lode_data(nod_u));
+    c3_free(nod_u);
   }
 }
 
@@ -361,7 +364,8 @@ u3_saga_new(const c3_path* const pax_u)
   mkdir(c3_path_str(log_u->pax_u), 0700);
 
   { // Create first epoch.
-    try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_event_log);
+    try_list(log_u->epo_u.lis_u = c3_list_init(C3_LIST_COPY),
+             goto free_event_log);
     u3_epoc* poc_u;
     try_epoc(poc_u = u3_epoc_new(log_u->pax_u, epo_min_d),
              goto free_event_log,
@@ -372,7 +376,8 @@ u3_saga_new(const c3_path* const pax_u)
     log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
   }
 
-  try_list(log_u->eve_u.lis_u = c3_list_init(), goto free_event_log);
+  try_list(log_u->eve_u.lis_u = c3_list_init(C3_LIST_TRANSFER),
+           goto free_event_log);
 
   goto succeed;
 
@@ -414,7 +419,8 @@ u3_saga_open(const c3_path* const pax_u, c3_w* const len_w)
     goto free_event_log;
   }
 
-  try_list(log_u->epo_u.lis_u = c3_list_init(), goto free_dir_entries);
+  try_list(log_u->epo_u.lis_u = c3_list_init(C3_LIST_COPY),
+           goto free_dir_entries);
   u3_epoc *poc_u, *pre_u;
   for ( size_t idx_i = 0; idx_i < ent_i; idx_i++ ) {
     c3_path_push(log_u->pax_u, ent_c[idx_i]);
@@ -434,7 +440,8 @@ u3_saga_open(const c3_path* const pax_u, c3_w* const len_w)
   log_u->epo_u.cur_u = c3_lode_data(c3_list_peekb(log_u->epo_u.lis_u));
   log_u->eve_d       = u3_epoc_last_commit(log_u->epo_u.cur_u);
 
-  try_list(log_u->eve_u.lis_u = c3_list_init(), goto free_dir_entries);
+  try_list(log_u->eve_u.lis_u = c3_list_init(C3_LIST_TRANSFER),
+           goto free_dir_entries);
 
   c3_free(ent_c);
   goto succeed;
@@ -495,10 +502,10 @@ u3_saga_commit_sync(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
 }
 
 void
-u3_saga_set_async_ctx(u3_saga* log_u,
+u3_saga_set_async_ctx(u3_saga*         log_u,
                       uv_loop_t* const lup_u,
-                      u3_saga_news com_f,
-                      void* ptr_v)
+                      u3_saga_news     com_f,
+                      void*            ptr_v)
 {
   if ( !log_u ) {
     return;
@@ -509,11 +516,10 @@ u3_saga_set_async_ctx(u3_saga* log_u,
   log_u->asy_u.ptr_v      = ptr_v;
 }
 
-
 c3_t
 u3_saga_commit_async(u3_saga* const log_u,
-                     c3_y* const byt_y,
-                     const size_t byt_i)
+                     c3_y* const    byt_y,
+                     const size_t   byt_i)
 {
   c3_list* const eve_u = log_u->eve_u.lis_u;
   // A NULL event can be passed to invoke another commit batch.
@@ -575,7 +581,7 @@ u3_saga_truncate(u3_saga* const log_u, size_t cnt_i)
 
   size_t len_i = c3_list_len(epo_u);
   c3_assert(len_i > 0);
-  cnt_i = ( 0 == cnt_i ) ? len_i - 1 : c3_min(cnt_i, len_i - 1);
+  cnt_i = (0 == cnt_i) ? len_i - 1 : c3_min(cnt_i, len_i - 1);
 
   for ( size_t idx_i = 0; idx_i < cnt_i; idx_i++ ) {
     c3_lode* nod_u = c3_list_popf(epo_u);
@@ -718,8 +724,10 @@ u3_saga_close(u3_saga* const log_u)
   { // Free events pending commit.
     c3_list* eve_u = log_u->eve_u.lis_u;
     if ( eve_u ) {
-      for ( size_t idx_i = 0; idx_i < c3_list_len(eve_u); idx_i++ ) {
-        c3_free(c3_list_popf(eve_u));
+      c3_lode* nod_u;
+      while ( (nod_u = c3_list_popf(eve_u)) ) {
+        c3_free(*(c3_y**)c3_lode_data(nod_u));
+        c3_free(nod_u);
       }
       c3_free(eve_u);
     }

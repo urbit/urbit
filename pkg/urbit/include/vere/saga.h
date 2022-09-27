@@ -161,7 +161,9 @@ u3_saga_needs_bootstrap(const u3_saga* const log_u);
 /// @return 1  Event was committed.
 /// @return 0  Otherwise.
 c3_t
-u3_saga_commit_sync(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i);
+u3_saga_commit_sync(u3_saga* const log_u,
+                    c3_y* const    byt_y,
+                    const size_t   byt_i);
 
 /// Set the context for an asynchronous commit.
 ///
@@ -172,10 +174,10 @@ u3_saga_commit_sync(u3_saga* const log_u, c3_y* const byt_y, const size_t byt_i)
 /// @param[in] com_f  Callback invoked upon commit completion.
 /// @param[in] ptr_v  User context passed to `com_f`.
 void
-u3_saga_set_async_ctx(u3_saga* const log_u,
+u3_saga_set_async_ctx(u3_saga* const   log_u,
                       uv_loop_t* const lup_u,
-                      u3_saga_news com_f,
-                      void* ptr_v);
+                      u3_saga_news     com_f,
+                      void*            ptr_v);
 
 /// Asynchronously commit an event to an event log.
 ///
@@ -192,8 +194,8 @@ u3_saga_set_async_ctx(u3_saga* const log_u,
 /// @return 0  Otherwise.
 c3_t
 u3_saga_commit_async(u3_saga* const log_u,
-                     c3_y* const byt_y,
-                     const size_t byt_i);
+                     c3_y* const    byt_y,
+                     const size_t   byt_i);
 
 /// Roll an event log over to a new epoch.
 ///
