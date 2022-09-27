@@ -1410,7 +1410,9 @@ u3_mars_boot(const c3_c* dir_c, u3_noun com)
 
   u3_boot_opts inp_u;
   {
-    inp_u.veb_o       = __( u3C.wag_w & u3o_verbose );
+    // Annoyingly, Arvo uses the flag to mean laconicity (the opposite of
+    // verbosity), which is why we have to negate the flag test.
+    inp_u.veb_o       = __(!( u3C.wag_w & u3o_verbose ));
     inp_u.lit_o       = c3n; // unimplemented in arvo
     // XX source kelvin from args?
     inp_u.ver_u.nam_m = c3__zuse;
