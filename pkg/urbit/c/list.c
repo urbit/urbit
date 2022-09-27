@@ -55,6 +55,8 @@ _create_node(const void* const dat_v, size_t dat_i, c3_list_ownership own_e)
       nod_u->dat_i = dat_i;
       memcpy(nod_u->dat_y, &dat_v, sizeof(dat_v));
       break;
+    case C3_LIST_OWNERSHIP_END:
+      break;
   }
   return nod_u;
 }
