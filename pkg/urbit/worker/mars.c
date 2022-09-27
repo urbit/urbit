@@ -590,6 +590,8 @@ _mars_damp_file(void)
 static void
 _mars_flush(u3_mars* mar_u)
 {
+  const c3_d las_d = u3_saga_last_commit(mar_u->log_u);
+
 top:
   {
     u3_gift* gif_u = c3_lode_data(c3_list_peekf(mar_u->gif_u));
@@ -598,7 +600,7 @@ top:
     //
     while (  gif_u
           && (  (u3_gift_rest_e == gif_u->sat_e)
-             || (gif_u->eve_d <= u3_saga_last_commit(mar_u->log_u)) ) )
+             || (gif_u->eve_d <= las_d) ) )
     {
       u3_newt_send(mar_u->out_u, gif_u->len_d, gif_u->hun_y);
 
@@ -607,9 +609,7 @@ top:
     }
   }
 
-  if (  (u3_mars_work_e != mar_u->sat_e)
-     && (u3_saga_last_commit(mar_u->log_u) == mar_u->dun_d) )
-  {
+  if ( u3_mars_work_e != mar_u->sat_e && las_d == mar_u->dun_d ) {
     if ( u3_mars_save_e == mar_u->sat_e ) {
       if ( u3_saga_needs_rollover(mar_u->log_u)
           && !u3_saga_rollover(mar_u->log_u) )
