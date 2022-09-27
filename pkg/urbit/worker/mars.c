@@ -632,8 +632,11 @@ top:
       _mars_damp_file();
 
       c3_free(mar_u->dir_u);
-      for ( size_t idx_i = 0; idx_i < c3_list_len(mar_u->gif_u); idx_i++ ) {
-        c3_free(c3_list_popf(mar_u->gif_u));
+      c3_lode* nod_u;
+      while ( (nod_u = c3_list_popf(mar_u->gif_u)) ) {
+        u3_gift* gif_u = c3_lode_data(nod_u);
+        c3_free(gif_u->hun_y);
+        c3_free(nod_u);
       }
       c3_free(mar_u->gif_u);
       c3_free(mar_u->log_u);
