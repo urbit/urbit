@@ -5,7 +5,7 @@
   $:  file=(unit @t)                   ::  filename
       type=(unit mite)                 ::  content-type
       code=(unit @t)                   ::  content-transfer-encoding
-      body=@t                          ::  content
+      body=octs                        ::  content
   ==
 ::
 ++  de-request
@@ -38,12 +38,14 @@
   ++  dim   (jest (cat 3 '--' del))
   ++  nip   (jest '\0d\0a')
   ++  nab   (more fas (cook (cury rap 3) (plus qit)))
-  ++  nag   (dine ;~(less ;~(plug nip dim) next))
+  ++  nag   (pour ;~(less ;~(plug nip dim) next))
   ++  nod   (dine ;~(less doq next))
   ++  nom   (dine alp)
   ++  sip   ;~(plug nip nip)
   ++  tip   ;~(plug dim hep hep nip)
   ::
   ++  dine  |*(r=rule (cook (cury rep 3) (star r)))
+  ++  pour  |*(r=rule (cook meat (star r)))
+  ++  meat  |=(l=(list @) [(lent l) (rep 3 l)])
   --
 --
