@@ -1004,16 +1004,11 @@ _cw_eval_get_input(FILE* fp, size_t size)
 
   str = c3_realloc(NULL, size);//size is start size
   
-  if( !str )
-    return str;
-  
   while( EOF != (ch=fgetc(fp)) ){
     str[len++]=ch;
     if( len == size ){
       size +=16;
-      str = realloc(str, (size));
-      if(!str)
-        return str;
+      str = c3_realloc(str, (size));
     }
   }
     
