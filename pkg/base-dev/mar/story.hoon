@@ -46,18 +46,13 @@
     [/text/x-urb-story (as-octs:mimes:html (of-wain:format txt))]
   ++  txt
     ^-  wain
-    %-  snoc  :_  ''  :: ensures terminating newline is present
+    %-  zing
+    %+  join  `wain`~['---']
     %+  murn  ~(tap by tale)
-    |=  [[=tako:clay =proses]]
-    ^-  (unit cord)
+    |=  [=tako:clay =proses]
+    ^-  (unit wain)
     ?~  proses  ~
-    %-  some
-    %-  crip
-    ;:  welp
-      (tako-to-text tako)
-      (proses-to-text proses)
-      "---"
-    ==
+    (some (chapter-to-text tako proses))
   --
 ++  grab
   |%                                                    ::  convert from
