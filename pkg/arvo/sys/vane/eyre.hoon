@@ -614,8 +614,8 @@
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
-    :: redirect to https if insecure, redirects enabled
-    :: and secure port live
+    ::  redirect to https if insecure, redirects enabled
+    ::  and secure port live
     ::
     ?:  ?&  !secure
             redirect.http-config.state
