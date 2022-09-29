@@ -2576,7 +2576,7 @@
 ++  load
   |=  old=axle
   ^+  ..^$
-  :: enable https redirects if certificate configured
+  ::  enable https redirects if certificate configured
   ::
   =.  redirect.http-config.server-state.old
     ?&  ?=(^ secure.ports.server-state.old)
