@@ -2325,7 +2325,9 @@
         [~ http-server-gate]
       =.  secure.config  cert.http-rule.task
       =.  redirect.config
-        &(?=(^ secure.ports.server-state.ax) ?=(^ cert.http-rule.task))
+        ?&  ?=(^ secure.ports.server-state.ax)
+            ?=(^ cert.http-rule.task)
+        ==
       :_  http-server-gate
       =*  out-duct  outgoing-duct.server-state.ax
       ?~  out-duct  ~
