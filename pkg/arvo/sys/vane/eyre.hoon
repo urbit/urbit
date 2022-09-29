@@ -749,7 +749,6 @@
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
-::
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
