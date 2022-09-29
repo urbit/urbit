@@ -599,11 +599,11 @@
     ?:  =('desk' name)
       ::  must be a desk with existing charge
       ::
-      ?.  ((sane %ta) body)
-        [desk glob (cat 3 'invalid desk: ' body) err]
-      ?.  (~(has by charges) body)
-        [desk glob (cat 3 'unknown desk: ' body) err]
-      [body glob err]
+      ?.  ((sane %ta) q.body)
+        [desk glob (cat 3 'invalid desk: ' q.body) err]
+      ?.  (~(has by charges) q.body)
+        [desk glob (cat 3 'unknown desk: ' q.body) err]
+      [q.body glob err]
     :-  desk
     ::  all submitted files must be complete
     ::
@@ -621,8 +621,9 @@
     ::  make sure to exclude the top-level dir from the path
     ::
     :_  err
-    %+  ~(put by glob)  (slag 1 `path`u.filp)
-    [u.type (as-octs:mimes:html body)]
+    %+  ~(put by glob)
+      (slag 1 `path`u.filp)
+    [u.type body]
   ::
   ++  fip
     =,  de-purl:html
