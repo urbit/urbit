@@ -484,11 +484,11 @@
       [%swap-files @tas]
     =/  =desk  +.val
     =.  userspace-ova.pil
-      =/  slim-dirs=(list path)
-        ~[/app /ted /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
+      ::  take all files from a userspace desk
+      =/  all-dirs=(list path)  ~[/]
       :_  ~
       %-  unix-event:pill-lib
-      %+  %*(. file-ovum:pill-lib directories slim-dirs)
+      %+  %*(. file-ovum:pill-lib directories all-dirs)
       desk  /(scot %p our.hid)/[desk]/(scot %da now.hid)
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
