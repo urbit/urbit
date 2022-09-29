@@ -7,6 +7,7 @@
 +$  owners      (jug owner ship)
 +$  sponsors    (map ship [residents=(set ship) requests=(set ship)])
 +$  history     (map address:ethereum (tree hist-tx))
++$  events      (list event-log:rpc:ethereum)
 +$  net         ?(%mainnet %ropsten %local %default)
 +$  snap-state  [%0 =id:block:jael nas=^state:naive =owners =sponsors]
 ::
