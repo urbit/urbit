@@ -993,23 +993,25 @@ _cw_intr_win(c3_c* han_c)
 }
 #endif
 
-c3_c 
-*_cw_eval_get_input(FILE* fp, size_t size)
+/* _cw_eval_get_input(): Read input from file and return a concatenated string
+*/
+c3_c*
+_cw_eval_get_input(FILE* fp, size_t size)
 {
-//The size is extended by the input with the value of the provisional
   c3_c *str;
   c3_i ch;
   size_t len = 0;
 
-  str = realloc(NULL, sizeof(*str)*size);//size is start size
+  str = c3_realloc(NULL, size);//size is start size
   
-  if(!str)
+  if( !str )
     return str;
   
-  while(EOF!=(ch=fgetc(fp))){
+  while( EOF != (ch=fgetc(fp)) ){
     str[len++]=ch;
-    if(len==size){
-      str = realloc(str, sizeof(*str)*(size+=16));
+    if( len == size ){
+      size +=16;
+      str = realloc(str, (size));
       if(!str)
         return str;
     }
@@ -1017,7 +1019,7 @@ c3_c
     
   str[len++]='\0';
 
-  return realloc(str, sizeof(*str)*len);
+  return c3_realloc(str,len);
 }
 
 
@@ -1069,6 +1071,7 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
   }
   u3z(res);
   u3z(gat);
+  free(evl_c);
 }
 
 /* _cw_serf_commence(): initialize and run serf
