@@ -993,23 +993,43 @@ _cw_intr_win(c3_c* han_c)
 }
 #endif
 
+c3_c 
+*_cw_eval_get_input(FILE* fp, size_t size)
+{
+//The size is extended by the input with the value of the provisional
+  c3_c *str;
+  c3_i ch;
+  size_t len = 0;
+
+  str = realloc(NULL, sizeof(*str)*size);//size is start size
+  
+  if(!str)
+    return str;
+  
+  while(EOF!=(ch=fgetc(fp))){
+    str[len++]=ch;
+    if(len==size){
+      str = realloc(str, sizeof(*str)*(size+=16));
+      if(!str)
+        return str;
+    }
+  }
+    
+  str[len++]='\0';
+
+  return realloc(str, sizeof(*str)*len);
+}
+
+
 /* _cw_eval_commence(): initialize and run the hoon evaluator
 */
 static void
 _cw_eval_commence(c3_i argc, c3_c* argv[])
 {
   //Read from stdin until an EOF is recieved
-  c3_c* lin_c = NULL;
-  size_t len_i = 0;
-  ssize_t red_i;
-  c3_c* evl_c = "";
+  c3_c* evl_c;
 
-  while((red_i = getline(&lin_c, &len_i, stdin)) != -1)
-  {
-     len_i = asprintf(&evl_c, "%s%s", evl_c, lin_c);
-  }
-
-  free(lin_c);
+  evl_c = _cw_eval_get_input(stdin, 10);
 
   //Initialize the Loom and load the Ivory Pill
   c3_d          len_d = u3_Ivory_pill_len;
