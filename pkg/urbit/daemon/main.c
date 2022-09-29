@@ -1021,12 +1021,12 @@ _cw_eval_commence(c3_i argc, c3_c* argv[])
   u3m_boot_lite();
   sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
   if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
-    printf("*** fail _setup 1\n");
+    printf("lite: unable to cue ivory pill\r\n");
     exit(1);
   }
   u3s_cue_xeno_done(sil_u);
   if ( c3n == u3v_boot_lite(pil) ) {
-    printf("*** fail _setup 2\n");
+    u3l_log("lite: boot failed\r\n");
     exit(1);
   }
 
