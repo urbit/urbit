@@ -959,6 +959,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     god_u->ops_u.file = arg_c[0];
     god_u->ops_u.args = arg_c;
 
+    /* spawns worker thread */
     if ( (err_i = uv_spawn(u3L, &god_u->cub_u, &god_u->ops_u)) ) {
       fprintf(stderr, "spawn: %s: %s\r\n", arg_c[0], uv_strerror(err_i));
 
