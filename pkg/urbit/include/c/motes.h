@@ -1240,6 +1240,7 @@
 #   define c3__vern   c3_s4('v','e','r','n')
 #   define c3__very   c3_s4('v','e','r','y')
 #   define c3__view   c3_s4('v','i','e','w')
+#   define c3__vile   c3_s4('v','i','l', 'e')
 #   define c3__vint   c3_s4('v','i','n','t')
 #   define c3__void   c3_s4('v','o','i','d')
 #   define c3__vorp   c3_s4('v','o','r','p')
