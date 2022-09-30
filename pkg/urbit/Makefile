@@ -20,9 +20,11 @@ headers = $(shell find include -type f)
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
 daemon_objs = $(shell echo $(daemon) | sed 's/\.c/.o/g')
 worker_objs = $(shell echo $(worker) | sed 's/\.c/.o/g')
+tests_objs  = $(shell echo $(tests)  | sed 's/\.c/.o/g')
+bench_objs  = $(shell echo $(bench)  | sed 's/\.c/.o/g')
 
-all_objs = $(common_objs) $(daemon_objs) $(worker_objs)
-all_srcs = $(common) $(daemon) $(worker)
+all_objs = $(common_objs) $(daemon_objs) $(worker_objs) $(tests_objs) $(bench_objs)
+all_srcs = $(common) $(daemon) $(worker) $(tests) $(bench)
 
 test_exes  = $(shell echo $(tests) | sed 's/tests\//.\/build\//g' | sed 's/\.c//g')
 bench_exes = $(shell echo $(bench) | sed 's/bench\//.\/build\//g' | sed 's/\.c//g')

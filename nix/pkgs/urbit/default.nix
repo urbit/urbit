@@ -19,8 +19,8 @@ let
   # See https://github.com/urbit/urbit/issues/5561
   oFlags =
     if stdenv.isDarwin
-    then (if enableDebug then [ "-O0" "-g" ] else [ "-O3" ])
-    else [ (if enableDebug then "-O0" else "-O3") "-g" ];
+    then (if enableDebug then [ "-O0" "-g3" ] else [ "-O3" ])
+    else [ (if enableDebug then "-O0" else "-O3") "-g3" ];
 
 in stdenv.mkDerivation {
   inherit src version;
