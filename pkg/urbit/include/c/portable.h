@@ -145,7 +145,7 @@
 
   /** Address space layout.
   ***
-  ***   NB: 2^29 words == 2GB
+  ***   NB: 2^30 words == 4G
   **/
 #   if defined(U3_OS_linux)
 #     ifdef __LP64__

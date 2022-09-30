@@ -496,7 +496,7 @@ _pave_road(c3_w* rut_w, c3_w* mat_w, c3_w* cap_w, c3_w siz_w)
   //  enable in case of corruption
   //
   // memset(mem_w, 0, 4 * len_w);
-  memset(rod_u, 0, 4 * siz_w);
+  memset(rod_u, 0, sizeof(c3_w) * siz_w);
 
   //  the top and bottom of the heap are initially the same
   //
