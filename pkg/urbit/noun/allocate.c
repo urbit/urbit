@@ -72,8 +72,8 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
 
   c3_assert(siz_w >= u3a_minimum);
 
-  box_w[0] = siz_w;
-  box_w[siz_w - 1] = siz_w;
+  box_u->siz_w = siz_w;
+  box_w[siz_w - 1] = siz_w;     /* stor size at end of allocation as well */
   box_u->use_w = use_w;
 
 # ifdef  U3_MEMORY_DEBUG

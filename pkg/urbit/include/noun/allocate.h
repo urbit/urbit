@@ -186,15 +186,14 @@
   /**  Macros.  Should be better commented.
   **/
     /* In and out of the box.
+       u3a_boxed -> sizeof u3a_box + allocation size (len_w) + 1 (for storing the redundant size)
+       u3a_boxto -> the region of memory adjacent to the box.
+       u3a_botox -> the box adjacent to the region of memory
     */
 #     define u3a_boxed(len_w)  (len_w + c3_wiseof(u3a_box) + 1)
 #     define u3a_boxto(box_v)  ( (void *) \
-                                   ( ((c3_w *)(void*)(box_v)) + \
-                                     c3_wiseof(u3a_box) ) )
-#     define u3a_botox(tox_v)  ( (struct _u3a_box *) \
-                                   (void *) \
-                                   ( ((c3_w *)(void*)(tox_v)) - \
-                                      c3_wiseof(u3a_box)  ) )
+                                   ( (u3a_box *)(void *)(box_v) + 1 ) )
+#     define u3a_botox(tox_v)  ( (u3a_box *)(void *)(tox_v) - 1 )
     /* Inside a noun.
     */
 
