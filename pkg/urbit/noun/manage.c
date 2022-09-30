@@ -486,11 +486,12 @@ _pave_parts(void)
   u3R->byc.har_p = u3h_new();
 }
 
-/* _pave_road(): initialize road boundaries
+/* _pave_road(): writes road boundaries to loom mem (stored at mat_w)
 */
 static u3_road*
 _pave_road(c3_w* rut_w, c3_w* mat_w, c3_w* cap_w, c3_w siz_w)
 {
+  c3_dessert(((uintptr_t)rut_w & u3a_balign-1) == 0);
   u3_road* rod_u = (void*) mat_w;
 
   //  enable in case of corruption
@@ -507,10 +508,17 @@ _pave_road(c3_w* rut_w, c3_w* mat_w, c3_w* cap_w, c3_w siz_w)
   rod_u->mat_p = u3of(c3_w, mat_w);  //  stack bottom
   rod_u->cap_p = u3of(c3_w, cap_w);  //  stack top
 
+  _rod_vaal(rod_u);
   return rod_u;
 }
 
 /* _pave_north(): calculate boundaries and initialize north road.
+
+   mem_w - the "beginning" of your loom (its lowest address). Corresponds to rut
+     in a north road.
+   siz_w - the size in bytes of your road record (or home record in the case of
+     paving home).
+   len_w - size of your loom in words
 */
 static u3_road*
 _pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
@@ -521,14 +529,23 @@ _pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   //    the stack starts at the end of the memory segment,
   //    minus space for the road structure [siz_w]
   //
-  c3_w* rut_w = mem_w;
-  c3_w* mat_w = ((mem_w + len_w) - siz_w);
+  //    00~~~|R|---|H|######|C|+++|M|~~~FF
+  //                                ^--u3R which _pave_road returns (u3H for home road)
+  //
+  c3_w* mat_w = c3_align(mem_w + len_w - siz_w, u3a_balign, ALLO);
+  c3_w* rut_w = c3_align(mem_w, u3a_balign, ALHI);
   c3_w* cap_w = mat_w;
 
   return _pave_road(rut_w, mat_w, cap_w, siz_w);
 }
 
 /* _pave_south(): calculate boundaries and initialize south road.
+
+   mem_w - the "beginning" of your loom (its lowest address). Corresponds to mat
+     in a south road.
+   siz_w - the size in bytes of your road record (or home record in the case of
+     paving home).
+   len_w - size of your loom in words
 */
 static u3_road*
 _pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
@@ -539,8 +556,10 @@ _pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   //    the stack starts at the base memory pointer [mem_w],
   //    and ends after the space for the road structure [siz_w]
   //
-  c3_w* rut_w = (mem_w + len_w);
-  c3_w* mat_w = mem_w;
+  //    00~~~|M|+++|C|######|H|---|R|~~~FFF
+  //         ^---u3R which _pave_road returns
+  c3_w* mat_w = c3_align(mem_w, u3a_balign, ALHI);
+  c3_w* rut_w = c3_align(mem_w + len_w, u3a_balign, ALLO);
   c3_w* cap_w = mat_w + siz_w;
 
   return _pave_road(rut_w, mat_w, cap_w, siz_w);
@@ -551,9 +570,9 @@ _pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 static void
 _pave_home(void)
 {
-  c3_w* mem_w = u3_Loom + 1;
+  c3_w* mem_w = u3_Loom + u3a_walign;
   c3_w  siz_w = c3_wiseof(u3v_home);
-  c3_w  len_w = u3C.wor_i - 1;
+  c3_w  len_w = u3C.wor_i - u3a_walign;
 
   u3H = (void *)_pave_north(mem_w, siz_w, len_w);
   u3H->ver_w = u3v_version;
@@ -572,9 +591,10 @@ _find_home(void)
 {
   //  NB: the home road is always north
   //
-  c3_w* mem_w = u3_Loom + 1;
+  c3_w* mem_w = u3_Loom + u3a_walign;
   c3_w  siz_w = c3_wiseof(u3v_home);
-  c3_w  len_w = u3C.wor_i - 1;
+  c3_w  len_w = u3C.wor_i - u3a_walign;
+  c3_w*  mat_w;
 
   {
     c3_w ver_w = *((mem_w + len_w) - 1);
@@ -588,13 +608,16 @@ _find_home(void)
     }
   }
 
-  u3H = (void *)((mem_w + len_w) - siz_w);
+  mat_w = c3_align(mem_w + len_w - siz_w, u3a_balign, ALLO);
+  u3H = (void *)mat_w;
   u3R = &u3H->rod_u;
 
   //  this looks risky, but there are no legitimate scenarios
   //  where it's wrong
   //
   u3R->cap_p = u3R->mat_p = u3C.wor_i - c3_wiseof(*u3H);
+
+  _rod_vaal(u3R);
 }
 
 /* u3m_pave(): instantiate or activate image.
@@ -783,8 +806,10 @@ u3m_error(c3_c* str_c)
 void
 u3m_leap(c3_w pad_w)
 {
-  c3_w     len_w;
+  c3_w     len_w; /* the length of the new road (avail - (pad [4M] + wiseof(u3a_road))) */
   u3_road* rod_u;
+
+  _rod_vaal(u3R);
 
   /* Measure the pad - we'll need it.
   */
@@ -798,40 +823,40 @@ u3m_leap(c3_w pad_w)
     }
 #endif
     if ( (pad_w + c3_wiseof(u3a_road)) >= u3a_open(u3R) ) {
+      /* not enough storage to leap */
       u3m_bail(c3__meme);
     }
-    len_w = u3a_open(u3R) - (pad_w + c3_wiseof(u3a_road));
+    pad_w += c3_wiseof(u3a_road);
+    len_w = u3a_open(u3R) - pad_w;
+    c3_align(len_w, u3a_walign, ALHI);
   }
 
   /* Allocate a region on the cap.
   */
   {
-    u3p(c3_w) bot_p;
+    u3p(c3_w) bot_p;            /* S: bot_p = new mat. N: bot_p = new rut  */
 
     if ( c3y == u3a_is_north(u3R) ) {
-      bot_p = (u3R->cap_p - len_w);
-      u3R->cap_p -= len_w;
+      bot_p = u3R->hat_p + pad_w;
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
       u3e_ward(rod_u->cap_p, rod_u->hat_p);
 #if 0
-      fprintf(stderr, "leap: from north %p (cap 0x%x), to south %p\r\n",
-              u3R,
-              u3R->cap_p + len_w,
-              rod_u);
+      fprintf(stderr, "NPAR.hat_p: 0x%x %p, SKID.hat_p: 0x%x %p\r\n",
+              u3R->hat_p, u3a_into(u3R->hat_p),
+              rod_u->hat_p, u3a_into(rod_u->hat_p));
 #endif
     }
     else {
       bot_p = u3R->cap_p;
-      u3R->cap_p += len_w;
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
       u3e_ward(rod_u->hat_p, rod_u->cap_p);
 #if 0
-      fprintf(stderr, "leap: from south %p (cap 0x%x), to north %p\r\n",
-              u3R,
-              u3R->cap_p - len_w,
-              rod_u);
+      fprintf(stderr, "SPAR.hat_p: 0x%x %p, NKID.hat_p: 0x%x %p\r\n",
+              u3R->hat_p, u3a_into(u3R->hat_p),
+              rod_u->hat_p, u3a_into(rod_u->hat_p));
+
 #endif
     }
   }
@@ -853,6 +878,8 @@ u3m_leap(c3_w pad_w)
 #ifdef U3_MEMORY_DEBUG
   rod_u->all.fre_w = 0;
 #endif
+
+  _rod_vaal(u3R);
 }
 
 void
@@ -1307,7 +1334,7 @@ u3m_soft(c3_w    mil_w,
 {
   u3_noun why;
 
-  why = u3m_soft_top(mil_w, (1 << 20), fun_f, arg);   // 2MB pad
+  why = u3m_soft_top(mil_w, (1 << 20), fun_f, arg);   // 4M pad
 
   if ( 0 == u3h(why) ) {
     return why;

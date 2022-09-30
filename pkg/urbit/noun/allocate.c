@@ -5,6 +5,9 @@
 
 //  declarations of inline functions
 //
+c3_w c3_align_w(c3_w x, c3_w al, align_dir hilo);
+c3_d c3_align_d(c3_d x, c3_d al, align_dir hilo);
+void *c3_align_p(void const * p, size_t al, align_dir hilo);
 void *u3a_into(c3_w x);
 c3_w u3a_outa(void *p);
 c3_w u3a_to_off(c3_w som);
@@ -43,6 +46,20 @@ _box_count(c3_ws siz_ws)
 static void
 _box_count(c3_ws siz_ws) { }
 #endif
+
+/* _box_vaal(): validate box alignment. no-op without C3DBG
+
+   TODO: I think validation code that might be compiled out like this,
+   _box_count, (others?) should have perhaps its own header and certainly its
+   own prefix. having to remind yourself that _box_count doesn't actually do
+   anything unless U3_CPU_DEBUG is defined is annoying. */
+#define _box_vaal(box_u)                                        \
+  do {                                                          \
+  c3_dessert(((uintptr_t)u3a_boxto(box_u)                       \
+              & u3a_balign-1) == 0);                            \
+  c3_dessert((((u3a_box*)(box_u))->siz_w                        \
+              & u3a_walign-1) == 0);                            \
+  } while(0)
 
 /* _box_slot(): select the right free list to search for a block.
    TODO: do we really need a loop to do this?
@@ -84,6 +101,8 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
   box_u->siz_w = siz_w;
   box_w[siz_w - 1] = siz_w;     /* stor size at end of allocation as well */
   box_u->use_w = use_w;
+
+  _box_vaal(box_u);
 
 # ifdef  U3_MEMORY_DEBUG
     box_u->cod_w = u3_Code;
@@ -175,6 +194,8 @@ _box_free(u3a_box* box_u)
     return;
   }
 
+  _box_vaal(box_u);
+
 #if 0
   /* Clear the contents of the block, for debugging.
   */
@@ -187,12 +208,12 @@ _box_free(u3a_box* box_u)
   }
 #endif
 
-  if ( c3y == u3a_is_north(u3R) ) {
+  if ( c3y == u3a_is_north(u3R) ) { /* north */
     /* Try to coalesce with the block below.
     */
     if ( box_w != u3a_into(u3R->rut_p) ) {
-      c3_w       laz_w = *(box_w - 1);
-      u3a_box* pox_u = (u3a_box*)(void *)(box_w - laz_w);
+      c3_w       laz_w = *(box_w - 1); /* the size of a box stored at the end of its allocation */
+      u3a_box* pox_u = (u3a_box*)(void *)(box_w - laz_w); /* the head of the adjacent box below */
 
       if ( 0 == pox_u->use_w ) {
         _box_detach(pox_u);
@@ -217,8 +238,8 @@ _box_free(u3a_box* box_u)
       }
       _box_attach(box_u);
     }
-  }
-  else {
+  }      /* end north */
+  else {                        /* south */
     /* Try to coalesce with the block above.
     */
     if ( (box_w + box_u->siz_w) != u3a_into(u3R->rut_p) ) {
@@ -246,7 +267,7 @@ _box_free(u3a_box* box_u)
       }
       _box_attach(box_u);
     }
-  }
+  } /* end south */
 }
 
 /* _me_align_pad(): pad to first point after pos_p aligned at (ald_w, alp_w).
@@ -283,12 +304,12 @@ static u3a_box*
 _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
 {
   c3_w    pad_w, siz_w;
-  u3_post all_p;
+  u3_post all_p = u3R->hat_p;
 
   if ( c3y == u3a_is_north(u3R) ) {
-    all_p = u3R->hat_p;
     pad_w = _me_align_pad(all_p, ald_w, alp_w);
     siz_w = (len_w + pad_w);
+    siz_w = c3_align(siz_w, u3a_walign, ALHI);
 
     //  hand-inlined: siz_w >= u3a_open(u3R)
     //
@@ -298,10 +319,12 @@ _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
     u3R->hat_p = (all_p + siz_w);
   }
   else {
-    all_p = (u3R->hat_p - len_w);
-    pad_w = _me_align_dap(all_p, ald_w, alp_w);
+    pad_w = _me_align_dap(c3_align(all_p - len_w, u3a_walign, ALLO),
+                          ald_w,
+                          alp_w);
     siz_w = (len_w + pad_w);
-    all_p -= pad_w;
+    siz_w = c3_align(siz_w, u3a_walign, ALHI);
+    all_p -= siz_w;
 
     //  hand-inlined: siz_w >= u3a_open(u3R)
     //
@@ -478,10 +501,11 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
       }
       else {                    /* we got a non-null freelist */
         c3_w pad_w = _me_align_pad(*pfr_p, ald_w, alp_w);
+        c3_w des_w = c3_align(siz_w + pad_w, u3a_walign, ALHI);
 
         if ( 1 == ald_w ) c3_assert(0 == pad_w);
 
-        if ( (siz_w + pad_w) > u3to(u3a_fbox, *pfr_p)->box_u.siz_w ) {
+        if ( (des_w) > u3to(u3a_fbox, *pfr_p)->box_u.siz_w ) {
           /* This free block is too small.  Continue searching.
           */
           pfr_p = &(u3to(u3a_fbox, *pfr_p)->nex_p);
@@ -493,7 +517,7 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
           /* We have found a free block of adequate size.  Remove it
           ** from the free list.
           */
-          siz_w += pad_w;
+
           _box_count(-(box_u->siz_w));
           /* misc free list consistency checks.
             TODO: in the future should probably only run for C3DBG builds */
@@ -524,15 +548,21 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 
           /* If we can chop off another block, do it.
           */
-          if ( (siz_w + u3a_minimum) <= box_u->siz_w ) {
+          if ( (des_w + u3a_minimum) <= box_u->siz_w ) {
             /* Split the block.
             */
+
+            /* XXX: Despite the fact that we're making a box here, we don't
+               actually have to ensure it's aligned, since siz_w and all boxes
+               already on the loom /are/ aligned. A debug break here implies
+               that you broke those conditions, not that this needs to handle
+               alignment. abandon hope. */
             c3_w* box_w = ((c3_w *)(void *)box_u);
-            c3_w* end_w = box_w + siz_w;
-            c3_w  lef_w = (box_u->siz_w - siz_w);
+            c3_w* end_w = box_w + des_w;
+            c3_w  lef_w = (box_u->siz_w - des_w);
 
             _box_attach(_box_make(end_w, lef_w, 0));
-            return u3a_boxto(_box_make(box_w, siz_w, 1));
+            return u3a_boxto(_box_make(box_w, des_w, 1));
           }
           else {
             c3_assert(0 == box_u->use_w);
@@ -555,14 +585,31 @@ static void*
 _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
   void* ptr_v;
+  c3_w  req_w;                  /* allocation request length */
 
-  while ( 1 ) {
-    ptr_v = _ca_willoc(len_w, ald_w, alp_w);
+  /* N.B: This odd looking logic is to generalize correct allocation lengths
+     requested from _ca_willoc to alignments other than DWORD. For DWORD (8
+     byte) aligned references, this is eq to `req_w = len_w | 1`;
+
+     ie we request an odd allocation length because c3_wiseof(u3a_box) + 1 is 3
+     and 3 + {1,3,5,...} % 2 == 0
+
+     This works only because when we strip off mem from the hat or from a larger
+     fbox, we don't strip off any more than what was requested (+ padding)
+     */
+  req_w = len_w
+    + (c3_wiseof(u3a_box) + 1)
+    + u3a_walign
+    & ~(u3a_walign - 1)
+    - (c3_wiseof(u3a_box) + 1);
+  for (;;) {
+    ptr_v = _ca_willoc(req_w, ald_w, alp_w);
     if ( 0 != ptr_v ) {
       break;
     }
     _ca_reclaim_half();
   }
+  _box_vaal(u3a_botox(ptr_v));
   return ptr_v;
 }
 
@@ -589,6 +636,7 @@ u3a_walloc(c3_w len_w)
     xuc_i++;
   }
 #endif
+  _box_vaal(u3a_botox(ptr_v));
   return ptr_v;
 }
 
@@ -597,15 +645,24 @@ u3a_walloc(c3_w len_w)
 void*
 u3a_wealloc(void* lag_v, c3_w len_w)
 {
+  c3_w req_w;                   /* allocation request length */
+
+  /* N.B: see related note in _ca_walloc */
+  req_w = len_w
+    + (c3_wiseof(u3a_box) + 1)
+    + u3a_walign
+    & ~(u3a_walign - 1)
+    - (c3_wiseof(u3a_box) + 1);
+
   if ( !lag_v ) {
-    return u3a_malloc(len_w);
+    return u3a_malloc(req_w);
   }
   else {
     u3a_box* box_u = u3a_botox(lag_v);
     c3_w*    old_w = lag_v;
-    c3_w     tiz_w = c3_min(box_u->siz_w, len_w);
+    c3_w     tiz_w = c3_min(box_u->siz_w, req_w);
     {
-      c3_w* new_w = u3a_walloc(len_w);
+      c3_w* new_w = u3a_walloc(req_w);
       c3_w  i_w;
 
       for ( i_w = 0; i_w < tiz_w; i_w++ ) {
@@ -645,23 +702,37 @@ u3a_wfree(void* tox_v)
 }
 
 /* u3a_wtrim(): trim storage.
+
+   old_w - old length
+   len_w - new length
 */
 void
 u3a_wtrim(void* tox_v, c3_w old_w, c3_w len_w)
 {
   c3_w* nov_w = tox_v;
 
-  if (  (old_w > len_w)
-     && ((old_w - len_w) >= u3a_minimum) )
-  {
-    c3_w* box_w = (void *)u3a_botox(nov_w);
-    c3_w* end_w = (nov_w + len_w + 1);
-    c3_w  asz_w = (end_w - box_w);
-    c3_w  bsz_w = box_w[0] - asz_w;
+  if ( (old_w > len_w)
+       && ((old_w - len_w) >= u3a_minimum) )
+    {
+    u3a_box* box_u = u3a_botox(nov_w);
+    c3_w*    box_w = (void*)u3a_botox(nov_w);
 
-    _box_attach(_box_make(end_w, bsz_w, 0));
+    c3_w* end_w = c3_align(nov_w + len_w + 1, /* +1 for trailing allocation size */
+                           u3a_balign,
+                           ALHI);
 
-    box_w[0] = asz_w;
+    c3_w  asz_w = (end_w - box_w);      /* total size in words of new allocation */
+    if (box_u->siz_w <= asz_w) return;
+    c3_w  bsz_w = box_u->siz_w - asz_w; /* size diff in words between old and new */
+
+    c3_dessert(asz_w && ((asz_w & u3a_walign-1) == 0)); /* new allocation size must be non-zero and DWORD multiple */
+    c3_dessert(end_w < (box_w + box_u->siz_w));         /* desired alloc end must not exceed existing boundaries */
+    c3_dessert(((uintptr_t)end_w & u3a_balign-1) == 0); /* address of box getting freed must be DWORD aligned */
+    c3_dessert((bsz_w & u3a_walign-1) == 0);            /* size of box getting freed must be DWORD multiple */
+
+    _box_attach(_box_make(end_w, bsz_w, 0)); /* free the unneeded space */
+
+    box_u->siz_w = asz_w;
     box_w[asz_w - 1] = asz_w;
   }
 }
@@ -707,6 +778,9 @@ u3a_malloc(size_t len_i)
 }
 
 /* u3a_cellblock(): allocate a block of cells on the hat.
+
+   XXX beware when we stop boxing cells and QWORD align references. Alignment
+   not guaranteed to be preserved after a call.
 */
 static c3_o
 u3a_cellblock(c3_w num_w)
@@ -731,7 +805,7 @@ u3a_cellblock(c3_w num_w)
 
         //  hand inline of _box_make(u3a_into(all_p), u3a_minimum, 1)
         {
-          box_w[0] = u3a_minimum;
+          box_u->siz_w = u3a_minimum;
           box_w[u3a_minimum - 1] = u3a_minimum;
           box_u->use_w = 1;
 #ifdef U3_MEMORY_DEBUG
@@ -766,7 +840,7 @@ u3a_cellblock(c3_w num_w)
 
         //  hand inline of _box_make(u3a_into(all_p), u3a_minimum, 1);
         {
-          box_w[0] = u3a_minimum;
+          box_u->siz_w = u3a_minimum;
           box_w[u3a_minimum - 1] = u3a_minimum;
           box_u->use_w = 1;
 # ifdef U3_MEMORY_DEBUG
@@ -787,6 +861,7 @@ u3a_cellblock(c3_w num_w)
 }
 
 /* u3a_celloc(): allocate a cell.
+   XXX beware when we stop boxing cells and QWORD align references
 */
 c3_w*
 u3a_celloc(void)
