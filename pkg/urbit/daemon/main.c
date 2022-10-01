@@ -4,6 +4,8 @@
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
+#include "vere/ivory.h"
+#include "ur/ur.h"
 #include "rsignal.h"
 #include <vere/serf.h>
 #include "vere/vere.h"
@@ -991,6 +993,82 @@ _cw_intr_win(c3_c* han_c)
 }
 #endif
 
+/* _cw_eval_get_input(): Read input from file and return a concatenated string
+*/
+c3_c*
+_cw_eval_get_input(FILE* fp, size_t size)
+{
+  c3_c *str;
+  c3_i ch;
+  size_t len = 0;
+
+  str = c3_realloc(NULL, size);//size is start size
+  
+  while( EOF != (ch=fgetc(fp)) ){
+    str[len++]=ch;
+    if( len == size ){
+      size +=16;
+      str = c3_realloc(str, (size));
+    }
+  }
+    
+  str[len++]='\0';
+
+  return c3_realloc(str,len);
+}
+
+
+/* _cw_eval_commence(): initialize and run the hoon evaluator
+*/
+static void
+_cw_eval_commence(c3_i argc, c3_c* argv[])
+{
+  //Read from stdin until an EOF is recieved
+  c3_c* evl_c;
+
+  evl_c = _cw_eval_get_input(stdin, 10);
+
+  //Initialize the Loom and load the Ivory Pill
+  c3_d          len_d = u3_Ivory_pill_len;
+  c3_y*         byt_y = u3_Ivory_pill;
+  u3_cue_xeno*  sil_u;
+  u3_weak       pil;
+
+  u3C.wag_w |= u3o_hashless;
+  u3m_boot_lite();
+  sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
+  if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
+    printf("lite: unable to cue ivory pill\r\n");
+    exit(1);
+  }
+  u3s_cue_xeno_done(sil_u);
+  if ( c3n == u3v_boot_lite(pil) ) {
+    u3l_log("lite: boot failed\r\n");
+    exit(1);
+  }
+
+  printf("eval:\n");
+
+  //Run the input through a virtualization (u3v_wish) and get the ouput
+  u3_noun gat = u3v_wish("|=(a=@t (sell (slap !>(+>.$) (rain /eval a))))");
+  u3_noun res;
+  {
+    u3_noun sam = u3i_string(evl_c);
+    u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
+    res = u3m_soft(0, u3n_kick_on, cor); // Transfer cor and sam
+  }
+  
+  if(0 == u3h(res)){//Succuessful execution print the output
+     u3_pier_tank(0,0,u3k(u3t(res)));
+  }
+  else{
+     u3_pier_punt_goof("eval", u3k(res)); //print stack trace error
+  }
+  u3z(res);
+  u3z(gat);
+  free(evl_c);
+}
+
 /* _cw_serf_commence(): initialize and run serf
 */
 static void
@@ -1639,6 +1717,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__vere: _cw_vere(argc, argv); return 1;
 
     case c3__serf: _cw_serf_commence(argc, argv); return 1;
+    case c3__eval: _cw_eval_commence(argc, argv); return 1;
   }
 
   return 0;
