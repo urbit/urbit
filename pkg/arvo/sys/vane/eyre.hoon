@@ -614,8 +614,8 @@
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
-    :: redirect to https if insecure, redirects enabled
-    :: and secure port live
+    ::  redirect to https if insecure, redirects enabled
+    ::  and secure port live
     ::
     ?:  ?&  !secure
             redirect.http-config.state
@@ -749,7 +749,6 @@
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
-::
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
@@ -2326,7 +2325,9 @@
         [~ http-server-gate]
       =.  secure.config  cert.http-rule.task
       =.  redirect.config
-        &(?=(^ secure.ports.server-state.ax) ?=(^ cert.http-rule.task))
+        ?&  ?=(^ secure.ports.server-state.ax)
+            ?=(^ cert.http-rule.task)
+        ==
       :_  http-server-gate
       =*  out-duct  outgoing-duct.server-state.ax
       ?~  out-duct  ~
@@ -2577,7 +2578,7 @@
 ++  load
   |=  old=axle
   ^+  ..^$
-  :: enable https redirects if certificate configured
+  ::  enable https redirects if certificate configured
   ::
   =.  redirect.http-config.server-state.old
     ?&  ?=(^ secure.ports.server-state.old)
