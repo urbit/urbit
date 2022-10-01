@@ -622,15 +622,15 @@
             ?=(^ secure.ports.state)
         ==
       =/  location=@t
-        ;:  (cury cat 3)
-          'https://'
-          (rash (fall host '') host-sans-port)
-          ?:  =(443 u.secure.ports.state)
-            ''
-          (crip ":{(a-co:co u.secure.ports.state)}")
-          ?:  ?=([[~ ~] ~] (parse-request-line url.request))
-            '/'
-          url.request
+        %+  rap  3
+        :~  'https://'
+            (rash (fall host '') host-sans-port)
+            ?:  =(443 u.secure.ports.state)
+              ''
+            (crip ":{(a-co:co u.secure.ports.state)}")
+            ?:  ?=([[~ ~] ~] (parse-request-line url.request))
+              '/'
+            url.request
         ==
       %-  handle-response
       :*  %start
