@@ -4,6 +4,8 @@
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
+#include "vere/ivory.h"
+#include "ur/ur.h"
 #include "rsignal.h"
 #include "vere/vere.h"
 #include <vere/mars.h>
@@ -1009,6 +1011,82 @@ _cw_dock(c3_i argc, c3_c* argv[])
   u3_king_dock(U3_VERE_PACE);
 }
 
+/* _cw_eval_get_input(): read file til EOF and return a malloc'd string
+*/
+c3_c*
+_cw_eval_get_input(FILE* fil_u, size_t siz_i)
+{
+  c3_i   car_i;
+  size_t len_i = 0;
+  c3_c*  str_c = c3_realloc(NULL, siz_i);//size is start size
+
+  while( EOF != (car_i = fgetc(fil_u)) ){
+    str_c[len_i++] = car_i;
+    if( len_i == siz_i ){
+      siz_i += 16;
+      str_c = c3_realloc(str_c, siz_i);
+    }
+  }
+
+  str_c[len_i++]='\0';
+
+  return c3_realloc(str_c, len_i);
+}
+
+/* _cw_eval(): initialize and run the hoon evaluator
+*/
+static void
+_cw_eval(c3_i argc, c3_c* argv[])
+{
+  c3_c* evl_c = _cw_eval_get_input(stdin, 10);
+
+  //  initialize the Loom and load the Ivory Pill
+  //
+  {
+    c3_d         len_d = u3_Ivory_pill_len;
+    c3_y*        byt_y = u3_Ivory_pill;
+    u3_cue_xeno* sil_u;
+    u3_weak      pil;
+
+    u3C.wag_w |= u3o_hashless;
+    u3m_boot_lite(u3a_bytes);
+    sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
+    if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
+      printf("lite: unable to cue ivory pill\r\n");
+      exit(1);
+    }
+    u3s_cue_xeno_done(sil_u);
+    if ( c3n == u3v_boot_lite(pil) ) {
+      u3l_log("lite: boot failed\r\n");
+      exit(1);
+    }
+  }
+
+  printf("eval:\n");
+
+  //  +wish for an eval gate (virtualized twice for pretty-printing)
+  //
+  u3_noun gat = u3v_wish("|=(a=@t (sell (slap !>(+>.$) (rain /eval a))))");
+  u3_noun res;
+  {
+    u3_noun sam = u3i_string(evl_c);
+    u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
+    res = u3m_soft(0, u3n_kick_on, cor);
+  }
+
+
+  if ( 0 == u3h(res) ) {  //  successful execution, print output
+     u3_pier_tank(0, 0, u3k(u3t(res)));
+  }
+  else {                  //  error, print stack trace
+     u3_pier_punt_goof("eval", u3k(res));
+  }
+
+  u3z(res);
+  u3z(gat);
+  free(evl_c);
+}
+
 /* _cw_info(): print pier info
 */
 static void
@@ -1631,6 +1709,69 @@ _cw_work(c3_i argc, c3_c* argv[])
   u3m_stop();
 }
 
+/* _cw_vile(): generatoe/print keyfile
+*/
+static void
+_cw_vile(c3_i argc, c3_c* argv[])
+{
+  switch ( argc ) {
+    case 2: {
+      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
+        fprintf(stderr, "unable to find pier\r\n");
+        exit (1);
+      }
+    } break;
+
+    case 3: {
+      u3_Host.dir_c = argv[2];
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
+  //  XX check if snapshot is stale?
+  //
+  c3_d  eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
+  u3_noun sam = u3nc(u3nc(u3_nul, u3_nul),
+                     u3nc(c3n, u3nq(c3__once, 'j', c3__vile, u3_nul)));
+  u3_noun res = u3v_soft_peek(0, sam);
+
+
+  switch ( u3h(res) ) {
+    default: c3_assert(0);
+
+    case c3n: {
+      fprintf(stderr, "vile: unable to retrieve key file\r\n");
+      u3_pier_punt_goof("foo", u3k(u3t(res)));
+    }
+    case c3y: {
+      u3_noun dat, vil, out;
+      c3_c* out_c;
+
+      if (  (u3_nul != u3h(u3t(res)))
+         || (c3n == u3r_pq(u3t(u3t(res)), c3__omen, 0, &dat))
+         || (c3n == u3r_p(dat, c3__atom, &vil))
+         || (c3n == u3a_is_atom(vil)) )
+      {
+        fprintf(stderr, "vile: unable to extract key file\r\n");
+        u3m_p("vil", res);
+      }
+      else {
+        out = u3dc("scot", c3__uw, u3k(vil));
+        out_c = u3r_string(out);
+        puts(out_c);
+        c3_free(out_c);
+        u3z(out);
+      }
+    }
+  }
+
+  u3z(res);
+}
+
 /* _cw_utils(): "worker" utilities and mars-process entrypoints
 */
 static c3_i
@@ -1641,6 +1782,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //    $@  ~                                             ::  usage
   //    $%  [%cram dir=@t]                                ::  jam state
   //        [%dock dir=@t]                                ::  copy binary
+  //        [%eval ~]                                     ::  eval hoon
   //        [?(%grab %mass) dir=@t]                       ::  gc
   //        [%info dir=@t]                                ::  print
   //        [%meld dir=@t]                                ::  deduplicate
@@ -1649,6 +1791,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //        [%prep dir=@t]                                ::  prep upgrade
   //        [%queu dir=@t eve=@ud]                        ::  cue state
   //        [?(%vere %fetch-vere) dir=@t]                 ::  download vere
+  //        [%vile dir=@t]                                ::  extract keys
   //    ::                                                ::
   //        $:  %boot                                     ::  boot (ipc)
   //            dir=@t key=@t wag=@t hap=@ud lom=@ud      ::
@@ -1679,6 +1822,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   switch ( mot_m ) {
     case c3__cram: _cw_cram(argc, argv); return 1;
     case c3__dock: _cw_dock(argc, argv); return 1;
+    case c3__eval: _cw_eval(argc, argv); return 1;
 
     case c3__mass:
     case c3__grab: _cw_grab(argc, argv); return 1;
@@ -1690,6 +1834,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__prep: _cw_prep(argc, argv); return 2; // continue on
     case c3__queu: _cw_queu(argc, argv); return 1;
     case c3__vere: _cw_vere(argc, argv); return 1;
+    case c3__vile: _cw_vile(argc, argv); return 1;
 
     case c3__boot: _cw_boot(argc - 2, argv + 2); return 1;
     case c3__work: _cw_work(argc - 2, argv + 2); return 1;
