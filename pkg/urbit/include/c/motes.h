@@ -511,6 +511,7 @@
 #   define c3__griv   c3_s4('g','r','i','v')
 #   define c3__grix   c3_s4('g','r','i','x')
 #   define c3__grop   c3_s4('g','r','o','p')
+#   define c3__grub   c3_s4('g','r','u','b')
 #   define c3__grun   c3_s4('g','r','u','n')
 #   define c3__gt     c3_s2('g','t')
 #   define c3__gulf   c3_s4('g','u','l','f')

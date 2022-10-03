@@ -1026,11 +1026,23 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
   }
 
   { // Read identity from Arvo's sample.
-    u3_noun who = u3x_at(u3x_sam_12, u3A->roc);
-    if ( c3n == u3ud(who) ) {
-      goto free_event_log;
+    // XX need to negotiate versions
+    u3_noun kel = u3x_at(u3x_sam_2, u3A->roc);
+    switch ( kel ) {
+      case c3__grub: {
+        fprintf(stderr, "arvo: unexpected larval stage while reading identity\r\n");
+        u3z(kel);
+
+      } goto free_event_log;
+      default: {
+        u3_noun who = u3x_at(u3x_sam_12, u3A->roc);
+        if ( c3n == u3ud(who) ) {
+          goto free_event_log;
+        }
+        u3r_bytes(0, u3r_met(3, who), (c3_y*)&mar_u->met_u.who_d, who);
+      } break;
     }
-    u3r_bytes(0, u3r_met(3, who), (c3_y*)&mar_u->met_u.who_d, who);
+    u3z(kel);
   }
 
   { // Scry fake bit from Arvo.
