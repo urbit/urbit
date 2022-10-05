@@ -520,6 +520,7 @@
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
+    %kiln-bump               =;(f (f !<(_+<.f vase)) poke-bump)
     %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
     %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
@@ -557,6 +558,30 @@
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+::
+++  poke-bump
+  |=  ~
+  =<  abet
+  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  =/  wic
+    %+  sort  ~(tap by wic:(~(got by rock) %base))
+    |=  [[* a=@ud] [* b=@ud]]
+    (gth a b)
+  =.  wic  (skip wic |=([* a=@ud] (gte a zuse)))
+  ?~  wic
+    %-  (slog 'kiln: %base already up-to-date' ~)
+    ..abet
+  =/  kel  i.wic
+  %-  emil
+  =/  cards
+    %+  murn  ~(tap by rock)
+    |=  [=desk =zest wic=(set weft)]
+    ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
+      ~
+    `u=[%pass /kiln/bump/[desk] %arvo %c %zest desk %next]
+  ?~  cards
+    [%pass /kiln/bump/wick %arvo %c %wick ~]~
+  cards
 ::
 ++  poke-cancel
   |=  a=@tas

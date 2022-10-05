@@ -1766,8 +1766,12 @@
     ::  find desk kelvin
     ::
     =/  kel=weft  (get-kelvin yoki)
-    ?.  ?|  =(kel zuse+zuse)
-            ?&  =(%base syd)
+    ?.  ?|  =(kel zuse+zuse)                            ::  kelvin match
+            ?&  !=(%base syd)                           ::  best-effort compat
+                =(%zuse lal.kel)
+                (gth num.kel zuse)
+            ==
+            ?&  =(%base syd)                            ::  ready to upgrade
                 %+  levy  ~(tap by tore:(lu now rof hen ruf))
                 |=  [=desk =zest wic=(set weft)]
                 ?|  =(%base desk)
@@ -1776,6 +1780,9 @@
                 ==
             ==
         ==
+      ?:  (gth num.kel zuse)
+        %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
+        ..park
       =.  wic.dom  (~(put by wic.dom) kel yoki)
       =?  ..park  !?=(%base syd)  (emit hen %pass /park-wick %c %wick ~)
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
@@ -3093,6 +3100,7 @@
       %+  sort  ~(tap by wic.dom)
       |=  [a=[weft yoki] b=[weft yoki]]
       (gth num.a num.b)
+    =.  wis  (skip wis |=([[* a=@ud] *] (gte a zuse)))
     ?~  wis
       ..park
     (park | & yoki.i.wis *rang)
