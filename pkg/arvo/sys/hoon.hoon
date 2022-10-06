@@ -2036,6 +2036,13 @@
     |%
     ::  loser tree internals
     ::
+    ++  wyt                                             ::  queue size
+      ~/  %wyt
+      |=  =pro
+      ^-  @
+      ?~  pro  0
+      +((size t.pro))
+    ::
     ++  size                                            ::  loser tree size
       ~/  %size
       |=  t=ltree
@@ -2198,6 +2205,18 @@
         %rlos  [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
       ==
     ::
+    ++  tap                                             ::  convert to list
+      ~/  %tap
+      |=  a=pro
+      =|  b=(list elem)
+      |-  ^+  b
+      =/  tor  (see a)
+      ?~  tor  b
+      ?-  -.tor
+        %sing  [n.tor b]
+        %play  (weld $(a l.tor) $(a r.tor))
+      ==
+    ::
     ++  put                                             :: add [key pri val]
       ~/  %put
       |=  [a=pro =k p=@ =v]
@@ -2269,6 +2288,47 @@
           (toy $(a [n.b l.b m.b]) [n.a r.b m.a])
         (toy [n.b l.b m.b] $(a [n.a r.b m.a]))
       ==
+    ::
+    ++  dew                                             ::  delete view
+      |=  [a=pro =k]
+      |-  ^-  (unit (trel @ v pro))
+      ?~  a  ~
+      ?~  t.a
+        ?.  =(k k.n.a)  ~
+        `[p.n.a v.n.a ~]
+      ?-    -.t.a
+          %llos
+      =/  b=lnode  p.t.a
+      ?:  |(=(k m.b) (gor k m.b))
+        =/  pat  $(a [n.b l.b m.b])
+        ?~  pat  ~
+        %-  some
+        :+  p.u.pat
+          q.u.pat
+        (toy r.u.pat [n.a r.b m.a])
+      =/  pat  $(a [n.a r.b m.a])
+      ?~  pat  ~
+      %-  some
+      :+  p.u.pat
+        q.u.pat
+      (toy [n.b l.b m.b] r.u.pat)
+    ::
+        %rlos
+      =/  b=lnode  p.t.a
+      ?:  |(=(k m.b) (gor k m.b))
+        =/  pat  $(a [n.a l.b m.b])
+        ?~  pat  ~
+        %-  some
+        :+  p.u.pat
+          q.u.pat
+        (toy r.u.pat [n.b r.b m.a])
+      =/  pat  $(a [n.b r.b m.a])
+      ?~  pat  ~
+      %-  some
+      :+  p.u.pat
+        q.u.pat
+      (toy [n.a l.b m.b] r.u.pat)
+    ==
     ::
     ++  bot                                             ::  lowest-pro view
       ~/  %bot
@@ -2373,6 +2433,148 @@
     --
   ::  pri logic
   ::
+  ++  wyt                                               ::  queue size
+    |=  a=pri
+    ^-  @
+    %+  rep  a
+    |=([[k @ buc] @] +((add +<+ (wyt:qor t.+<->+))))
+  ::
+  ++  get                                               ::  lookup
+    |=  [a=pri k=@]
+    |-  ^-  (unit (pair @ v))
+    ?~  a  ~
+    ?-    -.a
+        %tip
+      ?.  =((mug k) (mug k.a))  ~
+      ?:  =(k k.a)
+        `[p.a v.v.a]
+      (get:qor t.v.a k)
+    ::
+        %bin
+      ?:  (feud m.a k k.a)  ~
+      ?:  =((mug k) (mug k.a))
+        ?:  =(k k.a)
+          `[p.a v.v.a]
+        (get:qor t.v.a k)
+      ?:  (zero m.a k)
+        $(a l.a)
+      $(a r.a)
+    ==
+  ::
+  ++  has                                               ::  contains
+    |=  [a=pri =k]
+    ^-  ?
+    !=(~ (get a k))
+  ::
+  ++  put                                               ::  insert
+    |=  [a=pri =k p=@ =v]
+    ^-  pri
+    ?~  ded=(dew:qat a k)
+      (raw:qat a k p v ~)
+    =/  val  u.ded
+    =.  a  s.val
+    %+  raw:qat  a
+    ?:  =(k p.val)
+      (sink:qor t.r.val k p v)
+    ?:  |((lth q.val p) &(=(p q.val) (gor p.val k)))
+      [p.val q.val v.r.val (put:qor t.r.val k p v)]
+    :^  k  p  v
+    ?:  (has:qor t.r.val k)
+      (put:qor (del:qor t.r.val k) p.val q.val v.r.val)
+    (put:qor t.r.val p.val q.val v.r.val)
+  ::
+  ++  del                                               ::  remove
+    |=  [a=pri =k]
+    ^-  pri
+    ?~  ded=(dew:qat a k)  a
+    =/  val  u.ded
+    =.  a  s.val
+    ?:  =(k p.val)
+      ?~  low=(bot:qor t.r.val)  a
+      (raw:qat a u.low)
+    (raw:qat a p.val q.val v.r.val (del:qor t.r.val k))
+  ::
+  ++  dew                                               ::  delete view
+    |=  [a=pri =k]
+    ^-  (unit (trel @ v pri))
+    ?~  ded=(dew:qat a k)  ~
+    =/  val  u.ded
+    =.  a  s.val
+    ?:  =(k p.val)
+      %-  some
+      :+  q.val  v.r.val
+      ?~  low=(bot:qor t.r.val)  a
+      (raw:qat a u.low)
+    ?~  low=(dew:qor t.r.val k)  ~
+    %-  some
+    :+  p.u.low  q.u.low
+    (raw:qat a p.val q.val v.r.val r.u.low)
+  ::
+  ++  gas                                               ::  concatenate
+    |=  [a=pri b=(list (trel k @ v))]
+    |-  ^-  pri
+    ?~  b  a
+    $(b t.b, a (put a p.i.b q.i.b r.i.b))
+  ::
+  ++  bot                                               ::  min-priority view
+    |=  a=pri
+    ^-  (unit (qual k @ v pri))
+    ?~  a  ~
+    %-  some
+    ?-  -.a
+      %tip  [k.a p.a v.v.a (cut a)]
+      %bin  [k.a p.a v.v.a (cut a)]
+    ==
+  ::
+  ++  sam                                               ::  equality
+    |=  [a=pri b=pri]
+    ^-  ?
+    =/  loa  (bot a)
+    =/  lob  (bot b)
+    ?|  &(=(~ loa) =(~ lob))
+        !&(=(~ loa) !=(~ lob))
+        !&(!=(~ loa) =(~ lob))
+        ?>  &(?=(^ loa) ?=(^ lob))
+        ?&  =(p.u.loa p.u.lob)
+            =(q.u.loa q.u.lob)
+            =(r.u.loa r.u.lob)
+            $(a s.u.loa, b s.u.lob)
+        ==
+    ==
+  ::
+  ++  key                                               ::  list of keys
+    |=  a=pri
+    ^-  (list k)
+    %+  turn  `(list (trel k @ v))`(tap a)
+    |=([k @ v] +<-)
+  ::
+  ++  tap                                               ::  convert to list
+    |=  a=pri
+    =|  acc=(list (trel k @ buc))
+    =/  lis
+      |-  ^+  acc
+      ?~  a  acc
+      ?-  -.a
+        %tip  [[k.a p.a v.a] acc]
+        %bin  [[k.a p.a v.a] $(acc $(a r.a), a l.a)]
+      ==
+    =|  acc=(list (trel k @ v))
+    |-  ^+  acc
+    ?~  lis  acc
+    =/  hed  i.lis
+    =/  res  (tap:qor t.r.hed)
+    =.  acc  (weld res acc)
+    $(lis t.lis, acc [[p.hed q.hed v.r.hed] acc])
+  ::
+  ++  rep                                               ::  fold
+    |*  [a=pri f=_=>(buc |=([[* @ buc] *] +<+))]
+    |-
+    ?~  a  +<+.f
+    ?-    -.a
+      %tip  (f [k.a p.a v.a] +<+.f)
+      %bin  $(a r.a, +<+.f $(a l.a, +<+.f (f [k.a p.a v.a] +<+.f)))
+    ==
+  ::
   ++  cut                                               ::  delete min-pri
     ~/  %cut
     |=  a=pri
@@ -2380,13 +2582,11 @@
     ?~  a  ~
     ?-    -.a
         %tip
-      =/  hol  (bot:qor t.v.a)
-      ?~  hol  ~
+      ?~  hol=(bot:qor t.v.a)  ~
       [%tip u.hol]
     ::
         %bin
-      =/  hol  (bot:qor t.v.a)
-      ?~  hol  (fuse m.a l.a r.a)
+      ?~  hol=(bot:qor t.v.a)  (fuse m.a l.a r.a)
       (raw:qat (fuse m.a l.a r.a) u.hol)
     ==
   ::
