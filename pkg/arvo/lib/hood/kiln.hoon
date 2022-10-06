@@ -692,7 +692,7 @@
   ?:  (~(has by zyn) loc her rem)
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
-    abet
+    abet:(emit %pass /kiln/install %arvo %c %zest loc %live)
   ?:  =(%base loc)
     abet:abet:init:(apex:(sync loc her rem) `%kids)
   abet:abet:init:(sync loc her rem)
