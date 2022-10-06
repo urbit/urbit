@@ -501,6 +501,15 @@
   ::
       [%x %kiln %syncs ~]  ``noun+!>(zyn)
       [%x %kiln %sources ~]  ``noun+!>(sources)
+      [%x %kiln %pikes ~]
+    =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+    =-  ``noun+!>(-)
+    %-  ~(rut by rock)
+    |=  [=desk =zest wic=(set weft)]
+    ^-  pike
+    =+  .^(hash=@uv %cz /(scot %p our)/[desk]/(scot %da now))
+    =/  sync  (~(get by sources) desk)
+    [sync hash zest wic]
   ==
 ::
 ::  +get-germ: select merge strategy into local desk
