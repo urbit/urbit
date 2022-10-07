@@ -24,16 +24,22 @@ u3qdu_vip(u3_noun a, u3_noun k, u3_atom p, u3_noun v)
       u3_noun vva, tva;
       u3x_cell(va, &vva, &tva);
 
-      u3_noun mk  = u3r_mug(k);
-      u3_noun mka = u3r_mug(ka);
+      u3_atom mk  = u3r_mug(k);
+      u3_atom mka = u3r_mug(ka);
 
       if (c3y == u3r_sing(mk, mka)) {
-        u3_noun buc = u3nc(u3k(vva), u3qdu_qor_put(tva, k, p, v));
-        u3_noun pro = u3nc(u3nt(u3_nul, u3k(pa), u3k(va)),
-                        u3nq(c3__tip, u3k(ka), u3k(pa), u3k(buc)));
+        if (c3y == u3r_sing(k, ka)) {
+          return u3nc(u3nt(u3_nul, u3k(pa), u3k(vva)),
+                   u3nc(c3__tip, u3qdu_qor_sink(tva, k, p, v)));
+        }
+        else {
+          u3_noun buc = u3nc(u3k(vva), u3qdu_qor_put(tva, k, p, v));
+          u3_noun pro = u3nc(u3_nul,
+                          u3nq(c3__tip, u3k(ka), u3k(pa), u3k(buc)));
 
-        u3z(buc);
-        return pro;
+          u3z(buc);
+          return pro;
+        }
       }
       else {
         u3_noun lef = u3nq(c3__tip, u3k(k), u3k(p), u3nc(u3k(v), u3_nul));
@@ -65,30 +71,48 @@ u3qdu_vip(u3_noun a, u3_noun k, u3_atom p, u3_noun v)
       u3_noun mka = u3r_mug(ka);
 
       if (c3y == u3r_sing(mk, mka)) {
+
         u3_noun vva, tva;
         u3x_cell(va, &vva, &tva);
 
-        u3_noun buc = u3nc(u3k(vva), u3qdu_qor_put(tva, k, p, v));
+        if (c3y == u3r_sing(k, ka)) {
+          u3_noun val = u3qdu_qor_sink(tva, k, p, v);
 
-        if (c3y == u3qdu_zero(ma, k)) {
-          u3_noun lef = u3qdu_qat_raw(la, ka, pa, buc);
-          u3_noun pro = u3nc(u3nt(u3_nul, u3k(pa), u3k(va)),
-                          u3qdu_fuse(ma, lef, ra));
+          u3_noun pv, qv, rv;
+          u3x_trel(val, &pv, &qv, &rv);
+
+          if (c3y == u3qdu_zero(ma, pv)) {
+            u3_noun lef = u3qdu_qat_raw(la, pv, qv, rv);
+            u3_noun pro = u3nc(u3nt(u3_nul, u3k(pa), u3k(vva)),
+                            u3qdu_fuse(ma, lef, ra));
+
+            u3z(val);
+            u3z(lef);
+
+            return pro;
+          }
+          else {
+            u3_noun rye = u3qdu_qat_raw(ra, pv, qv, rv);
+            u3_noun pro = u3nc(u3nt(u3_nul, u3k(pa), u3k(vva)),
+                            u3qdu_fuse(ma, la, rye));
+
+            u3z(val);
+            u3z(rye);
+
+            return pro;
+          }
+        }
+        else {
+          u3_noun buc = u3nc(u3k(vva), u3qdu_qor_put(tva, k, p, v));
+          u3_noun pro = u3nc(u3_nul,
+                          u3nq(c3__bin, u3k(ka), u3k(pa),
+                            u3nq(u3k(buc), u3k(ma), u3k(la), u3k(ra))));
 
           u3z(buc);
-          u3z(lef);
-
-          return pro;
-        } else {
-          u3_noun rye = u3qdu_qat_raw(ra, ka, pa, buc);
-          u3_noun pro = u3nc(u3nt(u3_nul, u3k(pa), u3k(va)),
-                          u3qdu_fuse(ma, la, rye));
-
-          u3z(buc);
-          u3z(rye);
 
           return pro;
         }
+
       }
       else if (c3y == u3qdu_zero(ma, k)) {
         u3_noun val = u3qdu_vip(la, k, p, v);
