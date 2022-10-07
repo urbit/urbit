@@ -2593,28 +2593,29 @@
   ++  vip                                               ::  very important put
     ~/  %vip                                            ::
     |=  [a=pri k=k p=@ =v]                              ::  p must be higher
-    ^-  (pair (unit (pair @ buc)) pri)                  ::  than resident max
+    ^-  (pair (unit (pair @ _v)) pri)                   ::  than resident max
     ?~  a
       [~ [%tip k p v ~]]
     ?-    -.a
         %tip
       ?:  =((mug k) (mug k.a))
-        =/  =buc  [v.v.a (put:qor t.v.a k p v)]
-        :-  `[p.a v.a]
-        [%tip k.a p.a buc]
-      :-  ~
-      (rule k.a p.a v.a [%tip k p v ~] ~)
+        ?:  =(k k.a)
+          :-  `[p.a v.v.a]
+          [%tip (sink:qor t.v.a k p v)]
+        [~ [%tip k.a p.a v.v.a (put:qor t.v.a k p v)]]
+      [~ (rule k.a p.a v.a [%tip k p v ~] ~)]
     ::
         %bin
       ?:  (feud m.a k k.a)
-        :-  ~
-        (rule k.a p.a v.a [%tip k p v ~] (fuse m.a l.a r.a))
+        [~ (rule k.a p.a v.a [%tip k p v ~] (fuse m.a l.a r.a))]
       ?:  =((mug k) (mug k.a))
-        =/  =buc  [v.v.a (put:qor t.v.a k p v)]
-        :-  `[p.a v.a]
-        ?:  (zero m.a k)
-          (fuse m.a (raw:qat l.a k.a p.a buc) r.a)
-        (fuse m.a l.a (raw:qat r.a k.a p.a buc))
+        ?:  =(k k.a)
+          :-  `[p.a v.v.a]
+          =/  val  (sink:qor t.v.a k p v)
+          ?:  (zero m.a p.val)
+            (fuse m.a (raw:qat l.a val) r.a)
+          (fuse m.a l.a (raw:qat r.a val))
+        [~ [%bin k.a p.a [v.v.a (put:qor t.v.a k p v)] m.a l.a r.a]]
       ?:  (zero m.a k)
         =/  val  $(a l.a)
         :-  p.val
@@ -2660,11 +2661,8 @@
       ^-  (qual (unit (pair @ v)) _k @ _buc)
       ?:  =(k l)
         :-  `[q v.buc]
-        ?~  t.buc
-          [k p buc]
-        (sink:qor t.buc k p v.buc)
-      =/  val  (get:qor t.buc k)
-      ?~  val  [~ k q buc]
+        (sink:qor t.buc l p v.buc)
+      ?~  val=(get:qor t.buc k)  [~ l q buc]
       :^  val  l  q
       [v.buc (put:qor t.buc k p q.u.val)]
     --
