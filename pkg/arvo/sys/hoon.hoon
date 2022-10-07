@@ -2706,7 +2706,7 @@
       pri  q.vue
     ==
   ::
-  ++  get                                               ::  lookup and pri bump
+  ++  get                                               ::  lookup w/pri bump
     ~/  %get
     |=  [a=pes =k]
     ^-  (unit (pair v pes))
@@ -2719,6 +2719,31 @@
       tic  +(tic.a)
       pri  q.val
     ==
+  ::
+  ++  del                                               ::  remove
+    |=  [a=pes =k]
+    ^-  pes
+    ?~  ded=(dew:cor pri.a k)  a
+    %_  a
+      siz  (dec siz.a)
+      pri  r.u.ded
+    ==
+  ::
+  ++  gas                                               ::  concatenate
+    |=  [a=pes b=(list (pair k v))]
+    ^-  pes
+    ?~  b  a
+    $(b t.b, a (put a p.i.b q.i.b))
+  ::
+  ++  tap                                               ::  to list
+    |=  a=pes
+    ^-  (list (trel k @ v))
+    (tap:cor pri.a)
+  ::
+  ++  key                                               ::  list of keys
+    |=  a=pes
+    ^-  (list k)
+    (key:cor pri.a)
   --
 ::
 ::::  2o: containers                                    ::
