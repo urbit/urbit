@@ -2290,6 +2290,7 @@
       ==
     ::
     ++  dew                                             ::  delete view
+      ~/  %dew
       |=  [a=pro =k]
       |-  ^-  (unit (trel @ v pro))
       ?~  a  ~
