@@ -132,6 +132,7 @@
     c3_o    u3qdu_qor_has(u3_noun, u3_noun);
     u3_noun u3qdu_qor_get(u3_noun, u3_noun);
     u3_noun u3qdu_qor_del(u3_noun, u3_noun);
+    u3_noun u3qdu_qor_dew(u3_noun, u3_noun);
     u3_noun u3qdu_qor_bot(u3_noun);
 
     u3_noun u3qdu_qat_del(u3_noun, u3_noun);

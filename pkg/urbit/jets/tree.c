@@ -1993,6 +1993,7 @@ static u3j_harm _140_two_up_qor_put_a[]   = {{".2", u3wdu_qor_put, c3y}, {}};
 static u3j_harm _140_two_up_qor_has_a[]   = {{".2", u3wdu_qor_has, c3y}, {}};
 static u3j_harm _140_two_up_qor_get_a[]   = {{".2", u3wdu_qor_get, c3y}, {}};
 static u3j_harm _140_two_up_qor_del_a[]   = {{".2", u3wdu_qor_del, c3y}, {}};
+static u3j_harm _140_two_up_qor_dew_a[]   = {{".2", u3wdu_qor_dew, c3y}, {}};
 static u3j_harm _140_two_up_qor_bot_a[]   = {{".2", u3wdu_qor_bot, c3y}, {}};
 
 static u3j_harm _140_two_up_qat_del_a[] = {{".2", u3wdu_qat_del, c3y}, {}};
@@ -2019,6 +2020,7 @@ static u3j_core _140_two_up_qor_d[] =
   { "has", 7, _140_two_up_qor_has_a, 0, no_hashes },
   { "get", 7, _140_two_up_qor_get_a, 0, no_hashes },
   { "del", 7, _140_two_up_qor_del_a, 0, no_hashes },
+  { "dew", 7, _140_two_up_qor_dew_a, 0, no_hashes },
   { "bot", 7, _140_two_up_qor_bot_a, 0, no_hashes },
   {}
 };
