@@ -4356,6 +4356,12 @@
       =/  den  ((de now rof hen ruf) her syd)
       abet:+:(aeon-flow:den ?~(yon let.dom:den u.yon) res cache.state &2.state)
     [res (emil moves)]
+  ::
+  ++  trace
+    |=  [pri=@ print=(trap tape)]
+    ?:  (lth veb.bug pri)
+      same
+    (slog leaf+"goad: {(print)}" ~)
   ::  +goad: emit %load move for all desks, applying $rein's
   ::
   ++  goad
@@ -4366,15 +4372,26 @@
       ?~  desks
         [~ ..abet]
       =/  den  ((de now rof hen ruf) our i.desks)
+      ?.  =(%live liv.dom.den)
+        %-  (trace 2 |.("{<i.desks>} is not live"))
+        $(desks t.desks)
       =^  res  den  (aver:den ~ %x da+now /desk/bill)
       =.  ruf  +:abet:den
       ?.  ?=([~ ~ *] res)
         $(desks t.desks)
       =/  bill  ~|  [%building-bill i.desks]  !<(bill q.u.u.res)
+      =/  rid  (override bill ren.dom.den)
+      %-  %+  trace  2  |.
+          "{<i.desks>} has bill {<bill>} and rein {<ren.dom.den>}, so {<rid>}"
       =^  sats  ..abet  $(desks t.desks)
-      [[[i.desks (override bill [liv ren]:dom:den)] sats] ..abet]
+      [[[i.desks rid] sats] ..abet]
     ::
     =.  sat  (apply-precedence sat)
+    =+  ?:  (lth veb.bug 1)  ~
+        %-  slog
+        %+  turn  sat
+        |=  [=desk =bill]
+        leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
     ::  XX enable before release
     ::  =.  ..abet  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
@@ -4383,9 +4400,8 @@
   ::  +override: apply rein to bill
   ::
   ++  override
-    |=  [duz=bill liv=zest ren=(map dude:gall ?)]
+    |=  [duz=bill ren=(map dude:gall ?)]
     ^-  bill
-    ?.  ?=(%live liv)  ~
     =.  duz
       %+  skip  duz
       |=  =dude:gall
