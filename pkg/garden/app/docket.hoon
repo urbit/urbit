@@ -191,13 +191,21 @@
     ==
     ::
       [%x %charges ~]
+    =/  tyr
+      .^(rock:tire:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/tire)
     :-  ~  :-  ~
     %-  charge-update:cg
     :-  %initial
     %-  ~(gas by *(map desk charge))
-    %+  turn  ~(tap by charges)
+    %+  murn  ~(tap by charges)
     |=  [=desk =charge]
-    [desk (get-light-charge charge)]
+    ?~  got=(~(get by tyr) desk)
+      ~
+    ?:  ?&  ?=(%dead zest.u.got)
+            ?=(~ (get-apps-have:hood our.bowl desk now.bowl))
+        ==
+      ~
+    `u=[desk (get-light-charge charge)]
     ::
       [%x %charges @ %version ~]
     ?~  charge=(~(get by charges) i.t.t.path)
