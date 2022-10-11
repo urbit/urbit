@@ -2727,6 +2727,7 @@
     ==
   ::
   ++  del                                               ::  remove
+    ~/  %del
     |=  [a=pes =k]
     ^-  pes
     ?~  ded=(dew:cor pri.a k)  a

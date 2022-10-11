@@ -152,6 +152,7 @@
     u3_noun u3qdl_ebb(u3_noun);
     u3_noun u3qdl_put(u3_noun, u3_noun, u3_noun);
     u3_noun u3qdl_get(u3_noun, u3_noun);
+    u3_noun u3qdl_del(u3_noun, u3_noun);
 
   /** Tier 5.
   **/

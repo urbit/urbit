@@ -2070,12 +2070,14 @@ static u3j_core _140_two_up_d[] =
 static u3j_harm _140_two_lu_ebb_a[] = {{".2", u3wdl_ebb, c3y}, {}};
 static u3j_harm _140_two_lu_put_a[] = {{".2", u3wdl_put, c3y}, {}};
 static u3j_harm _140_two_lu_get_a[] = {{".2", u3wdl_get, c3y}, {}};
+static u3j_harm _140_two_lu_del_a[] = {{".2", u3wdl_del, c3y}, {}};
 
 static u3j_core _140_two_lu_core_d[] =
 {
   { "ebb", 7, _140_two_lu_ebb_a, 0, no_hashes },
   { "put", 7, _140_two_lu_put_a, 0, no_hashes },
   { "get", 7, _140_two_lu_get_a, 0, no_hashes },
+  { "del", 7, _140_two_lu_del_a, 0, no_hashes },
   {}
 };
 
