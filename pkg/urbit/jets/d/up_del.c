@@ -6,7 +6,7 @@ u3qdu_del(u3_noun a, u3_noun k)
   u3_noun ded = u3qdu_qat_dew(a, k);
 
   if (u3_nul == ded) {
-    return a;
+    return u3k(a);
   }
   else {
     u3_noun pv, qv, rv, sv;
@@ -21,7 +21,7 @@ u3qdu_del(u3_noun a, u3_noun k)
       if (u3_nul == low) {
         u3z(ded);
 
-        return a;
+        return u3k(sv);
       }
       else {
         u3_noun kl, pl, vl;
@@ -30,7 +30,7 @@ u3qdu_del(u3_noun a, u3_noun k)
         u3_noun pro = u3qdu_qat_raw(sv, kl, pl, vl);
 
         u3z(ded);
-        u3a(low);
+        u3z(low);
 
         return pro;
       }
@@ -52,8 +52,7 @@ u3wdu_del(u3_noun cor)
 {
   u3_noun a, k;
 
-  if (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &k, 0));
-  {
+  if (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &k, 0)) {
     return u3m_bail(c3__exit);
   } else {
     return u3qdu_del(a, k);
