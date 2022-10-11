@@ -33,10 +33,12 @@ u3qdu_vip(u3_noun a, u3_noun k, u3_atom p, u3_noun v)
                    u3nc(c3__tip, u3qdu_qor_sink(tva, k, p, v)));
         }
         else {
+          u3_noun got = u3qdu_qor_get(tva, k);
           u3_noun buc = u3nc(u3k(vva), u3qdu_qor_put(tva, k, p, v));
-          u3_noun pro = u3nc(u3_nul,
+          u3_noun pro = u3nc(u3k(got),
                           u3nq(c3__tip, u3k(ka), u3k(pa), u3k(buc)));
 
+          u3z(got);
           u3z(buc);
           return pro;
         }
@@ -103,11 +105,13 @@ u3qdu_vip(u3_noun a, u3_noun k, u3_atom p, u3_noun v)
           }
         }
         else {
+          u3_noun got = u3qdu_qor_get(tva, k);
           u3_noun buc = u3nc(u3k(vva), u3qdu_qor_put(tva, k, p, v));
-          u3_noun pro = u3nc(u3_nul,
+          u3_noun pro = u3nc(u3k(got),
                           u3nq(c3__bin, u3k(ka), u3k(pa),
                             u3nq(u3k(buc), u3k(ma), u3k(la), u3k(ra))));
 
+          u3z(got);
           u3z(buc);
 
           return pro;
