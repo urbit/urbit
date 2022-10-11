@@ -2608,7 +2608,8 @@
         ?:  =(k k.a)
           :-  `[p.a v.v.a]
           [%tip (sink:qor t.v.a k p v)]
-        [~ [%tip k.a p.a v.v.a (put:qor t.v.a k p v)]]
+        :-  (get:qor t.v.a k)
+        [%tip k.a p.a v.v.a (put:qor t.v.a k p v)]
       [~ (rule k.a p.a v.a [%tip k p v ~] ~)]
     ::
         %bin
@@ -2621,7 +2622,8 @@
           ?:  (zero m.a p.val)
             (fuse m.a (raw:qat l.a val) r.a)
           (fuse m.a l.a (raw:qat r.a val))
-        [~ [%bin k.a p.a [v.v.a (put:qor t.v.a k p v)] m.a l.a r.a]]
+        :-  (get:qor t.v.a k)
+        [%bin k.a p.a [v.v.a (put:qor t.v.a k p v)] m.a l.a r.a]
       ?:  (zero m.a k)
         =/  val  $(a l.a)
         :-  p.val
