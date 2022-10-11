@@ -2487,6 +2487,7 @@
     (put:qor t.r.val p.val q.val v.r.val)
   ::
   ++  del                                               ::  remove
+    ~/  %del
     |=  [a=pri =k]
     ^-  pri
     ?~  ded=(dew:qat a k)  a
