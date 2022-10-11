@@ -19,7 +19,7 @@ u3qdu_put(u3_noun a, u3_noun k, u3_atom p, u3_noun v)
     u3x_qual(u3t(ded), &pv, &qv, &rv, &sv);
     u3x_cell(rv, &vrv, &trv);
 
-    if (k == pv) {
+    if (c3y == u3r_sing(k, pv)) {
       u3_noun sun = u3qdu_qor_sink(trv, k, p, v);
 
       u3_noun ps, qs, rs;
@@ -80,5 +80,4 @@ u3wdu_put(u3_noun cor)
     return u3qdu_put(a, k, p, v);
   }
 }
-
 
