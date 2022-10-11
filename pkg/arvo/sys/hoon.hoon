@@ -2469,6 +2469,7 @@
     !=(~ (get a k))
   ::
   ++  put                                               ::  insert
+    ~/  %put
     |=  [a=pri =k p=@ =v]
     ^-  pri
     ?~  ded=(dew:qat a k)
