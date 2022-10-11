@@ -9,7 +9,7 @@ u3qdl_del(u3_noun a, u3_noun k)
   u3_noun ded = u3qdu_dew(pri_a, k);
 
   if (u3_nul == ded) {
-    return u3_nul;
+    return u3k(a);
   }
   else {
     u3_noun pd, qd, rd;
