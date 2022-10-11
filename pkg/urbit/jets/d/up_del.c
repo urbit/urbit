@@ -16,12 +16,14 @@ u3qdu_del(u3_noun a, u3_noun k)
     u3x_cell(rv, &vrv, &trv);
 
     if (c3y == u3r_sing(k, pv)) {
+
       u3_noun low = u3qdu_qor_bot(trv);
 
       if (u3_nul == low) {
-        u3z(ded);
+        u3_noun pro = u3k(sv);
 
-        return u3k(sv);
+        u3z(ded);
+        return pro;
       }
       else {
         u3_noun kl, pl, vl;
@@ -52,7 +54,8 @@ u3wdu_del(u3_noun cor)
 {
   u3_noun a, k;
 
-  if (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &k, 0)) {
+  if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &k, 0)) )
+  {
     return u3m_bail(c3__exit);
   } else {
     return u3qdu_del(a, k);
