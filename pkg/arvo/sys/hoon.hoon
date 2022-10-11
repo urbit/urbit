@@ -2522,6 +2522,7 @@
     $(b t.b, a (put a p.i.b q.i.b r.i.b))
   ::
   ++  bot                                               ::  min-priority view
+    ~/  %bot
     |=  a=pri
     ^-  (unit (qual k @ v pri))
     ?~  a  ~
