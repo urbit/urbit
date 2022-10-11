@@ -2499,6 +2499,7 @@
     (raw:qat a p.val q.val v.r.val (del:qor t.r.val k))
   ::
   ++  dew                                               ::  delete view
+    ~/  %dew
     |=  [a=pri =k]
     ^-  (unit (trel @ v pri))
     ?~  ded=(dew:qat a k)  ~

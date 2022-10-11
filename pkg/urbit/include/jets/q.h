@@ -143,6 +143,7 @@
     u3_noun u3qdu_put(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qdu_get(u3_noun, u3_noun);
     u3_noun u3qdu_del(u3_noun, u3_noun);
+    u3_noun u3qdu_dew(u3_noun, u3_noun);
     u3_noun u3qdu_cut(u3_noun);
     u3_noun u3qdu_vip(u3_noun, u3_noun, u3_atom, u3_noun);
     u3_noun u3qdu_see(u3_noun, u3_noun, u3_atom);
