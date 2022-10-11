@@ -1972,6 +1972,7 @@ static u3j_harm _140_two_up_fuse_a[] = {{".2", u3wdu_fuse, c3y}, {}};
 static u3j_harm _140_two_up_funk_a[] = {{".2", u3wdu_funk, c3y}, {}};
 static u3j_harm _140_two_up_wane_a[] = {{".2", u3wdu_wane, c3y}, {}};
 static u3j_harm _140_two_up_put_a[]  = {{".2", u3wdu_put, c3y}, {}};
+static u3j_harm _140_two_up_del_a[]  = {{".2", u3wdu_del, c3y}, {}};
 static u3j_harm _140_two_up_get_a[]  = {{".2", u3wdu_get, c3y}, {}};
 static u3j_harm _140_two_up_cut_a[]  = {{".2", u3wdu_cut, c3y}, {}};
 static u3j_harm _140_two_up_vip_a[]  = {{".2", u3wdu_vip, c3y}, {}};
@@ -2047,6 +2048,7 @@ static u3j_core _140_two_up_core_d[] =
   { "wane", 7, _140_two_up_wane_a, 0, no_hashes },
   { "get", 7, _140_two_up_get_a, 0, no_hashes },
   { "put", 7, _140_two_up_put_a, 0, no_hashes },
+  { "del", 7, _140_two_up_del_a, 0, no_hashes },
   { "cut", 7, _140_two_up_cut_a, 0, no_hashes },
   { "vip", 7, _140_two_up_vip_a, 0, no_hashes },
   { "see", 7, _140_two_up_see_a, 0, no_hashes },

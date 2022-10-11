@@ -149,6 +149,7 @@
 
     u3_noun u3wdu_get(u3_noun);
     u3_noun u3wdu_put(u3_noun);
+    u3_noun u3wdu_del(u3_noun);
     u3_noun u3wdu_cut(u3_noun);
     u3_noun u3wdu_vip(u3_noun);
     u3_noun u3wdu_see(u3_noun);
