@@ -2441,7 +2441,8 @@
     |=([[k @ buc] @] +((add +<+ (wyt:qor t.+<->+))))
   ::
   ++  get                                               ::  lookup
-    |=  [a=pri k=@]
+    ~/  %get
+    |=  [a=pri =k]
     |-  ^-  (unit (pair @ v))
     ?~  a  ~
     ?-    -.a
