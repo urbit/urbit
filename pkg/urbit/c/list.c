@@ -14,6 +14,9 @@ struct _c3_list_node {
   /// Previous node in the list.
   struct _c3_list_node* pre_u;
 
+  /// Ownership mode.
+  c3_list_ownership own_e;
+
   /// Length of `dat_y` in bytes.
   size_t dat_i;
 
@@ -47,11 +50,13 @@ _create_node(const void* const dat_v, size_t dat_i, c3_list_ownership own_e)
   switch ( own_e ) {
     case C3_LIST_COPY:
       nod_u        = c3_calloc(sizeof(*nod_u) + dat_i);
+      nod_u->own_e = own_e;
       nod_u->dat_i = dat_i;
       memcpy(nod_u->dat_y, dat_v, dat_i);
       break;
     case C3_LIST_TRANSFER:
       nod_u        = c3_calloc(sizeof(*nod_u) + sizeof(dat_v));
+      nod_u->own_e = own_e;
       nod_u->dat_i = dat_i;
       memcpy(nod_u->dat_y, &dat_v, sizeof(dat_v));
       break;
@@ -167,7 +172,18 @@ c3_lode_prev(const c3_lode* const nod_u)
 void*
 c3_lode_data(const c3_lode* const nod_u)
 {
-  return nod_u ? (void*)nod_u->dat_y : NULL;
+  if ( !nod_u ) {
+    return NULL;
+  }
+  switch ( nod_u->own_e ) {
+    case C3_LIST_COPY:
+      return (void*)nod_u->dat_y;
+    case C3_LIST_TRANSFER:
+      return *(void**)nod_u->dat_y;
+    case C3_LIST_OWNERSHIP_END:
+    default:
+      return NULL;
+  }
 }
 
 size_t

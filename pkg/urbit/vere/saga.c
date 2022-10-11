@@ -300,7 +300,7 @@ _remove_committed_events(u3_saga* const log_u)
   size_t   len_i = log_u->eve_u.req_i;
   for ( size_t idx_i = 0; idx_i < len_i; idx_i++ ) {
     c3_lode* nod_u = c3_list_popf(eve_u);
-    c3_free(*(c3_y**)c3_lode_data(nod_u));
+    c3_free(c3_lode_data(nod_u));
     c3_free(nod_u);
   }
 }
@@ -726,7 +726,7 @@ u3_saga_close(u3_saga* const log_u)
     if ( eve_u ) {
       c3_lode* nod_u;
       while ( (nod_u = c3_list_popf(eve_u)) ) {
-        c3_free(*(c3_y**)c3_lode_data(nod_u));
+        c3_free(c3_lode_data(nod_u));
         c3_free(nod_u);
       }
       c3_free(eve_u);

@@ -811,7 +811,7 @@ u3_epoc_commit(u3_epoc* const poc_u, const c3_lode* nod_u, const size_t len_i)
     }
     MDB_val key_u = {.mv_data = &ide_d, .mv_size = sizeof(ide_d)};
     MDB_val val_u = {
-      .mv_data = *(c3_y**)c3_lode_data(nod_u),
+      .mv_data = c3_lode_data(nod_u),
       .mv_size = c3_lode_len(nod_u),
     };
 

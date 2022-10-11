@@ -86,7 +86,7 @@ _test_push_back(void)
       c3_assert(idx_i == c3_list_len(lis_u));
       c3_list_pushb(lis_u, &idx_i, sizeof(idx_i));
       c3_assert(nod_u = c3_list_peekb(lis_u));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
     }
     c3_assert(len_i == c3_list_len(lis_u));
     // We leak the memory associated with the nodes here, but that's okay
@@ -120,7 +120,7 @@ _test_push_back(void)
       c3_list_pushb(lis_u, arrs_y[idx_i], sizeof(str_c));
       c3_assert(nod_u = c3_list_peekb(lis_u));
       c3_assert(sizeof(str_c) == c3_lode_len(nod_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
     }
     c3_assert(len_i == c3_list_len(lis_u));
 
@@ -175,7 +175,7 @@ _test_push_back(void)
       char* str_c = strs_c[idx_i];
       c3_list_pushb(lis_u, str_c, 1 + strlen(str_c));
       c3_assert(nod_u = c3_list_peekb(lis_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
     }
     c3_assert(len_i == c3_list_len(lis_u));
     // We leak the memory associated with the nodes here, but that's okay
@@ -217,7 +217,7 @@ _test_push_front(void)
       c3_assert(idx_i == c3_list_len(lis_u));
       c3_list_pushf(lis_u, &idx_i, sizeof(idx_i));
       c3_assert(nod_u = c3_list_peekf(lis_u));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
     }
     c3_assert(len_i == c3_list_len(lis_u));
     // We leak the memory associated with the nodes here, but that's okay
@@ -271,7 +271,7 @@ _test_push_front(void)
       char* str_c = strs_c[idx_i];
       c3_list_pushf(lis_u, str_c, 1 + strlen(str_c));
       c3_assert(nod_u = c3_list_peekf(lis_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
     }
     c3_assert(len_i == c3_list_len(lis_u));
     // We leak the memory associated with the nodes here, but that's okay
@@ -313,7 +313,7 @@ _test_push_mixed(void)
       c3_list_end end_i = idx_i % 2;
       c3_list_push(lis_u, end_i, &idx_i, sizeof(idx_i));
       c3_assert(nod_u = c3_list_peek(lis_u, end_i));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
     }
     c3_assert(len_i == c3_list_len(lis_u));
     // We leak the memory associated with the nodes here, but that's okay
@@ -382,20 +382,20 @@ _test_pop_back(void)
       c3_assert(idx_i == c3_list_len(lis_u));
       c3_list_pushf(lis_u, &nums_i[idx_i], sizeof(nums_i[idx_i]));
       c3_assert(nod_u = c3_list_peekf(lis_u));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
     }
     c3_assert(len_i == c3_list_len(lis_u));
 
     for ( size_t idx_i = 0; idx_i < len_i; idx_i++ ) {
       c3_assert(len_i - idx_i == c3_list_len(lis_u));
       c3_assert(nod_u = c3_list_peekb(lis_u));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
       c3_assert(nod_u = c3_list_popb(lis_u));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
       c3_free(nod_u);
       if ( 0 < c3_list_len(lis_u) ) {
         c3_assert(nod_u = c3_list_peekb(lis_u));
-        c3_assert(idx_i != **(size_t**)c3_lode_data(nod_u));
+        c3_assert(idx_i != *(size_t*)c3_lode_data(nod_u));
       }
     }
     c3_assert(0 == c3_list_len(lis_u));
@@ -463,7 +463,7 @@ _test_pop_back(void)
       char* str_c = strs_c[idx_i];
       c3_list_pushf(lis_u, str_c, 1 + strlen(str_c));
       c3_assert(nod_u = c3_list_peekf(lis_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
     }
     c3_assert(len_i == c3_list_len(lis_u));
 
@@ -471,13 +471,13 @@ _test_pop_back(void)
       c3_assert(len_i - idx_i == c3_list_len(lis_u));
       char* str_c = strs_c[idx_i];
       c3_assert(nod_u = c3_list_peekb(lis_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
       c3_assert(nod_u = c3_list_popb(lis_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
       c3_free(nod_u);
       if ( 0 < c3_list_len(lis_u) ) {
         c3_assert(nod_u = c3_list_peekb(lis_u));
-        c3_assert(0 != strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+        c3_assert(0 != strcmp(str_c, c3_lode_data(nod_u)));
       }
     }
     c3_assert(0 == c3_list_len(lis_u));
@@ -544,20 +544,20 @@ _test_pop_front(void)
       c3_assert(idx_i == c3_list_len(lis_u));
       c3_list_pushb(lis_u, &nums_i[idx_i], sizeof(nums_i[idx_i]));
       c3_assert(nod_u = c3_list_peekb(lis_u));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
     }
     c3_assert(len_i == c3_list_len(lis_u));
 
     for ( size_t idx_i = 0; idx_i < len_i; idx_i++ ) {
       c3_assert(len_i - idx_i == c3_list_len(lis_u));
       c3_assert(nod_u = c3_list_peekf(lis_u));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
       c3_assert(nod_u = c3_list_popf(lis_u));
-      c3_assert(idx_i == **(size_t**)c3_lode_data(nod_u));
+      c3_assert(idx_i == *(size_t*)c3_lode_data(nod_u));
       c3_free(nod_u);
       if ( 0 < c3_list_len(lis_u) ) {
         c3_assert(nod_u = c3_list_peekf(lis_u));
-        c3_assert(idx_i != **(size_t**)c3_lode_data(nod_u));
+        c3_assert(idx_i != *(size_t*)c3_lode_data(nod_u));
       }
     }
     c3_assert(0 == c3_list_len(lis_u));
@@ -622,20 +622,20 @@ _test_pop_front(void)
       char* str_c = strs_c[idx_i];
       c3_list_pushb(lis_u, str_c, 1 + strlen(str_c));
       c3_assert(nod_u = c3_list_peekb(lis_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
     }
 
     for ( size_t idx_i = 0; idx_i < len_i; idx_i++ ) {
       c3_assert(len_i - idx_i == c3_list_len(lis_u));
       char* str_c = strs_c[idx_i];
       c3_assert(nod_u = c3_list_peekf(lis_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
       c3_assert(nod_u = c3_list_popf(lis_u));
-      c3_assert(0 == strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+      c3_assert(0 == strcmp(str_c, c3_lode_data(nod_u)));
       c3_free(nod_u);
       if ( 0 < c3_list_len(lis_u) ) {
         c3_assert(nod_u = c3_list_peekf(lis_u));
-        c3_assert(0 != strcmp(str_c, *(c3_c**)c3_lode_data(nod_u)));
+        c3_assert(0 != strcmp(str_c, c3_lode_data(nod_u)));
       }
     }
     c3_assert(0 == c3_list_len(lis_u));
