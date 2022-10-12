@@ -3,6 +3,7 @@
 ::::
   ::
 =/  rtol  .1e-6
+=,  la
 |%
 ::  Auxiliary tools
 ::    Replace element of c at index a with item b
@@ -36,23 +37,11 @@
 ++  test-nulls  ^-  tang
   ;:  weld
     %+  expect-eq
-      !>  `@lvs`~
-      !>  ._
-    %+  expect-eq
       !>  0x1
       !>  `@ux`(make:lvs ~)
     %+  expect-eq
-      !>  `@lvd`~
-      !>  .~_
-    %+  expect-eq
       !>  0x1
       !>  `@ux`(make:lvd ~)
-    %+  expect-eq
-      !>  `@lvh`~
-      !>  .~~_
-    %+  expect-eq
-      !>  `@lvq`~
-      !>  .~~~_
   ==
 ::
 ::  Tests for vector creation

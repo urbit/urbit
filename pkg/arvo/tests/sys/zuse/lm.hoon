@@ -3,6 +3,7 @@
 ::::
   ::
 =/  rtol  .1e-6
+=,  la
 |%
 ::  +expect-near-lms: compares :expected and :actual for nearness in
 ::    floating-point @lm terms and pretty-prints the result
