@@ -2,9 +2,9 @@
 ::
 ::::
   ::
-=/  rtol  .1e-6
 =,  la
-|%
+^|
+|_  rtol=_.1e-6
 ::  +expect-near-lms: compares :expected and :actual for nearness in
 ::    floating-point @lm terms and pretty-prints the result
 ::
@@ -12,7 +12,7 @@
   |=  [expected=@lms actual=@lms]
   ^-  tang
   =|  result=tang
-  =?  result  !(all-close:lms expected actual .1e-6)
+  =?  result  !(all-close:lms expected actual rtol)
     %+  weld  result
     ^-  tang
     :~  [%palm [": " ~ ~ ~] [leaf+"expected" leaf+<(unmake:lms expected)> ~]]
@@ -625,7 +625,7 @@
       !>  (minor:lms mr 2 2)
   ==
 ++  test-invert
-  ::  TODO XX should really check for singularity etc,
+  ::  XX should really check for singularity etc,
   ::    the interesting ways this can fail
   =/  mr  `@lms`(make:lms ~[~[.1 .2 .3] ~[.4 .5 .6] ~[.7 .8 .0]])
   ;:  weld

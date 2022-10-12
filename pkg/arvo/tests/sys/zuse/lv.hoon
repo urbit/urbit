@@ -2,9 +2,9 @@
 ::
 ::::
   ::
-=/  rtol  .1e-6
 =,  la
-|%
+^|
+|_  rtol=_.1e-6
 ::  Auxiliary tools
 ::    Replace element of c at index a with item b
 ++  nick
@@ -18,18 +18,18 @@
 ++  expect-near-lvs
   |=  [expected=@lvs actual=@lvs]
   ^-  tang
-  ?:  (all-close:lvs `@lvs`expected `@lvs`actual .1e-6)
+  ?:  (all-close:lvs `@lvs`expected `@lvs`actual rtol)
     ~
-  :~  [%palm [": " ~ ~ ~] [leaf+"expected" leaf+(pprint:lvs expected) ~]]
-      [%palm [": " ~ ~ ~] [leaf+"actual" leaf+(pprint:lvs actual) ~]]
+  :~  [%palm [": " ~ ~ ~] [leaf+"expected" (pprint:lvs expected) ~]]
+      [%palm [": " ~ ~ ~] [leaf+"actual" (pprint:lvs actual) ~]]
   ==
 ++  expect-near-lvd
   |=  [expected=@lvd actual=@lvd]
   ^-  tang
-  ?:  (all-close:lvd `@lvd`expected `@lvd`actual .~1e-6)
+  ?:  (all-close:lvd `@lvd`expected `@lvd`actual (bit:rd (sea:rs rtol)))
     ~
-  :~  [%palm [": " ~ ~ ~] [leaf+"expected" leaf+(pprint:lvd expected) ~]]
-      [%palm [": " ~ ~ ~] [leaf+"actual" leaf+(pprint:lvd actual) ~]]
+  :~  [%palm [": " ~ ~ ~] [leaf+"expected" (pprint:lvd expected) ~]]
+      [%palm [": " ~ ~ ~] [leaf+"actual" (pprint:lvd actual) ~]]
   ==
 ::
 ::  Tests for various empty vectors.
@@ -327,7 +327,8 @@
   %+  expect-eq
     !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
     !>  (set:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) 5 .5)
-    ::  TODO XX test out-of-bounds
+  %-  expect-fail
+    |.  (set:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) 6 .5)
   ==
 ++  test-lvs-catenate  ^-  tang
   ;:  weld
@@ -343,37 +344,36 @@
 ::
 ++  test-lvs-adds  ^-  tang
   ;:  weld
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6])
-      !>  (adds:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
-      :: XX switch to expect-near-lvs instead
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.11 .12 .13 .14 .15])
-      !>  (adds:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6])
+      (adds:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.11 .12 .13 .14 .15])
+      (adds:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
   ==
 ++  test-lvs-subs  ^-  tang
   ;:  weld
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.0 .1 .2 .3 .4])
-      !>  (subs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.-9 .-8 .-7 .-6 .-5])
-      !>  (subs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.0 .1 .2 .3 .4])
+      (subs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.-9 .-8 .-7 .-6 .-5])
+      (subs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
   ==
 ++  test-lvs-muls  ^-  tang
   ;:  weld
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
-      !>  (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.2 .4 .6 .8 .10])
-      !>  (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .2)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
-      !>  (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .-1)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
-      !>  (muls:lvs (make:lvs `(list @rs)`~[.0.1 .0.2 .0.3 .0.4 .0.5]) .10)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
+      (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.2 .4 .6 .8 .10])
+      (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .2)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
+      (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .-1)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
+      (muls:lvs (make:lvs `(list @rs)`~[.0.1 .0.2 .0.3 .0.4 .0.5]) .10)
   ==
 ++  test-lvs-divs  ^-  tang
   ;:  weld
@@ -397,25 +397,27 @@
   =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
   =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
   ;:  weld
-    %+  expect-eq
-      !>  (iota:lvs 5)
-      !>  (addv:lvs vec00000 vec12345)
-    %+  expect-eq
-      !>  (fill:lvs 5 .2)
-      !>  (addv:lvs vec11111 vec11111)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.6 .5 .4 .3 .2])
-      !>  (addv:lvs vec11111 vec54321)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.-1 .1 .3 .5 .7])
-      !>  (addv:lvs vec12345 vec21012)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6])
-      !>  (addv:lvs vec11111 vec12345)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.-4 .-2 .0 .2 .4])
-      !>  (addv:lvs vec21012 vec21012)
-  ::  TODO XX test expected failures like diff sizes
+    %+  expect-near-lvs
+      (iota:lvs 5)
+      (addv:lvs vec00000 vec12345)
+    %+  expect-near-lvs
+      (fill:lvs 5 .2)
+      (addv:lvs vec11111 vec11111)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.6 .5 .4 .3 .2])
+      (addv:lvs vec11111 vec54321)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.-1 .1 .3 .5 .7])
+      (addv:lvs vec12345 vec21012)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6])
+      (addv:lvs vec11111 vec12345)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.-4 .-2 .0 .2 .4])
+      (addv:lvs vec21012 vec21012)
+    %-  expect-fail
+      |.  =/  vec000  (zeros:lvs 3)
+      (addv:lvs vec00000 vec000)
   ==
 ++  test-lvs-subv  ^-  tang
   =/  vec00000  (zeros:lvs 5)
@@ -424,25 +426,27 @@
   =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
   =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
   ;:  weld
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
-      !>  (subv:lvs vec00000 vec12345)
-    %+  expect-eq
-      !>  (zeros:lvs 5)
-      !>  (subv:lvs vec11111 vec11111)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.4 .3 .2 .1 .0])
-      !>  (subv:lvs vec54321 vec11111)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.3 .2 .1 .0 .-1])
-      !>  (subv:lvs vec11111 vec21012)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.0 .-1 .-2 .-3 .-4])
-      !>  (subv:lvs vec11111 vec12345)
-    %+  expect-eq
-      !>  (zeros:lvs 5)
-      !>  (subv:lvs vec21012 vec21012)
-  ::  TODO XX test expected failures like diff sizes
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
+      (subv:lvs vec00000 vec12345)
+    %+  expect-near-lvs
+      (zeros:lvs 5)
+      (subv:lvs vec11111 vec11111)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.4 .3 .2 .1 .0])
+      (subv:lvs vec54321 vec11111)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.3 .2 .1 .0 .-1])
+      (subv:lvs vec11111 vec21012)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.0 .-1 .-2 .-3 .-4])
+      (subv:lvs vec11111 vec12345)
+    %+  expect-near-lvs
+      (zeros:lvs 5)
+      (subv:lvs vec21012 vec21012)
+    %-  expect-fail
+      |.  =/  vec000  (zeros:lvs 3)
+      (addv:lvs vec00000 vec000)
   ==
 ++  test-lvs-mulv  ^-  tang
   =/  vec00000  (zeros:lvs 5)
@@ -451,25 +455,27 @@
   =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
   =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
   ;:  weld
-    %+  expect-eq
-      !>  (zeros:lvs 5)
-      !>  (mulv:lvs vec00000 vec12345)
-    %+  expect-eq
-      !>  (ones:lvs 5)
-      !>  (mulv:lvs vec11111 vec11111)
-    %+  expect-eq
-      !>  vec54321
-      !>  (mulv:lvs vec11111 vec54321)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.1 .4 .9 .16 .25])
-      !>  (mulv:lvs vec12345 vec12345)
-    %+  expect-eq
-      !>  vec21012
-      !>  (mulv:lvs vec11111 vec21012)
-    %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.4 .1 .0 .1 .4])
-      !>  (mulv:lvs vec21012 vec21012)
-  ::  TODO XX test expected failures like diff sizes
+    %+  expect-near-lvs
+      (zeros:lvs 5)
+      (mulv:lvs vec00000 vec12345)
+    %+  expect-near-lvs
+      (ones:lvs 5)
+      (mulv:lvs vec11111 vec11111)
+    %+  expect-near-lvs
+      vec54321
+      (mulv:lvs vec11111 vec54321)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.1 .4 .9 .16 .25])
+      (mulv:lvs vec12345 vec12345)
+    %+  expect-near-lvs
+      vec21012
+      (mulv:lvs vec11111 vec21012)
+    %+  expect-near-lvs
+      (make:lvs `(list @rs)`~[.4 .1 .0 .1 .4])
+      (mulv:lvs vec21012 vec21012)
+    %-  expect-fail
+      |.  =/  vec000  (zeros:lvs 3)
+      (addv:lvs vec00000 vec000)
   ==
 ++  test-lvs-divv  ^-  tang
   =/  vec11111  (ones:lvs 5)
@@ -483,7 +489,9 @@
     %+  expect-near-lvs
       (ones:lvs 5)
       (divv:lvs vec11111 vec11111)
-  ::  TODO XX test expected failures like diff sizes and div-by-zero
+    %-  expect-fail
+      |.  =/  vec000  (zeros:lvs 3)
+      (addv:lvs vec11111 vec000)
   ==
 ++  test-lvs-sum  ^-  tang
   ;:  weld
@@ -810,7 +818,8 @@
   %+  expect-eq
     !>  (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5])
     !>  (set:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) 5 .~5)
-    ::  TODO XX test out-of-bounds
+  %-  expect-fail
+    |.  (set:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) 6 .~5)
   ==
 ++  test-lvd-catenate  ^-  tang
   ;:  weld
@@ -880,25 +889,27 @@
   =/  vec54321  (make:lvd `(list @rd)`~[.~5 .~4 .~3 .~2 .~1])
   =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .~-1 .~0 .~1 .~2])
   ;:  weld
-    %+  expect-eq
-      !>  (iota:lvd 5)
-      !>  (addv:lvd vec00000 vec12345)
-    %+  expect-eq
-      !>  (fill:lvd 5 .~2)
-      !>  (addv:lvd vec11111 vec11111)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~6 .~5 .~4 .~3 .~2])
-      !>  (addv:lvd vec11111 vec54321)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~-1 .~1 .~3 .~5 .~7])
-      !>  (addv:lvd vec12345 vec21012)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~2 .~3 .~4 .~5 .~6])
-      !>  (addv:lvd vec11111 vec12345)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~-4 .~-2 .~0 .~2 .~4])
-      !>  (addv:lvd vec21012 vec21012)
-  ::  TODO XX test expected failures like diff sizes
+    %+  expect-near-lvd
+      (iota:lvd 5)
+      (addv:lvd vec00000 vec12345)
+    %+  expect-near-lvd
+      (fill:lvd 5 .~2)
+      (addv:lvd vec11111 vec11111)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~6 .~5 .~4 .~3 .~2])
+      (addv:lvd vec11111 vec54321)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~-1 .~1 .~3 .~5 .~7])
+      (addv:lvd vec12345 vec21012)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~2 .~3 .~4 .~5 .~6])
+      (addv:lvd vec11111 vec12345)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~-4 .~-2 .~0 .~2 .~4])
+      (addv:lvd vec21012 vec21012)
+    %-  expect-fail
+      |.  =/  vec000  (zeros:lvd 3)
+      (addv:lvd vec00000 vec000)
   ==
 ++  test-lvd-subv  ^-  tang
   =/  vec00000  (zeros:lvd 5)
@@ -907,25 +918,27 @@
   =/  vec54321  (make:lvd `(list @rd)`~[.~5 .~4 .~3 .~2 .~1])
   =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .~-1 .~0 .~1 .~2])
   ;:  weld
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~-1 .~-2 .~-3 .~-4 .~-5])
-      !>  (subv:lvd vec00000 vec12345)
-    %+  expect-eq
-      !>  (zeros:lvd 5)
-      !>  (subv:lvd vec11111 vec11111)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~4 .~3 .~2 .~1 .~0])
-      !>  (subv:lvd vec54321 vec11111)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~3 .~2 .~1 .~0 .~-1])
-      !>  (subv:lvd vec11111 vec21012)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~0 .~-1 .~-2 .~-3 .~-4])
-      !>  (subv:lvd vec11111 vec12345)
-    %+  expect-eq
-      !>  (zeros:lvd 5)
-      !>  (subv:lvd vec21012 vec21012)
-  ::  TODO XX test expected failures like diff sizes
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~-1 .~-2 .~-3 .~-4 .~-5])
+      (subv:lvd vec00000 vec12345)
+    %+  expect-near-lvd
+      (zeros:lvd 5)
+      (subv:lvd vec11111 vec11111)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~4 .~3 .~2 .~1 .~0])
+      (subv:lvd vec54321 vec11111)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~3 .~2 .~1 .~0 .~-1])
+      (subv:lvd vec11111 vec21012)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~0 .~-1 .~-2 .~-3 .~-4])
+      (subv:lvd vec11111 vec12345)
+    %+  expect-near-lvd
+      (zeros:lvd 5)
+      (subv:lvd vec21012 vec21012)
+    %-  expect-fail
+      |.  =/  vec000  (zeros:lvd 3)
+      (subv:lvd vec00000 vec000)
   ==
 ++  test-lvd-mulv  ^-  tang
   =/  vec00000  (zeros:lvd 5)
@@ -934,25 +947,27 @@
   =/  vec54321  (make:lvd `(list @rd)`~[.~5 .~4 .~3 .~2 .~1])
   =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .~-1 .~0 .~1 .~2])
   ;:  weld
-    %+  expect-eq
-      !>  (zeros:lvd 5)
-      !>  (mulv:lvd vec00000 vec12345)
-    %+  expect-eq
-      !>  (ones:lvd 5)
-      !>  (mulv:lvd vec11111 vec11111)
-    %+  expect-eq
-      !>  vec54321
-      !>  (mulv:lvd vec11111 vec54321)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~1 .~4 .~9 .~16 .~25])
-      !>  (mulv:lvd vec12345 vec12345)
-    %+  expect-eq
-      !>  vec21012
-      !>  (mulv:lvd vec11111 vec21012)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~4 .~1 .~0 .~1 .~4])
-      !>  (mulv:lvd vec21012 vec21012)
-  ::  TODO XX test expected failures like diff sizes
+    %+  expect-near-lvd
+      (zeros:lvd 5)
+      (mulv:lvd vec00000 vec12345)
+    %+  expect-near-lvd
+      (ones:lvd 5)
+      (mulv:lvd vec11111 vec11111)
+    %+  expect-near-lvd
+      vec54321
+      (mulv:lvd vec11111 vec54321)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~1 .~4 .~9 .~16 .~25])
+      (mulv:lvd vec12345 vec12345)
+    %+  expect-near-lvd
+      vec21012
+      (mulv:lvd vec11111 vec21012)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~4 .~1 .~0 .~1 .~4])
+      (mulv:lvd vec21012 vec21012)
+    %-  expect-fail
+      |.  =/  vec000  (zeros:lvd 3)
+      (mulv:lvd vec00000 vec000)
   ==
 ++  test-lvd-divv  ^-  tang
   =/  vec11111  (ones:lvd 5)
@@ -966,7 +981,9 @@
     %+  expect-near-lvd
       (ones:lvd 5)
       (divv:lvd vec11111 vec11111)
-  ::  TODO XX test expected failures like diff sizes and div-by-zero
+    %-  expect-fail
+      |.  =/  vec000  (zeros:lvd 3)
+      (divv:lvd vec11111 vec000)
   ==
 ++  test-lvd-sum  ^-  tang
   ;:  weld
