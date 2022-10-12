@@ -7,6 +7,7 @@
 ::::    0: version stub                                 ::
   ::                                                    ::
 ~%  %k.140  ~  ~                                        ::
+!:
 |%
 ++  hoon-version  +
 --  =>
@@ -5614,7 +5615,7 @@
             ?+  (cut 3 [2 1] p.p.lot)  (z-co q.p.lot)
               %h  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  ["_" "" "_"]
+                  :+  %rose  ["_" "." "_"]
                   %+  turn
                   ?~  u  `(list (list @rh))`~
                   =/  m  (end [4 1] (rsh [4 (dec (dec (met 4 u)))] u))
@@ -5626,10 +5627,10 @@
                     ?:  =(i m)  `(list (list @rh))`b
                     =/  c  `(list @rh)`(scag n (slag (mul i n) a))
                   $(i +(i), b `(list (list @rh))`(weld b ~[c]))
-                  |=(a=(list @rh) [%rose [" " "^" "^"] (turn a |=(a=@rh [%leaf (trip (scot %rh a))]))])
+                  |=(a=(list @rh) [%rose ["_" "." "_"] (turn a |=(a=@rh [%leaf (trip (scot %rh a))]))])
               %s  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "|" "|"]
+                  :+  %rose  ["_" "." "_"]
                   %+  turn
                   ?~  u  `(list (list @rs))`~
                   =/  m  (end [5 1] (rsh [5 (dec (dec (met 5 u)))] u))
@@ -5641,10 +5642,10 @@
                     ?:  =(i m)  `(list (list @rs))`b
                     =/  c  `(list @rs)`(scag n (slag (mul i n) a))
                   $(i +(i), b `(list (list @rs))`(weld b ~[c]))
-                  |=(a=(list @rs) [%rose [" " "<" ">"] (turn a |=(a=@rs [%leaf (trip (scot %rs a))]))])
+                  |=(a=(list @rs) [%rose ["_" "." "_"] (turn a |=(a=@rs [%leaf (trip (scot %rs a))]))])
               %d  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "|" "|"]
+                  :+  %rose  ["_" "." "_"]
                   %+  turn
                   ?~  u  `(list (list @rd))`~
                   =/  m  (end [6 1] (rsh [6 (dec (dec (met 6 u)))] u))
@@ -5656,10 +5657,10 @@
                     ?:  =(i m)  `(list (list @rd))`b
                     =/  c  `(list @rd)`(scag n (slag (mul i n) a))
                   $(i +(i), b `(list (list @rd))`(weld b ~[c]))
-                  |=(a=(list @rd) [%rose [" " "<<" ">>"] (turn a |=(a=@rd [%leaf (trip (scot %rd a))]))])
+                  |=(a=(list @rd) [%rose ["_" "." "_"] (turn a |=(a=@rd [%leaf (trip (scot %rd a))]))])
               %q  =/  u  q.p.lot
                   %~  ram  re
-                  :+  %rose  [" " "|" "|"]
+                  :+  %rose  ["_" "." "_"]
                   %+  turn
                   ?~  u  `(list (list @rq))`~
                   =/  m  (end [7 1] (rsh [7 (dec (dec (met 7 u)))] u))
@@ -5671,7 +5672,7 @@
                     ?:  =(i m)  `(list (list @rq))`b
                     =/  c  `(list @rq)`(scag n (slag (mul i n) a))
                   $(i +(i), b `(list (list @rq))`(weld b ~[c]))
-                  |=(a=(list @rq) [%rose [" " "<<<" ">>>"] (turn a |=(a=@rq [%leaf (trip (scot %rq a))]))])
+                  |=(a=(list @rq) [%rose ["_" "." "_"] (turn a |=(a=@rq [%leaf (trip (scot %rq a))]))])
             ==
           ==
         ==
@@ -6004,7 +6005,7 @@
   ++  lago-lvs  (cook lagvs lago-base-vs)
   ::++  lago-lmh  (cook lagmh lago-base-mh)
   ::++  lago-lmq  (cook lagmq lago-base-mq)
-  ++  lago-lmd  (cook lagmd lago-base-md)
+  ::++  lago-lmd  (cook lagmd lago-base-md)
   ::++  lago-lms  (cook lagms lago-base-ms)
   ::
   ++  lago-base-vh
@@ -6084,7 +6085,7 @@
     ==
     b
   ++  lago-base-ms
-    !:  |=  b=nail
+    |=  b=nail
     %-
     ;~  pose
     :: parse for null matrix, .__
@@ -6117,28 +6118,7 @@
     (mix (rep [5 1] a) (lsh [5 (lent a)] 1))
   ++  lagmh  !!
   ++  lagmq  !!
-  ++  lagmd
-    |=  a=(list (list @rd))
-    ^-  @lmd
-    ::  process `@lmd`~, .~__
-    ?~  a  `@lmd`~
-    ::  process `@lmd`~[~]
-    ?~  i.a  `@lmd`0x2.0000.0000.0000.0001
-    =/  m  (lent `(list (list @rd))`a)  :: number of rows
-    =/  n  (lent `(list @rd)`i.a)       :: number of columns
-    =/  mn  (mul m n)
-    =/  b  (mix (lsh [6 +(mn)] 2) (lsh [6 mn] m))
-    =/  i  0  :: index over rows
-    =/  j  0  :: index over columns
-    |-  ^-  @lmd
-    ?:  =(i m)  b
-    ?:  =(j n)  $(i +(i), j 0)
-    =/  idx  (add (mul n i) j)
-    =/  val  (snag j (snag i `(list (list @rd))`a))
-    %=  $
-      j  +(j)
-      b  (sew 6 [(dec (sub mn idx)) 1 val] b)
-    ==
+  ++  lagmd  |=(a=(list (list @rd)) `@lmd`~)
   ++  lagms  !!
   ::
   ++  zust
