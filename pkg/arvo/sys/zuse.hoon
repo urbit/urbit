@@ -6069,11 +6069,18 @@
       ~_  leaf+"lagoon-fail"
       (cut 5 [(dec i) 1] u)
     ::
-    ::    Pretty-print the contents of the vector.
+    ::    Pretty-print the contents of the vector as a tape.
     ++  pprint
       |=  u=@lvs
       ^-  tape
       %~  ram  re
+      ^-  tank
+      :+  %rose  [" " "[" "]"]
+      (turn (unmake u) |=(a=@rs [%leaf (trip (scot %rs a))]))
+    ::
+    ::    Pretty-print the contents of the vector as a tank.
+    ++  pprint-tank
+      |=  u=@lvs
       ^-  tank
       :+  %rose  [" " "[" "]"]
       (turn (unmake u) |=(a=@rs [%leaf (trip (scot %rs a))]))
@@ -6285,11 +6292,18 @@
       ~_  leaf+"lagoon-fail"
       (cut 6 [(dec i) 1] u)
     ::
-    ::    Pretty-print the contents of the vector.
+    ::    Pretty-print the contents of the vector as a tape.
     ++  pprint
       |=  u=@lvd
       ^-  tape
       %~  ram  re
+      ^-  tank
+      :+  %rose  [" " "[" "]"]
+      (turn (unmake u) |=(a=@rd [%leaf (trip (scot %rd a))]))
+    ::
+    ::    Pretty-print the contents of the vector as a tank.
+    ++  pprint-tank
+      |=  u=@lvd
       ^-  tank
       :+  %rose  [" " "[" "]"]
       (turn (unmake u) |=(a=@rd [%leaf (trip (scot %rd a))]))
@@ -6489,8 +6503,18 @@
         =/  c  `(list @rs)`(scag n (slag (mul i n) a))
       $(i +(i), b `(list (list @rs))`(weld b ~[c]))
     ::
-    ::    Pretty-print the contents of the matrix.
+    ::    Pretty-print the contents of the matrix as a tape.
     ++  pprint
+      |=  u=@lms
+      ^-  tape
+      %~  ram  re
+      ^-  tank
+      :+  %rose  [" " "[" "]"]
+      %+  turn  (unmake u)
+      |=(a=(list @rs) [%rose [" " "[" "]"] (turn a |=(a=@rs [%leaf (trip (scot %rs a))]))])
+    ::
+    ::    Pretty-print the contents of the matrix as a tank.
+    ++  pprint-tank
       |=  u=@lms  ^-  tank
       :+  %rose  [" " "[" "]"]
       %+  turn  (unmake u)
@@ -7000,11 +7024,19 @@
         =/  c  `(list @rd)`(scag n (slag (mul i n) a))
       $(i +(i), b `(list (list @rd))`(weld b ~[c]))
     ::
-    ::    Pretty-print the contents of the matrix.
+    ::    Pretty-print the contents of the matrix as a tape.
     ++  pprint
       |=  u=@lmd
       ^-  tape
       %~  ram  re
+      ^-  tank
+      :+  %rose  [" " "[[" "]]"]
+      %+  turn  (unmake u)
+      |=(a=(list @rd) [%rose [" " "[[" "]]"] (turn a |=(a=@rd [%leaf (trip (scot %rs a))]))])
+    ::
+    ::    Pretty-print the contents of the matrix as a tank.
+    ++  pprint-tank
+      |=  u=@lmd
       ^-  tank
       :+  %rose  [" " "[[" "]]"]
       %+  turn  (unmake u)

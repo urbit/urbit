@@ -16,16 +16,16 @@
   ^-  tang
   ?:  (all-close:lvs `@lvs`expected `@lvs`actual rtol)
     ~
-  :~  [%palm [": " ~ ~ ~] [leaf+"expected" (pprint:lvs expected) ~]]
-      [%palm [": " ~ ~ ~] [leaf+"actual" (pprint:lvs actual) ~]]
+  :~  [%palm [": " ~ ~ ~] [leaf+"expected" (pprint-tank:lvs expected) ~]]
+      [%palm [": " ~ ~ ~] [leaf+"actual" (pprint-tank:lvs actual) ~]]
   ==
 ++  expect-near-lvd
   |=  [expected=@lvd actual=@lvd]
   ^-  tang
   ?:  (all-close:lvd `@lvd`expected `@lvd`actual (bit:rd (sea:rs rtol)))
     ~
-  :~  [%palm [": " ~ ~ ~] [leaf+"expected" (pprint:lvd expected) ~]]
-      [%palm [": " ~ ~ ~] [leaf+"actual" (pprint:lvd actual) ~]]
+  :~  [%palm [": " ~ ~ ~] [leaf+"expected" (pprint-tank:lvd expected) ~]]
+      [%palm [": " ~ ~ ~] [leaf+"actual" (pprint-tank:lvd actual) ~]]
   ==
 ::
 ::  Tests for various empty vectors.
