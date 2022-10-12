@@ -6,10 +6,6 @@
 ^|
 |_  rtol=_.1e-6
 ::  Auxiliary tools
-::    Replace element of c at index a with item b
-++  nick
-  |*  [a=@ b=* c=(list @)]
-  (weld (scag a c) [b (slag +(a) c)])
 ::    Absolute value
 ++  absolute
   |=  x=@rs  ^-  @rs

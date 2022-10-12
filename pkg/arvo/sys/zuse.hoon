@@ -6071,7 +6071,10 @@
     ::
     ::    Pretty-print the contents of the vector.
     ++  pprint
-      |=  u=@lvs  ^-  tank
+      |=  u=@lvs
+      ^-  tape
+      %~  ram  re
+      ^-  tank
       :+  %rose  [" " "[" "]"]
       (turn (unmake u) |=(a=@rs [%leaf (trip (scot %rs a))]))
     ::
@@ -6132,8 +6135,8 @@
       (divv u ss)
     ::
     ::    Turn on a gate of two variables.
-    ++  zip  :: I guess not in hoon.hoon
-        |=  [[a=(list @rs) b=(list @rs)] f=$-([@rs @rs] @rs)]
+    ++  zip
+      |=  [[a=(list @rs) b=(list @rs)] f=$-([@rs @rs] @rs)]
       ^-  (list @rs)
       ?+  +<-  ~|(%zip-length !!)
         [~ ~]  ~
@@ -6187,7 +6190,6 @@
       |=  [u=@lvs v=@lvs]  ^-  @rs
       ~_  leaf+"lagoon-fail"
       (sum (mulv u v))
-    ++  outer  !!  :: unimplemented pending @lm type
     ++  catenate
       |=  [u=@lvs v=@lvs]
       ~_  leaf+"lagoon-fail"
@@ -6285,7 +6287,10 @@
     ::
     ::    Pretty-print the contents of the vector.
     ++  pprint
-      |=  u=@lvd  ^-  tank
+      |=  u=@lvd
+      ^-  tape
+      %~  ram  re
+      ^-  tank
       :+  %rose  [" " "[" "]"]
       (turn (unmake u) |=(a=@rd [%leaf (trip (scot %rd a))]))
     ::
@@ -6346,7 +6351,7 @@
       (divv u ss)
     ::
     ::    Turn on a gate of two variables.
-    ++  zip  :: I guess not in hoon.hoon
+    ++  zip
       |=  [[a=(list @rd) b=(list @rd)] f=$-([@rd @rd] @rd)]
       ^-  (list @rd)
       ?+  +<-  ~|(%zip-length !!)
@@ -6401,7 +6406,6 @@
       |=  [u=@lvd v=@lvd]  ^-  @rd
       ~_  leaf+"lagoon-fail"
       (sum (mulv u v))
-    ++  outer  !!  :: unimplemented pending @lm type
     ++  catenate
       |=  [u=@lvd v=@lvd]
       ~_  leaf+"lagoon-fail"
@@ -6998,7 +7002,10 @@
     ::
     ::    Pretty-print the contents of the matrix.
     ++  pprint
-      |=  u=@lmd  ^-  tank
+      |=  u=@lmd
+      ^-  tape
+      %~  ram  re
+      ^-  tank
       :+  %rose  [" " "[[" "]]"]
       %+  turn  (unmake u)
       |=(a=(list @rd) [%rose [" " "[[" "]]"] (turn a |=(a=@rd [%leaf (trip (scot %rs a))]))])
