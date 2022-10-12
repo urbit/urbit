@@ -1901,7 +1901,7 @@
     ?~(r.a [~ n.a] $(a r.a))
   --
 ::                                                      ::
-::::  2r: priority search queue (psq), cache logic      ::
+::::  2r: priority search queue (psq), lru cache logic  ::
   ::                                                    ::
   ::
 ++  up                                                  ::  psq engine
@@ -1911,9 +1911,17 @@
   ::
   ~%  %core  +  ~
   |%
-  +$  elem  [=k p=@ =v]                                 ::  pri element
+  +$  pri                                               ::  psq
+    $@  ~
+    $%  [%bin =k p=@ v=buc m=@ l=pri r=pri]
+        [%tip =k p=@ v=buc]
+    ==
   ::
-  +$  lnode  [n=elem l=ltree m=k r=ltree]               ::  loser tree node
+  +$  buc  [=v t=pro]                                   ::  collision handling
+  ::
+  +$  pro  $@(~ [n=elem t=ltree m=k])                   ::  internal psq
+  ::
+  +$  elem  [=k p=@ =v]                                 ::  key, pri, value
   ::
   +$  ltree                                             ::  loser tree
     $@  ~
@@ -1921,20 +1929,12 @@
         [%rlos s=@ p=lnode]
     ==
   ::
+  +$  lnode  [n=elem l=ltree m=k r=ltree]               ::  loser tree node
+  ::
   +$  torn                                              ::  tournament view
     $@  ~
     $%  [%sing n=elem]
         [%play l=pro r=pro]
-    ==
-  ::
-  +$  pro  $@(~ [n=elem t=ltree m=k])                   ::  internal psq
-  ::
-  +$  buc  [=v t=pro]                                   ::  bucket
-  ::
-  +$  pri                                               ::  psq
-    $@  ~
-    $%  [%bin =k p=@ v=buc m=@ l=pri r=pri]
-        [%tip =k p=@ v=buc]
     ==
   ::  utilities
   ::
@@ -1953,7 +1953,7 @@
     ^-  ?
     =(0 (dis (mug k) m))
   ::
-  ++  peak                                              ::  max unlike mug bit
+  ++  peak                                              ::  max unlike bit
     ~/  %peak
     |=  [k=k l=k]
     ^-  @
@@ -2038,6 +2038,13 @@
     ~%  %qor  ..qor  ~
     |%
     ::  loser tree internals
+    ::
+    ++  wyt                                             ::  queue size
+      ~/  %wyt
+      |=  =pro
+      ^-  @
+      ?~  pro  0
+      +((size t.pro))
     ::
     ++  size                                            ::  loser tree size
       ~/  %size
@@ -2201,6 +2208,18 @@
         %rlos  [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
       ==
     ::
+    ++  tap                                             ::  convert to list
+      ~/  %tap
+      |=  a=pro
+      =|  b=(list elem)
+      |-  ^+  b
+      =/  tor  (see a)
+      ?~  tor  b
+      ?-  -.tor
+        %sing  [n.tor b]
+        %play  (weld $(a l.tor) $(a r.tor))
+      ==
+    ::
     ++  put                                             :: add [key pri val]
       ~/  %put
       |=  [a=pro =k p=@ =v]
@@ -2271,6 +2290,44 @@
         ?:  |(=(k m.b) (gor k m.b))
           (toy $(a [n.b l.b m.b]) [n.a r.b m.a])
         (toy [n.b l.b m.b] $(a [n.a r.b m.a]))
+      ==
+    ::
+    ++  dew                                             ::  delete view
+      ~/  %dew
+      |=  [a=pro =k]
+      |-  ^-  (unit (trel @ v pro))
+      ?~  a  ~
+      ?~  t.a
+        ?.  =(k k.n.a)  ~
+        `[p.n.a v.n.a ~]
+      ?-    -.t.a
+          %llos
+        =/  b=lnode  p.t.a
+        ?:  |(=(k m.b) (gor k m.b))
+          =/  pat  $(a [n.b l.b m.b])
+          ?~  pat  ~
+          %-  some
+          :+  p.u.pat  q.u.pat
+          (toy r.u.pat [n.a r.b m.a])
+        =/  pat  $(a [n.a r.b m.a])
+        ?~  pat  ~
+        %-  some
+        :+  p.u.pat  q.u.pat
+        (toy [n.b l.b m.b] r.u.pat)
+      ::
+          %rlos
+        =/  b=lnode  p.t.a
+        ?:  |(=(k m.b) (gor k m.b))
+          =/  pat  $(a [n.a l.b m.b])
+          ?~  pat  ~
+          %-  some
+          :+  p.u.pat  q.u.pat
+          (toy r.u.pat [n.b r.b m.a])
+        =/  pat  $(a [n.b r.b m.a])
+        ?~  pat  ~
+        %-  some
+        :+  p.u.pat  q.u.pat
+        (toy [n.a l.b m.b] r.u.pat)
       ==
     ::
     ++  bot                                             ::  lowest-pro view
@@ -2376,6 +2433,153 @@
     --
   ::  pri logic
   ::
+  ++  wyt                                               ::  queue size
+    |=  a=pri
+    ^-  @
+    %+  rep  a
+    |=([[k @ buc] @] +((add +<+ (wyt:qor t.+<->+))))
+  ::
+  ++  get                                               ::  lookup
+    ~/  %get
+    |=  [a=pri =k]
+    |-  ^-  (unit (pair @ v))
+    ?~  a  ~
+    ?-    -.a
+        %tip
+      ?.  =((mug k) (mug k.a))  ~
+      ?:  =(k k.a)
+        `[p.a v.v.a]
+      (get:qor t.v.a k)
+    ::
+        %bin
+      ?:  (feud m.a k k.a)  ~
+      ?:  =((mug k) (mug k.a))
+        ?:  =(k k.a)
+          `[p.a v.v.a]
+        (get:qor t.v.a k)
+      ?:  (zero m.a k)
+        $(a l.a)
+      $(a r.a)
+    ==
+  ::
+  ++  has                                               ::  contains
+    |=  [a=pri =k]
+    ^-  ?
+    !=(~ (get a k))
+  ::
+  ++  put                                               ::  insert
+    ~/  %put
+    |=  [a=pri =k p=@ =v]
+    ^-  pri
+    ?~  ded=(dew:qat a k)
+      (raw:qat a k p v ~)
+    =/  val  u.ded
+    =.  a  s.val
+    %+  raw:qat  a
+    ?:  =(k p.val)
+      (sink:qor t.r.val k p v)
+    ?:  |((lth q.val p) &(=(p q.val) (gor p.val k)))
+      [p.val q.val v.r.val (put:qor t.r.val k p v)]
+    :^  k  p  v
+    ?:  (has:qor t.r.val k)
+      (put:qor (del:qor t.r.val k) p.val q.val v.r.val)
+    (put:qor t.r.val p.val q.val v.r.val)
+  ::
+  ++  del                                               ::  remove
+    ~/  %del
+    |=  [a=pri =k]
+    ^-  pri
+    ?~  ded=(dew:qat a k)  a
+    =/  val  u.ded
+    =.  a  s.val
+    ?:  =(k p.val)
+      ?~  low=(bot:qor t.r.val)  a
+      (raw:qat a u.low)
+    (raw:qat a p.val q.val v.r.val (del:qor t.r.val k))
+  ::
+  ++  dew                                               ::  delete view
+    ~/  %dew
+    |=  [a=pri =k]
+    ^-  (unit (trel @ v pri))
+    ?~  ded=(dew:qat a k)  ~
+    =/  val  u.ded
+    =.  a  s.val
+    ?:  =(k p.val)
+      %-  some
+      :+  q.val  v.r.val
+      ?~  low=(bot:qor t.r.val)  a
+      (raw:qat a u.low)
+    ?~  low=(dew:qor t.r.val k)  ~
+    %-  some
+    :+  p.u.low  q.u.low
+    (raw:qat a p.val q.val v.r.val r.u.low)
+  ::
+  ++  gas                                               ::  concatenate
+    |=  [a=pri b=(list (trel k @ v))]
+    |-  ^-  pri
+    ?~  b  a
+    $(b t.b, a (put a p.i.b q.i.b r.i.b))
+  ::
+  ++  bot                                               ::  min-priority view
+    ~/  %bot
+    |=  a=pri
+    ^-  (unit (qual k @ v pri))
+    ?~  a  ~
+    %-  some
+    ?-  -.a
+      %tip  [k.a p.a v.v.a (cut a)]
+      %bin  [k.a p.a v.v.a (cut a)]
+    ==
+  ::
+  ++  sam                                               ::  equality
+    |=  [a=pri b=pri]
+    ^-  ?
+    =/  loa  (bot a)
+    =/  lob  (bot b)
+    ?|  &(=(~ loa) =(~ lob))
+        !&(=(~ loa) !=(~ lob))
+        !&(!=(~ loa) =(~ lob))
+        ?>  &(?=(^ loa) ?=(^ lob))
+        ?&  =(p.u.loa p.u.lob)
+            =(q.u.loa q.u.lob)
+            =(r.u.loa r.u.lob)
+            $(a s.u.loa, b s.u.lob)
+        ==
+    ==
+  ::
+  ++  key                                               ::  list of keys
+    |=  a=pri
+    ^-  (list k)
+    %+  turn  `(list (trel k @ v))`(tap a)
+    |=([k @ v] +<-)
+  ::
+  ++  tap                                               ::  convert to list
+    |=  a=pri
+    =|  acc=(list (trel k @ buc))
+    =/  lis
+      |-  ^+  acc
+      ?~  a  acc
+      ?-  -.a
+        %tip  [[k.a p.a v.a] acc]
+        %bin  [[k.a p.a v.a] $(acc $(a r.a), a l.a)]
+      ==
+    =|  acc=(list (trel k @ v))
+    |-  ^+  acc
+    ?~  lis  acc
+    =/  hed  i.lis
+    =/  res  (tap:qor t.r.hed)
+    =.  acc  (weld res acc)
+    $(lis t.lis, acc [[p.hed q.hed v.r.hed] acc])
+  ::
+  ++  rep                                               ::  fold
+    |*  [a=pri f=_=>(buc |=([[* @ buc] *] +<+))]
+    |-
+    ?~  a  +<+.f
+    ?-    -.a
+      %tip  (f [k.a p.a v.a] +<+.f)
+      %bin  $(a r.a, +<+.f $(a l.a, +<+.f (f [k.a p.a v.a] +<+.f)))
+    ==
+  ::
   ++  cut                                               ::  delete min-pri
     ~/  %cut
     |=  a=pri
@@ -2383,41 +2587,42 @@
     ?~  a  ~
     ?-    -.a
         %tip
-      =/  hol  (bot:qor t.v.a)
-      ?~  hol  ~
+      ?~  hol=(bot:qor t.v.a)  ~
       [%tip u.hol]
     ::
         %bin
-      =/  hol  (bot:qor t.v.a)
-      ?~  hol  (fuse m.a l.a r.a)
+      ?~  hol=(bot:qor t.v.a)  (fuse m.a l.a r.a)
       (raw:qat (fuse m.a l.a r.a) u.hol)
     ==
   ::
   ++  vip                                               ::  very important put
     ~/  %vip                                            ::
     |=  [a=pri k=k p=@ =v]                              ::  p must be higher
-    ^-  (pair (unit (pair @ buc)) pri)                  ::  than resident max
+    ^-  (pair (unit (pair @ _v)) pri)                   ::  than resident max
     ?~  a
       [~ [%tip k p v ~]]
     ?-    -.a
         %tip
       ?:  =((mug k) (mug k.a))
-        =/  =buc  [v.v.a (put:qor t.v.a k p v)]
-        :-  `[p.a v.a]
-        [%tip k.a p.a buc]
-      :-  ~
-      (rule k.a p.a v.a [%tip k p v ~] ~)
+        ?:  =(k k.a)
+          :-  `[p.a v.v.a]
+          [%tip (sink:qor t.v.a k p v)]
+        :-  (get:qor t.v.a k)
+        [%tip k.a p.a v.v.a (put:qor t.v.a k p v)]
+      [~ (rule k.a p.a v.a [%tip k p v ~] ~)]
     ::
         %bin
       ?:  (feud m.a k k.a)
-        :-  ~
-        (rule k.a p.a v.a [%tip k p v ~] (fuse m.a l.a r.a))
+        [~ (rule k.a p.a v.a [%tip k p v ~] (fuse m.a l.a r.a))]
       ?:  =((mug k) (mug k.a))
-        =/  =buc  [v.v.a (put:qor t.v.a k p v)]
-        :-  `[p.a v.a]
-        ?:  (zero m.a k)
-          (fuse m.a (raw:qat l.a k.a p.a buc) r.a)
-        (fuse m.a l.a (raw:qat r.a k.a p.a buc))
+        ?:  =(k k.a)
+          :-  `[p.a v.v.a]
+          =/  val  (sink:qor t.v.a k p v)
+          ?:  (zero m.a p.val)
+            (fuse m.a (raw:qat l.a val) r.a)
+          (fuse m.a l.a (raw:qat r.a val))
+        :-  (get:qor t.v.a k)
+        [%bin k.a p.a [v.v.a (put:qor t.v.a k p v)] m.a l.a r.a]
       ?:  (zero m.a k)
         =/  val  $(a l.a)
         :-  p.val
@@ -2463,11 +2668,8 @@
       ^-  (qual (unit (pair @ v)) _k @ _buc)
       ?:  =(k l)
         :-  `[q v.buc]
-        ?~  t.buc
-          [k p buc]
-        (sink:qor t.buc k p v.buc)
-      =/  val  (get:qor t.buc k)
-      ?~  val  [~ k q buc]
+        (sink:qor t.buc l p v.buc)
+      ?~  val=(get:qor t.buc k)  [~ l q buc]
       :^  val  l  q
       [v.buc (put:qor t.buc k p q.u.val)]
     --
@@ -2480,9 +2682,9 @@
   ~%  %core  +  ~
   |%
   ::
-  +$  pes  [cap=_`@`10.000 siz=@ tic=@ pri=pri:cor]     ::  lru cache
+  +$  pes  [cap=_`@`10.000 siz=@ tic=@ pri=pri:psq]     ::  lru cache
   ::
-  ++  cor  (up k v)
+  ++  psq  (up k v)
   ::
   ++  new                                               ::  new cache
     ~/  %new
@@ -2496,14 +2698,14 @@
     ?:  (gte tic.a 0x7fff.ffff)
       (new cap.a)
     ?:  (gth siz.a cap.a)
-      a(siz (dec siz.a), pri (cut:cor pri.a))
+      a(siz (dec siz.a), pri (cut:psq pri.a))
     a
   ::
   ++  put                                               ::  insert
     ~/  %put
     |=  [a=pes =k =v]
     ^-  pes
-    =/  vue  (vip:cor pri.a k tic.a v)
+    =/  vue  (vip:psq pri.a k tic.a v)
     %-  ebb
     %_  a
       siz  ?~(p.vue +(siz.a) siz.a)
@@ -2511,11 +2713,11 @@
       pri  q.vue
     ==
   ::
-  ++  get                                               ::  lookup and pri bump
+  ++  get                                               ::  lookup w/pri bump
     ~/  %get
     |=  [a=pes =k]
     ^-  (unit (pair v pes))
-    =/  val  (see:cor pri.a k tic.a)
+    =/  val  (see:psq pri.a k tic.a)
     ?~  p.val  ~
     %-  some
     :-  q.u.p.val
@@ -2524,6 +2726,32 @@
       tic  +(tic.a)
       pri  q.val
     ==
+  ::
+  ++  del                                               ::  remove
+    ~/  %del
+    |=  [a=pes =k]
+    ^-  pes
+    ?~  ded=(dew:psq pri.a k)  a
+    %_  a
+      siz  (dec siz.a)
+      pri  r.u.ded
+    ==
+  ::
+  ++  gas                                               ::  concatenate
+    |=  [a=pes b=(list (pair k v))]
+    ^-  pes
+    ?~  b  a
+    $(b t.b, a (put a p.i.b q.i.b))
+  ::
+  ++  tap                                               ::  to list
+    |=  a=pes
+    ^-  (list (trel k @ v))
+    (tap:psq pri.a)
+  ::
+  ++  key                                               ::  list of keys
+    |=  a=pes
+    ^-  (list k)
+    (key:psq pri.a)
   --
 ::
 ::::  2o: containers                                    ::
