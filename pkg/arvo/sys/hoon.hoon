@@ -1898,7 +1898,7 @@
     ?~(r.a [~ n.a] $(a r.a))
   --
 ::                                                      ::
-::::  2r: priority search queue (psq), cache logic      ::
+::::  2r: priority search queue (psq), lru cache logic  ::
   ::                                                    ::
   ::
 ++  up                                                  ::  psq engine
@@ -1908,9 +1908,17 @@
   ::
   ~%  %core  +  ~
   |%
-  +$  elem  [=k p=@ =v]                                 ::  pri element
+  +$  pri                                               ::  psq
+    $@  ~
+    $%  [%bin =k p=@ v=buc m=@ l=pri r=pri]
+        [%tip =k p=@ v=buc]
+    ==
   ::
-  +$  lnode  [n=elem l=ltree m=k r=ltree]               ::  loser tree node
+  +$  buc  [=v t=pro]                                   ::  collision handling
+  ::
+  +$  pro  $@(~ [n=elem t=ltree m=k])                   ::  internal psq
+  ::
+  +$  elem  [=k p=@ =v]                                 ::  key, pri, value
   ::
   +$  ltree                                             ::  loser tree
     $@  ~
@@ -1918,20 +1926,12 @@
         [%rlos s=@ p=lnode]
     ==
   ::
+  +$  lnode  [n=elem l=ltree m=k r=ltree]               ::  loser tree node
+  ::
   +$  torn                                              ::  tournament view
     $@  ~
     $%  [%sing n=elem]
         [%play l=pro r=pro]
-    ==
-  ::
-  +$  pro  $@(~ [n=elem t=ltree m=k])                   ::  internal psq
-  ::
-  +$  buc  [=v t=pro]                                   ::  bucket
-  ::
-  +$  pri                                               ::  psq
-    $@  ~
-    $%  [%bin =k p=@ v=buc m=@ l=pri r=pri]
-        [%tip =k p=@ v=buc]
     ==
   ::  utilities
   ::
@@ -1950,7 +1950,7 @@
     ^-  ?
     =(0 (dis (mug k) m))
   ::
-  ++  peak                                              ::  max unlike mug bit
+  ++  peak                                              ::  max unlike bit
     ~/  %peak
     |=  [k=k l=k]
     ^-  @
@@ -2299,37 +2299,33 @@
         `[p.n.a v.n.a ~]
       ?-    -.t.a
           %llos
-      =/  b=lnode  p.t.a
-      ?:  |(=(k m.b) (gor k m.b))
-        =/  pat  $(a [n.b l.b m.b])
+        =/  b=lnode  p.t.a
+        ?:  |(=(k m.b) (gor k m.b))
+          =/  pat  $(a [n.b l.b m.b])
+          ?~  pat  ~
+          %-  some
+          :+  p.u.pat  q.u.pat
+          (toy r.u.pat [n.a r.b m.a])
+        =/  pat  $(a [n.a r.b m.a])
         ?~  pat  ~
         %-  some
-        :+  p.u.pat
-          q.u.pat
-        (toy r.u.pat [n.a r.b m.a])
-      =/  pat  $(a [n.a r.b m.a])
-      ?~  pat  ~
-      %-  some
-      :+  p.u.pat
-        q.u.pat
-      (toy [n.b l.b m.b] r.u.pat)
-    ::
-        %rlos
-      =/  b=lnode  p.t.a
-      ?:  |(=(k m.b) (gor k m.b))
-        =/  pat  $(a [n.a l.b m.b])
+        :+  p.u.pat  q.u.pat
+        (toy [n.b l.b m.b] r.u.pat)
+      ::
+          %rlos
+        =/  b=lnode  p.t.a
+        ?:  |(=(k m.b) (gor k m.b))
+          =/  pat  $(a [n.a l.b m.b])
+          ?~  pat  ~
+          %-  some
+          :+  p.u.pat  q.u.pat
+          (toy r.u.pat [n.b r.b m.a])
+        =/  pat  $(a [n.b r.b m.a])
         ?~  pat  ~
         %-  some
-        :+  p.u.pat
-          q.u.pat
-        (toy r.u.pat [n.b r.b m.a])
-      =/  pat  $(a [n.b r.b m.a])
-      ?~  pat  ~
-      %-  some
-      :+  p.u.pat
-        q.u.pat
-      (toy [n.a l.b m.b] r.u.pat)
-    ==
+        :+  p.u.pat  q.u.pat
+        (toy [n.a l.b m.b] r.u.pat)
+      ==
     ::
     ++  bot                                             ::  lowest-pro view
       ~/  %bot
@@ -2683,9 +2679,9 @@
   ~%  %core  +  ~
   |%
   ::
-  +$  pes  [cap=_`@`10.000 siz=@ tic=@ pri=pri:cor]     ::  lru cache
+  +$  pes  [cap=_`@`10.000 siz=@ tic=@ pri=pri:psq]     ::  lru cache
   ::
-  ++  cor  (up k v)
+  ++  psq  (up k v)
   ::
   ++  new                                               ::  new cache
     ~/  %new
@@ -2699,14 +2695,14 @@
     ?:  (gte tic.a 0x7fff.ffff)
       (new cap.a)
     ?:  (gth siz.a cap.a)
-      a(siz (dec siz.a), pri (cut:cor pri.a))
+      a(siz (dec siz.a), pri (cut:psq pri.a))
     a
   ::
   ++  put                                               ::  insert
     ~/  %put
     |=  [a=pes =k =v]
     ^-  pes
-    =/  vue  (vip:cor pri.a k tic.a v)
+    =/  vue  (vip:psq pri.a k tic.a v)
     %-  ebb
     %_  a
       siz  ?~(p.vue +(siz.a) siz.a)
@@ -2718,7 +2714,7 @@
     ~/  %get
     |=  [a=pes =k]
     ^-  (unit (pair v pes))
-    =/  val  (see:cor pri.a k tic.a)
+    =/  val  (see:psq pri.a k tic.a)
     ?~  p.val  ~
     %-  some
     :-  q.u.p.val
@@ -2732,7 +2728,7 @@
     ~/  %del
     |=  [a=pes =k]
     ^-  pes
-    ?~  ded=(dew:cor pri.a k)  a
+    ?~  ded=(dew:psq pri.a k)  a
     %_  a
       siz  (dec siz.a)
       pri  r.u.ded
@@ -2747,12 +2743,12 @@
   ++  tap                                               ::  to list
     |=  a=pes
     ^-  (list (trel k @ v))
-    (tap:cor pri.a)
+    (tap:psq pri.a)
   ::
   ++  key                                               ::  list of keys
     |=  a=pes
     ^-  (list k)
-    (key:cor pri.a)
+    (key:psq pri.a)
   --
 ::
 ::::  2o: containers                                    ::
@@ -2780,9 +2776,7 @@
   |*  [k=mold v=mold]
   |=  a=*
   =/  cor  (up k v)
-  =/  b  ;;(pri:cor a)
-  :: ?>  (apt:cor b)
-  b
+  ;;(pri:cor a)
 ::
 ++  pest                                                ::  lru cache
   |*  [k=mold v=mold]
