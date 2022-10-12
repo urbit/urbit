@@ -1011,6 +1011,28 @@ _cw_eval_get_input(FILE* fil_u, size_t siz_i)
 static void
 _cw_eval(c3_i argc, c3_c* argv[])
 {
+  c3_o jam_l;
+
+  switch ( argc ) {
+    case 2: {
+      jam_l = c3n ;
+    } break;
+
+    case 3: {
+      if ( 0 == strcmp(argv[2], "-j") )  {
+        jam_l = c3y;
+      } else {
+        fprintf(stderr, "invalid flag\r\n");
+        exit(1);
+      }
+    } break;
+
+    default: {
+      fprintf(stderr, "invalid command\r\n");
+      exit(1);
+    } break;
+  }
+
   c3_c* evl_c = _cw_eval_get_input(stdin, 10);
 
   //  initialize the Loom and load the Ivory Pill
@@ -1025,7 +1047,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
     u3m_boot_lite();
     sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
     if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
-      printf("lite: unable to cue ivory pill\r\n");
+      fprintf(stderr, "lite: unable to cue ivory pill\r\n");
       exit(1);
     }
     u3s_cue_xeno_done(sil_u);
@@ -1035,7 +1057,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
     }
   }
 
-  printf("eval:\n");
+  fprintf(stderr, "eval:\n");
 
   //  +wish for an eval gate (virtualized twice for pretty-printing)
   //
@@ -1049,6 +1071,20 @@ _cw_eval(c3_i argc, c3_c* argv[])
 
 
   if ( 0 == u3h(res) ) {  //  successful execution, print output
+     if ( c3y == jam_l ) {
+        printf("jamming\r\n");
+        u3_noun jam_n;
+        {
+           u3_noun sam = u3v_wish("|=(a=@t (jam a))");
+           u3_noun cor = u3nc(u3k(u3h(sam)), u3k(u3t(res)));
+           jam_n = u3m_soft(0, u3n_kick_on, cor);
+
+           u3_pier_tank(0, 0, u3t(jam_n));
+        }
+
+
+
+     }
      u3_pier_tank(0, 0, u3k(u3t(res)));
   }
   else {                  //  error, print stack trace
