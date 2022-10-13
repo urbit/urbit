@@ -2755,12 +2755,12 @@ _n_burn_out(u3_noun bus, u3n_prog* pog_u)
 {
   c3_ys mov, off;
   if ( c3y == u3a_is_north(u3R) ) {
-    mov = -1;
+    mov = -u3a_walign;
     off = 0;
   }
   else {
-    mov = 1;
-    off = -1;
+    mov = u3a_walign;
+    off = -u3a_walign;
   }
   return _n_burn(pog_u, bus, mov, off);
 }

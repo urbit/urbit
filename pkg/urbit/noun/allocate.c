@@ -675,13 +675,17 @@ u3a_wealloc(void* lag_v, c3_w len_w)
 }
 
 /* u3a_pile_prep(): initialize stack control.
+
+   pil_u - u3a_pile to prep
+   len_i - sizeof pile in bytes
 */
 void
-u3a_pile_prep(u3a_pile* pil_u, c3_w len_w)
+u3a_pile_prep(u3a_pile* pil_u, c3_w len_i)
 {
   //  frame size, in words
   //
-  c3_w wor_w = (len_w + 3) >> 2;
+  len_i = c3_align(len_i, u3a_balign, ALHI);
+  c3_w wor_w = (len_i + 3) >> 2;
   c3_o nor_o = u3a_is_north(u3R);
 
   pil_u->mov_ws = (c3y == nor_o) ? -wor_w :  wor_w;

@@ -469,7 +469,7 @@ _cr_sing(u3_noun a, u3_noun b)
 
   //  initialize stack control, push arguments onto the stack (none-frame)
   //
-  u3a_pile_prep(&pil_u, sizeof(eqframe));
+  u3a_pile_prep(&pil_u, sizeof(*fam_u));
   fam_u = _cr_sing_push(&pil_u, a, b);
 
   //  loop while arguments are on the stack
