@@ -3,3 +3,8 @@
 /include/config.h
 /include/ca-bundle.h
 /include/ivory.h
+
+# indexing
+/.cache/
+compile_commands.json
+tags

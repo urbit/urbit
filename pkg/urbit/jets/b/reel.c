@@ -27,7 +27,6 @@
         *top = i;
       } while ( u3_nul != t );
 
-      u3a_pile_sane(&pil_u);
       u3j_gate_prep(&sit_u, u3k(b));
 
       while ( c3n == u3a_pile_done(&pil_u) ) {

@@ -44,6 +44,11 @@
         void
         u3m_pave(c3_o nuu_o);
 
+      /* u3m_signal(): treat a nock-level exception as a signal interrupt.
+      */
+        void
+        u3m_signal(u3_noun sig_l);
+
       /* u3m_file(): load file, as atom, or bail.
       */
         u3_noun
