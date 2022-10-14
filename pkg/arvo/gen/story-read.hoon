@@ -48,7 +48,7 @@
   ?-    reverse-ancestors
       ~
     ::  stop here and return the current message
-    =/  msg=(list cord)  (msg-from-commit this-commit tale)
+    =/  msg=wain  (msg-from-commit this-commit tale)
     [(weld msg result.state) mergebase=~]
   ::
       [tako:clay ~]
@@ -103,8 +103,7 @@
     =/  mainline-commit
       .^(yaki:clay %cs /(scot %p our)/[syd]/(scot cas)/yaki/(scot %uv mainline))
     ::
-    =/  msg=(list cord)
-      (msg-from-commit this-commit tale)
+    =/  msg=wain  (msg-from-commit this-commit tale)
     ::
     ::  1 - process current commit
     ::  2 - recur and queue processing on all commits on the sideline
@@ -141,14 +140,9 @@
 ::
 ++  msg-from-commit
   |=  [commit=yaki:clay tale=story]
-  ^-  (list cord)
-  =/  proses  (~(get by tale) r.commit)
+  ^-  wain
+  =/  proses  (~(get ju tale) r.commit)
   ?~  proses  ~
   %-  flop    :: fixes formatting reversal in dojo
-  %-  to-wain:format
-  %-  crip
-  ;:  welp
-    (tako-to-text:lib r.commit)
-    (proses-to-text:lib u.proses)
-  ==
+  (chapter-to-text:lib r.commit proses)
 --
