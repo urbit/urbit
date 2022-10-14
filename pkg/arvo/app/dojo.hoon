@@ -174,8 +174,10 @@
     ::
       ;~  pfix  fas
         ;~  pose
-          (parse-variable (cold %sur hep) ;~(pfix gap parse-cables))
-          (parse-variable (cold %lib lus) ;~(pfix gap parse-cables))
+          (parse-variable (cold %sur hep) ;~(pfix gap (parse-cables %sur)))
+          (parse-variable (cold %lib lus) ;~(pfix gap (parse-cables %lib)))
+          ;~(pfix tis gap (parse-variable sym ;~(pfix gap parse-path)))
+          ;~(pfix cen gap (parse-variable sym ;~(pfix gap parse-mark)))
         ==
       ==
     ::
@@ -194,22 +196,17 @@
     ==
   ::
   ++  parse-cables
-    %+  cook
-      |=  cables=(list cable:clay)
-      :+  0  %ex
-      ^-  hoon
-      ::
-      :-  %clsg
-      %+  turn  cables
-      |=  cable=cable:clay
-      ^-  hoon
-      ::
-      :+  %clhp
-        ?~  face.cable
-          [%rock %n ~]
-        [%clhp [%rock %n ~] [%sand %tas u.face.cable]]
-      [%sand %tas file-path.cable]
-    (most ;~(plug com gaw) parse-cable)
+    |=  base-path=@ta
+    %-  cook  :_  (most ;~(plug com gaw) parse-cable)
+    |=  cables=(list cable:clay)
+    :+  0  %tu
+    ::
+    %+  turn  cables
+    |=  cable=cable:clay
+    ^-  dojo-source
+    =+  add-face=?~(face.cable "|*(n=* n)" ;:(weld "|*(n=* ^=(" (trip u.face.cable) " n))"))
+    :^  0  %do  (scan add-face parse-hoon)
+    :+  0  %dv  [-.dir `path`[base-path file-path.cable ~]]
   ::
   ++  parse-cable
     %+  cook  |=(a=cable:clay a)
@@ -218,6 +215,16 @@
       (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
       (cook |=(a=term [`a a]) sym)
     ==
+  ::
+  ++  parse-mark
+    %-  cook  :_  ;~(pfix cen sym)
+    |=  mark=@tas
+    [0 %dv -.dir `path`[~.mar mark ~]]
+  ::
+  ++  parse-path
+    %+  cook  |=(=path [0 %dv -.dir path])
+    ;~(pfix fas (more fas sym))
+  ::
   ++  parse-source  (stag 0 parse-build)
   ++  parse-build
       %+  knee  *dojo-build  |.  ~+
@@ -537,8 +544,8 @@
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  .
-          %lib  .(lib ~)
-          %sur  .(sur ~)
+          ::  %lib  .(lib ~)
+          ::  %sur  .(sur ~)
           %dir  .(dir [[our.hid %base ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
@@ -550,17 +557,17 @@
         ~|  bad-set+[p.p.mad p.q.cay]
         =<  dy-amok
         ?+  p.p.mad  .
-            %lib
-          %_    .
-              lib
-            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-          ==
-        ::
-            %sur
-          %_    .
-              sur
-            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-          ==
+        ::      %lib
+        ::    %_    .
+        ::        lib
+        ::      ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
+        ::    ==
+        ::  ::
+        ::      %sur
+        ::    %_    .
+        ::        sur
+        ::      ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
+        ::    ==
         ::
             %dir  =+  ^=  bem  ^-  beam
                       %-  need  %-  de-beam
