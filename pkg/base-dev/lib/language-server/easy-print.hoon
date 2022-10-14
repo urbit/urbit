@@ -84,11 +84,11 @@
         ?:  top-level
           ["" ""]
         ["(" ")"]
-      :+  ?~(sam leaf+"_" u.sam)
+      :+  ?~(sam '_' u.sam)
         =/  res  (mule |.((~(play ut q.q.ham) p.q.ham)))
         ?-  -.res
           %&  duck(sut p.res)
-          %|  leaf+"###"
+          %|  '###'
         ==
       ~
     ::

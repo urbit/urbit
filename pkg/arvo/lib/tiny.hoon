@@ -35,7 +35,7 @@
 ++  dec                                                 ::  decrement
   ~/  %dec
   |=  a=@
-  ~_  leaf+"decrement-underflow"
+  ~_  'decrement-underflow'
   ?<  =(0 a)
   =+  b=0
   |-  ^-  @
@@ -52,7 +52,7 @@
 ++  sub                                                 ::  subtract
   ~/  %sub
   |=  [a=@ b=@]
-  ~_  leaf+"subtract-underflow"
+  ~_  'subtract-underflow'
   ::  difference
   ^-  @
   ?:  =(0 b)  a
@@ -71,7 +71,7 @@
   ~/  %div
   |:  [a=`@`1 b=`@`1]
   ^-  @
-  ~_  leaf+"divide-by-zero"
+  ~_  'divide-by-zero'
   ?<  =(0 b)
   =+  c=0
   |-
@@ -275,7 +275,7 @@
   |*  [a=@ b=(list)]
   |-  ^+  ?>(?=(^ b) i.b)
   ?~  b
-    ~_  leaf+"snag-fail"
+    ~_  'snag-fail'
     !!
   ?:  =(0 a)  i.b
   $(b t.b, a (dec a))

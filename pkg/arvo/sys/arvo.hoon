@@ -353,7 +353,7 @@
           =(hoon-version -.ref)
           -:(~(nets wa *worm) +.ref p.vax)
       ==
-    ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
+    ~>(%slog.[0 'arvo: scry-lost'] ~)
   [~ ~ q.vax]
 ::  |wyrd: kelvin negotiation
 ::
@@ -765,13 +765,13 @@
       ::  as always, we have to use raw nock as we have no type.
       ::  the gate is in fact ++ride.
       ::
-      ~>  %slog.[0 leaf+"1-b"]
+      ~>  %slog.[0 '1-b']
       =/  compiler-gate  .*(0 fate.log)
       ::
       ::  compile the compiler source, producing (pair span nock).
       ::  the compiler ignores its input so we use a trivial span.
       ::
-      ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
+      ~>  %slog.[0 '1-c (compiling compiler, wait a few minutes)']
       =/  compiler-tool
         .*(compiler-gate [%9 2 %10 [6 %1 noun/hoon.log] %0 1])
       ::
@@ -780,7 +780,7 @@
       ::  language changes -- the first-generation formula will
       ::  generate last-generation spans for `!>`, etc.
       ::
-      ~>  %slog.[0 leaf+"1-d"]
+      ~>  %slog.[0 '1-d']
       =.  compiler-gate  .*(0 +:compiler-tool)
       ::
       ::  get the span (type) of the kernel core, which is the context
@@ -789,19 +789,19 @@
       ::  context is at tree address `+>` (ie, `+7` or Lisp `cddr`).
       ::  we use the compiler again to infer this trivial program.
       ::
-      ~>  %slog.[0 leaf+"1-e"]
+      ~>  %slog.[0 '1-e']
       =/  kernel-span
         -:.*(compiler-gate [%9 2 %10 [6 %1 [-.compiler-tool '+>']] %0 1])
       ::
       ::  compile the arvo source against the kernel core.
       ::
-      ~>  %slog.[0 leaf+"1-f"]
+      ~>  %slog.[0 '1-f']
       =/  kernel-tool
         .*(compiler-gate [%9 2 %10 [6 %1 [kernel-span arvo.log]] %0 1])
       ::
       ::  create the arvo kernel, whose subject is the kernel core.
       ::
-      ~>  %slog.[0 leaf+"1-g"]
+      ~>  %slog.[0 '1-g']
       [.*(+>:compiler-gate +:kernel-tool) epic.log]
     --
   ::
@@ -1948,7 +1948,7 @@
   ::
   ?~  hir=(molt now gub)
     [~ ..poke]
-  ~>  %slog.[0 leaf+"arvo: metamorphosis"]
+  ~>  %slog.[0 'arvo: metamorphosis']
   (load u.hir)
 ::
 ++  wish                                                ::  +10

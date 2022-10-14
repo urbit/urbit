@@ -444,7 +444,7 @@
   =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
   ::  ~bud -> nack -> ~nec
   ::
-  =/  =error:ames  [%flub [%leaf "sinusoidal repleneration"]~]
+  =/  =error:ames  [%flub ['sinusoidal repleneration']~]
   =^  moves3  bud  (take bud /bone/~nec/0/1 ~[/bud] %g %done `error)
   =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
   ::  ~bud -> nack-trace -> ~nec

@@ -193,8 +193,8 @@
     ++  molt
       |=  [=duct fec=(unit move)]
       ^-  [(list move) _adult-gate]
-      ~>  %slog.[0 leaf+"gall: molting"]
-      ~<  %slog.[0 leaf+"gall: molted"]
+      ~>  %slog.[0 'gall: molting']
+      ~<  %slog.[0 'gall: molted']
       ::  +molt should never notify its client about agent changes
       ::
       =-  :_  ->
@@ -235,11 +235,11 @@
       |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
       =*  call-args  +<
       ?:  =(~ eggs.spore)
-        ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
+        ~>  %slog.[0 'gall: direct morphogenesis']
         =.  state.adult-gate  spore(eggs *(map term yoke))
         (call:adult-core call-args)
       ?^  dud
-        ~>  %slog.[0 leaf+"gall: pupa call dud"]
+        ~>  %slog.[0 'gall: pupa call dud']
         (mean >mote.u.dud< tang.u.dud)
       =/  task  ((harden task:gall) wrapped-task)
       ?:  ?=(%vega -.task)
@@ -252,11 +252,11 @@
       |=  [=wire =duct dud=(unit goof) sign=sign-arvo]
       =*  take-args  +<
       ?:  =(~ eggs.spore)
-        ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
+        ~>  %slog.[0 'gall: direct morphogenesis']
         =.  state.adult-gate  spore(eggs *(map term yoke))
         (take:adult-core take-args)
       ?^  dud
-        ~>  %slog.[0 leaf+"gall: pupa take dud"]
+        ~>  %slog.[0 'gall: pupa take dud']
         (mean >mote.u.dud< tang.u.dud)
       ?:  =(/sys/lyv wire)
         (molt duct ~)
@@ -271,7 +271,7 @@
           =.  spore  old
           ?.  =(~ eggs.spore)
             pupal-gate
-          ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
+          ~>  %slog.[0 'gall: direct morphogenesis']
           %_  adult-gate
             state  spore(eggs *(map term yoke))
           ==
@@ -699,8 +699,8 @@
     ?>  ?=([%lyv ~] wire)
     ?>  ?=([?(%behn %clay) %wris *] sign-arvo)
     =/  nex=(list [=care:clay =path])  ~(tap in q.sign-arvo)
-    ~>  %slog.[0 leaf+"gall: reloading agents"]
-    ~<  %slog.[0 leaf+"gall: reloaded agents"]
+    ~>  %slog.[0 'gall: reloading agents']
+    ~<  %slog.[0 'gall: reloaded agents']
     =;  cor  (mo-subscribe-to-agent-builds:cor now)
     %+  roll  nex
     |=  [[=care:clay =path] cor=_mo-core]
@@ -1285,14 +1285,14 @@
         =/  sky  (rof ~ %cc bek mars-path)
         ?-    sky
             ?(~ [~ ~])
-          %-  (slog leaf+"watch-as fact conversion find-fail" >sky< ~)
+          %-  (slog 'watch-as fact conversion find-fail' >sky< ~)
           (ap-kill-up-slip duct)
         ::
             [~ ~ *]
           =+  !<(=tube:clay q.u.u.sky)
           =/  res  (mule |.((tube q.cage)))
           ?:  ?=(%| -.res)
-            %-  (slog leaf+"watch-as fact conversion failure" p.res)
+            %-  (slog 'watch-as fact conversion failure' p.res)
             (ap-kill-up-slip duct)
           :~  :*  duct  %pass  /nowhere  %c  %warp  our  q.beak.yoke  ~
                   %sing  %c  case  mars-path
@@ -1438,7 +1438,7 @@
       =/  peek-result=(each (unit (unit cage)) tang)
         (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
       ?:  ?=(%| -.peek-result)
-        ((slog leaf+"peek bad result" p.peek-result) [~ ~])
+        ((slog 'peek bad result' p.peek-result) [~ ~])
       ::  for non-%x scries, or failed %x scries, or %x results that already
       ::  have the requested mark, produce the result as-is
       ::
@@ -1972,7 +1972,7 @@
       ?:  (~(has by boat.yoke) sub-wire dock)
         =.  ap-core
           =/  =tang
-            ~[leaf+"subscribe wire not unique" >agent-name< >sub-wire< >dock<]
+            ~['subscribe wire not unique' >agent-name< >sub-wire< >dock<]
           =/  have  (~(got by boat.yoke) sub-wire dock)
           %-  (slog >out=have< tang)
           (ap-error %watch-not-unique tang)  ::  reentrant, maybe bad?

@@ -572,7 +572,7 @@
                     +(..dy (he-diff %tan 'dojo: dir does not exist' ~))
                   =.  dir  (need (de-beam pax))
                   =-  +>(..dy (he-diff %tan - ~))
-                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
+                  rose+[" " `~]^~['=%' (smyt (en-beam he-beak s.dir))]
         ==
       ::
           %poke
@@ -593,7 +593,7 @@
       ::
           %flat
         ?^  q.q.cay
-          (dy-rash %tan [%leaf "not an atom"]~)
+          (dy-rash %tan ['not an atom']~)
         (dy-rash %sav p.p.mad q.q.cay)
       ::
           %pill
@@ -787,7 +787,7 @@
         =/  res  (mule |.((slam q.cay (dy-vase p.i.p.cig))))
         ?:  ?=(%| -.res)
           ::  TODO: or +dy-rash  ?
-          (he-diff(poy ~) %tan leaf+"dojo: naked generator failure" p.res)
+          (he-diff(poy ~) %tan 'dojo: naked generator failure' p.res)
         (dy-hand %noun p.res)
       ::  normal generator
       ::
@@ -801,10 +801,10 @@
       ::
       =/  wat  (mule |.(!<(?(%ask %say) (slot 2 q.cay))))
       ?:  ?=(%| -.wat)
-        (he-diff(poy ~) %tan leaf+"dojo: generator neither %ask nor %say" p.wat)
+        (he-diff(poy ~) %tan 'dojo: generator neither %ask nor %say' p.wat)
       =-  =/  res  (mule -)
           ?:  ?=(%| -.res)
-            (he-diff(poy ~) %tan leaf+"dojo: generator failure" p.res)
+            (he-diff(poy ~) %tan 'dojo: generator failure' p.res)
           ?-  p.wat
             %ask  (dy-made-dial %noun p.res)
             %say  (dy-made-gent %noun p.res)
@@ -842,9 +842,9 @@
       ::
       =/  sam=vase  :(slop ven poz kev)
       ?.  (~(nest ut p.som) | p.sam)
-        ~>  %slog.1^leaf+"dojo: nest-need"
+        ~>  %slog.1^'dojo: nest-need'
         ~>  %slog.0^(skol p.som)
-        ~>  %slog.1^leaf+"dojo: nest-have"
+        ~>  %slog.1^'dojo: nest-have'
         ~>  %slog.0^(skol p.sam)
         !!
       (slam gat sam)
@@ -927,10 +927,10 @@
           %do
         =/  gat  (dy-eval p.bil)
         ?:  ?=(%| -.gat)
-          (he-diff(poy ~) %tan leaf+"dojo: %do create gate failed" p.gat)
+          (he-diff(poy ~) %tan 'dojo: %do create gate failed' p.gat)
         =/  res  (mule |.((slam q.p.gat (dy-vase p.q.bil))))
         ?:  ?=(%| -.res)
-          (he-diff(poy ~) %tan leaf+"dojo: %do execute failed" p.res)
+          (he-diff(poy ~) %tan 'dojo: %do execute failed' p.res)
         (dy-hand %noun p.res)
       ::
           %tu
@@ -964,7 +964,7 @@
       |=  =hoon
       =/  res  (dy-eval hoon)
       ?:  ?=(%| -.res)
-        (he-diff(poy ~) %tan leaf+"dojo: hoon expression failed" p.res)
+        (he-diff(poy ~) %tan 'dojo: hoon expression failed' p.res)
       (dy-hand p.res)
     ::  +dy-eval: run hoon source against the dojo subject
     ::
@@ -1094,7 +1094,7 @@
       +>
     ?~  p.cit
       (he-diff %txt ">=")
-    (he-diff %tan leaf+"dojo: app poke failed" u.p.cit)
+    (he-diff %tan 'dojo: app poke failed' u.p.cit)
   ::
   ++  he-wool
     |=  [way=wire =sign:agent:gall]
@@ -1103,13 +1103,13 @@
         %poke-ack
       ?~  p.sign
         +>.$
-      =.  +>.$  (he-diff(poy ~) %tan leaf+"dojo: thread poke failed" u.p.sign)
+      =.  +>.$  (he-diff(poy ~) %tan 'dojo: thread poke failed' u.p.sign)
       (he-card %pass /wool %agent [our.hid %spider] %leave ~)
     ::
         %watch-ack
       ?~  p.sign
         +>.$
-      (he-diff(poy ~) %tan leaf+"dojo: thread watch failed" u.p.sign)
+      (he-diff(poy ~) %tan 'dojo: thread watch failed' u.p.sign)
     ::
         %fact
       ?+    p.cage.sign  ~|([%dojo-thread-bad-mark-result p.cage.sign] !!)

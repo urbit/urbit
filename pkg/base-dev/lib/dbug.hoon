@@ -57,7 +57,7 @@
         %incoming
       =;  =tang
         ?^  tang  tang
-        [%leaf "no matching subscriptions"]~
+        ['no matching subscriptions']~
       %+  murn
         %+  sort  ~(tap by sup.bowl)
         |=  [[* a=[=ship =path]] [* b=[=ship =path]]]
@@ -79,7 +79,7 @@
         %outgoing
       =;  =tang
         ?^  tang  tang
-        [%leaf "no matching subscriptions"]~
+        ['no matching subscriptions']~
       %+  murn
         %+  sort  ~(tap by wex.bowl)
         |=  [[[a=wire *] *] [[b=wire *] *]]

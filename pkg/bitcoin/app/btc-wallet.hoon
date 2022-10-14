@@ -245,7 +245,7 @@
         %add-wallet
       |^
       ?~  (~(has by walts) xpub.comm)
-        ((slog ~[leaf+"xpub already in wallet"]) `state)
+        ((slog ~['xpub already in wallet']) `state)
       =/  w=walt  (from-xpub:bl +.comm)
       =.  walts  (~(put by walts) xpub.comm w)
       =^  c1  state  (init-batches xpub.comm (dec max-gap.w))
@@ -281,12 +281,12 @@
     ::
         %init-payment-external
       ?:  is-broadcasting:hc
-        %-  (slog ~[leaf+"broadcasting a transaction"])
+        %-  (slog ~['broadcasting a transaction'])
         [[(give-update:hc %error %tx-being-signed)]~ state]
       ?~  curr-xpub
         ~|("btc-wallet: no curr-xpub set" !!)
       ?:  (is-dust:hc value.comm address.comm)
-        %-  (slog ~[leaf+"sending dust"])
+        %-  (slog ~['sending dust'])
         [[(give-update:hc %error %no-dust)]~ state]
       ::
       ~|  "no wallet with xpub"
@@ -301,7 +301,7 @@
         ==
       ?~  tb
         %-  %-  slog
-          ~[leaf+"insufficient balance or not enough confirmed balance"]
+          ~['insufficient balance or not enough confirmed balance']
         [[(give-update:hc %error %insufficient-balance)]~ state]
       =^  tb=(unit txbu)  state
         ?~  chng  `state
@@ -320,13 +320,13 @@
     ::
         %init-payment
       ?:  =(src.bowl payee.comm)
-        %-  (slog ~[leaf+"can't pay ourselves"])
+        %-  (slog ~['can\'t pay ourselves'])
         [[(give-update:hc %error %cant-pay-ourselves)]~ state]
       ?:  ?=(%pawn (clan:title payee.comm))
-        %-  (slog ~[leaf+"no comets"])
+        %-  (slog ~['no comets'])
         [[(give-update:hc %error %no-comets)]~ state]
       ?:  is-broadcasting:hc
-        %-  (slog ~[leaf+"broadcasting a transaction"])
+        %-  (slog ~['broadcasting a transaction'])
         [[(give-update:hc %error %tx-being-signed)]~ state]
       =:  poym   `note.comm
           feybs  (~(put by feybs) payee.comm feyb.comm)
@@ -341,7 +341,7 @@
         ?~  txbu.poym  %.n
         =((get-id:txu:bc (decode:txu:bc signed)) ~(get-txid txb:bl u.txbu.poym))
       :-  ?.  tx-match
-            %-  (slog leaf+"txid didn't match txid in wallet")
+            %-  (slog 'txid didn\'t match txid in wallet')
             [(give-update:hc %error %broadcast-fail)]~
           ~[(poke-provider:hc [%broadcast-tx signed])]
       ?.  tx-match  state
@@ -422,7 +422,7 @@
       ?~  curr-xpub
         ~|("btc-wallet-hook: no curr-xpub set" !!)
       ?:  (is-dust:hc value.act address.act)
-        %-  (slog ~[leaf+"sending dust"])
+        %-  (slog ~['sending dust'])
         [[(give-update:hc %error %no-dust)]~ state]
       ::
       =/  feyb
@@ -451,7 +451,7 @@
           [wal eny.bowl block.btc-state payee feyb txos]
         ?~  tb
           %-  %-  slog
-            ~[leaf+"insufficient balance or not enough confirmed balance"]
+            ~['insufficient balance or not enough confirmed balance']
           [tb state]
         ::  if no change, return txbu; else add change output to txbu
         ::

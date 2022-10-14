@@ -323,7 +323,7 @@
   %-  se-dump
   %-  flop
   ^-  (list tank)
-  :-  leaf+"-----"
+  :-  '-----'
   %+  turn  tl
   |=  [=term =type=tank]
   ?:  lots

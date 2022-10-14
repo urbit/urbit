@@ -32,7 +32,7 @@
     %+  turn  (rip 10 (crip tape))
     |=  line=cord
     leaf+(trip line)
-  [leaf+""]~
+  ['']~
 ::
 ::  All the URLs we fetch from
 ::
@@ -57,9 +57,9 @@
   |=  =top-comments
   =/  m  (strand ,^top-comments)
   ^-  form:m
-  %-  (slog leaf+"drumroll please..." ~)
+  %-  (slog 'drumroll please...' ~)
   ;<  ~  bind:m  (sleep ~s3)
-  %-  (slog leaf+"Top comments:" (zing (turn top-comments comment-to-tang)))
+  %-  (slog 'Top comments:' (zing (turn top-comments comment-to-tang)))
   (pure:m top-comments)
 ::
 ::  XX

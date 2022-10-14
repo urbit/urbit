@@ -181,7 +181,7 @@
       :~  :-  'simpleState'
           %-  tank
           =;  head=(unit ^tank)
-            (fall head leaf+"unversioned")
+            (fall head 'unversioned')
           ::  try to print the state version
           ::
           =/  version=(unit vase)

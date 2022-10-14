@@ -76,7 +76,7 @@
   |^
   =+  !<(old-state=app-states old)
   =?  old-state  ?=(%0 -.old-state)
-    %-  (slog leaf+"upgrading eth-watcher from %0" ~)
+    %-  (slog 'upgrading eth-watcher from %0' ~)
     ^-  app-state-1
     %=    old-state
         -  %1
@@ -91,14 +91,14 @@
   =^  cards-1=(list card)  old-state
     ?.  ?=(%1 -.old-state)
       `old-state
-    %-  (slog leaf+"upgrading eth-watcher from %1" ~)
+    %-  (slog 'upgrading eth-watcher from %1' ~)
     :_  old-state(- %2)
     %+  turn  ~(tap by dogs.old-state)
     |=  [=path dog=watchdog-1]
     (wait-shortcut path now.bowl)
   ::
   =?  old-state  ?=(%2 -.old-state)
-    %-  (slog leaf+"upgrading eth-watcher from %2" ~)
+    %-  (slog 'upgrading eth-watcher from %2' ~)
     ^-  app-state-3
     %=    old-state
         -  %3
@@ -111,7 +111,7 @@
     ==
   ::
   =?  old-state  ?=(%3 -.old-state)
-    %-  (slog leaf+"upgrading eth-watcher from %3" ~)
+    %-  (slog 'upgrading eth-watcher from %3' ~)
     ^-  app-state-4
     %=    old-state
         -  %4
@@ -132,7 +132,7 @@
     ==
   ::
   =?  old-state  ?=(%4 -.old-state)
-    %-  (slog leaf+"upgrading eth-watcher from %4" ~)
+    %-  (slog 'upgrading eth-watcher from %4' ~)
     ^-  app-state-5
     %=    old-state
         -  %5
@@ -442,14 +442,14 @@
       %poke-ack
     ?~  p.sign
       [~ this]
-    %-  (slog leaf+"eth-watcher couldn't start thread" u.p.sign)
+    %-  (slog 'eth-watcher couldn\'t start thread' u.p.sign)
     :_  (clear-running t.wire)  :_  ~
     (leave-spider t.wire our.bowl)
   ::
       %watch-ack
     ?~  p.sign
       [~ this]
-    %-  (slog leaf+"eth-watcher couldn't start listening to thread" u.p.sign)
+    %-  (slog 'eth-watcher couldn\'t start listening to thread' u.p.sign)
     ::  TODO: kill thread that may have started, although it may not
     ::  have started yet since we get this response before the
     ::  %start-spider poke is processed
@@ -465,7 +465,7 @@
     ?+    p.cage.sign  (on-agent:def wire sign)
         %thread-fail
       =+  !<([=term =tang] q.cage.sign)
-      %-  (slog leaf+"eth-watcher failed; will retry" leaf+<term> tang)
+      %-  (slog 'eth-watcher failed; will retry' leaf+<term> tang)
       [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))]
     ::
         %thread-done
@@ -559,7 +559,7 @@
       ::  failed, try again.  maybe should tell user if fails more than
       ::  5 times.
       ::
-      %-  (slog leaf+"eth-watcher failed; will retry" ~)
+      %-  (slog 'eth-watcher failed; will retry' ~)
       [[(wait path now.bowl refresh-rate.dog)]~ this]
     ::  maybe kill a timed-out update thread, maybe start a new one
     ::

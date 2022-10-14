@@ -34,7 +34,7 @@
   ~/  %dec
   ::  unsigned decrement by one.
   |=  a=@
-  ~_  leaf+"decrement-underflow"
+  ~_  'decrement-underflow'
   ?<  =(0 a)
   =+  b=0
   ::  decremented integer
@@ -51,7 +51,7 @@
   |:  [a=`@`1 b=`@`1]
   ::  quotient
   ^-  @
-  ~_  leaf+"divide-by-zero"
+  ~_  'divide-by-zero'
   ?<  =(0 b)
   =+  c=0
   |-
@@ -175,7 +175,7 @@
   ::  a: minuend
   ::  b: subtrahend
   |=  [a=@ b=@]
-  ~_  leaf+"subtract-underflow"
+  ~_  'subtract-underflow'
   ::  difference
   ^-  @
   ?:  =(0 b)  a
@@ -725,7 +725,7 @@
   |*  [a=@ b=(list)]
   |-  ^+  ?>(?=(^ b) i.b)
   ?~  b
-    ~_  leaf+"snag-fail"
+    ~_  'snag-fail'
     !!
   ?:  =(0 a)  i.b
   $(b t.b, a (dec a))
@@ -1969,7 +1969,7 @@
   ++  snag                                              ::  index
     |*  [a=@ b=(list)]
     ?~  b
-      ~_  leaf+"snag-fail"
+      ~_  'snag-fail'
       !!
     ?:  =(0 a)  i.b
     $(b t.b, a (dec a))
@@ -2517,7 +2517,7 @@
     ++  ned                                             ::  require ?=([%f *] a)
       |=  [a=fn]  ^-  [%f s=? e=@s a=@u]
       ?:  ?=([%f *] a)  a
-      ~_  leaf+"need-float"
+      ~_  'need-float'
       !!
     ::
     ++  shf                                             ::  a * 2^b; no rounding
@@ -2850,56 +2850,56 @@
   ::
   ++  add  ~/  %add                                     ::  add
     |=  [a=@rd b=@rd]  ^-  @rd
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
     |=  [a=@rd b=@rd]  ^-  @rd
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
     |=  [a=@rd b=@rd]  ^-  @rd
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
     |=  [a=@rd b=@rd]  ^-  @rd
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
     |=  [a=@rd b=@rd c=@rd]  ^-  @rd
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
-    |=  [a=@rd]  ^-  @rd  ~_  leaf+"rd-fail"
+    |=  [a=@rd]  ^-  @rd  ~_  'rd-fail'
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  [a=@rd b=@rd]
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (lth:ma a b)
   ::
   ++  lte  ~/  %lte                                     ::  less-equals
     |=  [a=@rd b=@rd]
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (lte:ma a b)
   ::
   ++  equ  ~/  %equ                                     ::  equals
     |=  [a=@rd b=@rd]
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (equ:ma a b)
   ::
   ++  gte  ~/  %gte                                     ::  greater-equals
     |=  [a=@rd b=@rd]
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (gte:ma a b)
   ::
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  [a=@rd b=@rd]
-    ~_  leaf+"rd-fail"
+    ~_  'rd-fail'
     (gth:ma a b)
   ::
   ++  sun  |=  [a=@u]  ^-  @rd  (sun:ma a)              ::  uns integer to @rd
@@ -2928,57 +2928,57 @@
   ::
   ++  add  ~/  %add                                     ::  add
     |=  [a=@rs b=@rs]  ^-  @rs
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
     |=  [a=@rs b=@rs]  ^-  @rs
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
     |=  [a=@rs b=@rs]  ^-  @rs
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
     |=  [a=@rs b=@rs]  ^-  @rs
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
     |=  [a=@rs b=@rs c=@rs]  ^-  @rs
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
     |=  [a=@rs]  ^-  @rs
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  [a=@rs b=@rs]
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (lth:ma a b)
   ::
   ++  lte  ~/  %lte                                     ::  less-equals
     |=  [a=@rs b=@rs]
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (lte:ma a b)
   ::
   ++  equ  ~/  %equ                                     ::  equals
     |=  [a=@rs b=@rs]
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (equ:ma a b)
   ::
   ++  gte  ~/  %gte                                     ::  greater-equals
     |=  [a=@rs b=@rs]
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (gte:ma a b)
   ::
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  [a=@rs b=@rs]
-    ~_  leaf+"rs-fail"
+    ~_  'rs-fail'
     (gth:ma a b)
   ::
   ++  sun  |=  [a=@u]  ^-  @rs  (sun:ma a)              ::  uns integer to @rs
@@ -3007,57 +3007,57 @@
   ::
   ++  add  ~/  %add                                     ::  add
     |=  [a=@rq b=@rq]  ^-  @rq
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
     |=  [a=@rq b=@rq]  ^-  @rq
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
     |=  [a=@rq b=@rq]  ^-  @rq
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
     |=  [a=@rq b=@rq]  ^-  @rq
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
     |=  [a=@rq b=@rq c=@rq]  ^-  @rq
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
     |=  [a=@rq]  ^-  @rq
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  [a=@rq b=@rq]
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (lth:ma a b)
   ::
   ++  lte  ~/  %lte                                     ::  less-equals
     |=  [a=@rq b=@rq]
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (lte:ma a b)
   ::
   ++  equ  ~/  %equ                                     ::  equals
     |=  [a=@rq b=@rq]
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (equ:ma a b)
   ::
   ++  gte  ~/  %gte                                     ::  greater-equals
     |=  [a=@rq b=@rq]
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (gte:ma a b)
   ::
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  [a=@rq b=@rq]
-    ~_  leaf+"rq-fail"
+    ~_  'rq-fail'
     (gth:ma a b)
   ::
   ++  sun  |=  [a=@u]  ^-  @rq  (sun:ma a)              ::  uns integer to @rq
@@ -3086,57 +3086,57 @@
   ::
   ++  add  ~/  %add                                     ::  add
     |=  [a=@rh b=@rh]  ^-  @rh
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
     |=  [a=@rh b=@rh]  ^-  @rh
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
     |=  [a=@rh b=@rh]  ^-  @rh
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
     |=  [a=@rh b=@rh]  ^-  @rh
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
     |=  [a=@rh b=@rh c=@rh]  ^-  @rh
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
     |=  [a=@rh]  ^-  @rh
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  [a=@rh b=@rh]
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (lth:ma a b)
   ::
   ++  lte  ~/  %lte                                     ::  less-equals
     |=  [a=@rh b=@rh]
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (lte:ma a b)
   ::
   ++  equ  ~/  %equ                                     ::  equals
     |=  [a=@rh b=@rh]
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (equ:ma a b)
   ::
   ++  gte  ~/  %gte                                     ::  greater-equals
     |=  [a=@rh b=@rh]
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (gte:ma a b)
   ::
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  [a=@rh b=@rh]
-    ~_  leaf+"rh-fail"
+    ~_  'rh-fail'
     (gth:ma a b)
   ::
   ++  tos                                               ::  @rh to @rs
@@ -3581,7 +3581,7 @@
   |_  a=@
   ++  rad                                               ::  random in range
     |=  b=@  ^-  @
-    ~_  leaf+"rad-zero"
+    ~_  'rad-zero'
     ?<  =(0 b)
     =+  c=(raw (met 0 b))
     ?:((lth c b) c $(a +(a)))
@@ -5171,7 +5171,7 @@
           =+  vex=((full sab) [[1 1] los])
           ?~  q.vex
             ~_  (show [%m '{%d %d}'] p.p.vex q.p.vex ~)
-            ~_(leaf+"syntax error" !!)
+            ~_('syntax error' !!)
           p.u.q.vex
 ::
 ::::  4h: parsing (ascii glyphs)
@@ -6183,13 +6183,13 @@
       leaf+"mook.{(rip 3 tag)}"
     ::
         %hunk
-      ?@  dat  leaf+"mook.hunk"
+      ?@  dat  'mook.hunk'
       =/  sof=(unit path)  ((soft path) +.dat)
-      ?~  sof  leaf+"mook.hunk"
+      ?~  sof  'mook.hunk'
       (smyt u.sof)
     ::
         %lose
-      ?^  dat  leaf+"mook.lose"
+      ?^  dat  'mook.lose'
       leaf+(rip 3 dat)
     ::
         %hand
@@ -6198,14 +6198,14 @@
         %mean
       ?@  dat  leaf+(rip 3 dat)
       =/  mac  (mack dat -.dat)
-      ?~  mac  leaf+"####"
+      ?~  mac  '####'
       =/  sof  ((soft tank) u.mac)
-      ?~  sof  leaf+"mook.mean"
+      ?~  sof  'mook.mean'
       u.sof
     ::
         %spot
       =/  sof=(unit spot)  ((soft spot) dat)
-      ?~  sof  leaf+"mook.spot"
+      ?~  sof  'mook.spot'
       :+  %rose  [":" ~ ~]
       :~  (smyt p.u.sof)
           =*  l   p.q.u.sof
@@ -6257,7 +6257,7 @@
     %0  [%& p.ton]
   ::
     %1  =/  sof=(unit path)  ((soft path) p.ton)
-        [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
+        [%| ?~(sof 'mute.hunk' (smyt u.sof)) ~]
   ::
     %2  [%| p.ton]
   ==
@@ -7231,7 +7231,7 @@
   ?-    nug
       [%0 *]   p.nug
       [%11 *]  $(nug q.nug)
-      *        ~_(leaf+"cove" !!)
+      *        ~_('cove' !!)
   ==
 ++  comb                                                ::  combine two formulas
   ~/  %comb
@@ -8589,7 +8589,7 @@
         [%mcsg *]                                       ::                  ;~
       |-  ^-  hoon
       ?-  q.gen
-          ~      ~_(leaf+"open-mcsg" !!)
+          ~      ~_('open-mcsg' !!)
           ^
         :+  %tsgr  [%ktts %v %$ 1]                      ::  =>  v=.
         |-  ^-  hoon                                    ::
@@ -8703,7 +8703,7 @@
             (lte hoon-version p.gen)
           &((lte hoon-version p.p.gen) (gte hoon-version q.p.gen))
         q.gen
-      ~_(leaf+"hoon-version" !!)
+      ~_('hoon-version' !!)
     ::
         *           gen
     ==
@@ -9094,7 +9094,7 @@
     |%
     ++  dext
       ^-  type
-      ~_  leaf+"crop"
+      ~_  'crop'
       ::  ~_  (dunk 'dext: sut')
       ::  ~_  (dunk(sut ref) 'dext: ref')
       ?:  |(=(sut ref) =(%noun ref))
@@ -9368,7 +9368,7 @@
           ++  stop  ?~(q.heg here lose)
           ++  twin  |=  [hax=pony yor=pony]
                     ^-  pony
-                    ~_  leaf+"find-fork"
+                    ~_  'find-fork'
                     ?:  =(hax yor)  hax
                     ?~  hax  yor
                     ?~  yor  hax
@@ -9527,7 +9527,7 @@
     |=  [p=type q=foot]
     ?.  ?=([%core *] p)
       ~_  (dunk %fire-type)
-      ~_  leaf+"expected-fork-to-be-core"
+      ~_  'expected-fork-to-be-core'
       ~_  (dunk(sut p) %fork-type)
       ~>(%mean.'fire-core' !!)
     :-  %hold
@@ -9714,7 +9714,7 @@
       (cool how q.gen (play ~(example ax p.gen)))
     ?:  ?=([%wthx *] gen)
       =+  (play %wing q.gen)
-      ~>  %slog.[0 [%leaf "chipping"]]
+      ~>  %slog.[0 'chipping']
       ?:  how
         =-  ~>  %slog.[0 (dunk(sut +<) 'chip: gain: ref')]
             ~>  %slog.[0 (dunk(sut -) 'chip: gain: gain')]
@@ -9847,7 +9847,7 @@
       ?-    log
           %noun      (nice log &)
           [%cell *]  (nice log &)
-          [%core *]  ~_  leaf+"core-number-of-chapters"
+          [%core *]  ~_  'core-number-of-chapters'
                      (nice log =(~(wyt by dom) ~(wyt by q.r.q.log)))
           [%fork *]
         =/  tys  ~(tap in p.log)
@@ -9915,7 +9915,7 @@
       |*  [typ=* gud=?]
       ?:  gud
         typ
-      ~_  leaf+"core-nice"
+      ~_  'core-nice'
       !!
     --
   ::
@@ -10073,7 +10073,7 @@
     ::
     ++  nice
       |=  typ=type
-      ~_  leaf+"mint-nice"
+      ~_  'mint-nice'
       ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
@@ -10249,14 +10249,14 @@
       |=  typ=type
       ::  ~_  (dunk(sut gol) 'need')
       ::  ~_  (dunk(sut typ) 'have')
-      ~_  leaf+"mull-nice"
+      ~_  'mull-nice'
       ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
     ++  grow
       |=  [mel=vair nym=(unit term) hud=poly ruf=hoon dom=(map term tome)]
       ::  make al
-      ~_  leaf+"mull-grow"
+      ~_  'mull-grow'
       ^-  [p=type q=type]
       =+  dan=^$(gen ruf, gol %noun)
       =+  yaz=(mile(sut p.dan) q.dan mel nym hud dom)
@@ -10451,7 +10451,7 @@
                 &(con.pec =(tow 3))
             ==
           p.sut
-        ~_  leaf+"payload-block"
+        ~_  'payload-block'
         ?.  =(way %read)  !!
         %+  cell
           ?.(sam.pec %noun ^$(sut p.sut, axe 2))
@@ -10877,7 +10877,7 @@
   ++  wrap
     ~/  %wrap
     |=  yoz=?(%lead %iron %zinc)
-    ~_  leaf+"wrap"
+    ~_  'wrap'
     ^-  type
     ?+  sut  sut
       [%cell *]  (cell $(sut p.sut) $(sut q.sut))

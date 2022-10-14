@@ -11,4 +11,4 @@
 :-  %say
 |=  [^ [arg=path ~] vane=?(%g %c)]
 =+  lon=.^(arch (cat 3 vane %y) arg)
-tang+[?~(dir.lon leaf+"~" (show-dir vane arg dir.lon))]~
+tang+[?~(dir.lon '~' (show-dir vane arg dir.lon))]~

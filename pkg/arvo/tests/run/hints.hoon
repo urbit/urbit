@@ -13,9 +13,9 @@
 ::  these test that the hint-trace hints
 ::  are safe to run or ignore
 ++  test-hela-hint
-  ~>  %hela.[1 leaf+"test-hela-trace-hint"]
+  ~>  %hela.[1 'test-hela-trace-hint']
   ~
 ++  test-nara-hint
-  ~>  %nara.[1 leaf+"test-nara-trace-hint"]
+  ~>  %nara.[1 'test-nara-trace-hint']
   ~
 --

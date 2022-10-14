@@ -200,14 +200,14 @@
       %poke-ack
     ?~  p.sign
       [~ this]
-    %-  (slog leaf+"glob: couldn't start thread; will retry" u.p.sign)
+    %-  (slog 'glob: couldn\'t start thread; will retry' u.p.sign)
     :_  this(globs.state (~(put by globs.state) serve-path produced-hash ~))
     [(leave-spider t.wire our.bowl)]~
   ::
       %watch-ack
     ?~  p.sign
       [~ this]
-    %-  (slog leaf+"glob: couldn't listen to thread; will retry" u.p.sign)
+    %-  (slog 'glob: couldn\'t listen to thread; will retry' u.p.sign)
     [~ this(globs.state (~(put by globs.state) serve-path produced-hash ~))]
   ::
       %kick
@@ -219,7 +219,7 @@
     ?+    p.cage.sign  (on-agent:def wire sign)
         %thread-fail
       =+  !<([=term =tang] q.cage.sign)
-      %-  (slog leaf+"glob: thread failed; will retry" leaf+<term> tang)
+      %-  (slog 'glob: thread failed; will retry' leaf+<term> tang)
       :-  ~
       this(globs.state (~(put by globs.state) serve-path produced-hash ~))
     ::
@@ -227,7 +227,7 @@
       =+  !<(=glob:glob q.cage.sign)
       ?.  =(hash.u.glob-details (sham glob))
         %:  mean
-          leaf+"glob: hash doesn't match!"
+          'glob: hash doesn\'t match!'
           >expected=hash.u.glob-details<
           >got=(sham glob)<
           ~
@@ -282,9 +282,9 @@
       ==
     `this
   ?^  error.sign-arvo
-    %-  (slog leaf+"glob: timer handling failed; will retry" ~)
+    %-  (slog 'glob: timer handling failed; will retry' ~)
     [[(wait-timeout t.wire now.bowl)]~ this]
-  %-  (slog leaf+"glob: timed out; retrying" ~)
+  %-  (slog 'glob: timed out; retrying' ~)
   =/  new-details  u.glob-details(hash *@uv)
   =/  new-state    state(globs (~(put by globs.state) serve-path new-details))
   (on-load !>(new-state))

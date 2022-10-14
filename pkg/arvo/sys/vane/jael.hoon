@@ -563,7 +563,7 @@
         [%behn %wake *]
       ?^  error.hin
         %-  %+  slog
-              leaf+"jael unable to resubscribe, run :azimuth|listen"
+              'jael unable to resubscribe, run :azimuth|listen'
             u.error.hin
           +>.$
       ?>  ?=([%breach @ ~] tea)
@@ -591,7 +591,7 @@
           %poke-ack
         ?~  p.p.+>.hin
           +>.$
-        %-  (slog leaf+"jael-bad-coup" u.p.p.+>.hin)
+        %-  (slog 'jael-bad-coup' u.p.p.+>.hin)
         +>.$
       ::
           %watch-ack

@@ -20,14 +20,14 @@
   [leaf+(spud pax) (pretty-file .^(noun (cat 3 vane %x) pax))]
 ?-     dir.ark                                          ::  handle ambiguity
     ~
-  [rose+[" " `~]^~[leaf+"~" (smyt pax)]]~
+  [rose+[" " `~]^~['~' (smyt pax)]]~
 ::
     [[@t ~] ~ ~]
   $(pax (welp pax /[p.n.dir.ark]))
 ::
     *
   =-  [palm+[": " ``~]^-]~
-  :~  rose+[" " `~]^~[leaf+"*" (smyt pax)]
+  :~  rose+[" " `~]^~['*' (smyt pax)]
       `tank`(show-dir vane pax dir.ark)
   ==
 ==

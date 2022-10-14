@@ -153,7 +153,7 @@
       |=  ~
       ^-  form:m
       ;<  =vase  bind:m  ((handle ,vase) (take-poke %over))
-      %-  (slog leaf+"over..." ~)
+      %-  (slog 'over...' ~)
       (pure:m ~)
   ==
 ::

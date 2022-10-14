@@ -26,8 +26,8 @@
   ?:  good
     [(cat 3 'confirmed access via ' (en-turf:html turf)) ~]
   :-  (cat 3 'unable to access via ' (en-turf:html turf))
-  :~  leaf+"XX check via nslookup"
-      leaf+"XX confirm port 80"
+  :~  'XX check via nslookup'
+      'XX confirm port 80'
   ==
 ;<  ~        bind:m  (app-message:strandio %dns msg)
 loop(ames-domains t.ames-domains)

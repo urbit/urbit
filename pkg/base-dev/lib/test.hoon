@@ -12,15 +12,15 @@
   =?  result  !=(q.expected q.actual)
     %+  weld  result
     ^-  tang
-    :~  [%palm [": " ~ ~ ~] [leaf+"expected" (sell expected) ~]]
-        [%palm [": " ~ ~ ~] [leaf+"actual  " (sell actual) ~]]
+    :~  [%palm [": " ~ ~ ~] ['expected' (sell expected) ~]]
+        [%palm [": " ~ ~ ~] ['actual  ' (sell actual) ~]]
     ==
   ::
   =?  result  !(~(nest ut p.actual) | p.expected)
     %+  weld  result
     ^-  tang
     :~  :+  %palm  [": " ~ ~ ~]
-        :~  [%leaf "failed to nest"]
+        :~  'failed to nest'
             (~(dunk ut p.actual) %actual)
             (~(dunk ut p.expected) %expected)
     ==  ==
@@ -38,7 +38,7 @@
   =/  b  (mule a)
   ?-  -.b
     %|  ~
-    %&  [leaf+"expected failure - succeeded" ~]
+    %&  ['expected failure - succeeded' ~]
   ==
 ::  +category: prepends a name to an error result; passes successes unchanged
 ::

@@ -17,7 +17,7 @@
         ~
     ==
 ^-  (sole-result:sole [%write-sec-atom p=host:eyre q=@])
-%+  print  leaf+"Accepting credentials for https://*.googleapis.com"
+%+  print  'Accepting credentials for https://*.googleapis.com'
 =+  hot=[%& /com/googleapis]
 =-  ?~  arg  -
     (fun.q.q jon.arg)

@@ -12,7 +12,7 @@
 =/  ast=(unit hoon)
   (rush cord.action vest)
 ?~  ast
-  (pure:m !>(`tang`[%leaf "Syntax Error"]~))
+  (pure:m !>(`tang`['Syntax Error']~))
 =/  fowl=[our=@p now=@da eny=@uvJ]
   :+  our.bowl
     now.bowl
@@ -29,8 +29,8 @@
 !>  ^-  tang
 ?-  -.toon
   %0  [(sell type.p.minted p.toon) ~]
-  %1  :-  leaf+".^ unsupported in chat eval"
+  %1  :-  '.^ unsupported in chat eval'
       (turn ;;((list path) p.toon) smyt)
-  %2  [leaf+"crash!" p.toon]
+  %2  ['crash!' p.toon]
 ==
 

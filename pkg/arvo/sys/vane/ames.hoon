@@ -2002,7 +2002,7 @@
       ::
       =/  state=(unit peer-state)  (get-peer-state ship)
       ?~  state
-        %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
+        %-  (slog 'ames: missing peer-state, ignoring' ~)
         event-core
       =.  sponsor.u.state   u.sponsor
       =.  peers.ames-state  (~(put by peers.ames-state) ship %known u.state)

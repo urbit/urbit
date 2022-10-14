@@ -1116,10 +1116,10 @@
       ::  XX probably a DNS misconfiguration
       ::
       =/  =tang
-        :~  ?~(r.rep leaf+"~" (sell !>(u.r.rep)))
-            leaf+"actual:"
+        :~  ?~(r.rep '~' (sell !>(u.r.rep)))
+            'actual:'
             (sell !>((some bod)))
-            leaf+"expected:"
+            'expected:'
         ==
       (emil (notify 'domain validation value is wrong' tang))
     finalize-trial:effect

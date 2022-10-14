@@ -5277,8 +5277,8 @@
       [~ ..^$]
     ~>  %slog.
         :^  0  %rose  [" " "[" "]"]
-        :^    leaf+"initial merge failed"
-            leaf+"my most sincere apologies"
+        :^    'initial merge failed'
+            'my most sincere apologies'
           >p.p.p.+.hin<
         q.p.p.+.hin
     [~ ..^$]
@@ -5307,7 +5307,7 @@
       %onto  !!
       %unto  !!
       %writ
-    %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
+    %-  (slog 'clay: strange writ (expected on upgrade to Fusion)' ~)
     [~ ..^$]
   ::
       %done
@@ -5405,7 +5405,7 @@
     ^+  ..^$
     =/  peg=(unit page)  (~(get by lat.ran.ruf) lob)
     ?~  peg
-      (noop veb leaf+"clay: file already tombstoned" ~)
+      (noop veb 'clay: file already tombstoned' ~)
     ::
     =/  used=(unit beam)
       =/  desks=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
@@ -5432,7 +5432,7 @@
       (noop veb leaf+"clay: file used in {<(en-beam u.used)>}" ~)
     ::
     =.  lat.ran.ruf  (~(del by lat.ran.ruf) lob)
-    (noop veb leaf+"clay: file successfully tombstoned" ~)
+    (noop veb 'clay: file successfully tombstoned' ~)
   ::
   ++  noop
     |=  [veb=? =tang]

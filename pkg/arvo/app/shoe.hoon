@@ -51,9 +51,9 @@
 ++  tab-list
   |=  sole-id=@ta
   ^-  (list [@t tank])
-  :~  ['demo' leaf+"run example command"]
-      ['row' leaf+"print a row"]
-      ['table' leaf+"display a table"]
+  :~  ['demo' 'run example command']
+      ['row' 'print a row']
+      ['table' 'display a table']
   ==
 ::
 ++  on-command

@@ -698,7 +698,7 @@
       ?-  -.sign
           %poke-ack
         ?~  p.sign
-          %-  (slog leaf+"Send batch thread started successfully" ~)
+          %-  (slog 'Send batch thread started successfully' ~)
           [~ this]
         %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
         :_  this
@@ -764,7 +764,7 @@
       ?-  -.sign
           %poke-ack
         ?~  p.sign
-          %-  (slog leaf+"Nonce thread started successfully" ~)
+          %-  (slog 'Nonce thread started successfully' ~)
           [~ this]
         %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
         :_  this
@@ -800,7 +800,7 @@
       ?-  -.sign
           %poke-ack
         ?~  p.sign
-          %-  (slog leaf+"Refresh Nonce thread started successfully" ~)
+          %-  (slog 'Refresh Nonce thread started successfully' ~)
           [~ this]
         %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
         :_  this

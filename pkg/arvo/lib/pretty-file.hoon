@@ -9,7 +9,7 @@
 ++  pretty-noun
   |=  pri=*  ^-  tank
   ?~  pri
-    leaf+"~"
+    '~'
   ?@  pri
     leaf+?:(((sane %tas) pri) <`@tas`pri> <pri>)
   =<  rose+[" " ?:(- "~[" "[") "]"]^+

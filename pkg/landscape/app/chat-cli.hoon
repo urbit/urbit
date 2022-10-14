@@ -665,19 +665,19 @@
   ++  tab-list
     ^-  (list [@t tank])
     :~
-      [';view' leaf+";view ~ship/chat-name (glyph)"]
-      [';flee' leaf+";flee ~ship/chat-name"]
+      [';view' ';view ~ship/chat-name (glyph)']
+      [';flee' ';flee ~ship/chat-name']
     ::
-      [';bind' leaf+";bind [glyph] ~ship/chat-name"]
-      [';unbind' leaf+";unbind [glyph]"]
-      [';what' leaf+";what (~ship/chat-name) (glyph)"]
+      [';bind' ';bind [glyph] ~ship/chat-name']
+      [';unbind' ';unbind [glyph]']
+      [';what' ';what (~ship/chat-name) (glyph)']
     ::
-      [';settings' leaf+";settings"]
-      [';set' leaf+";set key (value)"]
-      [';unset' leaf+";unset key"]
+      [';settings' ';settings']
+      [';set' ';set key (value)']
+      [';unset' ';unset key']
     ::
-      [';chats' leaf+";chats"]
-      [';help' leaf+";help"]
+      [';chats' ';chats']
+      [';help' ';help']
     ==
   ::  +work: run user command
   ::

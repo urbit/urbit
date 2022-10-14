@@ -65,7 +65,7 @@
   %-  pure:m
   ?:  =(~ taken)  ~
   :-  ~
-  :~  leaf+"some ships already taken:"
+  :~  'some ships already taken:'
       >taken<
   ==
 ::
@@ -113,7 +113,7 @@
   ?:  =(~ missing)
     (pure:m ~)
   %+  strand-fail:strandio  %lacking-invites
-  :~  leaf+"not enough invites from stars:"
+  :~  'not enough invites from stars:'
       >missing<
   ==
 --

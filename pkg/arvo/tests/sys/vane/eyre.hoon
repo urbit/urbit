@@ -2125,7 +2125,7 @@
     ~
   ::  todo: handle other deals
   ::
-  [%leaf "unexpected %deal type"]~
+  ['unexpected %deal type']~
 ::  +perform-authentication: goes through the authentication flow
 ::
 ++  perform-authentication

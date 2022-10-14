@@ -34,12 +34,12 @@
   =/  res=toon
     (mock [trp %9 2 %0 1] mule-scry)
   =/  pax=(unit path)
-    !<  (unit path) 
-    :-  -:!>(*(unit path)) 
+    !<  (unit path)
+    :-  -:!>(*(unit path))
     ?:(?=(%0 -.res) p.res ~)
   ?:  !?=(%0 -.res)
     =/  =tang
-      :+  leaf+"failed kick handler, please report" 
+      :+  'failed kick handler, please report'
         leaf+"{<rid>} in {(trip dap.bowl)}"
       ?:  ?=(%2 -.res)
         p.res

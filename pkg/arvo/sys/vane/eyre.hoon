@@ -656,7 +656,7 @@
         %:  internal-server-error
             authenticated.inbound-request.connection
             url.request.inbound-request.connection
-            leaf+"generator crashed"
+            'generator crashed'
             p.res
         ==
       ?:  ?=(%1 -.res)
@@ -665,7 +665,7 @@
         %:  internal-server-error
             authenticated.inbound-request.connection
             url.request.inbound-request.connection
-            leaf+"scry blocked on"
+            'scry blocked on'
             (fall (bind (bind ((soft path) p.res) smyt) (late ~)) ~)
         ==
       =/  result  ;;(simple-payload:http +.p.res)
@@ -2245,7 +2245,7 @@
     ==
   ::
   ?:  ?=(%code-changed -.task)
-    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
+    ~>  %slog.[0 'eyre: code-changed: throwing away cookies and sessions']
     =.  authentication-state.server-state.ax  *authentication-state
     ::
     =/  event-args  [[eny duct now rof] server-state.ax]

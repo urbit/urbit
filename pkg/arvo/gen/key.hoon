@@ -24,7 +24,7 @@
 =/  sgn=@  (end 8 bod)
 %+  print  leaf+"  authentication: 0x{(render-hex-bytes:ethereum 32 sgn)}"
 %+  print  leaf+"  networking:     0x{(render-hex-bytes:ethereum 32 cry)}"
-%+  print  leaf+"ethereum public keys:"
+%+  print  'ethereum public keys:'
 ::
 =/  sed=seed:jael
   [who life sec:ex:cub ~]

@@ -1157,7 +1157,7 @@
   %.  abet
   ?~  k
     ?~  fus
-      (slog [leaf+"no ongoing fuses" ~])
+      (slog ['no ongoing fuses' ~])
     %-  slog
     %+  roll
       ~(tap by `(map desk per-fuse)`fus)
@@ -1258,7 +1258,7 @@
   |=  a=path
   =+  b=.^(arch %cy a)
   ?~  fil.b
-    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
+    =+  ~['No such file:' leaf+"{<a>}"]
     abet:(spam -)
   (poke-info "removed" `(fray a))
 ::
@@ -1283,7 +1283,7 @@
   |=  ~
   =<  abet  %-  spam
   ?:  =(0 ~(wyt by syn))
-    [%leaf "no syncs configured"]~
+    ['no syncs configured']~
   %+  turn  ~(tap in ~(key by syn))
   |=(a=kiln-sync (render "sync configured" [sud her syd]:a))
 ::
@@ -1613,7 +1613,7 @@
     ?~  rot
       =.  +>.$
         %^    spam
-            leaf+"sync cancelled, retrying"
+            'sync cancelled, retrying'
           (render "on sync" sud her syd)
         ~
       start-sync
@@ -1649,7 +1649,7 @@
     ?:  ?=([%| %ali-unavailable *] mes)
       =.  +>.$
         %^    spam
-            leaf+"merge cancelled, maybe because sunk; restarting"
+            'merge cancelled, maybe because sunk; restarting'
           (render "on sync" sud her syd)
         ~
       start-sync:stop
@@ -1660,9 +1660,9 @@
         [(render "sync succeeded" sud her syd) ~]
       ?+  p.p.mes
         :*  (render "sync failed" sud her syd)
-            leaf+"please manually merge the desks with"
+            'please manually merge the desks with'
             leaf+"|merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
-            leaf+""
+            ''
             leaf+"error code: {<p.p.mes>}"
             q.p.mes
         ==
@@ -1740,7 +1740,7 @@
           =+  "merged with strategy {<gem>}"
           win:(spam leaf+- ?~(p.are ~ [>`(set path)`p.are< ~]))
         :: ~?  >  =(~ p.are)  [%mere-no-conflict syd]
-        =>  .(+>.$ (spam leaf+"mashing conflicts" ~))
+        =>  .(+>.$ (spam 'mashing conflicts' ~))
         =+  tic=(cat 3 syd '-scratch')
         =/  notations=(list [path (unit [mark vase])])
           %+  turn  ~(tap in p.are)
@@ -1803,7 +1803,7 @@
       =+  "failed to merge with strategy {<gem>}"
       lose:(spam leaf+- >p.p.are< q.p.are)
     ?+    gem
-      (spam leaf+"strange auto" >gem< ~)
+      (spam 'strange auto' >gem< ~)
     ::
         %init
       =+  :-  "auto merge failed on strategy %init"
@@ -1814,14 +1814,14 @@
       ?.  ?=(%bad-fine-merge p.p.are)
         =+  "auto merge failed on strategy %fine"
         lose:(spam leaf+- >p.p.are< q.p.are)
-      =>  (spam leaf+"%fine merge failed, trying %meet" ~)
+      =>  (spam '%fine merge failed, trying %meet' ~)
       perform(gem %meet)
     ::
         %meet
       ?.  ?=(%meet-conflict p.p.are)
         =+  "auto merge failed on strategy %meet"
         lose:(spam leaf+- >p.p.are< q.p.are)
-      =>  (spam leaf+"%meet merge failed, trying %mate" ~)
+      =>  (spam '%meet merge failed, trying %mate' ~)
       perform(gem %mate)
     ::
         %mate
