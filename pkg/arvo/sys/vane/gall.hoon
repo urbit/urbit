@@ -706,11 +706,11 @@
   ::
   ++  mo-peek
     ~/  %mo-peek
-    |=  [dap=term =routes care=term =path]
+    |=  [veb=? dap=term =routes care=term =path]
     ^-  (unit (unit cage))
     ::
     =/  app  (ap-abed:ap dap routes)
-    (ap-peek:app care path)
+    (ap-peek:app veb care path)
   ::
   ++  mo-apply
     |=  [dap=term =routes =deal]
@@ -1122,7 +1122,7 @@
     ::
     ++  ap-peek
       ~/  %ap-peek
-      |=  [care=term tyl=path]
+      |=  [veb=? care=term tyl=path]
       ^-  (unit (unit cage))
       ::  take trailing mark off path for %x scrys
       ::
@@ -1135,6 +1135,7 @@
       =/  peek-result=(each (unit (unit cage)) tang)
         (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
       ?:  ?=(%| -.peek-result)
+        ?.  veb  [~ ~]
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
       ::  for non-%x scries, or failed %x scries, or %x results that already
       ::  have the requested mark, produce the result as-is
@@ -1899,8 +1900,16 @@
       (sort ~(tap by queued) aor)
     ::
     =/  running
-      =/  active  (~(run by yokes.state) |=(yoke [%.y +<]))
-      (sort ~(tap by active) aor)
+      %+  turn  (sort ~(tap by yokes.state) aor)
+      |=  [dap=term =yoke]
+      ^-  mass
+      =/  met=(list mass)
+        =/  dat  (mo-peek:mo | dap [~ ship] %x /whey/mass)
+        ?:  ?=(?(~ [~ ~]) dat)  ~
+        (fall ((soft (list mass)) q.q.u.u.dat) ~)
+      ?~  met
+        dap^&+yoke
+      dap^|+(welp met dot+&+yoke ~)
     ::
     =/  maz=(list mass)
       :~  [%foreign %.y contacts.state]
@@ -1974,7 +1983,7 @@
   ?.  ?=(^ path)
     ~
   =/  =routes  [~ ship]
-  (mo-peek:mo dap routes care path)
+  (mo-peek:mo & dap routes care path)
 ::  +stay: save without cache; suspend non-%base agents
 ::
 ::    TODO: superfluous? see +molt
