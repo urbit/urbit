@@ -1265,7 +1265,7 @@
       ::  the request may include a 'Last-Event-Id' header
       ::
       =/  maybe-last-event-id=(unit @ud)
-        ?~  maybe-raw-header=(get-header:http 'Last-Event-ID' header-list.request)
+        ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
           ~
         (rush u.maybe-raw-header dum:ag)
       ::  flush events older than the passed in 'Last-Event-ID'
