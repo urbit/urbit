@@ -739,19 +739,19 @@
   ++  gen-rut-jar
     ^~  ^-  (jar @p event)
     =/  filter  ;:  cork
-                    (cury filter-owner %.y)
+                    ::(cury filter-owner %.y)
                     ::(cury filter-proxy %spawn)
-                    (cury filter-nonce %.y)
+                    ::(cury filter-nonce %.y)
                     ::(cury filter-rank %galaxy)
                     ::(cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
-                    :*  ::%spawn
-                        ::%transfer-point
+                    :*  %spawn
+                        %transfer-point
                         %configure-keys
-                        ::%set-management-proxy
-                        ::%set-spawn-proxy
-                        ::%set-transfer-proxy
+                        %set-management-proxy
+                        %set-spawn-proxy
+                        %set-transfer-proxy
                         ~
                     ==
                 ==
