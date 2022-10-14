@@ -1880,7 +1880,6 @@
     =.  ..park  wake:?:(mem (ergo 0 mum.res) ..park)
     ::  if upgrading kelvin and there's a commit-in-waiting, use that
     ::
-    ::  XX delete old items from wic
     =?  ..park  &(=(%base syd) !=(old-kel kel))
       =/  desks=(list [=desk =dojo])  ~(tap by dos.rom)
       =^  moves-1  ruf  abet
@@ -1906,7 +1905,7 @@
     ?-    liv.dom
         %dead  ..park
         %live  goad
-        %next  (emit hen %pass /park-next/[syd] %b %wait now)
+        %held  (emit hen %pass /park-held/[syd] %b %wait now)
     ==
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
@@ -2201,7 +2200,7 @@
       --
     --
   ::
-  ++  take-park-next
+  ++  take-park-held
     |=  err=(unit tang)
     ^+  ..park
     ?^  err
@@ -5630,12 +5629,12 @@
       abet:(take-fuse:den [ali-ship ali-desk (case +.ali-case)] p.hin)
     [mos ..^$]
   ::
-  ?:  ?=([%park-next @ ~] tea)
+  ?:  ?=([%park-held @ ~] tea)
     ?>  ?=(%wake +<.hin)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our syd)
-      abet:(take-park-next:den error.hin)
+      abet:(take-park-held:den error.hin)
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)

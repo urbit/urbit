@@ -940,7 +940,7 @@
         r=tako                                          ::  self-reference
         t=@da                                           ::  date
     ==                                                  ::
-  +$  zest  $~(%dead ?(%dead %live %next))              ::  how live
+  +$  zest  $~(%dead ?(%dead %live %held))              ::  how live
   ::                                                    ::
   ++  tire                                              ::  app state
     |%                                                  ::

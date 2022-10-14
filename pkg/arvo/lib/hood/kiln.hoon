@@ -454,12 +454,12 @@
       |=  [=desk =arak-9]
       ^-  (unit [^desk zest])
       ?:  liv.rein.arak-9
-        `[desk %next]
+        `[desk %held]
       ?~  rail.arak-9
         ~
       ?:  paused.u.rail.arak-9
         ~
-      `[desk %next]
+      `[desk %held]
     ::
     :_  [%10 |1.+.old(syn 0, ark ~)]
     ;:  weld
@@ -578,7 +578,7 @@
     |=  [=desk =zest wic=(set weft)]
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
-    `u=[%pass /kiln/bump/[desk] %arvo %c %zest desk %next]
+    `u=[%pass /kiln/bump/[desk] %arvo %c %zest desk %held]
   ?~  cards
     [%pass /kiln/bump/wick %arvo %c %wick ~]~
   cards
@@ -688,7 +688,7 @@
       zyn
     (~(del by zyn) loc u.got)
   =?  ..abet  ?=(%dead zest)
-    (emit %pass /kiln/install %arvo %c %zest loc %next)
+    (emit %pass /kiln/install %arvo %c %zest loc %held)
   ?:  (~(has by zyn) loc her rem)
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])

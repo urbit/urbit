@@ -71,7 +71,7 @@
     ?-  zest.dek
       %live  "running"
       %dead  "suspended"
-      %next  "suspended until next update"
+      %held  "suspended until next update"
     ==
   :~  leaf/"/sys/kelvin:      {<[lal num]:weft>}"
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
