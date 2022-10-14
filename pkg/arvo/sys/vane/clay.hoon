@@ -5555,19 +5555,24 @@
     `u=[need have leak]
   --
 ::
-::  We clear the ford cache by replacing it with its bunt as a literal.
-::  This nests within +flow without reference to +type, +hoon, or
-::  anything else in the sample of cache objects.  Otherwise we would be
-::  contravariant in the those types, which makes them harder to change.
+::  We clear the ford cache by replacing it with its bunt as a literal,
+::  with its singleton type.  This nests within +flow and +flue without
+::  reference to +type, +hoon, or anything else in the sample of cache
+::  objects.  Otherwise we would be contravariant in those types, which
+::  makes them harder to change.
 ::
 ++  stay
+  =/  flu  [~ ~]
+  =+  `flue`flu
+  =/  flo  ~
+  =+  `flow`flo
   :-  ver
   %=    ruf
-      fad  ~
+      fad  flo
       dos.rom
     %-  ~(run by dos.rom.ruf)
     |=  =dojo
-    dojo(fod.dom `flue`[~ ~])
+    dojo(fod.dom flu)
   ::
       hoy
     %-  ~(run by hoy.ruf)
@@ -5576,7 +5581,7 @@
         rus
       %-  ~(run by rus.rung)
       |=  =rede
-      rede(fod.dom `flue`[~ ~])
+      rede(fod.dom flu)
     ==
   ==
 ::
