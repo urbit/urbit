@@ -928,6 +928,9 @@
         [%| p=(list a) q=(list a)]                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a=mold (list (unce a)))                  ::  list change
+  +$  waft                                              ::  kelvin range
+    $^  [[%1 ~] p=(set weft)]                           ::
+    weft                                                ::
   +$  whom  (each ship @ta)                             ::  ship or named crew
   +$  yoki  (each yuki yaki)                            ::  commit
   +$  yuki                                              ::  proto-commit
@@ -1026,6 +1029,22 @@
   ::  +page-to-lobe: hash a page to get a lobe.
   ::
   ++  page-to-lobe  |=(page (shax (jam +<)))
+  ::
+  ++  cord-to-waft
+    |=  =cord
+    ^-  waft
+    :-  [%1 ~]
+    %-  sy  ^-  (list weft)
+    %+  turn  (rash cord (star (ifix [gay gay] tall:vast)))
+    |=  =hoon
+    !<(weft (slap !>(~) hoon))
+  ::
+  ++  waft-to-wefts
+    |=  kal=waft
+    ^-  (set weft)
+    ?^  -.kal
+      p.kal
+    [kal ~ ~]
   ::
   ::  +make-yaki: make commit out of a list of parents, content, and date.
   ::

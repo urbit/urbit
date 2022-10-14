@@ -371,7 +371,7 @@
         [%glob u.glob.chad.charge]
       :_(state [add-fact fetch-glob]:cha)
     ::
-        ?(%next %dead)
+        ?(%held %dead)
       =/  glob=(unit glob)
         ?:(?=(%glob -.chad.charge) `glob.chad.charge ~)
       =.  charges  (new-chad:cha %suspend glob)

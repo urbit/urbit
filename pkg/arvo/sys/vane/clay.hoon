@@ -1765,38 +1765,42 @@
       !!
     ::  find desk kelvin
     ::
-    =/  kel=weft  (get-kelvin yoki)
-    ?.  ?|  =(kel zuse+zuse)                            ::  kelvin match
+    =/  kel=(set weft)  (waft-to-wefts (get-kelvin yoki))
+    ?.  ?|  (~(has in kel) zuse+zuse)                   ::  kelvin match
             ?&  !=(%base syd)                           ::  best-effort compat
-                =(%zuse lal.kel)
-                (gth num.kel zuse)
+                %-  ~(any in kel)
+                |=  =weft
+                &(=(%zuse lal.weft) (gth num.weft zuse))
             ==
             ?&  =(%base syd)                            ::  ready to upgrade
                 %+  levy  ~(tap by tore:(lu now rof hen ruf))
                 |=  [=desk =zest wic=(set weft)]
                 ?|  =(%base desk)
                     !?=(%live zest)
-                    (~(has in wic) kel)
+                    !=(~ (~(int in wic) kel))
                 ==
             ==
         ==
-      ?:  (gth num.kel zuse)
+      ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
         %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
         ..park
-      =.  wic.dom  (~(put by wic.dom) kel yoki)
+      =.  wic.dom
+        %+  roll  ~(tap in kel)
+        |:  [weft=*weft wic=wic.dom]
+        (~(put by wic) weft yoki)
       =?  ..park  !?=(%base syd)  (emit hen %pass /park-wick %c %wick ~)
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ..park
-    =.  wic.dom  (~(del by wic.dom) kel)
+    =.  wic.dom  (~(del by wic.dom) zuse+zuse)
     ::
     =/  old-yaki
       ?:  =(0 let.dom)
         *yaki
       (aeon-to-yaki:ze let.dom)
-    =/  old-kel
+    =/  old-kel=(set weft)
       ?:  =(0 let.dom)
-        zuse+zuse
-      (get-kelvin %| old-yaki)
+        [zuse+zuse ~ ~]
+      (waft-to-wefts (get-kelvin %| old-yaki))
     =/  [deletes=(set path) changes=(map path (each page lobe))]
       (get-changes q.old-yaki new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
@@ -1807,6 +1811,13 @@
     =/  invalid  (~(uni in deletes) ~(key by changes))
     ?:  &(=(%base syd) !updated (~(any in invalid) is-kernel-path))
       (sys-update yoki new-data)
+    =.  ..park  (emit hen %pass /park-wick %c %wick ~)
+    =.  wic.dom
+      %+  roll  ~(tap in kel)
+      |:  [weft=*weft wic=wic.dom]
+      ?:  (gte num.weft zuse)
+        wic
+      (~(put by wic) weft yoki)
     ::
     =+  ?.  (did-kernel-update invalid)  ~
         ((slog 'clay: kernel updated' ~) ~)
@@ -1890,7 +1901,7 @@
         (emil (weld moves-1 moves-2))
       ?.  ?=(%live liv.dom.dojo.i.desks)
         $(desks t.desks)
-      ?~  wat=(~(get by wic.dom.dojo.i.desks) kel)
+      ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
         ::  XX should crash here
         ::
         $(desks t.desks)
@@ -1923,10 +1934,10 @@
     ::
     ++  get-kelvin
       |=  =yoki
-      ^-  weft
+      ^-  waft
       |^  ?-    -.yoki
               %|
-            %-  lobe-to-weft
+            %-  lobe-to-waft
             ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
             ~|  ~(key by q.p.yoki)
             (~(got by q.p.yoki) /sys/kelvin)
@@ -1937,26 +1948,24 @@
               ~|  ~(key by q.p.yoki)
               (~(got by q.p.yoki) /sys/kelvin)
             ?-    -.fil
-                %&  (page-to-weft p.fil)
-                %|  (lobe-to-weft p.fil)
+                %&  (page-to-waft p.fil)
+                %|  (lobe-to-waft p.fil)
             ==
           ==
       ::
-      ++  lobe-to-weft
+      ++  lobe-to-waft
         |=  =lobe
-        ^-  weft
+        ^-  waft
         =/  peg=(unit page)  (~(get by lat.ran) lobe)
         ?~  peg  ~|([%sys-kelvin-tombstoned syd] !!)
-        (page-to-weft u.peg)
+        (page-to-waft u.peg)
       ::
-      ++  page-to-weft
+      ++  page-to-waft
         |=  =page
-        ^-  weft
+        ^-  waft
         ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
-            %kelvin  ;;(weft q.page)
-            %mime
-          =+  ;;(=mime q.page)
-          !<(weft (slap !>(~) (ream q.q.mime)))
+            %kelvin  ;;(waft q.page)
+            %mime    (cord-to-waft q.q:;;(mime q.page))
         ==
       --
     ::
@@ -4505,7 +4514,7 @@
           |-  ^-  mark
           ?~  t.t.pax
             i.pax
-          :((cury cat 3) i.pax '-' $(pax t.pax))
+          (rap 3 i.pax '-' $(pax t.pax) ~)
         ::
         =^  m2  nub.f
           |-  ^-  [(list mark) _nub.f]
