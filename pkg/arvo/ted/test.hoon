@@ -44,10 +44,6 @@
   %+  turn  ~(tap by paths-to-tests)
   |=  [=path test-arms=(list test-arm)]
   ^-  (list test)
-  ::  strip off leading 'tests' from :path
-  ::
-  ?.  ?=([%tests *] path)  ~
-  =/  path  t.path  ::NOTE  TMI
   ::  for each test, add the test's name to :path
   ::
   %+  turn  test-arms
