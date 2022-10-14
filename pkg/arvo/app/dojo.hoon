@@ -544,8 +544,6 @@
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  .
-          ::  %lib  .(lib ~)
-          ::  %sur  .(sur ~)
           %dir  .(dir [[our.hid %base ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
@@ -557,30 +555,19 @@
         ~|  bad-set+[p.p.mad p.q.cay]
         =<  dy-amok
         ?+  p.p.mad  .
-        ::      %lib
-        ::    %_    .
-        ::        lib
-        ::      ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-        ::    ==
-        ::  ::
-        ::      %sur
-        ::    %_    .
-        ::        sur
-        ::      ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-        ::    ==
-        ::
-            %dir  =+  ^=  bem  ^-  beam
-                      %-  need  %-  de-beam
-                      =+  pax=((dy-cast path !>(*path)) q.cay)
-                      ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
-                      ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
-                      ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
-                      pax
-                  ?:  =(~ .^((list path) %ct (en-beam he-beam(dir bem))))
-                    +(..dy (he-diff %tan 'dojo: dir does not exist' ~))
-                  =.  dir  bem
-                  =-  +>(..dy (he-diff %tan - ~))
-                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
+            %dir
+          =/  bem=beam
+            %-  need  %-  de-beam
+            =+  pax=((dy-cast path !>(*path)) q.cay)
+            ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
+            ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
+            ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
+            pax
+          ?:  =(~ .^((list path) %ct (en-beam he-beam(dir bem))))
+            +(..dy (he-diff %tan 'dojo: dir does not exist' ~))
+          =.  dir  bem
+          =-  +>(..dy (he-diff %tan - ~))
+          rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
         ==
       ::
           %poke
