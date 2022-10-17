@@ -2154,9 +2154,9 @@
     ?.  &(?=(%known -.s) =(%pawn (clan:title ship)))  %.n
     ?&  (gth (sub now ~d180) last-contact.qos.s)
         ::
-        %+  levy  (turn ~(tap by snd.s) tail)
+        %-  ~(any by snd.s)
         |=  m=message-pump-state
-        ?~(unsent-fragments.m %.y %.n)
+        !=(~ unsent-fragments.m)
     ==
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
