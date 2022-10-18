@@ -1106,7 +1106,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
       printf("\n");
 
       printf("khan jam: ");
-      printf("%x%08lx",0, len_d);
+      printf("%02x%08lx",0, len_d);
       p=0;
       while (p < len_d){
           printf("%x", byt_y[p]);
