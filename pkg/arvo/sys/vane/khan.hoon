@@ -210,7 +210,7 @@
       ?+    p.cag  ~&(bad-fact+p.cag !!)
           %thread-fail
         =/  =tang  !<(tang q.cag)
-        %-  (slog 'khan-fact' tang)
+        ::  %-  (slog 'khan-fact' tang)
         [hen %give %arow %| p.cag tang]~
       ::
           %thread-done

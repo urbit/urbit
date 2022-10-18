@@ -693,6 +693,7 @@
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
     abet
+  ~>  %slog.(fmt "beginning install into {here}")
   ?:  =(%base loc)
     abet:abet:init:(apex:(sync loc her rem) `%kids)
   abet:abet:init:(sync loc her rem)
@@ -772,6 +773,7 @@
   |=  hos=kiln-sync
   ?:  (~(has by zyn) hos)
     abet:(spam (render "already syncing" [sud her syd ~]:hos) ~)
+  ~>  %slog.(fmt "beginning sync into {here}")
   abet:abet:init:(sync hos)
 ::
 ++  poke-syncs                                        ::  print sync config
@@ -1072,7 +1074,6 @@
     =.  let  0
     %+  lard  /init
     =/  m  (strand:rand ,vase)
-    ~>  %slog.(fmt "beginning install into {here}")
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %y ud+1 /)
     ~>  %slog.(fmt "activated install into {here}")
     ;<  now=@da     bind:m  get-time:strandio

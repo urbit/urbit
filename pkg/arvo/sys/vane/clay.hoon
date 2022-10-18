@@ -1679,7 +1679,7 @@
       ?>  ?=(~ deletes)
       =/  data=(map path (each page lobe))
         (~(run by changes) |=(=cage &+[p q.q]:cage))
-      (park | & &+[~ data] *rang)
+      (park | &+[~ data] *rang)
     ::
     =/  parent-tako=tako  (aeon-to-tako:ze let.dom)
     =/  data=(map path (each page lobe))
@@ -1694,7 +1694,7 @@
       (~(run by changes) |=(=cage &+[p q.q]:cage))
     ::
     =/  =yuki  [~[parent-tako] data]
-    (park | & &+yuki *rang)
+    (park | &+yuki *rang)
   ::
   ::  Unix commit
   ::
@@ -1728,7 +1728,7 @@
   ++  park
     =/  check-sane  |
     |^
-    |=  [updated=? goat=? =yoki =rang]
+    |=  [updated=? =yoki =rang]
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
@@ -1888,18 +1888,14 @@
         ::
         $(desks t.desks)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
-      =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
+      =^  moves-3  ruf  abet:(park:den | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
-    ::  tell gall which agents to run
+    ::  tell gall to try to run agents if %held
     ::
-    ?.  goat
-      ..park
-    ?-    liv.dom
-        %dead  ..park
-        %live  goad
-        %held  (emit hen %pass /park-held/[syd] %b %wait now)
-    ==
+    ?:  ?=(%held liv.dom)
+      (emit hen %pass /park-held/[syd] %b %wait now)
+    ..park
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -2289,7 +2285,7 @@
     ^+  ..take-fuse
     ?~  merges
       =.  ..take-fuse  (done-fuse clean-state %& ~)
-      (park | & [%| next-yaki(p (flop parents))] rag)
+      (park | [%| next-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
     =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `next-yaki)
@@ -2370,7 +2366,7 @@
       ?~  mr
         (done %& ~)
       =.  ..merge  (done %& conflicts.u.mr)
-      (park | & new.u.mr ~ lat.u.mr)
+      (park | new.u.mr ~ lat.u.mr)
     ==
   ::
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe page)]
@@ -3100,9 +3096,9 @@
       |=  [a=[weft yoki] b=[weft yoki]]
       (gth num.a num.b)
     =.  wis  (skip wis |=([[* a=@ud] *] (gte a zuse)))
-    ?~  wis
-      ..park
-    (park | & yoki.i.wis *rang)
+    ?~  wis  ::  Every commit bottoms out here
+      goad
+    (park | yoki.i.wis *rang)
   ::
   ::  Cancel a request.
   ::
@@ -4735,7 +4731,7 @@
       %park
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(park:den | & [yok ran]:req)
+      abet:(park:den | [yok ran]:req)
     [mos ..^$]
   ::
       %pork
@@ -4743,7 +4739,7 @@
     =.  pud.ruf  ~
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our syd)
-      abet:(park:den & & yoki *rang)
+      abet:(park:den & yoki *rang)
     [mos ..^$]
   ::
       %perm
@@ -4863,8 +4859,7 @@
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-zest:den liv.req)
     =^  m2  ..^$  $(wrapped-task [%wick ~])
-    =^  m3  ruf  abet:goad:(lu now rof hen ruf)
-    [:(weld m1 m2 m3) ..^$]
+    [(weld m1 m2) ..^$]
   ::
       %plea
     =*  her  ship.req
