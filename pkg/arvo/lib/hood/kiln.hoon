@@ -1128,8 +1128,8 @@
         %next
       ?>  ?=(%arow +<.sign-arvo)
       ?:  ?=(%| -.p.sign-arvo)
-        ~>  %slog.(fmt "download failed into {here}; retrying sync")
-        %-  (slog p.p.sign-arvo)
+        ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
+        ::  %-  (slog p.p.sign-arvo)
         init
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")

@@ -3081,6 +3081,15 @@
       (~(put by ren.dom) dude u.on)
     ==
   ::
+  ++  stay
+    |=  ver=(unit weft)
+    ^+  ..park
+    =.  wic.dom
+      ?~  ver
+        ~
+      (~(del by wic.dom) u.ver)
+    ..park
+  ::
   ::  Try to apply highest-versioned %base commit-in-waiting
   ::
   ++  wick
@@ -4764,6 +4773,12 @@
         abet:(rise:den dude.arg.req on.arg.req)
       =^  m2  ruf  abet:goad:(lu now rof hen ruf)
       [(weld m1 m2) ..^$]
+    ::
+        [%stay =desk ver=(unit weft)]
+      =^  moves  ruf
+        =/  den  ((de now rof hen ruf) our desk.arg.req)
+        abet:(stay:den ver.arg.req)
+      [moves ..^$]
     ==
   ::
       %tire
