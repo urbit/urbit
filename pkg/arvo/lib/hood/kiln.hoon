@@ -693,10 +693,12 @@
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
     abet
-  ~>  %slog.(fmt "beginning install into {here}")
+  =/  sun  (sync loc her rem)
+  ~>  %slog.(fmt "beginning install into {here:sun}")
+  =<  abet:abet:init
   ?:  =(%base loc)
-    abet:abet:init:(apex:(sync loc her rem) `%kids)
-  abet:abet:init:(sync loc her rem)
+    (apex:sun `%kids)
+  sun
 ::
 ++  poke-kids
   |=  [hos=kiln-sync nex=(unit desk)]
@@ -773,7 +775,7 @@
   |=  hos=kiln-sync
   ?:  (~(has by zyn) hos)
     abet:(spam (render "already syncing" [sud her syd ~]:hos) ~)
-  ~>  %slog.(fmt "beginning sync into {here}")
+  ~>  %slog.(fmt "beginning sync into {<syd.hos>} from {<her.hos>}/{<sud.hos>}")
   abet:abet:init:(sync hos)
 ::
 ++  poke-syncs                                        ::  print sync config
@@ -1171,19 +1173,21 @@
     ::
         %kids
       ?>  ?=(%mere +<.sign-arvo)
+      ?~  kid
+        ..abet
       ::  See %main for this case
       ::
       ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
-        =+  "kids merge to {<kid>} failed, maybe peer sunk; restarting"
+        =+  "kids merge to {<u.kid>} failed, maybe peer sunk; restarting"
         ~>  %slog.(fmt -)
         init
       ::  Just notify; we've already started listening for the next
       ::  version
       ::
       ?-  -.p.sign-arvo
-        %&  ~>  %slog.(fmt "kids merge to {<kid>} succeeded")
+        %&  ~>  %slog.(fmt "kids merge to {<u.kid>} succeeded")
             ..abet
-        %|  ~>  %slog.(fmt "kids merge to {<kid>} failed")
+        %|  ~>  %slog.(fmt "kids merge to {<u.kid>} failed")
             %-  (slog p.p.sign-arvo)
             ..abet
       ==
