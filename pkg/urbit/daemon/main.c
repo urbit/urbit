@@ -1058,41 +1058,65 @@ _cw_eval(c3_i argc, c3_c* argv[])
   }
 
   fprintf(stderr, "eval:\n");
+  if ( c3n == jam_l ) {
 
-  //  +wish for an eval gate (virtualized twice for pretty-printing)
-  //
-  u3_noun gat = u3v_wish("|=(a=@t (sell (slap !>(+>.$) (rain /eval a))))");
-  u3_noun res;
-  {
-    u3_noun sam = u3i_string(evl_c);
-    u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
-    res = u3m_soft(0, u3n_kick_on, cor);
+    //  +wish for an eval gate (virtualized twice for pretty-printing)
+    //
+    u3_noun gat = u3v_wish("|=(a=@t (sell (slap !>(+>.$) (rain /eval a))))");
+    u3_noun res;
+    {
+      u3_noun sam = u3i_string(evl_c);
+      u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
+      res = u3m_soft(0, u3n_kick_on, cor);
+    }
+  
+  
+    if ( 0 == u3h(res) ) {  //  successful execution, print output
+      u3_pier_tank(0, 0, u3k(u3t(res)));
+    }
+    else {                  //  error, print stack trace
+       u3_pier_punt_goof("eval", u3k(res));
+    }
+
+    u3z(res);
+    u3z(gat);
+  } else {
+      u3_noun sam = u3i_string(evl_c);
+      u3_noun res = u3v_wish_n(sam);
+
+      printf("jamming\r\n");
+
+      c3_d bits = 0;
+      c3_d len_d = 0;
+      c3_y* byt_y;
+
+      bits = u3s_jam_xeno(res, &len_d, &byt_y);
+
+      //printf("bits: %d \n", bits);
+      //printf("size: %d \n", sizeof byt_y/ sizeof byt_y[0]);
+      //printf("len_d: %" PRIu64 "\n", len_d);
+      //printf("%x\n", (char*)byt_y);
+      //u3m_p("jam_n_t", res);
+      printf("jammed noun: ");
+      
+      int p=len_d;
+      while (0 <p ){
+          printf("%x", byt_y[--p]);
+      }
+      printf("\n");
+
+      printf("khan jam: ");
+      printf("%x%08lx",0, len_d);
+      p=0;
+      while (p < len_d){
+          printf("%x", byt_y[p]);
+          p++;
+      }
+      printf("\n");
+   
+    u3z(res);
+    u3z(sam);
   }
-
-
-  if ( 0 == u3h(res) ) {  //  successful execution, print output
-     if ( c3y == jam_l ) {
-        printf("jamming\r\n");
-        u3_noun jam_n;
-        {
-           u3_noun sam = u3v_wish("|=(a=@t (jam a))");
-           u3_noun cor = u3nc(u3k(u3h(sam)), u3k(u3t(res)));
-           jam_n = u3m_soft(0, u3n_kick_on, cor);
-
-           u3_pier_tank(0, 0, u3t(jam_n));
-        }
-
-
-
-     }
-     u3_pier_tank(0, 0, u3k(u3t(res)));
-  }
-  else {                  //  error, print stack trace
-     u3_pier_punt_goof("eval", u3k(res));
-  }
-
-  u3z(res);
-  u3z(gat);
   free(evl_c);
 }
 
