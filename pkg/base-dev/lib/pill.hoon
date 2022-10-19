@@ -39,6 +39,8 @@
 ++  file-ovum
   =/  directories=(list path)
     :~  /app    ::  %gall applications
+        /dia    ::  %citadel desk templates
+        /doc    ::  documentation
         /gen    ::  :dojo generators
         /lib    ::  libraries
         /mar    ::  mark definitions
