@@ -1084,7 +1084,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
       u3_noun sam = u3i_string(evl_c);
       u3_noun res = u3v_wish_n(sam);
 
-      printf("jamming\r\n");
+      fprintf(stderr,"jamming\r\n");
 
       c3_d bits = 0;
       c3_d len_d = 0;
@@ -1097,23 +1097,25 @@ _cw_eval(c3_i argc, c3_c* argv[])
       //printf("len_d: %" PRIu64 "\n", len_d);
       //printf("%x\n", (char*)byt_y);
       //u3m_p("jam_n_t", res);
-      printf("jammed noun: ");
+      fprintf(stderr,"jammed noun: ");
       
       int p=len_d;
       while (0 <p ){
-          printf("%x", byt_y[--p]);
+          fprintf(stderr,"%x", byt_y[--p]);
       }
-      printf("\n");
+      fprintf(stderr,"\n");
 
-      printf("khan jam: ");
+      fprintf(stderr,"khan jam: ");
+      fwrite(*byt_y, sizeof(byt_y), 1, stdout);
+      /*
       printf("%02x%08lx",0, len_d);
       p=0;
       while (p < len_d){
           printf("%x", byt_y[p]);
           p++;
       }
-      printf("\n");
-   
+      fprintf(stderr, "\n");
+      */
     u3z(res);
     u3z(sam);
   }
