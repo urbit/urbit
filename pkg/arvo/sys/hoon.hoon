@@ -6543,6 +6543,7 @@
   ==                                                    ::
 +$  tyre  (list [p=term q=hoon])                        ::
 +$  tyke  (list (unit hoon))                            ::
++$  ming  (trap vase)                                   ::  deferred vase
 ::                                                      ::::::  virtual nock
 +$  nock  $^  [p=nock q=nock]                           ::  autocons
           $%  [%1 p=*]                                  ::  constant
@@ -11484,8 +11485,8 @@
 ::  +swat: deferred +slap
 ::
 ++  swat
-  |=  [tap=(trap vase) gen=hoon]
-  ^-  (trap vase)
+  |=  [tap=ming gen=hoon]
+  ^-  ming
   =/  gun  (~(mint ut p:$:tap) %noun gen)
   =>  [tap=tap gun=gun]
   |.  ~+
@@ -11493,23 +11494,24 @@
 ::  +shed: deferred +slop
 ::
 ++  shed
-  |=  [hed=(trap vase) tal=(trap vase)]
-  ^-  (trap vase)
-  =>  [hed=hed tal=tal]
+  |=  [hed=ming tal=ming]
+  ^-  ming
+  =/  cel  [%cell p:$:hed p:$:tal]
+  =>  [cel=cel hed=hed tal=tal]
   |.  ~+
-  [[%cell p:$:hed p:$:tal] [q:$:hed q:$:tal]]
+  [cel [q:$:hed q:$:tal]]
 ::  +shut: deferred +slam
 ::
 ++  shut
-  |=  [gat=(trap vase) sam=(trap vase)]
-  ^-  (trap vase)
+  |=  [gat=ming sam=ming]
+  ^-  ming
   =/  typ=type  [%cell p:$:gat p:$:sam]
   =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =/  gun  (~(mint ut typ) %noun gen)
-  =/  noc  (slum q:$:gat q:$:sam)
-  =>  [gun=gun noc=noc]
+  =>  [hed=p.gun gat=gat sam=sam]
   |.  ~+
-  [p.gun noc]
+  ::  inline +slum
+  [hed .*(q:$:gat [%9 2 %10 [6 %1 q:$:sam] %0 1])]
 ::
 ::::  5d: parser
   ::

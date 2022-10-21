@@ -13,7 +13,6 @@
 ::  $bone: opaque duct handle
 ::  $case: global version
 ::  $cage: marked vase
-::  $coop: marked ming
 ::  +cask: marked data builder
 ::  $desk: local workspace
 ::  $dock: message target
@@ -48,13 +47,11 @@
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
-+$  coop  (cask ming)
 +$  desk  @tas
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))
 +$  mark  @tas
 +$  mien  [our=ship now=@da eny=@uvJ]
-+$  ming  (trap vase)
 +$  page  (cask)
 ++  omen  |$  [a]  (pair path (cask a))
 +$  ship  @p
