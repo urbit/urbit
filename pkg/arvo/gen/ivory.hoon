@@ -21,7 +21,7 @@
   (welp (flop (tail (flop sys))) /lib)
 ::
 |^  =/  ver
-      =/  sub  *(trap vase)
+      =/  sub  *ming
       =.  sub  (build-sys sub %hoon)
       =.  sub  (build-sys sub %arvo)
       =.  sub  (build-sys sub %lull)
@@ -30,17 +30,17 @@
       =.  sub  (build-lib sub & %azimuth)
       (build-lib sub | %vere)
     =/  nok  !.
-      =>  *[ver=(trap vase) ~]
+      =>  *[ver=ming ~]
       !=  q:$:ver
     ivory/[nok ver ~]
 ::
 ++  build-sys
-  |=  [sub=(trap vase) nam=term]  ^-  (trap vase)
+  |=  [sub=ming nam=term]  ^-  ming
   ~>  %slog.[0 leaf+"ivory: building /sys/{(trip nam)}"]
   (swat sub (rain /sys/[nam]/hoon .^(@t cx+(welp sys /[nam]/hoon))))
 ::
 ++  build-lib
-  |=  [sub=(trap vase) imp=? nam=term]  ^-  (trap vase)
+  |=  [sub=ming imp=? nam=term]  ^-  ming
   ~>  %slog.[0 leaf+"ivory: building /lib/{(trip nam)}"]
   =/  hun=hoon
     %+  mist  /lib/[nam]/hoon
@@ -66,8 +66,8 @@
 ::  +swel: +swat but with +slop
 ::
 ++  swel
-  |=  [tap=(trap vase) gen=hoon]
-  ^-  (trap vase)
+  |=  [tap=ming gen=hoon]
+  ^-  ming
   =/  gun  (~(mint ut p:$:tap) %noun gen)
   =>  [tap=tap gun=gun]
   |.  ~+
