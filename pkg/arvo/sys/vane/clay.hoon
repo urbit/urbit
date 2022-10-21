@@ -194,8 +194,8 @@
 ::
 +$  soak
   $%  [%cage =cage]
-      [%vase =vase]
-      [%arch dir=(map @ta vase)]
+      [%vase vase=ming]
+      [%arch dir=(map @ta ming)]
       [%dais =dais]
       [%tube =tube]
   ==
