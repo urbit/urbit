@@ -37,13 +37,13 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =/  bud
   ^~
-  =/  zuse  !>(..zuse)
+  =/  zuse=ming  |.(!>(..zuse))                         ::  XX do better
   :*  zuse=zuse
-      nave=(slap zuse !,(*hoon nave:clay))
-      cork=(slap zuse !,(*hoon cork))
-      same=(slap zuse !,(*hoon same))
-      mime=(slap zuse !,(*hoon mime))
-      cass=(slap zuse !,(*hoon cass:clay))
+      nave=(swat zuse !,(*hoon nave:clay))
+      cork=(swat zuse !,(*hoon cork))
+      same=(swat zuse !,(*hoon same))
+      mime=(swat zuse !,(*hoon mime))
+      cass=(swat zuse !,(*hoon cass:clay))
   ==
 ::
 |=  our=ship
@@ -541,15 +541,27 @@
   ++  wrap
     |*  [* state:ford]
     [+<- +<+< +<+>-]  ::  [result cache.state flue]
+  ::  +bait: pre-wrap eval
   ::
-  ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
+  ++  bait
+    |*  [(trap) state:ford]
+    [$:+<- +<+]
+  ::
+  ++  with-face
+    |=  [face=@tas vase=ming]
+    ^-  ming
+    =/  typ  p:$:vase
+    =>  [face=face typ=typ vase=vase]
+    |.  ~+
+    [[%face face typ] q:$:vase]
+  ::
   ++  with-faces
-    =|  res=(unit vase)
-    |=  vaz=(list [face=@tas =vase])
-    ^-  vase
+    =|  res=(unit ming)
+    |=  vaz=(list [face=@tas vase=ming])
+    ^-  ming
     ?~  vaz  (need res)
     =/  faz  (with-face i.vaz)
-    =.  res  `?~(res faz (slop faz u.res))
+    =.  res  `?~(res faz (shed faz u.res))
     $(vaz t.vaz)
   ::
   ++  ford
@@ -608,7 +620,7 @@
     ::
     ++  build-nave
       |=  mak=mark
-      ^-  [vase state]
+      ^-  [ming state]
       ~|  %error-building-mark^mak
       %-  soak-vase
       %+  gain-sprig  nave+mak  |.
@@ -617,19 +629,19 @@
         ~|(cycle+nave+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
       %-  (trace 1 |.("make mark {<mak>}"))
-      =^  cor=vase  nub  (build-fit %mar mak)
-      =/  gad=vase  (slap cor limb/%grad)
+      =^  cor=ming  nub  (build-fit %mar mak)
+      =/  gad=vase  $:(swat cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
-        =^  deg=vase  nub  ^$(mak mok)
-        =^  tub=vase  nub  (build-cast mak mok)
-        =^  but=vase  nub  (build-cast mok mak)
+        =^  deg=ming  nub  ^$(mak mok)
+        =^  tub=ming  nub  (build-cast mak mok)
+        =^  but=ming  nub  (build-cast mok mak)
         %+  gain-leak  nave+mak
         |=  nob=state
         =.  nub  nob
         :_  nub  :-  %vase
-        ^-  vase  ::  vase of nave
-        %+  slap
+        ^-  ming  ::  ming of nave
+        %+  swat
           (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
         !,  *hoon
         =/  typ  _+<.cor
@@ -653,8 +665,8 @@
       |=  nob=state
       =.  nub  nob
       :_  nub  :-  %vase
-      ^-  vase  ::  vase of nave
-      %+  slap  (slop (with-face cor+cor) zuse.bud)
+      ^-  ming  ::  ming of nave
+      %+  swat  (shed (with-face cor+cor) zuse.bud)
       !,  *hoon
       =/  typ  _+<.cor
       =/  dif  _*diff:grad:cor
@@ -689,7 +701,8 @@
       ?:  (~(has in cycle.nub) dais+mak)
         ~|(cycle+dais+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) dais+mak)
-      =^  nav=vase  nub  (build-nave mak)
+      =^  min=ming  nub  (build-nave mak)
+      =/  nav  $:min
       %+  gain-leak  dais+mak
       |=  nob=state
       =.  nub  nob
@@ -731,7 +744,7 @@
     ::
     ++  build-cast
       |=  [a=mark b=mark]
-      ^-  [vase state]
+      ^-  [ming state]
       ~|  error-building-cast+[a b]
       %-  soak-vase
       %+  gain-sprig  cast+a^b  |.
@@ -739,12 +752,12 @@
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
       ?:  =([%mime %hoon] [a b])
-        :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
+        :_(nub [%vase =>(..zuse |.(!>(|=(m=mime q.q.m))))])
       ::  try +grow; is there a +grow core with a .b arm?
       ::
       %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
-      =^  old=vase  nub  (build-fit %mar a)
-      ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
+      =^  old=ming  nub  (build-fit %mar a)
+      ?:  =/  ram  (mule (swat old !,(*hoon grow)))
           ?:  ?=(%| -.ram)  %.n
           =/  lab  (mule |.((slob b p.p.ram)))
           ?:  ?=(%| -.lab)  %.n
@@ -755,23 +768,23 @@
         |=  nob=state
         =.  nub  nob
         :_  nub  :-  %vase
-        %+  slap  (with-faces cor+old ~)
+        %+  swat  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
       ::  try direct +grab
       ::
-      =^  new=vase  nub  (build-fit %mar b)
-      =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
+      =^  new=ming  nub  (build-fit %mar b)
+      =/  rab  (mule (swat new tsgl/[limb/a limb/%grab]))
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
         =.  nub  nob
-        :_(nub vase+p.rab)
+        :_(nub vase+|.(p.rab))
       ::  try +jump
       ::
-      =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
+      =/  jum  (mule (swat old tsgl/[limb/b limb/%jump]))
       ?:  ?=(%& -.jum)
         (compose-casts a !<(mark p.jum) b)
       ?:  ?=(%& -.rab)
@@ -786,13 +799,13 @@
     ++  compose-casts
       |=  [x=mark y=mark z=mark]
       ^-  [soak state]
-      =^  uno=vase  nub  (build-cast x y)
-      =^  dos=vase  nub  (build-cast y z)
+      =^  uno=ming  nub  (build-cast x y)
+      =^  dos=ming  nub  (build-cast y z)
       %+  gain-leak  cast+x^z
       |=  nob=state
       =.  nub  nob
       :_  nub  :-  %vase
-      %+  slap
+      %+  swat
         (with-faces uno+uno dos+dos ~)
       !,(*hoon |=(_+<.uno (dos (uno +<))))
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
@@ -806,7 +819,8 @@
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) tube+[a b])
         ~|(cycle+tube+[a b]^cycle.nub !!)
-      =^  gat=vase  nub  (build-cast a b)
+      =^  min=ming  nub  (build-cast a b)
+      =/  gat  $:min
       %+  gain-leak  tube+a^b
       |=  nob=state
       =.  nub  nob
@@ -860,18 +874,18 @@
     ::
     ++  prelude
       |=  =path
-      ^-  vase
+      ^-  ming
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
       =.  hoon.pile  !,(*hoon .)
-      =^  res=vase  nub  (run-prelude pile)
+      =^  res=ming  nub  (run-prelude pile)
       res
     ::
     ++  build-dependency
       |=  dep=(each [dir=path fil=path] path)
-      ^-  [vase state]
+      ^-  [ming state]
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
@@ -886,11 +900,11 @@
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
-      =^  sut=vase  nub  (run-prelude pile)
+      =^  sut=ming  nub  (run-prelude pile)
       %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
-      =/  res=vase  (road |.((slap sut hoon.pile)))
+      =/  res=ming  (swat sut hoon.pile)
       [[%vase res] nub]
     ::
     ++  build-file
@@ -904,7 +918,7 @@
     ::
     ++  build-directory
       |=  =path
-      ^-  [(map @ta vase) state]
+      ^-  [(map @ta ming) state]
       %-  soak-arch
       %+  gain-sprig  arch+path  |.
       =.  stack.nub  [~ stack.nub]
@@ -923,7 +937,7 @@
           `i.pat
         ~
       ::
-      =|  rez=(map @ta vase)
+      =|  rez=(map @ta ming)
       |-
       ?~  fiz
         [[%arch rez] nub]
@@ -934,14 +948,15 @@
     ::
     ++  run-prelude
       |=  =pile
-      =/  sut=vase  zuse.bud
-      =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
-      =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
-      =^  sut=vase  nub  (run-raw sut raw.pile)
-      =^  sut=vase  nub  (run-raz sut raz.pile)
-      =^  sut=vase  nub  (run-maz sut maz.pile)
-      =^  sut=vase  nub  (run-caz sut caz.pile)
-      =^  sut=vase  nub  (run-bar sut bar.pile)
+      ^-  [ming state]
+      =/  sut=ming  zuse.bud
+      =^  sut=ming  nub  (run-tauts sut %sur sur.pile)
+      =^  sut=ming  nub  (run-tauts sut %lib lib.pile)
+      =^  sut=ming  nub  (run-raw sut raw.pile)
+      =^  sut=ming  nub  (run-raz sut raz.pile)
+      =^  sut=ming  nub  (run-maz sut maz.pile)
+      =^  sut=ming  nub  (run-caz sut caz.pile)
+      =^  sut=ming  nub  (run-bar sut bar.pile)
       [sut nub]
     ::
     ++  parse-pile
@@ -1026,74 +1041,86 @@
       ==
     ::
     ++  run-tauts
-      |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
-      ^-  [vase state]
+      |=  [sut=ming wer=?(%lib %sur) taz=(list taut)]
+      ^-  [ming state]
       ?~  taz  [sut nub]
-      =^  pin=vase  nub  (build-fit wer pax.i.taz)
-      =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
-      $(sut (slop pin sut), taz t.taz)
+      =^  pin=ming  nub  (build-fit wer pax.i.taz)
+      =?  pin  ?=(^ face.i.taz)  (with-face u.face.i.taz pin)
+      $(sut (shed pin sut), taz t.taz)
     ::
     ++  run-raw
-      |=  [sut=vase raw=(list [face=term =path])]
-      ^-  [vase state]
+      |=  [sut=ming raw=(list [face=term =path])]
+      ^-  [ming state]
       ?~  raw  [sut nub]
-      =^  pin=vase  nub  (build-file (snoc path.i.raw %hoon))
-      =.  p.pin  [%face face.i.raw p.pin]
-      $(sut (slop pin sut), raw t.raw)
+      =^  pin=ming  nub  (build-file (snoc path.i.raw %hoon))
+      =.  pin  (with-face face.i.raw pin)
+      $(sut (shed pin sut), raw t.raw)
     ::
     ++  run-raz
-      |=  [sut=vase raz=(list [face=term =spec =path])]
-      ^-  [vase state]
+      |=  [sut=ming raz=(list [face=term =spec =path])]
+      ^-  [ming state]
       ?~  raz  [sut nub]
-      =^  res=(map @ta vase)  nub
+      =^  res=(map @ta ming)  nub
         (build-directory path.i.raz)
-      =;  pin=vase
-        =.  p.pin  [%face face.i.raz p.pin]
-        $(sut (slop pin sut), raz t.raz)
+      =;  pin=ming
+        =.  pin  (with-face face.i.raz pin)
+        $(sut (shed pin sut), raz t.raz)
+      ::  ensure results nest in the specified type, and produce a
+      ::  homogenous map containing that type.
       ::
-      =/  =type  (~(play ut p.sut) [%kttr spec.i.raz])
-      ::  ensure results nest in the specified type,
-      ::  and produce a homogenous map containing that type.
+      ::  nest checks must be performed in a separate pass to avoid
+      ::  dragging +ut along for the ride.
       ::
-      :-  %-  ~(play ut p.sut)
-          [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
+      =+  =/  tin=type  (~(play ut p:$:sut) [%kttr spec.i.raz])
+          |-
+          ?~  res  ~
+          ?.  (~(nest ut tin) | p:$:q.n.res)
+            ~|  [%nest-fail path.i.raz p.n.res]
+            !!
+          [$(res l.res) $(res r.res)]
+      ::
+      =/  typ=type
+        %-  ~(play ut p:$:sut)
+        [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
+      ::
+      =>  [res=res typ=typ]
+      |.  ~+
+      :-  typ
       |-
       ?~  res  ~
-      ?.  (~(nest ut type) | p.q.n.res)
-        ~|  [%nest-fail path.i.raz p.n.res]
-        !!
-      :-  [p.n.res q.q.n.res]
+      :-  [p.n.res q:$:q.n.res]
       [$(res l.res) $(res r.res)]
     ::
     ++  run-maz
-      |=  [sut=vase maz=(list [face=term =mark])]
-      ^-  [vase state]
+      |=  [sut=ming maz=(list [face=term =mark])]
+      ^-  [ming state]
       ?~  maz  [sut nub]
-      =^  pin=vase  nub  (build-nave mark.i.maz)
-      =.  p.pin  [%face face.i.maz p.pin]
-      $(sut (slop pin sut), maz t.maz)
+      =^  pin=ming  nub  (build-nave mark.i.maz)
+      =.  pin  (with-face face.i.maz pin)
+      $(sut (shed pin sut), maz t.maz)
     ::
     ++  run-caz
-      |=  [sut=vase caz=(list [face=term =mars])]
-      ^-  [vase state]
+      |=  [sut=ming caz=(list [face=term =mars])]
+      ^-  [ming state]
       ?~  caz  [sut nub]
-      =^  pin=vase  nub  (build-cast mars.i.caz)
-      =.  p.pin  [%face face.i.caz p.pin]
-      $(sut (slop pin sut), caz t.caz)
+      =^  pin=ming  nub  (build-cast mars.i.caz)
+      =.  pin  (with-face face.i.caz pin)
+      $(sut (shed pin sut), caz t.caz)
     ::
     ++  run-bar
-      |=  [sut=vase bar=(list [face=term =mark =path])]
-      ^-  [vase state]
+      |=  [sut=ming bar=(list [face=term =mark =path])]
+      ^-  [ming state]
       ?~  bar  [sut nub]
       =^  =cage  nub  (cast-path [path mark]:i.bar)
-      =.  p.q.cage  [%face face.i.bar p.q.cage]
-      $(sut (slop q.cage sut), bar t.bar)
+      =/  pin=ming  |.(q.cage)
+      =.  pin  (with-face face.i.bar pin)
+      $(sut (shed pin sut), bar t.bar)
     ::
     ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
     ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
-      ^-  [vase state]
+      ^-  [ming state]
       (build-file (fit-path pre pax))
     ::
     ::  +fit-path: find path, maybe converting '-'s to '/'s
@@ -3746,6 +3773,7 @@
         ~_  leaf/"clay: %a build failed {<[syd aeon path]>}"
         %+  aeon-flow  aeon
         %-  wrap:fusion
+        %-  bait:fusion
         (build-file:(aeon-ford aeon) path)
       :_(..park [~ ~ %vase !>(vase)])
     ::
@@ -3782,6 +3810,7 @@
       =^  =vase  ..park
         %+  aeon-flow  aeon
         %-  wrap:fusion
+        %-  bait:fusion
         (build-nave:(aeon-ford aeon) i.path)
       :_(..park [~ ~ %nave vase])
     ::
@@ -3794,6 +3823,7 @@
       =^  =vase  ..park
         %+  aeon-flow  aeon
         %-  wrap:fusion
+        %-  bait:fusion
         (build-cast:(aeon-ford aeon) [i i.t]:path)
       :_(..park [~ ~ %cast vase])
     ::
