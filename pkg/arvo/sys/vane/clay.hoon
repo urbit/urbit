@@ -1770,7 +1770,7 @@
         %+  roll  ~(tap in kel)
         |:  [weft=*weft wic=wic.dom]
         (~(put by wic) weft yoki)
-      =?  ..park  !?=(%base syd)  (emit hen %pass /park-wick %c %wick ~)
+      =?  ..park  !?=(%base syd)  (emit hen %pass /park-stuck-wick %c %wick ~)
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ..park
     =.  wic.dom  (~(del by wic.dom) zuse+zuse)

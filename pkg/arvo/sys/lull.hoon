@@ -1033,11 +1033,13 @@
   ++  cord-to-waft
     |=  =cord
     ^-  waft
-    :-  [%1 ~]
-    %-  sy  ^-  (list weft)
-    %+  turn  (rash cord (star (ifix [gay gay] tall:vast)))
-    |=  =hoon
-    !<(weft (slap !>(~) hoon))
+    =/  wefts=(list weft)
+      %+  turn  (rash cord (star (ifix [gay gay] tall:vast)))
+      |=  =hoon
+      !<(weft (slap !>(~) hoon))
+    ?:  ?=([* ~] wefts)
+      i.wefts
+    [[%1 ~] (sy wefts)]
   ::
   ++  waft-to-wefts
     |=  kal=waft
