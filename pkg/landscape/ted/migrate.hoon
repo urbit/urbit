@@ -46,4 +46,44 @@
     ~
   `[flag writers u.assoc u.log graph]
 ;<  ~  bind:m  (poke-our:strandio %chat %graph-imports !>(imports))
+=/  =imports:diary:i
+  %-  ~(gas by *imports:diary:i)
+  %+  murn  ~(tap by graphs.network)
+  |=  [=flag:i graph=graph:gra mar=(unit mark)]
+  ?.  =(mar `%graph-validator-publish)  ::  XX: correct detection?
+    ~
+  ?~  assoc=(~(get by associations) [%graph flag])
+    ~&  missing-assoc/flag
+    ~
+  ?~  group=(~(get by groups) group.u.assoc)
+    ~&  missing-group/[flag group.u.assoc]
+    ~
+  =/  writers=(set ship)  (~(get ju tags.u.group) %graph flag %writers)
+  ?~  log=(~(get by update-logs.network) flag)
+    ~&  missing-log/flag  :: XX: doesn't need to fail, but suspect case
+    ~
+  `[flag writers u.assoc u.log graph]
+;<  ~  bind:m  (poke-our:strandio %diary %graph-imports !>(imports))
+=/  =imports:heap:i
+  %-  ~(gas by *imports:heap:i)
+  %+  murn  ~(tap by graphs.network)
+  |=  [=flag:i graph=graph:gra mar=(unit mark)]
+  ?.  =(mar `%graph-validator-link)  ::  XX: correct detection?
+    ~
+  ?~  assoc=(~(get by associations) [%graph flag])
+    ~&  missing-assoc/flag
+    ~
+  ?~  group=(~(get by groups) group.u.assoc)
+    ~&  missing-group/[flag group.u.assoc]
+    ~
+  =/  writers=(set ship)  (~(get ju tags.u.group) %graph flag %writers)
+  ?~  log=(~(get by update-logs.network) flag)
+    ~&  missing-log/flag  :: XX: doesn't need to fail, but suspect case
+    ~
+  `[flag writers u.assoc u.log graph]
+;<  ~  bind:m  (poke-our:strandio %link %graph-imports !>(imports))
+;<  ~  bind:m  
+  ?~  dms=(~(get by graphs.network) [our.bowl %dm-inbox])
+    (pure:(strand ,~) ~)
+  (poke-our:strandio %chat %dm-imports !>(p.u.dms))
 (pure:m *vase)
