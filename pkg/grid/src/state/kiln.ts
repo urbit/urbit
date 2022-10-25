@@ -36,6 +36,7 @@ const useKilnState = create<KilnState>((set, get) => ({
       return;
     }
     const vats = await api.scry<Vats>(getVats);
+    console.log(vats);
     set({ vats, loaded: true });
   },
   fetchLag: async () => {
