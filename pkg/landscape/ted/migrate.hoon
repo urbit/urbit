@@ -18,10 +18,20 @@
   (scry:strandio ,[%6 =network:gra] /gx/graph-store/export/noun)
 ;<  =associations:met  bind:m
   (scry:strandio ,associations:met /gx/metadata-store/associations/noun)
+=/  =imports:groups:i
+  %-  ~(gas by *imports:groups:i)
+  %+  murn  ~(tap by groups)
+  |=  [=flag:i =group]
+  ^-  (unit [_flag import:groups:i])
+  ?~  assoc=(~(get by associations) [%groups flag])
+    ~&  missing-group-assoc/flag
+    ~
+  `[flag u.assoc group]
+;<  ~  bind:m  (poke-our:strandio %groups group-import+!>(imports))
 =/  =imports:chat:i
   %-  ~(gas by *imports:chat:i)
   %+  murn  ~(tap by graphs.network)
-  |=  [=flag:chat:i graph=graph:gra mar=(unit mark)]
+  |=  [=flag:i graph=graph:gra mar=(unit mark)]
   ?.  =(mar `%graph-validator-chat)  ::  XX: correct detection?
     ~
   ?~  assoc=(~(get by associations) [%graph flag])
