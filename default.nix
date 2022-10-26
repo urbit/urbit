@@ -117,8 +117,8 @@ let
       pill = solid.lfs;
     };
 
-    ivory-ropsten = ivory.override { arvo = arvo.ropsten; };
-    brass-ropsten = brass.override { arvo = arvo.ropsten; };
+    ivory-goerli = ivory.override { arvo = arvo.goerli; };
+    brass-goerli = brass.override { arvo = arvo.goerli; };
 
     # Create a .tgz of the primary binaries.
     tarball = let

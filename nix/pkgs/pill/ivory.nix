@@ -1,5 +1,5 @@
 { lib, stdenvNoCC, fetchGitHubLFS, bootFakeShip, solid, urbit, arvo, curl, xxd
-, withRopsten ? false }:
+, withGoerli ? false }:
 
 let
 
@@ -9,9 +9,9 @@ in {
   build = import ./builder.nix {
     inherit stdenvNoCC urbit curl;
 
-    name = "ivory" + lib.optionalString withRopsten "-ropsten";
+    name = "ivory" + lib.optionalString withGoerli "-goerli";
     builder = ./ivory.sh;
-    arvo = if withRopsten then arvo.ropsten else arvo;
+    arvo = if withGoerli then arvo.goerli else arvo;
     pier = bootFakeShip {
       inherit urbit;
 
@@ -39,4 +39,4 @@ in {
 
     preferLocalBuild = true;
   };
-} // lib.optionalAttrs (!withRopsten) { inherit lfs; }
+} // lib.optionalAttrs (!withGoerli) { inherit lfs; }

@@ -6,16 +6,16 @@ stdenvNoCC.mkDerivation {
 
   buildInputs = [ bc ];
 
-  outputs = [ "out" "ropsten" ];
+  outputs = [ "out" "goerli" ];
 
-  phases = [ "mainnetPhase" "ropstenPhase" ];
+  phases = [ "mainnetPhase" "goerliPhase" ];
 
   mainnetPhase = ''
     cp -r $src $out
     chmod -R u+w $out
   '';
 
-  ropstenPhase = ''
+  goerliPhase = ''
     cp -r $src tmp
     chmod -R u+w tmp
 
@@ -23,9 +23,9 @@ stdenvNoCC.mkDerivation {
     AMES=tmp/arvo/sys/vane/ames.hoon
     ACME=tmp/arvo/app/acme.hoon
 
-    # Replace the mainnet azimuth contract with the ropsten contract
+    # Replace the mainnet azimuth contract with the goerli contract
     sed --in-place \
-      's/\(\+\+  contracts  \)mainnet\-contracts/\1ropsten-contracts/' \
+      's/\(\+\+  contracts  \)mainnet\-contracts/\1goerli-contracts/' \
       $ZUSE
 
     # Increment the %ames protocol version
@@ -38,8 +38,8 @@ stdenvNoCC.mkDerivation {
       's_https://acme-v02.api.letsencrypt.org/directory_https://acme-staging-v02.api.letsencrypt.org/directory_' \
       $ACME
 
-    cp -r tmp $ropsten
-    chmod -R u+w $ropsten
+    cp -r tmp $goerli
+    chmod -R u+w $goerli
   '';
 
   preferLocalBuild = true;

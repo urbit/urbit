@@ -185,7 +185,7 @@
     ::
       ?-  network
         %mainnet    0x1
-        %ropsten    0x3
+        %goerli     0x5
         %fakenet    `@ux``@`1.337
         [%other *]  id.network
       ==

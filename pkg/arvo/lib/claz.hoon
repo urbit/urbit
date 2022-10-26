@@ -25,7 +25,7 @@
   |=  =network
   ?+  network  ~&(%careful-fallback-contracts mainnet-contracts:azimuth)
     %mainnet  mainnet-contracts:azimuth
-    %ropsten  ropsten-contracts:azimuth
+    %goerli   goerli-contracts:azimuth
   ==
 ::
 ++  encode-claz-call

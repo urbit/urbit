@@ -50,7 +50,7 @@
   +$  address   address:naive  :: @ux
   +$  keccak    @ux            :: used for transaction and roll hashes
   +$  blocknum  number:block   :: @udblocknumber
-  +$  net       net:dice       :: ?(%mainnet %ropsten %local %default)
+  +$  net       net:dice       :: ?(%mainnet %goerli %local %default)
   +$  roll-dat                 :: all data required for each roll
     [[gas=@ud sender=address] =effects:naive]
   +$  block-dat                :: all data required for each block

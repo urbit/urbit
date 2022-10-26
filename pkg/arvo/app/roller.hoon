@@ -65,7 +65,7 @@
       ::  frequency: time to wait between sending batches (TODO fancier)
       ::  endpoint: ethereum rpc endpoint to use
       ::  contract: ethereum contract address
-      ::  chain-id: mainnet, ropsten, local (https://chainid.network/)
+      ::  chain-id: mainnet, goerli, local (https://chainid.network/)
       ::  resend-time: time to resend a batch with higher gas prie
       ::  update-rate: frequency to update the roller's predicted state
       ::  fallback-gas-price: default batch gas price
@@ -1019,7 +1019,7 @@
       =,  azimuth
       ?-  net.config
         %mainnet  mainnet-contracts
-        %ropsten  ropsten-contracts
+        %goerli   goerli-contracts
         %local    local-contracts
         %default  contracts
       ==
