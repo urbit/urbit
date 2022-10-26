@@ -1247,10 +1247,10 @@
     =|  [l=(unit) r=(unit)]
     |.  ^-  ?
     ?~  a   &
-    ?&  ?~(l & (gor n.a u.l))
-        ?~(r & (gor u.r n.a))
-        ?~(l.a & ?&((mor n.a n.l.a) $(a l.a, l `n.a)))
-        ?~(r.a & ?&((mor n.a n.r.a) $(a r.a, r `n.a)))
+    ?&  ?~(l & &((gor n.a u.l) !=(n.a u.l)))
+        ?~(r & &((gor u.r n.a) !=(u.r n.a)))
+        ?~(l.a & ?&((mor n.a n.l.a) !=(n.a n.l.a) $(a l.a, l `n.a)))
+        ?~(r.a & ?&((mor n.a n.r.a) !=(n.a n.r.a) $(a r.a, r `n.a)))
     ==
   ::
   ++  bif                                               ::  splits a by b
