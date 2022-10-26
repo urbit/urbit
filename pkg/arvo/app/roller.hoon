@@ -1017,7 +1017,7 @@
     =/  [contract=@ux chain-id=@]
       =<  [naive chain-id]
       =,  azimuth
-      ?-  net.config
+      ?+  net.config  !!
         %mainnet  mainnet-contracts
         %goerli   goerli-contracts
         %local    local-contracts
