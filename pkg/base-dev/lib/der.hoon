@@ -177,11 +177,12 @@
   ++  till
     |=  tub=nail
     ^-  (like (list @D))
-    ?~  q.tub
+    ?:  =('' q.tub)
       (fail tub)
     ::  fuz: first byte - length, or length of the length
     ::
-    =*  fuz  i.q.tub
+    =/  fuz  (end 3 q.tub)
+    =/  fur  (rsh 3 q.tub)
     ::  nex: offset of value bytes from fuz
     ::  len: length of value bytes
     ::
@@ -191,20 +192,20 @@
       =/  faz  (end [0 7] fuz)
       ?:  =(0 (cut 0 [7 1] fuz))
         [0 faz]
-      [faz (rep 3 (flop (scag faz t.q.tub)))]
+      [faz (swp 3 (end 3^faz fur))]
     ?:  ?&  !=(0 nex)
             !=(nex (met 3 len))
         ==
       (fail tub)
     ::  zuf: value bytes
     ::
-    =/  zuf  (swag [nex len] t.q.tub)
-    ?.  =(len (lent zuf))
+    =/  zuf  (cut 3 [nex len] fur)
+    ?.  =(len (met 3 zuf))
       (fail tub)
     ::  zaf:  product nail
     ::
     =/  zaf  [p.p.tub (add +(nex) q.p.tub)]
-    [zaf `[zuf zaf (slag (add nex len) t.q.tub)]]
+    [zaf `[(trip zuf) zaf (rsh 3^(add nex len) fur)]]
   --
 --
 

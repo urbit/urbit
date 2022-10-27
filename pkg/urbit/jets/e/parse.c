@@ -67,12 +67,12 @@
     u3_noun zac;
 
     u3x_cell(tub, &p_tub, &q_tub);
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
-      u3_noun iq_tub = u3h(q_tub);
-      u3_noun tq_tub = u3t(q_tub);
+      u3_noun iq_tub = u3qc_end(3, 1, q_tub);
+      u3_noun tq_tub = u3qc_rsh(3, 1, q_tub);
 
       zac = _slip(iq_tub, p_tub);
 
@@ -479,11 +479,11 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
-      u3_noun iq_tub = u3h(q_tub);
+      u3_noun iq_tub = u3qc_end(3, 1, q_tub);
 
       if ( c3y == u3r_sing(daf, iq_tub) ) {
         return _next(tub);
@@ -515,11 +515,11 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
-      u3_noun iq_tub = u3h(q_tub);
+      u3_noun iq_tub = u3qc_end(3, 1, q_tub);
 
       while ( c3y == u3du(bud) ) {
         if ( c3y == u3r_sing(u3h(bud), iq_tub) ) {
@@ -739,12 +739,12 @@
 
     u3x_cell(tub, &p_tub, &q_tub);
 
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
       u3_noun p_zep, q_zep;
-      u3_noun iq_tub = u3h(q_tub);
+      u3_noun iq_tub = u3qc_end(3, 1, q_tub);
 
       u3x_cell(zep, &p_zep, &q_zep);
       if ( _(u3a_is_cat(p_zep)) &&
@@ -856,11 +856,11 @@
     u3_noun p_tub, q_tub;
 
     u3x_cell(tub, &p_tub, &q_tub);
-    if ( c3n == u3du(q_tub) ) {
+    if ( u3_nul == q_tub ) {
       return _fail(tub);
     }
     else {
-      u3_noun iq_tub = u3h(q_tub);
+      u3_noun iq_tub = u3qc_end(3, 1, q_tub);
 
       if ( !_(u3a_is_cat(iq_tub)) ) {
         return u3m_bail(c3__fail);

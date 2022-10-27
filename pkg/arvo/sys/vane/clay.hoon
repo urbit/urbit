@@ -881,7 +881,7 @@
       ^-  vase
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
+      =/  tex=cord  !<(@t q.cag)
       =/  =pile  (parse-pile path tex)
       =.  hoon.pile  !,(*hoon .)
       =^  res=vase  nub  (run-prelude pile)
@@ -902,7 +902,7 @@
       =.  cycle.nub  (~(put in cycle.nub) file+path)
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
+      =/  tex=cord  !<(@t q.cag)
       =/  =pile  (parse-pile path tex)
       =^  sut=vase  nub  (run-prelude pile)
       %+  gain-leak  file+path
@@ -963,15 +963,16 @@
       [sut nub]
     ::
     ++  parse-pile
-      |=  [pax=path tex=tape]
+      |=  [pax=path tex=cord]
       ^-  pile
-      =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
+      =/  [=hair res=(unit [=pile =nail])]
+        ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
       %-  mean  %-  flop
       =/  lyn  p.hair
       =/  col  q.hair
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-          leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
+          leaf+(trip (snag (dec lyn) (to-wain:format tex)))
           leaf+(runt [(dec col) '-'] "^")
       ==
     ::

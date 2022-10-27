@@ -25,12 +25,12 @@
     ?~  lim  [0 ~]
     =/  [lam=@u hed=manx]
       ?:  ?=(_;/(**) i.mal)
-        [lim ;/(tay)]:(deword lim v.i.a.g.i.mal)
+        [lim ;/((trip tay))]:(deword lim (crip v.i.a.g.i.mal))
       [rem ele(c res)]:[ele=i.mal $(mal c.i.mal)]
     [rem - res]:[hed $(lim lam, mal t.mal)]
   ::
   ++  deword
-    |=  [lim=@u tay=tape]  ^-  [lim=@u tay=tape]
+    |=  [lim=@u tay=cord]  ^-  [lim=@u tay=cord]
     ?~  tay  [lim tay]
     ?~  lim  [0 ~]
     =+  wer=(dot 1^1 tay)
