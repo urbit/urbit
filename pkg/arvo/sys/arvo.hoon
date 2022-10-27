@@ -1241,7 +1241,7 @@
     ::
     ++  emit
       |=  pan=plan
-      this(run [pan run])
+      this(run (weld run pan ~))
     ::  +loop: until done
     ::
     ++  loop
