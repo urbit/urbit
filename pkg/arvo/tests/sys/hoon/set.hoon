@@ -106,6 +106,10 @@
   ::  Doesn't follow horizontal & vertical ordering
   ::
   =/  unbalanced-e=(set @)  [1 [3 ~ ~] [2 ~ ~]]
+  ::  Duplicate elements
+  ::
+  =/  has-dupes=(set @)  [1 [1 ~ ~] ~]
+  ::
   ;:  weld
     %+  expect-eq
       !>  [%b-a %.y]
@@ -125,6 +129,9 @@
     %+  expect-eq
       !>  [%u-e %.n]
       !>  [%u-e ~(apt in unbalanced-e)]
+    %+  expect-eq
+      !>  [%h-d %.n]
+      !>  [%h-d ~(apt in has-dupes)]
   ==
 ::
 ::  Test splits a in b

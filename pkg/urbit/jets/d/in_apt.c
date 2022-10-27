@@ -13,15 +13,21 @@ _in_apt(u3_noun a, u3_weak l, u3_weak r)
     u3_noun n_a, l_a, r_a;
     u3x_trel(a, &n_a, &l_a, &r_a);
 
-    if ( (u3_none != l) && (c3n == u3qc_gor(n_a, l)) ) {
+    if ( (u3_none != l) &&
+         ( (c3y == u3r_sing(n_a, l)) || (c3n == u3qc_gor(n_a, l)) )) {
       return c3n;
     }
 
-    if ( (u3_none != r) && (c3n == u3qc_gor(r, n_a)) ) {
+    if ( (u3_none != r) &&
+         ( (c3y == u3r_sing(r, n_a)) || (c3n == u3qc_gor(r, n_a)) )) {
       return c3n;
     }
 
     if ( u3_nul != l_a ) {
+      if ( c3y == u3r_sing(n_a, u3h(l_a)) ) {
+        return c3n;
+      }
+
       if ( c3n == u3qc_mor(n_a, u3h(l_a)) ) {
         return c3n;
       }
@@ -32,6 +38,10 @@ _in_apt(u3_noun a, u3_weak l, u3_weak r)
     }
 
     if ( u3_nul != r_a ) {
+      if ( c3y == u3r_sing(n_a, u3h(r_a)) ) {
+        return c3n;
+      }
+
       if ( c3n == u3qc_mor(n_a, u3h(r_a)) ) {
         return c3n;
       }
