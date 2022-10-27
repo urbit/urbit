@@ -1679,7 +1679,7 @@
       ?>  ?=(~ deletes)
       =/  data=(map path (each page lobe))
         (~(run by changes) |=(=cage &+[p q.q]:cage))
-      (park | &+[~ data] *rang)
+      (park | & &+[~ data] *rang)
     ::
     =/  parent-tako=tako  (aeon-to-tako:ze let.dom)
     =/  data=(map path (each page lobe))
@@ -1694,7 +1694,7 @@
       (~(run by changes) |=(=cage &+[p q.q]:cage))
     ::
     =/  =yuki  [~[parent-tako] data]
-    (park | &+yuki *rang)
+    (park | & &+yuki *rang)
   ::
   ::  Unix commit
   ::
@@ -1728,7 +1728,7 @@
   ++  park
     =/  check-sane  |
     |^
-    |=  [updated=? =yoki =rang]
+    |=  [updated=? goat=? =yoki =rang]
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
@@ -1868,9 +1868,6 @@
     =.  fod.dom  [spill sprig]:args
     =.  fad      cache.args
     =.  ..park   (emil (print q.old-yaki data))
-    ::  notify unix and subscribers
-    ::
-    =.  ..park  wake:?:(mem (ergo 0 mum.res) ..park)
     ::  if upgrading kelvin and there's a commit-in-waiting, use that
     ::
     =?  ..park  &(=(%base syd) !=(old-kel kel))
@@ -1888,14 +1885,20 @@
         ::
         $(desks t.desks)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
-      =^  moves-3  ruf  abet:(park:den | u.wat *^rang)
+      =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
     ::  tell gall to try to run agents if %held
     ::
-    ?:  ?=(%held liv.dom)
-      (emit hen %pass /park-held/[syd] %b %wait now)
-    ..park
+    =.  ..park
+      ?-  liv.dom
+        %held  (emit hen %pass /park-held/[syd] %b %wait now)
+        %dead  ..park
+        %live  ?:(goat goad ..park)
+      ==
+    ::  notify unix and subscribers
+    ::
+    wake:?:(mem (ergo 0 mum.res) ..park)
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -2285,7 +2288,7 @@
     ^+  ..take-fuse
     ?~  merges
       =.  ..take-fuse  (done-fuse clean-state %& ~)
-      (park | [%| next-yaki(p (flop parents))] rag)
+      (park | & [%| next-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
     =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `next-yaki)
@@ -2366,7 +2369,7 @@
       ?~  mr
         (done %& ~)
       =.  ..merge  (done %& conflicts.u.mr)
-      (park | new.u.mr ~ lat.u.mr)
+      (park | & new.u.mr ~ lat.u.mr)
     ==
   ::
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe page)]
@@ -3091,14 +3094,22 @@
   ++  wick
     ^+  ..park
     ?>  ?=(%base syd)
+    (emit hen %pass /wick %b %wait now)
+  ::
+  ++  take-wick
+    |=  err=(unit tang)
+    ^+  ..park
+    ?^  err
+      ((slog leaf+"clay: desk {<syd>} failed to unsuspend" u.err) ..park)
+    ?>  ?=(%base syd)
     =/  wis=(list [weft =yoki])
       %+  sort  ~(tap by wic.dom)
       |=  [a=[weft yoki] b=[weft yoki]]
       (gth num.a num.b)
     =.  wis  (skip wis |=([[* a=@ud] *] (gte a zuse)))
-    ?~  wis  ::  Every commit bottoms out here
-      goad
-    (park | yoki.i.wis *rang)
+    ?~  wis  ::  Every commit bottoms out here ?
+      ..park
+    (park | & yoki.i.wis *rang)
   ::
   ::  Cancel a request.
   ::
@@ -4731,7 +4742,7 @@
       %park
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(park:den | [yok ran]:req)
+      abet:(park:den | & [yok ran]:req)
     [mos ..^$]
   ::
       %pork
@@ -4739,7 +4750,7 @@
     =.  pud.ruf  ~
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our syd)
-      abet:(park:den & yoki *rang)
+      abet:(park:den & & yoki *rang)
     [mos ..^$]
   ::
       %perm
@@ -4858,8 +4869,9 @@
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-zest:den liv.req)
-    =^  m2  ..^$  $(wrapped-task [%wick ~])
-    [(weld m1 m2) ..^$]
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    =^  m3  ..^$  $(wrapped-task [%wick ~])
+    [:(weld m1 m2 m3) ..^$]
   ::
       %plea
     =*  her  ship.req
@@ -5640,6 +5652,13 @@
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our syd)
       abet:(take-park-held:den error.hin)
+    [mos ..^$]
+  ::
+  ?:  ?=([%wick ~] tea)
+    ?>  ?=(%wake +<.hin)
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our %base)
+      abet:(take-wick:den error.hin)
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)
