@@ -184,7 +184,7 @@
       kel=(list (pair path (cask)))
       fil=(list (pair path (cask)))
   ==
-+$  germ  [vane=term bars=(list duct)]
++$  germ  [vane=term bars=(list [@tD duct])]
 +$  grub
   $:  ::  who: identity once we know it
       ::  eny: entropy once we learn it
@@ -337,6 +337,15 @@
       ==
     ~
   `[[q.p.i q.p.i.t]:p.u.lot u.bem]
+::
+++  rant
+  |=  [a=(list [char=@tD *]) b=tape]
+  ^-  tape
+  ?~  a
+    b
+  =.  b  [char.i.a b]
+  $(a t.a)
+::
 ::
 ++  look
   ~/  %look
@@ -1193,6 +1202,7 @@
             ::
             run=(list plan)
             out=(list ovum)
+            neb=_14
             gem=germ
             dud=(unit goof)
             $=  but  %-  unit
@@ -1275,7 +1285,7 @@
         =*  task  task.note.ball.move
         ::
         ~?  &(!lac.fad !=(%$ vane.gem))
-          :-  (runt [(lent bars.gem) '|'] "")
+          :-  (rant bars.gem "")
           :^  %pass  [vane.gem vane]
             ?:  ?=(?(%deal %deal-gall) +>-.task)
               :-  :-  +>-.task
@@ -1296,7 +1306,7 @@
         =*  task  task.note.ball.move
         ::
         ~?  !lac.fad
-          :-  (runt [(lent bars.gem) '|'] "")
+          :-  (rant bars.gem "")
           [%slip [vane.gem vane] (symp +>-.task) duct]
         ::
         (call duct vane task)
@@ -1316,7 +1326,7 @@
           ?>(?=(^ wire) wire)
         ::
         ~?  &(!lac.fad !=(%$ way) |(!=(%blit +>-.gift) !=(%d vane.gem)))
-          :-  (runt [(lent bars.gem) '|'] "")
+          :-  (rant bars.gem "")
           :^  %give  vane.gem
             ?:  ?=(%unto +>-.gift)
               [+>-.gift (symp +>+<.gift)]
@@ -1397,8 +1407,9 @@
         ;;(waif q.p.task)
       ::
       =.  way  (grow way)
-      %+  push  [way duct bars.gem]
-      ~|  bar-stack=`(list ^duct)`[duct bars.gem]
+      =.  neb  (^mod +(neb) 94)
+      %+  push  [way [(add '!' neb) duct] bars.gem]
+      ~|  bar-stack=`(list ^duct)`[duct (turn bars.gem tail)]
       %.  task
       call:(spin:(plow way) duct eny dud)
     ::  +take: retreat along call-stack
@@ -1415,12 +1426,13 @@
       ::  the caller was a vane
       ::
       =.  way  (grow way)
-      %+  push  [way duct bars.gem]
+      =.  neb  (^mod +(neb) 94)
+      %+  push  [way [(add '!' neb) duct] bars.gem]
       ::
       ::  cons source onto .gift to make a $sign
       ::
       ~|  wire=wire
-      ~|  bar-stack=`(list ^duct)`[duct bars.gem]
+      ~|  bar-stack=`(list ^duct)`[duct (turn bars.gem tail)]
       %.  [wire [vane.gem gift]]
       take:(spin:(plow way) duct eny dud)
     ::  +push: finalize an individual step
