@@ -7,54 +7,51 @@
   **/
     /* u3a_bits: number of bits in word-addressed pointer.  29 == 2GB.
     */
-#     define u3a_bits  U3_OS_LoomBits
+#     define u3a_bits    U3_OS_LoomBits /* 30 */
 
-    /* u3a_vits: number of virtual bits in a noun reference
-       gained via alignment + shifting
+    /* u3a_vits: number of virtual bits in a noun reference gained via shifting
     */
-#     define u3a_vits    ((c3_y)1)
+#     define u3a_vits    1
 
     /* u3a_walign: references into the loom are guaranteed to be word-aligned to:
     */
-#     define u3a_walign   ((c3_y)1 << u3a_vits)
+#     define u3a_walign  (1 << u3a_vits)
 
     /* u3a_balign: u3a_walign in bytes
     */
-#     define u3a_balign   (sizeof(c3_w)*u3a_walign)
+#     define u3a_balign  (sizeof(c3_w)*u3a_walign)
 
-    /* u3a_page: number of bits in word-addressed page.  12 == 16Kbyte page.
+    /* u3a_page: number of bits in word-addressed page.  12 == 16K page
     */
-#     define u3a_page   12
+#     define u3a_page    12ULL
 
     /* u3a_pages: maximum number of pages in memory.
     */
-#     define u3a_pages  (1 << (u3a_bits - u3a_page))
+#     define u3a_pages   (1ULL << (u3a_bits + u3a_vits - u3a_page) )
 
     /* u3a_words: maximum number of words in memory.
     */
-#     define u3a_words  (1 << u3a_bits)
+#     define u3a_words   ( 1ULL << (u3a_bits + u3a_vits))
 
     /* u3a_bytes: maximum number of bytes in memory.
     */
-#     define u3a_bytes  (sizeof(c3_w) * u3a_words)
+#     define u3a_bytes   ((sizeof(c3_w) * u3a_words))
 
     /* u3a_cells: number of representable cells.
     */
-#     define u3a_cells  (c3_w)(u3a_words / u3a_minimum)
+#     define u3a_cells   (( u3a_words / u3a_minimum ))
 
     /* u3a_maximum: maximum loom object size (largest possible atom).
     */
-#     define u3a_maximum   \
-        (c3_w)(u3a_words - (c3_wiseof(u3a_box) + c3_wiseof(u3a_atom)))
+#     define u3a_maximum ( u3a_words - (c3_wiseof(u3a_box) + c3_wiseof(u3a_atom) + 1))
 
     /* u3a_minimum: minimum loom object size (actual size of a cell).
     */
-#     define u3a_minimum   (c3_w)(1 + c3_wiseof(u3a_box) + c3_wiseof(u3a_cell))
+#     define u3a_minimum ((c3_w)( 1 + c3_wiseof(u3a_box) + c3_wiseof(u3a_cell) ))
 
     /* u3a_fbox_no: number of free lists per size.
     */
-#     define u3a_fbox_no   27   /* why 27? Perhaps because 16 = 1 << 4 and 31 - 4 = 27 */
-
+#     define u3a_fbox_no 27 /* ;;: why 27? Perhaps because 16 = 1 << 4 and 31 - 4 = 27 */
 
   /**  Structures.
   **/

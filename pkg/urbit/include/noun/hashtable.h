@@ -24,7 +24,7 @@
       **   format - coordinate with allocate.h.  The top two bits are:
       **
       **     00 - empty (in the root table only)
-      **     01 - table
+      **     01 - table (node or buck)
       **     02 - entry, stale
       **     03 - entry, fresh
       */
@@ -76,8 +76,8 @@
 #     define  u3h_slot_is_node(sot)  ((1 == ((sot) >> 30)) ? c3y : c3n)
 #     define  u3h_slot_is_noun(sot)  ((1 == ((sot) >> 31)) ? c3y : c3n)
 #     define  u3h_slot_is_warm(sot)  (((sot) & 0x40000000) ? c3y : c3n)
-#     define  u3h_slot_to_node(sot)  (u3a_into((sot) & 0x3fffffff))
-#     define  u3h_node_to_slot(ptr)  (u3a_outa(ptr) | 0x40000000)
+#     define  u3h_slot_to_node(sot)  (u3a_into(((sot) & 0x3fffffff) << u3a_vits))
+#     define  u3h_node_to_slot(ptr)  ((u3a_outa((ptr)) >> u3a_vits) | 0x40000000)
 #     define  u3h_noun_be_warm(sot)  ((sot) | 0x40000000)
 #     define  u3h_noun_be_cold(sot)  ((sot) & ~0x40000000)
 #     define  u3h_slot_to_noun(sot)  (0x40000000 | (sot))
