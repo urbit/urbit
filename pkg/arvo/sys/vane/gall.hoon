@@ -701,10 +701,9 @@
         ~(tap in (~(uni in ~(key by perms.state)) ~(key by new-perms)))
       |-
       ?~  desks  ~
-      =/  rest  $(desks t.desks)
       =/  old  (~(get ju perms.state) i.desks)
       =/  new  (~(get ju new-perms) i.desks)
-      :_  rest
+      :_  $(desks t.desks)
       :*  i.desks
           (~(dif in new) old)
           (~(dif in old) new)
@@ -1275,7 +1274,7 @@
       =/  incoming   [attributing.agent-routes pax]
       =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
       =^  maybe-tang  ap-core
-        %+  ap-ingest  %watch-ack  |.
+        %+  ap-ingest  %watch  |.
         (on-watch:ap-agent-core pax)
       ?^  maybe-tang
         ap-silent-delete
@@ -1287,7 +1286,7 @@
       |=  =cage
       ^+  ap-core
       =^  maybe-tang  ap-core
-        %+  ap-ingest  %poke-ack  |.
+        %+  ap-ingest  %poke  |.
         (on-poke:ap-agent-core cage)
       ap-core
     ::  +ap-error: pour error.
@@ -1297,8 +1296,10 @@
       ^+  ap-core
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       =^  maybe-tang  ap-core
-        %+  ap-ingest  ~  |.
+        %+  ap-ingest  %fail  |.
         (on-fail:ap-agent-core term (turn tang form))
+      ?~  maybe-tang  ap-core
+      %-  (slog (cat 3 agent-name ': +on-fail crashed:') u.maybe-tang)
       ap-core
     ::  +ap-generic-take: generic take.
     ::
@@ -1468,7 +1469,7 @@
       ^-  [(unit tang) _ap-core]
       ::
       =^  maybe-tang  ap-core
-        %+  ap-ingest  ~
+        %+  ap-ingest  %load
         ?~  maybe-vase
           |.  on-init:ap-agent-core
         |.  (on-load:ap-agent-core u.maybe-vase)
@@ -1632,16 +1633,32 @@
       ?.  (rite our [vis bem] (~(get ju perms.state) q.beak.yoke))
         ~
       (rof lyc vis bem)
-    ::  +ap-ingest: call agent arm
+    ::  +ap-ingest: call agent arm, check perms, emit result
     ::
-    ::    Handle acks here because they need to be emitted before the
+    ::    Sends acks from here because they need to be emitted before the
     ::    rest of the moves.
     ::
     ++  ap-ingest
-      |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
+      |=  [for=?(%poke %watch %fail %load ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
       =/  result  (ap-mule run)
-      =^  new-moves  ap-core  (ap-handle-result result)
+      =/  forbad
+        ?:  ?=(%| -.result)  ~
+        (ap-douane -.p.result)
+      ::  handle permission violation, except for %poke and %watch
+      ::
+      ?:  &(?=(^ forbad) !?=(?(%poke %watch) for))
+        ?+  for  !!
+          ~      [~ (ap-error %not-permitted u.forbad)]
+          %fail  [`['insufficient permission:' u.forbad] ap-core]
+          %load  (mean 'insufficient permission:' u.forbad)
+        ==
+      ::  for %poke and %watch, failure nacks back over the wire
+      ::
+      =?  result  ?=(^ forbad)
+        [%| u.forbad]
+      =^  new-moves  ap-core
+        (ap-handle-result result)
       =/  maybe-tang=(unit tang)
         ?:  ?=(%& -.result)
           ~
@@ -1650,41 +1667,31 @@
         %-  zing
         %-  turn  :_  ap-from-internal
         ^-  (list card:agent)
-        ?-  ack
-          ~      ~
-          %poke-ack   [%give %poke-ack maybe-tang]~
-          %watch-ack  [%give %watch-ack maybe-tang]~
+        ?+  for  ~
+          %poke   [%give %poke-ack maybe-tang]~
+          %watch  [%give %watch-ack maybe-tang]~
         ==
       ::
       =.  agent-moves
         :(weld (flop new-moves) ack-moves agent-moves)
       [maybe-tang ap-core]
-    ::  +ap-handle-result: handle result.
+    ::  +ap-douane: describe unpermitted cards, if any
     ::
-    ++  ap-handle-result
-      ~/  %ap-handle-result
-      |=  result=(each step:agent tang)
-      ^-  [(list move) _ap-core]
-      ?:  ?=(%| -.result)
-        `ap-core
-      ::
-      =.  agent.yoke  &++.p.result
+    ++  ap-douane
+      |=  caz=(list card:agent)
+      ^-  (unit tang)
       =/  bad=(list [=card:agent perm=(unit perm)])
         ?:  =(%base q.beak.yoke)  ~
         =/  pes=(set perm)  (~(get ju perms.state) q.beak.yoke)
-        %+  murn  -.p.result
+        %+  murn  caz
         |=  =card:agent
         ^-  (unit [card:agent (unit perm)])
         =/  mus  (must [our agent-name] card)
         ?@  mus  ?:(mus ~ `card^~)
         ?:  (have pes mus)  ~
         `[card `mus]
-      ?:  =(~ bad)
-        =/  moves       (zing (turn -.p.result ap-from-internal))
-        =.  bitt.yoke   (ap-handle-kicks moves)
-        (ap-handle-peers moves)
+      ?:  =(~ bad)  ~
       :-  ~
-      %+  ap-error  %not-permitted
       ::  put the unpermitted cards and their requirements in the tang,
       ::  making sure to exclude actual card data to avoid huge nouns.
       ::
@@ -1698,13 +1705,25 @@
       ?-  -.card
         %pass  [%pass p.card $(card [%slip q.card])]
         %slip  ?-  -.p.card
-                 %agent  ~!  card
-                         p.card(task -.task.p.card)
+                 %agent  p.card(task -.task.p.card)
                  %arvo   [- +<]:+.p.card
                  %pyre   %pyre
                ==
-        %give  [%give +<.gift]
+        %give  [%give +<.gift]  ::NOTE  shouldn't ever be forbidden
       ==
+    ::  +ap-handle-result: handle result.
+    ::
+    ++  ap-handle-result
+      ~/  %ap-handle-result
+      |=  result=(each step:agent tang)
+      ^-  [(list move) _ap-core]
+      ?:  ?=(%| -.result)
+        `ap-core
+      ::
+      =.  agent.yoke  &++.p.result
+      =/  moves       (zing (turn -.p.result ap-from-internal))
+      =.  bitt.yoke   (ap-handle-kicks moves)
+      (ap-handle-peers moves)
     ::  +ap-handle-kicks: handle cancels of bitt.watches
     ::
     ++  ap-handle-kicks
