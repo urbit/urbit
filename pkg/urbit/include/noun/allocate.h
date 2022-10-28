@@ -307,7 +307,9 @@ inline c3_w u3a_outa(void *p) {
     /* u3a_to_off(): mask off bits 30 and 31 from noun [som].
     */
 inline c3_w u3a_to_off(c3_w som) {
-  return som & 0x3fffffff;      /* 1 << 30 - 1 */
+  c3_w ret = som & 0x3fffffff;  /* mask off tag bits */
+  ret <<= u3a_vits;             /* decompress */
+  return ret;
 }
 
     /* u3a_to_ptr(): convert noun [som] into generic pointer into loom.
@@ -324,11 +326,23 @@ inline c3_w *u3a_to_wtr(c3_w som) {
 
     /* u3a_to_pug(): set bit 31 of [off].
     */
-#     define u3a_to_pug(off)    (off | 0x80000000)
+inline c3_w u3a_to_pug(c3_w off) {
+  c3_dessert((off & u3a_walign-1) == 0);
+  c3_w ret = off;
+  ret >>= u3a_vits;             /* compress */
+  ret |= 0x80000000;
+  return ret;
+}
 
     /* u3a_to_pom(): set bits 30 and 31 of [off].
     */
-#     define u3a_to_pom(off)    (off | 0xc0000000)
+inline c3_w u3a_to_pom(c3_w off) {
+  c3_dessert((off & u3a_walign-1) == 0);
+  c3_w ret = off;
+  ret >>= u3a_vits;             /* compress */
+  ret |= 0xc0000000;
+  return ret;
+}
 
     /* u3a_is_atom(): yes if noun [som] is direct atom or indirect atom.
     */
