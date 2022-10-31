@@ -1902,8 +1902,8 @@
   +$  perm-gall                                        ::  inter-agent perms
     $%  [%write dude=$?(%peers (unit dude))]           ::  poke
         [%watch dude=$?(%peers (unit dude))]           ::  subscribe
-        ::TODO  what about %u scries?
-        [%reads vane=term desk=(unit desk) =spur]      ::  scry
+        ::TODO  include target ship once remote scry exists?
+        [%reads vane=term care=(unit term) desk=(unit desk) =spur]  ::  scry
     ==
   ::
   +$  perm-arvo  ::TODO  more narrow
@@ -1968,15 +1968,17 @@
     |=  [our=ship [=view =beam] pes=(set perm)]
     ^-  ?
     ?.  =(our p.beam)  |
-    =/  vane=term
-      ?^  view  way.view
+    =/  [vane=term care=term]
+      ::TODO  copied from arvo's +peek:le, should deduplicate
+      ?^  view  view
       ?.  =(2 (met 3 view))
-        view
-      (end 3 view)
+        [view %$]
+      [(end 3 view) (rsh 3 view)]
     %+  lien  ~(tap in pes)
     |=  p=perm
     ?.  ?=(%reads -.p)  |
     ?&  =(vane.p vane)
+        =(care (fall care.p care))
         =(q.beam (fall desk.p q.beam))
       ::
         |-
