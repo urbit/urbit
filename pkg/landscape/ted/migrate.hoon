@@ -81,7 +81,7 @@
     ~&  missing-log/flag  :: XX: doesn't need to fail, but suspect case
     ~
   `[flag writers u.assoc u.log graph]
-;<  ~  bind:m  (poke-our:strandio %link %graph-imports !>(imports))
+;<  ~  bind:m  (poke-our:strandio %heap %graph-imports !>(imports))
 ;<  ~  bind:m  
   ?~  dms=(~(get by graphs.network) [our.bowl %dm-inbox])
     (pure:(strand ,~) ~)
