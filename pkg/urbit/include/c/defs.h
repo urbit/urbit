@@ -162,6 +162,19 @@
 #     define c3_fopen(a, b) ({                                  \
         fopen(a, b);})
 
+  /** i/o wrappers
+  ***
+  **/
+    /* c3_pread(): full positioned read(), retrying errors where appropriate.
+    */
+      ssize_t
+      c3_pread(c3_i fid_i, void* buf_v, size_t len_i, off_t off_i);
+
+    /* c3_pwrite(): full positioned write(), retrying errors where appropriate.
+    */
+      ssize_t
+      c3_pwrite(c3_i fid_i, const void* buf_v, size_t len_i, off_t off_i);
+
       /// Reads the contents of a file into memory.
       ///
       /// @warn The file must be seekable, otherwise the behavior is undefined.
