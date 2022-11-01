@@ -1356,6 +1356,25 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
   //  XX print restart instructions
 }
 
+static c3_i
+_king_copy_raw(c3_i src_i, c3_i dst_i, c3_y* buf_y, size_t pag_i)
+{
+  ssize_t ret_i;
+
+  do {
+    if ( 0 > (ret_i = c3_read(src_i, buf_y, pag_i)) ) {
+      return ret_i;
+    }
+
+    if ( 0 > (ret_i = c3_write(dst_i, buf_y, (size_t)ret_i)) ) {
+      return ret_i;
+    }
+  }
+  while ( ret_i );
+
+  return 0;
+}
+
 #if defined(U3_OS_mingw)
 int err_win_to_posix(DWORD winerr);
 #endif
@@ -1394,6 +1413,8 @@ _king_copy_file(c3_c* src_c, c3_c* dst_c)
       goto done1;
     }
 
+    //  XX O_TRUNC?
+    //
     if ( -1 == (dst_i = open(dst_c, O_RDWR | O_CREAT, 0755)) ) {
       err_i = errno;
       ret_i = -1;
@@ -1457,28 +1478,16 @@ _king_copy_file(c3_c* src_c, c3_c* dst_c)
     //
 #endif
 
-    { // Copy from src_i to dst_i 16K at a time.
-      c3_y buf_y[1 << 14];
-      while ( 1 ) {
-        ret_i = c3_read(src_i, buf_y, sizeof(buf_y));
-        if ( ret_i < 0 ) {
-          break;
-        }
+    {
+      size_t pag_i = 1 << 14;;
+      c3_y*  buf_y = c3_malloc(pag_i);
 
-        if ( ret_i == 0 ) {
-          break;
-        }
-
-        ret_i = c3_write(dst_i, buf_y, sizeof(buf_y));
-        if ( ret_i < 0 ) {
-          break;
-        }
-      }
-
-      if ( ret_i < 0 ) {
+      if ( 0 > (ret_i = _king_copy_raw(src_i, dst_i, buf_y, pag_i)) ) {
         err_i = -ret_i;
         ret_i = -1;
       }
+
+      c3_free(buf_y);
     }
 
 done3:
