@@ -5004,12 +5004,16 @@
         /(scot %p our)/sein/(scot %da now)/(scot %p who)
     ==
   ::                                                    ::  ++team:title
-  ++  team                                              ::  our / our moon
+  ::   in the past, this meant "our / our moon", but    ::
+  ::   it has been primarly used to represent "our"     ::
+  ::                                                    ::
+  ::   moons as having the full permissions of their    ::
+  ::   parents doesn't make a lot of sense anymore      ::
+  ::                                                    ::
+  ++  team
     |=  [our=ship who=ship]
     ^-  ?
-    ?|  =(our who)
-        &(?=(%earl (clan who)) =(our (^sein who)))
-    ==
+    =(our who)
   --  ::title
 ::                                                      ::
 ::::                      ++milly                       ::  (2k) milliseconds
