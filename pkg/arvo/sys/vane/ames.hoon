@@ -1778,8 +1778,9 @@
     |=  =ship
     ^+  event-core
     =/  ship-state  (~(get by peers.ames-state) ship)
-    ::
-    ?>  ?=([~ %known *] ship-state)
+    ::  XX: should go in alien-agenda maybe?
+    ?.  ?=([~ %known *] ship-state)
+      event-core
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now channel-state -.peer-state]
     ::
