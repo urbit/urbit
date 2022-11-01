@@ -489,7 +489,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
   len_ws = buf_u.st_size;
   old_y = c3_malloc(len_ws);
 
-  ssize_t red_i = c3_read(fid_i, old_y, len_ws);
+  ssize_t red_i = c3_pread(fid_i, old_y, len_ws, 0);
 
   if ( close(fid_i) < 0 ) {
     u3l_log("error closing file (soft) %s: %s\r\n",
@@ -910,7 +910,7 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
   len_ws = buf_u.st_size;
   dat_y = c3_malloc(len_ws);
 
-  ssize_t red_i = c3_read(fid_i, dat_y, len_ws);
+  ssize_t red_i = c3_pread(fid_i, dat_y, len_ws, 0);
 
   if ( close(fid_i) < 0 ) {
     u3l_log("error closing file %s: %s\r\n",
@@ -1176,7 +1176,7 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
   len_ws = buf_u.st_size;
   dat_y = c3_malloc(len_ws);
 
-  ssize_t red_i = c3_read(fid_i, dat_y, len_ws);
+  ssize_t red_i = c3_pread(fid_i, dat_y, len_ws, 0);
 
   if ( close(fid_i) < 0 ) {
     u3l_log("error closing initial file %s: %s\r\n",

@@ -440,7 +440,7 @@ _king_get_pace(void)
 
   len_w = buf_u.st_size;
   pat_c = c3_malloc(len_w + 1);
-  ssize_t red_i = c3_read(fid_i, pat_c, len_w);
+  ssize_t red_i = c3_pread(fid_i, pat_c, len_w, 0);
   close(fid_i);
 
   if ( red_i != len_w ) {
@@ -1359,16 +1359,19 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
 static c3_i
 _king_copy_raw(c3_i src_i, c3_i dst_i, c3_y* buf_y, size_t pag_i)
 {
+  size_t  off_i = 0;
   ssize_t ret_i;
 
   do {
-    if ( 0 > (ret_i = c3_read(src_i, buf_y, pag_i)) ) {
+    if ( 0 > (ret_i = c3_pread(src_i, buf_y, pag_i, off_i)) ) {
       return ret_i;
     }
 
-    if ( 0 > (ret_i = c3_write(dst_i, buf_y, (size_t)ret_i)) ) {
+    if ( 0 > (ret_i = c3_pwrite(dst_i, buf_y, (size_t)ret_i, off_i)) ) {
       return ret_i;
     }
+
+    off_i += (size_t)ret_i;
   }
   while ( ret_i );
 
@@ -1483,7 +1486,7 @@ _king_copy_file(c3_c* src_c, c3_c* dst_c)
       c3_y*  buf_y = c3_malloc(pag_i);
 
       if ( 0 > (ret_i = _king_copy_raw(src_i, dst_i, buf_y, pag_i)) ) {
-        err_i = -ret_i;
+        err_i = errno;
         ret_i = -1;
       }
 

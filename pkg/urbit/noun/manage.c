@@ -445,7 +445,7 @@ u3m_file(c3_c* pas_c)
   fln_w = buf_b.st_size;
   pad_y = c3_malloc(buf_b.st_size);
 
-  ssize_t red_i = c3_read(fid_i, pad_y, fln_w);
+  ssize_t red_i = c3_pread(fid_i, pad_y, fln_w, 0);
   close(fid_i);
 
   if ( red_i != fln_w ) {
