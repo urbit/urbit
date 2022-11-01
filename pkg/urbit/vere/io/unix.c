@@ -502,7 +502,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
               fil_u->pax_c, strerror(-red_i));
     }
     else {
-      u3l_log("wrong # of bytes read in file %s: %d %lu\r\n",
+      u3l_log("wrong # of bytes read in file %s: %u %zu\r\n",
               fil_u->pax_c, len_ws, red_i);
     }
     c3_free(old_y);
@@ -923,7 +923,7 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
               fil_u->pax_c, strerror(-red_i));
     }
     else {
-      u3l_log("wrong # of bytes read in file %s: %d %lu\r\n",
+      u3l_log("wrong # of bytes read in file %s: %u %zu\r\n",
               fil_u->pax_c, len_ws, red_i);
     }
     c3_free(dat_y);
@@ -1189,7 +1189,7 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
               pax_c, strerror(-red_i));
     }
     else {
-      u3l_log("wrong # of bytes read in initial file %s: %d %lu\r\n",
+      u3l_log("wrong # of bytes read in initial file %s: %u %zu\r\n",
               pax_c, len_ws, red_i);
     }
     c3_free(dat_y);

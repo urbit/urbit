@@ -463,10 +463,8 @@ _ce_patch_verify(u3_ce_patch* pat_u)
         fprintf(stderr, "loom: patch read: %s\r\n", strerror(-red_i));
       }
       else {
-        fprintf(stderr,
-                "loom: patch read: read %lu of %lu bytes\r\n",
-                red_i,
-                pag_siz_i);
+        fprintf(stderr, "loom: patch read: read %zu of %zu bytes\r\n",
+                        red_i, pag_siz_i);
       }
       return c3n;
     }
@@ -770,16 +768,11 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     ssize_t red_i = c3_read(pat_u->mem_i, mem_w, pag_siz_i);
     if ( red_i != pag_siz_i ) {
       if ( red_i < 0 ) {
-        fprintf(stderr,
-                "loom: patch apply read: %s\r\n",
-                strerror(-red_i));
+        fprintf(stderr, "loom: patch apply read: %s\r\n", strerror(-red_i));
       }
       else {
-        fprintf(stderr,
-                "loom: patch apply read: read %lu of "
-                "%lu bytes\r\n",
-                red_i,
-                pag_siz_i);
+        fprintf(stderr, "loom: patch apply read: read %zu of %zu bytes\r\n",
+                        red_i, pag_siz_i);
       }
       c3_assert(0);
     }
@@ -822,10 +815,8 @@ _ce_image_blit(u3e_image* img_u,
         fprintf(stderr, "loom: image blit read: %s\r\n", strerror(-red_i));
       }
       else {
-        fprintf(stderr,
-                "loom: image blit read: read %lu of %u bytes\r\n",
-                red_i,
-                siz_w);
+        fprintf(stderr, "loom: image blit read: read %zu of %u bytes\r\n",
+                        red_i, siz_w);
       }
       c3_assert(0);
     }
@@ -865,10 +856,8 @@ _ce_image_fine(u3e_image* img_u,
         fprintf(stderr, "loom: image fine read: %s\r\n", strerror(-red_i));
       }
       else {
-        fprintf(stderr,
-                "loom: image fine read: read %lu of %lu bytess\r\n",
-                red_i,
-                pag_siz_i);
+        fprintf(stderr, "loom: image fine read: read %zu of %zu bytess\r\n",
+                        red_i, pag_siz_i);
       }
       c3_assert(0);
     }
@@ -922,10 +911,8 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
         fprintf(stderr, "loom: image copy read: %s\r\n", strerror(-red_i));
       }
       else {
-        fprintf(stderr,
-                "loom: image copy read: read %lu of %lu bytes\r\n",
-                red_i,
-                pag_siz_i);
+        fprintf(stderr, "loom: image copy read: read %zu of %zu bytes\r\n",
+                        red_i, pag_siz_i);
       }
       return c3n;
     }
