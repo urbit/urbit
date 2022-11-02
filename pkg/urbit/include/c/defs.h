@@ -164,36 +164,26 @@
 
   /** i/o wrappers
   ***
+  ***  these handle partial success and retry ephemeral errors
+  ***  up to hardcoded max try count, either reading/writing fully
+  ***  (up to EOF on read) or returning on error.
+  ***
+  ***  a wrapper for read() is not provided, as file cursor position
+  ***  is undefined on error. use pread() or loop yourself.
   **/
-    /* c3_pread(): full positioned read(), retrying errors where appropriate.
+    /* c3_pread(): full positioned read(), up to eof, retrying errors.
     */
       ssize_t
       c3_pread(c3_i fid_i, void* buf_v, size_t len_i, off_t off_i);
 
-    /* c3_pwrite(): full positioned write(), retrying errors where appropriate.
+    /* c3_pwrite(): full positioned write(), retrying errors.
     */
       ssize_t
       c3_pwrite(c3_i fid_i, const void* buf_v, size_t len_i, off_t off_i);
 
-      /// Writes the contents of a buffer to a file.
-      ///
-      /// This function correctly handles the case in which write() writes fewer
-      /// bytes than was requested by retrying until all bytes have been written
-      /// or until an error occurs, whichever comes first.
-      ///
-      /// If interrupted by a signal or if the write() call would block, this
-      /// function will retry up to a specified maximum number of attempts.
-      ///
-      ///
-      /// @param[in] fd_i        Open file descriptor to write to.
-      /// @param[in] data_v      Source buffer.
-      /// @param[in] data_len_i  Length of `data_v` in bytes.
-      ///
-      /// @return >=0  Number of bytes written. Guaranteed to be equal to
-      ///              `data_len_i`.
-      /// @return <0   Error occurred. The error number is the absolute value of
-      ///              the return value and can be fed into strerror().
+    /* c3_write(): full write(), retrying errors.
+    */
       ssize_t
-      c3_write(c3_i fd_i, const void* const data_v, const size_t data_len_i);
+      c3_write(c3_i fid_i, const void* buf_v, size_t len_i);
 
 #endif /* ifndef C3_DEFS_H */
