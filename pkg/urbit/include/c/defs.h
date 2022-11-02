@@ -175,30 +175,6 @@
       ssize_t
       c3_pwrite(c3_i fid_i, const void* buf_v, size_t len_i, off_t off_i);
 
-      /// Reads the contents of a file into memory.
-      ///
-      /// @warn The file must be seekable, otherwise the behavior is undefined.
-      ///
-      /// This function correctly handles the case in which read() reads fewer
-      /// bytes than was requested by retrying until all bytes have been read or
-      /// until an error occurs, whichever comes first.
-      ///
-      /// If interrupted by a signal or if the read() call would block, this
-      /// function will retry up to a specified maximum number of attempts.
-      ///
-      /// @param[in]  fd_i        Open file descriptor to read from.
-      /// @param[out] data_v      Destination buffer.
-      /// @param[in]  data_len_i  Length of `data_v` in bytes.
-      ///
-      /// @return >0  Number of bytes read. Guaranteed to be less than or equal
-      ///             to `data_len_i`. If less than `data_len_i`, then `fd_i`
-      ///             reached EOF.
-      /// @return  0  `fd_i` is at EOF.
-      /// @return <0  Error occurred. The error number is the absolute value of
-      ///             the return value and can be fed into strerror().
-      ssize_t
-      c3_read(c3_i fd_i, void* const data_v, const size_t data_len_i);
-
       /// Writes the contents of a buffer to a file.
       ///
       /// This function correctly handles the case in which write() writes fewer
