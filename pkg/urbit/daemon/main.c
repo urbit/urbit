@@ -1012,15 +1012,21 @@ static void
 _cw_eval(c3_i argc, c3_c* argv[])
 {
   c3_o jam_l;
+  c3_o khan_l;
 
   switch ( argc ) {
     case 2: {
-      jam_l = c3n ;
+      jam_l = c3n;
+      khan_l = c3n;
     } break;
 
     case 3: {
       if ( 0 == strcmp(argv[2], "-j") )  {
         jam_l = c3y;
+        khan_l = c3n;
+      } else if ( 0 == strcmp(argv[2], "-jk") ) {
+        jam_l = c3y;
+        khan_l = c3y;
       } else {
         fprintf(stderr, "invalid flag\r\n");
         exit(1);
@@ -1081,41 +1087,43 @@ _cw_eval(c3_i argc, c3_c* argv[])
     u3z(res);
     u3z(gat);
   } else {
-      u3_noun sam = u3i_string(evl_c);
-      u3_noun res = u3v_wish_n(sam);
+    u3_noun sam = u3i_string(evl_c);
+    u3_noun res = u3v_wish_n(sam);
 
-      fprintf(stderr,"jamming\r\n");
+    c3_d bits = 0;
+    c3_d len_d = 0;
+    c3_y* byt_y;
 
-      c3_d bits = 0;
-      c3_d len_d = 0;
-      c3_y* byt_y;
+    bits = u3s_jam_xeno(res, &len_d, &byt_y);
 
-      bits = u3s_jam_xeno(res, &len_d, &byt_y);
-
-      //printf("bits: %d \n", bits);
-      //printf("size: %d \n", sizeof byt_y/ sizeof byt_y[0]);
-      //printf("len_d: %" PRIu64 "\n", len_d);
-      //printf("%x\n", (char*)byt_y);
-      //u3m_p("jam_n_t", res);
+    if ( c3n == khan_l ) {
       fprintf(stderr,"jammed noun: ");
-      
-      int p=len_d;
-      while (0 <p ){
-          fprintf(stderr,"%x", byt_y[--p]);
+       
+      int p=0;
+      while (p < len_d ){
+        fprintf(stdout,"\\x%2x", byt_y[p++]);
       }
-      fprintf(stderr,"\n");
+        fprintf(stderr,"\n");
+      } else {
+        fprintf(stderr,"khan jammed noun: ");
+         
+        struct khanjam{
+          c3_y zer;
+          c3_d len;
+        };
 
-      fprintf(stderr,"khan jam: ");
-      fwrite(*byt_y, sizeof(byt_y), 1, stdout);
-      /*
-      printf("%02x%08lx",0, len_d);
-      p=0;
-      while (p < len_d){
-          printf("%x", byt_y[p]);
+        struct khanjam data = {0, len_d};
+         
+        fwrite(&data, 1, 9, stdout);
+         
+
+        int p=0;
+        while (p < len_d){
+          fwrite(&(byt_y[p]), 1, 1, stdout);
           p++;
+        }
+        fprintf(stderr, "\n");
       }
-      fprintf(stderr, "\n");
-      */
     u3z(res);
     u3z(sam);
   }
