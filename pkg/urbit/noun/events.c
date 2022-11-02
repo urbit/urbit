@@ -356,8 +356,7 @@ _ce_patch_write_control(u3_ce_patch* pat_u)
   c3_w len_w = sizeof(u3e_control) +
                (pat_u->con_u->pgs_w * sizeof(u3e_line));
 
-  ssize_t rit_i = c3_pwrite(pat_u->ctl_i, pat_u->con_u, len_w, 0);
-  if ( rit_i < len_w ) {
+  if ( 0 > c3_pwrite(pat_u->ctl_i, pat_u->con_u, len_w, 0) ) {
     fprintf(stderr, "loom: patch write: %s\r\n", strerror(errno));
     c3_assert(0);
   }
@@ -382,9 +381,9 @@ _ce_patch_read_control(u3_ce_patch* pat_u)
   }
 
   pat_u->con_u = c3_malloc(len_w);
-  ssize_t red_i = c3_pread(pat_u->ctl_i, pat_u->con_u, len_w, 0);
-  if ( red_i != len_w ||
-        (len_w != sizeof(u3e_control) +
+
+  if (  (len_w != c3_pread(pat_u->ctl_i, pat_u->con_u, len_w, 0))
+     || (len_w != sizeof(u3e_control) +
                   (pat_u->con_u->pgs_w * sizeof(u3e_line))) )
   {
     c3_free(pat_u->con_u);
@@ -439,7 +438,10 @@ _ce_patch_delete(void)
 static c3_o
 _ce_patch_verify(u3_ce_patch* pat_u)
 {
-  c3_w i_w;
+  c3_w i_w, pag_w, mug_w;
+  c3_w      mem_w[pag_wiz_i];
+  size_t    off_i, siz_i = pag_siz_i;
+  ssize_t   ret_i;
 
   if ( u3e_version != pat_u->con_u->ver_y ) {
     fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
@@ -449,22 +451,21 @@ _ce_patch_verify(u3_ce_patch* pat_u)
   }
 
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
-    c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
-    c3_w mug_w = pat_u->con_u->mem_u[i_w].mug_w;
-    c3_w mem_w[1 << u3a_page];
+    pag_w = pat_u->con_u->mem_u[i_w].pag_w;
+    mug_w = pat_u->con_u->mem_u[i_w].mug_w;
+    off_i = i_w << (u3a_page + 2);
 
-    ssize_t red_i = c3_pread(pat_u->mem_i, mem_w, pag_siz_i,
-                             i_w << (u3a_page + 2));
-    if ( red_i != pag_siz_i ) {
-      if ( red_i < 0 ) {
+    if ( siz_i != (ret_i = c3_pread(pat_u->mem_i, mem_w, siz_i, off_i)) ) {
+      if ( 0 > ret_i ) {
         fprintf(stderr, "loom: patch read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: patch read: read %zu of %zu bytes\r\n",
-                        red_i, pag_siz_i);
+                        (size_t)ret_i, siz_i);
       }
       return c3n;
     }
+
     {
       c3_w nug_w = u3r_mug_words(mem_w, pag_wiz_i);
 
@@ -549,10 +550,9 @@ _ce_patch_write_page(u3_ce_patch* pat_u,
                      c3_w         pgc_w,
                      c3_w*        mem_w)
 {
-  errno = 0;
-  ssize_t rit_i = c3_pwrite(pat_u->mem_i, mem_w, pag_siz_i,
-                            pgc_w << (u3a_page + 2));
-  if ( rit_i < 0 ) {
+  size_t off_i = pgc_w << (u3a_page + 2);
+
+  if ( 0 > c3_pwrite(pat_u->mem_i, mem_w, pag_siz_i, off_i) ) {
     fprintf(stderr, "loom: patch write: %s\r\n", strerror(errno));
     c3_assert(0);
   }
@@ -726,7 +726,10 @@ _ce_image_resize(u3e_image* img_u, c3_w pgs_w)
 static void
 _ce_patch_apply(u3_ce_patch* pat_u)
 {
-  c3_w i_w;
+  c3_w i_w, pag_w, off_w, mem_w[pag_wiz_i];
+  c3_i      fid_i;
+  size_t    rof_i, wof_i, siz_i = pag_siz_i;
+  ssize_t   ret_i;
 
   //  resize images
   //
@@ -736,10 +739,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   //  write patch pages into the appropriate image
   //
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
-    c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
-    c3_w mem_w[pag_wiz_i];
-    c3_i fid_i;
-    c3_w off_w;
+    pag_w = pat_u->con_u->mem_u[i_w].pag_w;
 
     if ( pag_w < pat_u->con_u->nor_w ) {
       fid_i = u3P.nor_u.fid_i;
@@ -750,22 +750,21 @@ _ce_patch_apply(u3_ce_patch* pat_u)
       off_w = (u3a_pages - (pag_w + 1));
     }
 
-    ssize_t red_i = c3_pread(pat_u->mem_i, mem_w, pag_siz_i,
-                             i_w << (u3a_page + 2));
-    if ( red_i != pag_siz_i ) {
-      if ( red_i < 0 ) {
+    rof_i = (size_t)i_w   << (u3a_page + 2);
+    wof_i = (size_t)off_w << (u3a_page + 2);
+
+    if ( siz_i != (ret_i = c3_pread(pat_u->mem_i, mem_w, siz_i, rof_i))) {
+      if ( 0 > ret_i ) {
         fprintf(stderr, "loom: patch apply read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: patch apply read: read %zu of %zu bytes\r\n",
-                        red_i, pag_siz_i);
+                        (size_t)ret_i, siz_i);
       }
       c3_assert(0);
     }
 
-    ssize_t rit_i = c3_pwrite(fid_i, mem_w, pag_siz_i,
-                              off_w << (u3a_page + 2));
-    if ( rit_i < 0 ) {
+    if ( 0 > c3_pwrite(fid_i, mem_w, siz_i, wof_i) ) {
       fprintf(stderr, "loom: patch apply write: %s\r\n", strerror(errno));
       c3_assert(0);
     }
@@ -782,28 +781,29 @@ _ce_image_blit(u3e_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
+  c3_w      i_w;
+  size_t  off_i, siz_i = pag_siz_i;
+  ssize_t ret_i;
+
   if ( 0 == img_u->pgs_w ) {
     return;
   }
 
-  c3_w i_w;
-  c3_w siz_w = pag_siz_i;
-
   for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
-    ssize_t red_i = c3_pread(img_u->fid_i, ptr_w, siz_w,
-                             i_w << (u3a_page + 2));
-    if ( red_i != siz_w ) {
-      if ( red_i < 0 ) {
+    off_i = (size_t)i_w << (u3a_page + 2);
+
+    if ( siz_i != (ret_i = c3_pread(img_u->fid_i, ptr_w, siz_i, off_i)) ) {
+      if ( 0 > ret_i ) {
         fprintf(stderr, "loom: image blit read: %s\r\n", strerror(errno));
       }
       else {
-        fprintf(stderr, "loom: image blit read: read %zu of %u bytes\r\n",
-                        red_i, siz_w);
+        fprintf(stderr, "loom: image blit read: read %zu of %zu bytes\r\n",
+                        (size_t)ret_i, siz_i);
       }
       c3_assert(0);
     }
 
-    if ( 0 != mprotect(ptr_w, siz_w, PROT_READ) ) {
+    if ( 0 != mprotect(ptr_w, siz_i, PROT_READ) ) {
       fprintf(stderr, "loom: live mprotect: %s\r\n", strerror(errno));
       c3_assert(0);
     }
@@ -825,24 +825,25 @@ _ce_image_fine(u3e_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
-  c3_w i_w;
-  c3_w buf_w[pag_wiz_i];
+  c3_w i_w, mem_w, fil_w;
+  c3_w      buf_w[pag_wiz_i];
+  size_t    off_i, siz_i = pag_siz_i;
+  ssize_t   ret_i;
 
   for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
-    c3_w mem_w, fil_w;
+    off_i = (size_t)i_w << (u3a_page + 2);
 
-    ssize_t red_i = c3_pread(img_u->fid_i, buf_w, pag_siz_i,
-                             i_w << (u3a_page + 2));
-    if ( red_i != pag_siz_i ) {
-      if ( red_i < 0 ) {
+    if ( siz_i != (ret_i = c3_pread(img_u->fid_i, buf_w, siz_i, off_i)) ) {
+      if ( 0 > ret_i ) {
         fprintf(stderr, "loom: image fine read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: image fine read: read %zu of %zu bytess\r\n",
-                        red_i, pag_siz_i);
+                        (size_t)ret_i, siz_i);
       }
       c3_assert(0);
     }
+
     mem_w = u3r_mug_words(ptr_w, pag_wiz_i);
     fil_w = u3r_mug_words(buf_w, pag_wiz_i);
 
@@ -850,10 +851,7 @@ _ce_image_fine(u3e_image* img_u,
       c3_w pag_w = (ptr_w - u3_Loom) >> u3a_page;
 
       fprintf(stderr, "mismatch: page %d, mem_w %x, fil_w %x, K %x\r\n",
-                     pag_w,
-                     mem_w,
-                     fil_w,
-                     u3K.mug_w[pag_w]);
+                      pag_w, mem_w, fil_w, u3K.mug_w[pag_w]);
       abort();
     }
     ptr_w += stp_ws;
@@ -866,7 +864,10 @@ _ce_image_fine(u3e_image* img_u,
 static c3_o
 _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
 {
-  c3_w i_w;
+  c3_w    i_w;
+  c3_w    mem_w[pag_wiz_i];
+  size_t  off_i, siz_i = pag_siz_i;
+  ssize_t ret_i;
 
   //  resize images
   //
@@ -875,29 +876,22 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
   //  copy pages into destination image
   //
   for ( i_w = 0; i_w < fom_u->pgs_w; i_w++ ) {
-    c3_w mem_w[pag_wiz_i];
-    c3_w off_w = i_w;
+    off_i = (size_t)i_w << (u3a_page + 2);
 
-    ssize_t red_i = c3_pread(fom_u->fid_i, mem_w, pag_siz_i,
-                             off_w << (u3a_page + 2));
-    if ( red_i != pag_siz_i ) {
-      if ( red_i < 0 ) {
+    if ( siz_i != (ret_i = c3_pread(fom_u->fid_i, mem_w, siz_i, off_i)) ) {
+      if ( 0 > ret_i ) {
         fprintf(stderr, "loom: image copy read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: image copy read: read %zu of %zu bytes\r\n",
-                        red_i, pag_siz_i);
+                        (size_t)ret_i, siz_i);
       }
       return c3n;
     }
 
-    {
-      ssize_t rit_i = c3_pwrite(tou_u->fid_i, mem_w, pag_siz_i,
-                                off_w << (u3a_page + 2));
-      if ( rit_i < 0) {
-        fprintf(stderr, "loom: image copy write: %s\r\n", strerror(errno));
-        return c3n;
-      }
+    if ( 0 > c3_pwrite(tou_u->fid_i, mem_w, siz_i, off_i) ) {
+      fprintf(stderr, "loom: image copy write: %s\r\n", strerror(errno));
+      return c3n;
     }
   }
 
