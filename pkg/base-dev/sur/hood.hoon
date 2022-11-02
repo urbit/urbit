@@ -1,6 +1,15 @@
 =,  clay
 =*  dude  dude:gall
 |%
++$  pike
+  $:  sync=(unit [=ship =desk])
+      hash=@uv
+      =zest
+      wic=(set weft)
+  ==
+::
++$  pikes  (map desk pike)
+::
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
