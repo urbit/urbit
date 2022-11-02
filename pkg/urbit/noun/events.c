@@ -453,14 +453,11 @@ _ce_patch_verify(u3_ce_patch* pat_u)
     c3_w mug_w = pat_u->con_u->mem_u[i_w].mug_w;
     c3_w mem_w[1 << u3a_page];
 
-    if ( -1 == lseek(pat_u->mem_i, (i_w << (u3a_page + 2)), SEEK_SET) ) {
-      fprintf(stderr, "loom: patch seek: %s\r\n", strerror(errno));
-      return c3n;
-    }
-    ssize_t red_i = c3_read(pat_u->mem_i, mem_w, pag_siz_i);
+    ssize_t red_i = c3_pread(pat_u->mem_i, mem_w, pag_siz_i,
+                             i_w << (u3a_page + 2));
     if ( red_i != pag_siz_i ) {
       if ( red_i < 0 ) {
-        fprintf(stderr, "loom: patch read: %s\r\n", strerror(-red_i));
+        fprintf(stderr, "loom: patch read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: patch read: read %zu of %zu bytes\r\n",
@@ -552,13 +549,11 @@ _ce_patch_write_page(u3_ce_patch* pat_u,
                      c3_w         pgc_w,
                      c3_w*        mem_w)
 {
-  if ( -1 == lseek(pat_u->mem_i, pgc_w * pag_siz_i, SEEK_SET) ) {
-    fprintf(stderr, "loom: patch seek: %s\r\n", strerror(errno));
-    c3_assert(0);
-  }
-  ssize_t rit_i = c3_write(pat_u->mem_i, mem_w, pag_siz_i);
+  errno = 0;
+  ssize_t rit_i = c3_pwrite(pat_u->mem_i, mem_w, pag_siz_i,
+                            pgc_w << (u3a_page + 2));
   if ( rit_i < 0 ) {
-    fprintf(stderr, "loom: patch write: %s\r\n", strerror(-rit_i));
+    fprintf(stderr, "loom: patch write: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 }
@@ -738,11 +733,9 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w);
   _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w);
 
-  //  seek to begining of patch and images
+  //  seek to begining of patch
   //
-  if (  (-1 == lseek(pat_u->mem_i, 0, SEEK_SET))
-     || (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET))
-     || (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
+  if ( -1 == lseek(pat_u->mem_i, 0, SEEK_SET) )
   {
     fprintf(stderr, "loom: patch apply seek 0: %s\r\n", strerror(errno));
     c3_assert(0);
@@ -777,14 +770,9 @@ _ce_patch_apply(u3_ce_patch* pat_u)
       c3_assert(0);
     }
 
-    if ( -1 == lseek(fid_i, (off_w << (u3a_page + 2)), SEEK_SET) ) {
-      fprintf(stderr, "loom: patch apply seek: %s\r\n", strerror(errno));
-      c3_assert(0);
-    }
-
-    ssize_t rit_i = c3_write(fid_i, mem_w, pag_siz_i);
+    ssize_t rit_i = c3_pwrite(fid_i, mem_w, pag_siz_i, (off_w << (u3a_page + 2)));
     if ( rit_i < 0 ) {
-      fprintf(stderr, "loom: patch apply write: %s\r\n", strerror(-rit_i));
+      fprintf(stderr, "loom: patch apply write: %s\r\n", strerror(errno));
       c3_assert(0);
     }
 #if 0
@@ -890,10 +878,9 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
   //
   _ce_image_resize(tou_u, fom_u->pgs_w);
 
-  //  seek to begining of patch and images
+  //  seek to begining of image
   //
-  if (  (-1 == lseek(fom_u->fid_i, 0, SEEK_SET))
-     || (-1 == lseek(tou_u->fid_i, 0, SEEK_SET)) )
+  if ( -1 == lseek(fom_u->fid_i, 0, SEEK_SET) )
   {
     fprintf(stderr, "loom: image copy seek 0: %s\r\n", strerror(errno));
     return c3n;
@@ -916,14 +903,12 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
       }
       return c3n;
     }
-    else {
-      if ( -1 == lseek(tou_u->fid_i, (off_w << (u3a_page + 2)), SEEK_SET) ) {
-        fprintf(stderr, "loom: image copy seek: %s\r\n", strerror(errno));
-        return c3n;
-      }
-      ssize_t rit_i = c3_write(tou_u->fid_i, mem_w, pag_siz_i);
+
+    {
+      ssize_t rit_i = c3_pwrite(tou_u->fid_i, mem_w, pag_siz_i,
+                                off_w << (u3a_page + 2));
       if ( rit_i < 0) {
-        fprintf(stderr, "loom: image copy write: %s\r\n", strerror(-rit_i));
+        fprintf(stderr, "loom: image copy write: %s\r\n", strerror(errno));
         return c3n;
       }
     }
