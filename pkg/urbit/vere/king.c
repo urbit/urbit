@@ -1178,11 +1178,10 @@ _king_init_pace(c3_c* pac_c)
   }
 
   size_t  len_i = strlen(pac_c);
-  ssize_t wit_i = c3_write(fid_i, pac_c, len_i);
+  ssize_t wit_i = c3_pwrite(fid_i, pac_c, len_i, 0);
   if ( wit_i != len_i ) {
     u3l_log("dock: init pace (%s) write failed: %s\n",
-            pac_c,
-            wit_i < 0 ? strerror(-wit_i) : "incomplete write");
+            pac_c, strerror(errno));
     close(fid_i);
     c3_free(bin_c);
     return -1;

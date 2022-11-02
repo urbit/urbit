@@ -356,9 +356,9 @@ _ce_patch_write_control(u3_ce_patch* pat_u)
   c3_w len_w = sizeof(u3e_control) +
                (pat_u->con_u->pgs_w * sizeof(u3e_line));
 
-  ssize_t rit_i = c3_write(pat_u->ctl_i, pat_u->con_u, len_w);
+  ssize_t rit_i = c3_pwrite(pat_u->ctl_i, pat_u->con_u, len_w, 0);
   if ( rit_i < len_w ) {
-    fprintf(stderr, "loom: patch write: %s\r\n", strerror(-rit_i));
+    fprintf(stderr, "loom: patch write: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 }

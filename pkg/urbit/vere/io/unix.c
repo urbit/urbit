@@ -342,12 +342,12 @@ u3_unix_save(c3_c* pax_c, u3_atom pad)
   pad_y = c3_malloc(fln_w);
   u3r_bytes(0, fln_w, pad_y, pad);
   u3z(pad);
-  ssize_t rit_i = c3_write(fid_i, pad_y, fln_w);
+  ssize_t rit_i = c3_pwrite(fid_i, pad_y, fln_w, 0);
   close(fid_i);
   c3_free(pad_y);
 
   if ( rit_i < 0 ) {
-    u3l_log("%s: %s\n", ful_c, strerror(-rit_i));
+    u3l_log("%s: %s\n", ful_c, strerror(errno));
     c3_free(ful_c);
     u3m_bail(c3__fail);
   }
@@ -446,11 +446,10 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
   u3r_bytes(0, len_w, dat_y, dat);
   u3z(mim);
 
-  ssize_t rit_i = c3_write(fid_i, dat_y, siz_w);
+  ssize_t rit_i = c3_pwrite(fid_i, dat_y, siz_w, 0);
 
   if ( rit_i < 0 ) {
-    u3l_log("error writing %s: %s\r\n",
-            pax_c, strerror(-rit_i));
+    u3l_log("error writing %s: %s\r\n", pax_c, strerror(errno));
     mug_w = 0;
   }
   else {

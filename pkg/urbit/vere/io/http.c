@@ -1698,7 +1698,7 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
                             htp_u->por_s,
                             (c3y == htp_u->sec) ? "secure" : "insecure",
                             (c3y == htp_u->lop) ? "loopback" : "public");
-      c3_assert(c3_write(por_i, temp, len_i) == len_i);
+      c3_assert( c3_pwrite(por_i, temp, len_i, 0) == len_i );
     }
 
     htp_u = htp_u->nex_u;

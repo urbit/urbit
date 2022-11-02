@@ -564,9 +564,9 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
 
   //  write jam-buffer into [fid_i]
   //
-  ssize_t rit_i = c3_write(fid_i, byt_y, len_d);
+  ssize_t rit_i = c3_pwrite(fid_i, byt_y, len_d, 0);
   if ( rit_i < 0 ) {
-    fprintf(stderr, "rock: write failed: %s\r\n", strerror(-rit_i));
+    fprintf(stderr, "rock: write failed: %s\r\n", strerror(errno));
   }
 
   close(fid_i);
