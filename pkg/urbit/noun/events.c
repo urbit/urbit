@@ -58,16 +58,14 @@
 //!   - update atomicity is suspect: patch application must either
 //!     completely succeed or leave on-disk segments intact. unapplied
 //!     patches can be discarded (triggering event replay), but once
-//!     patch application begins it must succeed (can fail if disk is full).
+//!     patch application begins it must succeed.
 //!     may require integration into the overall signal-handling regime.
-//!   - any errors are handled with assertions; failed/partial writes are not
-//!     retried.
+//!   - many errors are handled with assertions.
 //!
 //! ### enhancements
 //!
 //!   - use platform specific page fault mechanism (mach rpc, userfaultfd, &c).
 //!   - implement demand paging / heuristic page-out.
-//!   - add a guard page in the middle of the loom to reactively handle stack overflow.
 //!   - parallelism
 //!
 
@@ -80,10 +78,10 @@
 static u3p(c3_w) gar_pag_p;
 
 //! Urbit page size in 4-byte words.
-static const size_t pag_wiz_i = 1 << u3a_page;
+static const size_t pag_wiz_i = (size_t)1 << u3a_page;
 
 //! Urbit page size in bytes.
-static const size_t pag_siz_i = sizeof(c3_w) * pag_wiz_i;
+static const size_t pag_siz_i = (size_t)1 << (u3a_page + 2);
 
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
@@ -100,7 +98,7 @@ static c3_w
 _ce_check_page(c3_w pag_w)
 {
   c3_w* mem_w = u3_Loom + (pag_w << u3a_page);
-  c3_w  mug_w = u3r_mug_words(mem_w, (1 << u3a_page));
+  c3_w  mug_w = u3r_mug_words(mem_w, pag_wiz_i);
 
   return mug_w;
 }
@@ -118,8 +116,8 @@ u3e_check(c3_c* cap_c)
 
     u3m_water(&nwr_w, &swu_w);
 
-    nor_w = (nwr_w + ((1 << u3a_page) - 1)) >> u3a_page;
-    sou_w = (swu_w + ((1 << u3a_page) - 1)) >> u3a_page;
+    nor_w = (nwr_w + (pag_wiz_i - 1)) >> u3a_page;
+    sou_w = (swu_w + (pag_wiz_i - 1)) >> u3a_page;
   }
 
   /* Count dirty pages.
@@ -144,45 +142,6 @@ u3e_check(c3_c* cap_c)
     }
     u3l_log("%s: sum %x (%x, %x)\r\n", cap_c, sum_w, nor_w, sou_w);
   }
-}
-
-/* _ce_maplloc(): crude off-loom allocator.
-*/
-static void*
-_ce_maplloc(c3_w len_w)
-{
-  void* map_v;
-
-  map_v = mmap(0,
-               len_w,
-               (PROT_READ | PROT_WRITE),
-               (MAP_ANON | MAP_PRIVATE),
-               -1, 0);
-
-  if ( -1 == (c3_ps)map_v ) {
-    c3_assert(0);
-  }
-  else {
-    c3_w* map_w = map_v;
-
-    map_w[0] = len_w;
-
-    return map_w + 1;
-  }
-}
-
-/* _ce_mapfree(): crude off-loom allocator.
-*/
-static void
-_ce_mapfree(void* map_v)
-{
-  c3_w* map_w = map_v;
-  c3_i res_i;
-
-  map_w -= 1;
-  res_i = munmap(map_w, map_w[0]);
-
-  c3_assert(0 == res_i);
 }
 #endif
 
@@ -427,10 +386,16 @@ _ce_patch_delete(void)
   c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
-  c3_unlink(ful_c);
+  if ( unlink(ful_c) ) {
+    fprintf(stderr, "loom: failed to delete control.bin: %s\r\n",
+                    strerror(errno));
+  }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
-  c3_unlink(ful_c);
+  if ( unlink(ful_c) ) {
+    fprintf(stderr, "loom: failed to remove memory.bin: %s\r\n",
+                    strerror(errno));
+  }
 }
 
 /* _ce_patch_verify(): check patch data mug.
@@ -453,7 +418,7 @@ _ce_patch_verify(u3_ce_patch* pat_u)
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     pag_w = pat_u->con_u->mem_u[i_w].pag_w;
     mug_w = pat_u->con_u->mem_u[i_w].mug_w;
-    off_i = i_w << (u3a_page + 2);
+    off_i = (size_t)i_w << (u3a_page + 2);
 
     if ( siz_i != (ret_i = c3_pread(pat_u->mem_i, mem_w, siz_i, off_i)) ) {
       if ( 0 > ret_i ) {
@@ -550,7 +515,7 @@ _ce_patch_write_page(u3_ce_patch* pat_u,
                      c3_w         pgc_w,
                      c3_w*        mem_w)
 {
-  size_t off_i = pgc_w << (u3a_page + 2);
+  size_t off_i = (size_t)pgc_w << (u3a_page + 2);
 
   if ( 0 > c3_pwrite(pat_u->mem_i, mem_w, pag_siz_i, off_i) ) {
     fprintf(stderr, "loom: patch write: %s\r\n", strerror(errno));
@@ -698,8 +663,7 @@ _ce_image_sync(u3e_image* img_u)
 {
   if ( -1 == c3_sync(img_u->fid_i) ) {
     fprintf(stderr, "loom: image (%s) sync failed: %s\r\n",
-                    img_u->nam_c,
-                    strerror(errno));
+                    img_u->nam_c, strerror(errno));
     c3_assert(!"loom: image sync");
   }
 }
@@ -709,11 +673,19 @@ _ce_image_sync(u3e_image* img_u)
 static void
 _ce_image_resize(u3e_image* img_u, c3_w pgs_w)
 {
+  off_t off_i = (off_t)pgs_w << (u3a_page + 2);
+
   if ( img_u->pgs_w > pgs_w ) {
-    if ( ftruncate(img_u->fid_i, pgs_w << (u3a_page + 2)) ) {
+    if ( (off_i >> (u3a_page + 2)) != pgs_w ) {
+      fprintf(stderr, "loom: image (%s) truncate: "
+                      "offset overflow (%" PRId64 ") for page %u\r\n",
+                      img_u->nam_c, (c3_ds)off_i, pgs_w);
+      c3_assert(0);
+    }
+
+    if ( ftruncate(img_u->fid_i, off_i) ) {
       fprintf(stderr, "loom: image (%s) truncate: %s\r\n",
-                      img_u->nam_c,
-                      strerror(errno));
+                      img_u->nam_c, strerror(errno));
       c3_assert(0);
     }
   }
@@ -785,10 +757,6 @@ _ce_image_blit(u3e_image* img_u,
   size_t  off_i, siz_i = pag_siz_i;
   ssize_t ret_i;
 
-  if ( 0 == img_u->pgs_w ) {
-    return;
-  }
-
   for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
     off_i = (size_t)i_w << (u3a_page + 2);
 
@@ -823,8 +791,8 @@ _ce_image_blit(u3e_image* img_u,
 */
 static void
 _ce_image_fine(u3e_image* img_u,
-               c3_w*        ptr_w,
-               c3_ws        stp_ws)
+               c3_w*      ptr_w,
+               c3_ws     stp_ws)
 {
   c3_w i_w, mem_w, fil_w;
   c3_w      buf_w[pag_wiz_i];
@@ -866,7 +834,9 @@ _ce_image_fine(u3e_image* img_u,
 }
 #endif
 
-/* _ce_image_copy():
+/* _ce_image_copy(): copy all of [fom_u] to [tou_u]
+**
+**   XX use reflinks a la _king_copy_file()?
 */
 static c3_o
 _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
@@ -907,14 +877,14 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
   return c3y;
 }
 
-/* _ce_backup();
+/* _ce_backup(); copy snapshot to .urb/bhk (if it doesn't exist yet).
 */
 static void
 _ce_backup(void)
 {
   u3e_image nop_u = { .nam_c = "north", .pgs_w = 0 };
   u3e_image sop_u = { .nam_c = "south", .pgs_w = 0 };
-  c3_i mod_i = O_RDWR | O_CREAT;
+  c3_i mod_i = O_RDWR | O_CREAT; // XX O_TRUNC ?
   c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
@@ -1028,7 +998,15 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
   //  require that our page size is a multiple of the system page size.
   //
-  c3_assert(0 == (1 << (2 + u3a_page)) % sysconf(_SC_PAGESIZE));
+  {
+    size_t sys_i = sysconf(_SC_PAGESIZE);
+
+    if ( pag_siz_i % sys_i ) {
+      fprintf(stderr, "loom: incompatible system page size (%zuKB)\r\n",
+                      sys_i >> 10);
+      exit(1);
+    }
+  }
 
   u3P.dir_c = dir_c;
   u3P.nor_u.nam_c = "north";
