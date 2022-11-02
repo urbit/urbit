@@ -382,7 +382,7 @@ _ce_patch_read_control(u3_ce_patch* pat_u)
   }
 
   pat_u->con_u = c3_malloc(len_w);
-  ssize_t red_i = c3_read(pat_u->ctl_i, pat_u->con_u, len_w);
+  ssize_t red_i = c3_pread(pat_u->ctl_i, pat_u->con_u, len_w, 0);
   if ( red_i != len_w ||
         (len_w != sizeof(u3e_control) +
                   (pat_u->con_u->pgs_w * sizeof(u3e_line))) )
@@ -733,14 +733,6 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w);
   _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w);
 
-  //  seek to begining of patch
-  //
-  if ( -1 == lseek(pat_u->mem_i, 0, SEEK_SET) )
-  {
-    fprintf(stderr, "loom: patch apply seek 0: %s\r\n", strerror(errno));
-    c3_assert(0);
-  }
-
   //  write patch pages into the appropriate image
   //
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
@@ -758,10 +750,11 @@ _ce_patch_apply(u3_ce_patch* pat_u)
       off_w = (u3a_pages - (pag_w + 1));
     }
 
-    ssize_t red_i = c3_read(pat_u->mem_i, mem_w, pag_siz_i);
+    ssize_t red_i = c3_pread(pat_u->mem_i, mem_w, pag_siz_i,
+                             i_w << (u3a_page + 2));
     if ( red_i != pag_siz_i ) {
       if ( red_i < 0 ) {
-        fprintf(stderr, "loom: patch apply read: %s\r\n", strerror(-red_i));
+        fprintf(stderr, "loom: patch apply read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: patch apply read: read %zu of %zu bytes\r\n",
@@ -770,7 +763,8 @@ _ce_patch_apply(u3_ce_patch* pat_u)
       c3_assert(0);
     }
 
-    ssize_t rit_i = c3_pwrite(fid_i, mem_w, pag_siz_i, (off_w << (u3a_page + 2)));
+    ssize_t rit_i = c3_pwrite(fid_i, mem_w, pag_siz_i,
+                              off_w << (u3a_page + 2));
     if ( rit_i < 0 ) {
       fprintf(stderr, "loom: patch apply write: %s\r\n", strerror(errno));
       c3_assert(0);
@@ -795,12 +789,12 @@ _ce_image_blit(u3e_image* img_u,
   c3_w i_w;
   c3_w siz_w = pag_siz_i;
 
-  lseek(img_u->fid_i, 0, SEEK_SET);
   for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
-    ssize_t red_i = c3_read(img_u->fid_i, ptr_w, siz_w);
+    ssize_t red_i = c3_pread(img_u->fid_i, ptr_w, siz_w,
+                             i_w << (u3a_page + 2));
     if ( red_i != siz_w ) {
       if ( red_i < 0 ) {
-        fprintf(stderr, "loom: image blit read: %s\r\n", strerror(-red_i));
+        fprintf(stderr, "loom: image blit read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: image blit read: read %zu of %u bytes\r\n",
@@ -834,14 +828,14 @@ _ce_image_fine(u3e_image* img_u,
   c3_w i_w;
   c3_w buf_w[pag_wiz_i];
 
-  lseek(img_u->fid_i, 0, SEEK_SET);
   for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
     c3_w mem_w, fil_w;
 
-    ssize_t red_i = c3_read(img_u->fid_i, buf_w, pag_siz_i);
+    ssize_t red_i = c3_pread(img_u->fid_i, buf_w, pag_siz_i,
+                             i_w << (u3a_page + 2));
     if ( red_i != pag_siz_i ) {
       if ( red_i < 0 ) {
-        fprintf(stderr, "loom: image fine read: %s\r\n", strerror(-red_i));
+        fprintf(stderr, "loom: image fine read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: image fine read: read %zu of %zu bytess\r\n",
@@ -878,24 +872,17 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
   //
   _ce_image_resize(tou_u, fom_u->pgs_w);
 
-  //  seek to begining of image
-  //
-  if ( -1 == lseek(fom_u->fid_i, 0, SEEK_SET) )
-  {
-    fprintf(stderr, "loom: image copy seek 0: %s\r\n", strerror(errno));
-    return c3n;
-  }
-
   //  copy pages into destination image
   //
   for ( i_w = 0; i_w < fom_u->pgs_w; i_w++ ) {
     c3_w mem_w[pag_wiz_i];
     c3_w off_w = i_w;
 
-    ssize_t red_i = c3_read(fom_u->fid_i, mem_w, pag_siz_i);
+    ssize_t red_i = c3_pread(fom_u->fid_i, mem_w, pag_siz_i,
+                             off_w << (u3a_page + 2));
     if ( red_i != pag_siz_i ) {
       if ( red_i < 0 ) {
-        fprintf(stderr, "loom: image copy read: %s\r\n", strerror(-red_i));
+        fprintf(stderr, "loom: image copy read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: image copy read: read %zu of %zu bytes\r\n",
