@@ -9,6 +9,7 @@
         u3_noun who;                          //  single identity
         c3_c*   dir_c;                        //  execution directory (pier)
         c3_w    wag_w;                        //  flags (both ways)
+        size_t  wor_i;                        //  loom word-length (<= u3a_words)
         void (*stderr_log_f)(c3_c*);          //  errors from c code
         void (*slog_f)(u3_noun);              //  function pointer for slog
         void (*sign_hold_f)(void);            //  suspend system signal regime
@@ -29,7 +30,8 @@
         u3o_dryrun =        0x20,             //  don't touch checkpoint
         u3o_quiet =         0x40,             //  disable ~&
         u3o_hashless =      0x80,             //  disable hashboard
-        u3o_trace =         0x100             //  enables trace dumping
+        u3o_trace =         0x100,            //  enables trace dumping
+        u3o_auto_meld =     0x200             //  enables meld under pressure
       };
 
   /** Globals.
