@@ -339,9 +339,12 @@
   `[[q.p.i q.p.i.t]:p.u.lot u.bem]
 ::
 ++  rant
-  |=  [a=(list [char=@tD *]) b=tape]
-  ^-  tape
+  |=  a=(list [char=@tD *])
+  =|  b=tape
   ?~  a
+    b
+  |-  ^-  tape
+  ?~  t.a
     b
   =.  b  [char.i.a b]
   $(a t.a)
@@ -1202,7 +1205,7 @@
             ::
             run=(list plan)
             out=(list ovum)
-            neb=_14
+            neb=_15
             gem=germ
             dud=(unit goof)
             $=  but  %-  unit
@@ -1261,7 +1264,7 @@
           ==
         abet
       ?:  =(~ q.i.run)    :: XX TMI
-        loop(run t.run)
+        loop(run t.run, neb 15)
       =.  dud  ~
       =.  gem  p.i.run
       =^  mov=move  q.i.run  q.i.run
@@ -1273,6 +1276,10 @@
       ^+  this
       ::
       ~?  &(!lac.fad ?=(^ dud))  %goof
+      =.  neb  (^mod +(neb) 94)
+      =/  bar  (add '!' neb)
+      ::
+      |-
       ::
       ?-  -.ball.move
       ::
@@ -1285,7 +1292,7 @@
         =*  task  task.note.ball.move
         ::
         ~?  &(!lac.fad !=(%$ vane.gem))
-          :-  (rant bars.gem "")
+          :-  (rant [bar duct] bars.gem)
           :^  %pass  [vane.gem vane]
             ?:  ?=(?(%deal %deal-gall) +>-.task)
               :-  :-  +>-.task
@@ -1296,7 +1303,7 @@
         ::
         ::  cons source onto wire, and wire onto duct
         ::
-        (call [[vane.gem wire] duct] vane task)
+        (call bar [[vane.gem wire] duct] vane task)
       ::
       ::  %slip: lateral move
       ::
@@ -1306,10 +1313,10 @@
         =*  task  task.note.ball.move
         ::
         ~?  !lac.fad
-          :-  (rant bars.gem "")
+          :-  (rant [bar duct] bars.gem)
           [%slip [vane.gem vane] (symp +>-.task) duct]
         ::
-        (call duct vane task)
+        (call bar duct vane task)
       ::
       ::  %give: return move
       ::
@@ -1326,14 +1333,14 @@
           ?>(?=(^ wire) wire)
         ::
         ~?  &(!lac.fad !=(%$ way) |(!=(%blit +>-.gift) !=(%d vane.gem)))
-          :-  (rant bars.gem "")
+          :-  (rant [bar duct] bars.gem)
           :^  %give  vane.gem
             ?:  ?=(%unto +>-.gift)
               [+>-.gift (symp +>+<.gift)]
             (symp +>-.gift)
           duct.move
         ::
-        (take duct wire way gift)
+        (take bar duct wire way gift)
       ::
       ::  %hurl: action with error
       ::
@@ -1398,7 +1405,7 @@
     ::  +call: advance to target
     ::
     ++  call
-      |=  [=duct way=term task=maze]
+      |=  [bar=@tD =duct way=term task=maze]
       ^+  this
       ?:  ?=(%$ way)
         ~>  %mean.'arvo: call:pith failed'
@@ -1407,15 +1414,14 @@
         ;;(waif q.p.task)
       ::
       =.  way  (grow way)
-      =.  neb  (^mod +(neb) 94)
-      %+  push  [way [(add '!' neb) duct] bars.gem]
+      %+  push  [way [bar duct] bars.gem]
       ~|  bar-stack=`(list ^duct)`[duct (turn bars.gem tail)]
       %.  task
       call:(spin:(plow way) duct eny dud)
     ::  +take: retreat along call-stack
     ::
     ++  take
-      |=  [=duct =wire way=term gift=maze]
+      |=  [bar=@tD =duct =wire way=term gift=maze]
       ^+  this
       ?:  ?=(%$ way)
         ::
@@ -1426,8 +1432,7 @@
       ::  the caller was a vane
       ::
       =.  way  (grow way)
-      =.  neb  (^mod +(neb) 94)
-      %+  push  [way [(add '!' neb) duct] bars.gem]
+      %+  push  [way [bar duct] bars.gem]
       ::
       ::  cons source onto .gift to make a $sign
       ::
