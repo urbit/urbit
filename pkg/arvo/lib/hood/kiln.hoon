@@ -503,7 +503,8 @@
       [%x %kiln %sources ~]  ``noun+!>(sources)
       [%x %kiln %pikes ~]
     =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
-    =-  ``noun+!>(-)
+    :^  ~  ~  %kiln-pikes
+    !>  ^-  pikes   
     %-  ~(rut by rock)
     |=  [=desk =zest wic=(set weft)]
     ^-  pike
