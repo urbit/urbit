@@ -433,6 +433,7 @@ u3m_signal(u3_noun sig_l)
 u3_noun
 u3m_file(c3_c* pas_c)
 {
+  u3l_log("Loading file: %s\r\n", pas_c);
   struct stat buf_b;
   c3_i        fid_i = c3_open(pas_c, O_RDONLY, 0644);
   c3_w        fln_w, red_w;
@@ -443,6 +444,8 @@ u3m_file(c3_c* pas_c)
     return u3m_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
+  //u3l_log("file size: %i\r\n", fln_w);
+  
   pad_y = c3_malloc(buf_b.st_size);
 
   red_w = read(fid_i, pad_y, fln_w);
@@ -455,6 +458,9 @@ u3m_file(c3_c* pas_c)
   else {
     u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
     c3_free(pad_y);
+
+    //u3l_log("size of noun\r\n");
+    //u3m_p("size", u3dc("met", 3, u3k(pad)));
 
     return pad;
   }
