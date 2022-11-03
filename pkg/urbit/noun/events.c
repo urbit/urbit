@@ -746,43 +746,91 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   }
 }
 
-/* _ce_image_blit(): apply image to memory.
+/* _ce_loom_blit_north(): apply pages, in order, from the bottom of memory.
 */
 static void
-_ce_image_blit(u3e_image* img_u,
-               c3_w*        ptr_w,
-               c3_ws        stp_ws)
+_ce_loom_blit_north(c3_i fid_i, c3_w pgs_w)
 {
   c3_w      i_w;
-  size_t  off_i, siz_i = pag_siz_i;
+  c3_w*   ptr_w;
+  size_t  off_i;
   ssize_t ret_i;
 
-  for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
+  for ( i_w = 0; i_w < pgs_w; i_w++ ) {
     off_i = (size_t)i_w << (u3a_page + 2);
+    ptr_w = u3_Loom + (i_w << u3a_page);
 
-    if ( siz_i != (ret_i = c3_pread(img_u->fid_i, ptr_w, siz_i, off_i)) ) {
+    if ( pag_siz_i != (ret_i = c3_pread(fid_i, ptr_w, pag_siz_i, off_i)) ) {
       if ( 0 > ret_i ) {
-        fprintf(stderr, "loom: image (%s) blit read: %s\r\n",
-                        img_u->nam_c, strerror(errno));
+        fprintf(stderr, "loom: blit north read: %s\r\n", strerror(errno));
       }
       else {
-        fprintf(stderr, "loom: image (%s) blit read: read %zu of %zu bytes\r\n",
-                        img_u->nam_c, (size_t)ret_i, siz_i);
+        fprintf(stderr, "loom: blit north read partial (%zu of %zu bytes)\r\n",
+                        (size_t)ret_i, pag_siz_i);
       }
       c3_assert(0);
     }
+  }
 
-    if ( 0 != mprotect(ptr_w, siz_i, PROT_READ) ) {
-      fprintf(stderr, "loom: live mprotect: %s\r\n", strerror(errno));
+  if ( 0 != mprotect((void*)u3_Loom,
+                     (size_t)pgs_w << (u3a_page + 2),
+                     PROT_READ) )
+  {
+    fprintf(stderr, "loom: protect north: %s\r\n", strerror(errno));
+    c3_assert(0);
+  }
+
+  {
+    c3_w blk_w = pgs_w >> 5;
+    c3_w bit_w = pgs_w & 31;
+
+    memset((void*)u3P.dit_w, 0, blk_w << 2);
+    u3P.dit_w[blk_w] &= 0xffffffff << bit_w;
+  }
+}
+
+/* _ce_loom_blit_south(): apply pages, reversed, from the top of memory.
+*/
+static void
+_ce_loom_blit_south(c3_i fid_i, c3_w pgs_w)
+{
+  c3_w    lof_w, i_w;
+  c3_w*   ptr_w;
+  size_t  off_i;
+  ssize_t ret_i;
+
+  for ( i_w = 0; i_w < pgs_w; i_w++ ) {
+    off_i = (size_t)i_w << (u3a_page + 2);
+    lof_w = u3P.pag_w - (i_w + 1);
+    ptr_w = u3_Loom + (lof_w << u3a_page);
+
+    if ( pag_siz_i != (ret_i = c3_pread(fid_i, ptr_w, pag_siz_i, off_i)) ) {
+      if ( 0 > ret_i ) {
+        fprintf(stderr, "loom: blit south read: %s\r\n", strerror(errno));
+      }
+      else {
+        fprintf(stderr, "loom: blit south read partial (%zu of %zu bytes)\r\n",
+                        (size_t)ret_i, pag_siz_i);
+      }
       c3_assert(0);
     }
+  }
 
-    c3_w pag_w = u3a_outa(ptr_w) >> u3a_page;
-    c3_w blk_w = pag_w >> 5;
-    c3_w bit_w = pag_w & 31;
-    u3P.dit_w[blk_w] &= ~(1 << bit_w);
+  if ( 0 != mprotect((void*)(u3_Loom + (lof_w << u3a_page)),
+                     (size_t)pgs_w << (u3a_page + 2),
+                     PROT_READ) )
+  {
+    fprintf(stderr, "loom: protect south: %s\r\n", strerror(errno));
+    c3_assert(0);
+  }
 
-    ptr_w += stp_ws;
+  {
+    c3_w bas_w = (lof_w + 31) >> 5;
+    c3_w blk_w = pgs_w >> 5;
+    c3_w bit_w = pgs_w & 31;
+
+    memset((void*)(u3P.dit_w + bas_w), 0, blk_w << 2);
+    u3P.dit_w[lof_w >> 5] &= 0xffffffff >> bit_w;
   }
 }
 
@@ -1054,13 +1102,8 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       /* Write image files to memory; reinstate protection.
       */
       {
-        _ce_image_blit(&u3P.nor_u,
-                       u3_Loom,
-                       pag_wiz_i);
-
-        _ce_image_blit(&u3P.sou_u,
-                       (u3_Loom + u3C.wor_i) - pag_wiz_i,
-                       -(ssize_t)pag_wiz_i);
+        _ce_loom_blit_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w);
+        _ce_loom_blit_south(u3P.sou_u.fid_i, u3P.sou_u.pgs_w);
 
         u3l_log("boot: protected loom\r\n");
       }
