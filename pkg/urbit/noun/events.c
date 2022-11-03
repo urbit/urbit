@@ -7,7 +7,7 @@
 //!   - page: 16KB chunk of the loom.
 //!   - north segment (u3e_image, north.bin): low contiguous loom pages,
 //!     (in practice, the home road heap). indexed from low to high:
-//!     in-order on disk.
+//!     in-order on disk. in a file-backed mapping by default.
 //!   - south segment (u3e_image, south.bin): high contiguous loom pages,
 //!     (in practice, the home road stack). indexed from high to low:
 //!     reversed on disk.
@@ -20,8 +20,8 @@
 //!   - with the loom already mapped, all pages are marked dirty in a bitmap.
 //!   - if snapshot is missing or partial, empty segments are created.
 //!   - if a patch is present, it's applied (crash recovery).
-//!   - snapshot segments are copied onto the loom; all included pages
-//!     are marked clean and protected (read-only).
+//!   - snapshot segments are mapped or copied onto the loom;
+//!     all included pages are marked clean and protected (read-only).
 //!
 //! #### page faults (u3e_fault())
 //!
@@ -47,6 +47,7 @@
 //!       contiguous free space).
 //!   - patch pages are written to memory.bin, metadata to control.bin.
 //!   - the patch is applied to the snapshot segments, in-place.
+//!   - memory protections (and file-backed mappings) are re-established.
 //!   - patch files are deleted.
 //!
 //! ### limitations
@@ -65,8 +66,7 @@
 //! ### enhancements
 //!
 //!   - use platform specific page fault mechanism (mach rpc, userfaultfd, &c).
-//!   - implement demand paging / heuristic page-out.
-//!   - parallelism
+//!   - parallelism (conflicts with demand paging)
 //!
 
 #include "all.h"
@@ -724,6 +724,34 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   }
 }
 
+/* _ce_loom_pure_north(): track clean pages at the bottom of memory.
+*/
+static inline void
+_ce_loom_pure_north(c3_w pgs_w)
+{
+  c3_w blk_w = pgs_w >> 5;
+  c3_w bit_w = pgs_w & 31;
+
+  memset((void*)u3P.dit_w, 0, blk_w << 2);
+  u3P.dit_w[blk_w] &= 0xffffffff << bit_w;
+}
+
+/* _ce_loom_pure_south(): track clean pages at the top of memory.
+*/
+static inline void
+_ce_loom_pure_south(c3_w pgs_w)
+{
+  c3_w blk_w = pgs_w >> 5;
+  c3_w bit_w = pgs_w & 31;
+  c3_w bas_w = ((u3P.pag_w - pgs_w) + 31) >> 5;
+
+  memset((void*)(u3P.dit_w + bas_w), 0, blk_w << 2);
+
+  //  this is safe so long as the south segment never includes all pages
+  //
+  u3P.dit_w[bas_w - 1] &= 0xffffffff >> bit_w;
+}
+
 /* _ce_loom_protect_north(): protect/track pages from the bottom of memory.
 */
 static void
@@ -740,13 +768,7 @@ _ce_loom_protect_north(c3_w pgs_w)
     }
   }
 
-  {
-    c3_w blk_w = pgs_w >> 5;
-    c3_w bit_w = pgs_w & 31;
-
-    memset((void*)u3P.dit_w, 0, blk_w << 2);
-    u3P.dit_w[blk_w] &= 0xffffffff << bit_w;
-  }
+  _ce_loom_pure_north(pgs_w);
 }
 
 /* _ce_loom_protect_south(): protect/track pages from the top of memory.
@@ -754,10 +776,8 @@ _ce_loom_protect_north(c3_w pgs_w)
 static void
 _ce_loom_protect_south(c3_w pgs_w)
 {
-  c3_w lof_w = u3P.pag_w - pgs_w;
-
   if ( pgs_w ) {
-    if ( 0 != mprotect((void*)(u3_Loom + (lof_w << u3a_page)),
+    if ( 0 != mprotect((void*)(u3_Loom + ((u3P.pag_w - pgs_w) << u3a_page)),
                        (size_t)pgs_w << (u3a_page + 2),
                        PROT_READ) )
     {
@@ -767,14 +787,50 @@ _ce_loom_protect_south(c3_w pgs_w)
     }
   }
 
-  {
-    c3_w bas_w = (lof_w + 31) >> 5;
-    c3_w blk_w = pgs_w >> 5;
-    c3_w bit_w = pgs_w & 31;
+  _ce_loom_pure_south(pgs_w);
+}
 
-    memset((void*)(u3P.dit_w + bas_w), 0, blk_w << 2);
-    u3P.dit_w[lof_w >> 5] &= 0xffffffff >> bit_w;
+/* _ce_loom_mapf_north(): map [pgs_w] of [fid_i] into the bottom of memory
+**                        (and anonymize [old_w - pgs_w] after if needed).
+**
+**   NB: _ce_loom_mapf_south() is possible, but it would make separate mappings
+**       for each page since the south segment is reversed on disk.
+**       in practice, the south segment is a single page (and always dirty);
+**       a file-backed mapping for it is just not worthwhile.
+*/
+static void
+_ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
+{
+  //  XX mingw doesn't support MAP_FIXED clobbering;
+  //  will require explicit unmapping and related bookkeeping.
+  //
+  if ( pgs_w ) {
+    if ( MAP_FAILED == mmap((void*)u3_Loom,
+                            (size_t)pgs_w << (u3a_page + 2),
+                            PROT_READ,
+                            (MAP_FIXED | MAP_PRIVATE),
+                            fid_i, 0) )
+    {
+      fprintf(stderr, "loom: file-backed mmap failed (%u pages): %s\r\n",
+                      pgs_w, strerror(errno));
+      c3_assert(0);
+    }
   }
+
+  if ( old_w > pgs_w ) {
+    if ( MAP_FAILED == mmap((void*)(u3_Loom + (pgs_w << u3a_page)),
+                            (size_t)(old_w - pgs_w) << (u3a_page + 2),
+                            (PROT_READ | PROT_WRITE),
+                            (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
+                            -1, 0) )
+    {
+      fprintf(stderr, "loom: anonymous mmap failed (%u pages, %u old): %s\r\n",
+                      pgs_w, old_w, strerror(errno));
+      c3_assert(0);
+    }
+  }
+
+  _ce_loom_pure_north(pgs_w);
 }
 
 /* _ce_loom_blit_north(): apply pages, in order, from the bottom of memory.
@@ -993,6 +1049,7 @@ void
 u3e_save(void)
 {
   u3_ce_patch* pat_u;
+  c3_w         nod_w;
 
   if ( u3C.wag_w & u3o_dryrun ) {
     return;
@@ -1002,7 +1059,7 @@ u3e_save(void)
     return;
   }
 
-  // u3a_print_memory(stderr, "sync: save", 4096 * pat_u->con_u->pgs_w);
+  nod_w = u3P.nor_u.pgs_w;
 
   _ce_patch_sync(pat_u);
 
@@ -1027,7 +1084,13 @@ u3e_save(void)
   }
 #endif
 
-  _ce_loom_protect_north(u3P.nor_u.pgs_w);
+  if ( u3C.wag_w & u3o_no_demand ) {
+    _ce_loom_protect_north(u3P.nor_u.pgs_w);
+  }
+  else {
+    _ce_loom_mapf_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w, nod_w);
+  }
+
   _ce_loom_protect_south(u3P.sou_u.pgs_w);
 
   _ce_image_sync(&u3P.nor_u);
@@ -1043,6 +1106,12 @@ u3e_save(void)
 c3_o
 u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
+  //  XX demand paging is not supported on windows
+  //
+#ifdef U3_OS_mingw
+  u3C.wag_w |= u3o_no_demand;
+#endif
+
   //  require that our page size is a multiple of the system page size.
   //
   {
@@ -1101,7 +1170,13 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       /* Write image files to memory; reinstate protection.
       */
       {
-        _ce_loom_blit_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w);
+        if ( u3C.wag_w & u3o_no_demand ) {
+          _ce_loom_blit_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w);
+        }
+        else {
+          _ce_loom_mapf_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w, 0);
+        }
+
         _ce_loom_blit_south(u3P.sou_u.fid_i, u3P.sou_u.pgs_w);
 
         u3l_log("boot: protected loom\r\n");
