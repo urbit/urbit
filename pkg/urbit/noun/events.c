@@ -751,22 +751,17 @@ _ce_patch_apply(u3_ce_patch* pat_u)
 static void
 _ce_loom_blit_north(c3_i fid_i, c3_w pgs_w)
 {
-  c3_w      i_w;
-  c3_w*   ptr_w;
-  size_t  off_i;
+  size_t  len_i = (size_t)pgs_w << (u3a_page + 2);
   ssize_t ret_i;
 
-  for ( i_w = 0; i_w < pgs_w; i_w++ ) {
-    off_i = (size_t)i_w << (u3a_page + 2);
-    ptr_w = u3_Loom + (i_w << u3a_page);
-
-    if ( pag_siz_i != (ret_i = c3_pread(fid_i, ptr_w, pag_siz_i, off_i)) ) {
+  if ( pgs_w ) {
+    if ( len_i != (ret_i = c3_pread(fid_i, u3_Loom, len_i, 0)) ) {
       if ( 0 > ret_i ) {
         fprintf(stderr, "loom: blit north read: %s\r\n", strerror(errno));
       }
       else {
         fprintf(stderr, "loom: blit north read partial (%zu of %zu bytes)\r\n",
-                        (size_t)ret_i, pag_siz_i);
+                        (size_t)ret_i, len_i);
       }
       c3_assert(0);
     }
