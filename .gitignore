@@ -84,3 +84,5 @@ pkg/interface/link-webext/web-ext-artifacts
 *.log
 
 .vercel
+
+pkg/hodl/

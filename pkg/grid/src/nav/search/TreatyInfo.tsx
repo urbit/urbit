@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { AppInfo } from '../../components/AppInfo';
 import { Spinner } from '../../components/Spinner';
 import useDocketState, { useCharge, useTreaty } from '../../state/docket';
-import { useVat } from '../../state/kiln';
+import { usePike } from '../../state/kiln';
 import { getAppName } from '../../state/util';
 import { useLeapStore } from '../Nav';
 
@@ -11,7 +11,7 @@ export const TreatyInfo = () => {
   const select = useLeapStore((state) => state.select);
   const { host, desk } = useParams<{ host: string; desk: string }>();
   const treaty = useTreaty(host, desk);
-  const vat = useVat(desk);
+  const pike = usePike(desk);
   const charge = useCharge(desk);
   const name = getAppName(treaty);
 
@@ -34,5 +34,5 @@ export const TreatyInfo = () => {
       </div>
     );
   }
-  return <AppInfo className="dialog-inner-container" docket={charge || treaty} vat={vat} />;
+  return <AppInfo className="dialog-inner-container" docket={charge || treaty} pike={pike} />;
 };
