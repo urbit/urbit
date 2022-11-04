@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import clipboardCopy from 'clipboard-copy';
 import React, { HTMLAttributes, useCallback, useState } from 'react';
 import { Link, Route, useHistory } from 'react-router-dom';
-import { Vat } from '@urbit/api';
+import { Pike } from '@urbit/api';
 import { Adjust } from '../components/icons/Adjust';
-import { useVat } from '../state/kiln';
+import { usePike } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';
 import { useMedia } from '../logic/useMedia';
 import { Cross } from '../components/icons/Cross';
@@ -17,15 +17,15 @@ type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
   shouldDim: boolean;
 };
 
-function getHash(vat: Vat): string {
-  const parts = vat.hash.split('.');
+function getHash(pike: Pike): string {
+  const parts = pike.hash.split('.');
   return parts[parts.length - 1];
 }
 
 export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMenuProps) => {
   const { push } = useHistory();
   const [copied, setCopied] = useState(false);
-  const garden = useVat(window.desk);
+  const garden = usePike(window.desk);
   const hash = garden ? getHash(garden) : null;
   const isMobile = useMedia('(max-width: 639px)');
   const select = useLeapStore((s) => s.select);
