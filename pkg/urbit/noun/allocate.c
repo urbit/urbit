@@ -1992,25 +1992,28 @@ u3a_print_memory(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
 {
   c3_assert( 0 != fil_u );
 
-  c3_w byt_w = (wor_w * 4);
-  c3_w gib_w = (byt_w / 1000000000);
-  c3_w mib_w = (byt_w % 1000000000) / 1000000;
-  c3_w kib_w = (byt_w % 1000000) / 1000;
-  c3_w bib_w = (byt_w % 1000);
+  c3_z byt_z = ((c3_z)wor_w * 4);
+  c3_z gib_z = (byt_z / 1000000000);
+  c3_z mib_z = (byt_z % 1000000000) / 1000000;
+  c3_z kib_z = (byt_z % 1000000) / 1000;
+  c3_z bib_z = (byt_z % 1000);
 
-  if ( byt_w ) {
-    if ( gib_w ) {
-      fprintf(fil_u, "%s: GB/%d.%03d.%03d.%03d\r\n",
-              cap_c, gib_w, mib_w, kib_w, bib_w);
+  if ( byt_z ) {
+    if ( gib_z ) {
+      fprintf(fil_u, "%s: GB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
+              cap_c, gib_z, mib_z, kib_z, bib_z);
     }
-    else if ( mib_w ) {
-      fprintf(fil_u, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+    else if ( mib_z ) {
+      fprintf(fil_u, "%s: MB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
+              cap_c, mib_z, kib_z, bib_z);
     }
-    else if ( kib_w ) {
-      fprintf(fil_u, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
+    else if ( kib_z ) {
+      fprintf(fil_u, "%s: KB/%" PRIc3_z ".%03" PRIc3_z "\r\n",
+              cap_c, kib_z, bib_z);
     }
-    else if ( bib_w ) {
-      fprintf(fil_u, "%s: B/%d\r\n", cap_c, bib_w);
+    else if ( bib_z ) {
+      fprintf(fil_u, "%s: B/%" PRIc3_z "\r\n",
+              cap_c, bib_z);
     }
   }
 }
@@ -2031,24 +2034,27 @@ u3a_maid(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
 static void
 _ca_print_memory(FILE* fil_u, c3_w wor_w)
 {
-  c3_w byt_w = (wor_w * 4);
-  c3_w gib_w = (byt_w / 1000000000);
-  c3_w mib_w = (byt_w % 1000000000) / 1000000;
-  c3_w kib_w = (byt_w % 1000000) / 1000;
-  c3_w bib_w = (byt_w % 1000);
+  c3_z byt_z = ((c3_z)wor_w * 4);
+  c3_z gib_z = (byt_z / 1000000000);
+  c3_z mib_z = (byt_z % 1000000000) / 1000000;
+  c3_z kib_z = (byt_z % 1000000) / 1000;
+  c3_z bib_z = (byt_z % 1000);
 
-  if ( gib_w ) {
-    fprintf(fil_u, "GB/%d.%03d.%03d.%03d\r\n",
-            gib_w, mib_w, kib_w, bib_w);
+  if ( gib_z ) {
+    fprintf(fil_u, "GB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
+            gib_z, mib_z, kib_z, bib_z);
   }
-  else if ( mib_w ) {
-    fprintf(fil_u, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w);
+  else if ( mib_z ) {
+    fprintf(fil_u, "MB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
+            mib_z, kib_z, bib_z);
   }
-  else if ( kib_w ) {
-    fprintf(fil_u, "KB/%d.%03d\r\n", kib_w, bib_w);
+  else if ( kib_z ) {
+    fprintf(fil_u, "KB/%" PRIc3_z ".%03" PRIc3_z "\r\n",
+            kib_z, bib_z);
   }
   else {
-    fprintf(fil_u, "B/%d\r\n", bib_w);
+    fprintf(fil_u, "B/%" PRIc3_z "\r\n",
+            bib_z);
   }
 }
 
