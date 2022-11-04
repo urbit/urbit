@@ -5,15 +5,15 @@ import { Setting } from '../../components/Setting';
 import { ShipName } from '../../components/ShipName';
 import { Spinner } from '../../components/Spinner';
 import { useAsyncCall } from '../../logic/useAsyncCall';
-import useKilnState, { useVat } from '../../state/kiln';
+import useKilnState, { usePike } from '../../state/kiln';
 
 export const SystemUpdatePrefs = () => {
   const { changeOTASource, toggleOTAs } = useKilnState((s) =>
     _.pick(s, ['toggleOTAs', 'changeOTASource'])
   );
-  const base = useVat('base');
-  const otasEnabled = base && !(base.arak?.rail?.paused ?? true);
-  const otaSource = base && base.arak.rail?.ship;
+  const pike = usePike('base');
+  const otasEnabled = pike?.zest === 'live';
+  const otaSource = pike?.sync?.ship;
 
   const toggleBase = useCallback((on: boolean) => toggleOTAs('base', on), [toggleOTAs]);
 
