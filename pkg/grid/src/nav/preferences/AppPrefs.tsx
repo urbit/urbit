@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Setting } from '../../components/Setting';
 import { ShipName } from '../../components/ShipName';
 import { useCharge } from '../../state/docket';
-import useKilnState, { usePike, useVat } from '../../state/kiln';
+import useKilnState, { usePike } from '../../state/kiln';
 import { getAppName } from '../../state/util';
 
 export const AppPrefs = ({ match }: RouteComponentProps<{ desk: string }>) => {

@@ -1,18 +1,17 @@
-import { pick, pickBy, partition } from 'lodash';
+import { pick, partition } from 'lodash';
 import React, { useCallback } from 'react';
-import { kilnBump } from '@urbit/api';
+import { kilnBump, Pike } from '@urbit/api';
+import { useHistory } from 'react-router-dom';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
 import { Elbow } from '../../components/icons/Elbow';
 import api from '../../state/api';
 import { useCharges } from '../../state/docket';
-import useKilnState, { useVat } from '../../state/kiln';
+import useKilnState, { usePike } from '../../state/kiln';
 
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
-import { Vat } from '@urbit/api';
-import {useHistory} from 'react-router-dom';
 
 export const RuntimeLagNotification = () => (
   <section
@@ -38,18 +37,18 @@ export const RuntimeLagNotification = () => (
   </section>
 );
 
-function vatIsBlocked(newKelvin: number, vat: Vat) {
-  return !(vat.arak?.rail?.next || []).find(({ aeon, weft }) => weft.kelvin === newKelvin);
+function pikeIsBlocked(newKelvin: number, pike: Pike) {
+  return !pike.wefts?.find(({ kelvin }) => kelvin === newKelvin);
 }
 
 export const BaseBlockedNotification = () => {
-  const base = useVat('base');
+  const basePike = usePike('base');
   const { push } = useHistory();
   // TODO: assert weft.name === 'zuse'??
-  const newKelvin = base?.arak?.rail?.next?.[0]?.weft?.kelvin || 420;
+  const newKelvin = basePike?.wefts[0]?.kelvin ?? 418;
   const charges = useCharges();
-  const [blocked, unblocked] = useKilnState((s) => {
-    const [b, u] = partition(Object.entries(s.vats), ([desk, vat]) => vatIsBlocked(newKelvin, vat));
+  const [blocked] = useKilnState((s) => {
+    const [b, u] = partition(Object.entries(s.pikes), ([, pike]) => pikeIsBlocked(newKelvin, pike));
     return [b.map(([d]) => d), u.map(([d]) => d)] as const;
   });
 
