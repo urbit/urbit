@@ -1,10 +1,5 @@
 import { Poke, Scry } from '../lib';
-import { Vats, Vat, Pike } from './types';
-
-export const getVats: Scry = {
-  app: 'hood',
-  path: '/kiln/vats'
-};
+import { Pike } from './types';
 
 export const getPikes: Scry = {
   app: 'hood',
@@ -88,39 +83,6 @@ export function kilnResume(desk: string) {
 }
 
 export const scryLag: Scry = ({ app: 'hood', path: '/kiln/lag' });
-
-export function getBlockers(vats: Vats): string[] {
-  const blockers: string[] = [];
-  const base = vats?.base;
-  if(!base) {
-    return blockers;
-  }
-  const blockedOn = base.arak.rail?.next?.[0]?.weft?.kelvin;
-  if(!blockedOn) {
-    return blockers;
-  }
-
-  Object.entries(vats)
-    .filter(([desk]) => desk !== 'base')
-    .forEach(([desk, vat]) => {
-      // assuming only %zuse
-      const woofs = vat.arak.rail?.next || [];
-      const kelvins = woofs.map(n => n.weft.kelvin);
-      if(!(kelvins.includes(blockedOn))) {
-        blockers.push(desk);
-      }
-    });
-
-  return blockers;
-}
-
-export function getVatPublisher(vat: Vat): string | undefined {
-  if (vat.arak.rail) {
-    const { rail } = vat.arak;
-    return (rail?.publisher || rail?.ship || undefined);
-  }
-  return undefined;
-}
 
 export function getPikePublisher(pike: Pike) {
   return pike.sync?.ship;
