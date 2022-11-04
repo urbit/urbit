@@ -63,14 +63,11 @@ export function kilnRevive(
   };
 }
 
-export function kilnBump(force = false, except = [] as string[]) {
+export function kilnBump() {
   return {
     app: 'hood',
     mark: 'kiln-bump',
-    json: {
-      force,
-      except
-    }
+    json: {}
   };
 }
 
