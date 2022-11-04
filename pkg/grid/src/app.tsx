@@ -86,9 +86,10 @@ const AppRoutes = () => {
       fetchCharges();
       fetchAllies();
 
-      const { fetchVats, fetchLag } = useKilnState.getState();
+      const { fetchVats, fetchLag, fetchPikes } = useKilnState.getState();
       fetchVats();
       fetchLag();
+      fetchPikes();
 
       useContactState.getState().initialize(api);
       useHarkStore.getState().initialize(api);
