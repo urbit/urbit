@@ -6,6 +6,11 @@ export const getVats: Scry = {
   path: '/kiln/vats'
 };
 
+export const getPikes: Scry = {
+  app: 'hood',
+  path: '/kiln/pikes'
+};
+
 /**
  * Install a foreign desk
  */

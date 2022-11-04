@@ -161,3 +161,40 @@ export interface Vat {
 export interface Vats {
   [desk: string]: Vat;
 }
+/**
+ * TODO: crisp one-liner describing a Pike
+ */
+export interface Pike {
+  /**
+   * Hash of the desk, rendered as `@uv`
+   *
+   * @remarks
+   * Equivalent to
+   * ```hoon
+   * .^(@uv %cz /=desk=)
+   * ```
+   */
+  hash: string;
+  sync: {
+    /**
+     * Source desk for this Pike
+     */
+    desk: string;
+    /**
+     * Source ship for this Pike
+     */
+    ship: string;
+  } | null;
+  /**
+   *  {@link Weft}s associated with this Pike
+   */
+  wefts: Weft[];
+  /**
+   * how live is this pike?
+   */
+  zest: "live" | "dead" | "held";
+}
+
+export interface Pikes {
+  [desk: string]: Pike;
+}
