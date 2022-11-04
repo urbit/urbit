@@ -1023,10 +1023,11 @@ u3r_hext(u3_noun  a,
 **   (1 << a_y).
 **
 **   For example, (a_y == 3) returns the size in bytes.
+**   NB: (a_y) must be < 37.
 */
 c3_w
-u3r_met(c3_y    a_y,
-          u3_atom b)
+u3r_met(c3_y  a_y,
+        u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1061,19 +1062,23 @@ u3r_met(c3_y    a_y,
         */
         c3_w bif_w, col_w;
 
+        if ( gal_w > ((UINT32_MAX - 35) >> 5) ) {
+          return u3m_bail(c3__fail);
+        }
+
         col_w = c3_bits_word(daz_w);
         bif_w = col_w + (gal_w << 5);
 
         return (bif_w + ((1 << a_y) - 1)) >> a_y;
       }
-      case 3: {
-        return  (gal_w << 2)
-              + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
-      }
-      case 4: {
-        return  (gal_w << 1)
-              + ((daz_w >> 16) ? 2 : 1);
-      }
+
+      STATIC_ASSERT((UINT32_MAX > ((c3_d)u3a_maximum << 2)),
+                    "met overflow");
+
+      case 3: return (gal_w << 2) + ((c3_bits_word(daz_w) +  7) >> 3);
+
+      case 4: return (gal_w << 1) + ((c3_bits_word(daz_w) + 15) >> 4);
+
       default: {
         c3_y gow_y = (a_y - 5);
 
@@ -1676,9 +1681,7 @@ u3r_mug_words(const c3_w* key_w, c3_w len_w)
     c3_w gal_w = len_w - 1;
     c3_w daz_w = key_w[gal_w];
 
-    byt_w = (gal_w << 2)
-            + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
-
+    byt_w = (gal_w << 2) + ((c3_bits_word(daz_w) + 7) >> 3);
   }
 
   //  XX: assumes little-endian
