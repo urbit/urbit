@@ -1,25 +1,12 @@
-import {
-  getVats,
-  Vats,
-  scryLag,
-  getBlockers,
-  Vat,
-  kilnInstall,
-  kilnPause,
-  kilnResume,
-  getPikes,
-  Pikes,
-  Pike
-} from '@urbit/api';
+import { scryLag, kilnInstall, kilnPause, kilnResume, getPikes, Pikes, Pike } from '@urbit/api';
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback } from 'react';
 import api from './api';
 import { fakeRequest, useMockData } from './util';
-import { mockPikes, mockVats } from './mock-data';
+import { mockPikes } from './mock-data';
 
 interface KilnState {
-  vats: Vats;
   pikes: Pikes;
   loaded: boolean;
   lag: boolean;
@@ -31,7 +18,6 @@ interface KilnState {
   initializeKiln: () => Promise<void>;
 }
 const useKilnState = create<KilnState>((set, get) => ({
-  vats: useMockData ? mockVats : {},
   pikes: useMockData ? mockPikes : {},
   lag: !!useMockData,
   loaded: false,
@@ -85,15 +71,6 @@ const useKilnState = create<KilnState>((set, get) => ({
     await get().fetchPikes();
   }
 }));
-
-const selBlockers = (s: KilnState) => getBlockers(s.vats);
-export function useBlockers() {
-  return useKilnState(selBlockers);
-}
-
-export function useVat(desk: string): Vat | undefined {
-  return useKilnState(useCallback((s) => s.vats[desk], [desk]));
-}
 
 const selPikes = (s: KilnState) => s.pikes;
 export function usePikes(): Pikes {

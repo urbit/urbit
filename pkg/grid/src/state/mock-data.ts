@@ -1,6 +1,4 @@
 import {
-  Vat,
-  Vats,
   Allies,
   Charges,
   DocketHrefGlob,
@@ -341,41 +339,6 @@ export const mockContacts: Contacts = {
     color: '#130c06'
   }
 };
-
-export const mockVat = (desk: string, blockers?: boolean): Vat => ({
-  cass: {
-    da: '~2021.9.13..05.41.04..ae65',
-    ud: 1
-  },
-  desk,
-  arak: {
-    rein: {
-      sub: [],
-      add: []
-    },
-    rail:
-      desk === 'uniswap'
-        ? null
-        : {
-            aeon: 3,
-            desk,
-            publisher: '~zod',
-            next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
-            ship: '~zod',
-            paused: desk === 'groups'
-          }
-  },
-  hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
-});
-
-const badVats = ['inbox', 'system', 'terminal', 'base'];
-export const mockVats = _.reduce(
-  mockCharges,
-  (vats, charge, desk) => {
-    return { ...vats, [desk]: mockVat(desk, !badVats.includes(desk)) };
-  },
-  { base: mockVat('base', true) } as Vats
-);
 
 export const mockPikes: Pikes = {
   kids: {
