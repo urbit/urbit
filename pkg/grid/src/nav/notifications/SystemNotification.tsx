@@ -59,7 +59,7 @@ export const BaseBlockedNotification = () => {
   const handlePauseOTAs = useCallback(() => {}, []);
 
   const handleArchiveApps = useCallback(async () => {
-    api.poke(kilnBump(true));
+    api.poke(kilnBump());
     push('/leap/upgrading');
   }, []);
 
