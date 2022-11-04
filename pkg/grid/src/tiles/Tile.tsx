@@ -8,7 +8,7 @@ import { getAppHref } from '../state/util';
 import { useRecentsStore } from '../nav/search/Home';
 import { ChargeWithDesk } from '../state/docket';
 import { useTileColor } from './useTileColor';
-import { useVat } from '../state/kiln';
+import { usePike } from '../state/kiln';
 import { Bullet } from '../components/icons/Bullet';
 import { dragTypes } from './TileGrid';
 
@@ -21,7 +21,7 @@ type TileProps = {
 export const Tile: FunctionComponent<TileProps> = ({ charge, desk, disabled = false }) => {
   const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const { title, image, color, chad, href } = charge;
-  const vat = useVat(desk);
+  const pike = usePike(desk);
   const { lightText, tileColor, menuColor, suspendColor, suspendMenuColor } = useTileColor(color);
   const loading = !disabled && 'install' in chad;
   const suspended = disabled || 'suspend' in chad;
@@ -65,7 +65,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk, disabled = fa
             </>
           )}
         </div>
-        {vat?.arak.rail?.paused && !disabled && (
+        {pike?.zest === 'held' && !disabled && (
           <Bullet className="absolute z-10 top-5 left-5 sm:top-7 sm:left-7 w-4 h-4 text-orange-500 dark:text-black" />
         )}
         <TileMenu
