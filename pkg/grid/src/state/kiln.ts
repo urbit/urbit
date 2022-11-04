@@ -8,7 +8,8 @@ import {
   kilnPause,
   kilnResume,
   getPikes,
-  Pikes
+  Pikes,
+  Pike
 } from '@urbit/api';
 import create from 'zustand';
 import produce from 'immer';
@@ -109,6 +110,10 @@ export function useBlockers() {
 
 export function useVat(desk: string): Vat | undefined {
   return useKilnState(useCallback((s) => s.vats[desk], [desk]));
+}
+
+export function usePike(desk: string): Pike | undefined {
+  return useKilnState(useCallback((s) => s.pikes[desk], [desk]));
 }
 
 const selLag = (s: KilnState) => s.lag;

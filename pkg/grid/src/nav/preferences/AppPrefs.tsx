@@ -3,16 +3,16 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Setting } from '../../components/Setting';
 import { ShipName } from '../../components/ShipName';
 import { useCharge } from '../../state/docket';
-import useKilnState, { useVat } from '../../state/kiln';
+import useKilnState, { usePike, useVat } from '../../state/kiln';
 import { getAppName } from '../../state/util';
 
 export const AppPrefs = ({ match }: RouteComponentProps<{ desk: string }>) => {
   const { desk } = match.params;
   const charge = useCharge(desk);
-  const vat = useVat(desk);
-  const tracking = !!vat?.arak.rail;
-  const otasEnabled = !vat?.arak.rail?.paused;
-  const otaSource = vat?.arak.rail?.ship;
+  const pike = usePike(desk);
+  const tracking = !!pike?.sync;
+  const otasEnabled = pike?.zest === 'live';
+  const otaSource = pike?.sync?.ship;
   const toggleOTAs = useKilnState((s) => s.toggleOTAs);
 
   const toggleUpdates = useCallback((on: boolean) => toggleOTAs(desk, on), [desk, toggleOTAs]);
