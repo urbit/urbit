@@ -3,7 +3,8 @@
 ::
 =/  debug  |
 |%
-+*  option  [item]
+++  option
+  |$  [item]
   [term=cord detail=item]
 ::
 ::  Like +rose except also produces line number
