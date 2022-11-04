@@ -1865,13 +1865,13 @@ u3m_stop()
 /* u3m_boot(): start the u3 system. return next event, starting from 1.
 */
 c3_d
-u3m_boot(c3_c* dir_c)
+u3m_boot(c3_c* dir_c, size_t len_i)
 {
   c3_o nuu_o;
 
   /* Activate the loom.
   */
-  u3m_init(u3a_bytes);
+  u3m_init(len_i);
 
   /* Activate the storage system.
   */
@@ -1917,11 +1917,11 @@ u3m_boot(c3_c* dir_c)
 /* u3m_boot_lite(): start without checkpointing.
 */
 c3_d
-u3m_boot_lite(void)
+u3m_boot_lite(size_t len_i)
 {
   /* Activate the loom.
   */
-  u3m_init(u3a_bytes);
+  u3m_init(len_i);
 
   /* Activate tracing.
   */
