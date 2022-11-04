@@ -8,6 +8,7 @@ char *realpath(const char *path, char *resolved_path);
 int fdatasync(int fd);
 int utimes(const char *path, const struct timeval times[2]);
 long sysconf(int name);
+int getppid();
 
 int kill(pid_t pid, int signum);
 

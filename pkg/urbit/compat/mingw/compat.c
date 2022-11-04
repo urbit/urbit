@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <sys/utime.h>
 #include <windows.h>
+#include <tlhelp32.h>
 
 // set default CRT file mode to binary
 // note that mingw binmode.o does nothing
@@ -374,4 +375,36 @@ long sysconf(int name)
   }
   GetNativeSystemInfo(&si);
   return si.dwPageSize;
+}
+
+int getppid()
+{
+    HANDLE   h;
+    DWORD ppid = 0, pid = GetCurrentProcessId();
+    PROCESSENTRY32 pe32 = { 0 };
+    pe32.dwSize = sizeof(pe32);
+
+    h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+    if ( INVALID_HANDLE_VALUE == h ) {
+        errno = err_win_to_posix(GetLastError());
+        return -1;
+    }
+
+    if ( !Process32First(h, &pe32) ) {
+        CloseHandle(h);
+        errno = err_win_to_posix(GetLastError());
+        return -1;
+    }
+
+    do {
+        if ( pe32.th32ProcessID == pid ) {
+            ppid = pe32.th32ParentProcessID;
+            break;
+        }
+    }
+    while ( Process32Next(h, &pe32) );
+
+    CloseHandle(h);
+    return ppid;
 }
