@@ -1,5 +1,5 @@
 import { Poke, Scry } from '../lib';
-import { Vats, Vat } from './types';
+import { Vats, Vat, Pike } from './types';
 
 export const getVats: Scry = {
   app: 'hood',
@@ -120,4 +120,8 @@ export function getVatPublisher(vat: Vat): string | undefined {
     return (rail?.publisher || rail?.ship || undefined);
   }
   return undefined;
+}
+
+export function getPikePublisher(pike: Pike) {
+  return pike.sync?.ship;
 }

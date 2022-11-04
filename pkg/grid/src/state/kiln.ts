@@ -112,6 +112,11 @@ export function useVat(desk: string): Vat | undefined {
   return useKilnState(useCallback((s) => s.vats[desk], [desk]));
 }
 
+const selPikes = (s: KilnState) => s.pikes;
+export function usePikes(): Pikes {
+  return useKilnState(selPikes);
+}
+
 export function usePike(desk: string): Pike | undefined {
   return useKilnState(useCallback((s) => s.pikes[desk], [desk]));
 }
