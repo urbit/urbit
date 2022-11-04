@@ -1,4 +1,4 @@
-import { chadIsRunning, Treaty, Vat } from '@urbit/api';
+import { chadIsRunning, Pike, Treaty } from '@urbit/api';
 import clipboardCopy from 'clipboard-copy';
 import React, { FC, useCallback, useState } from 'react';
 import cn from 'classnames';
@@ -6,7 +6,7 @@ import { Button, PillButton } from './Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from './Dialog';
 import { DocketHeader } from './DocketHeader';
 import { Spinner } from './Spinner';
-import { VatMeta } from './VatMeta';
+import { PikeMeta } from './PikeMeta';
 import useDocketState, { ChargeWithDesk, useTreaty } from '../state/docket';
 import { getAppHref, getAppName } from '../state/util';
 import { addRecentApp } from '../nav/search/Home';
@@ -17,7 +17,7 @@ type InstallStatus = 'uninstalled' | 'installing' | 'installed';
 type App = ChargeWithDesk | Treaty;
 interface AppInfoProps {
   docket: App;
-  vat?: Vat;
+  pike?: Pike;
   className?: string;
 }
 
@@ -34,10 +34,9 @@ function getInstallStatus(docket: App): InstallStatus {
   return 'uninstalled';
 }
 
-function getRemoteDesk(docket: App, vat?: Vat) {
-  if (vat && vat.arak.rail) {
-    const { ship, desk } = vat.arak.rail;
-    return [ship, desk];
+function getRemoteDesk(docket: App, pike?: Pike) {
+  if (pike && pike.sync) {
+    return [pike.sync.ship, pike.sync.desk];
   }
   if ('chad' in docket) {
     return ['', docket.desk];
@@ -46,10 +45,10 @@ function getRemoteDesk(docket: App, vat?: Vat) {
   return [ship, desk];
 }
 
-export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
+export const AppInfo: FC<AppInfoProps> = ({ docket, pike, className }) => {
   const installStatus = getInstallStatus(docket);
-  const [ship, desk] = getRemoteDesk(docket, vat);
-  const publisher = vat?.arak?.rail?.publisher ?? ship;
+  const [ship, desk] = getRemoteDesk(docket, pike);
+  const publisher = pike?.sync?.ship ?? ship;
   const [copied, setCopied] = useState(false);
   const treaty = useTreaty(ship, desk);
 
@@ -136,10 +135,10 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
         </div>
       </DocketHeader>
       <div className="space-y-6">
-        {vat ? (
+        {pike ? (
           <>
             <hr className="-mx-5 sm:-mx-8 border-gray-50" />
-            <VatMeta vat={vat} />
+            <PikeMeta pike={pike} />
           </>
         ) : null}
         {!treaty ? null : (
