@@ -1147,6 +1147,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
     }
     else {
       u3_ce_patch* pat_u;
+      c3_w  nor_w, sou_w;
 
       /* Load any patch files; apply them to images.
       */
@@ -1158,7 +1159,10 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         _ce_patch_delete();
       }
 
-      if ( u3P.nor_u.pgs_w + u3P.sou_u.pgs_w >= u3P.pag_w ) {
+      nor_w = u3P.nor_u.pgs_w;
+      sou_w = u3P.sou_u.pgs_w;
+
+      if ( (nor_w + sou_w) >= u3P.pag_w ) {
         fprintf(stderr, "boot: snapshot too big for loom\r\n");
         exit(1);
       }
@@ -1171,26 +1175,29 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       */
       {
         if ( u3C.wag_w & u3o_no_demand ) {
-          _ce_loom_blit_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w);
+          _ce_loom_blit_north(u3P.nor_u.fid_i, nor_w);
         }
         else {
-          _ce_loom_mapf_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w, 0);
+          _ce_loom_mapf_north(u3P.nor_u.fid_i, nor_w, 0);
         }
 
-        _ce_loom_blit_south(u3P.sou_u.fid_i, u3P.sou_u.pgs_w);
+        _ce_loom_blit_south(u3P.sou_u.fid_i, sou_w);
 
         u3l_log("boot: protected loom\r\n");
       }
 
       /* If the images were empty, we are logically booting.
       */
-      if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
+      if ( !nor_w && !sou_w ) {
         u3l_log("live: logical boot\r\n");
         nuu_o = c3y;
       }
+      else  if ( u3C.wag_w & u3o_no_demand ) {
+        u3a_print_memory(stderr, "live: loaded", (nor_w + sou_w) << u3a_page);
+      }
       else {
-        u3a_print_memory(stderr, "live: loaded",
-                         (u3P.nor_u.pgs_w + u3P.sou_u.pgs_w) << u3a_page);
+        u3a_print_memory(stderr, "live: mapped", nor_w << u3a_page);
+        u3a_print_memory(stderr, "live: loaded", sou_w << u3a_page);
       }
     }
   }
