@@ -10,6 +10,7 @@
     :~  [%set-endpoint so:dejs]
         [%set-access-key-id so:dejs]
         [%set-secret-access-key so:dejs]
+        [%set-region so:dejs]
         [%add-bucket so:dejs]
         [%remove-bucket so:dejs]
         [%set-current-bucket so:dejs]
@@ -25,6 +26,7 @@
   :~  ?-  -.upd
           %set-current-bucket  [%'setCurrentBucket' s+bucket.upd]
           %add-bucket          [%'addBucket' s+bucket.upd]
+          %set-region          [%'setRegion' s+region.upd]
           %remove-bucket       [%'removeBucket' s+bucket.upd]
           %set-endpoint        [%'setEndpoint' s+endpoint.upd]
           %set-access-key-id   [%'setAccessKeyId' s+access-key-id.upd]
@@ -44,6 +46,7 @@
         %-  pairs:enjs
         :~  [%buckets a+(turn ~(tap in buckets.configuration.upd) |=(a=@t s+a))]
             [%'currentBucket' s+current-bucket.configuration.upd]
+            [%'region' s+region.configuration.upd]
         ==
       ==
   ==
