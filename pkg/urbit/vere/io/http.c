@@ -1689,6 +1689,8 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
   u3_http* htp_u = htd_u->htp_u;
   u3_pier* pir_u = htd_u->car_u.pir_u;
 
+  size_t off_i = 0;
+
   c3_c temp[32];
   while ( 0 != htp_u ) {
     if ( 0 < htp_u->por_s ) {
@@ -1698,7 +1700,9 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
                             htp_u->por_s,
                             (c3y == htp_u->sec) ? "secure" : "insecure",
                             (c3y == htp_u->lop) ? "loopback" : "public");
-      c3_assert( c3_pwrite(por_i, temp, len_i, 0) == len_i );
+      c3_assert( 0 < len_i);
+      c3_assert( c3_pwrite(por_i, temp, len_i, off_i) == len_i );
+      off_i += len_i;
     }
 
     htp_u = htp_u->nex_u;
