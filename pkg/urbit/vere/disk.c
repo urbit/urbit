@@ -574,6 +574,14 @@ _disk_lock(c3_c* pax_c)
   return paf_c;
 }
 
+/* _disk_lock_pid(): PID for lockfile
+*/
+static c3_i
+_disk_lock_pid(void)
+{
+  return ( u3o_mars == u3C.rol_e ) ? getppid() : getpid();
+}
+
 /* u3_disk_acquire(): acquire a lockfile, killing anything that holds it.
 */
 static void
@@ -586,10 +594,10 @@ u3_disk_acquire(c3_c* pax_c)
   if ( NULL != (loq_u = c3_fopen(paf_c, "r")) ) {
     if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
       u3l_log("lockfile %s is corrupt!\n", paf_c);
-      kill(getpid(), SIGTERM);
+      kill(_disk_lock_pid(), SIGTERM);
       sleep(1); c3_assert(0);
     }
-    else if (pid_w != getpid()) {
+    else if (pid_w != _disk_lock_pid()) {
       c3_w i_w;
 
       if ( -1 != kill(pid_w, SIGTERM) ) {
@@ -626,7 +634,7 @@ u3_disk_acquire(c3_c* pax_c)
     c3_assert(0);
   }
 
-  fprintf(loq_u, "%u\n", getpid());
+  fprintf(loq_u, "%u\n", _disk_lock_pid());
 
   {
     c3_i fid_i = fileno(loq_u);
