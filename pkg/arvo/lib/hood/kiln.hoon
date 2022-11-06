@@ -1200,15 +1200,6 @@
     abet:(spam leaf+mez ~)
   abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
 ::
-++  poke-infos
-  |=  [mez=tape mor=(list (unit toro))]
-  =<  abet
-  %-  emil:(spam leaf+mez ~)
-  %+  murn  mor
-  |=  tor=(unit toro)
-  ?~  tor  ~
-  `[%pass /kiln %arvo %c [%info u.tor]]
-::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
   abet:abet:(install:vats +<)
@@ -1266,7 +1257,10 @@
 ++  poke-rm
   |=  a=path
   =|  c=(list (unit toro))
-  %+  poke-infos  "removed: {<a>}"
+  %+  poke-info  "removed: {<a>}"
+  =-  %+  roll  -
+  |=  [a=(unit toro) b=(unit toro)]
+  (clap a b furl)
   |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
   ?^  fil.b  (snoc c `(fray a))
