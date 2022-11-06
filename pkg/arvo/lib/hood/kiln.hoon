@@ -1200,6 +1200,15 @@
     abet:(spam leaf+mez ~)
   abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
 ::
+++  poke-infos
+  |=  [mez=tape mor=(list (unit toro))]
+  =<  abet
+  %-  emil:(spam leaf+mez ~)
+  %+  murn  mor
+  |=  tor=(unit toro)
+  ?~  tor  ~
+  `[%pass /kiln %arvo %c [%info u.tor]]
+::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
   abet:abet:(install:vats +<)
@@ -1256,11 +1265,15 @@
 ::
 ++  poke-rm
   |=  a=path
+  =|  c=(list (unit toro))
+  %+  poke-infos  "removed: {<a>}"
+  |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?~  fil.b
-    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
-    abet:(spam -)
-  (poke-info "removed" `(fray a))
+  ?^  fil.b  (snoc c `(fray a))
+  %-  zing
+  %+  turn  ~(tap by dir.b)
+  |=  [kid=@ta ~]
+  ^$(a (weld a /[kid]))
 ::
 ++  poke-schedule
   |=  [where=path tym=@da eve=@t]
