@@ -604,7 +604,7 @@ u3_disk_acquire(c3_c* pax_c)
 
       if ( -1 == ret && errno == EPERM ) {
         u3l_log("disk: permission denied when trying to kill process %d!\n", pid_w);
-        kill(getpid(), SIGTERM);
+        kill(_disk_lock_pid(), SIGTERM);
         sleep(1); c3_assert(0);
       }
 
