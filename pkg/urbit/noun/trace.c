@@ -278,11 +278,19 @@ void
 u3t_trace_open(c3_c* dir_c)
 {
   c3_c fil_c[2048];
+
+  if ( !dir_c ) {
+    return;
+  }
+
   snprintf(fil_c, 2048, "%s/.urb/put/trace", dir_c);
 
   struct stat st;
-  if ( -1 == stat(fil_c, &st) ) {
-    c3_mkdir(fil_c, 0700);
+  if (  (-1 == stat(fil_c, &st))
+     && (-1 == c3_mkdir(fil_c, 0700)) )
+  {
+    fprintf(stderr, "mkdir: %s failed: %s\r\n", fil_c, strerror(errno));
+    return;
   }
 
   c3_c lif_c[2056];
@@ -290,6 +298,11 @@ u3t_trace_open(c3_c* dir_c)
 
   u3_Host.tra_u.fil_u = c3_fopen(lif_c, "w");
   u3_Host.tra_u.nid_w = (int)getpid();
+
+  if ( !u3_Host.tra_u.fil_u) {
+    fprintf(stderr, "trace open: %s\r\n", strerror(errno));
+    return;
+  }
 
   fprintf(u3_Host.tra_u.fil_u, "[ ");
 

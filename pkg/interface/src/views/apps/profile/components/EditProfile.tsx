@@ -90,33 +90,33 @@ export function EditProfile(props: any): ReactElement {
 
   const onSubmit = async (values: any, actions: any) => {
     try {
-      Object.keys(values).forEach((key) => {
+      for (const key in values) {
         const newValue = key !== 'color' ? values[key] : uxToHex(values[key]);
-        if (newValue !== contact[key]) {
-          if (key === 'isPublic') {
-            airlock.poke(setPublic(newValue));
-            return;
-          } else if (key === 'groups') {
-            const toRemove: string[] = _.difference(
-              contact?.groups || [],
-              newValue
-            );
-            const toAdd: string[] = _.difference(
-              newValue,
-              contact?.groups || []
-            );
-            toRemove.forEach(e =>
-                airlock.poke(editContact(ship, { 'remove-group': resourceFromPath(e) }))
-            );
-              toAdd.forEach(e =>
-                airlock.poke(editContact(ship, { 'add-group': resourceFromPath(e) }))
-            );
-          } else if (key !== 'last-updated' && key !== 'isPublic') {
-            airlock.poke(editContact(ship, { [key]: newValue }));
-            return;
+        if (newValue === contact[key] || key === 'last-updated') {
+          continue;
+        } else if (key === 'isPublic') {
+          await airlock.poke(setPublic(newValue));
+        } else if (key === 'groups') {
+          const toRemove: string[] = _.difference(
+            contact?.groups || [],
+            newValue
+          );
+          const toAdd: string[] = _.difference(
+            newValue,
+            contact?.groups || []
+          );
+          for (const i in toRemove) {
+            const group = resourceFromPath(toRemove[i]);
+            await airlock.poke(editContact(ship, { 'remove-group': group }));
           }
+          for (const i in toAdd) {
+            const group = resourceFromPath(toAdd[i]);
+            await airlock.poke(editContact(ship, { 'add-group': group }));
+          }
+        } else {
+          await airlock.poke(editContact(ship, { [key]: newValue }));
         }
-      });
+      }
       history.push(`/~profile/${ship}`);
     } catch (e) {
       console.error(e);

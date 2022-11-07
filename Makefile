@@ -1,4 +1,4 @@
-.PHONY: build build-all install cross release test pills ropsten-pills clean
+.PHONY: build build-all clean cross doc install pills release ropsten-pills test
 
 build:
 	nix-build -A urbit --no-out-link
@@ -26,6 +26,9 @@ interface:
 clean:
 	rm -rf ./out ./work
 	rm -f result result-*
+
+doc:
+	doxygen pkg/urbit/Doxyfile
 
 fmt:
 	sh/fmt

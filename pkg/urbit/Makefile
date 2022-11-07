@@ -1,6 +1,8 @@
 include config.mk
-include $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
+compat_mks := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
+include $(compat_mks)
 
+c 	 = $(wildcard c/*.c)
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
 ur   = $(wildcard ur/*.c)
@@ -12,7 +14,7 @@ bench  = $(wildcard bench/*.c)
 
 compat := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.c))
 
-common  = $(jets) $(noun) $(ur) $(vere) $(compat)
+common  = $(c) $(jets) $(noun) $(ur) $(vere) $(compat)
 headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
@@ -32,7 +34,7 @@ CFLAGS := $(CFLAGS)
 
 ################################################################################
 
-.PHONY: all test clean mrproper
+.PHONY: all bench test clean mrproper
 
 ################################################################################
 
@@ -53,7 +55,7 @@ clean:
 	rm -f ./tags $(all_objs) $(all_exes)
 
 mrproper: clean
-	rm -f config.mk include/config.h
+	rm -f config.mk include/config.h compile_commands.json
 
 ################################################################################
 
@@ -80,3 +82,15 @@ build/urbit: $(common_objs) $(daemon_objs) $(worker_objs)
 
 tags: $(all_srcs) $(headers)
 	ctags $^
+
+compile_commands.json: Makefile config.mk $(compat_mks)
+	@echo "[" > $@ && sep= && \
+	for src in $(all_srcs); do \
+		echo "$$sep{" >> $@; \
+		printf '"directory": "%s",\n' $$(pwd) >> $@; \
+		printf '"command": "%s",\n' "$(CC) -I./include $(CFLAGS) $$src $(CCEXTRA) -c" >> $@; \
+		printf '"file": "%s",\n' $$src >> $@; \
+		echo "}" >> $@; \
+		sep=','; \
+	done && \
+	echo "]" >> $@

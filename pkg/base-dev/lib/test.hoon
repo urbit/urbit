@@ -38,7 +38,37 @@
   =/  b  (mule a)
   ?-  -.b
     %|  ~
-    %&  [leaf+"expected failure - succeeded" ~]
+    %&  ['expected failure - succeeded' ~]
+  ==
+::  +expect-runs: kicks a trap, expecting success; returns trace on failure
+::
+++  expect-success
+  |=  a=(trap)
+  ^-  tang
+  =/  b  (mule a)
+  ?-  -.b
+    %&  ~
+    %|  ['expected success - failed' p.b]
+  ==
+::  $test-chain: a sequence of tests to be run
+::
++$  test-chain
+  $_
+  |?
+  ?:  =(0 0)
+    [%& p=*tang]
+  [%| p=[tang=*tang next=^?(..$)]]
+::  +run-chain: run a sequence of tests, stopping at first failure
+::
+++  run-chain
+  |=  seq=test-chain
+  ^-  tang
+  =/  res  $:seq
+  ?-  -.res
+    %&  p.res
+    %|  ?.  =(~ tang.p.res)
+          tang.p.res
+        $(seq next.p.res)
   ==
 ::  +category: prepends a name to an error result; passes successes unchanged
 ::

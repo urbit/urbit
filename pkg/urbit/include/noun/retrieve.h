@@ -304,6 +304,7 @@
       **   (1 << a_y).
       **
       **   For example, (a_y == 3) returns the size in bytes.
+      **   NB: (a_y) must be < 37.
       */
         c3_w
         u3r_met(c3_y    a_y,

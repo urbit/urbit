@@ -126,6 +126,11 @@
             ?@  key.p.kyz  key.p.kyz
             ?:(?=(?(%bac %del %ret) -.key.p.kyz) `@`-.key.p.kyz ~-)
           ?:(?=(%met mod.p.kyz) [%met c] [%ctl c])
+        ::
+            %seat
+          %^  pass  /seat  %g
+          :+  %deal   [our our]
+          [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
         ==
       ::
       ++  crud

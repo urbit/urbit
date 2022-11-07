@@ -56,13 +56,13 @@ export default [
     ],
     output: [
       {
-        dir: 'dist/esm',
+        file: 'dist/esm/index.js',
         format: 'esm',
         exports: 'named',
         sourcemap: true,
       },
       {
-        dir: 'dist/cjs',
+        file: 'dist/cjs/index.cjs',
         format: 'cjs',
         exports: 'named',
         sourcemap: true,

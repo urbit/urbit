@@ -13,8 +13,6 @@ void*
 u3a_pop(const u3a_pile* pil_u);
 void*
 u3a_push(const u3a_pile* pil_u);
-void
-u3a_pile_sane(const u3a_pile* pil_u);
 c3_o
 u3a_pile_done(const u3a_pile* pil_u);
 
@@ -694,18 +692,6 @@ u3a_malloc(size_t len_i)
   return out_w;
 }
 
-/* u3a_malloc_ssl(): openssl-shaped malloc
-*/
-void*
-u3a_malloc_ssl(size_t len_i
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-               , const char* file, int line
-#endif
-               )
-{
-  return u3a_malloc(len_i);
-}
-
 /* u3a_cellblock(): allocate a block of cells on the hat.
 */
 static c3_o
@@ -715,12 +701,13 @@ u3a_cellblock(c3_w num_w)
   c3_w          i_w;
 
   if ( c3y == u3a_is_north(u3R) ) {
-    if ( u3R->cap_p <= (u3R->hat_p + (num_w * u3a_minimum)) ) {
+    if ( u3R->cap_p <= (u3R->hat_p + (num_w * u3a_minimum) + (1 << u3a_page)) ) {
       return c3n;
     }
     else {
-      u3_post hat_p = u3R->hat_p;
       u3_post cel_p = u3R->all.cel_p;
+      u3_post hat_p = u3R->hat_p;
+      u3R->hat_p   += (num_w * u3a_minimum);
 
       for ( i_w = 0; i_w < num_w; i_w++) {
         u3_post  all_p = hat_p;
@@ -744,17 +731,18 @@ u3a_cellblock(c3_w num_w)
         u3to(u3a_fbox, fre_p)->nex_p = cel_p;
         cel_p = fre_p;
       }
-      u3R->hat_p = hat_p;
+
       u3R->all.cel_p = cel_p;
     }
   }
   else {
-    if ( (u3R->cap_p + (num_w * u3a_minimum)) >= u3R->hat_p ) {
+    if ( (u3R->cap_p + (num_w * u3a_minimum) + (1 << u3a_page)) >= u3R->hat_p ) {
       return c3n;
     }
     else {
-      u3_post hat_p = u3R->hat_p;
       u3_post cel_p = u3R->all.cel_p;
+      u3_post hat_p = u3R->hat_p;
+      u3R->hat_p   -= (num_w * u3a_minimum);
 
       for ( i_w = 0; i_w < num_w; i_w++ ) {
         u3_post  all_p = (hat_p -= u3a_minimum);
@@ -776,7 +764,7 @@ u3a_cellblock(c3_w num_w)
         u3to(u3a_fbox, fre_p)->nex_p = cel_p;
         cel_p = fre_p;
       }
-      u3R->hat_p = hat_p;
+
       u3R->all.cel_p = cel_p;
     }
   }
@@ -885,26 +873,6 @@ u3a_realloc(void* lag_v, size_t len_i)
   return u3a_wealloc(lag_v, (len_w + 3) >> 2);
 }
 
-/* u3a_realloc2(): gmp-shaped realloc.
-*/
-void*
-u3a_realloc2(void* lag_v, size_t old_i, size_t new_i)
-{
-  return u3a_realloc(lag_v, new_i);
-}
-
-/* u3a_realloc_ssl(): openssl-shaped realloc.
-*/
-void*
-u3a_realloc_ssl(void* lag_v, size_t len_i
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-                , const char* file, int line
-#endif
-                )
-{
-  return u3a_realloc(lag_v, len_i);
-}
-
 /* u3a_free(): free for aligned malloc.
 */
 void
@@ -919,26 +887,6 @@ u3a_free(void* tox_v)
 
   // u3l_log("free %p %p\r\n", org_w, tox_w);
   u3a_wfree(org_w);
-}
-
-/* u3a_free2(): gmp-shaped free.
-*/
-void
-u3a_free2(void* tox_v, size_t siz_i)
-{
-  return u3a_free(tox_v);
-}
-
-/* u3a_free_ssl(): openssl-shaped free.
-*/
-void
-u3a_free_ssl(void* tox_v
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-             , const char* file, int line
-#endif
-             )
-{
-  return u3a_free(tox_v);
 }
 
 /* _me_wash_north(): clean up mug slots after copy.
@@ -1174,7 +1122,6 @@ _ca_take_next_north(u3a_pile* pil_u, u3_noun veb)
       else {
         u3a_cell* old_u = (u3a_cell*)veb_u;
         _ca_take* fam_u = u3a_push(pil_u);
-        u3a_pile_sane(pil_u);
 
         fam_u->hed = u3_none;
         fam_u->old = veb;
@@ -1230,7 +1177,6 @@ _ca_take_next_south(u3a_pile* pil_u, u3_noun veb)
       else {
         u3a_cell* old_u = (u3a_cell*)veb_u;
         _ca_take* fam_u = u3a_push(pil_u);
-        u3a_pile_sane(pil_u);
 
         fam_u->hed = u3_none;
         fam_u->old = veb;
@@ -1671,7 +1617,7 @@ u3a_mark_ptr(void* ptr_v)
     if ( 0 == box_u->eus_w ) {
       siz_w = box_u->siz_w;
     }
-    else if ( 0xffffffff == box_u->eus_w ) {      // see _raft_prof()
+    else if ( 0xffffffff == box_u->eus_w ) {      // see u3a_prof()
       siz_w = 0xffffffff;
       box_u->eus_w = 0;
     }
@@ -1689,7 +1635,7 @@ u3a_mark_ptr(void* ptr_v)
     else {
       c3_assert(use_ws != 0);
 
-      if ( 0x80000000 == (c3_w)use_ws ) {    // see _raft_prof()
+      if ( 0x80000000 == (c3_w)use_ws ) {         // see u3a_prof()
         use_ws = -1;
         siz_w = 0xffffffff;
       }
@@ -1960,7 +1906,7 @@ u3a_print_memory(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
   if ( byt_w ) {
     if ( gib_w ) {
       fprintf(fil_u, "%s: GB/%d.%03d.%03d.%03d\r\n",
-          cap_c, gib_w, mib_w, kib_w, bib_w);
+              cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
       fprintf(fil_u, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
@@ -1983,6 +1929,122 @@ u3a_maid(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
     u3a_print_memory(fil_u, cap_c, wor_w);
   }
   return wor_w;
+}
+
+/* _ca_print_memory(): un-captioned u3a_print_memory().
+*/
+static void
+_ca_print_memory(FILE* fil_u, c3_w wor_w)
+{
+  c3_w byt_w = (wor_w * 4);
+  c3_w gib_w = (byt_w / 1000000000);
+  c3_w mib_w = (byt_w % 1000000000) / 1000000;
+  c3_w kib_w = (byt_w % 1000000) / 1000;
+  c3_w bib_w = (byt_w % 1000);
+
+  if ( gib_w ) {
+    fprintf(fil_u, "GB/%d.%03d.%03d.%03d\r\n",
+            gib_w, mib_w, kib_w, bib_w);
+  }
+  else if ( mib_w ) {
+    fprintf(fil_u, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w);
+  }
+  else if ( kib_w ) {
+    fprintf(fil_u, "KB/%d.%03d\r\n", kib_w, bib_w);
+  }
+  else {
+    fprintf(fil_u, "B/%d\r\n", bib_w);
+  }
+}
+
+/* u3a_prof(): mark/measure/print memory profile. RETAIN.
+*/
+c3_w
+u3a_prof(FILE* fil_u, c3_w den_w, u3_noun mas)
+{
+  c3_w tot_w = 0;
+  u3_noun h_mas, t_mas;
+
+  if ( c3n == u3r_cell(mas, &h_mas, &t_mas) ) {
+    fprintf(fil_u, "%.*smistyped mass\r\n", den_w, "");
+    return tot_w;
+  }
+  else if ( _(u3du(h_mas)) ) {
+    fprintf(fil_u, "%.*smistyped mass head\r\n", den_w, "");
+    {
+      c3_c* lab_c = u3m_pretty(h_mas);
+      fprintf(fil_u, "h_mas: %s", lab_c);
+      c3_free(lab_c);
+    }
+    return tot_w;
+  }
+  else {
+    {
+      c3_c* lab_c = u3m_pretty(h_mas);
+      fprintf(fil_u, "%*s%s: ", den_w, "", lab_c);
+      c3_free(lab_c);
+    }
+
+    u3_noun it_mas, tt_mas;
+
+    if ( c3n == u3r_cell(t_mas, &it_mas, &tt_mas) ) {
+      fprintf(fil_u, "%*smistyped mass tail\r\n", den_w, "");
+      return tot_w;
+    }
+    else if ( c3y == it_mas ) {
+      tot_w += u3a_mark_noun(tt_mas);
+      _ca_print_memory(fil_u, tot_w);
+
+#if 1
+      /* The basic issue here is that tt_mas is included in .sac
+       * (the whole profile), so they can't both be roots in the
+       * normal sense. When we mark .sac later on, we want tt_mas
+       * to appear unmarked, but its children should be already
+       * marked.
+       *
+       * see u3a_mark_ptr().
+      */
+      if ( _(u3a_is_dog(tt_mas)) ) {
+        u3a_box* box_u = u3a_botox(u3a_to_ptr(tt_mas));
+#ifdef U3_MEMORY_DEBUG
+        if ( 1 == box_u->eus_w ) {
+          box_u->eus_w = 0xffffffff;
+        }
+        else {
+          box_u->eus_w -= 1;
+        }
+#else
+        if ( -1 == (c3_w)box_u->use_w ) {
+          box_u->use_w = 0x80000000;
+        }
+        else {
+          box_u->use_w += 1;
+        }
+#endif
+      }
+#endif
+
+      return tot_w;
+    }
+    else if ( c3n == it_mas ) {
+      fprintf(fil_u, "\r\n");
+
+      while ( _(u3du(tt_mas)) ) {
+        tot_w += u3a_prof(fil_u, den_w+2, u3h(tt_mas));
+        tt_mas = u3t(tt_mas);
+      }
+
+      fprintf(fil_u, "%*s--", den_w, "");
+      _ca_print_memory(fil_u, tot_w);
+
+      return tot_w;
+
+    }
+    else {
+      fprintf(fil_u, "%*smistyped (strange) mass tail\r\n", den_w, "");
+      return tot_w;
+    }
+  }
 }
 
 /* u3a_mark_road(): mark ad-hoc persistent road structures.
@@ -2653,50 +2715,6 @@ u3a_walk_fore(u3_noun    a,
     //
     else {
       *top = u3t(a);
-      top  = u3a_push(&pil_u);
-      u3a_pile_sane(&pil_u);
-      *top = u3h(a);
-    }
-
-    a = *top;
-  }
-}
-
-/* u3a_walk_fore_unsafe(): u3a_walk_fore(), without overflow checks
-*/
-void
-u3a_walk_fore_unsafe(u3_noun    a,
-                     void*      ptr_v,
-                     void     (*pat_f)(u3_atom, void*),
-                     c3_o     (*cel_f)(u3_noun, void*))
-{
-  u3_noun*   top;
-  u3a_pile pil_u;
-
-  //  initialize stack control; push argument
-  //
-  u3a_pile_prep(&pil_u, sizeof(u3_noun));
-  top  = u3a_push(&pil_u);
-  *top = a;
-
-  while ( c3n == u3a_pile_done(&pil_u) ) {
-    //  visit an atom, then pop the stack
-    //
-    if ( c3y == u3a_is_atom(a) ) {
-      pat_f(a, ptr_v);
-      top = u3a_pop(&pil_u);
-    }
-    //  vist a cell, if c3n, pop the stack
-    //
-    else if ( c3n == cel_f(a, ptr_v) ) {
-      top = u3a_pop(&pil_u);
-    }
-    //  otherwise, push the tail and continue into the head
-    //
-    else {
-      *top = u3t(a);
-      //  NB: overflow check elided here
-      //
       top  = u3a_push(&pil_u);
       *top = u3h(a);
     }

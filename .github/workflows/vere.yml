@@ -232,9 +232,7 @@ jobs:
   after:
     runs-on: ubuntu-latest
     needs: [urbit, mingw]
-    # XX disabled due to missing storage.objects.delete access
-    if: false
-    # if: inputs.upload
+    if: inputs.upload
     steps:
       - uses: google-github-actions/setup-gcloud@v0.2.0
         with:
