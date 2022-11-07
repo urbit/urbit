@@ -167,8 +167,8 @@ _main_init(void)
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  u3_Host.ops_u.lut_y = u3a_bits + 2;
-  u3_Host.ops_u.lom_y = u3a_bits + 2;
+  u3_Host.ops_u.lut_y = u3a_bits + 1;
+  u3_Host.ops_u.lom_y = u3a_bits + 1;
 }
 
 /* _main_pier_run(): get pier from binary path (argv[0]), if appropriate
