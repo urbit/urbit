@@ -2,30 +2,16 @@
 /-  *group
 |%
 +$  flag  (pair ship term)
-++  chat
+++  graph
   |%
   +$  import
     [writers=(set ship) =association:met =update-log:gra =graph:gra]
   +$  imports  (map flag import)
   --
 ::
-++  diary
-  |%
-  +$  import
-    [writers=(set ship) =association:met =update-log:gra =graph:gra]
-  +$  imports  (map flag import)
-  --
-::
-++  heap
-  |%
-  +$  import
-    [writers=(set ship) =association:met =update-log:gra =graph:gra]
-  +$  imports  (map flag import)
-  --
-
 ++  groups
   |%
-  +$  import   [=association:met =group]
+  +$  import   [=association:met chans=(map flag association:met) roles=(set flag) =group]
   +$  imports  (map flag import)
   --
 --
