@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %140  =>
+=>  %139  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.140  ~  ~                                        ::
+~%  %k.139  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -13249,30 +13249,6 @@
         ;~  pfix  (jest '+$')
           ;~  plug
             ;~(pfix gap sym)
-            ;~(pfix gap loan)
-          ==
-        ==
-      ::
-        %+  cook
-          |=  [b=term c=(list term) e=spec]
-          ^-  [term hoon]
-          :-  b
-          :+  %brtr
-            :-  %bccl
-            =-  ?>(?=(^ -) -)
-            ::  for each .term in .c, produce $=(term $~(* $-(* *)))
-            ::  ie {term}=mold
-            ::
-            %+  turn  c
-            |=  =term
-            ^-  spec
-            =/  tar  [%base %noun]
-            [%bcts term [%bcsg tar [%bchp tar tar]]]
-          [%ktcl [%made [b c] e]]
-        ;~  pfix  (jest '+*')
-          ;~  plug
-            ;~(pfix gap sym)
-            ;~(pfix gap (ifix [sel ser] (most ace sym)))
             ;~(pfix gap loan)
           ==
         ==
