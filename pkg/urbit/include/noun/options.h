@@ -3,13 +3,21 @@
 
   /** Data structures.
   **/
+    /* u3o_role: process role.
+    */
+      typedef enum _u3o_role {
+        u3o_sole = 0,                         //  default (util)
+        u3o_mars = 1,                         //  child
+        u3o_urth = 2                          //  parent
+      } u3o_role;
+
     /* u3o_config: process / system configuration.
     */
       typedef struct _u3o_config {
-        u3_noun who;                          //  single identity
-        c3_c*   dir_c;                        //  execution directory (pier)
-        c3_w    wag_w;                        //  flags (both ways)
-        size_t  wor_i;                        //  loom word-length (<= u3a_words)
+        u3o_role rol_e;                       //  process role
+        c3_c*    dir_c;                       //  execution directory (pier)
+        c3_w     wag_w;                       //  flags (both ways)
+        size_t   wor_i;                       //  loom words (<= u3a_words)
         void (*stderr_log_f)(c3_c*);          //  errors from c code
         void (*slog_f)(u3_noun);              //  function pointer for slog
         void (*sign_hold_f)(void);            //  suspend system signal regime

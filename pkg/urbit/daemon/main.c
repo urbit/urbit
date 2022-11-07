@@ -1576,6 +1576,8 @@ _cw_boot(c3_i argc, c3_c* argv[])
     exit(1);
   }
 
+  u3C.rol_e = u3o_mars;
+
   uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
   c3_c*      dir_c = argv[0];
   c3_c*      key_c = argv[1]; // XX use passkey
@@ -1645,6 +1647,8 @@ _cw_work(c3_i argc, c3_c* argv[])
     fprintf(stderr, "work: missing args\n");
     exit(1);
   }
+
+  u3C.rol_e = u3o_mars;
 
   c3_d       eve_d = 0;
   uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
@@ -1893,6 +1897,8 @@ main(c3_i   argc,
     //
     case 2: break;
   }
+
+  u3C.rol_e = u3o_urth;
 
   _main_self_path();
 
