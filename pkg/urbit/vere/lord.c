@@ -786,7 +786,7 @@ _lord_on_serf_err_cb(uv_stream_t* pyp_u,
     //  serf used to write to 2 directly
     //  this can't be any worse than that
     //
-    u3_write_fd(2, buf_u->base, siz_i);
+    c3_assert(c3_write(STDERR_FILENO, buf_u->base, siz_i) == siz_i);
   } else {
     uv_read_stop(pyp_u);
 
