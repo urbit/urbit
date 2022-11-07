@@ -159,6 +159,15 @@ _main_init(void)
   //
   u3_Host.ops_u.has = c3y;
 
+  //  demand paging (ie, file-backed mapping for the loom)
+  //  is not yet supported on windows
+  //
+#ifdef U3_OS_mingw
+  u3_Host.ops_u.map = c3n;
+#else
+  u3_Host.ops_u.map = c3y;
+#endif
+
   u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.lit = c3n;
   u3_Host.ops_u.nuu = c3n;
@@ -256,6 +265,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "prop-name",           required_argument, NULL, 3 },
     { "auto-meld",           no_argument,       NULL, 4 },
     { "urth-loom",           required_argument, NULL, 5 },
+    { "no-demand",           no_argument,       NULL, 6 },
     //
     { NULL, 0, NULL, 0 },
   };
@@ -282,6 +292,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         }
 
         u3_Host.ops_u.lut_y = lut_w;
+        break;
+      }
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
         break;
       }
       case 'X': {
@@ -1967,6 +1981,12 @@ main(c3_i   argc,
       */
       if ( _(u3_Host.ops_u.gab) ) {
         u3C.wag_w |= u3o_debug_ram;
+      }
+
+      /*  Set no-demand flag.
+      */
+      if ( !_(u3_Host.ops_u.map) ) {
+        u3C.wag_w |= u3o_no_demand;
       }
 
       /*  Set auto-meld flag.
