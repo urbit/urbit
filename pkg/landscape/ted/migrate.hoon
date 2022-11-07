@@ -62,8 +62,7 @@
     %+  murn  ~(tap by associations)
     |=  [res=md-resource:met ass=association:met]
     ^-  (unit [flag:i association:met])
-    ?.  =(group.ass flag)
-      ~
+    ?.  =(group.ass flag)  ~
     `[resource.res ass]
   =/  roles=(set flag:i)
     %-  ~(gas in *(set flag:i))

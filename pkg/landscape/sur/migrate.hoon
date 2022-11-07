@@ -11,7 +11,7 @@
 ::
 ++  groups
   |%
-  +$  import   [=association:met chans=(map flag association:met) roles=(set flag) =group]
+  +$  import   [=association:met chans=(map flag =association:met) roles=(set flag) =group]
   +$  imports  (map flag import)
   --
 --
