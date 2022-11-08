@@ -45,7 +45,7 @@ export const BaseBlockedNotification = () => {
   const basePike = usePike('base');
   const { push } = useHistory();
   // TODO: assert weft.name === 'zuse'??
-  const newKelvin = basePike?.wefts[0]?.kelvin ?? 418;
+  const newKelvin = basePike?.wefts[0]?.kelvin ?? 417;
   const charges = useCharges();
   const [blocked] = useKilnState((s) => {
     const [b, u] = partition(Object.entries(s.pikes), ([, pike]) => pikeIsBlocked(newKelvin, pike));

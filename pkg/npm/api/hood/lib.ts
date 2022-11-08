@@ -96,11 +96,11 @@ export function kilnRevive(
   };
 }
 
-export function kilnBump() {
+export function kilnBump(): Poke<any> {
   return {
     app: 'hood',
     mark: 'kiln-bump',
-    json: {}
+    json: null,
   };
 }
 
