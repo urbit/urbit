@@ -26,8 +26,6 @@
 // Constants
 //==============================================================================
 
-const c3_w elo_ver_w = 1;
-
 /// Minimum number of events per epoch.
 static const size_t epo_len_i = 50000;
 
