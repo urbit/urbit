@@ -1,4 +1,4 @@
-import { scryLag, kilnInstall, kilnPause, kilnResume, getPikes, Pikes, Pike, kilnUnsync, kilnSync } from '@urbit/api';
+import { scryLag, getPikes, Pikes, Pike, kilnUnsync, kilnSync } from '@urbit/api';
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback } from 'react';
@@ -12,8 +12,6 @@ interface KilnState {
   lag: boolean;
   fetchLag: () => Promise<void>;
   fetchPikes: () => Promise<void>;
-  changeOTASource: (ship: string) => Promise<void>;
-  toggleOTAs: (desk: string, on: boolean) => Promise<void>;
   toggleSync: (desk: string, ship: string) => Promise<void>;
   set: (s: KilnState) => void;
   initializeKiln: () => Promise<void>;
@@ -34,37 +32,6 @@ const useKilnState = create<KilnState>((set, get) => ({
   fetchLag: async () => {
     const lag = await api.scry<boolean>(scryLag);
     set({ lag });
-  },
-  changeOTASource: async (ship: string) => {
-    if (useMockData) {
-      await fakeRequest('');
-      set(
-        produce((draft: KilnState) => {
-          if (!draft.pikes.base.sync?.ship) {
-            return;
-          }
-          draft.pikes.base.sync.ship = ship;
-        })
-      );
-      return;
-    }
-
-    await api.poke(kilnInstall(ship, 'kids', 'base'));
-  },
-  toggleOTAs: async (desk: string, on: boolean) => {
-    set(
-      produce((draft: KilnState) => {
-        const pike = draft.pikes[desk];
-        if (!pike) {
-          return;
-        }
-
-        pike.zest = on ? 'live' : 'held';
-      })
-    );
-
-    await (useMockData ? fakeRequest('') : api.poke(on ? kilnResume(desk) : kilnPause(desk)));
-    await get().fetchPikes(); // refresh pikes state
   },
   toggleSync: async (desk: string, ship: string) => {
     const synced = !!get().pikes[desk].sync;
