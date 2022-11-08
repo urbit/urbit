@@ -70,6 +70,7 @@ in stdenv.mkDerivation {
 
   MEMORY_DEBUG = enableDebug;
   CPU_DEBUG = enableDebug;
+  DBG = enableDebug;
   EVENT_TIME_DEBUG = false;
   VERE_PACE = if enableStatic then verePace else "";
 

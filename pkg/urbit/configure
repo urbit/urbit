@@ -69,6 +69,7 @@ done
 [ -n "${MEMORY_LOG-}" ]       && defmacro U3_MEMORY_LOG 1
 [ -n "${CPU_DEBUG-}" ]        && defmacro U3_CPU_DEBUG 1
 [ -n "${EVENT_TIME_DEBUG-}" ] && defmacro U3_EVENT_TIME_DEBUG 1
+[ -n "${DBG-}" ]              && defmacro C3DBG 1
 
 if [ -n "${HOST-}" ]
 then os=$(sed 's$^[^-]*-\([^-]*\)-.*$\1$' <<< "$HOST")

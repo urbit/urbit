@@ -20,6 +20,11 @@
   /** Random useful C macros.
   **/
     /* Assert.  Good to capture.
+
+       TODO: determine which c3_assert calls can rather call c3_dessert, i.e. in
+       public releases, which calls to c3_assert should abort and which should
+       no-op? If the latter, is the assert useful inter-development to validate
+       conditions we might accidentally break or not useful at all?
     */
 
 #     if defined(ASAN_ENABLED) && defined(__clang__)
@@ -42,6 +47,28 @@
               assert(x);                          \
             }                                     \
           } while(0)
+#endif
+
+    /* Dessert. Debug assert. If a debugger is attached, it will break in and
+       execution can be allowed to proceed without aborting the process.
+       Otherwise, the unhandled SIGTRAP will dump core.
+
+       ;;: maybe dassert is a preferred name
+    */
+#ifdef C3DBG
+  #if defined(__i386__) || defined(__x86_64__)
+    #define c3_dessert(x) do { if(!(x)) __asm__ volatile("int $3"); } while (0)
+  #elif defined(__thumb__)
+    #define c3_dessert(x) do { if(!(x)) __asm__ volatile(".inst 0xde01"); } while (0)
+  #elif defined(__aarch64__)
+    #define c3_dessert(x) do { if(!(x)) __asm__ volatile(".inst 0xd4200000"); } while (0)
+  #elif defined(__arm__)
+    #define c3_dessert(x) do { if(!(x)) __asm__ volatile(".inst 0xe7f001f0"); } while (0)
+  #else
+    STATIC_ASSERT(0, "debugger break instruction unimplemented");
+  #endif
+#else
+  #define c3_dessert(x) ((void)(0))
 #endif
 
     /* Stub.

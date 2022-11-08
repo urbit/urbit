@@ -277,6 +277,9 @@
 #     endif
 
     /* Static assertion.
+
+       TODO: we could just use static_assert (c23)/_Static_assert (c11) in
+       <assert.h>
     */
 #     define ASSERT_CONCAT_(a, b) a##b
 #     define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
