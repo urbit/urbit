@@ -26,6 +26,44 @@ export function kilnInstall(
 }
 
 /**
+ * Sync with a foreign desk
+ */
+export function kilnSync(
+  ship: string,
+  desk: string,
+  local?: string
+): Poke<any> {
+  return {
+    app: 'hood',
+    mark: 'kiln-sync',
+    json: {
+      ship,
+      desk,
+      local: local || desk
+    }
+  };
+}
+
+/**
+ * Unsync with a foreign desk
+ */
+export function kilnUnsync(
+  ship: string,
+  desk: string,
+  local?: string
+): Poke<any> {
+  return {
+    app: 'hood',
+    mark: 'kiln-unsync',
+    json: {
+      ship,
+      desk,
+      local: local || desk
+    }
+  };
+}
+
+/**
  * Uninstall a desk
  */
 export function kilnUninstall(
