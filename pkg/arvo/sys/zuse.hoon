@@ -4928,7 +4928,7 @@
         =<  q.q  %-  need  %-  need
         (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
       --
-  ::  middle core: for userspace use, with .^
+  ::  middle core: stateless queries for default numeric sponsorship
   ::
   =>  |%
       ::                                                ::  ++clan:title
@@ -4968,7 +4968,7 @@
           %pawn  (end 4 who)
         ==
       --
-  ::  surface core: stateless queries for default numeric sponsorship
+  ::  surface core: for userspace use, with .^
   ::
   |%
   ::                                                    ::  ++cite:title
@@ -5003,17 +5003,25 @@
         %j
         /(scot %p our)/sein/(scot %da now)/(scot %p who)
     ==
+  ::  +team was created with two meanings:
+  ::    A. her / her moon
+  ::    B. whoever should be able to control her ship
+  ::
+  ::  these two things aren't obviously equal anymore,
+  ::  and it's more important for +team to satisfy B than A,
+  ::  so now +team just means "her".
+  ::
+  ::  (ships can definitely be trusted to control themselves)
   ::                                                    ::  ++team:title
-  ::   in the past, this meant "our / our moon", but    ::
-  ::   it has been primarly used to represent "our"     ::
-  ::                                                    ::
-  ::   moons as having the full permissions of their    ::
-  ::   parents doesn't make a lot of sense anymore      ::
-  ::                                                    ::
-  ++  team
-    |=  [our=ship who=ship]
+  ++  team                                              ::  her
+    |=  [her=ship who=ship]
     ^-  ?
-    =(our who)
+    =(her who)
+  ::                                                    ::  ++moon:title
+  ++  moon                                              ::  her moon
+    |=  [her=ship who=ship]
+    ^-  ?
+    &(=(%earl (clan who)) =(her (^sein who)))
   --  ::title
 ::                                                      ::
 ::::                      ++milly                       ::  (2k) milliseconds
