@@ -12,7 +12,7 @@ export const SystemUpdatePrefs = () => {
     _.pick(s, ['toggleOTAs', 'changeOTASource'])
   );
   const pike = usePike('base');
-  const otasEnabled = pike?.zest === 'live';
+  const otasEnabled = !!pike?.sync;
   const otaSource = pike?.sync?.ship;
 
   const toggleBase = useCallback((on: boolean) => toggleOTAs('base', on), [toggleOTAs]);
