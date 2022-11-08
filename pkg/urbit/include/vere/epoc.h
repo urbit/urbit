@@ -76,7 +76,7 @@ extern const c3_d epo_min_d;
 // Functions
 //==============================================================================
 
-/// Create a new empty epoch rooted at `<par_c>/0i<fir_d>`.
+/// Create a new empty epoch rooted at `<par_c>/<epo_pre_c><fir_d>`.
 ///
 /// @param[in] par_u  Parent directory to house epoch. Will be created if it
 ///                   doesn't already exist.
@@ -104,7 +104,7 @@ u3_epoc_migrate(c3_path* const       src_u,
                 const c3_path* const par_u,
                 const c3_d           cur_d);
 
-/// Load an existing epoch created with u3_epoc_new().
+/// Load an existing epoch created with u3_epoc_new() or u3_epoc_migrate().
 ///
 /// @param[in]  pax_u  Root directory of epoch.
 /// @param[in]  rdo_t  If non-zero, the epoch will be inert (a strict form of
@@ -247,7 +247,7 @@ u3_epoc_iter_step(u3_epoc* const poc_u,
 void
 u3_epoc_iter_close(u3_epoc* const poc_u);
 
-/// Print info about an epoch's LMDB instance.
+/// Print info about an epoch.
 ///
 /// @param[in] poc_u  Epoch handle.
 void
