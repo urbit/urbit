@@ -42,6 +42,7 @@
       off=@ud                                           ::  window offset
       kil=kill                                          ::  kill buffer
       inx=@ud                                           ::  ring index
+      hiy=(map gill:gall history)                        :: ancient input
       fug=(map gill:gall (unit target))                 ::  connections
       mir=(pair @ud stub)                               ::  mirrored terminal
   ==                                                    ::
@@ -302,6 +303,8 @@
   ^+  +>
   =+  lag=se-agon
   ?.  (~(has by fug) gyl)  +>.$
+  =/  olt=target  (fall (~(got by fug) gyl) *target)
+  =.  hiy  %+  ~(put by hiy)  gyl  (fall `hit.olt *history)
   =.  fug  (~(del by fug) gyl)
   =.  eel  ?.(pej eel (~(del in eel) gyl))
   =.  +>.$  ?.  &(?=(^ lag) !=(gyl u.lag))
@@ -358,7 +361,8 @@
   ^+  +>
   =.  +>  (se-text "[linked to {<gyl>}]")
   ?>  ?=(~ (~(got by fug) gyl))
-  (se-alas(fug (~(put by fug) gyl `*target)) gyl)
+  =/  =target  %*(. *target hit (fall (~(get by hiy) gyl) *history))
+  (se-alas(fug (~(put by fug) gyl `target)) gyl)
 ::
 ++  se-nuke                                           ::  teardown connection
   |=  gyl=gill:gall

@@ -66,7 +66,13 @@
 ++  on-load
   |=  =old-state=vase
   ^-  step:agent:gall
-  =+  !<(old=any-state old-state-vase)
+   =/  maybe-old=(each any-state tang)
+  (mule |.(!<(any-state old-state-vase)))
+  =/  [old=any-state bad=?]
+    ?.  ?=(%| -.maybe-old)  [p.maybe-old |]
+    =;  [sta=any-state ba=?]  [sta ba]
+    =-  %+  fall  -  ~&  >  %bad-load  [state &]
+    (mole |.([!<(any-state old-state-vase) |]))
   =/  tup=any-state-tuple
     ?+    -.old  +.old
         ?(%1 %2 %3 %4 %5 %6)
