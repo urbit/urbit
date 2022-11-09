@@ -1637,12 +1637,13 @@
       ==
   ?>  ?=([%sole @ ~] path)
   =/  id  i.t.path
+  =/  old=session  (fall (~(get by hoc) id) *session)
   =?  hoc  (~(has by hoc) id)
     ~&  [%dojo-peer-replaced id]
     (~(del by hoc) id)
-  =/  =session  %*(. *session -.dir [our.hid %base ud+0])
+  =/  new=session  %*(. *session -.dir [our.hid %base ud+0])
   =^  moves  state
-    he-abet:~(he-prom he hid id ~ session)
+    he-abet:~(he-prom he hid id ~ new(var var.old))
   [moves ..on-init]
 ::
 ++  on-leave
