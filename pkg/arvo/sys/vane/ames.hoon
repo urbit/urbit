@@ -1777,15 +1777,16 @@
   ++  on-cork
     |=  =ship
     ^+  event-core
+    =/  =plea       [%$ /flow [%cork ~]]
     =/  ship-state  (~(get by peers.ames-state) ship)
-    ::  XX: should go in alien-agenda maybe?
     ?.  ?=([~ %known *] ship-state)
-      event-core
+      %+  enqueue-alien-todo  ship
+      |=  todos=alien-agenda
+      todos(messages [[duct plea] messages.todos])
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now channel-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
-    =/  =plea  [%$ /flow [%cork ~]]
     ::
     =.  closing.peer-state  (~(put in closing.peer-state) bone)
     %-  %^  trace  msg.veb  ship
@@ -2059,6 +2060,8 @@
         =.  event-core
           %+  reel  messages.todos
           |=  [[=^duct =plea] core=_event-core]
+          ?:  ?=(%$ -.plea)
+            (on-cork:core(duct duct) ship)
           (on-plea:core(duct duct) ship plea)
         ::  apply outgoing packet blobs
         ::
