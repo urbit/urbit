@@ -1259,8 +1259,8 @@
   =|  c=(list (unit toro))
   %+  poke-info  "removed: {<a>}"
   =-  %+  roll  -
-  |=  [a=(unit toro) b=(unit toro)]
-  (clap a b furl)
+      |=  [a=(unit toro) b=(unit toro)]
+      (clap a b furl)
   |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
   ?^  fil.b  (snoc c `(fray a))
