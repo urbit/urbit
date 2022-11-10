@@ -679,20 +679,19 @@
     =/  update-log
       (~(get by update-logs) [ship term])
     :-  ~  :-  ~  :-  %noun
-    !>
     ?+    t.t.t.t.path  (on-peek:def path)
         ~
-      ^-  update-log:store
+      !>  ^-  update-log:store
       ?~(update-log *update-log:store u.update-log)
     ::
         [%latest ~]
-      ^-  (unit time)
+      !>  ^-  (unit time)
       %+  biff  update-log
       |=  =update-log:store
       (bind (pry:orm-log:store update-log) head)
     ::
         [%subset @ @ ~]
-      ^-  update-log:store
+      !>  ^-  update-log:store
       ?~  update-log  *update-log:store
       =*  start  i.t.t.t.t.t.path
       =*  end    i.t.t.t.t.t.t.path

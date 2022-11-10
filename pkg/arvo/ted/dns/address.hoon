@@ -25,7 +25,7 @@
   |=  if=@if
   =/  m  (strand ,~)
   ^-  form:m
-  =/  collector-app  `dock`[~zod %dns-collector]
+  =/  collector-app  `dock`[~deg %dns-collector]
   ;<  good=?  bind:m  (self-check-http:libdns |+if 2)
   ?.  good
     %+  strand-fail:strandio  %bail-early-self-check
