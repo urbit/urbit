@@ -6,8 +6,9 @@
 static void
 _setup(void)
 {
-  u3m_init(1 << 23);
+  u3m_init(1 << 24);
   u3m_pave(c3y);
+  u3e_init();
 }
 
 static void
