@@ -1263,7 +1263,8 @@
       (clap a b furl)
   |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?^  fil.b  (snoc c `(fray a))
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
+  =?  c  ?=(^ fil.b)  (snoc c `(fray a))
   %-  zing
   %+  turn  ~(tap by dir.b)
   |=  [kid=@ta ~]
