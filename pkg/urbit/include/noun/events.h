@@ -84,9 +84,14 @@
       void
       u3e_foul(void);
 
-    /* u3e_init(): initialize page tracking.
+    /* u3e_init(): initialize guard page tracking.
     */
       void
       u3e_init(void);
+
+    /* u3e_ward(): reposition guard page if needed.
+    */
+      void
+      u3e_ward(u3_post low_p, u3_post hig_p);
 
 #endif /* ifndef U3_EVENTS_H */
