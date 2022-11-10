@@ -135,7 +135,7 @@
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
     [%x %export-all ~]
-    ``noun+!>((jam (export-all our.bowl now.bowl)))
+    ``noun+!>((export-all our.bowl now.bowl))
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
