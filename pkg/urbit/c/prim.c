@@ -1,4 +1,4 @@
-/// @file prim.c
+/// @file
 
 #include "c/prim.h"
 
@@ -7,17 +7,76 @@
 #include <sys/stat.h>
 
 //==============================================================================
-// Functions
+// Static functions
 //==============================================================================
 
-c3_t
-c3_prim_get(const c3_path* const path_u,
-            const c3_prim_type   type_e,
-            void*                data_v)
-{
-  c3_t suc_t = 0;
+#define define_put_num(type, type_suffix, format_specifier)                    \
+  c3_t c3_prim_put_##type(const c3_path* const path_u,                         \
+                          c3_##type_suffix     num_##type_suffix)              \
+  {                                                                            \
+    c3_t  suc_t = 0;                                                           \
+    c3_c* str_c;                                                               \
+    if ( -1 == asprintf(&str_c, "%" format_specifier, num_##type_suffix) ) {   \
+      goto end;                                                                \
+    }                                                                          \
+                                                                               \
+    suc_t = _write(path_u, str_c);                                             \
+free_str:                                                                      \
+    c3_free(str_c);                                                            \
+end:                                                                           \
+    return suc_t;                                                              \
+  }
 
-  if ( !path_u || type_e >= c3_prim_last || !data_v ) {
+#define define_get_num(type, type_suffix, format_specifier)                    \
+  c3_t c3_prim_get_##type(const c3_path* const    path_u,                      \
+                          c3_##type_suffix* const num_##type_suffix)           \
+  {                                                                            \
+    c3_t suc_t = 0;                                                            \
+                                                                               \
+    c3_c* str_c = _read(path_u);                                         \
+    if ( !str_c ) {                                                            \
+      goto end;                                                                \
+    }                                                                          \
+    if ( 1 != sscanf(str_c, "%" format_specifier, num_##type_suffix) ) {       \
+      goto free_str;                                                           \
+    }                                                                          \
+    suc_t = 1;                                                                 \
+                                                                               \
+free_str:                                                                      \
+    c3_free(str_c);                                                            \
+end:                                                                           \
+    return suc_t;                                                              \
+  }
+
+//==============================================================================
+// Static functions
+//==============================================================================
+
+/// Read a null-terminated string from a file.
+///
+/// @param[in] path_u  Path to backing file.
+///
+/// @return NULL    Error occurred.
+/// @return string  Otherwise.
+c3_c*
+_read(const c3_path* const path_u);
+
+/// Write null-terminated string to file.
+///
+/// @param[in] path_u  Path to backing file.
+/// @param[in] str_c   String.
+///
+/// @return 1  String successfully written to backing file.
+/// @return 0  Otherwise.
+c3_t
+_write(const c3_path* const path_u, const c3_c* const str_c);
+
+c3_c*
+_read(const c3_path* const path_u)
+{
+  c3_c* str_c = NULL;
+
+  if ( !path_u ) {
     goto end;
   }
 
@@ -39,94 +98,43 @@ c3_prim_get(const c3_path* const path_u,
     goto close_file;
   }
 
-  c3_c* const buf_c = c3_calloc(stat_u.st_size + 1);
-  { // Read file contents as a null-terminated string.
-    c3_c*  ptr_c             = buf_c;
-    size_t bytes_remaining_i = stat_u.st_size;
-    do {
-      ssize_t bytes_read_i = read(fd_i, ptr_c, bytes_remaining_i);
-      if ( bytes_read_i == -1 ) {
-        // Attempt to read again if we were interrupted by a signal.
-        if ( errno == EINTR ) {
-          continue;
-        }
-        fprintf(stderr,
-                "prim: failed to read %lu bytes from %s: %s\r\n",
-                bytes_remaining_i,
-                c3_path_str(path_u),
-                strerror(errno));
-        goto free_buf;
+  str_c                 = c3_malloc(stat_u.st_size + 1);
+  str_c[stat_u.st_size] = '\0';
+
+  c3_c*  ptr_c             = str_c;
+  size_t bytes_remaining_i = stat_u.st_size;
+  do {
+    ssize_t bytes_read_i = read(fd_i, ptr_c, bytes_remaining_i);
+    if ( bytes_read_i == -1 ) {
+      // Attempt to read again if we were interrupted by a signal.
+      if ( errno == EINTR ) {
+        continue;
       }
-      ptr_c += bytes_read_i;
-      bytes_remaining_i -= bytes_read_i;
-    } while ( bytes_remaining_i > 0 );
-  }
+      fprintf(stderr,
+              "prim: failed to read %lu bytes from %s: %s\r\n",
+              bytes_remaining_i,
+              c3_path_str(path_u),
+              strerror(errno));
+      c3_free(str_c);
+      str_c = NULL;
+      goto close_file;
+    }
+    ptr_c += bytes_read_i;
+    bytes_remaining_i -= bytes_read_i;
+  } while ( bytes_remaining_i > 0 );
 
-#define buf_to_num(type, conversion_specifier)                                 \
-  do {                                                                         \
-    if ( 1 != sscanf(buf_c, "%" conversion_specifier, (type*)data_v) ) {       \
-      goto free_buf;                                                           \
-    }                                                                          \
-  } while ( 0 )
-
-  switch ( type_e ) {
-    case c3_prim_str:
-      *(c3_c**)data_v = buf_c;
-      break;
-    case c3_prim_uint8:
-      buf_to_num(c3_y, SCNu8);
-      break;
-    case c3_prim_uint16:
-      buf_to_num(c3_s, SCNu16);
-      break;
-    case c3_prim_uint32:
-      buf_to_num(c3_w, SCNu32);
-      break;
-    case c3_prim_uint64:
-      buf_to_num(c3_d, SCNu64);
-      break;
-    case c3_prim_int8:
-      buf_to_num(c3_ys, SCNi8);
-      break;
-    case c3_prim_int16:
-      buf_to_num(c3_ss, SCNi16);
-      break;
-    case c3_prim_int32:
-      buf_to_num(c3_ws, SCNi32);
-      break;
-    case c3_prim_int64:
-      buf_to_num(c3_ds, SCNi64);
-      break;
-    case c3_prim_float:
-      buf_to_num(double, "lf");
-      break;
-    // This is dead code, but it's needed to appease macOS.
-    case c3_prim_last:
-      break;
-  }
-
-#undef buf_to_num
-
-  suc_t = 1;
-
-free_buf:
-  if ( type_e != c3_prim_str ) {
-    c3_free(buf_c);
-  }
 close_file:
   close(fd_i);
 end:
-  return suc_t;
+  return str_c;
 }
 
 c3_t
-c3_prim_put(const c3_path* const path_u,
-            const c3_prim_type   type_e,
-            const void* const    data_v)
+_write(const c3_path* const path_u, const c3_c* const str_c)
 {
   c3_t suc_t = 0;
 
-  if ( !path_u || type_e >= c3_prim_last || !data_v ) {
+  if ( !path_u || !str_c ) {
     goto end;
   }
 
@@ -139,89 +147,85 @@ c3_prim_put(const c3_path* const path_u,
     goto end;
   }
 
-  c3_c* buf_c = NULL;
-#define num_to_buf(type, conversion_specifier)                                 \
-  do {                                                                         \
-    if ( -1 == asprintf(&buf_c, "%" conversion_specifier, *(type*)data_v) ) {  \
-      goto close_file;                                                         \
-    }                                                                          \
-  } while ( 0 )
-
-  switch ( type_e ) {
-    case c3_prim_str:
-      buf_c = *(c3_c**)data_v;
-      break;
-    case c3_prim_uint8:
-      num_to_buf(c3_y, SCNu8);
-      break;
-    case c3_prim_uint16:
-      num_to_buf(c3_s, SCNu16);
-      break;
-    case c3_prim_uint32:
-      num_to_buf(c3_w, SCNu32);
-      break;
-    case c3_prim_uint64:
-      num_to_buf(c3_d, SCNu64);
-      break;
-    case c3_prim_int8:
-      num_to_buf(c3_ys, SCNi8);
-      break;
-    case c3_prim_int16:
-      num_to_buf(c3_ss, SCNi16);
-      break;
-    case c3_prim_int32:
-      num_to_buf(c3_ws, SCNi32);
-      break;
-    case c3_prim_int64:
-      num_to_buf(c3_ds, SCNi64);
-      break;
-    case c3_prim_float:
-      num_to_buf(double, "lf");
-      break;
-    // This is dead code, but it's needed to appease macOS.
-    case c3_prim_last:
-      break;
-  }
-#undef num_to_buf
-
-  { // Write null-terminated string to file.
-    c3_c*  ptr_c             = buf_c;
-    size_t bytes_remaining_i = strlen(buf_c);
-    do {
-      ssize_t bytes_written_i = write(fd_i, ptr_c, bytes_remaining_i);
-      if ( bytes_written_i == -1 ) {
-        // Attempt to write again if we were interrupted by a signal.
-        if ( errno == EINTR ) {
-          continue;
-        }
-        fprintf(stderr,
-                "prim: failed to read %lu bytes from %s: %s\r\n",
-                bytes_remaining_i,
-                c3_path_str(path_u),
-                strerror(errno));
-        goto free_buf;
+  const c3_c* ptr_c             = str_c;
+  size_t      bytes_remaining_i = strlen(str_c);
+  do {
+    ssize_t bytes_written_i = write(fd_i, ptr_c, bytes_remaining_i);
+    if ( bytes_written_i == -1 ) {
+      // Attempt to write again if we were interrupted by a signal.
+      if ( errno == EINTR ) {
+        continue;
       }
-      ptr_c += bytes_written_i;
-      bytes_remaining_i -= bytes_written_i;
-    } while ( bytes_remaining_i > 0 );
-
-    if ( -1 == c3_sync(fd_i) ) {
       fprintf(stderr,
-              "prim: failed to fsync %s: %s\r\n",
+              "prim: failed to read %lu bytes from %s: %s\r\n",
+              bytes_remaining_i,
               c3_path_str(path_u),
               strerror(errno));
-      goto free_buf;
+      goto close_file;
     }
+    ptr_c += bytes_written_i;
+    bytes_remaining_i -= bytes_written_i;
+  } while ( bytes_remaining_i > 0 );
+
+  if ( -1 == c3_sync(fd_i) ) {
+    fprintf(stderr,
+            "prim: failed to fsync %s: %s\r\n",
+            c3_path_str(path_u),
+            strerror(errno));
+    goto close_file;
   }
 
   suc_t = 1;
 
-free_buf:
-  if ( type_e != c3_prim_str ) {
-    c3_free(buf_c);
-  }
 close_file:
   close(fd_i);
 end:
   return suc_t;
 }
+
+//==============================================================================
+// Functions
+//==============================================================================
+
+c3_t
+c3_prim_put_str(const c3_path* const path_u, const c3_c* const str_c)
+{
+  return _write(path_u, str_c);
+}
+
+define_put_num(uint8, y, SCNu8);
+define_put_num(uint16, s, SCNu16);
+define_put_num(uint32, w, SCNu32);
+define_put_num(uint64, d, SCNu64);
+
+define_put_num(int8, ys, SCNi8);
+define_put_num(int16, ss, SCNi16);
+define_put_num(int32, ws, SCNi32);
+define_put_num(int64, ds, SCNi64);
+
+c3_t
+c3_prim_get_str(const c3_path* const path_u, c3_c** str_c)
+{
+  if ( !str_c ) {
+    return 0;
+  }
+  c3_c* res_c = _read(path_u);
+  if ( !res_c ) {
+    return 0;
+  }
+  *str_c = res_c;
+  return 1;
+}
+
+define_get_num(uint8, y, SCNu8);
+define_get_num(uint16, s, SCNu16);
+define_get_num(uint32, w, SCNu32);
+define_get_num(uint64, d, SCNu64);
+
+define_get_num(int8, ys, SCNi8);
+define_get_num(int16, ss, SCNi16);
+define_get_num(int32, ws, SCNi32);
+define_get_num(int64, ds, SCNi64);
+
+#undef define_put_num
+#undef define_get_num

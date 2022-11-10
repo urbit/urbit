@@ -1,4 +1,4 @@
-/// @file prim.h
+/// @file
 ///
 /// A file-backed, persistent primitive variable.
 ///
@@ -13,85 +13,80 @@
 #include "c/path.h"
 
 //==============================================================================
-// Types
+// Macros
 //==============================================================================
 
-/// The supported primitive types.
-typedef enum {
-  /// A NULL-terminated sequence of characters.
-  c3_prim_str,
+#define declare_put_num(type, type_suffix)                                     \
+  /** Write an integer of type <type> to a backing file.                       \
+   *                                                                           \
+   *  If the backing file already exists, its contents will be overwritten.    \
+   *                                                                           \
+   *  @param[in] path_u             Path to backing file.                      \
+   *  @param[in] num_<type_suffix>  Integer.                                   \
+   *                                                                           \
+   * @return 1  Integer successfully written to backing file.                  \
+   * @return 0  Otherwise.                                                     \
+   */                                                                          \
+  c3_t c3_prim_put_##type(const c3_path* const path_u,                         \
+                          c3_##type_suffix     num_##type_suffix)
 
-  /// An unsigned 8-bit integer.
-  c3_prim_uint8,
-
-  /// An unsigned 16-bit integer.
-  c3_prim_uint16,
-
-  /// An unsigned 32-bit integer.
-  c3_prim_uint32,
-
-  /// An unsigned 64-bit integer.
-  c3_prim_uint64,
-
-  /// A signed 8-bit integer.
-  c3_prim_int8,
-
-  /// A signed 16-bit integer.
-  c3_prim_int16,
-
-  /// A signed 32-bit integer.
-  c3_prim_int32,
-
-  /// A signed 64-bit integer.
-  c3_prim_int64,
-
-  // A double precision floating point number.
-  // @warning watch out for rounding bugs.
-  c3_prim_float,
-
-  /// Sentinel value. Not actually a type.
-  c3_prim_last,
-
-} c3_prim_type;
+#define declare_get_num(type, type_suffix)                                     \
+  /** Read a persistent integer from its backing file.                         \
+   *                                                                           \
+   *  @param[in] path_u              Path to backing file.                     \
+   *  @param[out] num_<type_suffix>  Output pointer for persistent integer.    \
+   *                                                                           \
+   *  @return 1  Integer successfully read from backing file.                  \
+   *  @return 0  Otherwise.                                                    \
+   */                                                                          \
+  c3_t c3_prim_get_##type(const c3_path* const    path_u,                      \
+                          c3_##type_suffix* const num_##type_suffix)
 
 //==============================================================================
 // Functions
 //==============================================================================
 
-/// Read a persistant variable from its backing file.
+/// Write a string to a backing file.
 ///
-/// @param[in]  path_u      Path to backing file.
-/// @param[in]  type_e      Type of variable.
-/// @param[out] data_v      Pointer to the variable.
+/// @param[in] path_u  Path to backing file.
+/// @param[in] str_c   String.
 ///
-/// @note The type of `data_v` should have one additional layer of indirection
-///       from the type indicated in `type_e`. So if `type_e` is `c3_prim_str`,
-///       `data_v` should be `c3_c**`, and if `type_e` is `c3_prim_uint32`,
-///       `data_v` should be `c3_w*`.
-///
-/// @return 1  Variable successfully read from backing file.
+/// @return 1  String successfully written to backing file.
 /// @return 0  Otherwise.
 c3_t
-c3_prim_get(const c3_path* const path_u,
-            const c3_prim_type   type_e,
-            void*                data_v);
+c3_prim_put_str(const c3_path* const path_u, const c3_c* const str_c);
 
-/// Write a variable to a backing file.
+declare_put_num(uint8, y);
+declare_put_num(uint16, s);
+declare_put_num(uint32, w);
+declare_put_num(uint64, d);
+
+declare_put_num(int8, ys);
+declare_put_num(int16, ss);
+declare_put_num(int32, ws);
+declare_put_num(int64, ds);
+
+/// Read a persistent string from its backing file.
 ///
-/// If the backing file already exists, its contents will be overwritten.
+/// @param[in]  path_u  Path to backing file.
+/// @param[out] str_c   Output pointer for the persistent string.
 ///
-/// @param[in] path_u      Path to backing file.
-/// @param[in] type_e      Type of variable.
-/// @param[in] data_v      Pointer to the variable.
-///
-/// @note Just as with c3_prim_get(), the type of `data_v` should have one
-///       additional layer of indirection from the type indicated in `type_e`.
-///
-/// @return 1  Variable successfully written to backing file.
+/// @return 1  String successfully read from backing file.
 /// @return 0  Otherwise.
 c3_t
-c3_prim_put(const c3_path* const path_u,
-            const c3_prim_type   type_e,
-            const void* const    data_v);
+c3_prim_get_str(const c3_path* const path_u, c3_c** str_c);
+
+declare_get_num(uint8, y);
+declare_get_num(uint16, s);
+declare_get_num(uint32, w);
+declare_get_num(uint64, d);
+
+declare_get_num(int8, ys);
+declare_get_num(int16, ss);
+declare_get_num(int32, ws);
+declare_get_num(int64, ds);
+
+#undef declare_put_num
+#undef declare_get_num
 
 #endif /* ifndef C3_PRIM_H */

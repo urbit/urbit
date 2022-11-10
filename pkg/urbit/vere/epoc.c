@@ -503,7 +503,7 @@ _persist_binary_version(c3_path* const pax_u, const c3_c* const ver_c)
   }
 
   c3_path_push(pax_u, urv_nam_c);
-  c3_t suc_t = c3_prim_put(pax_u, c3_prim_str, &ver_c);
+  c3_t suc_t = c3_prim_put_str(pax_u, ver_c);
   c3_path_pop(pax_u);
 
   if ( !suc_t ) {
@@ -523,7 +523,7 @@ _persist_epoc_version(c3_path* const pax_u, const c3_w ver_w)
   }
 
   c3_path_push(pax_u, epv_nam_c);
-  c3_t suc_t = c3_prim_put(pax_u, c3_prim_uint32, &ver_w);
+  c3_t suc_t = c3_prim_put_uint32(pax_u, ver_w);
   c3_path_pop(pax_u);
 
   if ( !suc_t ) {
@@ -688,7 +688,7 @@ u3_epoc_open(const c3_path* const pax_u, const c3_t rdo_t, c3_w* const len_w)
   { // Read contents of version file.
     c3_path_push(poc_u->pax_u, epv_nam_c);
     c3_w ver_w;
-    if ( !c3_prim_get(poc_u->pax_u, c3_prim_uint32, &ver_w) ) {
+    if ( !c3_prim_get_uint32(poc_u->pax_u, &ver_w) ) {
       goto free_epoc;
     }
     c3_path_pop(poc_u->pax_u);

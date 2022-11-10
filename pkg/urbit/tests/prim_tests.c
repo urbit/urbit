@@ -9,10 +9,10 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_c* data_c = "Did you try switching it to wumbo?";
-    c3_assert(c3_prim_put(path_u, c3_prim_str, &data_c));
+    c3_assert(c3_prim_put_str(path_u, data_c));
 
     data_c = NULL;
-    c3_assert(c3_prim_get(path_u, c3_prim_str, &data_c));
+    c3_assert(c3_prim_get_str(path_u, &data_c));
     c3_assert(strcmp(data_c, "Did you try switching it to wumbo?") == 0);
 
     c3_path_free(path_u);
@@ -22,10 +22,10 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_y data_y = 107;
-    c3_assert(c3_prim_put(path_u, c3_prim_uint8, &data_y));
+    c3_assert(c3_prim_put_uint8(path_u, data_y));
 
     data_y = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_uint8, &data_y));
+    c3_assert(c3_prim_get_uint8(path_u, &data_y));
     c3_assert(data_y == 107);
 
     c3_path_free(path_u);
@@ -35,10 +35,10 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_s data_s = 10000;
-    c3_assert(c3_prim_put(path_u, c3_prim_uint16, &data_s));
+    c3_assert(c3_prim_put_uint16(path_u, data_s));
 
     data_s = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_uint16, &data_s));
+    c3_assert(c3_prim_get_uint16(path_u, &data_s));
     c3_assert(data_s == 10000);
 
     c3_path_free(path_u);
@@ -48,10 +48,10 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_w data_w = 4000000000;
-    c3_assert(c3_prim_put(path_u, c3_prim_uint32, &data_w));
+    c3_assert(c3_prim_put_uint32(path_u, data_w));
 
     data_w = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_uint32, &data_w));
+    c3_assert(c3_prim_get_uint32(path_u, &data_w));
     c3_assert(data_w == 4000000000);
 
     c3_path_free(path_u);
@@ -61,10 +61,10 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_d data_d = 18446744073709551615UL;
-    c3_assert(c3_prim_put(path_u, c3_prim_uint64, &data_d));
+    c3_assert(c3_prim_put_uint64(path_u, data_d));
 
     data_d = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_uint64, &data_d));
+    c3_assert(c3_prim_get_uint64(path_u, &data_d));
     c3_assert(data_d == 18446744073709551615UL);
 
     c3_path_free(path_u);
@@ -74,10 +74,10 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_ys data_ys = -97;
-    c3_assert(c3_prim_put(path_u, c3_prim_int8, &data_ys));
+    c3_assert(c3_prim_put_int8(path_u, data_ys));
 
     data_ys = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_int8, &data_ys));
+    c3_assert(c3_prim_get_int8(path_u, &data_ys));
     c3_assert(data_ys == -97);
 
     c3_path_free(path_u);
@@ -87,10 +87,10 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_ss data_ss = -1223;
-    c3_assert(c3_prim_put(path_u, c3_prim_int16, &data_ss));
+    c3_assert(c3_prim_put_int16(path_u, data_ss));
 
     data_ss = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_int16, &data_ss));
+    c3_assert(c3_prim_get_int16(path_u, &data_ss));
     c3_assert(data_ss == -1223);
 
     c3_path_free(path_u);
@@ -100,10 +100,10 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_ws data_ws = -70003;
-    c3_assert(c3_prim_put(path_u, c3_prim_int32, &data_ws));
+    c3_assert(c3_prim_put_int32(path_u, data_ws));
 
     data_ws = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_int32, &data_ws));
+    c3_assert(c3_prim_get_int32(path_u, &data_ws));
     c3_assert(data_ws == -70003);
 
     c3_path_free(path_u);
@@ -113,24 +113,11 @@ _prim_put_get(void)
     c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
 
     c3_ds data_ds = -7123456789;
-    c3_assert(c3_prim_put(path_u, c3_prim_int64, &data_ds));
+    c3_assert(c3_prim_put_int64(path_u, data_ds));
 
     data_ds = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_int64, &data_ds));
+    c3_assert(c3_prim_get_int64(path_u, &data_ds));
     c3_assert(data_ds == -7123456789);
-
-    c3_path_free(path_u);
-  }
-
-  { // Test floating point.
-    c3_path* const path_u = c3_path_fv(3, "/", "tmp", "test.prim");
-
-    double data_f = 1.8;
-    c3_assert(c3_prim_put(path_u, c3_prim_float, &data_f));
-
-    data_f = 0;
-    c3_assert(c3_prim_get(path_u, c3_prim_float, &data_f));
-    c3_assert(data_f == 1.8);
 
     c3_path_free(path_u);
   }
