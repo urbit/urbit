@@ -8,7 +8,7 @@ _setup(void)
   //  XX at 1<<24, this succeeds on mac, but bail:exit's on linux.
   //  investigate possible u3n_prog corruption
   //
-  u3m_init(1 << 25);
+  u3m_init(1 << 24);
   u3m_pave(c3y);
   u3e_init();
 }
