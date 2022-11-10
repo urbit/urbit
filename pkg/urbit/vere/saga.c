@@ -15,8 +15,6 @@
 /// ...
 /// <epoch_M>/
 /// ```
-/// Note that the epoch directory names are ommitted because they are an
-/// implementation detail of the epoc module.
 
 #include "vere/saga.h"
 

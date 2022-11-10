@@ -192,6 +192,9 @@ u3_saga_commit_async(u3_saga* const log_u,
 
 /// Roll an event log over to a new epoch.
 ///
+/// Do NOT call this function while events are actively being computed. Doing so
+/// will result in corruption of the new epoch.
+///
 /// Future calls to u3_saga_commit_sync() and u3_saga_commit_async() will commit
 /// to this new epoch.
 ///
@@ -215,7 +218,7 @@ u3_saga_truncate(u3_saga* const log_u, size_t cnt_i);
 
 /// Replay part or all of an event log.
 ///
-/// TODO: explain assumptions around u3m_init().
+/// This function assumes that u3m_init() has already been called.
 ///
 /// @param[in] log_u  Event log handle.
 /// @param[in] cur_d  ID of event last applied.

@@ -78,6 +78,9 @@ extern const c3_d epo_min_d;
 
 /// Create a new empty epoch rooted at `<par_c>/<epo_pre_c><fir_d>`.
 ///
+/// Do NOT call this function while events are actively being computed. Doing so
+/// will result in corruption of the new epoch.
+///
 /// @param[in] par_u  Parent directory to house epoch. Will be created if it
 ///                   doesn't already exist.
 /// @param[in] fir_d  Event ID of first event in epoch.
