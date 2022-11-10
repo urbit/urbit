@@ -3192,9 +3192,14 @@
   ++  packet-queue
     %-  (ordered-map live-packet-key live-packet-val)
     lte-packets
+  ::  +num-live: number of sent packets awaiting ack
+  ::
+  ++  num-live
+    ^-  @ud
+    ~(wyt by live.state)
   ::  +gauge: inflate a |pump-gauge to track congestion control
   ::
-  ++  gauge  (make-pump-gauge now.channel metrics.state [her bug]:channel)
+  ++  gauge  (make-pump-gauge metrics.state num-live [now her bug]:channel)
   ::  +work: handle $packet-pump-task request
   ::
   ++  work
@@ -3308,7 +3313,7 @@
     ::  update .live and .metrics
     ::
     =.  live.state     (gas:packet-queue live.state send-list)
-    =.  metrics.state  (on-sent:gauge (lent send-list))
+    =.  metrics.state  (on-sent:gauge (lent send-list))  ::  TODO remove
     ::  TMI
     ::
     =>  .(sent `(list static-fragment)`sent)
@@ -3394,7 +3399,7 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? _acc]
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics.acc [her bug]:channel)
+    =/  gauge  (make-pump-gauge metrics.acc num-live [now her bug]:channel)
     ::  is this the acked packet?
     ::
     ?:  =(key [message-num fragment-num])
@@ -3441,7 +3446,7 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
-    =/  gauge  (make-pump-gauge now.channel metrics [her bug]:channel)
+    =/  gauge  (make-pump-gauge metrics num-live [now her bug]:channel)
     ::  if we get an out-of-order ack for a message, skip until it
     ::
     ?:  (lth message-num.key message-num)
@@ -3489,9 +3494,10 @@
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
-  |=  [now=@da pump-metrics =ship =bug]
+  |=  [pump-metrics live-packets=@ud now=@da =ship =bug]
+  ::  TODO rename live-packets num-live
   =*  veb  veb.bug
-  =*  metrics  +<+<
+  =*  metrics  +<-
   |%
   ++  trace
     |=  [verb=? print=(trap tape)]
@@ -3511,8 +3517,9 @@
   ::
   ++  num-slots
     ^-  @ud
-    (sub-safe cwnd num-live)
+    (sub-safe cwnd live-packets)
   ::  +on-sent: adjust metrics based on sending .num-sent fresh packets
+  ::  TODO remove
   ::
   ++  on-sent
     |=  num-sent=@ud
@@ -3527,7 +3534,7 @@
     ^-  pump-metrics
     ::
     =.  counter  +(counter)
-    =.  num-live  (dec num-live)
+    =.  num-live  (dec num-live)  :: TODO remove
     ::  if below congestion threshold, add 1; else, add avg. 1 / cwnd
     ::
     =.  cwnd
@@ -3598,7 +3605,7 @@
   ::
   ++  in-recovery
     ^-  ?
-    (gth num-live cwnd)
+    (gth live-packets cwnd)
   ::  +sub-safe: subtract with underflow protection
   ::
   ++  sub-safe
@@ -3615,6 +3622,7 @@
         rttvar=(div rttvar ms)
         ssthresh=ssthresh
         cwnd=cwnd
+        num-live=live-packets  ::  TODO remove
         num-live=num-live
         counter=counter
     ==
