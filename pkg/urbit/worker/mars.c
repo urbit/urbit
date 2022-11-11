@@ -626,12 +626,12 @@ top:
 
   if ( u3_mars_work_e != mar_u->sat_e && las_d == mar_u->dun_d ) {
     if ( u3_mars_save_e == mar_u->sat_e ) {
+      u3e_save();
       if ( u3_saga_needs_rollover(mar_u->log_u)
           && !u3_saga_rollover(mar_u->log_u) )
       {
         fprintf(stderr, "mars: failed to rollover to new epoch\r\n");
       }
-      u3e_save();
       mar_u->sav_u.eve_d = mar_u->dun_d;
       _mars_gift(mar_u,
         u3nt(c3__sync, u3i_chub(mar_u->dun_d), mar_u->mug_l));
