@@ -1053,7 +1053,6 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
     // Response is something like:
     // [0 0 %omen [106 '~zod' %fake '~2022.9.8..20.38.03..f7d0' 0] %noun 0]
     u3_noun ome, nou, fak;
-    // TODO: figure out if there's a better way than u3r_word().
     if ( c3n == u3r_hext(res, NULL, NULL, &ome, NULL, &nou, &fak)
         || ome != c3__omen
         || nou != c3__noun )
@@ -1062,6 +1061,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       goto free_event_log;
     }
 
+    // TODO: figure out if there's a better way than u3r_word().
     mar_u->met_u.fak_o = u3r_word(0, fak);
     u3z(res);
   }
