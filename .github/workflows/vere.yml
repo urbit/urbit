@@ -12,7 +12,7 @@ on:
       pace:
         description: 'release pace'
         type: string
-        default: 'often'
+        default: 'edge'
         required: false
     secrets:
       CACHIX_AUTH_TOKEN:
@@ -35,7 +35,7 @@ on:
         description: 'release pace'
         type: choice
         options:
-        - often
+        - edge
         - soon
         - live
 
