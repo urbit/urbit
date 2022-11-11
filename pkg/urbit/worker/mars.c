@@ -1106,12 +1106,12 @@ _mars_wyrd_card(c3_m nam_m, c3_w ver_w, c3_l sev_l)
 
   //  special case versions requiring the full stack
   //
-  if (  ((c3__zuse == nam_m) && (418 == ver_w))
-     || ((c3__lull == nam_m) && (329 == ver_w))
+  if (  ((c3__zuse == nam_m) && (417 == ver_w))
+     || ((c3__lull == nam_m) && (328 == ver_w))
      || ((c3__arvo == nam_m) && (240 == ver_w)) )
   {
-    kel = u3nl(u3nc(c3__zuse, 418),
-               u3nc(c3__lull, 329),
+    kel = u3nl(u3nc(c3__zuse, 417),
+               u3nc(c3__lull, 328),
                u3nc(c3__arvo, 240),
                u3nc(c3__hoon, 140),
                u3nc(c3__nock, 4),
