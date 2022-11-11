@@ -36,6 +36,8 @@ CFLAGS := $(CFLAGS)
 
 .PHONY: all bench test clean mrproper
 
+.SECONDARY:
+
 ################################################################################
 
 all: $(all_exes)
