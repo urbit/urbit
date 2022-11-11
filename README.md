@@ -27,12 +27,12 @@ identity, use [Bridge][brid].
 ## Install
 
 To install and run Urbit, please follow the instructions at
-[urbit.org/using/install][start].  You'll be on the live network in a
+[urbit.org/install][start].  You'll be on the live network in a
 few minutes.
 
 If you're interested in Urbit development, keep reading.
 
-[start]: https://urbit.org/using/install/
+[start]: https://urbit.org/install/
 
 ## Development
 
