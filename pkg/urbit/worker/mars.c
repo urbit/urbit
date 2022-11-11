@@ -1426,7 +1426,7 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
   //  XX source kelvin from args?
   //
   inp_u.ver_u.nam_m = c3__zuse;
-  inp_u.ver_u.ver_w = 418;
+  inp_u.ver_u.ver_w = 417;
 
   gettimeofday(&inp_u.tim_u, 0);
   c3_rand(inp_u.eny_w);
