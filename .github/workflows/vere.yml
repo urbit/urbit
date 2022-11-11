@@ -74,6 +74,11 @@ jobs:
           name: ares
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
+      # run unit tests early on linux (x-compilation will skip them)
+      - name: build dynamic binary (and run tests)
+        if: ${{ matrix.type == 'linux' }}
+        run: nix-build -A urbit
+
       - name: build static binary
         run: |
           nix-build -A urbit        \
