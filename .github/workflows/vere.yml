@@ -48,8 +48,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest }
-          - { os: macos-latest }
+          - { os: ubuntu-latest, type: linux }
+          - { os: macos-latest,  type: macos }
+          - { os: buildjet-4vcpu-ubuntu-2204-arm, type: linux }
 
     runs-on: ${{ matrix.os }}
 
@@ -64,7 +65,7 @@ jobs:
         with:
           extra_nix_config: |
             system-features = nixos-test benchmark big-parallel kvm
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.type == 'linux' }}
       - uses: cachix/install-nix-action@v16
         if: ${{ matrix.os != 'ubuntu-latest' }}
 
@@ -84,7 +85,7 @@ jobs:
           cat ./urbit-derivation
 
       - name: confirm binary is mostly static
-        if: matrix.os == 'macos-latest'
+        if: matrix.type == 'macos'
         run: |
           bin="${{ env.urbit_static }}/bin/urbit"
 
@@ -117,7 +118,7 @@ jobs:
           echo -n "$version" > ./version-string
 
       - name: upload version string artifact
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.type == 'linux'
         uses: actions/upload-artifact@v3
         with:
           name: version-string
