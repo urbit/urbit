@@ -6,7 +6,7 @@ let
 
 in prev.lib.optionalAttrs isAarch64 {
   libsigsegv = prev.libsigsegv.overrideAttrs (attrs: {
-    preConfigure = (old.preConfigure or "") + ''
+    preConfigure = (prev.preConfigure or "") + ''
       sed -i 's/^CFG_FAULT=$/CFG_FAULT=fault-linux-arm.h/' configure
     '';
   });
