@@ -59,7 +59,7 @@ export default function SourceSyncer({ appName, title, syncDesk, syncShip }: Sou
             </div>
             <div className="flex space-x-2">
               <Button onClick={onUnsync} variant="destructive">
-                Unsync
+                Unsync Updates for {appName}...
               </Button>
             </div>
           </>
