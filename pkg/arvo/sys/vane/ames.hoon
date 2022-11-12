@@ -607,9 +607,7 @@
 ::    life:        our $life; how many times we've rekeyed
 ::    crypto-core: interface for encryption and signing
 ::    bug:         debug printing configuration
-::    corks(STALE):wires for cork flows pending publisher update
 ::
-::    Note: .corks is only still present for unreleased migration reasons
 ::
 +$  ames-state
   $:  peers=(map ship ship-state)
@@ -617,7 +615,6 @@
       =life
       crypto-core=acru:ames
       =bug
-      corks=(set wire)  ::TODO  unused, remove in next version of state
   ==
 ::
 +$  ames-state-4  ames-state-5
@@ -644,7 +641,7 @@
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state)
+      snd=(map bone message-pump-state-8)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -673,18 +670,85 @@
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state)
+      snd=(map bone message-pump-state-8)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
   ==
 ::
++$  ship-state-8
+    $%  [%alien alien-agenda]
+        [%known peer-state-8]
+    ==
+::
++$  peer-state-8
+  $:  $:  =symmetric-key
+          =life
+          =rift
+          =public-key
+          sponsor=ship
+      ==
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state-8)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+      closing=(set bone)
+      corked=(set bone)
+      krocs=(set bone)
+  ==
+::
++$  message-pump-state-8
+  $:  current=_`message-num`1
+      next=_`message-num`1
+      unsent-messages=(qeu message-blob)
+      unsent-fragments=(list static-fragment)
+      queued-message-acks=(map message-num ack)
+      packet-pump-state=packet-pump-state-8
+  ==
+::
++$  packet-pump-state-8
+  $:  next-wake=(unit @da)
+      live=(tree [live-packet-key live-packet-val])
+      metrics=pump-metrics-8
+  ==
+::
++$  pump-metrics-8
+  $:  rto=_~s1
+      rtt=_~s1
+      rttvar=_~s1
+      ssthresh=_10.000
+      cwnd=_1
+      num-live=@ud
+      counter=@ud
+  ==
+::
 +$  ames-state-7
-  $:  peers=(map ship ship-state)
+  $:  peers=(map ship ship-state-8)
       =unix=duct
       =life
       crypto-core=acru:ames
       =bug
+  ==
+::
++$  ames-state-8
+  $:  peers=(map ship ship-state-8)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      =bug
+      corks=(set wire)
+  ==
+::
++$  cached-state
+  %-  unit
+  $%  [%5 ames-state-5]
+      [%6 ames-state-6]
+      [%7 ames-state-7]
+      [%8 ames-state-8]
+      [%9 ames-state]
   ==
 ::  $bug: debug printing configuration
 ::
@@ -841,7 +905,7 @@
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
-    =|  cached-state=(unit $%([%5 ames-state-5] [%6 ames-state-6] [%7 ames-state-7] [%8 ^ames-state]))
+    =|  =cached-state
     ::
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
@@ -963,7 +1027,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%8 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%9 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -995,6 +1059,13 @@
                   [%adult state=ames-state-7]
               ==  ==
               $:  %8
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-8
+                  ==
+                  [%adult state=ames-state-8]
+              ==  ==
+              $:  %9
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1039,12 +1110,22 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%8 %adult *]  (load:adult-core %8 state.old)
+          [%8 %adult *]
+        =.  cached-state  `[%8 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%8 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %8 state.old)
+        larval-gate
+       ::
+          [%9 %adult *]  (load:adult-core %9 state.old)
+      ::
+          [%9 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %9 state.old)
         larval-gate
        ::
       ==
@@ -1063,7 +1144,9 @@
         ~>  %slog.0^leaf/"ames: init daily recork timer"
         :-  [[/ames]~ %pass /recork %b %wait `@da`(add now ~d1)]~
         8+(state-7-to-8:load:adult-core +.u.cached-state)
-      ?>  ?=(%8 -.u.cached-state)
+      =?  u.cached-state  ?=(%8 -.u.cached-state)
+        9+(state-8-to-9:load:adult-core +.u.cached-state)
+      ?>  ?=(%9 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -1138,15 +1221,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%8 %adult ames-state]
+++  stay  [%9 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%8 ^ames-state]
+          $%  [%9 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%8 -.old-state)
+      ?>  ?=(%9 -.old-state)
       ames-gate(ames-state +.old-state)
   ::
   |%
@@ -1162,10 +1245,10 @@
         ship-state
       =.  snd.ship-state
         %-  ~(run by snd.ship-state)
-        |=  =message-pump-state
-        =.  num-live.metrics.packet-pump-state.message-pump-state
-          ~(wyt in live.packet-pump-state.message-pump-state)
-        message-pump-state
+        |=  pump=message-pump-state-8
+        =.  num-live.metrics.packet-pump-state.pump
+          ~(wyt in live.packet-pump-state.pump)
+        pump
       ship-state
     ames-state
   ::  +state-5-to-6 called from larval-ames
@@ -1199,24 +1282,46 @@
     :_  +.ames-state
     %-  ~(run by peers.ames-state)
     |=  ship-state=ship-state-6
-    ^-  ^ship-state
+    ^-  ship-state-8
     ?.  ?=(%known -.ship-state)
       ship-state
     :-  %known
-    ^-  peer-state
+    ^-  peer-state-8
     :-  +<.ship-state
     [route qos ossuary snd rcv nax heeds ~ ~ ~]:ship-state
   ::  +state-7-to-8 called from larval-ames
   ::
   ++  state-7-to-8
     |=  ames-state=ames-state-7
-    ^-  ^^ames-state
+    ^-  ames-state-8
     :*  peers.ames-state
         unix-duct.ames-state
         life.ames-state
         crypto-core.ames-state
         bug.ames-state
         *(set wire)
+    ==
+  ::  +state-8-to-9 called from larval-ames
+  ::
+  ++  state-8-to-9
+    |=  ames-state=ames-state-8
+    ^-  ^^ames-state
+    :_  [unix-duct life crypto-core bug]:ames-state
+    %-  ~(run by peers.ames-state)
+    |=  ship-state=ship-state-8
+    ^-  ^ship-state
+    ?.  ?=(%known -.ship-state)
+      ship-state
+    %=    ship-state
+        snd
+      %-  ~(run by snd.ship-state)
+      |=  pump=message-pump-state-8
+      ^-  message-pump-state
+      =*  packet  packet-pump-state.pump
+      %=    pump
+          metrics.packet-pump-state
+        [rto rtt rttvar ssthresh cwnd counter]:metrics.packet
+      ==
     ==
   --
 ::  +scry: dereference namespace
@@ -1331,9 +1436,6 @@
     =/  res
       u.mps
     ``noun+!>(!>(res))
-  ::
-      [%corks ~]
-    ``noun+!>(~(tap in corks.ames-state))
   ==
 --
 ::  |per-event: inner event-handling core
@@ -3313,7 +3415,6 @@
     ::  update .live and .metrics
     ::
     =.  live.state     (gas:packet-queue live.state send-list)
-    =.  metrics.state  (on-sent:gauge (lent send-list))  ::  TODO remove
     ::  TMI
     ::
     =>  .(sent `(list static-fragment)`sent)
@@ -3494,8 +3595,7 @@
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
-  |=  [pump-metrics live-packets=@ud now=@da =ship =bug]
-  ::  TODO rename live-packets num-live
+  |=  [pump-metrics num-live=@ud now=@da =ship =bug]
   =*  veb  veb.bug
   =*  metrics  +<-
   |%
@@ -3517,16 +3617,7 @@
   ::
   ++  num-slots
     ^-  @ud
-    (sub-safe cwnd live-packets)
-  ::  +on-sent: adjust metrics based on sending .num-sent fresh packets
-  ::  TODO remove
-  ::
-  ++  on-sent
-    |=  num-sent=@ud
-    ^-  pump-metrics
-    ::
-    =.  num-live  (add num-live num-sent)
-    metrics
+    (sub-safe cwnd num-live)
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
   ::
   ++  on-ack
@@ -3534,7 +3625,6 @@
     ^-  pump-metrics
     ::
     =.  counter  +(counter)
-    =.  num-live  (dec num-live)  :: TODO remove
     ::  if below congestion threshold, add 1; else, add avg. 1 / cwnd
     ::
     =.  cwnd
@@ -3605,7 +3695,7 @@
   ::
   ++  in-recovery
     ^-  ?
-    (gth live-packets cwnd)
+    (gth num-live cwnd)
   ::  +sub-safe: subtract with underflow protection
   ::
   ++  sub-safe
@@ -3622,7 +3712,6 @@
         rttvar=(div rttvar ms)
         ssthresh=ssthresh
         cwnd=cwnd
-        num-live=live-packets  ::  TODO remove
         num-live=num-live
         counter=counter
     ==
