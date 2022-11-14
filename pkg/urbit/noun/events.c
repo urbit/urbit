@@ -226,8 +226,9 @@ _ce_center_guard_page(void)
   if ( -1 == mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
     fprintf(stderr,
             "loom: failed to protect the guard page "
-            "(base address %p)\r\n",
-            u3a_into(gar_pag_p));
+            "(base address %p): %s\r\n",
+            u3a_into(gar_pag_p),
+            strerror(errno));
     goto fail;
   }
 
@@ -611,6 +612,7 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
                         pag_siz_i,
                         PROT_READ) )
     {
+      fprintf(stderr, "loom: patch mprotect: %s\r\n", strerror(errno));
       c3_assert(0);
     }
 
