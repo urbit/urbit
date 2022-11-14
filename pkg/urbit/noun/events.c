@@ -1083,7 +1083,16 @@ u3e_yolo(void)
   //    NB: u3e_save() will reinstate protection flags
   //
   if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
+    //  XX confirm recoverable errors
+    //
+    fprintf(stderr, "loom: yolo: %s\r\n", strerror(errno));
     return c3n;
+  }
+
+  if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+    fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
+                    strerror(errno));
+    c3_assert(0);
   }
 
   return c3y;
