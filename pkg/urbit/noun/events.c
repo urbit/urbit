@@ -1285,6 +1285,8 @@ u3e_foul(void)
   memset(u3P.dit_w, 0xff, sizeof(u3P.dit_w));
 }
 
+/* u3e_init(): initialize guard page tracking.
+*/
 void
 u3e_init(void)
 {
@@ -1292,5 +1294,17 @@ u3e_init(void)
 
 #ifdef U3_GUARD_PAGE
   _ce_center_guard_page();
+#endif
+}
+
+/* u3e_ward(): reposition guard page if needed.
+*/
+void
+u3e_ward(u3_post low_p, u3_post hig_p)
+{
+#ifdef U3_GUARD_PAGE
+  if ( (low_p > gar_pag_p) || (hig_p < gar_pag_p) ) {
+    _ce_center_guard_page();
+  }
 #endif
 }

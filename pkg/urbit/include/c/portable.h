@@ -114,8 +114,7 @@
 #   if defined(U3_OS_linux)
 #     ifdef __LP64__
 #       ifdef U3_CPU_aarch64
-//  XX not yet
-//#         define U3_OS_ARCH "aarch64-linux"
+#         define U3_OS_ARCH "aarch64-linux"
 #       else
 #         define U3_OS_ARCH "x86_64-linux"
 #       endif

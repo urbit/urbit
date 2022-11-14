@@ -783,6 +783,7 @@ u3m_leap(c3_w pad_w)
       u3R->cap_p -= len_w;
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
+      u3e_ward(rod_u->cap_p, rod_u->hat_p);
 #if 0
       fprintf(stderr, "leap: from north %p (cap 0x%x), to south %p\r\n",
               u3R,
@@ -795,6 +796,7 @@ u3m_leap(c3_w pad_w)
       u3R->cap_p += len_w;
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
+      u3e_ward(rod_u->hat_p, rod_u->cap_p);
 #if 0
       fprintf(stderr, "leap: from south %p (cap 0x%x), to north %p\r\n",
               u3R,

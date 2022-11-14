@@ -147,4 +147,8 @@
       void
       u3e_init(void);
 
+      /// Reposition guard page if needed.
+      void
+      u3e_ward(u3_post low_p, u3_post hig_p);
+
 #endif /* ifndef U3_EVENTS_H */
