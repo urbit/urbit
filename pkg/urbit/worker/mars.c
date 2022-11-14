@@ -538,7 +538,7 @@ _mars_post(u3_mars* mar_u)
     mar_u->rec_o = c3n;
   }
 
-  //  XX this runs on replay too, |mass s/b elsewhere
+  //  XX |mass s/b elsewhere
   //
   if ( c3y == mar_u->mut_o ) {
     _mars_grab(mar_u->sac);
@@ -733,45 +733,75 @@ _mars_disk_cb(void* ptr_v, c3_d eve_d, c3_o ret_o)
 
 /* _mars_poke_play(): replay an event.
 */
-static u3_noun
+static u3_weak
 _mars_poke_play(u3_mars* mar_u, c3_d eve_d, u3_noun job)
 {
-  c3_w  pre_w = u3a_open(u3R);
   u3_noun vir;
 
   if ( c3n == u3v_poke_sure(0, job, &vir) ) {
-    u3z(vir);
-    return c3n;
+    return vir;
   }
 
-  u3z(_mars_sure_feck(mar_u, pre_w, vir));
-  return c3y;
+  u3z(vir);
+  return u3_none;
 }
+
+typedef enum {
+  _play_yes_e,  //  success
+  _play_mem_e,  //  %meme
+  _play_int_e,  //  %intr
+  _play_log_e,  //  event log fail
+  _play_mug_e,  //  mug mismatch
+  _play_bad_e   //  total failure
+} _mars_play_e;
 
 /* _mars_play_batch(): replay a batch of events.
 */
-static c3_o
+static _mars_play_e
 _mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
 {
   u3_disk*      log_u = mar_u->log_u;
   u3_disk_walk* wok_u = u3_disk_walk_init(log_u, mar_u->dun_d + 1, bat_w);
   u3_fact       tac_u;
+  u3_noun         dud;
 
   while ( c3y == u3_disk_walk_live(wok_u) ) {
     if ( c3n == u3_disk_walk_step(wok_u, &tac_u) ) {
       u3_disk_walk_done(wok_u);
-      return c3n;
+      return _play_log_e;
     }
 
     c3_assert( ++mar_u->sen_d == tac_u.eve_d );
 
-    if ( c3n == _mars_poke_play(mar_u, tac_u.eve_d, tac_u.job) ) {
-      //  XX produce/print trace, reclaim on meme, retry on %intr, &c
-      //
-      fprintf(stderr, "play (%" PRIu64 "): failed\r\n", tac_u.eve_d);
+    if ( u3_none != (dud = _mars_poke_play(mar_u, tac_u.eve_d, tac_u.job)) ) {
+      c3_m mot_m;
+
       mar_u->sen_d = mar_u->dun_d;
       u3_disk_walk_done(wok_u);
-      return c3n;
+
+      c3_assert( c3y == u3r_safe_word(u3h(dud), &mot_m) );
+
+      switch ( mot_m ) {
+        case c3__meme: {
+          fprintf(stderr, "play (%" PRIu64 "): %%meme\r\n", tac_u.eve_d);
+          u3z(dud);
+          return _play_mem_e;
+        }
+
+        case c3__intr: {
+          fprintf(stderr, "play (%" PRIu64 "): %%intr\r\n", tac_u.eve_d);
+          u3z(dud);
+          return _play_int_e;
+        }
+
+        default: {
+          fprintf(stderr, "play (%" PRIu64 "): failed\r\n", tac_u.eve_d);
+          u3_pier_punt_goof("play", dud);
+          //  XX say something uplifting
+          //
+          return _play_bad_e;
+        }
+      }
     }
 
     mar_u->mug_l = u3r_mug(u3A->roc);
@@ -784,7 +814,7 @@ _mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
       if ( c3y == mug_o ) {
         mar_u->sen_d = mar_u->dun_d;
         u3_disk_walk_done(wok_u);
-        return c3n;
+        return _play_mug_e;
       }
     }
 
@@ -793,7 +823,7 @@ _mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
 
   u3_disk_walk_done(wok_u);
 
-  return c3y;
+  return _play_yes_e;
 }
 
 /* u3_mars_play(): replay all newer logged events.
@@ -806,8 +836,13 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
   if ( !eve_d ) {
     eve_d = log_u->dun_d;
   }
+  else if ( eve_d <= mar_u->dun_d ) {
+    u3l_log("mars: already computed %" PRIu64 "\r\n", eve_d);
+    u3l_log("      state=%" PRIu64 ", log=%" PRIu64 "\r\n",
+            mar_u->dun_d, log_u->dun_d);
+    return;
+  }
   else {
-    c3_assert( eve_d > mar_u->dun_d );
     eve_d = c3_min(eve_d, log_u->dun_d);
   }
 
@@ -828,29 +863,60 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
             eve_d);
   }
 
-  while ( mar_u->dun_d < eve_d ) {
-    c3_w bat_w = eve_d - mar_u->dun_d;
-    c3_assert( (mar_u->dun_d + bat_w) == eve_d );
+  {
+    c3_d fir_d = mar_u->dun_d;  // started at
+    c3_d mem_d = 0;             // last event to meme
+    c3_w try_w = 0;             // [mem_d] retry count
 
-    _mars_step_trace(mar_u->dir_c);
+    while ( mar_u->dun_d < eve_d ) {
+      _mars_step_trace(mar_u->dir_c);
 
-    //  XX get batch from args
-    //
-    if ( c3n == _mars_play_batch(mar_u, c3n, c3_min(bat_w, 500)) ) {
-      u3l_log("play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
-      u3e_save();
-      //  XX exit code, cb
+      //  XX get batch from args
       //
-      exit(1);
+      switch ( _mars_play_batch(mar_u, c3y, 1024) ) {
+        case _play_yes_e: {
+          u3l_log("play (%" PRIu64 "): done\r\n", mar_u->dun_d);
+          u3m_reclaim();
+
+          //  XX save a snapshot every N events?
+          //
+        } break;
+
+        case _play_mem_e: {
+          if ( (mem_d == mar_u->dun_d) && (3 == ++try_w) ) {
+            fprintf(stderr, "play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
+            u3e_save();
+            //  XX exit code, cb
+            //
+            exit(1);
+          }
+
+          mem_d = mar_u->dun_d;
+
+          //  XX pack before meld?
+          //
+          if ( u3C.wag_w & u3o_auto_meld ) {
+            u3a_print_memory(stderr, "mars: meld: gained", u3u_meld());
+          }
+          else {
+            u3a_print_memory(stderr, "mars: pack: gained", u3m_pack());
+          }
+        } break;
+
+        //  XX handle any specifically?
+        //
+        case _play_int_e:
+        case _play_log_e:
+        case _play_mug_e:
+        case _play_bad_e: {
+          fprintf(stderr, "play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
+          u3e_save();
+          //  XX exit code, cb
+          //
+          exit(1);
+        }
+      }
     }
-
-    u3l_log("play (%" PRIu64 "): done\r\n", mar_u->dun_d);
-
-    //  XX refactor |mass
-    //
-    u3z(mar_u->sac);
-    mar_u->sac = u3_nul;
-    _mars_post(mar_u);
   }
 
   u3l_log("---------------- playback complete ----------------\r\n");
