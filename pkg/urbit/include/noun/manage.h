@@ -9,13 +9,13 @@
         ///
         /// @return  Next event number (starting from 1).
         c3_d
-        u3m_boot(const c3_c* dir_c);
+        u3m_boot(const c3_c* dir_c, size_t len_i);
 
         /// Start the u3 system without starting the snapshotting subsystem.
         ///
         /// @return 0  Always.
         c3_d
-        u3m_boot_lite(void);
+        u3m_boot_lite(size_t len_i);
 
         /// Gracefully shutdown and cleanup.
         void

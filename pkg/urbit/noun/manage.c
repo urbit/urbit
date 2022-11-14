@@ -431,7 +431,7 @@ u3m_file(c3_c* pas_c)
 {
   struct stat buf_b;
   c3_i        fid_i = c3_open(pas_c, O_RDONLY, 0644);
-  c3_w        fln_w, red_w;
+  c3_w        fln_w;
   c3_y*       pad_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
@@ -441,10 +441,10 @@ u3m_file(c3_c* pas_c)
   fln_w = buf_b.st_size;
   pad_y = c3_malloc(buf_b.st_size);
 
-  red_w = read(fid_i, pad_y, fln_w);
+  ssize_t red_i = c3_pread(fid_i, pad_y, fln_w, 0);
   close(fid_i);
 
-  if ( fln_w != red_w ) {
+  if ( red_i != fln_w ) {
     c3_free(pad_y);
     return u3m_bail(c3__fail);
   }
@@ -1805,11 +1805,11 @@ u3m_stop()
 }
 
 c3_d
-u3m_boot(const c3_c* dir_c)
+u3m_boot(const c3_c* dir_c, size_t len_i)
 {
   /* Activate the loom.
   */
-  u3m_init(u3a_bytes);
+  u3m_init(len_i);
 
   /* Activate the storage system.
   */
@@ -1853,11 +1853,11 @@ u3m_boot(const c3_c* dir_c)
 }
 
 c3_d
-u3m_boot_lite(void)
+u3m_boot_lite(size_t len_i)
 {
   /* Activate the loom.
   */
-  u3m_init(u3a_bytes);
+  u3m_init(len_i);
 
   /* Activate tracing.
   */

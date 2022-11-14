@@ -960,6 +960,7 @@ u3_mars_init(c3_c* dir_c, u3_moat* inn_u, u3_mojo* out_u, c3_d eve_d)
       .sen_d = u3A->eve_d,
       .dun_d = u3A->eve_d,
       .pac_o = c3n,
+      .mel_o = c3n,
       .rec_o = c3n,
       .mut_o = c3n,
       .sac   = u3_nul,
@@ -1325,7 +1326,7 @@ _mars_boot_make(u3_boot_opts* inp_u,
       cad = u3nc(c3__whom, u3k(who));
       mod = u3nc(u3nc(u3k(wir), cad), mod);
 
-      cad = u3nt(c3__verb, u3_nul, inp_u->veb_o);
+      cad = u3nt(c3__verb, u3_nul, (c3y == inp_u->veb_o) ? c3n : c3y);
       mod = u3nc(u3nc(u3k(wir), cad), mod);
 
       cad = _mars_wyrd_card(inp_u->ver_u.nam_m,

@@ -293,7 +293,8 @@
         c3_c*   key_c;                      //  -k, private key file
         c3_o    net;                        //  -L, local-only networking
         c3_o    lit;                        //  -l, lite mode
-        c3_o    map;                        //  -m, disable snapshot mmap
+        c3_y    lom_y;                      //      loom bex
+        c3_y    lut_y;                      //      urth-loom bex
         c3_c*   til_c;                      //  -n, play till eve_d
         c3_o    pro;                        //  -P, profile
         c3_s    per_s;                      //      http port
@@ -314,6 +315,7 @@
         c3_o    con;                        //      run conn
         c3_o    doc;                        //      dock binary in pier
         u3_even* vex_u;                     //  --prop-*, boot enhanchements
+        c3_o    map;                        //  --no-demand (reversed)
         c3_o    mel;                        //  --auto-meld
       } u3_opts;
 
@@ -1265,11 +1267,6 @@
       */
         void
         u3_daemon_init();
-
-      /* u3_write_fd(): retry interrupts, continue partial writes, assert errors.
-      */
-        void
-        u3_write_fd(c3_i fid_i, const void* buf_v, size_t len_i);
 
         c3_w
         u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);

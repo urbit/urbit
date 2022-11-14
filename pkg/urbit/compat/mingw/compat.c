@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <sys/utime.h>
 #include <windows.h>
+#include <tlhelp32.h>
 
 // set default CRT file mode to binary
 // note that mingw binmode.o does nothing
@@ -143,6 +144,63 @@ int link(const char *path1, const char *path2)
   errno = err_win_to_posix(GetLastError());
   return -1;
 }
+
+ssize_t pread(int fd, void *buf, size_t count, off_t offset)
+{
+  DWORD len = 0;
+
+  OVERLAPPED overlapped = {0};
+
+  overlapped.OffsetHigh = (sizeof(off_t) <= sizeof(DWORD)) ?
+                          (DWORD)0 : (DWORD)((offset >> 32) & 0xFFFFFFFFL);
+  overlapped.Offset     = (sizeof(off_t) <= sizeof(DWORD)) ?
+                          (DWORD)offset : (DWORD)(offset & 0xFFFFFFFFL);
+
+  HANDLE h = (HANDLE)_get_osfhandle(fd);
+
+  if ( INVALID_HANDLE_VALUE == h ) {
+    errno = EBADF;
+    return -1;
+  }
+
+  if ( !ReadFile(h, buf, count, &len, &overlapped) ) {
+    DWORD err = GetLastError();
+
+    if ( ERROR_HANDLE_EOF != err ) {
+      errno = err_win_to_posix(err);
+      return -1;
+    }
+  }
+
+  return (ssize_t)len;
+}
+
+ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset)
+{
+  DWORD len = 0;
+
+  OVERLAPPED overlapped = {0};
+
+  overlapped.OffsetHigh = (sizeof(off_t) <= sizeof(DWORD)) ?
+                          (DWORD)0 : (DWORD)((offset >> 32) & 0xFFFFFFFFL);
+  overlapped.Offset     = (sizeof(off_t) <= sizeof(DWORD)) ?
+                          (DWORD)offset : (DWORD)(offset & 0xFFFFFFFFL);
+
+  HANDLE h = (HANDLE)_get_osfhandle(fd);
+
+  if ( INVALID_HANDLE_VALUE == h ) {
+    errno = EBADF;
+    return -1;
+  }
+
+  if ( !WriteFile(h, buf, count, &len, &overlapped) ) {
+    errno = err_win_to_posix(GetLastError());
+    return -1;
+  }
+
+  return (ssize_t)len;
+}
+
 
 // from msys2 mingw-packages-dev patches
 // -----------------------------------------------------------------------
@@ -374,4 +432,36 @@ long sysconf(int name)
   }
   GetNativeSystemInfo(&si);
   return si.dwPageSize;
+}
+
+int getppid()
+{
+    HANDLE   h;
+    DWORD ppid = 0, pid = GetCurrentProcessId();
+    PROCESSENTRY32 pe32 = { 0 };
+    pe32.dwSize = sizeof(pe32);
+
+    h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+    if ( INVALID_HANDLE_VALUE == h ) {
+        errno = err_win_to_posix(GetLastError());
+        return -1;
+    }
+
+    if ( !Process32First(h, &pe32) ) {
+        CloseHandle(h);
+        errno = err_win_to_posix(GetLastError());
+        return -1;
+    }
+
+    do {
+        if ( pe32.th32ProcessID == pid ) {
+            ppid = pe32.th32ParentProcessID;
+            break;
+        }
+    }
+    while ( Process32Next(h, &pe32) );
+
+    CloseHandle(h);
+    return ppid;
 }
