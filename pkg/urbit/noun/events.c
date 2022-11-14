@@ -568,6 +568,9 @@ _ce_patch_compose(void)
 
     nor_w = (nwr_w + (pag_wiz_i - 1)) >> u3a_page;
     sou_w = (swu_w + (pag_wiz_i - 1)) >> u3a_page;
+
+    c3_assert(  ((gar_pag_p >> u3a_page) >= nor_w)
+             && ((gar_pag_p >> u3a_page) <= (u3P.pag_w - (sou_w + 1))) );
   }
 
 #ifdef U3_SNAPSHOT_VALIDATION
