@@ -1858,6 +1858,10 @@ u3m_boot_lite(void)
   */
   u3m_pave(c3y);
 
+  /* Place the guard page.
+  */
+  u3e_init();
+
   /* Initialize the jet system.
   */
   u3j_boot(c3y);
