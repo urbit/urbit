@@ -1518,10 +1518,27 @@
       (~(has in ^~((silt `(list ^care)`~[%u %w %x %y %z]))) care)
     --
   ::
+  ::  Build and send agents to gall
+  ::
+  ::  Must be called at the end of a commit, but only while Clay is in a
+  ::  fully-consistent state (eg not in the middle of a kelvin upgrade).
+  ::
   ++  goad
     ^+  ..park
     =^  moves-1  ruf  abet
     =^  moves-2  ruf  abet:goad:(lu now rof hen ruf)
+    =.  ..park  apex
+    (emil (weld moves-1 moves-2))
+  ::
+  ::  Notify subscribers of changes to tire
+  ::
+  ::  Must be called any time tire could have changed, unless you called
+  ::  goad (which calls tare internally).
+  ::
+  ++  tare
+    ^+  ..park
+    =^  moves-1  ruf  abet
+    =^  moves-2  ruf  abet:tare:(lu now rof hen ruf)
     =.  ..park  apex
     (emil (weld moves-1 moves-2))
   ::
@@ -1723,6 +1740,13 @@
   ::
   ::    Guaranteed to finish in one event.
   ::
+  ::    updated: whether we've already completed sys upgrade
+  ::    goat: whether we should call +goad at the end.  Only false
+  ::      during kelvin upgrade so that all commits can happen before
+  ::      the +goad.
+  ::    yoki: new commit
+  ::    rang: any additional objects referenced
+  ::
   ::    TODO: needs to check tako in rang
   ::
   ++  park
@@ -1772,7 +1796,9 @@
         (~(put by wic) weft yoki)
       =?  ..park  !?=(%base syd)  (emit hen %pass /park-stuck-wick %c %wick ~)
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
-      ..park
+      ::  call +tare to notify that there's a new commit-in-waiting
+      ::
+      tare
     =.  wic.dom  (~(del by wic.dom) zuse+zuse)
     ::
     =/  old-yaki
@@ -1791,8 +1817,15 @@
     ::  promote and fill in mime cache
     ::
     =/  invalid  (~(uni in deletes) ~(key by changes))
+    ::  if /sys updated in %base, defer to arvo and return early
+    ::
     ?:  &(=(%base syd) !updated (~(any in invalid) is-kernel-path))
       (sys-update yoki new-data)
+    ::  after this point, there must be no early return except if it's a
+    ::  complete no-op.  any error conditions must crash.  since we're
+    ::  changing state, we may need to call +wake, +goad, etc, which
+    ::  happens at the end of the function.
+    ::
     =.  ..park  (emit hen %pass /park-wick %c %wick ~)
     =.  wic.dom
       %+  roll  ~(tap in kel)
@@ -3087,7 +3120,7 @@
       ?~  ver
         ~
       (~(del by wic.dom) u.ver)
-    ..park
+    tare
   ::
   ::  Try to apply highest-versioned %base commit-in-waiting
   ::
@@ -4347,13 +4380,13 @@
   ++  emil
     |=  mof=(list move)
     %_(+> mow (weld (flop mof) mow))
-  ::  Init ford
+  ::  +ford: init ford
   ::
   ++  ford
     |=  [her=ship syd=desk yon=(unit aeon)]
     =/  den  ((de now rof hen ruf) her syd)
     (aeon-ford:den ?~(yon let.dom:den u.yon))
-  ::  Save ford cache
+  ::  +wrap: save ford cache
   ::
   ++  wrap
     |*  [her=ship syd=desk yon=(unit aeon) res=* =state:ford:fusion]
