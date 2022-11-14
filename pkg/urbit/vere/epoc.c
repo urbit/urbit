@@ -241,7 +241,7 @@ _get_boot_seq_len(const u3_epoc* const poc_u, c3_w* const len_w)
                break,
                "failed to get value for key '%s' in META database",
                key_c);
-      if ( val_u.mv_size != sizeof(*len_w) ) {
+      if ( val_u.mv_size > sizeof(*len_w) ) {
         fprintf(stderr,
                 "epoc: size of life cycle length unexpected:"
                 " expected %lu, got %lu\r\n",
@@ -249,7 +249,7 @@ _get_boot_seq_len(const u3_epoc* const poc_u, c3_w* const len_w)
                 val_u.mv_size);
       }
       else {
-        memcpy(len_w, val_u.mv_data, sizeof(*len_w));
+        memcpy(len_w, val_u.mv_data, val_u.mv_size);
         suc_t = 1;
       }
       break;
