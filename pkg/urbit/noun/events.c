@@ -558,7 +558,10 @@ _ce_patch_write_page(u3_ce_patch* pat_u,
 {
   ssize_t ret_i;
 
-  c3_assert(-1 != lseek(pat_u->mem_i, pgc_w * pag_siz_i, SEEK_SET));
+  if ( -1 == lseek(pat_u->mem_i, pgc_w * pag_siz_i, SEEK_SET) ) {
+    fprintf(stderr, "loom: patch page seek: %s\r\n", strerror(errno));
+    c3_assert(0);
+  }
 
   if ( pag_siz_i != (ret_i = write(pat_u->mem_i, mem_w, pag_siz_i)) ) {
     if ( 0 < ret_i ) {
@@ -826,7 +829,11 @@ _ce_image_blit(u3e_image* img_u,
   c3_w      i_w;
   c3_w    siz_w = pag_siz_i;
 
-  lseek(img_u->fid_i, 0, SEEK_SET);
+  if ( -1 == lseek(img_u->fid_i, 0, SEEK_SET) ) {
+    fprintf(stderr, "loom: image blit seek 0: %s\r\n", strerror(errno));
+    c3_assert(0);
+  }
+
   for ( i_w = 0; i_w < img_u->pgs_w; i_w++ ) {
     if ( siz_w != (ret_i = read(img_u->fid_i, ptr_w, siz_w)) ) {
       if ( 0 < ret_i ) {
@@ -865,7 +872,11 @@ _ce_image_fine(u3e_image* img_u,
   c3_w      i_w;
   c3_w    buf_w[pag_wiz_i];
 
-  lseek(img_u->fid_i, 0, SEEK_SET);
+  if ( -1 == lseek(img_u->fid_i, 0, SEEK_SET) ) {
+    fprintf(stderr, "loom: image fine seek 0: %s\r\n", strerror(errno));
+    c3_assert(0);
+  }
+
   for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
     c3_w mem_w, fil_w;
 
