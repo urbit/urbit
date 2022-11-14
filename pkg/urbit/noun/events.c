@@ -404,10 +404,10 @@ _ce_patch_delete(void)
 static c3_o
 _ce_patch_verify(u3_ce_patch* pat_u)
 {
-  c3_w i_w, pag_w, mug_w;
-  c3_w      mem_w[pag_wiz_i];
-  size_t    off_i, siz_i = pag_siz_i;
-  ssize_t   ret_i;
+  c3_w    pag_w, mug_w;
+  c3_w    mem_w[pag_wiz_i];
+  size_t  off_i, siz_i = pag_siz_i;
+  ssize_t ret_i;
 
   if ( u3e_version != pat_u->con_u->ver_y ) {
     fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
@@ -416,10 +416,10 @@ _ce_patch_verify(u3_ce_patch* pat_u)
     return c3n;
   }
 
-  for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
+  for ( c3_z i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     pag_w = pat_u->con_u->mem_u[i_w].pag_w;
     mug_w = pat_u->con_u->mem_u[i_w].mug_w;
-    off_i = (size_t)i_w << (u3a_page + 2);
+    off_i = i_w << (u3a_page + 2);
 
     if ( siz_i != (ret_i = c3_pread(pat_u->mem_i, mem_w, siz_i, off_i)) ) {
       if ( 0 < ret_i ) {
@@ -435,13 +435,13 @@ _ce_patch_verify(u3_ce_patch* pat_u)
       c3_w nug_w = u3r_mug_words(mem_w, pag_wiz_i);
 
       if ( mug_w != nug_w ) {
-        fprintf(stderr, "loom: patch mug mismatch %d/%d; (%x, %x)\r\n",
+        fprintf(stderr, "loom: patch mug mismatch %d/%zu; (%x, %x)\r\n",
                         pag_w, i_w, mug_w, nug_w);
         return c3n;
       }
 #if 0
       else {
-        u3l_log("verify: patch %d/%d, %x\r\n", pag_w, i_w, mug_w);
+        u3l_log("verify: patch %d/%zu, %x\r\n", pag_w, i_w, mug_w);
       }
 #endif
     }
