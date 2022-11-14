@@ -379,7 +379,6 @@
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
-                  %wick                                 ::
               ==                                        ::
           task                                          ::
       ==                                                ::
@@ -1794,7 +1793,7 @@
         %+  roll  ~(tap in kel)
         |:  [weft=*weft wic=wic.dom]
         (~(put by wic) weft yoki)
-      =?  ..park  !?=(%base syd)  (emit hen %pass /park-stuck-wick %c %wick ~)
+      =?  ..park  !?=(%base syd)  wick
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ::  call +tare to notify that there's a new commit-in-waiting
       ::
@@ -1826,7 +1825,7 @@
     ::  changing state, we may need to call +wake, +goad, etc, which
     ::  happens at the end of the function.
     ::
-    =.  ..park  (emit hen %pass /park-wick %c %wick ~)
+    =.  ..park  wick
     =.  wic.dom
       %+  roll  ~(tap in kel)
       |:  [weft=*weft wic=wic.dom]
@@ -1914,9 +1913,7 @@
       ?.  ?=(%live liv.dom.dojo.i.desks)
         $(desks t.desks)
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
-        ::  XX should crash here
-        ::
-        $(desks t.desks)
+        (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks))
       =/  den  ((de now rof hen ruf) our desk.i.desks)
       =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
@@ -3126,7 +3123,6 @@
   ::
   ++  wick
     ^+  ..park
-    ?>  ?=(%base syd)
     (emit hen %pass /wick %b %wait now)
   ::
   ++  take-wick
@@ -3979,7 +3975,7 @@
         (build-cast:(aeon-ford aeon) [i i.t]:path)
       :_(..park [~ ~ %cast vase])
     ::
-    ::  XX move to +read-buc
+    ::  TODO move to +read-buc
     ::
     ++  read-d
       !.
@@ -4140,7 +4136,7 @@
           %late  !!  :: handled in +aver
           %case  !!  :: handled in +aver
           %base-tako
-        ::  XX this ignores the given beak
+        ::  TODO this ignores the given beak
         ::  maybe move to +aver?
         ?>  ?=(^ t.t.pax)
         :^  ~  ~  %uvs  !>
@@ -4431,8 +4427,7 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
-    ::  XX enable before release
-    ::  =.  ..abet  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    =.  ..abet  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     =.  ..abet  tare
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
@@ -4901,10 +4896,9 @@
       %zest
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(set-zest:den liv.req)
+      abet:wick:(set-zest:den liv.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
-    =^  m3  ..^$  $(wrapped-task [%wick ~])
-    [:(weld m1 m2 m3) ..^$]
+    [(weld m1 m2) ..^$]
   ::
       %plea
     =*  her  ship.req
