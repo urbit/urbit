@@ -3192,14 +3192,14 @@
   ++  packet-queue
     %-  (ordered-map live-packet-key live-packet-val)
     lte-packets
-  ::  +num-live: number of sent packets awaiting ack
+  ::  +live-packets: number of sent packets awaiting ack
   ::
-  ++  num-live
+  ++  live-packets
     ^-  @ud
     ~(wyt by live.state)
   ::  +gauge: inflate a |pump-gauge to track congestion control
   ::
-  ++  gauge  (make-pump-gauge metrics.state num-live [now her bug]:channel)
+  ++  gauge  (make-pump-gauge metrics.state live-packets [now her bug]:channel)
   ::  +work: handle $packet-pump-task request
   ::
   ++  work
@@ -3313,7 +3313,6 @@
     ::  update .live and .metrics
     ::
     =.  live.state     (gas:packet-queue live.state send-list)
-    =.  metrics.state  (on-sent:gauge (lent send-list))  ::  TODO remove
     ::  TMI
     ::
     =>  .(sent `(list static-fragment)`sent)
@@ -3399,7 +3398,7 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? _acc]
     ::
-    =/  gauge  (make-pump-gauge metrics.acc num-live [now her bug]:channel)
+    =/  gauge  (make-pump-gauge metrics.acc live-packets [now her bug]:channel)
     ::  is this the acked packet?
     ::
     ?:  =(key [message-num fragment-num])
@@ -3446,7 +3445,7 @@
         ==
     ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
-    =/  gauge  (make-pump-gauge metrics num-live [now her bug]:channel)
+    =/  gauge  (make-pump-gauge metrics live-packets [now her bug]:channel)
     ::  if we get an out-of-order ack for a message, skip until it
     ::
     ?:  (lth message-num.key message-num)
@@ -3518,15 +3517,6 @@
   ++  num-slots
     ^-  @ud
     (sub-safe cwnd live-packets)
-  ::  +on-sent: adjust metrics based on sending .num-sent fresh packets
-  ::  TODO remove
-  ::
-  ++  on-sent
-    |=  num-sent=@ud
-    ^-  pump-metrics
-    ::
-    =.  num-live  (add num-live num-sent)
-    metrics
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
   ::
   ++  on-ack
@@ -3534,7 +3524,6 @@
     ^-  pump-metrics
     ::
     =.  counter  +(counter)
-    =.  num-live  (dec num-live)  :: TODO remove
     ::  if below congestion threshold, add 1; else, add avg. 1 / cwnd
     ::
     =.  cwnd
@@ -3600,7 +3589,7 @@
     (lth cwnd ssthresh)
   ::  +in-recovery: %.y iff we're recovering from a skipped packet
   ::
-  ::    We finish recovering when .num-live finally dips back down to
+  ::    We finish recovering when .live-packets finally dips back down to
   ::    .cwnd.
   ::
   ++  in-recovery
@@ -3622,8 +3611,7 @@
         rttvar=(div rttvar ms)
         ssthresh=ssthresh
         cwnd=cwnd
-        num-live=live-packets  ::  TODO remove
-        num-live=num-live
+        num-live=live-packets
         counter=counter
     ==
   --
