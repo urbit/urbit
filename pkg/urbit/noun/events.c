@@ -185,8 +185,9 @@ _ce_center_guard_page(void)
   if ( -1 == mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
     fprintf(stderr,
             "loom: failed to protect the guard page "
-            "(base address %p)\r\n",
-            u3a_into(gar_pag_p));
+            "(base address %p): %s\r\n",
+            u3a_into(gar_pag_p),
+            strerror(errno));
     goto fail;
   }
 
@@ -422,11 +423,10 @@ _ce_patch_verify(u3_ce_patch* pat_u)
 
     if ( siz_i != (ret_i = c3_pread(pat_u->mem_i, mem_w, siz_i, off_i)) ) {
       if ( 0 > ret_i ) {
-        fprintf(stderr, "loom: patch read: %s\r\n", strerror(errno));
+        fprintf(stderr, "loom: patch read fail: %s\r\n", strerror(errno));
       }
       else {
-        fprintf(stderr, "loom: patch read: read %zu of %zu bytes\r\n",
-                        (size_t)ret_i, siz_i);
+        fprintf(stderr, "loom: patch partial read: %zu\r\n", (size_t)ret_i);
       }
       return c3n;
     }
@@ -711,8 +711,8 @@ _ce_patch_apply(u3_ce_patch* pat_u)
         fprintf(stderr, "loom: patch apply read: %s\r\n", strerror(errno));
       }
       else {
-        fprintf(stderr, "loom: patch apply read: read %zu of %zu bytes\r\n",
-                        (size_t)ret_i, siz_i);
+        fprintf(stderr, "loom: patch apply partial read: %zu\r\n",
+                        (size_t)ret_i);
       }
       c3_assert(0);
     }
@@ -924,8 +924,8 @@ _ce_image_fine(u3e_image* img_u,
                         img_u->nam_c, strerror(errno));
       }
       else {
-        fprintf(stderr, "loom: image (%s) fine read: read %zu of %zu bytess\r\n",
-                        img_u->nam_c, (size_t)ret_i, siz_i);
+        fprintf(stderr, "loom: image (%s) fine partial read: %zu\r\n",
+                        img_u->nam_c, (size_t)ret_i);
       }
       c3_assert(0);
     }
@@ -957,7 +957,7 @@ _ce_image_fine(u3e_image* img_u,
 static c3_o
 _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
 {
-  c3_w    i_w;
+  c3_w      i_w;
   c3_w    mem_w[pag_wiz_i];
   size_t  off_i, siz_i = pag_siz_i;
   ssize_t ret_i;
@@ -977,8 +977,8 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
                         fom_u->nam_c, strerror(errno));
       }
       else {
-        fprintf(stderr, "loom: image (%s) copy read: read %zu of %zu bytes\r\n",
-                        fom_u->nam_c, (size_t)ret_i, siz_i);
+        fprintf(stderr, "loom: image (%s) copy partial read: %zu\r\n",
+                        fom_u->nam_c, (size_t)ret_i);
       }
       return c3n;
     }
@@ -1178,7 +1178,9 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       nor_w = u3P.nor_u.pgs_w;
       sou_w = u3P.sou_u.pgs_w;
 
-      if ( (nor_w + sou_w) >= u3P.pag_w ) {
+      //  detect snapshots from a larger loom
+      //
+      if ( (nor_w + sou_w + 1) >= u3P.pag_w ) {
         fprintf(stderr, "boot: snapshot too big for loom\r\n");
         exit(1);
       }
