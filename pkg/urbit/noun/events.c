@@ -432,11 +432,17 @@ _ce_patch_delete(void)
 {
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
-  c3_unlink(ful_c);
+   snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  if ( unlink(ful_c) ) {
+    fprintf(stderr, "loom: failed to delete control.bin: %s\r\n",
+                    strerror(errno));
+  }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
-  c3_unlink(ful_c);
+  if ( unlink(ful_c) ) {
+    fprintf(stderr, "loom: failed to remove memory.bin: %s\r\n",
+                    strerror(errno));
+  }
 }
 
 /* _ce_patch_verify(): check patch data mug.
