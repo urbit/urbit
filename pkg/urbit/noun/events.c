@@ -568,6 +568,9 @@ _ce_patch_compose(void)
 
     nor_w = (nwr_w + (pag_wiz_i - 1)) >> u3a_page;
     sou_w = (swu_w + (pag_wiz_i - 1)) >> u3a_page;
+
+    c3_assert(  ((gar_pag_p >> u3a_page) >= nor_w)
+             && ((gar_pag_p >> u3a_page) <= (u3P.pag_w - (sou_w + 1))) );
   }
 
 #ifdef U3_SNAPSHOT_VALIDATION
@@ -827,6 +830,19 @@ _ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
       fprintf(stderr, "loom: anonymous mmap failed (%u pages, %u old): %s\r\n",
                       pgs_w, old_w, strerror(errno));
       c3_assert(0);
+    }
+
+    //  protect guard page if clobbered
+    //
+    //    NB: < pgs_w is precluded by assertion in _ce_patch_compose()
+    //
+    if ( (gar_pag_p >> u3a_page) < old_w ) {
+      fprintf(stderr, "loom: guard on remap\r\n");
+      if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+        fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
+                        strerror(errno));
+        c3_assert(0);
+      }
     }
   }
 
@@ -1216,7 +1232,16 @@ u3e_yolo(void)
                      u3C.wor_i << 2,
                      (PROT_READ | PROT_WRITE)) )
   {
+    //  XX confirm recoverable errors
+    //
+    fprintf(stderr, "loom: yolo: %s\r\n", strerror(errno));
     return c3n;
+  }
+
+  if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+    fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
+                    strerror(errno));
+    c3_assert(0);
   }
 
   return c3y;
