@@ -4,7 +4,7 @@
 =/  debug  |
 =>
   ::    types used by doccords
-  |%  %dprint-types
+  |%
   ::    $overview: an overview of all named things in the type.
   ::
   ::  each element in the overview list is either a documentation for a sublist
@@ -57,7 +57,7 @@
   ::
   --
 ::    core containing doccords search and printing utilities
-|%  %dprint
+|%
 ::    contains arms used for looking for docs inside of a type
 ::
 ::  the entrypoint for finding docs within a type is +find-item-in-type.

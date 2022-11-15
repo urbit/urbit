@@ -3,11 +3,10 @@
 /+  *test, *dprint
 ::
 =>  =>
-    ::  This core is for testing core and chapter docs.
     ::    core-summary
     ::
     ::  core-description
-    |%  %core-test
+    |%
     ::    chapter-summary
     ::
     ::  chapter-description
@@ -16,10 +15,10 @@
     --
   ::
   ::    arms used for testing doccords
-  |%  %test-arms
+  |%
   +|  %types
   +$  arm-dox      [tape what what what]
-  +$  core-dox     [tape what]
+  +$  core-dox     what
   +$  chapter-dox  [tape what]
   ::
   +|  %helper-functions
@@ -40,7 +39,7 @@
     ^-  core-dox
     =/  itm=item  (get-item a)
     ?>  ?=([%core *] itm)
-    [name docs]:itm
+    docs:itm
   ::
   ++  get-chapter-dox
     |=  a=(list term)
@@ -254,7 +253,7 @@
   --
 ::
 ::    contains the actual tests to be run by -test
-|%  %dprint-tests
+|%
 +|  %batch-tests
   ++  test-b-foo
     %+  expect-eq
@@ -301,19 +300,19 @@
 ++  test-pdoc-cdoc  (run-arm-tests | & &)
 ++  test-adoc-pdoc-cdoc  (run-arm-tests & & &)
 ::
-+|  %core-tests
-++  test-core
-  %+  expect-eq
-    !>  ^-  core-dox
-    ["core-test" `['core-summary' ~[~[[%.y 'core-description']]]]]
-  ::
-    !>  (get-core-dox ~[%core-test])
-::
-++  test-chapter
-  %+  expect-eq
-    !>  ^-  chapter-dox
-    ["chapter-test" `['chapter-summary' ~[~[[%.y 'chapter-description']]]]]
-  ::
-    !>  (get-chapter-dox ~[%core-test %chapter-test])
+::  +|  %core-tests
+::  ++  test-core
+::    %+  expect-eq
+::      !>  ^-  core-dox
+::      `['core-summary' ~[~[[%.y 'core-description']]]]
+::    ::
+::      !>  (get-core-dox ~[%core-summary])
+::  ::
+::  ++  test-chapter
+::    %+  expect-eq
+::      !>  ^-  chapter-dox
+::      ["chapter-test" `['chapter-summary' ~[~[[%.y 'chapter-description']]]]]
+::    ::
+::      !>  (get-chapter-dox ~[%core-summary %chapter-test])
 ::
 --
