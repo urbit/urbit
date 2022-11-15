@@ -1444,9 +1444,9 @@ _n_push(c3_ys mov, c3_ys off, u3_noun a)
 {
   u3R->cap_p += mov;
 
-  //  XX stack sanity-check disabled for performance
+  //  XX switch to u3a_push()
   //
-#if 0
+#ifndef U3_GUARD_PAGE
   if ( 0 == off ) {
     if( !(u3R->cap_p > u3R->hat_p) ) {
       u3m_bail(c3__meme);

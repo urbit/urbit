@@ -149,9 +149,11 @@ _cqea_siv_de(c3_y*   key_y,
     txt_y = u3r_bytes_alloc(0, txt_w, txt);
     out_y = u3a_malloc(txt_w);
 
-    ret = ( 0 != (*low_f)(txt_y, txt_w, dat_u, soc_w, key_y, iv_y, out_y) )
-      ? u3_none
-      : u3nc(0, u3i_bytes(txt_w, out_y));
+    if ( 0 != (*low_f)(txt_y, txt_w, dat_u, soc_w, key_y, iv_y, out_y) ) {
+      return u3m_bail(c3__evil);
+    }
+
+    ret = u3nc(0, u3i_bytes(txt_w, out_y));
 
     u3a_free(txt_y);
     u3a_free(out_y);

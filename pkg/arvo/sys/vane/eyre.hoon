@@ -251,7 +251,7 @@
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
       ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
-      ;title:"OS1"
+      ;title:"Urbit"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
              @font-face {
@@ -1228,7 +1228,7 @@
       ::  the request may include a 'Last-Event-Id' header
       ::
       =/  maybe-last-event-id=(unit @ud)
-        ?~  maybe-raw-header=(get-header:http 'Last-Event-ID' header-list.request)
+        ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
           ~
         (rush u.maybe-raw-header dum:ag)
       ::  flush events older than the passed in 'Last-Event-ID'
@@ -2178,7 +2178,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[eny duct now rof] server-state.ax]
+    =*  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::

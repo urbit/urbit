@@ -2234,6 +2234,8 @@ u3_pier_exit(u3_pier* pir_u)
 void
 u3_pier_bail(u3_pier* pir_u)
 {
+  u3_Host.xit_i = 1;
+
   //  halt serf
   //
   if ( pir_u->god_u ) {

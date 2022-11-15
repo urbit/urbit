@@ -1507,51 +1507,61 @@ u3_king_done(void)
 {
   uv_handle_t* han_u = (uv_handle_t*)&u3K.tim_u;
 
-  //  get next binary
-  //
-  if ( c3y == u3_Host.nex_o ) {
-    c3_c* pac_c;
-    c3_c* ver_c;
-
-    //  hack to ensure we only try once
+  if ( u3_Host.xit_i ) {
+    if ( c3y == u3_Host.nex_o ) {
+      u3l_log("vere: upgrade failed\r\n");
+    }
+    else if ( c3y == u3_Host.pep_o ) {
+      u3l_log("vere: prep for upgrade failed\r\n");
+    }
+  }
+  else {
+    //  get next binary
     //
-    u3_Host.nex_o = c3n;
+    if ( c3y == u3_Host.nex_o ) {
+      c3_c* pac_c;
+      c3_c* ver_c;
 
-    pac_c = _king_get_pace();
+      //  hack to ensure we only try once
+      //
+      u3_Host.nex_o = c3n;
 
-    switch ( u3_king_next(pac_c, &ver_c) ) {
-      case -2: {
-        u3l_log("vere: unable to check for next version\n");
-      } break;
+      pac_c = _king_get_pace();
 
-      case -1: {
-        u3l_log("vere: up to date\n");
-      } break;
+      switch ( u3_king_next(pac_c, &ver_c) ) {
+        case -2: {
+          u3l_log("vere: unable to check for next version\n");
+        } break;
 
-      case 0: {
-        u3l_log("vere: next (%%%s): %s\n", pac_c, ver_c);
-        _king_do_upgrade(pac_c, ver_c);
-        c3_free(ver_c);
-      } break;
+        case -1: {
+          u3l_log("vere: up to date\n");
+        } break;
 
-      default: c3_assert(0);
+        case 0: {
+          u3l_log("vere: next (%%%s): %s\n", pac_c, ver_c);
+          _king_do_upgrade(pac_c, ver_c);
+          c3_free(ver_c);
+        } break;
+
+        default: c3_assert(0);
+      }
+
+      c3_free(pac_c);
+    }
+    else if ( c3y == u3_Host.pep_o ) {
+      u3l_log("vere: ready for upgrade\n");
     }
 
-    c3_free(pac_c);
-  }
-  else if ( c3y == u3_Host.pep_o ) {
-    u3l_log("vere: ready for upgrade\n");
-  }
-
-  //  copy binary into pier on boot
-  //
-  if (  (c3y == u3_Host.ops_u.nuu)
-     && (c3y == u3_Host.ops_u.doc) )
-  {
-    //  hack to ensure we only try once
+    //  copy binary into pier on boot
     //
-    u3_Host.ops_u.nuu = c3n;
-    u3_king_dock(U3_VERE_PACE);
+    if (  (c3y == u3_Host.ops_u.nuu)
+       && (c3y == u3_Host.ops_u.doc) )
+    {
+      //  hack to ensure we only try once
+      //
+      u3_Host.ops_u.nuu = c3n;
+      u3_king_dock(U3_VERE_PACE);
+    }
   }
 
   //  XX hack, if pier's are still linked, we're not actually done
@@ -1566,7 +1576,7 @@ u3_king_done(void)
 
   //  XX remove move
   //
-  exit(0);
+  exit(u3_Host.xit_i);
 }
 
 /* u3_king_exit(): shutdown gracefully
@@ -1582,10 +1592,11 @@ u3_king_exit(void)
 void
 u3_king_bail(void)
 {
+  u3_Host.xit_i = 1;
   _king_forall_unlink(u3_pier_bail);
   _king_loop_exit();
   u3_king_done();
-  exit(1);
+  exit(u3_Host.xit_i);
 }
 
 /* u3_king_grab(): gc the daemon
