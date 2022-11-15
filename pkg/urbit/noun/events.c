@@ -1075,7 +1075,15 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
   //  require that our page size is a multiple of the system page size.
   //
-  c3_assert(0 == (1 << (2 + u3a_page)) % sysconf(_SC_PAGESIZE));
+  {
+    size_t sys_i = sysconf(_SC_PAGESIZE);
+
+    if ( pag_siz_i % sys_i ) {
+      fprintf(stderr, "loom: incompatible system page size (%zuKB)\r\n",
+                      sys_i >> 10);
+      exit(1);
+    }
+  }
 
   u3P.dir_c = dir_c;
   u3P.nor_u.nam_c = "north";
