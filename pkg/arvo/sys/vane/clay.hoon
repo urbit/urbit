@@ -1,5 +1,4 @@
 ::  clay (4c), revision control
-!:
 ::  The way to understand Clay is to take it section-by-section:
 ::
 ::  - Data structures.  You *must* start here; make sure you understand
@@ -124,23 +123,6 @@
       nor=norm                                          ::  default policy
       mim=(map path mime)                               ::  mime cache
       fod=flue                                          ::  ford cache
-  ==                                                    ::
-::
-::  Commit state.
-::
-::  --  `del` is the paths we're deleting.
-::  --  `ink` is the insertions of hoon files (short-circuited for
-::      bootstrapping).
-::  --  `ins` is all the other insertions.
-::  --  `dif` is the diffs in `dig` applied to their files.
-::  --  `mut` is the diffs between `muc` and the original files.
-::
-+$  dork                                                ::  diff work
-  $:  del=(list path)                                   ::  deletes
-      ink=(list (pair path cage))                       ::  hoon inserts
-      ins=(list (pair path cage))                       ::  inserts
-      dif=(list (trel path lobe cage))                  ::  changes
-      mut=(list (trel path lobe cage))                  ::  mutations
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -4170,7 +4152,6 @@
         [~ ..park]
       ::  virtualize to catch and produce deterministic failures
       ::
-      !:
       |^  =/  res  (mule |.(read))
           ?:  ?=(%& -.res)  p.res
           %.  [[~ ~] ..park]

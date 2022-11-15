@@ -562,15 +562,16 @@
             ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
           ==
         ::
-            %dir  =+  ^=  pax  ^-  path
+            %dir  =+  ^=  bem  ^-  beam
+                      %-  need  %-  de-beam
                       =+  pax=((dy-cast path !>(*path)) q.cay)
                       ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
                       ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
                       ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
                       pax
-                  ?:  =(~ .^((list path) %ct pax))
+                  ?:  =(~ .^((list path) %ct (en-beam he-beam(dir bem))))
                     +(..dy (he-diff %tan 'dojo: dir does not exist' ~))
-                  =.  dir  (need (de-beam pax))
+                  =.  dir  bem
                   =-  +>(..dy (he-diff %tan - ~))
                   rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
         ==
