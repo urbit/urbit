@@ -657,6 +657,7 @@
   ::    rto: retransmission timeout
   ::    rtt: roundtrip time estimate, low-passed using EWMA
   ::    rttvar: mean deviation of .rtt, also low-passed with EWMA
+  ::    num-live: how many packets sent, awaiting ack
   ::    ssthresh: slow-start threshold
   ::    cwnd: congestion window; max unacked packets
   ::
@@ -666,6 +667,7 @@
         rttvar=_~s1
         ssthresh=_10.000
         cwnd=_1
+        num-live=@ud
         counter=@ud
     ==
   +$  live-packet
