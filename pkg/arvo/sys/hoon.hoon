@@ -6349,7 +6349,7 @@
           $~  [%base %null]                             ::
           $%  [%base p=base]                            ::  base type
               [%dbug p=spot q=spec]                     ::  set debug
-              [%dict p=help q=spec]                     ::  formal comment
+              [%gist p=help q=spec]                     ::  formal comment
               [%leaf p=term q=@]                        ::  constant atom
               [%like p=wing q=(list wing)]              ::  reference
               [%loop p=term]                            ::  hygienic reference
@@ -7568,7 +7568,7 @@
     ?-  -.mod
       %base  ?.(?=([%atom *] p.mod) ~ ?:(=(%$ p.p.mod) `%atom `p.p.mod))
       %dbug  $(mod q.mod)
-      %dict  $(mod q.mod)
+      %gist  $(mod q.mod)
       %leaf  `p.mod
       %loop  `p.mod
       %like  ?~(p.mod ~ ?^(i.p.mod ?:(?=(%& -.i.p.mod) ~ q.i.p.mod) `i.p.mod))
@@ -7766,7 +7766,7 @@
                         (~(put by ^+(cox (~(uni by cox) q.mod))) %$ p.mod)
                  ==
       [%dbug *]  [%dbug p.mod $(mod q.mod)]
-      [%dict *]  $(mod q.mod)
+      [%gist *]  $(mod q.mod)
       [%leaf *]  [%rock p.mod q.mod]
       [%loop *]  ~|([%loop p.mod] $(mod (~(got by cox) p.mod)))
       [%like *]  $(mod bcmc/(unreel p.mod q.mod))
@@ -7825,7 +7825,7 @@
     ::
       [%base *]  (decorate (basal p.mod))
       [%dbug *]  example(mod q.mod, bug [p.mod bug])
-      [%dict *]  example(mod q.mod, nut `help/p.mod)
+      [%gist *]  example(mod q.mod, nut `help/p.mod)
       [%leaf *]  (decorate [%rock p.mod q.mod])
       [%like *]  example(mod bcmc/(unreel p.mod q.mod))
       [%loop *]  [%limb p.mod]
@@ -8018,7 +8018,7 @@
       ::
       ::  formal comment
       ::
-          [%dict *]
+          [%gist *]
         relative(mod q.mod, nut `help/p.mod)
       ::
       ::  constant
@@ -8434,7 +8434,7 @@
                        :+  %brtr
                          [%bccl -]
                        |-
-                       ?.  ?=([%dict *] body.gen)
+                       ?.  ?=([%gist *] body.gen)
                          [%ktcl body.gen]
                        [%note help+[p.body.gen] $(body.gen q.body.gen)]
                    %+  turn  `(list term)`sample.gen
@@ -11713,11 +11713,11 @@
     %+  cook
       |=  [a=whit b=spec c=help]
       =?  b  !=(*help c)
-        [%dict c b]
+        [%gist c b]
       =+  docs=~(tap by bat.a)
       |-
       ?~  docs  b
-      $(docs t.docs, b [%dict i.docs b])
+      $(docs t.docs, b [%gist i.docs b])
     (seam fel)
   ++  scye                                              ::  prefix doccords only
     |*  fel=rule
