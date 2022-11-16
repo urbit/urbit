@@ -1002,7 +1002,9 @@ u3_term_ef_ctlc(void)
     _term_ovum_plan(uty_u->car_u, wir, cad);
   }
 
-  _term_it_refresh_line(uty_u);
+  if ( c3n == u3_Host.ops_u.tem ) {
+    _term_it_refresh_line(uty_u);
+  }
 }
 
 /*  _term_it_put_value(): put numeric color value on lin_w.
