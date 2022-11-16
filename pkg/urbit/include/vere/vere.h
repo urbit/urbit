@@ -507,6 +507,16 @@
 
 #       define u3_disk_no  100
 
+      /* u3_disk_work_e: persistence worker thread state.
+      */
+        typedef enum {
+          u3_dted_idle_e = 0,
+          u3_dted_sent_e = 1,
+          u3_dted_fore_e = 2,
+          u3_dted_afte_e = 3,
+          u3_dted_done_e = 4
+        } u3_disk_work_e;
+
       /* u3_disk: manage event persistence.
       */
         typedef struct _u3_disk {
@@ -531,6 +541,7 @@
             u3_disk_news   don_f;               //  async write cb
             c3_o           ted_o;               //  c3y == active
             c3_o           ret_o;               //  result
+            u3_disk_work_e ted_e;
             c3_d           eve_d;               //  first event
             c3_d           len_w;               //  number of events
             c3_y*          byt_y[u3_disk_no];   //  array of bytes

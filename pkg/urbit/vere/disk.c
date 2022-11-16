@@ -74,8 +74,13 @@ _disk_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
   log_u->sav_u.ted_o = c3n;
 
   if ( UV_ECANCELED != sas_i ) {
+      log_u->sav_u.ted_e = u3_dted_done_e;
     _disk_commit_done(log_u);
+    log_u->sav_u.ted_e = u3_dted_idle_e;
     _disk_commit(log_u);
+  }
+  else {
+    fprintf(stderr, "disk: commit canceled\r\n");
   }
 }
 
@@ -85,12 +90,15 @@ static void
 _disk_commit_cb(uv_work_t* ted_u)
 {
   u3_disk* log_u = ted_u->data;
+  log_u->sav_u.ted_e = u3_dted_fore_e;
 
   log_u->sav_u.ret_o = u3_lmdb_save(log_u->mdb_u,
                                     log_u->sav_u.eve_d,
                                     log_u->sav_u.len_w,
                             (void**)log_u->sav_u.byt_y,
                                     log_u->sav_u.siz_i);
+
+  log_u->sav_u.ted_e = u3_dted_afte_e;
 }
 
 /* _disk_commit_start(): queue async event-batch write.
@@ -105,6 +113,8 @@ _disk_commit_start(u3_disk* log_u)
   //
   uv_queue_work(u3L, &log_u->sav_u.ted_u, _disk_commit_cb,
                                           _disk_commit_after_cb);
+
+  log_u->sav_u.ted_e = u3_dted_sent_e;
 }
 
 /* u3_disk_etch(): serialize an event for persistence. RETAIN [eve]
@@ -777,6 +787,7 @@ u3_disk_init(c3_c* pax_c)
   u3_disk* log_u = c3_calloc(sizeof(*log_u));
   log_u->liv_o = c3n;
   log_u->sav_u.ted_o = c3n;
+  log_u->sav_u.ted_e = u3_dted_idle_e;
   log_u->sav_u.ted_u.data = log_u;
   log_u->put_u.ent_u = log_u->put_u.ext_u = 0;
 
