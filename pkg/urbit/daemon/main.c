@@ -560,7 +560,8 @@ _main_getopt(c3_i argc, c3_c** argv)
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
     u3_Host.ops_u.url_c =
-      "https://bootstrap.urbit.org/props/" URBIT_VERSION "/brass.pill";
+      // "https://bootstrap.urbit.org/props/" URBIT_VERSION "/brass.pill";
+      "https://bootstrap.urbit.org/urbit-v" URBIT_VERSION ".pill";
 
     //  if we're not in lite mode, and we didn't specify a pill
     //  include the default props
