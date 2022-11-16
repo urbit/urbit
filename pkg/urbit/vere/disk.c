@@ -161,7 +161,7 @@ _disk_batch(u3_disk* log_u)
     return c3n;
   }
 
-  len_w = c3_min(len_w, 100);
+  len_w = c3_min(len_w, u3_disk_no);
 
   c3_assert( fet_u );
   c3_assert( (1ULL + log_u->dun_d) == fet_u->eve_d );
@@ -265,7 +265,7 @@ u3_disk_sync(u3_disk* log_u)
 {
   c3_o ret_o = c3n;
 
-  //  XX max 100
+  //  XX max u3_disk_no
   //
   if ( c3y == _disk_batch(log_u) ) {
     ret_o = u3_lmdb_save(log_u->mdb_u,
@@ -749,7 +749,7 @@ u3_disk_slog(u3_disk* log_u)
 
     u3l_log("    batch:\n");
 
-    for ( i_w = 0; i_w < 100; i_w++ ) {
+    for ( i_w = 0; i_w < u3_disk_no; i_w++ ) {
       len_w = log_u->hit_w[i_w];
       if ( len_w ) {
         u3l_log("      %u: %u\n", i_w, len_w);

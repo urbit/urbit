@@ -498,10 +498,14 @@
           struct _u3_writ*     ext_u;           //  queue exit
         } u3_lord;
 
-
       /* u3_disk_news: disk sync callbak.
       */
         typedef void (*u3_disk_news)(void*, c3_d, c3_o);
+
+      /* u3_disk_no: maximum commit batch size
+      */
+
+#       define u3_disk_no  100
 
       /* u3_disk: manage event persistence.
       */
@@ -513,7 +517,7 @@
           void*            mdb_u;               //  lmdb environment.
           c3_d             sen_d;               //  commit requested
           c3_d             dun_d;               //  committed
-          c3_w             hit_w[100];          //  batch histogram
+          c3_w             hit_w[u3_disk_no];   //  batch histogram
           struct {                              //  new write queue
             u3_feat*       ent_u;               //  queue entry (highest)
             u3_feat*       ext_u;               //  queue exit (lowest)
@@ -529,8 +533,8 @@
             c3_o           ret_o;               //  result
             c3_d           eve_d;               //  first event
             c3_d           len_w;               //  number of events
-            c3_y*          byt_y[100];          //  array of bytes
-            size_t         siz_i[100];          //  array of lengths
+            c3_y*          byt_y[u3_disk_no];   //  array of bytes
+            size_t         siz_i[u3_disk_no];   //  array of lengths
           } sav_u;
         } u3_disk;
 
