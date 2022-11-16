@@ -936,7 +936,7 @@ _mars_do_boot(u3_disk* log_u, c3_d eve_d)
 
   u3l_log("--------------- bootstrap starting ----------------\r\n");
 
-  u3l_log("boot: 1-%u\r\n", u3qb_lent(eve));
+  u3l_log("boot: events 1-%u\r\n", u3qb_lent(eve));
 
   if ( c3n == u3v_boot(eve) ) {
     return c3n;
