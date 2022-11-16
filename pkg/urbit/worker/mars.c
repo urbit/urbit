@@ -1329,9 +1329,15 @@ _mars_boot_make(u3_boot_opts* inp_u,
       } break;
 
       case c3__dawn: {
+        u3_noun sed;
+
         met_u->fak_o = c3n;
 
-        if ( c3n == u3r_cell(dat, &who, 0) ) {
+        if (  (c3n == u3r_cell(dat, &sed, 0))
+           || (c3n == u3r_cell(sed, &who, 0)) )
+        {
+          fprintf(stderr, "boot: unable to parse %%dawn\r\n");
+          u3m_p("dat", dat);
           return c3n;
         }
       } break;
