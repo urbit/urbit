@@ -701,7 +701,7 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
   return ret_o;
 }
 
-/* _mars_disk_cb(): mars commit result callback.
+/* _mars_timer_cb(): mars snapshot timer callback.
 */
 static void
 _mars_timer_cb(uv_timer_t* tim_u)
