@@ -752,7 +752,7 @@ u3_disk_slog(u3_disk* log_u)
     for ( i_w = 0; i_w < u3_disk_no; i_w++ ) {
       len_w = log_u->hit_w[i_w];
       if ( len_w ) {
-        u3l_log("      %u: %u\n", i_w, len_w);
+        u3l_log("      %u: %u\n", i_w + 1, len_w);
       }
     }
   }
