@@ -602,21 +602,20 @@ _mars_damp_file(void)
 static void
 _mars_flush(u3_mars* mar_u)
 {
-top:
-  {
-    u3_gift* gif_u = mar_u->gif_u.ext_u;
+  const c3_d log_d = mar_u->log_u->dun_d;
 
-    //  XX gather i/o
-    //
-    while (  gif_u
-          && (  (u3_gift_rest_e == gif_u->sat_e)
-             || (gif_u->eve_d <= mar_u->log_u->dun_d)) )
+  //  send all the effects we can (XX vectored output)
+  //
+gift:
+  {
+    u3_gift* gif_u;
+
+    while (  (gif_u = mar_u->gif_u.ext_u)
+          && ((u3_gift_fact_e != gif_u->sat_e) || (log_d >= gif_u->eve_d)) )
     {
       u3_newt_send(mar_u->out_u, gif_u->len_d, gif_u->hun_y);
-
       mar_u->gif_u.ext_u = gif_u->nex_u;
       c3_free(gif_u);
-      gif_u = mar_u->gif_u.ext_u;
     }
 
     if ( !mar_u->gif_u.ext_u ) {
@@ -624,8 +623,10 @@ top:
     }
   }
 
+  //  check for needed log/state synchronization
+  //
   if (  (u3_mars_work_e != mar_u->sat_e)
-     && (mar_u->log_u->dun_d == mar_u->dun_d) )
+     && (log_d == mar_u->dun_d) )
   {
     if ( u3_mars_save_e == mar_u->sat_e ) {
       u3e_save();
@@ -633,7 +634,7 @@ top:
       _mars_gift(mar_u,
         u3nt(c3__sync, u3i_chub(mar_u->dun_d), mar_u->mug_l));
       mar_u->sat_e = u3_mars_work_e;
-      goto top;
+      goto gift;
     }
     else if ( u3_mars_exit_e == mar_u->sat_e ) {
       u3e_save();
