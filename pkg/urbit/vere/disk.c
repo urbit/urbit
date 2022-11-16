@@ -263,25 +263,25 @@ u3_disk_plan_list(u3_disk* log_u, u3_noun lit)
 c3_o
 u3_disk_sync(u3_disk* log_u)
 {
-  c3_o ret_o = c3n;
+  log_u->sav_u.ret_o = c3n;
 
-  //  XX max u3_disk_no
-  //
-  if ( c3y == _disk_batch(log_u) ) {
-    ret_o = u3_lmdb_save(log_u->mdb_u,
-                         log_u->sav_u.eve_d,
-                         log_u->sav_u.len_w,
-                 (void**)log_u->sav_u.byt_y,
-                         log_u->sav_u.siz_i);
-
-    log_u->sav_u.ret_o = ret_o;
+  while ( c3y == _disk_batch(log_u) ) {
+    log_u->sav_u.ret_o = u3_lmdb_save(log_u->mdb_u,
+                                      log_u->sav_u.eve_d,
+                                      log_u->sav_u.len_w,
+                              (void**)log_u->sav_u.byt_y,
+                                      log_u->sav_u.siz_i);
 
     //  XX don't want callbacks
     //
     _disk_commit_done(log_u);
+
+    if ( c3n == log_u->sav_u.ret_o ) {
+      break;
+    }
   }
 
-  return ret_o;
+  return log_u->sav_u.ret_o;
 }
 
 /* u3_disk_async(): active autosync with callbacks.
