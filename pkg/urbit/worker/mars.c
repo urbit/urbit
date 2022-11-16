@@ -715,12 +715,25 @@ _mars_timer_cb(uv_timer_t* tim_u)
   _mars_flush(mar_u);
 }
 
+static c3_d las_d = 0;
+
 /* _mars_disk_cb(): mars commit result callback.
 */
 static void
 _mars_disk_cb(void* ptr_v, c3_d eve_d, c3_o ret_o)
 {
   u3_mars* mar_u = ptr_v;
+  u3_disk* log_u = mar_u->log_u;
+
+  if ( u3_mars_save_e == mar_u->sat_e ) {
+    fprintf(stderr, "mars: preparing snapshot after commit "
+                    "(dun_d=%" PRIu64 " eve_d=%" PRIu64 ", las_d=%" PRIu64 ", "
+                    "log sen_d=%" PRIu64 ", dun_d=%" PRIu64 ")\r\n",
+                    mar_u->dun_d, eve_d, las_d,
+                    log_u->sen_d, log_u->dun_d);
+  }
+
+  las_d = eve_d;
 
   if ( c3n == ret_o ) {
     //  XX better
