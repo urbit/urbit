@@ -180,7 +180,7 @@ _disk_batch(u3_disk* log_u)
     fet_u = fet_u->nex_u;
   }
 
-  log_u->hit_w[len_w]++;
+  log_u->hit_w[len_w - 1]++;
 
   return c3y;
 }
