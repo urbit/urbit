@@ -25,7 +25,7 @@
 //==============================================================================
 
 /// Minimum number of events per epoch.
-static const size_t epo_len_i = 50000;
+static const size_t epo_len_i = 500000;
 
 /// Maximum number of events in a single batch commit.
 #define max_batch_size 100
