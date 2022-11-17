@@ -1,5 +1,5 @@
 /+  *test, test-pub, test-sub
-/=  ames-raw      /sys/vane/ames
+/=  ames-raw  /sys/vane/ames
 /=  gall-raw  /sys/vane/gall
 ::
 =/  ames-bunt  (ames-raw ~zod)
