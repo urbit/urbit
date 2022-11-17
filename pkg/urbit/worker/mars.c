@@ -515,7 +515,7 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
 
         case c3__meld: {
           u3z(jar);
-          u3u_meld();
+          u3a_print_memory(stderr, "mars: meld: gained", u3u_meld());
         } break;
       }
 
@@ -541,7 +541,7 @@ _mars_post(u3_mars* mar_u)
     mar_u->rec_o = c3n;
   }
 
-  //  XX this runs on replay too, |mass s/b elsewhere
+  //  XX |mass s/b elsewhere
   //
   if ( c3y == mar_u->mut_o ) {
     _mars_grab(mar_u->sac);
@@ -556,9 +556,9 @@ _mars_post(u3_mars* mar_u)
   }
 
   if ( c3y == mar_u->mel_o ) {
-    u3l_log("mars: meld: starting\n");
-    u3u_meld();
-    u3l_log("mars: meld: complete\n");
+    fprintf(stderr, "mars: meld: starting\n");
+    u3a_print_memory(stderr, "mars: meld: gained", u3u_meld());
+    fprintf(stderr, "mars: meld: complete\n");
     mar_u->mel_o = c3n;
   }
 }

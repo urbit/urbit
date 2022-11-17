@@ -1384,9 +1384,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
   u3C.wag_w |= u3o_hashless;
   u3m_boot(u3_Host.dir_c, u3a_bytes);
 
-  c3_w pre_w = u3a_open(u3R);
-  u3u_meld();
-  u3a_print_memory(stderr, "urbit: meld: gained", (u3a_open(u3R) - pre_w));
+  u3a_print_memory(stderr, "mars: meld: gained", u3u_meld());
 
   u3e_save();
   u3_lock_release(pax_u);
