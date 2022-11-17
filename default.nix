@@ -57,7 +57,10 @@ let
       if system == "x86_64-linux" && crossSystem == null && enableStatic then
         "x86_64-unknown-linux-musl"
       else
-        crossSystem;
+        if system == "aarch64-linux" && crossSystem == null && enableStatic then
+          "aarch64-unknown-linux-musl"
+        else
+          crossSystem;
   };
 
   # Use nixpkgs' top-level/static overlay if enableStatic = true.
