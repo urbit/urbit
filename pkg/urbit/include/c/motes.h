@@ -1296,6 +1296,7 @@
 #   define c3__wtts   c3_s4('w','t','t','s')
 #   define c3__wtzp   c3_s4('w','t','z','p')
 #   define c3__wyrd   c3_s4('w','y','r','d')
+#   define c3__xray   c3_s4('x','r','a','y')
 #   define c3__yell   c3_s4('y','e','l','l')
 #   define c3__yelp   c3_s4('y','e','l','p')
 #   define c3__z      c3_s1('z')
