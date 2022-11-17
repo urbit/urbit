@@ -31,6 +31,40 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
+::  We use a system of "invariant footnotes", where nonlocal invariants
+::  are tagged with column-57 notes to construct a distributed argument
+::  that the invariant is maintained.  For example, see [wake].
+::
+::  Each one should be described somewhere, and then it should be
+::  referenced any time it's touched.  For example, any code which might
+::  fill a subscription should be tagged with [wake], and if +wake is
+::  not called by the end of that function, the function itself should
+::  be tagged with [wake].
+::
+::  The tagged code should constitute an argument that invariant is
+::  maintained everywhere.  While this is vulnerable to omission ("I
+::  forgot that X could fill a subscription", it provides a good minimum
+::  bar.
+::
+::  The intent is for the argument to be navigated by search and by
+::  someone who is familiar with the code.  You do not need to tag every
+::  function in a call stack if the invariant is guaranteed to be
+::  maintained by the time the function returns.  Tag the specific line
+::  of code which affects the invariant.
+::
+::  Some invariant references get tagged with whether they "open" the
+::  invariant or "close" the invariant.  For example, adding a commit to
+::  the dome "opens" the [wake] invariant, while calling +wake closes
+::  it.  When an invariant opens, you should be able to scan down and
+::  find why it closes in each possible flow of control.  For wake,
+::  these are labeled like this:
+::
+::  open: [wake] <
+::  close: [wake] >
+::  open and almost immediately close: [wake] <>
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
 ::  Here are the structures.  `++raft` is the formal arvo state.  It's also
 ::  worth noting that many of the clay-related structures are defined in lull.
 ::
@@ -1554,6 +1588,8 @@
     =.  wov  (dedupe wov)
     =.  qyx  (~(put ju qyx) wov hen)
     ?~  ref
+      ::  [wake] at @da must check if subscription was fulfilled
+      ::
       (run-if-future rove.wov |=(@da (bait hen +<)))
     |-  ^+  +>+.$
     =/  =rave  (rove-to-rave rove.wov)
@@ -1670,8 +1706,8 @@
     ::  no existing aeon is bound to this label
     ::
     ?~  yen
-      =.  lab.dom  (~(put by lab.dom) bel yon)
-      ..park
+      =.  lab.dom  (~(put by lab.dom) bel yon)          ::  [wake] <>
+      wake
     ::  an aeon is bound to this label,
     ::  but it is the same as the existing one, so we no-op
     ::
@@ -1882,7 +1918,7 @@
         %|  ?>  =(data q.p.yoki)
             p.yoki
       ==
-    =:  let.dom  +(let.dom)
+    =:  let.dom  +(let.dom)                             ::  [wake] <
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -1928,7 +1964,7 @@
       ==
     ::  notify unix and subscribers
     ::
-    wake:?:(mem (ergo 0 mum.res) ..park)
+    wake:?:(mem (ergo 0 mum.res) ..park)                ::  [wake] >
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -3064,7 +3100,7 @@
           .
         (emit hen %give %done ~)
     ::
-    ?-  -.rit
+    ?-  -.rit                                           ::  [wake] <>
       %r    wake(per (put-perm per pax red.rit))
       %w    wake(pew (put-perm pew pax wit.rit))
       %rw   wake(per (put-perm per pax red.rit), pew (put-perm pew pax wit.rit))
@@ -3077,9 +3113,11 @@
   ::
   ::  Remove a group from all rules.
   ::
+  ::  [wake] <
+  ::
   ++  forget-crew
     |=  nom=@ta
-    %=  +>
+    %=  +>                                              ::  [wake] < +call
       per  (forget-crew-in nom per)
       pew  (forget-crew-in nom pew)
     ==
@@ -3198,7 +3236,7 @@
   ::  responses.  For %x, we call ++validate-x to validate the type of
   ::  the response.  For %y, we coerce the result to an arch.
   ::
-  ++  take-foreign-answer                              ::  external change
+  ++  take-foreign-answer                               ::  external change
     |=  [inx=@ud rut=(unit rand)]
     ^+  +>
     ?>  ?=(^ ref)
@@ -3210,7 +3248,7 @@
     ?~  rut
       ::  nothing here, so cache that
       ::
-      %_    wake
+      %_    wake                                        ::  [wake] <>
           haw.u.ref
         ?.  ?=(%sing -.rav)  haw.u.ref
         (~(put by haw.u.ref) mood.rav ~)
@@ -3218,7 +3256,7 @@
     |^
     =/  result=(unit cage)  (validate u.rut)
     =/  =mood  [p.p q.p q]:u.rut
-    =:  haw.u.ref  (~(put by haw.u.ref) mood result)
+    =:  haw.u.ref  (~(put by haw.u.ref) mood result)    ::  [wake] <>
         bom.u.ref  (~(del by bom.u.ref) inx)
         fod.u.ref  (~(del by fod.u.ref) hen)
       ==
@@ -3414,7 +3452,7 @@
         ?~  next
           ..abet(done &)
         =.  ..abet  =>((apply-foreign-update u.next) ?>(?=(~ need.sat) .))
-        =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)
+        =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)  ::  [wake] >
         $
       ::  This used to be what always removed an item from `need`.  Now,
       ::  we remove in +take-backfill, but in the meantime we could have
@@ -3444,6 +3482,8 @@
     ::  We get the commits from the nako and add them to our object
     ::  store, then we update the map of aeons to commits and the latest
     ::  aeon.
+    ::
+    ::  [wake] <
     ::
     ++  apply-foreign-update
       |=  =nako
@@ -3476,7 +3516,7 @@
       ::
       =/  =rave  rave:(~(got by bom.u.ref) inx)
       ?>  ?=(%many -.rave)
-      =:  let.dom   (max let.nako let.dom)
+      =:  let.dom   (max let.nako let.dom)              ::  [wake] < +work
           hit.dom   hit
           hut.ran   hut
           ::  Is this correct?  Seeems like it should only go to `to` if
@@ -3549,7 +3589,7 @@
   ::
   ++  send-cards
     |=  [cards=(list card) ducts=(set duct)]
-    ^+  ..wake
+    ^+  ..park
     %-  emil
     %-  zing
     %+  turn  cards
@@ -3560,6 +3600,18 @@
   ::
   ::  Loop through open subscriptions and check if we can fill any of
   ::  them.
+  ::
+  ::  [wake] This must be called any time something might have changed
+  ::  which fills a subscription or changes the set of subscriptions.
+  ::
+  ::  It is safe to call this multiple times, because it updates the
+  ::  subscription state to reflect that it's responded.  Usually this
+  ::  means deleting the subscription, but %many can respond multiple
+  ::  times.
+  ::
+  ::  One way of describing this invariant is that if you called +wake
+  ::  on every desk at the end of every +call/+take, it would always
+  ::  no-op.
   ::
   ++  wake
     ^+  .
@@ -4634,7 +4686,7 @@
     ?~  des  [[[hen %give %done ~] mos] ..^^$]
     =/  den  ((de now rof hen ruf) our i.des)
     =^  mor  ruf
-      =<  abet:wake
+      =<  abet:wake                                   ::  [wake] >
       ?:  ?=(^ cew.req)  den
       (forget-crew:den nom.req)
     $(des t.des, mos (weld mos mor))
@@ -5827,6 +5879,8 @@
     ?.  ?=([%tyme @ @ ~] tea)
       ~&  [%clay-strange-timer tea]
       [~ ..^$]
+    ::  [wake] when requested time passes, call +wake
+    ::
     =/  her  (slav %p i.t.tea)
     =/  syd  (slav %tas i.t.t.tea)
     =^  mos  ruf
