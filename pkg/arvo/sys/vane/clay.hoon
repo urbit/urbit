@@ -1844,7 +1844,7 @@
         %+  roll  ~(tap in kel)
         |:  [weft=*weft wic=wic.dom]
         (~(put by wic) weft yoki)
-      =?  ..park  !?=(%base syd)  wick
+      =?  ..park  !?=(%base syd)  wick                  ::  [wick]
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ::  call +tare to notify that there's a new commit-in-waiting
       ::
@@ -1875,6 +1875,20 @@
     ::  complete no-op.  any error conditions must crash.  since we're
     ::  changing state, we may need to call +wake, +goad, etc, which
     ::  happens at the end of the function.
+    ::
+    ::  [wick] if this commit added compatibility to a future kelvin,
+    ::  then we might have unblocked a kelvin upgrade.
+    ::
+    ::  or, if *this* is a kelvin upgrade, it's possible that another
+    ::  kelvin upgrade will immediately be ready.  for example, this
+    ::  could be the case if all desks but one are ready for the next
+    ::  two kelvins, and then that desk is suspended or receives a
+    ::  commit with compatiblity with both kelvins.
+    ::
+    ::  in any of these cases, we finish the current commit but call
+    ::  +wick so that we try to execute the kelvin upgrade afterward.
+    ::  we want this commit to persist even if the subsequent kelvin
+    ::  upgrade fails.
     ::
     =.  ..park  wick
     =.  wic.dom
@@ -3178,6 +3192,10 @@
     tare
   ::
   ::  Try to apply highest-versioned %base commit-in-waiting
+  ::
+  ::  [wick] Must be called whenever we might have unblocked a kelvin
+  ::  upgrade.  This is move-order agnostic because it defers the
+  ::  upgrade into a new event.
   ::
   ++  wick
     ^+  ..park
@@ -4966,12 +4984,14 @@
       %wick
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our %base)
-      abet:wick:den
+      abet:wick:den                                     ::  [wick]
     [mos ..^$]
   ::
       %zest
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
+      ::  [wick] could be suspending the last blocking desk
+      ::
       abet:wick:(set-zest:den liv.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
