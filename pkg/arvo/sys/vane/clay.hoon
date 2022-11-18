@@ -32,8 +32,8 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 ::  We use a system of "invariant footnotes", where nonlocal invariants
-::  are tagged with column-57 notes to construct a distributed argument
-::  that the invariant is maintained.  For example, see [wake].
+::  are tagged with notes to construct a distributed argument that the
+::  invariant is maintained.  For example, see [wake].
 ::
 ::  Each one should be described somewhere, and then it should be
 ::  referenced any time it's touched.  For example, any code which might
@@ -41,27 +41,25 @@
 ::  not called by the end of that function, the function itself should
 ::  be tagged with [wake].
 ::
-::  The tagged code should constitute an argument that invariant is
+::  The tagged code should constitute an argument that the invariant is
 ::  maintained everywhere.  While this is vulnerable to omission ("I
 ::  forgot that X could fill a subscription", it provides a good minimum
 ::  bar.
 ::
-::  The intent is for the argument to be navigated by search and by
-::  someone who is familiar with the code.  You do not need to tag every
-::  function in a call stack if the invariant is guaranteed to be
-::  maintained by the time the function returns.  Tag the specific line
-::  of code which affects the invariant.
+::  Tag the specific line of code which affects the invariant.  You do
+::  not need to tag every function in a call stack if the invariant is
+::  guaranteed to be maintained by the time the function returns.
 ::
-::  Some invariant references get tagged with whether they "open" the
-::  invariant or "close" the invariant.  For example, adding a commit to
-::  the dome "opens" the [wake] invariant, while calling +wake closes
-::  it.  When an invariant opens, you should be able to scan down and
-::  find why it closes in each possible flow of control.  For wake,
-::  these are labeled like this:
+::  Some invariant references get tagged with whether they "open" or
+::  "close" the invariant.  For example, adding a commit to the dome
+::  "opens" the [wake] invariant, while calling +wake closes it.  When
+::  an invariant opens, you should be able to scan down and find why it
+::  closes in each possible flow of control.  For wake, these are
+::  labeled like this:
 ::
-::  open: [wake] <
-::  close: [wake] >
-::  open and almost immediately close: [wake] <>
+::    open: [wake] <
+::    close: [wake] >
+::    open and almost immediately close: [wake] <>
 ::
 ::  This system is best used for nonlocal invariants and is not
 ::  necessary when a function can guarantee its own invariants.  For
@@ -80,8 +78,9 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-::  Here are the structures.  `++raft` is the formal arvo state.  It's also
-::  worth noting that many of the clay-related structures are defined in lull.
+::  Here are the structures.  `++raft` is the formal arvo state.  It's
+::  also worth noting that many of the clay-related structures are
+::  defined in lull.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =/  bud
@@ -1843,15 +1842,13 @@
       ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
         %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
         ..park
-      =.  wic.dom
+      =.  wic.dom                                       ::  [tare] <
         %+  roll  ~(tap in kel)
         |:  [weft=*weft wic=wic.dom]
         (~(put by wic) weft yoki)
       =?  ..park  !?=(%base syd)  wick                  ::  [wick]
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
-      ::  call +tare to notify that there's a new commit-in-waiting
-      ::
-      tare
+      tare                                              ::  [tare] >
     =.  wic.dom  (~(del by wic.dom) zuse+zuse)
     ::
     =/  old-yaki
@@ -1894,7 +1891,7 @@
     ::  upgrade fails.
     ::
     =.  ..park  wick
-    =.  wic.dom
+    =.  wic.dom                                         ::  [tare] <
       %+  roll  ~(tap in kel)
       |:  [weft=*weft wic=wic.dom]
       ?:  (gte num.weft zuse)
@@ -1940,9 +1937,10 @@
       ==
     ::  if we didn't change the data and it's not a merge commit, abort
     ::
-    ::  very important to keep all permanent changes below this point
-    ::
     ?:  &(=([r.old-yaki ~] p.p.yoki) =(data q.old-yaki))
+      ::  [tare] > if no changes, then commits-in-waiting could not have
+      ::  changed.
+      ::
       ..park
     =/  =yaki
       ?-  -.yoki
@@ -2005,7 +2003,8 @@
       ==
     ::  notify unix and subscribers
     ::
-    wake:?:(mem (ergo 0 mum.res) ..park)                ::  [wake] > [ergo] >
+    =?  ..park  mem  (ergo 0 mum.res)                   ::  [ergo] >
+    wake:tare                                           ::  [wake] > [tare] >
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -3199,7 +3198,7 @@
   ++  stay
     |=  ver=(unit weft)
     ^+  ..park
-    =.  wic.dom
+    =.  wic.dom                                         ::  [tare] <>
       ?~  ver
         ~
       (~(del by wic.dom) u.ver)
@@ -4516,6 +4515,8 @@
   ::  This is not move-order agnostic -- you must be careful of
   ::  reentrancy as long as arvo's move order is depth-first.
   ::
+  ::  [tare] >
+  ::
   ++  goad
     ^+  ..abet
     =^  sat=(list [=desk =bill])  ..abet
@@ -4546,7 +4547,7 @@
         leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
     =.  ..abet  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
-    =.  ..abet  tare
+    =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
   ::
@@ -4681,6 +4682,10 @@
     %-  ~(run by dos.rom)
     |=  =dojo
     [liv.dom.dojo ~(key by wic.dom.dojo)]
+  ::
+  ::  [tare] Must be called any time the zest or commits-in-waiting
+  ::  might have changed for a desk.  +goad calls this uncondtionally,
+  ::  but if you're not calling +goad, you may need to call this.
   ::
   ++  tare
     ?:  =(~ tyr)
