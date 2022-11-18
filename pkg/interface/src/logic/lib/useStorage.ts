@@ -34,7 +34,8 @@ const useStorage = ({ accept = '*' } = { accept: '*' }): IuseStorage => {
       }
       client.current = new S3Client({
         credentials: s3.credentials,
-        endpoint: s3.credentials.endpoint
+        endpoint: s3.credentials.endpoint,
+        signatureVersion: 'v4'
       });
     }
   }, [gcp.token, s3.credentials]);

@@ -492,8 +492,12 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
     {
       u3_atom puf = u3i_string(u3_Host.ops_u.puf_c);
       if ( c3y == u3r_sing(c3__jam, puf) ) {
-        out   = u3qe_jam(res);
+        c3_d len_d;
+        c3_y* byt_y;
+        u3s_jam_xeno(res, &len_d, &byt_y);
+        out = u3i_bytes(len_d, byt_y);
         ext_c = "jam";
+        free(byt_y);
       }
       else if ( c3y == u3a_is_atom(res) ) {
         out   = u3dc("scot", u3k(puf), u3k(res));
@@ -669,8 +673,8 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 //  XX organizing version constants
 //
 #define VERE_NAME  "vere"
-#define VERE_ZUSE  418
-#define VERE_LULL  329
+#define VERE_ZUSE  417
+#define VERE_LULL  328
 
 /* _pier_wyrd_aver(): check for %wend effect and version downgrade. RETAIN
 */
@@ -2234,6 +2238,8 @@ u3_pier_exit(u3_pier* pir_u)
 void
 u3_pier_bail(u3_pier* pir_u)
 {
+  u3_Host.xit_i = 1;
+
   //  halt serf
   //
   if ( pir_u->god_u ) {
