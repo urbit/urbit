@@ -6,12 +6,12 @@
       /* u3m_boot(): start the u3 system. return next event, starting from 1.
       */
         c3_d
-        u3m_boot(c3_c* dir_c);
+        u3m_boot(c3_c* dir_c, size_t len_i);
 
       /* u3m_boot_lite(): start without checkpointing.
       */
         c3_d
-        u3m_boot_lite(void);
+        u3m_boot_lite(size_t len_i);
 
       /* u3m_stop(): graceful shutdown cleanup. */
         void

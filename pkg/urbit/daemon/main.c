@@ -166,6 +166,9 @@ _main_init(void)
   u3_Host.ops_u.puf_c = "jam";
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
+
+  u3_Host.ops_u.lut_y = u3a_bits + 2;
+  u3_Host.ops_u.lom_y = u3a_bits + 2;
 }
 
 /* _main_pier_run(): get pier from binary path (argv[0]), if appropriate
@@ -218,6 +221,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "json-trace",          no_argument,       NULL, 'j' },
     { "kernel-stage",        required_argument, NULL, 'K' },
     { "key-file",            required_argument, NULL, 'k' },
+    { "loom",                required_argument, NULL, c3__loom },
     { "local",               no_argument,       NULL, 'L' },
     { "lite-boot",           no_argument,       NULL, 'l' },
     { "replay-to",           required_argument, NULL, 'n' },
@@ -240,6 +244,9 @@ _main_getopt(c3_i argc, c3_c** argv)
     { "exit",                no_argument,       NULL, 'x' },
     { "scry-into",           required_argument, NULL, 'Y' },
     { "scry-format",         required_argument, NULL, 'Z' },
+    //
+    { "urth-loom",           required_argument, NULL, 5 },
+    //
     { NULL, 0, NULL, 0 },
   };
 
@@ -248,6 +255,17 @@ _main_getopt(c3_i argc, c3_c** argv)
                  lop_u, &lid_i)) )
   {
     switch ( ch_i ) {
+      case 5: {  //  urth-loom
+        c3_w lut_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lut_w);
+        if ( (c3n == res_o) || (lut_w < 20) ) {
+          fprintf(stderr, "error: --urth-loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          return c3n;
+        }
+
+        u3_Host.ops_u.lut_y = lut_w;
+        break;
+      }
       case 'X': {
         u3_Host.ops_u.pek_c = strdup(optarg);
         break;
@@ -346,6 +364,16 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.pes_s = arg_w;
+        break;
+      }
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          return c3n;
+        }
+        u3_Host.ops_u.lom_y = lom_w;
         break;
       }
       case c3__noco: {
@@ -662,6 +690,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-K, --kernel-stage STAGE      Start at Hoon kernel version stage\n",
     "-k, --key-file KEYS           Private key file (see also -G)\n",
     "-L, --local                   Local networking only\n",
+    "    --loom                    Set loom to binary exponent (31 == 2GB)\n"
     "-l, --lite-boot               Most-minimal startup\n",
     "-n, --replay-to NUMBER        Replay up to event\n",
     "-P, --profile                 Profiling\n",
@@ -999,9 +1028,9 @@ static void
 _cw_serf_commence(c3_i argc, c3_c* argv[])
 {
 #ifdef U3_OS_mingw
-  if ( 8 > argc ) {
+  if ( 9 > argc ) {
 #else
-  if ( 7 > argc ) {
+  if ( 8 > argc ) {
 #endif
     fprintf(stderr, "serf: missing args\n");
     exit(1);
@@ -1013,9 +1042,11 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   c3_c*      key_c = argv[3]; // XX use passkey
   c3_c*      wag_c = argv[4];
   c3_c*      hap_c = argv[5];
-  c3_c*      eve_c = argv[6];
+  c3_c*      lom_c = argv[6];
+  c3_w       lom_w;
+  c3_c*      eve_c = argv[7];
 #ifdef U3_OS_mingw
-  c3_c*      han_c = argv[7];
+  c3_c*      han_c = argv[8];
   _cw_intr_win(han_c);
 #endif
 
@@ -1041,6 +1072,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   {
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
     sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
+    sscanf(lom_c, "%" SCNu32, &lom_w);
 
     if ( 1 != sscanf(eve_c, "%" PRIu64, &eve_d) ) {
       fprintf(stderr, "serf: rock: invalid number '%s'\r\n", argv[4]);
@@ -1064,7 +1096,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   //
   {
     u3V.dir_c = strdup(dir_c);
-    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
+    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c, (size_t)1 << lom_w);
 
     if ( eve_d ) {
       //  XX need not be fatal, need a u3m_reboot equivalent
@@ -1192,7 +1224,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
     u3_weak      pil;
 
     u3C.wag_w |= u3o_hashless;
-    u3m_boot_lite();
+    u3m_boot_lite(u3a_bytes);
     sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
     if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
       printf("lite: unable to cue ivory pill\r\n");
@@ -1253,7 +1285,7 @@ _cw_info(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c);
 
   fprintf(stderr, "\r\nurbit: %s at event %" PRIu64 "\r\n",
@@ -1290,7 +1322,7 @@ _cw_grab(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3C.wag_w |= u3o_hashless;
   u3_serf_grab();
   u3m_stop();
@@ -1319,7 +1351,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
     } break;
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c);
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
   c3_o  ret_o;
 
@@ -1381,7 +1413,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
 
     fprintf(stderr, "urbit: queu: preparing\r\n");
 
-    u3m_boot(u3_Host.dir_c);
+    u3m_boot(u3_Host.dir_c, u3a_bytes);
 
     //  XX can spuriously fail do to corrupt memory-image checkpoint,
     //  need a u3m_half_boot equivalent
@@ -1427,7 +1459,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
   c3_w     pre_w;
 
   u3C.wag_w |= u3o_hashless;
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
 
   pre_w = u3a_open(u3R);
   u3u_meld();
@@ -1515,7 +1547,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
 
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
 
-  u3m_boot(u3_Host.dir_c);
+  u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3e_save();
@@ -1688,7 +1720,7 @@ _cw_vile(c3_i argc, c3_c* argv[])
 
   //  XX check if snapshot is stale?
   //
-  c3_d  eve_d = u3m_boot(u3_Host.dir_c);
+  c3_d  eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
   u3_noun sam = u3nc(u3nc(u3_nul, u3_nul),
                      u3nc(c3n, u3nq(c3__once, 'j', c3__vile, u3_nul)));
   u3_noun res = u3v_soft_peek(0, sam);
@@ -1746,8 +1778,10 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //        [?(%vere %fetch-vere) dir=@t]                 ::  download vere
   //        [%vile dir=@t]                                ::  extract keys
   //    ::                                                ::    ipc:
-  //        [%serf dir=@t key=@t wag=@t hap=@ud eve=@ud]  ::  compute
-  //    ==
+  //        $:  %serf                                     ::  compute
+  //            dir=@t  key=@t wag=@t hap=@ud             ::
+  //            lom=@ud eve=@ud                           ::
+  //    ==  ==                                            ::
   //
   //    NB: don't print to anything other than stderr;
   //    other streams may be used for ipc.
@@ -1974,7 +2008,7 @@ main(c3_i   argc,
     //  starting u3m configures OpenSSL memory functions, so we must do it
     //  before any OpenSSL allocations
     //
-    u3m_boot_lite();
+    u3m_boot_lite((size_t)1 << u3_Host.ops_u.lut_y);
 
     //  Initialize OpenSSL for client and server
     //
