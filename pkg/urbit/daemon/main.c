@@ -1351,7 +1351,8 @@ _cw_cram(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "loom", required_argument, NULL, c3__loom },
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1359,6 +1360,11 @@ _cw_cram(c3_i argc, c3_c* argv[])
 
   while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
     switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
       case c3__loom: {
         c3_w lom_w;
         c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
@@ -1430,7 +1436,8 @@ _cw_queu(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "loom", required_argument, NULL, c3__loom },
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1438,6 +1445,11 @@ _cw_queu(c3_i argc, c3_c* argv[])
 
   while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
     switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
       case c3__loom: {
         c3_w lom_w;
         c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
@@ -1515,7 +1527,8 @@ _cw_meld(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "loom", required_argument, NULL, c3__loom },
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1523,6 +1536,11 @@ _cw_meld(c3_i argc, c3_c* argv[])
 
   while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
     switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
       case c3__loom: {
         c3_w lom_w;
         c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
@@ -1584,8 +1602,9 @@ _cw_next(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "arch", required_argument, NULL, 'a' },
-    { "loom", required_argument, NULL, c3__loom },
+    { "arch",      required_argument, NULL, 'a' },
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1595,6 +1614,11 @@ _cw_next(c3_i argc, c3_c* argv[])
     switch ( ch_i ) {
       case 'a': {
         u3_Host.arc_c = strdup(optarg);
+      } break;
+
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
       } break;
 
       case c3__loom: {
@@ -1648,7 +1672,8 @@ _cw_pack(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "loom", required_argument, NULL, c3__loom },
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1656,6 +1681,11 @@ _cw_pack(c3_i argc, c3_c* argv[])
 
   while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
     switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
       case c3__loom: {
         c3_w lom_w;
         c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
@@ -1712,7 +1742,8 @@ _cw_prep(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "loom", required_argument, NULL, c3__loom },
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1720,6 +1751,11 @@ _cw_prep(c3_i argc, c3_c* argv[])
 
   while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
     switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
       case c3__loom: {
         c3_w lom_w;
         c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
@@ -1883,7 +1919,8 @@ _cw_vile(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "loom", required_argument, NULL, c3__loom },
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1891,6 +1928,11 @@ _cw_vile(c3_i argc, c3_c* argv[])
 
   while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
     switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
       case c3__loom: {
         c3_w lom_w;
         c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
