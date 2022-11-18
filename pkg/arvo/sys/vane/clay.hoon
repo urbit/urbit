@@ -1797,6 +1797,9 @@
   ::    yoki: new commit
   ::    rang: any additional objects referenced
   ::
+  ::    [goad] < if goat is false, then the caller is responsible to
+  ::    call +goad.
+  ::
   ::    TODO: needs to check tako in rang
   ::
   ++  park
@@ -1947,7 +1950,9 @@
         %|  ?>  =(data q.p.yoki)
             p.yoki
       ==
-    =:  let.dom  +(let.dom)                             ::  [wake] < [ergo] <
+    ::  [wake] < [ergo] < [goad] <
+    ::
+    =:  let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -1980,10 +1985,17 @@
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
         (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks))
       =/  den  ((de now rof hen ruf) our desk.i.desks)
+      ::  [goad] < call without goading so that we apply all the commits
+      ::  before trying to compile all desks to send to gall.
+      ::
       =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
     ::  tell gall to try to run agents if %held
+    ::
+    ::  [goad] > if goat or desk not running.  %held uses park-held to
+    ::  defer the goad into a new event, to attempt to revive the desk.
+    ::  Note that %base will always be %live.
     ::
     =.  ..park
       ?-  liv.dom
@@ -2284,6 +2296,8 @@
         (emit hen %pass /what %$ what/fil)
       --
     --
+  ::
+  ::  [goad] Try to revive desk, but if it fails crash the event.
   ::
   ++  take-park-held
     |=  err=(unit tang)
@@ -3162,17 +3176,17 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  set-rein
+  ++  set-rein                                          ::  [goad] <
     |=  [ren=(map dude:gall ?)]
     ^+  ..park
     ..park(ren.dom ren)
   ::
-  ++  set-zest
+  ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
     ..park(liv.dom liv)
   ::
-  ++  rise
+  ++  rise                                              ::  [goad] <
     |=  [=dude:gall on=(unit ?)]
     ?<  =(%base syd)
     %_    ..park
@@ -3557,6 +3571,10 @@
       ::  [ergo] We do not call +ergo here, but if we wanted to support
       ::  keeping a foreign mounted desk up-to-date, this would open
       ::  that invariant.
+      ::
+      ::  [goad] Same for +goad -- if we supported running agents off
+      ::  foreign desks at an up-to-date revision, we would need to call
+      ::  +goad here.
       ::
       =:  let.dom   (max let.nako let.dom)              ::  [wake] < +work
           hit.dom   hit
@@ -4492,6 +4510,12 @@
     (slog leaf+"goad: {(print)}" ~)
   ::  +goad: emit %load move for all desks, applying $rein's
   ::
+  ::  [goad] Must be called any time the set of running agents changes.
+  ::  This is whenever an agent is started, stopped, or updated.
+  ::
+  ::  This is not move-order agnostic -- you must be careful of
+  ::  reentrancy as long as arvo's move order is depth-first.
+  ::
   ++  goad
     ^+  ..abet
     =^  sat=(list [=desk =bill])  ..abet
@@ -4885,7 +4909,7 @@
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-rein:den ren.req)
-    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)         ::  [goad] >
     [(weld m1 m2) ..^$]
   ::
       %stir
@@ -4900,7 +4924,7 @@
       =^  m1  ruf
         =/  den  ((de now rof hen ruf) our desk.arg.req)
         abet:(rise:den dude.arg.req on.arg.req)
-      =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+      =^  m2  ruf  abet:goad:(lu now rof hen ruf)       ::  [goad] <
       [(weld m1 m2) ..^$]
     ::
         [%stay =desk ver=(unit weft)]
