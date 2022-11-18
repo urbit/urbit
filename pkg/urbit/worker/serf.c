@@ -565,6 +565,14 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
                                sef_u->mug_l,
                                vir));
   }
+  //  event rejected -- bad ciphertext
+  //
+  else if ( c3__evil == u3h(gon) ) {
+    sef_u->sen_d = sef_u->dun_d;
+
+    u3z(job);
+    return u3nt(c3__bail, gon, u3_nul);
+  }
   //  event rejected
   //
   else {

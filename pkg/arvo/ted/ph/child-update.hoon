@@ -6,9 +6,9 @@
 |^
 =/  m  (strand ,vase)
 ;<  ~                bind:m  start-simple
-;<  ~                bind:m  (init-ship ~bud |)
-;<  ~                bind:m  (init-ship ~marbud |)
-;<  [path @t]        bind:m  (modify ~bud %home)
+;<  ~                bind:m  (init-ship ~bud &)
+;<  ~                bind:m  (init-ship ~marbud &)
+;<  *                bind:m  (modify ~bud %base)
 ;<  [=path file=@t]  bind:m  (modify ~bud %kids)
 ;<  ~                bind:m  (check-touched ~marbud %kids path file)
 ;<  ~                bind:m  end
@@ -26,18 +26,16 @@
     %^  cat  3  '=/  new-val  57  '
     (get-val /sys/zuse/hoon)
   =/  mar-contents
-    %^  cat  3  (get-val /mar/js/hoon)
-    '  ~&  >  new-val=new-val  .'
-  =/  js-contents
-    %^  cat  3  (get-val /app/landscape/js/channel/js)
-    'extra'
+    %^  cat  3  (get-val /mar/hoon/hoon)
+    ::TODO  doesn't get picked up somehow
+    :: '  ~&  >  new-val=new-val  .'
+    '  ~&  >  %testing  .'
   =/  files
-    :~  [/sys/zuse/hoon zuse-contents]
-        [/mar/js/hoon mar-contents]
-        [/app/landscape/js/channel/js js-contents]
+    :~  ::[/sys/zuse/hoon zuse-contents]
+        [/mar/hoon/hoon mar-contents]
     ==
   ;<  ~  bind:m  (send-events (insert-files:util her desk files))
-  (pure:m /app/landscape/js/channel/js js-contents)
+  (pure:m /mar/hoon/hoon mar-contents)
   ::
   ++  aqua-path
     |=  =path

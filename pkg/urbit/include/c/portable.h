@@ -21,6 +21,7 @@
 #     ifndef _XOPEN_SOURCE
 #     define _XOPEN_SOURCE 700
 #     endif
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -35,8 +36,10 @@
 #     include <sys/time.h>
 #     include <sys/resource.h>
 #     include <sys/mman.h>
+#     include <sys/sendfile.h>
 
 #   elif defined(U3_OS_osx)
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -53,8 +56,11 @@
 #     include <sys/resource.h>
 #     include <sys/syslimits.h>
 #     include <sys/mman.h>
+#     include <sys/clonefile.h>
+#     include <copyfile.h>
 
 #   elif defined(U3_OS_bsd)
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -74,6 +80,7 @@
 #     define signal mingw_has_no_usable_signal
 #     define raise  mingw_has_no_usable_raise
 #     define _POSIX
+#     include <ctype.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
@@ -101,6 +108,41 @@
 #     define ASAN_ENABLED
 #   endif
 
+  /** Platform string.
+  **/
+#   if defined(U3_OS_linux)
+#     ifdef __LP64__
+#       ifdef U3_CPU_aarch64
+#         define U3_OS_ARCH "aarch64-linux"
+#       else
+#         define U3_OS_ARCH "x86_64-linux"
+#       endif
+#     endif
+#   elif defined(U3_OS_mingw)
+#     define U3_OS_ARCH "x86_64-windows"
+#   elif defined(U3_OS_osx)
+#     ifdef __LP64__
+#       ifdef U3_CPU_aarch64
+//  XX not yet
+//#         define U3_OS_ARCH "aarch64-darwin"
+#       else
+#         define U3_OS_ARCH "x86_64-darwin"
+#       endif
+#     endif
+#   endif
+
+  /** Binary alias.
+  **/
+#   ifdef U3_OS_mingw
+#     define U3_BIN_SUFFIX ".exe"
+#   else
+#     define U3_BIN_SUFFIX ""
+#   endif
+
+
+
+#   define U3_BIN_ALIAS ".run" U3_BIN_SUFFIX
+
   /** Address space layout.
   ***
   ***   NB: 2^29 words == 2GB
@@ -115,24 +157,24 @@
 #     else
 #       define U3_OS_LoomBase 0x36000000
 #     endif
-#       define U3_OS_LoomBits 29
+#       define U3_OS_LoomBits 30
 #   elif defined(U3_OS_mingw)
 #       define U3_OS_LoomBase 0x28000000000
-#       define U3_OS_LoomBits 29
+#       define U3_OS_LoomBits 30
 #   elif defined(U3_OS_osx)
 #     ifdef __LP64__
 #       define U3_OS_LoomBase 0x28000000000
 #     else
 #       define U3_OS_LoomBase 0x4000000
 #     endif
-#       define U3_OS_LoomBits 29
+#       define U3_OS_LoomBits 30
 #   elif defined(U3_OS_bsd)
 #     ifdef __LP64__
 #       define U3_OS_LoomBase 0x200000000
 #     else
 #       define U3_OS_LoomBase 0x4000000
 #     endif
-#       define U3_OS_LoomBits 29
+#       define U3_OS_LoomBits 30
 #   else
 #     error "port: LoomBase"
 #   endif

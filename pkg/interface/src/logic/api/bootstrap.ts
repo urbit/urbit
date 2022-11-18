@@ -9,11 +9,20 @@ import useLaunchState from '../state/launch';
 import useSettingsState from '../state/settings';
 import useLocalState from '../state/local';
 import useStorageState from '../state/storage';
+import gcpManager from '../lib/gcpManager';
 
 export async function bootstrapApi() {
+  airlock.reset();
   airlock.onError = (e) => {
     (async () => {
-      const { reconnect } = useLocalState.getState();
+      const { reconnect, errorCount, set } = useLocalState.getState();
+      console.log(errorCount);
+      if(errorCount > 1) {
+        set(s => {
+          s.subscription = 'disconnected';
+        });
+        return;
+      }
       try {
         await reconnect();
       } catch (e) {
@@ -31,20 +40,30 @@ export async function bootstrapApi() {
     useLocalState.setState({ subscription: 'connected' });
   };
 
-  [useGraphState].map(s => s.getState()?.clear?.());
-  useGraphState.getState().getShallowChildren(`~${window.ship}`, 'dm-inbox');
+  useMetadataState.getState().initialize(airlock);
 
-  const promises = [
-    useHarkState,
-    useMetadataState,
+  const subs = [
     useGroupState,
     useContactState,
+    useHarkState,
     useSettingsState,
-    useLaunchState,
     useInviteState,
-    useGraphState,
-    useStorageState
+    useStorageState,
+    useLaunchState,
+    useGraphState
   ].map(state => state.getState().initialize(airlock));
-  await Promise.all(promises);
-}
 
+  await Promise.all(subs);
+
+  useSettingsState.getState().getAll();
+  gcpManager.start();
+
+  const {
+    getKeys,
+    getShallowChildren
+  } = useGraphState.getState();
+
+  useHarkState.getState().getUnreads();
+  getKeys();
+  getShallowChildren(`~${window.ship}`, 'dm-inbox');
+}

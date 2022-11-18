@@ -9,7 +9,8 @@
     lib=naive-transactions,
     ethereum,
     dice
-/*  logs  %eth-logs  /app/azimuth/logs/eth-logs
+::  /*  logs  %eth-logs  /app/azimuth/logs/eth-logs
+=/  logs  ~
 =,  strand=strand:spider
 ::
 =>  |%  +$  card    card:agent:gall

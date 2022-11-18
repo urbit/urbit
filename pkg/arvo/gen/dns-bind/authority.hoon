@@ -20,7 +20,7 @@
   %-  crip
   +:(scow %p .^(@p %j /(scot %p our)/code/(scot %da now)/(scot %p our)))
 =/  secrets
-  .^(@t %cx :(weld /(scot %p our)/home/(scot %da now)/sec domain /atom))
+  .^(@t %cx :(weld /(scot %p our)/base/(scot %da now)/sec domain /atom))
 ::
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])

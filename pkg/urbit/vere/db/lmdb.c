@@ -42,8 +42,6 @@ u3_lmdb_init(const c3_c* pax_c, size_t siz_i)
   MDB_env* env_u;
   c3_w     ret_w;
 
-  c3_assert(u3_unix_cane(pax_c));
-
   if ( (ret_w = mdb_env_create(&env_u)) ) {
     mdb_logerror(stderr, ret_w, "lmdb: init fail");
     return 0;
@@ -65,11 +63,19 @@ u3_lmdb_init(const c3_c* pax_c, size_t siz_i)
     return 0;
   }
 
-  if ( (ret_w = mdb_env_open(env_u, pax_c, 0, 0664)) ) {
-    mdb_logerror(stderr, ret_w, "lmdb: failed to open event log");
-    //  XX dispose env_u
-    //
-    return 0;
+  {
+#   if defined(U3_OS_no_ubc)
+      c3_w ops_w = MDB_WRITEMAP;
+#   else
+      c3_w ops_w = 0;
+#   endif
+
+    if ( (ret_w = mdb_env_open(env_u, pax_c, ops_w, 0664)) ) {
+      mdb_logerror(stderr, ret_w, "lmdb: failed to open event log");
+      //  XX dispose env_u
+      //
+      return 0;
+    }
   }
 
   return env_u;

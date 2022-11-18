@@ -10,16 +10,17 @@
       [%2 network:zero:store]
       [%3 network:one:store]
       [%4 network:store]
-      state-5
+      [%5 network:store]
+      state-6
   ==
-::
-+$  state-5  [%5 network:store]
+::-
++$  state-6  [%6 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 ++  mar      %graph-update-3
 --
 ::
-=|  state-5
+=|  state-6
 =*  state  -
 ::
 %-  agent:dbug
@@ -81,7 +82,21 @@
       (gas:orm-log ~ [now.bowl logged-update] ~)
     ==
   ::
-    %5  [cards this(state old)]
+      %5
+    %_  $
+      -.old  %6
+    ::
+        update-logs.old
+      %-  ~(rut by update-logs.old)
+      |=  [=resource:store =update-log:store]
+      ^-  update-log:store
+      ?:  =(our.bowl entity.resource)
+        update-log
+      %+  gas:orm-log  *update-log:store
+      (scag 2 (tap:orm-log update-log))
+    ==
+  ::
+    %6  [cards this(state old)]
   ==
 ::
 ++  on-watch
@@ -138,6 +153,15 @@
         %tags               ~|('cannot send %tags as poke' !!)
         %tag-queries        ~|('cannot send %tag-queries as poke' !!)
     ==
+    ++  put-update-log
+      |=  [=resource:store =update-log:store =time =logged-update:store]
+      ^-  update-log:store
+      ?:  =(our.bowl entity.resource)
+        (put:orm-log update-log time logged-update)
+      %+  gas:orm-log  *update-log:store
+      :~  (need (pry:orm-log update-log))
+          [time logged-update]
+      ==
     ::
     ++  add-graph
       |=  $:  =time
@@ -194,7 +218,7 @@
       ?>  is-valid
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
-        (put:orm-log update-log time [time [%add-nodes resource nodes]])
+        (put-update-log resource update-log time [time %add-nodes resource nodes])
       ::
       :-  (give [/updates]~ [%add-nodes resource nodes])
       %_  state
@@ -332,7 +356,9 @@
         (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
-        (put:orm-log update-log time [time [%remove-posts resource indices]])
+        %^  put-update-log  resource
+          update-log
+        [time time %remove-posts resource indices]
       :-  (give [/updates]~ [%remove-posts resource indices])
       %_  state
         update-logs  (~(put by update-logs) resource update-log)
@@ -419,8 +445,9 @@
         (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
-        (put:orm-log update-log time [time [%add-signatures uid signatures]])
-      ::
+        %^  put-update-log  resource
+          update-log
+        [time time %add-signatures uid signatures]
       :-  (give [/updates]~ [%add-signatures uid signatures])
       %_  state
           update-logs  (~(put by update-logs) resource update-log)
@@ -467,9 +494,9 @@
         (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
-        %^  put:orm-log  update-log
-          time
-        [time [%remove-signatures uid signatures]]
+        %^  put-update-log  resource
+          update-log
+        [time time %remove-signatures uid signatures]
       ::
       :-  (give [/updates]~ [%remove-signatures uid signatures])
       %_  state
@@ -652,20 +679,19 @@
     =/  update-log
       (~(get by update-logs) [ship term])
     :-  ~  :-  ~  :-  %noun
-    !>
     ?+    t.t.t.t.path  (on-peek:def path)
         ~
-      ^-  update-log:store
+      !>  ^-  update-log:store
       ?~(update-log *update-log:store u.update-log)
     ::
         [%latest ~]
-      ^-  (unit time)
+      !>  ^-  (unit time)
       %+  biff  update-log
       |=  =update-log:store
       (bind (pry:orm-log:store update-log) head)
     ::
         [%subset @ @ ~]
-      ^-  update-log:store
+      !>  ^-  update-log:store
       ?~  update-log  *update-log:store
       =*  start  i.t.t.t.t.t.path
       =*  end    i.t.t.t.t.t.t.path
@@ -860,8 +886,8 @@
       --
     ::
         [%depth-first @ @ ~]
-      =/  count=(unit atom)  (rush i.t.t.t.t.path dem:ag)
-      =/  start=(unit atom)  (rush i.t.t.t.t.t.path dem:ag)
+      =/  count=(unit atom)  (rush i.t.t.t.t.t.path dem:ag)
+      =/  start=(unit atom)  (rush i.t.t.t.t.t.t.path dem:ag)
       ?:  ?=(~ count)
         [~ ~]
       :-  ~  :-  ~  :-  mar

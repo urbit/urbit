@@ -197,7 +197,7 @@ function text(t: string) {
 function createDmNotification(...content: HarkContent[]): HarkBody {
   return {
     title: [ship('~hastuc-dibtux'), text(' messaged you')],
-    time: unixToDa(Date.now() - 3_600).toString(),
+    time: unixToDa(Date.now() - 3_600).toJSNumber(),
     content,
     binned: '/',
     link: '/'
@@ -207,7 +207,7 @@ function createDmNotification(...content: HarkContent[]): HarkBody {
 function createBitcoinNotif(amount: string) {
   return {
     title: [ship('~silnem'), text(` sent you ${amount}`)],
-    time: unixToDa(Date.now() - 3_600).toString(),
+    time: unixToDa(Date.now() - 3_600).toJSNumber(),
     content: [],
     binned: '/',
     link: '/'
@@ -218,7 +218,7 @@ function createGroupNotif(to: string): HarkBody {
   return {
     title: [ship('~ridlur-figbud'), text(` invited you to ${to}`)],
     content: [],
-    time: unixToDa(Date.now() - 3_600).toString(),
+    time: unixToDa(Date.now() - 3_600).toJSNumber(),
     binned: '/',
     link: '/'
   };
@@ -257,7 +257,7 @@ const onboard = createMockSysNotification('/onboard');
 const updateNotification = createMockSysNotification('/desk/bitcoin', [
   {
     title: [{ text: 'App "Bitcoin" updated to version 1.0.1' }],
-    time: '',
+    time: 0,
     content: [],
     link: '/desk/bitcoin',
     binned: '/'

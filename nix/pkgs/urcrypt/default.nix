@@ -1,5 +1,5 @@
 { stdenv, autoreconfHook, pkgconfig
-, libaes_siv, openssl, secp256k1
+, libaes_siv, openssl, openssl-static-osx, secp256k1
 , enableStatic ? stdenv.hostPlatform.isStatic }:
 
 stdenv.mkDerivation rec {

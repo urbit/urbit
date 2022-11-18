@@ -11,4 +11,11 @@
       %nonexistent   :: 404
       %offline       :: 504
   ==
++$  start-args
+  $:  parent=(unit tid)
+      use=(unit tid)
+      =beak
+      file=term
+      =vase
+  ==
 --

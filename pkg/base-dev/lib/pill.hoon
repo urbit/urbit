@@ -61,10 +61,10 @@
   =;  hav  ~&  user-files+(lent hav)
            =/  =yuki:clay
              :-  *(list tako:clay)
-             %-  ~(gas by *(map path (each page:clay lobe:clay)))
-             (turn hav |=([=path =page:clay] [path &+page]))
+             %-  ~(gas by *(map path (each page lobe:clay)))
+             (turn hav |=([=path =page] [path &+page]))
            [/c/sync [%park des &+yuki *rang:clay]]
-  =|  hav=(list [path page:clay])
+  =|  hav=(list [path page])
   |-  ^+  hav
   ?~  sal  ~
   =.  hav  $(sal t.sal)

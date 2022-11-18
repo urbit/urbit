@@ -1050,9 +1050,7 @@
   =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(scot %da now))
   ?-  ud.cass
     %0  %init
-    *  %take-that
-    ::%1  %take-that
-    ::*   %mate
+    *   %only-that
   ==
 ::
 ++  poke
@@ -1630,7 +1628,7 @@
     ::    fail.
     ::
     ::    We want to always use %only-that for the first remote merge.
-    ::    But we also want local syncs (%base to %home or %kids) to
+    ::    But we also want local syncs (%base to %base or %kids) to
     ::    succeed after that first remote sync. To accomplish both we
     ::    simply use %only-that for the first three sync merges.  (The
     ::    first two are from the pill.)

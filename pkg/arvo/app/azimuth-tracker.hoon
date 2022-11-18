@@ -93,6 +93,7 @@
     ^-  config:eth-watcher
     :*  url.state  =(%czar (clan:title our))  ~m5  ~m30
         launch:contracts:azimuth
+        ~
         ~[azimuth:contracts:azimuth]
         ~
         (topics whos.state)

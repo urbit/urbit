@@ -8,7 +8,7 @@
   ^-  form:m
   =*  loop  $
   ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
-  ?:  (is-dojo-output:util ship her unix-effect "activated app home/{(trip agent)}")
+  ?:  (is-dojo-output:util ship her unix-effect "activated app base/{(trip agent)}")
     (pure:m ~)
   loop
 ::

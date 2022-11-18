@@ -12,7 +12,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { getNotificationCount } from "~/logic/lib/hark";
 import { alphabeticalOrder } from "~/logic/lib/util";
-import useGroupState from "~/logic/state/group";
+import useGroupState, {useGroup} from "~/logic/state/group";
 import useHarkState, { selHarkGraph } from "~/logic/state/hark";
 import useInviteState from "~/logic/state/invite";
 import useMetadataState, { usePreview } from "~/logic/state/metadata";
@@ -128,6 +128,11 @@ function PendingGroup(props: PendingGroupProps) {
   };
 
   const joining = useGroupState((s) => s.pendingJoin[path]?.progress);
+  const group = useGroup(path);
+
+  if(joining?.progress === 'done' && !group) {
+    return null;
+  }
 
   return (
     <Tile gridColumnStart={first ? 1 : undefined}>

@@ -13,7 +13,7 @@ export type HarkContent = { ship: string; } | { text: string; };
 
 export interface HarkBody {
   title: HarkContent[];
-  time: string;
+  time: number;
   content: HarkContent[];
   link: string;
   binned: string;
@@ -29,7 +29,7 @@ export interface HarkBin {
   place: HarkPlace;
 }
 
-export type HarkLid = 
+export type HarkLid =
   { unseen: null; }
 | { seen: null; }
 | { time: string; };

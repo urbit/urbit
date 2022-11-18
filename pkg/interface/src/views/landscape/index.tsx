@@ -7,9 +7,10 @@ import useHarkState from '~/logic/state/hark';
 import { Workspace } from '~/types/workspace';
 import { Body } from '../components/Body';
 import { GroupsPane } from './components/GroupsPane';
-import { NewGroup } from './components/NewGroup';
 import './css/custom.css';
 import _ from 'lodash';
+
+const NewGroup = React.lazy(() => import('./components/NewGroup').then(module => ({ default: module.NewGroup })));
 
 moment.updateLocale('en', {
   relativeTime : {

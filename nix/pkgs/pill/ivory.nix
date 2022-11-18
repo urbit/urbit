@@ -1,4 +1,4 @@
-{ lib, stdenvNoCC, fetchGitHubLFS, bootFakeShip, solid, urbit, arvo, herb, xxd
+{ lib, stdenvNoCC, fetchGitHubLFS, bootFakeShip, solid, urbit, arvo, curl, xxd
 , withRopsten ? false }:
 
 let
@@ -7,13 +7,13 @@ let
 
 in {
   build = import ./builder.nix {
-    inherit stdenvNoCC urbit herb;
+    inherit stdenvNoCC urbit curl;
 
     name = "ivory" + lib.optionalString withRopsten "-ropsten";
     builder = ./ivory.sh;
     arvo = if withRopsten then arvo.ropsten else arvo;
     pier = bootFakeShip {
-      inherit urbit herb;
+      inherit urbit;
 
       pill = solid.lfs;
       ship = "zod";

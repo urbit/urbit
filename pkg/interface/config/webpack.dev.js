@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const urbitrc = require('./urbitrc');
 const _ = require('lodash');
 const { execSync } = require('child_process');
@@ -47,7 +47,7 @@ if(urbitrc.URL) {
 module.exports = {
   mode: 'development',
   entry: {
-    app: './src/index.js'
+    app: './src/index.tsx'
     // serviceworker: './src/serviceworker.js'
   },
   module: {
@@ -59,15 +59,14 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
               runtime: 'automatic',
-              development: true,
-              importSource: '@welldone-software/why-did-you-render'
+              development: true
             }]],
             plugins: [
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
               '@babel/plugin-proposal-class-properties',
-              'react-hot-loader/babel'
+              process.env.NODE_ENV !== 'production' && 'react-refresh/babel'
             ]
           }
         },
@@ -108,14 +107,15 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
       'process.env.LANDSCAPE_STORAGE_VERSION': JSON.stringify(Date.now()),
-      'process.env.LANDSCAPE_LAST_WIPE': JSON.stringify('2021-10-20'),
+      'process.env.LANDSCAPE_LAST_WIPE': JSON.stringify('2021-10-20')
     }),
 
     // new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: 'Groups',
       template: './public/index.html'
-    })
+    }),
+    process.env.NODE_ENV !== 'production' && new ReactRefreshWebpackPlugin()
   ],
   watch: true,
   output: {

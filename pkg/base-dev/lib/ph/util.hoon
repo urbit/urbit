@@ -59,7 +59,7 @@
 ::
 ::  Checks whether the given event is a dojo output blit containing the
 ::  given tape
-::
+::TODO  should be rename -dill-output
 ++  is-dojo-output
   |=  [who=ship her=ship uf=unix-effect what=tape]
   ?&  =(who her)

@@ -532,10 +532,11 @@
       ?:  ?=([%show %3] -.mad)
         (dy-rash %tan (dy-show-source q.mad) ~)
       ?:  ?=(%brev -.mad)
+        ?:  ?=(?(%eny %now %our) p.mad)
+          (dy-rash %tan (cat 3 p.mad ' is immutable') ~)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  .
-          $?(%eny %now %our)  !!
           %lib  .(lib ~)
           %sur  .(sur ~)
           %dir  .(dir [[our.hid %base ud+0] /])
@@ -543,13 +544,12 @@
       =+  cay=(~(got by rez) p.q.mad)
       ?-    -.p.mad
           %verb
+        ?:  ?=(?(%eny %now %our) p.p.mad)
+          (dy-rash %tan (cat 3 p.p.mad ' is immutable') ~)
         =.  var  (~(put by var) p.p.mad cay)
         ~|  bad-set+[p.p.mad p.q.cay]
         =<  dy-amok
         ?+  p.p.mad  .
-            %eny  ~|(%entropy-is-eternal !!)
-            %now  ~|(%time-is-immutable !!)
-            %our  ~|(%self-is-immutable !!)
             %lib
           %_    .
               lib
@@ -568,6 +568,8 @@
                       ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
                       ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
                       pax
+                  ?:  =(~ .^((list path) %ct pax))
+                    +(..dy (he-diff %tan 'dojo: dir does not exist' ~))
                   =.  dir  (need (de-beam pax))
                   =-  +>(..dy (he-diff %tan - ~))
                   rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
@@ -679,7 +681,9 @@
       [%face ^]  a(q $(a q.a))
       [%cell ^]  a(p $(a p.a), q $(a q.a))
       [%fork *]  a(p (silt (turn ~(tap in p.a) |=(b=type ^$(a b)))))
-      [%hint *]  !!
+      [%hint *]  ?.  ?=(%know -.q.p.a)  $(a q.a)
+                 ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
+                 [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
       [%core ^]  `wain`/core
       [%hold *]  a(p $(a p.a))
     ==
@@ -733,9 +737,9 @@
       ^+  +>+>
       =^  dat  say  (~(transceive sole say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
-        ~&  %dy-edit-busy
         =^  lic  say  (~(transmit sole say) dat)
-        (dy-diff %mor [%det lic] [%bel ~] ~)
+        =/  tip=@t  'dojo: busy (press backspace to abort)'
+        (dy-diff %mor [%det lic] [%bel ~] [%tan [tip ~]] ~)
       =>  .(per `dat)
       =/  res  (mule |.((slam u.pro !>((tufa buf.say)))))
       ?:  ?=(%| -.res)

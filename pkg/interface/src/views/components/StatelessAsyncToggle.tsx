@@ -1,7 +1,7 @@
 import {
-  LoadingSpinner, StatelessToggleSwitchField as Toggle,
-
-  Text
+  Box,
+  Icon,
+  LoadingSpinner, StatelessToggleSwitchField as Toggle
 } from '@tlon/indigo-react';
 import React, { ReactElement } from 'react';
 import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
@@ -22,11 +22,17 @@ export function StatelessAsyncToggle({
   } = useStatelessAsyncClickable(onClick, name);
 
   return state === 'error' ? (
-    <Text>Error</Text>
+    <Box width={5} textAlign='center' title='Something went wrong...'>
+      <Icon icon='ExclaimationMarkBold' />
+    </Box>
   ) : state === 'loading' ? (
-    <LoadingSpinner foreground={'white'} background="gray" />
+    <Box width={5} textAlign='center'>
+      <LoadingSpinner foreground={'white'} background="gray" />
+    </Box>
   ) : state === 'success' ? (
-    <Text mx={2}>Done</Text>
+    <Box width={5} textAlign='center' title='Success'>
+      <Icon icon='CheckmarkBold' />
+    </Box>
   ) : (
     <Toggle onClick={handleClick} {...rest} />
   );

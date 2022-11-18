@@ -171,6 +171,7 @@
 ++  dejs
   =,  dejs:format
   |%
+  ++  ship  (su ;~(pfix sig fed:ag))
   :: TODO: fix +stab 
   ::
   ++  pa
@@ -218,6 +219,26 @@
     :~  lid+lid
         bin+bin
     ==
+  ++  content
+    %-  of
+    :~  text+so
+        ship+ship
+    ==
+  ::
+  ++  body
+    %-  ot
+    :~  title+(ar content)
+        content+(ar content)
+        time+di
+        binned+pa
+        link+pa
+    ==
+  ::
+  ++  add-note
+    %-  ot
+    :~  bin+bin
+        body+body
+    ==
   ::
   ++  action
     ^-  $-(json ^action)
@@ -228,6 +249,7 @@
         read-count+place
         read-each+read-each
         read-note+bin
+        add-note+add-note
     ==
   --
 --

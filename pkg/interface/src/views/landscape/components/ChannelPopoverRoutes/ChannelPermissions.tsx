@@ -5,12 +5,11 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { addTag, Association, Group, PermVariation, removeTag, metadataEdit, deSig } from '@urbit/api';
+import { addTag, Association, Group, PermVariation, removeTag, metadataEdit, deSig, resourceFromPath } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
 import * as Yup from 'yup';
-import { resourceFromPath } from '~/logic/lib/group';
 import { FormGroupChild } from '~/views/components/FormGroup';
 import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWritePerms } from '../ChannelWritePerms';
@@ -75,7 +74,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
   const writers = _.get(
     group?.tags,
     ['graph', association.resource, 'writers'],
-    new Set()
+    []
   );
 
   let [, , hostShip] = association.resource.split('/');
@@ -92,7 +91,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
 
   const initialValues = {
     writePerms,
-    writers: Array.from(writers)
+    writers: [...writers]
       .filter(x => x !== hostShip),
     readerComments: association.metadata.vip === 'reader-comments'
   };
@@ -105,7 +104,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
       resource: association.resource,
       tag: 'writers'
     };
-    const allWriters = Array.from(writers).map(w => `~${w}`);
+    const allWriters = [...writers].map(w => `~${w}`);
     if (values.readerComments !== readerComments) {
       await airlock.poke(metadataEdit(association, {
         vip: values.readerComments ? 'reader-comments' : ''
@@ -171,7 +170,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
           <Col>
             <Label mb={2}>Permissions Summary</Label>
             <PermissionsSummary
-              writersSize={writers.size}
+              writersSize={writers.length}
               vip={association.metadata.vip}
             />
           </Col>

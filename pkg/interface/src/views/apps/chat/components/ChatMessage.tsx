@@ -290,18 +290,18 @@ const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
 
   return (
     <Box
-      borderRadius={1}
+      borderRadius={2}
       backgroundColor='white'
       border='1px solid'
       borderColor='lightGray'
       position='absolute'
-      top='-12px'
+      top='-16px'
       right={2}
     >
       <Row>
         <Box
-          padding={1}
-          size={'24px'}
+          padding={2}
+          size={5}
           cursor='pointer'
           onClick={() => onReply(msg)}
         >
@@ -342,7 +342,7 @@ const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
               </Col>
             }
           >
-            <Box padding={1} size={'24px'} cursor='pointer'>
+            <Box padding={2} size={5} cursor='pointer'>
               <Icon icon='Menu' size={3} />
             </Box>
           </Dropdown>

@@ -469,14 +469,14 @@ static void
 _pier_on_scry_done(void* ptr_v, u3_noun nun)
 {
   u3_pier* pir_u = ptr_v;
-  u3_weak res = u3r_at(7, nun);
+  u3_weak    res = u3r_at(7, nun);
 
   if (u3_none == res) {
     u3l_log("pier: scry failed\n");
   }
   else {
-    u3_weak out,    pad;
-    c3_c   *ext_c, *pac_c;
+    u3_weak out;
+    c3_c *ext_c, *pac_c;
 
     u3l_log("pier: scry succeeded\n");
 
@@ -492,8 +492,12 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
     {
       u3_atom puf = u3i_string(u3_Host.ops_u.puf_c);
       if ( c3y == u3r_sing(c3__jam, puf) ) {
-        out   = u3qe_jam(res);
+        c3_d len_d;
+        c3_y* byt_y;
+        u3s_jam_xeno(res, &len_d, &byt_y);
+        out = u3i_bytes(len_d, byt_y);
         ext_c = "jam";
+        free(byt_y);
       }
       else if ( c3y == u3a_is_atom(res) ) {
         out   = u3dc("scot", u3k(puf), u3k(res));
@@ -506,30 +510,13 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
       u3z(puf);
     }
 
-    //  try to build export target path
-    //
-    {
-      u3_noun pro = u3m_soft(0, _pier_stab, u3i_string(pac_c));
-      if ( 0 == u3h(pro) ) {
-        c3_w len_w = u3kb_lent(u3k(u3t(pro)));
-        pad = u3nt(c3_s4('.', 'u', 'r', 'b'),
-                   c3_s3('p', 'u', 't'),
-                   u3qb_scag(len_w - 1, u3t(pro)));
-      }
-      else {
-        u3l_log("pier: invalid export path %s\n", pac_c);
-        pad = u3_none;
-      }
-      u3z(pro);
-    }
-
     //  if serialization and export path succeeded, write to disk
     //
-    if ( (u3_none != out) && (u3_none != pad) ) {
+    if ( u3_none != out ) {
       c3_c fil_c[256];
       snprintf(fil_c, 256, "%s.%s", pac_c + 1, ext_c);
 
-      u3_unix_save(fil_c, pad);
+      u3_unix_save(fil_c, out);
       u3l_log("pier: scry result in %s/.urb/put/%s\n", u3_Host.dir_c, fil_c);
     }
   }
@@ -686,7 +673,8 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 //  XX organizing version constants
 //
 #define VERE_NAME  "vere"
-#define VERE_ZUSE  419
+#define VERE_ZUSE  417
+#define VERE_LULL  328
 
 /* _pier_wyrd_aver(): check for %wend effect and version downgrade. RETAIN
 */
@@ -822,7 +810,7 @@ _pier_wyrd_card(u3_pier* pir_u)
                      u3dc("scot", c3__ta, u3i_string(URBIT_VERSION)),
                      u3_nul);
   u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),  //  XX from both king and serf?
-                     u3nc(c3__lull, 330),        //  XX define
+                     u3nc(c3__lull, VERE_LULL),  //  XX from both king and serf?
                      u3nc(c3__arvo, 240),        //  XX from both king and serf?
                      u3nc(c3__hoon, 140),        //  god_u->hon_y
                      u3nc(c3__nock, 4),          //  god_u->noc_y
@@ -1048,7 +1036,17 @@ _pier_play(u3_play* pay_u)
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
       u3_lord_save(pir_u->god_u);
-      _pier_wyrd_init(pir_u);
+
+      //  early exit, preparing for upgrade
+      //
+      //    XX check kelvins?
+      //
+      if ( c3y == u3_Host.pep_o ) {
+        u3_pier_exit(pir_u);
+      }
+      else {
+        _pier_wyrd_init(pir_u);
+      }
     }
   }
   else {
@@ -1430,7 +1428,16 @@ _pier_on_lord_live(void* ptr_v)
       _pier_play_init(pir_u, eve_d);
     }
     else {
-      _pier_wyrd_init(pir_u);
+      //  early exit, preparing for upgrade
+      //
+      //    XX check kelvins?
+      //
+      if ( c3y == u3_Host.pep_o ) {
+        u3_pier_exit(pir_u);
+      }
+      else {
+        _pier_wyrd_init(pir_u);
+      }
     }
   }
 }
@@ -2231,6 +2238,8 @@ u3_pier_exit(u3_pier* pir_u)
 void
 u3_pier_bail(u3_pier* pir_u)
 {
+  u3_Host.xit_i = 1;
+
   //  halt serf
   //
   if ( pir_u->god_u ) {

@@ -215,9 +215,7 @@ urcrypt_secp_schnorr_sign(urcrypt_secp_context* context,
   if ( 1 != secp256k1_keypair_create(context->secp, &keypair, key) ) {
     return -1;
   }
-  if ( 1 != secp256k1_schnorrsig_sign(context->secp, out_sig, msg, &keypair,
-                                      secp256k1_nonce_function_bip340, aux) )
-  {
+  if ( 1 != secp256k1_schnorrsig_sign(context->secp, out_sig, msg, &keypair, aux) ) {
     return -1;
   }
 
@@ -240,7 +238,7 @@ urcrypt_secp_schnorr_veri(urcrypt_secp_context* context,
   if ( 1 != secp256k1_xonly_pubkey_parse(context->secp, &pubkey, pub) ) {
     return false;
   }
-  if ( 1 != secp256k1_schnorrsig_verify(context->secp, sig, msg, &pubkey) ) {
+  if ( 1 != secp256k1_schnorrsig_verify(context->secp, sig, msg, 32, &pubkey) ) {
     return false;
   }
   return true;

@@ -433,7 +433,6 @@
   %-  pure:m
   ?~  full-file.client-response  ''
   q.data.u.full-file.client-response
-
 ::
 ++  fetch-cord
   |=  url=tape
@@ -734,7 +733,7 @@
   ;<  =bowl:spider  bind:m  get-bowl
   =/  tid
     (scot %ta (cat 3 (cat 3 'strand_' file) (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid beak file args])
+  =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid beak file args])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~  bind:m  (sleep ~s0)  ::  wait for thread to start
   (pure:m tid)
@@ -748,7 +747,7 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
   =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid file args])
+  =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid byk.bowl file args])
   ;<  ~      bind:m  (watch-our /awaiting/[tid] %spider /thread-result/[tid])
   ;<  ~      bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~      bind:m  (sleep ~s0)  ::  wait for thread to start
@@ -756,6 +755,6 @@
   ;<  ~      bind:m  (take-kick /awaiting/[tid])
   ?+  p.cage  ~|([%strange-thread-result p.cage file tid] !!)
     %thread-done  (pure:m %& q.cage)
-    %thread-fail  (pure:m %| !<([term tang] q.cage))
+    %thread-fail  (pure:m %| ;;([term tang] q.q.cage))
   ==
 --

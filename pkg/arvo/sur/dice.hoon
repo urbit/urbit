@@ -7,6 +7,7 @@
 +$  owners      (jug owner ship)
 +$  sponsors    (map ship [residents=(set ship) requests=(set ship)])
 +$  history     (map address:ethereum (tree hist-tx))
++$  events      (list event-log:rpc:ethereum)
 +$  net         ?(%mainnet %ropsten %local %default)
 +$  snap-state  [%0 =id:block:jael nas=^state:naive =owners =sponsors]
 ::
@@ -85,7 +86,13 @@
 +$  hist-tx  [p=time q=roll-tx]
 +$  roll-tx  [=ship =status hash=keccak type=l2-tx]
 +$  pend-tx  [force=? =address:naive =time =raw-tx:naive]
-+$  send-tx  [next-gas-price=@ud sent=? txs=(list raw-tx:naive)]
++$  send-tx
+  $:  next-gas-price=@ud
+      sent=?
+      ::  TODO: make txs as (list pend-tx)?
+      ::
+      txs=(list [=address:naive force=? =raw-tx:naive])
+  ==
 +$  part-tx
   $%  [%raw raw=octs]
       [%don =tx:naive]

@@ -3,7 +3,7 @@ import {
 } from '@tlon/indigo-react';
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
-import { roleForShip } from '~/logic/lib/group';
+import { roleForShip } from '@urbit/api';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';

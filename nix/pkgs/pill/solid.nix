@@ -1,4 +1,4 @@
-{ stdenvNoCC, fetchGitHubLFS, bootFakeShip, solid, urbit, arvo, herb }:
+{ stdenvNoCC, fetchGitHubLFS, bootFakeShip, solid, urbit, arvo, curl }:
 
 let
 
@@ -8,12 +8,12 @@ in {
   inherit lfs;
 
   build = import ./builder.nix {
-    inherit stdenvNoCC urbit arvo herb;
+    inherit stdenvNoCC urbit arvo curl;
 
     name = "solid";
     builder = ./solid.sh;
     pier = bootFakeShip {
-      inherit urbit herb;
+      inherit urbit;
 
       arvo = null;
       pill = solid.lfs;

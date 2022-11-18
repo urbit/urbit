@@ -1,8 +1,6 @@
 #ifndef U3_ALLOCATE_H
 #define U3_ALLOCATE_H
 
-#include <openssl/opensslv.h>
-
 #include "manage.h"
 
   /**  Constants.
@@ -15,17 +13,17 @@
     */
 #     define u3a_page   12
 
-    /* u3a_pages: number of pages in memory.
+    /* u3a_pages: maximum number of pages in memory.
     */
 #     define u3a_pages  (1 << (u3a_bits - u3a_page))
 
-    /* u3a_words: number of words in memory.
+    /* u3a_words: maximum number of words in memory.
     */
 #     define u3a_words  (1 << u3a_bits)
 
-    /* u3a_bytes: number of bytes in memory.
+    /* u3a_bytes: maximum number of bytes in memory.
     */
-#     define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
+#     define u3a_bytes  (sizeof(c3_w) * u3a_words)
 
     /* u3a_cells: number of representable cells.
     */
@@ -397,36 +395,33 @@
           u3a_push(const u3a_pile* pil_u)
           {
             u3R->cap_p += pil_u->mov_ws;
-            return u3a_peek(pil_u);
-          }
 
-        /* u3a_pile_sane(): bail on invalid road stack state.
-        */
-          inline void
-          u3a_pile_sane(const u3a_pile* pil_u)
-          {
+#ifndef U3_GUARD_PAGE
             //  !off means we're on a north road
             //
             if ( !pil_u->off_ws ) {
               if( !(u3R->cap_p > u3R->hat_p) ) {
                 u3m_bail(c3__meme);
               }
-#ifdef U3_MEMORY_DEBUG
+# ifdef U3_MEMORY_DEBUG
               c3_assert( pil_u->top_p >= u3R->cap_p );
-#endif
+# endif
             }
             else {
               if( !(u3R->cap_p < u3R->hat_p) ) {
                 u3m_bail(c3__meme);
               }
-#ifdef U3_MEMORY_DEBUG
+# ifdef U3_MEMORY_DEBUG
               c3_assert( pil_u->top_p <= u3R->cap_p );
-#endif
+# endif
             }
+#endif /* ifndef U3_GUARD_PAGE */
 
 #ifdef U3_MEMORY_DEBUG
             c3_assert( pil_u->rod_u == u3R );
 #endif
+
+            return u3a_peek(pil_u);
           }
 
         /* u3a_pile_done(): assert valid upon completion.
@@ -480,15 +475,6 @@
           void*
           u3a_malloc(size_t len_i);
 
-        /* u3a_malloc_ssl(): openssl-shaped malloc
-        */
-          void*
-          u3a_malloc_ssl(size_t len_i
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-                          , const char* file, int line
-#endif
-                          );
-
         /* u3a_calloc(): aligned storage measured in bytes.
         */
           void*
@@ -499,38 +485,10 @@
           void*
           u3a_realloc(void* lag_v, size_t len_i);
 
-        /* u3a_realloc2(): gmp-shaped realloc.
-        */
-          void*
-          u3a_realloc2(void* lag_v, size_t old_i, size_t new_i);
-
-        /* u3a_realloc_ssl(): openssl-shaped realloc.
-        */
-          void*
-          u3a_realloc_ssl(void* lag_v, size_t len_i
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-                          , const char* file, int line
-#endif
-                          );
-
         /* u3a_free(): free for aligned malloc.
         */
           void
           u3a_free(void* tox_v);
-
-        /* u3a_free2(): gmp-shaped free.
-        */
-          void
-          u3a_free2(void* tox_v, size_t siz_i);
-
-        /* u3a_free_ssl(): openssl-shaped free.
-        */
-          void
-          u3a_free_ssl(void* tox_v
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-                          , const char* file, int line
-#endif
-                          );
 
       /* Reference and arena control.
       */
@@ -677,6 +635,11 @@
           void
           u3a_lop(c3_w lab_w);
 
+        /* u3a_print_time: print microsecond time.
+        */
+          void
+          u3a_print_time(c3_c* str_c, c3_c* cap_c, c3_d mic_d);
+
         /* u3a_print_memory(): print memory amount.
         */
           void
@@ -702,14 +665,6 @@
                         void*      ptr_v,
                         void     (*pat_f)(u3_atom, void*),
                         c3_o     (*cel_f)(u3_noun, void*));
-
-        /* u3a_walk_fore_unsafe(): u3a_walk_fore(), without overflow checks
-        */
-          void
-          u3a_walk_fore_unsafe(u3_noun    a,
-                               void*      ptr_v,
-                               void     (*pat_f)(u3_atom, void*),
-                               c3_o     (*cel_f)(u3_noun, void*));
 
         /* u3a_string(): `a` as an on-loom c-string.
         */

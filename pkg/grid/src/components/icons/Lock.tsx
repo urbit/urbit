@@ -1,14 +1,7 @@
 import React from 'react';
 
 export const Lock = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    width="10"
-    height="12"
-    viewBox="-11 -8 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+  <svg viewBox="-8.5 -6.5 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"

@@ -7,7 +7,7 @@ Usage:
 We support various merge strategies.  A "commit" is a snapshot of
 the files with a list of parents plus a date.   Most commits have
 one parent; a "merge" commit is a commit with two parents.  The
-%home desk starts with an initial commit with no parents; commits
+%base desk starts with an initial commit with no parents; commits
 with several parents ("octopus merges") are possible but we don't
 generate them right now.
                                                                       
@@ -72,13 +72,13 @@ We speak of merging into a destination *desk* from a source *commit*
 because while you can only merge on top of a desk, you can merge from
 historical commits.  For example,
                                                                       
-    |merge %old our %home, =cas ud+5, =gem %init
+    |merge %old our %base, =cas ud+5, =gem %init
                                                                       
-will create a new desk called %old with the 5th commit in %home.
+will create a new desk called %old with the 5th commit in %base.
 You can revert the contents of a desk to what they were yesterday
 with
                                                                       
-    |merge %home our %home, =cas da+(sub now ~d1), =gem %only-that
+    |merge %base our %base, =cas da+(sub now ~d1), =gem %only-that
                                                                       
 Note this is a normal %only-that merge, which means you're creating a
 *new* commit with the old *contents*.

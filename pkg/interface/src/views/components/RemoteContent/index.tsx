@@ -1,12 +1,17 @@
-import { hasProvider } from 'oembed-parser';
+import {
+  Box
+} from '@tlon/indigo-react';
 import React from 'react';
 import useSettingsState from '~/logic/state/settings';
 import {
   RemoteContentAudioEmbed,
   RemoteContentImageEmbed,
   RemoteContentOembed,
-  RemoteContentVideoEmbed
+  RemoteContentVideoEmbed,
+  RemoteContentEmbedFallback
 } from './embed';
+import { useEmbed } from '~/logic/state/embed';
+import { Suspender } from '~/logic/lib/suspend';
 import { TruncatedText } from '~/views/components/TruncatedText';
 import { RemoteContentWrapper } from './wrapper';
 import AsyncFallback from '../AsyncFallback';
@@ -43,8 +48,34 @@ export const IMAGE_REGEX = new RegExp(
 export const AUDIO_REGEX = new RegExp(/(\.mp3|\.wav|\.ogg|\.m4a)$/i);
 export const VIDEO_REGEX = new RegExp(/(\.mov|\.mp4|\.ogv)$/i);
 
+// This is used to prevent our oembed parser from 
+// trying to embed facebook/instagram links, which require an API key
+const isFacebookGraphDependent = (url: string) => {
+  const caseDesensitizedURL = url.toLowerCase()
+  return (caseDesensitizedURL.includes('facebook.com') || caseDesensitizedURL.includes('instagram.com'))
+}
+
+export const validOembedCheck = (embed: Suspender<any>, url: string) => {
+  if (!isFacebookGraphDependent(url)) {
+    if (!embed.read().hasOwnProperty("error")) {
+      return true
+    }
+  }
+  return false
+}
+
+export const RemoteContent = (props: RemoteContentProps) => {
+  const {url, ...rest} = props
+  return(
+    <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
+          <RemoteContentInner url={url} {...rest}/>
+    </AsyncFallback>
+  )
+}
+
+
 const emptyRef = () => {};
-export function RemoteContent(props: RemoteContentProps) {
+function RemoteContentInner(props: RemoteContentProps) {
   const {
     url,
     embedRef = emptyRef,
@@ -57,45 +88,51 @@ export function RemoteContent(props: RemoteContentProps) {
   const isImage = IMAGE_REGEX.test(url);
   const isAudio = AUDIO_REGEX.test(url);
   const isVideo = VIDEO_REGEX.test(url);
-  const isOembed = hasProvider(url);
+  const oembed = useEmbed(url);
+  const isOembed = validOembedCheck(oembed, url);
+
   const wrapperProps = {
     url,
     tall,
     embedOnly: !renderUrl || tall
   };
 
-  const fallback = !renderUrl ? null : (
-    <RemoteContentWrapper {...wrapperProps}>
-      <TruncatedText>{url}</TruncatedText>
-    </RemoteContentWrapper>
-  );
+  const fallback = null;
 
   if (isImage && remoteContentPolicy.imageShown) {
     return (
-      <RemoteContentWrapper {...wrapperProps} noOp={transcluded} replaced>
-        <RemoteContentImageEmbed url={url} />
-      </RemoteContentWrapper>
+      <Box mt={1} mb={2} flexShrink={0}>
+        <RemoteContentWrapper {...wrapperProps} noOp={transcluded} replaced>
+          <RemoteContentImageEmbed url={url} stretch={tall} />
+        </RemoteContentWrapper>
+      </Box>
     );
   } else if (isAudio && remoteContentPolicy.audioShown) {
     return (
-      <RemoteContentWrapper {...wrapperProps}>
-        <RemoteContentAudioEmbed url={url} />
-      </RemoteContentWrapper>
+      <Box mt={1} mb={2} flexShrink={0}>
+        <RemoteContentWrapper {...wrapperProps}>
+          <RemoteContentAudioEmbed url={url} />
+        </RemoteContentWrapper>
+      </Box>
     );
   } else if (isVideo && remoteContentPolicy.videoShown) {
     return (
-      <RemoteContentWrapper
-        {...wrapperProps}
-        detail={<RemoteContentVideoEmbed url={url} />}
-      >
-        <TruncatedText>{url}</TruncatedText>
-      </RemoteContentWrapper>
+      <Box mt={1} mb={2} flexShrink={0}>
+        <RemoteContentWrapper
+          {...wrapperProps}
+          detail={<RemoteContentVideoEmbed url={url} />}
+        >
+          <TruncatedText>{url}</TruncatedText>
+        </RemoteContentWrapper>
+      </Box>
     );
   } else if (isOembed && remoteContentPolicy.oembedShown) {
     return (
-      <AsyncFallback fallback={fallback}>
-        <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
-      </AsyncFallback>
+      <Box mt={1} mb={2} flexShrink={0}>
+        <AsyncFallback fallback={fallback}>
+          <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} oembed={oembed} />
+        </AsyncFallback>
+      </Box>
     );
   }
   return fallback;
