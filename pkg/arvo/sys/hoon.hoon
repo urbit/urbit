@@ -11588,15 +11588,15 @@
     ::
     ::  +apse: postfix comment.
     ++  apse
-      %+  knee  *help  |.  ~+
+      %+  knee  *note  |.  ~+
       ;~  pose
-        %+  cook  |=(a=cord %*(. *help summary.crib a))
+        %+  cook  |=(a=cord `note`help+`[a]~)
         ::TODO: if there is a $link then interpret it as the start
         ::of a prefix comment instead of postfix
         ::;~(less (exit ;~(plug (plus en-link) col ace)) (exit line))
         (exit line)
       ::
-        (easy *help)
+        (easy *note)
       ==
     ::
     ++  leap                                            ::  whitespace less docs
@@ -11700,9 +11700,9 @@
   ++  clad                                              ::  hoon doccords
     |*  fel=rule
     %+  cook
-      |=  [a=whit b=hoon c=help]
-      =?  b  !=(*help c)
-        [%note help+c b]
+      |=  [a=whit b=hoon c=note]
+      =?  b  !=(c *note)
+        note+[c b]
       =+  docs=~(tap by bat.a)
       |-
       ?~  docs  b
@@ -11711,9 +11711,10 @@
   ++  coat                                              ::  spec doccords
     |*  fel=rule
     %+  cook
-      |=  [a=whit b=spec c=help]
-      =?  b  !=(*help c)
-        [%gist c b]
+      |=  [a=whit b=spec c=note]
+      =?  b  !=(c *note)
+        ?>  ?=([%help *] c)
+        [%gist p.c b]
       =+  docs=~(tap by bat.a)
       |-
       ?~  docs  b
@@ -13318,15 +13319,16 @@
       ==
     ::
     ++  boog  !:
-      %+  knee  [p=*whit q=*term r=*help s=*hoon]
+      %+  knee  [p=*whit q=*term r=*note s=*hoon]
       |.(~+((scye ;~(pose bola boba bota))))
     ++  bola                                           ::  ++  arms
-      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
+      %+  knee  [q=*term r=*note s=*hoon]  |.  ~+
       %+  cook
-        |=  [q=term r=help s=hoon]
-        ?:  =(r *help)
-          [q r s]
-        [q %*(. r cuff [%funk q]~) s]
+        |=  [q=term r=note s=hoon]
+        ?:  =(r *note)
+          [q *note s]
+        ?>  ?=([%help *] r)
+        [q r(cuff.p [%funk q]~) s]
       ;~  pfix  (jest '++')
         ;~  plug
           ;~(pfix gap ;~(pose (cold %$ buc) sym))
@@ -13335,12 +13337,13 @@
         ==
       ==
     ++  boba                                           ::  +$  arms
-      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
+      %+  knee  [q=*term r=*note s=*hoon]  |.  ~+
       %+  cook
-        |=  [q=term r=help s=spec]
-        ?:  =(r *help)
-          [q [r [%ktcl %name q s]]]
-        [q %*(. r cuff [%plan q]~) [%ktcl %name q s]]
+        |=  [q=term r=note s=spec]
+        ?:  =(r *note)
+          [q *note [%ktcl %name q s]]
+        ?>  ?=([%help *] r)
+        [q r(cuff.p [%plan q]~) [%ktcl %name q s]]
       ;~  pfix  (jest '+$')
         ;~  plug
           ;~(pfix gap sym)
@@ -13350,10 +13353,10 @@
       ==
     ::TODO: deprecated, remove at next kelvin bump
     ++  bota                                           ::  +*  arms
-      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
+      %+  knee  [q=*term r=*note s=*hoon]  |.  ~+
       %+  cook
         |=  [b=term d=hoon]
-        [b *help d]
+        [b *note d]
       ;~  plug
         %+  cook
           |=  [b=term c=(list term) e=spec]
@@ -13400,21 +13403,22 @@
     ::
     ++  whap  !:                                        ::  chapter
       %+  cook
-        |=  a=(list (qual whit term help hoon))
+        |=  a=(list (qual whit term note hoon))
         ::  separate $helps into their own list to be passed to +glow
         =/  [duds=(list help) nude=(list (pair term hoon))]
           %+  roll  a
           |=  $:  $=  bog
-                  (qual whit term help hoon)
+                  (qual whit term note hoon)
                 ::
                   $=  gob
                   [duds=(list help) nude=(list (pair term hoon))]
               ==
           =/  [unt=(list help) tag=(list help)]
             %+  skid  ~(tap by bat.p.bog)  |=(=help =(~ cuff.help))
-          :-  ?:  =(*help r.bog)
+          :-  ?:  =(*note r.bog)
                 (weld tag duds.gob)
-              [r.bog (weld tag duds.gob)]
+              ?>  ?=([%help *] r.bog)
+              [p.r.bog (weld tag duds.gob)]
           ::TODO should i just throw out untagged arm-docs?
           ?~  unt  [[q.bog s.bog] nude.gob]
           :-  :-  q.bog
@@ -13466,13 +13470,14 @@
     ++  whip                                            ::  chapter declare
       ::TODO: handle arm batch comments written above chapter declaration
       %+  cook
-        |=  [[a=whit b=term c=help] d=(map term hoon)]
+        |=  [[a=whit b=term c=note] d=(map term hoon)]
         ^-  [whit (pair term (map term hoon))]
         ?.  =(*whit a)
           [a b d]
-        ?:  =(*help c)
+        ?:  =(*note c)
           [*whit b d]
-        [%*(. *whit bat (malt [[%chat b]~ crib.c]~)) b d]
+        ?>  ?=([%help *] c)
+        [%*(. *whit bat (malt [[%chat b]~ crib.p.c]~)) b d]
       ;~(plug (seam ;~(pfix (jest '+|') gap cen sym)) whap)
     ::
     ++  wasp                                            ::  $brcb aliases
