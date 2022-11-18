@@ -63,6 +63,21 @@
 ::  close: [wake] >
 ::  open and almost immediately close: [wake] <>
 ::
+::  This system is best used for nonlocal invariants and is not
+::  necessary when a function can guarantee its own invariants.  For
+::  example, consider a set alongside a @ud representing its size.
+::  There is an invariant that any time you add or remove an item from
+::  the set you must update its size.  If you're operating on these
+::  directly, it could be beneficial to tag each line of code which
+::  might modify the set and make it clear where the size is modified.
+::
+::  Sometimes code can be restructured so that many fewer tags are
+::  needed.  In the above example, if the set is modified in many
+::  places, it may be worth factoring out set+size into a data structure
+::  with its own arms for put, del, uni, int, etc.  Then the invariant
+::  only needs to be maintained within that data structure, and call
+::  sites do not need to be tagged.
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 ::  Here are the structures.  `++raft` is the formal arvo state.  It's also
@@ -1918,7 +1933,7 @@
         %|  ?>  =(data q.p.yoki)
             p.yoki
       ==
-    =:  let.dom  +(let.dom)                             ::  [wake] <
+    =:  let.dom  +(let.dom)                             ::  [wake] < [ergo] <
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -1964,7 +1979,7 @@
       ==
     ::  notify unix and subscribers
     ::
-    wake:?:(mem (ergo 0 mum.res) ..park)                ::  [wake] >
+    wake:?:(mem (ergo 0 mum.res) ..park)                ::  [wake] > [ergo] >
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -3006,6 +3021,11 @@
   ::
   ::  Emit update to unix sync
   ::
+  ::  [ergo] Must be called any time the set of files changes that must
+  ::  be mirrored to unix.  +want-mime may optionally be used to cheaply
+  ::  check if a version of a desk is mirrored to unix (and so +ergo
+  ::  must be called).
+  ::
   ++  ergo
     |=  [yon=aeon mim=(map path (unit mime))]
     ^+  ..park
@@ -3047,7 +3067,7 @@
       %-  (slog >%unknown-case< >[her syd case spur]< ~)
       ..mount
     =/  for-yon  ?:(=(let.dom u.yon) 0 u.yon)
-    =.  mon
+    =.  mon                                             ::  [ergo]
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
@@ -3064,7 +3084,7 @@
     |=  [pot=term =case =spur]
     ^+  ..unmount
     ?>  ?=(^ hez.ruf)
-    =.  mon  (~(del by mon) pot)
+    =.  mon  (~(del by mon) pot)                        ::  [ergo]
     =?  mim.dom  !(want-mime 0)  ~
     (emit u.hez.ruf %give %ogre pot)
   ::
@@ -3516,6 +3536,10 @@
       ::
       =/  =rave  rave:(~(got by bom.u.ref) inx)
       ?>  ?=(%many -.rave)
+      ::  [ergo] We do not call +ergo here, but if we wanted to support
+      ::  keeping a foreign mounted desk up-to-date, this would open
+      ::  that invariant.
+      ::
       =:  let.dom   (max let.nako let.dom)              ::  [wake] < +work
           hit.dom   hit
           hut.ran   hut
