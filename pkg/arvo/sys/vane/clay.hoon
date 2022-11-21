@@ -3219,7 +3219,7 @@
     |=  err=(unit tang)
     ^+  ..park
     ?^  err
-      ((slog leaf+"clay: desk {<syd>} failed to unsuspend" u.err) ..park)
+      ((slog leaf+"clay: failed to upgrade kelvin (wick)" u.err) ..park)
     ?>  ?=(%base syd)
     =/  wis=(list [weft =yoki])
       %+  sort  ~(tap by wic.dom)
@@ -4547,7 +4547,9 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
-    =.  ..abet  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::  XX  slow
+    ::  =.  ..abet
+    ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
