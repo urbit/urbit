@@ -169,6 +169,10 @@
   ::
   ==
   ::
+  ::  +make-arm: makes an arm or a core
+  ::
+  ::    if the arm builds a core with at least one arm besides a $ arm, this
+  ::    returns a %core item instead of an %arm item
   ++  make-arm
     |=  [name=term sut=type tom=(unit tome)]
     ^-  (unit item)
@@ -177,6 +181,21 @@
     ?~  arm
       ~
     =+  [adoc pdoc cdoc]=(all-arm-docs u.arm sut (trip name))
+    ::  check to see if arm builds a core with more than just a buc arm
+    =/  arms  (sloe (~(play ut sut) u.arm))
+    ~?  >>  debug  arms+arms
+    ?.  |(=(arms ~) =(arms ~[%$]))
+      ~?  >>  debug  %make-arm-core
+      ::  arm builds a core with more than just a $ arm
+      =/  dox=what  ?~(adoc ?~(pdoc ~ pdoc) adoc)
+      =/  arm-type  (~(play ut sut) u.arm)
+      |-
+      ?+  arm-type  ~
+        [%hint *]  $(arm-type q.arm-type)
+        [%hold *]  $(arm-type (~(play ut p.arm-type) q.arm-type))
+        [%core *]  =*  compiled-against  (signify p.sut)
+                   `[%core (trip name) dox arm-type q.arm-type compiled-against]
+      ==
     ?~  tom
       `[%arm (trip name) adoc pdoc cdoc u.arm p.sut]
     ?.  (~(has by q.u.tom) name)
