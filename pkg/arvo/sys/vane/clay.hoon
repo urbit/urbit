@@ -1,4 +1,5 @@
 ::  clay (4c), revision control
+::
 ::  The way to understand Clay is to take it section-by-section:
 ::
 ::  - Data structures.  You *must* start here; make sure you understand
@@ -1981,7 +1982,7 @@
       ?.  ?=(%live liv.dom.dojo.i.desks)
         $(desks t.desks)
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
-        (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks))
+        (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks) ~)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
       ::  [goad] < call without goading so that we apply all the commits
       ::  before trying to compile all desks to send to gall.
@@ -4541,7 +4542,7 @@
     ::
     =.  sat  (apply-precedence sat)
     =+  ?:  (lth veb.bug 1)  ~
-        %-  slog
+        %.  ~  %-  slog
         %+  turn  sat
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
