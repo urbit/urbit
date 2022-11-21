@@ -1981,6 +1981,8 @@
         (emil (weld moves-1 moves-2))
       ?.  ?=(%live liv.dom.dojo.i.desks)
         $(desks t.desks)
+      ?:  ?=(%base desk.i.desks)
+        $(desks t.desks)
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
         (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks) ~)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
