@@ -4549,9 +4549,8 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
-    ::  XX  slow
-    ::  =.  ..abet
-    ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    =.  ..abet
+      (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
@@ -4575,9 +4574,8 @@
     duz
   ::  +apply-precedence: resolve conflicts between $bill's
   ::
-  ::    %base takes precedence over other desks.
-  ::    Other desks have alphabetical precedence ('a' over 'b').
-  ::    Within each desk, the $bill order is respected.
+  ::    policy is to crash if multiple desks are trying to run the same
+  ::    agent.
   ::
   ++  apply-precedence
     |=  sat=(list [=desk =bill])
@@ -4600,7 +4598,8 @@
         [~ done]
       ::
       ?:  (~(has in done) i.bil)
-        $(bil t.bil)
+        ~>  %mean.(cat 3 'clay: cannot run app from two desks: %' i.bil)
+        !!
       =.  done  (~(put in done) i.bil)
       =^  next  done  $(bil t.bil)
       [[i.bil next] done]
