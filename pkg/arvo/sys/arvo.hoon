@@ -1570,7 +1570,7 @@
         ::
           %crud  =?  lag.zen  ?&  ?=(%exit mote.goof.buz)
                                   ?=(^ tang.goof.buz)
-                                  ?=(%leaf -.i.tang.goof.buz)  :: XX ?@
+                                  ?=([%leaf *] i.tang.goof.buz)
                                   ?=(%wyrd (crip p.i.tang.goof.buz))
                               ==
                    ~&(%lagging &)
