@@ -3,7 +3,7 @@
 ::
 =/  debug  |
 =>
-  ::    types used by doccords
+  ::    dprint-types
   |%
   ::    $overview: an overview of all named things in the type.
   ::
@@ -24,6 +24,7 @@
         ::
         [%view items=overview]
         ::  inspecting a full core
+        ::TODO: make name be the arm name or summary if it exists
         $:  %core
             name=tape
             docs=what
@@ -56,7 +57,9 @@
     ==
   ::
   --
-::    core containing doccords search and printing utilities
+::    dprint
+::
+::  core containing doccords search and printing utilities
 |%
 ::    contains arms used for looking for docs inside of a type
 ::
@@ -94,20 +97,31 @@
     ::  checks for a core name match, then tries to find a chapter, arm, or
     ::  arm in a chapter depending on how many topics remain. will still work
     ::  if core is unnamed
-    =+  core-name=p.p.q.sut
-    ?:  !=(`i.topics core-name)
-      =+  arm=(make-arm i.topics sut ~)
-      ?~  arm
-        ?:(rec $(sut p.sut) ~)
-      arm
+    ::
+    ::  we currently use the one-line description as the "name" of the core,
+    ::  rather than the built in name in $garb which is unused. this is an
+    ::  unsatisfactory state of affairs that should be altered once we better
+    ::  understand how to make doccords ergonomic.
+    ::
+    ::TODO: if an arm builds a core, we should treat the resulting item as a
+    ::%core rather than an %arm
+    ::
+    =+  arm=(make-arm i.topics sut ~)
+    =/  tom=(unit tome)  (~(get by q.r.q.sut) i.topics)
+    ?:  &(=(~ tom) =(~ arm))
+      ::  if no matches, recurse into type compiled against. we don't need a
+      ::  match because cores don't necessarily have names
+      ?:(rec $(sut p.sut) ~)
+    ?~  arm
+      ?~  t.topics
+        `[%chapter (trip i.topics) p:(need tom) sut q.sut]
+      (make-arm i.t.topics sut tom)
+    ::  if arm does match
     ?~  t.topics
-      (signify sut)
-    =/  tom=(unit tome)  (~(get by q.r.q.sut) i.t.topics)
-    ?~  tom
-      (make-arm i.t.topics sut ~)
-    ?~  t.t.topics
-      `[%chapter (trip i.t.topics) p.u.tom sut q.sut]
-    (make-arm i.t.t.topics sut tom)
+      arm
+    ::  else recurse into type of arm
+    ?>  ?=([%arm *] u.arm)
+    $(sut (~(play ut sut.u.arm) gen.u.arm), topics t.topics)
   ::
       [%face *]
     ?.  ?=(term p.sut)
@@ -133,6 +147,18 @@
    ::  produce an item, so we should peek inside of it to see what type it is
    ::  and grab the docs from the hint if so
    ::
+   ?.  ?=([%help *] q.p.sut)
+     ::  we only care about %help notes
+     ^$(sut q.sut)
+   ?:  ?&  ?=([%core *] q.sut)
+           ((sane %tas) summary.crib.p.q.p.sut)
+           =(summary.crib.p.q.p.sut i.topics)
+       ==
+     ::  no remaining topics means this is the desired core
+     ?~  t.topics
+       `(emblazon (need (signify q.sut)) (unwrap-hint sut))
+     ::  otherwise recurse into the core and keep looking
+     $(sut q.sut, topics t.topics)
    =/  shallow-match=(unit item)  $(sut q.sut, rec %.n)
    ?~  shallow-match
      ::  hint isn't wrapping a match, so step through it
@@ -175,11 +201,9 @@
     $(sut q.sut)
   ::
       [%core *]
-    =/  name=(unit term)  p.p.q.sut  :: should check if core is built with an arm and use that name?
+    ::=/  name=(unit term)  p.p.q.sut
     =*  compiled-against  $(sut p.sut)
-    ?~  name
-      `[%core ~ *what sut q.sut compiled-against]
-    `[%core (trip u.name) *what sut q.sut compiled-against]
+    `[%core ~ *what sut q.sut compiled-against]
   ::
       [%face *]
     ?.  ?=(term p.sut)
