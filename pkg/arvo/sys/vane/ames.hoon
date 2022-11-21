@@ -2764,6 +2764,14 @@
           ::
           (emit [/ames]~ %pass wire %b %rest next-wake)
         =/  nax-bone=^bone  (mix 0b10 bone)
+        %-  %+  trace  odd.veb
+            =/  dat  [her.channel bone=nax-bone message-num=message-num -.task]
+            |.("remove naxplanation flow {<dat>}")
+        =.  snd.peer-state
+          ::  unconditionally delete possible naxplanation flows that
+          ::  could have been sent (e.g. nacks for initial subscriptions)
+          ::
+          (~(del by snd.peer-state) nax-bone)
         =.  peer-state
           =,  peer-state
           %_  peer-state
