@@ -296,6 +296,7 @@
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
       fad=flow                                          ::  ford cache
+      zuz=(map weft vase)                               ::  antique zuses
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
@@ -1368,6 +1369,125 @@
   =*  red=rede  ->+
   =<  apex
   |%
+  ++  get-zuse
+    |=  =waft
+    |^  ^-  [vase _..park]
+    =/  wefts=(list weft)  (sort-filter-waft waft)
+    ?^  vuz=(try-zuse-cache wefts)
+      [u.vuz ..park]
+    =/  oldest=weft  -:(flop wefts)
+    =/  base-dome  dom:(~(got by dos.rom) %base)
+    =/  =aeon  let.base-dome
+    |-
+    ?>  (gte aeon 1)
+    =/  =yaki  (~(got by hut.ran) (~(got by hit.base-dome) aeon))
+    ?~  aeon-waft=(get-waft yaki)
+      $(aeon (dec aeon))
+    ?~  aeon-wefts=(sort-filter-waft u.aeon-waft)
+      $(aeon (dec aeon))
+    =/  aeon-newest=weft  i.aeon-wefts
+    :: if the newest weft for this aeon is older than
+    :: the oldest target weft, do not continue
+    ::
+    ?<  (gth num.aeon-newest num.oldest)
+    ?~  files=(get-kernel-files yaki)
+      $(aeon (dec aeon))
+    =/  zuse-core=vase  (build-zuse u.files)
+    =/  actual=weft
+      [%zuse !<(@ud (slap zuse-core %limb %zuse))]
+    [zuse-core ..part(zuz (~(put by zuz) actual zuse-core))]
+    ::
+    ++  build-zuse
+      |=  [h=@ a=@ l=@ z=@]
+      ^-  vase
+      =/  hoon-core=vase
+        %-  (slog 'compiling hoon' ~)
+        =-  (slot 7 -)
+        (road |.((slap *vase (ream h))))
+      =/  arvo-core=vase
+        %-  (slog 'compiling arvo' ~)
+        =-  (slap - (ream '..part'))
+        (road |.((slap hoon-core (ream a))))
+      =/  lull-core=vase
+        %-  (slog 'compiling lull' ~)
+        (road |.((slap arvo-core (rain /sys/lull/hoon l))))
+      %-  (slog 'compiling zuse' ~)
+      (road |.((slap lull-core (rain /sys/zuse/hoon z))))
+    ::
+    ++  try-zuse-cache
+      |=  wefts=(list weft)
+      ^-  (unit vase)
+      ?~  wefts
+        ~
+      ?:  =(i.wefts zuse+zuse)
+        (some zuse.bud)
+      ?~  zuse-core=(~(get by zuz) i.wefts)
+        $(wefts t.wefts)
+      (some zuse-core)
+    ::
+    ++  sort-filter-waft
+      |=  =waft
+      ^-  (list weft)
+      %+  sort
+        %+  skim  ~(tap in (waft-to-wefts waft))
+        |=(=weft =(%zuse lal.weft))
+      |=([a=weft b=weft] (lte num.a num.b))
+    ::
+    ++  get-waft
+      |=  =yaki
+      ^-  (unit waft)
+      ?~  lube=(~(get by q.yaki) /sys/kelvin)
+        ~
+      ?~  puge=(~(get by lat.ran) u.lube)
+        ~
+      (soft-read-kelvin u.puge)
+    ::
+    ++  get-kernel-files
+      |=  =yaki
+      ^-  (unit [h=@ a=@ l=@ z=@])
+      ;:  both
+        (get-kernel-file yaki /sys/hoon/hoon)
+        (get-kernel-file yaki /sys/arvo/hoon)
+        (get-kernel-file yaki /sys/lull/hoon)
+        (get-kernel-file yaki /sys/zuse/hoon)
+      ==
+    ::
+    ++  get-kernel-file
+      |=  [=yaki =path]
+      ^-  (unit @)
+      ?~  lube=(~(get by q.yaki) path)
+        ~
+      ?~  puge=(~(get by q.yaki) u.lube)
+        ~
+      ?+  p.u.puge  ~
+        %hoon  ?^(q.u.puge ~ (some q.u.puge))
+        %mime  ?.(?=([* @ @] q.u.puge) ~ (some +>.q.u.puge))
+      ==
+    ::
+    ++  soft-read-kelvin
+      |=  =page
+      ^-  (unit waft)
+      ?+    p.page  ~
+          %kelvin
+        ((soft waft) q.page)
+      ::
+          %mime
+        ?~  curd=(biff ((soft mime) q.page) |=(=mime ((soft @t) q.q.mime)))
+          ~
+        ?~  hune=(rush u.curd (star (ifix [gay gay] tall:vast)))
+          ~
+        =/  wefts
+          %+  murn  u.hune
+          |=  =hoon
+          (mole |.(!<(weft (slap !>(~) hoon))))
+        ?.  =((lent u.hune) (lent wefts))
+          ~
+        ?:  ?=([* ~] wefts)
+          (some i.wefts)
+        (some [%1 ~] (silt wefts))
+      ==
+    --
+  ::
   ++  abet                                              ::  resolve
     ^-  [(list move) raft]
     :-  (flop mow)
