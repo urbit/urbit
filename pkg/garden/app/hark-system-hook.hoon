@@ -30,7 +30,7 @@
   =+  !<(old=app-states vase)
   =^  cards-1  old
     ?.  ?=(%0 -.old)  `old
-    [[tire:cy]~ old(- %1)]
+    [[tire:cy:cc]~ old(- %1)]
   ?>  ?=(%1 -.old)
   [cards-1 this(state old)]
   ::
@@ -72,7 +72,7 @@
     ^-  (quip card _this)
     ?>  ?=(%tire +<.sign)
     ?-    -.p.sign
-        %&  [(turn ~(tap in ~(key by p.p.sign)) warp:cy) this]
+        %&  [(turn ~(tap in ~(key by p.p.sign)) warp:cy:cc) this]
         %|
       ?-    -.p.p.sign
           %zest  `this
@@ -92,7 +92,7 @@
       ?.  |(=(desk %base) ~(has-docket de:cc desk))  ~
       =/  =action:hark  ~(commit de:cc desk)
       ~[(poke:ha:cc action)]
-    [[(warp:cy desk) cards] this]
+    [[(warp:cy:cc desk) cards] this]
   --
 ::
 ++  on-fail  on-fail:def
