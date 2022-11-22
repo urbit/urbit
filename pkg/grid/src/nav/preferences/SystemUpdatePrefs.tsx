@@ -1,15 +1,22 @@
 import _ from 'lodash';
 import React from 'react';
-import SourceSyncer from '../../components/SourceSyncer';
-import { usePike } from '../../state/kiln';
+import SourceSetter from '../../components/SourceSetter';
+import useKilnState, { usePike } from '../../state/kiln';
 
 export const SystemUpdatePrefs = () => {
   const desk = 'base';
   const appName = 'your Urbit';
   const pike = usePike(desk);
-  const syncShip = pike?.sync?.ship;
+  const srcShip = pike?.sync?.ship;
+  const { toggleInstall } = useKilnState();
 
   return (
-    <SourceSyncer appName={appName} title="System Updates" syncDesk={desk} syncShip={syncShip} />
+    <SourceSetter
+      appName={appName}
+      toggleSrc={toggleInstall}
+      srcDesk={desk}
+      srcShip={srcShip}
+      title="System Updates"
+    />
   );
 };
