@@ -1900,8 +1900,8 @@
   +$  perm  $%(perm-arvo perm-gall)
   ::
   +$  perm-gall                                        ::  inter-agent perms
-    $%  [%write dude=$?(%peers (unit dude))]           ::  poke
-        [%watch dude=$?(%peers (unit dude))]           ::  subscribe
+    $%  [%write jump=? dude=?(~ dude)]                 ::  poke
+        [%watch jump=? dude=?(~ dude) =path]           ::  subscribe
         ::TODO  include target ship once remote scry exists?
         [%reads vane=term care=(unit term) desk=(unit desk) =spur]  ::  scry
     ==
@@ -1918,6 +1918,7 @@
         $:  %clay
         $%  [%mount ~]                 ::  %mont %ogre %dirk
             [%creds ~]                 ::  %cred %crew %perm
+            ::TODO  %reads-style specifications for the below
             [%write desk=(unit desk)]  ::  %info %merg %fuse
             [%local desk=(unit desk)]  ::  %warp
             [%build desk=(unit desk)]  ::  %warp with ford build $care
@@ -2007,15 +2008,32 @@
     ^-  ?
     ?+  mus  (~(has in pes) mus)
         [?(%write %watch) *]
+      =/  dum=?(~ dude)
+        ?-(-.mus %write dude.mus, %watch dude.mus)
       %+  lien  ~(tap in pes)
       |=  p=perm
-      ?&  ?=(?(%write %watch) -.p)
+      ?.  ?=(?(%write %watch) -.p)  |
+      =/  dup=?(~ dude)
+        ?-(-.p %write dude.p, %watch dude.p)
+      ?&  ::  perm matches
+          ::
           =(-.mus -.p)
-          ?-  dude.p
-            %peers  =(%peers dude.mus)
-            ^       =(dude.mus dude.p)
-            ~       ?=(^ dude.mus)  ::TODO  ?
-          ==
+          ::  perm allows remote, or we just need local
+          ::
+          |(jump.p !jump.mus)
+          ::  dude is allowed
+          ::
+          |(=(~ dup) =(dum dup))
+          ::  if watching, path is allowed
+          ::
+          ?.  ?=(%watch -.p)  &
+          ?>  ?=(%watch -.mus)
+          ::TODO  find-at-head list operation
+          |-
+          ?~  path.p  &
+          ?~  path.mus  |
+          ?.  =(i.path.p i.path.mus)  |
+          $(path.p t.path.p, path.mus t.path.mus)
       ==
     ::
         [%clay ?(%write %local %build %perms %liven) *]
@@ -2053,20 +2071,14 @@
     ?:  ?=(%pyre -.note)
       &
     ?:  ?=(%agent -.note)
-      |^  ?.  =(our ship.note)
-            (target-perm task.note %peers)
-          ?:  =(dap name.note)
-            &
-          (target-perm task.note `name.note)
-      ::
-      ++  target-perm
-        |=  [=task:agent target=$?(%peers dude=(unit dude))]
-        ?-  -.task
-          ?(%watch %watch-as)  [%watch target]
-          ?(%poke %poke-as)    [%write target]
-          %leave               &
-        ==
-      --
+      =*  jump=?  !=(our ship.note)
+      ?-  -.task.note
+        %watch     [%watch jump name.note path.task.note]
+        %watch-as  [%watch jump name.note path.task.note]
+        %poke      [%write jump name.note]
+        %poke-as   [%write jump name.note]
+        %leave     &
+      ==
     ::
     ?-  +<.note
         %a
