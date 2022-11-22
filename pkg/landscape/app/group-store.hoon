@@ -31,6 +31,7 @@
 ::
 /-  *group
 /+  store=group-store, default-agent, verb, dbug, resource, *migrate, agentio
+/+  gladio
 |%
 +$  card  card:agent:gall
 ::
@@ -38,6 +39,7 @@
   $%  state-zero
       state-one
       state-two
+      state-three
   ==
 ::
 +$  state-zero
@@ -52,9 +54,15 @@
   $:  %2
       =groups
   ==
+::
++$  state-three
+  $:  %3
+      =groups
+      wait=(set ship)
+  ==
 --
 ::
-=|  state-two
+=|  state-three
 =*  state  -
 ::
 %-  agent:dbug
@@ -72,10 +80,17 @@
   ++  on-load
     |=  =old=vase
     =/  old  !<(versioned-state old-vase)
+    =|  cards=(list card)
     |^
-    ?-  -.old
-      %2  `this(state old)
-      ::
+    ?-    -.old
+        %3  [(flop cards) this(state old)]
+    ::
+        %2
+      %_    $
+        old    [%3 groups ~]
+        cards  :_(cards [%pass / %agent [our dap]:bowl %poke noun+!>(%migrate)])
+      ==
+    ::
         %1  
       %_    $
         -.old  %2
@@ -112,6 +127,7 @@
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
         %sane  (poke-sane:gc !<(?(%check %fix) vase))
+        %noun  ?>(=(q.vase %migrate) poke-migrate:gc)
       ::
           ?(%group-update-0 %group-action)
         (poke-group-update:gc !<(update:store vase))
@@ -159,6 +175,10 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
+    ?:  ?=([%gladio @ ~] wire)
+      =^  cards  state
+        (take-migrate:gc sign)
+      [cards this]
     ?.  ?=([%try-rejoin @ *] wire)
       (on-agent:def wire sign)
     ?>  ?=(%poke-ack -.sign)
@@ -192,6 +212,32 @@
 ::
 |_  bol=bowl:gall
 +*  io  ~(. agentio bol)
+++  poke-migrate
+  ^-  (quip card _state)
+  =^  cards-1  wait
+    ~(migrate-start gladio bol)
+  =/  cards-2=(list card)
+    %+  turn  ~(tap in wait)
+    |=  =ship
+    ^-  card
+    [%pass /gladio/(scot %p ship) %agent [ship %groups] %watch /init]
+  =/  cards  (welp cards-1 cards-2)
+  ~&  cards
+  [cards state(wait wait)]
+::
+++  take-migrate
+  |=  =sign:agent:gall
+  ^-  (quip card _state)
+  ?:  ?=(%poke-ack -.sign)
+    `state
+  :_  state(wait (~(del in wait) src.bol))
+  ^-  (list card)
+  %+  welp  (~(migrate-ship gladio bol) src.bol)
+  ?:  ?=(%kick -.sign)  :: TODO: check queued watches don't get kicked
+    *(list card)
+  :_  *(list card)
+  [%pass /gladio/(scot %p src.bol) %agent [src.bol %groups] %leave ~]
+::
 ++  peek-group
   |=  rid=resource
   ^-  (unit group)
@@ -243,8 +289,8 @@
   |=  arc=*
   ^-  (quip card _state)
   |^
-  =/  sty=state-two
-    [%2 (remake-groups ;;((tree [resource tree-group]) +.arc))]
+  =/  sty=state-three
+    [%3 (remake-groups ;;((tree [resource tree-group]) +.arc)) ~]
   :_  sty
   %+  roll  ~(tap by groups.sty)
   |=  [[rid=resource grp=group] out=(list card)]
