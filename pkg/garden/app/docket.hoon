@@ -355,28 +355,31 @@
     |=  [=desk =zest:clay]
     ^-  (quip card _state)
     =*  cha  ~(. ch desk)
-    ?.  (~(has by charges) desk)
-      :_  state  :_  ~
+    =/  card-1
       (~(warp-our pass /warp/[desk]) desk ~ %sing %z da+now.bowl /desk/docket-0)
-    =/  =charge  (~(got by charges) desk)
-    ?-    zest
-        %live
-      ?.  ?=(%glob -.href.docket.charge)
-        =.  charges  (new-chad:cha %site ~)
+    =^  cards-2  state
+      ?.  (~(has by charges) desk)
+        `state
+      =/  =charge  (~(got by charges) desk)
+      ?-    zest
+          %live
+        ?.  ?=(%glob -.href.docket.charge)
+          =.  charges  (new-chad:cha %site ~)
+          :_(state ~[add-fact:cha])
+        =.  charges
+          %-  new-chad:cha
+          ?.  ?=([%suspend ~ *] chad.charge)
+            [%install ~]
+          [%glob u.glob.chad.charge]
+        :_(state [add-fact fetch-glob]:cha)
+      ::
+          ?(%held %dead)
+        =/  glob=(unit glob)
+          ?:(?=(%glob -.chad.charge) `glob.chad.charge ~)
+        =.  charges  (new-chad:cha %suspend glob)
         :_(state ~[add-fact:cha])
-      =.  charges
-        %-  new-chad:cha
-        ?.  ?=([%suspend ~ *] chad.charge)
-          [%install ~]
-        [%glob u.glob.chad.charge]
-      :_(state [add-fact fetch-glob]:cha)
-    ::
-        ?(%held %dead)
-      =/  glob=(unit glob)
-        ?:(?=(%glob -.chad.charge) `glob.chad.charge ~)
-      =.  charges  (new-chad:cha %suspend glob)
-      :_(state ~[add-fact:cha])
-    ==
+      ==
+    [[card-1 cards-2] state]
   ::
   ++  on-writ
     |=  [=desk =riot:clay]
