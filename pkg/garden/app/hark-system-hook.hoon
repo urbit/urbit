@@ -32,7 +32,8 @@
     ?.  ?=(%0 -.old)  `old
     [[tire:cy:cc]~ old(- %1)]
   ?>  ?=(%1 -.old)
-  [cards-1 this(state old)]
+  =/  cards-tire  [tire:cy:cc ~]
+  [(weld cards-1 cards-tire) this(state old)]
   ::
   +$  app-states  $%(state-0 state-1)
   +$  state-0  [%0 lagging=_|]
