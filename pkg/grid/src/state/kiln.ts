@@ -47,7 +47,7 @@ const useKilnState = create<KilnState>((set, get) => ({
     const synced = !!get().pikes[desk].sync;
     await (useMockData
       ? fakeRequest('')
-      : api.poke(synced ? kilnUninstall(desk) : kilnInstall(ship, desk)));
+      : api.poke(synced ? kilnUninstall(desk) : kilnInstall(ship, 'kids', desk)));
     await get().fetchPikes();
   },
   toggleSync: async (desk: string, ship: string) => {
