@@ -24,7 +24,6 @@
         ::
         [%view items=overview]
         ::  inspecting a full core
-        ::TODO: make name be the arm name or summary if it exists
         $:  %core
             name=tape
             docs=what
@@ -67,213 +66,243 @@
 +|  %searching
 ::    +find-item-in-type: returns the item to print while searching through topic
 ::
-::  this gate is optionally called recursively to find the path (topic) in the
-::  type (sut). once it finds the correct part of the type, it switches to
-::  +signify to describe that part of the type. recursion is turned off (for some
-::  cases) when a hint type is found, in case it is wrapping a match.
+::  this gate is a thin wrapper around _hunt for usability, since the only entry
+::  point most users should care about is find-item:hunt
+::
 ++  find-item-in-type
   |=  [topics=(list term) sut=type]
-  =/  rec=?  %.y
-  |^
-  ^-  (unit item)
-  ~?  >  debug  topics
-  ?~  topics
-      ::  we have no more search paths, return an overview of what remains
-      ::
-      (signify sut)
-  ?-  sut
-      %noun      ~
-      %void      ~
-      [%atom *]  ~
+  ?~  topics  !!
+  =/  top=(lest term)  topics
+  ~(find-item hunt [top sut])
+::
+::    +hunt: door used for refining the type while searching for doccords
+::
+++  hunt
+  |_  [topics=(lest term) sut=type]
+  ++  this  .
+  ::+|  %find
+  ++  find-item
+    ^-  (unit item)
+    ?-    sut
+        %noun      ~
+        %void      ~
+        [%atom *]  ~
+        [%cell *]  find-cell
+        [%core *]  find-core
+        [%face *]  find-face
+        [%fork *]  find-fork
+        [%hint *]  find-hint
+        [%hold *]  find-item:this(sut (~(play ut p.sut) q.sut))
+    ==
   ::
-      [%cell *]
-    =+  lhs=$(sut p.sut)
+  ++  find-cell
+    ?>  ?=([%cell *] sut)
+    =/  lhs  find-item:this(sut p.sut)
     ?~  lhs
-      ::  not sure if this should recurse when rec=%.n
-      $(sut q.sut)
+      find-item:this(sut q.sut)
     lhs
   ::
-      [%core *]
-    ::  checks for a core name match, then tries to find a chapter, arm, or
-    ::  arm in a chapter depending on how many topics remain. will still work
-    ::  if core is unnamed
-    ::
-    ::  we currently use the one-line description as the "name" of the core,
-    ::  rather than the built in name in $garb which is unused. this is an
-    ::  unsatisfactory state of affairs that should be altered once we better
-    ::  understand how to make doccords ergonomic.
-    ::
-    ::TODO: if an arm builds a core, we should treat the resulting item as a
-    ::%core rather than an %arm
-    ::
-    =+  arm=(make-arm i.topics sut ~)
-    =/  tom=(unit tome)  (~(get by q.r.q.sut) i.topics)
-    ?:  &(=(~ tom) =(~ arm))
-      ::  if no matches, recurse into type compiled against. we don't need a
-      ::  match because cores don't necessarily have names
-      ?:(rec $(sut p.sut) ~)
-    ?~  arm
-      ?~  t.topics
-        `[%chapter (trip i.topics) p:(need tom) sut q.sut]
-      (make-arm i.t.topics sut tom)
-    ::  if arm does match
-    ?~  t.topics
-      arm
-    ::  else recurse into type of arm
-    ?>  ?=([%arm *] u.arm)
-    $(sut (~(play ut sut.u.arm) gen.u.arm), topics t.topics)
+  ++  find-core
+    ?>  ?=([%core *] sut)
+    ?:  check-arm
+      ?:  check-search
+        ?:  check-arm-core
+          return-arm-core
+        return-arm
+      recurse-arm-core
+    ?:  check-chap
+      ?:  check-search
+        return-chap
+      recurse-chap
+    recurse-core
   ::
-      [%face *]
+  ++  find-face
+    ?>  ?=([%face *] sut)
     ?.  ?=(term p.sut)
-      ~  ::  TODO: handle tune case
+      ::TODO: handle $tune case
+      find-item:this(sut q.sut)
     ?.  =(i.topics p.sut)
       ~
     ?~  t.topics
-      (signify sut)
-    ?:(rec $(topics t.topics, sut q.sut) ~)
+      return-face
+    find-item:this(sut q.sut, topics t.topics)
   ::
-      [%fork *]
+  ++  find-fork
+    ?>  ?=([%fork *] sut)
     =/  types=(list type)  ~(tap in p.sut)
     |-
-    ?~  types
-      ~
-    =+  res=^$(sut i.types)
+    ?~  types  ~
+    =+  res=find-item:this(sut i.types)
     ?~  res
       $(types t.types)
     res
   ::
-     [%hint *]
-   ::  If we found a help hint, it is wrapping a type for which we might want to
-   ::  produce an item, so we should peek inside of it to see what type it is
-   ::  and grab the docs from the hint if so
-   ::
-   ?.  ?=([%help *] q.p.sut)
-     ::  we only care about %help notes
-     ^$(sut q.sut)
-   ?:  ?&  ?=([%core *] q.sut)
-           ((sane %tas) summary.crib.p.q.p.sut)
-           =(summary.crib.p.q.p.sut i.topics)
-       ==
-     ::  no remaining topics means this is the desired core
-     ?~  t.topics
-       `(emblazon (need (signify q.sut)) (unwrap-hint sut))
-     ::  otherwise recurse into the core and keep looking
-     $(sut q.sut, topics t.topics)
-   =/  shallow-match=(unit item)  $(sut q.sut, rec %.n)
-   ?~  shallow-match
-     ::  hint isn't wrapping a match, so step through it
-     ^$(sut q.sut)
-   `(emblazon u.shallow-match (unwrap-hint sut))
+  ++  find-hint
+    |^
+    ?>  ?=([%hint *] sut)
+    ?.  ?=([%help *] q.p.sut)
+      find-item:this(sut q.sut)
+    ?+    q.sut  ~
+        [%cell *]  find-cell:this(sut q.sut)
+        [%core *]  find-hint-core
+        [%face *]  find-hint-face
+        [%fork *]  find-fork:this(sut q.sut)
+        [%hint *]  find-hint:this(sut q.sut)
+        [%hold *]  find-hint:this(q.sut (~(play ut p.q.sut) q.q.sut))
+    ==
+    ::
+    ++  find-hint-core
+      ?>  &(?=([%hint *] sut) ?=([%help *] q.p.sut) ?=([%core *] q.sut))
+      ::
+      ?.  ?&  ((sane %tas) summary.crib.p.q.p.sut)
+              =(summary.crib.p.q.p.sut i.topics)
+          ==
+        find-core:this(sut q.sut)
+      ?~  t.topics
+        return-hint-core
+      find-item:this(sut q.sut, topics t.topics)
+    ::
+    ++  find-hint-face
+      ?>  &(?=([%hint *] sut) ?=([%help *] q.p.sut) ?=([%face *] q.sut))
+      ?:  check-face:this(sut q.sut)
+        ?~  t.topics
+          return-hint-face
+        find-item:this(sut q.q.sut, topics t.topics)
+      find-item:this(sut q.q.sut)
+  --
   ::
-     [%hold *]  $(sut (~(play ut p.sut) q.sut))
+  ::+|  %recurse
+  ++  recurse-core
+    ?>  ?=([%core *] sut)
+    find-item:this(sut p.sut)
+  ++  recurse-chap
+    ?>  ?=([%core *] sut)
+    ?~  t.topics  !!
+    find-item:this(topics t.topics)
+  ++  recurse-arm-core
+    ?>  ?=([%core *] sut)
+    ?~  t.topics  !!
+    find-item:this(sut arm-type, topics t.topics)
   ::
-  ==
+  ::+|  %check
+  ++  check-arm  !=(~ (find ~[i.topics] (sloe sut)))
+  ++  check-chap
+    ?>  ?=([%core *] sut)
+    (~(has by q.r.q.sut) i.topics)
+  ++  check-face
+    ?>  ?=([%face *] sut)
+    ?.  ?=(term p.sut)
+      ::TODO: handle $tune case
+      %.n
+    =(p.sut i.topics)
+  ++  check-search  =(~ t.topics)
+  ++  check-arm-core
+    ^-  ?
+    =+  arm-list=(sloe (~(play ut sut) arm-hoon))
+    &(!=(arm-list ~) !=(arm-list ~[%$]))
   ::
-  ::  +make-arm: makes an arm or a core
-  ::
-  ::    if the arm builds a core with at least one arm besides a $ arm, this
-  ::    returns a %core item instead of an %arm item
-  ++  make-arm
-    |=  [name=term sut=type tom=(unit tome)]
+  ::+|  %return
+  ++  return-core
     ^-  (unit item)
     ?>  ?=([%core *] sut)
-    =+  arm=(find-arm-in-coil name q.sut)
-    ?~  arm
-      ~
-    =+  [adoc pdoc cdoc]=(all-arm-docs u.arm sut (trip name))
-    ::  check to see if arm builds a core with more than just a buc arm
-    =/  arms  (sloe (~(play ut sut) u.arm))
-    ~?  >>  debug  arms+arms
-    ?.  |(=(arms ~) =(arms ~[%$]))
-      ~?  >>  debug  %make-arm-core
-      ::  arm builds a core with more than just a $ arm
-      =/  dox=what  ?~(adoc ?~(pdoc ~ pdoc) adoc)
-      =/  arm-type  (~(play ut sut) u.arm)
-      |-
-      ?+  arm-type  ~
-        [%hint *]  $(arm-type q.arm-type)
-        [%hold *]  $(arm-type (~(play ut p.arm-type) q.arm-type))
-        [%core *]  =*  compiled-against  (signify p.sut)
-                   `[%core (trip name) dox arm-type q.arm-type compiled-against]
-      ==
-    ?~  tom
-      `[%arm (trip name) adoc pdoc cdoc u.arm p.sut]
-    ?.  (~(has by q.u.tom) name)
-      ~
-    `[%arm (trip name) adoc pdoc cdoc u.arm p.sut]
-  --
-::
-::    +signify: changes a type into a item without docs
-::
-::  this does not actually assign the docs, since they usually come from a hint
-::  wrapping the type.
-++  signify
-  |=  sut=type
-  ^-  (unit item)
-  ?-    sut
-    ::
-      [%atom *]  ~
-    ::
-      [%cell *]
-    %+  join-items
-      $(sut p.sut)
-    $(sut q.sut)
+    =*  compiled-against  find-item:this(sut p.sut)
+    `[%core (trip i.topics) *what sut q.sut compiled-against]
   ::
-      [%core *]
-    ::=/  name=(unit term)  p.p.q.sut
-    =*  compiled-against  $(sut p.sut)
-    `[%core ~ *what sut q.sut compiled-against]
-  ::
-      [%face *]
-    ?.  ?=(term p.sut)
-      ~  ::  TODO: handle tune case
-    =*  compiled-against  $(sut q.sut)
+  ++  return-face
+    ^-  (unit item)
+    ?>  ?=([%face *] sut)
+    ::  TODO: handle tune case
+    ?>  ?=(term p.sut)
+    =*  compiled-against  return-item:this(sut q.sut)
     `[%face (trip p.sut) *what compiled-against]
   ::
-      [%fork *]
+  ++  return-fork
+    ^-  (unit item)
+    ?>  ?=([%fork *] sut)
     =*  types  ~(tap in p.sut)
-    =*  items  (turn types signify)
+    =*  items  (turn types |=(a=type return-item:this(sut a)))
     (roll items join-items)
-    ::
-      [%hint *]
-    ~?  >>  debug  %hint-signify
-    =*  rest-type  $(sut q.sut)
-    ::  check to see if it is a help hint
-    ?.  ?=(%help -.q.p.sut)
+  ::
+  ++  return-hint
+    ^-  (unit item)
+    ?>  ?=([%hint *] sut)
+    =*  res  return-item:this(sut q.sut)
+    ?.  ?=([%help *] q.p.sut)
       ~
-    `[%view [%header `crib.p.q.p.sut (item-as-overview rest-type)]~]
-    ::
-      [%hold *]  $(sut (~(play ut p.sut) q.sut))
-      %noun  ~
-      %void  ~
-  ==
+    `[%view [%header `crib.p.q.p.sut (item-as-overview res)]~]
+  ::
+  ++  return-arm
+    ^-  (unit item)
+    ?>  ?=([%core *] sut)
+    =+  [adoc pdoc cdoc]=(all-arm-docs arm-hoon sut (trip i.topics))
+    ::TODO: should this p.sut be sut? or the compiled type of the arm?
+    `[%arm (trip i.topics) adoc pdoc cdoc arm-hoon p.sut]
+  ::
+  ++  return-chap
+    ^-  (unit item)
+    ?>  ?=([%core *] sut)
+    =/  tom=tome  (~(got by q.r.q.sut) i.topics)
+    `[%chapter (trip i.topics) p.tom sut q.sut]
+  ::
+  ++  return-arm-core
+    ^-  (unit item)
+    ?>  ?=([%core *] sut)
+    =+  [adoc pdoc cdoc]=(all-arm-docs arm-hoon sut (trip i.topics))
+    =/  dox=what  ?~(adoc ?~(pdoc ~ pdoc) adoc)
+    =/  at  arm-type
+    ?>  ?=([%core *] at)
+    =*  compiled-against  return-item:this(sut p.sut)
+    `[%core (trip i.topics) dox at q.at compiled-against]
+  ::
+  ++  return-item
+    ^-  (unit item)
+    ?-    sut
+        %noun      ~
+        %void      ~
+        [%atom *]  ~
+        [%cell *]  (join-items return-item:this(sut p.sut) return-item:this(sut q.sut))
+        [%core *]  return-core
+        [%face *]  return-face
+        [%fork *]  return-fork
+        [%hint *]  return-hint
+        [%hold *]  return-item:this(sut (~(play ut p.sut) q.sut))
+    ==
+  ::
+  ++  return-hint-core
+    ^-  (unit item)
+    ?>  &(?=([%hint *] sut) ?=([%core *] q.sut))
+    (apply-hint return-core:this(sut q.sut))
+  ::
+  ++  return-hint-face
+    ^-  (unit item)
+    ?>  &(?=([%hint *] sut) ?=([%face *] q.sut))
+    (apply-hint return-face:this(sut q.sut))
+  ::
+  ++  apply-hint
+    |=  uit=(unit item)
+    ^-  (unit item)
+    ?~  uit  ~
+    ?>  &(?=([%hint *] sut) ?=([%help *] q.p.sut))
+    ?+  u.uit  ~
+      ?([%core *] [%face *])  (some u.uit(docs `crib.p.q.p.sut))
+    ==
+  ::
+  ::+|  %misc
+  ++  arm-hoon
+    ^-  hoon
+    ?>  ?=([%core *] sut)
+    (need (^arm-hoon i.topics q.sut))
+  ::
+  ++  arm-type
+    ^-  type
+    ?>  ?=([%core *] sut)
+    (~(play ut sut) arm-hoon)
+  --
 ::
-::  +unwrap-hint: checks if a hint type is a help hint and returns the docs if so
-++  unwrap-hint
-  |=  sut=type
-  ^-  what
-  ?.  ?=([%hint *] sut)
-    ~?  >  debug  %not-hint-type
-    ~
-  ?>(?=(%help -.q.p.sut) `crib.p.q.p.sut)
-::
-::    +emblazon: inserts docs into an item
-::
-::  when matching for a core or a face type, the docs for that type will be in
-::  a hint that wraps it. thus we end up producing an item for that type, then
-::  need to add the docs to it.
-++  emblazon
-  |=  [=item =what]
-  ~?  >>  debug  %emblazon
-  ^+  item
-  ?+  item  item  :: no-op on %chapter, %arm, $view
-    ?([%core *] [%face *])  item(docs what)
-  ==
-::
-::  +find-arm-in-coil: looks for an arm in a coil and returns its hoon
-++  find-arm-in-coil
+::  +arm-hoon: looks for an arm in a coil and returns its hoon
+++  arm-hoon
   |=  [arm-name=term con=coil]
-  ~?  >>  debug  %find-arm-in-coil
+  ~?  >>  debug  %arm-hoon
   ^-  (unit hoon)
   =/  tomes=(list [p=term q=tome])  ~(tap by q.r.con)
   |-
@@ -390,7 +419,7 @@
     ?.  ?=([%core *] sut)
       ~?  >  debug  %no-nested-core  ~
     ~?  >  debug  %found-nested-core
-    =+  carm=(find-arm-in-coil %$ q.sut)
+    =+  carm=(arm-hoon %$ q.sut)
     ?~  carm  ~?  >  debug  %empty-carm  ~
     ~?  >  debug  %found-default-arm
     =+  carm-type=(~(play ut sut) u.carm)
