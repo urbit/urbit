@@ -1,34 +1,39 @@
 import React, { useCallback, useState } from 'react';
 import { useAsyncCall } from '../logic/useAsyncCall';
-import useKilnState from '../state/kiln';
 import { Button } from './Button';
 import { ShipName } from './ShipName';
 import { Spinner } from './Spinner';
 
-interface SourceSyncerProps {
+interface SourceSetterProps {
   appName: string;
+  srcDesk: string;
+  srcShip?: string;
   title: string;
-  syncDesk: string;
-  syncShip?: string;
+  toggleSrc: (desk: string, ship: string) => Promise<void>;
 }
 
-export default function SourceSyncer({ appName, title, syncDesk, syncShip }: SourceSyncerProps) {
-  const [newSyncShip, setNewSyncShip] = useState(syncShip ?? '');
-  const { toggleSync } = useKilnState();
-  const { status: requestStatus, call: setSync } = useAsyncCall(toggleSync);
-  const syncDirty = newSyncShip !== syncShip;
+export default function SourceSetter({
+  appName,
+  srcDesk,
+  srcShip,
+  title,
+  toggleSrc
+}: SourceSetterProps) {
+  const [newSyncShip, setNewSyncShip] = useState(srcShip ?? '');
+  const { status: requestStatus, call: handleSubmit } = useAsyncCall(toggleSrc);
+  const syncDirty = newSyncShip !== srcShip;
 
-  const onUnsync = useCallback(() => {
-    if (!syncShip) {
+  const onUnset = useCallback(() => {
+    if (!srcShip) {
       return;
     }
     if (
       // eslint-disable-next-line no-alert, no-restricted-globals
       confirm(`Are you sure you want to unsync ${appName}? You will no longer receive updates.`)
     ) {
-      toggleSync(syncDesk, syncShip);
+      toggleSrc(srcDesk, srcShip);
     }
-  }, [syncShip, syncDesk, toggleSync]);
+  }, [srcShip, srcDesk]);
 
   const handleSourceChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = e;
@@ -39,26 +44,27 @@ export default function SourceSyncer({ appName, title, syncDesk, syncShip }: Sou
   const onSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await setSync(syncDesk, newSyncShip);
+      await handleSubmit(srcDesk, newSyncShip);
     },
-    [syncDesk, newSyncShip, toggleSync]
+    [srcDesk, newSyncShip]
   );
 
   return (
     <>
       <h2 className="h3 mb-7">{title}</h2>
       <div className="space-y-3">
-        {syncShip ? (
+        {srcShip ? (
           <>
             <h3 className="flex items-center h4 mb-2">Automatic Updates</h3>
             <p>Automatically download and apply updates to keep {appName} up to date.</p>
             <div className="flex-1 flex flex-col justify-center space-y-6">
               <p>
-                OTA Source: <ShipName name={syncShip} className="font-semibold font-mono" />
+                OTA Source:{' '}
+                <ShipName name={srcShip} truncate={false} className="font-semibold font-mono" />
               </p>
             </div>
             <div className="flex space-x-2">
-              <Button onClick={onUnsync} variant="destructive">
+              <Button onClick={onUnset} variant="destructive">
                 Unsync Updates for {appName}...
               </Button>
             </div>
