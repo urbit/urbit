@@ -31,8 +31,56 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-::  Here are the structures.  `++raft` is the formal arvo state.  It's also
-::  worth noting that many of the clay-related structures are defined in lull.
+::  We use a system of "invariant footnotes", where nonlocal invariants
+::  are tagged with notes to construct a distributed argument that the
+::  invariant is maintained.  For example, see [wake].
+::
+::  Each one should be described somewhere, and then it should be
+::  referenced any time it's touched.  For example, any code which might
+::  fill a subscription should be tagged with [wake], and if +wake is
+::  not called by the end of that function, the function itself should
+::  be tagged with [wake].
+::
+::  The tagged code should constitute an argument that the invariant is
+::  maintained everywhere.  While this is vulnerable to omission ("I
+::  forgot that X could fill a subscription", it provides a good minimum
+::  bar.
+::
+::  Tag the specific line of code which affects the invariant.  You do
+::  not need to tag every function in a call stack if the invariant is
+::  guaranteed to be maintained by the time the function returns.
+::
+::  Some invariant references get tagged with whether they "open" or
+::  "close" the invariant.  For example, adding a commit to the dome
+::  "opens" the [wake] invariant, while calling +wake closes it.  When
+::  an invariant opens, you should be able to scan down and find why it
+::  closes in each possible flow of control.  For wake, these are
+::  labeled like this:
+::
+::    open: [wake] <
+::    close: [wake] >
+::    open and almost immediately close: [wake] <>
+::
+::  This system is best used for nonlocal invariants and is not
+::  necessary when a function can guarantee its own invariants.  For
+::  example, consider a set alongside a @ud representing its size.
+::  There is an invariant that any time you add or remove an item from
+::  the set you must update its size.  If you're operating on these
+::  directly, it could be beneficial to tag each line of code which
+::  might modify the set and make it clear where the size is modified.
+::
+::  Sometimes code can be restructured so that many fewer tags are
+::  needed.  In the above example, if the set is modified in many
+::  places, it may be worth factoring out set+size into a data structure
+::  with its own arms for put, del, uni, int, etc.  Then the invariant
+::  only needs to be maintained within that data structure, and call
+::  sites do not need to be tagged.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+::  Here are the structures.  `++raft` is the formal arvo state.  It's
+::  also worth noting that many of the clay-related structures are
+::  defined in lull.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =/  bud
@@ -1554,6 +1602,8 @@
     =.  wov  (dedupe wov)
     =.  qyx  (~(put ju qyx) wov hen)
     ?~  ref
+      ::  [wake] at @da must check if subscription was fulfilled
+      ::
       (run-if-future rove.wov |=(@da (bait hen +<)))
     |-  ^+  +>+.$
     =/  =rave  (rove-to-rave rove.wov)
@@ -1670,8 +1720,8 @@
     ::  no existing aeon is bound to this label
     ::
     ?~  yen
-      =.  lab.dom  (~(put by lab.dom) bel yon)
-      ..park
+      =.  lab.dom  (~(put by lab.dom) bel yon)          ::  [wake] <>
+      wake
     ::  an aeon is bound to this label,
     ::  but it is the same as the existing one, so we no-op
     ::
@@ -1746,6 +1796,9 @@
   ::    yoki: new commit
   ::    rang: any additional objects referenced
   ::
+  ::    [goad] < if goat is false, then the caller is responsible to
+  ::    call +goad.
+  ::
   ::    TODO: needs to check tako in rang
   ::
   ++  park
@@ -1789,15 +1842,13 @@
       ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
         %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
         ..park
-      =.  wic.dom
+      =.  wic.dom                                       ::  [tare] <
         %+  roll  ~(tap in kel)
         |:  [weft=*weft wic=wic.dom]
         (~(put by wic) weft yoki)
-      =?  ..park  !?=(%base syd)  wick
+      =?  ..park  !?=(%base syd)  wick                  ::  [wick]
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
-      ::  call +tare to notify that there's a new commit-in-waiting
-      ::
-      tare
+      tare                                              ::  [tare] >
     =.  wic.dom  (~(del by wic.dom) zuse+zuse)
     ::
     =/  old-yaki
@@ -1825,8 +1876,22 @@
     ::  changing state, we may need to call +wake, +goad, etc, which
     ::  happens at the end of the function.
     ::
+    ::  [wick] if this commit added compatibility to a future kelvin,
+    ::  then we might have unblocked a kelvin upgrade.
+    ::
+    ::  or, if *this* is a kelvin upgrade, it's possible that another
+    ::  kelvin upgrade will immediately be ready.  for example, this
+    ::  could be the case if all desks but one are ready for the next
+    ::  two kelvins, and then that desk is suspended or receives a
+    ::  commit with compatiblity with both kelvins.
+    ::
+    ::  in any of these cases, we finish the current commit but call
+    ::  +wick so that we try to execute the kelvin upgrade afterward.
+    ::  we want this commit to persist even if the subsequent kelvin
+    ::  upgrade fails.
+    ::
     =.  ..park  wick
-    =.  wic.dom
+    =.  wic.dom                                         ::  [tare] <
       %+  roll  ~(tap in kel)
       |:  [weft=*weft wic=wic.dom]
       ?:  (gte num.weft zuse)
@@ -1872,9 +1937,10 @@
       ==
     ::  if we didn't change the data and it's not a merge commit, abort
     ::
-    ::  very important to keep all permanent changes below this point
-    ::
     ?:  &(=([r.old-yaki ~] p.p.yoki) =(data q.old-yaki))
+      ::  [tare] > if no changes, then commits-in-waiting could not have
+      ::  changed.
+      ::
       ..park
     =/  =yaki
       ?-  -.yoki
@@ -1882,6 +1948,8 @@
         %|  ?>  =(data q.p.yoki)
             p.yoki
       ==
+    ::  [wake] < [ergo] < [goad] <
+    ::
     =:  let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
@@ -1915,10 +1983,17 @@
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
         (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks))
       =/  den  ((de now rof hen ruf) our desk.i.desks)
+      ::  [goad] < call without goading so that we apply all the commits
+      ::  before trying to compile all desks to send to gall.
+      ::
       =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
     ::  tell gall to try to run agents if %held
+    ::
+    ::  [goad] > if goat or desk not running.  %held uses park-held to
+    ::  defer the goad into a new event, to attempt to revive the desk.
+    ::  Note that %base will always be %live.
     ::
     =.  ..park
       ?-  liv.dom
@@ -1928,7 +2003,8 @@
       ==
     ::  notify unix and subscribers
     ::
-    wake:?:(mem (ergo 0 mum.res) ..park)
+    =?  ..park  mem  (ergo 0 mum.res)                   ::  [ergo] >
+    wake:tare                                           ::  [wake] > [tare] >
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -2219,6 +2295,8 @@
         (emit hen %pass /what %$ what/fil)
       --
     --
+  ::
+  ::  [goad] Try to revive desk, but if it fails crash the event.
   ::
   ++  take-park-held
     |=  err=(unit tang)
@@ -2970,6 +3048,11 @@
   ::
   ::  Emit update to unix sync
   ::
+  ::  [ergo] Must be called any time the set of files changes that must
+  ::  be mirrored to unix.  +want-mime may optionally be used to cheaply
+  ::  check if a version of a desk is mirrored to unix (and so +ergo
+  ::  must be called).
+  ::
   ++  ergo
     |=  [yon=aeon mim=(map path (unit mime))]
     ^+  ..park
@@ -3011,7 +3094,7 @@
       %-  (slog >%unknown-case< >[her syd case spur]< ~)
       ..mount
     =/  for-yon  ?:(=(let.dom u.yon) 0 u.yon)
-    =.  mon
+    =.  mon                                             ::  [ergo]
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
@@ -3028,7 +3111,7 @@
     |=  [pot=term =case =spur]
     ^+  ..unmount
     ?>  ?=(^ hez.ruf)
-    =.  mon  (~(del by mon) pot)
+    =.  mon  (~(del by mon) pot)                        ::  [ergo]
     =?  mim.dom  !(want-mime 0)  ~
     (emit u.hez.ruf %give %ogre pot)
   ::
@@ -3064,7 +3147,7 @@
           .
         (emit hen %give %done ~)
     ::
-    ?-  -.rit
+    ?-  -.rit                                           ::  [wake] <>
       %r    wake(per (put-perm per pax red.rit))
       %w    wake(pew (put-perm pew pax wit.rit))
       %rw   wake(per (put-perm per pax red.rit), pew (put-perm pew pax wit.rit))
@@ -3077,9 +3160,11 @@
   ::
   ::  Remove a group from all rules.
   ::
+  ::  [wake] <
+  ::
   ++  forget-crew
     |=  nom=@ta
-    %=  +>
+    %=  +>                                              ::  [wake] < +call
       per  (forget-crew-in nom per)
       pew  (forget-crew-in nom pew)
     ==
@@ -3090,17 +3175,17 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  set-rein
+  ++  set-rein                                          ::  [goad] <
     |=  [ren=(map dude:gall ?)]
     ^+  ..park
     ..park(ren.dom ren)
   ::
-  ++  set-zest
+  ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
     ..park(liv.dom liv)
   ::
-  ++  rise
+  ++  rise                                              ::  [goad] <
     |=  [=dude:gall on=(unit ?)]
     ?<  =(%base syd)
     %_    ..park
@@ -3113,13 +3198,17 @@
   ++  stay
     |=  ver=(unit weft)
     ^+  ..park
-    =.  wic.dom
+    =.  wic.dom                                         ::  [tare] <>
       ?~  ver
         ~
       (~(del by wic.dom) u.ver)
     tare
   ::
   ::  Try to apply highest-versioned %base commit-in-waiting
+  ::
+  ::  [wick] Must be called whenever we might have unblocked a kelvin
+  ::  upgrade.  This is move-order agnostic because it defers the
+  ::  upgrade into a new event.
   ::
   ++  wick
     ^+  ..park
@@ -3198,7 +3287,7 @@
   ::  responses.  For %x, we call ++validate-x to validate the type of
   ::  the response.  For %y, we coerce the result to an arch.
   ::
-  ++  take-foreign-answer                              ::  external change
+  ++  take-foreign-answer                               ::  external change
     |=  [inx=@ud rut=(unit rand)]
     ^+  +>
     ?>  ?=(^ ref)
@@ -3210,7 +3299,7 @@
     ?~  rut
       ::  nothing here, so cache that
       ::
-      %_    wake
+      %_    wake                                        ::  [wake] <>
           haw.u.ref
         ?.  ?=(%sing -.rav)  haw.u.ref
         (~(put by haw.u.ref) mood.rav ~)
@@ -3218,7 +3307,7 @@
     |^
     =/  result=(unit cage)  (validate u.rut)
     =/  =mood  [p.p q.p q]:u.rut
-    =:  haw.u.ref  (~(put by haw.u.ref) mood result)
+    =:  haw.u.ref  (~(put by haw.u.ref) mood result)    ::  [wake] <>
         bom.u.ref  (~(del by bom.u.ref) inx)
         fod.u.ref  (~(del by fod.u.ref) hen)
       ==
@@ -3414,7 +3503,7 @@
         ?~  next
           ..abet(done &)
         =.  ..abet  =>((apply-foreign-update u.next) ?>(?=(~ need.sat) .))
-        =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)
+        =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)  ::  [wake] >
         $
       ::  This used to be what always removed an item from `need`.  Now,
       ::  we remove in +take-backfill, but in the meantime we could have
@@ -3444,6 +3533,8 @@
     ::  We get the commits from the nako and add them to our object
     ::  store, then we update the map of aeons to commits and the latest
     ::  aeon.
+    ::
+    ::  [wake] <
     ::
     ++  apply-foreign-update
       |=  =nako
@@ -3476,7 +3567,15 @@
       ::
       =/  =rave  rave:(~(got by bom.u.ref) inx)
       ?>  ?=(%many -.rave)
-      =:  let.dom   (max let.nako let.dom)
+      ::  [ergo] We do not call +ergo here, but if we wanted to support
+      ::  keeping a foreign mounted desk up-to-date, this would open
+      ::  that invariant.
+      ::
+      ::  [goad] Same for +goad -- if we supported running agents off
+      ::  foreign desks at an up-to-date revision, we would need to call
+      ::  +goad here.
+      ::
+      =:  let.dom   (max let.nako let.dom)              ::  [wake] < +work
           hit.dom   hit
           hut.ran   hut
           ::  Is this correct?  Seeems like it should only go to `to` if
@@ -3549,7 +3648,7 @@
   ::
   ++  send-cards
     |=  [cards=(list card) ducts=(set duct)]
-    ^+  ..wake
+    ^+  ..park
     %-  emil
     %-  zing
     %+  turn  cards
@@ -3560,6 +3659,18 @@
   ::
   ::  Loop through open subscriptions and check if we can fill any of
   ::  them.
+  ::
+  ::  [wake] This must be called any time something might have changed
+  ::  which fills a subscription or changes the set of subscriptions.
+  ::
+  ::  It is safe to call this multiple times, because it updates the
+  ::  subscription state to reflect that it's responded.  Usually this
+  ::  means deleting the subscription, but %many can respond multiple
+  ::  times.
+  ::
+  ::  One way of describing this invariant is that if you called +wake
+  ::  on every desk at the end of every +call/+take, it would always
+  ::  no-op.
   ::
   ++  wake
     ^+  .
@@ -4398,6 +4509,14 @@
     (slog leaf+"goad: {(print)}" ~)
   ::  +goad: emit %load move for all desks, applying $rein's
   ::
+  ::  [goad] Must be called any time the set of running agents changes.
+  ::  This is whenever an agent is started, stopped, or updated.
+  ::
+  ::  This is not move-order agnostic -- you must be careful of
+  ::  reentrancy as long as arvo's move order is depth-first.
+  ::
+  ::  [tare] >
+  ::
   ++  goad
     ^+  ..abet
     =^  sat=(list [=desk =bill])  ..abet
@@ -4428,7 +4547,7 @@
         leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
     =.  ..abet  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
-    =.  ..abet  tare
+    =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
   ::
@@ -4564,6 +4683,10 @@
     |=  =dojo
     [liv.dom.dojo ~(key by wic.dom.dojo)]
   ::
+  ::  [tare] Must be called any time the zest or commits-in-waiting
+  ::  might have changed for a desk.  +goad calls this uncondtionally,
+  ::  but if you're not calling +goad, you may need to call this.
+  ::
   ++  tare
     ?:  =(~ tyr)
       ..abet
@@ -4634,7 +4757,7 @@
     ?~  des  [[[hen %give %done ~] mos] ..^^$]
     =/  den  ((de now rof hen ruf) our i.des)
     =^  mor  ruf
-      =<  abet:wake
+      =<  abet:wake                                   ::  [wake] >
       ?:  ?=(^ cew.req)  den
       (forget-crew:den nom.req)
     $(des t.des, mos (weld mos mor))
@@ -4791,7 +4914,7 @@
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-rein:den ren.req)
-    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)         ::  [goad] >
     [(weld m1 m2) ..^$]
   ::
       %stir
@@ -4806,7 +4929,7 @@
       =^  m1  ruf
         =/  den  ((de now rof hen ruf) our desk.arg.req)
         abet:(rise:den dude.arg.req on.arg.req)
-      =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+      =^  m2  ruf  abet:goad:(lu now rof hen ruf)       ::  [goad] <
       [(weld m1 m2) ..^$]
     ::
         [%stay =desk ver=(unit weft)]
@@ -4890,12 +5013,14 @@
       %wick
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our %base)
-      abet:wick:den
+      abet:wick:den                                     ::  [wick]
     [mos ..^$]
   ::
       %zest
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
+      ::  [wick] could be suspending the last blocking desk
+      ::
       abet:wick:(set-zest:den liv.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld m1 m2) ..^$]
@@ -5827,6 +5952,8 @@
     ?.  ?=([%tyme @ @ ~] tea)
       ~&  [%clay-strange-timer tea]
       [~ ..^$]
+    ::  [wake] when requested time passes, call +wake
+    ::
     =/  her  (slav %p i.t.tea)
     =/  syd  (slav %tas i.t.t.tea)
     =^  mos  ruf
