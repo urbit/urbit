@@ -176,8 +176,8 @@ _main_init(void)
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  u3_Host.ops_u.lut_y = u3a_bits + 2;
-  u3_Host.ops_u.lom_y = u3a_bits + 2;
+  u3_Host.ops_u.lut_y = u3a_bits + 1;
+  u3_Host.ops_u.lom_y = u3a_bits + 1;
 }
 
 /* _main_pier_run(): get pier from binary path (argv[0]), if appropriate
@@ -1227,6 +1227,41 @@ _cw_eval_get_input(FILE* fil_u, size_t siz_i)
 static void
 _cw_eval(c3_i argc, c3_c* argv[])
 {
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
+
+  static struct option lop_u[] = {
+    { "loom", required_argument, NULL, c3__loom },
+    { NULL, 0, NULL, 0 }
+  };
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "eval"
+  //
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
+  }
+
   c3_c* evl_c = _cw_eval_get_input(stdin, 10);
 
   //  initialize the Loom and load the Ivory Pill
@@ -1238,7 +1273,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
     u3_weak      pil;
 
     u3C.wag_w |= u3o_hashless;
-    u3m_boot_lite(u3a_bytes);
+    u3m_boot_lite((size_t)1 << u3_Host.ops_u.lom_y);
     sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
     if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
       printf("lite: unable to cue ivory pill\r\n");
