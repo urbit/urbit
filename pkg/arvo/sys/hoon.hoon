@@ -5327,11 +5327,6 @@
            (star prn)
            (just `@`10)
          ==
-++  vil  %+  cold   ~                                   ::  comments
-         ;~  plug  col  col
-           (star ace)
-           (just `@`10)
-         ==
 ::
 ::::  4j: parsing (bases and base digits)
   ::
