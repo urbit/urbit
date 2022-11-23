@@ -77,10 +77,8 @@
   ~&  %solid-double-loaded
   =/  whole-formula
     =<  +
-    .*  0
-    :+  %7
-      compiler-formula
-    [%9 2 %10 [6 %1 %noun whole-src] [%0 1]]
+    .*  [%noun whole-src]
+    [%8 compiler-formula [%9 2 %10 [6 %0 3] [%0 2]]]
   ~&  %solid-double-compiled
   whole-formula
 ::
@@ -100,24 +98,19 @@
   |=  [ovo=ovum ken=*]
   [~ (slum ken [now ovo])]
 ::
-::  kernel-formula
+::  boot-two: startup formula
 ::
 ::    We evaluate :arvo-formula (for jet registration),
 ::    then ignore the result and produce .installed
 ::
-=/  kernel-formula
-  [%7 arvo-formula %1 installed]
-::
-::  boot-two: startup formula
-::
 =/  boot-two
-  =>  [kernel-formula=** main-sequence=**]
-  !=  [.*(0 kernel-formula) main-sequence]
+  =>  *[arvo-formula=^ installed=^ tale=*]
+  !=  =+(.*(0 arvo-formula) [installed tale])
 ::
 ::  boot-ova
 ::
 =/  boot-ova=(list)
-  [aeon:eden:part boot-two kernel-formula ~]
+  [aeon:eden:part boot-two arvo-formula installed ~]
 ::
 ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
 ::

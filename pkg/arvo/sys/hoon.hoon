@@ -6245,14 +6245,14 @@
 ++  mure
   |=  tap=(trap)
   ^-  (unit)
-  =/  ton  (mink [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  =/  ton  (mink [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
   ?.(?=(%0 -.ton) ~ `product.ton)
 ::  +mute: untyped virtual
 ::
 ++  mute
   |=  tap=(trap)
   ^-  (each * (list tank))
-  =/  ton  (mock [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  =/  ton  (mock [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
   ?-  -.ton
     %0  [%& p.ton]
   ::
@@ -6265,9 +6265,8 @@
 ::
 ++  slum
   ~/  %slum
-  |=  [gat=* sam=*]
-  ^-  *
-  .*(gat [%9 2 %10 [6 %1 sam] %0 1])
+  |=  sub=[gat=* sam=*]
+  .*(sub [%9 2 %10 [6 %0 3] %0 2])
 ::  +soft: virtual clam
 ::
 ++  soft
@@ -11411,13 +11410,12 @@
   ==
 ::
 ++  slew                                                ::  get axis in vase
-  |=  [axe=@ vax=vase]  ^-  (unit vase)
-  ?.  |-  ^-  ?
-      ?:  =(1 axe)  &
-      ?.  ?=(^ q.vax)  |
-      $(axe (mas axe), q.vax .*(q.vax [0 (cap axe)]))
-    ~
-  `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
+  |=  [axe=@ vax=vase]
+  =/  typ  |.  (~(peek ut p.vax) %free axe)
+  |-  ^-  (unit vase)
+  ?:  =(1 axe)  `[$:typ q.vax]
+  ?@  q.vax     ~
+  $(axe (mas axe), q.vax ?-((cap axe) %2 -.q.vax, %3 +.q.vax))
 ::
 ++  slim                                                ::  identical to seer?
   |=  old=vise  ^-  vase
