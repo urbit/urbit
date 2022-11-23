@@ -6,6 +6,24 @@
 /-  *group
 |_  =bowl:gall
 +$  card  card:agent:gall
+++  import-club
+  |=  [=^groups =associations:met =network:gra]
+  %-  ~(gas by *imports:club:i)
+  %+  murn  ~(tap by graphs.network)
+  |=  [=flag:i graph=graph:gra mar=(unit mark)]
+  ^-  (unit [flag:i import:club:i])
+  ?.  =(mar `%graph-validator-chat)
+    ~
+  ?~  assoc=(~(get by associations) [%graph flag])
+    ~&  missing-assoc-club/flag
+    ~
+  ?~  group=(~(get by groups) group.u.assoc)
+    ~&  missing-group/[flag group.u.assoc]
+    ~
+  ?.  hidden.u.group
+    ~
+  `[flag members.u.group u.assoc graph]
+::
 ++  import-for-mark
   |=  [her=ship =^groups =associations:met =network:gra]
   |=  =mark
@@ -22,6 +40,8 @@
     ~
   ?~  group=(~(get by groups) group.u.assoc)
     ~&  missing-group/[flag group.u.assoc]
+    ~
+  ?:  hidden.u.group
     ~
   =/  writers=(set ship)  
     (~(get ju tags.u.group) %graph flag %writers)
@@ -58,6 +78,7 @@
   ~&  ships/ships
   =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
   =/  import  (import-for-mark our.bowl groups associations network)
+  =/  clubs  (import-club groups associations network)
   =/  chats=imports:graph:i
     (import %graph-validator-chat)
   =/  diarys=imports:graph:i
@@ -69,6 +90,8 @@
     %+  murn  ~(tap by groups)
     |=  [=flag:i =group]
     ^-  (unit [_flag import:groups:i])
+    ?:  hidden.group
+      ~
     ?~  assoc=(~(get by associations) [%groups flag])
       ~&  missing-group-assoc/flag
       ~
@@ -100,6 +123,7 @@
   %-  welp
   :_  (migrate-ship our.bowl)
   :*  (poke-our %groups group-import+!>(imports))
+      (poke-our %chat club-imports+!>(clubs))
       ?~  dms  ~
       (poke-our %chat dm-imports+!>(p.u.dms))^~
   ==

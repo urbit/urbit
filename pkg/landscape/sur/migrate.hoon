@@ -14,5 +14,10 @@
   +$  import   [=association:met chans=(map flag =association:met) roles=(set flag) =group]
   +$  imports  (map flag import)
   --
+++  club
+  |%
+  +$  import   [ships=(set ship) =association:met =graph:gra]
+  +$  imports  (map flag import)
+  --
 --
     
