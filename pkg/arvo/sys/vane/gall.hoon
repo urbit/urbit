@@ -1683,7 +1683,7 @@
       =/  bad=(list [=card:agent perm=(unit perm)])
         ?:  =(%base q.beak.yoke)  ~
         =/  pes=(set perm)  (~(get ju perms.state) q.beak.yoke)
-        %+  murn  caz
+        %+  murn  `(list card:agent)`(zing (turn caz rive))
         |=  =card:agent
         ^-  (unit [card:agent (unit perm)])
         =/  mus  (must [our agent-name] card)

@@ -1916,17 +1916,17 @@
         ==  ==
       ::
         $:  %clay
-        $%  [%mount ~]                 ::  %mont %ogre %dirk
-            [%creds ~]                 ::  %cred %crew %perm
-            ::TODO  %reads-style specifications for the below
-            [%write desk=(unit desk)]  ::  %info %merg %fuse
-            [%local desk=(unit desk)]  ::  %warp
-            [%build desk=(unit desk)]  ::  %warp with ford build $care
-            [%peers ~]                 ::  %werp
+        $%  [%mount ~]                       ::  %mont %ogre %dirk
+            [%creds ~]                       ::  %cred %crew %perm
+            [%label desk=(unit desk)]        ::  %info w/ %| nori
+            [%write desk=(unit desk) =spur]  ::  %info %merg %fuse
+            [%local desk=(unit desk) =spur]  ::  %warp for local reads
+            [%build desk=(unit desk) =spur]  ::  %warp with ford build $care
+            [%peers desk=(unit desk) =spur]  ::  %warp for foreign ships
           ::
-            [%perms desk=(unit desk)]  ::  %curb
-            [%liven desk=(unit desk)]  ::  %rein %zest
-            [%pulse ~]                 ::  %tire
+            [%perms desk=(unit desk)]        ::  %curb
+            [%liven desk=(unit desk)]        ::  %rein %zest
+            [%pulse ~]                       ::  %tire
         ==  ==
       ::
         $:  %dill  ::TODO  revisit wrt nu-tem  ::REVIEW  %belt separate?
@@ -1998,6 +1998,8 @@
   ++  cred  !:
     |=  [[our=ship dap=dude] pes=(set perm) =card:agent]
     ^-  ?
+    %+  levy  (rive card)
+    |=  =card:agent
     =/  mus  (must [our dap] card)
     ?@  mus  mus
     (have pes mus)
@@ -2036,16 +2038,23 @@
           $(path.p t.path.p, path.mus t.path.mus)
       ==
     ::
-        [%clay ?(%write %local %build %perms %liven) *]
+        [%clay ?(%write %local %build) *]
       =/  =desk  (need desk.mus)
-      :: =/  =spur  (need spur.mus)
       %+  lien  ~(tap in pes)
       |=  p=perm
-      ?&  ?=([%clay *] p)
+      ?&  ?=([%clay ?(%write %local %build) *] p)
           =(+<.mus +<.p)
-          ?>  ?=(?(%write %local %build) +<.p)
           =(desk (fall desk.p desk))
-          :: |(=(/ spur.p) =(`0 (find spur.p spur)))
+          |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [%clay ?(%label %perms %liven) *]
+      =/  =desk  (need desk.mus)
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay ?(%label %perms %liven) *] p)
+          =(+<.mus +<.p)
+          =(desk (fall desk.p desk))
       ==
     ::
         [%gall %clear *]
@@ -2054,6 +2063,36 @@
       |=  p=perm
       ?&  ?=([%gall %clear *] p)
           =(dude (fall dude.p dude))
+      ==
+    ==
+  ::  +rive: split card into individual components
+  ::
+  ::    splitting cards up into their separate, unique components
+  ::    (for example, an %info write to both /a and /b becoming two cards)
+  ::    lets +must implement a simple one-to-one card-to-perm mapping.
+  ::
+  ++  rive  !:
+    |=  =card:agent
+    ^-  (list card:agent)
+    ?:  ?=(%give -.card)  [card]~
+    =/  wrap=$-(note:agent card:agent)
+      |=  =note:agent
+      ?-  -.card
+        %pass  card(q note)
+        %slip  card(p note)
+      ==
+    =/  =note:agent
+      ?-  -.card
+        %pass  q.card
+        %slip  p.card
+      ==
+    ?+  note  [card]~
+        [%arvo %c %info *]
+      ?-  -.dit.note
+        %|  [card]~
+        %&  %+  turn  p.dit.note
+            |=  d=[path $~([%del ~] miso:clay)]
+            (wrap note(p.dit [d]~))
       ==
     ==
   ::  +must: perm required for card, or loob if guaranteed
@@ -2096,18 +2135,28 @@
         ?(%mont %ogre %dirk)  [%clay %mount ~]
         ?(%cred %cred %perm)  [%clay %creds ~]
         %curb                 [%clay %perms ~]
-        ?(%info %merg %fuse)  [%clay %write `des.note]
-        %werp                 [%clay %peers ~]
+        ?(%merg %fuse)        [%clay %write `des.note /]
+        %tire                 [%clay %pulse ~]
+      ::
+          %info
+        ?-  -.dit.note
+          %|  [%clay %label `des.note]
+          %&  ?>  ?=([* ~] p.dit.note)
+              [%clay %write `des.note p.i.p.dit.note]
+        ==
       ::
           %warp
-        ?.  =(our wer.note)  [%clay %peers ~]
         ?~  q.rif.note  &  ::  can always cancel request
-        ::TODO  also account for the %mult case, may need multiple perms?
-        ?:  ?&  ?=(?(%sing %next) -.u.q.rif.note)
-                ?=(?(%a %b %c) care.mood.u.q.rif.note)
-            ==
-          [%clay %build `p.rif.note]
-        [%clay %local `p.rif.note]
+        ::NOTE  we intentionally do not allow %mult and %many,
+        ::      they're considered deprecated
+        ?.  ?=(?(%sing %next) -.u.q.rif.note)
+          |
+        =*  spec  [`p path.mood.u.q]:rif.note
+        ?.  =(our wer.note)
+          [%clay %peers spec]
+        ?:  ?=(?(%a %b %c) care.mood.u.q.rif.note)
+          [%clay %build spec]
+        [%clay %local spec]
       ==
     ::
         %d
