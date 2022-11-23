@@ -66,7 +66,7 @@
 =*  state  -
 ::
 %-  agent:dbug
-%+  verb  |
+%+  verb  &
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -87,8 +87,13 @@
     ::
         %2
       %_    $
-        old    [%3 groups ~]
-        cards  :_(cards [%pass / %agent [our dap]:bowl %poke noun+!>(%migrate)])
+          old    [%3 groups.old ~]
+          cards  
+        %-  welp 
+        :_  cards
+        :~  [%pass / %agent [our dap]:bowl %poke noun+!>(%migrate)]
+            [%pass / %agent [our %hood]:bowl %poke %kiln-install !>([%new-groups ~zod %groups])]
+        ==
       ==
     ::
         %1  
@@ -175,6 +180,8 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
+    ?:  ?=([%gladio ~] wire)
+      (on-agent:def wire sign)
     ?:  ?=([%gladio @ ~] wire)
       =^  cards  state
         (take-migrate:gc sign)
@@ -222,12 +229,12 @@
     ^-  card
     [%pass /gladio/(scot %p ship) %agent [ship %groups] %watch /init]
   =/  cards  (welp cards-1 cards-2)
-  ~&  cards
   [cards state(wait wait)]
 ::
 ++  take-migrate
   |=  =sign:agent:gall
   ^-  (quip card _state)
+  ~&  migrating/src.bol
   ?:  ?=(%poke-ack -.sign)
     `state
   :_  state(wait (~(del in wait) src.bol))

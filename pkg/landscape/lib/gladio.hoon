@@ -48,13 +48,14 @@
   (turn ~(tap in ~(key by graphs.network)) head)
 ++  poke-our
   |=  [=dude:gall =cage]
-  [%pass /gladio/[dude] %agent [our.bowl dude] %poke cage]
+  [%pass /gladio %agent [our.bowl dude] %poke cage]
 ++  migrate-start
   ^-  (quip card (set ship))
   =+  network
   =+  groups
   =+  associations
   =/  ships   (peers network)
+  ~&  ships/ships
   =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
   =/  import  (import-for-mark our.bowl groups associations network)
   =/  chats=imports:graph:i
@@ -109,7 +110,7 @@
   =+  groups
   =+  network
   =+  associations
-  =/  import  (import-for-mark our.bowl groups associations network)
+  =/  import  (import-for-mark her groups associations network)
   =/  chats=imports:graph:i
     (import %graph-validator-chat)
   =/  diarys=imports:graph:i
