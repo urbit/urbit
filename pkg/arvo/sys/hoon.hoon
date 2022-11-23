@@ -6304,6 +6304,9 @@
 +$  foot  $%  [%dry p=hoon]                             ::  dry arm, geometric
               [%wet p=hoon]                             ::  wet arm, generic
           ==                                            ::
+::TODO: only add %plan since otherwise we might need a migration
+::in the future. leave the others in another branch for future
+::recollection
 +$  link                                                ::  lexical segment
           $%  [%chat p=term]                            ::  |chapter
               [%cone p=aura q=atom]                     ::  %constant
@@ -6344,6 +6347,7 @@
           $~  [%base %null]                             ::
           $%  [%base p=base]                            ::  base type
               [%dbug p=spot q=spec]                     ::  set debug
+              ::TODO consider [%gist p=[%help p=help] q=spec]
               [%gist p=help q=spec]                     ::  formal comment
               [%leaf p=term q=@]                        ::  constant atom
               [%like p=wing q=(list wing)]              ::  reference
@@ -6606,6 +6610,8 @@
 +$  vair  ?(%gold %iron %lead %zinc)                    ::  in/contra/bi/co
 +$  vein  (list (unit axis))                            ::  search trace
 +$  sect  (list pica)                                   ::  paragraph
+::TODO cuff may be premature, maybe make it a term for now since its
+::easy to change
 +$  whit                                                ::  doccords parse
   $:  bat=(map cuff (pair cord (list sect)))            ::  batch comments
       use=(set cuff)                                    ::  defs used
@@ -7853,6 +7859,7 @@
     ^-  hoon
     ::  process annotations outside construct, to catch default
     ::
+    ::TODO: try seeing if putting %gist in here fixes %brbc
     ?:  ?=(%dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=(%bcsg -.mod)  factory(mod q.mod, def `[%kthp q.mod p.mod])
     ^-  hoon
@@ -8425,6 +8432,7 @@
         [%yell *]  [%cncl [%limb %cain] [%zpgr [%cltr p.gen]] ~]
         [%note *]  q.gen
     ::
+    ::TODO: does %gist need to be special cased here?
         [%brbc *]  =-  ?~  -  !!
                        :+  %brtr
                          [%bccl -]
@@ -11583,11 +11591,13 @@
     ::
     ::  +apse: postfix comment.
     ++  apse
+    ::TODO consider an intermediate struture instead of $note
       %+  knee  *note  |.  ~+
       ;~  pose
         %+  cook  |=(a=cord `note`help+`[a]~)
         ::TODO: if there is a $link then interpret it as the start
         ::of a prefix comment instead of postfix
+        ::TODO consider special casing $%
         ::;~(less (exit ;~(plug (plus en-link) col ace)) (exit line))
         (exit line)
       ::
@@ -11708,6 +11718,7 @@
     %+  cook
       |=  [a=whit b=spec c=note]
       =?  b  !=(c *note)
+        ::TODO: consider commenting see apse:docs
         ?>  ?=([%help *] c)
         [%gist p.c b]
       =+  docs=~(tap by bat.a)
@@ -13522,6 +13533,7 @@
         ==
       ==
     ::
+    ::TODO: check parser performance
     ++  toad                                            ::  untrap parser expr
       |*  har=_expa
       =+  dur=(ifix [pal par] $:har(tol |))
