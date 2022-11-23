@@ -422,11 +422,11 @@ _ce_patch_verify(u3_ce_patch* pat_u)
     off_i = (size_t)i_w << (u3a_page + 2);
 
     if ( siz_i != (ret_i = c3_pread(pat_u->mem_i, mem_w, siz_i, off_i)) ) {
-      if ( 0 > ret_i ) {
-        fprintf(stderr, "loom: patch read fail: %s\r\n", strerror(errno));
+      if ( 0 < ret_i ) {
+        fprintf(stderr, "loom: patch partial read: %zu\r\n", (size_t)ret_i);
       }
       else {
-        fprintf(stderr, "loom: patch partial read: %zu\r\n", (size_t)ret_i);
+        fprintf(stderr, "loom: patch read fail: %s\r\n", strerror(errno));
       }
       return c3n;
     }
@@ -707,12 +707,12 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     wof_i = (size_t)off_w << (u3a_page + 2);
 
     if ( siz_i != (ret_i = c3_pread(pat_u->mem_i, mem_w, siz_i, rof_i))) {
-      if ( 0 > ret_i ) {
-        fprintf(stderr, "loom: patch apply read: %s\r\n", strerror(errno));
-      }
-      else {
+      if ( 0 < ret_i ) {
         fprintf(stderr, "loom: patch apply partial read: %zu\r\n",
                         (size_t)ret_i);
+      }
+      else {
+        fprintf(stderr, "loom: patch apply read: %s\r\n", strerror(errno));
       }
       c3_assert(0);
     }
@@ -859,12 +859,12 @@ _ce_loom_blit_north(c3_i fid_i, c3_w pgs_w)
 
   if ( pgs_w ) {
     if ( len_i != (ret_i = c3_pread(fid_i, u3_Loom, len_i, 0)) ) {
-      if ( 0 > ret_i ) {
-        fprintf(stderr, "loom: blit north read: %s\r\n", strerror(errno));
+      if ( 0 < ret_i ) {
+        fprintf(stderr, "loom: blit north partial read: %zu\r\n",
+                        (size_t)ret_i);
       }
       else {
-        fprintf(stderr, "loom: blit north read partial (%zu of %zu bytes)\r\n",
-                        (size_t)ret_i, len_i);
+        fprintf(stderr, "loom: blit north read: %s\r\n", strerror(errno));
       }
       c3_assert(0);
     }
@@ -888,12 +888,12 @@ _ce_loom_blit_south(c3_i fid_i, c3_w pgs_w)
     ptr_w = u3_Loom + ((u3P.pag_w - (i_w + 1)) << u3a_page);
 
     if ( pag_siz_i != (ret_i = c3_pread(fid_i, ptr_w, pag_siz_i, off_i)) ) {
-      if ( 0 > ret_i ) {
-        fprintf(stderr, "loom: blit south read: %s\r\n", strerror(errno));
+      if ( 0 < ret_i ) {
+        fprintf(stderr, "loom: blit south partial read: %zu\r\n",
+                        (size_t)ret_i);
       }
       else {
-        fprintf(stderr, "loom: blit south read partial (%zu of %zu bytes)\r\n",
-                        (size_t)ret_i, pag_siz_i);
+        fprintf(stderr, "loom: blit south read: %s\r\n", strerror(errno));
       }
       c3_assert(0);
     }
@@ -919,13 +919,13 @@ _ce_image_fine(u3e_image* img_u,
     off_i = (size_t)i_w << (u3a_page + 2);
 
     if ( siz_i != (ret_i = c3_pread(img_u->fid_i, buf_w, siz_i, off_i)) ) {
-      if ( 0 > ret_i ) {
-        fprintf(stderr, "loom: image (%s) fine read: %s\r\n",
-                        img_u->nam_c, strerror(errno));
-      }
-      else {
+      if ( 0 < ret_i ) {
         fprintf(stderr, "loom: image (%s) fine partial read: %zu\r\n",
                         img_u->nam_c, (size_t)ret_i);
+      }
+      else {
+        fprintf(stderr, "loom: image (%s) fine read: %s\r\n",
+                        img_u->nam_c, strerror(errno));
       }
       c3_assert(0);
     }
@@ -957,7 +957,7 @@ _ce_image_fine(u3e_image* img_u,
 static c3_o
 _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
 {
-  c3_w      i_w;
+  c3_w    i_w;
   c3_w    mem_w[pag_wiz_i];
   size_t  off_i, siz_i = pag_siz_i;
   ssize_t ret_i;
@@ -972,13 +972,13 @@ _ce_image_copy(u3e_image* fom_u, u3e_image* tou_u)
     off_i = (size_t)i_w << (u3a_page + 2);
 
     if ( siz_i != (ret_i = c3_pread(fom_u->fid_i, mem_w, siz_i, off_i)) ) {
-      if ( 0 > ret_i ) {
-        fprintf(stderr, "loom: image (%s) copy read: %s\r\n",
-                        fom_u->nam_c, strerror(errno));
-      }
-      else {
+      if ( 0 < ret_i ) {
         fprintf(stderr, "loom: image (%s) copy partial read: %zu\r\n",
                         fom_u->nam_c, (size_t)ret_i);
+      }
+      else {
+        fprintf(stderr, "loom: image (%s) copy read: %s\r\n",
+                        fom_u->nam_c, strerror(errno));
       }
       return c3n;
     }

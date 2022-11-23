@@ -1052,6 +1052,41 @@ _cw_eval_get_input(FILE* fil_u, size_t siz_i)
 static void
 _cw_eval(c3_i argc, c3_c* argv[])
 {
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
+
+  static struct option lop_u[] = {
+    { "loom", required_argument, NULL, c3__loom },
+    { NULL, 0, NULL, 0 }
+  };
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "eval"
+  //
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
+  }
+
   c3_c* evl_c = _cw_eval_get_input(stdin, 10);
 
   //  initialize the Loom and load the Ivory Pill
@@ -1063,7 +1098,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
     u3_weak      pil;
 
     u3C.wag_w |= u3o_hashless;
-    u3m_boot_lite(u3a_bytes);
+    u3m_boot_lite((size_t)1 << u3_Host.ops_u.lom_y);
     sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
     if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
       printf("lite: unable to cue ivory pill\r\n");
@@ -1172,25 +1207,62 @@ _cw_grab(c3_i argc, c3_c* argv[])
 static void
 _cw_cram(c3_i argc, c3_c* argv[])
 {
-  switch ( argc ) {
-    case 2: {
-      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
-        fprintf(stderr, "unable to find pier\r\n");
-        exit (1);
-      }
-    } break;
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
 
-    case 3: {
-      u3_Host.dir_c = argv[2];
-    } break;
+  static struct option lop_u[] = {
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
+    { NULL, 0, NULL, 0 }
+  };
 
-    default: {
-      fprintf(stderr, "invalid command\r\n");
-      exit(1);
-    } break;
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
   }
 
-  c3_d     eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
+  //  argv[optind] is always "cram"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
+      exit(1);
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
+  }
+
+  c3_d     eve_d = u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
   c3_o  ret_o;
 
@@ -1220,28 +1292,63 @@ _cw_cram(c3_i argc, c3_c* argv[])
 static void
 _cw_queu(c3_i argc, c3_c* argv[])
 {
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
+
+  static struct option lop_u[] = {
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
+    { NULL, 0, NULL, 0 }
+  };
+
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "queu"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
+      exit(1);
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
+  }
+
   c3_c* eve_c;
   c3_d  eve_d;
-
-  switch ( argc ) {
-    case 3: {
-      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
-        fprintf(stderr, "unable to find pier\r\n");
-        exit (1);
-      }
-      eve_c = argv[2];
-    } break;
-
-    case 4: {
-      u3_Host.dir_c = argv[2];
-      eve_c         = argv[3];
-    } break;
-
-    default: {
-      fprintf(stderr, "invalid command\r\n");
-      exit(1);
-    } break;
-  }
 
   if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
     fprintf(stderr, "urbit: queu: invalid number '%s'\r\n", eve_c);
@@ -1252,7 +1359,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
 
     fprintf(stderr, "urbit: queu: preparing\r\n");
 
-    u3m_boot(u3_Host.dir_c, u3a_bytes);
+    u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
 
     //  XX can spuriously fail do to corrupt memory-image checkpoint,
     //  need a u3m_half_boot equivalent
@@ -1276,29 +1383,66 @@ _cw_queu(c3_i argc, c3_c* argv[])
 static void
 _cw_meld(c3_i argc, c3_c* argv[])
 {
-  switch ( argc ) {
-    case 2: {
-      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
-        fprintf(stderr, "unable to find pier\r\n");
-        exit (1);
-      }
-    } break;
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
 
-    case 3: {
-      u3_Host.dir_c = argv[2];
-    } break;
+  static struct option lop_u[] = {
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
+    { NULL, 0, NULL, 0 }
+  };
 
-    default: {
-      fprintf(stderr, "invalid command\r\n");
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "meld"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
       exit(1);
-    } break;
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
   }
 
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
   c3_w     pre_w;
 
   u3C.wag_w |= u3o_hashless;
-  u3m_boot(u3_Host.dir_c, u3a_bytes);
+  u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
 
   u3a_print_memory(stderr, "mars: meld: gained", u3u_meld());
 
@@ -1316,7 +1460,9 @@ _cw_next(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "arch",                required_argument, NULL, 'a' },
+    { "arch",      required_argument, NULL, 'a' },
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1328,7 +1474,23 @@ _cw_next(c3_i argc, c3_c* argv[])
         u3_Host.arc_c = strdup(optarg);
       } break;
 
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
       case '?': {
+        fprintf(stderr, "invalid argument\r\n");
         exit(1);
       } break;
     }
@@ -1364,27 +1526,64 @@ _cw_next(c3_i argc, c3_c* argv[])
 static void
 _cw_pack(c3_i argc, c3_c* argv[])
 {
-  switch ( argc ) {
-    case 2: {
-      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
-        fprintf(stderr, "unable to find pier\r\n");
-        exit (1);
-      }
-    } break;
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
 
-    case 3: {
-      u3_Host.dir_c = argv[2];
-    } break;
+  static struct option lop_u[] = {
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
+    { NULL, 0, NULL, 0 }
+  };
 
-    default: {
-      fprintf(stderr, "invalid command\r\n");
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "pack"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
       exit(1);
-    } break;
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
   }
 
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
 
-  u3m_boot(u3_Host.dir_c, u3a_bytes);
+  u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3e_save();
@@ -1397,22 +1596,59 @@ _cw_pack(c3_i argc, c3_c* argv[])
 static void
 _cw_prep(c3_i argc, c3_c* argv[])
 {
-  switch ( argc ) {
-    case 2: {
-      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
-        fprintf(stderr, "unable to find pier\r\n");
-        exit (1);
-      }
-    } break;
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
 
-    case 3: {
-      u3_Host.dir_c = argv[2];
-    } break;
+  static struct option lop_u[] = {
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
+    { NULL, 0, NULL, 0 }
+  };
 
-    default: {
-      fprintf(stderr, "invalid command\r\n");
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "prep"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
       exit(1);
-    } break;
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
   }
 
   u3_Host.pep_o = c3y;
@@ -1433,9 +1669,9 @@ _cw_vere(c3_i argc, c3_c* argv[])
   c3_w arg_w;
 
   static struct option lop_u[] = {
-    { "arch",                required_argument, NULL, 'a' },
-    { "pace",             required_argument, NULL, 'p' },
-    { "version",             required_argument, NULL, 'v' },
+    { "arch",    required_argument, NULL, 'a' },
+    { "pace",    required_argument, NULL, 'p' },
+    { "version", required_argument, NULL, 'v' },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1730,27 +1966,64 @@ _cw_work(c3_i argc, c3_c* argv[])
 static void
 _cw_vile(c3_i argc, c3_c* argv[])
 {
-  switch ( argc ) {
-    case 2: {
-      if ( !(u3_Host.dir_c = _main_pier_run(argv[0])) ) {
-        fprintf(stderr, "unable to find pier\r\n");
-        exit (1);
-      }
-    } break;
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
 
-    case 3: {
-      u3_Host.dir_c = argv[2];
-    } break;
+  static struct option lop_u[] = {
+    { "loom",      required_argument, NULL, c3__loom },
+    { "no-demand", no_argument,       NULL, 6 },
+    { NULL, 0, NULL, 0 }
+  };
 
-    default: {
-      fprintf(stderr, "invalid command\r\n");
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "vile"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
       exit(1);
-    } break;
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
   }
 
   //  XX check if snapshot is stale?
   //
-  c3_d  eve_d = u3m_boot(u3_Host.dir_c, u3a_bytes);
+  c3_d  eve_d = u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
   u3_noun sam = u3nc(u3nc(u3_nul, u3_nul),
                      u3nc(c3n, u3nq(c3__once, 'j', c3__vile, u3_nul)));
   u3_noun res = u3v_soft_peek(0, sam);
