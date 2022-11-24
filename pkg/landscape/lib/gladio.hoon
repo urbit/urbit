@@ -57,10 +57,24 @@
   /gx/(scot %p our.bowl)/[dude]/(scot %da now.bowl)
 ++  groups
   ~+  .^([@ =^groups *] (scry %group-store /export/noun))
+++  groups-raw
+  .^(* (scry %group-store /export/noun))
 ++  network
   ~+  .^([@ =network:gra] (scry %graph-store /export/noun))
+++  network-raw
+  .^(* (scry %graph-store /export/noun))
 ++  associations
-  ~+  .^(=associations:met (scry %metadata-store /associations/noun))
+  ~+  .^([@ =associations:met ~] (scry %metadata-store /export/noun))
+++  associations-raw
+  .^(* (scry %metadata-store /export/noun))
+++  export
+  ~>  %bout.[1 %export-jam]
+  %-  jam
+  ^-  *
+  ~>  %bout.[1 %export-scry]
+  :~  [%group-store groups-raw]
+      [%metadata-store associations-raw]
+  ==
 ++  peers
   |=  =network:gra
   =-  (~(del in -) our.bowl)
@@ -72,10 +86,9 @@
 ++  migrate-start
   ^-  (quip card (set ship))
   =+  network
-  =+  groups
   =+  associations
+  =+  groups
   =/  ships   (peers network)
-  ~&  ships/ships
   =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
   =/  import  (import-for-mark our.bowl groups associations network)
   =/  clubs  (import-club groups associations network)
@@ -119,9 +132,15 @@
       ~
     `[flag u.assoc chans roles group]
   =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
-  :_  (peers network)
-  %-  welp
-  :_  (migrate-ship our.bowl)
+  :_  ~
+  %+  welp
+    ^-  (list card)
+    %-  zing
+    %+  turn  ~(tap in (~(put in ships) our.bowl))
+    |=  =ship
+    (migrate-ship ship)
+  ^-  (list card)
+  ::
   :*  (poke-our %groups group-import+!>(imports))
       (poke-our %chat club-imports+!>(clubs))
       ?~  dms  ~
@@ -141,8 +160,17 @@
     (import %graph-validator-publish)
   =/  links=imports:graph:i
     (import %graph-validator-link)
+  =/  graph-flags
+    %.  ~(key by links)
+    =-  ~(uni in -)
+    (~(uni in ~(key by chats)) ~(key by diarys))
+  %+  welp
+    %+  turn  ~(tap in graph-flags)
+    |=  =flag:i
+    ^-  card
+    (poke-our %graph-store migrated+!>(flag))
   :~  (poke-our %chat graph-imports+!>(chats))
       (poke-our %diary graph-imports+!>(diarys))
       (poke-our %heap graph-imports+!>(links))
-  ==
+        ==
 --

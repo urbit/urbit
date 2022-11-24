@@ -129,8 +129,20 @@
     ?+  mark           (on-poke:def mark vase)
       %graph-update-3  (graph-update !<(update:store vase))
       %import          (poke-import q.vase)
+      %migrated        (poke-migrated !<(resource:store vase))
     ==
   [cards this]
+  ::
+  ++  poke-migrated
+    |=  r=resource:res
+    ^-  (quip card _state)
+    =/  =path  /(rap 3 'backup-' (scot %p entity.r) '-' name.r ~)/noun
+    =/  graph  (~(got by graphs) r)
+    :-  [%pass /migrate %agent [our.bowl %hood] %poke drum-put+!>([path (jam graph)])]~
+    %_  state
+      graphs       (~(del by graphs) r)
+      update-logs  (~(del by update-logs) r)
+    ==
   ::
   ++  graph-update
     |=  =update:store

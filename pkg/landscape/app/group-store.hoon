@@ -91,8 +91,9 @@
           cards  
         %-  welp 
         :_  cards
-        :~  [%pass / %agent [our dap]:bowl %poke noun+!>(%migrate)]
-            [%pass / %agent [our %hood]:bowl %poke %kiln-install !>([%new-groups ~zod %groups])]
+        :~  [%pass / %agent [our dap]:bowl %poke noun+!>(%export)]
+            [%pass / %agent [our dap]:bowl %poke noun+!>(%migrate)]
+            :: [%pass / %agent [our %hood]:bowl %poke %kiln-install !>([%new-groups ~zod %groups])]
         ==
       ==
     ::
@@ -132,7 +133,12 @@
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
         %sane  (poke-sane:gc !<(?(%check %fix) vase))
-        %noun  ?>(=(q.vase %migrate) poke-migrate:gc)
+      ::
+          %noun 
+        ?+  q.vase  !!
+          %migrate  poke-migrate:gc
+          %export   poke-export:gc
+        ==
       ::
           ?(%group-update-0 %group-action)
         (poke-group-update:gc !<(update:store vase))
@@ -219,9 +225,16 @@
 ::
 |_  bol=bowl:gall
 +*  io  ~(. agentio bol)
+++  poke-export
+  ^-  (quip card _state)
+  :_  state
+  =;  =(fyrd:khan cage)
+    [%pass /export %arvo %k %fard fyrd]~
+  [q.byk.bol %keep noun+!>(~(export gladio bol))]
+::
 ++  poke-migrate
   ^-  (quip card _state)
-  =^  cards-1  wait
+  =^  cards-1=(list card)  wait
     ~(migrate-start gladio bol)
   =/  cards-2=(list card)
     %+  turn  ~(tap in wait)
