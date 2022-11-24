@@ -175,6 +175,7 @@
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
       ren=rein                                          ::  force agents on/off
+      wef=(unit weft)                                   ::  zuse version in use
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -296,7 +297,7 @@
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
       fad=flow                                          ::  ford cache
-      zuz=(map weft vase)                               ::  antique zuses
+      zuz=(map weft vase)                               ::  zuse cache
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
@@ -1369,6 +1370,21 @@
   =*  red=rede  ->+
   =<  apex
   |%
+  ++  sweep-zuse-cache
+    ^+  ..park
+    =/  using=(set weft)
+      %-  ~(rep by dos.rom)
+      |=  [[=desk =dojo]  wefts=(set weft)]
+      ?~  wef.dom.dojo
+        wefts
+      (~(put in wefts) u.wef.dom.dojo)
+    =/  stale=(list weft)
+      ~(tap in (~(dif in ~(key by zuz)) using))
+    |-
+    ?~  stale
+      ..park(zuz zuz)
+    $(stale t.stale, zuz (~(del by zuz) i.stale))
+  ::
   ++  get-zuse
     |=  =waft
     |^  ^-  [vase _..park]
@@ -1376,11 +1392,11 @@
     ?^  vuse=(try-zuse-cache wefts)
       [u.vuse ..park]
     =/  oldest=weft  (rear wefts)
-    =/  base-dome  dom:(~(got by dos.rom) %base)
-    =/  =aeon  let.base-dome
+    =/  =dome  dom:(~(got by dos.rom) %base)
+    =/  =aeon  let.dome
     |-
     ?>  (gte aeon 1)
-    =/  =yaki  (~(got by hut.ran) (~(got by hit.base-dome) aeon))
+    =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) aeon))
     ?~  aeon-waft=(get-waft yaki)
       $(aeon (dec aeon))
     ?~  aeon-wefts=(sort-filter-waft u.aeon-waft)
@@ -1395,7 +1411,7 @@
     =/  zuse-core=vase  (build-zuse u.files)
     =/  actual=weft  [%zuse !<(@ud (slap zuse-core %limb %zuse))]
     ?>  ?@  -.waft
-          =(actual waft)
+          =(waft actual)
         (~(has in p.waft) actual)
     [zuse-core ..part(zuz (~(put by zuz) actual zuse-core))]
     ::
@@ -1403,17 +1419,17 @@
       |=  [h=@ a=@ l=@ z=@]
       ^-  vase
       =/  hoon-core=vase
-        %-  (slog 'compiling hoon' ~)
+        %-  (slog 'clay: compiling hoon' ~)
         =-  (slot 7 -)
         (road |.((slap *vase (ream h))))
       =/  arvo-core=vase
-        %-  (slog 'compiling arvo' ~)
+        %-  (slog 'clay: compiling arvo' ~)
         =-  (slap - (ream '..part'))
         (road |.((slap hoon-core (ream a))))
       =/  lull-core=vase
-        %-  (slog 'compiling lull' ~)
+        %-  (slog 'clay: compiling lull' ~)
         (road |.((slap arvo-core (rain /sys/lull/hoon l))))
-      %-  (slog 'compiling zuse' ~)
+      %-  (slog 'clay: compiling zuse' ~)
       (road |.((slap lull-core (rain /sys/zuse/hoon z))))
     ::
     ++  try-zuse-cache
@@ -1465,7 +1481,9 @@
         ~
       ?.  ?=(%hoon p.u.puge)
         ~
-      ((soft @) q.u.puge)
+      ?^  q.u.puge
+        ~
+      (some q.u.puge)
     --
   ::
   ++  abet                                              ::  resolve
