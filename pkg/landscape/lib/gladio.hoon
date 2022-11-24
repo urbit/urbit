@@ -24,14 +24,20 @@
     ~
   `[flag members.u.group u.assoc graph]
 ::
+++  import-flags
+  |=  [=^groups =associations:met =network:gra]
+  |=  =mark
+  ^-  (set flag:i)
+  ~(key by ((import-for-mark ~ groups associations network) mark))
+::
 ++  import-for-mark
-  |=  [her=ship =^groups =associations:met =network:gra]
+  |=  [her=(unit ship) =^groups =associations:met =network:gra]
   |=  =mark
   ^-  imports:graph:i
   %-  ~(gas by *imports:graph:i)
   %+  murn  ~(tap by graphs.network)
   |=  [=flag:i graph=graph:gra mar=(unit ^mark)]
-  ?.  =(p.flag her)
+  ?.  |(=(`p.flag her) =(her ~))
     ~
   ?.  =(mar `mark)  ::  XX: correct detection?
     ~
@@ -90,7 +96,7 @@
   =+  groups
   =/  ships   (peers network)
   =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
-  =/  import  (import-for-mark our.bowl groups associations network)
+  =/  import  (import-for-mark `our.bowl groups associations network)
   =/  clubs  (import-club groups associations network)
   =/  chats=imports:graph:i
     (import %graph-validator-chat)
@@ -132,16 +138,16 @@
       ~
     `[flag u.assoc chans roles group]
   =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
-  :_  ~
-  %+  welp
-    ^-  (list card)
-    %-  zing
-    %+  turn  ~(tap in (~(put in ships) our.bowl))
-    |=  =ship
-    (migrate-ship ship)
-  ^-  (list card)
-  ::
+  =/  flag-importer  (import-flags groups associations network)
+  =+  :*  chat-flags=(flag-importer %graph-validator-chat)
+          heap-flags=(flag-importer %graph-validator-link)
+          diary-flags=(flag-importer %graph-validator-publish)
+      ==
+  :_  ships
   :*  (poke-our %groups group-import+!>(imports))
+      (poke-our %chat import-flags+!>(chat-flags))
+      (poke-our %heap import-flags+!>(heap-flags))
+      (poke-our %diary import-flags+!>(diary-flags))
       (poke-our %chat club-imports+!>(clubs))
       ?~  dms  ~
       (poke-our %chat dm-imports+!>(p.u.dms))^~
@@ -153,7 +159,7 @@
   =+  groups
   =+  network
   =+  associations
-  =/  import  (import-for-mark her groups associations network)
+  =/  import  (import-for-mark `her groups associations network)
   =/  chats=imports:graph:i
     (import %graph-validator-chat)
   =/  diarys=imports:graph:i
