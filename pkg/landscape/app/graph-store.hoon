@@ -138,7 +138,7 @@
     ^-  (quip card _state)
     =/  =path  /(rap 3 'backup-' (scot %p entity.r) '-' name.r ~)/noun
     =/  graph  (~(got by graphs) r)
-    :-  [%pass /migrate %agent [our.bowl %hood] %poke drum-put+!>([path (jam graph)])]~
+    :-  [%pass /migrate %agent [our.bowl %hood] %poke drum-put+!>([path (jam r graph)])]~
     %_  state
       graphs       (~(del by graphs) r)
       update-logs  (~(del by update-logs) r)
