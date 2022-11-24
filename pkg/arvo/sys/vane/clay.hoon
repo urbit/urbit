@@ -1373,9 +1373,9 @@
     |=  =waft
     |^  ^-  [vase _..park]
     =/  wefts=(list weft)  (sort-filter-waft waft)
-    ?^  vuz=(try-zuse-cache wefts)
-      [u.vuz ..park]
-    =/  oldest=weft  -:(flop wefts)
+    ?^  vuse=(try-zuse-cache wefts)
+      [u.vuse ..park]
+    =/  oldest=weft  (rear wefts)
     =/  base-dome  dom:(~(got by dos.rom) %base)
     =/  =aeon  let.base-dome
     |-
@@ -1393,8 +1393,10 @@
     ?~  files=(get-kernel-files yaki)
       $(aeon (dec aeon))
     =/  zuse-core=vase  (build-zuse u.files)
-    =/  actual=weft
-      [%zuse !<(@ud (slap zuse-core %limb %zuse))]
+    =/  actual=weft  [%zuse !<(@ud (slap zuse-core %limb %zuse))]
+    ?>  ?@  -.waft
+          =(actual waft)
+        (~(has in p.waft) actual)
     [zuse-core ..part(zuz (~(put by zuz) actual zuse-core))]
     ::
     ++  build-zuse
@@ -1440,7 +1442,9 @@
         ~
       ?~  puge=(~(get by lat.ran) u.lube)
         ~
-      (soft-read-kelvin u.puge)
+      ?.  ?=(%kelvin p.u.puge)
+        ~
+      ((soft waft) q.u.page)
     ::
     ++  get-kernel-files
       |=  =yaki
@@ -1457,35 +1461,11 @@
       ^-  (unit @)
       ?~  lube=(~(get by q.yaki) path)
         ~
-      ?~  puge=(~(get by q.yaki) u.lube)
+      ?~  puge=(~(get by lat.ran) u.lube)
         ~
-      ?+  p.u.puge  ~
-        %hoon  ?^(q.u.puge ~ (some q.u.puge))
-        %mime  ?.(?=([* @ @] q.u.puge) ~ (some +>.q.u.puge))
-      ==
-    ::
-    ++  soft-read-kelvin
-      |=  =page
-      ^-  (unit waft)
-      ?+    p.page  ~
-          %kelvin
-        ((soft waft) q.page)
-      ::
-          %mime
-        ?~  curd=(biff ((soft mime) q.page) |=(=mime ((soft @t) q.q.mime)))
-          ~
-        ?~  hune=(rush u.curd (star (ifix [gay gay] tall:vast)))
-          ~
-        =/  wefts
-          %+  murn  u.hune
-          |=  =hoon
-          (mole |.(!<(weft (slap !>(~) hoon))))
-        ?.  =((lent u.hune) (lent wefts))
-          ~
-        ?:  ?=([* ~] wefts)
-          (some i.wefts)
-        (some [%1 ~] (silt wefts))
-      ==
+      ?.  ?=(%hoon p.u.puge)
+        ~
+      ((soft @) q.u.puge)
     --
   ::
   ++  abet                                              ::  resolve
