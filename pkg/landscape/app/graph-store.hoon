@@ -112,7 +112,7 @@
         |=  [r=resource:store m=marked-graph:store]
         ^-  card
         =/  pax  /(rap 3 'archive-' (scot %p entity.r) '-' name.r ~)/noun
-        =/  =cage  drum-put+!>([pax (jam m)])
+        =/  =cage  drum-put+!>([pax (jam r m)])
         [%pass /archive %agent [our.bowl %hood] %poke cage]
       ==
     ==
