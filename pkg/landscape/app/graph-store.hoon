@@ -11,10 +11,10 @@
       [%3 network:one:store]
       [%4 network:store]
       [%5 network:store]
-      state-6
+      [%6 network:store]
   ==
 ::-
-+$  state-6  [%6 network:store]
++$  state-7  [%7 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 ++  mar      %graph-update-3
@@ -96,7 +96,23 @@
       (scag 2 (tap:orm-log update-log))
     ==
   ::
-    %6  [cards this(state old)]
+      %6
+    %_  $
+        -.old  %7
+        archive.old  ~
+        cards
+      ;:  welp
+        cards
+      ::
+        %+  turn  ~(tap by archive.old)
+        |=  [r=resource:store m=marked-graph:store]
+        ^-  card
+        =/  pax  /(rap 3 'archive-'(scot %p entity.r) '-' name.r)/noun
+        =/  =cage  drum-put+!>([pax (jam m)])
+        [%pass /archive %agent [our.bowl %hood] %poke cage]
+    ==
+  ::
+      %7  [cards this(state old)]
   ==
 ::
 ++  on-watch
