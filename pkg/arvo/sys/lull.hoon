@@ -1897,13 +1897,16 @@
       --
     --
   ::
-  +$  perm  $%(perm-arvo perm-gall)
+  +$  perm  $~([%behn %timer] $%(perm-arvo perm-gall))
   ::
-  +$  perm-gall                                        ::  inter-agent perms
-    $%  [%write jump=? dude=?(~ dude)]                 ::  poke
-        [%watch jump=? dude=?(~ dude) =path]           ::  subscribe
+  +$  burr  [desk=(unit desk) =spur]
+  +$  spar  [care=(unit term) burr]
+  ::
+  +$  perm-gall                                         ::  inter-agent perms
+    $%  [%write jump=? dude=?(~ dude)]                  ::  poke
+        [%watch jump=? dude=?(~ dude) =path]            ::  subscribe
+        [%reads vane=term spar]                         ::  scry
         ::TODO  include target ship once remote scry exists?
-        [%reads vane=term care=(unit term) desk=(unit desk) =spur]  ::  scry
     ==
   ::
   +$  perm-arvo  ::TODO  more narrow
@@ -1916,17 +1919,16 @@
         ==  ==
       ::
         $:  %clay
-        $%  [%mount ~]                       ::  %mont %ogre %dirk
-            [%creds ~]                       ::  %cred %crew %perm
-            [%label desk=(unit desk)]        ::  %info w/ %| nori
-            [%write desk=(unit desk) =spur]  ::  %info %merg %fuse
-            [%local desk=(unit desk) =spur]  ::  %warp for local reads
-            [%build desk=(unit desk) =spur]  ::  %warp with ford build $care
-            [%peers desk=(unit desk) =spur]  ::  %warp for foreign ships
+        $%  [%mount ~]                 ::  %mont %ogre %dirk
+            [%creds ~]                 ::  %cred %crew %perm
+            [%label desk=(unit desk)]  ::  %info w/ %| nori
+            [%write burr]              ::  %info %merg %fuse
+            [%local spar]              ::  %warp for local data
+            [%peers spar]              ::  %warp for remote data
           ::
-            [%perms desk=(unit desk)]        ::  %curb
-            [%liven desk=(unit desk)]        ::  %rein %zest
-            [%pulse ~]                       ::  %tire
+            [%perms desk=(unit desk)]  ::  %curb
+            [%liven desk=(unit desk)]  ::  %rein %zest
+            [%pulse ~]                 ::  %tire
         ==  ==
       ::
         $:  %dill  ::TODO  revisit wrt nu-tem  ::REVIEW  %belt separate?
@@ -2038,12 +2040,23 @@
           $(path.p t.path.p, path.mus t.path.mus)
       ==
     ::
-        [%clay ?(%write %local %build) *]
+        [%clay %write *]
       =/  =desk  (need desk.mus)
       %+  lien  ~(tap in pes)
       |=  p=perm
-      ?&  ?=([%clay ?(%write %local %build) *] p)
+      ?&  ?=([%clay %write *] p)
+          =(desk (fall desk.p desk))
+          |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [%clay ?(%local %peers) *]
+      =/  =desk  (need desk.mus)
+      =/   care  (need care.mus)
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay ?(%local %peers) *] p)
           =(+<.mus +<.p)
+          =(care (fall care.p care))
           =(desk (fall desk.p desk))
           |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
       ==
@@ -2151,12 +2164,10 @@
         ::      they're considered deprecated
         ?.  ?=(?(%sing %next) -.u.q.rif.note)
           |
-        =*  spec  [`p path.mood.u.q]:rif.note
+        =/  =spar  [`care.mood.u.q `p path.mood.u.q]:rif.note
         ?.  =(our wer.note)
-          [%clay %peers spec]
-        ?:  ?=(?(%a %b %c) care.mood.u.q.rif.note)
-          [%clay %build spec]
-        [%clay %local spec]
+          [%clay %peers spar]
+        [%clay %local spar]
       ==
     ::
         %d
