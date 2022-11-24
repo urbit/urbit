@@ -528,6 +528,21 @@
 ::
 ++  upgrade
   |%
+  ++  nuke-groups
+    |=  =bowl:gall
+    |^  ^-  (list card:agent:gall)
+    ?.  .^(? (gall-scry %u %groups))
+      ~
+    =+  .^(=desk (gall-scry %d %groups))
+    :~  [%pass /nuke %agent [our.bowl %hood] %poke kiln-nuke+!>([desk &])]
+        [%pass /nuke %agent [our.bowl %hood] %poke kiln-uninstall+!>(desk)]
+    ==
+    ::
+    ++  gall-scry
+      |=  [=care:clay dap=dude:gall]
+      ^-  path
+      /(cat 3 %g care)/(scot %p our.bowl)/[dap]/(scot %da now.bowl)
+    --
   ::
   ::  +two
   ::
@@ -758,9 +773,9 @@
   --
 ++  import
   |=  [arc=* our=ship]
-  ^-  (quip card:agent:gall [%6 network])
+  ^-  (quip card:agent:gall [%7 network])
   |^
-  =/  sty  [%6 (remake-network ;;(tree-network +.arc))]
+  =/  sty  [%7 (remake-network ;;(tree-network +.arc))]
   :_  sty
   %+  turn  ~(tap by graphs.sty)
   |=  [rid=resource =marked-graph]

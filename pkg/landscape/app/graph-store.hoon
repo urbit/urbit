@@ -12,6 +12,7 @@
       [%4 network:store]
       [%5 network:store]
       [%6 network:store]
+      state-7
   ==
 ::-
 +$  state-7  [%7 network:store]
@@ -20,7 +21,7 @@
 ++  mar      %graph-update-3
 --
 ::
-=|  state-6
+=|  state-7
 =*  state  -
 ::
 %-  agent:dbug
@@ -104,12 +105,16 @@
       ;:  welp
         cards
       ::
+        (nuke-groups:upgrade:store bowl)
+      ::
+        ^-  (list card)
         %+  turn  ~(tap by archive.old)
         |=  [r=resource:store m=marked-graph:store]
         ^-  card
-        =/  pax  /(rap 3 'archive-'(scot %p entity.r) '-' name.r)/noun
+        =/  pax  /(rap 3 'archive-' (scot %p entity.r) '-' name.r ~)/noun
         =/  =cage  drum-put+!>([pax (jam m)])
         [%pass /archive %agent [our.bowl %hood] %poke cage]
+      ==
     ==
   ::
       %7  [cards this(state old)]
