@@ -259,8 +259,9 @@
 ::    recursively.
 ::
 +$  leak
-  $~  [*pour ~]
+  $~  [*pour *weft ~]
   $:  =pour
+      =weft
       deps=(set leak)
   ==
 ::
@@ -615,14 +616,17 @@
     !.
     =>  |%
         +$  state
-          $:  cache=flow
+          $:  remit=weft
+              topic=vase
+              cache=flow
               flue
               cycle=(set mist)
               drain=(map mist leak)
               stack=(list (set leak))
           ==
         +$  args
-          $:  files=(map path (each page lobe))
+          $:  topic=vase
+              files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
               cache=flow
@@ -633,6 +637,8 @@
     ::  nub: internal mutable state for this computation
     ::
     =|  nub=state
+    =.  remit.nub  [%zuse !<(@ud (slap topic %limb %zuse))]
+    =.  topic.nub  topic
     =.  cache.nub  cache
     =.  spill.nub  spill
     =.  sprig.nub  sprig
@@ -714,7 +720,7 @@
       =.  nub  nob
       :_  nub  :-  %vase
       ^-  vase  ::  vase of nave
-      %+  slap  (slop (with-face cor+cor) zuse.bud)
+      %+  slap  (slop (with-face cor+cor) topic)
       !,  *hoon
       =/  typ  _+<.cor
       =/  dif  _*diff:grad:cor
@@ -994,7 +1000,7 @@
     ::
     ++  run-prelude
       |=  =pile
-      =/  sut=vase  zuse.bud
+      =/  sut=vase  topic
       =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
@@ -1243,7 +1249,7 @@
       |=  [=mist next=$-(state [soak state])]
       ^-  [soak state]
       =^  top=(set leak)  stack.nub  stack.nub
-      =/  =leak  [(mist-to-pour mist) top]
+      =/  =leak  [(mist-to-pour mist) remit.nub top]
       =.  cycle.nub  (~(del in cycle.nub) mist)
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(put in i.stack.nub) leak))
