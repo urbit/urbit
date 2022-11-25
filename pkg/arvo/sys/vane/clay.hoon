@@ -1943,18 +1943,17 @@
     ::  find desk kelvin
     ::
     =/  kel=(set weft)  (waft-to-wefts (get-kelvin yoki))
-    ?.  ?|  (~(has in kel) zuse+zuse)                   ::  kelvin match
-            ?&  !=(%base syd)                           ::  best-effort compat
+    ?.  ?|  ?&  =(%base syd)
                 %-  ~(any in kel)
                 |=  =weft
-                &(=(%zuse lal.weft) (gth num.weft zuse))
+                &(=(%zuse lal.weft) (gte num.weft zuse))
             ==
-            ?&  =(%base syd)                            ::  ready to upgrade
-                %+  levy  ~(tap by tore:(lu now rof hen ruf))
-                |=  [=desk =zest wic=(set weft)]
-                ?|  =(%base desk)
-                    !?=(%live zest)
-                    !=(~ (~(int in wic) kel))
+            ?&  !=(%base syd)
+                %-  ~(any in kel)
+                |=  =weft
+                ?&  =(%zuse lal.weft)
+                    (lte num.weft zuse)
+                    |(?=(~ wef) (gte num.weft num.u.wef))
                 ==
             ==
         ==
