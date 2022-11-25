@@ -144,6 +144,7 @@
           diary-flags=(flag-importer %graph-validator-publish)
       ==
   :_  ships
+  %+  welp  (migrate-ship our.bowl)
   :*  (poke-our %groups group-import+!>(imports))
       (poke-our %chat import-flags+!>(chat-flags))
       (poke-our %heap import-flags+!>(heap-flags))
