@@ -462,12 +462,12 @@
     ::    [%vega ~]
     ::
         %vega
-      +>.$::
+      +>.$
+    ::
     ::  in response to memory pressure
     ::    [%trim p=@ud]
     ::
         %trim
-      ::TODO  consider %ruin-ing long-offline comets
       +>.$
     ::
     ::  watch private keys
@@ -995,7 +995,7 @@
 =|  lex=state-2
 |=  $:  ::  now: current time
         ::  eny: unique entropy
-        ::  ski: namespace resolver
+        ::  rof: namespace resolver
         ::
         now=@da
         eny=@uvJ
