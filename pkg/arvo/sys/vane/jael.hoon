@@ -736,12 +736,10 @@
   ++  subscribers-on-ship
     |=  =ship
     ^-  (set duct)
-    =/  specific-subs  (~(get ju ney.zim) ship)
-    =/  general-subs=(set duct)
-      ?:  ?=(?(%czar %king %duke) (clan:title ship))
-        nel.zim
-      ~
-    (~(uni in specific-subs) general-subs)
+    ::  union of general and ship-specific subs
+    ::
+    %-  ~(uni in nel.zim)
+    (~(get ju ney.zim) ship)
   ::
   ++  feed
     |_  ::  hen: subscription source

@@ -24,7 +24,7 @@ With:
 import UrbitInterface from '@urbit/http-api';
 import { settings } from '@urbit/api';
 const api: UrbitInterface = useApi();
-api.poke(setings.putEntry(bucket, key, value));
+api.poke(settings.putEntry(bucket, key, value));
 ```
 
 You may import single functions
