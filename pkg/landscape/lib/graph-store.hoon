@@ -528,6 +528,65 @@
 ::
 ++  upgrade
   |%
+  ++  is-old-dm  |=(r=resource =('dm--' (end [3 4] name.r)))
+  ++  backup
+    |=  =bowl:gall
+    |=  [r=resource m=marked-graph]
+    ^-  card:agent:gall
+    =/  pax  /(rap 3 'archive-' (scot %p entity.r) '-' name.r ~)/noun
+    =/  =cage  drum-put+!>([pax (jam r m)])
+    [%pass /archive %agent [our.bowl %hood] %poke cage]
+  ++  strip-sigs-graph
+    |=  g=graph
+    ^+  g
+    =*  loop  $
+    %+  gas:orm  *graph
+    %+  turn  (tap:orm g)
+    |=  [key=@ val=node]  :: optional: also strip out deleted messages?
+    =?  children.val  ?=(%graph -.children.val)
+      [%graph loop(g p.children.val)]
+    :-  key
+    ?.  ?=(%& -.post.val)
+      val
+    val(signatures.p.post ~)
+  ++  strip-sigs-log
+    |=  u=update-log
+    %+  gas:orm-log  *update-log
+    %+  turn  (tap:orm-log u)
+    |=  [key=@ upd=logged-update]
+    :-  key
+    :-  p.upd
+    ?+    -.q.upd  q.upd
+        %add-graph
+      q.upd(graph (strip-sigs-graph graph.q.upd))
+    ::
+        %add-signatures
+      q.upd(signatures ~)
+    ::
+        %remove-signatures
+      q.upd(signatures ~)
+    ::
+        %add-nodes
+      %=    q.upd
+          nodes
+        %-  ~(run by nodes.q.upd)
+        |=  =node
+        ^+  node
+        %=    node
+            children
+          ?.  ?=(%graph -.children.node)
+            children.node
+          [%graph (strip-sigs-graph p.children.node)]
+        ::
+            post
+          ?.  ?=(%& -.post.node)
+            post.node
+          =.  signatures.p.post.node  ~
+          post.node
+        ==
+      ==
+    ==
+  ::
   ++  nuke-groups
     |=  =bowl:gall
     |^  ^-  (list card:agent:gall)
