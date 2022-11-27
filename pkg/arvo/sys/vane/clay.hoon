@@ -1957,10 +1957,7 @@
             ?&  !=(%base syd)
                 %-  ~(any in kel)
                 |=  =weft
-                ?&  =(%zuse lal.weft)
-                    (lte num.weft zuse)
-                    |(?=(~ wef) (gte num.weft num.u.wef))
-                ==
+                &(=(%zuse lal.weft) (lte num.weft zuse))
             ==
         ==
       ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
@@ -2138,7 +2135,7 @@
     ::
     ++  did-kernel-update
       |=  invalid=(set path)
-      ?.  |(=(%base syd) &(=(%home syd)))
+      ?.  |(=(%base syd) =(%home syd))
         |
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
@@ -2396,6 +2393,7 @@
       ^+  ..park
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
+      =.  zuz  (~(put by zuz) zuse zuse.bud)
       |^  %.  [hen %slip %c %pork ~]
           emit:(pass-what files)
       ::
