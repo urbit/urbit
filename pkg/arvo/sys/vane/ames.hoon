@@ -733,6 +733,7 @@
       $%  [%private-keys ~]
           [%public-keys ships=(set ship)]
           [%turf ~]
+          [%ruin ships=(set ship)]
       ==  ==
       $:  @tas
       $%  [%plea =ship =plea]
@@ -1247,7 +1248,7 @@
           =(%$ syd)
       ==
     ?.  for.veb.bug.ames-state  ~
-    ~>  %slog.0^leaf/"ames: scry-fail {<[why=why lot=lot now=now syd=syd]>}"
+    ~>  %slog.0^leaf/"ames: scry-fail {<why=why lot=lot now=now syd=syd>}"
     ~
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
@@ -1280,9 +1281,11 @@
         [%forward-lane ~]
       ::
       ::  this duplicates the routing hack from +send-blob:event-core
-      ::  so long as neither the peer nor the peer's sponsoring galaxy is us:
+      ::  so long as neither the peer nor the peer's sponsoring galaxy is us,
+      ::  and the peer has been reached recently:
       ::
-      ::    - no route to the peer: send to the peer's sponsoring galaxy
+      ::    - no route to the peer, or peer has not been contacted recently:
+      ::      send to the peer's sponsoring galaxy
       ::    - direct route to the peer: use that
       ::    - indirect route to the peer: send to both that route and the
       ::      the peer's sponsoring galaxy
@@ -1294,6 +1297,8 @@
           ==
         ~
       =;  zar=(trap (list lane))
+        ?:  (lth last-contact.qos.u.peer (sub now ~h1))
+          $:zar
         ?~  route.u.peer  $:zar
         =*  rot  u.route.u.peer
         ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
@@ -1770,7 +1775,7 @@
         |.  ^-  tape
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
-        "plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
+        "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-cork: handle request to kill a flow
   ::
@@ -1793,7 +1798,7 @@
         |.  ^-  tape
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
-        "cork plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
+        "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
@@ -1921,14 +1926,14 @@
       ::  we shouldn't be hearing about ships we don't care about
       ::
       ?~  ship-state
-        ~>  %slog.0^leaf/"ames: breach unknown {<our^ship>}"
+        ~>  %slog.0^leaf/"ames: breach unknown {<our ship>}"
         event-core
       ::  if an alien breached, this doesn't affect us
       ::
       ?:  ?=([~ %alien *] ship-state)
-        ~>  %slog.0^leaf/"ames: breach alien {<our^ship>}"
+        ~>  %slog.0^leaf/"ames: breach alien {<our ship>}"
         event-core
-      ~>  %slog.0^leaf/"ames: breach peer {<our^ship>}"
+      ~>  %slog.0^leaf/"ames: breach peer {<our ship>}"
       ::  a peer breached; drop messaging state
       ::
       =/  =peer-state  +.u.ship-state
@@ -2141,10 +2146,27 @@
     ::
     (emit unix-duct.ames-state %give %turf turfs)
   ::  +on-vega: handle kernel reload
-  ::  +on-trim: handle request to free memory
   ::
   ++  on-vega  event-core
-  ++  on-trim  event-core
+  ::  +on-trim: handle request to free memory
+  ::
+  ::  %ruin comets not seen for six months
+  ::
+  ++  on-trim
+    ^+  event-core
+    =;  rui=(set @p)
+      (emit duct %pass /ruin %j %ruin rui)
+    =-  (silt (turn - head))
+    %+  skim
+      ~(tap by peers.ames-state)
+    |=  [=ship s=ship-state]
+    ?.  &(?=(%known -.s) =(%pawn (clan:title ship)))  %.n
+    ?&  (gth (sub now ~d180) last-contact.qos.s)
+        ::
+        %-  ~(any by snd.s)
+        |=  m=message-pump-state
+        !=(~ unsent-fragments.m)
+    ==
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
   ::    Also requests key and life from Jael on first request.
@@ -2232,6 +2254,10 @@
           ::
           ?:  for
             event-core
+          (try-next-sponsor sponsor.peer-state)
+        ::  if forwarding, route must not be stale
+        ::
+        ?:  &(for (lth last-contact.qos.peer-state (sub now ~h1)))
           (try-next-sponsor sponsor.peer-state)
         ::
         ?~  route=route.peer-state
@@ -2586,12 +2612,12 @@
               =(~ unsent-fragments.pum)
               =(~ live.packet-pump-state.pum)
           ==
-        ~>  %slog.0^leaf/"ames: bad pump state {<[her.channel i.boz]>}"
+        ~>  %slog.0^leaf/"ames: bad pump state {<her.channel i.boz>}"
         $(boz t.boz)
       ::  no outstanding messages, so send a new %cork
       ::
       ::  TODO use +trace
-      ~>  %slog.0^leaf/"ames: recork {<[her.channel i.boz]>}"
+      ~>  %slog.0^leaf/"ames: recork {<her.channel i.boz>}"
       =/  =plea  [%$ /flow [%cork ~]]
       (on-memo i.boz plea %plea)
     ::  +got-duct: look up $duct by .bone, asserting already bound
@@ -3256,7 +3282,7 @@
         =?  packet-pump  ?=(^ static-fragment)
           %-  %+  trace  snd.veb
               =/  nums  [message-num fragment-num]:u.static-fragment.res
-              |.("dead {<nums^show:gauge>}")
+              |.("dead {<nums show:gauge>}")
           (give %send u.static-fragment.res)
         packet-pump
     ::
@@ -3377,7 +3403,7 @@
                     =(0 (mod counter.metrics.state 20))
                 ==
               same
-            (trace snd.veb |.("send: {<[fragment=fragment-num show:gauge]>}"))
+            (trace snd.veb |.("send: {<fragment=fragment-num show:gauge>}"))
         ::  .resends is backward, so fold backward and emit
         ::
         =.  packet-pump
@@ -3436,7 +3462,7 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
-        %-  (trace snd.veb |.("done {<message-num=message-num^show:gauge>}"))
+        %-  (trace snd.veb |.("done {<message-num=message-num show:gauge>}"))
         (fast-resend-after-ack message-num `fragment-num`0)
     ::
     ^+  [metrics=metrics.state live=live.state]
@@ -3574,7 +3600,7 @@
     ::
     =?  cwnd  !in-recovery  (max 2 (div cwnd 2))
     %-  %+  trace  snd.veb
-        |.("skip {<[resend=resend in-recovery=in-recovery show]>}")
+        |.("skip {<resend=resend in-recovery=in-recovery show>}")
     metrics
   ::  +on-timeout: (re)enter slow-start mode on packet loss
   ::
@@ -3668,7 +3694,7 @@
     ::
     ?:  (gte seq (add 10 last-acked.state))
       %-  %+  trace  odd.veb
-          |.("future %hear {<seq=seq^last-acked=last-acked.state>}")
+          |.("future %hear {<seq=seq last-acked=last-acked.state>}")
       message-sink
     ::
     =/  is-last-fragment=?  =(+(fragment-num) num-fragments)
@@ -3679,7 +3705,7 @@
         ::  single packet ack
         ::
         %-  %+  trace  rcv.veb
-            |.("send dupe ack {<seq=seq^fragment-num=fragment-num>}")
+            |.("send dupe ack {<seq=seq fragment-num>}")
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
@@ -3699,8 +3725,8 @@
         %-  %+  trace  rcv.veb
             |.  ^-  tape
             =/  data
-              :*  her.channel  seq=seq  bone=bone
-                  fragment-num=fragment-num  num-fragments=num-fragments
+              :*  her.channel  seq=seq  bone=bone.shut-packet
+                  fragment-num  num-fragments
                   la=last-acked.state  lh=last-heard.state
               ==
             "hear last in-progress {<data>}"
@@ -3709,8 +3735,8 @@
       ::
       %-  %+  trace  rcv.veb  |.
           =/  data
-            :*  seq=seq  fragment-num=fragment-num
-                num-fragments=num-fragments  closing=closing
+            :*  seq=seq  fragment-num
+                num-fragments  closing=closing
             ==
           "send ack-1 {<data>}"
       (give %send seq %& fragment-num)
@@ -3740,7 +3766,7 @@
             "hear last dupe {<data>}"
         message-sink
       %-  %+  trace  rcv.veb
-          |.("send dupe ack {<her.channel^seq=seq^fragment-num=fragment-num>}")
+          |.("send dupe ack {<her.channel seq=seq fragment-num>}")
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -3757,7 +3783,7 @@
     =?  message-sink  !is-last-fragment
       %-  %+  trace  rcv.veb  |.
           =/  data
-            [seq=seq fragment-num=fragment-num num-fragments=num-fragments]
+            [seq=seq fragment-num num-fragments]
           "send ack-2 {<data>}"
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
