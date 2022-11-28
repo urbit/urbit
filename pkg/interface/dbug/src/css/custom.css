@@ -158,6 +158,7 @@ a {
 @media all and (prefers-color-scheme: dark) {
   body {
     background-color: #333;
+    color: white;
   }
   .bg-black-d {
     background-color: black;
