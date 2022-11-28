@@ -4944,6 +4944,25 @@
         =/  den  ((de now rof hen ruf) our desk.arg.req)
         abet:(stay:den ver.arg.req)
       [moves ..^$]
+    ::
+        [%trim ~]
+      =:    fad.ruf      *flow
+            dos.rom.ruf
+          %-  ~(run by dos.rom.ruf)
+          |=  =dojo
+          dojo(fod.dom *flue)
+        ::
+            hoy.ruf
+          %-  ~(run by hoy.ruf)
+          |=  =rung
+          %=    rung
+              rus
+            %-  ~(run by rus.rung)
+            |=  =rede
+            rede(fod.dom *flue)
+          ==
+        ==
+      [~ ..^$]
     ==
   ::
       %tire
@@ -4955,25 +4974,7 @@
     [hen %give %tire %& tore:(lu now rof hen ruf)]~
   ::
       %tomb  (tomb-clue:tomb hen clue.req)
-      %trim
-    =:    fad.ruf      *flow
-          dos.rom.ruf
-        %-  ~(run by dos.rom.ruf)
-        |=  =dojo
-        dojo(fod.dom *flue)
-      ::
-          hoy.ruf
-        %-  ~(run by hoy.ruf)
-        |=  =rung
-        %=    rung
-            rus
-          %-  ~(run by rus.rung)
-          |=  =rede
-          rede(fod.dom *flue)
-        ==
-      ==
-    [~ ..^$]
-  ::
+      %trim  [~ ..^$]
       %vega
     ::  wake all desks, then send pending notifications
     ::
