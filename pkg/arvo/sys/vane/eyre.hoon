@@ -201,6 +201,16 @@
   %+  ~(put by unacked)  rid
   ?:  (lte u.sus ack)  0
   (sub u.sus ack)
+::  +find-channel-mode: deduce requested mode from headers
+::
+++  find-channel-mode
+  |=  [met=method:http hes=header-list:http]
+  ^-  ?(%json %jam)
+  =+  ^-  [hed=@t jam=@t]
+    ?:  ?=(%'GET' met)  ['x-channel-format' 'jam']
+    ['content-type' 'application/octet-stream']
+  =+  typ=(bind (get-header:http hed hes) :(cork trip cass crip))
+  ?:(=(`jam typ) %jam %json)
 ::  +parse-channel-request: parses a list of channel-requests
 ::
 ++  parse-channel-request
@@ -1156,11 +1166,6 @@
         ::
         %^  return-static-data-on-duct  400  'text/html'
         (error-page 400 authenticated url.request "malformed channel url")
-      =/  mode=?(%json %jam)
-        ::TODO  go off file extention instead?
-        ?+  i.t.site.request-line  %json
-          %channel-jam  %jam
-        ==
       ::  channel-id: unique channel id parsed out of url
       ::
       =+  channel-id=i.t.t.site.request-line
@@ -1168,13 +1173,13 @@
       ?:  =('PUT' method.request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
         ::
-        (on-put-request channel-id mode request)
+        (on-put-request channel-id request)
       ::
       ?:  =('GET' method.request)
-        (on-get-request channel-id mode request)
+        (on-get-request channel-id request)
       ?:  =('POST' method.request)
         ::  POST methods are used solely for deleting channels
-        (on-put-request channel-id mode request)
+        (on-put-request channel-id request)
       ::
       ~&  %session-not-a-put
       [~ state]
@@ -1293,16 +1298,22 @@
     ::    client in text/event-stream format.
     ::
     ++  on-get-request
-      |=  [channel-id=@t mode=?(%json %jam) =request:http]
+      |=  [channel-id=@t =request:http]
       ^-  [(list move) server-state]
       ::  if there's no channel-id, we must 404
+      ::TODO  but arm description says otherwise?
       ::
       ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
         %^  return-static-data-on-duct  404  'text/html'
         (error-page 404 %.y url.request ~)
+      ::  find the requested "mode" and make sure it doesn't conflict
       ::
-      ::TODO  consider forbidding connection if !=(mode mode.u.maybe-channel)
-      ::
+      =/  mode=?(%json %jam)
+        (find-channel-mode %'GET' header-list.request)
+      ?.  =(mode mode.u.maybe-channel)
+        %^  return-static-data-on-duct  406  'text/html'
+        =;  msg=tape  (error-page 406 %.y url.request msg)
+        "channel already established in {(trip mode.u.maybe-channel)} mode"
       ::  when opening an event-stream, we must cancel our timeout timer
       ::  if there's no duct already bound. Else, kill the old request
       ::  and replace it
@@ -1348,7 +1359,7 @@
           (channel-event-to-sign u.maybe-channel request-id channel-event)
         ?~  sign  $
         =/  said
-          (sign-to-tape u.maybe-channel(mode mode) request-id u.sign)
+          (sign-to-tape u.maybe-channel request-id u.sign)
         ?~  said  $
         $(events [(event-tape-to-wall id +.u.said) events])
       ::  send the start event to the client
@@ -1418,13 +1429,16 @@
     ::    a set of commands in JSON format in the body of the message.
     ::
     ++  on-put-request
-      |=  [channel-id=@t mode=?(%json %jam) =request:http]
+      |=  [channel-id=@t =request:http]
       ^-  [(list move) server-state]
       ::  error when there's no body
       ::
       ?~  body.request
         %^  return-static-data-on-duct  400  'text/html'
         (error-page 400 %.y url.request "no put body")
+      ::
+      =/  mode=?(%json %jam)
+        (find-channel-mode %'PUT' header-list.request)
       ::  if we cannot parse requests from the body, give an error
       ::
       =/  maybe-requests=(each (list channel-request) @t)
@@ -2706,7 +2720,6 @@
     ^-  axle
     :-  %~2023.3.15
     ^-  server-state
-    ::TODO  add /~/channel-jam binding
     %=  server-state.ax
         session.channel-state
       (~(run by session.channel-state.server-state.ax) (lead %json))
