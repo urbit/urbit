@@ -880,7 +880,7 @@
         (page-to-cage page)
       =^  [mark vax=vase]  nub  (page-to-cage page)
       =^  =tube  nub  (build-tube p.page mak)
-      :_(nub [mak (road |.((tube vax)))])
+      :_(nub [mak (tube vax)])
     ::
     ++  page-to-cage
       |=  =page
@@ -902,7 +902,7 @@
         [cag nub]
       =^  =tube  nub  (build-tube mok mak)
       ~|  error-running-cast+[path mok mak]
-      :_(nub [mak (road |.((tube q.cag)))])
+      :_(nub [mak (tube q.cag)])
     ::
     ++  run-pact
       |=  [old=page diff=page]
@@ -948,7 +948,7 @@
       %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
-      =/  res=vase  (road |.((slap sut hoon.pile)))
+      =/  res=vase  (slap sut hoon.pile)
       [[%vase res] nub]
     ::
     ++  build-file
