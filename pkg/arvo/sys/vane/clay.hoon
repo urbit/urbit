@@ -4549,8 +4549,11 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
-    =.  ..abet
-      (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::  TODO: enable if we can reduce memory usage
+    ::
+    ::  =.  ..abet
+    ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
