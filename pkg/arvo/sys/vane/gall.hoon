@@ -523,6 +523,11 @@
         ?~  error=error.sign-arvo
           ~
         `[[%leaf (trip tag.u.error)] tang.u.error]
+      ::  send a %cork if we get a nack upon initial subscription
+      ::
+      =?  mo-core
+          &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
+        (mo-pass [%sys wire] %a %cork ship)
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
