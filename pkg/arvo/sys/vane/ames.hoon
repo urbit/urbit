@@ -2764,19 +2764,18 @@
           ::
           (emit [/ames]~ %pass wire %b %rest next-wake)
         =/  nax-bone=^bone  (mix 0b10 bone)
-        %-  %+  trace  odd.veb
-            =/  dat  [her.channel bone=nax-bone message-num=message-num -.task]
-            |.("remove naxplanation flow {<dat>}")
-        =.  snd.peer-state
-          ::  unconditionally delete possible naxplanation flows that
-          ::  could have been sent (e.g. nacks for initial subscriptions)
-          ::
-          (~(del by snd.peer-state) nax-bone)
+        =?  peer-core  (~(has by snd.peer-state) nax-bone)
+          %.  peer-core
+          %+  trace  odd.veb
+          =/  dat  [her.channel bone=nax-bone message-num=message-num -.task]
+          |.("remove naxplanation flow {<dat>}")
         =.  peer-state
           =,  peer-state
           %_  peer-state
+            ::  preemptively delete nax flows (e.g. nacks for initial %watches)
+            ::
+            snd      (~(del by (~(del by snd) bone)) nax-bone)
             rcv      (~(del by rcv) bone)
-            snd      (~(del by snd) bone)
             corked   (~(put in corked) bone)
             closing  (~(del in closing) bone)
             krocs    (~(del in krocs) bone)
