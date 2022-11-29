@@ -37,8 +37,10 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =/  bud
   ^~
+  =/  hash=@uw   (mix (mug ..zuse) zuse)
   =/  zuse=ming  |.(!>(..zuse))
   :*  zuse=zuse
+      hash=hash
       nave=(swat zuse !,(*hoon nave:clay))
       cork=(swat zuse !,(*hoon cork))
       same=(swat zuse !,(*hoon same))
@@ -206,8 +208,9 @@
 ::    recursively.
 ::
 +$  leak
-  $~  [*pour ~]
-  $:  =pour
+  $~  [0w0 *pour ~]
+  $:  zuse=@uw
+      =pour
       deps=(set leak)
   ==
 ::
@@ -1210,7 +1213,7 @@
       |=  [=mist next=$-(state [soak state])]
       ^-  [soak state]
       =^  top=(set leak)  stack.nub  stack.nub
-      =/  =leak  [(mist-to-pour mist) top]
+      =/  =leak  [hash.bud (mist-to-pour mist) top]
       =.  cycle.nub  (~(del in cycle.nub) mist)
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(put in i.stack.nub) leak))
