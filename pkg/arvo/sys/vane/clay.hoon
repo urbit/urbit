@@ -880,7 +880,7 @@
         (page-to-cage page)
       =^  [mark vax=vase]  nub  (page-to-cage page)
       =^  =tube  nub  (build-tube p.page mak)
-      :_(nub [mak (road |.((tube vax)))])
+      :_(nub [mak (tube vax)])
     ::
     ++  page-to-cage
       |=  =page
@@ -902,7 +902,7 @@
         [cag nub]
       =^  =tube  nub  (build-tube mok mak)
       ~|  error-running-cast+[path mok mak]
-      :_(nub [mak (road |.((tube q.cag)))])
+      :_(nub [mak (tube q.cag)])
     ::
     ++  run-pact
       |=  [old=page diff=page]
@@ -948,7 +948,7 @@
       %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
-      =/  res=vase  (road |.((slap sut hoon.pile)))
+      =/  res=vase  (slap sut hoon.pile)
       [[%vase res] nub]
     ::
     ++  build-file
@@ -4549,8 +4549,11 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
-    =.  ..abet
-      (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::  TODO: enable if we can reduce memory usage
+    ::
+    ::  =.  ..abet
+    ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
@@ -4941,6 +4944,25 @@
         =/  den  ((de now rof hen ruf) our desk.arg.req)
         abet:(stay:den ver.arg.req)
       [moves ..^$]
+    ::
+        [%trim ~]
+      =:    fad.ruf      *flow
+            dos.rom.ruf
+          %-  ~(run by dos.rom.ruf)
+          |=  =dojo
+          dojo(fod.dom *flue)
+        ::
+            hoy.ruf
+          %-  ~(run by hoy.ruf)
+          |=  =rung
+          %=    rung
+              rus
+            %-  ~(run by rus.rung)
+            |=  =rede
+            rede(fod.dom *flue)
+          ==
+        ==
+      [~ ..^$]
     ==
   ::
       %tire
@@ -4952,25 +4974,7 @@
     [hen %give %tire %& tore:(lu now rof hen ruf)]~
   ::
       %tomb  (tomb-clue:tomb hen clue.req)
-      %trim
-    =:    fad.ruf      *flow
-          dos.rom.ruf
-        %-  ~(run by dos.rom.ruf)
-        |=  =dojo
-        dojo(fod.dom *flue)
-      ::
-          hoy.ruf
-        %-  ~(run by hoy.ruf)
-        |=  =rung
-        %=    rung
-            rus
-          %-  ~(run by rus.rung)
-          |=  =rede
-          rede(fod.dom *flue)
-        ==
-      ==
-    [~ ..^$]
-  ::
+      %trim  [~ ..^$]
       %vega
     ::  wake all desks, then send pending notifications
     ::
