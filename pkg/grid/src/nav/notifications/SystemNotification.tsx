@@ -98,7 +98,7 @@ export const BaseBlockedNotification = () => {
           >
             <h2 className="h4">Skip System Update</h2>
             <p>
-              Skipping the application fo an incoming System Update will grant you the ability to
+              Skipping the application for an incoming System Update will grant you the ability to
               continue using incompatible apps at the cost of an urbit that&apos;s not up to date.
             </p>
             <p>
