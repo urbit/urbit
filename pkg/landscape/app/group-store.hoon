@@ -186,30 +186,26 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ?:  ?=([%pyre *] wire)
-      =^  cards  state
-        (take-pyre:gc t.wire sign)
-      [cards this]
-    ?:  ?=([%gladio ~] wire)
-      (on-agent:def wire sign)
-    ?:  ?=([%gladio @ ~] wire)
-      =^  cards  state
-        (take-migrate:gc sign)
-      [cards this]
-    ?.  ?=([%try-rejoin @ *] wire)
-      (on-agent:def wire sign)
-    ?>  ?=(%poke-ack -.sign)
-    =/  rid=resource  (de-path:resource t.t.wire)
-    ?~  p.sign
-      =/  =cage
-        [%pull-hook-action !>([%add entity.rid rid])]
-      :_  this
-      [%pass / %agent [our.bowl %group-pull-hook] %poke cage]~
-    =/  nack-count=@ud  (slav %ud i.t.wire)
-    =/  wakeup=@da
-      (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
-    :_  this
-    [%pass wire %arvo %b %wait wakeup]~
+    =^  cards  state
+      ?+    wire  [- state]:(on-agent:def wire sign)
+          [%pyre *]      (take-pyre:gc t.wire sign)
+          [%gladio @ ~]  (take-migrate:gc sign)
+      ::
+          [%try-rejoin @ *]
+        ?>  ?=(%poke-ack -.sign)
+        =/  rid=resource  (de-path:resource t.t.wire)
+        ?~  p.sign
+          =/  =cage
+            [%pull-hook-action !>([%add entity.rid rid])]
+          :_  state
+          [%pass / %agent [our.bowl %group-pull-hook] %poke cage]~
+        =/  nack-count=@ud  (slav %ud i.t.wire)
+        =/  wakeup=@da
+          (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
+        :_  state
+        [%pass wire %arvo %b %wait wakeup]~
+      ==
+    [cards this]
   ::
   ++  on-arvo
     |=  [=wire =sign-arvo]
