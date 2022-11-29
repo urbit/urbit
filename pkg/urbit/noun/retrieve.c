@@ -1029,63 +1029,46 @@ c3_w
 u3r_met(c3_y  a_y,
         u3_atom b)
 {
-  c3_assert(u3_none != b);
-  c3_assert(_(u3a_is_atom(b)));
+  c3_dessert(u3_none != b);
+  c3_dessert(_(u3a_is_atom(b)));
 
   if ( b == 0 ) {
     return 0;
   }
-  else {
-    /* gal_w: number of words besides (daz_w) in (b).
-    ** daz_w: top word in (b).
-    */
-    c3_w gal_w;
-    c3_w daz_w;
+  /* gal_w: number of words besides (daz_w) in (b).
+  ** daz_w: top word in (b).
+  */
+  c3_w gal_w;
+  c3_w daz_w;
 
-    if ( _(u3a_is_cat(b)) ) {
-      gal_w = 0;
-      daz_w = b;
-    }
-    else {
-      u3a_atom* b_u = u3a_to_ptr(b);
-
-      gal_w = (b_u->len_w) - 1;
-      daz_w = b_u->buf_w[gal_w];
-    }
-
-    switch ( a_y ) {
-      case 0:
-      case 1:
-      case 2: {
-        /* col_w: number of bits in (daz_w)
-        ** bif_w: number of bits in (b)
-        */
-        c3_w bif_w, col_w;
-
-        if ( gal_w > ((UINT32_MAX - 35) >> 5) ) {
-          return u3m_bail(c3__fail);
-        }
-
-        col_w = c3_bits_word(daz_w);
-        bif_w = col_w + (gal_w << 5);
-
-        return (bif_w + ((1 << a_y) - 1)) >> a_y;
-      }
-
-      STATIC_ASSERT((UINT32_MAX > ((c3_d)u3a_maximum << 2)),
-                    "met overflow");
-
-      case 3: return (gal_w << 2) + ((c3_bits_word(daz_w) +  7) >> 3);
-
-      case 4: return (gal_w << 1) + ((c3_bits_word(daz_w) + 15) >> 4);
-
-      default: {
-        c3_y gow_y = (a_y - 5);
-
-        return ((gal_w + 1) + ((1 << gow_y) - 1)) >> gow_y;
-      }
-    }
+  if ( _(u3a_is_cat(b)) ) {
+    gal_w = 0;
+    daz_w = b;
   }
+  else {
+    u3a_atom* b_u = u3a_to_ptr(b);
+
+    gal_w = (b_u->len_w) - 1;
+    daz_w = b_u->buf_w[gal_w];
+  }
+
+  /* 5 because 1<<2 bytes in c3_w, 1<<3 bits in byte.
+     aka log2(CHAR_BIT * sizeof gal_w)
+     a_y < 5 informs whether we shift return left or right
+     */
+  if (a_y < 5) {
+    c3_y max_y = (1 << a_y) - 1;
+    c3_y gow_y = 5 - a_y;
+
+    if (gal_w > ((UINT32_MAX - (32 + max_y)) >> gow_y))
+      return u3m_bail(c3__fail);
+
+    return (gal_w << gow_y)
+      + ((c3_bits_word(daz_w) + max_y)
+         >> a_y);
+  }
+  c3_y gow_y = (a_y - 5);
+  return ((gal_w + 1) + ((1 << gow_y) - 1)) >> gow_y;
 }
 
 /* u3r_bit():
