@@ -37,7 +37,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =/  bud
   ^~
-  =/  zuse=ming  |.(!>(..zuse))                         ::  XX do better
+  =/  zuse=ming  |.(!>(..zuse))
   :*  zuse=zuse
       nave=(swat zuse !,(*hoon nave:clay))
       cork=(swat zuse !,(*hoon cork))
@@ -194,7 +194,7 @@
 ::
 +$  soak
   $%  [%cage =cage]
-      [%vase vase=ming]
+      [%ming =ming]
       [%arch dir=(map @ta ming)]
       [%dais =dais]
       [%tube =tube]
@@ -622,7 +622,7 @@
       |=  mak=mark
       ^-  [ming state]
       ~|  %error-building-mark^mak
-      %-  soak-vase
+      %-  soak-ming
       %+  gain-sprig  nave+mak  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) nave+mak)
@@ -639,7 +639,7 @@
         %+  gain-leak  nave+mak
         |=  nob=state
         =.  nub  nob
-        :_  nub  :-  %vase
+        :_  nub  :-  %ming
         ^-  ming  ::  ming of nave
         %+  swat
           (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
@@ -664,7 +664,7 @@
       %+  gain-leak  nave+mak
       |=  nob=state
       =.  nub  nob
-      :_  nub  :-  %vase
+      :_  nub  :-  %ming
       ^-  ming  ::  ming of nave
       %+  swat  (shed (with-face cor+cor) zuse.bud)
       !,  *hoon
@@ -746,13 +746,13 @@
       |=  [a=mark b=mark]
       ^-  [ming state]
       ~|  error-building-cast+[a b]
-      %-  soak-vase
+      %-  soak-ming
       %+  gain-sprig  cast+a^b  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
       ?:  =([%mime %hoon] [a b])
-        :_(nub [%vase =>(..zuse |.(!>(|=(m=mime q.q.m))))])
+        :_(nub [%ming =>(..zuse |.(!>(|=(m=mime q.q.m))))])
       ::  try +grow; is there a +grow core with a .b arm?
       ::
       %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
@@ -767,7 +767,7 @@
         %+  gain-leak  cast+a^b
         |=  nob=state
         =.  nub  nob
-        :_  nub  :-  %vase
+        :_  nub  :-  %ming
         %+  swat  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
@@ -781,7 +781,7 @@
         %+  gain-leak  cast+a^b
         |=  nob=state
         =.  nub  nob
-        :_(nub vase+|.(p.rab))
+        :_(nub ming+|.(p.rab))
       ::  try +jump
       ::
       =/  jum  (mule (swat old tsgl/[limb/b limb/%jump]))
@@ -793,7 +793,7 @@
         %+  gain-leak  cast+a^b
         |=  nob=state
         =.  nub  nob
-        :_(nub vase+same.bud)
+        :_(nub ming+same.bud)
       ~|(no-cast-from+[a b] !!)
     ::
     ++  compose-casts
@@ -804,7 +804,7 @@
       %+  gain-leak  cast+x^z
       |=  nob=state
       =.  nub  nob
-      :_  nub  :-  %vase
+      :_  nub  :-  %ming
       %+  swat
         (with-faces uno+uno dos+dos ~)
       !,(*hoon |=(_+<.uno (dos (uno +<))))
@@ -889,7 +889,7 @@
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
-      %-  soak-vase
+      %-  soak-ming
       %+  gain-sprig  file+path  |.
       =.  stack.nub  [~ stack.nub]
       %-  (trace 1 |.("make file {(spud path)}"))
@@ -905,7 +905,7 @@
       |=  nob=state
       =.  nub  nob
       =/  res=ming  (swat sut hoon.pile)
-      [[%vase res] nub]
+      [[%ming res] nub]
     ::
     ++  build-file
       |=  =path
@@ -1192,7 +1192,7 @@
       ==
     ::
     ++  soak-cage  |=([s=soak n=state] ?>(?=(%cage -.s) [cage.s n]))
-    ++  soak-vase  |=([s=soak n=state] ?>(?=(%vase -.s) [vase.s n]))
+    ++  soak-ming  |=([s=soak n=state] ?>(?=(%ming -.s) [ming.s n]))
     ++  soak-dais  |=([s=soak n=state] ?>(?=(%dais -.s) [dais.s n]))
     ++  soak-tube  |=([s=soak n=state] ?>(?=(%tube -.s) [tube.s n]))
     ++  soak-arch  |=([s=soak n=state] ?>(?=(%arch -.s) [dir.s n]))
