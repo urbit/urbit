@@ -64,6 +64,8 @@ export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkL
     }
 
     await toggleInstall('base', otaSponsor);
+    await useHarkStore.getState().archiveNote(bin, lid);
+
     push('/leap/upgrading');
   }, []);
 
