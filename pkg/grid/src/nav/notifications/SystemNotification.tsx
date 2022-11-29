@@ -1,6 +1,6 @@
 import { pick, partition } from 'lodash';
 import React, { useCallback } from 'react';
-import { kilnBump, Pike } from '@urbit/api';
+import { HarkBin, HarkLid, kilnBump, Pike } from '@urbit/api';
 import { useHistory } from 'react-router-dom';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
@@ -12,6 +12,7 @@ import useKilnState, { usePike } from '../../state/kiln';
 
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
+import { useHarkStore } from '../../state/hark';
 
 export const RuntimeLagNotification = () => (
   <section
@@ -41,7 +42,7 @@ function pikeIsBlocked(newKelvin: number, pike: Pike) {
   return !pike.wefts?.find(({ kelvin }) => kelvin === newKelvin);
 }
 
-export const BaseBlockedNotification = () => {
+export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkLid }) => {
   const basePike = usePike('base');
   const { push } = useHistory();
   // TODO: assert weft.name === 'zuse'??
@@ -68,6 +69,8 @@ export const BaseBlockedNotification = () => {
 
   const handleArchiveApps = useCallback(async () => {
     await api.poke(kilnBump());
+    await useHarkStore.getState().archiveNote(bin, lid);
+
     push('/leap/upgrading');
   }, []);
 
