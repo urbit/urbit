@@ -544,11 +544,17 @@
   ;:  weld
     (print-header (weld "+" name.item) adoc.item)
     [%txt ""]~
-    (styled [[`%br ~ `%b] 'product:']~)
-    (print-header "" pdoc.item)
-    [%txt ""]~
-    (styled [[`%br ~ `%b] 'default arm in core:']~)
-    (print-header "" cdoc.item)
+    ?~  pdoc.item
+      *(list sole-effect)
+    %-  zing  :~  (styled [[`%br ~ `%b] 'product:']~)
+                  (print-header "" pdoc.item)
+                  [%txt ""]~
+              ==
+    ?~  cdoc.item
+      *(list sole-effect)
+    %-  zing  :~  (styled [[`%br ~ `%b] 'default arm in core:']~)
+                  (print-header "" cdoc.item)
+              ==
   ==
 ::
 ::  +print-face: renders documentation for a face
@@ -572,8 +578,8 @@
   ~?  >>  debug  %print-header
   ;:  weld
     (styled [[`%br ~ `%g] (crip name)]~)
-    ?~  doc
-      (styled [[`%br ~ `%r] '(undocumented)']~)
+    ?~  doc  *(list sole-effect)
+::      (styled [[`%br ~ `%r] '(undocumented)']~)
     :~  :-  %tan
         %-  flop
         ;:  weld
