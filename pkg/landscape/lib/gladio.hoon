@@ -6,6 +6,9 @@
 /-  *group
 |_  =bowl:gall
 +$  card  card:agent:gall
+::  if false, indicates that OTA should be done in one go, in order to
+::  allow for testing on partial testnets
+++  split-ota   &
 ++  import-club
   |=  [=^groups =associations:met =network:gra]
   %-  ~(gas by *imports:club:i)
@@ -74,10 +77,8 @@
 ++  associations-raw
   .^(* (scry %metadata-store /export/noun))
 ++  export
-  ~>  %bout.[1 %export-jam]
   %-  jam
   ^-  *
-  ~>  %bout.[1 %export-scry]
   :~  [%group-store groups-raw]
       [%metadata-store associations-raw]
   ==
@@ -143,16 +144,20 @@
           heap-flags=(flag-importer %graph-validator-link)
           diary-flags=(flag-importer %graph-validator-publish)
       ==
-  :_  ships
-  %+  welp  (migrate-ship our.bowl)
-  :*  (poke-our %groups group-import+!>(imports))
-      (poke-our %chat import-flags+!>(chat-flags))
-      (poke-our %heap import-flags+!>(heap-flags))
-      (poke-our %diary import-flags+!>(diary-flags))
-      (poke-our %chat club-imports+!>(clubs))
-      ?~  dms  ~
-      (poke-our %chat dm-imports+!>(p.u.dms))^~
-  ==
+  =/  setup=(list card)
+    %+  welp  (migrate-ship our.bowl)
+    :*  (poke-our %groups group-import+!>(imports))
+        (poke-our %chat import-flags+!>(chat-flags))
+        (poke-our %heap import-flags+!>(heap-flags))
+        (poke-our %diary import-flags+!>(diary-flags))
+        (poke-our %chat club-imports+!>(clubs))
+        ?~  dms  ~
+        (poke-our %chat dm-imports+!>(p.u.dms))^~
+    ==
+  ?.  split-ota
+    :_  ~
+    (welp setup (zing (turn ~(tap in (~(del in ships) our.bowl)) migrate-ship)))
+  [setup ships]
 ::
 ++  migrate-ship
   |=  her=ship

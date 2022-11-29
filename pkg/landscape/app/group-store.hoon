@@ -228,9 +228,9 @@
 ++  poke-export
   ^-  (quip card _state)
   :_  state
-  =;  =(fyrd:khan cage)
-    [%pass /export %arvo %k %fard fyrd]~
-  [q.byk.bol %keep noun+!>(~(export gladio bol))]
+  =;  =cage
+    [%pass /export %agent [our.bol %hood] %poke cage]~
+  drum-put+!>([/groups/jam ~(export gladio bol)])
 ::
 ++  poke-migrate
   ^-  (quip card _state)
