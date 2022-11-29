@@ -462,12 +462,12 @@
     ::    [%vega ~]
     ::
         %vega
-      +>.$::
+      +>.$
+    ::
     ::  in response to memory pressure
     ::    [%trim p=@ud]
     ::
         %trim
-      ::TODO  consider %ruin-ing long-offline comets
       +>.$
     ::
     ::  watch private keys
@@ -736,12 +736,10 @@
   ++  subscribers-on-ship
     |=  =ship
     ^-  (set duct)
-    =/  specific-subs  (~(get ju ney.zim) ship)
-    =/  general-subs=(set duct)
-      ?:  ?=(?(%czar %king %duke) (clan:title ship))
-        nel.zim
-      ~
-    (~(uni in specific-subs) general-subs)
+    ::  union of general and ship-specific subs
+    ::
+    %-  ~(uni in nel.zim)
+    (~(get ju ney.zim) ship)
   ::
   ++  feed
     |_  ::  hen: subscription source
@@ -997,7 +995,7 @@
 =|  lex=state-2
 |=  $:  ::  now: current time
         ::  eny: unique entropy
-        ::  ski: namespace resolver
+        ::  rof: namespace resolver
         ::
         now=@da
         eny=@uvJ
