@@ -91,8 +91,8 @@
           cards  
         %-  welp 
         :_  cards
-        :~  [%pass / %agent [our dap]:bowl %poke noun+!>(%export)]
-            [%pass / %agent [our dap]:bowl %poke noun+!>(%migrate)]
+        :~  [%pass /pyre/export %agent [our dap]:bowl %poke noun+!>(%export)]
+            [%pass /pyre/migrate %agent [our dap]:bowl %poke noun+!>(%migrate)]
             [%pass / %agent [our %hood]:bowl %poke %kiln-install !>([%groups ~zod %groups])]
         ==
       ==
@@ -186,6 +186,10 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
+    ?:  ?=([%pyre *] wire)
+      =^  cards  state
+        (take-pyre:gc t.wire sign)
+      [cards this]
     ?:  ?=([%gladio ~] wire)
       (on-agent:def wire sign)
     ?:  ?=([%gladio @ ~] wire)
@@ -243,6 +247,15 @@
     [%pass /gladio/(scot %p ship) %agent [ship %groups] %watch /init]
   =/  cards  (welp cards-1 cards-2)
   [cards state(wait wait)]
+::
+++  take-pyre
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _state)
+  :_  state
+  ?>  ?=(%poke-ack -.sign)
+  ?~  p.sign
+    ~
+  [%pass / %pyre leaf/"{<wire>} failed" u.p.sign]~
 ::
 ++  take-migrate
   |=  =sign:agent:gall
