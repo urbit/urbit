@@ -46,7 +46,7 @@
   ::  make flow
   ::
   %-  (slog leaf+"pill: filling flow for {<des>}" ~)
-  =^  tow  ruf  abet:(park:den & yoki *rang:clay)
+  =^  tow  ruf  abet:(park:den | & yoki *rang:clay)
   =.  den  ((de:clay-gate now *roof *duct ruf) our des)
   =/  pas=(list path)
     %+  murn  ~(tap in ~(key by fad.ruf))

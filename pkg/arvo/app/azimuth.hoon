@@ -6,22 +6,16 @@
     default-agent,
     verb,
     dbug
-::  Generally don't update the snapshot until we have clay tombstoning.
-::
-/*  snap  %azimuth-snapshot  /app/azimuth/version-0/azimuth-snapshot
 ::  To update, run from dojo:
 ::    -azimuth-snap-state %default 'version-0'
 ::
 ::  To recreate from a full list of logs (at /app/azimuth/logs/eth-logs):
 ::    -azimuth-snap-logs %default 'version-0'
 ::
-=/  snap=snap-state  snap
-=/  last-snap=@      number.id.snap
-::
 =,  jael
 |%
 +$  app-state
-  $:  %6
+  $:  %7
       url=@ta
       =net
       refresh=_~m5
@@ -30,10 +24,14 @@
       own=owners
       spo=sponsors
       logs=(list =event-log:rpc:ethereum)
+      sap=snap-state
   ==
 ::
 +$  poke-data
-  $%  ::  %listen
+  $%  ::  %load: load snapshot
+      ::
+      [%load snap=snap-state]
+      ::  %listen
       ::
       [%listen whos=(list ship) =source:jael]
       ::  %watch: configure node url and network
@@ -75,14 +73,18 @@
       ==
     ::
     ++  init-timer
-      |=  =bowl:gall
+      |=  at=@da
       ^-  card
-      [%pass /init %arvo %b %wait now.bowl]
+      [%pass /init %arvo %b %wait at]
     ::
     ++  start-log-retrieval
       |=  [=ship args=vase]
       ^-  card
       [%pass /wa %agent [ship %eth-watcher] %poke %eth-watcher-poke args]
+    ::
+    ++  start-azimuth-load
+      ^-  card
+      [%pass /al %arvo %k %fard %base %azimuth-load %noun !>(~)]
     --
 ::
 =<
@@ -92,22 +94,10 @@
       def   ~(. (default-agent this %|) bowl)
   ::
   ++  on-init
-    ^-  (quip card _this)
-    =/  points=@ud  ~(wyt by points.nas.snap)
-    %-  %-  slog
-        [leaf+"ship: loading azimuth snapshot ({<points>} points)"]~
-    ::
-    =:  net.state   %default
-        nas.state   nas.snap
-        own.state   owners.snap
-        spo.state   sponsors.snap
-        url.state   'http://eth-mainnet.urbit.org:8545'
-      ==
     :_  this
     ?:  .^(? %j /(scot %p our.bowl)/fake/(scot %da now.bowl))
       ~
-    ~[(nuke-azimuth-tracker bowl) (init-timer bowl)]
-  ::
+    ~[(init-timer now.bowl)]
   ++  on-save   !>(state)
   ++  on-load
     |=  old=vase
@@ -122,7 +112,7 @@
         `old-state
       %-  %-  slog  :_  ~
           leaf+"ship: loading snapshot with {<(lent logs.old-state)>} events"
-      =.  +.state  +:(state-5-to-6 old-state)
+      =.  +.state  +:(state-6-to-7 (state-5-to-6 old-state))
       =^  cards  state
         (%*(run-logs do nas.state *^state:naive) logs.state)
       [(jael-update:do (to-udiffs:do cards)) state]
@@ -130,12 +120,12 @@
       ?.  ?=(%2 -.old-state)
         `old-state
       ~&  >  '%azimuth: updating to state 3'
-      =.  +.state  +:(state-5-to-6 old-state)
+      =.  +.state  +:(state-6-to-7 (state-5-to-6 old-state))
       ::  replace naive state and indices with snapshot
       ::
-      =:  nas.state   nas.snap
-          own.state   owners.snap
-          spo.state   sponsors.snap
+      =:  nas.state   nas.sap.state
+          own.state   owners.sap.state
+          spo.state   sponsors.sap.state
           logs.state  ~
           ::  TODO: shouldn't be needed but have seen eth-watcher
           ::        threads use a url='' if this is not used
@@ -144,8 +134,8 @@
         ==
       =/  points=@ud  ~(wyt by points.nas.state)
       %-  %-  slog  :_  ~
-          leaf+"ship: processing azimuth snapshot ({<points>} points)"
-      =/  snap-cards=udiffs:point  (run-state:do id.snap points.nas.state)
+          leaf+"ship: processing azimuth snapshot (~{<points>} points)"
+      =/  snap-cards=udiffs:point  (run-state:do id.sap.state points.nas.state)
       :_  [%3 url net whos nas own spo logs]:state
       %+  weld
         (jael-update:do snap-cards)
@@ -160,22 +150,30 @@
     =^  cards-4  old-state
       ?.  ?=(%4 -.old-state)  [cards-3 old-state]
       =^  cards  this
-        %-  %*(. on-poke +.state.this +:(state-5-to-6 old-state))
+        %-  %*(. on-poke +.state.this +:(state-6-to-7 (state-5-to-6 old-state)))
         [%azimuth-poke !>([%watch [url net]:old-state])]
       ~&  >  '%azimuth: updating to state 5'
       [cards [%5 url net whos nas own spo logs]:state.this]
     =?  old-state  ?=(%5 -.old-state)
       (state-5-to-6 old-state)
-    ?>  ?=(%6 -.old-state)
+    =?  old-state  ?=(%6 -.old-state)
+      (state-6-to-7 old-state)
+    ?>  ?=(%7 -.old-state)
     [cards-4 this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1-2-3-4-5 app-state)
+    ++  app-states  $%(state-0 state-1-2-3-4-5 state-6 app-state)
     ::
-    ++  state-5-to-6
-      |=  state-1-2-3-4-5
-      ^-  app-state
-      [%6 url net ~m5 whos nas own spo logs]
-    ::
+    +$  state-6
+      $:  %6
+          url=@ta
+          =net
+          refresh=_~m5
+          whos=(set ship)
+          nas=^state:naive
+          own=owners
+          spo=sponsors
+          logs=(list =event-log:rpc:ethereum)
+      ==
     +$  state-1-2-3-4-5
       $:  ?(%1 %2 %3 %4 %5)
           url=@ta
@@ -196,6 +194,15 @@
           own=owners
           logs=(list =event-log:rpc:ethereum)
       ==
+    ++  state-5-to-6
+      |=  state-1-2-3-4-5
+      ^-  state-6
+      [%6 url net ~m5 whos nas own spo logs]
+    ::
+    ++  state-6-to-7
+      |=  state-6
+      ^-  app-state
+      [%7 url net refresh whos nas own spo logs *snap-state]
     --
   ::
   ++  on-poke
@@ -219,9 +226,9 @@
         [(subscribe-to-eth-watcher bowl)]~
       ::
           %resnap
-        =:  nas.state  nas.snap
-            own.state  owners.snap
-            spo.state  sponsors.snap
+        =:  nas.state  nas.sap.state
+            own.state  owners.sap.state
+            spo.state  sponsors.sap.state
           ==
         `this
       ==
@@ -229,7 +236,23 @@
     ?.  ?=(%azimuth-poke mark)
       (on-poke:def mark vase)
     =+  !<(poke=poke-data vase)
+    |-
     ?-    -.poke
+        %load
+      =/  points=@ud  ~(wyt by points.nas.snap.poke)
+      %-  %-  slog
+          [leaf+"ship: loading azimuth snapshot ({<points>} points)"]~
+      ::
+      =:  net.state   %default
+          nas.state   nas.snap.poke
+          own.state   owners.snap.poke
+          spo.state   sponsors.snap.poke
+          url.state   'http://eth-mainnet.urbit.org:8545'
+          sap.state   snap.poke
+          logs.state  ~
+        ==
+      $(poke [%kick ~])
+    ::
         %listen
       [[(listen-to-azimuth (silt whos.poke) source.poke)]~ this]
     ::
@@ -237,8 +260,8 @@
       =/  last-block=@
         ?^  logs.state
           number:(last-block-id:dice logs.state)
-        ~&  >>  %no-logs-in-azimuth-state
-        last-snap
+        ::  ~&  >>  %no-logs-in-azimuth-state
+        number.id.sap.state
       =+  [our=(scot %p our.bowl) now=(scot %da now.bowl)]
       =+  .^(dudes=(set [dude:gall ?]) %ge our %base now /)
       =/  running=?  (~(has in dudes) [%eth-watcher &])
@@ -246,43 +269,44 @@
         |((~(has in dudes) [%eth-watcher &]) (~(has in dudes) [%eth-watcher |]))
       :_  this
       =/  cards=(list card)
-        :-  ::  %jael will re-subscribe to get all azimuth diffs
-            ::
-            (listen-to-azimuth ~ [%| dap.bowl])
-        ::  we poke eth-watcher to retrieve logs from the latest we have
-        ::
-        %*(start do last-snap last-block)
-      =?  cards  !running
-        ::  restart %eth-watcher
-        ::
-        ~&  >>  %starting-eth-watcher
-        =/  rein=[desk rein]  [%base %.y [%eth-watcher ~ ~] ~]
-        :_  cards
-        [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>(rein)]
-      =?  cards  !installed
+        ?:  installed
+          ~
         ::  reinstall %base desk
         ::
         =+  spo=(sein:title [our now our]:bowl)
         ~&  >>  re-installing-base-from+spo
         =/  fresh=[desk ship desk]  [%base spo %kids]
+        [%pass /fresh %agent [our.bowl %hood] %poke kiln-install+!>(fresh)]~
+      =?  cards  !running
+        ::  restart %eth-watcher
+        ::
+        ~&  >>  %starting-eth-watcher
+        =/  rein=[desk rein]  [%base [%eth-watcher %&] ~ ~]
         :_  cards
-        [%pass /fresh %agent [our.bowl %hood] %poke kiln-install+!>(fresh)]
-      ::  resubscribe if we somehow get unsubscribed from eth-watcher
-      ::
-      ?:  (~(has by wex.bowl) [/eth-watcher our.bowl %eth-watcher])
-        cards
-      ~&  >>  %resubscribing-to-eth-watcher
-      [(subscribe-to-eth-watcher bowl) cards]
+        [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>(rein)]
+      =.  cards
+        ::  we poke eth-watcher to retrieve logs from the latest we have
+        ::
+        (weld %*(start do number.id.sap.state last-block) cards)
+      =?  cards  !(~(has by wex.bowl) [/eth-watcher our.bowl %eth-watcher])
+        ::  resubscribe if we somehow get unsubscribed from eth-watcher
+        ::
+        [(subscribe-to-eth-watcher bowl) cards]
+      =.  cards
+        ::  %jael will re-subscribe to get all azimuth diffs
+        ::
+        [(listen-to-azimuth ~ [%| dap.bowl]) cards]
+      (flop cards)
     ::
         %watch
-      =:  nas.state   ?:(?=(%default net.poke) nas.snap *^state:naive)
-          own.state   ?:(?=(%default net.poke) owners.snap ~)
-          spo.state   ?:(?=(%default net.poke) sponsors.snap ~)
+      =:  nas.state   ?:(?=(%default net.poke) nas.sap.state *^state:naive)
+          own.state   ?:(?=(%default net.poke) owners.sap.state ~)
+          spo.state   ?:(?=(%default net.poke) sponsors.sap.state ~)
           net.state   net.poke
           url.state   url.poke
           logs.state  ~
         ==
-      [start:do this]
+      `this
     ==
   ::
   ++  on-watch
@@ -309,7 +333,7 @@
         :-  %leaf
         "ship: processing azimuth snapshot ({<points>} points)"
     =/  snap-cards=udiffs:point
-      (%*(run-state do logs.state ~) id.snap points.nas.state)
+      (%*(run-state do logs.state ~) id.sap.state points.nas.state)
     [(weld (jael-update:do snap-cards) start:do) this]
   ::
   ++  on-leave  on-leave:def
@@ -318,13 +342,14 @@
     ^-  (unit (unit cage))
     |^
     ?+  path  (on-peek:def path)
-        [%x %logs ~]     ``noun+!>(logs.state)
-        [%x %nas ~]      ``noun+!>(nas.state)
-        [%x %dns ~]      ``noun+!>(dns.nas.state)
-        [%x %own ~]      ``noun+!>(own.state)
-        [%x %spo ~]      ``noun+!>(spo.state)
-        [%x %refresh ~]  ``atom+!>(refresh.state)
-        [%x %point @ ~]  ``noun+(point i.t.t.path)
+        [%x %logs ~]       ``noun+!>(logs.state)
+        [%x %nas ~]        ``noun+!>(nas.state)
+        [%x %dns ~]        ``noun+!>(dns.nas.state)
+        [%x %own ~]        ``noun+!>(own.state)
+        [%x %spo ~]        ``noun+!>(spo.state)
+        [%x %refresh ~]    ``atom+!>(refresh.state)
+        [%x %point @ ~]    ``noun+(point i.t.t.path)
+        [%x %last-snap ~]  ``noun+!>(sap.state)
     ==
     ::
     ++  point
@@ -369,19 +394,24 @@
   ::
   ++  on-arvo
     |=  [=wire =sign-arvo]
+    ?:  &(=(/al wire) ?=(%arow +<.sign-arvo))
+      ?-    -.p.sign-arvo
+          %&  `this
+          %|
+        %-  (slog 'loading azimuth snapshot failed! still trying' p.p.sign-arvo)
+        [~[(init-timer (add ~s10 now.bowl))] this]
+      ==
     ?.  &(=(/init wire) ?=(%wake +<.sign-arvo))
       (on-arvo:def wire sign-arvo)
     ?^  error.sign-arvo
       %-  (slog 'azimuth: failed to initialize!' ~)
       `this
     :_  this
-    ~[(subscribe-to-eth-watcher bowl) (listen-to-azimuth ~ [%| dap.bowl])]
+    ~[start-azimuth-load]
   ::
   ++  on-fail   on-fail:def
   --
 |_  =bowl:gall
-::  TODO: maybe flop the endianness here so metamask signs it in normal
-::  order?
 ::
 ++  verifier
   ^-  ^verifier:naive
@@ -514,7 +544,7 @@
     :+  %watch  /[dap.bowl]
     ^-  config:eth-watcher
     :*  url.state  =(%czar (clan:title our.bowl))  refresh.state  ~h30
-        (max launch.net ?:(=(net.state %default) +(last-snap) 0))
+        (max launch.net ?:(=(net.state %default) +(number.id.sap.state) 0))
         ~
         ~[azimuth.net]
         ~[naive.net]

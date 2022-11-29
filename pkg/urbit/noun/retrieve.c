@@ -864,7 +864,7 @@ u3r_p(u3_noun  a,
   if ( (c3y == u3r_cell(a, &feg, &nux)) &&
        (c3y == u3r_sing(feg, b)) )
   {
-    *c = nux;
+    if ( c ) *c = nux;
     return c3y;
   }
   else return c3n;
@@ -1731,10 +1731,6 @@ _cr_mug_next(u3a_pile* pil_u, u3_noun veb)
       else {
         u3a_cell* cel_u = (u3a_cell*)veb_u;
         _cr_mugf* fam_u = u3a_push(pil_u);
-
-        //  check for overflow
-        //
-        u3a_pile_sane(pil_u);
 
         fam_u->mug_l = 0;
         fam_u->cel   = veb;

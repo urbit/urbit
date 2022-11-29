@@ -19,6 +19,7 @@
 ::  $gang: infinite set of peers
 ::  $mark: symbolic content type
 ::  $mien: orientation
+::  $ming: deferred vase
 ::  $page: untyped cage
 ::  +omen: namespace path and data
 ::  $ship: network identity
@@ -200,9 +201,9 @@
       lac=?
       ver=(unit vere)
       fat=(unit (axal (cask)))
-      lul=(unit (trap vase))
-      zus=(unit (trap vase))
-      van=(map term (trap vase))
+      lul=(unit ming)
+      zus=(unit ming)
+      van=(map term ming)
   ==
 +$  heir
   $%  $:  %grub
@@ -738,7 +739,7 @@
       ?@  epic  arvo
       %=  $
         epic  +.epic
-        arvo  .*(arvo [%9 2 %10 [6 %1 -.epic] %0 1])
+        arvo  .*([arvo -.epic] [%9 2 %10 [6 %0 3] %0 2])
       ==
     ::
     ::  +boot: event 2: bootstrap a kernel from source
@@ -773,7 +774,7 @@
       ::
       ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
       =/  compiler-tool
-        .*(compiler-gate [%9 2 %10 [6 %1 noun/hoon.log] %0 1])
+        .*([compiler-gate noun/hoon.log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  switch to the second-generation compiler.  we want to be
       ::  able to generate matching reflection nouns even if the
@@ -781,7 +782,7 @@
       ::  generate last-generation spans for `!>`, etc.
       ::
       ~>  %slog.[0 leaf+"1-d"]
-      =.  compiler-gate  .*(0 +:compiler-tool)
+      =.  compiler-gate  .*(0 +.compiler-tool)
       ::
       ::  get the span (type) of the kernel core, which is the context
       ::  of the compiler gate.  we just compiled the compiler,
@@ -791,18 +792,18 @@
       ::
       ~>  %slog.[0 leaf+"1-e"]
       =/  kernel-span
-        -:.*(compiler-gate [%9 2 %10 [6 %1 [-.compiler-tool '+>']] %0 1])
+        -:.*([compiler-gate -.compiler-tool '+>'] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  compile the arvo source against the kernel core.
       ::
       ~>  %slog.[0 leaf+"1-f"]
       =/  kernel-tool
-        .*(compiler-gate [%9 2 %10 [6 %1 [kernel-span arvo.log]] %0 1])
+        .*([compiler-gate kernel-span arvo.log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  create the arvo kernel, whose subject is the kernel core.
       ::
       ~>  %slog.[0 leaf+"1-g"]
-      [.*(+>:compiler-gate +:kernel-tool) epic.log]
+      [.*(+>.compiler-gate +.kernel-tool) epic.log]
     --
   ::
   ::  |adapt
@@ -1570,7 +1571,7 @@
         ::
           %crud  =?  lag.zen  ?&  ?=(%exit mote.goof.buz)
                                   ?=(^ tang.goof.buz)
-                                  ?=(%leaf -.i.tang.goof.buz)  :: XX ?@
+                                  ?=([%leaf *] i.tang.goof.buz)
                                   ?=(%wyrd (crip p.i.tang.goof.buz))
                               ==
                    ~&(%lagging &)
@@ -1853,15 +1854,15 @@
               zuse/;;(@ud q:(slap zus limb/%zuse))
           ==
       =/  nav  %-  ~(run by van)
-               |=(a=(trap vase) (settle:va:part (slym $:a u.who)))
+               |=(a=ming (settle:va:part (slym $:a u.who)))
       :^  ~  arvo  *debt
       [[u.who now u.eny] [lac] [u.ver |] u.fat lul zus nav]
     ::
     ++  what
       =>  |%
           ++  smit
-            |=  [cap=tape sub=(trap vase) pax=path txt=@t]
-            ^-  (trap vase)
+            |=  [cap=tape sub=ming pax=path txt=@t]
+            ^-  ming
             ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
             %-  road  |.
             ~_  leaf/"{cap}: build failed"

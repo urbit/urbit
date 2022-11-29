@@ -1247,10 +1247,10 @@
     =|  [l=(unit) r=(unit)]
     |.  ^-  ?
     ?~  a   &
-    ?&  ?~(l & (gor n.a u.l))
-        ?~(r & (gor u.r n.a))
-        ?~(l.a & ?&((mor n.a n.l.a) $(a l.a, l `n.a)))
-        ?~(r.a & ?&((mor n.a n.r.a) $(a r.a, r `n.a)))
+    ?&  ?~(l & &((gor n.a u.l) !=(n.a u.l)))
+        ?~(r & &((gor u.r n.a) !=(u.r n.a)))
+        ?~(l.a & ?&((mor n.a n.l.a) !=(n.a n.l.a) $(a l.a, l `n.a)))
+        ?~(r.a & ?&((mor n.a n.r.a) !=(n.a n.r.a) $(a r.a, r `n.a)))
     ==
   ::
   ++  bif                                               ::  splits a by b
@@ -6245,14 +6245,14 @@
 ++  mure
   |=  tap=(trap)
   ^-  (unit)
-  =/  ton  (mink [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  =/  ton  (mink [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
   ?.(?=(%0 -.ton) ~ `product.ton)
 ::  +mute: untyped virtual
 ::
 ++  mute
   |=  tap=(trap)
   ^-  (each * (list tank))
-  =/  ton  (mock [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  =/  ton  (mock [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
   ?-  -.ton
     %0  [%& p.ton]
   ::
@@ -6265,9 +6265,8 @@
 ::
 ++  slum
   ~/  %slum
-  |=  [gat=* sam=*]
-  ^-  *
-  .*(gat [%9 2 %10 [6 %1 sam] %0 1])
+  |=  sub=[gat=* sam=*]
+  .*(sub [%9 2 %10 [6 %0 3] %0 2])
 ::  +soft: virtual clam
 ::
 ++  soft
@@ -6543,6 +6542,7 @@
   ==                                                    ::
 +$  tyre  (list [p=term q=hoon])                        ::
 +$  tyke  (list (unit hoon))                            ::
++$  ming  (trap vase)                                   ::  deferred vase
 ::                                                      ::::::  virtual nock
 +$  nock  $^  [p=nock q=nock]                           ::  autocons
           $%  [%1 p=*]                                  ::  constant
@@ -11411,13 +11411,12 @@
   ==
 ::
 ++  slew                                                ::  get axis in vase
-  |=  [axe=@ vax=vase]  ^-  (unit vase)
-  ?.  |-  ^-  ?
-      ?:  =(1 axe)  &
-      ?.  ?=(^ q.vax)  |
-      $(axe (mas axe), q.vax .*(q.vax [0 (cap axe)]))
-    ~
-  `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
+  |=  [axe=@ vax=vase]
+  =/  typ  |.  (~(peek ut p.vax) %free axe)
+  |-  ^-  (unit vase)
+  ?:  =(1 axe)  `[$:typ q.vax]
+  ?@  q.vax     ~
+  $(axe (mas axe), q.vax ?-((cap axe) %2 -.q.vax, %3 +.q.vax))
 ::
 ++  slim                                                ::  identical to seer?
   |=  old=vise  ^-  vase
@@ -11484,11 +11483,33 @@
 ::  +swat: deferred +slap
 ::
 ++  swat
-  |=  [tap=(trap vase) gen=hoon]
-  ^-  (trap vase)
+  |=  [tap=ming gen=hoon]
+  ^-  ming
   =/  gun  (~(mint ut p:$:tap) %noun gen)
+  =>  [tap=tap gun=gun]
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
+::  +shed: deferred +slop
+::
+++  shed
+  |=  [hed=ming tal=ming]
+  ^-  ming
+  =/  cel  [%cell p:$:hed p:$:tal]
+  =>  [cel=cel hed=hed tal=tal]
+  |.  ~+
+  [cel [q:$:hed q:$:tal]]
+::  +shut: deferred +slam
+::
+++  shut
+  |=  [gat=ming sam=ming]
+  ^-  ming
+  =/  typ=type  [%cell p:$:gat p:$:sam]
+  =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+  =/  gun  (~(mint ut typ) %noun gen)
+  =>  [hed=p.gun gat=gat sam=sam]
+  |.  ~+
+  ::  inline +slum
+  [hed .*(q:$:gat [%9 2 %10 [6 %1 q:$:sam] %0 1])]
 ::
 ::::  5d: parser
   ::
