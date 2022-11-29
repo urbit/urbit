@@ -5,10 +5,10 @@
 =>
   ::    dprint-types
   |%
-  ::    $overview: an overview of all named things in the type.
+  ::  $overview: an overview of all named things in the type.
   ::
-  ::  each element in the overview list is either a documentation for a sublist
-  ::  or an association betwen a term and documentation for it
+  ::    each element in the overview list is either a documentation for a sublist
+  ::    or an association betwen a term and documentation for it
   +$  overview  (list overview-item)
   ::
   ::  $overview-item: an element of an overview
@@ -28,7 +28,6 @@
             name=tape
             docs=what
             sut=type
-            con=coil
             children=(unit item)
         ==
         ::  inspecting a single arm on a core
@@ -51,7 +50,7 @@
             name=tape
             docs=what
             sut=type
-            con=coil
+            tom=tome
         ==
     ==
   ::
@@ -64,10 +63,10 @@
 ::
 ::  the entrypoint for finding docs within a type is +find-item-in-type.
 +|  %searching
-::    +find-item-in-type: returns the item to print while searching through topic
+::  +find-item-in-type: returns the item to print while searching through topic
 ::
-::  this gate is a thin wrapper around _hunt for usability, since the only entry
-::  point most users should care about is find-item:hunt
+::    this gate is a thin wrapper around _hunt for usability, since the only entry
+::    point most users should care about is find-item:hunt
 ::
 ++  find-item-in-type
   |=  [topics=(list term) sut=type]
@@ -75,7 +74,7 @@
   =/  top=(lest term)  topics
   ~(find-item hunt [top sut])
 ::
-::    +hunt: door used for refining the type while searching for doccords
+::  +hunt: door used for refining the type while searching for doccords
 ::
 ++  hunt
   |_  [topics=(lest term) sut=type]
@@ -206,7 +205,7 @@
     ^-  (unit item)
     ?>  ?=([%core *] sut)
     =*  compiled-against  find-item:this(sut p.sut)
-    `[%core (trip i.topics) *what sut q.sut compiled-against]
+    `[%core (trip i.topics) *what sut compiled-against]
   ::
   ++  return-face
     ^-  (unit item)
@@ -234,7 +233,7 @@
   ++  return-arm
     ^-  (unit item)
     ?>  ?=([%core *] sut)
-    =+  [adoc pdoc cdoc]=(all-arm-docs arm-hoon sut (trip i.topics))
+    =+  [adoc pdoc cdoc]=(arm-docs i.topics sut)
     ::TODO: should this p.sut be sut? or the compiled type of the arm?
     `[%arm (trip i.topics) adoc pdoc cdoc arm-hoon p.sut]
   ::
@@ -242,17 +241,17 @@
     ^-  (unit item)
     ?>  ?=([%core *] sut)
     =/  tom=tome  (~(got by q.r.q.sut) i.topics)
-    `[%chapter (trip i.topics) p.tom sut q.sut]
+    `[%chapter (trip i.topics) p.tom sut (~(got by q.r.q.sut) i.topics)]
   ::
   ++  return-arm-core
     ^-  (unit item)
     ?>  ?=([%core *] sut)
-    =+  [adoc pdoc cdoc]=(all-arm-docs arm-hoon sut (trip i.topics))
+    =+  [adoc pdoc cdoc]=(arm-docs i.topics sut)
     =/  dox=what  ?~(adoc ?~(pdoc ~ pdoc) adoc)
     =/  at  arm-type
     ?>  ?=([%core *] at)
     =*  compiled-against  return-item:this(sut p.sut)
-    `[%core (trip i.topics) dox at q.at compiled-against]
+    `[%core (trip i.topics) dox at compiled-against]
   ::
   ++  return-item
     ^-  (unit item)
@@ -291,176 +290,135 @@
   ++  arm-hoon
     ^-  hoon
     ?>  ?=([%core *] sut)
-    (need (^arm-hoon i.topics q.sut))
+    (^arm-hoon i.topics sut)
   ::
   ++  arm-type
     ^-  type
     ?>  ?=([%core *] sut)
-    (~(play ut sut) arm-hoon)
+    (^arm-type i.topics sut)
   --
 ::
-::  +arm-hoon: looks for an arm in a coil and returns its hoon
+::  +arm-hoon: looks for an arm in a core type and returns its hoon
 ++  arm-hoon
-  |=  [arm-name=term con=coil]
-  ~?  >>  debug  %arm-hoon
-  ^-  (unit hoon)
-  =/  tomes=(list [p=term q=tome])  ~(tap by q.r.con)
+  |=  [nom=term sut=type]
+  ^-  hoon
+  ?>  ?=([%core *] sut)
+  =/  tomes=(list [p=term q=tome])  ~(tap by q.r.q.sut)
   |-
-  ?~  tomes
-    ~
-  =+  gen=(~(get by q.q.i.tomes) arm-name)
+  ?~  tomes  !!
+  =+  gen=(~(get by q.q.i.tomes) nom)
   ?~  gen
     $(tomes t.tomes)
-  `u.gen
+  u.gen
 ::
-::  +help-from-hint: gets the help from a %help $hint and returns it as a unit
-++  help-from-hint
-  |=  sut=type
-  ^-  (unit help)
-  ?+    sut  ~
-      [%hold *]
-    ~?  >>  debug  %help-from-hold
-    $(sut (~(play ut p.sut) q.sut))
-  ::
-      [%hint *]
-    ~?  >>  debug  %help-from-hint
-    ?.  ?=(%help -.q.p.sut)
-      ~
-    `p.q.p.sut
-  ==
+::  +arm-type: looks for an arm in a core type and returns its type
+++  arm-type
+  |=  [nom=term sut=type]
+  ^-  type
+  ?>  ?=([%core *] sut)
+  (~(play ut sut) (arm-hoon nom sut))
 ::
-::    +arm-product-docs: returns 0, 1, or 2 whats for an arm
-::
-::  this arm should be handed the compiled type of the hoon of an arm, as well
-::  as the name of that arm. it checks for up to 2 nested hints on the outermost
-::  layer of the type. if you have 2, it is presumed to be arm-doc followed by
-::  product-doc. if you only have one, we check .cuff in the $help of the hint
-::  to determine whether it is an arm doc or product doc.
-::
-::  this returns ~ if there are no docs. if there are docs, the first one is the
-::  arm-doc, and the second one is the product-doc.
-::
-++  arm-product-docs
-  |=  [sut=type name=term]
-  ^-  (unit [what what])
-  =/  doc-one=(unit help)
-    (help-from-hint sut)
-  ?~  doc-one
-    ~?  >  debug  %doc-one-empty
-    ~  ::  no need to look for a second doc if there is no first one
-  ?:  =(~ cuff.u.doc-one)
-      :: doc-one is a product-doc
-      [~ [~ `crib.u.doc-one]]
-  ?:  !=(name ->.cuff.u.doc-one)
-    :: link on doc-one doesnt match arm name, so that means its calling a
-    :: different arm and trying to use its docs. don't let it
+::  +hint-doc: returns docs if type is %help $hint w/ matching cuff
+++  hint-doc
+  |=  [=cuff sut=type]
+  ^-  what
+  ?.  &(?=([%hint *] sut) ?=([%help *] q.p.sut) =(cuff cuff.p.q.p.sut))
     ~
-  ~?  >  debug  :-  %doc-one  doc-one
-  =/  doc-two=(unit help)
-    ?.  ?=([%hint *] sut)
-      ~
-    (help-from-hint q.sut)
-  ?~  doc-two
-    ~?  >  debug  %doc-two-empty
-    :: if .cuff is non-empty, check that the link is for the arm
-    ?:  =(name ->.cuff.u.doc-one)
-      ~?  >  debug  %link-match
-      [~ [`crib.u.doc-one ~]]
-    ~?  >  debug  %link-doesnt-match-arm
-    ::  this can happen if +bar calls +foo which has doccords
-    [~ [`crib.u.doc-one ~]]
-  ::  doc-two is non-empty. make sure that doc-one is an arm-doc for this arm
-  ?>  =(name ->.cuff.u.doc-one)
-  [~ [`crib.u.doc-one `crib.u.doc-two]]
+  `crib.p.q.p.sut
 ::
-::    +all-arm-docs: grabs the docs for an arm.
+::  +arm-doc: returns arm doc of an arm
 ::
-::  there are three possible places with relevant docs for an arm:
-::  docs for the arm itself, docs for the product of the arm, and
-::  if the arm builds a core, docs for the default arm of that core.
+::    we just check if the $cuff is from a ++ or +$ arm but this will
+::    probably need to be revisited once more sophisticated cuffs are used
+++  arm-doc
+  |=  [nom=term sut=type]
+  ^-  what
+  ?~  (hint-doc [%funk nom]~ sut)
+    (hint-doc [%plan nom]~ sut)
+  (hint-doc [%funk nom]~ sut)
 ::
-::  arm-doc: docs written above the the arm
-::  product-doc: docs for the product of the arm
-::  core-doc: docs for the default arm of the core produced by the arm
-::  this will be the first of the arm-doc or product-doc on the default
-::  arm. maybe this should be recursive and/or give both but its a decision
-::  ill leave for later
+::  +prod-doc: wrapper for +hint-doc with empty cuff
+++  prod-doc
+  |=  sut=type
+  ^-  what
+  (hint-doc ~ sut)
 ::
-++  all-arm-docs
-  |=  [gen=hoon sut=type name=tape]
-  ~?  >  debug  %all-arm-docs
+::  +buc-doc: checks if type is core and returns docs on $ arm if it exists
+++  buc-doc
+  |=  sut=type
+  ^-  what
+  ?.  ?=([%core *] sut)
+    ~
+  ?~  (find [%$]~ (sloe sut))
+    ~
+  =/  sat=type  (arm-type %$ sut)
+  ?~  (arm-doc %$ sat)
+    (prod-doc sat)
+  (arm-doc %$ sat)
+::
+::  +arm-docs: grabs the docs for an arm.
+::
+::    there are three possible places with relevant docs for an arm:
+::    docs for the arm itself, docs for the product of the arm, and
+::    if the arm builds a core, docs for the default arm of that core.
+::
+::    .adoc: docs written above the the arm
+::    .pdoc: docs for the product of the arm
+::    .cdoc: docs for the default arm of the core produced by the arm
+++  arm-docs
+  |=  [nom=term sut=type]
   ^-  [what what what]
-  =+  hoon-type=(~(play ut sut) gen)
-  =+  arm-prod=(arm-product-docs hoon-type `@tas`(crip name))
-  |^
-  :: check arm-prod to determine how many layers to look into the type
-  :: for core docs
-  =/  depth=@  ?~  arm-prod  0
-    (add =(~ +<.arm-prod) =(~ +>.arm-prod))
-  ?+  depth  ``~
-    %0  ``(extract hoon-type)
-    %1  :+  +<.arm-prod
-          +>.arm-prod
-        ?>  ?=([%hint *] hoon-type)
-        (extract q.hoon-type)
-    %2  :+  +<.arm-prod
-          +>.arm-prod
-        ?>  ?=([%hint *] hoon-type)
-        ?>  ?=([%hint *] q.hoon-type)
-        (extract q.q.hoon-type)
-  ==
-  ::    +extract: grabs the first doc for the default arm of a core
-  ::
-  ::  this could end up being an arm doc or a product doc.
-  ::
-  ++  extract
-    |=  sut=type
-    ^-  what
-    ?.  ?=([%core *] sut)
-      ~?  >  debug  %no-nested-core  ~
-    ~?  >  debug  %found-nested-core
-    =+  carm=(arm-hoon %$ q.sut)
-    ?~  carm  ~?  >  debug  %empty-carm  ~
-    ~?  >  debug  %found-default-arm
-    =+  carm-type=(~(play ut sut) u.carm)
-    =/  hel=(unit help)  (help-from-hint carm-type)
-    ?~  hel
-      ~
-    `what``crib.u.hel
-  --
+  ?>  ?=([%core *] sut)
+  =/  sat=type  (~(play ut sut) (arm-hoon nom sut))
+  =/  adoc=what  (arm-doc nom sat)
+  =/  pdoc=what
+    ?~  adoc
+      (prod-doc sat)
+    ?>  ?=([%hint *] sat)
+    (prod-doc q.sat)
+  =/  cdoc=what
+    ?~  adoc
+      ?~  pdoc
+        (buc-doc sat)
+      ?>  ?=([%hint *] sat)
+      (buc-doc q.sat)
+    ?~  pdoc
+      ?>  ?=([%hint *] sat)
+      (buc-doc q.sat)
+    ?>  &(?=([%hint *] sat) ?=([%hint *] q.sat))
+    (buc-doc q.q.sat)
+  [adoc pdoc cdoc]
 ::
-::    +arm-and-chapter-overviews: returns an overview of a cores contents
+::    +arm-and-chapter-overviews: returns an overview of a core's contents
 ::
 ::  returns an overview for arms which are part of unnamed chapters, and
 ::  an overview of the named chapters
 ::
 ++  arm-and-chapter-overviews
-  |=  [sut=type con=coil core-name=tape]
+  |=  =item
   ^-  [overview overview]
-  =|  arm-docs=overview
-  =|  chapter-docs=overview
-  =/  tomes  ~(tap by q.r.con)
+  ?>  &(?=([%core *] item) ?=([%core *] sut.item))
+  =|  [adocs=overview cdocs=overview]
+  =/  tomes  ~(tap by q.r.q.sut.item)
   |-
   ?~  tomes
-    [(sort-overview arm-docs) (sort-overview chapter-docs)]
-  =*  current  i.tomes  ::[term tome]
-  ?~  p.current
+    [(sort-overview adocs) (sort-overview cdocs)]
+  ?~  p.i.tomes
     :: chapter has no name. add documentation for its arms to arm-docs
-    =.  arm-docs  (weld arm-docs (arms-as-overview q.q.current sut))
+    =.  adocs  (weld adocs (tome-as-overview q.i.tomes sut.item))
     $(tomes t.tomes)
   ::  chapter has a name. add to list of chapters
-  =.  chapter-docs
-    %+  weld  chapter-docs
+  =.  cdocs
+    %+  weld  cdocs
     ^-  overview
-    [%item :(weld "^" core-name "|" (trip -.current)) p.q.current]~
+    [%item :(weld "^" name.item "|" (trip -.i.tomes)) p.q.i.tomes]~
   $(tomes t.tomes)
 ::
 ::  +arms-in-chapter: returns an overview of the arms in a specific chapter
 ++  arms-in-chapter
-  |=  [sut=type con=coil name=tape]
+  |=  [sut=type tom=tome]
   ^-  overview
-  =/  tom=tome  (~(got by q.r.con) (crip name))
-  (sort-overview (arms-as-overview q.tom sut))
+  (sort-overview (tome-as-overview tom sut))
 ::
 ::  +sort-overview: sort items in an overview in alphabetical order
 ++  sort-overview
@@ -478,14 +436,13 @@
     [%item *]    name.ovr
   ==
 ::
-::  +arms-as-overview: translate a tome into an overview
-++  arms-as-overview
-  |=  [a=(map term hoon) sut=type]
+::  +tome-as-overview: translate a tome into an overview
+++  tome-as-overview
+  |=  [tom=tome sut=type]
   ^-  overview
-  %+  turn  ~(tap by a)
+  %+  turn  ~(tap by q.tom)
   |=  ar=(pair term hoon)
-  =+  [adoc pdoc cdoc]=(all-arm-docs q.ar sut (trip p.ar))
-  [%item (weld "+" (trip p.ar)) adoc]
+  [%item (weld "+" (trip p.ar)) (arm-doc p.ar (~(play ut sut) q.ar))]
 ::
 ::  +item-as-overview: changes an item into an overview
 ++  item-as-overview
@@ -531,77 +488,81 @@
   ~?  >>  debug  %print-item
   ^-  (list sole-effect)
   ?-  item
-    [%view *]     (print-overview items.item *(pair styl styl))
-    [%core *]     (print-core +.item)
-    [%arm *]      (print-arm +.item)
-    [%chapter *]  (print-chapter +.item)
-    [%face *]     (print-face +.item)
+    [%view *]     (print-overview item *(pair styl styl))
+    [%core *]     (print-core item)
+    [%arm *]      (print-arm item)
+    [%chapter *]  (print-chapter item)
+    [%face *]     (print-face item)
   ==
 ::
 ::  +print-core: renders documentation for a full core
 ++  print-core
-  |=  [name=tape docs=what sut=type con=coil uit=(unit item)]
+  |=  =item
   ^-  (list sole-effect)
-  =+  [arms chapters]=(arm-and-chapter-overviews sut con name)
+  ?>  ?=([%core *] item)
+  =+  [arms chapters]=(arm-and-chapter-overviews item)
   =/  styles=(pair styl styl)  [[`%br ~ `%b] [`%br ~ `%m]]
   ;:  weld
-    (print-header (weld "^" name) docs)
+    (print-header (weld "^" name.item) docs.item)
   ::
-    ?~  arms
+  ?~  arms
       ~
-    (print-overview [%header `['arms:' ~] arms]~ styles)
+    (print-overview [%view [%header `['arms:' ~] arms]~] styles)
   ::
     ?~  chapters
       ~
-    (print-overview [%header `['chapters:' ~] chapters]~ styles)
+    (print-overview [%view [%header `['chapters:' ~] chapters]~] styles)
   ::
-    =+  compiled=(item-as-overview uit)
+    =+  compiled=(item-as-overview children.item)
     ?~  compiled
       ~
-    (print-overview [%header `['compiled against: ' ~] compiled]~ styles)
+    (print-overview [%view [%header `['compiled against: ' ~] compiled]~] styles)
   ==
 ::
 ::  +print-chapter: renders documentation for a single chapter
 ++  print-chapter
-  |=  [name=tape doc=what sut=type con=coil]
+  |=  =item
   ^-  (list sole-effect)
+  ?>  ?=([%chapter *] item)
   ~?  >  debug  %print-chapter
   =/  styles=(pair styl styl)  [[`%br ~ `%b] [`%br ~ `%m]]
   ;:  weld
-    (print-header (weld "|" name) doc)
+    (print-header (weld "|" name.item) docs.item)
   ::
-    =+  arms=(arms-in-chapter sut con name)
+    =+  arms=(arms-in-chapter sut.item tom.item)
     ?~  arms
       ~
-    (print-overview [%header `['arms:' ~] arms]~ styles)
+    (print-overview [%view [%header `['arms:' ~] arms]~] styles)
   ==
 ::
 ::  +print-arm: renders documentation for a single arm in a core
 ++  print-arm
-  |=  [name=tape adoc=what pdoc=what cdoc=what gen=hoon sut=type]
+  |=  =item
   ^-  (list sole-effect)
+  ?>  ?=([%arm *] item)
   ~?  >>  debug  %print-arm
   ;:  weld
-    (print-header (weld "+" name) adoc)
+    (print-header (weld "+" name.item) adoc.item)
     [%txt ""]~
     (styled [[`%br ~ `%b] 'product:']~)
-    (print-header "" pdoc)
+    (print-header "" pdoc.item)
     [%txt ""]~
     (styled [[`%br ~ `%b] 'default arm in core:']~)
-    (print-header "" cdoc)
+    (print-header "" cdoc.item)
   ==
 ::
 ::  +print-face: renders documentation for a face
 ++  print-face
-  |=  [name=tape doc=what children=(unit item)]
+  |=  =item
   ^-  (list sole-effect)
+  ?>  ?=([%face *] item)
   ~?  >>  debug  %print-face
   ;:  weld
-    (print-header (weld "." name) doc)
+    (print-header (weld "." name.item) docs.item)
     [%txt ""]~
-    ?~  children
+    ?~  children.item
       ~
-    (print-item u.children)
+    (print-item u.children.item)
   ==
 ::
 ::  +print-header: prints name and docs only
@@ -621,49 +582,47 @@
     ==  ==
   ==
 ::
-::    +print-overview: prints summaries of several items
+::  +print-overview: prints summaries of several items
 ::
-::  the (list styl) provides styles for each generation of child
-::  items
+::    the (pair styl styl) provides styles for each generation of child items
 ++  print-overview
-  |=  [=overview styles=(pair styl styl)]
+  |=  [view=item styles=(pair styl styl)]
+  ?>  ?=([%view *] view)
   ~?  >>  debug  %print-overview
   =|  out=(list sole-effect)
   |-  ^-  (list sole-effect)
-  ?~  overview  out
-  =/  oitem  i.overview
+  ?~  items.view  out
+  =/  oitem  i.items.view
   ?-    oitem
       [%header *]
     %=  $
-      overview  t.overview
-      out  ;:  weld
-             out
-             ?~  doc.oitem  ~
-             (styled [p.styles (crip "{(trip p.u.doc.oitem)}")]~)
-             ^$(overview children.oitem)
-          ==
-    ==
+      items.view  t.items.view
+      out         ;:  weld
+                    out
+                    ?~  doc.oitem  ~
+                    (styled [p.styles (crip "{(trip p.u.doc.oitem)}")]~)
+                    ^$(view [%view children.oitem])
+    ==            ==
   ::
       [%item *]
     %=  $
-      overview  t.overview
-      out  ;:  weld
-             out
-             (styled [q.styles (crip name.oitem)]~)
-             ?~  doc.oitem
-               %-  styled
-               :~  [[`%br ~ `%r] '(undocumented)']
-                   [[~ ~ ~] '']
-               ==
-             ^-  (list sole-effect)
-             [%tan [[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]]~
-           ==
-    ==
+      items.view  t.items.view
+      out         ;:  weld
+                    out
+                    (styled [q.styles (crip name.oitem)]~)
+                    ?~  doc.oitem
+                      %-  styled
+                      :~  [[`%br ~ `%r] '(undocumented)']
+                          [[~ ~ ~] '']
+                      ==
+                    ^-  (list sole-effect)
+                    [%tan [[%leaf ""] [%leaf "{(trip p.u.doc.oitem)}"] ~]]~
+    ==            ==
   ==
 ::
-::    +print-sections: renders a list of sections as tang
+::  +print-sections: renders a list of sections as tang
 ::
-::  prints the longform documentation
+::    prints the longform documentation
 ++  print-sections
   |=  sections=(list sect)
   ^-  tang
