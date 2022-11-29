@@ -4760,7 +4760,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%13                                       ::  vane version
+    $:  ver=%14                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5090,7 +5090,8 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%13 raft-13]
+        $%  [%14 raft-14]
+            [%13 raft-13]
             [%12 raft-12]
             [%11 raft-11]
             [%10 raft-10]
@@ -5099,12 +5100,25 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-13  raft
+      +$  raft-14  raft
+      +$  raft-13
+        $:  rom=room-13
+            hoy=(map ship rung-13)
+            ran=rang
+            fad=flow-13
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            bug=[veb=@ mas=@]
+        ==
       +$  raft-12
         $:  rom=room-11
             hoy=(map ship rung-11)
             ran=rang
-            fad=flow
+            fad=flow-13
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -5115,15 +5129,26 @@
         $:  rom=room-11
             hoy=(map ship rung-11)
             ran=rang
-            fad=flow
+            fad=flow-13
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
             pud=(unit [=desk =yoki])
         ==
+      +$  room-13
+        $:  hun=duct
+            dos=(map desk dojo-13)
+        ==
       +$  room-11
         $:  hun=duct
             dos=(map desk dojo-11)
+        ==
+      +$  dojo-13
+        $:  qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
         ==
       +$  dojo-11
         $:  qyx=cult
@@ -5132,6 +5157,18 @@
             pew=regs
             fiz=melt
         ==
+      +$  dome-13
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=flue-13
+            wic=(map weft yoki)
+            liv=zest
+            ren=rein
+        ==
       +$  dome-11
         $:  let=aeon
             hit=(map aeon tako)
@@ -5139,10 +5176,22 @@
             tom=(map tako norm)
             nor=norm
             mim=(map path mime)
-            fod=flue
+            fod=flue-13
+        ==
+      +$  rung-13
+        $:  rus=(map desk rede-13)
         ==
       +$  rung-11
         $:  rus=(map desk rede-11)
+        ==
+      +$  rede-13
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
         ==
       +$  rede-11
         $:  lim=@da
@@ -5152,6 +5201,21 @@
             per=regs
             pew=regs
             fiz=melt
+        ==
+      +$  flue-13
+        [spill=(set leak-13) sprig=(map mist [=leak-13 soak=soak-13])]
+      +$  flow-13  (map leak-13 [refs=@ud soak=soak-13])
+      +$  leak-13
+        $~  [*pour ~]
+        $:  =pour
+            deps=(set leak-13)
+        ==
+      +$  soak-13
+        $%  [%cage =cage]
+            [%vase =vase]
+            [%arch dir=(map @ta vase)]
+            [%dais =dais]
+            [%tube =tube]
         ==
       +$  raft-10
         $:  rom=room-10
@@ -5372,7 +5436,8 @@
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
-  ?>  ?=(%13 -.old)
+  =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
+  ?>  ?=(%14 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -5424,7 +5489,7 @@
       |=  =dojo-8
       ^-  dojo-10
       =/  dom  dom.dojo-8
-      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
+      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow-13])
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -5433,7 +5498,7 @@
       |=  =rede-8
       ^-  rede-10
       =/  dom  dom.rede-8
-      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
+      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow-13])
     ==
   ::  +raft-9-to-10: add .dist-upgraded
   ::
@@ -5532,7 +5597,7 @@
       ==
     ::
         |3
-      :-  *flow
+      :-  *flow-13
       %=  |3.raf
         mon  (~(run by mon.raf) |=(=beam beam(r ud+0)))
         |3   pud.raf
@@ -5601,7 +5666,7 @@
     ::                      ::  maybe have kiln send one-time list of desks
     ::
     =;  rof
-      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom %live))))
+      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo-13 d(liv.dom %live))))
     ^-  raft-13
     %=  raf
       dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
@@ -5611,24 +5676,53 @@
     ::
     ++  dojo-11-to-13
       |=  doj=dojo-11
-      ^-  dojo
+      ^-  dojo-13
       doj(dom (dome-11-to-13 dom.doj))
     ::
     ++  rung-11-to-13
       |=  rug=rung-11
-      ^-  rung
+      ^-  rung-13
       rug(rus (~(run by rus.rug) rede-11-to-13))
     ::
     ++  rede-11-to-13
       |=  red=rede-11
-      ^-  rede
+      ^-  rede-13
       red(dom (dome-11-to-13 dom.red))
     ::
     ++  dome-11-to-13
       |=  dom=dome-11
-      ^-  dome
+      ^-  dome-13
       dom(fod [fod.dom ~ liv=%dead ren=~])
     --
+  ::  +raft-13-to-14:
+  ::
+  ::    wipe $flow, $flue caches
+  ::
+  ++  raft-13-to-14
+    |=  raf=raft-13
+    ^-  raft-14
+    %=    raf
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  =dojo-13
+      ^-  dojo
+      %=  dojo-13
+        fod.dom  *flue
+      ==
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-13
+      %-  ~(run by rus.rung-13)
+      |=  =rede-13
+      ^-  rede
+      %=  rede-13
+        fod.dom  *flue
+      ==
+    ::
+        fad
+      *flow
+    ==
   --
 ::
 ++  scry                                              ::  inspect
