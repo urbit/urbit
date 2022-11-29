@@ -51,14 +51,23 @@ export const BaseBlockedNotification = () => {
     const [b, u] = partition(Object.entries(s.pikes), ([, pike]) => pikeIsBlocked(newKelvin, pike));
     return [b.map(([d]) => d), u.map(([d]) => d)] as const;
   });
+  const { toggleInstall } = useKilnState();
 
   const blockedCharges = Object.values(pick(charges, blocked));
   const count = blockedCharges.length;
 
-  const handlePauseOTAs = useCallback(() => {}, []);
+  const handlePauseOTAs = useCallback(async () => {
+    const otaSponsor = basePike?.sync?.ship;
+    if (!otaSponsor) {
+      return;
+    }
+
+    await toggleInstall('base', otaSponsor);
+    push('/leap/upgrading');
+  }, []);
 
   const handleArchiveApps = useCallback(async () => {
-    api.poke(kilnBump());
+    await api.poke(kilnBump());
     push('/leap/upgrading');
   }, []);
 
