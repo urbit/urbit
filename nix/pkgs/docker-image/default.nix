@@ -1,4 +1,4 @@
-{ urbit, curl, libcap, coreutils, bashInteractive, dockerTools, writeScriptBin, amesPort ? 34343, httpPort ? 80, loom ? 31 }:
+{ urbit, curl, libcap, coreutils, bashInteractive, dockerTools, writeScriptBin, amesPort ? 34343 }:
 let
   startUrbit = writeScriptBin "start-urbit" ''
     #!${bashInteractive}/bin/bash
@@ -7,8 +7,8 @@ let
 
     # set defaults
     amesPort=${toString amesPort}
-    httpPort=${toString httpPort}
-    loom=${toString loom}
+    httpPort="80"
+    loom="31"
 
     # check args
     for i in "$@"
