@@ -1,4 +1,4 @@
-{ urbit, curl, libcap, coreutils, bashInteractive, dockerTools, writeScriptBin, amesPort ? 34343 }:
+{ urbit, curl, libcap, coreutils, bashInteractive, dockerTools, writeScriptBin, amesPort ? 34343, httpPort ? 80, loom ? 31 }:
 let
   startUrbit = writeScriptBin "start-urbit" ''
     #!${bashInteractive}/bin/bash
@@ -6,9 +6,9 @@ let
     set -eu
 
     # set defaults
-    amesPort="34343"
-    httpPort="80"
-    loom="31"
+    amesPort=${toString amesPort}
+    httpPort=${toString httpPort}
+    loom=${toString loom}
 
     # check args
     for i in "$@"
@@ -69,3 +69,49 @@ let
 
     exec urbit $ttyflag -p $amesPort --http-port $httpPort  --loom $loom $dirname
     '';
+
+  getUrbitCode = writeScriptBin "get-urbit-code" ''
+    #!${bashInteractive}/bin/bash
+    raw=$(curl -s -X POST -H "Content-Type: application/json" \
+      -d '{ "source": { "dojo": "+code" }, "sink": { "stdout": null } }' \
+      http://127.0.0.1:12321)
+    # trim \n" from the end
+    trim="''${raw%\\n\"}"
+    # trim " from the start
+    code="''${trim#\"}"
+    echo "$code"
+    '';
+
+  resetUrbitCode = writeScriptBin "reset-urbit-code" ''
+    #!${bashInteractive}/bin/bash
+    curl=$(curl -s -X POST -H "Content-Type: application/json" \
+      -d '{ "source": { "dojo": "+hood/code %reset" }, "sink": { "app": "hood" } }' \
+      http://127.0.0.1:12321)
+    if [[ $? -eq 0 ]]
+    then
+      echo "OK"
+    else
+      echo "Curl error: $?"
+    fi
+    '';
+    
+in dockerTools.buildImage {
+  name = "urbit";
+  tag = "v${urbit.version}";
+  contents = [ bashInteractive urbit curl startUrbit getUrbitCode resetUrbitCode coreutils ];
+  runAsRoot = ''
+    #!${bashInteractive}
+    mkdir -p /urbit
+    mkdir -p /tmp
+    ${libcap}/bin/setcap 'cap_net_bind_service=+ep' /bin/urbit
+    '';
+  config = {
+    Cmd = [ "/bin/start-urbit" ];
+    Env = [ "PATH=/bin" ];
+    WorkingDir = "/urbit";
+    Volumes = {
+      "/urbit" = {};
+    };
+    Expose = [ "80/tcp" "${toString amesPort}/udp" ];
+  };
+}
