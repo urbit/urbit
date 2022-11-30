@@ -1993,22 +1993,22 @@ u3a_print_memory(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
   c3_assert( 0 != fil_u );
 
   c3_z byt_z = ((c3_z)wor_w * 4);
-  c3_z gib_z = (byt_z / 1000000000);
-  c3_z mib_z = (byt_z % 1000000000) / 1000000;
-  c3_z kib_z = (byt_z % 1000000) / 1000;
-  c3_z bib_z = (byt_z % 1000);
+  c3_z gib_z = (byt_z / (1 << 30));
+  c3_z mib_z = (byt_z % (1 << 30)) / (1 << 20);
+  c3_z kib_z = (byt_z % (1 << 20)) / (1 << 10);
+  c3_z bib_z = (byt_z % (1 << 10));
 
   if ( byt_z ) {
     if ( gib_z ) {
-      fprintf(fil_u, "%s: GB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
+      fprintf(fil_u, "%s: GiB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
               cap_c, gib_z, mib_z, kib_z, bib_z);
     }
     else if ( mib_z ) {
-      fprintf(fil_u, "%s: MB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
+      fprintf(fil_u, "%s: MiB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
               cap_c, mib_z, kib_z, bib_z);
     }
     else if ( kib_z ) {
-      fprintf(fil_u, "%s: KB/%" PRIc3_z ".%03" PRIc3_z "\r\n",
+      fprintf(fil_u, "%s: KiB/%" PRIc3_z ".%03" PRIc3_z "\r\n",
               cap_c, kib_z, bib_z);
     }
     else if ( bib_z ) {
@@ -2035,21 +2035,21 @@ static void
 _ca_print_memory(FILE* fil_u, c3_w wor_w)
 {
   c3_z byt_z = ((c3_z)wor_w * 4);
-  c3_z gib_z = (byt_z / 1000000000);
-  c3_z mib_z = (byt_z % 1000000000) / 1000000;
-  c3_z kib_z = (byt_z % 1000000) / 1000;
-  c3_z bib_z = (byt_z % 1000);
+  c3_z gib_z = (byt_z / (1 << 30));
+  c3_z mib_z = (byt_z % (1 << 30)) / (1 << 20);
+  c3_z kib_z = (byt_z % (1 << 20)) / (1 << 10);
+  c3_z bib_z = (byt_z % (1 << 10));
 
   if ( gib_z ) {
-    fprintf(fil_u, "GB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
+    fprintf(fil_u, "GiB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
             gib_z, mib_z, kib_z, bib_z);
   }
   else if ( mib_z ) {
-    fprintf(fil_u, "MB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
+    fprintf(fil_u, "MiB/%" PRIc3_z ".%03" PRIc3_z ".%03" PRIc3_z "\r\n",
             mib_z, kib_z, bib_z);
   }
   else if ( kib_z ) {
-    fprintf(fil_u, "KB/%" PRIc3_z ".%03" PRIc3_z "\r\n",
+    fprintf(fil_u, "KiB/%" PRIc3_z ".%03" PRIc3_z "\r\n",
             kib_z, bib_z);
   }
   else {
