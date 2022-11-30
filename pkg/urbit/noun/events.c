@@ -1240,8 +1240,27 @@ void
 u3e_ward(u3_post low_p, u3_post hig_p)
 {
 #ifdef U3_GUARD_PAGE
-  if ( (low_p > gar_pag_p) || (hig_p < gar_pag_p) ) {
+  const u3p(c3_w) gar_p = gar_pag_p;
+
+  if ( (low_p > gar_p) || (hig_p < gar_p) ) {
     _ce_center_guard_page();
+
+    if ( 0 != mprotect(u3a_into(gar_p),
+                       pag_siz_i,
+                       (PROT_READ | PROT_WRITE)) )
+    {
+      fprintf(stderr, "loom: failed to unprotect old guard page: %s\r\n",
+                      strerror(errno));
+      c3_assert(0);
+    }
+
+    {
+      c3_w pag_w = gar_p >> u3a_page;
+      c3_w blk_w = (pag_w >> 5);
+      c3_w bit_w = (pag_w & 31);
+
+      u3P.dit_w[blk_w] |= (1 << bit_w);
+    }
   }
 #endif
 }
