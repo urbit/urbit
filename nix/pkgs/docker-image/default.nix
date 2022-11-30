@@ -6,16 +6,26 @@ let
     set -eu
 
     # set defaults
-    amesPort=${toString amesPort}
+    amesPort="34343"
+    httpPort="80"
+    loom="31"
 
     # check args
     for i in "$@"
     do
     case $i in
-        -p=*|--port=*)
-            amesPort="''${i#*=}"
-            shift
-            ;;
+      -p=*|--port=*)
+          amesPort="${i#*=}"
+          shift
+          ;;
+      --http-port=*)
+          httpPort="${i#*=}"
+          shift
+          ;;
+      --loom=*)
+          loom="${i#*=}"
+          shift
+          ;;
     esac
     done
 
@@ -28,12 +38,6 @@ let
       ttyflag="-t"
     fi
 
-    # If the LOOMSIZE var is specified, use the --loom flag with the value
-    if [ -z "$LOOMSIZE ]; then
-      loomsize=""
-    else
-      loomsize="--loom $LOOMSIZE"
-    fi
 
     # Check if there is a keyfile, if so boot a ship with its name, and then remove the key
     if [ -e *.key ]; then
@@ -44,7 +48,7 @@ let
       mv $keyname /tmp
 
       # Boot urbit with the key, exit when done booting
-      urbit $ttyflag $loomsize -w $(basename $keyname .key) -k /tmp/$keyname -c $(basename $keyname .key) -p $amesPort -x
+      urbit $ttyflag -w $(basename $keyname .key) -k /tmp/$keyname -c $(basename $keyname .key) -p $amesPort -x --http-port $httpPort --loom $loom
 
       # Remove the keyfile for security
       rm /tmp/$keyname
@@ -63,57 +67,5 @@ let
     dirs=( $dirnames )
     dirname=''${dirnames[0]}
 
-    exec urbit $ttyflag -p $amesPort $dirname
+    exec urbit $ttyflag -p $amesPort --http-port $httpPort  --loom $loom $dirname
     '';
-
-  getUrbitCode = writeScriptBin "get-urbit-code" ''
-    #!${bashInteractive}/bin/bash
-
-    raw=$(curl -s -X POST -H "Content-Type: application/json" \
-      -d '{ "source": { "dojo": "+code" }, "sink": { "stdout": null } }' \
-      http://127.0.0.1:12321)
-
-    # trim \n" from the end
-    trim="''${raw%\\n\"}"
-
-    # trim " from the start
-    code="''${trim#\"}"
-
-    echo "$code"
-    '';
-
-  resetUrbitCode = writeScriptBin "reset-urbit-code" ''
-    #!${bashInteractive}/bin/bash
-
-    curl=$(curl -s -X POST -H "Content-Type: application/json" \
-      -d '{ "source": { "dojo": "+hood/code %reset" }, "sink": { "app": "hood" } }' \
-      http://127.0.0.1:12321)
-
-    if [[ $? -eq 0 ]]
-    then
-      echo "OK"
-    else
-      echo "Curl error: $?"
-    fi
-    '';
-    
-in dockerTools.buildImage {
-  name = "urbit";
-  tag = "v${urbit.version}";
-  contents = [ bashInteractive urbit curl startUrbit getUrbitCode resetUrbitCode coreutils ];
-  runAsRoot = ''
-    #!${bashInteractive}
-    mkdir -p /urbit
-    mkdir -p /tmp
-    ${libcap}/bin/setcap 'cap_net_bind_service=+ep' /bin/urbit
-    '';
-  config = {
-    Cmd = [ "/bin/start-urbit" ];
-    Env = [ "PATH=/bin" ];
-    WorkingDir = "/urbit";
-    Volumes = {
-      "/urbit" = {};
-    };
-    Expose = [ "80/tcp" "${toString amesPort}/udp" ];
-  };
-}
