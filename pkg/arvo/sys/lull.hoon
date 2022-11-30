@@ -1930,7 +1930,7 @@
         ::TODO  include target ship once remote scry exists?
     ==
   ::
-  +$  perm-arvo  ::TODO  more narrow
+  +$  perm-arvo
     $%  $:  %ames
         $?  %debug  ::  %sift %spew
         ==  ==
@@ -2019,11 +2019,11 @@
   ::    easier to just check for the optional permission's presence in :pes.
   ::
   ++  cred  !:
-    |=  [[our=ship dap=dude] pes=(set perm) =card:agent]
+    |=  [our=ship pes=(set perm) =card:agent]
     ^-  ?
     %+  levy  (rive card)
     |=  =card:agent
-    =/  mus  (must [our dap] card)
+    =/  mus  (must our card)
     ?@  mus  mus
     (have pes mus)
   ::  +have: check if mus, or a broader perm, is present in pes
@@ -2132,7 +2132,7 @@
   ::  +must: perm required for card, or loob if guaranteed
   ::
   ++  must  !:
-    |=  [[our=ship dap=dude] =card:agent]
+    |=  [our=ship =card:agent]
     ^-  $@(? perm)
     ?:  ?=(%give -.card)
       &

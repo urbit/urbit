@@ -1687,7 +1687,7 @@
         %+  murn  `(list card:agent)`(zing (turn caz rive))
         |=  =card:agent
         ^-  (unit [card:agent (unit perm)])
-        =/  mus  (must [our agent-name] card)
+        =/  mus  (must our card)
         ?@  mus  ?:(mus ~ `card^~)
         ?:  (have pes mus)  ~
         `[card `mus]
