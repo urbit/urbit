@@ -11,4 +11,4 @@
 =+  .^(=cone:clay %cx /(scot %p p.bec)//(scot %da now)/domes)
 %+  roll  arg
 |:  [*[on=? =dude:gall] rein=ren:(~(got by cone) [p.bec desk])]
-(~(put in rein) dude on)
+(~(put by rein) dude on)

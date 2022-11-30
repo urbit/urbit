@@ -1,6 +1,15 @@
 =,  clay
 =*  dude  dude:gall
 |%
++$  pike
+  $:  sync=(unit [=ship =desk])
+      hash=@uv
+      =zest
+      wic=(set weft)
+  ==
+::
++$  pikes  (map desk pike)
+::
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
@@ -51,7 +60,7 @@
     /[ego]/[syd]/[wen]/sys/kelvin
   ?.  .^(? %cu kel-path)
     leaf+"bad desk: {<syd>}"
-  =+  .^(=weft %cx kel-path)
+  =+  .^(=waft %cx kel-path)
   :+  %rose  ["" "{<syd>}" "::"]
   ^-  tang
   =/  hash  .^(@uv %cz /[ego]/[syd]/[wen])
@@ -72,9 +81,19 @@
     ?-  zest.dek
       %live  "running"
       %dead  "suspended"
-      %next  "suspended until next update"
+      %held  "suspended until next update"
     ==
-  :~  leaf/"/sys/kelvin:      {<[lal num]:weft>}"
+  =/  kul=tape
+    %+  roll
+      %+  sort
+        ~(tap in (waft-to-wefts:clay waft))
+      |=  [a=weft b=weft]
+      ?:  =(lal.a lal.b)
+        (lte num.a num.b)
+      (lte lal.a lal.b)
+    |=  [=weft =tape]
+    (welp " {<[lal num]:weft>}" tape)
+  :~  leaf/"/sys/kelvin:     {kul}"
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:         {<hash>}"
       ::
@@ -102,33 +121,7 @@
     leaf/"no %kids desk"
   =+  .^(hash=@uv %cz /[ego]/[syd]/[wen])
   leaf/"%kids %cz hash:     {<hash>}"
-::  +read-kelvin-foreign: read /sys/kelvin from a foreign desk
-::
-++  read-kelvin-foreign
-  |=  [=ship =desk =aeon]
-  ^-  weft
-  ~|  read-foreign-kelvin/+<
-  =/  her  (scot %p ship)
-  =/  syd  (scot %tas desk)
-  =/  yon  (scot %ud aeon)
-  ::
-  =/  dom  .^(dome cv/~[her syd yon])
-  =/  tak  (scot %uv (~(got by hit.dom) let.dom))
-  =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
-  =/  lob  (scot %uv (~(got by q.yak) /sys/kelvin))
-  =/  peg  .^(page cs/~[her syd yon %blob lob])
-  ;;(weft q.peg)
-::  +read-kelvin-local: read /sys/kelvin from a local desk
-::
-++  read-kelvin-local
-  |=  [our=ship =desk now=@da]
-  ^-  (unit weft)
-  ~|  read-kelvin-local+desk
-  =/  pax  (en-beam [our desk da+now] /sys/kelvin)
-  ?.  .^(? cu/pax)
-    ~
-  [~ .^(weft cx/pax)]
-::  +read-foreign: read file from a foreign desk
+::  +read-bill-foreign: read /desk/bill from a foreign desk
 ::
 ++  read-foreign
   |*  [=ship =desk =aeon =path =mold easy=*]

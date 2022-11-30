@@ -3,7 +3,7 @@
 !:
 =>  ..part
 |%
-++  lull  %329
+++  lull  %328
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -937,6 +937,9 @@
         [%| p=(list a) q=(list a)]                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a=mold (list (unce a)))                  ::  list change
+  +$  waft                                              ::  kelvin range
+    $^  [[%1 ~] p=(set weft)]                           ::
+    weft                                                ::
   +$  whom  (each ship @ta)                             ::  ship or named crew
   +$  yoki  (each yuki yaki)                            ::  commit
   +$  yuki                                              ::  proto-commit
@@ -949,7 +952,7 @@
         r=tako                                          ::  self-reference
         t=@da                                           ::  date
     ==                                                  ::
-  +$  zest  $~(%dead ?(%dead %live %next))              ::  how live
+  +$  zest  $~(%dead ?(%dead %live %held))              ::  how live
   ::                                                    ::
   ++  tire                                              ::  app state
     |%                                                  ::
@@ -1035,6 +1038,24 @@
   ::  +page-to-lobe: hash a page to get a lobe.
   ::
   ++  page-to-lobe  |=(page (shax (jam +<)))
+  ::
+  ++  cord-to-waft
+    |=  =cord
+    ^-  waft
+    =/  wefts=(list weft)
+      %+  turn  (rash cord (star (ifix [gay gay] tall:vast)))
+      |=  =hoon
+      !<(weft (slap !>(~) hoon))
+    ?:  ?=([* ~] wefts)
+      i.wefts
+    [[%1 ~] (sy wefts)]
+  ::
+  ++  waft-to-wefts
+    |=  kal=waft
+    ^-  (set weft)
+    ?^  -.kal
+      p.kal
+    [kal ~ ~]
   ::
   ::  +make-yaki: make commit out of a list of parents, content, and date.
   ::

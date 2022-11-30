@@ -62,11 +62,13 @@
     :_  old(- %3)  :_  ~
     ~(tire pass /tire)
   ?>  ?=(%3 -.old)
+  =/  cards-tire  [~(tire pass /tire) ~]
   =.  -.state  old
   ::  inflate-cache needs to be called after the state is set
   ::
   =.  +.state  inflate-cache
-  [(weld cards-1 cards-2) this]
+  [:(weld cards-1 cards-2 cards-tire) this]
+
   ::
   ++  inflate-cache
     ^-  cache
@@ -191,13 +193,21 @@
     ==
     ::
       [%x %charges ~]
+    =/  tyr
+      .^(rock:tire:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/tire)
     :-  ~  :-  ~
     %-  charge-update:cg
     :-  %initial
     %-  ~(gas by *(map desk charge))
-    %+  turn  ~(tap by charges)
+    %+  murn  ~(tap by charges)
     |=  [=desk =charge]
-    [desk (get-light-charge charge)]
+    ?~  got=(~(get by tyr) desk)
+      ~
+    ?:  ?&  ?=(%dead zest.u.got)
+            ?=(~ (get-apps-have:hood our.bowl desk now.bowl))
+        ==
+      ~
+    `u=[desk (get-light-charge charge)]
     ::
       [%x %charges @ %version ~]
     ?~  charge=(~(get by charges) i.t.t.path)
@@ -347,28 +357,26 @@
     |=  [=desk =zest:clay]
     ^-  (quip card _state)
     =*  cha  ~(. ch desk)
-    ?.  (~(has by charges) desk)
-      :_  state  :_  ~
+    =/  card-1
       (~(warp-our pass /warp/[desk]) desk ~ %sing %z da+now.bowl /desk/docket-0)
-    =/  =charge  (~(got by charges) desk)
-    ?-    zest
-        %live
-      ?.  ?=(%glob -.href.docket.charge)
-        =.  charges  (new-chad:cha %site ~)
+    =^  cards-2  state
+      ?.  (~(has by charges) desk)
+        `state
+      =/  =charge  (~(got by charges) desk)
+      ?-    zest
+          %live
+        ?.  ?=(%glob -.href.docket.charge)
+          =.  charges  (new-chad:cha %site ~)
+          :_(state ~[add-fact:cha])
         :_(state ~[add-fact:cha])
-      =.  charges
-        %-  new-chad:cha
-        ?.  ?=([%suspend ~ *] chad.charge)
-          [%install ~]
-        [%glob u.glob.chad.charge]
-      :_(state [add-fact fetch-glob]:cha)
-    ::
-        ?(%next %dead)
-      =/  glob=(unit glob)
-        ?:(?=(%glob -.chad.charge) `glob.chad.charge ~)
-      =.  charges  (new-chad:cha %suspend glob)
-      :_(state ~[add-fact:cha])
-    ==
+      ::
+          ?(%held %dead)
+        =/  glob=(unit glob)
+          ?:(?=(%glob -.chad.charge) `glob.chad.charge ~)
+        =.  charges  (new-chad:cha %suspend glob)
+        :_(state ~[add-fact:cha])
+      ==
+    [[card-1 cards-2] state]
   ::
   ++  on-writ
     |=  [=desk =riot:clay]
@@ -382,10 +390,10 @@
       ?.  =(%live zest:(~(got by tyr) desk))
         `state
       ?.  docket-exists:cha
-        ~?  ?&  !=(%base desk)
-                !=(%kids desk)
-            ==
-          [dap.bowl %no-docket-file-for desk]
+        ::  ~?  ?&  !=(%base desk)
+        ::          !=(%kids desk)
+        ::      ==
+        ::    [dap.bowl %no-docket-file-for desk]
         `state
       ::  always update the docket in state to match clay's
       ::
@@ -736,4 +744,3 @@
   ++  docket  .^(^docket %cx (scry:io desk docket-loc))
   --
 --
-

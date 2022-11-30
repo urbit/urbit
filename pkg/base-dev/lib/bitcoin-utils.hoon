@@ -143,6 +143,7 @@
     |=  a=@
     ^-  hexb
     =/  l=@  (met 3 a)
+    ?:  =(l 0)  1^a
     ?:  =(l 1)  1^a
     ?:  =(l 2)  (cat:byt ~[1^0xfd (flip:byt 2^a)])
     ?:  (lte l 4)  (cat:byt ~[1^0xfe (flip:byt 4^a)])
@@ -162,7 +163,7 @@
       %0xfe  2
       %0xff  3
     ==
-    :_  (drop:byt (add 1 len) h)
+    :_  (drop:byt (add 1 (bex len)) h)
     %-  flip:byt
     (take:byt (bex len) (drop:byt 1 h))
   ::  +dea: atom instead of hexb for parsed CompactSize

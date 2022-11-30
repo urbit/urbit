@@ -342,7 +342,7 @@
   ::
   =.  tid.state       (~(put by tid.state) new-tid yarn)
   ?-    -.source
-      %&  (begin-thread yarn p.source)
+      %&  (begin-shed yarn p.source)
       %|
     =.  starting.state  (~(put by starting.state) yarn [%build vase.p.source])
     =/  pax=path
@@ -371,10 +371,10 @@
   =/  maybe-thread  (mule |.(!<(thread !<(vase q.r.u.riot))))
   ?:  ?=(%| -.maybe-thread)
     (thread-fail-not-running tid %thread-not-thread ~)
-  (start-thread yarn p.maybe-thread)
+  (slam-thread yarn p.maybe-thread)
 ::
-++  start-thread
-  ~/  %start-thread
+++  slam-thread
+  ~/  %slam-thread
   |=  [=yarn =thread]
   ^-  (quip card ^state)
   =/  =vase  vase:(~(got by starting.state) yarn)
@@ -382,9 +382,9 @@
   ?:  ?=(%| -.res)
     (thread-fail-not-running (yarn-to-tid yarn) %false-start p.res)
   =.  starting.state  (~(del by starting.state) yarn)
-  (begin-thread yarn p.res)
+  (begin-shed yarn p.res)
 ::
-++  begin-thread
+++  begin-shed
   |=  [=yarn =shed:khan]
   ?<  (~(has of running.state) yarn)
   =/  m  (strand ,vase)

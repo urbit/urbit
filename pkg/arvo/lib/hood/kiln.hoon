@@ -454,12 +454,12 @@
       |=  [=desk =arak-9]
       ^-  (unit [^desk zest])
       ?:  liv.rein.arak-9
-        `[desk %next]
+        `[desk %held]
       ?~  rail.arak-9
         ~
       ?:  paused.u.rail.arak-9
         ~
-      `[desk %next]
+      `[desk %held]
     ::
     :_  [%10 |1.+.old(syn 0, ark ~)]
     ;:  weld
@@ -501,6 +501,16 @@
   ::
       [%x %kiln %syncs ~]  ``noun+!>(zyn)
       [%x %kiln %sources ~]  ``noun+!>(sources)
+      [%x %kiln %pikes ~]
+    =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+    :^  ~  ~  %kiln-pikes
+    !>  ^-  pikes   
+    %-  ~(rut by rock)
+    |=  [=desk =zest wic=(set weft)]
+    ^-  pike
+    =+  .^(hash=@uv %cz /(scot %p our)/[desk]/(scot %da now))
+    =/  sync  (~(get by sources) desk)
+    [sync hash zest wic]
   ==
 ::
 ::  +get-germ: select merge strategy into local desk
@@ -520,6 +530,7 @@
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
+    %kiln-bump               =;(f (f !<(_+<.f vase)) poke-bump)
     %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
     %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
@@ -561,6 +572,30 @@
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+::
+++  poke-bump
+  |=  ~
+  =<  abet
+  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  =/  wic
+    %+  sort  ~(tap by wic:(~(got by rock) %base))
+    |=  [[* a=@ud] [* b=@ud]]
+    (gth a b)
+  =.  wic  (skip wic |=([* a=@ud] (gte a zuse)))
+  ?~  wic
+    %-  (slog 'kiln: %base already up-to-date' ~)
+    ..abet
+  =/  kel  i.wic
+  %-  emil
+  =/  cards
+    %+  murn  ~(tap by rock)
+    |=  [=desk =zest wic=(set weft)]
+    ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
+      ~
+    `u=[%pass /kiln/bump/[desk] %arvo %c %zest desk %held]
+  ?~  cards
+    [%pass /kiln/bump/wick %arvo %c %wick ~]~
+  cards
 ::
 ++  poke-cancel
   |=  a=@tas
@@ -703,14 +738,17 @@
       zyn
     (~(del by zyn) loc u.got)
   =?  ..abet  ?=(%dead zest)
-    (emit %pass /kiln/install %arvo %c %zest loc %next)
+    (emit %pass /kiln/install %arvo %c %zest loc ?:(=(our her) %live %held))
   ?:  (~(has by zyn) loc her rem)
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
     abet
+  =/  sun  (sync loc her rem)
+  ~>  %slog.(fmt "beginning install into {here:sun}")
+  =<  abet:abet:init
   ?:  =(%base loc)
-    abet:abet:init:(apex:(sync loc her rem) `%kids)
-  abet:abet:init:(sync loc her rem)
+    (apex:sun `%kids)
+  sun
 ::
 ++  poke-kids
   |=  [hos=kiln-sync nex=(unit desk)]
@@ -787,6 +825,7 @@
   |=  hos=kiln-sync
   ?:  (~(has by zyn) hos)
     abet:(spam (render "already syncing" [sud her syd ~]:hos) ~)
+  ~>  %slog.(fmt "beginning sync into {<syd.hos>} from {<her.hos>}/{<sud.hos>}")
   abet:abet:init:(sync hos)
 ::
 ++  poke-syncs                                        ::  print sync config
@@ -1087,7 +1126,6 @@
     =.  let  0
     %+  lard  /init
     =/  m  (strand:rand ,vase)
-    ~>  %slog.(fmt "beginning install into {here}")
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %y ud+1 /)
     ~>  %slog.(fmt "activated install into {here}")
     ;<  now=@da     bind:m  get-time:strandio
@@ -1143,8 +1181,8 @@
         %next
       ?>  ?=(%arow +<.sign-arvo)
       ?:  ?=(%| -.p.sign-arvo)
-        ~>  %slog.(fmt "download failed into {here}; retrying sync")
-        %-  (slog p.p.sign-arvo)
+        ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
+        ::  %-  (slog p.p.sign-arvo)
         init
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
@@ -1185,19 +1223,21 @@
     ::
         %kids
       ?>  ?=(%mere +<.sign-arvo)
+      ?~  kid
+        ..abet
       ::  See %main for this case
       ::
       ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
-        =+  "kids merge to {<kid>} failed, maybe peer sunk; restarting"
+        =+  "kids merge to {<u.kid>} failed, maybe peer sunk; restarting"
         ~>  %slog.(fmt -)
         init
       ::  Just notify; we've already started listening for the next
       ::  version
       ::
       ?-  -.p.sign-arvo
-        %&  ~>  %slog.(fmt "kids merge to {<kid>} succeeded")
+        %&  ~>  %slog.(fmt "kids merge to {<u.kid>} succeeded")
             ..abet
-        %|  ~>  %slog.(fmt "kids merge to {<kid>} failed")
+        %|  ~>  %slog.(fmt "kids merge to {<u.kid>} failed")
             %-  (slog p.p.sign-arvo)
             ..abet
       ==

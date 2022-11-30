@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-10: overall gall state, versioned
+::  $state-12: overall gall state, versioned
 ::
-+$  state-10  [%10 state]
++$  state-12  [%12 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -143,7 +143,6 @@
       %poke
       %leave
       %missing
-      %cork
   ==
 ::  |migrate: data structures for upgrades
 ::
@@ -152,7 +151,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %10
+  $:  %12
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -180,7 +179,7 @@
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-10
+=|  state=state-12
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -340,7 +339,7 @@
       =/  stand
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       %+  ~(put by outstanding.state)  [wire hen]
-      (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave %cork]))
+      (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave]))
     =.  mo-core  (mo-pass wire note-arvo)
     ?.  ?=(%leave -.deal)
       mo-core
@@ -512,10 +511,8 @@
             (~(put to *(qeu remote-request)) %missing)
           ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)
-          ~?  &(=(rr %cork) ?=(^ stand))
-            [%outstanding-queue-not-empty wire hen]
           :-  rr
-          ?:  ?=(%cork rr)
+          ?:  =(~ stand)
             (~(del by outstanding.state) [full-wire hen])
           (~(put by outstanding.state) [full-wire hen] stand)
         ::  non-null case of wire is old, remove on next breach after
@@ -527,13 +524,17 @@
         ?~  error=error.sign-arvo
           ~
         `[[%leaf (trip tag.u.error)] tang.u.error]
+      ::  send a %cork if we get a nack upon initial subscription
+      ::
+      =?  mo-core
+          &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
+        (mo-pass [%sys wire] %a %cork ship)
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
         %watch     (mo-give %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
         %leave     mo-core
-        %cork      mo-core
         %missing   ~>(%slog.[3 'gall: missing'] mo-core)
       ==
     ::
@@ -550,10 +551,9 @@
       ?-  -.ames-response
         %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
         %x  =.  mo-core  (mo-give %unto %kick ~)
-            =.  outstanding.state
-              =/  key  [[%sys wire] hen]
-              %+  ~(put by outstanding.state)  key
-              (~(put to (~(gut by outstanding.state) key ~)) %cork)
+            =/  key  [[%sys wire] hen]
+            =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
+              (~(del by outstanding.state) key)
             (mo-pass [%sys wire] %a %cork ship)
       ==
     ::
@@ -755,11 +755,11 @@
   ::
   ++  mo-peek
     ~/  %mo-peek
-    |=  [dap=term =routes care=term =path]
+    |=  [veb=? dap=term =routes care=term =path]
     ^-  (unit (unit cage))
     ::
     =/  app  (ap-abed:ap dap routes)
-    (ap-peek:app care path)
+    (ap-peek:app veb care path)
   ::
   ++  mo-apply
     |=  [dap=term =routes =deal]
@@ -975,7 +975,7 @@
           [%give %kick ~(tap in inbound-paths) ~]~
         %+  turn  ~(tap by boat.yoke)
         |=  [[=wire =dock] ? =path]
-        [%pass (ap-nonce-wire wire dock) %agent dock %leave ~]
+        [%pass wire %agent dock %leave ~]
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::
@@ -1172,7 +1172,7 @@
     ::
     ++  ap-peek
       ~/  %ap-peek
-      |=  [care=term tyl=path]
+      |=  [veb=? care=term tyl=path]
       ^-  (unit (unit cage))
       ::  take trailing mark off path for %x scrys
       ::
@@ -1185,6 +1185,7 @@
       =/  peek-result=(each (unit (unit cage)) tang)
         (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
       ?:  ?=(%| -.peek-result)
+        ?.  veb  [~ ~]
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
       ::  for non-%x scries, or failed %x scries, or %x results that already
       ::  have the requested mark, produce the result as-is
@@ -1865,20 +1866,33 @@
       =?  old  ?=(%7 -.old)  (spore-7-to-8 old)
       =?  old  ?=(%8 -.old)  (spore-8-to-9 old)
       =?  old  ?=(%9 -.old)  (spore-9-to-10 old)
-      ?>  ?=(%10 -.old)
+      =?  old  ?=(%10 -.old)  (spore-10-to-11 old)
+      =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
+      ?>  ?=(%12 -.old)
       gall-payload(state old)
   ::
-  +$  spore-any  $%(spore spore-7 spore-8 spore-9)
-  +$  spore-9
-    $:  %9
+  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10 spore-11)
+  +$  spore-11
+    $:  %11
         system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
-        eggs=(map term egg-9)
+        eggs=(map term egg)
+        blocked=(map term (qeu blocked-move))
+        :: perms=(jug desk perm)
+        :: wards=(set duct)
+        =bug
+    ==
+  +$  spore-10
+    $:  %10
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-10)
         blocked=(map term (qeu blocked-move))
         =bug
     ==
-  +$  egg-9
+  +$  egg-10
     $:  control-duct=duct
         run-nonce=@t
         sub-nonce=@
@@ -1891,10 +1905,22 @@
         =beak
         marks=(map duct mark)
     ==
+  +$  spore-9
+    $:  %9
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request-9))
+        contacts=(set ship)
+        eggs=(map term egg-10)
+        blocked=(map term (qeu blocked-move))
+        =bug
+    ==
+  ::
+  +$  remote-request-9  ?(remote-request %cork)
+  ::
   +$  spore-8
     $:  %8
         system-duct=duct
-        outstanding=(map [wire duct] (qeu remote-request))
+        outstanding=(map [wire duct] (qeu remote-request-9))
         contacts=(set ship)
         eggs=(map term egg-8)
         blocked=(map term (qeu blocked-move))
@@ -1915,7 +1941,7 @@
     $:  %7
         wipe-eyre-subs=_|  ::NOTE  band-aid for #3196
         system-duct=duct
-        outstanding=(map [wire duct] (qeu remote-request))
+        outstanding=(map [wire duct] (qeu remote-request-9))
         contacts=(set ship)
         eggs=(map term egg-8)
         blocked=(map term (qeu blocked-move))
@@ -1939,7 +1965,7 @@
     =-  old(- %9, eggs -, blocked [blocked.old *bug])
     %-  ~(run by eggs.old)
     |=  =egg-8
-    ^-  egg-9
+    ^-  egg-10
     =/  [=bitt =boat =boar]  (watches-8-to-9 watches.egg-8)
     :*  control-duct.egg-8
         run-nonce.egg-8
@@ -1955,19 +1981,29 @@
     ^-  [bitt boat boar]
     [inbound outbound (~(run by outbound) |=([acked=? =path] nonce=0))]
   ::
+  ::  remove %cork
+  ::
+  ++  spore-9-to-10
+    |=  old=spore-9
+    =-  old(- %10, outstanding -)
+    %-  ~(run by outstanding.old)
+    |=  q=(qeu remote-request-9)
+    %-  ~(gas to *(qeu remote-request))
+    %+  murn  ~(tap to q)
+    |=(r=remote-request-9 ?:(?=(%cork r) ~ `r))
+  ::
   ::  removed live
   ::  changed old-state from (each vase vase) to [%| vase]
   ::  added code
   ::
-  ++  spore-9-to-10
-    |=  old=spore-9
-    ^-  spore
+  ++  spore-10-to-11
+    |=  old=spore-10
+    ^-  spore-11
     %=    old
-        -  %10
+        -  %11
         eggs
       %-  ~(urn by eggs.old)
-      |=  [a=term e=egg-9]
-      ::TODO just make this as a cell
+      |=  [a=term e=egg-10]
       ^-  egg
       :*  control-duct.e
           run-nonce.e
@@ -1981,9 +2017,14 @@
           beak.e
           marks.e
       ==
-    ::
-        bug
-      [~ ~ bug.old]
+    ==
+  ::
+  ++  spore-11-to-12
+    |=  old=spore-11
+    ^-  spore
+    %=  old
+      -   %12
+      |5  [&6.old ~ ~ |6.old]
     ==
   --
 ::  +scry: standard scry
@@ -2007,8 +2048,16 @@
       (sort ~(tap by queued) aor)
     ::
     =/  running
-      =/  active  (~(run by yokes.state) |=(yoke [%.y +<]))
-      (sort ~(tap by active) aor)
+      %+  turn  (sort ~(tap by yokes.state) aor)
+      |=  [dap=term =yoke]
+      ^-  mass
+      =/  met=(list mass)
+        =/  dat  (mo-peek:mo | dap [~ ship] %x /whey/mass)
+        ?:  ?=(?(~ [~ ~]) dat)  ~
+        (fall ((soft (list mass)) q.q.u.u.dat) ~)
+      ?~  met
+        dap^&+yoke
+      dap^|+(welp met dot+&+yoke ~)
     ::
     =/  maz=(list mass)
       :~  [%foreign %.y contacts.state]
@@ -2082,7 +2131,7 @@
   ?.  ?=(^ path)
     ~
   =/  =routes  [~ ship]
-  (mo-peek:mo dap routes care path)
+  (mo-peek:mo & dap routes care path)
 ::  +stay: save without cache; suspend non-%base agents
 ::
 ::    TODO: superfluous? see +molt
