@@ -28,6 +28,13 @@ let
       ttyflag="-t"
     fi
 
+    # If the LOOMSIZE var is specified, use the --loom flag with the value
+    if [ -z "$LOOMSIZE ]; then
+      loomsize=""
+    else
+      loomsize="--loom $LOOMSIZE"
+    fi
+
     # Check if there is a keyfile, if so boot a ship with its name, and then remove the key
     if [ -e *.key ]; then
       # Get the name of the key
@@ -37,7 +44,7 @@ let
       mv $keyname /tmp
 
       # Boot urbit with the key, exit when done booting
-      urbit $ttyflag -w $(basename $keyname .key) -k /tmp/$keyname -c $(basename $keyname .key) -p $amesPort -x
+      urbit $ttyflag $loomsize -w $(basename $keyname .key) -k /tmp/$keyname -c $(basename $keyname .key) -p $amesPort -x
 
       # Remove the keyfile for security
       rm /tmp/$keyname
