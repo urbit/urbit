@@ -13680,20 +13680,20 @@
     ::
     ::    hint syntax
     ::
-    ++  hinb  |.(;~(gunk bont loaf))                    ::  hint and hoon
+    ++  hinb  |.(;~(goop bont loaf))                    ::  hint and hoon
     ++  hinc  |.                                        ::  optional =en, hoon
-              ;~(pose ;~(gunk bony loaf) (stag ~ loaf)) ::
-    ++  hind  |.(;~(gunk bonk loaf bonz loaf))          ::  jet hoon "bon"s hoon
-    ++  hine  |.(;~(gunk bonk loaf))                    ::  jet-hint and hoon
+              ;~(pose ;~(goop bony loaf) (stag ~ loaf)) ::
+    ++  hind  |.(;~(gunk bonk loaf ;~(goop bonz loaf))) ::  jet hoon "bon"s hoon
+    ++  hine  |.(;~(goop bonk loaf))                    ::  jet-hint and hoon
     ++  hinf  |.                                        ::  0-3 >s, two hoons
       ;~  pose
-        ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf)
-        (stag 0 ;~(gunk loaf loaf))
+        ;~(goop (cook lent (stun [1 3] gar)) loaf loaf)
+        (stag 0 ;~(goop loaf loaf))
       ==
     ++  hing  |.                                        ::  0-3 >s, three hoons
       ;~  pose
-        ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf loaf)
-        (stag 0 ;~(gunk loaf loaf loaf))
+        ;~(goop (cook lent (stun [1 3] gar)) loaf loaf loaf)
+        (stag 0 ;~(goop loaf loaf loaf))
       ==
     ++  bonk                                            ::  jet signature
       ;~  pfix  cen
@@ -13705,7 +13705,7 @@
         ==
       ==
     ++  hinh  |.                                        ::  1/2 numbers, hoon
-        ;~  gunk
+        ;~  goop
           ;~  pose
             dem
             (ifix [sel ser] ;~(plug dem ;~(pfix ace dem)))
