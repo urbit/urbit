@@ -54,7 +54,7 @@
             [%get-perms ~]
           ~&  pes.bowl
           :_  this
-          [%give %fact ~ %noun !>(pes.bowl)]~
+          [%give %fact ~ %noun !>(`*`pes.bowl)]~
         ::
             [%ames-test *]
           :_  this
@@ -170,7 +170,7 @@
     =/  move-1=move
       [duct %give %unto %poke-ack ~]
     =/  move-2=move
-      =/  =sign:agent:gall  [%fact %noun !>(pes)]
+      =/  =sign:agent:gall  [%fact %noun !>(`*`pes)]
       [duct %give %unto sign]
     [move-1 move-2 ~]
   ::
@@ -266,20 +266,14 @@
   =/  poke-1=task:agent:gall
     [%poke %noun !>(`poke`[%ames-test task-1])]
   ::
-  =/  expected-moves=(list move)
-   =/  move-1=move
-     [duct %give %unto %poke-ack ~]
-   ~[move-1]
-  ::
   =^  moves  dep-gall
     (load-one dep-gall duct test-desk ~ `[%buster test-dummy])
   =^  moves  dep-gall
     (task-test-dummy dep-gall poke-1)
   ::
-  %+  expect-eq
-    !>  expected-moves
-  ::
-    !>  moves
+  %-  expect  !>
+  ::  avoid having to account for tank printing nonsense
+  ?=([[* %give %unto %poke-ack ~ *] ~] moves)
 ::
 +|  %gall-utilities
 ::
