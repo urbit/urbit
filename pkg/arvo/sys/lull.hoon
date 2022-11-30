@@ -2194,7 +2194,9 @@
         %d
       ::TODO  revisit wrt nu-term
       ?+  +>-.note  |
-          ?(%belt %blew %flee %flow %hail %view)
+        %flee  &
+      ::
+          ?(%belt %blew %flow %hail %view)
         [%dill %terms]
       ::
         ?(%crud %talk %text)  [%dill %print]
@@ -2211,7 +2213,8 @@
         %g
       ?+  +>-.note  |
         %nuke           [%gall %clear `dude.note]
-        ?(%ward %wink)  [%gall %guard ~]
+        %ward           [%gall %guard ~]
+        %wink           &
       ==
     ::
         %i
