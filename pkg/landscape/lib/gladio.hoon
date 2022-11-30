@@ -144,6 +144,7 @@
           heap-flags=(flag-importer %graph-validator-link)
           diary-flags=(flag-importer %graph-validator-publish)
       ==
+  ~&  [%to-import chat-flags]
   =/  setup=(list card)
     %+  welp  (migrate-ship our.bowl)
     :*  (poke-our %groups group-import+!>(imports))
@@ -176,6 +177,7 @@
     %.  ~(key by links)
     =-  ~(uni in -)
     (~(uni in ~(key by chats)) ~(key by diarys))
+  ~&  [%importing ~(key by chats)]
   %+  welp
     %+  turn  ~(tap in graph-flags)
     |=  =flag:i
