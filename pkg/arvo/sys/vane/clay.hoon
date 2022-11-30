@@ -175,7 +175,7 @@
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
       ren=rein                                          ::  force agents on/off
-      wef=(unit weft)                                   ::  zuse version in use
+      wef=weft                                          ::  zuse version in use
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -616,19 +616,18 @@
     !.
     =>  |%
         +$  state
-          $:  remit=weft
-              topic=vase
-              cache=flow
+          $:  cache=flow
               flue
               cycle=(set mist)
               drain=(map mist leak)
               stack=(list (set leak))
+              topic=[=weft =vase]
           ==
         +$  args
-          $:  topic=vase
-              files=(map path (each page lobe))
+          $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
+              topic=[=weft =vase]
               cache=flow
               flue
           ==
@@ -637,7 +636,6 @@
     ::  nub: internal mutable state for this computation
     ::
     =|  nub=state
-    =.  remit.nub  [%zuse !<(@ud (slap topic %limb %zuse))]
     =.  topic.nub  topic
     =.  cache.nub  cache
     =.  spill.nub  spill
@@ -720,7 +718,7 @@
       =.  nub  nob
       :_  nub  :-  %vase
       ^-  vase  ::  vase of nave
-      %+  slap  (slop (with-face cor+cor) topic)
+      %+  slap  (slop (with-face cor+cor) vase.topic.nub)
       !,  *hoon
       =/  typ  _+<.cor
       =/  dif  _*diff:grad:cor
@@ -1000,7 +998,7 @@
     ::
     ++  run-prelude
       |=  =pile
-      =/  sut=vase  topic
+      =/  sut=vase  vase.topic.nub
       =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
@@ -1249,7 +1247,7 @@
       |=  [=mist next=$-(state [soak state])]
       ^-  [soak state]
       =^  top=(set leak)  stack.nub  stack.nub
-      =/  =leak  [(mist-to-pour mist) remit.nub top]
+      =/  =leak  [(mist-to-pour mist) weft.topic.nub top]
       =.  cycle.nub  (~(del in cycle.nub) mist)
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(put in i.stack.nub) leak))
@@ -1381,9 +1379,7 @@
     =/  using=(set weft)
       %-  ~(rep by dos.rom)
       |=  [[=desk =dojo]  wefts=(set weft)]
-      ?~  wef.dom.dojo
-        wefts
-      (~(put in wefts) u.wef.dom.dojo)
+      (~(put in wefts) wef.dom.dojo)
     =/  stale=(list weft)
       ~(tap in (~(dif in ~(key by zuz)) using))
     |-
@@ -1391,12 +1387,12 @@
       ..park(zuz zuz)
     $(stale t.stale, zuz (~(del by zuz) i.stale))
   ::
-  ++  get-zuse
+  ++  got-zuse
     |=  =waft
-    |^  ^-  [vase _..park]
+    |^  ^-  [[weft vase] _..park]
     =/  wefts=(list weft)  (sort-filter-waft waft)
-    ?^  vuse=(try-zuse-cache wefts)
-      [u.vuse ..park]
+    ?^  cached=(try-zuse-cache wefts)
+      [u.cached ..park]
     =/  oldest=weft  (rear wefts)
     =/  =dome  dom:(~(got by dos.rom) %base)
     =/  =aeon  let.dome
@@ -1419,7 +1415,9 @@
     ?>  ?@  -.waft
           =(waft actual)
         (~(has in p.waft) actual)
-    [zuse-core ..part(zuz (~(put by zuz) actual zuse-core))]
+    :+  actual
+      zuse-core
+    ..part(zuz (~(put by zuz) actual zuse-core))
     ::
     ++  build-zuse
       |=  [h=@ a=@ l=@ z=@]
@@ -1440,14 +1438,14 @@
     ::
     ++  try-zuse-cache
       |=  wefts=(list weft)
-      ^-  (unit vase)
+      ^-  (unit [weft vase])
       ?~  wefts
         ~
       ?:  =(i.wefts zuse+zuse)
-        (some zuse.bud)
+        (some i.wefts zuse.bud)
       ?~  zuse-core=(~(get by zuz) i.wefts)
         $(wefts t.wefts)
-      (some zuse-core)
+      (some i.wefts zuse-core)
     ::
     ++  sort-filter-waft
       |=  =waft
@@ -1648,7 +1646,8 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    [files lat.ran veb.bug fad ?:(=(yon let.dom) fod.dom [~ ~])]
+    =/  zus  (got-zuse wef.dom)
+    [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
   ++  aeon-flow
@@ -1948,29 +1947,35 @@
       !!
     ::  find desk kelvin
     ::
-    =/  kel=(set weft)  (waft-to-wefts (get-kelvin yoki))
+    =/  waf=waft  (get-kelvin yoki)
+    =/  kel=(set weft)  (waft-to-wefts waf)
     ?.  ?|  ?&  =(%base syd)
-                %-  ~(any in kel)
-                |=  =weft
-                &(=(%zuse lal.weft) (gte num.weft zuse))
-            ==
-            ?&  !=(%base syd)
                 %-  ~(any in kel)
                 |=  =weft
                 &(=(%zuse lal.weft) (lte num.weft zuse))
             ==
+            ?&  !=(%base syd)
+                %-  ~(any in kel)
+                |=  =weft
+                &(=(%zuse lal.weft) (gte num.weft zuse))
+            ==
         ==
-      ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
-        %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
+      =/  kels  ~(tap in kel)
+      ?:  =(%base syd)
+        %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kels]>}" ~)
         ..park
       =.  wic.dom                                       ::  [tare] <
         %+  roll  ~(tap in kel)
         |:  [weft=*weft wic=wic.dom]
         (~(put by wic) weft yoki)
-      =?  ..park  !?=(%base syd)  wick                  ::  [wick]
-      %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
+      =.  ..park  wick                  ::  [wick]
+      %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kels]>}" ~)
       tare                                              ::  [tare] >
-    =.  wic.dom  (~(del by wic.dom) zuse+zuse)
+    =^  zus=[=weft =vase]  ..park
+      ?.  =(%base syd)
+        (got-zuse waf)
+      [[zuse+zuse zuse.bud] ..park]
+    =.  wic.dom  (~(del by wic.dom) weft.zus)
     ::
     =/  old-yaki
       ?:  =(0 let.dom)
@@ -2015,7 +2020,7 @@
     =.  wic.dom                                         ::  [tare] <
       %+  roll  ~(tap in kel)
       |:  [weft=*weft wic=wic.dom]
-      ?:  (gte num.weft zuse)
+      ?:  (gte num.weft num.weft.zus)
         wic
       (~(put by wic) weft yoki)
     ::
@@ -2028,7 +2033,8 @@
     ::
     =/  old-fod  fod.dom
     =.  fod.dom
-      ?:  updated  [~ ~]
+      ?:  |(updated !=(weft.zus wef.dom))
+        [~ ~]
       (promote-ford fod.dom invalid)
     =.  fad
       (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
@@ -2040,7 +2046,7 @@
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:ford:fusion  [files lat.ran veb.bug fad fod.dom]
+    =/  =args:ford:fusion  [files lat.ran veb.bug zus fad fod.dom]
     ::
     =^  change-cages  args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -2072,6 +2078,7 @@
     ::  [wake] < [ergo] < [goad] <
     ::
     =:  let.dom  +(let.dom)
+        wef.dom  weft.zus
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -2104,7 +2111,7 @@
       ?:  ?=(%base desk.i.desks)
         $(desks t.desks)
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
-        (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks) ~)
+        $(desks t.desks)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
       ::  [goad] < call without goading so that we apply all the commits
       ::  before trying to compile all desks to send to gall.
@@ -2393,7 +2400,7 @@
       ^+  ..park
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
-      =.  zuz  (~(put by zuz) zuse zuse.bud)
+      =.  zuz  (~(put by zuz) zuse+zuse zuse.bud)
       |^  %.  [hen %slip %c %pork ~]
           emit:(pass-what files)
       ::
