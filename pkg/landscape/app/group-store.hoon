@@ -190,7 +190,7 @@
     =^  cards  state
       ?+    wire  [- state]:(on-agent:def wire sign)
           [%pyre *]      (take-pyre:gc t.wire sign)
-          [%gladio @ ~]  (take-migrate:gc (slav %p i.t.wire) sign)
+          [%gladio @ ~]  (take-migrate:gc (scot %p i.t.wire) sign)
       ::
           [%try-rejoin @ *]
         ?>  ?=(%poke-ack -.sign)
