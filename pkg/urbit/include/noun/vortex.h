@@ -77,6 +77,11 @@
       u3_noun
       u3v_peek(u3_noun hap);
 
+    /* u3v_soft_peek(): softly query the reck namespace.
+    */
+      u3_noun
+      u3v_soft_peek(c3_w mil_w, u3_noun sam);
+
     /* u3v_poke(): insert and apply an input ovum (protected).
     */
       u3_noun
