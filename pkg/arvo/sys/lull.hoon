@@ -1415,9 +1415,9 @@
   ::  channel-event: unacknowledged channel event, vaseless sign
   ::
   +$  channel-event
-    $%  $>(%poke-ack sign:agent:gall)
-        $>(%watch-ack sign:agent:gall)
-        $>(%kick sign:agent:gall)
+    $%  $>(%poke-ack sign:agent-417:gall)
+        $>(%watch-ack sign:agent-417:gall)
+        $>(%kick sign:agent-417:gall)
         [%fact =mark =noun]
     ==
   ::  channel: connection to the browser
@@ -1794,6 +1794,7 @@
               $:  wex=boat                              ::  outgoing subs
                   sup=bitt                              ::  incoming subs
               ==                                        ::
+
               $:  act=@ud                               ::  change number
                   eny=@uvJ                              ::  entropy
                   now=@da                               ::  current time
@@ -1816,11 +1817,11 @@
     ==
   +$  deal
     $%  [%raw-poke =mark =noun]
-        task:agent
+        task:agent-417
     ==
   +$  unto
     $%  [%raw-fact =mark =noun]
-        sign:agent
+        sign:agent-417
     ==
   ::  TODO: add more flags?
   ::
@@ -1828,7 +1829,85 @@
   ::
   ::  +agent: app core
   ::
-  ++  agent
+  ++  agent  $%([[%zuse %418] agent-418] [[%zuse %417] agent-417])
+  ::
+    ++  agent-417
+    =<  form
+    |%
+    +$  step  (quip card form)
+    +$  card  (wind note gift)
+    +$  note
+      $%  [%agent [=ship name=term] =task]
+          [%arvo note-arvo]
+          [%pyre =tang]
+      ==
+    +$  task
+      $%  [%watch =path]
+          [%watch-as =mark =path]
+          [%leave ~]
+          [%poke =cage]
+          [%poke-as =mark =cage]
+      ==
+    +$  gift
+      $%  [%fact paths=(list path) =cage]
+          [%kick paths=(list path) ship=(unit ship)]
+          [%watch-ack p=(unit tang)]
+          [%poke-ack p=(unit tang)]
+      ==
+    +$  sign
+      $%  [%poke-ack p=(unit tang)]
+          [%watch-ack p=(unit tang)]
+          [%fact =cage]
+          [%kick ~]
+      ==
+    ++  form
+      $_  ^|
+      |_  bowl
+      ++  on-init
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-save
+        *vase
+      ::
+      ++  on-load
+        |~  old-state=vase
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-poke
+        |~  [mark vase]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-watch
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-leave
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-peek
+        |~  path
+        *(unit (unit cage))
+      ::
+      ++  on-agent
+        |~  [wire sign]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-arvo
+        |~  [wire sign-arvo]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-fail
+        |~  [term tang]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-rift
+        |~  ship
+        *(quip card _^|(..on-init))
+      --
+    --
+  ::
+  ++  agent-418
     =<  form
     |%
     +$  step  (quip card form)
@@ -2265,7 +2344,7 @@
   +$  input
     $%  [%poke =cage]
         [%sign =wire =sign-arvo]
-        [%agent =wire =sign:agent:gall]
+        [%agent =wire =sign:agent-417:gall]
         [%watch =path]
     ==
   +$  strand-input  [=bowl in=(unit input)]
