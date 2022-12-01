@@ -258,7 +258,7 @@
 ++  take-migrate
   |=  [=ship =sign:agent:gall]
   ^-  (quip card _state)
-  ~&  [%migrating ship src.bol]
+  ~&  [migrating ship src.bol]
   ?:  ?=(%poke-ack -.sign)
     `state
   :_  state(wait (~(del in wait) ship))
