@@ -531,6 +531,11 @@
   |*  [a=(list) b=*]
   (weld a ^+(a [b]~))
 ::
+::  +lure: List pURE
+++  lure
+  |*  a=*
+  [i=a t=~]
+::
 ++  fand                                                ::  all indices
   ~/  %fand
   |=  [nedl=(list) hstk=(list)]
