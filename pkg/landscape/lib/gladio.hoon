@@ -28,10 +28,14 @@
   `[flag members.u.group u.assoc graph]
 ::
 ++  import-flags
-  |=  [=^groups =associations:met =network:gra]
+  |=  [our=ship =^groups =associations:met =network:gra]
   |=  =mark
   ^-  (set flag:i)
-  ~(key by ((import-for-mark ~ groups associations network) mark))
+  %-  ~(gas in *(set flag:i))
+  %+  skim
+    ~(tap in ~(key by ((import-for-mark ~ groups associations network) mark)))
+  |=  =flag:i
+  !=(our p.flag)
 ::
 ++  import-for-mark
   |=  [her=(unit ship) =^groups =associations:met =network:gra]
@@ -139,7 +143,7 @@
       ~
     `[flag u.assoc chans roles group]
   =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
-  =/  flag-importer  (import-flags groups associations network)
+  =/  flag-importer  (import-flags our.bowl groups associations network)
   =+  :*  chat-flags=(flag-importer %graph-validator-chat)
           heap-flags=(flag-importer %graph-validator-link)
           diary-flags=(flag-importer %graph-validator-publish)
