@@ -4755,7 +4755,13 @@
       ?~  bill.i.sat
         [~ nub.f]
       =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
-      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
+      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent-any:gall vase)
+      =^  =cage  nub.f  (read-file:f /sys/kelvin)
+      =/  wefts  (waft-to-wefts !<(waft q.cage))
+      ?.  (~(has in wefts) -.agent)
+        =-  (mean leaf/- ~)
+        "clay: agent {<i.bill.i.sat>} incompatible, ".
+        "{[have=-.agent need=~(tap in wefts)]}"
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
     =.  lad  (weld lad new)
